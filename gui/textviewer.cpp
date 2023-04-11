@@ -81,7 +81,7 @@ bool TextViewerDialog::loadFile(Common::String &fname) {
 		return false;
 	}
 
-	warning("TextViewerDialog::loadFile(): File size is: %ld", stream->size());
+	warning("TextViewerDialog::loadFile(): File size is: %ld", long(stream->size()));
 
 	_linesArray.clear();
 

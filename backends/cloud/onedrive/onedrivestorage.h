@@ -55,6 +55,10 @@ protected:
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
 	OneDriveStorage(Common::String code, Networking::ErrorCallback cb);
+
+	/** This constructor extracts tokens from JSON acquired via OAuth code flow. */
+	OneDriveStorage(Networking::JsonResponse codeFlowJson, Networking::ErrorCallback cb);
+
 	virtual ~OneDriveStorage();
 
 	/**

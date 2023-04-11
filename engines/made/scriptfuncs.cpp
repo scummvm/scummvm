@@ -580,7 +580,7 @@ int16 ScriptFunctions::sfLoadMouseCursor(int16 argc, int16 *argv) {
 	PictureResource *flex = _vm->_res->getPicture(argv[2]);
 	if (flex) {
 		Graphics::Surface *surf = flex->getPicture();
-		CursorMan.replaceCursor(surf->getPixels(), surf->w, surf->h, argv[1], argv[0], 0);
+		CursorMan.replaceCursor(*surf, argv[1], argv[0], 0);
 		_vm->_res->freeResource(flex);
 	}
 	return 0;

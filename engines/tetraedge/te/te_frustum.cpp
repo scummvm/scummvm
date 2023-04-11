@@ -53,7 +53,7 @@ float TeFrustum::planeLen(int num) const {
 	const float *p = _m + num * 4;
 	float result = (float)sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]);
 	if (result == 0)
-		result = 1e-08;
+		result = 1e-08f;
 	return result;
 }
 

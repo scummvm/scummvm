@@ -1129,44 +1129,9 @@
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, -4, 0' spacing = '10' align = 'center'>
-				<layout type = 'vertical' padding = '0, 0, 2, 0' spacing = '4'>
-					<widget name = 'StorageWizardOpenLinkHint'
-							width = '96'
-							height = 'Globals.Line.Height'
-					/>
-				</layout>
-				<layout type = 'vertical' padding = '0, 0, 1, 0' spacing = '4'>
-					<widget name = 'StorageWizardLink'
-							width = '192'
-							height = 'Globals.Line.Height'
-					/>
-				</layout>
-			</layout>
-			<layout type = 'horizontal' padding = '0, 0, -2, 0' spacing = '10' align = 'center'>
-				<widget name = 'StorageWizardCodeHint'
-						height = 'Globals.Line.Height'
-				/>
-			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
-				<layout type = 'vertical' padding = '0, 0, -2, 0' spacing = '2'>
-					<widget name = 'StorageWizardCodeBox'
-						width = '108'
-						height = '24'
-					/>
-				</layout>
-				<layout type = 'vertical' padding = '0, 0, -2, 0' spacing = '2'>
-					<widget name = 'StorageWizardPasteButton'
-							type = 'Button'
-					/>
-				</layout>
-			</layout>
 			<layout type = 'horizontal' padding = '0, 0, -2, 0' spacing = '10' align = 'center'>
 				<widget name = 'StorageWizardConnectButton'
 						type = 'Button'
-				/>
-				<widget name = 'StorageWizardConnectionStatusHint'
-						height = 'Globals.Line.Height'
 				/>
 			</layout>
 		</layout>
@@ -1292,95 +1257,182 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_Cloud_ConnectionWizard' overlays = 'Dialog.GlobalOptions' shading = 'dim'>
-		<layout type = 'vertical' padding = '0, 0, 0, 0'>
-			<widget name = 'Container'/>
-		</layout>
-	</dialog>
+		<layout type = 'vertical' padding = '16, 16, 16, 8' spacing = '0'>
+			<widget name = 'Headline'
+					height = 'Globals.Line.Height'
+			/>
 
-	<dialog name = 'GlobalOptions_Cloud_ConnectionWizard_Container' overlays = 'GlobalOptions_Cloud_ConnectionWizard.Container'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '0'>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
-				<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '6'>
-					<widget name = 'Picture'
-							width = '109'
-							height = '109'
-					/>
-					<widget name = 'OpenUrlButton'
-							type = 'Button'
-					/>
-					<widget name = 'PasteCodeButton'
-							type = 'Button'
-					/>
-				</layout>
-				<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '6'>
-					<widget name = 'Headline'
-							height = 'Globals.Line.Height'
-					/>
-					<space size = '4' />
-					<widget name = 'NavigateLine'
-							height = 'Globals.Line.Height'
-					/>
-					<widget name = 'URLLine'
-							height = 'Globals.Line.Height'
-					/>
-					<space size = '4' />
-					<widget name = 'ReturnLine1'
-							height = 'Globals.Line.Height'
-					/>
-					<widget name = 'ReturnLine2'
-							height = 'Globals.Line.Height'
-					/>
-					<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '4' align = 'center'>
-						<widget name = 'CodeBox1'
-							width = '70'
-							height = 'Globals.Line.Height'
-						/>
-						<widget name = 'CodeBox2'
-							width = '70'
-							height = 'Globals.Line.Height'
-						/>
-						<widget name = 'CodeBox3'
-							width = '70'
-							height = 'Globals.Line.Height'
-						/>
-						<widget name = 'CodeBox4'
-							width = '70'
-							height = 'Globals.Line.Height'
-						/>
-					</layout>
-					<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '4' align = 'center'>
-						<widget name = 'CodeBox5'
-							width = '70'
-							height = 'Globals.Line.Height'
-						/>
-						<widget name = 'CodeBox6'
-							width = '70'
-							height = 'Globals.Line.Height'
-						/>
-						<widget name = 'CodeBox7'
-							width = '70'
-							height = 'Globals.Line.Height'
-						/>
-						<widget name = 'CodeBox8'
-							width = '70'
-							height = 'Globals.Line.Height'
-						/>
-					</layout>
-					<widget name = 'MessageLine'
-							height = 'Globals.Line.Height'
-					/>
-					<space size = '6' />
-				</layout>
-			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
+			<space size = '16' />
+
+			<widget name = 'Container'/>
+			<space />
+
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '12'>
+				<space />
 				<widget name = 'CancelButton'
 						type = 'Button'
 				/>
-				<space />
-				<widget name = 'ConnectButton'
+				<widget name = 'PrevButton'
+						type = 'Button'
+				/>
+				<widget name = 'NextButton'
+						type = 'Button'
+				/>
+				<widget name = 'FinishButton'
 						type = 'Button'
 				/>
 			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'ConnectionWizard_ModeSelect' overlays = 'GlobalOptions_Cloud_ConnectionWizard.Container' shading = 'dim'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '0'>
+
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '0' align = 'center'>
+				<widget name = 'QuickModeButton'
+						type = 'Button'
+				/>
+				<space size = '12' />
+				<widget name = 'QuickModeHint'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+
+			<layout type = 'horizontal' padding = '0, 0, 8, 0' spacing = '0' align = 'center'>
+				<widget name = 'ManualModeButton'
+						type = 'Button'
+				/>
+			</layout>
+
+		</layout>
+	</dialog>
+
+	<dialog name = 'ConnectionWizard_QuickModeStep1' overlays = 'GlobalOptions_Cloud_ConnectionWizard.Container' shading = 'dim'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '0'>
+
+			<layout type = 'vertical' padding = '0, 0, 0, 16' spacing = '0' align = 'center'>
+				<widget name = 'Line1'
+						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'Line2'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '0' align = 'center'>
+				<widget name = 'RunServerButton'
+						type = 'Button'
+				/>
+				<space size = '12' />
+				<widget name = 'ServerInfoLabel'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+
+		</layout>
+	</dialog>
+
+	<dialog name = 'ConnectionWizard_QuickModeStep2' overlays = 'GlobalOptions_Cloud_ConnectionWizard.Container' shading = 'dim'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '0'>
+
+			<layout type = 'vertical' padding = '0, 0, 0, 16' spacing = '0'>
+				<widget name = 'Line1'
+						height = 'Globals.Line.Height'
+				/>
+				<space size = '4' />
+				<widget name = 'OpenLinkButton'
+						width = '192'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+
+			<layout type = 'vertical' padding = '0, 0, 0, 12' spacing = '0' align = 'center'>
+				<widget name = 'Line2'
+						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'Line3'
+						height = 'Globals.Line.Height'
+				/>
+				<space size = '8' />
+				<widget name = 'Line4'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+
+		</layout>
+	</dialog>
+
+	<dialog name = 'ConnectionWizard_ManualModeStep1' overlays = 'GlobalOptions_Cloud_ConnectionWizard.Container' shading = 'dim'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '0'>
+			<widget name = 'Line1'
+					height = 'Globals.Line.Height'
+			/>
+			<space size = '4' />
+
+			<widget name = 'OpenLinkButton'
+					width = '192'
+					height = 'Globals.Line.Height'
+			/>
+			<space size = '16' />
+
+			<widget name = 'Line2'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'Line3'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'Line4'
+					height = 'Globals.Line.Height'
+			/>
+		</layout>
+	</dialog>
+
+	<dialog name = 'ConnectionWizard_ManualModeStep2' overlays = 'GlobalOptions_Cloud_ConnectionWizard.Container' shading = 'dim'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '0'>
+			<widget name = 'Line1'
+					height = 'Globals.Line.Height'
+			/>
+			<space size = '4' />
+
+			<widget name = 'CodeBox'
+					height = '24'
+			/>
+			<space size = '4' />
+
+			<widget name = 'PasteButton'
+					height = '24'
+			/>
+			<space size = '8' />
+
+			<widget name = 'Line2'
+					height = 'Globals.Line.Height'
+			/>
+		</layout>
+	</dialog>
+
+	<dialog name = 'ConnectionWizard_Failure' overlays = 'GlobalOptions_Cloud_ConnectionWizard.Container' shading = 'dim'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '0'>
+			<widget name = 'Line1'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'Line2'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'Line3'
+					height = 'Globals.Line.Height'
+			/>
+			<space size = '16' />
+			<widget name = 'Line4'
+					height = 'Globals.Line.Height'
+			/>
+		</layout>
+	</dialog>
+
+	<dialog name = 'ConnectionWizard_Success' overlays = 'GlobalOptions_Cloud_ConnectionWizard.Container' shading = 'dim'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '0'>
+			<widget name = 'Line1'
+					height = 'Globals.Line.Height'
+			/>
 		</layout>
 	</dialog>
 
@@ -2315,10 +2367,55 @@
 					height = '250'
 			/>
 			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
+				<widget name = 'PlayerNameLabel'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'PlayerName'
+						width = '300'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
 				<widget name = 'Join'
 						type = 'Button'
 				/>
 				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'CreateSession' overlays = 'screen_center' shading = 'dim'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' align = 'center'>
+			<widget name = 'CreateSessionTitle'
+					width = '480'
+					height = 'Globals.Line.Height'
+					textalign = 'center'
+			/>
+			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
+				<widget name = 'SessionNameLabel'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'SessionName'
+						width = '300'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
+				<widget name = 'PlayerNameLabel'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'PlayerName'
+						width = '300'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+				<widget name = 'Host'
 						type = 'Button'
 				/>
 			</layout>

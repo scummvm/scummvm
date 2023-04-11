@@ -88,6 +88,7 @@ enum KeybindingAction {
 
 enum KeybindingMode {
 	KBMODE_MENUS,       ///< Keys for when showing menus
+	KBMODE_MINIMAL,     ///< Keys for when doing text entry
 	KBMODE_PARTY_MENUS, ///< Keys for menus that allow switching party members
 	KBMODE_NORMAL,      ///< Keys available when normal in-game
 	KBMODE_COMBAT       ///< Keys when in combat mode

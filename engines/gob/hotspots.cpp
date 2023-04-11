@@ -1271,6 +1271,17 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 	}
 	type &= 0x7F;
 
+	if (_vm->getGameType() == kGameTypeAdibou1 &&
+		left == 0xFFFF - 5 &&
+		(_vm->isCurrentTot("L61EXO-7.tot") || _vm->isCurrentTot("L61EXO-9.tot"))) {
+		// WORKAROUND: In those "find matching cards" games, hotspots of cards already found
+		// are normally removed by setting their x coordinate to 0xFFFF. However, sometimes
+		// the hotspot pos() function subtracts an additional 5 from x, which results in the
+		// hotspot not being properly removed (and clicking on it leads to a crash).
+		// TODO: the original executable somehow avoids this problem.
+		left = 0xFFFF;
+	}
+
 	// Draw a border around the hotspot
 	if (_vm->_draw->_renderFlags & RENDERFLAG_BORDERHOTSPOTS) {
 		Surface &surface = *_vm->_draw->_spritesArray[_vm->_draw->_destSurface];

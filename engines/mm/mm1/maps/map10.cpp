@@ -77,21 +77,19 @@ void Map10::special00() {
 void Map10::special01() {
 	send(SoundMessage(
 		STRING["maps.map10.ranalou1"],
-		[](const Common::KeyState &ks) {
-			if (ks.keycode == Common::KEYCODE_y) {
-				g_events->send(InfoMessage(STRING["maps.map10.ranalou2"]));
-				Sound::sound(SOUND_3);
+		[]() {
+			g_events->send(InfoMessage(STRING["maps.map10.ranalou2"]));
+			Sound::sound(SOUND_3);
 
-				for (uint i = 0; i < g_globals->_party.size(); ++i)
-					g_globals->_party[i]._flags[1] |= CHARFLAG1_1;
+			for (uint i = 0; i < g_globals->_party.size(); ++i)
+				g_globals->_party[i]._flags[1] |= CHARFLAG1_1;
 
-				g_maps->clearSpecial();
-
-			} else if (ks.keycode == Common::KEYCODE_n) {
-				g_events->send(SoundMessage(STRING["maps.map10.ranalou3"]));
-				g_maps->_mapPos = Common::Point(15, 0);
-				g_maps->_currentMap->updateGame();
-			}
+			g_maps->clearSpecial();
+		},
+		[]() {
+			g_events->send(SoundMessage(STRING["maps.map10.ranalou3"]));
+			g_maps->_mapPos = Common::Point(15, 0);
+			g_maps->_currentMap->updateGame();
 		}
 	));
 }

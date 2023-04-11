@@ -111,27 +111,25 @@ void Map29::special01() {
 
 		send(SoundMessage(
 			STRING["maps.map29.beast"],
-			[](const Common::KeyState &ks) {
-				if (ks.keycode == Common::KEYCODE_y) {
-					g_events->close();
-					g_maps->_mapPos = Common::Point(12, 12);
-					g_maps->_currentMap->updateGame();
-				} else if (ks.keycode == Common::KEYCODE_n) {
-					Game::Encounter &enc = g_globals->_encounters;
-					Map29 &map = *static_cast<Map29 *>(g_maps->_currentMap);
-					g_events->close();
-					map[BEAST_FLAG]++;
+			[]() {
+				g_maps->_mapPos = Common::Point(12, 12);
+				g_maps->_currentMap->updateGame();
+			},
+			[]() {
+				Game::Encounter &enc = g_globals->_encounters;
+				Map29 &map = *static_cast<Map29 *>(g_maps->_currentMap);
+				g_events->close();
+				map[BEAST_FLAG]++;
 
-					enc.clearMonsters();
-					enc.addMonster(3, 12);
-					for (int i = 1; i < 13; ++i)
-						enc.addMonster(3, 5);
+				enc.clearMonsters();
+				enc.addMonster(3, 12);
+				for (int i = 1; i < 13; ++i)
+					enc.addMonster(3, 5);
 
-					enc._manual = true;
-					enc._encounterType = Game::FORCE_SURPRISED;
-					enc._levelIndex = 80;
-					enc.execute();
-				}
+				enc._manual = true;
+				enc._encounterType = Game::FORCE_SURPRISED;
+				enc._levelIndex = 80;
+				enc.execute();
 			}
 		));
 	}

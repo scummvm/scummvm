@@ -50,7 +50,7 @@ The Game tab also shows settings unique to the game engine for the selected game
 To find out which engine powers your game, have a look at the ScummVM Supported Games `wiki page
 <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ or :ref:`group <group>` games by Engine in the Launcher. 
 
-Engines: ADL_ | AGI_ | AGOS_ | Bladerunner_ | Buried_ | CGE_ | CGE2_ | Chewy_ | Cine_ | Drascula_ | Dreamweb_ | Freescape_ | Griffon_ | GrimE_ | HDB_ | Hopkins_ | Hypno_ | Kyra_ | Lure_ | MADE_ | MADS_ | mTropolis_ | Myst3_ | Neverhood_ | SCI_ | SCUMM_ | Sherlock_ | Sky_ | Stark_ | Supernova_ | Sword2_ | Sword25_ | Toltecs_ | Trecision_ | Ultima_ | Wintermute_ | Xeen_ | ZVision_ 
+Engines: ADL_ | AGI_ | AGOS_ | Bladerunner_ | Buried_ | CGE_ | CGE2_ | Chewy_ | Cine_ | Drascula_ | Dreamweb_ | Freescape_ | Griffon_ | GrimE_ | HDB_ | Hopkins_ | Hypno_ | Kyra_ | Lure_ | MADE_ | MADS_ | mTropolis_ | Myst3_ | Nancy_ | Neverhood_ | SCI_ | SCUMM_ | Sherlock_ | Sky_ | Stark_ | Supernova_ | Sword2_ | Sword25_ | Toltecs_ | Trecision_ | Ultima_ | Wintermute_ | Xeen_ | ZVision_ 
 
 
 
@@ -822,12 +822,33 @@ Myst3
 
 .. _widescreen_mod:
 
-	Widescreen mod
-		Enables widescreen rendering in fullscreen mode.
+Widescreen mod
+	Enables widescreen rendering in fullscreen mode.
 
-		*widescreen_mod*
+	*widescreen_mod*
 		
-,,,,,,,,,,,,,,,,	
+,,,,,,,,,,,,,,,,
+
+.. _Nancy:
+
+Nancy
+*******
+
+.. _player_speech:
+
+Player Speech
+	Enable player speech. Only works if speech is enabled in the Audio settings.
+		
+	*player_speech*
+
+.. _character_speech:
+
+Character Speech
+	Enable NPC speech. Only works if speech is enabled in the Audio settings.
+		
+	*character_speech*
+
+,,,,,,,,,,,,,,,,
 
 .. _Neverhood:
 

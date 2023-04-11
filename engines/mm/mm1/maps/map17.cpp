@@ -30,7 +30,6 @@ namespace MM1 {
 namespace Maps {
 
 #define VAL1 509
-#define COLOR 510
 #define CORRECT_ANSWERS 511
 
 void Map17::special() {
@@ -66,8 +65,8 @@ void Map17::special() {
 
 	} else if (getRandomNumber(30) == 10) {
 		g_maps->_mapPos = Common::Point(15, 15);
-		send(SoundMessage(STRING["maps.map17.wave"]));
 		updateGame();
+		send(SoundMessage(STRING["maps.map17.wave"]));
 
 	} else {
 		none160();
@@ -81,7 +80,7 @@ void Map17::special00() {
 void Map17::special01() {
 	SoundMessage msg(STRING["maps.map17.bridge"],
 		[]() {
-			static_cast<Map17 *>(g_maps->_currentMap)->askQuestion();
+			g_events->addView("ColorQuestions");
 		}
 	);
 
@@ -102,7 +101,7 @@ void Map17::special03() {
 	g_maps->clearSpecial();
 	g_globals->_encounters.execute();
 }
-
+/*
 void Map17::askQuestion(uint partyIndex) {
 	if (partyIndex >= g_globals->_party.size()) {
 		// Entire party has answered the question
@@ -163,7 +162,7 @@ void Map17::askQuestion(uint partyIndex) {
 		send(msg);
 	}
 }
-
+*/
 } // namespace Maps
 } // namespace MM1
 } // namespace MM

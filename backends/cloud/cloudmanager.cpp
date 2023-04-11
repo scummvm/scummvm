@@ -24,6 +24,7 @@
 #include "backends/cloud/dropbox/dropboxstorage.h"
 #include "backends/cloud/onedrive/onedrivestorage.h"
 #include "backends/cloud/googledrive/googledrivestorage.h"
+#include "common/formats/json.h"
 #include "common/translation.h"
 #include "common/config-manager.h"
 #include "common/str.h"
@@ -280,6 +281,66 @@ void CloudManager::connectStorage(uint32 index, Common::String code, Networking:
 	// when the token is received, they call replaceStorage()
 	// or removeStorage(), if some error occurred
 	// thus, no memory leak happens
+}
+
+void CloudManager::connectStorage(uint32 index, Networking::JsonResponse codeFlowJson, Networking::ErrorCallback cb) {
+	freeStorages();
+
+	switch (index) {
+	case kStorageDropboxId:
+		new Dropbox::DropboxStorage(codeFlowJson, cb);
+		break;
+	case kStorageOneDriveId:
+		new OneDrive::OneDriveStorage(codeFlowJson, cb);
+		break;
+	case kStorageGoogleDriveId:
+		new GoogleDrive::GoogleDriveStorage(codeFlowJson, cb);
+		break;
+	case kStorageBoxId:
+		new Box::BoxStorage(codeFlowJson, cb);
+		break;
+	default:
+		break;
+	}
+	// in these constructors Storages extract tokens from the passed JSON
+	// they call replaceStorage(), if the tokens are found,
+	// or removeStorage(), if some error occurred
+	// thus, no memory leak happens
+}
+
+bool CloudManager::connectStorage(Networking::JsonResponse codeFlowJson, Networking::ErrorCallback cb) {
+	Common::JSONValue *json = (Common::JSONValue *)codeFlowJson.value;
+	if (json == nullptr || !json->isObject()) {
+		return false;
+	}
+
+	Common::JSONObject result = json->asObject();
+	if (!result.contains("storage")) {
+		return false;
+	}
+
+	Common::JSONValue *storageValue = result.getVal("storage");
+	if (!storageValue->isString()) {
+		return false;
+	}
+
+	uint32 storageId = kStorageNoneId;
+	Common::String storage = storageValue->asString();
+	if (storage == "dropbox")
+		storageId = kStorageDropboxId;
+	else if (storage == "onedrive")
+		storageId = kStorageOneDriveId;
+	else if (storage == "gdrive")
+		storageId = kStorageGoogleDriveId;
+	else if (storage == "box")
+		storageId = kStorageBoxId;
+
+	if (storageId == kStorageNoneId) {
+		return false;
+	}
+
+	connectStorage(storageId, codeFlowJson, cb);
+	return true;
 }
 
 void CloudManager::disconnectStorage(uint32 index) {

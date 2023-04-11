@@ -57,13 +57,14 @@ void GameMessages::draw() {
 }
 
 bool GameMessages::msgInfo(const InfoMessage &msg) {
-	if (msg._ynCallback || msg._keyCallback ||
+	if (msg._yCallback || msg._keyCallback ||
 			g_globals->_party.isPartyDead()) {
 		addView(this);
 	}
 
 	_lines = msg._lines;
-	_ynCallback = msg._ynCallback;
+	_yCallback = msg._yCallback;
+	_nCallback = msg._nCallback;
 	_keyCallback = msg._keyCallback;
 
 	if (msg._largeMessage)
@@ -97,9 +98,11 @@ bool GameMessages::msgKeypress(const KeypressMessage &msg) {
 			_keyCallback(msg);
 		} else if (msg.keycode == Common::KEYCODE_n) {
 			close();
+			if (_nCallback)
+				_nCallback();
 		} else if (msg.keycode == Common::KEYCODE_y) {
 			close();
-			_ynCallback();
+			_yCallback();
 		}
 
 		return true;
@@ -127,14 +130,16 @@ bool GameMessages::msgAction(const ActionMessage &msg) {
 				_keyCallback(Common::KeyState(Common::KEYCODE_ESCAPE));
 			} else {
 				close();
+				if (_nCallback)
+					_nCallback();
 			}
 			return true;
 		case KEYBIND_SELECT:
 			if (_keyCallback) {
 				_keyCallback(Common::KeyState(Common::KEYCODE_RETURN));
-			} else if (_ynCallback) {
+			} else if (_yCallback) {
 				close();
-				_ynCallback();
+				_yCallback();
 			}
 			return true;
 		default:
@@ -149,10 +154,10 @@ bool GameMessages::msgAction(const ActionMessage &msg) {
 }
 
 void GameMessages::timeout() {
-	if (_ynCallback) {
+	if (_yCallback) {
 		// _ynCallback is also used for timeout callbacks
 		close();
-		_ynCallback();
+		_yCallback();
 	}
 }
 

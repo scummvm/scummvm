@@ -93,7 +93,6 @@ MODULE_OBJS := \
 	engine/impl/CGProgram.o \
 	engine/impl/CharacterBodyNewton.o \
 	engine/impl/CollideShapeNewton.o \
-	engine/impl/KeyboardSDL.o \
 	engine/impl/LowLevelGraphicsSDL.o \
 	engine/impl/LowLevelPhysicsNewton.o \
 	engine/impl/LowLevelSoundOpenAL.o \
@@ -101,7 +100,6 @@ MODULE_OBJS := \
 	engine/impl/MeshLoaderColladaHelpers.o \
 	engine/impl/MeshLoaderColladaLoader.o \
 	engine/impl/MeshLoaderMSH.o \
-	engine/impl/MouseSDL.o \
 	engine/impl/OcclusionQueryOGL.o \
 	engine/impl/OpenALSoundChannel.o \
 	engine/impl/OpenALSoundData.o \

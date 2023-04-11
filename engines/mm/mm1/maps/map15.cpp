@@ -168,25 +168,20 @@ void Map15::special05() {
 void Map15::special06() {
 	g_maps->clearSpecial();
 	send(SoundMessage(STRING["maps.map15.percella1"],
-		[](const Common::KeyState &ks) {
-			if (ks.keycode == Common::KEYCODE_y) {
-				g_events->close();
-				g_globals->_treasure._items[2] = KINGS_PASS_ID;
-				g_events->addAction(KEYBIND_SEARCH);
-
-			} else if (ks.keycode == Common::KEYCODE_n) {
-				g_events->close();
-
-				SoundMessage msg(
-					STRING["maps.map15.percella2"],
-					[]() {
-						g_maps->_mapPos = Common::Point(14, 2);
-						g_maps->_currentMap->updateGame();
-					}
-				);
-				msg._delaySeconds = 5;
-				g_events->send(msg);
-			}
+		[]() {
+			g_globals->_treasure._items[2] = KINGS_PASS_ID;
+			g_events->addAction(KEYBIND_SEARCH);
+		},
+		[]() {
+			SoundMessage msg(
+				STRING["maps.map15.percella2"],
+				[]() {
+					g_maps->_mapPos = Common::Point(14, 2);
+					g_maps->_currentMap->updateGame();
+				}
+			);
+			msg._delaySeconds = 5;
+			g_events->send(msg);
 		}
 	));
 }

@@ -46,6 +46,9 @@ private:
 		&Map14::special04,
 		&Map14::special05
 	};
+
+	void encounter();
+
 public:
 	Map14() : Map(14, "areaa1", 0xf01, 2) {}
 

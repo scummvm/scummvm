@@ -24,6 +24,7 @@
 
 #include "backends/cloud/storage.h"
 #include "backends/cloud/cloudicon.h"
+#include "backends/networking/curl/curljsonrequest.h"
 
 #include "common/array.h"
 #include "common/singleton.h"
@@ -206,6 +207,27 @@ public:
 	 * @param	cb		callback to notify of success or error
 	 */
 	void connectStorage(uint32 index, Common::String code, Networking::ErrorCallback cb = nullptr);
+
+	/**
+	 * Replace Storage which has given index with a
+	 * storage created with given JSON response.
+	 *
+	 * @param   index          Storage's index
+	 * @param   codeFlowJson   OAuth2 code flow JSON response (acquired from cloud.scummvm.org)
+	 * @param	cb		       callback to notify of success or error
+	 */
+	void connectStorage(uint32 index, Networking::JsonResponse codeFlowJson, Networking::ErrorCallback cb = nullptr);
+
+	/**
+	 * From given JSON response, extract Storage index
+	 * and replace Storage that has this index with a
+	 * storage created with given JSON.
+	 *
+	 * @param   codeFlowJson   OAuth2 code flow JSON response (acquired from cloud.scummvm.org)
+	 * @param	cb		       callback to notify of success or error
+	 * @returns whether Storage index was found and is correct
+	 */
+	bool connectStorage(Networking::JsonResponse codeFlowJson, Networking::ErrorCallback cb = nullptr);
 
 	/**
 	 * Remove Storage with a given index from config.

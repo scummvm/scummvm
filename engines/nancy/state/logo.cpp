@@ -84,8 +84,7 @@ void Logo::init() {
 	_logoImage.init(g_nancy->_imageChunks["LG0"].imageName);
 	_logoImage.registerGraphics();
 
-	if (g_nancy->getGameType() == kGameTypeVampire) {
-		_tvdVideoDecoder.loadFile("VAMPINTR.AVI");
+	if (g_nancy->getGameType() == kGameTypeVampire && _tvdVideoDecoder.loadFile("VAMPINTR.AVI")) {
 		_tvdVideoDecoder.start();
 		_videoObj.moveTo(Common::Rect(0, 0, 640, 480));
 		_videoObj._drawSurface.create(_tvdVideoDecoder.getWidth(), _tvdVideoDecoder.getHeight(), _tvdVideoDecoder.getPixelFormat());

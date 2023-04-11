@@ -135,43 +135,7 @@ void Map28::special() {
 }
 
 void Map28::special00() {
-	if (!_data[VAL1]) {
-		send(SoundMessage(STRING["maps.map28.arenko"]));
-		_data[VAL2] = 1;
-	} else if (_data[VAL1] < 19) {
-		send(SoundMessage(STRING["maps.map28.keep_climbing"]));
-	} else {
-		send(SoundMessage(
-			STRING["maps.map28.well_done"],
-			[](const Common::KeyState &ks) {
-				switch (ks.keycode) {
-				case Common::KEYCODE_a:
-					g_events->close();
-					g_globals->_treasure.setGold((g_events->getRandomNumber(8) + 8) * 256);
-					g_maps->clearSpecial();
-					g_events->addAction(KEYBIND_SEARCH);
-					break;
-
-				case Common::KEYCODE_b:
-					g_events->close();
-					g_globals->_treasure.setGems(g_events->getRandomNumber(50) + 200);
-					g_maps->clearSpecial();
-					g_events->addAction(KEYBIND_SEARCH);
-					break;
-
-				case Common::KEYCODE_c:
-					g_events->close();
-					g_globals->_treasure._items[2] = g_events->getRandomNumber(22) + 196;
-					g_maps->clearSpecial();
-					g_events->addAction(KEYBIND_SEARCH);
-					break;
-
-				default:
-					break;
-				}
-			}
-		));
-	}
+	g_events->addView("Arenko");
 }
 
 void Map28::special01() {

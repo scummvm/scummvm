@@ -36,6 +36,7 @@ namespace Maps {
 #define VAL5 164
 #define VAL6 165
 #define VAL7 166
+#define ANSWER_OFFSET 167
 
 void Map19::special() {
 	// Scan for special actions on the map cell
@@ -123,6 +124,42 @@ void Map19::encounter() {
 	enc._manual = true;
 	enc._levelIndex = 80;
 	enc.execute();
+}
+
+void Map19::riddleAnswer(const Common::String &answer) {
+	Common::String properAnswer;
+	_data[VAL1] = answer.size();
+
+	for (int i = 0; i < 4; ++i)
+		properAnswer += (_data[ANSWER_OFFSET + i] & 0x7f) + 64;
+
+	if (answer.equalsIgnoreCase(properAnswer)) {
+		InfoMessage msg(
+			16, 2, STRING["maps.map19.correct"],
+			[]() {
+				g_maps->clearSpecial();
+
+				if (g_globals->_party.hasItem(DIAMOND_KEY_ID)) {
+					g_globals->_treasure._items[2] = BRONZE_KEY_ID;
+					g_events->addAction(KEYBIND_SEARCH);
+					return;
+				}
+
+				g_globals->_treasure._items[2] = DIAMOND_KEY_ID;
+				g_events->addAction(KEYBIND_SEARCH);
+			}
+		);
+
+		msg._delaySeconds = 2;
+		send(msg);
+		Sound::sound(SOUND_3);
+		Sound::sound(SOUND_3);
+
+	} else {
+		g_maps->_mapPos.x = 15;
+		updateGame();
+		send(SoundMessage(STRING["maps.map19.incorrect"]));
+	}
 }
 
 } // namespace Maps

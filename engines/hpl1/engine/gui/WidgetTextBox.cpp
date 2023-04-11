@@ -442,34 +442,34 @@ bool cWidgetTextBox::OnKeyPress(cGuiMessageData &aData) {
 	if (mlMarkerCharPos < 0)
 		return false;
 
-	eKey key = aData.mKeyPress.mKey;
-	int mod = aData.mKeyPress.mlModifier;
+	auto key = aData.mKeyPress.keycode;
+	int mod = aData.mKeyPress.flags;
 
 	if (mpGfxMarker)
 		mpGfxMarker->SetAnimationTime(0);
 
 	//////////////////////////////
 	// Copy / Pase / Cut
-	if ((mod & eKeyModifier_CTRL)) {
+	if ((mod & Common::KBD_CTRL)) {
 		int lStart = mlMarkerCharPos < mlSelectedTextEnd ? mlMarkerCharPos : mlSelectedTextEnd;
 		int lEnd = mlMarkerCharPos > mlSelectedTextEnd ? mlMarkerCharPos : mlSelectedTextEnd;
 		int lSelectSize = lEnd - lStart;
 
 		/////////////////////////////
 		// Select all
-		if (key == eKey_a) {
+		if (key == Common::KEYCODE_a) {
 			mlSelectedTextEnd = 0;
 			mlMarkerCharPos = (int)msText.size() - 1;
 		}
 		/////////////////////////////
 		// Copy
-		else if (key == eKey_c) {
+		else if (key == Common::KEYCODE_c) {
 			if (mlSelectedTextEnd >= 0)
 				CopyTextToClipboard(cString::SubW(msText, lStart, lSelectSize));
 		}
 		/////////////////////////////
 		// Cut
-		else if (key == eKey_x) {
+		else if (key == Common::KEYCODE_x) {
 			if (mlSelectedTextEnd >= 0) {
 				CopyTextToClipboard(cString::SubW(msText, lStart, lSelectSize));
 				SetText(cString::SubW(msText, 0, lStart) + cString::SubW(msText, lEnd));
@@ -478,7 +478,7 @@ bool cWidgetTextBox::OnKeyPress(cGuiMessageData &aData) {
 		}
 		/////////////////////////////
 		// Paste
-		else if (key == eKey_v) {
+		else if (key == Common::KEYCODE_v) {
 			tWString sExtra = LoadTextFromClipboard();
 
 			if (mlSelectedTextEnd < 0) {
@@ -504,17 +504,17 @@ bool cWidgetTextBox::OnKeyPress(cGuiMessageData &aData) {
 	}
 	//////////////////////////////
 	// Arrow keys
-	else if (key == eKey_LEFT || key == eKey_RIGHT) {
-		if (mod & eKeyModifier_SHIFT) {
+	else if (key == Common::KEYCODE_LEFT || key == Common::KEYCODE_RIGHT) {
+		if (mod & Common::KBD_SHIFT) {
 			if (mlSelectedTextEnd == -1)
 				mlSelectedTextEnd = mlMarkerCharPos;
 
-			if (key == eKey_LEFT)
+			if (key == Common::KEYCODE_LEFT)
 				SetMarkerPos(mlMarkerCharPos - 1);
 			else
 				SetMarkerPos(mlMarkerCharPos + 1);
 		} else {
-			if (key == eKey_LEFT)
+			if (key == Common::KEYCODE_LEFT)
 				SetMarkerPos(mlMarkerCharPos - 1);
 			else
 				SetMarkerPos(mlMarkerCharPos + 1);
@@ -524,7 +524,7 @@ bool cWidgetTextBox::OnKeyPress(cGuiMessageData &aData) {
 	}
 	//////////////////////////////
 	// Delete and backspace
-	else if (key == eKey_DELETE || key == eKey_BACKSPACE) {
+	else if (key == Common::KEYCODE_DELETE || key == Common::KEYCODE_BACKSPACE) {
 		if (mlSelectedTextEnd >= 0) {
 			int lStart = mlMarkerCharPos < mlSelectedTextEnd ? mlMarkerCharPos : mlSelectedTextEnd;
 			int lEnd = mlMarkerCharPos > mlSelectedTextEnd ? mlMarkerCharPos : mlSelectedTextEnd;
@@ -534,7 +534,7 @@ bool cWidgetTextBox::OnKeyPress(cGuiMessageData &aData) {
 			mlSelectedTextEnd = -1;
 			SetMarkerPos(lStart);
 		} else {
-			if (key == eKey_DELETE) {
+			if (key == Common::KEYCODE_DELETE) {
 				SetText(cString::SubW(msText, 0, mlMarkerCharPos) +
 						cString::SubW(msText, mlMarkerCharPos + 1));
 			} else {
@@ -546,8 +546,8 @@ bool cWidgetTextBox::OnKeyPress(cGuiMessageData &aData) {
 	}
 	//////////////////////////////
 	// Home
-	else if (key == eKey_HOME) {
-		if (mod & eKeyModifier_SHIFT) {
+	else if (key == Common::KEYCODE_HOME) {
+		if (mod & Common::KBD_SHIFT) {
 			if (mlSelectedTextEnd == -1)
 				mlSelectedTextEnd = mlMarkerCharPos;
 		} else {
@@ -557,8 +557,8 @@ bool cWidgetTextBox::OnKeyPress(cGuiMessageData &aData) {
 	}
 	//////////////////////////////
 	// End
-	else if (key == eKey_END) {
-		if (mod & eKeyModifier_SHIFT) {
+	else if (key == Common::KEYCODE_END) {
+		if (mod & Common::KBD_SHIFT) {
 			if (mlSelectedTextEnd == -1)
 				mlSelectedTextEnd = mlMarkerCharPos;
 		} else {
@@ -571,14 +571,14 @@ bool cWidgetTextBox::OnKeyPress(cGuiMessageData &aData) {
 	else {
 		int lFirstFontChar = mpDefaultFontType->getFirstChar();
 		int lLastFontChar = mpDefaultFontType->getLastChar();
-		wchar_t unicode = aData.mKeyPress.mlUnicode;
+		auto textInput = aData.mKeyPress.ascii;
 
 		// Check so press is valid
-		if (unicode >= lFirstFontChar && unicode <= lLastFontChar &&
-			mpDefaultFontType->getGlyph(unicode - lFirstFontChar)) {
+		if (textInput >= lFirstFontChar && textInput <= lLastFontChar &&
+			mpDefaultFontType->getGlyph(textInput - lFirstFontChar)) {
 			if (mlSelectedTextEnd < 0) {
 				if (mlMaxCharacters == -1 || (int)msText.size() < mlMaxCharacters) {
-					SetText(cString::SubW(msText, 0, mlMarkerCharPos) + unicode +
+					SetText(cString::SubW(msText, 0, mlMarkerCharPos) + textInput +
 							cString::SubW(msText, mlMarkerCharPos));
 
 					SetMarkerPos(mlMarkerCharPos + 1);
@@ -587,7 +587,7 @@ bool cWidgetTextBox::OnKeyPress(cGuiMessageData &aData) {
 				int lStart = mlMarkerCharPos < mlSelectedTextEnd ? mlMarkerCharPos : mlSelectedTextEnd;
 				int lEnd = mlMarkerCharPos > mlSelectedTextEnd ? mlMarkerCharPos : mlSelectedTextEnd;
 
-				SetText(cString::SubW(msText, 0, lStart) + unicode +
+				SetText(cString::SubW(msText, 0, lStart) + textInput +
 						cString::SubW(msText, lEnd));
 
 				mlSelectedTextEnd = -1;

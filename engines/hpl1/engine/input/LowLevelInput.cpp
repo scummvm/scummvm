@@ -27,9 +27,9 @@
 
 #include "common/events.h"
 #include "common/system.h"
-#include "hpl1/engine/impl/KeyboardSDL.h"
-#include "hpl1/engine/impl/MouseSDL.h"
+#include "hpl1/engine/input/Keyboard.h"
 #include "hpl1/engine/input/LowLevelInput.h"
+#include "hpl1/engine/input/Mouse.h"
 #include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
@@ -64,14 +64,14 @@ void LowLevelInput::EndInputUpdate() {
 
 //-----------------------------------------------------------------------
 
-iMouse *LowLevelInput::CreateMouse() {
-	return hplNew(cMouseSDL, (this, _lowLevelGraphics));
+Mouse *LowLevelInput::CreateMouse() {
+	return hplNew(Mouse, (this, _lowLevelGraphics));
 }
 
 //-----------------------------------------------------------------------
 
-iKeyboard *LowLevelInput::CreateKeyboard() {
-	return hplNew(cKeyboardSDL, (this));
+Keyboard *LowLevelInput::CreateKeyboard() {
+	return hplNew(Keyboard, (this));
 }
 
 //-----------------------------------------------------------------------

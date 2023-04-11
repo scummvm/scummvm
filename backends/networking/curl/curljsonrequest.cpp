@@ -39,27 +39,6 @@ CurlJsonRequest::~CurlJsonRequest() {
 	delete[] _buffer;
 }
 
-char *CurlJsonRequest::getPreparedContents() {
-	//write one more byte in the end
-	byte zero[1] = {0};
-	_contentsStream.write(zero, 1);
-
-	//replace all "bad" bytes with '.' character
-	byte *result = _contentsStream.getData();
-	uint32 size = _contentsStream.size();
-	for (uint32 i = 0; i < size; ++i) {
-		if (result[i] == '\n')
-				result[i] = ' '; //yeah, kinda stupid
-		else if (result[i] < 0x20 || result[i] > 0x7f)
-			result[i] = '.';
-	}
-
-	//make it zero-terminated string
-	result[size - 1] = '\0';
-
-	return (char *)result;
-}
-
 void CurlJsonRequest::handle() {
 	if (!_stream) _stream = makeStream();
 
@@ -70,7 +49,7 @@ void CurlJsonRequest::handle() {
 				warning("CurlJsonRequest: unable to write all the bytes into MemoryWriteStreamDynamic");
 
 		if (_stream->eos()) {
-			char *contents = getPreparedContents();
+			char *contents = Common::JSON::untaintContents(_contentsStream);
 			Common::JSONValue *json = Common::JSON::parse(contents);
 			if (json) {
 				finishJson(json); //it's JSON even if's not 200 OK? That's fine!..

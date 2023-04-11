@@ -591,7 +591,6 @@ VectorRendererSpec(PixelFormat format) :
 	_blueMask((0xFF >> format.bLoss) << format.bShift),
 	_alphaMask((0xFF >> format.aLoss) << format.aShift) {
 
-	_bitmapAlphaColor = _format.RGBToColor(255, 0, 255);
 	_clippingArea = Common::Rect(0, 0, 32767, 32767);
 
 	_fgColor = _bgColor = _bevelColor = 0;
@@ -811,7 +810,7 @@ blitSurface(const Graphics::ManagedSurface *source, const Common::Rect &r) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-blitKeyBitmap(const Graphics::ManagedSurface *source, const Common::Point &p, bool themeTrans) {
+blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p) {
 	Common::Rect drawRect(p.x, p.y, p.x + source->w, p.y + source->h);
 	drawRect.clip(_clippingArea);
 	drawRect.translate(-p.x, -p.y);
@@ -829,10 +828,7 @@ blitKeyBitmap(const Graphics::ManagedSurface *source, const Common::Point &p, bo
 		np = p;
 	}
 
-	if (themeTrans)
-		_activeSurface->transBlitFrom(*source, drawRect, np, _bitmapAlphaColor);
-	else
-		_activeSurface->blitFrom(*source, drawRect, np);
+	_activeSurface->blitFrom(*source, drawRect, np);
 }
 
 template<typename PixelType>

@@ -52,68 +52,65 @@ struct cButtonHandlerAction {
 
 static const char *const gsLastPlayerAction = "GlowStick";
 static constexpr cButtonHandlerAction gvDefaultActions[] = {
-	{"Forward", "Keyboard", eKey_w, true},
-	{"Backward", "Keyboard", eKey_s, true},
-	{"Left", "Keyboard", eKey_a, true},
-	{"Right", "Keyboard", eKey_d, true},
+	{"Forward", "Keyboard", Common::KEYCODE_w, true},
+	{"Backward", "Keyboard", Common::KEYCODE_s, true},
+	{"Left", "Keyboard", Common::KEYCODE_a, true},
+	{"Right", "Keyboard", Common::KEYCODE_d, true},
 
-	{"LeanLeft", "Keyboard", eKey_q, true},
-	{"LeanRight", "Keyboard", eKey_e, true},
+	{"LeanLeft", "Keyboard", Common::KEYCODE_q, true},
+	{"LeanRight", "Keyboard", Common::KEYCODE_e, true},
 
-	{"Run", "Keyboard", eKey_LSHIFT, true},
-	{"Jump", "Keyboard", eKey_SPACE, true},
-	{"Crouch", "Keyboard", eKey_LCTRL, true},
+	{"Run", "Keyboard", Common::KEYCODE_LSHIFT, true},
+	{"Jump", "Keyboard", Common::KEYCODE_SPACE, true},
+	{"Crouch", "Keyboard", Common::KEYCODE_LCTRL, true},
 
-	{"InteractMode", "Keyboard", eKey_r, true},
+	{"InteractMode", "Keyboard", Common::KEYCODE_r, true},
 	{"LookMode", "MouseButton", eMButton_Middle, true},
 
-	{"Holster", "Keyboard", eKey_x, true},
+	{"Holster", "Keyboard", Common::KEYCODE_x, true},
 
 	{"Examine", "MouseButton", eMButton_Right, true},
 	{"Interact", "MouseButton", eMButton_Left, true},
 
-	{"Inventory", "Keyboard", eKey_TAB, true},
-	{"NoteBook", "Keyboard", eKey_n, true},
-	{"PersonalNotes", "Keyboard", eKey_p, true},
+	{"Inventory", "Keyboard", Common::KEYCODE_TAB, true},
+	{"NoteBook", "Keyboard", Common::KEYCODE_n, true},
+	{"PersonalNotes", "Keyboard", Common::KEYCODE_p, true},
 
 	{"WheelUp", "MouseButton", eMButton_WheelUp, true},
 	{"WheelDown", "MouseButton", eMButton_WheelDown, true},
 
-	{"Flashlight", "Keyboard", eKey_f, true},
-	{"GlowStick", "Keyboard", eKey_g, true},
+	{"Flashlight", "Keyboard", Common::KEYCODE_f, true},
+	{"GlowStick", "Keyboard", Common::KEYCODE_g, true},
 
-	{"Escape", "Keyboard", eKey_ESCAPE, false},
-	{"Enter", "Keyboard", eKey_RETURN, false},
+	{"Escape", "Keyboard", Common::KEYCODE_ESCAPE, false},
+	{"Enter", "Keyboard", Common::KEYCODE_RETURN, false},
 	{"MouseClick", "MouseButton", eMButton_Left, false},
 	{"MouseClickRight", "MouseButton", eMButton_Right, false},
 
 	{"RightClick", "MouseButton", eMButton_Right, false},
 	{"LeftClick", "MouseButton", eMButton_Left, false},
 
-	{"One", "Keyboard", eKey_1, false},
-	{"Two", "Keyboard", eKey_2, false},
-	{"Three", "Keyboard", eKey_3, false},
-	{"Four", "Keyboard", eKey_4, false},
-	{"Five", "Keyboard", eKey_5, false},
-	{"Six", "Keyboard", eKey_6, false},
-	{"Seven", "Keyboard", eKey_7, false},
-	{"Eight", "Keyboard", eKey_8, false},
-	{"Nine", "Keyboard", eKey_9, false},
+	{"One", "Keyboard", Common::KEYCODE_1, false},
+	{"Two", "Keyboard", Common::KEYCODE_2, false},
+	{"Three", "Keyboard", Common::KEYCODE_3, false},
+	{"Four", "Keyboard", Common::KEYCODE_4, false},
+	{"Five", "Keyboard", Common::KEYCODE_5, false},
+	{"Six", "Keyboard", Common::KEYCODE_6, false},
+	{"Seven", "Keyboard", Common::KEYCODE_7, false},
+	{"Eight", "Keyboard", Common::KEYCODE_8, false},
+	{"Nine", "Keyboard", Common::KEYCODE_9, false},
 
 	// Debug:
-	{"ResetGame", "Keyboard", eKey_F1, false},
-	{"SaveGame", "Keyboard", eKey_F4, false},
-	{"LoadGame", "Keyboard", eKey_F5, false},
-#ifdef __APPLE__
-	{"QuitGame", "Keyboard", eKeyModifier_META | eKey_q, false},
-#endif
-	{"LockInput", "Keyboard", eKey_k, false},
-	{"Screenshot", "Keyboard", eKey_F12, false},
+	{"ResetGame", "Keyboard", Common::KEYCODE_F1, false},
+	{"SaveGame", "Keyboard", Common::KEYCODE_F4, false},
+	{"LoadGame", "Keyboard", Common::KEYCODE_F5, false},
+	{"LockInput", "Keyboard", Common::KEYCODE_k, false},
+	{"Screenshot", "Keyboard", Common::KEYCODE_F12, false},
 
-	//{"Hit","Keyboard",eKey_h,false},
-	//{"Log","Keyboard",eKey_l,false},
-	//{"Taunt","Keyboard",eKey_t,false},
-	{"PrintLog", "Keyboard", eKey_l, false},
+	//{"Hit","Keyboard",Common::KEYCODE_h,false},
+	//{"Log","Keyboard",Common::KEYCODE_l,false},
+	//{"Taunt","Keyboard",Common::KEYCODE_t,false},
+	{"PrintLog", "Keyboard", Common::KEYCODE_l, false},
 
 	{"", "", 0, false}};
 
@@ -138,9 +135,8 @@ cButtonHandler::cButtonHandler(cInit *apInit) : iUpdateable("ButtonHandler") {
 	while (pBHAction->msName[0] != '\0') {
 		tString sName = pBHAction->msName;
 		tString sType = mpInit->mpConfig->GetString("Keys", sName + "_Type", pBHAction->msType);
-		tString sVal = mpInit->mpConfig->GetString("Keys", sName + "_Val", cString::ToString(pBHAction->mlVal));
 
-		iAction *pAction = ActionFromTypeAndVal(sName, sType, sVal);
+		iAction *pAction = ActionFromTypeAndVal(sName, sType, pBHAction->mlVal);
 		if (pAction) {
 			mpInput->AddAction(pAction);
 		} else {
@@ -653,9 +649,8 @@ void cButtonHandler::SetDefaultKeys() {
 	while (pBHAction->msName[0] != '\0') {
 		tString sName = pBHAction->msName;
 		tString sType = pBHAction->msType;
-		tString sVal = cString::ToString(pBHAction->mlVal);
 
-		iAction *pAction = ActionFromTypeAndVal(sName, sType, sVal);
+		iAction *pAction = ActionFromTypeAndVal(sName, sType, pBHAction->mlVal);
 
 		if (pAction) {
 			mpInput->DestroyAction(sName);
@@ -701,13 +696,13 @@ tString cButtonHandler::GetActionName(const tString &asInputName, const tString 
 
 //-----------------------------------------------------------------------
 
-iAction *cButtonHandler::ActionFromTypeAndVal(const tString &asName, const tString &asType, const tString &asVal) {
+iAction *cButtonHandler::ActionFromTypeAndVal(const tString &asName, const tString &asType, int input) {
 	// Log("Action %s from %s\n",asName.c_str(),asType.c_str());
 
 	if (asType == "Keyboard") {
-		return hplNew(cActionKeyboard, (asName, mpInit->mpGame->GetInput(), (eKey)cString::ToInt(asVal.c_str(), 0)));
+		return hplNew(cActionKeyboard, (asName, mpInit->mpGame->GetInput(), static_cast<Common::KeyCode>(input)));
 	} else if (asType == "MouseButton" || asType == "HapticDeviceButton") {
-		return hplNew(cActionMouseButton, (asName, mpInit->mpGame->GetInput(), (eMButton)cString::ToInt(asVal.c_str(), 0)));
+		return hplNew(cActionMouseButton, (asName, mpInit->mpGame->GetInput(), (eMButton)input));
 	}
 
 	return NULL;

@@ -28,46 +28,67 @@
 #ifndef HPL_MOUSE_H
 #define HPL_MOUSE_H
 
+#include "common/bitarray.h"
 #include "hpl1/engine/input/InputDevice.h"
 #include "hpl1/engine/input/InputTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 
+namespace Common {
+struct Event;
+}
+
 namespace hpl {
 
-class iMouse : public iInputDevice {
+class LowLevelInput;
+class iLowLevelGraphics;
+
+class Mouse : public iInputDevice {
 public:
-	iMouse(tString asName);
-	virtual ~iMouse() {}
+	Mouse(LowLevelInput *apLowLevelInputSDL, iLowLevelGraphics *apLowLevelGraphics);
+	~Mouse() {}
 
 	/**
 	 * Check if a mouse button is down
 	 * \param eMButton the button to check
 	 * \return
 	 */
-	virtual bool ButtonIsDown(eMButton) = 0;
+	bool ButtonIsDown(eMButton);
 	/**
 	 * Get the absolute pos of the mouse.
 	 * \return
 	 */
-	virtual cVector2f GetAbsPosition() = 0;
+	cVector2f GetAbsPosition();
 	/**
 	 * Get the relative movement.
 	 * \return
 	 */
-	virtual cVector2f GetRelPosition() = 0;
+	cVector2f GetRelPosition();
 
 	/**
 	 * Reset smoothing and relative movement.
 	 */
-	virtual void Reset() = 0;
+	void Reset();
 	/**
 	 * Set parameters for mouse smoothing
 	 * \param afMinPercent Influence of the oldest position.
 	 * \param afMaxPercent Influence of the latest position.
 	 * \param alBufferSize number of saved positions, 1 = no smoothing
 	 */
-	virtual void SetSmoothProperties(float afMinPercent,
-									 float afMaxPercent, unsigned int alBufferSize) = 0;
+	void SetSmoothProperties(float afMinPercent,
+							 float afMaxPercent, unsigned int alBufferSize);
+
+	void Update();
+
+private:
+	void processEvent(const Common::Event &ev);
+	cVector2f _absMousePos;
+	cVector2f _relMousePos;
+	Common::BitArray _buttonState;
+	float mfMaxPercent;
+	float mfMinPercent;
+	int mlBufferSize;
+	LowLevelInput *_lowLevelInputSDL;
+	iLowLevelGraphics *_lowLevelGraphics;
 };
 
 } // namespace hpl

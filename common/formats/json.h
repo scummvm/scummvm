@@ -49,6 +49,7 @@
 #include "common/array.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/memstream.h"
 #include "common/str.h"
 
 // Win32 incompatibilities
@@ -151,6 +152,9 @@ class JSON {
 	friend class JSONValue;
 
 public:
+	/** Prepares raw bytes in a given stream to be parsed with Common::JSON::parse(). */
+	static char *untaintContents(Common::MemoryWriteStreamDynamic &stream);
+
 	static JSONValue *parse(const char *data);
 	static String stringify(const JSONValue *value);
 protected:

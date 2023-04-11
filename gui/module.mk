@@ -47,6 +47,7 @@ MODULE_OBJS := \
 ifdef USE_CLOUD
 ifdef USE_LIBCURL
 MODULE_OBJS += \
+	cloudconnectionwizard.o \
 	downloaddialog.o \
 	downloadpacksdialog.o \
 	remotebrowser.o

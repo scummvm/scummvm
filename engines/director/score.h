@@ -173,6 +173,8 @@ private:
 	int _currentLabel;
 	DirectorSound *_soundManager;
 	int _currentPalette;
+
+	int _previousBuildBotBuild = -1;
 };
 
 } // End of namespace Director

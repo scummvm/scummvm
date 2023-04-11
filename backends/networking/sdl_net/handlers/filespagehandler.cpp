@@ -204,7 +204,7 @@ void FilesPageHandler::handle(Client &client) {
 		"</html>";
 	Common::String itemTemplate = "<tr><td><img src=\"icons/{icon}\"/></td><td><a href=\"{link}\">{name}</a></td><td>{size}</td></tr>\n"; //TODO: load this template too?
 
-																																		  // load stylish response page from the archive
+	// load stylish response page from the archive
 	Common::SeekableReadStream *const stream = HandlerUtils::getArchiveFile(FILES_PAGE_NAME);
 	if (stream)
 		response = HandlerUtils::readEverythingFromStream(stream);
@@ -218,7 +218,7 @@ void FilesPageHandler::handle(Client &client) {
 		return;
 	}
 
-	//these occur twice:
+	//some of these occur twice:
 	replace(response, "{create_directory_button}", _("Create directory").encode());
 	replace(response, "{create_directory_button}", _("Create directory").encode());
 	replace(response, "{path}", encodeDoubleQuotes(client.queryParameter("path")));

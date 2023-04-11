@@ -52,14 +52,14 @@ GameMessages::GameMessages() : ScrollText("GameMessages") {
 void GameMessages::draw() {
 	ScrollText::draw();
 
-	if (_ynCallback && !isDelayActive()) {
+	if (_yCallback && !isDelayActive()) {
 		_yesNo.resetSelectedButton();
 		_yesNo.draw();
 	}
 }
 
 bool GameMessages::msgFocus(const FocusMessage &msg) {
-	MetaEngine::setKeybindingMode(_ynCallback || _keyCallback ?
+	MetaEngine::setKeybindingMode(_yCallback || _keyCallback ?
 		KeybindingMode::KBMODE_MENUS :
 		KeybindingMode::KBMODE_NORMAL);
 	return true;
@@ -70,7 +70,8 @@ bool GameMessages::msgInfo(const InfoMessage &msg) {
 	g_events->redraw();
 	g_events->draw();
 
-	_ynCallback = msg._ynCallback;
+	_yCallback = msg._yCallback;
+	_nCallback = msg._nCallback;
 	_keyCallback = msg._keyCallback;
 
 	// Add the view
@@ -96,14 +97,14 @@ bool GameMessages::msgKeypress(const KeypressMessage &msg) {
 	if (_keyCallback) {
 		_keyCallback(msg);
 
-	} else if (_ynCallback) {
+	} else if (_yCallback) {
 		if (msg.keycode == Common::KEYCODE_n) {
 			close();
-			g_events->drawElements();
+			if (_nCallback)
+				_nCallback();
 		} else if (msg.keycode == Common::KEYCODE_y) {
 			close();
-			g_events->drawElements();
-			_ynCallback();
+			_yCallback();
 		}
 	} else {
 		// Displayed message, any keypress closes the window
@@ -118,14 +119,15 @@ bool GameMessages::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool GameMessages::msgAction(const ActionMessage &msg) {
-	if (_ynCallback || _keyCallback) {
+	if (_yCallback || _keyCallback) {
 		switch (msg._action) {
 		case KEYBIND_ESCAPE:
 			if (_keyCallback) {
 				_keyCallback(Common::KeyState(Common::KEYCODE_ESCAPE));
 			} else {
 				close();
-				g_events->drawElements();
+				if (_nCallback)
+					_nCallback();
 			}
 			return true;
 		case KEYBIND_SELECT:
@@ -133,8 +135,7 @@ bool GameMessages::msgAction(const ActionMessage &msg) {
 				_keyCallback(Common::KeyState(Common::KEYCODE_RETURN));
 			} else {
 				close();
-				g_events->drawElements();
-				_ynCallback();
+				_yCallback();
 			}
 			return true;
 		default:
@@ -152,14 +153,14 @@ bool GameMessages::msgAction(const ActionMessage &msg) {
 
 bool GameMessages::msgMouseDown(const MouseDownMessage &msg) {
 	// If yes/no prompting, also pass events to buttons view
-	if (_ynCallback)
+	if (_yCallback)
 		return send("MessagesYesNo", msg);
 	return false;
 }
 
 bool GameMessages::msgMouseUp(const MouseUpMessage &msg) {
 	// If yes/no prompting, also pass events to buttons view
-	if (_ynCallback)
+	if (_yCallback)
 		return send("MessagesYesNo", msg);
 	return false;
 }

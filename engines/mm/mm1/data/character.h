@@ -583,6 +583,13 @@ struct Character : public PrimaryAttributes {
 	 * Returns a string for a given condition
 	 */
 	static Common::String getConditionString(ConditionEnum cond);
+
+	/**
+	 * Returns true if the character has a fatal condition
+	 */
+	bool hasBadCondition() const {
+		return (_condition & BAD_CONDITION) != 0;
+	}
 };
 
 } // namespace MM1

@@ -452,7 +452,7 @@ bool cGui::SendMouseDoubleClick(eGuiMouseButton aButton) {
 	return mpSetInFocus->SendMessage(eGuiMessage_MouseDoubleClick, data);
 }
 
-bool cGui::SendKeyPress(const cKeyPress &keyPress) {
+bool cGui::SendKeyPress(Common::KeyState keyPress) {
 	if (mpSetInFocus == NULL)
 		return false;
 

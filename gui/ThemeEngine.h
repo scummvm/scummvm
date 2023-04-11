@@ -36,7 +36,7 @@
 #include "graphics/pixelformat.h"
 
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.9.10"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.9.11"
 
 class OSystem;
 
@@ -466,7 +466,7 @@ public:
 	void drawDropDownButton(const Common::Rect &r, uint32 dropdownWidth, const Common::U32String &str,
 	                        WidgetStateInfo buttonState, bool inButton, bool inDropdown, bool rtl = false);
 
-	void drawSurface(const Common::Point &p, const Graphics::ManagedSurface &surface, bool themeTrans = false);
+	void drawManagedSurface(const Common::Point &p, const Graphics::ManagedSurface &surface);
 
 	void drawSlider(const Common::Rect &r, int width, WidgetStateInfo state = kStateEnabled, bool rtl = false);
 

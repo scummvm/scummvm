@@ -250,12 +250,11 @@ bool cWidgetListBox::OnMouseLeave(cGuiMessageData &aData) {
 //-----------------------------------------------------------------------
 
 bool cWidgetListBox::OnKeyPress(cGuiMessageData &aData) {
-	eKey key = aData.mKeyPress.mKey;
-
-	if (key == eKey_UP) {
+	auto key = aData.mKeyPress.keycode;
+	if (key == Common::KEYCODE_UP) {
 		if (mlSelectedItem > 0)
 			SetSelectedItem(mlSelectedItem - 1, true);
-	} else if (key == eKey_DOWN) {
+	} else if (key == Common::KEYCODE_DOWN) {
 		if (mlSelectedItem < (int)mvItems.size() - 1)
 			SetSelectedItem(mlSelectedItem + 1, true);
 	}

@@ -80,34 +80,38 @@ void Map14::special00() {
 		}
 
 		send(SoundMessage(STRING["maps.map14.surrounded"],
-			[](const Common::KeyState &ks) {
+			[]() {
 				Map14 &map = *static_cast<Map14 *>(g_maps->_currentMap);
-				Game::Encounter &enc = g_globals->_encounters;
+				map.encounter();
+			},
+			[]() {
+				if (g_events->getRandomNumber(3) == 3) {
+					g_maps->_mapPos = Common::Point(15, 10);
+					g_maps->_currentMap->updateGame();
 
-				if (ks.keycode == Common::KEYCODE_y ||
-						ks.keycode == Common::KEYCODE_n) {
-					g_events->close();
-
-					// Note: The original seems to be backwards
-					if (ks.keycode == Common::KEYCODE_n &&
-							g_events->getRandomNumber(3) == 3) {
-						g_maps->_mapPos = Common::Point(15, 10);
-					} else {
-						map[VAL1]++;
-						enc.clearMonsters();
-						enc.addMonster(2, 12);
-						for (int i = 1; i < 12; ++i)
-							enc.addMonster(13, 8);
-
-						enc._levelIndex = 80;
-						enc._manual = true;
-						enc.execute();
-					}
+				} else {
+					Map14 &map = *static_cast<Map14 *>(g_maps->_currentMap);
+					map.encounter();
 				}
 			}
 		));
 	}
 }
+
+void Map14::encounter() {
+	Game::Encounter &enc = g_globals->_encounters;
+
+	_data[VAL1]++;
+	enc.clearMonsters();
+	enc.addMonster(2, 12);
+	for (int i = 1; i < 12; ++i)
+		enc.addMonster(13, 8);
+
+	enc._levelIndex = 80;
+	enc._manual = true;
+	enc.execute();
+};
+
 
 void Map14::special01() {
 	_data[VAL1] = 0;
@@ -126,17 +130,15 @@ void Map14::special02() {
 
 		send(SoundMessage(
 			STRING["maps.map14.castle"],
-			[](const Common::KeyState &ks) {
+			[]() {
 				Map14 &map = *static_cast<Map14 *>(g_maps->_currentMap);
-				if (ks.keycode == Common::KEYCODE_y) {
-					g_events->close();
-					map[VAL3] = 0xff;
-					map.updateGame();
-				} else if (ks.keycode == Common::KEYCODE_n) {
-					g_events->close();
-					map[VAL3]++;
-					map.updateGame();
-				}
+				map[VAL3] = 0xff;
+				map.updateGame();
+			},
+			[]() {
+				Map14 &map = *static_cast<Map14 *>(g_maps->_currentMap);
+				map[VAL3]++;
+				map.updateGame();
 			}
 		));
 	}

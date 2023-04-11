@@ -119,14 +119,14 @@ void GridItemWidget::drawWidget() {
 			r.translate(0, kLineHeight);
 		}
 	} else {
-		g_gui.theme()->drawSurface(Common::Point(_x, _y), _thumbGfx, true);
+		g_gui.theme()->drawManagedSurface(Common::Point(_x, _y), _thumbGfx);
 	}
 
 	// Draw Platform Icon
 	const Graphics::ManagedSurface *platGfx = _grid->platformToSurface(_activeEntry->platform);
 	if (platGfx) {
 		Common::Point p(_x + thumbWidth - platGfx->w, _y + thumbHeight - platGfx->h);
-		g_gui.theme()->drawSurface(p, *platGfx, true);
+		g_gui.theme()->drawManagedSurface(p, *platGfx);
 	}
 
 	// Draw Flag
@@ -135,14 +135,14 @@ void GridItemWidget::drawWidget() {
 		// SVG and PNG can resize differently so it's better to use thumbWidth as reference to
 		// ensure all flags are aligned
 		Common::Point p(_x + thumbWidth - (thumbWidth / 5), _y + 5);
-		g_gui.theme()->drawSurface(p, *flagGfx, true);
+		g_gui.theme()->drawManagedSurface(p, *flagGfx);
 	}
 
 	// Draw Demo Overlay
 	const Graphics::ManagedSurface *demoGfx = _grid->demoToSurface(_activeEntry->extra);
 	if (demoGfx) {
 		Common::Point p(_x, _y);
-		g_gui.theme()->drawSurface(p, *demoGfx, true);
+		g_gui.theme()->drawManagedSurface(p, *demoGfx);
 	}
 
 	bool validEntry = _activeEntry->validEntry;
@@ -152,7 +152,7 @@ void GridItemWidget::drawWidget() {
 		const Graphics::ManagedSurface *darkenGfx = _grid->disabledThumbnail();
 		if (darkenGfx) {
 			Common::Point p(_x, _y);
-			g_gui.theme()->drawSurface(p, *darkenGfx, true);
+			g_gui.theme()->drawManagedSurface(p, *darkenGfx);
 		}
 	}
 
@@ -246,10 +246,6 @@ GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entr
 	_editButton = new PicButtonWidget(this, trayPaddingX + buttonWidth + buttonSpacingX, trayPaddingY + buttonHeight + buttonSpacingY,
 									  buttonWidth, buttonHeight,
 									  _("Edit"), kEditButtonCmd);
-
-	_playButton->useThemeTransparency(true);
-	_loadButton->useThemeTransparency(true);
-	_editButton->useThemeTransparency(true);
 }
 
 void GridItemTray::reflowLayout() {

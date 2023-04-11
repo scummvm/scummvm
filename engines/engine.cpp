@@ -178,6 +178,8 @@ Engine::Engine(OSystem *syst)
 	// Note: Using this dummy palette will actually disable cursor
 	// palettes till the user enables it again.
 	CursorMan.pushCursorPalette(NULL, 0, 0);
+
+	defaultSyncSoundSettings();
 }
 
 Engine::~Engine() {
@@ -793,6 +795,10 @@ void Engine::setGameToLoadSlot(int slot) {
 }
 
 void Engine::syncSoundSettings() {
+	defaultSyncSoundSettings();
+}
+
+void Engine::defaultSyncSoundSettings() {
 	// Sync the engine with the config manager
 	int soundVolumeMusic = ConfMan.getInt("music_volume");
 	int soundVolumeSFX = ConfMan.getInt("sfx_volume");

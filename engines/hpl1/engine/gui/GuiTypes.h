@@ -28,6 +28,7 @@
 #ifndef HPL_GUI_TYPES_H
 #define HPL_GUI_TYPES_H
 
+#include "common/keyboard.h"
 #include "common/list.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/input/InputTypes.h"
@@ -276,14 +277,14 @@ struct cGuiMessageData {
 	cGuiMessageData(float afVal) {
 		mfVal = afVal;
 	}
-	cGuiMessageData(const cKeyPress &aKeyPress) {
+	cGuiMessageData(Common::KeyState aKeyPress) {
 		mKeyPress = aKeyPress;
 	}
 
 	cVector2f mvPos;
 	cVector2f mvRel;
 	int mlVal;
-	cKeyPress mKeyPress;
+	Common::KeyState mKeyPress;
 	float mfVal;
 	void *mpData;
 	eGuiMessage mMessage;

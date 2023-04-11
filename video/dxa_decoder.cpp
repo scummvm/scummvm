@@ -29,6 +29,8 @@
 
 #include "video/dxa_decoder.h"
 
+#include "audio/decoders/wave.h"
+
 #include "common/compression/gzio.h"
 
 namespace Video {
@@ -60,8 +62,15 @@ bool DXADecoder::loadStream(Common::SeekableReadStream *stream) {
 }
 
 void DXADecoder::readSoundData(Common::SeekableReadStream *stream) {
-	// Skip over the tag by default
-	stream->readUint32BE();
+	uint32 tag = stream->readUint32BE();
+
+	if (tag == MKTAG('W','A','V','E')) {
+		uint32 size = stream->readUint32BE();
+
+		addStreamTrack(Audio::makeWAVStream(stream->readStream(size), DisposeAfterUse::YES));
+	} else if (tag != MKTAG('N','U','L','L')) {
+		stream->skip(-4);
+	}
 }
 
 DXADecoder::DXAVideoTrack::DXAVideoTrack(Common::SeekableReadStream *stream) {
@@ -209,7 +218,7 @@ void DXADecoder::DXAVideoTrack::decode12(int size) {
 						  ((*dat & 0x0F) << shiftTbl[type-10].sh2);
 					dat++;
 				} else {
-					diffMap = *(unsigned short*)dat;
+					diffMap = READ_BE_UINT16(dat);
 					dat += 2;
 				}
 

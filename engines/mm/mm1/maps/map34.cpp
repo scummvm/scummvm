@@ -79,11 +79,14 @@ void Map34::special02() {
 
 	Sound::sound2(SOUND_2);
 
-	InfoMessage msg(
-		0, 0, STRING["maps.map34.alamar1"],
-		0, 7, STRING["maps.map34.alamar2"]
-	);
+	InfoMessage msg(0, 0, STRING["maps.map34.alamar"]);
 	msg._largeMessage = true;
+	msg._keyCallback = [](const Common::KeyState &) {
+		g_events->close();
+		g_globals->_treasure._items[2] = EYE_OF_GOROS_ID;
+		g_events->addAction(KEYBIND_SEARCH);
+	};
+
 	send(msg);
 }
 

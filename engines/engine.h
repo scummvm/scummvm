@@ -657,6 +657,12 @@ public:
 	virtual int getAutosaveSlot() const {
 		return 0;
 	}
+
+protected:
+	/**
+	 * Syncs the engine's mixer using the default volume syncing behavior.
+	 */
+	void defaultSyncSoundSettings();
 };
 
 

@@ -88,7 +88,7 @@ public:
 
 	void fillSurface() override;
 	void blitSurface(const Graphics::ManagedSurface *source, const Common::Rect &r) override;
-	void blitKeyBitmap(const Graphics::ManagedSurface *source, const Common::Point &p, bool themeTrans) override;
+	void blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p) override;
 
 	void applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) override;
 
@@ -321,7 +321,6 @@ protected:
 	Common::Array<int> _gradIndexes;
 
 	PixelType _bevelColor;
-	PixelType _bitmapAlphaColor;
 };
 
 

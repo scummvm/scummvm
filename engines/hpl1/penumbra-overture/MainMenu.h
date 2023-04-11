@@ -448,7 +448,7 @@ private:
 
 	bool mbGameActive;
 
-	bool mvKeyPressed[eKey_LastEnum];
+	bool mvKeyPressed[Common::KEYCODE_LAST];
 	bool mvMousePressed[eMButton_LastEnum];
 };
 
