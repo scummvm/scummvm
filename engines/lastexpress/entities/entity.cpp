@@ -159,7 +159,7 @@ void EntityData::saveLoadWithSerializer(Common::Serializer &s, const Common::Arr
 		// (the original game has same-size-PODs and just memcpy-s them.
 		// *sigh* Why does this implementation even need the extra byte in strings?
 		// Well, big-endian vs little-endian is also a thing...)
-		byte buf[ARRAYSIZE(_parameters) * 32 * 4];
+		byte buf[ARRAYSIZE(_parameters) * 32 * 4] = {0};
 		s.syncBytes(buf, sizeof(buf));
 
 		_data.saveLoadWithSerializer(s);
