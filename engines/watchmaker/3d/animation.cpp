@@ -188,7 +188,7 @@ int8 t3dLoadAnimation(WGame &game, const char *s, t3dMESH *mesh, uint16 Flag) {
 				t3dFree(PreloadedAnim[j].Bone[i].Trasl);
 				t3dFree(PreloadedAnim[j].Bone[i].Euler);
 			}
-			t3dFree(PreloadedAnim[j].Dist);
+			delete[] PreloadedAnim[j].Dist;
 			PreloadedAnim[j] = t3dLOADANIM();
 		}
 //t     else
@@ -244,7 +244,7 @@ int8 t3dLoadAnimation(WGame &game, const char *s, t3dMESH *mesh, uint16 Flag) {
 				}
 			}
 			if (stream->readByte()) {
-				p->Dist = (t3dF32 *) t3dMalloc(nf * sizeof(t3dF32));
+				p->Dist = new t3dF32[nf]{};
 				for (k = 0; k < nf; k++)
 					p->Dist[k] = stream->readFloatLE();
 			}
@@ -331,7 +331,7 @@ int8 t3dLoadAnimation(WGame &game, const char *s, t3dMESH *mesh, uint16 Flag) {
 		}
 	}
 	if (p->Dist) {
-		db->Dist = (t3dF32 *)t3dMalloc(db->NumFrames * sizeof(t3dF32));
+		db->Dist = new t3dF32[db->NumFrames]{};
 		for (k = 0; k < db->NumFrames; k++)
 			db->Dist[k] = p->Dist[k];
 	}
@@ -682,7 +682,7 @@ void ReleasePreloadedAnims() {
 			t3dFree(PreloadedAnim[j].Bone[i].Trasl);
 			t3dFree(PreloadedAnim[j].Bone[i].Euler);
 		}
-		t3dFree(PreloadedAnim[j].Dist);
+		delete[] PreloadedAnim[j].Dist;
 		PreloadedAnim[j] = t3dLOADANIM();
 	}
 }

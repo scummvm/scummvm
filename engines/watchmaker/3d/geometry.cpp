@@ -387,7 +387,7 @@ void t3dReleaseBody(t3dBODY *b) {
 	b->clearVBTable();
 
 	for (int i = 0; i < T3D_MAX_LEVELS; i++) {
-		t3dFree(b->Panel[i]);
+		delete[] b->Panel[i];
 		b->Panel[i] = nullptr;
 	}
 
@@ -651,7 +651,7 @@ void t3dCreateProceduralSky(void) {
 #endif
 	MaxSetDimX = MaxSetDimY = 256;
 	MARGIN = MaxSetDimX / 2;
-	tab = (uint8 *)t3dMalloc(MaxSetDimX * MaxSetDimY * 3);
+	tab = new uint8[MaxSetDimX * MaxSetDimY * 3]{};
 
 	if (!SkySurface)  // rReleaseBitmapDirect( SkySurface );
 		SkySurface = (gTexture *)rCreateSurface(256, 256, rTEXTURESURFACE);
@@ -753,7 +753,7 @@ void t3dCreateProceduralSky(void) {
 	}
 
 	rUnlockSurfaceDirect(SkySurface);
-	t3dFree(tab);
+	delete[] tab;
 
 	if (t3dSky && t3dSky->MatTable.size() >= 2)
 		t3dSky->MatTable[1]->Texture = (SkySurface);

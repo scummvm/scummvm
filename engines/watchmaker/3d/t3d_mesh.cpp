@@ -214,7 +214,7 @@ void t3dMESH::releaseAnim(uint8 flag) {
 
 	t3dFree(ba->BoneTable);
 	ba->BoneTable = nullptr;
-	t3dFree(ba->Dist);
+	delete[] ba->Dist;
 	ba->Dist = nullptr;
 }
 
@@ -230,28 +230,22 @@ void t3dMESH::release() { // Will eventually be a destructor.
 	this->RejectedMeshes.clear();
 	this->PortalList = nullptr;
 
-	if (this->WaterBuffer1)
-		t3dFree(this->WaterBuffer1);
+	delete[] this->WaterBuffer1;
 	this->WaterBuffer1 = nullptr;
 
-	if (this->WaterBuffer2)
-		t3dFree(this->WaterBuffer2);
+	delete[] this->WaterBuffer2;
 	this->WaterBuffer2 = nullptr;
 
-	if (this->VertexBuffer)
-		t3dFree(this->VertexBuffer);
+	delete[] this->VertexBuffer;
 	this->VertexBuffer = nullptr;
 
-	if (this->OldVertexBuffer)
-		t3dFree(this->OldVertexBuffer);
+	delete[] this->OldVertexBuffer;
 	this->OldVertexBuffer = nullptr;
 
-	if (this->SavedVertexBuffer)
-		t3dFree(this->SavedVertexBuffer);
+	delete[] this->SavedVertexBuffer;
 	this->SavedVertexBuffer = nullptr;
 
-	if (this->VertsInterpolants)
-		t3dFree(this->VertsInterpolants);
+	delete[] this->VertsInterpolants;
 	this->VertsInterpolants = nullptr;
 
 //		if(mt->VBptr)

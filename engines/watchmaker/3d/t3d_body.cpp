@@ -281,7 +281,7 @@ void LoadBounds(WorkDirs &workDirs, const char *pname, t3dBODY *b) {
 	for (j = 0; j < nlev; j++) {
 		b->NumPanels[j] = npan = stream->readSint16LE();
 		b->PanelHeight[j] = stream->readFloatLE() * SCALEFACTOR;
-		b->Panel[j] = t3dMalloc<t3dPAN>(npan + 4 * T3D_MAX_CHARACTERS);        // lascia anche un po' di spazio per eventuali aggiunte
+		b->Panel[j] = new t3dPAN[npan + 4 * T3D_MAX_CHARACTERS];        // lascia anche un po' di spazio per eventuali aggiunte
 
 		for (i = 0; i < npan; i++) {
 			b->Panel[j][i].x1 = stream->readFloatLE() * SCALEFACTOR;

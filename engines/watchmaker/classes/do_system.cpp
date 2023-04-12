@@ -331,10 +331,8 @@ void TitoliCoda_ShowScrolling(WGame &game, char initialize) {
 				DebugLogFile("tcEnd %s", c->s);
 			}
 
-		if (TitoliCoda) {
-			t3dFree(TitoliCoda);
-			TitoliCoda = nullptr;
-		}
+		delete[] TitoliCoda;
+		TitoliCoda = nullptr;
 
 		bTitoliCodaScrolling = 0;
 		DebugLogFile("TITOLI CODA FINITI");
@@ -488,10 +486,8 @@ void TitoliCoda_ShowStatic(WGame &game, char initialize) {
 				DebugLogFile("tcEnd %s", c->s);
 			}
 
-		if (TitoliCoda) {
-			t3dFree(TitoliCoda);
-			TitoliCoda = nullptr;
-		}
+		delete[] TitoliCoda;
+		TitoliCoda = nullptr;
 
 		bTitoliCodaStatic = 0;
 		TitoliCoda_ShowScrolling(game, 1);
