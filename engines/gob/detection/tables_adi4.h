@@ -130,7 +130,7 @@
 {
 	{
 		"adi4",
-		"Addy 4 Grundschule Basis CD",
+		"Addy 4 Grundschule Basisprogramm",
 		AD_ENTRY1s("intro.stk", "d2f0fb8909e396328dc85c0e29131ba8", 5847588),
 		DE_DEU,
 		kPlatformWindows,
@@ -144,7 +144,7 @@
 {
 	{
 		"adi4",
-		"Addy 4 Sekundarstufe Basis CD",
+		"Addy 4.01 Sekundarstufe Basisprogramm",
 		AD_ENTRY1s("intro.stk", "367340e59c461b4fa36651cd74e32c4e", 5847378),
 		DE_DEU,
 		kPlatformWindows,
