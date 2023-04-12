@@ -143,7 +143,7 @@ void Temple::updateCosts() {
 	_uncurseCost = UNCURSE_COST[townNum];
 	for (i = 0; i < INVENTORY_COUNT; ++i) {
 		if (c._equipped[i]) {
-			if (g_globals->_items.getItem(c._equipped[i])->_equipMode == EQUIP_CURSED)
+			if (g_globals->_items.getItem(c._equipped[i])->_constBonus_id == EQUIP_CURSED)
 				break;
 		}
 	}
@@ -178,7 +178,7 @@ void Temple::uncurseItems() {
 		for (int i = 0; i < INVENTORY_COUNT; ++i) {
 			if (c._equipped[i]) {
 				g_globals->_items.getItem(c._equipped[i]);
-				if (g_globals->_currItem._equipMode == EQUIP_CURSED) {
+				if (g_globals->_currItem._constBonus_id == EQUIP_CURSED) {
 					c._equipped.removeAt(i);
 					--i;
 				}
