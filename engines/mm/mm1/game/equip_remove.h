@@ -38,6 +38,12 @@ struct EquipRemove {
 	 * Remove an item
 	 */
 	bool removeItem(int index, Common::Point &textPos, Common::String &removeError);
+
+	/**
+	 * apply an equip bonus on a current character
+	 */
+	void applyEquipBonus(int id, int value);
+
 };
 
 } // namespace Game
