@@ -217,7 +217,17 @@ Common::String Overlay::getRecordTypeName() const {
 
 void Overlay::setFrame(uint frame) {
 	_currentFrame = frame;
-	_drawSurface.create(_fullSurface, _srcRects[frame]);
+	
+	// Workaround for the fireplace in nancy2 scene 2491,
+	// where one of the rects is invalid. Assumes all
+	// rects in a single animation have the same dimensions
+	Common::Rect srcRect = _srcRects[frame];
+	if (!srcRect.isValidRect()) {
+		srcRect.setWidth(_srcRects[0].width());
+		srcRect.setHeight(_srcRects[0].height());
+	}
+
+	_drawSurface.create(_fullSurface, srcRect);
 
 	setTransparent(_transparency == kPlayOverlayPlain);
 
