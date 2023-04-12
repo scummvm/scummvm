@@ -134,7 +134,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		_pitch *= _bitsPerPixel;
 		_pitch >>= 3;
 
-	} else if (version >= kFileVer400 && version < kFileVer500) {
+	} else if (version >= kFileVer400 && version < kFileVer600) {
 		_flags1 = flags1;
 		_pitch = stream.readUint16();
 		_pitch &= 0x0fff;
@@ -149,6 +149,9 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		if (stream.eos()) {
 			_bitsPerPixel = 0;
 		} else {
+			if (version >= kFileVer500) {
+				stream.readSint16(); // ff ff
+			}
 			_clut = stream.readSint16();
 			if (_clut <= 0) // builtin palette
 				_clut -= 1;
@@ -182,24 +185,6 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 			debug("BitmapCastMember: tail");
 			Common::hexdump(buf, tail);
 		}
-	} else if (version >= kFileVer500) {
-		uint16 count = stream.readUint16();
-		for (uint16 cc = 0; cc < count; cc++)
-			stream.readUint32();
-
-		uint32 stringLength = stream.readUint32();
-		for (uint32 s = 0; s < stringLength; s++)
-			stream.readByte();
-
-		/*uint16 width =*/ stream.readUint16LE(); //maybe?
-		_initialRect = Movie::readRect(stream);
-
-		/*uint32 somethingElse =*/ stream.readUint32();
-		_boundingRect = Movie::readRect(stream);
-
-		_bitsPerPixel = stream.readUint16();
-
-		stream.readUint32();
 	}
 
 	_tag = castTag;
