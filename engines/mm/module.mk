@@ -42,6 +42,7 @@ MODULE_OBJS += \
 	mm1/game/combat.o \
 	mm1/game/encounter.o \
 	mm1/game/equip_remove.o \
+	mm1/game/leprechaun.o \
 	mm1/game/monster_touch.o \
 	mm1/game/rest.o \
 	mm1/game/spell_casting.o \
@@ -83,6 +84,7 @@ MODULE_OBJS += \
 	mm1/views/maps/ice_princess.o \
 	mm1/views/maps/inspectron.o \
 	mm1/views/maps/keeper.o \
+	mm1/views/maps/leprechaun.o \
 	mm1/views/maps/lion.o \
 	mm1/views/maps/lord_archer.o \
 	mm1/views/maps/lord_ironfist.o \
@@ -188,6 +190,7 @@ MODULE_OBJS += \
 	mm1/views_enh/interactions/ice_princess.o \
 	mm1/views_enh/interactions/interaction.o \
 	mm1/views_enh/interactions/interaction_query.o \
+	mm1/views_enh/interactions/leprechaun.o \
 	mm1/views_enh/interactions/lion.o \
 	mm1/views_enh/interactions/prisoners.o \
 	mm1/views_enh/interactions/resistances.o \

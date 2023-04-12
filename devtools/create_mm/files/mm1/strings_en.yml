@@ -993,7 +993,8 @@ maps:
 		levitate: ", levitation saves you!"
 	emap00:
 		training_inside: "Before you are various groups engaged in training exercises. Worg, the guildmaster asks, \"Do you require training (Y/N)?\""
-		leprechaun: "A tenacious leprechaun appears saying, \"Traveling the roads is quite dangerous save for the strong and courageous, Only 1 gem you lose and i'll send you to the town you choose.\"\n\n'ESC' to go back\nWhich town (1-5)?"
+		leprechaun: "A tenacious leprechaun appears saying, \"Traveling the roads is quite dangerous. Only 1 gem and i'll teleport you.\""
+		leprechaun_title: "Leprechaun"
 
 	map01:
 		blacksmith: "\"B. Smith's workshop\""
