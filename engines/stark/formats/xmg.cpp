@@ -212,7 +212,7 @@ XMGDecoder::Block XMGDecoder::processRGB() {
 	color = _stream->readUint16LE();
 	color += _stream->readByte() << 16;
 	if (color != _transColor)
-		color += 255 << 24;
+		color += 255u << 24;
 	else
 		color = 0;
 	block.a1 = color;
@@ -220,7 +220,7 @@ XMGDecoder::Block XMGDecoder::processRGB() {
 	color = _stream->readUint16LE();
 	color += _stream->readByte() << 16;
 	if (color != _transColor)
-		color += 255 << 24;
+		color += 255u << 24;
 	else
 		color = 0;
 	block.a2 = color;
@@ -228,7 +228,7 @@ XMGDecoder::Block XMGDecoder::processRGB() {
 	color = _stream->readUint16LE();
 	color += _stream->readByte() << 16;
 	if (color != _transColor)
-		color += 255 << 24;
+		color += 255u << 24;
 	else
 		color = 0;
 	block.b1 = color;
@@ -236,7 +236,7 @@ XMGDecoder::Block XMGDecoder::processRGB() {
 	color = _stream->readUint16LE();
 	color += _stream->readByte() << 16;
 	if (color != _transColor)
-		color += 255 << 24;
+		color += 255u << 24;
 	else
 		color = 0;
 	block.b2 = color;
