@@ -83,7 +83,7 @@ bool Hacker::msgKeypress(const KeypressMessage &msg) {
 		Character &c = g_globals->_party[0];
 		if (c._quest) {
 			Common::String line = Common::String::format("%s %s",
-				STRING["maps.map36.hacker3."].c_str(),
+				STRING["maps.map36.hacker3"].c_str(),
 				STRING[Common::String::format(
 					"maps.map36.ingredients.%d",
 					g_globals->_party[0]._quest - 15)].c_str()
