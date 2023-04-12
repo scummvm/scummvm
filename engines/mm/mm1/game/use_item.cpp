@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/game/use_item.h"
+#include "mm/mm1/game/equip_remove.h"
 #include "mm/mm1/game/combat.h"
 #include "mm/mm1/game/spells_party.h"
 #include "mm/mm1/globals.h"
@@ -34,21 +35,23 @@ Common::String UseItem::combatUseItem(Inventory &inv, Inventory::Entry &invEntry
 	Common::String msg;
 	Item *item = g_globals->_items.getItem(invEntry._id);
 
-	if (!item->_effectId) {
+	if (!item->_tempBonus_id) {	
 		msg = STRING["dialogs.character.use_combat.no_special_power"];
 
-	} else if (item->_equipMode == IS_EQUIPPABLE || isEquipped) {
+	} else if (item->_constBonus_id == IS_EQUIPPABLE || isEquipped) {
 		if (invEntry._charges) {
 			g_globals->_combatEffectCtr++;
 			inv.removeCharge(&invEntry);
 
-			if (item->_effectId == 0xff) {
+			if (item->_tempBonus_id == 0xff) {
 				setSpell(item->_spellId, 0, 0);
 				Game::SpellsParty::cast(_spellIndex, g_globals->_currCharacter);
 
 			} else {
 				// TODO: find out area of Character _effectId is used as an offset for
-				error("TODO: _effectId used as a character offset to increase attribute?");
+				//error("TODO: _effectId used as a character offset to increase attribute?");
+				//add temporary equip bonus to character parameters
+				applyItemBonus(item->_tempBonus_id, item->_tempBonus_value);
 
 				if (g_globals->_combatEffectCtr)
 					(isEquipped ? &g_globals->_currCharacter->_equipped :
@@ -75,21 +78,23 @@ Common::String UseItem::nonCombatUseItem(Inventory &inv, Inventory::Entry &invEn
 	Common::String msg;
 	Item *item = g_globals->_items.getItem(invEntry._id);
 
-	if (!item->_effectId) {
+	if (!item->_tempBonus_id) {
 		msg = STRING["dialogs.character.use_noncombat.no_special_power"];
 
-	} else if (item->_equipMode == IS_EQUIPPABLE || isEquipped) {
+	} else if (item->_constBonus_id == IS_EQUIPPABLE || isEquipped) {
 		if (invEntry._charges) {
 			g_globals->_nonCombatEffectCtr++;
 			inv.removeCharge(&invEntry);
 
-			if (item->_effectId == 0xff) {
+			if (item->_tempBonus_id== 0xff) {
 				setSpell(item->_spellId, 0, 0);
 				Game::SpellsParty::cast(_spellIndex, g_globals->_currCharacter);
 
 			} else {
 				// TODO: find out area of Character _effectId is used as an offset for
-				error("TODO: _effectId used as a character offset to increase attribute?");
+				//error("TODO: _effectId used as a character offset to increase attribute?");
+				//add temorary equip bonus to character parameters
+				applyItemBonus (item->_tempBonus_id, item->_tempBonus_value);
 
 				if (g_globals->_nonCombatEffectCtr)
 					(isEquipped ? &g_globals->_currCharacter->_equipped :
@@ -108,6 +113,27 @@ Common::String UseItem::nonCombatUseItem(Inventory &inv, Inventory::Entry &invEn
 
 	return msg;
 }
+
+void UseItem::applyItemBonus(int id, int value){
+	if ((id<2)||(id>=0xff)) return;
+	Character &c = *g_globals->_currCharacter;
+	switch (id) {
+		case 24: c._might._current += value; break;
+		case 30: c._speed._current += value; break;
+		case 32: c._accuracy._current += value; break;
+		case 34: c._luck._current += value; break;
+		case 36: c._level._current += value; break;
+		case 37: c._age._current += value; break;
+		case 43: c._sp._current += value; break;
+		case 48: c._spellLevel._current += value; break;
+		case 49: c._gems += value; break;
+		case 58: c._gold += 255*value; break;
+		case 62: c._food += value; break;
+		case 89: c._resistances._s._magic._current += value; break;
+		case 99: c._resistances._s._fear._current += value; break;
+	}
+}
+
 
 } // namespace Game
 } // namespace MM1

@@ -40,6 +40,11 @@ public:
 	 * Using an item outside of combat
 	 */
 	Common::String nonCombatUseItem(Inventory &inv, Inventory::Entry &invEntry, bool isEquipped);
+
+	/**
+	 * Apply item to a character parameter
+	 */
+    void applyItemBonus(int id, int value);
 };
 
 } // namespace Game
