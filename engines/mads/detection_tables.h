@@ -23,7 +23,7 @@ namespace MADS {
 
 static const MADSGameDescription gameDescriptions[] = {
 	{
-		// Rex Nebular and the Cosmic Gender Bender DOS English (compressed, 3.5" floppy installer)
+		// Rex Nebular and the Cosmic Gender Bender DOS English USA (compressed, 3.5" floppy installer)
 		{
 			"nebular",
 			"3.5 inch floppy installer",
@@ -40,6 +40,26 @@ static const MADSGameDescription gameDescriptions[] = {
 		GType_RexNebular,
 		0
 	},
+
+	{
+		// Rex Nebular and the Cosmic Gender Bender DOS English UK 8.44 (compressed, 3.5" floppy installer)
+		{
+			"nebular",
+			"3.5 inch floppy installer",
+			AD_ENTRY2s("mpslabs.001", "4df5c557b52abb5b661cf4befe5ae301", 1315354, "mpslabs.idx", "d74bed6513d0a5d514269750f574a23b", 5598),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			GF_INSTALLER,
+#ifdef USE_TTS
+			GUIO6(GUIO_NOSPEECH, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ANIMATED_INVENTORY, GAMEOPTION_ANIMATED_INTERFACE, GAMEOPTION_NAUGHTY_MODE, GAMEOPTION_TTS_NARRATOR)
+#else
+			GUIO5(GUIO_NOSPEECH, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ANIMATED_INVENTORY, GAMEOPTION_ANIMATED_INTERFACE, GAMEOPTION_NAUGHTY_MODE)
+#endif
+		},
+		GType_RexNebular,
+		0
+	},
+
 	{
 		// Rex Nebular and the Cosmic Gender Bender DOS English (compressed, 5.25" floppy installer)
 		{
@@ -60,7 +80,7 @@ static const MADSGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Rex Nebular and the Cosmic Gender Bender DOS English, same as 2 entries above but uncompressed
+		// Rex Nebular and the Cosmic Gender Bender DOS English, same as USA/UK entries but uncompressed
 		{
 			"nebular",
 			0,
