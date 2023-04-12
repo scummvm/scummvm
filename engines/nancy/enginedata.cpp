@@ -116,24 +116,66 @@ INV::INV(Common::SeekableReadStream *chunkStream) {
 	readFilename(s, inventoryBoxIconsImageName);
 	readFilename(s, inventoryCursorsImageName);
 
-	s.skip(0x4); // inventory box icons surface w/h
-	s.skip(0x4); // inventory cursors surface w/h
+	s.skip(0x4, kGameTypeVampire, kGameTypeNancy1); // inventory box icons surface w/h
+	s.skip(0x4, kGameTypeVampire, kGameTypeNancy1); // inventory cursors surface w/h
 
 	s.skip(0x10); // unknown rect, same size as a hotspot
 
-	byte itemName[20];
-	uint itemNameLength = g_nancy->getGameType() == kGameTypeVampire ? 15 : 20;
+	byte textBuf[60];
+
+	if (s.getVersion() >= kGameTypeNancy2) {
+		cantSound.read(*chunkStream, SoundDescription::kNormal);
+		s.syncBytes(textBuf, 60);
+		textBuf[59] = '\0';
+		cantText = (char *)textBuf;
+	}
+
+	uint itemNameLength;
+	switch (s.getVersion()) {
+		case kGameTypeVampire :
+			itemNameLength = 15;
+			break;
+		case kGameTypeNancy1 :
+			itemNameLength = 20;
+			break;
+		case kGameTypeNancy2 :
+			// fall through
+		default:
+			itemNameLength = 48;
+			break;
+	}
 
 	uint16 numItems = g_nancy->getStaticData().numItems;
 	itemDescriptions.resize(numItems);
 	for (uint i = 0; i < numItems; ++i) {
 		ItemDescription &item = itemDescriptions[i];
 		
-		s.syncBytes(itemName, itemNameLength);
-		itemName[itemNameLength - 1] = '\0';
-		item.name = (char *)itemName;
+		s.syncBytes(textBuf, itemNameLength);
+		textBuf[itemNameLength - 1] = '\0';
+		item.name = (char *)textBuf;
+
 		s.syncAsUint16LE(item.keepItem);
 		readRect(s, item.sourceRect);
+		readRect(s, item.highlightedSourceRect, kGameTypeNancy2);
+
+		if (s.getVersion() == kGameTypeNancy2) {
+			s.syncBytes(textBuf, 60);
+			textBuf[59] = '\0';
+			item.specificCantText = (char *)textBuf;
+
+			s.syncBytes(textBuf, 60);
+			textBuf[59] = '\0';
+			item.generalCantText = (char *)textBuf;
+
+			item.specificCantSound.read(*chunkStream, SoundDescription::kNormal);
+			item.generalCantSound.read(*chunkStream, SoundDescription::kNormal);
+		} else if (s.getVersion() >= kGameTypeNancy3) {
+			s.syncBytes(textBuf, 60);
+			textBuf[59] = '\0';
+			item.specificCantText = (char *)textBuf;
+
+			item.specificCantSound.read(*chunkStream, SoundDescription::kNormal);
+		}
 	}
 
 	delete chunkStream;

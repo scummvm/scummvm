@@ -69,6 +69,12 @@ struct INV {
 		Common::String name;
 		byte keepItem;
 		Common::Rect sourceRect;
+		Common::Rect highlightedSourceRect;
+
+		Common::String specificCantText;
+		Common::String generalCantText;
+		SoundDescription specificCantSound;
+		SoundDescription generalCantSound;
 	};
 
 	INV(Common::SeekableReadStream *chunkStream);
@@ -86,6 +92,9 @@ struct INV {
 
 	Common::String inventoryBoxIconsImageName;
 	Common::String inventoryCursorsImageName;
+
+	SoundDescription cantSound;
+	Common::String cantText;
 
 	Common::Array<ItemDescription> itemDescriptions;
 };
