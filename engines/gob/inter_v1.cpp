@@ -606,8 +606,10 @@ void Inter_v1::o1_getObjAnimSize() {
 					animData.animation, 0, *(_vm->_mult->_objects[objIndex].pPosX),
 					*(_vm->_mult->_objects[objIndex].pPosY), 0);
 
-		_vm->_scenery->_toRedrawLeft = MAX<int16>(_vm->_scenery->_toRedrawLeft, 0);
-		_vm->_scenery->_toRedrawTop  = MAX<int16>(_vm->_scenery->_toRedrawTop , 0);
+		if (_vm->getGameType() != kGameTypeAdibou1) {
+			_vm->_scenery->_toRedrawLeft = MAX<int16>(_vm->_scenery->_toRedrawLeft, 0);
+			_vm->_scenery->_toRedrawTop  = MAX<int16>(_vm->_scenery->_toRedrawTop , 0);
+		}
 	}
 
 	WRITE_VAR_OFFSET(varLeft  , _vm->_scenery->_toRedrawLeft);
