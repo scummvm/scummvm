@@ -1299,10 +1299,11 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "fsivacuum", "FSi's Vacuum Cleaner Gone Mad" },
 	{ "fuguestate", "The Man From Fugue State" },
 	{ "fulkramick", "Fulkramick's Dreamting: An Interactive Adventure" },
-	{ "furballs1", "Fur Balls 1 - evil be thy name: Bundles of mayhem!" },
 	{ "funnyboneyard", "The Funny Boneyard" },
 	{ "funsunmishaps", "Fun, Sun & Mishaps" },
 	{ "funwithnumbers", "Fun With Numbers" },
+	{ "furballs1", "Fur Balls 1 - evil be thy name: Bundles of mayhem!" },
+	{ "furryfather", "Sorrow of a Furry Father" },
 	{ "futuramatrivia", "Futurama: Who Said That?" },
 	{ "futurecity3000", "Future City 3000" },
 	{ "fycorpse", "Fuck You I'm a Corpse" },  // aka Dead Dave
@@ -4141,8 +4142,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_NOLAUNCHLOAD("whispersofamachine", "whispers.exe", "b8416ff5242d6540980f922f03a01a5f", 159085573, AGSSPRITEFONT_CLIFFTOP),
 	GAME_ENTRY_EN_STEAM("wolfterritory", "wolf.exe", "78dd4ca028ee0156b6a093d6d780aa65", 3957156),
 	GAME_ENTRY_EN_STEAM("yetilastescape", "Big-run.exe", "1e003cdad70709b5bd3d0d957f637e58", 31372723),
-	GAME_ENTRY_STEAM("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100036465),  // Eng-Pol
+	GAME_ENTRY_STEAM("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100036465),  // Win Eng-Pol
 	GAME_ENTRY_STEAM("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100040004),
+	GAME_ENTRY_STEAM("zniwadventure", "ctgame.ags", "8f52737244a78a7d1e6acace8ced67a5", 97017764),  // Linux
 	GAME_ENTRY_GOG("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100046802),
 	GAME_ENTRY_GOG("zniwadventure", "ac2game.dat", "8a2d48ee8d92bad3c5cacd8b883c5871", 100067853), // macOS
 	GAME_ENTRY_GOG("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100067853), // 1.3.4 Win
@@ -5753,6 +5755,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("funsunmishaps", "Fun, Sun & Mishaps.exe", "933200c8f306eccaaa484b1575da8528", 452348866),
 	GAME_ENTRY_EN("funwithnumbers", "fwn.exe", "a524cbb1c51589903c4043b98917f1d9", 18743833),
 	GAME_ENTRY_EN("furballs1", "Fur Balls 1 Evil be thy name.exe", "c876b504a1048fe06c71c9d9a0bc5817", 11417569),
+	GAME_ENTRY_EN("furryfather", "Sorrow of a Furry Father.exe", "0fe1d93da69963d5eef55ce2619c94be", 20220753),  // Windows
+	GAME_ENTRY_EN("furryfather", "Sorrow of a Furry Father.ags", "5f2b5f4a20550110de2a00c46c722dee", 17186109),  // Linux
 	GAME_ENTRY_EN("futuramatrivia", "FuturamaWhoSaidThat.exe", "8923670fc767b7b66ac2659556bdc3da", 125539307),  // Windows
 	GAME_ENTRY_EN("futuramatrivia", "FuturamaWhoSaidThat.ags", "a02b24866dbcc53227b96d4767fd566e", 122145751),  // Linux
 	GAME_ENTRY_EN("futurecity3000", "FutureCity3000.exe", "4d4b6d6e560cf32f440c39f8d3896da5", 41930580),
