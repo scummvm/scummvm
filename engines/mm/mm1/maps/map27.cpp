@@ -114,7 +114,7 @@ void Map27::special04() {
 
 			for (int itemNum = (int)inv.size() - 1; itemNum >= 0; --itemNum) {
 				Item *item = g_globals->_items.getItem(c._equipped[itemNum]._id);
-				if (item->_equipMode == EQUIP_CURSED)
+				if (item->_constBonus_id == EQUIP_CURSED)
 					inv.removeAt(itemNum);
 			}
 		}

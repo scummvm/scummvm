@@ -19,18 +19,23 @@
  *
  */
 
-#include "mm/mm1/views/maps/hacker.h"
+#include "mm/mm1/views_enh/interactions/hacker.h"
 #include "mm/mm1/maps/map36.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Maps {
+namespace ViewsEnh {
+namespace Interactions {
 
-Hacker::Hacker() : TextView("Hacker") {
-	_bounds = getLineBounds(20, 24);
+Hacker::Hacker() : Interaction("Hacker", 35) {
+	_title = STRING["maps.emap36.hacker_title"];
+}
+
+bool Hacker::msgFocus(const FocusMessage &msg) {
+	Interaction::msgFocus(msg);
+	return true;
 }
 
 bool Hacker::msgGame(const GameMessage &msg) {
@@ -38,72 +43,68 @@ bool Hacker::msgGame(const GameMessage &msg) {
 		return false;
 
 	g_globals->_currCharacter = &g_globals->_party[0];
-	_canAccept = !g_globals->_currCharacter->_quest;
+	_mode = g_globals->_currCharacter->_quest ? ACTIVE_QUEST : CAN_ACCEPT;
 
-	if (_canAccept) {
-		// Show the view
+	if (_mode == CAN_ACCEPT)
 		Sound::sound(SOUND_2);
-		addView();
+	addView();
+	clearButtons();
+
+	if (_mode == CAN_ACCEPT) {
+		addText(STRING["maps.map36.hacker2"]);
+		addButton(STRING["maps.accept"], 'Y');
+		addButton(STRING["maps.decline"], 'N');
 
 	} else {
+		// There's an active quest, so check for completion
 		MM1::Maps::Map36 &map = *static_cast<MM1::Maps::Map36 *>(g_maps->_currentMap);
 		int questNum = g_globals->_party[0]._quest;
 		Common::String line;
 
-		if (questNum >= 15 && questNum <= 21)
+		if (questNum >= 8 && questNum <= 14)
 			line = map.checkQuestComplete();
 		else
 			line = STRING["maps.map36.hacker4"];
 
-		g_maps->_mapPos.x--;
+		g_maps->_mapPos.y++;
 		map.redrawGame();
 
-		send(SoundMessage(
-			0, 1, STRING["maps.map36.hacker1"],
-			0, 2, line
-		));
+		addText(line);
 	}
 
 	return true;
 }
 
-void Hacker::draw() {
-	clearSurface();
-	writeString(0, 1, STRING["maps.map36.hacker1"]);
-	writeString(0, 2, STRING["maps.map36.hacker2"]);
-}
-
 bool Hacker::msgKeypress(const KeypressMessage &msg) {
 	MM1::Maps::Map36 &map = *static_cast<MM1::Maps::Map36 *>(g_maps->_currentMap);
 
-	if (msg.keycode == Common::KEYCODE_y) {
-		close();
-		map.acceptQuest();
+	if (_mode == CAN_ACCEPT) {
+		if (msg.keycode == Common::KEYCODE_y) {
+			map.acceptQuest();
+			_mode = ACCEPTED_QUEST;
 
-		Character &c = g_globals->_party[0];
-		if (c._quest) {
+			clearButtons();
 			Common::String line = Common::String::format("%s %s",
 				STRING["maps.map36.hacker3"].c_str(),
 				STRING[Common::String::format(
 					"maps.map36.ingredients.%d",
 					g_globals->_party[0]._quest - 15)].c_str()
 			);
+			addText(line);
 
-			send(InfoMessage(
-				0, 1, STRING["maps.map36.hacker1"],
-				0, 2, line
-			));
+			redraw();
+			return true;
+
+		} else if (msg.keycode == Common::KEYCODE_n) {
+			close();
+			return true;
 		}
-
-	} else if (msg.keycode == Common::KEYCODE_n) {
-		close();
-		map.redrawGame();
 	}
 
-	return true;
+	return false;
 }
 
-} // namespace Maps
-} // namespace Views
+} // namespace Interactions
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM

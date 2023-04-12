@@ -19,35 +19,40 @@
  *
  */
 
-#ifndef MM1_GAME_EQUIP_REMOVE_H
-#define MM1_GAME_EQUIP_REMOVE_H
-
-#include "common/rect.h"
+#include "mm/mm1/views_enh/interactions/leprechaun.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
-namespace Game {
+namespace ViewsEnh {
+namespace Interactions {
 
-struct EquipRemove {
-	/**
-	 * Equip an item
-	 */
-	bool equipItem(int index, Common::Point &textPos, Common::String &equipError);
+Leprechaun::Leprechaun() : Interaction("Leprechaun", 15) {
+	_title = STRING["maps.emap00.leprechaun_title"];
+	addText(STRING["maps.emap00.leprechaun"]);
+	addButton(STRING["stats.towns.1"], '1');
+	addButton(STRING["stats.towns.2"], '2');
+	addButton(STRING["stats.towns.3"], '3');
+	addButton(STRING["stats.towns.4"], '4');
+	addButton(STRING["stats.towns.5"], '5');
+}
 
-	/**
-	 * Remove an item
-	 */
-	bool removeItem(int index, Common::Point &textPos, Common::String &removeError);
+bool Leprechaun::msgFocus(const FocusMessage &msg) {
+	Interaction::msgFocus(msg);
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
+	return true;
+}
 
-	/**
-	 * apply an equip bonus on a current character
-	 */
-	void applyEquipBonus(int id, int value);
+bool Leprechaun::msgKeypress(const KeypressMessage &msg) {
+	if (msg.keycode >= Common::KEYCODE_1 && msg.keycode <= Common::KEYCODE_5) {
+		teleportToTown(msg.ascii);
+		return true;
+	}
 
-};
+	return false;
+}
 
-} // namespace Game
+} // namespace Interactions
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
-
-#endif
