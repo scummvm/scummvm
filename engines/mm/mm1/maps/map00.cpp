@@ -29,11 +29,6 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
-#define TOWN_NUM 0x2fe
-#define LEPRECHAUN_MAP_ID1 0x2ff
-#define LEPRECHAUN_MAP_ID2 0x304
-#define LEPRECHAUN_MAP_X 0x309
-#define LEPRECHAUN_MAP_Y 0x30E
 #define STATUE_VAL 0x412
 
 void Map00::special() {
@@ -115,53 +110,7 @@ void Map00::special07() {
 }
 
 void Map00::special08() {
-	SoundMessage msg(
-		STRING["maps.map00.leprechaun"],
-		[](const Common::KeyState &keyState) {
-			Maps &maps = *g_maps;
-			Map &map = *g_maps->_currentMap;
-
-			switch (keyState.keycode) {
-			case Common::KEYCODE_ESCAPE:
-				maps.turnAround();
-				g_events->focusedView()->close();
-				break;
-			case Common::KEYCODE_1:
-			case Common::KEYCODE_2:
-			case Common::KEYCODE_3:
-			case Common::KEYCODE_4:
-			case Common::KEYCODE_5:
-				g_events->focusedView()->close();
-				map[TOWN_NUM] = keyState.ascii;
-
-				for (uint i = 0; i < g_globals->_party.size(); ++i) {
-					Character &c = g_globals->_party[i];
-					if (c._gems) {
-						c._gems--;
-
-						int townIndex = map[TOWN_NUM] - Common::KEYCODE_1;
-						maps._mapPos.x = map[LEPRECHAUN_MAP_X + townIndex];
-						maps._mapPos.y = map[LEPRECHAUN_MAP_Y + townIndex];
-						maps.changeMap(
-							map[LEPRECHAUN_MAP_ID1 + townIndex] |
-							(map[LEPRECHAUN_MAP_ID2 + townIndex] << 8),
-							1);
-
-						g_events->redraw();
-						return;
-					}
-				}
-
-				maps._mapPos = Common::Point(8, 5);
-				break;
-			default:
-				break;
-			}
-		}
-	);
-
-	msg._largeMessage = true;
-	send(msg);
+	g_events->addView("Leprechaun");
 }
 
 void Map00::special09() {

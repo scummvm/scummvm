@@ -119,8 +119,9 @@ ManPrisoner::ManPrisoner() :
 }
 
 CloakedPrisoner::CloakedPrisoner() :
-	Prisoner("CloakedPrisoner", 1, STRING["maps.prisoners.cloaked"],
+	Prisoner("CloakedPrisoner", 16, STRING["maps.prisoners.cloaked"],
 		CHARFLAG1_40, EVIL, GOOD) {
+	_animated = false;
 }
 
 DemonPrisoner::DemonPrisoner() :

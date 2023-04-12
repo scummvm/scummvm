@@ -946,6 +946,8 @@ maps:
 	tavern_inside: "Step up to the bar (Y/N)?"
 	passage_outside1: "A passage leads outside, take it (Y/N)?"
 	passage_outside2: "Passage outside, exit (Y/N)?"
+	accept: "Accept"
+	decline: "Decline"
 
 	desert:
 		its_hot: "It's hot... "
@@ -993,7 +995,8 @@ maps:
 		levitate: ", levitation saves you!"
 	emap00:
 		training_inside: "Before you are various groups engaged in training exercises. Worg, the guildmaster asks, \"Do you require training (Y/N)?\""
-		leprechaun: "A tenacious leprechaun appears saying, \"Traveling the roads is quite dangerous save for the strong and courageous, Only 1 gem you lose and i'll send you to the town you choose.\"\n\n'ESC' to go back\nWhich town (1-5)?"
+		leprechaun: "A tenacious leprechaun appears saying, \"Traveling the roads is quite dangerous. Only 1 gem and i'll teleport you.\""
+		leprechaun_title: "Leprechaun"
 
 	map01:
 		blacksmith: "\"B. Smith's workshop\""
@@ -1505,13 +1508,13 @@ maps:
 		exit: "Exit castle (Y/N)?"
 		merchant_pass: "Castle guards exclaim\n\"No merchants pass! Begone peasants.\""
 		quests:
-			0: "Find the ancient ruins in the\nquivering forest"
-			1: "Visit blithes peak, and report"
+			0: "Find the ancient ruins in the\nQuivering Forest"
+			1: "Visit Blithes Peak, and report"
 			2: "The people of the desert have much to\ntrade,bring me a sample of their goods"
-			3: "Find the shrine of okzar in the\ncaves below dusk"
-			4: "Find the fabled fountain in dragadune"
-			5: "Solve the riddle of the ruby"
-			6: "Defeat the stronghold\nin the enchanted forest"
+			3: "Find the Shrine of Okzar in the\ncaves below dusk"
+			4: "Find the Fabled Fountain in Dragadune"
+			5: "Solve the Riddle of the Ruby"
+			6: "Defeat the stronghold\nin the Enchanted Forest"
 		inspectron1: "Lord inspectron speaks:\n"
 		inspectron2: "\"Your services are needed!\"Accept (Y/N)?"
 		inspectron3: "\"Return not until thy quest is complete\""
@@ -1520,9 +1523,12 @@ maps:
 		message: "Etched in silver, message a reads:\natis-19-31ud54aeupi1"
 		slide: "A slide!"
 		vault: "Empty vault, alarm!"
+	emap35:
+		inspectron_title: "Lord Inspectron"
+		inspectron2: "\"Your services are needed!\" Accept (Y/N)?"
 
 	map36:
-		exit: "Exit castle, (Y/N)?"
+		exit: "Exit castle (Y/N)?"
 		begone: "Castle guards exclaim,\"Begone peasants!\""
 		slide: "Slide!"
 		pit: "The pit of peril..."
@@ -1537,12 +1543,17 @@ maps:
 			6: "the ring of okirm"
 		hacker1: "Lord hacker speaks:\n"
 		hacker2: "\"Your services are needed!\"Accept (Y/N)?"
-		hacker3: "Bring me "
+		hacker3: "Bring me"
 		hacker4: "\"Sorry, you're already quested.\""
 		hacker5: "\"Return not until thy quest is complete\"\n(leader should present items)"
 		hacker6: "Well done, quest complete! +%u exp"
 		hacker7: "My brew is complete, guards take their\nitems and send them to the pit!"
 		message: "Etched in silver, message C reads:\niaci1;-2;0nu--g,not2"
+	emap36:
+		hacker_title: "Lord Hacker"
+		begone: "Castle guards exclaim, \"Begone peasants!\""
+		hacker2: "\"Your services are needed!\" Accept (Y/N)?"
+		hacker7: "My brew is complete. Guards take their items and send them to the pit!"
 
 	map37:
 		message1: "Etched in gold, message 1 reads:\nCompletion-must-each-kings-of-astral-\nwith-9th-sanctum-and-wondrous"

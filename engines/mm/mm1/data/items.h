@@ -73,7 +73,7 @@ enum ItemCategory {
 };
 
 enum EquipMode {
-	EQUIPMODE_0 = 0, IS_EQUIPPABLE = 1,
+	NO_EQUIP_BONUS = 0, IS_EQUIPPABLE = 1,
 	EQUIP_CURSED = 0xff
 };
 
@@ -84,14 +84,15 @@ enum TransferKind {
 
 struct ItemData {
 	byte _disablements = 0;
-	EquipMode _equipMode = EQUIPMODE_0;
-	byte _val10 = 0;
-	byte _effectId = 0;
+	byte _constBonus_id = 0;  // id equals to character characteristic id, except special "EquipMode" values
+	byte _constBonus_value = 0; // value to be added to character characteristic 
+	byte _tempBonus_id = 0;  // id equals to character characteristic id, except 0xff
+	byte _tempBonus_value = 0; // value to be added to character characteristic 
 	byte _spellId = 0;
-	byte _maxCharges = 0;
+	byte _maxCharges = 0; // for spells and tempBonus
 	uint16 _cost = 0;
-	byte _val16 = 0;
-	byte _val17 = 0;
+	byte _damage = 0;
+	byte _AC_Dmg = 0; //it is AC for armor and additional damage for weapon
 };
 
 struct Item : public ItemData {

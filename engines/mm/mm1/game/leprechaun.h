@@ -19,31 +19,16 @@
  *
  */
 
-#ifndef MM1_GAME_EQUIP_REMOVE_H
-#define MM1_GAME_EQUIP_REMOVE_H
-
-#include "common/rect.h"
+#ifndef MM1_GAME_LEPRECHAUN_H
+#define MM1_GAME_LEPRECHAUN_H
 
 namespace MM {
 namespace MM1 {
 namespace Game {
 
-struct EquipRemove {
-	/**
-	 * Equip an item
-	 */
-	bool equipItem(int index, Common::Point &textPos, Common::String &equipError);
-
-	/**
-	 * Remove an item
-	 */
-	bool removeItem(int index, Common::Point &textPos, Common::String &removeError);
-
-	/**
-	 * apply an equip bonus on a current character
-	 */
-	void applyEquipBonus(int id, int value);
-
+class Leprechaun {
+public:
+	void teleportToTown(char townNum);
 };
 
 } // namespace Game

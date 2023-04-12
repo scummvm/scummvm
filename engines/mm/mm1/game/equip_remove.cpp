@@ -85,7 +85,7 @@ bool EquipRemove::equipItem(int index, Common::Point &textPos, Common::String &e
 	}
 
 	if (equipError.empty()) {
-		if (item._equipMode == IS_EQUIPPABLE) {
+		if (item._constBonus_id == IS_EQUIPPABLE) {
 			equipError = STRING["dialogs.character.not_equipped"];
 			textPos.x = 10;
 		}
@@ -134,12 +134,12 @@ bool EquipRemove::equipItem(int index, Common::Point &textPos, Common::String &e
 		c._backpack.removeAt(index);
 		uint freeIndex = c._equipped.add(itemId, charges);
 
-		if (item._equipMode != EQUIPMODE_0) {
-			if (item._equipMode == IS_EQUIPPABLE) {
+		if (item._constBonus_id != NO_EQUIP_BONUS) {
+			if (item._constBonus_id == IS_EQUIPPABLE) {
 				equipError = STRING["dialogs.character.not_equipped"];
 				textPos.x = 10;
-			} else if (item._equipMode == EQUIP_CURSED) {
-				c._equipped[freeIndex]._charges += item._val10;
+			} else if (item._constBonus_id == EQUIP_CURSED) {
+				c._equipped[freeIndex]._charges += item._constBonus_value;
 			}
 		}
 	}
@@ -147,19 +147,22 @@ bool EquipRemove::equipItem(int index, Common::Point &textPos, Common::String &e
 	if (!equipError.empty())
 		return false;
 
+	//add const equip bonus to character parameters
+	applyEquipBonus(item._constBonus_id, item._constBonus_value);
+
 	switch (getItemCategory(itemId)) {
 	case ITEMCAT_WEAPON:
 	case ITEMCAT_TWO_HANDED:
-		c._physicalAttr._base = item._val16;
-		c._physicalAttr._current = item._val17;
+		c._physicalAttr._base = item._damage;
+		c._physicalAttr._current = item._AC_Dmg;
 		break;
 	case ITEMCAT_MISSILE:
-		c._missileAttr._base = item._val16;
-		c._missileAttr._current = item._val17;
+		c._missileAttr._base = item._damage;
+		c._missileAttr._current = item._AC_Dmg;
 		break;
 	case ITEMCAT_ARMOR:
 	case ITEMCAT_SHIELD:
-		c._ac._base += item._val17;
+		c._ac._base += item._AC_Dmg;
 		break;
 	default:
 		break;
@@ -178,7 +181,7 @@ bool EquipRemove::removeItem(int index, Common::Point &textPos, Common::String &
 
 	g_globals->_items.getItem(itemId);
 	const Item &item = g_globals->_currItem;
-	if (item._equipMode == EQUIP_CURSED) {
+	if (item._constBonus_id == EQUIP_CURSED) {
 		removeError = STRING["dialogs.character.cursed"];
 		textPos.x = 13;
 	} else if (c._backpack.full()) {
@@ -193,11 +196,14 @@ bool EquipRemove::removeItem(int index, Common::Point &textPos, Common::String &
 	c._equipped.removeAt(index);
 	c._backpack.add(itemId, charges);
 
-	if (item._val10) {
+	if (item._constBonus_value) {
 		// TODO: _equipMode is used as a character offset. Need to
 		// find an example that calls it so I know what area of
 		// the character updates are being done to
-		error("TODO: item flag in remove item");
+		//error("TODO: item flag in remove item");
+
+		//substract const equip bonus from character parameters
+		applyEquipBonus(item._constBonus_id, -item._constBonus_value);
 	}
 
 	switch (getItemCategory(itemId)) {
@@ -210,13 +216,41 @@ bool EquipRemove::removeItem(int index, Common::Point &textPos, Common::String &
 		break;
 	case ITEMCAT_ARMOR:
 	case ITEMCAT_SHIELD:
-		c._ac._base = MAX((int)c._ac._base - (int)item._val17, 0);
+		c._ac._base = MAX((int)c._ac._base - (int)item._AC_Dmg, 0);
 		break;
 	default:
 		break;
 	}
 
 	return true;
+}
+
+void EquipRemove::applyEquipBonus(int id, int value){
+	if ((id<2)||(id>=0xff)) return;
+	Character &c = *g_globals->_currCharacter;
+
+	// TODO: check strange cases (decimal id numbers): 16, 19
+	switch (id) {
+		//case 16: c.sex = NONE; break;	//UNOBTAINIUM
+		// case 19: c._luck._race = NONE; break;  //JADE AMULET
+		case 21: c._intelligence._base += value; break;
+		case 23: c._might._base += value; break;
+		case 25: c._personality._base += value; break;
+		case 29: c._speed._base += value; break;
+		case 31: c._accuracy._base += value; break;
+		case 33: c._luck._base += value; break;
+		case 37: c._age._current += value; break;
+		case 60: c._ac._base += value; break;
+		case 88: c._resistances._s._magic._base += value; break; 
+		case 90: c._resistances._s._fire._base += value; break;
+		case 92: c._resistances._s._cold._base += value; break;
+		case 94: c._resistances._s._electricity._base += value; break;
+		case 96: c._resistances._s._acid._base += value; break;
+		case 98: c._resistances._s._fear._base += value; break;
+		case 100: c._resistances._s._poison._base += value; break;
+		case 102: c._resistances._s._psychic._base += value; break; //resistance to sleep
+		case 108: c._trapCtr += value; break;
+	}
 }
 
 
