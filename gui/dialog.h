@@ -66,6 +66,7 @@ protected:
 
 private:
 	int		_result;
+	bool    _handlingMouseWheel;
 
 public:
 	Dialog(int x, int y, int w, int h);

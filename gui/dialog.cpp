@@ -40,7 +40,7 @@ namespace GUI {
 Dialog::Dialog(int x, int y, int w, int h)
 	: GuiObject(x, y, w, h),
 	  _mouseWidget(nullptr), _focusedWidget(nullptr), _dragWidget(nullptr), _tickleWidget(nullptr), _visible(false),
-	_backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
+	_backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault), _handlingMouseWheel(false) {
 	// Some dialogs like LauncherDialog use internally a fixed size, even though
 	// their widgets rely on the layout to be initialized correctly by the theme.
 	// Thus we need to catch screen changes here too. If we do not do that, it
@@ -55,7 +55,7 @@ Dialog::Dialog(int x, int y, int w, int h)
 Dialog::Dialog(const Common::String &name)
 	: GuiObject(name),
 	  _mouseWidget(nullptr), _focusedWidget(nullptr), _dragWidget(nullptr), _tickleWidget(nullptr), _visible(false),
-	_backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
+	_backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault), _handlingMouseWheel(false) {
 
 	// It may happen that we have 3x scaler in launcher (960xY) and then 640x480
 	// game will be forced to 1x. At this stage GUI will not be aware of
@@ -236,17 +236,24 @@ void Dialog::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void Dialog::handleMouseWheel(int x, int y, int direction) {
-	Widget *w;
+	// Guard against recursive call.
+	// This can happen as we call handleMouseWheel() on the widget under the mouse,
+	// and the default implementation of Widget::handleMouseWheel() is to call it
+	// for the widget boss, which can be this dialog.
+	if (_handlingMouseWheel)
+		return;
+	_handlingMouseWheel = true;
 
 	// This may look a bit backwards, but I think it makes more sense for
 	// the mouse wheel to primarily affect the widget the mouse is at than
 	// the widget that happens to be focused.
-
-	w = findWidget(x, y);
+	Widget *w = findWidget(x, y);
 	if (!w)
 		w = _focusedWidget;
 	if (w)
 		w->handleMouseWheel(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), direction);
+
+	_handlingMouseWheel = false;
 }
 
 void Dialog::handleKeyDown(Common::KeyState state) {
