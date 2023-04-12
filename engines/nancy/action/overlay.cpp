@@ -24,65 +24,77 @@
 #include "engines/nancy/resource.h"
 #include "engines/nancy/util.h"
 
-#include "engines/nancy/action/staticbitmapanim.h"
+#include "engines/nancy/action/overlay.h"
 
 #include "engines/nancy/state/scene.h"
+
+#include "common/serializer.h"
 
 namespace Nancy {
 namespace Action {
 
-void PlayStaticBitmapAnimation::init() {
+void Overlay::init() {
 	g_nancy->_resource->loadImage(_imageName, _fullSurface);
 
-	setFrame(0);
+	setFrame(_firstFrame);
 
 	RenderObject::init();
 }
 
-void PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
-	readFilename(stream, _imageName);
+void Overlay::readData(Common::SeekableReadStream &stream) {
+	Common::Serializer ser(&stream, nullptr);
+	ser.setVersion(g_nancy->getGameType());
 
-	stream.skip(0x2);
-	_transparency = stream.readUint16LE();
-	_animationSceneChange = stream.readUint16LE();
-	_playDirection = stream.readUint16LE();
-	_loop = stream.readUint16LE();
-	_firstFrame = stream.readUint16LE();
-	_loopFirstFrame = stream.readUint16LE();
-	_loopLastFrame = stream.readUint16LE();
+	uint16 numSrcRects;
+
+	readFilename(ser, _imageName);
+	ser.skip(2);
+	ser.syncAsUint16LE(_transparency);
+	ser.syncAsUint16LE(_hasSceneChange);
+
+	ser.syncAsUint16LE(_enableHotspot, kGameTypeNancy2);
+	ser.syncAsUint16LE(_z, kGameTypeNancy2);
+	ser.syncAsUint16LE(_overlayType, kGameTypeNancy2);
+	ser.syncAsUint16LE(numSrcRects, kGameTypeNancy2);
+
+	ser.syncAsUint16LE(_playDirection);
+	ser.syncAsUint16LE(_loop);
+	ser.syncAsUint16LE(_firstFrame);
+	ser.syncAsUint16LE(_loopFirstFrame);
+	ser.syncAsUint16LE(_loopLastFrame);
 	_frameTime = Common::Rational(1000, stream.readUint16LE()).toInt();
-	_z = stream.readUint16LE();
+	ser.syncAsUint16LE(_z, kGameTypeNancy1, kGameTypeNancy1);
 
-	if (_isInterruptible) {
-		_interruptCondition.label = stream.readSint16LE();
-		_interruptCondition.flag = stream.readUint16LE();
-	} else {
-		_interruptCondition.label = kEvNoEvent;
-		_interruptCondition.flag = kEvNotOccurred;
+	if (ser.getVersion() > kGameTypeNancy1) {
+		_isInterruptible = true;
 	}
 
+	if (_isInterruptible) {
+			ser.syncAsSint16LE(_interruptCondition.label);
+			ser.syncAsUint16LE(_interruptCondition.flag);
+		} else {
+			_interruptCondition.label = kEvNoEvent;
+			_interruptCondition.flag = kEvNotOccurred;
+		}
+
 	_sceneChange.readData(stream);
-	_triggerFlags.readData(stream);
+	_flagsOnTrigger.readData(stream);
 	_sound.read(stream, SoundDescription::kNormal);
 	uint numViewportFrames = stream.readUint16LE();
 
-	_srcRects.reserve(_loopLastFrame - _firstFrame);
-	for (uint i = _firstFrame; i <= _loopLastFrame; ++i) {
-		_srcRects.push_back(Common::Rect());
-		readRect(stream, _srcRects[i]);
+	if (_overlayType == kPlayOverlayAnimated) {
+		numSrcRects = _loopLastFrame - _firstFrame + 1;
 	}
 
-	_bitmaps.reserve(numViewportFrames);
-	for (uint i = 0; i < numViewportFrames; ++i) {
-		_bitmaps.push_back(BitmapDescription());
-		BitmapDescription &rects = _bitmaps.back();
-		rects.frameID = stream.readUint16LE();
-		readRect(stream, rects.src);
-		readRect(stream, rects.dest);
+	readRectArray(ser, _srcRects, numSrcRects);
+
+	_bitmaps.resize(numViewportFrames);
+	for (auto &bm : _bitmaps) {
+		bm.readData(stream);
 	}
 }
 
-void PlayStaticBitmapAnimation::execute() {
+void Overlay::execute() {
 	uint32 _currentFrameTime = g_nancy->getTotalPlayTime();
 	switch (_state) {
 	case kBegin:
@@ -94,11 +106,11 @@ void PlayStaticBitmapAnimation::execute() {
 		// fall through
 	case kRun: {
 		// Check the timer to see if we need to draw the next animation frame
-		if (_nextFrameTime <= _currentFrameTime) {
+		if (_overlayType == kPlayOverlayAnimated && _nextFrameTime <= _currentFrameTime) {
 			// World's worst if statement
 			if (NancySceneState.getEventFlag(_interruptCondition) ||
-				(	(((_currentFrame == _loopLastFrame) && (_playDirection == kPlayAnimationForward) && (_loop == kPlayAnimationOnce)) ||
-					((_currentFrame == _loopFirstFrame) && (_playDirection == kPlayAnimationReverse) && (_loop == kPlayAnimationOnce))) &&
+				(	(((_currentFrame == _loopLastFrame) && (_playDirection == kPlayOverlayForward) && (_loop == kPlayOverlayOnce)) ||
+					((_currentFrame == _loopFirstFrame) && (_playDirection == kPlayOverlayReverse) && (_loop == kPlayOverlayOnce))) &&
 						!g_nancy->_sound->isSoundPlaying(_sound))	) {
 
 				_state = kActionTrigger;
@@ -117,26 +129,30 @@ void PlayStaticBitmapAnimation::execute() {
 				if (_currentViewportFrame != newFrame) {
 					_currentViewportFrame = newFrame;
 
+					setVisible(false);
+
 					for (uint i = 0; i < _bitmaps.size(); ++i) {
 						if (_currentViewportFrame == _bitmaps[i].frameID) {
-							_screenPosition = _bitmaps[i].dest;
+							moveTo(_bitmaps[i].dest);
+							setVisible(true);
 							break;
 						}
 					}
 				}
 
 				_nextFrameTime = _currentFrameTime + _frameTime;
-				setFrame(_currentFrame);
 
-				if (_playDirection == kPlayAnimationReverse) {
-					--_currentFrame;
-					_currentFrame = _currentFrame < _loopFirstFrame ? _loopLastFrame : _currentFrame;
-					return;
+				uint16 nextFrame = _currentFrame;
+
+				if (_playDirection == kPlayOverlayReverse) {
+					--nextFrame;
+					nextFrame = nextFrame < _loopFirstFrame ? _loopLastFrame : nextFrame;
 				} else {
-					++_currentFrame;
-					_currentFrame = _currentFrame > _loopLastFrame ? _loopFirstFrame : _currentFrame;
-					return;
+					++nextFrame;
+					nextFrame = nextFrame > _loopLastFrame ? _loopFirstFrame : nextFrame;
 				}
+
+				setFrame(nextFrame);
 			}
 		} else {
 			// Check if we've moved the viewport
@@ -145,9 +161,24 @@ void PlayStaticBitmapAnimation::execute() {
 			if (_currentViewportFrame != newFrame) {
 				_currentViewportFrame = newFrame;
 
+				setVisible(false);
+				_hasHotspot = false;
+
 				for (uint i = 0; i < _bitmaps.size(); ++i) {
 					if (_currentViewportFrame == _bitmaps[i].frameID) {
-						_screenPosition = _bitmaps[i].dest;
+						moveTo(_bitmaps[i].dest);
+						setVisible(true);
+
+						// In static mode every "animation" frame corresponds to a viewport frame
+						if (_overlayType == kPlayOverlayStatic) {
+							setFrame(i);
+
+							if (_enableHotspot) {
+								_hotspot = _screenPosition;
+								_hasHotspot = true;
+							}
+						}
+
 						break;
 					}
 				}
@@ -157,8 +188,8 @@ void PlayStaticBitmapAnimation::execute() {
 		break;
 	}
 	case kActionTrigger:
-		_triggerFlags.execute();
-		if (_animationSceneChange == kPlayAnimationSceneChange) {
+		_flagsOnTrigger.execute();
+		if (_hasSceneChange == kPlayOverlaySceneChange) {
 			NancySceneState.changeScene(_sceneChange);
 			finishExecution();
 		}
@@ -166,17 +197,29 @@ void PlayStaticBitmapAnimation::execute() {
 	}
 }
 
-void PlayStaticBitmapAnimation::onPause(bool pause) {
+void Overlay::onPause(bool pause) {
 	if (!pause) {
 		registerGraphics();
 	}
 }
 
-void PlayStaticBitmapAnimation::setFrame(uint frame) {
+Common::String Overlay::getRecordTypeName() const {
+	if (g_nancy->getGameType() <= kGameTypeNancy1) {
+		if (_isInterruptible) {
+			return "PlayIntStaticBitmapAnimation";
+		} else {
+			return "PlayStaticBitmapAnimation";
+		}
+	} else {
+		return "Overlay";
+	}
+}
+
+void Overlay::setFrame(uint frame) {
 	_currentFrame = frame;
 	_drawSurface.create(_fullSurface, _srcRects[frame]);
 
-	setTransparent(_transparency == kPlayAnimationPlain);
+	setTransparent(_transparency == kPlayOverlayPlain);
 
 	_needsRedraw = true;
 }

@@ -21,6 +21,7 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/util.h"
+#include "engines/nancy/nancy.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -43,7 +44,12 @@ void HotspotDescription::readData(Common::SeekableReadStream &stream) {
 }
 
 void BitmapDescription::readData(Common::SeekableReadStream &stream) {
-	frameID = stream.readUint16LE();
+	if (g_nancy->getGameType() <= kGameTypeNancy1) {
+		frameID = stream.readUint16LE();
+	} else {
+		frameID = stream.readUint32LE();
+	}
+	
 	readRect(stream, src);
 	readRect(stream, dest);
 }

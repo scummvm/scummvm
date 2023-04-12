@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef NANCY_ACTION_STATICBITMAPANIM_H
-#define NANCY_ACTION_STATICBITMAPANIM_H
+#ifndef NANCY_ACTION_OVERLAY_H
+#define NANCY_ACTION_OVERLAY_H
 
 #include "engines/nancy/renderobject.h"
 
@@ -29,26 +29,35 @@
 namespace Nancy {
 namespace Action {
 
-// ActionRecord subclass describing a short "flipbook" animation from a single bitmap
-// Also supports sound and getting interrupted by an event flag.
-// This class covers both the PlayStaticBitmapAnimation and PlayIntStaticBitmapAnimation
-// action record types, whose functionality is nearly identical
-class PlayStaticBitmapAnimation : public ActionRecord, public RenderObject {
+// ActionRecord describing an overlay on top of the viewport.
+// That overlay can be either a short animation, or a static bitmap
+// that changes depending on the current viewport frame.
+// This class covers three different ActionRecord types:
+// - PlayStaticBitmapAnimation: nancy1 only, does not support static mode
+// - PlayIntStaticBitmapAnimation: nancy1 only, same as above but supports being interrupted by an event flag
+// - Overlay: nancy2 and above, supports static mode
+class Overlay : public ActionRecord, public RenderObject {
 public:
-	static const byte kPlayAnimationPlain			= 1;
-	static const byte kPlayAnimationTransparent		= 2;
+	static const byte kPlayOverlayPlain				= 1;
+	static const byte kPlayOverlayTransparent		= 2;
 
-	static const byte kPlayAnimationSceneChange		= 1;
-	static const byte kPlayAnimationNoSceneChange 	= 2;
+	static const byte kPlayOverlaySceneChange		= 1;
+	static const byte kPlayOverlayNoSceneChange 	= 2;
 
-	static const byte kPlayAnimationOnce			= 1;
-	static const byte kPlayAnimationLoop			= 2;
+	static const byte kPlayOverlayStatic			= 1;
+	static const byte kPlayOverlayAnimated			= 2;
 
-	static const byte kPlayAnimationForward			= 1;
-	static const byte kPlayAnimationReverse			= 2;
+	static const byte kPlayOverlayOnce				= 1;
+	static const byte kPlayOverlayLoop				= 2;
 
-	PlayStaticBitmapAnimation(bool interruptible) : RenderObject(7), _isInterruptible(interruptible) {}
-	virtual ~PlayStaticBitmapAnimation() { _fullSurface.free(); }
+	static const byte kPlayOverlayForward			= 1;
+	static const byte kPlayOverlayReverse			= 2;
+
+	static const byte kPlayOverlayWithHotspot		= 1;
+	static const byte kPlayOverlayNoHotspot			= 2;
+
+	Overlay(bool interruptible) : RenderObject(7), _isInterruptible(interruptible) {}
+	virtual ~Overlay() { _fullSurface.free(); }
 
 	void init() override;
 
@@ -58,17 +67,19 @@ public:
 
 	Common::String _imageName;
 
-	uint16 _transparency = kPlayAnimationPlain; // 0xC
-	uint16 _animationSceneChange = kPlayAnimationSceneChange; // 0xE
-	uint16 _playDirection = kPlayAnimationForward; // 0x10
-	uint16 _loop = kPlayAnimationOnce; // 0x12
-	uint16 _firstFrame = 0; // 0x14
-	uint16 _loopFirstFrame = 0; // 0x16
-	uint16 _loopLastFrame = 0; // 0x18
+	uint16 _transparency = kPlayOverlayPlain;
+	uint16 _hasSceneChange = kPlayOverlaySceneChange;
+	uint16 _enableHotspot = kPlayOverlayNoHotspot;
+	uint16 _overlayType = kPlayOverlayAnimated;
+	uint16 _playDirection = kPlayOverlayForward;
+	uint16 _loop = kPlayOverlayOnce;
+	uint16 _firstFrame = 0;
+	uint16 _loopFirstFrame = 0;
+	uint16 _loopLastFrame = 0;
 	Time _frameTime;
-	FlagDescription _interruptCondition; // 0x1E
+	FlagDescription _interruptCondition;
 	SceneChangeDescription _sceneChange;
-	MultiEventFlagDescription _triggerFlags; // 0x2A
+	MultiEventFlagDescription _flagsOnTrigger; // 0x2A
 
 	Nancy::SoundDescription _sound; // 0x52
 
@@ -84,7 +95,7 @@ public:
 	bool _isInterruptible;
 
 protected:
-	Common::String getRecordTypeName() const override { return _isInterruptible ? "PlayIntStaticBitmapAnimation" : "PlayStaticBitmapAnimation"; }
+	Common::String getRecordTypeName() const override;
 	bool isViewportRelative() const override { return true; }
 
 	void setFrame(uint frame);
@@ -95,4 +106,4 @@ protected:
 } // End of namespace Action
 } // End of namespace Nancy
 
-#endif // NANCY_ACTION_STATICBITMAPANIM_H
+#endif // NANCY_ACTION_OVERLAY_H

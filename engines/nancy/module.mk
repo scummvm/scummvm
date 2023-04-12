@@ -13,7 +13,7 @@ MODULE_OBJS = \
   action/secondarymovie.o \
   action/secondaryvideo.o \
   action/sliderpuzzle.o \
-  action/staticbitmapanim.o \
+  action/overlay.o \
   action/telephone.o \
   ui/fullscreenimage.o \
   ui/animatedbutton.o \

@@ -23,7 +23,7 @@
 #include "engines/nancy/action/primaryvideo.h"
 #include "engines/nancy/action/secondaryvideo.h"
 #include "engines/nancy/action/secondarymovie.h"
-#include "engines/nancy/action/staticbitmapanim.h"
+#include "engines/nancy/action/overlay.h"
 #include "engines/nancy/action/orderingpuzzle.h"
 #include "engines/nancy/action/rotatinglockpuzzle.h"
 #include "engines/nancy/action/telephone.h"
@@ -63,9 +63,9 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 	case 53:
 		return new PlaySecondaryMovie();
 	case 54:
-		return new PlayStaticBitmapAnimation(false); // PlayStaticBitmapAnimation
+		return new Overlay(false); // PlayStaticBitmapAnimation
 	case 55:
-		return new PlayStaticBitmapAnimation(true); // PlayIntStaticBitmapAnimation
+		return new Overlay(true); // PlayIntStaticBitmapAnimation
 	case 60:
 		return new MapCall();
 	case 61:
