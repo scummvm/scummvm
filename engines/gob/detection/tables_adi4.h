@@ -33,7 +33,7 @@
 		AD_ENTRY1s("intro.stk", "a3c35d19b2d28ea261d96321d208cb5a", 6021466),
 		FR_FRA,
 		kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi4,
@@ -47,7 +47,7 @@
 		AD_ENTRY1s("intro.stk", "44491d85648810bc6fcf84f9b3aa47d5", 5834944),
 		FR_FRA,
 		kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi4,
@@ -61,7 +61,7 @@
 		AD_ENTRY1s("intro.stk", "29374c0e3c10b17dd8463b06a55ad093", 6012072),
 		FR_FRA,
 		kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi4,
@@ -75,7 +75,7 @@
 		AD_ENTRY1s("intro.stk", "ebbbc5e28a4adb695535ed989c1b8d66", 5929644),
 		FR_FRA,
 		kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi4,
@@ -89,7 +89,7 @@
 		AD_ENTRY1s("intro.stk", "6afc2590856433b9f5295b032f2b205d", 5923112),
 		FR_FRA,
 		kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi4,
@@ -103,7 +103,7 @@
 		AD_ENTRY1s("intro.stk", "6296e4be4e0c270c24d1330881900c7f", 5921234),
 		FR_FRA,
 		kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi4,
@@ -117,7 +117,7 @@
 		AD_ENTRY1s("intro.stk", "c5b9f6222c0b463f51dab47317c5b687", 5950490),
 		FR_FRA,
 		kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi4,
@@ -125,16 +125,16 @@
 	0, 0, 0
 },
 
-// -- German: Addy --
+// -- German: ADDY --
 
 {
 	{
 		"adi4",
-		"Addy 4 Grundschule Basis CD",
+		"ADDY 4 Grundschule Basisprogramm",
 		AD_ENTRY1s("intro.stk", "d2f0fb8909e396328dc85c0e29131ba8", 5847588),
 		DE_DEU,
 		kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi4,
@@ -144,11 +144,11 @@
 {
 	{
 		"adi4",
-		"Addy 4 Sekundarstufe Basis CD",
+		"ADDY 4.01 Sekundarstufe Basisprogramm",
 		AD_ENTRY1s("intro.stk", "367340e59c461b4fa36651cd74e32c4e", 5847378),
 		DE_DEU,
 		kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi4,
@@ -158,11 +158,11 @@
 {
 	{
 		"adi4",
-		"Addy 4.21",
+		"ADDY 4.21",
 		AD_ENTRY1s("intro.stk", "534f0b674cd4830df94a9c32c4ea7225", 6878034),
 		DE_DEU,
 		kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi4,
@@ -179,7 +179,7 @@
 		AD_ENTRY1s("intro.stk", "3e3fa9656e37d802027635ace88c4cc5", 5359144),
 		EN_GRB,
 		kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi4,
@@ -196,7 +196,7 @@
 		AD_ENTRY1s("intro.stk", "89ace204dbaac001425c73f394334f6f", 2413102),
 		FR_FRA,
 		kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_DEMO,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi4,
