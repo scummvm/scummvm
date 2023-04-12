@@ -209,6 +209,44 @@ void GridWidget::toggleGroup(int groupID) {
 	reflowLayout();
 }
 
+void GridWidget::loadClosedGroups(const Common::U32String &groupName) {
+	// Recalls what groups were closed from the config
+	if (ConfMan.hasKey("group_" + groupName, ConfMan.kApplicationDomain)) {
+		const Common::String &val = ConfMan.get("group_" + groupName, ConfMan.kApplicationDomain);
+		Common::StringTokenizer hiddenGroups(val);
+
+		for (Common::String tok = hiddenGroups.nextToken(); tok.size(); tok = hiddenGroups.nextToken()) {
+			// See if the hidden group is in our group headers still, if so, hide it
+			for (Common::U32StringArray::size_type i = 0; i < _groupHeaders.size(); ++i) {
+				if (_groupHeaders[i] == tok || (tok == "unnamed" && _groupHeaders[i].size() == 0)) {
+					_groupExpanded[i] = false;
+					break;
+				}
+			}
+		}
+		sortGroups();
+		// TODO: Replace reflowLayout with only the necessary sequence of steps
+		// reflowLayout();
+	}
+}
+
+void GridWidget::saveClosedGroups(const Common::U32String &groupName) {
+	// Save the hidden groups to the config
+	Common::String hiddenGroups;
+	for (Common::U32StringArray::size_type i = 0; i < _groupHeaders.size(); ++i) {
+		if (!_groupExpanded[i]) {
+			if (_groupHeaders[i].size()) {
+				hiddenGroups += _groupHeaders[i];
+			} else {
+				hiddenGroups += "unnamed";
+			}
+			hiddenGroups += ' ';
+		}
+	}
+	ConfMan.set("group_" + groupName, hiddenGroups, ConfMan.kApplicationDomain);
+	ConfMan.flushToDisk();
+}
+
 void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (_activeEntry->isHeader) {
 		_grid->_selectedEntry = nullptr;

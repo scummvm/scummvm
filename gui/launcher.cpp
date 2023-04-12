@@ -957,6 +957,7 @@ LauncherDisplayType getRequestedLauncherType() {
 class LauncherSimple : public LauncherDialog {
 public:
 	LauncherSimple(const Common::String &title, LauncherChooser *chooser);
+	~LauncherSimple() override;
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleKeyDown(Common::KeyState state) override;
@@ -978,6 +979,7 @@ private:
 class LauncherGrid : public LauncherDialog {
 public:
 	LauncherGrid(const Common::String &title, LauncherChooser *chooser);
+	~LauncherGrid() override;
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleKeyDown(Common::KeyState state) override;
@@ -1043,6 +1045,10 @@ LauncherSimple::LauncherSimple(const Common::String &title, LauncherChooser *cho
 	: LauncherDialog(title, chooser),
 	_list(nullptr) {
 	build();
+}
+
+LauncherSimple::~LauncherSimple() {
+	_list->saveClosedGroups(Common::U32String(groupingModes[_groupBy].name));
 }
 
 void LauncherSimple::selectTarget(const Common::String &target) {
@@ -1144,6 +1150,9 @@ void LauncherSimple::updateListing() {
 	// Update the filter settings, those are lost when "setList"
 	// is called.
 	_list->setFilter(_searchWidget->getEditString());
+	
+	// Close groups that the user closed earlier
+	_list->loadClosedGroups(Common::U32String(groupingModes[_groupBy].name));
 }
 
 void LauncherSimple::groupEntries(const Common::Array<LauncherEntry> &metadata) {
@@ -1282,6 +1291,7 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		// Change the grouping criteria
 		GroupingMethod newGroupBy = (GroupingMethod)data;
 		if (_groupBy != newGroupBy) {
+			_list->saveClosedGroups(Common::U32String(groupingModes[_groupBy].name));
 			_groupBy = newGroupBy;
 			const GroupingMode *mode = groupingModes;
 			while (mode->name) {
@@ -1334,6 +1344,10 @@ LauncherGrid::LauncherGrid(const Common::String &title, LauncherChooser *chooser
 	: LauncherDialog(title, chooser),
 	_grid(nullptr), _gridItemSizeSlider(nullptr), _gridItemSizeLabel(nullptr) {
 	build();
+}
+
+LauncherGrid::~LauncherGrid() {
+	_grid->saveClosedGroups(Common::U32String(groupingModes[_groupBy].name));
 }
 
 void LauncherGrid::groupEntries(const Common::Array<LauncherEntry> &metadata) {
@@ -1475,6 +1489,8 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		_grid->setFilter(Common::U32String());
 		break;
 	case kSetGroupMethodCmd: {
+		_grid->saveClosedGroups(Common::U32String(groupingModes[_groupBy].name));
+	
 		// Change the grouping criteria
 		GroupingMethod newGroupBy = (GroupingMethod)data;
 		if (_groupBy != newGroupBy) {
@@ -1545,6 +1561,8 @@ void LauncherGrid::updateListing() {
 		// Select the last entry if the list has been reduced
 		_grid->setSelected(gridList.size() - 1);
 	updateButtons();
+
+	_grid->loadClosedGroups(Common::U32String(groupingModes[_groupBy].name));
 }
 
 void LauncherGrid::updateButtons() {
