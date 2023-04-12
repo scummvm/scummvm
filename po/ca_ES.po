@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-10 06:37+0000\n"
-"PO-Revision-Date: 2023-03-31 04:35+0000\n"
+"PO-Revision-Date: 2023-04-12 15:35+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -97,41 +97,35 @@ msgstr "Tria"
 
 #: gui/cloudconnectionwizard.cpp:175
 msgid "Cloud Connection Wizard"
-msgstr ""
+msgstr "Assistent de connexió al núvol"
 
 #: gui/cloudconnectionwizard.cpp:178
-#, fuzzy
-#| msgid "Quick load"
 msgid "Quick mode"
-msgstr "Càrrega ràpida"
+msgstr "Mode ràpid"
 
 #: gui/cloudconnectionwizard.cpp:179
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Manual mode"
-msgstr "Mode ràpid"
+msgstr "Mode manual"
 
 #: gui/cloudconnectionwizard.cpp:182
 msgid "Will ask you to run Local Webserver"
-msgstr ""
+msgstr "Us demanarà que executeu el servidor web local"
 
 #: gui/cloudconnectionwizard.cpp:184
-#, fuzzy
-#| msgid "Run local webserver"
 msgid "Requires Local Webserver feature"
-msgstr "Executa el servidor web local"
+msgstr "Requereix la característica de servidor web local"
 
 #: gui/cloudconnectionwizard.cpp:200
 msgid "Quick Mode: Step 1"
-msgstr ""
+msgstr "Mode ràpid: pas 1"
 
 #: gui/cloudconnectionwizard.cpp:205
 msgid "In this mode, Local Webserver must be running,"
-msgstr ""
+msgstr "En aquest mode, el servidor web local ha d'estar executant-se,"
 
 #: gui/cloudconnectionwizard.cpp:206
 msgid "so your browser could forward data to ScummVM"
-msgstr ""
+msgstr "perquè el vostre navegador pugui reenviar dades a ScummVM"
 
 #: gui/cloudconnectionwizard.cpp:226 gui/options.cpp:3657
 msgid "Stop server"
@@ -155,11 +149,11 @@ msgstr "Aturat"
 
 #: gui/cloudconnectionwizard.cpp:250
 msgid "Quick Mode: Step 2"
-msgstr ""
+msgstr "Mode ràpid: pas 2"
 
 #: gui/cloudconnectionwizard.cpp:254
 msgid "Now, open this link in your browser:"
-msgstr ""
+msgstr "Ara, obriu aquest enllaç al navegador:"
 
 #: gui/cloudconnectionwizard.cpp:255 gui/cloudconnectionwizard.cpp:302
 #: gui/message.cpp:218 gui/message.cpp:222
@@ -168,59 +162,55 @@ msgstr "Obre URL"
 
 #: gui/cloudconnectionwizard.cpp:257
 msgid "It will automatically pass the data to ScummVM,"
-msgstr ""
+msgstr "Es passarà automàticament les dades a ScummVM,"
 
 #: gui/cloudconnectionwizard.cpp:258
 msgid "and warn you should there be any errors."
-msgstr ""
+msgstr "i t'avisa si hi ha cap error."
 
 #: gui/cloudconnectionwizard.cpp:262
 msgid "Local Webserver address: "
-msgstr ""
+msgstr "Adreça del servidor web local: "
 
 #: gui/cloudconnectionwizard.cpp:278
 msgid "Quick Mode: Success"
-msgstr ""
+msgstr "Mode ràpid: èxit"
 
 #: gui/cloudconnectionwizard.cpp:282
-#, fuzzy
-#| msgid "Connect your cloud storage account"
 msgid "You cloud storage has been connected!"
-msgstr "Connecteu el vostre compte d'emmagatzematge al núvol"
+msgstr "El vostre emmagatzematge al núvol s'ha connectat!"
 
 #: gui/cloudconnectionwizard.cpp:283 gui/cloudconnectionwizard.cpp:370
 msgid "Finish"
-msgstr ""
+msgstr "Finalitza"
 
 #: gui/cloudconnectionwizard.cpp:296
 msgid "Manual Mode: Step 1"
-msgstr ""
+msgstr "Mode manual: pas 1"
 
 #: gui/cloudconnectionwizard.cpp:301
-#, fuzzy
-#| msgid "1. Open this link:"
 msgid "Open this link in your browser:"
-msgstr "1. Obre aquest enllaç:"
+msgstr "Obre aquest enllaç al navegador:"
 
 #: gui/cloudconnectionwizard.cpp:304
 msgid "When it fails to pass JSON code to ScummVM,"
-msgstr ""
+msgstr "Quan falla en passar el codi JSON a ScummVM,"
 
 #: gui/cloudconnectionwizard.cpp:305
 msgid "find it on Troubleshooting section of the page,"
-msgstr ""
+msgstr "troba'l a la secció de resolució de problemes de la pàgina,"
 
 #: gui/cloudconnectionwizard.cpp:306
 msgid "and go to the next step here."
-msgstr ""
+msgstr "i ves al següent pas aquí."
 
 #: gui/cloudconnectionwizard.cpp:321
 msgid "Manual Mode: Step 2"
-msgstr ""
+msgstr "Mode manual: pas 2"
 
 #: gui/cloudconnectionwizard.cpp:326
 msgid "Copy JSON code from browser here and press Next:"
-msgstr ""
+msgstr "Copieu aquí el codi JSON del navegador i premeu Següent:"
 
 #: gui/cloudconnectionwizard.cpp:328
 msgid "Paste"
@@ -232,41 +222,37 @@ msgstr "Enganxa el codi del porta-retalls"
 
 #: gui/cloudconnectionwizard.cpp:344
 msgid "Manual Mode: Something went wrong"
-msgstr ""
+msgstr "Mode manual: alguna cosa ha anat malament"
 
 #: gui/cloudconnectionwizard.cpp:348
-#, fuzzy
-#| msgid "Storage connected."
 msgid "Cloud storage was not connected."
-msgstr "Emmagatzematge connectat."
+msgstr "L'emmagatzematge al núvol no està connectat."
 
 #: gui/cloudconnectionwizard.cpp:349
 msgid "Make sure JSON code was copied correctly and retry."
 msgstr ""
+"Assegureu-vos que el codi JSON s'ha copiat correctament i torneu-ho a "
+"intentar."
 
 #: gui/cloudconnectionwizard.cpp:350
 msgid "It it doesn't work, try from the beginning."
-msgstr ""
+msgstr "Si no funciona, intenta-ho des del principi."
 
 #: gui/cloudconnectionwizard.cpp:351
 msgid "Error message: "
-msgstr ""
+msgstr "Missatge d'error: "
 
 #: gui/cloudconnectionwizard.cpp:365
 msgid "Manual Mode: Success"
-msgstr ""
+msgstr "Mode manual: èxit"
 
 #: gui/cloudconnectionwizard.cpp:369
-#, fuzzy
-#| msgid "Connect your cloud storage account"
 msgid "Your cloud storage has been connected!"
-msgstr "Connecteu el vostre compte d'emmagatzematge al núvol"
+msgstr "El vostre emmagatzematge al núvol s'ha connectat!"
 
 #: gui/cloudconnectionwizard.cpp:393
-#, fuzzy
-#| msgid "Backend"
 msgid "Back"
-msgstr "de fondo"
+msgstr "Enrere"
 
 #: gui/cloudconnectionwizard.cpp:401 gui/saveload-dialog.cpp:829
 msgid "Next"
@@ -310,7 +296,7 @@ msgstr "Espereu fins que l'Emmagatzematge actual acabi i torneu a provar-ho."
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:501
 msgid "JSON code contents is malformed."
-msgstr ""
+msgstr "El contingut del codi JSON està mal format."
 
 #: gui/cloudconnectionwizard.cpp:522 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
@@ -338,14 +324,12 @@ msgstr "D'acord"
 
 #: gui/cloudconnectionwizard.cpp:523
 msgid "Incorrect JSON."
-msgstr ""
+msgstr "JSON incorrecte."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:530
-#, fuzzy
-#| msgid "Interact"
 msgid "Interrupted."
-msgstr "Interaccionar"
+msgstr "Interromput."
 
 #: gui/cloudconnectionwizard.cpp:580 gui/options.cpp:3358
 msgid ""
@@ -1953,28 +1937,19 @@ msgid "Active cloud storage"
 msgstr "Activar salvar al núvol"
 
 #: gui/options.cpp:2687
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgctxt "lowres"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. L'emmagatzematge encara no està habilitat. Verifiqueu que el nom d'usuari "
-"és correcte i habiliteu-lo:"
+"L'emmagatzematge encara no està habilitat. Verifiqueu que el nom d'usuari és "
+"correcte i habiliteu-lo:"
 
 #: gui/options.cpp:2689
-#, fuzzy
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. L'emmagatzematge encara no està habilitat. Verifiqueu que el nom d'usuari "
-"és correcte i habiliteu-lo:"
+"L'emmagatzematge encara no està habilitat. Verifiqueu que el nom d'usuari és "
+"correcte i habiliteu-lo:"
 
 #: gui/options.cpp:2690
 msgid "Enable storage"
@@ -2082,24 +2057,17 @@ msgid "Stop using this storage on this device"
 msgstr "Atura l'ús d'aquest emmagatzematge en aquest dispositiu"
 
 #: gui/options.cpp:2719
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "This storage is not connected yet! To connect,"
 msgctxt "lowres"
 msgid "This storage is not connected yet!"
-msgstr "Aquest emmagatzematge encara no està connectat! Per connectar-lo,"
+msgstr "Aquest emmagatzematge encara no està connectat!"
 
 #: gui/options.cpp:2721
-#, fuzzy
-#| msgid "This storage is not connected yet! To connect,"
 msgid "This storage is not connected yet!"
-msgstr "Aquest emmagatzematge encara no està connectat! Per connectar-lo,"
+msgstr "Aquest emmagatzematge encara no està connectat!"
 
 #: gui/options.cpp:2722
-#, fuzzy
-#| msgid "3. Connect"
 msgid "Connect"
-msgstr "3. Connecta"
+msgstr "Connecta"
 
 #: gui/options.cpp:2722
 msgid "Connect your cloud storage account"
@@ -7326,25 +7294,19 @@ msgstr ""
 
 #. I18N: Creates new online session for multiplayer
 #: engines/scumm/dialog-createsession.cpp:37
-#, fuzzy
-#| msgid "Create a new saved game"
 msgid "Create a new game session"
-msgstr "Crea una nova partida desada"
+msgstr "Crea una sessió de joc nova"
 
 #. I18N: Name of the online game session
 #: engines/scumm/dialog-createsession.cpp:40
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Name:"
-msgstr "Menú del joc"
+msgstr "Nom del joc:"
 
 #. I18N: The user's name for online
 #: engines/scumm/dialog-createsession.cpp:44
 #: engines/scumm/dialog-sessionselector.cpp:60
-#, fuzzy
-#| msgid "Name:"
 msgid "Your Name:"
-msgstr "Nom:"
+msgstr "El vostre nom:"
 
 #. I18N: Button, start hosting online multiplayer game
 #: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3518
