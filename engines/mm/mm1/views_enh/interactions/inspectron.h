@@ -19,34 +19,33 @@
  *
  */
 
-#ifndef MM1_GAME_EQUIP_REMOVE_H
-#define MM1_GAME_EQUIP_REMOVE_H
+#ifndef MM1_VIEWS_ENH_INTERACTIONS_INSPECTRON_H
+#define MM1_VIEWS_ENH_INTERACTIONS_INSPECTRON_H
 
-#include "common/rect.h"
+#include "mm/mm1/views_enh/interactions/interaction.h"
+#include "mm/mm1/data/character.h"
 
 namespace MM {
 namespace MM1 {
-namespace Game {
+namespace ViewsEnh {
+namespace Interactions {
 
-struct EquipRemove {
-	/**
-	 * Equip an item
-	 */
-	bool equipItem(int index, Common::Point &textPos, Common::String &equipError);
+class Inspectron : public Interaction {
+private:
+	enum Mode { CAN_ACCEPT, ACTIVE_QUEST, ACCEPTED_QUEST };
+	Mode _mode = CAN_ACCEPT;
 
-	/**
-	 * Remove an item
-	 */
-	bool removeItem(int index, Common::Point &textPos, Common::String &removeError);
+public:
+	Inspectron();
+	virtual ~Inspectron() {}
 
-	/**
-	 * apply an equip bonus on a current character
-	 */
-	void applyEquipBonus(int id, int value);
-
+	bool msgGame(const GameMessage &msg) override;
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
-} // namespace Game
+} // namespace Interactions
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
 

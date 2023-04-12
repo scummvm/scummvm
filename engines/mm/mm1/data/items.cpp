@@ -51,14 +51,17 @@ bool ItemsArray::load() {
 			item._name.deleteLastChar();
 
 		item._disablements = getNextValue(line);
-		item._equipMode = (EquipMode)getNextValue(line);
-		item._val10 = getNextValue(line);
-		item._effectId = getNextValue(line);
-		item._spellId = getNextValue(line);
+		item._constBonus_id = getNextValue(line);
+		item._constBonus_value = getNextValue(line);
+		item._tempBonus_id = getNextValue(line);
+
+        	if (item._tempBonus_id != 0xff) {item._tempBonus_value =  getNextValue(line);}
+        	else {item._spellId = getNextValue(line);}       
+
 		item._maxCharges = getNextValue(line);
 		item._cost = getNextValue(line);
-		item._val16 = getNextValue(line);
-		item._val17 = getNextValue(line);
+		item._damage = getNextValue(line);
+		item._AC_Dmg = getNextValue(line);
 	}
 
 	return true;

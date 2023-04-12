@@ -19,34 +19,27 @@
  *
  */
 
-#ifndef MM1_GAME_EQUIP_REMOVE_H
-#define MM1_GAME_EQUIP_REMOVE_H
+#ifndef MM1_VIEWS_ENH_INTERACTIONS_LEPRECHAUN_H
+#define MM1_VIEWS_ENH_INTERACTIONS_LEPRECHAUN_H
 
-#include "common/rect.h"
+#include "mm/mm1/views_enh/interactions/interaction.h"
+#include "mm/mm1/game/leprechaun.h"
 
 namespace MM {
 namespace MM1 {
-namespace Game {
+namespace ViewsEnh {
+namespace Interactions {
 
-struct EquipRemove {
-	/**
-	 * Equip an item
-	 */
-	bool equipItem(int index, Common::Point &textPos, Common::String &equipError);
-
-	/**
-	 * Remove an item
-	 */
-	bool removeItem(int index, Common::Point &textPos, Common::String &removeError);
-
-	/**
-	 * apply an equip bonus on a current character
-	 */
-	void applyEquipBonus(int id, int value);
-
+class Leprechaun : public Interaction, MM1::Game::Leprechaun {
+public:
+	Leprechaun();
+	virtual ~Leprechaun() {}
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
-} // namespace Game
+} // namespace Interactions
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
 

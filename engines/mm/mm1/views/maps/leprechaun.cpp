@@ -19,35 +19,49 @@
  *
  */
 
-#ifndef MM1_GAME_EQUIP_REMOVE_H
-#define MM1_GAME_EQUIP_REMOVE_H
-
-#include "common/rect.h"
+#include "mm/mm1/views/maps/leprechaun.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
-namespace Game {
+namespace Views {
+namespace Maps {
 
-struct EquipRemove {
-	/**
-	 * Equip an item
-	 */
-	bool equipItem(int index, Common::Point &textPos, Common::String &equipError);
+Leprechaun::Leprechaun() : TextView("Leprechaun") {
+	_bounds = getLineBounds(17, 24);
+}
 
-	/**
-	 * Remove an item
-	 */
-	bool removeItem(int index, Common::Point &textPos, Common::String &removeError);
+bool Leprechaun::msgFocus(const FocusMessage &msg) {
+	TextView::msgFocus(msg);
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
+	return true;
+}
 
-	/**
-	 * apply an equip bonus on a current character
-	 */
-	void applyEquipBonus(int id, int value);
+void Leprechaun::draw() {
+	clearSurface();
+	writeString(0, 1, STRING["maps.map00.leprechaun"]);
+}
 
-};
+bool Leprechaun::msgKeypress(const KeypressMessage &msg) {
+	if (msg.keycode >= Common::KEYCODE_1 && msg.keycode <= Common::KEYCODE_5) {
+		teleportToTown(msg.ascii);
+		return true;
+	}
 
-} // namespace Game
+	return false;
+}
+
+bool Leprechaun::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		close();
+		g_maps->turnAround();
+		return true;
+	}
+
+	return false;
+}
+
+} // namespace Maps
+} // namespace Views
 } // namespace MM1
 } // namespace MM
-
-#endif
