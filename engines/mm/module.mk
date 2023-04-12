@@ -187,6 +187,7 @@ MODULE_OBJS += \
 	mm1/views_enh/interactions/chess.o \
 	mm1/views_enh/interactions/giant.o \
 	mm1/views_enh/interactions/gypsy.o \
+	mm1/views_enh/interactions/hacker.o \
 	mm1/views_enh/interactions/ice_princess.o \
 	mm1/views_enh/interactions/inspectron.o \
 	mm1/views_enh/interactions/interaction.o \

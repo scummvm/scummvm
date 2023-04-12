@@ -946,6 +946,8 @@ maps:
 	tavern_inside: "Step up to the bar (Y/N)?"
 	passage_outside1: "A passage leads outside, take it (Y/N)?"
 	passage_outside2: "Passage outside, exit (Y/N)?"
+	accept: "Accept"
+	decline: "Decline"
 
 	desert:
 		its_hot: "It's hot... "
@@ -1524,11 +1526,9 @@ maps:
 	emap35:
 		inspectron_title: "Lord Inspectron"
 		inspectron2: "\"Your services are needed!\" Accept (Y/N)?"
-		accept: "Accept"
-		decline: "Decline"
 
 	map36:
-		exit: "Exit castle, (Y/N)?"
+		exit: "Exit castle (Y/N)?"
 		begone: "Castle guards exclaim,\"Begone peasants!\""
 		slide: "Slide!"
 		pit: "The pit of peril..."
@@ -1543,12 +1543,17 @@ maps:
 			6: "the ring of okirm"
 		hacker1: "Lord hacker speaks:\n"
 		hacker2: "\"Your services are needed!\"Accept (Y/N)?"
-		hacker3: "Bring me "
+		hacker3: "Bring me"
 		hacker4: "\"Sorry, you're already quested.\""
 		hacker5: "\"Return not until thy quest is complete\"\n(leader should present items)"
 		hacker6: "Well done, quest complete! +%u exp"
 		hacker7: "My brew is complete, guards take their\nitems and send them to the pit!"
 		message: "Etched in silver, message C reads:\niaci1;-2;0nu--g,not2"
+	emap36:
+		hacker_title: "Lord Hacker"
+		begone: "Castle guards exclaim, \"Begone peasants!\""
+		hacker2: "\"Your services are needed!\" Accept (Y/N)?"
+		hacker7: "My brew is complete. Guards take their items and send them to the pit!"
 
 	map37:
 		message1: "Etched in gold, message 1 reads:\nCompletion-must-each-kings-of-astral-\nwith-9th-sanctum-and-wondrous"

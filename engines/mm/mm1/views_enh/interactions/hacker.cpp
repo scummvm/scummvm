@@ -19,8 +19,8 @@
  *
  */
 
-#include "mm/mm1/views_enh/interactions/inspectron.h"
-#include "mm/mm1/maps/map35.h"
+#include "mm/mm1/views_enh/interactions/hacker.h"
+#include "mm/mm1/maps/map36.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
 
@@ -29,16 +29,16 @@ namespace MM1 {
 namespace ViewsEnh {
 namespace Interactions {
 
-Inspectron::Inspectron() : Interaction("Inspectron", 18) {
-	_title = STRING["maps.emap35.inspectron_title"];
+Hacker::Hacker() : Interaction("Hacker", 35) {
+	_title = STRING["maps.emap36.hacker_title"];
 }
 
-bool Inspectron::msgFocus(const FocusMessage &msg) {
+bool Hacker::msgFocus(const FocusMessage &msg) {
 	Interaction::msgFocus(msg);
 	return true;
 }
 
-bool Inspectron::msgGame(const GameMessage &msg) {
+bool Hacker::msgGame(const GameMessage &msg) {
 	if (msg._name != "DISPLAY")
 		return false;
 
@@ -51,20 +51,20 @@ bool Inspectron::msgGame(const GameMessage &msg) {
 	clearButtons();
 
 	if (_mode == CAN_ACCEPT) {
-		addText(STRING["maps.map35.inspectron2"]);
+		addText(STRING["maps.map36.hacker2"]);
 		addButton(STRING["maps.accept"], 'Y');
 		addButton(STRING["maps.decline"], 'N');
 
 	} else {
 		// There's an active quest, so check for completion
-		MM1::Maps::Map35 &map = *static_cast<MM1::Maps::Map35 *>(g_maps->_currentMap);
+		MM1::Maps::Map36 &map = *static_cast<MM1::Maps::Map36 *>(g_maps->_currentMap);
 		int questNum = g_globals->_party[0]._quest;
 		Common::String line;
 
 		if (questNum >= 8 && questNum <= 14)
 			line = map.checkQuestComplete();
 		else
-			line = STRING["maps.map35.inspectron4"];
+			line = STRING["maps.map36.hacker4"];
 
 		g_maps->_mapPos.y++;
 		map.redrawGame();
@@ -75,8 +75,8 @@ bool Inspectron::msgGame(const GameMessage &msg) {
 	return true;
 }
 
-bool Inspectron::msgKeypress(const KeypressMessage &msg) {
-	MM1::Maps::Map35 &map = *static_cast<MM1::Maps::Map35 *>(g_maps->_currentMap);
+bool Hacker::msgKeypress(const KeypressMessage &msg) {
+	MM1::Maps::Map36 &map = *static_cast<MM1::Maps::Map36 *>(g_maps->_currentMap);
 
 	if (_mode == CAN_ACCEPT) {
 		if (msg.keycode == Common::KEYCODE_y) {
@@ -84,10 +84,13 @@ bool Inspectron::msgKeypress(const KeypressMessage &msg) {
 			_mode = ACCEPTED_QUEST;
 
 			clearButtons();
-			addText(STRING[Common::String::format(
-				"maps.map35.quests.%d",
-				g_globals->_party[0]._quest - 8
-			)]);
+			Common::String line = Common::String::format("%s %s",
+				STRING["maps.map36.hacker3"].c_str(),
+				STRING[Common::String::format(
+					"maps.map36.ingredients.%d",
+					g_globals->_party[0]._quest - 15)].c_str()
+			);
+			addText(line);
 
 			redraw();
 			return true;

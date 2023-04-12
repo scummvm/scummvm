@@ -79,9 +79,9 @@ void Map36::special01() {
 void Map36::special02() {
 	visitedExit();
 
-	send(SoundMessage(STRING["maps.map36.slide"]));
 	g_maps->_mapPos = Common::Point(12, 2);
 	g_maps->changeMap(0xa00, 2);
+	send(SoundMessage(STRING["maps.map36.slide"]));
 }
 
 void Map36::special03() {
@@ -90,9 +90,9 @@ void Map36::special03() {
 
 void Map36::special04() {
 	if (!g_globals->_party.hasItem(MERCHANTS_PASS_ID)) {
-		send(SoundMessage(STRING["maps.map36.begone"]));
 		g_maps->_mapPos.x--;
 		updateGame();
+		send(SoundMessage(STRING["maps.map36.begone"]));
 	}
 }
 
@@ -105,9 +105,9 @@ void Map36::special05() {
 void Map36::special06() {
 	visitedExit();
 
-	send(SoundMessage(STRING["maps.map36.pit"]));
 	g_maps->_mapPos = Common::Point(7, 4);
 	g_maps->changeMap(0x705, 3);
+	send(SoundMessage(STRING["maps.map36.pit"]));
 }
 
 void Map36::special07() {
