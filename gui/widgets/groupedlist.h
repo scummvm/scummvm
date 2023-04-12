@@ -52,6 +52,8 @@ public:
 
 	void setGroupHeaderFormat(const Common::U32String &prefix, const Common::U32String &suffix);
 	void groupByAttribute();
+	void loadClosedGroups(const Common::U32String &groupName);
+	void saveClosedGroups(const Common::U32String &groupName);
 
 	void setSelected(int item);
 	int getSelected() const { return (_selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }

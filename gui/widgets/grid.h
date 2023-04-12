@@ -189,6 +189,8 @@ public:
 	void sortGroups();
 	bool groupExpanded(int groupID) { return _groupExpanded[groupID]; }
 	void toggleGroup(int groupID);
+	void loadClosedGroups(const Common::U32String &groupName);
+	void saveClosedGroups(const Common::U32String &groupName);
 
 	void reloadThumbnails();
 	void loadFlagIcons();
@@ -210,7 +212,6 @@ public:
 
 	void handleMouseWheel(int x, int y, int direction) override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
-
 	void reflowLayout() override;
 
 	bool wantsFocus() override { return true; }
