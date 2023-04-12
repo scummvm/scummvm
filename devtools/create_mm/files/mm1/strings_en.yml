@@ -1506,13 +1506,13 @@ maps:
 		exit: "Exit castle (Y/N)?"
 		merchant_pass: "Castle guards exclaim\n\"No merchants pass! Begone peasants.\""
 		quests:
-			0: "Find the ancient ruins in the\nquivering forest"
-			1: "Visit blithes peak, and report"
+			0: "Find the ancient ruins in the\nQuivering Forest"
+			1: "Visit Blithes Peak, and report"
 			2: "The people of the desert have much to\ntrade,bring me a sample of their goods"
-			3: "Find the shrine of okzar in the\ncaves below dusk"
-			4: "Find the fabled fountain in dragadune"
-			5: "Solve the riddle of the ruby"
-			6: "Defeat the stronghold\nin the enchanted forest"
+			3: "Find the Shrine of Okzar in the\ncaves below dusk"
+			4: "Find the Fabled Fountain in Dragadune"
+			5: "Solve the Riddle of the Ruby"
+			6: "Defeat the stronghold\nin the Enchanted Forest"
 		inspectron1: "Lord inspectron speaks:\n"
 		inspectron2: "\"Your services are needed!\"Accept (Y/N)?"
 		inspectron3: "\"Return not until thy quest is complete\""
@@ -1521,6 +1521,11 @@ maps:
 		message: "Etched in silver, message a reads:\natis-19-31ud54aeupi1"
 		slide: "A slide!"
 		vault: "Empty vault, alarm!"
+	emap35:
+		inspectron_title: "Lord Inspectron"
+		inspectron2: "\"Your services are needed!\" Accept (Y/N)?"
+		accept: "Accept"
+		decline: "Decline"
 
 	map36:
 		exit: "Exit castle, (Y/N)?"
