@@ -206,6 +206,10 @@ void LightningOn::readData(Common::SeekableReadStream &stream) {
 	stream.skip(4);
 }
 
+void SpecialEffect::readData(Common::SeekableReadStream &stream) {
+	stream.skip(5);
+}
+
 void LightningOn::execute() {
 	NancySceneState.beginLightning(_distance, _pulseTime, _rgbPercent);
 	_isDone = true;

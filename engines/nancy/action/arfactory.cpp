@@ -33,6 +33,8 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "engines/nancy/nancy.h"
+
 namespace Nancy {
 namespace Action {
 
@@ -53,7 +55,12 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 	case 21:
 		return new PaletteNextScene();
 	case 40:
-		return new LightningOn();
+		if (g_nancy->getGameType() < kGameTypeNancy2) {
+			// Only used in TVD
+			return new LightningOn();
+		} else {
+			return new SpecialEffect();
+		}		
 	case 50:
 		return new PlayPrimaryVideoChan0();
 	case 51:

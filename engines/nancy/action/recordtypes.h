@@ -130,6 +130,14 @@ protected:
 	Common::String getRecordTypeName() const override { return "LightningOn"; }
 };
 
+class SpecialEffect : public Unimplemented {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "SpecialEffect"; }
+};
+
 class MapCall : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
