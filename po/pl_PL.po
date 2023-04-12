@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-10 06:37+0000\n"
+"POT-Creation-Date: 2023-04-12 14:08+0000\n"
 "PO-Revision-Date: 2023-03-20 15:33+0000\n"
 "Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -1175,36 +1175,36 @@ msgstr "Widok listy"
 msgid "Grid view"
 msgstr "Widok siatki"
 
-#: gui/launcher.cpp:1067
+#: gui/launcher.cpp:1073
 msgid "~S~tart"
 msgstr "~S~tart"
 
-#: gui/launcher.cpp:1067
+#: gui/launcher.cpp:1073
 msgid "Start selected game"
 msgstr "Rozpocznij wybraną grę"
 
-#: gui/launcher.cpp:1070
+#: gui/launcher.cpp:1076
 msgid "~L~oad..."
 msgstr "~W~czytaj..."
 
-#: gui/launcher.cpp:1070
+#: gui/launcher.cpp:1076
 msgid "Load saved game for selected game"
 msgstr "Wczytaj zapis wybranej gry"
 
-#: gui/launcher.cpp:1072
+#: gui/launcher.cpp:1078
 msgid "Record..."
 msgstr "Nagraj..."
 
-#: gui/launcher.cpp:1078
+#: gui/launcher.cpp:1084
 #, fuzzy
 msgid "~G~ame Options..."
 msgstr "~O~pcje..."
 
-#: gui/launcher.cpp:1078
+#: gui/launcher.cpp:1084
 msgid "Change game options"
 msgstr "Zmień opcje gry"
 
-#: gui/launcher.cpp:1078
+#: gui/launcher.cpp:1084
 #, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
@@ -1212,42 +1212,42 @@ msgstr "~O~pcje..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1167 gui/launcher.cpp:1356
+#: gui/launcher.cpp:1176 gui/launcher.cpp:1370
 #, fuzzy
 msgid "Unknown Engine"
 msgstr "Nieznany wariant gry"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1184 gui/launcher.cpp:1373
+#: gui/launcher.cpp:1193 gui/launcher.cpp:1387
 #, fuzzy
 msgid "Unknown Publisher"
 msgstr "Nieznany autor"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1201 gui/launcher.cpp:1390
+#: gui/launcher.cpp:1210 gui/launcher.cpp:1404
 msgid "No Series"
 msgstr ""
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1215 gui/launcher.cpp:1404
+#: gui/launcher.cpp:1224 gui/launcher.cpp:1418
 msgid "Language not detected"
 msgstr "Nie wykryto języka"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1229 gui/launcher.cpp:1418
+#: gui/launcher.cpp:1238 gui/launcher.cpp:1432
 msgid "Platform not detected"
 msgstr "Platforma nie wykryta"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1429 gui/widgets/groupedlist.cpp:80
+#: gui/launcher.cpp:1443 gui/widgets/groupedlist.cpp:81
 #, fuzzy
 msgid "All"
 msgstr "Alt"
 
-#: gui/launcher.cpp:1576
+#: gui/launcher.cpp:1594
 msgid "Icons per row:"
 msgstr ""
 
@@ -2340,7 +2340,7 @@ msgstr "Nagrywaj"
 msgid "Playback"
 msgstr "Odtwarzaj"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:248
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:286
 msgid "Edit"
 msgstr "Edytuj"
 
@@ -2532,11 +2532,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "Wyczyść"
 
-#: gui/widgets/grid.cpp:242
+#: gui/widgets/grid.cpp:280
 msgid "Play"
 msgstr "Uruchom"
 
-#: gui/widgets/grid.cpp:245
+#: gui/widgets/grid.cpp:283
 #, fuzzy
 msgid "Saves"
 msgstr "Zapisz"

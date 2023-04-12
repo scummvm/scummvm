@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-10 06:37+0000\n"
+"POT-Creation-Date: 2023-04-12 14:08+0000\n"
 "PO-Revision-Date: 2023-03-27 11:20+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -1182,74 +1182,74 @@ msgstr "Προβολή ως λίστα"
 msgid "Grid view"
 msgstr "Προβολή ως πλέγμα"
 
-#: gui/launcher.cpp:1067
+#: gui/launcher.cpp:1073
 msgid "~S~tart"
 msgstr "~Ε~κκίνηση"
 
-#: gui/launcher.cpp:1067
+#: gui/launcher.cpp:1073
 msgid "Start selected game"
 msgstr "Εκκίνηση επιλεγμένου παιχνιδιού"
 
-#: gui/launcher.cpp:1070
+#: gui/launcher.cpp:1076
 msgid "~L~oad..."
 msgstr "~Φ~όρτωση..."
 
-#: gui/launcher.cpp:1070
+#: gui/launcher.cpp:1076
 msgid "Load saved game for selected game"
 msgstr "Φόρτωση αποθηκευμένου παιχνιδιού για το επιλεγμένο παιχνίδι"
 
-#: gui/launcher.cpp:1072
+#: gui/launcher.cpp:1078
 msgid "Record..."
 msgstr "Εγγραφή..."
 
-#: gui/launcher.cpp:1078
+#: gui/launcher.cpp:1084
 msgid "~G~ame Options..."
 msgstr "~Ρ~υθμίσεις Παιχνιδιού..."
 
-#: gui/launcher.cpp:1078
+#: gui/launcher.cpp:1084
 msgid "Change game options"
 msgstr "Αλλαγή επιλογών παιχνιδιού"
 
-#: gui/launcher.cpp:1078
+#: gui/launcher.cpp:1084
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "~Ρ~υθμ Παιχν..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1167 gui/launcher.cpp:1356
+#: gui/launcher.cpp:1176 gui/launcher.cpp:1370
 msgid "Unknown Engine"
 msgstr "Άγνωστη Μηχανή"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1184 gui/launcher.cpp:1373
+#: gui/launcher.cpp:1193 gui/launcher.cpp:1387
 msgid "Unknown Publisher"
 msgstr "Άγνωστος Εκδότης"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1201 gui/launcher.cpp:1390
+#: gui/launcher.cpp:1210 gui/launcher.cpp:1404
 msgid "No Series"
 msgstr "Δεν ανήκουν σε σειρά"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1215 gui/launcher.cpp:1404
+#: gui/launcher.cpp:1224 gui/launcher.cpp:1418
 msgid "Language not detected"
 msgstr "Δεν ανιχνεύτηκε η γλώσσα"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1229 gui/launcher.cpp:1418
+#: gui/launcher.cpp:1238 gui/launcher.cpp:1432
 msgid "Platform not detected"
 msgstr "Δεν ανιχνεύτηκε η πλατφόρμα"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1429 gui/widgets/groupedlist.cpp:80
+#: gui/launcher.cpp:1443 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "Όλα"
 
-#: gui/launcher.cpp:1576
+#: gui/launcher.cpp:1594
 msgid "Icons per row:"
 msgstr "Εικονίδια ανά σειρά:"
 
@@ -2364,7 +2364,7 @@ msgstr "Εγγραφή"
 msgid "Playback"
 msgstr "Αναπαραγωγή"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:248
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:286
 msgid "Edit"
 msgstr "Επεξεργασία"
 
@@ -2559,11 +2559,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "Σβήσιμο τιμής"
 
-#: gui/widgets/grid.cpp:242
+#: gui/widgets/grid.cpp:280
 msgid "Play"
 msgstr "Παίξε"
 
-#: gui/widgets/grid.cpp:245
+#: gui/widgets/grid.cpp:283
 msgid "Saves"
 msgstr "Αποθηκευμένα παιχνίδια"
 

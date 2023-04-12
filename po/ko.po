@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-10 06:37+0000\n"
+"POT-Creation-Date: 2023-04-12 14:08+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -1163,35 +1163,35 @@ msgstr "리스트로 표시"
 msgid "Grid view"
 msgstr "그리드로 표시"
 
-#: gui/launcher.cpp:1067
+#: gui/launcher.cpp:1073
 msgid "~S~tart"
 msgstr "시작(~S~)"
 
-#: gui/launcher.cpp:1067
+#: gui/launcher.cpp:1073
 msgid "Start selected game"
 msgstr "선택한 게임을 시작합니다"
 
-#: gui/launcher.cpp:1070
+#: gui/launcher.cpp:1076
 msgid "~L~oad..."
 msgstr "불러오기(~L~)..."
 
-#: gui/launcher.cpp:1070
+#: gui/launcher.cpp:1076
 msgid "Load saved game for selected game"
 msgstr "선택된 게임의 저장 데이터를 불러옵니다"
 
-#: gui/launcher.cpp:1072
+#: gui/launcher.cpp:1078
 msgid "Record..."
 msgstr "녹화..."
 
-#: gui/launcher.cpp:1078
+#: gui/launcher.cpp:1084
 msgid "~G~ame Options..."
 msgstr "게임 옵션(~G~)..."
 
-#: gui/launcher.cpp:1078
+#: gui/launcher.cpp:1084
 msgid "Change game options"
 msgstr "게임 옵션을 변경합니다"
 
-#: gui/launcher.cpp:1078
+#: gui/launcher.cpp:1084
 #, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
@@ -1199,39 +1199,39 @@ msgstr "게임 옵션(~G~)..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1167 gui/launcher.cpp:1356
+#: gui/launcher.cpp:1176 gui/launcher.cpp:1370
 msgid "Unknown Engine"
 msgstr "알려지지 않은 엔진"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1184 gui/launcher.cpp:1373
+#: gui/launcher.cpp:1193 gui/launcher.cpp:1387
 msgid "Unknown Publisher"
 msgstr "알 수 없는 배급사"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1201 gui/launcher.cpp:1390
+#: gui/launcher.cpp:1210 gui/launcher.cpp:1404
 msgid "No Series"
 msgstr "시리즈 없음"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1215 gui/launcher.cpp:1404
+#: gui/launcher.cpp:1224 gui/launcher.cpp:1418
 msgid "Language not detected"
 msgstr "언어가 감지되지 않음"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1229 gui/launcher.cpp:1418
+#: gui/launcher.cpp:1238 gui/launcher.cpp:1432
 msgid "Platform not detected"
 msgstr "플랫폼이 감지되지 않음"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1429 gui/widgets/groupedlist.cpp:80
+#: gui/launcher.cpp:1443 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "모두"
 
-#: gui/launcher.cpp:1576
+#: gui/launcher.cpp:1594
 msgid "Icons per row:"
 msgstr ""
 
@@ -2307,7 +2307,7 @@ msgstr "녹화"
 msgid "Playback"
 msgstr "재생"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:248
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:286
 msgid "Edit"
 msgstr "수정"
 
@@ -2498,11 +2498,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "값 제거"
 
-#: gui/widgets/grid.cpp:242
+#: gui/widgets/grid.cpp:280
 msgid "Play"
 msgstr "플레이"
 
-#: gui/widgets/grid.cpp:245
+#: gui/widgets/grid.cpp:283
 msgid "Saves"
 msgstr "저장"
 
