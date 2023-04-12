@@ -1712,9 +1712,14 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	_type = kCastLingoScript;
 	_scriptType = kNoneScript;
 
+	if (debugChannelSet(5, kDebugLoading)) {
+		debugC(5, kDebugLoading, "ScriptCastMember::ScriptCastMember(): Contents");
+		stream.hexdump(stream.size());
+	}
+
 	if (version < kFileVer400) {
 		error("Unhandled Script cast");
-	} else if (version >= kFileVer400 && version < kFileVer500) {
+	} else if (version >= kFileVer400 && version < kFileVer600) {
 		byte unk1 = stream.readByte();
 		byte type = stream.readByte();
 
@@ -1733,13 +1738,6 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 
 		stream.readByte(); // There should be no more data
 		assert(stream.eos());
-	} else if (version >= kFileVer500) {
-		stream.readByte();
-		stream.readByte();
-
-		debugC(4, kDebugLoading, "CASt: Script");
-
-		// WIP need to complete this!
 	}
 }
 
