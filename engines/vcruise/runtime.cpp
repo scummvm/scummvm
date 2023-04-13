@@ -20,6 +20,7 @@
  */
 
 #include "common/formats/winexe.h"
+#include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/math.h"
@@ -210,6 +211,9 @@ void Runtime::GyroState::reset() {
 	dragBaseState = 0;
 	dragCurrentState = 0;
 	isWaitingForAnimation = false;
+}
+
+Runtime::SubtitleDef::SubtitleDef() : subIndex(0), color{0, 0, 0}, unknownValue1(0), unknownValue2(0) {
 }
 
 SfxPlaylistEntry::SfxPlaylistEntry() : frame(0), balance(0), volume(0), isUpdate(false) {
@@ -732,7 +736,8 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  /*_loadedArea(0), */_lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0),
 	  _delayCompletionTime(0),
 	  _panoramaState(kPanoramaStateInactive),
-	  _listenerX(0), _listenerY(0), _listenerAngle(0), _soundCacheIndex(0) {
+	  _listenerX(0), _listenerY(0), _listenerAngle(0), _soundCacheIndex(0),
+	  _subtitleFont(nullptr), _subtitleExpireTime(0), _displayingSubtitles(false), _languageIndex(0) {
 
 	for (uint i = 0; i < kNumDirections; i++) {
 		_haveIdleAnimations[i] = false;
@@ -744,6 +749,10 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 		_panCursors[i] = 0;
 
 	_rng.reset(new Common::RandomSource("vcruise"));
+
+	_subtitleFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	if (!_subtitleFont)
+		warning("Couldn't load subtitle font, subtitles will be disabled");
 }
 
 Runtime::~Runtime() {
@@ -909,11 +918,80 @@ bool Runtime::bootGame(bool newGame) {
 			error("Couldn't figure out what screen to start on");
 	}
 
+	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
+
+	bool foundLang = false;
+
 	if (_gameID == GID_REAH) {
 		_animSpeedRotation = Fraction(21, 1);	// Probably accurate
 		_animSpeedStaticAnim = Fraction(21, 1); // Probably accurate
 		_animSpeedDefault = Fraction(16, 1);    // Possibly not accurate
+
+		const Common::Language langIndexes[] = {
+			Common::PL_POL,
+			Common::EN_ANY,
+			Common::DE_DEU,
+			Common::FR_FRA,
+			Common::NL_NLD,
+			Common::ES_ESP,
+			Common::IT_ITA,
+		};
+
+		_languageIndex = 1;
+		uint langCount = sizeof(langIndexes) / sizeof(langIndexes[0]);
+
+		for (uint li = 0; li < langCount; li++) {
+			if (langIndexes[li] == lang) {
+				_languageIndex = li;
+				foundLang = true;
+				break;
+			}
+		}
+	} else if (_gameID == GID_SCHIZM) {
+		const Common::Language langIndexes[] = {
+			Common::PL_POL,
+			Common::EN_GRB,
+			Common::DE_DEU,
+			Common::FR_FRA,
+			Common::NL_NLD,
+			Common::ES_ESP,
+			Common::IT_ITA,
+			Common::RU_RUS,
+			Common::EL_GRC,
+			Common::EN_USA,
+		};
+
+		_languageIndex = 1;
+		uint langCount = sizeof(langIndexes) / sizeof(langIndexes[0]);
+
+		for (uint li = 0; li < langCount; li++) {
+			if (langIndexes[li] == lang) {
+				_languageIndex = li;
+				foundLang = true;
+				break;
+			}
+		}
 	}
+
+	if (!foundLang) {
+		// Maybe should pick this differently
+		if (_gameID == GID_REAH)
+			lang = Common::EN_ANY;
+		else if (_gameID == GID_SCHIZM)
+			lang = Common::EN_GRB;
+	}
+
+	Common::CodePage codePage = Common::CodePage::kWindows1252;
+
+	if (lang == Common::PL_POL)
+		codePage = Common::CodePage::kWindows1250;
+	else if (lang == Common::RU_RUS)
+		codePage = Common::CodePage::kWindows1251;
+	else if (lang == Common::EL_GRC)
+		codePage = Common::CodePage::kWindows1253;
+
+	loadSubtitles(codePage);
+	debug(1, "Subtitles loaded OK");
 
 	return true;
 }
@@ -3086,6 +3164,71 @@ Common::SharedPtr<Graphics::Surface> Runtime::loadGraphic(const Common::String &
 	surf->copyFrom(*bmpDecoder.getSurface());
 
 	return surf;
+}
+
+void Runtime::loadSubtitles(Common::CodePage codePage) {
+	Common::String filePath = Common::String::format("Log/Speech%02u.txt", _languageIndex);
+
+	Common::INIFile ini;
+
+	ini.allowNonEnglishCharacters();
+
+	if (!ini.loadFromFile(filePath)) {
+		warning("Couldn't load subtitle data");
+		return;
+	}
+
+	for (const Common::INIFile::Section &section : ini.getSections()) {
+		if (section.name == "Anims")
+			continue;	// Ignore
+
+		FrameToSubtitleMap_t *frameMap = nullptr;
+		bool isWave = false;
+
+		if (section.name.substr(0, 5) == "Disc-")
+			isWave = true;
+		else if (section.name.size() == 8 && section.name.substr(0, 4) == "Anim") {
+			uint animID = 0;
+			if (sscanf(section.name.substr(4, 4).c_str(), "%u", &animID) == 1)
+				frameMap = &_animSubtitles[animID];
+		}
+
+		if (frameMap != nullptr || isWave) {
+			for (const Common::INIFile::KeyValue &kv : section.getKeys()) {
+				if (kv.value.size() < 23)
+					continue;
+
+				if (kv.value[21] != '\"' || kv.value[kv.value.size() - 1] != '\"')
+					continue;
+
+				Common::String locLineParamSlice = kv.value.substr(0, 21);
+
+				int colorCode = 0;
+				uint param1 = 0;
+				uint param2 = 0;
+				if (sscanf(locLineParamSlice.c_str(), "0x%x, 0x%x, %u, ", &colorCode, &param1, &param2) == 3) {
+					SubtitleDef *subDef = nullptr;
+
+					if (isWave)
+						subDef = &_waveSubtitles[kv.key];
+					else if (frameMap) {
+						uint frameNum = 0;
+						if (kv.key.size() >= 4 && kv.key.substr(kv.key.size() - 3) == "_01" && sscanf(kv.key.substr(0, kv.key.size() - 3).c_str(), "%u", &frameNum) == 1)
+							subDef = &(*frameMap)[frameNum];
+					}
+
+					if (subDef) {
+						subDef->color[0] = ((colorCode >> 16) & 0xff);
+						subDef->color[1] = ((colorCode >> 8) & 0xff);
+						subDef->color[2] = (colorCode & 0xff);
+						subDef->unknownValue1 = param1;
+						subDef->unknownValue2 = param2;
+						subDef->str = kv.value.substr(22, kv.value.size() - 23).decode(codePage).encode(Common::kUtf8);
+					}
+				}
+			}
+		}
+	}
 }
 
 void Runtime::onLButtonDown(int16 x, int16 y) {

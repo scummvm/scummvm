@@ -50,6 +50,7 @@ namespace Graphics {
 struct PixelFormat;
 struct WinCursorGroup;
 class ManagedSurface;
+class Font;
 
 } // End of namespace Graphics
 
@@ -592,6 +593,16 @@ private:
 		ValueUnion value;
 	};
 
+	struct SubtitleDef {
+		SubtitleDef();
+
+		uint subIndex;
+		uint8 color[3];
+		uint unknownValue1;
+		uint unknownValue2;
+		Common::String str;
+	};
+
 	bool runIdle();
 	bool runDelay();
 	bool runHorizontalPan(bool isRight);
@@ -670,6 +681,8 @@ private:
 
 	Common::String getFileNameForItemGraphic(uint itemID) const;
 	Common::SharedPtr<Graphics::Surface> loadGraphic(const Common::String &graphicName, bool required);
+
+	void loadSubtitles(Common::CodePage codePage);
 
 	// Script things
 	void scriptOpNumber(ScriptArg_t arg);
@@ -948,6 +961,18 @@ private:
 	uint _soundCacheIndex;
 
 	Common::SharedPtr<SaveGameSnapshot> _saveGame;
+
+	const Graphics::Font *_subtitleFont;
+	uint32 _subtitleExpireTime;
+	uint _languageIndex;
+	bool _displayingSubtitles;
+
+	typedef Common::HashMap<uint, SubtitleDef> FrameToSubtitleMap_t;
+	typedef Common::HashMap<uint, FrameToSubtitleMap_t> AnimSubtitleMap_t;
+	typedef Common::HashMap<Common::String, SubtitleDef> WaveSubtitleMap_t;
+
+	AnimSubtitleMap_t _animSubtitles;
+	Common::HashMap<Common::String, SubtitleDef> _waveSubtitles;
 };
 
 } // End of namespace VCruise
