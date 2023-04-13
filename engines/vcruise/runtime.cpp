@@ -3203,7 +3203,7 @@ void Runtime::loadSubtitles(Common::CodePage codePage) {
 
 				Common::String locLineParamSlice = kv.value.substr(0, 21);
 
-				int colorCode = 0;
+				uint colorCode = 0;
 				uint param1 = 0;
 				uint param2 = 0;
 				if (sscanf(locLineParamSlice.c_str(), "0x%x, 0x%x, %u, ", &colorCode, &param1, &param2) == 3) {
