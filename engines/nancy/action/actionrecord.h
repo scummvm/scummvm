@@ -55,7 +55,7 @@ enum struct DependencyType : byte {
 	kTimerLessThanDependencyTime	= 13,
 	kTimerGreaterThanDependencyTime	= 14,
 	kDifficultyLevel				= 15,
-	kClosedCaptioning				= 16,	// Not implemented
+	kClosedCaptioning				= 16,
 	kSound							= 17,	// Not implemented
 	kOpenParentheses				= 18,	// Not implemented
 	kCloseParentheses				= 19	// Not implemented

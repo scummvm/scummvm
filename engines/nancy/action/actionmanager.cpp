@@ -20,6 +20,7 @@
  */
 
 #include "common/serializer.h"
+#include "common/config-manager.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/input.h"
@@ -29,7 +30,6 @@
 #include "engines/nancy/action/actionrecord.h"
 
 #include "engines/nancy/state/scene.h"
-
 namespace Nancy {
 namespace Action {
 
@@ -309,6 +309,17 @@ void ActionManager::processActionRecords() {
 							dep.satisfied = true;
 						}
 
+						break;
+					case DependencyType::kClosedCaptioning:
+						if (ConfMan.getBool("subtitles")) {
+							if (dep.condition == 2) {
+								dep.satisfied = true;
+							}
+						} else {
+							if (dep.condition == 1) {
+								dep.satisfied = true;
+							}
+						}
 						break;
 					default:
 						warning("Unimplemented Dependency type %i", (int)dep.type);
