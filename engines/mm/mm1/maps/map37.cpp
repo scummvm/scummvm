@@ -55,7 +55,9 @@ void Map37::special() {
 }
 
 void Map37::special00() {
-	send(SoundMessage(STRING["maps.map37.message1"]));
+	SoundMessage msg(STRING["maps.map37.message1"]);
+	msg._fontReduced = true;
+	send(msg);
 }
 
 void Map37::special01() {

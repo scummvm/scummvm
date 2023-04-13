@@ -58,6 +58,7 @@
 #include "mm/mm1/views_enh/interactions/arenko.h"
 #include "mm/mm1/views_enh/interactions/arrested.h"
 #include "mm/mm1/views_enh/interactions/chess.h"
+#include "mm/mm1/views_enh/interactions/ghost.h"
 #include "mm/mm1/views_enh/interactions/giant.h"
 #include "mm/mm1/views_enh/interactions/gypsy.h"
 #include "mm/mm1/views_enh/interactions/hacker.h"
@@ -91,6 +92,7 @@ private:
 	ViewsEnh::Interactions::Arenko _arenko;
 	ViewsEnh::Interactions::Arrested _arrested;
 	ViewsEnh::Interactions::Chess _chess;
+	ViewsEnh::Interactions::Ghost _ghost;
 	ViewsEnh::Interactions::Giant _giant;
 	ViewsEnh::Interactions::Gypsy _gypsy;
 	ViewsEnh::Interactions::Hacker _hacker;

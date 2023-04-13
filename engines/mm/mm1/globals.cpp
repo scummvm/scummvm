@@ -142,7 +142,7 @@ Common::String Globals::operator[](const Common::String &name) const {
 	assert(_strings.contains(name));
 	Common::String result = _strings[name];
 
-	if (g_engine->isEnhanced() && isMapStr)
+	if (g_engine->isEnhanced() && name.hasPrefix("maps."))
 		result = searchAndReplace(result, "\n", " ");
 
 	return result;

@@ -1557,12 +1557,15 @@ maps:
 
 	map37:
 		message1: "Etched in gold, message 1 reads:\nCompletion-must-each-kings-of-astral-\nwith-9th-sanctum-and-wondrous"
-		okrim1: "A ghostlike figure rises from the body\nof okrim and speaks,\"In exchange for\nmy ring, forfeit a life, accept (Y/N)?\""
+		okrim1: "A ghostlike figure rises from the body\nof Okrim and speaks,\"In exchange for\nmy ring, forfeit a life. Accept (Y/N)?\""
 		okrim2: "\"May the shadow of death greet you\nwith open arms!\""
 		archway: "A gem encrusted archway reads:\nLair of the omnipotent wizard Okrim"
 		opening: "An opening above leads outside,\nClimb out (Y/N)?"
 		spins: "The floor spins!"
-
+	emap37:
+		okrim: "Okrim"
+		okrim1: "A ghostlike figure rises from the body of Okrim and speaks, \"In exchange for my ring, forfeit a life. Accept (Y/N)?\""
+	
 	map38:
 		message4: "Etched in gold, message 4 reads:'\nof-be-has-true-knowledge-plane-a-level-'\nto-reality-it"
 		banner: "A banner reads:\nthe labyrinth of lazzeruth...\nfew have entered, none have returned!"

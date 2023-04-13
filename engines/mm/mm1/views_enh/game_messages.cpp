@@ -73,6 +73,7 @@ bool GameMessages::msgInfo(const InfoMessage &msg) {
 	_yCallback = msg._yCallback;
 	_nCallback = msg._nCallback;
 	_keyCallback = msg._keyCallback;
+	_fontReduced = msg._fontReduced;
 
 	// Add the view
 	addView(this);

@@ -19,50 +19,60 @@
  *
  */
 
-#include "mm/mm1/views/maps/ghost.h"
+#include "mm/mm1/views_enh/interactions/ghost.h"
 #include "mm/mm1/maps/map37.h"
 #include "mm/mm1/globals.h"
-#include "mm/mm1/sound.h"
+
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Maps {
+namespace ViewsEnh {
+namespace Interactions {
 
-Ghost::Ghost() : TextView("Ghost") {
-	_bounds = getLineBounds(20, 24);
+Ghost::Ghost() : Interaction("Ghost", 33) {
+	_title = STRING["maps.emap37.okrim"];
 }
 
-void Ghost::draw() {
-	clearSurface();
-	writeString(0, 1, STRING["maps.map37.okrim1"]);
+bool Ghost::msgFocus(const FocusMessage &msg) {
+	Interaction::msgFocus(msg);
+	addText(STRING["maps.map37.okrim1"]);
+
+	clearButtons();
+	addButton(STRING["maps.accept"], 'Y');
+	addButton(STRING["maps.decline"], 'N');
+
+	return true;
 }
 
 bool Ghost::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_y || msg.keycode == Common::KEYCODE_n) {
+	if (!_buttons.empty()) {
 		MM1::Maps::Map37 &map = *static_cast<MM1::Maps::Map37 *>(g_maps->_currentMap);
 
 		if (msg.keycode == Common::KEYCODE_y) {
 			g_globals->_party[0]._condition = ERADICATED;
-		} else {
-			clearSurface();
-			writeString(0, 1, STRING["maps.map37.okrim2"]);
+			close();
+			return true;
 
+		} else if (msg.keycode == Common::KEYCODE_n) {
 			map[MM1::Maps::MAP_29] = 32;
 			map[MM1::Maps::MAP_47] = 8;
-		}
 
-		// Note: You get the ring whether or not you agree to it.
-		// This is indeed how the original's logic is implemented
-		close();
-		g_globals->_treasure._items[2] = RING_OF_OKRIM_ID;
-		g_events->addAction(KEYBIND_SEARCH);
+			addText(STRING["maps.map37.okrim2"]);
+			clearButtons();
+			return true;
+		}
 	}
 
 	return true;
 }
 
-} // namespace Maps
-} // namespace Views
+void Ghost::viewAction() {
+	if (_buttons.empty()) {
+		close();
+	}
+}
+
+} // namespace Interactions
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM

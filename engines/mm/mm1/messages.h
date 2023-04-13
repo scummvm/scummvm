@@ -135,6 +135,7 @@ struct InfoMessage : public Message {
 	bool _largeMessage = false;
 	bool _sound = false;
 	int _delaySeconds = 0;
+	bool _fontReduced = false;
 
 	InfoMessage();
 	InfoMessage(const Common::String &str, TextAlign align = ALIGN_LEFT);
