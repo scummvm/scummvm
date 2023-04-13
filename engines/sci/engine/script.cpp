@@ -57,6 +57,8 @@ void Script::freeScript(const bool keepLocalsSegment) {
 	_synonyms.clear();
 	_numSynonyms = 0;
 
+	_codeOffset = 0;
+
 	_localsOffset = 0;
 	if (!keepLocalsSegment) {
 		_localsSegment = 0;
