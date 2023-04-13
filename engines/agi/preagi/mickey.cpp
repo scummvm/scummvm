@@ -876,12 +876,8 @@ void MickeyEngine::drawRoom() {
 	}
 
 	// Draw room objects
-	if (_gameStateMickey.iRoom >= IDI_MSA_MAX_PIC_ROOM) {
-		drawRoomAnimation();
-		return;
-	}
-
-	if (_gameStateMickey.iRmObj[_gameStateMickey.iRoom] != IDI_MSA_OBJECT_NONE) {
+	if (_gameStateMickey.iRoom < IDI_MSA_MAX_ROOM &&
+		_gameStateMickey.iRmObj[_gameStateMickey.iRoom] != IDI_MSA_OBJECT_NONE) {
 		readOfsData(IDO_MSA_ROOM_OBJECT_XY_OFFSETS,
 		            _gameStateMickey.iRmObj[_gameStateMickey.iRoom], buffer, sizeof(buffer));
 
