@@ -927,7 +927,7 @@ ChunkResourceSource::ChunkResourceSource(const Common::String &name, uint16 numb
 void ChunkResourceSource::scanSource(ResourceManager *resMan) {
 	Resource *chunk = resMan->findResource(ResourceId(kResourceTypeChunk, _number), false);
 
-	if (!chunk)
+	if (chunk == nullptr)
 		error("Trying to load non-existent chunk");
 
 	const byte *ptr = chunk->data();
@@ -963,11 +963,13 @@ void ChunkResourceSource::scanSource(ResourceManager *resMan) {
 
 void ChunkResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	Resource *chunk = resMan->findResource(ResourceId(kResourceTypeChunk, _number), false);
+	if (chunk == nullptr)
+		error("Trying to load non-existent chunk");
 
-	if (!_resMap.contains(res->_id))
+	ResourceEntry entry;
+	if (!_resMap.tryGetVal(res->_id, entry))
 		error("Trying to load non-existent resource %s from chunk %d", res->_id.toString().c_str(), _number);
 
-	ResourceEntry entry = _resMap[res->_id];
 	if (entry.offset + entry.length > chunk->size()) {
 		error("Resource %s is too large to exist within chunk %d (%u + %u > %u)", res->_id.toString().c_str(), _number, entry.offset, entry.length, chunk->size());
 	}
