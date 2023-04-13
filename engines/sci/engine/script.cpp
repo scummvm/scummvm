@@ -1225,10 +1225,10 @@ void Script::initializeObjectsSci3(SegManager *segMan, SegmentId segmentId, bool
 void Script::initializeObjects(SegManager *segMan, SegmentId segmentId, bool applyScriptPatches) {
 	if (getSciVersion() <= SCI_VERSION_1_LATE)
 		initializeObjectsSci0(segMan, segmentId, applyScriptPatches);
-	else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE)
+	else if (getSciVersion() <= SCI_VERSION_2_1_LATE)
 		initializeObjectsSci11(segMan, segmentId, applyScriptPatches);
 #ifdef ENABLE_SCI32
-	else if (getSciVersion() == SCI_VERSION_3)
+	else
 		initializeObjectsSci3(segMan, segmentId, applyScriptPatches);
 #endif
 }
