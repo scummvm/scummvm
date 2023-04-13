@@ -624,8 +624,15 @@ int MidiPlayer_FMTowns::open(ResourceManager *resMan) {
 	int result = MidiDriver::MERR_DEVICE_NOT_AVAILABLE;
 	if (_townsDriver) {
 		result = _townsDriver->open();
-		if (!result && _version == SCI_VERSION_1_LATE)
-			_townsDriver->loadInstruments(*resMan->findResource(ResourceId(kResourceTypePatch, 8), false));
+		if (!result && _version == SCI_VERSION_1_LATE) {
+			Resource *res = resMan->findResource(ResourceId(kResourceTypePatch, 8), false);
+			if (res != nullptr) {
+				_townsDriver->loadInstruments(*res);
+			} else {
+				warning("MidiPlayer_FMTowns: Failed to open patch 8");
+				result = MidiDriver::MERR_DEVICE_NOT_AVAILABLE;
+			}
+		}
 	}
 	return result;
 }
