@@ -258,17 +258,47 @@ void Frame::readChannels(Common::SeekableReadStreamEndian *stream, uint16 versio
 			warning("Frame::readChannels(): STUB: unk5: %d 0x%x", unk1, unk1);
 
 	} else if (version >= kFileVer500 && version < kFileVer600) {
+		if (debugChannelSet(8, kDebugLoading)) {
+			debugC(8, kDebugLoading, "Frame::readChannels(): 48 byte header");
+			stream->hexdump(48);
+		}
 		// Sound/Tempo/Transition channel
-		stream->read(unk, 24);
+		uint16 actionCastLib = stream->readUint16();
+		uint16 actionId = stream->readUint16();
+		_actionId = CastMemberID(actionId, actionCastLib);
+		uint16 sound1CastLib = stream->readUint16();
+		uint16 sound1Id = stream->readUint16();
+		_sound1 = CastMemberID(sound1Id, sound1CastLib);
+		uint16 sound2CastLib = stream->readUint16();
+		uint16 sound2Id = stream->readUint16();
+		_sound2 = CastMemberID(sound2Id, sound2CastLib);
+		uint16 transCastLib = stream->readUint16();
+		uint16 transId = stream->readUint16();
+		_trans = CastMemberID(transId, transCastLib);
+
+		stream->read(unk, 5);
+
+		_tempo = stream->readByte();
+
+		stream->read(unk, 2);
 
 		// palette
-		stream->read(unk, 24);
-	} else {
-		// Sound[2]
-		// palette
-		// Transition
-		// Tempo
-		// Script
+		stream->read(unk, 2);
+
+		_palette.paletteId = stream->readSint16();
+		_palette.speed = stream->readByte();
+		_palette.flags = stream->readByte();
+		_palette.colorCycling = (_palette.flags & 0x80) != 0;
+		_palette.normal = (_palette.flags & 0x60) == 0x00;
+		_palette.fadeToBlack = (_palette.flags & 0x60) == 0x60;
+		_palette.fadeToWhite = (_palette.flags & 0x60) == 0x40;
+		_palette.autoReverse = (_palette.flags & 0x10) != 0;
+		_palette.overTime = (_palette.flags & 0x04) != 0;
+		_palette.firstColor = g_director->transformColor(stream->readByte() + 0x80);
+		_palette.lastColor = g_director->transformColor(stream->readByte() + 0x80);
+		_palette.frameCount = stream->readUint16();
+		_palette.cycleCount = stream->readUint16();
+		stream->read(unk, 12);
 	}
 
 	_transChunkSize = CLIP<byte>(_transChunkSize, 0, 128);

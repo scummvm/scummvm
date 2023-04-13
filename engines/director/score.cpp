@@ -1292,14 +1292,16 @@ void Score::playQueuedSound() {
 void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version) {
 	debugC(1, kDebugLoading, "****** Loading frames VWSC");
 
-	//stream.hexdump(stream.size());
+	if (debugChannelSet(8, kDebugLoading)) {
+		stream.hexdump(stream.size());
+	}
 
 	uint32 size = stream.readUint32();
 	size -= 4;
 
 	if (version < kFileVer400) {
 		_numChannelsDisplayed = 30;
-	} else if (version >= kFileVer400 && version < kFileVer500) {
+	} else if (version >= kFileVer400 && version < kFileVer600) {
 		uint32 frame1Offset = stream.readUint32();
 		uint32 numFrames = stream.readUint32();
 		uint16 framesVersion = stream.readUint16();
@@ -1323,38 +1325,6 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 		warning("STUB: Score::loadFrames. frame1Offset: %x numFrames: %x version: %x spriteRecordSize: %x numChannels: %x numChannelsDisplayed: %x",
 			frame1Offset, numFrames, framesVersion, spriteRecordSize, numChannels, _numChannelsDisplayed);
 		// Unknown, some bytes - constant (refer to contuinity).
-	} else if (version >= kFileVer500) {
-		//what data is up the top of D5 VWSC?
-		uint32 unk1 = stream.readUint32();
-		uint32 unk2 = stream.readUint32();
-
-		uint16 unk3, unk4, unk5, unk6;
-
-		if (unk2 > 0) {
-			uint32 blockSize = stream.readUint32() - 1;
-			stream.readUint32();
-			stream.readUint32();
-			stream.readUint32();
-			stream.readUint32();
-			for (uint32 skip = 0; skip < blockSize * 4; skip++)
-				stream.readByte();
-
-			//header number two... this is our actual score entry point.
-			unk1 = stream.readUint32();
-			unk2 = stream.readUint32();
-			stream.readUint32();
-			unk3 = stream.readUint16();
-			unk4 = stream.readUint16();
-			unk5 = stream.readUint16();
-			unk6 = stream.readUint16();
-		} else {
-			unk3 = stream.readUint16();
-			unk4 = stream.readUint16();
-			unk5 = stream.readUint16();
-			unk6 = stream.readUint16();
-			size -= 16;
-		}
-		warning("STUB: Score::loadFrames. unk1: %x unk2: %x unk3: %x unk4: %x unk5: %x unk6: %x", unk1, unk2, unk3, unk4, unk5, unk6);
 	}
 
 	uint16 channelSize;
@@ -1378,6 +1348,9 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	while (size != 0 && !stream.eos()) {
 		uint16 frameSize = stream.readUint16();
 		debugC(3, kDebugLoading, "++++++++++ score frame %d (frameSize %d) size %d", _frames.size(), frameSize, size);
+		if (debugChannelSet(8, kDebugLoading)) {
+			stream.hexdump(frameSize);
+		}
 
 		if (frameSize > 0) {
 			Frame *frame = new Frame(this, _numChannelsDisplayed);

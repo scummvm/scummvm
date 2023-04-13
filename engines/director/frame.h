@@ -115,6 +115,7 @@ public:
 	uint8 _transArea; // 1 - Whole Window, 0 - Changing Area
 	uint8 _transChunkSize;
 	TransitionType _transType;
+	CastMemberID _trans;
 	PaletteInfo _palette;
 	uint8 _tempo;
 

@@ -150,7 +150,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 			_bitsPerPixel = 0;
 		} else {
 			if (version >= kFileVer500) {
-				stream.readSint16(); // ff ff
+				stream.readSint16(); // is this the castlib? was ff ff
 			}
 			_clut = stream.readSint16();
 			if (_clut <= 0) // builtin palette
