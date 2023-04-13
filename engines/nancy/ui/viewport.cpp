@@ -186,6 +186,8 @@ void Viewport::loadVideo(const Common::String &filename, uint frameNr, uint vert
 	_videoFormat = format;
 
 	enableEdges(kUp | kDown | kLeft | kRight);
+	
+	_panningType = panningType;
 
 	setFrame(frameNr);
 	setVerticalScroll(verticalScroll);
@@ -197,7 +199,6 @@ void Viewport::loadVideo(const Common::String &filename, uint frameNr, uint vert
 
 	_movementLastFrame = 0;
 	_nextMovementTime = 0;
-	_panningType = panningType;
 }
 
 void Viewport::setFrame(uint frameNr) {
