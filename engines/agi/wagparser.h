@@ -232,7 +232,7 @@ public:
 	 * @param key ini key
 	 * @param code corresponding WAG code
 	*/
-	void addPropFromIni(Common::INIFile *iniWagFile, Common::String section, Common::String key, Agi::WagProperty::WagPropertyCode code);
+	void addPropFromIni(Common::INIFile &iniWagFile, Common::String section, Common::String key, Agi::WagProperty::WagPropertyCode code);
 
 	/**
 	 * Loads a *.wag file and parses it.

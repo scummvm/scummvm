@@ -170,11 +170,11 @@ bool WagFileParser::checkWagVersion(Common::SeekableReadStream &stream) {
 	}
 }
 
-void WagFileParser::addPropFromIni(Common::INIFile *iniWagFile, Common::String section, Common::String key, Agi::WagProperty::WagPropertyCode code) {
+void WagFileParser::addPropFromIni(Common::INIFile &iniWagFile, Common::String section, Common::String key, Agi::WagProperty::WagPropertyCode code) {
 	WagProperty property;
 	property.setPropCode(code);
 	Common::String value;
-	if (iniWagFile->getKey(key, section, value)) {
+	if (iniWagFile.getKey(key, section, value)) {
 		property.setPropDataSize(value);
 		_propList.push_back(property);
 	}
@@ -211,8 +211,8 @@ bool WagFileParser::parse(const Common::FSNode &node) {
 		} else {
 			// Invalid WinAGI version string or it couldn't be read
 			// Let's try to read WAG file as newer INI format
-			Common::INIFile *iniWagFile = new Common::INIFile();
-			_parsedOk = iniWagFile->loadFromStream(*stream);
+			Common::INIFile iniWagFile;
+			_parsedOk = iniWagFile.loadFromStream(*stream);
 			if (_parsedOk) {
 				addPropFromIni(iniWagFile, "General", "Interpreter", WagProperty::PC_INTVERSION);
 				addPropFromIni(iniWagFile, "General", "GameID", WagProperty::PC_GAMEID);
