@@ -171,9 +171,14 @@ protected:
 	Common::String getRecordTypeName() const override { return "MapCallHotMultiframe"; }
 };
 
-class TextBoxWrite : public Unimplemented {
+class TextBoxWrite : public ActionRecord {
 public:
+	virtual ~TextBoxWrite();
+
 	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	Common::String _text;
 
 protected:
 	Common::String getRecordTypeName() const override { return "TextBoxWrite"; }

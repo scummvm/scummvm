@@ -277,11 +277,31 @@ void MapCallHotMultiframe::execute() {
 
 void TextBoxWrite::readData(Common::SeekableReadStream &stream) {
 	uint16 size = stream.readUint16LE();
-	stream.skip(size);
 
 	if (size > 10000) {
 		error("Action Record atTextboxWrite has too many text box chars: %d", size);
 	}
+
+	char *buf = new char[size];
+	stream.read(buf, size);
+	buf[size - 1] = '\0';
+	_text = buf;
+
+	delete[] buf;
+}
+
+TextBoxWrite::~TextBoxWrite() {
+	NancySceneState.setShouldClearTextbox(true);
+	NancySceneState.getTextbox().setVisible(false);
+}
+
+void TextBoxWrite::execute() {
+	auto &tb = NancySceneState.getTextbox();
+	tb.clear();
+	tb.addTextLine(_text);
+	tb.setVisible(true);
+	NancySceneState.setShouldClearTextbox(false);
+	finishExecution();
 }
 
 void TextBoxClear::readData(Common::SeekableReadStream &stream) {
