@@ -92,4 +92,4 @@ private:
 
 } // End of namespace Sci
 
-#endif // SCI_SFX_CORE_H
+#endif // SCI_AUDIO_H

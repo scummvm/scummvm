@@ -399,30 +399,27 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 	uint32 audioCompressionType = audioRes->getAudioCompressionType();
 
 	if (audioCompressionType) {
-#if (defined(USE_MAD) || defined(USE_VORBIS) || defined(USE_FLAC))
 		// Compressed audio made by our tool
 		switch (audioCompressionType) {
-		case MKTAG('M','P','3',' '):
 #ifdef USE_MAD
+		case MKTAG('M','P','3',' '):
 			audioSeekStream = Audio::makeMP3Stream(memoryStream, DisposeAfterUse::YES);
-#endif
 			break;
-		case MKTAG('O','G','G',' '):
+#endif
 #ifdef USE_VORBIS
+		case MKTAG('O','G','G',' '):
 			audioSeekStream = Audio::makeVorbisStream(memoryStream, DisposeAfterUse::YES);
-#endif
 			break;
-		case MKTAG('F','L','A','C'):
+#endif
 #ifdef USE_FLAC
+		case MKTAG('F','L','A','C'):
 			audioSeekStream = Audio::makeFLACStream(memoryStream, DisposeAfterUse::YES);
-#endif
 			break;
+#endif
 		default:
+			error("Compressed audio file encountered, but no decoder compiled in for: '%s'", tag2str(audioCompressionType));
 			break;
 		}
-#else
-		error("Compressed audio file encountered, but no appropriate decoder is compiled in");
-#endif
 	} else {
 		// Original source file
 		if (audioRes->size() > 6 &&
