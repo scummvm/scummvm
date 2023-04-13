@@ -598,6 +598,9 @@ reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv) {
 #ifdef ENABLE_SCI32
 		SegmentRef destReference = s->_segMan->dereference(dest);
 		SegmentObj *destObject = s->_segMan->getSegmentObj(dest.getSegment());
+		if (destObject == nullptr) {
+			error("kFileIO(readRaw): invalid destination %04x:%04x", PRINT_REG(dest));
+		}
 
 		if (destReference.maxSize == size - 4 && destObject->getType() == SEG_TYPE_ARRAY) {
 			// This is an array structure, which starts with the number of
