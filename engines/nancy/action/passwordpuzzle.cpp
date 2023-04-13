@@ -77,6 +77,7 @@ void PasswordPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 		_nextBlinkTime = g_nancy->getTotalPlayTime() + _cursorBlinkTime;
 		_state = kRun;
 		// fall through
@@ -156,6 +157,8 @@ void PasswordPuzzle::execute() {
 			NancySceneState.setEventFlag(_flagOnSolve.label);
 			break;
 		}
+		
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
 		finishExecution();
 	}
