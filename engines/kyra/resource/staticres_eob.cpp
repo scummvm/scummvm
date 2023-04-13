@@ -548,7 +548,7 @@ void EoBCoreEngine::initStaticResource() {
 	case Common::EN_ANY: {
 		if (_flags.platform == Common::kPlatformSegaCD) {
 			_saveLoadStrings = saveLoadStrings[4];
-			_errorSlotEmptyString = errorSlotEmptyString[5];
+			_errorSlotEmptyString = errorSlotEmptyString[4];
 		} else {
 			_saveLoadStrings = saveLoadStrings[0];
 			_errorSlotEmptyString = errorSlotEmptyString[0];
@@ -570,7 +570,7 @@ void EoBCoreEngine::initStaticResource() {
 	case Common::JA_JPN:
 		if (_flags.platform == Common::kPlatformSegaCD) {
 			_saveLoadStrings = saveLoadStrings[5];
-			_errorSlotEmptyString = errorSlotEmptyString[6];
+			_errorSlotEmptyString = errorSlotEmptyString[5];
 		} else {
 			// EOB II FM-Towns uses English here.
 			// Only the empty slot warning is in Japanese.
