@@ -39,7 +39,8 @@ namespace UI {
 InventoryBox::InventoryBox() :
 		RenderObject(6),
 		_scrollbar(nullptr),
-		_scrollbarPos(0) {}
+		_scrollbarPos(0),
+		_highlightedHotspot(-1) {}
 
 InventoryBox::~InventoryBox() {
 	_fullInventorySurface.free();
@@ -99,6 +100,8 @@ void InventoryBox::handleInput(NancyInput &input) {
 		_scrollbar->handleInput(input);
 	}
 
+	int hoveredHotspot = -1;
+
 	for (uint i = 0; i < 4; ++i) {
 		if (_itemHotspots[i].hotspot.contains(input.mousePos)) {
 			if (NancySceneState.getHeldItem() != -1) {
@@ -109,17 +112,36 @@ void InventoryBox::handleInput(NancyInput &input) {
 				}
 			} else if (_itemHotspots[i].itemID != -1) {
 				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
+				
+				hoveredHotspot = i;
+
 				if (input.input & NancyInput::kLeftMouseButtonUp) {
 					NancySceneState.removeItemFromInventory(_itemHotspots[i].itemID);
+					_highlightedHotspot = -1;
+					hoveredHotspot = -1;
 					g_nancy->_sound->playSound("GLOB");
 				}
 			}
 			break;
 		}
 	}
+
+	if (_highlightedHotspot != hoveredHotspot) {
+		if (_highlightedHotspot != -1) {
+			// Un-highlight last hovered item
+			drawItemInSlot(_itemHotspots[_highlightedHotspot].itemID, _itemHotspots[_highlightedHotspot].itemOrder, false);
+			_highlightedHotspot = -1;
+		}
+
+		if (hoveredHotspot != -1) {
+			// Highlight hovered item
+			drawItemInSlot(_itemHotspots[hoveredHotspot].itemID, _itemHotspots[hoveredHotspot].itemOrder, true);
+			_highlightedHotspot = hoveredHotspot;
+		}
+	}
 }
 
-void InventoryBox::addItem(int16 itemID) {
+void InventoryBox::addItem(const int16 itemID) {
 	if (_order.size() == 0) {
 		// Adds first item, start curtains animation
 		_curtains.setOpen(true);
@@ -132,7 +154,7 @@ void InventoryBox::addItem(int16 itemID) {
 	onReorder();
 }
 
-void InventoryBox::removeItem(int16 itemID) {
+void InventoryBox::removeItem(const int16 itemID) {
 	for (auto &i : _order) {
 		if (i == itemID) {
 			_order.erase(&i);
@@ -147,13 +169,7 @@ void InventoryBox::onReorder() {
 
 	_fullInventorySurface.clear();
 	for (uint i = 0; i < _order.size(); ++i) {
-		Common::Rect dest;
-		dest.setWidth(_screenPosition.width() / 2);
-		dest.setHeight(_screenPosition.height() / 2);
-		dest.moveTo((i % 2) * dest.width(), (i / 2) * dest.height());
-		Common::Point destPoint = Common::Point (dest.left, dest.top);
-
-		_fullInventorySurface.blitFrom(_iconsSurface, g_nancy->_inventoryData->itemDescriptions[_order[i]].sourceRect, destPoint);
+		drawItemInSlot(_order[i], i);
 	}
 
 	if (_order.size() > 0) {
@@ -165,14 +181,29 @@ void InventoryBox::onReorder() {
 	_needsRedraw = true;
 }
 
-void InventoryBox::setHotspots(uint pageNr) {
+void InventoryBox::setHotspots(const uint pageNr) {
 	for (uint i = 0; i < 4; ++i) {
 		if (i + pageNr * 4 < _order.size()) {
 			_itemHotspots[i].itemID = _order[i + pageNr * 4];
+			_itemHotspots[i].itemOrder = i + pageNr * 4;
 		} else {
 			_itemHotspots[i].itemID = -1;
+			_itemHotspots[i].itemOrder = -1;
 		}
 	}
+}
+
+void InventoryBox::drawItemInSlot(const uint itemID, const uint slotID, const bool highlighted) {
+	auto &item = g_nancy->_inventoryData->itemDescriptions[itemID];
+	Common::Rect dest;
+
+	dest.setWidth(_screenPosition.width() / 2);
+	dest.setHeight(_screenPosition.height() / 2);
+	dest.moveTo((slotID % 2) * dest.width(), (slotID / 2) * dest.height());
+	Common::Point destPoint = Common::Point (dest.left, dest.top);
+
+	_fullInventorySurface.blitFrom(_iconsSurface, highlighted ? item.highlightedSourceRect : item.sourceRect, destPoint);
+	_needsRedraw = true;
 }
 
 void InventoryBox::onScrollbarMove() {

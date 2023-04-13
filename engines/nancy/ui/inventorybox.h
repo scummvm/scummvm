@@ -61,11 +61,12 @@ public:
 
 private:
 	// These are private since they should only be called from Scene
-	void addItem(int16 itemID);
-	void removeItem(int16 itemID);
+	void addItem(const int16 itemID);
+	void removeItem(const int16 itemID);
 
 	void onReorder();
-	void setHotspots(uint pageNr);
+	void setHotspots(const uint pageNr);
+	void drawItemInSlot(const uint itemID, const uint slotID, const bool highlighted = false);
 
 	class Curtains : public RenderObject {
 	public:
@@ -91,6 +92,7 @@ private:
 
 	struct ItemHotspot {
 		int16 itemID = -1;
+		int itemOrder = -1; // index of the item into the _order array
 		Common::Rect hotspot; // in screen coordinates
 	};
 
@@ -104,6 +106,7 @@ private:
 
 	Common::Array<int16> _order;
 	ItemHotspot _itemHotspots[4];
+	int _highlightedHotspot;
 };
 
 } // End of namespace UI
