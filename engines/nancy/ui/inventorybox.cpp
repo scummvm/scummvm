@@ -92,7 +92,7 @@ void InventoryBox::registerGraphics() {
 
 void InventoryBox::handleInput(NancyInput &input) {
 	// Disable input when primary video is playing
-	if (NancySceneState.getActivePrimaryVideo()) {
+	if (NancySceneState.getActiveConversation()) {
 		return;
 	}
 

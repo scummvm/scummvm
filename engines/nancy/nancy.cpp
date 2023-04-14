@@ -36,7 +36,7 @@
 #include "engines/nancy/console.h"
 #include "engines/nancy/util.h"
 
-#include "engines/nancy/action/primaryvideo.h"
+#include "engines/nancy/action/conversation.h"
 
 #include "engines/nancy/state/logo.h"
 #include "engines/nancy/state/scene.h"
@@ -132,7 +132,7 @@ bool NancyEngine::canLoadGameStateCurrently() {
 
 bool NancyEngine::canSaveGameStateCurrently() {
 	// TODO also disable during secondary movie
-	return State::Scene::hasInstance() && NancySceneState.getActivePrimaryVideo() == nullptr;
+	return State::Scene::hasInstance() && NancySceneState.getActiveConversation() == nullptr;
 }
 
 bool NancyEngine::canSaveAutosaveCurrently() {

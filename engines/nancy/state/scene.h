@@ -48,7 +48,7 @@ struct SceneChangeDescription;
 
 namespace Action {
 class SliderPuzzle;
-class PlayPrimaryVideoChan0;
+class ConversationSound;
 }
 
 namespace Misc {
@@ -181,8 +181,8 @@ public:
 	SceneInfo &getNextSceneInfo() { return _sceneState.nextScene; }
 	const SceneSummary &getSceneSummary() const { return _sceneState.summary; }
 
-	void setActivePrimaryVideo(Action::PlayPrimaryVideoChan0 *activeVideo);
-	Action::PlayPrimaryVideoChan0 *getActivePrimaryVideo();
+	void setActiveConversation(Action::ConversationSound *activeConversation);
+	Action::ConversationSound *getActiveConversation();
 
 	// The Vampire Diaries only;
 	void beginLightning(int16 distance, uint16 pulseTime, int16 rgbPercent);
@@ -274,7 +274,7 @@ private:
 	Common::Rect _mapHotspot;
 
 	Action::ActionManager _actionManager;
-	Action::PlayPrimaryVideoChan0 *_activePrimaryVideo;
+	Action::ConversationSound *_activeConversation;
 
 	State _state;
 

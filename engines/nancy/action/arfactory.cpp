@@ -20,7 +20,7 @@
  */
 
 #include "engines/nancy/action/recordtypes.h"
-#include "engines/nancy/action/primaryvideo.h"
+#include "engines/nancy/action/conversation.h"
 #include "engines/nancy/action/secondaryvideo.h"
 #include "engines/nancy/action/secondarymovie.h"
 #include "engines/nancy/action/overlay.h"
@@ -62,7 +62,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 			return new SpecialEffect();
 		}		
 	case 50:
-		return new PlayPrimaryVideoChan0();
+		return new ConversationVideo(); // PlayPrimaryVideoChan0
 	case 51:
 		return new PlaySecondaryVideo(0);
 	case 52:
@@ -73,6 +73,12 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new Overlay(false); // PlayStaticBitmapAnimation
 	case 55:
 		return new Overlay(true); // PlayIntStaticBitmapAnimation
+	case 56:
+		return new ConversationVideo();
+	case 57:
+		return new ConversationCel();
+	case 58:
+		return new ConversationSound();
 	case 60:
 		return new MapCall();
 	case 61:

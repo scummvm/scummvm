@@ -7,7 +7,7 @@ MODULE_OBJS = \
   action/leverpuzzle.o \
   action/orderingpuzzle.o \
   action/passwordpuzzle.o \
-  action/primaryvideo.o \
+  action/conversation.o \
   action/recordtypes.o \
   action/rotatinglockpuzzle.o \
   action/secondarymovie.o \

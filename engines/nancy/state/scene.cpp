@@ -112,7 +112,7 @@ Scene::Scene() :
 		_clock(nullptr),
 		_actionManager(),
 		_difficulty(0),
-		_activePrimaryVideo(nullptr),
+		_activeConversation(nullptr),
 		_lightning(nullptr) {}
 
 Scene::~Scene()  {
@@ -535,12 +535,12 @@ void Scene::init() {
 	g_nancy->_graphicsManager->redrawAll();
 }
 
-void Scene::setActivePrimaryVideo(Action::PlayPrimaryVideoChan0 *activeVideo) {
-	_activePrimaryVideo = activeVideo;
+void Scene::setActiveConversation(Action::ConversationSound *activeConversation) {
+	_activeConversation = activeConversation;
 }
 
-Action::PlayPrimaryVideoChan0 *Scene::getActivePrimaryVideo() {
-	return _activePrimaryVideo;
+Action::ConversationSound *Scene::getActiveConversation() {
+	return _activeConversation;
 }
 
 void Scene::beginLightning(int16 distance, uint16 pulseTime, int16 rgbPercent) {
@@ -661,7 +661,7 @@ void Scene::handleInput() {
 	NancyInput input = g_nancy->_input->getInput();
 
 	// Warp the mouse below the inactive zone during dialogue scenes
-	if (_activePrimaryVideo != nullptr) {
+	if (_activeConversation != nullptr) {
 		const Common::Rect &inactiveZone = g_nancy->_cursorManager->getPrimaryVideoInactiveZone();
 		const Common::Point cursorHotspot = g_nancy->_cursorManager->getCurrentCursorHotspot();
 		Common::Point adjustedMousePos = input.mousePos;
