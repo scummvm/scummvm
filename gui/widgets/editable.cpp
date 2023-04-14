@@ -546,7 +546,9 @@ void EditableWidget::drawCaret(bool erase) {
 		// possible glitches due to different methods used.
 
 		ThemeEngine::TextInversionState inversion = _inversion;
-		inversion = (_selOffset < 0) ? ThemeEngine::kTextInversionFocus : ThemeEngine::kTextInversionNone;
+
+		if (!_disableSelection)
+			inversion = (_selOffset < 0) ? ThemeEngine::kTextInversionFocus : ThemeEngine::kTextInversionNone;
 
 		width = MIN(editRect.width() - caretOffset, width);
 		if (width > 0) {
