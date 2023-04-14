@@ -169,7 +169,7 @@ public:
 	uint16 _lastFrame = 0;
 
 	uint _curFrame = 0; 
-	uint16 _nextFrameTime = 0;
+	uint32 _nextFrameTime = 0;
 
 	// We use the built-in RenderObject for the body
 	HeadCel _headRObj;

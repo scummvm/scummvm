@@ -106,7 +106,8 @@ void ConversationSound::readData(Common::SeekableReadStream &stream) {
 	for (uint i = 0; i < numSceneBranchStructs; ++i) {
 		_sceneBranchStructs[i].conditions.read(stream);
 		_sceneBranchStructs[i].sceneChange.readData(stream, g_nancy->getGameType() == kGameTypeVampire);
-		stream.skip(0x32);
+		ser.skip(0x32, kGameTypeVampire, kGameTypeNancy1);
+		ser.skip(2, kGameTypeNancy2);
 	}
 
 	uint16 numFlagsStructs = stream.readUint16LE();
@@ -510,6 +511,8 @@ Common::String ConversationVideo::getRecordTypeName() const {
 
 void ConversationCel::init() {
 	registerGraphics();
+	_curFrame = _firstFrame;
+	_nextFrameTime = g_nancy->getTotalPlayTime();
 	ConversationSound::init();
 }
 
@@ -521,7 +524,7 @@ void ConversationCel::registerGraphics() {
 void ConversationCel::updateGraphics() {
 	uint32 currentTime = g_nancy->getTotalPlayTime();
 
-	if (currentTime > _nextFrameTime && _curFrame < _cels.size()) {
+	if (_state == kRun && currentTime > _nextFrameTime && _curFrame <= _lastFrame) {
 		Cel &curCel = _cels[_curFrame];
 
 		_drawSurface.create(curCel.bodySurf, curCel.bodySrc);
@@ -530,10 +533,6 @@ void ConversationCel::updateGraphics() {
 		_headRObj._drawSurface.create(curCel.headSurf, curCel.headSrc);
 		_headRObj.moveTo(curCel.headDest);
 
-		if (_nextFrameTime == 0) {
-			_nextFrameTime = currentTime;
-		}
-		
 		_nextFrameTime += _frameTime;
 		++_curFrame;
 	}
