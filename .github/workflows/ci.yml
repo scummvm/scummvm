@@ -111,8 +111,8 @@ jobs:
             brewPackages: a52dec faad2 flac fluid-synth freetype fribidi giflib jpeg mad libmikmod libmpeg2 libogg libpng libvorbis libvpx sdl2 sdl2_net theora
           - platform: ios7
             buildFlags: -scheme ScummVM-iOS CODE_SIGN_IDENTITY="" CODE_SIGNING_ALLOWED=NO
-            configFlags: --disable-nasm --disable-opengl --disable-theoradec --disable-mpeg2 --disable-taskbar --disable-tts --disable-fribidi
-            packagesUrl: https://downloads.scummvm.org/frs/build/scummvm-ios7-libs-v2.zip
+            configFlags: --use-xcframework --enable-faad --enable-gif --enable-mikmod --enable-mpeg2 --enable-vpx --disable-nasm --disable-opengl --disable-taskbar --disable-tts
+            packagesUrl: https://downloads.scummvm.org/frs/build/scummvm-ios7-libs-v3.zip
     env:
       BUILDCACHE_MAX_CACHE_SIZE: 2000000000
       BUILDCACHE_HARD_LINKS: true
