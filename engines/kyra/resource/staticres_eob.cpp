@@ -578,6 +578,8 @@ void EoBCoreEngine::initStaticResource() {
 		0
 	};
 
+	_menuOkString = "OK";
+
 	switch (_flags.lang) {
 	case Common::EN_ANY: {
 		if (_flags.platform == Common::kPlatformSegaCD) {
@@ -615,6 +617,7 @@ void EoBCoreEngine::initStaticResource() {
 	case Common::ZH_TWN:
 		_saveLoadStrings = saveLoadStrings[6];
 		_errorSlotEmptyString = errorSlotEmptyString[6];
+		_menuOkString = "\xa7\xb9\xb2\xa6"; /* "完畢" */
 		break;
 
 	default:
@@ -622,8 +625,6 @@ void EoBCoreEngine::initStaticResource() {
 		_errorSlotEmptyString = errorSlotEmptyString[0];
 		break;
 	}
-
-	_menuOkString = "OK";
 }
 
 void EoBCoreEngine::initButtonData() {
