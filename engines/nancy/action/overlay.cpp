@@ -62,7 +62,13 @@ void Overlay::readData(Common::SeekableReadStream &stream) {
 	ser.syncAsUint16LE(_firstFrame);
 	ser.syncAsUint16LE(_loopFirstFrame);
 	ser.syncAsUint16LE(_loopLastFrame);
-	_frameTime = Common::Rational(1000, stream.readUint16LE()).toInt();
+	uint16 frameTime = stream.readUint16LE();
+	
+	// Avoid divide by 0
+	if (frameTime) {
+		_frameTime = Common::Rational(1000, frameTime).toInt();
+	}
+	
 	ser.syncAsUint16LE(_z, kGameTypeNancy1, kGameTypeNancy1);
 
 	if (ser.getVersion() > kGameTypeNancy1) {
