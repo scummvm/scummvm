@@ -87,16 +87,18 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int flags
 			const Graphics::Surface *frame = decoder->decodeNextFrame();
 
 			if (frame && enableVideo) {
-				if (stretchVideo && frame->w == scr.w && frame->h == scr.h)
+				Rect dstRect = PlaceInRect(RectWH(0, 0, scr.w, scr.h), RectWH(0, 0, frame->w, frame->h),
+					(stretchVideo ? kPlaceStretchProportional : kPlaceCenter));
+
+				if (stretchVideo && frame->w == dstRect.GetWidth() && frame->h == dstRect.GetHeight())
 					// Don't need to stretch video after all
 					stretchVideo = false;
 
 				if (stretchVideo) {
 					scr.transBlitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h),
-					                  Common::Rect(0, 0, scr.w, scr.h));
+					                  Common::Rect(dstRect.Left, dstRect.Top, dstRect.Right + 1, dstRect.Bottom + 1));
 				} else {
-					scr.blitFrom(*frame, Common::Point((scr.w - frame->w) / 2,
-					                                   (scr.h - frame->h) / 2));
+					scr.blitFrom(*frame, Common::Point(dstRect.Left, dstRect.Top));
 				}
 			}
 
