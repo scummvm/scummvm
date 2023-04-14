@@ -807,7 +807,6 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::Surface &s
 
 bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSurface &surf, const Common::String treeName, Common::Rect *outSrc, Common::Rect *outDest) {
 	CifInfo info;
-	bool loadedFromBitmapFile = false;
 	surf.free();
 
 	byte *buf = nullptr;
@@ -818,12 +817,11 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 		buf = getCifData(name, info);
 	}
 
-	if (!buf && treeName.size() > 0) {
+	if (!buf) {
 		// Couldn't find image in a cif tree, try to open a .bmp file
 		// This is used by The Vampire Diaries
 		Common::File f;
-		loadedFromBitmapFile = f.open(name + ".bmp");
-		if (loadedFromBitmapFile) {
+		if (treeName.size() == 0 && f.open(name + ".bmp")) {
 			Image::BitmapDecoder dec;
 			if (dec.loadStream(f)) {
 				GraphicsManager::copyToManaged(*dec.getSurface(), surf);
