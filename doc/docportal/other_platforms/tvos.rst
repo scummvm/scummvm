@@ -17,7 +17,7 @@ There are two ways to install ScummVM on an Apple TV depending on if building th
 Building the project
 ************************************
 
-Since the port for Apple TV shares the same code base as the iOS port the instructions for building the project is the same as for iOS. Follow the :doc:`./ios` with the differences that the `tvOS libraries <https://github.com/larsamannen/scummvm-tvos-libs-v1>`_ should be used instead and the ``ScummVM-tvOS`` target should be chosen in Xcode. Use the libraries in the ``appletv`` folder if building for real target and ``appletvsimulator`` if building for simulator. Note that the libraries are built without bitcode since it's not required since tvOS 16.
+Since the port for Apple TV shares the same code base as the iOS port the instructions for building the project is the same as for iOS. Follow the :doc:`./ios` with the difference that the ``ScummVM-tvOS`` target should be chosen in Xcode.
 
 Downloading and installing ScummVM
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
