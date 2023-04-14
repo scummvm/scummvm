@@ -446,6 +446,7 @@ void ConversationVideo::init() {
 		setTransparent(true);
 	}
 	
+	ConversationSound::init();
 	registerGraphics();
 }
 
