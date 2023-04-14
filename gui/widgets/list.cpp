@@ -58,6 +58,9 @@ ListWidget::ListWidget(Dialog *boss, const Common::String &name, const Common::U
 	// The item is selected, thus _bgcolor is used to draw the caret and _textcolorhi to erase it
 	_caretInverse = true;
 
+	// Disable text selection
+	_disableSelection = true;
+
 	// FIXME: This flag should come from widget definition
 	_editable = true;
 
@@ -96,6 +99,9 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, con
 
 	// The item is selected, thus _bgcolor is used to draw the caret and _textcolorhi to erase it
 	_caretInverse = true;
+
+	// Disable text selection
+	_disableSelection = true;
 
 	// FIXME: This flag should come from widget definition
 	_editable = true;
