@@ -63,7 +63,13 @@ void ActionManager::handleInput(NancyInput &input) {
 					}
 
 					if (!shouldTrigger) {
-						g_nancy->_sound->playSound("CANT");
+						if (g_nancy->getGameType() >= kGameTypeNancy2) {
+							SoundDescription &sound = g_nancy->_inventoryData->itemDescriptions[rec->_itemRequired].specificCantSound;
+							g_nancy->_sound->loadSound(sound);
+							g_nancy->_sound->playSound(sound);
+						} else {
+							g_nancy->_sound->playSound("CANT");
+						}
 					}
 				} else {
 					shouldTrigger = true;
