@@ -23,6 +23,7 @@
 #define NANCY_RESOURCE_H
 
 #include "common/array.h"
+#include "common/rect.h"
 
 namespace Graphics {
 struct Surface;
@@ -56,6 +57,7 @@ public:
 		uint16 width, pitch, height;
 		byte depth; // Bit depth
 		uint32 compressedSize, size;
+		Common::Rect src, dest; // Used when drawing conversation cels
 	};
 
 	ResourceManager();
@@ -63,9 +65,8 @@ public:
 
 	void initialize();
 	bool loadCifTree(const Common::String &name, const Common::String &ext);
-	bool loadImage(const Common::String &name, Graphics::Surface &surf);
-	bool loadImage(const Common::String &name, Graphics::ManagedSurface &surf);
-	void freeImage(Graphics::Surface &surf);
+	bool loadImage(const Common::String &name, Graphics::Surface &surf, const Common::String treeName = "", Common::Rect *outSrc = nullptr, Common::Rect *outDest = nullptr);
+	bool loadImage(const Common::String &name, Graphics::ManagedSurface &surf, const Common::String treeName = "", Common::Rect *outSrc = nullptr, Common::Rect *outDest = nullptr);
 	byte *loadData(const Common::String &name, uint &size);
 
 	// Debugger functions

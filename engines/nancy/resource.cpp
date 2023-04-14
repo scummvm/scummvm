@@ -27,6 +27,7 @@
 #include "engines/nancy/resource.h"
 #include "engines/nancy/decompress.h"
 #include "engines/nancy/graphics.h"
+#include "engines/nancy/util.h"
 
 namespace Nancy {
 
@@ -122,7 +123,8 @@ protected:
 };
 
 void CifFile21::readCifInfo(Common::File &f) {
-	f.skip(32);
+	readRect(f, _cifInfo.src);
+	readRect(f, _cifInfo.dest);
 	readCifInfo20(f, _cifInfo);
 }
 
@@ -415,7 +417,8 @@ void CifTree21::readCifInfo(Common::File &f, CifInfoChain &chain) {
 		chain.next = f.readUint16LE();
 	}
 
-	f.skip(32); // TODO
+	readRect(f, info.src);
+	readRect(f, info.dest);
 
 	readCifInfo20(f, info, (_hasOffsetFirst ? nullptr : &chain.dataOffset));
 
@@ -745,13 +748,19 @@ byte *ResourceManager::loadData(const Common::String &name, uint &size) {
 	return buf;
 }
 
-bool ResourceManager::loadImage(const Common::String &name, Graphics::Surface &surf) {
+bool ResourceManager::loadImage(const Common::String &name, Graphics::Surface &surf, const Common::String treeName, Common::Rect *outSrc, Common::Rect *outDest) {
 	CifInfo info;
 	surf.free();
 
-	byte *buf = getCifData(name, info);
+	byte *buf = nullptr;
 
-	if (!buf) {
+	if (treeName.size()) {
+		buf = getCifData(treeName, name, info);
+	} else {
+		buf = getCifData(name, info);
+	}
+
+	if (!buf && treeName.size() > 0) {
 		// Couldn't find image in a cif tree, try to open a .bmp file
 		// This is used by The Vampire Diaries
 		Common::File f;
@@ -780,6 +789,14 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::Surface &s
 		}
 	}
 
+	if (outSrc) {
+		*outSrc = info.src;
+	}
+
+	if (outDest) {
+		*outDest = info.dest;
+	}
+
 	surf.w = info.width;
 	surf.h = info.height;
 	surf.pitch = info.pitch;
@@ -788,14 +805,20 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::Surface &s
 	return true;
 }
 
-bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSurface &surf) {
+bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSurface &surf, const Common::String treeName, Common::Rect *outSrc, Common::Rect *outDest) {
 	CifInfo info;
 	bool loadedFromBitmapFile = false;
 	surf.free();
 
-	byte *buf = getCifData(name, info);
+	byte *buf = nullptr;
 
-	if (!buf) {
+	if (treeName.size()) {
+		buf = getCifData(treeName, name, info);
+	} else {
+		buf = getCifData(name, info);
+	}
+
+	if (!buf && treeName.size() > 0) {
 		// Couldn't find image in a cif tree, try to open a .bmp file
 		// This is used by The Vampire Diaries
 		Common::File f;
@@ -823,6 +846,14 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 			warning("Image '%s' has unsupported depth %i", name.c_str(), info.depth);
 			delete[] buf;
 			return false;
+		}
+
+		if (outSrc) {
+			*outSrc = info.src;
+		}
+
+		if (outDest) {
+			*outDest = info.dest;
 		}
 
 		GraphicsManager::copyToManaged(buf, surf, info.width, info.height, g_nancy->_graphicsManager->getInputPixelFormat());
