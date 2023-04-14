@@ -1286,9 +1286,9 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 		&& y + h + Base::_shadowOffset + 1 < Base::_activeSurface->h
 		&& h > (Base::_shadowOffset + 1) * 2) {
 		if (useOriginal) {
-			drawRoundedSquareShadow(x, y, r, w, h, Base::_shadowOffset);
+			drawRoundedSquareShadow(x, y, r, w, h, Base::_shadowOffset, Base::_shadowIntensity);
 		} else {
-			drawRoundedSquareShadowClip(x, y, r, w, h, Base::_shadowOffset);
+			drawRoundedSquareShadowClip(x, y, r, w, h, Base::_shadowOffset, Base::_shadowIntensity);
 		}
 	}
 
@@ -3666,7 +3666,7 @@ drawSquareShadowClip(int x, int y, int w, int h, int offset) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
+drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset, uint32 shadowIntensity) {
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 
 	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
@@ -3686,7 +3686,9 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 
 	// Soft shadows are constructed by drawing increasingly
 	// darker and smaller rectangles on top of each other.
-	for (int i = offset; i >= 0; i--) {
+	uint32 targetOffset = (uint32)offset << 16;
+	int curOffset = 0;
+	for (uint32 i = shadowIntensity; i <= targetOffset; i += shadowIntensity) {
 		int f, ddF_x, ddF_y;
 		int x, y, px, py;
 
@@ -3747,7 +3749,8 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 		}
 
 		// Make shadow smaller each iteration
-		shadowRect.grow(-1);
+		shadowRect.grow(curOffset - (i >> 16));
+		curOffset = i >> 16;
 
 		if (_shadowFillMode == kShadowExponential)
 			// Multiply with expfactor
@@ -3757,7 +3760,7 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawRoundedSquareShadowClip(int x1, int y1, int r, int w, int h, int offset) {
+drawRoundedSquareShadowClip(int x1, int y1, int r, int w, int h, int offset, uint32 shadowIntensity) {
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 
 	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
@@ -3777,7 +3780,9 @@ drawRoundedSquareShadowClip(int x1, int y1, int r, int w, int h, int offset) {
 
 	// Soft shadows are constructed by drawing increasingly
 	// darker and smaller rectangles on top of each other.
-	for (int i = offset; i >= 0; i--) {
+	uint32 targetOffset = (uint32)offset << 16;
+	int curOffset = 0;
+	for (uint32 i = shadowIntensity; i <= targetOffset; i += shadowIntensity) {
 		int f, ddF_x, ddF_y;
 		int x, y, px, py;
 
@@ -3840,7 +3845,8 @@ drawRoundedSquareShadowClip(int x1, int y1, int r, int w, int h, int offset) {
 		}
 
 		// Make shadow smaller each iteration
-		shadowRect.grow(-1);
+		shadowRect.grow(curOffset - (i >> 16));
+		curOffset = i >> 16;
 
 		if (_shadowFillMode == kShadowExponential)
 			// Multiply with expfactor

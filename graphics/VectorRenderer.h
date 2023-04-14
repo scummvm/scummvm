@@ -92,6 +92,8 @@ struct DrawStep {
 
 	uint32 scale; /**< scale of all the coordinates in FIXED POINT with 16 bits mantissa */
 
+	uint32 shadowIntensity; /**< interval for drawing shadows in FIXED POINT with 16 bits mantissa */
+
 	GUI::ThemeEngine::AutoScaleMode autoscale; /**< scale alphaimage if present */
 
 	DrawStep() {
@@ -107,6 +109,7 @@ struct DrawStep {
 		shadowFillMode = 0;
 		extraData = 0;
 		scale = 0;
+		shadowIntensity = 0;
 		autoscale = GUI::ThemeEngine::kAutoScaleNone;
 	}
 };
@@ -376,6 +379,16 @@ public:
 	}
 
 	/**
+	 * Sets the pixel interval for drawing shadows
+	 * 
+	 * @param shadowIntensity interval for drawing shadows
+	 */
+	virtual void setShadowIntensity(uint32 shadowIntensity) {
+		if (shadowIntensity > 0)
+			_shadowIntensity = shadowIntensity;
+	}
+
+	/**
 	 * Sets the clipping rectangle to be used by draw calls.
 	 *
 	 * Draw calls are restricted to pixels that are inside of the clipping
@@ -544,6 +557,7 @@ protected:
 	uint32 _dynamicData; /**< Dynamic data from the GUI Theme that modifies the drawing of the current shape */
 
 	int _gradientFactor; /**< Multiplication factor of the active gradient */
+	uint32 _shadowIntensity; /**< Intensity of the shadow */
 };
 /** @} */
 } // End of namespace Graphics

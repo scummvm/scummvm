@@ -258,8 +258,8 @@ protected:
 	 */
 	virtual void drawSquareShadow(int x, int y, int w, int h, int offset);
 	virtual void drawSquareShadowClip(int x, int y, int w, int h, int offset);
-	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int offset);
-	virtual void drawRoundedSquareShadowClip(int x, int y, int r, int w, int h, int offset);
+	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int offset, uint32 shadowIntensity);
+	virtual void drawRoundedSquareShadowClip(int x, int y, int r, int w, int h, int offset, uint32 shadowIntensity);
 
 	/**
 	 * Calculates the color gradient on a given point.
@@ -380,8 +380,8 @@ protected:
 
 	virtual void drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m);
 
-	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int offset) {
-		Base::drawRoundedSquareShadow(x, y, r, w, h, offset);
+	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int offset, uint32 shadowIntensity) {
+		Base::drawRoundedSquareShadow(x, y, r, w, h, offset, shadowIntensity);
 	}
 
 	virtual void drawTabAlg(int x, int y, int w, int h, int r,

@@ -52,6 +52,7 @@ void VectorRenderer::drawStep(const Common::Rect &area, const Common::Rect &clip
 	setStrokeWidth(step.stroke);
 	setFillMode((FillMode)step.fillMode);
 	setClippingRect(applyStepClippingRect(area, clip, step));
+	setShadowIntensity(step.shadowIntensity);
 
 	_dynamicData = extra;
 

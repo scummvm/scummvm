@@ -161,6 +161,7 @@ Graphics::DrawStep *ThemeParser::defaultDrawStep() {
 	step->fillMode = Graphics::VectorRenderer::kFillDisabled;
 	step->scale = (1 << 16);
 	step->radius = 0xFF;
+	step->shadowIntensity = SCALEVALUE((1 << 16));
 
 	return step;
 }
