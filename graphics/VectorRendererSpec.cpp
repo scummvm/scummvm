@@ -3780,6 +3780,10 @@ drawRoundedSquareShadowClip(int x1, int y1, int r, int w, int h, int offset, uin
 
 	// Soft shadows are constructed by drawing increasingly
 	// darker and smaller rectangles on top of each other.
+
+	// HACK: shadowIntensity is tailed with 16-bits mantissa. We also represent the
+	// offset as a 16.16 fixed point number here as termination condition to simplify
+	// looping logic.
 	uint32 targetOffset = (uint32)offset << 16;
 	int curOffset = 0;
 	for (uint32 i = shadowIntensity; i <= targetOffset; i += shadowIntensity) {

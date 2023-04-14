@@ -109,7 +109,7 @@ struct DrawStep {
 		shadowFillMode = 0;
 		extraData = 0;
 		scale = 0;
-		shadowIntensity = 0;
+		shadowIntensity = 1;
 		autoscale = GUI::ThemeEngine::kAutoScaleNone;
 	}
 };
@@ -386,6 +386,8 @@ public:
 	virtual void setShadowIntensity(uint32 shadowIntensity) {
 		if (shadowIntensity > 0)
 			_shadowIntensity = shadowIntensity;
+		else
+			warning("setShadowIntensity(): zero intensity");
 	}
 
 	/**
