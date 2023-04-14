@@ -166,9 +166,9 @@ public:
 	uint16 _frameTime = 0;
 	uint _videoFormat = kLargeVideoFormat;
 	uint16 _firstFrame = 0;
-	int16 _lastFrame = 0;
+	uint16 _lastFrame = 0;
 
-	int _curFrame = -1; 
+	uint _curFrame = 0; 
 	uint16 _nextFrameTime = 0;
 
 	// We use the built-in RenderObject for the body

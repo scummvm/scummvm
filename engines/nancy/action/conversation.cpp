@@ -510,6 +510,7 @@ Common::String ConversationVideo::getRecordTypeName() const {
 
 void ConversationCel::init() {
 	registerGraphics();
+	ConversationSound::init();
 }
 
 void ConversationCel::registerGraphics() {
@@ -520,7 +521,7 @@ void ConversationCel::registerGraphics() {
 void ConversationCel::updateGraphics() {
 	uint32 currentTime = g_nancy->getTotalPlayTime();
 
-	if (currentTime > _nextFrameTime && ++_curFrame < (int)_cels.size()) {
+	if (currentTime > _nextFrameTime && _curFrame < _cels.size()) {
 		Cel &curCel = _cels[_curFrame];
 
 		_drawSurface.create(curCel.bodySurf, curCel.bodySrc);
@@ -529,7 +530,12 @@ void ConversationCel::updateGraphics() {
 		_headRObj._drawSurface.create(curCel.headSurf, curCel.headSrc);
 		_headRObj.moveTo(curCel.headDest);
 
-		_nextFrameTime = currentTime + _frameTime;
+		if (_nextFrameTime == 0) {
+			_nextFrameTime = currentTime;
+		}
+		
+		_nextFrameTime += _frameTime;
+		++_curFrame;
 	}
 }
 
@@ -584,7 +590,7 @@ void ConversationCel::readData(Common::SeekableReadStream &stream) {
 }
 
 bool ConversationCel::isVideoDonePlaying() {
-	return _curFrame == _lastFrame && _nextFrameTime <= g_nancy->getTotalPlayTime();
+	return _curFrame >= _lastFrame && _nextFrameTime <= g_nancy->getTotalPlayTime();
 }
 	
 } // End of namespace Action
