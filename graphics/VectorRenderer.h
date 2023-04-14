@@ -109,7 +109,7 @@ struct DrawStep {
 		shadowFillMode = 0;
 		extraData = 0;
 		scale = 0;
-		shadowIntensity = 1;
+		shadowIntensity = 1 << 16;
 		autoscale = GUI::ThemeEngine::kAutoScaleNone;
 	}
 };
