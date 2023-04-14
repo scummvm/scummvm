@@ -1439,6 +1439,7 @@ void EoBEngine::initStaticResource() {
 
 	switch (_flags.lang) {
 	case Common::EN_ANY:
+	default:
 		_errorSlotNoNameString = errorSlotNoNameString[0];
 		break;
 	case Common::DE_DEU:
@@ -1450,8 +1451,6 @@ void EoBEngine::initStaticResource() {
 	case Common::JA_JPN:
 		_errorSlotNoNameString = errorSlotNoNameString[3];
 		break;
-	default:
-		_errorSlotNoNameString = errorSlotNoNameString[ARRAYSIZE(errorSlotNoNameString) - 1];
 	}
 }
 
