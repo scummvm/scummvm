@@ -2614,8 +2614,13 @@ void GUI_EoB::messageDialogue(int dim, int id, int buttonTextCol) {
 	int by = dm->sy + dm->h - 19;
 	int bw = _screen->getTextWidth(_vm->_menuOkString) + 7;
 
-	drawMenuButtonBox(bx, by, bw, 14, false, false);
-	_screen->printShadedText(_vm->_menuOkString, bx + 4, by + 3, buttonTextCol, 0, _vm->guiSettings()->colors.guiColorBlack);
+	if (_vm->_flags.lang == Common::Language::ZH_TWN) {
+		drawMenuButtonBox(bx, by, bw, 16, false, false);
+		_screen->printShadedText(_vm->_menuOkString, bx + 4, by + 1, buttonTextCol, 0, _vm->guiSettings()->colors.guiColorBlack);
+	} else {
+		drawMenuButtonBox(bx, by, bw, 14, false, false);
+		_screen->printShadedText(_vm->_menuOkString, bx + 4, by + 3, buttonTextCol, 0, _vm->guiSettings()->colors.guiColorBlack);
+	}
 	_screen->updateScreen();
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
