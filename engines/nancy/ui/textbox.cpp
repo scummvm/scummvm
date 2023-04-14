@@ -83,6 +83,7 @@ void Textbox::registerGraphics() {
 	RenderObject::registerGraphics();
 	_scrollbar->registerGraphics();
 	_highlightRObj.registerGraphics();
+	_highlightRObj.setVisible(false);
 }
 
 void Textbox::updateGraphics() {
