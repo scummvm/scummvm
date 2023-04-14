@@ -134,13 +134,17 @@ void Textbox::drawTextbox() {
 		bool hasHotspot = false;
 		Rect hotspot;
 
-		// Trim the begin and end tokens from the line
-		if (currentLine.hasPrefix(_CCBeginToken) && currentLine.hasSuffix(_CCEndToken)) {
-			currentLine = currentLine.substr(ARRAYSIZE(_CCBeginToken) - 1, currentLine.size() - ARRAYSIZE(_CCBeginToken) - ARRAYSIZE(_CCEndToken) + 2);
+		// Erase the begin and end tokens from the line
+		uint32 newLinePos;
+		while (newLinePos = currentLine.find(_CCBeginToken), newLinePos != String::npos) {
+			currentLine.erase(newLinePos, ARRAYSIZE(_CCBeginToken) - 1);
+		}
+
+		while (newLinePos = currentLine.find(_CCEndToken), newLinePos != String::npos) {
+			currentLine.erase(newLinePos, ARRAYSIZE(_CCEndToken) - 1);
 		}
 
 		// Replace every newline token with \n
-		uint32 newLinePos;
 		while (newLinePos = currentLine.find(_newLineToken), newLinePos != String::npos) {
 			currentLine.replace(newLinePos, ARRAYSIZE(_newLineToken) - 1, "\n");
 		}
