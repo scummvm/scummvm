@@ -119,7 +119,7 @@ void EditableWidget::handleTickle() {
 void EditableWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (!isEnabled())
 		return;
-	
+
 	_isDragging = true;
 	// Select all text incase of double press
 	if (clickCount > 1) {
@@ -129,7 +129,7 @@ void EditableWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		markAsDirty();
 		return;
 	}
-	
+
 	// Clear any selection
 	if (_selOffset != 0 && !_shiftPressed)
 		clearSelection();
@@ -266,7 +266,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		} else if (deleteIndex >= 0 && _selOffset != 0) {
 			int selBegin = _selCaretPos;
 			int selEnd = _selCaretPos + _selOffset;
-			if (selBegin > selEnd) 
+			if (selBegin > selEnd)
 				SWAP(selBegin, selEnd);
 			_editString.erase(selBegin, selEnd - selBegin);
 			setCaretPos(caretVisualPos(selBegin));
@@ -360,7 +360,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 				if (_selOffset != 0) {
 					int selBegin = _selCaretPos;
 					int selEnd = _selCaretPos + _selOffset;
-					if (selBegin > selEnd) 
+					if (selBegin > selEnd)
 						SWAP(selBegin, selEnd);
 					_editString.replace(selBegin, selEnd - selBegin, text);
 					setCaretPos(caretVisualPos(selBegin));
@@ -449,7 +449,7 @@ void EditableWidget::defaultKeyDownHandler(Common::KeyState &state, bool &dirty,
 		if (_selCaretPos >= 0) {
 			int selBegin = _selCaretPos;
 			int selEnd = _selCaretPos + _selOffset;
-			if (selBegin > selEnd) 
+			if (selBegin > selEnd)
 				SWAP(selBegin, selEnd);
 			_editString.replace(selBegin, selEnd - selBegin, Common::U32String(state.ascii));
 			if(_editString.size() > 0)
