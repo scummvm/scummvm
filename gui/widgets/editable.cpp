@@ -544,11 +544,14 @@ void EditableWidget::drawCaret(bool erase) {
 		// EditTextWidget uses that but not ListWidget. Thus, one should check
 		// whether we can unify the drawing in the text area first to avoid
 		// possible glitches due to different methods used.
-		_inversion = (_selOffset < 0) ? ThemeEngine::kTextInversionFocus : ThemeEngine::kTextInversionNone;
+
+		ThemeEngine::TextInversionState inversion = _inversion;
+		inversion = (_selOffset < 0) ? ThemeEngine::kTextInversionFocus : ThemeEngine::kTextInversionNone;
+
 		width = MIN(editRect.width() - caretOffset, width);
 		if (width > 0) {
 			g_gui.theme()->drawText(Common::Rect(x, y, x + width, y + editRect.height()), character,
-			                        _state, _drawAlign, _inversion, 0, false, _font,
+			                        _state, _drawAlign, inversion, 0, false, _font,
 			                        ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		}
 	}
