@@ -340,7 +340,13 @@ void TextDisplayer_rpg::printLine(char *str) {
 	bool sjisTextMode = _pc98TextMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15) ? true : false;
 	int sjisOffs = (sjisTextMode || _vm->game() != GI_LOL) ? 8 : 9;
 
-	int fh = (_screen->_currentFont == Screen::FID_SJIS_TEXTMODE_FNT) ? 9 : (_screen->getFontHeight() + _screen->_lineSpacing);
+	int fh;
+	if (_screen->_currentFont == Screen::FID_CHINESE_FNT && _vm->_flags.lang == Common::Language::ZH_TWN && _vm->_flags.gameID == GI_EOB2)
+		fh = 14;
+	else if (_screen->_currentFont == Screen::FID_SJIS_TEXTMODE_FNT)
+		fh = 9;
+	else
+		fh = _screen->getFontHeight() + _screen->_lineSpacing;
 	int lines = (sd->h - _screen->_lineSpacing) / fh;
 
 	while (_textDimData[sdx].line >= lines) {
