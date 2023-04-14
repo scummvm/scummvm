@@ -156,6 +156,11 @@ void Scene::process() {
 void Scene::onStateEnter(const NancyState::NancyState prevState) {
 	if (_state != kInit) {
 		registerGraphics();
+
+		if (prevState != NancyState::kPause) {
+			g_nancy->setTotalPlayTime((uint32)_timers.pushedPlayTime);
+		}
+
 		_actionManager.onPause(false);
 
 		g_nancy->_graphicsManager->redrawAll();
@@ -164,18 +169,16 @@ void Scene::onStateEnter(const NancyState::NancyState prevState) {
 			g_nancy->_cursorManager->setCursorItemID(getHeldItem());
 		}
 
-		// Run once to clear out the previous scene when coming from Map
-		process();
-
-		g_nancy->setTotalPlayTime((uint32)_timers.pushedPlayTime);
-
 		unpauseSceneSpecificSounds();
 		g_nancy->_sound->stopSound("MSND");
 	}
 }
 
 bool Scene::onStateExit(const NancyState::NancyState nextState) {
-	_timers.pushedPlayTime = g_nancy->getTotalPlayTime();
+	if (nextState != NancyState::kPause) {
+		_timers.pushedPlayTime = g_nancy->getTotalPlayTime();
+	}
+	
 	_actionManager.onPause(true);
 	pauseSceneSpecificSounds();
 	_gameStateRequested = NancyState::kNone;
