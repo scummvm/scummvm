@@ -62,6 +62,9 @@ private:
 	};
 
 	Graphics::ManagedSurface _fullSurface;
+	Graphics::ManagedSurface _textHighlightSurface;
+
+	RenderObject _highlightRObj;
 
 	Scrollbar *_scrollbar;
 

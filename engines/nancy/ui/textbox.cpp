@@ -48,7 +48,8 @@ Textbox::Textbox() :
 		_scrollbar(nullptr),
 		_scrollbarPos(0),
 		_numLines(0),
-		_lastResponseisMultiline(false) {}
+		_lastResponseisMultiline(false),
+		_highlightRObj(7) {}
 
 Textbox::~Textbox() {
 	delete _scrollbar;
@@ -59,7 +60,10 @@ void Textbox::init() {
 	assert(tbox);
 
 	moveTo(g_nancy->_bootSummary->textboxScreenPosition);
+	_highlightRObj.moveTo(g_nancy->_bootSummary->textboxScreenPosition);
 	_fullSurface.create(tbox->innerBoundingBox.width(), tbox->innerBoundingBox.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
+	_textHighlightSurface.create(tbox->innerBoundingBox.width(), tbox->innerBoundingBox.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
+	_textHighlightSurface.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
 
 	Common::Rect outerBoundingBox = _screenPosition;
 	outerBoundingBox.moveTo(0, 0);
@@ -78,6 +82,7 @@ void Textbox::init() {
 void Textbox::registerGraphics() {
 	RenderObject::registerGraphics();
 	_scrollbar->registerGraphics();
+	_highlightRObj.registerGraphics();
 }
 
 void Textbox::updateGraphics() {
@@ -97,11 +102,23 @@ void Textbox::updateGraphics() {
 void Textbox::handleInput(NancyInput &input) {
 	_scrollbar->handleInput(input);
 
+	bool hasHighlight = false;
 	for (uint i = 0; i < _hotspots.size(); ++i) {
 		Common::Rect hotspot = _hotspots[i];
 		hotspot.translate(0, -_drawSurface.getOffsetFromOwner().y);
-		if (convertToScreen(hotspot).findIntersectingRect(_screenPosition).contains(input.mousePos)) {
+		Common::Rect hotspotOnScreen = convertToScreen(hotspot).findIntersectingRect(_screenPosition);
+		if (hotspotOnScreen.contains(input.mousePos)) {
 			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
+
+			// Highlight the selected response
+			if (g_nancy->getGameType() >= kGameTypeNancy2) {
+				_highlightRObj.setVisible(true);
+				Common::Rect hotspotInside = convertToLocal(hotspotOnScreen);
+				hotspotInside.translate(0, _drawSurface.getOffsetFromOwner().y);
+				_highlightRObj._drawSurface.create(_textHighlightSurface, hotspotInside);
+				_highlightRObj.moveTo(hotspotOnScreen);
+				hasHighlight = true;
+			}
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				input.input &= ~NancyInput::kLeftMouseButtonUp;
@@ -111,6 +128,10 @@ void Textbox::handleInput(NancyInput &input) {
 
 			break;
 		}
+	}
+
+	if (!hasHighlight && _highlightRObj.isVisible()) {
+		_highlightRObj.setVisible(false);
 	}
 }
 
@@ -122,7 +143,8 @@ void Textbox::drawTextbox() {
 
 	_numLines = 0;
 
-	const Font *font = g_nancy->_graphicsManager->getFont(tbox->fontID);
+	const Font *font = g_nancy->_graphicsManager->getFont(tbox->conversationFontID);
+	const Font *highlightFont = g_nancy->_graphicsManager->getFont(tbox->highlightConversationFontID);
 
 	uint maxWidth = _fullSurface.w - tbox->maxWidthDifference - tbox->borderWidth - 2;
 	uint lineDist = tbox->lineHeight + tbox->lineHeight / 4;
@@ -225,8 +247,8 @@ void Textbox::drawTextbox() {
 
 			if (hasHotspot) {
 				hotspot.left = tbox->borderWidth;
-				hotspot.top = tbox->firstLineOffset - font->getFontHeight() + (_numLines + 1 - numColorLines) * lineDist;
-				hotspot.setHeight(MAX<int16>((wrappedLines.size() + numColorLines - 1), 1) * tbox->lineHeight + lineDist);
+				hotspot.top = tbox->firstLineOffset - tbox->lineHeight + (_numLines - numColorLines) * lineDist - 1;
+				hotspot.setHeight((wrappedLines.size() + MAX<int16>((numColorLines - 1), 0)) * lineDist - (lineDist - tbox->lineHeight));
 				hotspot.setWidth(0);
 			}
 
@@ -234,6 +256,7 @@ void Textbox::drawTextbox() {
 			for (uint i = 0; i < wrappedLines.size(); ++i) {
 				font->drawString(&_fullSurface, wrappedLines[i], tbox->borderWidth + (i == 0 ? horizontalOffset : 0), tbox->firstLineOffset - font->getFontHeight() + _numLines * lineDist, maxWidth, 0);
 				if (hasHotspot) {
+					highlightFont->drawString(&_textHighlightSurface, wrappedLines[i], tbox->borderWidth + (i == 0 ? horizontalOffset : 0), tbox->firstLineOffset - highlightFont->getFontHeight() + _numLines * lineDist, maxWidth, 0);
 					hotspot.setWidth(MAX<int16>(hotspot.width(), font->getStringWidth(wrappedLines[i]) + (i == 0 ? horizontalOffset : 0)));
 				}
 				++_numLines;
@@ -267,6 +290,7 @@ void Textbox::drawTextbox() {
 
 void Textbox::clear() {
 	_fullSurface.clear();
+	_textHighlightSurface.clear(_textHighlightSurface.getTransparentColor());
 	_textLines.clear();
 	_hotspots.clear();
 	_scrollbar->resetPosition();
@@ -315,8 +339,10 @@ void Textbox::onScrollbarMove() {
 		Common::Rect bounds = getBounds();
 		bounds.moveTo(0, (inner - outer) * _scrollbarPos);
 		_drawSurface.create(_fullSurface, bounds);
+		_highlightRObj._drawSurface.create(_textHighlightSurface, bounds);
 	} else {
 		_drawSurface.create(_fullSurface, getBounds());
+		_highlightRObj._drawSurface.create(_textHighlightSurface, getBounds());
 	}
 
 	_needsRedraw = true;

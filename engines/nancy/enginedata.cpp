@@ -216,7 +216,16 @@ TBOX::TBOX(Common::SeekableReadStream *chunkStream) {
 	}
 
 	chunkStream->seek(0x1FE);
-	fontID = chunkStream->readUint16LE();
+	defaultFontID = chunkStream->readUint16LE();
+	
+	if (g_nancy->getGameType() >= kGameTypeNancy2) {
+		chunkStream->skip(2);
+		conversationFontID = chunkStream->readUint16LE();
+		highlightConversationFontID = chunkStream->readUint16LE();
+	} else {
+		conversationFontID = defaultFontID;
+		highlightConversationFontID = defaultFontID;
+	}
 
 	delete chunkStream;
 }

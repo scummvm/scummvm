@@ -115,7 +115,9 @@ struct TBOX {
 	Common::Array<Common::Rect> ornamentSrcs;
 	Common::Array<Common::Rect> ornamentDests;
 
-	uint16 fontID;
+	uint16 defaultFontID;
+	uint16 conversationFontID;
+	uint16 highlightConversationFontID;
 };
 
 struct MAP {

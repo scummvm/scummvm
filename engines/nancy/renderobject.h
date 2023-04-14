@@ -48,6 +48,7 @@ public:
 	void moveTo(const Common::Rect &bounds);
 	void setVisible(bool visible);
 	void setTransparent(bool isTransparent);
+	bool isVisible() const { return _isVisible; }
 
 	// Only used by The Vampire Diaries
 	void grabPalette(byte *colors, uint paletteStart = 0, uint paletteSize = 256);
