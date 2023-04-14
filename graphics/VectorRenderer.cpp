@@ -109,7 +109,7 @@ int VectorRenderer::stepGetRadius(const DrawStep &step, const Common::Rect &area
 
 void VectorRenderer::stepGetPositions(const DrawStep &step, const Common::Rect &area, uint16 &in_x, uint16 &in_y, uint16 &in_w, uint16 &in_h) {
 	if (!step.autoWidth) {
-		in_w = step.w == -1 ? area.height() : step.w;
+		in_w = step.w == -1 ? area.width() : step.w;
 
 		switch (step.xAlign) {
 		case Graphics::DrawStep::kVectorAlignManual:
@@ -140,7 +140,7 @@ void VectorRenderer::stepGetPositions(const DrawStep &step, const Common::Rect &
 	}
 
 	if (!step.autoHeight) {
-		in_h = step.h == -1 ? area.width() : step.h;
+		in_h = step.h == -1 ? area.height() : step.h;
 
 		switch (step.yAlign) {
 		case Graphics::DrawStep::kVectorAlignManual:
