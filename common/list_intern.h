@@ -31,8 +31,11 @@ template<typename T> class List;
 
 namespace ListInternal {
 	struct NodeBase {
-		NodeBase *_prev;
-		NodeBase *_next;
+		NodeBase *_prev = nullptr;
+		NodeBase *_next = nullptr;
+
+		constexpr NodeBase() = default;
+		constexpr NodeBase(NodeBase *prev, NodeBase *next) : _prev(prev), _next(next) {}
 	};
 
 	template<typename T>
