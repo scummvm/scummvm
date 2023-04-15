@@ -31,8 +31,10 @@ namespace Math {
 template<>
 class Matrix<3, 3> : public MatrixType<3, 3>, public Rotation3D<Matrix<3, 3> > {
 public:
-	Matrix();
-	Matrix(const MatrixBase<3, 3> &m);
+	Matrix() : MatrixType<3, 3>(), Rotation3D<Matrix<3, 3> >() {}
+	Matrix(const MatrixBase<3, 3> &m) :
+		MatrixType<3, 3>(m), Rotation3D<Matrix<3, 3> >() {
+	}
 
 	void transpose();
 

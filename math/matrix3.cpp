@@ -23,14 +23,6 @@
 
 namespace Math {
 
-Matrix<3, 3>::Matrix() :
-	MatrixType<3, 3>(), Rotation3D<Matrix<3, 3> >() {
-}
-
-Matrix<3, 3>::Matrix(const MatrixBase<3, 3> &m) :
-	MatrixType<3, 3>(m), Rotation3D<Matrix<3, 3> >() {
-}
-
 void swap (float &a, float &b) {
 	float c = a; a = b; b = c;
 }
