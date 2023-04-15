@@ -147,9 +147,13 @@ uint8 LightgVertex(gVertex *v, t3dLIGHT *light) {
 Common::String setDirectoryAndName(const Common::String &path, const Common::String &name) {
 	int32  len = name.size();
 
-	auto backSlashPos = name.findFirstOf("\\");
+	auto backSlashPos = name.findLastOf("\\");
 
-	return path + name.substr(backSlashPos + 1, name.size() - (backSlashPos + 1));
+	if (backSlashPos != Common::String::npos) {
+		len = backSlashPos;
+	}
+
+	return path + name.substr(0, len);
 }
 
 /* -----------------29/05/99 12.03-------------------
