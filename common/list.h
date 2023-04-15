@@ -59,10 +59,7 @@ public:
 	/**
 	 * Construct a new empty list.
 	 */
-	List() {
-		_anchor._prev = &_anchor;
-		_anchor._next = &_anchor;
-	}
+	constexpr List() : _anchor(&_anchor, &_anchor) {}
 	List(const List<t_T> &list) {  /*!< Construct a new list as a copy of the given @p list. */
 		_anchor._prev = &_anchor;
 		_anchor._next = &_anchor;
