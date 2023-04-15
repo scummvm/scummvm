@@ -120,14 +120,6 @@ void Overlay::execute() {
 						!g_nancy->_sound->isSoundPlaying(_sound))	) {
 
 				_state = kActionTrigger;
-
-				// Not sure if hiding when triggered is a hack or the intended behavior, but it's here to fix
-				// nancy1's safe lock light not turning off.
-				setVisible(false);
-
-				if (!g_nancy->_sound->isSoundPlaying(_sound)) {
-					g_nancy->_sound->stopSound(_sound);
-				}
 			} else {
 				// Check if we've moved the viewport
 				uint16 newFrame = NancySceneState.getSceneInfo().frameID;
@@ -136,11 +128,18 @@ void Overlay::execute() {
 					_currentViewportFrame = newFrame;
 
 					setVisible(false);
+					_hasHotspot = false;
 
 					for (uint i = 0; i < _bitmaps.size(); ++i) {
 						if (_currentViewportFrame == _bitmaps[i].frameID) {
 							moveTo(_bitmaps[i].dest);
 							setVisible(true);
+
+							if (_enableHotspot == kPlayOverlayWithHotspot) {
+								_hotspot = _screenPosition;
+								_hasHotspot = true;
+							}
+
 							break;
 						}
 					}
@@ -179,7 +178,7 @@ void Overlay::execute() {
 						if (_overlayType == kPlayOverlayStatic) {
 							setFrame(i);
 
-							if (_enableHotspot) {
+							if (_enableHotspot == kPlayOverlayWithHotspot) {
 								_hotspot = _screenPosition;
 								_hasHotspot = true;
 							}
@@ -194,11 +193,15 @@ void Overlay::execute() {
 		break;
 	}
 	case kActionTrigger:
+		setVisible(false);
+		g_nancy->_sound->stopSound(_sound);
+
 		_flagsOnTrigger.execute();
 		if (_hasSceneChange == kPlayOverlaySceneChange) {
 			NancySceneState.changeScene(_sceneChange);
 			finishExecution();
 		}
+
 		break;
 	}
 }
