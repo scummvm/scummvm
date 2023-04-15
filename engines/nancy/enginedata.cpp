@@ -305,16 +305,22 @@ HELP::HELP(Common::SeekableReadStream *chunkStream) {
 
 	chunkStream->seek(0);
 	readFilename(*chunkStream, imageName);
-
 	chunkStream->skip(20);
-	buttonDest.left = chunkStream->readUint16LE();
-	buttonDest.top = chunkStream->readUint16LE();
-	buttonDest.right = chunkStream->readUint16LE();
-	buttonDest.bottom = chunkStream->readUint16LE();
-	buttonSrc.left = chunkStream->readUint16LE();
-	buttonSrc.top = chunkStream->readUint16LE();
-	buttonSrc.right = chunkStream->readUint16LE();
-	buttonSrc.bottom = chunkStream->readUint16LE();
+
+	if (g_nancy->getGameType() <= kGameTypeNancy1) {
+		buttonDest.left = chunkStream->readUint16LE();
+		buttonDest.top = chunkStream->readUint16LE();
+		buttonDest.right = chunkStream->readUint16LE();
+		buttonDest.bottom = chunkStream->readUint16LE();
+		buttonSrc.left = chunkStream->readUint16LE();
+		buttonSrc.top = chunkStream->readUint16LE();
+		buttonSrc.right = chunkStream->readUint16LE();
+		buttonSrc.bottom = chunkStream->readUint16LE();
+	} else {
+		readRect(*chunkStream, buttonDest);
+		readRect(*chunkStream, buttonSrc);
+		readRect(*chunkStream, buttonHoverSrc);
+	}	
 
 	delete chunkStream;
 }

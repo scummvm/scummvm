@@ -33,8 +33,11 @@
 namespace Nancy {
 namespace UI {
 
-Button::Button(uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds) :
-		RenderObject(zOrder, surface, srcBounds, destBounds),
+Button::Button(uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &clickSrcBounds, const Common::Rect &destBounds, const Common::Rect &hoverSrcBounds) :
+		RenderObject(zOrder, surface, clickSrcBounds, destBounds),
+		surf(surface),
+		_clickSrc(clickSrcBounds),
+		_hoverSrc(hoverSrcBounds),
 		_isClicked(false) {
 	setVisible(false);
 	setTransparent(true);
@@ -44,10 +47,21 @@ void Button::handleInput(NancyInput &input) {
 	if (_screenPosition.contains(input.mousePos)) {
 		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
-		if (input.input & NancyInput::kLeftMouseButtonUp) {
-			_isClicked = true;
+		if (!_hoverSrc.isEmpty() && !_isClicked) {
+			_drawSurface.create(surf, _hoverSrc);
 			setVisible(true);
 		}
+
+		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			_isClicked = true;
+			if (_hoverSrc.isEmpty()) {
+				setVisible(true);
+			} else {
+				_drawSurface.create(surf, _clickSrc);
+			}
+		}
+	} else if (!_isClicked && _isVisible) {
+		setVisible(false);
 	}
 }
 

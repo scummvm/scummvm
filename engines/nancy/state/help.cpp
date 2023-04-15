@@ -84,7 +84,7 @@ void Help::init() {
 	assert(helpData);
 	_image.init(helpData->imageName);
 
-	_button = new UI::Button(5, _image._drawSurface, helpData->buttonSrc, helpData->buttonDest);
+	_button = new UI::Button(5, _image._drawSurface, helpData->buttonSrc, helpData->buttonDest, helpData->buttonHoverSrc);
 	_button->init();
 
 	_state = kBegin;

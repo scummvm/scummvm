@@ -763,8 +763,8 @@ void Scene::initStaticData() {
 		_mapHotspot = g_nancy->_mapData->buttonDest;
 	}
 
-	_menuButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, bsum->menuButtonSrc, bsum->menuButtonDest);
-	_helpButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, bsum->helpButtonSrc, bsum->helpButtonDest);
+	_menuButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, bsum->menuButtonSrc, bsum->menuButtonDest, bsum->menuButtonHighlightSrc);
+	_helpButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, bsum->helpButtonSrc, bsum->helpButtonDest, bsum->helpButtonHighlightSrc);
 	g_nancy->setMouseEnabled(true);
 	
 	// Init ornaments and clock (TVD only)

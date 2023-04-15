@@ -161,8 +161,9 @@ struct HELP {
 	HELP(Common::SeekableReadStream *chunkStream);
 
 	Common::String imageName;
-	Common::Rect buttonSrc;
 	Common::Rect buttonDest;
+	Common::Rect buttonSrc;
+	Common::Rect buttonHoverSrc;
 };
 
 struct CRED {

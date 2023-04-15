@@ -32,11 +32,17 @@ namespace UI {
 
 class Button : public RenderObject {
 public:
-	Button(uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds);
+	Button(uint16 zOrder, Graphics::ManagedSurface &surface,
+			const Common::Rect &clickSrcBounds,
+			const Common::Rect &destBounds,
+			const Common::Rect &hoverSrcBounds = Common::Rect());
 	virtual ~Button() = default;
 
 	void handleInput(NancyInput &input);
 
+	Graphics::ManagedSurface &surf;
+	Common::Rect _clickSrc;
+	Common::Rect _hoverSrc;
 	bool _isClicked;
 };
 
