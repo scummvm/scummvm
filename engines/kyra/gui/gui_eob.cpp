@@ -2081,24 +2081,73 @@ int GUI_EoB::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 	return result;
 }
 
+Common::Point GUI_EoB::simpleMenu_getTextPoint(int num, int *col) {
+	int column = 0;
+        int line = num;
+        int tx = 0;
+        for (; line >= _menuLines[column] && column + 1 < _menuColumns; line -= _menuLines[column], column++)
+                tx += _menuColumnWidth[column];
+        int ty = (line + _menuColumnOffset[column]) * (_menuLineSpacing + _screen->getCharHeight(' '));
+	if (col)
+		*col = column;
+	return Common::Point(tx, ty);
+}
+
+void GUI_EoB::simpleMenu_printButton(int sd, int num, const char *title, bool isHighlight, bool isInitial) {
+	int column;
+	Common::Point tPoint = simpleMenu_getTextPoint(num, &column);
+        if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+                _vm->_txt->printShadedText(title, 4 + tPoint.x, (sd == 8 ? 2 : 20) + tPoint.y, isHighlight ? _menuHighlightColor : _menuTextColor, _menuShadowColor);
+        } else {
+		Common::Point p = tPoint + _menuPoint;
+                _screen->printShadedText(title, p.x, p.y, _menuTextColor, 0, _menuShadowColor);
+                if (isHighlight)
+                        _screen->printText(title, p.x, p.y, _menuHighlightColor, 0);
+		if (num < ARRAYSIZE(_menuOverflow) && isInitial)
+			_menuOverflow[num] = _screen->getTextWidth(title) > _menuColumnWidth[column];
+        }
+}
+
 void GUI_EoB::simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int itemOffset, int lineSpacing, int textColor, int highlightColor, int shadowColor) {
 	simpleMenu_initMenuItemsMask(sd, maxItem, menuItemsMask, itemOffset);
 
 	const ScreenDim *dm = _screen->getScreenDim(19 + sd);
-	int x = (_screen->_curDim->sx + dm->sx) << 3;
-	int y = _screen->_curDim->sy + dm->sy;
+        _menuPoint = Common::Point((_screen->_curDim->sx + dm->sx) << 3, _screen->_curDim->sy + dm->sy);
 
 	int v = simpleMenu_getMenuItem(_menuCur, menuItemsMask, itemOffset);
+	_menuColumns = 1;
+	_menuLines[0] = _menuNumItems;
+	_menuLines[1] = 0;
+	_menuColumnWidth[0] = dm->w * _screen->getCharWidth('W');
+	_menuColumnWidth[1] = 0;
+	_menuColumnOffset[0] = 0;
+	_menuColumnOffset[1] = 0;
 
-	for (int i = 0; i < _menuNumItems; i++) {
-		int item = simpleMenu_getMenuItem(i, menuItemsMask, itemOffset);
-		int ty = i * (lineSpacing + _screen->getCharHeight(' '));
-		if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
-			_vm->_txt->printShadedText(strings[item], 4, (sd == 8 ? 2 : 20) + ty, item == v ? highlightColor : textColor, shadowColor);
-		} else {
-			_screen->printShadedText(strings[item], x, y + ty, textColor, 0, shadowColor);
-			if (item == v)
-				_screen->printText(strings[item], x, y + ty, highlightColor, 0);
+	memset(_menuOverflow, 0, sizeof(_menuOverflow));
+
+	if (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN) {
+		switch (sd) {
+		case 1:
+		case 3:
+			_menuPoint.x = (_screen->_curDim->sx << 3) - 7;
+			if (_menuNumItems >= 6) {
+				_menuLines[0] = 6;
+				_menuLines[1] = _menuNumItems - 6;
+				_menuColumnWidth[0] = _menuColumnWidth[1] = 75;
+				_menuColumns = 2;
+			}
+			break;
+		case 2:
+			_menuPoint.x = (_screen->_curDim->sx << 3) - 7;
+			if (_menuNumItems >= 7) {
+				_menuLines[0] = 7;
+				_menuColumnOffset[1] = -1;
+				_menuLines[1] = _menuNumItems - 7;
+				_menuColumnWidth[0] = 48;
+				_menuColumnWidth[1] = 135;
+				_menuColumns = 2;
+			}
+			break;
 		}
 	}
 
@@ -2107,65 +2156,113 @@ void GUI_EoB::simpleMenu_setup(int sd, int maxItem, const char *const *strings, 
 	_menuTextColor = textColor;
 	_menuHighlightColor = highlightColor;
 	_menuShadowColor = shadowColor;
+
+	for (int i = 0; i < _menuNumItems; i++) {
+		int item = simpleMenu_getMenuItem(i, menuItemsMask, itemOffset);
+                simpleMenu_printButton(sd, i, strings[item], item == v, true);
+	}
+
 	_vm->removeInputTop();
 }
 
-int GUI_EoB::simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int itemOffset) {
+int GUI_EoB::simpleMenu_getMouseItem(int sd) {
 	const ScreenDim *dm = _screen->getScreenDim(19 + sd);
-	int h = _menuNumItems - 1;
+	Common::Point mousePos = _vm->getMousePos();
+	int xrel = mousePos.x - _menuPoint.x;
+	int y1 = _screen->_curDim->sy + dm->sy - (_menuLineSpacing >> 1);
+	int lineH = (_menuLineSpacing + _screen->getCharHeight(' '));
+	int yrel = mousePos.y - y1;
+	int column;
+	int columnItems = 0;
+
+	if (xrel < 0)
+		return -1;
+
+	for (column = 0; column < _menuColumns; column++) {
+		if (xrel < _menuColumnWidth[column])
+			break;
+		xrel -= _menuColumnWidth[column];
+		columnItems += _menuLines[column];
+	}
+
+	if (column == _menuColumns)
+		return -1;
+	
+	int yrelcol = yrel - _menuColumnOffset[column] * lineH;
+
+	if (yrelcol >= 0 && yrelcol < _menuLines[column] * lineH)
+		return yrelcol / lineH + columnItems;
+
+	// Try previous column if it's wide
+	if (column == 0)
+		return -1;
+
+	column--;
+	columnItems -= _menuLines[column];
+	yrelcol = yrel - _menuColumnOffset[column] * lineH;
+	if (yrelcol >= 0 && yrelcol < _menuLines[column] * lineH) {
+		int candidate = yrelcol / lineH + columnItems;
+		if (candidate < ARRAYSIZE(_menuOverflow) && _menuOverflow[candidate])
+			return candidate;
+	}
+
+	return -1;
+}
+
+int GUI_EoB::simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int itemOffset) {
 	int currentItem = _menuCur % _menuNumItems;
 	int newItem = currentItem;
 	int result = -1;
-	int lineH = (_menuLineSpacing + _screen->getCharHeight(' '));
-	int lineS1 = _menuLineSpacing >> 1;
-	int x = (_screen->_curDim->sx + dm->sx) << 3;
-	int y = _screen->_curDim->sy + dm->sy;
 
 	int inFlag = _vm->checkInput(0, false, 0) & 0x8FF;
 	_vm->removeInputTop();
-	Common::Point mousePos = _vm->getMousePos();
 
-	int x1 = (_screen->_curDim->sx << 3) + (dm->sx * _screen->getCharWidth('W'));
-	int y1 = _screen->_curDim->sy + dm->sy - lineS1;
-	int x2 = x1 + (dm->w * _screen->getCharWidth('W')) - 1;
-	int y2 = y1 + _menuNumItems * lineH - 1;
-	if (_vm->posWithinRect(mousePos.x, mousePos.y, x1, y1, x2, y2))
-		newItem = (mousePos.y - y1) / lineH;
+	int mouseItem = simpleMenu_getMouseItem(sd);
+
+	if (mouseItem >= 0)
+		newItem = mouseItem;
 
 	if (inFlag == 199 || inFlag == 201) {
-		if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, x1, y1, x2, y2))
-			result = newItem = (_vm->_mouseY - y1) / lineH;
+		if (mouseItem >= 0)
+			result = newItem = mouseItem;
 	} else if (inFlag == _vm->_keyMap[Common::KEYCODE_RETURN] || inFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inFlag == _vm->_keyMap[Common::KEYCODE_KP5]) {
 		result = newItem;
 	} else if (inFlag == _vm->_keyMap[Common::KEYCODE_HOME] || inFlag == _vm->_keyMap[Common::KEYCODE_KP7] || inFlag == _vm->_keyMap[Common::KEYCODE_PAGEUP] || inFlag == _vm->_keyMap[Common::KEYCODE_KP9]) {
 		newItem = 0;
 	} else if (inFlag == _vm->_keyMap[Common::KEYCODE_END] || inFlag == _vm->_keyMap[Common::KEYCODE_KP1] || inFlag == _vm->_keyMap[Common::KEYCODE_PAGEDOWN] || inFlag == _vm->_keyMap[Common::KEYCODE_KP3]) {
-		newItem = h;
+		newItem = _menuNumItems - 1;
 	} else if (inFlag == _vm->_keyMap[Common::KEYCODE_UP] || inFlag == _vm->_keyMap[Common::KEYCODE_KP8]) {
 		if (--newItem < 0)
-			newItem = h;
+			newItem = _menuNumItems - 1;
 	} else if (inFlag == _vm->_keyMap[Common::KEYCODE_DOWN] || inFlag == _vm->_keyMap[Common::KEYCODE_KP2]) {
-		if (++newItem > h)
+		if (++newItem > _menuNumItems - 1)
 			newItem = 0;
+	} else if (inFlag == _vm->_keyMap[Common::KEYCODE_LEFT] || inFlag == _vm->_keyMap[Common::KEYCODE_KP4]) {
+		newItem -= _menuLines[0];
+		if (newItem < 0)
+			newItem = 0;
+	} else if (inFlag == _vm->_keyMap[Common::KEYCODE_RIGHT] || inFlag == _vm->_keyMap[Common::KEYCODE_KP6]) {
+		newItem += _menuLines[0];
+		if (newItem > _menuNumItems - 1)
+			newItem = _menuNumItems - 1;
 	} else {
 		_menuLastInFlags = inFlag;
 	}
 
 	if (newItem != currentItem) {
+                simpleMenu_printButton(sd, currentItem, strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], false, false);
+                simpleMenu_printButton(sd, newItem, strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], true, false);
 		if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
-			_vm->_txt->printShadedText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], 4, (sd == 8 ? 2 : 20) + currentItem * lineH, _menuTextColor, _menuShadowColor);
-			_vm->_txt->printShadedText(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], 4, (sd == 8 ? 2 : 20) + newItem * lineH, _menuHighlightColor, _menuShadowColor);
 			_screen->sega_getRenderer()->render(0, 6, 20, 26, 5);
-		} else {
-			_screen->printText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], x, y + currentItem * lineH, _menuTextColor, 0);
-			_screen->printText(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], x, y + newItem * lineH, _menuHighlightColor, 0);
 		}
 		_screen->updateScreen();
 	}
 
 	if (result != -1) {
 		result = simpleMenu_getMenuItem(result, menuItemsMask, itemOffset);
-		simpleMenu_flashSelection(strings[result], x, y + newItem * lineH, _vm->guiSettings()->colors.guiColorWhite, _menuHighlightColor, 0);
+		Common::Point tPoint = simpleMenu_getTextPoint(newItem);
+		Common::Point p = _menuPoint + tPoint;
+		simpleMenu_flashSelection(strings[result], p.x, p.y, _vm->guiSettings()->colors.guiColorWhite, _menuHighlightColor, 0);
 	}
 
 	_menuCur = newItem;
