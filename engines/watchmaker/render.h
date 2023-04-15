@@ -24,7 +24,6 @@
 
 #include "common/array.h"
 #include "watchmaker/types.h"
-#include "watchmaker/surface.h"
 #include "watchmaker/windows_hacks.h"
 #include "watchmaker/3d/texture.h"
 #include "watchmaker/3d/material.h"

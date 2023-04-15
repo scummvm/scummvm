@@ -28,7 +28,6 @@
 #include "watchmaker/3d/dds_header.h"
 #include "graphics/surface.h"
 #include "watchmaker/rect.h"
-#include "watchmaker/surface.h"
 
 namespace Watchmaker {
 
