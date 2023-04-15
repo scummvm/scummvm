@@ -143,7 +143,7 @@ public:
 	Matrix<rows, cols> &operator/=(const Matrix<rows, cols> &m);
 
 protected:
-	MatrixBase();
+	constexpr MatrixBase() = default;
 	MatrixBase(const float *data);
 	MatrixBase(const MatrixBase<rows, cols> &m);
 	MatrixBase &operator=(const MatrixBase<rows, cols> &m);
@@ -154,7 +154,7 @@ protected:
 		return *static_cast<Matrix<rows, cols> *>(this); }
 
 private:
-	float _values[rows * cols];
+	float _values[rows * cols] = { 0.0f };
 };
 
 /**
@@ -164,7 +164,7 @@ private:
 template<int r, int c>
 class MatrixType : public MatrixBase<r, c> {
 protected:
-	MatrixType() : MatrixBase<r, c>() { }
+	constexpr MatrixType() : MatrixBase<r, c>() { }
 	MatrixType(const float *data) : MatrixBase<r, c>(data) { }
 	MatrixType(const MatrixBase<r, c> &m) : MatrixBase<r, c>(m) { }
 };
@@ -179,7 +179,7 @@ protected:
 template<int r, int c>
 class Matrix : public MatrixType<r, c> {
 public:
-	Matrix() : MatrixType<r, c>() { }
+	constexpr Matrix() : MatrixType<r, c>() { }
 	Matrix(const float *data) : MatrixType<r, c>(data) { }
 	Matrix(const MatrixBase<r, c> &m) : MatrixType<r, c>(m) { }
 };
@@ -214,13 +214,6 @@ bool operator!=(const Matrix<r, c> &m1, const Matrix<r, c> &m2);
 
 
 // Constructors
-template<int rows, int cols>
-MatrixBase<rows, cols>::MatrixBase() {
-	for (int i = 0; i < rows * cols; ++i) {
-		_values[i] = 0.f;
-	}
-}
-
 template<int rows, int cols>
 MatrixBase<rows, cols>::MatrixBase(const float *data) {
 	setData(data);
