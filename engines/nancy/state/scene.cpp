@@ -113,7 +113,8 @@ Scene::Scene() :
 		_actionManager(),
 		_difficulty(0),
 		_activeConversation(nullptr),
-		_lightning(nullptr) {}
+		_lightning(nullptr),
+		_sliderPuzzleState(nullptr) {}
 
 Scene::~Scene()  {
 	delete _helpButton;
@@ -123,6 +124,7 @@ Scene::~Scene()  {
 	delete _inventoryBoxOrnaments;
 	delete _clock;
 	delete _lightning;
+	delete _sliderPuzzleState;
 }
 
 void Scene::process() {
@@ -462,28 +464,43 @@ void Scene::synchronize(Common::Serializer &ser) {
 	ser.syncAsSint16LE(_lastHintCharacter);
 	ser.syncAsSint16LE(_lastHintID);
 
-	// Synchronize SliderPuzzle static data
-	ser.syncAsByte(_sliderPuzzleState.playerHasTriedPuzzle);
+	switch (g_nancy->getGameType()) {
+		case kGameTypeVampire:
+			// Fall through to avoid having to bump the savegame version
+			// fall through
+		case kGameTypeNancy1: {
+			// Synchronize SliderPuzzle static data
+			if (!_sliderPuzzleState) {
+				return;
+			}
 
-	byte x = 0, y = 0;
+			ser.syncAsByte(_sliderPuzzleState->playerHasTriedPuzzle);
 
-	if (ser.isSaving()) {
-		y = _sliderPuzzleState.playerTileOrder.size();
-		if (y) {
-			x = _sliderPuzzleState.playerTileOrder.back().size();
-		} else {
-			x = 0;
+			byte x = 0, y = 0;
+
+			if (ser.isSaving()) {
+				y = _sliderPuzzleState->playerTileOrder.size();
+				if (y) {
+					x = _sliderPuzzleState->playerTileOrder.back().size();
+				} else {
+					x = 0;
+				}
+			}
+
+			ser.syncAsByte(x);
+			ser.syncAsByte(y);
+
+			_sliderPuzzleState->playerTileOrder.resize(y);
+
+			for (int i = 0; i < y; ++i) {
+				_sliderPuzzleState->playerTileOrder[i].resize(x);
+				ser.syncArray(_sliderPuzzleState->playerTileOrder[i].data(), x, Common::Serializer::Sint16LE);
+			}
+
+			break;
 		}
-	}
-
-	ser.syncAsByte(x);
-	ser.syncAsByte(y);
-
-	_sliderPuzzleState.playerTileOrder.resize(y);
-
-	for (int i = 0; i < y; ++i) {
-		_sliderPuzzleState.playerTileOrder[i].resize(x);
-		ser.syncArray(_sliderPuzzleState.playerTileOrder[i].data(), x, Common::Serializer::Sint16LE);
+		default:
+			break;
 	}
 }
 
@@ -515,7 +532,19 @@ void Scene::init() {
 		_lastHintCharacter = _lastHintID = -1;
 	}
 
-	_sliderPuzzleState.playerHasTriedPuzzle = false;
+	// Initialize game-specific data
+	switch (g_nancy->getGameType()) {
+		case kGameTypeVampire:
+			// Fall through to avoid having to bump the savefile version
+			// fall through
+		case kGameTypeNancy1:
+			delete _sliderPuzzleState;
+			_sliderPuzzleState = new SliderPuzzleState();
+			_sliderPuzzleState->playerHasTriedPuzzle = false;
+			break;
+		default:
+			break;
+	}
 
 	initStaticData();
 

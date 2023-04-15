@@ -238,11 +238,6 @@ private:
 		int16 primaryVideoResponsePicked = -1;
 	};
 
-	struct SliderPuzzleState {
-		Common::Array<Common::Array<int16>> playerTileOrder;
-		bool playerHasTriedPuzzle;
-	};
-
 	// UI
 	UI::FullScreenImage _frame;
 	UI::Viewport _viewport;
@@ -258,11 +253,13 @@ private:
 	UI::InventoryBoxOrnaments *_inventoryBoxOrnaments;
 	UI::Clock *_clock;
 
-	// Data
+	// Game-specific data that needs to be saved/loaded
+	SliderPuzzleState *_sliderPuzzleState;
+
+	// General data
 	SceneState _sceneState;
 	PlayFlags _flags;
 	Timers _timers;
-	SliderPuzzleState _sliderPuzzleState;
 	uint16 _difficulty;
 	Common::Array<uint16> _hintsRemaining;
 	int16 _lastHintCharacter;

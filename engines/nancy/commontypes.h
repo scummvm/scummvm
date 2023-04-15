@@ -240,6 +240,12 @@ struct StaticData {
 	void readData(Common::SeekableReadStream &stream, Common::Language language);
 };
 
+// Structs for game-specific puzzle data that needs to be saved/loaded
+struct SliderPuzzleState {
+	Common::Array<Common::Array<int16>> playerTileOrder;
+	bool playerHasTriedPuzzle;
+};
+
 } // End of namespace Nancy
 
 #endif // NANCY_COMMONYPES_H

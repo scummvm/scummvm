@@ -49,6 +49,7 @@ public:
 	void onPause(bool pause) override;
 
 	SPUZ *_spuzData = nullptr;
+	SliderPuzzleState *_puzzleState = nullptr;
 
 	Common::String _imageName; // 0x00
 	uint16 _width = 0; // 0xA
