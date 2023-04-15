@@ -527,6 +527,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 3 (PC 3.5") 2.14 3/15/88 [AGI 2.936] "For MCGA"
 	GAME("kq3", "2.14 1988-03-15 3.5\" MCGA", "7650e659c7bc0f1e9f8a410b7a2e9de6", 0x2936, GID_KQ3),
 
+	// King's Quest 3 (PC 3.5") 2.14 3/15/88 [AGI 2.936] with fanmade Spanish translation
+	// TRAC #13494
+	GAME_LPS("kq3", "2.14 1988-03-15 3.5\"", "87956c92d23f53d81bf2ee9e08fdc64c", 390, Common::ES_ESP, 0x2936, GID_KQ3, Common::kPlatformDOS),
+
 	// King's Quest 3 (CoCo3 158k/360k) 1.0C [AGI 2.023]
 	GAME_PS("kq3", "", "5a6be7d16b1c742c369ef5cc64fefdd2", 429, 0x2440, GID_KQ3, Common::kPlatformCoCo3),
 
