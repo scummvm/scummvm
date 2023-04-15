@@ -1845,10 +1845,11 @@ void DarkMoonEngine::initStaticResource() {
 	_amigaSoundIndex2 = _staticres->loadRawData(kEoB2SoundIndex2, temp);
 	_amigaSoundPatch = _staticres->loadRawData(kEoB2MonsterSoundPatchData, _amigaSoundPatchSize);
 
-	static const char *const errorSlotNoNameString[4] = {
+	static const char *const errorSlotNoNameString[5] = {
 		" You must specify\r a name for your\r save game!",
 		" Spielst[nde m]ssen\r einen Namen haben!",
 		" Debes poner\run nombre al\rfichero!",
+		" \xb1\x7a\xa5\xb2\xb6\xb7\xbf\xe9\xa4\x4a\xc0\xc9\xae\xd7\xa6\x57\xba\xd9", /* " 您必須輸入檔案名稱" */
 		0
 	};
 
@@ -1890,6 +1891,10 @@ void DarkMoonEngine::initStaticResource() {
 		case Common::ES_ESP:
 			_errorSlotNoNameString = errorSlotNoNameString[2];
 			_transferStringsScummVM = transferStringsScummVM[2];
+			break;
+		case Common::ZH_TWN:
+			_errorSlotNoNameString = errorSlotNoNameString[3];
+			_transferStringsScummVM = transferStringsScummVM[0];
 			break;
 	}
 
