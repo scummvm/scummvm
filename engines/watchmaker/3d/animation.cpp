@@ -356,9 +356,10 @@ void FixupAnim(t3dMESH *mesh, uint8 pos, const char *room) {
 		db = &mesh->Anim;
 		if (pos) {
 			if (room && (room[0] != '\0')) {
-				for (i = 0; i < NumLoadedFiles; i++)
-					if ((LoadedFiles[i].b != nullptr) && LoadedFiles[i].b->name.equalsIgnoreCase(room))
-						t3dCurRoom = LoadedFiles[i].b;
+				t3dBODY *roomPtr = _vm->_roomManager->getRoomIfLoaded(room);
+				if (room) {
+					t3dCurRoom = roomPtr;
+				}
 			}
 			if (!GetLightPosition(&lp, pos) || (lp.x == 0.0f) || (lp.z == 0.0f)) pos = 0;
 			if (!GetLightDirection(&ld, pos) || (ld.x == 0.0f) || (ld.z == 0.0f)) pos = 0;
@@ -508,7 +509,7 @@ t3dBODY *LoadShadowMeshes(WGame &game, const char *pname, t3dBODY *Body) {
 	strcpy(Name, pname);
 	strncpy(&Name[strlen(pname) - 4], "_Shadow.t3d\0", 12);
 	uint16 numBodys = 0;
-	shadow = t3dLoadRoom(game, Name, shadow, &numBodys, (T3D_NOLIGHTMAPS | T3D_NORECURSION | T3D_NOVOLUMETRICLIGHTS | T3D_NOCAMERAS | T3D_NOBOUNDS | T3D_STATIC_SET0 | T3D_STATIC_SET1));
+	shadow = _vm->_roomManager->loadRoom(Name, shadow, &numBodys, (T3D_NOLIGHTMAPS | T3D_NORECURSION | T3D_NOVOLUMETRICLIGHTS | T3D_NOCAMERAS | T3D_NOBOUNDS | T3D_STATIC_SET0 | T3D_STATIC_SET1));
 	if (!shadow) return nullptr;
 
 	for (uint16 i = 0; i < shadow->NumMeshes(); i++) {
@@ -564,8 +565,11 @@ t3dCHARACTER *t3dLoadCharacter(WGame &game, const char *pname, uint16 num) {
 	//  gVertex *v;
 
 	t3dCHARACTER *b = new t3dCHARACTER[1] {};
-	b->Body = t3dLoadRoom(game, pname, b->Body, &n, (T3D_NOLIGHTMAPS | T3D_NORECURSION | T3D_NOVOLUMETRICLIGHTS | T3D_NOCAMERAS | T3D_STATIC_SET0 | T3D_STATIC_SET1));
-	if (!b->Body) return nullptr;
+	b->Body = _vm->_roomManager->loadRoom(pname, b->Body, &n, (T3D_NOLIGHTMAPS | T3D_NORECURSION | T3D_NOVOLUMETRICLIGHTS | T3D_NOCAMERAS | T3D_STATIC_SET0 | T3D_STATIC_SET1));
+	if (!b->Body) {
+		delete b;
+		return nullptr;
+	}
 	b->Mesh = &b->Body->MeshTable[0];
 	b->CurRoom = t3dCurRoom;
 	b->Flags = T3D_CHARACTER_HIDE | T3D_CHARACTER_REALTIMELIGHTING;
@@ -700,9 +704,7 @@ uint8 CompareLightPosition(char *roomname, uint8 pos1, t3dV3F *pos2, t3dF32 acce
 //	cerco la stanza
 	t = nullptr;
 	if (roomname && (roomname[0] != '\0')) {
-		for (i = 0; i < NumLoadedFiles; i++)
-			if ((LoadedFiles[i].b != nullptr) && LoadedFiles[i].b->name.equalsIgnoreCase(roomname))
-				t = LoadedFiles[i].b;
+		t = _vm->_roomManager->getRoomIfLoaded(roomname);
 	} else t = t3dCurRoom;
 
 	if (!t) return FALSE;

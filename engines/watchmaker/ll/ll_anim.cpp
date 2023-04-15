@@ -1829,12 +1829,7 @@ void StopPlayingGame(WGame &game) {
 	StopAllAnims(init);
 	StopMusic();
 	t3dResetPipeline();
-	for (i = 0; i < NumLoadedFiles; i++) {
-		if (LoadedFiles[i].b && !(LoadedFiles[i].Flags & T3D_STATIC_SET1)) {
-			t3dReleaseBody(LoadedFiles[i].b);
-			LoadedFiles[i] = RecStruct(); // TODO: Deduplicate.
-		}
-	}
+	_vm->_roomManager->releaseLoadedFiles(T3D_STATIC_SET1);
 
 	t3dRxt = nullptr;
 	t3dSky = nullptr;

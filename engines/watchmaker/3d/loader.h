@@ -69,19 +69,27 @@ struct RecStruct {
 	uint32 Flags = 0;
 };
 
-extern RecStruct LoadedFiles[];
-extern uint16 NumLoadedFiles;
-
-t3dBODY *t3dLoadRoom(WGame &game, const Common::String &pname, t3dBODY *b, unsigned short *NumBody, unsigned int LoaderFlags);
-t3dBODY *t3dLoadSingleRoom(WGame &game, const char *_pname, t3dBODY *b, uint16 *NumBody, uint32 LoaderFlags);
 void t3dOptimizeMaterialList(t3dBODY *b);
 void t3dFinalizeMaterialList(t3dBODY *b);
 void t3dPrecalcLight(t3dBODY *b, unsigned char *sun);
 void t3dLoadSky(WGame &game, t3dBODY *b);
 
-t3dBODY *CheckIfAlreadyLoaded(const Common::String &Name);
-void AddToLoadList(t3dMESH *m, const Common::String &pname, uint32 LoaderFlags);
 Common::String constructPath(const Common::String &prefix, const Common::String &filename, const char *suffix = nullptr);
+
+class RoomManager {
+public:
+	virtual ~RoomManager() {}
+	virtual void addToLoadList(t3dMESH *m, const Common::String &pname, uint32 LoaderFlags) = 0;
+	virtual t3dBODY* loadRoom(const Common::String &pname, t3dBODY *b, uint16 *NumBody, uint32 LoaderFlags) = 0;
+	static RoomManager *create(WGame *game);
+	virtual t3dBODY *getRoomIfLoaded(const Common::String &roomname) = 0;
+	virtual t3dMESH *linkMeshToStr(Init &init, const Common::String &str) = 0;
+	virtual void hideRoomMeshesMatching(const Common::String &pname) = 0;
+	virtual void releaseBody(const Common::String &name, const Common::String &altName) = 0;
+	virtual void releaseLoadedFiles(uint32 exceptFlag) = 0;
+	virtual t3dBODY *checkIfAlreadyLoaded(const Common::String &Name) = 0;
+	virtual Common::Array<t3dBODY*> getLoadedFiles() = 0;
+};
 
 } // End of namespace Watchmaker
 

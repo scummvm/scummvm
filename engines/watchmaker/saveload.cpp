@@ -545,12 +545,7 @@ bool DataLoad(WGame &game, const Common::String &FileName, uint8 slot) {
 	StopSounds();
 	StopMusic();
 	t3dResetPipeline();
-	for (int i = 0; i < NumLoadedFiles; i++) {
-		if (LoadedFiles[i].b && !(LoadedFiles[i].Flags & T3D_STATIC_SET1)) {
-			t3dReleaseBody(LoadedFiles[i].b);
-			LoadedFiles[i] = RecStruct();
-		}
-	}
+	_vm->_roomManager->releaseLoadedFiles(T3D_STATIC_SET1);
 	t3dRxt = nullptr;
 	t3dSky = nullptr;
 	rReleaseAllTextures(T3D_STATIC_SET0);

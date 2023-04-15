@@ -71,27 +71,6 @@ void *t3dCalloc(uint32 n) {
 	return (res);
 }
 
-void *t3dRealloc(void *pp, uint32 additionalBytes) {
-
-
-	uint32 *res = (uint32 *)pp;
-	uint32 size = 0;
-	if (pp == nullptr)    size = 0;
-	else
-		size = (uint32) MALLOC_SIZE(pp);
-	//Reallocate and show new size:
-	if ((res = (uint32 *)realloc(pp, (additionalBytes + size))) == nullptr) {
-		warning("t3dRealloc: Memory allocation error: can't alloc %d bytes", additionalBytes + size);
-		return res;
-	}
-
-	t3dAllocatedMemory += additionalBytes;
-	//malloc_size()
-	pp = res;//realloc(pp, additionalBytes);
-	//warning("t3dRealloc() size: %d, additionalBytes: %d, newSize = %d", size, additionalBytes, malloc_size(pp));
-	return (pp);
-}
-
 void t3dFree(void *p) {
 	if (!p) return;
 

@@ -50,6 +50,7 @@ public:
 };
 
 class MeshModifiers;
+class RoomManager;
 
 class WGame {
 	bool g_bReady, g_bActive;
@@ -69,6 +70,7 @@ public:
 	GameRect _gameRect;
 	Fonts _fonts;
 	MessageSystem _messageSystem;
+	RoomManager *_roomManager;
 	WGame();
 	~WGame();
 

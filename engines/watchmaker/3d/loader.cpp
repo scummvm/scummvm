@@ -20,80 +20,29 @@
  */
 
 #include "watchmaker/3d/loader.h"
-#include "watchmaker/3d/math/llmath.h"
-#include "watchmaker/t3d.h"
-#include "watchmaker/3d/t3d_body.h"
-#include "watchmaker/3d/t3d_mesh.h"
-#include "watchmaker/types.h"
 #include "common/stream.h"
-#include "watchmaker/utils.h"
-#include "watchmaker/ll/ll_system.h"
-#include "watchmaker/work_dirs.h"
 #include "watchmaker/3d/geometry.h"
 #include "watchmaker/3d/light.h"
-#include "watchmaker/windows_hacks.h"
+#include "watchmaker/3d/math/llmath.h"
+#include "watchmaker/3d/t3d_body.h"
+#include "watchmaker/3d/t3d_mesh.h"
 #include "watchmaker/game.h"
+#include "watchmaker/ll/ll_mesh.h"
+#include "watchmaker/ll/ll_system.h"
 #include "watchmaker/renderer.h"
+#include "watchmaker/t3d.h"
+#include "watchmaker/types.h"
+#include "watchmaker/utils.h"
+#include "watchmaker/windows_hacks.h"
 #include "watchmaker/work_dirs.h"
 
 namespace Watchmaker {
 
 #define T3DFILEVERSION  11
 
-// TODO: Globals
-#define MAX_LOADED_FILES    100
-RecStruct LoadedFiles[MAX_LOADED_FILES];
-uint16  NumLoadedFiles = 0;
-
 t3dV3F  CharCorrection;
 t3dF32  CurFloorY;
 int32  t3dCurTime = 900, t3dCurOliSet = 0;
-
-// LoadRoom vars
-#define MAX_T3D_LOADLIST_ITEMS  50
-struct _t3dLOADLIST {
-	Common::String pname = {};
-	uint32 LoaderFlags = 0;
-	t3dMESH *m = nullptr;
-} t3dLoadList[MAX_T3D_LOADLIST_ITEMS] = {};
-
-/* -----------------10/06/99 16.03-------------------
- *                  AddToLoadList
- * --------------------------------------------------*/
-void AddToLoadList(t3dMESH *m, const Common::String &pname, uint32 LoaderFlags) {
-	int32 a;
-
-	if (!pname.empty()) {
-		for (a = 0; a < MAX_T3D_LOADLIST_ITEMS; a++) {
-			if (t3dLoadList[a].pname.empty()) {
-				t3dLoadList[a].LoaderFlags = LoaderFlags;
-				t3dLoadList[a].m = m;
-				t3dLoadList[a].pname = pname;
-				break;
-			}
-		}
-
-		if (a >= MAX_T3D_LOADLIST_ITEMS)
-			warning("Cannot add %s to LoadList", pname.c_str());
-	} else {
-		warning("Invalid parameters invoking AddToLoadList()");
-		warning("Mesh (%s), pname %s", m->name.c_str(), pname.c_str());
-	}
-}
-
-/* -----------------10/06/99 16.04-------------------
- *                  GetFromLoadList
- * --------------------------------------------------*/
-struct _t3dLOADLIST *GetFromLoadList(void) {
-	int32 a;
-
-	for (a = 0; a < MAX_T3D_LOADLIST_ITEMS; a++) {
-		if (!t3dLoadList[a].pname.empty())
-			return &t3dLoadList[a];
-	}
-
-	return nullptr;
-}
 
 t3dPathCamera::t3dPathCamera(Common::SeekableReadStream &stream) {
 	NumCamera = stream.readByte();
@@ -160,21 +109,6 @@ void decodeLoaderFlags(uint32 flags) {
 	warning("%d: T3D_HIPOLYCHARACTERS", flags & T3D_HIPOLYCHARACTERS);
 }
 
-/* -----------------10/06/99 16.04-------------------
- *                  CheckIfAlreadyLoaded
- * --------------------------------------------------*/
-t3dBODY *CheckIfAlreadyLoaded(const Common::String &Name) {
-	if (Name.empty()) return nullptr;
-
-	for (uint16 i = 0; i < NumLoadedFiles; i++) {
-		if ((LoadedFiles[i].b != nullptr) && /*(LoadedFiles[i].Name != nullptr) &&*/ (!LoadedFiles[i].name.empty()))
-			if (LoadedFiles[i].name.equalsIgnoreCase(Name))
-				return LoadedFiles[i].b;
-	}
-
-	return nullptr;
-}
-
 Common::String constructPath(const Common::String &prefix, const Common::String &filename, const char *suffix) {
 	Common::String Name = prefix + filename;
 	uint16 len = Name.size();
@@ -186,15 +120,188 @@ Common::String constructPath(const Common::String &prefix, const Common::String 
 	return Common::String(Name);
 }
 
+class RoomManagerImplementation : public RoomManager {
+	WGame *_game;
+	#define MAX_LOADED_FILES    100
+	RecStruct LoadedFiles[MAX_LOADED_FILES];
+	uint16  NumLoadedFiles = 0;
+public:
+	RoomManagerImplementation(WGame *game) : _game(game) {}
+	#define MAX_T3D_LOADLIST_ITEMS  50
+	struct _t3dLOADLIST {
+		Common::String pname = {};
+		uint32 LoaderFlags = 0;
+		t3dMESH *m = nullptr;
+	};
+	_t3dLOADLIST t3dLoadList[MAX_T3D_LOADLIST_ITEMS] = {};
+
+	void addToLoadList(t3dMESH *m, const Common::String &pname, uint32 LoaderFlags) {
+		if (!pname.empty()) {
+			int32 a;
+			for (a = 0; a < MAX_T3D_LOADLIST_ITEMS; a++) {
+				if (t3dLoadList[a].pname.empty()) {
+					t3dLoadList[a].LoaderFlags = LoaderFlags;
+					t3dLoadList[a].m = m;
+					t3dLoadList[a].pname = pname;
+					break;
+				}
+			}
+
+			if (a >= MAX_T3D_LOADLIST_ITEMS)
+				warning("Cannot add %s to LoadList", pname.c_str());
+		} else {
+			warning("Invalid parameters invoking AddToLoadList()");
+			warning("Mesh (%s), pname %s", m->name.c_str(), pname.c_str());
+		}
+	}
+
+	_t3dLOADLIST* getFromLoadList(void) {
+		for (int a = 0; a < MAX_T3D_LOADLIST_ITEMS; a++) {
+			if (!t3dLoadList[a].pname.empty())
+				return &t3dLoadList[a];
+		}
+
+		return nullptr;
+	}
+
+	t3dBODY *getRoomIfLoaded(const Common::String &roomname) override {
+		t3dBODY *t = nullptr;
+		for (int i = 0; i < NumLoadedFiles; i++)
+			if ((LoadedFiles[i].b != nullptr) && LoadedFiles[i].b->name.equalsIgnoreCase(roomname))
+				t = LoadedFiles[i].b;
+		return t;
+	}
+
+
+
+	t3dBODY* loadRoom(const Common::String &pname, t3dBODY *b, uint16 *NumBody, uint32 LoaderFlags) override;
+	t3dBODY* loadSingleRoom(const Common::String &pname, uint16 *NumBody, uint32 LoaderFlags);
+	void hideRoomMeshesMatching(const Common::String &pname) override {
+		for (int i = 0; i < NumLoadedFiles; i++)
+			if (LoadedFiles[i].b)
+				if (LoadedFiles[i].b->name.equalsIgnoreCase(pname)) {
+					HideRoomMeshes(_game->init, LoadedFiles[i].b);
+				}
+	}
+	Common::Array<t3dBODY*> getLoadedFiles() override {
+		// TODO: This won't need to be a copy if we maintain a Common::Array only containing the valid ones.
+		Common::Array<t3dBODY*> files;
+		for (int i = 0; i < NumLoadedFiles; i++)
+			if (LoadedFiles[i].b)
+				files.push_back(LoadedFiles[i].b);
+		return files;
+	}
+	t3dBODY *checkIfAlreadyLoaded(const Common::String &Name) override {
+		if (Name.empty()) return nullptr;
+
+		for (uint16 i = 0; i < NumLoadedFiles; i++) {
+			if ((LoadedFiles[i].b != nullptr) && /*(LoadedFiles[i].Name != nullptr) &&*/ (!LoadedFiles[i].name.empty()))
+				if (LoadedFiles[i].name.equalsIgnoreCase(Name))
+					return LoadedFiles[i].b;
+		}
+
+		return nullptr;
+	}
+
+	t3dMESH *linkMeshToStr(Init &init, const Common::String &str) {
+		if (str.empty()) return nullptr;
+
+		//	Cerca tra le camere
+		if (str.equalsIgnoreCase("camera"))
+			return &init._globals._invVars.CameraDummy;
+		//	Cerca tra i personaggi
+		for (uint16 i = 0; i < T3D_MAX_CHARACTERS; i++)
+			if ((Character[i]) && (str.equalsIgnoreCase((char *)init.Obj[i].meshlink[0])))
+				return Character[i]->Mesh;
+		//	Cerca nelle stanze caricate
+		for (uint16 i = 0; i < NumLoadedFiles; i++) {
+			if (LoadedFiles[i].b)
+				for (uint16 j = 0; j < LoadedFiles[i].b->NumMeshes(); j++) {
+					if (str.equalsIgnoreCase(LoadedFiles[i].b->MeshTable[j].name))
+						return &LoadedFiles[i].b->MeshTable[j];
+				}
+		}
+
+		return nullptr;
+	}
+	void releaseBody(const Common::String &name, const Common::String &altName) override {
+		for (int j = 0; j < NumLoadedFiles; j++) {
+			if (LoadedFiles[j].name.equalsIgnoreCase(name) || LoadedFiles[j].name.equalsIgnoreCase(altName)) {
+				t3dReleaseBody(LoadedFiles[j].b);
+				LoadedFiles[j].b = nullptr;
+				break;
+			}
+		}
+	}
+
+	void releaseLoadedFiles(uint32 exceptFlag) override {
+		for (int i = 0; i < NumLoadedFiles; i++) {
+			if (LoadedFiles[i].b && !(LoadedFiles[i].Flags & exceptFlag)) {
+				t3dReleaseBody(LoadedFiles[i].b);
+				LoadedFiles[i] = RecStruct(); // TODO: Deduplicate.
+			}
+		}
+	}
+private:
+	void loadFromList();
+};
+
+RoomManager *RoomManager::create(WGame *game) {
+	return new RoomManagerImplementation(game);
+}
+
 /* -----------------10/06/99 16.04-------------------
- *                  t3dLoadSingleRoom
+ *                  t3dLoadRoom
  * --------------------------------------------------*/
-t3dBODY *t3dLoadSingleRoom(WGame &game, const Common::String &_pname, t3dBODY *b, uint16 *NumBody, uint32 LoaderFlags) {
+t3dBODY* RoomManagerImplementation::loadRoom(const Common::String &pname, t3dBODY *b, uint16 *NumBody, uint32 LoaderFlags) {
+	warning("t3dLoadRoom(%s, b, %d, %d)", pname.c_str(), *NumBody, LoaderFlags);
+	struct _t3dLOADLIST *l;
+	t3dBODY *r, *rez;
+	uint16 num, i;
+
+	// reset everything that was previously in the load list
+	for (int i = 0; i < MAX_T3D_LOADLIST_ITEMS; i++) {
+		t3dLoadList[i] = _t3dLOADLIST();
+	}
+
+	// Add the base stanza to the upload list
+	addToLoadList(nullptr, pname, LoaderFlags);
+
+	while ((l = getFromLoadList())) {
+		num = 0;
+		if (l->m) {
+			if ((rez = _vm->_roomManager->checkIfAlreadyLoaded(l->pname)))
+				l->m->PortalList = rez;
+			else {
+//				if (l->m->Flags&T3D_MESH_PREPROCESSPORTAL)
+//					body=l->m->PortalList = t3dLoadSingleRoom( l->pname, l->m->PortalList, &num, (l->LoaderFlags|T3D_HALFTEXTURESIZE) );
+//				else
+				// TODO: This should increase some refcount on the PortalList
+				warning("TODO: Handle refcounts on PortalList");
+				l->m->PortalList = loadSingleRoom(l->pname, &num, l->LoaderFlags);
+			}
+		} else
+			r = loadSingleRoom(l->pname, NumBody, l->LoaderFlags);
+
+		*l = _t3dLOADLIST();
+	}
+
+	if (!(LoaderFlags & T3D_NORECURSION)) {
+		for (i = 0; i < NumLoadedFiles; i++)
+			if (LoadedFiles[i].b)
+				t3dCalcRejectedMeshFromPortal(LoadedFiles[i].b);
+	}
+
+	warning("Room loaded");
+	return r;
+}
+
+t3dBODY* RoomManagerImplementation::loadSingleRoom(const Common::String &_pname, uint16 *NumBody, uint32 LoaderFlags) {
 	//warning("t3dLoadSingleRoom(workDirs, %s, b, %d, %d)", _pname, *NumBody, LoaderFlags);
 	//decodeLoaderFlags(LoaderFlags);
 	Common::String pname(_pname);
 
-	WorkDirs &workdirs = game.workDirs;
+	WorkDirs &workdirs = _game->workDirs;
 
 	if (pname.equalsIgnoreCase("r1c.t3d"))
 		if (((t3dCurTime >= 1300) && (t3dCurTime <= 1310)) || (t3dCurTime >= 1800))          //se viene cambiato l'orario cambiarlo anche in UpdateRoomVis...
@@ -212,11 +319,11 @@ t3dBODY *t3dLoadSingleRoom(WGame &game, const Common::String &_pname, t3dBODY *b
 		return nullptr;
 	}
 
-	if (*NumBody == 0) {                                                                         // Se e' il primo body, alloca
-		b = new t3dBODY;
-		(*NumBody)++;
-	} else
-		b = (t3dBODY *)t3dRealloc((uint32 *)b, sizeof(t3dBODY) * (++(*NumBody)));                         // Altrimenti, ridimensiona
+	if (*NumBody != 0) {
+		// TODO: This currently means that we never free the dependant bodies.
+		warning("Loading a dependant body, should also be deleted alongside the base body");
+	}
+	t3dBODY *b = new t3dBODY();
 
 	//warning("Loading %s ...", name.c_str());
 	*b = t3dBODY(); // Azzera Body
@@ -229,65 +336,23 @@ t3dBODY *t3dLoadSingleRoom(WGame &game, const Common::String &_pname, t3dBODY *b
 
 	{
 		uint16 j = 1;
-		while (LoadedFiles[j].b != nullptr) j++;
+		while (LoadedFiles[j].b != nullptr)
+			j++;
 		if (j > MAX_LOADED_FILES) {
 			warning("Too many t3d files loaded!");
 			return nullptr;
 		}
-		if ((j + 1) > NumLoadedFiles) NumLoadedFiles = j + 1;
+		if ((j + 1) > NumLoadedFiles)
+			NumLoadedFiles = j + 1;
 
 		LoadedFiles[j].name = _pname;                              // Aggiunge il file alla lista
 		LoadedFiles[j].Flags = LoaderFlags;                        // Aggiunge Flags alla lista
 		LoadedFiles[j].b = b;                                      // Aggiunge Body alla lista
 		j = 0;
 	}
-	b->loadFromStream(game, pname, *stream, LoaderFlags);
+	b->loadFromStream(*_game, pname, *stream, LoaderFlags);
 
 	return b;
-}
-
-/* -----------------10/06/99 16.04-------------------
- *                  t3dLoadRoom
- * --------------------------------------------------*/
-t3dBODY *t3dLoadRoom(WGame &game, const Common::String &pname, t3dBODY *b, uint16 *NumBody, uint32 LoaderFlags) {
-	warning("t3dLoadRoom(%s, b, %d, %d)", pname.c_str(), *NumBody, LoaderFlags);
-	struct _t3dLOADLIST *l;
-	t3dBODY *r, *rez;
-	uint16 num, i;
-
-//	azzera tutto quello che c'era prima nella load list
-	for (int i = 0; i < MAX_T3D_LOADLIST_ITEMS; i++) {
-		t3dLoadList[i] = _t3dLOADLIST();
-	}
-
-//	Aggiunge la stanza base alla lista di caricamenti
-	AddToLoadList(nullptr, pname, LoaderFlags);
-
-	while ((l = GetFromLoadList())) {
-		num = 0;
-		if (l->m) {
-			if ((rez = CheckIfAlreadyLoaded(l->pname)))
-				l->m->PortalList = rez;
-			else {
-//				if (l->m->Flags&T3D_MESH_PREPROCESSPORTAL)
-//					body=l->m->PortalList = t3dLoadSingleRoom( l->pname, l->m->PortalList, &num, (l->LoaderFlags|T3D_HALFTEXTURESIZE) );
-//				else
-				l->m->PortalList = t3dLoadSingleRoom(game, l->pname, l->m->PortalList, &num, l->LoaderFlags);
-			}
-		} else
-			r = t3dLoadSingleRoom(game, l->pname, b, NumBody, l->LoaderFlags);
-
-		*l = _t3dLOADLIST();
-	}
-
-	if (!(LoaderFlags & T3D_NORECURSION)) {
-		for (i = 0; i < NumLoadedFiles; i++)
-			if (LoadedFiles[i].b)
-				t3dCalcRejectedMeshFromPortal(LoadedFiles[i].b);
-	}
-
-	warning("Room loaded");
-	return r;
 }
 
 t3dParticle::t3dParticle(Common::SeekableReadStream &stream) {
@@ -408,7 +473,7 @@ void t3dLoadSky(WGame &game, t3dBODY * /*body*/) {
 //	t3dF32   Tile=1.5f;
 	t3dF32  div;
 
-	if (!(t3dSky = t3dLoadRoom(game, "sky.t3d", t3dSky, &n, T3D_NORECURSION | T3D_NOLIGHTMAPS | T3D_NOVOLUMETRICLIGHTS | T3D_NOCAMERAS | T3D_NOBOUNDS | T3D_STATIC_SET0))) {
+	if (!(t3dSky = _vm->_roomManager->loadRoom("sky.t3d", t3dSky, &n, T3D_NORECURSION | T3D_NOLIGHTMAPS | T3D_NOVOLUMETRICLIGHTS | T3D_NOCAMERAS | T3D_NOBOUNDS | T3D_STATIC_SET0))) {
 		warning("Error during t3dLoadRoom: Sky not loaded");
 	}
 
