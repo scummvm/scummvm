@@ -27,7 +27,7 @@ namespace Math {
 template<class T>
 class Transform {
 public:
-	Transform() {}
+	constexpr Transform() {}
 
 protected:
 	inline const T &getMatrix() const { return *static_cast<const T *>(this); }
