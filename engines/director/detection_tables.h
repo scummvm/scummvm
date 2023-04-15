@@ -314,6 +314,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "necrobius",			"Necrobius" },
 	{ "necromancer",		"Necromancer" },
 	{ "nightcafe",			"Night Café" },
+	{ "nightlight",			"Night Light" },
 	{ "nikolaiknights",		"Nikolai in Time: In the Time of the Knights" },
 	{ "nikolaimystery",		"Nikolai's Mysteries: The Mystery of the Black Windows" },
 	{ "nikolaipirates",		"Nikolai's Pirates" },
@@ -810,6 +811,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "adiboubobos",		"Adibou: Aventure dans le corps humain - 3. Mes petits bobos" },
 	{ "adibouhumain",		"Adibou: Aventure dans le corps humain" },
 	{ "adiboumots",			"Adibou: Joue avec les mots et les nombres (5-6 ans)" },
+	{ "adibounature",		"Adibou: Découvre la Nature" },
 	{ "affaires1",			"Affaires à suivre: L'Île diabolique" },
 	{ "boulebill",			"Boule et Bill: Au Voleur!" },
 	{ "boitearire",			"La boîte à rire" },
@@ -2386,9 +2388,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is ' ﾀﾞﾌﾞﾙｸﾘｯｸして下さい'
 	MACGAME1_l("japanart14", "", "xn-- -17t4bh9e390vlr5tbcab1fyg4fl2eb", "276bee761e48a6fd709df77d5c2f60dd", 393777, Common::JA_JPN, 313),
 
-	MACGAME1("jman", "",	 "Journeyman.16 MB", "1ae45c23586b41997ba52e2e7c771c4c", 437743, 300),
-	MACGAME1("jman", "v1.2", "Journeyman 16MB",  "2ce360c9ea2da80a2c6d1040b0ad92dd", 440902, 313),
-	WINGAME1("jman", "", "JMAN.EXE",		 "7c8230a804abf9353b05627a675b5ffb", 375282, 300),
+	// German version reported in TRAC #14406
+	MACGAME1("jman", "",	  "Journeyman.16 MB", "r:1ae45c23586b41997ba52e2e7c771c4c", 437743, 300),
+	MACGAME1("jman", "v1.2",  "Journeyman 16MB",  "r:2ce360c9ea2da80a2c6d1040b0ad92dd", 440902, 313),
+	WINGAME1("jman", "",	  "JMAN.EXE",		  "d:7c8230a804abf9353b05627a675b5ffb", 375282, 300),
+	WINGAME1_l("jman", "v1.1", "JMAN.EXE",		  "t:56feca9681406edc2fd78da501694cb2", 370002, Common::DE_DEU, 300),
 //	WINGAME1_l("jman", "", "JOURNEY.EXE",	 "65d06b5fef155a2473434571aff5bc29", -1, Common::JA_JPN, 300), FIXME: Needs additional file
 	MACDEMO1("jman", "Sneak Preview", "Journeyman Sneak Preview", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 6222633, 300),
 	MACDEMO1("jman", "CD Demo", "Journeyman Demo", "1ae45c23586b41997ba52e2e7c771c4c", 3077381, 311),
@@ -4664,6 +4668,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original Mac filename is NN’nN Toy Makers™
 	MACGAME1("nikolaitoys", "", "NNNN/xn--NNnN Toy Makers-5w9hs4m", "2c7d0c0d55cbe3f622c7d68cedb671e0", 486770, 404),
 	WINGAME1("nikolaitoys", "", "NNNN/NNN_TOYS.EXE", "22147e4c6311f670f72d43f8b793169e", 3206640, 404),
+
+	// Published by GTE Interactive
+	MACGAME1("nightlight", "",	   "Night Light",  "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 484028, 404),
+	WINGAME1("nightlight", "",	   "NIGHTMPC.EXE", "t:b09110b0631277f73bca40c3fdeb752f", 8081957, 404),
+	WINGAME1("nightlight", "Test", "MPC_TEST.EXE", "t:3063f5c6c2fe13eb7d6aac42724e6150", 8087955, 404),
 
 	MACDEMO1("nightsky", "Sampler", "Night Sky Interactive Sampler", "cbce20666bfe47a9533331c6be1e6039", 285269, 400),
 	WINDEMO1("nightsky", "Sampler", "NIGHTSKY.EXE", "68f1fe67a5881fd47b08e905401d174c", 4300149, 404),
@@ -8529,6 +8538,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("adibouhumain", "", "Adibou_CH.exe", "t:d955b857b9e506d1e3141ca4d81b59d5", 2633827, Common::FR_FRA, 1010),
 
 	WINGAME1_l("adiboumots", "", "ADBR_EX56.exe", "t:aee1d0997a82c796292b59d9c398ca20", 3872922, Common::FR_FRA, 1010),
+
+	// TRAC report #14403
+	WINGAME1_l("adibounature", "", "ADBS_EX48.exe", "t:aee1d0997a82c796292b59d9c398ca20", 3873754, Common::FR_FRA, 1010),
 
 	// Found on AOL 9.0 promo CD
 	// Game description is based on desktop shortcut after installation
