@@ -46,12 +46,12 @@ struct Point {
 	int16 x;	/*!< The horizontal position of the point. */
 	int16 y;	/*!< The vertical position of the point. */
 
-	Point() : x(0), y(0) {}
+	constexpr Point() : x(0), y(0) {}
 
 	/**
 	 * Create a point with position defined by @p x1 and @p y1.
 	 */
-	Point(int16 x1, int16 y1) : x(x1), y(y1) {}
+	constexpr Point(int16 x1, int16 y1) : x(x1), y(y1) {}
 	/**
 	 * Determine whether the position of two points is the same.
 	 */
@@ -145,11 +145,11 @@ struct Rect {
 	int16 top, left;		/*!< The point at the top left of the rectangle (part of the Rect). */
 	int16 bottom, right;	/*!< The point at the bottom right of the rectangle (not part of the Rect). */
 
-	Rect() : top(0), left(0), bottom(0), right(0) {}
+	constexpr Rect() : top(0), left(0), bottom(0), right(0) {}
 	/**
 	 * Create a rectangle with the top-left corner at position (0, 0) and the given width @p w and height @p h.
 	 */
-	Rect(int16 w, int16 h) : top(0), left(0), bottom(h), right(w) {}
+	constexpr Rect(int16 w, int16 h) : top(0), left(0), bottom(h), right(w) {}
 	/**
 	 * Create a rectangle with the top-left corner at the given position (x1, y1)
 	 * and the bottom-right corner at the position (x2, y2).
