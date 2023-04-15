@@ -155,7 +155,7 @@ Config::DriverId Config::detect(OplType type) {
 		} else {
 			// Else we will output a warning and just
 			// return that no valid driver is found.
-			warning("Your selected OPL driver \"%s\" does not support type %d emulation, which is requested by your game", _drivers[drv].description, type);
+			warning("Your selected OPL driver \"%s\" does not support type %d emulation, which is requested by your game", driverDesc->description, type);
 			return -1;
 		}
 	}
