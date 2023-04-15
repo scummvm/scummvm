@@ -64,7 +64,7 @@ protected:
 	T *_storage;  /*!< Memory used for element storage. */
 
 public:
-	Array() : _capacity(0), _size(0), _storage(nullptr) {}
+	constexpr Array() : _capacity(0), _size(0), _storage(nullptr) {}
 
 	/**
 	 * Construct an array with @p count default-inserted instances of @p T. No
