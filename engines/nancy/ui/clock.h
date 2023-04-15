@@ -35,7 +35,7 @@ struct NancyInput;
 namespace UI {
 
 class Clock : public RenderObject {
-	friend class ClockGlobe;
+	friend class ClockAnim;
 public:
 	Clock();
 	virtual ~Clock() = default;
@@ -48,10 +48,10 @@ public:
 	void drawClockHands();
 
 protected:
-	class ClockGlobe : public AnimatedButton {
+	class ClockAnim : public AnimatedButton {
 	public:
-		ClockGlobe(uint zOrder, Clock *owner) : AnimatedButton(zOrder), _owner(owner), _closeTime(0), _timeToKeepOpen(0) {}
-		virtual ~ClockGlobe() = default;
+		ClockAnim(uint zOrder, Clock *owner) : AnimatedButton(zOrder), _owner(owner), _closeTime(0), _timeToKeepOpen(0) {}
+		virtual ~ClockAnim() = default;
 
 		void init() override;
 		void updateGraphics() override;
@@ -66,8 +66,10 @@ protected:
 	};
 
 	CLOK *_clockData;
-	RenderObject _gargoyleEyes;
-	ClockGlobe _globe;
+	ClockAnim _animation;
+
+	// Used for gargoyle eyes in TVD, inside of watch in nancy2 and up
+	RenderObject _staticImage;
 
 	Time _playerTime;
 };

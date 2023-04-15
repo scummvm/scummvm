@@ -51,22 +51,21 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) {
 	s.skip(4, kGameTypeNancy3);
 
 	s.skip(8, kGameTypeVampire, kGameTypeVampire);
-	if (s.getVersion() == kGameTypeVampire) {
-		readRect(*chunkStream, mapButtonHotspot);
-	}
-
-	s.skip(0x10, kGameTypeVampire, kGameTypeNancy1);
-	s.skip(0x20, kGameTypeNancy2, kGameTypeNancy3);
-	readRect(*chunkStream, textboxScreenPosition);
-	readRect(*chunkStream, inventoryBoxScreenPosition);
-	readRect(*chunkStream, menuButtonSrc);
-	readRect(*chunkStream, helpButtonSrc);
-	readRect(*chunkStream, menuButtonDest);
-	readRect(*chunkStream, helpButtonDest);
+	readRect(s, mapButtonHotspot, kGameTypeVampire, kGameTypeVampire);
+	readRect(s, clockHotspot, kGameTypeNancy2);
+	s.skip(0x10);
+	readRect(s, textboxScreenPosition);
+	readRect(s, inventoryBoxScreenPosition);
+	readRect(s, menuButtonSrc);
+	readRect(s, helpButtonSrc);
+	readRect(s, menuButtonDest);
+	readRect(s, helpButtonDest);
+	readRect(s, menuButtonHighlightSrc, kGameTypeNancy2);
+	readRect(s, helpButtonHighlightSrc, kGameTypeNancy2);
+	readRect(s, clockHighlightSrc, kGameTypeNancy2);
 
 	s.skip(0xE, kGameTypeVampire, kGameTypeVampire);
-	s.skip(9, kGameTypeNancy1, kGameTypeNancy1);
-	s.skip(0x39, kGameTypeNancy2, kGameTypeNancy3);
+	s.skip(9, kGameTypeNancy1);
 	s.syncAsUint16LE(horizontalEdgesSize);
 	s.syncAsUint16LE(verticalEdgesSize);
 
@@ -379,18 +378,27 @@ CLOK::CLOK(Common::SeekableReadStream *chunkStream) {
 	Common::Serializer s(chunkStream, nullptr);
 	s.setVersion(g_nancy->getGameType());
 
-	readRectArray(s, animSrcs, 8);
+	uint numFrames = s.getVersion() == kGameTypeVampire? 8 : 7;
+
+	readRectArray(s, animSrcs, numFrames);
+	readRectArray(s, animDests, numFrames, kGameTypeNancy2);
+
+	readRect(s, staticImageSrc, kGameTypeNancy2);
+	readRect(s, staticImageDest, kGameTypeNancy2);
 
 	readRectArray(s, hoursHandSrcs, 12);
+	readRectArray(s, hoursHandDests, 12, kGameTypeNancy2);
+
 	readRectArray(s, minutesHandSrcs, 4);
+	readRectArray(s, minutesHandDests, 4, kGameTypeNancy2);
 
-	readRect(s, screenPosition);
+	readRect(s, screenPosition, kGameTypeVampire, kGameTypeVampire);
 
-	readRectArray(s, hoursHandDests, 12);
-	readRectArray(s, minutesHandDests, 4);
+	readRectArray(s, hoursHandDests, 12, kGameTypeVampire, kGameTypeVampire);
+	readRectArray(s, minutesHandDests, 4, kGameTypeVampire, kGameTypeVampire);
 
-	readRect(*chunkStream, gargoyleEyesSrc);
-	readRect(*chunkStream, gargoyleEyesDest);
+	readRect(s, staticImageSrc, kGameTypeVampire, kGameTypeVampire);
+	readRect(s, staticImageDest, kGameTypeVampire, kGameTypeVampire);
 
 	s.syncAsUint32LE(timeToKeepOpen);
 	s.syncAsUint16LE(frameTime);

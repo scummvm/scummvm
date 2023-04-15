@@ -69,7 +69,12 @@ void AnimatedButton::updateGraphics() {
 void AnimatedButton::handleInput(NancyInput &input) {
 	if (_hotspot.contains(input.mousePos)) {
 		if (_alwaysHighlightCursor || _currentFrame == -1 || _currentFrame == (int)_srcRects.size()) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursorManager->setCursorType(g_nancy->getGameType() == kGameTypeVampire ? CursorManager::kHotspot : CursorManager::kHotspotArrow);
+		}
+
+		if (!_highlightSrcRect.isEmpty() && !isVisible()) {
+			_drawSurface.create(g_nancy->_graphicsManager->_object0, _highlightSrcRect);
+			moveTo(_hotspot);
 		}
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
@@ -90,6 +95,11 @@ void AnimatedButton::setFrame(int frame) {
 	if (frame > -1 && frame < (int)_srcRects.size()) {
 		_drawSurface.create(g_nancy->_graphicsManager->_object0, _srcRects[frame]);
 		setTransparent(true);
+
+		if (_destRects.size()) {
+			moveTo(_destRects[frame]);
+		}
+
 		_needsRedraw = true;
 	}
 }

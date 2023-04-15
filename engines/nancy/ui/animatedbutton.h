@@ -48,6 +48,9 @@ public:
 
 protected:
 	Common::Array<Common::Rect> _srcRects;
+	Common::Array<Common::Rect> _destRects;
+	Common::Rect _highlightSrcRect;
+
 	uint32 _frameTime;
 	bool _alwaysHighlightCursor;
 

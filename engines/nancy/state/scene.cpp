@@ -782,6 +782,11 @@ void Scene::initStaticData() {
 		_clock->init();
 	}
 
+	if (g_nancy->getGameType() >= kGameTypeNancy2) {
+		_clock = new UI::Clock();
+		_clock->init();
+	}
+
 	_state = kLoad;
 }
 

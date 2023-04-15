@@ -40,12 +40,16 @@ struct BSUM {
 
 	// UI
 	Common::Rect mapButtonHotspot;
+	Common::Rect clockHotspot;
 	Common::Rect textboxScreenPosition;
 	Common::Rect inventoryBoxScreenPosition;
 	Common::Rect menuButtonSrc;
 	Common::Rect helpButtonSrc;
 	Common::Rect menuButtonDest;
 	Common::Rect helpButtonDest;
+	Common::Rect menuButtonHighlightSrc;
+	Common::Rect helpButtonHighlightSrc;
+	Common::Rect clockHighlightSrc;
 
 	uint16 horizontalEdgesSize;
 	uint16 verticalEdgesSize;
@@ -188,6 +192,7 @@ struct CLOK {
 	CLOK(Common::SeekableReadStream *chunkStream);
 
 	Common::Array<Common::Rect> animSrcs;
+	Common::Array<Common::Rect> animDests;
 
 	Common::Array<Common::Rect> hoursHandSrcs;
 	Common::Array<Common::Rect> minutesHandSrcs;
@@ -195,8 +200,8 @@ struct CLOK {
 	Common::Array<Common::Rect> hoursHandDests;
 	Common::Array<Common::Rect> minutesHandDests;
 
-	Common::Rect gargoyleEyesSrc;
-	Common::Rect gargoyleEyesDest;
+	Common::Rect staticImageSrc;
+	Common::Rect staticImageDest;
 
 	uint32 timeToKeepOpen;
 	uint16 frameTime;
