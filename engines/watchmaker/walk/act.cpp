@@ -214,9 +214,10 @@ void CharSetPosition(int32 oc, uint8 pos, const char *room) {
 	CharStop(oc);
 	if (pos == 99) return;
 	if (room && (room[0] != '\0')) {
-		for (i = 0; i < NumLoadedFiles; i++)
-			if ((LoadedFiles[i].b != nullptr) && LoadedFiles[i].b->name.equalsIgnoreCase(room))
-				t3dCurRoom = LoadedFiles[i].b;
+		t3dBODY *roomPtr = _vm->_roomManager->getRoomIfLoaded(room);
+		if (roomPtr) {
+			t3dCurRoom = roomPtr;
+		}
 	}
 
 	if (pos) {

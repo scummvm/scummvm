@@ -162,13 +162,7 @@ bool WGame::CheckAndLoadMoglieSupervisoreModel(int32 c) {
 		t3dReleaseCharacter(Character[c]);
 		Character[c] = nullptr;
 
-		for (j = 0; j < NumLoadedFiles; j++) {
-			if (LoadedFiles[j].name.equalsIgnoreCase(RemoveName) || LoadedFiles[j].name.equalsIgnoreCase(RemoveNameHI)) {
-				t3dReleaseBody(LoadedFiles[j].b);
-				LoadedFiles[j].b = nullptr;
-				break;
-			}
-		}
+		_vm->_roomManager->releaseBody(RemoveName, RemoveNameHI);
 
 		LoaderFlags |= T3D_PRELOADBASE;
 		LoaderFlags |= T3D_STATIC_SET1;
@@ -192,6 +186,7 @@ bool WGame::CheckAndLoadMoglieSupervisoreModel(int32 c) {
 WGame::WGame() : workDirs(WATCHMAKER_CFG_NAME) {
 	_vm = this;
 	_meshModifiers = new MeshModifiers();
+	_roomManager = RoomManager::create(this);
 	configLoaderFlags(); // TODO: This should probably happen before the constructor
 
 	// if LoaderFlags & T3D_DEBUGMODE
@@ -219,6 +214,7 @@ WGame::~WGame() {
 	delete _renderer;
 	delete sdl;
 	delete _meshModifiers;
+	delete _roomManager;
 	_vm = nullptr;
 }
 
@@ -313,7 +309,7 @@ bool WGame::LoadAndSetup(const Common::String &name, uint8 lite) {
 //				PrintLoading();
 
 			if (!(LoaderFlags & T3D_NOICONS))
-				if (!(init._globals._invVars.t3dIcons = t3dLoadRoom(*this, "Icons.t3d", init._globals._invVars.t3dIcons, &i, (LoaderFlags | T3D_NORECURSION | T3D_NOLIGHTMAPS | T3D_NOBOUNDS | T3D_NOCAMERAS | T3D_STATIC_SET1)))) {
+				if (!(init._globals._invVars.t3dIcons = _roomManager->loadRoom("Icons.t3d", init._globals._invVars.t3dIcons, &i, (LoaderFlags | T3D_NORECURSION | T3D_NOLIGHTMAPS | T3D_NOBOUNDS | T3D_NOCAMERAS | T3D_STATIC_SET1)))) {
 					warning("Error loading Icons");
 					return false;
 				}
@@ -361,7 +357,8 @@ bool WGame::LoadAndSetup(const Common::String &name, uint8 lite) {
 		if (!lite) {
 			if (LoaderFlags & T3D_PRELOAD_RXT) {
 				t3dCurOliSet = -1;
-				if (!(t3dRxt = t3dLoadRoom(*this, "rxt.t3d", t3dCurRoom, &i, LoaderFlags | T3D_NOLIGHTMAPS))) {
+				// TODO: Figure out how this i works out.
+				if (!(t3dRxt = _roomManager->loadRoom("rxt.t3d", t3dCurRoom, &i, LoaderFlags | T3D_NOLIGHTMAPS))) {
 					warning("Error loading room rxt.t3d");
 					return false;
 				}
@@ -379,7 +376,7 @@ bool WGame::LoadAndSetup(const Common::String &name, uint8 lite) {
 	}
 
 	if (!((LoaderFlags & T3D_PRELOAD_RXT) && name.equalsIgnoreCase("rxt.t3d"))) {
-		if (!(t3dCurRoom = t3dLoadRoom(*this, name, t3dCurRoom, &i, LoaderFlags))) {
+		if (!(t3dCurRoom = _roomManager->loadRoom(name, t3dCurRoom, &i, LoaderFlags))) {
 			warning("Error loading room %s", name.c_str());
 			return false;
 		}
@@ -506,12 +503,12 @@ bool WGame::LoadAndSetup(const Common::String &name, uint8 lite) {
 void WGame::UpdateAll() {
 	int32 i;
 	UpdateRoomVisibility(*this);
-	for (i = 0; i < NumLoadedFiles; i++) {
-		if (LoadedFiles[i].b) {
-			HideRoomMeshes(init, LoadedFiles[i].b);
-			_meshModifiers->applyAllMeshModifiers(*this, LoadedFiles[i].b);
-		}
+	auto bodies = _roomManager->getLoadedFiles();
+	for (auto loadedBody : bodies) {
+		HideRoomMeshes(init, loadedBody);
+		_meshModifiers->applyAllMeshModifiers(*this, loadedBody);
 	}
+
 	UpdateAllClocks(*this);
 
 //	Init for Clock33

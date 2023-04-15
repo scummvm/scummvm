@@ -177,15 +177,15 @@ void t3dBODY::populatePortalLists() {
 //#endif
 		// TODO: This should probably be upfactored.
 		t3dBODY *rez = nullptr;
-		if (((rez = CheckIfAlreadyLoaded(Name)) == nullptr) && (!(LoaderFlags & T3D_NORECURSION))) { // Controlla se lo ha gia' caricato
+		if (((rez = _vm->_roomManager->checkIfAlreadyLoaded(Name)) == nullptr) && (!(LoaderFlags & T3D_NORECURSION))) { // Controlla se lo ha gia' caricato
 			if (Name.equalsIgnoreCase("rxt.t3d"))
-				AddToLoadList(&Mesh[mesh], Name, (uint16)(LoaderFlags | T3D_NORECURSION & ~T3D_RECURSIONLEVEL1));    // aggiunge e leva la ricorsione
+				_vm->_roomManager->addToLoadList(&Mesh[mesh], Name, (uint16)(LoaderFlags | T3D_NORECURSION & ~T3D_RECURSIONLEVEL1));    // aggiunge e leva la ricorsione
 //				Mesh[mesh].Flags|=T3D_MESH_NOPORTALCHECK;
 			else {
 				if (LoaderFlags & T3D_RECURSIONLEVEL1)
-					AddToLoadList(&Mesh[mesh], Name, (uint16)(LoaderFlags | T3D_NORECURSION & ~T3D_RECURSIONLEVEL1));    // aggiunge e leva la ricorsione
+					_vm->_roomManager->addToLoadList(&Mesh[mesh], Name, (uint16)(LoaderFlags | T3D_NORECURSION & ~T3D_RECURSIONLEVEL1));    // aggiunge e leva la ricorsione
 				else
-					AddToLoadList(&Mesh[mesh], Name, (uint16)(LoaderFlags));                         // altrimenti lo agggiunge alla lista
+					_vm->_roomManager->addToLoadList(&Mesh[mesh], Name, (uint16)(LoaderFlags));                         // altrimenti lo agggiunge alla lista
 			}
 		} else
 			Mesh[mesh].PortalList = rez;

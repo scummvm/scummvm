@@ -562,10 +562,9 @@ void ProcessTime(WGame &game) {
 					//DebugLogFile("Updating Listener ");
 					UpdateListener = 20;
 
-					for (i = 0; i < NumLoadedFiles; i++)
-						if (LoadedFiles[i].b && t3dCurRoom)
-							if (LoadedFiles[i].b->name.equalsIgnoreCase(t3dCurRoom->name))
-								HideRoomMeshes(game.init, LoadedFiles[i].b);
+					if (t3dCurRoom) {
+						_vm->_roomManager->hideRoomMeshesMatching(t3dCurRoom->name);
+					}
 				}
 			}
 //

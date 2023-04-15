@@ -269,25 +269,8 @@ int32 LoadDDBitmap(WGame &game, const char *n, uint8 flags) {
  *                  LinkMeshToStr
  * --------------------------------------------------*/
 t3dMESH *LinkMeshToStr(Init &init, const Common::String &str) {
-	if (str.empty()) return nullptr;
-
-//	Cerca tra le camere
-	if (str.equalsIgnoreCase("camera"))
-		return &init._globals._invVars.CameraDummy;
-//	Cerca tra i personaggi
-	for (uint16 i = 0; i < T3D_MAX_CHARACTERS; i++)
-		if ((Character[i]) && (str.equalsIgnoreCase((char *)init.Obj[i].meshlink[0])))
-			return Character[i]->Mesh;
-//	Cerca nelle stanze caricate
-	for (uint16 i = 0; i < NumLoadedFiles; i++) {
-		if (LoadedFiles[i].b)
-			for (uint16 j = 0; j < LoadedFiles[i].b->NumMeshes(); j++) {
-				if (str.equalsIgnoreCase(LoadedFiles[i].b->MeshTable[j].name))
-					return &LoadedFiles[i].b->MeshTable[j];
-			}
-	}
-
-	return nullptr;
+	// TODO: Refactor the callsites:
+	return _vm->_roomManager->linkMeshToStr(init, str);
 }
 
 /* -----------------18/12/00 18.02-------------------
@@ -444,9 +427,7 @@ bool SetBndLevel(WGame &game, const char *roomname, int32 lev) {
 
 	t = nullptr;
 	if (roomname && (roomname[0] != '\0')) {
-		for (i = 0; i < NumLoadedFiles; i++)
-			if ((LoadedFiles[i].b != nullptr) && LoadedFiles[i].b->name.equalsIgnoreCase(roomname))
-				t = LoadedFiles[i].b;
+		_vm->_roomManager->getRoomIfLoaded(roomname);
 	} else t = t3dCurRoom;
 
 	if (!t) {
@@ -522,20 +503,13 @@ void ChangeRoom(WGame &game, Common::String n, uint8 pos, int32 an) {
 //	se esso aveva delle modifiche da fare al piano corrente le fa subito, e non dopo quando il piano non e' piu' disponibile
 	StopDiary(game, 0, 0, 0);
 
-	t = nullptr;
 //	Prima lo cerca tra le stanze in memoria
-	for (i = 0; i < NumLoadedFiles; i++)
-		if ((LoadedFiles[i].b != nullptr) && LoadedFiles[i].b->name.equalsIgnoreCase(n))
-			t = LoadedFiles[i].b;
+	t = _vm->_roomManager->getRoomIfLoaded(n);
+
 //	Se non lo trova tra le stanze in memoria
 	if (!t) {
 		t3dResetPipeline();
-		for (i = 0; i < NumLoadedFiles; i++) {
-			if (LoadedFiles[i].b && !(LoadedFiles[i].Flags & T3D_STATIC_SET0)) {
-				t3dReleaseBody(LoadedFiles[i].b);
-				LoadedFiles[i] = RecStruct(); // TODO: Deduplicate this
-			}
-		}
+		_vm->_roomManager->releaseLoadedFiles(T3D_STATIC_SET0);
 
 		for (i = 0; i < T3D_MAX_CHARACTERS; i++) {
 			if (Character[i]) {
@@ -597,9 +571,7 @@ int32 GetBndLevel(char *roomname) {
 
 	t = nullptr;
 	if (roomname && (roomname[0] != '\0')) {
-		for (i = 0; i < NumLoadedFiles; i++)
-			if ((LoadedFiles[i].b != nullptr) && LoadedFiles[i].b->name.equalsIgnoreCase(roomname))
-				t = LoadedFiles[i].b;
+		t = _vm->_roomManager->getRoomIfLoaded(roomname);
 	} else t = t3dCurRoom;
 
 	if (!t) return FALSE;
