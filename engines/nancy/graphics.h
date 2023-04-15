@@ -46,6 +46,7 @@ public:
 	void clearObjects();
 
 	void redrawAll();
+	void suppressNextDraw();
 
 	const Font *getFont(uint id) const { return id < _fonts.size() ? &_fonts[id] : nullptr; }
 	const Graphics::Screen *getScreen() { return &_screen; }
@@ -79,6 +80,8 @@ private:
 
 	Graphics::Screen _screen;
 	Common::Array<Font> _fonts;
+
+	bool _isSuppressed;
 };
 
 } // End of namespace Nancy

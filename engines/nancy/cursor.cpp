@@ -74,7 +74,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		_curItemID = itemID;
 	}
 
-	bool hasItem = false;
+	_hasItem = false;
 
 	switch (type) {
 	case kNormalArrow:
@@ -107,18 +107,28 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		} else {
 			// Item held
 			itemsOffset = g_nancy->getStaticData().numNonItemCursors;
-			hasItem = true;
+			_hasItem = true;
 		}
 
 		_curCursorID = itemID * (gameType <= kGameTypeNancy1? 4 : 5) + itemsOffset + type;
 	}
 	}
+}
 
+void CursorManager::setCursorType(CursorType type) {
+	setCursor(type, _curItemID);
+}
+
+void CursorManager::setCursorItemID(int16 itemID) {
+	setCursor(_curCursorType, itemID);
+}
+
+void CursorManager::applyCursor() {
 	Graphics::ManagedSurface *surf;
 	Common::Rect bounds = _cursors[_curCursorID].bounds;
 	Common::Point hotspot = _cursors[_curCursorID].hotspot;
 
-	if (hasItem) {
+	if (_hasItem) {
 		surf = &_invCursorsSurface;
 
 	} else {
@@ -145,14 +155,6 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	}
 
 	CursorMan.replaceCursor(temp.getPixels(), temp.w, temp.h, hotspot.x, hotspot.y, transColor, false, &temp.format);
-}
-
-void CursorManager::setCursorType(CursorType type) {
-	setCursor(type, _curItemID);
-}
-
-void CursorManager::setCursorItemID(int16 itemID) {
-	setCursor(_curCursorType, itemID);
 }
 
 void CursorManager::showCursor(bool shouldShow) {

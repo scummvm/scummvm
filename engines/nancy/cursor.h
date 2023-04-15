@@ -40,13 +40,18 @@ public:
 		_isInitialized(false),
 		_curItemID(-1),
 		_curCursorType(kNormal),
-		_curCursorID(0) {}
+		_curCursorID(0),
+		_hasItem(false) {}
 
 	void init(Common::SeekableReadStream *chunkStream);
 
+	// Change the current cursor ID. Does not change the graphic
 	void setCursor(CursorType type, int16 itemID);
 	void setCursorType(CursorType type);
 	void setCursorItemID(int16 itemID);
+
+	// Change the cursor graphic. Should be called right before drawing to screen
+	void applyCursor();
 
 	const Common::Point &getCurrentCursorHotspot() { return _cursors[_curCursorID].hotspot;}
 	const Common::Rect &getPrimaryVideoInactiveZone() { return _primaryVideoInactiveZone; }
@@ -71,6 +76,7 @@ private:
 	CursorType _curCursorType;
 	int16 _curItemID;
 	uint _curCursorID;
+	bool _hasItem;
 	bool _isInitialized;
 };
 

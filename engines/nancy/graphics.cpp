@@ -27,6 +27,7 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/renderobject.h"
 #include "engines/nancy/resource.h"
+#include "engines/nancy/cursor.h"
 #include "engines/nancy/state/scene.h"
 
 namespace Nancy {
@@ -35,7 +36,8 @@ GraphicsManager::GraphicsManager() :
 	_objects(objectComparator),
 	_inputPixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),
 	_screenPixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
-	_clut8Format(Graphics::PixelFormat::createFormatCLUT8()) {}
+	_clut8Format(Graphics::PixelFormat::createFormatCLUT8()),
+	_isSuppressed(false) {}
 
 void GraphicsManager::init() {
 	initGraphics(640, 480, &_screenPixelFormat);
@@ -47,6 +49,12 @@ void GraphicsManager::init() {
 }
 
 void GraphicsManager::draw() {
+	if (_isSuppressed) {
+		_isSuppressed = false;
+		return;
+	}
+
+	g_nancy->_cursorManager->applyCursor();
 	Common::List<Common::Rect> dirtyRects;
 
 	// Update graphics for all RenderObjects and determine
@@ -147,6 +155,10 @@ void GraphicsManager::redrawAll() {
 	for (auto &obj : _objects) {
 		obj->_needsRedraw = true;
 	}
+}
+
+void GraphicsManager::suppressNextDraw() {
+	_isSuppressed = true;
 }
 
 void GraphicsManager::loadSurfacePalette(Graphics::ManagedSurface &inSurf, const Common::String paletteFilename, uint paletteStart, uint paletteSize) {

@@ -658,6 +658,10 @@ void Scene::run() {
 	if (_lightning) {
 		_lightning->run();
 	}
+
+	if (_state == kLoad) {
+		g_nancy->_graphicsManager->suppressNextDraw();
+	}
 }
 
 void Scene::handleInput() {
