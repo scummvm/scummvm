@@ -273,15 +273,6 @@ void MidiDriver_Casio::programChange(byte outputChannel, byte patchId, int8 sour
 	if (applyBassSwap && mappedInstrument == (_deviceType == MT_MT540 ? BASS_INSTRUMENT_MT540 : BASS_INSTRUMENT_CT460) && outputChannel != 2) {
 		_mutex.lock();
 
-		// The original drivers do not stop all notes before swapping channels.
-		// This could potentially cause hanging notes, so this is done here to
-		// be safe. Instead, the original drivers swap out the registered
-		// active notes between the channels. This does not accomplish anything
-		// other than putting the driver state out of sync with the device
-		// state.
-		stopAllNotes(source, outputChannel);
-		stopAllNotes(source, 2);
-
 		int currentDataChannel = -1;
 		int currentTargetDataChannel = -1;
 		for (int i = 0; i < MIDI_CHANNEL_COUNT; i++) {
@@ -291,14 +282,27 @@ void MidiDriver_Casio::programChange(byte outputChannel, byte patchId, int8 sour
 				currentTargetDataChannel = i;
 			}
 		}
-		_channelMap[currentDataChannel] = 2;
-		_channelMap[currentTargetDataChannel] = outputChannel;
 
-		programChange(outputChannel, _instruments[2], source, applyRemapping, false);
+		// These data channels should always be mapped, but check it just in case.
+		if (currentDataChannel >= 0 && currentTargetDataChannel >= 0) {
+			// The original drivers do not stop all notes before swapping channels.
+			// This could potentially cause hanging notes, so this is done here to
+			// be safe. Instead, the original drivers swap out the registered
+			// active notes between the channels. This does not accomplish anything
+			// other than putting the driver state out of sync with the device
+			// state.
+			stopAllNotes(source, outputChannel);
+			stopAllNotes(source, 2);
+
+			_channelMap[currentDataChannel] = 2;
+			_channelMap[currentTargetDataChannel] = outputChannel;
+
+			programChange(outputChannel, _instruments[2], source, applyRemapping, false);
+
+			outputChannel = 2;
+		}
 
 		_mutex.unlock();
-
-		outputChannel = 2;
 	}
 
 	// Register the new instrument.
