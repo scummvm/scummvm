@@ -131,13 +131,14 @@ void OrderingPuzzle::execute() {
 	case kRun:
 		switch (_solveState) {
 		case kNotSolved:
-			if (_clickedSequence.size() != _sequenceLength) {
+			if (_clickedSequence.size() <  _sequenceLength) {
 				return;
 			}
 
 			for (uint i = 0; i < _sequenceLength; ++i) {
+
 				if (_clickedSequence[i] != (int16)_correctSequence[i]) {
-					if (_clickedSequence.size() > (uint)_sequenceLength + ((g_nancy->getGameType() == kGameTypeVampire) ? -1 : 1)) {
+					if (_clickedSequence.size() > (g_nancy->getGameType() == kGameTypeVampire ? 4 : (uint)_sequenceLength + 1)) {
 						clearAllElements();
 					}
 
