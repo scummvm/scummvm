@@ -109,6 +109,7 @@ private:
 	const EoBChargenButtonDef *_chargenButtonDefs;
 
 	static const EoBChargenButtonDef _chargenButtonDefsDOS[];
+	static const EoBChargenButtonDef _chargenButtonDefsDOSChinese[];
 	static const uint16 _chargenButtonKeyCodesFMTOWNS[];
 	static const CreatePartyModButton _chargenModButtons[];
 	static const EoBRect8 _chargenButtonBodyCoords[];
@@ -122,6 +123,9 @@ private:
 	static const int32 _alignmentMenuMasks[];
 
 	static const int16 _raceModifiers[];
+
+	static const char *_chineseStrings[17];
+	static const int _chineseButtonMapping[17];
 
 	EoBCharacter *_characters;
 	const uint8 **_faceShapes;
@@ -161,8 +165,8 @@ CharacterGenerator::CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen) : 
 	_chargenDefaultNames = _vm->staticres()->loadStrings(kEoB1DefaultPartyNames, temp);
 	_chargenDefaultStats = _vm->staticres()->loadRawData(kEoB1DefaultPartyStats, temp);
 
-	EoBChargenButtonDef *chargenButtonDefs = new EoBChargenButtonDef[41];
-	memcpy(chargenButtonDefs, _chargenButtonDefsDOS, 41 * sizeof(EoBChargenButtonDef));
+	EoBChargenButtonDef *chargenButtonDefs = new EoBChargenButtonDef[42];
+	memcpy(chargenButtonDefs, (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN) ? _chargenButtonDefsDOSChinese : _chargenButtonDefsDOS, 42 * sizeof(EoBChargenButtonDef));
 
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 		const uint16 *c = _chargenButtonKeyCodesFMTOWNS;
@@ -540,11 +544,40 @@ void CharacterGenerator::drawButton(int index, int buttonState, int pageNum) {
 		return;
 	}
 
-	const CreatePartyModButton *c = &_chargenModButtons[index];
-	const EoBRect8 *p = &_chargenButtonBodyCoords[c->bodyIndex + buttonState];
+	if (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN && _chineseStrings[index]) {
+		int mappedIdx = _chineseButtonMapping[index];
+		int destX = _chargenButtonDefs[mappedIdx].x;
+		int destY = _chargenButtonDefs[mappedIdx].y;
+		int w = _chargenButtonDefs[mappedIdx].w;
+		int h = _chargenButtonDefs[mappedIdx].h;
+
+		int x2 = destX;
+		int y2 = destY;
+
+		if (pageNum == 2) {
+			x2 = destX - 144;
+			y2 = destY - 64;
+		}
+		int page = _screen->_curPage;
+
+		_screen->_curPage = pageNum;
+		_screen->set16bitShadingLevel(4);
+		_vm->gui_drawBox(x2, y2, w, h, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, -1);
+		_vm->gui_drawBox(x2 + 1, y2 + 1, w - 2, h - 2, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
+		_screen->set16bitShadingLevel(0);
+		_screen->printShadedText(_chineseStrings[index], x2 + 2, y2 + 2, buttonState ? _vm->guiSettings()->colors.guiColorLightRed : _vm->guiSettings()->colors.guiColorWhite,
+					 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->_curPage = page;
+		if (pageNum == 0 || pageNum == 1)
+			_screen->updateScreen();
+		return;
+	}
 
 	int x2 = 20;
 	int y2 = 0;
+
+	const CreatePartyModButton *c = &_chargenModButtons[index];
+	const EoBRect8 *p = &_chargenButtonBodyCoords[c->bodyIndex + buttonState];
 
 	if (pageNum) {
 		x2 = c->destX + 2;
@@ -700,7 +733,8 @@ int CharacterGenerator::raceSexMenu() {
 		_screen->sega_getRenderer()->fillRectWithTiles(0, 18, 8, 20, 16, 0);
 		_vm->_txt->printShadedText(_chargenStrings2[8], 0, 0, -1, 0x99);
 	} else {
-		_screen->printShadedText(_chargenStrings2[8], 147, 67, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->printShadedText(_chargenStrings2[8], 147, (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN) ? 65 : 67,
+					 _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
 	}
 	_vm->removeInputTop();
 
@@ -738,8 +772,12 @@ int CharacterGenerator::classMenu(int raceSex) {
 		_screen->sega_loadTextBackground(_wndBackgrnd, 10240);
 		_screen->sega_getRenderer()->fillRectWithTiles(0, 18, 8, 20, 16, 0);
 		_vm->_txt->printShadedText(_chargenStrings2[9], 0, 0, -1, 0x99);
+	} else if (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN) {
+		_screen->printShadedText(_chargenStrings2[9], 145, 65,
+					 _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
 	} else {
-		_screen->printShadedText(_chargenStrings2[9], 147, 67, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->printShadedText(_chargenStrings2[9], 147, 67,
+					 _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
 	}
 	drawButton(5, 0, 0);
 
@@ -759,7 +797,8 @@ int CharacterGenerator::classMenu(int raceSex) {
 
 		if (in == _vm->_keyMap[Common::KEYCODE_ESCAPE] || _vm->_gui->_menuLastInFlags == _vm->_keyMap[Common::KEYCODE_ESCAPE] || _vm->_gui->_menuLastInFlags == _vm->_keyMap[Common::KEYCODE_b]) {
 			res = _vm->_keyMap[Common::KEYCODE_ESCAPE];
-		} else if (_vm->posWithinRect(mp.x, mp.y, 264, 171, 303, 187)) {
+		} else if (_vm->posWithinRect(mp.x, mp.y, _chargenButtonDefs[41].x, _chargenButtonDefs[41].y,
+					      _chargenButtonDefs[41].x + _chargenButtonDefs[41].w, _chargenButtonDefs[41].y + _chargenButtonDefs[41].h)) {
 			if (in == 199 || in == 201)
 				res = _vm->_keyMap[Common::KEYCODE_ESCAPE];
 			else
@@ -798,7 +837,9 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 		_screen->sega_getRenderer()->fillRectWithTiles(0, 18, 8, 20, 16, 0);
 		_vm->_txt->printShadedText(_chargenStrings2[10], 0, 0, -1, 0x99);
 	} else {
-		_screen->printShadedText(_chargenStrings2[10], 147, 67, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->printShadedText(_chargenStrings2[10], 147,
+					 (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN) ? 65 : 67,
+					 _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
 	}
 
 	drawButton(5, 0, 0);
@@ -819,7 +860,8 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 
 		if (in == _vm->_keyMap[Common::KEYCODE_ESCAPE] || _vm->_gui->_menuLastInFlags == _vm->_keyMap[Common::KEYCODE_ESCAPE] || _vm->_gui->_menuLastInFlags == _vm->_keyMap[Common::KEYCODE_b]) {
 			res = _vm->_keyMap[Common::KEYCODE_ESCAPE];
-		} else if (_vm->posWithinRect(mp.x, mp.y, 264, 171, 303, 187)) {
+		} else if (_vm->posWithinRect(mp.x, mp.y, _chargenButtonDefs[41].x, _chargenButtonDefs[41].y,
+					      _chargenButtonDefs[41].x + _chargenButtonDefs[41].w, _chargenButtonDefs[41].y + _chargenButtonDefs[41].h)) {
 			if (in == 199 || in == 201)
 				res = _vm->_keyMap[Common::KEYCODE_ESCAPE];
 			else
@@ -1135,7 +1177,7 @@ void CharacterGenerator::printStats(int index, int mode) {
 		_screen->copyRegion(0, 0, 160, 0, 160, 128, 2, 2, Screen::CR_NO_P_CHECK);
 		_screen->_curPage = 2;
 		if (mode != 4)
-			_screen->drawShape(2, c->faceShape, 224, 2, 0);
+			_screen->drawShape(2, c->faceShape, (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN) ? 289 : 224, 2, 0);
 	}
 
 	Common::String str1 = Common::String::format(_chargenStrings1[3], _vm->getCharStrength(c->strengthCur, c->strengthExtCur, _vm->gameFlags().platform == Common::kPlatformSegaCD).c_str(), c->intelligenceCur, c->wisdomCur, c->dexterityCur, c->constitutionCur, c->charismaCur);
@@ -1151,17 +1193,52 @@ void CharacterGenerator::printStats(int index, int mode) {
 		_vm->_txt->printShadedText(str2.c_str(), 112, 72);
 		_vm->_txt->printShadedText(str3.c_str(), 120, 88);
 	} else {
-		_screen->printShadedText(c->name, 160 + ((160 - _screen->getTextWidth(c->name)) / 2), 35, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-		_screen->printShadedText(_chargenRaceSexStrings[c->raceSex], 160 + ((160 - _screen->getTextWidth(_chargenRaceSexStrings[c->raceSex])) / 2), 45, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-		_screen->printShadedText(_chargenClassStrings[c->cClass], 160 + ((160 - _screen->getTextWidth(_chargenClassStrings[c->cClass])) / 2), 54, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->printShadedText(c->name,
+					 160 + ((160 - _screen->getTextWidth(c->name)) / 2),
+					 35, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+		if (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN) {
+			_screen->printShadedText(_chargenRaceSexStrings[c->raceSex], 165, 34, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(_chargenClassStrings[c->cClass], 165, 49, _vm->guiSettings()->colors.guiColorLightRed, 0, _vm->guiSettings()->colors.guiColorBlack);
 
-		for (int i = 0; i < 6; i++)
-			_screen->printShadedText(_chargenStatStrings[i], 163, (i + 8) << 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			for (int i = 0; i < 6; i++)
+				_screen->printShadedText(_chargenStatStrings[i], 165 + (i / 3) * 75, 64 + 16 * (i % 3), _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText("\xa8\xbe:" /* "防:"; */, 165, 64 + 16 * 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText("\xa9\x52:" /* "命:"; */, 165 + 45, 64 + 16 * 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText("\xaf\xc5:" /* "級:"; */, 165 + 91, 64 + 16 * 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 
-		_screen->printShadedText(_chargenStrings1[2], 248, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-		_screen->printShadedText(str1.c_str(), 192, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-		_screen->printShadedText(str2.c_str(), 280, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-		_screen->printShadedText(str3.c_str(), 280, 80, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
+			_screen->printShadedText(_vm->getCharStrength(c->strengthCur, c->strengthExtCur, _vm->gameFlags().platform == Common::kPlatformSegaCD).c_str(),
+						 165 + 25, 64 + 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(Common::String::format("%d", c->intelligenceCur).c_str(),
+						 165 + 25, 64 + 16 + 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(Common::String::format("%d", c->wisdomCur).c_str(),
+						 165 + 25, 64 + 16 * 2 + 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(Common::String::format("%d", c->dexterityCur).c_str(),
+						 165 + 75 + 25, 64 + 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(Common::String::format("%d", c->constitutionCur).c_str(),
+						 165 + 75 + 25, 64 + 16 + 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(Common::String::format("%d", c->charismaCur).c_str(),
+						 165 + 75 + 25, 64 + 16 * 2 + 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+
+			_screen->printShadedText(str3.c_str(),
+						 165 + 25, 64 + 16 * 3 + 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(Common::String::format("%d", c->hitPointsMax).c_str(),
+						 165 + 45 + 25, 64 + 16 * 3 + 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(Common::String::format("%d", c->armorClass).c_str(),
+						 165 + 91 + 25, 64 + 16 * 3 + 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->setFont(of);
+		} else {
+			_screen->printShadedText(_chargenRaceSexStrings[c->raceSex], 160 + ((160 - _screen->getTextWidth(_chargenRaceSexStrings[c->raceSex])) / 2), 45, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(_chargenClassStrings[c->cClass], 160 + ((160 - _screen->getTextWidth(_chargenClassStrings[c->cClass])) / 2), 54, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+
+			for (int i = 0; i < 6; i++)
+				_screen->printShadedText(_chargenStatStrings[i], 163, (i + 8) << 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(_chargenStrings1[2], 248, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+
+			_screen->printShadedText(str1.c_str(), 192, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(str2.c_str(), 280, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(str3.c_str(), 280, 80, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+		}
 	}
 
 	switch (mode) {
@@ -1235,10 +1312,17 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 	printStats(_activeBox, 3);
 	_vm->removeInputTop();
 
+	Screen::FontId of = _screen->_currentFont;
+
 	if (_vm->_flags.platform == Common::kPlatformSegaCD) {
 		Common::String statStr = index ? Common::String::format("%02d", *s1) : _vm->getCharStrength(*s1, *s2, true);
 		_vm->_txt->printShadedText(statStr.c_str(), b->x - 112, b->y - 64, 0x55);
 		_screen->sega_getRenderer()->render(0, (b->x + 32) >> 3, b->y >> 3, 5, 1);
+	} else if (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN) {
+		_screen->setFont(Screen::FID_8_FNT);
+		Common::String statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
+		_screen->copyRegion(b->x - 115, b->y - 63, b->x + 29, b->y + 1, index == 6 ? 20 : 40, 14, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->printShadedText(statStr.c_str(), b->x + 29, b->y + 1, _vm->guiSettings()->colors.guiColorLightRed, 0, _vm->guiSettings()->colors.guiColorBlack);
 	} else {
 		Common::String statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
 		_screen->copyRegion(b->x - 112, b->y - 64, b->x + 32, b->y, 40, b->height, 2, 0, Screen::CR_NO_P_CHECK);
@@ -1339,6 +1423,20 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 			printStats(_activeBox, 3);
 			_vm->_txt->printShadedText(statStr.c_str(), b->x - 112, b->y - 64, 0x55);
 			_screen->sega_getRenderer()->render(0, (b->x + 32) >> 3, b->y >> 3, 5, 1);
+		} else if (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN) {
+			Common::String statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
+			_screen->copyRegion(b->x - 115, b->y - 63, b->x + 29, b->y + 1, index == 6 ? 20 : 40, 14, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->printShadedText(statStr.c_str(), b->x + 29, b->y + 1, _vm->guiSettings()->colors.guiColorLightRed, 0, _vm->guiSettings()->colors.guiColorBlack);
+
+			if (hpChanged) {
+				statStr = Common::String::format("%d", c->hitPointsCur);
+				_screen->copyRegion(75, 115, 219, 179, 20, 8, 2, 0, Screen::CR_NO_P_CHECK);
+				_screen->printShadedText(statStr.c_str(), 219, 179, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			} else if (acChanged) {
+				statStr = Common::String::format("%d", c->armorClass);
+				_screen->copyRegion(121, 115, 265, 179, 20, 8, 2, 0, Screen::CR_NO_P_CHECK);
+				_screen->printShadedText(statStr.c_str(), 265, 179, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			}
 		} else {
 			Common::String statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
 			_screen->copyRegion(b->x - 112, b->y - 64, b->x + 32, b->y, 40, b->height, 2, 0, Screen::CR_NO_P_CHECK);
@@ -1366,6 +1464,8 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 			_screen->updateScreen();
 		}
 	}
+
+	_screen->setFont(of);
 
 	return ci;
 }
@@ -1618,6 +1718,92 @@ void CharacterGenerator::finish() {
 	}
 }
 
+// TODO: Move to kyra.dat
+const char *CharacterGenerator::_chineseStrings[17] = {
+	nullptr, /* Unused */
+	nullptr, /* Unused */
+	nullptr, /* Unused */
+	nullptr, /* Unused */
+	"\xbb\xeb\xa4\x6c", /* "骰子"; */
+	"\xb0\x68\xa6\x5e", /* "退回" */
+	"\xb1\xb5\xa8\xfc", /* "接受"; */
+	"\xad\xd7\xa7\xef", /* "修改"; */
+	"\xb3\x79\xab\xac", /* "造型"; */
+	"\xa7\xb9\xb2\xa6", /* "完畢"; */
+	"\xa4\x51", /* "十"; */
+	"\xa4\x40", /* "一"; */
+	nullptr, /* Arrow */
+	nullptr, /* Arrow */
+	nullptr, /* Inactive play */
+	nullptr, /* Active play */
+	"\xa7\x52\xb0\xa3", /* "刪除"; */
+};
+
+const int CharacterGenerator::_chineseButtonMapping[17] = {
+	-1,
+	-1,
+	-1,
+	-1,
+	27,
+	41,
+	30,
+	28,
+	29,
+	40,
+	38,
+	39,
+	-1,
+	-1,
+	-1,
+	-1,
+	6,
+};
+
+const EoBChargenButtonDef CharacterGenerator::_chargenButtonDefsDOSChinese[] = {
+	{ 0x01 << 3, 0x37, 0x31, 0x32, 0x70 },
+	{ 0x09 << 3, 0x37, 0x31, 0x32, 0x71 },
+	{ 0x01 << 3, 0x77, 0x31, 0x32, 0x72 },
+	{ 0x09 << 3, 0x77, 0x31, 0x32, 0x73 },
+	{ 0x03 << 3, 0xB5, 0x53, 0x10, 0x1A },
+	{ 190, 64, 35, 18, 0x19 },
+	{ 144, 64, 35, 18, 0x21 },
+	{ 0x21 << 3, 0xAC, 0x26, 0x10, 0x32 },
+	{ 0x13 << 3, 0x50, 0x9A, 0x08, 0x00 },
+	{ 0x13 << 3, 0x58, 0x9A, 0x08, 0x00 },
+	{ 0x13 << 3, 0x60, 0x9A, 0x08, 0x00 },
+	{ 0x13 << 3, 0x68, 0x9A, 0x08, 0x00 },
+	{ 0x13 << 3, 0x70, 0x9A, 0x08, 0x00 },
+	{ 0x13 << 3, 0x78, 0x9A, 0x08, 0x00 },
+	{ 0x13 << 3, 0x80, 0x9A, 0x08, 0x00 },
+	{ 0x13 << 3, 0x88, 0x9A, 0x08, 0x00 },
+	{ 0x13 << 3, 0x90, 0x9A, 0x08, 0x00 },
+	{ 0x13 << 3, 0x98, 0x9A, 0x08, 0x00 },
+	{ 0x13 << 3, 0xA0, 0x9A, 0x08, 0x00 },
+	{ 0x13 << 3, 0xA8, 0x9A, 0x08, 0x00 },
+	{ 0x13 << 3, 0xB0, 0x9A, 0x08, 0x00 },
+	{ 0x12 << 3, 0x42, 0x20, 0x10, 0x00 },
+	{ 0x12 << 3, 0x52, 0x20, 0x10, 0x00 },
+	{ 0x16 << 3, 0x42, 0x20, 0x20, 0x00 },
+	{ 0x1A << 3, 0x42, 0x20, 0x20, 0x00 },
+	{ 0x1E << 3, 0x42, 0x20, 0x20, 0x00 },
+	{ 0x22 << 3, 0x42, 0x20, 0x20, 0x00 },
+	{ 144,  64, 35, 18, 0x14 },
+	{ 183,  64, 35, 18, 0x34 },
+	{ 144,  80, 35, 18, 0x22 },
+	{ 183,  80, 35, 18, 0x26 },
+	{ 145, 130, 43, 16, 0x00 },
+	{ 145, 146, 43, 16, 0x00 },
+	{ 145, 162, 43, 16, 0x00 },
+	{ 220, 130, 43, 16, 0x00 },
+	{ 220, 146, 43, 16, 0x00 },
+	{ 220, 162, 43, 16, 0x00 },
+	{ 190, 178, 43, 16, 0x00 },
+	{ 144,  64, 19, 18, 0x0D },
+	{ 167,  64, 19, 18, 0x0C },
+	{ 190,  64, 35, 18, 0x19 },
+	{ 267, 171, 35, 18, 0x00 },
+};
+
 const EoBChargenButtonDef CharacterGenerator::_chargenButtonDefsDOS[] = {
 	{ 0x01 << 3, 0x37, 0x31, 0x32, 0x70 },
 	{ 0x09 << 3, 0x37, 0x31, 0x32, 0x71 },
@@ -1659,7 +1845,8 @@ const EoBChargenButtonDef CharacterGenerator::_chargenButtonDefsDOS[] = {
 	{ 0x1D << 3, 0x88, 0x35, 0x08, 0x00 },
 	{ 0x1B << 3, 0xAC, 0x15, 0x10, 0x0D },
 	{ 0x1E << 3, 0xAC, 0x15, 0x10, 0x0C },
-	{ 0x21 << 3, 0xAC, 0x25, 0x10, 0x19 }
+	{ 0x21 << 3, 0xAC, 0x25, 0x10, 0x19 },
+	{ 264      ,  171,   39,   16, 0    },
 };
 
 const uint16 CharacterGenerator::_chargenButtonKeyCodesFMTOWNS[] = {
