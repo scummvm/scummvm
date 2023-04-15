@@ -1331,12 +1331,12 @@ drawTab(int x, int y, int r, int w, int h, int s) {
 		// See the rounded rect alg for how to fix it. (The border should
 		// be drawn before the interior, both inside drawTabAlg.)
 		if (useClippingVersions) {
-			drawTabShadowClip(x, y, w - 2, h, r, s);
+			drawTabShadowClip(x, y, w - 2, h, r, s, Base::_shadowIntensity);
 			drawTabAlgClip(x, y, w - 2, h, r, _bgColor, Base::_fillMode);
 			if (Base::_strokeWidth)
 				drawTabAlgClip(x, y, w, h, r, _fgColor, kFillDisabled, (Base::_dynamicData >> 16), (Base::_dynamicData & 0xFFFF));
 		} else {
-			drawTabShadow(x, y, w - 2, h, r, s);
+			drawTabShadow(x, y, w - 2, h, r, s, Base::_shadowIntensity);
 			drawTabAlg(x, y, w - 2, h, r, _bgColor, Base::_fillMode);
 			if (Base::_strokeWidth)
 				drawTabAlg(x, y, w, h, r, _fgColor, kFillDisabled, (Base::_dynamicData >> 16), (Base::_dynamicData & 0xFFFF));
@@ -1641,8 +1641,7 @@ drawTabAlgClip(int x1, int y1, int w, int h, int r, PixelType color, VectorRende
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawTabShadow(int x1, int y1, int w, int h, int r, int s) {
-	int offset = s;
+drawTabShadow(int x1, int y1, int w, int h, int r, int offset, uint32 shadowIntensity) {
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 
 	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
@@ -1653,8 +1652,14 @@ drawTabShadow(int x1, int y1, int w, int h, int r, int s) {
 	int ystart = y1;
 	int width = w;
 	int height = h + offset + 1;
-
-	for (int i = offset; i >= 0; i--) {
+	
+	// HACK: shadowIntensity is tailed with 16-bits mantissa. We also represent the
+	// offset as a 16.16 fixed point number here as termination condition to simplify
+	// looping logic. An additional `shadowIntensity` is added to to keep consistent
+	// with previous implementation.
+	uint32 targetOffset = (uint32)(offset << 16) + shadowIntensity;
+	int curOffset = 0;
+	for (uint32 i = shadowIntensity; i <= targetOffset; i += shadowIntensity) {
 		int f, ddF_x, ddF_y;
 		int x, y, px, py;
 
@@ -1693,8 +1698,9 @@ drawTabShadow(int x1, int y1, int w, int h, int r, int s) {
 			ptr_fill += pitch;
 		}
 
-		// Move shadow one pixel upward each iteration
-		xstart += 1;
+		// Move shadow upward each iteration
+		xstart += (i >> 16) - curOffset;
+		curOffset = i >> 16;
 		// Multiply with expfactor
 		alpha = (alpha * (expFactor << 8)) >> 9;
 	}
@@ -1702,8 +1708,7 @@ drawTabShadow(int x1, int y1, int w, int h, int r, int s) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawTabShadowClip(int x1, int y1, int w, int h, int r, int s) {
-	int offset = s;
+drawTabShadowClip(int x1, int y1, int w, int h, int r, int offset, uint32 shadowIntensity) {
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 
 	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
@@ -1715,7 +1720,13 @@ drawTabShadowClip(int x1, int y1, int w, int h, int r, int s) {
 	int width = w;
 	int height = h + offset + 1;
 
-	for (int i = offset; i >= 0; i--) {
+	// HACK: shadowIntensity is tailed with 16-bits mantissa. We also represent the
+	// offset as a 16.16 fixed point number here as termination condition to simplify
+	// looping logic. An additional `shadowIntensity` is added to to keep consistent
+	// with previous implementation.
+	uint32 targetOffset = (uint32)(offset << 16) + shadowIntensity;
+	int curOffset = 0;
+	for (uint32 i = shadowIntensity; i <= targetOffset; i += shadowIntensity) {
 		int f, ddF_x, ddF_y;
 		int x, y, px, py;
 
@@ -1760,7 +1771,8 @@ drawTabShadowClip(int x1, int y1, int w, int h, int r, int s) {
 		}
 
 		// Move shadow one pixel upward each iteration
-		xstart += 1;
+		xstart += (i >> 16) - curOffset;
+		curOffset = i >> 16;
 		// Multiply with expfactor
 		alpha = (alpha * (expFactor << 8)) >> 9;
 	}
@@ -3686,7 +3698,12 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset, uint32 
 
 	// Soft shadows are constructed by drawing increasingly
 	// darker and smaller rectangles on top of each other.
-	uint32 targetOffset = (uint32)offset << 16;
+
+	// HACK: shadowIntensity is tailed with 16-bits mantissa. We also represent the
+	// offset as a 16.16 fixed point number here as termination condition to simplify
+	// looping logic. An additional `shadowIntensity` is added to to keep consistent
+	// with previous implementation.
+	uint32 targetOffset = (uint32)(offset << 16) + shadowIntensity;
 	int curOffset = 0;
 	for (uint32 i = shadowIntensity; i <= targetOffset; i += shadowIntensity) {
 		int f, ddF_x, ddF_y;
@@ -3783,8 +3800,9 @@ drawRoundedSquareShadowClip(int x1, int y1, int r, int w, int h, int offset, uin
 
 	// HACK: shadowIntensity is tailed with 16-bits mantissa. We also represent the
 	// offset as a 16.16 fixed point number here as termination condition to simplify
-	// looping logic.
-	uint32 targetOffset = (uint32)offset << 16;
+	// looping logic. An additional `shadowIntensity` is added to to keep consistent
+	// with previous implementation.
+	uint32 targetOffset = (uint32)(offset << 16) + shadowIntensity;
 	int curOffset = 0;
 	for (uint32 i = shadowIntensity; i <= targetOffset; i += shadowIntensity) {
 		int f, ddF_x, ddF_y;
