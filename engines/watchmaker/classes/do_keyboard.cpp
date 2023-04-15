@@ -232,16 +232,6 @@ void HandleFirstPersonView(void) {
 void ProcessKeyboard(WGame &game) {
 	//warning("STUBBED: ProcessKeyboard");
 
-	// Hack: Skip intro:
-	if ((CurDialog == dR000) || (CurDialog == dR111) || (CurDialog == dR211)) {
-		NextDlg = dNULL;
-		_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGEND_SKIPINTRO, MP_DEFAULT, (int16)CurDialog, mQUIT, 0, NULL, NULL, NULL);
-	}
-	// Skip Loghi
-	if (CurDialog == dRLOGHI)
-		_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGEND, MP_DEFAULT, (int16)CurDialog, mQUIT, 0, NULL, NULL, NULL);
-	// End hack
-
 	t3dF32 TurnSpeed, Speed = 1.0f, dist;
 	t3dV3F cp, cd, ct;
 	int32 a, b;
