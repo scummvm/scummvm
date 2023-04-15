@@ -155,6 +155,7 @@ const PlainGameDescriptor AGT_GAME_LIST[] = {
 
 const GlkDetectionEntry AGT_GAMES[] = {
 	DT_ENTRY0("abloodylife", "c492e0ae0647d3a4835012ca864b99d5", 157221),
+	DT_ENTRY0("alandria", "0dcaff32c55dd2c1898da7893500de34", 53946),
 	DT_ENTRY0("alchemistcastle", "7822dfaf1ae31b3e508e7b0a267d054b", 192051),
 	DT_ENTRY0("advalice", "0aaafb897b46baa28023bbbaf4091fd8", 23004),
 	DT_ENTRY0("apprenticetesting", "4e4244649dc1cd39546f3d10dc85acb5", 131868),
@@ -264,7 +265,7 @@ const GlkDetectionEntry AGT_GAMES[] = {
 	DT_ENTRY0("tossedintospace", "515f06782c5b11108a719a20e182166c", 49491),
 	DT_ENTRY0("timesquared", "55e36771d5e1fe184cce8f5be666ff9f", 105300),
 	DT_ENTRY0("folkestone", "7e949a7376b0a64cee0d9412b0203611", 64557),
-	DT_ENTRY0("wanderer1", "0dcaff32c55dd2c1898da7893500de34", 53946),
+	DT_ENTRY0("wanderer1", "e1d707c9deaf02a4b28c9041a4009cb6", 53946),
 	DT_ENTRY0("wanderer2", "89dd16629022c75f3ffc171a6b126da6", 46980),
 	DT_ENTRY0("wanderer3", "839ab34bce5c82ec6194675f0186b15b", 45765),
 	DT_ENTRY0("weekendsurvival", "e770c0e75b7257eae9d4677340beca10", 91044),
