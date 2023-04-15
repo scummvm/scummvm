@@ -59,7 +59,7 @@ public:
 	typedef uint32 unsigned_type; /*!< Unsigned version of the underlying type. */
 public:
 	/** Construct a new empty string. */
-	U32String() : BaseString<u32char_type_t>() {}
+	constexpr U32String() : BaseString<u32char_type_t>() {}
 
 	/** Construct a new string from the given null-terminated C string. */
 	explicit U32String(const value_type *str) : BaseString<u32char_type_t>(str) {}

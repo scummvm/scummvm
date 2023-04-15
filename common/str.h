@@ -66,7 +66,7 @@ public:
 	typedef unsigned char unsigned_type;
 
 	/** Construct a new empty string. */
-	String() : BaseString<char>() {}
+	constexpr String() : BaseString<char>() {}
 
 	/** Construct a new string from the given NULL-terminated C string. */
 	String(const char *str) : BaseString<char>(str) {}
