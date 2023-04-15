@@ -35,10 +35,10 @@ namespace Watchmaker {
 #define MAX_ICONS                   86              // oggetti d'inventario
 #define MAX_SOUNDS                  1120            // numero massimo di sample nel gioco
 #define MAX_MUSICS                  24              // numero massimo di musiche nel gioco
-#define MAX_DIALOGS                 112             // numero dialoghi e full-motion
+#define MAX_DIALOGS                 114             // numero dialoghi e full-motion
 #define MAX_DIARIES                 44              // numero di diari dei personaggi
 #define MAX_DLG_MENUS               100             // numero di menu e sotto menu per i dialoghi
-#define MAX_DLG_ITEMS               339             // numero massimo item per dialoghi
+#define MAX_DLG_ITEMS               341             // numero massimo item per dialoghi
 #define MAX_PLAYERS                 2               // numero personaggi principali giocanti
 #define MAX_ENVIRONMENTS            32              // numero massimo di environments presenti
 #define MAX_MODIFIED_MESH           1536            // numero mesh modifiers
