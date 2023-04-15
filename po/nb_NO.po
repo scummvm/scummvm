@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-13 21:27+0000\n"
-"PO-Revision-Date: 2023-03-08 14:02+0000\n"
+"PO-Revision-Date: 2023-04-15 16:26+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -98,41 +98,35 @@ msgstr "Velg"
 
 #: gui/cloudconnectionwizard.cpp:175
 msgid "Cloud Connection Wizard"
-msgstr ""
+msgstr "Veiledning for nettskytilkobling"
 
 #: gui/cloudconnectionwizard.cpp:178
-#, fuzzy
-#| msgid "Quick load"
 msgid "Quick mode"
-msgstr "Hurtiglasting"
+msgstr "Hurtigmodus"
 
 #: gui/cloudconnectionwizard.cpp:179
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Manual mode"
-msgstr "Rask modus"
+msgstr "Manuell modus"
 
 #: gui/cloudconnectionwizard.cpp:182
 msgid "Will ask you to run Local Webserver"
-msgstr ""
+msgstr "Ber deg om å kjøre Local Webserver"
 
 #: gui/cloudconnectionwizard.cpp:184
-#, fuzzy
-#| msgid "Run local webserver"
 msgid "Requires Local Webserver feature"
-msgstr "Kjør lokal webserver"
+msgstr "Krever Local Webserver-funksjonalitet"
 
 #: gui/cloudconnectionwizard.cpp:200
 msgid "Quick Mode: Step 1"
-msgstr ""
+msgstr "Hurtigmodus: Steg 1"
 
 #: gui/cloudconnectionwizard.cpp:205
 msgid "In this mode, Local Webserver must be running,"
-msgstr ""
+msgstr "Local Webserver må kjøre i denne modusen,"
 
 #: gui/cloudconnectionwizard.cpp:206
 msgid "so your browser could forward data to ScummVM"
-msgstr ""
+msgstr "sånn at nettleseren din kan videresende data til ScummVM."
 
 #: gui/cloudconnectionwizard.cpp:226 gui/options.cpp:3657
 msgid "Stop server"
@@ -156,11 +150,11 @@ msgstr "Kjører ikke"
 
 #: gui/cloudconnectionwizard.cpp:250
 msgid "Quick Mode: Step 2"
-msgstr ""
+msgstr "Hurtigmodus: Steg 2"
 
 #: gui/cloudconnectionwizard.cpp:254
 msgid "Now, open this link in your browser:"
-msgstr ""
+msgstr "Åpne denne lenken i nettleseren din:"
 
 #: gui/cloudconnectionwizard.cpp:255 gui/cloudconnectionwizard.cpp:302
 #: gui/message.cpp:218 gui/message.cpp:222
@@ -169,59 +163,55 @@ msgstr "Åpne URL"
 
 #: gui/cloudconnectionwizard.cpp:257
 msgid "It will automatically pass the data to ScummVM,"
-msgstr ""
+msgstr "Den videresender automatisk data til ScummVM,"
 
 #: gui/cloudconnectionwizard.cpp:258
 msgid "and warn you should there be any errors."
-msgstr ""
+msgstr "og varsler deg hvis det er noen feil."
 
 #: gui/cloudconnectionwizard.cpp:262
 msgid "Local Webserver address: "
-msgstr ""
+msgstr "Local Webserver-adresse: "
 
 #: gui/cloudconnectionwizard.cpp:278
 msgid "Quick Mode: Success"
-msgstr ""
+msgstr "Hurtigmodus: Vellykket"
 
 #: gui/cloudconnectionwizard.cpp:282
-#, fuzzy
-#| msgid "Connect your cloud storage account"
 msgid "You cloud storage has been connected!"
-msgstr "Koble til skylagringskontoen din"
+msgstr "Nettskylagringen din har blitt tilkoblet!"
 
 #: gui/cloudconnectionwizard.cpp:283 gui/cloudconnectionwizard.cpp:370
 msgid "Finish"
-msgstr ""
+msgstr "Fullfør"
 
 #: gui/cloudconnectionwizard.cpp:296
 msgid "Manual Mode: Step 1"
-msgstr ""
+msgstr "Manuell modus: Steg 1"
 
 #: gui/cloudconnectionwizard.cpp:301
-#, fuzzy
-#| msgid "1. Open this link:"
 msgid "Open this link in your browser:"
-msgstr "1. Åpne denne lenken:"
+msgstr "Åpne denne lenken i nettleseren din:"
 
 #: gui/cloudconnectionwizard.cpp:304
 msgid "When it fails to pass JSON code to ScummVM,"
-msgstr ""
+msgstr "Når den ikke greier å sende JSON-kode til ScummVM,"
 
 #: gui/cloudconnectionwizard.cpp:305
 msgid "find it on Troubleshooting section of the page,"
-msgstr ""
+msgstr "finn den på problemløsningseksjonen av siden"
 
 #: gui/cloudconnectionwizard.cpp:306
 msgid "and go to the next step here."
-msgstr ""
+msgstr "og gå til det neste steget her."
 
 #: gui/cloudconnectionwizard.cpp:321
 msgid "Manual Mode: Step 2"
-msgstr ""
+msgstr "Manuell modus: Steg 2"
 
 #: gui/cloudconnectionwizard.cpp:326
 msgid "Copy JSON code from browser here and press Next:"
-msgstr ""
+msgstr "Kopier JSON-kode fra nettleser hit og trykk på Neste:"
 
 #: gui/cloudconnectionwizard.cpp:328
 msgid "Paste"
@@ -233,41 +223,35 @@ msgstr "Lim inn kode fra utklippstavle"
 
 #: gui/cloudconnectionwizard.cpp:344
 msgid "Manual Mode: Something went wrong"
-msgstr ""
+msgstr "Manuell modus: Noe gikk galt"
 
 #: gui/cloudconnectionwizard.cpp:348
-#, fuzzy
-#| msgid "Storage connected."
 msgid "Cloud storage was not connected."
-msgstr "Lagringsmåte tilkoblet."
+msgstr "Nettskylagring ble ikke tilkoblet."
 
 #: gui/cloudconnectionwizard.cpp:349
 msgid "Make sure JSON code was copied correctly and retry."
-msgstr ""
+msgstr "Sørg for at JSON-koden ble kopiert riktig og prøv på nytt."
 
 #: gui/cloudconnectionwizard.cpp:350
 msgid "It it doesn't work, try from the beginning."
-msgstr ""
+msgstr "Hvis den ikke virker, start på nytt."
 
 #: gui/cloudconnectionwizard.cpp:351
 msgid "Error message: "
-msgstr ""
+msgstr "Feilmelding: "
 
 #: gui/cloudconnectionwizard.cpp:365
 msgid "Manual Mode: Success"
-msgstr ""
+msgstr "Manuell modus: Vellykket"
 
 #: gui/cloudconnectionwizard.cpp:369
-#, fuzzy
-#| msgid "Connect your cloud storage account"
 msgid "Your cloud storage has been connected!"
-msgstr "Koble til skylagringskontoen din"
+msgstr "Nettskylagringen din har blitt tilkoblet!"
 
 #: gui/cloudconnectionwizard.cpp:393
-#, fuzzy
-#| msgid "Backend"
 msgid "Back"
-msgstr "Backend"
+msgstr "Tilbake"
 
 #: gui/cloudconnectionwizard.cpp:401 gui/saveload-dialog.cpp:829
 msgid "Next"
@@ -311,7 +295,7 @@ msgstr "Vent til gjeldende lagringsmåte fullfører og prøv igjen."
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:501
 msgid "JSON code contents is malformed."
-msgstr ""
+msgstr "Innholdet i JSON-koden er feilaktig."
 
 #: gui/cloudconnectionwizard.cpp:522 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
@@ -338,17 +322,13 @@ msgid "OK"
 msgstr "OK"
 
 #: gui/cloudconnectionwizard.cpp:523
-#, fuzzy
-#| msgid "Incorrect rs file."
 msgid "Incorrect JSON."
-msgstr "Feil rs-fil."
+msgstr "Feilaktig JSON."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:530
-#, fuzzy
-#| msgid "Interact"
 msgid "Interrupted."
-msgstr "Samhandle"
+msgstr "Avbrutt."
 
 #: gui/cloudconnectionwizard.cpp:580 gui/options.cpp:3358
 msgid ""
@@ -1701,12 +1681,12 @@ msgstr "Kontroll"
 
 #: gui/options.cpp:2304
 msgid "Cloud"
-msgstr "Sky"
+msgstr "Nettsky"
 
 #: gui/options.cpp:2306
 msgctxt "lowres"
 msgid "Cloud"
-msgstr "Sky"
+msgstr "Nettsky"
 
 #: gui/options.cpp:2320
 msgid "LAN"
@@ -1795,14 +1775,12 @@ msgid "ScummVM config path: "
 msgstr "Filbane for ScummVM-konfigurering: "
 
 #: gui/options.cpp:2498
-#, fuzzy
-#| msgid "ScummVM config path: "
 msgid "ScummVM log path: "
-msgstr "Filbane for ScummVM-konfigurering: "
+msgstr "Filbane for ScummVM-logg: "
 
 #: gui/options.cpp:2503
 msgid "View"
-msgstr ""
+msgstr "Vis"
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2513 gui/options.cpp:3245
@@ -1903,10 +1881,8 @@ msgid "Seed for initializing all random number generators"
 msgstr "Startfrø for generering av alle tilfeldig genererte tall"
 
 #: gui/options.cpp:2634
-#, fuzzy
-#| msgid "Debug Menu"
 msgid "Debug level:"
-msgstr "Debug-meny"
+msgstr "Debug-nivå:"
 
 #. I18N: Debug level -1, no messages
 #: gui/options.cpp:2638 gui/options.cpp:2777
@@ -1916,7 +1892,7 @@ msgstr "Ingen"
 #. I18N: Debug level 11, all messages
 #: gui/options.cpp:2644
 msgid "11 (all)"
-msgstr ""
+msgstr "11 (alle)"
 
 #: gui/options.cpp:2648
 msgid "Enable Discord integration"
@@ -1948,30 +1924,21 @@ msgstr "Aktiv lagring:"
 
 #: gui/options.cpp:2678
 msgid "Active cloud storage"
-msgstr "Aktiv skylagring"
+msgstr "Aktiv nettskylagring"
 
 #: gui/options.cpp:2687
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgctxt "lowres"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. Lagring er ikke tilgjengelig ennå. Bekreft at brukernavnet er korrekt og "
+"Lagring er ikke tilgjengelig ennå. Bekreft at brukernavnet er korrekt og "
 "aktiver funksjonen:"
 
 #: gui/options.cpp:2689
-#, fuzzy
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. Lagring er ikke tilgjengelig ennå. Bekreft at brukernavnet er korrekt og "
+"Lagring er ikke tilgjengelig ennå. Bekreft at brukernavnet er korrekt og "
 "aktiver funksjonen:"
 
 #: gui/options.cpp:2690
@@ -2038,11 +2005,11 @@ msgstr "Start lagret spillsynkronisering"
 #: gui/options.cpp:2707
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr "Du kan laste ned spillfiler fra din skybaserte ScummVM-mappe:"
+msgstr "Du kan laste ned spillfiler fra din nettskybaserte ScummVM-mappe:"
 
 #: gui/options.cpp:2709
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr "Du kan laste ned spillfiler fra din skybaserte ScummVM-mappe:"
+msgstr "Du kan laste ned spillfiler fra din nettskybaserte ScummVM-mappe:"
 
 #: gui/options.cpp:2710
 msgid "Download game files"
@@ -2072,28 +2039,21 @@ msgid "Stop using this storage on this device"
 msgstr "Slutt å bruke denne lagringsmåten på denne enheten"
 
 #: gui/options.cpp:2719
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "This storage is not connected yet! To connect,"
 msgctxt "lowres"
 msgid "This storage is not connected yet!"
-msgstr "Denne lagringsmåten er ikke koblet til ennå! For å koble til må du:"
+msgstr "Denne lagringsenheten er ikke tilkoblet ennå!"
 
 #: gui/options.cpp:2721
-#, fuzzy
-#| msgid "This storage is not connected yet! To connect,"
 msgid "This storage is not connected yet!"
-msgstr "Denne lagringsmåten er ikke koblet til ennå! For å koble til må du:"
+msgstr "Denne lagringsenheten er ikke tilkoblet ennå!"
 
 #: gui/options.cpp:2722
-#, fuzzy
-#| msgid "3. Connect"
 msgid "Connect"
-msgstr "3. Koble til"
+msgstr "Koble til"
 
 #: gui/options.cpp:2722
 msgid "Connect your cloud storage account"
-msgstr "Koble til skylagringskontoen din"
+msgstr "Koble til nettskylagringskontoen din"
 
 #: gui/options.cpp:2735
 msgctxt "lowres"
@@ -2185,11 +2145,11 @@ msgstr "FEIL: Kunne ikke flytte følgende lagrede spill:\n"
 
 #: gui/options.cpp:2955
 msgid "Failed to change cloud storage!"
-msgstr "Klarte ikke å kontakte skylagring!"
+msgstr "Kunne ikke endre nettskylagring!"
 
 #: gui/options.cpp:2958
 msgid "Another cloud storage is already active."
-msgstr "En annen skylagring er allerede aktiv."
+msgstr "En annen nettskylagring er allerede aktiv."
 
 #: gui/options.cpp:3069
 msgid "Theme does not support selected language!"
@@ -3710,10 +3670,8 @@ msgid "D-pad Right"
 msgstr "Retningsknapp Høyre"
 
 #: backends/keymapper/hardware-input.cpp:270
-#, fuzzy
-#| msgid "D-pad Left"
 msgid "D-pad Center"
-msgstr "Retningsknapp Venstre"
+msgstr "Retningsknapp midtpunkt"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
@@ -3751,11 +3709,11 @@ msgstr "Høyre styrespak Y"
 
 #: backends/keymapper/hardware-input.cpp:281
 msgid "Hat X"
-msgstr ""
+msgstr "Hatt X"
 
 #: backends/keymapper/hardware-input.cpp:282
 msgid "Hat Y"
-msgstr ""
+msgstr "Hatt Y"
 
 #: backends/keymapper/remap-widget.cpp:295
 #: backends/keymapper/remap-widget.cpp:325
@@ -5798,10 +5756,8 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "GroovieV2-støtte er ikke innkompilert"
 
 #: engines/groovie/saveload.cpp:52
-#, fuzzy
-#| msgid "Run server"
 msgid "Reserved"
-msgstr "Kjør server"
+msgstr "Reservert"
 
 #: engines/groovie/script.cpp:660
 msgid "Failed to save game"
@@ -5875,84 +5831,66 @@ msgid "Enable Gore Mode when available"
 msgstr "Aktiver gørrmodus når tilgjengelig"
 
 #: engines/hpl1/metaengine.cpp:81
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forward"
-msgstr "Beveg Fremover"
+msgstr "Fremover"
 
 #: engines/hpl1/metaengine.cpp:82
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backward"
-msgstr "Gå bakover"
+msgstr "Bakover"
 
 #: engines/hpl1/metaengine.cpp:83 engines/mm/mm1/metaengine.cpp:99
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Strafe Left"
-msgstr "Skli mot Venstre"
+msgstr "Gå sidelengs mot venstre"
 
 #: engines/hpl1/metaengine.cpp:84 engines/mm/mm1/metaengine.cpp:100
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Strafe Right"
-msgstr "Skli mot Høyre"
+msgstr "Gå sidelengs mot høyre"
 
 #: engines/hpl1/metaengine.cpp:85
-#, fuzzy
 msgid "Lean Left"
-msgstr "Skli mot Venstre"
+msgstr "Len mot venstre"
 
 #: engines/hpl1/metaengine.cpp:86
-#, fuzzy
 msgid "Lean Right"
-msgstr "Skli mot Høyre"
+msgstr "Len mot høyre"
 
 #: engines/hpl1/metaengine.cpp:88
 msgid "Jump"
-msgstr ""
+msgstr "Hopp"
 
 #. I18N: Action in In Cold Blood
 #: engines/hpl1/metaengine.cpp:89 engines/icb/icb.cpp:119
 #: engines/icb/icb.cpp:185
-#, fuzzy
-#| msgid "Touch"
 msgid "Crouch"
-msgstr "Berøring"
+msgstr "Gå på huk"
 
 #: engines/hpl1/metaengine.cpp:92
-#, fuzzy
-#| msgid "Interact"
 msgid "Interact Mode"
-msgstr "Samhandle"
+msgstr "Samhandlingsmodus"
 
 #: engines/hpl1/metaengine.cpp:93
-#, fuzzy
-#| msgid "Gore Mode"
 msgid "Look Mode"
-msgstr "Gørrmodus"
+msgstr "Semodus"
 
 #: engines/hpl1/metaengine.cpp:94
 msgid "Holster"
-msgstr ""
+msgstr "Hylster"
 
 #: engines/hpl1/metaengine.cpp:100
 msgid "Notebook"
-msgstr ""
+msgstr "Notatbok"
 
 #: engines/hpl1/metaengine.cpp:101
 msgid "Personal Notes"
-msgstr ""
+msgstr "Personlige notater"
 
 #: engines/hpl1/metaengine.cpp:102
-#, fuzzy
-#| msgid "Fly straight"
 msgid "Flashlight"
-msgstr "Fly rett"
+msgstr "Lommelykt"
 
 #: engines/hpl1/metaengine.cpp:103
 msgid "Glowstick"
-msgstr ""
+msgstr "Glødepinne"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -5998,26 +5936,22 @@ msgstr ""
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:89
 msgid "Fire"
-msgstr ""
+msgstr "Ild"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
 msgid "Arm"
-msgstr ""
+msgstr "Arm"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:113
-#, fuzzy
-#| msgid "Remove"
 msgid "Remora"
-msgstr "Fjern"
+msgstr "Remora"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:125 engines/icb/icb.cpp:191
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Side Step"
-msgstr "Skli mot Venstre"
+msgstr "Gå til siden"
 
 #: engines/kyra/detection_tables.h:73
 msgid "Missing language specific game code and/or resources."
@@ -6430,115 +6364,101 @@ msgstr "Escape"
 
 #: engines/mm/mm1/metaengine.cpp:54
 msgid "View Party Member 1"
-msgstr ""
+msgstr "Vis gruppemedlem 1"
 
 #: engines/mm/mm1/metaengine.cpp:55
 msgid "View Party Member 2"
-msgstr ""
+msgstr "Vis gruppemedlem 2"
 
 #: engines/mm/mm1/metaengine.cpp:56
 msgid "View Party Member 3"
-msgstr ""
+msgstr "Vis gruppemedlem 3"
 
 #: engines/mm/mm1/metaengine.cpp:57
 msgid "View Party Member 4"
-msgstr ""
+msgstr "Vis gruppemedlem 4"
 
 #: engines/mm/mm1/metaengine.cpp:58
 msgid "View Party Member 5"
-msgstr ""
+msgstr "Vis gruppemedlem 5"
 
 #: engines/mm/mm1/metaengine.cpp:59
 msgid "View Party Member 6"
-msgstr ""
+msgstr "Vis gruppemedlem 6"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:67
-#, fuzzy
-#| msgid "Unlock"
 msgid "Block"
-msgstr "Lås opp"
+msgstr "Blokkere"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69
 msgid "Cast"
-msgstr ""
+msgstr "Formel"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:71
 msgid "Exchange"
-msgstr ""
+msgstr "Bytt"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:73
-#, fuzzy
-#| msgid "Right"
 msgid "Fight"
-msgstr "Høyre"
+msgstr "Kjemp"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:75 engines/mm/mm1/metaengine.cpp:116
-#, fuzzy
-#| msgid "Preferences"
 msgid "Quick Reference"
-msgstr "Preferanser"
+msgstr "Hurtigreferanse"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:77
 msgid "Retreat"
-msgstr ""
+msgstr "Trekk tilbake"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
-msgstr ""
+msgstr "Skyt"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:84
 msgid "Delay"
-msgstr ""
+msgstr "Vent"
 
 #. I18N: Combat command in Might & Magic 1
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:86 engines/mm/mm1/metaengine.cpp:107
 msgid "Protect"
-msgstr ""
+msgstr "Beskytt"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:94
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forwards"
-msgstr "Beveg Fremover"
+msgstr "Fremover"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:96
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backwards"
-msgstr "Gå bakover"
+msgstr "Bakover"
 
 #: engines/mm/mm1/metaengine.cpp:104
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Minimap"
-msgstr "Skru kampmodus av/på"
+msgstr "Skru minikart av/på"
 
 #: engines/mm/mm1/metaengine.cpp:105
 msgid "Reorder Party"
-msgstr ""
+msgstr "Endre gruppeoppsett"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:111
-#, fuzzy
-#| msgid "Search:"
 msgid "Search"
-msgstr "Søk:"
+msgstr "Søk"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:113
 msgid "Bash"
-msgstr ""
+msgstr "Slå"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:115 engines/scumm/help.cpp:144
@@ -6546,35 +6466,33 @@ msgid "Unlock"
 msgstr "Lås opp"
 
 #: engines/mm/mm1/metaengine.cpp:122
-#, fuzzy
-#| msgid "Next location"
 msgid "Goto location"
-msgstr "Neste sted"
+msgstr "Gå til plassering"
 
 #: engines/mm/mm1/metaengine.cpp:133 engines/mm/mm1/metaengine.cpp:143
 msgid "Might and Magic 1 - Menus"
-msgstr ""
+msgstr "Might and Magic 1 - Menyer"
 
 #: engines/mm/mm1/metaengine.cpp:138
 msgid "Might and Magic 1 - Minimal Keys"
-msgstr ""
+msgstr "Might and Magic 1 - Minimale taster"
 
 #: engines/mm/mm1/metaengine.cpp:144 engines/mm/mm1/metaengine.cpp:150
 #: engines/mm/mm1/metaengine.cpp:156
 msgid "Might and Magic 1 - Party"
-msgstr ""
+msgstr "Might and Magic 1 - Gruppe"
 
 #: engines/mm/mm1/metaengine.cpp:149
 msgid "Might and Magic 1 - Combat"
-msgstr ""
+msgstr "Might and Magic 1 - Kamp"
 
 #: engines/mm/mm1/metaengine.cpp:155
 msgid "Might and Magic 1"
-msgstr ""
+msgstr "Might and Magic 1"
 
 #: engines/mm/mm1/metaengine.cpp:157
 msgid "Might and Magic 1 - Cheats"
-msgstr ""
+msgstr "Might and Magic 1 - Juksefunksjoner"
 
 #: engines/mm/shared/utils/engine_data.cpp:277
 #: engines/ultima/shared/engine/data_archive.cpp:80
@@ -7396,7 +7314,7 @@ msgstr "Casio CT-460 / CSM-1"
 
 #: engines/sci/detection_tables.h:4475
 msgid "This demo uses an unimplemented version of Robot videos"
-msgstr ""
+msgstr "Denne demoen bruker en uimplementert versjon av Robot-videoer."
 
 #: engines/sci/detection_tables.h:4530
 msgid "Incomplete game detected. You have to copy data from all the CDs."
@@ -7611,25 +7529,19 @@ msgstr ""
 
 #. I18N: Creates new online session for multiplayer
 #: engines/scumm/dialog-createsession.cpp:37
-#, fuzzy
-#| msgid "Create a new saved game"
 msgid "Create a new game session"
-msgstr "Opprett ett nytt lagret spill"
+msgstr "Opprett en ny spilløkt"
 
 #. I18N: Name of the online game session
 #: engines/scumm/dialog-createsession.cpp:40
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Name:"
-msgstr "Spillmeny"
+msgstr "Spillnavn:"
 
 #. I18N: The user's name for online
 #: engines/scumm/dialog-createsession.cpp:44
 #: engines/scumm/dialog-sessionselector.cpp:60
-#, fuzzy
-#| msgid "Name:"
 msgid "Your Name:"
-msgstr "Navn:"
+msgstr "Ditt navn:"
 
 #. I18N: Button, start hosting online multiplayer game
 #: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3518
@@ -8889,22 +8801,22 @@ msgstr ""
 "programfilen. Vennligst pakk den ut"
 
 #: engines/tetraedge/metaengine.cpp:33
-#, fuzzy
-#| msgid "Correct aspect ratio for games"
 msgid "Correct movie aspect ratio"
-msgstr "Korriger bildeformat for spill"
+msgstr "Korriger bildeformat for filmklipp"
 
 #: engines/tetraedge/metaengine.cpp:34
 msgid "Play Syberia cutscenes in 16:9, rather than stretching to full screen"
 msgstr ""
+"Spill av Syberia-mellomsekvenser i 16:9, i steden for å strekke dem ut til "
+"fullskjermsmodus."
 
 #: engines/tetraedge/metaengine.cpp:44
 msgid "Restore missing scenes"
-msgstr ""
+msgstr "Gjenopprett manglende scener"
 
 #: engines/tetraedge/metaengine.cpp:45
 msgid "Restore some scenes originally in the Windows edition"
-msgstr ""
+msgstr "Gjenopprett enkelte scener som opprinnelig var i Windows-utgaven."
 
 #: engines/tinsel/detection_tables.h:481
 msgid "Saturn CD version is not yet supported"
@@ -9173,31 +9085,29 @@ msgid "Wall collision off"
 msgstr "Veggkollisjon av"
 
 #: engines/twine/parser/text.cpp:38
-#, fuzzy
-#| msgid "Language not detected"
 msgctxt "Options menu"
 msgid "Language selection"
-msgstr "Språk ikke oppdaget"
+msgstr "Språkvalg"
 
 #: engines/twine/parser/text.cpp:39
 msgctxt "Options menu"
 msgid "Voices: None"
-msgstr ""
+msgstr "Stemmer: Ingen"
 
 #: engines/twine/parser/text.cpp:40
 msgctxt "Options menu"
 msgid "Voices: English"
-msgstr ""
+msgstr "Stemmer: Engelsk"
 
 #: engines/twine/parser/text.cpp:41
 msgctxt "Options menu"
 msgid "Voices: French"
-msgstr ""
+msgstr "Stemmer: Fransk"
 
 #: engines/twine/parser/text.cpp:42
 msgctxt "Options menu"
 msgid "Voices: German"
-msgstr ""
+msgstr "Stemmer: Tysk"
 
 #: engines/ultima/metaengine.cpp:55
 msgid "Enable frame skipping"
@@ -9317,18 +9227,17 @@ msgid ""
 "directories have been copied from the CD.  More instructions are on the "
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
+"Introfilmfilen til Crusader mangler - Sjekk at mappene FLICS og SOUND har "
+"blitt kopiert fra CD-en. Flere instrukser finner du på wikien: https://wiki."
+"scummvm.org/index.php?title=Crusader:_No_Remorse."
 
 #: engines/vcruise/metaengine.cpp:50
-#, fuzzy
-#| msgid "Transitions:"
 msgid "Faster animations"
-msgstr "Overganger:"
+msgstr "Raskere animasjoner"
 
 #: engines/vcruise/metaengine.cpp:51
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Speeds up animations."
-msgstr "Talealternativer"
+msgstr "Øker hastigheten på animasjoner."
 
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
@@ -9354,26 +9263,17 @@ msgstr ""
 "Du kan fortsatt spille spillet, men du kan ikke høre noe musikk."
 
 #: engines/vcruise/vcruise.cpp:234
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, the save file doesn't contain valid version "
-#| "information."
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
-"Kunne ikke laste inn lagringsdata. Lagringsfilen inneholdt ikke gyldig "
-"versjonsinformasjon."
+"Kunne ikke laste inn lagringsdata. Lagringsfilen ser ut til å være skadet."
 
 #: engines/vcruise/vcruise.cpp:239
-#, fuzzy
-#| msgid "Failed to read version information from save file"
 msgid "Failed to read version information from save file."
 msgstr "Kunne ikke lese versjonsinformasjon fra lagringsfil."
 
 #: engines/vcruise/vcruise.cpp:259
-#, fuzzy
-#| msgid "An internal error occurred while attempting to write save game data"
 msgid "An unknown error occurred while attempting to load the saved game."
-msgstr "En intern feil oppstod under forsøket på å skrive lagringsdata."
+msgstr "En ukjent feil oppstod under forsøket på å laste inn lagringsdata."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
