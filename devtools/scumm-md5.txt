@@ -931,6 +931,7 @@ funpack	Putt-Putt's Fun Pack
 	3d219e7546039543307b55a91282bf18	-1	en	DOS	-	-	-	iziku
 	46b53fd430adcfbed791b48a0d4b079f	-1	en	DOS	-	-	-	khalek
 	90a329d8ad5b7ce0690429e98cfbb32f	-1	he	DOS	-	-	-
+	61fa2dd4dc9e58347c4de5f4243a3ba6	5798	jp	Mac	-	-	-	HerbFargus
 
 PuttsFunShop	Putt-Putt's One-Stop Fun Shop
 	5262a27afcaee04e5c4900220bd463e7	35741	us	All	-	-	-	Kirben
