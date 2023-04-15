@@ -55,6 +55,7 @@ void sdl_wrapper::pollSDL() {
 			break;
 		case Common::EVENT_QUIT:
 			shouldQuit = true;
+			break;
 		default:
 			warning("Unhandled event: %d", event.type);
 		}
