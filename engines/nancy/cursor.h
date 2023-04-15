@@ -34,7 +34,7 @@ class CursorManager {
 	friend class NancyEngine;
 
 public:
-	enum CursorType { kNormal = 0, kHotspot = 1, kMove = 2, kExit = 3, kNormalArrow, kHotspotArrow };
+	enum CursorType { kNormal = 0, kHotspot = 1, kMove = 2, kExit = 3, kRotate = 4, kNormalArrow, kHotspotArrow };
 
 	CursorManager() :
 		_isInitialized(false),

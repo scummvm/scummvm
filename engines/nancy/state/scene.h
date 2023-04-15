@@ -76,7 +76,6 @@ struct SceneInfo {
 class Scene : public State, public Common::Singleton<Scene> {
 	friend class Nancy::Action::ActionRecord;
 	friend class Nancy::Action::ActionManager;
-	friend class Nancy::Action::SliderPuzzle;
 	friend class Nancy::NancyConsole;
 	friend class Nancy::NancyEngine;
 
@@ -187,6 +186,10 @@ public:
 	// The Vampire Diaries only;
 	void beginLightning(int16 distance, uint16 pulseTime, int16 rgbPercent);
 
+	// Game-specific data that needs to be saved/loaded
+	SliderPuzzleState *_sliderPuzzleState;
+	RippedLetterPuzzleState *_rippedLetterPuzzleState;
+
 private:
 	void init();
 	void load();
@@ -252,9 +255,6 @@ private:
 	UI::TextboxOrnaments *_textboxOrnaments;
 	UI::InventoryBoxOrnaments *_inventoryBoxOrnaments;
 	UI::Clock *_clock;
-
-	// Game-specific data that needs to be saved/loaded
-	SliderPuzzleState *_sliderPuzzleState;
 
 	// General data
 	SceneState _sceneState;

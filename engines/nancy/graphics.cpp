@@ -263,6 +263,62 @@ void GraphicsManager::copyToManaged(void *src, Graphics::ManagedSurface &dst, ui
 	copyToManaged(surf, dst, verticalFlip, doubleSize);
 }
 
+// Custom rotation code since Surface::rotoscale() produces incorrect results
+// Only works on 16 bit square surfaces with the same size, and ignores transparency
+// Rotation is a value between 0 and 3, corresponding to 0, 90, 180, or 270 degrees clockwise
+void GraphicsManager::rotateBlit(const Graphics::ManagedSurface &src, Graphics::ManagedSurface &dest, byte rotation) {
+	assert(!src.empty() && !dest.empty());
+	assert(src.w == src.h && src.h == dest.w && dest.w == dest.h);
+	assert(rotation >= 0 && rotation <= 3);
+	assert(src.format.bytesPerPixel == 2 && dest.format.bytesPerPixel == 2);
+
+	uint size = src.w;
+	const uint16 *s, *e;
+
+	switch (rotation) {
+	case 0 :
+		// No rotation, just blit
+		dest.rawBlitFrom(src, src.getBounds(), Common::Point());
+		return;
+	case 2 : {
+		// 180 degrees
+		uint16 *d;
+		for (uint y = 0; y < size; ++y) {
+			s = (const uint16 *)src.getBasePtr(0, y);
+			e = (const uint16 *)src.getBasePtr(size - 1, y);
+			d = (uint16 *)dest.getBasePtr(size - 1, size - y - 1);
+			for (; s < e; ++s, --d) {
+				*d = *s;
+			}
+		}
+
+		break;
+	}
+	case 1 :
+		// 90 degrees
+		for (uint y = 0; y < size; ++y) {
+			s = (const uint16 *)src.getBasePtr(0, y);
+			e = (const uint16 *)src.getBasePtr(size - 1, y);
+			for (uint x = 0; x < size; ++x, ++s) {
+				*((uint16 *)dest.getBasePtr(size - y - 1, x)) = *s;
+			}
+		}
+
+		break;
+	case 3 :
+		// 270 degrees
+		for (uint y = 0; y < size; ++y) {
+			s = (const uint16 *)src.getBasePtr(0, y);
+			e = (const uint16 *)src.getBasePtr(size - 1, y);
+			for (uint x = 0; x < size; ++x, ++s) {
+				*((uint16 *)dest.getBasePtr(y, size - x - 1)) = *s;
+			}
+		}
+
+		break;
+	}
+}
+
 void GraphicsManager::debugDrawToScreen(const Graphics::ManagedSurface &surf) {
 	_screen.blitFrom(surf, Common::Point());
 	_screen.update();

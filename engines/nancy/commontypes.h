@@ -246,6 +246,12 @@ struct SliderPuzzleState {
 	bool playerHasTriedPuzzle;
 };
 
+struct RippedLetterPuzzleState {
+	Common::Array<int8> order;
+	Common::Array<byte> rotations;
+	bool playerHasTriedPuzzle;
+};
+
 } // End of namespace Nancy
 
 #endif // NANCY_COMMONYPES_H

@@ -30,6 +30,7 @@
 #include "engines/nancy/action/sliderpuzzle.h"
 #include "engines/nancy/action/passwordpuzzle.h"
 #include "engines/nancy/action/leverpuzzle.h"
+#include "engines/nancy/action/rippedletterpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -143,6 +144,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new PlaySoundMultiHS();
 	case 160:
 		return new HintSystem();
+	case 203:
+		return new RippedLetterPuzzle();
 	default:
 		error("Action Record type %i is invalid!", type);
 		return nullptr;
