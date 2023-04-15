@@ -81,7 +81,7 @@ protected:
 
 public:
 	/** Construct a new empty string. */
-	BaseString() : _size(0), _str(_storage) { _storage[0] = 0; }
+	constexpr BaseString() : _size(0), _str(_storage), _storage{0} {}
 
 	/** Construct a copy of the given string. */
 	BaseString(const BaseString &str);
