@@ -98,6 +98,9 @@ private:
 	int simpleMenu_getMenuItem(int index, int32 menuItemsMask, int itemOffset);
 	void simpleMenu_flashSelection(const char *str, int x, int y, int color1, int color2, int color3);
 	void simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int unk);
+	void simpleMenu_printButton(int sd, int num, const char *title, bool isHighlight, bool isInitial);
+	Common::Point simpleMenu_getTextPoint(int num, int *col = nullptr);
+	int simpleMenu_getMouseItem(int sd);
 
 	bool runSaveMenu(int x, int y);
 	int selectSaveSlotDialog(int x, int y, int id);
@@ -150,6 +153,12 @@ private:
 	int _menuTextColor;
 	int _menuHighlightColor;
 	int _menuShadowColor;
+	int _menuLines[2];
+	int _menuColumnWidth[2];
+	int _menuColumnOffset[2];
+	bool _menuOverflow[20];
+	int _menuColumns;
+	Common::Point _menuPoint;
 
 	uint8 _numPages;
 	uint8 _numVisPages;
