@@ -105,7 +105,7 @@ struct t3dNORMAL {
 	t3dF32  tras_n = 0.0f;                         //transformed normal    4
 	uint8   flag = 0;                           //flags                 1
 public:
-	t3dNORMAL() {}
+	constexpr t3dNORMAL() = default;
 	t3dNORMAL(Common::SeekableReadStream &stream) {
 		n = t3dV3F(stream); // Direzione
 		dist = -stream.readFloatLE(); // Distanza-Dot

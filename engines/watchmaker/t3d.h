@@ -116,6 +116,7 @@ namespace Watchmaker {
 struct t3dM3X3F {
 	t3dF32  M[9] = {};                           // Matrix 3 x 3
 	uint8   Flags = 0;                          // flags: if identity
+	constexpr t3dM3X3F() = default;
 };
 
 struct t3dBONE {
