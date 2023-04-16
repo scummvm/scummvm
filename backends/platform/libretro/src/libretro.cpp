@@ -27,6 +27,7 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/fs.h"
+#include "common/error.h"
 #include "streams/file_stream.h"
 #include "graphics/surface.h"
 #ifdef _WIN32
@@ -805,6 +806,13 @@ void retro_unload_game(void) {
 		retro_switch_to_emu_thread();
 	}
 	retro_deinit_emu_thread();
+
+	if (retro_get_scummvm_res() == Common::kNoError)
+		log_cb(RETRO_LOG_INFO, "ScummVM exited successfully.\n");
+	else if (retro_get_scummvm_res() < Common::kNoError)
+		log_cb(RETRO_LOG_WARN, "ScummVM not initialized correctly.\n", frameskip_counter, current_frame);
+	else
+		log_cb(RETRO_LOG_ERROR, "ScummVM exited with error %d.\n", retro_get_scummvm_res());
 	// g_system->destroy(); //TODO: This call causes "pure virtual method called" after frontend "Unloading core symbols". Check if needed at all.
 }
 

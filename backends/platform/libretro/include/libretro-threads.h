@@ -54,5 +54,8 @@ bool retro_emu_thread_initialized(void);
  */
 bool retro_emu_thread_exited(void);
 
+/* Returns scummvm_main return code or -1 if not available */
+int retro_get_scummvm_res(void);
+
 #endif
 
