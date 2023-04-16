@@ -508,4 +508,59 @@ TextAlign convertTextAlignH(TextAlign alignH, bool rtl) {
 	}
 }
 
+#define wholedivide(x, y)	(((x)+((y)-1))/(y))
+
+static void countupScore(int *dstGray, int x, int y, int bbw, int bbh, float scale) {
+	int newbbw = bbw * scale;
+	int newbbh = bbh * scale;
+	int x_ = x * newbbw;
+	int y_ = y * newbbh;
+	int x1 = x_ + newbbw;
+	int y1 = y_ + newbbh;
+
+	int newxbegin = x_ / bbw;
+	int newybegin = y_ / bbh;
+	int newxend = wholedivide(x1, bbw);
+	int newyend = wholedivide(y1, bbh);
+
+	for (int newy = newybegin; newy < newyend; newy++) {
+		for (int newx = newxbegin; newx < newxend; newx++) {
+			int newX = newx * bbw;
+			int newY = newy * bbh;
+			int newX1 = newX + bbw;
+			int newY1 = newY + bbh;
+			dstGray[newy * newbbw + newx] += (MIN(x1, newX1) - MAX(x_, newX)) *
+											 (MIN(y1, newY1) - MAX(y_, newY));
+		}
+	}
+}
+
+static void magnifyGray(Surface *src, int *dstGray, int width, int height, float scale) {
+	for (uint16 y = 0; y < height; y++) {
+		for (uint16 x = 0; x < width; x++) {
+			if (*((byte *)src->getBasePtr(x, y)) == 1)
+				countupScore(dstGray, x, y, width, height, scale);
+		}
+	}
+}
+
+void Font::scaleSingleGlyph(Surface *scaleSurface, int *grayScaleMap, int grayScaleMapSize, int width, int height, int xOffset, int yOffset, int grayLevel, int chr, int srcheight, int srcwidth, float scale) const {
+
+	scaleSurface->fillRect(Common::Rect(scaleSurface->w, scaleSurface->h), 0);
+	drawChar(scaleSurface, chr, xOffset, yOffset, 1);
+	memset(grayScaleMap, 0, grayScaleMapSize * sizeof(int));
+	magnifyGray(scaleSurface, grayScaleMap, srcwidth, srcheight, scale);
+	int *grayPtr = grayScaleMap;
+	for (int y = 0; y < height; y++) {
+		byte *dst = (byte *)scaleSurface->getBasePtr(0, y);
+		for (int x = 0; x < width; x++, grayPtr++, dst++) {
+			if (*grayPtr > grayLevel)
+				*dst = 1;
+			else
+				*dst = 0;
+		}
+	}
+
+}
+
 } // End of namespace Graphics

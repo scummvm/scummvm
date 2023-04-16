@@ -481,11 +481,6 @@ int MacFONTFont::getKerningOffset(uint32 left, uint32 right) const {
 	return 0;
 }
 
-#if DEBUGSCALING
-bool dododo;
-#endif
-
-static void magnifyGray(Surface *src, int *dstGray, int width, int height, float scale);
 static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height);
 static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height);
 static void makeItalic(Surface *src, Surface *dst, MacGlyph *glyph, int height);
@@ -588,39 +583,11 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 
 #if DEBUGSCALING
 		int ccc = 'c';
-		dododo = i == ccc;
 #endif
-
-		srcSurf.fillRect(Common::Rect(srcSurf.w, srcSurf.h), 0);
-		src->drawChar(&srcSurf, i + src->_data._firstChar, 0, 0, 1);
-		memset(dstGray, 0, dstGraySize * sizeof(int));
-		magnifyGray(&srcSurf, dstGray, srcglyph->width, src->_data._fRectHeight, scale);
 
 		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &data._defaultChar : &data._glyphs[i];
-		int *grayPtr = dstGray;
-
-		for (int y = 0; y < data._fRectHeight; y++) {
-			byte *dst = (byte *)srcSurf.getBasePtr(0, y);
-
-			for (int x = 0; x < glyph->bitmapWidth; x++, grayPtr++, dst++) {
-#if DEBUGSCALING
-				if (i == ccc) {
-					if (*grayPtr)
-						debugN(1, "%3d ", *grayPtr);
-					else
-						debugN(1, "    ");
-				}
-#endif
-				if (*grayPtr > grayLevel)
-					*dst = 1;
-				else
-					*dst = 0;
-			}
-#if DEBUGSCALING
-			if (i == ccc)
-				debug(1, "");
-#endif
-		}
+		src->scaleSingleGlyph(&srcSurf, dstGray, dstGraySize, glyph->bitmapWidth, data._fRectHeight, 0, 0, grayLevel, i + src->_data._firstChar,
+							src->_data._fRectHeight, srcglyph->width, scale);
 
 		if (slant & kMacFontBold) {
 			memset(dstGray, 0, dstGraySize * sizeof(int));
@@ -735,51 +702,6 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 	free(dstGray);
 
 	return new MacFONTFont(data);
-}
-
-#define wholedivide(x, y)	(((x)+((y)-1))/(y))
-
-static void countupScore(int *dstGray, int x, int y, int bbw, int bbh, float scale) {
-	int newbbw = bbw * scale;
-	int newbbh = bbh * scale;
-	int x_ = x * newbbw;
-	int y_ = y * newbbh;
-	int x1 = x_ + newbbw;
-	int y1 = y_ + newbbh;
-
-	int newxbegin = x_ / bbw;
-	int newybegin = y_ / bbh;
-	int newxend = wholedivide(x1, bbw);
-	int newyend = wholedivide(y1, bbh);
-
-	for (int newy = newybegin; newy < newyend; newy++) {
-		for (int newx = newxbegin; newx < newxend; newx++) {
-			int newX = newx * bbw;
-			int newY = newy * bbh;
-			int newX1 = newX + bbw;
-			int newY1 = newY + bbh;
-			dstGray[newy * newbbw + newx] += (MIN(x1, newX1) - MAX(x_, newX)) *
-											 (MIN(y1, newY1) - MAX(y_, newY));
-		}
-	}
-}
-
-static void magnifyGray(Surface *src, int *dstGray, int width, int height, float scale) {
-	for (uint16 y = 0; y < height; y++) {
-		for (uint16 x = 0; x < width; x++) {
-			if (*((byte *)src->getBasePtr(x, y)) == 1)
-				countupScore(dstGray, x, y, width, height, scale);
-#if DEBUGSCALING
-			if (dododo)
-				debugN("%c", *((byte *)src->getBasePtr(x, y)) == 1 ? '*' : ' ');
-#endif
-		}
-
-#if DEBUGSCALING
-		if (dododo)
-			debugN("\n");
-#endif
-	}
 }
 
 static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height) {
