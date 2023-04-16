@@ -142,7 +142,7 @@ struct BitmapDescription {
 	Common::Rect src;
 	Common::Rect dest;
 
-	void readData(Common::SeekableReadStream &stream);
+	void readData(Common::SeekableReadStream &stream, bool frameIsLong = false);
 };
 
 // Describes 10 event flag changes to be executed when an action is triggered

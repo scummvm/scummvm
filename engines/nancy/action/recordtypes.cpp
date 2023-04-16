@@ -496,9 +496,8 @@ void ShowInventoryItem::readData(Common::SeekableReadStream &stream) {
 
 	uint16 numFrames = stream.readUint16LE();
 
-	_bitmaps.reserve(numFrames);
+	_bitmaps.resize(numFrames);
 	for (uint i = 0; i < numFrames; ++i) {
-		_bitmaps.push_back(BitmapDescription());
 		_bitmaps[i].readData(stream);
 	}
 }

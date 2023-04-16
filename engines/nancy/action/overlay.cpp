@@ -96,7 +96,7 @@ void Overlay::readData(Common::SeekableReadStream &stream) {
 
 	_bitmaps.resize(numViewportFrames);
 	for (auto &bm : _bitmaps) {
-		bm.readData(stream);
+		bm.readData(stream, ser.getVersion() >= kGameTypeNancy2);
 	}
 }
 
