@@ -14,6 +14,7 @@ MODULE_OBJS = \
   action/secondarymovie.o \
   action/secondaryvideo.o \
   action/sliderpuzzle.o \
+  action/towerpuzzle.o \
   action/overlay.o \
   action/telephone.o \
   ui/fullscreenimage.o \

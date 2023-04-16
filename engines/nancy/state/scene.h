@@ -47,7 +47,6 @@ class NancyConsole;
 struct SceneChangeDescription;
 
 namespace Action {
-class SliderPuzzle;
 class ConversationSound;
 }
 
@@ -189,6 +188,7 @@ public:
 	// Game-specific data that needs to be saved/loaded
 	SliderPuzzleState *_sliderPuzzleState;
 	RippedLetterPuzzleState *_rippedLetterPuzzleState;
+	TowerPuzzleState *_towerPuzzleState;
 
 private:
 	void init();

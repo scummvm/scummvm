@@ -31,6 +31,7 @@
 #include "engines/nancy/action/passwordpuzzle.h"
 #include "engines/nancy/action/leverpuzzle.h"
 #include "engines/nancy/action/rippedletterpuzzle.h"
+#include "engines/nancy/action/towerpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -144,6 +145,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new PlaySoundMultiHS();
 	case 160:
 		return new HintSystem();
+	case 201:
+		return new TowerPuzzle();
 	case 203:
 		return new RippedLetterPuzzle();
 	default:

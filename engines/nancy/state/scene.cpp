@@ -115,7 +115,8 @@ Scene::Scene() :
 		_activeConversation(nullptr),
 		_lightning(nullptr),
 		_sliderPuzzleState(nullptr),
-		_rippedLetterPuzzleState(nullptr) {}
+		_rippedLetterPuzzleState(nullptr),
+		_towerPuzzleState(nullptr) {}
 
 Scene::~Scene()  {
 	delete _helpButton;
@@ -502,7 +503,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 		break;
 	}
 	case kGameTypeNancy2 :
-		if (!_rippedLetterPuzzleState) {
+		if (!_rippedLetterPuzzleState || !_towerPuzzleState) {
 			break;
 		}
 
@@ -515,6 +516,16 @@ void Scene::synchronize(Common::Serializer &ser) {
 
 		ser.syncArray(_rippedLetterPuzzleState->order.data(), 24, Common::Serializer::Byte);
 		ser.syncArray(_rippedLetterPuzzleState->rotations.data(), 24, Common::Serializer::Byte);
+
+		ser.syncAsByte(_towerPuzzleState->playerHasTriedPuzzle);
+
+		if (ser.isLoading()) {
+			_towerPuzzleState->order.resize(3, Common::Array<int8>(6, -1));
+		}
+
+		for (uint i = 0; i < 3; ++i) {
+			ser.syncArray(_towerPuzzleState->order[i].data(), 6, Common::Serializer::Byte);
+		}
 
 		break;
 	default:
@@ -566,6 +577,12 @@ void Scene::init() {
 		_rippedLetterPuzzleState->playerHasTriedPuzzle = false;
 		_rippedLetterPuzzleState->order.resize(24, 0);
 		_rippedLetterPuzzleState->rotations.resize(24, 0);
+
+		delete _towerPuzzleState;
+		_towerPuzzleState = new TowerPuzzleState();
+		_towerPuzzleState->playerHasTriedPuzzle = false;
+		_towerPuzzleState->order.resize(3, Common::Array<int8>(6, -1));
+		break;
 	default:
 		break;
 	}
