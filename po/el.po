@@ -213,7 +213,8 @@ msgstr "Χειροκίνητη Ρύθμιση: 2ο Βήμα"
 
 #: gui/cloudconnectionwizard.cpp:326
 msgid "Copy JSON code from browser here and press Next:"
-msgstr "Αντιγράψτε τον κώδικα JSON από τον browser σας εδώ και πατήστε Επόμενο:"
+msgstr ""
+"Αντιγράψτε τον κώδικα JSON από τον browser σας εδώ και πατήστε Επόμενο:"
 
 #: gui/cloudconnectionwizard.cpp:328
 msgid "Paste"
@@ -233,7 +234,8 @@ msgstr "Η αποθήκη Νέφους σας δεν συνδέθηκε."
 
 #: gui/cloudconnectionwizard.cpp:349
 msgid "Make sure JSON code was copied correctly and retry."
-msgstr "Βεβαιωθείτε ότι ο κωδικός JSON αντιγράφτηκε σωστά και προσπαθήστε πάλι."
+msgstr ""
+"Βεβαιωθείτε ότι ο κωδικός JSON αντιγράφτηκε σωστά και προσπαθήστε πάλι."
 
 #: gui/cloudconnectionwizard.cpp:350
 msgid "It it doesn't work, try from the beginning."
@@ -2123,8 +2125,8 @@ msgstr "Η θύρα (port) που θα χρησιμοποιεί ο διακομ�
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
-"Εκκινήστε τον διακομιστή για να διαχειριστείτε αρχεία με κάποιο browser ("
-"εντός του ίδιου δικτύου)."
+"Εκκινήστε τον διακομιστή για να διαχειριστείτε αρχεία με κάποιο browser "
+"(εντός του ίδιου δικτύου)."
 
 #: gui/options.cpp:2749
 msgctxt "lowres"
@@ -2134,8 +2136,8 @@ msgstr "Κλείνοντας το μενού Επιλογών θα σταματ�
 #: gui/options.cpp:2751
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
-"Εκκινήστε τον διακομιστή για να διαχειριστείτε αρχεία με κάποιο browser ("
-"εντός του ίδιου δικτύου)."
+"Εκκινήστε τον διακομιστή για να διαχειριστείτε αρχεία με κάποιο browser "
+"(εντός του ίδιου δικτύου)."
 
 #: gui/options.cpp:2752
 msgid "Closing options dialog will stop the server."
