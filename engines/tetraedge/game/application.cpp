@@ -151,7 +151,7 @@ void Application::create() {
 	textBase.build();
 	 */
 
-	static const char allLangs[][3] = {"en", "fr", "de", "es", "it", "ru"};
+	static const char allLangs[][3] = {"en", "fr", "de", "es", "it", "ru", "he"};
 	const Common::Path textsPath("texts");
 
 	// Try alternate langs..

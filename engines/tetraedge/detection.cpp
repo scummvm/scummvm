@@ -45,6 +45,7 @@ static const Common::Language *getGameLanguages() {
 		Common::IT_ITA,
 		Common::ES_ESP,
 		Common::RU_RUS,
+		Common::HE_ISR,  // This is a Fan-translation, which requires additional patch
 		Common::UNK_LANG
 	};
 	return languages;

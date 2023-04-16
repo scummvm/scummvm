@@ -28,6 +28,7 @@
 #include "tetraedge/te/te_core.h"
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
+#include "common/unicode-bidi.h"
 
 namespace Tetraedge {
 
@@ -144,7 +145,10 @@ void TeFont3::draw(TeImage &destImage, const Common::String &str, int fontSize, 
 
 	uint32 uintcol = ((uint32)col.a() << fmt.aShift) | ((uint32)(col.r()) << fmt.rShift)
 						| ((uint32)(col.g()) << fmt.gShift) | ((uint32)(col.b()) << fmt.bShift);
-	font->drawString(&destImage, str, 0, yoff, destImage.w, uintcol, talign);
+	Common::String line(str);
+	if (g_engine->getCore()->language() == "he")
+		line = Common::convertBiDiString(str, Common::kWindows1255);
+	font->drawString(&destImage, line, 0, yoff, destImage.w, uintcol, talign);
 }
 
 bool TeFont3::load(const Common::String &path) {
