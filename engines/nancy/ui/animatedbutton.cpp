@@ -72,9 +72,14 @@ void AnimatedButton::handleInput(NancyInput &input) {
 			g_nancy->_cursorManager->setCursorType(g_nancy->getGameType() == kGameTypeVampire ? CursorManager::kHotspot : CursorManager::kHotspotArrow);
 		}
 
+		if (isPlaying()) {
+			return;
+		}
+
 		if (!_highlightSrcRect.isEmpty() && !isVisible()) {
 			_drawSurface.create(g_nancy->_graphicsManager->_object0, _highlightSrcRect);
-			moveTo(_hotspot);
+			moveTo(_highlightDestRect);
+			setVisible(true);
 		}
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
@@ -87,7 +92,12 @@ void AnimatedButton::handleInput(NancyInput &input) {
 			}
 		}
 
-		input.eatMouseInput();
+		// This breaks TowerPuzzle in nancy2, so we only enable it for TVD
+		if (g_nancy->getGameType() == kGameTypeVampire) {
+			input.eatMouseInput();
+		}
+	} else if (!_highlightSrcRect.isEmpty() && isVisible() && !(isPlaying() || _isOpen)) {
+		setVisible(false);
 	}
 }
 

@@ -51,9 +51,10 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) {
 	s.skip(4, kGameTypeNancy3);
 
 	s.skip(8, kGameTypeVampire, kGameTypeVampire);
-	readRect(s, mapButtonHotspot, kGameTypeVampire, kGameTypeVampire);
-	readRect(s, clockHotspot, kGameTypeNancy2);
-	s.skip(0x10);
+	readRect(s, extraButtonHotspot, kGameTypeVampire, kGameTypeVampire);
+	readRect(s, extraButtonHotspot, kGameTypeNancy2);
+	readRect(s, extraButtonHighlightDest, kGameTypeNancy1);
+	s.skip(0x10, kGameTypeVampire, kGameTypeVampire);
 	readRect(s, textboxScreenPosition);
 	readRect(s, inventoryBoxScreenPosition);
 	readRect(s, menuButtonSrc);

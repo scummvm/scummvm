@@ -39,8 +39,8 @@ struct BSUM {
 	uint16 startTimeMinutes;
 
 	// UI
-	Common::Rect mapButtonHotspot;
-	Common::Rect clockHotspot;
+	Common::Rect extraButtonHotspot;	// Extra button is map in tvd, clock in nancy2 and up
+	Common::Rect extraButtonHighlightDest;
 	Common::Rect textboxScreenPosition;
 	Common::Rect inventoryBoxScreenPosition;
 	Common::Rect menuButtonSrc;

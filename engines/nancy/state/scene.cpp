@@ -832,7 +832,7 @@ void Scene::initStaticData() {
 	assert(bsum);
 	
 	if (g_nancy->getGameType() == kGameTypeVampire) {
-		_mapHotspot = bsum->mapButtonHotspot;
+		_mapHotspot = bsum->extraButtonHotspot;
 	} else if (g_nancy->_mapData) {
 		_mapHotspot = g_nancy->_mapData->buttonDest;
 	}
