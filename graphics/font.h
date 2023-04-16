@@ -269,6 +269,27 @@ public:
 	int wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth = 0, uint32 mode = kWordWrapOnExplicitNewLines) const;
 	/** @overload */
 	int wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth = 0, uint32 mode = kWordWrapOnExplicitNewLines) const;
+
+	/**
+	 * Scales the single gylph at @p chr the given the @p scale and the pointer @p grayScaleMap to the grayscale array. It fills @p scaleSurface surface 
+	 * and then we draw the character on @p scaleSurface surface. The @p scaleSUrface is magnified to grayScale array and then we change the @p scaleSurface using the 
+	 * grayScale array and @p grayLevel.
+	 *
+	 * @param grayScaleMap   The pointer to the grayScale array.
+	 * @param grayScaleMapSize  The size of the grayScale array.
+	 * @param scaleSurface  The surface to where character is scaled and drawn.
+	 * @param width     The width of the bouding box for scaled glyph.
+	 * @param height    The height of the bounding box for scaled glyph.
+	 * @param grayLevel The graylevel is the threshold value above which the pixel is considered
+	 * @param chr       The character to scale.
+	 * @param xOffset   The x offset of the bounding box for scaled glyph.
+	 * @param yOffset   The y offset of the bounding box for scaled glyph.
+	 * @param srcheight The height of the source glyph.
+	 * @param srcwidth  The width of the source glyph bounding box.
+	 * @param scale     The scale factor that is equal to @p newSize / @p srcSize of initializeScaling.
+	 */
+	void scaleSingleGlyph(Surface *scaleSurface, int *grayScaleMap, int grayScaleMapSize, int width, int height, int xOffset, int yOffset, int grayLevel, int chr, int srcheight, int srcwidth, float scale) const;
+
 };
 /** @} */
 } // End of namespace Graphics
