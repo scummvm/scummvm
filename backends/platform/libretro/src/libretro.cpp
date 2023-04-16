@@ -89,7 +89,7 @@ static uint8 frameskip_events = 0;
 
 static bool consecutive_screen_updates = false;
 
-static uint8 audio_status = 0;
+static uint8 audio_status = AUDIO_STATUS_MUTE;
 
 static unsigned retro_audio_buff_occupancy = 0;
 
