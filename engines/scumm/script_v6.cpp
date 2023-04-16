@@ -2471,7 +2471,20 @@ void ScummEngine_v6::o6_delay() {
 
 void ScummEngine_v6::o6_delaySeconds() {
 	uint32 delay = (uint32)pop();
-	delay = delay * 60;
+	// WORKAROUND: On Baseball 2001, this script downloads the news, poll and banner infomation.
+	// It gives a one second break before validating that the download has completed, which is
+	// a tad bit too long.  So let's turn that into a one frame break.  This is safe because
+	// the script also checks if either var135 == 1, or the check has been done
+	// 10 times before moving on:
+	//
+	// [0000] (43) localvar2 = 10
+	//  ...
+	// [004E] (4F) localvar3++
+	// [0051] (B1) delaySeconds(1)
+	// [0054] (5D) unless ((var135 || (localvar3 > localvar2))) jump 4e
+	if (!(_game.id == GID_BASEBALL2001 && vm.slot[_currentScript].number == 414)) {
+		delay = delay * 60;
+	}
 	vm.slot[_currentScript].delay = delay;
 	vm.slot[_currentScript].status = ssPaused;
 	o6_breakHere();
@@ -3107,7 +3120,11 @@ void ScummEngine_v6::o6_delayFrames() {
 	//
 	// But since we don't support GameSpy and have our own online support, this break
 	// has become redundant and only wastes time.
-	if (_game.id == GID_MOONBASE && vm.slot[_currentScript].number == 69) {
+	//
+	// WORKAROUND:  On Baseball 2001, there is a 10 frame pause before sending the login infomation
+	// to the server.  This is rather a pointless break, so let's skip that.
+	if ((_game.id == GID_MOONBASE && vm.slot[_currentScript].number == 69) ||
+		(_game.id == GID_BASEBALL2001 && _currentRoom == 37 && vm.slot[_currentScript].number == 2068)) {
 		pop();
 		return;
 	}
