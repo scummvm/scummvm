@@ -173,6 +173,10 @@ void RippedLetterPuzzle::execute() {
 }
 
 void RippedLetterPuzzle::handleInput(NancyInput &input) {
+	if (_state != kRun && _solveState != kNotSolved) {
+		return;
+	}
+
 	for (uint i = 0; i < 24; ++i) {
 		Common::Rect screenHotspot = NancySceneState.getViewport().convertViewportToScreen(_destRects[i]);
 		if (screenHotspot.contains(input.mousePos)) {
