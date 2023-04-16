@@ -51,7 +51,7 @@ bool Alan3MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		if (file->isDirectory())
 			continue;
 		Common::String filename = file->getName();
-		bool hasExt = filename.hasSuffix(".a3c");
+		bool hasExt = filename.hasSuffixIgnoreCase(".a3c");
 		if (!hasExt)
 			continue;
 

@@ -51,7 +51,7 @@ bool Alan2MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		if (file->isDirectory())
 			continue;
 		Common::String filename = file->getName();
-		bool hasExt = filename.hasSuffix(".acd");
+		bool hasExt = filename.hasSuffixIgnoreCase(".acd");
 		if (!hasExt)
 			continue;
 
