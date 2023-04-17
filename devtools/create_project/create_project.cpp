@@ -305,6 +305,8 @@ int main(int argc, char *argv[]) {
 			setup.useWindowsUnicode = false;
 		} else if (!std::strcmp(argv[i], "--use-xcframework")) {
 			setup.useXCFramework = true;
+		} else if (!std::strcmp(argv[i], "--vcpkg")) {
+			setup.useVcpkg = true;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -744,6 +746,8 @@ void displayHelp(const char *exe) {
 	        " --use-windows-unicode      Use Windows Unicode APIs\n"
 	        "                            (default: true)\n"
 	        " --use-windows-ansi         Use Windows ANSI APIs\n"
+	        "                            (default: false)\n"
+	        " --vcpkg                    Use vcpkg-provided libraries instead of pre-built SCUMMVM_LIBS\n"
 	        "                            (default: false)\n"
 	        "\n"
 	        "Engines settings:\n"

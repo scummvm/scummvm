@@ -106,13 +106,8 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	        << "\t\t<ProjectGuid>{" << uuid << "}</ProjectGuid>\n"
 	        << "\t\t<RootNamespace>" << name << "</RootNamespace>\n"
 	        << "\t\t<Keyword>Win32Proj</Keyword>\n"
-	        << "\t\t<VCTargetsPath Condition=\"'$(VCTargetsPath" << _version << ")' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''\">$(VCTargetsPath" << _version << ")</VCTargetsPath>\n";
-
-	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-		project << "\t\t<VcpkgTriplet Condition=\"'$(Platform)' == '" << getMSVCConfigName(*arch) << "'\">" << getMSVCArchName(*arch) << "-windows</VcpkgTriplet>\n";
-	}
-
-	project << "\t</PropertyGroup>\n";
+	        << "\t\t<VCTargetsPath Condition=\"'$(VCTargetsPath" << _version << ")' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''\">$(VCTargetsPath" << _version << ")</VCTargetsPath>\n"
+	        << "\t</PropertyGroup>\n";
 
 	// Shared configuration
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
@@ -330,7 +325,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 			// Copy data files to the build folder
 			project << "\t\t<PostBuildEvent>\n"
 			        << "\t\t\t<Message>Copy data files to the build folder</Message>\n"
-			        << "\t\t\t<Command>" << getPostBuildEvent(arch, setup) << "</Command>\n"
+			        << "\t\t\t<Command>" << getPostBuildEvent(arch, setup, isRelease) << "</Command>\n"
 			        << "\t\t</PostBuildEvent>\n";
 		} else if (setup.tests) {
 			project << "\t\t<PreBuildEvent>\n"
@@ -343,7 +338,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	project << "\t</ItemDefinitionGroup>\n";
 }
 
-void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringList &defines, const std::string &prefix, bool runBuildEvents) {
+void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, MSVC_Architecture arch, const StringList &defines, const std::string &prefix) {
 
 	std::string warnings;
 	for (StringList::const_iterator i = _globalWarnings.begin(); i != _globalWarnings.end(); ++i)
@@ -358,7 +353,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 		definesList += *i + ';';
 
 	// Add define to include revision header
-	if (runBuildEvents)
+	if (setup.runBuildEvents)
 		definesList += REVISION_DEFINE ";";
 
 	std::string includeDirsList;
@@ -369,21 +364,32 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	for (StringList::const_iterator i = setup.libraryDirs.begin(); i != setup.libraryDirs.end(); ++i)
 		libraryDirsList += convertPathToWin(*i) + ';';
 
+	std::string includeSDL = (setup.useSDL2 ? "SDL2" : "SDL");
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-	           << "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
-	           << "\t<PropertyGroup>\n"
-	           << "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_Global</_PropertySheetDisplayName>\n"
-	           << "\t\t<ExecutablePath>$(" << LIBS_DEFINE << ")\\bin;$(" << LIBS_DEFINE << ")\\bin\\" << getMSVCArchName(arch) << ";$(" << LIBS_DEFINE << ")\\$(Configuration)\\bin;$(ExecutablePath)</ExecutablePath>\n"
-	           << "\t\t<LibraryPath>" << libraryDirsList << "$(" << LIBS_DEFINE << ")\\lib\\" << getMSVCArchName(arch) << ";$(" << LIBS_DEFINE << ")\\lib\\" << getMSVCArchName(arch) << "\\$(Configuration);$(" << LIBS_DEFINE << ")\\lib;$(" << LIBS_DEFINE << ")\\$(Configuration)\\lib;$(LibraryPath)</LibraryPath>\n"
-	           << "\t\t<IncludePath>" << includeDirsList << "$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\" << (setup.useSDL2 ? "SDL2" : "SDL") << ";$(IncludePath)</IncludePath>\n"
-	           << "\t\t<OutDir>$(Configuration)" << getMSVCArchName(arch) << "\\</OutDir>\n"
-	           << "\t\t<IntDir>$(Configuration)" << getMSVCArchName(arch) << "\\$(ProjectName)\\</IntDir>\n"
-	           << "\t</PropertyGroup>\n"
-	           << "\t<ItemDefinitionGroup>\n"
-	           << "\t\t<ClCompile>\n"
-	           << "\t\t\t<DisableLanguageExtensions>true</DisableLanguageExtensions>\n"
-	           << "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n"
-	           << "\t\t\t<AdditionalIncludeDirectories>.;" << prefix << ";" << prefix << "\\engines;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
+			   << "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
+			   << "\t<PropertyGroup>\n"
+			   << "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_Global</_PropertySheetDisplayName>\n";
+	if (!setup.useVcpkg) {
+		properties << "\t\t<ExecutablePath>$(" << LIBS_DEFINE << ")\\bin;$(" << LIBS_DEFINE << ")\\bin\\" << getMSVCArchName(arch) << ";$(" << LIBS_DEFINE << ")\\$(Configuration)\\bin;$(ExecutablePath)</ExecutablePath>\n"
+				   << "\t\t<LibraryPath>" << libraryDirsList << "$(" << LIBS_DEFINE << ")\\lib\\" << getMSVCArchName(arch) << ";$(" << LIBS_DEFINE << ")\\lib\\" << getMSVCArchName(arch) << "\\$(Configuration);$(" << LIBS_DEFINE << ")\\lib;$(" << LIBS_DEFINE << ")\\$(Configuration)\\lib;$(LibraryPath)</LibraryPath>\n"
+				   << "\t\t<IncludePath>" << includeDirsList << "$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\" << includeSDL << ";$(IncludePath)</IncludePath>\n";
+	}
+	properties << "\t\t<OutDir>$(Configuration)" << getMSVCArchName(arch) << "\\</OutDir>\n"
+			   << "\t\t<IntDir>$(Configuration)" << getMSVCArchName(arch) << "\\$(ProjectName)\\</IntDir>\n"
+			   << "\t</PropertyGroup>\n"
+			   << "\t<ItemDefinitionGroup>\n"
+			   << "\t\t<ClCompile>\n"
+			   << "\t\t\t<DisableLanguageExtensions>true</DisableLanguageExtensions>\n"
+			   << "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n"
+			   << "\t\t\t<AdditionalIncludeDirectories>.;" << prefix << ";" << prefix << "\\engines;";
+	if (setup.tests) {
+		properties << prefix << "\\test\\cxxtest;";
+	}
+	// HACK to workaround SDL/SDL.h includes
+	if (setup.useVcpkg) {
+		properties << "$(_ZVcpkgCurrentInstalledDir)include\\" << includeSDL;
+	}
+	properties << "%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
 	           << "\t\t\t<PreprocessorDefinitions>" << definesList << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
 	           << "\t\t\t<ExceptionHandling>" << ((setup.devTools || setup.tests) ? "Sync" : "") << "</ExceptionHandling>\n";
 
@@ -438,8 +444,14 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, M
 	           << "\t<PropertyGroup>\n"
 	           << "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_" << configuration << getMSVCArchName(arch) << "</_PropertySheetDisplayName>\n"
 			   << "\t\t<LinkIncremental>" << ((isRelease || configuration == "Analysis") ? "false" : "true") << "</LinkIncremental>\n"
-	           << "\t\t<GenerateManifest>false</GenerateManifest>\n"
-	           << "\t</PropertyGroup>\n"
+	           << "\t\t<GenerateManifest>false</GenerateManifest>\n";
+
+	if (setup.useVcpkg) {
+		properties << "\t\t<VcpkgTriplet>" << getMSVCArchName(arch) << "-windows</VcpkgTriplet>\n";
+		properties << "\t\t<VcpkgConfiguration>" << (isRelease ? "Release" : "Debug") << "</VcpkgConfiguration>\n";
+	}
+
+	properties << "\t</PropertyGroup>\n"
 	           << "\t<ItemDefinitionGroup>\n"
 	           << "\t\t<ClCompile>\n";
 
