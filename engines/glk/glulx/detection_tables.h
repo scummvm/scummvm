@@ -1019,7 +1019,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRYL1("slendermanbase", Common::IT_ITA, "r3/140721", "6765e1c656f4dd1af25235bc9b11585c", 1156562),
 	DT_ENTRYL1("slenderman", Common::IT_ITA, "r3/140721", "b6a73057d3ff8e54011eab2556c2332c", 13465166),
 	DT_ENTRYL1("snuff", Common::IT_ITA, "180827", "1005bf49b80982997ed3b0930c390d5d", 135168),
-	DT_ENTRYL1("snuff", Common::IT_ITA, "r1/081125, "82724ff65cd9c839ee9621245326e8f6", 129884),
+	DT_ENTRYL1("snuff", Common::IT_ITA, "r1/081125", "82724ff65cd9c839ee9621245326e8f6", 129884),
 	DT_ENTRYL1("villamorganaglulx", Common::IT_ITA, "090404", "88feac9efb31e7e6bd832bda02ff0cfa", 1263196),
 
 	// Spanish games
