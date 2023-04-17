@@ -298,7 +298,7 @@ int main(int argc, char *argv[]) {
 		} else if (!std::strcmp(argv[i], "--sdl1")) {
 			setup.useSDL2 = false;
 		} else if (!std::strcmp(argv[i], "--use-canonical-lib-names")) {
-			setup.useCanonicalLibNames = true;
+			// Deprecated: Kept here so it doesn't error
 		} else if (!std::strcmp(argv[i], "--use-windows-unicode")) {
 			setup.useWindowsUnicode = true;
 		} else if (!std::strcmp(argv[i], "--use-windows-ansi")) {
@@ -736,9 +736,6 @@ void displayHelp(const char *exe) {
 	        "                            (default: false)\n"
 	        " --tests                    Create project files for the tests\n"
 	        "                            (ignores --build-events and --installer, as well as engine settings)\n"
-	        "                            (default: false)\n"
-	        " --use-canonical-lib-names  Use canonical library names for linking. This makes it easy to use\n"
-	        "                            e.g. vcpkg-provided libraries\n"
 	        "                            (default: false)\n"
 	        " --use-windows-unicode      Use Windows Unicode APIs\n"
 	        "                            (default: true)\n"
