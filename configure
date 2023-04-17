@@ -4863,7 +4863,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 		_plugin_suffix=".dll"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
-PLUGIN_LDFLAGS		+= -Wl,--enable-auto-import -shared ./libscummvm.a
+PLUGIN_LDFLAGS		+= -Wl,--enable-auto-import -shared -static-libgcc -static-libstdc++ ./libscummvm.a
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
 '
