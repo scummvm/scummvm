@@ -59,7 +59,7 @@ public:
 		free(tFilename);
 
 		if (!_dlHandle) {
-			debug("Failed loading plugin '%s' (error code %d)", _filename.c_str(), (int32) GetLastError());
+			warning("Failed loading plugin '%s' (error code %d)", _filename.c_str(), (int32) GetLastError());
 			return false;
 		} else {
 			debug(1, "Success loading plugin '%s', handle %p", _filename.c_str(), _dlHandle);
@@ -72,7 +72,7 @@ public:
 		DynamicPlugin::unloadPlugin();
 		if (_dlHandle) {
 			if (!FreeLibrary((HMODULE)_dlHandle))
-				debug("Failed unloading plugin '%s'", _filename.c_str());
+				warning("Failed unloading plugin '%s'", _filename.c_str());
 			else
 				debug(1, "Success unloading plugin '%s'", _filename.c_str());
 			_dlHandle = 0;
@@ -88,10 +88,7 @@ Plugin* Win32PluginProvider::createPlugin(const Common::FSNode &node) const {
 bool Win32PluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	// Check the plugin suffix
 	Common::String filename = node.getName();
-	if (!filename.hasSuffix(".dll"))
-		return false;
-
-	return true;
+	return filename.hasSuffix(".dll");
 }
 
 

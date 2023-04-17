@@ -35,7 +35,7 @@
 
 #include "backends/platform/sdl/win32/win32.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
-#include "backends/plugins/sdl/sdl-provider.h"
+#include "backends/plugins/win32/win32-provider.h"
 #include "base/main.h"
 
 int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
 	g_system->init();
 
 #ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
+	PluginManager::instance().addPluginProvider(new Win32PluginProvider());
 #endif
 
 	// Invoke the actual ScummVM main entry point:
