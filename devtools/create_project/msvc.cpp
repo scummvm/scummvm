@@ -43,43 +43,41 @@ MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, St
 	_arch_disabled_features[ARCH_AMD64] = amd64_disabled_features;
 	// NASM not supported for WoA target
 	// No OpenGL on Windows on ARM
-	// https://github.com/microsoft/vcpkg/issues/11248 [fribidi] Fribidi doesn't cross-compile on x86-64 to target arm/arm64
 	StringList arm64_disabled_features;
 	arm64_disabled_features.push_back("nasm");
 	arm64_disabled_features.push_back("opengl");
-	arm64_disabled_features.push_back("fribidi");
 	_arch_disabled_features[ARCH_ARM64] = arm64_disabled_features;
 }
 
 std::string MSVCProvider::getLibraryFromFeature(const char *feature, const BuildSetup &setup, bool isRelease) const {
 	static const MSVCLibrary s_libraries[] = {
 		// Libraries
-		{       "sdl", "SDL.lib",                   "SDLd.lib",      "winmm.lib imm32.lib version.lib setupapi.lib",    nullptr },
-		{      "sdl2", "SDL2.lib",                  "SDL2d.lib",     "winmm.lib imm32.lib version.lib setupapi.lib",    nullptr },
-		{      "zlib", "zlib.lib",                  "zlibd.lib",     nullptr,                                           nullptr },
-		{       "mad", "mad.lib",                   nullptr,         nullptr,                                           "libmad.lib" },
-		{   "fribidi", "fribidi.lib",               nullptr,         nullptr,                                           nullptr },
-		{       "ogg", "ogg.lib",                   nullptr,         nullptr,                                           "libogg_static.lib" },
-		{    "vorbis", "vorbis.lib vorbisfile.lib", nullptr,         nullptr,                                           "libvorbisfile_static.lib libvorbis_static.lib" },
-		{      "flac", "FLAC.lib",                  nullptr,         nullptr,                                           "libFLAC_static.lib win_utf8_io_static.lib" },
-		{       "png", "libpng16.lib",              "libpng16d.lib", nullptr,                                           nullptr },
-		{       "gif", "gif.lib",                   nullptr,         nullptr,                                           nullptr },
-		{      "faad", "faad.lib",                  nullptr,         nullptr,                                           "libfaad.lib" },
-		{     "mpeg2", "mpeg2.lib",                 nullptr,         nullptr,                                           "libmpeg2.lib" },
-		{ "theoradec", "theora.lib",                nullptr,         nullptr,                                           "libtheora_static.lib" },
-		{ "freetype2", "freetype.lib",              "freetyped.lib", nullptr,                                           nullptr },
-		{      "jpeg", "jpeg.lib",                  nullptr,         nullptr,                                           "jpeg-static.lib" },
-		{"fluidsynth", "fluidsynth.lib",            nullptr,         nullptr,                                           "libfluidsynth.lib" },
-		{ "fluidlite", "fluidlite.lib",             nullptr,         nullptr,                                           nullptr },
-		{   "libcurl", "libcurl.lib",               "libcurl-d.lib", "ws2_32.lib wldap32.lib crypt32.lib normaliz.lib", nullptr },
-		{    "sdlnet", "SDL_net.lib",               nullptr,         "iphlpapi.lib",                                    nullptr },
-		{   "sdl2net", "SDL2_net.lib",              nullptr,         "iphlpapi.lib",                                    "SDL_net.lib" },
-		{   "discord", "discord-rpc.lib",           nullptr,         nullptr,                                           nullptr },
-		{ "retrowave", "retrowave.lib",             nullptr,         nullptr,                                           nullptr },
+		{       "sdl", "SDL.lib",                   "SDLd.lib",      "winmm.lib imm32.lib version.lib setupapi.lib"    },
+		{      "sdl2", "SDL2.lib",                  "SDL2d.lib",     "winmm.lib imm32.lib version.lib setupapi.lib"    },
+		{      "zlib", "zlib.lib",                  "zlibd.lib",     nullptr                                           },
+		{       "mad", "mad.lib",                   nullptr,         nullptr                                           },
+		{   "fribidi", "fribidi.lib",               nullptr,         nullptr                                           },
+		{       "ogg", "ogg.lib",                   nullptr,         nullptr                                           },
+		{    "vorbis", "vorbis.lib vorbisfile.lib", nullptr,         nullptr                                           },
+		{      "flac", "FLAC.lib",                  nullptr,         nullptr                                           },
+		{       "png", "libpng16.lib",              "libpng16d.lib", nullptr                                           },
+		{       "gif", "gif.lib",                   nullptr,         nullptr                                           },
+		{      "faad", "faad.lib",                  nullptr,         nullptr                                           },
+		{     "mpeg2", "mpeg2.lib",                 nullptr,         nullptr                                           },
+		{ "theoradec", "theora.lib",                nullptr,         nullptr                                           },
+		{ "freetype2", "freetype.lib",              "freetyped.lib", nullptr                                           },
+		{      "jpeg", "jpeg.lib",                  nullptr,         nullptr                                           },
+		{"fluidsynth", "fluidsynth.lib",            nullptr,         nullptr                                           },
+		{ "fluidlite", "fluidlite.lib",             nullptr,         nullptr                                           },
+		{   "libcurl", "libcurl.lib",               "libcurl-d.lib", "ws2_32.lib wldap32.lib crypt32.lib normaliz.lib" },
+		{    "sdlnet", "SDL_net.lib",               nullptr,         "iphlpapi.lib"                                    },
+		{   "sdl2net", "SDL2_net.lib",              nullptr,         "iphlpapi.lib"                                    },
+		{   "discord", "discord-rpc.lib",           nullptr,         nullptr                                           },
+		{ "retrowave", "retrowave.lib",             nullptr,         nullptr                                           },
 		// Feature flags with library dependencies
-		{   "updates", "winsparkle.lib",            nullptr,         nullptr,                                           nullptr },
-		{       "tts", nullptr,                     nullptr,         "sapi.lib",                                        nullptr },
-		{    "opengl", nullptr,                     nullptr,         "opengl32.lib",                                    nullptr }
+		{   "updates", "winsparkle.lib",            nullptr,         nullptr                                           },
+		{       "tts", nullptr,                     nullptr,         "sapi.lib"                                        },
+		{    "opengl", nullptr,                     nullptr,         "opengl32.lib"                                    }
 	};
 
 	// HACK for switching SDL_net to SDL2_net
@@ -104,20 +102,16 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 			libs += " ";
 		}
 
-		const char *basename = library->release;
-		if (setup.useCanonicalLibNames) {
+		// Vcpkg already adds the libs
+		if (!setup.useVcpkg) {
+			const char *basename = library->release;
 			// Debug name takes priority
 			if (!isRelease && library->debug) {
 				basename = library->debug;
 			}
-		} else {
-			// Legacy name ignores configuration
-			if (library->legacy) {
-				basename = library->legacy;
+			if (basename) {
+				libs += basename;
 			}
-		}
-		if (basename) {
-			libs += basename;
 		}
 	}
 

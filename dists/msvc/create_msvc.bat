@@ -55,28 +55,28 @@ goto done
 echo.
 echo Creating project files with all engines enabled (stable and unstable)
 echo.
-create_project ..\.. --enable-all-engines --use-canonical-lib-names --msvc
+create_project ..\.. --enable-all-engines --msvc
 goto done
 
 :stable
 echo.
 echo Creating normal project files, with only the stable engines enabled
 echo.
-create_project ..\.. --use-canonical-lib-names --msvc
+create_project ..\.. --msvc
 goto done
 
 :tools
 echo.
 echo Creating tools project files
 echo.
-create_project ..\.. --tools --use-canonical-lib-names --msvc
+create_project ..\.. --tools --msvc
 goto done
 
 :tests
 echo.
 echo Creating tests project files
 echo.
-create_project ..\.. --tests --use-canonical-lib-names --msvc
+create_project ..\.. --tests --msvc
 goto done
 
 :clean_check

@@ -47,7 +47,7 @@ static const char *const FILENAMES[] = {
 	"metaengine.h", "module.mk", "xyzzy.cpp",
 	"xyzzy.h", "POTFILES", nullptr
 };
-const char *const ENGINES = "create_project ..\\.. --use-canonical-lib-names --msvc\n";
+const char *const ENGINES = "create_project ..\\.. --msvc\n";
 
 bool fileExists(const char *name) {
 #ifdef _MSC_VER

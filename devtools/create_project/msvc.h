@@ -47,7 +47,6 @@ protected:
 		const char *release; ///< Filename of the Release build of the library.
 		const char *debug;   ///< Filename of the Debug build of the library.
 		const char *depends; ///< Win32 libs this library must be linked against.
-		const char *legacy;  ///< Legacy name for old precompiled libraries (deprecated).
 	};
 
 	std::string getLibraryFromFeature(const char *feature, const BuildSetup &setup, bool isRelease) const;
