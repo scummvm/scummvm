@@ -960,7 +960,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "cryo", "Cryo" },
 	{ "crypt", "Crypt" },
 	{ "cryptic", "Cryptic" },
-	{ "crystalball", "The Crystal Ball" },
 	{ "crystalquest", "Crystal Quest" },
 	{ "csihunt1", "CSI Hunt 1" },
 	{ "cspb", "Cake & Smurphy Puzzle Battle!" },
@@ -2903,6 +2902,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "thecondemned", "The Condemned" },
 	{ "thecradle", "The Cradle" },
 	{ "thecrazedchicken", "The Crazed Chicken" },
+	{ "thecrystalball", "The Crystal Ball" },
 	{ "thecube", "The Cube" },
 	{ "thecurseoflife", "The Curse of Life" },
 	{ "thedarkplague", "The Dark Plague" },
@@ -5373,7 +5373,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("cryo", "cryo.exe", "615e73fc1874e92d60a1996c2330ea36", 27992619),
 	GAME_ENTRY_EN("crypt", "crypt.exe", "0500aacb6c176d47ac0f8158f055db83", 2089059),
 	GAME_ENTRY_EN("cryptic", "cryptic.exe", "d9143b143b011d7bd8726c1bb5dabc59", 6027654),
-	GAME_ENTRY_EN("crystalball", "OROW8.exe", "8cc8a212d8ffb923db0ba740074dfa69", 20921755),
 	GAME_ENTRY_EN("crystalquest", "MarchMAGS.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2284362),
 	GAME_ENTRY_EN("csihunt1", "csi hunt 1.exe", "06a03fe35791b0578068ab1873455463", 2190662),
 	GAME_ENTRY_EN("cspb", "cspb.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 77296215),
@@ -7688,6 +7687,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("thecondemned", "The Condemned.exe", "338fa79960d40689063af31c671b8729", 399499655),
 	GAME_ENTRY_EN("thecradle", "The Cradle.exe", "7db052bc30700d1f30f5330f5814f519", 326421438),
 	GAME_ENTRY("thecrazedchicken", "chicken.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 3913199), // Eng-Pol
+	GAME_ENTRY_EN("thecrystalball", "OROW8.exe", "8cc8a212d8ffb923db0ba740074dfa69", 20921755),
 	GAME_ENTRY("thecube", "The Cube.exe", "97d700529f5cc826f230c27acf81adfd", 2029985),  // Eng-Deu
 	GAME_ENTRY("thecurseoflife", "TheCurse.exe", "90413e9ae57e222f8913b09d2bc847bc", 9651875), // Eng-Ita
 	GAME_ENTRY_EN("thedarkplague", "darkplague.exe", "850d1f4d8af87b89d77650a083f7f307", 8176381),
