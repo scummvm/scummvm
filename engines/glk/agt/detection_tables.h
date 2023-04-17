@@ -27,6 +27,8 @@ namespace Glk {
 namespace AGT {
 
 const PlainGameDescriptor AGT_GAME_LIST[] = {
+	{ "agt", "AGT IF Game" },
+
 	{ "abloodylife", "A Bloody Life" },
 	{ "alandria", "The Search for Princess Alandria" },
 	{ "alchemistcastle", "Castle of the Alchemists" },
@@ -109,6 +111,7 @@ const PlainGameDescriptor AGT_GAME_LIST[] = {
 	{ "pork2", "PORK II, The Gizzard of Showbiz" },
 	{ "starportal", "The Star Portal" },
 	{ "pastoralpitfalls", "Pastoral Pitfalls" },
+	{ "personalizedsample", "Personalized Adventure Game Sample" },
 	{ "lostproperty", "Lost Property" },
 	{ "gameofrecovery", "The Game of Recovery" },
 	{ "rerunsagain", "Reruns Again version" },
@@ -132,6 +135,7 @@ const PlainGameDescriptor AGT_GAME_LIST[] = {
 	{ "therift", "The Rift" },
 	{ "tja", "The Jeweled Arena" },
 	{ "toho", "Toho Academy" },
+	{ "tombpharaohs", "The Tomb of the Ancient Pharaohs" },
 	{ "tossedintospace", "Tossed into Space : Dr.Schmidt Goes Home" },
 	{ "timesquared", "TimeSquared" },
 	{ "folkestone", "Murder at the Folkestone Inn" },
@@ -238,6 +242,7 @@ const GlkDetectionEntry AGT_GAMES[] = {
 	DT_ENTRY0("pork2", "13911c59cbe70ae877c87aa0ded89e47", 28269),
 	DT_ENTRY0("starportal", "0bf0f86fdeea607083c22a5cb41c6885", 172935),
 	DT_ENTRY0("pastoralpitfalls", "c35d440286c6bf67cd6ee1e5947c3483", 206469),
+	DT_ENTRY0("personalizedsample", "c590a3c5116ee2fa786e8f511ef85c8e", 69174),
 	DT_ENTRY0("lostproperty", "8acf3d6994a3b39911827d5040e8873a", 30375),
 	DT_ENTRY0("gameofrecovery", "b497bb0e1e93023a892f0fa54d78a1c0", 108459),
 	DT_ENTRY0("rerunsagain", "d263341c871a2f52e0052c313bf3e525", 81648),
@@ -262,6 +267,7 @@ const GlkDetectionEntry AGT_GAMES[] = {
 	DT_ENTRY0("therift", "1c30da9b9a55d691226c45b8b53c11c3", 41877),
 	DT_ENTRY0("tja", "6699e867df8263dd7858d2f6fb84acde", 517185),
 	DT_ENTRY0("toho", "58a6fdf89b29966774beaca80f505fff", 228744),
+	DT_ENTRY0("tombpharaohs", "2d10501417f28ee1dc5be8479f6e88a3", 46251),
 	DT_ENTRY0("tossedintospace", "515f06782c5b11108a719a20e182166c", 49491),
 	DT_ENTRY0("timesquared", "55e36771d5e1fe184cce8f5be666ff9f", 105300),
 	DT_ENTRY0("folkestone", "7e949a7376b0a64cee0d9412b0203611", 64557),
