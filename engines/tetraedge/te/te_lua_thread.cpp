@@ -188,10 +188,10 @@ void TeLuaThread::applyScriptWorkarounds(char *buf, const Common::String &fileNa
 			// Allow Kate to enter scene 11100
 			fixline = strstr(buf, "\"11070\"");
 			if (fixline) // 11070 -> 11100
-				strncpy(fixline + 3, "10 ", 2);
+				memcpy(fixline + 3, "10 ", 2);
 			fixline = strstr(buf, "\"11070\"");
 			if (fixline)
-				strncpy(fixline + 3, "10 ", 2);
+				memcpy(fixline + 3, "10 ", 2);
 #ifdef TETRAEDGE_RESTORE_EXPERIMENTAL
 		// The 11170 scene is not usable yet - it seems
 		// to not have any free move zone data?
@@ -213,14 +213,14 @@ void TeLuaThread::applyScriptWorkarounds(char *buf, const Common::String &fileNa
 		} else if (fileName.contains("Logic11100.lua")) {
 			fixline = strstr(buf, " , 55 ,70, ");
 			if (fixline) // 70 -> 65 to fix speech marker location
-				strncpy(fixline + 7, "65 ", 2);
+				memcpy(fixline + 7, "65 ", 2);
 		} else if (fileName.contains("Int11100.lua") || fileName.contains("Int11170.lua")) {
 			fixline = strstr(buf, "ratio = 16/9,");
 			if (fixline) // 16/9 -> 4/3
-				strncpy(fixline + 8, "4/3 ", 4);
+				memcpy(fixline + 8, "4/3 ", 4);
 			fixline = strstr(buf, "ratioMode = PanScan,");
 			if (fixline)
-				strncpy(fixline + 9, "=LetterBox", 10);
+				memcpy(fixline + 9, "=LetterBox", 10);
 		} else if (fileName.contains("For11100.lua") || fileName.contains("For11170.lua")) {
 			fixline = strstr(buf, "size = {1.0");
 			if (fixline) // 1.0 -> 1.5
@@ -250,7 +250,7 @@ void TeLuaThread::applyScriptWorkarounds(char *buf, const Common::String &fileNa
 	fixline = strstr(buf, "OBJECT_10050_Inventory_obj_coeurmec_Taketoun ");
 	if (fixline) {
 		// Taketoun -> Taken
-		strncpy(fixline + 40, "n   ", 4);
+		memcpy(fixline + 40, "n   ", 4);
 	}
 }
 
