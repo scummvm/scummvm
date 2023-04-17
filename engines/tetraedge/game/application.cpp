@@ -174,12 +174,13 @@ void Application::create() {
 	if (!g_engine->gameIsAmerzone()) {
 		const Common::Path helpMenuPath("menus/help/help_");
 		Common::Path helpMenuFilePath;
+		Common::String lang(core->language());
 		i = 0;
 		while (i < ARRAYSIZE(allLangs)) {
-			helpMenuFilePath = helpMenuPath.append(core->language() + ".xml");
+			helpMenuFilePath = helpMenuPath.append(lang + ".xml");
 			if (Common::File::exists(helpMenuFilePath))
 				break;
-			core->language(allLangs[i]);
+			lang = allLangs[i];
 			i++;
 		}
 		if (i == ARRAYSIZE(allLangs)) {
