@@ -253,7 +253,7 @@ void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
 			}
 		}
 
-		outputGlobalPropFile(archSetup, properties, *arch, archSetup.defines, convertPathToWin(archSetup.filePrefix), archSetup.runBuildEvents);
+		outputGlobalPropFile(archSetup, properties, *arch, archSetup.defines, convertPathToWin(archSetup.filePrefix));
 		properties.close();
 	}
 }
@@ -280,7 +280,7 @@ std::string MSVCProvider::getTestPreBuildEvent(const BuildSetup &setup) const {
 	return "&quot;$(SolutionDir)../../test/cxxtest/cxxtestgen.py&quot; --runner=ParenPrinter --no-std --no-eh -o &quot;$(SolutionDir)test_runner.cpp&quot;" + target;
 }
 
-std::string MSVCProvider::getPostBuildEvent(MSVC_Architecture arch, const BuildSetup &setup) const {
+std::string MSVCProvider::getPostBuildEvent(MSVC_Architecture arch, const BuildSetup &setup, bool isRelease) const {
 	std::string cmdLine = "";
 
 	cmdLine = "@echo off\n"
@@ -290,9 +290,17 @@ std::string MSVCProvider::getPostBuildEvent(MSVC_Architecture arch, const BuildS
 
 	cmdLine += (setup.useSDL2) ? "SDL2" : "SDL";
 
-	cmdLine += " &quot;%" LIBS_DEFINE "%/lib/";
-	cmdLine += getMSVCArchName(arch);
-	cmdLine += "/$(Configuration)&quot; ";
+	if (setup.useVcpkg) {
+		cmdLine += " &quot;$(_ZVcpkgCurrentInstalledDir)";
+		if (!isRelease) {
+			cmdLine += "debug/";
+		}
+		cmdLine += "bin/&quot; ";
+	} else {
+		cmdLine += " &quot;%" LIBS_DEFINE "%/lib/";
+		cmdLine += getMSVCArchName(arch);
+		cmdLine += "/$(Configuration)&quot; ";
+	}
 
 	// Specify if installer needs to be built or not
 	cmdLine += (setup.createInstaller ? "1" : "0");
