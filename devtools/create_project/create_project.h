@@ -245,7 +245,6 @@ struct BuildSetup {
 	bool runBuildEvents;       ///< Run build events as part of the build (generate revision number and copy engine/theme data & needed files to the build folder
 	bool createInstaller;      ///< Create installer after the build
 	bool useSDL2;              ///< Whether to use SDL2 or not.
-	bool useCanonicalLibNames; ///< Whether to use canonical libraries names or default ones
 	bool useStaticDetection;   ///< Whether to link detection features inside the executable or not.
 	bool useWindowsUnicode;    ///< Whether to use Windows Unicode APIs or ANSI APIs.
 	bool useXCFramework;       ///< Whether to use Apple XCFrameworks instead of static libraries
@@ -257,7 +256,6 @@ struct BuildSetup {
 		runBuildEvents = false;
 		createInstaller = false;
 		useSDL2 = true;
-		useCanonicalLibNames = false;
 		useStaticDetection = true;
 		useWindowsUnicode = true;
 		useXCFramework = false;
