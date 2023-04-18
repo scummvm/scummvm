@@ -2499,7 +2499,7 @@ bool QDM2Stream::qdm2_decodeFrame(Common::SeekableReadStream &in, QueuingAudioSt
 	}
 
 	if ((in.size() - in.pos()) < _packetSize) {
-		debug(1, "QDM2Stream::qdm2_decodeFrame Insufficient Packet Data in Input Stream Found: %ld Need: %d", in.size() - in.pos(), _packetSize);
+		debug(1, "QDM2Stream::qdm2_decodeFrame Insufficient Packet Data in Input Stream Found: %ld Need: %d", long(in.size() - in.pos()), _packetSize);
 		return false;
 	}
 
