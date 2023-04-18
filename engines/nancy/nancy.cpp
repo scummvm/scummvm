@@ -59,7 +59,7 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	g_nancy = this;
 
 	_randomSource = new Common::RandomSource("Nancy");
-	_randomSource->setSeed(_randomSource->getSeed());
+	_randomSource->setSeed(Common::RandomSource::generateNewSeed());
 
 	_input = new InputManager();
 	_sound = new SoundManager();
