@@ -22,8 +22,6 @@
 #ifndef NANCY_ACTION_SLIDERPUZZLE_H
 #define NANCY_ACTION_SLIDERPUZZLE_H
 
-#include "engines/nancy/renderobject.h"
-
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Common {
@@ -33,12 +31,13 @@ class Serializer;
 namespace Nancy {
 
 struct SPUZ;
+
 namespace Action {
 
-class SliderPuzzle: public ActionRecord, public RenderObject {
+class SliderPuzzle: public RenderActionRecord {
 public:
 	enum SolveState { kNotSolved, kWaitForSound };
-	SliderPuzzle() : RenderObject(7) {}
+	SliderPuzzle() : RenderActionRecord(7) {}
 	virtual ~SliderPuzzle() {}
 
 	void init() override;
@@ -46,7 +45,6 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 	void handleInput(NancyInput &input) override;
-	void onPause(bool pause) override;
 
 	SPUZ *_spuzData = nullptr;
 	SliderPuzzleState *_puzzleState = nullptr;

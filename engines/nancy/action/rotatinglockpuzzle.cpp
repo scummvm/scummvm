@@ -206,13 +206,6 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
 		}
 	}
 }
-
-void RotatingLockPuzzle::onPause(bool pause) {
-	if (!pause) {
-		registerGraphics();
-	}
-}
-
 void RotatingLockPuzzle::drawDial(uint id) {
 	Common::Point destPoint(_destRects[id].left - _screenPosition.left, _destRects[id].top - _screenPosition.top);
 	_drawSurface.blitFrom(_image, _srcRects[_currentSequence[id]], destPoint);

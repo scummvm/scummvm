@@ -22,14 +22,12 @@
 #ifndef NANCY_ACTION_TELEPHONE_H
 #define NANCY_ACTION_TELEPHONE_H
 
-#include "engines/nancy/renderobject.h"
-
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Nancy {
 namespace Action {
 
-class Telephone : public ActionRecord, public RenderObject {
+class Telephone : public RenderActionRecord {
 public:
 	struct PhoneCall {
 		Common::Array<byte> phoneNumber;
@@ -41,7 +39,7 @@ public:
 	enum CallState { kWaiting, kButtonPress, kRinging, kBadNumber, kCall, kHangUp };
 
 	Telephone() :
-		RenderObject(7),
+		RenderActionRecord(7),
 		_callState(kWaiting),
 		_selected(0) {}
 	virtual ~Telephone() {}

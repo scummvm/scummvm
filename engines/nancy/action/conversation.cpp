@@ -496,6 +496,7 @@ void ConversationVideo::updateGraphics() {
 
 void ConversationVideo::onPause(bool pause) {
 	_decoder.pauseVideo(pause);
+	RenderActionRecord::onPause(pause);
 }
 
 bool ConversationVideo::isVideoDonePlaying() {

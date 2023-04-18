@@ -223,12 +223,6 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 	}
 }
 
-void OrderingPuzzle::onPause(bool pause) {
-	if (!pause) {
-		registerGraphics();
-	}
-}
-
 void OrderingPuzzle::drawElement(uint id) {
 	_drawnElements[id] = true;
 	Common::Point destPoint(_destRects[id].left - _screenPosition.left, _destRects[id].top - _screenPosition.top);

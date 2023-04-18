@@ -25,6 +25,7 @@
 #include "engines/nancy/time.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/commontypes.h"
+#include "engines/nancy/renderobject.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -81,7 +82,7 @@ struct DependencyRecord {
 // Supports conditional execution (via dependencies) and can have
 // clickable hotspots on screen.
 // Does _not_ support drawing to screen, records that need this functionality
-// will have to also subclass RenderObject.
+// will have to subclass RenderActionRecord.
 class ActionRecord {
 	friend class ActionManager;
 	friend class Nancy::NancyConsole;
@@ -130,6 +131,17 @@ public:
 	ExecutionState _state;							// 0x91
 	int16 _days;									// 0x95
 	int8 _itemRequired;								// 0x97
+};
+
+// Base class for visual ActionRecords
+class RenderActionRecord : public ActionRecord, public RenderObject {
+public:
+	RenderActionRecord(uint zOrder) : RenderObject(zOrder) {}
+	virtual ~RenderActionRecord() {}
+
+	// This makes sure the AR is re-added to the render system
+	// when returning from a different state (e.g. the Help screen)
+	void onPause(bool pause) override { if (!pause) registerGraphics(); }
 };
 
 } // End of namespace Action

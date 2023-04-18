@@ -206,12 +206,6 @@ void Overlay::execute() {
 	}
 }
 
-void Overlay::onPause(bool pause) {
-	if (!pause) {
-		registerGraphics();
-	}
-}
-
 Common::String Overlay::getRecordTypeName() const {
 	if (g_nancy->getGameType() <= kGameTypeNancy1) {
 		if (_isInterruptible) {

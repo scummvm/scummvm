@@ -22,17 +22,15 @@
 #ifndef NANCY_ACTION_ORDERINGPUZZLE_H
 #define NANCY_ACTION_ORDERINGPUZZLE_H
 
-#include "engines/nancy/renderobject.h"
-
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Nancy {
 namespace Action {
 
-class OrderingPuzzle : public ActionRecord, public RenderObject {
+class OrderingPuzzle : public RenderActionRecord {
 public:
 	enum SolveState { kNotSolved, kPlaySound, kWaitForSound };
-	OrderingPuzzle() : RenderObject(7) {}
+	OrderingPuzzle() : RenderActionRecord(7) {}
 	virtual ~OrderingPuzzle() {}
 
 	void init() override;
@@ -40,7 +38,6 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 	void handleInput(NancyInput &input) override;
-	void onPause(bool pause) override;
 
 	Common::String _imageName;
 	Common::Array<Common::Rect> _srcRects;

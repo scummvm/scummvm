@@ -282,12 +282,6 @@ void SliderPuzzle::handleInput(NancyInput &input) {
 	}
 }
 
-void SliderPuzzle::onPause(bool pause) {
-	if (!pause) {
-		registerGraphics();
-	}
-}
-
 void SliderPuzzle::drawTile(int tileID, uint posX, uint posY) {
 	if (tileID < 0) {
 		undrawTile(posX, posY);

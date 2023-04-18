@@ -23,14 +23,12 @@
 #define NANCY_ACTION_SECONDARYMOVIE_H
 
 #include "engines/nancy/video.h"
-#include "engines/nancy/renderobject.h"
-
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Nancy {
 namespace Action {
 
-class PlaySecondaryMovie : public ActionRecord, public RenderObject {
+class PlaySecondaryMovie : public RenderActionRecord {
 public:
 	static const byte kMovieSceneChange			= 5;
 	static const byte kMovieNoSceneChange		= 6;
@@ -46,7 +44,7 @@ public:
 		FlagDescription flagDesc;
 	};
 
-	PlaySecondaryMovie() : RenderObject(8) {}
+	PlaySecondaryMovie() : RenderActionRecord(8) {}
 	virtual ~PlaySecondaryMovie();
 
 	void init() override;

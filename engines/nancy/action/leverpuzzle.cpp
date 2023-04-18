@@ -218,12 +218,6 @@ void LeverPuzzle::handleInput(NancyInput &input) {
 	}
 }
 
-void LeverPuzzle::onPause(bool pause) {
-	if (!pause) {
-		registerGraphics();
-	}
-}
-
 void LeverPuzzle::drawLever(uint id) {
 	Common::Point destPoint(_destRects[id].left - _screenPosition.left, _destRects[id].top - _screenPosition.top);
 	_drawSurface.blitFrom(_image, _srcRects[id][_playerSequence[id]], destPoint);

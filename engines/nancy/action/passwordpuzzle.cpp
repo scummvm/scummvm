@@ -198,12 +198,6 @@ void PasswordPuzzle::handleInput(NancyInput &input) {
 	}
 }
 
-void PasswordPuzzle::onPause(bool pause) {
-	if (!pause) {
-		registerGraphics();
-	}
-}
-
 void PasswordPuzzle::drawText() {
 	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
 	const Graphics::Font *font = g_nancy->_graphicsManager->getFont(_fontID);

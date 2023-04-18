@@ -22,16 +22,15 @@
 #ifndef NANCY_ACTION_RIDDLEPUZZLE_H
 #define NANCY_ACTION_RIDDLEPUZZLE_H
 
-#include "engines/nancy/renderobject.h"
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Nancy {
 namespace Action {
 
-class RiddlePuzzle : public ActionRecord, public RenderObject {
+class RiddlePuzzle : public RenderActionRecord {
 public:
 	enum SolveState { kWaitForSound, kNotSolved, kFailed, kSolvedOne, kSolvedAll };
-	RiddlePuzzle() : RenderObject(7) {}
+	RiddlePuzzle() : RenderActionRecord(7) {}
 	virtual ~RiddlePuzzle() {}
 
 	void init() override;

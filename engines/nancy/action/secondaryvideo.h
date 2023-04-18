@@ -23,8 +23,6 @@
 #define NANCY_ACTION_SECONDARYVIDEO_H
 
 #include "engines/nancy/video.h"
-#include "engines/nancy/renderobject.h"
-
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Nancy {
@@ -32,14 +30,14 @@ namespace Action {
 
 // ActionRecord that shows NPC animations outside of dialogue. Supports
 // different animations depending on whether the NPC is hovered by the mouse
-class PlaySecondaryVideo : public ActionRecord, public RenderObject {
+class PlaySecondaryVideo : public RenderActionRecord {
 public:
 	static const byte kNoVideoHotspots	= 1;
 	static const byte kVideoHotspots	= 2;
 
 	enum HoverState { kNoHover, kHover, kEndHover };
 
-	PlaySecondaryVideo(uint chan) : RenderObject(8), channel(chan) {}
+	PlaySecondaryVideo(uint chan) : RenderActionRecord(8), channel(chan) {}
 	virtual ~PlaySecondaryVideo() { _decoder.close(); }
 
 	void init() override;

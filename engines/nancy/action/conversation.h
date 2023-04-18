@@ -23,16 +23,15 @@
 #define NANCY_ACTION_CONVERSATION_H
 
 #include "engines/nancy/action/actionrecord.h"
-#include "engines/nancy/renderobject.h"
 #include "engines/nancy/video.h"
 
 namespace Nancy {
 namespace Action {
 
 // The base class for conversations, with no video data
-class ConversationSound : public ActionRecord, public RenderObject {
+class ConversationSound : public RenderActionRecord {
 public:
-	ConversationSound() : RenderObject(8) {}
+	ConversationSound() : RenderActionRecord(8) {}
 	virtual ~ConversationSound();
 
 	void init() override;

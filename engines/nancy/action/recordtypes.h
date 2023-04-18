@@ -22,8 +22,6 @@
 #ifndef NANCY_ACTION_RECORDTYPES_H
 #define NANCY_ACTION_RECORDTYPES_H
 
-#include "engines/nancy/renderobject.h"
-
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Nancy {
@@ -340,16 +338,15 @@ protected:
 	Common::String getRecordTypeName() const override { return "DifficultyLevel"; }
 };
 
-class ShowInventoryItem : public ActionRecord, public RenderObject {
+class ShowInventoryItem : public RenderActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
-	ShowInventoryItem() : RenderObject(9) {}
+	ShowInventoryItem() : RenderActionRecord(9) {}
 	virtual ~ShowInventoryItem() { _fullSurface.free(); }
 
 	void init() override;
-	void onPause(bool pause) override;
 
 	uint16 _objectID = 0;
 	Common::String _imageName;

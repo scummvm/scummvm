@@ -546,12 +546,6 @@ void ShowInventoryItem::execute() {
 	}
 }
 
-void ShowInventoryItem::onPause(bool pause) {
-	if (!pause) {
-		registerGraphics();
-	}
-}
-
 void PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
 	_sound.read(stream, SoundDescription::kDIGI);
 	_sceneChange.readData(stream, g_nancy->getGameType() == kGameTypeVampire);

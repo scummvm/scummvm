@@ -22,17 +22,15 @@
 #ifndef NANCY_ACTION_PASSWORDPUZZLE_H
 #define NANCY_ACTION_PASSWORDPUZZLE_H
 
-#include "engines/nancy/renderobject.h"
-
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Nancy {
 namespace Action {
 
-class PasswordPuzzle : public ActionRecord, public RenderObject {
+class PasswordPuzzle : public RenderActionRecord {
 public:
 	enum SolveState { kNotSolved, kFailed, kSolved };
-	PasswordPuzzle() : RenderObject(7) {}
+	PasswordPuzzle() : RenderActionRecord(7) {}
 	virtual ~PasswordPuzzle() {}
 
 	void init() override;
@@ -40,7 +38,6 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 	void handleInput(NancyInput &input) override;
-	void onPause(bool pause) override;
 
 	uint16 _fontID = 0;
 	Time _cursorBlinkTime;
