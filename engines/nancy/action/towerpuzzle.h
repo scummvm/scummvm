@@ -48,23 +48,20 @@ protected:
 
 	Common::String _imageName;
 	Common::Array<uint16> _numRingsByDifficulty;
-	// 2 unknown
-	Common::Array<Common::Rect> _droppedRingSrcs; // 6
-	Common::Array<Common::Rect> _heldRingSrcs; // 6
 
-	Common::Array<Common::Rect> _hotspots; // 3
+	Common::Array<Common::Rect> _droppedRingSrcs;
+	Common::Array<Common::Rect> _heldRingSrcs;
 
+	Common::Array<Common::Rect> _hotspots;
 	Common::Array<Common::Array<Common::Array<Common::Rect>>> _destRects; // [ringID][poleID][position]
 
 	SoundDescription _takeSound;
 	SoundDescription _dropSound;
 
-	SceneChangeDescription _solveExitScene;
+	SceneChangeWithFlag _solveExitScene;
 	SoundDescription _solveSound;
-	FlagDescription _flagOnSolve;
 
-	SceneChangeDescription _exitScene;
-	FlagDescription _flagOnExit;
+	SceneChangeWithFlag _exitScene;
 	Common::Rect _exitHotspot;
 
 	Graphics::ManagedSurface _image;

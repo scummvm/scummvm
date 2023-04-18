@@ -42,19 +42,17 @@ public:
 	void handleInput(NancyInput &input) override;
 	void onPause(bool pause) override;
 
-	Common::String _imageName; // 0x0
-	Common::Array<Common::Array<Common::Rect>> _srcRects; // 0xA, 0xC0 bytes
-	Common::Array<Common::Rect> _destRects; // 0xCA, 0x30 bytes
-	Common::Array<byte> _correctSequence; // 0xFA, 3 bytes
-	SoundDescription _moveSound; // 0x100
-	SoundDescription _noMoveSound; // 0x122
-	SceneChangeDescription _solveExitScene; // 0x144
-	FlagDescription _flagOnSolve; // 0x14E
-	uint16 _solveSoundDelay = 0; // 0x151
-	SoundDescription _solveSound; // 0x153
-	SceneChangeDescription _exitScene; // 0x175
-	FlagDescription _flagOnExit; // 0x17F
-	Common::Rect _exitHotspot; // 0x182
+	Common::String _imageName;
+	Common::Array<Common::Array<Common::Rect>> _srcRects;
+	Common::Array<Common::Rect> _destRects;
+	Common::Array<byte> _correctSequence;
+	SoundDescription _moveSound;
+	SoundDescription _noMoveSound;
+	SceneChangeWithFlag _solveExitScene;
+	uint16 _solveSoundDelay = 0;
+	SoundDescription _solveSound;
+	SceneChangeWithFlag _exitScene;
+	Common::Rect _exitHotspot;
 
 	Common::Array<byte> _playerSequence;
 	Common::Array<bool> _leverDirection;

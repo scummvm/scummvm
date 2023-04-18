@@ -42,22 +42,19 @@ public:
 	void handleInput(NancyInput &input) override;
 	void onPause(bool pause) override;
 
-	uint16 _fontID = 0; // 0x00
-	Time _cursorBlinkTime; // 0x2
-	Common::Rect _nameBounds; // 0x4
-	Common::Rect _passwordBounds; // 0x14
+	uint16 _fontID = 0;
+	Time _cursorBlinkTime;
+	Common::Rect _nameBounds;
+	Common::Rect _passwordBounds;
 	// _screenPosition 0x24
-	Common::String _name; // 0x34, 20 bytes long
-	Common::String _password; // 0x48, 20 bytes long
-	SceneChangeDescription _solveExitScene; // 0x5A
-	FlagDescription _flagOnSolve; // 0x66
-	SoundDescription _solveSound; // 0x69
-	SceneChangeDescription _failExitScene; // 0x8B
-	FlagDescription _flagOnFail; // 0x95
-	SoundDescription _failSound; // 0x98
-	SceneChangeDescription _exitScene; // 0xBA
-	FlagDescription _flagOnExit; // 0xC4
-	Common::Rect _exitHotspot; // 0xC7
+	Common::String _name;
+	Common::String _password;
+	SceneChangeWithFlag _solveExitScene;
+	SoundDescription _solveSound;
+	SceneChangeWithFlag _failExitScene;
+	SoundDescription _failSound;
+	SceneChangeWithFlag _exitScene;
+	Common::Rect _exitHotspot;
 
 	Common::String _playerNameInput;
 	Common::String _playerPasswordInput;

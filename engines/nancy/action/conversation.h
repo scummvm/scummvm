@@ -60,11 +60,11 @@ protected:
 	};
 
 	struct ResponseStruct {
-		ConversationFlags conditionFlags; // 0x01
-		Common::String text; // 0x06
-		Common::String soundName; // 0x196
-		SceneChangeDescription sceneChange; // 0x1A0
-		FlagDescription flagDesc; // 0x1A8
+		ConversationFlags conditionFlags;
+		Common::String text;
+		Common::String soundName;
+		SceneChangeDescription sceneChange;
+		FlagDescription flagDesc;
 
 		bool isOnScreen = false;
 	};

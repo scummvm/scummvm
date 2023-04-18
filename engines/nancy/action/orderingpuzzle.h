@@ -42,19 +42,17 @@ public:
 	void handleInput(NancyInput &input) override;
 	void onPause(bool pause) override;
 
-	Common::String _imageName; // 0x00
-	Common::Array<Common::Rect> _srcRects; // 0xC, 15
-	Common::Array<Common::Rect> _destRects; // 0xFC, 15
-	uint16 _sequenceLength = 0; // 0x1EC;
-	Common::Array<byte> _correctSequence; // 0x1EE, 15 bytes
-	Nancy::SoundDescription _clickSound; // 0x1FD, kNormal
-	SceneChangeDescription _solveExitScene; // 0x21F
-	FlagDescription _flagOnSolve; // 0x229
-	uint16 _solveSoundDelay = 0; // 0x22C
-	Nancy::SoundDescription _solveSound; // 0x22E
-	SceneChangeDescription _exitScene; // 0x250
-	FlagDescription _flagOnExit; // 0x25A
-	Common::Rect _exitHotspot; // 0x25D
+	Common::String _imageName;
+	Common::Array<Common::Rect> _srcRects;
+	Common::Array<Common::Rect> _destRects;
+	uint16 _sequenceLength = 0;
+	Common::Array<byte> _correctSequence;
+	Nancy::SoundDescription _clickSound;
+	SceneChangeWithFlag _solveExitScene;
+	uint16 _solveSoundDelay = 0;
+	Nancy::SoundDescription _solveSound;
+	SceneChangeWithFlag _exitScene;
+	Common::Rect _exitHotspot;
 
 	SolveState _solveState = kNotSolved;
 	Graphics::ManagedSurface _image;

@@ -56,21 +56,21 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
-	Common::String _videoName; // 0x00
+	Common::String _videoName;
 	Common::String _paletteName;
 
-	uint16 _videoSceneChange = kMovieNoSceneChange; // 0x1C
-	byte _playerCursorAllowed = kPlayerCursorAllowed; // 0x1E
-	byte _playDirection = kPlayMovieForward; // 0x20, 2E
-	uint16 _firstFrame = 0; // 0x22, 30
-	uint16 _lastFrame = 0; // 0x24, 32
-	Common::Array<FlagAtFrame> _frameFlags; // 0x26
-	MultiEventFlagDescription _triggerFlags; // 0x80
+	uint16 _videoSceneChange = kMovieNoSceneChange;
+	byte _playerCursorAllowed = kPlayerCursorAllowed;
+	byte _playDirection = kPlayMovieForward;
+	uint16 _firstFrame = 0;
+	uint16 _lastFrame = 0;
+	Common::Array<FlagAtFrame> _frameFlags;
+	MultiEventFlagDescription _triggerFlags;
 
-	SoundDescription _sound; // 0xA8
+	SoundDescription _sound;
 
-	SceneChangeDescription _sceneChange; // 0xCA
-	Common::Array<SecondaryVideoDescription> _videoDescs; // 0xD4
+	SceneChangeDescription _sceneChange;
+	Common::Array<SecondaryVideoDescription> _videoDescs;
 
 protected:
 	Common::String getRecordTypeName() const override { return "PlaySecondaryMovie"; }

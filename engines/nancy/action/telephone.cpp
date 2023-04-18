@@ -87,13 +87,7 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 	textBuf[199] = '\0';
 	_dialAgainString = textBuf;
 	_reloadScene.readData(stream);
-	stream.skip(2);
-	_flagOnReload.label = stream.readSint16LE();
-	_flagOnReload.flag = stream.readUint16LE();
 	_exitScene.readData(stream);
-	stream.skip(2);
-	_flagOnExit.label = stream.readSint16LE();
-	_flagOnExit.flag = stream.readUint16LE();
 	readRect(stream, _exitHotspot);
 
 	uint numCalls = stream.readUint16LE();
@@ -113,9 +107,6 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 		textBuf[199] = '\0';
 		call.text = textBuf;
 		call.sceneChange.readData(stream);
-		stream.skip(2);
-		call.flag.label = stream.readSint16LE();
-		call.flag.flag = stream.readUint16LE();
 	}
 }
 
@@ -223,23 +214,20 @@ void Telephone::execute() {
 	case kActionTrigger:
 		switch (_callState) {
 		case kBadNumber:
-			NancySceneState.changeScene(_reloadScene);
+			_reloadScene.execute();
 			_calledNumber.clear();
-			NancySceneState.setEventFlag(_flagOnReload);
 			_state = kRun;
 			_callState = kWaiting;
 
 			break;
 		case kCall: {
 			PhoneCall &call = _calls[_selected];
-			NancySceneState.changeScene(call.sceneChange);
-			NancySceneState.setEventFlag(call.flag);
+			call.sceneChange.execute();
 
 			break;
 		}
 		case kHangUp:
-			NancySceneState.changeScene(_exitScene);
-			NancySceneState.setEventFlag(_flagOnExit);
+			_exitScene.execute();
 
 			break;
 		default:

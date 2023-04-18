@@ -94,15 +94,10 @@ void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_clickSound.read(stream, SoundDescription::kNormal);
 	_solveExitScene.readData(stream);
-	stream.skip(2); // shouldStopRendering, useless
-	_flagOnSolve.label = stream.readSint16LE();
-	_flagOnSolve.flag = stream.readByte();
 	_solveSoundDelay = stream.readUint16LE();
 	_solveSound.read(stream, SoundDescription::kNormal);
+
 	_exitScene.readData(stream);
-	stream.skip(2); // shouldStopRendering, useless
-	_flagOnExit.label = stream.readSint16LE();
-	_flagOnExit.flag = stream.readByte();
 	readRect(stream, _exitHotspot);
 }
 
@@ -130,7 +125,7 @@ void RotatingLockPuzzle::execute() {
 				}
 			}
 
-			NancySceneState.setEventFlag(_flagOnSolve);
+			NancySceneState.setEventFlag(_solveExitScene._flag);
 			_solveSoundPlayTime = g_nancy->getTotalPlayTime() + _solveSoundDelay * 1000;
 			_solveState = kPlaySound;
 			// fall through
@@ -155,10 +150,9 @@ void RotatingLockPuzzle::execute() {
 		g_nancy->_sound->stopSound(_solveSound);
 
 		if (_solveState == kNotSolved) {
-			NancySceneState.changeScene(_exitScene);
-			NancySceneState.setEventFlag(_flagOnExit);
+			_exitScene.execute();
 		} else {
-			NancySceneState.changeScene(_solveExitScene);
+			NancySceneState.changeScene(_solveExitScene._sceneChange);
 		}
 
 		finishExecution();

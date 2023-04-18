@@ -32,12 +32,10 @@ namespace Action {
 class Telephone : public ActionRecord, public RenderObject {
 public:
 	struct PhoneCall {
-		Common::Array<byte> phoneNumber; // 0x0, 11 bytes
-		Common::String soundName; // 0xB
-		Common::String text; // 0x15, 0xC8 bytes
-		SceneChangeDescription sceneChange; // 0xDD
-		// shouldStopRendering
-		FlagDescription flag; // 0xE7
+		Common::Array<byte> phoneNumber;
+		Common::String soundName;
+		Common::String text;
+		SceneChangeWithFlag sceneChange;
 	};
 
 	enum CallState { kWaiting, kButtonPress, kRinging, kBadNumber, kCall, kHangUp };
@@ -54,25 +52,22 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
-	Common::String _imageName; // 0x00
-	Common::Array<Common::Rect> _srcRects; // 0xA, 12
-	Common::Array<Common::Rect> _destRects; // 0xCA, 12
-	SoundDescription _genericDialogueSound; // 0x18A
-	SoundDescription _genericButtonSound; // 0x1AC
-	SoundDescription _ringSound; // 0x1CE
-	SoundDescription _dialToneSound; // 0x1F0
-	SoundDescription _dialAgainSound; // 0x212
-	SoundDescription _hangUpSound; // 0x234
-	Common::Array<Common::String> _buttonSoundNames; // 0x256, 12 * 0xA
-	Common::String _addressBookString; // 0x2CE, 0xC8 long
-	Common::String _dialAgainString; // 0x396
-	SceneChangeDescription _reloadScene; // 0x45E
-	FlagDescription _flagOnReload; // 0x468 ??
-	SceneChangeDescription _exitScene; // 0x46C
-	FlagDescription _flagOnExit; // 0x476
-	Common::Rect _exitHotspot; // 0x47A
-	// 0x48A numConvos
-	Common::Array<PhoneCall> _calls; // 0x48C
+	Common::String _imageName;
+	Common::Array<Common::Rect> _srcRects;
+	Common::Array<Common::Rect> _destRects;
+	SoundDescription _genericDialogueSound;
+	SoundDescription _genericButtonSound;
+	SoundDescription _ringSound;
+	SoundDescription _dialToneSound;
+	SoundDescription _dialAgainSound;
+	SoundDescription _hangUpSound;
+	Common::Array<Common::String> _buttonSoundNames;
+	Common::String _addressBookString;
+	Common::String _dialAgainString;
+	SceneChangeWithFlag _reloadScene;
+	SceneChangeWithFlag _exitScene;
+	Common::Rect _exitHotspot;
+	Common::Array<PhoneCall> _calls;
 
 	Common::Array<byte> _calledNumber;
 	Graphics::ManagedSurface _image;

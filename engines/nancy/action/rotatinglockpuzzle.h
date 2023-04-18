@@ -42,21 +42,18 @@ public:
 	void handleInput(NancyInput &input) override;
 	void onPause(bool pause) override;
 
-	Common::String _imageName; // 0x00
-	// 0xA numDials
-	Common::Array<Common::Rect> _srcRects; // 0xC, 10
-	Common::Array<Common::Rect> _destRects; // 0xAC, 8
-	Common::Array<Common::Rect> _upHotspots; // 0x12C, 8
-	Common::Array<Common::Rect> _downHotspots; // 0x1AC, 8
-	Common::Array<byte> _correctSequence; // 0x22C
-	Nancy::SoundDescription _clickSound; // 0x234, kNormal
-	SceneChangeDescription _solveExitScene; // 0x256
-	FlagDescription _flagOnSolve; // 0x260
-	uint16 _solveSoundDelay = 0; // 0x263
-	Nancy::SoundDescription _solveSound; // 0x265
-	SceneChangeDescription _exitScene; // 0x287
-	FlagDescription _flagOnExit; // 0x291
-	Common::Rect _exitHotspot; // 0x294
+	Common::String _imageName;
+	Common::Array<Common::Rect> _srcRects;
+	Common::Array<Common::Rect> _destRects;
+	Common::Array<Common::Rect> _upHotspots;
+	Common::Array<Common::Rect> _downHotspots;
+	Common::Array<byte> _correctSequence;
+	Nancy::SoundDescription _clickSound;
+	SceneChangeWithFlag _solveExitScene;
+	uint16 _solveSoundDelay = 0;
+	Nancy::SoundDescription _solveSound;
+	SceneChangeWithFlag _exitScene;
+	Common::Rect _exitHotspot;
 
 	SolveState _solveState = kNotSolved;
 	Graphics::ManagedSurface _image;

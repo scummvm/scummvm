@@ -38,8 +38,8 @@ void SceneChangeDescription::readData(Common::SeekableReadStream &stream, bool l
 	continueSceneSound = stream.readUint16LE();
 }
 
-void SceneChangeWithFlag::readData(Common::SeekableReadStream &stream) {
-	_sceneChange.readData(stream);
+void SceneChangeWithFlag::readData(Common::SeekableReadStream &stream, bool longFormat) {
+	_sceneChange.readData(stream, longFormat);
 	stream.skip(2); // shouldStopRendering
 	_flag.label = stream.readSint16LE();
 	_flag.flag = stream.readByte();

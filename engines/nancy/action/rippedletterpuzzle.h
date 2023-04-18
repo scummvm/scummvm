@@ -53,11 +53,9 @@ public:
 	SoundDescription _takeSound;
 	SoundDescription _dropSound;
 	SoundDescription _rotateSound;
-	SceneChangeDescription _solveExitScene;
+	SceneChangeWithFlag _solveExitScene;
 	SoundDescription _solveSound;
-	FlagDescription _flagOnSolve;
-	SceneChangeDescription _exitScene;
-	FlagDescription _flagOnExit;
+	SceneChangeWithFlag _exitScene;
 	Common::Rect _exitHotspot;
 
 	RenderObject _pickedUpPiece;

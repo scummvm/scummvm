@@ -79,9 +79,9 @@ public:
 	Time _frameTime;
 	FlagDescription _interruptCondition;
 	SceneChangeDescription _sceneChange;
-	MultiEventFlagDescription _flagsOnTrigger; // 0x2A
+	MultiEventFlagDescription _flagsOnTrigger;
 
-	Nancy::SoundDescription _sound; // 0x52
+	Nancy::SoundDescription _sound;
 
 	// Describes a single frame in this animation
 	Common::Array<Common::Rect> _srcRects;

@@ -58,15 +58,15 @@ public:
 	uint16 _videoFormat = kLargeVideoFormat;
 	uint16 _videoHotspots = kVideoHotspots;
 
-	uint16 _loopFirstFrame = 0; // 0x1E
-	uint16 _loopLastFrame = 0; // 0x20
-	uint16 _onHoverFirstFrame = 0; // 0x22
-	uint16 _onHoverLastFrame = 0; // 0x24
-	uint16 _onHoverEndFirstFrame = 0; // 0x26
-	uint16 _onHoverEndLastFrame = 0; // 0x28
-	SceneChangeDescription _sceneChange; // 0x2A
-	// unknown byte
-	Common::Array<SecondaryVideoDescription> _videoDescs; // 0x35
+	uint16 _loopFirstFrame = 0;
+	uint16 _loopLastFrame = 0;
+	uint16 _onHoverFirstFrame = 0;
+	uint16 _onHoverLastFrame = 0;
+	uint16 _onHoverEndFirstFrame = 0;
+	uint16 _onHoverEndLastFrame = 0;
+	SceneChangeDescription _sceneChange;
+
+	Common::Array<SecondaryVideoDescription> _videoDescs;
 
 protected:
 	Common::String getRecordTypeName() const override { return Common::String::format("PlaySecondaryVideoChan%i", channel); }
