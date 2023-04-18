@@ -190,6 +190,7 @@ else ifeq ($(platform), vita)
    CXX = arm-vita-eabi-g++$(EXE_EXT)
    AR = arm-vita-eabi-ar$(EXE_EXT) rcs
    DEFINES += -DVITA
+   LITE := 1
    STATIC_LINKING = 1
 
 # GCW0
