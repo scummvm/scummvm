@@ -175,8 +175,6 @@ void PasswordPuzzle::handleInput(NancyInput &input) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}
-
-		return;
 	}
 
 	for (uint i = 0; i < input.otherKbdInput.size(); ++i) {
