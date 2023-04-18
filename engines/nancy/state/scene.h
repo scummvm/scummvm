@@ -189,6 +189,7 @@ public:
 	SliderPuzzleState *_sliderPuzzleState;
 	RippedLetterPuzzleState *_rippedLetterPuzzleState;
 	TowerPuzzleState *_towerPuzzleState;
+	RiddlePuzzleState *_riddlePuzzleState;
 
 private:
 	void init();

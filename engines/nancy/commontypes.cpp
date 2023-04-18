@@ -38,6 +38,18 @@ void SceneChangeDescription::readData(Common::SeekableReadStream &stream, bool l
 	continueSceneSound = stream.readUint16LE();
 }
 
+void SceneChangeWithFlag::readData(Common::SeekableReadStream &stream) {
+	_sceneChange.readData(stream);
+	stream.skip(2); // shouldStopRendering
+	_flag.label = stream.readSint16LE();
+	_flag.flag = stream.readByte();
+}
+
+void SceneChangeWithFlag::execute() {
+	NancySceneState.changeScene(_sceneChange);
+	NancySceneState.setEventFlag(_flag);
+}
+
 void HotspotDescription::readData(Common::SeekableReadStream &stream) {
 	frameID = stream.readUint16LE();
 	readRect(stream, coords);

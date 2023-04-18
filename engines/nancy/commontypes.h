@@ -128,6 +128,14 @@ struct FlagDescription {
 	byte flag = 0;
 };
 
+struct SceneChangeWithFlag {
+	SceneChangeDescription _sceneChange;
+	FlagDescription _flag;
+
+	void readData(Common::SeekableReadStream &stream);
+	void execute();
+};
+
 // Describes a hotspot
 struct HotspotDescription {
 	uint16 frameID = 0;
@@ -255,6 +263,11 @@ struct RippedLetterPuzzleState {
 struct TowerPuzzleState {
 	Common::Array<Common::Array<int8>> order;
 	bool playerHasTriedPuzzle;
+};
+
+struct RiddlePuzzleState {
+	Common::Array<byte> solvedRiddleIDs;
+	int8 incorrectRiddleID;
 };
 
 } // End of namespace Nancy

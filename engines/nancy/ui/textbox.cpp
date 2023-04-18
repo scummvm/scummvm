@@ -49,7 +49,8 @@ Textbox::Textbox() :
 		_scrollbarPos(0),
 		_numLines(0),
 		_lastResponseisMultiline(false),
-		_highlightRObj(7) {}
+		_highlightRObj(7),
+		_fontIDOverride(-1) {}
 
 Textbox::~Textbox() {
 	delete _scrollbar;
@@ -144,7 +145,7 @@ void Textbox::drawTextbox() {
 
 	_numLines = 0;
 
-	const Font *font = g_nancy->_graphicsManager->getFont(tbox->conversationFontID);
+	const Font *font = g_nancy->_graphicsManager->getFont(_fontIDOverride == -1 ? tbox->conversationFontID : _fontIDOverride);
 	const Font *highlightFont = g_nancy->_graphicsManager->getFont(tbox->highlightConversationFontID);
 
 	uint maxWidth = _fullSurface.w - tbox->maxWidthDifference - tbox->borderWidth - 2;
@@ -296,6 +297,7 @@ void Textbox::clear() {
 	_hotspots.clear();
 	_scrollbar->resetPosition();
 	_numLines = 0;
+	_fontIDOverride = -1;
 	onScrollbarMove();
 	_needsRedraw = true;
 }

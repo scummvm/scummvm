@@ -116,7 +116,8 @@ Scene::Scene() :
 		_lightning(nullptr),
 		_sliderPuzzleState(nullptr),
 		_rippedLetterPuzzleState(nullptr),
-		_towerPuzzleState(nullptr) {}
+		_towerPuzzleState(nullptr),
+		_riddlePuzzleState(nullptr) {}
 
 Scene::~Scene()  {
 	delete _helpButton;
@@ -128,6 +129,8 @@ Scene::~Scene()  {
 	delete _lightning;
 	delete _sliderPuzzleState;
 	delete _rippedLetterPuzzleState;
+	delete _towerPuzzleState;
+	delete _riddlePuzzleState;
 }
 
 void Scene::process() {
@@ -502,8 +505,8 @@ void Scene::synchronize(Common::Serializer &ser) {
 
 		break;
 	}
-	case kGameTypeNancy2 :
-		if (!_rippedLetterPuzzleState || !_towerPuzzleState) {
+	case kGameTypeNancy2 : {
+		if (!_rippedLetterPuzzleState || !_towerPuzzleState || !_riddlePuzzleState) {
 			break;
 		}
 
@@ -527,7 +530,17 @@ void Scene::synchronize(Common::Serializer &ser) {
 			ser.syncArray(_towerPuzzleState->order[i].data(), 6, Common::Serializer::Byte);
 		}
 
+		byte numRiddles;
+		ser.syncAsByte(numRiddles);
+
+		if (ser.isLoading()) {
+			_riddlePuzzleState->solvedRiddleIDs.resize(numRiddles);
+		}
+
+		ser.syncArray(_riddlePuzzleState->solvedRiddleIDs.data(), numRiddles, Common::Serializer::Byte);
+
 		break;
+	}
 	default:
 		break;
 	}
@@ -570,6 +583,7 @@ void Scene::init() {
 		delete _sliderPuzzleState;
 		_sliderPuzzleState = new SliderPuzzleState();
 		_sliderPuzzleState->playerHasTriedPuzzle = false;
+		
 		break;
 	case kGameTypeNancy2:
 		delete _rippedLetterPuzzleState;
@@ -582,6 +596,11 @@ void Scene::init() {
 		_towerPuzzleState = new TowerPuzzleState();
 		_towerPuzzleState->playerHasTriedPuzzle = false;
 		_towerPuzzleState->order.resize(3, Common::Array<int8>(6, -1));
+
+		delete _riddlePuzzleState;
+		_riddlePuzzleState = new RiddlePuzzleState();
+		_riddlePuzzleState->incorrectRiddleID = -1;
+		
 		break;
 	default:
 		break;

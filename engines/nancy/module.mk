@@ -11,6 +11,7 @@ MODULE_OBJS = \
   action/recordtypes.o \
   action/rippedletterpuzzle.o \
   action/rotatinglockpuzzle.o \
+  action/riddlepuzzle.o \
   action/secondarymovie.o \
   action/secondaryvideo.o \
   action/sliderpuzzle.o \
