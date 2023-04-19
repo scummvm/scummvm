@@ -38,6 +38,26 @@ void open(int type);
 void close(int type);
 
 void m_new(int nargs);
+void m_dispose(int nargs);
+void m_name(int nargs);
+void m_status(int nargs);
+void m_error(int nargs);
+void m_lastError(int nargs);
+void m_open(int nargs);
+void m_play(int nargs);
+void m_stop(int nargs);
+void m_getTimeRange(int nargs);
+void m_getMovieBox(int nargs);
+void m_getTime(int nargs);
+void m_setTime(int nargs);
+void m_setVolume(int nargs);
+void m_length(int nargs);
+void m_setMovieBox(int nargs);
+void m_setTimeRange(int nargs);
+void m_addCallback(int nargs);
+void m_removeCallback(int nargs);
+void m_resetCallbacks(int nargs);
+void m_setBatch(int nargs);
 
 } // End of namespace BatQT
 
