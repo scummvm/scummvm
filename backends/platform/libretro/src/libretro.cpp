@@ -821,7 +821,7 @@ void retro_reset(void) {
 
 // Stubs
 void *retro_get_memory_data(unsigned type) {
-	return 0;
+	return NULL;
 }
 size_t retro_get_memory_size(unsigned type) {
 	return 0;
