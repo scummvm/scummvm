@@ -80,9 +80,6 @@ void PersonScreen::InternalEvents() {
 }
 
 void PersonScreen::Draw(pyrodactyl::event::Info &info, const std::string &id) {
-	warning("STUB: PersonScreen::Draw()");
-
-#if 0
 	bg.Draw();
 
 	if (info.PersonValid(id)) {
@@ -95,7 +92,6 @@ void PersonScreen::Draw(pyrodactyl::event::Info &info, const std::string &id) {
 		Rect clip = cur_sp->DialogClip(PST_NORMAL);
 		gImageManager.Draw(img.x, img.y, cur_sp->Img(), &clip);
 	}
-#endif
 }
 
 void PersonScreen::Cache(Info &info, const std::string &id, pyrodactyl::level::Level &level) {
