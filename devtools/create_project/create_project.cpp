@@ -1628,10 +1628,13 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		createModuleList(setup.srcDir + "/graphics", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/gui", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/audio", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/video", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/image", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/math", setup.defines, setup.testDirs, in, ex);
+
+		if (getFeatureBuildState("mt32emu", setup.features))
+			createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, setup.testDirs, in, ex);
+
 		if (setup.tests) {
 			createModuleList(setup.srcDir + "/test", setup.defines, setup.testDirs, in, ex);
 		} else {
