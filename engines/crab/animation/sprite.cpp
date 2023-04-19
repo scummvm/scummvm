@@ -241,9 +241,6 @@ Vector2i Sprite::CamFocus() {
 // Purpose: Draw the sprite
 //------------------------------------------------------------------------
 void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera) {
-	warning("STUB: Sprite::Draw()");
-
-#if 0
 	using namespace pyrodactyl::image;
 	using namespace pyrodactyl::text;
 
@@ -325,7 +322,6 @@ void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera) {
 									10);
 		destinationRect.Draw(-camera.x, -camera.y, 0, 200, 0, 254);
 	}
-#endif
 }
 
 void Sprite::DrawPopup(pyrodactyl::ui::ParagraphData &pop, const Rect &camera) {
@@ -340,6 +336,7 @@ void Sprite::DrawPopup(pyrodactyl::ui::ParagraphData &pop, const Rect &camera) {
 // Purpose: Handle the movement in a level for the player only
 //------------------------------------------------------------------------
 void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &sc, const Common::Event &Event) {
+
 	int num = 0;
 	info.StatGet(id, pyrodactyl::stat::STAT_SPEED, num);
 	++num;
@@ -372,6 +369,7 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 			YVel(0.0f);
 	} else // Keyboard movement
 	{
+		#if 0
 		// Disable destination as soon as player presses a direction key
 		// X axis
 		if (gInput.State(IG_LEFT)) {
@@ -392,6 +390,7 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 			YVel(player_speed * sc.walk_vel_mod.y);
 		} else if (!ai_data.dest.active)
 			YVel(0.0f);
+		#endif
 	}
 
 	UpdateMove(input.HandleEvents(Event));
