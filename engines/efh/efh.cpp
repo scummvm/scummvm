@@ -164,7 +164,7 @@ Common::Error EfhEngine::run() {
 				_redrawNeededFl = true;
 			}
 			break;
-		case Common::KEYCODE_F5: { // Original is using CTRL-S
+		case Common::KEYCODE_F5: { // Original is using CTRL-S, which is mapped to F5 in utils
 			for (uint counter = 0; counter < 2; ++counter) {
 				clearBottomTextZone(0);
 				displayCenteredString("Are You Sure You Want To Save?", 24, 296, 160);
@@ -185,7 +185,7 @@ Common::Error EfhEngine::run() {
 
 			}
 			break;
-		case Common::KEYCODE_F7: { // Original is using CTRL-L
+		case Common::KEYCODE_F7: { // Original is using CTRL-L, which is mapped to F7 in utils
 			for (uint counter = 0; counter < 2; ++counter) {
 				clearBottomTextZone(0);
 				displayCenteredString("Are You Sure You Want To Load?", 24, 296, 160);

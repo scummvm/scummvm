@@ -151,7 +151,7 @@ Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
 	Common::KeyCode lastChar = Common::KEYCODE_INVALID;
 
 	uint32 lastMs = _system->getMillis();
-	while (delay > 0 && lastChar == Common::KEYCODE_INVALID) {
+	while (delay > 0 && lastChar == Common::KEYCODE_INVALID && !shouldQuit()) {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
@@ -176,7 +176,7 @@ Common::KeyCode EfhEngine::getInput(int16 delay) {
 	Common::KeyCode retVal = Common::KEYCODE_INVALID;
 
 	uint32 lastMs = _system->getMillis();
-	while (delay > 0) {
+	while (delay > 0 && !shouldQuit()) {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
@@ -194,13 +194,39 @@ Common::KeyCode EfhEngine::getInput(int16 delay) {
 	return retVal;
 }
 
+Common::KeyCode EfhEngine::getKeyCode(const Common::Event &event) {
+	Common::KeyCode retVal = event.kbd.keycode;
+	if (retVal == Common::KEYCODE_LCTRL || retVal == Common::KEYCODE_RCTRL || retVal == Common::KEYCODE_RALT || retVal == Common::KEYCODE_LALT)
+		retVal = Common::KEYCODE_INVALID;
+	else  if (event.kbd.flags & Common::KBD_CTRL) {
+		switch (retVal) {
+		case Common::KEYCODE_l:
+			retVal = Common::KEYCODE_F7;
+			break;
+		case Common::KEYCODE_s:
+			retVal = Common::KEYCODE_F5;
+			break;
+		case Common::KEYCODE_x:
+		case Common::KEYCODE_q:
+			_shouldQuit = true;
+			break;
+		default:
+			break;
+		}
+	} else if (event.kbd.flags & Common::KBD_ALT && retVal == Common::KEYCODE_F4) {
+		_shouldQuit = true;
+	}
+
+	return retVal;
+}
+
 Common::KeyCode EfhEngine::waitForKey() {
 	debugC(1, kDebugUtils, "waitForKey");
 	Common::KeyCode retVal = Common::KEYCODE_INVALID;
 	Common::Event event;
 
 	uint32 lastMs = _system->getMillis();
-	while (retVal == Common::KEYCODE_INVALID) { // TODO: Check shouldquit()
+	while (retVal == Common::KEYCODE_INVALID && !shouldQuit()) {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
@@ -210,9 +236,8 @@ Common::KeyCode EfhEngine::waitForKey() {
 		}
 
 		_system->getEventManager()->pollEvent(event);
-		if (event.type == Common::EVENT_KEYUP) {
-			retVal = event.kbd.keycode;
-		}
+		if (event.type == Common::EVENT_KEYUP)
+			retVal = getKeyCode(event);
 	}
 
 	return retVal;
@@ -236,12 +261,11 @@ Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
 	Common::KeyCode retVal = Common::KEYCODE_INVALID;
 
 	uint32 lastMs = _system->getMillis();
-	while (retVal == Common::KEYCODE_INVALID) {
+	while (retVal == Common::KEYCODE_INVALID && !shouldQuit()) {
 		_system->getEventManager()->pollEvent(event);
 
-		if (event.type == Common::EVENT_KEYUP) {
-			retVal = event.kbd.keycode;
-		}
+		if (event.type == Common::EVENT_KEYUP)
+			retVal = getKeyCode(event);
 
 		if (animFl) {
 			_system->delayMillis(20);
@@ -265,12 +289,11 @@ Common::KeyCode EfhEngine::getInputBlocking() {
 	Common::KeyCode retVal = Common::KEYCODE_INVALID;
 
 	uint32 lastMs = _system->getMillis();
-	while (retVal == Common::KEYCODE_INVALID) {
+	while (retVal == Common::KEYCODE_INVALID && !shouldQuit()) {
 		_system->getEventManager()->pollEvent(event);
 
-		if (event.type == Common::EVENT_KEYUP) {
-			retVal = event.kbd.keycode;
-		}
+		if (event.type == Common::EVENT_KEYUP)
+			retVal = getKeyCode(event);
 
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
