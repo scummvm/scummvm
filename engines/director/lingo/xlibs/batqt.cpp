@@ -68,7 +68,27 @@ const char *BatQT::fileNames[] = {
 };
 
 static MethodProto xlibMethods[] = {
-	{ "new",		BatQT::m_new,			 0, 0,	400 },	// D4
+	{ "new",			BatQT::m_new,			0, 0,	400 },	// D4
+	{ "dispose",		BatQT::m_dispose,		1, 1,	400 },	// D4
+	{ "name",			BatQT::m_name,			0, 0,	400 },	// D4
+	{ "status",			BatQT::m_status,		0, 0,	400 },	// D4
+	{ "error",			BatQT::m_error,			1, 1,	400 },	// D4
+	{ "lastError",		BatQT::m_lastError,		0, 0,	400 },	// D4
+	{ "open",			BatQT::m_open,			2, 2,	400 },	// D4
+	{ "play",			BatQT::m_play,			3, 3,	400 },	// D4
+	{ "stop",			BatQT::m_stop,			0, 0,	400 },  // D4
+	{ "getTimeRange",	BatQT::m_getTimeRange,	0, 0,	400 },  // D4
+	{ "getMovieBox",	BatQT::m_getMovieBox,	0, 0,	400 },  // D4
+	{ "getTime",		BatQT::m_getTime,		0, 0,	400 },  // D4
+	{ "setTime",		BatQT::m_setTime,		1, 1,	400 },  // D4
+	{ "setVolume",		BatQT::m_setVolume,		1, 1,	400 },  // D4
+	{ "length",			BatQT::m_length,		0, 0,	400 },  // D4
+	{ "setMovieBox",	BatQT::m_setMovieBox,	4, 4,	400 },  // D4
+	{ "setTimeRange",	BatQT::m_setTimeRange,	2, 2,	400 },  // D4
+	{ "addCallback",	BatQT::m_addCallback,	1, 1,	400 },  // D4
+	{ "removeCallback",	BatQT::m_removeCallback,1, 1,	400 },  // D4
+	{ "resetCallbacks",	BatQT::m_resetCallbacks,0, 0,	400 },  // D4
+	{ "setBatch",		BatQT::m_setBatch,		1, 1,	400 },  // D4
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
@@ -88,12 +108,131 @@ void BatQT::close(int type) {
 }
 
 
-BatQTXObject::BatQTXObject(ObjectType ObjectType) : Object<BatQTXObject>("FindSys") {
+BatQTXObject::BatQTXObject(ObjectType ObjectType) : Object<BatQTXObject>("BatQt") {
 	_objType = ObjectType;
 }
 
 void BatQT::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
+
+void BatQT::m_dispose(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_dispose", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void BatQT::m_name(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_name", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(""));
+}
+
+void BatQT::m_status(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_status", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(0));
+}
+
+void BatQT::m_error(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_error", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(""));
+}
+
+void BatQT::m_lastError(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_lastError", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(""));
+}
+
+void BatQT::m_open(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_open", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(0));
+}
+
+void BatQT::m_play(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_play", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(0));
+}
+
+void BatQT::m_stop(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_stop", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(0));
+}
+
+void BatQT::m_getTimeRange(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_getTimeRange", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(""));
+}
+
+void BatQT::m_getMovieBox(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_getMovieBox", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum("0,0,320,240"));
+}
+
+void BatQT::m_getTime(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_getTime", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(0));
+}
+
+void BatQT::m_setTime(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_setTime", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(""));
+}
+
+void BatQT::m_setVolume(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_setVolume", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(""));
+}
+
+void BatQT::m_length(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_length", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(0));
+}
+
+void BatQT::m_setMovieBox(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_setMovieBox", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(0));
+}
+
+void BatQT::m_setTimeRange(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_setTimeRange", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(0));
+}
+
+void BatQT::m_addCallback(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_addCallback", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(0));
+}
+
+void BatQT::m_removeCallback(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_removeCallback", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(0));
+}
+
+void BatQT::m_resetCallbacks(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_resetCallbacks", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(0));
+}
+
+void BatQT::m_setBatch(int nargs) {
+	g_lingo->printSTUBWithArglist("BatQT::m_setBatch", nargs);
+	g_lingo->dropStack(nargs);
+}
+
 
 } // End of namespace Director
