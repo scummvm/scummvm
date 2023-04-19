@@ -232,11 +232,11 @@ void FileIO::m_new(int nargs) {
 	}
 
 	// Enforce target to the created files so they do not mix up
-	Common::String filename = lastPathComponent(path, dirSeparator);
-	Common::String dir = firstPathComponents(path, dirSeparator);
+	Common::String filenameOrig = lastPathComponent(path, dirSeparator);
 
+	Common::String filename = filenameOrig;
 	if (!filename.hasPrefixIgnoreCase(prefix))
-		filename = dir + prefix + filename;
+		filename = prefix + filenameOrig;
 
 	if (option.equalsIgnoreCase("read")) {
 		me->_inStream = saves->openForLoading(filename);
