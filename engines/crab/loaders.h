@@ -88,14 +88,21 @@ bool LoadEnum(T &val, const Common::String &name, rapidxml::xml_node<char> *node
 bool LoadRect(SDL_Rect &rect, rapidxml::xml_node<char> *node, const bool &echo = true,
 	const Common::String &x_name = "x", const Common::String &y_name = "y", const Common::String &w_name = "w", const Common::String &h_name = "h");
 
+#endif
+
+// Make linker happy by temporarily defining SDL_COLOR
+struct SDL_Color {
+	uint32 r;
+	uint32 g;
+	uint32 b;
+};
+
 //Load Color
 bool LoadColor(SDL_Color &col, rapidxml::xml_node<char> *node, const bool &echo = true,
 	const Common::String &r_name = "r", const Common::String &g_name = "g", const Common::String &b_name = "b");
 
 //Shortcut to load integer color index to a number
 bool LoadColor(int &col, rapidxml::xml_node<char> *node, const bool &echo = true);
-
-#endif
 
 // Load two dimensional coordinates
 template<typename T>

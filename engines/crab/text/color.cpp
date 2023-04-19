@@ -35,10 +35,8 @@ namespace Crab {
 using namespace pyrodactyl::text;
 
 void ColorPool::Load(const std::string &filename) {
-	warning("STUB: ColorPool::Load()");
-#if 0
 	pool.clear();
-	XMLDoc col_list(filename);
+	XMLDoc col_list(filename.c_str());
 	if (col_list.ready()) {
 		rapidxml::xml_node<char> *node = col_list.Doc()->first_node("colors");
 		for (rapidxml::xml_node<char> *n = node->first_node("color"); n != NULL; n = n->next_sibling("color")) {
@@ -47,7 +45,6 @@ void ColorPool::Load(const std::string &filename) {
 			pool.push_back(c);
 		}
 	}
-#endif
 }
 
 SDL_Color &ColorPool::Get(const int &num) {

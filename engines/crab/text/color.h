@@ -41,13 +41,6 @@ namespace pyrodactyl {
 namespace text {
 // Storage pool for saving colors from one file, then using them
 
-// Make linker happy by temporarily defining SDL_COLOR
-struct SDL_Color {
-	uint32 r;
-	uint32 g;
-	uint32 b;
-};
-
 class ColorPool {
 
 	std::vector<SDL_Color> pool;
