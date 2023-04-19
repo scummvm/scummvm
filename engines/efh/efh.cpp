@@ -440,11 +440,13 @@ void EfhEngine::initEngine() {
 	fileName = "titlsong";
 	readFileToBuffer(fileName, _titleSong);
 	setDefaultNoteDuration();
-	Common::KeyCode lastInput = playSong(_titleSong);
+	Common::KeyCode lastInput = Common::KEYCODE_INVALID;
 
-	if (lastInput != Common::KEYCODE_ESCAPE && _loadSaveSlot == -1) {
+	if (_loadSaveSlot == -1)
+		lastInput = playSong(_titleSong);
+
+	if (lastInput != Common::KEYCODE_ESCAPE && _loadSaveSlot == -1)
 		playIntro();
-	}
 
 	loadImageSet(6, _circleImageBuf, _circleImageSubFileArray, _decompBuf);
 	readImpFile(99, false);
