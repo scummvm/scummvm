@@ -221,18 +221,19 @@ Common::String Overlay::getRecordTypeName() const {
 void Overlay::setFrame(uint frame) {
 	_currentFrame = frame;
 	
-	// Workaround for the fireplace in nancy2 scene 2491,
-	// where one of the rects is invalid. Assumes all
-	// rects in a single animation have the same dimensions
+	// Workaround for:
+	// - the fireplace in nancy2 scene 2491, where one of the rects is invalid.
+	// - the ball thing in nancy2 scene 1562, where one of the rects is twice as tall as it should be
+	// Assumes all rects in a single animation have the same dimensions
 	Common::Rect srcRect = _srcRects[frame];
-	if (!srcRect.isValidRect()) {
+	if (!srcRect.isValidRect() || srcRect.height() > _srcRects[0].height()) {
 		srcRect.setWidth(_srcRects[0].width());
 		srcRect.setHeight(_srcRects[0].height());
 	}
 
 	_drawSurface.create(_fullSurface, srcRect);
 
-	setTransparent(_transparency == kPlayOverlayPlain);
+	setTransparent(_transparency == kPlayOverlayTransparent);
 
 	_needsRedraw = true;
 }
