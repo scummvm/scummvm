@@ -44,6 +44,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <sstream>
 
 #if 0
 #include <SDL2/SDL.h>
