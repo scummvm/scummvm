@@ -84,7 +84,7 @@ void FindSys::m_new(int nargs) {
 }
 
 void FindSys::m_do(int nargs) {
-	g_lingo->push(Common::String("C:\\WINDOWS"));
+	g_lingo->push(Common::String("C:\\WINDOWS\\"));
 }
 
 } // End of namespace Director
