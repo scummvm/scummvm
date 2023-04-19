@@ -103,9 +103,6 @@ void ItemSlot::LoadState(rapidxml::xml_node<char> *node) {
 // Purpose: Draw
 //------------------------------------------------------------------------
 void ItemSlot::Draw() {
-
-	warning("STUB: ItemSlot::Draw()");
-#if 0
 	StateButton::Draw();
 
 	if (!empty)
@@ -113,7 +110,6 @@ void ItemSlot::Draw() {
 
 	if (unread)
 		pyrodactyl::image::gImageManager.NotifyDraw(x + w, y);
-#endif
 }
 
 //------------------------------------------------------------------------
