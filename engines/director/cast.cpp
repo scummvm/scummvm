@@ -518,6 +518,22 @@ void Cast::loadCast() {
 		delete r;
 	}
 
+	// Cast library mapping, used in V5 and up
+	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('M', 'C', 's', 'L'))) != nullptr) {
+		loadCastLibMapping(*r);
+		delete r;
+	}
+
+	Common::Array<uint16> cinf = _castArchive->getResourceIDList(MKTAG('C', 'i', 'n', 'f'));
+	if (cinf.size() > 0) {
+		debugC(2, kDebugLoading, "****** Loading %d CastLibInfos Cinf", cinf.size());
+
+		for (Common::Array<uint16>::iterator iterator = cinf.begin(); iterator != cinf.end(); ++iterator) {
+			loadCastLibInfo(*(r = _castArchive->getResource(MKTAG('C', 'i', 'n', 'f'), *iterator)), *iterator);
+			delete r;
+		}
+	}
+
 	Common::Array<uint16> vwci = _castArchive->getResourceIDList(MKTAG('V', 'W', 'C', 'I'));
 	if (vwci.size() > 0) {
 		debugC(2, kDebugLoading, "****** Loading %d CastInfos VWCI", vwci.size());
@@ -1497,6 +1513,40 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		_castsScriptIds[ci->scriptId] = id;
 
 	_castsInfo[id] = ci;
+}
+
+void Cast::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
+	if (debugChannelSet(8, kDebugLoading)) {
+		stream.hexdump(stream.size());
+	}
+	stream.readUint32(); // header size
+	uint32 count = stream.readUint32();
+	stream.readUint16();
+	uint32 unkCount = stream.readUint32() + 1;
+	for (uint32 i = 0; i < unkCount; i++) {
+		stream.readUint32();
+	}
+	for (uint32 i = 0; i < count; i++) {
+		int nameSize = stream.readByte() + 1;
+		Common::String name = stream.readString('\0', nameSize);
+		int pathSize = stream.readByte() + 1;
+		Common::String path = stream.readString('\0', pathSize);
+		if (pathSize > 1)
+			stream.readUint16();
+		stream.readUint16();
+		uint16 itemCount = stream.readUint16();
+		stream.readUint16();
+		uint16 libId = stream.readUint16();
+		debugC(5, kDebugLoading, "Cast::loadCastLibMapping: name: %s, path: %s, itemCount: %d, libId: %d", name.c_str(), path.c_str(), itemCount, libId);
+	}
+	return;
+}
+
+void Cast::loadCastLibInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
+	if (debugChannelSet(8, kDebugLoading)) {
+		stream.hexdump(stream.size());
+	}
+	debugC(5, kDebugLoading, "Cast::loadCastLibInfo(): %d", id);
 }
 
 Common::CodePage Cast::getFileEncoding() {
