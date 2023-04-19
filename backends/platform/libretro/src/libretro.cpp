@@ -671,15 +671,6 @@ bool retro_load_game_special(unsigned game_type, const struct retro_game_info *i
 }
 
 void retro_run(void) {
-
-	if (retro_emu_thread_exited())
-		retro_deinit_emu_thread();
-
-	if (!retro_emu_thread_initialized()) {
-		environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, NULL);
-		return;
-	}
-
 	bool updated = false;
 	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated){
 		update_variables();
@@ -763,6 +754,14 @@ void retro_run(void) {
 			if (!skip_frame)
 				retro_switch_to_emu_thread();
 
+			if (retro_emu_thread_exited())
+				retro_deinit_emu_thread();
+
+			if (!retro_emu_thread_initialized()) {
+				environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, NULL);
+				return;
+			}
+
 			/* Retrieve audio */
 			samples_count = 0;
 			if (audio_video_enable & 2) {
@@ -799,13 +798,13 @@ void retro_run(void) {
 }
 
 void retro_unload_game(void) {
-	if (!retro_emu_thread_initialized())
-		return;
-	while (!retro_emu_thread_exited()) {
-		retroQuit();
-		retro_switch_to_emu_thread();
+	if (retro_emu_thread_initialized()) {
+		while (!retro_emu_thread_exited()) {
+			retroQuit();
+			retro_switch_to_emu_thread();
+		}
+		retro_deinit_emu_thread();
 	}
-	retro_deinit_emu_thread();
 
 	if (retro_get_scummvm_res() == Common::kNoError)
 		log_cb(RETRO_LOG_INFO, "ScummVM exited successfully.\n");
