@@ -209,6 +209,7 @@ Common::KeyCode EfhEngine::getKeyCode(const Common::Event &event) {
 		case Common::KEYCODE_x:
 		case Common::KEYCODE_q:
 			_shouldQuit = true;
+			retVal = Common::KEYCODE_INVALID;
 			break;
 		default:
 			break;
