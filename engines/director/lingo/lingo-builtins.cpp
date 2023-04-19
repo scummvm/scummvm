@@ -1154,34 +1154,35 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 	}
 
 	Datum r;
+	Common::Array<Common::String> fileNameList;
+
+	// First, mix in any files injected from the quirks
+	Common::Archive *cache = SearchMan.getArchive(kQuirksCacheArchive);
+	if (cache) {
+		Common::ArchiveMemberList files;
+
+		cache->listMatchingMembers(files, path + (path.empty() ? "*" : "/*"), true);
+
+		for (auto &fi : files) {
+			fileNameList.push_back(Common::lastPathComponent(fi->getName(), '/'));
+		}
+	}
+
+	// Next, mix in files from the game filesystem (if they exist)
 	if (d.exists()) {
 		Common::FSList f;
 		if (!d.getChildren(f, Common::FSNode::kListAll)) {
 			warning("Cannot access directory %s", path.c_str());
 		} else {
-			if ((uint)fileNum < f.size()) {
-				// here, we sort all the fileNames
-				Common::Array<Common::String> fileNameList;
-				for (uint i = 0; i < f.size(); i++)
-					fileNameList.push_back(f[i].getName());
-
-				// Now mix in any files coming from the quirks
-				Common::Archive *cache = SearchMan.getArchive(kQuirksCacheArchive);
-
-				if (cache) {
-					Common::ArchiveMemberList files;
-
-					cache->listMatchingMembers(files, path + (path.empty() ? "*" : "/*"), true);
-
-					for (auto &fi : files) {
-						fileNameList.push_back(fi->getName().c_str());
-					}
-				}
-
-				Common::sort(fileNameList.begin(), fileNameList.end());
-				r = Datum(fileNameList[fileNum]);
-			}
+			for (uint i = 0; i < f.size(); i++)
+				fileNameList.push_back(f[i].getName());
 		}
+	}
+
+	if (!fileNameList.empty() && (uint)fileNum < fileNameList.size()) {
+		// Sort files alphabetically
+		Common::sort(fileNameList.begin(), fileNameList.end());
+		r = Datum(fileNameList[fileNum]);
 	}
 
 	g_lingo->push(r);
