@@ -49,7 +49,7 @@ namespace pyrodactyl {
 namespace text {
 class TextManager {
 	// The collection of stored fonts
-	// std::vector<TTF_Font *> font;
+	std::vector<Graphics::Font *> font;
 
 	// The size of the cache
 	int cache_size;
@@ -86,7 +86,7 @@ class TextManager {
 	ColorPool colpool;
 
 	// The rectangle used to store the darkened rectangle coordinates
-	//SDL_Rect rect;
+	SDL_Rect rect;
 
 	int Search(const std::string &text, int col, FontKey fontid);
 	int FindFreeSlot();
@@ -102,8 +102,10 @@ public:
 	void Quit();
 	void Reset();
 
+
+	Graphics::Font *GetFont(const FontKey &fontid) { return font[fontid]; }
+	Graphics::ManagedSurface *RenderTextBlended(const FontKey &font, const std::string &text, const int &color);
 #if 0
-	TTF_Font *GetFont(const FontKey &fontid) { return font[fontid]; }
 	SDL_Surface *RenderTextBlended(const FontKey &font, const std::string &text, const int &color);
 #endif
 
