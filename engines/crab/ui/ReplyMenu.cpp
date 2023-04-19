@@ -146,9 +146,6 @@ void ReplyMenu::Draw() {
 }
 
 void ReplyMenu::Cache(Info &info, ConversationData &dat) {
-	warning("STUB: ReplyMenu::Cache()");
-
-#if 0
 	// Some replies are locked, which means the other replies move up and take their place -
 	// which is why we need two count variables
 	unsigned int reply_count = 0, element_count = 0;
@@ -160,8 +157,9 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 
 			tone.value.at(element_count) = dat.reply.at(reply_count).tone;
 
-			std::string text = SDL_GetScancodeName(gInput.iv[IU_REPLY_0 + element_count].key);
-			text += ". " + i->text;
+			//std::string text = SDL_GetScancodeName(gInput.iv[IU_REPLY_0 + element_count].key);
+			//text += ". " + i->text;
+			std::string text = i->text;
 			info.InsertName(text);
 
 			if (element_count == 0)
@@ -179,7 +177,6 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 	// Unused element buttons are hidden
 	for (; element_count < element.size(); element_count++)
 		element.at(element_count).visible = false;
-	#endif
 }
 
 void ReplyMenu::SetUI() {
