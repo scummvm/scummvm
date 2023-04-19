@@ -594,6 +594,12 @@ int ScummEngine::readVar(uint var) {
 						return _roomVars[var] - 1;
 					}
 				}
+				// Mod for Backyard Baseball 2001 online competitive play: don't give powerups for double plays
+				// Return true for this variable, which dictates whether powerups are disabled, but only in this script
+				// that detects double plays (among other things)
+				if (_game.id == GID_BASEBALL2001 && _currentRoom == 3 && vm.slot[_currentScript].number == 2099 && var == 32 && readVar(399) == 1) {
+					return 1;
+				}
 			}
 #endif
 
