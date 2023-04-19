@@ -103,10 +103,6 @@ bool Trigger::Evaluate(int lhs, int rhs) {
 }
 
 bool Trigger::Evaluate(pyrodactyl::event::Info &info) {
-
-	warning("STUB: Trigger::Evaluate()");
-
-#if 0
 	using namespace pyrodactyl::people;
 	using namespace pyrodactyl::stat;
 
@@ -198,8 +194,6 @@ bool Trigger::Evaluate(pyrodactyl::event::Info &info) {
 	default:
 		break;
 	}
-
-#endif
 
 	return false;
 }
