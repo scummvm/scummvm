@@ -250,7 +250,6 @@ void TMXMap::Reset() {
 // Purpose: Draw functions
 //------------------------------------------------------------------------
 void TMXMap::DrawDebug(const Rect &camera) {
-#if 0
 	using namespace pyrodactyl::text;
 
 	for (auto i = area_trig.begin(); i != area_trig.end(); ++i)
@@ -270,8 +269,8 @@ void TMXMap::DrawDebug(const Rect &camera) {
 
 	for (auto i = area_stairs.begin(); i != area_stairs.end(); ++i) {
 		i->Draw(-camera.x, -camera.y, 0, 254, 0, 254);
-		gTextManager.Draw(i->rect.x - camera.x + 100, i->rect.y - camera.y, NumberToString(i->modifier.x), 0);
-		gTextManager.Draw(i->rect.x - camera.x + 200, i->rect.y - camera.y, NumberToString(i->modifier.y), 0);
+		//gTextManager.Draw(i->rect.x - camera.x + 100, i->rect.y - camera.y, NumberToString(i->modifier.x).c_str(), 0);
+		//gTextManager.Draw(i->rect.x - camera.x + 200, i->rect.y - camera.y, NumberToString(i->modifier.y).c_str(), 0);
 	}
 
 	// Draw the pathfinding grid (SZ)
@@ -313,7 +312,6 @@ void TMXMap::DrawDebug(const Rect &camera) {
 	prev = *j;
 	}
 	}*/
-#endif
 }
 
 //------------------------------------------------------------------------
