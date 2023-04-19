@@ -85,7 +85,7 @@ void Overlay::readData(Common::SeekableReadStream &stream) {
 
 	_sceneChange.readData(stream);
 	_flagsOnTrigger.readData(stream);
-	_sound.read(stream, SoundDescription::kNormal);
+	_sound.readData(stream, SoundDescription::kNormal);
 	uint numViewportFrames = stream.readUint16LE();
 
 	if (_overlayType == kPlayOverlayAnimated) {

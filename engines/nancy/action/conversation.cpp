@@ -58,7 +58,7 @@ void ConversationSound::readData(Common::SeekableReadStream &stream) {
 	ser.setVersion(g_nancy->getGameType());
 
 	if (ser.getVersion() >= kGameTypeNancy2) {
-		_sound.read(stream, SoundDescription::kNormal);
+		_sound.readData(stream, SoundDescription::kNormal);
 	}
 
 	char *rawText = new char[1500];
@@ -67,10 +67,10 @@ void ConversationSound::readData(Common::SeekableReadStream &stream) {
 	delete[] rawText;
 
 	if (ser.getVersion() <= kGameTypeNancy1) {
-		_sound.read(stream, SoundDescription::kNormal);
+		_sound.readData(stream, SoundDescription::kNormal);
 	}
 
-	_responseGenericSound.read(stream, SoundDescription::kNormal);
+	_responseGenericSound.readData(stream, SoundDescription::kNormal);
 	ser.skip(1);
 	ser.syncAsByte(_conditionalResponseCharacterID);
 	ser.syncAsByte(_goodbyeResponseCharacterID);

@@ -56,9 +56,9 @@ void PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
 	buf[19] = '\0';
 	_password = buf;
 	_solveExitScene.readData(stream);
-	_solveSound.read(stream, SoundDescription::kNormal);
+	_solveSound.readData(stream, SoundDescription::kNormal);
 	_failExitScene.readData(stream);
-	_failSound.read(stream, SoundDescription::kNormal);
+	_failSound.readData(stream, SoundDescription::kNormal);
 	_exitScene.readData(stream);
 	readRect(stream, _exitHotspot);
 }

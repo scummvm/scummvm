@@ -92,10 +92,10 @@ void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	stream.skip(8 - numDials);
 
-	_clickSound.read(stream, SoundDescription::kNormal);
+	_clickSound.readData(stream, SoundDescription::kNormal);
 	_solveExitScene.readData(stream);
 	_solveSoundDelay = stream.readUint16LE();
-	_solveSound.read(stream, SoundDescription::kNormal);
+	_solveSound.readData(stream, SoundDescription::kNormal);
 
 	_exitScene.readData(stream);
 	readRect(stream, _exitHotspot);

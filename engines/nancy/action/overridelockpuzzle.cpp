@@ -67,13 +67,13 @@ void OverrideLockPuzzle::readData(Common::SeekableReadStream &stream) {
 	readRectArray(stream, _lightDests, num);
 	stream.skip((10 - num) * 16);
 
-	_buttonSound.read(stream, SoundDescription::kNormal);
-	_wrongSound.read(stream, SoundDescription::kNormal);
+	_buttonSound.readData(stream, SoundDescription::kNormal);
+	_wrongSound.readData(stream, SoundDescription::kNormal);
 
 	_buttonPopTime = stream.readUint16LE();
 
 	_solveExitScene.readData(stream);
-	_solveSound.read(stream, SoundDescription::kNormal);
+	_solveSound.readData(stream, SoundDescription::kNormal);
 
 	_exitScene.readData(stream);
 	readRect(stream, _exitHotspot);

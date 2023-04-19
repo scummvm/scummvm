@@ -74,7 +74,7 @@ public:
 	// Used when changing scenes
 	void stopAndUnloadSpecificSounds();
 
-	static Audio::SeekableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
+	static Audio::SeekableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 overrideSamplesPerSec = 0);
 
 protected:
 	struct Channel {

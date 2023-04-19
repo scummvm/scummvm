@@ -172,15 +172,16 @@ struct SecondaryVideoDescription {
 
 // Descrbes a single sound. Combines four different structs found in the data in one
 struct SoundDescription {
-	enum Type { kNormal, kMenu, kDIGI, kScene };
+	enum Type { kNormal = 0, kDIGI = 1, kMenu = 2, kScene = 3 };
 
 	Common::String name;
 	uint16 channelID = 0;
 	uint16 numLoops = 0;
 	uint16 volume = 0;
 	uint16 panAnchorFrame = 0;
+	uint32 samplesPerSec = 0;
 
-	void read(Common::SeekableReadStream &stream, Type type);
+	void readData(Common::SeekableReadStream &stream, Type type);
 };
 
 // Structs inside nancy.dat, which contains all the data that was

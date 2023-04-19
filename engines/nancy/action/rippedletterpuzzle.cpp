@@ -87,12 +87,12 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 		_solveRotations[i] = stream.readByte();
 	}
 
-	_takeSound.read(stream, SoundDescription::kNormal);
-	_dropSound.read(stream, SoundDescription::kNormal);
-	_rotateSound.read(stream, SoundDescription::kNormal);
+	_takeSound.readData(stream, SoundDescription::kNormal);
+	_dropSound.readData(stream, SoundDescription::kNormal);
+	_rotateSound.readData(stream, SoundDescription::kNormal);
 
 	_solveExitScene.readData(stream);
-	_solveSound.read(stream, SoundDescription::kNormal);
+	_solveSound.readData(stream, SoundDescription::kNormal);
 
 	_exitScene.readData(stream);
 	readRect(stream, _exitHotspot);

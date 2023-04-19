@@ -189,7 +189,7 @@ bool readHISHeader(Common::SeekableReadStream *stream, SoundType &type, uint16 &
 	return true;
 }
 
-Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
+Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint overrideSamplesPerSec) {
 	char buf[22];
 
 	stream->read(buf, 22);
@@ -242,7 +242,7 @@ Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStre
 	Common::SeekableSubReadStream *subStream = new Common::SeekableSubReadStream(stream, stream->pos(), stream->pos() + size, disposeAfterUse);
 
 	if (type == kSoundTypeRaw || type == kSoundTypeDiamondware)
-		return Audio::makeRawStream(subStream, samplesPerSec, flags, DisposeAfterUse::YES);
+		return Audio::makeRawStream(subStream, overrideSamplesPerSec == 0 ? samplesPerSec : overrideSamplesPerSec, flags, DisposeAfterUse::YES);
 	else
 		return Audio::makeVorbisStream(subStream, DisposeAfterUse::YES);
 }
@@ -264,7 +264,7 @@ void SoundManager::loadCommonSounds(IFF *boot) {
 		chunk = boot->getChunkStream(s);
 		if (chunk) {
 			SoundDescription &desc = _commonSounds.getOrCreateVal(s);
-			desc.read(*chunk, SoundDescription::kNormal);
+			desc.readData(*chunk, SoundDescription::kNormal);
 			g_nancy->_sound->loadSound(desc);
 			_channels[desc.channelID].isPersistent = true;
 
@@ -276,7 +276,7 @@ void SoundManager::loadCommonSounds(IFF *boot) {
 	chunk = boot->getChunkStream("MSND"); // channel 28
 	if (chunk) {
 		SoundDescription &desc = _commonSounds.getOrCreateVal("MSND");
-		desc.read(*chunk, SoundDescription::kMenu);
+		desc.readData(*chunk, SoundDescription::kMenu);
 		g_nancy->_sound->loadSound(desc);
 		_channels[desc.channelID].isPersistent = true;
 
@@ -310,7 +310,7 @@ void SoundManager::loadSound(const SoundDescription &description, bool panning) 
 
 	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(description.name + (g_nancy->getGameType() == kGameTypeVampire ? ".dwd" : ".his"));
 	if (file) {
-		_channels[description.channelID].stream = makeHISStream(file, DisposeAfterUse::YES);
+		_channels[description.channelID].stream = makeHISStream(file, DisposeAfterUse::YES, description.samplesPerSec);
 	}
 }
 

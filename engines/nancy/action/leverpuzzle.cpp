@@ -79,11 +79,11 @@ void LeverPuzzle::readData(Common::SeekableReadStream &stream) {
 		_correctSequence.push_back(stream.readByte());
 	}
 
-	_moveSound.read(stream, SoundDescription::kNormal);
-	_noMoveSound.read(stream, SoundDescription::kNormal);
+	_moveSound.readData(stream, SoundDescription::kNormal);
+	_noMoveSound.readData(stream, SoundDescription::kNormal);
 	_solveExitScene.readData(stream);
 	_solveSoundDelay = stream.readUint16LE();
-	_solveSound.read(stream, SoundDescription::kNormal);
+	_solveSound.readData(stream, SoundDescription::kNormal);
 	_exitScene.readData(stream);
 	readRect(stream, _exitHotspot);
 }

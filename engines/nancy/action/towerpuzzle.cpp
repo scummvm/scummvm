@@ -80,12 +80,12 @@ void TowerPuzzle::readData(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	_takeSound.read(stream, SoundDescription::kNormal);
-	_dropSound.read(stream, SoundDescription::kNormal);
+	_takeSound.readData(stream, SoundDescription::kNormal);
+	_dropSound.readData(stream, SoundDescription::kNormal);
 
 	_solveExitScene._sceneChange.readData(stream);
 	stream.skip(2);
-	_solveSound.read(stream, SoundDescription::kNormal);
+	_solveSound.readData(stream, SoundDescription::kNormal);
 	_solveExitScene._flag.label = stream.readSint16LE();
 	_solveExitScene._flag.flag = stream.readByte();
 
