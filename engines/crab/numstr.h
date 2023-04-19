@@ -65,16 +65,9 @@ Common::String NumberToString(T Number) {
 
 template<typename T>
 T StringToNumber(char *Text) {
-	T result = 0;
-	char *num = Text;
-
-	if (Text[0] == '-')
-		num++;
-
-	for (int i = 0; num[i]; i++)
-		result = (result * 10) + (num[i] - '0');
-
-	return Text[0] == '-' ? -result : result;
+	std::stringstream ss(Text);
+	T result;
+	return (ss >> result) ? result : 0;
 }
 
 template<typename T>
