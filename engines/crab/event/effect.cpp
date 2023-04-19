@@ -129,10 +129,6 @@ void Effect::ChangeOpinion(pyrodactyl::event::Info &info, pyrodactyl::people::Op
 
 bool Effect::Execute(pyrodactyl::event::Info &info, const std::string &player_id,
 					 std::vector<EventResult> &result, std::vector<EventSeqInfo> &end_seq) {
-
-	warning("STUB: Effect::Execute()");
-
-#if 0
 	if (type < EFF_MOVE) {
 		switch (type) {
 		case EFF_VAR:
@@ -287,8 +283,6 @@ bool Effect::Execute(pyrodactyl::event::Info &info, const std::string &player_id
 
 		result.push_back(r);
 	}
-#endif
-
 	return false;
 }
 
