@@ -402,6 +402,7 @@ bool DrasculaEngine::runCurrentChapter() {
 	int framesWithoutAction = 0;
 
 	_rightMouseButton = 0;
+	_leftMouseButtonHeld = false;
 
 	previousMusic = -1;
 
@@ -629,15 +630,21 @@ bool DrasculaEngine::runCurrentChapter() {
 			selectVerb(kVerbNone);
 		}
 
+		if (_leftMouseButton == 0)
+			_leftMouseButtonHeld = false;
+
 		if (_leftMouseButton == 1 && _menuBar) {
 			selectVerbFromBar();
-		} else if (_leftMouseButton == 1 && takeObject == 0) {
+		} else if (_leftMouseButton == 1 && takeObject == 0 && !_leftMouseButtonHeld) {
 			if (verify1())
 				return true;
-			delay(100);
-		} else if (_leftMouseButton == 1 && takeObject == 1) {
+			delay(50);
+			_leftMouseButtonHeld = true;
+		} else if (_leftMouseButton == 1 && takeObject == 1 && !_leftMouseButtonHeld) {
 			if (verify2())
 				return true;
+			delay(50);
+			_leftMouseButtonHeld = true;
 		}
 
 		_menuBar = (_mouseY < 24 && !_menuScreen) ? true : false;

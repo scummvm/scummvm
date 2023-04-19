@@ -464,6 +464,7 @@ public:
 	int _color;
 	int musicStopped;
 	int _mouseX, _mouseY, _leftMouseButton, _rightMouseButton;
+	bool _leftMouseButtonHeld;
 
 	Common::KeyState _keyBuffer[KEYBUFSIZE];
 	int _keyBufferHead;
