@@ -29,6 +29,7 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/PathfindingAgent.h"
 
 namespace Crab {
@@ -104,10 +105,8 @@ void PathfindingAgent::SetDestination(Vector2f d, bool r) {
 }
 
 void PathfindingAgent::Update(long timeslice) {
-	warning("STUB: PathfindingAgent::Update()");
 
-#if 0
-	long prevTime = SDL_GetTicks();
+	long prevTime = g_system->getMillis();
 	long time = timeslice;
 
 	double dTempCost;
@@ -216,13 +215,12 @@ void PathfindingAgent::Update(long timeslice) {
 
 		// Update the time
 		if (timeslice != 0) {
-			time -= (SDL_GetTicks() - prevTime);
-			prevTime = SDL_GetTicks();
+			time -= (g_system->getMillis() - prevTime);
+			prevTime = g_system->getMillis();
 		}
-	} while (!isDone() && (time >= 0 || timeslice == 0));
 
+	} while (!isDone() && (time >= 0 || timeslice == 0));
 	noSolution = true; // You can't get there from here (SZ)
-#endif
 }
 
 bool PathfindingAgent::isDone() const {
