@@ -64,6 +64,27 @@ bool Image::Load(Graphics::Surface *surface) {
 #endif
 }
 
+bool Image::Load(Graphics::ManagedSurface *surface) {
+	Delete();
+	texture = new Graphics::ManagedSurface(*surface);
+	w = surface->w;
+	h = surface->h;
+	return true;
+#if 0
+	// Create texture from surface pixels
+	texture = SDL_CreateTextureFromSurface(gRenderer, surface);
+	if (texture == NULL) {
+		fprintf(stderr, "Unable to create texture from SDL_Surface! SDL Error: %s\n", SDL_GetError());
+		return false;
+	}
+
+	// Get image dimensions
+	w = surface->w;
+	h = surface->h;
+	return true;
+#endif
+}
+
 bool Image::Load(const Common::String &path) {
 	// Get rid of preexisting texture
 	Delete();

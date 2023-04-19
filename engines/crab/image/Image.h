@@ -89,6 +89,7 @@ public:
 	bool Load(const Common::String &path);
 	bool Load(rapidxml::xml_node<char> *node, const char *name);
 	bool Load(Graphics::Surface *surface);
+	bool Load(Graphics::ManagedSurface *surface);
 
 	// Draw the openGL texture
 	void Draw(const int &x, const int &y, Common::Rect *clip = NULL, const TextureFlipType &flip = FLIP_NONE);
