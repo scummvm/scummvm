@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/text/TextManager.h"
 #include "crab/XMLDoc.h"
 
@@ -45,9 +47,6 @@ TextManager gTextManager;
 // Purpose: Initialize, set cache etc
 //------------------------------------------------------------------------
 void TextManager::Init() {
-	warning("STUB: TextManager::Init()");
-
-#if 0
 	// First, delete everything that exists
 	Quit();
 
@@ -73,14 +72,18 @@ void TextManager::Init() {
 				unsigned int pos = StringToNumber<unsigned int>(id->value());
 				if (font.size() <= pos)
 					font.resize(pos + 1);
+#if 0
 				font.at(pos) = TTF_OpenFont(path->value(), StringToNumber<int>(size->value()));
 				TTF_SetFontHinting(font.at(pos), TTF_HINTING_LIGHT);
+#endif
+				Common::File file;
+				FileOpen(path->value(), &file);
+				font.at(pos) = Graphics::loadTTFFont(file, StringToNumber<int>(size->value()));
 			}
 		}
 	}
 
-	colpool.Load(gFilePath.colors);
-#endif
+	colpool.Load(gFilePath.colors.c_str());
 }
 
 void TextManager::Reset() {
@@ -123,54 +126,93 @@ SDL_Surface *TextManager::RenderTextBlended(const FontKey &font, const std::stri
 }
 #endif
 
+Graphics::ManagedSurface *TextManager::RenderTextBlended(const FontKey &font, const std::string &text, const int &color) {
+	SDL_Color sdlcolor = colpool.Get(color);
+	uint32 col = g_engine->_format->ARGBToColor(255, sdlcolor.r, sdlcolor.g, sdlcolor.b);
+
+	Graphics::ManagedSurface *surf = nullptr;
+
+	if (text.empty()) {
+		Common::Rect rec = GetFont(font)->getBoundingBox(" ");
+		int h = rec.height();
+		surf = new Graphics::ManagedSurface(rec.width(), h + (h / 2), *g_engine->_format);
+		GetFont(font)->drawString(surf, " ", 0, 0, rec.width(), col);
+	} else {
+		Common::Rect rec = GetFont(font)->getBoundingBox(text.c_str());
+		int h = rec.height();
+		surf = new Graphics::ManagedSurface(rec.width(), h + (h / 2), *g_engine->_format);
+		GetFont(font)->drawString(surf, text.c_str(), 0, 0, rec.width(), col);
+	}
+
+	return surf;
+}
+
 //------------------------------------------------------------------------
 // Purpose: Draw text
 //------------------------------------------------------------------------
 void TextManager::Draw(const int &x, const int &y, const std::string &text, const int &color,
-					   const FontKey &font, const Align &align, const bool &background) {
-	warning("STUB: TextManager::Draw()");
+					   const FontKey &fontk, const Align &align, const bool &background) {
+	//warning("STUB: TextManager::Draw()");
 
-#if 0
-	int pos = Search(text, color, font);
+	int pos = Search(text, color, fontk);
 	if (pos == -1) {
 		pos = FindFreeSlot();
+#if 0
 		SDL_Surface *surf = RenderTextBlended(font, text, color);
-
+#endif
+		Graphics::ManagedSurface *surf = RenderTextBlended(fontk, text, color);
 		cache[pos].img.Delete();
 		cache[pos].empty = false;
 
 		cache[pos].text = text;
 		cache[pos].col = color;
-		cache[pos].font = font;
+		cache[pos].font = fontk;
 
 		cache[pos].img.Load(surf);
+
+		delete surf;
+#if 0
 		SDL_FreeSurface(surf);
+#endif
 	}
 
 	if (background) {
 		rect.w = cache[pos].img.W() + (2 * pad_bg.x);
 		rect.h = cache[pos].img.H() + (2 * pad_bg.y);
-
+#if 0
 		SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 128);
+#endif
 
 		if (align == ALIGN_LEFT) {
 			rect.x = x - pad_bg.x;
 			rect.y = y - pad_bg.y;
 
+#if 0
 			SDL_RenderFillRect(gRenderer, &rect);
+#endif
+			uint32 col = g_engine->_format->ARGBToColor(128, 0, 0, 0);
+			g_engine->_screen->fillRect(Common::Rect(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h), col);
 			cache[pos].img.Draw(x, y);
 		} else if (align == ALIGN_CENTER) {
 			rect.x = x - cache[pos].img.W() / 2 - pad_bg.x;
 			rect.y = y - cache[pos].img.H() / 2 - pad_bg.y;
 
+#if 0
 			SDL_RenderFillRect(gRenderer, &rect);
+#endif
+			uint32 col = g_engine->_format->ARGBToColor(128, 0, 0, 0);
+			g_engine->_screen->fillRect(Common::Rect(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h), col);
 			cache[pos].img.Draw(x - cache[pos].img.W() / 2, y - cache[pos].img.H() / 2);
 		} else {
 			rect.x = x - cache[pos].img.W() - pad_bg.x;
 			rect.y = y - pad_bg.y;
 
+#if 0
 			SDL_RenderFillRect(gRenderer, &rect);
+#endif
+			uint32 col = g_engine->_format->ARGBToColor(128, 0, 0, 0);
+			g_engine->_screen->fillRect(Common::Rect(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h), col);
 			cache[pos].img.Draw(x - cache[pos].img.W(), y);
 		}
 	} else {
@@ -181,7 +223,6 @@ void TextManager::Draw(const int &x, const int &y, const std::string &text, cons
 		else
 			cache[pos].img.Draw(x - cache[pos].img.W(), y);
 	}
-#endif
 }
 
 void TextManager::Draw(const int &x, int y, const std::string &text, const int &color, const FontKey &font, const Align &align,
@@ -224,7 +265,7 @@ void TextManager::Draw(const int &x, int y, const std::string &text, const int &
 // Purpose: Quit
 //------------------------------------------------------------------------
 void TextManager::Quit() {
-	warning("TextManager::Quit()");
+	warning("STUB: TextManager::Quit()");
 
 #if 0
 	for (auto i = font.begin(); i != font.end(); ++i)

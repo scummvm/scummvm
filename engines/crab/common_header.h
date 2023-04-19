@@ -64,6 +64,8 @@
 
 #include "graphics/surface.h"
 #include "graphics/managed_surface.h"
+#include "graphics/font.h"
+#include "graphics/fonts/ttf.h"
 
 #define RAPIDXML_NO_EXCEPTIONS
 #include "crab/rapidxml/rapidxml.hpp"
