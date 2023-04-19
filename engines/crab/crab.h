@@ -83,6 +83,7 @@ protected:
 
 public:
 	Graphics::Screen *_screen = nullptr;
+	Graphics::PixelFormat *_format = nullptr;
 	Graphics::ManagedSurface *_renderSurface = nullptr;
 	Common::FSNode _gameDataDir;
 

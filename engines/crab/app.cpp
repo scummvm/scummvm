@@ -122,8 +122,6 @@ bool App::Init() {
 	pyrodactyl::input::gInput.Init();
 
 	LoadSettings("res/settings.xml");
-	gScreenSettings.cur.w = 1920;
-	gScreenSettings.cur.h = 1080;
 	gScreenSettings.in_game = false;
 	return true;
 }
