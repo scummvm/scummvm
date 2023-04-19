@@ -26,6 +26,8 @@
 #include "engines/util.h"
 
 #include "efh/efh.h"
+
+#include "common/config-manager.h"
 #include "efh/constants.h"
 
 namespace Efh {
@@ -135,6 +137,7 @@ Common::Error EfhEngine::run() {
 			goNorthWest();
 			_imageSetSubFilesIdx = 147;
 			break;
+		case Common::KEYCODE_1:
 		case Common::KEYCODE_F1:
 			if (_teamChar[0]._id != -1) {
 				handleStatusMenu(1, _teamChar[0]._id);
@@ -143,6 +146,7 @@ Common::Error EfhEngine::run() {
 				_redrawNeededFl = true;
 			}
 			break;
+		case Common::KEYCODE_2:
 		case Common::KEYCODE_F2:
 			if (_teamChar[1]._id != -1) {
 				handleStatusMenu(1, _teamChar[1]._id);
@@ -151,6 +155,7 @@ Common::Error EfhEngine::run() {
 				_redrawNeededFl = true;
 			}
 			break;
+		case Common::KEYCODE_3:
 		case Common::KEYCODE_F3:
 			if (_teamChar[2]._id != -1) {
 				handleStatusMenu(1, _teamChar[2]._id);
@@ -200,27 +205,35 @@ Common::Error EfhEngine::run() {
 			displayLowStatusScreen(true);
 
 		} break;
+
 		// debug cases to test sound
-		case Common::KEYCODE_1:
-			generateSound(13);
-			break;
-		case Common::KEYCODE_2:
-			generateSound(14);
-			break;
-		case Common::KEYCODE_3:
-			generateSound(15);
-			break;
 		case Common::KEYCODE_4:
-			generateSound(5);
+			if (ConfMan.getBool("dump_scripts"))
+				generateSound(13);
 			break;
 		case Common::KEYCODE_5:
-			generateSound(10);
+			if (ConfMan.getBool("dump_scripts"))
+				generateSound(14);
 			break;
 		case Common::KEYCODE_6:
-			generateSound(9);
+			if (ConfMan.getBool("dump_scripts"))
+				generateSound(15);
 			break;
 		case Common::KEYCODE_7:
-			generateSound(16);
+			if (ConfMan.getBool("dump_scripts"))
+				generateSound(5);
+			break;
+		case Common::KEYCODE_8:
+			if (ConfMan.getBool("dump_scripts"))
+				generateSound(10);
+			break;
+		case Common::KEYCODE_9:
+			if (ConfMan.getBool("dump_scripts"))
+				generateSound(9);
+			break;
+		case Common::KEYCODE_0:
+			if (ConfMan.getBool("dump_scripts"))
+				generateSound(16);
 			break;
 		default:
 			if (retVal != Common::KEYCODE_INVALID)
