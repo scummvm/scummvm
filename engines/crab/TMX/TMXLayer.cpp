@@ -43,16 +43,13 @@ bool Layer::Load(rapidxml::xml_node<char> *node) {
 }
 
 bool MapLayer::Load(const std::string &path, rapidxml::xml_node<char> *node) {
-	warning("STUB: MapLayer::Load()");
-
-#if 0
 	if (Layer::Load(node)) {
 		if (NodeValid("image", node, false)) {
 			type = LAYER_IMAGE;
 			rapidxml::xml_node<char> *imgnode = node->first_node("image");
 
 			if (imgnode->first_attribute("source") != NULL)
-				img.Load(path + imgnode->first_attribute("source")->value());
+				img.Load((path + imgnode->first_attribute("source")->value()).c_str());
 		} else {
 			type = LAYER_NORMAL;
 			int i = 0;
@@ -104,7 +101,6 @@ bool MapLayer::Load(const std::string &path, rapidxml::xml_node<char> *node) {
 
 		return true;
 	}
-#endif
 
 	return false;
 }

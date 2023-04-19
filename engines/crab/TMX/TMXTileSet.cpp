@@ -80,9 +80,6 @@ void TileSetGroup::Load(const std::string &path, rapidxml::xml_node<char> *node)
 }
 
 void TileSet::Draw(const Vector2i &pos, const TileInfo &tile) {
-	warning("STUB: TileSet::Draw()");
-
-#if 0
 	if (tile.gid != 0) {
 		clip.x = ((tile.gid - first_gid) % total_cols) * tile_w;
 		clip.y = ((tile.gid - first_gid) / total_cols) * tile_h;
@@ -92,7 +89,6 @@ void TileSet::Draw(const Vector2i &pos, const TileInfo &tile) {
 		/*if(tile.flip != FLIP_NONE && GameDebug)
 		pyrodactyl::text::gTextManager.Draw(pos.x,pos.y,NumberToString(tile.flip),0);*/
 	}
-#endif
 }
 
 void TileSetGroup::Draw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos) {
