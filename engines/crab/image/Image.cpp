@@ -147,17 +147,17 @@ void Image::Draw(const int &x, const int &y, Common::Rect *clip, const TextureFl
 	if (clip != NULL) {
 		srcRect = *clip;
 	} else {
-		srcRect = Common::Rect{x, y, w + x, h + y};
+		srcRect = Common::Rect{static_cast<int16>(x), static_cast<int16>(y), static_cast<int16>(w + x), static_cast<int16>(h + y)};
 	}
 
-	Common::Rect destRect {x, y, w + x, h + y};
+	Common::Rect destRect {static_cast<int16>(x), static_cast<int16>(y), static_cast<int16>(w + x), static_cast<int16>(h + y)};
 	if (clip != NULL) {
 		destRect.right = clip->right;
 		destRect.bottom = clip->bottom;
 	}
 
 	// TODO: Do proper clipping
-	g_engine->_screen->blitFrom(*texture, Common::Point(x, y));
+	g_engine->_screen->blitFrom(*texture, Common::Point(static_cast<int16>(x), static_cast<int16>(y)));
 	//g_engine->_renderSurface->blitFrom(*texture, Common::Point(x, y));
 	//g_engine->_renderSurface->copyRectToSurface(texture->getPixels(), texture->pitch, x, y, texture->w, texture->h);
 #if 0
@@ -215,13 +215,13 @@ void Image::Draw(const int &x, const int &y, Common::Rect *clip, const TextureFl
 }
 
 void Image::Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &flip) {
-	Common::Rect srcRect {0, 0, w + 0, h + 0};
-	Common::Rect destRect {x, y, w + x, h + y};
+	Common::Rect srcRect {0, 0, static_cast<int16>(w + 0), static_cast<int16>(h + 0)};
+	Common::Rect destRect {static_cast<int16>(x), static_cast<int16>(y), static_cast<int16>(w + x), static_cast<int16>(h + y)};
 
 	if (clip) {
-		srcRect = {clip->x, clip->y, clip->x + clip->w, clip->y + clip->h};
-		destRect.right = clip->w + x;
-		destRect.bottom = clip->h + y;
+		srcRect = {static_cast<int16>(clip->x), static_cast<int16>(clip->y), static_cast<int16>(clip->x + clip->w), static_cast<int16>(clip->y + clip->h)};
+		destRect.right = static_cast<int16>(clip->w + x);
+		destRect.bottom = static_cast<int16>(clip->h + y);
 	}
 
 	Graphics::Surface *s = new Graphics::Surface();
