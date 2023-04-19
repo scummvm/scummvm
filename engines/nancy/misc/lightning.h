@@ -19,15 +19,12 @@
  *
  */
 
-#ifndef NANCY_ACTION_LIGHTNING_H
-#define NANCY_ACTION_LIGHTNING_H
+#ifndef NANCY_MISC_LIGHTNING_H
+#define NANCY_MISC_LIGHTNING_H
 
 #include "engines/nancy/commontypes.h"
 
 namespace Nancy {
-
-class RenderObject;
-
 namespace Misc {
 
 // Special class that handles The Vampire Diaries' lightning screen effect.
@@ -73,4 +70,4 @@ private:
 } // End of namespace Misc
 } // End of namespace Nancy
 
-#endif // NANCY_ACTION_LIGHTNING_H
+#endif // NANCY_MISC_LIGHTNING_H

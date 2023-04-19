@@ -128,9 +128,14 @@ protected:
 	Common::String getRecordTypeName() const override { return "LightningOn"; }
 };
 
-class SpecialEffect : public Unimplemented {
+class SpecialEffect : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	byte _type = 1;
+	uint16 _fadeToBlackTime = 0;
+	uint16 _frameTime = 0;
 
 protected:
 	Common::String getRecordTypeName() const override { return "SpecialEffect"; }

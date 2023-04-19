@@ -38,6 +38,7 @@
 #include "engines/nancy/ui/clock.h"
 
 #include "engines/nancy/misc/lightning.h"
+#include "engines/nancy/misc/specialeffect.h"
 
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Scene);
@@ -114,6 +115,7 @@ Scene::Scene() :
 		_difficulty(0),
 		_activeConversation(nullptr),
 		_lightning(nullptr),
+		_specialEffect(nullptr),
 		_sliderPuzzleState(nullptr),
 		_rippedLetterPuzzleState(nullptr),
 		_towerPuzzleState(nullptr),
@@ -127,6 +129,7 @@ Scene::~Scene()  {
 	delete _inventoryBoxOrnaments;
 	delete _clock;
 	delete _lightning;
+	delete _specialEffect;
 	delete _sliderPuzzleState;
 	delete _rippedLetterPuzzleState;
 	delete _towerPuzzleState;
@@ -211,6 +214,10 @@ void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte con
 
 	if (paletteID != -1) {
 		_sceneState.nextScene.paletteID = paletteID;
+	}
+
+	if (_specialEffect) {
+		_specialEffect->onSceneChange();
 	}
 
 	_state = kLoad;
@@ -641,6 +648,15 @@ void Scene::beginLightning(int16 distance, uint16 pulseTime, int16 rgbPercent) {
 	}
 }
 
+void Scene::specialEffect(byte type, uint16 fadeToBlackTime, uint16 frameTime) {
+	if (_specialEffect) {
+		delete _specialEffect;
+	}
+
+	_specialEffect = new Misc::SpecialEffect(type, fadeToBlackTime, frameTime);
+	_specialEffect->init();
+}
+
 void Scene::load() {
 	clearSceneData();
 
@@ -713,12 +729,26 @@ void Scene::load() {
 
 	_timers.sceneTime = 0;
 
+	if (_specialEffect) {
+		_specialEffect->afterSceneChange();
+	}
+
 	_state = kStartSound;
 }
 
 void Scene::run() {
 	if (_gameStateRequested != NancyState::kNone) {
 		g_nancy->setState(_gameStateRequested);
+
+		return;
+	}
+
+	if (_specialEffect && _specialEffect->isInitialized()) {
+		if (_specialEffect->isDone()) {
+			delete _specialEffect;
+			_specialEffect = nullptr;
+			g_nancy->_graphicsManager->redrawAll();
+		}
 
 		return;
 	}

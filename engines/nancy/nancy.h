@@ -121,6 +121,7 @@ public:
 	HINT *_hintData;
 	SPUZ *_sliderPuzzleData;
 	CLOK *_clockData;
+	SPEC *_specialEffectData;
 
 	Common::HashMap<Common::String, ImageChunk> _imageChunks;
 

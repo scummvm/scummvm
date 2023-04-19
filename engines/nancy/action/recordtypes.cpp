@@ -207,7 +207,14 @@ void LightningOn::readData(Common::SeekableReadStream &stream) {
 }
 
 void SpecialEffect::readData(Common::SeekableReadStream &stream) {
-	stream.skip(5);
+	_type = stream.readByte();
+	_fadeToBlackTime = stream.readUint16LE();
+	_frameTime = stream.readUint16LE();
+}
+
+void SpecialEffect::execute() {
+	NancySceneState.specialEffect(_type, _fadeToBlackTime, _frameTime);
+	_isDone = true;
 }
 
 void LightningOn::execute() {

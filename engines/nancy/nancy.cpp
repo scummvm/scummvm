@@ -78,6 +78,7 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	_hintData = nullptr;
 	_sliderPuzzleData = nullptr;
 	_clockData = nullptr;
+	_specialEffectData = nullptr;
 }
 
 NancyEngine::~NancyEngine() {
@@ -98,6 +99,7 @@ NancyEngine::~NancyEngine() {
 	delete _hintData;
 	delete _sliderPuzzleData;
 	delete _clockData;
+	delete _specialEffectData;
 }
 
 NancyEngine *NancyEngine::create(GameType type, OSystem *syst, const NancyGameDescription *gd) {
@@ -391,6 +393,11 @@ void NancyEngine::bootGameEngine() {
 	chunkStream = boot->getChunkStream("CLOK");
 	if (chunkStream) {
 		_clockData = new CLOK(chunkStream);
+	}
+
+	chunkStream = boot->getChunkStream("SPEC");
+	if (chunkStream) {
+		_specialEffectData = new SPEC(chunkStream);
 	}
 
 	_sound->loadCommonSounds(boot);

@@ -413,6 +413,16 @@ CLOK::CLOK(Common::SeekableReadStream *chunkStream) {
 	delete chunkStream;
 }
 
+SPEC::SPEC(Common::SeekableReadStream *chunkStream) {
+	assert(chunkStream);
+
+	chunkStream->seek(0);
+
+	fadeToBlackNumFrames = chunkStream->readByte();
+	fadeToBlackFrameTime = chunkStream->readUint16LE();
+	crossDissolveNumFrames = chunkStream->readUint16LE();
+}
+
 ImageChunk::ImageChunk(Common::SeekableReadStream *chunkStream) {
 	assert(chunkStream);
 

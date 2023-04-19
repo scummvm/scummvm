@@ -48,7 +48,7 @@ void GraphicsManager::init() {
 	g_nancy->_resource->loadImage(g_nancy->_imageChunks["OB0"].imageName, _object0);
 }
 
-void GraphicsManager::draw() {
+void GraphicsManager::draw(bool updateScreen) {
 	if (_isSuppressed) {
 		_isSuppressed = false;
 		return;
@@ -109,7 +109,9 @@ void GraphicsManager::draw() {
 	}
 
 	// Draw the screen
-	_screen.update();
+	if (updateScreen) {
+		_screen.update();
+	}
 }
 
 void GraphicsManager::loadFonts(Common::SeekableReadStream *chunkStream) {
@@ -319,6 +321,12 @@ void GraphicsManager::rotateBlit(const Graphics::ManagedSurface &src, Graphics::
 	}
 }
 
+void GraphicsManager::crossDissolve(const Graphics::ManagedSurface &from, const Graphics::ManagedSurface &to, byte alpha, Graphics::ManagedSurface &inResult) {
+	assert(from.getBounds() == to.getBounds() && to.getBounds() == inResult.getBounds());
+	inResult.blitFrom(from, Common::Point());
+	inResult.transBlitFrom(to, -1, false, 0, alpha);
+}
+
 void GraphicsManager::debugDrawToScreen(const Graphics::ManagedSurface &surf) {
 	_screen.blitFrom(surf, Common::Point());
 	_screen.update();
@@ -354,6 +362,13 @@ void GraphicsManager::grabViewportObjects(Common::Array<RenderObject *> &inArray
 			inArray.push_back(obj);
 		}
 	}
+}
+
+void GraphicsManager::screenshotViewport(Graphics::ManagedSurface &inSurf) {
+	draw(false);
+	inSurf.free();
+	inSurf.create(g_nancy->_viewportData->bounds.width(), g_nancy->_viewportData->bounds.height(), _screenPixelFormat);
+	inSurf.blitFrom(_screen, g_nancy->_viewportData->screenPosition, g_nancy->_viewportData->bounds);
 }
 
 // Draw a given screen-space rectangle to the screen

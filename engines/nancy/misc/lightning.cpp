@@ -189,5 +189,5 @@ void Lightning::handleThunder() {
 	}
 }
 
-} // End of namespace Action
 } // End of namespace Misc
+} // End of namespace Nancy

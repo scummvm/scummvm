@@ -208,6 +208,14 @@ struct CLOK {
 	uint16 frameTime;
 };
 
+struct SPEC {
+	SPEC(Common::SeekableReadStream *chunkStream);
+
+	byte fadeToBlackNumFrames;
+	uint16 fadeToBlackFrameTime;
+	byte crossDissolveNumFrames;
+};
+
 struct ImageChunk {
 	ImageChunk() : width(0), height(0) {}
 	ImageChunk(Common::SeekableReadStream *chunkStream);

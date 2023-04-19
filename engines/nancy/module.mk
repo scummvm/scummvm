@@ -35,6 +35,7 @@ MODULE_OBJS = \
   state/map.o \
   state/scene.o \
   misc/lightning.o \
+  misc/specialeffect.o \
   commontypes.o \
   console.o \
   cursor.o \
