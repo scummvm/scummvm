@@ -1889,6 +1889,21 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		g_lingo->push(d);
 		return;
 	}
+	if (obj.type == RECT) {
+		if (propName.equalsIgnoreCase("left")) {
+			d = obj.u.farr->arr[0];
+		} else if (propName.equalsIgnoreCase("top")) {
+			d = obj.u.farr->arr[1];
+		} else if (propName.equalsIgnoreCase("right")) {
+			d = obj.u.farr->arr[2];
+		} else if (propName.equalsIgnoreCase("bottom")) {
+			d = obj.u.farr->arr[3];
+		} else {
+			g_lingo->lingoError("Lingo::getObjectProp: Rect <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
+		}
+		g_lingo->push(d);
+		return;
+	}
 	if (obj.type == CASTREF) {
 		Movie *movie = _vm->getCurrentMovie();
 		if (!movie) {
