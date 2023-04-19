@@ -567,6 +567,12 @@ int ScummEngine::readVar(uint var) {
 				!(_currentRoom == 4 && (vm.slot[_currentScript].number == 2150 || vm.slot[_currentScript].number == 2208 || vm.slot[_currentScript].number == 2210))) {
 				return 263;
 			}
+			// Mod for Backyard Baseball 2001 online competitive play: allow random bounces
+			// Normally they only happen offline; this script checks var399, here we tell this
+			// script that we're not in online play even if we are
+			if (_game.id == GID_BASEBALL2001 && vm.slot[_currentScript].number == 39 && var == 399) {
+				return 0;
+			}
 		}
 #endif
 		assertRange(0, var, _numVariables - 1, "variable (reading)");
