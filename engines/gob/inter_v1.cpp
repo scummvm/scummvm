@@ -1348,7 +1348,7 @@ void Inter_v1::o1_capturePush(OpFuncParams &params) {
 	width = _vm->_game->_script->readValExpr();
 	height = _vm->_game->_script->readValExpr();
 
-	if ((width < 0) || (height < 0))
+	if ((width <= 0) || (height <= 0))
 		return;
 
 	_vm->_game->capturePush(left, top, width, height);
