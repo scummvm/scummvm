@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/Line.h"
 
 namespace Crab {
@@ -37,7 +39,7 @@ namespace Crab {
 //------------------------------------------------------------------------
 void DrawLine(const int &x1, const int &y1, const int &x2, const int &y2,
 			  const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a) {
-	warning("STUB: DrawLine()");
+	g_engine->_screen->drawLine(x1, y1, x2, y2, g_engine->_format->ARGBToColor(a, r, g, b));
 
 #if 0
 	SDL_SetRenderDrawColor(gRenderer, r, g, b, a);
