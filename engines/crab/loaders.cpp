@@ -103,6 +103,7 @@ bool LoadRect(SDL_Rect &rect, rapidxml::xml_node<char> *node, const bool &echo,
 		return true;
 	return false;
 }
+#endif
 
 bool LoadColor(SDL_Color &col, rapidxml::xml_node<char> *node, const bool &echo,
 	const Common::String &r_name, const Common::String &g_name, const Common::String &b_name)
@@ -119,8 +120,6 @@ bool LoadColor(SDL_Color &col, rapidxml::xml_node<char> *node, const bool &echo,
 
 	return false;
 }
-
-#endif
 
 bool LoadColor(int &col, rapidxml::xml_node<char> *node, const bool &echo) {
 	return LoadNum(col, "color", node, echo);
