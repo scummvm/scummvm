@@ -86,7 +86,9 @@ public:
 private:
 	void init();
 	Graphics::Font *getAtSize(uint size);
+	Common::CodePage codePage() const;
 
+	Common::CodePage _codePage;
 	Common::File _fontFile;
 	Common::HashMap<uint, Graphics::Font *> _fonts;
 	Common::String _loadedPath;

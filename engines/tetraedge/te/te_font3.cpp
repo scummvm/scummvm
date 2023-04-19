@@ -109,14 +109,29 @@ TeFont3::GlyphData TeFont3::glyph(uint pxSize, uint charcode) {
 	return retval;
 }
 
+Common::CodePage TeFont3::codePage() const {
+	Common::String lang = g_engine->getCore()->language();
+	if (lang == "he")
+		return Common::kWindows1255; 
+	if (lang == "ru")
+		return Common::kISO8859_5;
+	return Common::kLatin1;
+}
+
+
 int TeFont3::wordWrapText(const Common::String &str, int fontSize, int maxWidth, Common::Array<Common::String> &lines) {
 	Graphics::Font *font = getAtSize(fontSize);
-	return font->wordWrapText(str, maxWidth, lines);
+	Common::Array<Common::U32String> u32lines;
+	int retval = font->wordWrapText(str.decode(_codePage), maxWidth, u32lines);
+	for (auto &line: u32lines) {
+		lines.push_back(line.encode(_codePage));
+	}
+	return retval;
 }
 
 Common::Rect TeFont3::getBoundingBox(const Common::String &str, int fontSize) {
 	Graphics::Font *font = getAtSize(fontSize);
-	return font->getBoundingBox(str);
+	return font->getBoundingBox(str.decode(_codePage));
 }
 
 int TeFont3::getHeight(int fontSize) {
@@ -145,9 +160,9 @@ void TeFont3::draw(TeImage &destImage, const Common::String &str, int fontSize, 
 
 	uint32 uintcol = ((uint32)col.a() << fmt.aShift) | ((uint32)(col.r()) << fmt.rShift)
 						| ((uint32)(col.g()) << fmt.gShift) | ((uint32)(col.b()) << fmt.bShift);
-	Common::String line(str);
+	Common::U32String line = str.decode(_codePage);
 	if (g_engine->getCore()->language() == "he")
-		line = Common::convertBiDiString(str, Common::kWindows1255);
+		line = Common::convertBiDiU32String(line).visual;
 	font->drawString(&destImage, line, 0, yoff, destImage.w, uintcol, talign);
 }
 
@@ -192,6 +207,7 @@ void TeFont3::unload() {
 }
 
 void TeFont3::init() {
+	_codePage = codePage();
 }
 
 float TeFont3::ascender(uint pxSize) {
