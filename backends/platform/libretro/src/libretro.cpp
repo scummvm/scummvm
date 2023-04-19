@@ -540,6 +540,7 @@ void retro_init(void) {
 }
 
 void retro_deinit(void) {
+	g_system->destroy();
 	free(sound_buffer);
 }
 
@@ -812,7 +813,6 @@ void retro_unload_game(void) {
 		log_cb(RETRO_LOG_WARN, "ScummVM not initialized correctly.\n", frameskip_counter, current_frame);
 	else
 		log_cb(RETRO_LOG_ERROR, "ScummVM exited with error %d.\n", retro_get_scummvm_res());
-	// g_system->destroy(); //TODO: This call causes "pure virtual method called" after frontend "Unloading core symbols". Check if needed at all.
 }
 
 void retro_reset(void) {
