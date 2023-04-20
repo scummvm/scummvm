@@ -98,6 +98,8 @@ public:
 	/** Draw the video at the default position. */
 	void setXY();
 
+	void setDouble(bool isDouble); // double the size of the video, to accommodate higher resolutions
+
 	/** Override the video's frame rate. */
 	void setFrameRate(Common::Rational frameRate);
 	/** Get the video's frame rate. */
@@ -231,6 +233,8 @@ protected:
 	byte _palette[768];
 	bool _paletteDirty;
 
+	bool _isDouble;
+
 	bool    _ownSurface;
 	Graphics::Surface _surface;
 
@@ -258,12 +262,14 @@ protected:
 	void deRLE(byte *&destPtr, const byte *&srcPtr, int16 destLen, int16 srcLen);
 
 	// Block rendering
-	void renderBlockWhole   (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
-	void renderBlockWhole4X (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
-	void renderBlockWhole2Y (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
-	void renderBlockSparse  (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
-	void renderBlockSparse2Y(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
-	void renderBlockRLE     (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockWhole       (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockWholeDouble (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockWhole4X     (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockWhole2Y     (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockSparse      (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockSparseDouble(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockSparse2Y    (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
+	void renderBlockRLE         (Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect);
 
 	// Sound helper functions
 	inline void unsignedToSigned(byte *buffer, int length);

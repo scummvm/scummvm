@@ -154,6 +154,10 @@ void CoktelDecoder::setXY() {
 	setXY(_defaultX, _defaultY);
 }
 
+void CoktelDecoder::setDouble(bool isDouble) {
+	_isDouble = isDouble;
+}
+
 void CoktelDecoder::setFrameRate(Common::Rational frameRate) {
 	_frameRate = frameRate;
 }
@@ -476,6 +480,29 @@ void CoktelDecoder::renderBlockWhole(Graphics::Surface &dstSurf, const byte *src
 	}
 }
 
+void CoktelDecoder::renderBlockWholeDouble(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect) {
+	Common::Rect srcRect = rect;
+
+	rect.clip(dstSurf.w / 2, dstSurf.h / 2);
+
+	byte *dst = (byte *)dstSurf.getBasePtr(2 * rect.left, 2 * rect.top);
+	byte bpp = dstSurf.format.bytesPerPixel;
+	for (int i = 0; i < rect.height(); i++) {
+		// Each pixel on the source row is written twice to the destination row
+		for (int j = 0; j < rect.width(); j++) {
+			memcpy(dst + 2 * j * bpp, src + j * bpp, bpp);
+			memcpy(dst + (2 * j + 1) * bpp, src + j * bpp, bpp);
+		}
+		dst += dstSurf.pitch;
+
+		// Then, the whole row is written again to the destination
+		memcpy(dst, dst - dstSurf.pitch, 2 * rect.width() * bpp);
+		dst += dstSurf.pitch;
+
+		src += srcRect.width() * bpp;
+	}
+}
+
 // A quarter-wide whole, completely filled block
 void CoktelDecoder::renderBlockWhole4X(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect) {
 	Common::Rect srcRect = rect;
@@ -557,6 +584,48 @@ void CoktelDecoder::renderBlockSparse(Graphics::Surface &dstSurf, const byte *sr
 		dst += dstSurf.pitch;
 	}
 }
+
+void CoktelDecoder::renderBlockSparseDouble(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect) {
+	Common::Rect srcRect = rect;
+
+	rect.clip(dstSurf.w / 2, dstSurf.h / 2);
+
+	byte *dst = (byte *)dstSurf.getBasePtr(2 * rect.left, 2 * rect.top);
+	for (int i = 0; i < rect.height(); i++) {
+		byte *dstRow = dst;
+		int16 pixWritten = 0;
+
+		// Each pixel on the source row is written twice to the destination row
+		while (pixWritten < srcRect.width()) {
+			int16 pixCount = *src++;
+
+			if (pixCount & 0x80) { // Data
+				int16 copyCount;
+
+				pixCount = MIN<int16>((pixCount & 0x7F) + 1, srcRect.width() - pixWritten);
+				copyCount = CLIP<int16>(rect.width() - pixWritten, 0, pixCount);
+
+				for (int j = 0; j < copyCount; j++) {
+					dstRow[2 * j] = src[j];
+					dstRow[2 * j + 1] = src[j];
+				}
+
+				pixWritten += pixCount;
+				dstRow += 2 * pixCount;
+				src += pixCount;
+			} else { // "Hole"
+				pixWritten += pixCount + 1;
+				dstRow += 2 * (pixCount + 1); // The hole size is doubled in the destination
+			}
+		}
+
+		dst += dstSurf.pitch;
+		// Then, the whole row is written again to the destination
+		memcpy(dst, dst - dstSurf.pitch, 2 * rect.width());
+		dst += dstSurf.pitch;
+	}
+}
+
 
 // A half-high sparse block
 void CoktelDecoder::renderBlockSparse2Y(Graphics::Surface &dstSurf, const byte *src, Common::Rect &rect) {
@@ -1476,11 +1545,17 @@ bool IMDDecoder::renderFrame(Common::Rect &rect) {
 	}
 
 	// Evaluate the block type
-	if      (type == 0x01)
-		renderBlockSparse  (_surface, dataPtr, rect);
-	else if (type == 0x02)
-		renderBlockWhole   (_surface, dataPtr, rect);
-	else if (type == 0x42)
+	if (type == 0x01) {
+		if (_isDouble)
+			renderBlockSparseDouble(_surface, dataPtr, rect);
+		else
+			renderBlockSparse(_surface, dataPtr, rect);
+	} else if (type == 0x02) {
+		if (_isDouble)
+			renderBlockWholeDouble(_surface, dataPtr, rect);
+		else
+			renderBlockWhole(_surface, dataPtr, rect);
+	} else if (type == 0x42)
 		renderBlockWhole4X (_surface, dataPtr, rect);
 	else if ((type & 0x0F) == 0x02)
 		renderBlockWhole2Y (_surface, dataPtr, rect);
@@ -2417,11 +2492,17 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 	}
 
 	// Evaluate the block type
-	if      (type == 0x01)
-		renderBlockSparse  (*surface, dataPtr, *blockRect);
-	else if (type == 0x02)
-		renderBlockWhole   (*surface, dataPtr, *blockRect);
-	else if (type == 0x03)
+	if      (type == 0x01) {
+		if (_isDouble)
+			renderBlockSparseDouble(*surface, dataPtr, *blockRect);
+		else
+			renderBlockSparse(*surface, dataPtr, *blockRect);
+	} else if (type == 0x02) {
+		if (_isDouble)
+			renderBlockWholeDouble(*surface, dataPtr, *blockRect);
+		else
+			renderBlockWhole(*surface, dataPtr, *blockRect);
+	} else if (type == 0x03)
 		renderBlockRLE     (*surface, dataPtr, *blockRect);
 	else if (type == 0x42)
 		renderBlockWhole4X (*surface, dataPtr, *blockRect);
