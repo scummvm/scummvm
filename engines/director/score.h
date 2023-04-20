@@ -46,7 +46,6 @@ class Archive;
 class DirectorEngine;
 class DirectorSound;
 class Frame;
-struct Label;
 class Movie;
 struct Resource;
 class Cursor;
@@ -58,6 +57,13 @@ class AudioDecoder;
 enum RenderMode {
 	kRenderModeNormal,
 	kRenderForceUpdate
+};
+
+struct Label {
+	Common::String comment;
+	Common::String name;
+	uint16 number;
+	Label(Common::String name1, uint16 number1, Common::String comment1) { name = name1; number = number1; comment = comment1;}
 };
 
 class Score {

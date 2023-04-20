@@ -28,7 +28,7 @@
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
-#include "director/castmember.h"
+#include "director/archive.h"
 #include "director/cursor.h"
 #include "director/movie.h"
 #include "director/score.h"

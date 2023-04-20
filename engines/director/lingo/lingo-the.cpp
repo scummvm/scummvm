@@ -27,7 +27,6 @@
 
 #include "director/director.h"
 #include "director/cast.h"
-#include "director/castmember.h"
 #include "director/cursor.h"
 #include "director/channel.h"
 #include "director/frame.h"
@@ -36,6 +35,9 @@
 #include "director/sprite.h"
 #include "director/score.h"
 #include "director/window.h"
+#include "director/castmember/castmember.h"
+#include "director/castmember/digitalvideo.h"
+#include "director/castmember/text.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"

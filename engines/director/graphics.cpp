@@ -25,11 +25,11 @@
 
 #include "director/director.h"
 #include "director/cast.h"
-#include "director/castmember.h"
 #include "director/movie.h"
 #include "director/images.h"
 #include "director/picture.h"
 #include "director/window.h"
+#include "director/castmember/bitmap.h"
 
 namespace Director {
 

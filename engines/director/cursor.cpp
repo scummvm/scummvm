@@ -26,7 +26,7 @@
 #include "director/cast.h"
 #include "director/cursor.h"
 #include "director/movie.h"
-#include "director/castmember.h"
+#include "director/castmember/bitmap.h"
 #include "director/picture.h"
 
 namespace Director {

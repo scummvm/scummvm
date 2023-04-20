@@ -26,9 +26,12 @@
 #include "director/cast.h"
 #include "director/channel.h"
 #include "director/sprite.h"
-#include "director/castmember.h"
 #include "director/types.h"
 #include "director/window.h"
+#include "director/castmember/castmember.h"
+#include "director/castmember/bitmap.h"
+#include "director/castmember/digitalvideo.h"
+#include "director/castmember/filmloop.h"
 
 #include "graphics/macgui/mactext.h"
 #include "graphics/macgui/macbutton.h"

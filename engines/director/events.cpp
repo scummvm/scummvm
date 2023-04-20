@@ -35,7 +35,7 @@
 #include "director/channel.h"
 #include "director/sprite.h"
 #include "director/window.h"
-#include "director/castmember.h"
+#include "director/castmember/castmember.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {
