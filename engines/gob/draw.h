@@ -41,6 +41,7 @@ namespace Gob {
 #define RENDERFLAG_NOSUBTITLES       0x0400
 #define RENDERFLAG_FROMSPLIT         0x0800
 #define RENDERFLAG_DOUBLECOORDS      0x1000
+#define RENDERFLAG_DOUBLEVIDEO       0x2000
 
 class Draw {
 public:

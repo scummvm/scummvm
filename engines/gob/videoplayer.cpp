@@ -338,6 +338,9 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 		//       Except for Urban Runner and Bambou, where it leads to glitches
 		properties.breakKey = kShortKeyEscape;
 
+	if (_vm->_draw->_renderFlags & RENDERFLAG_DOUBLEVIDEO)
+		video->decoder->setDouble(true);
+
 	while ((properties.startFrame != properties.lastFrame) &&
 	       (properties.startFrame < (int32)(video->decoder->getFrameCount() - 1))) {
 
@@ -357,6 +360,9 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 		if (!_noCursorSwitch && properties.waitEndFrame)
 			waitEndFrame(slot);
 	}
+
+	if (_vm->_draw->_renderFlags & RENDERFLAG_DOUBLEVIDEO)
+		video->decoder->setDouble(false);
 
 	evalBgShading(*video);
 
