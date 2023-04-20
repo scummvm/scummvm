@@ -97,8 +97,8 @@ public:
 
 	void loadCastMemberData();
 	void loadStxtData(int key, TextCastMember *member);
-	void loadPaletteData(PaletteCastMember *member);
-	void loadFilmLoopData(FilmLoopCastMember *member);
+	void loadPaletteData(int key, PaletteCastMember *member);
+	void loadFilmLoopData(int key, FilmLoopCastMember *member);
 	void loadBitmapData(int key, BitmapCastMember *bitmapCast);
 	void loadSoundData(int key, SoundCastMember *soundCast);
 
