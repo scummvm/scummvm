@@ -43,6 +43,7 @@ void Inter_Adibou1::setupOpcodesDraw() {
 
 void Inter_Adibou1::setupOpcodesFunc() {
 	Inter_v2::setupOpcodesFunc();
+	OPCODEDRAW(0x0A, o1_setRenderFlags);
 }
 
 void Inter_Adibou1::setupOpcodesGob() {
