@@ -328,6 +328,16 @@ void Hotspots::recalculate(bool force) {
 			top  += _vm->_draw->_backDeltaY;
 		}
 
+		if (_vm->_draw->_needAdjust != 2 && _vm->_draw->_needAdjust != 10) {
+			_vm->_draw->adjustCoords(0, &left, &top);
+			if ((spot.flags & 15) < 3)
+				_vm->_draw->adjustCoords(2, &width, &height);
+			else {
+				height &= 0xFFFFFFFE;
+				_vm->_draw->adjustCoords(2, nullptr, &height);
+			}
+		}
+
 		// Clamping
 		if (left < 0) {
 			width += left;
@@ -1310,6 +1320,18 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 	if ((_vm->_draw->_renderFlags & RENDERFLAG_CAPTUREPOP) && (left != 0xFFFF)) {
 		left += _vm->_draw->_backDeltaX;
 		top  += _vm->_draw->_backDeltaY;
+	}
+
+	if (left != 0xFFFF) {
+		_vm->_draw->adjustCoords(0, &left, &top);
+		if ((type & 0x3F) >= 20 || (type & 0x3F) < 3)
+			_vm->_draw->adjustCoords(0, &width, &height);
+		else {
+			if (_vm->_draw->_needAdjust != 2 && _vm->_draw->_needAdjust != 10)
+				height &= 0xFFFE;
+
+			_vm->_draw->adjustCoords(0, &height, 0);
+		}
 	}
 
 	right  = left + width  - 1;

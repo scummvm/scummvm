@@ -1178,6 +1178,9 @@ void Inter_v2::o2_addHotspot(OpFuncParams &params) {
 	if (key == 0)
 		key = ABS(id) + 41960;
 
+	_vm->_draw->adjustCoords(0, &left, &top);
+	_vm->_draw->adjustCoords(2, &width, &height);
+
 	if (left < 0) {
 		width += left;
 		left   = 0;

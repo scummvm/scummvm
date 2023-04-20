@@ -341,7 +341,7 @@ void Draw::freeSprite(int16 index) {
 }
 
 void Draw::adjustCoords(char adjust, int16 *coord1, int16 *coord2) {
-	if (_needAdjust == 2)
+	if (_needAdjust == 2 || _needAdjust == 10)
 		return;
 
 	switch (adjust) {

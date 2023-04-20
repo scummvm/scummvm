@@ -156,7 +156,12 @@ public:
 	int16 _palLoadData1[4];
 	int16 _palLoadData2[4];
 
+	// Coordinates adjustment mode
+	// Some game were released for a higher resolution than the one they
+	// were originally designed for. adjustCoords() is used to adjust
+	//
 	int16 _needAdjust;
+
 	int16 _scrollOffsetY;
 	int16 _scrollOffsetX;
 

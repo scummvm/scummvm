@@ -737,7 +737,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 			break;
 
 		_spritesArray[_destSurface]->blit(*_spritesArray[_sourceSurface],
-				_spriteLeft, spriteTop,
+				_spriteLeft, _spriteTop,
 				_spriteLeft + _spriteRight - 1,
 				_spriteTop + _spriteBottom - 1,
 				_destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0, _transparency & 0x80);
@@ -754,13 +754,13 @@ void Draw_v2::spriteOperation(int16 operation) {
 
 	case DRAW_FILLRECT:
 		if (!(_backColor & 0xFF00) || !(_backColor & 0x0100)) {
-			_spritesArray[_destSurface]->fillRect(destSpriteX,
+			_spritesArray[_destSurface]->fillRect(_destSpriteX,
 					_destSpriteY, _destSpriteX + _spriteRight - 1,
 					_destSpriteY + _spriteBottom - 1, getColor(_backColor));
 		} else {
 			uint8 strength = 16 - (((uint16) _backColor) >> 12);
 
-			_spritesArray[_destSurface]->shadeRect(destSpriteX,
+			_spritesArray[_destSurface]->shadeRect(_destSpriteX,
 					_destSpriteY, _destSpriteX + _spriteRight - 1,
 					_destSpriteY + _spriteBottom - 1, getColor(_backColor), strength);
 		}
@@ -790,6 +790,9 @@ void Draw_v2::spriteOperation(int16 operation) {
 
 		if (!resource)
 			break;
+
+		if (_vm->_draw->_needAdjust == 3 || _vm->_draw->_needAdjust == 4)
+			adjustCoords(0, &_spriteRight, &_spriteBottom);
 
 		_vm->_video->drawPackedSprite(resource->getData(),
 				_spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,

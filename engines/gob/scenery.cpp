@@ -520,6 +520,7 @@ int16 Scenery::loadAnim(char search) {
 			_animPictToSprite[7 * sceneryIndex + i] = sprIndex;
 			_spriteRefs[sprIndex]  = 1;
 			_spriteResId[sprIndex] = sprResId;
+			_vm->_draw->adjustCoords(0, &width, &height);
 			_vm->_draw->initSpriteSurf(sprIndex, width, height, 2);
 
 			_vm->_draw->_spritesArray[sprIndex]->clear();

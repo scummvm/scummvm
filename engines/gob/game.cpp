@@ -575,6 +575,12 @@ void Game::playTot(int16 function) {
 				break;
 			}
 
+			if (_vm->getGameType() == kGameTypeAdibou1) { // TODO: probably needed by other games (Adi 2?)
+				_vm->_draw->_needAdjust = _vm->_game->_script->getData()[58];
+				if (_vm->_draw->_needAdjust <= 1 || _vm->_draw->_needAdjust >= 8)
+					_vm->_draw->_needAdjust = 2;
+			}
+
 			_resources->load(_curTotFile);
 
 			_vm->_global->_inter_animDataSize = _script->getAnimDataSize();
@@ -666,6 +672,9 @@ void Game::capturePush(int16 left, int16 top, int16 width, int16 height) {
 	if (_captureCount == 20)
 		error("Game::capturePush(): Capture stack overflow");
 
+	_vm->_draw->adjustCoords(0, &left, &top);
+	_vm->_draw->adjustCoords(0, &width, &height);
+
 	_captureStack[_captureCount].left = left;
 	_captureStack[_captureCount].top = top;
 	_captureStack[_captureCount].right = left + width;
@@ -688,7 +697,11 @@ void Game::capturePush(int16 left, int16 top, int16 width, int16 height) {
 	_vm->_draw->_destSpriteX = 0;
 	_vm->_draw->_destSpriteY = 0;
 	_vm->_draw->_transparency = 0;
+
+	int16 savedNeedAdjust = _vm->_draw->_needAdjust;
+	_vm->_draw->_needAdjust = 10;
 	_vm->_draw->spriteOperation(DRAW_BLITSURF);
+	_vm->_draw->_needAdjust = savedNeedAdjust;
 	_captureCount++;
 }
 
@@ -710,7 +723,10 @@ void Game::capturePop(char doDraw) {
 		_vm->_draw->_destSurface = Draw::kBackSurface;
 		_vm->_draw->_spriteLeft = _vm->_draw->_destSpriteX & 0xF;
 		_vm->_draw->_spriteTop = 0;
+		int16 savedNeedAdjust = _vm->_draw->_needAdjust;
+		_vm->_draw->_needAdjust = 10;
 		_vm->_draw->spriteOperation(DRAW_BLITSURF);
+		_vm->_draw->_needAdjust = savedNeedAdjust;
 	}
 	_vm->_draw->freeSprite(Draw::kCaptureSurface + _captureCount);
 }
