@@ -107,10 +107,6 @@ PViewport GameState::GetRoomViewport(int index) const {
 	return _roomViewports[index];
 }
 
-Rect GameState::GetUIViewportAbs() const {
-	return Rect::MoveBy(_uiViewport, _mainViewport.Left, _mainViewport.Top);
-}
-
 const std::vector<PViewport> &GameState::GetRoomViewportsZOrdered() const {
 	return _roomViewportsSorted;
 }
