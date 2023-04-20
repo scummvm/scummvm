@@ -79,12 +79,12 @@
 		"ADI Jr. 4-6 Jahre",
 		AD_ENTRY1s("intro.stk", "4d4c23da4cd7e080cb1769b49ace1805", 4731020),
 		DE_DEU,
-		kPlatformDOS,
+		kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeAdibou1,
-	kFeaturesAdLib,
+	kFeaturesAdLib | kFeatures640x480,
 	0, 0, 0
 },
 
