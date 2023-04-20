@@ -683,7 +683,7 @@ void render_to_screen() {
 	// Stage: final plugin callback (still drawn on game screen
 	if (pl_any_want_hook(AGSE_FINALSCREENDRAW)) {
 		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
-										SpriteTransform(0, _GP(play).shake_screen_yoff), (GraphicFlip)_GP(play).screen_flipped);
+										_GP(play).GetGlobalTransform(full_frame_rend), (GraphicFlip)_GP(play).screen_flipped);
 		_G(gfxDriver)->DrawSprite(AGSE_FINALSCREENDRAW, 0, nullptr);
 		_G(gfxDriver)->EndSpriteBatch();
 	}
@@ -2085,7 +2085,7 @@ static void construct_room_view() {
 		auto camera = viewport->GetCamera();
 		if (!camera)
 			continue;
-		const Rect &view_rc = _GP(play).GetRoomViewportAbs(viewport->GetID());
+		const Rect &view_rc = viewport->GetRect();
 		const Rect &cam_rc = camera->GetRect();
 		const float view_sx = (float)view_rc.GetWidth() / (float)cam_rc.GetWidth();
 		const float view_sy = (float)view_rc.GetHeight() / (float)cam_rc.GetHeight();
@@ -2137,7 +2137,7 @@ static void construct_room_view() {
 
 // Schedule ui rendering
 static void construct_ui_view() {
-	_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetUIViewportAbs());
+	_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetUIViewport());
 	draw_gui_and_overlays();
 	_G(gfxDriver)->EndSpriteBatch();
 	clear_draw_list();
@@ -2220,7 +2220,7 @@ void construct_game_scene(bool full_redraw) {
 	// Begin with the parent scene node, defining global offset and flip
 	bool full_frame_rend = _G(gfxDriver)->RequiresFullRedrawEachFrame();
 	_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
-									SpriteTransform(0, _GP(play).shake_screen_yoff),
+									_GP(play).GetGlobalTransform(full_frame_rend),
 									(GraphicFlip)_GP(play).screen_flipped);
 
 	// Stage: room viewports
@@ -2281,7 +2281,8 @@ void update_mouse_cursor() {
 void construct_game_screen_overlay(bool draw_mouse) {
 	const bool full_frame_rend = _G(gfxDriver)->RequiresFullRedrawEachFrame();
 	_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
-									SpriteTransform(0, _GP(play).shake_screen_yoff), (GraphicFlip)_GP(play).screen_flipped);
+									_GP(play).GetGlobalTransform(full_frame_rend),
+									(GraphicFlip)_GP(play).screen_flipped);
 	if (pl_any_want_hook(AGSE_POSTSCREENDRAW)) {
 		_G(gfxDriver)->DrawSprite(AGSE_POSTSCREENDRAW, 0, nullptr);
 	}
@@ -2458,7 +2459,7 @@ void render_graphics(IDriverDependantBitmap *extraBitmap, int extraX, int extraY
 	// TODO: extraBitmap is a hack, used to place an additional gui element
 	// on top of the screen. Normally this should be a part of the game UI stage.
 	if (extraBitmap != nullptr) {
-		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform(0, _GP(play).shake_screen_yoff),
+		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), _GP(play).GetGlobalTransform(_G(gfxDriver)->RequiresFullRedrawEachFrame()),
 										(GraphicFlip)_GP(play).screen_flipped);
 		invalidate_sprite(extraX, extraY, extraBitmap, false);
 		_G(gfxDriver)->DrawSprite(extraX, extraY, extraBitmap);

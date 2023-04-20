@@ -288,8 +288,6 @@ struct GameState {
 	const std::vector<PViewport> &GetRoomViewportsZOrdered() const;
 	// Finds room viewport at the given screen coordinates; returns nullptr if non found
 	PViewport  GetRoomViewportAt(int x, int y) const;
-	// Returns UI viewport position in absolute coordinates (with main viewport offset)
-	Rect GetUIViewportAbs() const;
 	// Returns Room viewport position in absolute coordinates (with main viewport offset);
 	// this is a helper function, meant for peculiar cases.
 	Rect       GetRoomViewportAbs(int index) const;
