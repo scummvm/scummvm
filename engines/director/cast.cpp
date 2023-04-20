@@ -632,27 +632,27 @@ void Cast::loadStxtData(int key, TextCastMember *member) {
 	}
 }
 
-void Cast::loadPaletteData(PaletteCastMember *member) {
+void Cast::loadPaletteData(int key, PaletteCastMember *member) {
 	// TODO: Verify how palettes work in >D4 versions
 	int paletteId = 0;
 	if (_version >= kFileVer400 && _version < kFileVer500 && member->_children.size() == 1) {
 		paletteId = member->_children[0].index;
 	} else if (_version < kFileVer400) {
 		// For D3 and below, palette IDs are stored in the CLUT resource as cast ID + 1024
-		paletteId = member->getID() + _castIDoffset;
+		paletteId = key + _castIDoffset;
 	} else {
 		warning("Cast::loadPaletteData(): Expected 1 child for palette cast, got %d", member->_children.size());
 	}
 	if (paletteId) {
-		debugC(2, kDebugImages, "Cast::loadPaletteData(): linking palette id %d to cast member %d", paletteId, member->getID());
+		debugC(2, kDebugImages, "Cast::loadPaletteData(): linking palette id %d to cast index %d", paletteId, key);
 		member->_palette = g_director->getPalette(paletteId);
 	}
 }
 
-void Cast::loadFilmLoopData(FilmLoopCastMember *member) {
+void Cast::loadFilmLoopData(int key, FilmLoopCastMember *member) {
 	if (_version < kFileVer400) {
 		// Director 3 and below should have a SCVW resource
-		uint16 filmLoopId = member->getID() + _castIDoffset;
+		uint16 filmLoopId = key + _castIDoffset;
 		uint32 tag = MKTAG('S', 'C', 'V', 'W');
 		Common::SeekableReadStreamEndian *loop = _castArchive->getResource(tag, filmLoopId);
 		debugC(2, kDebugLoading, "****** Loading '%s' id: %d, %d bytes", tag2str(tag), filmLoopId, (int)loop->size());
@@ -868,10 +868,10 @@ void Cast::loadCastMemberData() {
 
 		switch (c->_value->_type){
 			case kCastPalette:
-				loadPaletteData((PaletteCastMember *)c->_value);
+				loadPaletteData(c->_key, (PaletteCastMember *)c->_value);
 				break;
 			case kCastFilmLoop:
-				loadFilmLoopData((FilmLoopCastMember *)c->_value);
+				loadFilmLoopData(c->_key, (FilmLoopCastMember *)c->_value);
 				break;
 			case kCastBitmap:
 				loadBitmapData(c->_key, (BitmapCastMember *)c->_value);
