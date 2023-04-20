@@ -22,11 +22,13 @@
 #include "graphics/macgui/macwidget.h"
 
 #include "director/director.h"
-#include "director/castmember.h"
 #include "director/frame.h"
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sprite.h"
+#include "director/castmember/castmember.h"
+#include "director/castmember/bitmap.h"
+#include "director/castmember/shape.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 

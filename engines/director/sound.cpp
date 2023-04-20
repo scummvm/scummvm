@@ -35,10 +35,10 @@
 
 #include "director/director.h"
 #include "director/movie.h"
-#include "director/castmember.h"
 #include "director/sound.h"
 #include "director/util.h"
 #include "director/window.h"
+#include "director/castmember/sound.h"
 
 namespace Director {
 

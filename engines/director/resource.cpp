@@ -30,8 +30,8 @@
 #include "graphics/wincursor.h"
 
 #include "director/director.h"
+#include "director/archive.h"
 #include "director/cast.h"
-#include "director/castmember.h"
 #include "director/movie.h"
 #include "director/window.h"
 #include "director/lingo/lingo.h"

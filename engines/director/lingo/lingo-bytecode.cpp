@@ -26,10 +26,11 @@
 
 #include "director/director.h"
 #include "director/cast.h"
-#include "director/castmember.h"
 #include "director/movie.h"
 #include "director/util.h"
 #include "director/window.h"
+#include "director/castmember/castmember.h"
+#include "director/castmember/script.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-codegen.h"

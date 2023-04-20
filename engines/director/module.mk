@@ -3,7 +3,6 @@ MODULE := engines/director
 MODULE_OBJS = \
 	archive.o \
 	cast.o \
-	castmember.o \
 	channel.o \
 	cursor.o \
 	director.o \
@@ -27,6 +26,16 @@ MODULE_OBJS = \
 	types.o \
 	util.o \
 	window.o \
+	castmember/castmember.o \
+	castmember/bitmap.o \
+	castmember/digitalvideo.o \
+	castmember/filmloop.o \
+	castmember/movie.o \
+	castmember/palette.o \
+	castmember/script.o \
+	castmember/shape.o \
+	castmember/sound.o \
+	castmember/text.o \
 	lingo/lingo.o \
 	lingo/lingo-builtins.o \
 	lingo/lingo-bytecode.o \

@@ -38,7 +38,6 @@
 
 #include "director/director.h"
 #include "director/cast.h"
-#include "director/castmember.h"
 #include "director/score.h"
 #include "director/frame.h"
 #include "director/movie.h"
@@ -48,6 +47,8 @@
 #include "director/sprite.h"
 #include "director/window.h"
 #include "director/util.h"
+#include "director/castmember/castmember.h"
+#include "director/castmember/palette.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {

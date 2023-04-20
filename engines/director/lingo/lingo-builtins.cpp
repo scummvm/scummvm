@@ -30,7 +30,6 @@
 
 #include "director/director.h"
 #include "director/cast.h"
-#include "director/castmember.h"
 #include "director/frame.h"
 #include "director/movie.h"
 #include "director/score.h"
@@ -41,6 +40,10 @@
 #include "director/window.h"
 #include "director/stxt.h"
 #include "director/util.h"
+#include "director/castmember/castmember.h"
+#include "director/castmember/bitmap.h"
+#include "director/castmember/palette.h"
+#include "director/castmember/text.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
