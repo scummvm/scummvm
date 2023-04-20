@@ -73,6 +73,18 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"driller",
+		"Not implemented yet",
+		{
+			{"DRILLER.ZX.DATA", 0, "e571795806ed8a30df0fa3109eaa8ffb", 36000},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformZX,
+		ADGF_UNSUPPORTED | ADGF_DEMO,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"driller",
 		"",
 		{
 			{"DRILL.BIN", 0, "719f5157391e88b2c391c30576340637", 35320},
@@ -227,6 +239,20 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
 	{
+		"driller",
+		"Packed data",
+		{
+			{"driller.prg", 0, "ae9b03e247def6f0793174b1cb4352b5", 1821},
+			{"data", 0, "0c927fbc6c390afd0d0c15b2d7f8766f", 10893},
+			{"demo.cmd", 0, "9c732dcdad26b36b537e632924cd8f0e", 745},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_UNSUPPORTED | ADGF_DEMO,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
 		"darkside",
 		"",
 		{
@@ -255,6 +281,18 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE | ADGF_DEMO,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
+	},
+	{
+		"darkside",
+		"Not implemented yet",
+		{
+			{"DARKSIDE.ZX.DATA", 0, "0e4d9b6e64ff24801272ff0b18a3caab", 29182},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformZX,
+		ADGF_UNSUPPORTED | ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"totaleclipse",
