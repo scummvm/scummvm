@@ -165,6 +165,8 @@ bool retro_init_emu_thread(void) {
 
 	if (!success)
 		retro_free_emu_thread();
+	else
+		status &= ~EMU_EXITED;
 
 	return success;
 }
