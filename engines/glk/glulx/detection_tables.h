@@ -504,7 +504,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("airport", "080204", "d3db494abc309a42b4dccfa53243a783", 234728),
 	DT_ENTRY1("alabaster", "090609", "7f664b6eef28485a2f85a1831b041246", 3132122),
 	DT_ENTRY1("alabaster", "r1/090604", "3e7913a97275d57d4f2fcec7b014b167", 3374558),
-	DT_ENTRY1("alabaster", "r1/090604", "3e7913a97275d57d4f2fcec7b014b167", 3374558),
 	DT_ENTRY1("aliasthemagpie", "190206", "a4281a03b797582ea53aa203b1eb7236", 1875956),
 	DT_ENTRY1("alone", "200927", "8ceba612963681d5c8a61cead9c8f1f0", 1078102),
 	DT_ENTRY1("alone", "r10/201006", "891fb305a00a9a8f957f01629f59bfe5", 1093464),
