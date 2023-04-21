@@ -214,7 +214,6 @@ public:
 	void SetGamma(int newGamma) override;
 	void UseSmoothScaling(bool /*enabled*/) override {}
 	bool DoesSupportVsyncToggle() override;
-	bool SetVsync(bool enabled) override;
 	void RenderSpritesAtScreenResolution(bool /*enabled*/, int /*supersampling*/) override {}
 	bool RequiresFullRedrawEachFrame() override {
 		return false;
@@ -238,6 +237,7 @@ public:
 	void SetGraphicsFilter(PSDLRenderFilter filter);
 
 protected:
+	bool SetVsyncImpl(bool vsync, bool &vsync_res) override;
 	size_t GetLastDrawEntryIndex() override {
 		return _spriteList.size();
 	}

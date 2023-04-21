@@ -222,19 +222,18 @@ bool ScummVMRendererGraphicsDriver::DoesSupportVsyncToggle() {
 	return g_system->hasFeature(OSystem::kFeatureVSync);
 }
 
-bool ScummVMRendererGraphicsDriver::SetVsync(bool enabled) {
-	if (_mode.Vsync == enabled) {
-		return _mode.Vsync;
-	}
-
+bool ScummVMRendererGraphicsDriver::SetVsyncImpl(bool enabled, bool &vsync_res) {
 	if (g_system->hasFeature(OSystem::kFeatureVSync)) {
 		g_system->beginGFXTransaction();
 		g_system->setFeatureState(OSystem::kFeatureVSync, enabled);
 		g_system->endGFXTransaction();
 
-		_mode.Vsync = g_system->getFeatureState(OSystem::kFeatureVSync);
+		vsync_res = g_system->getFeatureState(OSystem::kFeatureVSync);
+		if (!vsync_res)
+			Debug::Printf(kDbgMsg_Error, "Renderer: SetVsync (%d) failed", enabled);
+		return vsync_res;
 	}
-	return _mode.Vsync;
+	return false;
 }
 
 int ScummVMRendererGraphicsDriver::GetCompatibleBitmapFormat(int color_depth) {
