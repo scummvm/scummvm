@@ -284,14 +284,14 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"darkside",
-		"Not implemented yet",
+		"Demo",
 		{
 			{"DARKSIDE.ZX.DATA", 0, "0e4d9b6e64ff24801272ff0b18a3caab", 29182},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformZX,
-		ADGF_UNSUPPORTED | ADGF_DEMO,
+		ADGF_UNSTABLE | ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{

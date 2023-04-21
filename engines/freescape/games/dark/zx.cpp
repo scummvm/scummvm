@@ -26,91 +26,47 @@
 
 namespace Freescape {
 
-extern byte kEGADefaultPaletteData[16][3];
-
-void DarkEngine::initDOS() {
-	if (_renderMode == Common::kRenderEGA)
-		_viewArea = Common::Rect(40, 24, 279, 124);
-	else
-		error("Invalid or unknown render mode");
+void DarkEngine::initZX() {
+	_viewArea = Common::Rect(56, 28, 265, 132);
 }
 
-void DarkEngine::loadAssetsDOSDemo() {
+void DarkEngine::loadAssetsZXDemo() {
 	Common::File file;
-	if (_renderMode == Common::kRenderEGA) {
-		file.open("SCN1E.DAT");
-		if (file.isOpen()) {
-			_title = load8bitBinImage(&file, 0x0);
-			_title->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
-		}
-		file.close();
-		file.open("DSIDEE.EXE");
 
-		if (!file.isOpen())
-			error("Failed to open DSIDEE.EXE");
-		loadMessagesFixedSize(&file, 0x4525, 16, 27);
-		loadMessagesFixedSize(&file, 0x9959, 307, 5);
-		loadFonts(&file, 0xa598);
-		loadGlobalObjects(&file, 0x3d04, 23);
-		load8bitBinary(&file, 0xa700, 16);
-		_border = load8bitBinImage(&file, 0x210);
-		_border->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
-
-		for (auto &it : _areaMap) {
-			addWalls(it._value);
-			addECDs(it._value);
-		}
-	} else if (_renderMode == Common::kRenderCGA) {
-		//loadBundledImages();
-		file.open("DSIDEC.EXE");
-
-		if (!file.isOpen())
-			error("Failed to open DSIDEC.EXE");
-		loadFonts(&file, 0xa598);
-		load8bitBinary(&file, 0x8a70, 4); // TODO
+	file.open("darkside.zx.title");
+	if (file.isOpen()) {
+		_title = loadAndCenterScrImage(&file);
 	} else
-		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));
+		error("Unable to find darkside.zx.title");
+
+	file.close();
+	file.open("darkside.zx.border");
+	if (file.isOpen()) {
+		_border = loadAndCenterScrImage(&file);
+	} else
+		error("Unable to find driller.zx.border");
+	file.close();
+
+
+	file.open("darkside.zx.data");
+
+	if (!file.isOpen())
+		error("Failed to open darksize.zx.data");
+
+	loadMessagesFixedSize(&file, 0x56c, 19, 24);
+	loadMessagesFixedSize(&file, 0x5761, 264, 5);
+
+	loadFonts(&file, 0x6164);
+	//loadGlobalObjects(&file, 0x1d13, 8);
+	load8bitBinary(&file, 0x62c6, 4);
+	/*for (auto &it : _areaMap) {
+		addWalls(it._value);
+		addECDs(it._value);
+	}*/
 }
 
-void DarkEngine::loadAssetsDOSFullGame() {
-	Common::File file;
-	if (_renderMode == Common::kRenderEGA) {
-		file.open("SCN1E.DAT");
-		if (file.isOpen()) {
-			_title = load8bitBinImage(&file, 0x0);
-			_title->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
-		}
-		file.close();
-		file.open("DSIDEE.EXE");
-
-		if (!file.isOpen())
-			error("Failed to open DSIDEE.EXE");
-
-		loadFonts(&file, 0xa113);
-		loadMessagesFixedSize(&file, 0x4525, 16, 27);
-		loadGlobalObjects(&file, 0x3d04, 23);
-		load8bitBinary(&file, 0xa280, 16);
-		_border = load8bitBinImage(&file, 0x210);
-		_border->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
-
-		// TODO: load objects
-		for (auto &it : _areaMap) {
-			addWalls(it._value);
-			addECDs(it._value);
-		}
-	} else if (_renderMode == Common::kRenderCGA) {
-		loadBundledImages();
-		file.open("DSIDEC.EXE");
-
-		if (!file.isOpen())
-			error("Failed to open DSIDEC.EXE");
-		load8bitBinary(&file, 0x7bb0, 4); // TODO
-	} else
-		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));
-}
-
-void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
-	uint32 color = _renderMode == Common::kRenderCGA ? 1 : 14;
+void DarkEngine::drawZXUI(Graphics::Surface *surface) {
+	/*uint32 color = 1;
 	uint8 r, g, b;
 
 	_gfx->readFromPalette(color, r, g, b);
@@ -169,7 +125,7 @@ void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
 
 		energyBar = Common::Rect(72, 148, 151 - (k8bitMaxEnergy - energy), 153);
 		surface->fillRect(energyBar, blue);
-	}
+	}*/
 }
 
 } // End of namespace Freescape

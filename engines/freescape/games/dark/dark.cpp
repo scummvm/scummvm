@@ -29,7 +29,11 @@
 namespace Freescape {
 
 DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
-	_viewArea = Common::Rect(40, 24, 279, 124);
+	if (isDOS())
+		initDOS();
+	else if (isSpectrum())
+		initZX();
+
 	_playerHeightNumber = 1;
 	_playerHeights.push_back(16);
 	_playerHeights.push_back(48);
@@ -251,7 +255,7 @@ void DarkEngine::updateTimeVariables() {
 void DarkEngine::borderScreen() {
 	if (_border) {
 		drawBorder();
-		if (isDemo()) {
+		if (isDemo() && isDOS()) {
 			drawFullscreenMessage(_messagesList[27]);
 			drawFullscreenMessage(_messagesList[28]);
 			drawFullscreenMessage(_messagesList[29]);

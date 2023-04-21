@@ -519,13 +519,20 @@ public:
 	void pressedKey(const int keycode) override;
 	void executePrint(FCLInstruction &instruction) override;
 
+	void initDOS();
+	void initZX();
+
 	void loadAssetsDOSFullGame() override;
 	void loadAssetsDOSDemo() override;
+
+	void loadAssetsZXDemo() override;
 
 	int _lastTenSeconds;
 	void updateTimeVariables() override;
 
 	void drawDOSUI(Graphics::Surface *surface) override;
+	void drawZXUI(Graphics::Surface *surface) override;
+
 	void drawFullscreenMessage(Common::String message);
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
