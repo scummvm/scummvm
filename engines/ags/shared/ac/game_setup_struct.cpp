@@ -245,8 +245,10 @@ void GameSetupStruct::read_messages(Shared::Stream *in, GameDataVersion data_ver
 
 void GameSetupStruct::ReadCharacters_Aligned(Stream *in, bool is_save) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
+	const GameDataVersion data_ver = is_save ? kGameVersion_Undefined : _G(loaded_game_file_version);
+	const int save_ver = is_save ? 0 : -1;
 	for (int iteratorCount = 0; iteratorCount < numcharacters; ++iteratorCount) {
-		chars[iteratorCount].ReadFromFile(&align_s, is_save ? kGameVersion_Undefined : _G(loaded_game_file_version), 0);
+		chars[iteratorCount].ReadFromFile(&align_s, data_ver, save_ver);
 		align_s.Reset();
 	}
 }

@@ -78,7 +78,7 @@ void CharacterInfo::ReadFromFile(Stream *in, GameDataVersion data_ver, int save_
 	on = in->ReadInt8();
 
 	if ((data_ver > kGameVersion_Undefined && data_ver < kGameVersion_360_16) ||
-		(save_ver >= 0 && save_ver < 2)) {
+		((data_ver == kGameVersion_Undefined) && save_ver >= 0 && save_ver < 2)) {
 		idle_anim_speed = animspeed + 5;
 	}
 }
