@@ -48,6 +48,12 @@ bool FileStream::HasErrors() const {
 void FileStream::Close() {
 	delete _file;
 	_file = nullptr;
+	if (FileCloseNotify) {
+		CloseNotifyArgs args;
+		args.Filepath = _fileName;
+		args.WorkMode = _workMode;
+		FileCloseNotify(args);
+	}
 }
 
 bool FileStream::Flush() {
@@ -189,9 +195,12 @@ void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkM
 
 		if (!_file)
 			error("Invalid attempt to create file - %s", file_name.GetCStr());
+
+		_fileName = file_name;
 	}
 }
 
+FileStream::FFileCloseNotify FileStream::FileCloseNotify = nullptr;
 
 String FileStream::getSaveName(const String &filename) {
 	return String(filename.GetCStr() + strlen(SAVE_FOLDER_PREFIX));

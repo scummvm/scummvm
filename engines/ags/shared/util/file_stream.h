@@ -24,6 +24,7 @@
 
 #include "common/savefile.h"
 #include "common/stream.h"
+#include "ags/lib/std/functional.h"
 #include "ags/shared/util/data_stream.h"
 #include "ags/shared/util/file.h" // TODO: extract filestream mode constants
 
@@ -33,6 +34,15 @@ namespace Shared {
 
 class FileStream : public DataStream {
 public:
+	struct CloseNotifyArgs {
+		String Filepath;
+		FileWorkMode WorkMode;
+	};
+
+	// definition of function called when file closes
+	typedef std::function<void(const CloseNotifyArgs &args)> FFileCloseNotify;
+
+	static FFileCloseNotify FileCloseNotify;
 	// Represents an open file object
 	// The constructor may raise std::runtime_error if
 	// - there is an issue opening the file (does not exist, locked, permissions, etc)
@@ -73,6 +83,7 @@ private:
 
 	Common::Stream *_file;
 	const FileWorkMode  _workMode;
+	String _fileName;
 };
 
 } // namespace Shared
