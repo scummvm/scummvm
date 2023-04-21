@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/events.h"
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/castmember/castmember.h"
@@ -36,6 +37,7 @@ CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndi
 	_size = stream.size();
 	_flags1 = 0;
 
+	_loaded = false;
 	_modified = true;
 	_isChanged = false;
 
@@ -54,6 +56,7 @@ CastMember::CastMember(Cast *cast, uint16 castId) : Object<CastMember>("CastMemb
 	_size = 0;
 	_flags1 = 0;
 
+	_loaded = false;
 	_modified = true;
 	_isChanged = false;
 
@@ -236,6 +239,20 @@ bool CastMember::setField(int field, const Datum &d) {
 
 CastMemberInfo *CastMember::getInfo() {
 	return _cast->getCastMemberInfo(_castId);
+}
+
+void CastMember::load() {
+	if (_loaded)
+		return;
+
+	_loaded = true;
+}
+
+void CastMember::unload() {
+	if (!_loaded)
+		return;
+
+	_loaded = false;
 }
 
 } // End of namespace Director

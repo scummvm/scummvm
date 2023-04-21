@@ -47,6 +47,9 @@ public:
 
 	Common::String formatInfo() override;
 
+	void load() override;
+	void unload() override;
+
 	bool _enableSound;
 	bool _looping;
 	bool _crop;

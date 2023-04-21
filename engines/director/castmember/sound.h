@@ -33,6 +33,8 @@ public:
 	SoundCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	~SoundCastMember();
 
+	void load() override;
+	void unload() override;
 	Common::String formatInfo() override;
 
 	bool _looping;

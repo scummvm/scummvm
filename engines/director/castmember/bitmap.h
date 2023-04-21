@@ -48,6 +48,9 @@ public:
 
 	Common::String formatInfo() override;
 
+	void load() override;
+	void unload() override;
+
 	PictureReference *getPicture() const;
 	void setPicture(PictureReference &picture);
 	void setPicture(Image::ImageDecoder &image, bool adjustSize);

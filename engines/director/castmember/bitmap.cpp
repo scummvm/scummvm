@@ -19,12 +19,17 @@
  *
  */
 
+#include "common/macresman.h"
 #include "graphics/surface.h"
 #include "graphics/macgui/macwidget.h"
+#include "image/bmp.h"
 #include "image/image_decoder.h"
+#include "image/jpeg.h"
+#include "image/pict.h"
 
 #include "director/director.h"
 #include "director/cast.h"
+#include "director/images.h"
 #include "director/movie.h"
 #include "director/picture.h"
 #include "director/score.h"
@@ -476,6 +481,151 @@ Common::String BitmapCastMember::formatInfo() {
 		getForeColor(), getBackColor(),
 		_regX, _regY, _pitch, _bitsPerPixel, _clut
 	);
+}
+
+void BitmapCastMember::load() {
+	if (_loaded)
+		return;
+
+	uint32 tag = _tag;
+	uint16 imgId = _castId;
+	uint16 realId = 0;
+
+	Image::ImageDecoder *img = nullptr;
+	Common::SeekableReadStream *pic = nullptr;
+
+	if (_cast->_version >= kFileVer400) {
+		if (_children.size() > 0) {
+			imgId = _children[0].index;
+			tag = _children[0].tag;
+
+			pic = _cast->getResource(tag, imgId);
+		}
+
+		CastMemberInfo *ci = _cast->getCastMemberInfo(_castId);
+
+		if ((pic == nullptr || pic->size() == 0)
+				&& ci && !ci->fileName.empty()) {
+			// image file is linked, load from the filesystem
+			Common::String filename = ci->fileName;
+			Common::String directory = ci->directory;
+
+			Common::String imageFilename = directory + g_director->_dirSeparator + filename;
+
+			Common::Path path = Common::Path(pathMakeRelative(imageFilename), g_director->_dirSeparator);
+
+			Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(path);
+			if (file) {
+				// Detect the filetype. Director will ignore file extensions, as do we.
+				Image::ImageDecoder *decoder = nullptr;
+				uint32 fileType = file->readUint32BE();
+				file->seek(0);
+
+				if ((fileType >> 16) == MKTAG16('B', 'M')) {
+					// Windows Bitmap file
+					decoder = new Image::BitmapDecoder();
+				} else if ((fileType == 0xffd8ffe0) || (fileType == 0xffd8ffe1) || (fileType == 0xffd8ffe2)) {
+					// JPEG file
+					decoder = new Image::JPEGDecoder();
+				} else {
+					// Well... Director allowed someone to add it, so it must be a PICT. No further questions!
+					decoder = new Image::PICTDecoder();
+				}
+
+				bool res = decoder->loadStream(*file);
+				delete file;
+
+				if (res) {
+					setPicture(*decoder, decoder->hasPalette());
+					_external = true;
+
+					const Graphics::Surface *surf = decoder->getSurface();
+					if (decoder->hasPalette()) {
+						// For BMPs this sometimes gets set to 16 in the cast record,
+						// we should go with what the target image has.
+						_bitsPerPixel = 8;
+					}
+
+					debugC(5, kDebugImages, "BitmapCastMember::load(): Bitmap: id: %d, w: %d, h: %d, flags1: %x, flags2: %x bytes: %x, bpp: %d clut: %x", imgId, surf->w, surf->h, _flags1, _flags2, _bytes, _bitsPerPixel, _clut);
+					delete pic;
+					delete decoder;
+					_loaded = true;
+					return;
+				} else {
+					delete decoder;
+					warning("BUILDBOT: BitmapCastMember::load(): wrong format for external picture '%s'", path.toString().c_str());
+				}
+			} else {
+				warning("BitmapCastMember::load(): cannot open external picture '%s'", path.toString().c_str());
+			}
+		}
+	} else {
+		realId = imgId + _cast->_castIDoffset;
+		pic = _cast->getResource(tag, realId);
+	}
+
+	if (pic == nullptr) {
+		warning("BitmapCastMember::load(): Bitmap image %d not found", imgId);
+		return;
+	}
+
+	int w = _initialRect.width();
+	int h = _initialRect.height();
+
+	switch (tag) {
+	case MKTAG('D', 'I', 'B', ' '):
+		debugC(2, kDebugLoading, "****** Loading 'DIB ' id: %d (%d), %d bytes", imgId, realId, (int)pic->size());
+		img = new DIBDecoder();
+		break;
+
+	case MKTAG('B', 'I', 'T', 'D'):
+		debugC(2, kDebugLoading, "****** Loading 'BITD' id: %d (%d), %d bytes", imgId, realId, (int)pic->size());
+
+		if (w > 0 && h > 0) {
+			if (_cast->_version < kFileVer600) {
+				img = new BITDDecoder(w, h, _bitsPerPixel, _pitch, g_director->getPalette(), _cast->_version);
+			} else {
+				img = new Image::BitmapDecoder();
+			}
+		} else {
+			warning("BitmapCastMember::load(): Bitmap image %d not found", imgId);
+		}
+
+		break;
+
+	default:
+		warning("BitmapCastMember::load(): Unknown Bitmap CastMember Tag: [%d] %s", tag, tag2str(tag));
+		break;
+	}
+
+	if (!img || !img->loadStream(*pic)) {
+		warning("BitmapCastMember::load(): Unable to load id: %d", imgId);
+		delete pic;
+		delete img;
+		return;
+	}
+
+	setPicture(*img, true);
+
+	delete img;
+	delete pic;
+
+	debugC(5, kDebugImages, "BitmapCastMember::load(): Bitmap: id: %d, w: %d, h: %d, flags1: %x, flags2: %x bytes: %x, bpp: %d clut: %x", imgId, w, h, _flags1, _flags2, _bytes, _bitsPerPixel, _clut);
+
+	_loaded = true;
+}
+
+void BitmapCastMember::unload() {
+	if (!_loaded)
+		return;
+
+	delete _picture;
+	_picture = nullptr;
+
+	delete _ditheredImg;
+	_ditheredImg = nullptr;
+
+	_loaded = false;
 }
 
 PictureReference *BitmapCastMember::getPicture() const {

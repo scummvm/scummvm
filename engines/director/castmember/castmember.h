@@ -55,6 +55,10 @@ public:
 	uint16 getID() { return _castId; }
 	CastMemberInfo *getInfo();
 
+	virtual void load();
+	virtual void unload();
+	bool isLoaded() { return _loaded; }
+
 	virtual bool isEditable() { return false; }
 	virtual void setEditable(bool editable) {}
 	virtual bool isModified() { return _modified; }
@@ -98,6 +102,7 @@ protected:
 	uint16 _castId;
 	// a link to the widget we created, we may use it later
 	Graphics::MacWidget *_widget;
+	bool _loaded;
 	bool _modified;
 	bool _isChanged;
 };
