@@ -49,19 +49,27 @@ public:
 	Bitmap(BITMAP *al_bmp, bool shared_data);
 	~Bitmap();
 
-	// Allocate new bitmap
-	// CHECKME: color_depth = 0 is used to call Allegro's create_bitmap, which uses
+	// Allocate new bitmap.
+	// NOTE: color_depth is in BITS per pixel (i.e. 8, 16, 24, 32...).
+	// NOTE: in all of these color_depth may be passed as 0 in which case a default
+	// color depth will be used (as previously set for the system).
+	// TODO: color_depth = 0 is used to call Allegro's create_bitmap, which uses
 	// some global color depth setting; not sure if this is OK to use for generic class,
 	// revise this in future
 	bool    Create(int width, int height, int color_depth = 0);
+	// Create Bitmap and clear to transparent color
 	bool    CreateTransparent(int width, int height, int color_depth = 0);
-	// Allow this object to share existing bitmap data
+	// Creates a sub-bitmap of the given bitmap; the sub-bitmap is a reference to
+	// particular region inside a parent.
+	// WARNING: the parent bitmap MUST be kept in memory for as long as sub-bitmap exists!
 	bool    CreateSubBitmap(Bitmap *src, const Rect &rc);
 	// Resizes existing sub-bitmap within the borders of its parent
 	bool    ResizeSubBitmap(int width, int height);
-	// Create a copy of given bitmap
+	// Creates a plain copy of the given bitmap, optionally converting to a different color depth;
+	// pass color depth 0 to keep the original one.
 	bool    CreateCopy(Bitmap *src, int color_depth = 0);
-	// TODO: a temporary solution for plugin support
+	// TODO: this is a temporary solution for plugin support
+	// Wraps a raw allegro BITMAP object, optionally owns it (will delete on disposal)
 	bool    WrapAllegroBitmap(BITMAP *al_bmp, bool shared_data);
 	// Deallocate bitmap
 	void    Destroy();
