@@ -543,8 +543,11 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	// restore the queue now that the music is playing
 	_GP(play).music_queue_size = queuedMusicSize;
 
-	if (_GP(play).digital_master_volume >= 0)
-		System_SetVolume(_GP(play).digital_master_volume);
+	if (_GP(play).digital_master_volume >= 0) {
+		int temp_vol = _GP(play).digital_master_volume;
+		_GP(play).digital_master_volume = -1; // reset to invalid state before re-applying
+		System_SetVolume(temp_vol);
+	}
 
 	// Run audio clips on channels
 	// these two crossfading parameters have to be temporarily reset
