@@ -42,29 +42,17 @@ enum {
 // static const int MB_ARRAY[3] = { 1, 2, 4 };
 
 void mgetgraphpos() {
-	// TODO: review and possibly rewrite whole thing;
-	// research what disable_mgetgraphpos does, and is this still necessary?
+	// TODO:
 	// disable or update mouse speed control to sdl
 	// (does sdl support mouse cursor speed? is it even necessary anymore?);
 
 	// TODO: [sonneveld] find out where mgetgraphpos is needed, are events polled before that?
 	sys_evt_process_pending();
 
-	if (_G(disable_mgetgraphpos)) {
-		// The cursor coordinates are provided from alternate source;
-		// in this case we completely ignore actual cursor movement.
-		if (!_G(ignore_bounds) &&
-			// When applying script bounds we only do so while cursor is inside game viewport
-			_GP(mouse).ControlRect.IsInside(_G(mousex), _G(mousey)) &&
-			(_G(mousex) < _G(boundx1) || _G(mousey) < _G(boundy1) || _G(mousex) > _G(boundx2) || _G(mousey) > _G(boundy2))) {
-			_G(mousex) = CLIP(_G(mousex), _G(boundx1), _G(boundx2));
-			_G(mousey) = CLIP(_G(mousey), _G(boundy1), _G(boundy2));
-			msetgraphpos(_G(mousex), _G(mousey));
-		}
+	if (_G(switched_away))
 		return;
-	}
 
-	if (!_G(switched_away) && _GP(mouse).ControlEnabled) {
+	if (_GP(mouse).ControlEnabled) {
 		// Use relative mouse movement; speed factor should already be applied by SDL in this mode
 		int rel_x, rel_y;
 		ags_mouse_get_relxy(rel_x, rel_y);

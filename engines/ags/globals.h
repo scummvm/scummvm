@@ -1126,7 +1126,6 @@ public:
 	// real mouse coordinates and bounds
 	int _real_mouse_x = 0, _real_mouse_y = 0;
 	int _boundx1 = 0, _boundx2 = 99999, _boundy1 = 0, _boundy2 = 99999;
-	int _disable_mgetgraphpos = 0;
 	int8 _ignore_bounds = 0;
 	AGS::Shared::Bitmap *_mousecurs[MAXCURSORS];
 
