@@ -20,6 +20,7 @@
  */
 
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/sound.h"
 #include "director/castmember/sound.h"
 
@@ -41,6 +42,67 @@ Common::String SoundCastMember::formatInfo() {
 	return Common::String::format(
 		"looping: %d", _looping
 	);
+}
+
+void SoundCastMember::load() {
+	if (_loaded)
+		return;
+
+	uint32 tag = MKTAG('S', 'N', 'D', ' ');
+	uint16 sndId = (uint16)(_castId + _cast->_castIDoffset);
+
+	if (_cast->_version >= kFileVer400 && _children.size() > 0) {
+		sndId = _children[0].index;
+		tag = _children[0].tag;
+	}
+
+	Common::SeekableReadStreamEndian *sndData = _cast->getResource(tag, sndId);
+	if (!sndData) {
+		tag = MKTAG('s', 'n', 'd', ' ');
+		sndData = _cast->getResource(tag, sndId);
+	}
+
+	if (sndData == nullptr || sndData->size() == 0) {
+		// audio file is linked, load from the filesystem
+		CastMemberInfo *ci = _cast->getCastMemberInfo(_castId);
+		if (ci) {
+			Common::String filename = ci->fileName;
+
+			if (!ci->directory.empty())
+				filename = ci->directory + g_director->_dirSeparator + ci->fileName;
+
+			AudioFileDecoder *audio = new AudioFileDecoder(filename);
+			_audio = audio;
+		} else {
+			warning("Sound::load(): no resource or info found for cast member %d, skipping", _castId);
+		}
+	} else {
+		SNDDecoder *audio = new SNDDecoder();
+		audio->loadStream(*sndData);
+		_audio = audio;
+		_size = sndData->size();
+		if (_cast->_version < kFileVer400) {
+			// The looping flag wasn't added to sound cast members until D4.
+			// In older versions, always loop sounds that contain a loop start and end.
+			_looping = audio->hasLoopBounds();
+		}
+	}
+	if (sndData)
+		delete sndData;
+
+	_loaded = true;
+}
+
+void SoundCastMember::unload() {
+	if (!_loaded)
+		return;
+
+	delete _audio;
+	_audio = nullptr;
+	_size = 0;
+	_looping = false;
+
+	_loaded = false;
 }
 
 } // End of namespace Director

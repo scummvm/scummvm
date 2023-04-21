@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/stream.h"
 #include "graphics/surface.h"
 #include "graphics/macgui/macwidget.h"
 
@@ -387,6 +388,48 @@ Common::String FilmLoopCastMember::formatInfo() {
 		_frames.size(), _subchannels.size(), _enableSound, _looping,
 		_crop, _center
 	);
+}
+
+void FilmLoopCastMember::load() {
+	if (_loaded)
+		return;
+
+	if (_cast->_version < kFileVer400) {
+		// Director 3 and below should have a SCVW resource
+		uint16 filmLoopId = _castId + _cast->_castIDoffset;
+		uint32 tag = MKTAG('S', 'C', 'V', 'W');
+		Common::SeekableReadStreamEndian *loop = _cast->getResource(tag, filmLoopId);
+		if (loop) {
+			debugC(2, kDebugLoading, "****** Loading '%s' id: %d, %d bytes", tag2str(tag), filmLoopId, (int)loop->size());
+			loadFilmLoopData(*loop);
+			delete loop;
+		} else {
+			warning("FilmLoopCastMember::load(): Film loop not found");
+		}
+	} else if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+		if (_children.size() == 1) {
+			uint16 filmLoopId = _children[0].index;
+			uint32 tag = _children[0].tag;
+			Common::SeekableReadStreamEndian *loop = _cast->getResource(tag, filmLoopId);
+			if (loop) {
+				debugC(2, kDebugLoading, "****** Loading '%s' id: %d, %d bytes", tag2str(tag), filmLoopId, (int)loop->size());
+				loadFilmLoopDataV4(*loop);
+				delete loop;
+			} else {
+				warning("FilmLoopCastMember::load(): Film loop not found");
+			}
+		} else {
+			warning("FilmLoopCastMember::load(): Expected 1 child for film loop cast, got %d", _children.size());
+		}
+	} else {
+		warning("STUB: FilmLoopCastMember::load(): Film loops not supported for version %d", _cast->_version);
+	}
+
+	_loaded = true;
+}
+
+void FilmLoopCastMember::unload() {
+	// No unload necessary.
 }
 
 } // End of namespace Director

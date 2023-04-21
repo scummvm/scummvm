@@ -34,6 +34,9 @@ public:
 
 	Common::String formatInfo() override;
 
+	void load() override;
+	void unload() override;
+
 	PaletteV4 *_palette;
 };
 

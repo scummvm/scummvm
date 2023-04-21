@@ -58,6 +58,9 @@ public:
 
 	Common::String formatInfo() override;
 
+	void load() override;
+	void unload() override;
+
 	SizeType _borderSize;
 	SizeType _gutterSize;
 	SizeType _boxShadow;

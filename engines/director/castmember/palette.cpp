@@ -20,6 +20,7 @@
  */
 
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/castmember/palette.h"
 
 namespace Director {
@@ -39,6 +40,32 @@ Common::String PaletteCastMember::formatInfo() {
 		}
 	}
 	return result;
+}
+
+void PaletteCastMember::load() {
+	if (_loaded)
+		return;
+
+	// TODO: Verify how palettes work in >D4 versions
+	int paletteId = 0;
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500 && _children.size() == 1) {
+		paletteId = _children[0].index;
+	} else if (_cast->_version < kFileVer400) {
+		// For D3 and below, palette IDs are stored in the CLUT resource as cast ID + 1024
+		paletteId = _castId + _cast->_castIDoffset;
+	} else {
+		warning("PaletteCastMember::load(): Expected 1 child for palette cast, got %d", _children.size());
+	}
+	if (paletteId) {
+		debugC(2, kDebugImages, "PaletteCastMember::load(): linking palette id %d to cast index %d", paletteId, _castId);
+		_palette = g_director->getPalette(paletteId);
+	}
+
+	_loaded = true;
+}
+
+void PaletteCastMember::unload() {
+	// No unload necessary.
 }
 
 }

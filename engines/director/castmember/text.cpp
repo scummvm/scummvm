@@ -23,6 +23,7 @@
 #include "graphics/macgui/mactext.h"
 
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/channel.h"
 #include "director/movie.h"
 #include "director/score.h"
@@ -366,7 +367,31 @@ Common::String TextCastMember::formatInfo() {
 		getForeColor(), getBackColor(),
 		_editable, format.c_str()
 	);
+}
 
+void TextCastMember::load() {
+	if (_loaded)
+		return;
+
+	uint stxtid;
+	if (_cast->_version >= kFileVer400 && _children.size() > 0)
+		stxtid = _children[0].index;
+	else
+		stxtid = _castId;
+
+	if (_cast->_loadedStxts->contains(stxtid)) {
+		const Stxt *stxt = _cast->_loadedStxts->getVal(stxtid);
+		importStxt(stxt);
+		_size = stxt->_size;
+	} else {
+		warning("TextCastMember::load(): stxtid %i isn't loaded", stxtid);
+	}
+
+	_loaded = true;
+}
+
+void TextCastMember::unload() {
+	// No unload necessary.
 }
 
 bool TextCastMember::hasField(int field) {
