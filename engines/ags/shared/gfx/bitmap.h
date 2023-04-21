@@ -62,7 +62,7 @@ namespace BitmapHelper {
 // Helper functions, that delete faulty bitmaps automatically, and return
 // NULL if bitmap could not be created.
 Bitmap *CreateBitmap(int width, int height, int color_depth = 0);
-Bitmap *CreateClearBitmap(int width, int height, int clear_color = 0, int color_depth = 0);
+Bitmap *CreateClearBitmap(int width, int height, int color_depth = 0, int clear_color = 0);
 Bitmap *CreateTransparentBitmap(int width, int height, int color_depth = 0);
 Bitmap *CreateSubBitmap(Bitmap *src, const Rect &rc);
 Bitmap *CreateBitmapCopy(Bitmap *src, int color_depth = 0);
