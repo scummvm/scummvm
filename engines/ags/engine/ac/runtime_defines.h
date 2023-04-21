@@ -145,7 +145,9 @@ const int LegacyRoomVolumeFactor = 30;
 // Bit mask for packing skip key/button data into result
 #define SKIP_RESULT_DATA_MASK  0x00FFFFFF
 
-#define MANOBJNUM 99
+// The index base for characters, used in legacy AnimateObject script function;
+// if passed ID is eq or gt than this, then a Character is animated instead
+#define LEGACY_ANIMATE_CHARIDBASE 100
 
 #define STD_BUFFER_SIZE 3000
 
