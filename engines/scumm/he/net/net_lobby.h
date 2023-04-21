@@ -134,6 +134,9 @@ protected:
 
 	void handleTeams(Common::JSONArray userTeam, Common::JSONArray opponentTeam, int error, Common::String message);
 
+	void downloadFile(const char *downloadPath, const char *filename);
+	void handleFileData(Common::String filename, Common::String data);
+
 	void setIcon(int icon);
 	void sendGameResults(int userId, int arrayIndex, int unknown);
 
@@ -157,6 +160,9 @@ protected:
 
 	void sendBusy(int playerId);
 	void handleReceiverBusy();
+
+	void pingPlayer(int playerId);
+	void handlePingResult(int ping);
 
 	void challengePlayer(int32 playerId, int32 stadium);
 	void handleReceiveChallenge(int playerId, int stadium, Common::String name);

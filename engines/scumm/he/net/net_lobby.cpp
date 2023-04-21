@@ -127,10 +127,14 @@ void Lobby::processLine(Common::String line) {
 		} else if (command == "profile_info") {
 			Common::JSONArray profile = root["profile"]->asArray();
 			handleProfileInfo(profile);
+		} else if (command == "file_data") {
+			Common::String filename = root["filename"]->asString();
+			Common::String data = root["data"]->asString();
+			handleFileData(filename, data);
 		} else if (command == "population_resp") {
 			int areaId = root["area"]->asIntegerNumber();
 			int population = root["population"]->asIntegerNumber();
-			handlePopulation((int)areaId, (int)population);
+			handlePopulation(areaId, population);
 		} else if (command == "locate_resp") {
 			int code = root["code"]->asIntegerNumber();
 			int areaId = root["areaId"]->asIntegerNumber();
@@ -142,6 +146,9 @@ void Lobby::processLine(Common::String line) {
 		} else if (command == "games_playing") {
 			int games = root["games"]->asIntegerNumber();
 			handleGamesPlaying(games);
+		} else if (command == "ping_result") {
+			int result = root["result"]->asIntegerNumber();
+			handlePingResult(result);
 		} else if (command == "receive_challenge") {
 			int user = root["user"]->asIntegerNumber();
 			int stadium = root["stadium"]->asIntegerNumber();
@@ -153,15 +160,15 @@ void Lobby::processLine(Common::String line) {
 			handleConsideringChallenge();
 		} else if (command == "counter_challenge") {
 			int stadium = root["stadium"]->asIntegerNumber();
-			handleCounterChallenge((int)stadium);
+			handleCounterChallenge(stadium);
 		} else if (command == "decline_challenge") {
 			int notResponding = root["not_responding"]->asIntegerNumber();
-			handleDeclineChallenge((int)notResponding);
+			handleDeclineChallenge(notResponding);
 		} else if (command == "accept_challenge") {
 			handleAcceptChallenge();
 		} else if (command == "game_session") {
 			int session = root["session"]->asIntegerNumber();
-			handleGameSession((int)session);
+			handleGameSession(session);
 		} else if (command == "teams") {
 			int error = root["error"]->asIntegerNumber();
 			Common::String message = root["message"]->asString();
@@ -220,7 +227,8 @@ int32 Lobby::dispatch(int op, int numArgs, int32 *args) {
 		challengePlayer(args[0], args[1]);
 		break;
 	case OP_NET_PING_OPPONENT:
-		// TODO
+		// NOTE: See getUserProfile, this op only gets
+		// called after an oponent picks up the phone.
 		break;
 	case OP_NET_RECEIVER_BUSY:
 		sendBusy(args[0]);
@@ -271,8 +279,13 @@ int32 Lobby::dispatch(int op, int numArgs, int32 *args) {
 		res = answerPhone(args[0]);
 		break;
 	case OP_NET_DOWNLOAD_FILE:
-		// TODO
-		_vm->writeVar(135, 1);
+		char downloadPath[MAX_USER_NAME];
+		char filename[MAX_USER_NAME];
+
+		_vm->getStringFromArray(args[0], downloadPath, sizeof(downloadPath));
+		_vm->getStringFromArray(args[1], filename, sizeof(filename));
+
+		downloadFile(downloadPath, filename);
 		break;
 	case OP_NET_UPDATE_INIT:
 		break;
@@ -355,13 +368,6 @@ bool Lobby::connect() {
 		}
 	} else
 		warning("LOBBY: Could not parse URL, attempting to connect as is");
-
-
-	// // Maybe this check could be done better...
-	// int pos = lobbyUrl.findLastOf(":");
-	// if (pos)
-	// 	// If the URL missing a port at the end, add the default one in.
-	// 	lobbyUrl += ":9130";
 
 	debugC(DEBUG_NETWORK, "LOBBY: Connecting to %s", lobbyUrl.c_str());
 
@@ -460,6 +466,13 @@ void Lobby::getUserProfile(int userId) {
 	getProfileRequest.setVal("cmd", new Common::JSONValue("get_profile"));
 	if (userId) {
 		getProfileRequest.setVal("user_id", new Common::JSONValue((long long int)userId));
+		if (ConfMan.getBool("enable_competitive_mods") && _vm->_game.id == GID_BASEBALL2001) {
+			// NOTE: Since there are isn't any way to reliably ping the player (since in-game
+			// communication takes place after accepting a challenge), we are substituting
+			// the functionality to deterimine whether the opponent has competitive mods
+			// enabled or not.
+			pingPlayer(userId);
+		}
 	}
 	send(getProfileRequest);
 }
@@ -516,6 +529,25 @@ void Lobby::handleTeams(Common::JSONArray userTeam, Common::JSONArray opponentTe
 		// Write a one to var747 to indicate that Prince Rupert teams should be pulled from arrays 748 and 749
 		_vm->writeVar(747, 1);
 	}
+}
+
+void Lobby::downloadFile(const char *downloadPath, const char *filename) {
+	if (!_socket)
+		return;
+
+	Common::JSONObject downloadRequest;
+	downloadRequest.setVal("cmd", new Common::JSONValue("download_file"));
+	downloadRequest.setVal("filename", new Common::JSONValue((Common::String)filename));
+	send(downloadRequest);
+}
+
+void Lobby::handleFileData(Common::String filename, Common::String data) {
+	if (data.size()) {
+		Common::OutSaveFile file = _vm->_saveFileMan->openForSaving(_vm->_targetName + '-' + filename);
+		file.write(data.c_str(), data.size());
+		file.finalize();
+	}
+	_vm->writeVar(135, 1);
 }
 
 void Lobby::setIcon(int icon) {
@@ -784,6 +816,25 @@ void Lobby::handleReceiverBusy() {
 
 	// Setup the arguments
 	args[0] = OP_REMOTE_OPPONENT_BUSY;
+
+	// Run the script
+	runRemoteStartScript(args);
+}
+
+void Lobby::pingPlayer(int playerId) {
+	Common::JSONObject pingRequest;
+	pingRequest.setVal("cmd", new Common::JSONValue("ping_player"));
+	pingRequest.setVal("user", new Common::JSONValue((long long int)playerId));
+	send(pingRequest);
+}
+
+void Lobby::handlePingResult(int result) {
+	int args[25];
+	memset(args, 0, sizeof(args));
+
+	// Setup the arguments
+	args[0] = OP_REMOTE_PING_TEST_RESULT;
+	args[1] = result;
 
 	// Run the script
 	runRemoteStartScript(args);
