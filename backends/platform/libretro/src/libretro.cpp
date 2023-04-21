@@ -768,11 +768,10 @@ void retro_run(void) {
 			if (!skip_frame)
 				retro_switch_to_emu_thread();
 
-			if (retro_emu_thread_exited())
+			if (retro_emu_thread_exited()) {
 				retro_deinit_emu_thread();
-
-			if (!retro_emu_thread_initialized()) {
 				environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, NULL);
+				log_scummvm_exit_code();
 				return;
 			}
 
@@ -812,14 +811,7 @@ void retro_run(void) {
 }
 
 void retro_unload_game(void) {
-	if (retro_emu_thread_initialized()) {
-		while (!retro_emu_thread_exited()) {
-			retroQuit();
-			retro_switch_to_emu_thread();
-		}
-		retro_deinit_emu_thread();
-	}
-	log_scummvm_exit_code();
+	retroQuit();
 }
 
 void retro_reset(void) {
