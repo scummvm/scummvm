@@ -1001,6 +1001,12 @@ void Lobby::gameFinished() {
 	_inGame = false;
 	_vm->_net->closeProvider();
 
+	// Bugfix: After finishing a game on an area with power ups disabled, the variable
+	// for it (689) does not reset. This causes offline games to play without power ups at all,
+	// so let's reset it ourselves.
+	if (_vm->_game.id == GID_BASEBALL2001)
+		_vm->writeVar(689, 0);
+
 	Common::JSONObject gameFinishedRequest;
 	gameFinishedRequest.setVal("cmd", new Common::JSONValue("game_finished"));
 
