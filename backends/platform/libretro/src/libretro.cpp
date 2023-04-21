@@ -74,6 +74,7 @@ static float mouse_speed = 1.0f;
 static float gamepad_acceleration_time = 0.2f;
 
 static bool timing_inaccuracies_enabled = false;
+static bool consecutive_screen_updates = false;
 
 char cmd_params[20][200];
 char cmd_params_num;
@@ -88,7 +89,6 @@ static uint8 frameskip_threshold;
 static uint32 frameskip_counter = 0;
 static uint8 frameskip_events = 0;
 
-static bool consecutive_screen_updates = false;
 
 static uint8 audio_status = AUDIO_STATUS_MUTE;
 
@@ -103,6 +103,15 @@ static uint16 samples_per_frame = 0;                // length in samples per fra
 static size_t samples_per_frame_buffer_size = 0;
 
 static int16_t *sound_buffer = NULL;       // pointer to output buffer
+
+static void log_scummvm_exit_code(void) {
+	if (retro_get_scummvm_res() == Common::kNoError)
+		log_cb(RETRO_LOG_INFO, "ScummVM exited successfully.\n");
+	else if (retro_get_scummvm_res() < Common::kNoError)
+		log_cb(RETRO_LOG_WARN, "Unknown ScummVM exit code.\n");
+	else
+		log_cb(RETRO_LOG_ERROR, "ScummVM exited with error %d.\n", retro_get_scummvm_res());
+}
 
 static void audio_buffer_init(uint16 sample_rate, uint16 frame_rate) {
 	samples_per_frame = sample_rate / frame_rate;
@@ -810,13 +819,7 @@ void retro_unload_game(void) {
 		}
 		retro_deinit_emu_thread();
 	}
-
-	if (retro_get_scummvm_res() == Common::kNoError)
-		log_cb(RETRO_LOG_INFO, "ScummVM exited successfully.\n");
-	else if (retro_get_scummvm_res() < Common::kNoError)
-		log_cb(RETRO_LOG_WARN, "ScummVM not initialized correctly.\n", frameskip_counter, current_frame);
-	else
-		log_cb(RETRO_LOG_ERROR, "ScummVM exited with error %d.\n", retro_get_scummvm_res());
+	log_scummvm_exit_code();
 }
 
 void retro_reset(void) {
