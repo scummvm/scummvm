@@ -183,6 +183,9 @@ void System_SetVolume(int newvol) {
 	if ((newvol < 0) || (newvol > 100))
 		quit("!System.Volume: invalid volume - must be from 0-100");
 
+	if (newvol == _GP(play).digital_master_volume)
+		return;
+
 	_GP(play).digital_master_volume = newvol;
 
 	Audio::Mixer *mixer = ::AGS::g_vm->_mixer;
