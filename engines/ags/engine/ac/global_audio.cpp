@@ -374,13 +374,11 @@ void PlayMP3File(const char *filename) {
 	int useChan = prepare_for_new_music();
 	bool doLoop = (_GP(play).music_repeat > 0);
 
-	SOUNDCLIP *clip = nullptr;
+	SOUNDCLIP *clip = my_load_ogg(asset_name, doLoop);
 	int sound_type = 0;
 
-	if (!clip) {
-		clip = my_load_ogg(asset_name, doLoop);
+	if (clip)
 		sound_type = MUS_OGG;
-	}
 
 	if (!clip) {
 		clip = my_load_mp3(asset_name, doLoop);
