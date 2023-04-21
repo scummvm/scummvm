@@ -38,7 +38,7 @@ Bitmap *CreateBitmap(int width, int height, int color_depth) {
 	return bitmap;
 }
 
-Bitmap *CreateClearBitmap(int width, int height, int clear_color, int color_depth) {
+Bitmap *CreateClearBitmap(int width, int height, int color_depth, int clear_color) {
 	Bitmap *bitmap = new Bitmap();
 	if (!bitmap->Create(width, height, color_depth)) {
 		delete bitmap;
