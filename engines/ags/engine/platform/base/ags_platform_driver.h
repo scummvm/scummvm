@@ -32,6 +32,7 @@
 #include "ags/engine/ac/date_time.h"
 #include "ags/engine/ac/path_helper.h"
 #include "ags/shared/debugging/output_handler.h"
+#include "ags/shared/util/geometry.h"
 #include "ags/shared/util/ini_util.h"
 #include "ags/lib/allegro/error.h"
 
@@ -167,8 +168,8 @@ struct AGSPlatformDriver
 	// Adjust application window's parameters to suit windowed mode
 	virtual void AdjustWindowStyleForWindowed();
 	virtual int  ConvertKeycodeToScanCode(int keyCode);
-	// Adjust window size to ensure it is in the supported limits
-	virtual void ValidateWindowSize(int &x, int &y, bool /*borderless*/) const;
+	// Adjust window's * client size * to ensure it is in the supported limits
+	virtual Size ValidateWindowSize(const Size &sz, bool borderless) const;
 
 	virtual int  InitializeCDPlayer() = 0;  // return 0 on success
 	virtual int  CDPlayerCommand(int cmdd, int datt) = 0;
