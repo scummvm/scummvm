@@ -189,7 +189,7 @@ eAGSMouseButton ags_mgetbutton() {
 	return mgetbutton();;
 }
 
-void ags_mouse_get_relxy(int &x, int &y) {
+void ags_mouse_acquire_relxy(int &x, int &y) {
 	x = _G(mouse_accum_relx);
 	y = _G(mouse_accum_rely);
 	_G(mouse_accum_relx) = 0;
@@ -220,11 +220,10 @@ int ags_check_mouse_wheel() {
 void ags_clear_input_state() {
 	// Clear everything related to the input field
 	::AGS::g_events->clearEvents();
-	_G(mouse_accum_relx) = 0;
-	_G(mouse_accum_rely) = 0;
 	_G(mouse_button_state) = 0;
 	_G(mouse_accum_button_state) = 0;
 	_G(mouse_clear_at_time) = AGS_Clock::now();
+	ags_clear_mouse_movement();
 }
 
 void ags_clear_input_buffer() {
@@ -232,8 +231,7 @@ void ags_clear_input_buffer() {
 	// accumulated state only helps to not miss clicks
 	_G(mouse_accum_button_state) = 0;
 	// forget about recent mouse relative movement too
-	_G(mouse_accum_relx) = 0;
-	_G(mouse_accum_rely) = 0;
+	ags_clear_mouse_movement();
 }
 
 void ags_clear_mouse_movement() {
