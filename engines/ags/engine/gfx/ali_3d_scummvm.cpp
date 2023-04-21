@@ -214,6 +214,7 @@ void ScummVMRendererGraphicsDriver::SetGamma(int newGamma) {
 	}
 
 	SDL_SetWindowGammaRamp(sys_get_window(), gamma_red, gamma_green, gamma_blue);
+	_gamma = newGamma;
 #endif
 }
 
