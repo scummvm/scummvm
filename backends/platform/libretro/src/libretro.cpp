@@ -54,6 +54,9 @@
 #include "backends/platform/libretro/include/libretro-core-options.h"
 #include "backends/platform/libretro/include/os.h"
 
+static struct retro_game_info game_buf;
+static struct retro_game_info * game_buf_ptr;
+
 retro_log_printf_t log_cb = NULL;
 static retro_video_refresh_t video_cb = NULL;
 static retro_audio_sample_batch_t audio_batch_cb = NULL;
@@ -89,6 +92,7 @@ static uint8 frameskip_threshold;
 static uint32 frameskip_counter = 0;
 static uint8 frameskip_events = 0;
 
+static bool restart_pending = false;
 
 static uint8 audio_status = AUDIO_STATUS_MUTE;
 
@@ -585,6 +589,8 @@ bool retro_load_game(const struct retro_game_info *game) {
 	}
 
 	if (game) {
+		game_buf_ptr = &game_buf;
+		memcpy(game_buf_ptr, game, sizeof(retro_game_info));
 		// Retrieve the game path.
 		Common::FSNode detect_target = Common::FSNode(game->path);
 		Common::FSNode parent_dir = detect_target.getParent();
@@ -671,6 +677,8 @@ bool retro_load_game(const struct retro_game_info *game) {
 		} else {
 			parse_command_params(buffer);
 		}
+	} else {
+		game_buf_ptr = NULL;
 	}
 
 	if (!retro_init_emu_thread()) {
@@ -770,8 +778,15 @@ void retro_run(void) {
 
 			if (retro_emu_thread_exited()) {
 				retro_deinit_emu_thread();
-				environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, NULL);
-				log_scummvm_exit_code();
+				if (!restart_pending) {
+					environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, NULL);
+					log_scummvm_exit_code();
+				} else {
+					init_command_params();
+					retro_load_game(game_buf_ptr);
+					retroReset();
+					restart_pending = false;
+				}
 				return;
 			}
 
@@ -815,7 +830,8 @@ void retro_unload_game(void) {
 }
 
 void retro_reset(void) {
-	retroReset();
+	restart_pending = true;
+	retroQuit();
 }
 
 // Stubs

@@ -1284,9 +1284,7 @@ public:
 	}
 
 	void Reset() {
-		Common::Event ev;
-		ev.type = Common::EVENT_RETURN_TO_LAUNCHER;
-		dynamic_cast<OSystem_RETRO *>(g_system)->getEventManager()->pushEvent(ev);
+		dynamic_cast<OSystem_RETRO *>(g_system)->getEventManager()->resetQuit();
 	}
 
 };
