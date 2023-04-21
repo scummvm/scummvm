@@ -309,6 +309,12 @@ bool consecutive_screen_updates_is_enabled(){
 		return consecutive_screen_updates;
 }
 
+void init_command_params(void) {
+	memset(cmd_params, 0, sizeof(cmd_params));
+	cmd_params_num = 1;
+	strcpy(cmd_params[0], "scummvm\0");
+}
+
 void parse_command_params(char *cmdline) {
 	int j = 0;
 	int cmdlen = strlen(cmdline);
@@ -470,8 +476,7 @@ void retro_init(void) {
 	audio_buffer_init(SAMPLE_RATE, (uint16) frame_rate);
 	update_variables();
 
-	cmd_params_num = 1;
-	strcpy(cmd_params[0], "scummvm\0");
+	init_command_params();
 
 	struct retro_input_descriptor desc[] = {
 		{0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT, "Mouse Cursor Left"},
@@ -707,9 +712,8 @@ void retro_run(void) {
 			/* Determine frameskip need based on settings */
 			if ((frameskip_type == 2) || (performance_switch & PERF_SWITCH_ON))
 				skip_frame = (audio_status & AUDIO_STATUS_BUFFER_UNDERRUN);
-			else if (frameskip_type == 1){
+			else if (frameskip_type == 1)
 				skip_frame = !(current_frame % frameskip_no == 0);
-}
 			else if (frameskip_type == 3)
 				skip_frame = (retro_audio_buff_occupancy < frameskip_threshold);
 
