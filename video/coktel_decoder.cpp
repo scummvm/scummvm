@@ -50,9 +50,9 @@ CoktelDecoder::State::State() : flags(0), speechId(0) {
 CoktelDecoder::CoktelDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) :
 	_mixer(mixer), _soundType(soundType), _width(0), _height(0), _x(0), _y(0),
 	_defaultX(0), _defaultY(0), _features(0), _frameCount(0), _paletteDirty(false),
-	_ownSurface(true), _frameRate(12), _hasSound(false), _soundEnabled(false),
-	_soundStage(kSoundNone), _audioStream(0), _startTime(0), _pauseStartTime(0),
-	_isPaused(false) {
+	_isDouble(false), _ownSurface(true), _frameRate(12), _hasSound(false),
+	_soundEnabled(false), _soundStage(kSoundNone), _audioStream(0), _startTime(0),
+	_pauseStartTime(0), _isPaused(false) {
 
 	assert(_mixer);
 
