@@ -317,6 +317,7 @@ MODULE_OBJS = \
 	plugins/core/textbox.o \
 	plugins/core/view_frame.o \
 	plugins/ags_agi/ags_agi.o \
+	plugins/ags_app_open_url/ags_app_open_url.o \
 	plugins/ags_blend/ags_blend.o \
 	plugins/ags_clipboard/ags_clipboard.o \
 	plugins/ags_controller/ags_controller.o \
