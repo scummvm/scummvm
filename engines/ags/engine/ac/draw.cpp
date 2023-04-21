@@ -690,7 +690,10 @@ void render_to_screen() {
 	// Stage: engine overlay
 	construct_engine_overlay();
 
-	_G(gfxDriver)->SetVsync(_GP(scsystem).vsync > 0);
+	// Try set new vsync value, and remember the actual result
+	bool new_vsync = _G(gfxDriver)->SetVsync(_GP(scsystem).vsync > 0);
+	if (new_vsync != _GP(scsystem).vsync)
+		System_SetVSyncInternal(new_vsync);
 
 	bool succeeded = false;
 	while (!succeeded && !_G(want_exit) && !_G(abort_engine)) {
