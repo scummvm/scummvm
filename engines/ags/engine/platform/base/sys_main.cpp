@@ -155,6 +155,7 @@ SDL_Window *sys_window_create(const char *window_title, int w, int h, WindowMode
 	}
 	flags |= ex_flags;
 #if (AGS_PLATFORM_MOBILE)
+	// Resizable flag is necessary for fullscreen app rotation
 	flags |= SDL_WINDOW_RESIZABLE;
 #endif
 	window = SDL_CreateWindow(
@@ -165,6 +166,15 @@ SDL_Window *sys_window_create(const char *window_title, int w, int h, WindowMode
 		h,
 		flags
 	);
+#if (AGS_PLATFORM_DESKTOP)
+	// CHECKME: this is done because SDL2 has some bug(s) during
+	// centering. See: https://github.com/libsdl-org/SDL/issues/6875
+	// TODO: SDL2 docs mentioned that on some systems the window border size
+	// may be known only after the window is displayed, which means that
+	// this may have to be called with a short delay (but how to know when?)
+	if (mode == kWnd_Windowed)
+		sys_window_center();
+#endif
 	return window;
 }
 #else
@@ -228,6 +238,10 @@ void sys_window_set_icon() {
 bool sys_window_set_size(int w, int h, bool center) {
 	error("TODO: sys_window_set_size");
 	return false;
+}
+
+void sys_window_center() {
+	// No implementation in ScummVM
 }
 
 #if AGS_PLATFORM_OS_WINDOWS
