@@ -58,7 +58,7 @@ Size get_desktop_size() {
 Size get_max_display_size(bool windowed) {
 	Size device_size = get_desktop_size();
 	if (windowed)
-		_G(platform)->ValidateWindowSize(device_size.Width, device_size.Height, false);
+		device_size = _G(platform)->ValidateWindowSize(device_size, false);
 	return device_size;
 }
 
