@@ -99,6 +99,8 @@ void ags_simulate_keypress(eAGSKeyCode ags_key) {
 	e.kbd.ascii = (e.kbd.keycode >= 32 && e.kbd.keycode <= 127) ? e.kbd.keycode : 0;
 
 	::AGS::g_events->pushKeyboardEvent(e);
+	e.type = Common::EVENT_KEYUP;
+	::AGS::g_events->pushKeyboardEvent(e);
 }
 
 // ----------------------------------------------------------------------------
