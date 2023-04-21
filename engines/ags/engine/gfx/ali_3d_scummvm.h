@@ -251,6 +251,7 @@ private:
 	uint16 _defaultGammaRed[256] {};
 	uint16 _defaultGammaGreen[256] {};
 	uint16 _defaultGammaBlue[256] {};
+	int _gamma = 100;
 #endif
 
 	/*  SDL_Renderer *_renderer = nullptr;
