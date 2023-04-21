@@ -22,6 +22,7 @@
 #include "ags/lib/allegro.h"
 #include "ags/plugins/plugin_base.h"
 #include "ags/plugins/ags_agi/ags_agi.h"
+#include "ags/plugins/ags_app_open_url/ags_app_open_url.h"
 #include "ags/plugins/ags_blend/ags_blend.h"
 #include "ags/plugins/ags_clipboard/ags_clipboard.h"
 #include "ags/plugins/ags_controller/ags_controller.h"
@@ -69,6 +70,9 @@ Plugins::PluginBase *pluginOpen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("AGS_AGI"))
 		return new AGSAgi::AGSAgi();
+
+	if (fname.equalsIgnoreCase("agsappopenurl"))
+		return new AGSAppOpenURL::AGSAppOpenURL();
 
 	if (fname.equalsIgnoreCase("AGSBlend"))
 		return new AGSBlend::AGSBlend();
