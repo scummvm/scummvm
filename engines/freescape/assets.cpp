@@ -50,7 +50,7 @@ void FreescapeEngine::loadAssetsFullGame() {
 	} else if (isDOS()) {
 		loadAssetsDOSFullGame();
 	} else
-		error("Invalid or unsupported render mode %s for Driller", Common::getRenderModeDescription(_renderMode));
+		error("Invalid or unsupported render mode %s", Common::getRenderModeDescription(_renderMode));
 }
 
 void FreescapeEngine::loadAssetsDemo() {
@@ -61,8 +61,10 @@ void FreescapeEngine::loadAssetsDemo() {
 		loadAssetsAtariDemo();
 	} else if (isDOS()) {
 		loadAssetsDOSDemo();
+	} else if (isSpectrum()) {
+		loadAssetsZXDemo();
 	} else
-		error("Unsupported demo for Driller");
+		error("Unsupported demo");
 }
 
 void FreescapeEngine::loadAssetsAtariDemo() {

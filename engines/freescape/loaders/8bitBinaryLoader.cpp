@@ -757,7 +757,7 @@ void FreescapeEngine::loadMessagesFixedSize(Common::SeekableReadStream *file, in
 		file->read(buffer, size);
 		Common::String message = (const char *)buffer;
 		_messagesList.push_back(message);
-		debugC(1, kFreescapeDebugParser, "%s", _messagesList[_messagesList.size() - 1].c_str());
+		debugC(1, kFreescapeDebugParser, "'%s'", _messagesList[_messagesList.size() - 1].c_str());
 	}
 	free(buffer);
 }

@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	games/castle.o \
 	games/dark/dark.o \
 	games/dark/dos.o \
+	games/dark/zx.o \
 	games/driller/amiga.o \
 	games/driller/atari.o \
 	games/driller/c64.o \
