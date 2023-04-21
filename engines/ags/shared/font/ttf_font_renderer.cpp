@@ -115,16 +115,18 @@ bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
 	String filename = String::FromFormat("agsfnt%d.ttf", fontNumber);
 	if (fontSize <= 0)
 		fontSize = 8; // compatibility fix
-	if (params && params->SizeMultiplier > 1)
-		fontSize *= params->SizeMultiplier;
+	assert(params);
+	FontRenderParams f_params = params ? *params : FontRenderParams();
+	if (f_params.SizeMultiplier > 1)
+		fontSize *= f_params.SizeMultiplier;
 
 	ALFONT_FONT *alfptr = LoadTTF(filename, fontSize,
-		GetAlfontFlags(params->LoadMode));
+		GetAlfontFlags(f_params.LoadMode));
 	if (!alfptr)
 		return false;
 
 	_fontData[fontNumber].AlFont = alfptr;
-	_fontData[fontNumber].Params = params ? *params : FontRenderParams();
+	_fontData[fontNumber].Params = f_params;
 	if (metrics)
 		FillMetrics(alfptr, metrics);
 	return true;
