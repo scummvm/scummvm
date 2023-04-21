@@ -691,7 +691,6 @@ void Cast::loadBitmapData(int key, BitmapCastMember *bitmapCast) {
 	uint32 tag = bitmapCast->_tag;
 	uint16 imgId = key;
 	uint16 realId = 0;
-	Cast *sharedCast = _movie ? _movie->getSharedCast() : nullptr;
 
 	Image::ImageDecoder *img = nullptr;
 	Common::SeekableReadStream *pic = nullptr;
@@ -703,8 +702,6 @@ void Cast::loadBitmapData(int key, BitmapCastMember *bitmapCast) {
 
 			if (_castArchive->hasResource(tag, imgId))
 				pic = _castArchive->getResource(tag, imgId);
-			else if (sharedCast && sharedCast->getArchive()->hasResource(tag, imgId))
-				pic = sharedCast->getArchive()->getResource(tag, imgId);
 		}
 
 		if ((pic == nullptr || pic->size() == 0)
@@ -766,10 +763,6 @@ void Cast::loadBitmapData(int key, BitmapCastMember *bitmapCast) {
 			bitmapCast->_tag = tag = ((BitmapCastMember *)_loadedCast->getVal(imgId))->_tag;
 			realId = imgId + _castIDoffset;
 			pic = _castArchive->getResource(tag, realId);
-		} else if (sharedCast && sharedCast->_loadedCast && sharedCast->_loadedCast->contains(imgId)) {
-			bitmapCast->_tag = tag = ((BitmapCastMember *)sharedCast->_loadedCast->getVal(imgId))->_tag;
-			realId = imgId + sharedCast->_castIDoffset;
-			pic = sharedCast->getArchive()->getResource(tag, realId);
 		}
 	}
 
