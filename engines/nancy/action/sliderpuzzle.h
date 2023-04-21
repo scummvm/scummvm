@@ -24,10 +24,6 @@
 
 #include "engines/nancy/action/actionrecord.h"
 
-namespace Common {
-class Serializer;
-}
-
 namespace Nancy {
 
 struct SPUZ;
