@@ -73,7 +73,7 @@ extern int (*uisok)(int c);
 extern void set_uformat(int type);
 
 enum { LC_CTYPE };
-extern void setlocale(int type, const char *language);
+extern const char *setlocale(int type, const char *language);
 
 /* get_uformat:
  *  Returns the current text encoding format.

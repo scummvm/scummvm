@@ -1288,8 +1288,10 @@ int ustrsizez(const char *s) {
 	return (intptr_t)s - (intptr_t)orig;
 }
 
-void setlocale(int type, const char *language) {
+const char *setlocale(int type, const char *language) {
+	const char *locale = "C";
 	// TODO: If needed for alfont
+	return locale;
 }
 
 int need_uconvert(const char *s, int type, int newtype) {
