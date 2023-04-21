@@ -101,7 +101,8 @@ public:
 	Size        GetNativeSize() const override;
 	Rect        GetRenderDestination() const override;
 
-	bool SetVsync(bool enabled) override;
+	bool		SetVsync(bool enabled) override;
+	bool		GetVsync() const override;
 
 	void        BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
 	                             Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr) override;

@@ -189,8 +189,10 @@ public:
 	virtual bool GetCopyOfScreenIntoBitmap(Shared::Bitmap *destination, bool at_native_res, GraphicResolution *want_fmt = nullptr) = 0;
 	// Tells if the renderer supports toggling vsync after initializing the mode.
 	virtual bool DoesSupportVsyncToggle() = 0;
-	// Toggles vertical sync mode, if renderer supports one; returns the new state.
+	// Toggles vertical sync mode, if renderer supports one; returns the *new state*.
 	virtual bool SetVsync(bool enabled) = 0;
+	// Tells if the renderer currently has vsync enabled.
+	virtual bool GetVsync() const = 0;
 	// Enables or disables rendering mode that draws sprite list directly into
 	// the final resolution, as opposed to drawing to native-resolution buffer
 	// and scaling to final frame. The effect may be that sprites that are
