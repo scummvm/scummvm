@@ -101,6 +101,8 @@ public:
 	Size        GetNativeSize() const override;
 	Rect        GetRenderDestination() const override;
 
+	bool SetVsync(bool enabled) override;
+
 	void        BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
 	                             Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr) override;
 	void        EndSpriteBatch() override;
@@ -141,6 +143,11 @@ protected:
 	virtual void OnSetRenderFrame(const Rect &dst_rect);
 	// Called when the new filter is set
 	virtual void OnSetFilter();
+
+	// Try changing vsync setting; fills new current mode in vsync_res,
+	// returns whether the new setting was set successfully.
+	virtual bool SetVsyncImpl(bool vsync, bool &vsync_res) { return false; }
+
 	// Initialize sprite batch and allocate necessary resources
 	virtual void InitSpriteBatch(size_t index, const SpriteBatchDesc &desc) = 0;
 	// Gets the index of a last draw entry (sprite)

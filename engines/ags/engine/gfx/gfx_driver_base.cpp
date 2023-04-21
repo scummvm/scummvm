@@ -64,6 +64,18 @@ Rect GraphicsDriverBase::GetRenderDestination() const {
 	return _dstRect;
 }
 
+bool GraphicsDriverBase::SetVsync(bool enabled) {
+	if (_mode.Vsync == enabled) {
+		return _mode.Vsync;
+	}
+
+	bool new_value;
+	if (SetVsyncImpl(enabled, new_value)) {
+		_mode.Vsync = new_value;
+	}
+	return _mode.Vsync;
+}
+
 void GraphicsDriverBase::BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
 	GraphicFlip flip, PBitmap surface) {
 	_spriteBatchDesc.push_back(SpriteBatchDesc(_actSpriteBatch, viewport, transform, flip, surface));
