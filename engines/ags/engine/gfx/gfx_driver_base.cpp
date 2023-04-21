@@ -23,6 +23,7 @@
 #include "ags/engine/gfx/gfxfilter.h"
 #include "ags/engine/gfx/gfx_driver_base.h"
 #include "ags/engine/gfx/gfx_util.h"
+#include "ags/shared/debugging/out.h"
 
 namespace AGS3 {
 
@@ -65,13 +66,18 @@ Rect GraphicsDriverBase::GetRenderDestination() const {
 }
 
 bool GraphicsDriverBase::SetVsync(bool enabled) {
-	if (_mode.Vsync == enabled) {
+	if (!_capsVsync || (_mode.Vsync == enabled)) {
 		return _mode.Vsync;
 	}
 
-	bool new_value;
-	if (SetVsyncImpl(enabled, new_value)) {
+	bool new_value = true;
+	if (SetVsyncImpl(enabled, new_value) && new_value == enabled) {
+		Debug::Printf("SetVsync: switched to %d", new_value);
 		_mode.Vsync = new_value;
+	}
+	else {
+		Debug::Printf("SetVsync: failed, stay at %d", new_value);
+		_capsVsync = false; // mark as non-capable (at least in current mode)
 	}
 	return _mode.Vsync;
 }
@@ -107,6 +113,8 @@ void GraphicsDriverBase::OnUnInit() {
 
 void GraphicsDriverBase::OnModeSet(const DisplayMode &mode) {
 	_mode = mode;
+	// Adjust some generic parameters as necessary
+	_mode.Vsync &= _capsVsync;
 }
 
 void GraphicsDriverBase::OnModeReleased() {
