@@ -164,6 +164,9 @@ protected:
 	Rect                _filterRect;    // filter scaling destination rect (before final scaling)
 	PlaneScaling        _scaling;       // native -> render dest coordinate transformation
 
+	// Capability flags
+	bool				_capsVsync = false; // is vsync available
+
 	// Callbacks
 	GFXDRV_CLIENTCALLBACK _pollingCallback;
 	GFXDRV_CLIENTCALLBACK _drawScreenCallback;

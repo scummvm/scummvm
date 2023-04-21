@@ -117,6 +117,7 @@ bool ScummVMRendererGraphicsDriver::SetDisplayMode(const DisplayMode &mode) {
 	if (!IsModeSupported(mode))
 		return false;
 
+	_capsVsync = true; // reset vsync flag, allow to try setting again
 	const int driver = GFX_SCUMMVM;
 	if (set_gfx_mode(driver, mode.Width, mode.Height, mode.ColorDepth) != 0)
 		return false;
@@ -125,6 +126,10 @@ bool ScummVMRendererGraphicsDriver::SetDisplayMode(const DisplayMode &mode) {
 		g_system->beginGFXTransaction();
 		g_system->setFeatureState(OSystem::kFeatureVSync, mode.Vsync);
 		g_system->endGFXTransaction();
+	}
+	else {
+		_capsVsync = false;
+		Debug::Printf(kDbgMsg_Warn, "WARNING: Vertical sync is not supported. Setting will be kept at driver default.");
 	}
 
 	OnInit();
@@ -230,7 +235,7 @@ bool ScummVMRendererGraphicsDriver::SetVsyncImpl(bool enabled, bool &vsync_res) 
 
 		vsync_res = g_system->getFeatureState(OSystem::kFeatureVSync);
 		if (!vsync_res)
-			Debug::Printf(kDbgMsg_Error, "Renderer: SetVsync (%d) failed", enabled);
+			Debug::Printf(kDbgMsg_Warn, "Renderer: SetVsync (%d) failed", enabled);
 		return vsync_res;
 	}
 	return false;
