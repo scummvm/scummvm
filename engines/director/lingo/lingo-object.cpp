@@ -60,6 +60,7 @@
 #include "director/lingo/xlibs/flushxobj.h"
 #include "director/lingo/xlibs/fplayxobj.h"
 #include "director/lingo/xlibs/gpid.h"
+#include "director/lingo/xlibs/hitmap.h"
 #include "director/lingo/xlibs/jwxini.h"
 #include "director/lingo/xlibs/iscd.h"
 #include "director/lingo/xlibs/ispippin.h"
@@ -74,12 +75,16 @@
 #include "director/lingo/xlibs/palxobj.h"
 #include "director/lingo/xlibs/popupmenuxobj.h"
 #include "director/lingo/xlibs/porta.h"
+#include "director/lingo/xlibs/prefpath.h"
+#include "director/lingo/xlibs/printomatic.h"
 #include "director/lingo/xlibs/qtmovie.h"
 #include "director/lingo/xlibs/registercomponent.h"
 #include "director/lingo/xlibs/serialportxobj.h"
 #include "director/lingo/xlibs/soundjam.h"
 #include "director/lingo/xlibs/spacemgr.h"
+#include "director/lingo/xlibs/stagetc.h"
 #include "director/lingo/xlibs/unittest.h"
+#include "director/lingo/xlibs/valkyrie.h"
 #include "director/lingo/xlibs/videodiscxobj.h"
 #include "director/lingo/xlibs/volumelist.h"
 #include "director/lingo/xlibs/widgetxobj.h"
@@ -181,6 +186,7 @@ static struct XLibProto {
 	{ FlushXObj::fileNames,				FlushXObj::open,			FlushXObj::close,			kXObj,					300 },	// D3
 	{ FPlayXObj::fileNames,				FPlayXObj::open,			FPlayXObj::close,			kXObj,					200 },	// D2
 	{ GpidXObj::fileNames,				GpidXObj::open,				GpidXObj::close,			kXObj,					400 },	// D4
+	{ HitMap::fileNames,				HitMap::open,				HitMap::close,			kXObj,					400 },	// D4
 	{ IsCD::fileNames,					IsCD::open,					IsCD::close,				kXObj,					300 },	// D3
 	{ IsPippin::fileNames,				IsPippin::open,				IsPippin::close,			kXObj,					400 },	// D4
 	{ JITDraw3XObj::fileNames,			JITDraw3XObj::open,			JITDraw3XObj::close,		kXObj,					400 },	// D4
@@ -195,16 +201,20 @@ static struct XLibProto {
 	{ PalXObj::fileNames,				PalXObj::open,				PalXObj::close,				kXObj,					400 },	// D4
 	{ PopUpMenuXObj::fileNames,			PopUpMenuXObj::open,		PopUpMenuXObj::close,		kXObj,					200 },	// D2
 	{ Porta::fileNames,					Porta::open,				Porta::close,				kXObj,					300 },	// D3
+	{ PrefPath::fileNames,				PrefPath::open,				PrefPath::close,			kXObj,					400 },	// D4
+	{ PrintOMaticXObj::fileNames,		PrintOMaticXObj::open,		PrintOMaticXObj::close,		kXObj,					400 },	// D4
 	{ QTMovie::fileNames,				QTMovie::open,				QTMovie::close,				kXObj,					400 },	// D4
 	{ RearWindowXObj::fileNames,		RearWindowXObj::open,		RearWindowXObj::close,		kXObj,					400 },	// D4
 	{ RegisterComponent::fileNames,		RegisterComponent::open,	RegisterComponent::close,	kXObj,					400 },	// D4
 	{ SerialPortXObj::fileNames,		SerialPortXObj::open,		SerialPortXObj::close,		kXObj,					200 },	// D2
 	{ SoundJam::fileNames,				SoundJam::open,				SoundJam::close,			kXObj,					400 },	// D4
 	{ SpaceMgr::fileNames,				SpaceMgr::open,				SpaceMgr::close,			kXObj,					400 },	// D4
+	{ StageTCXObj::fileNames,			StageTCXObj::open,			StageTCXObj::close,			kXObj,					400 },	// D4
 	{ UnitTest::fileNames,				UnitTest::open,				UnitTest::close,			kXObj,					400 },	// D4
+	{ ValkyrieXObj::fileNames,			ValkyrieXObj::open,			ValkyrieXObj::close,		kXObj,					400 },	// D4
+	{ VideodiscXObj::fileNames,			VideodiscXObj::open,		VideodiscXObj::close,		kXObj,					200 },	// D2
 	{ VolumeList::fileNames,			VolumeList::open,			VolumeList::close,			kXObj,					300 },	// D3
 	{ WidgetXObj::fileNames,			WidgetXObj::open,			WidgetXObj::close, 			kXObj,					400 },  // D4
-	{ VideodiscXObj::fileNames,			VideodiscXObj::open,		VideodiscXObj::close,		kXObj,					200 },	// D2
 	{ XioXObj::fileNames,				XioXObj::open,				XioXObj::close,				kXObj,					400 },	// D3
 	{ XPlayAnim::fileNames,				XPlayAnim::open,			XPlayAnim::close,			kXObj,					300 },	// D3
 	{ Yasix::fileNames,					Yasix::open,				Yasix::close,				kXObj,					300 },	// D3

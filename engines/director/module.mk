@@ -66,6 +66,7 @@ MODULE_OBJS = \
 	lingo/xlibs/flushxobj.o \
 	lingo/xlibs/fplayxobj.o \
 	lingo/xlibs/gpid.o \
+	lingo/xlibs/hitmap.o \
 	lingo/xlibs/iscd.o \
 	lingo/xlibs/ispippin.o \
 	lingo/xlibs/jitdraw3.o \
@@ -80,12 +81,16 @@ MODULE_OBJS = \
 	lingo/xlibs/palxobj.o \
 	lingo/xlibs/popupmenuxobj.o \
 	lingo/xlibs/porta.o \
+	lingo/xlibs/prefpath.o \
+	lingo/xlibs/printomatic.o \
 	lingo/xlibs/qtmovie.o \
 	lingo/xlibs/registercomponent.o \
 	lingo/xlibs/serialportxobj.o \
 	lingo/xlibs/soundjam.o \
 	lingo/xlibs/spacemgr.o \
+	lingo/xlibs/stagetc.o \
 	lingo/xlibs/unittest.o \
+	lingo/xlibs/valkyrie.o \
 	lingo/xlibs/videodiscxobj.o \
 	lingo/xlibs/volumelist.o \
 	lingo/xlibs/widgetxobj.o \
