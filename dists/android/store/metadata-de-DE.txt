@@ -16,27 +16,18 @@ ScummVM bietet die Möglichkeit, viele klassische Point-and-Click-Adventures und
 
 Weitere Informationen hierzu sowie einige kostenfreie Spiele findest du auf unserer Website. Eine aktuelle Liste mit Bezugsquellen findest du auch in unserem Wiki unter https://wiki.scummvm.org/index.php/Where_to_get_the_games.
 
-Ebenfalls auf unserer Website findest du unter der URL https://docs.scummvm.org/en/v2.5.0/other_platforms/android.html weitere Informationen bezüglich der Einrichtung und Nutzung einiger Android-spezifischer Optionen.
+Ebenfalls auf unserer Website findest du unter der URL https://docs.scummvm.org/en/v2.7.0/other_platforms/android.html weitere Informationen bezüglich der Einrichtung und Nutzung einiger Android-spezifischer Optionen.
 
 https://forums.scummvm.org/viewforum.php?f=17 ist unser Forum, wo du dich mit anderen Nutzern über die Android-Version austauschen kannst.
 
 *** Current release:
-2.5.0
+2.7.0.5
 
 *** Release notes:
-- Unterstützung für 12 weitere Engines - AGS, Little Big Adventure, Red Comrades, Director. Bisher KEINE 3D-Spiele
-- Unterstützung für HiDPI-Displays
-- Unicode-Benutzeroberfläche
+- Unterstützung für sicheren Dateizugriff auf SD-Karten
+- Verbesserte Controller-Unterstützung
+- Das ScummVM-Log kann jetzt in den globalen Einstellungen eingesehen werden
+- Die Unterstützung für 3D-Spiele entspricht jetzt den Desktop-Versionen von ScummVM
+- Zwischen dem Joystick-, Touchpad- und Maus-Steuerungsmodus kann jetzt nahtlos umgeschaltet werden
 
-Eine vollständige Aufstellung aller Änderungen findest Du unter https://scummvm.org/frs/scummvm/2.5.0/ReleaseNotes.html
-
-*** Beta release name:
-2.7.0.4 (beta 4)
-
-*** Beta release notes:
-<de-DE>
-- Eine Reihe von gemeldeten App-Abstürzen wurde behoben
-- Das ScummVM-Log kann jetzt im "Pfade"-Tab der GUI eingesehen werden
-- Grundlegende Unterstützung für einige TV-Fernbedienungen hinzugefügt.
-- Vollständige Versionshinweise für 2.7.0 findest Du unter: https://scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
-</de-DE>
+Eine vollständige Aufstellung aller Änderungen findest Du unter https://scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
