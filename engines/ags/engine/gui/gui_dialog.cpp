@@ -31,6 +31,7 @@
 #include "ags/engine/gui/csci_dialog.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/graphics_driver.h"
+#include "ags/engine/main/game_run.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/util/path.h"
 #include "ags/ags.h"
@@ -80,6 +81,7 @@ void clear_gui_screen() {
 
 void refresh_gui_screen() {
 	_G(gfxDriver)->UpdateDDBFromBitmap(_G(dialogDDB), _G(windowBuffer), false);
+	update_cursor_and_dependent();
 	render_graphics(_G(dialogDDB), _G(windowPosX), _G(windowPosY));
 }
 
