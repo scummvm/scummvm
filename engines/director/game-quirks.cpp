@@ -98,6 +98,11 @@ static void quirkMcLuhanWin() {
 	fontMan->loadWindowsFont("MCLUHAN/SYSTEM/MCL1N___.FON");
 }
 
+static void quirkPipCatalog() {
+	// Pippin game that uses Unix path separators rather than Mac
+	g_director->_dirSeparator = '/';
+}
+
 static void quirkMcLuhanMac() {
 	Common::SeekableReadStream *installer = Common::MacResManager::openFileOrDataFork("Understanding McLuhan Installer");
 
@@ -156,6 +161,7 @@ struct Quirk {
 	{ "mamauta1", Common::kPlatformWindows, &quirk640x480Desktop },
 	{ "mcluhan", Common::kPlatformWindows, &quirkMcLuhanWin },
 	{ "mcluhan", Common::kPlatformMacintosh, &quirkMcLuhanMac },
+	{ "pipcatalog", Common::kPlatformPippin, &quirkPipCatalog },
 	{ nullptr, Common::kPlatformUnknown, nullptr }
 };
 
