@@ -24,3 +24,18 @@ scummvmAssert(not (#test <= 0))
 set a to the picture of cast 1
 scummvmAssert(a <> a)
 scummvmAssert(a <> the picture of cast 1)   -- always false
+
+
+-- String comparison
+scummvmAssert("a" > "A")
+scummvmAssert("a" <= "Z")
+scummvmAssert("a" <= "Bubba")
+scummvmAssert("z" > "Z")
+scummvmAssert("abba" > "Abba")
+
+-- This behaviour was fixed by 8.5
+-- set save to the scummvmVersion
+-- set the scummvmVersion to 850
+-- scummvmAssert("a" <= "Z")
+-- scummvmAssert("a" <= "A")
+-- set the scummvmVersion to save
