@@ -115,20 +115,20 @@ void Test_IniFile() {
 	delete fs;
 
 	// there are explicit sections and 1 implicit global one
-	const int section_count = 5;
+	const size_t section_count = 5;
 	// Test reading from the custom ini file
 	{
 		assert(ini.GetSectionCount() == section_count);
 		IniFile::ConstSectionIterator sec = ini.CBegin();
 
-		assert(sec->GetItemCount() == 1);
+		assert(sec->GetItemCount() == 1u);
 		IniFile::ConstItemIterator item = sec->CBegin();
 		assert(item->GetKey() == "global_item");
 		assert(item->GetValue() == "global_value");
 
 		++sec;
 		assert(sec->GetName() == "section1");
-		assert(sec->GetItemCount() == 5);
+		assert(sec->GetItemCount() == 5u);
 		item = sec->CBegin();
 		assert(item->GetKey() == "item1");
 		assert(item->GetValue() == "");
@@ -146,7 +146,7 @@ void Test_IniFile() {
 
 		++sec;
 		assert(sec->GetName() == "this_section_should_be_deleted");
-		assert(sec->GetItemCount() == 3);
+		assert(sec->GetItemCount() == 3u);
 		item = sec->CBegin();
 		assert(item->GetKey() == "item1");
 		assert(item->GetValue() == "value1");
@@ -158,7 +158,7 @@ void Test_IniFile() {
 
 		++sec;
 		assert(sec->GetName() == "section3");
-		assert(sec->GetItemCount() == 2);
+		assert(sec->GetItemCount() == 2u);
 		item = sec->CBegin();
 		assert(item->GetKey() == "item_to_be_deleted");
 		assert(item->GetValue() == "value");
@@ -168,7 +168,7 @@ void Test_IniFile() {
 
 		++sec;
 		assert(sec->GetName() == "section4");
-		assert(sec->GetItemCount() == 1);
+		assert(sec->GetItemCount() == 1u);
 		item = sec->CBegin();
 		assert(item->GetKey() == "item1");
 		assert(item->GetValue() == "value");
@@ -234,18 +234,18 @@ void Test_IniFile() {
 		ConfigTree tree;
 		IniUtil::Read("test.ini", tree);
 
-		assert(tree.size() == 5);
+		assert(tree.size() == 5u);
 		assert(tree.find("") != tree.end()); // global section
 		assert(tree.find("section1") != tree.end());
 		assert(tree.find("section3") != tree.end());
 		assert(tree.find("section4") != tree.end());
 		assert(tree.find("section5") != tree.end());
 		StringOrderMap &sub_tree = tree[""];
-		assert(sub_tree.size() == 1);
+		assert(sub_tree.size() == 1u);
 		assert(sub_tree.find("global_item") != sub_tree.end());
 		assert(sub_tree["global_item"] == "global_value");
 		sub_tree = tree["section1"];
-		assert(sub_tree.size() == 4);
+		assert(sub_tree.size() == 4u);
 		assert(sub_tree.find("item1") != sub_tree.end());
 		assert(sub_tree.find("item2") != sub_tree.end());
 		assert(sub_tree.find("item3") != sub_tree.end());
@@ -255,11 +255,11 @@ void Test_IniFile() {
 		assert(sub_tree["item3"] == "value3");
 		assert(sub_tree["new_item"] == "new_value");
 		sub_tree = tree["section3"];
-		assert(sub_tree.size() == 1);
+		assert(sub_tree.size() == 1u);
 		assert(sub_tree.find("item_to_be_kept") != sub_tree.end());
 		assert(sub_tree["item_to_be_kept"] == "another value");
 		sub_tree = tree["section4"];
-		assert(sub_tree.size() == 3);
+		assert(sub_tree.size() == 3u);
 		assert(sub_tree.find("new_item1") != sub_tree.end());
 		assert(sub_tree.find("item1") != sub_tree.end());
 		assert(sub_tree.find("new_item2") != sub_tree.end());
@@ -267,7 +267,7 @@ void Test_IniFile() {
 		assert(sub_tree["item1"] == "value");
 		assert(sub_tree["new_item2"] == "new_value2");
 		sub_tree = tree["section5"];
-		assert(sub_tree.size() == 3);
+		assert(sub_tree.size() == 3u);
 		assert(sub_tree.find("item5_1") != sub_tree.end());
 		assert(sub_tree.find("item5_2") != sub_tree.end());
 		assert(sub_tree.find("item5_3") != sub_tree.end());
