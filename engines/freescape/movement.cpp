@@ -260,6 +260,19 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 				if (stepUp) {
 					if (!isPlayingSound())
 						playSound(4, false);
+
+					positionY = _position.y();
+					int fallen;
+					for (fallen = 1; fallen < 64; fallen++) {
+						_position.set(_position.x(), positionY - fallen , _position.z());
+						if (tryStepDown(_position))
+							break;
+					}
+					assert(fallen < 64);
+					fallen++;
+					fallen++;
+					_position.set(_position.x(), positionY - fallen, _position.z());
+
 					debugC(1, kFreescapeDebugCode, "Runing effects:");
 					checkCollisions(true); // run the effects (again)
 				} else {
@@ -358,7 +371,7 @@ bool FreescapeEngine::checkCollisions(bool executeCode) {
 		// FIXME: find a better workaround of this
 		if (gobj->getSize().length() > 3000) {
 			if (largeObjectWasBlocking)
-				break;
+				continue;
 			largeObjectWasBlocking = true;
 		}
 
