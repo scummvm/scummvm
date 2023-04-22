@@ -41,7 +41,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-void my_fade_in(PALETTE p, int speed) {
+void fadein_impl(PALETTE p, int speed) {
 	if (_GP(game).color_depth > 1) {
 		set_palette(p);
 
@@ -70,7 +70,7 @@ void current_fade_out_effect() {
 		if (!_GP(play).keep_screen_during_instant_transition)
 			set_palette_range(_G(black_palette), 0, 255, 0);
 	} else if (theTransition == FADE_NORMAL) {
-		my_fade_out(5);
+		fadeout_impl(5);
 	} else if (theTransition == FADE_BOXOUT) {
 		_G(gfxDriver)->BoxOutEffect(true, get_fixed_pixel_size(16), 1000 / GetGameSpeed());
 		_GP(play).screen_is_faded_out = 1;

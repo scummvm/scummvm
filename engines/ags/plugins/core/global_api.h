@@ -83,7 +83,7 @@ public:
 	void FaceCharacter(ScriptMethodParams &params);
 	void FaceLocation(ScriptMethodParams &params);
 	void FadeIn(ScriptMethodParams &params);
-	void my_fade_out(ScriptMethodParams &params);
+	void FadeOut(ScriptMethodParams &params);
 	void FileClose(ScriptMethodParams &params);
 	void FileIsEOF(ScriptMethodParams &params);
 	void FileIsError(ScriptMethodParams &params);

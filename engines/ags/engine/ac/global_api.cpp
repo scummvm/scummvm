@@ -338,8 +338,8 @@ RuntimeScriptValue Sc_FadeIn(const RuntimeScriptValue *params, int32_t param_cou
 }
 
 // void (int spdd)
-RuntimeScriptValue Sc_my_fade_out(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_VOID_PINT(my_fade_out);
+RuntimeScriptValue Sc_FadeOut(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_VOID_PINT(FadeOut);
 }
 
 // void (int handle)
@@ -1941,7 +1941,7 @@ void RegisterGlobalAPI() {
 	ccAddExternalStaticFunction("FaceCharacter",            Sc_FaceCharacter);
 	ccAddExternalStaticFunction("FaceLocation",             Sc_FaceLocation);
 	ccAddExternalStaticFunction("FadeIn",                   Sc_FadeIn);
-	ccAddExternalStaticFunction("FadeOut",                  Sc_my_fade_out);
+	ccAddExternalStaticFunction("FadeOut",                  Sc_FadeOut);
 	ccAddExternalStaticFunction("FileClose",                Sc_FileClose);
 	ccAddExternalStaticFunction("FileIsEOF",                Sc_FileIsEOF);
 	ccAddExternalStaticFunction("FileIsError",              Sc_FileIsError);
