@@ -71,12 +71,14 @@ void SoundCastMember::load() {
 			if (!ci->directory.empty())
 				filename = ci->directory + g_director->_dirSeparator + ci->fileName;
 
+			debugC(2, kDebugLoading, "****** Loading file '%s', cast id: %d", filename.c_str(), sndId);
 			AudioFileDecoder *audio = new AudioFileDecoder(filename);
 			_audio = audio;
 		} else {
 			warning("Sound::load(): no resource or info found for cast member %d, skipping", _castId);
 		}
 	} else {
+		debugC(2, kDebugLoading, "****** Loading '%s' id: %d, %d bytes", tag2str(tag), sndId, (int)sndData->size());
 		SNDDecoder *audio = new SNDDecoder();
 		audio->loadStream(*sndData);
 		_audio = audio;

@@ -373,6 +373,9 @@ void TextCastMember::load() {
 	if (_loaded)
 		return;
 
+	if (!_cast->_loadedStxts)
+		return;
+
 	uint stxtid;
 	if (_cast->_version >= kFileVer400 && _children.size() > 0)
 		stxtid = _children[0].index;
