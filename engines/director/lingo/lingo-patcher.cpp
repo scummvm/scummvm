@@ -216,6 +216,10 @@ struct ScriptPatch {
 			19, "      set mytest3 = FileIO(mnew, \"read\" mymovie)", "      set mytest3 = FileIO(mnew, \"read\", mymovie)"},
 
 
+	{"erikotamuraoz", "Demo", kPlatformMacintosh, "Shared Cast", kMovieScript, 391, 0,
+			21, "", "end repeat"},
+
+
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, 0, nullptr, nullptr}
 };
 
