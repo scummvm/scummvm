@@ -127,6 +127,7 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 	assert(!(shot && collided));
 	int ip = 0;
 	int codeSize = code.size();
+	assert(codeSize > 0);
 	while (ip <= codeSize - 1) {
 		FCLInstruction &instruction = code[ip];
 		debugC(1, kFreescapeDebugCode, "Executing ip: %d with type %d in code with size: %d", ip, instruction.getType(), codeSize);
@@ -135,6 +136,10 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			if (!isCastle())
 				error("Instruction %x at ip: %d not implemented!", instruction.getType(), ip);
 			break;
+		case Token::NOP:
+			debugC(1, kFreescapeDebugCode, "Executing NOP at ip: %d", ip);
+			break;
+
 		case Token::COLLIDEDQ:
 			if (collided)
 				executeCode(*instruction._thenInstructions, shot, collided, timer);
@@ -198,6 +203,9 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			break;
 		case Token::CLEARBIT:
 			executeClearBit(instruction);
+			break;
+		case Token::TOGGLEBIT:
+			executeToggleBit(instruction);
 			break;
 		case Token::PRINT:
 			executePrint(instruction);

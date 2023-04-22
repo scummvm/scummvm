@@ -77,14 +77,14 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 			FCLInstruction branch;
 			branch = FCLInstruction(oldConditional);
 
-			branch.setBranches(conditionalInstructions, nullptr);
-			instructions.push_back(branch);
-
 			if (bytePointer > 0) {
 				detokenisedStream += "ENDIF\n";
 				// Allocate the next vector of instructions
 				conditionalInstructions = new FCLInstructionVector();
 			}
+
+			branch.setBranches(conditionalInstructions, nullptr);
+			instructions.push_back(branch);
 
 			if (oldConditional == Token::SHOTQ)
 				detokenisedStream += "IF SHOT? THEN\n";
@@ -124,6 +124,8 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 		case 0:
 			detokenisedStream += "NOP ";
 			currentInstruction = FCLInstruction(Token::NOP);
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
 			break; // NOP
 		case 1:    // add three-byte value to score
 		{
@@ -188,6 +190,7 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 
 		case 9:
 			detokenisedStream += "ADDVAR (1, v";
+			detokenisedStream += Common::String::format("%d)", tokenisedCondition[bytePointer]);
 			currentInstruction = FCLInstruction(Token::ADDVAR);
 			currentInstruction.setSource(tokenisedCondition[bytePointer]);
 			currentInstruction.setDestination(1);
@@ -198,6 +201,7 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 			break;
 		case 10:
 			detokenisedStream += "SUBVAR (1, v";
+			detokenisedStream += Common::String::format("%d)", tokenisedCondition[bytePointer]);
 			currentInstruction = FCLInstruction(Token::SUBVAR);
 			currentInstruction.setSource(tokenisedCondition[bytePointer]);
 			currentInstruction.setDestination(1);
@@ -357,8 +361,7 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 		case 20:
 			detokenisedStream += "SETVAR ";
 			detokenisedStream += Common::String::format("(v%d, %d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
-			bytePointer += 2;
-			numberOfArguments = 0;
+			currentInstruction = FCLInstruction(Token::SETVAR);
 			break;
 
 		case 35:
