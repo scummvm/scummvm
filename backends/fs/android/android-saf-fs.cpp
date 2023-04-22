@@ -280,7 +280,7 @@ AndroidSAFFilesystemNode::AndroidSAFFilesystemNode(jobject safTree, jobject safP
 
 // We need the custom copy constructor because of the reference
 AndroidSAFFilesystemNode::AndroidSAFFilesystemNode(const AndroidSAFFilesystemNode &node)
-	: AbstractFSNode(), _safNode(nullptr) {
+	: AbstractFSNode(), _safNode(nullptr), _safParent(nullptr) {
 
 	JNIEnv *env = JNI::getEnv();
 
@@ -410,7 +410,7 @@ bool AndroidSAFFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode
 
 AbstractFSNode *AndroidSAFFilesystemNode::getParent() const {
 	assert(_safTree != nullptr);
-	assert(_safNode != nullptr);
+	// No need to check for _safNode: if node doesn't exist yet parent is its parent
 
 	if (_safParent) {
 		return new AndroidSAFFilesystemNode(_safTree, _safParent);
