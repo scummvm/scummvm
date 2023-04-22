@@ -777,7 +777,6 @@ void retro_run(void) {
 				retro_switch_to_emu_thread();
 
 			if (retro_emu_thread_exited()) {
-				retro_deinit_emu_thread();
 				if (!restart_pending) {
 					environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, NULL);
 					log_scummvm_exit_code();
@@ -827,11 +826,14 @@ void retro_run(void) {
 
 void retro_unload_game(void) {
 	retroQuit();
+	while (!retro_emu_thread_exited())
+		retro_switch_to_emu_thread();
+	retro_deinit_emu_thread();
 }
 
 void retro_reset(void) {
 	restart_pending = true;
-	retroQuit();
+	retro_unload_game();
 }
 
 // Stubs
