@@ -100,6 +100,8 @@ void        play_next_queued();
 int         calculate_max_volume();
 // add/remove the volume drop to the audio channels while speech is playing
 void        apply_volume_drop_modifier(bool applyModifier);
+// syncs logical audio channels with the audio backend state
+void        sync_audio_playback();
 // Update the music, and advance the crossfade on a step
 // (this should only be called once per game loop);
 void        update_audio_system_on_game_loop();

@@ -780,6 +780,19 @@ void update_volume_drop_if_voiceover() {
 	apply_volume_drop_modifier(_GP(play).speech_has_voice);
 }
 
+// Sync logical game channels with the audio backend:
+// startup new assigned clips, apply changed parameters.
+void sync_audio_playback() {
+	for (int i = 0; i < TOTAL_AUDIO_CHANNELS; ++i) {
+		// update the playing channels, and dispose the finished / invalid ones
+		auto *ch = AudioChans::GetChannelIfPlaying(i);
+		if (ch && !ch->update()) {
+			AudioChans::SetChannel(i, nullptr);
+			delete ch;
+		}
+	}
+}
+
 // Update the music, and advance the crossfade on a step
 // (this should only be called once per game loop)
 void update_audio_system_on_game_loop() {
@@ -791,13 +804,7 @@ void update_audio_system_on_game_loop() {
 	// and queues, then second time later - because we need to apply any
 	// changes to channels / parameters.
 	// TODO: investigate options for optimizing this.
-	for (int i = 0; i < TOTAL_AUDIO_CHANNELS; ++i) { // update the playing channels, and dispose the finished / invalid ones
-		auto *ch = AudioChans::GetChannelIfPlaying(i);
-		if (ch && !ch->update()) {
-			AudioChans::SetChannel(i, nullptr);
-			delete ch;
-		}
-	}
+	sync_audio_playback();
 
 	process_scheduled_music_update();
 
@@ -838,16 +845,8 @@ void update_audio_system_on_game_loop() {
 		update_directional_sound_vol();
 	}
 
-	// Sync logical game channels with the audio backend:
-	// startup new assigned clips, apply changed parameters.
-	for (int i = 0; i < TOTAL_AUDIO_CHANNELS; ++i) {
-		// update the playing channels, and dispose the finished / invalid ones
-		auto *ch = AudioChans::GetChannelIfPlaying(i);
-		if (ch && !ch->update()) {
-			AudioChans::SetChannel(i, nullptr);
-			delete ch;
-		}
-	}
+	// Sync logical game channels with the audio backend again
+	sync_audio_playback();
 }
 
 void stopmusic() {
