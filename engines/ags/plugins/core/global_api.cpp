@@ -126,7 +126,7 @@ void GlobalAPI::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(FaceCharacter, GlobalAPI::FaceCharacter);
 	SCRIPT_METHOD(FaceLocation, GlobalAPI::FaceLocation);
 	SCRIPT_METHOD(FadeIn, GlobalAPI::FadeIn);
-	SCRIPT_METHOD(FadeOut, GlobalAPI::my_fade_out);
+	SCRIPT_METHOD(FadeOut, GlobalAPI::FadeOut);
 	SCRIPT_METHOD(FileClose, GlobalAPI::FileClose);
 	SCRIPT_METHOD(FileIsEOF, GlobalAPI::FileIsEOF);
 	SCRIPT_METHOD(FileIsError, GlobalAPI::FileIsError);
@@ -694,9 +694,9 @@ void GlobalAPI::FadeIn(ScriptMethodParams &params) {
 	AGS3::FadeIn(sppd);
 }
 
-void GlobalAPI::my_fade_out(ScriptMethodParams &params) {
+void GlobalAPI::FadeOut(ScriptMethodParams &params) {
 	PARAMS1(int, spdd);
-	AGS3::my_fade_out(spdd);
+	AGS3::FadeOut(spdd);
 }
 
 void GlobalAPI::FileClose(ScriptMethodParams &params) {
