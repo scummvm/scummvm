@@ -324,7 +324,7 @@ bool TeWarp::onMouseLeftDown(const Common::Point &pt) {
 	_clickedAnimData = nullptr;
 
 	bool hitAnimData = false;
-	FrameData *frameData;
+	FrameData *frameData = nullptr;
 	for (auto &animData : _loadedAnimData) {
 		frameData = &(animData._frameDatas[animData._curFrameMaybe]);
 		TeVector3f32 interesctPt;
