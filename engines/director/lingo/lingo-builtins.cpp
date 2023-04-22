@@ -1283,9 +1283,8 @@ void LB::b_saveMovie(int nargs) {
 }
 
 void LB::b_setCallBack(int nargs) {
-	for (int i = 0; i < nargs; i++)
-		g_lingo->pop();
-	warning("STUB: b_setCallBack");
+	g_lingo->printSTUBWithArglist("b_setCallBack", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void LB::b_showResFile(int nargs) {
@@ -2078,7 +2077,8 @@ void LB::b_installMenu(int nargs) {
 	TextCastMember *field = static_cast<TextCastMember *>(member);
 
 	Common::String menuStxt = field->getRawText();
-	int linenum = -1; // We increment it before processing
+	// clang reports linenum variable is unused
+	// int linenum = -1; // We increment it before processing
 
 	Graphics::MacMenu *menu = g_director->_wm->addMenu();
 	int submenu = -1;
@@ -2130,7 +2130,8 @@ void LB::b_installMenu(int nargs) {
 				line += *it++;
 			}
 		}
-		linenum++;
+		// clang reports linenum variable is unused
+		// linenum++;
 
 		if (line.empty())
 			continue;
