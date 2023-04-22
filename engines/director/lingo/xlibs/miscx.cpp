@@ -24,6 +24,7 @@
  * USED IN:
  * Pippi
  * AMBER: Journeys Beyond
+ * Total Distortion
  *
  *************************************/
 
