@@ -570,7 +570,7 @@ void SaveGameSnapshot::Sound::read(Common::ReadStream *stream) {
 	params3D.read(stream);
 }
 
-SaveGameSnapshot::SaveGameSnapshot() : roomNumber(0), screenNumber(0), direction(0), escOn(false), musicTrack(0), loadedAnimation(0),
+SaveGameSnapshot::SaveGameSnapshot() : roomNumber(0), screenNumber(0), direction(0), escOn(false), musicTrack(0), musicVolume(100), loadedAnimation(0),
 									   animDisplayingFrame(0), listenerX(0), listenerY(0), listenerAngle(0) {
 }
 
@@ -584,6 +584,7 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 
 	stream->writeByte(escOn ? 1 : 0);
 	stream->writeSint32BE(musicTrack);
+	stream->writeUint32BE(musicVolume);
 
 	stream->writeUint32BE(loadedAnimation);
 	stream->writeUint32BE(animDisplayingFrame);
@@ -654,6 +655,11 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 
 	escOn = (stream->readByte() != 0);
 	musicTrack = stream->readSint32BE();
+
+	if (saveVersion >= 5)
+		musicVolume = stream->readUint32BE();
+	else
+		musicVolume = 100;
 
 	loadedAnimation = stream->readUint32BE();
 	animDisplayingFrame = stream->readUint32BE();
@@ -730,7 +736,9 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
-	  _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _scriptNextInstruction(0), _escOn(false), _debugMode(false), _fastAnimationMode(false), _musicTrack(0), _panoramaDirectionFlags(0),
+	  _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _scriptNextInstruction(0), _escOn(false), _debugMode(false), _fastAnimationMode(false),
+	  _musicTrack(0), _musicVolume(100), _musicVolumeRampStartTime(0), _musicVolumeRampStartVolume(0), _musicVolumeRampRatePerMSec(0), _musicVolumeRampEnd(0),
+	  _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0),
 	  _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
@@ -1553,8 +1561,7 @@ bool Runtime::runScript() {
 			DISPATCH_OP(StopSndLO);
 
 			DISPATCH_OP(Music);
-			DISPATCH_OP(MusicUp);
-			DISPATCH_OP(MusicDn);
+			DISPATCH_OP(MusicVolRamp);
 			DISPATCH_OP(Parm0);
 			DISPATCH_OP(Parm1);
 			DISPATCH_OP(Parm2);
@@ -2342,7 +2349,7 @@ void Runtime::changeMusicTrack(int track) {
 			Common::SharedPtr<Audio::AudioStream> loopingStream(Audio::makeLoopingAudioStream(audioStream, 0));
 
 			_musicPlayer.reset(new AudioPlayer(_mixer, loopingStream, Audio::Mixer::kMusicSoundType));
-			_musicPlayer->play(100, 0);
+			_musicPlayer->play(_musicVolume, 0);
 		}
 	} else {
 		warning("Music file '%s' is missing", wavFileName.c_str());
@@ -2653,6 +2660,40 @@ void Runtime::updateSounds(uint32 timestamp) {
 				}
 			}
 		}
+	}
+
+	if (_musicVolumeRampRatePerMSec != 0) {
+		bool negative = (_musicVolumeRampRatePerMSec < 0);
+
+		uint32 rampMax = 0;
+		uint32 absRampRate = 0;
+		if (negative) {
+			rampMax = _musicVolumeRampStartVolume - _musicVolumeRampEnd;
+			absRampRate = -_musicVolumeRampRatePerMSec;
+		} else {
+			rampMax = _musicVolumeRampEnd - _musicVolumeRampStartVolume;
+			absRampRate = _musicVolumeRampRatePerMSec;
+		}
+
+		uint32 rampTime = timestamp - _musicVolumeRampStartTime;
+
+		uint32 ramp = (rampTime * absRampRate) >> 16;
+		if (ramp > rampMax)
+			ramp = rampMax;
+
+		uint32 newVolume = _musicVolumeRampStartVolume;
+		if (negative)
+			newVolume -= ramp;
+		else
+			newVolume += ramp;
+
+		if (newVolume != _musicVolume) {
+			_musicPlayer->setVolume(static_cast<byte>(newVolume));
+			_musicVolume = newVolume;
+		}
+
+		if (newVolume == _musicVolumeRampEnd)
+			_musicVolumeRampRatePerMSec = 0;
 	}
 }
 
@@ -3459,6 +3500,12 @@ void Runtime::recordSaveGameSnapshot() {
 
 	snapshot->musicTrack = _musicTrack;
 
+	snapshot->musicVolume = _musicVolume;
+
+	// If music volume is ramping, use the end volume and skip the ramp
+	if (_musicVolumeRampRatePerMSec != 0)
+		snapshot->musicVolume = _musicVolumeRampEnd;
+
 	snapshot->loadedAnimation = _loadedAnimation;
 	snapshot->animDisplayingFrame = _animDisplayingFrame;
 
@@ -3536,6 +3583,12 @@ void Runtime::restoreSaveGameSnapshot() {
 		_timers[timerNode._key] = timerNode._value + timeBase;
 
 	_escOn = _saveGame->escOn;
+
+	_musicVolume = _saveGame->musicVolume;
+	_musicVolumeRampStartTime = 0;
+	_musicVolumeRampStartVolume = 0;
+	_musicVolumeRampRatePerMSec = 0;
+	_musicVolumeRampEnd = _musicVolume;
 
 	changeMusicTrack(_saveGame->musicTrack);
 
@@ -4277,19 +4330,30 @@ void Runtime::scriptOpMusic(ScriptArg_t arg) {
 	changeMusicTrack(stackArgs[0]);
 }
 
-void Runtime::scriptOpMusicUp(ScriptArg_t arg) {
+void Runtime::scriptOpMusicVolRamp(ScriptArg_t arg) {
 	TAKE_STACK_INT(2);
 
-	warning("Music volume ramp up is not implemented");
-	(void)stackArgs;
+	uint32 duration = static_cast<uint32>(stackArgs[0]) * 100u;
+	uint32 newVolume = stackArgs[1];
+
+	_musicVolumeRampRatePerMSec = 0;
+
+	if (duration == 0) {
+		_musicVolume = newVolume;
+		if (_musicPlayer)
+			_musicPlayer->setVolume(newVolume);
+	} else {
+		if (newVolume != _musicVolume) {
+			uint32 timestamp = g_system->getMillis();
+
+			_musicVolumeRampRatePerMSec = (static_cast<int32>(newVolume) - static_cast<int32>(_musicVolume)) * 65536 / static_cast<int32>(duration);
+			_musicVolumeRampStartTime = timestamp;
+			_musicVolumeRampStartVolume = _musicVolume;
+			_musicVolumeRampEnd = newVolume;
+		}
+	}
 }
 
-void Runtime::scriptOpMusicDn(ScriptArg_t arg) {
-	TAKE_STACK_INT(2);
-
-	warning("Music volume ramp down is not implemented");
-	(void)stackArgs;
-}
 
 void Runtime::scriptOpParm0(ScriptArg_t arg) {
 	TAKE_STACK_INT(4);

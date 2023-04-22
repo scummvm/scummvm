@@ -336,7 +336,7 @@ struct SaveGameSnapshot {
 	LoadGameOutcome read(Common::ReadStream *stream);
 
 	static const uint kSaveGameIdentifier = 0x53566372;
-	static const uint kSaveGameCurrentVersion = 4;
+	static const uint kSaveGameCurrentVersion = 5;
 	static const uint kSaveGameEarliestSupportedVersion = 2;
 
 	struct InventoryItem {
@@ -376,6 +376,8 @@ struct SaveGameSnapshot {
 
 	bool escOn;
 	int musicTrack;
+
+	uint musicVolume;
 
 	uint loadedAnimation;
 	uint animDisplayingFrame;
@@ -748,8 +750,7 @@ private:
 	void scriptOpStopSndLO(ScriptArg_t arg);
 
 	void scriptOpMusic(ScriptArg_t arg);
-	void scriptOpMusicUp(ScriptArg_t arg);
-	void scriptOpMusicDn(ScriptArg_t arg);
+	void scriptOpMusicVolRamp(ScriptArg_t arg);
 	void scriptOpParm0(ScriptArg_t arg);
 	void scriptOpParm1(ScriptArg_t arg);
 	void scriptOpParm2(ScriptArg_t arg);
@@ -892,6 +893,13 @@ private:
 
 	Common::SharedPtr<AudioPlayer> _musicPlayer;
 	int _musicTrack;
+	uint _musicVolume;
+
+	uint32 _musicVolumeRampStartTime;
+	uint _musicVolumeRampStartVolume;
+	int32 _musicVolumeRampRatePerMSec;
+	uint _musicVolumeRampEnd;
+
 	SfxData _sfxData;
 
 	Common::SharedPtr<Video::AVIDecoder> _animDecoder;
