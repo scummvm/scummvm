@@ -1546,7 +1546,7 @@ void LauncherGrid::updateListing() {
 		iter->domain->tryGetVal("platform", platform);
 		iter->domain->tryGetVal("extra", extra);
 		valid_path = (!iter->domain->tryGetVal("path", path) || !Common::FSNode(path).isDirectory()) ? false : true;
-		gridList.push_back(GridItemInfo(k++, engineid, gameid, iter->title, iter->description, extra, Common::parseLanguage(language), Common::parsePlatform(platform), valid_path));
+		gridList.push_back(GridItemInfo(k++, engineid, gameid, iter->description, iter->title, extra, Common::parseLanguage(language), Common::parsePlatform(platform), valid_path));
 		_domains.push_back(iter->key);
 	}
 
