@@ -1430,6 +1430,36 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 
 		update3DSounds();
 
+		AnimSubtitleMap_t::const_iterator animSubtitlesIt = _animSubtitles.find(_loadedAnimation);
+		if (animSubtitlesIt != _animSubtitles.end()) {
+			const FrameToSubtitleMap_t &frameMap = animSubtitlesIt->_value;
+
+			FrameToSubtitleMap_t::const_iterator frameIt = frameMap.find(_animDisplayingFrame);
+			if (frameIt != frameMap.end()) {
+				if (!millis)
+					millis = g_system->getMillis();
+
+				const SubtitleDef &subDef = frameIt->_value;
+
+				_subtitleQueue.clear();
+				_isDisplayingSubtitles = false;
+
+				SubtitleQueueItem queueItem;
+				queueItem.startTime = millis;
+				queueItem.endTime = millis + 1000u;
+
+				for (int ch = 0; ch < 3; ch++)
+					queueItem.color[ch] = subDef.color[ch];
+
+				if (subDef.durationInDeciseconds != 1)
+					queueItem.endTime = queueItem.startTime + subDef.durationInDeciseconds * 100u;
+
+				queueItem.str = subDef.str.decode(Common::kUtf8);
+
+				_subtitleQueue.push_back(queueItem);
+			}
+		}
+
 		if (_animPlaylist) {
 			uint decodeFrameInPlaylist = _animDisplayingFrame - _animFirstFrame;
 			for (const SfxPlaylistEntry &playlistEntry : _animPlaylist->entries) {
@@ -2417,6 +2447,8 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 		if (twoDtFile.open(twoDtFileName))
 			loadFrameData2(&twoDtFile);
 		twoDtFile.close();
+
+		stopSubtitles();
 	}
 
 	if (_animDecoderState == kAnimDecoderStatePlaying) {
@@ -2710,8 +2742,13 @@ void Runtime::updateSubtitles() {
 				_subtitleQueue.remove_at(0);
 				_isDisplayingSubtitles = false;
 
-				if (_subtitleQueue.size() == 0)
-					redrawTray();
+				if (_subtitleQueue.size() == 0) {
+					// Is this really what we want to be doing?
+					if (_escOn)
+						clearTray();
+					else
+						redrawTray();
+				}
 			} else
 				break;
 		} else {
