@@ -68,9 +68,7 @@ void NewControl::drawifneeded() {
 	}
 }
 void NewControl::drawandmouse() {
-	//    ags_domouse(DOMOUSE_DISABLE);
 	draw(get_gui_screen());
-	//  ags_domouse(DOMOUSE_ENABLE);
 }
 
 } // namespace AGS3
