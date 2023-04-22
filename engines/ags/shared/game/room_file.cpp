@@ -219,7 +219,7 @@ HError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 			room->WalkAreas[i].ScalingFar = in->ReadInt16();
 	if (data_ver >= kRoomVersion_214)
 		for (size_t i = 0; i < room->WalkAreaCount; ++i)
-			room->WalkAreas[i].Light = in->ReadInt16();
+			room->WalkAreas[i].PlayerView = in->ReadInt16();
 	if (data_ver >= kRoomVersion_251) {
 		for (size_t i = 0; i < room->WalkAreaCount; ++i)
 			room->WalkAreas[i].ScalingNear = in->ReadInt16();
@@ -282,8 +282,9 @@ HError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	}
 
 	if (data_ver >= kRoomVersion_114) {
+		// NOTE: this WA value was written for the second time here, for some weird reason
 		for (size_t i = 0; i < (size_t)MAX_WALK_AREAS + 1; ++i)
-			room->WalkAreas[i].Light = in->ReadInt16();
+			room->WalkAreas[i].PlayerView = in->ReadInt16();
 	}
 	if (data_ver >= kRoomVersion_255b) {
 		for (size_t i = 0; i < room->RegionCount; ++i)
@@ -504,7 +505,8 @@ HRoomFileError UpdateRoomData(RoomStruct *room, RoomFileVersion data_ver, bool g
 			room->RegionMask.reset(BitmapHelper::CreateBitmap(room->WalkAreaMask->GetWidth(), room->WalkAreaMask->GetHeight(), 8));
 		room->RegionMask->Blit(room->WalkAreaMask.get(), 0, 0, 0, 0, room->RegionMask->GetWidth(), room->RegionMask->GetHeight());
 		for (size_t i = 0; i < MAX_ROOM_REGIONS; ++i) {
-			room->Regions[i].Light = room->WalkAreas[i].Light;
+			// sic!! walkable areas were storing Light level in this field pre-2.55
+			room->Regions[i].Light = room->WalkAreas[i].PlayerView;
 			room->Regions[i].Tint = 255;
 		}
 	}
@@ -701,7 +703,7 @@ void WriteMainBlock(const RoomStruct *room, Stream *out) {
 	for (size_t i = 0; i < (size_t)MAX_WALK_AREAS + 1; ++i)
 		out->WriteInt16(room->WalkAreas[i].ScalingFar);
 	for (size_t i = 0; i < (size_t)MAX_WALK_AREAS + 1; ++i)
-		out->WriteInt16(room->WalkAreas[i].Light);
+		out->WriteInt16(room->WalkAreas[i].PlayerView);
 	for (size_t i = 0; i < (size_t)MAX_WALK_AREAS + 1; ++i)
 		out->WriteInt16(room->WalkAreas[i].ScalingNear);
 	for (size_t i = 0; i < (size_t)MAX_WALK_AREAS + 1; ++i)
@@ -728,8 +730,9 @@ void WriteMainBlock(const RoomStruct *room, Stream *out) {
 
 	out->WriteInt16(0); // legacy room animations
 
+	// NOTE: this WA value was written for the second time here, for some weird reason
 	for (size_t i = 0; i < (size_t)MAX_WALK_AREAS + 1; ++i)
-		out->WriteInt16(room->WalkAreas[i].Light);
+		out->WriteInt16(room->WalkAreas[i].PlayerView);
 	for (size_t i = 0; i < (size_t)MAX_ROOM_REGIONS; ++i)
 		out->WriteInt16(room->Regions[i].Light);
 	for (size_t i = 0; i < (size_t)MAX_ROOM_REGIONS; ++i)
