@@ -34,6 +34,7 @@
 #include "director/sound.h"
 #include "director/window.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/fplayxobj.h"
 
 #include "audio/audiostream.h"
@@ -86,65 +87,16 @@ void FPlayXObj::b_fplay(int nargs) {
 	sound->playFPlaySound(arr);
 }
 
-void FPlayXObj::b_copysnd(int nargs) {
-	g_lingo->printSTUBWithArglist("FPlayXObj::b_copysnd", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
-
-void FPlayXObj::b_erasesnd(int nargs) {
-	g_lingo->printSTUBWithArglist("FPlayXObj::b_erasesnd", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
-
-void FPlayXObj::b_pastesnd(int nargs) {
-	g_lingo->printSTUBWithArglist("FPlayXObj::b_pastesnd", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
-
-void FPlayXObj::b_renamesnd(int nargs) {
-	g_lingo->printSTUBWithArglist("FPlayXObj::b_renamesnd", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
-
-void FPlayXObj::b_duplicatesnd(int nargs) {
-	g_lingo->printSTUBWithArglist("FPlayXObj::b_duplicatesnd", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
-
-void FPlayXObj::b_sndinfo(int nargs) {
-	g_lingo->printSTUBWithArglist("FPlayXObj::b_sndinfo", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
-
-void FPlayXObj::b_sndlist(int nargs) {
-	g_lingo->printSTUBWithArglist("FPlayXObj::b_sndlist", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
-
-void FPlayXObj::b_volume(int nargs) {
-	g_lingo->printSTUBWithArglist("FPlayXObj::b_volume", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
-
-void FPlayXObj::b_filename(int nargs) {
-	g_lingo->printSTUBWithArglist("FPlayXObj::b_filename", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
-
-void FPlayXObj::b_inputlevel(int nargs) {
-	g_lingo->printSTUBWithArglist("FPlayXObj::b_inputlevel", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
+XOBJSTUBV(FPlayXObj::b_copysnd)
+XOBJSTUBV(FPlayXObj::b_erasesnd)
+XOBJSTUBV(FPlayXObj::b_pastesnd)
+XOBJSTUBV(FPlayXObj::b_renamesnd)
+XOBJSTUBV(FPlayXObj::b_duplicatesnd)
+XOBJSTUBV(FPlayXObj::b_sndinfo)
+XOBJSTUBV(FPlayXObj::b_sndlist)
+XOBJSTUBV(FPlayXObj::b_volume)
+XOBJSTUBV(FPlayXObj::b_filename)
+XOBJSTUBV(FPlayXObj::b_inputlevel)
 
 void FPlayXObj::b_fsound(int nargs) {
 	if (nargs != 0) {

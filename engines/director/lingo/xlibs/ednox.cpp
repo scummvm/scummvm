@@ -58,6 +58,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/ednox.h"
 
 
@@ -118,9 +119,7 @@ void Ednox::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
-void Ednox::m_dispose(int nargs) {
-	g_lingo->printSTUBWithArglist("Ednox::m_dispose", nargs);
-}
+XOBJSTUBNR(Ednox::m_dispose)
 
 void Ednox::m_getdocumentfile(int nargs) {
 	// Common::U32String hFile = g_lingo->pop().asString();
@@ -167,13 +166,8 @@ void Ednox::m_setdrivex(int nargs) {
 	g_lingo->push(Datum(0));
 }
 
-void Ednox::m_checksoundx(int nargs) {
-	g_lingo->printSTUBWithArglist("Ednox::m_checksoundx", nargs);
-}
-
-void Ednox::m_clearsoundx(int nargs) {
-	g_lingo->printSTUBWithArglist("Ednox::m_clearsoundx", nargs);
-}
+XOBJSTUB(Ednox::m_checksoundx, "")
+XOBJSTUB(Ednox::m_clearsoundx, "")
 
 void Ednox::m_deletedocumentfile(int nargs) {
 	// Common::U32String hFile = g_lingo->pop().asString();
@@ -182,17 +176,12 @@ void Ednox::m_deletedocumentfile(int nargs) {
 	g_lingo->dropStack(nargs);
 }
 
-void Ednox::m_disabletaskswitch(int nargs) {
-	g_lingo->printSTUBWithArglist("Ednox::m_disabletaskswitch", nargs);
-}
+XOBJSTUB(Ednox::m_enabletaskswitch, "")
+XOBJSTUB(Ednox::m_disabletaskswitch, "")
 
 void Ednox::m_drawbkgndx(int nargs) {
 	// Common::U32String hBkgnd = g_lingo->pop().asString();
 	g_lingo->printSTUBWithArglist("Ednox::m_drawbkgndx", nargs);
-}
-
-void Ednox::m_enabletaskswitch(int nargs) {
-	g_lingo->printSTUBWithArglist("Ednox::m_enabletaskswitch", nargs);
 }
 
 void Ednox::m_getdocumentname(int nargs) {
@@ -208,25 +197,15 @@ void Ednox::m_error(int nargs) {
 	g_lingo->dropStack(nargs);
 }
 
-void Ednox::m_lasterror(int nargs) {
-	g_lingo->printSTUBWithArglist("Ednox::m_lasterror", nargs);
-}
+XOBJSTUB(Ednox::m_lasterror, "")
 
 void Ednox::m_name(int nargs) {
 	g_lingo->push(Datum("ednox"));
 }
 
-void Ednox::m_status(int nargs) {
-	g_lingo->printSTUBWithArglist("Ednox::m_status", nargs);
-}
-
-void Ednox::m_playsoundx(int nargs) {
-	g_lingo->printSTUBWithArglist("Ednox::m_playsoundx", nargs);
-}
-
-void Ednox::m_restorex(int nargs) {
-	g_lingo->printSTUBWithArglist("Ednox::m_restorex", nargs);
-}
+XOBJSTUB(Ednox::m_status, 0)
+XOBJSTUB(Ednox::m_playsoundx, "")
+XOBJSTUB(Ednox::m_restorex, "")
 
 void Ednox::m_savex(int nargs) {
 	// Common::U32String hStrIn = g_lingo->pop().asString();

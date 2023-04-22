@@ -83,6 +83,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/draw.h"
 
 
@@ -139,84 +140,21 @@ void DrawXObj::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
-void DrawXObj::m_dispose(int nargs) {
-	g_lingo->printSTUBWithArglist("DrawXObj::m_dispose", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void DrawXObj::m_line(int nargs) {
-	g_lingo->printSTUBWithArglist("DrawXObj::m_line", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void DrawXObj::m_lineBrush(int nargs) {
-	g_lingo->printSTUBWithArglist("DrawXObj::m_lineBrush", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void DrawXObj::m_lineBrushTrans(int nargs) {
-	g_lingo->printSTUBWithArglist("DrawXObj::m_lineBrushTrans", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void DrawXObj::m_lineBrushCol(int nargs) {
-	g_lingo->printSTUBWithArglist("DrawXObj::m_lineBrushCol", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void DrawXObj::m_filterBMP(int nargs) {
-	g_lingo->printSTUBWithArglist("DrawXObj::m_filterBMP", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void DrawXObj::m_filterDIB(int nargs) {
-	g_lingo->printSTUBWithArglist("DrawXObj::m_filterDIB", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void DrawXObj::m_filterBMP128(int nargs) {
-	g_lingo->printSTUBWithArglist("DrawXObj::m_filterBMP128", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void DrawXObj::m_filterDIB128(int nargs) {
-	g_lingo->printSTUBWithArglist("DrawXObj::m_filterDIB128", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void DrawXObj::m_filterBMPMakeGhostImage(int nargs) {
-	g_lingo->printSTUBWithArglist("DrawXObj::m_filterBMPMakeGhostImage", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void DrawXObj::m_filterDIBMakeGhostImage(int nargs) {
-	g_lingo->printSTUBWithArglist("DrawXObj::m_filterDIBMakeGhostImage", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void DrawXObj::m_emptyClipboard(int nargs) {
-	g_lingo->printSTUBWithArglist("DrawXObj::m_emptyClipboard", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void DrawXObj::m_fill(int nargs) {
-	g_lingo->printSTUBWithArglist("DrawXObj::m_fill", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void DrawXObj::m_getColor(int nargs) {
-	g_lingo->printSTUBWithArglist("DrawXObj::m_getColor", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void DrawXObj::m_drawRect(int nargs) {
-	g_lingo->printSTUBWithArglist("DrawXObj::m_drawRect", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void DrawXObj::m_drawFrame(int nargs) {
-	g_lingo->printSTUBWithArglist("DrawXObj::m_drawFrame", nargs);
-	g_lingo->dropStack(nargs);
-}
+XOBJSTUB(DrawXObj::m_dispose, 0)
+XOBJSTUB(DrawXObj::m_line, 0)
+XOBJSTUB(DrawXObj::m_lineBrush, 0)
+XOBJSTUB(DrawXObj::m_lineBrushTrans, 0)
+XOBJSTUB(DrawXObj::m_lineBrushCol, 0)
+XOBJSTUB(DrawXObj::m_filterBMP, 0)
+XOBJSTUB(DrawXObj::m_filterDIB, 0)
+XOBJSTUB(DrawXObj::m_filterBMP128, 0)
+XOBJSTUB(DrawXObj::m_filterDIB128, 0)
+XOBJSTUB(DrawXObj::m_filterBMPMakeGhostImage, 0)
+XOBJSTUB(DrawXObj::m_filterDIBMakeGhostImage, 0)
+XOBJSTUB(DrawXObj::m_emptyClipboard, 0)
+XOBJSTUB(DrawXObj::m_fill, 0)
+XOBJSTUB(DrawXObj::m_getColor, 0)
+XOBJSTUB(DrawXObj::m_drawRect, 0)
+XOBJSTUB(DrawXObj::m_drawFrame, 0)
 
 } // End of namespace Director

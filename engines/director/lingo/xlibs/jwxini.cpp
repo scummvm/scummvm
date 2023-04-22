@@ -43,6 +43,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/jwxini.h"
 
 
@@ -126,17 +127,7 @@ void JourneyWareXINIXObj::m_GetProfileString(int nargs) {
 	g_lingo->push(Datum(defaultValue)); // TODO: We only return the default for now
 }
 
-void JourneyWareXINIXObj::m_WritePrivateProfileString(int nargs) {
-	g_lingo->printSTUBWithArglist("JWXIni::WritePrivateProfileString", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0)); // TODO
-}
-
-void JourneyWareXINIXObj::m_WriteProfileString(int nargs) {
-	g_lingo->printSTUBWithArglist("JWXIni::WriteProfileString", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0)); // TODO
-}
-
+XOBJSTUB(JourneyWareXINIXObj::m_WritePrivateProfileString, 0)
+XOBJSTUB(JourneyWareXINIXObj::m_WriteProfileString, 0)
 
 } // End of namespace Director

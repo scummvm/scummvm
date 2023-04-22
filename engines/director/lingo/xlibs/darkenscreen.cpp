@@ -33,6 +33,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/darkenscreen.h"
 
 
@@ -57,8 +58,6 @@ void DarkenScreen::close(int type) {
 	g_lingo->cleanupBuiltIns(builtins);
 }
 
-void DarkenScreen::m_darkenscreen(int nargs) {
-	g_lingo->printSTUBWithArglist("DarkenScreen::m_darkenscreen", nargs);
-}
+XOBJSTUBNR(DarkenScreen::m_darkenscreen)
 
 } // End of namespace Director

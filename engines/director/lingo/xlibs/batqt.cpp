@@ -55,6 +55,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/batqt.h"
 
 
@@ -116,123 +117,25 @@ void BatQT::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
-void BatQT::m_dispose(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_dispose", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void BatQT::m_name(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_name", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(""));
-}
-
-void BatQT::m_status(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_status", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void BatQT::m_error(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_error", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(""));
-}
-
-void BatQT::m_lastError(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_lastError", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(""));
-}
-
-void BatQT::m_open(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_open", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void BatQT::m_play(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_play", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void BatQT::m_stop(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_stop", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void BatQT::m_getTimeRange(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_getTimeRange", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(""));
-}
-
-void BatQT::m_getMovieBox(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_getMovieBox", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum("0,0,320,240"));
-}
-
-void BatQT::m_getTime(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_getTime", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void BatQT::m_setTime(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_setTime", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(""));
-}
-
-void BatQT::m_setVolume(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_setVolume", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(""));
-}
-
-void BatQT::m_length(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_length", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void BatQT::m_setMovieBox(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_setMovieBox", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void BatQT::m_setTimeRange(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_setTimeRange", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void BatQT::m_addCallback(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_addCallback", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void BatQT::m_removeCallback(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_removeCallback", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void BatQT::m_resetCallbacks(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_resetCallbacks", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void BatQT::m_setBatch(int nargs) {
-	g_lingo->printSTUBWithArglist("BatQT::m_setBatch", nargs);
-	g_lingo->dropStack(nargs);
-}
-
+XOBJSTUBNR(BatQT::m_dispose)
+XOBJSTUB(BatQT::m_name, "")
+XOBJSTUB(BatQT::m_status, 0)
+XOBJSTUB(BatQT::m_error, "")
+XOBJSTUB(BatQT::m_lastError, "")
+XOBJSTUB(BatQT::m_open, 0)
+XOBJSTUB(BatQT::m_play, 0)
+XOBJSTUB(BatQT::m_stop, 0)
+XOBJSTUB(BatQT::m_getTimeRange, "")
+XOBJSTUB(BatQT::m_getMovieBox, "0,0,320,240")
+XOBJSTUB(BatQT::m_getTime, 0)
+XOBJSTUB(BatQT::m_setTime, "")
+XOBJSTUB(BatQT::m_setVolume, "")
+XOBJSTUB(BatQT::m_length, 0)
+XOBJSTUB(BatQT::m_setMovieBox, 0)
+XOBJSTUB(BatQT::m_setTimeRange, 0)
+XOBJSTUB(BatQT::m_addCallback, 0)
+XOBJSTUB(BatQT::m_removeCallback, 0)
+XOBJSTUB(BatQT::m_resetCallbacks, 0)
+XOBJSTUBNR(BatQT::m_setBatch)
 
 } // End of namespace Director

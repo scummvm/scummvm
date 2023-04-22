@@ -76,6 +76,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/spacemgr.h"
 #include "director/util.h"
 
@@ -162,34 +163,11 @@ void SpaceMgr::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
-void SpaceMgr::m_dispose(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_dispose", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void SpaceMgr::m_lastError(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_lastError", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void SpaceMgr::m_memUsed(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_memUsed", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void SpaceMgr::m_listData(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_listData", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(""));
-}
-
-void SpaceMgr::m_sortAll(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_sortAll", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
+XOBJSTUBNR(SpaceMgr::m_dispose)
+XOBJSTUB(SpaceMgr::m_lastError, 0)
+XOBJSTUB(SpaceMgr::m_memUsed, 0)
+XOBJSTUB(SpaceMgr::m_listData, "")
+XOBJSTUB(SpaceMgr::m_sortAll, 0)
 
 void SpaceMgr::m_checkForDups(int nargs) {
 	if (nargs != 1) {
@@ -354,11 +332,7 @@ void SpaceMgr::m_setCurData(int nargs) {
 	g_lingo->push(Datum(0));
 }
 
-void SpaceMgr::m_addSpaceCollection(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_addSpaceCollection", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
+XOBJSTUB(SpaceMgr::m_addSpaceCollection, 0)
 
 void SpaceMgr::m_removeSpaceCollection(int nargs) {
 	if (nargs != 1) {
@@ -433,17 +407,8 @@ void SpaceMgr::m_getSpaceCollection(int nargs) {
 	g_lingo->push(Datum(result));
 }
 
-void SpaceMgr::m_addSpace(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_addSpace", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void SpaceMgr::m_removeSpace(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_removeSpace", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
+XOBJSTUB(SpaceMgr::m_addSpace, 0)
+XOBJSTUB(SpaceMgr::m_removeSpace, 0)
 
 void SpaceMgr::m_setCurSpace(int nargs) {
 	if (nargs != 1) {
@@ -507,17 +472,8 @@ void SpaceMgr::m_getSpace(int nargs) {
 	g_lingo->push(Datum(result));
 }
 
-void SpaceMgr::m_addNode(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_addNode", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void SpaceMgr::m_removeNode(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_removeNode", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
+XOBJSTUB(SpaceMgr::m_addNode, 0)
+XOBJSTUB(SpaceMgr::m_removeNode, 0)
 
 void SpaceMgr::m_setCurNode(int nargs) {
 	if (nargs != 1) {
@@ -587,17 +543,8 @@ void SpaceMgr::m_getNode(int nargs) {
 	g_lingo->push(Datum(result));
 }
 
-void SpaceMgr::m_addView(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_addView", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void SpaceMgr::m_removeView(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_removeView", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
+XOBJSTUB(SpaceMgr::m_addView, 0)
+XOBJSTUB(SpaceMgr::m_removeView, 0)
 
 void SpaceMgr::m_setCurView(int nargs) {
 	if (nargs != 1) {
@@ -673,23 +620,9 @@ void SpaceMgr::m_getView(int nargs) {
 	g_lingo->push(Datum(result));
 }
 
-void SpaceMgr::m_addLocalLink(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_addLocalLink", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void SpaceMgr::m_removeLocalLink(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_removeLocalLink", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void SpaceMgr::m_removeLocalLinks(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_removeLocalLinks", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
+XOBJSTUB(SpaceMgr::m_addLocalLink, 0)
+XOBJSTUB(SpaceMgr::m_removeLocalLink, 0)
+XOBJSTUB(SpaceMgr::m_removeLocalLinks, 0)
 
 void SpaceMgr::m_getLocalLink(int nargs) {
 	if (nargs != 1) {
@@ -721,34 +654,10 @@ void SpaceMgr::m_getLocalLink(int nargs) {
 	g_lingo->push(Datum(result));
 }
 
-void SpaceMgr::m_getLocalLinks(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_getLocalLinks", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(""));
-}
-
-void SpaceMgr::m_addGlobalLink(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_addGlobalLink", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(""));
-}
-
-void SpaceMgr::m_removeGlobalLink(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_removeGlobalLink", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
-void SpaceMgr::m_getGlobalLink(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_getGlobalLink", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(""));
-}
-
-void SpaceMgr::m_getGlobalLinks(int nargs) {
-	g_lingo->printSTUBWithArglist("SpaceMgr::m_getGlobalLinks", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(""));
-}
+XOBJSTUB(SpaceMgr::m_getLocalLinks, "")
+XOBJSTUB(SpaceMgr::m_addGlobalLink, "")
+XOBJSTUB(SpaceMgr::m_removeGlobalLink, 0)
+XOBJSTUB(SpaceMgr::m_getGlobalLink, "")
+XOBJSTUB(SpaceMgr::m_getGlobalLinks, "")
 
 } // End of namespace Director

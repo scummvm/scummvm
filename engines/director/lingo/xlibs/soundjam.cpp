@@ -107,11 +107,7 @@ void SoundJam::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
-void SoundJam::m_defineFileSound(int nargs) {
-	g_lingo->printSTUBWithArglist("SoundJam::m_defineFileSound", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
+XOBJSTUB(SoundJam::m_defineFileSound, 0)
 
 void SoundJam::m_defineCastSound(int nargs) {
 	SoundJamObject *me = static_cast<SoundJamObject *>(g_lingo->_state->me.u.obj);
@@ -147,17 +143,8 @@ void SoundJam::m_undefineSound(int nargs) {
 	g_lingo->push(0); // success
 }
 
-void SoundJam::m_readSome(int nargs) {
-	g_lingo->printSTUBWithArglist("SoundJam::m_readSome", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
-
-void SoundJam::m_startSound(int nargs) {
-	g_lingo->printSTUBWithArglist("SoundJam::m_startSound", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
+XOBJSTUB(SoundJam::m_readSome, 0)
+XOBJSTUB(SoundJam::m_startSound, 0)
 
 void SoundJam::m_switchNew(int nargs) {
 	SoundJamObject *me = static_cast<SoundJamObject *>(g_lingo->_state->me.u.obj);
@@ -175,22 +162,9 @@ void SoundJam::m_switchNew(int nargs) {
 	g_lingo->push(0); // success
 }
 
-void SoundJam::m_switchParallel(int nargs) {
-	g_lingo->printSTUBWithArglist("SoundJam::m_switchParallel", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
-
-void SoundJam::m_hasSwitchHappened(int nargs) {
-	g_lingo->printSTUBWithArglist("SoundJam::m_hasSwitchHappened", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
-
-void SoundJam::m_toggleMute(int nargs) {
-	g_lingo->printSTUBWithArglist("SoundJam::m_toggleMute", nargs);
-	g_lingo->dropStack(nargs);
-}
+XOBJSTUB(SoundJam::m_switchParallel, 0)
+XOBJSTUB(SoundJam::m_hasSwitchHappened, 0)
+XOBJSTUBNR(SoundJam::m_toggleMute)
 
 void SoundJam::m_stop(int nargs) {
 	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();

@@ -53,4 +53,24 @@
 		return; \
 	}
 
+#define XOBJSTUB(methname,retval) \
+	void methname(int nargs) { \
+		g_lingo->printSTUBWithArglist(#methname, nargs); \
+		g_lingo->dropStack(nargs); \
+		g_lingo->push(Datum(retval)); \
+	}
+
+#define XOBJSTUBV(methname) \
+	void methname(int nargs) { \
+		g_lingo->printSTUBWithArglist(#methname, nargs); \
+		g_lingo->dropStack(nargs); \
+		g_lingo->push(Datum()); \
+	}
+
+#define XOBJSTUBNR(methname) \
+	void methname(int nargs) { \
+		g_lingo->printSTUBWithArglist(#methname, nargs); \
+		g_lingo->dropStack(nargs); \
+	}
+
 #endif
