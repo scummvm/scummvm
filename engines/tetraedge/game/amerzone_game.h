@@ -33,7 +33,6 @@ namespace Tetraedge {
 class AmerzoneGame : public Tetraedge::Game {
 public:
 	AmerzoneGame();
-
 	~AmerzoneGame() {}
 
 	virtual void addToBag(const Common::String &objname) override;
@@ -47,21 +46,29 @@ public:
 	virtual bool onDialogFinished(const Common::String &val) override;
 	virtual bool onVideoFinished() override;
 
-private:
-	void changeSpeedToMouseDirection();
+	TeWarp *warpY() { return _warpY; }
+	const Common::String lastObjectHitName() const { return _lastObjectHitName; }
+
 	void setAngleX(float angle);
 	void setAngleY(float angle);
-	void speedX(float speed);
-	void speedY(float speed);
+	void showPuzzle(int puzzleNo, int puzParam1, int puzParam2);
+
+private:
+	void changeSpeedToMouseDirection();
+	void isInDrag(bool val);
+	void speedX(const float &speed);
+	void speedY(const float &speed);
 
 	bool onHelpButtonValidated();
 	bool onAnimationFinished(const Common::String &anim);
 	bool onMouseLeftUp(const Common::Point &pt);
 	bool onMouseLeftDown(const Common::Point &pt);
 	bool onObjectClick(const Common::String &obj);
+	bool onPuzzleEnterAnimLoadTime();
 
 	void optimizeWarpResources();
 	void startChangeWarpAnim();
+	void startDecelerationAnim();
 	bool onChangeWarpAnimFinished();
 
 	TeTimer _dragTimer;
@@ -75,15 +82,17 @@ private:
 	float _speedY;
 	bool _isInDrag;
 	int _edgeButtonRolloverCount;
-	TeVector2s32 _mouseDragStart;
-	TeVector2s32 _mouseDragLast;
-	/*
-	TeCurveAnim<AmerzoneGame, float> _decelAnimX;
-	TeCurveAnim<AmerzoneGame, float> _decelAnimY;
-	*/
+	Common::Point _mouseDragStart;
+	Common::Point _mouseDragLast;
+	int _puzzleNo;
+	int _puzParam1;
+	int _puzParam2;
+	TeCurveAnim2<AmerzoneGame, float> _decelAnimX;
+	TeCurveAnim2<AmerzoneGame, float> _decelAnimY;
 	TeWarp *_warpX;
 	TeWarp *_warpY;
 	TeWarp *_prevWarpY;
+	Common::String _lastObjectHitName;
 };
 
 } // end namespace Tetraedge

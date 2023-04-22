@@ -291,7 +291,7 @@ bool Game::playMovie(const Common::String &vidPath, const Common::String &musicP
 	TeButtonLayout *skipVideoButton = _inGameGui.buttonLayoutChecked("skipVideoButton");
 	skipVideoButton->setVisible(false);
 
-	TeMusic &music = app->music();
+	TeMusic &music = (g_engine->gameIsAmerzone() ? app->videoMusic() : app->music());
 	music.stop();
 	music.setChannelName("video");
 	music.repeat(false);

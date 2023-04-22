@@ -19,12 +19,15 @@
  *
  */
 
+#include "common/math.h"
+
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/application.h"
 #include "tetraedge/te/te_warp.h"
 #include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_input_mgr.h"
 #include "tetraedge/te/te_renderer.h"
+#include "tetraedge/te/te_ray_intersection.h"
 
 namespace Tetraedge {
 
@@ -32,7 +35,9 @@ namespace Tetraedge {
 bool TeWarp::debug = false;
 
 TeWarp::TeWarp() : _visible1(false), _loaded(false), _preloaded(false),
-	_numAnims(0), _someXVal(0), _someYVal(0), _someMeshX(0), _someMeshY(0) {
+	_numAnims(0), _someXVal(0), _someYVal(0), _someMeshX(0), _someMeshY(0),
+	_renderWarpBlocs(true), _xCount(0), _yCount(0), _clickedPickMesh(nullptr),
+	_clickedAnimData(nullptr) {
 }
 
 TeWarp::~TeWarp() {
@@ -115,31 +120,93 @@ TeMarker *TeWarp::allocMarker(unsigned long *nMarkers) {
 }
 
 void TeWarp::checkObjectEvents() {
-	//const Common::Point lastMouse = g_engine->getInputMgr()->lastMousePos();
-	//Math::Ray mouseRay = _camera.getRay(lastMouse);
-	//for (uint i = 0; i < _numAnims; i++) {
-	//
-	//}
-	error("TODO: Implement TeWarp::checkObjectEvents");
+	const Common::Point lastMouse = g_engine->getInputMgr()->lastMousePos();
+	Math::Ray mouseRay = _camera.getRay(lastMouse);
+	for (auto &animData : _loadedAnimData) {
+		if (_clickedAnimData == &animData) {
+			TePickMesh &pickMesh = animData._frameDatas[animData._curFrameMaybe]._pickMesh;
+			TeVector3f32 intersectPt;
+			float intersectLen;
+			if (pickMesh.flag() && pickMesh.intersect(mouseRay, intersectPt, intersectLen)) {
+				_markerValidatedSignal.call(pickMesh.name());
+				break;
+			}
+		}
+	}
+	TePickMesh *mesh = TeRayIntersection::getMesh(mouseRay, _pickMeshes2, FLT_MAX, 0, nullptr);
+	if (mesh && mesh == _clickedPickMesh)
+		_markerValidatedSignal.call(mesh->name());
+	_clickedAnimData = nullptr;
+	_clickedPickMesh = nullptr;
 }
 
 void TeWarp::clear() {
-	_animDatas.clear();
+	_putAnimData.clear();
 
 	error("TODO: Implement TeWarp::clear");
 }
 
-TeWarp::AnimData *TeWarp::findAnimation(const Common::String &name) {
+void TeWarp::configMarker(const Common::String &objname, int markerImgNo, long markerId) {
+	Exit *exit = findExit(objname, false);
+	long foundId = -1;
+	if (exit) {
+		foundId = exit->_markerId;
+	} else {
+		AnimData *anim = findAnimation(objname);
+		if (!anim || anim->_markerIds.empty())
+			return;
+		foundId = anim->_markerIds[0];
+	}
+	assert(foundId >= 0 && foundId < _warpMarkers.size());
+
+	TeWarpMarker *warpMarker = _warpMarkers[foundId];
+	if (markerImgNo == -1) {
+		warpMarker->marker()->visible(false);
+	} else {
+		Common::String markerPath = Common::String::format("2D/Menus/InGame/Marker_%d.png", markerImgNo);
+		Common::String markerPathOver = Common::String::format("2D/Menus/InGame/Marker_%d_over.png", markerImgNo);
+		if (exit)
+			warpMarker->setName(objname);
+		else
+			warpMarker->setName(Common::String("3D\\") + objname);
+
+		warpMarker->marker()->button().load(markerPath, markerPathOver, markerPathOver);
+		TeSpriteLayout *btnUp = dynamic_cast<TeSpriteLayout*>(warpMarker->marker()->button().upLayout());
+		if (!btnUp)
+			error("Loading button image %s failed", markerPath.c_str());
+		warning("TeWarp::configMarker: set anim values and something else here?");
+		//btnUp->_tiledSurfacePtr->_frameAnim._repeatCount = -1;
+		//btnUp->_tiledSurfacePtr->_frameAnim.setFrameRate(8.0);
+		btnUp->play();
+		warpMarker->marker()->visible(true);
+	}
+}
+
+TeWarp::AnimData *TeWarp::findAnimation(const Common::String &objname) {
 	for (uint i = 0; i < _numAnims; i++) {
-		if (_loadedAnimData[i]._name == name)
+		if (_loadedAnimData[i]._name == objname)
 			return _loadedAnimData.data() + i;
 	}
 	return nullptr;
 }
 
-bool TeWarp::hasObjectOrAnim(const Common::String &name) {
+TeWarp::Exit *TeWarp::findExit(const Common::String &objname, bool flag) {
+	Common::String fullName;
+	if (flag)
+		fullName = objname;
+	else
+		fullName = Common::String("3D\\") + objname;
+
+	for (auto &e : _exitList) {
+		if (e._name == fullName)
+			return &e;
+	}
+	return nullptr;
+}
+
+bool TeWarp::hasObjectOrAnim(const Common::String &objname) {
 	for (uint i = 0; i < _numAnims; i++) {
-		if (_loadedAnimData[i]._name == name)
+		if (_loadedAnimData[i]._name == objname)
 			return true;
 	}
 	return false;
@@ -147,7 +214,7 @@ bool TeWarp::hasObjectOrAnim(const Common::String &name) {
 
 void TeWarp::init() {
 	// This mostly sets up the camera.. maybe nothing to do?
-	warning("TODO: Implement TeWarp::init");
+	warning("TODO: Implement TeWarp::init?");
 }
 
 void TeWarp::load(const Common::String &path, bool flag) {
@@ -156,7 +223,7 @@ void TeWarp::load(const Common::String &path, bool flag) {
 	_warpPath = path;
 	TeCore *core = g_engine->getCore();
 	Common::FSNode node = core->findFile(_warpPath);
-	if (node.isReadable())
+	if (!node.isReadable())
 		error("Couldn't find TeWarp path '%s'", _warpPath.c_str());
 
 	if (_preloaded)
@@ -169,15 +236,14 @@ void TeWarp::load(const Common::String &path, bool flag) {
 	if (Common::String(header) != "TeWarp")
 		error("Invalid header in warp data %s", _warpPath.c_str());
 	uint32 globalTexDataOffset = file.readUint32LE();
-	Common::String encodingType = file.readPascalString();
+	_texEncodingType = file.readPascalString();
 	_xCount = file.readUint32LE();
 	_yCount = file.readUint32LE();
 	_numAnims = file.readUint32LE();
 	_someXVal = file.readUint32LE();
 	_someYVal = file.readUint32LE();
-	warning("TeWarp::load: TODO: Identify these ints..");
-	/*int someInt3 = */file.readUint32LE();
-	/*int someInt4 = */file.readUint32LE();
+	_someMeshX = file.readUint32LE();
+	_someMeshY = file.readUint32LE();
 	_warpBlocs.resize(_xCount * _yCount * 6);
 	for (uint i = 0; i < _xCount * _yCount * 6; i++) {
 		TeWarpBloc::CubeFace face = static_cast<TeWarpBloc::CubeFace>(file.readByte());
@@ -191,7 +257,7 @@ void TeWarp::load(const Common::String &path, bool flag) {
 		}
 	}
 	_loadedAnimData.resize(_numAnims);
-	_animDatas.reserve(_numAnims);
+	_putAnimData.reserve(_numAnims);
 	for (uint i = 0; i < _numAnims; i++) {
 		char aname[5];
 		file.read(aname, 4);
@@ -237,14 +303,14 @@ void TeWarp::load(const Common::String &path, bool flag) {
 				}
 			}
 			frameData._warpBlocs.resize(frameData._numWarpBlocs);
-
-			error("TODO: Finish line 323~343");
+			for (int k = 0; k < frameData._numWarpBlocs; k++) {
+				frameData._warpBlocs[k] = warpBlocs[k];
+			}
 		}
 
 	}
 
 	_loaded = true;
-	error("TODO: Finish TeWarp::load");
 }
 
 bool TeWarp::onMarkerValidated(const Common::String &name) {
@@ -253,7 +319,59 @@ bool TeWarp::onMarkerValidated(const Common::String &name) {
 }
 
 bool TeWarp::onMouseLeftDown(const Common::Point &pt) {
-	error("TODO: Implement TeWarp::onMouseLeftDown");
+	const Math::Ray mouseRay = _camera.getRay(pt);
+	_clickedPickMesh = nullptr;
+	_clickedAnimData = nullptr;
+
+	bool hitAnimData = false;
+	FrameData *frameData;
+	for (auto &animData : _loadedAnimData) {
+		frameData = &(animData._frameDatas[animData._curFrameMaybe]);
+		TeVector3f32 interesctPt;
+		float intersectDist;
+		if (frameData->_pickMesh.flag() && frameData->_pickMesh.intersect(mouseRay, interesctPt, intersectDist)) {
+			_clickedAnimData = &animData;
+			hitAnimData = true;
+			break;
+		}
+	}
+
+	if (!hitAnimData) {
+		_clickedPickMesh = TeRayIntersection::getMesh(mouseRay, _pickMeshes2, FLT_MAX, 0, nullptr);
+		if (_clickedPickMesh) {
+			Exit *exit = findExit(_clickedPickMesh->name(), true);
+			_warpMarkers[exit->_markerId]->marker()->button().setEnable(false);
+		}
+		return false;
+	}
+
+	AnimData *data = findAnimation(frameData->_pickMesh.name());
+	for (auto &markerId : data->_markerIds) {
+		_warpMarkers[markerId]->marker()->button().setEnable(false);
+	}
+	return false;
+}
+
+void TeWarp::putObject(const Common::String &name, bool enable) {
+	for (auto &animData : _loadedAnimData) {
+		if (animData._name != name || animData._frameDatas.size() != 1
+				|| animData._curFrameMaybe != 0)
+			continue;
+		bool alreadyAdded = false;
+		for (auto putAnim : _putAnimData) {
+			if (putAnim == &animData) {
+				alreadyAdded = true;
+				break;
+			}
+		}
+		if (!alreadyAdded)
+			_putAnimData.push_back(&animData);
+		for (auto &frameData : animData._frameDatas) {
+			frameData._pickMesh.setFlag(enable);
+		}
+		return;
+	}
+	warning("Impossible de trouver l\'objet %s dans le Warp", name.c_str());
 }
 
 void TeWarp::update() {
@@ -261,7 +379,15 @@ void TeWarp::update() {
 		return;
 	Application *app = g_engine->getApplication();
 	_frustum.update(app->mainWindowCamera());
-	error("TODO: Implement TeWarp::update");
+	for (uint i = 0; i < _xCount * _yCount * 6; i++) {
+		_warpBlocs[i].loadTexture(_file, _texEncodingType);
+	}
+
+	if (!_loadedAnimData.empty())
+		error("TODO: Finish updating anims in TeWarp::update");
+	// for (uint i = 0; i < _loadedAnimData.size(); i++) {
+	//
+	// }
 }
 
 void TeWarp::sendExit(TeWarp::Exit &exit) {
@@ -287,6 +413,10 @@ void TeWarp::sendMarker(const Common::String &name, unsigned long markerId) {
 	AnimData *anim = findAnimation(name);
 	if (anim)
 		anim->_markerIds.push_back(markerId);
+}
+
+void TeWarp::setAnimationPart(const Common::String &name, int x, int y, int z, bool flag) {
+	error("TODO: Implement TeWarp::setAnimationPart");
 }
 
 void TeWarp::setColor(const TeColor &col) {
@@ -332,7 +462,31 @@ void TeWarp::render() {
 	renderer->disableZBuffer();
 	renderer->pushMatrix();
 
-	// TODO: Render the WarpBlocs here.
+	if (_renderWarpBlocs) {
+		for (uint i = 0; i < _xCount * _yCount * 6; i++) {
+			_warpBlocs[i].render();
+		}
+	}
+
+	TeVector3f32 vertexes[6];
+	for (uint i = 0; i < _putAnimData.size(); i++) {
+		AnimData *animData = _putAnimData[i];
+		for (uint j = 0; j < animData->_frameDatas.size(); j++) {
+			FrameData &frameData = animData->_frameDatas[j];
+			for (uint k = 0; k < frameData._warpBlocs.size(); k++) {
+				TeWarpBloc &bloc = frameData._warpBlocs[k];
+				vertexes[0] = bloc.vertex(0);
+				vertexes[1] = bloc.vertex(1);
+				vertexes[2] = bloc.vertex(3);
+				vertexes[3] = bloc.vertex(1);
+				vertexes[4] = bloc.vertex(2);
+				vertexes[5] = bloc.vertex(3);
+				if (_frustum.triangleIsIn(vertexes) && _frustum.triangleIsIn(vertexes + 3)) {
+					bloc.render();
+				}
+			}
+		}
+	}
 
 	for (auto &warpMarker : _warpMarkers) {
 		warpMarker->marker()->update(&_camera);
@@ -346,8 +500,6 @@ void TeWarp::render() {
 	renderer->popMatrix();
 	renderer->setMatrixMode(TeRenderer::MM_GL_MODELVIEW);
 	renderer->popMatrix();
-
-	error("TODO: Finish TeWarp::render");
 }
 
 void TeWarp::rotateCamera(const TeQuaternion &rot) {
@@ -358,6 +510,10 @@ void TeWarp::rotateCamera(const TeQuaternion &rot) {
 
 void TeWarp::setFov(float fov) {
 	_camera.setFov(fov);
+}
+
+void TeWarp::takeObject(const Common::String &name) {
+	error("TODO: Implement TeWarp::takeObject");
 }
 
 void TeWarp::unload() {

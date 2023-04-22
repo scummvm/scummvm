@@ -66,11 +66,10 @@ void TePickMesh::getTriangle(uint triNum, TeVector3f32 &v1, TeVector3f32 &v2, Te
 	v3 = _verticies[triNum * 3 + 2];
 }
 
-bool TePickMesh::intersect(const TeVector3f32 &origin, const TeVector3f32 &dir, TeVector3f32 &ptOut, float &lenOut) {
+bool TePickMesh::intersect(const Math::Ray &ray, TeVector3f32 &ptOut, float &lenOut) {
 	if (!_flag || !_nTriangles)
 		return false;
 	float nearest = FLT_MAX;
-	const Math::Ray ray(origin, dir);
 	for (uint i = 0; i < _nTriangles; i++) {
 		float idist;
 		Math::Vector3d iloc;
@@ -80,7 +79,7 @@ bool TePickMesh::intersect(const TeVector3f32 &origin, const TeVector3f32 &dir, 
 		}
 	}
 	if (nearest != FLT_MAX) {
-		ptOut = origin + dir * nearest;
+		ptOut = ray.getOrigin() + ray.getDirection() * nearest;
 		lenOut = nearest;
 		return true;
 	}

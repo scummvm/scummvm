@@ -104,7 +104,7 @@ bool AmerzoneGame::changeWarp(const Common::String &zone, const Common::String &
 
 	dotpos = sceneXml.rfind('.');
 	Common::String sceneLua = sceneXml.substr(0, dotpos);
-	sceneLua += ".xml";
+	sceneLua += ".lua";
 	_luaScript.load(core->findFile(sceneLua));
 	_luaScript.execute();
 	_luaScript.execute("OnWarpEnter");
@@ -117,7 +117,12 @@ bool AmerzoneGame::changeWarp(const Common::String &zone, const Common::String &
 }
 
 void AmerzoneGame::draw() {
-	error("TODO: Implement AmerzoneGame::draw");
+	if (!_running)
+		return;
+	if (_warpX)
+		_warpX->render();
+	if (_warpY)
+		_warpY->render();
 }
 
 void AmerzoneGame::enter() {
@@ -164,12 +169,14 @@ void AmerzoneGame::enter() {
 	_warpX = new TeWarp();
 	_warpX->setRotation(app->frontOrientationLayout().rotation());
 	_warpX->init();
+	// TODO: Set FOV here?
 	_warpX->setVisible(true, false);
 	_luaContext.create();
 	_luaScript.attachToContext(&_luaContext);
 
-	warning("TODO: Finish AmerzoneGame::enter");
+	// Game also sets up fade sprites, which is set up in Game.
 
+	_running = true;
 	_playedTimer.start();
 	_edgeButtonRolloverCount = 0;
 
@@ -196,8 +203,64 @@ void AmerzoneGame::initLoadedBackupData() {
 	changeWarp(app->firstWarpPath(), app->firstScene(), true);
 }
 
+void AmerzoneGame::isInDrag(bool inDrag) {
+	const Common::Point mousePt = g_engine->getInputMgr()->lastMousePos();
+	if (inDrag != _isInDrag) {
+		_isInDrag = inDrag;
+		if (inDrag) {
+			// Start drag operation
+			_mouseDragStart = mousePt;
+			_mouseDragLast = mousePt;
+			_decelAnimX.stop();
+			_decelAnimY.stop();
+			_dragTimer.stop();
+			_dragTimer.start();
+		} else {
+			// Finish drag operation
+			_dragTimer.timeElapsed();
+			Application *app = g_engine->getApplication();
+			TeVector3f32 mouseDir(mousePt.x - _mouseDragLast.x, mousePt.y - _mouseDragLast.y, 0);
+			if (app->inverseLook())
+				mouseDir = mouseDir * -1.0f;
+			const TeMatrix4x4 layoutRot = app->frontOrientationLayout().rotation().toTeMatrix();
+			TeVector3f32 dest = layoutRot * mouseDir;
+			dest.x() /= 2;
+			dest.y() /= 2;
+			_speedX = CLIP(dest.x(), -10000.0f, 10000.0f);
+			_speedY = CLIP(dest.y(), -10000.0f, 10000.0f);
+			startDecelerationAnim();
+		}
+	}
+}
+
 void AmerzoneGame::leave(bool flag) {
-	error("TODO: Implement AmerzoneGame::leave");
+	_inGameGui.unload();
+	_question2.unload();
+	Application *app = g_engine->getApplication();
+	app->frontOrientationLayout().removeChild(&_dialog2);
+	_dialog2.unload();
+	if (_warpX) {
+		delete _warpX;
+		_warpX = nullptr;
+	}
+	if (_warpY) {
+		saveBackup("save.xml");
+	}
+	app->frontOrientationLayout().removeChild(&_inventoryMenu);
+	_inventoryMenu.unload();
+
+	// TODO: game does this.. doesn't this leak?
+	_warpY = nullptr;
+	_prevWarpY = nullptr;
+
+	// TODO: Game goes through a list of (cached?) warps here to clean up.
+	warning("TODO: Finish AmerzoneGame::leave");
+
+	_notifier.unload();
+	_luaContext.destroy();
+	_running = false;
+	_playedTimer.stop();
+	_music.stop();
 }
 
 bool AmerzoneGame::onChangeWarpAnimFinished() {
@@ -231,19 +294,30 @@ bool AmerzoneGame::onAnimationFinished(const Common::String &anim) {
 }
 
 bool AmerzoneGame::onMouseLeftUp(const Common::Point &pt) {
-	error("TODO: Implement AmerzoneGame::onMouseLeftUp");
+	_warpY->setMouseLeftUpForMakers();
+	TeVector3f32 offset = TeVector3f32(pt - _mouseDragStart);
+	if (offset.length() > 20.0f)
+		_warpY->checkObjectEvents();
+	isInDrag(false);
+	return false;
 }
 
 bool AmerzoneGame::onMouseLeftDown(const Common::Point &pt) {
-	error("TODO: Implement AmerzoneGame::onMouseLeftDown");
+	isInDrag(true);
+	return false;
 }
 
 bool AmerzoneGame::onObjectClick(const Common::String &obj) {
 	error("TODO: Implement AmerzoneGame::onObjectClick");
 }
 
+bool AmerzoneGame::onPuzzleEnterAnimLoadTime() {
+	error("TODO: Implement AmerzoneGame::onPuzzleEnterAnimLoadTime");
+}
+
 void AmerzoneGame::optimizeWarpResources() {
-	error("TODO: Implement AmerzoneGame::optimizeWarpResources");
+	// Note: original calls this OptimizeWarpRessources
+	warning("TODO: Implement AmerzoneGame::optimizeWarpResources");
 }
 
 void AmerzoneGame::setAngleX(float angle) {
@@ -284,11 +358,19 @@ void AmerzoneGame::setAngleY(float angle) {
 		_orientationY = 45.0f;
 }
 
-void AmerzoneGame::speedX(float speed) {
+void AmerzoneGame::showPuzzle(int puzzleNo, int puzParam1, int puzParam2) {
+	_puzzleNo = puzzleNo;
+	_puzParam1 = puzParam1;
+	_puzParam2 = puzParam2;
+	onPuzzleEnterAnimLoadTime();
+}
+
+
+void AmerzoneGame::speedX(const float &speed) {
 	_speedX = CLIP(speed, -10000.0f, 10000.0f);
 }
 
-void AmerzoneGame::speedY(float speed) {
+void AmerzoneGame::speedY(const float &speed) {
 	_speedY = CLIP(speed, -10000.0f, 10000.0f);
 }
 
@@ -311,6 +393,36 @@ void AmerzoneGame::startChangeWarpAnim() {
 		_prevWarpY->unloadTextures();
 		g_engine->getApplication()->visualFade().animateFadeWithZoom();
 	}
+}
+
+void AmerzoneGame::startDecelerationAnim() {
+	_decelAnimX.stop();
+	_decelAnimY.stop();
+
+	Common::Array<float> curve;
+	curve.push_back(0);
+	curve.push_back(0.35f);
+	curve.push_back(0.68f);
+	curve.push_back(0.85f);
+	curve.push_back(0.93f);
+	curve.push_back(0.97f);
+	curve.push_back(1);
+
+	_decelAnimX.setCurve(curve);
+	_decelAnimX._duration = 400;
+	_decelAnimX._startVal = _speedX;
+	_decelAnimX._endVal = 0;
+	_decelAnimX._callbackObj = this;
+	_decelAnimX._callbackMethod = &AmerzoneGame::speedX;
+	_decelAnimX.play();
+
+	_decelAnimY.setCurve(curve);
+	_decelAnimY._duration = 400;
+	_decelAnimY._startVal = _speedY;
+	_decelAnimY._endVal = 0;
+	_decelAnimY._callbackObj = this;
+	_decelAnimY._callbackMethod = &AmerzoneGame::speedY;
+	_decelAnimY.play();
 }
 
 void AmerzoneGame::update() {

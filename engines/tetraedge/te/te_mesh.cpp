@@ -42,6 +42,15 @@ void TeMesh::defaultMaterial(const TeIntrusivePtr<Te3DTexture> &texture) {
 	_materials[0] = TeMaterial(texture, mode);
 }
 
+TeMaterial *TeMesh::material(uint index) {
+	assert(!_materials.empty());
+	if (index < _materials.size()) {
+		return &_materials[index];
+	} else {
+		return &_materials[0];
+	}
+}
+
 const TeMaterial *TeMesh::material(uint index) const {
 	assert(!_materials.empty());
 	if (index < _materials.size()) {

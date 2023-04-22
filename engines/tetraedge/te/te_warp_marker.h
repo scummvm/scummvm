@@ -38,6 +38,8 @@ public:
 	void marker(TeMarker *marker);
 	bool onMarkerButtonValidated();
 	TeSignal1Param<const Common::String &> &markerButtonSignal() { return _markerButtonSignal; };
+	void setName(const Common::String newName) { _name = newName; }
+
 
 private:
 	TeMarker *_marker;

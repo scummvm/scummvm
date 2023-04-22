@@ -35,7 +35,7 @@ public:
 	// void create(); // unused
 	void destroy();
 	void getTriangle(uint triNum, TeVector3f32 &v1, TeVector3f32 &v2, TeVector3f32 &v3) const;
-	bool intersect(const TeVector3f32 &origin, const TeVector3f32 &dir, TeVector3f32 &ptOut, float &lenOut);
+	bool intersect(const Math::Ray &ray, TeVector3f32 &ptOut, float &lenOut);
 	void nbTriangles(uint nTriangles);
 	TePickMesh &operator+=(const TePickMesh &other);
 	TePickMesh &operator=(const TePickMesh &other);
@@ -44,7 +44,9 @@ public:
 
 	void setName(const Common::String &name) { _name = name; }
 	void setFlag(bool val) { _flag = val; }
+	bool flag() const { return _flag; }
 	const Common::String &name() const { return _name; }
+	uint nTriangles() const { return _nTriangles; }
 
 private:
 	bool _flag;

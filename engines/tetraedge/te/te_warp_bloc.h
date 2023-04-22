@@ -28,6 +28,7 @@
 #include "tetraedge/te/te_vector3f32.h"
 #include "tetraedge/te/te_intrusive_ptr.h"
 #include "tetraedge/te/te_3d_texture.h"
+#include "tetraedge/te/te_mesh.h"
 
 #include "common/file.h"
 
@@ -61,7 +62,7 @@ public:
 	void texture(uint idx, float x, float y);
 	void unloadTexture();
 	void vertex(uint n, float x, float y, float z);
-	const TeVector3f32 &vertex(uint n) const;
+	TeVector3f32 vertex(uint n) const;
 
 	const TeVector2s32 offset() const { return _offset; }
 	CubeFace face() const { return _cubeFace; }
@@ -69,13 +70,10 @@ public:
 	void setTextureFileOffset(long offset) { _textureDataFileOffset = offset; }
 
 private:
-	TeColor *_colors;
 	TeVector2s32 _offset;
-	TeIntrusivePtr<Te3DTexture> _texture;
 	CubeFace _cubeFace;
-	TeVector3f32 _verticies[4];
-	TeVector2f32 _texCoords[4];
-	short _indexes[4];
+	// Tex UV / indexes / texture from orig now in here.
+	Common::SharedPtr<TeMesh> _mesh;
 	long _textureDataFileOffset;
 };
 

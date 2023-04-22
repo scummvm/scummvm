@@ -46,9 +46,10 @@ public:
 
 	class AnimData {
 	public:
-		AnimData() : _fps(15.0f), _flag(false) {}
+		AnimData() : _fps(15.0f), _flag(false), _curFrameMaybe(0) {}
 		Common::Array<unsigned long> _markerIds;
 		float _fps;
+		int _curFrameMaybe;
 		bool _flag;
 		TeTimer _timer;
 		Common::String _name;
@@ -78,7 +79,7 @@ public:
 	uint addQuadToPickMesh(TePickMesh &pickmesh, uint trinum, TeWarpBloc::CubeFace face,
 		const TeVector2s32 &param_4, uint param_5, uint param_6);
 	TeMarker *allocMarker(unsigned long *nMarkers);
-	void configMarker(const Common::String objname, int markerImgNo, long markerId);
+	void configMarker(const Common::String &objname, int markerImgNo, long markerId);
 	void checkObjectEvents();
 	void clear();
 	//void entry(); // unused
@@ -90,16 +91,19 @@ public:
 	void load(const Common::String &path, bool flag);
 	//void loadTextures(); // unused
 	//void preload(const Common::String &path); // unused
+	void putObject(const Common::String &name, bool enable);
 	void update();
 	void render();
 	void rotateCamera(const TeQuaternion &rot);
 	void sendExit(Exit &exit);
 	void sendMarker(const Common::String &name, unsigned long markerId);
+	void setAnimationPart(const Common::String &name, int x, int y, int z, bool flag);
 	void setColor(const TeColor &col) override;
 	void setMarkersOpacity(float opacity);
 	void setMouseLeftUpForMakers();
 	void setFov(float fov);
 	void setVisible(bool v1, bool v2);
+	void takeObject(const Common::String &name);
 	void unload();
 	void unloadTextures();
 	void updateCamera(const TeVector3f32 &screen);
@@ -121,12 +125,16 @@ private:
 	bool _visible1;
 	bool _loaded;
 	bool _preloaded;
+	bool _renderWarpBlocs;
+
+	TePickMesh *_clickedPickMesh;
+	AnimData *_clickedAnimData;
 
 	TeFrustum _frustum;
 
 	Common::Array<TeWarpMarker *> _warpMarkers;
 	Common::List<Common::String> _paths;
-	Common::Array<AnimData> _animDatas;
+	Common::Array<AnimData *> _putAnimData;
 	Common::List<TeWarp::Exit> _exitList;
 	uint _someXVal;
 	uint _someYVal;
@@ -136,9 +144,11 @@ private:
 	uint _yCount;
 	uint _numAnims;
 	Common::Array<TeWarpBloc> _warpBlocs;
+	Common::Array<TePickMesh *> _pickMeshes2;
 	Common::Array<AnimData> _loadedAnimData;
 	TeSignal1Param<const Common::String &> _markerValidatedSignal;
 	TeSignal1Param<const Common::String &> _animFinishedSignal;
+	Common::String _texEncodingType;
 };
 
 } // end namespace Tetraedge

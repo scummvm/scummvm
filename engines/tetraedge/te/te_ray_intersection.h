@@ -31,12 +31,8 @@ class TePickMesh;
 
 namespace TeRayIntersection {
 
-TePickMesh *getMesh(const TeVector3f32 &param_1, const TeVector3f32 &param_2, const Common::Array<TePickMesh *> &pickMeshes,
-			float param_4, float param_5, TeVector3f32 *param_6);
-
-// Replaced with Math::Ray::intersectTriangle
-//int intersect(const TeVector3f32 &rayPos, const TeVector3f32 &rayDir, const TeVector3f32 &v1,
-//				const TeVector3f32 &v2, const TeVector3f32 &v3, TeVector3f32 &vout, float &fout);
+TePickMesh *getMesh(const Math::Ray ray, const Common::Array<TePickMesh *> &pickMeshes,
+			float maxDist, float minDist, TeVector3f32 *ptOut);
 
 } // end namespace TeRayIntersection
 
