@@ -516,6 +516,7 @@ void BitmapCastMember::load() {
 
 			Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(path);
 			if (file) {
+				debugC(2, kDebugLoading, "****** Loading file '%s', cast id: %d", imageFilename.c_str(), imgId);
 				// Detect the filetype. Director will ignore file extensions, as do we.
 				Image::ImageDecoder *decoder = nullptr;
 				uint32 fileType = file->readUint32BE();

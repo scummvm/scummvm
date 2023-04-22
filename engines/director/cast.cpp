@@ -58,6 +58,7 @@ Cast::Cast(Movie *movie, uint16 castLibID, bool isShared) {
 
 	_castLibID = castLibID;
 	_isShared = isShared;
+	_loadMutex = true;
 
 	_lingoArchive = new LingoArchive(this);
 
@@ -117,6 +118,13 @@ CastMember *Cast::getCastMember(int castId) {
 	if (_loadedCast && _loadedCast->contains(castId)) {
 		result = _loadedCast->getVal(castId);
 	}
+	if (result && _loadMutex) {
+		// Archives only support having one stream open at a time,
+		// prevent recursive calls to CastMember::load()
+		_loadMutex = false;
+		result->load();
+		_loadMutex = true;
+	}
 	return result;
 }
 
@@ -127,26 +135,23 @@ void Cast::releaseCastMemberWidget() {
 }
 
 CastMember *Cast::getCastMemberByNameAndType(const Common::String &name, CastType type) {
-	CastMember *result = nullptr;
-
 	if (type == kCastTypeAny) {
 		if (_castsNames.contains(name)) {
-			result = _loadedCast->getVal(_castsNames[name]);
+			return getCastMember(_castsNames[name]);
 		}
 	} else {
 		Common::String cname = Common::String::format("%s:%d", name.c_str(), type);
 
 		if (_castsNames.contains(cname))
-			result = _loadedCast->getVal(_castsNames[cname]);
+			return getCastMember(_castsNames[cname]);
 	}
-	return result;
+	return nullptr;
 }
 
 CastMember *Cast::getCastMemberByScriptId(int scriptId) {
-	CastMember *result = nullptr;
 	if (_castsScriptIds.contains(scriptId))
-		result = _loadedCast->getVal(_castsScriptIds[scriptId]);
-	return result;
+		return getCastMember(_castsScriptIds[scriptId]);
+	return nullptr;
 }
 
 CastMemberInfo *Cast::getCastMemberInfo(int castId) {
@@ -617,23 +622,6 @@ void Cast::loadCast() {
 			delete r;
 		}
 
-	}
-
-	loadCastMemberData();
-}
-
-void Cast::loadCastMemberData() {
-	debugC(1, kDebugLoading, "****** Loading casts data: sprite palettes, images, filmloops, sounds and texts.");
-
-	int idx = 0;
-
-	for (Common::HashMap<int, CastMember *>::iterator c = _loadedCast->begin(); c != _loadedCast->end(); ++c) {
-		if (!c->_value)
-			continue;
-		c->_value->load();
-
-		if (debugChannelSet(-1, kDebugFewFramesOnly) && idx++ > 0 && !(idx % 200))
-			debug("Loaded %d casts data", idx);
 	}
 }
 

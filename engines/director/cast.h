@@ -95,8 +95,6 @@ public:
 	void loadExternalSound(Common::SeekableReadStreamEndian &stream);
 	void loadSord(Common::SeekableReadStreamEndian &stream);
 
-	void loadCastMemberData();
-
 	int getCastSize();
 	Common::Rect getCastMemberInitialRect(int castId);
 	void setCastMemberModified(int castId);
@@ -162,6 +160,7 @@ private:
 	Movie *_movie;
 
 	bool _isShared;
+	bool _loadMutex;
 
 	Common::String _macName;
 
