@@ -33,6 +33,11 @@ void open(int type);
 void close(int type);
 
 void b_fplay(int nargs);
+void b_copysnd(int nargs);
+void b_erasesnd(int nargs);
+void b_pastesnd(int nargs);
+void b_renamesnd(int nargs);
+void b_duplicatesnd(int nargs);
 void b_sndinfo(int nargs);
 void b_sndlist(int nargs);
 void b_volume(int nargs);

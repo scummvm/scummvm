@@ -22,12 +22,12 @@
 /*************************************
  *
  * USED IN:
- * Spaceship Warlock Mac
+ * Spaceship Warlock (Mac)
  *
  *************************************/
 
 /*
- * ersion 2.0.3  Copyright © 1988-90 Farallon Computing, Inc.
+ * Version 2.0.3  Copyright © 1988-90 Farallon Computing, Inc.
  */
 
 #include "director/director.h"
@@ -48,14 +48,18 @@ const char *FPlayXObj::fileNames[] = {
 };
 
 static BuiltinProto builtins[] = {
-	{ "FPlay",			FPlayXObj::b_fplay,		-1,0, 200, CBLTIN },
-	{ "SndInfo",		FPlayXObj::b_sndinfo,	-1,0, 200, FBLTIN },
-	{ "SndList",		FPlayXObj::b_sndlist,	-1,0, 200, FBLTIN },
-	{ "SndList",		FPlayXObj::b_sndlist,	-1,0, 200, FBLTIN },
-	{ "Volume",			FPlayXObj::b_volume,	-1,0, 200, FBLTIN },
-	{ "FileName",		FPlayXObj::b_filename,	-1,0, 200, FBLTIN },
-	{ "InputLevel",		FPlayXObj::b_inputlevel,-1,0, 200, FBLTIN },
-	{ "FSound",			FPlayXObj::b_fsound,	 0,0, 200, FBLTIN },
+	{ "FPlay",			FPlayXObj::b_fplay,		   -1,0, 200, CBLTIN },	// XCMD
+	{ "CopySnd",		FPlayXObj::b_copysnd,	   -1,0, 200, CBLTIN },	// XCMD
+	{ "EraseSnd",		FPlayXObj::b_erasesnd,	   -1,0, 200, CBLTIN },	// XCMD
+	{ "PasteSnd",		FPlayXObj::b_pastesnd,	   -1,0, 200, CBLTIN },	// XCMD
+	{ "RenameSnd",		FPlayXObj::b_renamesnd,	   -1,0, 200, CBLTIN },	// XCMD
+	{ "DuplicateSnd",	FPlayXObj::b_duplicatesnd, -1,0, 200, CBLTIN },	// XCMD
+	{ "SndInfo",		FPlayXObj::b_sndinfo,	   -1,0, 200, FBLTIN },	// XFCN
+	{ "SndList",		FPlayXObj::b_sndlist,	   -1,0, 200, FBLTIN },	// XFCN
+	{ "Volume",			FPlayXObj::b_volume,	   -1,0, 200, FBLTIN },	// XFCN
+	{ "FileName",		FPlayXObj::b_filename,	   -1,0, 200, FBLTIN },	// XFCN
+	{ "InputLevel",		FPlayXObj::b_inputlevel,   -1,0, 200, FBLTIN },	// XFCN
+	{ "FSound",			FPlayXObj::b_fsound,	    0,0, 200, FBLTIN },	// XFCN
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 
@@ -82,32 +86,62 @@ void FPlayXObj::b_fplay(int nargs) {
 	sound->playFPlaySound(arr);
 }
 
+void FPlayXObj::b_copysnd(int nargs) {
+	g_lingo->printSTUBWithArglist("FPlayXObj::b_copysnd", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum());
+}
+
+void FPlayXObj::b_erasesnd(int nargs) {
+	g_lingo->printSTUBWithArglist("FPlayXObj::b_erasesnd", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum());
+}
+
+void FPlayXObj::b_pastesnd(int nargs) {
+	g_lingo->printSTUBWithArglist("FPlayXObj::b_pastesnd", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum());
+}
+
+void FPlayXObj::b_renamesnd(int nargs) {
+	g_lingo->printSTUBWithArglist("FPlayXObj::b_renamesnd", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum());
+}
+
+void FPlayXObj::b_duplicatesnd(int nargs) {
+	g_lingo->printSTUBWithArglist("FPlayXObj::b_duplicatesnd", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum());
+}
+
 void FPlayXObj::b_sndinfo(int nargs) {
-	g_lingo->printSTUBWithArglist("b_sndinfo", nargs);
+	g_lingo->printSTUBWithArglist("FPlayXObj::b_sndinfo", nargs);
 	g_lingo->dropStack(nargs);
 	g_lingo->push(Datum());
 }
 
 void FPlayXObj::b_sndlist(int nargs) {
-	g_lingo->printSTUBWithArglist("b_sndlist", nargs);
+	g_lingo->printSTUBWithArglist("FPlayXObj::b_sndlist", nargs);
 	g_lingo->dropStack(nargs);
 	g_lingo->push(Datum());
 }
 
 void FPlayXObj::b_volume(int nargs) {
-	g_lingo->printSTUBWithArglist("b_volume", nargs);
+	g_lingo->printSTUBWithArglist("FPlayXObj::b_volume", nargs);
 	g_lingo->dropStack(nargs);
 	g_lingo->push(Datum());
 }
 
 void FPlayXObj::b_filename(int nargs) {
-	g_lingo->printSTUBWithArglist("b_filename", nargs);
+	g_lingo->printSTUBWithArglist("FPlayXObj::b_filename", nargs);
 	g_lingo->dropStack(nargs);
 	g_lingo->push(Datum());
 }
 
 void FPlayXObj::b_inputlevel(int nargs) {
-	g_lingo->printSTUBWithArglist("b_inputlevel", nargs);
+	g_lingo->printSTUBWithArglist("FPlayXObj::b_inputlevel", nargs);
 	g_lingo->dropStack(nargs);
 	g_lingo->push(Datum());
 }
