@@ -95,7 +95,7 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 AGSEngine::~AGSEngine() {
 	if (_globals && _G(proper_exit) == 0) {
 		_G(platform)->DisplayAlert("Error: the program has exited without requesting it.\n"
-		                           "Program pointer: %+03d  (write this number down), ACI version %s\n"
+		                           "Program pointer: %+03d  (write this number down), engine version %s\n"
 		                           "If you see a list of numbers above, please write them down and contact\n"
 		                           "developers. Otherwise, note down any other information displayed.",
 		                           _G(our_eip), _G(EngineVersion).LongString.GetCStr());
