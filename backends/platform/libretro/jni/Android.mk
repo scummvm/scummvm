@@ -17,7 +17,8 @@ include $(addprefix $(SCUMMVM_PATH)/, $(addsuffix /module.mk,$(MODULES)))
 OBJS_MODULES := $(addprefix $(SCUMMVM_PATH)/, $(foreach MODULE,$(MODULES),$(MODULE_OBJS-$(MODULE)))) \
 	$(CORE_PATH)/android-fs-factory.o
 
-COREFLAGS := $(DEFINES) -DUSE_CXX11
+#TODO: -O2 or higher causes segmentation fault with some engines (e.g. hopkins)
+COREFLAGS := $(DEFINES) -DUSE_CXX11 -O1
 
 ifeq ($(TARGET_ARCH),arm)
   COREFLAGS += -D_ARM_ASSEM_
