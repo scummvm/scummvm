@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-21 05:59+0000\n"
-"PO-Revision-Date: 2023-04-09 03:18+0000\n"
+"PO-Revision-Date: 2023-04-22 05:36+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -6520,10 +6520,8 @@ msgid "Might and Magic 1 - Menus"
 msgstr "Might and Magic 1 - Menüs"
 
 #: engines/mm/mm1/metaengine.cpp:138
-#, fuzzy
-#| msgid "Might and Magic 1 - Menus"
 msgid "Might and Magic 1 - Minimal Keys"
-msgstr "Might and Magic 1 - Menüs"
+msgstr "Might and Magic 1 - Minimale Tasten"
 
 #: engines/mm/mm1/metaengine.cpp:144 engines/mm/mm1/metaengine.cpp:150
 #: engines/mm/mm1/metaengine.cpp:156
@@ -7385,6 +7383,7 @@ msgstr "Casio CT-460 / CSM-1"
 #: engines/sci/detection_tables.h:4475
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr ""
+"Diese Demo verwendete eine nicht implementierte Version von Robot-Videos"
 
 #: engines/sci/detection_tables.h:4530
 msgid "Incomplete game detected. You have to copy data from all the CDs."
