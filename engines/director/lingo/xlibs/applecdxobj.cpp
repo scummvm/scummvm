@@ -122,7 +122,7 @@ void AppleCDXObj::close(int type) {
 }
 
 
-AppleCDXObject::AppleCDXObject(ObjectType ObjectType) :Object<AppleCDXObject>("AppleCDXObj") {
+AppleCDXObject::AppleCDXObject(ObjectType ObjectType) :Object<AppleCDXObject>("AppleCD") {
 	_objType = ObjectType;
 }
 
@@ -138,6 +138,7 @@ void AppleCDXObj::m_readStatus(int nargs) {
 }
 
 void AppleCDXObj::m_eject(int nargs) {
+    debug(5, "AppleCDXObj::eject: Ejecting CD");
 }
 
 } // End of namespace Director
