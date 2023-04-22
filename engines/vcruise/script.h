@@ -108,6 +108,7 @@ enum ScriptOp {
 	kDup,
 	kSwap,
 	kSay1,
+	kSay2,
 	kSay3,
 	kSay3Get,
 	kSetTimer,

@@ -213,7 +213,7 @@ void Runtime::GyroState::reset() {
 	isWaitingForAnimation = false;
 }
 
-Runtime::SubtitleDef::SubtitleDef() : subIndex(0), color{0, 0, 0}, unknownValue1(0), unknownValue2(0) {
+Runtime::SubtitleDef::SubtitleDef() : color{0, 0, 0}, unknownValue1(0), durationInDeciseconds(0) {
 }
 
 SfxPlaylistEntry::SfxPlaylistEntry() : frame(0), balance(0), volume(0), isUpdate(false) {
@@ -410,7 +410,7 @@ SoundCache::~SoundCache() {
 
 SoundInstance::SoundInstance()
 	: id(0), rampStartVolume(0), rampEndVolume(0), rampRatePerMSec(0), rampStartTime(0), rampTerminateOnCompletion(false),
-	  volume(0), balance(0), effectiveBalance(0), effectiveVolume(0), is3D(false), isLooping(false), isSpeech(false), isSilencedLoop(false), x(0), y(0), endTime(0) {
+	  volume(0), balance(0), effectiveBalance(0), effectiveVolume(0), is3D(false), isLooping(false), isSpeech(false), isSilencedLoop(false), x(0), y(0), endTime(0), duration(0) {
 }
 
 SoundInstance::~SoundInstance() {
@@ -737,7 +737,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _delayCompletionTime(0),
 	  _panoramaState(kPanoramaStateInactive),
 	  _listenerX(0), _listenerY(0), _listenerAngle(0), _soundCacheIndex(0),
-	  _subtitleFont(nullptr), _subtitleExpireTime(0), _displayingSubtitles(false), _languageIndex(0) {
+	  _subtitleFont(nullptr), _isDisplayingSubtitles(false), _languageIndex(0) {
 
 	for (uint i = 0; i < kNumDirections; i++) {
 		_haveIdleAnimations[i] = false;
@@ -750,7 +750,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 
 	_rng.reset(new Common::RandomSource("vcruise"));
 
-	_subtitleFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	_subtitleFont = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
 	if (!_subtitleFont)
 		warning("Couldn't load subtitle font, subtitles will be disabled");
 }
@@ -890,6 +890,7 @@ bool Runtime::runFrame() {
 	uint32 timestamp = g_system->getMillis();
 
 	updateSounds(timestamp);
+	updateSubtitles();
 
 	return true;
 }
@@ -1563,6 +1564,7 @@ bool Runtime::runScript() {
 			DISPATCH_OP(Dup);
 			DISPATCH_OP(Swap);
 			DISPATCH_OP(Say1);
+			DISPATCH_OP(Say2);
 			DISPATCH_OP(Say3);
 			DISPATCH_OP(Say3Get);
 			DISPATCH_OP(SetTimer);
@@ -2462,12 +2464,15 @@ void Runtime::triggerSound(bool looping, SoundInstance &snd, uint volume, int32 
 
 		snd.isSilencedLoop = true;
 		snd.endTime = 0;
+		snd.duration = 0;
 		return;
 	}
 
 	snd.isSilencedLoop = false;
 
 	SoundCache *cache = loadCache(snd);
+
+	snd.duration = cache->stream->getLength().msecs();
 
 	// Reset if looping state changes
 	if (cache->loopingStream && !looping) {
@@ -2517,6 +2522,65 @@ void Runtime::triggerSoundRamp(SoundInstance &snd, uint durationMSec, uint newVo
 
 	if (durationMSec)
 		snd.rampRatePerMSec = 65536 / durationMSec;
+}
+
+void Runtime::triggerWaveSubtitles(const SoundInstance &snd, const Common::String &id) {
+	char appendedCode[4] = {'_', '0', '0', '\0'};
+
+	char digit1 = '0';
+	char digit2 = '0';
+
+	stopSubtitles();
+
+	uint32 currentTime = g_system->getMillis(true);
+
+	uint32 soundEndTime = currentTime + snd.duration;
+
+	for (;;) {
+		if (digit2 == '9') {
+			digit2 = '0';
+
+			if (digit1 == '9')
+				return;	// This should never happen
+
+			digit1++;
+		} else
+			digit2++;
+
+		appendedCode[1] = digit1;
+		appendedCode[2] = digit2;
+
+		Common::String subtitleID = id + appendedCode;
+
+		WaveSubtitleMap_t::const_iterator subIt = _waveSubtitles.find(subtitleID);
+
+		if (subIt != _waveSubtitles.end()) {
+			const SubtitleDef &subDef = subIt->_value;
+
+			SubtitleQueueItem queueItem;
+			queueItem.startTime = currentTime;
+			queueItem.endTime = soundEndTime + 1000u;
+
+			if (_subtitleQueue.size() > 0)
+				queueItem.startTime = _subtitleQueue.back().endTime;
+
+			for (int ch = 0; ch < 3; ch++)
+				queueItem.color[ch] = subDef.color[ch];
+
+			if (subDef.durationInDeciseconds != 1)
+				queueItem.endTime = queueItem.startTime + subDef.durationInDeciseconds * 100u;
+
+			queueItem.str = subDef.str.decode(Common::kUtf8);
+
+			_subtitleQueue.push_back(queueItem);
+		}
+	}
+}
+
+void Runtime::stopSubtitles() {
+	_subtitleQueue.clear();
+	_isDisplayingSubtitles = false;
+	redrawTray();
 }
 
 void Runtime::stopSound(SoundInstance &sound) {
@@ -2580,6 +2644,63 @@ void Runtime::updateSounds(uint32 timestamp) {
 					assert(snd.isSilencedLoop == false);
 				}
 			}
+		}
+	}
+}
+
+void Runtime::updateSubtitles() {
+	uint32 timestamp = g_system->getMillis(true);
+
+	while (_subtitleQueue.size() > 0) {
+		const SubtitleQueueItem &queueItem = _subtitleQueue[0];
+
+		if (_isDisplayingSubtitles) {
+			assert(_subtitleQueue.size() > 0);
+
+			if (queueItem.endTime <= timestamp) {
+				_subtitleQueue.remove_at(0);
+				_isDisplayingSubtitles = false;
+
+				if (_subtitleQueue.size() == 0)
+					redrawTray();
+			} else
+				break;
+		} else {
+			Graphics::ManagedSurface *surf = _traySection.surf.get();
+
+			Common::Array<Common::U32String> lines;
+
+			uint lineStart = 0;
+			for (;;) {
+				uint lineEnd = queueItem.str.find(static_cast<Common::u32char_type_t>('\\'), lineStart);
+				if (lineEnd == Common::U32String::npos) {
+					lines.push_back(queueItem.str.substr(lineStart));
+					break;
+				}
+
+				lines.push_back(queueItem.str.substr(lineStart, lineEnd - lineStart));
+				lineStart = lineEnd + 1;
+			}
+
+			clearTray();
+
+			if (_subtitleFont) {
+				int lineHeight = _subtitleFont->getFontHeight();
+
+				int topY = (surf->h - lineHeight * static_cast<int>(lines.size())) / 2;
+
+				uint32 textColor = surf->format.RGBToColor(queueItem.color[0], queueItem.color[1], queueItem.color[2]);
+
+				for (uint lineIndex = 0; lineIndex < lines.size(); lineIndex++) {
+					const Common::U32String &line = lines[lineIndex];
+					int lineWidth = _subtitleFont->getStringWidth(line);
+					_subtitleFont->drawString(surf, line, (surf->w - lineWidth) / 2, topY + static_cast<int>(lineIndex) * lineHeight, lineWidth, textColor);
+				}
+			}
+
+			commitSectionToScreen(_traySection, Common::Rect(0, 0, _traySection.rect.width(), _traySection.rect.height()));
+
+			_isDisplayingSubtitles = true;
 		}
 	}
 }
@@ -3020,7 +3141,27 @@ void Runtime::inventoryRemoveItem(uint itemID) {
 	}
 }
 
+void Runtime::redrawTray() {
+	if (_subtitleQueue.size() != 0)
+		return;
+
+	clearTray();
+
+	drawCompass();
+
+	for (uint slot = 0; slot < kNumInventorySlots; slot++)
+		drawInventory(slot);
+}
+
+void Runtime::clearTray() {
+	uint32 blackColor = _traySection.surf->format.RGBToColor(0, 0, 0);
+	_traySection.surf->fillRect(Common::Rect(0, 0, _traySection.surf->w, _traySection.surf->h), blackColor);
+}
+
 void Runtime::drawInventory(uint slot) {
+	if (_subtitleQueue.size() > 0)
+		return;
+
 	Common::Rect trayRect = _traySection.rect;
 	trayRect.translate(-trayRect.left, -trayRect.top);
 
@@ -3058,6 +3199,9 @@ void Runtime::drawInventory(uint slot) {
 }
 
 void Runtime::drawCompass() {
+	if (_subtitleQueue.size() > 0)
+		return;
+
 	bool haveHorizontalRotate = false;
 	bool haveUp = false;
 	bool haveDown = false;
@@ -3222,7 +3366,7 @@ void Runtime::loadSubtitles(Common::CodePage codePage) {
 						subDef->color[1] = ((colorCode >> 8) & 0xff);
 						subDef->color[2] = (colorCode & 0xff);
 						subDef->unknownValue1 = param1;
-						subDef->unknownValue2 = param2;
+						subDef->durationInDeciseconds = param2;
 						subDef->str = kv.value.substr(22, kv.value.size() - 23).decode(codePage).encode(Common::kUtf8);
 					}
 				}
@@ -3439,8 +3583,8 @@ void Runtime::restoreSaveGameSnapshot() {
 	_havePendingScreenChange = true;
 	_forceScreenChange = true;
 
-	for (uint slot = 0; slot < kNumInventorySlots; slot++)
-		drawInventory(slot);
+	stopSubtitles();
+	redrawTray();
 }
 
 void Runtime::saveGame(Common::WriteStream *stream) const {
@@ -4356,8 +4500,28 @@ void Runtime::scriptOpSay1(ScriptArg_t arg) {
 	SoundInstance *cachedSound = nullptr;
 	resolveSoundByName(soundIDStr, true, soundID, cachedSound);
 
-	if (cachedSound)
+	if (cachedSound) {
 		triggerSound(false, *cachedSound, 100, 0, false, true);
+		triggerWaveSubtitles(*cachedSound, soundIDStr);
+	}
+}
+
+void Runtime::scriptOpSay2(ScriptArg_t arg) {
+	TAKE_STACK_INT_NAMED(2, sndParamArgs);
+	TAKE_STACK_STR_NAMED(1, sndNameArgs);
+
+	StackInt_t soundID = 0;
+	SoundInstance *cachedSound = nullptr;
+	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
+
+	if (cachedSound) {
+		// The third param seems to control sound interruption, but say3 is a Reah-only op and it's only ever 1.
+		if (sndParamArgs[1] != 1)
+			error("Invalid interrupt arg for say2, only 1 is supported.");
+
+		triggerSound(false, *cachedSound, 100, 0, false, true);
+		triggerWaveSubtitles(*cachedSound, sndNameArgs[0]);
+	}
 }
 
 void Runtime::scriptOpSay3(ScriptArg_t arg) {
@@ -4380,6 +4544,8 @@ void Runtime::scriptOpSay3(ScriptArg_t arg) {
 		if (Common::find(_triggeredOneShots.begin(), _triggeredOneShots.end(), oneShot) == _triggeredOneShots.end()) {
 			triggerSound(false, *cachedSound, 100, 0, false, true);
 			_triggeredOneShots.push_back(oneShot);
+
+			triggerWaveSubtitles(*cachedSound, sndNameArgs[0]);
 		}
 	}
 }

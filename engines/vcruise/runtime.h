@@ -230,6 +230,7 @@ struct SoundInstance {
 	SoundParams3D params3D;
 
 	uint32 endTime;
+	uint32 duration;
 };
 
 struct RandomAmbientSound {
@@ -596,11 +597,17 @@ private:
 	struct SubtitleDef {
 		SubtitleDef();
 
-		uint subIndex;
 		uint8 color[3];
 		uint unknownValue1;
-		uint unknownValue2;
+		uint durationInDeciseconds;
 		Common::String str;
+	};
+
+	struct SubtitleQueueItem {
+		Common::U32String str;
+		uint8 color[3];
+		uint32 startTime;
+		uint32 endTime;
 	};
 
 	bool runIdle();
@@ -651,9 +658,13 @@ private:
 	void triggerSoundRamp(SoundInstance &sound, uint durationMSec, uint newVolume, bool terminateOnCompletion);
 	void stopSound(SoundInstance &sound);
 	void updateSounds(uint32 timestamp);
+	void updateSubtitles();
 	void update3DSounds();
 	bool computeEffectiveVolumeAndBalance(SoundInstance &snd);
 	void triggerAmbientSounds();
+
+	void triggerWaveSubtitles(const SoundInstance &sound, const Common::String &id);
+	void stopSubtitles();
 
 	AnimationDef stackArgsToAnimDef(const StackInt_t *args) const;
 	void pushAnimDef(const AnimationDef &animDef);
@@ -675,6 +686,8 @@ private:
 
 	void inventoryAddItem(uint item);
 	void inventoryRemoveItem(uint item);
+	void redrawTray();
+	void clearTray();
 	void drawInventory(uint slot);
 	void drawCompass();
 	void resetInventoryHighlights();
@@ -754,6 +767,7 @@ private:
 	void scriptOpDup(ScriptArg_t arg);
 	void scriptOpSwap(ScriptArg_t arg);
 	void scriptOpSay1(ScriptArg_t arg);
+	void scriptOpSay2(ScriptArg_t arg);
 	void scriptOpSay3(ScriptArg_t arg);
 	void scriptOpSay3Get(ScriptArg_t arg);
 	void scriptOpSetTimer(ScriptArg_t arg);
@@ -963,9 +977,7 @@ private:
 	Common::SharedPtr<SaveGameSnapshot> _saveGame;
 
 	const Graphics::Font *_subtitleFont;
-	uint32 _subtitleExpireTime;
 	uint _languageIndex;
-	bool _displayingSubtitles;
 
 	typedef Common::HashMap<uint, SubtitleDef> FrameToSubtitleMap_t;
 	typedef Common::HashMap<uint, FrameToSubtitleMap_t> AnimSubtitleMap_t;
@@ -973,6 +985,8 @@ private:
 
 	AnimSubtitleMap_t _animSubtitles;
 	Common::HashMap<Common::String, SubtitleDef> _waveSubtitles;
+	Common::Array<SubtitleQueueItem> _subtitleQueue;
+	bool _isDisplayingSubtitles;
 };
 
 } // End of namespace VCruise
