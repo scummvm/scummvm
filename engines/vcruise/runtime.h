@@ -977,6 +977,7 @@ private:
 	Common::SharedPtr<SaveGameSnapshot> _saveGame;
 
 	const Graphics::Font *_subtitleFont;
+	Common::SharedPtr<Graphics::Font> _subtitleFontKeepalive;
 	uint _languageIndex;
 
 	typedef Common::HashMap<uint, SubtitleDef> FrameToSubtitleMap_t;

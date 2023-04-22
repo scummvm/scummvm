@@ -31,6 +31,7 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
+#include "graphics/fonts/ttf.h"
 #include "graphics/fontman.h"
 #include "graphics/wincursor.h"
 #include "graphics/managed_surface.h"
@@ -750,7 +751,14 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 
 	_rng.reset(new Common::RandomSource("vcruise"));
 
-	_subtitleFont = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
+#ifdef USE_FREETYPE2
+	_subtitleFontKeepalive.reset(Graphics::loadTTFFontFromArchive("NotoSans-Regular.ttf", 16, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeLight));
+	_subtitleFont = _subtitleFontKeepalive.get();
+#endif
+
+	if (!_subtitleFont)
+		_subtitleFont = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
+
 	if (!_subtitleFont)
 		warning("Couldn't load subtitle font, subtitles will be disabled");
 }
