@@ -258,7 +258,7 @@ void engine_init_fonts() {
 }
 
 void engine_init_mouse() {
-	int res = minstalled();
+	int res = _GP(mouse).GetButtonCount();
 	if (res < 0)
 		Debug::Printf(kDbgMsg_Info, "Initializing mouse: failed");
 	else

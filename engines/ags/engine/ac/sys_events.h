@@ -71,7 +71,7 @@ extern void ags_simulate_keypress(eAGSKeyCode ags_key);
 //
 // Tells if the mouse button is currently down
 extern bool ags_misbuttondown(eAGSMouseButton but);
-// Returns mouse button code
+// Returns last "clicked" mouse button
 extern eAGSMouseButton ags_mgetbutton();
 // Returns recent relative mouse movement; resets accumulated values
 extern void ags_mouse_acquire_relxy(int &x, int &y);
