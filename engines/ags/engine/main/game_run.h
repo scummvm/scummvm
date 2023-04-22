@@ -46,9 +46,9 @@ void GameLoopUntilButAnimEnd(int guin, int objn);
 
 // Run the actual game until it ends, or aborted by player/error; loops GameTick() internally
 void RunGameUntilAborted();
-// Update everything game related
+// Update everything game related; wait for the next frame
 void UpdateGameOnce(bool checkControls = false, IDriverDependantBitmap *extraBitmap = nullptr, int extraX = 0, int extraY = 0);
-// Update minimal required game state: audio, loop counter, etc
+// Update minimal required game state: audio, loop counter, etc; wait for the next frame
 void UpdateGameAudioOnly();
 // Gets current logical game FPS, this is normally a fixed number set in script;
 // in case of "maxed fps" mode this function returns real measured FPS.
@@ -62,6 +62,9 @@ bool run_service_mb_controls(eAGSMouseButton &mbut, int &mwheelz);
 // Polls few things (exit flag and debugger messages)
 // TODO: refactor this
 void update_polled_stuff();
+// Update cursor position and view, poll anything related to cursor position;
+// this function is useful when you don't want to update whole game, but only the cursor.
+void update_cursor_and_dependent();
 
 } // namespace AGS3
 

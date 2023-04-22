@@ -805,6 +805,7 @@ bool DialogOptions::Run() {
 		_GP(play).disabled_user_interface--;
 	} else {
 		update_audio_system_on_game_loop();
+		update_cursor_and_dependent();
 		render_graphics(ddb, dirtyx, dirtyy);
 	}
 
