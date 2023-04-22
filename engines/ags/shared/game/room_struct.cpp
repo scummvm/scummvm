@@ -75,7 +75,7 @@ WalkArea::WalkArea()
 	: CharacterView(0)
 	, ScalingFar(0)
 	, ScalingNear(NOT_VECTOR_SCALED)
-	, Light(0)
+	, PlayerView(0)
 	, Top(-1)
 	, Bottom(-1) {
 }

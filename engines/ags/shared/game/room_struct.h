@@ -224,8 +224,8 @@ struct WalkArea {
 	int32_t     ScalingFar;
 	// Scaling at the nearest point, or NOT_VECTOR_SCALED for uniform scaling
 	int32_t     ScalingNear;
-	// Light level (-100 -> +100)
-	int32_t     Light;
+	// Optional override for player character view
+	int32_t     PlayerView;
 	// Top and bottom Y of the area
 	int32_t     Top;
 	int32_t     Bottom;
