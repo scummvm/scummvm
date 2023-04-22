@@ -116,9 +116,7 @@ int MyListBox::pressedon(int mousex, int mousey) {
 
 	}
 
-	//    ags_domouse(DOMOUSE_DISABLE);
 	draw(get_gui_screen());
-	//  ags_domouse(DOMOUSE_ENABLE);
 	_G(smcode) = CM_SELCHANGE;
 	return 0;
 }

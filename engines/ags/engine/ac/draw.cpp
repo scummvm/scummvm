@@ -1988,21 +1988,6 @@ void draw_gui_and_overlays() {
 			gui_ddb->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(gui.Transparency));
 			add_to_sprite_list(gui_ddb, gui.X, gui.Y, gui.ZOrder, false, index);
 		}
-
-		// Poll the GUIs
-		// TODO: move this out of the draw routine into game update!!
-		if (IsInterfaceEnabled()) // only poll if the interface is enabled
-		{
-			for (auto &gui : _GP(guis)) {
-				if (!gui.IsDisplayed()) continue; // not on screen
-				// Don't touch GUI if "GUIs Turn Off When Disabled"
-				if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) &&
-					(_G(all_buttons_disabled) >= 0) &&
-					(gui.PopupStyle != kGUIPopupNoAutoRemove))
-					continue;
-				gui.Poll(_G(mousex), _G(mousey));
-			}
-		}
 	}
 
 	// If not adding gui controls as textures, simply move the resulting sprlist to render
@@ -2247,39 +2232,6 @@ void construct_game_scene(bool full_redraw) {
 	_G(gfxDriver)->EndSpriteBatch();
 }
 
-void update_mouse_cursor() {
-	// update mouse position (mousex, mousey)
-	ags_domouse();
-	// update animating mouse cursor
-	if (_GP(game).mcurs[_G(cur_cursor)].view >= 0) {
-		// only on mousemove, and it's not moving
-		if (((_GP(game).mcurs[_G(cur_cursor)].flags & MCF_ANIMMOVE) != 0) &&
-		        (_G(mousex) == _G(lastmx)) && (_G(mousey) == _G(lastmy)));
-		// only on hotspot, and it's not on one
-		else if (((_GP(game).mcurs[_G(cur_cursor)].flags & MCF_HOTSPOT) != 0) &&
-		         (GetLocationType(game_to_data_coord(_G(mousex)), game_to_data_coord(_G(mousey))) == 0))
-			set_new_cursor_graphic(_GP(game).mcurs[_G(cur_cursor)].pic);
-		else if (_G(mouse_delay) > 0) _G(mouse_delay)--;
-		else {
-			int viewnum = _GP(game).mcurs[_G(cur_cursor)].view;
-			int loopnum = 0;
-			if (loopnum >= _GP(views)[viewnum].numLoops)
-				quitprintf("An animating mouse cursor is using view %d which has no loops", viewnum + 1);
-			if (_GP(views)[viewnum].loops[loopnum].numFrames < 1)
-				quitprintf("An animating mouse cursor is using view %d which has no frames in loop %d", viewnum + 1, loopnum);
-
-			_G(mouse_frame)++;
-			if (_G(mouse_frame) >= _GP(views)[viewnum].loops[loopnum].numFrames)
-				_G(mouse_frame) = 0;
-			set_new_cursor_graphic(_GP(views)[viewnum].loops[loopnum].frames[_G(mouse_frame)].pic);
-			_G(mouse_delay) = _GP(views)[viewnum].loops[loopnum].frames[_G(mouse_frame)].speed + _GP(game).mcurs[_G(cur_cursor)].animdelay;
-			CheckViewFrame(viewnum, loopnum, _G(mouse_frame));
-		}
-		_G(lastmx) = _G(mousex);
-		_G(lastmy) = _G(mousey);
-	}
-}
-
 void construct_game_screen_overlay(bool draw_mouse) {
 	const bool full_frame_rend = _G(gfxDriver)->RequiresFullRedrawEachFrame();
 	_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
@@ -2288,10 +2240,6 @@ void construct_game_screen_overlay(bool draw_mouse) {
 	if (pl_any_want_hook(AGSE_POSTSCREENDRAW)) {
 		_G(gfxDriver)->DrawSprite(AGSE_POSTSCREENDRAW, 0, nullptr);
 	}
-
-	// TODO: find out if it's okay to move cursor animation and state update
-	// to the update loop instead of doing it in the drawing routine
-	update_mouse_cursor();
 
 	// Add mouse cursor pic, and global screen tint effect
 	if (_GP(play).screen_is_faded_out == 0) {
