@@ -22,7 +22,7 @@
 #ifndef AGS_PLUGINS_SERIALIZER_H
 #define AGS_PLUGINS_SERIALIZER_H
 
-#include "ags/shared/api/stream_api.h"
+#include "ags/shared/util/iags_stream.h"
 #include "ags/plugins/ags_plugin.h"
 #include "common/serializer.h"
 
