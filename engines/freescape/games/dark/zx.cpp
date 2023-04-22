@@ -66,7 +66,7 @@ void DarkEngine::loadAssetsZXDemo() {
 }
 
 void DarkEngine::drawZXUI(Graphics::Surface *surface) {
-	/*uint32 color = 1;
+	uint32 color = 7;
 	uint8 r, g, b;
 
 	_gfx->readFromPalette(color, r, g, b);
@@ -81,13 +81,13 @@ void DarkEngine::drawZXUI(Graphics::Surface *surface) {
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	int score = _gameStateVars[k8bitVariableScore];
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 199, 137, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 199, 145, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 199, 153, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 191, 141, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 191, 149, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 191, 157, front, back, surface);
 
-	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 71, 168, front, back, surface);
-	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 71, 177, front, back, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 95, 8, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 78, 165, front, back, surface);
+	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 78, 173, front, back, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 94, 13, front, back, surface);
 
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
@@ -97,35 +97,32 @@ void DarkEngine::drawZXUI(Graphics::Surface *surface) {
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringInSurface(message, 112, 177, back, front, surface);
+		drawStringInSurface(message, 112, 173, back, front, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else
-		drawStringInSurface(_currentArea->_name, 112, 177, front, back, surface);
+		drawStringInSurface(_currentArea->_name, 112, 173, front, back, surface);
 
 	int energy = _gameStateVars[k8bitVariableEnergy]; // called fuel in this game
 	int shield = _gameStateVars[k8bitVariableShield];
 
-	_gfx->readFromPalette(9, r, g, b);
-	uint32 blue = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
-
 	if (shield >= 0) {
 		Common::Rect shieldBar;
-		shieldBar = Common::Rect(72, 139, 151 - (k8bitMaxShield - shield), 146);
-		surface->fillRect(shieldBar, front);
+		shieldBar = Common::Rect(80, 141, 151 - (k8bitMaxShield - shield), 147);
+		surface->fillRect(shieldBar, back);
 
-		shieldBar = Common::Rect(72, 140, 151 - (k8bitMaxShield - shield), 145);
-		surface->fillRect(shieldBar, blue);
+		shieldBar = Common::Rect(80, 142, 151 - (k8bitMaxShield - shield), 146);
+		surface->fillRect(shieldBar, front);
 	}
 
 	if (energy >= 0) {
 		Common::Rect energyBar;
 		energyBar = Common::Rect(72, 147, 151 - (k8bitMaxEnergy - energy), 154);
-		surface->fillRect(energyBar, front);
+		surface->fillRect(energyBar, back);
 
 		energyBar = Common::Rect(72, 148, 151 - (k8bitMaxEnergy - energy), 153);
-		surface->fillRect(energyBar, blue);
-	}*/
+		surface->fillRect(energyBar, front);
+	}
 }
 
 } // End of namespace Freescape
