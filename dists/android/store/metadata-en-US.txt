@@ -23,7 +23,7 @@ https://forums.scummvm.org/viewforum.php?f=17 is our web forum where you can dis
 *** Current release:
 2.7.0.5
 
-*** Release notes:
+*** Release notes (limit is 500 characters):
 - Support secure file access for SD Cards
 - Improved controller support
 - Added a log view under Global Options
