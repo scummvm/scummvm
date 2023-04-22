@@ -41,7 +41,7 @@ enum {
 
 // static const int MB_ARRAY[3] = { 1, 2, 4 };
 
-void mgetgraphpos() {
+void Mouse::Poll() {
 	// TODO:
 	// disable or update mouse speed control to sdl
 	// (does sdl support mouse cursor speed? is it even necessary anymore?);
@@ -66,35 +66,29 @@ void mgetgraphpos() {
 		(_G(mousex) < _G(boundx1) || _G(mousey) < _G(boundy1) || _G(mousex) > _G(boundx2) || _G(mousey) > _G(boundy2))) {
 		_G(mousex) = Math::Clamp(_G(mousex), _G(boundx1), _G(boundx2));
 		_G(mousey) = Math::Clamp(_G(mousey), _G(boundy1), _G(boundy2));
-		msetgraphpos(_G(mousex), _G(mousey));
+		_GP(mouse).SetSysPosition(_G(mousex), _G(mousey));
 	}
 	// Convert to virtual coordinates
 	_GP(mouse).WindowToGame(_G(mousex), _G(mousey));
 }
 
-void msetcursorlimit(int x1, int y1, int x2, int y2) {
-	_G(boundx1) = x1;
-	_G(boundy1) = y1;
-	_G(boundx2) = x2;
-	_G(boundy2) = y2;
-}
-
-void msetgraphpos(int xa, int ya) {
-	_G(sys_mouse_x) = xa;
-	_G(sys_mouse_y) = ya;
-	_G(real_mouse_x) = xa;
-	_G(real_mouse_y) = ya;
+void Mouse::SetSysPosition(int x, int y) {
+	_G(sys_mouse_x) = x;
+	_G(sys_mouse_y) = y;
+	_G(real_mouse_x) = x;
+	_G(real_mouse_y) = y;
 	sys_window_set_mouse(_G(real_mouse_x), _G(real_mouse_y));
 }
 
-void msethotspot(int xx, int yy) {
-	_G(hotx) = xx;  // _G(mousex) -= _G(hotx); _G(mousey) -= _G(hoty);
-	_G(hoty) = yy;  // _G(mousex) += _G(hotx); _G(mousey) += _G(hoty);
+void Mouse::SetHotspot(int x, int y) {
+	_G(hotx) = x;
+	_G(hoty) = y;
 }
 
-int minstalled() {
-	// Number of buttons supported
-	return 3;
+int Mouse::GetButtonCount() {
+	// TODO: can SDL tell number of available/supported buttons at all, or whether mouse is present?
+	// this is not that critical, but maybe some game devs would like to detect if player has or not a mouse.
+	return 3; // SDL *theoretically* support 3 mouse buttons, but that does not mean they are physically present...
 }
 
 void Mouse::WindowToGame(int &x, int &y) {
@@ -105,11 +99,15 @@ void Mouse::WindowToGame(int &x, int &y) {
 void Mouse::SetMoveLimit(const Rect &r) {
 	Rect src_r = OffsetRect(r, _GP(play).GetMainViewport().GetLT());
 	Rect dst_r = _GP(GameScaling).ScaleRange(src_r);
-	msetcursorlimit(dst_r.Left, dst_r.Top, dst_r.Right, dst_r.Bottom);
+	_G(boundx1) = dst_r.Left;
+	_G(boundy1) = dst_r.Top;
+	_G(boundx2) = dst_r.Right;
+	_G(boundy2) = dst_r.Bottom;
 }
 
-void Mouse::SetPosition(const Point p) {
-	msetgraphpos(_GP(GameScaling).X.ScalePt(p.X + _GP(play).GetMainViewport().Left), _GP(GameScaling).Y.ScalePt(p.Y + _GP(play).GetMainViewport().Top));
+void Mouse::SetPosition(const Point &p) {
+	_GP(mouse).SetSysPosition(_GP(GameScaling).X.ScalePt(p.X + _GP(play).GetMainViewport().Left),
+							  _GP(GameScaling).Y.ScalePt(p.Y + _GP(play).GetMainViewport().Top));
 }
 
 bool Mouse::IsLockedToWindow() {

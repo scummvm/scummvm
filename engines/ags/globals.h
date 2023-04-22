@@ -1130,7 +1130,7 @@ public:
 	int8 _currentcursor = 0;
 	// virtual mouse cursor coordinates
 	int _mousex = 0, _mousey = 0, _numcurso = -1, _hotx = 0, _hoty = 0;
-	// real mouse coordinates and bounds
+	// real mouse coordinates and bounds (in window coords)
 	int _real_mouse_x = 0, _real_mouse_y = 0;
 	int _boundx1 = 0, _boundx2 = 99999, _boundy1 = 0, _boundy2 = 99999;
 	int8 _ignore_bounds = 0;

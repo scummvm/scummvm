@@ -34,14 +34,6 @@ class Bitmap;
 
 using namespace AGS; // FIXME later
 
-void mgetgraphpos();
-// Sets the area of the game frame (zero-based coordinates) where the mouse cursor is allowed to move;
-// this function was meant to be used to achieve gameplay effect
-void msetcursorlimit(int x1, int y1, int x2, int y2);
-void msetgraphpos(int xa, int ya);
-void msethotspot(int xx, int yy);
-int minstalled();
-
 struct Mouse {
 	// Tells whether mouse was locked to the game window
 	bool LockedToWindow = false;
@@ -59,8 +51,13 @@ struct Mouse {
 	// Actual speed factor (cached)
 	float Speed = 1.f;
 
-
+	// Converts real window coordinates to native game coords
 	void WindowToGame(int &x, int &y);
+	// Sets mouse position in system coordinates, syncs with the real mouse cursor
+	void SetSysPosition(int x, int y);
+
+	// Tells the number of supported mouse buttons
+	int GetButtonCount();
 
 	// Get if mouse is locked to the game window
 	bool IsLockedToWindow();
@@ -80,13 +77,20 @@ struct Mouse {
 	// Get speed factor
 	float GetSpeed();
 
+	// Updates limits of the area inside which the standard OS cursor is not shown;
+	// uses game's main viewport (in native coordinates) to calculate real area on screen
+	void UpdateGraphicArea();
 	// Limits the area where the game cursor can move on virtual screen;
 	// parameter must be in native game coordinates
 	void SetMoveLimit(const Rect &r);
-	// Set actual OS cursor position on screen; parameter must be in native game coordinates
-	void SetPosition(const Point p);
 
-	void UpdateGraphicArea();
+	// Polls the cursor position, updates mousex, mousey
+	void Poll();
+	// Set actual OS cursor position on screen; in native game coordinates
+	void SetPosition(const Point &p);
+	// Sets the relative position of the cursor's hotspot, in native pixels
+	void SetHotspot(int x, int y);
+
 	void SetMovementControl(bool flag);
 };
 
