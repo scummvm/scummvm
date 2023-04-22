@@ -62,8 +62,8 @@ static void _aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed 
 	int rscinc, rscdd, rsci1, rsci2;
 	int sxinc, sxdd, sxi1, sxi2;
 	int syinc, sydd, syi1, syi2;
-	unsigned long num;
-	void (*add)(BITMAP * _src, int _sx1, int _sx2, int _sy1, int _sy2, unsigned long _num);
+	uint32_t num;
+	void (*add)(BITMAP * _src, int _sx1, int _sx2, int _sy1, int _sy2, uint32_t _num);
 	void (*put)(byte * _addr, int _x);
 
 	if (_dst->clip) {

@@ -118,8 +118,8 @@ const char *alfont_get_name(ALFONT_FONT *f) {
 */
 
 /* original: _blender_trans15 in colblend.c */
-unsigned long __skiptranspixels_blender_trans15(unsigned long x, unsigned long y, unsigned long n) {
-	unsigned long result;
+uint32_t __skiptranspixels_blender_trans15(uint32_t x, uint32_t y, uint32_t n) {
+	uint32_t result;
 
 	if ((y & 0xFFFF) == 0x7C1F)
 		return x;
@@ -136,8 +136,8 @@ unsigned long __skiptranspixels_blender_trans15(unsigned long x, unsigned long y
 }
 
 /* original: _blender_trans16 in colblend.c */
-unsigned long __skiptranspixels_blender_trans16(unsigned long x, unsigned long y, unsigned long n) {
-	unsigned long result;
+uint32_t __skiptranspixels_blender_trans16(uint32_t x, uint32_t y, uint32_t n) {
+	uint32_t result;
 
 	if ((y & 0xFFFF) == 0xF81F)
 		return x;
@@ -154,8 +154,8 @@ unsigned long __skiptranspixels_blender_trans16(unsigned long x, unsigned long y
 }
 
 /* original: _blender_trans24 in colblend.c */
-unsigned long __preservedalpha_blender_trans24(unsigned long x, unsigned long y, unsigned long n) {
-	unsigned long res, g, alpha;
+uint32_t __preservedalpha_blender_trans24(uint32_t x, uint32_t y, uint32_t n) {
+	uint32_t res, g, alpha;
 
 	alpha = (y & 0xFF000000);
 
