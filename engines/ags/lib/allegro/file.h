@@ -23,6 +23,7 @@
 #define AGS_LIB_ALLEGRO_FILE_H
 
 #include "ags/lib/allegro/alconfig.h"
+#include "ags/shared/core/types.h"
 #include "common/file.h"
 
 namespace AGS3 {
@@ -79,13 +80,13 @@ struct PACKFILE {
 	PACKFILE *pack_fopen_chunk(int pack);
 	PACKFILE *pack_fclose_chunk();
 	int pack_igetw();
-	long pack_igetl();
+	int32_t pack_igetl();
 	int pack_iputw(int w);
-	long pack_iputl(long l);
+	int32_t pack_iputl(int32_t l);
 	int pack_mgetw();
-	long pack_mgetl();
+	int32_t pack_mgetl();
 	int pack_mputw(int w);
-	long pack_mputl(long l);
+	int32_t pack_mputl(int32_t l);
 	char *pack_fgets(char *p, int max);
 	int pack_fputs(AL_CONST char *p);
 	};
@@ -207,13 +208,13 @@ AL_FUNC(int, pack_putc, (int c, PACKFILE *f));
 AL_FUNC(int, pack_feof, (PACKFILE *f));
 AL_FUNC(int, pack_ferror, (PACKFILE *f));
 AL_FUNC(int, pack_igetw, (PACKFILE *f));
-AL_FUNC(long, pack_igetl, (PACKFILE *f));
+AL_FUNC(int32_t, pack_igetl, (PACKFILE *f));
 AL_FUNC(int, pack_iputw, (int w, PACKFILE *f));
-AL_FUNC(long, pack_iputl, (long l, PACKFILE *f));
+AL_FUNC(int32_t, pack_iputl, (int32_t l, PACKFILE *f));
 AL_FUNC(int, pack_mgetw, (PACKFILE *f));
-AL_FUNC(long, pack_mgetl, (PACKFILE *f));
+AL_FUNC(int32_t, pack_mgetl, (PACKFILE *f));
 AL_FUNC(int, pack_mputw, (int w, PACKFILE *f));
-AL_FUNC(long, pack_mputl, (long l, PACKFILE *f));
+AL_FUNC(int32_t, pack_mputl, (int32_t l, PACKFILE *f));
 AL_FUNC(long, pack_fread, (void *p, long n, PACKFILE *f));
 AL_FUNC(long, pack_fwrite, (AL_CONST void *p, long n, PACKFILE *f));
 AL_FUNC(int, pack_ungetc, (int c, PACKFILE *f));
