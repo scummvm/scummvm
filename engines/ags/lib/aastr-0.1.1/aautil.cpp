@@ -65,7 +65,7 @@ void _aa_prepare_for_24bpp() {
 /*
  * Add r, g, b values of pixels.
  */
-void _aa_add_rgb8(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, unsigned long _num) {
+void _aa_add_rgb8(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, uint32_t _num) {
 	unsigned char *sline;
 	int sx, sx1i, sx1f, sx2i, sx2f;
 	int sy, sy1i, sy1f, sy2i, sy2f;
@@ -183,7 +183,7 @@ void _aa_add_rgb8(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, unsigned
 }
 
 #ifdef ALLEGRO_COLOR16
-void _aa_add_rgb15(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, unsigned long _num) {
+void _aa_add_rgb15(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, uint32_t _num) {
 	unsigned short *sline;
 	int sx, sx1i, sx1f, sx2i, sx2f;
 	int sy, sy1i, sy1f, sy2i, sy2f;
@@ -300,7 +300,7 @@ void _aa_add_rgb15(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, unsigne
 	}
 }
 
-void _aa_add_rgb16(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, unsigned long _num) {
+void _aa_add_rgb16(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, uint32_t _num) {
 	unsigned short *sline;
 	int sx, sx1i, sx1f, sx2i, sx2f;
 	int sy, sy1i, sy1f, sy2i, sy2f;
@@ -419,7 +419,7 @@ void _aa_add_rgb16(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, unsigne
 #endif
 
 #ifdef ALLEGRO_COLOR24
-void _aa_add_rgb24(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, unsigned long _num) {
+void _aa_add_rgb24(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, uint32_t _num) {
 	unsigned char *sline;
 	int sx, sx1i, sx1f, sx2i, sx2f;
 	int sy, sy1i, sy1f, sy2i, sy2f;
@@ -528,7 +528,7 @@ void _aa_add_rgb24(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, unsigne
 #endif
 
 #ifdef ALLEGRO_COLOR32
-void _aa_add_rgb32(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, unsigned long _num) {
+void _aa_add_rgb32(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, uint32_t _num) {
 	unsigned int *sline;
 	int sx, sx1i, sx1f, sx2i, sx2f;
 	int sy, sy1i, sy1f, sy2i, sy2f;
@@ -675,13 +675,13 @@ void _aa_put_rgb32(byte *addr, int _x) {
 /*
  * Add masked r, g, b values of pixels.
  */
-void _aa_masked_add_rgb8(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, unsigned long _num) {
+void _aa_masked_add_rgb8(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, uint32_t _num) {
 	unsigned char *sline;
 	int sx, sx1i, sx1f, sx2i, sx2f;
 	int sy, sy1i, sy1f, sy2i, sy2f;
-	unsigned long r1, g1, b1;
-	unsigned long r2, g2, b2, t2;
-	unsigned long scolor;
+	uint32_t r1, g1, b1;
+	uint32_t r2, g2, b2, t2;
+	uint32_t scolor;
 
 	sy1i = _sy1 >> aa_BITS;
 	sy = sy1i;
@@ -833,7 +833,7 @@ void _aa_masked_add_rgb8(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, u
 }
 
 #ifdef ALLEGRO_COLOR16
-void _aa_masked_add_rgb15(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, unsigned long _num) {
+void _aa_masked_add_rgb15(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, uint32_t _num) {
 	unsigned short *sline;
 	int sx, sx1i, sx1f, sx2i, sx2f;
 	int sy, sy1i, sy1f, sy2i, sy2f;
@@ -990,7 +990,7 @@ void _aa_masked_add_rgb15(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, 
 		_aa.transparent = 1;
 }
 
-void _aa_masked_add_rgb16(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, unsigned long _num) {
+void _aa_masked_add_rgb16(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, uint32_t _num) {
 	unsigned short *sline;
 	int sx, sx1i, sx1f, sx2i, sx2f;
 	int sy, sy1i, sy1f, sy2i, sy2f;
@@ -1149,7 +1149,7 @@ void _aa_masked_add_rgb16(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, 
 #endif
 
 #ifdef ALLEGRO_COLOR24
-void _aa_masked_add_rgb24(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, unsigned long _num) {
+void _aa_masked_add_rgb24(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, uint32_t _num) {
 	unsigned char *sline;
 	int sx, sx1i, sx1f, sx2i, sx2f;
 	int sy, sy1i, sy1f, sy2i, sy2f;
@@ -1371,7 +1371,7 @@ void _aa_masked_add_rgb24(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, 
 #endif
 
 #ifdef ALLEGRO_COLOR32
-void _aa_masked_add_rgb32(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, unsigned long _num) {
+void _aa_masked_add_rgb32(BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, uint32_t _num) {
 	unsigned int *sline;
 	int sx, sx1i, sx1f, sx2i, sx2f;
 	int sy, sy1i, sy1f, sy2i, sy2f;

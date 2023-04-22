@@ -50,8 +50,8 @@ static void _aa_stretch_blit(BITMAP *_src, BITMAP *_dst,
 	int xi1, xi2, xdd, yxdd;
 	int yi1, yi2, ydd;
 	int dxbeg, dxend, dybeg, dyend;
-	unsigned long num;
-	void (*add)(BITMAP * _src, int _sx1, int _sx2, int _sy1, int _sy2, unsigned long _num);
+	uint32_t num;
+	void (*add)(BITMAP * _src, int _sx1, int _sx2, int _sy1, int _sy2, uint32_t _num);
 	void (*put)(byte * _addr, int _x);
 
 	if ((_dw <= 0) || (_dh <= 0) || (_sw <= 0) || (_sh <= 0))
