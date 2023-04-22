@@ -34,7 +34,7 @@
 #ifndef AGS_SHARED_UTIL_STREAM_H
 #define AGS_SHARED_UTIL_STREAM_H
 
-#include "ags/shared/api/stream_api.h"
+#include "ags/shared/util/iags_stream.h"
 #include "ags/lib/allegro/file.h"
 #include "common/stream.h"
 #include "common/types.h"
