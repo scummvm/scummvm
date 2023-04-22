@@ -261,6 +261,10 @@ char *Script::peekString(int32 offset) {
 	return (char *)(_totPtr + offset);
 }
 
+void Script::writeByte(int32 offset, byte v) {
+	_totPtr[offset] = v;
+}
+
 uint16 Script::readVarIndex(uint16 *size, uint16 *type) {
 	return _expression->parseVarIndex(size, type);
 }

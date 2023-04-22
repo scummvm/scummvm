@@ -854,6 +854,29 @@ void Inter_v1::o1_if(OpFuncParams &params) {
 		WRITE_VAR(285, 0);
 	}
 
+	if (_vm->getGameType() == kGameTypeAdibou2 &&
+		_vm->_enableAdibou2FlowersInfiniteLoopWorkaround &&
+		_vm->isCurrentTot("FLORAL.tot") &&
+		(_vm->_game->_script->pos() == 30743 ||
+		 _vm->_game->_script->pos() == 31074 ||
+		 _vm->_game->_script->pos() == 31109) &&
+		_vm->_game->_script->peekByte() == 15 && // "offset from an array"
+		_vm->_game->_script->peekByte(7) == OP_LOAD_VAR_INT32 &&
+		_vm->_game->_script->peekByte(11) == 97 && // end of "offset from an array"
+		_vm->_game->_script->peekByte(12) == OP_LOAD_VAR_INT32 &&
+		_vm->_game->_script->peekByte(13) == 2 && // offset of the flower state in the flower struct
+		_vm->_game->_script->peekByte(15) == OP_GREATER) {
+		// WORKAROUND an infinite loop in Adibou2 "Flower Garden" activity.
+		// At most 30 flowers can exist at the same time. When the max is reached,
+		// the script iterates over the possible spots until it finds one that is
+		// occupied by a flower (status >= 1) and removes it. But it wrongly checks
+		// for strict inequality ("status > 1") instead of "status >= 1", so if all
+		// flowers happen to be at status 1 (meaning they have not grown at all yet),
+		// the script loops forever.
+		// We fix this by changing the comparison operator to ">=".
+		_vm->_game->_script->writeByte(15, OP_GEQ);
+	}
+
 	int pos = _vm->_game->_script->pos();
 	boolRes = _vm->_game->_script->evalBool();
 

@@ -169,6 +169,7 @@ public:
 
 	bool _resourceSizeWorkaround;
 	bool _enableAdibou2FreeBananasWorkaround;
+	bool _enableAdibou2FlowersInfiniteLoopWorkaround;
 
 	Global *_global;
 	Util *_util;
