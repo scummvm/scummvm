@@ -116,7 +116,7 @@ QuitReason quit_check_for_error_state(const char *qmsg, String &errmsg, String &
 			qreason = kQuit_GameError;
 			alertis.Format("An error has occurred. Please contact the game author for support, as this "
 			               "is likely to be a scripting error and not a bug in AGS.\n"
-			               "(ACI version %s)\n\n", _G(EngineVersion).LongString.GetCStr());
+			               "(Engine version %s)\n\n", _G(EngineVersion).LongString.GetCStr());
 		}
 
 		alertis.Append(cc_get_error().CallStack);
@@ -130,12 +130,12 @@ QuitReason quit_check_for_error_state(const char *qmsg, String &errmsg, String &
 		qmsg++;
 		alertis.Format("A warning has been generated. This is not normally fatal, but you have selected "
 		               "to treat warnings as errors.\n"
-		               "(ACI version %s)\n\n%s\n%s", _G(EngineVersion).LongString.GetCStr(), cc_get_error().CallStack.GetCStr(), qmsg);
+		               "(Engine version %s)\n\n%s\n%s", _G(EngineVersion).LongString.GetCStr(), cc_get_error().CallStack.GetCStr(), qmsg);
 		errmsg = qmsg;
 		return kQuit_GameWarning;
 	} else {
 		alertis.Format("An internal error has occurred. Please note down the following information.\n"
-		               "(ACI version %s)\n"
+		               "(Engine version %s)\n"
 		               "\nError: %s", _G(EngineVersion).LongString.GetCStr(), qmsg);
 		return kQuit_FatalError;
 	}

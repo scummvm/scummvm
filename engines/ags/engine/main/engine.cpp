@@ -1285,6 +1285,20 @@ const char *get_engine_version() {
 	return _G(EngineVersion).LongString.GetCStr();
 }
 
+String get_engine_version_and_build() {
+	const char *bit = (AGS_PLATFORM_64BIT) ? "64-bit" : "32-bit";
+	const char *end = (AGS_PLATFORM_ENDIAN_LITTLE) ? "LE" : "BE";
+#ifdef BUILD_STR
+	return String::FromFormat("%s (Build: %s), %s %s",
+							  _G(EngineVersion).LongString.GetCStr(), EngineVersion.BuildInfo.GetCStr(),
+							  bit, end);
+#else
+	return String::FromFormat("%s, %s %s",
+							  _G(EngineVersion).LongString.GetCStr(),
+							  bit, end);
+#endif
+}
+
 void engine_set_pre_init_callback(t_engine_pre_init_callback callback) {
 	_G(engine_pre_init_callback) = callback;
 }

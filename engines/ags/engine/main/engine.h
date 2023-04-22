@@ -26,8 +26,10 @@
 
 namespace AGS3 {
 
-const char *get_engine_name();
-const char *get_engine_version();
+const char			*get_engine_name();
+const char			*get_engine_version();
+AGS::Shared::String  get_engine_version_and_build();
+
 void        show_preload();
 void        engine_init_game_settings();
 int         initialize_engine(const AGS::Shared::ConfigTree &startup_opts);
