@@ -33,6 +33,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/qtmovie.h"
 
 
@@ -57,9 +58,6 @@ void QTMovie::close(int type) {
 	g_lingo->cleanupBuiltIns(builtins);
 }
 
-void QTMovie::m_qtmovie(int nargs) {
-	g_lingo->printSTUBWithArglist("QTMovie::m_qtmovie", nargs);
-	g_lingo->dropStack(nargs);
-}
+XOBJSTUBNR(QTMovie::m_qtmovie)
 
 } // End of namespace Director

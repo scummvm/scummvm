@@ -106,6 +106,7 @@ IS     mRegister, serialNumber
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/printomatic.h"
 
 
@@ -164,57 +165,21 @@ void PrintOMaticXObj::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
-void PrintOMaticXObj::m_dispose(int nargs) {
-	g_lingo->printSTUBWithArglist("PrintOMaticXObj::m_dispose", nargs);
-	g_lingo->dropStack(nargs);
-}
+XOBJSTUBNR(PrintOMaticXObj::m_dispose)
 
 void PrintOMaticXObj::m_register(int nargs) {
 	Common::String serialNumber = g_lingo->pop().asString();
 	warning("PrintOMaticXObj::m_register: Registered with serial \"%s\"", serialNumber.c_str());
 }
 
-void PrintOMaticXObj::m_reset(int nargs) {
-	g_lingo->printSTUBWithArglist("PrintOMaticXObj::m_reset", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void PrintOMaticXObj::m_newPage(int nargs) {
-	g_lingo->printSTUBWithArglist("PrintOMaticXObj::m_newPage", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void PrintOMaticXObj::m_setPrintableMargins(int nargs) {
-	g_lingo->printSTUBWithArglist("PrintOMaticXObj::m_setPrintableMargins", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void PrintOMaticXObj::m_getPageWidth(int nargs) {
-	g_lingo->printSTUBWithArglist("PrintOMaticXObj::m_getPageWidth", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(-1));
-}
-
-void PrintOMaticXObj::m_getPageHeight(int nargs) {
-	g_lingo->printSTUBWithArglist("PrintOMaticXObj::m_getPageHeight", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(-1));
-}
-
-void PrintOMaticXObj::m_picture(int nargs) {
-	g_lingo->printSTUBWithArglist("PrintOMaticXObj::m_picture", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void PrintOMaticXObj::m_stagePicture(int nargs) {
-	g_lingo->printSTUBWithArglist("PrintOMaticXObj::m_stagePicture", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void PrintOMaticXObj::m_1bitStagePicture(int nargs) {
-	g_lingo->printSTUBWithArglist("PrintOMaticXObj::m_1bitStagePicture", nargs);
-	g_lingo->dropStack(nargs);
-}
+XOBJSTUBNR(PrintOMaticXObj::m_reset)
+XOBJSTUB(PrintOMaticXObj::m_newPage, 0)
+XOBJSTUBNR(PrintOMaticXObj::m_setPrintableMargins)
+XOBJSTUB(PrintOMaticXObj::m_getPageWidth, -1)
+XOBJSTUB(PrintOMaticXObj::m_getPageHeight, -1)
+XOBJSTUBV(PrintOMaticXObj::m_picture)
+XOBJSTUBV(PrintOMaticXObj::m_stagePicture)
+XOBJSTUBV(PrintOMaticXObj::m_1bitStagePicture)
 
 void PrintOMaticXObj::m_setLandscapeMode(int nargs) {
 	// int trueOrFalse = g_lingo->pop.asInt()
@@ -222,36 +187,11 @@ void PrintOMaticXObj::m_setLandscapeMode(int nargs) {
 	g_lingo->dropStack(nargs);
 }
 
-void PrintOMaticXObj::m_doPageSetup(int nargs) {
-	g_lingo->printSTUBWithArglist("PrintOMaticXObj::m_doPageSetup", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(1));
-}
-
-void PrintOMaticXObj::m_doJobSetup(int nargs) {
-	g_lingo->printSTUBWithArglist("PrintOMaticXObj::m_doJobSetup", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(1));
-}
-
-void PrintOMaticXObj::m_setProgressMsg(int nargs) {
-	g_lingo->printSTUBWithArglist("PrintOMaticXObj::m_setProgressMsg", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void PrintOMaticXObj::m_printPreview(int nargs) {
-	g_lingo->printSTUBWithArglist("PrintOMaticXObj::m_printPreview", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void PrintOMaticXObj::m_printPicts(int nargs) {
-	g_lingo->printSTUBWithArglist("PrintOMaticXObj::m_printPicts", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void PrintOMaticXObj::m_print(int nargs) {
-	g_lingo->printSTUBWithArglist("PrintOMaticXObj::m_print", nargs);
-	g_lingo->dropStack(nargs);
-}
+XOBJSTUB(PrintOMaticXObj::m_doPageSetup, 1)
+XOBJSTUB(PrintOMaticXObj::m_doJobSetup, 1)
+XOBJSTUBNR(PrintOMaticXObj::m_setProgressMsg)
+XOBJSTUB(PrintOMaticXObj::m_printPreview, 0)
+XOBJSTUBV(PrintOMaticXObj::m_printPicts)
+XOBJSTUBNR(PrintOMaticXObj::m_print)
 
 } // End of namespace Director

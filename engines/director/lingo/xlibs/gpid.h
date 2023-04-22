@@ -39,6 +39,12 @@ void open(int type);
 void close(int type);
 
 void m_new(int nargs);
+void m_dispose(int nargs);
+void m_name(int nargs);
+void m_status(int nargs);
+void m_error(int nargs);
+void m_lastError(int nargs);
+void m_getPid(int nargs);
 
 } // End of namespace GpidXObj
 

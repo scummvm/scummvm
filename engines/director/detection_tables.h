@@ -5300,7 +5300,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("trekguideds9", "v1.0", "OMNI_DS9.EXE", "0058390ff77e527c7bb413081004c304", 805517, 400),
 
 	MACGAME1("trekguidetng", "v1.1", "TNG Episodes", "1c2e5371b835680e7c1ca8bcea008bef", 520149, 400),
-	WINGAME1("trekguidetng", "v1.1", "OMNI_TNG.EXE", "0049d72e2d5869408fc33860ec4b5c1f", 794201, 400),
+	WINGAME1("trekguidetng", "v1.1", "OMNI2/OMNI_TNG.EXE", "0049d72e2d5869408fc33860ec4b5c1f", 794201, 400),
 
 	MACGAME1("trekomni", "v1.00", "Omnipedia", "b7e69c37b7355022d400c14aa97c5d54", 516791, 400),
 	MACGAME1("trekomni", "v1.1.2 Upgrade", "Omnipedia 2", "b7e69c37b7355022d400c14aa97c5d54", 613253, 400),

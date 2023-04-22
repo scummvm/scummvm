@@ -50,6 +50,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/moovxobj.h"
 
 
@@ -118,15 +119,10 @@ void MoovXObj::m_dispose(int nargs) {
 	}
 }
 
-void MoovXObj::m_name(int nargs) {
-	// unused in C.H.A.O.S.
-	g_lingo->printSTUBWithArglist("MoovXObj::m_name", nargs);
-}
-
-void MoovXObj::m_movieInit(int nargs) {
-	// called in C.H.A.O.S. ScummVMs setup happens in playMovie
-	g_lingo->printSTUBWithArglist("MoovXObj::m_movieInit", nargs);
-}
+// unused in C.H.A.O.S.
+XOBJSTUB(MoovXObj::m_name, "MoovXObj")
+// called in C.H.A.O.S. ScummVMs setup happens in playMovie
+XOBJSTUB(MoovXObj::m_movieInit, 0)
 
 void MoovXObj::m_movieKill(int nargs) {
 	debug(5, "MoovXObj::m_movieKill");
@@ -172,21 +168,12 @@ void MoovXObj::m_playMovie(int nargs) {
 	me->_video->start();
 }
 
-void MoovXObj::m_pauseMovie(int nargs) {
-	// unused in C.H.A.O.S.
-	g_lingo->printSTUBWithArglist("MoovXObj::m_pauseMovie", nargs);
-}
-
-void MoovXObj::m_soundMovie(int nargs) {
-	// unused in C.H.A.O.S.
-	g_lingo->printSTUBWithArglist("MoovXObj::m_soundMovie", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void MoovXObj::m_stopMovie(int nargs) {
-	// unused in C.H.A.O.S.
-	g_lingo->printSTUBWithArglist("MoovXObj::m_stopMovie", nargs);
-}
+// unused in C.H.A.O.S.
+XOBJSTUB(MoovXObj::m_pauseMovie, 0)
+// unused in C.H.A.O.S.
+XOBJSTUB(MoovXObj::m_soundMovie, 0)
+// unused in C.H.A.O.S.
+XOBJSTUB(MoovXObj::m_stopMovie, 0)
 
 void MoovXObj::m_movieDone(int nargs) {
 	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_state->me.u.obj);

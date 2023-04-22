@@ -39,6 +39,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/xio.h"
 
 
@@ -94,19 +95,7 @@ void XioXObj::m_unlock(int nargs) {
 	g_lingo->push(Datum(1));
 }
 
-void XioXObj::m_deleteFile(int nargs) {
-	// Common::String filename = g_lingo->pop().asString();
-	g_lingo->printSTUBWithArglist("XioXObj::m_deleteFile", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(1));
-}
-
-void XioXObj::m_copyFile(int nargs) {
-	// Common::String source = g_lingo->pop().asString();
-	// Common::String destination = g_lingo->pop().asString();
-	g_lingo->printSTUBWithArglist("XioXObj::m_copyFile", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(1));
-}
+XOBJSTUB(XioXObj::m_deleteFile, 1)
+XOBJSTUB(XioXObj::m_copyFile, 1)
 
 } // End of namespace Director

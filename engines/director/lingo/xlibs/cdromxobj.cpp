@@ -165,6 +165,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/cdromxobj.h"
 
 namespace Director {
@@ -315,11 +316,7 @@ void CDROMXObj::m_playSegment(int nargs) {
 	g_lingo->push(Datum());
 }
 
-void CDROMXObj::m_askPlay(int nargs) {
-	g_lingo->printSTUBWithArglist("CDROMXObj::m_askPlay", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
+XOBJSTUBV(CDROMXObj::m_askPlay)
 
 void CDROMXObj::m_stepFwd(int nargs) {
 	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
@@ -471,51 +468,18 @@ void CDROMXObj::m_currentTrack(int nargs) {
 	g_lingo->push(Datum(me->_cdda_status.track));
 }
 
-void CDROMXObj::m_currentTime(int nargs) {
-	g_lingo->printSTUBWithArglist("CDROMXObj::m_currentTime", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
+XOBJSTUBV(CDROMXObj::m_currentTime)
 
 // The next few methods depend on full TOC implementation, so they
 // can't be implemented right now.
-void CDROMXObj::m_firstTrack(int nargs) {
-	g_lingo->printSTUBWithArglist("CDROMXObj::m_firstTrack", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
-
-void CDROMXObj::m_lastTrack(int nargs) {
-	g_lingo->printSTUBWithArglist("CDROMXObj::m_lastTrack", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
-
-void CDROMXObj::m_totalTime(int nargs) {
-	g_lingo->printSTUBWithArglist("CDROMXObj::m_totalTime", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
+XOBJSTUBV(CDROMXObj::m_firstTrack)
+XOBJSTUBV(CDROMXObj::m_lastTrack)
+XOBJSTUBV(CDROMXObj::m_totalTime)
 
 // The scan methods depend on absolute timing, so they also require
 // a full TOC.
-void CDROMXObj::m_scanFwd(int nargs) {
-	g_lingo->printSTUBWithArglist("CDROMXObj::m_scanFwd", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
-
-void CDROMXObj::m_scanBwd(int nargs) {
-	g_lingo->printSTUBWithArglist("CDROMXObj::m_scanBwd", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
-
-void CDROMXObj::m_stopScan(int nargs) {
-	g_lingo->printSTUBWithArglist("CDROMXObj::m_stopScan", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
-}
-
+XOBJSTUBV(CDROMXObj::m_scanFwd)
+XOBJSTUBV(CDROMXObj::m_scanBwd)
+XOBJSTUBV(CDROMXObj::m_stopScan)
 
 } // End of namespace Director

@@ -65,6 +65,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/jitdraw3.h"
 
 
@@ -113,15 +114,8 @@ void JITDraw3XObj::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
-void JITDraw3XObj::m_dispose(int nargs) {
-	g_lingo->printSTUBWithArglist("JITDraw3XObj::m_dispose", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void JITDraw3XObj::m_checkifcdrom(int nargs) {
-	g_lingo->printSTUBWithArglist("JITDraw3XObj::m_checkifcdrom", nargs);
-	g_lingo->push(Datum(0));
-}
+XOBJSTUBNR(JITDraw3XObj::m_dispose)
+XOBJSTUB(JITDraw3XObj::m_checkifcdrom, 0)
 
 void JITDraw3XObj::m_msgokcancel(int nargs) {
 	Common::U32String caption = g_lingo->pop().asString();  // Title of the message box
@@ -147,20 +141,8 @@ void JITDraw3XObj::m_msgyesno(int nargs) {
 	g_lingo->push(Datum(result == GUI::kMessageOK ? 1 : 0));
 }
 
-void JITDraw3XObj::m_gotodraw(int nargs) {
-	g_lingo->printSTUBWithArglist("JITDraw3XObj::m_gotodraw", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(3));
-}
-
-void JITDraw3XObj::m_adddrawbutton(int nargs) {
-	g_lingo->printSTUBWithArglist("JITDraw3XObj::m_adddrawbutton", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void JITDraw3XObj::m_removedrawbutton(int nargs) {
-	g_lingo->printSTUBWithArglist("JITDraw3XObj::m_removedrawbutton", nargs);
-	g_lingo->dropStack(nargs);
-}
+XOBJSTUB(JITDraw3XObj::m_gotodraw, 3)
+XOBJSTUB(JITDraw3XObj::m_adddrawbutton, 0)
+XOBJSTUB(JITDraw3XObj::m_removedrawbutton, 0)
 
 } // End of namespace Director

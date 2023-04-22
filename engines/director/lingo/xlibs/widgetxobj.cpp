@@ -39,6 +39,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/widgetxobj.h"
 
 namespace Director {
@@ -91,9 +92,6 @@ void WidgetXObj::m_getPro(int nargs) {
 	g_lingo->push(Datum("D"));
 }
 
-void WidgetXObj::m_askQuit(int nargs) {
-	g_lingo->printSTUBWithArglist("WidgetXObj::m_askQuit", nargs);
-	g_lingo->dropStack(nargs);
-}
+XOBJSTUB(WidgetXObj::m_askQuit, 0)
 
 } // End of namespace Director

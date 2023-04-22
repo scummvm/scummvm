@@ -41,6 +41,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/valkyrie.h"
 
 
@@ -88,19 +89,13 @@ void ValkyrieXObj::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
-void ValkyrieXObj::m_dispose(int nargs) {
-	g_lingo->printSTUBWithArglist("ValkyrieXObj::m_dispose", nargs);
-	g_lingo->dropStack(nargs);
-}
+XOBJSTUBNR(ValkyrieXObj::m_dispose)
 
 void ValkyrieXObj::m_name(int nargs) {
 	g_lingo->push(Datum("Valkyrie"));
 }
 
-void ValkyrieXObj::m_status(int nargs) {
-	g_lingo->printSTUBWithArglist("ValkyrieXObj::m_status", nargs);
-	g_lingo->dropStack(nargs);
-}
+XOBJSTUB(ValkyrieXObj::m_status, 0)
 
 void ValkyrieXObj::m_error(int nargs) {
 	// TODO: Save error code for m_lastError?
@@ -108,10 +103,7 @@ void ValkyrieXObj::m_error(int nargs) {
 	warning("ValkyrieXObj::m_error: Got error %d", errorCode);
 }
 
-void ValkyrieXObj::m_lastError(int nargs) {
-	g_lingo->printSTUBWithArglist("ValkyrieXObj::m_lastError", nargs);
-	g_lingo->dropStack(nargs);
-}
+XOBJSTUB(ValkyrieXObj::m_lastError, "")
 
 void ValkyrieXObj::m_save(int nargs) {
 	// should write to namco.ini > Valkyrie > Data
