@@ -39,7 +39,7 @@ int PACKFILE::pack_igetw() {
 	return pack_fread(buf, 2) == 2 ? READ_LE_UINT16(buf) : 0;
 }
 
-long PACKFILE::pack_igetl() {
+int32_t PACKFILE::pack_igetl() {
 	byte buf[4];
 	return pack_fread(buf, 4) == 4 ? READ_LE_UINT32(buf) : 0;
 }
@@ -51,7 +51,7 @@ int PACKFILE::pack_iputw(int w) {
 	return 0;
 }
 
-long PACKFILE::pack_iputl(long l) {
+int32_t PACKFILE::pack_iputl(int32_t l) {
 	byte buf[4];
 	WRITE_LE_UINT32(buf, l);
 	pack_fwrite(buf, 4);
@@ -63,7 +63,7 @@ int PACKFILE::pack_mgetw() {
 	return pack_fread(buf, 2) == 2 ? READ_BE_UINT16(buf) : 0;
 }
 
-long PACKFILE::pack_mgetl() {
+int32_t PACKFILE::pack_mgetl() {
 	byte buf[4];
 	return pack_fread(buf, 4) == 4 ? READ_BE_UINT32(buf) : 0;
 }
@@ -75,7 +75,7 @@ int PACKFILE::pack_mputw(int w) {
 	return 0;
 }
 
-long PACKFILE::pack_mputl(long l) {
+int32_t PACKFILE::pack_mputl(int32_t l) {
 	byte buf[4];
 	WRITE_BE_UINT16(buf, 4);
 	pack_fwrite(buf, 4);
@@ -206,7 +206,7 @@ int pack_igetw(PACKFILE *f) {
 	error("TODO: xxx");
 }
 
-long pack_igetl(PACKFILE *f) {
+int32_t pack_igetl(PACKFILE *f) {
 	return f->pack_igetl();
 }
 
@@ -214,7 +214,7 @@ int pack_iputw(int w, PACKFILE *f) {
 	return f->pack_iputw(w);
 }
 
-long pack_iputl(long l, PACKFILE *f) {
+int32_t pack_iputl(int32_t l, PACKFILE *f) {
 	return f->pack_iputl(l);
 }
 
@@ -222,7 +222,7 @@ int pack_mgetw(PACKFILE *f) {
 	return f->pack_mgetw();
 }
 
-long pack_mgetl(PACKFILE *f) {
+int32_t pack_mgetl(PACKFILE *f) {
 	return f->pack_mgetl();
 }
 
@@ -230,7 +230,7 @@ int pack_mputw(int w, PACKFILE *f) {
 	return f->pack_mputw(w);
 }
 
-long pack_mputl(long l, PACKFILE *f) {
+int32_t pack_mputl(int32_t l, PACKFILE *f) {
 	return f->pack_mputl(l);
 }
 
