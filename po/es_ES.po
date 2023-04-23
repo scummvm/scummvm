@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-23 14:30+0000\n"
-"PO-Revision-Date: 2023-04-10 14:43+0000\n"
+"PO-Revision-Date: 2023-04-23 16:48+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -120,12 +120,12 @@ msgid "Quick Mode: Step 1"
 msgstr "Modo rápido: paso 1"
 
 #: gui/cloudconnectionwizard.cpp:206
-#, fuzzy
-#| msgid "In this mode, Local Webserver must be running,"
 msgid ""
 "In this mode, Local Webserver must be running,\n"
 "so your browser could forward data to ScummVM"
-msgstr "En este modo debes tener en marcha un servidor web"
+msgstr ""
+"En este modo debes tener en marcha un servidor web\n"
+"para que tu navegador pueda enviar datos a ScummVM"
 
 #: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:3657
 msgid "Stop server"
@@ -161,12 +161,12 @@ msgid "Open URL"
 msgstr "Abre la dirección URL"
 
 #: gui/cloudconnectionwizard.cpp:266
-#, fuzzy
-#| msgid "It will automatically pass the data to ScummVM,"
 msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
-msgstr "Se transmitirán datos automáticamente a ScummVM"
+msgstr ""
+"Se transmitirán datos automáticamente a ScummVM\n"
+"y se te avisará en caso de que ocurran errores."
 
 #: gui/cloudconnectionwizard.cpp:279
 msgid "Local Webserver address: "
@@ -198,6 +198,9 @@ msgid ""
 "find it on Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
+"Cuando de error al enviar código JSON a ScummVM,\n"
+"ve a la sección «Troubleshooting/Resolución de problemas»\n"
+"de la página y sigue el siguiente paso."
 
 #: gui/cloudconnectionwizard.cpp:350
 msgid "Manual Mode: Step 2"
