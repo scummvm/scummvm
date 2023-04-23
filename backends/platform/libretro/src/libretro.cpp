@@ -828,7 +828,6 @@ void retro_run(void) {
 
 void retro_unload_game(void) {
 	close_emu_thread();
-	exit_to_frontend();
 }
 
 void retro_reset(void) {
