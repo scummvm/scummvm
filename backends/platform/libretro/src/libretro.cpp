@@ -92,8 +92,6 @@ static uint8 frameskip_threshold;
 static uint32 frameskip_counter = 0;
 static uint8 frameskip_events = 0;
 
-static bool restart_pending = false;
-
 static uint8 audio_status = AUDIO_STATUS_MUTE;
 
 static unsigned retro_audio_buff_occupancy = 0;
@@ -363,6 +361,18 @@ void parse_command_params(char *cmdline) {
 			break;
 		}
 	}
+}
+
+static void exit_to_frontend(void) {
+	log_scummvm_exit_code();
+	environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, NULL);
+}
+
+static void close_emu_thread(void) {
+	retroQuit();
+	while (!retro_emu_thread_exited())
+		retro_switch_to_emu_thread();
+	retro_deinit_emu_thread();
 }
 
 #if defined(WIIU) || defined(__SWITCH__) || defined(_MSC_VER) || defined(_3DS)
@@ -777,23 +787,15 @@ void retro_run(void) {
 				retro_switch_to_emu_thread();
 
 			if (retro_emu_thread_exited()) {
-				if (!restart_pending) {
-					environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, NULL);
-					log_scummvm_exit_code();
-				} else {
-					init_command_params();
-					retro_load_game(game_buf_ptr);
-					retroReset();
-					restart_pending = false;
-				}
+				exit_to_frontend();
 				return;
 			}
 
 			/* Retrieve audio */
 			samples_count = 0;
-			if (audio_video_enable & 2) {
+			if (audio_video_enable & 2)
 				samples_count = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) sound_buffer, samples_per_frame_buffer_size);
-			}
+
 			audio_status = samples_count ? (audio_status & ~AUDIO_STATUS_MUTE) : (audio_status | AUDIO_STATUS_MUTE);
 
 			/* Retrieve video */
@@ -825,15 +827,15 @@ void retro_run(void) {
 }
 
 void retro_unload_game(void) {
-	retroQuit();
-	while (!retro_emu_thread_exited())
-		retro_switch_to_emu_thread();
-	retro_deinit_emu_thread();
+	close_emu_thread();
+	exit_to_frontend();
 }
 
 void retro_reset(void) {
-	restart_pending = true;
-	retro_unload_game();
+	close_emu_thread();
+	init_command_params();
+	retro_load_game(game_buf_ptr);
+	retroReset();
 }
 
 // Stubs
