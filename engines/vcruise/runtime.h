@@ -24,6 +24,7 @@
 
 #include "common/hashmap.h"
 #include "common/keyboard.h"
+#include "common/rect.h"
 
 #include "vcruise/detection.h"
 
@@ -67,6 +68,9 @@ static const uint kNumHighPrecisionDirections = 256;
 static const uint kHighPrecisionDirectionMultiplier = kNumHighPrecisionDirections / kNumDirections;
 
 class AudioPlayer;
+class MenuInterface;
+class MenuPage;
+class RuntimeMenuInterface;
 class TextParser;
 struct ScriptSet;
 struct Script;
@@ -86,6 +90,8 @@ enum GameState {
 
 	kGameStatePanLeft,
 	kGameStatePanRight,
+
+	kGameStateMenu,
 };
 
 struct AnimationDef {
@@ -135,11 +141,13 @@ struct MapDef {
 struct ScriptEnvironmentVars {
 	ScriptEnvironmentVars();
 
-	bool lmb;
-	bool lmbDrag;
 	uint panInteractionID;
 	uint fpsOverride;
 	uint lastHighlightedItem;
+	bool lmb;
+	bool lmbDrag;
+	bool esc;
+	bool exitToMenu;
 };
 
 struct SfxSound {
@@ -399,12 +407,33 @@ struct SaveGameSnapshot {
 	Common::HashMap<uint, uint32> timers;
 };
 
+enum OSEventType {
+	kOSEventTypeInvalid,
+
+	kOSEventTypeMouseMove,
+	kOSEventTypeLButtonDown,
+	kOSEventTypeLButtonUp,
+
+	kOSEventTypeKeyDown,
+};
+
+struct OSEvent {
+	OSEvent();
+
+	OSEventType type;
+	Common::Point pos;
+	Common::KeyCode keyCode;
+	uint32 timestamp;
+};
+
 class Runtime {
 public:
+	friend class RuntimeMenuInterface;
+
 	Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID);
 	virtual ~Runtime();
 
-	void initSections(Common::Rect gameRect, Common::Rect menuRect, Common::Rect trayRect, const Graphics::PixelFormat &pixFmt);
+	void initSections(const Common::Rect &gameRect, const Common::Rect &menuRect, const Common::Rect &trayRect, const Common::Rect &fullscreenMenuRect, const Graphics::PixelFormat &pixFmt);
 
 	void loadCursors(const char *exeName);
 	void setDebugMode(bool debugMode);
@@ -505,16 +534,6 @@ private:
 		bool isWaitingForAnimation;
 	};
 
-	enum OSEventType {
-		kOSEventTypeInvalid,
-
-		kOSEventTypeMouseMove,
-		kOSEventTypeLButtonDown,
-		kOSEventTypeLButtonUp,
-
-		kOSEventTypeKeyDown,
-	};
-
 	enum PanoramaCursorFlags {
 		kPanCursorDraggableHoriz	= (1 << 0),
 		kPanCursorDraggableUp		= (1 << 1),
@@ -551,15 +570,6 @@ private:
 	static const uint kPanoramaHorizFlags = (kPanoramaLeftFlag | kPanoramaRightFlag);
 
 	static const uint kNumInventorySlots = 6;
-
-	struct OSEvent {
-		OSEvent();
-
-		OSEventType type;
-		Common::Point pos;
-		Common::KeyCode keyCode;
-		uint32 timestamp;
-	};
 
 	typedef int32 ScriptArg_t;
 	typedef int32 StackInt_t;
@@ -688,6 +698,7 @@ private:
 
 	void inventoryAddItem(uint item);
 	void inventoryRemoveItem(uint item);
+	void clearScreen();
 	void redrawTray();
 	void clearTray();
 	void drawInventory(uint slot);
@@ -698,6 +709,8 @@ private:
 	Common::SharedPtr<Graphics::Surface> loadGraphic(const Common::String &graphicName, bool required);
 
 	void loadSubtitles(Common::CodePage codePage);
+
+	void changeToMenuPage(MenuPage *menuPage);
 
 	// Script things
 	void scriptOpNumber(ScriptArg_t arg);
@@ -830,6 +843,8 @@ private:
 	Common::SharedPtr<Graphics::Surface> _trayHighlightGraphic;
 	Common::SharedPtr<Graphics::Surface> _trayCornerGraphic;
 
+	Common::Array<Common::SharedPtr<Graphics::Surface> > _uiGraphics;
+
 	uint _panCursors[kPanCursorMaxCount];
 
 	Common::HashMap<Common::String, StackInt_t> _namedCursors;
@@ -872,10 +887,14 @@ private:
 	bool _havePendingCompletionCheck;
 	GameState _gameState;
 
+	Common::SharedPtr<MenuPage> _menuPage;
+	Common::SharedPtr<MenuInterface> _menuInterface;
+
 	bool _havePendingPlayAmbientSounds;
 	uint32 _ambientSoundFinishTime;
 
 	bool _escOn;
+	bool _escUsed;
 	bool _debugMode;
 	bool _fastAnimationMode;
 
@@ -915,6 +934,7 @@ private:
 	uint32 _animStartTime;
 	uint32 _animFramesDecoded;
 	uint _loadedAnimation;
+	bool _loadedAnimationHasSound;
 	bool _animPlayWhileIdle;
 
 	Common::Array<FrameData> _frameData;
@@ -937,6 +957,7 @@ private:
 	RenderSection _gameDebugBackBuffer;
 	RenderSection _menuSection;
 	RenderSection _traySection;
+	RenderSection _fullscreenMenuSection;
 
 	Common::Point _mousePos;
 	Common::Point _lmbDownPos;
@@ -983,6 +1004,7 @@ private:
 	uint _soundCacheIndex;
 
 	Common::SharedPtr<SaveGameSnapshot> _saveGame;
+	bool _isInGame;
 
 	const Graphics::Font *_subtitleFont;
 	Common::SharedPtr<Graphics::Font> _subtitleFontKeepalive;

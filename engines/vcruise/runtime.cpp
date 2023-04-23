@@ -22,10 +22,12 @@
 #include "common/formats/winexe.h"
 #include "common/config-manager.h"
 #include "common/endian.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "common/math.h"
 #include "common/ptr.h"
 #include "common/random.h"
+#include "common/savefile.h"
 #include "common/system.h"
 #include "common/stream.h"
 
@@ -46,12 +48,113 @@
 #include "gui/message.h"
 
 #include "vcruise/audio_player.h"
+#include "vcruise/menu.h"
 #include "vcruise/runtime.h"
 #include "vcruise/script.h"
 #include "vcruise/textparser.h"
+#include "vcruise/vcruise.h"
 
 
 namespace VCruise {
+
+class RuntimeMenuInterface : public MenuInterface {
+public:
+	explicit RuntimeMenuInterface(Runtime *runtime);
+
+	void commitRect(const Common::Rect &rect) const override;
+	bool popOSEvent(OSEvent &evt) const override;
+	Graphics::Surface *getUIGraphic(uint index) const override;
+	Graphics::ManagedSurface *getMenuSurface() const override;
+	bool hasDefaultSave() const override;
+	Common::Point getMouseCoordinate() const override;
+	void restartGame() const override;
+	void goToCredits() const override;
+	void changeMenu(MenuPage *newPage) const override;
+	void quitGame() const override;
+	bool canSave() const override;
+	bool reloadFromCheckpoint() const override;
+
+private:
+	Runtime *_runtime;
+};
+
+
+RuntimeMenuInterface::RuntimeMenuInterface(Runtime *runtime) : _runtime(runtime) {
+}
+
+void RuntimeMenuInterface::commitRect(const Common::Rect &rect) const {
+	_runtime->commitSectionToScreen(_runtime->_fullscreenMenuSection, rect);
+}
+
+bool RuntimeMenuInterface::popOSEvent(OSEvent &evt) const {
+	return _runtime->popOSEvent(evt);
+}
+
+Graphics::Surface *RuntimeMenuInterface::getUIGraphic(uint index) const {
+	if (index >= _runtime->_uiGraphics.size())
+		return nullptr;
+	return _runtime->_uiGraphics[index].get();
+}
+
+Graphics::ManagedSurface *RuntimeMenuInterface::getMenuSurface() const {
+	return _runtime->_fullscreenMenuSection.surf.get();
+}
+
+bool RuntimeMenuInterface::hasDefaultSave() const {
+	return static_cast<VCruiseEngine *>(g_engine)->hasDefaultSave();
+}
+
+Common::Point RuntimeMenuInterface::getMouseCoordinate() const {
+	return _runtime->_mousePos;
+}
+
+void RuntimeMenuInterface::restartGame() const {
+	Common::SharedPtr<SaveGameSnapshot> snapshot(new SaveGameSnapshot());
+
+	if (_runtime->_gameID == GID_REAH) {
+		snapshot->roomNumber = 1;
+		snapshot->screenNumber = 0xb0;
+		snapshot->loadedAnimation = 1;
+	} else {
+		error("Don't know what screen to start on for this game");
+	}
+
+	_runtime->_saveGame = snapshot;
+	_runtime->restoreSaveGameSnapshot();
+}
+
+void RuntimeMenuInterface::goToCredits() const {
+	_runtime->clearScreen();
+
+	if (_runtime->_gameID == GID_REAH) {
+		_runtime->changeToScreen(40, 0xa1);
+	} else {
+		error("Don't know what screen to go to for credits for this game");
+	}
+}
+
+void RuntimeMenuInterface::changeMenu(MenuPage *newPage) const {
+	_runtime->changeToMenuPage(newPage);
+}
+
+void RuntimeMenuInterface::quitGame() const {
+	Common::Event evt;
+	evt.type = Common::EVENT_QUIT;
+
+	g_engine->getEventManager()->pushEvent(evt);
+}
+
+bool RuntimeMenuInterface::canSave() const {
+	return _runtime->canSave();
+}
+
+bool RuntimeMenuInterface::reloadFromCheckpoint() const {
+	if (!_runtime->canSave())
+		return false;
+
+	_runtime->restoreSaveGameSnapshot();
+	return true;
+}
 
 AnimationDef::AnimationDef() : animNum(0), firstFrame(0), lastFrame(0) {
 }
@@ -77,16 +180,16 @@ const MapScreenDirectionDef *MapDef::getScreenDirection(uint screen, uint direct
 	return screenDirections[screen][direction].get();
 }
 
-ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), lmbDrag(false), panInteractionID(0), fpsOverride(0), lastHighlightedItem(0) {
+ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), lmbDrag(false), esc(false), exitToMenu(false), panInteractionID(0), fpsOverride(0), lastHighlightedItem(0) {
+}
+
+OSEvent::OSEvent() : type(kOSEventTypeInvalid), keyCode(static_cast<Common::KeyCode>(0)) {
 }
 
 void Runtime::RenderSection::init(const Common::Rect &paramRect, const Graphics::PixelFormat &fmt) {
 	rect = paramRect;
 	surf.reset(new Graphics::ManagedSurface(paramRect.width(), paramRect.height(), fmt));
 	surf->fillRect(Common::Rect(0, 0, surf->w, surf->h), 0xffffffff);
-}
-
-Runtime::OSEvent::OSEvent() : type(kOSEventTypeInvalid), keyCode(static_cast<Common::KeyCode>(0)) {
 }
 
 Runtime::StackValue::ValueUnion::ValueUnion() {
@@ -739,13 +842,14 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _scriptNextInstruction(0), _escOn(false), _debugMode(false), _fastAnimationMode(false),
 	  _musicTrack(0), _musicVolume(100), _musicVolumeRampStartTime(0), _musicVolumeRampStartVolume(0), _musicVolumeRampRatePerMSec(0), _musicVolumeRampEnd(0),
 	  _panoramaDirectionFlags(0),
-	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0),
+	  _loadedAnimation(0), _loadedAnimationHasSound(false), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0),
 	  _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
 	  /*_loadedArea(0), */_lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0),
 	  _delayCompletionTime(0),
 	  _panoramaState(kPanoramaStateInactive),
 	  _listenerX(0), _listenerY(0), _listenerAngle(0), _soundCacheIndex(0),
+	  _isInGame(false),
 	  _subtitleFont(nullptr), _isDisplayingSubtitles(false), _languageIndex(0) {
 
 	for (uint i = 0; i < kNumDirections; i++) {
@@ -769,15 +873,18 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 
 	if (!_subtitleFont)
 		warning("Couldn't load subtitle font, subtitles will be disabled");
+
+	_menuInterface.reset(new RuntimeMenuInterface(this));
 }
 
 Runtime::~Runtime() {
 }
 
-void Runtime::initSections(Common::Rect gameRect, Common::Rect menuRect, Common::Rect trayRect, const Graphics::PixelFormat &pixFmt) {
+void Runtime::initSections(const Common::Rect &gameRect, const Common::Rect &menuRect, const Common::Rect &trayRect, const Common::Rect &fullscreenMenuRect, const Graphics::PixelFormat &pixFmt) {
 	_gameSection.init(gameRect, pixFmt);
 	_menuSection.init(menuRect, pixFmt);
 	_traySection.init(trayRect, pixFmt);
+	_fullscreenMenuSection.init(fullscreenMenuRect, pixFmt);
 }
 
 void Runtime::loadCursors(const char *exeName) {
@@ -891,6 +998,9 @@ bool Runtime::runFrame() {
 		case kGameStateGyroAnimation:
 			moreActions = runGyroAnimation();
 			break;
+		case kGameStateMenu:
+			moreActions = _menuPage->run();
+			break;
 		default:
 			error("Unknown game state");
 			return false;
@@ -929,8 +1039,7 @@ bool Runtime::bootGame(bool newGame) {
 
 	if (newGame) {
 		if (_gameID == GID_REAH) {
-			// TODO: Change to the logo instead (0xb1) instead when menus are implemented
-			changeToScreen(1, 0xb0);
+			changeToScreen(1, 0xb1);
 		} else
 			error("Couldn't figure out what screen to start on");
 	}
@@ -1009,6 +1118,15 @@ bool Runtime::bootGame(bool newGame) {
 
 	loadSubtitles(codePage);
 	debug(1, "Subtitles loaded OK");
+
+	_uiGraphics.resize(24);
+	for (uint i = 0; i < _uiGraphics.size(); i++) {
+		if (_gameID == GID_REAH) {
+			_uiGraphics[i] = loadGraphic(Common::String::format("Image%03u", static_cast<uint>(_languageIndex * 100u + i)), false);
+			if (_languageIndex != 0 && !_uiGraphics[i])
+				_uiGraphics[i] = loadGraphic(Common::String::format("Image%03u", static_cast<uint>(i)), false);
+		}
+	}
 
 	return true;
 }
@@ -1686,6 +1804,14 @@ void Runtime::terminateScript() {
 
 	if (_havePendingScreenChange)
 		changeToScreen(_roomNumber, _screenNumber);
+
+	if (_scriptEnv.exitToMenu && _gameState == kGameStateIdle) {
+		changeToCursor(_cursors[kCursorArrow]);
+		if (_gameID == GID_REAH)
+			changeToMenuPage(createMenuReahMain());
+		else
+			error("Missing main menu behavior for this game");
+	}
 }
 
 bool Runtime::checkCompletionConditions() {
@@ -2366,7 +2492,7 @@ void Runtime::loadFrameData2(Common::SeekableReadStream *stream) {
 }
 
 void Runtime::changeMusicTrack(int track) {
-	if (track == _musicTrack)
+	if (track == _musicTrack && _musicPlayer.get() != nullptr)
 		return;
 
 	_musicPlayer.reset();
@@ -2448,6 +2574,8 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 			loadFrameData2(&twoDtFile);
 		twoDtFile.close();
 
+		_loadedAnimationHasSound = (_animDecoder->getAudioTrackCount() > 0);
+
 		stopSubtitles();
 	}
 
@@ -2474,7 +2602,7 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 		_animFrameRateLock = Fraction(_scriptEnv.fpsOverride, 1);
 		_scriptEnv.fpsOverride = 0;
 	} else {
-		if (!_fastAnimationMode && _animDecoder && _animDecoder->getAudioTrackCount() == 0)
+		if (!_fastAnimationMode && _animDecoder && !_loadedAnimationHasSound)
 			_animFrameRateLock = defaultFrameRate;
 	}
 
@@ -3227,6 +3355,10 @@ void Runtime::inventoryRemoveItem(uint itemID) {
 	}
 }
 
+void Runtime::clearScreen() {
+	_system->fillScreen(_system->getScreenFormat().RGBToColor(0, 0, 0));
+}
+
 void Runtime::redrawTray() {
 	if (_subtitleQueue.size() != 0)
 		return;
@@ -3245,7 +3377,7 @@ void Runtime::clearTray() {
 }
 
 void Runtime::drawInventory(uint slot) {
-	if (_subtitleQueue.size() > 0)
+	if (_subtitleQueue.size() > 0 || _loadedAnimationHasSound || !_isInGame)
 		return;
 
 	Common::Rect trayRect = _traySection.rect;
@@ -3285,7 +3417,7 @@ void Runtime::drawInventory(uint slot) {
 }
 
 void Runtime::drawCompass() {
-	if (_subtitleQueue.size() > 0)
+	if (_subtitleQueue.size() > 0 || _loadedAnimationHasSound || !_isInGame)
 		return;
 
 	bool haveHorizontalRotate = false;
@@ -3384,6 +3516,10 @@ Common::SharedPtr<Graphics::Surface> Runtime::loadGraphic(const Common::String &
 		return nullptr;
 	}
 
+	// 1-byte BMPs are placeholders for no file
+	if (f.size() == 1)
+		return nullptr;
+
 	Image::BitmapDecoder bmpDecoder;
 	if (!bmpDecoder.loadStream(f)) {
 		warning("Failed to load BMP file '%s'", filePath.c_str());
@@ -3461,6 +3597,15 @@ void Runtime::loadSubtitles(Common::CodePage codePage) {
 	}
 }
 
+void Runtime::changeToMenuPage(MenuPage *menuPage) {
+	_menuPage.reset(menuPage);
+
+	_gameState = kGameStateMenu;
+
+	menuPage->init(_menuInterface.get());
+	menuPage->start();
+}
+
 void Runtime::onLButtonDown(int16 x, int16 y) {
 	onMouseMove(x, y);
 
@@ -3502,10 +3647,13 @@ bool Runtime::canSave() const {
 }
 
 bool Runtime::canLoad() const {
-	return _gameState == kGameStateIdle;
+	return _gameState == kGameStateIdle || _gameState == kGameStateMenu;
 }
 
 void Runtime::recordSaveGameSnapshot() {
+	if (!_isInGame)
+		return;
+
 	_saveGame.reset();
 
 	uint32 timeBase = g_system->getMillis();
@@ -3677,11 +3825,13 @@ void Runtime::restoreSaveGameSnapshot() {
 	changeAnimation(animDef, false);
 
 	_gameState = kGameStateWaitingForAnimation;
+	_isInGame = true;
 
 	_havePendingScreenChange = true;
 	_forceScreenChange = true;
 
 	stopSubtitles();
+	clearScreen();
 	redrawTray();
 }
 
@@ -4919,8 +5069,14 @@ void Runtime::scriptOpEscOff(ScriptArg_t arg) {
 	_escOn = false;
 }
 
-OPCODE_STUB(EscGet)
-OPCODE_STUB(BackStart)
+void Runtime::scriptOpEscGet(ScriptArg_t arg) {
+	_scriptStack.push_back(StackValue(_scriptEnv.esc ? 1 : 0));
+	_scriptEnv.esc = false;
+}
+
+void Runtime::scriptOpBackStart(ScriptArg_t arg) {
+	_scriptEnv.exitToMenu = true;
+}
 
 void Runtime::scriptOpAnimName(ScriptArg_t arg) {
 	if (_roomNumber >= _roomDefs.size())

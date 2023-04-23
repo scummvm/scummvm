@@ -24,6 +24,7 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/stream.h"
+#include "common/savefile.h"
 #include "common/system.h"
 #include "common/algorithm.h"
 #include "common/translation.h"
@@ -159,7 +160,7 @@ Common::Error VCruiseEngine::run() {
 	_system->fillScreen(0);
 
 	_runtime.reset(new Runtime(_system, _mixer, _rootFSNode, _gameDescription->gameID));
-	_runtime->initSections(_videoRect, _menuBarRect, _trayRect, _system->getScreenFormat());
+	_runtime->initSections(_videoRect, _menuBarRect, _trayRect, Common::Rect(640, 480), _system->getScreenFormat());
 
 	const char *exeName = _gameDescription->desc.filesDescriptions[0].fileName;
 
@@ -282,5 +283,13 @@ void VCruiseEngine::initializePath(const Common::FSNode &gamePath) {
 
 	_rootFSNode = gamePath;
 }
+
+bool VCruiseEngine::hasDefaultSave() {
+	const Common::String &autoSaveName = getSaveStateName(getMetaEngine()->getAutosaveSlot());
+	bool autoSaveExists = getSaveFileManager()->exists(autoSaveName);
+
+	return autoSaveExists;
+}
+
 
 } // End of namespace VCruise

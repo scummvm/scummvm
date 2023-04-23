@@ -3,6 +3,7 @@ MODULE := engines/vcruise
 MODULE_OBJS = \
 	audio_player.o \
 	metaengine.o \
+	menu.o \
 	runtime.o \
 	script.o \
 	textparser.o \
