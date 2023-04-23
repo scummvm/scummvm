@@ -553,63 +553,6 @@ gTexture *gUserTexture(Texture *texture, unsigned int dimx, unsigned int dimy) {
 	return Texture;
 }
 
-GLuint dxtCompressionToTextureFormat(DxtCompression compression) {
-	switch (compression) {
-	case DxtCompression::UNCOMPRESSED:
-		return GL_RGBA;
-	case DxtCompression::DXT1:
-		return GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-	case DxtCompression::DXT2:
-		error("DXT2 Support is not implemented");
-	case DxtCompression::DXT3:
-		return GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-	case DxtCompression::DXT4:
-		error("DXT4 Support is not implemented");
-	case DxtCompression::DXT5:
-		return GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-	}
-}
-
-class OpenGLTexture : public Texture {
-public:
-	unsigned int _texId;
-	OpenGLTexture() {
-		glGenTextures(1, &_texId);
-	}
-	OpenGLTexture(unsigned int texId) : _texId(texId) {}
-	void assignData(const TextureData &data) override {
-		glBindTexture(GL_TEXTURE_2D, _texId);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-		// TODO: Check both compiletime and runtime for the existence of EXT_texture_compression_s3tc
-		GLuint texFormat = dxtCompressionToTextureFormat(data._compression);
-		bool compressed = data._compression != DxtCompression::UNCOMPRESSED;
-
-		if (compressed) {
-			glCompressedTexImage2D(GL_TEXTURE_2D, // target
-			                       0, // level
-			                       texFormat, // internalFormat
-			                       data.getWidth(), // width
-			                       data.getHeight(), // height
-			                       0, // border
-			                       data.getDataSize(),
-			                       data.getData()
-			                      );
-			checkGlError("glCompressedTexImage");
-		} else {
-			glTexImage2D(GL_TEXTURE_2D, 0, texFormat, data.getWidth(), data.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, data.getData());
-			checkGlError("glTexImage2D");
-		}
-	}
-	void bind() override {
-		glBindTexture(GL_TEXTURE_2D, _texId);
-		checkGlError("OpenGLTexture::bind");
-	};
-};
-
 class SurfaceBackedTextureData : public TextureData {
 	bool _owned = true;
 public:
@@ -634,10 +577,6 @@ public:
 		return _surface->getPixels();
 	}
 };
-
-Texture *createGLTexture() {
-	return new OpenGLTexture();
-}
 
 Common::SharedPtr<TextureData> createTextureFromSurface(Graphics::Surface &surface, int texFormat) {
 	return Common::SharedPtr<TextureData>(new SurfaceBackedTextureData(&surface, false));
@@ -710,7 +649,7 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 	}
 	texture = &gTextureList[pos];
 	*texture = gTexture();
-	texture->_texture = new OpenGLTexture();
+	texture->_texture = createGLTexture();
 
 	if (bUseAlternate) {
 		auto stream = workDirs.resolveFile(AlternateName);

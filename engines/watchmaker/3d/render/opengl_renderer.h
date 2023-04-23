@@ -72,6 +72,9 @@ Texture *createGLTexture();
 
 class OpenGLRenderer {
 public:
+	void enter2Dmode();
+	void exit2Dmode();
+
 	void pushModelView();
 	void popModelView();
 	void setTransformMatrix(TransformMatrix which, const Matrix4x4 &matrix);

@@ -209,6 +209,24 @@ void OpenGLRenderer::setBlendFunc(BlendFactor src, BlendFactor dst) {
 	glBlendFunc(translateBlendFactorToGL(src), translateBlendFactorToGL(dst));
 }
 
+void OpenGLRenderer::enter2Dmode() {
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	checkGlError("Exiting enter2Dmode");
+}
+
+void OpenGLRenderer::exit2Dmode() {
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	checkGlError("exit2Dmode");
+}
+
 } // End of namespace Watchmaker
 
 #endif // USE_OPENGL_GAME

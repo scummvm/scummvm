@@ -141,24 +141,6 @@ bool gClipToBlitterViewport(int *sposx, int *sposy, int *sdimx, int *sdimy,
 	return true;
 }
 
-void enter2Dmode(WGame &game) {
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-	checkGlError("Exiting enter2Dmode");
-}
-
-void exit2Dmode() {
-	glPopMatrix();
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	checkGlError("exit2Dmode");
-}
-
 void renderTexture(WGame &game, gTexture &bitmap, Rect srcRect, Rect dstRect) {
 	checkGlError("Entering renderTexture");
 	glClearColor(0, 0, 1, 0);
@@ -216,9 +198,9 @@ void gTexture::render(WGame &game, Rect src, Rect dst) {
 
 void Renderer::blitScreenBuffer() {
 	checkGlError("Entering rBlitScreenBuffer");
-	enter2Dmode(*_game);
+	g_renderer->enter2Dmode();
 	_bitmapList.bitmaps[BACK_BUFFER].render(*_game, _game->_renderer->_viewport, _game->_renderer->_viewport);
-	exit2Dmode();
+	g_renderer->exit2Dmode();
 	checkGlError("Exiting rBlitScreenBuffer");
 }
 
