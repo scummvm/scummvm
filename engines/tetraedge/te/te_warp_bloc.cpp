@@ -98,10 +98,15 @@ void TeWarpBloc::create(CubeFace face, uint x, uint y, const TeVector2s32 &offse
 	_mesh->setTextureUV(1, TeVector2f32(1, 0));
 	_mesh->setTextureUV(2, TeVector2f32(1, 1));
 	_mesh->setTextureUV(3, TeVector2f32(0, 1));
+	_mesh->setNormal(0, TeVector3f32(0, 0, 1));
+	_mesh->setNormal(1, TeVector3f32(0, 0, 1));
+	_mesh->setNormal(2, TeVector3f32(0, 0, 1));
+	_mesh->setNormal(3, TeVector3f32(0, 0, 1));
 	_mesh->setIndex(0, 0);
 	_mesh->setIndex(1, 1);
 	_mesh->setIndex(2, 2);
 	_mesh->setIndex(3, 3);
+	_mesh->setColor(TeColor(255, 255, 255, 255));
 }
 
 void TeWarpBloc::create() {
@@ -127,9 +132,9 @@ void TeWarpBloc::loadTexture(Common::File &file, const Common::String &type) {
 	TeImage img;
 	img.load(file, type);
 
-	_mesh->materials().resize(1);
-	_mesh->material(0)->_texture = Te3DTexture::makeInstance();
-	_mesh->material(0)->_texture->load(img);
+	TeIntrusivePtr<Te3DTexture> tex = Te3DTexture::makeInstance();
+	tex->load(img);
+	_mesh->defaultMaterial(tex);
 }
 
 void TeWarpBloc::render() {

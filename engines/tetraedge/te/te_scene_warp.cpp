@@ -70,7 +70,7 @@ const TeSceneWarp::WarpEvent *TeSceneWarp::getWarpEvent(const Common::String &na
 bool TeSceneWarp::load(const Common::String &name, TeWarp *warp, bool flag) {
 	close();
 	_warp = warp;
-	_someInt = 0;
+	_numExitsCreated = 0;
 	_name = name;
 
 	TeSceneWarpXmlParser parser(this, flag);

@@ -120,7 +120,15 @@ bool TeImage::load(Common::SeekableReadStream &stream, const Common::String &typ
 		delete codec;
 		return false;
 	}
-	error("TODO: Implement TeImage::load");
+
+	Common::SharedPtr<TePalette> nullpal;
+	createImg(codec->width(), codec->height(), nullpal, codec->imageFormat(), codec->width(), codec->height());
+
+	if (!codec->update(0, *this)) {
+		error("TeImage::load: Failed to update from stream");
+	}
+	delete codec;
+	return true;
 }
 
 bool TeImage::save(const Common::Path &path, enum SaveType type) {

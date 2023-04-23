@@ -88,7 +88,6 @@ public:
 	MainMenu &mainMenu() { return _mainMenu; }
 	OptionsMenu &optionsMenu() { return _optionsMenu; }
 	TeMusic &music() { return _music; }
-	TeMusic &videoMusic() { return _videoMusic; }
 	Credits &credits() { return _credits; }
 	UpsellScreen &upsellScreen() { return _upsellScreen; }
 	TeVisualFade &visualFade() { return _visFade; }
@@ -132,7 +131,6 @@ private:
 
 	TeVisualFade _visFade;
 	TeMusic _music;
-	TeMusic _videoMusic; // Only used in Amerzone
 	TeSpriteLayout _appSpriteLayout;
 	TeSpriteLayout _mouseCursorLayout;
 	TeSpriteLayout _autoSaveIcon1;

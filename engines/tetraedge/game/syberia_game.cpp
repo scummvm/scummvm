@@ -1119,7 +1119,7 @@ bool SyberiaGame::onMouseClick(const Common::Point &pt) {
 
 bool SyberiaGame::onVideoFinished() {
 	if (!_inGameGui.loaded()) {
-		_music.stop();
+		_videoMusic.stop();
 		return false;
 	}
 
@@ -1134,7 +1134,7 @@ bool SyberiaGame::onVideoFinished() {
 	btn = _inGameGui.buttonLayoutChecked("skipVideoButton");
 	btn->setVisible(false);
 	video->setVisible(false);
-	_music.stop();
+	_videoMusic.stop();
 	_running = true;
 	bool resumed = false;
 	for (uint i = 0; i < _yieldedCallbacks.size(); i++) {

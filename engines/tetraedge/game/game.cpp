@@ -276,7 +276,7 @@ bool Game::onSkipVideoButtonValidated() {
 
 /* Unused
 void Game::pauseMovie() {
-	_music.pause();
+	_videoMusic.pause();
 	TeSpriteLayout *sprite = _inGameGui.spriteLayoutChecked("video");
 	sprite->pause();
 }
@@ -291,12 +291,12 @@ bool Game::playMovie(const Common::String &vidPath, const Common::String &musicP
 	TeButtonLayout *skipVideoButton = _inGameGui.buttonLayoutChecked("skipVideoButton");
 	skipVideoButton->setVisible(false);
 
-	TeMusic &music = (g_engine->gameIsAmerzone() ? app->videoMusic() : app->music());
-	music.stop();
-	music.setChannelName("video");
-	music.repeat(false);
-	music.volume(volume);
-	music.load(musicPath);
+	app->music().stop();
+	_videoMusic.stop();
+	_videoMusic.setChannelName("video");
+	_videoMusic.repeat(false);
+	_videoMusic.volume(volume);
+	_videoMusic.load(musicPath);
 
 	_running = false;
 
@@ -314,13 +314,13 @@ bool Game::playMovie(const Common::String &vidPath, const Common::String &musicP
 		}
 
 		videoSpriteLayout->setVisible(true);
-		music.play();
+		_videoMusic.play();
 		videoSpriteLayout->play();
 
 		// Stop the movie and sound early for testing if skip_videos set
 		if (ConfMan.getBool("skip_videos")) {
 			videoSpriteLayout->_tiledSurfacePtr->_frameAnim.setNbFrames(10);
-			music.stop();
+			_videoMusic.stop();
 		}
 
 		app->fade();
@@ -383,7 +383,7 @@ void Game::removeNoScale2Child(TeLayout *layout) {
 }
 
 void Game::resumeMovie() {
-	_music.play();
+	_videoMusic.play();
 	_inGameGui.spriteLayout("video")->play();
 }
 
@@ -482,10 +482,10 @@ Common::Error Game::syncGame(Common::Serializer &s) {
 		s.syncAsByte(_objectsTakenBits[i]);
 	s.syncAsUint32LE(_dialogsTold);
 	s.syncString(_prevSceneName);
-	Common::String mpath = _music.rawPath();
+	Common::String mpath = _videoMusic.rawPath();
 	s.syncString(mpath);
 	if (s.isLoading())
-		_music.load(mpath);
+		_videoMusic.load(mpath);
 	s.syncString(_scene._character->walkModeStr());
 	s.syncAsByte(_firstInventory);
 	s.syncAsByte(app->tutoActivated());

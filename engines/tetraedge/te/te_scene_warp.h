@@ -96,7 +96,7 @@ private:
 	Common::List<WarpEvent> _warpEvents;
 	Common::String _name;
 	TeWarp *_warp;
-	int _someInt;
+	int _numExitsCreated;
 };
 
 } // end namespace Tetraedge

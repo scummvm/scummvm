@@ -32,6 +32,7 @@
 #include "tetraedge/te/te_png.h"
 #include "tetraedge/te/te_images_sequence.h"
 #include "tetraedge/te/te_jpeg.h"
+#include "tetraedge/te/te_zlib_jpeg.h"
 #include "tetraedge/te/te_theora.h"
 #include "tetraedge/te/te_tga.h"
 
@@ -69,6 +70,8 @@ TeICodec *TeCore::createVideoCodec(const Common::String &extn) {
 		return new TePng();
 	} else if (TeJpeg::matchExtension(extn)) {
 		return new TeJpeg();
+	} else if (TeZlibJpeg::matchExtension(extn)) {
+		return new TeZlibJpeg();
 	} else if (TeTheora::matchExtension(extn)) {
 		return new TeTheora();
 	} else if (TeTga::matchExtension(extn)) {

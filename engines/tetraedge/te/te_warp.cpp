@@ -228,43 +228,42 @@ void TeWarp::load(const Common::String &path, bool flag) {
 
 	if (_preloaded)
 		error("TODO: Support preloading in TeWarp::load");
-	Common::File file;
-	file.open(node);
+	_file.open(node);
 	char header[7];
 	header[6] = '\0';
-	file.read(header, 6);
+	_file.read(header, 6);
 	if (Common::String(header) != "TeWarp")
 		error("Invalid header in warp data %s", _warpPath.c_str());
-	uint32 globalTexDataOffset = file.readUint32LE();
-	_texEncodingType = file.readPascalString();
-	_xCount = file.readUint32LE();
-	_yCount = file.readUint32LE();
-	_numAnims = file.readUint32LE();
-	_someXVal = file.readUint32LE();
-	_someYVal = file.readUint32LE();
-	_someMeshX = file.readUint32LE();
-	_someMeshY = file.readUint32LE();
+	uint32 globalTexDataOffset = _file.readUint32LE();
+	_texEncodingType = _file.readPascalString();
+	_xCount = _file.readUint32LE();
+	_yCount = _file.readUint32LE();
+	_numAnims = _file.readUint32LE();
+	_someXVal = _file.readUint32LE();
+	_someYVal = _file.readUint32LE();
+	_someMeshX = _file.readUint32LE();
+	_someMeshY = _file.readUint32LE();
 	_warpBlocs.resize(_xCount * _yCount * 6);
 	for (uint i = 0; i < _xCount * _yCount * 6; i++) {
-		TeWarpBloc::CubeFace face = static_cast<TeWarpBloc::CubeFace>(file.readByte());
+		TeWarpBloc::CubeFace face = static_cast<TeWarpBloc::CubeFace>(_file.readByte());
 		for (uint j = 0; j < _xCount * _yCount; j++) {
-			unsigned short offx = file.readUint16LE();
-			unsigned short offy = file.readUint16LE();
-			unsigned int blocTexOffset = file.readUint32LE();
-			_warpBlocs[j].setTextureFileOffset(globalTexDataOffset + blocTexOffset);
+			unsigned short offx = _file.readUint16LE();
+			unsigned short offy = _file.readUint16LE();
+			unsigned int blocTexOffset = _file.readUint32LE();
+			_warpBlocs[i].setTextureFileOffset(globalTexDataOffset + blocTexOffset);
 			TeVector2s32 offset(offx, offy);
-			_warpBlocs[j].create(face, _xCount, _yCount, offset);
+			_warpBlocs[i].create(face, _xCount, _yCount, offset);
 		}
 	}
 	_loadedAnimData.resize(_numAnims);
 	_putAnimData.reserve(_numAnims);
 	for (uint i = 0; i < _numAnims; i++) {
 		char aname[5];
-		file.read(aname, 4);
+		_file.read(aname, 4);
 		aname[4] = '\0';
 		_loadedAnimData[i]._name = aname;
-		uint numFrames = file.readUint32LE();
-		byte numSomething = file.readByte();
+		uint numFrames = _file.readUint32LE();
+		byte numSomething = _file.readByte();
 		_loadedAnimData[i]._frameDatas.resize(numFrames);
 		for (uint j = 0; j < numFrames; j++) {
 			FrameData &frameData = _loadedAnimData[i]._frameDatas[j];
@@ -272,26 +271,26 @@ void TeWarp::load(const Common::String &path, bool flag) {
 			frameData._numWarpBlocs = 0;
 			Common::Array<TeWarpBloc> warpBlocs;
 			for (uint k = 0; k < numSomething; k++) {
-				uint blocCount = file.readUint32LE();
+				uint blocCount = _file.readUint32LE();
 				if (blocCount) {
-					TeWarpBloc::CubeFace face = static_cast<TeWarpBloc::CubeFace>(file.readByte());
+					TeWarpBloc::CubeFace face = static_cast<TeWarpBloc::CubeFace>(_file.readByte());
 					warpBlocs.resize(frameData._numWarpBlocs + blocCount);
 					for (auto &warpBloc : warpBlocs) {
-						uint xoff = file.readUint16LE();
-						uint yoff = file.readUint16LE();
-						uint32 texDataOff = file.readUint32LE();
+						uint xoff = _file.readUint16LE();
+						uint yoff = _file.readUint16LE();
+						uint32 texDataOff = _file.readUint32LE();
 						warpBloc.setTextureFileOffset(globalTexDataOffset + texDataOff);
 						warpBloc.create(face, _someXVal, _someYVal, TeVector2s32(xoff, yoff));
 						if (flag)
 							warpBloc.color(TeColor(255, 0, 0, 255));
 					}
-					uint meshSize = file.readUint32LE();
+					uint meshSize = _file.readUint32LE();
 					TePickMesh tmpMesh;
 					tmpMesh.setName(aname);
 					tmpMesh.nbTriangles(meshSize * 2);
 					for (uint m = 0; m < meshSize; m++) {
-						uint xoff = file.readUint16LE();
-						uint yoff = file.readUint16LE();
+						uint xoff = _file.readUint16LE();
+						uint yoff = _file.readUint16LE();
 						addQuadToPickMesh(tmpMesh, m * 2, face, TeVector2s32(xoff, yoff), _someMeshX, _someMeshY);
 					}
 					tmpMesh.setFlag(true);

@@ -35,7 +35,7 @@
 namespace Tetraedge {
 
 AmerzoneGame::AmerzoneGame() : Tetraedge::Game(), _orientationX(0.0f), _orientationY(0.0f),
-_speedX(0.0f), _speedY(0.0f), _isInDrag(false), _edgeButtonRolloverCount(0),
+_speedX(0.0f), _speedY(0.0f), _isInDrag(false), _musicOn(false), _edgeButtonRolloverCount(0),
 _warpX(nullptr), _warpY(nullptr), _prevWarpY(nullptr) {
 
 }
@@ -59,7 +59,7 @@ bool AmerzoneGame::changeWarp(const Common::String &zone, const Common::String &
 		_warpY->markerValidatedSignal().add(this, &AmerzoneGame::onObjectClick);
 		_warpY->animFinishedSignal().add(this, &AmerzoneGame::onAnimationFinished);
 		saveBackup("save.xml");
-		_music.stop();
+		_videoMusic.stop();
 	}
 	_prevWarpY = _warpY;
 	_warpY = nullptr;
@@ -99,8 +99,8 @@ bool AmerzoneGame::changeWarp(const Common::String &zone, const Common::String &
 
 	_xAngleMin = FLT_MAX;
 	_xAngleMax = FLT_MAX;
-	_yAngleMax = 45.0 - _orientationY;
-	_yAngleMin = _orientationY + 55.0;
+	_yAngleMax = 45.0f - _orientationY;
+	_yAngleMin = _orientationY + 55.0f;
 
 	dotpos = sceneXml.rfind('.');
 	Common::String sceneLua = sceneXml.substr(0, dotpos);
@@ -260,7 +260,7 @@ void AmerzoneGame::leave(bool flag) {
 	_luaContext.destroy();
 	_running = false;
 	_playedTimer.stop();
-	_music.stop();
+	_videoMusic.stop();
 }
 
 bool AmerzoneGame::onChangeWarpAnimFinished() {
@@ -480,7 +480,6 @@ void AmerzoneGame::update() {
 		_warpX->update();
 	if (_warpY)
 		_warpY->update();
-
 }
 
 bool AmerzoneGame::onDialogFinished(const Common::String &val) {
@@ -494,12 +493,10 @@ bool AmerzoneGame::onVideoFinished() {
 	TeSpriteLayout *video = _inGameGui.spriteLayoutChecked("video");
 	Common::String vidPath = video->_tiledSurfacePtr->loadedPath();
 	video->setVisible(false);
-	_music.stop();
-	// TODO:
-	//Application *app = g_engine->getApplication();
-	//if (app->musicOn()) {
-	//	app->music().play();
-	//}
+	Application *app = g_engine->getApplication();
+	_videoMusic.stop();
+	if (_musicOn)
+		app->music().play();
 	_running = true;
 	_luaScript.execute("OnMovieFinished", vidPath);
 	return false;

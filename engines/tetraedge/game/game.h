@@ -160,7 +160,7 @@ protected:
 	TeLuaScript _luaScript;
 	TeLuaContext _luaContext;
 	TeLuaScript _gameEnterScript;
-	TeMusic _music;
+	TeMusic _videoMusic;
 	Notifier _notifier;
 	DocumentsBrowser _documentsBrowser;
 

@@ -81,9 +81,9 @@ void TeFrustum::update(TeCamera *camera) {
 	const TeMatrix4x4 camMatrix = camera->worldTransformationMatrix();
 	for (unsigned int plane = 0; plane < 6; plane++) {
 		if (plane % 2)
-			extractPlanAdd(camMatrix, plane / 2, plane);
+			extractPlanAdd(camMatrix, plane, plane / 2);
 		else
-			extractPlanSub(camMatrix, plane / 2, plane);
+			extractPlanSub(camMatrix, plane, plane / 2);
 		float len = planeLen(plane);
 		float *p = _m + plane * 4;
 		for (int i = 0; i < 4; i++)

@@ -81,6 +81,7 @@ private:
 	float _speedX;
 	float _speedY;
 	bool _isInDrag;
+	bool _musicOn;
 	int _edgeButtonRolloverCount;
 	Common::Point _mouseDragStart;
 	Common::Point _mouseDragLast;
