@@ -560,7 +560,10 @@ public:
 class CastleEngine : public FreescapeEngine {
 public:
 	CastleEngine(OSystem *syst, const ADGameDescription *gd);
+	~CastleEngine();
 
+
+	Graphics::ManagedSurface *_option;
 	void titleScreen() override;
 	void loadAssetsDOSFullGame() override;
 	void drawUI() override;
