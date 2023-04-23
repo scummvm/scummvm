@@ -1242,35 +1242,35 @@ void CharacterGenerator::printStats(int index, int mode) {
 		}
 	}
 
-	switch (mode) {
-	case 1:
-		drawButton(4, 0, 2);
-		drawButton(7, 0, 2);
-		drawButton(8, 0, 2);
-		drawButton(6, 0, 2);
-		break;
-
-	case 2:
-		drawButton(16, 0, 2);
-		drawButton(9, 0, 2);
-		break;
-
-	case 3:
-		drawButton(10, 0, 2);
-		drawButton(11, 0, 2);
-		drawButton(9, 0, 2);
-		break;
-
-	default:
-		break;
-	}
-
 	if (_vm->_flags.platform == Common::kPlatformSegaCD) {
 		_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
 		if (mode != 4)
 			_screen->drawShape(0, c->faceShape, 208, 66, 0);
 	} else
 		_screen->copyRegion(160, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
+
+	switch (mode) {
+	case 1:
+		drawButton(4, 0, 0);
+		drawButton(7, 0, 0);
+		drawButton(8, 0, 0);
+		drawButton(6, 0, 0);
+		break;
+
+	case 2:
+		drawButton(16, 0, 0);
+		drawButton(9, 0, 0);
+		break;
+
+	case 3:
+		drawButton(10, 0, 0);
+		drawButton(11, 0, 0);
+		drawButton(9, 0, 0);
+		break;
+
+	default:
+		break;
+	}
 
 	if (mode != 3)
 		_screen->updateScreen();
