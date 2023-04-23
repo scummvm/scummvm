@@ -15,6 +15,7 @@ MODULE_OBJS = \
 	3d/render/opengl_2d.o \
 	3d/render/opengl_3d.o \
 	3d/render/opengl_renderer.o \
+	3d/render/opengl_texture.o \
 	3d/render/render.o \
 	3d/render/shadows.o \
 	3d/t3d_body.o \
