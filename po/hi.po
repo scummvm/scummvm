@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-23 05:16+0000\n"
-"PO-Revision-Date: 2023-04-03 16:43+0000\n"
+"PO-Revision-Date: 2023-04-23 06:53+0000\n"
 "Last-Translator: barryspacezero <barryspace01@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
@@ -5759,23 +5759,20 @@ msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:476
 #: engines/twine/metaengine.cpp:380
-#, fuzzy
 msgid "Move Forward"
-msgstr "नीचे देखो"
+msgstr "आगे बढ़ो"
 
 #: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:477
 msgid "Move Back"
 msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:372
-#, fuzzy
 msgid "Move Left"
-msgstr "बाएं"
+msgstr "बाएं चलें"
 
 #: engines/kyra/engine/eobcommon.cpp:373
-#, fuzzy
 msgid "Move Right"
-msgstr "दाहिने"
+msgstr "दाहिने चलें"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
 #: engines/mm/mm1/metaengine.cpp:97 engines/pegasus/pegasus.cpp:2739
@@ -5786,7 +5783,6 @@ msgstr "बांए मुड़िए"
 #: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:481
 #: engines/mm/mm1/metaengine.cpp:98 engines/pegasus/pegasus.cpp:2746
 #: engines/twine/metaengine.cpp:394 engines/zvision/metaengine.cpp:215
-#, fuzzy
 msgid "Turn Right"
 msgstr "दायें मुड़िए"
 
@@ -5851,9 +5847,8 @@ msgid "Slide Left"
 msgstr ""
 
 #: engines/kyra/engine/lol.cpp:479
-#, fuzzy
 msgid "Slide Right"
-msgstr "दाहिने"
+msgstr "दाहिने स्लाइड करे"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/kyra/engine/lol.cpp:482 engines/mm/mm1/metaengine.cpp:109
@@ -5865,9 +5860,8 @@ msgid "Options"
 msgstr "विकल्प(O)..."
 
 #: engines/kyra/engine/lol.cpp:484
-#, fuzzy
 msgid "Choose Spell"
-msgstr "चुनें"
+msgstr "जादू चुनें"
 
 #: engines/kyra/gui/saveload_eob.cpp:597
 #, c-format
@@ -6035,10 +6029,8 @@ msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:73
-#, fuzzy
-#| msgid "Right"
 msgid "Fight"
-msgstr "दाएँ"
+msgstr "फाइट"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:75 engines/mm/mm1/metaengine.cpp:116
@@ -6068,9 +6060,8 @@ msgstr ""
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:94
-#, fuzzy
 msgid "Forwards"
-msgstr "नीचे देखो"
+msgstr "आगे"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:96
@@ -6101,9 +6092,8 @@ msgid "Unlock"
 msgstr ""
 
 #: engines/mm/mm1/metaengine.cpp:122
-#, fuzzy
 msgid "Goto location"
-msgstr "पिछला (P)"
+msgstr "लोकेशन पर जाएँ"
 
 #: engines/mm/mm1/metaengine.cpp:133 engines/mm/mm1/metaengine.cpp:143
 msgid "Might and Magic 1 - Menus"
@@ -6356,9 +6346,8 @@ msgid "You are missing the following required Riven data files:\n"
 msgstr ""
 
 #: engines/mohawk/riven.cpp:865
-#, fuzzy
 msgid "Move forward"
-msgstr "नीचे देखो"
+msgstr "आगे बढ़ें"
 
 #: engines/mohawk/riven.cpp:871
 msgid "Move forward left"
@@ -6376,7 +6365,6 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:741
 #: engines/wintermute/keymapper_tables.h:2122
 #: engines/wintermute/keymapper_tables.h:2223
-#, fuzzy
 msgid "Turn left"
 msgstr "बांए मुड़िए"
 
@@ -6540,9 +6528,8 @@ msgid "Left Click Interact"
 msgstr ""
 
 #: engines/nancy/input.cpp:160
-#, fuzzy
 msgid "Right Click Interact"
-msgstr "दाहिने"
+msgstr "राइट क्लिक इंटरैक्ट"
 
 #: engines/nancy/input.cpp:191
 msgid "Fast move modifier"
@@ -6745,14 +6732,12 @@ msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 
 #: engines/sci/detection_options.h:45
-#, fuzzy
 msgid "Enable high resolution graphics"
-msgstr "खेल का पूरा नाम"
+msgstr "एच डी ग्राफ़िक्स इनेबल करें"
 
 #: engines/sci/detection_options.h:46
-#, fuzzy
 msgid "Enable high resolution graphics/content"
-msgstr "खेल का पूरा नाम"
+msgstr "एच डी ग्राफ़िक्स इनेबल करें"
 
 #: engines/sci/detection_options.h:57
 msgid "Enable black-lined video"
@@ -7049,10 +7034,8 @@ msgstr "गेम मेनू"
 #. I18N: The user's name for online
 #: engines/scumm/dialog-createsession.cpp:44
 #: engines/scumm/dialog-sessionselector.cpp:60
-#, fuzzy
-#| msgid "Name:"
 msgid "Your Name:"
-msgstr "नाम:"
+msgstr "आपका नाम:"
 
 #. I18N: Button, start hosting online multiplayer game
 #: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3518
@@ -7129,9 +7112,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1055 engines/scumm/metaengine.cpp:676
-#, fuzzy
 msgid "Enable the original GUI and Menu"
-msgstr "खेल का पूरा नाम"
+msgstr "ओरिजिनल GUI और मेनू इनेबल करें"
 
 #: engines/scumm/dialogs.cpp:1056
 msgid ""
@@ -7309,7 +7291,6 @@ msgid "Special keyboard commands:"
 msgstr ""
 
 #: engines/scumm/help.cpp:92
-#, fuzzy
 msgid "Show / Hide console"
 msgstr "छिपी हुई files दिखाये"
 
@@ -7405,15 +7386,13 @@ msgstr ""
 
 #: engines/scumm/help.cpp:129 engines/scumm/help.cpp:151
 #: engines/scumm/help.cpp:169
-#, fuzzy
 msgid "Turn on"
-msgstr "बांए मुड़िए"
+msgstr "on करें"
 
 #: engines/scumm/help.cpp:130 engines/scumm/help.cpp:152
 #: engines/scumm/help.cpp:170
-#, fuzzy
 msgid "Turn off"
-msgstr "बांए मुड़िए"
+msgstr "ऑफ करें"
 
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:192 engines/wintermute/keymapper_tables.h:1540
@@ -7448,9 +7427,8 @@ msgid "Switch"
 msgstr ""
 
 #: engines/scumm/help.cpp:164 engines/scumm/help.cpp:226
-#, fuzzy
 msgid "Look"
-msgstr "ऊपर देखो"
+msgstr "देखो"
 
 #: engines/scumm/help.cpp:171 engines/scumm/help.cpp:221
 msgid "Talk"
@@ -7514,7 +7492,6 @@ msgstr ""
 #: engines/scumm/help.cpp:197 engines/scumm/help.cpp:209
 #: engines/wintermute/keymapper_tables.h:122
 #: engines/wintermute/keymapper_tables.h:1534
-#, fuzzy
 msgid "Look at"
 msgstr "ऊपर देखो"
 
@@ -7535,9 +7512,8 @@ msgid "Highlight prev dialogue"
 msgstr ""
 
 #: engines/scumm/help.cpp:216
-#, fuzzy
 msgid "KeyDown"
-msgstr "नीचे"
+msgstr "की डाउन"
 
 #: engines/scumm/help.cpp:216
 msgid "Highlight next dialogue"
@@ -7842,9 +7818,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:686
-#, fuzzy
 msgid "Enable low latency audio mode"
-msgstr "खेल का पूरा नाम"
+msgstr "लो लेटेंसी ऑडियो मोड इनेबल करे"
 
 #: engines/scumm/metaengine.cpp:687
 msgid ""
@@ -7865,22 +7840,18 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:770
-#, fuzzy
 msgid "Down Left"
 msgstr "बांए मुड़िए"
 
 #: engines/scumm/metaengine.cpp:783
-#, fuzzy
 msgid "Down Right"
 msgstr "दायें मुड़िए"
 
 #: engines/scumm/metaengine.cpp:803
-#, fuzzy
 msgid "Up Left"
 msgstr "बाएँ"
 
 #: engines/scumm/metaengine.cpp:816
-#, fuzzy
 msgid "Up Right"
 msgstr "दाएँ"
 
@@ -8289,9 +8260,8 @@ msgid "Enable debug mode"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:68
-#, fuzzy
 msgid "Enable the debug mode"
-msgstr "खेल का पूरा नाम"
+msgstr "debug मोड इनेबल करें"
 
 #: engines/twine/metaengine.cpp:78
 msgid "Enable audio CD"
@@ -8306,37 +8276,32 @@ msgid "Enable sound"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:90
-#, fuzzy
 msgid "Enable the sound for the game"
-msgstr "खेल का पूरा नाम"
+msgstr "गेम साउंड इनेबल करें"
 
 #: engines/twine/metaengine.cpp:100
 msgid "Enable text"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:101
-#, fuzzy
 msgid "Enable the text for the game"
-msgstr "खेल का पूरा नाम"
+msgstr "गेम टेक्स्ट इनेबल करें"
 
 #: engines/twine/metaengine.cpp:111
 msgid "Enable movies"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:112
-#, fuzzy
 msgid "Enable the cutscenes for the game"
-msgstr "खेल का पूरा नाम"
+msgstr "गेम cutscenes इनेबल करें"
 
 #: engines/twine/metaengine.cpp:122
-#, fuzzy
 msgid "Enable mouse"
-msgstr "खेल का पूरा नाम"
+msgstr "माउस इनेबल करें"
 
 #: engines/twine/metaengine.cpp:123
-#, fuzzy
 msgid "Enable the mouse for the UI"
-msgstr "खेल का पूरा नाम"
+msgstr "माउस इनेबल करें UI के लिए"
 
 #: engines/twine/metaengine.cpp:133
 msgid "Use the USA version"
@@ -8351,9 +8316,8 @@ msgid "Enable high resolution"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:145 engines/ultima/metaengine.cpp:89
-#, fuzzy
 msgid "Enable a higher resolution for the game"
-msgstr "खेल का पूरा नाम"
+msgstr "गेम के लिए हाई रेसोलुशन on करें"
 
 #: engines/twine/metaengine.cpp:236
 msgid "Debug Next Room"
@@ -8469,9 +8433,8 @@ msgid "Next Page"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:558
-#, fuzzy
 msgid "Previous location"
-msgstr "पिछला (P)"
+msgstr "पिछला लोकेशन"
 
 #: engines/twine/metaengine.cpp:563
 msgid "Next location"
@@ -8498,12 +8461,9 @@ msgid "Wall collision off"
 msgstr ""
 
 #: engines/twine/parser/text.cpp:38
-#, fuzzy
-#| msgctxt "group"
-#| msgid "Language"
 msgctxt "Options menu"
 msgid "Language selection"
-msgstr "भाषा"
+msgstr "भाषा चुनाव"
 
 #: engines/twine/parser/text.cpp:39
 msgctxt "Options menu"
@@ -8542,9 +8502,8 @@ msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
 
 #: engines/ultima/metaengine.cpp:77
-#, fuzzy
 msgid "Enable cheats"
-msgstr "खेल का पूरा नाम"
+msgstr "cheats इनेबल करें"
 
 #: engines/ultima/metaengine.cpp:78
 msgid "Allow cheats by commands and a menu when player is clicked."
