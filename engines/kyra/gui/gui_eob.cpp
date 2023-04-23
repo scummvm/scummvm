@@ -2824,6 +2824,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 	uint8 *segaCharBuf = new uint8[destMaxLen << 5]();
 
 	int len = strlen(dest);
+	int height = (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN) ? 15 : 9;
 	if (len > destMaxLen) {
 		len = destMaxLen;
 		dest[destMaxLen] = 0;
@@ -2833,7 +2834,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 	if (len >= destMaxLen)
 		pos--;
 
-	_screen->copyRegion((x - 1) << 3, y, 0, 191, (destMaxLen + 2) << 3, 9, 0, 2, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion((x - 1) << 3, y, 0, 200 - height, (destMaxLen + 2) << 3, height, 0, 2, Screen::CR_NO_P_CHECK);
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
 		_screen->copyRegion(0, 0, 160, 0, 160, 128, 2, 2, Screen::CR_NO_P_CHECK);
 	_screen->printShadedText(dest, x << 3, y, textColor1, textColor2, _vm->guiSettings()->colors.guiColorBlack);
@@ -2862,10 +2863,10 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 					_screen->sega_getRenderer()->render(0, x + pos, y >> 3, 1, 1);
 					_screen->sega_setTextBuffer(0, 0);
 				} else if (cursorState) {
-					_screen->copyRegion((pos + 1) << 3, 191, (x + pos) << 3, y, 8, 9, 2, 0, Screen::CR_NO_P_CHECK);
+					_screen->copyRegion((pos + 1) << 3, 200 - height, (x + pos) << 3, y, 8, height, 2, 0, Screen::CR_NO_P_CHECK);
 					_screen->printShadedText(sufx, (x + pos) << 3, y, textColor1, textColor2, _vm->guiSettings()->colors.guiColorBlack);
 				} else {
-					_screen->fillRect((x + pos) << 3, y, ((x + pos) << 3) + 7, y + 7, cursorColor);
+					_screen->fillRect((x + pos) << 3, y, ((x + pos) << 3) + 7, y + height - 2, cursorColor);
 					_screen->printText(sufx, (x + pos) << 3, y, textColor1, cursorColor);
 				}
 
@@ -2989,7 +2990,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 			_screen->sega_getRenderer()->render(0, x, y >> 3, destMaxLen, 1);
 			_screen->sega_setTextBuffer(0, 0);
 		} else {
-			_screen->copyRegion(0, 191, (x - 1) << 3, y, (destMaxLen + 2) << 3, 9, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(0, 200 - height, (x - 1) << 3, y, (destMaxLen + 2) << 3, height, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->printShadedText(dest, x << 3, y, textColor1, textColor2, _vm->guiSettings()->colors.guiColorBlack);
 		}
 
