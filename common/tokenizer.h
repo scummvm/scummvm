@@ -23,8 +23,7 @@
 #define COMMON_TOKENIZER_H
 
 #include "common/scummsys.h"
-#include "common/str.h"
-#include "common/ustr.h"
+#include "common/str-array.h"
 
 namespace Common {
 
@@ -55,6 +54,7 @@ public:
 	void reset();       ///< Resets the tokenizer to its initial state
 	bool empty() const; ///< Returns true if there are no more tokens left in the string, false otherwise
 	String nextToken(); ///< Returns the next token from the string (Or an empty string if there are no more tokens)
+	StringArray split(); ///< Returns StringArray with all tokens. Beware of the memory usage
 
 private:
 	const String _str;        ///< The string to be tokenized
@@ -82,6 +82,7 @@ public:
 	void reset();       ///< Resets the tokenizer to its initial state, i.e points boten token iterators to the beginning
 	bool empty() const; ///< Returns true if there are no more tokens left in the string, false otherwise
 	U32String nextToken(); ///< Returns the next token from the string (Or an empty string if there are no more tokens)
+	U32StringArray split(); ///< Returns StringArray with all tokens. Beware of the memory usage
 
 private:
 	const U32String _str;        ///< The unicode string to be tokenized

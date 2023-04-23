@@ -52,6 +52,15 @@ String StringTokenizer::nextToken() {
 	return String(_str.c_str() + _tokenBegin, _tokenEnd - _tokenBegin);
 }
 
+StringArray StringTokenizer::split() {
+	StringArray res;
+
+	while (!empty())
+		res.push_back(nextToken());
+
+	return res;
+}
+
 U32StringTokenizer::U32StringTokenizer(const U32String &str, const String &delimiters) : _str(str), _delimiters(delimiters) {
 	reset();
 }
@@ -97,6 +106,15 @@ U32String U32StringTokenizer::nextToken() {
 		return U32String(_tokenBegin, _tokenEnd);
 	else
 		return U32String();
+}
+
+U32StringArray U32StringTokenizer::split() {
+	U32StringArray res;
+
+	while (!empty())
+		res.push_back(nextToken());
+
+	return res;
 }
 
 
