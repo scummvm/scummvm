@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-22 12:05+0000\n"
+"POT-Creation-Date: 2023-04-23 05:16+0000\n"
 "PO-Revision-Date: 2023-04-15 16:26+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -316,7 +316,7 @@ msgstr "Innholdet i JSON-koden er feilaktig."
 #: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:888
 #: engines/sword1/logic.cpp:1634 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
-#: engines/vcruise/vcruise.cpp:85 engines/vcruise/vcruise.cpp:95
+#: engines/vcruise/vcruise.cpp:86 engines/vcruise/vcruise.cpp:96
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "OK"
@@ -5168,7 +5168,7 @@ msgstr ""
 "gang du starter spillet.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:249
+#: engines/vcruise/vcruise.cpp:250
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Lagret spill ble opprettet med en nyere versjon av ScummVM. Kan ikke laste "
@@ -6886,14 +6886,14 @@ msgstr "Tvungen avslutning av filmsekvenser"
 msgid "Failed to read version information from save file"
 msgstr "Kunne ikke lese versjonsinformasjon fra lagringsfil."
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:244
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:245
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Kunne ikke laste inn lagringsdata. Lagringsfilen inneholdt ikke gyldig "
 "versjonsinformasjon."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:254
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:255
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -9239,12 +9239,12 @@ msgstr "Raskere animasjoner"
 msgid "Speeds up animations."
 msgstr "Øker hastigheten på animasjoner."
 
-#: engines/vcruise/vcruise.cpp:76
+#: engines/vcruise/vcruise.cpp:77
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr ""
 "Spillet krever JPEG-støtte, som ikke har blitt inkludert i kompileringen."
 
-#: engines/vcruise/vcruise.cpp:83
+#: engines/vcruise/vcruise.cpp:84
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
@@ -9253,7 +9253,7 @@ msgstr ""
 "inkludert i kompileringen.\n"
 "Du kan fortsatt spille spillet, men du kan ikke høre noe musikk."
 
-#: engines/vcruise/vcruise.cpp:93
+#: engines/vcruise/vcruise.cpp:94
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
@@ -9262,16 +9262,16 @@ msgstr ""
 "kompileringen.\n"
 "Du kan fortsatt spille spillet, men du kan ikke høre noe musikk."
 
-#: engines/vcruise/vcruise.cpp:234
+#: engines/vcruise/vcruise.cpp:235
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "Kunne ikke laste inn lagringsdata. Lagringsfilen ser ut til å være skadet."
 
-#: engines/vcruise/vcruise.cpp:239
+#: engines/vcruise/vcruise.cpp:240
 msgid "Failed to read version information from save file."
 msgstr "Kunne ikke lese versjonsinformasjon fra lagringsfil."
 
-#: engines/vcruise/vcruise.cpp:259
+#: engines/vcruise/vcruise.cpp:260
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "En ukjent feil oppstod under forsøket på å laste inn lagringsdata."
 
