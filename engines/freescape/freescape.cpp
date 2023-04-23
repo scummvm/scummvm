@@ -267,9 +267,9 @@ void FreescapeEngine::takeDamageFromSensor() {
 
 void FreescapeEngine::drawBackground() {
 	_gfx->setViewport(_fullscreenViewArea);
-	_gfx->clear(_currentArea->_usualBackgroundColor);
+	_gfx->drawBackground(_currentArea->_usualBackgroundColor);
 	_gfx->setViewport(_viewArea);
-	_gfx->clear(_currentArea->_skyColor);
+	_gfx->drawBackground(_currentArea->_skyColor);
 }
 
 void FreescapeEngine::drawFrame() {

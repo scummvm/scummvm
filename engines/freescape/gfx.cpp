@@ -925,6 +925,22 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 	polygonOffset(false);
 }
 
+void Renderer::drawBackground(uint8 color) {
+
+	if (_colorRemaps && _colorRemaps->contains(color)) {
+		color = (*_colorRemaps)[color];
+	}
+
+	byte *stipple = nullptr;
+	uint8 r1, g1, b1, r2, g2, b2;
+	bool render = getRGBAt(color, r1, g1, b1, r2, g2, b2, stipple);
+	if (!render)
+		r1 = g1 = b1 = 0;
+
+	assert(stipple == nullptr); // Unclear if this is ever used
+	clear(r1, g1, b1);
+}
+
 Graphics::RendererType determinateRenderType() {
 	Common::String rendererConfig = ConfMan.get("renderer");
 	Graphics::RendererType desiredRendererType = Graphics::Renderer::parseTypeCode(rendererConfig);

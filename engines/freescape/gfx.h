@@ -91,8 +91,9 @@ public:
 	virtual void renderFace(const Common::Array<Math::Vector3d> &vertices) = 0;
 
 	void setColorRemaps(ColorReMap *colorRemaps);
-	virtual void clear(uint8 color) = 0;
+	virtual void clear(uint8 r, uint8 g, uint8 b) = 0;
 	virtual void drawFloor(uint8 color) = 0;
+	virtual void drawBackground(uint8 color);
 
 	Common::Rect viewport() const;
 

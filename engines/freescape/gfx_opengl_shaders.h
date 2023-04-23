@@ -65,7 +65,7 @@ public:
 	int _variableStippleArray[64];
 
 	virtual void init() override;
-	virtual void clear(uint8 color) override;
+	virtual void clear(uint8 r, uint8 g, uint8 b) override;
 	virtual void setViewport(const Common::Rect &rect) override;
 	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest) override;
 	virtual void updateProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) override;
