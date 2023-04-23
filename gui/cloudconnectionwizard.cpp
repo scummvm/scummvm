@@ -29,6 +29,7 @@
 
 #include "common/formats/json.h"
 #include "common/memstream.h"
+#include "common/tokenizer.h"
 #include "common/translation.h"
 
 #include "gui/message.h"
@@ -51,7 +52,7 @@ enum {
 };
 
 CloudConnectionWizard::CloudConnectionWizard() :
-	Dialog("GlobalOptions_Cloud_ConnectionWizard"),	
+	Dialog("GlobalOptions_Cloud_ConnectionWizard"),
 	_currentStep(Step::NONE), _switchToSuccess(false), _switchToFailure(false),
 	_connecting(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
@@ -202,8 +203,16 @@ void CloudConnectionWizard::showStepQuickMode1() {
 	showBackButton();
 	showNextButton();
 
-	_label0 = new StaticTextWidget(_container, "ConnectionWizard_QuickModeStep1.Line1", _("In this mode, Local Webserver must be running,"));
-	_label1 = new StaticTextWidget(_container, "ConnectionWizard_QuickModeStep1.Line2", _("so your browser could forward data to ScummVM"));
+	Common::U32StringTokenizer tok(_("In this mode, Local Webserver must be running,\n"
+									 "so your browser could forward data to ScummVM"), "\n");
+
+	Common::U32StringArray labels = tok.split();
+
+	if (labels.size() < 2)
+		labels.push_back(Common::U32String());
+
+	_label0 = new StaticTextWidget(_container, "ConnectionWizard_QuickModeStep1.Line1", labels[0]);
+	_label1 = new StaticTextWidget(_container, "ConnectionWizard_QuickModeStep1.Line2", labels[1]);
 
 	_button0 = new ButtonWidget(_container, "ConnectionWizard_QuickModeStep1.RunServerButton", Common::U32String(), Common::U32String(), kCloudConnectionWizardRunServerButtonCmd);
 	_label2 = new StaticTextWidget(_container, "ConnectionWizard_QuickModeStep1.ServerInfoLabel", Common::U32String());
@@ -254,8 +263,16 @@ void CloudConnectionWizard::showStepQuickMode2() {
 	_label0 = new StaticTextWidget(_container, "ConnectionWizard_QuickModeStep2.Line1", _("Now, open this link in your browser:"));
 	_button0 = new ButtonWidget(_container, "ConnectionWizard_QuickModeStep2.OpenLinkButton", Common::U32String("https://cloud.scummvm.org/"), _("Open URL"), kCloudConnectionWizardOpenUrlStorageCmd);
 
-	_label1 = new StaticTextWidget(_container, "ConnectionWizard_QuickModeStep2.Line2", _("It will automatically pass the data to ScummVM,"));
-	_label2 = new StaticTextWidget(_container, "ConnectionWizard_QuickModeStep2.Line3", _("and warn you should there be any errors."));
+	Common::U32StringTokenizer tok(_("It will automatically pass the data to ScummVM,\n"
+									 "and warn you should there be any errors."), "\n");
+
+	Common::U32StringArray labels = tok.split();
+
+	if (labels.size() < 2)
+		labels.push_back(Common::U32String());
+
+	_label1 = new StaticTextWidget(_container, "ConnectionWizard_QuickModeStep2.Line2", labels[0]);
+	_label2 = new StaticTextWidget(_container, "ConnectionWizard_QuickModeStep2.Line3", labels[1]);
 	_label3 = new StaticTextWidget(_container, "ConnectionWizard_QuickModeStep2.Line4", Common::U32String(), Common::U32String(), ThemeEngine::kFontStyleNormal);
 
 #ifdef USE_SDL_NET
@@ -301,9 +318,21 @@ void CloudConnectionWizard::showStepManualMode1() {
 	_label0 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep1.Line1", _("Open this link in your browser:"));
 	_button0 = new ButtonWidget(_container, "ConnectionWizard_ManualModeStep1.OpenLinkButton", Common::U32String("https://cloud.scummvm.org/"), _("Open URL"), kCloudConnectionWizardOpenUrlStorageCmd);
 
-	_label1 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep1.Line2", _("When it fails to pass JSON code to ScummVM,"));
-	_label2 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep1.Line3", _("find it on Troubleshooting section of the page,"));
-	_label3 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep1.Line4", _("and go to the next step here."));
+	Common::U32StringTokenizer tok(_("When it fails to pass JSON code to ScummVM,\n"
+									 "find it on Troubleshooting section of the page,\n"
+									 "and go to the next step here."), "\n");
+
+	Common::U32StringArray labels = tok.split();
+
+	if (labels.size() < 2)
+		labels.push_back(Common::U32String());
+
+	if (labels.size() < 3)
+		labels.push_back(Common::U32String());
+
+	_label1 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep1.Line2", labels[0]);
+	_label2 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep1.Line3", labels[1]);
+	_label3 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep1.Line4", labels[2]);
 }
 
 void CloudConnectionWizard::hideStepManualMode1() {
@@ -502,7 +531,7 @@ void CloudConnectionWizard::manualModeConnect() {
 		return;
 	}
 
-	// disable UI	
+	// disable UI
 	if (_codeBox)
 		_codeBox->setEnabled(false);
 	if (_button0)
@@ -553,7 +582,7 @@ void CloudConnectionWizard::close() {
 	Dialog::close();
 }
 
-void CloudConnectionWizard::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {	
+void CloudConnectionWizard::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kCloudConnectionWizardQuickModeButtonCmd:
 		showStep(Step::QUICK_MODE_STEP_1);
@@ -634,7 +663,7 @@ void CloudConnectionWizard::handleCommand(CommandSender *sender, uint32 cmd, uin
 		}
 		break;
 
-	default:	
+	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}
 }
