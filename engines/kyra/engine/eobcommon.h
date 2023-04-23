@@ -69,7 +69,7 @@ struct EoBRect8 {
 };
 
 struct EoBChargenButtonDef {
-	uint8 x;
+	uint16 x;
 	uint8 y;
 	uint8 w;
 	uint8 h;
