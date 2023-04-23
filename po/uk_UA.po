@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-23 05:16+0000\n"
+"POT-Creation-Date: 2023-04-23 14:30+0000\n"
 "PO-Revision-Date: 2023-04-10 09:18+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -58,7 +58,7 @@ msgctxt "lowres"
 msgid "Go up"
 msgstr "Вгору"
 
-#: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:60
+#: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:61
 #: gui/downloadpacksdialog.cpp:267 gui/downloadpacksdialog.cpp:462
 #: gui/editgamedialog.cpp:352 gui/editrecorddialog.cpp:66
 #: gui/filebrowser-dialog.cpp:68 gui/fluidsynth-dialog.cpp:152
@@ -97,182 +97,175 @@ msgstr "Відміна"
 msgid "Choose"
 msgstr "Вибрати"
 
-#: gui/cloudconnectionwizard.cpp:175
+#: gui/cloudconnectionwizard.cpp:176
 msgid "Cloud Connection Wizard"
 msgstr "Візард для залучення з хмарою"
 
-#: gui/cloudconnectionwizard.cpp:178
+#: gui/cloudconnectionwizard.cpp:179
 msgid "Quick mode"
 msgstr "Швидкий режим"
 
-#: gui/cloudconnectionwizard.cpp:179
+#: gui/cloudconnectionwizard.cpp:180
 msgid "Manual mode"
 msgstr "Ручний режим"
 
-#: gui/cloudconnectionwizard.cpp:182
+#: gui/cloudconnectionwizard.cpp:183
 msgid "Will ask you to run Local Webserver"
 msgstr "Вас буде попрошено запустити локальний веб-сервер"
 
-#: gui/cloudconnectionwizard.cpp:184
+#: gui/cloudconnectionwizard.cpp:185
 msgid "Requires Local Webserver feature"
 msgstr "Потребує локального веб-серверу"
 
-#: gui/cloudconnectionwizard.cpp:200
+#: gui/cloudconnectionwizard.cpp:201
 msgid "Quick Mode: Step 1"
 msgstr "Швидкий Режим: Крок 1"
 
-#: gui/cloudconnectionwizard.cpp:205
-msgid "In this mode, Local Webserver must be running,"
+#: gui/cloudconnectionwizard.cpp:206
+#, fuzzy
+#| msgid "In this mode, Local Webserver must be running,"
+msgid ""
+"In this mode, Local Webserver must be running,\n"
+"so your browser could forward data to ScummVM"
 msgstr "В цьому режимі має бути запущено локльний веб-сервер,"
 
-#: gui/cloudconnectionwizard.cpp:206
-msgid "so your browser could forward data to ScummVM"
-msgstr "тож ваш переглядач зможе передати дані до ScummVM"
-
-#: gui/cloudconnectionwizard.cpp:226 gui/options.cpp:3657
+#: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:3657
 msgid "Stop server"
 msgstr "Вимкнути сервер"
 
-#: gui/cloudconnectionwizard.cpp:226 gui/options.cpp:2730
+#: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:2730
 msgid "Run server"
 msgstr "Запустити сервер"
 
-#: gui/cloudconnectionwizard.cpp:227 gui/options.cpp:3658
+#: gui/cloudconnectionwizard.cpp:236 gui/options.cpp:3658
 msgid "Stop local webserver"
 msgstr "Вимкнути локальний веб-сервер"
 
-#: gui/cloudconnectionwizard.cpp:227 gui/options.cpp:2730
+#: gui/cloudconnectionwizard.cpp:236 gui/options.cpp:2730
 msgid "Run local webserver"
 msgstr "Запускає локальний веб-сервер"
 
-#: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:2731 gui/options.cpp:3665
+#: gui/cloudconnectionwizard.cpp:244 gui/options.cpp:2731 gui/options.cpp:3665
 msgid "Not running"
 msgstr "Вимкнено"
 
-#: gui/cloudconnectionwizard.cpp:250
+#: gui/cloudconnectionwizard.cpp:259
 msgid "Quick Mode: Step 2"
 msgstr "Швидкий Режим: Крок 2"
 
-#: gui/cloudconnectionwizard.cpp:254
+#: gui/cloudconnectionwizard.cpp:263
 msgid "Now, open this link in your browser:"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:255 gui/cloudconnectionwizard.cpp:302
+#: gui/cloudconnectionwizard.cpp:264 gui/cloudconnectionwizard.cpp:319
 #: gui/message.cpp:218 gui/message.cpp:222
 msgid "Open URL"
 msgstr "Відкрити URL"
 
-#: gui/cloudconnectionwizard.cpp:257
-msgid "It will automatically pass the data to ScummVM,"
+#: gui/cloudconnectionwizard.cpp:266
+msgid ""
+"It will automatically pass the data to ScummVM,\n"
+"and warn you should there be any errors."
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:258
-msgid "and warn you should there be any errors."
-msgstr ""
-
-#: gui/cloudconnectionwizard.cpp:262
+#: gui/cloudconnectionwizard.cpp:279
 msgid "Local Webserver address: "
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:278
+#: gui/cloudconnectionwizard.cpp:295
 msgid "Quick Mode: Success"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:282
+#: gui/cloudconnectionwizard.cpp:299
 #, fuzzy
 #| msgid "Connect your cloud storage account"
 msgid "You cloud storage has been connected!"
 msgstr "Залучитись до вашого облікового запису на хмарному середовищі"
 
-#: gui/cloudconnectionwizard.cpp:283 gui/cloudconnectionwizard.cpp:370
+#: gui/cloudconnectionwizard.cpp:300 gui/cloudconnectionwizard.cpp:399
 msgid "Finish"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:296
+#: gui/cloudconnectionwizard.cpp:313
 msgid "Manual Mode: Step 1"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:301
+#: gui/cloudconnectionwizard.cpp:318
 #, fuzzy
 #| msgid "1. Open this link:"
 msgid "Open this link in your browser:"
 msgstr "1. Відкрийте це посилання:"
 
-#: gui/cloudconnectionwizard.cpp:304
-msgid "When it fails to pass JSON code to ScummVM,"
-msgstr ""
-
-#: gui/cloudconnectionwizard.cpp:305
-msgid "find it on Troubleshooting section of the page,"
-msgstr ""
-
-#: gui/cloudconnectionwizard.cpp:306
-msgid "and go to the next step here."
-msgstr ""
-
 #: gui/cloudconnectionwizard.cpp:321
+msgid ""
+"When it fails to pass JSON code to ScummVM,\n"
+"find it on Troubleshooting section of the page,\n"
+"and go to the next step here."
+msgstr ""
+
+#: gui/cloudconnectionwizard.cpp:350
 msgid "Manual Mode: Step 2"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:326
+#: gui/cloudconnectionwizard.cpp:355
 msgid "Copy JSON code from browser here and press Next:"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:328
+#: gui/cloudconnectionwizard.cpp:357
 msgid "Paste"
 msgstr "Вставити"
 
-#: gui/cloudconnectionwizard.cpp:328
+#: gui/cloudconnectionwizard.cpp:357
 msgid "Paste code from clipboard"
 msgstr "Вставити код з буфера обміну"
 
-#: gui/cloudconnectionwizard.cpp:344
+#: gui/cloudconnectionwizard.cpp:373
 msgid "Manual Mode: Something went wrong"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:348
+#: gui/cloudconnectionwizard.cpp:377
 #, fuzzy
 #| msgid "Storage connected."
 msgid "Cloud storage was not connected."
 msgstr "Хмарне середовище підключено."
 
-#: gui/cloudconnectionwizard.cpp:349
+#: gui/cloudconnectionwizard.cpp:378
 msgid "Make sure JSON code was copied correctly and retry."
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:350
+#: gui/cloudconnectionwizard.cpp:379
 msgid "It it doesn't work, try from the beginning."
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:351
+#: gui/cloudconnectionwizard.cpp:380
 msgid "Error message: "
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:365
+#: gui/cloudconnectionwizard.cpp:394
 msgid "Manual Mode: Success"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:369
+#: gui/cloudconnectionwizard.cpp:398
 #, fuzzy
 #| msgid "Connect your cloud storage account"
 msgid "Your cloud storage has been connected!"
 msgstr "Залучитись до вашого облікового запису на хмарному середовищі"
 
-#: gui/cloudconnectionwizard.cpp:393
+#: gui/cloudconnectionwizard.cpp:422
 #, fuzzy
 #| msgid "Backend"
 msgid "Back"
 msgstr "Бекенд"
 
-#: gui/cloudconnectionwizard.cpp:401 gui/saveload-dialog.cpp:829
+#: gui/cloudconnectionwizard.cpp:430 gui/saveload-dialog.cpp:829
 msgid "Next"
 msgstr "Наступний"
 
-#: gui/cloudconnectionwizard.cpp:464
+#: gui/cloudconnectionwizard.cpp:493
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "Інше хмарне середовище вже є активним. Чи ви хочете припинити процес?"
 
-#: gui/cloudconnectionwizard.cpp:464 gui/downloaddialog.cpp:118
+#: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:136
 #: gui/fluidsynth-dialog.cpp:217 gui/launcher.cpp:415 gui/launcher.cpp:444
 #: gui/launcher.cpp:487 gui/options.cpp:3367 gui/options.cpp:3741
@@ -286,7 +279,7 @@ msgstr "Інше хмарне середовище вже є активним. �
 msgid "Yes"
 msgstr "Так"
 
-#: gui/cloudconnectionwizard.cpp:464 gui/downloaddialog.cpp:118
+#: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:136
 #: gui/fluidsynth-dialog.cpp:217 gui/launcher.cpp:415 gui/launcher.cpp:444
 #: gui/launcher.cpp:487 gui/options.cpp:3367 gui/options.cpp:3741
@@ -299,16 +292,16 @@ msgstr "Так"
 msgid "No"
 msgstr "Ні"
 
-#: gui/cloudconnectionwizard.cpp:473 gui/options.cpp:3376
+#: gui/cloudconnectionwizard.cpp:502 gui/options.cpp:3376
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Заждіть, поки поточне середовище закінчить роботу, і спробуйте знов."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
-#: gui/cloudconnectionwizard.cpp:501
+#: gui/cloudconnectionwizard.cpp:530
 msgid "JSON code contents is malformed."
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:522 gui/downloaddialog.cpp:146
+#: gui/cloudconnectionwizard.cpp:551 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:543 gui/launcher.cpp:547
 #: gui/massadd.cpp:90 gui/options.cpp:2345 gui/predictivedialog.cpp:69
@@ -332,20 +325,20 @@ msgstr ""
 msgid "OK"
 msgstr "OK"
 
-#: gui/cloudconnectionwizard.cpp:523
+#: gui/cloudconnectionwizard.cpp:552
 #, fuzzy
 #| msgid "Incorrect rs file."
 msgid "Incorrect JSON."
 msgstr "Невірний файл rs."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
-#: gui/cloudconnectionwizard.cpp:530
+#: gui/cloudconnectionwizard.cpp:559
 #, fuzzy
 #| msgid "Interact"
 msgid "Interrupted."
 msgstr "Взаємодія"
 
-#: gui/cloudconnectionwizard.cpp:580 gui/options.cpp:3358
+#: gui/cloudconnectionwizard.cpp:609 gui/options.cpp:3358
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -9979,6 +9972,9 @@ msgstr ""
 "завантажити Liberation Fonts, або пакет GNU FreeFont. Вам будуть потрібні "
 "всі шрифти з пакету, який ви оберете, тобто, LiberationMono, LiberationSans "
 "та LiberationSerif, або FreeMono, FreeSans та FreeSerif відповідно."
+
+#~ msgid "so your browser could forward data to ScummVM"
+#~ msgstr "тож ваш переглядач зможе передати дані до ScummVM"
 
 #~ msgid "Speech Options"
 #~ msgstr "Налаштування озвучки"
