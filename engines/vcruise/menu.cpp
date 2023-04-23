@@ -811,8 +811,10 @@ void ReahMainMenuPage::start() {
 
 	Graphics::Surface *buttonGraphic = _menuInterface->getUIGraphic(1);
 
-	Common::Point buttonStateOffset = Common::Point(112, 0);
-	Common::Point buttonTopLeft = Common::Point(492, 66);
+	// FIXME: Unused
+	//Common::Point buttonStateOffset = Common::Point(112, 0);
+	//ommon::Point buttonTopLeft = Common::Point(492, 66);
+
 	const int buttonTopYs[6] = {66, 119, 171, 224, 277, 330};
 
 	for (int i = 0; i < 6; i++) {
