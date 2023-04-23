@@ -158,32 +158,13 @@ Common::String adjustPath(const Common::String &path) {
 bool checkFileExists(const Common::String &filename) {
 	Common::String adjustedPath = adjustPath(filename);
 
-	Common::ArchiveMemberList files;
-	SearchMan.listMatchingMembers(files, adjustedPath);
-
-	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); ++it) {
-		if ((*it)->getName().equalsIgnoreCase(lastPathComponent(adjustedPath, '/'))) {
-			return true;
-		}
-	}
-
-	return false;
+	return SearchMan.hasFile(adjustedPath);
 }
 
 Common::SharedPtr<Common::SeekableReadStream> openFile(const Common::String &filename, int offset, int size) {
 	Common::String adjustedPath = adjustPath(filename);
 
-	Common::SeekableReadStream *file = nullptr;
-	// Try directly from SearchMan first
-	Common::ArchiveMemberList files;
-	SearchMan.listMatchingMembers(files, adjustedPath);
-
-	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); ++it) {
-		if ((*it)->getName().equalsIgnoreCase(lastPathComponent(adjustedPath, '/'))) {
-			file = (*it)->createReadStream();
-			break;
-		}
-	}
+	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(adjustedPath);
 
 	if (offset != 0 || size != -1) {
 		if (size == -1) {
