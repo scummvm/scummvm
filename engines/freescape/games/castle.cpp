@@ -36,6 +36,33 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_playerDepth = 8;
 }
 
+CastleEngine::~CastleEngine() {
+	if (_option) {
+		_option->free();
+		delete _option;
+	}
+}
+
+byte kCastleTitleDOSPalette[16][3] = {
+	{0x00, 0x00, 0x00}, // correct!
+	{0x00, 0x00, 0xaa}, // correct!
+	{0x00, 0x00, 0x00}, // ????
+	{0x00, 0xaa, 0xaa}, // changed
+	{0x55, 0x55, 0x55}, // changed
+	{0x55, 0x55, 0xff}, // changed
+	{0xaa, 0xaa, 0xaa}, // changed
+	{0x55, 0xff, 0xff}, // changed
+	{0xff, 0x55, 0xff}, // changed
+	{0x00, 0x00, 0x00},
+	{0xff, 0xff, 0xff}, // changed
+	{0x00, 0x00, 0x00},
+	{0x00, 0x00, 0x00},
+	{0x00, 0x00, 0x00},
+	{0x00, 0x00, 0x00},
+	{0x00, 0x00, 0x00}
+};
+
+
 Common::SeekableReadStream *CastleEngine::decryptFile(const Common::String filename) {
 	Common::File file;
 	file.open(filename);
@@ -65,16 +92,19 @@ void CastleEngine::loadAssetsDOSFullGame() {
 	if (_renderMode == Common::kRenderEGA) {
 		_viewArea = Common::Rect(39, 31, 278, 150);
 
-		file.open("CMOE.DAT");
+		file.open("CMLE.DAT");
 		_title = load8bitBinImage(&file, 0x0);
-		_title->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
+		_title->setPalette((byte *)&kCastleTitleDOSPalette, 0, 16);
+		file.close();
 
+		file.open("CMOE.DAT");
+		_option = load8bitBinImage(&file, 0x0);
+		_option->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
 		file.close();
 
 		file.open("CME.DAT");
 		_border = load8bitBinImage(&file, 0x0);
 		_border->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
-
 		file.close();
 
 		stream = decryptFile("CMLE");

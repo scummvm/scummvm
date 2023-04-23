@@ -165,7 +165,6 @@ FreescapeEngine::~FreescapeEngine() {
 		delete _border;
 	}
 
-
 	if (_gfx->_isAccelerated) {
 		delete _borderTexture;
 		delete _uiTexture;
