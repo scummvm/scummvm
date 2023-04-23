@@ -969,6 +969,7 @@ void CharacterGenerator::generateStats(int index) {
 
 void CharacterGenerator::modifyMenu() {
 	_vm->removeInputTop();
+	_screen->copyRegion(0, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
 	printStats(_activeBox, 3);
 
 	EoBCharacter *c = &_characters[_activeBox];
