@@ -714,9 +714,16 @@ void CharacterGenerator::createPartyMember() {
 				if (!_vm->shouldQuit())
 					_vm->_gui->getTextInput(_characters[_activeBox].name, (_chargenBoxX[_activeBox] >> 3) - 1, _chargenBoxY[_activeBox] + 41, 7, 0xFF, 0x00, 0xFF);
 			} else {
+				if (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN)
+					_screen->copyRegion(5, 33, 149, 97, 64, 21, 2, 0, Screen::CR_NO_P_CHECK);
 				_screen->printShadedText(_chargenStrings2[11], 149, 100, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
 				if (!_vm->shouldQuit()) {
-					_vm->_gui->getTextInput(_characters[_activeBox].name, 24, 100, 10, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorDarkRed);
+					if (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN)
+						_vm->_gui->getTextInput(_characters[_activeBox].name, 28, 100, 9,
+									_vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorDarkRed);
+					else
+						_vm->_gui->getTextInput(_characters[_activeBox].name, 24, 100, 10,
+									_vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorDarkRed);
 					processNameInput(_activeBox, _vm->guiSettings()->colors.guiColorBlue);
 				}
 			}
