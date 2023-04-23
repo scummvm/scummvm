@@ -223,7 +223,6 @@ void Area::resetArea() {
 
 
 void Area::draw(Freescape::Renderer *gfx) {
-	gfx->clear(_skyColor);
 	assert(_drawableObjects.size() > 0);
 	for (auto &obj : _drawableObjects) {
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
