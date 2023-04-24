@@ -303,24 +303,24 @@ public:
 	/**
 	 * Copy another surface into this one.
 	 */
-	void blitFrom(const Surface &src);
+	void blitFrom(const Surface &src, const byte *srcPalette = nullptr);
 
 	/**
 	 * Copy another surface into this one at a given destination position.
 	 */
-	void blitFrom(const Surface &src, const Common::Point &destPos);
+	void blitFrom(const Surface &src, const Common::Point &destPos, const byte *srcPalette = nullptr);
 
 	/**
 	 * Copy another surface into this one at a given destination position.
 	 */
 	void blitFrom(const Surface &src, const Common::Rect &srcRect,
-		const Common::Point &destPos);
+		const Common::Point &destPos, const byte *srcPalette = nullptr);
 
 	/**
 	 * Copy another surface into this one at a given destination area and perform the potential scaling.
 	 */
 	void blitFrom(const Surface &src, const Common::Rect &srcRect,
-		const Common::Rect &destRect);
+		const Common::Rect &destRect, const byte *srcPalette = nullptr);
 
 	/**
 	 * Copy another surface into this one at a given destination area and perform the potential scaling.
@@ -353,9 +353,10 @@ public:
 	 * @param overrideColor	Optional color to use instead of non-transparent pixels from
 	 *						the source surface.
 	 * @param srcAlpha		Optional additional transparency applied to @p src.
+	 * @param srcPalette	Optional palette if the @p src surface uses a CLUT8 pixel format.
 	 */
 	void transBlitFrom(const Surface &src, uint32 transColor = 0, bool flipped = false,
-		uint32 overrideColor = 0, uint32 srcAlpha = 0xff);
+		uint32 overrideColor = 0, uint32 srcAlpha = 0xff, const byte *srcPalette = nullptr);
 
 	/**
 	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
@@ -367,9 +368,10 @@ public:
 	 * @param overrideColor	Optional color to use instead of non-transparent pixels from
 	 *						the source surface.
 	 * @param srcAlpha		Optional additional transparency applied to @p src.
+	 * @param srcPalette	Optional palette if the @p src surface uses a CLUT8 pixel format.
 	 */
 	void transBlitFrom(const Surface &src, const Common::Point &destPos,
-		uint32 transColor = 0, bool flipped = false, uint32 overrideColor = 0, uint32 srcAlpha = 0xff);
+		uint32 transColor = 0, bool flipped = false, uint32 overrideColor = 0, uint32 srcAlpha = 0xff, const byte *srcPalette = nullptr);
 
 	/**
 	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
@@ -377,9 +379,10 @@ public:
 	 * @param src			Source surface.
 	 * @param destPos		Destination position to draw the surface.
 	 * @param mask			Mask definition.
+	 * @param srcPalette	Optional palette if the @p src surface uses a CLUT8 pixel format.
 	 */
 	void transBlitFrom(const Surface &src, const Common::Point &destPos,
-		const ManagedSurface &mask);
+		const ManagedSurface &mask, const byte *srcPalette = nullptr);
 
 	/**
 	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
@@ -387,9 +390,10 @@ public:
 	 * @param src			Source surface.
 	 * @param destPos		Destination position to draw the surface.
 	 * @param mask			Mask definition.
+	 * @param srcPalette	Optional palette if the @p src surface uses a CLUT8 pixel format.
 	 */
 	void transBlitFrom(const Surface &src, const Common::Point &destPos,
-		const Surface &mask);
+		const Surface &mask, const byte *srcPalette = nullptr);
 
 	/**
 	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
@@ -402,9 +406,21 @@ public:
 	 * @param overrideColor	Optional color to use instead of non-transparent pixels from
 	 *						the source surface.
 	 * @param srcAlpha		Optional additional transparency applied to @p src.
+	 * @param srcPalette	Optional palette if the @p src surface uses a CLUT8 pixel format.
 	 */
 	void transBlitFrom(const Surface &src, const Common::Rect &srcRect, const Common::Point &destPos,
-		uint32 transColor = 0, bool flipped = false, uint32 overrideColor = 0, uint32 srcAlpha = 0xff);
+		uint32 transColor = 0, bool flipped = false, uint32 overrideColor = 0, uint32 srcAlpha = 0xff, const byte *srcPalette = nullptr);
+
+	/**
+	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
+	 *
+	 * @param src			Source surface.
+	 * @param srcRect		Subsection of the source surface to draw.
+	 * @param destRect		Destination area to draw the surface in. This can be sized differently
+	 *						then @p srcRect, allowing for arbitrary scaling of the image.
+	 * @param srcPalette	Palette for the CLUT8  @p src surface.
+	 */
+	void transBlitFrom(const Surface &src, const Common::Rect &srcRect, const Common::Rect &destRect, const byte *srcPalette);
 
 	/**
 	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
@@ -420,10 +436,11 @@ public:
 	 * @param srcAlpha		Optional additional transparency applied to @p src.
 	 * @param mask			Optional parameter with mask definition.
 	 * @param maskOnly		Optional parameter for using mask over @p transColor.
+	 * @param srcPalette	Optional palette if the @p src surface uses a CLUT8 pixel format.
 	 */
 	void transBlitFrom(const Surface &src, const Common::Rect &srcRect, const Common::Rect &destRect,
 		uint32 transColor = 0, bool flipped = false, uint32 overrideColor = 0, uint32 srcAlpha = 0xff,
-		const Surface *mask = nullptr, bool maskOnly = false);
+		const Surface *mask = nullptr, bool maskOnly = false, const byte *srcPalette = nullptr);
 
 	/**
 	 * Copy another surface into this one, ignoring pixels of a designated transparent color.
