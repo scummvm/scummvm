@@ -29,7 +29,7 @@ void AGSWaves::FireUpdate(ScriptMethodParams &params) {
 	PARAMS2(int, getDynamicSprite, bool, Fire2Visible);
 
 	BITMAP *src = _engine->GetSpriteGraphic(getDynamicSprite);
-	uint32 **pixel_src = (uint32 **)_engine->GetRawBitmapSurface(src);
+	uint32 *pixel_src = (uint32 *)_engine->GetRawBitmapSurface(src);
 	int32 src_width = 640;
 	int32 src_height = 360;
 	int32 src_depth = 32;
@@ -82,8 +82,7 @@ void AGSWaves::FireUpdate(ScriptMethodParams &params) {
 
 			av = int((float(255 * (150 - dusts[h].transp))) / 100.0);
 
-
-			pixel_src[setY][setX] = SetColorRGBA(rv, gv, bv, av);
+			pixel_src[(setY * src_width) + setX] = SetColorRGBA(rv, gv, bv, av);
 
 			//drawt.DrawImage(dusts[h].x, dusts[h].y, sg, dusts[h].transp);
 			dusts[h].timlay += int(8.0);
@@ -114,7 +113,7 @@ void AGSWaves::WindUpdate(ScriptMethodParams &params) {
 	int32 src_height = 360;
 	int32 src_depth = 32;
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
-	uint32 **sprite_pixels = (uint32 **)_engine->GetRawBitmapSurface(src);
+	uint32 *sprite_pixels = (uint32 *)_engine->GetRawBitmapSurface(src);
 
 	int by = 0;
 	while (by < 2) {
@@ -182,7 +181,7 @@ void AGSWaves::WindUpdate(ScriptMethodParams &params) {
 				int32 src2_height = 360;
 				int32 src2_depth = 32;
 				_engine->GetBitmapDimensions(src2, &src2_width, &src2_height, &src2_depth);
-				uint32 **sprite_pixels2 = (uint32 **)_engine->GetRawBitmapSurface(src2);
+				uint32 *sprite_pixels2 = (uint32 *)_engine->GetRawBitmapSurface(src2);
 				_engine->ReleaseBitmapSurface(src2);
 
 				int startx = px + setByx;
@@ -213,7 +212,7 @@ void AGSWaves::WindUpdate(ScriptMethodParams &params) {
 						if (netY < 0) netY = 0;
 						if (netY > src_height - 1) netY = src_height - 1;
 
-						int clr = sprite_pixels2[setY][setX];
+						int clr = sprite_pixels2[(setY * src2_width) + setX];
 						int rv = getRcolor(clr);
 						int gv = getGcolor(clr);
 						int bv = getBcolor(clr);
@@ -221,7 +220,7 @@ void AGSWaves::WindUpdate(ScriptMethodParams &params) {
 
 						av = int(float((av * (100 - tp))) / 100.0);
 
-						sprite_pixels[netY][netX] = SetColorRGBA(rv, gv, bv, av);
+						sprite_pixels[(netY * src_width) + netX] = SetColorRGBA(rv, gv, bv, av);
 						nx++;
 					}
 					ny++;
@@ -298,7 +297,7 @@ void AGSWaves::WindUpdate(ScriptMethodParams &params) {
 				int32 src2_height = 360;
 				int32 src2_depth = 32;
 				_engine->GetBitmapDimensions(src2, &src2_width, &src2_height, &src2_depth);
-				uint32 **sprite_pixels2 = (uint32 **)_engine->GetRawBitmapSurface(src2);
+				uint32 *sprite_pixels2 = (uint32 *)_engine->GetRawBitmapSurface(src2);
 				_engine->ReleaseBitmapSurface(src2);
 
 				int startx = px + setByx;
@@ -328,7 +327,7 @@ void AGSWaves::WindUpdate(ScriptMethodParams &params) {
 						if (netY < 0) netY = 0;
 						if (netY > src_height - 1) netY = src_height - 1;
 
-						int clr = sprite_pixels2[setY][setX];
+						int clr = sprite_pixels2[(setY * src2_width) + setX];
 						int rv = getRcolor(clr);
 						int gv = getGcolor(clr);
 						int bv = getBcolor(clr);
@@ -336,7 +335,7 @@ void AGSWaves::WindUpdate(ScriptMethodParams &params) {
 
 						av = int(float((av * (100 - tp))) / 100.0);
 
-						sprite_pixels[netY][netX] = SetColorRGBA(rv, gv, bv, av);
+						sprite_pixels[(netY * src_width) + netX] = SetColorRGBA(rv, gv, bv, av);
 
 						nx++;
 					}
@@ -400,7 +399,7 @@ void AGSWaves::WindUpdate(ScriptMethodParams &params) {
 					int32 src2_height = 360;
 					int32 src2_depth = 32;
 					_engine->GetBitmapDimensions(src2, &src2_width, &src2_height, &src2_depth);
-					uint32 **sprite_pixels2 = (uint32 **)_engine->GetRawBitmapSurface(src2);
+					uint32 *sprite_pixels2 = (uint32 *)_engine->GetRawBitmapSurface(src2);
 					_engine->ReleaseBitmapSurface(src2);
 
 					int startx = px + setByx;
@@ -431,7 +430,7 @@ void AGSWaves::WindUpdate(ScriptMethodParams &params) {
 							if (netY < 0) netY = 0;
 							if (netY > src_height - 1) netY = src_height - 1;
 
-							int clr = sprite_pixels2[setY][setX];
+							int clr = sprite_pixels2[(setY * src2_width) + setX];
 							int rv = getRcolor(clr);
 							int gv = getGcolor(clr);
 							int bv = getBcolor(clr);
@@ -439,7 +438,7 @@ void AGSWaves::WindUpdate(ScriptMethodParams &params) {
 
 							av = int(float((av * (100 - tp))) / 100.0);
 
-							sprite_pixels[netY][netX] = SetColorRGBA(rv, gv, bv, av);
+							sprite_pixels[(netY * src_width) + netX] = SetColorRGBA(rv, gv, bv, av);
 							nx++;
 						}
 						ny++;
@@ -532,7 +531,6 @@ void AGSWaves::RainUpdate(ScriptMethodParams &params) {
 	int32 src_height = 360;
 	int32 src_depth = 32;
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
-//	uint32 **sprite_pixels = (uint32 **)_engine->GetRawBitmapSurface(src);
 
 	int rotAngle = 6;
 	int rotTrans = 60 + Random(40 + 60);//Random(103)+122;
@@ -697,7 +695,7 @@ void AGSWaves::DrawLineCustom(int x1, int y1, int x2, int y2, int graphic, int s
 	int32 src_height = 360;
 	int32 src_depth = 32;
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
-	uint32 **sprite_pixels = (uint32 **)_engine->GetRawBitmapSurface(src);
+	uint32 *sprite_pixels = (uint32 *)_engine->GetRawBitmapSurface(src);
 
 	int DiffA = -26;
 
@@ -724,7 +722,7 @@ void AGSWaves::DrawLineCustom(int x1, int y1, int x2, int y2, int graphic, int s
 
 		if (xx2 < 0 || xx2 > src_width - 1 || yy2 > src_height - 1 || yy2 < 0) {
 		} else {
-			sprite_pixels[yy2][xx2] = SetColorRGBA(setR, setG, setB, setA + DiffA + (ALine * TranDif));
+			sprite_pixels[(yy2 * src_width) + xx2] = SetColorRGBA(setR, setG, setB, setA + DiffA + (ALine * TranDif));
 		}
 
 		int xx3 = x + 320;
@@ -732,7 +730,7 @@ void AGSWaves::DrawLineCustom(int x1, int y1, int x2, int y2, int graphic, int s
 
 		if (xx3 < 0 || xx3 > src_width - 1 || yy3 > src_height - 1 || yy3 < 0) {
 		} else {
-			sprite_pixels[yy3][xx3] = SetColorRGBA(setR, setG, setB, setA + DiffA + (ALine * TranDif));
+			sprite_pixels[(yy3 * src_width) + xx3] = SetColorRGBA(setR, setG, setB, setA + DiffA + (ALine * TranDif));
 		}
 
 		int xx = x;
@@ -740,7 +738,7 @@ void AGSWaves::DrawLineCustom(int x1, int y1, int x2, int y2, int graphic, int s
 
 		if (xx < 0 || xx > src_width - 1 || yy > src_height - 1 || yy < 0) {
 		} else {
-			sprite_pixels[yy][xx] = SetColorRGBA(setR, setG, setB, setA + (ALine * TranDif));
+			sprite_pixels[(yy * src_width) + xx] = SetColorRGBA(setR, setG, setB, setA + (ALine * TranDif));
 			ALine++;
 		}
 
@@ -762,20 +760,20 @@ void AGSWaves::DrawLineCustom(int x1, int y1, int x2, int y2, int graphic, int s
 			yy2 = y;
 			if (xx2 < 0 || xx2 > src_width - 1 || yy2 > src_height - 1 || yy2 < 0) {
 			} else {
-				sprite_pixels[yy2][xx2] = SetColorRGBA(setR, setG, setB, setA + DiffA + (ALine * TranDif));
+				sprite_pixels[(yy2 * src_width) + xx2] = SetColorRGBA(setR, setG, setB, setA + DiffA + (ALine * TranDif));
 			}
 			xx3 = x + 320;
 			yy3 = y;
 			if (xx3 < 0 || xx3 > src_width - 1 || yy3 > src_height - 1 || yy3 < 0) {
 			} else {
-				sprite_pixels[yy3][xx3] = SetColorRGBA(setR, setG, setB, setA + DiffA + (ALine * TranDif));
+				sprite_pixels[(yy3 * src_width) + xx3] = SetColorRGBA(setR, setG, setB, setA + DiffA + (ALine * TranDif));
 			}
 
 			xx = x;
 			yy = y;
 			if (xx < 0 || xx > src_width - 1 || yy > src_height - 1 || yy < 0) {
 			} else {
-				sprite_pixels[yy][xx] = SetColorRGBA(setR, setG, setB, setA + (ALine * TranDif));
+				sprite_pixels[(yy * src_width) + xx] = SetColorRGBA(setR, setG, setB, setA + (ALine * TranDif));
 				ALine++;
 			}
 
@@ -798,7 +796,7 @@ void AGSWaves::DrawLineCustom(int x1, int y1, int x2, int y2, int graphic, int s
 
 		if (xx2 < 0 || xx2 > src_width - 1 || yy2 > src_height - 1 || yy2 < 0) {
 		} else {
-			sprite_pixels[yy2][xx2] = SetColorRGBA(setR, setG, setB, setA + DiffA + (ALine * TranDif));
+			sprite_pixels[(yy2 * src_width) + xx2] = SetColorRGBA(setR, setG, setB, setA + DiffA + (ALine * TranDif));
 		}
 
 		int xx3 = x + 320;
@@ -806,14 +804,14 @@ void AGSWaves::DrawLineCustom(int x1, int y1, int x2, int y2, int graphic, int s
 
 		if (xx3 < 0 || xx3 > src_width - 1 || yy3 > src_height - 1 || yy3 < 0) {
 		} else {
-			sprite_pixels[yy3][xx3] = SetColorRGBA(setR, setG, setB, setA + DiffA + (ALine * TranDif));
+			sprite_pixels[(yy3 * src_width) + xx3] = SetColorRGBA(setR, setG, setB, setA + DiffA + (ALine * TranDif));
 		}
 		int xx = x;
 		int yy = y;
 
 		if (xx < 0 || xx > src_width - 1 || yy > src_height - 1 || yy < 0) {
 		} else {
-			sprite_pixels[yy][xx] = SetColorRGBA(setR, setG, setB, setA + (ALine * TranDif));
+			sprite_pixels[(yy * src_width) + xx] = SetColorRGBA(setR, setG, setB, setA + (ALine * TranDif));
 			ALine++;
 		}
 
@@ -834,19 +832,19 @@ void AGSWaves::DrawLineCustom(int x1, int y1, int x2, int y2, int graphic, int s
 			yy2 = y;
 			if (xx2 < 0 || xx2 > src_width - 1 || yy2 > src_height - 1 || yy2 < 0) {
 			} else {
-				sprite_pixels[yy2][xx2] = SetColorRGBA(setR, setG, setB, setA + DiffA + (ALine * TranDif));
+				sprite_pixels[(yy2 * src_width) + xx2] = SetColorRGBA(setR, setG, setB, setA + DiffA + (ALine * TranDif));
 			}
 			xx3 = x + 320;
 			yy3 = y;
 			if (xx3 < 0 || xx3 > src_width - 1 || yy3 > src_height - 1 || yy3 < 0) {
 			} else {
-				sprite_pixels[yy3][xx3] = SetColorRGBA(setR, setG, setB, setA + DiffA + (ALine * TranDif));
+				sprite_pixels[(yy3 * src_width) + xx3] = SetColorRGBA(setR, setG, setB, setA + DiffA + (ALine * TranDif));
 			}
 			xx = x;
 			yy = y;
 			if (xx < 0 || xx > src_width - 1 || yy > src_height - 1 || yy < 0) {
 			} else {
-				sprite_pixels[yy][xx] = SetColorRGBA(setR, setG, setB, setA + (ALine * TranDif));
+				sprite_pixels[(yy * src_width) + xx] = SetColorRGBA(setR, setG, setB, setA + (ALine * TranDif));
 				ALine++;
 			}
 			i++;
