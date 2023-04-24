@@ -294,7 +294,7 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 		assert(srcFormat.bytesPerPixel == 1 || srcFormat.bytesPerPixel == 2 || srcFormat.bytesPerPixel == 3 || srcFormat.bytesPerPixel == 4);
 		if (srcFormat.bytesPerPixel == 1) {
 			// When the pixel format differs, the destination must be non-paletted
-			assert(!destFormat.isCLUT8() || srcPalette);
+			assert(!destFormat.isCLUT8() && srcPalette);
 		}
 	}
 
