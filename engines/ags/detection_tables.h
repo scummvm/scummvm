@@ -326,6 +326,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "mage", "Mage's Initiation: Reign of the Elements" },
 	{ "metaldead", "Metal Dead" },
 	{ "mountainsofmadness", "Chronicle of Innsmouth: Mountains of Madness" },
+	{ "murdercases", "Murder Cases" },
 	{ "mybigsister", "My Big Sister" },
 	{ "mybigsisterrm", "My Big Sister: Remastered" },
 	{ "nellycootalot-hd", "Nelly Cootalot: Spoonbeaks Ahoy! HD" },
@@ -4492,6 +4493,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DETECTION_ENTRY("mmmwayne", "Police_Molest-SP.exe", "bb59de174d70797d774dec76a171352d", 6740315, Common::DE_DEU, "Trailer", nullptr, ADGF_DEMO),
 	DEMO_ENTRY_EN("monkeywrench", "monkeywrench.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 27454116),
 	DEMO_ENTRY_EN("morphine", "Morphine.exe", "0a04523bb2e6fe2b4eb8eee70217ac16", 113435250),
+	DEMO_ENTRY("murdercases", "Murder Cases Demo.exe", "e01f39b38593e3f871a803908daa20e7", 431399292),
+	DEMO_ENTRY("murdercases", "Murder Cases Demo.exe", "e01f39b38593e3f871a803908daa20e7", 431401071),
 	DEMO_ENTRY_EN("murderinminnesota", "Game.exe", "495d45fb8adfd49690ae3b97921feec6", 14820679),  //v1 Windows
 	DEMO_ENTRY_EN("murderinminnesota", "Game.ags", "b4ed9f317081139a925d1b3a0260c1ad", 12340023),  //v1 Linux
 	DEMO_ENTRY_EN("murderinminnesota", "Game.exe", "495d45fb8adfd49690ae3b97921feec6", 15258174),  //v2 Windows
