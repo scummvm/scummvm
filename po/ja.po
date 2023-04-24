@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-23 14:30+0000\n"
-"PO-Revision-Date: 2023-04-10 14:43+0000\n"
+"PO-Revision-Date: 2023-04-24 08:35+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -120,12 +120,12 @@ msgid "Quick Mode: Step 1"
 msgstr "Quickモード：ステップ1"
 
 #: gui/cloudconnectionwizard.cpp:206
-#, fuzzy
-#| msgid "In this mode, Local Webserver must be running,"
 msgid ""
 "In this mode, Local Webserver must be running,\n"
 "so your browser could forward data to ScummVM"
-msgstr "ブラウザーがScummVMにデータを転送するため、"
+msgstr ""
+"ブラウザーがScummVMにデータを転送するため、\n"
+"このモードではLocal Webserverの起動が必要です"
 
 #: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:3657
 msgid "Stop server"
@@ -161,12 +161,12 @@ msgid "Open URL"
 msgstr "URLを開く"
 
 #: gui/cloudconnectionwizard.cpp:266
-#, fuzzy
-#| msgid "It will automatically pass the data to ScummVM,"
 msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
-msgstr "ScummVMに自動でデータを転送し、"
+msgstr ""
+"ScummVMに自動でデータを転送し、\n"
+"エラー発生時は警告を表示します。"
 
 #: gui/cloudconnectionwizard.cpp:279
 msgid "Local Webserver address: "
@@ -198,6 +198,9 @@ msgid ""
 "find it on Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
+"ScummVMへのJSONコードの転送失敗時、\n"
+"「トラブルシューティング」をクリックし、\n"
+"次のステップに進みます。"
 
 #: gui/cloudconnectionwizard.cpp:350
 msgid "Manual Mode: Step 2"
