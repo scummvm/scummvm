@@ -14992,9 +14992,39 @@ static const uint16 qfg2PatchImportCharType[] = {
 	PATCH_END
 };
 
+// On day 27, approaching the Emir's palace at night without a visa crashes with
+//  a missing text error. The script is missing the first boolean parameter to
+//  the game-over procedure, causing the other parameters to be misinterpreted
+//  as text resource numbers.
+//
+// We fix this by adding the missing parameter, just like script 380's version.
+//
+// Applies to: All versions
+// Responsible method: backToInn:changeState(6)
+static const uint16 qfg2SignatureVisaCrash[] = {
+	0x39, SIG_MAGICDWORD, 0x04,        // pushi 04
+	0x38, SIG_UINT16(0x0191),          // pushi 0191
+	0x39, 0x12,                        // pushi 12
+	0x39, SIG_ADDTOOFFSET(+1),         // pushi title
+	0x72, SIG_ADDTOOFFSET(+2),         // lofsa "...Get a visa"
+	0x36,                              // push
+	0x47, 0x01, 0x18, 0x08,            // calle proc1_24 [ game-over, missing first parameter ]
+	SIG_END
+};
+
+static const uint16 qfg2PatchVisaCrash[] = {
+	0x39, 0x05,                        // pushi 05
+	0x78,                              // push1
+	PATCH_GETORIGINALBYTES(2, 7),
+	0x74, PATCH_GETORIGINALUINT16ADJUST(10, -1), // lofss "...Get a visa"
+	0x47, 0x01, 0x18, 0x0a,            // calle proc1_24 [ game-over ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                       patch
 static const SciScriptPatcherEntry qfg2Signatures[] = {
 	{  true,    98, "disable speed test",                          1, sci01SpeedTestGlobalSignature,  sci01SpeedTestGlobalPatch },
+	{  true,   401, "visa crash",                                  1, qfg2SignatureVisaCrash,         qfg2PatchVisaCrash },
 	{  true,   665, "getting back on saurus freeze fix",           1, qfg2SignatureSaurusFreeze,      qfg2PatchSaurusFreeze },
 	{  true,   695, "Oops Jackalmen fix",                          1, qfg2SignatureOopsJackalMen,     qfg2PatchOopsJackalMen },
 	{  true,   805, "import character type fix",                   1, qfg2SignatureImportCharType,    qfg2PatchImportCharType },
