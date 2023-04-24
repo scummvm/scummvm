@@ -48,10 +48,12 @@ void AudioSpeech::mixerChannelEnded(int channel, void *data) {
 
 AudioSpeech::AudioSpeech(BladeRunnerEngine *vm) {
 	_vm = vm;
-	// _speechVolume here sets a percentage to be appied on the specified voice cue volume
-	// before sending it to the audio player
-	// (setting _speechVolume to 100 renders it indifferent)
-	_speechVolume = BLADERUNNER_ORIGINAL_SETTINGS ? 50 : 100;
+	// _speechVolumeFactorOriginalEngine here sets a percentage to be applied on the voice cues' volume
+	// before sending them to the audio player.
+	// This is how the original engine set the volume via the in-game KIA volume slider controls.
+	// Setting _speechVolumeFactorOriginalEngine to 100, for the purposes ScummVM engine, renders it indifferent,
+	// so sound volume can be controlled by ScummVM's Global Main Menu / ConfMan/ syncSoundSettings().
+	_speechVolumeFactorOriginalEngine = BLADERUNNER_ORIGINAL_SETTINGS ? 50 : 100;
 	_isActive = false;
 	_data = new byte[kBufferSize];
 	_channel = -1;
@@ -66,6 +68,7 @@ AudioSpeech::~AudioSpeech() {
 	delete[] _data;
 }
 
+// pan should be in [-100, 100]
 bool AudioSpeech::playSpeech(const Common::String &name, int pan) {
 	if (isPlaying()) {
 		stopSpeech();
@@ -98,16 +101,19 @@ bool AudioSpeech::playSpeech(const Common::String &name, int pan) {
 
 	AudStream *audioStream = new AudStream(_data, _vm->_shortyMode ? 33000 : -1);
 
-	_channel = _vm->_audioMixer->play(
-		Audio::Mixer::kSpeechSoundType,
-		audioStream,
-		100,
-		false,
-		_speechVolume,
-		pan,
-		mixerChannelEnded,
-		this,
-		audioStream->getLength());
+	// Speech plays here with priority 100 (max)
+	// Using directly _speechVolumeFactorOriginalEngine as the volume for audioMixer::play(),
+	// which for the ScummVM engine is 100, so speech volume will be only determined
+	// by the ScummVM volume for the speech sound type.
+	_channel = _vm->_audioMixer->play(Audio::Mixer::kSpeechSoundType,
+	                                  audioStream,
+	                                  100,
+	                                  false,
+	                                  _speechVolumeFactorOriginalEngine,
+	                                  pan,
+	                                  mixerChannelEnded,
+	                                  this,
+	                                  audioStream->getLength());
 
 	_isActive = true;
 
@@ -128,21 +134,26 @@ bool AudioSpeech::isPlaying() const {
 	return _isActive;
 }
 
+// volume should be in [0, 100]
+// priority should be in [0, 100]
+// pan is calculated based on actor's position with Actor::soundPan()
 bool AudioSpeech::playSpeechLine(int actorId, int sentenceId, int volume, int a4, int priority) {
 	int pan = _vm->_actors[actorId]->soundPan();
 	Common::String name = Common::String::format("%02d-%04d%s.AUD", actorId, sentenceId, _vm->_languageCode.c_str());
-	return _vm->_audioPlayer->playAud(name, _speechVolume * volume / 100, pan, pan, priority, kAudioPlayerOverrideVolume, Audio::Mixer::kSpeechSoundType);
+	return _vm->_audioPlayer->playAud(name, (volume * _speechVolumeFactorOriginalEngine) / 100, pan, pan, priority, kAudioPlayerOverrideVolume, Audio::Mixer::kSpeechSoundType);
 }
 
-// We no longer set the _speechVolume (speech default volume percent) via a public method
-// It is set in AudioSpeech::AudioSpeech() constructor and keeps its value constant.
-//void AudioSpeech::setVolume(int volume) {
-//	_speechVolume = volume;
-//}
+#if BLADERUNNER_ORIGINAL_SETTINGS
+// We no longer set the _speechVolumeFactorOriginalEngine via a public method.
+// For the ScummVM Engine's purposes it is set in AudioSpeech::AudioSpeech() constructor and keeps its value constant.
+void AudioSpeech::setVolume(int volume) {
+	_speechVolumeFactorOriginalEngine = volume;
+}
 
 int AudioSpeech::getVolume() const {
-	return _speechVolume;
+	return _speechVolumeFactorOriginalEngine;
 }
+#endif // BLADERUNNER_ORIGINAL_SETTINGS
 
 void AudioSpeech::playSample() {
 #if BLADERUNNER_ORIGINAL_BUGS

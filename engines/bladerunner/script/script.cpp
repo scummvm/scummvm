@@ -1102,11 +1102,16 @@ int ScriptBase::Random_Query(int min, int max) {
 	return _vm->_rnd.getRandomNumberRng(min, max);
 }
 
+// volume should be in [0, 100]
+// panStart, panEnd should be in [-100, 100]
+// priority should be in [0, 100]
 void ScriptBase::Sound_Play(int id, int volume, int panStart, int panEnd, int priority) {
 	debugC(6, kDebugScript, "Sound_Play(%d, %d, %d, %d, %d)", id, volume, panStart, panEnd, priority);
 	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(id), volume, panStart, panEnd, priority);
 }
 
+// volume should be in [0, 100]
+// priority should be in [0, 100]
 void ScriptBase::Sound_Play_Speech_Line(int actorId, int sentenceId, int volume, int a4, int priority) {
 	debugC(kDebugScript, "Sound_Play_Speech_Line(%d, %d, %d, %d, %d)", actorId, sentenceId, volume, a4, priority);
 	_vm->_audioSpeech->playSpeechLine(actorId, sentenceId, volume, a4, priority);
@@ -1177,11 +1182,16 @@ void ScriptBase::Footstep_Sound_Override_Off() {
 	_vm->_scene->_set->resetFoodstepSoundOverride();
 }
 
+// volume should be in [0, 100]
+// pan should be in [-100, 100]
+// A negative (typically -1) value for timePlaySeconds, means "play the whole music track"
 bool ScriptBase::Music_Play(int musicId, int volume, int pan, int32 timeFadeInSeconds, int32 timePlaySeconds, int loop, int32 timeFadeOutSeconds) {
 	debugC(kDebugScript, "Music_Play(%d, %d, %d, %d, %d, %d, %d)", musicId, volume, pan, timeFadeInSeconds, timePlaySeconds, loop, timeFadeOutSeconds);
 	return _vm->_music->play(_vm->_gameInfo->getMusicTrack(musicId), volume, pan, timeFadeInSeconds, timePlaySeconds, loop, timeFadeOutSeconds);
 }
 
+// volume should be in [0, 100], with "-1" being a special value for skipping volume adjustment 
+// pan should be in [-100, 100], with "-101" being a special value for skipping pan (balance) adjustment
 void ScriptBase::Music_Adjust(int volume, int pan, uint32 delaySeconds) {
 	debugC(kDebugScript, "Music_Adjust(%d, %d, %u)", volume, pan, delaySeconds);
 	_vm->_music->adjust(volume, pan, delaySeconds);
@@ -1228,6 +1238,10 @@ void ScriptBase::Outtake_Play(int id, int noLocalization, int container) {
 	_vm->outtakePlay(id, noLocalization, container);
 }
 
+// volumeMin, volumeMax should be in [0, 100]
+// panStartMin, panStartMax should be in [-100, 100]
+// panEndMin, panEndMax should be in [-100, 100], with "-101" being a special value for skipping pan (balance) adjustment
+// priority should be in [0, 100]
 void ScriptBase::Ambient_Sounds_Add_Sound(int sfxId, uint32 delayMinSeconds, uint32 delayMaxSeconds, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk) {
 	debugC(kDebugScript, "Ambient_Sounds_Add_Sound(%d, %u, %u, %d, %d, %d, %d, %d, %d, %d, %d)", sfxId, delayMinSeconds, delayMaxSeconds, volumeMin, volumeMax, panStartMin, panStartMax, panEndMin, panEndMax, priority, unk);
 	_vm->_ambientSounds->addSound(sfxId, delayMinSeconds, delayMaxSeconds, volumeMin, volumeMax, panStartMin, panStartMax, panEndMin, panEndMax, priority, unk);
@@ -1238,6 +1252,10 @@ void  ScriptBase::Ambient_Sounds_Remove_Sound(int sfxId, bool stopPlaying) {
 	_vm->_ambientSounds->removeNonLoopingSound(sfxId,  stopPlaying);
 }
 
+// volumeMin, volumeMax should be in [0, 100]
+// panStartMin, panStartMax should be in [-100, 100]
+// panEndMin, panEndMax should be in [-100, 100], with "-101" being a special value for skipping pan (balance) adjustment
+// priority should be in [0, 100]
 void ScriptBase::Ambient_Sounds_Add_Speech_Sound(int actorId, int sentenceId, uint32 delayMinSeconds, uint32 delayMaxSeconds, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk) {
 	debugC(kDebugScript, "Ambient_Sounds_Add_Speech_Sound(%d, %d, %u, %u, %d, %d, %d, %d, %d, %d, %d, %d)", actorId, sentenceId, delayMinSeconds, delayMaxSeconds, volumeMin, volumeMax, panStartMin, panStartMax, panEndMin, panEndMax, priority, unk);
 	_vm->_ambientSounds->addSpeech(actorId, sentenceId, delayMinSeconds, delayMaxSeconds, volumeMin, volumeMax, panStartMin, panStartMax, panEndMin, panEndMax, priority, unk);
@@ -1245,11 +1263,18 @@ void ScriptBase::Ambient_Sounds_Add_Speech_Sound(int actorId, int sentenceId, ui
 
 // ScriptBase::Ambient_Sounds_Remove_Speech_Sound
 
+
+// volume should be in [0, 100]
+// panStart, panEnd should be in [-100, 100]
+// priority should be in [0, 100]
 void ScriptBase::Ambient_Sounds_Play_Sound(int sfxId, int volume, int panStart, int panEnd, int priority) {
 	debugC(kDebugScript, "Ambient_Sounds_Play_Sound(%d, %d, %d, %d, %d)", sfxId, volume, panStart, panEnd, priority);
 	_vm->_ambientSounds->playSound(sfxId, volume, panStart, panEnd, priority);
 }
 
+// volume should be in [0, 100]
+// panStart, panEnd should be in [-100, 100]
+// priority should be in [0, 100]
 void ScriptBase::Ambient_Sounds_Play_Speech_Sound(int actorId, int sentenceId, int volume, int panStart, int panEnd, int priority) {
 	debugC(kDebugScript, "Ambient_Sounds_Play_Speech_Sound(%d, %d, %d, %d, %d, %d)", actorId, sentenceId, volume, panStart, panEnd, priority);
 	_vm->_ambientSounds->playSpeech(actorId, sentenceId, volume, panStart, panEnd, priority);
@@ -1260,11 +1285,15 @@ void ScriptBase::Ambient_Sounds_Remove_All_Non_Looping_Sounds(bool stopPlaying) 
 	_vm->_ambientSounds->removeAllNonLoopingSounds(stopPlaying);
 }
 
+// volume should be in [0, 100]
+// pan should be in [-100, 100]
 void ScriptBase::Ambient_Sounds_Add_Looping_Sound(int sfxId, int volume, int pan, uint32 delaySeconds) {
 	debugC(kDebugScript, "Ambient_Sounds_Add_Looping_Sound(%d, %d, %d, %u)", sfxId, volume, pan, delaySeconds);
 	_vm->_ambientSounds->addLoopingSound(sfxId, volume, pan, delaySeconds);
 }
 
+// volume should be in [0, 100], with "-1" being a special value for skipping volume adjustment 
+// pan should be in [-100, 100], with "-101" being a special value for skipping pan (balance) adjustment
 void ScriptBase::Ambient_Sounds_Adjust_Looping_Sound(int sfxId, int volume, int pan, uint32 delaySeconds) {
 	debugC(kDebugScript, "Ambient_Sounds_Adjust_Looping_Sound(%d, %d, %d, %u)", sfxId, volume, pan, delaySeconds);
 	_vm->_ambientSounds->adjustLoopingSound(sfxId, volume, pan, delaySeconds);

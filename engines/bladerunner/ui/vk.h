@@ -66,8 +66,8 @@ class VK {
 
 	Common::Array<Common::Array<Question> > _questions;
 
-	int _volumeAmbient;
-	int _volumeMusic;
+	int _ambientVolumeFactorOutsideVK; // should be in [0, 100]
+	int _musicVolumeFactorOutsideVK;   // should be in [0, 100]
 	int _soundTrackId1;
 	int _soundTrackId2;
 	int _soundTrackId3;
@@ -133,7 +133,7 @@ public:
 
 	void tick();
 
-	void resume();
+//	void resume();
 
 	void handleMouseDown(int mouseX, int mouseY, bool mainButton);
 	void handleMouseUp(int mouseX, int mouseY, bool mainButton);

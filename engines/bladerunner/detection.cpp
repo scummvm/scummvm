@@ -34,6 +34,7 @@
 
 static const DebugChannelDef debugFlagList[] = {
 	{BladeRunner::kDebugScript, "Script", "Debug the scripts"},
+	{BladeRunner::kDebugSound, "Sound", "Debug the sound"},
 	DEBUG_CHANNEL_END
 };
 

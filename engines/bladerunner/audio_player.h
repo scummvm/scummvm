@@ -29,7 +29,7 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 
-#include "bladerunner/bladerunner.h" // For BLADERUNNER_ORIGINAL_BUGS symbol
+#include "bladerunner/bladerunner.h" // For BLADERUNNER_ORIGINAL_BUGS and BLADERUNNER_ORIGINAL_SETTINGS symbols
 
 namespace BladeRunner {
 
@@ -56,8 +56,8 @@ class AudioPlayer {
 		bool                isActive;
 		int                 channel;
 		int                 priority;
-		int                 volume;
-		int                 pan;
+		int                 volume;   // should be in [0, 100]
+		int                 pan;      // should be in [-100, 100]
 		AudStream          *stream;
 	};
 
@@ -65,7 +65,7 @@ class AudioPlayer {
 
 	Common::Mutex _mutex;
 	Track         _tracks[kTracks];
-	int           _sfxVolume;
+	int           _sfxVolumeFactorOriginalEngine; // should be in [0, 100] - Unused in ScummVM Engine, used in original engine
 
 public:
 	AudioPlayer(BladeRunnerEngine *vm);
@@ -76,11 +76,13 @@ public:
 	uint32 getLength(int track) const;
 	void stop(int track, bool immediately);
 	void stopAll();
-	void adjustVolume(int track, int volume, uint32 delaySeconds, bool overrideVolume);
+	void adjustVolume(int track, int volume, uint32 delaySeconds, bool explicitVolumeAdjustment);
 	void adjustPan(int track, int pan, uint32 delaySeconds);
 
-//	void setVolume(int volume);
+#if BLADERUNNER_ORIGINAL_SETTINGS
+	void setVolume(int volume);
 	int getVolume() const;
+#endif // BLADERUNNER_ORIGINAL_SETTINGS
 	void playSample();
 
 private:

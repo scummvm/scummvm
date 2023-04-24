@@ -22,6 +22,8 @@
 #ifndef BLADERUNNER_AUDIO_SPEECH_H
 #define BLADERUNNER_AUDIO_SPEECH_H
 
+#include "bladerunner/bladerunner.h" // For BLADERUNNER_ORIGINAL_SETTINGS symbol
+
 #include "common/str.h"
 #include "common/types.h"
 
@@ -35,7 +37,7 @@ class AudioSpeech {
 
 	BladeRunnerEngine *_vm;
 
-	int   _speechVolume;
+	int   _speechVolumeFactorOriginalEngine;  // should be in [0, 100] - Unused in ScummVM Engine, used in original engine
 	bool  _isActive;
 	int   _channel;
 	byte *_data;
@@ -50,8 +52,10 @@ public:
 
 	bool playSpeechLine(int actorId, int sentenceId, int volume, int a4, int priority);
 
-//	void setVolume(int volume);
+#if BLADERUNNER_ORIGINAL_SETTINGS
+	void setVolume(int volume);
 	int getVolume() const;
+#endif // BLADERUNNER_ORIGINAL_SETTINGS
 	void playSample();
 
 private:

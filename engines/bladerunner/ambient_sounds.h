@@ -22,6 +22,8 @@
 #ifndef BLADERUNNER_AMBIENT_SOUNDS_H
 #define BLADERUNNER_AMBIENT_SOUNDS_H
 
+#include "bladerunner/bladerunner.h" // For BLADERUNNER_ORIGINAL_SETTINGS symbol
+
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 
@@ -47,15 +49,15 @@ class AmbientSounds {
 		uint32         delayMax;          // milliseconds
 		uint32         nextPlayTimeStart; // milliseconds
 		uint32         nextPlayTimeDiff;  // milliseconds
-		int            volumeMin;
-		int            volumeMax;
-		int            volume;
-		int            panStartMin;
-		int            panStartMax;
-		int            panEndMin;
-		int            panEndMax;
-		int            priority;
-		int32          soundType; // new - not stored in saved games
+		int            volumeMin;   // should be in [0, 100]
+		int            volumeMax;   // should be in [0, 100]
+		int            volume;      // should be in [0, 100] (calculated as a random value within [volumeMin, volumeMax]
+		int            panStartMin; // should be in [-100, 100]
+		int            panStartMax; // should be in [-100, 100]
+		int            panEndMin;   // should be in [-100, 100], with "-101" being a special value for skipping pan (balance) adjustment
+		int            panEndMax;   // should be in [-100, 100], with "-101" being a special value for skipping pan (balance) adjustment
+		int            priority;    // should be in [0, 100]
+		int32          soundType;   // new - not stored in saved games
 	};
 
 	struct LoopingSound {
@@ -63,8 +65,8 @@ class AmbientSounds {
 		Common::String name;
 		int32          hash;
 		int            audioPlayerTrack;
-		int            volume;
-		int            pan;
+		int            volume; // should be in [0, 100]
+		int            pan;    // should be in [-100, 100]
 		int32          soundType; // new - not stored in saved games
 	};
 
@@ -72,30 +74,27 @@ class AmbientSounds {
 
 	NonLoopingSound *_nonLoopingSounds;
 	LoopingSound    *_loopingSounds;
-	int              _ambientVolume;
+	int              _ambientVolumeFactorOriginalEngine; // should be in [0, 100]
 
 public:
 	AmbientSounds(BladeRunnerEngine *vm);
 	~AmbientSounds();
 
-	void addSound(
-		int sfxId,
-		uint32 delayMinSeconds, uint32 delayMaxSeconds,
-		int volumeMin, int volumeMax,
-		int panStartMin, int panStartMax,
-		int panEndMin, int panEndMax,
-		int priority, int unk
-	);
+	void addSound(int sfxId,
+	              uint32 delayMinSeconds, uint32 delayMaxSeconds,
+	              int volumeMin, int volumeMax,
+	              int panStartMin, int panStartMax,
+	              int panEndMin, int panEndMax,
+	              int priority, int unk);
 	void removeNonLoopingSound(int sfxId, bool stopPlaying);
 	void removeAllNonLoopingSounds(bool stopPlaying);
 
-	void addSpeech(
-		int actorId, int sentenceId,
-		uint32 delayMinSeconds, uint32 delayMaxSeconds,
-		int volumeMin, int volumeMax,
-		int panStartMin, int panStartMax,
-		int panEndMin, int panEndMax,
-		int priority, int unk);
+	void addSpeech(int actorId, int sentenceId,
+	               uint32 delayMinSeconds, uint32 delayMaxSeconds,
+	               int volumeMin, int volumeMax,
+	               int panStartMin, int panStartMax,
+	               int panEndMin, int panEndMax,
+	               int priority, int unk);
 	void playSound(int sfxId, int volume, int panStart, int panEnd, int priority, Audio::Mixer::SoundType type = kAmbientSoundType);
 	void playSpeech(int actorId, int sentenceId, int volume, int panStart, int panEnd, int priority);
 
@@ -122,13 +121,12 @@ private:
 	int findAvailableLoopingTrack() const;
 	int findLoopingTrackByHash(int32 hash) const;
 
-	void addSoundByName(
-		const Common::String &name,
-		uint32 delayMinSeconds, uint32 delayMaxSeconds,
-		int volumeMin, int volumeMax,
-		int panStartMin, int panStartMax,
-		int panEndMin, int panEndMax,
-		int priority, int unk);
+	void addSoundByName(const Common::String &name,
+	                    uint32 delayMinSeconds, uint32 delayMaxSeconds,
+	                    int volumeMin, int volumeMax,
+	                    int panStartMin, int panStartMax,
+	                    int panEndMin, int panEndMax,
+	                    int priority, int unk);
 
 	void removeNonLoopingSoundByIndex(int index, bool stopPlaying);
 	void removeLoopingSoundByIndex(int index, uint32 delaySeconds);
