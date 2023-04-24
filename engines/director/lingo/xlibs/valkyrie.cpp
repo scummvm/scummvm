@@ -137,6 +137,7 @@ void ValkyrieXObj::m_load(int nargs) {
 	} else {
 		saveFile->getKey("Data", "Valkyrie", saveString);
 	}
+	delete saveFile;
 	g_lingo->push(Datum(saveString));
 }
 
