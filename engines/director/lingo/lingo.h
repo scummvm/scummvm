@@ -482,6 +482,7 @@ public:
 	SymbolHash _builtinCmds;
 	SymbolHash _builtinFuncs;
 	SymbolHash _builtinConsts;
+	SymbolHash _builtinListHandlers;
 	SymbolHash _methods;
 	XLibFuncHash _xlibOpeners;
 	XLibFuncHash _xlibClosers;

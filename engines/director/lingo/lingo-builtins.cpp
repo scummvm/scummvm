@@ -79,31 +79,31 @@ static BuiltinProto builtins[] = {
 	{ "string",			LB::b_string,		1, 1, 200, FBLTIN },	// D2 f
 	{ "value",		 	LB::b_value,		1, 1, 200, FBLTIN },	// D2 f
 	// Lists
-	{ "add",			LB::b_add,			2, 2, 400, HBLTIN },	//			D4 handler
-	{ "addAt",			LB::b_addAt,		3, 3, 400, HBLTIN },	//			D4 h
-	{ "addProp",		LB::b_addProp,		3, 3, 400, HBLTIN },	//			D4 h
-	{ "append",			LB::b_append,		2, 2, 400, HBLTIN },	//			D4 h
-	{ "count",			LB::b_count,		1, 1, 400, FBLTIN },	//			D4 f
-	{ "deleteAt",		LB::b_deleteAt,		2, 2, 400, HBLTIN },	//			D4 h
-	{ "deleteOne",		LB::b_deleteOne,	2, 2, 400, HBLTIN },	//			D4 h, undocumented?
-	{ "deleteProp",		LB::b_deleteProp,	2, 2, 400, HBLTIN },	//			D4 h
-	{ "findPos",		LB::b_findPos,		2, 2, 400, FBLTIN },	//			D4 f
-	{ "findPosNear",	LB::b_findPosNear,	2, 2, 400, FBLTIN },	//			D4 f
-	{ "getaProp",		LB::b_getaProp,		2, 2, 400, FBLTIN },	//			D4 f
-	{ "getAt",			LB::b_getAt,		2, 2, 400, FBLTIN },	//			D4 f
-	{ "getLast",		LB::b_getLast,		1, 1, 400, FBLTIN },	//			D4 f
-	{ "getOne",			LB::b_getOne,		2, 2, 400, FBLTIN },	//			D4 f
-	{ "getPos",			LB::b_getPos,		2, 2, 400, FBLTIN },	//			D4 f
-	{ "getProp",		LB::b_getProp,		2, 2, 400, FBLTIN },	//			D4 f
-	{ "getPropAt",		LB::b_getPropAt,	2, 2, 400, FBLTIN },	//			D4 f
-	{ "list",			LB::b_list,			-1, 0, 400, FBLTIN },	//			D4 f
-	{ "listP",			LB::b_listP,		1, 1, 400, FBLTIN },	//			D4 f
-	{ "max",			LB::b_max,			-1,0, 400, FBLTIN },	//			D4 f
-	{ "min",			LB::b_min,			-1,0, 400, FBLTIN },	//			D4 f
-	{ "setaProp",		LB::b_setaProp,		3, 3, 400, HBLTIN },	//			D4 h
-	{ "setAt",			LB::b_setAt,		3, 3, 400, HBLTIN },	//			D4 h
-	{ "setProp",		LB::b_setProp,		3, 3, 400, HBLTIN },	//			D4 h
-	{ "sort",			LB::b_sort,			1, 1, 400, HBLTIN },	//			D4 h
+	{ "add",			LB::b_add,			2, 2, 400, HBLTIN_LIST },	//			D4 handler
+	{ "addAt",			LB::b_addAt,		3, 3, 400, HBLTIN_LIST },	//			D4 h
+	{ "addProp",		LB::b_addProp,		3, 3, 400, HBLTIN_LIST },	//			D4 h
+	{ "append",			LB::b_append,		2, 2, 400, HBLTIN_LIST },	//			D4 h
+	{ "count",			LB::b_count,		1, 1, 400, FBLTIN_LIST },	//			D4 f
+	{ "deleteAt",		LB::b_deleteAt,		2, 2, 400, HBLTIN_LIST },	//			D4 h
+	{ "deleteOne",		LB::b_deleteOne,	2, 2, 400, HBLTIN_LIST },	//			D4 h, undocumented?
+	{ "deleteProp",		LB::b_deleteProp,	2, 2, 400, HBLTIN_LIST },	//			D4 h
+	{ "findPos",		LB::b_findPos,		2, 2, 400, FBLTIN_LIST },	//			D4 f
+	{ "findPosNear",	LB::b_findPosNear,	2, 2, 400, FBLTIN_LIST },	//			D4 f
+	{ "getaProp",		LB::b_getaProp,		2, 2, 400, FBLTIN_LIST },	//			D4 f
+	{ "getAt",			LB::b_getAt,		2, 2, 400, FBLTIN_LIST },	//			D4 f
+	{ "getLast",		LB::b_getLast,		1, 1, 400, FBLTIN_LIST },	//			D4 f
+	{ "getOne",			LB::b_getOne,		2, 2, 400, FBLTIN_LIST },	//			D4 f
+	{ "getPos",			LB::b_getPos,		2, 2, 400, FBLTIN_LIST },	//			D4 f
+	{ "getProp",		LB::b_getProp,		2, 2, 400, FBLTIN_LIST },	//			D4 f
+	{ "getPropAt",		LB::b_getPropAt,	2, 2, 400, FBLTIN_LIST },	//			D4 f
+	{ "list",			LB::b_list,			-1, 0, 400, FBLTIN_LIST },	//			D4 f
+	{ "listP",			LB::b_listP,		1, 1, 400, FBLTIN_LIST },	//			D4 f
+	{ "max",			LB::b_max,			-1,0, 400, FBLTIN_LIST },	//			D4 f
+	{ "min",			LB::b_min,			-1,0, 400, FBLTIN_LIST },	//			D4 f
+	{ "setaProp",		LB::b_setaProp,		3, 3, 400, HBLTIN_LIST },	//			D4 h
+	{ "setAt",			LB::b_setAt,		3, 3, 400, HBLTIN_LIST },	//			D4 h
+	{ "setProp",		LB::b_setProp,		3, 3, 400, HBLTIN_LIST },	//			D4 h
+	{ "sort",			LB::b_sort,			1, 1, 400, HBLTIN_LIST },	//			D4 h
 	// Files
 	{ "closeDA",	 	LB::b_closeDA, 		0, 0, 200, CBLTIN },	// D2 c
 	{ "closeResFile",	LB::b_closeResFile,	0, 1, 200, CBLTIN },	// D2 c
@@ -260,11 +260,15 @@ void Lingo::initBuiltIns(BuiltinProto protos[]) {
 			_builtinCmds[blt->name] = sym;
 			break;
 		case FBLTIN:
+		case FBLTIN_LIST:
 			_builtinFuncs[blt->name] = sym;
+			_builtinListHandlers[blt->name] = sym;
 			break;
 		case HBLTIN:
+		case HBLTIN_LIST:
 			_builtinCmds[blt->name] = sym;
 			_builtinFuncs[blt->name] = sym;
+			_builtinListHandlers[blt->name] = sym;
 			break;
 		case KBLTIN:
 			_builtinConsts[blt->name] = sym;
