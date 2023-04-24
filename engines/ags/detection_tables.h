@@ -4080,17 +4080,17 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("starshipquasar", "starship quasar.ags", "0ea8150e15a4f4d0f3e82c231a4659f2", 10415936),  // Multilang
 	GAME_ENTRY("starshipquasar", "Starship Quasar.exe", "0ea8150e15a4f4d0f3e82c231a4659f2", 10415936),  // Multilang itch.io
 	GAME_ENTRY_EN_STEAM("stayingalive", "Staying Alive.exe", "fae163b58c16e194688727d0903684be", 17380838),
-	GAME_ENTRY("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3186614879),
-	GAME_ENTRY("strangeland", "ac2game.dat", "151b0391a650d3c81c2758deaa5852cd", 3183277137),
-	GAME_ENTRY_GOG("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3186989657), // Win v2.7
-	GAME_ENTRY_GOG("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3187004936), // Win v3.0
-	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "511e08ad31c4020a9ca01b6f7ce1365f", 3009634736), // Mac
-	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "7e5abc5202098bd00ddef999854eb9ab", 3183368017), // Mac
-	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "e4b9f0aa26c1115143ad483c99bc9383", 3183880236), // Mac v2.5a
-	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "86e8b93b8231d6c571669f1621561a21", 3183886917), // Mac v2.7
-	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "c0d0009485795a4ff0cf9dbe5ad82a2f", 3183902196), // Mac v3?
-	GAME_ENTRY_STEAM("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3187004654), // Win-Linux v3.0
-	GAME_ENTRY_STEAM("strangeland", "ac2game.dat", "e037ab3414dec971b90715c7dbb56f4c", 3183901914), // Mac
+	DETECTION_ENTRY_GUIO("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3186614879, Common::EN_ANY, nullptr, GUIO2(GUIO_NOLANG, GUIO_NOLAUNCHLOAD), nullptr, ADGF_NO_FLAGS),
+	DETECTION_ENTRY_GUIO("strangeland", "ac2game.dat", "151b0391a650d3c81c2758deaa5852cd", 3183277137, Common::EN_ANY, nullptr, GUIO2(GUIO_NOLANG, GUIO_NOLAUNCHLOAD), nullptr, ADGF_NO_FLAGS),
+	GAME_ENTRY_PLUGIN_GOG_NOLAUNCHLOAD("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3186989657, nullptr), // Win v2.7
+	GAME_ENTRY_PLUGIN_GOG_NOLAUNCHLOAD("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3187004936, nullptr), // Win v3.0
+	GAME_ENTRY_PLUGIN_GOG_NOLAUNCHLOAD("strangeland", "ac2game.dat", "511e08ad31c4020a9ca01b6f7ce1365f", 3009634736, nullptr), // Mac
+	GAME_ENTRY_PLUGIN_GOG_NOLAUNCHLOAD("strangeland", "ac2game.dat", "7e5abc5202098bd00ddef999854eb9ab", 3183368017, nullptr), // Mac
+	GAME_ENTRY_PLUGIN_GOG_NOLAUNCHLOAD("strangeland", "ac2game.dat", "e4b9f0aa26c1115143ad483c99bc9383", 3183880236, nullptr), // Mac v2.5a
+	GAME_ENTRY_PLUGIN_GOG_NOLAUNCHLOAD("strangeland", "ac2game.dat", "86e8b93b8231d6c571669f1621561a21", 3183886917, nullptr), // Mac v2.7
+	GAME_ENTRY_PLUGIN_GOG_NOLAUNCHLOAD("strangeland", "ac2game.dat", "c0d0009485795a4ff0cf9dbe5ad82a2f", 3183902196, nullptr), // Mac v3?
+	GAME_ENTRY_PLUGIN_STEAM_NOLAUNCHLOAD("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3187004654, nullptr), // Win-Linux v3.0
+	GAME_ENTRY_PLUGIN_STEAM_NOLAUNCHLOAD("strangeland", "ac2game.dat", "e037ab3414dec971b90715c7dbb56f4c", 3183901914, nullptr), // Mac
 	GAME_ENTRY("sulifallenharmony", "Suli Fallen Harmony.exe", "8a58836830dce896e4366f57791ab6cc", 35900870),  // v1.4 itch.io En-Fr
 	GAME_ENTRY_STEAM("sumatra", "sumatra fate of yandi.exe", "57c868b1a81c0335ab60970292cd79d8", 170088886),  // En-Fr-De-Es
 	GAME_ENTRY_STEAM("sumatra", "sumatra fate of yandi.exe", "b4407ac542f316456f549fc8a60dccae", 170634789),
