@@ -48,9 +48,9 @@ bool AIScriptLuther::Update() {
 	 && !Game_Flag_Query(kFlagUG16PulledGun)
 	 &&  Global_Variable_Query(kVariableChapter) == 4
 	) {
-		Actor_Says(kActorMcCoy, 5720, 12);
-		Actor_Says(kActorLuther, 80, 13);
-		Actor_Says(kActorLance, 40, 12);
+		Actor_Says(kActorMcCoy, 5720, 12); // Just a moment of your time, please.
+		Actor_Says(kActorLuther, 80, 13); // I am sick and tired of people waving those things around.
+		Actor_Says(kActorLance, 40, 12); // Just give it up. You got no jurisdiction down here.
 		Game_Flag_Set(kFlagUG16PulledGun);
 		return false;
 	}
