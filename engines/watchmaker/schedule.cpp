@@ -113,6 +113,8 @@ const char *eventToString(EventClass classe) {
 		case EventClass::MC_DIALOG: return "MC_DIALOG";
 		case EventClass::MC_ANIM: return "MC_ANIM";
 		case EventClass::MC_T2D: return "MC_T2D";
+		default:
+			error("Invalid EventClass %d", (int)classe);
 	}
 }
 

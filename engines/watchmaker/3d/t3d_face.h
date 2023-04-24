@@ -66,7 +66,7 @@ public:
 
 	void checkVertices() {
 		for (int i = 0; i < 3; i++) {
-			assert(getMaterial()->VertsList.size() > MatVertexIndex[i]);
+			assert((int)getMaterial()->VertsList.size() > MatVertexIndex[i]);
 		}
 	}
 

@@ -191,7 +191,7 @@ void gTexture::render(WGame &game, Rect src, Rect dst) {
 	if (_texture) {
 		renderTexture(game, *this, src, dst);
 	}
-	for (int i = 0; i < _blitsOnTop.size(); i++) {
+	for (uint i = 0; i < _blitsOnTop.size(); i++) {
 		_blitsOnTop[i].texture->render(game, _blitsOnTop[i].src, _blitsOnTop[i].dst);
 	}
 }

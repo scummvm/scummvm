@@ -48,7 +48,7 @@ struct Matrix4x4 {
 			for (int col = 1; col <= 4; col++) {
 				warning("%f ", getValue(row, col));
 			}
-			warning("");
+			warning(" ");
 		}
 	}
 	bool operator==(const Matrix4x4 &rhs) const {

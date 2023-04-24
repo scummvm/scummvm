@@ -248,9 +248,9 @@ void rAddToMaterialList(gMaterial &mat, signed short int ViewMatrixNum) {
 		bb->ViewMatrixNum = ViewMatrixNum;
 		bb->FacesList = mat.getFacesList();
 		bb->VBO = mat.VBO;
-		for (int f = 0; f < bb->FacesList.size(); f++) {
+		for (uint f = 0; f < bb->FacesList.size(); f++) {
 			if (bb->FacesList[f] >= bb->VBO->_buffer.size()) {
-				for (int o = 0; o < bb->FacesList.size(); o++) {
+				for (uint o = 0; o < bb->FacesList.size(); o++) {
 					warning("%d", bb->FacesList[o]);
 				}
 				warning("%d > %d (%d)", bb->FacesList[f], bb->VBO->_buffer.size(), bb->NumVerts());
