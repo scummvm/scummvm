@@ -99,9 +99,10 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int flags
 
 				if (stretchVideo) {
 					scr.transBlitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h),
-					                  Common::Rect(dstRect.Left, dstRect.Top, dstRect.Right + 1, dstRect.Bottom + 1));
+					                  Common::Rect(dstRect.Left, dstRect.Top, dstRect.Right + 1, dstRect.Bottom + 1),
+					                  decoder->getPalette());
 				} else {
-					scr.blitFrom(*frame, Common::Point(dstRect.Left, dstRect.Top));
+					scr.blitFrom(*frame, Common::Point(dstRect.Left, dstRect.Top), decoder->getPalette());
 				}
 			}
 
