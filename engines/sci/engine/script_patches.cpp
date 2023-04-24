@@ -1175,32 +1175,25 @@ static const SciScriptPatcherEntry castleBrainSignatures[] = {
 };
 
 // ===========================================================================
+// EcoQuest 1
+
 // stayAndHelp::changeState (0) is called when ego swims to the left or right
 //  boundaries of room 660. Normally a textbox is supposed to get on screen
 //  but the call is wrong, so not only do we get an error message the script
 //  is also hanging because the cue won't get sent out
 //  This also happens in sierra sci
-// Applies to at least: PC-CD
+//
+// Applies to: PC-CD
 // Responsible method: stayAndHelp::changeState
 // Fixes bug: #5107
 static const uint16 ecoquest1SignatureStayAndHelp[] = {
-	0x3f, 0x01,                      // link 01
-	0x87, 0x01,                      // lap param[1]
-	0x65, 0x14,                      // aTop state
-	0x36,                            // push
 	0x3c,                            // dup
 	0x35, 0x00,                      // ldi 00
 	0x1a,                            // eq?
-	0x31, 0x1c,                      // bnt [next state]
-	0x76,                            // push0
-	0x45, 0x01, 0x00,                // callb [export 1 of script 0], 00 (switching control off)
-	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x0122),        // pushi 0122
-	0x78,                            // push1
-	0x76,                            // push0
-	0x81, 0x00,                      // lag global[0]
-	0x4a, 0x06,                      // send 06 - call ego::setMotion(0)
+	0x31, 0x1c,                      // bnt 1c [next state]
+	SIG_ADDTOOFFSET(+13),
 	0x39, SIG_SELECTOR8(init),       // pushi init
+	SIG_MAGICDWORD,
 	0x39, 0x04,                      // pushi 04
 	0x76,                            // push0
 	0x76,                            // push0
@@ -1208,30 +1201,19 @@ static const uint16 ecoquest1SignatureStayAndHelp[] = {
 	0x7c,                            // pushSelf
 	0x51, 0x82,                      // class EcoNarrator
 	0x4a, 0x0c,                      // send 0c - call EcoNarrator::init(0, 0, 23, self) (BADLY BROKEN!)
-	0x33,                            // jmp [end]
 	SIG_END
 };
 
 static const uint16 ecoquest1PatchStayAndHelp[] = {
-	0x87, 0x01,                      // lap param[1]
-	0x65, 0x14,                      // aTop state
-	0x36,                            // push
-	0x2f, 0x22,                      // bt [next state] (this optimization saves 6 bytes)
-	0x39, 0x00,                      // pushi 0 (wasting 1 byte here)
-	0x45, 0x01, 0x00,                // callb [export 1 of script 0], 00 (switching control off)
-	0x38, PATCH_UINT16(0x0122),      // pushi 0122
-	0x78,                            // push1
-	0x76,                            // push0
-	0x81, 0x00,                      // lag global[0]
-	0x4a, 0x06,                      // send 06 - call ego::setMotion(0)
-	0x39, PATCH_SELECTOR8(init),     // pushi init
+	0x2f, 0x20,                      // bt 20 [next state] (saves 4 bytes)
+	PATCH_GETORIGINALBYTES(6, 15),
 	0x39, 0x06,                      // pushi 06
-	0x39, 0x02,                      // pushi 02 (additional 2 bytes)
+	0x7a,                            // push2
 	0x76,                            // push0
 	0x76,                            // push0
 	0x39, 0x17,                      // pushi 17
 	0x7c,                            // pushSelf
-	0x38, PATCH_UINT16(0x0280),      // pushi 280 (additional 3 bytes)
+	0x38, PATCH_UINT16(0x0280),      // pushi 0280
 	0x51, 0x82,                      // class EcoNarrator
 	0x4a, 0x10,                      // send 10 - call EcoNarrator::init(2, 0, 0, 23, self, 640)
 	PATCH_END
