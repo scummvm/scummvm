@@ -349,7 +349,7 @@ tentacle	Day of the Tentacle
 	94aaedbb8f26d71ed3ad6dd34490e29e	-1	fr	DOS	Floppy	Floppy	alt?	Nicolas Joly
 	57b0d89af79befe1cabce3bece869e7f	-1	de	DOS	Floppy	Floppy	-	Andrej Sinicyn, Andrea Petrucci
 	50fcdc982a25063b78ad46bf389b8e8d	-1	it	DOS	Floppy	Floppy	-	Andrea Petrucci
-	ae94f110a14ce71fc515d5b648827a8f	-1	es	DOS	Floppy	Floppy	-	abnog, Andrea Petrucci
+	ae94f110a14ce71fc515d5b648827a8f	7932	es	DOS	Floppy	Floppy	-	abnog, Andrea Petrucci
 
 	4167a92a1d46baa4f4127d918d561f88	7932	en	All?	-	CD	1.6	Fingolfin
 	8aa05d3cdb0e795436043f0546af2da2	7932	fr	All?	-	CD	-	Andrea Petrucci
@@ -365,12 +365,13 @@ tentacle	Day of the Tentacle
 	17fa250eb72dae2dad511ba79c0b6b0a	7477	fr	DOS	-	Demo	-	cyx
 	ac1642b6edfb8521ca03760126f1c250	7477	de	DOS	-	Demo	-	Simon Krumrein, sev
 	2a41b53cf1a90b6e6f26c10cc6041084	2439158	en	Mac	-	Demo	Mac bundle	Fingolfin
+
 	e47bcf709d7ab8470bdbfaf02d434e60	-1	ko	DOS	Floppy	Floppy	Fan translation	ScummVM-Kor
 	a4b30b29a419d49a2ab33bd4414939d1	-1	ko	All?	-	CD	Fan translation	ScummVM-Kor
 
 samnmax	Sam &amp; Max Hit the Road
-	3b301b7892f883ce42ab4be6a274fea6	-1	en	DOS	Floppy	Floppy	-	Andrea Petrucci
-	a3036878840720fbefa41e6965fa4a0a	-1	en	DOS	Floppy	Floppy	alt?	Andrea Petrucci
+	3b301b7892f883ce42ab4be6a274fea6	9040	en	DOS	Floppy	Floppy	-	Andrea Petrucci
+	a3036878840720fbefa41e6965fa4a0a	9040	en	DOS	Floppy	Floppy	alt?	Andrea Petrucci
 	ef347474f3c7be3b29584eaa133cca05	9040	fr	DOS	Floppy	Floppy	v1.1, 01/28/93	Nicolas Sauz&egrave;de, Andrea Petrucci
 	f27b1ba0eadaf2a6617b2b58192d1dbf	9040	de	DOS	Floppy	Floppy	-	dhewg, Andrea Petrucci
 	b289a2a8cbedbf45786e0b4ad2f510f1	-1	it	DOS	Floppy	Floppy	-	Andrea Petrucci
@@ -379,8 +380,8 @@ samnmax	Sam &amp; Max Hit the Road
 	d917f311a448e3cc7239c31bddb00dd2	9080	en	All?	-	CD	CD1.11, 3/24/94	Fingolfin
 	7edd665bbede7ea8b7233f8e650be6f8	9080	fr	All?	-	CD	v1.2, 31/10/94	Andrea Petrucci
 	0fb73eddfcf584c02ba097984df131ba	9080	de	All?	-	CD	v1.0, 23/06/94 	Fingolfin
-	0f6f2e716ba896a44e5059bba1de7ca9	-1	it	All?	-	CD	-	Andrea Petrucci
-	4ba7fb331296c283e73d8f5b2096e551	-1	es	All?	-	CD	-	Andrea Petrucci
+	0f6f2e716ba896a44e5059bba1de7ca9	9080	it	All?	-	CD	-	Andrea Petrucci
+	4ba7fb331296c283e73d8f5b2096e551	9080	es	All?	-	CD	-	Andrea Petrucci
 	d43352a805d78b5f4936c6d7779bf575	-1	ru	DOS	-	CD	-
 	166553538ff320c69edafeee29525419	199195304	en	Mac	-	CD	Mac bundle	Joachim Eberhard
 	3a5d13675e9a23aedac0bac7730f0ac1	228446581	fr	Mac	-	CD	Mac bundle	ThierryFR, Thierry Crozat
@@ -389,7 +390,7 @@ samnmax	Sam &amp; Max Hit the Road
 	0e4c5d54a0ad4b26132e78b5ea76642a	6485	en	DOS	Floppy	Demo	WIP	Fingolfin
 	d9d0dd93d16ab4dec55cabc2b86bbd17	6478	en	DOS	-	Demo	non-interactive	Fingolfin
 	cc8ba2b0df2f9c450bcf055fe2711979	7485	de	DOS	Floppy	Demo	-	Simon Krumrein, sev, Fingolfin
-	0425954a9db5c340861672892c3e678d	-1	en	All	-	Demo	-	Kirben
+	0425954a9db5c340861672892c3e678d	7505	en	All	-	Demo	-	Kirben
 	b9fce749c3e9da0d41c78213c179631b	7505	en	DOS	CD	Demo	-	eientei
 	6dead580b0ff14d5f7b33b4219f04159	16556335	en	Mac	-	Demo	Mac bundle	Fingolfin
 
@@ -849,7 +850,7 @@ puttputt	Putt-Putt Joins the Parade
 	7e151c17adf624f1966c8fc5827c95e9	-1	en	3DO	HE 61	-	-	khalek
 	be2abe172f58db170de3a037daa1dd27	-1	jp	3DO	HE 61	-	-	clone2727
 	ee41f6afbc5b26fa475754b56fe92048	8032	jp	3DO	HE 61	-	-	George Kormendi
-	9708cf716ed8bcc9ff3fcfc69413b746	-1	en	DOS	HE 62	-	-	khalek
+	9708cf716ed8bcc9ff3fcfc69413b746	8117	en	DOS	HE 62	-	-	khalek
 	e361a7058ed8e8ebb462663c0a3ae8d6	-1	he	DOS	HE 62	-	-	sev
 	684732efb5799c0f78804c99d8de9aba	-1	en	Mac	HE 62	-	-	khalek
 	6a30a07f353a75cdc602db27d73e1b42	12728	en	Windows	HE 70	-	-	khalek
