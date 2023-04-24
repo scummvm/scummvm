@@ -59,7 +59,7 @@ public:
 
 	Common::String unwindowsify(const Common::String &str) const {
 		Common::String result; // TODO Rewrite
-		for (int i = 0; i < str.size(); i++) {
+		for (uint i = 0; i < str.size(); i++) {
 			if (str[i] != '\\') {
 				result += str[i];
 			} else {

@@ -174,7 +174,7 @@ extern uint8 bSaveDisabled;
 extern uint8 bLockCamera;
 extern uint8 bMiscLoaded;
 extern uint8 bStartMenuActive;
-extern uint8 bShowOnlyLoadWindow;;
+extern uint8 bShowOnlyLoadWindow;
 extern uint8 bSbCacciatorehowOnlyLoadWindow;
 extern uint8 bNotSkippableSent;
 extern uint8 bPorteEsternoBloccate;
@@ -242,15 +242,14 @@ struct Init : public SerializableAsset {
 	}
 private:
 	void treatCredits() {
-
-		for (int i = 0; i < _creditsNames.size(); i++) {
+		for (uint32 i = 0; i < _creditsNames.size(); i++) {
 			char *c = _creditsNames[i].name;
 			for (int k = 0; k < 32; k++, c++) {
 				(*c) ^= 0xA0;
 			}
 		}
 
-		for (int i = 0; i < _creditsRoles.size(); i++) {
+		for (uint32 i = 0; i < _creditsRoles.size(); i++) {
 			char *c = _creditsRoles[i].role;
 			for (int k = 0; k < 48; k++, c++) {
 				(*c) ^= 0xC4;

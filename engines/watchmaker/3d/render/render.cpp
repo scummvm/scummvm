@@ -148,7 +148,7 @@ void RenderGeometry(void) {
 	LastViewMatrixNum = LastTexture1 = LastTexture2 = -2;
 	bb = &BatchBlockList[0];
 	qsort(bb, NumBatchBlocks, sizeof(gBatchBlock), cmpbb);
-	for (int i = 0; i < NumBatchBlocks; i++, bb++) {
+	for (uint i = 0; i < NumBatchBlocks; i++, bb++) {
 		if (bb->Texture1 < 0) continue;
 
 		if (bb->ViewMatrixNum != LastViewMatrixNum) {
@@ -217,7 +217,7 @@ void RenderGeometry(void) {
 
 		LastViewMatrixNum = LastTexture1 = LastTexture2 = -2;
 		bb = &BatchBlockList[0];
-		for (int i = 0; i < NumBatchBlocks; i++, bb++) {
+		for (uint i = 0; i < NumBatchBlocks; i++, bb++) {
 			if (bb->Texture2 <= 0) continue;
 
 			if (bb->ViewMatrixNum != LastViewMatrixNum) {
@@ -255,7 +255,7 @@ void RenderGeometry(void) {
 	LastViewMatrixNum = LastTexture1 = LastTexture2 = -2;
 	bb = &BatchBlockListSpecial[0];
 	qsort(bb, NumBatchBlocksSpecial, sizeof(gBatchBlock), cmpbb);
-	for (int i = 0; i < NumBatchBlocksSpecial; i++, bb++) {
+	for (uint i = 0; i < NumBatchBlocksSpecial; i++, bb++) {
 		if (bb->Texture1 < 0) continue;
 		if (!(bb->Flags1 & T3D_MATERIAL_CLIPMAP) ||
 		        (bb->Flags1 & T3D_MATERIAL_FLARE) ||
@@ -293,7 +293,7 @@ void RenderGeometry(void) {
 
 	LastViewMatrixNum = LastTexture1 = LastTexture2 = -2;
 	bb = &BatchBlockListSpecial[0];
-	for (int i = 0; i < NumBatchBlocksSpecial; i++, bb++) {
+	for (uint i = 0; i < NumBatchBlocksSpecial; i++, bb++) {
 		if (bb->Texture1 < 0) continue;
 		if (!(bb->Flags1 & T3D_MATERIAL_FLARE) &&
 		        !(bb->Flags1 & T3D_MATERIAL_SMOKE))
@@ -344,7 +344,7 @@ void RenderGeometry(void) {
 
 	LastViewMatrixNum = LastTexture1 = LastTexture2 = -2;
 	bb = &BatchBlockListSpecial[0];
-	for (int i = 0; i < NumBatchBlocksSpecial; i++, bb++) {
+	for (uint i = 0; i < NumBatchBlocksSpecial; i++, bb++) {
 		if (bb->Texture1 < 0) continue;
 		if ((bb->Flags1 & T3D_MATERIAL_FLARE) ||
 		        (bb->Flags1 & T3D_MATERIAL_SMOKE))

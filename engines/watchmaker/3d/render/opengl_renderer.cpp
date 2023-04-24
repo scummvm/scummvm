@@ -61,8 +61,8 @@ void OpenGLRenderer::drawIndexedPrimitivesVBO(PrimitiveType primitiveType, Commo
 	glEnable(GL_TEXTURE_2D);
 
 	glBegin(GL_TRIANGLES);
-	for (int i = 0; i < numFaces; i++) {
-		int index = faces[i];
+	for (uint32 i = 0; i < numFaces; i++) {
+		uint16 index = faces[i];
 		assert(index <= VBO->_buffer.size());
 		auto &vertex = VBO->_buffer[index];
 		//warning("%d/%d %d: [%f, %f, %f], [%f, %f], [%f, %f]", i, numFaces, index, vertex.x, vertex.y, vertex.z, vertex.u1, vertex.v1, vertex.u2, vertex.v2);
