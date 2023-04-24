@@ -73,11 +73,11 @@ void U6Lib_n::close() {
 	}
 	items = NULL;
 
-	if (data != NULL)
-		data->close();
-
-	if (del_data)
+	if (del_data) {
+		if (data != NULL)
+			data->close();
 		delete data;
+	}
 
 	data = NULL;
 	del_data = false;
