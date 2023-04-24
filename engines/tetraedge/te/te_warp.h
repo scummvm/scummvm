@@ -64,6 +64,7 @@ public:
 	};
 
 	struct Exit {
+		Exit() : _camAngleX(0), _camAngleY(0), _markerId(0) {}
 		Common::String _name;
 		Common::String _linkedWarpPath;
 		float _camAngleX;

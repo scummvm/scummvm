@@ -24,7 +24,7 @@
 
 namespace Tetraedge {
 
-TeSceneWarp::TeSceneWarp() : _warp(nullptr) {
+TeSceneWarp::TeSceneWarp() : _warp(nullptr), _numExitsCreated(0) {
 }
 
 TeSceneWarp::~TeSceneWarp() {

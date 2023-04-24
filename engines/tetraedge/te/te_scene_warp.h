@@ -42,7 +42,7 @@ public:
 	};
 	class Exit {
 	public:
-		Exit() : _nbWarpBlock(0) {}
+		Exit() : _nbWarpBlock(0), _markerId(0) {}
 		Common::String _name;
 		Common::String _linkedWarp;
 		unsigned long _markerId;
@@ -54,6 +54,7 @@ public:
 	};
 	class Object {
 	public:
+		Object() : _markerId(0) {}
 		Common::String _name;
 		Common::String _str2;
 		unsigned long _markerId;
