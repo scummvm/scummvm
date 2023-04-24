@@ -317,6 +317,8 @@ enum SymbolType {
 	FBLTIN,	// builtin function
 	HBLTIN,	// builtin handler (can be called as either command or func)
 	KBLTIN,	// builtin constant
+	FBLTIN_LIST, // builtin function w/list override check
+	HBLTIN_LIST, // builtin handler w/list override check
 	HANDLER	// user-defined handler
 };
 

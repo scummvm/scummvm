@@ -1533,6 +1533,16 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 	// Handler
 	funcSym = g_lingo->getHandler(name);
 
+	if (g_lingo->_builtinListHandlers.contains(name) && nargs >= 1) {
+		// Lingo builtin functions in the "List" category have very strange override mechanics.
+		// If the first argument is an ARRAY or PARRAY, it will use the builtin.
+		// Otherwise, it will fall back to whatever handler is defined globally.
+		Datum firstArg = g_lingo->peek(nargs - 1);
+		if (firstArg.type == ARRAY || firstArg.type == PARRAY) {
+			funcSym = g_lingo->_builtinListHandlers[name];
+		}
+	}
+
 	if (funcSym.type == VOIDSYM) { // The built-ins could be overridden
 		// Builtin
 		if (allowRetVal) {

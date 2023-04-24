@@ -1,0 +1,28 @@
+
+on count l
+  return "what is this"
+end
+
+on add l, x
+  return "this is the worst"
+end
+
+set result = count([1, 2, 3])
+scummvmAssertEqual(result, 3)
+
+set result = count([1: 2, 3: 4, 5: 6])
+scummvmAssertEqual(result, 3)
+
+set result = count("not an array")
+scummvmAssertEqual(result, "what is this")
+
+set result = add("still not an array")
+scummvmAssertEqual(result, "this is the worst")
+
+set result = add("even less of an array", 8)
+scummvmAssertEqual(result, "this is the worst")
+
+set target = [1, 2, 3] 
+add(target, 4)
+scummvmAssertEqual(count(target), 4)
+
