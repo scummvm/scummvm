@@ -60,12 +60,12 @@ class AudioMixer {
 		bool                loop;
 		Audio::SoundHandle  handle;
 		Audio::AudioStream *stream;
-		float               volume;
+		float               volume;       // should be in [0.0f, 100.0f]. It's percent for the Audio::Mixer::kMaxChannelVolume
 		float               volumeDelta;
-		float               volumeTarget;
-		float               pan;
+		float               volumeTarget; // should be in [0.0f, 100.0f], as for volume field.
+		float               pan;          // should be in [-100.0f, 100.0f]. It's percent for 127 (max absolute balance value)
 		float               panDelta;
-		float               panTarget;
+		float               panTarget;    // should be in [-100.0f, 100.0f], as for pan field.
 		void              (*endCallback)(int channel, void *data);
 		void               *callbackData;
 		uint32              timeStarted;
@@ -96,8 +96,8 @@ public:
 	int playMusic(Audio::RewindableAudioStream *stream, int volume, void(*endCallback)(int, void *), void *callbackData, uint32 trackDurationMs);
 	void stop(int channel, uint32 time);
 
-	void adjustVolume(int channel, int newVolume, uint32 time);
-	void adjustPan(int channel, int newPan, uint32 time);
+	void adjustVolume(int channel, int targetVolume, uint32 time);
+	void adjustPan(int channel, int targetPan, uint32 time);
 
 #if !BLADERUNNER_ORIGINAL_BUGS
 	void startAppTimerProc(int audioMixAppTimerId, uint32 intervalMillis);

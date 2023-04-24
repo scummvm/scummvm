@@ -178,7 +178,6 @@ void EndCredits::show() {
 	_vm->_ambientSounds->removeAllLoopingSounds(4u);
 	_vm->_audioSpeech->stopSpeech();
 
-	// ASDF volume is 100 here (correct it should be from 0..100)
 	_vm->_music->play(_vm->_gameInfo->getMusicTrack(kMusicCredits), 100, 0, 2, -1, kMusicLoopPlayOnce, 3);
 
 	Font *fontBig = Font::load(_vm, "TAHOMA24.FON", 1, true);

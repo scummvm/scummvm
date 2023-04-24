@@ -177,12 +177,12 @@ class ESPER {
 	uint32 _timeScrollNextStart;
 
 	int _soundId1;
-	int _volume1;
+	int _volume1;  // should be in [0, 100]
 	int _soundId2;
-	int _volume2;
+	int _volume2;  // should be in [0, 100]
 	int _soundId3;
-	int _volume3;
-	int _ambientVolume;
+	int _volume3;  // should be in [0, 100]
+	int _ambientVolumeFactorOutsideEsper;
 
 public:
 	ESPER(BladeRunnerEngine *vm);

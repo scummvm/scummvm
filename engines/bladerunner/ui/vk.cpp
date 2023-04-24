@@ -75,12 +75,15 @@ void VK::open(int actorId, int calibrationRatio) {
 		}
 	}
 
-	_volumeAmbient = _vm->_ambientSounds->getVolume();
-	_volumeMusic   = _vm->_music->getVolume();
+	_ambientVolumeFactorOutsideVK = _vm->_ambientSounds->getVolume();
+	_musicVolumeFactorOutsideVK = _vm->_music->getVolume();
+	// Original engine sets volume to 1 for ambient and music
+	_vm->_ambientSounds->setVolume(1);
+	_vm->_music->setVolume(1);
 
 	_actorId          = actorId;
 	_calibrationRatio = calibrationRatio;
-	_calibration      = 0;
+	_calibration      = 0; // TODO Original uses a float (0.0) var for calibration. Does this make any difference?
 
 	_buttons = new UIImagePicker(_vm, 8);
 
@@ -175,8 +178,9 @@ void VK::close() {
 	_shapes->unload();
 
 	_vm->closeArchive("MODE.MIX");
-	_vm->_music->setVolume(_volumeMusic);
-	_vm->_ambientSounds->setVolume(_volumeAmbient);
+
+	_vm->_music->setVolume(_musicVolumeFactorOutsideVK);
+	_vm->_ambientSounds->setVolume(_ambientVolumeFactorOutsideVK);
 
 	_vm->_time->resume();
 	_vm->_scene->resume();
@@ -442,8 +446,8 @@ void VK::reset() {
 
 	_shapes->unload();
 
-	_volumeAmbient = 0;
-	_volumeMusic   = 0;
+	_ambientVolumeFactorOutsideVK = 0;
+	_musicVolumeFactorOutsideVK   = 0;
 
 	_calibrationRatio   = 0;
 	_calibrationCounter = 0;

@@ -25,7 +25,7 @@
 #include "common/mutex.h"
 #include "common/str.h"
 
-#include "bladerunner/bladerunner.h" // For BLADERUNNER_ORIGINAL_BUGS symbol
+#include "bladerunner/bladerunner.h" // For BLADERUNNER_ORIGINAL_BUGS and BLADERUNNER_ORIGINAL_SETTINGS symbols
 
 namespace BladeRunner {
 
@@ -37,8 +37,8 @@ class SaveFileWriteStream;
 class Music {
 	struct Track {
 		Common::String name;
-		int            volume;             // A value between 0 and 100 - It is the set volume for the track regardless of fadeIn and fadeOut transitions
-		int            pan;                // A value between -100 (left) and 100 (right) (0 is center) - It is the set pan/balance for the track regardless of any ongoing adjustments
+		int            volume;             // A value in [0, 100] - It is the set (target) volume for the track regardless of fadeIn and fadeOut transitions
+		int            pan;                // A value in [-100, 100]. -100 is left, 100 is right and 0 is center - It is the set (target) pan/balance for the track regardless of any ongoing adjustments
 		int32          timeFadeInSeconds;  // how long will it take for the track to reach target volume (in seconds)
 		int32          timePlaySeconds;    // how long the track will play before starting fading out (in seconds) - uses timeFadeOutSeconds for fadeout
 		                                   // -1: Special value for playing the whole track
@@ -49,7 +49,7 @@ class Music {
 	BladeRunnerEngine *_vm;
 
 	Common::Mutex _mutex;
-	int           _musicVolume;
+	int           _musicVolumeFactorOriginalEngine; // should be in [0, 100]
 	int           _channel;
 	bool          _isNextPresent;
 	bool          _isPlaying;
@@ -69,7 +69,7 @@ public:
 	bool isPlaying();
 
 	void setVolume(int volume);
-	int getVolume();
+	int getVolume() const;
 	void playSample();
 
 	void save(SaveFileWriteStream &f);
@@ -84,7 +84,11 @@ public:
 
 private:
 	void reset();
+#if BLADERUNNER_ORIGINAL_BUGS
+	void adjustVolume(int adjustedVolume, uint32 delaySeconds);
+#else
 	void adjustVolume(int volume, uint32 delaySeconds);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	void adjustPan(int pan, uint32 delaySeconds);
 
 	void ended();

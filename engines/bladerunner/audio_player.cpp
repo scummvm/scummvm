@@ -47,10 +47,12 @@ AudioPlayer::AudioPlayer(BladeRunnerEngine *vm) {
 		_tracks[i].stream = nullptr;
 	}
 
-	// _sfxVolume here sets a percentage to be appied on the specified track volume
-	// before sending it to the audio player
-	// (setting _sfxVolume to 100 renders it indifferent)
-	_sfxVolume = BLADERUNNER_ORIGINAL_SETTINGS ? 65 : 100;
+	// _sfxVolumeFactorOriginalEngine here sets a percentage to be applied on the audio tracks' volume
+	// before sending them to the audio player.
+	// This is how the original engine set the volume via the in-game KIA volume slider controls.
+	// Setting _sfxVolumeFactorOriginalEngine to 100, for the purposes ScummVM engine, renders it indifferent,
+	// so sound volume can be controlled by ScummVM's Global Main Menu / ConfMan/ syncSoundSettings().
+	_sfxVolumeFactorOriginalEngine = BLADERUNNER_ORIGINAL_SETTINGS ? 65 : 100;
 }
 
 AudioPlayer::~AudioPlayer() {
@@ -68,20 +70,26 @@ void AudioPlayer::stopAll() {
 	}
 }
 
-void AudioPlayer::adjustVolume(int track, int volume, uint32 delaySeconds, bool overrideVolume) {
+// This method sets the target volume (as a percent) for the track
+// and the time (delaySeconds) to reach that target in.
+// volume (and actualVolume) should be in [0, 100]
+void AudioPlayer::adjustVolume(int track, int volume, uint32 delaySeconds, bool explicitVolumeAdjustment) {
 	if (track < 0 || track >= kTracks || !_tracks[track].isActive || _tracks[track].channel == -1) {
 		return;
 	}
 
 	int actualVolume = volume;
-	if (!overrideVolume) {
-		actualVolume = actualVolume * _sfxVolume / 100;
+	if (explicitVolumeAdjustment) {
+		actualVolume = (actualVolume * _sfxVolumeFactorOriginalEngine) / 100;
 	}
 
 	_tracks[track].volume = actualVolume;
 	_vm->_audioMixer->adjustVolume(_tracks[track].channel, actualVolume, 60u * delaySeconds);
 }
 
+// This method sets the target pan (as a percent) for the track
+// and the time (delaySeconds) to reach that target in.
+// pan should be in [-100, 100]
 void AudioPlayer::adjustPan(int track, int pan, uint32 delaySeconds) {
 	if (track < 0 || track >= kTracks || !_tracks[track].isActive || _tracks[track].channel == -1) {
 		return;
@@ -91,30 +99,40 @@ void AudioPlayer::adjustPan(int track, int pan, uint32 delaySeconds) {
 	_vm->_audioMixer->adjustPan(_tracks[track].channel, pan, 60u * delaySeconds);
 }
 
-// We no longer set the _sfxVolume (audio player's default volume percent) via a public method
-// It is set in AudioPlayer::AudioPlayer() constructor and keeps its value constant.
-//void AudioPlayer::setVolume(int volume) {
-//	_sfxVolume = volume;
-//}
+#if BLADERUNNER_ORIGINAL_SETTINGS
+// We no longer set the _sfxVolumeFactorOriginalEngine via a public method.
+// For the ScummVM Engine's purposes it is set in AudioPlayer::AudioPlayer() constructor and keeps its value constant.
+void AudioPlayer::setVolume(int volume) {
+	_sfxVolumeFactorOriginalEngine = volume;
+}
 
 int AudioPlayer::getVolume() const {
-	return _sfxVolume;
+	return _sfxVolumeFactorOriginalEngine;
 }
+#endif // BLADERUNNER_ORIGINAL_SETTINGS
 
 void AudioPlayer::playSample() {
 	Common::String name;
 
-	int rnd = _vm->_rnd.getRandomNumber(3);
-	if (rnd == 0) {
+	switch (_vm->_rnd.getRandomNumber(3)) {
+	case 0:
 		name = "gunmiss1.aud";
-	} else if (rnd == 1) {
+		break;
+
+	case 1:
 		name = "gunmiss2.aud";
-	} else if (rnd == 2) {
+		break;
+
+	case 2:
 		name = "gunmiss3.aud";
-	} else {
+		break;
+
+	default:
 		name = "gunmiss4.aud";
+		break;
 	}
 
+	// Sample plays with priority 100 (max)
 	playAud(name, 100, 0, 0, 100, 0);
 }
 
@@ -136,41 +154,64 @@ void AudioPlayer::mixerChannelEnded(int channel, void *data) {
 	audioPlayer->remove(channel);
 }
 
+// This method plays an audio file, at volume "volume" (as a percent, set immediately, no fade-in),
+// with audio balance starting at panStart (as a signed percent) and ending at panEnd.
+// The balance shifting happens throughout the duration of the audio track.
+// volume (and actualVolume) should be in [0, 100]
+// panStart and panEnd should be in [-100, 100]
+// priority should be in [0, 100]
+// The higher the priority, the more likely it is that this track will replace another active one
+// (with the lowest priority), if no available track slots exists.
+// Returns the index of the track slot assigned (for _tracks array) or -1 otherwise (gave up)
+// The code here is very similar to AudioMixer::play()
+// Note that this method calls AudioMixer::play() which also uses the priority value to assign a channel to the track.
+// If that fails, the new track is dropped (gave up).
+// TODO Maybe explain why we need this two step priority check (for track slot and then channel slot)
 int AudioPlayer::playAud(const Common::String &name, int volume, int panStart, int panEnd, int priority, byte flags, Audio::Mixer::SoundType type) {
-	/* Find first available track or, alternatively, the lowest priority playing track */
-	int track = -1;
-	int lowestPriority = 1000000;
-	int lowestPriorityTrack = -1;
+	debugC(6, kDebugSound, "AudioPlayer::playAud name:%s v:%d pS:%d pE:%d pr:%d type:%d", name.c_str(), volume, panStart, panEnd, priority, (int)type);
+	// Find first available track or, alternatively, the lowest priority playing track
+	int trackSlotToAssign = -1;
+	int lowestPriority = 1000000; // TODO wouldn't a lower value work as well? eg. 1000? Original uses 100 but code is a bit different
+	int lowestPriorityTrackSlot = -1;
 
+	// Find an available track slot
 	for (int i = 0; i != kTracks; ++i) {
 		if (!isActive(i)) {
 			//debug("Assigned track %i to %s", i, name.c_str());
-			track = i;
+			trackSlotToAssign = i;
 			break;
 		}
 
-		if (lowestPriorityTrack == -1 || _tracks[i].priority < lowestPriority) {
+		if (lowestPriorityTrackSlot == -1 || _tracks[i].priority < lowestPriority) {
 			lowestPriority = _tracks[i].priority;
-			lowestPriorityTrack = i;
+			lowestPriorityTrackSlot = i;
 		}
 	}
 
-	/* If there's no available track, stop the lowest priority track if it's lower than
-	 * the new priority
-	 */
-	if (track == -1 && lowestPriority < priority) {
-		//debug("Stop lowest priority  track (with lower prio: %d %d), for %s %d!", lowestPriorityTrack, lowestPriority, name.c_str(), priority);
-		stop(lowestPriorityTrack, true);
-		track = lowestPriorityTrack;
+	// If there's still no available track slot
+	if (trackSlotToAssign == -1) {
+		// Give up if the lowest priority track still has greater priority (lowestPriority).
+#if BLADERUNNER_ORIGINAL_BUGS
+		// NOTE If the new priority is *equal* to the existing lowestPriority,
+		// then the new audio would still not replace the old one.
+		if (priority <= lowestPriority) {
+			return -1;
+		}
+#else
+		// NOTE If the new priority is *equal* to the existing lowestPriority,
+		// then the new audio will replace the old one.
+		if (priority < lowestPriority) {
+			//debug("No available track for %s %d - giving up", name.c_str(), priority);
+			return -1;
+		}
+#endif
+		// Otherwise, stop the lowest priority track, and assign the slot to the new one.
+		//debug("Stop lowest priority  track (with lower prio: %d %d), for %s %d!", lowestPriorityTrackSlot, lowestPriority, name.c_str(), priority);
+		stop(lowestPriorityTrackSlot, true);
+		trackSlotToAssign = lowestPriorityTrackSlot;
 	}
 
-	/* If there's still no available track, give up */
-	if (track == -1) {
-		//debug("No available track for %s %d - giving up", name.c_str(), priority);
-		return -1;
-	}
-
-	/* Load audio resource and store in cache. Playback will happen directly from there. */
+	// Load audio resource and store in cache. Playback will happen directly from there.
 	int32 hash = MIXArchive::getHash(name);
 	if (!_vm->_audioCache->findByHash(hash)) {
 		Common::SeekableReadStream *r = _vm->getResourceStream(_vm->_enhancedEdition ? ("audio/" + name) : name);
@@ -195,20 +236,18 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panStart, i
 
 	int actualVolume = volume;
 	if (!(flags & kAudioPlayerOverrideVolume)) {
-		actualVolume = _sfxVolume * volume / 100;
+		actualVolume = (actualVolume * _sfxVolumeFactorOriginalEngine) / 100;
 	}
 
-	int channel = _vm->_audioMixer->play(
-		type,
-		audioStream,
-		priority,
-		flags & kAudioPlayerLoop,
-		actualVolume,
-		panStart,
-		mixerChannelEnded,
-		this,
-		audioStream->getLength()
-		);
+	int channel = _vm->_audioMixer->play(type,
+	                                     audioStream,
+	                                     priority,
+	                                     flags & kAudioPlayerLoop,
+	                                     actualVolume,
+	                                     panStart,
+	                                     mixerChannelEnded,
+	                                     this,
+	                                     audioStream->getLength());
 
 	if (channel == -1) {
 		delete audioStream;
@@ -220,13 +259,13 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panStart, i
 		_vm->_audioMixer->adjustPan(channel, panEnd, (60u * audioStream->getLength()) / 1000u);
 	}
 
-	_tracks[track].isActive = true;
-	_tracks[track].channel  = channel;
-	_tracks[track].priority = priority;
-	_tracks[track].volume   = actualVolume;
-	_tracks[track].stream   = audioStream;
+	_tracks[trackSlotToAssign].isActive = true;
+	_tracks[trackSlotToAssign].channel  = channel;
+	_tracks[trackSlotToAssign].priority = priority;
+	_tracks[trackSlotToAssign].volume   = actualVolume;
+	_tracks[trackSlotToAssign].stream   = audioStream;
 
-	return track;
+	return trackSlotToAssign;
 }
 
 bool AudioPlayer::isActive(int track) const {

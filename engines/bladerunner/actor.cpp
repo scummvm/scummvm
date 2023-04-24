@@ -1581,6 +1581,7 @@ int Actor::soundVolume() const {
 }
 
 // overrideRange argument was added to allow for more accurate sound balance on occasion (if required)
+// overrideRange value should be in [35, 100]
 int Actor::soundPan(uint8 overrideRange) const {
 	Vector3 screenPosition = _vm->_view->calculateScreenPosition(_position);
 	// By default map [0..640] to [-overrideRange..overrideRange] (default range [-35..35])

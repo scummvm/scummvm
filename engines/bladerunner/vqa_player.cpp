@@ -24,6 +24,9 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/time.h"
 #include "bladerunner/audio_player.h"
+#if BLADERUNNER_ORIGINAL_SETTINGS
+#include "bladerunner/audio_speech.h"
+#endif
 
 #include "audio/decoders/raw.h"
 
@@ -234,7 +237,15 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 					// Audio stream starts playing, consuming queued "audio frames"
 					// Note: On its own, the audio will not re-synch with video;
 					// It plays independently so it can get ahead!
+#if BLADERUNNER_ORIGINAL_SETTINGS
+					_vm->_mixer->playStream(kVQASoundType, &_soundHandle, _audioStream, -1, (_vm->_audioSpeech->getVolume() * Audio::Mixer::kMaxChannelVolume) / 100);
+#else
+					// using the default volume argument (Audio::Mixer::kMaxChannelVolume)
+					// will result in the the configured volume for speech being used,
+					// since playStream() does get the soundtype volume into consideration.
+					// See: Channel::updateChannelVolumes() in audio/mixer.cpp
 					_vm->_mixer->playStream(kVQASoundType, &_soundHandle, _audioStream);
+#endif // BLADERUNNER_ORIGINAL_SETTINGS
 				}
 				_audioStarted = true;
 			}
