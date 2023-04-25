@@ -42,6 +42,7 @@
 #include "ags/plugins/ags_sprite_font/ags_sprite_font_clifftop.h"
 #include "ags/plugins/ags_tcp_ip/ags_tcp_ip.h"
 #include "ags/plugins/ags_touch/ags_touch.h"
+#include "ags/plugins/ags_trans/ags_trans.h"
 #include "ags/plugins/ags_wadjet_util/ags_wadjet_util.h"
 #include "ags/plugins/ags_waves/ags_waves.h"
 #include "ags/ags.h"
@@ -132,6 +133,9 @@ Plugins::PluginBase *pluginOpen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("AGSTouch"))
 		return new AGSTouch::AGSTouch();
+
+	if (fname.equalsIgnoreCase("AGSTrans"))
+		return new AGSTrans::AGSTrans();
 
 	if (fname.equalsIgnoreCase("AGSWadjetUtil"))
 		return new AGSWadjetUtil::AGSWadjetUtil();
