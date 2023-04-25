@@ -99,8 +99,8 @@ bool AmerzoneGame::changeWarp(const Common::String &zone, const Common::String &
 
 	_xAngleMin = FLT_MAX;
 	_xAngleMax = FLT_MAX;
-	_yAngleMax = 45.0f - _orientationY;
-	_yAngleMin = _orientationY + 55.0f;
+	_yAngleMin = 45.0f - _orientationY;
+	_yAngleMax = _orientationY + 55.0f;
 
 	dotpos = sceneXml.rfind('.');
 	Common::String sceneLua = sceneXml.substr(0, dotpos);
@@ -333,7 +333,7 @@ void AmerzoneGame::setAngleX(float angle) {
 	_xAngleMin -= diff;
 	_xAngleMax += diff;
 
-	float roundedAngle = (int)(angle / 360.0f) * 360;
+	float roundedAngle = angle - (int)(angle / 360.0f) * 360;
 	_orientationX = roundedAngle;
 	if (roundedAngle > 360.0f || roundedAngle < -360.0f)
 		_orientationX = 0;
@@ -352,10 +352,7 @@ void AmerzoneGame::setAngleY(float angle) {
 	_yAngleMin -= diff;
 	_yAngleMax += diff;
 
-	if (angle < -55.0f)
-		_orientationY = -55.0f;
-	else if (_orientationY > 45.0f)
-		_orientationY = 45.0f;
+	_orientationY = CLIP(angle, -55.0f, 45.0f);
 }
 
 void AmerzoneGame::showPuzzle(int puzzleNo, int puzParam1, int puzParam2) {
@@ -428,8 +425,7 @@ void AmerzoneGame::startDecelerationAnim() {
 void AmerzoneGame::update() {
 	TeInputMgr *inputMgr = g_engine->getInputMgr();
 
-	// TODO:
-	// if (!inputMgr->isLeftDown())
+	//if (!inputMgr->>isLeftDown())
 	//     isInDrag(false);
 
 	Application *app = g_engine->getApplication();
@@ -469,8 +465,12 @@ void AmerzoneGame::update() {
 			_warpY->setMouseLeftUpForMakers();
 	}
 
+	// Rotate x around the Y axis (spinning left/right on the spot)
 	TeQuaternion xRot = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 1, 0), (float)(_orientationX * M_PI) / 180);
-	TeQuaternion yRot = TeQuaternion::fromAxisAndAngle(TeVector3f32(1, 0, 0), (float)(_orientationY * M_PI) / 180);
+	// Rotate y around the axis perpendicular to the x rotation
+	TeVector3f32 yRotAxis = TeVector3f32(1, 0, 0);
+	xRot.inverse().transform(yRotAxis);
+	TeQuaternion yRot = TeQuaternion::fromAxisAndAngle(yRotAxis, (float)(_orientationY * M_PI) / 180);
 
 	if (_warpX)
 		_warpX->rotateCamera(xRot * yRot);

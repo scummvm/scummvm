@@ -37,7 +37,7 @@ bool TeWarp::debug = false;
 TeWarp::TeWarp() : _visible1(false), _loaded(false), _preloaded(false),
 	_numAnims(0), _someXVal(0), _someYVal(0), _someMeshX(0), _someMeshY(0),
 	_renderWarpBlocs(true), _xCount(0), _yCount(0), _clickedPickMesh(nullptr),
-	_clickedAnimData(nullptr) {
+	_clickedAnimData(nullptr), _markersActive(true) {
 }
 
 TeWarp::~TeWarp() {
@@ -214,7 +214,12 @@ bool TeWarp::hasObjectOrAnim(const Common::String &objname) {
 
 void TeWarp::init() {
 	// This mostly sets up the camera.. maybe nothing to do?
-	warning("TODO: Implement TeWarp::init?");
+	TeVector3f32 winSize = g_engine->getApplication()->getMainWindow().size();
+	_camera.setProjMatrixType(3);
+	_camera.viewport(0, 0, (int)winSize.x(), (int)winSize.y());
+	_camera.setOrthoPlanes(1, 4096);
+	_camera.setAspectRatio(winSize.x() / winSize.y());
+	warning("TODO: Finish TeWarp::init?");
 }
 
 void TeWarp::load(const Common::String &path, bool flag) {
@@ -538,7 +543,7 @@ void TeWarp::unloadTextures() {
 
 void TeWarp::updateCamera(const TeVector3f32 &screen) {
 	_camera.viewport(0, 0, screen.x(), screen.y());
-	_camera.setOrthoPlanes(1, 4086);
+	_camera.setOrthoPlanes(1, 4096);
 	_camera.setAspectRatio(screen.x() / screen.y());
 }
 

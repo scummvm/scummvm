@@ -25,7 +25,7 @@
 
 namespace Tetraedge {
 
-TeWarpBloc::TeWarpBloc() : _cubeFace(FaceInvalid) {
+TeWarpBloc::TeWarpBloc() : _cubeFace(FaceInvalid), _textureDataFileOffset(0) {
 	_mesh.reset(TeMesh::makeInstance());
 }
 
@@ -49,10 +49,11 @@ void TeWarpBloc::create(CubeFace face, uint x, uint y, const TeVector2s32 &offse
 
 	_mesh->setConf(4, 4, TeMesh::MeshMode_TriangleStrip, 0, 0);
 
-	float y1 = offset._y * (1000.0f / y) - 500.0f;
-	float y2 = y1 + 1000.0f / y;
 	float x1 = offset._x * (1000.0f / x) - 500.0f;
-	float x2 = x1 + 1000.0f / x;
+	float x2 = 1000.0f / x + x1;
+	float y1 = offset._y * (1000.0f / y) - 500.0f;
+	float y2 = 1000.0f / y + y1;
+
 	switch (face) {
 	case Face0:
 		_mesh->setVertex(0, TeVector3f32(-x1, 500, -y1));
@@ -104,8 +105,8 @@ void TeWarpBloc::create(CubeFace face, uint x, uint y, const TeVector2s32 &offse
 	_mesh->setNormal(3, TeVector3f32(0, 0, 1));
 	_mesh->setIndex(0, 0);
 	_mesh->setIndex(1, 1);
-	_mesh->setIndex(2, 2);
-	_mesh->setIndex(3, 3);
+	_mesh->setIndex(2, 3);
+	_mesh->setIndex(3, 2);
 	_mesh->setColor(TeColor(255, 255, 255, 255));
 }
 
@@ -135,6 +136,7 @@ void TeWarpBloc::loadTexture(Common::File &file, const Common::String &type) {
 	TeIntrusivePtr<Te3DTexture> tex = Te3DTexture::makeInstance();
 	tex->load(img);
 	_mesh->defaultMaterial(tex);
+	_mesh->materials()[0]._enableLights = false;
 }
 
 void TeWarpBloc::render() {

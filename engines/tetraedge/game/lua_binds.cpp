@@ -2004,7 +2004,7 @@ static void PlayMusic(const Common::String &path, float volume) {
 	// very slightly different to original because we can't
 	// change repeat value after starting.
 	music.stop();
-	music.repeat(false);
+	music.repeat(g_engine->gameIsAmerzone());
 	music.load(path);
 	music.play();
 	music.volume(volume);
