@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-23 14:30+0000\n"
-"PO-Revision-Date: 2023-04-17 23:35+0000\n"
+"PO-Revision-Date: 2023-04-25 20:35+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -120,12 +120,12 @@ msgid "Quick Mode: Step 1"
 msgstr "Pikatila: Vaihe 1"
 
 #: gui/cloudconnectionwizard.cpp:206
-#, fuzzy
-#| msgid "In this mode, Local Webserver must be running,"
 msgid ""
 "In this mode, Local Webserver must be running,\n"
 "so your browser could forward data to ScummVM"
-msgstr "Tässä tilassa paikallisen webpalvelimen täytyy olla käynnissä,"
+msgstr ""
+"Tässä tilassa paikallisen webpalvelimen täytyy olla käynnissä,\n"
+"jotta selaimesi voi välittää dataa ScummVM:lle"
 
 #: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:3657
 msgid "Stop server"
@@ -161,12 +161,12 @@ msgid "Open URL"
 msgstr "Avaa osoite"
 
 #: gui/cloudconnectionwizard.cpp:266
-#, fuzzy
-#| msgid "It will automatically pass the data to ScummVM,"
 msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
-msgstr "Se välittää automaattisesti dataa ScummVM:lle,"
+msgstr ""
+"Se välittää automaattisesti dataa ScummVM:lle\n"
+"ja varoittaa sinua mahdollisista virheistä."
 
 #: gui/cloudconnectionwizard.cpp:279
 msgid "Local Webserver address: "
@@ -198,6 +198,9 @@ msgid ""
 "find it on Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
+"Kun JSON:in välittäminen ScummVM:lle epäonnistuu,\n"
+"tutki sivun Troubleshooting-kohtaa,\n"
+"ja siirry täällä seuraavaan vaiheeseen."
 
 #: gui/cloudconnectionwizard.cpp:350
 msgid "Manual Mode: Step 2"
