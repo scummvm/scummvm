@@ -966,7 +966,7 @@ void GfxScreen::debugShowMap(int mapNo) {
 }
 
 void GfxScreen::scale2x(const SciSpan<const byte> &src, SciSpan<byte> &dst, int16 srcWidth, int16 srcHeight, byte bytesPerPixel) {
-	assert(bytesPerPixel == 1 || bytesPerPixel == 2);
+	assert(bytesPerPixel == 1 || bytesPerPixel == 2 || bytesPerPixel == 3 || bytesPerPixel == 4);
 	const int newWidth = srcWidth * 2;
 	const int pitch = newWidth * bytesPerPixel;
 	const byte *srcPtr = src.getUnsafeDataAt(0, srcWidth * srcHeight * bytesPerPixel);
@@ -998,6 +998,55 @@ void GfxScreen::scale2x(const SciSpan<const byte> &src, SciSpan<byte> &dst, int1
 				dstPtr[pitch + 2] = color;
 				dstPtr[pitch + 3] = color2;
 				dstPtr += 4;
+			}
+			dstPtr += pitch;
+		}
+	} else if (bytesPerPixel == 3) {
+		for (int y = 0; y < srcHeight; y++) {
+			for (int x = 0; x < srcWidth; x++) {
+				const byte color = *srcPtr++;
+				const byte color2 = *srcPtr++;
+				const byte color3 = *srcPtr++;
+				dstPtr[0] = color;
+				dstPtr[1] = color2;
+				dstPtr[2] = color3;
+				dstPtr[3] = color;
+				dstPtr[4] = color2;
+				dstPtr[5] = color3;
+				dstPtr[pitch] = color;
+				dstPtr[pitch + 1] = color2;
+				dstPtr[pitch + 2] = color3;
+				dstPtr[pitch + 3] = color;
+				dstPtr[pitch + 4] = color2;
+				dstPtr[pitch + 5] = color3;
+				dstPtr += 6;
+			}
+			dstPtr += pitch;
+		}
+	} else if (bytesPerPixel == 4) {
+		for (int y = 0; y < srcHeight; y++) {
+			for (int x = 0; x < srcWidth; x++) {
+				const byte color = *srcPtr++;
+				const byte color2 = *srcPtr++;
+				const byte color3 = *srcPtr++;
+				const byte color4 = *srcPtr++;
+				dstPtr[0] = color;
+				dstPtr[1] = color2;
+				dstPtr[2] = color3;
+				dstPtr[3] = color4;
+				dstPtr[4] = color;
+				dstPtr[5] = color2;
+				dstPtr[6] = color3;
+				dstPtr[7] = color4;
+				dstPtr[pitch] = color;
+				dstPtr[pitch + 1] = color2;
+				dstPtr[pitch + 2] = color3;
+				dstPtr[pitch + 3] = color4;
+				dstPtr[pitch + 4] = color;
+				dstPtr[pitch + 5] = color2;
+				dstPtr[pitch + 6] = color3;
+				dstPtr[pitch + 7] = color4;
+				dstPtr += 8;
 			}
 			dstPtr += pitch;
 		}
