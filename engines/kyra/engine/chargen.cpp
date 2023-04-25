@@ -52,7 +52,7 @@ private:
 	void initButtonsFromList(int first, int numButtons);
 	void initButton(int index, const EoBChargenButtonDef *e);
 	void checkForCompleteParty();
-	void drawButton(int index, int buttonState, int pageNum);
+	void drawButton(int index, int buttonState);
 	void processButtonClick(int index);
 	int viewDeleteCharacter();
 	void createPartyMember();
@@ -507,9 +507,9 @@ void CharacterGenerator::checkForCompleteParty() {
 			_screen->setCurPage(0);
 			_screen->copyRegion(168, 61, 152, 125, 136, 40, 2, 0, Screen::CR_NO_P_CHECK);
 		}
-		drawButton(15, 0, 0);
+		drawButton(15, 0);
 	} else {
-		drawButton(14, 0, 0);
+		drawButton(14, 0);
 	}
 
 	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
@@ -520,7 +520,7 @@ void CharacterGenerator::checkForCompleteParty() {
 	_screen->updateScreen();
 }
 
-void CharacterGenerator::drawButton(int index, int buttonState, int pageNum) {
+void CharacterGenerator::drawButton(int index, int buttonState) {
 	if (index >= 17)
 		return;
 
@@ -554,13 +554,9 @@ void CharacterGenerator::drawButton(int index, int buttonState, int pageNum) {
 		int x2 = destX;
 		int y2 = destY;
 
-		if (pageNum == 2) {
-			x2 = destX - 144;
-			y2 = destY - 64;
-		}
 		int page = _screen->_curPage;
 
-		_screen->_curPage = pageNum;
+		_screen->_curPage = 0;
 		_screen->set16bitShadingLevel(4);
 		_vm->gui_drawBox(x2, y2, w, h, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, -1);
 		_vm->gui_drawBox(x2 + 1, y2 + 1, w - 2, h - 2, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
@@ -568,8 +564,7 @@ void CharacterGenerator::drawButton(int index, int buttonState, int pageNum) {
 		_screen->printShadedText(_chineseStrings[index], x2 + 2, y2 + 2, buttonState ? _vm->guiSettings()->colors.guiColorLightRed : _vm->guiSettings()->colors.guiColorWhite,
 					 0, _vm->guiSettings()->colors.guiColorBlack);
 		_screen->_curPage = page;
-		if (pageNum == 0 || pageNum == 1)
-			_screen->updateScreen();
+		_screen->updateScreen();
 		return;
 	}
 
@@ -579,28 +574,20 @@ void CharacterGenerator::drawButton(int index, int buttonState, int pageNum) {
 	const CreatePartyModButton *c = &_chargenModButtons[index];
 	const EoBRect8 *p = &_chargenButtonBodyCoords[c->bodyIndex + buttonState];
 
-	if (pageNum) {
-		x2 = c->destX + 2;
-		y2 = c->destY - 64;
-	}
-
 	_screen->copyRegion(p->x << 3, p->y, x2 << 3, y2, p->w << 3, p->h, 2, 2, Screen::CR_NO_P_CHECK);
 	if (c->labelW)
 		_screen->drawShape(2, _chargenButtonLabels[index], (x2 << 3) + c->labelX, y2 + c->labelY, 0);
-
-	if (pageNum == 2)
-		return;
 
 	_screen->copyRegion(160, 0, c->destX << 3, c->destY, p->w << 3, p->h, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 }
 
 void CharacterGenerator::processButtonClick(int index) {
-	drawButton(index, 1, 0);
+	drawButton(index, 1);
 	if (!(_vm->game() == GI_EOB1 && _vm->_flags.platform == Common::kPlatformPC98))
 		_vm->snd_playSoundEffect(76);
 	_vm->_system->delayMillis(80);
-	drawButton(index, 0, 0);
+	drawButton(index, 0);
 }
 
 int CharacterGenerator::viewDeleteCharacter() {
@@ -786,7 +773,7 @@ int CharacterGenerator::classMenu(int raceSex) {
 		_screen->printShadedText(_chargenStrings2[9], 147, 67,
 					 _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
 	}
-	drawButton(5, 0, 0);
+	drawButton(5, 0);
 
 	itemsMask &= _classMenuMasks[raceSex / 2];
 	_vm->_gui->simpleMenu_setup(2, 15, _chargenClassStrings, itemsMask, 0, 0, _menuColor1, _menuColor2, _menuColor3);
@@ -849,7 +836,7 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 					 _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
 	}
 
-	drawButton(5, 0, 0);
+	drawButton(5, 0);
 
 	itemsMask &= _alignmentMenuMasks[cClass];
 	_vm->_gui->simpleMenu_setup(3, 9, _chargenAlignmentStrings, itemsMask, 0, 0, _menuColor1, _menuColor2, _menuColor3);
@@ -1076,8 +1063,8 @@ void CharacterGenerator::faceSelectMenu() {
 	int8 shp = charSex ? 26 : 0;
 
 	printStats(_activeBox, 4);
-	drawButton(12, 0, 0);
-	drawButton(13, 0, 0);
+	drawButton(12, 0);
+	drawButton(13, 0);
 	_vm->_gui->updateBoxFrameHighLight(-1);
 
 	shp = getNextFreeFaceShape(shp, charSex, 1, _chargenSelectedPortraits);
@@ -1172,7 +1159,7 @@ void CharacterGenerator::processFaceMenuSelection(int index) {
 	if (index <= 48)
 		_screen->drawShape(0, _characters[_activeBox].faceShape, _chargenBoxX[_activeBox], _chargenBoxY[_activeBox] + 1, 0);
 	else
-		drawButton(index - 50, 0, 0);
+		drawButton(index - 50, 0);
 }
 
 void CharacterGenerator::printStats(int index, int mode) {
@@ -1258,21 +1245,21 @@ void CharacterGenerator::printStats(int index, int mode) {
 
 	switch (mode) {
 	case 1:
-		drawButton(4, 0, 0);
-		drawButton(7, 0, 0);
-		drawButton(8, 0, 0);
-		drawButton(6, 0, 0);
+		drawButton(4, 0);
+		drawButton(7, 0);
+		drawButton(8, 0);
+		drawButton(6, 0);
 		break;
 
 	case 2:
-		drawButton(16, 0, 0);
-		drawButton(9, 0, 0);
+		drawButton(16, 0);
+		drawButton(9, 0);
 		break;
 
 	case 3:
-		drawButton(10, 0, 0);
-		drawButton(11, 0, 0);
-		drawButton(9, 0, 0);
+		drawButton(10, 0);
+		drawButton(11, 0);
+		drawButton(9, 0);
 		break;
 
 	default:
