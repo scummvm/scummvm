@@ -1070,8 +1070,8 @@ void doT2DKeyboard(WGame &game) {
 				break;
 
 			case T2D_WIN_COMPUTER_SEARCH: {
-				Common::String *String;
-				int Max;
+				Common::String *String = nullptr;
+				int Max = 0;
 				switch (WhatText) {
 				case  0:
 					break;
@@ -1267,12 +1267,12 @@ void doT2DMouseMainMenu(WGame &game, t2dWINDOW *w) {
 void doT2DMouse(WGame &game) {
 	struct SRect t;
 	struct SDDBitmap *d, *d1, *d2;
-	t2dWINDOW *w;
-	t2dBUTTON *b;
-	int32 a, i;
+	t2dWINDOW *w = nullptr;
+	t2dBUTTON *b = nullptr;
+	int32 a = 0, i = 0;
 	char Name[MAX_PATH];
 	//Variabili per gestione scrolling
-	int32 StartY, DimY;
+	int32 StartY = 0, DimY = 0;
 	SYSTEMTIME sysTime;
 	char Text[1000];
 	int16 mouse_x, mouse_y;
@@ -1440,9 +1440,9 @@ void doT2DMouse(WGame &game) {
 						if (WinActive[i] == CurButtonWin) break;
 					if (i == a) break;
 					for (; i < a; i++) {
-						int32 t = WinActive[i];
+						int32 temp = WinActive[i];
 						WinActive[i] = WinActive[i + 1];
-						WinActive[i + 1] = t;
+						WinActive[i + 1] = temp;
 					}
 					ResetScreenBuffer();
 					return;
@@ -5343,18 +5343,18 @@ void doT2D(WGame &game) {
 					StartSound(game, wPDAALERT);
 
 					if (StartAcquiring != i28WALKMANOK) {
-						t2dBUTTON *b;
+						t2dBUTTON *button = nullptr;
 
-						b = &w->bt[T2D_BT_PDA_TONE_WIN];
-						b->on = false;
-						b = &w->bt[T2D_BT_PDA_TONE_HELP];
-						b->on = false;
-						b = &w->bt[T2D_BT_PDA_TONE_EXIT];
-						b->on = false;
-						b = &w->bt[T2D_BT_PDA_TONE_ACQUIRE];
-						b->on = false;
-						b = &w->bt[T2D_BT_PDA_TONE_PROCESS];
-						b->on = false;
+						button = &w->bt[T2D_BT_PDA_TONE_WIN];
+						button->on = false;
+						button = &w->bt[T2D_BT_PDA_TONE_HELP];
+						button->on = false;
+						button = &w->bt[T2D_BT_PDA_TONE_EXIT];
+						button->on = false;
+						button = &w->bt[T2D_BT_PDA_TONE_ACQUIRE];
+						button->on = false;
+						button = &w->bt[T2D_BT_PDA_TONE_PROCESS];
+						button->on = false;
 
 						SetHelpWin(game._fonts, &PDA_Tone_Acquire_Help_Func, 2, Sentence[init.Obj[oTONERHELP].text[4]], " ");
 						_vm->_messageSystem.doEvent(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_DEFAULT, T2D_WIN_PDA_HELP, 0, true, nullptr, nullptr, nullptr);

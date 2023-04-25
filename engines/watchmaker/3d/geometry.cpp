@@ -1018,7 +1018,7 @@ void t3dAddBlend(t3dF32 AddPercent, t3dMESH *mesh) {
  *                  t3dCalcMeshBones
  * --------------------------------------------------*/
 void t3dCalcMeshBones(t3dMESH *mesh, int32 last) {
-	int16 TempFrame;
+	int16 TempFrame = 0;
 	if (!mesh) return;
 
 	if (last) {
@@ -2731,22 +2731,22 @@ void t3dAnimLights(t3dBODY *b) {
 	if (b->LightTable[0].Type & T3D_LIGHT_ALLLIGHTSOFF)
 		return;
 
-	t3dCalcHalos(b);                                                        //Calculate flare/halos for lights
+	t3dCalcHalos(b); // Calculate flare/halos for lights
 
-	int k = 0;
 	bProcessLights = 0;
-	while ((k < b->NumLights())) {
-		t3dLIGHT &l = b->LightTable[k];
+	int light = 0;
+	while ((light < b->NumLights())) {
+		t3dLIGHT &l = b->LightTable[light];
 		if (l.Type & T3D_LIGHT_CANDLESMOKE)
 			t3dRaiseSmoke(&l.Source, l.Particle.get());
 		else if (l.Type & T3D_LIGHT_PULSE) {
 			error("TODO: Pulsing lights");
 #if 0
-			bProcessLights = 1;
-			l.LightRandomizer = -rand() % ((int32)(l.Color.x + l.Color.y + l.Color.z) / 12);
+		bProcessLights = 1;
+		l.LightRandomizer = -rand() % ((int32)(l.Color.x + l.Color.y + l.Color.z) / 12);
 #endif
 		}
-		k++;
+		light++;
 	}
 
 	if (bProcessLights) {
@@ -2798,18 +2798,19 @@ void t3dCheckMaterialVB(MaterialPtr mat) {
 	if (!mat || (mat->NumAllocatedVerts() < 3))
 		return ;
 
-	int i;
-	for (i = 0; i < mat->NumAllocatedMesh; i++)
-		if (*(mat->FlagsList[i]) & T3D_MESH_UPDATEVB)
-			break;
+	{
+		int i = 0;
+		for (; i < mat->NumAllocatedMesh; i++)
+			if (*(mat->FlagsList[i]) & T3D_MESH_UPDATEVB)
+				break;
 
-	if (i >= mat->NumAllocatedMesh)
-		return ;
-
+		if (i >= mat->NumAllocatedMesh)
+			return;
+	}
 	//warning("TODO: Implement t3dCheckMaterialVB");
 //	gv = rLockVertexPtr(mat->VB, DDLOCK_WRITEONLY | DDLOCK_NOSYSLOCK);
 	mat->VBO->_buffer.clear();
-	for (i = 0; i < mat->NumAllocatedVerts(); i++) {
+	for (int i = 0; i < mat->NumAllocatedVerts(); i++) {
 		auto vert = *mat->VertsList[i];
 		mat->VBO->_buffer.push_back(vert);
 		//memcpy(gv, mat->VertsList[i], sizeof(gVertex));

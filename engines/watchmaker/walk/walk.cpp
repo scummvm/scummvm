@@ -110,7 +110,7 @@ int FindAttachedPanel(int32 oc, int srcp, int destp) {
 void PointOut(int32 oc, t3dCAMERA *Camera) {
 	t3dCHARACTER *Act = Character[oc];
 	t3dWALK *w = &Act->Walk;
-	float x, z;
+	float x = 0, z = 0;
 	float inters;
 	float temp;
 	float nx, nz;

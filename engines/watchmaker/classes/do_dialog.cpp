@@ -495,7 +495,7 @@ void UpdateDialogMenu(WGame &game, int16 dmx, int16 dmy, uint8 db) {
  * --------------------------------------------------*/
 void PaintDialog(WGame &game) {
 	int32 a, ca1, ca2;
-	int32 tx, ty;
+	int32 tx = 0, ty = 0;
 	FontColor tc;
 	Init &init = game.init;
 

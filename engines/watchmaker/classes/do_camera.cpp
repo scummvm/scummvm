@@ -165,7 +165,7 @@ void HandleCameraCarrello(t3dBODY *croom) {
 	t3dF32 dist, mindist;
 	t3dV3F pt, i, b;
 	int16 j;
-	uint8 bcc;
+	uint8 bcc = false;
 
 	if (!Player || !croom || !t3dCurCamera) return;
 

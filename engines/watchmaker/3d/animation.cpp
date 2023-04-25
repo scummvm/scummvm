@@ -156,7 +156,8 @@ uint8 GetLightDirection(t3dV3F *dest, uint8 pos) {
  *                  t3dLoadAnimation
  * --------------------------------------------------*/
 int8 t3dLoadAnimation(WGame &game, const char *s, t3dMESH *mesh, uint16 Flag) {
-	uint32 nf, nb, i, j, k, h, older, ScaleAnim, CurPreloadedAnim;
+	uint32 nf, nb, i, k, h, older, len, ScaleAnim, CurPreloadedAnim;
+	uint32 j = 0;
 	t3dLOADANIM *p;
 	t3dLOADBONE *bone;
 	t3dBONEANIM *db;
@@ -560,12 +561,12 @@ t3dBODY *LoadShadowMeshes(WGame &game, const char *pname, t3dBODY *Body) {
 t3dCHARACTER *t3dLoadCharacter(WGame &game, const char *pname, uint16 num) {
 	warning("LoadCharacter(%s)", pname);
 	uint8   Mirror = 1;
-	uint16  n = 0, f;
+	uint16  numBody = 0, f, i;
 	t3dV3F tmp;
 	//  gVertex *v;
 
 	t3dCHARACTER *b = new t3dCHARACTER[1] {};
-	b->Body = _vm->_roomManager->loadRoom(pname, b->Body, &n, (T3D_NOLIGHTMAPS | T3D_NORECURSION | T3D_NOVOLUMETRICLIGHTS | T3D_NOCAMERAS | T3D_STATIC_SET0 | T3D_STATIC_SET1));
+	b->Body = _vm->_roomManager->loadRoom(pname, b->Body, &numBody, (T3D_NOLIGHTMAPS | T3D_NORECURSION | T3D_NOVOLUMETRICLIGHTS | T3D_NOCAMERAS | T3D_STATIC_SET0 | T3D_STATIC_SET1));
 	if (!b->Body) {
 		delete b;
 		return nullptr;

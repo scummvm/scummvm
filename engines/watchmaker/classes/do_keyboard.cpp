@@ -80,23 +80,23 @@ void ProcessKBInput() {
 #endif
 }
 
-bool KeyDown(unsigned char key) {
-	if (KeyTable[(key)] & 0x80)
+bool KeyDown(Common::KeyCode key) {
+	if (KeyTable[key] & 0x80)
 		return TRUE;
 	else
 		return FALSE;
 }
 
-bool KeyUp(unsigned char key) {
-	if (KeyTable[(key)] & 0x10) {
-		KeyTable[(key)] = 0;
+bool KeyUp(Common::KeyCode key) {
+	if (KeyTable[key] & 0x10) {
+		KeyTable[key] = 0;
 		return TRUE;
 	} else
 		return FALSE;
 }
 
-void KeyClear(unsigned char key) {
-	KeyTable[(key)] = 0;
+void KeyClear(Common::KeyCode key) {
+	KeyTable[key] = 0;
 }
 
 bool DInputExclusiveMouse() {

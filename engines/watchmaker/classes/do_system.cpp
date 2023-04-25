@@ -354,7 +354,7 @@ void TitoliCoda_ShowStatic(WGame &game, char initialize) {
 	FontKind f;
 	int32 width, height, bpp;
 	uint32 next_time;
-	uint32 cur_time;
+	uint32 cur_time = 0;
 	uint32 time_inc;    //incremento tra l'apparizione di un ruolo e il successivo
 	Init &init = game.init;
 
@@ -681,7 +681,7 @@ void NextMessage(WGame &game) {
  *                  UpdateIntroText
  * --------------------------------------------------*/
 void UpdateIntroText(uint8 com, int32 cur, int32 max, int32 orig) {
-	int32 sx, sy, ix, iy, dx;
+	int32 sx = 0, sy = 0, ix = 0, iy = 0, dx = 0;
 
 	max --;
 	if ((com == EFFECT_MOVEIN_T2) || (com == EFFECT_MOVEOUT_T2)) dx = rT2.dx;

@@ -256,8 +256,8 @@ RoomManager *RoomManager::create(WGame *game) {
 t3dBODY* RoomManagerImplementation::loadRoom(const Common::String &pname, t3dBODY *b, uint16 *NumBody, uint32 LoaderFlags) {
 	warning("t3dLoadRoom(%s, b, %d, %d)", pname.c_str(), *NumBody, LoaderFlags);
 	struct _t3dLOADLIST *l;
-	t3dBODY *r, *rez;
-	uint16 num, i;
+	t3dBODY *r = nullptr;
+	t3dBODY *rez = nullptr;
 
 	// reset everything that was previously in the load list
 	for (int i = 0; i < MAX_T3D_LOADLIST_ITEMS; i++) {
@@ -268,7 +268,7 @@ t3dBODY* RoomManagerImplementation::loadRoom(const Common::String &pname, t3dBOD
 	addToLoadList(nullptr, pname, LoaderFlags);
 
 	while ((l = getFromLoadList())) {
-		num = 0;
+		uint16 num = 0;
 		if (l->m) {
 			if ((rez = _vm->_roomManager->checkIfAlreadyLoaded(l->pname)))
 				l->m->PortalList = rez;
@@ -287,7 +287,7 @@ t3dBODY* RoomManagerImplementation::loadRoom(const Common::String &pname, t3dBOD
 	}
 
 	if (!(LoaderFlags & T3D_NORECURSION)) {
-		for (i = 0; i < NumLoadedFiles; i++)
+		for (uint16 i = 0; i < NumLoadedFiles; i++)
 			if (LoadedFiles[i].b)
 				t3dCalcRejectedMeshFromPortal(LoadedFiles[i].b);
 	}
