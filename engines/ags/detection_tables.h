@@ -360,6 +360,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "sphonx", "Sphonx" },
 	{ "starshipquasar", "Starship Quasar" },
 	{ "stayingalive", "The Ancient Art of Staying Alive" },
+	{ "stellarmessep1", "Stellar Mess - Episode 1: The Princess Conundrum" },
 	{ "strangeland", "Strangeland" },
 	{ "sulifallenharmony", "Suli Fallen Harmony" },
 	{ "sumatra", "Sumatra: Fate of Yandi" },
@@ -2783,7 +2784,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "steamsquares", "Steamsquares" },
 	{ "steamtrek", "Steam Trek: Clueless around Risa" },
 	{ "stediddyip1employment", "Stediddy in IP1 - Employment" },
-	{ "stellarmessep1", "Stellar Mess - Episode 1: The Princess Conundrum" },
 	{ "stephenkingcars", "Stephen King DodgeEmCars" },
 	{ "stevequest", "Steve Quest" },
 	{ "stickamhour1", "Stickam Hour Game - Downfallen Superhero" },
@@ -4080,6 +4080,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("starshipquasar", "starship quasar.ags", "0ea8150e15a4f4d0f3e82c231a4659f2", 10415936),  // Multilang
 	GAME_ENTRY("starshipquasar", "Starship Quasar.exe", "0ea8150e15a4f4d0f3e82c231a4659f2", 10415936),  // Multilang itch.io
 	GAME_ENTRY_EN_STEAM("stayingalive", "Staying Alive.exe", "fae163b58c16e194688727d0903684be", 17380838),
+	GAME_ENTRY_STEAM("stellarmessep1", "StellarMessTPC.exe", "a409703089eebbcfa13f0a22f6fb71ed", 18068440),  // Eng-Esp
+	GAME_ENTRY_STEAM("stellarmessep1", "StellarMessTPC.exe", "a409703089eebbcfa13f0a22f6fb71ed", 18077040),  // Eng-Esp v1.4
 	DETECTION_ENTRY_GUIO("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3186614879, Common::EN_ANY, nullptr, GUIO2(GUIO_NOLANG, GUIO_NOLAUNCHLOAD), nullptr, ADGF_NO_FLAGS),
 	DETECTION_ENTRY_GUIO("strangeland", "ac2game.dat", "151b0391a650d3c81c2758deaa5852cd", 3183277137, Common::EN_ANY, nullptr, GUIO2(GUIO_NOLANG, GUIO_NOLAUNCHLOAD), nullptr, ADGF_NO_FLAGS),
 	GAME_ENTRY_PLUGIN_GOG_NOLAUNCHLOAD("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3186989657, nullptr), // Win v2.7
