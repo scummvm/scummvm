@@ -322,6 +322,11 @@ void Scene::setHeldItem(int16 id)  {
 }
 
 void Scene::setEventFlag(int16 label, byte flag) {
+	if (label > 1000) {
+		// In nancy3 and onwards flags begin from 1000
+		label -= 1000;
+	}
+
 	if (label > kEvNoEvent && (uint)label < g_nancy->getStaticData().numEventFlags) {
 		_flags.eventFlags[label] = flag;
 	}
@@ -332,6 +337,11 @@ void Scene::setEventFlag(FlagDescription eventFlag) {
 }
 
 bool Scene::getEventFlag(int16 label, byte flag) const {
+	if (label > 1000) {
+		// In nancy3 and onwards flags begin from 1000
+		label -= 1000;
+	}
+
 	if (label > kEvNoEvent && (uint)label < g_nancy->getStaticData().numEventFlags) {
 		return _flags.eventFlags[label] == flag;
 	} else {
@@ -345,6 +355,10 @@ bool Scene::getEventFlag(FlagDescription eventFlag) const {
 
 void Scene::setLogicCondition(int16 label, byte flag) {
 	if (label > kEvNoEvent) {
+		if (label > 2000) {
+			// In nancy3 and onwards logic conditions begin from 2000
+			label -= 2000;
+		}
 		_flags.logicConditions[label].flag = flag;
 		_flags.logicConditions[label].timestamp = g_nancy->getTotalPlayTime();
 	}
