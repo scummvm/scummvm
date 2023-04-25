@@ -34,6 +34,7 @@
 #include "engines/nancy/action/towerpuzzle.h"
 #include "engines/nancy/action/riddlepuzzle.h"
 #include "engines/nancy/action/overridelockpuzzle.h"
+#include "engines/nancy/action/bombpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -149,6 +150,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new HintSystem();
 	case 201:
 		return new TowerPuzzle();
+	case 202:
+		return new BombPuzzle();
 	case 203:
 		return new RippedLetterPuzzle();
 	case 204:
