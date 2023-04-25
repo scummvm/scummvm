@@ -330,25 +330,29 @@ void Area::addObjectFromArea(int16 id, Area *global) {
 	}
 }
 
-void Area::addStructure(Area *global) {
-	Object *obj = nullptr;
-	if (!global || !_entrancesByID->contains(255)) {
-		int id = 254;
-		Common::Array<uint8> *gColors = new Common::Array<uint8>;
-		for (int i = 0; i < 6; i++)
-			gColors->push_back(_groundColor);
+void Area::addFloor() {
+	int id = 0;
+	assert(!_objectsByID->contains(id));
+	Common::Array<uint8> *gColors = new Common::Array<uint8>;
+	for (int i = 0; i < 6; i++)
+		gColors->push_back(_groundColor);
 
-		obj = (Object *)new GeometricObject(
-			ObjectType::kCubeType,
-			id,
-			0,                             // flags
-			Math::Vector3d(0, -1, 0),      // Position
-			Math::Vector3d(4128, 1, 4128), // size
-			gColors,
-			nullptr,
-			FCLInstructionVector());
-		(*_objectsByID)[id] = obj;
-		_drawableObjects.insert_at(0, obj);
+	Object *obj = (Object *)new GeometricObject(
+		ObjectType::kCubeType,
+		id,
+		0,                             // flags
+		Math::Vector3d(0, -1, 0),      // Position
+		Math::Vector3d(4128, 1, 4128), // size
+		gColors,
+		nullptr,
+		FCLInstructionVector());
+	(*_objectsByID)[id] = obj;
+	_drawableObjects.insert_at(0, obj);
+}
+
+void Area::addStructure(Area *global) {
+	if (!global || !_entrancesByID->contains(255)) {
+		addFloor();
 		return;
 	}
 	GlobalStructure *rs = (GlobalStructure *)(*_entrancesByID)[255];
