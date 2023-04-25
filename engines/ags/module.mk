@@ -351,6 +351,7 @@ MODULE_OBJS = \
 	plugins/ags_shell/ags_shell.o \
 	plugins/ags_tcp_ip/ags_tcp_ip.o \
 	plugins/ags_touch/ags_touch.o \
+	plugins/ags_trans/ags_trans.o \
 	plugins/ags_wadjet_util/ags_wadjet_util.o \
 	plugins/ags_waves/ags_waves.o \
 	plugins/ags_waves/data.o \
