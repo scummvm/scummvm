@@ -161,9 +161,7 @@ Cursor GraphicsManager::setCursor(Cursor newCursor) {
 	if (!cursor)
 		error("Failed to find cursor %d", newCursor);
 
-	CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(),
-			cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
-	CursorMan.replaceCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
+	CursorMan.replaceCursor(cursor);
 
 	if (cursorGroup)
 		delete cursorGroup;
