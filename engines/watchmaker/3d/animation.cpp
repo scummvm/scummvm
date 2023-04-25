@@ -156,7 +156,7 @@ uint8 GetLightDirection(t3dV3F *dest, uint8 pos) {
  *                  t3dLoadAnimation
  * --------------------------------------------------*/
 int8 t3dLoadAnimation(WGame &game, const char *s, t3dMESH *mesh, uint16 Flag) {
-	uint32 nf, nb, i, k, h, older, len, ScaleAnim, CurPreloadedAnim;
+	uint32 nf, nb, i, k, h, older, ScaleAnim, CurPreloadedAnim;
 	uint32 j = 0;
 	t3dLOADANIM *p;
 	t3dLOADBONE *bone;
@@ -561,7 +561,7 @@ t3dBODY *LoadShadowMeshes(WGame &game, const char *pname, t3dBODY *Body) {
 t3dCHARACTER *t3dLoadCharacter(WGame &game, const char *pname, uint16 num) {
 	warning("LoadCharacter(%s)", pname);
 	uint8   Mirror = 1;
-	uint16  numBody = 0, f, i;
+	uint16  numBody = 0, f;
 	t3dV3F tmp;
 	//  gVertex *v;
 
@@ -709,7 +709,7 @@ uint8 CompareLightPosition(char *roomname, uint8 pos1, t3dV3F *pos2, t3dF32 acce
 
 	auto pLights = t->getPositionalLight(pos1);
 	bool foundLight = false;
-	for (auto light : pLights) {
+	for (auto &light : pLights) {
 		if (light.Pos.x && light.Pos.z) {
 			p1.x = light.Pos.x;
 			p1.y = light.Pos.y;

@@ -202,10 +202,10 @@ struct SInvObject : public SerializableAsset {
 };
 
 struct SAtFrame : public SerializableAsset {
-	uint8 type;                             // ATFTEXT, ATFSND, ATFEVENT
-	uint8 anim;                             // solo se subanim e' attiva
-	int16 nframe;                          // 10000 se attraversa portale
-	uint16 index;
+	uint8 type = 0;                             // ATFTEXT, ATFSND, ATFEVENT
+	uint8 anim = 0;                             // solo se subanim e' attiva
+	int16 nframe = 0;                          // 10000 se attraversa portale
+	uint16 index = 0;
 
 	void loadFromStream(Common::SeekableReadStream &stream) override {
 		type = stream.readByte();
@@ -477,8 +477,8 @@ struct message {
 	int16 wparam1 = 0;                     // t3dS16 parameter 1
 	int16 wparam2 = 0;                     // t3dS16 parameter 2
 	union {
-		int32 lparam[3];               // long parameter
-		t3dF32 fparam[3];               // float parameter
+		int32 lparam[3] = {}; // long parameter
+		t3dF32 fparam[3]; // float parameter
 	};
 	message() = default;
 	message(EventClass _classe, uint8 _event, uint16 _flags) : classe(_classe), event(_event), flags(_flags) {}
@@ -504,7 +504,7 @@ struct SCreditsName : public SerializableAsset {
 };
 
 struct SCreditsRole : public SerializableAsset {
-	char role[48];
+	char role[48] = {};
 	uint8 flags = 0;
 
 	void loadFromStream(Common::SeekableReadStream &stream) override {
