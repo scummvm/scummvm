@@ -1768,6 +1768,10 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, cons
 	if (!font && allowNonScalable)
 		font = loadFont(filename, fontName);
 
+	if (font) {
+		font = Graphics::BdfFont::scaleFont((const Graphics::BdfFont *)font, pointsize);
+	}
+
 	// If the font is successfully loaded store it in the font manager.
 	if (font) {
 		FontMan.assignFontToName(fontName, font);

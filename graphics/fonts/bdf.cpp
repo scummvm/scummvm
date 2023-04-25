@@ -771,20 +771,30 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 	Common::strcpy_s(slant, sz, src->_data.slant);
 	data.slant = slant;
 
-	BdfBoundingBox *boxes = new BdfBoundingBox[data.numCharacters];
-	for (int i = 0; i < data.numCharacters; ++i) {
-		boxes[i].width = (int)(((float)src->_data.boxes[i].width * scale));
-		boxes[i].height = (int)(((float)src->_data.height * scale));
-		boxes[i].xOffset = (int)(((float)src->_data.boxes[i].xOffset * scale));
-		boxes[i].yOffset = (int)(((float)src->_data.boxes[i].yOffset * scale));
+	if (src->_data.boxes) {
+		BdfBoundingBox *boxes = new BdfBoundingBox[data.numCharacters];
+		for (int i = 0; i < data.numCharacters; ++i) {
+			boxes[i].width = (int)(((float)src->_data.boxes[i].width * scale));
+			boxes[i].height = (int)(((float)src->_data.height * scale));
+			boxes[i].xOffset = (int)(((float)src->_data.boxes[i].xOffset * scale));
+			boxes[i].yOffset = (int)(((float)src->_data.boxes[i].yOffset * scale));
+		}
+		data.boxes = boxes;
+	} else {
+		// if the sources have null boxes
+		data.boxes = nullptr;
 	}
-	data.boxes = boxes;
 
-	byte *advances = new byte[data.numCharacters];
-	for (int i = 0; i < data.numCharacters; ++i) {
-		advances[i] = (int)(roundf((float)src->_data.advances[i] * scale));
+	if (src->_data.advances) {
+		byte *advances = new byte[data.numCharacters];
+		for (int i = 0; i < data.numCharacters; ++i) {
+			advances[i] = (int)(roundf((float)src->_data.advances[i] * scale));
+		}
+		data.advances = advances;
+	} else {
+		// if the sources have null advances
+		data.advances = nullptr;
 	}
-	data.advances = advances;
 
 	byte **bitmaps = new byte *[data.numCharacters];
 	for (int i = 0; i < data.numCharacters; i++) {
@@ -800,8 +810,14 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 			const int bytes = dstPitch * box.height;
 			bitmaps[i] = new byte[bytes];
 
-			src->scaleSingleGlyph(&srcSurf, dstGray, dstGraySize, box.width, box.height, box.xOffset, box.yOffset, grayLevel, i + src->_data.firstCharacter,
-								src->_data.height, srcBox.width, scale);
+			int srcBoxWidth = 0;
+			if (src->_data.boxes) {
+				srcBoxWidth = srcBox.width;
+			} else {
+				srcBoxWidth = src->_data.defaultBox.width;
+			}
+			src->scaleSingleGlyph(&srcSurf, dstGray, dstGraySize, box.width, box.height, 0, box.yOffset, grayLevel, i + src->_data.firstCharacter,
+								src->_data.height, srcBoxWidth, scale);
 
 			byte *ptr = bitmaps[i];
 			for (int y = 0; y < box.height; y++) {
