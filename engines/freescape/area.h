@@ -57,6 +57,7 @@ public:
 	ObjectArray checkCollisions(const Math::AABB &boundingBox);
 	void addObjectFromArea(int16 id, Area *global);
 	void addObject(Object *obj);
+	void addFloor();
 	void addStructure(Area *global);
 	void removeObject(int16 id);
 	void resetArea();

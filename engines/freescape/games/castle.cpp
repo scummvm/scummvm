@@ -151,6 +151,8 @@ void CastleEngine::loadAssetsDOSFullGame() {
 		load8bitBinary(stream, 0, 16);
 		for (auto &it : _areaMap)
 			it._value->addStructure(_areaMap[255]);
+
+		_areaMap[2]->addFloor();
 		delete stream;
 	} else
 		error("Not implemented yet");
