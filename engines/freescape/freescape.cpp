@@ -643,7 +643,7 @@ void FreescapeEngine::processBorder() {
 
 		for (int i = 0; i < border->w; i++) {
 			for (int j = 0; j < border->h; j++) {
-				if (border->getPixel(i, j) == black)
+				if (!isCastle() && border->getPixel(i, j) == black)
 					border->setPixel(i, j, transparent);
 			}
 		}
