@@ -39,7 +39,7 @@ struct NancyInput;
 
 namespace Action {
 
-enum struct DependencyType : byte {
+enum struct DependencyType : int16 {
 	kNone							= 0,
 	kInventory						= 1,
 	kEvent							= 2,
@@ -66,8 +66,8 @@ enum struct DependencyType : byte {
 // action record can be executed
 struct DependencyRecord {
 	DependencyType type;	// 0x00
-	byte label;				// 0x01
-	byte condition;			// 0x02
+	int16 label;			// 0x01
+	int16 condition;		// 0x02
 	bool orFlag;			// 0x03
 	int16 hours;			// 0x04
 	int16 minutes;			// 0x06

@@ -119,10 +119,11 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
 	// If the localChunkSize is less than the total data, there must be dependencies at the end of the chunk
 	uint16 depsDataSize = (uint16)inputData.size() - localChunkSize;
 	if (depsDataSize > 0) {
-		// Each dependency is 0x0C bytes long (in v1)
-		uint numDependencies = depsDataSize / 0xC;
-		if (depsDataSize % 0xC) {
-			error("Action record type %s has incorrect read size", newRecord->getRecordTypeName().c_str());;
+		// Each dependency is 12 (up to nancy2) or 16 (nancy3 and up) bytes long 
+		uint singleDepSize = g_nancy->getGameType() <= kGameTypeNancy2 ? 12 : 16;
+		uint numDependencies = depsDataSize / singleDepSize;
+		if (depsDataSize % singleDepSize) {
+			error("Action record type %s has incorrect read size", newRecord->getRecordTypeName().c_str());
 		}
 
 		// Initialize the dependencies data
@@ -132,10 +133,18 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
 			newRecord->_dependencies.push_back(DependencyRecord());
 			DependencyRecord &dep = newRecord->_dependencies.back();
 
-			dep.type = (DependencyType)inputData.readByte();
-			dep.label = inputData.readByte();
-			dep.condition = inputData.readByte();
-			dep.orFlag = inputData.readByte();
+			if (singleDepSize == 12) {
+				dep.type = (DependencyType)inputData.readByte();
+				dep.label = inputData.readByte();
+				dep.condition = inputData.readByte();
+				dep.orFlag = inputData.readByte();
+			} else if (singleDepSize == 16) {
+				dep.type = (DependencyType)inputData.readUint16LE();
+				dep.label = inputData.readUint16LE();
+				dep.condition = inputData.readUint16LE();
+				dep.orFlag = inputData.readUint16LE();
+			}
+
 			dep.hours = inputData.readSint16LE();
 			dep.minutes = inputData.readSint16LE();
 			dep.seconds = inputData.readSint16LE();
