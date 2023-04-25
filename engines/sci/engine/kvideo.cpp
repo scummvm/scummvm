@@ -128,6 +128,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	Common::ScopedPtr<Video::VideoDecoder> videoDecoder;
 
 	bool switchedGraphicsMode = false;
+	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
 
 	if (argv[0].isPointer()) {
 		Common::String filename = s->_segMan->getString(argv[0]);
@@ -135,29 +136,27 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
 			// Mac QuickTime
 			// The only argument is the string for the video
+			videoDecoder.reset(new Video::QuickTimeDecoder());
 
-			// Switch to 16bpp graphics for Cinepak
-			if (g_system->getScreenFormat().bytesPerPixel == 1) {
-				const Common::List<Graphics::PixelFormat> supportedFormats = g_system->getSupportedFormats();
-				Common::List<Graphics::PixelFormat>::const_iterator it;
-				for (it = supportedFormats.begin(); it != supportedFormats.end(); ++it) {
-					if (it->bytesPerPixel == 2) {
-						const Graphics::PixelFormat format = *it;
-						initGraphics(screenWidth, screenHeight, &format);
-						switchedGraphicsMode = true;
-						break;
-					}
+			if (!videoDecoder->loadFile(filename)) {
+				error("Could not open '%s'", filename.c_str());
+				videoDecoder.reset();
+			}
+
+			// Handle the pixel format for Cinepak videos
+			if (videoDecoder && videoDecoder->getPixelFormat() != screenFormat) {
+				if (screenFormat.isCLUT8()) {
+					// QuickTime provides generic dithering, so we shouldn't need to check the return value.
+					uint8 palette[256 * 3];
+					g_sci->_gfxScreen->grabPalette(palette, 0, 256);
+					videoDecoder->setDitheringPalette(palette);
+				} else {
+					// This shouldn't happen with Cinepak, but just in case:
+					Graphics::PixelFormat videoFormat = videoDecoder->getPixelFormat();
+					initGraphics(screenWidth, screenHeight, &videoFormat);
+					switchedGraphicsMode = true;
 				}
 			}
-
-			if (g_system->getScreenFormat().bytesPerPixel == 1) {
-				warning("This video requires >8bpp color to be displayed, but could not switch to RGB color mode");
-				return NULL_REG;
-			}
-
-			videoDecoder.reset(new Video::QuickTimeDecoder());
-			if (!videoDecoder->loadFile(filename))
-				error("Could not open '%s'", filename.c_str());
 		} else {
 			// DOS SEQ
 			// SEQ's are called with no subops, just the string and delay
@@ -197,7 +196,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		// HACK: Switch back to 8bpp if we played a true color video.
 		// We also won't be copying the screen to the SCI screen...
 		if (switchedGraphicsMode)
-			initGraphics(screenWidth, screenHeight);
+			initGraphics(screenWidth, screenHeight, &screenFormat);
 		else if (is8bit) {
 			g_sci->_gfxScreen->kernelSyncWithFramebuffer();
 			g_sci->_gfxPalette16->kernelSyncScreenPalette();
