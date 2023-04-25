@@ -280,12 +280,21 @@ void Scene::setPlayerTime(Time time, byte relative) {
 }
 
 byte Scene::getPlayerTOD() const {
-	if (_timers.playerTime.getHours() >= 7 && _timers.playerTime.getHours() < 18) {
-		return kPlayerDay;
-	} else if (_timers.playerTime.getHours() >= 19 || _timers.playerTime.getHours() < 6) {
-		return kPlayerNight;
+	if (g_nancy->getGameType() <= kGameTypeNancy1) {
+		if (_timers.playerTime.getHours() >= 7 && _timers.playerTime.getHours() < 18) {
+			return kPlayerDay;
+		} else if (_timers.playerTime.getHours() >= 19 || _timers.playerTime.getHours() < 6) {
+			return kPlayerNight;
+		} else {
+			return kPlayerDuskDawn;
+		}
 	} else {
-		return kPlayerDuskDawn;
+		// nancy2 and up removed dusk/dawn
+		if (_timers.playerTime.getHours() >= 6 && _timers.playerTime.getHours() < 18) {
+			return kPlayerDay;
+		} else {
+			return kPlayerNight;
+		}
 	}
 }
 
