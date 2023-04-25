@@ -568,7 +568,7 @@ t3dCHARACTER *t3dLoadCharacter(WGame &game, const char *pname, uint16 num) {
 	t3dCHARACTER *b = new t3dCHARACTER[1] {};
 	b->Body = _vm->_roomManager->loadRoom(pname, b->Body, &numBody, (T3D_NOLIGHTMAPS | T3D_NORECURSION | T3D_NOVOLUMETRICLIGHTS | T3D_NOCAMERAS | T3D_STATIC_SET0 | T3D_STATIC_SET1));
 	if (!b->Body) {
-		delete b;
+		delete[] b;
 		return nullptr;
 	}
 	b->Mesh = &b->Body->MeshTable[0];
