@@ -374,8 +374,9 @@ void iOS7_buildSharedOSystemInstance() {
 void iOS7_main(int argc, char **argv) {
 
 	//OSystem_iOS7::migrateApp();
+	Common::String logFilePath = iOS7_getDocumentsDir() + "/scummvm.log";
 
-	FILE *newfp = fopen("/var/mobile/.scummvm.log", "a");
+	FILE *newfp = fopen(logFilePath.c_str(), "a");
 	if (newfp != NULL) {
 		fclose(stdout);
 		fclose(stderr);
