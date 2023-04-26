@@ -46,7 +46,7 @@ void CCGUI::Serialize(const char *address, Stream *out) {
 
 void CCGUI::Unserialize(int index, Stream *in, size_t data_sz) {
 	int num = in->ReadInt32();
-	ccRegisterUnserializedObject(index, &_G(scrGui)[num], this);
+	ccRegisterUnserializedObject(index, &_GP(scrGui)[num], this);
 }
 
 } // namespace AGS3

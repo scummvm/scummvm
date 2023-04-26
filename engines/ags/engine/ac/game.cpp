@@ -423,12 +423,10 @@ void unload_game() {
 			free(dlg.optionscripts);
 	}
 	_G(dialog).clear();
-	delete[] _G(scrDialog);
-	_G(scrDialog) = nullptr;
+	_GP(scrDialog).clear();
 
 	_GP(guis).clear();
-	delete[] _G(scrGui);
-	_G(scrGui) = nullptr;
+	_GP(scrGui).clear();
 
 	remove_screen_overlay(-1);
 

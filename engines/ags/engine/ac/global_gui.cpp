@@ -118,7 +118,7 @@ void SetGUIPosition(int ifn, int xx, int yy) {
 	if ((ifn < 0) || (ifn >= _GP(game).numgui))
 		quit("!SetGUIPosition: invalid GUI number");
 
-	GUI_SetPosition(&_G(scrGui)[ifn], xx, yy);
+	GUI_SetPosition(&_GP(scrGui)[ifn], xx, yy);
 }
 
 void SetGUIObjectSize(int ifn, int objn, int newwid, int newhit) {
@@ -135,21 +135,21 @@ void SetGUISize(int ifn, int widd, int hitt) {
 	if ((ifn < 0) || (ifn >= _GP(game).numgui))
 		quit("!SetGUISize: invalid GUI number");
 
-	GUI_SetSize(&_G(scrGui)[ifn], widd, hitt);
+	GUI_SetSize(&_GP(scrGui)[ifn], widd, hitt);
 }
 
 void SetGUIZOrder(int guin, int z) {
 	if ((guin < 0) || (guin >= _GP(game).numgui))
 		quit("!SetGUIZOrder: invalid GUI number");
 
-	GUI_SetZOrder(&_G(scrGui)[guin], z);
+	GUI_SetZOrder(&_GP(scrGui)[guin], z);
 }
 
 void SetGUIClickable(int guin, int clickable) {
 	if ((guin < 0) || (guin >= _GP(game).numgui))
 		quit("!SetGUIClickable: invalid GUI number");
 
-	GUI_SetClickable(&_G(scrGui)[guin], clickable);
+	GUI_SetClickable(&_GP(scrGui)[guin], clickable);
 }
 
 // pass trans=0 for fully solid, trans=100 for fully transparent
@@ -157,14 +157,14 @@ void SetGUITransparency(int ifn, int trans) {
 	if ((ifn < 0) | (ifn >= _GP(game).numgui))
 		quit("!SetGUITransparency: invalid GUI number");
 
-	GUI_SetTransparency(&_G(scrGui)[ifn], trans);
+	GUI_SetTransparency(&_GP(scrGui)[ifn], trans);
 }
 
 void CentreGUI(int ifn) {
 	if ((ifn < 0) | (ifn >= _GP(game).numgui))
 		quit("!CentreGUI: invalid GUI number");
 
-	GUI_Centre(&_G(scrGui)[ifn]);
+	GUI_Centre(&_GP(scrGui)[ifn]);
 }
 
 int GetTextWidth(const char *text, int fontnum) {
@@ -201,7 +201,7 @@ void SetGUIBackgroundPic(int guin, int slotn) {
 	if ((guin < 0) | (guin >= _GP(game).numgui))
 		quit("!SetGUIBackgroundPic: invalid GUI number");
 
-	GUI_SetBackgroundGraphic(&_G(scrGui)[guin], slotn);
+	GUI_SetBackgroundGraphic(&_GP(scrGui)[guin], slotn);
 }
 
 void DisableInterface() {

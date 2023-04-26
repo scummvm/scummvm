@@ -65,7 +65,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 ScriptGUI *GUI_AsTextWindow(ScriptGUI *tehgui) { // Internally both GUI and TextWindow are implemented by same class
-	return _GP(guis)[tehgui->id].IsTextWindow() ? &_G(scrGui)[tehgui->id] : nullptr;
+	return _GP(guis)[tehgui->id].IsTextWindow() ? &_GP(scrGui)[tehgui->id] : nullptr;
 }
 
 int GUI_GetPopupStyle(ScriptGUI *tehgui) {
@@ -269,7 +269,7 @@ ScriptGUI *GetGUIAtLocation(int xx, int yy) {
 	int guiid = GetGUIAt(xx, yy);
 	if (guiid < 0)
 		return nullptr;
-	return &_G(scrGui)[guiid];
+	return &_GP(scrGui)[guiid];
 }
 
 void GUI_Click(ScriptGUI *scgui, int mbut) {
@@ -306,7 +306,7 @@ void remove_popup_interface(int ifacenum) {
 void process_interface_click(int ifce, int btn, int mbut) {
 	if (btn < 0) {
 		// click on GUI background
-		RuntimeScriptValue params[]{ RuntimeScriptValue().SetDynamicObject(&_G(scrGui)[ifce], &_GP(ccDynamicGUI)),
+		RuntimeScriptValue params[]{ RuntimeScriptValue().SetDynamicObject(&_GP(scrGui)[ifce], &_GP(ccDynamicGUI)),
 					RuntimeScriptValue().SetInt32(mbut) };
 		QueueScriptFunction(kScInstGame, _GP(guis)[ifce].OnClickHandler.GetCStr(), 2, params);
 		return;

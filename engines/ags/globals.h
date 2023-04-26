@@ -754,18 +754,13 @@ public:
 	CCAudioClip *_ccDynamicAudioClip;
 	CCAudioChannel *_ccDynamicAudio;
 	ScriptString *_myScriptStringImpl;
-
-	// TODO: IMPORTANT!!
-	// we cannot simply replace these arrays with vectors, or other C++ containers,
-	// until we implement safe management of such containers in script exports
-	// system. Notably we would need an alternate to StaticArray class to track
-	// access to their elements.
 	ScriptObject *_scrObj;
-	ScriptGUI *_scrGui = nullptr;
+	std::vector<ScriptGUI> *_scrGui;
 	ScriptHotspot *_scrHotspot;
 	ScriptRegion *_scrRegion;
 	ScriptInvItem *_scrInv;
-	ScriptDialog *_scrDialog = nullptr;
+	std::vector<ScriptDialog> *_scrDialog;
+
 	std::vector<ViewStruct> *_views;
 	// Cached character and object states, used to determine
 	// whether these require texture update

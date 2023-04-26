@@ -109,7 +109,7 @@ void DialogOptionsRendering_SetParserTextboxWidth(ScriptDialogOptionsRendering *
 }
 
 ScriptDialog *DialogOptionsRendering_GetDialogToRender(ScriptDialogOptionsRendering *dlgOptRender) {
-	return &_G(scrDialog)[dlgOptRender->dialogID];
+	return &_GP(scrDialog)[dlgOptRender->dialogID];
 }
 
 ScriptDrawingSurface *DialogOptionsRendering_GetSurface(ScriptDialogOptionsRendering *dlgOptRender) {
@@ -122,7 +122,7 @@ int DialogOptionsRendering_GetActiveOptionID(ScriptDialogOptionsRendering *dlgOp
 }
 
 void DialogOptionsRendering_SetActiveOptionID(ScriptDialogOptionsRendering *dlgOptRender, int activeOptionID) {
-	int optionCount = _G(dialog)[_G(scrDialog)[dlgOptRender->dialogID].id].numoptions;
+	int optionCount = _G(dialog)[_GP(scrDialog)[dlgOptRender->dialogID].id].numoptions;
 	if ((activeOptionID < 0) || (activeOptionID > optionCount))
 		quitprintf("DialogOptionsRenderingInfo.ActiveOptionID: invalid ID specified for this dialog (specified %d, valid range: 1..%d)", activeOptionID, optionCount);
 
