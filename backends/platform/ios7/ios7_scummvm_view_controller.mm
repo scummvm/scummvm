@@ -57,14 +57,16 @@
 - (void)viewDidAppear:(BOOL)animated {
 	[super viewDidAppear:animated];
 
-	UIInterfaceOrientation orientationBefore = UIInterfaceOrientationUnknown;
+	UIInterfaceOrientation orientation = UIInterfaceOrientationUnknown;
 	if (@available(iOS 13.0, *)) {
-		orientationBefore = [[[[self view] window] windowScene] interfaceOrientation];
+		orientation = [[[[self view] window] windowScene] interfaceOrientation];
 	} else {
-		orientationBefore = [[UIApplication sharedApplication] statusBarOrientation];
+		orientation = [[UIApplication sharedApplication] statusBarOrientation];
 	}
-	if (currentOrientation != UIInterfaceOrientationUnknown)
-		[[iOS7AppDelegate iPhoneView] interfaceOrientationChanged:currentOrientation];
+	if (orientation != UIInterfaceOrientationUnknown && orientation != currentOrientation) {
+		currentOrientation = orientation;
+		[[iOS7AppDelegate iPhoneView] interfaceOrientationChanged:orientation];
+	}
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
