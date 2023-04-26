@@ -66,7 +66,9 @@
 #include "ags/engine/ac/dynobj/cc_serializer.h"
 #include "ags/engine/ac/dynobj/managed_object_pool.h"
 #include "ags/engine/ac/dynobj/script_audio_channel.h"
+#include "ags/engine/ac/dynobj/script_dialog.h"
 #include "ags/engine/ac/dynobj/script_dialog_options_rendering.h"
+#include "ags/engine/ac/dynobj/script_gui.h"
 #include "ags/engine/ac/dynobj/script_hotspot.h"
 #include "ags/engine/ac/dynobj/script_inv_item.h"
 #include "ags/engine/ac/dynobj/script_object.h"
@@ -236,10 +238,12 @@ Globals::Globals() {
 	_thisroom = new AGS::Shared::RoomStruct();
 	_troom = new RoomStatus();
 	_usetup = new GameSetup();
+	_scrGui = new std::vector<ScriptGUI>();
 	_scrObj = new ScriptObject[MAX_ROOM_OBJECTS];
 	_scrHotspot = new ScriptHotspot[MAX_ROOM_HOTSPOTS];
 	_scrRegion = new ScriptRegion[MAX_ROOM_REGIONS];
 	_scrInv = new ScriptInvItem[MAX_INV];
+	_scrDialog = new std::vector<ScriptDialog>();
 	_charcache = new std::vector<ObjectCache>();
 	_objcache = new ObjectCache[MAX_ROOM_OBJECTS];
 	_screenovercache = new std::vector<Point>();
@@ -499,10 +503,12 @@ Globals::~Globals() {
 	delete _thisroom;
 	delete _troom;
 	delete _usetup;
+	delete _scrGui;
 	delete[] _scrObj;
 	delete[] _scrHotspot;
 	delete[] _scrRegion;
 	delete[] _scrInv;
+	delete _scrDialog;
 	delete _charcache;
 	delete[] _objcache;
 	delete _screenovercache;

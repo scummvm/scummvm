@@ -129,14 +129,14 @@ void InitAndRegisterCharacters(GameSetupStruct &game) {
 
 // Initializes dialog and registers them in the script system
 void InitAndRegisterDialogs(GameSetupStruct &game) {
-	_G(scrDialog) = new ScriptDialog[game.numdialog];
+	_GP(scrDialog).resize(MAX(1, game.numdialog)); // ensure at least 1 element, we must register buffer
 	for (int i = 0; i < game.numdialog; ++i) {
-		_G(scrDialog)[i].id = i;
-		_G(scrDialog)[i].reserved = 0;
-		ccRegisterManagedObject(&_G(scrDialog)[i], &_GP(ccDynamicDialog));
+		_GP(scrDialog)[i].id = i;
+		_GP(scrDialog)[i].reserved = 0;
+		ccRegisterManagedObject(&_GP(scrDialog)[i], &_GP(ccDynamicDialog));
 
 		if (!game.dialogScriptNames[i].IsEmpty())
-			ccAddExternalDynamicObject(game.dialogScriptNames[i], &_G(scrDialog)[i], &_GP(ccDynamicDialog));
+			ccAddExternalDynamicObject(game.dialogScriptNames[i], &_GP(scrDialog)[i], &_GP(ccDynamicDialog));
 	}
 }
 
@@ -152,9 +152,9 @@ void InitAndRegisterDialogOptions() {
 
 // Initializes gui and registers them in the script system
 HError InitAndRegisterGUI(GameSetupStruct &game) {
-	_G(scrGui) = new ScriptGUI[game.numgui];
+	_GP(scrGui).resize(MAX(1, game.numgui)); // ensure at least 1 element, we must register buffer
 	for (int i = 0; i < game.numgui; ++i) {
-		_G(scrGui)[i].id = -1;
+		_GP(scrGui)[i].id = -1;
 	}
 
 	for (int i = 0; i < game.numgui; ++i) {
@@ -164,9 +164,9 @@ HError InitAndRegisterGUI(GameSetupStruct &game) {
 			return err;
 		// export all the GUI's controls
 		export_gui_controls(i);
-		_G(scrGui)[i].id = i;
-		ccAddExternalDynamicObject(_GP(guis)[i].Name, &_G(scrGui)[i], &_GP(ccDynamicGUI));
-		ccRegisterManagedObject(&_G(scrGui)[i], &_GP(ccDynamicGUI));
+		_GP(scrGui)[i].id = i;
+		ccAddExternalDynamicObject(_GP(guis)[i].Name, &_GP(scrGui)[i], &_GP(ccDynamicGUI));
+		ccRegisterManagedObject(&_GP(scrGui)[i], &_GP(ccDynamicGUI));
 	}
 	return HError::None();
 }
@@ -220,11 +220,11 @@ void RegisterStaticArrays(GameSetupStruct &game) {
 
 	ccAddExternalStaticArray("character", &game.chars[0], &_GP(StaticCharacterArray));
 	ccAddExternalStaticArray("object", &_G(scrObj)[0], &_GP(StaticObjectArray));
-	ccAddExternalStaticArray("gui", &_G(scrGui)[0], &_GP(StaticGUIArray));
+	ccAddExternalStaticArray("gui", &_GP(scrGui)[0], &_GP(StaticGUIArray));
 	ccAddExternalStaticArray("hotspot", &_G(scrHotspot)[0], &_GP(StaticHotspotArray));
 	ccAddExternalStaticArray("region", &_G(scrRegion)[0], &_GP(StaticRegionArray));
 	ccAddExternalStaticArray("inventory", &_G(scrInv)[0], &_GP(StaticInventoryArray));
-	ccAddExternalStaticArray("dialog", &_G(scrDialog)[0], &_GP(StaticDialogArray));
+	ccAddExternalStaticArray("dialog", &_GP(scrDialog)[0], &_GP(StaticDialogArray));
 }
 
 // Initializes various game entities and registers them in the script system
