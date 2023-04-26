@@ -45,6 +45,7 @@
 #include "ags/engine/ac/event.h"
 #include "ags/engine/ac/game_setup.h"
 #include "ags/engine/ac/game_state.h"
+#include "ags/engine/ac/lip_sync.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/move_list.h"
 #include "ags/engine/ac/room_status.h"
@@ -149,6 +150,9 @@ Globals::Globals() {
 
 	// cc_common globals
 	_ccError = new ScriptError();
+
+	// character.cpp globals
+	_splipsync = new std::vector<SpeechLipSyncLine>();
 
 	// csc_dialog.cpp globals
 	_vobjs = new NewControl *[MAXCONTROLS];
@@ -427,6 +431,9 @@ Globals::~Globals() {
 
 	// cc_common.cpp globals
 	delete _ccError;
+
+	// character.cpp globals
+	delete _splipsync;
 
 	// cscdialog.cpp globals
 	delete[] _vobjs;

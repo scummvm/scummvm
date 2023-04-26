@@ -296,14 +296,14 @@ void LoadLipsyncData() {
 		Debug::Printf(kDbgMsg_Info, "Unknown speech lip sync format (%d).\nLip sync disabled.", lipsync_fmt);
 	} else {
 		_G(numLipLines) = speechsync->ReadInt32();
-		_G(splipsync) = (SpeechLipSyncLine *)malloc(sizeof(SpeechLipSyncLine) * _G(numLipLines));
+		_GP(splipsync).resize(_G(numLipLines));
 		for (int ee = 0; ee < _G(numLipLines); ee++) {
-			_G(splipsync)[ee].numPhonemes = speechsync->ReadInt16();
-			speechsync->Read(_G(splipsync)[ee].filename, 14);
-			_G(splipsync)[ee].endtimeoffs = (int32_t *)malloc(_G(splipsync)[ee].numPhonemes * sizeof(int));
-			speechsync->ReadArrayOfInt32(_G(splipsync)[ee].endtimeoffs, _G(splipsync)[ee].numPhonemes);
-			_G(splipsync)[ee].frame = (short *)malloc(_G(splipsync)[ee].numPhonemes * sizeof(short));
-			speechsync->ReadArrayOfInt16(_G(splipsync)[ee].frame, _G(splipsync)[ee].numPhonemes);
+			_GP(splipsync)[ee].numPhonemes = speechsync->ReadInt16();
+			speechsync->Read(_GP(splipsync)[ee].filename, 14);
+			_GP(splipsync)[ee].endtimeoffs.resize(_GP(splipsync)[ee].numPhonemes);
+			speechsync->ReadArrayOfInt32(&_GP(splipsync)[ee].endtimeoffs.front(), _GP(splipsync)[ee].numPhonemes);
+			_GP(splipsync)[ee].frame.resize(_GP(splipsync)[ee].numPhonemes);
+			speechsync->ReadArrayOfInt16(&_GP(splipsync)[ee].frame.front(), _GP(splipsync)[ee].numPhonemes);
 		}
 	}
 	Debug::Printf(kDbgMsg_Info, "Lipsync data found and loaded");
