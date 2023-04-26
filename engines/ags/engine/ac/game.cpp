@@ -406,17 +406,10 @@ void unload_game() {
 	_GP(charextra).clear();
 	_GP(mls).clear();
 	_GP(views).clear();
-	// Free lipsync
-	if (_G(splipsync) != nullptr) {
-		for (int i = 0; i < _G(numLipLines); ++i) {
-			free(_G(splipsync)[i].endtimeoffs);
-			free(_G(splipsync)[i].frame);
-		}
-		free(_G(splipsync));
-		_G(splipsync) = nullptr;
-		_G(numLipLines) = 0;
-		_G(curLipLine) = -1;
-	}
+
+	_GP(splipsync).clear();
+	_G(numLipLines) = 0;
+	_G(curLipLine) = -1;
 
 	for (auto &dlg : _G(dialog)) {
 		if (dlg.optionscripts != nullptr)

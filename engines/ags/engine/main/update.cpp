@@ -313,16 +313,16 @@ void update_sierra_speech() {
 
 		if (_G(curLipLine) >= 0) {
 			// check voice lip sync
-			if (_G(curLipLinePhoneme) >= _G(splipsync)[_G(curLipLine)].numPhonemes) {
+			if (_G(curLipLinePhoneme) >= _GP(splipsync)[_G(curLipLine)].numPhonemes) {
 				// the lip-sync has finished, so just stay idle
 			} else {
-				while ((_G(curLipLinePhoneme) < _G(splipsync)[_G(curLipLine)].numPhonemes) &&
-				        ((_G(curLipLinePhoneme) < 0) || (voice_pos_ms >= _G(splipsync)[_G(curLipLine)].endtimeoffs[_G(curLipLinePhoneme)]))) {
+				while ((_G(curLipLinePhoneme) < _GP(splipsync)[_G(curLipLine)].numPhonemes) &&
+				        ((_G(curLipLinePhoneme) < 0) || (voice_pos_ms >= _GP(splipsync)[_G(curLipLine)].endtimeoffs[_G(curLipLinePhoneme)]))) {
 					_G(curLipLinePhoneme)++;
-					if (_G(curLipLinePhoneme) >= _G(splipsync)[_G(curLipLine)].numPhonemes)
+					if (_G(curLipLinePhoneme) >= _GP(splipsync)[_G(curLipLine)].numPhonemes)
 						_G(facetalkframe) = _GP(game).default_lipsync_frame;
 					else
-						_G(facetalkframe) = _G(splipsync)[_G(curLipLine)].frame[_G(curLipLinePhoneme)];
+						_G(facetalkframe) = _GP(splipsync)[_G(curLipLine)].frame[_G(curLipLinePhoneme)];
 
 					if (_G(facetalkframe) >= _GP(views)[_G(facetalkview)].loops[_G(facetalkloop)].numFrames)
 						_G(facetalkframe) = 0;
