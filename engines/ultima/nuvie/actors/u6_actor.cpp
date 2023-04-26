@@ -1520,7 +1520,9 @@ bool U6Actor::can_twitch() {
 
 bool U6Actor::can_be_passed(Actor *other) {
 	U6Actor *other_ = static_cast<U6Actor *>(other);
-	return (Actor::can_be_passed(other_) || other_->current_movetype != current_movetype);
+// Sherry the mouse can pass others if they are in a party with her.
+	bool is_sherry = is_in_party() && other_->is_in_party() && other_->obj_n == OBJ_U6_MOUSE;
+	return (Actor::can_be_passed(other_) || other_->current_movetype != current_movetype || is_sherry);
 }
 
 void U6Actor::print() {
