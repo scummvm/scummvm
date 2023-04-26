@@ -392,7 +392,7 @@ void remove_clips_of_type_from_queue(int audioType) {
 	int aa;
 	for (aa = 0; aa < _GP(play).new_music_queue_size; aa++) {
 		ScriptAudioClip *clip = &_GP(game).audioClips[_GP(play).new_music_queue[aa].audioClipIndex];
-		if (clip->type == audioType) {
+		if ((audioType == SCR_NO_VALUE) || (clip->type == audioType)) {
 			_GP(play).new_music_queue_size--;
 			for (int bb = aa; bb < _GP(play).new_music_queue_size; bb++)
 				_GP(play).new_music_queue[bb] = _GP(play).new_music_queue[bb + 1];
