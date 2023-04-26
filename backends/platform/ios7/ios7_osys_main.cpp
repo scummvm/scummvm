@@ -98,13 +98,9 @@ OSystem_iOS7::OSystem_iOS7() :
 	ChRootFilesystemFactory *chFsFactory = new ChRootFilesystemFactory(_chrootBasePath);
 	_fsFactory = chFsFactory;
 	// Add virtual drive for bundle path
-	CFURLRef fileUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
-	if (fileUrl) {
-		UInt8 buf[MAXPATHLEN];
-		if (CFURLGetFileSystemRepresentation(fileUrl, true, buf, sizeof(buf)))
-			chFsFactory->addVirtualDrive("appbundle:", Common::String((const char *)buf));
-		CFRelease(fileUrl);
-	}
+	Common::String appBubdlePath = iOS7_getAppBundleDir();
+	if (!appBubdlePath.empty())
+		chFsFactory->addVirtualDrive("appbundle:", appBubdlePath);
 
 	initVideoContext();
 
@@ -392,7 +388,7 @@ void iOS7_main(int argc, char **argv) {
 		//gDebugLevel = 10;
 	}
 
-	chdir(iOS7_getDocumentsDir());
+	chdir(iOS7_getDocumentsDir().c_str());
 
 	g_system = OSystem_iOS7::sharedInstance();
 	assert(g_system);

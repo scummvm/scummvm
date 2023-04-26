@@ -45,7 +45,7 @@
 
 	// Create the directory for savegames
 	NSFileManager *fm = [NSFileManager defaultManager];
-	NSString *documentPath = [NSString stringWithUTF8String:iOS7_getDocumentsDir()];
+	NSString *documentPath = [NSString stringWithUTF8String:iOS7_getDocumentsDir().c_str()];
 	NSString *savePath = [documentPath stringByAppendingPathComponent:@"Savegames"];
 	if (![fm fileExistsAtPath:savePath]) {
 		[fm createDirectoryAtPath:savePath withIntermediateDirectories:YES attributes:nil error:nil];
@@ -142,14 +142,3 @@
 }
 
 @end
-
-const char *iOS7_getDocumentsDir() {
-	NSArray *paths;
-#if TARGET_OS_IOS
-	paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-#else
-	paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-#endif
-	NSString *documentsDirectory = [paths objectAtIndex:0];
-	return [documentsDirectory UTF8String];
-}

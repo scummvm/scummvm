@@ -117,7 +117,8 @@ bool iOS7_isBigDevice();
 
 void iOS7_buildSharedOSystemInstance();
 void iOS7_main(int argc, char **argv);
-const char *iOS7_getDocumentsDir();
+Common::String iOS7_getDocumentsDir();
+Common::String iOS7_getAppBundleDir();
 bool iOS7_touchpadModeEnabled();
 
 uint getSizeNextPOT(uint size);
