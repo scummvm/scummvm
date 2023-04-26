@@ -3622,7 +3622,7 @@ if test -n "$_host"; then
 			;;
 		ios7*)
 			add_line_to_config_mk 'IPHONE = 1'
-			append_var DEFINES "-DIPHONE -DIPHONE_IOS7 -DIPHONE_SANDBOXED"
+			append_var DEFINES "-DIPHONE -DIPHONE_IOS7"
 			_backend="ios7"
 			_seq_midi=no
 			_timidity=no
@@ -3904,7 +3904,7 @@ if test -n "$_host"; then
 			;;
 		tvos)
 			add_line_to_config_mk 'IPHONE = 1'
-			append_var DEFINES "-DIPHONE -DIPHONE_IOS7 -DIPHONE_SANDBOXED"
+			append_var DEFINES "-DIPHONE -DIPHONE_IOS7"
 			_backend="ios7"
 			_seq_midi=no
 			_timidity=no

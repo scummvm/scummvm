@@ -1303,7 +1303,6 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	REMOVE_DEFINE(scummvm_defines, "MACOSX");
 	REMOVE_DEFINE(scummvm_defines, "IPHONE");
 	REMOVE_DEFINE(scummvm_defines, "IPHONE_IOS7");
-	REMOVE_DEFINE(scummvm_defines, "IPHONE_SANDBOXED");
 	REMOVE_DEFINE(scummvm_defines, "SDL_BACKEND");
 	ADD_SETTING_LIST(scummvm_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_defines, kSettingsNoQuote | kSettingsAsList, 5);
 	ADD_SETTING(scummvm_Debug, "GCC_WARN_ABOUT_RETURN_TYPE", "YES");
@@ -1398,7 +1397,6 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_DEFINE(scummvmIOS_defines, "\"$(inherited)\"");
 	ADD_DEFINE(scummvmIOS_defines, "IPHONE");
 	ADD_DEFINE(scummvmIOS_defines, "IPHONE_IOS7");
-	ADD_DEFINE(scummvmIOS_defines, "IPHONE_SANDBOXED");
 	if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
 		ADD_DEFINE(scummvmIOS_defines, "WITHOUT_SDL");
 	ADD_SETTING_LIST(iPhone_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmIOS_defines, kSettingsNoQuote | kSettingsAsList, 5);
@@ -1556,7 +1554,6 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_DEFINE(scummvmTVOS_defines, "\"$(inherited)\"");
 	ADD_DEFINE(scummvmTVOS_defines, "IPHONE");
 	ADD_DEFINE(scummvmTVOS_defines, "IPHONE_IOS7");
-	ADD_DEFINE(scummvmTVOS_defines, "IPHONE_SANDBOXED");
 	if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
 		ADD_DEFINE(scummvmTVOS_defines, "WITHOUT_SDL");
 	ADD_SETTING_LIST(tvOS_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmTVOS_defines, kSettingsNoQuote | kSettingsAsList, 5);
@@ -1642,7 +1639,6 @@ void XcodeProvider::setupDefines(const BuildSetup &setup) {
 	REMOVE_DEFINE(_defines, "MACOSX");
 	REMOVE_DEFINE(_defines, "IPHONE");
 	REMOVE_DEFINE(_defines, "IPHONE_IOS7");
-	REMOVE_DEFINE(_defines, "IPHONE_SANDBOXED");
 	REMOVE_DEFINE(_defines, "SDL_BACKEND");
 	ADD_DEFINE(_defines, "CONFIG_H");
 	ADD_DEFINE(_defines, "UNIX");
