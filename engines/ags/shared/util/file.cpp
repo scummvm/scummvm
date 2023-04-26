@@ -89,6 +89,34 @@ bool File::DeleteFile(const String &filename) {
 	return g_system->getSavefileManager()->removeSavefile(file);
 }
 
+bool File::RenameFile(const String &old_name, const String &new_name) {
+	// Only allow renaming files in the savegame folder
+	if (old_name.CompareLeftNoCase(SAVE_FOLDER_PREFIX) || new_name.CompareLeftNoCase(SAVE_FOLDER_PREFIX)) {
+		warning("Cannot rename file %s to %s. Only files in the savegame directory can be renamed", old_name.GetCStr(), new_name.GetCStr());
+		return false;
+	}
+	Common::String file_old(old_name.GetCStr() + strlen(SAVE_FOLDER_PREFIX));
+	Common::String file_new(new_name.GetCStr() + strlen(SAVE_FOLDER_PREFIX));
+	return g_system->getSavefileManager()->renameSavefile(file_old, file_new);
+}
+
+bool File::CopyFile(const String &src_path, const String &dst_path, bool overwrite) {
+	// Only allow copying files to the savegame folder
+	// In theory it should be possible to copy any file to to save folder, but
+	// let's restrict only to files that are already in the save folder for now
+	if (src_path.CompareLeftNoCase(SAVE_FOLDER_PREFIX) || dst_path.CompareLeftNoCase(SAVE_FOLDER_PREFIX)) {
+		warning("Cannot copy file %s to %s. Source and destination files must be in the savegame directory", src_path.GetCStr(), dst_path.GetCStr());
+		return false;
+	}
+	if (ags_file_exists(dst_path.GetCStr()) && !overwrite) {
+		warning("Cannot copy file %s to %s. File exists", src_path.GetCStr(), dst_path.GetCStr());
+		return false;
+	}
+	Common::String file_src(src_path.GetCStr() + strlen(SAVE_FOLDER_PREFIX));
+	Common::String file_dest(dst_path.GetCStr() + strlen(SAVE_FOLDER_PREFIX));
+	return g_system->getSavefileManager()->copySavefile(file_src, file_dest);
+}
+
 bool File::GetFileModesFromCMode(const String &cmode, FileOpenMode &open_mode, FileWorkMode &work_mode) {
 	// We do not test for 'b' and 't' here, because text mode reading/writing should be done with
 	// the use of ITextReader and ITextWriter implementations.
