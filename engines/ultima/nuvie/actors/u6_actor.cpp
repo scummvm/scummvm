@@ -1520,7 +1520,7 @@ bool U6Actor::can_twitch() {
 
 bool U6Actor::can_be_passed(Actor *other) {
 	U6Actor *other_ = static_cast<U6Actor *>(other);
-	return (Actor::can_be_passed(other_) && other_->current_movetype != current_movetype);
+	return (Actor::can_be_passed(other_) || other_->current_movetype != current_movetype);
 }
 
 void U6Actor::print() {
