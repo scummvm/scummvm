@@ -42,6 +42,7 @@ protected:
 	void onStart() override;
 
 	int32 _stopFrame;
+	int32 _framesDeducted;
 };
 
 } // End of namespace Pink
