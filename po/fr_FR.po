@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-23 14:30+0000\n"
-"PO-Revision-Date: 2023-04-23 19:36+0000\n"
+"PO-Revision-Date: 2023-04-26 04:44+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -580,7 +580,7 @@ msgstr "Utiliser des réglages back-end spécifiques à ce jeu"
 #: gui/editgamedialog.cpp:224
 msgctxt "lowres"
 msgid "Override global backend settings"
-msgstr "Utiliser des réglages back-end spécifiques à ce jeu"
+msgstr "Réglages back-end spécifiques"
 
 #: gui/editgamedialog.cpp:238 gui/options.cpp:2247 engines/dialogs.cpp:290
 msgid "Audio"
