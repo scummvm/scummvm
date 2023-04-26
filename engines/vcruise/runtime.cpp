@@ -66,6 +66,7 @@ public:
 	Graphics::Surface *getUIGraphic(uint index) const override;
 	Graphics::ManagedSurface *getMenuSurface() const override;
 	bool hasDefaultSave() const override;
+	bool hasAnySave() const override;
 	Common::Point getMouseCoordinate() const override;
 	void restartGame() const override;
 	void goToCredits() const override;
@@ -102,6 +103,10 @@ Graphics::ManagedSurface *RuntimeMenuInterface::getMenuSurface() const {
 
 bool RuntimeMenuInterface::hasDefaultSave() const {
 	return static_cast<VCruiseEngine *>(g_engine)->hasDefaultSave();
+}
+
+bool RuntimeMenuInterface::hasAnySave() const {
+	return static_cast<VCruiseEngine *>(g_engine)->hasAnySave();
 }
 
 Common::Point RuntimeMenuInterface::getMouseCoordinate() const {
@@ -845,6 +850,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _loadedAnimation(0), _loadedAnimationHasSound(false), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0),
 	  _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
+	  _inGameMenuState(kInGameMenuStateInvisible), _inGameMenuActiveElement(0), _inGameMenuButtonActive {false, false, false, false, false},
 	  /*_loadedArea(0), */_lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0),
 	  _delayCompletionTime(0),
 	  _panoramaState(kPanoramaStateInactive),
@@ -1196,32 +1202,36 @@ bool Runtime::runIdle() {
 				return true;
 			}
 		} else if (osEvent.type == kOSEventTypeLButtonUp) {
-			PanoramaState oldPanoramaState = _panoramaState;
-			_panoramaState = kPanoramaStateInactive;
+			if (_inGameMenuState != kInGameMenuStateInvisible) {
+				dischargeInGameMenuMouseUp();
+			} else {
+				PanoramaState oldPanoramaState = _panoramaState;
+				_panoramaState = kPanoramaStateInactive;
 
-			// This is the correct place for matching the original game's behavior, not switching to panorama
-			resetInventoryHighlights();
+				// This is the correct place for matching the original game's behavior, not switching to panorama
+				resetInventoryHighlights();
 
-			if (_lmbReleaseWasClick) {
-				bool changedState = dischargeIdleClick();
-				if (changedState) {
-					drawCompass();
-					return true;
+				if (_lmbReleaseWasClick) {
+					bool changedState = dischargeIdleClick();
+					if (changedState) {
+						drawCompass();
+						return true;
+					}
 				}
-			}
 
-			// If the released from panorama mode, pick up any interactions at the new mouse location, and change the mouse back
-			if (oldPanoramaState != kPanoramaStateInactive) {
-				changeToCursor(_cursors[kCursorArrow]);
+				// If the released from panorama mode, pick up any interactions at the new mouse location, and change the mouse back
+				if (oldPanoramaState != kPanoramaStateInactive) {
+					changeToCursor(_cursors[kCursorArrow]);
 
-				// Clear idle interaction so that if a drag occurs but doesn't trigger a panorama or other state change,
-				// interactions are re-detected here.
-				_idleIsOnInteraction = false;
+					// Clear idle interaction so that if a drag occurs but doesn't trigger a panorama or other state change,
+					// interactions are re-detected here.
+					_idleIsOnInteraction = false;
 
-				bool changedState = dischargeIdleMouseMove();
-				if (changedState) {
-					drawCompass();
-					return true;
+					bool changedState = dischargeIdleMouseMove();
+					if (changedState) {
+						drawCompass();
+						return true;
+					}
 				}
 			}
 		} else if (osEvent.type == kOSEventTypeLButtonDown) {
@@ -2258,43 +2268,15 @@ void Runtime::changeToCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &
 bool Runtime::dischargeIdleMouseMove() {
 	const MapScreenDirectionDef *sdDef = _map.getScreenDirection(_screenNumber, _direction);
 
-	if (_panoramaState == kPanoramaStateInactive) {
-		Common::Point relMouse(_mousePos.x - _gameSection.rect.left, _mousePos.y - _gameSection.rect.top);
+	if (_inGameMenuState != kInGameMenuStateInvisible) {
+		checkInGameMenuHover();
 
-		bool isOnInteraction = false;
-		uint interactionID = 0;
-		if (sdDef) {
-			for (const InteractionDef &idef : sdDef->interactions) {
-				if (idef.objectType == 1 && idef.rect.contains(relMouse)) {
-					isOnInteraction = true;
-					interactionID = idef.interactionID;
-					break;
-				}
-			}
-		}
+		// If still in the menu, ignore anything else
+		if (_inGameMenuState != kInGameMenuStateInvisible)
+			return false;
+	}
 
-		if (_idleIsOnInteraction && (!isOnInteraction || interactionID != _idleInteractionID)) {
-			// Mouse left the previous interaction
-			_idleIsOnInteraction = false;
-			_idleHaveClickInteraction = false;
-			_idleHaveDragInteraction = false;
-			changeToCursor(_cursors[kCursorArrow]);
-			resetInventoryHighlights();
-		}
-
-		if (isOnInteraction && _idleIsOnInteraction == false) {
-			_idleIsOnInteraction = true;
-			_idleInteractionID = interactionID;
-
-			// New interaction, is there a script?
-			Common::SharedPtr<Script> script = findScriptForInteraction(interactionID);
-
-			if (script) {
-				activateScript(script, ScriptEnvironmentVars());
-				return true;
-			}
-		}
-	} else {
+	if (_panoramaState != kPanoramaStateInactive) {
 		uint interactionID = 0;
 
 		Common::Point panRelMouse = _mousePos - _panoramaAnchor;
@@ -2328,11 +2310,58 @@ bool Runtime::dischargeIdleMouseMove() {
 		}
 	}
 
+	Common::Point relMouse(_mousePos.x - _gameSection.rect.left, _mousePos.y - _gameSection.rect.top);
+
+	bool isOnInteraction = false;
+	uint interactionID = 0;
+	if (sdDef) {
+		for (const InteractionDef &idef : sdDef->interactions) {
+			if (idef.objectType == 1 && idef.rect.contains(relMouse)) {
+				isOnInteraction = true;
+				interactionID = idef.interactionID;
+				break;
+			}
+		}
+	}
+
+	if (_idleIsOnInteraction && (!isOnInteraction || interactionID != _idleInteractionID)) {
+		// Mouse left the previous interaction
+		_idleIsOnInteraction = false;
+		_idleHaveClickInteraction = false;
+		_idleHaveDragInteraction = false;
+		changeToCursor(_cursors[kCursorArrow]);
+		resetInventoryHighlights();
+	}
+
+	if (isOnInteraction && _idleIsOnInteraction == false) {
+		_idleIsOnInteraction = true;
+		_idleInteractionID = interactionID;
+
+		// New interaction, is there a script?
+		Common::SharedPtr<Script> script = findScriptForInteraction(interactionID);
+
+		if (script) {
+			activateScript(script, ScriptEnvironmentVars());
+			return true;
+		}
+	}
+
+	if (_panoramaState == kPanoramaStateInactive)
+		checkInGameMenuHover();
+
 	// Didn't do anything
 	return false;
 }
 
 bool Runtime::dischargeIdleMouseDown() {
+	if (_inGameMenuState != kInGameMenuStateInvisible) {
+		if (_inGameMenuState == kInGameMenuStateHoveringActive) {
+			_inGameMenuState = kInGameMenuStateClickingOver;
+			drawInGameMenuButton(_inGameMenuActiveElement);
+		}
+		return false;
+	}
+
 	if (_idleIsOnInteraction && _idleHaveDragInteraction) {
 		// Interaction, is there a script?
 		Common::SharedPtr<Script> script = findScriptForInteraction(_idleInteractionID);
@@ -3261,7 +3290,7 @@ void Runtime::detectPanoramaDirections() {
 }
 
 void Runtime::detectPanoramaMouseMovement(uint32 timestamp) {
-	if (_panoramaState == kPanoramaStateInactive && (_lmbDragging || (_lmbDown && (timestamp - _lmbDownTime) >= 500)))
+	if (_panoramaState == kPanoramaStateInactive && _inGameMenuState == kInGameMenuStateInvisible && (_lmbDragging || (_lmbDown && (timestamp - _lmbDownTime) >= 500)))
 		panoramaActivate();
 }
 
@@ -3377,7 +3406,7 @@ void Runtime::clearTray() {
 }
 
 void Runtime::drawInventory(uint slot) {
-	if (_subtitleQueue.size() > 0 || _loadedAnimationHasSound || !_isInGame)
+	if (!isTrayVisible())
 		return;
 
 	Common::Rect trayRect = _traySection.rect;
@@ -3417,7 +3446,7 @@ void Runtime::drawInventory(uint slot) {
 }
 
 void Runtime::drawCompass() {
-	if (_subtitleQueue.size() > 0 || _loadedAnimationHasSound || !_isInGame)
+	if (!isTrayVisible())
 		return;
 
 	bool haveHorizontalRotate = false;
@@ -3484,6 +3513,10 @@ void Runtime::drawCompass() {
 
 	commitSectionToScreen(_traySection, compassRect);
 	commitSectionToScreen(_traySection, lowerRightRect);
+}
+
+bool Runtime::isTrayVisible() const {
+	return _subtitleQueue.size() == 0 && !_loadedAnimationHasSound && _isInGame && (_gameState != kGameStateMenu);
 }
 
 void Runtime::resetInventoryHighlights() {
@@ -3604,6 +3637,171 @@ void Runtime::changeToMenuPage(MenuPage *menuPage) {
 
 	menuPage->init(_menuInterface.get());
 	menuPage->start();
+}
+
+void Runtime::checkInGameMenuHover() {
+	if (_inGameMenuState == kInGameMenuStateInvisible) {
+		if (_menuSection.rect.contains(_mousePos)) {
+			// Figure out what elements should be visible
+
+			// Help
+			_inGameMenuButtonActive[0] = true;
+
+			// Save
+			_inGameMenuButtonActive[1] = (_saveGame != nullptr);
+
+			// Load
+			_inGameMenuButtonActive[2] = static_cast<VCruiseEngine *>(g_engine)->hasAnySave();
+
+			// Sound
+			_inGameMenuButtonActive[3] = true;
+
+			// Quit
+			_inGameMenuButtonActive[4] = true;
+
+			_inGameMenuState = kInGameMenuStateVisible;
+			for (uint i = 0; i < 5; i++)
+				drawInGameMenuButton(i);
+		}
+	}
+
+	if (_inGameMenuState == kInGameMenuStateInvisible)
+		return;
+
+	if (!_menuSection.rect.contains(_mousePos)) {
+		if (_inGameMenuState != kInGameMenuStateClickingOver && _inGameMenuState != kInGameMenuStateClickingNotOver && _inGameMenuState != kInGameMenuStateClickingInactive) {
+			dismissInGameMenu();
+			return;
+		}
+	}
+
+	uint activeElement = 0;
+	if (_mousePos.x >= _menuSection.rect.left && _mousePos.y < _menuSection.rect.right)
+		activeElement = static_cast<uint>(_mousePos.x - _menuSection.rect.left) / 128u;
+
+	assert(activeElement < 5);
+
+	switch (_inGameMenuState) {
+	case kInGameMenuStateVisible:
+		if (_inGameMenuButtonActive[activeElement]) {
+			_inGameMenuState = kInGameMenuStateHoveringActive;
+			_inGameMenuActiveElement = activeElement;
+			drawInGameMenuButton(activeElement);
+		}
+		break;
+	case kInGameMenuStateHoveringActive:
+		if (activeElement != _inGameMenuActiveElement) {
+			uint oldElement = _inGameMenuActiveElement;
+
+			if (_inGameMenuButtonActive[activeElement]) {
+				_inGameMenuState = kInGameMenuStateHoveringActive;
+				_inGameMenuActiveElement = activeElement;
+				drawInGameMenuButton(activeElement);
+			} else
+				_inGameMenuState = kInGameMenuStateVisible;
+
+			drawInGameMenuButton(oldElement);
+		}
+		break;
+	case kInGameMenuStateClickingOver:
+		if (activeElement != _inGameMenuActiveElement) {
+			_inGameMenuState = kInGameMenuStateClickingNotOver;
+			drawInGameMenuButton(_inGameMenuActiveElement);
+		}
+		break;
+	case kInGameMenuStateClickingNotOver:
+		if (activeElement == _inGameMenuActiveElement) {
+			_inGameMenuState = kInGameMenuStateClickingOver;
+			drawInGameMenuButton(_inGameMenuActiveElement);
+		}
+		break;
+	case kInGameMenuStateClickingInactive:
+		break;
+	default:
+		error("Invalid menu state");
+		break;
+	}
+}
+
+void Runtime::dismissInGameMenu() {
+	const Common::Rect menuRect(0, 0, _menuSection.surf->w, _menuSection.surf->h);
+
+	uint32 blackColor = _menuSection.surf->format.RGBToColor(0, 0, 0);
+	_menuSection.surf->fillRect(menuRect, blackColor);
+
+	commitSectionToScreen(_menuSection, menuRect);
+
+	_inGameMenuState = kInGameMenuStateInvisible;
+}
+
+void Runtime::dischargeInGameMenuMouseUp() {
+	if (_inGameMenuState == kInGameMenuStateClickingOver) {
+		dismissInGameMenu();
+
+		// Handle click event
+		switch (_inGameMenuActiveElement) {
+		case 0:
+			changeToMenuPage(createMenuReahHelp());
+			break;
+		case 1:
+			g_engine->saveGameDialog();
+			break;
+		case 2:
+			g_engine->loadGameDialog();
+			break;
+		case 3:
+			changeToMenuPage(createMenuReahSound());
+			break;
+		case 4:
+			changeToMenuPage(createMenuReahQuit());
+			break;
+		default:
+			break;
+		}
+	} else {
+		_inGameMenuState = kInGameMenuStateVisible;
+		drawInGameMenuButton(_inGameMenuActiveElement);
+
+		checkInGameMenuHover();
+	}
+}
+
+void Runtime::drawInGameMenuButton(uint element) {
+	Common::Rect buttonDestRect = Common::Rect(element * 128u, 0, element * 128u + 128u, _menuSection.rect.height());
+
+	int buttonState = 0;
+	if (_inGameMenuButtonActive[element])
+		buttonState = 1;
+
+	switch (_inGameMenuState) {
+	case kInGameMenuStateVisible:
+		break;
+	case kInGameMenuStateHoveringActive:
+		if (element == _inGameMenuActiveElement)
+			buttonState = 2;
+		break;
+	case kInGameMenuStateClickingOver:
+		if (element == _inGameMenuActiveElement)
+			buttonState = 3;
+		break;
+	case kInGameMenuStateClickingNotOver:
+		if (element == _inGameMenuActiveElement)
+			buttonState = 2;
+		break;
+	case kInGameMenuStateClickingInactive:
+		break;
+	default:
+		error("Invalid menu state");
+		break;
+	}
+
+	Common::Point buttonTopLeftPoint = Common::Point(buttonDestRect.left, buttonDestRect.top);
+	buttonTopLeftPoint.y += buttonState * 44;
+
+	Common::Rect buttonSrcRect = Common::Rect(buttonTopLeftPoint.x, buttonTopLeftPoint.y, buttonTopLeftPoint.x + 128, buttonTopLeftPoint.y + _menuSection.rect.height());
+
+	_menuSection.surf->blitFrom(*_uiGraphics[4], buttonSrcRect, buttonDestRect);
+	commitSectionToScreen(_menuSection, buttonDestRect);
 }
 
 void Runtime::onLButtonDown(int16 x, int16 y) {

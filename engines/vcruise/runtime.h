@@ -558,6 +558,16 @@ private:
 		kPanoramaStatePanningDown,
 	};
 
+	enum InGameMenuState {
+		kInGameMenuStateInvisible,
+		kInGameMenuStateVisible,
+		kInGameMenuStateHoveringInactive,
+		kInGameMenuStateHoveringActive,
+		kInGameMenuStateClickingOver,		// Mouse was pressed on a button and is holding on it
+		kInGameMenuStateClickingNotOver,	// Mouse was pressed on a button and dragged off
+		kInGameMenuStateClickingInactive,
+	};
+
 	static const uint kPanLeftInteraction = 1;
 	static const uint kPanDownInteraction = 2;
 	static const uint kPanRightInteraction = 3;
@@ -703,6 +713,7 @@ private:
 	void clearTray();
 	void drawInventory(uint slot);
 	void drawCompass();
+	bool isTrayVisible() const;
 	void resetInventoryHighlights();
 
 	Common::String getFileNameForItemGraphic(uint itemID) const;
@@ -711,6 +722,11 @@ private:
 	void loadSubtitles(Common::CodePage codePage);
 
 	void changeToMenuPage(MenuPage *menuPage);
+
+	void checkInGameMenuHover();
+	void dismissInGameMenu();
+	void dischargeInGameMenuMouseUp();
+	void drawInGameMenuButton(uint element);
 
 	// Script things
 	void scriptOpNumber(ScriptArg_t arg);
@@ -948,6 +964,10 @@ private:
 	bool _idleHaveClickInteraction;
 	bool _idleHaveDragInteraction;
 	uint _idleInteractionID;
+
+	InGameMenuState _inGameMenuState;
+	uint _inGameMenuActiveElement;
+	bool _inGameMenuButtonActive[5];
 
 	Audio::Mixer *_mixer;
 

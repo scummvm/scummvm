@@ -811,16 +811,14 @@ void ReahMainMenuPage::start() {
 
 	Graphics::Surface *buttonGraphic = _menuInterface->getUIGraphic(1);
 
-	// FIXME: Unused
-	//Common::Point buttonStateOffset = Common::Point(112, 0);
-	//ommon::Point buttonTopLeft = Common::Point(492, 66);
-
 	const int buttonTopYs[6] = {66, 119, 171, 224, 277, 330};
 
 	for (int i = 0; i < 6; i++) {
 		bool isEnabled = true;
 		if (i == kButtonContinue)
 			isEnabled = _menuInterface->hasDefaultSave();
+		else if (i == kButtonLoad)
+			isEnabled = _menuInterface->hasAnySave();
 
 		_buttons.push_back(Button(buttonGraphic, Common::Rect(0, i * 44, 112, i * 44 + 44), Common::Rect(492, buttonTopYs[i], 492 + 112, buttonTopYs[i] + 44), Common::Point(112, 0), isEnabled));
 	}
@@ -883,6 +881,18 @@ bool MenuPage::run() {
 
 MenuPage *createMenuReahMain() {
 	return new ReahMainMenuPage();
+}
+
+MenuPage *createMenuReahQuit() {
+	return new ReahQuitMenuPage();
+}
+
+MenuPage *createMenuReahHelp() {
+	return new ReahHelpMenuPage();
+}
+
+MenuPage *createMenuReahSound() {
+	return new ReahSoundMenuPage();
 }
 
 } // End of namespace VCruise

@@ -291,5 +291,9 @@ bool VCruiseEngine::hasDefaultSave() {
 	return autoSaveExists;
 }
 
+bool VCruiseEngine::hasAnySave() {
+	return hasDefaultSave();	// Maybe could do this better, but with how ScummVM works, if there are any saves at all, then the autosave should exist.
+}
+
 
 } // End of namespace VCruise

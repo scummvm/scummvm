@@ -63,6 +63,7 @@ public:
 	void initializePath(const Common::FSNode &gamePath) override;
 
 	bool hasDefaultSave();
+	bool hasAnySave();
 
 protected:
 	void pauseEngineIntern(bool pause) override;

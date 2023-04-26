@@ -53,6 +53,7 @@ public:
 	virtual Graphics::Surface *getUIGraphic(uint index) const = 0;
 	virtual Graphics::ManagedSurface *getMenuSurface() const = 0;
 	virtual bool hasDefaultSave() const = 0;
+	virtual bool hasAnySave() const = 0;
 	virtual Common::Point getMouseCoordinate() const = 0;
 	virtual void restartGame() const = 0;
 	virtual void goToCredits() const = 0;
@@ -77,6 +78,9 @@ protected:
 };
 
 MenuPage *createMenuReahMain();
+MenuPage *createMenuReahHelp();
+MenuPage *createMenuReahSound();
+MenuPage *createMenuReahQuit();
 
 } // End of namespace VCruise
 
