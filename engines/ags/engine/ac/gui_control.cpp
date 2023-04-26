@@ -104,7 +104,7 @@ int GUIControl_GetID(GUIObject *guio) {
 }
 
 ScriptGUI *GUIControl_GetOwningGUI(GUIObject *guio) {
-	return &_G(scrGui)[guio->ParentId];
+	return &_GP(scrGui)[guio->ParentId];
 }
 
 GUIButton *GUIControl_GetAsButton(GUIObject *guio) {

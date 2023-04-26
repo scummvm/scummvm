@@ -48,7 +48,7 @@ void CCDialog::Serialize(const char *address, Stream *out) {
 
 void CCDialog::Unserialize(int index, Stream *in, size_t data_sz) {
 	int num = in->ReadInt32();
-	ccRegisterUnserializedObject(index, &_G(scrDialog)[num], this);
+	ccRegisterUnserializedObject(index, &_GP(scrDialog)[num], this);
 }
 
 } // namespace AGS3
