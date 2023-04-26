@@ -43,7 +43,6 @@
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
 	CGRect rect = [[UIScreen mainScreen] bounds];
 
-#ifdef IPHONE_SANDBOXED
 	// Create the directory for savegames
 	NSFileManager *fm = [NSFileManager defaultManager];
 	NSString *documentPath = [NSString stringWithUTF8String:iOS7_getDocumentsDir()];
@@ -51,7 +50,6 @@
 	if (![fm fileExistsAtPath:savePath]) {
 		[fm createDirectoryAtPath:savePath withIntermediateDirectories:YES attributes:nil error:nil];
 	}
-#endif
 
 	_window = [[UIWindow alloc] initWithFrame:rect];
 	[_window retain];

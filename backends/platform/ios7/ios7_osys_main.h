@@ -39,10 +39,6 @@
 #define WAVE_BUFFER_SIZE 2048
 #define AUDIO_SAMPLE_RATE 44100
 
-#define SCUMMVM_ROOT_PATH "/var/mobile/Library/ScummVM"
-#define SCUMMVM_SAVE_PATH SCUMMVM_ROOT_PATH "/Savegames"
-#define SCUMMVM_PREFS_PATH SCUMMVM_ROOT_PATH "/Preferences"
-
 typedef void (*SoundProc)(void *param, byte *buf, int len);
 typedef int (*TimerProc)(int interval);
 
@@ -111,9 +107,7 @@ protected:
 
 	Common::String _lastErrorMessage;
 
-#ifdef IPHONE_SANDBOXED
 	Common::String _chrootBasePath;
-#endif
 
 public:
 

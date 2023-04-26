@@ -59,7 +59,6 @@ AQCallbackStruct OSystem_iOS7::s_AudioQueue;
 SoundProc OSystem_iOS7::s_soundCallback = NULL;
 void *OSystem_iOS7::s_soundParam = NULL;
 
-#ifdef IPHONE_SANDBOXED
 class SandboxedSaveFileManager : public DefaultSaveFileManager {
 	Common::String _sandboxRootPath;
 public:
@@ -84,7 +83,6 @@ public:
 		}
 	}
 };
-#endif
 
 OSystem_iOS7::OSystem_iOS7() :
 	_mixer(NULL), _lastMouseTap(0), _queuedEventTime(0),
@@ -95,7 +93,7 @@ OSystem_iOS7::OSystem_iOS7() :
 	_mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = !iOS7_isBigDevice();
-#ifdef IPHONE_SANDBOXED
+
 	_chrootBasePath = iOS7_getDocumentsDir();
 	ChRootFilesystemFactory *chFsFactory = new ChRootFilesystemFactory(_chrootBasePath);
 	_fsFactory = chFsFactory;
@@ -107,9 +105,7 @@ OSystem_iOS7::OSystem_iOS7() :
 			chFsFactory->addVirtualDrive("appbundle:", Common::String((const char *)buf));
 		CFRelease(fileUrl);
 	}
-#else
-	_fsFactory = new POSIXFilesystemFactory();
-#endif
+
 	initVideoContext();
 
 	memset(_gamePalette, 0, sizeof(_gamePalette));
@@ -146,11 +142,7 @@ int OSystem_iOS7::timerHandler(int t) {
 }
 
 void OSystem_iOS7::initBackend() {
-#ifdef IPHONE_SANDBOXED
 	_savefileManager = new SandboxedSaveFileManager(_chrootBasePath, "/Savegames");
-#else
-	_savefileManager = new DefaultSaveFileManager(SCUMMVM_SAVE_PATH);
-#endif
 
 	_timerManager = new DefaultTimerManager();
 
@@ -354,12 +346,8 @@ OSystem_iOS7 *OSystem_iOS7::sharedInstance() {
 }
 
 Common::String OSystem_iOS7::getDefaultConfigFileName() {
-#ifdef IPHONE_SANDBOXED
 	Common::String path = "/Preferences";
 	return path;
-#else
-	return SCUMMVM_PREFS_PATH;
-#endif
 }
 
 void OSystem_iOS7::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
@@ -371,12 +359,8 @@ void OSystem_iOS7::addSysArchivesToSearchSet(Common::SearchSet &s, int priority)
 		if (CFURLGetFileSystemRepresentation(fileUrl, true, buf, sizeof(buf))) {
 			// Success: Add it to the search path
 			Common::String bundlePath((const char *)buf);
-#ifdef IPHONE_SANDBOXED
 			POSIXFilesystemNode *posixNode = new POSIXFilesystemNode(bundlePath);
 			s.add("__IOS_BUNDLE__", new Common::FSDirectory(AbstractFSNode::makeFSNode(posixNode)), priority);
-#else
-			s.add("__IOS_BUNDLE__", new Common::FSDirectory(bundlePath), priority);
-#endif
 		}
 		CFRelease(fileUrl);
 	}
@@ -408,14 +392,7 @@ void iOS7_main(int argc, char **argv) {
 		//gDebugLevel = 10;
 	}
 
-#ifdef IPHONE_SANDBOXED
 	chdir(iOS7_getDocumentsDir());
-#else
-	system("mkdir " SCUMMVM_ROOT_PATH);
-	system("mkdir " SCUMMVM_SAVE_PATH);
-
-	chdir("/var/mobile/");
-#endif
 
 	g_system = OSystem_iOS7::sharedInstance();
 	assert(g_system);

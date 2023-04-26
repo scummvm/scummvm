@@ -48,7 +48,7 @@
 #include "audio/mpu401.h"
 #include "audio/softsynth/emumidi.h"
 #include "gui/message.h"
-#if defined(IPHONE_IOS7) && defined(IPHONE_SANDBOXED)
+#if defined(IPHONE_IOS7)
 #include "backends/platform/ios7/ios7_common.h"
 #endif
 #ifdef __ANDROID__
@@ -438,7 +438,7 @@ int MidiDriver_FluidSynth::open() {
 	} else
 #endif // FS_HAS_STREAM_SUPPORT
 	{
-#if defined(IPHONE_IOS7) && defined(IPHONE_SANDBOXED)
+#if defined(IPHONE_IOS7)
 		// HACK: Due to the sandbox on non-jailbroken iOS devices, we need to deal
 		// with the chroot filesystem. All the path selected by the user are
 		// relative to the Document directory. So, we need to adjust the path to
