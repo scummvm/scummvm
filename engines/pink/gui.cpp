@@ -210,8 +210,7 @@ void PinkEngine::executeMenuCommand(uint id) {
 
 	switch (id) {
 	case kNewGameAction: {
-		const Common::String moduleName = _modules[0]->getName();
-		initModule(moduleName, "", nullptr);
+		initModule(_modules[0]->getName(), "", nullptr);
 		break;
 	}
 	case kLoadSave:

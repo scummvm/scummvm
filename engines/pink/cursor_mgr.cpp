@@ -34,6 +34,7 @@ CursorMgr::CursorMgr(PinkEngine *game, Page *page)
 void CursorMgr::setCursor(byte index, Common::Point point, const Common::String &itemName) {
 	switch (index) {
 	case kClickableFirstFrameCursor:
+		// fall through
 	case kPDAClickableFirstFrameCursor:
 		startAnimation(index);
 		hideItem();
