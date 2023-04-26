@@ -269,19 +269,10 @@ static bool SetSaveGameDirectory(const FSLocation &fsdir) {
 		return false;
 
 	// copy the Restart Game file, if applicable
-	String restartGamePath = Path::ConcatPaths(_G(saveGameDirectory), get_save_game_filename(RESTART_POINT_SAVE_GAME_NUMBER));
-	Stream *restartGameFile = File::OpenFileRead(restartGamePath);
-	if (restartGameFile != nullptr) {
-		long fileSize = restartGameFile->GetLength();
-		char *mbuffer = (char *)malloc(fileSize);
-		restartGameFile->Read(mbuffer, fileSize);
-		delete restartGameFile;
-
-		restartGamePath = Path::ConcatPaths(newSaveGameDir, get_save_game_filename(RESTART_POINT_SAVE_GAME_NUMBER));
-		restartGameFile = File::CreateFile(restartGamePath);
-		restartGameFile->Write(mbuffer, fileSize);
-		delete restartGameFile;
-		free(mbuffer);
+	String old_restart_path = Path::ConcatPaths(_G(saveGameDirectory), get_save_game_filename(RESTART_POINT_SAVE_GAME_NUMBER));
+	if (File::IsFile(old_restart_path)) {
+		String new_restart_path = Path::ConcatPaths(newSaveGameDir, get_save_game_filename(RESTART_POINT_SAVE_GAME_NUMBER));
+		File::CopyFile(old_restart_path, new_restart_path, true);
 	}
 
 	_G(saveGameDirectory) = newSaveGameDir;
