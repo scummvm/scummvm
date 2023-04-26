@@ -370,6 +370,12 @@ ScriptDynamicSprite *DynamicSprite_CreateFromDrawingSurface(ScriptDrawingSurface
 }
 
 ScriptDynamicSprite *DynamicSprite_Create(int width, int height, int alphaChannel) {
+	if (width <= 0 || height <= 0) {
+		debug_script_warn("WARNING: DynamicSprite.Create: invalid size %d x %d, will adjust", width, height);
+		width = MAX(1, width);
+		height = MAX(1, height);
+	}
+
 	data_to_game_coords(&width, &height);
 
 	int gotSlot = _GP(spriteset).GetFreeIndex();
