@@ -14789,36 +14789,25 @@ static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 };
 
 // ===========================================================================
+// Quest for Glory 2
 
-// This is a very complicated bug.
 // When the player encounters an enemy in the desert while riding a saurus and
 //  later tries to get back on it by entering "ride", the game will not give
 //  control back to the player.
 //
-// This is caused by script mountSaurus getting triggered twice. Once by
-//  entering the command "ride" and then a second time by a proximity check.
+// This is caused by two scripts running the mountSaurus script concurrently.
+//  desertReg:handleEvent sets mountSaurus as the room script when entering
+//  "ride". sheepScript sets mountSaurus as ego's script when saurus animation
+//  completes after entering the saurus room. The unexpected second instance of
+//  mountSaurus interrupts the motions and cyclers that the other is waiting on,
+//  preventing them from both completing and returning control to the player.
 //
-// Both are calling mountSaurus::init() in script 20. This one disables
-//  controls. Then mountSaurus::changeState() from script 660 is triggered.
-//  Finally, mountSaurus::changeState(5) calls mountSaurus::dispose(), also in
-//  script 20, which re-enables controls.
+// We fix this by patching sheepScript to skip running mountSaurus if input is
+//  already disabled. Alternatively, we could expand this into a larger patch
+//  that tests if the room script is already mountSaurus.
 //
-// A fix is difficult to implement. The code in script 20 is generic and used
-//  by multiple objects
-//
-// An early attempt changed the responsible vars (global[102], global[161])
-//  during mountSaurus::changeState(5). This worked for controls, but
-//  mountSaurus::init changes a few selectors of ego as well, which won't get
-//  restored in that situation, which then messes up room changes and other
-//  things.
-//
-// Instead we change sheepScript::changeState(2) in script 665.
-//
-// Note: This could cause issues in case there is a cutscene, where ego is
-//  supposed to get onto the saurus using sheepScript.
-//
-// Applies to at least: English PC Floppy, English Amiga Floppy
-// Responsible method: mountSaurus::changeState(), mountSaurus::init(), mountSaurus::dispose()
+// Applies to: All versions
+// Responsible method: sheepScript:changeState(2)
 // Fixes bug: #5156
 static const uint16 qfg2SignatureSaurusFreeze[] = {
 	0x3c,                               // dup
