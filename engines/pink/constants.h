@@ -132,11 +132,6 @@ enum {
 };
 
 enum {
-	kLoadingSave = 1,
-	kLoadingNewGame = 0
-};
-
-enum {
 	kOrbMajorVersion = 2,
 	kOrbMinorVersion = 0,
 	kBroMajorVersion = 1,

@@ -187,13 +187,19 @@ void PinkEngine::initModule(const Common::String &moduleName, const Common::Stri
 	if (_module)
 		removeModule();
 
+	if (moduleName == _modules[0]->getName()) {
+		// new game
+		_variables.clear();
+		debugC(6, kPinkDebugGeneral, "Global Game Variables cleared");
+	}
+
 	addModule(moduleName);
 	if (saveFile)
 		_module->loadState(*saveFile);
 
 	debugC(6, kPinkDebugGeneral, "Module added");
 
-	_module->init(saveFile ? kLoadingSave : kLoadingNewGame, pageName);
+	_module->init(saveFile != nullptr, pageName);
 }
 
 void PinkEngine::changeScene() {

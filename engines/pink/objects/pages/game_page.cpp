@@ -185,7 +185,7 @@ void GamePage::unload() {
 
 void GamePage::clear() {
 	Page::clear();
-	_variables.clear(1);
+	_variables.clear(true);
 
 	for (uint i = 0; i < _handlers.size(); ++i) {
 		delete _handlers[i];
