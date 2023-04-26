@@ -422,7 +422,8 @@ bool Actor::can_be_moved() {
 }
 
 bool Actor::can_be_passed(Actor *other) {
-	return (other->is_passable() || is_passable());
+// ethereal actors can always pass us
+	return (other->ethereal || is_passable());
 }
 
 uint8 Actor::get_object_readiable_location(Obj *obj) {
