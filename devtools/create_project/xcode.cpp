@@ -1353,6 +1353,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING_QUOTE_VAR(iPhone_Debug, "CODE_SIGN_IDENTITY[sdk=iphoneos*]", "iPhone Developer");
 	ADD_SETTING(iPhone_Debug, "COPY_PHASE_STRIP", "NO");
 	ADD_SETTING_QUOTE(iPhone_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf");
+	ADD_SETTING(iPhone_Debug, "ENABLE_BITCODE", "NO");
 	ValueList iPhone_FrameworkSearchPaths;
 	iPhone_FrameworkSearchPaths.push_back("$(inherited)");
 	iPhone_FrameworkSearchPaths.push_back("\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"");
@@ -1513,6 +1514,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING_QUOTE_VAR(tvOS_Debug, "CODE_SIGN_IDENTITY[sdk=appletvos*]", "iPhone Developer");
 	ADD_SETTING(tvOS_Debug, "COPY_PHASE_STRIP", "NO");
 	ADD_SETTING_QUOTE(tvOS_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf");
+	ADD_SETTING(tvOS_Debug, "ENABLE_BITCODE", "NO");
 	ValueList tvOS_FrameworkSearchPaths;
 	tvOS_FrameworkSearchPaths.push_back("$(inherited)");
 	tvOS_FrameworkSearchPaths.push_back("\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"");
