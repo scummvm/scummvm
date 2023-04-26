@@ -65,7 +65,7 @@ void Module::init(bool isLoadingSave, const Common::String &pageName) {
 void Module::changePage(const Common::String &pageName) {
 	_page->unload();
 	_page = findPage(pageName);
-	_page->init(kLoadingNewGame);
+	_page->init(false);
 }
 
 GamePage *Module::findPage(const Common::String &pageName) const {
