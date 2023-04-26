@@ -462,7 +462,7 @@ public:
 	int _loops_per_character = 0, _text_lips_offset = 0, _char_speaking = -1;
 	int _char_thinking = -1;
 	const char *_text_lips_text = nullptr;
-	SpeechLipSyncLine *_splipsync = nullptr;
+	std::vector<SpeechLipSyncLine> *_splipsync;
 	int _numLipLines = 0, _curLipLine = -1, _curLipLinePhoneme = 0;
 
 	/**@}*/
