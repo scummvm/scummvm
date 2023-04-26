@@ -233,6 +233,10 @@ void Screen::pause(bool pause_) {
 	}
 }
 
+bool Screen::isMenuActive() {
+	return _wm != nullptr && _wm->isMenuActive();
+}
+
 void Screen::saveStage() {
 	_savedSprites = _sprites;
 	clear();
