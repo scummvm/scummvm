@@ -95,10 +95,6 @@ protected:
 	int _lastDragPosX;
 	int _lastDragPosY;
 
-	int _timerCallbackNext;
-	int _timerCallbackTimer;
-	TimerProc _timerCallback;
-
 	Common::Array<Common::Rect> _dirtyRects;
 	Common::Array<Common::Rect> _dirtyOverlayRects;
 	ScreenOrientation _screenOrientation;

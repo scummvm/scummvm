@@ -34,11 +34,6 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 
 	long curTime = getMillis();
 
-	if (_timerCallback && (curTime >= _timerCallbackNext)) {
-		_timerCallback(_timerCallbackTimer);
-		_timerCallbackNext = curTime + _timerCallbackTimer;
-	}
-
 	if (_queuedInputEvent.type != Common::EVENT_INVALID && curTime >= _queuedEventTime) {
 		event = _queuedInputEvent;
 		_queuedInputEvent.type = Common::EVENT_INVALID;
