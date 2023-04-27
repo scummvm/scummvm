@@ -252,9 +252,9 @@ public:
 	// Get shared texture from cache, or create from bitmap and assign ID
 	IDriverDependantBitmap *GetSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) override;
 	// Removes the shared texture reference, will force the texture to recreate next time
-	 void ClearSharedDDB(uint32_t sprite_id) override;
-	 // Updates shared texture data, but only if it is present in the cache
-	 void UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) override;
+	void ClearSharedDDB(uint32_t sprite_id) override;
+	// Updates shared texture data, but only if it is present in the cache
+	void UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) override;
 	void DestroyDDB(IDriverDependantBitmap* ddb) override;
 
 	// Sets stage screen parameters for the current batch.
@@ -349,6 +349,8 @@ private:
 	// - this lets to share same texture data among multiple sprites on screen.
 	// TextureCacheItem stores weak references to the existing texture tiles,
 	// identified by an arbitrary uint32 number.
+	// TODO: a curious topic to consider: reuse released TextureData for
+	// textures of the same size (research potential performance impact).
 	struct TextureCacheItem {
 		GraphicResolution Res;
 		std::weak_ptr<TextureData> Data;
