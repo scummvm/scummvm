@@ -231,15 +231,22 @@ void VideoMemoryGraphicsDriver::UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitm
 		if (txdata)
 			UpdateTextureData(txdata.get(), bitmap, opaque, hasAlpha);
 	}
- }
+}
 
- void VideoMemoryGraphicsDriver::ClearSharedDDB(uint32_t sprite_id) {
+void VideoMemoryGraphicsDriver::ClearSharedDDB(uint32_t sprite_id) {
+	// Reset sprite ID for any remaining shared txdata,
+	// then remove the reference from the cache;
+	// NOTE: we do not delete txdata itself, as it may be temporarily in use
 	const auto found = _txRefs.find(sprite_id);
-	if (found != _txRefs.end())
+	if (found != _txRefs.end()) {
+		auto txdata = found->_value.Data.lock();
+		if (txdata)
+			txdata->ID = UINT32_MAX;
 		_txRefs.erase(found);
- }
+	}
+}
 
- void VideoMemoryGraphicsDriver::DestroyDDB(IDriverDependantBitmap* ddb) {
+void VideoMemoryGraphicsDriver::DestroyDDB(IDriverDependantBitmap* ddb) {
 	uint32_t sprite_id = ddb->GetRefID();
 	DestroyDDBImpl(ddb);
 	// Remove shared object from ref list if no more active refs left
