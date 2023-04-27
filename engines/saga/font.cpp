@@ -461,7 +461,10 @@ void DefaultFont::textDrawRect(FontId fontId, const char *text, const Common::Re
 			w_total = 0;
 			len_total = 0;
 			if (wc == 0 && measurePointer) {
-				searchPointer = measurePointer + 1;
+				if (isBig5 && (*measurePointer & 0x80))
+					searchPointer = measurePointer + 2;
+				else
+					searchPointer = measurePointer + 1;
 			}
 			wc = 0;
 
@@ -579,8 +582,19 @@ int DefaultFont::getHeight(FontId fontId, const char *text, int width, FontEffec
 	searchPointer = text;
 	endPointer = text + textLength;
 
+	// IHNM korean uses spaces, so we use western algorithm for it.
+	bool isBig5 = !!_chineseFont;
+
 	for (;;) {
-		foundPointer = strchr(searchPointer, ' ');
+		if (isBig5) {
+			if (*searchPointer & 0x80)
+				foundPointer = searchPointer + 2;
+			else if (*searchPointer)
+				foundPointer = searchPointer + 1;
+			else
+				foundPointer = nullptr;
+		} else
+			foundPointer = strchr(searchPointer, ' ');
 		if (foundPointer == nullptr) {
 			// Ran to the end of the buffer
 			len = endPointer - measurePointer;
@@ -595,7 +609,10 @@ int DefaultFont::getHeight(FontId fontId, const char *text, int width, FontEffec
 			// This word won't fit
 			if (wc == 0) {
 				// The first word in the line didn't fit. Still print it
-				searchPointer = measurePointer + 1;
+				if (isBig5 && (*measurePointer & 0x80))
+					searchPointer = measurePointer + 2;
+				else
+					searchPointer = measurePointer + 1;
 			}
 			// Wrap what we've got and restart
 			textPoint.y += h + TEXT_LINESPACING;
@@ -614,7 +631,10 @@ int DefaultFont::getHeight(FontId fontId, const char *text, int width, FontEffec
 				// Since word hit NULL but fit, we are done
 				return textPoint.y + h;
 			}
-			searchPointer = measurePointer + 1;
+			if (isBig5 && (*measurePointer & 0x80))
+				searchPointer = measurePointer + 2;
+			else
+				searchPointer = measurePointer + 1;
 		}
 	}
 }
