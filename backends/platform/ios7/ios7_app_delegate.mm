@@ -110,11 +110,19 @@
 	[_view saveApplicationState];
 }
 
+#ifdef __IPHONE_13_2
+- (BOOL)application:(UIApplication *)application shouldSaveSecureApplicationState:(NSCoder *)coder {
+#else
 - (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder {
+#endif
 	return YES;
 }
 
+#ifdef __IPHONE_13_2
+- (BOOL)application:(UIApplication *)application shouldRestoreSecureApplicationState:(NSCoder *)coder {
+#else
 - (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
+#endif
 	return YES;
 }
 
