@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-23 14:30+0000\n"
+"POT-Creation-Date: 2023-04-27 00:25+0000\n"
 "PO-Revision-Date: 2023-04-26 04:44+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -3010,7 +3010,7 @@ msgstr ""
 "ERREUR : Impossible de copier la sauvegarde auto. vers un nouvel emplacement"
 
 #: engines/engine.cpp:630 engines/savestate.cpp:98
-#: backends/platform/ios7/ios7_osys_main.cpp:266 engines/mm/xeen/saves.cpp:293
+#: backends/platform/ios7/ios7_osys_main.cpp:254 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:216
 msgid "Autosave"
 msgstr "Sauvegarde auto"

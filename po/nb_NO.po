@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-23 14:30+0000\n"
+"POT-Creation-Date: 2023-04-27 00:25+0000\n"
 "PO-Revision-Date: 2023-04-15 16:26+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -2967,7 +2967,7 @@ msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "FEIL: Kunne ikke kopiere det lagrede spillet til et nytt lagringsspor"
 
 #: engines/engine.cpp:630 engines/savestate.cpp:98
-#: backends/platform/ios7/ios7_osys_main.cpp:266 engines/mm/xeen/saves.cpp:293
+#: backends/platform/ios7/ios7_osys_main.cpp:254 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:216
 msgid "Autosave"
 msgstr "Automatisk lagring"
