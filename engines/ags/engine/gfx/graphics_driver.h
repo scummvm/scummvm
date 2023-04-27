@@ -149,6 +149,10 @@ public:
 	virtual void DestroyDDB(IDriverDependantBitmap *bitmap) = 0;
 
 	// Get shared texture from cache, or create from bitmap and assign ID
+	// FIXME: opaque should be either texture data's flag, - in which case same sprite_id
+	// will be either opaque or not opaque, - or DDB's flag, but in that case it cannot
+	// be applied to the shared texture data. Currently it's possible to share same
+	// texture data, but update it with different "opaque" values, which breaks logic.
 	virtual IDriverDependantBitmap *GetSharedDDB(uint32_t sprite_id,
 		Shared::Bitmap *bitmap = nullptr, bool hasAlpha = true, bool opaque = false) = 0;
 	virtual void UpdateSharedDDB(uint32_t sprite_id, Shared::Bitmap *bitmap = nullptr, bool hasAlpha = true, bool opaque = false) = 0;
