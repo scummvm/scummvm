@@ -32,7 +32,6 @@ namespace Pink {
 void ActionPlay::deserialize(Archive &archive) {
 	ActionStill::deserialize(archive);
 	_stopFrame = archive.readDWORD();
-	_framesDeducted = 0;
 }
 
 void ActionPlay::toConsole() const {
@@ -47,7 +46,7 @@ void ActionPlay::end() {
 
 void ActionPlay::update() {
 	ActionCEL::update();
-	if (_decoder.getCurFrame() + _framesDeducted >= _stopFrame) {
+	if (_decoder.getCurFrame() >= _stopFrame) {
 		_decoder.setEndOfTrack();
 		assert(!_decoder.needsUpdate());
 		_actor->endAction();
@@ -63,16 +62,15 @@ void ActionPlay::onStart() {
 	debugC(6, kPinkDebugActions, "Actor %s has now ActionPlay %s", _actor->getName().c_str(), _name.c_str());
 	int32 frameCount = _decoder.getFrameCount();
 
-	_framesDeducted = 0;
 	if ((int32)_startFrame >= frameCount) {
-		_framesDeducted = (int32)_startFrame;
+		_startFrame = 0;
 	}
 
-	if (_stopFrame == -1 || (_stopFrame - _framesDeducted) >= frameCount) {
-		_stopFrame = _framesDeducted + frameCount - 1;
+	if (_stopFrame == -1 || _stopFrame >= frameCount) {
+		_stopFrame = frameCount - 1;
 	}
 
-	ActionCEL::setFrame(_startFrame - _framesDeducted);
+	ActionCEL::setFrame(_startFrame);
 	// doesn't need to decode startFrame here. Update method will decode
 }
 

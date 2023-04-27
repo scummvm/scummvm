@@ -51,9 +51,9 @@ void ActionPlayWithSfx::toConsole() const {
 }
 
 void ActionPlayWithSfx::update() {
-	int currFrame = _framesDeducted + _decoder.getCurFrame();
+	int currFrame = _decoder.getCurFrame();
 	if (_isLoop && currFrame == _stopFrame) {
-		ActionCEL::setFrame(_startFrame - _framesDeducted);
+		ActionCEL::setFrame(_startFrame);
 		decodeNext();
 	} else
 		ActionPlay::update();
