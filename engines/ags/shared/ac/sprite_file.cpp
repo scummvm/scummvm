@@ -615,19 +615,25 @@ void SpriteFileWriter::WriteBitmap(Bitmap *image) {
 	int w = image->GetWidth();
 	int h = image->GetHeight();
 	ImBufferCPtr im_data(image->GetData(), w * h * bpp, bpp);
+
 	// (Optional) Handle storage options
 	std::vector<uint8_t> indexed_buf;
 	uint32_t palette[256];
 	uint32_t pal_count = 0;
 	SpriteFormat sformat = kSprFmt_Undefined;
-	SpriteCompression compress = kSprCompress_None;
+
 	if ((_storeFlags & kSprStore_OptimizeForSize) != 0 && (image->GetBPP() > 1)) { // Try to store this sprite as an indexed bitmap
-		if (CreateIndexedBitmap(image, indexed_buf, palette, pal_count) && pal_count > 0) {
-			sformat = PaletteFormatForBPP(image->GetBPP());
+		uint32_t gen_pal_count;
+		if (CreateIndexedBitmap(image, indexed_buf, palette, gen_pal_count) && gen_pal_count > 0) { // Test the resulting size, and switch if the paletted image is less
+			if (im_data.Size > (indexed_buf.size() + gen_pal_count * image->GetBPP())) {
 			im_data = ImBufferCPtr(&indexed_buf[0], indexed_buf.size(), 1);
+			sformat = PaletteFormatForBPP(image->GetBPP());
+			pal_count = gen_pal_count;
+			}
 		}
 	}
 	// (Optional) Compress the image data into the temp buffer
+	SpriteCompression compress = kSprCompress_None;
 	if (_compress != kSprCompress_None) {
 		compress = _compress;
 		VectorStream mems(_membuf, kStream_Write);
@@ -641,6 +647,7 @@ void SpriteFileWriter::WriteBitmap(Bitmap *image) {
 		// mark to write as a plain byte array
 		im_data = ImBufferCPtr(&_membuf[0], _membuf.size(), 1);
 	}
+
 	// Write the final data
 	SpriteDatHeader hdr(bpp, sformat, pal_count, compress, w, h);
 	WriteSpriteData(hdr, im_data.Buf, im_data.Size, im_data.BPP, palette);
