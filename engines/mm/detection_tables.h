@@ -207,7 +207,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			"cloudsofxeen",
 			nullptr,
 			AD_ENTRY1s("xeen.cc", "1fea0587fe139b13f4effa2b5791bd80", 13859999),
-			Common::ZH_ANY,
+			Common::ZH_TWN,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
 			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
@@ -284,7 +284,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			"darksideofxeen",
 			nullptr,
 			AD_ENTRY1s("dark.cc", "4dcbcdb0be885afebc2ab6c9e60c434e", 11137412),
-			Common::ZH_ANY,
+			Common::ZH_TWN,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
 			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
