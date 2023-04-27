@@ -61,12 +61,8 @@ const char *String_Append(const char *thisString, const char *extrabit) {
 }
 
 const char *String_AppendChar(const char *thisString, int extraOne) {
-	size_t chw = 1;
-	char chr[Utf8::UtfSz + 1]{};
-	if (get_uformat() == U_UTF8)
-		chw = Utf8::SetChar(extraOne, chr, sizeof(chr));
-	else
-		chr[0] = extraOne;
+	char chr[5]{};
+	size_t chw = usetc(chr, extraOne);
 	size_t ln = strlen(thisString) + chw + 1;
 	char *buffer = (char *)malloc(ln);
 	Common::sprintf_s(buffer, ln, "%s%s", thisString, chr);
@@ -82,12 +78,8 @@ const char *String_ReplaceCharAt(const char *thisString, int index, int newChar)
 	int uchar = ugetc(thisString + off);
 	size_t remain_sz = strlen(thisString + off);
 	size_t old_sz = ucwidth(uchar);
-	size_t new_chw = 1;
-	char new_chr[Utf8::UtfSz + 1]{};
-	if (get_uformat() == U_UTF8)
-		new_chw = Utf8::SetChar(newChar, new_chr, sizeof(new_chr));
-	else
-		new_chr[0] = newChar;
+	char new_chr[5]{};
+	size_t new_chw = usetc(new_chr, newChar);
 	size_t total_sz = off + remain_sz + new_chw - old_sz + 1;
 	char *buffer = (char *)malloc(total_sz);
 	memcpy(buffer, thisString, off);
