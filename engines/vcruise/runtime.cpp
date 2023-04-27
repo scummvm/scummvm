@@ -3354,8 +3354,6 @@ void Runtime::inventoryAddItem(uint item) {
 	uint firstOpenSlot = kNumInventorySlots;
 
 	for (uint i = 0; i < kNumInventorySlots; i++) {
-		if (_inventory[i].itemID == item)
-			return;
 		if (_inventory[i].itemID == 0 && firstOpenSlot == kNumInventorySlots)
 			firstOpenSlot = i;
 	}
@@ -3380,6 +3378,7 @@ void Runtime::inventoryRemoveItem(uint itemID) {
 			item.itemID = 0;
 			item.graphic.reset();
 			drawInventory(slot);
+			break;
 		}
 	}
 }
@@ -4478,6 +4477,7 @@ void Runtime::scriptOpItemHighlightSet(ScriptArg_t arg) {
 		if (item.itemID == static_cast<uint>(stackArgs[0])) {
 			item.highlighted = isHighlighted;
 			drawInventory(slot);
+			break;
 		}
 	}
 }
