@@ -38,6 +38,7 @@
 #define AUDIO_BUFFERS 3
 #define WAVE_BUFFER_SIZE 2048
 #define AUDIO_SAMPLE_RATE 44100
+#define MAX_IOS7_SCUMMVM_LOG_FILESIZE_IN_BYTES (100*1024)
 
 typedef void (*SoundProc)(void *param, byte *buf, int len);
 typedef int (*TimerProc)(int interval);
