@@ -178,7 +178,7 @@ void Character_AnimateEx(CharacterInfo *chaa, int loop, int delay, int repeat,
 }
 
 void Character_Animate(CharacterInfo *chaa, int loop, int delay, int repeat, int blocking, int direction) {
-	Character_AnimateEx(chaa, loop, delay, repeat, blocking, direction, 0, -1);
+	Character_AnimateEx(chaa, loop, delay, repeat, blocking, direction, 0, 100 /* full volume */);
 }
 
 void Character_ChangeRoomAutoPosition(CharacterInfo *chaa, int room, int newPos) {

@@ -142,7 +142,7 @@ void Object_AnimateEx(ScriptObject *objj, int loop, int delay, int repeat,
 }
 
 void Object_Animate(ScriptObject *objj, int loop, int delay, int repeat, int blocking, int direction) {
-	Object_AnimateEx(objj, loop, delay, repeat, blocking, direction, 0, -1);
+	Object_AnimateEx(objj, loop, delay, repeat, blocking, direction, 0, 100 /* full volume */);
 }
 
 void Object_StopAnimating(ScriptObject *objj) {

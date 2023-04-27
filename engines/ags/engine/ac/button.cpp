@@ -119,12 +119,12 @@ void Button_AnimateEx(GUIButton *butt, int view, int loop, int speed,
 }
 
 void Button_Animate(GUIButton *butt, int view, int loop, int speed, int repeat) {
-	Button_AnimateEx(butt, view, loop, speed, repeat, IN_BACKGROUND, FORWARDS, 0, 100);
+	Button_AnimateEx(butt, view, loop, speed, repeat, IN_BACKGROUND, FORWARDS, 0, 100 /* full volume */);
 }
 
 void Button_Animate7(GUIButton *butt, int view, int loop, int speed, int repeat, int blocking, int direction, int sframe) {
-	 Button_AnimateEx(butt, view, loop, speed, repeat, blocking, direction, sframe, 100);
- }
+	Button_AnimateEx(butt, view, loop, speed, repeat, blocking, direction, sframe, 100 /* full volume */);
+}
 
 const char *Button_GetText_New(GUIButton *butt) {
 	return CreateNewScriptString(butt->GetText().GetCStr());
