@@ -470,9 +470,7 @@ else ifeq ($(platform), osx)
    endif
 endif
 
-ifeq ($(DEBUG), 1)
-   DEFINES += -O0 -g
-else ifeq ($(platform), wiiu)
+ifeq ($(platform), wiiu)
    DEFINES += -Os
 else ifeq ($(platform),genode)
    DEFINES += -O2

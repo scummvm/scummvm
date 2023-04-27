@@ -598,6 +598,12 @@ bool retro_load_game(const struct retro_game_info *game) {
 		return false;
 	}
 
+#ifdef LIBRETRO_DEBUG
+	char debug_buf [20];
+	sprintf(debug_buf, "--debuglevel=11");
+	parse_command_params(debug_buf);
+#endif
+
 	if (game) {
 		game_buf_ptr = &game_buf;
 		memcpy(game_buf_ptr, game, sizeof(retro_game_info));
@@ -733,8 +739,7 @@ void retro_run(void) {
 		/* ScummVM is not based on fixed framerate like libretro, and engines/scripts
 		can call multiple screen updates between two retro_run calls. Hence if consecutive screen updates
 		are detected we will loop within the same retro_run call until next pollEvent or
-		delayMillis call in ScummVM thread.
-		*/
+		delayMillis call in ScummVM thread. */
 		do {
 			/* Determine frameskip need based on settings */
 			if ((frameskip_type == 2) || (performance_switch & PERF_SWITCH_ON))
@@ -746,7 +751,7 @@ void retro_run(void) {
 
 			/* No frame skipping if
 			- no incoming audio (e.g. GUI)
-			- doing a THREAD_SWITCH_UPDATE loop*/
+			- doing a THREAD_SWITCH_UPDATE loop */
 			skip_frame = skip_frame && !(audio_status & AUDIO_STATUS_MUTE) && !(getThreadSwitchCaller() & THREAD_SWITCH_UPDATE);
 
 			/* Reset frameskip counter if not flagged */
