@@ -786,11 +786,12 @@ int ccInstance::Run(int32_t curpc) {
 
 			// Make sure it's not stuck in a While loop
 			if (arg1.IValue < 0) {
+				++loopIterations;
 				if (flags & INSTF_RUNNING) {
 					// was notified still running, don't do anything
 					flags &= ~INSTF_RUNNING;
 					loopIterations = 0;
-				} else if ((loopIterationCheckDisabled == 0) && (_G(maxWhileLoops) > 0) && (++loopIterations > _G(maxWhileLoops))) {
+				} else if ((loopIterationCheckDisabled == 0) && (_G(maxWhileLoops) > 0) && (loopIterations > _G(maxWhileLoops))) {
 					cc_error("!Script appears to be hung (a while loop ran %d times). The problem may be in a calling function; check the call stack.", (int)loopIterations);
 					return -1;
 				} else if ((loopIterations % 1000) == 0 && (std::chrono::duration_cast<std::chrono::milliseconds>(AGS_Clock::now() - _lastAliveTs) > timeout)) {
