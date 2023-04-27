@@ -290,14 +290,14 @@ void DirectorEngine::loadKeyCodes() {
 
 void DirectorEngine::setMachineType(int machineType) {
     _machineType = machineType;
-    
+
     switch (machineType) {
     case 1: // Macintosh 512Ke
     case 2: // Macintosh Plus
     case 3: // Macintosh SE
     case 4: // Macintosh II
     case 5: // Macintosh IIx
-    case 6: // Macintosh IIcx 
+    case 6: // Macintosh IIcx
     case 7: // Macintosh SE/30
     case 8: // Macintosh Portable
     case 9: // Macintosh IIci
@@ -1302,16 +1302,16 @@ const byte orderTableD4Jmac[256] = {
 };
 
 //
-// Director 4.0-5.0 Win, cp1250 encoding
+// Director 4.0-5.0 Win, cp1252 encoding
 //
 // ................................
 //   !"«»#$%&'‘’()*+,-./0123456789:
-// ;<=>?@AÁŔÂÄĂĹĆaáŕâäăĺćBbCÇcçDĐdđ
-// EÉČĘËeéčęëFfGgHhIÍĚÎĎiíěîďJjKkLl
-// MmNŃnńOÓŇÔÖŐŘŚoóňôöőřśPpQqRrSŠsš
-// ßTtUÚŮŰÜuúůűüVvWwXxYÝźyý.Zz[\]^_
-// `{|}~.€�‚�„…†‡�‰‹ŤŽŹ�“”•–—�™›ťžˇ
-// ˘Ł¤Ą¦§¨©Ş¬®Ż°±˛ł´µ¶·¸ąşĽ˝ľż×Ţţ÷
+// ;<=>?@AÁÀÂÄÃÅÆaáàâäãåæBbCÇcçDÐdð
+// EÉÈÊËeéèêëFfGgHhIÍÌÎÏiíìîïJjKkLl
+// MmNÑnñOÓÒÔÖÕØŒoóòôöõøœPpQqRrSŠsš
+// ßTtUÚÙÛÜuúùûüVvWwXxYÝŸyý.Zz[\]^_
+// `{|}~.€�‚ƒ„…†‡ˆ‰‹�Ž��“”•–—˜™›�ž¡
+// ¢£¤¥¦§¨©ª¬­®¯°±²³´µ¶·¸¹º¼½¾¿×Þþ÷
 
 const byte orderTableD4win[256] = {
 	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
@@ -1334,16 +1334,16 @@ const byte orderTableD4win[256] = {
 
 
 //
-// Director 6.0 Win, cp1250 encoding
+// Director 6.0 Win, cp1252 encoding
 //
-// ............................�ŤŹ�
-// ť'-–—  .....!"#$%&()*,./:;?@[\]
-// ^�_`{|}~ˇ¦¨Ż´¸ż�‘’‚“”„‹›+<=>±«»×
-// ÷˘Ł¤Ą§©¬®°µ¶·†‡•…‰€0Ľ˝ľ1ą2˛3ł456
-// 789aAŞáÁŕŔâÂäÄăĂĺĹćĆbBcCçÇdDđĐeE
-// éÉčČęĘëËfF�gGhHiIíÍěĚîÎďĎjJkKlLm
-// MnNńŃoOşóÓňŇôÔöÖőŐřŘśŚpPqQrRsSšŠ
-// ßtTţŢ™uUúÚůŮűŰüÜvVwWxXyYýÝ.źzZžŽ
+// ............................����
+// �'-­–—  .....!"#$%&()*,./:;?@[\]
+// ^ˆ_`{|}~¡¦¨¯´¸¿˜‘’‚“”„‹›+<=>±«»×
+// ÷¢£¤¥§©¬®°µ¶·†‡•…‰€0¼½¾1¹2²3³456
+// 789aAªáÁàÀâÂäÄãÃåÅæÆbBcCçÇdDðÐeE
+// éÉèÈêÊëËfFƒgGhHiIíÍìÌîÎïÏjJkKlLm
+// MnNñÑoOºóÓòÒôÔöÖõÕøØœŒpPqQrRsSšŠ
+// ßtTþÞ™uUúÚùÙûÛüÜvVwWxXyYýÝ.ŸzZžŽ
 
 const byte orderTableD6win[256] = {
 	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x09, 0x0a,
@@ -1368,6 +1368,14 @@ const byte orderTableD6win[256] = {
 //
 // Director 8.5 Mac, MacRoman encoding
 //
+// ................................
+//   !"«»“”#$%&'‘’()*+,-./012345678
+// 9:;<=>?@AÁÀÂÄÃÅaáàâäãåÆæBbCÇcçDd
+// EÉÈÊËeéèêëFfﬁﬂGgHhIÍÌÎÏı.íìîïJjK
+// kLlMmNÑnñOÓÒÔÖΩØoóòôöõøŒœPpQqRrS
+// sßTtUÚÙÛÜuúùûüVvWwXxYyÿŸZz[\]^_`
+// {|}~.†°¢£§•¶®©™´¨≠∞±≤≥¥µ∂∑∏π∫ªºΩ
+// ¿¡¬√ƒ≈Δ…–—÷◊⁄¤‹›‡·‚„‰��¯˘˙˚¸˝˛.
 
 const byte orderTableD8mac[256] = {
 	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
@@ -1390,8 +1398,16 @@ const byte orderTableD8mac[256] = {
 
 
 //
-// Director 8.5-10 Win, cp1250 encoding
+// Director 8.5-10 Win, cp1252 encoding
 //
+// ­............................'-–
+// —  .....!"#$%&()*,./:;?@[\]ˆ._`{
+// |}~¡¦¨¯´¸¿˜‘’‚“”„‹›¢£¤¥€+<=>±«»×
+// ÷§©¬®°µ¶·…†‡•‰�����0¼½¾1¹2²3³456
+// 789aAªáÁàÀâÂäÄãÃåÅæÆbBcCçÇdDðÐeE
+// éÉèÈêÊëËfFƒgGhHiIíÍìÌîÎïÏjJkKlLm
+// MnNñÑoOºóÓòÒôÔöÖõÕøØœŒpPqQrRsSšŠ
+// ßtTþÞ™uUúÚùÙûÛüÜvVwWxXyYýÝ.ŸzZžŽ
 
 const byte orderTableD8win[256] = {
 	0x00, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x23, 0x24, 0x25, 0x26, 0x27, 0x0a, 0x0b,
