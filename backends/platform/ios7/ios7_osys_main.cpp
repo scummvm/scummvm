@@ -374,19 +374,31 @@ void iOS7_buildSharedOSystemInstance() {
 void iOS7_main(int argc, char **argv) {
 
 	//OSystem_iOS7::migrateApp();
+
 	Common::String logFilePath = iOS7_getDocumentsDir() + "/scummvm.log";
+	FILE *logFile = fopen(logFilePath.c_str(), "a");
+	if (logFile != nullptr) {
+		// We check for log file size; if it's too big, we rewrite it.
+		// This happens only upon app launch
+		// NOTE: We don't check for file size each time we write a log message.
+		long sz = ftell(logFile);
+		if (sz > MAX_IOS7_SCUMMVM_LOG_FILESIZE_IN_BYTES) {
+			fclose(logFile);
+			fprintf(stdout, "Default log file is bigger than %dKB. It will be overwritten!", MAX_IOS7_SCUMMVM_LOG_FILESIZE_IN_BYTES / 1024);
 
-	FILE *newfp = fopen(logFilePath.c_str(), "a");
-	if (newfp != NULL) {
-		fclose(stdout);
-		fclose(stderr);
-		*stdout = *newfp;
-		*stderr = *newfp;
-		setbuf(stdout, NULL);
-		setbuf(stderr, NULL);
-
-		//extern int gDebugLevel;
-		//gDebugLevel = 10;
+			// Create the log file from scratch overwriting the previous one
+			logFile = fopen(logFilePath.c_str(), "w");
+			if (logFile == nullptr)
+				fprintf(stdout, "Could not open default log file for rewrite!");
+		}
+		if (logFile != NULL) {
+			fclose(stdout);
+			fclose(stderr);
+			*stdout = *logFile;
+			*stderr = *logFile;
+			setbuf(stdout, NULL);
+			setbuf(stderr, NULL);
+		}
 	}
 
 	chdir(iOS7_getDocumentsDir().c_str());
@@ -398,9 +410,9 @@ void iOS7_main(int argc, char **argv) {
 	scummvm_main(argc, (const char *const *) argv);
 	g_system->quit();       // TODO: Consider removing / replacing this!
 
-	if (newfp != NULL) {
+	if (logFile != NULL) {
 		//*stdout = NULL;
 		//*stderr = NULL;
-		fclose(newfp);
+		fclose(logFile);
 	}
 }
