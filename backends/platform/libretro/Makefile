@@ -34,6 +34,8 @@ MKDIR     = mkdir -p
 RM        = rm -f
 RM_REC    = rm -rf
 
+LDFLAGS :=
+
 # Raspberry Pi 3 (64 bit)
 ifeq ($(platform), rpi3_64)
    TARGET   = $(TARGET_NAME)_libretro.so
