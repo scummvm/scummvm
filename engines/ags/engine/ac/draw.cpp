@@ -798,7 +798,8 @@ Engine::IDriverDependantBitmap* recycle_ddb_sprite(Engine::IDriverDependantBitma
 	return _G(gfxDriver)->GetSharedDDB(sprite_id, source, has_alpha, opaque);
 }
 
-void sync_object_texture(ObjTexture &obj, bool has_alpha = false, bool opaque = false) {
+// FIXME: make has_alpha and opaque properties of ObjTexture?!
+static void sync_object_texture(ObjTexture &obj, bool has_alpha = false, bool opaque = false) {
 	Bitmap *use_bmp = obj.Bmp.get() ? obj.Bmp.get() : _GP(spriteset)[obj.SpriteID];
 	obj.Ddb = recycle_ddb_sprite(obj.Ddb, obj.SpriteID, use_bmp, has_alpha, opaque);
 }
