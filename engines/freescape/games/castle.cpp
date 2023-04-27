@@ -194,6 +194,28 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 		_gfx->_keyColor = 0;
 	} else
 		_gfx->_keyColor = 255;
+
+	_lastPosition = _position;
+	_gameStateVars[0x1f] = 0;
+
+	if (areaID == _startArea && entranceID == _startEntrance) {
+		_yaw = 310;
+		_pitch = 0;
+	}
+
+	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+	clearTemporalMessages();
+	playSound(5, false);
+	// Ignore sky/ground fields
+	_gfx->_keyColor = 0;
+
+	_gfx->_colorPair[_currentArea->_underFireBackgroundColor] = _currentArea->_extraColor[0];
+	_gfx->_colorPair[_currentArea->_usualBackgroundColor] = _currentArea->_extraColor[1];
+	_gfx->_colorPair[_currentArea->_paperColor] = _currentArea->_extraColor[2];
+	_gfx->_colorPair[_currentArea->_inkColor] = _currentArea->_extraColor[3];
+
+	swapPalette(areaID);
+	resetInput();
 }
 
 void CastleEngine::drawUI() {

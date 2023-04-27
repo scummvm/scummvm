@@ -361,8 +361,7 @@ bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 	return true;
 }
 
-bool Renderer::getRGBAtEGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2) {
- 	// assert(index-1 < _colorMap->size());
+uint8 Renderer::mapEGAColor(uint8 index) {
 	byte *entry = (*_colorMap)[index - 1];
 	uint8 color = 0;
 	uint8 acc = 1;
@@ -376,10 +375,23 @@ bool Renderer::getRGBAtEGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 		entry++;
 	}
 	assert(color < 16);
-	readFromPalette(color, r1, g1, b1);
-	r2 = r1;
-	g2 = g1;
-	b2 = b1;
+	return color;
+}
+
+bool Renderer::getRGBAtEGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2) {
+	uint8 color;
+	if (_colorPair[index] > 0) {
+		color = mapEGAColor(_colorPair[index] & 0xf);
+		readFromPalette(color, r1, g1, b1);
+		color = mapEGAColor(_colorPair[index] >> 4);
+		readFromPalette(color, r2, g2, b2);
+	} else {
+		color = mapEGAColor(index);
+		readFromPalette(color, r1, g1, b1);
+		r2 = r1;
+		g2 = g1;
+		b2 = b1;
+	}
 	return true;
 }
 
