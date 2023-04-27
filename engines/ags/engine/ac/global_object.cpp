@@ -269,7 +269,7 @@ static void LegacyAnimateObjectImpl(int obn, int loopn, int spdd, int rept,
 	if (obn >= LEGACY_ANIMATE_CHARIDBASE) {
 		scAnimateCharacter(obn - LEGACY_ANIMATE_CHARIDBASE, loopn, spdd, rept);
 	} else {
-		AnimateObjectImpl(obn, loopn, spdd, rept, direction, blocking, 0);
+		AnimateObjectImpl(obn, loopn, spdd, rept, direction, blocking, 0, 100 /* full volume */);
 	}
 }
 
