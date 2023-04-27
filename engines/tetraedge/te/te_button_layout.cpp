@@ -111,21 +111,24 @@ void TeButtonLayout::load(const Common::String &upImg, const Common::String &dow
 	TeSpriteLayout *upSprite = nullptr;
 	if (upImg.size()) {
 		upSprite = new TeSpriteLayout();
-		upSprite->load(upImg);
+		if (!upSprite->load(upImg))
+			warning("Failed to load button up img %s", upImg.c_str());
 	}
 	setUpLayout(upSprite);
 
 	TeSpriteLayout *downSprite = nullptr;
 	if (downImg.size()) {
 		downSprite = new TeSpriteLayout();
-		downSprite->load(downImg);
+		if (!downSprite->load(upImg))
+			warning("Failed to load button down img %s", downImg.c_str());
 	}
 	setDownLayout(downSprite);
 
 	TeSpriteLayout *overSprite = nullptr;
 	if (overImg.size()) {
 		overSprite = new TeSpriteLayout();
-		overSprite->load(overImg);
+		if (!overSprite->load(overImg))
+			warning("Failed to load button over img %s", overImg.c_str());
 	}
 	setRollOverLayout(overSprite);
 	setHitZone(nullptr);
@@ -263,6 +266,7 @@ void TeButtonLayout::setDisabledLayout(TeLayout *disabledLayout) {
 
 	_disabledLayout = disabledLayout;
 	if (_disabledLayout) {
+		_sizeChanged = true;
 		addChild(_disabledLayout);
 		//_disabledLayout->setColor(TeColor(0, 0, 0, 0));
 		//_disabledLayout->setName(name() + "_disabledLayout");
@@ -277,6 +281,7 @@ void TeButtonLayout::setHitZone(TeLayout *hitZoneLayout) {
 
 	_hitZoneLayout = hitZoneLayout;
 	if (_hitZoneLayout) {
+		_sizeChanged = true;
 		addChild(_hitZoneLayout);
 		//_hitZoneLayout->setColor(TeColor(0, 0, 0xff, 0xff));
 		//_hitZoneLayout->setName(name() + "_hitZoneLayout");
@@ -291,7 +296,7 @@ void TeButtonLayout::setDownLayout(TeLayout *downLayout) {
 		addChild(downLayout);
 	_downLayout = downLayout;
 
-	if (sizeType() == RELATIVE_TO_PARENT &&
+	if (sizeType() == ABSOLUTE &&
 			size().x() == 1.0f && size().y() == 1.0f &&
 			!_upLayout && _downLayout) {
 		setSize(_downLayout->size());
@@ -331,7 +336,7 @@ void TeButtonLayout::setUpLayout(TeLayout *upLayout) {
 		addChild(upLayout);
 	_upLayout = upLayout;
 
-	if (sizeType() == RELATIVE_TO_PARENT &&
+	if (sizeType() == ABSOLUTE &&
 			size().x() == 1.0f && size().y() == 1.0f &&
 			!_downLayout && _upLayout) {
 		setSize(_upLayout->size());

@@ -41,6 +41,8 @@ public:
 	// Parser
 	CUSTOM_XML_PARSER(TeSceneWarpXmlParser) {
 		XML_KEY(FileFormatVersion)
+			XML_PROP(major, true)
+			XML_PROP(minor, true)
 		KEY_END()
 		XML_KEY(exit)
 			XML_PROP(linkedWarp, true)

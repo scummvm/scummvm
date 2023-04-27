@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	game/dialog2.o \
 	game/document.o \
 	game/documents_browser.o \
+	game/documents_browser_xml_parser.o \
 	game/gallery_menu.o \
 	game/game.o \
 	game/game_achievements.o \

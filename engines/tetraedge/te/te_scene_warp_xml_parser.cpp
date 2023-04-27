@@ -57,7 +57,7 @@ bool TeSceneWarpXmlParser::parserCallback_marker(ParserNode *node) {
 		} else {
 			marker->visible(false);
 		}
-		marker->setSomeFloat(999.0f);
+		marker->setZLoc(999.0f);
 		_sceneWarp->_warp->sendMarker(exit._name, exit._markerId);
 	} else if (_objType == kObjObject) {
 		TeSceneWarp::Object &obj = _sceneWarp->_objects.back();
@@ -70,7 +70,7 @@ bool TeSceneWarpXmlParser::parserCallback_marker(ParserNode *node) {
 		} else {
 			marker->visible(false);
 		}
-		marker->setSomeFloat(999.0f);
+		marker->setZLoc(999.0f);
 		if (_sceneWarp->_warp->hasObjectOrAnim(obj._name)) {
 			_sceneWarp->_warp->sendMarker(obj._name, obj._markerId);
 		}
@@ -97,7 +97,7 @@ bool TeSceneWarpXmlParser::parserCallback_block(ParserNode *node) {
 		bloc.color(TeColor(0, 0, 0xff, 0x80));
 		exit._warpBlocs.push_back(bloc);
 	} // else, create a TeWarp::Block which we do after parsing.
-	error("TODO: Finish TeSceneWarpXmlParser::parserCallback_block");
+	return true;
 }
 
 bool TeSceneWarpXmlParser::parserCallback_object(ParserNode *node) {

@@ -19,6 +19,8 @@
  *
  */
 
+#include "tetraedge/tetraedge.h"
+#include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_scene_warp.h"
 #include "tetraedge/te/te_scene_warp_xml_parser.h"
 
@@ -74,6 +76,10 @@ bool TeSceneWarp::load(const Common::String &name, TeWarp *warp, bool flag) {
 	_name = name;
 
 	TeSceneWarpXmlParser parser(this, flag);
+	TeCore *core = g_engine->getCore();
+	Common::FSNode node = core->findFile(name);
+	parser.loadFile(node);
+	parser.parse();
 
 	if (flag) {
 		// Line 357 ~ 426, plus other fixups

@@ -97,7 +97,7 @@ TeSpriteLayout *Game::findSpriteLayoutByName(TeLayout *parent, const Common::Str
 }
 
 bool Game::isDocumentOpened() {
-	return _documentsBrowser.gui1().layoutChecked("zoomed")->visible();
+	return _documentsBrowser.gui().layoutChecked("zoomed")->visible();
 }
 
 bool Game::isMoviePlaying() {

@@ -30,6 +30,12 @@ namespace Tetraedge {
 
 class DocumentsBrowser : public TeLayout {
 public:
+	struct DocumentData {
+		Common::String _id;
+		Common::String _name;
+		Common::String _description; // seems always empty..
+	};
+
 	DocumentsBrowser();
 
 	bool addDocument(Document *document);
@@ -40,8 +46,8 @@ public:
 		return 1;
 	}
 
-	Common::String documentDescription(const Common::String &name);
-	Common::String documentName(const Common::String &name);
+	Common::String documentDescription(const Common::String &name) const;
+	Common::String documentName(const Common::String &name) const;
 
 	void enter();
 	void hideDocument();
@@ -50,6 +56,16 @@ public:
 	// void loadFromBackup(TiXmlNode *node);
 	void loadZoomed();
 	// void saveToBackup(TiXmlNode *node);
+
+	void showDocument(const Common::String &str, int startPage);
+	void unload();
+
+	TeLayout &zoomedLayout() { return _zoomedLayout; }
+
+	TeLuaGUI &gui() { return _gui; }
+
+private:
+	void loadXMLFile(const Common::String &path);
 
 	void onDocumentSelected(Document *doc);
 	bool onNextPage();
@@ -79,14 +95,7 @@ public:
 	bool onShowedDocumentButton18();
 	bool onShowedDocumentButton19();
 
-	void showDocument(const Common::String &str, int startPage);
-	void unload();
 
-	TeLayout &zoomedLayout() { return _zoomedLayout; }
-
-	TeLuaGUI &gui1() { return _gui1; }
-
-private:
 	TeTimer _timer;
 	TeLayout _zoomedLayout;
 	uint64 _curPage;
@@ -94,9 +103,10 @@ private:
 	int _zoomCount;
 	Common::String _curDocName;
 
-	TeLuaGUI _gui1;
-	TeLuaGUI _gui2;
-	// TiXmlDocument _xmldoc;
+	TeLuaGUI _gui;
+	TeLuaGUI _zoomedDocGui;
+
+	Common::HashMap<Common::String, DocumentData> _documentData;
 };
 
 } // end namespace Tetraedge

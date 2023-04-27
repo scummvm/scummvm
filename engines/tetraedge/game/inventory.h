@@ -59,13 +59,6 @@ public:
 	Common::String objectDescription(const Common::String &objname);
 	Common::String objectName(const Common::String &objname);
 
-	bool onMainMenuButton();
-	bool onObjectSelected(InventoryObject &obj);
-	bool onQuitButton();
-	bool onTakeObjectSelected();
-	bool onVisibleCellphone();
-	bool onZoomed();
-
 	void pauseAnims();
 	void unPauseAnims();
 
@@ -85,6 +78,19 @@ public:
 	Cellphone *cellphone() { return _cellphone; }
 
 private:
+	// Amerzone navigation events
+	void currentPage(uint page);
+	bool onPreviousPage();
+	bool onNextPage();
+
+	// Syberia navigation events
+	bool onMainMenuButton();
+	bool onObjectSelected(InventoryObject &obj);
+	bool onQuitButton();
+	bool onTakeObjectSelected();
+	bool onVisibleCellphone();
+	bool onZoomed();
+
 	void loadXMLFile(const Common::Path &path);
 
 	TeLuaGUI _gui;
@@ -95,6 +101,8 @@ private:
 
 	// This is used when we need a reference to a blank str in selectedObject()
 	const Common::String _blankStr;
+	
+	uint _currentPage;
 
 	TeTimer _selectedTimer;
 };

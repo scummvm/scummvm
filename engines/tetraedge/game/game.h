@@ -101,6 +101,7 @@ public:
 	DocumentsBrowser &documentsBrowser() { return _documentsBrowser; }
 	bool entered() const { return _entered; }
 	bool running() const { return _running; }
+	void setRunning(bool val) { _running = val; }
 	bool luaShowOwnerError() const { return _luaShowOwnerError; }
 
 	bool _returnToMainMenu;

@@ -71,7 +71,7 @@ bool AmerzoneGame::changeWarp(const Common::String &zone, const Common::String &
 	// Just reload each time for now.
 	if (!_warpY) {
 		_warpY = new TeWarp();
-		_warpY->setRotation(app->frontOrientationLayout().rotation());
+		_warpY->setRotation(app->frontLayout().rotation());
 		_warpY->init();
 		float fov = 45.0f; //TODO: g_engine->getCore()->fileFlagSystemFlagsContains("HD") ? 60.0f : 45.0f;
 		_warpY->setFov(fov);
@@ -132,10 +132,10 @@ void AmerzoneGame::enter() {
 	_inGameGui.load("GUI/InGame.lua");
 
 	TeLayout *inGame = _inGameGui.layoutChecked("inGame");
-	// Note:
-	app->frontOrientationLayout().addChild(inGame);
+	app->frontLayout().addChild(inGame);
+	// DocumentsBrowser and Inventory get added as children of InventoryMenu
 	_inventoryMenu.load();
-	app->frontOrientationLayout().addChild(&_inventoryMenu);
+	app->frontLayout().addChild(&_inventoryMenu);
 
 	TeButtonLayout *invbtn = _inGameGui.buttonLayoutChecked("inventoryButton");
 	invbtn->onMouseClickValidated().add(this, &AmerzoneGame::onInventoryButtonValidated);
@@ -151,7 +151,7 @@ void AmerzoneGame::enter() {
 	vid->_tiledSurfacePtr->_frameAnim.onStop().add(this, &Game::onVideoFinished);
 	vid->setVisible(false);
 	_dialog2.load();
-	app->frontOrientationLayout().addChild(&_dialog2);
+	app->frontLayout().addChild(&_dialog2);
 	_question2.load();
 
 	TeInputMgr *inputMgr = g_engine->getInputMgr();
@@ -167,7 +167,7 @@ void AmerzoneGame::enter() {
 
 	_notifier.load();
 	_warpX = new TeWarp();
-	_warpX->setRotation(app->frontOrientationLayout().rotation());
+	_warpX->setRotation(app->frontLayout().rotation());
 	_warpX->init();
 	// TODO: Set FOV here?
 	_warpX->setVisible(true, false);
@@ -222,7 +222,7 @@ void AmerzoneGame::isInDrag(bool inDrag) {
 			TeVector3f32 mouseDir(mousePt.x - _mouseDragLast.x, mousePt.y - _mouseDragLast.y, 0);
 			if (app->inverseLook())
 				mouseDir = mouseDir * -1.0f;
-			const TeMatrix4x4 layoutRot = app->frontOrientationLayout().rotation().toTeMatrix();
+			const TeMatrix4x4 layoutRot = app->frontLayout().rotation().toTeMatrix();
 			TeVector3f32 dest = layoutRot * mouseDir;
 			dest.x() /= 2;
 			dest.y() /= 2;
@@ -237,7 +237,7 @@ void AmerzoneGame::leave(bool flag) {
 	_inGameGui.unload();
 	_question2.unload();
 	Application *app = g_engine->getApplication();
-	app->frontOrientationLayout().removeChild(&_dialog2);
+	app->frontLayout().removeChild(&_dialog2);
 	_dialog2.unload();
 	if (_warpX) {
 		delete _warpX;
@@ -246,7 +246,7 @@ void AmerzoneGame::leave(bool flag) {
 	if (_warpY) {
 		saveBackup("save.xml");
 	}
-	app->frontOrientationLayout().removeChild(&_inventoryMenu);
+	app->frontLayout().removeChild(&_inventoryMenu);
 	_inventoryMenu.unload();
 
 	// TODO: game does this.. doesn't this leak?
@@ -433,7 +433,7 @@ void AmerzoneGame::update() {
 		if (_isInDrag) {
 			TeVector2s32 mousePos = TeVector2s32(inputMgr->lastMousePos());
 			TeVector3f32 offset = TeVector3f32(mousePos - _mouseDragLast);
-			TeMatrix4x4 orientLayoutMatrix = app->frontOrientationLayout().rotation().toTeMatrix();
+			TeMatrix4x4 orientLayoutMatrix = app->frontLayout().rotation().toTeMatrix();
 			TeVector3f32 rotOffset = orientLayoutMatrix * offset;
 			if (app->inverseLook()) {
 				setAngleX(_orientationX + rotOffset.x() / 2);

@@ -34,27 +34,34 @@
 
 namespace Tetraedge {
 
-Inventory::Inventory() : _cellphone(nullptr), _selectedObject(nullptr) {
+Inventory::Inventory() : _cellphone(nullptr), _selectedObject(nullptr), _currentPage(0) {
 }
 
 Inventory::~Inventory() {
-	if (_cellphone)
+	if (_cellphone) {
 		_cellphone->unload();
-	delete _cellphone;
+		delete _cellphone;
+	}
 }
 
 void Inventory::enter() {
 	setVisible(true);
-	Game *game = g_engine->getGame();
-	Character *character = game->scene()._character;
-	character->stop();
-	character->setAnimation(character->characterSettings()._idleAnimFileName, true);
-	_gui.layoutChecked("textObject")->setVisible(false);
-
-	if (!game->_firstInventory) {
-		_gui.buttonLayoutChecked("Aide")->setVisible(false);
+	
+	if (g_engine->gameIsAmerzone()) {
+		currentPage(_currentPage);
 	} else {
-		game->_firstInventory = false;
+		Game *game = g_engine->getGame();
+		Character *character = game->scene()._character;
+		character->stop();
+		character->setAnimation(character->characterSettings()._idleAnimFileName, true);
+
+		_gui.layoutChecked("textObject")->setVisible(false);
+
+		if (!game->_firstInventory && !g_engine->gameIsAmerzone()) {
+			_gui.buttonLayoutChecked("Aide")->setVisible(false);
+		} else {
+			game->_firstInventory = false;
+		}
 	}
 
 	if (_selectedObject)
@@ -71,39 +78,52 @@ void Inventory::leave() {
 }
 
 void Inventory::load() {
-	setName("inventory");
+	setName("_inventory");
 	setSizeType(RELATIVE_TO_PARENT);
 	setSize(TeVector3f32(1.0f, 1.0f, userSize().z()));
 	_gui.load("Inventory/Inventory.lua");
 	TeLayout *invlayout = _gui.layoutChecked("inventory");
 	addChild(invlayout);
 
-	TeButtonLayout *btn;
-	btn = _gui.buttonLayoutChecked("cellphone");
-	btn->onMouseClickValidated().add(this, &Inventory::onVisibleCellphone);
+	if (g_engine->gameIsAmerzone()) {
+		TeLayout *bglayout = _gui.layoutChecked("background");
+		bglayout->setRatioMode(RATIO_MODE_NONE);
 
-	btn = _gui.buttonLayoutChecked("prendre");
-	btn->setVisible(false);
-	btn->onMouseClickValidated().add(this, &Inventory::onTakeObjectSelected);
+		TeButtonLayout *btn;
+		btn = _gui.buttonLayoutChecked("previousPage");
+		btn->onMouseClickValidated().add(this, &Inventory::onPreviousPage);
+	
+		btn = _gui.buttonLayoutChecked("nextPage");
+		btn->onMouseClickValidated().add(this, &Inventory::onNextPage);
+	} else {
+		TeButtonLayout *btn;
+		btn = _gui.buttonLayoutChecked("cellphone");
+		btn->onMouseClickValidated().add(this, &Inventory::onVisibleCellphone);
 
-	btn = _gui.buttonLayoutChecked("lire");
-	btn->setEnable(false);
-	btn->onMouseClickValidated().add(this, &Inventory::onZoomed);
+		btn = _gui.buttonLayoutChecked("prendre");
+		btn->setVisible(false);
+		btn->onMouseClickValidated().add(this, &Inventory::onTakeObjectSelected);
 
-	btn = _gui.buttonLayoutChecked("quitButton");
-	btn->setVisible(true);
-	btn->onMouseClickValidated().add(this, &Inventory::onQuitButton);
+		btn = _gui.buttonLayoutChecked("lire");
+		btn->setEnable(false);
+		btn->onMouseClickValidated().add(this, &Inventory::onZoomed);
 
-	btn = _gui.buttonLayoutChecked("quitBackground");
-	btn->setVisible(true);
-	btn->onMouseClickValidated().add(this, &Inventory::onQuitButton);
+		btn = _gui.buttonLayoutChecked("quitButton");
+		btn->setVisible(true);
+		btn->onMouseClickValidated().add(this, &Inventory::onQuitButton);
 
-	btn = _gui.buttonLayoutChecked("mainMenuButton");
-	btn->setVisible(true);
-	btn->onMouseClickValidated().add(this, &Inventory::onMainMenuButton);
+		btn = _gui.buttonLayoutChecked("quitBackground");
+		btn->setVisible(true);
+		btn->onMouseClickValidated().add(this, &Inventory::onQuitButton);
 
+		btn = _gui.buttonLayoutChecked("mainMenuButton");
+		btn->setVisible(true);
+		btn->onMouseClickValidated().add(this, &Inventory::onMainMenuButton);
+
+		loadCellphone();
+	}
+	_currentPage = 0;
 	_selectedObject = nullptr;
-	loadCellphone();
 
 	const Common::Path objectsPathPrefix("Inventory/Objects/Objects_");
 	const Common::String &lang = g_engine->getCore()->language();
@@ -120,7 +140,7 @@ void Inventory::load() {
 
 	loadXMLFile(langXmlPath);
 
-	TeLayout *layout = _gui.layout("selectionSprite");
+	TeLayout *layout = _gui.layoutChecked("selectionSprite");
 	layout->setVisible(false);
 	_invObjects.clear();
 
@@ -288,6 +308,35 @@ Common::String Inventory::objectName(const Common::String &objId) {
 	if (!_objectData.contains(objId))
 		return "";
 	return _objectData.getVal(objId)._name;
+}
+
+void Inventory::currentPage(uint page) {
+	TeLayout *pageLayout = _gui.layout(Common::String::format("page%d", page));
+	if (pageLayout) {
+		_currentPage = page;
+		uint p = 0;
+		while (true) {
+			pageLayout = _gui.layout(Common::String::format("page%d", p));
+			if (!pageLayout)
+				break;
+			pageLayout->setVisible(p == _currentPage);
+			TeButtonLayout *diodeLayout = _gui.buttonLayoutChecked(Common::String::format("diode%d", p));
+			diodeLayout->setEnable(p != _currentPage);
+			p++;
+		}
+		if (_selectedObject)
+			selectedObject(_selectedObject);
+	}
+}
+
+bool Inventory::onPreviousPage() {
+	currentPage(_currentPage - 1);
+	return false;
+}
+
+bool Inventory::onNextPage() {
+	currentPage(_currentPage + 1);
+	return false;
 }
 
 bool Inventory::onMainMenuButton() {

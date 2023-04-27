@@ -153,8 +153,10 @@ void TeWarp::configMarker(const Common::String &objname, int markerImgNo, long m
 		foundId = exit->_markerId;
 	} else {
 		AnimData *anim = findAnimation(objname);
-		if (!anim || anim->_markerIds.empty())
+		if (!anim || anim->_markerIds.empty()) {
+			warning("configMarker: Didn't find marker %s", objname.c_str());
 			return;
+		}
 		foundId = anim->_markerIds[0];
 	}
 	assert(foundId >= 0 && foundId < _warpMarkers.size());
@@ -175,10 +177,14 @@ void TeWarp::configMarker(const Common::String &objname, int markerImgNo, long m
 		if (!btnUp)
 			error("Loading button image %s failed", markerPath.c_str());
 		warning("TeWarp::configMarker: set anim values and something else here?");
-		//btnUp->_tiledSurfacePtr->_frameAnim._repeatCount = -1;
-		//btnUp->_tiledSurfacePtr->_frameAnim.setFrameRate(8.0);
+		btnUp->_tiledSurfacePtr->_frameAnim._repeatCount = -1;
+		btnUp->_tiledSurfacePtr->_frameAnim.setFrameRate(8.0);
 		btnUp->play();
 		warpMarker->marker()->visible(true);
+		// The game uses TeSprite, but we use the layout system instead.
+		TeLayout &frontLayout = g_engine->getApplication()->frontLayout();
+		// Ensure markers appear below menus and videos.
+		frontLayout.addChildBefore(&warpMarker->marker()->button(), frontLayout.child(0));
 	}
 }
 
@@ -198,7 +204,7 @@ TeWarp::Exit *TeWarp::findExit(const Common::String &objname, bool flag) {
 		fullName = Common::String("3D\\") + objname;
 
 	for (auto &e : _exitList) {
-		if (e._name == fullName)
+		if (e._linkedWarpPath.contains(fullName))
 			return &e;
 	}
 	return nullptr;
@@ -409,7 +415,7 @@ void TeWarp::sendExit(TeWarp::Exit &exit) {
 	assert(marker);
 	marker->button().load("2D/Menus/InGame/Marker_0.png", "2D/Menus/InGame/Marker_0_over.png", "");
 	marker->visible(false);
-	marker->setSomeFloat(-999.0f);
+	marker->setZLoc(-999.0f);
 	_exitList.push_back(exit);
 }
 
@@ -493,7 +499,7 @@ void TeWarp::render() {
 	}
 
 	for (auto &warpMarker : _warpMarkers) {
-		warpMarker->marker()->update(&_camera);
+		warpMarker->marker()->update(_camera);
 	}
 
 	renderer->setCurrentColor(TeColor(255, 255, 255, 255));

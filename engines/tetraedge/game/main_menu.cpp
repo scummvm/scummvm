@@ -78,6 +78,7 @@ void MainMenu::enter() {
 	// WORKAROUND: This is set to PanScan ratio 1.0, but with our code
 	// but that shrinks it down to pillarboxed.  Force back to full size.
 	//
+	
 	TeLayout *background;
 	if (layout("background"))
 		background = layoutChecked("background");
@@ -85,7 +86,6 @@ void MainMenu::enter() {
 		background = dynamic_cast<TeLayout *>(menuLayout->child(0));
 	assert(background);
 	background->setRatioMode(TeILayout::RATIO_MODE_NONE);
-
 
 	app->mouseCursorLayout().setVisible(true);
 	app->mouseCursorLayout().load(app->defaultCursor());

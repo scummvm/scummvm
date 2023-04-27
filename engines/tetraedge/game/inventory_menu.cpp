@@ -31,8 +31,11 @@ InventoryMenu::InventoryMenu() {
 
 void InventoryMenu::enter() {
 	Application *app = g_engine->getApplication();
+	if (g_engine->gameIsAmerzone())
+		g_engine->getGame()->setRunning(false);
 	app->mouseCursorLayout().load(app->defaultCursor());
 
+	_gui.buttonLayoutChecked("quitButton")->setEnable(true);
 	_gui.layoutChecked("inventoryMenu")->setVisible(true);
 	onInventoryButton();
 }
@@ -44,16 +47,29 @@ void InventoryMenu::leave() {
 	TeLayout *invMenu = _gui.layout("inventoryMenu");
 	if (invMenu)
 		invMenu->setVisible(false);
+	if (g_engine->gameIsAmerzone())
+		game->setRunning(true);
 }
 
 void InventoryMenu::load() {
-	setName("inventoryMenu");
+	setName("_inventoryMenu");
 	setSizeType(RELATIVE_TO_PARENT);
 	TeVector3f32 usersz = userSize();
 	setSize(TeVector3f32(1.0f, 1.0f, usersz.z()));
 
 	_gui.load("InventoryMenu/InventoryMenu.lua");
+
+	Game *game = g_engine->getGame();
+	if (g_engine->gameIsAmerzone()) {
+		_gui.layoutChecked("inventoryMenu")->setRatioMode(RATIO_MODE_NONE);
+		game->inventory().load();
+		game->documentsBrowser().load();
+		addChild(&game->inventory());
+		addChild(&game->documentsBrowser());
+	}
+
 	addChild(_gui.layoutChecked("inventoryMenu"));
+
 	_gui.buttonLayoutChecked("quitButton")->onMouseClickValidated()
 				.add(this, &InventoryMenu::onQuitButton);
 	// Quit background is only in Syberia 1 and 2 (not amerzone)
@@ -69,7 +85,9 @@ void InventoryMenu::load() {
 
 	_gui.layoutChecked("inventoryMenu")->setVisible(false);
 
-	setVisible(false);
+	if (g_engine->gameIsAmerzone()) {
+		game->documentsBrowser().loadZoomed();
+	}
 }
 
 void InventoryMenu::unload() {

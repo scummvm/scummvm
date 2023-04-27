@@ -28,23 +28,27 @@ TeMarker::TeMarker() : _visible(true), _isActive(false) {
 
 void TeMarker::active(bool val) {
 	_isActive = val;
-	_button.setVisible(!_visible && val);
+	_button.setVisible(_visible && val);
 }
 
-void TeMarker::update(TeCamera *camera) {
+void TeMarker::update(TeCamera &camera) {
+	_button.setVisible(true);
 	if (!_visible)
 		return;
-	const TeVector3f32 transformLoc = camera->transformCoord(_loc);
+	const TeVector3f32 transformLoc = camera.transformCoord(_loc);
 	const TeVector3f32 btnSize = _button.size();
-	if (transformLoc.z() < 0) {
-		_button.setPosition(TeVector3f32(btnSize.x(), btnSize.y(), _someFloat));
+	_button.setPositionType(TeILayout::ABSOLUTE);
+	if (transformLoc.z() < 1.0f) {
+		// Behind the camera, move off-screen.
+		_button.setPosition(TeVector3f32(-btnSize.x(), -btnSize.y(), _zLoc));
 	} else {
-		TeVector3f32 transformLoc2(transformLoc.x() + btnSize.x() / 2, transformLoc.y() + btnSize.y() / 2, _someFloat);
+		TeVector3f32 buttonMiddle(transformLoc.x() - btnSize.x() / 2, transformLoc.y() - btnSize.y() / 2, _zLoc);
 		// TODO: device rotation (maybe?) is taken account of here
 		// in original, should we do that?
-		TeVector3f32 newScale(480.0f / camera->getViewportWidth(), 320.0f / camera->getViewportHeight(), 1.0);
+		TeVector3f32 newScale(480.0f / camera.getViewportWidth(), 320.0f / camera.getViewportHeight(), 1.0);
 		_button.setScale(newScale);
-		_button.setPosition(TeVector3f32(newScale.x() * transformLoc2.x(), newScale.y() * transformLoc2.y(), newScale.z()));
+		_button.setPosition(TeVector3f32(/*newScale.x() * */ buttonMiddle.x(), /*newScale.y() * */ buttonMiddle.y(), buttonMiddle.z()));
+		//debug("Updated button pos to %s (scale %s middle %s)", _button.position().dump().c_str(), newScale.dump().c_str(), buttonMiddle.dump().c_str());
 	}
 }
 

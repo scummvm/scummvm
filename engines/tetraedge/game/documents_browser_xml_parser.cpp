@@ -19,40 +19,16 @@
  *
  */
 
-#ifndef TETRAEDGE_TE_TE_MARKER_H
-#define TETRAEDGE_TE_TE_MARKER_H
-
-#include "tetraedge/te/te_camera.h"
-#include "tetraedge/te/te_button_layout.h"
-#include "tetraedge/te/te_vector3f32.h"
+#include "tetraedge/game/documents_browser_xml_parser.h"
 
 namespace Tetraedge {
 
-// Note: Only used in Amerzone
-class TeMarker {
-public:
-	TeMarker();
-
-	void active(bool val);
-	void update(TeCamera &camera);
-	void visible(bool val);
-
-	TeButtonLayout &button() { return _button; }
-	TeVector3f32 &loc() { return _loc; }
-
-	void setZLoc(float f) { _zLoc = f; }
-
-private:
-	bool _visible;
-	bool _isActive;
-	float _zLoc;
-	TeVector3f32 _loc;
-	// Note: this is a TeSpriteButton in the original, updated
-	// to use the newer ButtonLayout
-	TeButtonLayout _button;
-
-};
+bool DocumentsBrowserXmlParser::parserCallback_Document(ParserNode *node) {
+	DocumentsBrowser::DocumentData data;
+	data._id = node->values["id"];
+	data._name = node->values["name"];
+	_objects.setVal(data._id, data);
+	return true;
+}
 
 } // end namespace Tetraedge
-
-#endif // TETRAEDGE_TE_TE_MARKER_H

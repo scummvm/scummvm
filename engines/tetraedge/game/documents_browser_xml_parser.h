@@ -19,40 +19,37 @@
  *
  */
 
-#ifndef TETRAEDGE_TE_TE_MARKER_H
-#define TETRAEDGE_TE_TE_MARKER_H
+#include "common/hashmap.h"
+#include "common/str.h"
+#include "common/formats/xmlparser.h"
+#include "tetraedge/game/documents_browser.h"
 
-#include "tetraedge/te/te_camera.h"
-#include "tetraedge/te/te_button_layout.h"
-#include "tetraedge/te/te_vector3f32.h"
+#ifndef TETRAEDGE_GAME_DOCUMENTS_BROWSER_XML_PARSER_H
+#define TETRAEDGE_GAME_DOCUMENTS_BROWSER_XML_PARSER_H
 
 namespace Tetraedge {
 
-// Note: Only used in Amerzone
-class TeMarker {
+class DocumentsBrowserXmlParser : public Common::XMLParser {
 public:
-	TeMarker();
+	// Parser
+	CUSTOM_XML_PARSER(DocumentsBrowserXmlParser) {
+		XML_KEY(document)
+			XML_KEY(Document)
+				XML_PROP(id, true)
+				XML_PROP(name, true)
+				XML_PROP(description, false)
+			KEY_END()
+		KEY_END()
+	} PARSER_END()
 
-	void active(bool val);
-	void update(TeCamera &camera);
-	void visible(bool val);
+	bool parserCallback_document(ParserNode *node) { return true; };
+	bool parserCallback_Document(ParserNode *node);
 
-	TeButtonLayout &button() { return _button; }
-	TeVector3f32 &loc() { return _loc; }
-
-	void setZLoc(float f) { _zLoc = f; }
-
-private:
-	bool _visible;
-	bool _isActive;
-	float _zLoc;
-	TeVector3f32 _loc;
-	// Note: this is a TeSpriteButton in the original, updated
-	// to use the newer ButtonLayout
-	TeButtonLayout _button;
+public:
+	Common::HashMap<Common::String, DocumentsBrowser::DocumentData> _objects;
 
 };
 
 } // end namespace Tetraedge
 
-#endif // TETRAEDGE_TE_TE_MARKER_H
+#endif // TETRAEDGE_GAME_DOCUMENTS_BROWSER_XML_PARSER_H

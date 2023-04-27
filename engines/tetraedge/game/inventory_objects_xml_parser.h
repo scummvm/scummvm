@@ -38,6 +38,7 @@ public:
 				XML_PROP(id, true)
 				XML_PROP(name, true)
 				XML_PROP(isDocument, false)
+				XML_PROP(description, false)
 			KEY_END()
 		KEY_END()
 	} PARSER_END()

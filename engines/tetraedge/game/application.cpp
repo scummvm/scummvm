@@ -49,7 +49,7 @@ bool Application::_dontUpdateWhenApplicationPaused = false;
 Application::Application() : _finishedGame(false), _finishedFremium(false),
 _captureFade(false), _difficulty(1), _created(false), _tutoActivated(false),
 _drawShadows(true), _compassLook(false), _inverseLook(false),
-_permanentHelp(false) {
+_permanentHelp(true) {
 	//
 	// TODO: Game defaults _ratioStretched to false, but then
 	// the horizontally scrolling scenes don't scroll properly.
@@ -432,7 +432,7 @@ static void dumpLayout(TeLayout *layout, Common::String indent = "++") {
 	assert(layout);
 	if (!layout->worldVisible())
 		return;
-	debug("%s %s  pos:%s  worldScale:%s  userSize:%s  size:%s  col:%s", indent.c_str(), layout->name().c_str(),
+	debug("%s '%s'%s  pos:%s  worldScale:%s  userSize:%s  size:%s  col:%s", indent.c_str(), layout->name().c_str(), (layout->worldVisible() ? "" : " (invis)"),
 			layout->position().dump().c_str(), layout->worldScale().dump().c_str(),
 			layout->userSize().dump().c_str(), layout->size().dump().c_str(),
 			layout->color().dump().c_str());
