@@ -583,7 +583,7 @@ public:
 
 	// actsps is used for temporary storage of the bitamp and texture
 	// of the latest version of the sprite (room objects and characters);
-	// objects sprites begin with index 0, characters are after MAX_ROOM_OBJECTS
+	// objects sprites begin with index 0, characters are after ACTSP_OBJSOFF
 	std::vector<ObjTexture> *_actsps;
 	// Walk-behind textures (3D renderers only)
 	std::vector<ObjTexture> *_walkbehindobj;
