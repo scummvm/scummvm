@@ -133,6 +133,8 @@ bool OPL::init() {
 	} else {
 		retrowave_io_init(&_retrowaveGlobalContext);
 		_initialized = true;
+
+		initDualOpl2OnOpl3(_type);
 	}
 
 	_rwMutex->unlock();
@@ -160,6 +162,8 @@ void OPL::reset() {
 				writeReg(offset + reg, 0, true);
 			}
 		}
+
+		initDualOpl2OnOpl3(_type);
 	}
 
 	_rwMutex->unlock();
@@ -183,7 +187,9 @@ byte OPL::read(int portAddress) {
 }
 
 void OPL::writeReg(int reg, int value) {
-	writeReg(reg, value, false);
+	if (emulateDualOpl2OnOpl3(reg, value, _type)) {
+		writeReg(reg, value, false);
+	}
 }
 
 void OPL::writeReg(int reg, int value, bool forcePort) {

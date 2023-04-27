@@ -74,6 +74,10 @@ OPL::OPL() {
 	if (_hasInstance)
 		error("There are multiple OPL output instances running");
 	_hasInstance = true;
+	_rhythmMode = false;
+	_connectionFeedbackValues[0] = 0;
+	_connectionFeedbackValues[1] = 0;
+	_connectionFeedbackValues[2] = 0;
 }
 
 const Config::EmulatorDescription Config::_drivers[] = {
@@ -90,10 +94,10 @@ const Config::EmulatorDescription Config::_drivers[] = {
 #endif
 #ifdef ENABLE_OPL2LPT
 	{ "opl2lpt", _s("OPL2LPT"), kOPL2LPT, kFlagOpl2},
-	{ "opl3lpt", _s("OPL3LPT"), kOPL3LPT, kFlagOpl2 | kFlagOpl3 },
+	{ "opl3lpt", _s("OPL3LPT"), kOPL3LPT, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
 #endif
 #ifdef USE_RETROWAVE
-	{"rwopl3", _s("RetroWave OPL3"), kRWOPL3, kFlagOpl2 | kFlagOpl3},
+	{"rwopl3", _s("RetroWave OPL3"), kRWOPL3, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
 #endif
 	{ nullptr, nullptr, 0, 0 }
 };
@@ -229,20 +233,11 @@ OPL *Config::create(DriverId driver, OplType type) {
 		warning("OPL2LPT only supprts OPL2");
 		return 0;
 	case kOPL3LPT:
-		if (type == kOpl2 || type == kOpl3) {
-			return OPL2LPT::create(type);
-		}
-
-		warning("OPL3LPT does not support dual OPL2");
-		return 0;
+		return OPL2LPT::create(type);
 #endif
 
 #ifdef USE_RETROWAVE
 	case kRWOPL3:
-		if (type == kDualOpl2) {
-			warning("RetroWave OPL3 does not support dual OPL2");
-			return 0;
-		}
 		return RetroWaveOPL3::create(type);
 #endif
 
@@ -262,6 +257,90 @@ void OPL::start(TimerCallback *callback, int timerFrequency) {
 void OPL::stop() {
 	stopCallbacks();
 	_callback.reset();
+}
+
+void OPL::initDualOpl2OnOpl3(Config::OplType oplType) {
+	if (oplType != Config::OplType::kDualOpl2)
+		return;
+
+	// Enable OPL3 mode.
+	writeReg(0x105, 1);
+
+	// Set panning for channels 0-8 and 9-17 to right and left, respectively.
+	for (int i = 0; i <= 0x100; i += 0x100) {
+		for (int j = 0xC0; j <= 0xC8; j++) {
+			writeReg(i | j, i == 0 ? 0x20 : 0x10);
+		}
+	}
+}
+
+bool OPL::emulateDualOpl2OnOpl3(int r, int v, Config::OplType oplType) {
+	if (oplType != Config::OplType::kDualOpl2)
+		return true;
+
+	// Prevent writes to the following registers of the second set:
+	// - 01 - Test register. Setting any bit here will disable output.
+	// - 04 - Connection select. This is used to enable 4 operator instruments,
+	//		  which are not used for dual OPL2.
+	// - 05 - New. Only allow writes which set bit 0 to 1, which enables OPL3
+	//		  features.
+	if (r == 0x101 || r == 0x104 || (r == 0x105 && ((v & 1) == 0)))
+		return false;
+
+	// Clear bit 2 of waveform select register writes. This will prevent
+	// selection of OPL3-specific waveforms, which are not used for dual OPL2.
+	if ((r & 0xFF) >= 0xE0 && (r & 0xFF) <= 0xF5 && ((v & 4) > 0)) {
+		writeReg(r, v & ~4);
+		return false;
+	}
+
+	// Handle rhythm mode register writes.
+	if ((r & 0xFF) == 0xBD) {
+		// Check if rhythm mode is enabled or disabled.
+		bool newRhythmMode = (v & 0x20) > 0;
+		if (newRhythmMode != _rhythmMode) {
+			_rhythmMode = newRhythmMode;
+			// Set panning for channels 6-8 (used by rhythm mode instruments)
+			// to center or right if rhythm mode is enabled or disabled,
+			// respectively.
+			writeReg(0xC6, (_rhythmMode ? 0x30 : 0x20) | _connectionFeedbackValues[0]);
+			writeReg(0xC7, (_rhythmMode ? 0x30 : 0x20) | _connectionFeedbackValues[1]);
+			writeReg(0xC8, (_rhythmMode ? 0x30 : 0x20) | _connectionFeedbackValues[2]);
+		}
+		if (r == 0x1BD) {
+			// Send writes to the rhythm mode register on the 2nd OPL2 to the
+			// single rhythm mode register on the OPL3.
+			writeReg(0xBD, v);
+			return false;
+		}
+	}
+
+	// Keep track of the connection and feedback values set for channels 6-8.
+	// This is necessary for handling rhythm mode panning (see above).
+	if (r >= 0xC6 && r <= 0xC8) {
+		_connectionFeedbackValues[r - 0xC6] = v & 0xF;
+	}
+
+	// Add panning bits to writes to the connection/feedback registers.
+	if ((r & 0xFF) >= 0xC0 && (r & 0xFF) <= 0xC8) {
+		// Add right or left panning for the first or second OPL2, respectively.
+		int newValue = (r < 0x100 ? 0x20 : 0x10) | (v & 0xF);
+		if (_rhythmMode && r >= 0xC6 && r <= 0xC8) {
+			// If rhythm mode is enabled, pan channels 6-8 center.
+			newValue = 0x30 | (v & 0xF);
+		}
+		if (v == newValue) {
+			// Panning bits are already correct.
+			return true;
+		} else {
+			// Write the new value with the correct panning bits instead.
+			writeReg(r, newValue);
+			return false;
+		}
+	}
+
+	// Any other register writes can be processed normally.
+	return true;
 }
 
 bool OPL::_hasInstance = false;

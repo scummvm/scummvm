@@ -192,6 +192,28 @@ public:
 
 protected:
 	/**
+	 * Initializes an OPL3 chip for emulating dual OPL2.
+	 * 
+	 * @param oplType The type of OPL configuration that the engine expects.
+	 * If this is not DualOpl2, this function will do nothing.
+	 */
+	void initDualOpl2OnOpl3(Config::OplType oplType);
+
+	/**
+	 * Processes the specified register write so it will be correctly handled
+	 * for emulating dual OPL2 on an OPL3 chip.
+	 * 
+	 * @param r The register that is written to.
+	 * @param v The value written to the register.
+	 * @param oplType The type of OPL configuration that the engine expects.
+	 * If this is not DualOpl2, this function will do nothing.
+	 * @return True if the register write can be processed normally; false if
+	 * it should be discarded. In this case, a new call to writeReg is usually
+	 * performed by this function to replace the discarded register write.
+	*/
+	bool emulateDualOpl2OnOpl3(int r, int v, Config::OplType oplType);
+
+	/**
 	 * Start the callbacks.
 	 */
 	virtual void startCallbacks(int timerFrequency) = 0;
@@ -205,6 +227,9 @@ protected:
 	 * The functor for callbacks.
 	 */
 	Common::ScopedPtr<TimerCallback> _callback;
+
+	bool _rhythmMode;
+	int _connectionFeedbackValues[3];
 };
 
 /**

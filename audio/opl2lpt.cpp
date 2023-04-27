@@ -121,12 +121,14 @@ void OPL::reset() {
 	for(int i = 0; i < 256; i ++) {
 		writeReg(i, 0);
 	}
-	if (_type == Config::kOpl3) {
+	if (_type == Config::kOpl3 || _type == Config::kDualOpl2) {
 		for (int i = 0; i < 256; i++) {
 			writeReg(i + 256, 0);
 		}
 	}
 	index = 0;
+	
+	initDualOpl2OnOpl3(_type);
 }
 
 void OPL::write(int port, int val) {
@@ -138,6 +140,7 @@ void OPL::write(int port, int val) {
 			index = val & 0xff;
 			break;
 		case Config::kOpl3:
+		case Config::kDualOpl2:
 			index = (val & 0xff) | ((port << 7) & 0x100);
 			break;
 		default:
@@ -153,12 +156,15 @@ byte OPL::read(int port) {
 }
 
 void OPL::writeReg(int r, int v) {
-	if (_type == Config::kOpl3) {
+	if (_type == Config::kOpl3 || _type == Config::kDualOpl2) {
 		r &= 0x1ff;
 	} else {
 		r &= 0xff;
 	}
 	v &= 0xff;
+
+	if (!emulateDualOpl2OnOpl3(r, v, _type))
+		return;
 
 	ieee1284_write_data(_pport, r & 0xff);
 	if (r < 0x100) {
