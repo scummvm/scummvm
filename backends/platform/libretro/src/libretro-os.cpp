@@ -768,8 +768,21 @@ public:
 	}
 
 	virtual void logMessage(LogMessageType::Type type, const char *message) {
+		retro_log_level loglevel = RETRO_LOG_INFO;
+		switch (type) {
+			case LogMessageType::kDebug:
+				loglevel = RETRO_LOG_DEBUG;
+				break;
+			case LogMessageType::kWarning:
+				loglevel = RETRO_LOG_WARN;
+				break;
+			case LogMessageType::kError:
+				loglevel = RETRO_LOG_ERROR;
+				break;
+		}
+
 		if (log_cb)
-			log_cb(RETRO_LOG_INFO, "%s\n", message);
+			log_cb(loglevel, "%s\n", message);
 	}
 
 	const Graphics::Surface &getScreen() {
