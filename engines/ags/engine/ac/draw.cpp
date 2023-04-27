@@ -620,7 +620,7 @@ void reset_objcache_for_sprite(int sprnum, bool deleted) {
 		if (_GP(charcache)[i].sppic == sprnum)
 			_GP(charcache)[i].sppic = -1;
 		if (deleted && ((int)(_GP(actsps)[ACTSP_OBJSOFF + i].SpriteID) == sprnum))
-			_GP(actsps)[i].SpriteID = UINT32_MAX; // invalid sprite ref
+			_GP(actsps)[ACTSP_OBJSOFF + i].SpriteID = UINT32_MAX; // invalid sprite ref
 	}
 }
 
