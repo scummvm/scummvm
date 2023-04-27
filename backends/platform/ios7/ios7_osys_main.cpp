@@ -303,13 +303,15 @@ void OSystem_iOS7::delayMillis(uint msecs) {
 
 void OSystem_iOS7::setTimerCallback(TimerProc callback, int interval) {
 	//printf("setTimerCallback()\n");
+	dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+	dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
 
-	if (callback != NULL) {
-		_timerCallbackTimer = interval;
-		_timerCallbackNext = getMillis() + interval;
-		_timerCallback = callback;
-	} else
-		_timerCallback = NULL;
+	if (timer)
+	{
+		dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), interval * NSEC_PER_MSEC, interval * NSEC_PER_MSEC / 10);
+		dispatch_source_set_event_handler(timer, ^{ callback(interval); });
+		dispatch_resume(timer);
+	}
 }
 
 Common::MutexInternal *OSystem_iOS7::createMutex() {
