@@ -32,25 +32,15 @@
 namespace AGS3 {
 
 int FloatToInt(float value, int roundDirection) {
-	if (value >= 0.0) {
-		if (roundDirection == eRoundDown)
-			return static_cast<int>(value);
-		else if (roundDirection == eRoundNearest)
-			return static_cast<int>(value + 0.5);
-		else if (roundDirection == eRoundUp)
-			return static_cast<int>(value + 0.999999);
-		else
-			error("!FloatToInt: invalid round direction");
-	} else {
-		// negative number
-		if (roundDirection == eRoundUp)
-			return static_cast<int>(value); // this just truncates
-		else if (roundDirection == eRoundNearest)
-			return static_cast<int>(value - 0.5);
-		else if (roundDirection == eRoundDown)
-			return static_cast<int>(value - 0.999999);
-		else
-			error("!FloatToInt: invalid round direction");
+	switch (roundDirection) {
+	case eRoundDown:
+		return static_cast<int>(floor(value));
+	case eRoundUp:
+		return static_cast<int>(ceil(value));
+	case eRoundNearest:
+		return static_cast<int>(round(value));
+	default:
+		quit("!FloatToInt: invalid round direction");
 	}
 	return 0;
 }
