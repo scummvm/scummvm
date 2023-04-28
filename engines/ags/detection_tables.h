@@ -785,6 +785,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "brokenwindows1", "Broken Windows - Chapter 1" },
 	{ "brokenwindows2", "Broken Windows - Chapter 2" },
 	{ "brokenwindows3", "Broken Windows - Chapter 3" },
+	{ "brokenwindows4", "Broken Windows - Chapter 4" },
 	{ "brotherswreckers", "Brothers & Wreckers" },
 	{ "brotherswreckersep7", "Brothers & Wreckers - Episode 7" },
 	{ "brucequest", "Bruce Quest: The Secrets of the Outback" },
@@ -1337,10 +1338,12 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "glitchquest", "Glitch Quest" },
 	{ "globalistagenda", "My Dear Globalist Agenda" },
 	{ "gloriouswolf2", "Glorious Wolf 2 - The Queens Gambit" },
+	{ "gloriouswolfcomics", "Glorious Wolf - Interactive Musical Comics Ep. 1" },
 	{ "gnomeshomebrewingadventure", "Gnome's Homebrewing Adventure" },
 	{ "gnrblex", "GNRBLEX" },
 	{ "goatburn", "Goat Burn" },
 	{ "goatherd", "Goat Herd and the Gods" },
+	{ "gobyworld", "Gobyworld" },
 	{ "goldreddragon", "Gold of the Red Dragon" },
 	{ "goneboatfishin", "Gone Boat Fishin'" },
 	{ "gonefishin", "Gone fishin'" },
@@ -2931,6 +2934,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "theendlessnight", "The Endless Night" },
 	{ "theenergizer", "The Energizer" },
 	{ "theepicadventures", "The epic adventures of Barry" },
+	{ "theerrand", "The Errand" },
 	{ "theeternalnight", "The Eternal Night" },
 	{ "theeverbeginningtale", "The Ever-Beginning Tale" },
 	{ "theexecutionofanneboleyn", "The Execution of Anne Boleyn" },
@@ -2990,7 +2994,8 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "thenetherworld", "The Netherworld" },
 	{ "thenextcurse", "The Next Curse" },
 	{ "thenorthcrown", "The North Crown" },
-	{ "theoccultist", "The Occultist - Old Growth" },
+	{ "theoccultist1", "The Occultist - Old Growth" },
+	{ "theoccultist2", "The Occultist - Bridge Under Troubled Water" },
 	{ "theoffice", "The Office" },
 	{ "theoracle", "The Oracle" },
 	{ "theoscillation", "The Oscillation" },
@@ -3772,6 +3777,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_INSTALLER_ENTRY("zak2", "fanadv_zak2.exe", "Zak2.exe", "329ff478ffc1a3bd0dc941d5212aa602", 7165704),
 	UNSUPPORTED_GAME_ENTRY("zak2", "Zak2.exe", "0b7529a76f38283d6e850b8d56526fc1", 9205143),
 
+	// AGS4 games
+	UNSUPPORTED_GAME_ENTRY("gloriouswolfcomics", "Glorious Wolf.ags", "578f34ce108225b7b03091b424655f6e", 1592100251),
+
 	// Commercial games
 	GAME_ENTRY_EN_STEAM("alemmo", "al-emmo.exe", "ff22fd118f18eca884dc7ed2a5be3877", 19045178),
 	GAME_ENTRY_EN("alemmo", "al_emmo.exe", "bb9e32ee92bb0996df5fea50e88d686a", 19036716), // 4.1, Desura
@@ -4205,6 +4213,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("aboardtheadventure", "Aboard.exe", "3c3f8f6c6fdcc519464477d3627b60f6", 125789038), // Voice: En-Es(LA), Subs: De-En-Es(La)-Pt(Br)
 	DEMO_ENTRY_EN("aboardtheadventure", "Aboard.exe", "3c3f8f6c6fdcc519464477d3627b60f6", 125813308),
 	DEMO_ENTRY_EN("abscission", "Abscission.exe", "418a9aaa044bfc5b7a79ba96fe679b60", 54341372),  // v1.0.3
+	DEMO_ENTRY_EN("abscission", "Abscission Demo.exe", "418a9aaa044bfc5b7a79ba96fe679b60", 311033029),  // Steam
 	DEMO_ENTRY_EN("absurdistan", "Absurdistan - Demo.exe", "4588012d3077d6b6791fce8cd4b15885", 35712363),  // v1.3
 	DEMO_ENTRY_EN("acaixa", "A caixa.exe", "f434ba41ed68ef8d5224254027aad1f4", 48866212),
 	DEMO_ENTRY_EN("acuriouspastime", "Curious.exe", "3e46b32a00fd4e6b9f68754f854695c5", 27346489),
@@ -4653,6 +4662,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("thejourneyofiesir", "The Journey of Iesir.exe", "376a3f162c7940d990325c53edc20fed", 70444514),
 	DEMO_ENTRY("theloneloser", "demo (english).exe", "0500aacb6c176d47ac0f8158f055db83", 6082095), //Eng-Ita
 	DEMO_ENTRY_EN("themajesticconspiracy", "majestic.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 17929647),
+	DEMO_ENTRY_EN("theoccultist2", "Occultist2-BUTW.exe", "b781cc4ab0fbe647615fafa4830ec308", 8571116),  // Windows
+	DEMO_ENTRY_EN("theoccultist2", "Occultist2-BUTW.ags", "50198f2880d4f8334a74051fa5591192", 5404376),  // Linux
 	DEMO_ENTRY_EN("theperfectmurder", "Tamz.exe", "9cf51833e787cc919837d9a8bd8fc14c", 4527709),
 	DEMO_ENTRY_EN("theropods", "Theropods - Demo.exe", "bd4f8ebbab2893ccd54ea0e7ca4334a7", 445439739),  // Steam
 	DEMO_ENTRY_EN("theropods", "theropods-demo.exe", "e4e47802c282a743fb269794e8bf0fe9", 445252923),  // Gamejolt
@@ -5162,6 +5173,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("brokenwindows1", "Police.exe", "7ddb9e776648faed5a51170d087074e9", 16971333),
 	GAME_ENTRY_EN("brokenwindows2", "BW2.exe", "0564de07d3fd5c16e6947a647061913c", 16458558),
 	GAME_ENTRY_EN("brokenwindows3", "BW3.exe", "0564de07d3fd5c16e6947a647061913c", 16926857),
+	GAME_ENTRY_EN("brokenwindows4", "BW4.exe", "0564de07d3fd5c16e6947a647061913c", 15020205),
 	GAME_ENTRY_EN("brotherswreckersep7", "Brothers & Wreckers.exe", "f24c533ce89a2566c157b871f87a4ce4", 19524598),
 	GAME_ENTRY_EN("brucequest", "bruce.exe", "f18443f98fd61d2c655e76a17f7da905", 30055288),
 	GAME_ENTRY_EN("bruises", "Bruises.exe", "1b9191cfa0fab42776cbaf7b02768a05", 8050720),  //Windows
@@ -5824,6 +5836,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("goatburn", "Goat Burn.exe", "22d2d13d88310758fc76ff9d6e4f23b8", 49624859),
 	GAME_ENTRY_EN_PLATFORM("goatburn", "Goat Burn.exe", "22d2d13d88310758fc76ff9d6e4f23b8", 49624244, "MAGS"),
 	GAME_ENTRY_EN("goatherd", "Goat Herd and the Gods.exe", "56ce1bc6ab10748cb4ddb91435cfa578", 91710325),
+	GAME_ENTRY_EN_STEAM("gobyworld", "Gobyworld.exe", "c1be9e9512e62644d40aedb5bf6cd649", 33204590),
 	GAME_ENTRY_EN("goldreddragon", "Mongoose Fitch.exe", "615e73fc1874e92d60a1996c2330ea36", 4508646),
 	GAME_ENTRY_EN("goneboatfishin", "Gone Boat Fishin'.exe", "bdd1df0484e296faa348ffcb03e16273", 72936045),
 	GAME_ENTRY_EN("gonefishin", "Gone fishin'.exe", "338fa79960d40689063af31c671b8729", 76569490),
@@ -7737,6 +7750,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("theendlessnight", "An Endless Night.exe", "ae8d17427ae4a33be146967054f0fcf1", 7052775),
 	GAME_ENTRY_EN("theenergizer", "TheEnergizer.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 54539625),
 	GAME_ENTRY_EN("theepicadventures", "Epic adventures.exe", "a524cbb1c51589903c4043b98917f1d9", 17723648),
+	GAME_ENTRY_EN("theerrand", "The Errand.ags", "1bf407b3d0396deefd5c02f4996806f4", 24822053),
+	GAME_ENTRY_EN("theerrand", "The Errand.exe", "ae2e93ae61a612dd8cad1290bd5f7443", 27934009),
 	GAME_ENTRY_EN("theeverbeginningtale", "RRS.exe", "36f8b37f85f446e9aaccb18d85660cde", 5006033),
 	GAME_ENTRY_EN_PLATFORM("theeverbeginningtale", "RRS.exe", "25976a689b0f4d73eac69b1728377ecb", 4313508, "MAGS"),
 	GAME_ENTRY_EN("theexecutionofanneboleyn", "TheExecutionOfAnneBoleyn.exe", "6ee67d23067b0499eb8c6a1a9aabff8c", 8549540),
@@ -7810,8 +7825,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("thenextcurse", "TNC.exe", "88cf59aad15ca331ab0f854e16c84df3", 4125146),
 	GAME_ENTRY_EN("thenorthcrown", "htw.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 3452775),
 	GAME_ENTRY_EN("thenorthcrown", "htw.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 3452831),
-	GAME_ENTRY_EN("theoccultist", "Occultist01.exe", "776a62db4387dc68be92ef9933399fd5", 10691261),  // Windows
-	GAME_ENTRY_EN("theoccultist", "Occultist01.ags", "bedd88519a455aea5ccd7f0c8298116d", 7584937),
+	GAME_ENTRY_EN("theoccultist1", "Occultist01.exe", "776a62db4387dc68be92ef9933399fd5", 10691261),  // Windows
+	GAME_ENTRY_EN("theoccultist1", "Occultist01.ags", "bedd88519a455aea5ccd7f0c8298116d", 7584937),
 	GAME_ENTRY_EN("theoffice", "TheOffice.exe", "8e386ed8901186872484373c64fcd812", 355519407),  //v1.1 Win
 	GAME_ENTRY_EN("theoffice", "TheOffice.ags", "6721a4f1403e28a61dca04558728f914", 353015199),  //v1.1 Linux
 	GAME_ENTRY_EN("theoracle", "The Oracle.exe", "f120690b506dd63cd7d1112ea6af2f77", 7490474),  //v1.1
