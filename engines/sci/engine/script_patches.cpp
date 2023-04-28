@@ -8411,13 +8411,14 @@ static const SciScriptPatcherEntry longbowSignatures[] = {
 
 // Pushing the penthouse elevator button in room 350 causes a broken polygon to
 //  be used for pathfinding. openObstacle:points is set to a local array of 17
-//  points but its size property is incorrectly set to 19. We fix the size so
-//  that the interpreter doesn't use the wrong values for pathfinding.
+//  points but its size property is incorrectly set to 19. In the first version
+//  of the game this was correct, but the array was changed without updating the
+//  size value. We fix the size so that the interpreter doesn't use the wrong
+//  values for pathfinding.
 //
-// Applies to: All versions
+// Applies to: All versions except 2.0 VGA
 // Responsible method: rm350:init
 static const uint16 larry1SignatureElevatorPolygon[] = {
-	SIG_MAGICDWORD,
 	0x5b, 0x02, 0x1f,                // lea 02 1f
 	0x36,                            // push
 	0x39, SIG_SELECTOR8(size),       // pushi size
@@ -8425,6 +8426,10 @@ static const uint16 larry1SignatureElevatorPolygon[] = {
 	0x39, 0x13,                      // pushi 13 [ incorrect size ]
 	0x72, SIG_ADDTOOFFSET(+2),       // lofsa openObstacle
 	0x4a, 0x0c,                      // send 0c [ openObstacle points: @local31 size: 19 ]
+	SIG_ADDTOOFFSET(+2),
+	SIG_MAGICDWORD,
+	0x78,                            // push1
+	0x5b, 0x02, 0x41,                // lea 02 41 [ 41 in broken versions, otherwise 45 ]
 	SIG_END
 };
 
