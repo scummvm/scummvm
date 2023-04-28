@@ -115,7 +115,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "inadream", "In a Dream" },
 	{ "indygoldmedallion", "Indiana Jones and The Gold Medallion" },
 	{ "indyguybrush", "Indiana Jones - Alla ricerca di Guybrush Threepwood" },
-	{ "indysecretchamber", "Indiana Jones and the Secret Chamber of Schloss Brunwald" },
 	{ "interactivefiction", "Interactive Fiction" },
 	{ "intergalacticlife", "Intergalactic Life" },
 	{ "invasionspacealiens", "Invasion of the Space Aliens Who Are Not From Earth But From Some Other Planet" },
@@ -1506,6 +1505,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "indypassageofsaints", "Indiana Jones and the Passage of Saints" },
 	{ "indyrelicoftheviking", "Indiana Jones and the relic of the Viking" },
 	{ "indyroyaume", "Indiana Jones et le Royaume des Voeux" },
+	{ "indysecretchamber", "Indiana Jones and the Secret Chamber of Schloss Brunwald" },
 	{ "indysevencities", "Indiana Jones and the Seven Cities of Gold" },
 	{ "indianarodent", "Indiana Rodent: Raiders of the Lost Cheese" },
 	{ "ineedawee", "I need a Wee!" },
@@ -4403,6 +4403,12 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("indycrystalcursor", "cursoid.exe", "06a03fe35791b0578068ab1873455463", 12136127),
 	DEMO_ENTRY_EN("indyeyedestiny", "Trap.exe", "618d7dce9631229b4579340b964c6810", 3619133),
 	DEMO_ENTRY_EN("indysevencities", "Seven Cities.exe", "c9cd3e2cdd295c33e62cfa97b14461e9", 12561314),  //v1.2.1.1
+	DEMO_ENTRY("indysevencities", "Seven Cities.exe", "be858e83311d4f1b49e05b933b92f0a9", 12592498),  // Eng-Ita
+	DETECTION_ENTRY("indysevencities", "mirrors_demo.exe", "615e73fc1874e92d60a1996c2330ea36", 3363553, Common::UNK_LANG, "Mirrors Module Demo v1", nullptr, ADGF_DEMO),  //En-It
+	DETECTION_ENTRY("indysevencities", "IJ7Cities-Mirrors.exe", "44f90e1b2f427fef02fc0d00420d2b6f", 4637313, Common::UNK_LANG, "Mirrors Module Demo v2", nullptr, ADGF_DEMO),  //En-It
+	DETECTION_ENTRY("indysevencities", "Map_noDynamicSprites.exe", "615e73fc1874e92d60a1996c2330ea36", 3540387, Common::UNK_LANG, "Indy Map Module Demo", nullptr, ADGF_DEMO),  //En-It
+	DETECTION_ENTRY("indysevencities", "IJ7Cities-TextArea.exe", "635852726a70679997f9834619678845", 3633773, Common::UNK_LANG, "Text Area Module Demo", nullptr, ADGF_DEMO),  //En-It
+	DETECTION_ENTRY("indysevencities", "IJ7Cities-Icicles.exe", "44f90e1b2f427fef02fc0d00420d2b6f", 3798425, Common::UNK_LANG, "Icicles Module Demo", nullptr, ADGF_DEMO),  //En-It
 	DEMO_ENTRY_EN("infectionep2", "Infection_Ep_II_AGS.exe", "a524cbb1c51589903c4043b98917f1d9", 23691417),
 	DEMO_ENTRY_EN("inferno", "inf.exe", "97d700529f5cc826f230c27acf81adfd", 8783105),
 	DEMO_ENTRY_LANG("insidemonkeyislandch4", "IMI4.exe", "18b284c22010850f79bc5c20054a70c4", 8187753, Common::IT_ITA),
@@ -4461,9 +4467,11 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("menial", "Menial (demo).ags", "c828826cc17fda61464ca7cc3d3a7fc0", 15248159),
 	DEMO_ENTRY_EN("mi0daementia", "Monkey Island - Zero.exe", "a524cbb1c51589903c4043b98917f1d9", 6561007),
 	DEMO_ENTRY("mi0navidad", "Navidad.exe", "735dab7116efa2dfff49ea57e5259223", 2321151),  // Eng-Esp
+	DEMO_ENTRY("mi0navidad", "MI Zero - Navidad.exe", "44f90e1b2f427fef02fc0d00420d2b6f", 3642721),  // En-Es-It
 	DEMO_ENTRY_LANG("mi12", "Monkey Island.exe", "0500aacb6c176d47ac0f8158f055db83", 3394895, Common::DE_DEU),
 	DEMO_ENTRY_LANG("mi25escape", "MI 2.5.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 6592143, Common::IT_ITA),
 	DEMO_ENTRY_LANG("mi25parque", "Golden Studios.exe", "c6c49c00986ca36933959fa8afa6678b", 6553367, Common::ES_ESP),
+	DEMO_ENTRY("mi25parque", "MI2.5 El parque de las Pesadillas.exe", "0b629941253ad4b140bf26a69a170f7a", 7816500),  // Es-It
 	DEMO_ENTRY_EN("mi5thereturnoflechuck", "demo.exe", "0500aacb6c176d47ac0f8158f055db83", 6235270),
 	DEMO_ENTRY_EN("mibaddaytobedead", "Monkey.exe", "f120690b506dd63cd7d1112ea6af2f77", 2117238),
 	DEMO_ENTRY_LANG("micv", "MI.exe", "d90febc33f641a5f14c485f8ef29fb33", 3371895, Common::ES_ESP),
@@ -4475,6 +4483,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("minewadv", "Lars MI game.exe", "7f59c1439943d984312dfb08083b13c9", 1869768),
 	DEMO_ENTRY_LANG("miprision", "Prision Demo.exe", "6ccc4b7febad420898db72f0c0190875", 3444329, Common::ES_ESP),  //v1
 	DEMO_ENTRY_LANG("miprision", "Prision Demo V0.2.exe", "81b72a0500164c15396238a19a8314a4", 3369056, Common::ES_ESP),  //v2
+	DEMO_ENTRY("miprision", "Prision.exe", "c3b72132686c4a102b3365d380c8ae3a", 5179581),  // v3 Es-It
 	DEMO_ENTRY_EN("mirevealed", "MI2.5.exe", "0710e2ec71042617f565c01824f0cf3c", 2454801),
 	DEMO_ENTRY_LANG("misterybigwhoop", "monkyisland-pjt.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 2132048, Common::IT_ITA),
 	DEMO_ENTRY("mivl", "MI.exe", "23a7b5a6119e82a9750302492b3f2856", 1927604),  // Eng-Esp
@@ -6024,6 +6033,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("indypassageofsaints", "Compiled_AGS3.2.1.exe", "4370edcb2ef8b9ecb323fb5a94770117", 78409939),
 	GAME_ENTRY("indyrelicoftheviking", "Indiana Jones and the relic of the viking.exe", "de375dffcb0635bb84daf82eaddf4e3b", 63943198),  //v1.1 Multilang
 	GAME_ENTRY_LANG("indyroyaume", "indiana.exe", "18b284c22010850f79bc5c20054a70c4", 3779448, Common::FR_FRA),
+	GAME_ENTRY("indysecretchamber", "The Secret Chamber of Schloss Brunwald.exe", "44f90e1b2f427fef02fc0d00420d2b6f", 3813560),  // En-It
 	GAME_ENTRY_EN("ineedawee", "needawee.exe", "f120690b506dd63cd7d1112ea6af2f77", 1377697),
 	GAME_ENTRY_EN("infantrydivision", "Infantry.exe", "0710e2ec71042617f565c01824f0cf3c", 9144372),
 	GAME_ENTRY("infectionep1", "Infection I.exe", "7132ff7d6b0bc1e9f3e4bd4755390626", 25974295),  // En-De
@@ -6361,6 +6371,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_PLATFORM("manboy", "Man Boy.exe", "1275885401b7d2ece491e704535707d9", 2932301, "OROW"),
 	GAME_ENTRY_EN("mangivingup", "ManGivingUp.exe", "1a56f15e76e2650c38ef680cb0f6ad3f", 4218825),
 	GAME_ENTRY_EN("maniacapartment", "Maniac apartmen.exe", "465f972675db2da6040518221af5b0ba", 4806623),
+	GAME_ENTRY("maniacapartment", "ManiacApt.exe", "44f90e1b2f427fef02fc0d00420d2b6f", 6844931),  // v1.1 En-Es-It
 	GAME_ENTRY_EN("maniacland", "AliceInManiacland.exe", "74203c62b4604c4463f1c53db2d47c01", 6570499),  // Windows
 	GAME_ENTRY_EN("maniacland", "AliceInManiacland.ags", "00596e8a9f0bd774528fb8c7225bed0d", 4082163),  // Linux
 	GAME_ENTRY("maniacland", "AliceInManiacland.exe", "d37a4f06126fc1f3bb7e5c31bd58a014", 8015351),  // Windows (newer) En-Es-It
@@ -6853,6 +6864,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("onemorefathom", "AGS_OMF.exe", "9b47600b5662d7f8b6a4c6ed6854a12c", 24492467),
 	GAME_ENTRY_EN("oneofakind", "OneOfAKind.exe", "a524cbb1c51589903c4043b98917f1d9", 4031186),
 	GAME_ENTRY_EN("onerainyday", "gewitter.exe", "82da2565c456dcfb265ded6fe3189c0b", 8409861),
+	GAME_ENTRY("onerainyday", "OneRainyDay.exe", "c3b72132686c4a102b3365d380c8ae3a", 9749023),  // En-It
 	GAME_ENTRY_EN_PLATFORM("oneroom", "One Room.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 14331940, "OROW"),
 	GAME_ENTRY_EN("oneroom", "One Room.exe", "7a5f69f3034dc2b629ee53bd7ee5f95b", 21431873),  // v2
 	GAME_ENTRY_EN("oneroomonecheese", "One Cheese.exe", "c4f5b7b29be90ba0f8128298afb917de", 3698736),
@@ -8086,6 +8098,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("wheredidhumansgo", "AdvGameChallenge22.exe", "805aebfc9a02cd02f892de6cd2cb7c87", 34137817),  // Windows Eng-Ita
 	GAME_ENTRY("wheredidhumansgo", "AdvGameChallenge22.ags", "d8eefb1fd0d9132d413f3d977c9712f8", 31022789),  // Linux Eng-Ita
 	GAME_ENTRY_EN("wheredidsamgo", "WDSG.exe", "0710e2ec71042617f565c01824f0cf3c", 4921841),
+	GAME_ENTRY("wheredidsamgo", "WDSamGo.exe", "90c820d7154dda79ac2af5fbbf60887f", 10719373),  // En-It
 	GAME_ENTRY_EN_PLATFORM("wheresmhatma", "WMHM.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 50659613, "MAGS"),
 	GAME_ENTRY_EN_PLATFORM("wheresmhatma", "g3.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 50659613, "MAGS"),
 	GAME_ENTRY_EN("wheresmhatma", "WMHM.exe", "25f919423520b921a041ec854e3a0217", 51766424),  //v2.0
