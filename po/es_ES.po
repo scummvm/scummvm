@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-28 14:08+0000\n"
-"PO-Revision-Date: 2023-04-23 16:48+0000\n"
+"PO-Revision-Date: 2023-04-28 21:22+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -9301,62 +9301,44 @@ msgid "Speeds up animations."
 msgstr "Hace que las animaciones vayan más rápidas."
 
 #: engines/vcruise/metaengine.cpp:102
-#, fuzzy
-#| msgid "Display/Hide Info Screen"
 msgid "Display help screen"
-msgstr "Mostrar/Ocultar pantalla de información"
+msgstr "Mostrar pantalla de ayuda"
 
 #: engines/vcruise/metaengine.cpp:107 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Guardar partida"
 
 #: engines/vcruise/metaengine.cpp:117
-#, fuzzy
-#| msgid "Open 3DS Settings"
 msgid "Open sound settings"
-msgstr "Configuración de 3DS"
+msgstr "Abrir ajustes de sonido"
 
 #: engines/vcruise/metaengine.cpp:122
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit game"
 msgstr "Salir del juego"
 
 #: engines/vcruise/metaengine.cpp:133
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle music on/off"
-msgstr "Activar/Desactivar pantalla completa"
+msgstr "Activar/Desactivar música"
 
 #: engines/vcruise/metaengine.cpp:138
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Toggle sound effects on/off"
-msgstr "Volumen de los efectos de sonido"
+msgstr "Activar/Desactivar efectos de sonido"
 
 #: engines/vcruise/metaengine.cpp:143
-#, fuzzy
-#| msgid "Music volume up / down"
 msgid "Music volume down"
-msgstr "Subir/Bajar el volumen de la música"
+msgstr "Bajar volumen de música"
 
 #: engines/vcruise/metaengine.cpp:148
-#, fuzzy
-#| msgid "Music volume: "
 msgid "Music volume up"
-msgstr "Volumen de la música: "
+msgstr "Subir volumen de música"
 
 #: engines/vcruise/metaengine.cpp:153
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume down"
-msgstr "Volumen de los efectos de sonido"
+msgstr "Bajar volumen de efectos de sonido"
 
 #: engines/vcruise/metaengine.cpp:158
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume up"
-msgstr "Volumen de los efectos de sonido"
+msgstr "Subir volumen de efectos de sonido"
 
 #: engines/vcruise/vcruise.cpp:77
 msgid "This game requires JPEG support, which was not compiled in."
