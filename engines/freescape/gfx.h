@@ -119,6 +119,7 @@ public:
 	void setColorMap(ColorMap *colorMap_);
 	ColorMap *_colorMap;
 	ColorReMap *_colorRemaps;
+	void clearColorPairArray();
 	void fillColorPairArray();
 	byte _colorPair[16];
 	int _keyColor;

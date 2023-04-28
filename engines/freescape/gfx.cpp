@@ -126,6 +126,11 @@ byte getCGAStipple(byte x, int back, int fore) {
 	return st;
 }
 
+void Renderer::clearColorPairArray() {
+	for (int i = 0; i < 15; i++)
+		_colorPair[i] = 0;
+}
+
 void Renderer::fillColorPairArray() {
 	for (int i = 4; i < 15; i++) {
 		byte *entry = (*_colorMap)[i];
