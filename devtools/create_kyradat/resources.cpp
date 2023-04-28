@@ -152,6 +152,7 @@
 
 #include "resources/lol_dos.h"
 #include "resources/lol_dos_english.h"
+#include "resources/lol_dos_chinese.h"
 #include "resources/lol_dos_french.h"
 #include "resources/lol_dos_german.h"
 #include "resources/lol_dos_russian.h"
@@ -4923,6 +4924,13 @@ static const ResourceProvider resourceProviders[] = {
 	{ kLoLCharacterDefs, kLoL, kPlatformDOS, kNoSpecial, DE_DEU, &kLoLCharacterDefsDOSGermanProvider },
 	{ kLoLCharacterDefs, kLoL, kPlatformDOS, kNoSpecial, FR_FRA, &kLoLCharacterDefsDOSFrenchProvider },
 	{ kLoLCharacterDefs, kLoL, kPlatformDOS, kNoSpecial, ES_ESP, &kLoLCharacterDefsDOSSpanishProvider },
+	{ kLoLCharacterDefs, kLoL, kPlatformDOS, kNoSpecial, ZH_TWN, &kLoLCharacterDefsDOSChineseProvider },
+	{ k2FontData, kLoL, kPlatformDOS, kNoSpecial, EN_ANY, &k2FontDataDOSDummyProvider },
+	{ k2FontData, kLoL, kPlatformDOS, kNoSpecial, RU_RUS, &k2FontDataDOSDummyProvider },
+	{ k2FontData, kLoL, kPlatformDOS, kNoSpecial, DE_DEU, &k2FontDataDOSDummyProvider },
+	{ k2FontData, kLoL, kPlatformDOS, kNoSpecial, FR_FRA, &k2FontDataDOSDummyProvider },
+	{ k2FontData, kLoL, kPlatformDOS, kNoSpecial, ES_ESP, &k2FontDataDOSDummyProvider },
+	{ k2FontData, kLoL, kPlatformDOS, kNoSpecial, ZH_TWN, &kLoLASCIIFontDOSChineseProvider },
 	{ kLoLIngamePakFiles, kLoL, kPlatformPC98, kNoSpecial, UNK_LANG, &kLoLIngamePakFilesPC98Provider },
 	{ kLoLCharacterDefs, kLoL, kPlatformPC98, kNoSpecial, JA_JPN, &kLoLCharacterDefsPC98JapaneseProvider },
 	{ kLoLIngameSfxFiles, kLoL, kPlatformPC98, kNoSpecial, UNK_LANG, &kLoLIngameSfxFilesPC98Provider },

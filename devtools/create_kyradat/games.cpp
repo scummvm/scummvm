@@ -158,6 +158,7 @@ const Game lolGames[] = {
 	{ kLoL, kPlatformDOS, kNoSpecial, DE_DEU },
 	{ kLoL, kPlatformDOS, kNoSpecial, FR_FRA },
 	{ kLoL, kPlatformDOS, kNoSpecial, ES_ESP },
+	{ kLoL, kPlatformDOS, kNoSpecial, ZH_TWN },
 
 	{ kLoL, kPlatformDOS, kTalkieVersion, EN_ANY },
 	{ kLoL, kPlatformDOS, kTalkieVersion, FR_FRA },
@@ -1087,6 +1088,8 @@ const int lolFloppyNeed[] = {
 	kLoLHealShapeFrames,
 	kLoLLightningDefs,
 	kLoLFireballCoords,
+
+	k2FontData,
 
 	-1
 };
