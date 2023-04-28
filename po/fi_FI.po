@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-27 18:14+0000\n"
+"POT-Creation-Date: 2023-04-28 14:08+0000\n"
 "PO-Revision-Date: 2023-04-25 20:35+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -6648,7 +6648,7 @@ msgid ""
 msgstr "Haluatko varmasti ladata pelin? Menetät tallentamattoman edistymisesi."
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:112
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
@@ -6821,11 +6821,11 @@ msgstr ""
 "Näyttää tekstityksen tärkeille ääniefekteille. Tämä saattaa madaltaa "
 "äänentunnistustehtävien vaikeutta."
 
-#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:39
+#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:42
 msgid "Start with debugger"
 msgstr "Käynnistä debuggeri päällä"
 
-#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:40
+#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:43
 msgid "Starts with the debugger dashboard active."
 msgstr "Käynnistää debuggerikojelauta aktiivisena."
 
@@ -7717,7 +7717,7 @@ msgstr "Esc"
 msgid "Space"
 msgstr "Välilyönti"
 
-#: engines/scumm/help.cpp:76
+#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:127
 msgid "Pause game"
 msgstr "Pause"
 
@@ -9165,13 +9165,71 @@ msgstr ""
 "kansiot on kopioiutu CD:ltä. Lisää ohjeita WIKI:ssä: https://wiki.scummvm."
 "org/index.php?title=Crusader:_No_Remorse."
 
-#: engines/vcruise/metaengine.cpp:50
+#: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
 msgstr "Nopeammat animaatiot"
 
-#: engines/vcruise/metaengine.cpp:51
+#: engines/vcruise/metaengine.cpp:54
 msgid "Speeds up animations."
 msgstr "Nopeuttaa animaatioita."
+
+#: engines/vcruise/metaengine.cpp:102
+#, fuzzy
+#| msgid "Display/Hide Info Screen"
+msgid "Display help screen"
+msgstr "Näytä/Piilota Infonäyttö"
+
+#: engines/vcruise/metaengine.cpp:107 engines/wintermute/keymapper_tables.h:920
+msgid "Save game"
+msgstr "Luo pelitallennus"
+
+#: engines/vcruise/metaengine.cpp:117
+#, fuzzy
+#| msgid "Open 3DS Settings"
+msgid "Open sound settings"
+msgstr "Avaa 3DS asetukset"
+
+#: engines/vcruise/metaengine.cpp:122
+#, fuzzy
+#| msgid "Quit Game"
+msgid "Quit game"
+msgstr "Lopeta peli"
+
+#: engines/vcruise/metaengine.cpp:133
+#, fuzzy
+#| msgid "Toggle fullscreen"
+msgid "Toggle music on/off"
+msgstr "Kokoruututilan vaihto"
+
+#: engines/vcruise/metaengine.cpp:138
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Toggle sound effects on/off"
+msgstr "Erikoisefektit"
+
+#: engines/vcruise/metaengine.cpp:143
+#, fuzzy
+#| msgid "Music volume up / down"
+msgid "Music volume down"
+msgstr "Musiikin äänenvoimakkuus ylös / alas"
+
+#: engines/vcruise/metaengine.cpp:148
+#, fuzzy
+#| msgid "Music volume: "
+msgid "Music volume up"
+msgstr "Musiikin äänenvoimakkuus: "
+
+#: engines/vcruise/metaengine.cpp:153
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Sound effect volume down"
+msgstr "Erikoisefektit"
+
+#: engines/vcruise/metaengine.cpp:158
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Sound effect volume up"
+msgstr "Erikoisefektit"
 
 #: engines/vcruise/vcruise.cpp:77
 msgid "This game requires JPEG support, which was not compiled in."
@@ -9587,10 +9645,6 @@ msgstr "Äänet pois päältä"
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Change font size"
 msgstr "Muuta fontin kokoa"
-
-#: engines/wintermute/keymapper_tables.h:920
-msgid "Save game"
-msgstr "Luo pelitallennus"
 
 #: engines/wintermute/keymapper_tables.h:935
 msgid "Walking speed: Low"

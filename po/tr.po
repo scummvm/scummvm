@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-27 18:14+0000\n"
+"POT-Creation-Date: 2023-04-28 14:08+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -6571,7 +6571,7 @@ msgid ""
 msgstr ""
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:112
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 #, fuzzy
@@ -6728,11 +6728,11 @@ msgid ""
 "difficulty of sound recognition puzzles and minigames."
 msgstr ""
 
-#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:39
+#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:42
 msgid "Start with debugger"
 msgstr ""
 
-#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:40
+#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:43
 msgid "Starts with the debugger dashboard active."
 msgstr ""
 
@@ -7535,7 +7535,7 @@ msgstr ""
 msgid "Space"
 msgstr ""
 
-#: engines/scumm/help.cpp:76
+#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:127
 #, fuzzy
 msgid "Pause game"
 msgstr "Oyun yükle:"
@@ -8931,14 +8931,66 @@ msgid ""
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:50
+#: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:51
+#: engines/vcruise/metaengine.cpp:54
 #, fuzzy
 msgid "Speeds up animations."
 msgstr "A~y~arlar..."
+
+#: engines/vcruise/metaengine.cpp:102
+msgid "Display help screen"
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:107 engines/wintermute/keymapper_tables.h:920
+#, fuzzy
+msgid "Save game"
+msgstr "Kaydetme Yolu:"
+
+#: engines/vcruise/metaengine.cpp:117
+#, fuzzy
+#| msgid "Override global audio settings"
+msgid "Open sound settings"
+msgstr "Global ses ayarlarını bastırma"
+
+#: engines/vcruise/metaengine.cpp:122
+#, fuzzy
+msgid "Quit game"
+msgstr "Oyun"
+
+#: engines/vcruise/metaengine.cpp:133
+msgid "Toggle music on/off"
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:138
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Toggle sound effects on/off"
+msgstr "Özel ses efektleri ses düzeyi"
+
+#: engines/vcruise/metaengine.cpp:143
+#, fuzzy
+msgid "Music volume down"
+msgstr "Müzik cihazı:"
+
+#: engines/vcruise/metaengine.cpp:148
+#, fuzzy
+msgid "Music volume up"
+msgstr "Müzik cihazı:"
+
+#: engines/vcruise/metaengine.cpp:153
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Sound effect volume down"
+msgstr "Özel ses efektleri ses düzeyi"
+
+#: engines/vcruise/metaengine.cpp:158
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Sound effect volume up"
+msgstr "Özel ses efektleri ses düzeyi"
 
 #: engines/vcruise/vcruise.cpp:77
 #, fuzzy
@@ -9352,11 +9404,6 @@ msgstr "Ses"
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Change font size"
 msgstr ""
-
-#: engines/wintermute/keymapper_tables.h:920
-#, fuzzy
-msgid "Save game"
-msgstr "Kaydetme Yolu:"
 
 #: engines/wintermute/keymapper_tables.h:935
 msgid "Walking speed: Low"

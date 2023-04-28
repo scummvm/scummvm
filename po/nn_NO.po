@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-27 18:14+0000\n"
+"POT-Creation-Date: 2023-04-28 14:08+0000\n"
 "PO-Revision-Date: 2022-10-02 04:37+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -6701,7 +6701,7 @@ msgid ""
 msgstr "   Er du sikker på at du vil avslutte?   "
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:112
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 #, fuzzy
@@ -6867,12 +6867,12 @@ msgid ""
 "difficulty of sound recognition puzzles and minigames."
 msgstr ""
 
-#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:39
+#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:42
 #, fuzzy
 msgid "Start with debugger"
 msgstr "Start debuggaren"
 
-#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:40
+#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:43
 #, fuzzy
 msgid "Starts with the debugger dashboard active."
 msgstr "Start debuggaren"
@@ -7697,7 +7697,7 @@ msgstr "Esc"
 msgid "Space"
 msgstr "Opprom"
 
-#: engines/scumm/help.cpp:76
+#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:127
 msgid "Pause game"
 msgstr "Pause spel"
 
@@ -9145,15 +9145,73 @@ msgid ""
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:50
+#: engines/vcruise/metaengine.cpp:53
 #, fuzzy
 msgid "Faster animations"
 msgstr "~O~vergangar aktivert"
 
-#: engines/vcruise/metaengine.cpp:51
+#: engines/vcruise/metaengine.cpp:54
 #, fuzzy
 msgid "Speeds up animations."
 msgstr "Berre Tale"
+
+#: engines/vcruise/metaengine.cpp:102
+#, fuzzy
+#| msgid "Display/Hide Info Screen"
+msgid "Display help screen"
+msgstr "Skjul/Vis infoskjerm"
+
+#: engines/vcruise/metaengine.cpp:107 engines/wintermute/keymapper_tables.h:920
+#, fuzzy
+msgid "Save game"
+msgstr "Lagra spel:"
+
+#: engines/vcruise/metaengine.cpp:117
+#, fuzzy
+#| msgid "Override global audio settings"
+msgid "Open sound settings"
+msgstr "Overstyr globale lydinstillingar"
+
+#: engines/vcruise/metaengine.cpp:122
+#, fuzzy
+msgid "Quit game"
+msgstr " (Spel)"
+
+#: engines/vcruise/metaengine.cpp:133
+#, fuzzy
+#| msgid "Toggle fullscreen"
+msgid "Toggle music on/off"
+msgstr "Veksle fullskjerm"
+
+#: engines/vcruise/metaengine.cpp:138
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Toggle sound effects on/off"
+msgstr "Spesiallydeffekt volum"
+
+#: engines/vcruise/metaengine.cpp:143
+#, fuzzy
+#| msgid "Music volume up / down"
+msgid "Music volume down"
+msgstr "Musikkvolum opp / ned"
+
+#: engines/vcruise/metaengine.cpp:148
+#, fuzzy
+#| msgid "Music volume: "
+msgid "Music volume up"
+msgstr "Musikkvolum: "
+
+#: engines/vcruise/metaengine.cpp:153
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Sound effect volume down"
+msgstr "Spesiallydeffekt volum"
+
+#: engines/vcruise/metaengine.cpp:158
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Sound effect volume up"
+msgstr "Spesiallydeffekt volum"
 
 #: engines/vcruise/vcruise.cpp:77
 #, fuzzy
@@ -9600,11 +9658,6 @@ msgstr "Volum"
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Change font size"
 msgstr ""
-
-#: engines/wintermute/keymapper_tables.h:920
-#, fuzzy
-msgid "Save game"
-msgstr "Lagra spel:"
 
 #: engines/wintermute/keymapper_tables.h:935
 msgid "Walking speed: Low"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-27 18:14+0000\n"
+"POT-Creation-Date: 2023-04-28 14:08+0000\n"
 "PO-Revision-Date: 2023-04-25 03:35+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -6699,7 +6699,7 @@ msgstr ""
 "salvo será perdido."
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:112
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
@@ -6877,11 +6877,11 @@ msgstr ""
 "Habilita legendas para efeitos sonoros importantes.  Isso pode reduzir a "
 "dificuldade para puzzles e minigames de reconhecimento de som."
 
-#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:39
+#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:42
 msgid "Start with debugger"
 msgstr "Iniciar com depurador"
 
-#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:40
+#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:43
 msgid "Starts with the debugger dashboard active."
 msgstr "Inicia com o painel do depurador ativo."
 
@@ -7789,7 +7789,7 @@ msgstr "Esc"
 msgid "Space"
 msgstr "Espaço"
 
-#: engines/scumm/help.cpp:76
+#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:127
 msgid "Pause game"
 msgstr "Pausar jogo"
 
@@ -9251,13 +9251,71 @@ msgstr ""
 "diretórios FLICS e SOUND foram copiados do CD.  Mais instruções no wiki: "
 "https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 
-#: engines/vcruise/metaengine.cpp:50
+#: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
 msgstr "Animações mais rápidas"
 
-#: engines/vcruise/metaengine.cpp:51
+#: engines/vcruise/metaengine.cpp:54
 msgid "Speeds up animations."
 msgstr "Acelera as animações."
+
+#: engines/vcruise/metaengine.cpp:102
+#, fuzzy
+#| msgid "Display/Hide Info Screen"
+msgid "Display help screen"
+msgstr "Exibir/Ocultar Tela de Informação"
+
+#: engines/vcruise/metaengine.cpp:107 engines/wintermute/keymapper_tables.h:920
+msgid "Save game"
+msgstr "Salvar jogo"
+
+#: engines/vcruise/metaengine.cpp:117
+#, fuzzy
+#| msgid "Open 3DS Settings"
+msgid "Open sound settings"
+msgstr "Abrir Configurações do 3DS"
+
+#: engines/vcruise/metaengine.cpp:122
+#, fuzzy
+#| msgid "Quit Game"
+msgid "Quit game"
+msgstr "Sair do Jogo"
+
+#: engines/vcruise/metaengine.cpp:133
+#, fuzzy
+#| msgid "Toggle fullscreen"
+msgid "Toggle music on/off"
+msgstr "Alternar modo de tela cheia"
+
+#: engines/vcruise/metaengine.cpp:138
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Toggle sound effects on/off"
+msgstr "Volume dos efeitos sonoros especiais"
+
+#: engines/vcruise/metaengine.cpp:143
+#, fuzzy
+#| msgid "Music volume up / down"
+msgid "Music volume down"
+msgstr "Aumentar / abaixar volume da música"
+
+#: engines/vcruise/metaengine.cpp:148
+#, fuzzy
+#| msgid "Music volume: "
+msgid "Music volume up"
+msgstr "Volume da música: "
+
+#: engines/vcruise/metaengine.cpp:153
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Sound effect volume down"
+msgstr "Volume dos efeitos sonoros especiais"
+
+#: engines/vcruise/metaengine.cpp:158
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Sound effect volume up"
+msgstr "Volume dos efeitos sonoros especiais"
 
 #: engines/vcruise/vcruise.cpp:77
 msgid "This game requires JPEG support, which was not compiled in."
@@ -9668,10 +9726,6 @@ msgstr "Volume desligado"
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Change font size"
 msgstr "Mudar tamanho da fonte"
-
-#: engines/wintermute/keymapper_tables.h:920
-msgid "Save game"
-msgstr "Salvar jogo"
 
 #: engines/wintermute/keymapper_tables.h:935
 msgid "Walking speed: Low"

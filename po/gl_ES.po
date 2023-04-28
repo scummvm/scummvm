@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-27 18:14+0000\n"
+"POT-Creation-Date: 2023-04-28 14:08+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -6753,7 +6753,7 @@ msgid ""
 msgstr "   Seguro que queres saír?   "
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:112
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 #, fuzzy
@@ -6932,12 +6932,12 @@ msgid ""
 "difficulty of sound recognition puzzles and minigames."
 msgstr ""
 
-#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:39
+#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:42
 #, fuzzy
 msgid "Start with debugger"
 msgstr "Iniciar o depurador"
 
-#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:40
+#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:43
 #, fuzzy
 msgid "Starts with the debugger dashboard active."
 msgstr "Iniciar o depurador"
@@ -7797,7 +7797,7 @@ msgstr "ESC"
 msgid "Space"
 msgstr "Barra espazadora"
 
-#: engines/scumm/help.cpp:76
+#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:127
 msgid "Pause game"
 msgstr "Pausar xogo"
 
@@ -9246,16 +9246,74 @@ msgid ""
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:50
+#: engines/vcruise/metaengine.cpp:53
 #, fuzzy
 #| msgid "Transitions:"
 msgid "Faster animations"
 msgstr "Transicións:"
 
-#: engines/vcruise/metaengine.cpp:51
+#: engines/vcruise/metaengine.cpp:54
 #, fuzzy
 msgid "Speeds up animations."
 msgstr "Só voz"
+
+#: engines/vcruise/metaengine.cpp:102
+#, fuzzy
+#| msgid "Display/Hide Info Screen"
+msgid "Display help screen"
+msgstr "Mostrar/Ocultar pantalla de información"
+
+#: engines/vcruise/metaengine.cpp:107 engines/wintermute/keymapper_tables.h:920
+#, fuzzy
+msgid "Save game"
+msgstr "Gardar partida:"
+
+#: engines/vcruise/metaengine.cpp:117
+#, fuzzy
+#| msgid "Override global audio settings"
+msgid "Open sound settings"
+msgstr "Anular a configuración do son"
+
+#: engines/vcruise/metaengine.cpp:122
+#, fuzzy
+msgid "Quit game"
+msgstr " (Xogo)"
+
+#: engines/vcruise/metaengine.cpp:133
+#, fuzzy
+#| msgid "Toggle fullscreen"
+msgid "Toggle music on/off"
+msgstr "Activar/desactivar pantalla completa"
+
+#: engines/vcruise/metaengine.cpp:138
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Toggle sound effects on/off"
+msgstr "Volume dos efectos de son"
+
+#: engines/vcruise/metaengine.cpp:143
+#, fuzzy
+#| msgid "Music volume up / down"
+msgid "Music volume down"
+msgstr "Subir/baixar volume de música"
+
+#: engines/vcruise/metaengine.cpp:148
+#, fuzzy
+#| msgid "Music volume: "
+msgid "Music volume up"
+msgstr "Volume de música: "
+
+#: engines/vcruise/metaengine.cpp:153
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Sound effect volume down"
+msgstr "Volume dos efectos de son"
+
+#: engines/vcruise/metaengine.cpp:158
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Sound effect volume up"
+msgstr "Volume dos efectos de son"
 
 #: engines/vcruise/vcruise.cpp:77
 #, fuzzy
@@ -9703,11 +9761,6 @@ msgstr "Volume"
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Change font size"
 msgstr ""
-
-#: engines/wintermute/keymapper_tables.h:920
-#, fuzzy
-msgid "Save game"
-msgstr "Gardar partida:"
 
 #: engines/wintermute/keymapper_tables.h:935
 msgid "Walking speed: Low"

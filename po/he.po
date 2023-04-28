@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-27 18:14+0000\n"
+"POT-Creation-Date: 2023-04-28 14:08+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -6613,7 +6613,7 @@ msgid ""
 msgstr "האם אתה בטוח שברצונך לטעון משחק שנשמר? כל ההתקדמות שלא נשמרה תאבד."
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:112
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
@@ -6779,11 +6779,11 @@ msgstr ""
 "הפעלת כתוביות עבור אפקטים קוליים חשובים.  זה עשוי להפחית את רמת הקושי של "
 "חידות ומשחקונים שתלויים בזיהוי קולי."
 
-#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:39
+#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:42
 msgid "Start with debugger"
 msgstr "הפעלה עם ניפוי תקלים"
 
-#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:40
+#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:43
 msgid "Starts with the debugger dashboard active."
 msgstr "התחלה עם לוח ניפוי תקלים פעיל."
 
@@ -7650,7 +7650,7 @@ msgstr "יציאה"
 msgid "Space"
 msgstr "שטח"
 
-#: engines/scumm/help.cpp:76
+#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:127
 msgid "Pause game"
 msgstr "השהה משחק"
 
@@ -9064,17 +9064,75 @@ msgid ""
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:50
+#: engines/vcruise/metaengine.cpp:53
 #, fuzzy
 #| msgid "Transitions:"
 msgid "Faster animations"
 msgstr "מעברים:"
 
-#: engines/vcruise/metaengine.cpp:51
+#: engines/vcruise/metaengine.cpp:54
 #, fuzzy
 #| msgid "Speech Options"
 msgid "Speeds up animations."
 msgstr "אפשרויות דיבור"
+
+#: engines/vcruise/metaengine.cpp:102
+#, fuzzy
+#| msgid "Display/Hide Info Screen"
+msgid "Display help screen"
+msgstr "הצג / הסתר מסך מידע"
+
+#: engines/vcruise/metaengine.cpp:107 engines/wintermute/keymapper_tables.h:920
+msgid "Save game"
+msgstr "שמירת משחק"
+
+#: engines/vcruise/metaengine.cpp:117
+#, fuzzy
+#| msgid "Open 3DS Settings"
+msgid "Open sound settings"
+msgstr "פתיחת הגדרות 3DS"
+
+#: engines/vcruise/metaengine.cpp:122
+#, fuzzy
+#| msgid "Quit Game"
+msgid "Quit game"
+msgstr "יציאה מהמשחק"
+
+#: engines/vcruise/metaengine.cpp:133
+#, fuzzy
+#| msgid "Toggle fullscreen"
+msgid "Toggle music on/off"
+msgstr "מיתוג מסך מלא"
+
+#: engines/vcruise/metaengine.cpp:138
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Toggle sound effects on/off"
+msgstr "עוצמת אפקטים קוליים מיוחדים"
+
+#: engines/vcruise/metaengine.cpp:143
+#, fuzzy
+#| msgid "Music volume up / down"
+msgid "Music volume down"
+msgstr "עוצמת מוזיקה למעלה / למטה"
+
+#: engines/vcruise/metaengine.cpp:148
+#, fuzzy
+#| msgid "Music volume: "
+msgid "Music volume up"
+msgstr "עוצמת שמע: "
+
+#: engines/vcruise/metaengine.cpp:153
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Sound effect volume down"
+msgstr "עוצמת אפקטים קוליים מיוחדים"
+
+#: engines/vcruise/metaengine.cpp:158
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Sound effect volume up"
+msgstr "עוצמת אפקטים קוליים מיוחדים"
 
 #: engines/vcruise/vcruise.cpp:77
 #, fuzzy
@@ -9487,10 +9545,6 @@ msgstr "עוצמה כבויה"
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Change font size"
 msgstr "שינוי גודל גופן"
-
-#: engines/wintermute/keymapper_tables.h:920
-msgid "Save game"
-msgstr "שמירת משחק"
 
 #: engines/wintermute/keymapper_tables.h:935
 msgid "Walking speed: Low"

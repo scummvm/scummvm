@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-27 18:14+0000\n"
+"POT-Creation-Date: 2023-04-28 14:08+0000\n"
 "PO-Revision-Date: 2023-02-13 09:34+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -6712,7 +6712,7 @@ msgid ""
 msgstr "   Jste si jisti, že chcete odejít ?   "
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:112
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 #, fuzzy
@@ -6890,12 +6890,12 @@ msgid ""
 "difficulty of sound recognition puzzles and minigames."
 msgstr ""
 
-#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:39
+#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:42
 #, fuzzy
 msgid "Start with debugger"
 msgstr "Spustit ladící program"
 
-#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:40
+#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:43
 #, fuzzy
 msgid "Starts with the debugger dashboard active."
 msgstr "Spustit ladící program"
@@ -7746,7 +7746,7 @@ msgstr "Mezerník"
 msgid "Space"
 msgstr "Mezerník"
 
-#: engines/scumm/help.cpp:76
+#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:127
 msgid "Pause game"
 msgstr "Pozastavit hru"
 
@@ -9190,16 +9190,73 @@ msgid ""
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:50
+#: engines/vcruise/metaengine.cpp:53
 #, fuzzy
 #| msgid "Transitions:"
 msgid "Faster animations"
 msgstr "Přechody:"
 
-#: engines/vcruise/metaengine.cpp:51
+#: engines/vcruise/metaengine.cpp:54
 #, fuzzy
 msgid "Speeds up animations."
 msgstr "Pouze Řeč"
+
+#: engines/vcruise/metaengine.cpp:102
+#, fuzzy
+#| msgid "Display/Hide Info Screen"
+msgid "Display help screen"
+msgstr "Zobrazit/Skrýto obrazovku informací"
+
+#: engines/vcruise/metaengine.cpp:107 engines/wintermute/keymapper_tables.h:920
+msgid "Save game"
+msgstr "Uložit hru"
+
+#: engines/vcruise/metaengine.cpp:117
+#, fuzzy
+#| msgid "Override global audio settings"
+msgid "Open sound settings"
+msgstr "Potlačit globální nastavení zvuku"
+
+#: engines/vcruise/metaengine.cpp:122
+#, fuzzy
+msgid "Quit game"
+msgstr " (Hra)"
+
+#: engines/vcruise/metaengine.cpp:133
+#, fuzzy
+#| msgid "Toggle fullscreen"
+msgid "Toggle music on/off"
+msgstr "Přepnout celou obrazovku"
+
+#: engines/vcruise/metaengine.cpp:138
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Toggle sound effects on/off"
+msgstr "Hlasitost speciálních zvukových efektů"
+
+#: engines/vcruise/metaengine.cpp:143
+#, fuzzy
+#| msgid "Music volume up / down"
+msgid "Music volume down"
+msgstr "Hlasitost hudby nahoru / dolů"
+
+#: engines/vcruise/metaengine.cpp:148
+#, fuzzy
+#| msgid "Music volume: "
+msgid "Music volume up"
+msgstr "Hlasitost hudby: "
+
+#: engines/vcruise/metaengine.cpp:153
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Sound effect volume down"
+msgstr "Hlasitost speciálních zvukových efektů"
+
+#: engines/vcruise/metaengine.cpp:158
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Sound effect volume up"
+msgstr "Hlasitost speciálních zvukových efektů"
 
 #: engines/vcruise/vcruise.cpp:77
 #, fuzzy
@@ -9646,10 +9703,6 @@ msgstr "Hlasitost"
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Change font size"
 msgstr ""
-
-#: engines/wintermute/keymapper_tables.h:920
-msgid "Save game"
-msgstr "Uložit hru"
 
 #: engines/wintermute/keymapper_tables.h:935
 msgid "Walking speed: Low"
