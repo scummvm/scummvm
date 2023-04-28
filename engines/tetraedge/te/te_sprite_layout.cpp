@@ -81,17 +81,19 @@ bool TeSpriteLayout::load(const Common::String &path) {
 
 	TeCore *core = g_engine->getCore();
 	Common::FSNode node = core->findFile(path);
+	_tiledSurfacePtr->setLoadedPath(path);
 	if (load(node)) {
-		_tiledSurfacePtr->setLoadedPath(path);
 		return true;
+	} else {
+		_tiledSurfacePtr->setLoadedPath("");
+		return false;
 	}
-	return false;
 }
 
 bool TeSpriteLayout::load(const Common::FSNode &node) {
 	if (!node.exists()) {
 		_tiledSurfacePtr = new TeTiledSurface();
-		return true;
+		return false;
 	}
 
 	stop();

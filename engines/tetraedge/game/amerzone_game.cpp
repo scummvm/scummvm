@@ -73,8 +73,8 @@ bool AmerzoneGame::changeWarp(const Common::String &zone, const Common::String &
 		_warpY = new TeWarp();
 		_warpY->setRotation(app->frontLayout().rotation());
 		_warpY->init();
-		float fov = 45.0f; //TODO: g_engine->getCore()->fileFlagSystemFlagsContains("HD") ? 60.0f : 45.0f;
-		_warpY->setFov(fov);
+		float fov = 60.0f; //TODO: g_engine->getCore()->fileFlagSystemFlagsContains("HD") ? 60.0f : 45.0f;
+		_warpY->setFov((float)(fov * M_PI / 180.0));
 	}
 	_warpY->load(zone, false);
 	_warpY->setVisible(true, false);
@@ -169,7 +169,8 @@ void AmerzoneGame::enter() {
 	_warpX = new TeWarp();
 	_warpX->setRotation(app->frontLayout().rotation());
 	_warpX->init();
-	// TODO: Set FOV here?
+	float fov = 60.0f; //TODO: g_engine->getCore()->fileFlagSystemFlagsContains("HD") ? 60.0f : 45.0f;
+	_warpX->setFov((float)(fov * M_PI / 180.0));
 	_warpX->setVisible(true, false);
 	_luaContext.create();
 	_luaScript.attachToContext(&_luaContext);
@@ -207,6 +208,7 @@ void AmerzoneGame::isInDrag(bool inDrag) {
 	const Common::Point mousePt = g_engine->getInputMgr()->lastMousePos();
 	if (inDrag != _isInDrag) {
 		_isInDrag = inDrag;
+		g_system->lockMouse(inDrag);
 		if (inDrag) {
 			// Start drag operation
 			_mouseDragStart = mousePt;

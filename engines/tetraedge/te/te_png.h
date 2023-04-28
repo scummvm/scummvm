@@ -33,16 +33,26 @@ namespace Tetraedge {
 
 class TePng : public TeScummvmCodec {
 public:
-	TePng();
+	TePng(const Common::String &extn);
 	virtual ~TePng();
 
+	virtual bool load(const Common::FSNode &node) override;
 	virtual bool load(Common::SeekableReadStream &stream) override;
 
 	TeImage::Format imageFormat() override;
 
+	// We support "animated" PNGs which contain 8
+	// frames stacked vertically.
+	virtual int nbFrames() override { return _nbFrames; }
+	virtual uint height() override { return _height; }
+	virtual bool isAtEnd() override;
+	virtual bool update(uint i, TeImage &imgout) override;
+
 	static bool matchExtension(const Common::String &extn);
 
 private:
+	int _nbFrames;
+	int16 _height;
 };
 
 } // end namespace Tetraedge

@@ -27,7 +27,13 @@
 
 namespace Tetraedge {
 
-TePng::TePng() {
+TePng::TePng(const Common::String &extn) {
+	if (extn == "png#anim") {
+		_nbFrames = 8;
+		_frameRate = 8.0f;
+	} else {
+		_nbFrames = 1;
+	}
 }
 
 TePng::~TePng() {
@@ -35,7 +41,16 @@ TePng::~TePng() {
 
 /*static*/
 bool TePng::matchExtension(const Common::String &extn) {
-	return extn == "png";
+	return extn == "png" || extn == "png#anim";
+}
+
+bool TePng::load(const Common::FSNode &node) {
+	if (!TeScummvmCodec::load(node))
+		return false;
+
+	_height = _loadedSurface->h / _nbFrames;
+
+	return true;
 }
 
 bool TePng::load(Common::SeekableReadStream &stream) {
@@ -49,6 +64,29 @@ bool TePng::load(Common::SeekableReadStream &stream) {
 
 	_loadedSurface = png.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 	return true;
+}
+
+bool TePng::update(uint i, TeImage &imgout) {
+	if (_nbFrames == 1)
+		return TeScummvmCodec::update(i, imgout);
+
+	uint relFrame = i % _nbFrames;
+	if (imgout.w == _loadedSurface->w && imgout.h == _height) {
+		Common::Rect srcRect;
+		srcRect.left = 0;
+		srcRect.right = _loadedSurface->w;
+		srcRect.top = relFrame * _height;
+		srcRect.bottom = (relFrame + 1) * _height;
+		imgout.blitFrom(*_loadedSurface, srcRect, Common::Point());
+		return true;
+	}
+
+	error("TODO: Update animated png for different size");
+}
+
+// TODO: should this return true if last frame was 7?
+bool TePng::isAtEnd() {
+	return false;
 }
 
 TeImage::Format TePng::imageFormat() {

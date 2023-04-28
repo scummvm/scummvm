@@ -64,7 +64,8 @@ bool TeTiledSurface::load(const Common::FSNode &node) {
 	unload();
 
 	TeResourceManager *resmgr = g_engine->getResourceManager();
-	_loadedPath = node.getPath();
+	if (_loadedPath.empty())
+		_loadedPath = node.getPath();
 
 	TeIntrusivePtr<TeTiledTexture> texture;
 	if (resmgr->exists(_loadedPath + ".tt")) {
@@ -74,7 +75,7 @@ bool TeTiledSurface::load(const Common::FSNode &node) {
 
 	if (!texture) {
 		TeCore *core = g_engine->getCore();
-		_codec = core->createVideoCodec(node);
+		_codec = core->createVideoCodec(Common::Path(_loadedPath));
 		if (!_codec)
 			return false;
 
@@ -171,6 +172,7 @@ bool TeTiledSurface::onFrameAnimCurrentFrameChanged() {
 
 	Common::SharedPtr<TePalette> nullPal;
 	img.createImg(vidSize._x, vidSize._y, nullPal, _imgFormat, bufxsize, bufysize);
+
 	if (_codec->update(_frameAnim.lastFrameShown(), img))
 		update(img);
 	return _codec->isAtEnd();
@@ -184,8 +186,8 @@ void TeTiledSurface::play() {
 	if (_codec) {
 		_frameAnim.setNbFrames(_codec->nbFrames());
 		_frameAnim.setFrameRate(_codec->frameRate());
-		_frameAnim.play();
 	}
+	_frameAnim.play();
 }
 
 void TeTiledSurface::setColorKey(const TeColor &col) {

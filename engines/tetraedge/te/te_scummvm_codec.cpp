@@ -27,7 +27,8 @@
 
 namespace Tetraedge {
 
-TeScummvmCodec::TeScummvmCodec() : _loadedSurface(nullptr) {
+TeScummvmCodec::TeScummvmCodec() : _loadedSurface(nullptr), _frameRate(0.0f),
+_bottomBorder(0), _topBorder(0) {
 }
 
 TeScummvmCodec::~TeScummvmCodec() {
@@ -69,10 +70,11 @@ bool TeScummvmCodec::update(uint i, TeImage &imgout) {
 	if (!_loadedPath.empty())
 		imgout.setAccessName(_loadedPath);
 
-	if (imgout.w == _loadedSurface->w && imgout.h == _loadedSurface->h && imgout.format == _loadedSurface->format) {
+	if (imgout.w == _loadedSurface->w && imgout.h == _loadedSurface->h && imgout.format == _loadedSurface->format && !_bottomBorder && !_topBorder) {
 		imgout.copyFrom(*_loadedSurface);
 		return true;
-	} else if (imgout.w == _loadedSurface->w && imgout.h == _loadedSurface->h) {
+	} else if (imgout.w == _loadedSurface->w && imgout.h == _loadedSurface->h
+		&& !_bottomBorder && !_topBorder) {
 		Graphics::PixelFormat destfmt = imgout.format;
 		imgout.copyFrom(*_loadedSurface);
 		imgout.convertToInPlace(destfmt);
@@ -80,6 +82,22 @@ bool TeScummvmCodec::update(uint i, TeImage &imgout) {
 	}
 
 	error("TODO: Implement TeScummvmCodec::update for different sizes");
+}
+
+void TeScummvmCodec::setLeftBorderSize(uint val) {
+	error("left border not supported.");
+}
+
+void TeScummvmCodec::setRightBorderSize(uint val) {
+	error("left border not supported.");
+}
+
+void TeScummvmCodec::setBottomBorderSize(uint val) {
+	_bottomBorder = val;
+}
+
+void TeScummvmCodec::setTopBorderSize(uint val) {
+	_topBorder = val;
 }
 
 } // end namespace Tetraedge

@@ -53,7 +53,7 @@ bool TeSceneWarpXmlParser::parserCallback_marker(ParserNode *node) {
 		if (_flag) {
 			marker->loc().normalize();
 			marker->loc() *= 500.0f;
-			marker->button().load("2D/Menus/InGame/Marker_2.png", "2D/Menus/InGame/Marker_2_over.png", "");
+			marker->button().load("2D/Menus/InGame/Marker_2.png#anim", "2D/Menus/InGame/Marker_2_over.png", "");
 		} else {
 			marker->visible(false);
 		}
@@ -66,7 +66,7 @@ bool TeSceneWarpXmlParser::parserCallback_marker(ParserNode *node) {
 		if (_flag) {
 			marker->loc().normalize();
 			marker->loc() *= 500.0f;
-			marker->button().load("2D/Menus/InGame/Marker_2.png", "2D/Menus/InGame/Marker_2_over.png", "");
+			marker->button().load("2D/Menus/InGame/Marker_2.png#anim", "2D/Menus/InGame/Marker_2_over.png", "");
 		} else {
 			marker->visible(false);
 		}

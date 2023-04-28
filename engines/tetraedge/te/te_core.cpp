@@ -67,7 +67,8 @@ TeICodec *TeCore::createVideoCodec(const Common::String &extn) {
 	// The original engine has more formats and even checks for alpha maps,
 	// but it never uses them.
 	if (TePng::matchExtension(extn)) {
-		return new TePng();
+		// png codec needs to know extension
+		return new TePng(extn);
 	} else if (TeJpeg::matchExtension(extn)) {
 		return new TeJpeg();
 	} else if (TeZlibJpeg::matchExtension(extn)) {
@@ -82,15 +83,15 @@ TeICodec *TeCore::createVideoCodec(const Common::String &extn) {
 	return nullptr;
 }
 
-TeICodec *TeCore::createVideoCodec(const Common::FSNode &node) {
-	const Common::String filename = node.getName();
+TeICodec *TeCore::createVideoCodec(const Common::Path &path) {
+	const Common::String filename = path.getLastComponent().toString();
 	if (!filename.contains('.'))
 		return nullptr;
-	Common::String extn = filename.substr(filename.findFirstOf('.') + 1);
+	Common::String extn = filename.substr(filename.findLastOf('.') + 1);
 	extn.toLowercase();
 	TeICodec *codec = createVideoCodec(extn);
 	if (!codec)
-		error("TTeCore::createVideoCodec: Unrecognised format %s", node.getName().c_str());
+		error("TTeCore::createVideoCodec: Unrecognised format %s", filename.c_str());
 	return codec;
 }
 
@@ -146,7 +147,6 @@ static Common::FSNode _findSubPath(const Common::FSNode &parent, const Common::P
 	return Common::FSNode();
 }
 
-
 Common::FSNode TeCore::findFile(const Common::Path &path) const {
 	Common::FSNode node(path);
 	if (node.exists())
@@ -156,11 +156,15 @@ Common::FSNode TeCore::findFile(const Common::Path &path) const {
 	if (!gameRoot.isDirectory())
 		error("Game directory should be a directory");
 	const Common::FSNode resNode = (g_engine->getGamePlatform() == Common::kPlatformMacintosh
-			?  gameRoot.getChild("Resources") : gameRoot);
+			? gameRoot.getChild("Resources") : gameRoot);
 	if (!resNode.isDirectory())
 		error("Resources directory should exist in game");
 
-	const Common::Path fname = path.getLastComponent();
+	Common::String fname = path.getLastComponent().toString();
+
+	// Slight HACK: Remove 'comments' used to specify animated pngs
+	if (fname.contains('#'))
+		fname = fname.substr(0, fname.find('#'));
 	const Common::Path dir = path.getParent();
 
 	static const char *pathSuffixes[] = {

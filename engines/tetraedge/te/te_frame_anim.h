@@ -48,6 +48,7 @@ public:
 
 private:
 	float _frameRate;
+	// TODO: Isn't this the same as TeAnimation::_repeatCount??
 	int _loopCount;
 	int _nbFrames;
 	int _numFramesToShow;

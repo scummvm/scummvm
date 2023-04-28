@@ -165,7 +165,7 @@ void TeWarp::configMarker(const Common::String &objname, int markerImgNo, long m
 	if (markerImgNo == -1) {
 		warpMarker->marker()->visible(false);
 	} else {
-		Common::String markerPath = Common::String::format("2D/Menus/InGame/Marker_%d.png", markerImgNo);
+		Common::String markerPath = Common::String::format("2D/Menus/InGame/Marker_%d.png#anim", markerImgNo);
 		Common::String markerPathOver = Common::String::format("2D/Menus/InGame/Marker_%d_over.png", markerImgNo);
 		if (exit)
 			warpMarker->setName(objname);
@@ -177,8 +177,7 @@ void TeWarp::configMarker(const Common::String &objname, int markerImgNo, long m
 		if (!btnUp)
 			error("Loading button image %s failed", markerPath.c_str());
 		warning("TeWarp::configMarker: set anim values and something else here?");
-		btnUp->_tiledSurfacePtr->_frameAnim._repeatCount = -1;
-		btnUp->_tiledSurfacePtr->_frameAnim.setFrameRate(8.0);
+		btnUp->_tiledSurfacePtr->_frameAnim.setLoopCount(-1);
 		btnUp->play();
 		warpMarker->marker()->visible(true);
 		// The game uses TeSprite, but we use the layout system instead.
@@ -219,12 +218,13 @@ bool TeWarp::hasObjectOrAnim(const Common::String &objname) {
 }
 
 void TeWarp::init() {
-	// This mostly sets up the camera.. maybe nothing to do?
 	TeVector3f32 winSize = g_engine->getApplication()->getMainWindow().size();
-	_camera.setProjMatrixType(3);
+	_camera.setProjMatrixType(1);
 	_camera.viewport(0, 0, (int)winSize.x(), (int)winSize.y());
 	_camera.setOrthoPlanes(1, 4096);
 	_camera.setAspectRatio(winSize.x() / winSize.y());
+	// update proj matrix
+	_camera.projectionMatrix();
 	warning("TODO: Finish TeWarp::init?");
 }
 
@@ -413,7 +413,7 @@ void TeWarp::sendExit(TeWarp::Exit &exit) {
 	exit._warpBlockList.clear();
 	TeMarker *marker = _warpMarkers[exit._markerId]->marker();
 	assert(marker);
-	marker->button().load("2D/Menus/InGame/Marker_0.png", "2D/Menus/InGame/Marker_0_over.png", "");
+	marker->button().load("2D/Menus/InGame/Marker_0.png#anim", "2D/Menus/InGame/Marker_0_over.png", "");
 	marker->visible(false);
 	marker->setZLoc(-999.0f);
 	_exitList.push_back(exit);
@@ -520,6 +520,8 @@ void TeWarp::rotateCamera(const TeQuaternion &rot) {
 
 void TeWarp::setFov(float fov) {
 	_camera.setFov(fov);
+	// update proj matrix
+	_camera.projectionMatrix();
 }
 
 void TeWarp::takeObject(const Common::String &name) {
@@ -551,6 +553,8 @@ void TeWarp::updateCamera(const TeVector3f32 &screen) {
 	_camera.viewport(0, 0, screen.x(), screen.y());
 	_camera.setOrthoPlanes(1, 4096);
 	_camera.setAspectRatio(screen.x() / screen.y());
+	// update proj matrix
+	_camera.projectionMatrix();
 }
 
 } // end namespace Tetraedge
