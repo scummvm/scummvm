@@ -1308,7 +1308,7 @@ int LoLEngine::olol_drawExitButton(EMCState *script) {
 	static const uint8 printPara[] = { 0x90, 0x78, 0x0C, 0x9F, 0x80, 0x1E };
 
 	int cp = _screen->setCurPage(0);
-	Screen::FontId cf = _screen->setFont(Screen::FID_6_FNT);
+	Screen::FontId cf = _screen->setFont(_flags.lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT : Screen::FID_6_FNT);
 	int x = printPara[3 * stackPos(0)] << 1;
 	int y = printPara[3 * stackPos(0) + 1];
 	int offs = printPara[3 * stackPos(0) + 2];
