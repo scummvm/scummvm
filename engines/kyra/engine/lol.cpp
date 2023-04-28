@@ -2016,7 +2016,7 @@ void LoLEngine::delay(uint32 millis, bool doUpdate, bool) {
 }
 
 const KyraRpgGUISettings *LoLEngine::guiSettings() const {
-	return &_guiSettings;
+	return _flags.lang == Common::Language::ZH_TWN ? &_guiSettingsZH : &_guiSettings;
 }
 
 // spells

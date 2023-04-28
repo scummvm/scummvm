@@ -1167,6 +1167,7 @@ private:
 	uint8 *_pageBuffer2;
 
 	static const KyraRpgGUISettings _guiSettings;
+	static const KyraRpgGUISettings _guiSettingsZH;
 
 	// spells
 	typedef Common::Functor1Mem<ActiveSpell *, int, LoLEngine> SpellProc;
