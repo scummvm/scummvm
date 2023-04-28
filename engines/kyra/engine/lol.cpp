@@ -1975,6 +1975,12 @@ void LoLEngine::setupDialogueButtons(int numStr, const char *s1, const char *s2,
 			posX[2] = posX[1] + xOffs;
 		}
 
+		if (_flags.lang == Common::Language::ZH_TWN) {
+			posY[0] -= 10;
+			posY[1] -= 10;
+			posY[2] -= 10;
+		}
+
 		drawDialogueButtons();
 	}
 
