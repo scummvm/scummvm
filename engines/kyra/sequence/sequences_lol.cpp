@@ -349,7 +349,7 @@ int LoLEngine::chooseCharacter() {
 		_screen->printText(_tim->getCTableEntry(51), 72, 176, 0x81, 0x00);
 		_screen->printText(_tim->getCTableEntry(53), 72, 184, 0x81, 0x00);
 		_screen->printText(_tim->getCTableEntry(55), 72, 192, 0x81, 0x00);
-	} else {
+	} else if (_flags.lang != Common::ZH_TWN) { // Chinese puts everything on the background layer
 		const char *const *previewNames = (_flags.lang == Common::RU_RUS && !_flags.isTalkie) ? _charPreviewNamesRussianFloppy : (_flags.lang == Common::JA_JPN ? _charNamesJapanese : _charPreviewNamesDefault);
 		for (int i = 0; i < 4; ++i) {
 			_screen->fprintStringIntro("%s", _charPreviews[i].x + 16, _charPreviews[i].y + 36, 0xC0, 0x00, 0x9C, 0x120, previewNames[i]);
@@ -424,14 +424,15 @@ int LoLEngine::chooseCharacter() {
 
 void LoLEngine::kingSelectionIntro() {
 	_screen->copyRegion(0, 0, 0, 0, 112, 120, 4, 0, Screen::CR_NO_P_CHECK);
-	int y = 38;
 
 	if (_flags.platform == Common::kPlatformPC98) {
 		for (int i = 0; i < 5; ++i)
 			_screen->printText(_tim->getCTableEntry(57 + i), 16, 32 + i * 8, 0xC1, 0x00);
 	} else {
+		int fh = _flags.lang == Common::Language::ZH_TWN ? 16 : 10;
+		int y = _flags.lang == Common::Language::ZH_TWN ? 28 : 38;
 		for (int i = 0; i < 5; ++i)
-			_screen->fprintStringIntro("%s", 8, y + i * 10, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(57 + i));
+			_screen->fprintStringIntro("%s", 8, y + i * fh, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(57 + i));
 	}
 
 	if (_flags.isTalkie)
@@ -469,14 +470,15 @@ void LoLEngine::kingSelectionIntro() {
 
 void LoLEngine::kingSelectionReminder() {
 	_screen->copyRegion(0, 0, 0, 0, 112, 120, 4, 0, Screen::CR_NO_P_CHECK);
-	int y = 48;
 
 	if (_flags.platform == Common::kPlatformPC98) {
 		_screen->printText(_tim->getCTableEntry(62), 16, 32, 0xC1, 0x00);
 		_screen->printText(_tim->getCTableEntry(63), 16, 40, 0xC1, 0x00);
 	} else {
+		int fh = _flags.lang == Common::Language::ZH_TWN ? 16 : 10;
+		int y = 48;
 		_screen->fprintStringIntro("%s", 8, y, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(62));
-		_screen->fprintStringIntro("%s", 8, y + 10, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(63));
+		_screen->fprintStringIntro("%s", 8, y + fh, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(63));
 	}
 
 	if (_flags.isTalkie)
@@ -618,10 +620,17 @@ int LoLEngine::selectionCharInfo(int character) {
 
 		_screen->printText(_tim->getCTableEntry(69), 112, 168, 0x01, 0x00);
 	} else {
+		int fh = _flags.lang == Common::Language::ZH_TWN ? 16 : 10;
+		int y = 127;
 		for (int i = 0; i < 5; ++i)
-			_screen->fprintStringIntro("%s", 50, 127 + i * 10, 0x53, 0x00, 0xCF, 0x20, _tim->getCTableEntry(idx + i));
+			_screen->fprintStringIntro("%s", 50, y + i * fh, 0x53, 0x00, 0xCF, 0x20, _tim->getCTableEntry(idx + i));
 
-		_screen->fprintStringIntro("%s", 100, 168, 0x32, 0x00, 0xCF, 0x20, _tim->getCTableEntry(69));
+		if (_flags.lang == Common::Language::ZH_TWN)
+			_screen->fprintStringIntro("%s", 125, 177,
+						   0x32, 0x00, 0xCF, 0x20, _tim->getCTableEntry(70));
+		else
+			_screen->fprintStringIntro("%s", 100, 168,
+						   0x32, 0x00, 0xCF, 0x20, _tim->getCTableEntry(69));
 	}
 
 	selectionCharInfoIntro(vocFilename);
@@ -648,8 +657,9 @@ int LoLEngine::selectionCharInfo(int character) {
 		for (int i = 0; i < 5; ++i)
 			_screen->printText(_tim->getCTableEntry(64 + i), 16, 32 + i * 8, 0xC1, 0x00);
 	} else {
+		int fh = _flags.lang == Common::Language::ZH_TWN ? 16 : 10;
 		for (int i = 0; i < 5; ++i)
-			_screen->fprintStringIntro("%s", 3, 28 + i * 10, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(64 + i));
+			_screen->fprintStringIntro("%s", 3, 28 + i * fh, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(64 + i));
 	}
 
 	resetSkipFlag();
@@ -714,10 +724,17 @@ int LoLEngine::selectionCharAccept() {
 	removeInputTop();
 
 	if (inputFlag == 200) {
-		if (88 <= _mouseX && _mouseX <= 128 && 180 <= _mouseY && _mouseY <= 194)
-			return 1;
-		if (196 <= _mouseX && _mouseX <= 236 && 180 <= _mouseY && _mouseY <= 194)
-			return 0;
+		if (_flags.lang == Common::Language::ZH_TWN) {
+			if (223 <= _mouseX && _mouseX <= 264 && 176 <= _mouseY && _mouseY <= 192)
+				return 1;
+			if (271 <= _mouseX && _mouseX <= 313 && 176 <= _mouseY && _mouseY <= 192)
+				return 0;
+		} else {
+			if (88 <= _mouseX && _mouseX <= 128 && 180 <= _mouseY && _mouseY <= 194)
+				return 1;
+			if (196 <= _mouseX && _mouseX <= 236 && 180 <= _mouseY && _mouseY <= 194)
+				return 0;
+		}
 	}
 
 	return -1;
