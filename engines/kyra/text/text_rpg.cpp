@@ -673,7 +673,9 @@ void TextDisplayer_rpg::textPageBreak() {
 	int w = _vm->_dialogueButtonWidth;
 
 	if (_vm->game() == GI_LOL) {
-		if (_vm->_needSceneRestore && (_vm->_updateFlags & 2)) {
+		if (_vm->gameFlags().lang == Common::Language::ZH_TWN) {
+			y = dim->sy + dim->h - 15;
+		} else if (_vm->_needSceneRestore && (_vm->_updateFlags & 2)) {
 			if (_vm->_currentControlMode || !(_vm->_updateFlags & 2)) {
 				y = dim->sy + dim->h - 5;
 			} else {
@@ -728,7 +730,7 @@ void TextDisplayer_rpg::textPageBreak() {
 		if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
 			loop = false;
 		} else if (inputFlag == 199 || inputFlag == 201) {
-			if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, x, y, x + w, y + 9)) {
+			if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, x, y, x + w, y + _vm->guiSettings()->buttons.height)) {
 				if (_vm->game() == GI_LOL)
 					target = true;
 				else
@@ -742,7 +744,7 @@ void TextDisplayer_rpg::textPageBreak() {
 
 	_screen->set16bitShadingLevel(4);
 	if (_vm->game() == GI_LOL && _vm->gameFlags().use16ColorMode)
-		_screen->fillRect(x + 8, y, x + 57, y + 9, _textDimData[_screen->curDimIndex()].color2);
+		_screen->fillRect(x + 8, y, x + 57, y + _vm->guiSettings()->buttons.height, _textDimData[_screen->curDimIndex()].color2);
 	else
 		_screen->fillRect(x, y, x + w - 1, y + _vm->guiSettings()->buttons.height - 1, _textDimData[_screen->curDimIndex()].color2);
 
