@@ -208,6 +208,7 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	playSound(5, false);
 	// Ignore sky/ground fields
 	_gfx->_keyColor = 0;
+	_gfx->clearColorPairArray();
 
 	_gfx->_colorPair[_currentArea->_underFireBackgroundColor] = _currentArea->_extraColor[0];
 	_gfx->_colorPair[_currentArea->_usualBackgroundColor] = _currentArea->_extraColor[1];
