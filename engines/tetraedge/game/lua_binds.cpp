@@ -208,8 +208,8 @@ static int tolua_ExportedFunctions_Selected00(lua_State *L) {
 static void TakeObject_Amerzone(const Common::String &obj) {
 	AmerzoneGame *game = dynamic_cast<AmerzoneGame *>(g_engine->getGame());
 	assert(game);
-	game->luaContext().setGlobal(game->lastObjectHitName(), true);
-	game->warpY()->takeObject(game->lastObjectHitName());
+	game->luaContext().setGlobal(game->lastHitObjectName(), true);
+	game->warpY()->takeObject(game->lastHitObjectName());
 	if (!obj.empty()) {
 		game->addToBag(obj);
 		g_engine->getSoundManager()->playFreeSound("Sounds/SFX/N_prendre.ogg", 1.0, "sfx");

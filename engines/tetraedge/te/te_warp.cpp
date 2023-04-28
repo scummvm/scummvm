@@ -41,6 +41,7 @@ TeWarp::TeWarp() : _visible1(false), _loaded(false), _preloaded(false),
 }
 
 TeWarp::~TeWarp() {
+	_markerValidatedSignal.clear();
 	unload();
 	_file.close();
 }
@@ -143,7 +144,11 @@ void TeWarp::checkObjectEvents() {
 void TeWarp::clear() {
 	_putAnimData.clear();
 
-	error("TODO: Implement TeWarp::clear");
+	for (auto &data : _loadedAnimData)
+		data._flag = false;
+
+	for (auto *marker : _warpMarkers)
+		marker->marker()->visible(false);
 }
 
 void TeWarp::configMarker(const Common::String &objname, int markerImgNo, long markerId) {
@@ -167,7 +172,7 @@ void TeWarp::configMarker(const Common::String &objname, int markerImgNo, long m
 	} else {
 		Common::String markerPath = Common::String::format("2D/Menus/InGame/Marker_%d.png#anim", markerImgNo);
 		Common::String markerPathOver = Common::String::format("2D/Menus/InGame/Marker_%d_over.png", markerImgNo);
-		if (exit)
+		if (!exit)
 			warpMarker->setName(objname);
 		else
 			warpMarker->setName(Common::String("3D\\") + objname);
@@ -232,10 +237,17 @@ void TeWarp::load(const Common::String &path, bool flag) {
 	if (_warpPath == path && _loaded)
 		return;
 	_warpPath = path;
+
 	TeCore *core = g_engine->getCore();
 	Common::FSNode node = core->findFile(_warpPath);
-	if (!node.isReadable())
-		error("Couldn't find TeWarp path '%s'", _warpPath.c_str());
+	if (!node.isReadable()) {
+		// Try with '\'s..
+		Common::Path warpPathPath(_warpPath, '\\');
+		node = core->findFile(warpPathPath);
+		if (!node.isReadable()) {
+			error("Couldn't find TeWarp path data '%s'", _warpPath.c_str());
+		}
+	}
 
 	if (_preloaded)
 		error("TODO: Support preloading in TeWarp::load");
@@ -415,7 +427,7 @@ void TeWarp::sendExit(TeWarp::Exit &exit) {
 	assert(marker);
 	marker->button().load("2D/Menus/InGame/Marker_0.png#anim", "2D/Menus/InGame/Marker_0_over.png", "");
 	marker->visible(false);
-	marker->setZLoc(-999.0f);
+	marker->setZLoc(200.0f);
 	_exitList.push_back(exit);
 }
 
@@ -452,7 +464,14 @@ void TeWarp::setVisible(bool v1, bool v2) {
 		inputMgr->_mouseLDownSignal.add(this, &TeWarp::onMouseLeftDown);
 	} else {
 		if (v2) {
-			error("TODO: Implement TeWarp::setVisible for v2==true");
+			for (auto *marker : _warpMarkers) {
+				TeMarker *m = marker->marker();
+				delete marker;
+				// May be still handling the button click
+				if (m)
+					m->deleteLater();
+			}
+			_warpMarkers.clear();
 		}
 		inputMgr->_mouseLDownSignal.remove(this, &TeWarp::onMouseLeftDown);
 	}
@@ -525,11 +544,33 @@ void TeWarp::setFov(float fov) {
 }
 
 void TeWarp::takeObject(const Common::String &name) {
-	error("TODO: Implement TeWarp::takeObject");
+	for (auto &animData : _loadedAnimData) {
+		if (animData._name != name)
+			continue;
+		error("TODO: Finish TeWarp::takeObject");
+	}
+	warning("Impossible de trouver l\'objet %s dans le Warp", name.c_str());
 }
 
 void TeWarp::unload() {
-	error("TODO: Implement TeWarp::unload");
+	unloadTextures();
+	_xCount = 0;
+	_yCount = 0;
+	_loadedAnimData.clear();
+	_putAnimData.clear();
+	_paths.clear();
+	_pickMeshes2.clear();
+	_exitList.clear();
+	for (auto *marker : _warpMarkers) {
+		TeMarker *m = marker->marker();
+		delete marker;
+		// May be still handling the button click
+		if (m)
+			m->deleteLater();
+	}
+	_warpMarkers.clear();
+	_preloaded = false;
+	_loaded = false;
 }
 
 void TeWarp::unloadTextures() {

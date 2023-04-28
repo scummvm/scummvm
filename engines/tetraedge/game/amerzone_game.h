@@ -47,7 +47,7 @@ public:
 	virtual bool onVideoFinished() override;
 
 	TeWarp *warpY() { return _warpY; }
-	const Common::String lastObjectHitName() const { return _lastObjectHitName; }
+	const Common::String lastHitObjectName() const { return _lastHitObjectName; }
 
 	void setAngleX(float angle);
 	void setAngleY(float angle);
@@ -93,7 +93,7 @@ private:
 	TeWarp *_warpX;
 	TeWarp *_warpY;
 	TeWarp *_prevWarpY;
-	Common::String _lastObjectHitName;
+	Common::String _lastHitObjectName;
 };
 
 } // end namespace Tetraedge

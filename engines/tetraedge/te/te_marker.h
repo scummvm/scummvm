@@ -29,7 +29,7 @@
 namespace Tetraedge {
 
 // Note: Only used in Amerzone
-class TeMarker {
+class TeMarker : public TeObject {
 public:
 	TeMarker();
 
@@ -50,7 +50,6 @@ private:
 	// Note: this is a TeSpriteButton in the original, updated
 	// to use the newer ButtonLayout
 	TeButtonLayout _button;
-
 };
 
 } // end namespace Tetraedge

@@ -195,11 +195,11 @@ void TetraedgeEngine::configureSearchPaths() {
 }
 
 int TetraedgeEngine::getDefaultScreenWidth() const {
-	return gameIsAmerzone() ? 1365 : 800;
+	return gameIsAmerzone() ? 1280 : 800;
 }
 
 int TetraedgeEngine::getDefaultScreenHeight() const {
-	return gameIsAmerzone() ? 768 : 600;
+	return gameIsAmerzone() ? 800 : 600;
 }
 
 bool TetraedgeEngine::onKeyUp(const Common::KeyState &state) {

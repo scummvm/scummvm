@@ -355,10 +355,10 @@ void TeButtonLayout::setDoubleValidationProtectionEnabled(bool enable) {
 }
 
 void TeButtonLayout::setEnable(bool enable) {
-	if (enable) {
+	if (enable && _currentState == BUTTON_STATE_DISABLED) {
 		_currentState = BUTTON_STATE_UP;
 		setState(_currentState);
-	} else {
+	} else if (!enable && _currentState != BUTTON_STATE_DISABLED) {
 		_currentState = BUTTON_STATE_DISABLED;
 		setState(_currentState);
 	}
@@ -373,9 +373,11 @@ void TeButtonLayout::setPosition(const TeVector3f32 &pos) {
 			// probably not needed as we reimplememted how this works.
 			error("TODO: Implement setPosition logic for up/down state");
 		}
-		if (!_ignoreMouseEvents) {
-			setState(somethingCount ? BUTTON_STATE_DOWN : BUTTON_STATE_UP);
-		}
+		// Original does something like this, but that breaks in
+		// Amerzone where the button position can move during a click.
+		//if (!_ignoreMouseEvents) {
+		//	setState(somethingCount ? BUTTON_STATE_DOWN : BUTTON_STATE_UP);
+		//}
 	}
 }
 

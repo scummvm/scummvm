@@ -241,7 +241,16 @@ TeVector2f32 TeCamera::projectPoint(const TeVector3f32 &pt) {
 }
 
 TeVector3f32 TeCamera::projectPoint3f32(const TeVector3f32 &pt) {
-	error("TODO: Implement TeCamera::projectPoint3f32");
+	_rotation.normalize();
+	TeMatrix4x4 worldInverse = worldTransformationMatrix();
+	worldInverse.inverse();
+	const TeVector3f32 projectedPt = _projectionMatrix * worldInverse * pt;
+	int halfViewportW = (int)_viewportW / 2;
+	int halfViewportH = (int)_viewportH / 2;
+
+	float projectedX = halfViewportW * (projectedPt.x() + 1.0) + _viewportX;
+	float projectedY = halfViewportH * (1.0 - projectedPt.y()) + _viewportY;
+	return TeVector3f32(projectedX, projectedY, projectedPt.z());
 }
 
 void TeCamera::restore() {

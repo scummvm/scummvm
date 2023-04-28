@@ -56,8 +56,8 @@ void AmerzoneGame::changeSpeedToMouseDirection() {
 bool AmerzoneGame::changeWarp(const Common::String &zone, const Common::String &scene, bool fadeFlag) {
 	if (_warpY) {
 		_luaScript.execute("OnWarpLeave");
-		_warpY->markerValidatedSignal().add(this, &AmerzoneGame::onObjectClick);
-		_warpY->animFinishedSignal().add(this, &AmerzoneGame::onAnimationFinished);
+		_warpY->markerValidatedSignal().remove(this, &AmerzoneGame::onObjectClick);
+		_warpY->animFinishedSignal().remove(this, &AmerzoneGame::onAnimationFinished);
 		saveBackup("save.xml");
 		_videoMusic.stop();
 	}
@@ -126,6 +126,8 @@ void AmerzoneGame::draw() {
 }
 
 void AmerzoneGame::enter() {
+	if (_entered)
+		return;
 	Application *app = g_engine->getApplication();
 	// TODO:
 	//_puzzleDisjoncteur.setState(5);
@@ -182,6 +184,7 @@ void AmerzoneGame::enter() {
 	_edgeButtonRolloverCount = 0;
 
 	initLoadedBackupData();
+	_entered = true;
 }
 
 void AmerzoneGame::finishGame() {
@@ -271,10 +274,10 @@ bool AmerzoneGame::onChangeWarpAnimFinished() {
 		_prevWarpY->setVisible(false, true);
 		_prevWarpY->clear();
 		_prevWarpY = nullptr;
-		// TODO: set some sprite not visible here.
-		error("TODO: Finish AmerzoneGame::onChangeWarpAnimFinished");
+		// TODO: set fade sprite not visible here?
+		//error("TODO: Finish AmerzoneGame::onChangeWarpAnimFinished");
 	}
-	_warpY->markerValidatedSignal().remove(this, &AmerzoneGame::onObjectClick);
+	_warpY->markerValidatedSignal().add(this, &AmerzoneGame::onObjectClick);
 	optimizeWarpResources();
 	return false;
 }
@@ -310,7 +313,9 @@ bool AmerzoneGame::onMouseLeftDown(const Common::Point &pt) {
 }
 
 bool AmerzoneGame::onObjectClick(const Common::String &obj) {
-	error("TODO: Implement AmerzoneGame::onObjectClick");
+	_lastHitObjectName = obj;
+	_luaScript.execute("OnWarpObjectHit", obj);
+	return true;
 }
 
 bool AmerzoneGame::onPuzzleEnterAnimLoadTime() {
