@@ -30,7 +30,7 @@
 
 namespace Kyra {
 
-Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen_v2(vm, system,  vm->gameFlags().use16ColorMode ? _screenDimTable16C : _screenDimTable256C, _screenDimTableCount) {
+Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen_v2(vm, system,  vm->gameFlags().use16ColorMode ? _screenDimTable16C : vm->gameFlags().lang == Common::Language::ZH_TWN ? _screenDimTableZH : _screenDimTable256C, _screenDimTableCount) {
 	_paletteOverlay1 = new uint8[0x100]();
 	_paletteOverlay2 = new uint8[0x100]();
 	_grayOverlay = new uint8[0x100]();

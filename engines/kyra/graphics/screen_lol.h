@@ -89,6 +89,7 @@ public:
 private:
 	static const ScreenDim _screenDimTable256C[];
 	static const ScreenDim _screenDimTable16C[];
+	static const ScreenDim _screenDimTableZH[];
 	static const int _screenDimTableCount;
 
 	uint8 *_levelOverlays[8];
