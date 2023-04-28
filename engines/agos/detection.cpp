@@ -31,6 +31,7 @@
 
 #include "agos/detection.h"
 #include "agos/intern_detection.h"
+#include "agos/detection_fallback.h"
 #include "agos/obsolete.h" // Obsolete ID table.
 #include "agos/agos.h"
 
@@ -99,6 +100,16 @@ public:
 	const DebugChannelDef *getDebugChannels() const override {
 		return debugFlagList;
 	}
+
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
+		ADDetectedGame detectedGame = detectGameFilebased(allFiles, AGOS::fileBased);
+		if (!detectedGame.desc) {
+			return ADDetectedGame();
+		}
+
+		return detectedGame;
+	}
+
 };
 
 REGISTER_PLUGIN_STATIC(AGOS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, AgosMetaEngineDetection);
