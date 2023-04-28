@@ -417,6 +417,21 @@ enum OSEventType {
 	kOSEventTypeKeyDown,
 };
 
+enum KeymappedEvent {
+	kKeymappedEventHelp,
+	kKeymappedEventSaveGame,
+	kKeymappedEventLoadGame,
+	kKeymappedEventSoundSettings,
+	kKeymappedEventQuit,
+	kKeymappedEventPause,
+	kKeymappedEventMusicToggle,
+	kKeymappedEventSoundToggle,
+	kKeymappedEventMusicVolumeDown,
+	kKeymappedEventMusicVolumeUp,
+	kKeymappedEventSoundVolumeDown,
+	kKeymappedEventSoundVolumeUp,
+};
+
 struct OSEvent {
 	OSEvent();
 
