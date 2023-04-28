@@ -817,6 +817,17 @@ const KyraRpgGUISettings LoLEngine::_guiSettings = {
 	}
 };
 
+const KyraRpgGUISettings LoLEngine::_guiSettingsZH = {
+	{ _dlgButtonPosX_Def, _dlgButtonPosY_Def, 144, 254, 60, 18, 2, 66, { 0, 0 }, { 0, 0 }, { 0, 0 } },
+	{ 136, 251, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{	{ 0, 0, 0 }, { 0, 0, 0 }, 0, 0,
+		{ 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },
+		{ 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 },
+		{ 0, 0, 0 }, { 0, 0, 0 }, 0, 0, { 0, 0, 0 }, { 0, 0, 0 }, 0, 0,
+		0, 0
+	}
+};
+
 const MistOfDoomAnimData LoLEngine::_mistAnimData[] = {
 	{  0,   7,   7,  13, 155 },
 	{  0,  16,  16,  17, 155 },
