@@ -109,7 +109,7 @@ protected:
 	/**
 	 * Pre process an event before it is dispatched.
 	 */
-	virtual void preprocessEvents(SDL_Event *event) {}
+	virtual void preprocessEvents(SDL_Event *event);
 
 	/**
 	 * Dispatchs SDL events for each handler.
@@ -217,6 +217,104 @@ protected:
 	 */
 	Common::Event _fakeKeyUp;
 #endif
+
+#if defined(USE_SDL_TS_VMOUSE)
+private:
+    /// Perform initialization of touch-related state structures.
+    void _touchInitialize();
+    /**
+     * Run pre-processing on touch-based events, otherwise null operation.
+     *
+     * @param event Input event to process.
+     */
+    void _touchPreprocessEvent(SDL_Event *event);
+
+    /// Preprocessing specific to SDL_FINGERDOWN.
+    void _touchPreprocessFingerDown(SDL_Event *event);
+    /// Preprocessing specific to SDL_FINGERUP.
+    void _touchPreprocessFingerUp(SDL_Event *event);
+    /// Preprocessing specific to SDL_FINGERMOTION.
+    void _touchPreprocessFingerMotion(SDL_Event *event);
+    /// Convert panel normalized coordinates to window pixel coordinates.
+    void _touchConvertPanelToWindow(
+        float panelX, float panelY, 
+        int32_t &winX, int32_t &winY);
+    /// Run periodic processing updates - e.g. click finalization.
+    void _touchPeriodicUpdate();
+
+    /// Structure representing a single tracked touch point.
+    struct Touch {
+        /// Identifier of the touch point. -1 for no touch.
+        int32_t id;
+        /// Current pixel position of the touch point on the x-axis.
+        int32_t posX;
+        /// Current pixel position of the touch point on the y-axis.
+        int32_t posY;
+        /// Time of last touchdown.
+        uint32_t tdTime;
+        /// Touchdown pixel position on the x-axis.
+        int32_t tdPosX;
+        /// Touchdown pixel position on the y-axis.
+        int32_t tdPosY;
+    }; // struct Touch
+
+    /// Maximum number of supported touch ports.
+    static constexpr uint32_t TOUCH_MAX_PORTS = 16u;
+    /// Maximum number of supported touch points per port.
+    static constexpr uint32_t TOUCH_MAX_POINTS = 16u;
+
+    /// Recognized types of dragging operations.
+    enum TouchDragType {
+        /// No dragging
+        TOUCH_DRAG_NONE = 0, 
+        /// Two-finger drag
+        TOUCH_DRAG_TWO, 
+        /// Three-finger drag
+        TOUCH_DRAG_THREE
+    }; // enum TouchDragType
+
+    /// Types of simulated mouse buttons.
+    enum TouchMouseButton {
+        /// Left mouse button
+        TOUCH_BUTTON_LEFT = 0, 
+        /// Right mouse button
+        TOUCH_BUTTON_RIGHT = 1, 
+        /// Total number of simulated mouse buttons
+        TOUCH_BUTTON_COUNT, 
+    }; // enum TouchMouseButton
+
+    /// Width of the touch panel.
+    uint32_t _touchPanelWidth;
+    /// Height of the touch panel.
+    uint32_t _touchPanelHeight;
+    /// Width of the touch window.
+    uint32_t _touchWindowWidth;
+    /// Height of the touch window.
+    uint32_t _touchWindowHeight;
+
+    /// Maximum time of contact in milliseconds which counts as a tap.
+    uint32_t _touchMaxTapTime;
+    /// Maximum distance of motion in squared pixels which counts as a tap.
+    uint32_t _touchMaxTapSqDist;
+    /// Length of a simulated mouse click in milliseconds.
+    uint32_t _touchClickDuration;
+    /// Multiplier used for sub-pixel touch precision - higher = smaller movement.
+    uint32_t _touchPrecisionMult;
+
+    /// Finger-tracking structure.
+    Touch _touchFingers[TOUCH_MAX_PORTS][TOUCH_MAX_POINTS];
+
+    /// Drag type being executed for each port.
+    TouchDragType _touchDragType[TOUCH_MAX_PORTS];
+
+    /// Tracking of start time for mouse button clicks.
+    uint32_t _touchClickTime[TOUCH_MAX_PORTS][TOUCH_BUTTON_COUNT];
+
+    /// High resolution x-axis delta for the simulated touchpad cursor.
+    int32_t _touchHighResDX;
+    /// High resolution y-axis delta for the simulated touchpad cursor.
+    int32_t _touchHighResDY;
+#endif // defined(SDL_TS_VMOUSE)
 };
 
 #endif
