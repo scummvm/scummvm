@@ -181,6 +181,14 @@ bool Screen_EoB::init() {
 		}
 		_cpsFilePattern += cpsExt[ci];
 
+		if (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN) {
+			Common::File f;
+			if (!f.open("ceob.pat"))
+				return false;
+			_big5.reset(new Graphics::Big5Font());
+			_big5->loadPrefixedRaw(f, 14);
+		}
+
 		return true;
 	}
 	return false;
@@ -1665,6 +1673,8 @@ bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 	bool ret = false;
 	if (fnt) {
 		ret = fnt->load(*file);
+		if (_big5)
+			fnt = new ChineseTwoByteFontEoB(_big5, fnt);
 		fnt->setColorMap(_textColorsMap);
 	}
 
@@ -2141,6 +2151,34 @@ void OldDOSFont::unload() {
 	_data = 0;
 	_width = _height = _numGlyphs = 0;
 	_bitmapOffsets = 0;
+}
+
+uint16 ChineseTwoByteFontEoB::translateBig5(uint16 in) const {
+	if (in < 0x80)
+		return in;
+	in = ((in & 0xff00) >> 8) | ((in & 0xff) << 8);
+	if (_big5->hasGlyphForBig5Char(in))
+		return in;
+	return '?';
+}
+
+int ChineseTwoByteFontEoB::getCharWidth(uint16 c) const {
+	uint16 t = translateBig5(c);
+	return (t < 0x80) ? _singleByte->getCharWidth(t) : _big5->kChineseTraditionalWidth;
+}
+
+int ChineseTwoByteFontEoB::getCharHeight(uint16 c) const {
+	uint16 t = translateBig5(c);
+	return (t < 0x80) ? _singleByte->getCharHeight(t) : _big5->getFontHeight() + 1;
+}
+
+void ChineseTwoByteFontEoB::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {
+	uint16 t = translateBig5(c);
+	if (t < 0x80)
+		_singleByte->drawChar(t, dst, pitch, bpp);
+	else
+		_big5->drawBig5Char(dst, t,
+				    _big5->kChineseTraditionalWidth, _big5->getFontHeight(), pitch, _colorMap[1], _colorMap[0], _border, bpp);
 }
 
 } // End of namespace Kyra

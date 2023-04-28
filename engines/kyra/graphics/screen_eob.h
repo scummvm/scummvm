@@ -24,6 +24,8 @@
 
 #ifdef ENABLE_EOB
 
+#include "graphics/big5.h"
+
 #include "kyra/graphics/screen.h"
 
 namespace Kyra {
@@ -221,6 +223,34 @@ private:
 	uint16 *_segaCustomPalettes;
 	uint8 *_defaultRenderBuffer;
 	int _defaultRenderBufferSize;
+
+	Common::SharedPtr<Graphics::Big5Font> _big5;
+};
+
+class ChineseTwoByteFontEoB final : public Font {
+public:
+	ChineseTwoByteFontEoB(Common::SharedPtr<Graphics::Big5Font> big5, Font *singleByte) : _big5(big5), _singleByte(singleByte), _border(false), _colorMap(nullptr) {}
+
+	virtual Type getType() const override { return kBIG5; }
+
+	bool load(Common::SeekableReadStream &data) override {
+		return _singleByte->load(data);
+	}
+
+	void setStyles(int styles) override { _border = (styles & kStyleBorder); _singleByte->setStyles(styles); }
+	int getHeight() const override { return MAX(_big5->getFontHeight() + 1, _singleByte->getHeight()); }
+	int getWidth() const override { return MAX(_big5->kChineseTraditionalWidth + 2, _singleByte->getWidth()); }
+	void setColorMap(const uint8 *src) override { _colorMap = src; _singleByte->setColorMap(src); }
+	int getCharWidth(uint16 c) const override;
+	int getCharHeight(uint16 c) const override;
+	void drawChar(uint16 c, byte *dst, int pitch, int bpp) const override;
+
+private:
+	uint16 translateBig5(uint16 in) const;
+	Common::SharedPtr<Graphics::Big5Font> _big5;
+	Common::ScopedPtr<Font> _singleByte;
+	bool _border;
+	const uint8 *_colorMap;
 };
 
 /**
