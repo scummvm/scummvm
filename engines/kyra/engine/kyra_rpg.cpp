@@ -147,6 +147,8 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 		_buttonFont = _flags.gameID == GI_LOL ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_SJIS_FNT;
 	else if (_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformFMTowns)
 		_buttonFont = Screen::FID_8_FNT;
+	else if (_flags.lang == Common::Language::ZH_TWN && _flags.gameID == GI_LOL)
+		_buttonFont = Screen::FID_CHINESE_FNT;
 }
 
 KyraRpgEngine::~KyraRpgEngine() {

@@ -103,7 +103,7 @@ void LoLEngine::gui_drawInventoryItem(int index) {
 
 void LoLEngine::gui_drawScroll() {
 	_screen->copyRegion(112, 0, 12, 0, 87, 15, 2, 2, Screen::CR_NO_P_CHECK);
-	Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
+	Screen::FontId of = _screen->setFont(_flags.lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT : Screen::FID_9_FNT);
 	int h = 0;
 
 	for (int i = 0; i < 7; i++) {
@@ -135,7 +135,7 @@ void LoLEngine::gui_drawScroll() {
 
 void LoLEngine::gui_highlightSelectedSpell(bool mode) {
 	int y = 15;
-	Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
+	Screen::FontId of = _screen->setFont(_flags.lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT : Screen::FID_9_FNT);
 	for (int i = 0; i < 7; i++) {
 		if (_availableSpells[i] == -1)
 			continue;
@@ -178,7 +178,7 @@ void LoLEngine::gui_displayCharInventory(int charNum) {
 	for (int i = 0; i < 11; i++)
 		gui_drawCharInventoryItem(i);
 
-	Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
+	Screen::FontId of = _screen->setFont(_flags.lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT : Screen::FID_9_FNT);
 	_screen->fprintString("%s", 182, 103, _flags.use16ColorMode ? 0xBB : 172, 0, 5, getLangString(0x4033));
 	_screen->setFont(of);
 
@@ -2219,7 +2219,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 	const ScreenDim *d = _screen->getScreenDim(8);
 	uint32 textCursorTimer = 0;
 	uint8 textCursorStatus = 1;
-	Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
+	Screen::FontId of = _screen->setFont(_vm->gameFlags().lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT : Screen::FID_9_FNT);
 	int wW = _screen->getCharWidth('W');
 	_screen->setFont(of);
 

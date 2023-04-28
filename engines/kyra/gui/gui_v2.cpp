@@ -55,6 +55,11 @@ GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI_v1(vm), _vm(vm), _screen(vm->screen_v2()
 		_saveMenuCursor = Common::Rect(0, 0, 8, 14);
 		_saveLoadNumSlots = 4;
 	}
+
+	if (vm->gameFlags().lang == Common::Language::ZH_TWN && vm->game() == GI_LOL) {
+		_saveMenuFont = Screen::FID_CHINESE_FNT;
+	}
+
 }
 
 Button *GUI_v2::addButtonToList(Button *list, Button *newButton) {

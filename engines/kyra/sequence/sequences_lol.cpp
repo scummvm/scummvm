@@ -74,7 +74,8 @@ int LoLEngine::processPrologue() {
 		// Original version: (260|193) "V CD1.02 D"
 		const int width = _screen->getTextWidth(versionString.c_str());
 		_screen->fprintString("%s", 320 - width, 193, 0x67, 0x00, 0x04, versionString.c_str());
-		_screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_9_FNT);
+		_screen->setFont(_flags.lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT :
+				 (_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_9_FNT);
 
 		_screen->fadePalette(_screen->getPalette(0), 0x1E);
 		_screen->updateScreen();
@@ -247,7 +248,9 @@ void LoLEngine::showIntro() {
 
 	_screen->loadFont(Screen::FID_8_FNT, "NEW8P.FNT");
 	_screen->loadFont(Screen::FID_INTRO_FNT, "INTRO.FNT");
-	_screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_8_FNT);
+
+	_screen->setFont(_flags.lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT :
+			 (_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_8_FNT);
 
 	_tim->resetFinishedFlag();
 	_tim->setLangData("LOLINTRO.DIP");
@@ -317,7 +320,8 @@ int LoLEngine::chooseCharacter() {
 
 	_chargenWSA->displayFrame(0, 2, 113, 0, 0, 0, 0);
 
-	_screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_9_FNT);
+	_screen->setFont(_flags.lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT :
+			 (_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_9_FNT);
 	_screen->_curPage = 2;
 
 	if (_flags.platform == Common::kPlatformPC98 && _flags.use16ColorMode) {
@@ -803,7 +807,7 @@ void HistoryPlayer::play() {
 	_screen->updateScreen();
 
 	pal.fill(0, 256, 0);
-	_screen->setFont(Screen::FID_9_FNT);
+	_screen->setFont(_vm->gameFlags().lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT : Screen::FID_9_FNT);
 
 	char tempWsaFilename[16];
 	char voiceFilename[13];
@@ -1342,7 +1346,7 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 			if (*curString == 3 || *curString == 4)
 				s.alignment = *curString++;
 
-			_screen->setFont(Screen::FID_6_FNT);
+			_screen->setFont(_flags.lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT : Screen::FID_6_FNT);
 
 			if (*curString == 1 || *curString == 2)
 				++curString;
@@ -1481,7 +1485,7 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 
 			if (y < _screen->_curDim->h) {
 				_screen->_curPage = page;
-				_screen->setFont(Screen::FID_6_FNT);
+				_screen->setFont(_flags.lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT : Screen::FID_6_FNT);
 				if (_flags.use16ColorMode) {
 					_screen->printText(s.str, (_screen->_curDim->sx << 3) + x + 1, _screen->_curDim->sy + y + 1, 0x44, 0x00);
 					_screen->printText(s.str, (_screen->_curDim->sx << 3) + x, _screen->_curDim->sy + y, 0x33, 0x00);

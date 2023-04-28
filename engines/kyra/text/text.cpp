@@ -109,7 +109,8 @@ char *TextDisplayer::preprocessString(const char *str) {
 	static const uint16 limKor[2] = { 240, 480 };
 	const uint16 *lim = (_vm->gameFlags().lang == Common::KO_KOR) ? limKor : limDef;
 
-	Screen::FontId curFont = _screen->setFont(_vm->gameFlags().lang == Common::KO_KOR ? Screen::FID_KOREAN_FNT : Screen::FID_8_FNT);
+	Screen::FontId curFont = _screen->setFont(_vm->gameFlags().lang == Common::Language::ZH_TWN && _vm->gameFlags().gameID == GI_LOL ? Screen::FID_CHINESE_FNT :
+						  _vm->gameFlags().lang == Common::KO_KOR ? Screen::FID_KOREAN_FNT : Screen::FID_8_FNT);
 	_screen->_charSpacing = -2;
 	int textWidth = _screen->getTextWidth(p);
 	_screen->_charSpacing = 0;

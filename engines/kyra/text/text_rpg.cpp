@@ -52,6 +52,8 @@ TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(e
 		_waitButtonFont = Screen::FID_8_FNT;
 	else if ((_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98))
 		_waitButtonFont = Screen::FID_SJIS_FNT;
+	else if ((_vm->game() == GI_LOL && _vm->gameFlags().lang == Common::Language::ZH_TWN))
+		_waitButtonFont = Screen::FID_CHINESE_FNT;
 
 	_textDimData = new TextDimData[_screen->screenDimTableCount()];
 

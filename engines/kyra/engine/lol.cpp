@@ -515,7 +515,8 @@ Common::Error LoLEngine::go() {
 	// the prologue code we need to setup them manually here.
 	if (_gameToLoad != -1 && action != 3) {
 		preInit();
-		_screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_9_FNT);
+		_screen->setFont(_flags.lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT :
+				 (_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_9_FNT);
 	}
 
 	// We have three sound.dat files, one for the intro, one for the
@@ -691,10 +692,17 @@ int LoLEngine::mainMenu() {
 			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xC1, 0xE1 },
 			{ 0xCC, 0xDD, 0xDD, 0xDD }, 0,
 			Screen::FID_SJIS_TEXTMODE_FNT, 1, 1
-		}
+		},
+		// 256 color Chinese mode
+		{
+			{ 0, 0, 0, 0, 0 },
+			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0x3D, 0x9F },
+			{ 0x2C, 0x19, 0x48, 0x2C }, 0,
+			Screen::FID_CHINESE_FNT, 0, 1
+		},
 	};
 
-	int dataIndex = _flags.use16ColorMode ? 1 : 0;
+	int dataIndex = _flags.use16ColorMode ? 1 : _flags.lang == Common::Language::ZH_TWN ? 2 : 0;
 
 	if (!_flags.isTalkie)
 		--data[dataIndex].menuTable[3];
@@ -3135,7 +3143,8 @@ void LoLEngine::transferSpellToScollAnimation(int charNum, int spell, int slot) 
 			_screen->copyRegion(112, 16, 12, h + 15, 87, 14, 2, 2, Screen::CR_NO_P_CHECK);
 
 			int y = 15;
-			Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
+			Screen::FontId of = _screen->setFont(_flags.lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT :
+							     Screen::FID_9_FNT);
 			for (int ii = 0; ii < 7; ii++) {
 				if (_availableSpells[ii] == -1)
 					continue;
@@ -4214,7 +4223,8 @@ void LoLEngine::drawMapPage(int pageNum) {
 			_screen->copyRegion(236, 16, 236 + xOffset, 16, -xOffset, 1, pageNum, pageNum, Screen::CR_NO_P_CHECK);
 
 		int cp = _screen->setCurPage(pageNum);
-		Screen::FontId of = _screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_9_FNT);
+		Screen::FontId of = _screen->setFont(_flags.lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT :
+						     (_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_9_FNT);
 		_screen->printText(getLangString(_autoMapStrings[_currentMapLevel]), 236 + xOffset, 8, 1, 0);
 		uint16 blX = mapGetStartPosX();
 		uint16 bl = (mapGetStartPosY() << 5) + blX;
@@ -4274,7 +4284,8 @@ void LoLEngine::drawMapPage(int pageNum) {
 		_screen->setFont(of);
 		_screen->setCurPage(cp);
 
-		of = _screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_6_FNT);
+		of = _screen->setFont(_flags.lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT :
+				      (_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_6_FNT);
 
 		int tY = 0;
 		sx = mapGetStartPosX();
@@ -4523,7 +4534,8 @@ void LoLEngine::printMapText(uint16 stringId, int x, int y) {
 
 void LoLEngine::printMapExitButtonText() {
 	int cp = _screen->setCurPage(2);
-	Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
+	Screen::FontId of = _screen->setFont(_flags.lang == Common::Language::ZH_TWN ?
+					     Screen::FID_CHINESE_FNT : Screen::FID_9_FNT);
 	_screen->fprintString("%s", 295, 182, _flags.use16ColorMode ? 0xBB : 172, 0, 5, getLangString(0x4033));
 	_screen->setFont(of);
 	_screen->setCurPage(cp);

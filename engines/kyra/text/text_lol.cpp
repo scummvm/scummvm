@@ -160,7 +160,7 @@ void TextDisplayer_LoL::printDialogueText2(int dim, const char *str, EMCState *s
 	}
 
 	int cp = _screen->setCurPage(0);
-	Screen::FontId of = _screen->setFont(_pc98TextMode ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_9_FNT);
+	Screen::FontId of = _screen->setFont(_vm->gameFlags().lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT : _pc98TextMode ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_9_FNT);
 
 	preprocessString(str, script, paramList, paramIndex);
 	_numCharsTotal = Common::strnlen(_dialogueBuffer, 2559);
