@@ -67,7 +67,7 @@ int LoLEngine::processPrologue() {
 
 	int processSelection = -1;
 	while (!shouldQuit() && processSelection == -1) {
-		_screen->loadBitmap("TITLE.CPS", 2, 2, &_screen->getPalette(0));
+		_screen->loadBitmap(gameFlags().lang == Common::Language::ZH_TWN ? "TITLECHI.CPS" : "TITLE.CPS", 2, 2, &_screen->getPalette(0));
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 
 		_screen->setFont(Screen::FID_6_FNT);
