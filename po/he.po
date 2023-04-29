@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-29 19:39+0000\n"
+"POT-Creation-Date: 2023-04-29 20:04+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -321,7 +321,7 @@ msgstr ""
 #: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:888
 #: engines/sword1/logic.cpp:1634 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
-#: engines/vcruise/vcruise.cpp:86 engines/vcruise/vcruise.cpp:96
+#: engines/vcruise/vcruise.cpp:91 engines/vcruise/vcruise.cpp:101
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "אישור"
@@ -5106,7 +5106,7 @@ msgstr ""
 "יש ללחוץ על אישור כדי להמירם כעת, אחרת תשאלו בפעם הבאה שהמשחק יתחיל.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:250
+#: engines/vcruise/vcruise.cpp:293
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr "המשחק שנשמר נוצר באמצעות גרסה חדשה יותר של ScummVM. לא ניתן לטעון."
 
@@ -6808,12 +6808,12 @@ msgstr "סיום מידי של כל הסרטים שמתנגנים"
 msgid "Failed to read version information from save file"
 msgstr "נכשל בקריאת מידע הגרסה מקובץ השמירה"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:245
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:288
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr "טעינת השמירה נכשלה, קובץ השמירה אינו מכיל מידע גרסה תקף."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:255
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:298
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -9143,24 +9143,30 @@ msgstr "עוצמת אפקטים קוליים מיוחדים"
 msgid "Sound effect volume up"
 msgstr "עוצמת אפקטים קוליים מיוחדים"
 
-#: engines/vcruise/vcruise.cpp:77
+#: engines/vcruise/metaengine.cpp:163
+#, fuzzy
+#| msgid "Speech Options"
+msgid "Skip current animation"
+msgstr "אפשרויות דיבור"
+
+#: engines/vcruise/vcruise.cpp:82
 #, fuzzy
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr "משחק זה דורש את תת-מנוע HeroCraft, שאינו נבנה."
 
-#: engines/vcruise/vcruise.cpp:84
+#: engines/vcruise/vcruise.cpp:89
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:94
+#: engines/vcruise/vcruise.cpp:99
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:235
+#: engines/vcruise/vcruise.cpp:278
 #, fuzzy
 #| msgid ""
 #| "Failed to load save, the save file doesn't contain valid version "
@@ -9168,13 +9174,13 @@ msgstr ""
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr "טעינת השמירה נכשלה, קובץ השמירה אינו מכיל מידע גרסה תקף."
 
-#: engines/vcruise/vcruise.cpp:240
+#: engines/vcruise/vcruise.cpp:283
 #, fuzzy
 #| msgid "Failed to read version information from save file"
 msgid "Failed to read version information from save file."
 msgstr "נכשל בקריאת מידע הגרסה מקובץ השמירה"
 
-#: engines/vcruise/vcruise.cpp:260
+#: engines/vcruise/vcruise.cpp:303
 #, fuzzy
 #| msgid "An internal error occurred while attempting to write save game data"
 msgid "An unknown error occurred while attempting to load the saved game."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-29 19:39+0000\n"
+"POT-Creation-Date: 2023-04-29 20:04+0000\n"
 "PO-Revision-Date: 2023-03-21 14:26+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -321,7 +321,7 @@ msgstr ""
 #: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:888
 #: engines/sword1/logic.cpp:1634 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
-#: engines/vcruise/vcruise.cpp:86 engines/vcruise/vcruise.cpp:96
+#: engines/vcruise/vcruise.cpp:91 engines/vcruise/vcruise.cpp:101
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "OK"
@@ -5184,7 +5184,7 @@ msgstr ""
 "de volgende keer als u het spel start.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:250
+#: engines/vcruise/vcruise.cpp:293
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Opgeslagen spel is gemaakt met een nieuwere versie van ScummVM. Laden is "
@@ -6929,12 +6929,12 @@ msgstr ""
 msgid "Failed to read version information from save file"
 msgstr "Versie informatie uitlezen uit het opgeslagen bestand is niet gelukt"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:245
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:288
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:255
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:298
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -9334,36 +9334,42 @@ msgstr "Volume voor speciale geluidseffecten"
 msgid "Sound effect volume up"
 msgstr "Volume voor speciale geluidseffecten"
 
-#: engines/vcruise/vcruise.cpp:77
+#: engines/vcruise/metaengine.cpp:163
+#, fuzzy
+#| msgid "Speech Options"
+msgid "Skip current animation"
+msgstr "Spraak Opties"
+
+#: engines/vcruise/vcruise.cpp:82
 #, fuzzy
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr ""
 "Dit spel vereist de HeroCraft subengine, welke niet is meegecompileerd."
 
-#: engines/vcruise/vcruise.cpp:84
+#: engines/vcruise/vcruise.cpp:89
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:94
+#: engines/vcruise/vcruise.cpp:99
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:235
+#: engines/vcruise/vcruise.cpp:278
 #, fuzzy
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "Opgeslagen spel is gemaakt met een nieuwere versie van ScummVM. Laden is "
 "niet mogelijk."
 
-#: engines/vcruise/vcruise.cpp:240
+#: engines/vcruise/vcruise.cpp:283
 msgid "Failed to read version information from save file."
 msgstr "Kon de versie van het opgeslagen bestand niet bepalen."
 
-#: engines/vcruise/vcruise.cpp:260
+#: engines/vcruise/vcruise.cpp:303
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Een onbekende fout trad op tijdens het laden van het opgeslagen spel."
 

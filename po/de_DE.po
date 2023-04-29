@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-29 19:39+0000\n"
+"POT-Creation-Date: 2023-04-29 20:04+0000\n"
 "PO-Revision-Date: 2023-04-24 08:35+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -339,7 +339,7 @@ msgstr "JSON-Code ist fehlerhaft."
 #: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:888
 #: engines/sword1/logic.cpp:1634 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
-#: engines/vcruise/vcruise.cpp:86 engines/vcruise/vcruise.cpp:96
+#: engines/vcruise/vcruise.cpp:91 engines/vcruise/vcruise.cpp:101
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "OK"
@@ -5228,7 +5228,7 @@ msgstr ""
 "wenn Du das Spiel erneut startest.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:250
+#: engines/vcruise/vcruise.cpp:293
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Dieser Spielstand wurde mit einer neueren Version von ScummVM erstellt und "
@@ -6970,14 +6970,14 @@ msgstr ""
 "Die Versions-Informationen konnten nicht aus der Spielstand-Datei ausgelesen "
 "werden"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:245
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:288
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Spielstand konnte nicht geladen werden, da die Spielstand-Datei keine "
 "gültigen Versions-Informationen enthält."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:255
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:298
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -9424,11 +9424,17 @@ msgstr "Lautstärke spezieller Geräusch-Effekte"
 msgid "Sound effect volume up"
 msgstr "Lautstärke spezieller Geräusch-Effekte"
 
-#: engines/vcruise/vcruise.cpp:77
+#: engines/vcruise/metaengine.cpp:163
+#, fuzzy
+#| msgid "Speeds up animations."
+msgid "Skip current animation"
+msgstr "Beschleunigt Animationen."
+
+#: engines/vcruise/vcruise.cpp:82
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr "Dieses Spiel benötigt JPEG-Unterstützung, die nicht vorhanden ist."
 
-#: engines/vcruise/vcruise.cpp:84
+#: engines/vcruise/vcruise.cpp:89
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
@@ -9437,7 +9443,7 @@ msgstr ""
 "die nicht vorhanden ist.\n"
 "Das Spiel wird spielbar sein, jedoch ohne Musik wiedergegeben."
 
-#: engines/vcruise/vcruise.cpp:94
+#: engines/vcruise/vcruise.cpp:99
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
@@ -9446,19 +9452,19 @@ msgstr ""
 "nicht vorhanden ist.\n"
 "Das Spiel wird spielbar sein, jedoch ohne Musik wiedergegeben."
 
-#: engines/vcruise/vcruise.cpp:235
+#: engines/vcruise/vcruise.cpp:278
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "Spielstand konnte nicht geladen werden, da die Spielstand-Datei vermutlich "
 "beschädigt ist."
 
-#: engines/vcruise/vcruise.cpp:240
+#: engines/vcruise/vcruise.cpp:283
 msgid "Failed to read version information from save file."
 msgstr ""
 "Die Versions-Informationen konnten nicht aus der Spielstand-Datei ausgelesen "
 "werden."
 
-#: engines/vcruise/vcruise.cpp:260
+#: engines/vcruise/vcruise.cpp:303
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ""
 "Beim Versuch, die Spielstand-Dateien zu laden, ist ein unbekannte Fehler "
