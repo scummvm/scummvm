@@ -39,11 +39,11 @@ Inter_Adibou1::Inter_Adibou1(GobEngine *vm) : Inter_v2(vm) {
 
 void Inter_Adibou1::setupOpcodesDraw() {
 	Inter_v2::setupOpcodesDraw();
+	OPCODEDRAW(0x0A, o1_setRenderFlags);
 }
 
 void Inter_Adibou1::setupOpcodesFunc() {
 	Inter_v2::setupOpcodesFunc();
-	OPCODEDRAW(0x0A, o1_setRenderFlags);
 }
 
 void Inter_Adibou1::setupOpcodesGob() {
