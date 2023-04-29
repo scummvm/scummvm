@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-29 12:20+0000\n"
+"POT-Creation-Date: 2023-04-29 19:39+0000\n"
 "PO-Revision-Date: 2023-04-29 19:34+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -232,7 +232,9 @@ msgstr ""
 "Βεβαιωθείτε ότι ο κωδικός JSON αντιγράφτηκε σωστά και προσπαθήστε πάλι."
 
 #: gui/cloudconnectionwizard.cpp:379
-msgid "It it doesn't work, try again from the beginning."
+#, fuzzy
+#| msgid "It it doesn't work, try again from the beginning."
+msgid "If that doesn't work, try again from the beginning."
 msgstr "Αν δεν λειτουργήσει αυτό, δοκιμάστε ξανά από την αρχή."
 
 #: gui/cloudconnectionwizard.cpp:380
