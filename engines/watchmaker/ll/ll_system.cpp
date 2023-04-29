@@ -19,17 +19,6 @@
  *
  */
 
-#ifdef __APPLE__
-#include <malloc/malloc.h>
-#define MALLOC_SIZE  malloc_size
-#else
-#include <malloc.h>
-#ifdef __linux__
-#define MALLOC_SIZE  malloc_usable_size
-#else
-#define MALLOC_SIZE  _msize
-#endif
-#endif
 #include "common/substream.h"
 #include "common/archive.h"
 #include "watchmaker/ll/ll_system.h"
@@ -38,8 +27,6 @@
 #include "watchmaker/windows_hacks.h"
 
 namespace Watchmaker {
-
-uint32 t3dAllocatedMemory = 0;
 
 char bUsingFastFile = 0;
 
@@ -55,8 +42,6 @@ void *t3dMalloc(uint32 n) {
 	if (!(res = static_cast<uint32 *>(malloc(n))))
 		warning("t3dMalloc: Can't alloc %d bytes", n);
 
-	t3dAllocatedMemory += n;
-
 	return (res);
 }
 
@@ -66,15 +51,11 @@ void *t3dCalloc(uint32 n) {
 	if (!(res = static_cast<uint32 *>(calloc(n, 1))))
 		warning("t3dCalloc: Can't alloc %d bytes", n);
 
-	t3dAllocatedMemory += n;
-
 	return (res);
 }
 
 void t3dFree(void *p) {
 	if (!p) return;
-
-	t3dAllocatedMemory -= (uint32) MALLOC_SIZE(p);
 
 	free(p);
 }
