@@ -416,6 +416,7 @@ bool Scanner::ValidateSequence(byte *Base, byte *Image, uint32 iPos, uint32 acod
 			Strange++;
 	} while (Valid && !Finished && Pos < size); /* && Strange==0); */
 	(*Size) += Pos - iPos;
+	(void)Strange;
 	return Valid; /* && Strange==0; */
 }
 
