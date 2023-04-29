@@ -126,11 +126,19 @@ void FreescapeEngine::executeLocalGlobalConditions(bool shot, bool collided, boo
 void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer) {
 	assert(!(shot && collided));
 	int ip = 0;
+	bool skip = false;
 	int codeSize = code.size();
 	assert(codeSize > 0);
 	while (ip <= codeSize - 1) {
 		FCLInstruction &instruction = code[ip];
 		debugC(1, kFreescapeDebugCode, "Executing ip: %d with type %d in code with size: %d", ip, instruction.getType(), codeSize);
+
+		if (skip && instruction.getType() != Token::ELSE && instruction.getType() != Token::ENDIF) {
+			debugC(1, kFreescapeDebugCode, "Instruction skipped!");
+			ip++;
+			continue;
+		}
+
 		switch (instruction.getType()) {
 		default:
 			//if (!isCastle())
@@ -141,7 +149,7 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			break;
 
 		case Token::ACTIVATEDQ:
-			if (collided) // TODO: implement interaction
+			if (shot) // TODO: implement interaction
 				executeCode(*instruction._thenInstructions, shot, collided, timer);
 			// else branch is always empty
 			assert(instruction._elseInstructions == nullptr);
@@ -169,6 +177,18 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			if (executeEndIfNotEqual(instruction))
 				ip = codeSize;
 			break;
+		case Token::IFGTEQ:
+			skip = !checkIfGreaterOrEqual(instruction);
+			break;
+
+		case Token::ELSE:
+			skip = !skip;
+			break;
+
+		case Token::ENDIF:
+			skip = false;
+			break;
+
 		case Token::SWAPJET:
 			executeSwapJet(instruction);
 			break;
@@ -264,7 +284,7 @@ void FreescapeEngine::executeDelay(FCLInstruction &instruction) {
 
 void FreescapeEngine::executePrint(FCLInstruction &instruction) {
 	uint16 index = instruction._source - 1;
-	debugC(1, kFreescapeDebugCode, "Printing message %d", index);
+	debugC(1, kFreescapeDebugCode, "Printing message %d: \"%s\"", index, _messagesList[index].c_str());
 	_currentAreaMessages.clear();
 	_currentAreaMessages.push_back(_messagesList[index]);
 }
@@ -334,6 +354,14 @@ bool FreescapeEngine::executeEndIfVisibilityIsEqual(FCLInstruction &instruction)
 
 	return (obj->isInvisible() == (value != 0));
 }
+
+bool FreescapeEngine::checkIfGreaterOrEqual(FCLInstruction &instruction) {
+	uint16 variable = instruction._source;
+	uint16 value = instruction._destination;
+	debugC(1, kFreescapeDebugCode, "Check if variable %d is greater than equal to %d!", variable, value);
+	return (_gameStateVars[variable] >= value);
+}
+
 
 bool FreescapeEngine::executeEndIfNotEqual(FCLInstruction &instruction) {
 	uint16 variable = instruction._source;

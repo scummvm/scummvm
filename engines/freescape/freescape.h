@@ -281,6 +281,7 @@ public:
 	void executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer);
 
 	// Instructions
+	bool checkIfGreaterOrEqual(FCLInstruction &instruction);
 	void executeIncrementVariable(FCLInstruction &instruction);
 	void executeDecrementVariable(FCLInstruction &instruction);
 	void executeSetVariable(FCLInstruction &instruction);
