@@ -274,7 +274,7 @@ bool Cast::loadConfig() {
 	_castArrayStart = stream->readUint16();
 	_castArrayEnd = stream->readUint16();
 
-	// v3 and below use this, override for v4 and over
+	// D3 and below use this, override for D4 and over
 	// actual framerates are, on average: { 3.75, 4, 4.35, 4.65, 5, 5.5, 6, 6.6, 7.5, 8.5, 10, 12, 20, 30, 60 }
 	Common::Array<int> frameRates = { 3, 4, 4, 4, 5, 5, 6, 6, 7, 8, 10, 12, 15, 20, 30, 60 };
 	byte readRate = stream->readByte();
@@ -500,7 +500,7 @@ void Cast::loadCast() {
 		delete r;
 	}
 
-	// Font Mapping V4
+	// Font Mapping D4
 	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('F', 'm', 'a', 'p'))) != nullptr) {
 		loadFontMapV4(*r);
 		delete r;
@@ -529,7 +529,7 @@ void Cast::loadCast() {
 		delete r;
 	}
 
-	// Cast library mapping, used in V5 and up
+	// Cast library mapping, used in D5+
 	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('M', 'C', 's', 'L'))) != nullptr) {
 		loadCastLibMapping(*r);
 		delete r;
@@ -998,7 +998,7 @@ LingoContextEntry::LingoContextEntry(int32 i, int16 n)
 
 void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 	if (_version >= kFileVer400) {
-		debugC(1, kDebugCompile, "Add V4 script context");
+		debugC(1, kDebugCompile, "Add D4 script context");
 
 		if (debugChannelSet(5, kDebugLoading)) {
 			debugC(5, kDebugLoading, "Lctx header:");

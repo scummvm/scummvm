@@ -1381,10 +1381,10 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		// Size of an entry in the consts index.
 		int constEntrySize = 0;
 		if (version >= kFileVer500) {
-			// For V5 this is uint32 type + uint32 offset
+			// For D5 this is uint32 type + uint32 offset
 			constEntrySize = 8;
 		} else {
-			// For V4 this is uint16 type + uint32 offset
+			// For D4 this is uint16 type + uint32 offset
 			constEntrySize = 6;
 		}
 
