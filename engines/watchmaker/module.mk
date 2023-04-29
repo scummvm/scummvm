@@ -21,7 +21,6 @@ MODULE_OBJS = \
 	3d/t3d_body.o \
 	3d/t3d_face.o \
 	3d/t3d_mesh.o \
-	3d/t3d_mesh.o \
 	3d/texture.o \
 	3d/types3d.o \
 	3d/vertex.o \
