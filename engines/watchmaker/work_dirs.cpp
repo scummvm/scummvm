@@ -28,7 +28,7 @@ namespace Watchmaker {
 
 Common::SharedPtr<Common::SeekableReadStream> WorkDirs::resolveFile(const Common::String &path, bool noFastFile) {
 	Common::String converted = path;
-	for (int i = 0; i < path.size(); i++) {
+	for (uint i = 0; i < path.size(); i++) {
 		if (converted[i] == '\\') {
 			converted.setChar('/', i);
 		}

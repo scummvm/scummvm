@@ -146,7 +146,6 @@ void ProcessMouse(WGame &game) {
 void HandleMouseChanges() {
 	// Mouse movement will have been accumulated prior to calling this function.
 	// Button flags may also have been changed, this function then applies the button changes.
-	int curX, curY;
 
 	//warning("L: %d %d R: %d %d", bLPressed, bLPressedPrev, bRPressed, bRPressedPrev);
 	// Button 0 pressed or released

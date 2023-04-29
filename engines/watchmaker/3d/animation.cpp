@@ -156,7 +156,7 @@ uint8 GetLightDirection(t3dV3F *dest, uint8 pos) {
  *                  t3dLoadAnimation
  * --------------------------------------------------*/
 int8 t3dLoadAnimation(WGame &game, const char *s, t3dMESH *mesh, uint16 Flag) {
-	uint32 nf, nb, i, j, k, h, older, len, ScaleAnim, CurPreloadedAnim;
+	uint32 nf, nb, i, j, k, h, older, ScaleAnim, CurPreloadedAnim;
 	t3dLOADANIM *p;
 	t3dLOADBONE *bone;
 	t3dBONEANIM *db;
@@ -560,7 +560,7 @@ t3dBODY *LoadShadowMeshes(WGame &game, const char *pname, t3dBODY *Body) {
 t3dCHARACTER *t3dLoadCharacter(WGame &game, const char *pname, uint16 num) {
 	warning("LoadCharacter(%s)", pname);
 	uint8   Mirror = 1;
-	uint16  n = 0, f, i;
+	uint16  n = 0, f;
 	t3dV3F tmp;
 	//  gVertex *v;
 
@@ -657,8 +657,6 @@ t3dCHARACTER *t3dLoadCharacter(WGame &game, const char *pname, uint16 num) {
  *                  GetFullLightPosition
  * --------------------------------------------------*/
 uint8 GetFullLightDirection(t3dV3F *dest, uint8 pos) {
-	uint8 a;
-
 	if (!pos) return 0;
 
 	auto pLights = t3dCurRoom->getPositionalLight(pos);
@@ -697,7 +695,6 @@ void ReleasePreloadedAnims() {
 uint8 CompareLightPosition(char *roomname, uint8 pos1, t3dV3F *pos2, t3dF32 acceptable_dist) {
 	t3dV3F p1;
 	t3dBODY *t;
-	int32 i;
 
 	if ((pos1 <= 0) || (pos2 == nullptr)) return FALSE;
 

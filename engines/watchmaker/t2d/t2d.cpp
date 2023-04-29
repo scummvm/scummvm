@@ -5443,13 +5443,13 @@ void doT2D(WGame &game) {
 }
 
 void CaricaSaves(WGame &game) {
+	warning("STUBBED: CaricaSaves");
+#if 0
 	int i, j;
 	char DataFile[MAX_PATH];
 	char GfxFile[MAX_PATH];
 	char Temp[10];
 	char Data[T3D_NAMELEN + 8];
-	warning("STUBBED: CaricaSaves");
-#if 0
 	FILE *file;
 
 	NSaves = 0;

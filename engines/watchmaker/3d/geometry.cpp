@@ -2305,7 +2305,6 @@ void t3dSetFaceVisibility(t3dMESH *mesh, t3dCAMERA *cam) {
 	T1 = T2 = -1;
 
 	MaterialPtr target = nullptr;
-	int targetIndex = 0;
 	for (uint32 i = 0; i < mesh->NumFaces(); i++) {
 		t3dFACE &f = mesh->FList[i];
 
@@ -2722,7 +2721,7 @@ void t3dRaiseSmoke(t3dV3F *pos, t3dParticle *p) {
  * --------------------------------------------------*/
 void t3dAnimLights(t3dBODY *b) {
 //	t3dU8        exist=0;
-	gVertex     **vlist, *vv;
+	gVertex     *vv;
 	int32      rr, gg, bb, aa;
 	uint8       bProcessLights;
 
@@ -2734,10 +2733,10 @@ void t3dAnimLights(t3dBODY *b) {
 
 	t3dCalcHalos(b);                                                        //Calculate flare/halos for lights
 
-	int i = 0;
+	int k = 0;
 	bProcessLights = 0;
-	while ((i < b->NumLights())) {
-		t3dLIGHT &l = b->LightTable[i];
+	while ((k < b->NumLights())) {
+		t3dLIGHT &l = b->LightTable[k];
 		if (l.Type & T3D_LIGHT_CANDLESMOKE)
 			t3dRaiseSmoke(&l.Source, l.Particle.get());
 		else if (l.Type & T3D_LIGHT_PULSE) {
@@ -2747,12 +2746,12 @@ void t3dAnimLights(t3dBODY *b) {
 			l.LightRandomizer = -rand() % ((int32)(l.Color.x + l.Color.y + l.Color.z) / 12);
 #endif
 		}
-		i++;
+		k++;
 	}
 
 	if (bProcessLights) {
 		//lock all vertexbuffers
-		for (int i = 0; i < b->NumMeshes(); i++) {
+		for (uint i = 0; i < b->NumMeshes(); i++) {
 			t3dMESH &m = b->MeshTable[i];
 			m.VBptr = m.VertexBuffer;
 			m.Flags |= T3D_MESH_UPDATEVB;
@@ -2786,7 +2785,7 @@ void t3dAnimLights(t3dBODY *b) {
 			l.FlickerDelay++;
 		}
 		//lock all vertexbuffers
-		for (i = 0; i < b->NumMeshes(); i++) {
+		for (uint i = 0; i < b->NumMeshes(); i++) {
 			b->MeshTable[i].VBptr = nullptr;
 		}
 	}
@@ -2810,14 +2809,13 @@ void t3dCheckMaterialVB(MaterialPtr mat) {
 	//warning("TODO: Implement t3dCheckMaterialVB");
 //	gv = rLockVertexPtr(mat->VB, DDLOCK_WRITEONLY | DDLOCK_NOSYSLOCK);
 	mat->VBO->_buffer.clear();
-	for (int i = 0; i < mat->NumAllocatedVerts(); i++) {
+	for (i = 0; i < mat->NumAllocatedVerts(); i++) {
 		auto vert = *mat->VertsList[i];
 		mat->VBO->_buffer.push_back(vert);
 		//memcpy(gv, mat->VertsList[i], sizeof(gVertex));
 	}
 
 //	rUnlockVertexPtr(mat->VB);
-
 }
 
 /* -----------------10/06/99 15.49-------------------

@@ -93,7 +93,7 @@ bool rClearBuffers(char flags) {
 	checkGlError("Entering rClearBuffers");
 	bool clearStencil = rGetStencilBitDepth() != 0;
 	bool clearDepth = flags & rCLEARZBUFFER;
-	bool clearBack = flags & rCLEARBACKBUFFER;
+	//bool clearBack = flags & rCLEARBACKBUFFER;
 	bool clearScreen = flags & rCLEARSCREENBUFFER;
 
 	// Picking green to make the clear color easy to spot.

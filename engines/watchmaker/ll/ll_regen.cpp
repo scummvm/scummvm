@@ -355,7 +355,6 @@ void Add3DStuff(WGame &game) {
 
 		if (LoaderFlags & T3D_DEBUGMODE) {
 			extern uint8 t3dCurCameraIndex;
-			extern int ci;
 			auto windowInfo = game._renderer->getScreenInfos();
 			if (CurFps > 100.0f) CurFps = 100.0f;
 			if (AvgFps > 100.0f) AvgFps = 100.0f;
@@ -407,10 +406,10 @@ void Add3DStuff(WGame &game) {
 //			if( CurFps > hi ) hi = CurFps;
 //			if( CurFps < lo ) lo = CurFps;
 //			DebugVideo(1,y+=16,"mHide %d",mHide);
-//	         DebugVideo(1,1,"FPS: %3d TRI: %d VERT: %d",(int)AvgFps,StatNumTris,StatNumVerts);
+//			DebugVideo(1,1,"FPS: %3d TRI: %d VERT: %d",(int)AvgFps,StatNumTris,StatNumVerts);
 //			DebugVideo(1,y+=16,"CurTime %d    CurCamera %d",t3dCurTime,t3dCurCameraIndex+1);
 //			DebugVideo(1,y+=16,"CurDialog %d, obj %d",CurDialog,Dialog[CurDialog].obj);
-//		        DebugVideo(1,y+=16,"%d,%d: %s (%d %d) %X",CurRoom,CurObj,ObjectUnderCursor,NextPortalObj,NextPortalAnim,Obj[CurObj].flags); //_remove
+//			DebugVideo(1,y+=16,"%d,%d: %s (%d %d) %X",CurRoom,CurObj,ObjectUnderCursor,NextPortalObj,NextPortalAnim,Obj[CurObj].flags); //_remove
 		}
 	}
 //	Aggiunge i rettangoli D3D

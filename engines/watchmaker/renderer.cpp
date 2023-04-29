@@ -197,10 +197,7 @@ void Renderer::printText(const char *s, unsigned int dst, FontKind font, FontCol
 	auto f = _fonts->fontForKind(font);
 	uint32 src = f->color[color];
 
-	if (dst == 0)
-		gPrintText(*_game, s, NULL, src, f->table, x, y);
-	else
-		gPrintText(*_game, s, dst, src, f->table, x, y);
+	gPrintText(*_game, s, dst, src, f->table, x, y);
 }
 
 bool Renderer::setProjectionMatrix(float width, float height, float fAspect, float fNearPlane, float fFarPlane) {

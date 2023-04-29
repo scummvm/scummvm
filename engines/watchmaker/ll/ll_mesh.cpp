@@ -501,7 +501,6 @@ void SMeshModifier::modifyMesh(WGame &game, t3dMESH *mesh) {
  * --------------------------------------------------*/
 void MeshModifiers::addMeshModifier(const Common::String &name, int16 com, void *p) {
 	struct SMeshModifier *mm;
-	uint32 Flags;
 	int16 i;
 
 	warning("Not sure this is right"); // Used to check for nullptr, not 0 length.

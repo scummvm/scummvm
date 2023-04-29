@@ -36,7 +36,6 @@ void t3dMatMul(t3dM3X3F *Dest, t3dM3X3F *a, t3dM3X3F *b);
 void t3dMatRotAxis(t3dM3X3F *m, t3dF32 x, t3dF32 y, t3dF32 z, t3dF32 rad);
 void t3dMatRot(t3dM3X3F *matrix, t3dF32 x, t3dF32 y, t3dF32 z);
 void t3dMatReflect(t3dM3X3F *Matrix, t3dV3F *mirrorpos, t3dNORMAL *n);
-void t3dMatCopy(t3dM3X3F *d, t3dM3X3F *s);
 void t3dMatView(t3dM3X3F *dest, t3dV3F *eye, t3dV3F *center);
 void t3dVectTransform(t3dV3F *d, t3dV3F *s, t3dM3X3F *mat);
 void t3dVectTransformInv(t3dV3F *d, t3dV3F *s, t3dM3X3F *mat);
@@ -45,7 +44,6 @@ void t3dVectCross(t3dV3F *d, t3dV3F *v2, t3dV3F *v3);
 void t3dVectSub(t3dV3F *d, t3dV3F *a, t3dV3F *b);            // d = a - b
 void t3dVectAdd(t3dV3F *d, t3dV3F *a, t3dV3F *b);            // d = a - b
 void t3dVectFill(t3dV3F *d, t3dF32 a);
-void t3dVectInit(t3dV3F *d, t3dF32 a1, t3dF32 a2, t3dF32 a3);
 void t3dVectCopy(t3dV3F *d, t3dV3F *s);
 t3dF32 t3dVectMod(t3dV3F *c);
 t3dF32 t3dVectDistance(t3dV3F *a, t3dV3F *b);

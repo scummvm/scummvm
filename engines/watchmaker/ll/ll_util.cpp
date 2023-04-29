@@ -422,10 +422,7 @@ void UpdateRoomVisibility(WGame &game) {
  *                  SetBndLevel
  * --------------------------------------------------*/
 bool SetBndLevel(WGame &game, const char *roomname, int32 lev) {
-	t3dBODY *t;
-	int32 i;
-
-	t = nullptr;
+	t3dBODY *t  = nullptr;
 	if (roomname && (roomname[0] != '\0')) {
 		_vm->_roomManager->getRoomIfLoaded(roomname);
 	} else t = t3dCurRoom;
@@ -566,10 +563,7 @@ void ChangeRoom(WGame &game, Common::String n, uint8 pos, int32 an) {
  *                  GetBndLevel
  * --------------------------------------------------*/
 int32 GetBndLevel(char *roomname) {
-	t3dBODY *t;
-	int32 i;
-
-	t = nullptr;
+	t3dBODY *t = nullptr;
 	if (roomname && (roomname[0] != '\0')) {
 		t = _vm->_roomManager->getRoomIfLoaded(roomname);
 	} else t = t3dCurRoom;

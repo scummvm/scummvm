@@ -50,8 +50,7 @@ int WMakerMain() {
 	warning("The Watchmaker");
 
 	//CreateWindow()
-	int loaderFlags = 0;
-	//loaderFlags = ParseCommandLine()
+	//int loaderFlags = ParseCommandLine()
 
 	WGame *game = new WGame;
 

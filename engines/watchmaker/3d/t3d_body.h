@@ -72,7 +72,7 @@ public:
 		return VBTable.back();
 	}
 	void clearVBTable() {
-		for (int i = 0; i < VBTable.size(); i++) {
+		for (uint i = 0; i < VBTable.size(); i++) {
 			rDeleteVertexBuffer(*VBTable[i]);
 		}
 		VBTable.clear();
