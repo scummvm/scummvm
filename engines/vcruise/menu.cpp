@@ -619,15 +619,16 @@ void ReahSoundMenuPage::addPageContents() {
 	if (ConfMan.hasKey("music_volume"))
 		musVol = ConfMan.getInt("music_volume");
 
-	_soundChecked = (sndVol != 0);
-	_musicChecked = (musVol != 0);
+	bool musicMute = false;
+	if (ConfMan.hasKey("vcruise_mute_music"))
+		musicMute = ConfMan.getBool("vcruise_mute_music");
 
-	// Set defaults so clicking the checkbox does something
-	if (sndVol == 0)
-		sndVol = 3 * Audio::Mixer::kMaxMixerVolume / 4;
+	bool soundMute = false;
+	if (ConfMan.hasKey("vcruise_mute_sound"))
+		soundMute = ConfMan.getBool("vcruise_mute_sound");
 
-	if (musVol == 0)
-		musVol = 3 * Audio::Mixer::kMaxMixerVolume / 4;
+	_soundChecked = !musicMute;
+	_musicChecked = !soundMute;
 
 	Graphics::Surface *soundGraphics = _menuInterface->getUIGraphic(17);
 	if (soundGraphics) {
@@ -705,27 +706,21 @@ void ReahSoundMenuPage::onSliderMoved(uint slider) {
 }
 
 void ReahSoundMenuPage::applySoundVolume() const {
-	int vol = 0;
-
-	if (_soundChecked)
-		vol = _sliders[kSliderSound]._value * Audio::Mixer::kMaxMixerVolume / _sliders[kSliderSound]._maxValue;
+	int vol = _sliders[kSliderSound]._value * Audio::Mixer::kMaxMixerVolume / _sliders[kSliderSound]._maxValue;
 
 	ConfMan.setInt("sfx_volume", vol, ConfMan.getActiveDomainName());
+	ConfMan.setBool("vcruise_mute_sound", !_soundChecked, ConfMan.getActiveDomainName());
 
-	if (g_engine->_mixer)
-		g_engine->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol);
+	g_engine->syncSoundSettings();
 }
 
 void ReahSoundMenuPage::applyMusicVolume() const {
-	int vol = 0;
-
-	if (_musicChecked)
-		vol = _sliders[kSliderMusic]._value * Audio::Mixer::kMaxMixerVolume / _sliders[kSliderMusic]._maxValue;
+	int vol = _sliders[kSliderMusic]._value * Audio::Mixer::kMaxMixerVolume / _sliders[kSliderMusic]._maxValue;
 
 	ConfMan.setInt("music_volume", vol, ConfMan.getActiveDomainName());
+	ConfMan.setBool("vcruise_mute_music", !_musicChecked, ConfMan.getActiveDomainName());
 
-	if (g_engine->_mixer)
-		g_engine->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol);
+	g_engine->syncSoundSettings();
 }
 
 ReahQuitMenuPage::ReahQuitMenuPage() : ReahMenuBarPage(kMenuBarButtonQuit) {

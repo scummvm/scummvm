@@ -29,6 +29,8 @@
 #include "common/algorithm.h"
 #include "common/translation.h"
 
+#include "audio/mixer.h"
+
 #include "gui/message.h"
 
 #include "vcruise/runtime.h"
@@ -217,6 +219,44 @@ bool VCruiseEngine::hasFeature(EngineFeature f) const {
 	default:
 		return false;
 	};
+}
+
+void VCruiseEngine::syncSoundSettings() {
+	// Sync the engine with the config manager
+	int soundVolumeMusic = ConfMan.getInt("music_volume");
+	int soundVolumeSFX = ConfMan.getInt("sfx_volume");
+	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
+
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	// We need to handle the speech mute separately here. This is because the
+	// engine code should be able to rely on all speech sounds muted when the
+	// user specified subtitles only mode, which results in "speech_mute" to
+	// be set to "true". The global mute setting has precedence over the
+	// speech mute setting though.
+	bool speechMute = mute;
+	if (!speechMute)
+		speechMute = ConfMan.getBool("speech_mute");
+
+	bool muteMusic = false;
+	if (ConfMan.hasKey("vcruise_mute_music"))
+		muteMusic = ConfMan.getBool("vcruise_mute_music");
+
+	bool muteSound = ConfMan.getBool("vcruise_mute_sound");
+	if (ConfMan.hasKey("vcruise_mute_sound"))
+		muteSound = ConfMan.getBool("vcruise_mute_sound");
+
+	_mixer->muteSoundType(Audio::Mixer::kPlainSoundType, mute || muteSound);
+	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, mute || muteMusic);
+	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, mute || muteSound);
+	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, speechMute || muteSound);
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, Audio::Mixer::kMaxMixerVolume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
 }
 
 Common::Error VCruiseEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {

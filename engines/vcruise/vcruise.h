@@ -49,7 +49,7 @@ public:
 	~VCruiseEngine() override;
 
 	bool hasFeature(EngineFeature f) const override;
-	//void syncSoundSettings() override;
+	void syncSoundSettings() override;
 
 	const VCruiseGameDescription *_gameDescription;
 
