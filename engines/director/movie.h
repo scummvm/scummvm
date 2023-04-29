@@ -22,6 +22,9 @@
 #ifndef DIRECTOR_MOVIE_H
 #define DIRECTOR_MOVIE_H
 
+#define DEFAULT_CAST_LIB 1
+#define CAST_LIB_OFFSET 1023
+
 namespace Common {
 struct Event;
 class ReadStreamEndian;
@@ -88,13 +91,14 @@ public:
 	static Common::Rect readRect(Common::ReadStreamEndian &stream);
 	static InfoEntries loadInfoEntries(Common::SeekableReadStreamEndian &stream, uint16 version);
 
+	void loadCastLibMapping(Common::SeekableReadStreamEndian &stream);
 	bool loadArchive();
 	void setArchive(Archive *archive);
 	Archive *getArchive() const { return _movieArchive; };
 	Common::String getMacName() const { return _macName; }
 	Window *getWindow() const { return _window; }
 	DirectorEngine *getVM() const { return _vm; }
-	Cast *getCast() const { return _casts.getValOrDefault(0, nullptr); }
+	Cast *getCast() const { return _casts.getValOrDefault(DEFAULT_CAST_LIB, nullptr); }
 	Cast *getSharedCast() const { return _sharedCast; }
 	Score *getScore() const { return _score; }
 

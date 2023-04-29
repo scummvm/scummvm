@@ -112,7 +112,7 @@ int Score::resolvePaletteId(int id) {
 	if (id == 255) {
 		id = g_director->getCurrentMovie()->getCast()->_defaultPalette;
 	} else if (id > 0) {
-		CastMember *member = _movie->getCastMember(CastMemberID(id, 0));
+		CastMember *member = _movie->getCastMember(CastMemberID(id, DEFAULT_CAST_LIB));
 		id = (member && member->_type == kCastPalette) ? ((PaletteCastMember *)member)->getPaletteId() : 0;
 	}
 

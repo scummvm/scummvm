@@ -27,6 +27,7 @@
 
 #include "director/director.h"
 #include "director/archive.h"
+#include "director/movie.h"
 #include "director/window.h"
 #include "director/util.h"
 
@@ -681,10 +682,19 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		delete keyStream;
 	}
 
-	// Parse the CAS*, if present
-	if (Common::SeekableReadStreamEndian *casStream = getMovieResourceIfPresent(MKTAG('C', 'A', 'S', '*'))) {
-		readCast(*casStream);
-		delete casStream;
+	// Parse the CAS* for each library, if present
+	uint32 casTag = MKTAG('C', 'A', 'S', '*');
+	if (_keyData.contains(casTag)) {
+		for (auto &it : _keyData[casTag]) {
+			uint32 libId = it._key - CAST_LIB_OFFSET;
+			for (auto &jt : it._value) {
+				if (Common::SeekableReadStreamEndian *casStream = getResource(casTag, jt)) {
+					Resource res = getResourceDetail(casTag, jt);
+					readCast(*casStream, libId);
+					delete casStream;
+				}
+			}
+		}
 	}
 
 	return true;
@@ -910,12 +920,12 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 	return true;
 }
 
-void RIFXArchive::readCast(Common::SeekableReadStreamEndian &casStream) {
+void RIFXArchive::readCast(Common::SeekableReadStreamEndian &casStream, uint16 libId) {
 	uint castTag = MKTAG('C', 'A', 'S', 't');
 
 	uint casSize = casStream.size() / 4;
 
-	debugCN(2, kDebugLoading, "CAS*: %d [", casSize);
+	debugCN(2, kDebugLoading, "CAS*: libId %d, %d members [", libId, casSize);
 
 	for (uint i = 0; i < casSize; i++) {
 		uint32 castIndex = casStream.readUint32BE();
@@ -926,6 +936,7 @@ void RIFXArchive::readCast(Common::SeekableReadStreamEndian &casStream) {
 		}
 		Resource &res = _types[castTag][castIndex];
 		res.castId = i;
+		res.libId = libId;
 	}
 	debugC(2, kDebugLoading, "]");
 }
@@ -947,6 +958,14 @@ void RIFXArchive::readKeyTable(Common::SeekableReadStreamEndian &keyStream) {
 
 		debugC(2, kDebugLoading, "KEY*: childIndex: %d parentIndex: %d childTag: %s", childIndex, parentIndex, tag2str(childTag));
 
+		if (!_keyData.contains(childTag)) {
+			_keyData[childTag] = KeyMap();
+		}
+		if (!_keyData[childTag].contains(parentIndex)) {
+			_keyData[childTag][parentIndex] = KeyArray();
+		}
+		_keyData[childTag][parentIndex].push_back(childIndex);
+
 		// Link cast members to their resources.
 		if (castResMap.contains(parentIndex)) {
 			castResMap[parentIndex].children.push_back(_types[childTag][childIndex]);
@@ -958,7 +977,7 @@ void RIFXArchive::readKeyTable(Common::SeekableReadStreamEndian &keyStream) {
 		// The movie has the hardcoded ID 1024, which may collide with a cast member's ID
 		// when there are many chunks. This is not a problem since cast members and
 		// movies use different resource types, so we can tell them apart.
-		if (parentIndex == 1024) {
+		if (parentIndex == DEFAULT_CAST_LIB + CAST_LIB_OFFSET) {
 			_movieChunks.setVal(childTag, childIndex);
 		}
 	}

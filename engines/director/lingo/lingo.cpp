@@ -1182,7 +1182,7 @@ CastMemberID Datum::asMemberID(CastType castType) const {
 	if (type == CASTREF || type == FIELDREF)
 		return *u.cast;
 
-	return g_lingo->resolveCastMember(*this, 0, castType);
+	return g_lingo->resolveCastMember(*this, DEFAULT_CAST_LIB, castType);
 }
 
 Common::Point Datum::asPoint() const {
