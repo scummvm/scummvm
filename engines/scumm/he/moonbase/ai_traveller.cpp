@@ -107,12 +107,12 @@ int Traveller::numChildrenToGen() {
 }
 
 IContainedObject *Traveller::createChildObj(int index, int &completionFlag) {
-	static int nodeCount = 0;
+	//static int nodeCount = 0;
 	static int completionState = 1;
 
-	if (!index) nodeCount = 0;
+	//if (!index) nodeCount = 0;
 
-	nodeCount++;
+	//nodeCount++;
 
 	Traveller *retTraveller = new Traveller(_ai);
 

@@ -111,7 +111,7 @@ int Sortie::numChildrenToGen() {
 IContainedObject *Sortie::createChildObj(int index, int &completionFlag) {
 	float thisDamage;
 	Sortie *retSortie = new Sortie(_ai);
-	int activeDefenses = 0;
+//	int activeDefenses = 0;
 
 	Common::Array<DefenseUnit *> thisEnemyDefenses;
 
@@ -172,7 +172,7 @@ IContainedObject *Sortie::createChildObj(int index, int &completionFlag) {
 
 		// Check to see if we're within an active defense's radius
 		if ((distance < (*i)->getRadius()) && ((*i)->getState() == DUS_ON)) {
-			activeDefenses++;
+			//activeDefenses++;
 
 			// Turn off this anti-air and drop the coverage count
 			if (((*i)->getType() == DUT_ANTI_AIR)) {
