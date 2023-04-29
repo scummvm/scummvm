@@ -992,7 +992,7 @@ int16 EfhEngine::handleCharacterJoining() {
 void EfhEngine::drawText(uint8 *srcPtr, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag) {
 	debugC(7, kDebugEngine, "drawText %d-%d %d-%d %s", posX, posY, maxX, maxY, flag ? "True" : "False");
 
-	uint16 stringIdx = 0;
+	//uint16 stringIdx = 0;
 	uint8 *impPtr = srcPtr;
 	_messageToBePrinted = "";
 
@@ -1004,13 +1004,13 @@ void EfhEngine::drawText(uint8 *srcPtr, int16 posX, int16 posY, int16 maxX, int1
 
 		if (curChar == 0x0D) {
 			_messageToBePrinted += " ";
-			stringIdx++;
+			//stringIdx++;
 			++impPtr;
 		} else if (curChar == 0x0A) {
 			++impPtr;
 		} else {
 			_messageToBePrinted += curChar;
-			stringIdx++;
+			//stringIdx++;
 			++impPtr;
 		}
 	}
