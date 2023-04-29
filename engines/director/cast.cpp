@@ -123,7 +123,13 @@ CastMember *Cast::getCastMember(int castId) {
 		// prevent recursive calls to CastMember::load()
 		_loadMutex = false;
 		result->load();
+		while (!_loadQueue.empty()) {
+			_loadQueue.back()->load();
+			_loadQueue.pop_back();
+		}
 		_loadMutex = true;
+	} else if (result) {
+		_loadQueue.push_back(result);
 	}
 	return result;
 }
