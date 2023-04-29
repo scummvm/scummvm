@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-29 12:20+0000\n"
-"PO-Revision-Date: 2023-04-24 08:35+0000\n"
+"PO-Revision-Date: 2023-04-29 19:23+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -108,14 +108,10 @@ msgid "Manual mode"
 msgstr "Manualモード"
 
 #: gui/cloudconnectionwizard.cpp:183
-#, fuzzy
-#| msgid "Will ask you to run Local Webserver"
 msgid "Will ask you to run the Local Webserver"
 msgstr "ローカルWebサーバーの実行を要求"
 
 #: gui/cloudconnectionwizard.cpp:185
-#, fuzzy
-#| msgid "Requires Local Webserver feature"
 msgid "Requires the Local Webserver feature"
 msgstr "ローカルWebサーバーが必要です"
 
@@ -124,10 +120,6 @@ msgid "Quick Mode: Step 1"
 msgstr "Quickモード：ステップ1"
 
 #: gui/cloudconnectionwizard.cpp:206
-#, fuzzy
-#| msgid ""
-#| "In this mode, Local Webserver must be running,\n"
-#| "so your browser could forward data to ScummVM"
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
@@ -201,11 +193,6 @@ msgid "Open this link in your browser:"
 msgstr "ブラウザーでリンクを開く："
 
 #: gui/cloudconnectionwizard.cpp:321
-#, fuzzy
-#| msgid ""
-#| "When it fails to pass JSON code to ScummVM,\n"
-#| "find it on Troubleshooting section of the page,\n"
-#| "and go to the next step here."
 msgid ""
 "When it fails to pass the JSON code to ScummVM,\n"
 "find it on the Troubleshooting section of the page,\n"
@@ -220,8 +207,6 @@ msgid "Manual Mode: Step 2"
 msgstr "Manualモード：ステップ2"
 
 #: gui/cloudconnectionwizard.cpp:355
-#, fuzzy
-#| msgid "Copy JSON code from browser here and press Next:"
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr "ここにJSONコードをコピーし「次へ」を押します："
 
@@ -242,14 +227,10 @@ msgid "Cloud storage was not connected."
 msgstr "クラウドストレージに接続不可。"
 
 #: gui/cloudconnectionwizard.cpp:378
-#, fuzzy
-#| msgid "Make sure JSON code was copied correctly and retry."
 msgid "Make sure the JSON code was copied correctly and retry."
 msgstr "JSONコードがコピーされた事を確認し、リトライ。"
 
 #: gui/cloudconnectionwizard.cpp:379
-#, fuzzy
-#| msgid "It it doesn't work, try from the beginning."
 msgid "It it doesn't work, try again from the beginning."
 msgstr "上手く行かない場合、最初から試してください。"
 
@@ -270,10 +251,8 @@ msgid "Next"
 msgstr "次へ"
 
 #: gui/cloudconnectionwizard.cpp:493
-#, fuzzy
-#| msgid "Another Storage is working now. Do you want to interrupt it?"
 msgid "Another Storage is working right now. Do you want to interrupt it?"
-msgstr "すでに別のストレージが使用されています。切断してもよろしいですか?"
+msgstr "すでに別のストレージが使用されています。切断しますか?"
 
 #: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:136
@@ -303,15 +282,11 @@ msgid "No"
 msgstr "いいえ"
 
 #: gui/cloudconnectionwizard.cpp:502
-#, fuzzy
-#| msgid "Wait until current Storage finishes up and try again."
 msgid "Wait until current Storage finishes and try again."
-msgstr "ストレージへのアップロード完了後に再実施してください。"
+msgstr "現在のストレージが終了するまでお待ちください。"
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:530
-#, fuzzy
-#| msgid "JSON code contents is malformed."
 msgid "JSON code contents are malformed."
 msgstr "JSONコードの内容が不正です。"
 
@@ -6122,14 +6097,7 @@ msgid "Choose Spell"
 msgstr "魔法を選択"
 
 #: engines/kyra/gui/saveload_eob.cpp:598
-#, fuzzy, c-format
-#| msgid ""
-#| "The following original saved game file has been found in your game path:\n"
-#| "\n"
-#| "%s %s\n"
-#| "\n"
-#| "Do you wish to use this saved game file with ScummVM?\n"
-#| "\n"
+#, c-format
 msgid ""
 "The following original saved game file has been found in your game path:\n"
 "\n"
@@ -6140,7 +6108,7 @@ msgid ""
 msgstr ""
 "オリジナルのセーブファイルが、ゲームディレクトリーで見つかりました：\n"
 "\n"
-"%s %s\n"
+"%s %S\n"
 "\n"
 "このセーブファイルをScummVMで使用しますか?\n"
 "\n"
@@ -9087,62 +9055,44 @@ msgid "Speeds up animations."
 msgstr "アニメを高速化します。"
 
 #: engines/vcruise/metaengine.cpp:102
-#, fuzzy
-#| msgid "Display/Hide Info Screen"
 msgid "Display help screen"
-msgstr "情報スクリーンの表示/非表示"
+msgstr "情報スクリーンの表示"
 
 #: engines/vcruise/metaengine.cpp:107 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "ゲームをセーブ"
 
 #: engines/vcruise/metaengine.cpp:117
-#, fuzzy
-#| msgid "Open 3DS Settings"
 msgid "Open sound settings"
-msgstr "3DSの設定を開く"
+msgstr "サウンド設定を開く"
 
 #: engines/vcruise/metaengine.cpp:122
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit game"
-msgstr "ゲームを終了する"
+msgstr "ゲーム終了"
 
 #: engines/vcruise/metaengine.cpp:133
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle music on/off"
-msgstr "全面モードの切替"
+msgstr "BGM ON/OFFの切替"
 
 #: engines/vcruise/metaengine.cpp:138
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Toggle sound effects on/off"
-msgstr "音響効果の音量"
+msgstr "SE ON/OFFの切替"
 
 #: engines/vcruise/metaengine.cpp:143
-#, fuzzy
-#| msgid "Music volume up / down"
 msgid "Music volume down"
-msgstr "BGMの音量アップ/ダウン"
+msgstr "BGMの音量ダウン"
 
 #: engines/vcruise/metaengine.cpp:148
-#, fuzzy
-#| msgid "Music volume: "
 msgid "Music volume up"
-msgstr "音楽の音量： "
+msgstr "BGMの音量アップ"
 
 #: engines/vcruise/metaengine.cpp:153
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume down"
-msgstr "音響効果の音量"
+msgstr "SEの音量ダウン"
 
 #: engines/vcruise/metaengine.cpp:158
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume up"
-msgstr "音響効果の音量"
+msgstr "SEの音量アップ"
 
 #: engines/vcruise/vcruise.cpp:77
 msgid "This game requires JPEG support, which was not compiled in."
