@@ -1257,6 +1257,40 @@ bool Runtime::runIdle() {
 				drawCompass();
 				return true;
 			}
+		} else if (osEvent.type == kOSEventTypeKeymappedEvent) {
+			if (!_lmbDown) {
+				switch (osEvent.keymappedEvent) {
+				case kKeymappedEventHelp:
+					if (_gameID == GID_REAH)
+						changeToMenuPage(createMenuReahHelp());
+					else
+						error("Don't have a help menu for this game");
+					return true;
+				case kKeymappedEventLoadGame:
+					if (g_engine->loadGameDialog())
+						return true;
+					break;
+				case kKeymappedEventSaveGame:
+					if (g_engine->saveGameDialog())
+						return true;
+					break;
+				case kKeymappedEventPause:
+					if (_gameID == GID_REAH)
+						changeToMenuPage(createMenuReahPause());
+					else
+						error("Don't have a pause menu for this game");
+					return true;
+				case kKeymappedEventQuit:
+					if (_gameID == GID_REAH)
+						changeToMenuPage(createMenuReahQuit());
+					else
+						error("Don't have a quit menu for this game");
+					return true;
+
+				default:
+					break;
+				}
+			}
 		}
 	}
 

@@ -82,6 +82,7 @@ MenuPage *createMenuReahMain();
 MenuPage *createMenuReahHelp();
 MenuPage *createMenuReahSound();
 MenuPage *createMenuReahQuit();
+MenuPage *createMenuReahPause();
 
 } // End of namespace VCruise
 

@@ -195,6 +195,13 @@ private:
 	};
 };
 
+class ReahPauseMenuPage : public ReahMenuBarPage {
+public:
+	ReahPauseMenuPage();
+
+	void addPageContents() override;
+};
+
 class ReahMainMenuPage : public ReahMenuPage {
 public:
 	void start() override;
@@ -489,7 +496,8 @@ void ReahMenuBarPage::start() {
 	bool menuButtonsEnabled[5] = {true, true, true, true, true};
 
 	menuButtonsEnabled[1] = _menuInterface->canSave();
-	menuButtonsEnabled[_page] = false;
+	if (_page < 5)
+		menuButtonsEnabled[_page] = false;
 
 	if (graphic) {
 		for (int buttonIndex = 0; buttonIndex < 5; buttonIndex++) {
@@ -832,6 +840,25 @@ void ReahQuitMenuPage::onButtonClicked(uint button, bool &outChangedState) {
 		onButtonClicked(kMenuBarButtonReturn, outChangedState);
 }
 
+ReahPauseMenuPage::ReahPauseMenuPage() : ReahMenuBarPage(static_cast<uint>(-1)) {
+}
+
+void ReahPauseMenuPage::addPageContents() {
+	Graphics::Surface *pauseGraphic = _menuInterface->getUIGraphic(20);
+
+	Graphics::ManagedSurface *menuSurf = _menuInterface->getMenuSurface();
+
+	uint32 blackColor = menuSurf->format.RGBToColor(0, 0, 0);
+
+	menuSurf->fillRect(Common::Rect(0, 44, 640, 392), blackColor);
+
+	if (pauseGraphic)
+		menuSurf->blitFrom(*pauseGraphic, Common::Point(164, 186));
+
+	_menuInterface->commitRect(Common::Rect(0, 44, 640, 392));
+}
+
+
 void ReahMainMenuPage::start() {
 	Graphics::Surface *bgGraphic = _menuInterface->getUIGraphic(0);
 
@@ -930,6 +957,10 @@ MenuPage *createMenuReahHelp() {
 
 MenuPage *createMenuReahSound() {
 	return new ReahSoundMenuPage();
+}
+
+MenuPage *createMenuReahPause() {
+	return new ReahPauseMenuPage();
 }
 
 } // End of namespace VCruise
