@@ -5,8 +5,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  New games:
    - Added support for macOS versions of Syberia and Syberia II.
-   - Added support for The Vampire Diaries and Nancy Drew: Secrets Can Kill
-   - Added support for Reah: Face the Unknown
+   - Added support for The Vampire Diaries and Nancy Drew: Secrets Can Kill.
+   - Added support for Reah: Face the Unknown.
 
  New platforms:
    - Added libretro new shiny port.
