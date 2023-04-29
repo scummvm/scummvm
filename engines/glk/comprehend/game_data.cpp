@@ -515,7 +515,6 @@ void GameData::parse_flags(FileBuffer *fb) {
 void GameData::parse_replace_words(FileBuffer *fb) {
 	size_t len;
 	bool eof;
-	int i;
 
 	/* FIXME - Rename addr_strings_end */
 	fb->seek(_header.addr_strings_end);
@@ -523,7 +522,7 @@ void GameData::parse_replace_words(FileBuffer *fb) {
 	/* FIXME - what is this for */
 	fb->skip(2);
 
-	for (i = 0;; i++) {
+	for (;;) {
 		len = fb->strlen(&eof);
 		if (len == 0)
 			break;
