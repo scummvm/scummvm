@@ -285,7 +285,7 @@ GameIDType loadExtraSherwoodData(void) {
 	ct = 0;
 	rp = &_G(_rooms)[0];
 
-	int actual_room_number = 0;
+	//int actual_room_number = 0;
 
 	ptr = seekToPos(_G(_entireFile), 0x5b7e + _G(_fileBaselineOffset));
 	if (ptr == 0)
@@ -295,12 +295,12 @@ GameIDType loadExtraSherwoodData(void) {
 		rp->_text = decompressText(ptr, ct);
 		rp->_text.toLowercase();
 		ct++;
-		actual_room_number++;
+		//actual_room_number++;
 		if (ct == 11) {
 			for (int i = 0; i < 61; i++) {
 				rp++;
 				rp->_text = "in Sherwood Forest";
-				actual_room_number++;
+				//actual_room_number++;
 			}
 		}
 		rp++;
@@ -366,7 +366,7 @@ GameIDType loadExtraSherwoodData64(void) {
 	ct = 0;
 	rp = &_G(_rooms)[0];
 
-	int actual_room_number = 0;
+	//int actual_room_number = 0;
 
 	offset = 0x402e + _G(_fileBaselineOffset);
 
@@ -378,12 +378,12 @@ GameIDType loadExtraSherwoodData64(void) {
 		rp->_text = decompressText(ptr, ct);
 		rp->_text.toLowercase();
 		ct++;
-		actual_room_number++;
+		//actual_room_number++;
 		if (ct == 11) {
 			for (int i = 0; i < 61; i++) {
 				rp++;
 				rp->_text = "in Sherwood Forest";
-				actual_room_number++;
+				//actual_room_number++;
 			}
 		}
 		rp++;
