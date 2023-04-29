@@ -461,7 +461,7 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"backStart", ProtoOp::kProtoOpScript, ScriptOps::kBackStart},
 	{"saveAs", ProtoOp::kProtoOpScript, ScriptOps::kSaveAs},
 	{"save0", ProtoOp::kProtoOpNoop, ScriptOps::kSave0},
-	{"exit", ProtoOp::kProtoOpNoop, ScriptOps::kExit},
+	{"exit", ProtoOp::kProtoOpScript, ScriptOps::kExit},
 	{"allowedSave", ProtoOp::kProtoOpNoop, ScriptOps::kInvalid},
 };
 

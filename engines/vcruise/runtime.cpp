@@ -5138,7 +5138,24 @@ void Runtime::scriptOpSave0(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpExit(ScriptArg_t arg) {
-	warning("exit op not implemented");
+	_isInGame = false;
+	_saveGame.reset();
+
+	if (_gameID == GID_REAH) {
+		_havePendingScreenChange = true;
+		_forceScreenChange = true;
+
+		_roomNumber = 40;
+		_screenNumber = 0xa1;
+
+		terminateScript();
+
+		changeMusicTrack(0);
+		if (_musicPlayer)
+			_musicPlayer->setVolumeAndBalance(100, 0);
+	} else {
+		error("Don't know what screen to go to on exit");
+	}
 }
 
 void Runtime::scriptOpNot(ScriptArg_t arg) {
