@@ -676,6 +676,8 @@ private:
 	bool popOSEvent(OSEvent &evt);
 	void queueOSEvent(const OSEvent &evt);
 
+	void processUniversalKeymappedEvents(KeymappedEvent evt);
+
 	void loadIndex();
 	void findWaves();
 	Common::SharedPtr<SoundInstance> loadWave(const Common::String &soundName, uint soundID, const Common::ArchiveMemberPtr &archiveMemberPtr);

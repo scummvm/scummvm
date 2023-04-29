@@ -72,6 +72,7 @@ public:
 
 	virtual void start();
 	virtual bool run();
+	virtual void onSettingsChanged();
 
 protected:
 	const MenuInterface *_menuInterface;

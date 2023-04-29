@@ -1935,6 +1935,8 @@ bool Runtime::popOSEvent(OSEvent &evt) {
 			_lmbReleaseWasClick = !_lmbDragging;
 			_lmbDown = false;
 			_lmbDragging = false;
+		} else if (tempEvent.type == kOSEventTypeKeymappedEvent) {
+			processUniversalKeymappedEvents(tempEvent.keymappedEvent);
 		}
 
 		evt = tempEvent;
@@ -1942,6 +1944,63 @@ bool Runtime::popOSEvent(OSEvent &evt) {
 	}
 
 	return false;
+}
+
+void Runtime::processUniversalKeymappedEvents(KeymappedEvent evt) {
+	const int soundSettingGranularity = 25;
+
+	switch (evt) {
+	case kKeymappedEventMusicToggle:
+		ConfMan.setBool("vcruise_mute_music", !(ConfMan.hasKey("vcruise_mute_music")) || !(ConfMan.getBool("vcruise_mute_music")), ConfMan.getActiveDomainName());
+		g_engine->syncSoundSettings();
+		if (_menuPage)
+			_menuPage->onSettingsChanged();
+		break;
+	case kKeymappedEventMusicVolumeUp: {
+			int newVol = ConfMan.getInt("music_volume") + soundSettingGranularity;
+			if (newVol > Audio::Mixer::kMaxMixerVolume)
+				newVol = Audio::Mixer::kMaxMixerVolume;
+			ConfMan.setInt("music_volume", newVol, ConfMan.getActiveDomainName());
+			g_engine->syncSoundSettings();
+			if (_menuPage)
+				_menuPage->onSettingsChanged();
+		} break;
+	case kKeymappedEventMusicVolumeDown: {
+			int newVol = ConfMan.getInt("music_volume") - soundSettingGranularity;
+			if (newVol < 0)
+				newVol = 0;
+			ConfMan.setInt("music_volume", newVol, ConfMan.getActiveDomainName());
+			g_engine->syncSoundSettings();
+			if (_menuPage)
+				_menuPage->onSettingsChanged();
+		} break;
+	case kKeymappedEventSoundToggle:
+		ConfMan.setBool("vcruise_mute_sound", !(ConfMan.hasKey("vcruise_mute_sound")) || !(ConfMan.getBool("vcruise_mute_sound")), ConfMan.getActiveDomainName());
+		g_engine->syncSoundSettings();
+		if (_menuPage)
+			_menuPage->onSettingsChanged();
+		break;
+	case kKeymappedEventSoundVolumeUp: {
+			int newVol = ConfMan.getInt("sfx_volume") + soundSettingGranularity;
+			if (newVol > Audio::Mixer::kMaxMixerVolume)
+				newVol = Audio::Mixer::kMaxMixerVolume;
+			ConfMan.setInt("sfx_volume", newVol, ConfMan.getActiveDomainName());
+			g_engine->syncSoundSettings();
+			if (_menuPage)
+				_menuPage->onSettingsChanged();
+		} break;
+	case kKeymappedEventSoundVolumeDown: {
+			int newVol = ConfMan.getInt("sfx_volume") - soundSettingGranularity;
+			if (newVol < 0)
+				newVol = 0;
+			ConfMan.setInt("sfx_volume", newVol, ConfMan.getActiveDomainName());
+			g_engine->syncSoundSettings();
+			if (_menuPage)
+				_menuPage->onSettingsChanged();
+		} break;
+	default:
+		break;
+	}
 }
 
 void Runtime::queueOSEvent(const OSEvent &evt) {

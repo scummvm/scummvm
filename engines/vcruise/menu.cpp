@@ -94,7 +94,7 @@ protected:
 		int _maxValue;
 	};
 
-private:
+protected:
 	void drawButtonInState(uint buttonIndex, ButtonState state) const;
 	void drawCheckboxInState(uint buttonIndex, CheckboxState state) const;
 	void drawSlider(uint sliderIndex) const;
@@ -104,7 +104,6 @@ private:
 	void handleMouseDown(const Common::Point &pt, bool &outChangedState);
 	void handleMouseUp(const Common::Point &pt, bool &outChangedState);
 
-protected:
 	Common::Array<Button> _buttons;
 	Common::Array<Button> _checkboxes;
 	Common::Array<Slider> _sliders;
@@ -151,6 +150,7 @@ public:
 	ReahSoundMenuPage();
 
 	void addPageContents() override;
+	void onSettingsChanged() override;
 
 protected:
 	void eraseSlider(uint sliderIndex) const override;
@@ -627,8 +627,8 @@ void ReahSoundMenuPage::addPageContents() {
 	if (ConfMan.hasKey("vcruise_mute_sound"))
 		soundMute = ConfMan.getBool("vcruise_mute_sound");
 
-	_soundChecked = !musicMute;
-	_musicChecked = !soundMute;
+	_soundChecked = !soundMute;
+	_musicChecked = !musicMute;
 
 	Graphics::Surface *soundGraphics = _menuInterface->getUIGraphic(17);
 	if (soundGraphics) {
@@ -667,6 +667,45 @@ void ReahSoundMenuPage::addPageContents() {
 		_sliders.push_back(Slider(_sliderKeyGraphic->surfacePtr(), Common::Rect(236, kSoundSliderY, 236 + 40, kSoundSliderY + 60), sndVol * kSoundSliderWidth / Audio::Mixer::kMaxMixerVolume, kSoundSliderWidth));
 		_sliders.push_back(Slider(_sliderKeyGraphic->surfacePtr(), Common::Rect(236, kMusicSliderY, 236 + 40, kMusicSliderY + 60), musVol * kSoundSliderWidth / Audio::Mixer::kMaxMixerVolume, kSoundSliderWidth));
 	}
+}
+
+void ReahSoundMenuPage::onSettingsChanged() {
+	int sndVol = 0;
+	if (ConfMan.hasKey("sfx_volume"))
+		sndVol = ConfMan.getInt("sfx_volume");
+
+	int musVol = 0;
+	if (ConfMan.hasKey("music_volume"))
+		musVol = ConfMan.getInt("music_volume");
+
+	bool musicMute = false;
+	if (ConfMan.hasKey("vcruise_mute_music"))
+		musicMute = ConfMan.getBool("vcruise_mute_music");
+
+	bool soundMute = false;
+	if (ConfMan.hasKey("vcruise_mute_sound"))
+		soundMute = ConfMan.getBool("vcruise_mute_sound");
+
+	_soundChecked = !soundMute;
+	_musicChecked = !musicMute;
+
+	eraseSlider(kSliderSound);
+	eraseSlider(kSliderMusic);
+
+	_sliders[kSliderSound]._value = sndVol * kSoundSliderWidth / Audio::Mixer::kMaxMixerVolume;
+	_sliders[kSliderMusic]._value = musVol * kSoundSliderWidth / Audio::Mixer::kMaxMixerVolume;
+
+	drawSlider(kSliderSound);
+	drawSlider(kSliderMusic);
+
+	// Release any active interactions with the checkboxes
+	if ((_interactionState == kInteractionStateClickingOnCheckbox || _interactionState == kInteractionStateClickingOffCheckbox)
+		&& (_interactionIndex == kCheckboxMusic || _interactionIndex == kCheckboxSound)) {
+		_interactionState = kInteractionStateNotInteracting;
+	}
+
+	drawCheckboxInState(kCheckboxSound, _soundChecked ? kCheckboxStateOn : kCheckboxStateOff);
+	drawCheckboxInState(kCheckboxMusic, _musicChecked ? kCheckboxStateOn : kCheckboxStateOff);
 }
 
 void ReahSoundMenuPage::eraseSlider(uint sliderIndex) const {
@@ -868,6 +907,9 @@ void MenuPage::init(const MenuInterface *menuInterface) {
 }
 
 void MenuPage::start() {
+}
+
+void MenuPage::onSettingsChanged() {
 }
 
 bool MenuPage::run() {
