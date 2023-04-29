@@ -742,7 +742,7 @@ void AGSWaves::DrawLineCustom(int x1, int y1, int x2, int y2, int graphic, int s
 			ALine++;
 		}
 
-		int i = 0;
+		//int i = 0;
 		while (x < xe) {
 			x = x + 1;
 			if (px < 0) {
@@ -777,7 +777,7 @@ void AGSWaves::DrawLineCustom(int x1, int y1, int x2, int y2, int graphic, int s
 				ALine++;
 			}
 
-			i++;
+			//i++;
 		}
 	} else {
 		if (dy >= 0) {
@@ -815,7 +815,7 @@ void AGSWaves::DrawLineCustom(int x1, int y1, int x2, int y2, int graphic, int s
 			ALine++;
 		}
 
-		int i = 0;
+		//int i = 0;
 		while (y < ye) {
 			y = y + 1;
 			if (py <= 0) {
@@ -847,7 +847,7 @@ void AGSWaves::DrawLineCustom(int x1, int y1, int x2, int y2, int graphic, int s
 				sprite_pixels[(yy * src_width) + xx] = SetColorRGBA(setR, setG, setB, setA + (ALine * TranDif));
 				ALine++;
 			}
-			i++;
+			//i++;
 		}
 	}
 

@@ -30,7 +30,7 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSWaves {
 
-const float PI = 3.14159265f;
+//const float PI = 3.14159265f;
 
 void AGSWaves::SFX_Play(ScriptMethodParams &params) {
 	PARAMS2(int, sfxNum, int, repeat);
@@ -104,7 +104,7 @@ void AGSWaves::SFX_SetPosition(ScriptMethodParams &params) {
 
 	SoundEffect &effect = SFX[sfxNum];
 
-	if (_mixer->isSoundHandleActive(effect._soundHandle)) { 
+	if (_mixer->isSoundHandleActive(effect._soundHandle)) {
 		int angle = 0;
 		int dist = 0;
 
