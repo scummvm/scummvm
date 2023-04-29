@@ -40,6 +40,7 @@ struct Resource {
 	uint32 uncompSize;
 	uint32 compressionType;
 	uint32 castId;
+	uint32 libId;
 	uint32 tag;
 	Common::String name;
 	Common::Array<Resource> children;
@@ -135,7 +136,7 @@ public:
 private:
 	bool readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset, Common::SeekableMemoryWriteStream *dumpStream, uint32 movieStartOffset);
 	bool readAfterburnerMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset);
-	void readCast(Common::SeekableReadStreamEndian &casStream);
+	void readCast(Common::SeekableReadStreamEndian &casStream, uint16 libId);
 	void readKeyTable(Common::SeekableReadStreamEndian &keyStream);
 
 protected:
@@ -143,6 +144,9 @@ protected:
 	Common::Array<Resource *> _resources;
 	Common::HashMap<uint32, byte *> _ilsData;
 	uint32 _ilsBodyOffset;
+	typedef Common::Array<uint32> KeyArray;
+	typedef Common::HashMap<uint32, KeyArray> KeyMap;
+	Common::HashMap<uint32, KeyMap> _keyData;
 };
 
 } // End of namespace Director

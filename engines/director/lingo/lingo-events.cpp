@@ -187,7 +187,7 @@ void Movie::queueMovieEvent(Common::Queue<LingoEvent> &queue, LEvent event, int 
 	for (ScriptContextHash::iterator it = mainArchive->scriptContexts[kMovieScript].begin();
 			it != mainArchive->scriptContexts[kMovieScript].end(); ++it) {
 		if (it->_value->_eventHandlers.contains(event)) {
-			queue.push(LingoEvent(event, eventId, kMovieScript, CastMemberID(it->_key, 0), false));
+			queue.push(LingoEvent(event, eventId, kMovieScript, CastMemberID(it->_key, DEFAULT_CAST_LIB), false));
 			return;
 		}
 	}
@@ -196,7 +196,7 @@ void Movie::queueMovieEvent(Common::Queue<LingoEvent> &queue, LEvent event, int 
 		for (ScriptContextHash::iterator it = sharedArchive->scriptContexts[kMovieScript].begin();
 				it != sharedArchive->scriptContexts[kMovieScript].end(); ++it) {
 			if (it->_value->_eventHandlers.contains(event)) {
-				queue.push(LingoEvent(event, eventId, kMovieScript, CastMemberID(it->_key, 0), false));
+				queue.push(LingoEvent(event, eventId, kMovieScript, CastMemberID(it->_key, DEFAULT_CAST_LIB), false));
 				return;
 			}
 		}
@@ -228,7 +228,7 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 	case kEventKeyDown:
 	case kEventTimeout:
 		{
-			CastMemberID scriptID = CastMemberID(event, 0);
+			CastMemberID scriptID = CastMemberID(event, DEFAULT_CAST_LIB);
 			if (getScriptContext(kEventScript, scriptID)) {
 				queue.push(LingoEvent(kEventGeneric, eventId, kEventScript, scriptID, true));
 			}
@@ -236,7 +236,7 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 		break;
 	case kEventMenuCallback:
 		{
-			CastMemberID scriptID = CastMemberID(targetId, 0);
+			CastMemberID scriptID = CastMemberID(targetId, DEFAULT_CAST_LIB);
 			if (getScriptContext(kEventScript, scriptID)) {
 				queue.push(LingoEvent(kEventGeneric, eventId, kEventScript, scriptID, true));
 			}

@@ -2227,7 +2227,7 @@ void LB::b_move(int nargs) {
 
 	if (nargs == 1) {
 		int id = (int) g_director->getCurrentMovie()->getCast()->_castArrayStart;
-		CastMemberID *castId = new CastMemberID(id, 0);
+		CastMemberID *castId = new CastMemberID(id, DEFAULT_CAST_LIB);
 		Datum d = Datum(*castId);
 		delete castId;
 		g_lingo->push(d);
@@ -2253,7 +2253,7 @@ void LB::b_move(int nargs) {
 		return;
 	}
 
-	if (src.u.cast->castLib != 0) {
+	if (src.u.cast->castLib != DEFAULT_CAST_LIB) {
 		warning("b_move: wrong castLib '%d' in src CastMemberID", src.u.cast->castLib);
 	}
 
@@ -2288,7 +2288,7 @@ void LB::b_move(int nargs) {
 
 	for (uint i = 0; i < channels.size(); i++) {
 		if (channels[i]->_sprite->_castId == dest.asMemberID()) {
-			channels[i]->_sprite->setCast(CastMemberID(1, 0));
+			channels[i]->_sprite->setCast(CastMemberID(1, DEFAULT_CAST_LIB));
 			channels[i]->_dirty = true;
 		}
 	}

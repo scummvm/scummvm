@@ -529,12 +529,6 @@ void Cast::loadCast() {
 		delete r;
 	}
 
-	// Cast library mapping, used in D5+
-	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('M', 'C', 's', 'L'))) != nullptr) {
-		loadCastLibMapping(*r);
-		delete r;
-	}
-
 	Common::Array<uint16> cinf = _castArchive->getResourceIDList(MKTAG('C', 'i', 'n', 'f'));
 	if (cinf.size() > 0) {
 		debugC(2, kDebugLoading, "****** Loading %d CastLibInfos Cinf", cinf.size());
@@ -560,13 +554,15 @@ void Cast::loadCast() {
 		_loadedCast = new Common::HashMap<int, CastMember *>();
 
 	if (cast.size() > 0) {
-		debugC(2, kDebugLoading, "****** Loading %d CASt resources", cast.size());
+		debugC(2, kDebugLoading, "****** Loading CASt resources for libId %d", _castLibID);
 
 		int idx = 0;
 
 		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator) {
-			Common::SeekableReadStreamEndian *stream = _castArchive->getResource(MKTAG('C', 'A', 'S', 't'), *iterator);
 			Resource res = _castArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), *iterator);
+			if (res.libId != _castLibID)
+				continue;
+			Common::SeekableReadStreamEndian *stream = _castArchive->getResource(MKTAG('C', 'A', 'S', 't'), *iterator);
 			loadCastData(*stream, res.castId, &res);
 			delete stream;
 
@@ -1256,33 +1252,6 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	_castsInfo[id] = ci;
 }
 
-void Cast::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
-	if (debugChannelSet(8, kDebugLoading)) {
-		stream.hexdump(stream.size());
-	}
-	stream.readUint32(); // header size
-	uint32 count = stream.readUint32();
-	stream.readUint16();
-	uint32 unkCount = stream.readUint32() + 1;
-	for (uint32 i = 0; i < unkCount; i++) {
-		stream.readUint32();
-	}
-	for (uint32 i = 0; i < count; i++) {
-		int nameSize = stream.readByte() + 1;
-		Common::String name = stream.readString('\0', nameSize);
-		int pathSize = stream.readByte() + 1;
-		Common::String path = stream.readString('\0', pathSize);
-		if (pathSize > 1)
-			stream.readUint16();
-		stream.readUint16();
-		uint16 itemCount = stream.readUint16();
-		stream.readUint16();
-		uint16 libId = stream.readUint16();
-		debugC(5, kDebugLoading, "Cast::loadCastLibMapping: name: %s, path: %s, itemCount: %d, libId: %d", name.c_str(), path.c_str(), itemCount, libId);
-	}
-	return;
-}
-
 void Cast::loadCastLibInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	if (debugChannelSet(8, kDebugLoading)) {
 		stream.hexdump(stream.size());
@@ -1340,7 +1309,7 @@ void Cast::loadSord(Common::SeekableReadStreamEndian &stream) {
 	stream.readUint16();
 
 	uint numEntries = 0;
-	uint16 castLibId = 0; // default for pre-D5
+	uint16 castLibId = DEFAULT_CAST_LIB; // default for pre-D5
 	uint16 memberId;
 	while (!stream.eos()) {
 
@@ -1364,7 +1333,7 @@ void Cast::loadVWTL(Common::SeekableReadStreamEndian &stream) {
 	debugC(1, kDebugLoading, "****** Loading CastMember petterns VWTL");
 
 	Common::Rect r;
-	uint16 castLibId = 0; // default for pre-D5
+	uint16 castLibId = DEFAULT_CAST_LIB; // default for pre-D5
 	uint16 memberId;
 
 	for (int i = 0; i < kNumBuiltinTiles; i++) {

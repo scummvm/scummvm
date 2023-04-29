@@ -89,7 +89,6 @@ public:
 	void loadCastDataVWCR(Common::SeekableReadStreamEndian &stream);
 	void loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Resource *res);
 	void loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id);
-	void loadCastLibMapping(Common::SeekableReadStreamEndian &stream);
 	void loadCastLibInfo(Common::SeekableReadStreamEndian &stream, uint16 id);
 	void loadLingoContext(Common::SeekableReadStreamEndian &stream);
 	void loadExternalSound(Common::SeekableReadStreamEndian &stream);
