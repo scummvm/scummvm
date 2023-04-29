@@ -160,6 +160,7 @@ private:
 
 	bool _isShared;
 	bool _loadMutex;
+	Common::Array<CastMember *> _loadQueue;
 
 	Common::String _macName;
 
