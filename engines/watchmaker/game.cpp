@@ -19,9 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
-#define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
-
 #include "watchmaker/game.h"
 #include "watchmaker/windows_hacks.h"
 #include "watchmaker/classes/do_system.h"
@@ -122,32 +119,32 @@ bool WGame::CheckAndLoadMoglieSupervisoreModel(int32 c) {
 	if (c == ocMOGLIESUPERVISORE) {
 		if (bMoglieGym && (!Character[c]->Body->name.contains("MoglieGym"))) {
 			CharName_Strings[c] = "MoglieGym.t3d";
-			strcpy(RemoveName, "MoglieSwim.t3d");
+			Common::strlcpy(RemoveName, "MoglieSwim.t3d", 128);
 			CharNameHI_Strings[c] = "MoglieGymHI.t3d";
-			strcpy(RemoveNameHI, "MoglieSwimHI.t3d");
+			Common::strlcpy(RemoveNameHI, "MoglieSwimHI.t3d", 128);
 		}
 
 		if ((!bMoglieGym) && (!Character[c]->Body->name.contains("MoglieSwim"))) {
 			CharName_Strings[c] = "MoglieSwim.t3d";
-			strcpy(RemoveName, "MoglieGym.t3d");
+			Common::strlcpy(RemoveName, "MoglieGym.t3d", 128);
 			CharNameHI_Strings[c] = "MoglieSwimHI.t3d";
-			strcpy(RemoveNameHI, "MoglieGymHI.t3d");
+			Common::strlcpy(RemoveNameHI, "MoglieGymHI.t3d", 128);
 		}
 	}
 
 	if (c == ocMOGLIE_KIMONO) {
 		if (bMoglieSangue && (!Character[c]->Body->name.contains("MoglieKimonoSangue"))) {
 			CharName_Strings[c] = "MoglieKimonoSangue.t3d";
-			strcpy(RemoveName, "MoglieKimono.t3d");
+			Common::strlcpy(RemoveName, "MoglieKimono.t3d", 128);
 			CharNameHI_Strings[c] = "MoglieKimonoSangueHI.t3d";
-			strcpy(RemoveNameHI, "MoglieKimonoHI.t3d");
+			Common::strlcpy(RemoveNameHI, "MoglieKimonoHI.t3d", 128);
 		}
 
 		if ((!bMoglieSangue) && (!Character[c]->Body->name.contains("MoglieKimono"))) {
 			CharName_Strings[c] = "MoglieKimono.t3d";
-			strcpy(RemoveName, "MoglieKimonoSangue.t3d");
+			Common::strlcpy(RemoveName, "MoglieKimonoSangue.t3d", 128);
 			CharNameHI_Strings[c] = "MoglieKimonoHI.t3d";
-			strcpy(RemoveNameHI, "MoglieKimonoSangueHI.t3d");
+			Common::strlcpy(RemoveNameHI, "MoglieKimonoSangueHI.t3d", 128);
 		}
 	}
 
@@ -278,7 +275,7 @@ int WGame::StartPlayingGame(const Common::String &LoaderName_override) {
 	bWideScreen = 0;
 	bTitoliCodaStatic = 0;
 	bTitoliCodaScrolling = 0;
-	strcpy(RoomInfo.name, "");
+	strlcpy(RoomInfo.name, "", 64);
 
 	return true;
 }
@@ -590,7 +587,7 @@ void WGame::LoadMisc() {
 	//TrecLogo = LoadDDBitmap( "TrecLogo.tga", rSURFACESTRETCH );
 
 	for (i = 1; i < 85; i++) {
-		sprintf(str, "I%0#3d.tga", i);
+		snprintf(str, 20, "I%0#3d.tga", i);
 		IconsPics[i] = LoadDDBitmap(*this, str, rSURFACESTRETCH);
 	}
 
