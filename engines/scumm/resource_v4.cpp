@@ -53,7 +53,6 @@ int ScummEngine_v4::readResTypeList(ResType type) {
 void ScummEngine_v4::readIndexFile() {
 	uint16 blocktype;
 	uint32 itemsize;
-	int numblock = 0;
 
 	debug(9, "readIndexFile()");
 
@@ -108,8 +107,6 @@ void ScummEngine_v4::readIndexFile() {
 			break;
 
 		blocktype = _fileHandle->readUint16LE();
-
-		numblock++;
 
 		switch (blocktype) {
 

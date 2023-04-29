@@ -241,7 +241,6 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 
 void ScummEngine::readIndexFile() {
 	uint32 blocktype, itemsize;
-	int numblock = 0;
 
 	debugC(DEBUG_GENERAL, "readIndexFile()");
 
@@ -302,7 +301,6 @@ void ScummEngine::readIndexFile() {
 		if (_fileHandle->eos() || _fileHandle->err())
 			break;
 
-		numblock++;
 		debug(2, "Reading index block of type '%s', size %d", tag2str(blocktype), itemsize);
 		readIndexBlock(blocktype, itemsize);
 	}
