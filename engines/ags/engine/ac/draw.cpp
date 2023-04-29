@@ -692,7 +692,7 @@ void render_to_screen() {
 
 	// Try set new vsync value, and remember the actual result
 	bool new_vsync = _G(gfxDriver)->SetVsync(_GP(scsystem).vsync > 0);
-	if (new_vsync != _GP(scsystem).vsync)
+	if (new_vsync != (_GP(scsystem).vsync > 0))
 		System_SetVSyncInternal(new_vsync);
 
 	bool succeeded = false;
