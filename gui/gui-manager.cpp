@@ -310,7 +310,6 @@ void GuiManager::redraw() {
 	switch (_redrawStatus) {
 		case kRedrawCloseDialog:
 		case kRedrawFull:
-		case kRedrawTopDialog:
 			_theme->clearAll();
 			_theme->drawToBackbuffer();
 
@@ -324,8 +323,9 @@ void GuiManager::redraw() {
 			// fall through
 
 		case kRedrawOpenDialog:
+		case kRedrawTopDialog:
 			// This case is an optimization to avoid redrawing the whole dialog
-			// stack when opening a new dialog.
+			// stack when opening a new dialog or redrawing the current one.
 
 			if (_displayTopDialogOnly) {
 				// When displaying only the top dialog clear the screen
@@ -341,7 +341,8 @@ void GuiManager::redraw() {
 					previousDialog->drawDialog(kDrawLayerForeground);
 				}
 
-				_theme->applyScreenShading(shading);
+				if (_redrawStatus != kRedrawTopDialog)
+					_theme->applyScreenShading(shading);
 			}
 
 			_dialogStack.top()->drawDialog(kDrawLayerBackground);
@@ -776,7 +777,9 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 }
 
 void GuiManager::scheduleTopDialogRedraw() {
-	_redrawStatus = kRedrawTopDialog;
+	// Open/Close dialog redraws have higher priority, otherwise they may not be processed at all
+	if (_redrawStatus != kRedrawOpenDialog && _redrawStatus != kRedrawCloseDialog)
+		_redrawStatus = kRedrawTopDialog;
 }
 
 void GuiManager::giveFocusToDialog(Dialog *dialog) {
