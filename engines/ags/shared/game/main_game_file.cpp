@@ -315,7 +315,7 @@ void ReadDialogs(std::vector<DialogTopic> &dialog,
 	            fgetstring(stringbuffer, iii);
 	    }
 	*/
-	int i = 0;
+	//int i = 0;
 	char buffer[1000];
 	if (data_ver <= kGameVersion_260) {
 		// Plain text on <= 2.60
@@ -342,7 +342,7 @@ void ReadDialogs(std::vector<DialogTopic> &dialog,
 				break;
 
 			old_speech_lines.push_back(buffer);
-			i++;
+			//i++;
 		}
 	} else {
 		// Encrypted text on > 2.60
@@ -358,7 +358,7 @@ void ReadDialogs(std::vector<DialogTopic> &dialog,
 			decrypt_text(buffer, newlen);
 			buffer[newlen] = 0;
 			old_speech_lines.push_back(buffer);
-			i++;
+			//i++;
 		}
 	}
 }
