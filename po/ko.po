@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-29 10:14+0000\n"
+"POT-Creation-Date: 2023-04-29 10:21+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -7331,7 +7331,7 @@ msgstr "최대 색상이 8비트인 시스템에서 %d비트 색상 영상을 �
 msgid "SCI32 support not compiled in"
 msgstr "SCI32 지원이 컴파일 되지 않음"
 
-#: engines/sci/resource/resource.cpp:863
+#: engines/sci/resource/resource.cpp:858
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "

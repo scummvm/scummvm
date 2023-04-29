@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-29 10:14+0000\n"
+"POT-Creation-Date: 2023-04-29 10:21+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -7383,7 +7383,7 @@ msgstr "Не магу прайграць %dbpp відэа на сістэме з
 msgid "SCI32 support not compiled in"
 msgstr "Уключаныя ў зборку опцыі:"
 
-#: engines/sci/resource/resource.cpp:863
+#: engines/sci/resource/resource.cpp:858
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "
