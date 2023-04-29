@@ -77,7 +77,7 @@ private:
 	char *getSubText(char **buf, char open, char close);
 	void skipCharacters(char **buf, const char *toSkip);
 	int32 getObject(char **buf, const TokenDesc *tokens, char **name, char **data);
-	int32 _parserLine;
+	int32 _parserLine = 0;
 	char _lastOffender[255];
 	char *_whiteSpace;
 };
