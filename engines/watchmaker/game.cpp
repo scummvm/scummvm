@@ -275,7 +275,7 @@ int WGame::StartPlayingGame(const Common::String &LoaderName_override) {
 	bWideScreen = 0;
 	bTitoliCodaStatic = 0;
 	bTitoliCodaScrolling = 0;
-	strlcpy(RoomInfo.name, "", 64);
+	Common::strlcpy(RoomInfo.name, "", 64);
 
 	return true;
 }
