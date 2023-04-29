@@ -316,7 +316,6 @@ void CGE2Engine::loadScript(const char *fname, bool onlyToolbar) {
 		return;
 
 	bool ok = true;
-	int lcnt = 0;
 
 	char tmpStr[kLineMax + 1];
 	Common::String line;
@@ -325,7 +324,6 @@ void CGE2Engine::loadScript(const char *fname, bool onlyToolbar) {
 		if (line.empty())
 			continue;
 
-		lcnt++;
 		Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
 
 		ok = false; // not OK if break
