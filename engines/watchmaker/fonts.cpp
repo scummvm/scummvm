@@ -20,7 +20,7 @@
  */
 
 #include "watchmaker/fonts.h"
-#include "main.h"
+#include "watchmaker/main.h"
 #include "watchmaker/game.h"
 
 namespace Watchmaker {
