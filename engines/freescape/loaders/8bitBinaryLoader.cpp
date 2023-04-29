@@ -534,11 +534,13 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		uint32 lengthOfCondition = readField(file, 8);
 		debugC(1, kFreescapeDebugParser, "length of condition: %d", lengthOfCondition);
 		// get the condition
-		Common::Array<uint8> conditionArray = readArray(file, lengthOfCondition);
-		Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions);
-		area->_conditions.push_back(instructions);
-		area->_conditionSources.push_back(conditionSource);
-		debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
+		if (lengthOfCondition > 0) {
+			Common::Array<uint8> conditionArray = readArray(file, lengthOfCondition);
+			Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions);
+			area->_conditions.push_back(instructions);
+			area->_conditionSources.push_back(conditionSource);
+			debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
+		}
 	}
 
 	debugC(1, kFreescapeDebugParser, "End of area at %lx", file->pos());
@@ -625,12 +627,13 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		uint32 lengthOfCondition = readField(file, 8);
 		debugC(1, kFreescapeDebugParser, "length of condition: %d at %lx", lengthOfCondition, file->pos());
 		// get the condition
-		Common::Array<uint8> conditionArray = readArray(file, lengthOfCondition);
-		// debug("Global condition %d", numConditions + 1);
-		Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions);
-		_conditions.push_back(instructions);
-		_conditionSources.push_back(conditionSource);
-		debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
+		if (lengthOfCondition > 0) {
+			Common::Array<uint8> conditionArray = readArray(file, lengthOfCondition);
+			Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions);
+			_conditions.push_back(instructions);
+			_conditionSources.push_back(conditionSource);
+			debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
+		}
 	}
 
 	if (isDriller()) {
