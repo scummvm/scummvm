@@ -54,18 +54,15 @@ Breakpoint breakpoint[BREAKPOINTMAX];
 /*----------------------------------------------------------------------*/
 static void showAttributes(AttributeEntry *attrib) {
 	AttributeEntry *at;
-	int i;
 	char str[80];
 
 	if (attrib == nullptr)
 		return;
 
-	i = 1;
 	for (at = attrib; !isEndOfArray(at); at++) {
 		Common::sprintf_s(str, "$i$t%s[%d] = %d", (char *) pointerTo(at->id), at->code, (int)at->value);
 
 		output(str);
-		i++;
 	}
 }
 
