@@ -160,6 +160,10 @@ Common::Array<Common::Keymap *> VCruiseMetaEngine::initKeymaps(const char *targe
 	act->addDefaultInputMapping("F12");
 	keymap->addAction(act);
 
+	act = new Common::Action("VCRUISE_SKIP_ANIMATION", _("Skip current animation"));
+	act->setCustomEngineActionEvent(VCruise::kKeymappedEventSkipAnimation);
+	keymap->addAction(act);
+
 	return Common::Keymap::arrayOf(keymap);
 }
 

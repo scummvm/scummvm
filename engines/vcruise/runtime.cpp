@@ -188,7 +188,7 @@ const MapScreenDirectionDef *MapDef::getScreenDirection(uint screen, uint direct
 ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), lmbDrag(false), esc(false), exitToMenu(false), panInteractionID(0), fpsOverride(0), lastHighlightedItem(0) {
 }
 
-OSEvent::OSEvent() : type(kOSEventTypeInvalid), keyCode(static_cast<Common::KeyCode>(0)) {
+OSEvent::OSEvent() : type(kOSEventTypeInvalid), keyCode(static_cast<Common::KeyCode>(0)), keymappedEvent(kKeymappedEventNone) {
 }
 
 void Runtime::RenderSection::init(const Common::Rect &paramRect, const Graphics::PixelFormat &fmt) {
@@ -1325,6 +1325,8 @@ bool Runtime::runWaitForAnimation() {
 				_gameState = kGameStateScript;
 				return true;
 			}
+		} else if (evt.type == kOSEventTypeKeymappedEvent && evt.keymappedEvent == kKeymappedEventSkipAnimation) {
+			_animFrameRateLock = Fraction(600, 1);
 		}
 	}
 
@@ -3835,6 +3837,14 @@ void Runtime::onKeyDown(Common::KeyCode keyCode) {
 	OSEvent evt;
 	evt.type = kOSEventTypeKeyDown;
 	evt.keyCode = keyCode;
+
+	queueOSEvent(evt);
+}
+
+void Runtime::onKeymappedEvent(KeymappedEvent kme) {
+	OSEvent evt;
+	evt.type = kOSEventTypeKeymappedEvent;
+	evt.keymappedEvent = kme;
 
 	queueOSEvent(evt);
 }

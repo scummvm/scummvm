@@ -63,6 +63,9 @@ void VCruiseEngine::handleEvents() {
 		case Common::EVENT_KEYDOWN:
 			_runtime->onKeyDown(evt.kbd.keycode);
 			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			_runtime->onKeymappedEvent(static_cast<VCruise::KeymappedEvent>(evt.customType));
+			break;
 		default:
 			break;
 		}
