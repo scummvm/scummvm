@@ -43,6 +43,8 @@ public:
 
 	void receivedFocus(int x = -1, int y = -1) override {}
 protected:
+	void close() override;
+
 	void handleMouseDown(int x, int y, int button, int clickCount) override {
 		close();
 		_parent->handleMouseDown(x + (getAbsX() - _parent->getAbsX()), y + (getAbsY() - _parent->getAbsY()), button, clickCount);
