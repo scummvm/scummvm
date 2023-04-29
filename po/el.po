@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-29 12:20+0000\n"
-"PO-Revision-Date: 2023-04-24 09:41+0000\n"
+"PO-Revision-Date: 2023-04-29 19:34+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -107,14 +107,10 @@ msgid "Manual mode"
 msgstr "Χειροκίνητη ρύθμιση"
 
 #: gui/cloudconnectionwizard.cpp:183
-#, fuzzy
-#| msgid "Will ask you to run Local Webserver"
 msgid "Will ask you to run the Local Webserver"
 msgstr "Θα σας ζητηθεί να εκτελέσετε Τοπικό Διακομιστή Ιστού"
 
 #: gui/cloudconnectionwizard.cpp:185
-#, fuzzy
-#| msgid "Requires Local Webserver feature"
 msgid "Requires the Local Webserver feature"
 msgstr "Απαιτεί τη λειτουργία Τοπικού Διακομιστή Ιστού"
 
@@ -123,10 +119,6 @@ msgid "Quick Mode: Step 1"
 msgstr "Γρήγορη Ρύθμιση: 1ο Βήμα"
 
 #: gui/cloudconnectionwizard.cpp:206
-#, fuzzy
-#| msgid ""
-#| "In this mode, Local Webserver must be running,\n"
-#| "so your browser could forward data to ScummVM"
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
@@ -200,31 +192,23 @@ msgid "Open this link in your browser:"
 msgstr "Ανοίξτε αυτόν τον σύνδεσμο στον browser σας:"
 
 #: gui/cloudconnectionwizard.cpp:321
-#, fuzzy
-#| msgid ""
-#| "When it fails to pass JSON code to ScummVM,\n"
-#| "find it on Troubleshooting section of the page,\n"
-#| "and go to the next step here."
 msgid ""
 "When it fails to pass the JSON code to ScummVM,\n"
 "find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
 "Όταν αποτυχεί να περάσει τον κωδικά JSON στο ScummVM,\n"
-"βρείτε τον στην ενότητα Επιδιόρθωσης Προβλημάτων (Troubleshooting) της "
-"σελίδας,\n"
-"και μεταβείτε στο επόμενο βήμα εδώ."
+"βρείτε τον στην ενότητα Επιδιόρθωσης Προβλημάτων (Troubleshooting)\n"
+"της σελίδας, και μεταβείτε στο επόμενο βήμα εδώ."
 
 #: gui/cloudconnectionwizard.cpp:350
 msgid "Manual Mode: Step 2"
 msgstr "Χειροκίνητη Ρύθμιση: 2ο Βήμα"
 
 #: gui/cloudconnectionwizard.cpp:355
-#, fuzzy
-#| msgid "Copy JSON code from browser here and press Next:"
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr ""
-"Αντιγράψτε τον κώδικα JSON από τον browser σας εδώ και πατήστε Επόμενο:"
+"Αντιγράψτε τον κώδικα JSON από τον πλοηγητή σας εδώ και πατήστε Επόμενο:"
 
 #: gui/cloudconnectionwizard.cpp:357
 msgid "Paste"
@@ -243,15 +227,10 @@ msgid "Cloud storage was not connected."
 msgstr "Η αποθήκη Νέφους σας δεν συνδέθηκε."
 
 #: gui/cloudconnectionwizard.cpp:378
-#, fuzzy
-#| msgid "Make sure JSON code was copied correctly and retry."
 msgid "Make sure the JSON code was copied correctly and retry."
-msgstr ""
-"Βεβαιωθείτε ότι ο κωδικός JSON αντιγράφτηκε σωστά και προσπαθήστε πάλι."
+msgstr "Βεβαιωθείτε ότι ο κωδικός JSON αντιγράφτηκε σωστά και προσπαθήστε πάλι."
 
 #: gui/cloudconnectionwizard.cpp:379
-#, fuzzy
-#| msgid "It it doesn't work, try from the beginning."
 msgid "It it doesn't work, try again from the beginning."
 msgstr "Αν δεν λειτουργήσει αυτό, δοκιμάστε ξανά από την αρχή."
 
@@ -272,8 +251,6 @@ msgid "Next"
 msgstr "Επόμενο"
 
 #: gui/cloudconnectionwizard.cpp:493
-#, fuzzy
-#| msgid "Another Storage is working now. Do you want to interrupt it?"
 msgid "Another Storage is working right now. Do you want to interrupt it?"
 msgstr ""
 "Μια άλλη Αποθήκη έχει εργασία σε εξέλιξη αυτή τη στιγμή. Επιθυμείτε να τη "
@@ -307,15 +284,11 @@ msgid "No"
 msgstr "Όχι"
 
 #: gui/cloudconnectionwizard.cpp:502
-#, fuzzy
-#| msgid "Wait until current Storage finishes up and try again."
 msgid "Wait until current Storage finishes and try again."
 msgstr "Περιμένετε να ολοκληρωθεί η τρέχουσα Αποθήκευση και δοκιμάστε ξανά."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:530
-#, fuzzy
-#| msgid "JSON code contents is malformed."
 msgid "JSON code contents are malformed."
 msgstr "Τα περιεχόμενα του κώδικα JSON δεν έχουν σωστή μορφή."
 
@@ -6326,14 +6299,7 @@ msgid "Choose Spell"
 msgstr "Επιλέξτε Ξόρκι"
 
 #: engines/kyra/gui/saveload_eob.cpp:598
-#, fuzzy, c-format
-#| msgid ""
-#| "The following original saved game file has been found in your game path:\n"
-#| "\n"
-#| "%s %s\n"
-#| "\n"
-#| "Do you wish to use this saved game file with ScummVM?\n"
-#| "\n"
+#, c-format
 msgid ""
 "The following original saved game file has been found in your game path:\n"
 "\n"
@@ -6345,7 +6311,7 @@ msgstr ""
 "Το ακόλουθο αποθηκευμένο αρχείο του αρχικού παιχνιδιού (original saved game) "
 "έχει βρεθεί στο φάκελο του παιχνιδιού σας:\n"
 "\n"
-"%s %s\n"
+"%s %S\n"
 "\n"
 "Θέλετε να χρησιμοποιήσετε αυτό το αποθηκευμένο αρχείο παιχνιδιού με το "
 "ScummVM;\n"
@@ -9469,62 +9435,44 @@ msgid "Speeds up animations."
 msgstr "Επιταχύνει τις κινήσεις (animations) των χαρακτήρων."
 
 #: engines/vcruise/metaengine.cpp:102
-#, fuzzy
-#| msgid "Display/Hide Info Screen"
 msgid "Display help screen"
-msgstr "Προβολή/Απόκρυψη Οθόνης Πληροφοριών"
+msgstr "Προβολή οθόνης βοήθειας"
 
 #: engines/vcruise/metaengine.cpp:107 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Αποθήκευση παιχνιδιού"
 
 #: engines/vcruise/metaengine.cpp:117
-#, fuzzy
-#| msgid "Open 3DS Settings"
 msgid "Open sound settings"
-msgstr "Άνοιγμα Ρυθμίσεων 3DS"
+msgstr "Άνοιγμα ρυθμίσεων ήχου"
 
 #: engines/vcruise/metaengine.cpp:122
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit game"
 msgstr "Έξοδος από το παιχνίδι"
 
 #: engines/vcruise/metaengine.cpp:133
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle music on/off"
-msgstr "Λειτουργία πλήρους οθόνης"
+msgstr "Εναλλαγή μουσικής με/χωρίς"
 
 #: engines/vcruise/metaengine.cpp:138
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Toggle sound effects on/off"
-msgstr "Ένταση ειδικών ακουστικών εφέ"
+msgstr "Εναλλαγή ηχητικών εφέ με/χωρίς"
 
 #: engines/vcruise/metaengine.cpp:143
-#, fuzzy
-#| msgid "Music volume up / down"
 msgid "Music volume down"
-msgstr "Ένταση μουσικής πάνω / κάτω"
+msgstr "Ένταση μουσικής κάτω"
 
 #: engines/vcruise/metaengine.cpp:148
-#, fuzzy
-#| msgid "Music volume: "
 msgid "Music volume up"
-msgstr "Ένταση μουσικής: "
+msgstr "Ένταση μουσικής πάνω"
 
 #: engines/vcruise/metaengine.cpp:153
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume down"
-msgstr "Ένταση ειδικών ακουστικών εφέ"
+msgstr "Ένταση ηχητικών εφέ κάτω"
 
 #: engines/vcruise/metaengine.cpp:158
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume up"
-msgstr "Ένταση ειδικών ακουστικών εφέ"
+msgstr "Ένταση ηχητικών εφέ πάνω"
 
 #: engines/vcruise/vcruise.cpp:77
 msgid "This game requires JPEG support, which was not compiled in."
