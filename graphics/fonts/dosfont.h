@@ -22,7 +22,7 @@
 #ifndef GRAPHICS_FONTS_DOSFONT_H
 #define GRAPHICS_FONTS_DOSFONT_H
 
-#include <graphics/font.h>
+#include "graphics/font.h"
 
 namespace Graphics {
 
