@@ -77,7 +77,6 @@ LabelDrvXObject::LabelDrvXObject(ObjectType ObjectType) :Object<LabelDrvXObject>
 void LabelDrvXObj::m_new(int nargs) {
 	LabelDrvXObject *me = static_cast<LabelDrvXObject *>(g_lingo->_state->me.u.obj);
 
-	Common::Rect rect;
 	me->_range = "C";
 
 	g_lingo->push(g_lingo->_state->me);
