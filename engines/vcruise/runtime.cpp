@@ -4945,13 +4945,20 @@ void Runtime::scriptOpVolumeDn2(ScriptArg_t arg) {
 	TAKE_STACK_INT_NAMED(1, sndParamArgs);
 	TAKE_STACK_VAR_NAMED(1, sndIDArgs);
 
-	StackInt_t soundID = 0;
-	SoundInstance *cachedSound = nullptr;
-	resolveSoundByNameOrID(sndIDArgs[0], true, soundID, cachedSound);
+	uint32 durationMSec = static_cast<uint>(sndParamArgs[0]) * 100u;
 
-	// FIXME: Just do this instantly
-	if (cachedSound)
-		triggerSoundRamp(*cachedSound, 1, sndParamArgs[0], false);
+	if (sndIDArgs[0].type == StackValue::kNumber && sndIDArgs[0].value.i == 0) {
+		// Apply to all sounds
+		for (const Common::SharedPtr<SoundInstance> &sndPtr : _activeSounds)
+			triggerSoundRamp(*sndPtr, durationMSec, 0, true);
+	} else {
+		StackInt_t soundID = 0;
+		SoundInstance *cachedSound = nullptr;
+		resolveSoundByNameOrID(sndIDArgs[0], true, soundID, cachedSound);
+
+		if (cachedSound)
+			triggerSoundRamp(*cachedSound, durationMSec, 0, true);
+	}
 }
 
 void Runtime::scriptOpVolumeDn3(ScriptArg_t arg) {
