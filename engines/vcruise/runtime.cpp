@@ -3642,7 +3642,7 @@ void Runtime::changeToMenuPage(MenuPage *menuPage) {
 
 void Runtime::checkInGameMenuHover() {
 	if (_inGameMenuState == kInGameMenuStateInvisible) {
-		if (_menuSection.rect.contains(_mousePos)) {
+		if (_menuSection.rect.contains(_mousePos) && _isInGame) {
 			// Figure out what elements should be visible
 
 			// Help
@@ -3669,7 +3669,7 @@ void Runtime::checkInGameMenuHover() {
 	if (_inGameMenuState == kInGameMenuStateInvisible)
 		return;
 
-	if (!_menuSection.rect.contains(_mousePos)) {
+	if (!_menuSection.rect.contains(_mousePos) || !_isInGame) {
 		if (_inGameMenuState != kInGameMenuStateClickingOver && _inGameMenuState != kInGameMenuStateClickingNotOver && _inGameMenuState != kInGameMenuStateClickingInactive) {
 			dismissInGameMenu();
 			return;
