@@ -115,6 +115,7 @@ public:
 	bool compassLook() const { return _compassLook; }
 	bool inverseLook() const { return _inverseLook; }
 	bool permanentHelp() const { return _permanentHelp; }
+	bool musicOn() const { return _musicOn; }
 
 private:
 	void drawBack();
@@ -184,6 +185,7 @@ private:
 	bool _compassLook;
 	bool _inverseLook;
 	bool _permanentHelp;
+	bool _musicOn;
 
 	int _difficulty;
 

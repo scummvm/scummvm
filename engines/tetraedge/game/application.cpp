@@ -49,7 +49,7 @@ bool Application::_dontUpdateWhenApplicationPaused = false;
 Application::Application() : _finishedGame(false), _finishedFremium(false),
 _captureFade(false), _difficulty(1), _created(false), _tutoActivated(false),
 _drawShadows(true), _compassLook(false), _inverseLook(false),
-_permanentHelp(true) {
+_permanentHelp(true), _musicOn(true) {
 	//
 	// TODO: Game defaults _ratioStretched to false, but then
 	// the horizontally scrolling scenes don't scroll properly.

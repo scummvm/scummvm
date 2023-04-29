@@ -35,7 +35,7 @@
 namespace Tetraedge {
 
 AmerzoneGame::AmerzoneGame() : Tetraedge::Game(), _orientationX(0.0f), _orientationY(0.0f),
-_speedX(0.0f), _speedY(0.0f), _isInDrag(false), _musicOn(false), _edgeButtonRolloverCount(0),
+_speedX(0.0f), _speedY(0.0f), _isInDrag(false), _edgeButtonRolloverCount(0),
 _warpX(nullptr), _warpY(nullptr), _prevWarpY(nullptr) {
 
 }
@@ -97,6 +97,13 @@ bool AmerzoneGame::changeWarp(const Common::String &rawZone, const Common::Strin
 	_luaContext.removeGlobal("OnDialogFinished");
 	_luaContext.removeGlobal("OnDocumentClosed");
 	_luaContext.removeGlobal("OnPuzzleWon");
+
+	for (uint i = 0; i < _gameSounds.size(); i++) {
+		_gameSounds[i]->stop();
+		_gameSounds[i]->deleteLater();
+	}
+	_gameSounds.clear();
+
 	Common::String sceneXml = zone;
 	size_t dotpos = sceneXml.rfind('.');
 	if (dotpos != Common::String::npos)
@@ -519,7 +526,7 @@ bool AmerzoneGame::onVideoFinished() {
 	video->setVisible(false);
 	Application *app = g_engine->getApplication();
 	_videoMusic.stop();
-	if (_musicOn)
+	if (app->musicOn())
 		app->music().play();
 	_running = true;
 	_luaScript.execute("OnMovieFinished", vidPath);

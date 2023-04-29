@@ -2006,6 +2006,8 @@ static void PlayMusic(const Common::String &path, float volume) {
 	music.stop();
 	music.repeat(g_engine->gameIsAmerzone());
 	music.load(path);
+	if (!g_engine->getApplication()->musicOn())
+		return;
 	music.play();
 	music.volume(volume);
 }
