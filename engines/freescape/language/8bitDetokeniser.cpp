@@ -374,28 +374,32 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 
 		case 44:
 			detokenisedStream += "ELSE ";
+			currentInstruction = FCLInstruction(Token::ELSE);
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
+			numberOfArguments = 0;
 			break;
 
 		case 45:
 			detokenisedStream += "ENDIF ";
+			currentInstruction = FCLInstruction(Token::ENDIF);
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
+			numberOfArguments = 0;
 			break;
 
 		case 46:
-			detokenisedStream += "IFGTE ";
-			detokenisedStream += Common::String::format("(v%d, %d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
-			bytePointer += 2;
-			numberOfArguments = 0;
+			detokenisedStream += "IFGTE (v";
+			currentInstruction = FCLInstruction(Token::IFGTEQ);
 			break;
 
 		case 47:
-			detokenisedStream += "IFLTE ";
-			detokenisedStream += Common::String::format("(v%d, %d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
-			bytePointer += 2;
-			numberOfArguments = 0;
+			detokenisedStream += "IFLTE (v";
+			currentInstruction = FCLInstruction(Token::IFGTEQ);
 			break;
 
 		case 48:
-			detokenisedStream += "EXECUTE ";
+			detokenisedStream += "EXECUTE (";
 			currentInstruction = FCLInstruction(Token::EXECUTE);
 			break;
 		}
