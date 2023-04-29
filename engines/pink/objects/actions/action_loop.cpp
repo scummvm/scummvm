@@ -54,10 +54,10 @@ void ActionLoop::toConsole() const {
 }
 
 void ActionLoop::update() {
-	int frame = _decoder.getCurFrame();
+	int32 frame = _decoder.getCurFrame();
 
 	if (!_inLoop) {
-		if (frame < (int)_startFrame) {
+		if (frame < (int32)_startFrame) {
 			decodeNext();
 			return;
 		} else
@@ -75,7 +75,7 @@ void ActionLoop::update() {
 				decodeNext();
 			}
 		} else {
-			if (frame > (int)_startFrame) {
+			if (frame > (int32)_startFrame) {
 				ActionCEL::setFrame(frame - 1);
 			} else {
 				_forward = true;
@@ -83,18 +83,21 @@ void ActionLoop::update() {
 			decodeNext();
 		}
 		break;
+
 	case kRandom: {
 		Common::RandomSource &rnd = _actor->getPage()->getGame()->getRnd();
 		ActionCEL::setFrame(rnd.getRandomNumberRng(_startFrame, _stopFrame));
 		decodeNext();
 		break;
 	}
+
 	case kForward:
 		if (frame == _stopFrame) {
 			ActionCEL::setFrame(_startFrame);
 		}
 		decodeNext();
 		break;
+
 	default:
 		break;
 	}

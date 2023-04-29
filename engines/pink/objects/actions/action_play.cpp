@@ -60,13 +60,14 @@ void ActionPlay::pause(bool paused) {
 
 void ActionPlay::onStart() {
 	debugC(6, kPinkDebugActions, "Actor %s has now ActionPlay %s", _actor->getName().c_str(), _name.c_str());
-	int frameCount = _decoder.getFrameCount();
-	if (_stopFrame == -1 || _stopFrame >= frameCount)
-		_stopFrame = frameCount - 1;
+	int32 frameCount = _decoder.getFrameCount();
 
-	if (_startFrame >= _decoder.getFrameCount()) {
-		_actor->endAction();
-		return;
+	if ((int32)_startFrame >= frameCount) {
+		_startFrame = 0;
+	}
+
+	if (_stopFrame == -1 || _stopFrame >= frameCount) {
+		_stopFrame = frameCount - 1;
 	}
 
 	ActionCEL::setFrame(_startFrame);

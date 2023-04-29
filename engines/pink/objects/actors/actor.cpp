@@ -31,7 +31,7 @@ namespace Pink {
 
 Actor::Actor()
 		: _page(nullptr), _action(nullptr),
-		  _isActionEnded(1) {}
+		  _isActionEnded(true) {}
 
 Actor::~Actor() {
 	for (uint i = 0; i < _actions.size(); ++i) {
@@ -63,9 +63,9 @@ void Actor::init(bool paused) {
 		_action = findAction(kIdleAction);
 
 	if (!_action) {
-		_isActionEnded = 1;
+		_isActionEnded = true;
 	} else {
-		_isActionEnded = 0;
+		_isActionEnded = false;
 		_action->start();
 		_action->pause(paused);
 	}
@@ -113,19 +113,19 @@ Common::String Actor::getLocation() const {
 
 void Actor::setAction(Action *newAction) {
 	if (_action) {
-		_isActionEnded = 1;
+		_isActionEnded = true;
 		_action->end();
 	}
 	_action = newAction;
 	if (newAction) {
-		_isActionEnded = 0;
+		_isActionEnded = false;
 		_action->start();
 	}
 }
 
 void Actor::setAction(Action *newAction, bool loadingSave) {
 	if (loadingSave) {
-		_isActionEnded = 1;
+		_isActionEnded = true;
 		_action = newAction;
 	} else {
 		setAction(newAction);
