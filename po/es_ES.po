@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-29 12:20+0000\n"
-"PO-Revision-Date: 2023-04-28 21:22+0000\n"
+"PO-Revision-Date: 2023-04-29 19:23+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -108,31 +108,23 @@ msgid "Manual mode"
 msgstr "Modo manual"
 
 #: gui/cloudconnectionwizard.cpp:183
-#, fuzzy
-#| msgid "Will ask you to run Local Webserver"
 msgid "Will ask you to run the Local Webserver"
-msgstr "Solicitará la ejecución de un servidor local"
+msgstr "Solicitará la ejecución del servidor local"
 
 #: gui/cloudconnectionwizard.cpp:185
-#, fuzzy
-#| msgid "Requires Local Webserver feature"
 msgid "Requires the Local Webserver feature"
-msgstr "Necesita un servidor local"
+msgstr "Necesita el servidor local"
 
 #: gui/cloudconnectionwizard.cpp:201
 msgid "Quick Mode: Step 1"
 msgstr "Modo rápido: paso 1"
 
 #: gui/cloudconnectionwizard.cpp:206
-#, fuzzy
-#| msgid ""
-#| "In this mode, Local Webserver must be running,\n"
-#| "so your browser could forward data to ScummVM"
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
 msgstr ""
-"En este modo debes tener en marcha un servidor web\n"
+"En este modo debes tener en marcha el servidor web\n"
 "para que tu navegador pueda enviar datos a ScummVM"
 
 #: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:3657
@@ -201,11 +193,6 @@ msgid "Open this link in your browser:"
 msgstr "Abre este enlace en tu navegador:"
 
 #: gui/cloudconnectionwizard.cpp:321
-#, fuzzy
-#| msgid ""
-#| "When it fails to pass JSON code to ScummVM,\n"
-#| "find it on Troubleshooting section of the page,\n"
-#| "and go to the next step here."
 msgid ""
 "When it fails to pass the JSON code to ScummVM,\n"
 "find it on the Troubleshooting section of the page,\n"
@@ -220,8 +207,6 @@ msgid "Manual Mode: Step 2"
 msgstr "Modo manual: paso 2"
 
 #: gui/cloudconnectionwizard.cpp:355
-#, fuzzy
-#| msgid "Copy JSON code from browser here and press Next:"
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr "Copia aquí el código JSON del navegador y pulsa en Siguiente:"
 
@@ -242,14 +227,10 @@ msgid "Cloud storage was not connected."
 msgstr "No se pudo conectar al almacenamiento."
 
 #: gui/cloudconnectionwizard.cpp:378
-#, fuzzy
-#| msgid "Make sure JSON code was copied correctly and retry."
 msgid "Make sure the JSON code was copied correctly and retry."
 msgstr "Comprueba que el código JSON esté bien copiado y vuelve a intentarlo."
 
 #: gui/cloudconnectionwizard.cpp:379
-#, fuzzy
-#| msgid "It it doesn't work, try from the beginning."
 msgid "It it doesn't work, try again from the beginning."
 msgstr "En caso de que no funcione, empieza desde el principio."
 
@@ -270,8 +251,6 @@ msgid "Next"
 msgstr "Siguiente"
 
 #: gui/cloudconnectionwizard.cpp:493
-#, fuzzy
-#| msgid "Another Storage is working now. Do you want to interrupt it?"
 msgid "Another Storage is working right now. Do you want to interrupt it?"
 msgstr "Ya hay otro almacenamiento activo. ¿Quieres interrumpirlo?"
 
@@ -303,17 +282,13 @@ msgid "No"
 msgstr "No"
 
 #: gui/cloudconnectionwizard.cpp:502
-#, fuzzy
-#| msgid "Wait until current Storage finishes up and try again."
 msgid "Wait until current Storage finishes and try again."
 msgstr "Espera a que el almacenamiento actual finalice y prueba otra vez."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:530
-#, fuzzy
-#| msgid "JSON code contents is malformed."
 msgid "JSON code contents are malformed."
-msgstr "El código JSON no es válido."
+msgstr "Los contenidos del código JSON no son válidos."
 
 #: gui/cloudconnectionwizard.cpp:551 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
@@ -6261,14 +6236,7 @@ msgid "Choose Spell"
 msgstr "Elegir hechizo"
 
 #: engines/kyra/gui/saveload_eob.cpp:598
-#, fuzzy, c-format
-#| msgid ""
-#| "The following original saved game file has been found in your game path:\n"
-#| "\n"
-#| "%s %s\n"
-#| "\n"
-#| "Do you wish to use this saved game file with ScummVM?\n"
-#| "\n"
+#, c-format
 msgid ""
 "The following original saved game file has been found in your game path:\n"
 "\n"
@@ -6279,7 +6247,7 @@ msgid ""
 msgstr ""
 "Se ha encontrado esta partida guardada en el directorio del juego:\n"
 "\n"
-"%s %s\n"
+"%s %S\n"
 "\n"
 "¿Quieres utilizar esta partida guardada en ScummVM?\n"
 "\n"
