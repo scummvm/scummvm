@@ -1262,7 +1262,7 @@ void replace_tokens(const char *srcmes, char *destm, int maxlen) {
 	while (srcmes[indxsrc] != 0) {
 		srcp = &srcmes[indxsrc];
 		destp = &destm[indxdest];
-		if ((strncmp(srcp, "@IN", 3) == 0) | (strncmp(srcp, "@GI", 3) == 0)) {
+		if ((strncmp(srcp, "@IN", 3) == 0) || (strncmp(srcp, "@GI", 3) == 0)) {
 			int tokentype = 0;
 			if (srcp[1] == 'I') tokentype = 1;
 			else tokentype = 2;
