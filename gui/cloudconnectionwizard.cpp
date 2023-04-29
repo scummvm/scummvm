@@ -376,7 +376,7 @@ void CloudConnectionWizard::showStepManualModeFailure() {
 
 	_label0 = new StaticTextWidget(_container, "ConnectionWizard_Failure.Line1", _("Cloud storage was not connected."));
 	_label1 = new StaticTextWidget(_container, "ConnectionWizard_Failure.Line2", _("Make sure the JSON code was copied correctly and retry."));
-	_label2 = new StaticTextWidget(_container, "ConnectionWizard_Failure.Line3", _("It it doesn't work, try again from the beginning."));
+	_label2 = new StaticTextWidget(_container, "ConnectionWizard_Failure.Line3", _("If that doesn't work, try again from the beginning."));
 	_label3 = new StaticTextWidget(_container, "ConnectionWizard_Failure.Line4", _("Error message: ") + _errorMessage, Common::U32String(), ThemeEngine::kFontStyleNormal);
 	_label3->setEnabled(false);
 }
