@@ -884,6 +884,21 @@ void Screen_LoL::postProcessCursor(uint8 *data, int w, int h, int pitch) {
 	}
 }
 
+void ChineseOneByteFontLoL::processColorMap() {
+	_textColor[0] = _colorMap[1];
+	_textColor[1] = _colorMap[0];
+}
+
+uint32 ChineseTwoByteFontLoL::getFontOffset(uint16 c) const {
+	c = ((c & 0x7F00) >> 2) | (c & 0x3F);
+	return c * 28;
+}
+
+void ChineseTwoByteFontLoL::processColorMap() {
+	_textColor[0] = _colorMap[1];
+	_textColor[1] = _colorMap[0];
+}
+
 } // End of namespace Kyra
 
 #endif // ENABLE_LOL
