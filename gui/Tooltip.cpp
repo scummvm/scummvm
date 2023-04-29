@@ -97,4 +97,19 @@ void Tooltip::drawDialog(DrawLayer layerToDraw) {
 	}
 }
 
+void Tooltip::close() {
+	// copy&paste from Dialog::close()
+	_visible = false;
+
+	if (_mouseWidget) {
+		_mouseWidget->handleMouseLeft(0);
+		_mouseWidget = nullptr;
+	}
+	releaseFocus();
+	g_gui.closeTopDialog(false);
+
+	// instead of kRedrawCloseDialog schedule kRedrawTopDialog of the parent
+	g_gui.scheduleTopDialogRedraw();
+}
+
 }
