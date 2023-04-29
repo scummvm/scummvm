@@ -700,7 +700,7 @@ void CryOmni3DEngine_Versailles::calculateTransparentMapping() {
 	}
 
 	uint newColorsNextId = _transparentNewStart;
-	uint newColorsCount = 0;
+	//uint newColorsCount = 0;
 	for (uint i = _transparentDstStart; i < _transparentDstStop; i++) {
 		byte transparentRed = ((uint)_mainPalette[3 * i + 0]) * 60 / 128;
 		byte transparentGreen = ((uint)_mainPalette[3 * i + 1]) * 50 / 128;
@@ -729,7 +729,7 @@ void CryOmni3DEngine_Versailles::calculateTransparentMapping() {
 				_mainPalette[3 * newColorsNextId + 2] = transparentBlue;
 				nearestId = newColorsNextId;
 
-				newColorsCount++;
+				//newColorsCount++;
 				newColorsNextId++;
 			}
 		}
