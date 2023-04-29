@@ -101,7 +101,7 @@ public:
 		return debugFlagList;
 	}
 
-	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override {
 		ADDetectedGame detectedGame = detectGameFilebased(allFiles, AGOS::fileBased);
 		if (!detectedGame.desc) {
 			return ADDetectedGame();
