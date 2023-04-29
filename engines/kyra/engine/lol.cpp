@@ -388,6 +388,10 @@ Common::Error LoLEngine::init() {
 	assert(_gui);
 	_gui->initStaticData();
 
+	if (_res->exists("LANDS.PAK")) {
+		_screen->loadFont(Screen::FID_CHINESE_FNT, "LANDS.PAK");
+	}
+
 	_txt = new TextDisplayer_LoL(this, _screen);
 
 	_screen->setAnimBlockPtr(10000);
