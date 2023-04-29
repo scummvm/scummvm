@@ -199,6 +199,9 @@ all: $(TARGET) scummvm.zip $(TARGET_NAME)_libretro.info
 #bundle_files
 scummvm.zip: $(SCUMMVM_PATH)/dists/scummvm.rc
 	@echo Preparing $@
+ifeq (, $(shell which zip))
+	$(error "No zip found, consider doing apt-get install zip")
+endif
 	@$(SCRIPTS_PATH)/bundle_datafiles.sh $(ROOT_PATH) $(SCUMMVM_PATH) bundle $(TARGET_NAME)
 
 $(TARGET_NAME)_libretro.info: $(SCUMMVM_PATH)/dists/scummvm.rc
