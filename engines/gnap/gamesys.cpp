@@ -806,7 +806,7 @@ void GameSys::drawSprites() {
 
 	// Restore dirty background and collect rects to be redrawn for all sprites
 	// which aren't marked to be redrawn yet
-	Common::Rect intersectingRect;
+	//Common::Rect intersectingRect;
 	for (uint i = 0; i < _dirtyRects.size(); ++i) {
 		restoreBackgroundRect(_dirtyRects[i]);
 		for (int j = 0; j < _gfxItemsCount; ++j)
@@ -910,7 +910,7 @@ void GameSys::updateScreen() {
 		_gameSysClock = 0;
 	}
 
-	Common::Rect dstRect, srcRect, rcSrc2;
+	Common::Rect srcRect, rcSrc2;
 
 	for (int j = 0; j < _gfxItemsCount; ++j) {
 
