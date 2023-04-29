@@ -33,7 +33,7 @@ uint8 k8bitMaxVariable = 64;
 uint8 k8bitMaxShield = 64;
 uint8 k8bitMaxEnergy = 64;
 
-Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition, FCLInstructionVector &instructions) {
+Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition, FCLInstructionVector &instructions, bool enableActivated) {
 	Common::String detokenisedStream;
 	Common::Array<uint8>::size_type bytePointer = 0;
 	Common::Array<uint8>::size_type sizeOfTokenisedContent = tokenisedCondition.size();
@@ -63,7 +63,9 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 		// get the conditional type of the next operation
 		uint8 conditionalByte = tokenisedCondition[bytePointer];
 
-		if (conditionalByte & 0x80)
+		if ((conditionalByte & 0xc0) && enableActivated) {
+			newConditional = Token::ACTIVATEDQ;
+		} else if (conditionalByte & 0x80)
 			newConditional = Token::SHOTQ;
 		else if (conditionalByte & 0x40)
 			newConditional = Token::TIMERQ;
@@ -92,6 +94,8 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 				detokenisedStream += "IF TIMER? THEN\n";
 			else if (oldConditional == Token::COLLIDEDQ)
 				detokenisedStream += "IF COLLIDED? THEN\n";
+			else if (oldConditional == Token::ACTIVATEDQ)
+				detokenisedStream += "IF ACTIVATED? THEN\n";
 			else
 				error("Invalid conditional: %x", oldConditional);
 		}

@@ -133,11 +133,18 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 		debugC(1, kFreescapeDebugCode, "Executing ip: %d with type %d in code with size: %d", ip, instruction.getType(), codeSize);
 		switch (instruction.getType()) {
 		default:
-			if (!isCastle())
-				error("Instruction %x at ip: %d not implemented!", instruction.getType(), ip);
+			//if (!isCastle())
+			error("Instruction %x at ip: %d not implemented!", instruction.getType(), ip);
 			break;
 		case Token::NOP:
 			debugC(1, kFreescapeDebugCode, "Executing NOP at ip: %d", ip);
+			break;
+
+		case Token::ACTIVATEDQ:
+			if (collided) // TODO: implement interaction
+				executeCode(*instruction._thenInstructions, shot, collided, timer);
+			// else branch is always empty
+			assert(instruction._elseInstructions == nullptr);
 			break;
 
 		case Token::COLLIDEDQ:

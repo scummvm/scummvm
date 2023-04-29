@@ -206,7 +206,7 @@ void DrillerEngine::loadAssetsFullGame() {
 	conditionArray.push_back(0x7f);
 	conditionArray.push_back(0x0);
 
-	Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions);
+	Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions, false);
 	debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
 	_areaMap[18]->_conditions.push_back(instructions);
 	_areaMap[18]->_conditionSources.push_back(conditionSource);

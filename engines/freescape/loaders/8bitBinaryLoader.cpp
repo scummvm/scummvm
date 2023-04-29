@@ -187,7 +187,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		Common::String conditionSource;
 		if (byteSizeOfObject) {
 			Common::Array<uint8> conditionArray = readArray(file, byteSizeOfObject);
-			conditionSource = detokenise8bitCondition(conditionArray, instructions);
+			conditionSource = detokenise8bitCondition(conditionArray, instructions, isCastle());
 			// instructions = getInstructions(conditionSource);
 			debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
 		}
@@ -257,7 +257,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		// grab the object condition, if there is one
 		if (byteSizeOfObject) {
 			Common::Array<uint8> conditionArray = readArray(file, byteSizeOfObject);
-			conditionSource = detokenise8bitCondition(conditionArray, instructions);
+			conditionSource = detokenise8bitCondition(conditionArray, instructions, isCastle());
 			debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
 		}
 		debugC(1, kFreescapeDebugParser, "End of object at %lx", file->pos());
@@ -536,7 +536,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		// get the condition
 		if (lengthOfCondition > 0) {
 			Common::Array<uint8> conditionArray = readArray(file, lengthOfCondition);
-			Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions);
+			Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions, isCastle());
 			area->_conditions.push_back(instructions);
 			area->_conditionSources.push_back(conditionSource);
 			debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
@@ -629,7 +629,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		// get the condition
 		if (lengthOfCondition > 0) {
 			Common::Array<uint8> conditionArray = readArray(file, lengthOfCondition);
-			Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions);
+			Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions, isCastle());
 			_conditions.push_back(instructions);
 			_conditionSources.push_back(conditionSource);
 			debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
