@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-28 14:08+0000\n"
+"POT-Creation-Date: 2023-04-29 10:14+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -7179,7 +7179,7 @@ msgstr "Mostrar/Ocultar menú de pausa"
 msgid "Toggle Chatty AI"
 msgstr "Modo Rápido"
 
-#: engines/pink/gui.cpp:279
+#: engines/pink/gui.cpp:278
 msgid "This menu item is not yet implemented"
 msgstr ""
 

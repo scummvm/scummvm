@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-28 14:08+0000\n"
+"POT-Creation-Date: 2023-04-29 10:14+0000\n"
 "PO-Revision-Date: 2022-10-02 04:37+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -7111,7 +7111,7 @@ msgstr "Skjul/Vis pausemeny"
 msgid "Toggle Chatty AI"
 msgstr "Rask modus"
 
-#: engines/pink/gui.cpp:279
+#: engines/pink/gui.cpp:278
 msgid "This menu item is not yet implemented"
 msgstr ""
 

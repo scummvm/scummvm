@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-28 14:08+0000\n"
+"POT-Creation-Date: 2023-04-29 10:14+0000\n"
 "PO-Revision-Date: 2023-04-24 08:35+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -7168,7 +7168,7 @@ msgstr "Pause-Menü anzeigen/verbergen"
 msgid "Toggle Chatty AI"
 msgstr "Schalte die gesprächige KI um"
 
-#: engines/pink/gui.cpp:279
+#: engines/pink/gui.cpp:278
 msgid "This menu item is not yet implemented"
 msgstr "Dieser Menüpunkt ist noch nicht implementiert"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-28 14:08+0000\n"
+"POT-Creation-Date: 2023-04-29 10:14+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -7081,7 +7081,7 @@ msgstr "정지 메뉴 표시/숨김"
 msgid "Toggle Chatty AI"
 msgstr "말 많은 AI 토글"
 
-#: engines/pink/gui.cpp:279
+#: engines/pink/gui.cpp:278
 msgid "This menu item is not yet implemented"
 msgstr "현재 메뉴 항목은 아직 구현되지 않았습니다"
 
