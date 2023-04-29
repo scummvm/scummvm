@@ -406,9 +406,9 @@ struct SString {
 	uint16  x = 0, y = 0, dx = 0;
 
 	constexpr SString() = default;
-	SString(const char *text, uint16 x = 0, uint16 y = 0, uint16 dx = 0) : x(x), y(y), dx(dx) {
-		if (text != nullptr) {
-			memcpy(this->text, text, strlen(text));
+	SString(const char *_text, uint16 _x = 0, uint16 _y = 0, uint16 _dx = 0) : x(_x), y(_y), dx(_dx) {
+		if (_text != nullptr) {
+			memcpy(this->text, _text, strlen(_text));
 		}
 	}
 };
@@ -416,7 +416,7 @@ struct SString {
 struct SRect {
 	int32  x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 	constexpr SRect() = default;
-	constexpr SRect(int32 x1, int32 y1, int32 x2, int32 y2): x1(x1), y1(y1), x2(x2), y2(y2) {}
+	constexpr SRect(int32 _x1, int32 _y1, int32 _x2, int32 _y2): x1(_x1), y1(_y1), x2(_x2), y2(_y2) {}
 };
 
 struct SD3DRect {
@@ -440,10 +440,10 @@ struct SDDBitmap {
 enum class FontKind;
 struct SDDText {
 	SDDText() = default;
-	SDDText(const char *text, FontKind font, FontColor color, int32 tnum) : font(font),
-																			color(color),
-																			tnum(tnum) {
-		Common::strlcpy(this->text, text, sizeof(this->text));
+	SDDText(const char *_text, FontKind _font, FontColor _color, int32 _tnum) : font(_font),
+																			color(_color),
+																			tnum(_tnum) {
+		Common::strlcpy(this->text, _text, sizeof(this->text));
 	}
 	char text[MAX_STRING_LEN] = {};
 	FontKind font; // TODO: Move elsewhere so we can initalize
@@ -481,7 +481,7 @@ struct message {
 		t3dF32 fparam[3];               // float parameter
 	};
 	message() = default;
-	message(EventClass classe, uint8 event, uint16 flags) : classe(classe), event(event), flags(flags) {}
+	message(EventClass _classe, uint8 _event, uint16 _flags) : classe(_classe), event(_event), flags(_flags) {}
 };
 
 struct pqueue {
