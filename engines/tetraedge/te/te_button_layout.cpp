@@ -368,7 +368,7 @@ void TeButtonLayout::setPosition(const TeVector3f32 &pos) {
 	TeLayout::setPosition(pos);
 
 	if (_currentState != BUTTON_STATE_DISABLED) {
-		int somethingCount = 0;
+		//int somethingCount = 0;
 		if (!_intArr.empty()) {
 			// probably not needed as we reimplememted how this works.
 			error("TODO: Implement setPosition logic for up/down state");
