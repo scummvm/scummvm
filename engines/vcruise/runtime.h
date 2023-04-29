@@ -985,6 +985,7 @@ private:
 	Common::Array<Common::String> _animDefNames;
 	Common::HashMap<Common::String, uint> _animDefNameToIndex;
 
+	bool _idleLockInteractions;
 	bool _idleIsOnInteraction;
 	bool _idleHaveClickInteraction;
 	bool _idleHaveDragInteraction;

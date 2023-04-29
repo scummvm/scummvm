@@ -849,7 +849,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _loadedAnimationHasSound(false), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0),
 	  _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
-	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
+	  _animPlayWhileIdle(false), _idleLockInteractions(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
 	  _inGameMenuState(kInGameMenuStateInvisible), _inGameMenuActiveElement(0), _inGameMenuButtonActive {false, false, false, false, false},
 	  /*_loadedArea(0), */_lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0),
 	  _delayCompletionTime(0),
@@ -1175,6 +1175,15 @@ bool Runtime::runIdle() {
 			_animPlayWhileIdle = false;
 			sanim.nextStartTime = timestamp + sanim.params.repeatDelay * 1000u;
 			sanim.currentAlternation = 1 - sanim.currentAlternation;
+
+			if (_idleLockInteractions) {
+				_idleLockInteractions = false;
+				bool changedState = dischargeIdleMouseMove();
+				if (changedState) {
+					drawCompass();
+					return true;
+				}
+			}
 		}
 	} else if (_haveIdleAnimations[_direction]) {
 		// Try to re-trigger
@@ -1183,6 +1192,14 @@ bool Runtime::runIdle() {
 			const AnimationDef &animDef = sanim.animDefs[sanim.currentAlternation];
 			changeAnimation(animDef, animDef.firstFrame, false, _animSpeedStaticAnim);
 			_animPlayWhileIdle = true;
+
+			_idleLockInteractions = sanim.params.lockInteractions;
+			if (_idleLockInteractions) {
+				_panoramaState = kPanoramaStateInactive;
+				bool changedState = dischargeIdleMouseMove();
+				assert(!changedState);	// Shouldn't be changing state from this!
+				(void)changedState;
+			}
 		}
 	}
 
@@ -2301,7 +2318,8 @@ void Runtime::returnToIdleState() {
 			sanim.currentAlternation = 1;
 		}
 	}
-
+	
+	_idleLockInteractions = false;
 	_idleIsOnInteraction = false;
 	_idleHaveClickInteraction = false;
 	_idleHaveDragInteraction = false;
@@ -2375,7 +2393,7 @@ bool Runtime::dischargeIdleMouseMove() {
 
 	bool isOnInteraction = false;
 	uint interactionID = 0;
-	if (sdDef) {
+	if (sdDef && !_idleLockInteractions) {
 		for (const InteractionDef &idef : sdDef->interactions) {
 			if (idef.objectType == 1 && idef.rect.contains(relMouse)) {
 				isOnInteraction = true;
@@ -3351,7 +3369,7 @@ void Runtime::detectPanoramaDirections() {
 }
 
 void Runtime::detectPanoramaMouseMovement(uint32 timestamp) {
-	if (_panoramaState == kPanoramaStateInactive && _inGameMenuState == kInGameMenuStateInvisible && (_lmbDragging || (_lmbDown && (timestamp - _lmbDownTime) >= 500)))
+	if (_panoramaState == kPanoramaStateInactive && _inGameMenuState == kInGameMenuStateInvisible && (_lmbDragging || (_lmbDown && (timestamp - _lmbDownTime) >= 500)) && !_idleLockInteractions)
 		panoramaActivate();
 }
 
@@ -4408,14 +4426,17 @@ void Runtime::scriptOpAnim(ScriptArg_t arg) {
 	_direction = stackArgs[kAnimDefStackArgs + 1];
 	_havePendingScreenChange = true;
 
-	
-	uint cursorID = kCursorArrow;
-	if (_scriptEnv.panInteractionID == kPanUpInteraction)
-		cursorID = _panCursors[kPanCursorDraggableUp | kPanCursorDirectionUp];
-	else if (_scriptEnv.panInteractionID == kPanDownInteraction)
-		cursorID = _panCursors[kPanCursorDraggableDown | kPanCursorDirectionDown];
+	if (_loadedAnimationHasSound)
+		changeToCursor(nullptr);
+	else {
+		uint cursorID = kCursorArrow;
+		if (_scriptEnv.panInteractionID == kPanUpInteraction)
+			cursorID = _panCursors[kPanCursorDraggableUp | kPanCursorDirectionUp];
+		else if (_scriptEnv.panInteractionID == kPanDownInteraction)
+			cursorID = _panCursors[kPanCursorDraggableDown | kPanCursorDirectionDown];
 
-	changeToCursor(_cursors[cursorID]);
+		changeToCursor(_cursors[cursorID]);
+	}
 }
 
 void Runtime::scriptOpStatic(ScriptArg_t arg) {
