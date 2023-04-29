@@ -201,7 +201,6 @@ void t3dCheckBlockMesh(Common::Array<t3dMESH> &mt, uint32 NumMeshes, t3dMESH *bl
 	t3dF32  xa, za, xb, zb, xc, zc, xd, zd;
 	t3dF32  r, s, divisor;
 
-	uint32  i, j;
 	uint8   ref[4] = {2, 3, 6, 7};
 
 	if (!blockmesh || mt.empty() || !blockmesh->VertexBuffer) return;
@@ -216,7 +215,7 @@ void t3dCheckBlockMesh(Common::Array<t3dMESH> &mt, uint32 NumMeshes, t3dMESH *bl
 		t3dFACE &f = blockmesh->FList[j];
 		if (!f.n) continue;
 
-		for (i = 0; i < 3; i++) {
+		for (uint32 i = 0; i < 3; i++) {
 			if (blockmesh->VBptr[f.VertexIndex[i]].x < xa) {
 				xa = blockmesh->VBptr[f.VertexIndex[i]].x;
 				za = blockmesh->VBptr[f.VertexIndex[i]].z;
@@ -229,11 +228,12 @@ void t3dCheckBlockMesh(Common::Array<t3dMESH> &mt, uint32 NumMeshes, t3dMESH *bl
 	}
 	blockmesh->VBptr = nullptr;
 
-	for (i = 0; i < NumMeshes; i++) {
+	for (uint32 i = 0; i < NumMeshes; i++) {
 		t3dMESH &mesh = mt[i];
 		if ((mesh.Flags & T3D_MESH_HIDDEN) || (mesh.Flags & T3D_MESH_INVISIBLEFROMSECT))
 			continue;
 
+		uint32 j;
 		for (j = 0; j < 4; j++) {
 			xd = mesh.Trasl.x + mesh.BBox[ref[j]].p.x;
 			zd = mesh.Trasl.z + mesh.BBox[ref[j]].p.z;
@@ -882,7 +882,7 @@ void CalcBones(t3dMESH *mesh, t3dBONEANIM *Anim, int32 Frame) {
 	t3dBONE     *bone;
 	t3dM3X3F    *Matrix;
 	t3dV3F      *Trasl, Appov;
-	int32      i, cv, *pmodvert;
+	int32      i, cv;
 	gVertex     *Newptr;
 	uint8       *Average/*,first=0*/;
 	uint32      memalloc = 0;
@@ -1581,7 +1581,7 @@ void t3dCalcVolumetricLights(t3dMESH *m, t3dBODY *body) {
  * --------------------------------------------------*/
 void t3dLightCharacter(t3dCHARACTER *Ch) {
 	t3dMESH     *mesh;
-	uint32      i, j;
+	uint32      j;
 	t3dV3F      l;
 	t3dF32      dist, far_range, near_range, AttenIntensity;
 	t3dF32      ang, half_hotspot, half_falloff, SpotIntensity;
@@ -1617,7 +1617,7 @@ void t3dLightCharacter(t3dCHARACTER *Ch) {
 	}
 	t3dVectAdd(&ppos, &mesh->Trasl, &mesh->Pos);
 
-	//for (i = 0; i < Ch->CurRoom->NumLights(); i++, lt++) {
+	//for (uint32 i = 0; i < Ch->CurRoom->NumLights(); i++, lt++) {
 	for (auto &lt : Ch->CurRoom->LightTable) {
 		if (!(lt.Type & T3D_LIGHT_LIGHTON)) continue;
 		if (!(lt.Type & T3D_LIGHT_REALTIME)) continue;
@@ -2174,8 +2174,8 @@ void t3dRenderWater(t3dMESH &mesh, uint32 Type) {
 	        *texturedest=*(texturesource+((Xoffset*2+Yoffset*pitch)&(dimy*dimy*2-1)));
 	    }*/
 
-	for (uint32 j = 0; j < (dimy); j++)
-		for (uint32 i = 0; i < (dimx); i++, texturedest++, WaterBuffer++, textsource++) {
+	for (int32 j = 0; j < dimy; j++)
+		for (int32 i = 0; i < dimx; i++, texturedest++, WaterBuffer++, textsource++) {
 			if (Type & T3D_MESH_POOLWATER) {
 				Xoffset = ((*(WaterBuffer - 1)) - (*(WaterBuffer + 1))) >> 16;
 				Yoffset = ((*(WaterBuffer - dimx)) - (*(WaterBuffer + dimx))) >> 16;
@@ -2327,10 +2327,10 @@ void t3dSetFaceVisibility(t3dMESH *mesh, t3dCAMERA *cam) {
 			if (!(mesh->VBptr = mesh->VertexBuffer))
 				continue;
 
-			for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
 				t3dV3F  v;
-				gVertex *gv = &mesh->VBptr[f.VertexIndex[i]];
-				t3dV3F *n = &mesh->NList[f.VertexIndex[i]]->n;
+				gVertex *gv = &mesh->VBptr[f.VertexIndex[j]];
+				t3dV3F *n = &mesh->NList[f.VertexIndex[j]]->n;
 				t3dVectTransform(&v, n, &m);
 				gv->u1 = (v.x);
 				gv->v1 = (v.y);
@@ -2430,6 +2430,10 @@ void t3dCAMERA::normalizedSight() {
  *                  t3dCalcHalos
  * --------------------------------------------------*/
 void t3dCalcHalos(t3dBODY *b) {
+	// The userVertexBuffer stuff is not ready yet, giving us nullptr writes.
+	warning("TODO: t3dCalcHalos");
+	return;
+
 	gMaterial   *Material;
 	int16      T1;
 	uint32      uvbc;
@@ -2438,10 +2442,6 @@ void t3dCalcHalos(t3dBODY *b) {
 	t3dF32      size;
 	//uint16      *fp;
 	t3dV3F      v0, v1, v2, v3, tmp;
-
-	// The userVertexBuffer stuff is not ready yet, giving us nullptr writes.
-	warning("TODO: t3dCalcHalos");
-	return;
 
 	for (i = 0; i < b->NumLights(); i++) {
 		t3dLIGHT &l = b->LightTable[i];

@@ -118,7 +118,6 @@ bool WGame::CheckAndLoadMoglieSupervisoreModel(int32 c) {
 	warning("CheckAndLoadMoglieSupervisoreModel(workDirs, %d)", c);
 	char RemoveName[128] = "";
 	char RemoveNameHI[128] = "";
-	int32 j;
 
 	if (c == ocMOGLIESUPERVISORE) {
 		if (bMoglieGym && (!Character[c]->Body->name.contains("MoglieGym"))) {
@@ -501,7 +500,6 @@ bool WGame::LoadAndSetup(const Common::String &name, uint8 lite) {
  *                  UpdateAll
  * --------------------------------------------------*/
 void WGame::UpdateAll() {
-	int32 i;
 	UpdateRoomVisibility(*this);
 	auto bodies = _roomManager->getLoadedFiles();
 	for (auto loadedBody : bodies) {
@@ -602,7 +600,7 @@ void WGame::LoadMisc() {
 
 void WGame::GameLoop() {
 	bool done = false;
-	bool bGotMsg = false;
+	//bool bGotMsg = false;
 	//MSG  msg;
 
 	// TODO: These two should be adjusted if the game loses focus or needs to get a new context.
@@ -636,12 +634,11 @@ void WGame::GameLoop() {
 }
 
 void WGame::CleanUpAndPostQuit() {
-	uint16 i;
-	extern char *TextBucket;
-
 	gameOptions.save(workDirs);
 	warning("STUBBED CleanupAndPostQuit");
 #if 0
+	extern char *TextBucket;
+
 	if (CreditsNames) t3dFree(CreditsNames);
 	if (CreditsRoles) t3dFree(CreditsRoles);
 
@@ -652,7 +649,7 @@ void WGame::CleanUpAndPostQuit() {
 
 	CheckExtraLocalizationStrings(0);
 
-	for (i = 0; i < T3D_MAX_CHARACTERS; i++) {
+	for (uint16 i = 0; i < T3D_MAX_CHARACTERS; i++) {
 		if ((i != ocCURPLAYER) && (Character[i]))
 			CharStop(i);
 
@@ -661,7 +658,7 @@ void WGame::CleanUpAndPostQuit() {
 		Character[i] = nullptr;
 	}
 	Player = nullptr;
-	for (i = 0; i < NumLoadedFiles; i++) {
+	for (uint16 i = 0; i < NumLoadedFiles; i++) {
 		t3dReleaseBody(LoadedFiles[i].b);
 		LoadedFiles[i].b = nullptr;
 	}

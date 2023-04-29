@@ -28,9 +28,6 @@
 namespace Watchmaker {
 
 unsigned int jStringLimit = J_MAXSTRLEN, jTillEOL = 0, jUsingComments = 0;
-unsigned int nlLineCounter;
-char nlCurFileName[200];
-static Common::SeekableReadStream *nlCurFile;
 
 // PELS: supporto per il parsing dei .nl **********************************
 static void (*ErrorFunc)(void) = nullptr;
@@ -44,7 +41,7 @@ int ParseError(const char *ln, ...) {
 	va_start(ap, ln);
 	vsprintf(err, ln, ap);
 	va_end(ap);
-	warning("%s,%d: %s", nlCurFileName, nlLineCounter, err);
+	warning("%s", err);
 	return 0;
 }
 

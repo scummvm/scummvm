@@ -204,8 +204,6 @@ int32 WhatObj(WGame &game, int32 mx, int32 my, uint8 op) {
  *                  getRoomFromStr
  * --------------------------------------------------*/
 int16 getRoomFromStr(Init &init, const Common::String &s) {
-	char t[100]; //, *str;
-
 	auto end = s.findLastOf(".-");
 	if (end == s.npos) {
 		end = s.size() - 1;

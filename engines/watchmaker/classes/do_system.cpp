@@ -516,7 +516,6 @@ void ProcessTime(WGame &game) {
 	// warning("STUBBED ProcessTime");
 
 //	LARGE_INTEGER pf,pt;
-	int32 i;
 	TheTime = ReadTime();
 
 //	QueryPerformanceFrequency(&pf);QueryPerformanceCounter(&pt);

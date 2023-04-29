@@ -585,8 +585,8 @@ t3dCHARACTER *t3dLoadCharacter(WGame &game, const char *pname, uint16 num) {
 	b->Body->NumNormals = 0;
 	b->Body->NumVerticesNormals = 0;
 
-	for (uint16 n = 0; n < b->Body->NumMeshes(); n++) {
-		t3dMESH &mesh = b->Body->MeshTable[n];
+	for (uint16 i = 0; i < b->Body->NumMeshes(); i++) {
+		t3dMESH &mesh = b->Body->MeshTable[i];
 		for (f = 0; f < mesh.NumFaces(); f++) {
 			mesh.FList[f].n = nullptr;
 		}
@@ -622,9 +622,9 @@ t3dCHARACTER *t3dLoadCharacter(WGame &game, const char *pname, uint16 num) {
 	    t3dVectFill(&b->Mesh->BBox[7].p,0.0f);
 	    b->Mesh->Flags|=T3D_MESH_NOBOUNDBOX;
 	*/
-	for (uint16 n = 0; n < b->Body->NumMeshes(); n++) {
-		b->Body->MeshTable[n].Flags |= T3D_MESH_CHARACTER;
-		b->Body->MeshTable[n].Flags &= ~T3D_MESH_MIRROR;
+	for (uint16 i = 0; i < b->Body->NumMeshes(); i++) {
+		b->Body->MeshTable[i].Flags |= T3D_MESH_CHARACTER;
+		b->Body->MeshTable[i].Flags &= ~T3D_MESH_MIRROR;
 	}
 
 	t3dVectFill(&b->Pos, 0.0f);
