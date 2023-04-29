@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-29 11:27+0000\n"
+"POT-Creation-Date: 2023-04-29 11:37+0000\n"
 "PO-Revision-Date: 2023-04-28 21:22+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -282,7 +282,7 @@ msgstr "Ya hay otro almacenamiento activo. ¿Quieres interrumpirlo?"
 #: base/main.cpp:595 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
-#: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
+#: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3512
 #: engines/toon/toon.cpp:1502
@@ -295,7 +295,7 @@ msgstr "Sí"
 #: gui/launcher.cpp:487 gui/options.cpp:3367 gui/options.cpp:3741
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
-#: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
+#: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3512
 #: engines/toon/toon.cpp:1502
@@ -4598,7 +4598,7 @@ msgstr ""
 "Los primeros juegos en AGI para la Tandy Color Computer no son compatibles "
 "todavía."
 
-#: engines/agi/font.cpp:1096
+#: engines/agi/font.cpp:691
 msgid ""
 "Could not open/use file 'hgc_font' for Hercules hires font.\n"
 "If you have such file in other AGI (Sierra) game, you can copy it to the "
@@ -4939,7 +4939,7 @@ msgstr "Continuar"
 
 #: engines/bladerunner/detection_tables.h:90
 #: engines/bladerunner/detection_tables.h:101
-#: engines/kyra/detection_tables.h:75
+#: engines/kyra/detection_tables.h:76
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
@@ -6021,31 +6021,31 @@ msgstr "REMORA"
 msgid "Side Step"
 msgstr "Moverse hacia los lados"
 
-#: engines/kyra/detection_tables.h:73
+#: engines/kyra/detection_tables.h:74
 msgid "Missing language specific game code and/or resources."
 msgstr "Faltan el código o recursos del juego específicos del idioma."
 
-#: engines/kyra/detection_tables.h:74
+#: engines/kyra/detection_tables.h:75
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
 msgstr ""
 "Faltan el código o recursos del juego específicos de esta fantraducción."
 
-#: engines/kyra/detection_tables.h:76
+#: engines/kyra/detection_tables.h:77
 msgid "Demo plays simple animations without using Westwood's Engine."
 msgstr ""
 "La demostración mostrará animaciones sencillas sin recurrir al motor de "
 "Westwood."
 
-#: engines/kyra/detection_tables.h:1367
+#: engines/kyra/detection_tables.h:1368
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr ""
 "Has añadido el juego de forma incorrecta. Debes añadir la carpeta raíz del "
 "juego."
 
 #. I18N: The file in the game directory needs to be extracted
-#: engines/kyra/detection_tables.h:1383
+#: engines/kyra/detection_tables.h:1384
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
@@ -6260,12 +6260,19 @@ msgstr "Opciones"
 msgid "Choose Spell"
 msgstr "Elegir hechizo"
 
-#: engines/kyra/gui/saveload_eob.cpp:597
-#, c-format
+#: engines/kyra/gui/saveload_eob.cpp:598
+#, fuzzy, c-format
+#| msgid ""
+#| "The following original saved game file has been found in your game path:\n"
+#| "\n"
+#| "%s %s\n"
+#| "\n"
+#| "Do you wish to use this saved game file with ScummVM?\n"
+#| "\n"
 msgid ""
 "The following original saved game file has been found in your game path:\n"
 "\n"
-"%s %s\n"
+"%s %S\n"
 "\n"
 "Do you wish to use this saved game file with ScummVM?\n"
 "\n"
@@ -6277,7 +6284,7 @@ msgstr ""
 "¿Quieres utilizar esta partida guardada en ScummVM?\n"
 "\n"
 
-#: engines/kyra/gui/saveload_eob.cpp:630
+#: engines/kyra/gui/saveload_eob.cpp:631
 #, c-format
 msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
@@ -6286,7 +6293,7 @@ msgstr ""
 "Ya hay una partida guardada en el espacio %d. ¿Quieres sobrescribirla?\n"
 "\n"
 
-#: engines/kyra/gui/saveload_eob.cpp:663
+#: engines/kyra/gui/saveload_eob.cpp:664
 #, c-format
 msgid ""
 "%d original saved games have been successfully imported into\n"
