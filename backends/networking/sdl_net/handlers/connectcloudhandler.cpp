@@ -29,7 +29,6 @@
 #include "backends/networking/sdl_net/reader.h"
 #include "common/formats/json.h"
 #include "common/memstream.h"
-#include "common/translation.h"
 #include "common/callback.h"
 
 namespace Networking {
@@ -57,7 +56,7 @@ ConnectCloudClientHandler::~ConnectCloudClientHandler() {}
 void ConnectCloudClientHandler::respond(Client &client, Common::String response, long responseCode) const {
 	Common::SeekableReadStream *responseStream = HandlerUtils::makeResponseStreamFromString(response);
 	GetClientHandler *responseHandler = new GetClientHandler(responseStream);
-	responseHandler->setResponseCode(responseCode);	
+	responseHandler->setResponseCode(responseCode);
 	responseHandler->setHeader("Access-Control-Allow-Origin", "https://cloud.scummvm.org");
 	responseHandler->setHeader("Access-Control-Allow-Methods", "POST");
 	responseHandler->setHeader("Access-Control-Allow-Headers", "Content-Type");
