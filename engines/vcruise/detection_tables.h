@@ -37,7 +37,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("Reah.exe", "60ec19c53f1323cc7f0314f98d396283", 304128),
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | VCRUISE_GF_WANT_MP3,
+			ADGF_TESTING | VCRUISE_GF_WANT_MP3,
 			GUIO0()
 		},
 		GID_REAH,
@@ -49,7 +49,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("Reah.exe", "77bc7f7819cdd443f52b193529138c87", 305664),
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO0()
 		},
 		GID_REAH,
