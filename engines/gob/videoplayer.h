@@ -126,6 +126,7 @@ public:
 	int32 getExpectedFrameFromCurrentTime(int slot);
 
 	bool isPlayingLive() const;
+	bool isSoundPlaying() const;
 
 	void updateLive(bool force = false);
 

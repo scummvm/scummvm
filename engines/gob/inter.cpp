@@ -173,7 +173,11 @@ void Inter::storeKey(int16 key) {
 	WRITE_VAR(12, _vm->_util->getTimeKey() - _vm->_game->_startTimeKey);
 
 	storeMouse();
-	WRITE_VAR(1, _vm->_sound->blasterPlayingSound());
+	bool isSoundPlaying = _vm->_sound->blasterPlayingSound() ||
+						  (_vm->getGameType() == kGameTypeAdibou1 && // NOTE: may be needed by other games as well
+						   _vm->_vidPlayer->isSoundPlaying());
+
+	WRITE_VAR(1, isSoundPlaying);
 
 	if      (key == kKeyUp)
 		key =    kShortKeyUp;

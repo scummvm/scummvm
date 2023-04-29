@@ -397,6 +397,11 @@ bool VideoPlayer::isPlayingLive() const {
 	return video && video->live;
 }
 
+bool VideoPlayer::isSoundPlaying() const {
+	const Video *video = getVideoBySlot(0);
+	return video && video->decoder && video->decoder->isSoundPlaying();
+}
+
 void VideoPlayer::updateLive(bool force) {
 	for (int i = 0; i < kVideoSlotCount; i++)
 		updateLive(i, force);
