@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-29 10:21+0000\n"
+"POT-Creation-Date: 2023-04-29 11:27+0000\n"
 "PO-Revision-Date: 2023-04-25 20:35+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -108,11 +108,15 @@ msgid "Manual mode"
 msgstr "Manuaalinen tila"
 
 #: gui/cloudconnectionwizard.cpp:183
-msgid "Will ask you to run Local Webserver"
+#, fuzzy
+#| msgid "Will ask you to run Local Webserver"
+msgid "Will ask you to run the Local Webserver"
 msgstr "Pyytää sinua käynnistämään paikallisen webpalvelimen"
 
 #: gui/cloudconnectionwizard.cpp:185
-msgid "Requires Local Webserver feature"
+#, fuzzy
+#| msgid "Requires Local Webserver feature"
+msgid "Requires the Local Webserver feature"
 msgstr "Tarvitsee paikallisen webpalvelimen"
 
 #: gui/cloudconnectionwizard.cpp:201
@@ -120,9 +124,13 @@ msgid "Quick Mode: Step 1"
 msgstr "Pikatila: Vaihe 1"
 
 #: gui/cloudconnectionwizard.cpp:206
+#, fuzzy
+#| msgid ""
+#| "In this mode, Local Webserver must be running,\n"
+#| "so your browser could forward data to ScummVM"
 msgid ""
-"In this mode, Local Webserver must be running,\n"
-"so your browser could forward data to ScummVM"
+"In this mode, the Local Webserver must be running,\n"
+"so your browser can forward data to ScummVM"
 msgstr ""
 "Tässä tilassa paikallisen webpalvelimen täytyy olla käynnissä,\n"
 "jotta selaimesi voi välittää dataa ScummVM:lle"
@@ -176,9 +184,9 @@ msgstr "Paikallisen webpalvelimen osoite: "
 msgid "Quick Mode: Success"
 msgstr "Pikatila: Onnistui"
 
-#: gui/cloudconnectionwizard.cpp:299
-msgid "You cloud storage has been connected!"
-msgstr "Yhteys pilvitallennustilisi on avattu!"
+#: gui/cloudconnectionwizard.cpp:299 gui/cloudconnectionwizard.cpp:398
+msgid "Your cloud storage has been connected!"
+msgstr "Yhteys pilvitallennustilisi on luotu!"
 
 #: gui/cloudconnectionwizard.cpp:300 gui/cloudconnectionwizard.cpp:399
 msgid "Finish"
@@ -193,9 +201,14 @@ msgid "Open this link in your browser:"
 msgstr "Avaa tämä linkki selaimessasi:"
 
 #: gui/cloudconnectionwizard.cpp:321
+#, fuzzy
+#| msgid ""
+#| "When it fails to pass JSON code to ScummVM,\n"
+#| "find it on Troubleshooting section of the page,\n"
+#| "and go to the next step here."
 msgid ""
-"When it fails to pass JSON code to ScummVM,\n"
-"find it on Troubleshooting section of the page,\n"
+"When it fails to pass the JSON code to ScummVM,\n"
+"find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
 "Kun JSON:in välittäminen ScummVM:lle epäonnistuu,\n"
@@ -207,7 +220,9 @@ msgid "Manual Mode: Step 2"
 msgstr "Manuaalinen tila: Vaihe 2"
 
 #: gui/cloudconnectionwizard.cpp:355
-msgid "Copy JSON code from browser here and press Next:"
+#, fuzzy
+#| msgid "Copy JSON code from browser here and press Next:"
+msgid "Copy the JSON code from the browser here and press Next:"
 msgstr "Kopioi JSON-koodi selaimesta tähän ja paina 'Seuraava':"
 
 #: gui/cloudconnectionwizard.cpp:357
@@ -227,11 +242,15 @@ msgid "Cloud storage was not connected."
 msgstr "Yhteyttä tallennustilaan ei avattu."
 
 #: gui/cloudconnectionwizard.cpp:378
-msgid "Make sure JSON code was copied correctly and retry."
+#, fuzzy
+#| msgid "Make sure JSON code was copied correctly and retry."
+msgid "Make sure the JSON code was copied correctly and retry."
 msgstr "Varmista että JSON-koodi kopioitiin oikein ja yritä uudestaan."
 
 #: gui/cloudconnectionwizard.cpp:379
-msgid "It it doesn't work, try from the beginning."
+#, fuzzy
+#| msgid "It it doesn't work, try from the beginning."
+msgid "It it doesn't work, try again from the beginning."
 msgstr "Jos se ei toimi, yritä alusta uudestaan."
 
 #: gui/cloudconnectionwizard.cpp:380
@@ -242,10 +261,6 @@ msgstr "Virheilmoitus: "
 msgid "Manual Mode: Success"
 msgstr "Manuaalinen tila: Onnistui"
 
-#: gui/cloudconnectionwizard.cpp:398
-msgid "Your cloud storage has been connected!"
-msgstr "Yhteys pilvitallennustilisi on luotu!"
-
 #: gui/cloudconnectionwizard.cpp:422
 msgid "Back"
 msgstr "Takaisin"
@@ -255,7 +270,9 @@ msgid "Next"
 msgstr "Seuraava"
 
 #: gui/cloudconnectionwizard.cpp:493
-msgid "Another Storage is working now. Do you want to interrupt it?"
+#, fuzzy
+#| msgid "Another Storage is working now. Do you want to interrupt it?"
+msgid "Another Storage is working right now. Do you want to interrupt it?"
 msgstr "Toinen tallennustila on aktiivinen. Haluatko keskeyttää sen?"
 
 #: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
@@ -285,13 +302,17 @@ msgstr "Kyllä"
 msgid "No"
 msgstr "Ei"
 
-#: gui/cloudconnectionwizard.cpp:502 gui/options.cpp:3376
-msgid "Wait until current Storage finishes up and try again."
+#: gui/cloudconnectionwizard.cpp:502
+#, fuzzy
+#| msgid "Wait until current Storage finishes up and try again."
+msgid "Wait until current Storage finishes and try again."
 msgstr "Odota kunnes aktiivinen Tallennus on valmis ja yritä sitten uudestaan."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:530
-msgid "JSON code contents is malformed."
+#, fuzzy
+#| msgid "JSON code contents is malformed."
+msgid "JSON code contents are malformed."
 msgstr "JSON-koodin sisältö on epämuodostunutta."
 
 #: gui/cloudconnectionwizard.cpp:551 gui/downloaddialog.cpp:146
@@ -2197,6 +2218,10 @@ msgstr "sävytinpaketit"
 #: gui/options.cpp:3367
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Tämä tallennustila on nyt aktiivinen. Haluatko keskeyttää sen?"
+
+#: gui/options.cpp:3376
+msgid "Wait until current Storage finishes up and try again."
+msgstr "Odota kunnes aktiivinen Tallennus on valmis ja yritä sitten uudestaan."
 
 #: gui/options.cpp:3572 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
@@ -9992,6 +10017,9 @@ msgstr ""
 "ladata Liberation Fonts -paketin tai GNU FreeFont -paketin. Tarvitset kaikki "
 "fontit paketista jonka valitset, i.e. LiberationMono, LiberationSans ja "
 "LiberationSerif, tai FreeMono, FreeSans ja FreeSerif riippuen valinnastasi."
+
+#~ msgid "You cloud storage has been connected!"
+#~ msgstr "Yhteys pilvitallennustilisi on avattu!"
 
 #~ msgid "so your browser could forward data to ScummVM"
 #~ msgstr "jotta selaimesi voi uudelleenohjata dataa ScummVM:lle"

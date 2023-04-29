@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-29 10:21+0000\n"
+"POT-Creation-Date: 2023-04-29 11:27+0000\n"
 "PO-Revision-Date: 2023-04-24 08:35+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -108,11 +108,15 @@ msgid "Manual mode"
 msgstr "Manualモード"
 
 #: gui/cloudconnectionwizard.cpp:183
-msgid "Will ask you to run Local Webserver"
+#, fuzzy
+#| msgid "Will ask you to run Local Webserver"
+msgid "Will ask you to run the Local Webserver"
 msgstr "ローカルWebサーバーの実行を要求"
 
 #: gui/cloudconnectionwizard.cpp:185
-msgid "Requires Local Webserver feature"
+#, fuzzy
+#| msgid "Requires Local Webserver feature"
+msgid "Requires the Local Webserver feature"
 msgstr "ローカルWebサーバーが必要です"
 
 #: gui/cloudconnectionwizard.cpp:201
@@ -120,9 +124,13 @@ msgid "Quick Mode: Step 1"
 msgstr "Quickモード：ステップ1"
 
 #: gui/cloudconnectionwizard.cpp:206
+#, fuzzy
+#| msgid ""
+#| "In this mode, Local Webserver must be running,\n"
+#| "so your browser could forward data to ScummVM"
 msgid ""
-"In this mode, Local Webserver must be running,\n"
-"so your browser could forward data to ScummVM"
+"In this mode, the Local Webserver must be running,\n"
+"so your browser can forward data to ScummVM"
 msgstr ""
 "ブラウザーがScummVMにデータを転送するため、\n"
 "このモードではLocal Webserverの起動が必要です"
@@ -176,8 +184,8 @@ msgstr "ローカルWebサーバーアドレス: "
 msgid "Quick Mode: Success"
 msgstr "Quickモード：成功"
 
-#: gui/cloudconnectionwizard.cpp:299
-msgid "You cloud storage has been connected!"
+#: gui/cloudconnectionwizard.cpp:299 gui/cloudconnectionwizard.cpp:398
+msgid "Your cloud storage has been connected!"
 msgstr "クラウドストレージに接続しました!"
 
 #: gui/cloudconnectionwizard.cpp:300 gui/cloudconnectionwizard.cpp:399
@@ -193,9 +201,14 @@ msgid "Open this link in your browser:"
 msgstr "ブラウザーでリンクを開く："
 
 #: gui/cloudconnectionwizard.cpp:321
+#, fuzzy
+#| msgid ""
+#| "When it fails to pass JSON code to ScummVM,\n"
+#| "find it on Troubleshooting section of the page,\n"
+#| "and go to the next step here."
 msgid ""
-"When it fails to pass JSON code to ScummVM,\n"
-"find it on Troubleshooting section of the page,\n"
+"When it fails to pass the JSON code to ScummVM,\n"
+"find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
 "ScummVMへのJSONコードの転送失敗時、\n"
@@ -207,7 +220,9 @@ msgid "Manual Mode: Step 2"
 msgstr "Manualモード：ステップ2"
 
 #: gui/cloudconnectionwizard.cpp:355
-msgid "Copy JSON code from browser here and press Next:"
+#, fuzzy
+#| msgid "Copy JSON code from browser here and press Next:"
+msgid "Copy the JSON code from the browser here and press Next:"
 msgstr "ここにJSONコードをコピーし「次へ」を押します："
 
 #: gui/cloudconnectionwizard.cpp:357
@@ -227,11 +242,15 @@ msgid "Cloud storage was not connected."
 msgstr "クラウドストレージに接続不可。"
 
 #: gui/cloudconnectionwizard.cpp:378
-msgid "Make sure JSON code was copied correctly and retry."
+#, fuzzy
+#| msgid "Make sure JSON code was copied correctly and retry."
+msgid "Make sure the JSON code was copied correctly and retry."
 msgstr "JSONコードがコピーされた事を確認し、リトライ。"
 
 #: gui/cloudconnectionwizard.cpp:379
-msgid "It it doesn't work, try from the beginning."
+#, fuzzy
+#| msgid "It it doesn't work, try from the beginning."
+msgid "It it doesn't work, try again from the beginning."
 msgstr "上手く行かない場合、最初から試してください。"
 
 #: gui/cloudconnectionwizard.cpp:380
@@ -242,10 +261,6 @@ msgstr "エラーメッセージ： "
 msgid "Manual Mode: Success"
 msgstr "Manualモード：成功"
 
-#: gui/cloudconnectionwizard.cpp:398
-msgid "Your cloud storage has been connected!"
-msgstr "クラウドストレージに接続しました!"
-
 #: gui/cloudconnectionwizard.cpp:422
 msgid "Back"
 msgstr "前へ"
@@ -255,7 +270,9 @@ msgid "Next"
 msgstr "次へ"
 
 #: gui/cloudconnectionwizard.cpp:493
-msgid "Another Storage is working now. Do you want to interrupt it?"
+#, fuzzy
+#| msgid "Another Storage is working now. Do you want to interrupt it?"
+msgid "Another Storage is working right now. Do you want to interrupt it?"
 msgstr "すでに別のストレージが使用されています。切断してもよろしいですか?"
 
 #: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
@@ -285,13 +302,17 @@ msgstr "はい"
 msgid "No"
 msgstr "いいえ"
 
-#: gui/cloudconnectionwizard.cpp:502 gui/options.cpp:3376
-msgid "Wait until current Storage finishes up and try again."
+#: gui/cloudconnectionwizard.cpp:502
+#, fuzzy
+#| msgid "Wait until current Storage finishes up and try again."
+msgid "Wait until current Storage finishes and try again."
 msgstr "ストレージへのアップロード完了後に再実施してください。"
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:530
-msgid "JSON code contents is malformed."
+#, fuzzy
+#| msgid "JSON code contents is malformed."
+msgid "JSON code contents are malformed."
 msgstr "JSONコードの内容が不正です。"
 
 #: gui/cloudconnectionwizard.cpp:551 gui/downloaddialog.cpp:146
@@ -2176,6 +2197,10 @@ msgstr "シェーダーパック"
 #: gui/options.cpp:3367
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "ストレージを使用中です。切断してもよろしいですか?"
+
+#: gui/options.cpp:3376
+msgid "Wait until current Storage finishes up and try again."
+msgstr "ストレージへのアップロード完了後に再実施してください。"
 
 #: gui/options.cpp:3572 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
@@ -9862,6 +9887,9 @@ msgstr ""
 "Arialが必要です。LiberationFontsを使用する場合、LiberationMono、"
 "LiberationSans、LiberationSerifが必要です。GNUFreeFontを使用する場合、"
 "FreeMono、FreeSans、FreeSerifが必要です。"
+
+#~ msgid "You cloud storage has been connected!"
+#~ msgstr "クラウドストレージに接続しました!"
 
 #~ msgid "so your browser could forward data to ScummVM"
 #~ msgstr "ローカルWebサーバーの起動が必要です"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-29 10:21+0000\n"
+"POT-Creation-Date: 2023-04-29 11:27+0000\n"
 "PO-Revision-Date: 2023-04-24 09:41+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -107,11 +107,15 @@ msgid "Manual mode"
 msgstr "Χειροκίνητη ρύθμιση"
 
 #: gui/cloudconnectionwizard.cpp:183
-msgid "Will ask you to run Local Webserver"
+#, fuzzy
+#| msgid "Will ask you to run Local Webserver"
+msgid "Will ask you to run the Local Webserver"
 msgstr "Θα σας ζητηθεί να εκτελέσετε Τοπικό Διακομιστή Ιστού"
 
 #: gui/cloudconnectionwizard.cpp:185
-msgid "Requires Local Webserver feature"
+#, fuzzy
+#| msgid "Requires Local Webserver feature"
+msgid "Requires the Local Webserver feature"
 msgstr "Απαιτεί τη λειτουργία Τοπικού Διακομιστή Ιστού"
 
 #: gui/cloudconnectionwizard.cpp:201
@@ -119,9 +123,13 @@ msgid "Quick Mode: Step 1"
 msgstr "Γρήγορη Ρύθμιση: 1ο Βήμα"
 
 #: gui/cloudconnectionwizard.cpp:206
+#, fuzzy
+#| msgid ""
+#| "In this mode, Local Webserver must be running,\n"
+#| "so your browser could forward data to ScummVM"
 msgid ""
-"In this mode, Local Webserver must be running,\n"
-"so your browser could forward data to ScummVM"
+"In this mode, the Local Webserver must be running,\n"
+"so your browser can forward data to ScummVM"
 msgstr ""
 "Σε αυτή τη λειτουργία, ένας Τοπικός Διακομιστής Ιστού πρέπει να εκτελείται,\n"
 "ώστε ο πλοηγητής σας να μπορεί να προωθεί δεδομένα στο ScummVM"
@@ -175,8 +183,8 @@ msgstr "Διεύθυνση Τοπικού Διακομιστή Ιστού: "
 msgid "Quick Mode: Success"
 msgstr "Γρήγορη Ρύθμιση: Επιτυχία"
 
-#: gui/cloudconnectionwizard.cpp:299
-msgid "You cloud storage has been connected!"
+#: gui/cloudconnectionwizard.cpp:299 gui/cloudconnectionwizard.cpp:398
+msgid "Your cloud storage has been connected!"
 msgstr "Η αποθήκη Νέφους σας συνδέθηκε!"
 
 #: gui/cloudconnectionwizard.cpp:300 gui/cloudconnectionwizard.cpp:399
@@ -192,9 +200,14 @@ msgid "Open this link in your browser:"
 msgstr "Ανοίξτε αυτόν τον σύνδεσμο στον browser σας:"
 
 #: gui/cloudconnectionwizard.cpp:321
+#, fuzzy
+#| msgid ""
+#| "When it fails to pass JSON code to ScummVM,\n"
+#| "find it on Troubleshooting section of the page,\n"
+#| "and go to the next step here."
 msgid ""
-"When it fails to pass JSON code to ScummVM,\n"
-"find it on Troubleshooting section of the page,\n"
+"When it fails to pass the JSON code to ScummVM,\n"
+"find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
 "Όταν αποτυχεί να περάσει τον κωδικά JSON στο ScummVM,\n"
@@ -207,7 +220,9 @@ msgid "Manual Mode: Step 2"
 msgstr "Χειροκίνητη Ρύθμιση: 2ο Βήμα"
 
 #: gui/cloudconnectionwizard.cpp:355
-msgid "Copy JSON code from browser here and press Next:"
+#, fuzzy
+#| msgid "Copy JSON code from browser here and press Next:"
+msgid "Copy the JSON code from the browser here and press Next:"
 msgstr ""
 "Αντιγράψτε τον κώδικα JSON από τον browser σας εδώ και πατήστε Επόμενο:"
 
@@ -228,12 +243,16 @@ msgid "Cloud storage was not connected."
 msgstr "Η αποθήκη Νέφους σας δεν συνδέθηκε."
 
 #: gui/cloudconnectionwizard.cpp:378
-msgid "Make sure JSON code was copied correctly and retry."
+#, fuzzy
+#| msgid "Make sure JSON code was copied correctly and retry."
+msgid "Make sure the JSON code was copied correctly and retry."
 msgstr ""
 "Βεβαιωθείτε ότι ο κωδικός JSON αντιγράφτηκε σωστά και προσπαθήστε πάλι."
 
 #: gui/cloudconnectionwizard.cpp:379
-msgid "It it doesn't work, try from the beginning."
+#, fuzzy
+#| msgid "It it doesn't work, try from the beginning."
+msgid "It it doesn't work, try again from the beginning."
 msgstr "Αν δεν λειτουργήσει αυτό, δοκιμάστε ξανά από την αρχή."
 
 #: gui/cloudconnectionwizard.cpp:380
@@ -244,10 +263,6 @@ msgstr "Μήνυμα σφάλματος: "
 msgid "Manual Mode: Success"
 msgstr "Χειροκίνητη Ρύθμιση: Επιτυχία"
 
-#: gui/cloudconnectionwizard.cpp:398
-msgid "Your cloud storage has been connected!"
-msgstr "Η αποθήκη Νέφους σας συνδέθηκε!"
-
 #: gui/cloudconnectionwizard.cpp:422
 msgid "Back"
 msgstr "Πίσω"
@@ -257,7 +272,9 @@ msgid "Next"
 msgstr "Επόμενο"
 
 #: gui/cloudconnectionwizard.cpp:493
-msgid "Another Storage is working now. Do you want to interrupt it?"
+#, fuzzy
+#| msgid "Another Storage is working now. Do you want to interrupt it?"
+msgid "Another Storage is working right now. Do you want to interrupt it?"
 msgstr ""
 "Μια άλλη Αποθήκη έχει εργασία σε εξέλιξη αυτή τη στιγμή. Επιθυμείτε να τη "
 "διακόψετε;"
@@ -289,13 +306,17 @@ msgstr "Ναι"
 msgid "No"
 msgstr "Όχι"
 
-#: gui/cloudconnectionwizard.cpp:502 gui/options.cpp:3376
-msgid "Wait until current Storage finishes up and try again."
+#: gui/cloudconnectionwizard.cpp:502
+#, fuzzy
+#| msgid "Wait until current Storage finishes up and try again."
+msgid "Wait until current Storage finishes and try again."
 msgstr "Περιμένετε να ολοκληρωθεί η τρέχουσα Αποθήκευση και δοκιμάστε ξανά."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:530
-msgid "JSON code contents is malformed."
+#, fuzzy
+#| msgid "JSON code contents is malformed."
+msgid "JSON code contents are malformed."
 msgstr "Τα περιεχόμενα του κώδικα JSON δεν έχουν σωστή μορφή."
 
 #: gui/cloudconnectionwizard.cpp:551 gui/downloaddialog.cpp:146
@@ -2249,6 +2270,10 @@ msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr ""
 "Αυτή η αποθήκη Νέφους έχει εργασία σε εξέλιξη αυτή τη στιγμή. Επιθυμείτε να "
 "τη διακόψετε;"
+
+#: gui/options.cpp:3376
+msgid "Wait until current Storage finishes up and try again."
+msgstr "Περιμένετε να ολοκληρωθεί η τρέχουσα Αποθήκευση και δοκιμάστε ξανά."
 
 #: gui/options.cpp:3572 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
@@ -10261,6 +10286,9 @@ msgstr ""
 "Liberation Fonts ή το πακέτο GNU FreeFont. Θα χρειαστείτε όλα τα fonts από "
 "το πακέτο με fonts που θα επιλέξετε, δηλαδή, LiberationMono, LiberationSans "
 "και LiberationSerif, ή FreeMono, FreeSans και FreeSerif αντίστοιχα."
+
+#~ msgid "You cloud storage has been connected!"
+#~ msgstr "Η αποθήκη Νέφους σας συνδέθηκε!"
 
 #~ msgid "so your browser could forward data to ScummVM"
 #~ msgstr ""

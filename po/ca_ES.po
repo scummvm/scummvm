@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-29 10:21+0000\n"
+"POT-Creation-Date: 2023-04-29 11:27+0000\n"
 "PO-Revision-Date: 2023-04-12 15:35+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -108,11 +108,15 @@ msgid "Manual mode"
 msgstr "Mode manual"
 
 #: gui/cloudconnectionwizard.cpp:183
-msgid "Will ask you to run Local Webserver"
+#, fuzzy
+#| msgid "Will ask you to run Local Webserver"
+msgid "Will ask you to run the Local Webserver"
 msgstr "Us demanarà que executeu el servidor web local"
 
 #: gui/cloudconnectionwizard.cpp:185
-msgid "Requires Local Webserver feature"
+#, fuzzy
+#| msgid "Requires Local Webserver feature"
+msgid "Requires the Local Webserver feature"
 msgstr "Requereix la característica de servidor web local"
 
 #: gui/cloudconnectionwizard.cpp:201
@@ -123,8 +127,8 @@ msgstr "Mode ràpid: pas 1"
 #, fuzzy
 #| msgid "In this mode, Local Webserver must be running,"
 msgid ""
-"In this mode, Local Webserver must be running,\n"
-"so your browser could forward data to ScummVM"
+"In this mode, the Local Webserver must be running,\n"
+"so your browser can forward data to ScummVM"
 msgstr "En aquest mode, el servidor web local ha d'estar executant-se,"
 
 #: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:3657
@@ -176,8 +180,8 @@ msgstr "Adreça del servidor web local: "
 msgid "Quick Mode: Success"
 msgstr "Mode ràpid: èxit"
 
-#: gui/cloudconnectionwizard.cpp:299
-msgid "You cloud storage has been connected!"
+#: gui/cloudconnectionwizard.cpp:299 gui/cloudconnectionwizard.cpp:398
+msgid "Your cloud storage has been connected!"
 msgstr "El vostre emmagatzematge al núvol s'ha connectat!"
 
 #: gui/cloudconnectionwizard.cpp:300 gui/cloudconnectionwizard.cpp:399
@@ -194,8 +198,8 @@ msgstr "Obre aquest enllaç al navegador:"
 
 #: gui/cloudconnectionwizard.cpp:321
 msgid ""
-"When it fails to pass JSON code to ScummVM,\n"
-"find it on Troubleshooting section of the page,\n"
+"When it fails to pass the JSON code to ScummVM,\n"
+"find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
 
@@ -204,7 +208,9 @@ msgid "Manual Mode: Step 2"
 msgstr "Mode manual: pas 2"
 
 #: gui/cloudconnectionwizard.cpp:355
-msgid "Copy JSON code from browser here and press Next:"
+#, fuzzy
+#| msgid "Copy JSON code from browser here and press Next:"
+msgid "Copy the JSON code from the browser here and press Next:"
 msgstr "Copieu aquí el codi JSON del navegador i premeu Següent:"
 
 #: gui/cloudconnectionwizard.cpp:357
@@ -224,13 +230,17 @@ msgid "Cloud storage was not connected."
 msgstr "L'emmagatzematge al núvol no està connectat."
 
 #: gui/cloudconnectionwizard.cpp:378
-msgid "Make sure JSON code was copied correctly and retry."
+#, fuzzy
+#| msgid "Make sure JSON code was copied correctly and retry."
+msgid "Make sure the JSON code was copied correctly and retry."
 msgstr ""
 "Assegureu-vos que el codi JSON s'ha copiat correctament i torneu-ho a "
 "intentar."
 
 #: gui/cloudconnectionwizard.cpp:379
-msgid "It it doesn't work, try from the beginning."
+#, fuzzy
+#| msgid "It it doesn't work, try from the beginning."
+msgid "It it doesn't work, try again from the beginning."
 msgstr "Si no funciona, intenta-ho des del principi."
 
 #: gui/cloudconnectionwizard.cpp:380
@@ -241,10 +251,6 @@ msgstr "Missatge d'error: "
 msgid "Manual Mode: Success"
 msgstr "Mode manual: èxit"
 
-#: gui/cloudconnectionwizard.cpp:398
-msgid "Your cloud storage has been connected!"
-msgstr "El vostre emmagatzematge al núvol s'ha connectat!"
-
 #: gui/cloudconnectionwizard.cpp:422
 msgid "Back"
 msgstr "Enrere"
@@ -254,7 +260,9 @@ msgid "Next"
 msgstr "Següent"
 
 #: gui/cloudconnectionwizard.cpp:493
-msgid "Another Storage is working now. Do you want to interrupt it?"
+#, fuzzy
+#| msgid "Another Storage is working now. Do you want to interrupt it?"
+msgid "Another Storage is working right now. Do you want to interrupt it?"
 msgstr "Un altre Emmagatzematge està actiu ara. Voleu interrompre'l?"
 
 #: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
@@ -284,13 +292,17 @@ msgstr "Sí"
 msgid "No"
 msgstr "No"
 
-#: gui/cloudconnectionwizard.cpp:502 gui/options.cpp:3376
-msgid "Wait until current Storage finishes up and try again."
+#: gui/cloudconnectionwizard.cpp:502
+#, fuzzy
+#| msgid "Wait until current Storage finishes up and try again."
+msgid "Wait until current Storage finishes and try again."
 msgstr "Espereu fins que l'Emmagatzematge actual acabi i torneu a provar-ho."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:530
-msgid "JSON code contents is malformed."
+#, fuzzy
+#| msgid "JSON code contents is malformed."
+msgid "JSON code contents are malformed."
 msgstr "El contingut del codi JSON està mal format."
 
 #: gui/cloudconnectionwizard.cpp:551 gui/downloaddialog.cpp:146
@@ -2215,6 +2227,10 @@ msgstr "paquets de shaders"
 #: gui/options.cpp:3367
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Aquest Emmagatzematge està funcionant ara. Voleu interrompre'l?"
+
+#: gui/options.cpp:3376
+msgid "Wait until current Storage finishes up and try again."
+msgstr "Espereu fins que l'Emmagatzematge actual acabi i torneu a provar-ho."
 
 #: gui/options.cpp:3572 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
@@ -9689,6 +9705,9 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#~ msgid "You cloud storage has been connected!"
+#~ msgstr "El vostre emmagatzematge al núvol s'ha connectat!"
 
 #~ msgid "so your browser could forward data to ScummVM"
 #~ msgstr "perquè el vostre navegador pugui reenviar dades a ScummVM"
