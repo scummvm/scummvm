@@ -836,15 +836,6 @@ void Renderer::renderRectangle(const Math::Vector3d &origin, const Math::Vector3
 
 			vertices.push_back(Math::Vector3d(origin.x() + dx, origin.y() + dy, origin.z() + dz));
 			vertices.push_back(Math::Vector3d(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z()));
-			renderFace(vertices);
-			if (r1 != r2 || g1 != g2 || b1 != b2) {
-				useStipple(true);
-				useColor(r2, g2, b2);
-				renderFace(vertices);
-				useStipple(false);
-			}
-
-			vertices.clear();
 			vertices.push_back(Math::Vector3d(origin.x(), origin.y(), origin.z()));
 
 			dx = dy = dz = 0.0;
@@ -954,7 +945,7 @@ void Renderer::drawBackground(uint8 color) {
 	if (!render)
 		r1 = g1 = b1 = 0;
 
-	assert(stipple == nullptr); // Unclear if this is ever used
+	//assert(stipple == nullptr); // Unclear if this is ever used
 	clear(r1, g1, b1);
 }
 
