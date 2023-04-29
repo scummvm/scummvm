@@ -456,7 +456,7 @@ void RunObjectInteraction(int aa, int mood) {
 }
 
 int AreObjectsColliding(int obj1, int obj2) {
-	if ((!is_valid_object(obj1)) | (!is_valid_object(obj2)))
+	if ((!is_valid_object(obj1)) || (!is_valid_object(obj2)))
 		quit("!AreObjectsColliding: invalid object specified");
 
 	return (AreThingsOverlapping(obj1 + OVERLAPPING_OBJECT, obj2 + OVERLAPPING_OBJECT)) ? 1 : 0;
