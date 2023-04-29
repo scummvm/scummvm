@@ -2876,10 +2876,11 @@ static int tolua_ExportedFunctions_PutObject00(lua_State *L) {
 	error("#ferror in function 'PutObject': %d %d %s", err.index, err.array, err.type);
 }
 
-static void SetAnimationPart(const Common::String &name, int x, int y, int z, bool flag) {
+static void StartAnimationPart(const Common::String &name, int startFrame, int endFrame, int repCount, bool flag) {
 	AmerzoneGame *game = dynamic_cast<AmerzoneGame *>(g_engine->getGame());
 	assert(game);
-	game->warpY()->setAnimationPart(name, x, y, z, flag);
+	// Note parameter order changes
+	game->warpY()->startAnimationPart(name, repCount, startFrame, endFrame, flag);
 }
 
 static int tolua_ExportedFunctions_StartAnimationPart00(lua_State *L) {
@@ -2892,7 +2893,7 @@ static int tolua_ExportedFunctions_StartAnimationPart00(lua_State *L) {
 		double d2 = tolua_tonumber(L, 3, 0.0);
 		double d3 = tolua_tonumber(L, 4, -1.0);
 		bool b1 = tolua_tonumber(L, 5, 0);
-		SetAnimationPart(s1, (int)d1, (int)d2, (int)d3, b1);
+		StartAnimationPart(s1, (int)d1, (int)d2, (int)d3, b1);
 		return 0;
 	}
 	error("#ferror in function 'SetAnimationPart': %d %d %s", err.index, err.array, err.type);

@@ -42,15 +42,22 @@ public:
 		Common::Array<TeWarpBloc> _warpBlocs;
 		TePickMesh _pickMesh;
 		int _loadedTexCount;
+		// Note: dropped "minblock" param from original as it's only
+		// ever set to 0
+		void loadTextures(const TeFrustum &frustum, Common::File &file, const Common::String &fileType);
+		void unloadTextures();
 	};
 
 	class AnimData {
 	public:
-		AnimData() : _fps(15.0f), _flag(false), _curFrameMaybe(0) {}
+		AnimData() : _fps(15.0f), _enabled(false), _curFrameNo(0), _repCount(0), _firstFrameNo(0), _endFrameNo(0) {}
 		Common::Array<unsigned long> _markerIds;
 		float _fps;
-		int _curFrameMaybe;
-		bool _flag;
+		int _repCount;
+		int _firstFrameNo;
+		int _endFrameNo;
+		int _curFrameNo;
+		bool _enabled;
 		TeTimer _timer;
 		Common::String _name;
 		Common::Array<FrameData> _frameDatas;
@@ -98,12 +105,12 @@ public:
 	void rotateCamera(const TeQuaternion &rot);
 	void sendExit(Exit &exit);
 	void sendMarker(const Common::String &name, unsigned long markerId);
-	void setAnimationPart(const Common::String &name, int x, int y, int z, bool flag);
 	void setColor(const TeColor &col) override;
 	void setMarkersOpacity(float opacity);
 	void setMouseLeftUpForMakers();
 	void setFov(float fov);
 	void setVisible(bool v1, bool v2);
+	void startAnimationPart(const Common::String &name, int x, int y, int z, bool flag);
 	void takeObject(const Common::String &name);
 	void unload();
 	void unloadTextures();

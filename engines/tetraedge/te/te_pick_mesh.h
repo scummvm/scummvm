@@ -40,18 +40,17 @@ public:
 	TePickMesh &operator+=(const TePickMesh &other);
 	TePickMesh &operator=(const TePickMesh &other);
 	// bool operator==(const TePickMesh &other) const; // unused
-	void setTriangle(uint triNum, const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32 &v3) const;
+	void setTriangle(uint triNum, const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32 &v3);
 
 	void setName(const Common::String &name) { _name = name; }
 	void setFlag(bool val) { _flag = val; }
 	bool flag() const { return _flag; }
 	const Common::String &name() const { return _name; }
-	uint nTriangles() const { return _nTriangles; }
+	uint nTriangles() const { return _verticies.size() / 3; }
 
 private:
 	bool _flag;
-	TeVector3f32 *_verticies;
-	uint _nTriangles;
+	Common::Array<TeVector3f32> _verticies;
 	Common::String _name;
 	TeVector3f32 _v1;
 	TeVector3f32 _v2;

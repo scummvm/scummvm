@@ -110,11 +110,16 @@ void DocumentsBrowser::load() {
 }
 
 void DocumentsBrowser::loadZoomed() {
-	_zoomedLayout.setSizeType(RELATIVE_TO_PARENT);
-	TeVector3f32 usersz = userSize();
-	_zoomedLayout.setSize(TeVector3f32(1.0f, 1.0f, usersz.z()));
 	TeLayout *zoomedChild = _gui.layout("zoomed");
-	_zoomedLayout.addChild(zoomedChild);
+	if (g_engine->gameIsAmerzone()) {
+		zoomedChild->setRatioMode(RATIO_MODE_NONE);
+		g_engine->getGame()->inventoryMenu().addChild(zoomedChild);
+	} else {
+		_zoomedLayout.setSizeType(RELATIVE_TO_PARENT);
+		TeVector3f32 usersz = userSize();
+		_zoomedLayout.setSize(TeVector3f32(1.0f, 1.0f, usersz.z()));
+		_zoomedLayout.addChild(zoomedChild);
+	}
 }
 
 void DocumentsBrowser::loadXMLFile(const Common::String &path) {
@@ -206,6 +211,9 @@ bool DocumentsBrowser::addDocument(Document *document) {
 				break;
 			if (slot->childCount() == 0) {
 				slot->addChild(document);
+				if (g_engine->gameIsAmerzone()) {
+					document->onButtonDownSignal().add(this, &DocumentsBrowser::onDocumentSelected);
+				}
 				return true;
 			}
 			slotno++;
@@ -234,13 +242,70 @@ Common::String DocumentsBrowser::documentName(const Common::String &key) const {
 	return "";
 }
 
+bool DocumentsBrowser::onDocumentSelected(Document &doc) {
+	showDocument(doc.name(), 0);
+	return false;
+}
+
+Common::String DocumentsBrowser::zoomedPageName() const {
+	return Common::String::format("%s_zoomed_%d", _curDocName.c_str(), (int)_curPage);
+}
+
+bool DocumentsBrowser::onShowedDocumentButton0() {
+	g_engine->getGame()->luaScript().execute("OnShowedDocumentButtonValidated", zoomedPageName(), "button0");
+	return false;
+}
+bool DocumentsBrowser::onShowedDocumentButton1() {
+	g_engine->getGame()->luaScript().execute("OnShowedDocumentButtonValidated", zoomedPageName(), "button1");
+	return false;
+}
+bool DocumentsBrowser::onShowedDocumentButton2() {
+	g_engine->getGame()->luaScript().execute("OnShowedDocumentButtonValidated", zoomedPageName(), "button2");
+	return false;
+}
+bool DocumentsBrowser::onShowedDocumentButton3() {
+	g_engine->getGame()->luaScript().execute("OnShowedDocumentButtonValidated", zoomedPageName(), "button3");
+	return false;
+}
+bool DocumentsBrowser::onShowedDocumentButton4() {
+	g_engine->getGame()->luaScript().execute("OnShowedDocumentButtonValidated", zoomedPageName(), "button4");
+	return false;
+}
+bool DocumentsBrowser::onShowedDocumentButton5() {
+	g_engine->getGame()->luaScript().execute("OnShowedDocumentButtonValidated", zoomedPageName(), "button5");
+	return false;
+}
+bool DocumentsBrowser::onShowedDocumentButton6() {
+	g_engine->getGame()->luaScript().execute("OnShowedDocumentButtonValidated", zoomedPageName(), "button6");
+	return false;
+}
+bool DocumentsBrowser::onShowedDocumentButton7() {
+	g_engine->getGame()->luaScript().execute("OnShowedDocumentButtonValidated", zoomedPageName(), "button7");
+	return false;
+}
+bool DocumentsBrowser::onShowedDocumentButton8() {
+	g_engine->getGame()->luaScript().execute("OnShowedDocumentButtonValidated", zoomedPageName(), "button8");
+	return false;
+}
+bool DocumentsBrowser::onShowedDocumentButton9() {
+	g_engine->getGame()->luaScript().execute("OnShowedDocumentButtonValidated", zoomedPageName(), "button9");
+	return false;
+}
+
 void DocumentsBrowser::showDocument(const Common::String &docName, int startPage) {
 	_curPage = startPage;
 	_startPage = startPage;
 	_curDocName = docName;
 	_zoomedDocGui.unload();
+
+	if (docName.empty()) {
+		hideDocument();
+		return;
+	}
+
 	TeCore *core = g_engine->getCore();
-	const Common::Path docPathBase(Common::String::format("DocumentsBrowser/Documents/Documents/%s_zoomed_%d", docName.c_str(), (int)startPage));
+	const char *pathPattern = g_engine->gameIsAmerzone() ? "DocumentsBrowser/Documents/%s_zoomed_%d" : "DocumentsBrowser/Documents/Documents/%s_zoomed_%d";
+	const Common::Path docPathBase(Common::String::format(pathPattern, docName.c_str(), (int)startPage));
 	Common::Path docPath = docPathBase.append(".png");
 	Common::FSNode docNode = core->findFile(docPath);
 	if (!docNode.exists()) {
@@ -257,24 +322,64 @@ void DocumentsBrowser::showDocument(const Common::String &docName, int startPage
 	Application *app = g_engine->getApplication();
 	app->captureFade();
 	TeSpriteLayout *sprite = _gui.spriteLayoutChecked("zoomedSprite");
-	//sprite->setSizeType(ABSOLUTE);
 	sprite->load(docNode);
 	TeVector2s32 spriteSize = sprite->_tiledSurfacePtr->tiledTexture()->totalSize();
-	sprite->setSizeType(RELATIVE_TO_PARENT);
-	TeVector3f32 winSize = app->getMainWindow().size();
-	sprite->setSize(TeVector3f32(1.0f, (4.0f / (winSize.y() / winSize.x() * 4.0f)) *
-							((float)spriteSize._y / (float)spriteSize._x), 0.0f));
-	TeScrollingLayout *scroll = _gui.scrollingLayout("scroll");
-	if (!scroll)
-		error("DocumentsBrowser::showDocument Couldn't fetch scroll object");
-	scroll->resetScrollPosition();
-	scroll->playAutoScroll();
+
 	Common::FSNode luaNode = core->findFile(docPathBase.append(".lua"));
 	if (luaNode.exists()) {
 		_zoomedDocGui.load(luaNode);
-		error("Finish DocumentsBrowser::showDocument");
+		sprite->addChild(_zoomedDocGui.layoutChecked("root"));
+
+		TeButtonLayout *btn;
+		btn = _zoomedDocGui.buttonLayout("button0");
+		if (btn)
+			btn->onMouseClickValidated().add(this, &DocumentsBrowser::onShowedDocumentButton0);
+		btn = _zoomedDocGui.buttonLayout("button1");
+		if (btn)
+			btn->onMouseClickValidated().add(this, &DocumentsBrowser::onShowedDocumentButton1);
+		btn = _zoomedDocGui.buttonLayout("button2");
+		if (btn)
+			btn->onMouseClickValidated().add(this, &DocumentsBrowser::onShowedDocumentButton2);
+		btn = _zoomedDocGui.buttonLayout("button3");
+		if (btn)
+			btn->onMouseClickValidated().add(this, &DocumentsBrowser::onShowedDocumentButton3);
+		btn = _zoomedDocGui.buttonLayout("button4");
+		if (btn)
+			btn->onMouseClickValidated().add(this, &DocumentsBrowser::onShowedDocumentButton4);
+		btn = _zoomedDocGui.buttonLayout("button5");
+		if (btn)
+			btn->onMouseClickValidated().add(this, &DocumentsBrowser::onShowedDocumentButton5);
+		btn = _zoomedDocGui.buttonLayout("button6");
+		if (btn)
+			btn->onMouseClickValidated().add(this, &DocumentsBrowser::onShowedDocumentButton6);
+		btn = _zoomedDocGui.buttonLayout("button7");
+		if (btn)
+			btn->onMouseClickValidated().add(this, &DocumentsBrowser::onShowedDocumentButton7);
+		btn = _zoomedDocGui.buttonLayout("button8");
+		if (btn)
+			btn->onMouseClickValidated().add(this, &DocumentsBrowser::onShowedDocumentButton8);
+		btn = _zoomedDocGui.buttonLayout("button9");
+		if (btn)
+			btn->onMouseClickValidated().add(this, &DocumentsBrowser::onShowedDocumentButton9);
 	}
-	_gui.layoutChecked("zoomed")->setVisible(true);
+
+	sprite->setSizeType(RELATIVE_TO_PARENT);
+
+	if (!g_engine->gameIsAmerzone()) {
+		TeVector3f32 winSize = app->getMainWindow().size();
+		sprite->setSize(TeVector3f32(1.0f, (4.0f / (winSize.y() / winSize.x() * 4.0f)) *
+								((float)spriteSize._y / (float)spriteSize._x), 0.0f));
+		TeScrollingLayout *scroll = _gui.scrollingLayout("scroll");
+		if (!scroll)
+			error("DocumentsBrowser::showDocument Couldn't fetch scroll object");
+		scroll->resetScrollPosition();
+		scroll->playAutoScroll();
+	} else {
+		sprite->setRatioMode(RATIO_MODE_NONE);
+		sprite->updateSize();
+	}
+
+	_gui.buttonLayoutChecked("zoomed")->setVisible(true);
 	_zoomCount = 0;
 	app->fade();
 }

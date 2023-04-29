@@ -51,7 +51,7 @@ void TeMarker::update(TeCamera &camera) {
 		//TeVector3f32 newScale(480.0f / vpWidth, 320.0f / vpHeight, 1.0);
 		//_button.setScale(newScale);
 		_button.setPosition(TeVector3f32(buttonMiddle.x(), buttonMiddle.y(), buttonMiddle.z()));
-		debug("Updated button pos to %s (transformed %s middle %s)", _button.position().dump().c_str(), transformLoc.dump().c_str(), buttonMiddle.dump().c_str());
+		/*debug("Updated button pos to %s (transformed %s middle %s)", _button.position().dump().c_str(), transformLoc.dump().c_str(), buttonMiddle.dump().c_str());*/
 	}
 }
 

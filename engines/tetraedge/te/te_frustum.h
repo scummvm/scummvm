@@ -35,9 +35,9 @@ public:
 	void computeNormal(unsigned int val);
 	void extractPlanAdd(const TeMatrix4x4 &matrix, uint param_2, uint param_3);
 	void extractPlanSub(const TeMatrix4x4 &matrix, uint param_2, uint param_3);
-	bool pointIsIn(const TeVector3f32 &pt);
-	bool sphereIsIn(const TeVector3f32 &vec, float f);
-	bool triangleIsIn(const TeVector3f32 *vertexes);
+	bool pointIsIn(const TeVector3f32 &pt) const;
+	bool sphereIsIn(const TeVector3f32 &vec, float f) const;
+	bool triangleIsIn(const TeVector3f32 *vertexes) const;
 	void update(TeCamera *camera);
 
 private:

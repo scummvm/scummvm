@@ -53,7 +53,7 @@ void AmerzoneGame::changeSpeedToMouseDirection() {
 	error("TODO: Implement AmerzoneGame::changeSpeedToMouseDirection");
 }
 
-bool AmerzoneGame::changeWarp(const Common::String &zone, const Common::String &scene, bool fadeFlag) {
+bool AmerzoneGame::changeWarp(const Common::String &rawZone, const Common::String &scene, bool fadeFlag) {
 	if (_warpY) {
 		_luaScript.execute("OnWarpLeave");
 		_warpY->markerValidatedSignal().remove(this, &AmerzoneGame::onObjectClick);
@@ -76,6 +76,14 @@ bool AmerzoneGame::changeWarp(const Common::String &zone, const Common::String &
 		float fov = 60.0f; //TODO: g_engine->getCore()->fileFlagSystemFlagsContains("HD") ? 60.0f : 45.0f;
 		_warpY->setFov((float)(fov * M_PI / 180.0));
 	}
+
+	Common::String zone = rawZone;
+	if (rawZone.contains('\\')) {
+		// Replace '\'s which our core understands
+		Common::Path converted(rawZone, '\\');
+		zone = converted.toString();
+	}
+
 	_warpY->load(zone, false);
 	_warpY->setVisible(true, false);
 	TeWarp::debug = false;
@@ -113,7 +121,7 @@ bool AmerzoneGame::changeWarp(const Common::String &zone, const Common::String &
 	} else {
         onChangeWarpAnimFinished();
 	}
-	return false;
+	return true;
 }
 
 void AmerzoneGame::draw() {
@@ -149,6 +157,12 @@ void AmerzoneGame::enter() {
 	TeButtonLayout *skipvidbtn = _inGameGui.buttonLayoutChecked("skipVideoButton");
 	skipvidbtn->setVisible(false);
 	skipvidbtn->onMouseClickValidated().add(this, &AmerzoneGame::onSkipVideoButtonValidated);
+
+	TeButtonLayout *vidbgbtn = _inGameGui.buttonLayoutChecked("videoBackgroundButton");
+	vidbgbtn->setVisible(false);
+	vidbgbtn->onMouseClickValidated().remove(this, &AmerzoneGame::onLockVideoButtonValidated);
+	vidbgbtn->onMouseClickValidated().add(this, &AmerzoneGame::onLockVideoButtonValidated);
+
 	TeSpriteLayout *vid = _inGameGui.spriteLayoutChecked("video");
 	vid->_tiledSurfacePtr->_frameAnim.onStop().add(this, &Game::onVideoFinished);
 	vid->setVisible(false);
@@ -295,7 +309,8 @@ bool AmerzoneGame::onHelpButtonValidated() {
 }
 
 bool AmerzoneGame::onAnimationFinished(const Common::String &anim) {
-	error("TODO: Implement AmerzoneGame::onAnimationFinished");
+	_luaScript.execute("OnAnimationFinished", anim);
+	return false;
 }
 
 bool AmerzoneGame::onMouseLeftUp(const Common::Point &pt) {
@@ -473,11 +488,13 @@ void AmerzoneGame::update() {
 	}
 
 	// Rotate x around the Y axis (spinning left/right on the spot)
-	TeQuaternion xRot = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 1, 0), (float)(_orientationX * M_PI) / 180);
+	TeQuaternion xRot = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 1, 0), (float)(_orientationX * M_PI) / 180.0f);
 	// Rotate y around the axis perpendicular to the x rotation
+	// Note: slightly different from original because of the way
+	// rotation works in the Amerzone Tetraedge engine.
 	TeVector3f32 yRotAxis = TeVector3f32(1, 0, 0);
 	xRot.inverse().transform(yRotAxis);
-	TeQuaternion yRot = TeQuaternion::fromAxisAndAngle(yRotAxis, (float)(_orientationY * M_PI) / 180);
+	TeQuaternion yRot = TeQuaternion::fromAxisAndAngle(yRotAxis, (float)(_orientationY * M_PI) / 180.0f);
 
 	if (_warpX)
 		_warpX->rotateCamera(xRot * yRot);

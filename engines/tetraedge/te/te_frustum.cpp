@@ -44,7 +44,7 @@ void TeFrustum::extractPlanSub(const TeMatrix4x4 &matrix, uint dest, uint col) {
 	_m[dest * 4 + 3] = matrix(3, 3) + matrix(3, col);
 }
 
-bool TeFrustum::pointIsIn(const TeVector3f32 &pt) {
+bool TeFrustum::pointIsIn(const TeVector3f32 &pt) const {
 	error("TODO: Implement TeFrustum::pointIsIn");
 }
 
@@ -57,15 +57,15 @@ float TeFrustum::planeLen(int num) const {
 	return result;
 }
 
-bool TeFrustum::sphereIsIn(const TeVector3f32 &vec, float f) {
+bool TeFrustum::sphereIsIn(const TeVector3f32 &vec, float f) const {
 	error("TODO: Implement TeFrustum::sphereIsIn");
 }
 
-bool TeFrustum::triangleIsIn(const TeVector3f32 *verts) {
+bool TeFrustum::triangleIsIn(const TeVector3f32 *verts) const {
 	for (unsigned int p = 0; p < 6; p++) {
 		bool inside = true;
 		for (unsigned int v = 0; v < 3; v++) {
-			float *pm = _m + p * 4;
+			const float *pm = _m + p * 4;
 			if(pm[0] * verts[v].x() + pm[1] * verts[v].y() +
 				pm[2] * verts[v].z() + pm[3] >= 0.0)
 					inside = false;

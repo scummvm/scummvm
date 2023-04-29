@@ -67,11 +67,13 @@ public:
 private:
 	void loadXMLFile(const Common::String &path);
 
-	void onDocumentSelected(Document *doc);
+	bool onDocumentSelected(Document &doc);
 	bool onNextPage();
 	bool onPreviousPage();
 	bool onQuitDocumentDoubleClickTimer();
 	bool onZoomedButton();
+
+	Common::String zoomedPageName() const;
 
 	// Sorry, this is how the original does it...
 	bool onShowedDocumentButton0();
@@ -84,6 +86,8 @@ private:
 	bool onShowedDocumentButton7();
 	bool onShowedDocumentButton8();
 	bool onShowedDocumentButton9();
+	/*
+	These are defined but unused in any game..
 	bool onShowedDocumentButton10();
 	bool onShowedDocumentButton11();
 	bool onShowedDocumentButton12();
@@ -94,7 +98,7 @@ private:
 	bool onShowedDocumentButton17();
 	bool onShowedDocumentButton18();
 	bool onShowedDocumentButton19();
-
+	*/
 
 	TeTimer _timer;
 	TeLayout _zoomedLayout;

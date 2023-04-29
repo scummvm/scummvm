@@ -126,7 +126,8 @@ bool InventoryMenu::onMainMenuButton() {
 	Game *game = g_engine->getGame();
 	game->_returnToMainMenu = true;
 	app->fade();
-	return false;
+	// Don't process any more events.
+	return true;
 }
 
 bool InventoryMenu::onQuitButton() {

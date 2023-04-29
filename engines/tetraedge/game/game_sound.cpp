@@ -32,8 +32,7 @@ GameSound::GameSound() {
 
 bool GameSound::onSoundStopped() {
 	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
-	assert(game);
-	if (!game->luaContext().isCreated())
+	if (!game || !game->luaContext().isCreated())
 		return false;
 
 	Common::Array<SyberiaGame::YieldedCallback> &callbacks = game->yieldedCallbacks();

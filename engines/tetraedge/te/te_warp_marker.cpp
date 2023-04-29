@@ -27,16 +27,22 @@ TeWarpMarker::TeWarpMarker() : _marker(nullptr) {
 }
 
 TeWarpMarker::~TeWarpMarker() {
-	if (_marker)
+	if (_marker) {
 		_marker->button().onMouseClickValidated().remove(this, &TeWarpMarker::onMarkerButtonValidated);
+		_marker->button().setVisible(false);
+	}
 }
 
 void TeWarpMarker::marker(TeMarker *marker) {
-	if (_marker)
+	if (_marker) {
 		_marker->button().onMouseClickValidated().remove(this, &TeWarpMarker::onMarkerButtonValidated);
+		_marker->button().setVisible(false);
+	}
 	_marker = marker;
-	if (_marker)
+	if (_marker) {
 		_marker->button().onMouseClickValidated().add(this, &TeWarpMarker::onMarkerButtonValidated);
+		_marker->button().setName(_name + "_btn");
+	}
 }
 
 bool TeWarpMarker::onMarkerButtonValidated() {

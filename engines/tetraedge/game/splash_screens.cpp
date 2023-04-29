@@ -40,9 +40,14 @@ void SplashScreens::enter()	{
 		_splashNo = 0;
 		const char *scriptStr = g_engine->gameIsAmerzone() ? "GUI/PC-MacOSX/Splash0.lua" : "menus/splashes/splash0.lua";
 		if (Common::File::exists(scriptStr)) {
-			TeLuaGUI::load(scriptStr);
+			load(scriptStr);
 			Application *app = g_engine->getApplication();
-			TeLayout *splash = layout("splash");
+			TeLayout *splash = layoutChecked("splash");
+			if (g_engine->gameIsAmerzone()) {
+				TeLayout *splashImg = dynamic_cast<TeLayout *>(splash->child(0));
+				splashImg->setRatioMode(TeILayout::RATIO_MODE_NONE);
+				splashImg->updateSize();
+			}
 			app->frontLayout().addChild(splash);
 			app->performRender();
 		}
@@ -69,10 +74,14 @@ bool SplashScreens::onAlarm() {
 	} else {
 		load(scriptName);
 
-		TeButtonLayout *btnLayout = buttonLayoutChecked("splash");
-		btnLayout->onMouseClickValidated().add(this, &SplashScreens::onQuitSplash);
+		TeButtonLayout *splash = buttonLayoutChecked("splash");
+		splash->onMouseClickValidated().add(this, &SplashScreens::onQuitSplash);
 
-		TeLayout *splash = layout("splash");
+		if (g_engine->gameIsAmerzone()) {
+			TeLayout *splashImg = dynamic_cast<TeLayout *>(splash->child(0));
+			splashImg->setRatioMode(TeILayout::RATIO_MODE_NONE);
+			splashImg->updateSize();
+		}
 		app->frontLayout().addChild(splash);
 
 		_timer.start();

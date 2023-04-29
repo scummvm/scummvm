@@ -52,6 +52,8 @@ public:
 	Common::Path spritePath() const;
 	void unload();
 
+	TeSignal1Param<Document &> &onButtonDownSignal() { return _onButtonDownSignal; }
+
 private:
 	DocumentsBrowser *_browser;
 	TeLuaGUI _gui;
