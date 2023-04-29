@@ -291,7 +291,7 @@ void PaintInventory(WGame &game) {
 
 		if (bT2DActive != tOPTIONS) {
 			for (a = 0; a < MAX_SHOWN_ICONS; a++) {
-				if (ci = Inv[CurPlayer][InvBase[CurPlayer] + a]) {
+				if ((ci = Inv[CurPlayer][InvBase[CurPlayer] + a])) {
 					if (CurInvObj == ci)
 						renderer._2dStuff.displayDDText(ObjName[init.InvObj[ci].name], FontKind::Standard, RED_FONT, INV_MARG_SX, INV_MARG_UP + ICON_DY * a, 0, 0, 0, 0);
 					else
