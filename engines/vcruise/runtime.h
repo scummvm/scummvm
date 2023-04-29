@@ -935,7 +935,6 @@ private:
 	uint32 _ambientSoundFinishTime;
 
 	bool _escOn;
-	bool _escUsed;
 	bool _debugMode;
 	bool _fastAnimationMode;
 
