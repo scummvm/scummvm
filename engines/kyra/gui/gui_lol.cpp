@@ -236,6 +236,7 @@ void LoLEngine::gui_printCharacterStats(int index, int redraw, int value) {
 	uint32 offs = _screen->_curPage ? 0 : 112;
 	int y = 0;
 	int col = 0;
+	int fh = _flags.lang == Common::Language::ZH_TWN ? 16 : 10;
 
 	if (index < 2) {
 		// might
@@ -246,7 +247,7 @@ void LoLEngine::gui_printCharacterStats(int index, int redraw, int value) {
 			if (redraw)
 				_screen->fprintString("%s", offs + 108, y, col, 0, 0, getLangString(0x4014 + index));
 		} else {
-			y = index * 10 + 22;
+			y = index * fh + 22;
 			col = 158;
 			if (redraw)
 				_screen->fprintString("%s", offs + 108, y, col, 0, 4, getLangString(0x4014 + index));
@@ -254,14 +255,14 @@ void LoLEngine::gui_printCharacterStats(int index, int redraw, int value) {
 	} else {
 		//skills
 		int s = index - 2;
-		y = s * 10 + 62;
+		y = s * fh + 62;
 		if (_flags.use16ColorMode) {
 			y = (s + 8) << 3;
 			col = _characters[_selectedCharacter].flags & (0x200 << s) ? 0xE1 : 0x81;
 			if (redraw)
 				_screen->fprintString("%s", offs + 108, y, col, 0, 0, getLangString(0x4014 + index));
 		} else {
-			y = s * 10 + 62;
+			y = s * fh + 62;
 			col = _characters[_selectedCharacter].flags & (0x200 << s) ? 254 : 180;
 			if (redraw)
 				_screen->fprintString("%s", offs + 108, y, col, 0, 4, getLangString(0x4014 + index));
