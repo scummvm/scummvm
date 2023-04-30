@@ -367,21 +367,16 @@ void Part::sendAll() {
 }
 
 void Part::sendPitchBend() {
-	if (!_mc)
-		return;
-
 	if (_se->_newSystem && !_pitchbend_factor) {
 		sendVolumeFade();
 		return;
 	}
 
-	_mc->pitchBend(_pitchbend);
+	if (_mc)
+		_mc->pitchBend(_pitchbend);
 }
 
 void Part::sendVolume(int8 fadeModifier) {
-	if (!_mc)
-		return;
-
 	uint16 vol = (_vol + fadeModifier + 1) * _player->getEffectiveVolume();
 
 	if (_se->_newSystem)
