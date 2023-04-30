@@ -33,7 +33,7 @@ uint8 k8bitMaxVariable = 64;
 uint8 k8bitMaxShield = 64;
 uint8 k8bitMaxEnergy = 64;
 
-Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition, FCLInstructionVector &instructions, bool enableActivated) {
+Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition, FCLInstructionVector &instructions, bool multipleConditionals) {
 	Common::String detokenisedStream;
 	Common::Array<uint8>::size_type bytePointer = 0;
 	Common::Array<uint8>::size_type sizeOfTokenisedContent = tokenisedCondition.size();
@@ -56,28 +56,30 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 
 	if (sizeOfTokenisedContent > 0)
 		detokenisedStream += Common::String::format("CONDITION FLAG: %x\n", tokenisedCondition[0]);
-	Token::Type newConditional = Token::UNKNOWN;
-	Token::Type oldConditional = Token::UNKNOWN;
+	uint16 newConditional = 0;
+	uint16 oldConditional = 0;
 
 	while (bytePointer < sizeOfTokenisedContent) {
 		// get the conditional type of the next operation
-		uint8 conditionalByte = tokenisedCondition[bytePointer];
+		uint8 conditionalByte = tokenisedCondition[bytePointer] & 0xc0;
+		//detokenisedStream += Common::String::format("CONDITION FLAG: %x\n", conditionalByte);
+		newConditional = 0;
 
-		if ((conditionalByte & 0xc0) && enableActivated) {
-			newConditional = Token::ACTIVATEDQ;
-		} else if (conditionalByte & 0x80)
-			newConditional = Token::SHOTQ;
-		else if (conditionalByte & 0x40)
-			newConditional = Token::TIMERQ;
+		if (conditionalByte == 0x40)
+			newConditional = kConditionalTimeout;
+		else if (conditionalByte == 0x80)
+			newConditional = kConditionalShot;
+		else if (conditionalByte == 0xc0)
+			newConditional = kConditionalActivated;
 		else
-			newConditional = Token::COLLIDEDQ;
+			newConditional = kConditionalCollided;
 
 		// if the conditional type has changed then end the old conditional,
 		// if we were in one, and begin a new one
 		if (bytePointer == 0 || newConditional != oldConditional) {
 			oldConditional = newConditional;
 			FCLInstruction branch;
-			branch = FCLInstruction(oldConditional);
+			branch = FCLInstruction(Token::CONDITIONAL);
 
 			if (bytePointer > 0) {
 				detokenisedStream += "ENDIF\n";
@@ -86,18 +88,23 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 			}
 
 			branch.setBranches(conditionalInstructions, nullptr);
+			branch.setSource(oldConditional); // conditional flag
 			instructions.push_back(branch);
 
-			if (oldConditional == Token::SHOTQ)
-				detokenisedStream += "IF SHOT? THEN\n";
-			else if (oldConditional == Token::TIMERQ)
-				detokenisedStream += "IF TIMER? THEN\n";
-			else if (oldConditional == Token::COLLIDEDQ)
-				detokenisedStream += "IF COLLIDED? THEN\n";
-			else if (oldConditional == Token::ACTIVATEDQ)
-				detokenisedStream += "IF ACTIVATED? THEN\n";
+			detokenisedStream += "IF ";
+
+			if (oldConditional & kConditionalShot)
+				detokenisedStream += "SHOT? ";
+			else if (oldConditional & kConditionalTimeout)
+				detokenisedStream += "TIMER? ";
+			else if (oldConditional & kConditionalCollided)
+				detokenisedStream += "COLLIDED? ";
+			else if (oldConditional & kConditionalActivated)
+				detokenisedStream += "ACTIVATED? ";
 			else
 				error("Invalid conditional: %x", oldConditional);
+
+			detokenisedStream += "THEN\n";
 		}
 
 		// get the actual operation

@@ -148,31 +148,13 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			debugC(1, kFreescapeDebugCode, "Executing NOP at ip: %d", ip);
 			break;
 
-		case Token::ACTIVATEDQ:
-			if (shot) // TODO: implement interaction
+		case Token::CONDITIONAL:
+			if (checkConditional(instruction, shot, collided, timer, false)) // TODO: implement interaction
 				executeCode(*instruction._thenInstructions, shot, collided, timer);
 			// else branch is always empty
 			assert(instruction._elseInstructions == nullptr);
 			break;
 
-		case Token::COLLIDEDQ:
-			if (collided)
-				executeCode(*instruction._thenInstructions, shot, collided, timer);
-			// else branch is always empty
-			assert(instruction._elseInstructions == nullptr);
-			break;
-		case Token::SHOTQ:
-			if (shot)
-				executeCode(*instruction._thenInstructions, shot, collided, timer);
-			// else branch is always empty
-			assert(instruction._elseInstructions == nullptr);
-			break;
-		case Token::TIMERQ:
-			if (timer)
-				executeCode(*instruction._thenInstructions, shot, collided, timer);
-			// else branch is always empty
-			assert(instruction._elseInstructions == nullptr);
-			break;
 		case Token::VARNOTEQ:
 			if (executeEndIfNotEqual(instruction))
 				ip = codeSize;
@@ -353,6 +335,23 @@ bool FreescapeEngine::executeEndIfVisibilityIsEqual(FCLInstruction &instruction)
 	}
 
 	return (obj->isInvisible() == (value != 0));
+}
+
+bool FreescapeEngine::checkConditional(FCLInstruction &instruction, bool shot, bool collided, bool timer, bool activated) {
+	uint16 conditional = instruction._source;
+	bool result = false;
+
+	if (conditional & kConditionalShot)
+		result |= shot;
+	if (conditional & kConditionalTimeout)
+		result |= timer;
+	if (conditional & kConditionalCollided)
+		result |= collided;
+	if (conditional & kConditionalActivated)
+		result |= activated;
+
+	debugC(1, kFreescapeDebugCode, "Check if conditional %x is true: %d!", conditional, result);
+	return result;
 }
 
 bool FreescapeEngine::checkIfGreaterOrEqual(FCLInstruction &instruction) {
