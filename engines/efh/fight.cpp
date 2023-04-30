@@ -352,8 +352,9 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 						addReactionText(kEfhReactionWinces);
 					} else if (hitPointsBefore / 8 >= originalDamage) {
 						addReactionText(kEfhReactionChortles);
-					} else if (originalDamage == 0 && getRandom(100) < 35) {
-						// CHECKME: "originalDamage == 0" is always false as it's checked beforehand. Looks like another original bug
+					} else if (getRandom(100) < 35) {
+						// Note : The original had a bug as it was doing an (always false) check "originalDamage == 0".
+						// This check has been removed so that it behaves as originally expected
 						addReactionText(kEfhReactionLaughs);
 					}
 				}
@@ -593,8 +594,9 @@ void EfhEngine::handleFight_MobstersAttack(int groupId) {
 							addReactionText(kEfhReactionScreams);
 						} else if (_npcBuf[_teamChar[targetId]._id]._maxHP / 8 >= originalDamage) {
 							addReactionText(kEfhReactionChortles);
-						} else if (originalDamage == 0 && getRandom(100) < 35) {
-							// CHECKME: "originalDamage == 0" is always false as it's checked beforehand. Looks like another original bug
+						} else if (getRandom(100) < 35) {
+							// Note : The original had a bug as it was doing an (always false) check "originalDamage == 0".
+							// This check has been removed so that it behaves as originally expected
 							addReactionText(kEfhReactionLaughs);
 						}
 					}
