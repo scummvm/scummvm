@@ -34,7 +34,7 @@ public:
 	Big5Font();
 	~Big5Font();
 	void loadPrefixedRaw(Common::ReadStream &input, int height);
-	bool drawBig5Char(byte *dest, uint16 ch, int maxX, int maxY, uint32 destPitch, byte color, byte outlineColor, bool outline = true, int bpp = 8) const;
+	bool drawBig5Char(byte *dest, uint16 ch, int maxX, int maxY, uint32 destPitch, byte color, byte outlineColor, bool outline = true, int bpp = 1) const;
 	bool drawBig5Char(Graphics::Surface *surf, uint16 ch, const Common::Point &pt, uint32 color, byte outlineColor = 0, bool outline = false) const;
 	bool hasGlyphForBig5Char(uint16 textChar) const { return (textChar & 0x8000) && _chineseTraditionalIndex[textChar & 0x7fff] >= 0; }
 
