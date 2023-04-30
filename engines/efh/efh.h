@@ -58,7 +58,7 @@ namespace Efh {
 static const uint8 kSavegameVersion = 1;
 #define EFH_SAVE_HEADER MKTAG('E', 'F', 'H', 'S')
 
-enum AccessDebugChannels {
+enum EfhDebugChannels {
 	kDebugEngine = 1 << 0,
 	kDebugUtils = 1 << 1,
 	kDebugGraphics = 1 << 2,
