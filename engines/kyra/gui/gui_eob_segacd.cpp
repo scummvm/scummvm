@@ -972,7 +972,7 @@ void GUI_EoB_SegaCD::restParty_updateRestTime(int hours, bool init) {
 	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 5120);
 	r->fillRectWithTiles(0, 1, 4, 20, 2, 0x6000);
 	r->fillRectWithTiles(0, 1, 6, 20, 6, 0x6283, true);
-	r->render(0, 0, 0, 22, 16);
+	r->render(0, 0, 0, 22, 17);
 	_screen->updateScreen();
 	_vm->delay(160);
 }
