@@ -37,6 +37,10 @@ namespace Tetraedge {
 TeSoundManager::TeSoundManager() {
 }
 
+void TeSoundManager::playFreeSound(const Common::Path &path) {
+	playFreeSound(path, 1.0f, "sfx");
+}
+
 void TeSoundManager::playFreeSound(const Common::Path &path, float vol, const Common::String &channel) {
 	TeCore *core = g_engine->getCore();
 	Common::FSNode sndNode = core->findFile(path);

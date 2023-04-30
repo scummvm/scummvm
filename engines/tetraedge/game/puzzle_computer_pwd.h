@@ -19,37 +19,43 @@
  *
  */
 
-#ifndef TETRAEDGE_TE_TE_XML_GUI_H
-#define TETRAEDGE_TE_TE_XML_GUI_H
+#ifndef TETRAEDGE_GAME_PUZZLE_COMPUTER_PWD_H
+#define TETRAEDGE_GAME_PUZZLE_COMPUTER_PWD_H
 
-#include "common/str.h"
-#include "common/path.h"
-
-#include "tetraedge/te/te_button_layout.h"
-#include "tetraedge/te/te_sprite_layout.h"
+#include "tetraedge/te/te_3d_object2.h"
+#include "tetraedge/te/te_lua_gui.h"
 
 namespace Tetraedge {
 
-class TeXmlGui {
+class PuzzleComputerPwd : public Te3DObject2 {
 public:
-	TeXmlGui();
+	PuzzleComputerPwd();
 
-	Common::String value(const Common::String &key);
-
-	void clear();
-
-	void load(const Common::Path &path);
-	void unload();
-
-	TeSpriteLayout *sprite(const Common::String &name);
-	TeButtonLayout *button(const Common::String &name);
-	bool group(const Common::String &name);
+	void enter();
+	bool leave();
 
 private:
-	Common::StringMap _map;
-	bool _loaded;
+	bool onButton0Clicked();
+	bool onButton1Clicked();
+	bool onButton2Clicked();
+	bool onButton3Clicked();
+	bool onButton4Clicked();
+	bool onButton5Clicked();
+	bool onButton6Clicked();
+	bool onButton7Clicked();
+	bool onButton8Clicked();
+	bool onButton9Clicked();
+	bool onButtonCancelClicked();
+	bool onExitButton();
+
+	bool registerNewDigit(int digit);
+	void resetPwd();
+
+	TeLuaGUI _gui;
+	int _nDigits;
+	int _enteredPwd[6];
 };
 
 } // end namespace Tetraedge
 
-#endif // TETRAEDGE_TE_TE_XML_GUI_H
+#endif // TETRAEDGE_GAME_PUZZLE_COMPUTER_PWD_H

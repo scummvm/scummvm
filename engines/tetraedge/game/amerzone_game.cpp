@@ -307,7 +307,7 @@ bool AmerzoneGame::onChangeWarpAnimFinished() {
 }
 
 bool AmerzoneGame::onHelpButtonValidated() {
-	g_engine->getSoundManager()->playFreeSound("Sounds/SFX/Clic_prec-suiv.ogg", 1.0f, "sfx");
+	g_engine->getSoundManager()->playFreeSound("Sounds/SFX/Clic_prec-suiv.ogg");
 
 	bool active = true;
 	TeWarp::debug = TeWarp::debug == false;
@@ -344,7 +344,50 @@ bool AmerzoneGame::onObjectClick(const Common::String &obj) {
 }
 
 bool AmerzoneGame::onPuzzleEnterAnimLoadTime() {
-	error("TODO: Implement AmerzoneGame::onPuzzleEnterAnimLoadTime");
+	TeLayout *ingame = _inGameGui.layoutChecked("inGame");
+	float zoff = ingame->zSize();
+	switch(_puzzleNo) {
+	case 0:
+		_puzzleComputerPwd.setScale(TeVector3f32(1, 1, 0.0001f));
+		_puzzleComputerPwd.setPosition(TeVector3f32(0, 0, zoff));
+		_puzzleComputerPwd.enter();
+		break;
+	case 1:
+		_puzzleComputerHydra.setScale(TeVector3f32(1, 1, 0.0001f));
+		_puzzleComputerHydra.setPosition(TeVector3f32(0, 0, zoff));
+		_puzzleComputerHydra.setTargetCoordinates(1, 4, 5);
+		_puzzleComputerHydra.enter();
+		break;
+	case 2:
+		_puzzleComputerHydra.setScale(TeVector3f32(1, 1, 0.0001f));
+		_puzzleComputerHydra.setPosition(TeVector3f32(0, 0, zoff));
+		_puzzleComputerHydra.setTargetCoordinates(2, 7, 2);
+		_puzzleComputerHydra.enter();
+		break;
+	case 3:
+		_puzzleHanjie.setScale(TeVector3f32(1, 1, 0.0001f));
+		_puzzleHanjie.setPosition(TeVector3f32(0, 0, zoff));
+		_puzzleHanjie.wakeUp();
+		break;
+	case 4:
+		_puzzlePentacle.setScale(TeVector3f32(1, 1, 0.0001f));
+		_puzzlePentacle.setPosition(TeVector3f32(0, 0, zoff));
+		_puzzlePentacle.wakeUp(_puzParam1, _puzParam2);
+		break;
+	case 5:
+		_puzzleDisjoncteur.setScale(TeVector3f32(1, 1, 0.0001f));
+		_puzzleDisjoncteur.setPosition(TeVector3f32(0, 0, zoff));
+		_puzzleDisjoncteur.wakeUp();
+		break;
+	case 6:
+		_puzzleLiquides.setScale(TeVector3f32(1, 1, 0.0001f));
+		_puzzleLiquides.setPosition(TeVector3f32(0, 0, zoff));
+		_puzzleLiquides.wakeUp();
+		break;
+	default:
+		break;
+	}
+	return false;
 }
 
 void AmerzoneGame::optimizeWarpResources() {

@@ -27,7 +27,7 @@
 
 namespace Tetraedge {
 
-TeXmlGui::TeXmlGui() {
+TeXmlGui::TeXmlGui() : _loaded(false) {
 }
 
 Common::String TeXmlGui::value(const Common::String &key) {
@@ -41,14 +41,32 @@ void TeXmlGui::load(const Common::Path &path) {
 
 	TeNameValXmlParser parser;
 	if (!parser.loadFile(path.toString()))
-		error("LocFile::load: failed to load xml.");
+		error("TeXmlGui::load: failed to load xml.");
 
 	_map = parser.getMap();
+	_loaded = true;
 }
 
 void TeXmlGui::clear() {
 	_map.clear();
 	// TODO: Finish TeXmlGui.clear()
+}
+
+void TeXmlGui::unload() {
+	clear();
+	_loaded = false;
+}
+
+TeSpriteLayout *TeXmlGui::sprite(const Common::String &name) {
+	error("TODO: Implement TeXmlGui::sprite");
+}
+
+TeButtonLayout *TeXmlGui::button(const Common::String &name) {
+	error("TODO: Implement TeXmlGui::sprite");
+}
+
+bool TeXmlGui::group(const Common::String &name) {
+	error("TODO: Implement TeXmlGui::group");
 }
 
 } // end namespace Tetraedge

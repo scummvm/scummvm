@@ -19,37 +19,28 @@
  *
  */
 
-#ifndef TETRAEDGE_TE_TE_XML_GUI_H
-#define TETRAEDGE_TE_TE_XML_GUI_H
+#ifndef TETRAEDGE_GAME_PUZZLE_COFFRE_H
+#define TETRAEDGE_GAME_PUZZLE_COFFRE_H
 
-#include "common/str.h"
-#include "common/path.h"
-
-#include "tetraedge/te/te_button_layout.h"
-#include "tetraedge/te/te_sprite_layout.h"
+#include "tetraedge/te/te_3d_object2.h"
 
 namespace Tetraedge {
 
-class TeXmlGui {
+// Note: this puzzle exists in the game code but seems never used?
+
+class PuzzleCoffre : public Te3DObject2 {
 public:
-	TeXmlGui();
+	PuzzleCoffre();
 
-	Common::String value(const Common::String &key);
+	void wakeUp();
 
-	void clear();
-
-	void load(const Common::Path &path);
-	void unload();
-
-	TeSpriteLayout *sprite(const Common::String &name);
-	TeButtonLayout *button(const Common::String &name);
-	bool group(const Common::String &name);
+	// TODO add public members
 
 private:
-	Common::StringMap _map;
-	bool _loaded;
+	// TODO add private members
+
 };
 
 } // end namespace Tetraedge
 
-#endif // TETRAEDGE_TE_TE_XML_GUI_H
+#endif // TETRAEDGE_GAME_PUZZLE_COFFRE_H

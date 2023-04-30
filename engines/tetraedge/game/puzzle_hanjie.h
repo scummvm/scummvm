@@ -19,37 +19,45 @@
  *
  */
 
-#ifndef TETRAEDGE_TE_TE_XML_GUI_H
-#define TETRAEDGE_TE_TE_XML_GUI_H
+#ifndef TETRAEDGE_GAME_PUZZLE_HANJIE_H
+#define TETRAEDGE_GAME_PUZZLE_HANJIE_H
 
-#include "common/str.h"
-#include "common/path.h"
-
+#include "tetraedge/te/te_3d_object2.h"
+#include "tetraedge/te/te_timer.h"
+#include "tetraedge/te/te_xml_gui.h"
 #include "tetraedge/te/te_button_layout.h"
 #include "tetraedge/te/te_sprite_layout.h"
 
 namespace Tetraedge {
 
-class TeXmlGui {
+class PuzzleHanjie : public Te3DObject2 {
 public:
-	TeXmlGui();
+	PuzzleHanjie();
 
-	Common::String value(const Common::String &key);
-
-	void clear();
-
-	void load(const Common::Path &path);
-	void unload();
-
-	TeSpriteLayout *sprite(const Common::String &name);
-	TeButtonLayout *button(const Common::String &name);
-	bool group(const Common::String &name);
+	void wakeUp();
+	void sleep();
 
 private:
-	Common::StringMap _map;
-	bool _loaded;
+	bool onExitButton();
+	bool onWinTimer();
+	bool onMouseUp(const Common::Point &pt);
+
+	TeTimer _timer;
+	TeXmlGui _gui;
+
+	TeButtonLayout *_exitButton;
+	TeSpriteLayout *_sprites[49];
+	TeSpriteLayout *_foregroundSprite;
+	int _backgroundNo;
+	bool _entered;
+	Common::String _bgImg;
+	Common::String _soundBegin;
+	TeSpriteLayout _bgSprite;
+	int _expectedVals[49];
+	// TODO add private members
+
 };
 
 } // end namespace Tetraedge
 
-#endif // TETRAEDGE_TE_TE_XML_GUI_H
+#endif // TETRAEDGE_GAME_PUZZLE_HANJIE_H

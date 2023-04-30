@@ -23,6 +23,17 @@
 #define TETRAEDGE_GAME_AMERZONE_GAME_H
 
 #include "tetraedge/game/game.h"
+
+#include "tetraedge/game/puzzle_cadenas.h"
+#include "tetraedge/game/puzzle_coffre.h"
+#include "tetraedge/game/puzzle_computer_hydra.h"
+#include "tetraedge/game/puzzle_computer_pwd.h"
+#include "tetraedge/game/puzzle_disjoncteur.h"
+#include "tetraedge/game/puzzle_hanjie.h"
+#include "tetraedge/game/puzzle_liquides.h"
+#include "tetraedge/game/puzzle_pentacle.h"
+#include "tetraedge/game/puzzle_transfusion.h"
+
 #include "tetraedge/te/te_timer.h"
 #include "tetraedge/te/te_warp.h"
 
@@ -93,6 +104,16 @@ private:
 	TeWarp *_warpY;
 	TeWarp *_prevWarpY;
 	Common::String _lastHitObjectName;
+
+	PuzzleCadenas _puzzleCadenas;
+	PuzzleCoffre _puzzleCoffre;
+	PuzzleComputerPwd _puzzleComputerPwd;
+	PuzzleComputerHydra _puzzleComputerHydra;
+	PuzzleDisjoncteur _puzzleDisjoncteur;
+	PuzzleHanjie _puzzleHanjie;
+	PuzzleLiquides _puzzleLiquides;
+	PuzzlePentacle _puzzlePentacle;
+	PuzzleTransfusion _puzzleTransfusion;
 };
 
 } // end namespace Tetraedge

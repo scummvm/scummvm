@@ -35,8 +35,27 @@ bool TeNameValXmlParser::parserCallback_value(ParserNode *node) {
 		qpos = valStr.find("&quot;");
 	}
 
-	_map.setVal(node->values["name"], valStr);
+	Common::String name;
+	if (_curGroup.empty())
+		name = node->values["name"];
+	else
+		name = _curGroup + "." + node->values["name"];
+
+	_map.setVal(name, valStr);
 	return true;
 }
+
+bool TeNameValXmlParser::parserCallback_group(ParserNode *node) {
+	_curGroup = node->values["name"];
+	_groupNames.push_back(_curGroup);
+	return true;
+}
+
+bool TeNameValXmlParser::closedKeyCallback(ParserNode *node) {
+	if (node->name == "group")
+		_curGroup.clear();
+	return true;
+}
+
 
 } // end namespace Tetraedge

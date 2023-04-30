@@ -40,6 +40,15 @@ MODULE_OBJS := \
 	game/options_menu.o \
 	game/owner_error_menu.o \
 	game/particle_xml_parser.o \
+	game/puzzle_cadenas.o \
+	game/puzzle_coffre.o \
+	game/puzzle_computer_hydra.o \
+	game/puzzle_computer_pwd.o \
+	game/puzzle_disjoncteur.o \
+	game/puzzle_hanjie.o \
+	game/puzzle_liquides.o \
+	game/puzzle_pentacle.o \
+	game/puzzle_transfusion.o \
 	game/question2.o \
 	game/scene_lights_xml_parser.o \
 	game/splash_screens.o \

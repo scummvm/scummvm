@@ -34,16 +34,28 @@ public:
 			XML_PROP(name, true)
 			XML_PROP(value, true)
 		KEY_END()
+		XML_KEY(group)
+			XML_PROP(name, true)
+			XML_KEY(value)
+				XML_PROP(name, true)
+				XML_PROP(value, true)
+			KEY_END()
+		KEY_END()
+
 	} PARSER_END()
 
 	// Parser callback methods
 	bool parserCallback_value(ParserNode *node);
+	bool parserCallback_group(ParserNode *node);
+	virtual bool closedKeyCallback(ParserNode *node) override;
 
 public:
 	const Common::StringMap &getMap() const { return _map; }
 
 private:
 	Common::StringMap _map;
+	Common::String _curGroup;
+	Common::Array<Common::String> _groupNames;
 };
 } // end namespace Tetraedge
 

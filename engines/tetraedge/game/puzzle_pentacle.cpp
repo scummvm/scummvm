@@ -19,37 +19,17 @@
  *
  */
 
-#ifndef TETRAEDGE_TE_TE_XML_GUI_H
-#define TETRAEDGE_TE_TE_XML_GUI_H
-
-#include "common/str.h"
-#include "common/path.h"
-
-#include "tetraedge/te/te_button_layout.h"
-#include "tetraedge/te/te_sprite_layout.h"
+#include "tetraedge/game/puzzle_pentacle.h"
 
 namespace Tetraedge {
 
-class TeXmlGui {
-public:
-	TeXmlGui();
+PuzzlePentacle::PuzzlePentacle() {
+}
 
-	Common::String value(const Common::String &key);
+void PuzzlePentacle::wakeUp(int param1, int param2) {
+	error("TODO: Implement PuzzlePentacle::wakeUp");
+}
 
-	void clear();
-
-	void load(const Common::Path &path);
-	void unload();
-
-	TeSpriteLayout *sprite(const Common::String &name);
-	TeButtonLayout *button(const Common::String &name);
-	bool group(const Common::String &name);
-
-private:
-	Common::StringMap _map;
-	bool _loaded;
-};
+// TODO: Add more functions here.
 
 } // end namespace Tetraedge
-
-#endif // TETRAEDGE_TE_TE_XML_GUI_H
