@@ -30,12 +30,11 @@ namespace Freescape {
 struct Token {
 public:
 	enum Type {
-		ACTIVATEDQ,
 		ADDVAR,
 		AGAIN,
 		AND,
 		ANDV,
-		COLLIDEDQ,
+		CONDITIONAL,
 		DELAY,
 		DESTROY,
 		DESTROYEDQ,
@@ -67,7 +66,6 @@ public:
 		SCREEN,
 		SOUND,
 		SETVAR,
-		SHOTQ,
 		START,
 		STARTANIM,
 		STOPANIM,
@@ -75,7 +73,6 @@ public:
 		SUBVAR,
 		SYNCSND,
 		THEN,
-		TIMERQ,
 		TOGVIS,
 		TRIGANIM,
 		UPDATEI,
