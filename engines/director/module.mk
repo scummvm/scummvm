@@ -93,6 +93,7 @@ MODULE_OBJS = \
 	lingo/xlibs/prefpath.o \
 	lingo/xlibs/printomatic.o \
 	lingo/xlibs/qtmovie.o \
+	lingo/xlibs/qtvr.o \
 	lingo/xlibs/registercomponent.o \
 	lingo/xlibs/serialportxobj.o \
 	lingo/xlibs/soundjam.o \
