@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-29 21:49+0000\n"
+"POT-Creation-Date: 2023-04-30 18:01+0000\n"
 "PO-Revision-Date: 2023-04-29 06:31+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -6160,24 +6160,24 @@ msgid "Eye of Beholder support is not compiled in"
 msgstr ""
 "La prise en charge de Eye Of Beholder n'a pas été activée dans cette version"
 
-#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:468
+#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:472
 #: engines/ultima/ultima4/metaengine.cpp:224
 #: engines/ultima/ultima8/metaengine.cpp:142
 msgid "Interact via Left Click"
 msgstr "Interagir via Clic Gauche"
 
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:469
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:473
 #: engines/ultima/ultima4/metaengine.cpp:230
 #: engines/ultima/ultima8/metaengine.cpp:148
 msgid "Interact via Right Click"
 msgstr "Interagir via Clic Droit"
 
-#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:476
+#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:480
 #: engines/twine/metaengine.cpp:380
 msgid "Move Forward"
 msgstr "Avancer"
 
-#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:477
+#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:481
 msgid "Move Back"
 msgstr "Reculer"
 
@@ -6189,13 +6189,13 @@ msgstr "Aller vers la Gauche"
 msgid "Move Right"
 msgstr "Aller vers la Droite"
 
-#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
+#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:484
 #: engines/mm/mm1/metaengine.cpp:97 engines/pegasus/pegasus.cpp:2739
 #: engines/twine/metaengine.cpp:401 engines/zvision/metaengine.cpp:209
 msgid "Turn Left"
 msgstr "Tourner vers la Gauche"
 
-#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:481
+#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:485
 #: engines/mm/mm1/metaengine.cpp:98 engines/pegasus/pegasus.cpp:2746
 #: engines/twine/metaengine.cpp:394 engines/zvision/metaengine.cpp:215
 msgid "Turn Right"
@@ -6241,40 +6241,40 @@ msgstr "Sort Niveau 5"
 msgid "Spell Level 6"
 msgstr "Sort Niveau 6"
 
-#: engines/kyra/engine/lol.cpp:472
+#: engines/kyra/engine/lol.cpp:476
 msgid "Attack 1"
 msgstr "Attaque 1"
 
-#: engines/kyra/engine/lol.cpp:473
+#: engines/kyra/engine/lol.cpp:477
 msgid "Attack 2"
 msgstr "Attaque 2"
 
-#: engines/kyra/engine/lol.cpp:474
+#: engines/kyra/engine/lol.cpp:478
 msgid "Attack 3"
 msgstr "Attaque 3"
 
-#: engines/kyra/engine/lol.cpp:475 engines/mm/mm1/metaengine.cpp:103
+#: engines/kyra/engine/lol.cpp:479 engines/mm/mm1/metaengine.cpp:103
 msgid "Show Map"
 msgstr "Afficher la Carte"
 
-#: engines/kyra/engine/lol.cpp:478
+#: engines/kyra/engine/lol.cpp:482
 msgid "Slide Left"
 msgstr "Faire un pas vers la Gauche"
 
-#: engines/kyra/engine/lol.cpp:479
+#: engines/kyra/engine/lol.cpp:483
 msgid "Slide Right"
 msgstr "Faire un pas vers la Droite"
 
 #. I18N: Action of hero party in Might & Magic 1
-#: engines/kyra/engine/lol.cpp:482 engines/mm/mm1/metaengine.cpp:109
+#: engines/kyra/engine/lol.cpp:486 engines/mm/mm1/metaengine.cpp:109
 msgid "Rest"
 msgstr "Se Reposer"
 
-#: engines/kyra/engine/lol.cpp:483
+#: engines/kyra/engine/lol.cpp:487
 msgid "Options"
 msgstr "Options"
 
-#: engines/kyra/engine/lol.cpp:484
+#: engines/kyra/engine/lol.cpp:488
 msgid "Choose Spell"
 msgstr "Choisir un Sort"
 
