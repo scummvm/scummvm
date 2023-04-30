@@ -38,6 +38,8 @@ namespace Watchmaker {
 
 char bDiariesStoppedByTimeInc = 0;
 
+void t3dLoadOutdoorLights(const char *pname, t3dBODY *b, int32 ora);
+
 /* -----------------26/11/1999 16.19-----------------
  *                      StartDiary
  * --------------------------------------------------*/
@@ -309,7 +311,6 @@ void ContinueDiary(WGame &game, int32 an) {
  *                  UpdateAllClocks
  * --------------------------------------------------*/
 void UpdateAllClocks(WGame &game) {
-	void t3dLoadOutdoorLights(const char *pname, t3dBODY * b, int32 ora);
 	char str[255];
 	t3dMESH *mesh;
 	Init &init = game.init;

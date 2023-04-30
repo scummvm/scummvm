@@ -58,6 +58,8 @@ uint16 bnd_lev;
 extern int16 NextDlg;   //from doDialog.c
 extern uint8 tasti_per_sfx1;    //from main.c
 
+void t3dLoadOutdoorLights(const char *pname, t3dBODY *b, int32 ora);
+
 void ProcessKBInput() {
 	// TODO: Currently we're polling this in the PollEvent flow.
 	return;
@@ -389,7 +391,6 @@ void ProcessKeyboard(WGame &game) {
 
 
 		if (KeyDown(Common::KEYCODE_LSHIFT)) {
-			void t3dLoadOutdoorLights(const char *pname, t3dBODY * b, int32 ora);
 			if (KeyUp(Common::KEYCODE_F1)) t3dLoadOutdoorLights("c:\\wm\\LMaps\\rxt.t3d", t3dRxt, 1030);
 			if (KeyUp(Common::KEYCODE_F2)) t3dLoadOutdoorLights("c:\\wm\\LMaps\\rxt.t3d", t3dRxt, 1530);
 			if (KeyUp(Common::KEYCODE_F3)) t3dLoadOutdoorLights("c:\\wm\\LMaps\\rxt.t3d", t3dRxt, 1930);
