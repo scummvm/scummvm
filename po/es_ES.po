@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-29 21:49+0000\n"
-"PO-Revision-Date: 2023-04-29 19:23+0000\n"
+"PO-Revision-Date: 2023-04-30 09:22+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -231,8 +231,6 @@ msgid "Make sure the JSON code was copied correctly and retry."
 msgstr "Comprueba que el código JSON esté bien copiado y vuelve a intentarlo."
 
 #: gui/cloudconnectionwizard.cpp:379
-#, fuzzy
-#| msgid "It it doesn't work, try again from the beginning."
 msgid "If that doesn't work, try again from the beginning."
 msgstr "En caso de que no funcione, empieza desde el principio."
 
@@ -9343,10 +9341,8 @@ msgid "Sound effect volume up"
 msgstr "Subir volumen de efectos de sonido"
 
 #: engines/vcruise/metaengine.cpp:163
-#, fuzzy
-#| msgid "Speeds up animations."
 msgid "Skip current animation"
-msgstr "Hace que las animaciones vayan más rápidas."
+msgstr "Omitir animación actual"
 
 #: engines/vcruise/vcruise.cpp:82
 msgid "This game requires JPEG support, which was not compiled in."
