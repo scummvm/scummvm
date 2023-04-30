@@ -230,6 +230,7 @@ struct BuildSetup {
 	std::string srcDir;     ///< Path to the sources.
 	std::string filePrefix; ///< Prefix for the relative path arguments in the project files.
 	std::string outputDir;  ///< Path where to put the MSVC project files.
+	std::string libsDir;    ///< Path to libraries for MSVC builds.  If absent, use LIBS_DEFINE environment var instead.
 
 	StringList includeDirs; ///< List of additional include paths
 	StringList libraryDirs; ///< List of additional library paths

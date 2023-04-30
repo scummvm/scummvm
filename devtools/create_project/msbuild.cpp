@@ -369,10 +369,17 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 			   << "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 			   << "\t<PropertyGroup>\n"
 			   << "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_Global</_PropertySheetDisplayName>\n";
+
+	std::string libsPath;
+	if (setup.libsDir.empty())
+		libsPath = "$(" LIBS_DEFINE ")";
+	else
+		libsPath = convertPathToWin(setup.libsDir);
+
 	if (!setup.useVcpkg) {
-		properties << "\t\t<ExecutablePath>$(" << LIBS_DEFINE << ")\\bin;$(" << LIBS_DEFINE << ")\\bin\\" << getMSVCArchName(arch) << ";$(" << LIBS_DEFINE << ")\\$(Configuration)\\bin;$(ExecutablePath)</ExecutablePath>\n"
-				   << "\t\t<LibraryPath>" << libraryDirsList << "$(" << LIBS_DEFINE << ")\\lib\\" << getMSVCArchName(arch) << ";$(" << LIBS_DEFINE << ")\\lib\\" << getMSVCArchName(arch) << "\\$(Configuration);$(" << LIBS_DEFINE << ")\\lib;$(" << LIBS_DEFINE << ")\\$(Configuration)\\lib;$(LibraryPath)</LibraryPath>\n"
-				   << "\t\t<IncludePath>" << includeDirsList << "$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\" << includeSDL << ";$(IncludePath)</IncludePath>\n";
+		properties << "\t\t<ExecutablePath>" << libsPath << "\\bin;" << libsPath << "\\bin\\" << getMSVCArchName(arch) << ";" << libsPath << "\\$(Configuration)\\bin;$(ExecutablePath)</ExecutablePath>\n"
+				   << "\t\t<LibraryPath>" << libraryDirsList << libsPath << "\\lib\\" << getMSVCArchName(arch) << ";" << libsPath << "\\lib\\" << getMSVCArchName(arch) << "\\$(Configuration);" << libsPath << "\\lib;" << libsPath << "\\$(Configuration)\\lib;$(LibraryPath)</LibraryPath>\n"
+				   << "\t\t<IncludePath>" << includeDirsList << libsPath << "\\include;" << libsPath << "\\include\\" << includeSDL << ";$(IncludePath)</IncludePath>\n";
 	}
 	properties << "\t\t<OutDir>$(Configuration)" << getMSVCArchName(arch) << "\\</OutDir>\n"
 			   << "\t\t<IntDir>$(Configuration)" << getMSVCArchName(arch) << "\\$(ProjectName)\\</IntDir>\n"
