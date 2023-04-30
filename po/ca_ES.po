@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-29 21:49+0000\n"
-"PO-Revision-Date: 2023-04-12 15:35+0000\n"
+"PO-Revision-Date: 2023-04-30 17:40+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -108,14 +108,10 @@ msgid "Manual mode"
 msgstr "Mode manual"
 
 #: gui/cloudconnectionwizard.cpp:183
-#, fuzzy
-#| msgid "Will ask you to run Local Webserver"
 msgid "Will ask you to run the Local Webserver"
 msgstr "Us demanarà que executeu el servidor web local"
 
 #: gui/cloudconnectionwizard.cpp:185
-#, fuzzy
-#| msgid "Requires Local Webserver feature"
 msgid "Requires the Local Webserver feature"
 msgstr "Requereix la característica de servidor web local"
 
@@ -124,12 +120,12 @@ msgid "Quick Mode: Step 1"
 msgstr "Mode ràpid: pas 1"
 
 #: gui/cloudconnectionwizard.cpp:206
-#, fuzzy
-#| msgid "In this mode, Local Webserver must be running,"
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
-msgstr "En aquest mode, el servidor web local ha d'estar executant-se,"
+msgstr ""
+"En aquest mode, el servidor web local ha d'estar executant-se,\n"
+"de manera que el vostre navegador pot enviar dades a ScummVM"
 
 #: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:3657
 msgid "Stop server"
@@ -165,12 +161,12 @@ msgid "Open URL"
 msgstr "Obre URL"
 
 #: gui/cloudconnectionwizard.cpp:266
-#, fuzzy
-#| msgid "It will automatically pass the data to ScummVM,"
 msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
-msgstr "Es passarà automàticament les dades a ScummVM,"
+msgstr ""
+"Es passarà automàticament les dades a ScummVM,\n"
+"i avisa si hi ha errors."
 
 #: gui/cloudconnectionwizard.cpp:279
 msgid "Local Webserver address: "
@@ -208,8 +204,6 @@ msgid "Manual Mode: Step 2"
 msgstr "Mode manual: pas 2"
 
 #: gui/cloudconnectionwizard.cpp:355
-#, fuzzy
-#| msgid "Copy JSON code from browser here and press Next:"
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr "Copieu aquí el codi JSON del navegador i premeu Següent:"
 
@@ -230,18 +224,14 @@ msgid "Cloud storage was not connected."
 msgstr "L'emmagatzematge al núvol no està connectat."
 
 #: gui/cloudconnectionwizard.cpp:378
-#, fuzzy
-#| msgid "Make sure JSON code was copied correctly and retry."
 msgid "Make sure the JSON code was copied correctly and retry."
 msgstr ""
 "Assegureu-vos que el codi JSON s'ha copiat correctament i torneu-ho a "
 "intentar."
 
 #: gui/cloudconnectionwizard.cpp:379
-#, fuzzy
-#| msgid "It it doesn't work, try from the beginning."
 msgid "If that doesn't work, try again from the beginning."
-msgstr "Si no funciona, intenta-ho des del principi."
+msgstr "Si això no funciona, torneu-ho a provar des del principi."
 
 #: gui/cloudconnectionwizard.cpp:380
 msgid "Error message: "
@@ -260,10 +250,8 @@ msgid "Next"
 msgstr "Següent"
 
 #: gui/cloudconnectionwizard.cpp:493
-#, fuzzy
-#| msgid "Another Storage is working now. Do you want to interrupt it?"
 msgid "Another Storage is working right now. Do you want to interrupt it?"
-msgstr "Un altre Emmagatzematge està actiu ara. Voleu interrompre'l?"
+msgstr "Un altre Emmagatzematge està actiu ara mateix. Voleu interrompre'l?"
 
 #: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:136
@@ -293,15 +281,11 @@ msgid "No"
 msgstr "No"
 
 #: gui/cloudconnectionwizard.cpp:502
-#, fuzzy
-#| msgid "Wait until current Storage finishes up and try again."
 msgid "Wait until current Storage finishes and try again."
 msgstr "Espereu fins que l'Emmagatzematge actual acabi i torneu a provar-ho."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:530
-#, fuzzy
-#| msgid "JSON code contents is malformed."
 msgid "JSON code contents are malformed."
 msgstr "El contingut del codi JSON està mal format."
 
@@ -3709,11 +3693,11 @@ msgstr "Stick dret Y"
 
 #: backends/keymapper/hardware-input.cpp:281
 msgid "Hat X"
-msgstr ""
+msgstr "Selector X"
 
 #: backends/keymapper/hardware-input.cpp:282
 msgid "Hat Y"
-msgstr ""
+msgstr "Selector Y"
 
 #: backends/keymapper/remap-widget.cpp:295
 #: backends/keymapper/remap-widget.cpp:325
@@ -5263,6 +5247,7 @@ msgid ""
 "The game prevents quitting at this moment. Are you sure you want to quit "
 "anyway?"
 msgstr ""
+"El joc impedeix sortir en aquest moment. Segur que voleu sortir igualment?"
 
 #: engines/dragons/dragons.cpp:1885
 #, c-format
@@ -5365,7 +5350,7 @@ msgstr "Perforació automàtica"
 
 #: engines/freescape/metaengine.cpp:58
 msgid "Allow to succefully drill in any part of the area in Driller"
-msgstr ""
+msgstr "Permet perforar amb èxit en qualsevol part de l'àrea a Driller"
 
 #: engines/freescape/metaengine.cpp:68
 msgid "Disable demo mode"
@@ -5373,7 +5358,7 @@ msgstr "Desactiva el mode de demostració"
 
 #: engines/freescape/metaengine.cpp:69
 msgid "Never activate demo mode"
-msgstr ""
+msgstr "No activis mai el mode de demostració"
 
 #: engines/freescape/metaengine.cpp:79
 msgid "Disable sensors"
@@ -5381,7 +5366,7 @@ msgstr "Desactiva els sensors"
 
 #: engines/freescape/metaengine.cpp:80
 msgid "Sensors will not shoot the player"
-msgstr ""
+msgstr "Els sensors no dispararan al jugador"
 
 #: engines/freescape/metaengine.cpp:90
 msgid "Disable falling"
@@ -5389,11 +5374,11 @@ msgstr "Desactiva la caiguda"
 
 #: engines/freescape/metaengine.cpp:91
 msgid "Player cannot fall over edges"
-msgstr ""
+msgstr "El jugador no pot caure sobre les vores"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
-msgstr ""
+msgstr "[ premeu qualsevol tecla per sortir ]"
 
 #: engines/glk/quetzal.cpp:147 engines/glk/quetzal.cpp:156
 msgid "Untitled Savegame"
@@ -5430,24 +5415,24 @@ msgstr "No s'ha pogut crear la partida desada"
 
 #: engines/glk/advsys/vm.cpp:560
 msgid "Speak up! I can't hear you!\n"
-msgstr ""
+msgstr "Parlar alt! No et sento!\n"
 
 #: engines/glk/advsys/vm.cpp:596
 #, c-format
 msgid "I don't know the word \"%s\".\n"
-msgstr ""
+msgstr "No conec la paraula \"%s\".\n"
 
 #: engines/glk/advsys/vm.cpp:682
 msgid "I don't understand.\n"
-msgstr ""
+msgstr "No ho entenc.\n"
 
 #: engines/glk/alan2/alan2.cpp:75
 msgid "This is too short to be a valid Alan2 file."
-msgstr ""
+msgstr "Això és massa curt per a ser un fitxer Alan2 vàlid."
 
 #: engines/glk/alan2/alan2.cpp:81
 msgid "This is not a valid Alan2 file."
-msgstr ""
+msgstr "Aquest no és un fitxer Alan2 vàlid."
 
 #: engines/glk/comprehend/game.cpp:321
 msgid "Savegame"
@@ -5455,7 +5440,7 @@ msgstr "Desa la partida"
 
 #: engines/glk/comprehend/game.cpp:860
 msgid "Picture window toggled\n"
-msgstr ""
+msgstr "Finestra d'imatge commutada\n"
 
 #: engines/glk/glulx/glulx.cpp:81
 msgid "This is too short to be a valid Glulx file."
@@ -5487,11 +5472,11 @@ msgstr "S'ha produït un error en desar la partida\n"
 
 #: engines/glk/hugo/hugo.cpp:182
 msgid "Incorrect rs file."
-msgstr ""
+msgstr "Fitxer rs incorrecte."
 
 #: engines/glk/hugo/hugo.cpp:189
 msgid "Save file created by different version."
-msgstr ""
+msgstr "El fitxer de la partida desada va ser creat per una versió diferent."
 
 #: engines/gob/inter_playtoons.cpp:259 engines/gob/inter_v2.cpp:1499
 #: engines/gob/inter_geisha.cpp:231 engines/tinsel/saveload.cpp:582
@@ -5509,7 +5494,7 @@ msgstr "No s'ha pogut esborrar el fitxer."
 
 #: engines/griffon/metaengine.cpp:109
 msgid "Menu / Skip"
-msgstr ""
+msgstr "Menú / Omet"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/griffon/metaengine.cpp:145 engines/mm/mm1/metaengine.cpp:65
@@ -5534,7 +5519,7 @@ msgstr ""
 #: engines/hpl1/metaengine.cpp:87 engines/icb/icb.cpp:131
 #: engines/icb/icb.cpp:197
 msgid "Run"
-msgstr ""
+msgstr "Còrrer"
 
 #: engines/grim/grim.cpp:482 engines/hpl1/metaengine.cpp:95
 #: engines/scumm/help.cpp:237 engines/scumm/help.cpp:245
@@ -8910,68 +8895,48 @@ msgid "Speeds up animations."
 msgstr "Accelera les animacions."
 
 #: engines/vcruise/metaengine.cpp:102
-#, fuzzy
-#| msgid "Display/Hide Info Screen"
 msgid "Display help screen"
-msgstr "Mostra/Oculta la pantalla d'informació"
+msgstr "Mostra la pantalla d'ajuda"
 
 #: engines/vcruise/metaengine.cpp:107 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Desa la partida"
 
 #: engines/vcruise/metaengine.cpp:117
-#, fuzzy
-#| msgid "Open 3DS Settings"
 msgid "Open sound settings"
-msgstr "Obre la configuració 3DS"
+msgstr "Obre la configuració del so"
 
 #: engines/vcruise/metaengine.cpp:122
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit game"
 msgstr "Surt del joc"
 
 #: engines/vcruise/metaengine.cpp:133
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle music on/off"
-msgstr "Commuta la pantalla completa"
+msgstr "Activa/desactiva la música"
 
 #: engines/vcruise/metaengine.cpp:138
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Toggle sound effects on/off"
-msgstr "Volum dels sons d'efectes especials"
+msgstr "Activa/desactiva els efectes de so"
 
 #: engines/vcruise/metaengine.cpp:143
-#, fuzzy
-#| msgid "Music volume up / down"
 msgid "Music volume down"
-msgstr "Puja / Baixa el volum de la música"
+msgstr "Abaixa el volum de música"
 
 #: engines/vcruise/metaengine.cpp:148
-#, fuzzy
-#| msgid "Music volume: "
 msgid "Music volume up"
-msgstr "Volum de música: "
+msgstr "Apuja el volum de música"
 
 #: engines/vcruise/metaengine.cpp:153
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume down"
-msgstr "Volum dels sons d'efectes especials"
+msgstr "Abaixa el volum de l'efecte de so"
 
 #: engines/vcruise/metaengine.cpp:158
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume up"
-msgstr "Volum dels sons d'efectes especials"
+msgstr "Apuja el volum de l'efecte de so"
 
 #: engines/vcruise/metaengine.cpp:163
-#, fuzzy
-#| msgid "Speeds up animations."
 msgid "Skip current animation"
-msgstr "Accelera les animacions."
+msgstr "Omet l'animació actual"
 
 #: engines/vcruise/vcruise.cpp:82
 msgid "This game requires JPEG support, which was not compiled in."
