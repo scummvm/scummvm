@@ -6,6 +6,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Neue Spiele:
    - Unterstützung für die macOS-Versionen von Syberia und Syberia II hinzugefügt.
    - Unterstützung für The Vampire Diaries und Nancy Drew: Secrets Can Kill hinzugefügt.
+   - Unterstützung für Reah: Face the Unknown hinzugefügt.
 
  Neue Plattformen:
    - Vollständig erneute Portierung für libretro hinzugefügt.
@@ -25,6 +26,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für die chinesische Version von Grim Fandango hinzugefügt.
    - Unterstützung für die von Fargus, ENPY und 7Wolf erstellte russische Version
      von Grim Fandango hinzugefügt.
+   - Unterstützung für die chineische Version von EOB2 hinzugefügt.
 
  Kyra:
    - Unterstützung für die französische Amiga-Version von Kyra1 und die tschechische DOS-Fan-Übersetzung hinzugefügt.
