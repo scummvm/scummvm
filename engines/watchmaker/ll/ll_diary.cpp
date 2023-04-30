@@ -265,16 +265,14 @@ void StopDiary(WGame &game, int32 room, int32 obj, uint8 only_overtime) {
  * --------------------------------------------------*/
 void ContinueDiary(WGame &game, int32 an) {
 	struct SDiary *d;
-	int32 i, ca, pos;
+	int32 i, ca;
 	Init &init = game.init;
 
 //	DebugLogFile( "Continuo Diario per anim %d", an );
 
-	pos = -1;
 	for (i = 0, d = &init.Diary[0]; i < MAX_DIARIES; i++, d++) {
 		if ((!d->item[d->cur].on) || (d->item[d->cur].anim[d->item[d->cur].cur] != an)) continue;
 
-		pos = init.Anim[an].pos;
 		d->item[d->cur].cur ++;
 		if (!(ca = d->item[d->cur].anim[d->item[d->cur].cur]) || init.Anim[ca].active) {
 			if ((!d->item[d->cur].loop) || !(ca = d->item[d->cur].anim[0]) || init.Anim[ca].active ||

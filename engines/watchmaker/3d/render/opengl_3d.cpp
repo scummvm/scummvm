@@ -469,7 +469,6 @@ void gBuildAlternateName(char *AltName, char *Name) {
 
 //*********************************************************************************************
 gTexture *gUserTexture(Texture *texture, unsigned int dimx, unsigned int dimy) {
-	bool        AlreadyLoaded = FALSE, bAlpha = FALSE;
 	gTexture    *Texture;
 	int         pos;
 	//DDSURFACEDESC2    DDSurfDesc;
@@ -498,34 +497,44 @@ gTexture *gUserTexture(Texture *texture, unsigned int dimx, unsigned int dimy) {
 			DDSurfDesc.ddsCaps.dwCaps2 = DDSCAPS2_TEXTUREMANAGE;
 		}
 #endif
-		if (dimx > 8)
-			if (dimx > 16)
-				if (dimx > 32)
-					if (dimx > 64)
-						if (dimx > 128)
+		if (dimx > 8) {
+			if (dimx > 16) {
+				if (dimx > 32) {
+					if (dimx > 64) {
+						if (dimx > 128) {
 							dimx = 256;
-						else
+						} else {
 							dimx = 128;
-					else
+						}
+					} else {
 						dimx = 64;
-				else
+					}
+				} else {
 					dimx = 32;
-			else
+				}
+			} else {
 				dimx = 16;
-		if (dimy > 8)
-			if (dimy > 16)
-				if (dimy > 32)
-					if (dimy > 64)
-						if (dimy > 128)
+			}
+		}
+		if (dimy > 8) {
+			if (dimy > 16) {
+				if (dimy > 32) {
+					if (dimy > 64) {
+						if (dimy > 128) {
 							dimy = 256;
-						else
+						} else {
 							dimy = 128;
-					else
+						}
+					} else {
 						dimy = 64;
-				else
+					}
+				} else {
 					dimy = 32;
-			else
+				}
+			} else {
 				dimy = 16;
+			}
+		}
 #if 0
 		DDSurfDesc.dwWidth = dimx;
 		DDSurfDesc.dwHeight = dimy;

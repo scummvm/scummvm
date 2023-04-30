@@ -1545,9 +1545,6 @@ void doT2DMouse(WGame &game) {
 					//Suono
 					StartSound(game, wSCANPULSANTE);
 				} else if ((CurButton == T2D_BT_SCANNER_TOOLBAR_SCAN_OFF) && (TheMessage->event != ME_MOUSEUPDATE)) {
-					extern uint8 bWinLog;
-					//bWinLog=1;
-
 					w->bm[T2D_BM_SCANNER_TOOLBAR_SCAN_OFF].tnum |= T2D_BM_OFF;
 					w->bm[T2D_BM_SCANNER_TOOLBAR_SCAN_ON].tnum &= ~T2D_BM_OFF;
 					_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_SCANNER_BUTTON_DELAY, 0, EFFECT_WAIT,

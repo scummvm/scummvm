@@ -135,12 +135,12 @@ public:
 	};
 	_t3dLOADLIST t3dLoadList[MAX_T3D_LOADLIST_ITEMS] = {};
 
-	void addToLoadList(t3dMESH *m, const Common::String &pname, uint32 LoaderFlags) {
+	void addToLoadList(t3dMESH *m, const Common::String &pname, uint32 _LoaderFlags) {
 		if (!pname.empty()) {
 			int32 a;
 			for (a = 0; a < MAX_T3D_LOADLIST_ITEMS; a++) {
 				if (t3dLoadList[a].pname.empty()) {
-					t3dLoadList[a].LoaderFlags = LoaderFlags;
+					t3dLoadList[a].LoaderFlags = _LoaderFlags;
 					t3dLoadList[a].m = m;
 					t3dLoadList[a].pname = pname;
 					break;
@@ -253,8 +253,8 @@ RoomManager *RoomManager::create(WGame *game) {
 /* -----------------10/06/99 16.04-------------------
  *                  t3dLoadRoom
  * --------------------------------------------------*/
-t3dBODY* RoomManagerImplementation::loadRoom(const Common::String &pname, t3dBODY *b, uint16 *NumBody, uint32 LoaderFlags) {
-	warning("t3dLoadRoom(%s, b, %d, %d)", pname.c_str(), *NumBody, LoaderFlags);
+t3dBODY* RoomManagerImplementation::loadRoom(const Common::String &pname, t3dBODY *b, uint16 *NumBody, uint32 _LoaderFlags) {
+	warning("t3dLoadRoom(%s, b, %d, %d)", pname.c_str(), *NumBody, _LoaderFlags);
 	struct _t3dLOADLIST *l;
 	t3dBODY *r = nullptr;
 	t3dBODY *rez = nullptr;
@@ -265,7 +265,7 @@ t3dBODY* RoomManagerImplementation::loadRoom(const Common::String &pname, t3dBOD
 	}
 
 	// Add the base stanza to the upload list
-	addToLoadList(nullptr, pname, LoaderFlags);
+	addToLoadList(nullptr, pname, _LoaderFlags);
 
 	while ((l = getFromLoadList())) {
 		uint16 num = 0;
@@ -286,7 +286,7 @@ t3dBODY* RoomManagerImplementation::loadRoom(const Common::String &pname, t3dBOD
 		*l = _t3dLOADLIST();
 	}
 
-	if (!(LoaderFlags & T3D_NORECURSION)) {
+	if (!(_LoaderFlags & T3D_NORECURSION)) {
 		for (uint16 i = 0; i < NumLoadedFiles; i++)
 			if (LoadedFiles[i].b)
 				t3dCalcRejectedMeshFromPortal(LoadedFiles[i].b);
@@ -296,9 +296,9 @@ t3dBODY* RoomManagerImplementation::loadRoom(const Common::String &pname, t3dBOD
 	return r;
 }
 
-t3dBODY* RoomManagerImplementation::loadSingleRoom(const Common::String &_pname, uint16 *NumBody, uint32 LoaderFlags) {
-	//warning("t3dLoadSingleRoom(workDirs, %s, b, %d, %d)", _pname, *NumBody, LoaderFlags);
-	//decodeLoaderFlags(LoaderFlags);
+t3dBODY* RoomManagerImplementation::loadSingleRoom(const Common::String &_pname, uint16 *NumBody, uint32 _LoaderFlags) {
+	//warning("t3dLoadSingleRoom(workDirs, %s, b, %d, %d)", _pname, *NumBody, _LoaderFlags);
+	//decodeLoaderFlags(_LoaderFlags);
 	Common::String pname(_pname);
 
 	WorkDirs &workdirs = _game->workDirs;
@@ -350,7 +350,7 @@ t3dBODY* RoomManagerImplementation::loadSingleRoom(const Common::String &_pname,
 		LoadedFiles[j].b = b;                                      // Aggiunge Body alla lista
 		j = 0;
 	}
-	b->loadFromStream(*_game, pname, *stream, LoaderFlags);
+	b->loadFromStream(*_game, pname, *stream, _LoaderFlags);
 
 	return b;
 }
@@ -522,12 +522,12 @@ Common::SharedPtr<VertexBuffer> t3dAddVertexBuffer(t3dBODY *b, uint32 numv) {
  *              t3dOptimizeMaterialList
  * --------------------------------------------------*/
 void t3dOptimizeMaterialList(t3dBODY *b) {
-	for (int i = 0; i < b->NumMaterials(); i++) {                                              // Scorre tutti materilai di un body
+	for (uint32 i = 0; i < b->NumMaterials(); i++) {                                              // Scorre tutti materilai di un body
 		MaterialPtr Mat = b->MatTable[i];
 		if ((Mat == nullptr) || /*(!Mat->Texture->Name) ||*/ (Mat->Movie) || (Mat->hasFlag(T3D_MATERIAL_MOVIE))) // Se non esiste o non ha texture
 			continue;                                                                           // esce
 
-		for (int j = 0; j < b->NumMaterials(); j++) {                                       // Cerca materiali uguali
+		for (uint32 j = 0; j < b->NumMaterials(); j++) {                                       // Cerca materiali uguali
 			MaterialPtr CurMat = b->MatTable[j];
 			if (Mat == CurMat)
 				continue;
@@ -540,7 +540,7 @@ void t3dOptimizeMaterialList(t3dBODY *b) {
 				// This is currently broken.
 
 				Mat = rMergeMaterial(Mat, CurMat);                                          // Unisce i due materiali
-				for (int k = 0; k < b->NumMeshes(); k++) {                                       // Aggiorna in tutte le mesh id materiale
+				for (uint32 k = 0; k < b->NumMeshes(); k++) {                                       // Aggiorna in tutte le mesh id materiale
 					auto &m = b->MeshTable[k];
 					for (int q = 0; q < m.NumFaces(); q++) {
 						auto &f = m.FList[q];
@@ -558,11 +558,11 @@ void t3dOptimizeMaterialList(t3dBODY *b) {
 	// references to them. Currently we do this by subtracting 1 from all references that were above
 	// a removed material. This works, but isn't really optimal.
 	int subtract = 0;
-	for (int i = 0; i < b->NumMaterials(); i++) {
+	for (uint32 i = 0; i < b->NumMaterials(); i++) {
 		if (!b->MatTable[i]) {
 			b->MatTable.remove_at(i);
 			subtract++;
-			for (int k = 0; k < b->NumMeshes(); k++) {
+			for (uint32 k = 0; k < b->NumMeshes(); k++) {
 				auto &m = b->MeshTable[k];
 				for (int q = 0; q < m.NumFaces(); q++) {
 					auto &f = m.FList[q];
@@ -636,13 +636,13 @@ void t3dFinalizeMaterialList(t3dBODY *b) {
 #endif
 	}
 
-	for (int i = 0; i < b->NumMaterials(); i++) {
+	for (uint32 i = 0; i < b->NumMaterials(); i++) {
 		auto &Mat = b->MatTable[i];
 		if (!Mat) {
 			warning("nullptr");
 		}
 		Mat->VBO = b->addVertexBuffer(); // t3dAddVertexBuffer(b, Mat->NumAllocatedVerts);
-		for (int j = 0; j < (uint32)Mat->NumAddictionalMaterial; j++)
+		for (int j = 0; j < Mat->NumAddictionalMaterial; j++)
 			Mat->AddictionalMaterial[j]->VBO = t3dAddVertexBuffer(b, Mat->AddictionalMaterial[j]->NumAllocatedVerts());
 	}
 }

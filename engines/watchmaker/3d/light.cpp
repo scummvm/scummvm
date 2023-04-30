@@ -430,7 +430,7 @@ void t3dLIGHT::SetVisibleFromLight(gVertex *v) {
  * --------------------------------------------------*/
 void t3dLIGHT::setupVisibleVerticesFromLight(t3dBODY *b) {
 	gVertex     *gv;
-	for (int k = 0; k < b->NumMeshes(); k++) {
+	for (uint32 k = 0; k < b->NumMeshes(); k++) {
 		t3dMESH &m = b->MeshTable[k];
 #ifndef WMGEN
 		m.VBptr = m.VertexBuffer;

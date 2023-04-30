@@ -86,6 +86,8 @@ SFont *Fonts::fontForKind(FontKind font) {
 		return &ComputerFont;
 	case FontKind::PDA:
 		return &PDAFont;
+	default:
+		return nullptr;
 	}
 }
 

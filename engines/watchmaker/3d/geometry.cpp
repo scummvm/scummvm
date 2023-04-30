@@ -2435,7 +2435,6 @@ void t3dCalcHalos(t3dBODY *b) {
 	return;
 
 	gMaterial   *Material;
-	int16      T1;
 	uint32      uvbc;
 	uint32      i;
 	gVertex     *gv;
@@ -2471,7 +2470,6 @@ void t3dCalcHalos(t3dBODY *b) {
 
 		if (l.Type & T3D_LIGHT_FLARE) {
 			Material = &l.Material[0];
-			T1 = Material->Texture->ID;
 
 			size = l.FlareSize;
 
@@ -2734,7 +2732,7 @@ void t3dAnimLights(t3dBODY *b) {
 	t3dCalcHalos(b); // Calculate flare/halos for lights
 
 	bProcessLights = 0;
-	int light = 0;
+	uint32 light = 0;
 	while ((light < b->NumLights())) {
 		t3dLIGHT &l = b->LightTable[light];
 		if (l.Type & T3D_LIGHT_CANDLESMOKE)
