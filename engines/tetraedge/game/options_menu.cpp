@@ -309,8 +309,9 @@ void OptionsMenu::updateJauge(const Common::String &chan, const Common::String &
 		if (!sprite)
 			break;
 		bool enableSprite = false;
-		if (i * (1.0f / n) - EPSILON <= chanVol) {
-			enableSprite = chanVol < (i + 1) * (1.0f / n) - EPSILON;
+		float mul = n ? 1.0f / n : 1.0f;
+		if (i * mul - EPSILON <= chanVol) {
+			enableSprite = chanVol < (i + 1) * mul - EPSILON;
 		}
 		sprite->setVisible(enableSprite);
 

@@ -23,7 +23,7 @@
 
 namespace Tetraedge {
 
-TeMarker::TeMarker() : _visible(true), _isActive(false) {
+TeMarker::TeMarker() : _visible(true), _isActive(false), _zLoc(0) {
 }
 
 void TeMarker::active(bool val) {

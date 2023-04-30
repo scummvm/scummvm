@@ -42,7 +42,7 @@ public:
 	};
 	class Exit {
 	public:
-		Exit() : _nbWarpBlock(0), _markerId(0) {}
+		Exit() : _nbWarpBlock(0), _markerId(0), _camAngleX(0.0f), _camAngleY(0.0f) {}
 		Common::String _name;
 		Common::String _linkedWarp;
 		unsigned long _markerId;

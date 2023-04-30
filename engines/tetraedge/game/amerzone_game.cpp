@@ -36,7 +36,10 @@ namespace Tetraedge {
 
 AmerzoneGame::AmerzoneGame() : Tetraedge::Game(), _orientationX(0.0f), _orientationY(0.0f),
 _speedX(0.0f), _speedY(0.0f), _isInDrag(false), _edgeButtonRolloverCount(0),
-_warpX(nullptr), _warpY(nullptr), _prevWarpY(nullptr) {
+_warpX(nullptr), _warpY(nullptr), _prevWarpY(nullptr),
+_xAngleMin(0.0f), _xAngleMax(0.0f), _yAngleMin(0.0f), _yAngleMax(0.0f),
+_puzzleNo(-1), _puzParam1(-1), _puzParam2(-1)
+ {
 
 }
 
@@ -409,8 +412,10 @@ void AmerzoneGame::startChangeWarpAnim() {
 		TeRenderer *renderer = g_engine->getRenderer();
 		renderer->clearBuffer(TeRenderer::ColorBuffer);
 		renderer->clearBuffer(TeRenderer::DepthBuffer);
-		if (_warpX)
-			_warpX->render();
+
+		// Original does null checks here but they are pointless as both
+		// are already used above.
+		_warpX->render();
 		_prevWarpY->render();
 
 		// This is a much simpler version of what the original does
