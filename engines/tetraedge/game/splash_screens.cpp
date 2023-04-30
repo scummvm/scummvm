@@ -27,6 +27,7 @@
 #include "tetraedge/game/application.h"
 #include "tetraedge/game/game.h"
 #include "tetraedge/game/splash_screens.h"
+#include "tetraedge/te/te_core.h"
 
 namespace Tetraedge {
 
@@ -39,15 +40,16 @@ void SplashScreens::enter()	{
 		_entered = true;
 		_splashNo = 0;
 		const char *scriptStr = g_engine->gameIsAmerzone() ? "GUI/PC-MacOSX/Splash0.lua" : "menus/splashes/splash0.lua";
-		if (Common::File::exists(scriptStr)) {
-			load(scriptStr);
+		Common::FSNode node = g_engine->getCore()->findFile(scriptStr);
+		if (node.exists()) {
+			load(node);
 			Application *app = g_engine->getApplication();
 			TeLayout *splash = layoutChecked("splash");
-			if (g_engine->gameIsAmerzone()) {
-				TeLayout *splashImg = dynamic_cast<TeLayout *>(splash->child(0));
-				splashImg->setRatioMode(TeILayout::RATIO_MODE_NONE);
-				splashImg->updateSize();
-			}
+
+			TeLayout *splashImg = dynamic_cast<TeLayout *>(splash->child(0));
+			splashImg->setRatioMode(TeILayout::RATIO_MODE_NONE);
+			splashImg->updateSize();
+
 			app->frontLayout().addChild(splash);
 			app->performRender();
 		}
@@ -69,19 +71,19 @@ bool SplashScreens::onAlarm() {
 		return true;
 	}
 
-	if (!Common::File::exists(scriptName)) {
+	Common::FSNode node = g_engine->getCore()->findFile(scriptName);
+	if (!node.exists()) {
 		onQuitSplash();
 	} else {
-		load(scriptName);
+		load(node);
 
 		TeButtonLayout *splash = buttonLayoutChecked("splash");
 		splash->onMouseClickValidated().add(this, &SplashScreens::onQuitSplash);
 
-		if (g_engine->gameIsAmerzone()) {
-			TeLayout *splashImg = dynamic_cast<TeLayout *>(splash->child(0));
-			splashImg->setRatioMode(TeILayout::RATIO_MODE_NONE);
-			splashImg->updateSize();
-		}
+		TeLayout *splashImg = dynamic_cast<TeLayout *>(splash->child(0));
+		splashImg->setRatioMode(TeILayout::RATIO_MODE_NONE);
+		splashImg->updateSize();
+
 		app->frontLayout().addChild(splash);
 
 		_timer.start();
