@@ -1264,7 +1264,7 @@ protected:
 
 	// sound
 	void snd_playSong(int id, bool loop = true);
-	void snd_playLevelScore();
+	virtual void snd_playLevelScore() = 0;
 	void snd_playSoundEffect(int id, int volume = 0xFF) override;
 	void snd_stopSound();
 	void snd_fadeOut(int del = 160);

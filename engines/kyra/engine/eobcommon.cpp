@@ -2721,16 +2721,6 @@ void EoBCoreEngine::snd_playSong(int track, bool loop) {
 	_sound->playTrack(track);
 }
 
-void EoBCoreEngine::snd_playLevelScore() {
-	if (_flags.platform == Common::kPlatformPC98) {
-		if (_flags.gameID == GI_EOB1)
-			snd_playSong(_currentLevel + 1);
-	} else if (_flags.platform == Common::kPlatformSegaCD) {
-		static const uint8 levelTracksSegaCD[13] = { 7, 7, 7, 7, 6, 6, 6, 4, 4, 4, 5, 5, 10 };
-		snd_playSong(levelTracksSegaCD[_currentLevel]);
-	}
-}
-
 void EoBCoreEngine::snd_playSoundEffect(int track, int volume) {
 	if ((track < 1) || (_flags.gameID == GI_EOB2 && track > 119) || shouldQuit())
 		return;

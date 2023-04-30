@@ -689,6 +689,11 @@ void DarkMoonEngine::snd_loadAmigaSounds(int level, int sub) {
 	_amigaCurSoundIndex = sndIndex;
 }
 
+void DarkMoonEngine::snd_playLevelScore() {
+	if (_flags.platform == Common::kPlatformPC98)
+		snd_playSong(0);
+}
+
 void DarkMoonEngine::useHorn(int charIndex, int weaponSlot) {
 	int v = _items[_characters[charIndex].inventory[weaponSlot]].value - 1;
 	_txt->printMessage(_hornStrings[v]);

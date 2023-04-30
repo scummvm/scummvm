@@ -569,7 +569,6 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 
 	seq_segaRestoreAfterSequence();
 	setLevelPalettes(_currentLevel);
-	_levelCurTrack = -1;
 	if (_flags.platform == Common::kPlatformSegaCD)
 		snd_playLevelScore();
 }
@@ -993,6 +992,16 @@ void EoBEngine::snd_loadAmigaSounds(int level, int) {
 	_sound->loadSoundFile(Common::String::format("LEVELSAM%d.CPS", level));
 
 	_amigaCurSoundFile = level;
+}
+
+void EoBEngine::snd_playLevelScore() {
+	if (_flags.platform == Common::kPlatformPC98) {
+		snd_playSong(_currentLevel + 1);
+	} else if (_flags.platform == Common::kPlatformSegaCD) {
+		static const uint8 levelTracksSegaCD[13] = { 7, 7, 7, 7, 6, 6, 6, 4, 4, 4, 5, 5, 10 };
+		_levelCurTrack = levelTracksSegaCD[_currentLevel];
+		snd_playSong(_levelCurTrack);
+	}
 }
 
 void EoBEngine::snd_updateLevelScore() {

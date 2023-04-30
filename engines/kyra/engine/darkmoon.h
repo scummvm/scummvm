@@ -121,6 +121,7 @@ private:
 
 	// Sound
 	void snd_loadAmigaSounds(int level, int sub) override;
+	void snd_playLevelScore() override;
 
 	const char *const *_amigaSoundFiles2;
 	const char *const *_amigaSoundMapExtra;

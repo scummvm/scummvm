@@ -175,6 +175,7 @@ private:
 
 	// Sound
 	void snd_loadAmigaSounds(int level, int) override;
+	void snd_playLevelScore() override;
 	void snd_updateLevelScore() override;
 
 	int _levelCurTrack;
