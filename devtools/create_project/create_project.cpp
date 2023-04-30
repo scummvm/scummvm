@@ -307,6 +307,14 @@ int main(int argc, char *argv[]) {
 			setup.useXCFramework = true;
 		} else if (!std::strcmp(argv[i], "--vcpkg")) {
 			setup.useVcpkg = true;
+		} else if (!std::strcmp(argv[i], "--libs-path")) {
+			if (i + 1 >= argc) {
+				std::cerr << "ERROR: Missing \"path\" parameter for \"--libs-path\"!\n";
+				return -1;
+			}
+			std::string libsDir = unifyPath(argv[++i]);
+			removeTrailingSlash(libsDir);
+			setup.libsDir = libsDir;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -741,7 +749,9 @@ void displayHelp(const char *exe) {
 	        "                            (default: true)\n"
 	        " --use-windows-ansi         Use Windows ANSI APIs\n"
 	        "                            (default: false)\n"
-	        " --vcpkg                    Use vcpkg-provided libraries instead of pre-built SCUMMVM_LIBS\n"
+	        " --libs-path path           Specify the path of pre-built libraries instead of using the\n"
+			"                            " LIBS_DEFINE " environment variable\n "
+	        " --vcpkg                    Use vcpkg-provided libraries instead of pre-built libraries\n"
 	        "                            (default: false)\n"
 	        "\n"
 	        "Engines settings:\n"
