@@ -185,7 +185,6 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 			readVar(399) == 1 &&  // This checks that we're playing online
 			readVar(0x8000 + 11) == 1 &&  // The ball is a pop-up
 			readVar(291) < 2 &&  // Less than two outs
-			readVar(300) == 0 &&  // Ball hasn't bounced
 			// This is the array of baserunner status info, and the value in position 8 specifies whether the runner is forced
 			array == 295 && idx1 == 8) {
 			return 0;
