@@ -262,7 +262,6 @@ public:
 	EfhEngine(OSystem *syst, const ADGameDescription *gd);
 	~EfhEngine() override;
 
-	OSystem *_system;
 	Graphics::Surface *_mainSurface;
 	Common::RandomSource *_rnd;
 
@@ -286,7 +285,6 @@ public:
 	bool _shouldQuit;
 
 protected:
-	Common::EventManager *_eventMan;
 	int _lastTime;
 	// Engine APIs
 	Common::Error run() override;

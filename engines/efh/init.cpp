@@ -241,7 +241,6 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	_rnd = nullptr;
 
 	_shouldQuit = false;
-	_eventMan = nullptr;
 	_lastTime = 0;
 	_platform = Common::kPlatformUnknown;
 	_mainSurface = nullptr;
