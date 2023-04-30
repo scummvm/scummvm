@@ -536,10 +536,6 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			Common::KeyCode var19 = handleAndMapInput(false);
 			if (_menuDepth == 0) {
 				switch (var19) {
-				case Common::KEYCODE_ESCAPE:
-					windowId = kEfhMenuLeave;
-					var19 = Common::KEYCODE_RETURN;
-					break;
 				case Common::KEYCODE_a:
 					windowId = kEfhMenuActive;
 					var19 = Common::KEYCODE_RETURN;
@@ -560,6 +556,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					windowId = kEfhMenuInfo;
 					var19 = Common::KEYCODE_RETURN;
 					break;
+				case Common::KEYCODE_ESCAPE:
 				case Common::KEYCODE_l:
 					windowId = kEfhMenuLeave;
 					var19 = Common::KEYCODE_RETURN;
@@ -576,9 +573,8 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					windowId = kEfhMenuUse;
 					var19 = Common::KEYCODE_RETURN;
 					break;
-				// case 0xFB: Joystick button 2
 				default:
-					//	warning("handleStatusMenu - unhandled keys (or joystick event?) 0xBA, 0xBB, 0xBC");
+					debugC(9, kDebugEngine, "handleStatusMenu - unhandled keys");
 					break;
 				}
 			} else if (_menuDepth == 1) {
