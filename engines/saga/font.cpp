@@ -390,7 +390,6 @@ void DefaultFont::textDrawRect(FontId fontId, const char *text, const Common::Re
 	int h;
 	int wc;
 	int w_total;
-	int len_total;
 	Common::Point textPoint;
 	Common::Point textPoint2;
 
@@ -412,7 +411,6 @@ void DefaultFont::textDrawRect(FontId fontId, const char *text, const Common::Re
 	// String won't fit on one line
 	h = getHeight(fontId, text);
 	w_total = 0;
-	len_total = 0;
 	wc = 0;
 
 	startPointer = text;
@@ -425,7 +423,7 @@ void DefaultFont::textDrawRect(FontId fontId, const char *text, const Common::Re
 
 	for (;;) {
 		if (isBig5) {
-			if (*searchPointer & 0x80)
+			if ((searchPointer[0] & 0x80) && searchPointer[1])
 				foundPointer = searchPointer + 2;
 			else if (*searchPointer)
 				foundPointer = searchPointer + 1;
@@ -446,26 +444,22 @@ void DefaultFont::textDrawRect(FontId fontId, const char *text, const Common::Re
 		if ((w_total + w) > fitWidth) {
 			// This word won't fit
 			if (wc == 0) {
+				if (measurePointer)
+					searchPointer = measurePointer;
+				else
+					searchPointer = endPointer;
 				w_total = fitWidth;
-				len_total = len;
 			}
 
 			// Wrap what we've got and restart
 			textPoint2.x = textPoint.x - (w_total / 2);
 			textPoint2.y = textPoint.y;
-			draw(fontId, startPointer, len_total, textPoint2, color, effectColor, flags);
+			draw(fontId, startPointer, searchPointer - startPointer, textPoint2, color, effectColor, flags);
 			textPoint.y += h + TEXT_LINESPACING;
 			if (textPoint.y >= rect.bottom) {
 				return;
 			}
 			w_total = 0;
-			len_total = 0;
-			if (wc == 0 && measurePointer) {
-				if (isBig5 && (*measurePointer & 0x80))
-					searchPointer = measurePointer + 2;
-				else
-					searchPointer = measurePointer + 1;
-			}
 			wc = 0;
 
 			// Advance the search pointer to the next non-space.
@@ -485,13 +479,12 @@ void DefaultFont::textDrawRect(FontId fontId, const char *text, const Common::Re
 		} else {
 			// Word will fit ok
 			w_total += w;
-			len_total += len;
 			wc++;
 			if (foundPointer == nullptr) {
 				// Since word hit NULL but fit, we are done
 				textPoint2.x = textPoint.x - (w_total / 2);
 				textPoint2.y = textPoint.y;
-				draw(fontId, startPointer, len_total, textPoint2, color,
+				draw(fontId, startPointer, endPointer - startPointer, textPoint2, color,
 					effectColor, flags);
 				return;
 			}
