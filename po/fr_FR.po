@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-30 18:01+0000\n"
-"PO-Revision-Date: 2023-04-29 06:31+0000\n"
+"PO-Revision-Date: 2023-05-01 02:40+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -108,14 +108,10 @@ msgid "Manual mode"
 msgstr "Mode manuel"
 
 #: gui/cloudconnectionwizard.cpp:183
-#, fuzzy
-#| msgid "Will ask you to run Local Webserver"
 msgid "Will ask you to run the Local Webserver"
-msgstr "Vous demandera de lancer un Serveur web local"
+msgstr "Vous demandera de lancer le Serveur web local"
 
 #: gui/cloudconnectionwizard.cpp:185
-#, fuzzy
-#| msgid "Requires Local Webserver feature"
 msgid "Requires the Local Webserver feature"
 msgstr "Récessite la fonction Serveur web local"
 
@@ -124,10 +120,6 @@ msgid "Quick Mode: Step 1"
 msgstr "Mode rapide : Etape 1"
 
 #: gui/cloudconnectionwizard.cpp:206
-#, fuzzy
-#| msgid ""
-#| "In this mode, Local Webserver must be running,\n"
-#| "so your browser could forward data to ScummVM"
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
@@ -201,11 +193,6 @@ msgid "Open this link in your browser:"
 msgstr "1. Ouvrir ce lien dans votre navigateur :"
 
 #: gui/cloudconnectionwizard.cpp:321
-#, fuzzy
-#| msgid ""
-#| "When it fails to pass JSON code to ScummVM,\n"
-#| "find it on Troubleshooting section of the page,\n"
-#| "and go to the next step here."
 msgid ""
 "When it fails to pass the JSON code to ScummVM,\n"
 "find it on the Troubleshooting section of the page,\n"
@@ -220,10 +207,8 @@ msgid "Manual Mode: Step 2"
 msgstr "Mode manuel : Etape 2"
 
 #: gui/cloudconnectionwizard.cpp:355
-#, fuzzy
-#| msgid "Copy JSON code from browser here and press Next:"
 msgid "Copy the JSON code from the browser here and press Next:"
-msgstr "Copiez ici le code JSON depuis le navigateur et appyuez sur Suivant :"
+msgstr "Copiez ici le code JSON depuis le navigateur et appuyez sur Suivant :"
 
 #: gui/cloudconnectionwizard.cpp:357
 msgid "Paste"
@@ -242,14 +227,10 @@ msgid "Cloud storage was not connected."
 msgstr "Espace de stockage cloud non connecté."
 
 #: gui/cloudconnectionwizard.cpp:378
-#, fuzzy
-#| msgid "Make sure JSON code was copied correctly and retry."
 msgid "Make sure the JSON code was copied correctly and retry."
 msgstr "Assurez-vous que le code JSON a été copié correctement et réessayez."
 
 #: gui/cloudconnectionwizard.cpp:379
-#, fuzzy
-#| msgid "It it doesn't work, try from the beginning."
 msgid "If that doesn't work, try again from the beginning."
 msgstr "Si cela ne fonctionne pas, recommencez depuis le début."
 
@@ -270,10 +251,10 @@ msgid "Next"
 msgstr "Suivant"
 
 #: gui/cloudconnectionwizard.cpp:493
-#, fuzzy
-#| msgid "Another Storage is working now. Do you want to interrupt it?"
 msgid "Another Storage is working right now. Do you want to interrupt it?"
-msgstr "Un autre service de stockage est actif. Voulez-vous l'interrompre ?"
+msgstr ""
+"Un autre service de stockage est actuellement actif. Voulez-vous "
+"l'interrompre ?"
 
 #: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:136
@@ -303,18 +284,13 @@ msgid "No"
 msgstr "Non"
 
 #: gui/cloudconnectionwizard.cpp:502
-#, fuzzy
-#| msgid "Wait until current Storage finishes up and try again."
 msgid "Wait until current Storage finishes and try again."
-msgstr ""
-"Patientez jusqu'à ce que le Stockage actuel soit fermé et essayez de nouveau."
+msgstr "Attendez que le stockage en cours soit terminé et essayez à nouveau."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:530
-#, fuzzy
-#| msgid "JSON code contents is malformed."
 msgid "JSON code contents are malformed."
-msgstr "Le contenu du code JSON est malformé."
+msgstr "Les contenus du code JSON sont malformés."
 
 #: gui/cloudconnectionwizard.cpp:551 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
@@ -6279,14 +6255,7 @@ msgid "Choose Spell"
 msgstr "Choisir un Sort"
 
 #: engines/kyra/gui/saveload_eob.cpp:598
-#, fuzzy, c-format
-#| msgid ""
-#| "The following original saved game file has been found in your game path:\n"
-#| "\n"
-#| "%s %s\n"
-#| "\n"
-#| "Do you wish to use this saved game file with ScummVM?\n"
-#| "\n"
+#, c-format
 msgid ""
 "The following original saved game file has been found in your game path:\n"
 "\n"
@@ -6298,7 +6267,7 @@ msgstr ""
 "Le fichier de sauvegarde original suivant a été trouvé dans le répertoire du "
 "jeu :\n"
 "\n"
-"%s %s\n"
+"%s %S\n"
 "\n"
 "Voulez-vous utiliser cette sauvegarde avec ScummVM ?\n"
 "\n"
@@ -9432,10 +9401,8 @@ msgid "Sound effect volume up"
 msgstr "Hausse du volume des effets sonores"
 
 #: engines/vcruise/metaengine.cpp:163
-#, fuzzy
-#| msgid "Speeds up animations."
 msgid "Skip current animation"
-msgstr "Accélère les animations."
+msgstr "Passer l'animation en cours"
 
 #: engines/vcruise/vcruise.cpp:82
 msgid "This game requires JPEG support, which was not compiled in."
