@@ -2150,7 +2150,7 @@ bool EfhEngine::handleInteractionText(int16 mapPosX, int16 mapPosY, int16 charId
 	if (tileId < 0)
 		return false;
 
-	if ((arg8 == 4 && _mapSpecialTiles[_techId][tileId]._triggerType < 0xFA) || arg8 != 4) {
+	if (arg8 != 4 || _mapSpecialTiles[_techId][tileId]._triggerType < 0xFA) {
 		if (_mapSpecialTiles[_techId][tileId]._field7_textId > 0xFE)
 			return false;
 		displayImp1Text(_mapSpecialTiles[_techId][tileId]._field7_textId);
@@ -2177,7 +2177,7 @@ int8 EfhEngine::checkTileStatus(int16 mapPosX, int16 mapPosY, bool teamFl) {
 	}
 
 	if (_tileFact[tileFactId]._tileId != 0xFF) {
-		if (teamFl || (!teamFl && tileFactId != 128 && tileFactId != 121)) {
+		if (teamFl || (tileFactId != 128 && tileFactId != 121)) {
 			if (_largeMapFlag)
 				_mapGameMaps[_techId][mapPosX][mapPosY] = _tileFact[tileFactId]._tileId;
 			else
