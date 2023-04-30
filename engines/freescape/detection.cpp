@@ -346,7 +346,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"CMH.EXE", 0, "1f3b67e649e718e239ebfd7c56e96d47", 63040},
 			AD_LISTEND
 		},
-		Common::EN_ANY,
+		Common::UNK_LANG,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
@@ -619,6 +619,19 @@ public:
 	const DebugChannelDef *getDebugChannels() const override {
 		return debugFlagList;
 	}
+	DetectedGame toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const override;
 };
+
+DetectedGame FreescapeMetaEngineDetection::toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const {
+	DetectedGame game = AdvancedMetaEngineDetection::toDetectedGame(adGame);
+
+	// The AdvancedDetector model only allows specifying a single supported game language.
+	if (game.gameId == "castlemaster" && game.language == Common::UNK_LANG) {
+		game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
+		game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
+		game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
+	}
+	return game;
+}
 
 REGISTER_PLUGIN_STATIC(FREESCAPE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, FreescapeMetaEngineDetection);

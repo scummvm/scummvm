@@ -60,6 +60,8 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 
 	_variant = gd->flags;
 
+	_language = Common::parseLanguage(ConfMan.get("language"));
+
 	if (!Common::parseBool(ConfMan.get("prerecorded_sounds"), _usePrerecordedSounds))
 		error("Failed to parse bool from prerecorded_sounds option");
 
