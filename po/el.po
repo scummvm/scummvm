@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-29 21:49+0000\n"
-"PO-Revision-Date: 2023-04-29 19:34+0000\n"
+"PO-Revision-Date: 2023-04-30 02:45+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -232,8 +232,6 @@ msgstr ""
 "Βεβαιωθείτε ότι ο κωδικός JSON αντιγράφτηκε σωστά και προσπαθήστε πάλι."
 
 #: gui/cloudconnectionwizard.cpp:379
-#, fuzzy
-#| msgid "It it doesn't work, try again from the beginning."
 msgid "If that doesn't work, try again from the beginning."
 msgstr "Αν δεν λειτουργήσει αυτό, δοκιμάστε ξανά από την αρχή."
 
@@ -9478,10 +9476,8 @@ msgid "Sound effect volume up"
 msgstr "Ένταση ηχητικών εφέ πάνω"
 
 #: engines/vcruise/metaengine.cpp:163
-#, fuzzy
-#| msgid "Speeds up animations."
 msgid "Skip current animation"
-msgstr "Επιταχύνει τις κινήσεις (animations) των χαρακτήρων."
+msgstr "Παράκαμψη τρέχουσας κίνησης"
 
 #: engines/vcruise/vcruise.cpp:82
 msgid "This game requires JPEG support, which was not compiled in."
