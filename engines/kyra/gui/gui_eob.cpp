@@ -4631,8 +4631,7 @@ void GUI_EoB::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int sp
 	if (bookPageIndex < 0)
 		return;
 
-	int x1 = _vm->_flags.lang == Common::ZH_TWN ? 4 + (bookPageIndex / 4) * 80 : 8;
-	int x2 = _vm->_flags.lang == Common::ZH_TWN ? x1 : 6;
+	int x = _vm->_flags.lang == Common::ZH_TWN ? 4 + (bookPageIndex / 4) * 80 : 8;
 	int y = _vm->_flags.lang == Common::ZH_TWN ? (bookPageIndex % 4) * 16 + 58 : bookPageIndex * 9 + 50;
 	int w = _vm->_flags.lang == Common::ZH_TWN ? 80 : 160;
 	int h = _vm->_flags.lang == Common::ZH_TWN ? 15 : 8;
@@ -4641,7 +4640,7 @@ void GUI_EoB::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int sp
 	Screen::FontId of = _screen->setFont(_menuFont2);
 
 	if (!spellId || (_vm->_flags.lang == Common::ZH_TWN && !noFill))
-		_screen->fillRect(x2, y, x1 + w, y + h,  _vm->guiSettings()->colors.fill);
+		_screen->fillRect(x - (_vm->_flags.lang == Common::ZH_TWN ? 1 : 2), y, x + w, y + h,  _vm->guiSettings()->colors.fill);
 
 	if (spellId) {
 		Common::String s;
@@ -4655,9 +4654,9 @@ void GUI_EoB::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int sp
 		}
 
 		if (noFill)
-			_screen->printText(s.c_str(), x1, y, highLight ? _vm->guiSettings()->colors.guiColorLightRed : col1, 0);
+			_screen->printText(s.c_str(), x, y, highLight ? _vm->guiSettings()->colors.guiColorLightRed : col1, 0);
 		else
-			_screen->printShadedText(s.c_str(), x1, y, highLight ? _vm->guiSettings()->colors.guiColorLightRed : col1, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(s.c_str(), x, y, highLight ? _vm->guiSettings()->colors.guiColorLightRed : col1, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.guiColorBlack);
 	}
 
 	_screen->setFont(of);
