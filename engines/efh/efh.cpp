@@ -1853,7 +1853,7 @@ bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 		}
 		break;
 	case 5:
-		if (arg2 == 2 && _npcBuf[npcId].field11_NpcId == itemId) {
+		if (arg2 == 3 && _npcBuf[npcId].field11_NpcId == itemId) {
 			displayMonsterAnim(monsterId);
 			displayImp1Text(_npcBuf[npcId].field14_textId);
 			displayAnimFrames(0xFE, true);
