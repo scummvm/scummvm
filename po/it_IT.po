@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-29 21:49+0000\n"
-"PO-Revision-Date: 2023-04-24 09:40+0000\n"
+"PO-Revision-Date: 2023-04-30 09:11+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -108,14 +108,10 @@ msgid "Manual mode"
 msgstr "Modalità manuale"
 
 #: gui/cloudconnectionwizard.cpp:183
-#, fuzzy
-#| msgid "Will ask you to run Local Webserver"
 msgid "Will ask you to run the Local Webserver"
-msgstr "Verrà richiesta l'esecuzione di un server web locale"
+msgstr "Verrà richiesta l'esecuzione del server web locale"
 
 #: gui/cloudconnectionwizard.cpp:185
-#, fuzzy
-#| msgid "Requires Local Webserver feature"
 msgid "Requires the Local Webserver feature"
 msgstr "Necessario server web locale"
 
@@ -124,15 +120,11 @@ msgid "Quick Mode: Step 1"
 msgstr "Modalità Rapida: Passo 1"
 
 #: gui/cloudconnectionwizard.cpp:206
-#, fuzzy
-#| msgid ""
-#| "In this mode, Local Webserver must be running,\n"
-#| "so your browser could forward data to ScummVM"
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
 msgstr ""
-"In questa modalità, un server web locale deve essere in esecuzione,\n"
+"In questa modalità, il server web locale deve essere in esecuzione,\n"
 "affinchè il tuo browser possa inoltrare i dati a ScummVM"
 
 #: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:3657
@@ -201,11 +193,6 @@ msgid "Open this link in your browser:"
 msgstr "Apri questo link nel tuo browser:"
 
 #: gui/cloudconnectionwizard.cpp:321
-#, fuzzy
-#| msgid ""
-#| "When it fails to pass JSON code to ScummVM,\n"
-#| "find it on Troubleshooting section of the page,\n"
-#| "and go to the next step here."
 msgid ""
 "When it fails to pass the JSON code to ScummVM,\n"
 "find it on the Troubleshooting section of the page,\n"
@@ -220,8 +207,6 @@ msgid "Manual Mode: Step 2"
 msgstr "Modalità Manuale: Passo 2"
 
 #: gui/cloudconnectionwizard.cpp:355
-#, fuzzy
-#| msgid "Copy JSON code from browser here and press Next:"
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr "Copia qui il codice JSON dal browser e clicca Successivo:"
 
@@ -242,15 +227,11 @@ msgid "Cloud storage was not connected."
 msgstr "Servizio di archiviazione cloud non collegato."
 
 #: gui/cloudconnectionwizard.cpp:378
-#, fuzzy
-#| msgid "Make sure JSON code was copied correctly and retry."
 msgid "Make sure the JSON code was copied correctly and retry."
 msgstr ""
 "Assicurati che il codice JSON sia stato copiato correttamente e riprova."
 
 #: gui/cloudconnectionwizard.cpp:379
-#, fuzzy
-#| msgid "It it doesn't work, try from the beginning."
 msgid "If that doesn't work, try again from the beginning."
 msgstr "Se non funziona, riprova dall'inizio."
 
@@ -271,8 +252,6 @@ msgid "Next"
 msgstr "Succ."
 
 #: gui/cloudconnectionwizard.cpp:493
-#, fuzzy
-#| msgid "Another Storage is working now. Do you want to interrupt it?"
 msgid "Another Storage is working right now. Do you want to interrupt it?"
 msgstr "Un altro servizio di archiviazione è attivo. Vuoi interromperlo?"
 
@@ -304,15 +283,11 @@ msgid "No"
 msgstr "No"
 
 #: gui/cloudconnectionwizard.cpp:502
-#, fuzzy
-#| msgid "Wait until current Storage finishes up and try again."
 msgid "Wait until current Storage finishes and try again."
 msgstr "Aspetta che il Cloud abbia terminato l'operazione e prova di nuovo."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:530
-#, fuzzy
-#| msgid "JSON code contents is malformed."
 msgid "JSON code contents are malformed."
 msgstr "Il codice JSON non è valido."
 
@@ -6264,14 +6239,7 @@ msgid "Choose Spell"
 msgstr "Scegli incantesimo"
 
 #: engines/kyra/gui/saveload_eob.cpp:598
-#, fuzzy, c-format
-#| msgid ""
-#| "The following original saved game file has been found in your game path:\n"
-#| "\n"
-#| "%s %s\n"
-#| "\n"
-#| "Do you wish to use this saved game file with ScummVM?\n"
-#| "\n"
+#, c-format
 msgid ""
 "The following original saved game file has been found in your game path:\n"
 "\n"
@@ -6282,7 +6250,7 @@ msgid ""
 msgstr ""
 "Il seguente salvataggio originale è stato rilevato nel percorso del gioco:\n"
 "\n"
-"%s %s\n"
+"%s %S\n"
 "\n"
 "Desideri utilizzare questo salvataggio in ScummVM?\n"
 "\n"
@@ -9353,68 +9321,48 @@ msgid "Speeds up animations."
 msgstr "Velocizza le animazioni."
 
 #: engines/vcruise/metaengine.cpp:102
-#, fuzzy
-#| msgid "Display/Hide Info Screen"
 msgid "Display help screen"
-msgstr "Mostra/nascondi schermata informazioni"
+msgstr "Mostra schermata di aiuto"
 
 #: engines/vcruise/metaengine.cpp:107 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Salva gioco"
 
 #: engines/vcruise/metaengine.cpp:117
-#, fuzzy
-#| msgid "Open 3DS Settings"
 msgid "Open sound settings"
-msgstr "Impostazioni 3DS"
+msgstr "Apri impostazioni audio"
 
 #: engines/vcruise/metaengine.cpp:122
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit game"
 msgstr "Esci dal gioco"
 
 #: engines/vcruise/metaengine.cpp:133
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle music on/off"
-msgstr "Attiva/disattiva schermo intero"
+msgstr "Attiva/disattiva musica"
 
 #: engines/vcruise/metaengine.cpp:138
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Toggle sound effects on/off"
-msgstr "Volume degli effetti sonori"
+msgstr "Attiva/disattiva effetti sonori"
 
 #: engines/vcruise/metaengine.cpp:143
-#, fuzzy
-#| msgid "Music volume up / down"
 msgid "Music volume down"
-msgstr "Volume musica su / giù"
+msgstr "Riduci volume musica"
 
 #: engines/vcruise/metaengine.cpp:148
-#, fuzzy
-#| msgid "Music volume: "
 msgid "Music volume up"
-msgstr "Volume musica: "
+msgstr "Aumenta volume musica"
 
 #: engines/vcruise/metaengine.cpp:153
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume down"
-msgstr "Volume degli effetti sonori"
+msgstr "Riduci volume effetti sonori"
 
 #: engines/vcruise/metaengine.cpp:158
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume up"
-msgstr "Volume degli effetti sonori"
+msgstr "Aumenta volume effetti sonori"
 
 #: engines/vcruise/metaengine.cpp:163
-#, fuzzy
-#| msgid "Speeds up animations."
 msgid "Skip current animation"
-msgstr "Velocizza le animazioni."
+msgstr "Salta animazione in corso"
 
 #: engines/vcruise/vcruise.cpp:82
 msgid "This game requires JPEG support, which was not compiled in."
