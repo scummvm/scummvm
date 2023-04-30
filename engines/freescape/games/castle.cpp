@@ -143,7 +143,23 @@ void CastleEngine::loadAssetsDOSFullGame() {
 		_border->setPalette((byte *)&kCastleBorderDOSPalette, 0, 16);
 		file.close();
 
-		stream = decryptFile("CMLE");
+		switch (_language) {
+			case Common::ES_ESP:
+				stream = decryptFile("CMLS");
+				break;
+			case Common::FR_FRA:
+				stream = decryptFile("CMLF");
+				break;
+			case Common::DE_DEU:
+				stream = decryptFile("CMLG");
+				break;
+			case Common::EN_ANY:
+				stream = decryptFile("CMLE");
+				break;
+			default:
+				error("Invalid or unsupported language: %x", _language);
+		}
+
 		loadMessagesVariableSize(stream, 0x11, 164);
 		delete stream;
 
