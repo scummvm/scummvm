@@ -282,7 +282,8 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 	}
 
 	// Not supported yet.
-	if (getLanguage() == Common::Language::ZH_CHN)
+	if (getLanguage() == Common::Language::ZH_CHN || getLanguage() == Common::Language::ZH_TWN
+		|| getGameLanguage() == Common::Language::ZH_CHN || getGameLanguage() == Common::Language::ZH_TWN)
 		availableRendererTypes &= ~Graphics::kRendererTypeOpenGLShaders;
 
 	Graphics::RendererType matchingRendererType = Graphics::Renderer::getBestMatchingType(desiredRendererType, availableRendererTypes);
