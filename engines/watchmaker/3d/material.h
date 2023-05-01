@@ -89,7 +89,7 @@ MaterialPtr rAddMaterial(MaterialTable &MList, const Common::String &TextName, i
 MaterialPtr rAddMaterial(gMaterial &Material, const Common::String &TextName, int NumFaces, unsigned int LoaderFlags);
 void rRemoveMaterial(MaterialPtr &m);
 void rRemoveMaterials(MaterialTable &m);
-void rCopyMaterialList(MaterialTable &dst, MaterialTable &src, int count);
+void rCopyMaterialList(MaterialTable &dst, MaterialTable &src, uint count);
 MaterialPtr rMergeMaterial(MaterialPtr Mat1, MaterialPtr Mat2);
 void rAddToMaterialList(gMaterial &mat, signed short int ViewMatrixNum);
 

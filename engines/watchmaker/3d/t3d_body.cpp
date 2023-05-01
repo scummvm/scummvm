@@ -481,8 +481,8 @@ void LoadLightmaps(WGame &game, t3dBODY *b) {
 /* -----------------10/06/99 16.04-------------------
  *                  t3dLoadSingleRoom
  * --------------------------------------------------*/
-t3dBODY *t3dBODY::loadFromStream(WGame &game, const Common::String &pname, Common::SeekableReadStream &stream, uint32 LoaderFlags) {
-	//decodeLoaderFlags(LoaderFlags);
+t3dBODY *t3dBODY::loadFromStream(WGame &game, const Common::String &pname, Common::SeekableReadStream &stream, uint32 _LoaderFlags) {
+	//decodeLoaderFlags(_LoaderFlags);
 	//char /*t3dU8*/   Name[255];
 
 	uint16  light;
@@ -492,7 +492,7 @@ t3dBODY *t3dBODY::loadFromStream(WGame &game, const Common::String &pname, Commo
 	WorkDirs &workdirs = game.workDirs;
 
 	this->name = pname;
-	auto name = constructPath(workdirs._t3dDir, pname);
+	auto _name = constructPath(workdirs._t3dDir, pname);
 
 	this->NumTotVerts = 0;
 
@@ -547,9 +547,9 @@ t3dBODY *t3dBODY::loadFromStream(WGame &game, const Common::String &pname, Commo
 
 	populatePortalLists();
 
-	warning("LoaderFlags late = %08X", LoaderFlags);
-	//decodeLoaderFlags(LoaderFlags);
-	if (!(LoaderFlags & T3D_NOBOUNDS)) {                                                        // Carica Bounds
+	warning("LoaderFlags late = %08X", _LoaderFlags);
+	//decodeLoaderFlags(_LoaderFlags);
+	if (!(_LoaderFlags & T3D_NOBOUNDS)) {                                                        // Carica Bounds
 		auto bndName = workdirs.join(workdirs._bndDir, pname, "bnd");
 		/*
 		strcpy(Name, workdirs._bndDir.c_str());
@@ -561,23 +561,23 @@ t3dBODY *t3dBODY::loadFromStream(WGame &game, const Common::String &pname, Commo
 		 */
 		LoadBounds(game.workDirs, bndName.c_str(), this);
 	}
-	if (!(LoaderFlags & T3D_NOCAMERAS)) {                                                       // Carica Camere
+	if (!(_LoaderFlags & T3D_NOCAMERAS)) {                                                       // Carica Camere
 		auto cameraName = constructPath(workdirs._camDir, pname, "cam");
 		LoadCameras(game.workDirs, cameraName.c_str(), this);
 	}
-	if (!(LoaderFlags & T3D_NOLIGHTMAPS)) {                                                     // Carica le Lightmaps
+	if (!(_LoaderFlags & T3D_NOLIGHTMAPS)) {                                                     // Carica le Lightmaps
 		// TODO: This looks odd
 		if (!pname.equalsIgnoreCase("rxt.t3d") || !pname.equalsIgnoreCase("rxt-b.t3d") || !pname.equalsIgnoreCase("rxt-c.t3d") ||
 		        !pname.equalsIgnoreCase("rxt-d.t3d") || !pname.equalsIgnoreCase("rxt-e.t3d") || !pname.equalsIgnoreCase("rxt.t3d-f"))
 			LoadLightmaps(game, this);
 	}
-	if ((LoaderFlags & T3D_OUTDOORLIGHTS)) {                                                    // Carica le luci per l'esterno
+	if ((_LoaderFlags & T3D_OUTDOORLIGHTS)) {                                                    // Carica le luci per l'esterno
 		if (pname.equalsIgnoreCase("rxt.t3d")) {
 			auto outdoorLightsPath = constructPath(workdirs._lightmapsDir, pname);
 			t3dLoadOutdoorLights(outdoorLightsPath.c_str(), this, t3dCurTime);
 		}
 	}
-	if (!(LoaderFlags & T3D_NOVOLUMETRICLIGHTS)) {                                              // Carica le luci volumetriche
+	if (!(_LoaderFlags & T3D_NOVOLUMETRICLIGHTS)) {                                              // Carica le luci volumetriche
 		auto volMapPath = constructPath(workdirs._lightmapsDir, pname, "vol");
 		LoadVolumetricMap(workdirs, volMapPath.c_str(), this);
 	}

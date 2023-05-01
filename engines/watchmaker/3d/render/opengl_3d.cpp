@@ -44,22 +44,6 @@
 
 namespace Watchmaker {
 
-// temp pixel format conversion info
-struct {
-	float RedScale;
-	float GreenScale;
-	float BlueScale;
-	float AlphaScale;
-	unsigned int RedShift;
-	unsigned int GreenShift;
-	unsigned int BlueShift;
-	unsigned int AlphaShift;
-	unsigned int RedMask;
-	unsigned int GreenMask;
-	unsigned int BlueMask;
-	unsigned int AlphaMask;
-} gTexturePixelConversion;
-
 #define T3D_FASTFILE            (1<<23)     // fastfile
 
 // Tecture formats
@@ -601,10 +585,10 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 	//uint32        magic,retv;
 	unsigned long   dwWidth = 0, dwHeight = 0;
 	//DDSURFACEDESC2            DDSurfDesc;
-	Graphics::Surface *lpSSource = nullptr;
+	//Graphics::Surface *lpSSource = nullptr;
 
 	if (!TextName) return nullptr;
-	lpSSource = nullptr;
+	//lpSSource = nullptr;
 
 	//warning("gLoadTexture(%s)", TextName);
 //	Check if already loaded
@@ -670,7 +654,7 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 		texture->_texture->assignData(*ddsTextureData);
 		dwWidth = ddsTextureData->getWidth();
 		dwHeight = ddsTextureData->getHeight();
-		lpSSource = nullptr;
+		//lpSSource = nullptr;
 #if 0
 		if (gRenderFlags & gDXT1SUPPORTED) {
 			/*          if( gRenderFlags & gAGPSUPPORTED )
@@ -829,8 +813,7 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 }
 
 
-bool Renderer::addMaterial(gMaterial &material, const Common::String &name, int NumFaces, unsigned int LoaderFlags) {
-	bool            AlreadyLoaded = FALSE;
+bool Renderer::addMaterial(gMaterial &material, const Common::String &name, int NumFaces, unsigned int _LoaderFlags) {
 	//warning("AddMaterial(%s)", name.c_str());
 	if (hasFileExtension(name, "avi")) {
 		auto tex = createGLTexture();
@@ -842,7 +825,7 @@ bool Renderer::addMaterial(gMaterial &material, const Common::String &name, int 
 			return false;
 		material.addProperty(T3D_MATERIAL_MOVIE);
 	} else {
-		if ((material.Texture = gLoadTexture(*_workDirs, name.c_str(), LoaderFlags)) == nullptr)
+		if ((material.Texture = gLoadTexture(*_workDirs, name.c_str(), _LoaderFlags)) == nullptr)
 			return false;
 	}
 

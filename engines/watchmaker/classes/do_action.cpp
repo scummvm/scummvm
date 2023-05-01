@@ -81,7 +81,7 @@ void doDoor(WGame &game, int32 obj) {
  * --------------------------------------------------*/
 void doTake(WGame &game, int32 obj) {
 	int32 anim = aNULL;
-	uint8 del = TRUE;
+	//uint8 del = TRUE;
 
 	if (!obj) return;
 
@@ -93,7 +93,7 @@ void doTake(WGame &game, int32 obj) {
 		break;
 
 	default:
-		del = TRUE;
+		//del = TRUE;
 		break;
 	}
 

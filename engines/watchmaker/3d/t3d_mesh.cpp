@@ -181,7 +181,7 @@ t3dMESH::t3dMESH(t3dBODY *b, Common::SeekableReadStream &stream, t3dMESH *&Recei
 		this->VertsInterpolants = t3dCalloc<t3dV3F>(this->NumVerts);   // Crea spazio per interpolanti
 
 		this->ModVertices.reserve(numAniVerts);
-		for (int i = 0; i < numAniVerts; i++) {
+		for (uint32 i = 0; i < numAniVerts; i++) {
 			this->ModVertices.push_back(t3dMODVERTS(stream));
 		}
 	}

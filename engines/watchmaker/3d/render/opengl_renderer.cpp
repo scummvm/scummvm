@@ -166,18 +166,25 @@ void setGlFeature(GLint feature, bool state) {
 
 void OpenGLRenderer::setRenderState(RenderState state, int value) {
 	switch (state) {
-	case RenderState::ZENABLE: {
+	case RenderState::ZENABLE:
 		glDepthFunc(GL_LEQUAL);
 		setGlFeature(GL_DEPTH_TEST, value);
 		break;
-	}
-	case RenderState::ALPHAREF: { // ALPHA-func is never changed.
+	case RenderState::ALPHAREF: // ALPHA-func is never changed.
 		glAlphaFunc(GL_ALWAYS, value);
-	}
+		// fall through
+		// FIXME: Is this intended?
 	case RenderState::ALPHABLEND:
 		setGlFeature(GL_BLEND, value);
 		break; // TODO
 
+	case RenderState::LIGHT:
+	case RenderState::CLIP:
+	case RenderState::EXTENT:
+	case RenderState::ZWRITE_ENABLE:
+	case RenderState::TEXTUREFACTOR:
+	default:
+		break;
 	}
 	//warning("TODO: Implement setRenderState");
 }

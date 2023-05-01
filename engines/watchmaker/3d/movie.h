@@ -56,9 +56,9 @@ public:
 
 	gMovie(Common::SharedPtr<Common::SeekableReadStream> stream, Texture *texture, const Common::String &name);
 
-	bool setFrame(uint32 newFrame);
-	void loadThisFrameData(uint32 frame);
-	void buildNewFrame(byte *surf, uint32 frame);
+	bool setFrame(uint16 newFrame);
+	void loadThisFrameData(uint16 frame);
+	void buildNewFrame(byte *surf, uint16 frame);
 	bool updateMovie();
 
 	~gMovie() {

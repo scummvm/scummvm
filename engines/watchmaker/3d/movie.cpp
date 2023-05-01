@@ -76,21 +76,21 @@ Common::SharedPtr<gMovie> gLoadMovie(WorkDirs &workDirs, const char *TextName, T
 	return Movie;
 }
 
-void gMovie::loadThisFrameData(uint32 frame) {
+void gMovie::loadThisFrameData(uint16 frame) {
 	_stream->seek(_frameOffsets[frame], SEEK_SET);
 	//read frame data
-	int size = 0;
+	int32 size = 0;
 	if ((frame + 1) == _numFrames) {
 		size = _stream->size() - _frameOffsets[frame];
 	} else {
 		size = _frameOffsets[frame + 1] - _frameOffsets[frame];
 	}
-	assert(size <= bufferSize());
+	assert(size <= (int32)bufferSize());
 	_stream->read(_buffer, size);
 }
 
 //build a new frame by difference from previous
-void gMovie::buildNewFrame(byte *surf, uint32 frame) {
+void gMovie::buildNewFrame(byte *surf, uint16 frame) {
 	loadThisFrameData(frame);
 
 	DWORD bitArraySize = _numBlocks >> 3;
@@ -109,11 +109,11 @@ void gMovie::buildNewFrame(byte *surf, uint32 frame) {
 				memcpy(&surf[curBlock << 3], buf, 8);
 				buf += 8;
 			}
-		}//for j
-	}//for
+		}
+	}
 }
 
-bool gMovie::setFrame(uint32 newFrame) {
+bool gMovie::setFrame(uint16 newFrame) {
 	warning("Set Frame: %d\t%s", newFrame, _name.c_str());
 	if (_curFrame == newFrame)
 		return true;
@@ -138,15 +138,15 @@ bool gMovie::setFrame(uint32 newFrame) {
 		memcpy(_surfaceBuffer, _buffer, _header.dataSize());
 	} else {
 		if ((_curFrame + 1) != newFrame) { //we can't directly build this frame because the current frame is not his previous
-			WORD startFrame;
-			WORD prevKey = (newFrame / _keyFrame) * _keyFrame;
+			uint16 startFrame;
+			uint16 prevKey = (newFrame / _keyFrame) * _keyFrame;
 
 			if ((_curFrame > newFrame) || (_curFrame < prevKey)) {
 				loadThisFrameData(prevKey);
 				memcpy(_surfaceBuffer, _buffer, _header.dataSize());
 				startFrame = prevKey + 1;
 			} else startFrame = _curFrame + 1;
-			for (WORD i = startFrame; i < newFrame; i++) {
+			for (uint16 i = startFrame; i < newFrame; i++) {
 				buildNewFrame(_surfaceBuffer, i);
 			}
 		}

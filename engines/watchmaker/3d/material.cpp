@@ -185,12 +185,12 @@ Common::SharedPtr<gMaterial> rCopyMaterial(Common::SharedPtr<gMaterial> Mat1, Co
 	return Mat1;
 }
 
-void rCopyMaterialList(MaterialTable &dst, MaterialTable &src, int count) {
+void rCopyMaterialList(MaterialTable &dst, MaterialTable &src, uint count) {
 	dst.resize(count);
 	if (count > src.size()) {
 		error("Copying more materials than there are in the src");
 	}
-	for (int i = 0; i < count; i++) {
+	for (uint i = 0; i < count; i++) {
 		if (!dst[i]) {
 			dst[i] = Common::SharedPtr<gMaterial>(new gMaterial());
 		}

@@ -32,6 +32,7 @@ namespace Watchmaker {
 GLuint dxtCompressionToTextureFormat(DxtCompression compression) {
 	switch (compression) {
 	case DxtCompression::UNCOMPRESSED:
+	default:
 		return GL_RGBA;
 	case DxtCompression::DXT1:
 		return GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
