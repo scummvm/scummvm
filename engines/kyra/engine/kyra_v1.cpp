@@ -436,7 +436,7 @@ void KyraEngine_v1::setupKeyMap() {
 		return;
 
 	for (int i = 0; i < ARRAYSIZE(keys); i++)
-		_keyMap[keys[i].kcScummVM] = (_flags.gameID != GI_EOB1 && _flags.platform == Common::kPlatformPC98) ? keys[i].kcPC98 : ((_flags.platform == Common::kPlatformFMTowns) ? keys[i].kcFMTowns : keys[i].kcDOS);
+		_keyMap[keys[i].kcScummVM] = (_flags.gameID != GI_EOB1 && _flags.gameID != GI_EOB2 && _flags.platform == Common::kPlatformPC98) ? keys[i].kcPC98 : ((_flags.platform == Common::kPlatformFMTowns) ? keys[i].kcFMTowns : keys[i].kcDOS);
 }
 
 void KyraEngine_v1::updateInput() {
