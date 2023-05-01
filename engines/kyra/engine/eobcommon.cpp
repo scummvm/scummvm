@@ -198,7 +198,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_buttonList7Size = _buttonList8Size = 0;
 	_inventorySlotsY = _mnDef = 0;
 	_invFont1 = _invFont2 = _invFont4 = _conFont = _bookFont = Screen::FID_6_FNT;
-	_invFont3 = Screen::FID_8_FNT;
+	_titleFont = _invFont3 = Screen::FID_8_FNT;
 	_transferStringsScummVM = 0;
 	_buttonDefs = 0;
 	_npcPreset = 0;
@@ -592,24 +592,23 @@ void EoBCoreEngine::loadFonts() {
 			_bookFont = Screen::FID_SJIS_SMALL_FNT;
 			_invFont4 = Screen::FID_SJIS_FNT;
 		}		
-		_conFont = _invFont3 = Screen::FID_SJIS_FNT;
+		_titleFont = _conFont = _invFont3 = Screen::FID_SJIS_FNT;
 		_invFont1 = Screen::FID_SJIS_SMALL_FNT;
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
 		_screen->loadFont(Screen::FID_8_FNT, "FONTK12");
 		_screen->setFontStyles(Screen::FID_8_FNT, Font::kStyleNone);
 		_invFont1 = _invFont2 = _invFont4 = _conFont = Screen::FID_8_FNT;
-	}
-
-	if (_flags.lang == Common::ZH_TWN) {
+	} else if (_flags.lang == Common::ZH_TWN) {
 		_screen->loadFont(Screen::FID_CHINESE_FNT, "FONT8.FNT");
-		_conFont = Screen::FID_CHINESE_FNT;
+		_titleFont = _conFont = Screen::FID_CHINESE_FNT;
 	}
 }
 
 Common::Error EoBCoreEngine::go() {
 	static_cast<Debugger_EoB *>(getDebugger())->initialize();
 	_txt->removePageBreakFlag();
-	_screen->setFont(_flags.platform == Common::kPlatformPC98 ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+	_screen->setFont(_titleFont);
+
 	loadItemsAndDecorationsShapes();
 
 	_screen->setMouseCursor(0, 0, _itemIconShapes[0]);

@@ -199,7 +199,7 @@ bool Screen::init() {
 
 			if (_use16ColorMode)
 				_fonts[FID_SJIS_TEXTMODE_FNT] = new SJISFont(_sjisFontShared, _sjisInvisibleColor, true, false, 0);
-			else
+			else if (!(_vm->gameFlags().platform == Common::kPlatformPC98 && _vm->game() != GI_EOB2))
 				_fonts[FID_SJIS_FNT] = new SJISFont(_sjisFontShared, _sjisInvisibleColor, false, _vm->game() != GI_LOL && _vm->game() != GI_EOB2, _vm->game() == GI_LOL ? 1 : 0);
 		}
 	}

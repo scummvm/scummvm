@@ -183,6 +183,9 @@ CharacterGenerator::CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen) : 
 		chargenButtonDefs[37].x -= 8;
 	}
 
+	if (_vm->gameFlags().platform == Common::kPlatformPC98 && _vm->gameFlags().gameID == GI_EOB2)
+		_screen->setFont(Screen::FID_8_FNT);
+
 	_chargenButtonDefs = chargenButtonDefs;
 }
 
@@ -201,6 +204,9 @@ CharacterGenerator::~CharacterGenerator() {
 	delete[] _chargenButtonDefs;
 	delete[] _wndBackgrnd;
 	_vm->_wndBackgrnd = 0;
+
+	if (_vm->gameFlags().platform == Common::kPlatformPC98 && _vm->gameFlags().gameID == GI_EOB2)
+		_screen->setFont(Screen::FID_SJIS_FNT);
 
 	_screen->clearPage(2);
 }
@@ -479,8 +485,8 @@ void CharacterGenerator::checkForCompleteParty() {
 	_screen->copyRegion(0, 0, 160, 0, 160, 128, 2, 2, Screen::CR_NO_P_CHECK);
 	int cp = _screen->setCurPage(2);
 	int x = (_vm->gameFlags().platform == Common::kPlatformFMTowns) ? 184 : 168;
-	int y1 = (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformPC98) ? 80 : 16;
-	int y2 = (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformPC98) ? 112 : 61;
+	int y1 = (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformPC98) ? 40 : 16;
+	int y2 = (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformPC98) ? 56 : 61;
 	int cs = 0;
 
 	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
@@ -707,12 +713,15 @@ void CharacterGenerator::createPartyMember() {
 					_screen->copyRegion(5, 33, 149, 97, 64, 21, 2, 0, Screen::CR_NO_P_CHECK);
 				_screen->printShadedText(_chargenStrings2[11], 149, 100, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
 				if (!_vm->shouldQuit()) {
-					if (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN)
+					if (_vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::Language::ZH_TWN) {
 						_vm->_gui->getTextInput(_characters[_activeBox].name, 28, 100, 9,
 									_vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorDarkRed);
-					else
+					} else {
+						Screen::FontId of = _screen->setFont(_vm->_invFont3);
 						_vm->_gui->getTextInput(_characters[_activeBox].name, 24, 100, 10,
 									_vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorDarkRed);
+						_screen->setFont(of);
+					}
 					processNameInput(_activeBox, _vm->guiSettings()->colors.guiColorBlue);
 				}
 			}

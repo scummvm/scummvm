@@ -391,8 +391,24 @@ private:
 };
 
 /**
+* SJIS Font variant used in EOB II PC-98. It converts 1-byte characters into 2-byte characters.
+*/
+class SJISFontEoB2PC98 : public SJISFont {
+public:
+	SJISFontEoB2PC98(Common::SharedPtr<Graphics::FontSJIS> &font, /*uint8 shadowColor,*/ const char *convTable1, const char *convTable2);
+	~SJISFontEoB2PC98() override {}
+	int getCharWidth(uint16 c) const override;
+	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
+
+private:
+	uint16 convert(uint16 c) const;
+	const char *_convTable1, *_convTable2;
+	bool _defaultConv;
+};
+
+/**
 * OldDOSFont variant used in EOB I PC-98. It uses the same drawing routine, but has a different loader. It contains
-* ASCII and Katakana characters and requires several conversion tables to display these. It gets drawn on the SJIS overlay.
+* ASCII and Katakana characters and requires several conversion tables to display these. It gets drawn on the hires overlay.
 */
 class Font12x12PC98 : public OldDOSFont{
 public:
@@ -412,8 +428,8 @@ private:
 };
 
 /**
-* OldDOSFont variant used in EOB II PC-98. It uses the same drawing routine, but supports weird vertical scaling, can be drawn
-* on the SJIS overlay and has some character conversion.
+* OldDOSFont variant used in EOB II PC-98 which supports twice the number of characters. Some font files may include kana characters. The font supports
+* weird vertical scaling and can be drawn on the hires overlay.
 */
 class PC98Font : public OldDOSFont {
 public:

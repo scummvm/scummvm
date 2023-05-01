@@ -209,6 +209,44 @@ uint16 SJISFontEoB1PC98::convert(uint16 c) const {
 	return c;
 }
 
+SJISFontEoB2PC98::SJISFontEoB2PC98(Common::SharedPtr<Graphics::FontSJIS> &font, /*uint8 shadowColor,*/ const char *convTable1, const char *convTable2) : SJISFont(font, 0, false, false, 0),
+/*_shadowColor(shadowColor),*/ _convTable1(convTable1), _convTable2(convTable2), _defaultConv(true) {
+	assert(_convTable1);
+	assert(_convTable2);
+}
+
+int SJISFontEoB2PC98::getCharWidth(uint16 c) const {
+	return SJISFont::getCharWidth(convert(c));
+}
+
+void SJISFontEoB2PC98::drawChar(uint16 c, byte *dst, int pitch, int) const {
+	SJISFont::drawChar(convert(c), dst, pitch, 0);
+}
+
+uint16 SJISFontEoB2PC98::convert(uint16 c) const {
+	uint8 l = c & 0xFF;
+	uint8 h = c >> 8;
+
+	if (h || l < 32 || l == 127) {
+		return c;
+	} else if (l < 127) {
+		c = (l - 32) * 2;
+		assert(c < 190);
+		l = _convTable1[c];
+		h = _convTable1[c + 1];
+	} else if (l < 212) {
+		h = l - 64;
+		l = 0x83;
+	} else {
+		c = (l - 212) * 2;
+		assert(c < 8);
+		l = _convTable2[c];
+		h = _convTable2[c + 1];
+	}
+
+	return (h << 8) | l;
+}
+
 Font12x12PC98::Font12x12PC98(uint8 shadowColor, const uint16 *convTable1, const uint16 *convTable2, const uint8 *lookupTable) : OldDOSFont(Common::kRenderDefault, 12), _convTable1(convTable1), _convTable2(convTable2) {
 	assert(convTable1);
 	assert(convTable2);
@@ -302,8 +340,27 @@ bool PC98Font::load(Common::SeekableReadStream &file) {
 }
 
 uint16 PC98Font::convert(uint16 c) const {
+	if (!_convTable || c < 128)
+		return c;
 
-	return c;
+	uint8 lo = c & 0xff;
+	uint8 hi = c >> 8;
+
+	if (lo == 0x81) {
+		if (hi >= 0x40 && hi <= 0xac)
+			return _convTable[hi - 0x40];
+	} else if (lo == 0x82) {
+		if (hi >= 0x4f && hi <= 0x58)
+			return hi + 0xe1;
+		if (hi >= 0x60 && hi <= 0x79)
+			return hi - 0x1f;
+		if (hi >= 0x81 && hi <= 0x9a)
+			return hi - 0x20;
+	} else if (lo == 0x83 && hi >= 0x40 && hi <= 0x93) {
+		return hi + 0x40;
+	}
+
+	return 0;
 }
 
 } // End of namespace Kyra

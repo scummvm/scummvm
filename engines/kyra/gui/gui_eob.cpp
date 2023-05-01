@@ -126,7 +126,7 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index, bool screenUpdt) {
 			if (index == _exchangeCharacterId)
 				_screen->printText(_characterGuiStringsSt[0], x2 + 2, y2 + 2, guiSettings()->colors.guiColorDarkRed, guiSettings()->colors.fill);
 			else
-				_screen->printText(c->name, x2 + 2, y2 + (_flags.platform == Common::kPlatformFMTowns ? 1 : 2), txtCol1, _flags.use16ColorMode ? 0 : guiSettings()->colors.fill);
+				_screen->printText(c->name, x2 + 2, y2 + (_flags.platform == Common::kPlatformFMTowns ? 1 : 2), txtCol1, _flags.platform == Common::kPlatformPC98 ? 0 : guiSettings()->colors.fill);
 		}
 
 		_screen->setFont(_invFont2);
@@ -2949,9 +2949,9 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 
 		} else if ((in > 31 && in < 126) || (in == 0x89)) {
 			if (!(in == 32 && pos == 0)) {
-				// The PC-98 version and the English Sega-CD version of EOB I are the only versions that allow small characters.
+				// The PC-98 versions of EOB I + II and the English Sega-CD version of EOB I are the only versions that allow small characters.
 				// For all other versions we convert to capital characters.
-				if (in >= 97 && in <= 122 && !(_vm->_flags.gameID == GI_EOB1 && (_vm->_flags.platform == Common::kPlatformPC98 || (_vm->_flags.platform == Common::kPlatformSegaCD && _vm->_flags.lang != Common::JA_JPN))))
+				if (in >= 97 && in <= 122 && _vm->_flags.platform != Common::kPlatformPC98 && !(_vm->_flags.platform == Common::kPlatformSegaCD && _vm->_flags.lang != Common::EN_ANY))
 					in -= 32;
 
 				if (pos < len) {

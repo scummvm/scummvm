@@ -139,8 +139,14 @@ bool Screen_EoB::init() {
 			enableHiColorMode(true);
 			setFontStyles(FID_SJIS_FNT, Font::kStyleFat);
 			_fonts[FID_SJIS_LARGE_FNT] = new SJISFontLarge(_sjisFontShared);
-		} else if (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98) {
-			_fonts[FID_SJIS_FNT] = new SJISFontEoB1PC98(_sjisFontShared, /*12,*/ _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp), _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp));
+		} else if (_vm->gameFlags().platform == Common::kPlatformPC98) {
+			if (_vm->game() == GI_EOB1) {
+				_fonts[FID_SJIS_FNT] = new SJISFontEoB1PC98(_sjisFontShared, /*12,*/ _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp), _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp));
+			} else {
+				const char *const *tbl = _vm->staticres()->loadStrings(kEoB2Ascii2SjisTables2, temp);
+				assert(temp > 1);
+				_fonts[FID_SJIS_FNT] = new SJISFontEoB2PC98(_sjisFontShared, /*12,*/ tbl[0], tbl[1]);
+			}
 		}
 
 		if (_vm->gameFlags().useHiRes && _renderMode == Common::kRenderEGA) {

@@ -66,7 +66,7 @@ Common::Error DarkMoonEngine::init() {
 	_screen->loadPalette(_flags.platform == Common::kPlatformFMTowns ? "MENU.PAL" : "PALETTE.COL", _screen->getPalette(0));
 	_screen->setScreenPalette(_screen->getPalette(0));
 
-	// adjust menu settings for EOB II FM-Towns/PC-98 versions
+	// adjust menu settings for EOB II FM-Towns/PC-98/Chinese versions
 	if (_flags.platform == Common::kPlatformFMTowns) {
 		_screen->modifyScreenDim(6, 10, 100, 21, 40);
 		_screen->modifyScreenDim(27, 0, 0, 21, 2);
@@ -74,6 +74,8 @@ Common::Error DarkMoonEngine::init() {
 	} else if (_flags.platform == Common::kPlatformPC98) {
 		_screen->modifyScreenDim(6, 10, 100, 21, 40);
 		_screen->modifyScreenDim(27, 0, 0, 21, 5);
+	} else if (_flags.lang == Common::Language::ZH_TWN) {
+		_screen->modifyScreenDim(6, 10, 72, 21, 40);
 	}
 
 	return Common::kNoError;

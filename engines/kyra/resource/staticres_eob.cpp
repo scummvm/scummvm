@@ -25,7 +25,6 @@
 
 #include "common/memstream.h"
 
-
 namespace Kyra {
 
 #ifdef ENABLE_EOB
@@ -1845,20 +1844,21 @@ void DarkMoonEngine::initStaticResource() {
 	_amigaSoundIndex2 = _staticres->loadRawData(kEoB2SoundIndex2, temp);
 	_amigaSoundPatch = _staticres->loadRawData(kEoB2MonsterSoundPatchData, _amigaSoundPatchSize);
 
-	static const char *const errorSlotNoNameString[5] = {
+	static const char *const errorSlotNoNameString[6] = {
 		" You must specify\r a name for your\r save game!",
 		" Spielst[nde m]ssen\r einen Namen haben!",
 		" Debes poner\run nombre al\rfichero!",
+		"\x83""Z""\x81""[""\x83""u""\x83""t""\x83""@""\x83""C""\x83\x8b\r\x82\xc9\x82\xcd\x96\xbc\x91""O""\x82\xaa\r\x95""K""\x97""v""\x82\xc5\x82\xb7\x81""B",
 		" \xb1\x7a\xa5\xb2\xb6\xb7\xbf\xe9\xa4\x4a\xc0\xc9\xae\xd7\xa6\x57\xba\xd9", /* " 您必須輸入檔案名稱" */
 		0
 	};
 
 	// ScummVM specific
-	static const char *const transferStringsScummVM[4][5] = {
+	static const char *const transferStringsScummVM[3][5] = {
 		{
 			"\r We cannot find any EOB save game\r file. Please make sure that the\r save game file with the party\r you wish to transfer is located\r in your ScummVM save game\r directory. If you have set up\r multiple save directories you\r have to copy the EOB save file\r into your EOB II save directory.\r Do you wish to try again?",
 			"Game ID",
-			"\r It seems that you have already\r defeated Xanathar here. Do you\r wish to transfer the party that\r finished the game? If not, you\r will be able to select a save\r game from the save game\r dialogue.",
+			"\r It seems that you have already\r defeated Xanathar here. Do you\r wish to transfer the party that\r finished the game? If not, you\r will be able to select a save\r game from the save game\r dialog.",
 			"Select File",
 			"\r\r   Please wait..."
 		},
@@ -1875,13 +1875,6 @@ void DarkMoonEngine::initStaticResource() {
 			"\r Parece que ya se ha vencido\r Xanathar aqui. Deseas transferir\r el grupo que ha finalizado el\r juego? En caso contrario puedes\r seleccionar otra partida de las\r anteriores guardadas.",
 			"Escoge Fichero",
 			"\r\r   Un momento\r   por favor..."
-		},
-		{
-			"\x82""d""\x82""n""\x82""a""\x82""h""\x82\xcc\x83""f""\x81""[""\x83""^""\x81""iEOBDATA.SAV""\x81""j""\x82\xaa\x8c\xa9\x82\xc2\x82\xa9\x82\xe8\x82\xdc\x82\xb9\x82\xf1\x81""B""\x83""J""\x83\x8c\x83\x93\x83""g""\x83""f""\x83""B""\x83\x8c\x83""N""\x83""g""\x83\x8a\x82\xc9\x93""]""\x91\x97\x82\xb5\x82\xc4\x82\xa9\x82\xe7\x8e\xc0\x8d""s""\x82\xb5\x82\xc4\x89\xba\x82\xb3\x82\xa2\x81""B",
-			"\x83\x51\x81\x5B\x83\x80\x82\x68\x82\x63",
-			"\x82""d""\x82""n""\x82""a""\x82""h""\x82\xcc\x83""f""\x81""[""\x83""^""\x81""iEOBDATA.SAV""\x81""j""\x82\xaa\x8c\xa9\x82\xc2\x82\xa9\x82\xe8\x82\xdc\x82\xb9\x82\xf1\x81""B""\x83""J""\x83\x8c\x83\x93\x83""g""\x83""f""\x83""B""\x83\x8c\x83""N""\x83""g""\x83\x8a\x82\xc9\x93""]""\x91\x97\x82\xb5\x82\xc4\x82\xa9\x82\xe7\x8e\xc0\x8d""s""\x82\xb5\x82\xc4\x89\xba\x82\xb3\x82\xa2\x81""B",
-			"\x83\x51\x81\x5B\x83\x80\x82\xf0\x91\x49\x82\xf1\x82\xc5\x89\xba\x82\xb3\x82\xa2\x81\x42",
-			"\r\r   \x82\xa8\x91\xd2\x82\xbF\x89\xba\x82\xb3\x82\xa2\x81""E""\x81""E""\x81""E"
 		}
 	};
 
@@ -1900,12 +1893,14 @@ void DarkMoonEngine::initStaticResource() {
 			_transferStringsScummVM = transferStringsScummVM[2];
 			break;
 		case Common::JA_JPN:
-		case Common::ZH_TWN:
 			_errorSlotNoNameString = errorSlotNoNameString[3];
 			_transferStringsScummVM = transferStringsScummVM[0];
 			break;
+		case Common::ZH_TWN:
+			_errorSlotNoNameString = errorSlotNoNameString[4];
+			_transferStringsScummVM = transferStringsScummVM[0];
+			break;
 	}
-
 }
 
 void DarkMoonEngine::initSpells() {
