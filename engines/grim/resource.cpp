@@ -197,7 +197,7 @@ ResourceLoader::ResourceLoader() {
 		error("%s", "Cannot find game data - check configuration file");
 
 	// Load labs
-	int priority = files.size();
+	int priority = -1;
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 		Common::String filename = (*x)->getName();
 		filename.toLowercase();
