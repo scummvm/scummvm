@@ -30,16 +30,31 @@ SaveLoad_Adibou1::SaveFile SaveLoad_Adibou1::_saveFiles[] = {
 	{ "bou.inf", kSaveModeSave, nullptr, "adibou1"},
 	{ "dessin.inf", kSaveModeSave, nullptr, "paint game drawing"},
 	{ "const.inf", kSaveModeSave, nullptr, "construction game"},
-	{ "menu.inf", kSaveModeSave, nullptr, "temporary sprite"}
+	{ "menu.inf", kSaveModeSave, nullptr, "temporary sprite"},
+	{ "dessin1.inf", kSaveModeSave, nullptr, "paint game drawing"},
+	{ "dessin2.inf", kSaveModeSave, nullptr, "paint game drawing"},
+	{ "dessin3.inf", kSaveModeSave, nullptr, "paint game drawing"},
+	{ "dessin4.inf", kSaveModeSave, nullptr, "paint game drawing"},
+	{ "dessin5.inf", kSaveModeSave, nullptr, "paint game drawing"},
+	{ "dessin6.inf", kSaveModeSave, nullptr, "paint game drawing"},
+	{ "dessin7.inf", kSaveModeSave, nullptr, "paint game drawing"},
+	{ "dessin8.inf", kSaveModeSave, nullptr, "paint game drawing"}
 };
 
 SaveLoad_Adibou1::SaveLoad_Adibou1(GobEngine *vm, const char *targetName) :
 	SaveLoad(vm) {
 
-	_saveFiles[0].handler = _bouHandler = new GameFileHandler(vm, targetName, "bouinf");
-	_saveFiles[1].handler = _drawingHandler = new SpriteHandler(vm, targetName, "drawing");
-	_saveFiles[2].handler = _constructionHandler = new GameFileHandler(vm, targetName, "construction");
-	_saveFiles[3].handler = _menuHandler = new TempSpriteHandler(vm);;
+	uint32 index = 0;
+	_saveFiles[index++].handler = _bouHandler = new GameFileHandler(vm, targetName, "bouinf");
+	_saveFiles[index++].handler = _drawingHandler = new SpriteHandler(vm, targetName, "drawing");
+	_saveFiles[index++].handler = _constructionHandler = new GameFileHandler(vm, targetName, "construction");
+	_saveFiles[index++].handler = _menuHandler = new TempSpriteHandler(vm);;
+	for (int i = 0; i < kAdibou1NbrOfDrawings; i++) {
+		_saveFiles[index++].handler = _drawingWithThumbnailHandler[i] = new DrawingWithThumbnailHandler(vm,
+																									   targetName,
+																									   Common::String::format("drawing%02d", i + 1));
+	}
+
 }
 
 SaveLoad_Adibou1::~SaveLoad_Adibou1() {
@@ -47,6 +62,8 @@ SaveLoad_Adibou1::~SaveLoad_Adibou1() {
 	delete _drawingHandler;
 	delete _constructionHandler;
 	delete _menuHandler;
+	for (int i = 0; i < kAdibou1NbrOfDrawings; i++)
+		delete _drawingWithThumbnailHandler[i];
 }
 
 SaveLoad_Adibou1::SpriteHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :
@@ -111,6 +128,76 @@ bool SaveLoad_Adibou1::SpriteHandler::save(int16 dataVar, int32 size, int32 offs
 	SaveWriter writer(1, 0, fileName);
 	return writer.writePart(0, _sprite);
 }
+
+SaveLoad_Adibou1::DrawingWithThumbnailHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :
+	SlotFileStatic(vm, base, ext) {
+}
+
+SaveLoad_Adibou1::DrawingWithThumbnailHandler::File::~File() {
+}
+
+SaveLoad_Adibou1::DrawingWithThumbnailHandler::DrawingWithThumbnailHandler(GobEngine *vm,
+																		 const Common::String &target,
+																		 const Common::String &ext)
+	: TempSpriteHandler(vm), _file(vm, target, ext) {
+
+	Common::String fileName = _file.build();
+	_reader = new SaveReader(2, 0, fileName); // Two parts: the thumbnail + the actual drawing
+	_writer = new SaveWriter(2, 0, fileName);
+}
+
+SaveLoad_Adibou1::DrawingWithThumbnailHandler::~DrawingWithThumbnailHandler() {
+	delete _reader;
+	delete _writer;
+}
+
+int32 SaveLoad_Adibou1::DrawingWithThumbnailHandler::getSize() {
+	if (!_reader)
+		return -1;;
+
+	if (!_reader->load())
+		return -1;
+
+	SaveHeader header1, header2;
+	if (!_reader->readPartHeader(0, &header1))
+		return -1;
+
+	if (!_reader->readPartHeader(1, &header2))
+		return -1;
+
+	return header1.getSize() + header2.getSize();
+}
+
+bool SaveLoad_Adibou1::DrawingWithThumbnailHandler::load(int16 dataVar, int32 size, int32 offset) {
+	if (!TempSpriteHandler::createFromSprite(dataVar, size, offset))
+		return false;
+
+	Common::String fileName = _file.build();
+	if (fileName.empty())
+		return false;
+
+	if (!_reader->load())
+		return false;
+
+	uint32 part = (offset == 0) ? 0 : 1;
+	if (!_reader->readPart(part, _sprite))
+		return false;
+
+	return TempSpriteHandler::load(dataVar, size, offset);
+}
+
+bool SaveLoad_Adibou1::DrawingWithThumbnailHandler::save(int16 dataVar, int32 size, int32 offset) {
+	if (!TempSpriteHandler::save(dataVar, size, offset))
+		return false;
+
+	Common::String fileName = _file.build();
+	if (fileName.empty())
+		return false;
+
+	uint32 part = (offset == 0) ? 0 : 1;
+	return _writer->writePart(part, _sprite);
+}
+
 
 SaveLoad_Adibou1::GameFileHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :
 	SlotFileStatic(vm, base, ext) {

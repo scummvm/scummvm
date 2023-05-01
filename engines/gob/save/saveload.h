@@ -265,6 +265,7 @@ protected:
 /** Save/Load class for Adibou 1 */
 class SaveLoad_Adibou1 : public SaveLoad {
 public:
+	static const int32 kAdibou1NbrOfDrawings = 8;
 	SaveLoad_Adibou1(GobEngine *vm, const char *targetName);
 	~SaveLoad_Adibou1() override;
 
@@ -297,6 +298,30 @@ protected:
 		File _file;
 	};
 
+
+	class DrawingWithThumbnailHandler : public TempSpriteHandler {
+	public:
+		DrawingWithThumbnailHandler(GobEngine *vm,
+								   const Common::String &target,
+								   const Common::String &ext);
+		~DrawingWithThumbnailHandler() override;
+
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
+
+	private:
+		class File : public SlotFileStatic {
+		public:
+			File(GobEngine *vm, const Common::String &base, const Common::String &ext);
+			~File() override;
+		};
+
+		File _file;
+		SaveWriter *_writer;
+		SaveReader *_reader;
+	};
+
 	class GameFileHandler : public SaveHandler {
 	public:
 		GameFileHandler(GobEngine *vm, const Common::String &target, const Common::String &ext);
@@ -326,6 +351,7 @@ protected:
 	GameFileHandler *_constructionHandler;
 	SpriteHandler   *_drawingHandler;
 	TempSpriteHandler *_menuHandler;
+	DrawingWithThumbnailHandler *_drawingWithThumbnailHandler[kAdibou1NbrOfDrawings];
 
 	SaveHandler *getHandler(const char *fileName) const override;
 	const char *getDescription(const char *fileName) const override;
