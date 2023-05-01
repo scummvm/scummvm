@@ -142,7 +142,6 @@ DMEngine::DMEngine(OSystem *syst, const DMADGameDescription *desc) :
 	_groupMan = nullptr;
 	_timeline = nullptr;
 	_projexpl = nullptr;
-	_displayMan = nullptr;
 	_sound = nullptr;
 
 	_engineShouldQuit = false;
@@ -752,7 +751,7 @@ void DMEngine::drawEntrance() {
 	/* Atari ST: { 0x000, 0x333, 0x444, 0x420, 0x654, 0x210, 0x040, 0x050, 0x432, 0x700, 0x543, 0x321, 0x222, 0x555, 0x310, 0x777 }, RGB colors are different */
 	static uint16 palEntrance[16] = {0x000, 0x666, 0x888, 0x840, 0xCA8, 0x0C0, 0x080, 0x0A0, 0x864, 0xF00, 0xA86, 0x642, 0x444, 0xAAA, 0x620, 0xFFF}; // @ G0020_aui_Graphic562_Palette_Entrance
 
-	byte *microDungeonCurrentMapData[32];
+	byte **microDungeonCurrentMapData = new byte*[32];
 
 	_dungeonMan->_partyMapIndex = kDMMapIndexEntrance;
 	_displayMan->_drawFloorAndCeilingRequested = true;
@@ -845,7 +844,7 @@ void DMEngine::drawTittle() {
 	_displayMan->startEndFadeToPalette(blitPalette);
 	_displayMan->fillScreen(kDMColorBlack);
 	// uncomment this to draw 'Presents'
-	//_displayMan->f132_blitToBitmap(L1384_puc_Bitmap_Title, _displayMan->_g348_bitmapScreen, G0005_s_Graphic562_Box_Title_Presents, 0, 137, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, k200_heightScreen, k200_heightScreen);
+	_displayMan->blitToBitmap(bitmapTitle, _displayMan->_bitmapScreen, boxTitlePresents, 0, 137, k160_byteWidthScreen, k160_byteWidthScreen, kDMColorNoTransparency, k200_heightScreen, k200_heightScreen);
 	blitPalette[15] = D09_RGB_WHITE;
 	_displayMan->startEndFadeToPalette(blitPalette);
 	byte *masterStrikesBack = titleSteps;

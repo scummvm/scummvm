@@ -378,7 +378,7 @@ public:
 		_rect = Common::Rect(x1, y1, x2, y2);
 	}
 
-	Box() {}
+	Box() = default;
 
 	bool isPointInside(Common::Point point) {
 		// not using Common::Rect::contains() because we need both boundaries to be included
@@ -400,9 +400,13 @@ public:
 	uint16 _srcByteWidth, _srcHeight;
 	uint16 _srcX, _srcY;
 
-	Frame() {}
+	Frame(){
+		_srcByteWidth = _srcHeight = 0;
+		_srcX = _srcY = 0;
+	}
+
 	Frame(uint16 destFromX, uint16 destToX, uint16 destFromY, uint16 destToY,
-		  uint16 srcWidth, uint16 srcHeight, uint16 srcX, uint16 srcY) :
+	      uint16 srcWidth, uint16 srcHeight, uint16 srcX, uint16 srcY) :
 		_box(destFromX, destToX, destFromY, destToY),
 		_srcByteWidth(srcWidth), _srcHeight(srcHeight), _srcX(srcX), _srcY(srcY) {}
 };

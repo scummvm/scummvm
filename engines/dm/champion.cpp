@@ -334,25 +334,19 @@ void ChampionMan::applyModifiersToStatistics(Champion *champ, int16 slotIndex, i
 				} else {
 					switch (iconIndex) {
 					case kDMIconIndiceWeaponDeltaSideSplitter:
-						modifier = 1;
-						break;
-					case kDMIconIndiceWeaponTheInquisitorDragonFang:
-						modifier = 2;
-						break;
-					case kDMIconIndiceWeaponVorpalBlade:
-						modifier = 4;
-						break;
-					case kDMIconIndiceWeaponStaff:
-						modifier = 2;
-						break;
 					case kDMIconIndiceWeaponWand:
 						modifier = 1;
 						break;
-					case kDMIconIndiceWeaponTeowand:
-						modifier = 6;
+					case kDMIconIndiceWeaponTheInquisitorDragonFang:
+					case kDMIconIndiceWeaponStaff:
+						modifier = 2;
 						break;
+					case kDMIconIndiceWeaponVorpalBlade:
 					case kDMIconIndiceWeaponYewStaff:
 						modifier = 4;
+						break;
+					case kDMIconIndiceWeaponTeowand:
+						modifier = 6;
 						break;
 					case kDMIconIndiceWeaponStaffOfManarStaffOfIrra:
 						modifier = 10;
