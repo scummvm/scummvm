@@ -358,6 +358,7 @@ public:
 	void loadMessagesVariableSize(Common::SeekableReadStream *file, int offset, int number);
 
 	void loadFonts(Common::SeekableReadStream *file, int offset);
+	void loadFonts(byte *font, int charNumber);
 	Common::StringArray _currentAreaMessages;
 	Common::StringArray _currentEphymeralMessages;
 	Common::BitArray _font;
@@ -565,12 +566,13 @@ public:
 	CastleEngine(OSystem *syst, const ADGameDescription *gd);
 	~CastleEngine();
 
-
 	Graphics::ManagedSurface *_option;
+	void initGameState() override;
 	void titleScreen() override;
 	void loadAssetsDOSFullGame() override;
 	void drawUI() override;
 
+	void executePrint(FCLInstruction &instruction) override;
 	void gotoArea(uint16 areaID, int entranceID) override;
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;

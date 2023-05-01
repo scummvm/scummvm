@@ -722,15 +722,20 @@ void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int 
 	Common::String ustr = str;
 	ustr.toUppercase();
 
+	int sizeX = 8;
+	int sizeY = isCastle() ? 8 : 6;
+	int sep = isCastle() ? 9 : 8;
+	int additional = isCastle() ? 0 : 1;
+
 	if (isDOS() || isSpectrum() || isCPC() || isC64()) {
 		for (uint32 c = 0; c < ustr.size(); c++) {
 			assert(ustr[c] >= 32);
-			for (int j = 0; j < 6; j++) {
-				for (int i = 0; i < 8; i++) {
-					if (_font.get(48 * (offset + ustr[c] - 32) + 1 + j * 8 + i))
-						surface->setPixel(x + 8 - i + 8 * c, y + j, fontColor);
+			for (int j = 0; j < sizeY; j++) {
+				for (int i = 0; i < sizeX; i++) {
+					if (_font.get(sizeX * sizeY * (offset + ustr[c] - 32) + additional + j * 8 + i))
+						surface->setPixel(x + 8 - i + sep * c, y + j, fontColor);
 					else
-						surface->setPixel(x + 8 - i + 8 * c, y + j, backColor);
+						surface->setPixel(x + 8 - i + sep * c, y + j, backColor);
 				}
 			}
 		}
