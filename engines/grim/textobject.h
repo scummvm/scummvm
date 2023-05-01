@@ -147,6 +147,10 @@ protected:
 	bool _created;
 
 	int _stackLevel;
+
+private:
+	template <typename S>
+	void setupTextReal(S msg, Common::String (*convert)(const S &s));
 };
 
 } // end of namespace Grim
