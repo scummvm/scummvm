@@ -21,6 +21,8 @@
 
 #include "common/unicode-bidi.h"
 
+#include "common/dbcs-str.h"
+
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/textobject.h"
@@ -161,9 +163,9 @@ void TextObject::destroy() {
 	}
 }
 
-void TextObject::setupText() {
-	Common::String msg = LuaBase::instance()->parseMsgText(_textID.c_str(), nullptr);
-	Common::String message;
+template <typename S>
+void TextObject::setupTextReal(S msg, Common::String (*convert)(const S &s)) {
+	S message;
 
 	// remove spaces (NULL_TEXT) from the end of the string,
 	// while this helps make the string unique it screws up
@@ -209,7 +211,7 @@ void TextObject::setupText() {
 	}
 
 	// We break the message to lines not longer than maxWidth
-	Common::String currLine;
+	S currLine;
 	_numberLines = 1;
 	int lineWidth = 0;
 	for (uint i = 0; i < msg.size(); i++) {
@@ -226,14 +228,16 @@ void TextObject::setupText() {
 					--i;
 				}
 			} else { // if it is a unique word
-				int dashWidth = _font->getCharKernedWidth('-');
+				bool useDash = !(g_grim->getGameLanguage() == Common::Language::ZH_CHN || g_grim->getGameLanguage() == Common::Language::ZH_TWN);
+				int dashWidth = useDash ? _font->getCharKernedWidth('-') : 0;
 				while (lineWidth + dashWidth > maxWidth && currLine.size() > 1) {
 					lineWidth -= _font->getCharKernedWidth(currLine.lastChar());
 					message.deleteLastChar();
 					currLine.deleteLastChar();
 					--i;
 				}
-				message += '-';
+				if (useDash)
+					message += '-';
 			}
 			message += '\n';
 			currLine.clear();
@@ -263,27 +267,54 @@ void TextObject::setupText() {
 
 	for (int j = 0; j < _numberLines; j++) {
 		int nextLinePos, cutLen;
-		const char *breakPos = strchr(message.c_str(), '\n');
-		if (breakPos) {
+		const typename S::value_type *breakPos = message.c_str();
+		while (*breakPos && *breakPos != '\n')
+			breakPos++;
+		if (*breakPos == '\n') {
 			nextLinePos = breakPos - message.c_str();
 			cutLen = nextLinePos + 1;
 		} else {
 			nextLinePos = message.size();
 			cutLen = nextLinePos;
 		}
-		Common::String currentLine(message.c_str(), message.c_str() + nextLinePos);
+		S currentLine(message.c_str(), message.c_str() + nextLinePos);
+		Common::String currentLineConvert = convert(currentLine);
 
 		// Reverse the line for the Hebrew translation
 		if (g_grim->getGameLanguage() == Common::HE_ISR)
-			currentLine = Common::convertBiDiString(currentLine, Common::kWindows1255);
+			currentLineConvert = Common::convertBiDiString(currentLineConvert, Common::kWindows1255);
 
-		_lines[j] = currentLine;
-		int width = _font->getKernedStringLength(currentLine);
+		_lines[j] = currentLineConvert;
+		int width = _font->getKernedStringLength(currentLineConvert);
 		if (width > _maxLineWidth)
 			_maxLineWidth = width;
 		for (int count = 0; count < cutLen; count++)
 			message.deleteChar(0);
 	}
+}
+
+static Common::String sConvert(const Common::String &s) {
+	return s;
+}
+
+static Common::String usConvert(const Common::U32String &us) {
+	return us.encode(Common::CodePage::kUtf8);
+}
+
+static Common::String dbcsConvert(const Common::DBCSString &ds) {
+	return ds.convertToString();
+}
+
+void TextObject::setupText() {
+	Common::String msg = LuaBase::instance()->parseMsgText(_textID.c_str(), nullptr);
+
+	if (g_grim->_isUtf8)
+		setupTextReal<Common::U32String>(msg.decode(Common::CodePage::kUtf8), usConvert);
+	else if (g_grim->getGameLanguage() == Common::Language::ZH_CHN || g_grim->getGameLanguage() == Common::Language::ZH_TWN)
+		setupTextReal<Common::DBCSString>(Common::DBCSString(msg), dbcsConvert);
+	else
+		setupTextReal<Common::String>(msg, sConvert);
+
 	_elapsedTime = 0;
 }
 
