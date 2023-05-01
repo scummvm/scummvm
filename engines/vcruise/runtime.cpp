@@ -116,13 +116,9 @@ Common::Point RuntimeMenuInterface::getMouseCoordinate() const {
 void RuntimeMenuInterface::restartGame() const {
 	Common::SharedPtr<SaveGameSnapshot> snapshot(new SaveGameSnapshot());
 
-	if (_runtime->_gameID == GID_REAH) {
-		snapshot->roomNumber = 1;
-		snapshot->screenNumber = 0xb0;
-		snapshot->loadedAnimation = 1;
-	} else {
-		error("Don't know what screen to start on for this game");
-	}
+	snapshot->roomNumber = 1;
+	snapshot->screenNumber = 0xb0;
+	snapshot->loadedAnimation = 1;
 
 	_runtime->_saveGame = snapshot;
 	_runtime->restoreSaveGameSnapshot();
@@ -1043,12 +1039,48 @@ bool Runtime::bootGame(bool newGame) {
 
 	_gameState = kGameStateIdle;
 
-	if (newGame) {
-		if (_gameID == GID_REAH) {
-			changeToScreen(1, 0xb1);
-		} else
-			error("Couldn't figure out what screen to start on");
+	if (_gameID == GID_SCHIZM) {
+		Common::SharedPtr<IScriptCompilerGlobalState> gs = createScriptCompilerGlobalState();
+
+		// Precompile all scripts.  We must do this because global functions are stored in room 3, which is never used.
+		Common::SharedPtr<ScriptSet> scriptSet(new ScriptSet());
+
+		Common::ArchiveMemberList scriptFiles;
+		SearchMan.listMatchingMembers(scriptFiles, "Log/Room##.log", true);
+
+		Common::Array<bool> scriptExists;
+
+		uint highestScriptIndex = 0;
+		for (const Common::ArchiveMemberPtr &scriptFile : scriptFiles) {
+			Common::String scriptName = scriptFile->getName();
+
+			uint scriptIndex = ((scriptName[4] - '0') * 10) + (scriptName[5] - '0');
+			if (scriptIndex > highestScriptIndex) {
+				highestScriptIndex = scriptIndex;
+				scriptExists.resize(highestScriptIndex + 1);
+			}
+			scriptExists[scriptIndex] = true;
+		}
+
+		for (uint i = 0; i <= highestScriptIndex; i++) {
+			if (!scriptExists[i])
+				continue;
+
+			Common::String logicFileName = Common::String::format("Log/Room%02u.log", i);
+
+			Common::File logicFile;
+			if (logicFile.open(logicFileName)) {
+				debug(1, "Compiling script %s...", logicFileName.c_str());
+				compileSchizmLogicFile(*scriptSet, logicFile, static_cast<uint>(logicFile.size()), logicFileName, gs.get());
+				logicFile.close();
+			}
+		}
+
+		_scriptSet = scriptSet;
 	}
+
+	if (newGame)
+		changeToScreen(1, 0xb1);
 
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
 
@@ -1738,6 +1770,8 @@ bool Runtime::runScript() {
 			DISPATCH_OP(AnimG);
 			DISPATCH_OP(AnimS);
 			DISPATCH_OP(Anim);
+			DISPATCH_OP(AnimChange);
+			DISPATCH_OP(AnimVolume);
 
 			DISPATCH_OP(Static);
 			DISPATCH_OP(VarLoad);
@@ -1773,6 +1807,7 @@ bool Runtime::runScript() {
 
 			DISPATCH_OP(Music);
 			DISPATCH_OP(MusicVolRamp);
+			DISPATCH_OP(MusicStop);
 			DISPATCH_OP(Parm0);
 			DISPATCH_OP(Parm1);
 			DISPATCH_OP(Parm2);
@@ -2280,14 +2315,21 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 		// This shouldn't happen when running a script
 		assert(!_activeScript);
 
-		_scriptSet.reset();
+		if (_gameID == GID_SCHIZM) {
+			// Keep script set
+		} else if (_gameID == GID_REAH) {
+			_scriptSet.reset();
 
-		Common::String logicFileName = Common::String::format("Log/Room%02i.log", static_cast<int>(roomNumber));
-		Common::File logicFile;
-		if (logicFile.open(logicFileName)) {
-			_scriptSet = compileLogicFile(logicFile, static_cast<uint>(logicFile.size()), logicFileName);
-			logicFile.close();
-		}
+			Common::String logicFileName = Common::String::format("Log/Room%02i.log", static_cast<int>(roomNumber));
+			Common::File logicFile;
+			if (logicFile.open(logicFileName)) {
+				_scriptSet = compileReahLogicFile(logicFile, static_cast<uint>(logicFile.size()), logicFileName);
+
+				logicFile.close();
+			}
+		} else
+			error("Don't know how to compile scripts for this game");
+
 
 		_map.clear();
 
@@ -4473,6 +4515,9 @@ void Runtime::scriptOpAnim(ScriptArg_t arg) {
 	}
 }
 
+OPCODE_STUB(AnimChange)
+OPCODE_STUB(AnimVolume)
+
 void Runtime::scriptOpStatic(ScriptArg_t arg) {
 	TAKE_STACK_INT(kAnimDefStackArgs);
 
@@ -4863,6 +4908,7 @@ void Runtime::scriptOpMusicVolRamp(ScriptArg_t arg) {
 	}
 }
 
+OPCODE_STUB(MusicStop)
 
 void Runtime::scriptOpParm0(ScriptArg_t arg) {
 	TAKE_STACK_INT(4);
@@ -5433,9 +5479,9 @@ void Runtime::scriptOpAnimName(ScriptArg_t arg) {
 		error("Can't resolve animation for room, room number was invalid");
 
 
-	Common::HashMap<Common::String, AnimationDef>::const_iterator it = roomDef->animations.find(_scriptSet->strings[arg]);
+	Common::HashMap<Common::String, AnimationDef>::const_iterator it = roomDef->animations.find(_activeScript->strings[arg]);
 	if (it == roomDef->animations.end())
-		error("Can't resolve animation for room, couldn't find animation '%s'", _scriptSet->strings[arg].c_str());
+		error("Can't resolve animation for room, couldn't find animation '%s'", _activeScript->strings[arg].c_str());
 
 	pushAnimDef(it->_value);
 }
@@ -5448,7 +5494,7 @@ void Runtime::scriptOpValueName(ScriptArg_t arg) {
 	if (!roomDef)
 		error("Room def doesn't exist");
 
-	const Common::String &varName = _scriptSet->strings[arg];
+	const Common::String &varName = _activeScript->strings[arg];
 
 	Common::HashMap<Common::String, int>::const_iterator it = roomDef->values.find(varName);
 	if (it == roomDef->values.end())
@@ -5465,7 +5511,7 @@ void Runtime::scriptOpVarName(ScriptArg_t arg) {
 	if (!roomDef)
 		error("Room def doesn't exist");
 
-	const Common::String &varName = _scriptSet->strings[arg];
+	const Common::String &varName = _activeScript->strings[arg];
 
 	Common::HashMap<Common::String, uint>::const_iterator it = roomDef->vars.find(varName);
 	if (it == roomDef->vars.end())
@@ -5475,11 +5521,11 @@ void Runtime::scriptOpVarName(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpSoundName(ScriptArg_t arg) {
-	_scriptStack.push_back(StackValue(_scriptSet->strings[arg]));
+	_scriptStack.push_back(StackValue(_activeScript->strings[arg]));
 }
 
 void Runtime::scriptOpCursorName(ScriptArg_t arg) {
-	const Common::String &cursorName = _scriptSet->strings[arg];
+	const Common::String &cursorName = _activeScript->strings[arg];
 
 	Common::HashMap<Common::String, StackInt_t>::const_iterator namedCursorIt = _namedCursors.find(cursorName);
 	if (namedCursorIt == _namedCursors.end()) {

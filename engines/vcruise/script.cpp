@@ -28,6 +28,11 @@
 
 namespace VCruise {
 
+enum ScriptDialect {
+	kScriptDialectReah,
+	kScriptDialectSchizm,
+};
+
 class LogicUnscrambleStream : public Common::ReadStream {
 public:
 	LogicUnscrambleStream(Common::ReadStream *stream, uint streamSize);
@@ -129,11 +134,17 @@ ProtoInstruction::ProtoInstruction(ProtoOp paramProtoOp, ScriptOps::ScriptOp par
 struct ProtoScript {
 	Common::Array<ProtoInstruction> instrs;
 
+	Common::Array<Common::String> strings;
+	Common::HashMap<Common::String, uint> stringToIndex;
+
 	void reset();
 };
 
 void ProtoScript::reset() {
 	instrs.clear();
+
+	strings.clear();
+	stringToIndex.clear(true);
 }
 
 struct ScriptNamedInstruction {
@@ -144,9 +155,9 @@ struct ScriptNamedInstruction {
 
 class ScriptCompiler {
 public:
-	ScriptCompiler(TextParser &parser, const Common::String &blamePath);
+	ScriptCompiler(TextParser &parser, const Common::String &blamePath, ScriptDialect dialect, IScriptCompilerGlobalState *gs);
 
-	void compileRoomScriptSet(ScriptSet *ss);
+	void compileScriptSet(ScriptSet *ss);
 
 private:
 	bool parseNumber(const Common::String &token, uint32 &outNumber) const;
@@ -156,12 +167,14 @@ private:
 	void expectNumber(uint32 &outNumber);
 
 	void compileRoomScriptSet(RoomScriptSet *rss);
-	void compileScreenScriptSet(ScreenScriptSet *sss);
+	void compileReahScreenScriptSet(ScreenScriptSet *sss);
+	void compileSchizmScreenScriptSet(ScreenScriptSet *sss);
+	void compileFunction(Script *script);
 	bool compileInstructionToken(ProtoScript &script, const Common::String &token);
 
 	void codeGenScript(ProtoScript &protoScript, Script &script);
 
-	uint indexString(const Common::String &str);
+	static uint indexString(ProtoScript &script, const Common::String &str);
 
 	enum NumberParsingMode {
 		kNumberParsingDec,
@@ -173,32 +186,62 @@ private:
 	NumberParsingMode _numberParsingMode;
 	const Common::String _blamePath;
 
-	Common::HashMap<Common::String, uint> _stringToIndex;
-	Common::Array<Common::String> _strings;
+	ScriptDialect _dialect;
+
+	const char *_scrToken;
+	const char *_eroomToken;
+
+	IScriptCompilerGlobalState *_gs;
 };
 
-ScriptCompiler::ScriptCompiler(TextParser &parser, const Common::String &blamePath) : _numberParsingMode(kNumberParsingHex), _parser(parser), _blamePath(blamePath) {
+class ScriptCompilerGlobalState : public IScriptCompilerGlobalState {
+public:
+	void define(const Common::String &key, const Common::String &value) override;
+
+	const Common::String *getTokenReplacement(const Common::String &str) const override;
+
+	void addFunction(const Common::String &fnName, const Common::SharedPtr<Script> &fn) override;
+	Common::SharedPtr<Script> getFunction(const Common::String &fnName) const override;
+
+private:
+	Common::HashMap<Common::String, Common::String> _defs;
+	Common::HashMap<Common::String, Common::SharedPtr<Script> > _functions;
+};
+
+ScriptCompiler::ScriptCompiler(TextParser &parser, const Common::String &blamePath, ScriptDialect dialect, IScriptCompilerGlobalState *gs)
+	: _numberParsingMode(kNumberParsingHex), _parser(parser), _blamePath(blamePath), _dialect(dialect), _gs(gs),
+	  _scrToken(nullptr), _eroomToken(nullptr) {
 }
 
 bool ScriptCompiler::parseNumber(const Common::String &token, uint32 &outNumber) const {
 	if (token.size() == 0)
 		return false;
 
-	if (token[0] == 'd')
-		return parseDecNumber(token, 1, outNumber);
+	if (_dialect == kScriptDialectReah) {
+		if (token[0] == 'd')
+			return parseDecNumber(token, 1, outNumber);
 
-	if (token[0] == '0') {
-		switch (_numberParsingMode) {
-		case kNumberParsingDec:
-			return parseDecNumber(token, 0, outNumber);
-		case kNumberParsingHex:
-			return parseHexNumber(token, 0, outNumber);
-		case kNumberParsingBin:
-			return parseBinNumber(token, 0, outNumber);
-		default:
-			error("Unknown number parsing mode");
-			return false;
+		if (token[0] == '0') {
+			switch (_numberParsingMode) {
+			case kNumberParsingDec:
+				return parseDecNumber(token, 0, outNumber);
+			case kNumberParsingHex:
+				return parseHexNumber(token, 0, outNumber);
+			case kNumberParsingBin:
+				return parseBinNumber(token, 0, outNumber);
+			default:
+				error("Unknown number parsing mode");
+				return false;
+			}
 		}
+	} else if (_dialect == kScriptDialectSchizm) {
+		if (token.size() >= 2 && token[0] == '0' && token[1] == 'x')
+			return parseHexNumber(token, 2, outNumber);
+		if (token[token.size() - 1] == 'b')
+			return parseBinNumber(token.substr(0, token.size() - 1), 0, outNumber);
+		if (token[token.size() - 1] == 'h')
+			return parseHexNumber(token.substr(0, token.size() - 1), 0, outNumber);
+		return parseDecNumber(token, 0, outNumber);
 	}
 
 	return false;
@@ -256,56 +299,100 @@ void ScriptCompiler::expectNumber(uint32 &outNumber) {
 	}
 }
 
-void ScriptCompiler::compileRoomScriptSet(ScriptSet *ss) {
+void ScriptCompiler::compileScriptSet(ScriptSet *ss) {
 	Common::SharedPtr<RoomScriptSet> roomScript;
+
+	const char *roomToken = nullptr;
+
+	if (_dialect == kScriptDialectReah) {
+		roomToken = "~ROOM";
+		_eroomToken = "~EROOM";
+		_scrToken = "~SCR";
+	} else if (_dialect == kScriptDialectSchizm) {
+		roomToken = "~Room";
+		_eroomToken = "~ERoom";
+		_scrToken = "~Scr";
+	} else
+		error("Unknown script dialect");
 
 	TextParserState state;
 	Common::String token;
 	while (_parser.parseToken(token, state)) {
-		if (token == "~ROOM") {
+		if (token == roomToken) {
 			if (roomScript)
-				error("Error compiling script at line %i col %i: Encountered ~ROOM without ~EROOM", static_cast<int>(state._lineNum), static_cast<int>(state._col));
+				error("Error compiling script at line %i col %i: Encountered %s without %s", static_cast<int>(state._lineNum), static_cast<int>(state._col), roomToken, _eroomToken);
 			roomScript.reset(new RoomScriptSet());
 
-			uint32 roomNumber = 0;
-			expectNumber(roomNumber);
+			{
+				uint32 roomNumber = 0;
 
-			ss->roomScripts[roomNumber] = roomScript;
+				if (_parser.parseToken(token, state)) {
+					// Many Schizm rooms use 0xxh as the room number and are empty.  In this case the room is discarded.
+					if (_dialect != kScriptDialectSchizm || token != "0xxh") {
+						if (!parseNumber(token, roomNumber))
+							error("Error compiling script at line %i col %i: Expected number but found '%s'", static_cast<int>(state._lineNum), static_cast<int>(state._col), token.c_str());
+
+						ss->roomScripts[roomNumber] = roomScript;
+					}
+				} else {
+					error("Error compiling script at line %i col %i: Expected number", static_cast<int>(state._lineNum), static_cast<int>(state._col));
+				}
+			}
 
 			compileRoomScriptSet(roomScript.get());
 		} else {
-			error("Error compiling script at line %i col %i: Expected ~ROOM and found '%s'", static_cast<int>(state._lineNum), static_cast<int>(state._col), token.c_str());
+			error("Error compiling script at line %i col %i: Expected %s and found '%s'", static_cast<int>(state._lineNum), static_cast<int>(state._col), roomToken, token.c_str());
 		}
 	}
-
-	ss->strings = Common::move(_strings);
 }
 
 void ScriptCompiler::compileRoomScriptSet(RoomScriptSet *rss) {
 	TextParserState state;
 	Common::String token;
 	while (_parser.parseToken(token, state)) {
-		if (token == "~EROOM") {
+		if (token == _eroomToken) {
 			return;
-		} else if (token == "~SCR") {
+		} else if (token == _scrToken) {
 			uint32 screenNumber = 0;
 			expectNumber(screenNumber);
 
 			Common::SharedPtr<ScreenScriptSet> sss(new ScreenScriptSet());
-			compileScreenScriptSet(sss.get());
+			if (_dialect == kScriptDialectReah)
+				compileReahScreenScriptSet(sss.get());
+			else if (_dialect == kScriptDialectSchizm)
+				compileSchizmScreenScriptSet(sss.get());
 
 			// QUIRK: The tower in Reah (Room 06) has two 0cb screens, the second one is bad and must be ignored
 			if (rss->screenScripts.find(screenNumber) == rss->screenScripts.end())
 				rss->screenScripts[screenNumber] = sss;
+		} else if (_dialect == kScriptDialectSchizm && token == "#def") {
+			Common::String key;
+			Common::String value;
+			if (!_parser.parseToken(key, state))
+				error("Error compiling script at line %i col %i: Expected key", static_cast<int>(state._lineNum), static_cast<int>(state._col));
+			if (!_parser.parseToken(value, state))
+				error("Error compiling script at line %i col %i: Expected value", static_cast<int>(state._lineNum), static_cast<int>(state._col));
+
+			_gs->define(key, value);
+		} else if (_dialect == kScriptDialectSchizm && token == "~Fun") {
+			Common::String fnName;
+			if (!_parser.parseToken(fnName, state))
+				error("Error compiling script at line %i col %i: Expected function name", static_cast<int>(state._lineNum), static_cast<int>(state._col));
+
+			Common::SharedPtr<Script> func(new Script());
+
+			compileFunction(func.get());
+
+			_gs->addFunction(fnName, func);
 		} else {
-			error("Error compiling script at line %i col %i: Expected ~EROOM or ~SCR and found '%s'", static_cast<int>(state._lineNum), static_cast<int>(state._col), token.c_str());
+			error("Error compiling script at line %i col %i: Expected %s or %s and found '%s'", static_cast<int>(state._lineNum), static_cast<int>(state._col), _eroomToken, _scrToken, token.c_str());
 		}
 	}
 
 	error("Error compiling script: Room wasn't terminated");
 }
 
-void ScriptCompiler::compileScreenScriptSet(ScreenScriptSet *sss) {
+void ScriptCompiler::compileReahScreenScriptSet(ScreenScriptSet *sss) {
 	TextParserState state;
 	Common::String token;
 
@@ -339,7 +426,45 @@ void ScriptCompiler::compileScreenScriptSet(ScreenScriptSet *sss) {
 		} else if (token == "dubbing") {
 			Common::String dubbingName;
 			_parser.expectToken(dubbingName, _blamePath);
-			protoScript.instrs.push_back(ProtoInstruction(ScriptOps::kDubbing, indexString(dubbingName)));
+			protoScript.instrs.push_back(ProtoInstruction(ScriptOps::kDubbing, indexString(protoScript, dubbingName)));
+		} else if (compileInstructionToken(protoScript, token)) {
+			// Nothing
+		} else {
+			error("Error compiling script at line %i col %i: Expected %s or %s or ~* or instruction but found '%s'", static_cast<int>(state._lineNum), static_cast<int>(state._col), _eroomToken, _scrToken, token.c_str());
+		}
+	}
+}
+
+void ScriptCompiler::compileSchizmScreenScriptSet(ScreenScriptSet *sss) {
+	TextParserState state;
+	Common::String token;
+
+	ProtoScript protoScript;
+	Common::SharedPtr<Script> currentScript(new Script());
+
+	sss->entryScript.reset(currentScript);
+
+	if (!_parser.parseToken(token, state))
+		error("Error compiling script at line %i col %i: Expected screen name", static_cast<int>(state._lineNum), static_cast<int>(state._col));
+
+	sss->screenName = token;
+
+	while (_parser.parseToken(token, state)) {
+		if (token == "~ERoom" || token == "~Scr" || token == "~Fun") {
+			_parser.requeue(token, state);
+
+			codeGenScript(protoScript, *currentScript);
+			return;
+		} else if (token == "~*") {
+			uint32 interactionNumber = 0;
+			expectNumber(interactionNumber);
+
+			codeGenScript(protoScript, *currentScript);
+
+			currentScript.reset(new Script());
+			protoScript.reset();
+
+			sss->interactionScripts[interactionNumber] = currentScript;
 		} else if (compileInstructionToken(protoScript, token)) {
 			// Nothing
 		} else {
@@ -348,7 +473,27 @@ void ScriptCompiler::compileScreenScriptSet(ScreenScriptSet *sss) {
 	}
 }
 
-static ScriptNamedInstruction g_namedInstructions[] = {
+void ScriptCompiler::compileFunction(Script *script) {
+	TextParserState state;
+	Common::String token;
+
+	ProtoScript protoScript;
+
+	while (_parser.parseToken(token, state)) {
+		if (token == "~ERoom" || token == "~Scr" || token == "~Fun") {
+			_parser.requeue(token, state);
+
+			codeGenScript(protoScript, *script);
+			return;
+		} else if (compileInstructionToken(protoScript, token)) {
+			// Nothing
+		} else {
+			error("Error compiling script at line %i col %i: Expected ~ERoom or ~Scr or ~Fun but found '%s'", static_cast<int>(state._lineNum), static_cast<int>(state._col), token.c_str());
+		}
+	}
+}
+
+static ScriptNamedInstruction g_reahNamedInstructions[] = {
 	{"rotate", ProtoOp::kProtoOpScript, ScriptOps::kRotate},
 	{"angle", ProtoOp::kProtoOpScript, ScriptOps::kAngle},
 	{"angleG@", ProtoOp::kProtoOpScript, ScriptOps::kAngleGGet},
@@ -356,10 +501,10 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"sanimL", ProtoOp::kProtoOpScript, ScriptOps::kSAnimL},
 	{"changeL", ProtoOp::kProtoOpScript, ScriptOps::kChangeL},
 	{"changeL1", ProtoOp::kProtoOpScript, ScriptOps::kChangeL},	// This seems wrong, but not sure what changeL1 does differently from changeL yet
-	{"animR", ProtoOp::kProtoOpScript, ScriptOps::kAnimR},
 	{"animF", ProtoOp::kProtoOpScript, ScriptOps::kAnimF},
-	{"animN", ProtoOp::kProtoOpScript, ScriptOps::kAnimN},
 	{"animG", ProtoOp::kProtoOpScript, ScriptOps::kAnimG},
+	{"animN", ProtoOp::kProtoOpScript, ScriptOps::kAnimN},
+	{"animR", ProtoOp::kProtoOpScript, ScriptOps::kAnimR},
 	{"animS", ProtoOp::kProtoOpScript, ScriptOps::kAnimS},
 	{"anim", ProtoOp::kProtoOpScript, ScriptOps::kAnim},
 	{"static", ProtoOp::kProtoOpScript, ScriptOps::kStatic},
@@ -465,7 +610,147 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"allowedSave", ProtoOp::kProtoOpNoop, ScriptOps::kInvalid},
 };
 
-bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::String &token) {
+
+
+static ScriptNamedInstruction g_schizmNamedInstructions[] = {
+	{"StopScore", ProtoOp::kProtoOpScript, ScriptOps::kMusicStop},
+	{"PlayScore", ProtoOp::kProtoOpScript, ScriptOps::kMusicPlayScore},
+	{"ScoreAlways", ProtoOp::kProtoOpScript, ScriptOps::kScoreAlways},
+	{"ScoreNormal", ProtoOp::kProtoOpScript, ScriptOps::kScoreNormal},
+	{"SndAddRandom", ProtoOp::kProtoOpScript, ScriptOps::kSndAddRandom},
+	{"SndClearRandom", ProtoOp::kProtoOpScript, ScriptOps::kSndClearRandom},
+	{"SndPlay", ProtoOp::kProtoOpScript, ScriptOps::kSndPlay},
+	{"SndPlayEx", ProtoOp::kProtoOpScript, ScriptOps::kSndPlayEx},
+	{"SndPlay3D", ProtoOp::kProtoOpScript, ScriptOps::kSndPlay3D},
+	{"SndPlaying", ProtoOp::kProtoOpScript, ScriptOps::kSndPlaying},
+	{"SndHalt", ProtoOp::kProtoOpScript, ScriptOps::kSndHalt},
+	{"SndWait", ProtoOp::kProtoOpScript, ScriptOps::kSndWait},
+	{"SndToBack", ProtoOp::kProtoOpScript, ScriptOps::kSndToBack},
+	{"SndStop", ProtoOp::kProtoOpScript, ScriptOps::kSndStop},
+	{"SndStopAll", ProtoOp::kProtoOpScript, ScriptOps::kSndStopAll},
+	{"VolumeAdd", ProtoOp::kProtoOpScript, ScriptOps::kVolumeAdd},
+	{"VolumeChange", ProtoOp::kProtoOpScript, ScriptOps::kVolumeChange},
+	{"VolumeDown", ProtoOp::kProtoOpScript, ScriptOps::kVolumeDown},
+	{"esc_on", ProtoOp::kProtoOpScript, ScriptOps::kEscOn},
+	{"esc_off", ProtoOp::kProtoOpScript, ScriptOps::kEscOff},
+	{"esc_get@", ProtoOp::kProtoOpScript, ScriptOps::kEscGet},
+	{"room!", ProtoOp::kProtoOpScript, ScriptOps::kSetRoom},
+	{"room@", ProtoOp::kProtoOpScript, ScriptOps::kGetRoom},
+	{"lmb", ProtoOp::kProtoOpScript, ScriptOps::kLMB},
+	{"lmb1", ProtoOp::kProtoOpScript, ScriptOps::kLMB1},
+	{"animVolume", ProtoOp::kProtoOpScript, ScriptOps::kAnimVolume},
+	{"animChange", ProtoOp::kProtoOpScript, ScriptOps::kAnimChange},
+	{"anim", ProtoOp::kProtoOpScript, ScriptOps::kAnim},			// Dialect difference: Accepts room name
+	{"static", ProtoOp::kProtoOpScript, ScriptOps::kStatic},
+	{"animF", ProtoOp::kProtoOpScript, ScriptOps::kAnimF},
+	{"animG", ProtoOp::kProtoOpScript, ScriptOps::kAnimG},
+	{"animN", ProtoOp::kProtoOpScript, ScriptOps::kAnimN},
+	{"animR", ProtoOp::kProtoOpScript, ScriptOps::kAnimR},
+	{"animS", ProtoOp::kProtoOpScript, ScriptOps::kAnimS},
+	{"sanimL", ProtoOp::kProtoOpScript, ScriptOps::kSAnimL},
+	{"sparmX", ProtoOp::kProtoOpScript, ScriptOps::kSParmX},
+	{"sanimX", ProtoOp::kProtoOpScript, ScriptOps::kSAnimX},
+	{"byte@", ProtoOp::kProtoOpScript, ScriptOps::kExtractByte},
+	{"byte!", ProtoOp::kProtoOpScript, ScriptOps::kInsertByte},
+	{"rotate", ProtoOp::kProtoOpScript, ScriptOps::kRotate},
+	{"rotateUpdate", ProtoOp::kProtoOpScript, ScriptOps::kRotateUpdate},
+	{"bit@", ProtoOp::kProtoOpScript, ScriptOps::kBitLoad},
+	{"bit0!", ProtoOp::kProtoOpScript, ScriptOps::kBitSet0},
+	{"bit1!", ProtoOp::kProtoOpScript, ScriptOps::kBitSet1},
+	{"speech", ProtoOp::kProtoOpScript, ScriptOps::kSpeech},
+	{"speechEx", ProtoOp::kProtoOpScript, ScriptOps::kSpeechEx},
+	{"speechTest", ProtoOp::kProtoOpScript, ScriptOps::kSpeechTest},
+	{"say", ProtoOp::kProtoOpScript, ScriptOps::kSay},
+	{"changeL", ProtoOp::kProtoOpScript, ScriptOps::kChangeL},		// Dialect difference: Accepts room name
+	{"range", ProtoOp::kProtoOpScript, ScriptOps::kRange},
+	{"sound3DL2", ProtoOp::kProtoOpScript, ScriptOps::k3DSoundL2},	// Dialect difference: Different name
+	{"random", ProtoOp::kProtoOpScript, ScriptOps::kRandomInclusive},
+	{"heroSetPos", ProtoOp::kProtoOpScript, ScriptOps::kHeroSetPos},
+	{"heroGetPos", ProtoOp::kProtoOpScript, ScriptOps::kHeroGetPos},
+	{"heroOut", ProtoOp::kProtoOpScript, ScriptOps::kHeroOut},
+	{"hero@", ProtoOp::kProtoOpScript, ScriptOps::kHeroGet},
+	{"ret", ProtoOp::kProtoOpScript, ScriptOps::kReturn},
+	{"setTimer", ProtoOp::kProtoOpScript, ScriptOps::kSetTimer},
+	{"getTimer", ProtoOp::kProtoOpScript, ScriptOps::kGetTimer},
+	{"delay", ProtoOp::kProtoOpScript, ScriptOps::kDelay},
+	{"lo!", ProtoOp::kProtoOpScript, ScriptOps::kLoSet},
+	{"lo@", ProtoOp::kProtoOpScript, ScriptOps::kLoGet},
+	{"hi!", ProtoOp::kProtoOpScript, ScriptOps::kHiSet},
+	{"hi@", ProtoOp::kProtoOpScript, ScriptOps::kHiGet},
+	{"angle@", ProtoOp::kProtoOpScript, ScriptOps::kAngleGet},
+	{"angleG@", ProtoOp::kProtoOpScript, ScriptOps::kAngleGGet},
+	{"cd@", ProtoOp::kProtoOpScript, ScriptOps::kCDGet},
+	{"disc", ProtoOp::kProtoOpScript, ScriptOps::kDisc},
+	{"save0", ProtoOp::kProtoOpNoop, ScriptOps::kSave0},
+	{"hidePanel", ProtoOp::kProtoOpNoop, ScriptOps::kHidePanel},
+	{"ItemExist@", ProtoOp::kProtoOpScript, ScriptOps::kItemCheck},
+	{"ItemSelect!", ProtoOp::kProtoOpScript, ScriptOps::kItemHighlightSet},
+	{"ItemPlace@", ProtoOp::kProtoOpScript, ScriptOps::kItemHaveSpace},
+	{"ItemPutInto!", ProtoOp::kProtoOpScript, ScriptOps::kItemAdd},
+	{"ItemRemove!", ProtoOp::kProtoOpScript, ScriptOps::kItemRemove},
+	{"cyfra@", ProtoOp::kProtoOpScript, ScriptOps::kCyfraGet},
+	{"puzzleInit", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleInit},
+	{"puzzleCanPress", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleCanPress},
+	{"puzzleDoMove1", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleDoMove1},
+	{"puzzleDoMove2", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleDoMove2},
+	{"puzzleDone", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleDone},
+	{"puzzleWhoWon", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleWhoWon},
+
+	{"+", ProtoOp::kProtoOpScript, ScriptOps::kAdd},
+	{"-", ProtoOp::kProtoOpScript, ScriptOps::kSub},
+	{"*", ProtoOp::kProtoOpScript, ScriptOps::kMul},
+	{"/", ProtoOp::kProtoOpScript, ScriptOps::kDiv},
+	{"%", ProtoOp::kProtoOpScript, ScriptOps::kMod},
+	
+	{"&&", ProtoOp::kProtoOpScript, ScriptOps::kAnd},
+	{"or", ProtoOp::kProtoOpScript, ScriptOps::kOr},
+	{"||", ProtoOp::kProtoOpScript, ScriptOps::kOr},
+	{"+", ProtoOp::kProtoOpScript, ScriptOps::kAdd},
+	{"-", ProtoOp::kProtoOpScript, ScriptOps::kSub},
+	{">", ProtoOp::kProtoOpScript, ScriptOps::kCmpGt},
+	{"<", ProtoOp::kProtoOpScript, ScriptOps::kCmpLt},
+	{"=", ProtoOp::kProtoOpScript, ScriptOps::kCmpEq},
+	{"==", ProtoOp::kProtoOpScript, ScriptOps::kCmpEq},
+	{"!=", ProtoOp::kProtoOpScript, ScriptOps::kCmpNE},
+	{">=", ProtoOp::kProtoOpScript, ScriptOps::kCmpGE},
+	{"<=", ProtoOp::kProtoOpScript, ScriptOps::kCmpLE},
+
+	{"&", ProtoOp::kProtoOpScript, ScriptOps::kBitAnd},
+	{"|", ProtoOp::kProtoOpScript, ScriptOps::kBitOr},
+
+	{"#if", ProtoOp::kProtoOpIf, ScriptOps::kInvalid},
+	{"#eif", ProtoOp::kProtoOpEndIf, ScriptOps::kInvalid},
+	{"#else", ProtoOp::kProtoOpElse, ScriptOps::kInvalid},
+
+	{"#switch:", ProtoOp::kProtoOpSwitch, ScriptOps::kInvalid},
+	{"#eswitch", ProtoOp::kProtoOpEndSwitch, ScriptOps::kInvalid},
+	{"break", ProtoOp::kProtoOpBreak, ScriptOps::kInvalid},
+
+	{"ret", ProtoOp::kProtoOpScript, ScriptOps::kReturn},
+
+	{"backStart", ProtoOp::kProtoOpScript, ScriptOps::kBackStart},
+	{"allowedSave", ProtoOp::kProtoOpNoop, ScriptOps::kInvalid},
+};
+
+bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::String &tokenBase) {
+	const Common::String *tokenPtr = &tokenBase;
+
+	if (_dialect == kScriptDialectSchizm) {
+		const Common::String *ppToken = _gs->getTokenReplacement(tokenBase);
+		if (ppToken)
+			tokenPtr = ppToken;
+	}
+
+	const Common::String &token = *tokenPtr;
+
+	if (_dialect == kScriptDialectSchizm && token.hasPrefix("-")) {
+		uint32 unumber = 0;
+		if (parseNumber(token.substr(1), unumber)) {
+			script.instrs.push_back(ProtoInstruction(ScriptOps::kNumber, -static_cast<int32>(unumber)));
+			return true;
+		}
+	}
+
 	uint32 number = 0;
 	if (parseNumber(token, number)) {
 		script.instrs.push_back(ProtoInstruction(ScriptOps::kNumber, number));
@@ -473,29 +758,33 @@ bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::
 	}
 
 	if (token.size() >= 1 && token[0] == ':') {
-		if (token.size() >= 3 && token[2] == ':') {
-			if (token[1] == 'Y') {
-				script.instrs.push_back(ProtoInstruction(ScriptOps::kVarName, indexString(token.substr(3))));
-				return true;
-			} else if (token[1] == 'V') {
-				script.instrs.push_back(ProtoInstruction(ScriptOps::kValueName, indexString(token.substr(3))));
-				return true;
-			} else
-				return false;
+		if (_dialect == kScriptDialectReah) {
+			if (token.size() >= 3 && token[2] == ':') {
+				if (token[1] == 'Y') {
+					script.instrs.push_back(ProtoInstruction(ScriptOps::kVarName, indexString(script, token.substr(3))));
+					return true;
+				} else if (token[1] == 'V') {
+					script.instrs.push_back(ProtoInstruction(ScriptOps::kValueName, indexString(script, token.substr(3))));
+					return true;
+				} else
+					return false;
+			}
 		}
 
-		script.instrs.push_back(ProtoInstruction(ScriptOps::kAnimName, indexString(token.substr(1))));
+		script.instrs.push_back(ProtoInstruction(ScriptOps::kAnimName, indexString(script, token.substr(1))));
 		return true;
 	}
 
 	if (token.size() >= 2 && token[0] == '_') {
-		script.instrs.push_back(ProtoInstruction(ScriptOps::kSoundName, indexString(token.substr(1))));
+		script.instrs.push_back(ProtoInstruction(ScriptOps::kSoundName, indexString(script, token.substr(1))));
 		return true;
 	}
 
-	if (token.hasPrefix("CUR_")) {
-		script.instrs.push_back(ProtoInstruction(ScriptOps::kCursorName, indexString(token)));
-		return true;
+	if (_dialect == kScriptDialectReah) {
+		if (token.hasPrefix("CUR_")) {
+			script.instrs.push_back(ProtoInstruction(ScriptOps::kCursorName, indexString(script, token)));
+			return true;
+		}
 	}
 
 	if (token == "#switch") {
@@ -521,9 +810,87 @@ bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::
 		return true;
 	}
 
-	for (const ScriptNamedInstruction &namedInstr : g_namedInstructions) {
-		if (token == namedInstr.str) {
-			script.instrs.push_back(ProtoInstruction(namedInstr.protoOp, namedInstr.op, 0));
+	if (_dialect == kScriptDialectReah) {
+		for (const ScriptNamedInstruction &namedInstr : g_reahNamedInstructions) {
+			if (token == namedInstr.str) {
+				script.instrs.push_back(ProtoInstruction(namedInstr.protoOp, namedInstr.op, 0));
+				return true;
+			}
+		}
+	} else if (_dialect == kScriptDialectSchizm) {
+		if (token.hasPrefix("fn")) {
+			uint fnIndex = indexString(script, token);
+			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kCallFunction, fnIndex));
+			return true;
+		}
+
+		if (token.size() >= 2 && token[0] == '\"' && token[token.size() - 1] == '\"') {
+			// Seems like these are only used for sounds and music?
+			uint fnIndex = indexString(script, token.substr(1, token.size() - 2));
+			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kString, fnIndex));
+			return true;
+		}
+
+		if (token == "dvd@") {
+			// Always pass disc checks
+			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kNumber, 1));
+			return true;
+		}
+
+		for (const ScriptNamedInstruction &namedInstr : g_schizmNamedInstructions) {
+			if (token == namedInstr.str) {
+				script.instrs.push_back(ProtoInstruction(namedInstr.protoOp, namedInstr.op, 0));
+				return true;
+			}
+		}
+
+		if (token.size() >= 2 && token.hasSuffix("!")) {
+			if (compileInstructionToken(script, token.substr(0, token.size() - 1))) {
+				script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kVarGlobalStore, 0));
+				return true;
+			} else
+				return false;
+		}
+
+		// HACK: Work around bugged variable name in Room02.log
+		if (token == "dwFirst\x8c@") {
+			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kNumber, 0));
+			return true;
+		}
+
+		if (token.size() >= 2 && token.hasSuffix("@")) {
+			if (compileInstructionToken(script, token.substr(0, token.size() - 1))) {
+				script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kVarGlobalLoad, 0));
+				return true;
+			} else
+				return false;
+		}
+
+		// Does this look like a screen name?
+		bool couldBeScreenName = true;
+		for (uint i = 0; i < token.size(); i++) {
+			char c = token[i];
+			bool isAlphaNumeric = ((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'));
+			if (!isAlphaNumeric) {
+				couldBeScreenName = false;
+				break;
+			}
+		}
+
+		if (couldBeScreenName) {
+			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kScreenName, indexString(script, token)));
+			return true;
+		}
+
+		if (token.hasPrefix("cur")) {
+			script.instrs.push_back(ProtoInstruction(ScriptOps::kCursorName, indexString(script, token)));
+			return true;
+		}
+
+		// HACK: Work around broken volume variable names in Room02.  Some of these appear to have "par"
+		// where it should be "vol" but some are garbage.  Figure this out later.
+		if (token.hasPrefix("par")) {
+			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kGarbage, indexString(script, token)));
 			return true;
 		}
 	}
@@ -734,8 +1101,33 @@ void ScriptCompiler::codeGenScript(ProtoScript &protoScript, Script &script) {
 		}
 	}
 
-	if (controlFlowStack.size() > 0)
-		error("Error in codegen: Unterminated flow control construct");
+	if (controlFlowStack.size() > 0) {
+		if (_dialect == kScriptDialectSchizm) {
+			// For some reason line 105 in Room36 and line 342 in Room61 have unterminated conditional blocks,
+			// and the comments say that's intentional.
+
+			while (controlFlowStack.size() > 0) {
+				const CodeGenControlFlowBlock &cf = controlFlowStack.back();
+
+				switch (controlFlowStack.back().type) {
+				case kFlowControlIf: {
+						warning("CodeGen encountered unterminated #if statement");
+						instrs.push_back(ProtoInstruction(kProtoOpLabel, ScriptOps::kInvalid, ifs[cf.index].endLabel));
+						controlFlowStack.pop_back();
+					} break;
+				case kFlowControlSwitch: {
+						warning("CodeGen encountered unterminated #switch statement");
+						instrs.push_back(ProtoInstruction(kProtoOpLabel, ScriptOps::kInvalid, switches[cf.index].endLabel));
+						controlFlowStack.pop_back();
+					} break;
+				default:
+					error("Unknown control flow type");
+				}
+			}
+		} else {
+			error("Error in codegen: Unterminated flow control construct");
+		}
+	}
 
 	Common::Array<ProtoInstruction> instrs2;
 
@@ -802,31 +1194,72 @@ void ScriptCompiler::codeGenScript(ProtoScript &protoScript, Script &script) {
 			break;
 		}
 	}
+
+	// Commit strings
+	script.strings = Common::move(protoScript.strings);
 }
 
-uint ScriptCompiler::indexString(const Common::String &str) {
-	Common::HashMap<Common::String, uint>::const_iterator it = _stringToIndex.find(str);
-	if (it == _stringToIndex.end()) {
-		uint index = _strings.size();
-		_stringToIndex[str] = index;
-		_strings.push_back(str);
+uint ScriptCompiler::indexString(ProtoScript &script, const Common::String &str) {
+	Common::HashMap<Common::String, uint>::const_iterator it = script.stringToIndex.find(str);
+	if (it == script.stringToIndex.end()) {
+		uint index = script.strings.size();
+		script.stringToIndex[str] = index;
+		script.strings.push_back(str);
 		return index;
 	}
 
 	return it->_value;
 }
 
-Common::SharedPtr<ScriptSet> compileLogicFile(Common::ReadStream &stream, uint streamSize, const Common::String &blamePath) {
+void ScriptCompilerGlobalState::define(const Common::String &key, const Common::String &value) {
+	_defs.setVal(key, value);
+}
+
+const Common::String *ScriptCompilerGlobalState::getTokenReplacement(const Common::String &str) const {
+	Common::HashMap<Common::String, Common::String>::const_iterator it = _defs.find(str);
+	if (it == _defs.end())
+		return nullptr;
+
+	return &it->_value;
+}
+
+void ScriptCompilerGlobalState::addFunction(const Common::String &fnName, const Common::SharedPtr<Script> &fn) {
+	_functions.setVal(fnName, fn);
+}
+
+Common::SharedPtr<Script> ScriptCompilerGlobalState::getFunction(const Common::String &fnName) const {
+	Common::HashMap<Common::String, Common::SharedPtr<Script> >::const_iterator it = _functions.find(fnName);
+	if (it == _functions.end())
+		return Common::SharedPtr<Script>();
+
+	return it->_value;
+}
+
+IScriptCompilerGlobalState::~IScriptCompilerGlobalState() {
+}
+
+static void compileLogicFile(ScriptSet &scriptSet, Common::ReadStream &stream, uint streamSize, const Common::String &blamePath, ScriptDialect dialect, IScriptCompilerGlobalState *gs) {
 	LogicUnscrambleStream unscrambleStream(&stream, streamSize);
 	TextParser parser(&unscrambleStream);
 
+	ScriptCompiler compiler(parser, blamePath, dialect, gs);
+
+	compiler.compileScriptSet(&scriptSet);
+}
+
+Common::SharedPtr<IScriptCompilerGlobalState> createScriptCompilerGlobalState() {
+	return Common::SharedPtr<IScriptCompilerGlobalState>(new ScriptCompilerGlobalState());
+}
+
+Common::SharedPtr<ScriptSet> compileReahLogicFile(Common::ReadStream &stream, uint streamSize, const Common::String &blamePath) {
 	Common::SharedPtr<ScriptSet> scriptSet(new ScriptSet());
 
-	ScriptCompiler compiler(parser, blamePath);
-
-	compiler.compileRoomScriptSet(scriptSet.get());
-
+	compileLogicFile(*scriptSet, stream, streamSize, blamePath, kScriptDialectReah, nullptr);
 	return scriptSet;
+}
+
+void compileSchizmLogicFile(ScriptSet &scriptSet, Common::ReadStream &stream, uint streamSize, const Common::String &blamePath, IScriptCompilerGlobalState *gs) {
+	compileLogicFile(scriptSet, stream, streamSize, blamePath, kScriptDialectSchizm, gs);
 }
 
 } // namespace VCruise

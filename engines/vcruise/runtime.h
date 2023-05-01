@@ -74,6 +74,7 @@ class RuntimeMenuInterface;
 class TextParser;
 struct ScriptSet;
 struct Script;
+struct IScriptCompilerGlobalState;
 struct Instruction;
 
 enum GameState {
@@ -768,6 +769,8 @@ private:
 	void scriptOpAnimG(ScriptArg_t arg);
 	void scriptOpAnimS(ScriptArg_t arg);
 	void scriptOpAnim(ScriptArg_t arg);
+	void scriptOpAnimChange(ScriptArg_t arg);
+	void scriptOpAnimVolume(ScriptArg_t arg);
 
 	void scriptOpStatic(ScriptArg_t arg);
 	void scriptOpVarLoad(ScriptArg_t arg);
@@ -805,6 +808,7 @@ private:
 
 	void scriptOpMusic(ScriptArg_t arg);
 	void scriptOpMusicVolRamp(ScriptArg_t arg);
+	void scriptOpMusicStop(ScriptArg_t arg);
 	void scriptOpParm0(ScriptArg_t arg);
 	void scriptOpParm1(ScriptArg_t arg);
 	void scriptOpParm2(ScriptArg_t arg);
