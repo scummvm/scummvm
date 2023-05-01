@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	concatstream.o \
 	config-manager.o \
 	coroutines.o \
+	dbcs-str.o \
 	debug.o \
 	error.o \
 	events.o \
