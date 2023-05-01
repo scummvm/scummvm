@@ -417,6 +417,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "24hourgame", "The 24 Hour Game" },
 	{ "24hours", "24 Hours" },
 	{ "30minutes", "30 minutes" },
+	{ "3dayspandora", "3 Days to Pandora" },
 	{ "3minfart", "3 Minutes a Fart" },
 	{ "3pigsandawolf", "Three Little Pigs and a Wolf" },
 	{ "46memorylane", "46 Memory Lane" },
@@ -683,6 +684,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "beasts", "Beasts" },
 	{ "beatthebuzzer", "Beat the Buzzer" },
 	{ "beautiesandbeasts", "Beauties and Beasts" },
+	{ "beepboop", "Beep Boop" },
 	{ "beforethedarkcrystal", "Before the Dark Crystal" },
 	{ "beforethedarkcrystal2", "Before the Dark Crystal II" },
 	{ "beforeww2", "Before WW2" },
@@ -2156,6 +2158,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "nightmareframes", "Nightmare Frames" },
 	{ "nightoftheravingfeminist", "Night of the Raving Feminist" },
 	{ "nightofthetesticle", "Night of the Testicle" },
+	{ "nightowl", "The Night Owl Murder" },
 	{ "nightwatch", "NightWatch (2008)" },
 	{ "nightwitch", "Night Witch" },
 	{ "nightwitches", "Night Witches: Women of the clouds" },
@@ -4207,6 +4210,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	// Free post-2.5 games that are likely supported by the AGS engine
 	DEMO_ENTRY_EN("24hourgame", "24 Hour Game.exe", "06a03fe35791b0578068ab1873455463", 2209262),
 	DEMO_ENTRY("3geeks", "3GEEKS_Demo.exe", "7ddb9e776648faed5a51170d087074e9", 512546851), // itch.io  En-Fr
+	DEMO_ENTRY_EN("3dayspandora", "3_Days.ags", "654d58a2bc09c516f2ce69a1c2f88ae3", 1120924),
 	DEMO_ENTRY_EN("99species", "99Species.exe", "615e73fc1874e92d60a1996c2330ea36", 23870894),
 	DEMO_ENTRY_EN("aazor", "aazor.exe", "465f972675db2da6040518221af5b0ba", 4955082),
 	DEMO_ENTRY_EN("aazor", "aazor.exe", "465f972675db2da6040518221af5b0ba", 4956212),
@@ -5053,6 +5057,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("beatthebuzzer", "Beat the Buzzer.exe", "4d5d25446373d4df71c6bda77a15230a", 227179876),  // v1.1 Post-Jam
 	GAME_ENTRY_EN_PLATFORM("beautiesandbeasts", "beautiesandbeasts.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 6506966, "OROW"),  //v1.00
 	GAME_ENTRY_EN("beautiesandbeasts", "beautiesandbeasts.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 6507202),  //v1.01
+	GAME_ENTRY_EN("beepboop", "Beep Boop.exe", "b781cc4ab0fbe647615fafa4830ec308", 5230657),
+	GAME_ENTRY_EN("beepboop", "Beep Boop.ags", "d0598090532ce80925e08c05424d8f6b", 2063917),
 	GAME_ENTRY("beforethedarkcrystal", "DarkCrystal.exe", "f120690b506dd63cd7d1112ea6af2f77", 15194282),  // En-Fr
 	GAME_ENTRY("beforethedarkcrystal2", "Before the Dark Crystal II.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 59569723),  // En-Fr
 	GAME_ENTRY_EN("bellyofthebeast", "Belly of the beast.exe", "9f8a9d74c09f188af9af3e263f8b59bc", 22461502),  // Windows
@@ -6802,6 +6808,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("nightandday", "Night and Day.exe", "430eaebb21d406061d67a9972ad33947", 17206287),  //v1.1
 	GAME_ENTRY_EN("nightandday", "Night and Day.exe", "430eaebb21d406061d67a9972ad33947", 17209105),  //v1.2
 	GAME_ENTRY_EN("nightofthetesticle", "testicle2.exe", "18b284c22010850f79bc5c20054a70c4", 145543486),
+	GAME_ENTRY_EN("nightowl", "LD51.exe", "dbe9bab672130b9a84925cb6da64a3db", 33871100),
+	GAME_ENTRY_EN("nightowl", "LD51.ags", "475ee6971bd15088ab7c4271ef6dccfd", 30762728),
 	GAME_ENTRY_EN("nightwatch", "NWATCH.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 2451134),
 	GAME_ENTRY_EN("nightwitch", "NightWitch.exe", "9632da1faae3ef66d7ea9dd60cc19440", 28701275),
 	GAME_ENTRY_EN("nightwitch", "NightWitch.ags", "220d7fcf6fc747f1861265c338ff3fdd", 25658951),
