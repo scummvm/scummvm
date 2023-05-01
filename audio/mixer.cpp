@@ -115,6 +115,26 @@ public:
 	int8 getBalance();
 
 	/**
+	 * Set the channel's sample rate.
+	 * 
+	 * @param rate	The new sample rate. Must be less than 131072
+	*/
+	void setRate(uint32 rate);
+
+	/**
+	 * Get the channel's sample rate.
+	 * 
+	 * @return The current sample rate of the channel.
+	*/
+	uint32 getRate();
+
+	/**
+	 * Reset the sample rate of the channel back to its
+	 * AudioStream's native rate.
+	*/
+	void resetRate();
+
+	/**
 	 * Notifies the channel that the global sound type
 	 * volume settings changed.
 	 */
@@ -401,6 +421,34 @@ int8 MixerImpl::getChannelBalance(SoundHandle handle) {
 	return _channels[index]->getBalance();
 }
 
+void MixerImpl::setChannelRate(SoundHandle handle, uint32 rate) {
+	Common::StackLock lock(_mutex);
+
+	const int index = handle._val % NUM_CHANNELS;
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
+		return;
+
+	_channels[index]->setRate(rate);
+}
+
+uint32 MixerImpl::getChannelRate(SoundHandle handle) {
+	const int index = handle._val % NUM_CHANNELS;
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
+		return 0;
+	
+	return _channels[index]->getRate();
+}
+
+void MixerImpl::resetChannelRate(SoundHandle handle) {
+	Common::StackLock lock(_mutex);
+
+	const int index = handle._val % NUM_CHANNELS;
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
+		return;
+	
+	_channels[index]->resetRate();
+}
+
 uint32 MixerImpl::getSoundElapsedTime(SoundHandle handle) {
 	return getElapsedTime(handle).msecs();
 }
@@ -557,6 +605,24 @@ void Channel::setBalance(const int8 balance) {
 
 int8 Channel::getBalance() {
 	return _balance;
+}
+
+void Channel::setRate(uint32 rate) {
+	if (_converter)
+		_converter->setInputRate(rate);
+}
+
+uint32 Channel::getRate() {
+	if (_converter)
+		return _converter->getInputRate();
+	
+	return 0;
+}
+
+void Channel::resetRate() {
+	if (_converter && _stream) {
+		_converter->setInputRate(_stream->getRate());
+	}
 }
 
 void Channel::updateChannelVolumes() {

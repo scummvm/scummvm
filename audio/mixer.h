@@ -255,6 +255,31 @@ public:
 	virtual int8 getChannelBalance(SoundHandle handle) = 0;
 
 	/**
+	 * Set the sample rate for the given handle.
+	 * 
+	 * @param handle 	The sound to affect.
+	 * @param rate		The new sample rate. Must be less than 131072
+	*/
+	virtual void setChannelRate(SoundHandle handle, uint32 rate) = 0;
+
+	/**
+	 * Get the sample rate for the given handle.
+	 * 
+	 * @param handle 	The sound to affect.
+	 * 
+	 * @return The current sample rate of the channel.
+	*/
+	virtual uint32 getChannelRate(SoundHandle handle) = 0;
+
+	/**
+	 * Reset the sample rate of the channel back to its
+	 * AudioStream's native rate.
+	 * 
+	 * @param handle 	The sound to affect.
+	*/
+	virtual void resetChannelRate(SoundHandle handle) = 0;
+
+	/**
 	 * Get an approximation of for how long the channel has been playing.
 	 */
 	virtual uint32 getSoundElapsedTime(SoundHandle handle) = 0;
