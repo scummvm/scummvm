@@ -103,6 +103,10 @@ void Inter_Adibou1::oAdibou1_fillAreaAtPoint(OpGobParams &params) {
 
 	int16 x = VAR(varX);
 	int16 y = VAR(varY);
+	if (_vm->_draw->_needAdjust != 2) {
+		x *= 2;
+		y *= 2;
+	}
 	int16 spriteIndex = VAR(varSpriteIndex);
 	int16 color = VAR(varColor);
 
