@@ -86,6 +86,7 @@ enum GameState {
 	kGameStateIdle,							// Waiting for input events
 	kGameStateDelay,						// Waiting for delay completion time
 	kGameStateScript,						// Running a script
+	kGameStateScriptReset,					// Resetting script interpreter into a new script
 	kGameStateGyroIdle,						// Waiting for mouse movement to run a gyro
 	kGameStateGyroAnimation,				// Animating a gyro
 
@@ -640,6 +641,13 @@ private:
 		ValueUnion value;
 	};
 
+	struct CallStackFrame {
+		CallStackFrame();
+
+		Common::SharedPtr<Script> _script;
+		uint _nextInstruction;
+	};
+
 	struct SubtitleDef {
 		SubtitleDef();
 
@@ -718,6 +726,7 @@ private:
 	void pushAnimDef(const AnimationDef &animDef);
 
 	void activateScript(const Common::SharedPtr<Script> &script, const ScriptEnvironmentVars &envVars);
+	void compileSchizmLogicSet(const uint *roomNumbers, uint numRooms);
 
 	bool parseIndexDef(IndexParseType parseType, uint roomNumber, const Common::String &key, const Common::String &value);
 	void allocateRoomsUpTo(uint roomNumber);
@@ -769,8 +778,6 @@ private:
 	void scriptOpAnimG(ScriptArg_t arg);
 	void scriptOpAnimS(ScriptArg_t arg);
 	void scriptOpAnim(ScriptArg_t arg);
-	void scriptOpAnimChange(ScriptArg_t arg);
-	void scriptOpAnimVolume(ScriptArg_t arg);
 
 	void scriptOpStatic(ScriptArg_t arg);
 	void scriptOpVarLoad(ScriptArg_t arg);
@@ -808,7 +815,6 @@ private:
 
 	void scriptOpMusic(ScriptArg_t arg);
 	void scriptOpMusicVolRamp(ScriptArg_t arg);
-	void scriptOpMusicStop(ScriptArg_t arg);
 	void scriptOpParm0(ScriptArg_t arg);
 	void scriptOpParm1(ScriptArg_t arg);
 	void scriptOpParm2(ScriptArg_t arg);
@@ -877,6 +883,67 @@ private:
 
 	void scriptOpVerticalPanSet(bool *flags);
 	void scriptOpVerticalPanGet();
+
+	// Schizm ops
+	void scriptOpCallFunction(ScriptArg_t arg);
+
+	void scriptOpMusicStop(ScriptArg_t arg);
+	void scriptOpMusicPlayScore(ScriptArg_t arg);
+	void scriptOpScoreAlways(ScriptArg_t arg);
+	void scriptOpScoreNormal(ScriptArg_t arg);
+	void scriptOpSndPlay(ScriptArg_t arg);
+	void scriptOpSndPlayEx(ScriptArg_t arg);
+	void scriptOpSndPlay3D(ScriptArg_t arg);
+	void scriptOpSndPlaying(ScriptArg_t arg);
+	void scriptOpSndWait(ScriptArg_t arg);
+	void scriptOpSndHalt(ScriptArg_t arg);
+	void scriptOpSndToBack(ScriptArg_t arg);
+	void scriptOpSndStop(ScriptArg_t arg);
+	void scriptOpSndStopAll(ScriptArg_t arg);
+	void scriptOpSndAddRandom(ScriptArg_t arg);
+	void scriptOpSndClearRandom(ScriptArg_t arg);
+	void scriptOpVolumeAdd(ScriptArg_t arg);
+	void scriptOpVolumeChange(ScriptArg_t arg);
+	void scriptOpVolumeDown(ScriptArg_t arg);
+	void scriptOpAnimVolume(ScriptArg_t arg);
+	void scriptOpAnimChange(ScriptArg_t arg);
+	void scriptOpScreenName(ScriptArg_t arg);
+	void scriptOpExtractByte(ScriptArg_t arg);
+	void scriptOpInsertByte(ScriptArg_t arg);
+	void scriptOpString(ScriptArg_t arg);
+	void scriptOpCmpNE(ScriptArg_t arg);
+	void scriptOpCmpLE(ScriptArg_t arg);
+	void scriptOpCmpGE(ScriptArg_t arg);
+	void scriptOpReturn(ScriptArg_t arg);
+	void scriptOpSpeech(ScriptArg_t arg);
+	void scriptOpSpeechEx(ScriptArg_t arg);
+	void scriptOpSpeechTest(ScriptArg_t arg);
+	void scriptOpSay(ScriptArg_t arg);
+	void scriptOpRandomInclusive(ScriptArg_t arg);
+	void scriptOpHeroOut(ScriptArg_t arg);
+	void scriptOpHeroGetPos(ScriptArg_t arg);
+	void scriptOpHeroSetPos(ScriptArg_t arg);
+	void scriptOpHeroGet(ScriptArg_t arg);
+	void scriptOpGarbage(ScriptArg_t arg);
+	void scriptOpGetRoom(ScriptArg_t arg);
+	void scriptOpBitAnd(ScriptArg_t arg);
+	void scriptOpBitOr(ScriptArg_t arg);
+	void scriptOpAngleGet(ScriptArg_t arg);
+	void scriptOpCDGet(ScriptArg_t arg);
+	void scriptOpDisc(ScriptArg_t arg);
+	void scriptOpHidePanel(ScriptArg_t arg);
+	void scriptOpRotateUpdate(ScriptArg_t arg);
+	void scriptOpMul(ScriptArg_t arg);
+	void scriptOpDiv(ScriptArg_t arg);
+	void scriptOpMod(ScriptArg_t arg);
+	void scriptOpCyfraGet(ScriptArg_t arg);
+	void scriptOpPuzzleInit(ScriptArg_t arg);
+	void scriptOpPuzzleCanPress(ScriptArg_t arg);
+	void scriptOpPuzzleDoMove1(ScriptArg_t arg);
+	void scriptOpPuzzleDoMove2(ScriptArg_t arg);
+	void scriptOpPuzzleDone(ScriptArg_t arg);
+	void scriptOpPuzzleWhoWon(ScriptArg_t arg);
+	void scriptOpFn(ScriptArg_t arg);
 
 	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _cursors;		// Cursors indexed as CURSOR_CUR_##
 	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _cursorsShort;	// Cursors indexed as CURSOR_#
@@ -947,8 +1014,8 @@ private:
 	Common::Array<Common::SharedPtr<RoomDef> > _roomDefs;
 	Common::SharedPtr<ScriptSet> _scriptSet;
 
-	Common::SharedPtr<Script> _activeScript;
-	uint _scriptNextInstruction;
+	Common::Array<CallStackFrame> _scriptCallStack;
+
 	Common::Array<StackValue> _scriptStack;
 	ScriptEnvironmentVars _scriptEnv;
 

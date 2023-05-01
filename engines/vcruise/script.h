@@ -215,6 +215,7 @@ enum ScriptOp {
 	kPuzzleDoMove2,
 	kPuzzleDone,
 	kPuzzleWhoWon,
+	kFn,
 
 	kNumOps,
 };
@@ -232,7 +233,6 @@ struct Instruction {
 
 struct Script {
 	Common::Array<Instruction> instrs;
-	Common::Array<Common::String> strings;
 };
 
 typedef Common::HashMap<uint, Common::SharedPtr<Script> > ScriptMap_t;
@@ -252,6 +252,10 @@ struct RoomScriptSet {
 
 struct ScriptSet {
 	RoomScriptSetMap_t roomScripts;
+
+	Common::Array<Common::SharedPtr<Script> > functions;
+	Common::Array<Common::String> functionNames;
+	Common::Array<Common::String> strings;
 };
 
 struct FunctionDef {
@@ -267,8 +271,12 @@ struct IScriptCompilerGlobalState {
 	virtual void define(const Common::String &key, const Common::String &value) = 0;
 	virtual const Common::String *getTokenReplacement(const Common::String &str) const = 0;
 
-	virtual void addFunction(const Common::String &fnName, const Common::SharedPtr<Script> &fn) = 0;
-	virtual Common::SharedPtr<Script> getFunction(const Common::String &fnName) const = 0;
+	virtual uint getFunctionIndex(const Common::String &fnName) = 0;
+	virtual void setFunction(uint fnIndex, const Common::SharedPtr<Script> &fn) = 0;
+
+	virtual uint getNumFunctions() const = 0;
+	virtual void dumpFunctionNames(Common::Array<Common::String> &fnNames) const = 0;
+	virtual Common::SharedPtr<Script> getFunction(uint fnIndex) const = 0;
 };
 
 Common::SharedPtr<IScriptCompilerGlobalState> createScriptCompilerGlobalState();

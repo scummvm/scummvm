@@ -261,6 +261,9 @@ Runtime::StackValue &Runtime::StackValue::operator=(StackValue &&other) {
 	return *this;
 }
 
+Runtime::CallStackFrame::CallStackFrame() : _nextInstruction(0) {
+}
+
 Runtime::Gyro::Gyro() {
 	reset();
 }
@@ -840,7 +843,7 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
-	  _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _scriptNextInstruction(0), _escOn(false), _debugMode(false), _fastAnimationMode(false),
+	  _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false),
 	  _musicTrack(0), _musicVolume(100), _musicVolumeRampStartTime(0), _musicVolumeRampStartVolume(0), _musicVolumeRampRatePerMSec(0), _musicVolumeRampEnd(0),
 	  _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _loadedAnimationHasSound(false), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0),
@@ -982,6 +985,10 @@ bool Runtime::runFrame() {
 		case kGameStatePanRight:
 			moreActions = runHorizontalPan(true);
 			break;
+		case kGameStateScriptReset:
+			_gameState = kGameStateScript;
+			moreActions = runScript();
+			break;
 		case kGameStateScript:
 			moreActions = runScript();
 			break;
@@ -1038,46 +1045,6 @@ bool Runtime::bootGame(bool newGame) {
 	_trayCornerGraphic = loadGraphic("Select_2", true);
 
 	_gameState = kGameStateIdle;
-
-	if (_gameID == GID_SCHIZM) {
-		Common::SharedPtr<IScriptCompilerGlobalState> gs = createScriptCompilerGlobalState();
-
-		// Precompile all scripts.  We must do this because global functions are stored in room 3, which is never used.
-		Common::SharedPtr<ScriptSet> scriptSet(new ScriptSet());
-
-		Common::ArchiveMemberList scriptFiles;
-		SearchMan.listMatchingMembers(scriptFiles, "Log/Room##.log", true);
-
-		Common::Array<bool> scriptExists;
-
-		uint highestScriptIndex = 0;
-		for (const Common::ArchiveMemberPtr &scriptFile : scriptFiles) {
-			Common::String scriptName = scriptFile->getName();
-
-			uint scriptIndex = ((scriptName[4] - '0') * 10) + (scriptName[5] - '0');
-			if (scriptIndex > highestScriptIndex) {
-				highestScriptIndex = scriptIndex;
-				scriptExists.resize(highestScriptIndex + 1);
-			}
-			scriptExists[scriptIndex] = true;
-		}
-
-		for (uint i = 0; i <= highestScriptIndex; i++) {
-			if (!scriptExists[i])
-				continue;
-
-			Common::String logicFileName = Common::String::format("Log/Room%02u.log", i);
-
-			Common::File logicFile;
-			if (logicFile.open(logicFileName)) {
-				debug(1, "Compiling script %s...", logicFileName.c_str());
-				compileSchizmLogicFile(*scriptSet, logicFile, static_cast<uint>(logicFile.size()), logicFileName, gs.get());
-				logicFile.close();
-			}
-		}
-
-		_scriptSet = scriptSet;
-	}
 
 	if (newGame)
 		changeToScreen(1, 0xb1);
@@ -1743,16 +1710,25 @@ void Runtime::commitSectionToScreen(const RenderSection &section, const Common::
 	case ScriptOps::k##op: this->scriptOp##op(arg); break
 
 bool Runtime::runScript() {
+	if (_scriptCallStack.empty()) {
+		terminateScript();
+		return true;
+	}
+
+	CallStackFrame &frame = _scriptCallStack.back();
+	const Common::Array<Instruction> &instrs = frame._script->instrs;
+
 	while (_gameState == kGameStateScript) {
-		uint instrNum = _scriptNextInstruction;
-		if (!_activeScript || instrNum >= _activeScript->instrs.size()) {
-			terminateScript();
+		uint instrNum = frame._nextInstruction;
+
+		if (instrNum >= instrs.size()) {
+			_scriptCallStack.pop_back();
 			return true;
 		}
 
-		_scriptNextInstruction++;
+		frame._nextInstruction = instrNum + 1u;
 
-		const Instruction &instr = _activeScript->instrs[instrNum];
+		const Instruction &instr = instrs[instrNum];
 		int32 arg = instr.arg;
 
 		switch (instr.op) {
@@ -1770,8 +1746,6 @@ bool Runtime::runScript() {
 			DISPATCH_OP(AnimG);
 			DISPATCH_OP(AnimS);
 			DISPATCH_OP(Anim);
-			DISPATCH_OP(AnimChange);
-			DISPATCH_OP(AnimVolume);
 
 			DISPATCH_OP(Static);
 			DISPATCH_OP(VarLoad);
@@ -1807,7 +1781,6 @@ bool Runtime::runScript() {
 
 			DISPATCH_OP(Music);
 			DISPATCH_OP(MusicVolRamp);
-			DISPATCH_OP(MusicStop);
 			DISPATCH_OP(Parm0);
 			DISPATCH_OP(Parm1);
 			DISPATCH_OP(Parm2);
@@ -1874,6 +1847,67 @@ bool Runtime::runScript() {
 			DISPATCH_OP(CheckValue);
 			DISPATCH_OP(Jump);
 
+			// Schizm ops
+			DISPATCH_OP(CallFunction);
+			DISPATCH_OP(Return);
+
+			DISPATCH_OP(MusicStop);
+			DISPATCH_OP(MusicPlayScore);
+			DISPATCH_OP(ScoreAlways);
+			DISPATCH_OP(ScoreNormal);
+			DISPATCH_OP(SndPlay);
+			DISPATCH_OP(SndPlayEx);
+			DISPATCH_OP(SndPlay3D);
+			DISPATCH_OP(SndPlaying);
+			DISPATCH_OP(SndWait);
+			DISPATCH_OP(SndHalt);
+			DISPATCH_OP(SndToBack);
+			DISPATCH_OP(SndStop);
+			DISPATCH_OP(SndStopAll);
+			DISPATCH_OP(SndAddRandom);
+			DISPATCH_OP(SndClearRandom);
+			DISPATCH_OP(VolumeAdd);
+			DISPATCH_OP(VolumeChange);
+			DISPATCH_OP(VolumeDown);
+			DISPATCH_OP(AnimVolume);
+			DISPATCH_OP(AnimChange);
+			DISPATCH_OP(ScreenName);
+			DISPATCH_OP(ExtractByte);
+			DISPATCH_OP(InsertByte);
+			DISPATCH_OP(String);
+			DISPATCH_OP(CmpNE);
+			DISPATCH_OP(CmpLE);
+			DISPATCH_OP(CmpGE);
+			DISPATCH_OP(Speech);
+			DISPATCH_OP(SpeechEx);
+			DISPATCH_OP(SpeechTest);
+			DISPATCH_OP(Say);
+			DISPATCH_OP(RandomInclusive);
+			DISPATCH_OP(HeroOut);
+			DISPATCH_OP(HeroGetPos);
+			DISPATCH_OP(HeroSetPos);
+			DISPATCH_OP(HeroGet);
+			DISPATCH_OP(Garbage);
+			DISPATCH_OP(GetRoom);
+			DISPATCH_OP(BitAnd);
+			DISPATCH_OP(BitOr);
+			DISPATCH_OP(AngleGet);
+			DISPATCH_OP(CDGet);
+			DISPATCH_OP(Disc);
+			DISPATCH_OP(HidePanel);
+			DISPATCH_OP(RotateUpdate);
+			DISPATCH_OP(Mul);
+			DISPATCH_OP(Div);
+			DISPATCH_OP(Mod);
+			DISPATCH_OP(CyfraGet);
+			DISPATCH_OP(PuzzleInit);
+			DISPATCH_OP(PuzzleCanPress);
+			DISPATCH_OP(PuzzleDoMove1);
+			DISPATCH_OP(PuzzleDoMove2);
+			DISPATCH_OP(PuzzleDone);
+			DISPATCH_OP(PuzzleWhoWon);
+			DISPATCH_OP(Fn);
+
 		default:
 			error("Unimplemented opcode %i", static_cast<int>(instr.op));
 		}
@@ -1885,8 +1919,7 @@ bool Runtime::runScript() {
 #undef DISPATCH_OP
 
 void Runtime::terminateScript() {
-	_activeScript.reset();
-	_scriptNextInstruction = 0;
+	_scriptCallStack.clear();
 
 	if (_gameState == kGameStateScript)
 		_gameState = kGameStateIdle;
@@ -2313,10 +2346,16 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 
 	if (changedRoom) {
 		// This shouldn't happen when running a script
-		assert(!_activeScript);
+		assert(_scriptCallStack.empty());
 
 		if (_gameID == GID_SCHIZM) {
-			// Keep script set
+			uint roomsToCompile[3] = {1, 3, 0};
+			uint numRoomsToCompile = 2;
+
+			if (roomNumber != 1 && roomNumber != 3)
+				roomsToCompile[numRoomsToCompile++] = roomNumber;
+
+			compileSchizmLogicSet(roomsToCompile, numRoomsToCompile);
 		} else if (_gameID == GID_REAH) {
 			_scriptSet.reset();
 
@@ -3276,10 +3315,54 @@ void Runtime::activateScript(const Common::SharedPtr<Script> &script, const Scri
 	if (script->instrs.size() == 0)
 		return;
 
+	assert(_gameState != kGameStateScript);
+
 	_scriptEnv = envVars;
-	_activeScript = script;
-	_scriptNextInstruction = 0;
+
+	CallStackFrame frame;
+	frame._script = script;
+	frame._nextInstruction = 0;
+
+	_scriptCallStack.resize(1);
+	_scriptCallStack[0] = frame;
+
 	_gameState = kGameStateScript;
+}
+
+void Runtime::compileSchizmLogicSet(const uint *roomNumbers, uint numRooms) {
+	_scriptSet.reset();
+
+	Common::SharedPtr<IScriptCompilerGlobalState> gs = createScriptCompilerGlobalState();
+
+	Common::SharedPtr<ScriptSet> scriptSet(new ScriptSet());
+
+	for (uint i = 0; i < numRooms; i++) {
+
+		Common::String logicFileName = Common::String::format("Log/Room%02u.log", roomNumbers[i]);
+
+		Common::File logicFile;
+		if (logicFile.open(logicFileName)) {
+			debug(1, "Compiling script %s...", logicFileName.c_str());
+			compileSchizmLogicFile(*scriptSet, logicFile, static_cast<uint>(logicFile.size()), logicFileName, gs.get());
+			logicFile.close();
+		}
+	}
+
+	gs->dumpFunctionNames(scriptSet->functionNames);
+
+	uint numFunctions = gs->getNumFunctions();
+
+	scriptSet->functions.resize(numFunctions);
+
+	for (uint i = 0; i < numFunctions; i++) {
+		Common::SharedPtr<Script> function = gs->getFunction(i);
+		scriptSet->functions[i] = function;
+
+		if (!function)
+			warning("Function '%s' was referenced but not defined", scriptSet->functionNames[i].c_str());
+	}
+
+	_scriptSet = scriptSet;
 }
 
 bool Runtime::parseIndexDef(IndexParseType parseType, uint roomNumber, const Common::String &key, const Common::String &value) {
@@ -3316,6 +3399,10 @@ bool Runtime::parseIndexDef(IndexParseType parseType, uint roomNumber, const Com
 		int height = 0;
 
 		int numValuesRead = sscanf(value.c_str(), "%i, %i, %i, %i", &left, &top, &width, &height);
+
+		// Work around bad def in Schizm at line 5899
+		if (numValuesRead != 4)
+			numValuesRead = sscanf(value.c_str(), "%i ,%i, %i, %i", &left, &top, &width, &height);
 
 		if (numValuesRead == 4) {
 			AnimationDef &animDef = _roomDefs[roomNumber]->animations[key];
@@ -4515,9 +4602,6 @@ void Runtime::scriptOpAnim(ScriptArg_t arg) {
 	}
 }
 
-OPCODE_STUB(AnimChange)
-OPCODE_STUB(AnimVolume)
-
 void Runtime::scriptOpStatic(ScriptArg_t arg) {
 	TAKE_STACK_INT(kAnimDefStackArgs);
 
@@ -4908,8 +4992,6 @@ void Runtime::scriptOpMusicVolRamp(ScriptArg_t arg) {
 	}
 }
 
-OPCODE_STUB(MusicStop)
-
 void Runtime::scriptOpParm0(ScriptArg_t arg) {
 	TAKE_STACK_INT(4);
 
@@ -5292,6 +5374,26 @@ void Runtime::scriptOpVerticalPanGet() {
 	_scriptStack.push_back(StackValue(isInRadius ? 1 : 0));
 }
 
+void Runtime::scriptOpCallFunction(ScriptArg_t arg) {
+	Common::SharedPtr<Script> function = _scriptSet->functions[arg];
+	if (function) {
+		CallStackFrame newFrame;
+		newFrame._script = function;
+		newFrame._nextInstruction = 0;
+
+		_scriptCallStack.push_back(newFrame);
+
+		_gameState = kGameStateScriptReset;
+	} else {
+		error("Unknown function '%s'", _scriptSet->functionNames[arg].c_str());
+	}
+}
+
+void Runtime::scriptOpReturn(ScriptArg_t arg) {
+	_scriptCallStack.pop_back();
+	_gameState = kGameStateScriptReset;
+}
+
 void Runtime::scriptOpSaveAs(ScriptArg_t arg) {
 	TAKE_STACK_INT(4);
 
@@ -5444,8 +5546,15 @@ void Runtime::scriptOpGoto(ScriptArg_t arg) {
 	}
 
 	if (newScript) {
-		_scriptNextInstruction = 0;
-		_activeScript = newScript;
+		// This only happens in Reah so we don't have to worry about what to do about frames on the callstack in Schizm
+		_gameState = kGameStateScriptReset;
+
+		CallStackFrame frame;
+		frame._script = newScript;
+		frame._nextInstruction = 0;
+
+		_scriptCallStack.resize(1);
+		_scriptCallStack[0] = frame;
 	} else {
 		error("Goto target %u couldn't be resolved", newInteraction);
 	}
@@ -5479,9 +5588,9 @@ void Runtime::scriptOpAnimName(ScriptArg_t arg) {
 		error("Can't resolve animation for room, room number was invalid");
 
 
-	Common::HashMap<Common::String, AnimationDef>::const_iterator it = roomDef->animations.find(_activeScript->strings[arg]);
+	Common::HashMap<Common::String, AnimationDef>::const_iterator it = roomDef->animations.find(_scriptSet->strings[arg]);
 	if (it == roomDef->animations.end())
-		error("Can't resolve animation for room, couldn't find animation '%s'", _activeScript->strings[arg].c_str());
+		error("Can't resolve animation for room, couldn't find animation '%s'", _scriptSet->strings[arg].c_str());
 
 	pushAnimDef(it->_value);
 }
@@ -5494,7 +5603,7 @@ void Runtime::scriptOpValueName(ScriptArg_t arg) {
 	if (!roomDef)
 		error("Room def doesn't exist");
 
-	const Common::String &varName = _activeScript->strings[arg];
+	const Common::String &varName = _scriptSet->strings[arg];
 
 	Common::HashMap<Common::String, int>::const_iterator it = roomDef->values.find(varName);
 	if (it == roomDef->values.end())
@@ -5511,7 +5620,7 @@ void Runtime::scriptOpVarName(ScriptArg_t arg) {
 	if (!roomDef)
 		error("Room def doesn't exist");
 
-	const Common::String &varName = _activeScript->strings[arg];
+	const Common::String &varName = _scriptSet->strings[arg];
 
 	Common::HashMap<Common::String, uint>::const_iterator it = roomDef->vars.find(varName);
 	if (it == roomDef->vars.end())
@@ -5521,11 +5630,11 @@ void Runtime::scriptOpVarName(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpSoundName(ScriptArg_t arg) {
-	_scriptStack.push_back(StackValue(_activeScript->strings[arg]));
+	_scriptStack.push_back(StackValue(_scriptSet->strings[arg]));
 }
 
 void Runtime::scriptOpCursorName(ScriptArg_t arg) {
-	const Common::String &cursorName = _activeScript->strings[arg];
+	const Common::String &cursorName = _scriptSet->strings[arg];
 
 	Common::HashMap<Common::String, StackInt_t>::const_iterator namedCursorIt = _namedCursors.find(cursorName);
 	if (namedCursorIt == _namedCursors.end()) {
@@ -5546,12 +5655,75 @@ void Runtime::scriptOpCheckValue(ScriptArg_t arg) {
 	if (stackArgs[0].type == StackValue::kNumber && stackArgs[0].value.i == arg)
 		_scriptStack.pop_back();
 	else
-		_scriptNextInstruction++;
+		_scriptCallStack.back()._nextInstruction++;
 }
 
 void Runtime::scriptOpJump(ScriptArg_t arg) {
-	_scriptNextInstruction = arg;
+	_scriptCallStack.back()._nextInstruction = arg;
 }
+
+OPCODE_STUB(MusicStop)
+OPCODE_STUB(MusicPlayScore)
+OPCODE_STUB(ScoreAlways)
+OPCODE_STUB(ScoreNormal)
+OPCODE_STUB(SndPlay)
+OPCODE_STUB(SndPlayEx)
+OPCODE_STUB(SndPlay3D)
+OPCODE_STUB(SndPlaying)
+OPCODE_STUB(SndWait)
+OPCODE_STUB(SndHalt)
+OPCODE_STUB(SndToBack)
+OPCODE_STUB(SndStop)
+OPCODE_STUB(SndStopAll)
+OPCODE_STUB(SndAddRandom)
+OPCODE_STUB(SndClearRandom)
+OPCODE_STUB(VolumeAdd)
+OPCODE_STUB(VolumeChange)
+OPCODE_STUB(VolumeDown)
+OPCODE_STUB(AnimVolume)
+OPCODE_STUB(AnimChange)
+OPCODE_STUB(ScreenName)
+
+void Runtime::scriptOpExtractByte(ScriptArg_t arg) {
+	TAKE_STACK_INT(2);
+
+	_scriptStack.push_back(StackValue(static_cast<StackInt_t>((stackArgs[0] >> (stackArgs[1] * 8) & 0xff))));
+}
+
+OPCODE_STUB(InsertByte)
+OPCODE_STUB(String)
+OPCODE_STUB(CmpNE)
+OPCODE_STUB(CmpLE)
+OPCODE_STUB(CmpGE)
+OPCODE_STUB(Speech)
+OPCODE_STUB(SpeechEx)
+OPCODE_STUB(SpeechTest)
+OPCODE_STUB(Say)
+OPCODE_STUB(RandomInclusive)
+OPCODE_STUB(HeroOut)
+OPCODE_STUB(HeroGetPos)
+OPCODE_STUB(HeroSetPos)
+OPCODE_STUB(HeroGet)
+OPCODE_STUB(Garbage)
+OPCODE_STUB(GetRoom)
+OPCODE_STUB(BitAnd)
+OPCODE_STUB(BitOr)
+OPCODE_STUB(AngleGet)
+OPCODE_STUB(CDGet)
+OPCODE_STUB(Disc)
+OPCODE_STUB(HidePanel)
+OPCODE_STUB(RotateUpdate)
+OPCODE_STUB(Mul)
+OPCODE_STUB(Div)
+OPCODE_STUB(Mod)
+OPCODE_STUB(CyfraGet)
+OPCODE_STUB(PuzzleInit)
+OPCODE_STUB(PuzzleCanPress)
+OPCODE_STUB(PuzzleDoMove1)
+OPCODE_STUB(PuzzleDoMove2)
+OPCODE_STUB(PuzzleDone)
+OPCODE_STUB(PuzzleWhoWon)
+OPCODE_STUB(Fn)
 
 #undef TAKE_STACK_STR
 #undef TAKE_STACK_STR_NAMED

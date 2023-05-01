@@ -132,19 +132,13 @@ ProtoInstruction::ProtoInstruction(ProtoOp paramProtoOp, ScriptOps::ScriptOp par
 }
 
 struct ProtoScript {
-	Common::Array<ProtoInstruction> instrs;
-
-	Common::Array<Common::String> strings;
-	Common::HashMap<Common::String, uint> stringToIndex;
-
 	void reset();
+
+	Common::Array<ProtoInstruction> instrs;
 };
 
 void ProtoScript::reset() {
 	instrs.clear();
-
-	strings.clear();
-	stringToIndex.clear(true);
 }
 
 struct ScriptNamedInstruction {
@@ -174,7 +168,7 @@ private:
 
 	void codeGenScript(ProtoScript &protoScript, Script &script);
 
-	static uint indexString(ProtoScript &script, const Common::String &str);
+	uint indexString(const Common::String &str);
 
 	enum NumberParsingMode {
 		kNumberParsingDec,
@@ -191,6 +185,8 @@ private:
 	const char *_scrToken;
 	const char *_eroomToken;
 
+	Common::HashMap<Common::String, uint> _stringToIndex;
+
 	IScriptCompilerGlobalState *_gs;
 };
 
@@ -200,12 +196,18 @@ public:
 
 	const Common::String *getTokenReplacement(const Common::String &str) const override;
 
-	void addFunction(const Common::String &fnName, const Common::SharedPtr<Script> &fn) override;
-	Common::SharedPtr<Script> getFunction(const Common::String &fnName) const override;
+	uint getFunctionIndex(const Common::String &fnName) override;
+	void setFunction(uint fnIndex, const Common::SharedPtr<Script> &fn) override;
+
+	uint getNumFunctions() const override;
+	void dumpFunctionNames(Common::Array<Common::String> &fnNames) const override;
+	Common::SharedPtr<Script> getFunction(uint fnIndex) const override;
 
 private:
 	Common::HashMap<Common::String, Common::String> _defs;
-	Common::HashMap<Common::String, Common::SharedPtr<Script> > _functions;
+
+	Common::HashMap<Common::String, uint> _functionNameToIndex;
+	Common::Array<Common::SharedPtr<Script> > _functions;
 };
 
 ScriptCompiler::ScriptCompiler(TextParser &parser, const Common::String &blamePath, ScriptDialect dialect, IScriptCompilerGlobalState *gs)
@@ -302,6 +304,11 @@ void ScriptCompiler::expectNumber(uint32 &outNumber) {
 void ScriptCompiler::compileScriptSet(ScriptSet *ss) {
 	Common::SharedPtr<RoomScriptSet> roomScript;
 
+	uint numExistingStrings = ss->strings.size();
+
+	for (uint i = 0; i < numExistingStrings; i++)
+		_stringToIndex[ss->strings[i]] = i;
+
 	const char *roomToken = nullptr;
 
 	if (_dialect == kScriptDialectReah) {
@@ -344,6 +351,15 @@ void ScriptCompiler::compileScriptSet(ScriptSet *ss) {
 			error("Error compiling script at line %i col %i: Expected %s and found '%s'", static_cast<int>(state._lineNum), static_cast<int>(state._col), roomToken, token.c_str());
 		}
 	}
+
+	for (const Common::HashMap<Common::String, uint>::Node &stiNode : _stringToIndex) {
+		if (stiNode._value >= numExistingStrings) {
+			if (stiNode._value >= ss->strings.size())
+				ss->strings.resize(stiNode._value + 1);
+
+			ss->strings[stiNode._value] = stiNode._key;
+		}
+	}
 }
 
 void ScriptCompiler::compileRoomScriptSet(RoomScriptSet *rss) {
@@ -383,7 +399,15 @@ void ScriptCompiler::compileRoomScriptSet(RoomScriptSet *rss) {
 
 			compileFunction(func.get());
 
-			_gs->addFunction(fnName, func);
+			uint fnIndex = _gs->getFunctionIndex(fnName);
+
+			if (_gs->getFunction(fnIndex)) {
+				// This triggers on fnSoundFountain_Start and fnSoundFountain_Stop in Room30.
+				// fnSoundFountain_Start is called in Room31, so might not matter there?  But fnSoundFountain_Stop is called in Room30.
+				warning("Function '%s' was defined multiple times", fnName.c_str());
+			}
+
+			_gs->setFunction(_gs->getFunctionIndex(fnName), func);
 		} else {
 			error("Error compiling script at line %i col %i: Expected %s or %s and found '%s'", static_cast<int>(state._lineNum), static_cast<int>(state._col), _eroomToken, _scrToken, token.c_str());
 		}
@@ -426,7 +450,7 @@ void ScriptCompiler::compileReahScreenScriptSet(ScreenScriptSet *sss) {
 		} else if (token == "dubbing") {
 			Common::String dubbingName;
 			_parser.expectToken(dubbingName, _blamePath);
-			protoScript.instrs.push_back(ProtoInstruction(ScriptOps::kDubbing, indexString(protoScript, dubbingName)));
+			protoScript.instrs.push_back(ProtoInstruction(ScriptOps::kDubbing, indexString(dubbingName)));
 		} else if (compileInstructionToken(protoScript, token)) {
 			// Nothing
 		} else {
@@ -695,6 +719,7 @@ static ScriptNamedInstruction g_schizmNamedInstructions[] = {
 	{"puzzleDoMove2", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleDoMove2},
 	{"puzzleDone", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleDone},
 	{"puzzleWhoWon", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleWhoWon},
+	{"fn", ProtoOp::kProtoOpScript, ScriptOps::kFn},
 
 	{"+", ProtoOp::kProtoOpScript, ScriptOps::kAdd},
 	{"-", ProtoOp::kProtoOpScript, ScriptOps::kSub},
@@ -761,28 +786,28 @@ bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::
 		if (_dialect == kScriptDialectReah) {
 			if (token.size() >= 3 && token[2] == ':') {
 				if (token[1] == 'Y') {
-					script.instrs.push_back(ProtoInstruction(ScriptOps::kVarName, indexString(script, token.substr(3))));
+					script.instrs.push_back(ProtoInstruction(ScriptOps::kVarName, indexString(token.substr(3))));
 					return true;
 				} else if (token[1] == 'V') {
-					script.instrs.push_back(ProtoInstruction(ScriptOps::kValueName, indexString(script, token.substr(3))));
+					script.instrs.push_back(ProtoInstruction(ScriptOps::kValueName, indexString(token.substr(3))));
 					return true;
 				} else
 					return false;
 			}
 		}
 
-		script.instrs.push_back(ProtoInstruction(ScriptOps::kAnimName, indexString(script, token.substr(1))));
+		script.instrs.push_back(ProtoInstruction(ScriptOps::kAnimName, indexString(token.substr(1))));
 		return true;
 	}
 
 	if (token.size() >= 2 && token[0] == '_') {
-		script.instrs.push_back(ProtoInstruction(ScriptOps::kSoundName, indexString(script, token.substr(1))));
+		script.instrs.push_back(ProtoInstruction(ScriptOps::kSoundName, indexString(token.substr(1))));
 		return true;
 	}
 
 	if (_dialect == kScriptDialectReah) {
 		if (token.hasPrefix("CUR_")) {
-			script.instrs.push_back(ProtoInstruction(ScriptOps::kCursorName, indexString(script, token)));
+			script.instrs.push_back(ProtoInstruction(ScriptOps::kCursorName, indexString(token)));
 			return true;
 		}
 	}
@@ -818,15 +843,9 @@ bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::
 			}
 		}
 	} else if (_dialect == kScriptDialectSchizm) {
-		if (token.hasPrefix("fn")) {
-			uint fnIndex = indexString(script, token);
-			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kCallFunction, fnIndex));
-			return true;
-		}
-
 		if (token.size() >= 2 && token[0] == '\"' && token[token.size() - 1] == '\"') {
 			// Seems like these are only used for sounds and music?
-			uint fnIndex = indexString(script, token.substr(1, token.size() - 2));
+			uint fnIndex = indexString(token.substr(1, token.size() - 2));
 			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kString, fnIndex));
 			return true;
 		}
@@ -842,6 +861,12 @@ bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::
 				script.instrs.push_back(ProtoInstruction(namedInstr.protoOp, namedInstr.op, 0));
 				return true;
 			}
+		}
+
+		if (token.hasPrefix("fn")) {
+			uint fnIndex = _gs->getFunctionIndex(token);
+			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kCallFunction, fnIndex));
+			return true;
 		}
 
 		if (token.size() >= 2 && token.hasSuffix("!")) {
@@ -878,19 +903,19 @@ bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::
 		}
 
 		if (couldBeScreenName) {
-			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kScreenName, indexString(script, token)));
+			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kScreenName, indexString(token)));
 			return true;
 		}
 
 		if (token.hasPrefix("cur")) {
-			script.instrs.push_back(ProtoInstruction(ScriptOps::kCursorName, indexString(script, token)));
+			script.instrs.push_back(ProtoInstruction(ScriptOps::kCursorName, indexString(token)));
 			return true;
 		}
 
 		// HACK: Work around broken volume variable names in Room02.  Some of these appear to have "par"
 		// where it should be "vol" but some are garbage.  Figure this out later.
 		if (token.hasPrefix("par")) {
-			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kGarbage, indexString(script, token)));
+			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kGarbage, indexString(token)));
 			return true;
 		}
 	}
@@ -1194,17 +1219,13 @@ void ScriptCompiler::codeGenScript(ProtoScript &protoScript, Script &script) {
 			break;
 		}
 	}
-
-	// Commit strings
-	script.strings = Common::move(protoScript.strings);
 }
 
-uint ScriptCompiler::indexString(ProtoScript &script, const Common::String &str) {
-	Common::HashMap<Common::String, uint>::const_iterator it = script.stringToIndex.find(str);
-	if (it == script.stringToIndex.end()) {
-		uint index = script.strings.size();
-		script.stringToIndex[str] = index;
-		script.strings.push_back(str);
+uint ScriptCompiler::indexString(const Common::String &str) {
+	Common::HashMap<Common::String, uint>::const_iterator it = _stringToIndex.find(str);
+	if (it == _stringToIndex.end()) {
+		uint index = _stringToIndex.size();
+		_stringToIndex[str] = index;
 		return index;
 	}
 
@@ -1223,16 +1244,39 @@ const Common::String *ScriptCompilerGlobalState::getTokenReplacement(const Commo
 	return &it->_value;
 }
 
-void ScriptCompilerGlobalState::addFunction(const Common::String &fnName, const Common::SharedPtr<Script> &fn) {
-	_functions.setVal(fnName, fn);
+uint ScriptCompilerGlobalState::getFunctionIndex(const Common::String &fnName) {
+	Common::HashMap<Common::String, uint>::const_iterator it = _functionNameToIndex.find(fnName);
+
+	assert(fnName != "fn");
+
+	if (it == _functionNameToIndex.end()) {
+		uint newIndex = _functionNameToIndex.size();
+		_functionNameToIndex.setVal(fnName, newIndex);
+		_functions.push_back(nullptr);
+
+		return newIndex;
+	} else
+		return it->_value;
 }
 
-Common::SharedPtr<Script> ScriptCompilerGlobalState::getFunction(const Common::String &fnName) const {
-	Common::HashMap<Common::String, Common::SharedPtr<Script> >::const_iterator it = _functions.find(fnName);
-	if (it == _functions.end())
-		return Common::SharedPtr<Script>();
+void ScriptCompilerGlobalState::setFunction(uint fnIndex, const Common::SharedPtr<Script> &fn) {
+	_functions[fnIndex] = fn;
+}
 
-	return it->_value;
+uint ScriptCompilerGlobalState::getNumFunctions() const {
+	return _functionNameToIndex.size();
+}
+
+void ScriptCompilerGlobalState::dumpFunctionNames(Common::Array<Common::String> &fnNames) const {
+	fnNames.clear();
+	fnNames.resize(_functionNameToIndex.size());
+
+	for (const Common::HashMap<Common::String, uint>::Node &node : _functionNameToIndex)
+		fnNames[node._value] = node._key;
+}
+
+Common::SharedPtr<Script> ScriptCompilerGlobalState::getFunction(uint fnIndex) const {
+	return _functions[fnIndex];
 }
 
 IScriptCompilerGlobalState::~IScriptCompilerGlobalState() {
