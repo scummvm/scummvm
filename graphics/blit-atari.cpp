@@ -274,7 +274,8 @@ void copyBlit(byte *dst, const byte *src,
 			"	moveq	#0x0f,d1\n"
 			"	and.l	d0,d1\n"
 			"	neg.l	d1\n"
-			"	lea		(4f,pc,d1.l*2),a1\n"
+			"	lea		(4f,pc,d1.l*2),a0\n"
+			"	move.l	a0,a1\n"
 
 			"	lsr.l	#4,d0\n"
 			"	beq.b	3f\n"
