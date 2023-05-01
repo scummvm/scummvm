@@ -22,7 +22,7 @@
 #ifndef AUDIO_RATE_H
 #define AUDIO_RATE_H
 
-#include "common/scummsys.h"
+#include "common/frac.h"
 
 namespace Audio {
 /**
@@ -46,11 +46,6 @@ enum {
 	ST_SAMPLE_MIN = (-ST_SAMPLE_MAX - 1L)
 };
 
-enum {
-	ST_EOF = -1,
-	ST_SUCCESS = 0
-};
-
 static inline void clampedAdd(int16& a, int b) {
 	int val;
 #ifdef OUTPUT_UNSIGNED_AUDIO
@@ -71,20 +66,39 @@ static inline void clampedAdd(int16& a, int b) {
 #endif
 }
 
+/**
+ * Helper class that handles resampling an AudioStream between an input and output
+ * sample rate. Its regular use case is upsampling from the native stream rate
+ * to the one used by the sound mixer. However, the input/output rates can be
+ * manually adjusted to change playback speed and produce sound effects.
+*/
 class RateConverter {
 public:
-	RateConverter() {}
+    RateConverter() {}
 	virtual ~RateConverter() {}
-
+    
 	/**
+	 * Convert the provided AudioStream to the target sample rate.
+	 * 
+	 * @param input			The AudioStream to read data from.
+	 * @param outBuffer		The buffer that the resampled audio will be written to. Must have size of at least @p numSamples.
+	 * @param numSamples	The desired number of samples to be written into the buffer.
+	 * @param vol_l			Volume for left channel.
+	 * @param vol_r			Volume for right channel.
+	 * 
 	 * @return Number of sample pairs written into the buffer.
 	 */
-	virtual int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) = 0;
+	virtual int convert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r) = 0;
 
-	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) = 0;
+	virtual void setInputRate(st_rate_t inputRate) = 0;
+	virtual void setOutputRate(st_rate_t outputRate) = 0;
+
+	virtual st_rate_t getInputRate() const = 0;
+	virtual st_rate_t getOutputRate() const = 0;
 };
 
-RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool instereo, bool outstereo, bool reverseStereo);
+RateConverter *makeRateConverter(st_rate_t inRate, st_rate_t outRate, bool inStereo, bool outStereo, bool reverseStereo);
+
 /** @} */
 } // End of namespace Audio
 
