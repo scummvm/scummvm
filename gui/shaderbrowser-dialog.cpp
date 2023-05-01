@@ -156,7 +156,6 @@ void ShaderBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	case kListSelectionChangedCmd:
 		_fileName->setEditString(_fileList->getList().operator[](_fileList->getSelected()));
-		_fileName->markAsDirty();
 		break;
 	case kListItemActivatedCmd:
 	case kListItemDoubleClickedCmd:

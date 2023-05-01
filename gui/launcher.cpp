@@ -1312,18 +1312,10 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 void LauncherSimple::updateButtons() {
 	bool enable = (_list->getSelected() >= 0);
-	if (enable != _startButton->isEnabled()) {
-		_startButton->setEnabled(enable);
-		_startButton->markAsDirty();
-	}
-	if (enable != _editButton->isEnabled()) {
-		_editButton->setEnabled(enable);
-		_editButton->markAsDirty();
-	}
-	if (enable != _removeButton->isEnabled()) {
-		_removeButton->setEnabled(enable);
-		_removeButton->markAsDirty();
-	}
+
+	_startButton->setEnabled(enable);
+	_editButton->setEnabled(enable);
+	_removeButton->setEnabled(enable);
 
 	int item = _list->getSelected();
 	bool en = enable;
@@ -1331,10 +1323,7 @@ void LauncherSimple::updateButtons() {
 	if (item >= 0)
 		en = !(Common::checkGameGUIOption(GUIO_NOLAUNCHLOAD, ConfMan.get("guioptions", _domains[item])));
 
-	if (en != _loadButton->isEnabled()) {
-		_loadButton->setEnabled(en);
-		_loadButton->markAsDirty();
-	}
+	_loadButton->setEnabled(en);
 }
 
 #pragma mark -
@@ -1567,10 +1556,8 @@ void LauncherGrid::updateListing() {
 
 void LauncherGrid::updateButtons() {
 	bool enable = (_grid->getSelected() >= 0);
-	if (enable != _removeButton->isEnabled()) {
-		_removeButton->setEnabled(enable);
-		_removeButton->markAsDirty();
-	}
+
+	_removeButton->setEnabled(enable);
 }
 
 void LauncherGrid::selectTarget(const Common::String &target) {

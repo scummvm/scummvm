@@ -266,9 +266,7 @@ bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx, 
 	// We need to redraw immediately. Otherwise
 	// some other event may cause a widget to be
 	// redrawn before redraw() has been called.
-	_redrawStatus = kRedrawFull;
-	redraw();
-	_system->updateScreen();
+	redrawFull();
 
 	return true;
 }
@@ -731,9 +729,7 @@ void GuiManager::screenChange() {
 	// We need to redraw immediately. Otherwise
 	// some other event may cause a widget to be
 	// redrawn before redraw() has been called.
-	_redrawStatus = kRedrawFull;
-	redraw();
-	_system->updateScreen();
+	redrawFull();
 
 #ifdef ENABLE_EVENTRECORDER
 	// Resume recording once GUI has redrawn

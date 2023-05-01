@@ -1097,11 +1097,9 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	case kClearShaderCmd:
 		_shader->setLabel(_c("None", "shader"));
 		_shaderClearButton->setEnabled(false);
-		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kMidiGainChanged:
 		_midiGainLabel->setLabel(Common::String::format("%.2f", (double)_midiGainSlider->getValue() / 100.0));
-		_midiGainLabel->markAsDirty();
 		break;
 	case kMusicVolumeChanged: {
 		const int newValue = _musicVolumeSlider->getValue();
@@ -1165,11 +1163,9 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	case kClearSoundFontCmd:
 		_soundFont->setLabel(_c("None", "soundfont"));
 		_soundFontClearButton->setEnabled(false);
-		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kKbdMouseSpeedChanged:
 		_kbdMouseSpeedLabel->setLabel(_(kbdMouseSpeedLabels[_kbdMouseSpeedSlider->getValue()]));
-		_kbdMouseSpeedLabel->markAsDirty();
 		break;
 	case kJoystickDeadzoneChanged:
 		_joystickDeadzoneLabel->setValue(_joystickDeadzoneSlider->getValue());
@@ -1192,8 +1188,6 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 				_shaderClearButton->setEnabled(true);
 			else
 				_shaderClearButton->setEnabled(false);
-
-			g_gui.scheduleTopDialogRedraw();
 		}
 		break;
 	}
