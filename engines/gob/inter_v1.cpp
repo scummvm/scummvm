@@ -791,6 +791,17 @@ void Inter_v1::o1_repeatUntil(OpFuncParams &params) {
 		size = _vm->_game->_script->peekUint16(2) + 2;
 
 		funcBlock(1);
+		if (_vm->getGameType() == kGameTypeAdibou1) {
+			// WORKAROUND: some Adibou1 scripts have loops checking for
+			// VAR(1) (= isSoundPlaying) without calling opcodes which
+			// usually update this variable, leading to an infinite loop.
+			// This may be a script bug that was innocuous in the original
+			// version due to slightly different timing of sound state
+			// transition.
+			bool isSoundPlaying = _vm->_sound->blasterPlayingSound() ||
+								  _vm->_vidPlayer->isSoundPlaying();
+			WRITE_VAR(1, isSoundPlaying);
+		}
 
 		_vm->_game->_script->seek(blockPos + size + 1);
 
