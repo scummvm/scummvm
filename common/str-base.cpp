@@ -837,6 +837,7 @@ TEMPLATE uint BASESTRING::hash() const {
 }
 
 template class BaseString<char>;
+template class BaseString<uint16>;
 template class BaseString<u32char_type_t>;
 
 }
