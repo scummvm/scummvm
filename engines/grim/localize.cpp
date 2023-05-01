@@ -102,6 +102,15 @@ Localizer::Localizer() {
 		case MKTAG('I', 'N', 'T', 'T'):
 		case MKTAG('6', '6', '6', 'I'):
 			break;
+		case 0xfffe4600: {
+			Common::String n = Common::U32String::decodeUTF16LE((const uint16 *) (data + 2), (filesize - 2) / 2).encode();
+			delete[] data;
+			data = new char[n.size() + 1];
+			memcpy(data, n.c_str(), n.size() + 1);
+			filesize = n.size();
+			g_grim->_isUtf8 = true;
+			break;
+		}
 		default:
 			error("Invalid magic reading %s: %08x (%s)", filename.c_str(), READ_BE_UINT32(data), tag2str(READ_BE_UINT32(data)));
 		}
