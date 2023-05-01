@@ -1119,11 +1119,11 @@ Character::Water::Water() {
 	quad[1] = camMatrix.mult3x3(TeVector3f32( 0.1f, 0.0f,  0.1f));
 	quad[2] = camMatrix.mult3x3(TeVector3f32(-0.1f, 0.0f, -0.1f));
 	quad[3] = camMatrix.mult3x3(TeVector3f32( 0.1f, 0.0f, -0.1f));
-	TeQuaternion rot = TeQuaternion::fromEuler(TeVector3f32(0, 0, 0));
+	const TeQuaternion noRot = TeQuaternion::fromEuler(TeVector3f32(0, 0, 0));
 	TeIntrusivePtr<Te3DTexture> tex = Te3DTexture::makeInstance();
 	tex->load(g_engine->getCore()->findFile("texturesIngame/EauOndine1.tga"));
 	_model->setQuad(tex, quad, TeColor(255, 0, 0, 0));
-	_model->setRotation(rot);
+	_model->setRotation(noRot);
 	_model->setScale(TeVector3f32(0.5, 0.5, 0.5));
 	_colorAnim._duration = 2000.0f;
 	TeColor col = _model->color();

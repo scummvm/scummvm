@@ -60,6 +60,7 @@ bool TeParticle::loadTexture(const Common::String &filename) {
 void TeParticle::setOrientation(const TeVector3f32 &orientation) {
 	// Divergence from original.. orientation is only ever used
 	// to calculate this matrix during update(), so just do it now.
+	// TODO: isn't this equivalent to using fromEuler?
 	_orientMatrix = TeMatrix4x4();
 	_orientMatrix.rotate(TeQuaternion::fromAxisAndAngle(TeVector3f32(1,  0, 0),
 							orientation.x() * M_PI / 180));

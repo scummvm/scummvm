@@ -165,7 +165,7 @@ void TeWarp::configMarker(const Common::String &objname, int markerImgNo, long m
 		}
 		foundId = anim->_markerIds[0];
 	}
-	assert(foundId >= 0 && foundId < _warpMarkers.size());
+	assert(foundId >= 0 && foundId < (long)_warpMarkers.size());
 
 	TeWarpMarker *warpMarker = _warpMarkers[foundId];
 	// The game uses TeSprite, but we use the layout system instead.

@@ -175,7 +175,7 @@ bool InGameScene::addMarker(const Common::String &markerName, const Common::Stri
 float InGameScene::angularDistance(float a1, float a2) {
 	float result = a2 - a1;
 	if (result >= -M_PI && result > M_PI) {
-		result = result + -(M_PI * 2);
+		result = result - (M_PI * 2);
 	} else {
 		result = result + (M_PI * 2);
 	}
@@ -1764,7 +1764,7 @@ void InGameScene::update() {
 		if (obj->_rotateTime >= 0) {
 			float time = MIN((float)(obj->_rotateTimer.getTimeFromStart() / 1000000.0), obj->_rotateTime);
 			TeVector3f32 rot = (obj->_rotateAmount * (time / obj->_rotateTime));
-			TeQuaternion rotq = TeQuaternion::fromEuler(rot);
+			TeQuaternion rotq = TeQuaternion::fromEulerDegrees(rot);
 			obj->model()->setRotation(obj->_rotateStart * rotq);
 		}
 	}

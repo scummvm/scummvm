@@ -115,8 +115,9 @@ bool AmerzoneGame::changeWarp(const Common::String &rawZone, const Common::Strin
 	TeSceneWarp sceneWarp;
 	sceneWarp.load(sceneXml, _warpY, false);
 
-	_xAngleMin = FLT_MAX;
-	_xAngleMax = FLT_MAX;
+	// NOTE: Original uses FLT_MAX here but that can cause overflows, just use a big number.
+	_xAngleMin = 1e8;
+	_xAngleMax = 1e8;
 	_yAngleMin = 45.0f - _orientationY;
 	_yAngleMax = _orientationY + 55.0f;
 
@@ -525,8 +526,10 @@ void AmerzoneGame::update() {
 				changeSpeedToMouseDirection();
 			}
 			float dragtime = (float)(_dragTimer.timeElapsed() / 1000000.0);
-			setAngleX(_orientationX - _speedX * dragtime);
-			setAngleY(_orientationY + _speedY * dragtime);
+			if (_speedX)
+				setAngleX(_orientationX - _speedX * dragtime);
+			if (_speedY)
+				setAngleY(_orientationY + _speedY * dragtime);
 		}
 	} else {
 		// Compass stuff happens here in the game, but it's
@@ -542,19 +545,12 @@ void AmerzoneGame::update() {
 			_warpY->setMouseLeftUpForMakers();
 	}
 
-	// Rotate x around the Y axis (spinning left/right on the spot)
-	TeQuaternion xRot = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 1, 0), (float)(_orientationX * M_PI) / 180.0f);
-	// Rotate y around the axis perpendicular to the x rotation
-	// Note: slightly different from original because of the way
-	// rotation works in the Amerzone Tetraedge engine.
-	TeVector3f32 yRotAxis = TeVector3f32(1, 0, 0);
-	xRot.inverse().transform(yRotAxis);
-	TeQuaternion yRot = TeQuaternion::fromAxisAndAngle(yRotAxis, (float)(_orientationY * M_PI) / 180.0f);
+	const TeQuaternion rot = TeQuaternion::fromEulerDegrees(TeVector3f32(_orientationX, _orientationY, 0));
 
 	if (_warpX)
-		_warpX->rotateCamera(xRot * yRot);
+		_warpX->rotateCamera(rot);
 	if (_warpY)
-		_warpY->rotateCamera(xRot * yRot);
+		_warpY->rotateCamera(rot);
 	if (_warpX)
 		_warpX->update();
 	if (_warpY)

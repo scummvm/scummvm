@@ -917,7 +917,7 @@ static int tolua_ExportedFunctions_PlaceCharacterOnDummy00(lua_State *L) {
 }
 
 static void SetCharacterRotation(const Common::String &charname, float rx, float ry, float rz) {
-	TeQuaternion quat = TeQuaternion::fromEuler(TeVector3f32(rx * M_PI / 180.0, ry * M_PI / 180.0, rz * M_PI / 180.0));
+	const TeQuaternion quat = TeQuaternion::fromEulerDegrees(TeVector3f32(rx, ry, rz));
 	Game *game = g_engine->getGame();
 	Character *c = game->scene().character(charname);
 	if (c) {
@@ -1139,8 +1139,7 @@ static void SetGroundObjectRotation(const Common::String &objname, float x, floa
 		return;
 	}
 
-	TeVector3f32 rotvec(x * M_PI / 180.0, y * M_PI / 180.0, z * M_PI / 180.0);
-	obj->model()->setRotation(TeQuaternion::fromEuler(rotvec));
+	obj->model()->setRotation(TeQuaternion::fromEulerDegrees(TeVector3f32(x, y, z)));
 	obj->model()->setVisible(true);
 }
 
@@ -2055,8 +2054,7 @@ static void SetObjectRotation(const Common::String &obj, float xr, float yr, flo
 		warning("[SetObjectRotation] Object not found %s", obj.c_str());
 		return;
 	}
-	const TeVector3f32 rot(xr * M_PI / 180.0, yr * M_PI / 180.0, zr * M_PI / 180.0);
-	obj3d->_objRotation = TeQuaternion::fromEuler(rot);
+	obj3d->_objRotation = TeQuaternion::fromEulerDegrees(TeVector3f32(xr, yr, zr));
 }
 
 static int tolua_ExportedFunctions_SetObjectRotation00(lua_State *L) {
@@ -2964,7 +2962,7 @@ static void LookAt(int x, int y) {
 	AmerzoneGame *game = dynamic_cast<AmerzoneGame *>(g_engine->getGame());
 	assert(game);
 	game->setAngleX(-x);
-	int yval = y + -360;
+	int yval = y - 360;
 	if (y < 90)
 		yval = y;
 	game->setAngleY(-yval);
