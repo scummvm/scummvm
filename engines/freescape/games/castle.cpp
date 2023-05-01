@@ -299,9 +299,7 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	resetInput();
 }
 
-void CastleEngine::drawUI() {
-	_gfx->setViewport(_fullscreenViewArea);
-
+void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 	uint32 color = 10;
 	uint8 r, g, b;
 
@@ -312,12 +310,6 @@ void CastleEngine::drawUI() {
 
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
-
-	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
-	uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
-	surface->fillRect(_fullscreenViewArea, gray);
-	drawCrossair(surface);
 
 	Common::Rect backRect(97, 181, 232, 190);
 	surface->fillRect(backRect, back);
@@ -331,18 +323,6 @@ void CastleEngine::drawUI() {
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else
 		drawStringInSurface(_currentArea->_name, 97, 182, front, back, surface);
-
-	if (!_uiTexture)
-		_uiTexture = _gfx->createTexture(surface);
-	else
-		_uiTexture->update(surface);
-
-	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
-
-	surface->free();
-	delete surface;
-
-	_gfx->setViewport(_viewArea);
 }
 
 void CastleEngine::initGameState() {

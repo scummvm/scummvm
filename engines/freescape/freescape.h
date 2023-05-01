@@ -570,7 +570,8 @@ public:
 	void initGameState() override;
 	void titleScreen() override;
 	void loadAssetsDOSFullGame() override;
-	void drawUI() override;
+
+	void drawDOSUI(Graphics::Surface *surface) override;
 
 	void executePrint(FCLInstruction &instruction) override;
 	void gotoArea(uint16 areaID, int entranceID) override;
