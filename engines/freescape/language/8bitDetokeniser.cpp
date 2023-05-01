@@ -115,7 +115,7 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 		// check we have enough bytes left to read
 		if (opcode > 48) {
 			debugC(1, kFreescapeDebugParser, "%s", detokenisedStream.c_str());
-			if (opcode != 0x3f)
+			if (opcode != 0x3f && opcode != 0x3b)
 				error("ERROR: failed to read opcode: %x", opcode);
 			break;
 		}

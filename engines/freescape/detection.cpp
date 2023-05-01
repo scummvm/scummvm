@@ -337,6 +337,20 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"castlemaster",
+		"Demo",
+		{
+			{"CASTLE.EXE", 0, "cbcf475b2d993c831a34a5203d2643e1", 2022},
+			{"CMDC.EXE", 0, "278fd1a96c61db71d952af472164ac57", 56526},
+			{"CMDE.EXE", 0, "428555ba83bc64d69bc2f7cb385f04f2", 88590},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE | ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"castlemaster",
 		"",
 		{
 			{"CASTLE.EXE", 0, "f1a141df0e47860246716db20d2ba061", 2806},

@@ -243,6 +243,46 @@ void CastleEngine::loadAssetsDOSFullGame() {
 	// load8bitBinary(file, 0x791a, 16);
 }
 
+void CastleEngine::loadAssetsDOSDemo() {
+	Common::File file;
+	Common::SeekableReadStream *stream = nullptr;
+
+	if (_renderMode == Common::kRenderEGA) {
+		_viewArea = Common::Rect(40, 33, 280, 152);
+
+		file.open("CMLE.DAT");
+		_title = load8bitBinImage(&file, 0x0);
+		_title->setPalette((byte *)&kCastleTitleDOSPalette, 0, 16);
+		file.close();
+
+		file.open("CMOE.DAT");
+		_option = load8bitBinImage(&file, 0x0);
+		_option->setPalette((byte *)&kCastleOptionDOSPalette, 0, 16);
+		file.close();
+
+		file.open("CME.DAT");
+		_border = load8bitBinImage(&file, 0x0);
+		_border->setPalette((byte *)&kCastleBorderDOSPalette, 0, 16);
+		file.close();
+
+		stream = decryptFile("CMLD"); // Only english
+
+		loadFonts(kFreescapeCastleFont, 59);
+		loadMessagesVariableSize(stream, 0x11, 164);
+		delete stream;
+
+		stream = decryptFile("CDEDF");
+		load8bitBinary(stream, 0, 16);
+		for (auto &it : _areaMap)
+			it._value->addStructure(_areaMap[255]);
+
+		_areaMap[2]->addFloor();
+		delete stream;
+	} else
+		error("Not implemented yet");
+}
+
+
 void CastleEngine::titleScreen() {
 	if (isAmiga() || isAtariST()) // These releases has their own screens
 		return;
