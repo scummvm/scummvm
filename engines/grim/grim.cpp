@@ -396,6 +396,15 @@ Common::Error GrimEngine::run() {
 		g_driver = createRenderer(640, 480);
 	}
 
+	if (getGameType() == GType_MONKEY4 && getGameLanguage() == Common::Language::ZH_TWN) {
+		Common::File img, imgmap;
+		if (img.open("font.tga") && imgmap.open("map.bin")) {
+			BitmapFont *f = new BitmapFont();
+			f->loadTGA("font.tga", &imgmap, &img);
+			_overrideFont = f;
+		}
+	}
+
 	if (getGameType() == GType_MONKEY4 && SearchMan.hasFile("AMWI.m4b")) {
 		// Play EMI Mac Aspyr logo
 		playAspyrLogo();
