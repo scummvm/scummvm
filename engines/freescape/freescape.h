@@ -570,6 +570,7 @@ public:
 	void initGameState() override;
 	void titleScreen() override;
 	void loadAssetsDOSFullGame() override;
+	void loadAssetsDOSDemo() override;
 
 	void drawDOSUI(Graphics::Surface *surface) override;
 
