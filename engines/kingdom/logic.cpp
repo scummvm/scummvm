@@ -478,6 +478,9 @@ void Logic::gameHelp() {
 		//TODO: Set _quitFlag to 1
 		break;
 	case 0x241:
+	case 0x43B:
+	case 0x43C:
+	case 0x44F:
 		// Resume game
 		gameHelp_Sub43C();
 		return;
@@ -540,11 +543,8 @@ void Logic::gameHelp() {
 	case 0x246:
 		_vm->saveGame();
 		break;
-	case 0x43B:
-	case 0x43C:
-	case 0x44F:
-		gameHelp_Sub43C();
-		return;
+	default:
+		break;
 	}
 
 	if (_vm->_userInput > 0x427 && _vm->_userInput < 0x43A)

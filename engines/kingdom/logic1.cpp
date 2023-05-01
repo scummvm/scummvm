@@ -699,7 +699,7 @@ void Logic::GPL1_121() {
 			GPLogic1_SubSP121();
 		break;
 	case 0x43E:
-		if (_vm->_pMovie == 023)
+		if (_vm->_pMovie == 23)
 			GPLogic1_SubSP121();
 		else {
 			_vm->_sound = _vm->_lastSound;
