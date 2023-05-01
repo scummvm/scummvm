@@ -803,7 +803,6 @@ void retro_run(void) {
 					frameskip_events = 0;
 				}
 			}
-
 			/* Switch to ScummVM thread, unless frameskipping is ongoing */
 			if (!skip_frame)
 				retro_switch_to_emu_thread();

@@ -118,7 +118,8 @@ LIBRETRO_OBJS := $(CORE_PATH)/libretro-os.o \
 	$(CORE_PATH)/libretro-fs.o \
 	$(CORE_PATH)/libretro-fs-factory.o \
 	$(CORE_PATH)/libretro.o \
-	$(CORE_PATH)/libretro-threads.o
+	$(CORE_PATH)/libretro-threads.o \
+	$(CORE_PATH)/libretro-timer.o
 
 OBJS += $(LIBRETRO_OBJS)
 

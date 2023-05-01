@@ -46,7 +46,7 @@
 #endif
 
 #include "backends/saves/default/default-saves.h"
-#include "backends/timer/default/default-timer.h"
+#include "backends/platform/libretro/include/libretro-timer.h"
 #include "graphics/colormasks.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
@@ -322,6 +322,7 @@ Common::List<Common::Event> _events;
 extern bool timing_inaccuracies_is_enabled(void);
 extern bool consecutive_screen_updates_is_enabled(void);
 extern void reset_performance_tuner(void);
+extern float frame_rate;
 
 class OSystem_RETRO : public EventsBaseBackend, public PaletteManager {
 public:
@@ -360,12 +361,11 @@ public:
 	bool _ptrmouseButton;
 
 	uint32 _startTime;
-	uint32 _threadExitTime;
 	uint8 _threadSwitchCaller;
 
 	Audio::MixerImpl *_mixer;
 
-	OSystem_RETRO() : _mousePaletteEnabled(false), _mouseVisible(false), _mouseX(0), _mouseY(0), _mouseXAcc(0.0), _mouseYAcc(0.0), _mouseHotspotX(0), _mouseHotspotY(0), _dpadXAcc(0.0), _dpadYAcc(0.0), _dpadXVel(0.0f), _dpadYVel(0.0f), _mouseKeyColor(0), _mouseDontScale(false), _joypadnumpadLast(8), _joypadnumpadActive(false), _mixer(0), _startTime(0), _threadExitTime(0), _threadSwitchCaller(0) {
+	OSystem_RETRO() : _mousePaletteEnabled(false), _mouseVisible(false), _mouseX(0), _mouseY(0), _mouseXAcc(0.0), _mouseYAcc(0.0), _mouseHotspotX(0), _mouseHotspotY(0), _dpadXAcc(0.0), _dpadYAcc(0.0), _dpadXVel(0.0f), _dpadYVel(0.0f), _mouseKeyColor(0), _mouseDontScale(false), _joypadnumpadLast(8), _joypadnumpadActive(false), _mixer(0), _startTime(0), _threadSwitchCaller(0) {
 		_fsFactory = new FS_SYSTEM_FACTORY();
 		memset(_mouseButtons, 0, sizeof(_mouseButtons));
 		memset(_joypadmouseButtons, 0, sizeof(_joypadmouseButtons));
@@ -397,7 +397,8 @@ public:
 		_overlay.create(RES_W_OVERLAY, RES_H_OVERLAY, Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
 #endif
 		_mixer = new Audio::MixerImpl(SAMPLE_RATE);
-		_timerManager = new DefaultTimerManager();
+
+		_timerManager = new LibretroTimerManager(frame_rate);
 
 		_mixer->setReady(true);
 
@@ -550,7 +551,7 @@ public:
 		Non consecutive updateScreen are covered by thread switches triggered by pollEvent or delayMillis. */
 		if (! timing_inaccuracies_is_enabled() && consecutive_screen_updates_is_enabled()) {
 			if (_threadSwitchCaller & THREAD_SWITCH_UPDATE) {
-				retro_switch_to_main_thread();
+				((LibretroTimerManager *)_timerManager)->switchThread();
 			} else {
 				_threadSwitchCaller = THREAD_SWITCH_UPDATE;
 			}
@@ -643,23 +644,13 @@ public:
 		_mousePaletteEnabled = true;
 	}
 
-	void retroCheckThread(uint32 offset = 0) {
-		/* Limit the thread switches triggered by pollEvent or delayMillis to one each 10ms. */
-		if (_threadExitTime <= (getMillis() + offset)) {
-			retro_switch_to_main_thread();
-			_threadExitTime = getMillis() + 10;
-		}
-
-		((DefaultTimerManager *)_timerManager)->handler();
-	}
-
 	uint8 getThreadSwitchCaller(){
 		return _threadSwitchCaller;
 	}
 
 	virtual bool pollEvent(Common::Event &event) {
 		_threadSwitchCaller = THREAD_SWITCH_POLL;
-		retroCheckThread();
+		((LibretroTimerManager *)_timerManager)->checkThread();
 		if (!_events.empty()) {
 			event = _events.front();
 			_events.pop_front();
@@ -687,6 +678,7 @@ public:
 	virtual void delayMillis(uint msecs) {
 		// Implement 'non-blocking' sleep...
 		uint32 start_time = getMillis();
+		_threadSwitchCaller = THREAD_SWITCH_DELAY;
 
 		if (timing_inaccuracies_is_enabled()) {
 			// Use janky inaccurate method...
@@ -697,12 +689,11 @@ public:
 				// thread exit time, exit the thread immediately
 				// (i.e. start burning delay time in the main RetroArch
 				// thread as soon as possible...)
-				_threadSwitchCaller = THREAD_SWITCH_DELAY;
-				retroCheckThread(time_remaining);
+				((LibretroTimerManager *)_timerManager)->checkThread(time_remaining);
 				// Check how much delay time remains...
 				elapsed_time = getMillis() - start_time;
 				if (time_remaining > elapsed_time) {
-					time_remaining = time_remaining - elapsed_time;
+					time_remaining -= elapsed_time;
 					usleep(1000);
 				} else {
 					time_remaining = 0;
@@ -711,9 +702,8 @@ public:
 		} else {
 			// Use accurate method...
 			while (getMillis() < start_time + msecs) {
+				((LibretroTimerManager *)_timerManager)->checkThread();
 				usleep(1000);
-				_threadSwitchCaller = THREAD_SWITCH_DELAY;
-				retroCheckThread();
 			}
 		}
 	}
