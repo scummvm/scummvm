@@ -614,7 +614,7 @@ void GuiManager::openDialog(Dialog *dialog) {
 		dialog->reflowLayout();
 }
 
-void GuiManager::closeTopDialog(bool redraw) {
+void GuiManager::closeTopDialog() {
 	// Don't do anything if no dialog is open
 	if (_dialogStack.empty())
 		return;
@@ -627,12 +627,10 @@ void GuiManager::closeTopDialog(bool redraw) {
 		giveFocusToDialog(dialog);
 	}
 
-	if (redraw) {
-		if (_redrawStatus != kRedrawFull)
-			_redrawStatus = kRedrawCloseDialog;
+	if (_redrawStatus != kRedrawFull)
+		_redrawStatus = kRedrawCloseDialog;
 
-		this->redraw();
-	}
+	redraw();
 }
 
 void GuiManager::setupCursor() {

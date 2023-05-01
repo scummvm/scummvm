@@ -71,7 +71,6 @@ typedef Common::FixedStack<Dialog *> DialogStack;
  */
 class GuiManager : public Common::Singleton<GuiManager>, public CommandSender {
 	friend class Dialog;
-	friend class Tooltip;
 	friend class Common::Singleton<SingletonBaseType>;
 	GuiManager();
 	~GuiManager() override;
@@ -212,7 +211,7 @@ protected:
 	void restoreState();
 
 	void openDialog(Dialog *dialog);
-	void closeTopDialog(bool redraw = true);
+	void closeTopDialog();
 
 	void redraw();
 
