@@ -34,6 +34,13 @@ namespace Access {
 
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 
+ScreenSave::ScreenSave(){
+	_clipWidth = _clipHeight = 0;
+	_windowXAdd = _windowYAdd = 0;
+	_scrollCol = _scrollRow = 0;
+	_screenYOff = 0;
+}
+
 Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	create(320, 200);
 	Common::fill(&_tempPalette[0], &_tempPalette[PALETTE_SIZE], 0);
@@ -63,6 +70,13 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	_cycleStart = 0;
 	_endCycle = 0;
 	_fadeIn = false;
+
+	for (int i = 0; i < 768; ++i) {
+		_rawPalette[i] = 0;
+		_savedPalettes[0][i] = 0;
+		_savedPalettes[1][i] = 0;
+		_tempPalette[i] = 0;
+	}
 }
 
 void Screen::clearScreen() {

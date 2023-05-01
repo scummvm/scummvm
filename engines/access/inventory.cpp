@@ -54,6 +54,18 @@ int InventoryEntry::checkItem(int itemId) {
 
 /*------------------------------------------------------------------------*/
 
+InventoryManager::SavedFields::SavedFields() {
+	_vWindowHeight = _vWindowLinesTall = _vWindowWidth = _vWindowBytesWide = 0;
+	_playFieldHeight = _playFieldWidth = 0;
+	_windowXAdd = _windowYAdd = 0;
+	_screenYOff = 0;
+	_scrollX = _scrollY = 0;
+	_clipWidth = _clipHeight = 0;
+	_scrollCol = _scrollRow = 0;
+}
+
+/*------------------------------------------------------------------------*/
+
 InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 	_startInvItem = 0;
 	_startInvBox = 0;

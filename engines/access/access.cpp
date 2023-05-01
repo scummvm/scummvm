@@ -79,7 +79,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_establish = nullptr;
 
 	_conversation = 0;
-	_currentMan = 0;
 	_newTime = 0;
 	_newDate = 0;
 	Common::fill(&_objectsTable[0], &_objectsTable[100], (SpriteResource *)nullptr);
@@ -120,6 +119,9 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_pictureTaken = 0;
 
 	_vidEnd = false;
+
+	for (int i = 0; i < 6; ++i)
+		_countTbl[i] = 0;
 }
 
 AccessEngine::~AccessEngine() {

@@ -31,6 +31,10 @@ namespace Access {
 namespace Martian {
 
 MartianEngine::MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc) : AccessEngine(syst, gameDesc) {
+	_skipStart = false;
+	_introObjects = nullptr;
+	_creditsStream = nullptr;
+	_spec7Objects = nullptr;
 }
 
 MartianEngine::~MartianEngine() {

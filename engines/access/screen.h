@@ -42,6 +42,8 @@ struct ScreenSave {
 	int _scrollRow;
 	Common::Point _bufferStart;
 	int _screenYOff;
+
+	ScreenSave();
 };
 
 class Screen : public BaseSurface {

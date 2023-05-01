@@ -68,6 +68,8 @@ class InventoryManager : public Manager {
 		Common::Point _bufferStart;
 		int _scrollCol;
 		int _scrollRow;
+
+		SavedFields();
 	};
 private:
 	Common::Array<int> _items;

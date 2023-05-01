@@ -32,6 +32,12 @@ namespace Martian {
 
 MartianRoom::MartianRoom(AccessEngine *vm) : Room(vm) {
 	_game = (MartianEngine *)vm;
+
+	for (int i = 0; i < 30; i++)
+		_byte26CD2[i] = 0;
+
+	for (int i = 0; i < 10; i++)
+		_byte26CBC[i] = 0;
 }
 
 MartianRoom::~MartianRoom() {
