@@ -380,8 +380,8 @@ void KingdomGame::loadAResource(int reznum) {
 			file->seek(0, SEEK_SET);
 			_rezPointers[reznum] = file->readStream(_rezSize[reznum]);
 			file->close();
-			delete file;
 		}
+		delete file;
 	}
 }
 
