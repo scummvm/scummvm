@@ -368,6 +368,9 @@ Costume *ResourceLoader::loadCostume(const Common::String &filename, Actor *owne
 Font *ResourceLoader::loadFont(const Common::String &filename) {
 	Common::SeekableReadStream *stream;
 
+	if (g_grim->_overrideFont)
+		return g_grim->_overrideFont;
+
 	if (g_grim->getGameType() == GType_GRIM && g_grim->isRemastered()) {
 		Common::String name = "FontsHD/" + filename + ".txt";
 		stream = openNewStreamFile(name, true);
