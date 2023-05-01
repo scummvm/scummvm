@@ -652,7 +652,7 @@ int Channel::mix(int16 *data, uint len) {
 		_samplesConsumed = _samplesDecoded;
 		_mixerTimeStamp = g_system->getMillis(true);
 		_pauseTime = 0;
-		res = _converter->flow(*_stream, data, len, _volL, _volR);
+		res = _converter->convert(*_stream, data, len, _volL, _volR);
 		_samplesDecoded += res;
 	}
 

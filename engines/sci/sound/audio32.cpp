@@ -234,7 +234,7 @@ Audio32::~Audio32() {
 
 int Audio32::writeAudioInternal(Audio::AudioStream &sourceStream, Audio::RateConverter &converter, Audio::st_sample_t *targetBuffer, const int numSamples, const Audio::st_volume_t leftVolume, const Audio::st_volume_t rightVolume) {
 	const int samplePairsToRead = numSamples >> 1;
-	const int samplePairsWritten = converter.flow(sourceStream, targetBuffer, samplePairsToRead, leftVolume, rightVolume);
+	const int samplePairsWritten = converter.convert(sourceStream, targetBuffer, samplePairsToRead, leftVolume, rightVolume);
 	return samplePairsWritten << 1;
 }
 

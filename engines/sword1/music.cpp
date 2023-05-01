@@ -246,7 +246,7 @@ void Music::mixer(int16 *buf, uint32 len) {
 	memset(buf, 0, 2 * len * sizeof(int16));
 	for (int i = 0; i < ARRAYSIZE(_handles); i++)
 		if (_handles[i].streaming() && _converter[i])
-			_converter[i]->flow(_handles[i], buf, len, _volumeL, _volumeR);
+			_converter[i]->convert(_handles[i], buf, len, _volumeL, _volumeR);
 }
 
 void Music::setVolume(uint8 volL, uint8 volR) {
