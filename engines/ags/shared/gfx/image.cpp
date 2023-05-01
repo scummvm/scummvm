@@ -50,7 +50,7 @@ BITMAP *decodeImageStream(Common::SeekableReadStream &stream, color *pal) {
 
 		// Copy the palette
 		const byte *palP = decoder.getPalette();
-		if (palP) {
+		if (palP && pal) {
 			for (int idx = 0; idx < 256; ++idx, palP += 3) {
 				pal[idx].r = palP[0];
 				pal[idx].g = palP[1];
