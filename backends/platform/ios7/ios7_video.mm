@@ -981,7 +981,7 @@ uint getSizeNextPOT(uint size) {
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
 	for (GameController *c : _controllers) {
 		if ([c isKindOfClass:TouchController.class]) {
-			[(TouchController *)c touchesEnded:touches withEvent:event];
+			[(TouchController *)c touchesCancelled:touches withEvent:event];
 		}
 	}
 }
