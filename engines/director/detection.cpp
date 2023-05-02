@@ -43,6 +43,8 @@ static struct CustomTarget {
 	{"d4-mac", "mac", "400" },
 	{"d3-win", "win", "300" },
 	{"d4-win", "win", "400" },
+	{"d5-mac", "mac", "500" },
+	{"d5-win", "win", "500" },
 	{"director-movie", "win", "400" },
 	{ nullptr, nullptr, nullptr }
 };

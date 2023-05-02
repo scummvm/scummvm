@@ -104,6 +104,7 @@ public:
 
 	void clearSharedCast();
 	void loadSharedCastsFrom(Common::String filename);
+	Archive *loadExternalCastFrom(Common::String filename);
 
 	CastMember *getCastMember(CastMemberID memberID);
 	CastMember *createOrReplaceCastMember(CastMemberID memberID, CastMember *cast);

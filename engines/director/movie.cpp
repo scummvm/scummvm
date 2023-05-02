@@ -154,14 +154,23 @@ void Movie::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
 		stream.readUint16();
 		uint16 libId = stream.readUint16() - CAST_LIB_OFFSET;
 		debugC(5, kDebugLoading, "Movie::loadCastLibMapping: name: %s, path: %s, itemCount: %d, libId: %d", name.c_str(), path.c_str(), itemCount, libId);
+		Archive *castArchive = _movieArchive;
+		bool isExternal = !path.empty();
+		if (isExternal) {
+			castArchive = loadExternalCastFrom(pathMakeRelative(path));
+			if (!castArchive) {
+				continue;	// couldn't load external cast
+			}
+		}
+
 		Cast *cast = nullptr;
 		if (_casts.contains(libId)) {
 			cast = _casts.getVal(libId);
 		} else {
-			cast = new Cast(this, libId);
+			cast = new Cast(this, libId, false, isExternal);
 			_casts.setVal(libId, cast);
 		}
-		cast->setArchive(_movieArchive);
+		cast->setArchive(castArchive);
 	}
 	return;
 }
@@ -176,6 +185,8 @@ bool Movie::loadArchive() {
 	_version = _cast->_version;
 	_platform = _cast->_platform;
 	_movieRect = _cast->_movieRect;
+	_score->_currentFrameRate = _cast->_frameRate;
+	_stageColor = _vm->transformColor(_cast->_stageColor);
 	// Wait to handle _stageColor until palette is loaded in loadCast...
 
 	// File Info
@@ -360,12 +371,33 @@ void Movie::loadSharedCastsFrom(Common::String filename) {
 	debug(0, "@@@@   Loading shared cast '%s'", filename.c_str());
 	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
-	_sharedCast = new Cast(this, DEFAULT_CAST_LIB, true);
+	_sharedCast = new Cast(this, DEFAULT_CAST_LIB, true, false);
 	_sharedCast->setArchive(sharedCast);
 	_sharedCast->loadArchive();
 
 	// Register the resfile so that Cursor::readFromResource can find it
 	g_director->_allOpenResFiles.setVal(sharedCast->getPathName(), sharedCast);
+}
+
+Archive *Movie::loadExternalCastFrom(Common::String filename) {
+	Archive *externalCast = _vm->createArchive();
+
+	if (!externalCast->openFile(filename)) {
+		warning("Movie::loadExternalCastFrom(): Cast file %s not found", filename.c_str());
+
+		delete externalCast;
+
+		return nullptr;
+	}
+	externalCast->setPathName(filename);
+
+	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+	debug(0, "@@@@   Loading external cast '%s'", filename.c_str());
+	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+
+	// Store the archive for later
+	g_director->_allOpenResFiles.setVal(externalCast->getPathName(), externalCast);
+	return externalCast;
 }
 
 CastMember *Movie::getCastMember(CastMemberID memberID) {
