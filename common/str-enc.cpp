@@ -102,6 +102,7 @@ static const uint16 *windows950ConversionTable = 0;
 static uint16 *windows950ReverseConversionTable = 0;
 static const uint16 *johabConversionTable = 0;
 static const uint16 *johabReverseConversionTable = 0;
+static const uint16 *traditional2SimplifiedChineseConversionTable = 0;
 
 static const uint16 *loadCJKTable(File &f, int idx, size_t sz) {
 	f.seek(16 + idx * 4);
@@ -114,6 +115,23 @@ static const uint16 *loadCJKTable(File &f, int idx, size_t sz) {
 		res[i] = FROM_LE_16(res[i]);
 #endif
 	return res;
+}
+
+static void loadChineseT2S(File &f) {
+	f.seek(16 + 5 * 4);
+	uint32 off = f.readUint32LE();
+	f.seek(off);
+	uint16 *res = new uint16[0x10000];
+	for (uint i = 0; i < 0x10000; i++) {
+		res[i] = i;
+	}
+	uint32 num_entries = f.readUint32LE();
+	for (uint i = 0; i < num_entries; i++) {
+		uint16 t = f.readUint16LE();
+		uint16 s = f.readUint16LE();
+		res[t] = s;
+	}
+	traditional2SimplifiedChineseConversionTable = res;
 }
 
 static void loadCJKTables() {
@@ -153,6 +171,8 @@ static void loadCJKTables() {
 		johabConversionTable = loadCJKTable(f, 3, 80 * 188);
 	if (num_tables >= 5)
 		windows936ConversionTable = loadCJKTable(f, 4, 126 * 190);
+	if (num_tables >= 6)
+		loadChineseT2S(f);
 }
 
 void releaseCJKTables() {
@@ -1211,6 +1231,24 @@ StringEncodingResult U32String::encode(String &outString, CodePage page, char er
 	}
 
 	return outString.encodeInternal(*this, page, errorChar);
+}
+
+U32String U32String::transcodeChineseT2S() const {
+	if (!cjk_tables_loaded)
+		loadCJKTables();
+
+	if (!traditional2SimplifiedChineseConversionTable)
+		return *this;
+
+	U32String simplified;
+	for (uint32 i = 0; i < size(); i++) {
+		uint32 ch = _str[i];
+		if (ch >= 0x10000)
+			simplified += ch;
+		else
+			simplified += traditional2SimplifiedChineseConversionTable[ch];
+	}
+	return simplified;
 }
 
 } // End of namespace Common
