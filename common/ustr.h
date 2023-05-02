@@ -187,6 +187,9 @@ public:
 	/** Transform a U32String into UTF-16 representation (native encoding). The result must be freed. */
 	uint16 *encodeUTF16Native(uint *len = nullptr) const;
 
+	/** Transform Traditional Chinese string into Simplified. */
+	U32String transcodeChineseT2S() const;
+
 private:
 	static U32String formatInternal(const U32String *fmt, ...);
 
