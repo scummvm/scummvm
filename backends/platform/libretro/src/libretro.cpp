@@ -568,7 +568,7 @@ void retro_init(void) {
 }
 
 void retro_deinit(void) {
-	g_system->destroy();
+	retroDestroy();
 	free(sound_buffer);
 }
 

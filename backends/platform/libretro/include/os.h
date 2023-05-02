@@ -94,4 +94,6 @@ void retroKeyEvent(bool down, unsigned keycode, uint32_t character, uint16_t key
 
 uint8 getThreadSwitchCaller(void);
 
+void retroDestroy(void);
+
 #endif

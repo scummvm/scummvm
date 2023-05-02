@@ -1300,6 +1300,10 @@ public:
 		dynamic_cast<OSystem_RETRO *>(g_system)->getEventManager()->resetQuit();
 	}
 
+	void destroy() {
+		delete this;
+	}
+
 };
 
 OSystem *retroBuildOS() {
@@ -1340,4 +1344,8 @@ void retroReset() {
 
 uint8 getThreadSwitchCaller(){
 	return dynamic_cast<OSystem_RETRO *>(g_system)->getThreadSwitchCaller();
+}
+
+void retroDestroy() {
+	dynamic_cast<OSystem_RETRO *>(g_system)->destroy();
 }
