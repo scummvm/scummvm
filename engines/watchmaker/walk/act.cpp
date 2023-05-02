@@ -207,7 +207,6 @@ void CharStop(int32 oc) {
  * --------------------------------------------------*/
 void CharSetPosition(int32 oc, uint8 pos, const char *room) {
 	t3dBODY *OldCurRoom = t3dCurRoom;
-	int32 i;
 	t3dCHARACTER *Char = Character[oc];
 	t3dV3F tmp;
 

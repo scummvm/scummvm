@@ -122,7 +122,7 @@ void t3dBODY::allocateNormals() {
 }
 
 void t3dBODY::initNormals(Common::SeekableReadStream &stream) {
-	int nListSize = this->NumNormals + this->NumVerticesNormals;
+	uint nListSize = this->NumNormals + this->NumVerticesNormals;
 	assert(this->NList.size() == nListSize);
 	for (uint16 normal = 0; normal < this->NList.size(); normal++) {                // Legge normali globali
 		*this->NList[normal] = t3dNORMAL(stream);
@@ -179,11 +179,11 @@ void t3dBODY::populatePortalLists() {
 		t3dBODY *rez = nullptr;
 		if (((rez = _vm->_roomManager->checkIfAlreadyLoaded(Name)) == nullptr) && (!(LoaderFlags & T3D_NORECURSION))) { // Controlla se lo ha gia' caricato
 			if (Name.equalsIgnoreCase("rxt.t3d"))
-				_vm->_roomManager->addToLoadList(&Mesh[mesh], Name, (uint16)(LoaderFlags | T3D_NORECURSION & ~T3D_RECURSIONLEVEL1));    // aggiunge e leva la ricorsione
+				_vm->_roomManager->addToLoadList(&Mesh[mesh], Name, (uint16)((LoaderFlags | T3D_NORECURSION) & ~T3D_RECURSIONLEVEL1));    // aggiunge e leva la ricorsione
 //				Mesh[mesh].Flags|=T3D_MESH_NOPORTALCHECK;
 			else {
 				if (LoaderFlags & T3D_RECURSIONLEVEL1)
-					_vm->_roomManager->addToLoadList(&Mesh[mesh], Name, (uint16)(LoaderFlags | T3D_NORECURSION & ~T3D_RECURSIONLEVEL1));    // aggiunge e leva la ricorsione
+					_vm->_roomManager->addToLoadList(&Mesh[mesh], Name, (uint16)((LoaderFlags | T3D_NORECURSION) & ~T3D_RECURSIONLEVEL1));    // aggiunge e leva la ricorsione
 				else
 					_vm->_roomManager->addToLoadList(&Mesh[mesh], Name, (uint16)(LoaderFlags));                         // altrimenti lo agggiunge alla lista
 			}
@@ -486,7 +486,6 @@ t3dBODY *t3dBODY::loadFromStream(WGame &game, const Common::String &pname, Commo
 	//char /*t3dU8*/   Name[255];
 
 	uint16  light;
-	t3dPLIGHT   *PLight;
 	t3dF32  minx, miny, minz, maxx, maxy, maxz;
 
 	WorkDirs &workdirs = game.workDirs;

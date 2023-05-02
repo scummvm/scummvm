@@ -19,9 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
-#define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
-
 #include "watchmaker/classes/do_dialog.h"
 #include "watchmaker/globvar.h"
 #include "watchmaker/define.h"
@@ -80,7 +77,7 @@ void doDialog(WGame &game) {
 		//faccio apparire la scritta di descrizione della stanza di Darrell
 		if ((TheMessage->wparam1 == dR000) && bShowRoomDescriptions) {
 			t3dCurTime = 240;
-			strcpy(RoomInfo.name, "");
+			RoomInfo.name[0] = '\0';
 			UpdateRoomInfo(game);
 		}
 
@@ -187,7 +184,7 @@ void doDialog(WGame &game) {
 				Character[ic->param1]->Flags &= ~T3D_CHARACTER_HIDE;
 				break;
 			case IC_CHANGE_ROOM:
-				sprintf(str, "%s.t3d", init.Room[ic->param1].name);
+				snprintf(str, T3D_NAMELEN, "%s.t3d", init.Room[ic->param1].name);
 				ChangeRoom(game, str, 0, aNULL);
 				break;
 			case IC_EXPRESSION:

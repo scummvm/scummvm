@@ -281,11 +281,10 @@ void RefreshUpdate(Init &init) {
 }
 
 void ScrollLog(Init &init, int Add) {
-	int LastPos, Sign, i;
+	int Sign, i;
 
 	if (Add == 0) return;
 
-	LastPos = CurrentLogPos;
 	Sign = abs(Add) / Add;
 
 	for (i = 0; i < abs(Add); i++) {
@@ -314,12 +313,12 @@ void ScrollLog(Init &init, int Add) {
 }
 
 
-void WriteLog(Init &init, int i, int *CurDate, int *CurLine, int *RealLine, int PDAScrollLine, int IndentX) {
+void WriteLog(Init &init, int i, int *CurDate, int *CurLine, int *RealLine, int _PDAScrollLine, int IndentX) {
 	t2dWINDOW *w = &t2dWin[T2D_WIN_PDA_LOG];
 	int j;
 
 	//Data
-	if ((!(init.PDALog[i].flags & PDA_MENU)) && ((i != CurrentLogPos) || (PDAScrollLine == 0))) {
+	if ((!(init.PDALog[i].flags & PDA_MENU)) && ((i != CurrentLogPos) || (_PDAScrollLine == 0))) {
 		strcpy(w->text[T2D_TEXT_PDA_LOG_DATA_START + (*CurDate)].text, init.PDALog[i].info.c_str());
 		w->bm[T2D_BM_PDA_LOG_DATA_START + (*CurDate)].py = T2D_PDA_LOG_YI + (*RealLine) * 15;
 		w->bm[T2D_BM_PDA_LOG_DATA_START + (*CurDate)].tnum &= ~T2D_BM_OFF;
@@ -328,7 +327,7 @@ void WriteLog(Init &init, int i, int *CurDate, int *CurLine, int *RealLine, int 
 
 	//Testo
 	for (j = 0; j <= init.PDALog[i].lines; j++) {
-		if ((i == CurrentLogPos) && (j < PDAScrollLine)) continue;
+		if ((i == CurrentLogPos) && (j < _PDAScrollLine)) continue;
 
 		if (j == init.PDALog[i].lines) {
 			(*RealLine)++;
@@ -363,7 +362,7 @@ void WriteLog(Init &init, int i, int *CurDate, int *CurLine, int *RealLine, int 
 #define PDA_LAST_LINE   2
 
 
-int RefreshLogMenu(Init &init, int *Log, int *NumLog, int PDAScrollLine) {
+int RefreshLogMenu(Init &init, int *Log, int *NumLog, int _PDAScrollLine) {
 	int i;
 	int CurDate = 0, CurLine = 0, RealLine = 0;
 	t2dWINDOW *w = &t2dWin[T2D_WIN_PDA_LOG];
@@ -373,7 +372,7 @@ int RefreshLogMenu(Init &init, int *Log, int *NumLog, int PDAScrollLine) {
 
 		CurrentPDALogs[(*NumLog)++] = &init.PDALog[PDALogSorted[*Log].PDALogInd];
 
-		WriteLog(init, PDALogSorted[*Log].PDALogInd, &CurDate, &CurLine, &RealLine, PDAScrollLine, PDALogSorted[*Log].IndentX);
+		WriteLog(init, PDALogSorted[*Log].PDALogInd, &CurDate, &CurLine, &RealLine, _PDAScrollLine, PDALogSorted[*Log].IndentX);
 
 		if (!(init.PDALog[PDALogSorted[*Log].PDALogInd].flags & PDA_MENU)) init.PDALog[PDALogSorted[*Log].PDALogInd].flags &= ~PDA_UPDATE;
 

@@ -93,7 +93,8 @@ void t3dLightRoom(Init &init, t3dBODY *b, t3dV3F *p, t3dF32 NearRange, t3dF32 Fa
 			if (!(SavedBodyLight[j] = (uint32 *)t3dMalloc(sizeof(uint32) * m->NumVerts * 4)))
 				continue;
 
-			gv = m->VBptr = m->VBptr = m->VertexBuffer;
+			gv = m->VBptr;
+			m->VBptr = m->VertexBuffer;
 			for (i = 0; i < m->NumVerts; i++, gv++) {
 				SavedBodyLight[j][i * 4 + 0] = RGBA_GETRED(gv->diffuse);
 				SavedBodyLight[j][i * 4 + 1] = RGBA_GETGREEN(gv->diffuse);
@@ -123,7 +124,8 @@ void t3dLightRoom(Init &init, t3dBODY *b, t3dV3F *p, t3dF32 NearRange, t3dF32 Fa
 			        m->name.equalsIgnoreCase("p50-sentierini04") || m->name.equalsIgnoreCase("p50-sentierini05") || m->name.equalsIgnoreCase("p50-sentierini06")) {
 				tmp.x = m->Pos.x - p->x;
 				tmp.z = m->Pos.z - p->z;
-				gv = m->VBptr = m->VBptr = m->VertexBuffer;
+				gv = m->VBptr;
+				m->VBptr = m->VertexBuffer;
 				if ((dist = tmp.x * tmp.x + tmp.z * tmp.z) > (FarRange + m->Radius * m->Radius * 1.3f)) {
 					if ((bGolfMode == 0) || (bGolfMode == 1))
 						if (dist > (FarRange + m->Radius * m->Radius) * 2.5f) m->Flags |= T3D_MESH_HIDDEN;

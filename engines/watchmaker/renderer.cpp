@@ -96,7 +96,7 @@ WindowInfo Renderer::getScreenInfos() const {
 }
 
 bool Renderer::createScreenBuffer() {
-	auto windowSize = getScreenInfos();
+	//auto windowSize = getScreenInfos();
 	_viewport.left = _viewport.top = 0;
 	_viewport.right = 800;
 	_viewport.bottom = 600;

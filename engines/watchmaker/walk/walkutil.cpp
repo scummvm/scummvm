@@ -116,6 +116,7 @@ int PointInside(int32 oc, int32 pan, double x, double z) {
 float DistF(float x1, float y1, float x2, float y2) {
 	float d1 = (float)fabs(x1 - x2);
 	float d2 = (float)fabs(y1 - y2);
+#if 0
 	float minimum;
 
 	if (d1 >= d2)
@@ -123,7 +124,8 @@ float DistF(float x1, float y1, float x2, float y2) {
 	else
 		minimum = d1;
 
-//    return d1+d2 - ( minimum / 2.0 );
+	return d1+d2 - ( minimum / 2.0 );
+#endif
 	return (float)(sqrt(d1 * d1 + d2 * d2));
 }
 /*-----------------07/10/96 11.21-------------------
