@@ -573,6 +573,9 @@ void TriggeredOneShot::read(Common::ReadStream *stream) {
 	uniqueSlot = stream->readUint32BE();
 }
 
+ScoreSectionDef::ScoreSectionDef() : volumeOrDurationInSeconds(0) {
+}
+
 StaticAnimParams::StaticAnimParams() : initialDelay(0), repeatDelay(0), lockInteractions(false) {
 }
 
@@ -677,8 +680,8 @@ void SaveGameSnapshot::Sound::read(Common::ReadStream *stream) {
 	params3D.read(stream);
 }
 
-SaveGameSnapshot::SaveGameSnapshot() : roomNumber(0), screenNumber(0), direction(0), escOn(false), musicTrack(0), musicVolume(100), loadedAnimation(0),
-									   animDisplayingFrame(0), listenerX(0), listenerY(0), listenerAngle(0) {
+SaveGameSnapshot::SaveGameSnapshot() : roomNumber(0), screenNumber(0), direction(0), escOn(false), musicTrack(0), musicVolume(100), musicActive(true), loadedAnimation(0),
+									   animDisplayingFrame(0), animVolume(100), listenerX(0), listenerY(0), listenerAngle(0) {
 }
 
 void SaveGameSnapshot::write(Common::WriteStream *stream) const {
@@ -693,8 +696,13 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 	stream->writeSint32BE(musicTrack);
 	stream->writeUint32BE(musicVolume);
 
+	writeString(stream, scoreTrack);
+	writeString(stream, scoreSection);
+	stream->writeByte(musicActive ? 1 : 0);
+
 	stream->writeUint32BE(loadedAnimation);
 	stream->writeUint32BE(animDisplayingFrame);
+	stream->writeUint32BE(animVolume);
 
 	pendingStaticAnimParams.write(stream);
 	pendingSoundParams3D.write(stream);
@@ -768,8 +776,21 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 	else
 		musicVolume = 100;
 
+	if (saveVersion >= 6) {
+		scoreTrack = safeReadString(stream);
+		scoreSection = safeReadString(stream);
+		musicActive = (stream->readByte() != 0);
+	} else {
+		musicActive = true;
+	}
+
 	loadedAnimation = stream->readUint32BE();
 	animDisplayingFrame = stream->readUint32BE();
+
+	if (saveVersion >= 6)
+		animVolume = stream->readUint32BE();
+	else
+		animVolume = 100;
 
 	pendingStaticAnimParams.read(stream);
 	pendingSoundParams3D.read(stream);
@@ -840,13 +861,26 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 	return kLoadGameOutcomeSucceeded;
 }
 
+Common::String SaveGameSnapshot::safeReadString(Common::ReadStream *stream) {
+	uint len = stream->readUint32BE();
+	if (stream->eos() || stream->err())
+		len = 0;
+
+	return stream->readString(0, len);
+}
+
+void SaveGameSnapshot::writeString(Common::WriteStream *stream, const Common::String &str) {
+	stream->writeUint32BE(str.size());
+	stream->writeString(str);
+}
+
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
 	  _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false),
-	  _musicTrack(0), _musicVolume(100), _musicVolumeRampStartTime(0), _musicVolumeRampStartVolume(0), _musicVolumeRampRatePerMSec(0), _musicVolumeRampEnd(0),
+	  _musicTrack(0), _musicActive(true), _scoreSectionEndTime(0), _musicVolume(100), _musicVolumeRampStartTime(0), _musicVolumeRampStartVolume(0), _musicVolumeRampRatePerMSec(0), _musicVolumeRampEnd(0),
 	  _panoramaDirectionFlags(0),
-	  _loadedAnimation(0), _loadedAnimationHasSound(false), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0),
+	  _loadedAnimation(0), _loadedAnimationHasSound(false), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0), _animVolume(100),
 	  _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleLockInteractions(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
 	  _inGameMenuState(kInGameMenuStateInvisible), _inGameMenuActiveElement(0), _inGameMenuButtonActive {false, false, false, false, false},
@@ -1039,6 +1073,11 @@ bool Runtime::bootGame(bool newGame) {
 	findWaves();
 	debug(1, "Waves indexed OK");
 
+	if (_gameID == GID_SCHIZM) {
+		loadScore();
+		debug(1, "Score loaded OK");
+	}
+
 	_trayBackgroundGraphic = loadGraphic("Pocket", true);
 	_trayHighlightGraphic = loadGraphic("Select", true);
 	_trayCompassGraphic = loadGraphic("Select_1", true);
@@ -1046,8 +1085,13 @@ bool Runtime::bootGame(bool newGame) {
 
 	_gameState = kGameStateIdle;
 
-	if (newGame)
-		changeToScreen(1, 0xb1);
+	if (newGame) {
+		// TODO: Implement menus and go to b1 in Schizm instead
+		if (_gameID == GID_SCHIZM)
+			changeToScreen(1, 0xb0);
+		else
+			changeToScreen(1, 0xb1);
+	}
 
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
 
@@ -2200,6 +2244,52 @@ void Runtime::findWaves() {
 	}
 }
 
+void Runtime::loadScore() {
+	Common::INIFile scoreINI;
+	if (scoreINI.loadFromFile("Sfx/score.ini")) {
+
+		for (const Common::INIFile::Section &section : scoreINI.getSections()) {
+			ScoreTrackDef &trackDef = _scoreDefs[section.name];
+
+			for (const Common::INIFile::KeyValue &kv : section.keys) {
+
+				uint32 firstSpacePos = kv.value.find(' ', 0);
+				if (firstSpacePos != Common::String::npos) {
+					uint32 secondSpacePos = kv.value.find(' ', firstSpacePos + 1);
+
+					if (secondSpacePos == Common::String::npos) {
+						// Silent section
+						Common::String durationSlice = kv.value.substr(0, firstSpacePos);
+						Common::String nextSectionSlice = kv.value.substr(firstSpacePos + 1);
+
+						uint duration = 0;
+						if (sscanf(durationSlice.c_str(), "%u", &duration) == 1) {
+							ScoreSectionDef &sectionDef = trackDef.sections[kv.key];
+							sectionDef.nextSection = nextSectionSlice;
+							sectionDef.volumeOrDurationInSeconds = duration;
+						} else
+							warning("Couldn't parse score silent section duration");
+					} else {
+						Common::String fileNameSlice = kv.value.substr(0, firstSpacePos);
+						Common::String volumeSlice = kv.value.substr(firstSpacePos + 1, secondSpacePos - firstSpacePos - 1);
+						Common::String nextSectionSlice = kv.value.substr(secondSpacePos + 1);
+
+						int volume = 0;
+						if (sscanf(volumeSlice.c_str(), "%i", &volume) == 1) {
+							ScoreSectionDef &sectionDef = trackDef.sections[kv.key];
+							sectionDef.nextSection = nextSectionSlice;
+							sectionDef.volumeOrDurationInSeconds = normalizeSoundVolume(volume);
+							sectionDef.musicFileName = fileNameSlice;
+						} else
+							warning("Couldn't parse score section volume");
+					}
+				}
+			}
+		}
+	} else
+		warning("Couldn't load music score");
+}
+
 Common::SharedPtr<SoundInstance> Runtime::loadWave(const Common::String &soundName, uint soundID, const Common::ArchiveMemberPtr &archiveMemberPtr) {
 	for (const Common::SharedPtr<SoundInstance> &activeSound : _activeSounds) {
 		if (activeSound->name == soundName)
@@ -2310,6 +2400,15 @@ void Runtime::resolveSoundByName(const Common::String &soundName, bool load, Sta
 			outWave = snd.get();
 		}
 	}
+}
+
+SoundInstance *Runtime::resolveSoundByID(uint soundID) {
+	for (const Common::SharedPtr<SoundInstance> &snd : _activeSounds) {
+		if (snd->id == soundID)
+			return snd.get();
+	}
+
+	return nullptr;
 }
 
 void Runtime::resolveSoundByNameOrID(const StackValue &stackValue, bool load, StackInt_t &outSoundID, SoundInstance *&outWave) {
@@ -2721,6 +2820,9 @@ void Runtime::changeMusicTrack(int track) {
 	_musicPlayer.reset();
 	_musicTrack = track;
 
+	if (!_musicActive)
+		return;
+
 	Common::String wavFileName = Common::String::format("Sfx/Music-%02i.wav", static_cast<int>(track));
 	Common::File *wavFile = new Common::File();
 	if (wavFile->open(wavFileName)) {
@@ -2773,6 +2875,8 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 			warning("Animation file %i is missing", animFile);
 			delete aviFile;
 		}
+
+		applyAnimationVolume();
 
 		Common::String sfxFileName = Common::String::format("Sfx/Anim%04i.sfx", animFile);
 		Common::File sfxFile;
@@ -2835,6 +2939,15 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 	}
 
 	debug(1, "Animation last frame set to %u", animDef.lastFrame);
+}
+
+void Runtime::applyAnimationVolume() {
+	if (_animDecoder) {
+		uint volume = _animVolume * static_cast<uint>(Audio::Mixer::kMaxChannelVolume) / 100u;
+		if (volume > Audio::Mixer::kMaxChannelVolume)
+			volume = Audio::Mixer::kMaxChannelVolume;
+		_animDecoder->setVolume(volume);
+	}
 }
 
 void Runtime::setSound3DParameters(SoundInstance &snd, int32 x, int32 y, const SoundParams3D &soundParams3D) {
@@ -3271,6 +3384,16 @@ void Runtime::triggerAmbientSounds() {
 	// No ambient sound was ready
 	for (RandomAmbientSound &snd : _randomAmbientSounds)
 		snd.sceneChangesRemaining--;
+}
+
+uint Runtime::normalizeSoundVolume(StackInt_t arg) const {
+	int32 adjustedVol = static_cast<int32>(arg) + 50;
+	if (adjustedVol < 0)
+		return 0;
+	if (adjustedVol > 100)
+		return 100;
+
+	return static_cast<uint>(adjustedVol);
 }
 
 AnimationDef Runtime::stackArgsToAnimDef(const StackInt_t *args) const {
@@ -4131,6 +4254,7 @@ void Runtime::recordSaveGameSnapshot() {
 	snapshot->escOn = _escOn;
 
 	snapshot->musicTrack = _musicTrack;
+	snapshot->musicActive = _musicActive;
 
 	snapshot->musicVolume = _musicVolume;
 
@@ -4221,6 +4345,8 @@ void Runtime::restoreSaveGameSnapshot() {
 	_musicVolumeRampStartVolume = 0;
 	_musicVolumeRampRatePerMSec = 0;
 	_musicVolumeRampEnd = _musicVolume;
+
+	_musicActive = _saveGame->musicActive;
 
 	changeMusicTrack(_saveGame->musicTrack);
 
@@ -5662,11 +5788,22 @@ void Runtime::scriptOpJump(ScriptArg_t arg) {
 	_scriptCallStack.back()._nextInstruction = arg;
 }
 
-OPCODE_STUB(MusicStop)
-OPCODE_STUB(MusicPlayScore)
+void Runtime::scriptOpMusicStop(ScriptArg_t arg) {
+	_musicPlayer.reset();
+	_musicActive = false;
+}
+
+void Runtime::scriptOpMusicPlayScore(ScriptArg_t arg) {
+	error("MusicPlayScore opcode not implemented");
+}
+
 OPCODE_STUB(ScoreAlways)
 OPCODE_STUB(ScoreNormal)
-OPCODE_STUB(SndPlay)
+
+void Runtime::scriptOpSndPlay(ScriptArg_t arg) {
+	scriptOpSoundL1(arg);
+}
+
 OPCODE_STUB(SndPlayEx)
 OPCODE_STUB(SndPlay3D)
 OPCODE_STUB(SndPlaying)
@@ -5678,11 +5815,48 @@ OPCODE_STUB(SndStopAll)
 OPCODE_STUB(SndAddRandom)
 OPCODE_STUB(SndClearRandom)
 OPCODE_STUB(VolumeAdd)
-OPCODE_STUB(VolumeChange)
+
+void Runtime::scriptOpVolumeChange(ScriptArg_t arg) {
+	TAKE_STACK_INT(3);
+
+	SoundInstance *cachedSound = resolveSoundByID(static_cast<uint>(stackArgs[0]));
+
+	if (cachedSound)
+		triggerSoundRamp(*cachedSound, stackArgs[1] * 100, stackArgs[2], false);
+}
+
 OPCODE_STUB(VolumeDown)
-OPCODE_STUB(AnimVolume)
-OPCODE_STUB(AnimChange)
-OPCODE_STUB(ScreenName)
+
+void Runtime::scriptOpAnimVolume(ScriptArg_t arg) {
+	TAKE_STACK_INT(1);
+
+	_animVolume = normalizeSoundVolume(stackArgs[0]);
+
+	applyAnimationVolume();
+}
+
+void Runtime::scriptOpAnimChange(ScriptArg_t arg) {
+	TAKE_STACK_INT(2);
+
+	(void)stackArgs;
+
+	warning("animChange opcode isn't implemented yet");
+}
+
+void Runtime::scriptOpScreenName(ScriptArg_t arg) {
+	const Common::String &scrName = _scriptSet->strings[arg];
+	RoomScriptSetMap_t::const_iterator scriptSetIt = _scriptSet->roomScripts.find(_roomNumber);
+	if (scriptSetIt == _scriptSet->roomScripts.end())
+		error("Couldn't resolve room number to find screen name: '%s'", scrName.c_str());
+
+	const RoomScriptSet *rss = scriptSetIt->_value.get();
+
+	ScreenNameMap_t::const_iterator screenNameIt = rss->screenNames.find(scrName);
+	if (screenNameIt == rss->screenNames.end())
+		error("Couldn't resolve screen name '%s'", scrName.c_str());
+
+	_scriptStack.push_back(StackValue(static_cast<StackInt_t>(screenNameIt->_value)));
+}
 
 void Runtime::scriptOpExtractByte(ScriptArg_t arg) {
 	TAKE_STACK_INT(2);
@@ -5691,7 +5865,11 @@ void Runtime::scriptOpExtractByte(ScriptArg_t arg) {
 }
 
 OPCODE_STUB(InsertByte)
-OPCODE_STUB(String)
+
+void Runtime::scriptOpString(ScriptArg_t arg) {
+	_scriptStack.push_back(StackValue(_scriptSet->strings[arg]));
+}
+
 OPCODE_STUB(CmpNE)
 OPCODE_STUB(CmpLE)
 OPCODE_STUB(CmpGE)

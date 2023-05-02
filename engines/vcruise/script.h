@@ -238,16 +238,16 @@ struct Script {
 typedef Common::HashMap<uint, Common::SharedPtr<Script> > ScriptMap_t;
 typedef Common::HashMap<uint, Common::SharedPtr<ScreenScriptSet> > ScreenScriptSetMap_t;
 typedef Common::HashMap<uint, Common::SharedPtr<RoomScriptSet> > RoomScriptSetMap_t;
+typedef Common::HashMap<Common::String, uint> ScreenNameMap_t;
 
 struct ScreenScriptSet {
 	Common::SharedPtr<Script> entryScript;
 	ScriptMap_t interactionScripts;
-
-	Common::String screenName;	// Only in Schizm
 };
 
 struct RoomScriptSet {
 	ScreenScriptSetMap_t screenScripts;
+	ScreenNameMap_t screenNames;
 };
 
 struct ScriptSet {

@@ -271,6 +271,20 @@ struct TriggeredOneShot {
 	void read(Common::ReadStream *stream);
 };
 
+struct ScoreSectionDef {
+	ScoreSectionDef();
+
+	Common::String musicFileName;	// If empty, this is silent
+	Common::String nextSection;
+	uint32 volumeOrDurationInSeconds;
+};
+
+struct ScoreTrackDef {
+	typedef Common::HashMap<Common::String, ScoreSectionDef> ScoreSectionMap_t;
+
+	ScoreSectionMap_t sections;
+};
+
 struct StaticAnimParams {
 	StaticAnimParams();
 
@@ -346,7 +360,7 @@ struct SaveGameSnapshot {
 	LoadGameOutcome read(Common::ReadStream *stream);
 
 	static const uint kSaveGameIdentifier = 0x53566372;
-	static const uint kSaveGameCurrentVersion = 5;
+	static const uint kSaveGameCurrentVersion = 6;
 	static const uint kSaveGameEarliestSupportedVersion = 2;
 
 	struct InventoryItem {
@@ -380,6 +394,9 @@ struct SaveGameSnapshot {
 		void read(Common::ReadStream *stream);
 	};
 
+	static Common::String safeReadString(Common::ReadStream *stream);
+	static void writeString(Common::WriteStream *stream, const Common::String &str);
+
 	uint roomNumber;
 	uint screenNumber;
 	uint direction;
@@ -387,10 +404,15 @@ struct SaveGameSnapshot {
 	bool escOn;
 	int musicTrack;
 
+	Common::String scoreTrack;
+	Common::String scoreSection;
+	bool musicActive;
+
 	uint musicVolume;
 
 	uint loadedAnimation;
 	uint animDisplayingFrame;
+	uint animVolume;
 
 	StaticAnimParams pendingStaticAnimParams;
 	SoundParams3D pendingSoundParams3D;
@@ -689,10 +711,12 @@ private:
 
 	void loadIndex();
 	void findWaves();
+	void loadScore();
 	Common::SharedPtr<SoundInstance> loadWave(const Common::String &soundName, uint soundID, const Common::ArchiveMemberPtr &archiveMemberPtr);
 	SoundCache *loadCache(SoundInstance &sound);
-	void resolveSoundByName(const Common::String &soundName, bool resolveSoundByName, StackInt_t &outSoundID, SoundInstance *&outWave);
-	void resolveSoundByNameOrID(const StackValue &stackValue, bool resolveSoundByName, StackInt_t &outSoundID, SoundInstance *&outWave);
+	void resolveSoundByName(const Common::String &soundName, bool load, StackInt_t &outSoundID, SoundInstance *&outWave);
+	SoundInstance *resolveSoundByID(uint soundID);
+	void resolveSoundByNameOrID(const StackValue &stackValue, bool load, StackInt_t &outSoundID, SoundInstance *&outWave);
 
 	void changeToScreen(uint roomNumber, uint screenNumber);
 	void returnToIdleState();
@@ -708,6 +732,7 @@ private:
 	void changeAnimation(const AnimationDef &animDef, bool consumeFPSOverride);
 	void changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride);
 	void changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride, const Fraction &defaultFrameRate);
+	void applyAnimationVolume();
 
 	void setSound3DParameters(SoundInstance &sound, int32 x, int32 y, const SoundParams3D &soundParams3D);
 	void triggerSound(bool looping, SoundInstance &sound, uint volume, int32 balance, bool is3D, bool isSpeech);
@@ -718,6 +743,7 @@ private:
 	void update3DSounds();
 	bool computeEffectiveVolumeAndBalance(SoundInstance &snd);
 	void triggerAmbientSounds();
+	uint normalizeSoundVolume(StackInt_t arg) const;
 
 	void triggerWaveSubtitles(const SoundInstance &sound, const Common::String &id);
 	void stopSubtitles();
@@ -1024,6 +1050,12 @@ private:
 	Common::SharedPtr<AudioPlayer> _musicPlayer;
 	int _musicTrack;
 	uint _musicVolume;
+	bool _musicActive;
+
+	Common::String _scoreTrack;
+	Common::String _scoreSection;
+	uint32 _scoreSectionEndTime;
+	Common::HashMap<Common::String, ScoreTrackDef> _scoreDefs;
 
 	uint32 _musicVolumeRampStartTime;
 	uint _musicVolumeRampStartVolume;
@@ -1040,6 +1072,7 @@ private:
 	uint _animFirstFrame;
 	uint _animLastFrame;
 	uint _animStopFrame;
+	uint _animVolume;
 	Fraction _animFrameRateLock;
 	Common::Rect _animConstraintRect;
 	uint32 _animStartTime;

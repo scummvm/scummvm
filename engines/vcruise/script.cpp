@@ -375,8 +375,15 @@ void ScriptCompiler::compileRoomScriptSet(RoomScriptSet *rss) {
 			Common::SharedPtr<ScreenScriptSet> sss(new ScreenScriptSet());
 			if (_dialect == kScriptDialectReah)
 				compileReahScreenScriptSet(sss.get());
-			else if (_dialect == kScriptDialectSchizm)
+			else if (_dialect == kScriptDialectSchizm) {
+
+				if (!_parser.parseToken(token, state))
+					error("Error compiling script at line %i col %i: Expected screen name", static_cast<int>(state._lineNum), static_cast<int>(state._col));
+
+				rss->screenNames[token] = screenNumber;
+
 				compileSchizmScreenScriptSet(sss.get());
+			}
 
 			// QUIRK: The tower in Reah (Room 06) has two 0cb screens, the second one is bad and must be ignored
 			if (rss->screenScripts.find(screenNumber) == rss->screenScripts.end())
@@ -467,11 +474,6 @@ void ScriptCompiler::compileSchizmScreenScriptSet(ScreenScriptSet *sss) {
 	Common::SharedPtr<Script> currentScript(new Script());
 
 	sss->entryScript.reset(currentScript);
-
-	if (!_parser.parseToken(token, state))
-		error("Error compiling script at line %i col %i: Expected screen name", static_cast<int>(state._lineNum), static_cast<int>(state._col));
-
-	sss->screenName = token;
 
 	while (_parser.parseToken(token, state)) {
 		if (token == "~ERoom" || token == "~Scr" || token == "~Fun") {
