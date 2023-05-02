@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-05-02 06:02+0000\n"
-"PO-Revision-Date: 2023-04-25 20:35+0000\n"
+"PO-Revision-Date: 2023-05-02 21:40+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -108,14 +108,10 @@ msgid "Manual mode"
 msgstr "Manuaalinen tila"
 
 #: gui/cloudconnectionwizard.cpp:183
-#, fuzzy
-#| msgid "Will ask you to run Local Webserver"
 msgid "Will ask you to run the Local Webserver"
 msgstr "Pyytää sinua käynnistämään paikallisen webpalvelimen"
 
 #: gui/cloudconnectionwizard.cpp:185
-#, fuzzy
-#| msgid "Requires Local Webserver feature"
 msgid "Requires the Local Webserver feature"
 msgstr "Tarvitsee paikallisen webpalvelimen"
 
@@ -124,10 +120,6 @@ msgid "Quick Mode: Step 1"
 msgstr "Pikatila: Vaihe 1"
 
 #: gui/cloudconnectionwizard.cpp:206
-#, fuzzy
-#| msgid ""
-#| "In this mode, Local Webserver must be running,\n"
-#| "so your browser could forward data to ScummVM"
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
@@ -201,11 +193,6 @@ msgid "Open this link in your browser:"
 msgstr "Avaa tämä linkki selaimessasi:"
 
 #: gui/cloudconnectionwizard.cpp:321
-#, fuzzy
-#| msgid ""
-#| "When it fails to pass JSON code to ScummVM,\n"
-#| "find it on Troubleshooting section of the page,\n"
-#| "and go to the next step here."
 msgid ""
 "When it fails to pass the JSON code to ScummVM,\n"
 "find it on the Troubleshooting section of the page,\n"
@@ -220,8 +207,6 @@ msgid "Manual Mode: Step 2"
 msgstr "Manuaalinen tila: Vaihe 2"
 
 #: gui/cloudconnectionwizard.cpp:355
-#, fuzzy
-#| msgid "Copy JSON code from browser here and press Next:"
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr "Kopioi JSON-koodi selaimesta tähän ja paina 'Seuraava':"
 
@@ -242,14 +227,10 @@ msgid "Cloud storage was not connected."
 msgstr "Yhteyttä tallennustilaan ei avattu."
 
 #: gui/cloudconnectionwizard.cpp:378
-#, fuzzy
-#| msgid "Make sure JSON code was copied correctly and retry."
 msgid "Make sure the JSON code was copied correctly and retry."
 msgstr "Varmista että JSON-koodi kopioitiin oikein ja yritä uudestaan."
 
 #: gui/cloudconnectionwizard.cpp:379
-#, fuzzy
-#| msgid "It it doesn't work, try from the beginning."
 msgid "If that doesn't work, try again from the beginning."
 msgstr "Jos se ei toimi, yritä alusta uudestaan."
 
@@ -270,8 +251,6 @@ msgid "Next"
 msgstr "Seuraava"
 
 #: gui/cloudconnectionwizard.cpp:493
-#, fuzzy
-#| msgid "Another Storage is working now. Do you want to interrupt it?"
 msgid "Another Storage is working right now. Do you want to interrupt it?"
 msgstr "Toinen tallennustila on aktiivinen. Haluatko keskeyttää sen?"
 
@@ -303,15 +282,11 @@ msgid "No"
 msgstr "Ei"
 
 #: gui/cloudconnectionwizard.cpp:502
-#, fuzzy
-#| msgid "Wait until current Storage finishes up and try again."
 msgid "Wait until current Storage finishes and try again."
 msgstr "Odota kunnes aktiivinen Tallennus on valmis ja yritä sitten uudestaan."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:530
-#, fuzzy
-#| msgid "JSON code contents is malformed."
 msgid "JSON code contents are malformed."
 msgstr "JSON-koodin sisältö on epämuodostunutta."
 
@@ -6180,14 +6155,7 @@ msgid "Choose Spell"
 msgstr "Valitse loitsu"
 
 #: engines/kyra/gui/saveload_eob.cpp:598
-#, fuzzy, c-format
-#| msgid ""
-#| "The following original saved game file has been found in your game path:\n"
-#| "\n"
-#| "%s %s\n"
-#| "\n"
-#| "Do you wish to use this saved game file with ScummVM?\n"
-#| "\n"
+#, c-format
 msgid ""
 "The following original saved game file has been found in your game path:\n"
 "\n"
@@ -6198,7 +6166,7 @@ msgid ""
 msgstr ""
 "Seuraava alkuperäinen pelitallennus löydettiin pelipolustasi:\n"
 "\n"
-"%s %s\n"
+"%s %S\n"
 "\n"
 "Haluatko käyttää tätä tallennusta ScummVM:ssä?\n"
 "\n"
@@ -9206,68 +9174,48 @@ msgid "Speeds up animations."
 msgstr "Nopeuttaa animaatioita."
 
 #: engines/vcruise/metaengine.cpp:102
-#, fuzzy
-#| msgid "Display/Hide Info Screen"
 msgid "Display help screen"
-msgstr "Näytä/Piilota Infonäyttö"
+msgstr "Näytä ohjenäyttö"
 
 #: engines/vcruise/metaengine.cpp:107 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Luo pelitallennus"
 
 #: engines/vcruise/metaengine.cpp:117
-#, fuzzy
-#| msgid "Open 3DS Settings"
 msgid "Open sound settings"
-msgstr "Avaa 3DS asetukset"
+msgstr "Avaa ääniasetukset"
 
 #: engines/vcruise/metaengine.cpp:122
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit game"
 msgstr "Lopeta peli"
 
 #: engines/vcruise/metaengine.cpp:133
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle music on/off"
-msgstr "Kokoruututilan vaihto"
+msgstr "Musiikki päälle/pois"
 
 #: engines/vcruise/metaengine.cpp:138
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Toggle sound effects on/off"
-msgstr "Erikoisefektit"
+msgstr "Ääniefektit päälle/pois"
 
 #: engines/vcruise/metaengine.cpp:143
-#, fuzzy
-#| msgid "Music volume up / down"
 msgid "Music volume down"
-msgstr "Musiikin äänenvoimakkuus ylös / alas"
+msgstr "Musiikin äänenvoimakkuus alas"
 
 #: engines/vcruise/metaengine.cpp:148
-#, fuzzy
-#| msgid "Music volume: "
 msgid "Music volume up"
-msgstr "Musiikin äänenvoimakkuus: "
+msgstr "Musiikin äänenvoimakkuus ylös"
 
 #: engines/vcruise/metaengine.cpp:153
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume down"
-msgstr "Erikoisefektit"
+msgstr "Ääniefektien äänenvoimakkuus alas"
 
 #: engines/vcruise/metaengine.cpp:158
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume up"
-msgstr "Erikoisefektit"
+msgstr "Ääniefektien äänenvoimakkuus ylös"
 
 #: engines/vcruise/metaengine.cpp:163
-#, fuzzy
-#| msgid "Speeds up animations."
 msgid "Skip current animation"
-msgstr "Nopeuttaa animaatioita."
+msgstr "Ohita tämänhetkinen animaatio"
 
 #: engines/vcruise/vcruise.cpp:82
 msgid "This game requires JPEG support, which was not compiled in."
