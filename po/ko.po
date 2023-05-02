@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-30 18:01+0000\n"
+"POT-Creation-Date: 2023-05-01 21:38+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4612,7 +4612,7 @@ msgid "Add game speed menu (similar to PC version)"
 msgstr "속도 메뉴를 추가합니다. (PC 버전과 유사)"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
-#: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
+#: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:831
@@ -4631,7 +4631,7 @@ msgid "Restore game:"
 msgstr "게임 불러오기:"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
-#: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
+#: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:831

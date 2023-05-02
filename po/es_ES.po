@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-30 18:01+0000\n"
+"POT-Creation-Date: 2023-05-01 21:38+0000\n"
 "PO-Revision-Date: 2023-04-30 09:22+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -4656,7 +4656,7 @@ msgstr ""
 "Activa el menú de velocidad del juego (similar al de la versión para PC)"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
-#: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
+#: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:831
@@ -4675,7 +4675,7 @@ msgid "Restore game:"
 msgstr "Cargar partida:"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
-#: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
+#: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:831

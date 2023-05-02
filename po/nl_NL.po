@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-30 18:01+0000\n"
+"POT-Creation-Date: 2023-05-01 21:38+0000\n"
 "PO-Revision-Date: 2023-03-21 14:26+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4649,7 +4649,7 @@ msgid "Add game speed menu (similar to PC version)"
 msgstr "Voeg spelsnelheid menu toe (net als PC versie)"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
-#: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
+#: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:831
@@ -4668,7 +4668,7 @@ msgid "Restore game:"
 msgstr "Laad opgeslagen spel:"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
-#: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
+#: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:831

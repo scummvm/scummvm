@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-30 18:01+0000\n"
+"POT-Creation-Date: 2023-05-01 21:38+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -4621,7 +4621,7 @@ msgid "Add game speed menu (similar to PC version)"
 msgstr "Дадаць хуткае мэню (як у вэрсіі на ПК)"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
-#: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
+#: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:831
@@ -4640,7 +4640,7 @@ msgid "Restore game:"
 msgstr "Аднавіць гульню:"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
-#: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
+#: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:831
