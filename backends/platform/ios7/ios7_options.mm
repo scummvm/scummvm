@@ -19,12 +19,18 @@
  *
  */
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "gui/gui-manager.h"
+#include "gui/message.h"
 #include "gui/ThemeEval.h"
 #include "gui/widget.h"
 
 #include "common/translation.h"
+#include "backends/platform/ios7/ios7_osys_main.h"
+
+#include <TargetConditionals.h>
 
 enum {
 	kHelpCmd = 'Help',
@@ -51,9 +57,6 @@ private:
 	GUI::CheckboxWidget *_clickAndDragdCheckbox;
 
 	bool _enabled;
-
-	uint32 loadTouchMode(const Common::String &setting, bool acceptDefault, uint32 defaultValue);
-	void saveTouchMode(const Common::String &setting, uint32 touchMode);
 };
 
 IOS7OptionsWidget::IOS7OptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
@@ -61,11 +64,15 @@ IOS7OptionsWidget::IOS7OptionsWidget(GuiObject *boss, const Common::String &name
 
 	const bool inAppDomain = domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
 
-	_onscreenCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.OnScreenControl", _("Show On-screen control"));
+	_onscreenCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.OnScreenControl", _("Show On-screen control (iOS 15 and later)"));
 	_touchpadCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.TouchpadMouseMode", _("Touchpad mouse mode"));
 	_clickAndDragdCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.ClickAndDragMode", _("Mouse-click-and-drag mode"));
 
 	new GUI::ButtonWidget(widgetsBoss(), "IOS7OptionsDialog.ControlsHelp", _("Controls Help"), Common::U32String(), kHelpCmd);
+
+	// setEnabled is normally only called from the EditGameDialog, but some options (OnScreenControl)
+	// should be disabled in all domains if system is running a lower version of iOS than 15.0.
+	setEnabled(_enabled);
 }
 
 IOS7OptionsWidget::~IOS7OptionsWidget() {
@@ -90,18 +97,35 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 void IOS7OptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kHelpCmd: {
-		GUI::MessageDialog help(_(
-"Gestures and controls:
-
-One finger tap: Left mouse click
-Two finger tap: Right mouse click
-Two finger double tap: ESC
-Two finger swipe (bottom to top): Toggles Click and drag mode
-Two finger swipe (left to right): Toggles between touch direct mode and touchpad mode
-Two finger swipe (top to bottom): Global Main Menu
-Three finger swipe: Arrow keys
-Pinch gesture: Enables/disables keyboard
-Keyboard spacebar: Pause"));
+		GUI::MessageDialog help(
+#if TARGET_OS_IOS
+			_("Gestures and controls:\n"
+			  "\n"
+			  "One finger tap: Left mouse click\n"
+			  "Two finger tap: Right mouse click\n"
+			  "Two finger double tap: ESC\n"
+			  "Two finger swipe (bottom to top): Toggles Click and drag mode\n"
+			  "Two finger swipe (left to right): Toggles between touch direct mode and touchpad mode\n"
+			  "Two finger swipe (right to left): Shows/hides on-screen controls\n"
+			  "Two finger swipe (top to bottom): Global Main Menu\n"
+			  "Three finger swipe: Arrow keys\n"
+			  "Pinch gesture: Enables/disables keyboard\n"
+			  "Keyboard spacebar: Pause"),
+#else // TVOS
+			_("Using the Apple TV remote control:\n"
+			  "\n"
+			  "Press Touch area: Left mouse click\n"
+			  "Press Play/Pause button: Right mouse click\n"
+			  "Press Back/Menu button in game: Global Main menu\n"
+			  "Press Back/Menu button in launcher: Apple TV Home\n"
+			  "Press and hold Play/Pause button: Show keyboard with extra keys\n"
+			  "Touch (not press) on top of Touch area: Up arrow key\n"
+			  "Touch (not press) on left of Touch area: Left arrow key\n"
+			  "Touch (not press) on right of Touch area: Right arrow key\n"
+			  "Touch (not press) on bottom of Touch area: Down arrow key\n"
+			  "Keyboard spacebar: Pause"),
+#endif
+			Common::U32String(_("Close")), Common::U32String(), Graphics::kTextAlignLeft);
 
 		help.runModal();
 		break;
@@ -134,24 +158,37 @@ bool IOS7OptionsWidget::save() {
 bool IOS7OptionsWidget::hasKeys() {
 	return ConfMan.hasKey("onscreen_control", _domain) ||
 	       ConfMan.hasKey("touchpad_mode", _domain) ||
-	       ConfMan.hasKey("clickanddrag_mode", _domain));
+	       ConfMan.hasKey("clickanddrag_mode", _domain);
 }
 
 void IOS7OptionsWidget::setEnabled(bool e) {
 	_enabled = e;
 
-	_onscreenCheckbox->setEnabled(e);
+#if TARGET_OS_IOS && defined (__IPHONE_15_0)
+	// On-screen controls (virtual controller is supported in iOS 15 and later)
+	if (@available(iOS 15.0, *)) {
+		_onscreenCheckbox->setEnabled(e);
+	} else {
+		_onscreenCheckbox->setEnabled(false);
+	}
+#else
+	_onscreenCheckbox->setEnabled(false);
+#endif
 	_touchpadCheckbox->setEnabled(e);
 	_clickAndDragdCheckbox->setEnabled(e);
 }
-
 
 GUI::OptionsContainerWidget *OSystem_iOS7::buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	return new IOS7OptionsWidget(boss, name, target);
 }
 
 void OSystem_iOS7::registerDefaultSettings(const Common::String &target) const {
-	ConfMan.registerDefault("onscreen_control", true);
-	ConfMan.registerDefault("touchpad_mode", true);
+	ConfMan.registerDefault("onscreen_control", false);
+	ConfMan.registerDefault("touchpad_mode", !iOS7_isBigDevice());
 	ConfMan.registerDefault("clickanddrag_mode", false);
+}
+
+void OSystem_iOS7::applyBackendSettings() {
+	_touchpadModeEnabled = ConfMan.getBool("touchpad_mode");
+	_mouseClickAndDragEnabled = ConfMan.getBool("clickanddrag_mode");
 }

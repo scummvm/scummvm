@@ -87,12 +87,13 @@ public:
 OSystem_iOS7::OSystem_iOS7() :
 	_mixer(NULL), _lastMouseTap(0), _queuedEventTime(0),
 	_mouseNeedTextureUpdate(false), _secondaryTapped(false), _lastSecondaryTap(0),
-	_screenOrientation(kScreenOrientationFlippedLandscape), _mouseClickAndDragEnabled(false),
+	_screenOrientation(kScreenOrientationFlippedLandscape),
 	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false), _fullScreenOverlayIsDirty(false),
 	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0),
 	_mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
-	_touchpadModeEnabled = !iOS7_isBigDevice();
+	_touchpadModeEnabled = ConfMan.getBool("touchpad_mode");
+	_mouseClickAndDragEnabled = ConfMan.getBool("clickanddrag_mode");
 
 	_chrootBasePath = iOS7_getDocumentsDir();
 	ChRootFilesystemFactory *chFsFactory = new ChRootFilesystemFactory(_chrootBasePath);
@@ -299,7 +300,6 @@ void OSystem_iOS7::delayMillis(uint msecs) {
 	//printf("delayMillis(%d)\n", msecs);
 	usleep(msecs * 1000);
 }
-
 
 void OSystem_iOS7::setTimerCallback(TimerProc callback, int interval) {
 	//printf("setTimerCallback()\n");

@@ -98,6 +98,7 @@ backends/platform/3ds/osystem-events.cpp
 backends/platform/android/options.cpp
 backends/platform/ds/ds-graphics.cpp
 backends/platform/ds/osystem_ds.cpp
+backends/platform/ios7/ios7_options.mm
 backends/platform/ios7/ios7_osys_events.cpp
 backends/platform/ios7/ios7_osys_main.cpp
 backends/platform/iphone/osys_events.cpp

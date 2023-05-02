@@ -211,6 +211,10 @@ public:
 
 	virtual Common::String getDefaultLogFileName() override { return Common::String("/scummvm.log"); }
 
+	virtual GUI::OptionsContainerWidget* buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+	virtual void applyBackendSettings() override;
+	virtual void registerDefaultSettings(const Common::String &target) const override;
+
 protected:
 	void initVideoContext();
 	void updateOutputSurface();
