@@ -49,6 +49,7 @@
 #include "director/util.h"
 #include "director/castmember/castmember.h"
 #include "director/castmember/palette.h"
+#include "director/castmember/transition.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {
@@ -390,7 +391,7 @@ void Score::update() {
 
 		// If there is a transition, the perFrameHook is called
 		// after each transition subframe instead.
-		if (_frames[_currentFrame]->_transType == 0) {
+		if (_frames[_currentFrame]->_transType == 0 && _frames[_currentFrame]->_trans.isNull()) {
 			_lingo->executePerFrameHook(_currentFrame, 0);
 		}
 	}
@@ -606,9 +607,16 @@ bool Score::renderTransition(uint16 frameId) {
 		setLastPalette(frameId);
 		_window->playTransition(frameId, currentFrame->_transDuration, currentFrame->_transArea, currentFrame->_transChunkSize, currentFrame->_transType, resolvePaletteId(currentFrame->_scoreCachedPaletteId));
 		return true;
-	} else {
-		return false;
- }
+	} else if (!currentFrame->_trans.isNull()) {
+		CastMember *member = _movie->getCastMember(currentFrame->_trans);
+		if (member && member->_type == kCastTransition) {
+			TransitionCastMember *trans = static_cast<TransitionCastMember *>(member);
+			setLastPalette(frameId);
+			_window->playTransition(frameId, trans->_durationMillis, trans->_area, trans->_chunkSize, trans->_transType, resolvePaletteId(currentFrame->_scoreCachedPaletteId));
+			return true;
+		}
+	}
+	return false;
 }
 
 void Score::renderSprites(uint16 frameId, RenderMode mode) {
