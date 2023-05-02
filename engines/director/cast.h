@@ -148,7 +148,7 @@ public:
 
 	Common::Rect _movieRect;
 	uint16 _stageColor;
-	int _defaultPalette;
+	CastMemberID _defaultPalette;
 	TilePatternEntry _tiles[kNumBuiltinTiles];
 
 	LingoArchive *_lingoArchive;

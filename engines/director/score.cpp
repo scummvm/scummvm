@@ -110,7 +110,7 @@ int Score::resolvePaletteId(int id) {
 	// TODO: Palette ID should be a CastMemberID to allow for palettes in different casts
 	// 255 represent system palette in D2
 	if (id == 255) {
-		id = g_director->getCurrentMovie()->getCast()->_defaultPalette;
+		id = g_director->getCurrentMovie()->getCast()->_defaultPalette.member;
 	} else if (id > 0) {
 		CastMember *member = _movie->getCastMember(CastMemberID(id, DEFAULT_CAST_LIB));
 		id = (member && member->_type == kCastPalette) ? ((PaletteCastMember *)member)->getPaletteId() : 0;
@@ -289,7 +289,7 @@ void Score::startPlay() {
 
 	_lastPalette = _frames[_currentFrame]->_palette.paletteId;
 	if (!_lastPalette)
-		_lastPalette = _movie->getCast()->_defaultPalette;
+		_lastPalette = _movie->getCast()->_defaultPalette.member;
 	debugC(2, kDebugImages, "Score::startPlay(): palette changed to %d", _lastPalette);
 	_vm->setPalette(resolvePaletteId(_lastPalette));
 
@@ -777,7 +777,7 @@ void Score::setLastPalette(uint16 frameId) {
 		// The cached ID is created before the cast gets loaded; if it's zero,
 		// this corresponds to the movie default palette.
 		if (!currentPalette)
-			currentPalette = g_director->getCurrentMovie()->getCast()->_defaultPalette;
+			currentPalette = g_director->getCurrentMovie()->getCast()->_defaultPalette.member;
 		// If for whatever reason this doesn't resolve, abort.
 		if (!currentPalette || !resolvePaletteId(currentPalette))
 			return;
@@ -1559,7 +1559,7 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 Common::String Score::formatChannelInfo() {
 	Frame &frame = *_frames[_currentFrame];
 	Common::String result;
-	int defaultPalette = g_director->getCurrentMovie()->getCast()->_defaultPalette;
+	int defaultPalette = g_director->getCurrentMovie()->getCast()->_defaultPalette.member;
 	result += Common::String::format("TMPO:   tempo: %d, skipFrameFlag: %d, blend: %d, currentFPS: %d\n",
 		frame._tempo, frame._skipFrameFlag, frame._blend, _currentFrameRate);
 	if (frame._palette.paletteId) {

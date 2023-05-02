@@ -217,7 +217,7 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 			// Get the current score palette. Note that this is the ID of the palette in the list, not the cast member!
 			int currentPaletteId = score->resolvePaletteId(score->getCurrentPalette());
 			if (!currentPaletteId)
-				currentPaletteId = cast->_defaultPalette;
+				currentPaletteId = cast->_defaultPalette.member;
 			PaletteV4 *currentPalette = g_director->getPalette(currentPaletteId);
 			if (!currentPalette) {
 				currentPaletteId = kClutSystemMac;
@@ -380,7 +380,7 @@ bool BitmapCastMember::isModified() {
 		Score *score = movie->getScore();
 		int currentPaletteId = score->resolvePaletteId(score->getCurrentPalette());
 		if (!currentPaletteId)
-			currentPaletteId = cast->_defaultPalette;
+			currentPaletteId = cast->_defaultPalette.member;
 		PaletteV4 *currentPalette = g_director->getPalette(currentPaletteId);
 		if (!currentPalette) {
 			currentPaletteId = kClutSystemMac;
@@ -388,7 +388,7 @@ bool BitmapCastMember::isModified() {
 		}
 		int castPaletteId = score->resolvePaletteId(_clut);
 		if (!castPaletteId)
-			castPaletteId = cast->_defaultPalette;
+			castPaletteId = cast->_defaultPalette.member;
 
 		if (currentPaletteId == castPaletteId) {
 			return _ditheredTargetClut != 0;
