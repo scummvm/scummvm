@@ -25,6 +25,8 @@
 #include "graphics/font.h"
 #include "graphics/surface.h"
 
+#include "image/tga.h"
+
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/savegame.h"
@@ -85,14 +87,14 @@ Font *Font::getFirstFont() {
 }
 
 bool BitmapFont::is8Bit() const {
-	return !_isDBCS;
+	return !_isDBCS && !_isUnicode;
 }
 
 BitmapFont::BitmapFont() :
 		_userData(nullptr),
 		_fontData(nullptr), _charHeaders(nullptr),
 		_numChars(0), _dataSize(0), _kernedHeight(0), _baseOffsetY(0),
-		_firstChar(0), _lastChar(0) {
+		_firstChar(0), _lastChar(0), _isUnicode(false), _isDBCS(false) {
 }
 
 BitmapFont::~BitmapFont() {
@@ -164,7 +166,7 @@ void BitmapFont::load(const Common::String &filename, Common::SeekableReadStream
 		_charHeaders[i].startingLine = data->readSByte();
 		data->seek(1, SEEK_CUR);
 		// Character bitmap size
-		_charHeaders[i].bitmapWidth = data->readUint32LE();
+		_charHeaders[i].bitmapPitch = _charHeaders[i].bitmapWidth = data->readUint32LE();
 		_charHeaders[i].bitmapHeight = data->readUint32LE();
 	}
 	// Read font data
@@ -175,7 +177,57 @@ void BitmapFont::load(const Common::String &filename, Common::SeekableReadStream
 	g_driver->createFont(this);
 }
 
-uint16 BitmapFont::getCharIndex(uint16 c) const {
+void BitmapFont::loadTGA(const Common::String &filename, Common::SeekableReadStream *index, Common::SeekableReadStream *image) {
+  	Image::TGADecoder dec;
+	bool success = dec.loadStream(*image);
+
+	if (!success)
+		return;
+
+	const Graphics::Surface *surf = dec.getSurface();
+
+	const int MAX_16BIT_CHARACTER = 0xffff;
+	const int INDEX_ENTRY_SIZE = 10;
+
+	_filename = filename;
+	_numChars = index->size() / INDEX_ENTRY_SIZE;
+	_dataSize = surf->w * surf->h;
+	_kernedHeight = 16;
+	_baseOffsetY = 0;
+	_firstChar = 0;
+	_lastChar = MAX_16BIT_CHARACTER;
+
+	_isDBCS = false;
+	_isUnicode = true;
+
+	// Read character headers
+	_charHeaders = new CharHeader[_numChars];
+
+	_fwdCharIndex.resize(MAX_16BIT_CHARACTER + 1, -1);
+	for (uint i = 0; i < _numChars; ++i) {
+		uint16 point = index->readUint16LE();
+		uint32 x = index->readUint32LE();
+		uint32 y = index->readUint32LE();
+		_fwdCharIndex[point] = i;
+		_charHeaders[i].offset = x + y * surf->w;
+		_charHeaders[i].kernedWidth = 16;
+		_charHeaders[i].startingCol = 0;
+		_charHeaders[i].startingLine = 0;
+		_charHeaders[i].bitmapWidth = 16;
+		_charHeaders[i].bitmapHeight = 16;
+		_charHeaders[i].bitmapPitch = surf->w;
+	}
+	// Read font data
+	_fontData = new byte[_dataSize];
+
+	for (int y = 0; y < surf->h; y++)
+		for (int x = 0; x < surf->w; x++)
+			_fontData[y * surf->w + x] = surf->getPixel(x, y) ? 0 : 0xff;
+
+	g_driver->createFont(this);
+}
+
+uint16 BitmapFont::getCharIndex(uint32 c) const {
 	int res = c < _fwdCharIndex.size() ? _fwdCharIndex[c] : -1;
 	if (res >= 0)
 		return res;
@@ -186,25 +238,70 @@ uint16 BitmapFont::getCharIndex(uint16 c) const {
 	return 0;
 }
 
+uint32 BitmapFont::getNextChar(const Common::String &text, uint32 &i) const {
+	if (_isUnicode) {
+		uint32 chr = 0;
+		uint num = 1;
+
+		if ((text[i] & 0xF8) == 0xF0) {
+			num = 4;
+		} else if ((text[i] & 0xF0) == 0xE0) {
+			num = 3;
+		} else if ((text[i] & 0xE0) == 0xC0) {
+			num = 2;
+		}
+
+		if (text.size() - i < num) {
+			i = text.size();
+			return '?';
+		}
+
+		switch (num) {
+		case 4:
+			chr |= (text[i++] & 0x07) << 18;
+			chr |= (text[i++] & 0x3F) << 12;
+			chr |= (text[i++] & 0x3F) << 6;
+			chr |= (text[i++] & 0x3F);
+			break;
+
+		case 3:
+			chr |= (text[i++] & 0x0F) << 12;
+			chr |= (text[i++] & 0x3F) << 6;
+			chr |= (text[i++] & 0x3F);
+			break;
+
+		case 2:
+			chr |= (text[i++] & 0x1F) << 6;
+			chr |= (text[i++] & 0x3F);
+			break;
+
+		default:
+			chr = (text[i++] & 0x7F);
+			break;
+		}
+
+		return chr;
+	}
+	uint16 ch = uint8(text[i]);
+	if (_isDBCS && i + 1 < text.size() && (ch & 0x80)) {
+		ch = (ch << 8) | (text[++i] & 0xff);
+	}
+	i++;
+	return ch;
+}
+
 int BitmapFont::getKernedStringLength(const Common::String &text) const {
 	int result = 0;
-	for (uint32 i = 0; i < text.size(); ++i) {
-		uint16 ch = uint8(text[i]);
-		if (_isDBCS && i + 1 < text.size() && (ch & 0x80)) {
-			ch = (ch << 8) | (text[++i] & 0xff);
-		}
-		result += getCharKernedWidth(ch);
+	for (uint32 i = 0; i < text.size(); ) {
+		result += getCharKernedWidth(getNextChar(text, i));
 	}
 	return result;
 }
 
 int BitmapFont::getBitmapStringLength(const Common::String &text) const {
 	int result = 0;
-	for (uint32 i = 0; i < text.size(); ++i) {
-		uint16 ch = uint8(text[i]);
-		if (_isDBCS && i + 1 < text.size() && (ch & 0x80)) {
-			ch = (ch << 8) | (text[++i] & 0xff);
-		}
+	for (uint32 i = 0; i < text.size(); ) {
+		uint32 ch = getNextChar(text, i);
 		result += getCharKernedWidth(ch) + getCharStartingCol(ch);
 	}
 	return result;
@@ -212,11 +309,8 @@ int BitmapFont::getBitmapStringLength(const Common::String &text) const {
 
 int BitmapFont::getStringHeight(const Common::String &text) const {
 	int result = 0;
-	for (uint32 i = 0; i < text.size(); ++i) {
-		uint16 ch = uint8(text[i]);
-		if (_isDBCS && i + 1 < text.size() && (ch & 0x80)) {
-			ch = (ch << 8) | (text[++i] & 0xff);
-		}
+	for (uint32 i = 0; i < text.size(); ) {
+		uint32 ch = getNextChar(text, i);
 
 		int verticalOffset = getCharStartingLine(ch) + getBaseOffsetY();
 		int charHeight = verticalOffset + getCharBitmapHeight(ch);
@@ -274,12 +368,10 @@ void BitmapFont::render(Graphics::Surface &buf, const Common::String &currentLin
 	buf.create(width, height, pixelFormat);
 	buf.fillRect(Common::Rect(0, 0, width, height), colorKey);
 
-	for (unsigned int d = 0; d < currentLine.size(); d++) {
-		uint16 ch = uint8(currentLine[d]);
-		if (_isDBCS && (ch & 0x80) &&  d + 1 < currentLine.size()) {
-			ch = (ch << 8) | (currentLine[++d] & 0xff);
-		}
+	for (uint32 d = 0; d < currentLine.size(); ) {
+		uint32 ch = getNextChar(currentLine, d);
 		int32 charBitmapWidth = getCharBitmapWidth(ch);
+		int32 charBitmapPitch = getCharBitmapPitch(ch);
 		int32 charBitmapHeight = getCharBitmapHeight(ch);
 		int8 fontRow = getCharStartingLine(ch) + getBaseOffsetY();
 		int8 fontCol = getCharStartingCol(ch);
@@ -287,7 +379,7 @@ void BitmapFont::render(Graphics::Surface &buf, const Common::String &currentLin
 		for (int line = 0; line < charBitmapHeight; line++) {
 			int lineOffset = (fontRow + line);
 			int columnOffset = startColumn + fontCol;
-			int fontOffset = (charBitmapWidth * line);
+			int fontOffset = (charBitmapPitch * line);
 			for (int bitmapCol = 0; bitmapCol < charBitmapWidth; bitmapCol++, columnOffset++, fontOffset++) {
 				byte pixel = getCharData(ch)[fontOffset];
 				if (pixel == 0x80) {
