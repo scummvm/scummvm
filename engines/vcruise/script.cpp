@@ -911,6 +911,7 @@ bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::
 
 		if (token.hasPrefix("cur")) {
 			script.instrs.push_back(ProtoInstruction(ScriptOps::kCursorName, indexString(token)));
+			script.instrs.push_back(ProtoInstruction(ScriptOps::kSetCursor, 0));
 			return true;
 		}
 

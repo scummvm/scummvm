@@ -729,6 +729,8 @@ private:
 	void loadFrameData2(Common::SeekableReadStream *stream);
 
 	void changeMusicTrack(int musicID);
+	void startScoreSection();
+
 	void changeAnimation(const AnimationDef &animDef, bool consumeFPSOverride);
 	void changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride);
 	void changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride, const Fraction &defaultFrameRate);

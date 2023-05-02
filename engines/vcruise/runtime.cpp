@@ -41,6 +41,8 @@
 #include "image/bmp.h"
 
 #include "audio/decoders/wave.h"
+#include "audio/decoders/vorbis.h"
+
 #include "audio/audiostream.h"
 
 #include "video/avi_decoder.h"
@@ -971,19 +973,29 @@ void Runtime::loadCursors(const char *exeName) {
 		_namedCursors["CUR_PRZOD"] = 1;		// Przod = forward
 
 		// CUR_ZOSTAW is in the executable memory but appears to be unused
-
-		_panCursors[kPanCursorDraggableHoriz | kPanCursorDraggableUp] = 2;
-		_panCursors[kPanCursorDraggableHoriz | kPanCursorDraggableDown] = 3;
-		_panCursors[kPanCursorDraggableHoriz] = 4;
-		_panCursors[kPanCursorDraggableHoriz | kPanCursorDirectionRight] = 5;
-		_panCursors[kPanCursorDraggableHoriz | kPanCursorDirectionLeft] = 6;
-		_panCursors[kPanCursorDraggableUp] = 7;
-		_panCursors[kPanCursorDraggableDown] = 8;
-		_panCursors[kPanCursorDraggableUp | kPanCursorDirectionUp] = 9;
-		_panCursors[kPanCursorDraggableDown | kPanCursorDirectionDown] = 10;
-		_panCursors[kPanCursorDraggableUp | kPanCursorDraggableDown] = 11;
-		_panCursors[kPanCursorDraggableHoriz | kPanCursorDraggableUp | kPanCursorDraggableDown] = 12;
 	}
+
+	if (_gameID == GID_SCHIZM) {
+		_namedCursors["curPress"] = 16;
+		_namedCursors["curLookFor"] = 21;
+		_namedCursors["curForward"] = 1;
+		_namedCursors["curBack"] = 13;
+		_namedCursors["curNothing"] = 0;
+		_namedCursors["curPickUp"] = 90;
+		_namedCursors["curDrop"] = 91;
+	}
+
+	_panCursors[kPanCursorDraggableHoriz | kPanCursorDraggableUp] = 2;
+	_panCursors[kPanCursorDraggableHoriz | kPanCursorDraggableDown] = 3;
+	_panCursors[kPanCursorDraggableHoriz] = 4;
+	_panCursors[kPanCursorDraggableHoriz | kPanCursorDirectionRight] = 5;
+	_panCursors[kPanCursorDraggableHoriz | kPanCursorDirectionLeft] = 6;
+	_panCursors[kPanCursorDraggableUp] = 7;
+	_panCursors[kPanCursorDraggableDown] = 8;
+	_panCursors[kPanCursorDraggableUp | kPanCursorDirectionUp] = 9;
+	_panCursors[kPanCursorDraggableDown | kPanCursorDirectionDown] = 10;
+	_panCursors[kPanCursorDraggableUp | kPanCursorDraggableDown] = 11;
+	_panCursors[kPanCursorDraggableHoriz | kPanCursorDraggableUp | kPanCursorDraggableDown] = 12;
 }
 
 void Runtime::setDebugMode(bool debugMode) {
@@ -2835,6 +2847,44 @@ void Runtime::changeMusicTrack(int track) {
 	} else {
 		warning("Music file '%s' is missing", wavFileName.c_str());
 		delete wavFile;
+	}
+}
+
+void Runtime::startScoreSection() {
+	_musicPlayer.reset();
+
+	if (!_musicActive)
+		return;
+
+	Common::HashMap<Common::String, ScoreTrackDef>::const_iterator trackIt = _scoreDefs.find(_scoreTrack);
+	if (trackIt != _scoreDefs.end()) {
+		const ScoreTrackDef::ScoreSectionMap_t &sectionMap = trackIt->_value.sections;
+
+		ScoreTrackDef::ScoreSectionMap_t::const_iterator sectionIt = sectionMap.find(_scoreSection);
+		if (sectionIt != sectionMap.end()) {
+			const ScoreSectionDef &sectionDef = sectionIt->_value;
+
+			if (sectionDef.musicFileName.empty()) {
+				_scoreSectionEndTime = sectionDef.volumeOrDurationInSeconds * 1000u + g_system->getMillis();
+			} else {
+				Common::String trackFileName = Common::String("Sfx/") + sectionDef.musicFileName;
+
+				Common::File *trackFile = new Common::File();
+				if (trackFile->open(trackFileName)) {
+					if (Audio::SeekableAudioStream *audioStream = Audio::makeVorbisStream(trackFile, DisposeAfterUse::YES)) {
+						_musicPlayer.reset(new AudioPlayer(_mixer, Common::SharedPtr<Audio::AudioStream>(audioStream), Audio::Mixer::kMusicSoundType));
+						_musicPlayer->play(sectionDef.volumeOrDurationInSeconds, 0);
+
+						_scoreSectionEndTime = static_cast<uint32>(audioStream->getLength().msecs()) + g_system->getMillis();
+					} else {
+						warning("Couldn't create Vorbis stream for music file '%s'", trackFileName.c_str());
+						delete trackFile;
+					}
+				} else {
+					warning("Music file '%s' is missing", trackFileName.c_str());
+				}
+			}
+		}
 	}
 }
 
@@ -5794,7 +5844,13 @@ void Runtime::scriptOpMusicStop(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpMusicPlayScore(ScriptArg_t arg) {
-	error("MusicPlayScore opcode not implemented");
+	TAKE_STACK_STR(2);
+
+	_scoreTrack = stackArgs[0];
+	_scoreSection = stackArgs[1];
+	_musicActive = true;
+
+	startScoreSection();
 }
 
 OPCODE_STUB(ScoreAlways)
