@@ -51,13 +51,14 @@
 
 namespace Director {
 
-Cast::Cast(Movie *movie, uint16 castLibID, bool isShared) {
+Cast::Cast(Movie *movie, uint16 castLibID, bool isShared, bool isExternal) {
 	_movie = movie;
 	_vm = _movie->getVM();
 	_lingo = _vm->getLingo();
 
 	_castLibID = castLibID;
 	_isShared = isShared;
+	_isExternal = isExternal;
 	_loadMutex = true;
 
 	_lingoArchive = new LingoArchive(this);
@@ -78,6 +79,7 @@ Cast::Cast(Movie *movie, uint16 castLibID, bool isShared) {
 	_loadedCast = nullptr;
 
 	_defaultPalette = CastMemberID(-1, -1);
+	_frameRate = 0;
 }
 
 Cast::~Cast() {
@@ -274,9 +276,6 @@ bool Cast::loadConfig() {
 	else
 		_movieRect = g_director->_fixStageRect;
 
-	if (!_isShared)
-		_movie->_movieRect = _movieRect;
-
 	_castArrayStart = stream->readUint16();
 	_castArrayEnd = stream->readUint16();
 
@@ -284,29 +283,28 @@ bool Cast::loadConfig() {
 	// actual framerates are, on average: { 3.75, 4, 4.35, 4.65, 5, 5.5, 6, 6.6, 7.5, 8.5, 10, 12, 20, 30, 60 }
 	Common::Array<int> frameRates = { 3, 4, 4, 4, 5, 5, 6, 6, 7, 8, 10, 12, 15, 20, 30, 60 };
 	byte readRate = stream->readByte();
-	int16 currentFrameRate;
 	if (readRate <= 0xF) {
-		currentFrameRate = frameRates[readRate];
+		_frameRate = frameRates[readRate];
 	} else {
 		switch (readRate) {
 			// rate when set via the tempo channel
 			// these rates are the actual framerates
 			case 0x10:
 				// defaults to 15 fps on D2 and D3. On D4 it shows as 120 fps
-				currentFrameRate = 15;
+				_frameRate = 15;
 				break;
 			case 212:
-				currentFrameRate = 1;
+				_frameRate = 1;
 				break;
 			case 242:
-				currentFrameRate = 2;
+				_frameRate = 2;
 				break;
 			case 252:
-				currentFrameRate = 3;
+				_frameRate = 3;
 				break;
 			default:
 				warning("BUILDBOT: Cast::loadConfig: unhandled framerate: %i", readRate);
-				currentFrameRate = readRate;
+				_frameRate = readRate;
 		}
 	}
 
@@ -326,9 +324,6 @@ bool Cast::loadConfig() {
 	// Warning for post-D7 movies (stageColor is isStageColorRGB and stageColorR post-D7)
 	if (humanVer >= 700)
 		warning("STUB: Cast::loadConfig: 16 bit stageColor read instead of two 8 bit isStageColorRGB and stageColorR. Read value: %04x", _stageColor);
-
-	if (!_isShared)
-		_movie->_stageColor = _vm->transformColor(_stageColor);
 
 	uint16 bitdepth = stream->readUint16();
 
@@ -372,7 +367,7 @@ bool Cast::loadConfig() {
 		int8 field25 = stream->readSByte();
 		/* int8 field26 = */ stream->readSByte();
 
-		currentFrameRate = stream->readSint16();
+		_frameRate = stream->readSint16();
 		uint16 platform = stream->readUint16();
 		_platform = platformFromID(platform);
 
@@ -422,7 +417,7 @@ bool Cast::loadConfig() {
 		check += field23 + 23;
 		check += field24 + 24;
 		check *= field25 + 25;
-		check += currentFrameRate + 26;
+		check += _frameRate + 26;
 		check *= platform + 27;
 		check *= (protection * 0xE06) + 0xFFF450000;
 		check ^= MKTAG('r', 'a', 'l', 'f');
@@ -455,12 +450,7 @@ bool Cast::loadConfig() {
 		} else {
 			warning("STUB: Cast::loadConfig(): Extended config not yet supported for version %d", _version);
 		}
-		debugC(1, kDebugLoading, "Cast::loadConfig(): platform: %s, defaultPalette: %s", getPlatformAbbrev(_platform), _defaultPalette.asString().c_str());
-	}
-
-	if (!_isShared) {
-		debugC(1, kDebugLoading, "Cast::loadConfig(): currentFrameRate: %d", currentFrameRate);
-		_movie->getScore()->_currentFrameRate = currentFrameRate;
+		debugC(1, kDebugLoading, "Cast::loadConfig(): platform: %s, defaultPalette: %s, frameRate: %d", getPlatformAbbrev(_platform), _defaultPalette.asString().c_str(), _frameRate);
 	}
 
 	if (humanVer > _vm->getVersion()) {
@@ -579,7 +569,10 @@ void Cast::loadCast() {
 
 		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator) {
 			Resource res = _castArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), *iterator);
-			if (res.libId != _castLibID)
+			// Only load cast members which belong to the requested library ID.
+			// External casts only have one library ID, so instead
+			// we use the movie's mapping.
+			if (res.libId != _castLibID && !_isExternal)
 				continue;
 			Common::SeekableReadStreamEndian *stream = _castArchive->getResource(MKTAG('C', 'A', 'S', 't'), *iterator);
 			loadCastData(*stream, res.castId, &res);

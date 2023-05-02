@@ -76,7 +76,7 @@ struct TilePatternEntry {
 
 class Cast {
 public:
-	Cast(Movie *movie, uint16 castLibID, bool shared = false);
+	Cast(Movie *movie, uint16 castLibID, bool isShared = false, bool isExternal = false);
 	~Cast();
 
 	void loadArchive();
@@ -132,6 +132,7 @@ public:
 	uint16 _version;
 	Common::Platform _platform;
 	uint16 _castLibID;
+	bool _isExternal;
 
 	CharMap _macCharsToWin;
 	CharMap _winCharsToMac;
@@ -149,6 +150,7 @@ public:
 	Common::Rect _movieRect;
 	uint16 _stageColor;
 	CastMemberID _defaultPalette;
+	int16 _frameRate;
 	TilePatternEntry _tiles[kNumBuiltinTiles];
 
 	LingoArchive *_lingoArchive;
