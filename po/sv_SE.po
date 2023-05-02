@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-01 21:38+0000\n"
+"POT-Creation-Date: 2023-05-02 06:02+0000\n"
 "PO-Revision-Date: 2022-11-29 23:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -4213,26 +4213,26 @@ msgstr "Hårdvaruskalning (snabbt, men låg kvalitet)"
 msgid "Software scale (good quality, but slower)"
 msgstr "Mjukvaruskalning (bra kvalitet, men långsamt)"
 
-#: backends/platform/ios7/ios7_osys_events.cpp:348
-#: backends/platform/ios7/ios7_osys_events.cpp:479
+#: backends/platform/ios7/ios7_osys_events.cpp:343
+#: backends/platform/ios7/ios7_osys_events.cpp:474
 #: backends/platform/iphone/osys_events.cpp:299
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "Dra-och-släpp-läge med mus aktiverat."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:350
-#: backends/platform/ios7/ios7_osys_events.cpp:481
+#: backends/platform/ios7/ios7_osys_events.cpp:345
+#: backends/platform/ios7/ios7_osys_events.cpp:476
 #: backends/platform/iphone/osys_events.cpp:301
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "Dra-och-släpp-läge med mus deaktiverat."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:361
-#: backends/platform/ios7/ios7_osys_events.cpp:500
+#: backends/platform/ios7/ios7_osys_events.cpp:356
+#: backends/platform/ios7/ios7_osys_events.cpp:495
 #: backends/platform/iphone/osys_events.cpp:312
 msgid "Touchpad mode enabled."
 msgstr "Touchpad-läge aktiverat."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:363
-#: backends/platform/ios7/ios7_osys_events.cpp:502
+#: backends/platform/ios7/ios7_osys_events.cpp:358
+#: backends/platform/ios7/ios7_osys_events.cpp:497
 #: backends/platform/iphone/osys_events.cpp:314
 msgid "Touchpad mode disabled."
 msgstr "Touchpad-läge inaktiverat."

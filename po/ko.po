@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-01 21:38+0000\n"
+"POT-Creation-Date: 2023-05-02 06:02+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4168,26 +4168,26 @@ msgstr "하드웨어 크기조절 (빠름, 저화질)"
 msgid "Software scale (good quality, but slower)"
 msgstr "소프트웨어 크기조절 (느림, 고화질)"
 
-#: backends/platform/ios7/ios7_osys_events.cpp:348
-#: backends/platform/ios7/ios7_osys_events.cpp:479
+#: backends/platform/ios7/ios7_osys_events.cpp:343
+#: backends/platform/ios7/ios7_osys_events.cpp:474
 #: backends/platform/iphone/osys_events.cpp:299
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "마우스 클릭&드래그 모드가 활성화되었습니다."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:350
-#: backends/platform/ios7/ios7_osys_events.cpp:481
+#: backends/platform/ios7/ios7_osys_events.cpp:345
+#: backends/platform/ios7/ios7_osys_events.cpp:476
 #: backends/platform/iphone/osys_events.cpp:301
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "마우스 클릭&드래그 모드가 비활성화되었습니다."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:361
-#: backends/platform/ios7/ios7_osys_events.cpp:500
+#: backends/platform/ios7/ios7_osys_events.cpp:356
+#: backends/platform/ios7/ios7_osys_events.cpp:495
 #: backends/platform/iphone/osys_events.cpp:312
 msgid "Touchpad mode enabled."
 msgstr "터치패드 모드가 활성화되었습니다."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:363
-#: backends/platform/ios7/ios7_osys_events.cpp:502
+#: backends/platform/ios7/ios7_osys_events.cpp:358
+#: backends/platform/ios7/ios7_osys_events.cpp:497
 #: backends/platform/iphone/osys_events.cpp:314
 msgid "Touchpad mode disabled."
 msgstr "터치패드 모드가 비활성화되었습니다."
