@@ -158,6 +158,11 @@ Localizer::Localizer() {
 			_entries[last_entry = Common::String(line, tab - line)] = Common::String(tab + 1, (nextline - tab - 2));
 		}
 	}
+	if (g_grim->_transcodeChineseToSimplified && g_grim->_isUtf8) {
+		for (Common::StringMap::iterator it = _entries.begin(); it != _entries.end(); it++) {
+			it->_value = it->_value.decode(Common::CodePage::kUtf8).transcodeChineseT2S().encode(Common::CodePage::kUtf8);
+		}
+	}
 	delete[] data;
 }
 
