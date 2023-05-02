@@ -48,12 +48,23 @@ void SoundCastMember::load() {
 	if (_loaded)
 		return;
 
-	uint32 tag = MKTAG('S', 'N', 'D', ' ');
-	uint16 sndId = (uint16)(_castId + _cast->_castIDoffset);
+	uint32 tag = 0;
+	uint16 sndId = 0;
 
-	if (_cast->_version >= kFileVer400 && _children.size() > 0) {
-		sndId = _children[0].index;
-		tag = _children[0].tag;
+	if (_cast->_version < kFileVer400) {
+		tag = MKTAG('S', 'N', 'D', ' ');
+		sndId = (uint16)(_castId + _cast->_castIDoffset);
+	} else if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+		if (_children.size() > 0) {
+			sndId = _children[0].index;
+			tag = _children[0].tag;
+		} else {
+			warning("SoundCastMember::load(): could not find child reference, falling back to D3");
+			tag = MKTAG('S', 'N', 'D', ' ');
+			sndId = (uint16)(_castId + _cast->_castIDoffset);
+		}
+	} else {
+		warning("STUB: SoundCastMember::SoundCastMember(): Sounds not yet supported for version %d", _cast->_version);
 	}
 
 	Common::SeekableReadStreamEndian *sndData = _cast->getResource(tag, sndId);
