@@ -25,6 +25,7 @@
 #define SAMPLE_RATE     48000
 #define REFRESH_RATE    60
 #define FRAMESKIP_MAX   REFRESH_RATE / 2
+#define MIN_AUTO_FRAMESKIP_MAX 5
 
 // Audio status
 #define AUDIO_STATUS_MUTE               (1 << 0)
