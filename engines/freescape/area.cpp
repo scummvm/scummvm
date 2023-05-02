@@ -341,8 +341,8 @@ void Area::addFloor() {
 		ObjectType::kCubeType,
 		id,
 		0,                             // flags
-		Math::Vector3d(0, -1, 0),      // Position
-		Math::Vector3d(4128, 1, 4128), // size
+		Math::Vector3d(-4128, -1, -4128),      // Position
+		Math::Vector3d(4128 * 4, 1, 4128 * 4), // size
 		gColors,
 		nullptr,
 		FCLInstructionVector());
