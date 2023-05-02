@@ -351,6 +351,33 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"castlemaster",
+		"Demo",
+		{
+			{"cm", 0, "936b6ca92be53f122bd904a3397137e2", 1552},
+			{"x", 0, "c8c811439da0cf8a193e35feb5b5c6dc", 353388},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_UNSTABLE | ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+	// Stampede Amiga, Issue 1, July 1990
+	{
+		"castlemaster",
+		"Demo",
+		{
+			{"cm", 0, "b7e713a0742fa09aa81c9606bbbba4af", 4068},
+			{"x", 0, "c8c811439da0cf8a193e35feb5b5c6dc", 353388},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_UNSTABLE | ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"castlemaster",
 		"",
 		{
 			{"CASTLE.EXE", 0, "f1a141df0e47860246716db20d2ba061", 2806},

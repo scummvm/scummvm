@@ -571,6 +571,7 @@ public:
 	void titleScreen() override;
 	void loadAssetsDOSFullGame() override;
 	void loadAssetsDOSDemo() override;
+	void loadAssetsAmigaDemo() override;
 
 	void drawDOSUI(Graphics::Surface *surface) override;
 
