@@ -403,11 +403,19 @@ Common::Error GrimEngine::run() {
 	}
 
 	if (getGameType() == GType_MONKEY4 && getGameLanguage() == Common::Language::ZH_TWN) {
-		Common::File img, imgmap;
-		if (img.open("font.tga") && imgmap.open("map.bin")) {
-			BitmapFont *f = new BitmapFont();
-			f->loadTGA("font.tga", &imgmap, &img);
+		_transcodeChineseToSimplified = ConfMan.hasKey("language") && (Common::parseLanguage(ConfMan.get("language")) == Common::Language::ZH_CHN);
+
+		if (_transcodeChineseToSimplified) {
+			FontTTF *f = new FontTTF();
+			f->loadTTFFromArchive("NotoSansSC-Regular.otf", 1200);
 			_overrideFont = f;
+		} else {
+			Common::File img, imgmap;
+			if (img.open("font.tga") && imgmap.open("map.bin")) {
+				BitmapFont *f = new BitmapFont();
+				f->loadTGA("font.tga", &imgmap, &img);
+				_overrideFont = f;
+			}
 		}
 	}
 
