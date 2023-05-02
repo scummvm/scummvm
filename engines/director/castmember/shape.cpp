@@ -33,6 +33,11 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 
 	_ink = kInkTypeCopy;
 
+	if (debugChannelSet(5, kDebugLoading)) {
+		debugC(5, kDebugLoading, "ShapeCastMember::ShapeCastMember(): Shape data");
+		stream.hexdump(stream.size());
+	}
+
 	if (version < kFileVer400) {
 		unk1 = stream.readByte();
 		_shapeType = static_cast<ShapeType>(stream.readByte());
@@ -45,7 +50,7 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 		_ink = static_cast<InkType>(_fillType & 0x3f);
 		_lineThickness = stream.readByte();
 		_lineDirection = stream.readByte();
-	} else if (version >= kFileVer400 && version < kFileVer500) {
+	} else if (version >= kFileVer400 && version < kFileVer600) {
 		unk1 = stream.readByte();
 		_shapeType = static_cast<ShapeType>(stream.readByte());
 		_initialRect = Movie::readRect(stream);
@@ -57,12 +62,8 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 		_lineThickness = stream.readByte();
 		_lineDirection = stream.readByte();
 	} else {
-		stream.readByte(); // FIXME: Was this copied from D4 by mistake?
-		unk1 = stream.readByte();
-
-		_initialRect = Movie::readRect(stream);
-		_boundingRect = Movie::readRect(stream);
-
+		warning("STUB: ShapeCastMember::ShapeCastMember(): not yet implemented");
+		unk1 = 0;
 		_shapeType = kShapeRectangle;
 		_pattern = 0;
 		_fgCol = _bgCol = 0;

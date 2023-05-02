@@ -422,7 +422,7 @@ void FilmLoopCastMember::load() {
 			warning("FilmLoopCastMember::load(): Expected 1 child for film loop cast, got %d", _children.size());
 		}
 	} else {
-		warning("STUB: FilmLoopCastMember::load(): Film loops not supported for version %d", _cast->_version);
+		warning("STUB: FilmLoopCastMember::load(): Film loops not yet supported for version %d", _cast->_version);
 	}
 
 	_loaded = true;

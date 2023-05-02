@@ -55,6 +55,8 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 
 		stream.readByte(); // There should be no more data
 		assert(stream.eos());
+	} else {
+		warning("STUB: ScriptCastMember::ScriptCastMember(): Scripts not yet supported for version %d", version);
 	}
 }
 

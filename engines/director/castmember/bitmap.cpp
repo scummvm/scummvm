@@ -133,6 +133,8 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 			debug("BitmapCastMember: tail");
 			Common::hexdump(buf, tail);
 		}
+	} else {
+		warning("STUB: BitmapCastMember::BitmapCastMember(): Bitmaps not yet supported for version %d", version);
 	}
 
 	_tag = castTag;
