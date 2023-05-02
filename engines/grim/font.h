@@ -44,7 +44,7 @@ public:
 	virtual int getKernedStringLength(const Common::String &text) const = 0;
 	virtual int32 getBaseOffsetY() const = 0;
 	virtual void render(Graphics::Surface &buf, const Common::String &currentLine, const Graphics::PixelFormat &pixelFormat, uint32 blackColor, uint32 color, uint32 colorKey) const = 0;
-	virtual int32 getCharKernedWidth(uint16 c) const = 0;
+	virtual int32 getCharKernedWidth(uint32 c) const = 0;
 	virtual int getPoolId() const = 0;
 	virtual int32 getPoolTag() const = 0;
 	virtual bool is8Bit() const = 0;
@@ -69,20 +69,21 @@ public:
 	int32 getPoolTag() const override { return getStaticTag(); }
 
 	void load(const Common::String &filename, Common::SeekableReadStream *data);
-
+	void loadTGA(const Common::String &filename, Common::SeekableReadStream *index, Common::SeekableReadStream *image);
 
 	const Common::String &getFilename() const { return _filename; }
 	int32 getKernedHeight() const override { return _kernedHeight; }
 	int32 getFontWidth() const override { return getCharKernedWidth('w'); }
 	int32 getBaseOffsetY() const override { return _baseOffsetY; }
 	void render(Graphics::Surface &buf, const Common::String &currentLine, const Graphics::PixelFormat &pixelFormat, uint32 blackColor, uint32 color, uint32 colorKey) const override;
-	int32 getCharBitmapWidth(uint16 c) const { return _charHeaders[getCharIndex(c)].bitmapWidth; }
-	int32 getCharBitmapHeight(uint16 c) const { return _charHeaders[getCharIndex(c)].bitmapHeight; }
-	int32 getCharKernedWidth(uint16 c) const override { return _charHeaders[getCharIndex(c)].kernedWidth; }
-	int32 getCharStartingCol(uint16 c) const { return _charHeaders[getCharIndex(c)].startingCol; }
-	int32 getCharStartingLine(uint16 c) const { return _charHeaders[getCharIndex(c)].startingLine; }
-	int32 getCharOffset(uint16 c) const { return _charHeaders[getCharIndex(c)].offset; }
-	const byte *getCharData(uint16 c) const { return _fontData + (_charHeaders[getCharIndex(c)].offset); }
+	int32 getCharBitmapWidth(uint32 c) const { return _charHeaders[getCharIndex(c)].bitmapWidth; }
+	int32 getCharBitmapPitch(uint32 c) const { return _charHeaders[getCharIndex(c)].bitmapPitch; }
+	int32 getCharBitmapHeight(uint32 c) const { return _charHeaders[getCharIndex(c)].bitmapHeight; }
+	int32 getCharKernedWidth(uint32 c) const override { return _charHeaders[getCharIndex(c)].kernedWidth; }
+	int32 getCharStartingCol(uint32 c) const { return _charHeaders[getCharIndex(c)].startingCol; }
+	int32 getCharStartingLine(uint32 c) const { return _charHeaders[getCharIndex(c)].startingLine; }
+	int32 getCharOffset(uint32 c) const { return _charHeaders[getCharIndex(c)].offset; }
+	const byte *getCharData(uint32 c) const { return _fontData + (_charHeaders[getCharIndex(c)].offset); }
 
 	const byte *getFontData() const { return _fontData; }
 	uint32 getDataSize() const { return _dataSize; }
@@ -100,14 +101,15 @@ public:
 
 	static const uint8 emerFont[][13];
 private:
-
-	uint16 getCharIndex(uint16 c) const;
+	uint32 getNextChar(const Common::String &text, uint32 &i) const;
+	uint16 getCharIndex(uint32 c) const;
 	struct CharHeader {
 		int32 offset;
 		int8  kernedWidth;
-		int8  startingCol;
-		int8  startingLine;
+		int32 startingCol;
+		int32 startingLine;
 		int32 bitmapWidth;
+		int32 bitmapPitch;
 		int32 bitmapHeight;
 	};
 
@@ -119,7 +121,7 @@ private:
 	CharHeader *_charHeaders;
 	byte *_fontData;
 	void *_userData;
-	bool _isDBCS;
+	bool _isDBCS, _isUnicode;
 };
 
 class FontTTF : public Font, public PoolObject<FontTTF> {
@@ -132,7 +134,7 @@ public:
 
 	int32 getKernedHeight() const override { return _font->getFontHeight(); }
 	int32 getBaseOffsetY() const override { return 0; }
-	int32 getCharKernedWidth(uint16 c) const override { return _font->getCharWidth(c); }
+	int32 getCharKernedWidth(uint32 c) const override { return _font->getCharWidth(c); }
 	int32 getFontWidth() const override { return getCharKernedWidth('w'); }
 
 	int getKernedStringLength(const Common::String &text) const override { return _font->getStringWidth(text); }
