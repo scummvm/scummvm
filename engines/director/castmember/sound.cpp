@@ -54,7 +54,7 @@ void SoundCastMember::load() {
 	if (_cast->_version < kFileVer400) {
 		tag = MKTAG('S', 'N', 'D', ' ');
 		sndId = (uint16)(_castId + _cast->_castIDoffset);
-	} else if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+	} else if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer600) {
 		if (_children.size() > 0) {
 			sndId = _children[0].index;
 			tag = _children[0].tag;
