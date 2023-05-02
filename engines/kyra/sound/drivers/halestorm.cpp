@@ -713,7 +713,7 @@ bool HSMidiParser::loadTracks(HSSong &song) {
 	if (in >= end)
 		return false;
 
-	int tps = READ_BE_UINT16(in + 12);
+	int tps = READ_BE_INT16(in + 12);
 	if (tps >= 0)
 		song.setTicksPerSecond(tps);
 
