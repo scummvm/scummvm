@@ -124,6 +124,7 @@ QuitReason quit_check_for_error_state(const char *qmsg, String &errmsg, String &
 		if (qreason != kQuit_UserAbort) {
 			alertis.AppendFmt("\nError: %s", qmsg);
 			errmsg = qmsg;
+			Debug::Printf(kDbgMsg_Fatal, "ERROR: %s\n%s", qmsg, cc_get_error().CallStack.GetCStr());
 		}
 		return qreason;
 	} else if (qmsg[0] == '%') {
