@@ -36,6 +36,7 @@ MODULE_OBJS = \
 	castmember/shape.o \
 	castmember/sound.o \
 	castmember/text.o \
+	castmember/transition.o \
 	lingo/lingo.o \
 	lingo/lingo-builtins.o \
 	lingo/lingo-bytecode.o \

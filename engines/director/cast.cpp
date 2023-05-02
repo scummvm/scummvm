@@ -46,6 +46,7 @@
 #include "director/castmember/shape.h"
 #include "director/castmember/sound.h"
 #include "director/castmember/text.h"
+#include "director/castmember/transition.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 
@@ -964,8 +965,12 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastMovie (id=%d, %d children)",  id, res->children.size());
 		_loadedCast->setVal(id, new MovieCastMember(this, id, castStream, _version));
 		break;
+	case kCastTransition:
+		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastTransition (id=%d, %d children)",  id, res->children.size());
+		_loadedCast->setVal(id, new TransitionCastMember(this, id, castStream, _version));
+		break;
 	default:
-		warning("Cast::loadCastData(): Unhandled cast type: %d [%s] (id=%d, %d children)! This will be missing from the movie and may cause problems", castType, tag2str(castType), id, res->children.size());
+		warning("BUILDBOT: STUB: Cast::loadCastData(): Unhandled cast type: %d [%s] (id=%d, %d children)! This will be missing from the movie and may cause problems", castType, tag2str(castType), id, res->children.size());
 		// also don't try and read the strings... we don't know what this item is.
 		castInfoSize = 0;
 		break;
