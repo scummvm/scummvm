@@ -194,7 +194,8 @@ void t3dLightRoom(Init &init, t3dBODY *b, t3dV3F *p, t3dF32 NearRange, t3dF32 Fa
 			cg = 0;
 			cb = 0;
 		}
-		gv = m->VBptr = m->VBptr = m->VertexBuffer;
+		gv = m->VBptr;
+		m->VBptr = m->VertexBuffer;
 		for (i = 0; i < m->NumVerts; i++, gv++) {
 			rr = cr + *sbl++;
 			gg = cg + *sbl++;
