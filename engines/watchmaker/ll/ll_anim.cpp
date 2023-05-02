@@ -888,8 +888,10 @@ void ProcessATF(WGame &game, int32 an, int32 atf) {
 		break;
 	case ATFM_INCFRAME:
 		SetMeshMaterialMovieFrame(h->sub[in - 1].ptr, +1, 1);
+		break;
 	case ATFM_DECFRAME:
 		SetMeshMaterialMovieFrame(h->sub[in - 1].ptr, -1, 1);
+		break;
 	case ATFM_START_MOVIE:
 		SetMeshMaterialMovieFrame(h->sub[in - 1].ptr, 0, 1);
 		ChangeMeshMaterialFlag(h->sub[in - 1].ptr, -1, T3D_MATERIAL_MOVIEPAUSED);
