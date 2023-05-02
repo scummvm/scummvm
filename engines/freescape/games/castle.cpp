@@ -282,6 +282,34 @@ void CastleEngine::loadAssetsDOSDemo() {
 		error("Not implemented yet");
 }
 
+void CastleEngine::loadAssetsAmigaDemo() {
+	Common::File file;
+	file.open("x");
+	if (!file.isOpen())
+		error("Failed to open 'x' file");
+
+	loadMessagesVariableSize(&file, 0x8bb2, 164);
+	load8bitBinary(&file, 0x162a6, 16);
+	assert(0);
+	//loadPalettes(&file, 0x0);
+
+	//file.close();
+	//file.open("driller");
+	//if (!file.isOpen())
+	//	error("Failed to open 'driller' file");
+
+	//loadFonts(&file, 0xa30);
+	//loadMessagesFixedSize(&file, 0x3960, 14, 20);
+	//loadGlobalObjects(&file, 0x3716, 8);
+
+	file.close();
+	//file.open("soundfx");
+	//if (!file.isOpen())
+	//	error("Failed to open 'soundfx' executable for Amiga");
+
+	//loadSoundsFx(&file, 0, 25);
+}
+
 
 void CastleEngine::titleScreen() {
 	if (isAmiga() || isAtariST()) // These releases has their own screens

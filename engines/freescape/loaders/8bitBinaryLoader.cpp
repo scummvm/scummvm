@@ -471,12 +471,12 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 			i++;
 		}
 	} else if (isCastle()) {
-		byte idx = file->readByte();
+		byte idx = readField(file, 8);
 		name = _messagesList[idx + 41];
-		extraColor[0] = file->readByte();
-		extraColor[1] = file->readByte();
-		extraColor[2] = file->readByte();
-		extraColor[3] = file->readByte();
+		extraColor[0] = readField(file, 8);
+		extraColor[1] = readField(file, 8);
+		extraColor[2] = readField(file, 8);
+		extraColor[3] = readField(file, 8);
 	}
 	debugC(1, kFreescapeDebugParser, "Area name: %s", name.c_str());
 
