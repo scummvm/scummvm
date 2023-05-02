@@ -545,7 +545,7 @@ void AmerzoneGame::update() {
 			_warpY->setMouseLeftUpForMakers();
 	}
 
-	const TeQuaternion rot = TeQuaternion::fromEulerDegrees(TeVector3f32(_orientationX, _orientationY, 0));
+	const TeQuaternion rot = TeQuaternion::fromEulerDegrees(TeVector3f32(_orientationY, _orientationX, 0));
 
 	if (_warpX)
 		_warpX->rotateCamera(rot);

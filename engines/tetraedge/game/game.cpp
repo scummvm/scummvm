@@ -68,8 +68,16 @@ Game::~Game() {
 };
 
 void Game::addNoScale2Child(TeLayout *layout) {
-	if (_noScaleLayout2 && layout) {
-		_noScaleLayout2->addChild(layout);
+	if (!layout)
+		return;
+
+	if (!g_engine->gameIsAmerzone()) {
+		if (_noScaleLayout2) {
+			_noScaleLayout2->addChild(layout);
+		}
+	} else {
+		// No _noScaleLayout in Amerzone, just use front
+		g_engine->getApplication()->frontLayout().addChild(layout);
 	}
 }
 
@@ -377,9 +385,16 @@ void Game::playSound(const Common::String &name, int repeats, float volume) {
 }
 
 void Game::removeNoScale2Child(TeLayout *layout) {
-	if (!_noScaleLayout2 || !layout)
+	if (!layout)
 		return;
-	_noScaleLayout2->removeChild(layout);
+
+	if (!g_engine->gameIsAmerzone()) {
+		if (_noScaleLayout2)
+			_noScaleLayout2->removeChild(layout);
+	} else {
+		// No _noScaleLayout in Amerzone, just use front
+		g_engine->getApplication()->frontLayout().removeChild(layout);
+	}
 }
 
 void Game::resumeMovie() {

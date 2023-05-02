@@ -207,7 +207,8 @@ static int tolua_ExportedFunctions_Selected00(lua_State *L) {
 
 static void TakeObject_Amerzone(const Common::String &obj) {
 	AmerzoneGame *game = dynamic_cast<AmerzoneGame *>(g_engine->getGame());
-	assert(game);
+	assert(game && game->warpY());
+	debug("TakeObject: lastObj %s, obj %s", game->lastHitObjectName().c_str(), obj.c_str());
 	game->luaContext().setGlobal(game->lastHitObjectName(), true);
 	game->warpY()->takeObject(game->lastHitObjectName());
 	if (!obj.empty()) {
@@ -2915,14 +2916,21 @@ static int tolua_ExportedFunctions_RemoveObject00_Amerzone(lua_State *L) {
 	error("#ferror in function 'RemoveObject': %d %d %s", err.index, err.array, err.type);
 }
 
+static void AddToBag(const Common::String &name) {
+	Game *game = g_engine->getGame();
+	game->addToBag(name);
+	TeSoundManager *sndMgr = g_engine->getSoundManager();
+	sndMgr->playFreeSound("Sounds/SFX/N_prendre.ogg");
+}
+
 static int tolua_ExportedFunctions_AddToBag00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
-		debug("%s", s1.c_str());
+		AddToBag(s1);
 		return 0;
 	}
-	error("#ferror in function 'PrintDebugMessage': %d %d %s", err.index, err.array, err.type);
+	error("#ferror in function 'AddToBag': %d %d %s", err.index, err.array, err.type);
 }
 
 void SaveGame(const Common::String &name) {
@@ -2961,11 +2969,13 @@ static int tolua_ExportedFunctions_SetMarker00(lua_State *L) {
 static void LookAt(int x, int y) {
 	AmerzoneGame *game = dynamic_cast<AmerzoneGame *>(g_engine->getGame());
 	assert(game);
-	game->setAngleX(-x);
+	// Note: Reverse the angles to what the game does, because we apply them
+	// using fromEuler.
+	game->setAngleX(x);
 	int yval = y - 360;
 	if (y < 90)
 		yval = y;
-	game->setAngleY(-yval);
+	game->setAngleY(yval);
 }
 
 static int tolua_ExportedFunctions_LookAt00(lua_State *L) {

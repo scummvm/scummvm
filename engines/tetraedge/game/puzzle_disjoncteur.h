@@ -23,6 +23,8 @@
 #define TETRAEDGE_GAME_PUZZLE_DISJONCTEUR_H
 
 #include "tetraedge/te/te_3d_object2.h"
+#include "tetraedge/te/te_sprite_layout.h"
+#include "tetraedge/te/te_xml_gui.h"
 
 namespace Tetraedge {
 
@@ -31,12 +33,24 @@ public:
 	PuzzleDisjoncteur();
 
 	void wakeUp();
-
-	// TODO add public members
+	void sleep();
 
 private:
-	// TODO add private members
+	void addState(uint32 flags);
+	void removeState(uint32 flags);
+	void setDraggedSprite(TeSpriteLayout *sprite);
+	void setDraggedSpriteBack();
+	void setState(uint32 flags) { _state = flags; }
 
+	bool onExitButton();
+	bool onLevierAnimFinished();
+	bool onMouseDown(const Common::Point &pt);
+	bool onMouseMove(const Common::Point &pt);
+	bool onMouseUp(const Common::Point &pt);
+	bool onWinTimer();
+
+	TeXmlGui _gui;
+	uint32 _state;
 };
 
 } // end namespace Tetraedge

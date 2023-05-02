@@ -31,11 +31,18 @@ public:
 	PuzzleLiquides();
 
 	void wakeUp();
-
-	// TODO add public members
+	void sleep();
 
 private:
-	// TODO add private members
+	void initCase();
+	bool isAdjacent(int x, int y);
+	bool isSolved();
+
+	bool onExitButton();
+	bool onMouseDown(const Common::Point &pt);
+	bool onMouseMove(const Common::Point &pt);
+	bool onMouseUp(const Common::Point &pt);
+	bool onWinTimer();
 
 };
 

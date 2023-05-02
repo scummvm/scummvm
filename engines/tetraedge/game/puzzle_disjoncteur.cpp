@@ -23,13 +23,60 @@
 
 namespace Tetraedge {
 
-PuzzleDisjoncteur::PuzzleDisjoncteur() {
+PuzzleDisjoncteur::PuzzleDisjoncteur() : _state(0) {
 }
 
 void PuzzleDisjoncteur::wakeUp() {
 	error("TODO: Implement PuzzleDisjoncteur::wakeUp");
 }
 
-// TODO: Add more functions here.
+void PuzzleDisjoncteur::sleep() {
+	error("TODO: Implement PuzzleDisjoncteur::sleep");
+}
+
+void PuzzleDisjoncteur::addState(uint32 flags) {
+	if (!(_state & flags))
+		_state += flags;
+}
+
+void PuzzleDisjoncteur::removeState(uint32 flags) {
+	if (_state & flags)
+		_state -= flags;
+}
+
+void PuzzleDisjoncteur::setDraggedSprite(TeSpriteLayout *sprite) {
+	error("TODO: Implement PuzzleDisjoncteur::setDraggedSprite");
+}
+
+void PuzzleDisjoncteur::setDraggedSpriteBack() {
+	error("TODO: Implement PuzzleDisjoncteur::setDraggedSpriteBack");
+}
+
+bool PuzzleDisjoncteur::onExitButton() {
+	sleep();
+	return false;
+}
+
+bool PuzzleDisjoncteur::onLevierAnimFinished() {
+	error("TODO: Implement PuzzleDisjoncteur::onLevierAnimFinished");
+}
+
+bool PuzzleDisjoncteur::onMouseDown(const Common::Point &pt) {
+	error("TODO: Implement PuzzleDisjoncteur::onMouseDown");
+}
+
+bool PuzzleDisjoncteur::onMouseMove(const Common::Point &pt) {
+	error("TODO: Implement PuzzleDisjoncteur::onMouseMove");
+}
+
+bool PuzzleDisjoncteur::onMouseUp(const Common::Point &pt) {
+	error("TODO: Implement PuzzleDisjoncteur::onMouseUp");
+}
+
+bool PuzzleDisjoncteur::onWinTimer() {
+	sleep();
+	return false;
+}
+
 
 } // end namespace Tetraedge

@@ -30,6 +30,10 @@ void PuzzleLiquides::wakeUp() {
 	error("TODO: Implement PuzzleLiquides::wakeUp");
 }
 
+void PuzzleLiquides::sleep() {
+	error("TODO: Implement PuzzleLiquides::sleep");
+}
+
 // TODO: Add more functions here.
 
 } // end namespace Tetraedge
