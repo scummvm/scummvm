@@ -137,8 +137,11 @@ static void loadCJKTables() {
 		return;
 	}
 
+	int ver = f.readUint32LE();
+	int num_tables = f.readUint32LE();
+
 	// Version and number of tables.
-	if (f.readUint32LE() != 0 || f.readUint32LE() < 3) {
+	if (ver != 0 || num_tables < 3) {
 		warning("encoding.dat is of incompatible version. Support for CJK is disabled");
 		return;
 	}
@@ -146,8 +149,10 @@ static void loadCJKTables() {
 	windows932ConversionTable = loadCJKTable(f, 0, 47 * 192);
 	windows949ConversionTable = loadCJKTable(f, 1, 0x7e * 0xb2);
 	windows950ConversionTable = loadCJKTable(f, 2, 89 * 157);
-	johabConversionTable = loadCJKTable(f, 3, 80 * 188);
-	windows936ConversionTable = loadCJKTable(f, 4, 126 * 190);
+	if (num_tables >= 4)
+		johabConversionTable = loadCJKTable(f, 3, 80 * 188);
+	if (num_tables >= 5)
+		windows936ConversionTable = loadCJKTable(f, 4, 126 * 190);
 }
 
 void releaseCJKTables() {
