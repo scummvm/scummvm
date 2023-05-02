@@ -167,6 +167,7 @@ private:
 	bool cmdScriptSaid(int argc, const char **argv);
 	bool cmdVMVarlist(int argc, const char **argv);
 	bool cmdVMVars(int argc, const char **argv);
+	bool cmdLocalVars(int argc, const char **argv);
 	bool cmdStack(int argc, const char **argv);
 	bool cmdValueType(int argc, const char **argv);
 	bool cmdViewListNode(int argc, const char **argv);

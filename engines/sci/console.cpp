@@ -245,6 +245,8 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("vm_vars",			WRAP_METHOD(Console, cmdVMVars));
 	registerCmd("vmvars",				WRAP_METHOD(Console, cmdVMVars));					// alias
 	registerCmd("vv",					WRAP_METHOD(Console, cmdVMVars));					// alias
+	registerCmd("locals",				WRAP_METHOD(Console, cmdLocalVars));
+	registerCmd("l",					WRAP_METHOD(Console, cmdLocalVars));				// alias
 	registerCmd("stack",				WRAP_METHOD(Console, cmdStack));
 	registerCmd("st",					WRAP_METHOD(Console, cmdStack));					// alias
 	registerCmd("value_type",			WRAP_METHOD(Console, cmdValueType));
@@ -452,6 +454,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" script_said - Shows all said - strings inside a specified script\n");
 	debugPrintf(" vm_varlist / vmvarlist / vl - Shows the addresses of variables in the VM\n");
 	debugPrintf(" vm_vars / vmvars / vv - Displays or changes variables in the VM\n");
+	debugPrintf(" locals / l - Displays or changes local variables in the VM\n");
 	debugPrintf(" stack / st - Lists the specified number of stack elements\n");
 	debugPrintf(" value_type - Determines the type of a value\n");
 	debugPrintf(" view_listnode - Examines the list node at the given address\n");
@@ -2976,6 +2979,71 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 			return true;
 		}
 	}
+	return true;
+}
+
+bool Console::cmdLocalVars(int argc, const char **argv) {
+	if (!(2 <= argc && argc <= 4)) {
+		debugPrintf("Displays or changes local variables in the VM\n");
+		debugPrintf("Usage: %s <script> <varnum> [<value>]\n", argv[0]);
+		return true;
+	}
+
+	int scriptNumber;
+	if (!parseInteger(argv[1], scriptNumber) || scriptNumber < 0) {
+		debugPrintf("Invalid script: %s\n", argv[1]);
+		return true;
+	}
+
+	// search segment table for script locals
+	Common::Array<reg_t> *locals = nullptr;
+	for (uint i = 0; i < _engine->_gamestate->_segMan->_heap.size(); i++) {
+		SegmentObj *segmentObj = _engine->_gamestate->_segMan->_heap[i];
+		if (segmentObj != nullptr && segmentObj->getType() == SEG_TYPE_LOCALS) {
+			LocalVariables *localVariables = (LocalVariables *)segmentObj;
+			if (localVariables->script_id == scriptNumber) {
+				locals = &localVariables->_locals;
+				break;
+			}
+		}
+	}
+	if (locals == nullptr) {
+		debugPrintf("No locals for script: %d\n", scriptNumber);
+		return true;
+	}
+
+	int varIndex = -1;
+	if (argc >= 3) {
+		if (!parseInteger(argv[2], varIndex) || varIndex < 0) {
+			debugPrintf("Variable number may not be negative\n");
+			return true;
+		}
+		if (varIndex >= (int)locals->size()) {
+			debugPrintf("Maximum variable number for this type is %d (0x%x)\n", locals->size(), locals->size());
+			return true;
+		}
+	}
+
+	if (argc <= 3) {
+		// print script local(s)
+		for (uint i = 0; i < locals->size(); i++) {
+			if (varIndex == -1 || varIndex == (int)i) {
+				reg_t value = (*locals)[i];
+				debugPrintf("local var %d == %04x:%04x", i, PRINT_REG(value));
+				printBasicVarInfo(value);
+				debugPrintf("\n");
+			}
+		}
+	} else {
+		// change script local
+		reg_t *value = &(*locals)[varIndex];
+		if (parse_reg_t(_engine->_gamestate, argv[3], value)) {
+			debugPrintf("Invalid value/address passed.\n");
+			debugPrintf("Check the \"addresses\" command on how to use addresses\n");
+			debugPrintf("Or pass a decimal or hexadecimal value directly (e.g. 12, 1Ah)\n");
+		}
+	}
+
 	return true;
 }
 
