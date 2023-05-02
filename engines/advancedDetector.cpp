@@ -769,7 +769,8 @@ ADDetectedGames AdvancedMetaEngineDetectionBase::detectGame(const Common::FSNode
 		// Do not even bother to look at entries which do not have matching
 		// language and platform (if specified).
 		if ((language != Common::UNK_LANG && g->language != Common::UNK_LANG && g->language != language
-			 && !(language == Common::EN_ANY && (g->flags & ADGF_ADDENGLISH))) ||
+		     && !(language == Common::EN_ANY && (g->flags & ADGF_ADDENGLISH))
+		     && !(language == Common::Language::ZH_CHN && g->language == Common::Language::ZH_TWN && (_flags & kADFlagCanTranscodeTraditionalChineseToSimplified))) ||
 			(platform != Common::kPlatformUnknown && g->platform != Common::kPlatformUnknown && g->platform != platform)) {
 			continue;
 		}

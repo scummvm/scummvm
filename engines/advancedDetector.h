@@ -383,6 +383,11 @@ enum ADFlags {
 	  * of detected games.
 	  */
 	kADFlagCanPlayUnknownVariants = (1 << 3),
+
+	/**
+	  * Indicates engine's ability to play a variant of a Traditional Chinese game while transcoding it on-the-fly to Simplified.
+	  */
+	kADFlagCanTranscodeTraditionalChineseToSimplified = (1 << 4),
 };
 
 
