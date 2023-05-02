@@ -74,6 +74,9 @@ SoundChannel *DirectorSound::getChannel(uint8 soundChannel) {
 }
 
 void DirectorSound::playFile(Common::String filename, uint8 soundChannel) {
+	if (!isChannelValid(soundChannel))
+		return;
+
 	if (debugChannelSet(-1, kDebugFast))
 		return;
 
@@ -282,6 +285,8 @@ bool DirectorSound::fadeChannel(uint8 soundChannel) {
 }
 
 void DirectorSound::cancelFade(uint8 soundChannel) {
+	if (!isChannelValid(soundChannel))
+		return;
 	// NOTE: It is assumed that soundChannel has already been validated, which is
 	// why this method is private.
 
