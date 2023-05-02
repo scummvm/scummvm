@@ -792,6 +792,13 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 
 				debugN(9, "%s", recIndent());
 				debug(9, "wrappedPathMakeRelative(): s6 -- not found %s", res.c_str());
+
+				debugN(9, "%s", recIndent());
+				debug(9, "wrappedPathMakeRelative(): s7 -- try alternate extensions for %s in %s", nameWithoutExt.c_str(), initialPath.c_str());
+				addedexts = testExtensions(nameWithoutExt, initialPath, convPath);
+				if (!addedexts.empty())
+					return addedexts;
+
 			}
 		}
 
@@ -822,8 +829,19 @@ bool hasExtension(Common::String filename) {
 Common::String testExtensions(Common::String component, Common::String initialPath, Common::String convPath) {
 	const char *extsD3[] = { ".MMM", nullptr };
 	const char *extsD4[] = { ".DIR", ".DXR", nullptr };
+	const char *extsD5[] = { ".DIR", ".DXR", ".CST", ".CXT", nullptr };
 
-	const char **exts = (g_director->getVersion() >= 400) ? extsD4 : extsD3;
+	const char **exts = nullptr;
+	if (g_director->getVersion() < 400) {
+		exts = extsD3;
+	} else if (g_director->getVersion() >= 400 && g_director->getVersion() < 500) {
+		exts = extsD4;
+	} else if (g_director->getVersion() >= 500 && g_director->getVersion() < 600) {
+		exts = extsD5;
+	} else {
+		warning("STUB: testExtensions(): file extensions not yet supported for version %d, falling back to D5", g_director->getVersion());
+		exts = extsD5;
+	}
 	for (int i = 0; exts[i]; ++i) {
 		Common::String newpath = convPath + component.c_str() + exts[i];
 
