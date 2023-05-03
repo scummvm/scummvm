@@ -165,7 +165,7 @@ struct SfxPlaylistEntry {
 	uint frame;
 	Common::SharedPtr<SfxSound> sample;
 	int8 balance;
-	uint8 volume;
+	int32 volume;
 	bool isUpdate;
 };
 

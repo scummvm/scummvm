@@ -351,14 +351,24 @@ void SfxData::load(Common::SeekableReadStream &stream, Audio::Mixer *mixer) {
 
 	const Common::INIFile::Section *samplesSection = nullptr;
 	const Common::INIFile::Section *playlistsSection = nullptr;
+	const Common::INIFile::Section *presetsSection = nullptr;
 
-	Common::INIFile::SectionList sections = iniFile.getSections();	// Why does this require a copy??
+	Common::INIFile::SectionList sections = iniFile.getSections();	// Why does this require a copy?  Sigh.
 
 	for (const Common::INIFile::Section &section : sections) {
 		if (section.name == "samples")
 			samplesSection = &section;
 		else if (section.name == "playlists")
 			playlistsSection = &section;
+		else if (section.name == "presets")
+			presetsSection = &section;
+	}
+
+	Common::HashMap<Common::String, Common::String> presets;
+
+	if (presetsSection) {
+		for (const Common::INIFile::KeyValue &keyValue : presetsSection->keys)
+			presets.setVal(keyValue.key, keyValue.value);
 	}
 
 	if (samplesSection) {
@@ -470,11 +480,19 @@ void SfxData::load(Common::SeekableReadStream &stream, Audio::Mixer *mixer) {
 					continue;
 				}
 
+				if (!presets.empty()) {
+					for (Common::String &tokenRef : tokens) {
+						Common::HashMap<Common::String, Common::String>::const_iterator presetIt = presets.find(tokenRef);
+						if (presetIt != presets.end())
+							tokenRef = presetIt->_value;
+					}
+				}
+
 				unsigned int frameNum = 0;
 				int balance = 0;
-				unsigned int volume = 0;
+				int volume = 0;
 
-				if (!sscanf(tokens[0].c_str(), "%u", &frameNum) || !sscanf(tokens[2].c_str(), "%i", &balance) || !sscanf(tokens[3].c_str(), "%u", &volume)) {
+				if (!sscanf(tokens[0].c_str(), "%u", &frameNum) || !sscanf(tokens[2].c_str(), "%i", &balance) || !sscanf(tokens[3].c_str(), "%i", &volume)) {
 					warning("Malformed playlist entry: %s", key.c_str());
 					continue;
 				}
@@ -1719,11 +1737,11 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 					VCruise::AudioPlayer &audioPlayer = *playlistEntry.sample->audioPlayer;
 
 					if (playlistEntry.isUpdate) {
-						audioPlayer.setVolumeAndBalance(playlistEntry.volume, playlistEntry.balance);
+						audioPlayer.setVolumeAndBalance(applyVolumeScale(playlistEntry.volume), playlistEntry.balance);
 					} else {
 						audioPlayer.stop();
 						playlistEntry.sample->audioStream->seek(0);
-						audioPlayer.play(playlistEntry.volume, playlistEntry.balance);
+						audioPlayer.play(applyVolumeScale(playlistEntry.volume), playlistEntry.balance);
 					}
 
 					// No break, it's possible for there to be multiple sounds in the same frame
