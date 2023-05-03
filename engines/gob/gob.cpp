@@ -221,6 +221,10 @@ bool GobEngine::is800x600() const {
 	return (_features & kFeatures800x600) != 0;
 }
 
+bool GobEngine::is16Colors() const {
+	return (_features & kFeatures16Colors) != 0;
+}
+
 bool GobEngine::isTrueColor() const {
 	return (_features & kFeaturesTrueColor) != 0;
 }

@@ -52,7 +52,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeAdibou1,
-	kFeaturesAdLib | kFeaturesEGA,
+	kFeaturesAdLib | kFeatures16Colors,
 	0, "base.tot", 0
 },
 
