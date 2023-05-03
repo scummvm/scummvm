@@ -904,7 +904,12 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 #endif
 		offset = _exports.getUint16SEAt(pubfunct);
 
-	// TODO: Check if this should be done for SCI1.1 games as well
+	// SCI2 doesn't adjust export offsets to the code block when they're zero.
+	// Zero is supposed to signify that the export slot is empty. This leaves the
+	// offset pointing at the start of the code block, and several scripts rely
+	// on this. Script 64909's first export is zero but game scripts call this
+	// to shake the screen. This works because the function resides at the start
+	// of the code block.
 	if (getSciVersion() >= SCI_VERSION_2 && offset == 0) {
 		offset = getCodeBlockOffset();
 	}
