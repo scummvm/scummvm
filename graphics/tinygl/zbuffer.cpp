@@ -86,14 +86,14 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelFormat &for
 	_pbufBpp = _pbufFormat.bytesPerPixel;
 	_pbufPitch = (_pbufWidth * _pbufBpp + 3) & ~3;
 
-	_pbuf.set(_pbufFormat, new byte[_pbufHeight * _pbufPitch]);
+	_pbuf = (byte *)gl_zalloc(_pbufHeight * _pbufPitch * sizeof(byte));
 	_zbuf = (uint *)gl_zalloc(_pbufWidth * _pbufHeight * sizeof(uint));
 	if (enableStencilBuffer)
 		_sbuf = (byte *)gl_zalloc(_pbufWidth * _pbufHeight * sizeof(byte));
 	else
 		_sbuf = nullptr;
 
-	_offscreenBuffer.pbuf = _pbuf.getRawBuffer();
+	_offscreenBuffer.pbuf = _pbuf;
 	_offscreenBuffer.zbuf = _zbuf;
 
 	_currentTexture = nullptr;
@@ -102,7 +102,7 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelFormat &for
 }
 
 FrameBuffer::~FrameBuffer() {
-	_pbuf.free();
+	gl_free(_pbuf);
 	gl_free(_zbuf);
 	if (_sbuf)
 		gl_free(_sbuf);
@@ -136,7 +136,7 @@ void FrameBuffer::clear(int clearZ, int z, int clearColor, int r, int g, int b,
 		}
 	}
 	if (clearColor) {
-		byte *pp = _pbuf.getRawBuffer();
+		byte *pp = _pbuf;
 		uint32 color = _pbufFormat.RGBToColor(r, g, b);
 		const uint8 *colorc = (uint8 *)&color;
 		uint i;
@@ -187,7 +187,7 @@ void FrameBuffer::clearRegion(int x, int y, int w, int h, bool clearZ, int z,
 	}
 	if (clearColor) {
 		int height = h;
-		byte *pp = _pbuf.getRawBuffer() + y * _pbufPitch + x * _pbufBpp;
+		byte *pp = _pbuf + y * _pbufPitch + x * _pbufBpp;
 		uint32 color = _pbufFormat.RGBToColor(r, g, b);
 		const uint8 *colorc = (uint8 *)&color;
 		uint i;
@@ -238,7 +238,7 @@ void FrameBuffer::blitOffscreenBuffer(Buffer *buf) {
 	if (buf->used) {
 		const int pixel_bytes = _pbufBpp;
 		const int unrolled_pixel_bytes = pixel_bytes * UNROLL_COUNT;
-		byte *to = _pbuf.getRawBuffer();
+		byte *to = _pbuf;
 		byte *from = buf->pbuf;
 		uint *to_z = _zbuf;
 		uint *from_z = buf->zbuf;

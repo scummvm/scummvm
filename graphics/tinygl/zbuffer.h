@@ -29,7 +29,6 @@
 #define GRAPHICS_TINYGL_ZBUFFER_H_
 
 #include "graphics/surface.h"
-#include "graphics/tinygl/pixelbuffer.h"
 #include "graphics/tinygl/texelbuffer.h"
 #include "graphics/tinygl/gl.h"
 
@@ -112,11 +111,7 @@ struct FrameBuffer {
 	}
 
 	byte *getPixelBuffer() {
-		return _pbuf.getRawBuffer();
-	}
-
-	byte *getPixelBuffer(int pixel) {
-		return _pbuf.getRawBuffer(pixel);
+		return _pbuf;
 	}
 
 	int getPixelBufferWidth() {
@@ -131,21 +126,66 @@ struct FrameBuffer {
 		return _pbufPitch;
 	}
 
+	int getPixelBufferBpp() {
+		return _pbufBpp;
+	}
+
 	const uint *getZBuffer() {
 		return _zbuf;
 	}
 
 	Graphics::Surface *copyFromFrameBuffer(const Graphics::PixelFormat &dstFormat) {
 		Graphics::Surface tmp;
-		tmp.init(_pbufWidth, _pbufHeight, _pbufPitch, _pbuf.getRawBuffer(), _pbufFormat);
+		tmp.init(_pbufWidth, _pbufHeight, _pbufPitch, _pbuf, _pbufFormat);
 		return tmp.convertTo(dstFormat);
 	}
 
 	void getSurfaceRef(Graphics::Surface &surface) {
-		surface.init(_pbufWidth, _pbufHeight, _pbufPitch, _pbuf.getRawBuffer(), _pbufFormat);
+		surface.init(_pbufWidth, _pbufHeight, _pbufPitch, _pbuf, _pbufFormat);
 	}
 
 private:
+
+	FORCEINLINE void setPixelAt(int pixel, uint32 value) {
+		switch (_pbufBpp) {
+		case 2:
+			((uint16 *) _pbuf)[pixel] = value;
+			return;
+		case 3:
+			pixel *= 3;
+#if defined(SCUMM_BIG_ENDIAN)
+			_pbuf[pixel + 0] = (value >> 16) & 0xFF;
+			_pbuf[pixel + 1] = (value >> 8) & 0xFF;
+			_pbuf[pixel + 2] = value & 0xFF;
+#elif defined(SCUMM_LITTLE_ENDIAN)
+			_pbuf[pixel + 0] = value & 0xFF;
+			_pbuf[pixel + 1] = (value >> 8) & 0xFF;
+			_pbuf[pixel + 2] = (value >> 16) & 0xFF;
+#endif
+			return;
+		case 4:
+			((uint32 *) _pbuf)[pixel] = value;
+			return;
+		}
+		error("setPixelAt: Unhandled bytesPerPixel %d", int(_pbufBpp));
+	}
+
+	FORCEINLINE uint32 getPixelAt(int i) const {
+		switch (_pbufBpp) {
+		case 2:
+			return ((uint16 *) _pbuf)[i];
+		case 3:
+			i *= 3;
+#if defined(SCUMM_BIG_ENDIAN)
+			return (_pbuf[i + 0] << 16) | (_pbuf[i + 1] << 8) | _pbuf[i + 2];
+#elif defined(SCUMM_LITTLE_ENDIAN)
+			return _pbuf[i + 0] | (_pbuf[i + 1] << 8) | (_pbuf[i + 2] << 16);
+#endif
+		case 4:
+			return ((uint32 *) _pbuf)[i];
+		}
+		error("getPixelAt: Unhandled bytesPerPixel %d", int(_pbufBpp));
+	}
 
 	FORCEINLINE bool compareDepth(uint &zSrc, uint &zDst) {
 		if (!_depthTestEnabled)
@@ -295,13 +335,13 @@ private:
 	template <bool kEnableAlphaTest, bool kBlendingEnabled, bool kDepthWrite>
 	FORCEINLINE void writePixel(int pixel, int value, uint z) {
 		if (kBlendingEnabled == false) {
-			_pbuf.setPixelAt(pixel, value);
+			setPixelAt(pixel, value);
 			if (kDepthWrite) {
 				_zbuf[pixel] = z;
 			}
 		} else {
 			byte rSrc, gSrc, bSrc, aSrc;
-			_pbuf.getFormat().colorToARGB(value, aSrc, rSrc, gSrc, bSrc);
+			_pbufFormat.colorToARGB(value, aSrc, rSrc, gSrc, bSrc);
 
 			writePixel<kEnableAlphaTest, kBlendingEnabled, kDepthWrite>(pixel, aSrc, rSrc, gSrc, bSrc, z);
 		}
@@ -415,10 +455,10 @@ private:
 		}
 
 		if (!kBlendingEnabled) {
-			_pbuf.setPixelAt(pixel, aSrc, rSrc, gSrc, bSrc);
+			setPixelAt(pixel, _pbufFormat.ARGBToColor(aSrc, rSrc, gSrc, bSrc));
 		} else {
 			byte rDst, gDst, bDst, aDst;
-			_pbuf.getARGBAt(pixel, aDst, rDst, gDst, bDst);
+			_pbufFormat.colorToARGB(getPixelAt(pixel), aDst, rDst, gDst, bDst);
 			switch (_sourceBlendingFactor) {
 			case TGL_ZERO:
 				rSrc = gSrc = bSrc = 0;
@@ -517,7 +557,7 @@ private:
 			if (finalB > 255) {
 				finalB = 255;
 			}
-			_pbuf.setPixelAt(pixel, 255, finalR, finalG, finalB);
+			setPixelAt(pixel, _pbufFormat.RGBToColor(finalR, finalG, finalB));
 		}
 	}
 
@@ -701,7 +741,7 @@ private:
 	void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
 
 	Buffer _offscreenBuffer;
-	Graphics::PixelBuffer _pbuf;
+	byte *_pbuf;
 	int _pbufWidth;
 	int _pbufHeight;
 	int _pbufPitch;
