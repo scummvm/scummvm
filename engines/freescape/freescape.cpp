@@ -515,6 +515,12 @@ void FreescapeEngine::processInput() {
 			}
 			break;
 
+		case Common::EVENT_RBUTTONDOWN:
+			if (_hasFallen || !isCastle())
+				break;
+			activate();
+			break;
+
 		default:
 			break;
 		}
