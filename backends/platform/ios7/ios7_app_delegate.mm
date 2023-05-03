@@ -118,6 +118,16 @@
 	return YES;
 }
 
+#ifdef __IPHONE_13_2
+- (BOOL)application:(UIApplication *)application shouldSaveSecureApplicationState:(NSCoder *)coder {
+	return YES;
+}
+
+- (BOOL)application:(UIApplication *)application shouldRestoreSecureApplicationState:(NSCoder *)coder {
+	return YES;
+}
+#endif
+
 - (void)application:(UIApplication *)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {
 	_restoreState = YES;
 }
