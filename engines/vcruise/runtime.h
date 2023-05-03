@@ -400,6 +400,7 @@ struct SaveGameSnapshot {
 	uint roomNumber;
 	uint screenNumber;
 	uint direction;
+	uint hero;
 
 	bool escOn;
 	int musicTrack;
@@ -476,7 +477,7 @@ class Runtime {
 public:
 	friend class RuntimeMenuInterface;
 
-	Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID);
+	Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID, bool isCDVariant, bool isDVDVariant);
 	virtual ~Runtime();
 
 	void initSections(const Common::Rect &gameRect, const Common::Rect &menuRect, const Common::Rect &trayRect, const Common::Rect &fullscreenMenuRect, const Graphics::PixelFormat &pixFmt);
@@ -960,7 +961,8 @@ private:
 	void scriptOpBitAnd(ScriptArg_t arg);
 	void scriptOpBitOr(ScriptArg_t arg);
 	void scriptOpAngleGet(ScriptArg_t arg);
-	void scriptOpCDGet(ScriptArg_t arg);
+	void scriptOpIsDVDVersion(ScriptArg_t arg);
+	void scriptOpIsCDVersion(ScriptArg_t arg);
 	void scriptOpDisc(ScriptArg_t arg);
 	void scriptOpHidePanel(ScriptArg_t arg);
 	void scriptOpRotateUpdate(ScriptArg_t arg);
@@ -997,7 +999,7 @@ private:
 	uint _roomNumber;	// Room number can be changed independently of the loaded room, the screen doesn't change until a command changes it
 	uint _screenNumber;
 	uint _direction;
-	//uint _highPrecisionDirection;
+	uint _hero;
 
 	GyroState _gyros;
 
@@ -1163,6 +1165,8 @@ private:
 	const Graphics::Font *_subtitleFont;
 	Common::SharedPtr<Graphics::Font> _subtitleFontKeepalive;
 	uint _languageIndex;
+	bool _isDVDVariant;
+	bool _isCDVariant;
 
 	typedef Common::HashMap<uint, SubtitleDef> FrameToSubtitleMap_t;
 	typedef Common::HashMap<uint, FrameToSubtitleMap_t> AnimSubtitleMap_t;

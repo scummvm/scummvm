@@ -253,9 +253,17 @@ bool ScriptCompiler::parseDecNumber(const Common::String &token, uint start, uin
 	if (start == token.size())
 		return false;
 
-	uint num = 0;
-	if (!sscanf(token.c_str() + start, "%u", &num))
-		return false;
+	// We don't use sscanf because sscanf accepts partial results and we want to reject this if any character is mismatched
+	uint32 num = 0;
+	for (uint i = start; i < token.size(); i++) {
+		num *= 10u;
+
+		char c = token[i];
+		if (c >= '0' && c <= '9')
+			num += static_cast<uint32>(c - '0');
+		else
+			return false;
+	}
 
 	outNumber = num;
 	return true;
@@ -265,9 +273,21 @@ bool ScriptCompiler::parseHexNumber(const Common::String &token, uint start, uin
 	if (start == token.size())
 		return false;
 
-	uint num = 0;
-	if (!sscanf(token.c_str() + start, "%x", &num))
-		return false;
+	// We don't use sscanf because sscanf accepts partial results and we want to reject this if any character is mismatched
+	uint32 num = 0;
+	for (uint i = start; i < token.size(); i++) {
+		num *= 16u;
+
+		char c = token[i];
+		if (c >= '0' && c <= '9')
+			num += static_cast<uint32>(c - '0');
+		else if (c >= 'a' && c <= 'f')
+			num += static_cast<uint32>(c - 'a' + 0xa);
+		else if (c >= 'A' && c <= 'F')
+			num += static_cast<uint32>(c - 'a' + 0xa);
+		else
+			return false;
+	}
 
 	outNumber = num;
 	return true;
@@ -278,7 +298,9 @@ bool ScriptCompiler::parseBinNumber(const Common::String &token, uint start, uin
 		return false;
 
 	uint num = 0;
-	for (char c : token) {
+	for (uint i = start; i < token.size(); i++) {
+		char c = token[i];
+
 		num <<= 1;
 		if (c == '1')
 			num |= 1;
@@ -705,7 +727,8 @@ static ScriptNamedInstruction g_schizmNamedInstructions[] = {
 	{"hi@", ProtoOp::kProtoOpScript, ScriptOps::kHiGet},
 	{"angle@", ProtoOp::kProtoOpScript, ScriptOps::kAngleGet},
 	{"angleG@", ProtoOp::kProtoOpScript, ScriptOps::kAngleGGet},
-	{"cd@", ProtoOp::kProtoOpScript, ScriptOps::kCDGet},
+	{"cd@", ProtoOp::kProtoOpScript, ScriptOps::kIsCDVersion},
+	{"dvd@", ProtoOp::kProtoOpScript, ScriptOps::kIsDVDVersion},
 	{"disc", ProtoOp::kProtoOpScript, ScriptOps::kDisc},
 	{"save0", ProtoOp::kProtoOpNoop, ScriptOps::kSave0},
 	{"hidePanel", ProtoOp::kProtoOpNoop, ScriptOps::kHidePanel},
@@ -849,12 +872,6 @@ bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::
 			// Seems like these are only used for sounds and music?
 			uint fnIndex = indexString(token.substr(1, token.size() - 2));
 			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kString, fnIndex));
-			return true;
-		}
-
-		if (token == "dvd@") {
-			// Always pass disc checks
-			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kNumber, 1));
 			return true;
 		}
 

@@ -682,7 +682,7 @@ void SaveGameSnapshot::Sound::read(Common::ReadStream *stream) {
 	params3D.read(stream);
 }
 
-SaveGameSnapshot::SaveGameSnapshot() : roomNumber(0), screenNumber(0), direction(0), escOn(false), musicTrack(0), musicVolume(100), musicActive(true), loadedAnimation(0),
+SaveGameSnapshot::SaveGameSnapshot() : roomNumber(0), screenNumber(0), direction(0), hero(0), escOn(false), musicTrack(0), musicVolume(100), musicActive(true), loadedAnimation(0),
 									   animDisplayingFrame(0), animVolume(100), listenerX(0), listenerY(0), listenerAngle(0) {
 }
 
@@ -693,6 +693,7 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 	stream->writeUint32BE(roomNumber);
 	stream->writeUint32BE(screenNumber);
 	stream->writeUint32BE(direction);
+	stream->writeUint32BE(hero);
 
 	stream->writeByte(escOn ? 1 : 0);
 	stream->writeSint32BE(musicTrack);
@@ -769,6 +770,11 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 	roomNumber = stream->readUint32BE();
 	screenNumber = stream->readUint32BE();
 	direction = stream->readUint32BE();
+
+	if (saveVersion >= 6)
+		hero = stream->readUint32BE();
+	else
+		hero = 0;
 
 	escOn = (stream->readByte() != 0);
 	musicTrack = stream->readSint32BE();
@@ -876,8 +882,8 @@ void SaveGameSnapshot::writeString(Common::WriteStream *stream, const Common::St
 	stream->writeString(str);
 }
 
-Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
-	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
+Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID, bool isCDVariant, bool isDVDVariant)
+	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _hero(0), _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
 	  _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false),
 	  _musicTrack(0), _musicActive(true), _scoreSectionEndTime(0), _musicVolume(getDefaultSoundVolume()), _musicVolumeRampStartTime(0), _musicVolumeRampStartVolume(0), _musicVolumeRampRatePerMSec(0), _musicVolumeRampEnd(0),
@@ -891,7 +897,8 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _panoramaState(kPanoramaStateInactive),
 	  _listenerX(0), _listenerY(0), _listenerAngle(0), _soundCacheIndex(0),
 	  _isInGame(false),
-	  _subtitleFont(nullptr), _isDisplayingSubtitles(false), _languageIndex(0) {
+	  _subtitleFont(nullptr), _isDisplayingSubtitles(false), _languageIndex(0),
+	  _isCDVariant(isCDVariant), _isDVDVariant(isDVDVariant) {
 
 	for (uint i = 0; i < kNumDirections; i++) {
 		_haveIdleAnimations[i] = false;
@@ -1091,6 +1098,9 @@ bool Runtime::bootGame(bool newGame) {
 	if (_gameID == GID_SCHIZM) {
 		loadScore();
 		debug(1, "Score loaded OK");
+
+		if (_isCDVariant == _isDVDVariant)
+			error("Detection entry is malformed, Schizm requires either VCRUISE_GF_CD_VARIANT or VCRUISE_GF_DVD_VARIANT");
 	}
 
 	_trayBackgroundGraphic = loadGraphic("Pocket", true);
@@ -1954,7 +1964,8 @@ bool Runtime::runScript() {
 			DISPATCH_OP(BitAnd);
 			DISPATCH_OP(BitOr);
 			DISPATCH_OP(AngleGet);
-			DISPATCH_OP(CDGet);
+			DISPATCH_OP(IsCDVersion);
+			DISPATCH_OP(IsDVDVersion);
 			DISPATCH_OP(Disc);
 			DISPATCH_OP(HidePanel);
 			DISPATCH_OP(RotateUpdate);
@@ -4327,6 +4338,7 @@ void Runtime::recordSaveGameSnapshot() {
 	snapshot->roomNumber = _roomNumber;
 	snapshot->screenNumber = _screenNumber;
 	snapshot->direction = _direction;
+	snapshot->hero = _hero;
 
 	snapshot->pendingStaticAnimParams = _pendingStaticAnimParams;
 
@@ -4411,6 +4423,7 @@ void Runtime::restoreSaveGameSnapshot() {
 	_roomNumber = _saveGame->roomNumber;
 	_screenNumber = _saveGame->screenNumber;
 	_direction = _saveGame->direction;
+	_hero = _saveGame->hero;
 
 	_pendingStaticAnimParams = _saveGame->pendingStaticAnimParams;
 
@@ -5679,16 +5692,34 @@ void Runtime::scriptOpCmpEq(ScriptArg_t arg) {
 	_scriptStack.push_back(StackValue((stackArgs[0] == stackArgs[1]) ? 1 : 0));
 }
 
+void Runtime::scriptOpCmpNE(ScriptArg_t arg) {
+	TAKE_STACK_INT(2);
+
+	_scriptStack.push_back(StackValue((stackArgs[0] != stackArgs[1]) ? 1 : 0));
+}
+
 void Runtime::scriptOpCmpLt(ScriptArg_t arg) {
 	TAKE_STACK_INT(2);
 
 	_scriptStack.push_back(StackValue((stackArgs[0] < stackArgs[1]) ? 1 : 0));
 }
 
+void Runtime::scriptOpCmpLE(ScriptArg_t arg) {
+	TAKE_STACK_INT(2);
+
+	_scriptStack.push_back(StackValue((stackArgs[0] <= stackArgs[1]) ? 1 : 0));
+}
+
 void Runtime::scriptOpCmpGt(ScriptArg_t arg) {
 	TAKE_STACK_INT(2);
 
 	_scriptStack.push_back(StackValue((stackArgs[0] > stackArgs[1]) ? 1 : 0));
+}
+
+void Runtime::scriptOpCmpGE(ScriptArg_t arg) {
+	TAKE_STACK_INT(2);
+
+	_scriptStack.push_back(StackValue((stackArgs[0] >= stackArgs[1]) ? 1 : 0));
 }
 
 void Runtime::scriptOpBitLoad(ScriptArg_t arg) {
@@ -5961,24 +5992,42 @@ void Runtime::scriptOpString(ScriptArg_t arg) {
 	_scriptStack.push_back(StackValue(_scriptSet->strings[arg]));
 }
 
-OPCODE_STUB(CmpNE)
-OPCODE_STUB(CmpLE)
-OPCODE_STUB(CmpGE)
 OPCODE_STUB(Speech)
 OPCODE_STUB(SpeechEx)
 OPCODE_STUB(SpeechTest)
 OPCODE_STUB(Say)
-OPCODE_STUB(RandomInclusive)
+
+void Runtime::scriptOpRandomInclusive(ScriptArg_t arg) {
+	TAKE_STACK_INT(1);
+
+	if (stackArgs[0] == 0)
+		_scriptStack.push_back(StackValue(0));
+	else
+		_scriptStack.push_back(StackValue(_rng->getRandomNumber(stackArgs[0])));
+}
+
 OPCODE_STUB(HeroOut)
 OPCODE_STUB(HeroGetPos)
 OPCODE_STUB(HeroSetPos)
-OPCODE_STUB(HeroGet)
+
+void Runtime::scriptOpHeroGet(ScriptArg_t arg) {
+	_scriptStack.push_back(StackValue(_hero));
+}
+
 OPCODE_STUB(Garbage)
 OPCODE_STUB(GetRoom)
 OPCODE_STUB(BitAnd)
 OPCODE_STUB(BitOr)
 OPCODE_STUB(AngleGet)
-OPCODE_STUB(CDGet)
+
+void Runtime::scriptOpIsDVDVersion(ScriptArg_t arg) {
+	_scriptStack.push_back(StackValue(_isDVDVariant ? 1 : 0));
+}
+
+void Runtime::scriptOpIsCDVersion(ScriptArg_t arg) {
+	_scriptStack.push_back(StackValue(_isCDVariant ? 1 : 0));
+}
+
 OPCODE_STUB(Disc)
 OPCODE_STUB(HidePanel)
 OPCODE_STUB(RotateUpdate)
