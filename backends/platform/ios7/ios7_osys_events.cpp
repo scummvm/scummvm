@@ -24,6 +24,7 @@
 
 #include "gui/message.h"
 #include "common/translation.h"
+#include "common/config-manager.h"
 
 #include "backends/platform/ios7/ios7_osys_main.h"
 
@@ -404,6 +405,8 @@ bool OSystem_iOS7::handleEvent_swipe(Common::Event &event, int direction, int to
 		switch ((UIViewSwipeDirection)direction) {
 		case kUIViewSwipeUp: {
 			_mouseClickAndDragEnabled = !_mouseClickAndDragEnabled;
+			ConfMan.setBool("clickanddrag_mode", _mouseClickAndDragEnabled);
+			ConfMan.flushToDisk();
 			Common::U32String dialogMsg;
 			if (_mouseClickAndDragEnabled) {
 				dialogMsg = _("Mouse-click-and-drag mode enabled.");
@@ -425,6 +428,8 @@ bool OSystem_iOS7::handleEvent_swipe(Common::Event &event, int direction, int to
 		case kUIViewSwipeRight: {
 			// Swipe right
 			_touchpadModeEnabled = !_touchpadModeEnabled;
+			ConfMan.setBool("touchpad_mode", _touchpadModeEnabled);
+			ConfMan.flushToDisk();
 			Common::U32String dialogMsg;
 			if (_touchpadModeEnabled)
 				dialogMsg = _("Touchpad mode enabled.");
