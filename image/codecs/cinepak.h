@@ -96,7 +96,8 @@ private:
 
 	void initializeCodebook(uint16 strip, byte codebookType);
 	void loadCodebook(Common::SeekableReadStream &stream, uint16 strip, byte codebookType, byte chunkID, uint32 chunkSize);
-	void decodeVectors(Common::SeekableReadStream &stream, uint16 strip, byte chunkID, uint32 chunkSize);
+	void decodeVectors8(Common::SeekableReadStream &stream, uint16 strip, byte chunkID, uint32 chunkSize);
+	void decodeVectors24(Common::SeekableReadStream &stream, uint16 strip, byte chunkID, uint32 chunkSize);
 
 	byte findNearestRGB(int index) const;
 	void ditherVectors(Common::SeekableReadStream &stream, uint16 strip, byte chunkID, uint32 chunkSize);
