@@ -69,6 +69,29 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 	_sensors = _currentArea->getSensors();
 }
 
+void FreescapeEngine::activate() {
+	Common::Point center(_viewArea.left + _viewArea.width() / 2, _viewArea.top + _viewArea.height() / 2);
+	float xoffset = _crossairPosition.x - center.x;
+	float yoffset = _crossairPosition.y - center.y;
+	xoffset = xoffset * 0.33;
+	yoffset = yoffset * 0.50;
+
+	Math::Vector3d direction = directionToVector(_pitch - yoffset, _yaw - xoffset);
+	Math::Ray ray(_position, direction);
+	Object *interacted = _currentArea->shootRay(ray);
+	if (interacted) {
+		GeometricObject *gobj = (GeometricObject *)interacted;
+		debugC(1, kFreescapeDebugMove, "Interact with object %d with flags %x", gobj->getObjectID(), gobj->getObjectFlags());
+
+		if (!gobj->_conditionSource.empty())
+			debugC(1, kFreescapeDebugMove, "Must use interact = true when executing: %s", gobj->_conditionSource.c_str());
+
+		executeObjectConditions(gobj, false, false, true);
+	}
+	//executeLocalGlobalConditions(true, false, false); // Only execute "on shot" room/global conditions
+}
+
+
 void FreescapeEngine::shoot() {
 	playSound(1, false);
 	g_system->delayMillis(2);
@@ -90,7 +113,7 @@ void FreescapeEngine::shoot() {
 		if (!gobj->_conditionSource.empty())
 			debugC(1, kFreescapeDebugMove, "Must use shot = true when executing: %s", gobj->_conditionSource.c_str());
 
-		executeObjectConditions(gobj, true, false);
+		executeObjectConditions(gobj, true, false, false);
 	}
 	executeLocalGlobalConditions(true, false, false); // Only execute "on shot" room/global conditions
 }
@@ -375,7 +398,7 @@ bool FreescapeEngine::checkCollisions(bool executeCode) {
 			largeObjectWasBlocking = true;
 		}
 
-		executeObjectConditions(gobj, false, true);
+		executeObjectConditions(gobj, false, true, false);
 
 		if (areaID != _currentArea->getAreaID())
 			break;

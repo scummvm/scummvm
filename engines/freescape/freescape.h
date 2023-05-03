@@ -241,6 +241,7 @@ public:
 	float _lastFrame;
 
 	// Interaction
+	void activate();
 	void shoot();
 	void traverseEntrance(uint16 entranceID);
 
@@ -277,9 +278,9 @@ public:
 	bool checkCollisions(bool executeCode);
 	Math::Vector3d _objExecutingCodeSize;
 	virtual void executeMovementConditions();
-	void executeObjectConditions(GeometricObject *obj, bool shot, bool collided);
+	void executeObjectConditions(GeometricObject *obj, bool shot, bool collided, bool activated);
 	void executeLocalGlobalConditions(bool shot, bool collided, bool timer);
-	void executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer);
+	void executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer, bool activated);
 
 	// Instructions
 	bool checkConditional(FCLInstruction &instruction, bool shot, bool collided, bool timer, bool activated);

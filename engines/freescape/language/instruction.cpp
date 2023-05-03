@@ -89,7 +89,7 @@ Token::Type FCLInstruction::getType() {
 	return _type;
 }
 
-void FreescapeEngine::executeObjectConditions(GeometricObject *obj, bool shot, bool collided) {
+void FreescapeEngine::executeObjectConditions(GeometricObject *obj, bool shot, bool collided, bool activated) {
 	assert(obj != nullptr);
 	if (!obj->_conditionSource.empty()) {
 		_firstSound = true;
@@ -98,9 +98,11 @@ void FreescapeEngine::executeObjectConditions(GeometricObject *obj, bool shot, b
 			debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", obj->_conditionSource.c_str());
 		else if (shot)
 			debugC(1, kFreescapeDebugCode, "Executing with shot flag: %s", obj->_conditionSource.c_str());
+		else if (activated)
+			debugC(1, kFreescapeDebugCode, "Executing with activated flag: %s", obj->_conditionSource.c_str());
 		else
 			error("Neither shot or collided flag is set!");
-		executeCode(obj->_condition, shot, collided, false); // TODO: check this last parameter
+		executeCode(obj->_condition, shot, collided, false, activated); // TODO: check this last parameter
 	}
 }
 
@@ -113,17 +115,17 @@ void FreescapeEngine::executeLocalGlobalConditions(bool shot, bool collided, boo
 
 	for (uint i = 0; i < conditions.size(); i++) {
 		debugC(1, kFreescapeDebugCode, "%s", conditionSources[i].c_str());
-		executeCode(conditions[i], shot, collided, timer);
+		executeCode(conditions[i], shot, collided, timer, false);
 	}
 
 	debugC(1, kFreescapeDebugCode, "Executing global conditions (%d)", _conditions.size());
 	for (uint i = 0; i < _conditions.size(); i++) {
 		debugC(1, kFreescapeDebugCode, "%s", _conditionSources[i].c_str());
-		executeCode(_conditions[i], shot, collided, timer);
+		executeCode(_conditions[i], shot, collided, timer, false);
 	}
 }
 
-void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer) {
+void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer, bool activated) {
 	assert(!(shot && collided));
 	int ip = 0;
 	bool skip = false;
@@ -149,8 +151,8 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			break;
 
 		case Token::CONDITIONAL:
-			if (checkConditional(instruction, shot, collided, timer, false)) // TODO: implement interaction
-				executeCode(*instruction._thenInstructions, shot, collided, timer);
+			if (checkConditional(instruction, shot, collided, timer, activated))
+				executeCode(*instruction._thenInstructions, shot, collided, timer, activated);
 			// else branch is always empty
 			assert(instruction._elseInstructions == nullptr);
 			break;
