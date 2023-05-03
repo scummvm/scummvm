@@ -357,10 +357,12 @@ void BlitImage::tglBlitOpaque(int dstX, int dstY, int srcX, int srcY, int srcWid
 	if (clipBlitImage(c, srcX, srcY, srcWidth, srcHeight, width, height, dstX, dstY, clampWidth, clampHeight) == false)
 		return;
 
-	int fbWidth = c->fb->getPixelBufferWidth();
+	int fbPitch = c->fb->getPixelBufferPitch();
+	int fbBpp = c->fb->getPixelBufferBpp();
+	byte *fbBuf = c->fb->getPixelBuffer() + (dstX * fbBpp) + (dstY * fbPitch);
 
-	Graphics::crossBlit(c->fb->getPixelBuffer(dstX + dstY * fbWidth), (const byte *)_surface.getBasePtr(srcX, srcY),
-	                    c->fb->getPixelBufferPitch(), _surface.pitch, clampWidth, clampHeight,
+	Graphics::crossBlit(fbBuf, (const byte *)_surface.getBasePtr(srcX, srcY),
+	                    fbPitch, _surface.pitch, clampWidth, clampHeight,
 	                    c->fb->getPixelFormat(), _surface.format);
 }
 
