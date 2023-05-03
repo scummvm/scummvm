@@ -22,6 +22,7 @@
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
+#include "common/md5.h"
 #include "engines/advancedDetector.h"
 #include "engines/metaengine.h"
 #include "common/system.h"
@@ -51,6 +52,7 @@ static const SkyVersion skyVersions[] = {
 	{ 1711, 26623798, "CD Demo", 365, GUIO0() },
 	{ 5099, 72429382, "CD", 368, GUIO0() },
 	{ 5097, 72395713, "CD", 372, GUIO0() },
+	{ 5097, 73123264, "CD", 372, GUIO0() },
 	{ 0, 0, 0, 0, 0 }
 };
 
@@ -98,6 +100,7 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 	bool hasSkyDnr = false;
 	int dinnerTableEntries = -1;
 	int dataDiskSize = -1;
+	Common::String dataDiskHeadMD5 = "";
 	int exeSize = -1; 
 	const Common::Language langs[] = {
 		Common::EN_GRB,
@@ -121,6 +124,8 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 				if (dataDisk.open(*file)) {
 					hasSkyDsk = true;
 					dataDiskSize = dataDisk.size();
+					if (dataDiskSize == 73123264)
+						dataDiskHeadMD5 = Common::computeStreamMD5AsString(dataDisk, 5000);
 				}
 			}
 
@@ -161,23 +166,29 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 		}
 
 		DetectedGame game;
+		Common::Language lang = Common::Language::UNK_LANG;
+		if (dataDiskSize == 73123264 && dataDiskHeadMD5 == "886d6faecd97488be09b73f4f87b92d9")
+			lang = Common::Language::RU_RUS;
 
 		if (sv->dinnerTableEntries) {
 			Common::String extra = Common::String::format("v0.0%d %s", sv->version, sv->extraDesc);
 
-			game = DetectedGame(getName(), skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformDOS, extra);
+			game = DetectedGame(getName(), skySetting.gameId, skySetting.description, lang, Common::kPlatformDOS, extra);
 			game.setGUIOptions(sv->guioptions);
 		} else {
 			game = DetectedGame(getName(), skySetting.gameId, skySetting.description);
 		}
 
-		for (uint i = 0; i < ARRAYSIZE(langs); i++) {
-			if (langTable[i])
-				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(langs[i]));
-		}
+		if (lang == Common::Language::UNK_LANG) {
+			for (uint i = 0; i < ARRAYSIZE(langs); i++) {
+				if (langTable[i])
+					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(langs[i]));
+			}
 
-		if (exeSize == 575538)
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ZH_TWN));
+			if (exeSize == 575538)
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ZH_TWN));
+		} else
+			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(lang));
 
 		detectedGames.push_back(game);
 	}
