@@ -165,11 +165,11 @@ void Character_AnimateEx(CharacterInfo *chaa, int loop, int delay, int repeat,
 		blocking = 0;
 
 	if ((repeat < 0) || (repeat > 1))
-		quit("!Character.Animate: invalid repeat value");
+		quitprintf("!Character.Animate: invalid repeat value (%d)", repeat);
 	if ((blocking < 0) || (blocking > 1))
-		quit("!Character.Animate: invalid blocking value");
+		quitprintf("!Character.Animate: invalid blocking value (%d)", blocking);
 	if ((direction < 0) || (direction > 1))
-		quit("!Character.Animate: invalid direction");
+		quitprintf("!Character.Animate: invalid direction (%d)", direction);
 
 	animate_character(chaa, loop, delay, repeat, 0, direction, sframe, volume);
 
