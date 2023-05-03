@@ -533,7 +533,7 @@ void RandomAmbientSound::write(Common::WriteStream *stream) const {
 	stream->writeUint32BE(name.size());
 	stream->writeString(name);
 
-	stream->writeUint32BE(volume);
+	stream->writeSint32BE(volume);
 	stream->writeSint32BE(balance);
 
 	stream->writeUint32BE(frequency);
@@ -547,7 +547,7 @@ void RandomAmbientSound::read(Common::ReadStream *stream) {
 
 	name = stream->readString(0, nameLen);
 
-	volume = stream->readUint32BE();
+	volume = stream->readSint32BE();
 	balance = stream->readSint32BE();
 
 	frequency = stream->readUint32BE();
@@ -647,7 +647,7 @@ void SaveGameSnapshot::Sound::write(Common::WriteStream *stream) const {
 	stream->writeString(name);
 
 	stream->writeUint32BE(id);
-	stream->writeUint32BE(volume);
+	stream->writeSint32BE(volume);
 	stream->writeSint32BE(balance);
 
 	stream->writeByte(is3D ? 1 : 0);
@@ -669,7 +669,7 @@ void SaveGameSnapshot::Sound::read(Common::ReadStream *stream) {
 	name = stream->readString(0, nameLen);
 
 	id = stream->readUint32BE();
-	volume = stream->readUint32BE();
+	volume = stream->readSint32BE();
 	balance = stream->readSint32BE();
 
 	is3D = (stream->readByte() != 0);
@@ -696,7 +696,7 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 
 	stream->writeByte(escOn ? 1 : 0);
 	stream->writeSint32BE(musicTrack);
-	stream->writeUint32BE(musicVolume);
+	stream->writeSint32BE(musicVolume);
 
 	writeString(stream, scoreTrack);
 	writeString(stream, scoreSection);
@@ -704,7 +704,7 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 
 	stream->writeUint32BE(loadedAnimation);
 	stream->writeUint32BE(animDisplayingFrame);
-	stream->writeUint32BE(animVolume);
+	stream->writeSint32BE(animVolume);
 
 	pendingStaticAnimParams.write(stream);
 	pendingSoundParams3D.write(stream);
@@ -774,7 +774,7 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 	musicTrack = stream->readSint32BE();
 
 	if (saveVersion >= 5)
-		musicVolume = stream->readUint32BE();
+		musicVolume = stream->readSint32BE();
 	else
 		musicVolume = 100;
 
@@ -790,7 +790,7 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 	animDisplayingFrame = stream->readUint32BE();
 
 	if (saveVersion >= 6)
-		animVolume = stream->readUint32BE();
+		animVolume = stream->readSint32BE();
 	else
 		animVolume = 100;
 
@@ -880,9 +880,9 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
 	  _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false),
-	  _musicTrack(0), _musicActive(true), _scoreSectionEndTime(0), _musicVolume(100), _musicVolumeRampStartTime(0), _musicVolumeRampStartVolume(0), _musicVolumeRampRatePerMSec(0), _musicVolumeRampEnd(0),
+	  _musicTrack(0), _musicActive(true), _scoreSectionEndTime(0), _musicVolume(getDefaultSoundVolume()), _musicVolumeRampStartTime(0), _musicVolumeRampStartVolume(0), _musicVolumeRampRatePerMSec(0), _musicVolumeRampEnd(0),
 	  _panoramaDirectionFlags(0),
-	  _loadedAnimation(0), _loadedAnimationHasSound(false), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0), _animVolume(100),
+	  _loadedAnimation(0), _loadedAnimationHasSound(false), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0), _animVolume(getDefaultSoundVolume()),
 	  _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleLockInteractions(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
 	  _inGameMenuState(kInGameMenuStateInvisible), _inGameMenuActiveElement(0), _inGameMenuButtonActive {false, false, false, false, false},
@@ -916,6 +916,9 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 		warning("Couldn't load subtitle font, subtitles will be disabled");
 
 	_menuInterface.reset(new RuntimeMenuInterface(this));
+
+	for (int32 i = 0; i < 49; i++)
+		_dbToVolume[i] = decibelsToLinear(i - 49, Audio::Mixer::kMaxChannelVolume, Audio::Mixer::kMaxChannelVolume);
 }
 
 Runtime::~Runtime() {
@@ -1099,9 +1102,10 @@ bool Runtime::bootGame(bool newGame) {
 
 	if (newGame) {
 		// TODO: Implement menus and go to b1 in Schizm instead
-		if (_gameID == GID_SCHIZM)
+		if (_gameID == GID_SCHIZM) {
 			changeToScreen(1, 0xb0);
-		else
+			_isInGame = true;
+		} else
 			changeToScreen(1, 0xb1);
 	}
 
@@ -1186,6 +1190,8 @@ bool Runtime::bootGame(bool newGame) {
 			_uiGraphics[i] = loadGraphic(Common::String::format("Image%03u", static_cast<uint>(_languageIndex * 100u + i)), false);
 			if (_languageIndex != 0 && !_uiGraphics[i])
 				_uiGraphics[i] = loadGraphic(Common::String::format("Image%03u", static_cast<uint>(i)), false);
+		} else if (_gameID == GID_SCHIZM) {
+			_uiGraphics[i] = loadGraphic(Common::String::format("Data%03u", i), false);
 		}
 	}
 
@@ -2290,7 +2296,7 @@ void Runtime::loadScore() {
 						if (sscanf(volumeSlice.c_str(), "%i", &volume) == 1) {
 							ScoreSectionDef &sectionDef = trackDef.sections[kv.key];
 							sectionDef.nextSection = nextSectionSlice;
-							sectionDef.volumeOrDurationInSeconds = normalizeSoundVolume(volume);
+							sectionDef.volumeOrDurationInSeconds = volume;
 							sectionDef.musicFileName = fileNameSlice;
 						} else
 							warning("Couldn't parse score section volume");
@@ -2842,7 +2848,7 @@ void Runtime::changeMusicTrack(int track) {
 			Common::SharedPtr<Audio::AudioStream> loopingStream(Audio::makeLoopingAudioStream(audioStream, 0));
 
 			_musicPlayer.reset(new AudioPlayer(_mixer, loopingStream, Audio::Mixer::kMusicSoundType));
-			_musicPlayer->play(_musicVolume, 0);
+			_musicPlayer->play(applyVolumeScale(_musicVolume), 0);
 		}
 	} else {
 		warning("Music file '%s' is missing", wavFileName.c_str());
@@ -2873,7 +2879,7 @@ void Runtime::startScoreSection() {
 				if (trackFile->open(trackFileName)) {
 					if (Audio::SeekableAudioStream *audioStream = Audio::makeVorbisStream(trackFile, DisposeAfterUse::YES)) {
 						_musicPlayer.reset(new AudioPlayer(_mixer, Common::SharedPtr<Audio::AudioStream>(audioStream), Audio::Mixer::kMusicSoundType));
-						_musicPlayer->play(sectionDef.volumeOrDurationInSeconds, 0);
+						_musicPlayer->play(applyVolumeScale(sectionDef.volumeOrDurationInSeconds), 0);
 
 						_scoreSectionEndTime = static_cast<uint32>(audioStream->getLength().msecs()) + g_system->getMillis();
 					} else {
@@ -2993,10 +2999,7 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 
 void Runtime::applyAnimationVolume() {
 	if (_animDecoder) {
-		uint volume = _animVolume * static_cast<uint>(Audio::Mixer::kMaxChannelVolume) / 100u;
-		if (volume > Audio::Mixer::kMaxChannelVolume)
-			volume = Audio::Mixer::kMaxChannelVolume;
-		_animDecoder->setVolume(volume);
+		_animDecoder->setVolume(applyVolumeScale(_animVolume));
 	}
 }
 
@@ -3006,7 +3009,7 @@ void Runtime::setSound3DParameters(SoundInstance &snd, int32 x, int32 y, const S
 	snd.params3D = soundParams3D;
 }
 
-void Runtime::triggerSound(bool looping, SoundInstance &snd, uint volume, int32 balance, bool is3D, bool isSpeech) {
+void Runtime::triggerSound(bool looping, SoundInstance &snd, int32 volume, int32 balance, bool is3D, bool isSpeech) {
 	snd.volume = volume;
 	snd.balance = balance;
 	snd.is3D = is3D;
@@ -3015,7 +3018,7 @@ void Runtime::triggerSound(bool looping, SoundInstance &snd, uint volume, int32 
 
 	computeEffectiveVolumeAndBalance(snd);
 
-	if (volume == 0 && looping) {
+	if (volume == getSilentSoundVolume() && looping) {
 		if (snd.cache) {
 			if (snd.cache->player)
 				snd.cache->player.reset();
@@ -3071,14 +3074,14 @@ void Runtime::triggerSound(bool looping, SoundInstance &snd, uint volume, int32 
 		snd.endTime = g_system->getMillis(true) + static_cast<uint32>(cache->stream->getLength().msecs()) + 1000u;
 }
 
-void Runtime::triggerSoundRamp(SoundInstance &snd, uint durationMSec, uint newVolume, bool terminateOnCompletion) {
+void Runtime::triggerSoundRamp(SoundInstance &snd, uint durationMSec, int32 newVolume, bool terminateOnCompletion) {
 	snd.rampStartVolume = snd.volume;
 	snd.rampEndVolume = newVolume;
 	snd.rampTerminateOnCompletion = terminateOnCompletion;
 	snd.rampStartTime = g_system->getMillis();
 	snd.rampRatePerMSec = 65536;
 
-	if (!snd.isLooping && newVolume == 0)
+	if (!snd.isLooping && newVolume == getSilentSoundVolume())
 		snd.rampTerminateOnCompletion = true;
 
 	if (durationMSec)
@@ -3159,15 +3162,15 @@ void Runtime::updateSounds(uint32 timestamp) {
 		SoundInstance &snd = *_activeSounds[sndIndex];
 
 		if (snd.rampRatePerMSec) {
-			uint ramp = snd.rampRatePerMSec * (timestamp - snd.rampStartTime);
-			uint newVolume = snd.volume;
+			int32 ramp = snd.rampRatePerMSec * static_cast<int32>(timestamp - snd.rampStartTime);
+			int32 newVolume = snd.volume;
 			if (ramp >= 65536) {
 				snd.rampRatePerMSec = 0;
 				newVolume = snd.rampEndVolume;
 				if (snd.rampTerminateOnCompletion)
 					stopSound(snd);
 			} else {
-				uint rampedVolume = (snd.rampStartVolume * (65536u - ramp)) + (snd.rampEndVolume * ramp);
+				int32 rampedVolume = (snd.rampStartVolume * (65536 - ramp)) + (snd.rampEndVolume * ramp);
 				newVolume = rampedVolume >> 16;
 			}
 
@@ -3191,7 +3194,7 @@ void Runtime::updateSounds(uint32 timestamp) {
 		}
 
 		if (snd.isLooping) {
-			if (snd.volume == 0) {
+			if (snd.volume == getSilentSoundVolume()) {
 				if (!snd.isSilencedLoop) {
 					if (snd.cache) {
 						snd.cache->player.reset();
@@ -3227,14 +3230,14 @@ void Runtime::updateSounds(uint32 timestamp) {
 		if (ramp > rampMax)
 			ramp = rampMax;
 
-		uint32 newVolume = _musicVolumeRampStartVolume;
+		int32 newVolume = _musicVolumeRampStartVolume;
 		if (negative)
-			newVolume -= ramp;
+			newVolume -= static_cast<int32>(ramp);
 		else
-			newVolume += ramp;
+			newVolume += static_cast<int32>(ramp);
 
 		if (newVolume != _musicVolume) {
-			_musicPlayer->setVolume(static_cast<byte>(newVolume));
+			_musicPlayer->setVolume(applyVolumeScale(newVolume));
 			_musicVolume = newVolume;
 		}
 
@@ -3328,7 +3331,7 @@ void Runtime::update3DSounds() {
 }
 
 bool Runtime::computeEffectiveVolumeAndBalance(SoundInstance &snd) {
-	uint effectiveVolume = snd.volume;
+	uint effectiveVolume = applyVolumeScale(snd.volume);
 	int32 effectiveBalance = snd.balance;
 
 	double radians = Common::deg2rad<double>(_listenerAngle);
@@ -3436,14 +3439,45 @@ void Runtime::triggerAmbientSounds() {
 		snd.sceneChangesRemaining--;
 }
 
-uint Runtime::normalizeSoundVolume(StackInt_t arg) const {
-	int32 adjustedVol = static_cast<int32>(arg) + 50;
-	if (adjustedVol < 0)
-		return 0;
-	if (adjustedVol > 100)
-		return 100;
+uint Runtime::decibelsToLinear(int db, uint baseVolume, uint maxVol) const {
+	double linearized = floor(pow(1.1220184543019634355910389464779, db) * static_cast<double>(baseVolume) + 0.5);
 
-	return static_cast<uint>(adjustedVol);
+	if (linearized > static_cast<double>(maxVol))
+		return maxVol;
+
+	return static_cast<uint>(linearized);
+}
+
+int32 Runtime::getSilentSoundVolume() const {
+	if (_gameID == GID_SCHIZM)
+		return -50;
+	else
+		return 0;
+}
+
+int32 Runtime::getDefaultSoundVolume() const {
+	if (_gameID == GID_SCHIZM)
+		return 0;
+	else
+		return 100;
+}
+
+uint Runtime::applyVolumeScale(int32 volume) const {
+	if (_gameID == GID_SCHIZM) {
+		if (volume >= 0)
+			return Audio::Mixer::kMaxChannelVolume;
+		else if (volume < -49)
+			return 0;
+
+		return _dbToVolume[volume + 49];
+	} else {
+		if (volume > 100)
+			return Audio::Mixer::kMaxChannelVolume;
+		else if (volume < 0)
+			return 0;
+
+		return volume * Audio::Mixer::kMaxChannelVolume / 100;
+	}
 }
 
 AnimationDef Runtime::stackArgsToAnimDef(const StackInt_t *args) const {
@@ -5025,7 +5059,7 @@ void Runtime::scriptOpSoundL1(ScriptArg_t arg) {
 	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
 
 	if (cachedSound)
-		triggerSound(true, *cachedSound, 100, 0, false, false);
+		triggerSound(true, *cachedSound, getDefaultSoundVolume(), 0, false, false);
 }
 
 void Runtime::scriptOpSoundL2(ScriptArg_t arg) {
@@ -5148,7 +5182,7 @@ void Runtime::scriptOpMusicVolRamp(ScriptArg_t arg) {
 	TAKE_STACK_INT(2);
 
 	uint32 duration = static_cast<uint32>(stackArgs[0]) * 100u;
-	uint32 newVolume = stackArgs[1];
+	int32 newVolume = stackArgs[1];
 
 	_musicVolumeRampRatePerMSec = 0;
 
@@ -5160,7 +5194,7 @@ void Runtime::scriptOpMusicVolRamp(ScriptArg_t arg) {
 		if (newVolume != _musicVolume) {
 			uint32 timestamp = g_system->getMillis();
 
-			_musicVolumeRampRatePerMSec = (static_cast<int32>(newVolume) - static_cast<int32>(_musicVolume)) * 65536 / static_cast<int32>(duration);
+			_musicVolumeRampRatePerMSec = (newVolume - _musicVolume) * 65536 / static_cast<int32>(duration);
 			_musicVolumeRampStartTime = timestamp;
 			_musicVolumeRampStartVolume = _musicVolume;
 			_musicVolumeRampEnd = newVolume;
@@ -5597,7 +5631,7 @@ void Runtime::scriptOpExit(ScriptArg_t arg) {
 
 		changeMusicTrack(0);
 		if (_musicPlayer)
-			_musicPlayer->setVolumeAndBalance(100, 0);
+			_musicPlayer->setVolumeAndBalance(applyVolumeScale(getDefaultSoundVolume()), 0);
 	} else {
 		error("Don't know what screen to go to on exit");
 	}
@@ -5877,8 +5911,9 @@ void Runtime::scriptOpVolumeChange(ScriptArg_t arg) {
 
 	SoundInstance *cachedSound = resolveSoundByID(static_cast<uint>(stackArgs[0]));
 
+	// FIXME: Figure out what the duration scale really is
 	if (cachedSound)
-		triggerSoundRamp(*cachedSound, stackArgs[1] * 100, stackArgs[2], false);
+		triggerSoundRamp(*cachedSound, stackArgs[1], stackArgs[2], false);
 }
 
 OPCODE_STUB(VolumeDown)
@@ -5886,7 +5921,7 @@ OPCODE_STUB(VolumeDown)
 void Runtime::scriptOpAnimVolume(ScriptArg_t arg) {
 	TAKE_STACK_INT(1);
 
-	_animVolume = normalizeSoundVolume(stackArgs[0]);
+	_animVolume = stackArgs[0];
 
 	applyAnimationVolume();
 }

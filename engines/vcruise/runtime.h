@@ -218,13 +218,13 @@ struct SoundInstance {
 
 	uint id;
 
-	uint rampStartVolume;
-	uint rampEndVolume;
-	uint32 rampRatePerMSec;
+	int32 rampStartVolume;
+	int32 rampEndVolume;
+	int32 rampRatePerMSec;
 	uint32 rampStartTime;
 	bool rampTerminateOnCompletion;
 
-	uint volume;
+	int32 volume;
 	int32 balance;
 
 	uint effectiveVolume;
@@ -248,7 +248,7 @@ struct RandomAmbientSound {
 
 	Common::String name;
 
-	uint volume;
+	int32 volume;
 	int32 balance;
 
 	uint frequency;
@@ -276,7 +276,7 @@ struct ScoreSectionDef {
 
 	Common::String musicFileName;	// If empty, this is silent
 	Common::String nextSection;
-	uint32 volumeOrDurationInSeconds;
+	int32 volumeOrDurationInSeconds;
 };
 
 struct ScoreTrackDef {
@@ -378,7 +378,7 @@ struct SaveGameSnapshot {
 
 		Common::String name;
 		uint id;
-		uint volume;
+		int32 volume;
 		int32 balance;
 
 		bool is3D;
@@ -408,11 +408,11 @@ struct SaveGameSnapshot {
 	Common::String scoreSection;
 	bool musicActive;
 
-	uint musicVolume;
+	int32 musicVolume;
 
 	uint loadedAnimation;
 	uint animDisplayingFrame;
-	uint animVolume;
+	int32 animVolume;
 
 	StaticAnimParams pendingStaticAnimParams;
 	SoundParams3D pendingSoundParams3D;
@@ -737,15 +737,18 @@ private:
 	void applyAnimationVolume();
 
 	void setSound3DParameters(SoundInstance &sound, int32 x, int32 y, const SoundParams3D &soundParams3D);
-	void triggerSound(bool looping, SoundInstance &sound, uint volume, int32 balance, bool is3D, bool isSpeech);
-	void triggerSoundRamp(SoundInstance &sound, uint durationMSec, uint newVolume, bool terminateOnCompletion);
+	void triggerSound(bool looping, SoundInstance &sound, int32 volume, int32 balance, bool is3D, bool isSpeech);
+	void triggerSoundRamp(SoundInstance &sound, uint durationMSec, int32 newVolume, bool terminateOnCompletion);
 	void stopSound(SoundInstance &sound);
 	void updateSounds(uint32 timestamp);
 	void updateSubtitles();
 	void update3DSounds();
 	bool computeEffectiveVolumeAndBalance(SoundInstance &snd);
 	void triggerAmbientSounds();
-	uint normalizeSoundVolume(StackInt_t arg) const;
+	uint decibelsToLinear(int db, uint baseVolume, uint maxVolume) const;
+	int32 getSilentSoundVolume() const;
+	int32 getDefaultSoundVolume() const;
+	uint applyVolumeScale(int32 volume) const;
 
 	void triggerWaveSubtitles(const SoundInstance &sound, const Common::String &id);
 	void stopSubtitles();
@@ -1051,7 +1054,7 @@ private:
 
 	Common::SharedPtr<AudioPlayer> _musicPlayer;
 	int _musicTrack;
-	uint _musicVolume;
+	int32 _musicVolume;
 	bool _musicActive;
 
 	Common::String _scoreTrack;
@@ -1060,9 +1063,9 @@ private:
 	Common::HashMap<Common::String, ScoreTrackDef> _scoreDefs;
 
 	uint32 _musicVolumeRampStartTime;
-	uint _musicVolumeRampStartVolume;
+	int32 _musicVolumeRampStartVolume;
 	int32 _musicVolumeRampRatePerMSec;
-	uint _musicVolumeRampEnd;
+	int32 _musicVolumeRampEnd;
 
 	SfxData _sfxData;
 
@@ -1169,6 +1172,8 @@ private:
 	Common::HashMap<Common::String, SubtitleDef> _waveSubtitles;
 	Common::Array<SubtitleQueueItem> _subtitleQueue;
 	bool _isDisplayingSubtitles;
+
+	int32 _dbToVolume[49];
 };
 
 } // End of namespace VCruise

@@ -103,7 +103,7 @@ Common::Error VCruiseEngine::run() {
 	}
 #endif
 
-	
+	syncSoundSettings();
 
 	const Graphics::PixelFormat *fmt16_565 = nullptr;
 	const Graphics::PixelFormat *fmt16_555 = nullptr;
