@@ -127,18 +127,16 @@ public:
 	struct Line {
 		int _x;
 		int _y;
+		int _bpp;
 		int _length;
 		byte *_pixels;
-		Graphics::PixelBuffer _buf; // This is needed for the conversion.
 
 		Line() : _x(0), _y(0), _length(0), _pixels(nullptr) { }
 		Line(int x, int y, int length, byte *pixels, const Graphics::PixelFormat &textureFormat) :
-				_buf(gl_get_context()->fb->getPixelFormat(), length, DisposeAfterUse::NO),
-				_x(x), _y(y), _length(length) {
-			// Performing texture to screen conversion.
-			Graphics::PixelBuffer srcBuf(textureFormat, pixels);
-			_buf.copyBuffer(0, 0, length, srcBuf);
-			_pixels = _buf.getRawBuffer();
+				_x(x), _y(y), _bpp(gl_get_context()->fb->getPixelBufferBpp()), _length(length) {
+			_pixels = (byte *)gl_zalloc(_length * _bpp);
+			Graphics::crossBlit(_pixels, pixels, _length * _bpp, _length * _bpp, _length, 1,
+			                    gl_get_context()->fb->getPixelFormat(), textureFormat);
 		}
 
 		Line &operator=(const Line &other) {
@@ -146,23 +144,22 @@ public:
 				return *this;
 			_x = other._x;
 			_y = other._y;
-			if (_length != other._length || _buf.getFormat() != other._buf.getFormat()) {
-				_buf.free();
-				_buf.create(other._buf.getFormat(), other._length, DisposeAfterUse::NO);
+			if (_length != other._length || _bpp != other._bpp) {
+				_pixels = (byte *)gl_realloc(_pixels, other._length * other._bpp);
 				_length = other._length;
+				_bpp = other._bpp;
 			}
-			_buf.copyBuffer(0, 0, _length, other._buf);
-			_pixels = _buf.getRawBuffer();
+			memcpy(_pixels, other._pixels, _length * _bpp);
 			return *this;
 		}
 
-		Line(const Line& other) : _buf(other._buf.getFormat(), other._length, DisposeAfterUse::NO), _x(other._x), _y(other._y), _length(other._length) {
-			_buf.copyBuffer(0, 0, _length, other._buf);
-			_pixels = _buf.getRawBuffer();
+		Line(const Line& other) : _x(other._x), _y(other._y), _bpp(other._bpp), _length(other._length) {
+			_pixels = (byte *)gl_zalloc(_length * _bpp);
+			memcpy(_pixels, other._pixels, _length * _bpp);
 		}
 
 		~Line() {
-			_buf.free();
+			gl_free(_pixels);
 		}
 	};
 
@@ -407,19 +404,15 @@ void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, int srcWidth,
 				length -= skipStart;
 				int skipEnd   = (l._x + l._length > maxX) ? (l._x + l._length - maxX) : 0;
 				length -= skipEnd;
-				if (kDisableColoring && (kEnableAlphaBlending == false || kDisableBlending)) {
-					memcpy(dstBuf.getRawBuffer((l._y - srcY) * fbWidth + MAX(l._x - srcX, 0)),
+				int xStart = MAX(l._x - srcX, 0);
+				if (kDisableColoring) {
+					memcpy(dstBuf.getRawBuffer((l._y - srcY) * fbWidth + xStart),
 						l._pixels + skipStart * kBytesPerPixel, length * kBytesPerPixel);
 				} else {
-					int xStart = MAX(l._x - srcX, 0);
-					if (kDisableColoring) {
-						dstBuf.copyBuffer(xStart + (l._y - srcY) * fbWidth, skipStart, length, l._buf);
-					} else {
-						for(int x = xStart; x < xStart + length; x++) {
-							byte aDst, rDst, gDst, bDst;
-							srcBuf.getARGBAt((l._y - srcY) * _surface.w + x, aDst, rDst, gDst, bDst);
-							c->fb->writePixel((dstX + x) + (dstY + (l._y - srcY)) * fbWidth, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
-						}
+					for(int x = xStart; x < xStart + length; x++) {
+						byte aDst, rDst, gDst, bDst;
+						srcBuf.getARGBAt((l._y - srcY) * _surface.w + x, aDst, rDst, gDst, bDst);
+						c->fb->writePixel((dstX + x) + (dstY + (l._y - srcY)) * fbWidth, aDst * aTint, rDst * rTint, gDst * gTint, bDst * bTint);
 					}
 				}
 			}
@@ -434,11 +427,11 @@ void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, int srcWidth,
 				length -= skipStart;
 				int skipEnd   = (l._x + l._length > maxX) ? (l._x + l._length - maxX) : 0;
 				length -= skipEnd;
+				int xStart = MAX(l._x - srcX, 0);
 				if (kDisableColoring && (kEnableAlphaBlending == false || kDisableBlending)) {
-					memcpy(dstBuf.getRawBuffer((l._y - srcY) * fbWidth + MAX(l._x - srcX, 0)),
+					memcpy(dstBuf.getRawBuffer((l._y - srcY) * fbWidth + xStart),
 						l._pixels + skipStart * kBytesPerPixel, length * kBytesPerPixel);
 				} else {
-					int xStart = MAX(l._x - srcX, 0);
 					for(int x = xStart; x < xStart + length; x++) {
 						byte aDst, rDst, gDst, bDst;
 						srcBuf.getARGBAt((l._y - srcY) * _surface.w + x, aDst, rDst, gDst, bDst);
