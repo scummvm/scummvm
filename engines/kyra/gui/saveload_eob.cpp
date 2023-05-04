@@ -113,7 +113,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 	if (slot == -1) {
 		// Skip all settings which aren't necessary for party transfer.
 		// Jump directly to the items list.
-		in.skip(header.version > 18 ? 124 : 108);
+		in.skip(header.version > 18 ? (header.version < 21 ? 124 : 120) : 108);
 	} else {
 		_currentLevel = in.readByte();
 		_currentSub = in.readSByte();
