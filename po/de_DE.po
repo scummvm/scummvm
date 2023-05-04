@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-02 06:02+0000\n"
+"POT-Creation-Date: 2023-05-04 03:41+0000\n"
 "PO-Revision-Date: 2023-05-01 08:55+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -5202,7 +5202,7 @@ msgstr ""
 "wenn Du das Spiel erneut startest.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:293
+#: engines/vcruise/vcruise.cpp:296
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Dieser Spielstand wurde mit einer neueren Version von ScummVM erstellt und "
@@ -6735,7 +6735,7 @@ msgstr ""
 "gespeicherte Fortschritt geht dabei verloren."
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:112
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:123
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
@@ -6937,14 +6937,14 @@ msgstr ""
 "Die Versions-Informationen konnten nicht aus der Spielstand-Datei ausgelesen "
 "werden"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:288
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:291
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Spielstand konnte nicht geladen werden, da die Spielstand-Datei keine "
 "gültigen Versions-Informationen enthält."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:298
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:301
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -7849,7 +7849,7 @@ msgstr "Esc"
 msgid "Space"
 msgstr "Leertaste"
 
-#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:127
+#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:138
 msgid "Pause game"
 msgstr "Spielpause"
 
@@ -9333,47 +9333,57 @@ msgstr "Schnellere Animationen"
 msgid "Speeds up animations."
 msgstr "Beschleunigt Animationen."
 
-#: engines/vcruise/metaengine.cpp:102
+#: engines/vcruise/metaengine.cpp:64
+#, fuzzy
+#| msgid "Open main menu"
+msgid "Skip main menu"
+msgstr "Hauptmenü öffnen"
+
+#: engines/vcruise/metaengine.cpp:65
+msgid "Starts a new game upon launching instead of going to the main menu."
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:113
 msgid "Display help screen"
 msgstr "Hilfe-Bildschirm anzeigen"
 
-#: engines/vcruise/metaengine.cpp:107 engines/wintermute/keymapper_tables.h:920
+#: engines/vcruise/metaengine.cpp:118 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Spiel speichern"
 
-#: engines/vcruise/metaengine.cpp:117
+#: engines/vcruise/metaengine.cpp:128
 msgid "Open sound settings"
 msgstr "Sound-Einstellungen öffnen"
 
-#: engines/vcruise/metaengine.cpp:122
+#: engines/vcruise/metaengine.cpp:133
 msgid "Quit game"
 msgstr "Spiel beenden"
 
-#: engines/vcruise/metaengine.cpp:133
+#: engines/vcruise/metaengine.cpp:144
 msgid "Toggle music on/off"
 msgstr "Musik umschalten"
 
-#: engines/vcruise/metaengine.cpp:138
+#: engines/vcruise/metaengine.cpp:149
 msgid "Toggle sound effects on/off"
 msgstr "Sound-Effekte umschalten"
 
-#: engines/vcruise/metaengine.cpp:143
+#: engines/vcruise/metaengine.cpp:154
 msgid "Music volume down"
 msgstr "Musiklautstärke reduzieren"
 
-#: engines/vcruise/metaengine.cpp:148
+#: engines/vcruise/metaengine.cpp:159
 msgid "Music volume up"
 msgstr "Musiklautstärke erhöhen"
 
-#: engines/vcruise/metaengine.cpp:153
+#: engines/vcruise/metaengine.cpp:164
 msgid "Sound effect volume down"
 msgstr "Soundeffekt-Lautstelle reduzieren"
 
-#: engines/vcruise/metaengine.cpp:158
+#: engines/vcruise/metaengine.cpp:169
 msgid "Sound effect volume up"
 msgstr "Soundeffekt-Lautstärke erhöhen"
 
-#: engines/vcruise/metaengine.cpp:163
+#: engines/vcruise/metaengine.cpp:174
 msgid "Skip current animation"
 msgstr "Überspringe aktuelle Animation"
 
@@ -9399,19 +9409,19 @@ msgstr ""
 "nicht vorhanden ist.\n"
 "Das Spiel wird spielbar sein, jedoch ohne Musik wiedergegeben."
 
-#: engines/vcruise/vcruise.cpp:278
+#: engines/vcruise/vcruise.cpp:281
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "Spielstand konnte nicht geladen werden, da die Spielstand-Datei vermutlich "
 "beschädigt ist."
 
-#: engines/vcruise/vcruise.cpp:283
+#: engines/vcruise/vcruise.cpp:286
 msgid "Failed to read version information from save file."
 msgstr ""
 "Die Versions-Informationen konnten nicht aus der Spielstand-Datei ausgelesen "
 "werden."
 
-#: engines/vcruise/vcruise.cpp:303
+#: engines/vcruise/vcruise.cpp:306
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ""
 "Beim Versuch, die Spielstand-Dateien zu laden, ist ein unbekannte Fehler "

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-02 06:02+0000\n"
+"POT-Creation-Date: 2023-05-04 03:41+0000\n"
 "PO-Revision-Date: 2023-04-30 17:40+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -5161,7 +5161,7 @@ msgstr ""
 "demanar la propera vegada que inicieu el joc.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:293
+#: engines/vcruise/vcruise.cpp:296
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "El joc es va crear amb una nova versió de ScummVM. No s'ha pogut carregar."
@@ -6548,7 +6548,7 @@ msgstr ""
 "no desat."
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:112
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:123
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
@@ -6722,12 +6722,12 @@ msgstr ""
 msgid "Failed to read version information from save file"
 msgstr "No s'ha pogut llegir la informació de la versió de la partida desada"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:288
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:291
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:298
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:301
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -7507,7 +7507,7 @@ msgstr "Esc"
 msgid "Space"
 msgstr "Espai"
 
-#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:127
+#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:138
 msgid "Pause game"
 msgstr "Pausa la partida"
 
@@ -8894,47 +8894,57 @@ msgstr "Animacions més ràpides"
 msgid "Speeds up animations."
 msgstr "Accelera les animacions."
 
-#: engines/vcruise/metaengine.cpp:102
+#: engines/vcruise/metaengine.cpp:64
+#, fuzzy
+#| msgid "Open main menu"
+msgid "Skip main menu"
+msgstr "Obre el menú principal"
+
+#: engines/vcruise/metaengine.cpp:65
+msgid "Starts a new game upon launching instead of going to the main menu."
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:113
 msgid "Display help screen"
 msgstr "Mostra la pantalla d'ajuda"
 
-#: engines/vcruise/metaengine.cpp:107 engines/wintermute/keymapper_tables.h:920
+#: engines/vcruise/metaengine.cpp:118 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Desa la partida"
 
-#: engines/vcruise/metaengine.cpp:117
+#: engines/vcruise/metaengine.cpp:128
 msgid "Open sound settings"
 msgstr "Obre la configuració del so"
 
-#: engines/vcruise/metaengine.cpp:122
+#: engines/vcruise/metaengine.cpp:133
 msgid "Quit game"
 msgstr "Surt del joc"
 
-#: engines/vcruise/metaengine.cpp:133
+#: engines/vcruise/metaengine.cpp:144
 msgid "Toggle music on/off"
 msgstr "Activa/desactiva la música"
 
-#: engines/vcruise/metaengine.cpp:138
+#: engines/vcruise/metaengine.cpp:149
 msgid "Toggle sound effects on/off"
 msgstr "Activa/desactiva els efectes de so"
 
-#: engines/vcruise/metaengine.cpp:143
+#: engines/vcruise/metaengine.cpp:154
 msgid "Music volume down"
 msgstr "Abaixa el volum de música"
 
-#: engines/vcruise/metaengine.cpp:148
+#: engines/vcruise/metaengine.cpp:159
 msgid "Music volume up"
 msgstr "Apuja el volum de música"
 
-#: engines/vcruise/metaengine.cpp:153
+#: engines/vcruise/metaengine.cpp:164
 msgid "Sound effect volume down"
 msgstr "Abaixa el volum de l'efecte de so"
 
-#: engines/vcruise/metaengine.cpp:158
+#: engines/vcruise/metaengine.cpp:169
 msgid "Sound effect volume up"
 msgstr "Apuja el volum de l'efecte de so"
 
-#: engines/vcruise/metaengine.cpp:163
+#: engines/vcruise/metaengine.cpp:174
 msgid "Skip current animation"
 msgstr "Omet l'animació actual"
 
@@ -8954,17 +8964,17 @@ msgid ""
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:278
+#: engines/vcruise/vcruise.cpp:281
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "No s'ha pogut carregar la partida desada, sembla que les dades desades estan "
 "malmeses."
 
-#: engines/vcruise/vcruise.cpp:283
+#: engines/vcruise/vcruise.cpp:286
 msgid "Failed to read version information from save file."
 msgstr "No s'ha pogut llegir la informació de la versió de la partida desada."
 
-#: engines/vcruise/vcruise.cpp:303
+#: engines/vcruise/vcruise.cpp:306
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ""
 "S'ha produït un error desconegut en intentar carregar la partida desada."

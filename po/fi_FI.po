@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-02 06:02+0000\n"
+"POT-Creation-Date: 2023-05-04 03:41+0000\n"
 "PO-Revision-Date: 2023-05-02 21:40+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -5150,7 +5150,7 @@ msgstr ""
 "uudestaan seuraavalla kerralla peliä käynnistäessäsi.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:293
+#: engines/vcruise/vcruise.cpp:296
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Tämä pelitallenne on luotu ScummVM:n uudemmalla versiolla. Lataus ei onnistu."
@@ -6648,7 +6648,7 @@ msgid ""
 msgstr "Haluatko varmasti ladata pelin? Menetät tallentamattoman edistymisesi."
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:112
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:123
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
@@ -6841,14 +6841,14 @@ msgstr "Lopeta kaikki käynnissä olevat videot"
 msgid "Failed to read version information from save file"
 msgstr "Pelitallenteen version lukeminen epäonnistui"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:288
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:291
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Pelitallenteen lukeminen epäonnistui, tallenne ei sisällä validia "
 "versioinformaatiota."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:298
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:301
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -7717,7 +7717,7 @@ msgstr "Esc"
 msgid "Space"
 msgstr "Välilyönti"
 
-#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:127
+#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:138
 msgid "Pause game"
 msgstr "Pause"
 
@@ -9173,47 +9173,57 @@ msgstr "Nopeammat animaatiot"
 msgid "Speeds up animations."
 msgstr "Nopeuttaa animaatioita."
 
-#: engines/vcruise/metaengine.cpp:102
+#: engines/vcruise/metaengine.cpp:64
+#, fuzzy
+#| msgid "Open main menu"
+msgid "Skip main menu"
+msgstr "Avaa päävalikko"
+
+#: engines/vcruise/metaengine.cpp:65
+msgid "Starts a new game upon launching instead of going to the main menu."
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:113
 msgid "Display help screen"
 msgstr "Näytä ohjenäyttö"
 
-#: engines/vcruise/metaengine.cpp:107 engines/wintermute/keymapper_tables.h:920
+#: engines/vcruise/metaengine.cpp:118 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Luo pelitallennus"
 
-#: engines/vcruise/metaengine.cpp:117
+#: engines/vcruise/metaengine.cpp:128
 msgid "Open sound settings"
 msgstr "Avaa ääniasetukset"
 
-#: engines/vcruise/metaengine.cpp:122
+#: engines/vcruise/metaengine.cpp:133
 msgid "Quit game"
 msgstr "Lopeta peli"
 
-#: engines/vcruise/metaengine.cpp:133
+#: engines/vcruise/metaengine.cpp:144
 msgid "Toggle music on/off"
 msgstr "Musiikki päälle/pois"
 
-#: engines/vcruise/metaengine.cpp:138
+#: engines/vcruise/metaengine.cpp:149
 msgid "Toggle sound effects on/off"
 msgstr "Ääniefektit päälle/pois"
 
-#: engines/vcruise/metaengine.cpp:143
+#: engines/vcruise/metaengine.cpp:154
 msgid "Music volume down"
 msgstr "Musiikin äänenvoimakkuus alas"
 
-#: engines/vcruise/metaengine.cpp:148
+#: engines/vcruise/metaengine.cpp:159
 msgid "Music volume up"
 msgstr "Musiikin äänenvoimakkuus ylös"
 
-#: engines/vcruise/metaengine.cpp:153
+#: engines/vcruise/metaengine.cpp:164
 msgid "Sound effect volume down"
 msgstr "Ääniefektien äänenvoimakkuus alas"
 
-#: engines/vcruise/metaengine.cpp:158
+#: engines/vcruise/metaengine.cpp:169
 msgid "Sound effect volume up"
 msgstr "Ääniefektien äänenvoimakkuus ylös"
 
-#: engines/vcruise/metaengine.cpp:163
+#: engines/vcruise/metaengine.cpp:174
 msgid "Skip current animation"
 msgstr "Ohita tämänhetkinen animaatio"
 
@@ -9241,16 +9251,16 @@ msgstr ""
 "tähän ScummVM:ään.\n"
 "Peli toimii silti, mutta ilman musiikkia."
 
-#: engines/vcruise/vcruise.cpp:278
+#: engines/vcruise/vcruise.cpp:281
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "Pelitallenteen lukeminen epäonnistui, tallenne vaikuttaa olevan vaurioitunut."
 
-#: engines/vcruise/vcruise.cpp:283
+#: engines/vcruise/vcruise.cpp:286
 msgid "Failed to read version information from save file."
 msgstr "Pelitallenteen version lukeminen epäonnistui."
 
-#: engines/vcruise/vcruise.cpp:303
+#: engines/vcruise/vcruise.cpp:306
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Tuntematon virhe pelitallennusta ladatessa."
 

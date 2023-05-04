@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-02 06:02+0000\n"
+"POT-Creation-Date: 2023-05-04 03:41+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -5229,7 +5229,7 @@ msgstr ""
 "martxan jartzen duzunean.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:293
+#: engines/vcruise/vcruise.cpp:296
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 
@@ -6742,7 +6742,7 @@ msgid ""
 msgstr "   Ziur irten nahi duzula?   "
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:112
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:123
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 #, fuzzy
@@ -6932,12 +6932,12 @@ msgstr ""
 msgid "Failed to read version information from save file"
 msgstr "Ezin izan da fitxategitik jokoa kargatu."
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:288
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:291
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:298
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:301
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -7747,7 +7747,7 @@ msgstr "Ihes"
 msgid "Space"
 msgstr "Zuriunea"
 
-#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:127
+#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:138
 msgid "Pause game"
 msgstr "Jokoa pausatu"
 
@@ -9208,65 +9208,74 @@ msgstr "~T~rantsizioak gaituta"
 msgid "Speeds up animations."
 msgstr "Ahotsak bakarrik"
 
-#: engines/vcruise/metaengine.cpp:102
+#: engines/vcruise/metaengine.cpp:64
+#, fuzzy
+msgid "Skip main menu"
+msgstr "It~z~uli abiarazlera"
+
+#: engines/vcruise/metaengine.cpp:65
+msgid "Starts a new game upon launching instead of going to the main menu."
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:113
 #, fuzzy
 #| msgid "Display/Hide Info Screen"
 msgid "Display help screen"
 msgstr "Erakutsi/Ezkutatu informazio pantaila"
 
-#: engines/vcruise/metaengine.cpp:107 engines/wintermute/keymapper_tables.h:920
+#: engines/vcruise/metaengine.cpp:118 engines/wintermute/keymapper_tables.h:920
 #, fuzzy
 msgid "Save game"
 msgstr "Gorde jokoa:"
 
-#: engines/vcruise/metaengine.cpp:117
+#: engines/vcruise/metaengine.cpp:128
 #, fuzzy
 #| msgid "Override global audio settings"
 msgid "Open sound settings"
 msgstr "Soinu ezarpen globalak baliogabetu"
 
-#: engines/vcruise/metaengine.cpp:122
+#: engines/vcruise/metaengine.cpp:133
 #, fuzzy
 msgid "Quit game"
 msgstr " (Jokoa)"
 
-#: engines/vcruise/metaengine.cpp:133
+#: engines/vcruise/metaengine.cpp:144
 #, fuzzy
 #| msgid "Toggle fullscreen"
 msgid "Toggle music on/off"
 msgstr "Txandakatu pantaila osoa"
 
-#: engines/vcruise/metaengine.cpp:138
+#: engines/vcruise/metaengine.cpp:149
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Toggle sound effects on/off"
 msgstr "Soinu efektu berezien bolumena"
 
-#: engines/vcruise/metaengine.cpp:143
+#: engines/vcruise/metaengine.cpp:154
 #, fuzzy
 #| msgid "Music volume up / down"
 msgid "Music volume down"
 msgstr "Musikaren bolumena gora / behera"
 
-#: engines/vcruise/metaengine.cpp:148
+#: engines/vcruise/metaengine.cpp:159
 #, fuzzy
 #| msgid "Music volume: "
 msgid "Music volume up"
 msgstr "Musika: "
 
-#: engines/vcruise/metaengine.cpp:153
+#: engines/vcruise/metaengine.cpp:164
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Sound effect volume down"
 msgstr "Soinu efektu berezien bolumena"
 
-#: engines/vcruise/metaengine.cpp:158
+#: engines/vcruise/metaengine.cpp:169
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Sound effect volume up"
 msgstr "Soinu efektu berezien bolumena"
 
-#: engines/vcruise/metaengine.cpp:163
+#: engines/vcruise/metaengine.cpp:174
 #, fuzzy
 msgid "Skip current animation"
 msgstr "Ahotsak bakarrik"
@@ -9288,17 +9297,17 @@ msgid ""
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:278
+#: engines/vcruise/vcruise.cpp:281
 #, fuzzy
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr "Ezin izan da fitxategitik jokoa kargatu."
 
-#: engines/vcruise/vcruise.cpp:283
+#: engines/vcruise/vcruise.cpp:286
 #, fuzzy
 msgid "Failed to read version information from save file."
 msgstr "Ezin izan da fitxategitik jokoa kargatu."
 
-#: engines/vcruise/vcruise.cpp:303
+#: engines/vcruise/vcruise.cpp:306
 #, fuzzy
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ", konpartituriko direktorioa muntatzerakoan errorea"

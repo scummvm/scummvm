@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-02 06:02+0000\n"
+"POT-Creation-Date: 2023-05-04 03:41+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -5106,7 +5106,7 @@ msgstr ""
 "יש ללחוץ על אישור כדי להמירם כעת, אחרת תשאלו בפעם הבאה שהמשחק יתחיל.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:293
+#: engines/vcruise/vcruise.cpp:296
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr "המשחק שנשמר נוצר באמצעות גרסה חדשה יותר של ScummVM. לא ניתן לטעון."
 
@@ -6622,7 +6622,7 @@ msgid ""
 msgstr "האם אתה בטוח שברצונך לטעון משחק שנשמר? כל ההתקדמות שלא נשמרה תאבד."
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:112
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:123
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
@@ -6808,12 +6808,12 @@ msgstr "סיום מידי של כל הסרטים שמתנגנים"
 msgid "Failed to read version information from save file"
 msgstr "נכשל בקריאת מידע הגרסה מקובץ השמירה"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:288
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:291
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr "טעינת השמירה נכשלה, קובץ השמירה אינו מכיל מידע גרסה תקף."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:298
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:301
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -7659,7 +7659,7 @@ msgstr "יציאה"
 msgid "Space"
 msgstr "שטח"
 
-#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:127
+#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:138
 msgid "Pause game"
 msgstr "השהה משחק"
 
@@ -9085,65 +9085,75 @@ msgstr "מעברים:"
 msgid "Speeds up animations."
 msgstr "אפשרויות דיבור"
 
-#: engines/vcruise/metaengine.cpp:102
+#: engines/vcruise/metaengine.cpp:64
+#, fuzzy
+#| msgid "Open main menu"
+msgid "Skip main menu"
+msgstr "פתיחת תפריט ראשי"
+
+#: engines/vcruise/metaengine.cpp:65
+msgid "Starts a new game upon launching instead of going to the main menu."
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:113
 #, fuzzy
 #| msgid "Display/Hide Info Screen"
 msgid "Display help screen"
 msgstr "הצג / הסתר מסך מידע"
 
-#: engines/vcruise/metaengine.cpp:107 engines/wintermute/keymapper_tables.h:920
+#: engines/vcruise/metaengine.cpp:118 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "שמירת משחק"
 
-#: engines/vcruise/metaengine.cpp:117
+#: engines/vcruise/metaengine.cpp:128
 #, fuzzy
 #| msgid "Open 3DS Settings"
 msgid "Open sound settings"
 msgstr "פתיחת הגדרות 3DS"
 
-#: engines/vcruise/metaengine.cpp:122
+#: engines/vcruise/metaengine.cpp:133
 #, fuzzy
 #| msgid "Quit Game"
 msgid "Quit game"
 msgstr "יציאה מהמשחק"
 
-#: engines/vcruise/metaengine.cpp:133
+#: engines/vcruise/metaengine.cpp:144
 #, fuzzy
 #| msgid "Toggle fullscreen"
 msgid "Toggle music on/off"
 msgstr "מיתוג מסך מלא"
 
-#: engines/vcruise/metaengine.cpp:138
+#: engines/vcruise/metaengine.cpp:149
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Toggle sound effects on/off"
 msgstr "עוצמת אפקטים קוליים מיוחדים"
 
-#: engines/vcruise/metaengine.cpp:143
+#: engines/vcruise/metaengine.cpp:154
 #, fuzzy
 #| msgid "Music volume up / down"
 msgid "Music volume down"
 msgstr "עוצמת מוזיקה למעלה / למטה"
 
-#: engines/vcruise/metaengine.cpp:148
+#: engines/vcruise/metaengine.cpp:159
 #, fuzzy
 #| msgid "Music volume: "
 msgid "Music volume up"
 msgstr "עוצמת שמע: "
 
-#: engines/vcruise/metaengine.cpp:153
+#: engines/vcruise/metaengine.cpp:164
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Sound effect volume down"
 msgstr "עוצמת אפקטים קוליים מיוחדים"
 
-#: engines/vcruise/metaengine.cpp:158
+#: engines/vcruise/metaengine.cpp:169
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Sound effect volume up"
 msgstr "עוצמת אפקטים קוליים מיוחדים"
 
-#: engines/vcruise/metaengine.cpp:163
+#: engines/vcruise/metaengine.cpp:174
 #, fuzzy
 #| msgid "Speech Options"
 msgid "Skip current animation"
@@ -9166,7 +9176,7 @@ msgid ""
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:278
+#: engines/vcruise/vcruise.cpp:281
 #, fuzzy
 #| msgid ""
 #| "Failed to load save, the save file doesn't contain valid version "
@@ -9174,13 +9184,13 @@ msgstr ""
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr "טעינת השמירה נכשלה, קובץ השמירה אינו מכיל מידע גרסה תקף."
 
-#: engines/vcruise/vcruise.cpp:283
+#: engines/vcruise/vcruise.cpp:286
 #, fuzzy
 #| msgid "Failed to read version information from save file"
 msgid "Failed to read version information from save file."
 msgstr "נכשל בקריאת מידע הגרסה מקובץ השמירה"
 
-#: engines/vcruise/vcruise.cpp:303
+#: engines/vcruise/vcruise.cpp:306
 #, fuzzy
 #| msgid "An internal error occurred while attempting to write save game data"
 msgid "An unknown error occurred while attempting to load the saved game."
