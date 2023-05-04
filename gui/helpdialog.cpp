@@ -21,6 +21,8 @@
 
 #include "common/translation.h"
 #include "gui/helpdialog.h"
+#include "gui/gui-manager.h"
+#include "gui/ThemeEval.h"
 #include "gui/widget.h"
 
 namespace GUI {
@@ -28,7 +30,21 @@ namespace GUI {
 HelpDialog::HelpDialog()
 	: Dialog(30, 20, 260, 124) {
 
-	new ButtonWidget(this, 10, 10, 16, 16, Common::U32String("Close"), Common::U32String(), kCloseCmd);
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+
+	int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
+	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
+
+	_w = screenW * 8 / 10;
+	_h = screenH * 8 / 10;
+
+	// Center the dialog
+	_x = (screenW - _w) / 2;
+	_y = (screenH - _h) / 2;
+
+
+	new ButtonWidget(this, _w - buttonWidth - 10, _h - buttonHeight - 10, buttonWidth, buttonHeight, Common::U32String("Close"), Common::U32String(), kCloseCmd);
 }
 
 void HelpDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
