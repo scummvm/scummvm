@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-05-04 03:41+0000\n"
-"PO-Revision-Date: 2023-04-30 09:22+0000\n"
+"PO-Revision-Date: 2023-05-04 09:32+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -9301,14 +9301,14 @@ msgid "Speeds up animations."
 msgstr "Hace que las animaciones vayan más rápidas."
 
 #: engines/vcruise/metaengine.cpp:64
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Skip main menu"
-msgstr "Abrir menú principal"
+msgstr "Omitir menú principal"
 
 #: engines/vcruise/metaengine.cpp:65
 msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr ""
+"Comienza una partida nueva nada más ejecutar el juego en vez de ir al menú "
+"principal."
 
 #: engines/vcruise/metaengine.cpp:113
 msgid "Display help screen"
