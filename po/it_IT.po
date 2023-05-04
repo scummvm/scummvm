@@ -9326,7 +9326,8 @@ msgstr "Salta menù principale"
 
 #: engines/vcruise/metaengine.cpp:65
 msgid "Starts a new game upon launching instead of going to the main menu."
-msgstr "Avvia direttamente una nuova partita senza mostrare il menù principale."
+msgstr ""
+"Avvia direttamente una nuova partita senza mostrare il menù principale."
 
 #: engines/vcruise/metaengine.cpp:113
 msgid "Display help screen"
