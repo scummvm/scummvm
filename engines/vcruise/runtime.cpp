@@ -925,7 +925,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleLockInteractions(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
 	  _inGameMenuState(kInGameMenuStateInvisible), _inGameMenuActiveElement(0), _inGameMenuButtonActive {false, false, false, false, false},
-	  /*_loadedArea(0), */_lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0),
+	  _lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0), _lmbDragTolerance(0),
 	  _delayCompletionTime(0),
 	  _panoramaState(kPanoramaStateInactive),
 	  _listenerX(0), _listenerY(0), _listenerAngle(0), _soundCacheIndex(0),
@@ -1121,6 +1121,9 @@ bool Runtime::runFrame() {
 
 bool Runtime::bootGame(bool newGame) {
 	assert(_gameState == kGameStateBoot);
+
+	if (!ConfMan.hasKey("vcruise_increase_drag_distance") || ConfMan.hasKey("vcruise_increase_drag_distance"))
+		_lmbDragTolerance = 3;
 
 	debug(1, "Booting V-Cruise game...");
 	loadIndex();
@@ -2164,8 +2167,19 @@ bool Runtime::popOSEvent(OSEvent &evt) {
 			if (_mousePos == tempEvent.pos)
 				continue;
 
-			if (_lmbDown && tempEvent.pos != _lmbDownPos)
-				_lmbDragging = true;
+			if (_lmbDown && tempEvent.pos != _lmbDownPos) {
+				bool isDrag = true;
+
+				if (_lmbDragTolerance > 0) {
+					int xDelta = tempEvent.pos.x - _lmbDownPos.x;
+					int yDelta = tempEvent.pos.y - _lmbDownPos.y;
+
+					if (xDelta >= -_lmbDragTolerance && xDelta <= _lmbDragTolerance && yDelta >= -_lmbDragTolerance && yDelta <= _lmbDragTolerance)
+						isDrag = false;
+				}
+
+				_lmbDragging = isDrag;
+			}
 
 			_mousePos = tempEvent.pos;
 		} else if (tempEvent.type == kOSEventTypeLButtonDown) {

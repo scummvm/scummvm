@@ -1153,6 +1153,7 @@ private:
 	Common::Point _mousePos;
 	Common::Point _lmbDownPos;
 	uint32 _lmbDownTime;
+	int _lmbDragTolerance;
 	bool _lmbDown;
 	bool _lmbDragging;
 	bool _lmbReleaseWasClick;	// If true, then the mouse didn't move at all since the LMB down

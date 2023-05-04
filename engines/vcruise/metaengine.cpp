@@ -37,12 +37,12 @@ namespace VCruise {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
-		GAMEOPTION_LAUNCH_DEBUG,
+		GAMEOPTION_INCREASE_DRAG_DISTANCE,
 		{
-			_s("Start with debugger"),
-			_s("Starts with the debugger dashboard active."),
-			"vcruise_debug",
-			false,
+			_s("Improved click sensitivity"),
+			_s("Allows the mouse to be moved a short distance without cancelling click interactions.  If this is off, any mouse movement while the mouse button is held cancels a click interaction."),
+			"vcruise_increase_drag_distance",
+			true,
 			0,
 			0
 		}
@@ -53,6 +53,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Faster animations"),
 			_s("Speeds up animations."),
 			"vcruise_fast_animations",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_LAUNCH_DEBUG,
+		{
+			_s("Start with debugger"),
+			_s("Starts with the debugger dashboard active."),
+			"vcruise_debug",
 			false,
 			0,
 			0
