@@ -473,6 +473,37 @@ struct OSEvent {
 	uint32 timestamp;
 };
 
+struct TextStyleDef {
+	Common::String fontName;
+	uint size;
+	uint unknown1;
+	uint unknown2;
+	uint unknown3;	// Seems to always be 0 for English, other values for other languages
+	uint colorRGB;
+	uint shadowColorRGB;
+	uint unknown4;
+	uint unknown5;	// Possibly drop shadow offset
+};
+
+struct UILabelDef {
+	Common::String lineID;
+	Common::String styleDefID;
+	uint unknown1;
+	uint unknown2;
+	uint unknown3;
+	uint unknown4;
+};
+
+struct FontCacheItem {
+	FontCacheItem();
+
+	Common::String fname;
+	uint size;
+
+	const Graphics::Font *font;
+	Common::SharedPtr<Graphics::Font> keepAlive;
+};
+
 class Runtime {
 public:
 	friend class RuntimeMenuInterface;
@@ -505,6 +536,8 @@ public:
 	LoadGameOutcome loadGame(Common::ReadStream *stream);
 
 	bool bootGame(bool newGame);
+
+	void getLabelDef(const Common::String &labelID, const Graphics::Font *&outFont, const Common::String *&outTextUTF8, uint32 &outColor, uint32 &outShadowColor);
 
 private:
 	enum IndexParseType {
@@ -794,6 +827,8 @@ private:
 	void dismissInGameMenu();
 	void dischargeInGameMenuMouseUp();
 	void drawInGameMenuButton(uint element);
+
+	const Graphics::Font *resolveFont(const Common::String &textStyle, uint size);
 
 	// Script things
 	void scriptOpNumber(ScriptArg_t arg);
@@ -1176,6 +1211,12 @@ private:
 	Common::HashMap<Common::String, SubtitleDef> _waveSubtitles;
 	Common::Array<SubtitleQueueItem> _subtitleQueue;
 	bool _isDisplayingSubtitles;
+
+	Common::HashMap<Common::String, Common::String> _locStrings;
+	Common::HashMap<Common::String, TextStyleDef> _locTextStyles;
+	Common::HashMap<Common::String, UILabelDef> _locUILabels;
+
+	Common::Array<Common::SharedPtr<FontCacheItem> > _fontCache;
 
 	int32 _dbToVolume[49];
 };

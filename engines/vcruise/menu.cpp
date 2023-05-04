@@ -21,6 +21,7 @@
 
 #include "common/config-manager.h"
 
+#include "graphics/font.h"
 #include "graphics/managed_surface.h"
 
 #include "audio/mixer.h"
@@ -30,9 +31,9 @@
 
 namespace VCruise {
 
-class ReahMenuPage : public MenuPage {
+class ReahSchizmMenuPage : public MenuPage {
 public:
-	ReahMenuPage();
+	explicit ReahSchizmMenuPage(bool isSchizm);
 
 	bool run() override;
 	void start() override;
@@ -76,12 +77,15 @@ protected:
 	struct Button {
 		Button();
 		Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Point &stateOffset, bool enabled);
+		Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Point &stateOffset, bool enabled, const Common::String (&states)[4]);
 
 		Graphics::Surface *_graphic;
 		Common::Rect _graphicRect;
 		Common::Rect _screenRect;
 		Common::Point _stateOffset;
 		bool _enabled;
+
+		Common::String _buttonStates[4];
 	};
 
 	struct Slider {
@@ -113,11 +117,13 @@ protected:
 
 	Common::Point _sliderDragStart;
 	int _sliderDragValue;
+
+	bool _isSchizm;
 };
 
-class ReahMenuBarPage : public ReahMenuPage {
+class ReahMenuBarPage : public ReahSchizmMenuPage {
 public:
-	explicit ReahMenuBarPage(uint page);
+	ReahMenuBarPage(uint page, bool isSchizm);
 
 	void start() override final;
 
@@ -140,14 +146,14 @@ protected:
 
 class ReahHelpMenuPage : public ReahMenuBarPage {
 public:
-	ReahHelpMenuPage();
+	explicit ReahHelpMenuPage(bool isSchizm);
 
 	void addPageContents() override;
 };
 
 class ReahSoundMenuPage : public ReahMenuBarPage {
 public:
-	ReahSoundMenuPage();
+	explicit ReahSoundMenuPage(bool isSchizm);
 
 	void addPageContents() override;
 	void onSettingsChanged() override;
@@ -183,7 +189,7 @@ private:
 
 class ReahQuitMenuPage : public ReahMenuBarPage {
 public:
-	ReahQuitMenuPage();
+	explicit ReahQuitMenuPage(bool isSchizm);
 
 	void addPageContents() override;
 	void onButtonClicked(uint button, bool &outChangedState) override;
@@ -197,13 +203,15 @@ private:
 
 class ReahPauseMenuPage : public ReahMenuBarPage {
 public:
-	ReahPauseMenuPage();
+	explicit ReahPauseMenuPage(bool isSchizm);
 
 	void addPageContents() override;
 };
 
-class ReahMainMenuPage : public ReahMenuPage {
+class ReahSchizmMainMenuPage : public ReahSchizmMenuPage {
 public:
+	explicit ReahSchizmMainMenuPage(bool isSchizm);
+
 	void start() override;
 
 protected:
@@ -220,10 +228,10 @@ private:
 	};
 };
 
-ReahMenuPage::ReahMenuPage() : _interactionIndex(0), _interactionState(kInteractionStateNotInteracting), _sliderDragValue(0) {
+ReahSchizmMenuPage::ReahSchizmMenuPage(bool isSchizm) : _interactionIndex(0), _interactionState(kInteractionStateNotInteracting), _sliderDragValue(0), _isSchizm(isSchizm) {
 }
 
-bool ReahMenuPage::run() {
+bool ReahSchizmMenuPage::run() {
 	bool changedState = false;
 
 	OSEvent evt;
@@ -252,7 +260,7 @@ bool ReahMenuPage::run() {
 	return false;
 }
 
-void ReahMenuPage::start() {
+void ReahSchizmMenuPage::start() {
 	for (uint buttonIndex = 0; buttonIndex < _buttons.size(); buttonIndex++)
 		drawButtonInState(buttonIndex, _buttons[buttonIndex]._enabled ? kButtonStateIdle : kButtonStateDisabled);
 
@@ -266,20 +274,20 @@ void ReahMenuPage::start() {
 	handleMouseMove(mousePoint);
 }
 
-void ReahMenuPage::onButtonClicked(uint button, bool &outChangedState) {
+void ReahSchizmMenuPage::onButtonClicked(uint button, bool &outChangedState) {
 	outChangedState = false;
 }
 
-void ReahMenuPage::onCheckboxClicked(uint button, bool &outChangedState) {
+void ReahSchizmMenuPage::onCheckboxClicked(uint button, bool &outChangedState) {
 }
 
-void ReahMenuPage::onSliderMoved(uint slider) {
+void ReahSchizmMenuPage::onSliderMoved(uint slider) {
 }
 
-void ReahMenuPage::eraseSlider(uint sliderIndex) const {
+void ReahSchizmMenuPage::eraseSlider(uint sliderIndex) const {
 }
 
-void ReahMenuPage::handleMouseMove(const Common::Point &pt) {
+void ReahSchizmMenuPage::handleMouseMove(const Common::Point &pt) {
 	switch (_interactionState) {
 	case kInteractionStateNotInteracting:
 		for (uint buttonIndex = 0; buttonIndex < _buttons.size(); buttonIndex++) {
@@ -411,7 +419,7 @@ void ReahMenuPage::handleMouseMove(const Common::Point &pt) {
 	}
 }
 
-void ReahMenuPage::handleMouseDown(const Common::Point &pt, bool &outChangedState) {
+void ReahSchizmMenuPage::handleMouseDown(const Common::Point &pt, bool &outChangedState) {
 	switch (_interactionState) {
 	case kInteractionStateNotInteracting:
 	case kInteractionStateClickingOnButton:
@@ -442,7 +450,7 @@ void ReahMenuPage::handleMouseDown(const Common::Point &pt, bool &outChangedStat
 	}
 }
 
-void ReahMenuPage::handleMouseUp(const Common::Point &pt, bool &outChangedState) {
+void ReahSchizmMenuPage::handleMouseUp(const Common::Point &pt, bool &outChangedState) {
 	switch (_interactionState) {
 	case kInteractionStateNotInteracting:
 	case kInteractionStateOverButton:
@@ -487,7 +495,7 @@ void ReahMenuPage::handleMouseUp(const Common::Point &pt, bool &outChangedState)
 	}
 }
 
-ReahMenuBarPage::ReahMenuBarPage(uint page) : _page(page) {
+ReahMenuBarPage::ReahMenuBarPage(uint page, bool isSchizm) : ReahSchizmMenuPage(isSchizm), _page(page) {
 }
 
 void ReahMenuBarPage::start() {
@@ -519,13 +527,13 @@ void ReahMenuBarPage::start() {
 
 	addPageContents();
 
-	ReahMenuPage::start();
+	ReahSchizmMenuPage::start();
 }
 
 void ReahMenuBarPage::onButtonClicked(uint button, bool &outChangedState) {
 	switch (button) {
 	case kMenuBarButtonHelp:
-		_menuInterface->changeMenu(new ReahHelpMenuPage());
+		_menuInterface->changeMenu(new ReahHelpMenuPage(_isSchizm));
 		outChangedState = true;
 		break;
 	case kMenuBarButtonLoad:
@@ -535,11 +543,11 @@ void ReahMenuBarPage::onButtonClicked(uint button, bool &outChangedState) {
 		g_engine->saveGameDialog();
 		break;
 	case kMenuBarButtonSound:
-		_menuInterface->changeMenu(new ReahSoundMenuPage());
+		_menuInterface->changeMenu(new ReahSoundMenuPage(_isSchizm));
 		outChangedState = true;
 		break;
 	case kMenuBarButtonQuit:
-		_menuInterface->changeMenu(new ReahQuitMenuPage());
+		_menuInterface->changeMenu(new ReahQuitMenuPage(_isSchizm));
 		outChangedState = true;
 		break;
 
@@ -547,7 +555,7 @@ void ReahMenuBarPage::onButtonClicked(uint button, bool &outChangedState) {
 		if (_menuInterface->canSave())
 			outChangedState = _menuInterface->reloadFromCheckpoint();
 		else {
-			_menuInterface->changeMenu(new ReahMainMenuPage());
+			_menuInterface->changeMenu(new ReahSchizmMainMenuPage(_isSchizm));
 			outChangedState = true;
 		}
 		break;
@@ -556,15 +564,15 @@ void ReahMenuBarPage::onButtonClicked(uint button, bool &outChangedState) {
 	}
 }
 
-void ReahMenuPage::drawButtonInState(uint buttonIndex, ButtonState state) const {
+void ReahSchizmMenuPage::drawButtonInState(uint buttonIndex, ButtonState state) const {
 	drawButtonFromListInState(_buttons, buttonIndex, state);
 }
 
-void ReahMenuPage::drawCheckboxInState(uint buttonIndex, CheckboxState state) const {
+void ReahSchizmMenuPage::drawCheckboxInState(uint buttonIndex, CheckboxState state) const {
 	drawButtonFromListInState(_checkboxes, buttonIndex, state);
 }
 
-void ReahMenuPage::drawSlider(uint sliderIndex) const {
+void ReahSchizmMenuPage::drawSlider(uint sliderIndex) const {
 	const Slider &slider = _sliders[sliderIndex];
 
 	Common::Point screenPoint(slider._baseRect.left + slider._value, slider._baseRect.top);
@@ -573,32 +581,65 @@ void ReahMenuPage::drawSlider(uint sliderIndex) const {
 	_menuInterface->commitRect(Common::Rect(screenPoint.x, screenPoint.y, screenPoint.x + slider._baseRect.width(), screenPoint.y + slider._baseRect.height()));
 }
 
-void ReahMenuPage::drawButtonFromListInState(const Common::Array<Button> &buttonList, uint buttonIndex, int state) const {
+void ReahSchizmMenuPage::drawButtonFromListInState(const Common::Array<Button> &buttonList, uint buttonIndex, int state) const {
 	const Button &button = buttonList[buttonIndex];
 
 	Common::Rect graphicRect = button._graphicRect;
 	graphicRect.translate(button._stateOffset.x * state, button._stateOffset.y * state);
 
-	_menuInterface->getMenuSurface()->blitFrom(*button._graphic, graphicRect, button._screenRect);
+	Graphics::ManagedSurface *menuSurf = _menuInterface->getMenuSurface();
+	menuSurf->blitFrom(*button._graphic, graphicRect, button._screenRect);
+
+	const Graphics::Font *font = nullptr;
+	const Common::String *labelTextUTF8 = nullptr;
+	uint32 textColor;
+	uint32 shadowColor;
+	_menuInterface->getLabelDef(button._buttonStates[state], font, labelTextUTF8, textColor, shadowColor);
+
+	if (font && labelTextUTF8) {
+		Common::U32String text = labelTextUTF8->decode(Common::kUtf8);
+
+		int strWidth = font->getStringWidth(text);
+		int strHeight = font->getFontHeight();
+
+		Common::Point textPos(button._screenRect.left + (button._screenRect.width() - strWidth) / 2, button._screenRect.top + (button._screenRect.height() - strHeight) / 2);
+
+		if (shadowColor != 0) {
+			Common::Point shadowPos = textPos + Common::Point(1, 1);
+
+			uint32 realShadowColor = menuSurf->format.RGBToColor((shadowColor >> 16) & 0xff, (shadowColor >> 8) & 0xff, shadowColor & 0xff);
+			font->drawString(menuSurf, text, shadowPos.x, shadowPos.y, strWidth, realShadowColor);
+		}
+
+		uint32 realTextColor = menuSurf->format.RGBToColor((textColor >> 16) & 0xff, (textColor >> 8) & 0xff, textColor & 0xff);
+		font->drawString(menuSurf, text, textPos.x, textPos.y, strWidth, realTextColor);
+	}
+
 	_menuInterface->commitRect(Common::Rect(button._screenRect.left, button._screenRect.top, button._screenRect.left + graphicRect.width(), button._screenRect.top + graphicRect.height()));
 }
 
-ReahMenuPage::Button::Button() : _graphic(nullptr), _enabled(true) {
+ReahSchizmMenuPage::Button::Button() : _graphic(nullptr), _enabled(true) {
 }
 
-ReahMenuPage::Button::Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Point &stateOffset, bool enabled)
+ReahSchizmMenuPage::Button::Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Point &stateOffset, bool enabled)
 	: _graphic(graphic), _graphicRect(graphicRect), _screenRect(screenRect), _stateOffset(stateOffset), _enabled(enabled) {
 }
 
-ReahMenuPage::Slider::Slider() : _graphic(nullptr), _value(0), _maxValue(1) {
+ReahSchizmMenuPage::Button::Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Point &stateOffset, bool enabled, const Common::String (&states)[4])
+	: _graphic(graphic), _graphicRect(graphicRect), _screenRect(screenRect), _stateOffset(stateOffset), _enabled(enabled) {
+	for (int i = 0; i < 4; i++)
+		this->_buttonStates[i] = states[i];
 }
 
-ReahMenuPage::Slider::Slider(Graphics::Surface *graphic, const Common::Rect &baseRect, int value, int maxValue)
+ReahSchizmMenuPage::Slider::Slider() : _graphic(nullptr), _value(0), _maxValue(1) {
+}
+
+ReahSchizmMenuPage::Slider::Slider(Graphics::Surface *graphic, const Common::Rect &baseRect, int value, int maxValue)
 	: _graphic(graphic), _baseRect(baseRect), _value(value), _maxValue(maxValue) {
 	assert(_value >= 0 && _value <= maxValue);
 }
 
-ReahHelpMenuPage::ReahHelpMenuPage() : ReahMenuBarPage(kMenuBarButtonHelp) {
+ReahHelpMenuPage::ReahHelpMenuPage(bool isSchizm) : ReahMenuBarPage(kMenuBarButtonHelp, isSchizm) {
 }
 
 void ReahHelpMenuPage::addPageContents() {
@@ -609,7 +650,7 @@ void ReahHelpMenuPage::addPageContents() {
 	}
 }
 
-ReahSoundMenuPage::ReahSoundMenuPage() : ReahMenuBarPage(kMenuBarButtonSound), _soundChecked(false), _musicChecked(false) {
+ReahSoundMenuPage::ReahSoundMenuPage(bool isSchizm) : ReahMenuBarPage(kMenuBarButtonSound, isSchizm), _soundChecked(false), _musicChecked(false) {
 }
 
 void ReahSoundMenuPage::addPageContents() {
@@ -770,7 +811,7 @@ void ReahSoundMenuPage::applyMusicVolume() const {
 	g_engine->syncSoundSettings();
 }
 
-ReahQuitMenuPage::ReahQuitMenuPage() : ReahMenuBarPage(kMenuBarButtonQuit) {
+ReahQuitMenuPage::ReahQuitMenuPage(bool isSchizm) : ReahMenuBarPage(kMenuBarButtonQuit, isSchizm) {
 }
 
 void ReahQuitMenuPage::addPageContents() {
@@ -840,7 +881,7 @@ void ReahQuitMenuPage::onButtonClicked(uint button, bool &outChangedState) {
 		onButtonClicked(kMenuBarButtonReturn, outChangedState);
 }
 
-ReahPauseMenuPage::ReahPauseMenuPage() : ReahMenuBarPage(static_cast<uint>(-1)) {
+ReahPauseMenuPage::ReahPauseMenuPage(bool isSchizm) : ReahMenuBarPage(static_cast<uint>(-1), isSchizm) {
 }
 
 void ReahPauseMenuPage::addPageContents() {
@@ -858,8 +899,10 @@ void ReahPauseMenuPage::addPageContents() {
 	_menuInterface->commitRect(Common::Rect(0, 44, 640, 392));
 }
 
+ReahSchizmMainMenuPage::ReahSchizmMainMenuPage(bool isSchizm) : ReahSchizmMenuPage(isSchizm) {
+}
 
-void ReahMainMenuPage::start() {
+void ReahSchizmMainMenuPage::start() {
 	Graphics::Surface *bgGraphic = _menuInterface->getUIGraphic(0);
 
 	Graphics::ManagedSurface *menuSurf = _menuInterface->getMenuSurface();
@@ -872,7 +915,39 @@ void ReahMainMenuPage::start() {
 
 	Graphics::Surface *buttonGraphic = _menuInterface->getUIGraphic(1);
 
-	const int buttonTopYs[6] = {66, 119, 171, 224, 277, 330};
+	Common::Point buttonSize;
+
+	Common::Point buttonCoords[6];
+	Common::String buttonStates[6][4];
+
+	if (_isSchizm) {
+		buttonCoords[0] = Common::Point(240, 52);
+		buttonCoords[1] = Common::Point(181, 123);
+		buttonCoords[2] = Common::Point(307, 157);
+		buttonCoords[3] = Common::Point(179, 232);
+		buttonCoords[4] = Common::Point(298, 296);
+		buttonCoords[5] = Common::Point(373, 395);
+
+		buttonSize = Common::Point(150, 40);
+
+		for (int i = 0; i < 6; i++) {
+			int index = i;
+			if (i == 5)
+				index = 6;
+
+			buttonStates[i][0] = Common::String::format("szData001_%02i", static_cast<int>(index + 1));
+			buttonStates[i][1] = Common::String::format("szData001_%02i", static_cast<int>(index + 8));
+			buttonStates[i][2] = Common::String::format("szData001_%02i", static_cast<int>(index + 15));
+			buttonStates[i][3] = Common::String::format("szData001_%02i", static_cast<int>(index + 22));
+		}
+
+	} else {
+		const int buttonTopYs[6] = {66, 119, 171, 224, 277, 330};
+		for (int i = 0; i < 6; i++)
+			buttonCoords[i] = Common::Point(492, buttonTopYs[i]);
+
+		buttonSize = Common::Point(112, 44);
+	}
 
 	for (int i = 0; i < 6; i++) {
 		bool isEnabled = true;
@@ -881,13 +956,22 @@ void ReahMainMenuPage::start() {
 		else if (i == kButtonLoad)
 			isEnabled = _menuInterface->hasAnySave();
 
-		_buttons.push_back(Button(buttonGraphic, Common::Rect(0, i * 44, 112, i * 44 + 44), Common::Rect(492, buttonTopYs[i], 492 + 112, buttonTopYs[i] + 44), Common::Point(112, 0), isEnabled));
+		int coordScale = i;
+
+		// Skip uninstall button
+		if (_isSchizm && i == 5)
+			coordScale = 6;
+
+		Common::Rect graphicRect(0, coordScale * buttonSize.y, buttonSize.x, (coordScale + 1) * buttonSize.y);
+		Common::Rect screenRect(buttonCoords[i].x, buttonCoords[i].y, buttonCoords[i].x + buttonSize.x, buttonCoords[i].y + buttonSize.y);
+
+		_buttons.push_back(Button(buttonGraphic, graphicRect, screenRect, Common::Point(buttonSize.x, 0), isEnabled, buttonStates[i]));
 	}
 
-	ReahMenuPage::start();
+	ReahSchizmMenuPage::start();
 }
 
-void ReahMainMenuPage::onButtonClicked(uint button, bool &outChangedState) {
+void ReahSchizmMainMenuPage::onButtonClicked(uint button, bool &outChangedState) {
 	switch (button) {
 	case kButtonContinue: {
 			Common::Error loadError = g_engine->loadGameState(g_engine->getAutosaveSlot());
@@ -904,7 +988,7 @@ void ReahMainMenuPage::onButtonClicked(uint button, bool &outChangedState) {
 		break;
 
 	case kButtonSound:
-		_menuInterface->changeMenu(new ReahSoundMenuPage());
+		_menuInterface->changeMenu(new ReahSoundMenuPage(_isSchizm));
 		outChangedState = true;
 		break;
 
@@ -914,7 +998,7 @@ void ReahMainMenuPage::onButtonClicked(uint button, bool &outChangedState) {
 		break;
 
 	case kButtonQuit:
-		_menuInterface->changeMenu(new ReahQuitMenuPage());
+		_menuInterface->changeMenu(new ReahQuitMenuPage(_isSchizm));
 		outChangedState = true;
 		break;
 	}
@@ -943,24 +1027,24 @@ bool MenuPage::run() {
 	return false;
 }
 
-MenuPage *createMenuReahMain() {
-	return new ReahMainMenuPage();
+MenuPage *createMenuMain(bool isSchizm) {
+	return new ReahSchizmMainMenuPage(isSchizm);
 }
 
-MenuPage *createMenuReahQuit() {
-	return new ReahQuitMenuPage();
+MenuPage *createMenuQuit(bool isSchizm) {
+	return new ReahQuitMenuPage(isSchizm);
 }
 
-MenuPage *createMenuReahHelp() {
-	return new ReahHelpMenuPage();
+MenuPage *createMenuHelp(bool isSchizm) {
+	return new ReahHelpMenuPage(isSchizm);
 }
 
-MenuPage *createMenuReahSound() {
-	return new ReahSoundMenuPage();
+MenuPage *createMenuSound(bool isSchizm) {
+	return new ReahSoundMenuPage(isSchizm);
 }
 
-MenuPage *createMenuReahPause() {
-	return new ReahPauseMenuPage();
+MenuPage *createMenuPause(bool isSchizm) {
+	return new ReahPauseMenuPage(isSchizm);
 }
 
 } // End of namespace VCruise

@@ -77,6 +77,8 @@ public:
 	bool canSave() const override;
 	bool reloadFromCheckpoint() const override;
 
+	void getLabelDef(const Common::String &labelID, const Graphics::Font *&outFont, const Common::String *&outTextUTF8, uint32 &outColor, uint32 &outShadowColor) const override;
+
 private:
 	Runtime *_runtime;
 };
@@ -117,10 +119,14 @@ Common::Point RuntimeMenuInterface::getMouseCoordinate() const {
 
 void RuntimeMenuInterface::restartGame() const {
 	Common::SharedPtr<SaveGameSnapshot> snapshot(new SaveGameSnapshot());
-
+	
 	snapshot->roomNumber = 1;
 	snapshot->screenNumber = 0xb0;
-	snapshot->loadedAnimation = 1;
+
+	if (_runtime->_gameID == GID_SCHIZM)
+		snapshot->loadedAnimation = 200;
+	else
+		snapshot->loadedAnimation = 1;
 
 	_runtime->_saveGame = snapshot;
 	_runtime->restoreSaveGameSnapshot();
@@ -158,6 +164,11 @@ bool RuntimeMenuInterface::reloadFromCheckpoint() const {
 	_runtime->restoreSaveGameSnapshot();
 	return true;
 }
+
+void RuntimeMenuInterface::getLabelDef(const Common::String &labelID, const Graphics::Font *&outFont, const Common::String *&outTextUTF8, uint32 &outColor, uint32 &outShadowColor) const {
+	return _runtime->getLabelDef(labelID, outFont, outTextUTF8, outColor, outShadowColor);
+}
+
 
 AnimationDef::AnimationDef() : animNum(0), firstFrame(0), lastFrame(0) {
 }
@@ -900,6 +911,10 @@ void SaveGameSnapshot::writeString(Common::WriteStream *stream, const Common::St
 	stream->writeString(str);
 }
 
+
+FontCacheItem::FontCacheItem() : font(nullptr), size(0) {
+}
+
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID, bool isCDVariant, bool isDVDVariant)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _hero(0), _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
@@ -1129,11 +1144,9 @@ bool Runtime::bootGame(bool newGame) {
 	_gameState = kGameStateIdle;
 
 	if (newGame) {
-		// TODO: Implement menus and go to b1 in Schizm instead
-		if (_gameID == GID_SCHIZM) {
-			changeToScreen(1, 0xb0);
-			_isInGame = true;
-		} else
+		if (_gameID == GID_SCHIZM)
+			changeToScreen(1, 0xb1);
+		else
 			changeToScreen(1, 0xb1);
 	}
 
@@ -1224,6 +1237,31 @@ bool Runtime::bootGame(bool newGame) {
 	}
 
 	return true;
+}
+
+void Runtime::getLabelDef(const Common::String &labelID, const Graphics::Font *&outFont, const Common::String *&outTextUTF8, uint32 &outColor, uint32 &outShadowColor) {
+	outFont = nullptr;
+	outTextUTF8 = nullptr;
+	outColor = 0;
+	outShadowColor = 0;
+
+	Common::HashMap<Common::String, UILabelDef>::const_iterator labelDefIt = _locUILabels.find(labelID);
+	if (labelDefIt != _locUILabels.end()) {
+		const UILabelDef &labelDef = labelDefIt->_value;
+
+		Common::HashMap<Common::String, Common::String>::const_iterator lineIt = _locStrings.find(labelDef.lineID);
+
+		if (lineIt != _locStrings.end()) {
+			Common::HashMap<Common::String, TextStyleDef>::const_iterator styleIt = _locTextStyles.find(labelDef.styleDefID);
+
+			if (styleIt != _locTextStyles.end()) {
+				outFont = resolveFont(styleIt->_value.fontName, styleIt->_value.size);
+				outColor = styleIt->_value.colorRGB;
+				outShadowColor = styleIt->_value.shadowColorRGB;
+				outTextUTF8 = &lineIt->_value;
+			}
+		}
+	}
 }
 
 bool Runtime::runIdle() {
@@ -1351,7 +1389,7 @@ bool Runtime::runIdle() {
 				switch (osEvent.keymappedEvent) {
 				case kKeymappedEventHelp:
 					if (_gameID == GID_REAH)
-						changeToMenuPage(createMenuReahHelp());
+						changeToMenuPage(createMenuHelp(_gameID == GID_SCHIZM));
 					else
 						error("Don't have a help menu for this game");
 					return true;
@@ -1365,13 +1403,13 @@ bool Runtime::runIdle() {
 					break;
 				case kKeymappedEventPause:
 					if (_gameID == GID_REAH)
-						changeToMenuPage(createMenuReahPause());
+						changeToMenuPage(createMenuPause(_gameID == GID_SCHIZM));
 					else
 						error("Don't have a pause menu for this game");
 					return true;
 				case kKeymappedEventQuit:
 					if (_gameID == GID_REAH)
-						changeToMenuPage(createMenuReahQuit());
+						changeToMenuPage(createMenuQuit(_gameID == GID_SCHIZM));
 					else
 						error("Don't have a quit menu for this game");
 					return true;
@@ -1462,6 +1500,7 @@ bool Runtime::runWaitForAnimation() {
 					_animDecoder->pauseVideo(true);
 					_animDecoderState = kAnimDecoderStatePaused;
 				}
+				_scriptEnv.esc = true;
 				_gameState = kGameStateScript;
 				return true;
 			}
@@ -2029,8 +2068,8 @@ void Runtime::terminateScript() {
 
 	if (_scriptEnv.exitToMenu && _gameState == kGameStateIdle) {
 		changeToCursor(_cursors[kCursorArrow]);
-		if (_gameID == GID_REAH)
-			changeToMenuPage(createMenuReahMain());
+		if (_gameID == GID_REAH || _gameID == GID_SCHIZM)
+			changeToMenuPage(createMenuMain(_gameID == GID_SCHIZM));
 		else
 			error("Missing main menu behavior for this game");
 	}
@@ -3223,7 +3262,7 @@ void Runtime::updateSounds(uint32 timestamp) {
 		}
 
 		if (snd.isLooping) {
-			if (snd.volume == getSilentSoundVolume()) {
+			if (snd.volume <= getSilentSoundVolume()) {
 				if (!snd.isSilencedLoop) {
 					if (snd.cache) {
 						snd.cache->player.reset();
@@ -4069,20 +4108,74 @@ void Runtime::loadSubtitles(Common::CodePage codePage) {
 				frameMap = &_animSubtitles[animID];
 		}
 
-		if (frameMap != nullptr || isWave) {
-			for (const Common::INIFile::KeyValue &kv : section.getKeys()) {
-				if (kv.value.size() < 23)
+		bool isTextData = (section.name == "szTextData");
+		bool isFontData = (section.name == "szFontData");
+		bool isStringData = (section.name.hasPrefix("szData"));
+
+		for (const Common::INIFile::KeyValue &kv : section.getKeys()) {
+			// Tokenize the line
+			Common::Array<Common::String> tokens;
+
+			{
+				const Common::String &valueStr = kv.value;
+
+				uint currentTokenStart = 0;
+				uint nextCharPos = 0;
+				bool isQuotedString = false;
+
+				while (nextCharPos < valueStr.size()) {
+					char c = valueStr[nextCharPos];
+					nextCharPos++;
+
+					if (isQuotedString) {
+						if (c == '\"')
+							isQuotedString = false;
+						continue;
+					}
+
+					if (c == '\"') {
+						isQuotedString = true;
+						continue;
+					}
+
+					if (c == ',') {
+						while (valueStr[currentTokenStart] == ' ')
+							currentTokenStart++;
+
+						tokens.push_back(valueStr.substr(currentTokenStart, (nextCharPos - currentTokenStart) - 1u));
+
+						currentTokenStart = nextCharPos;
+					}
+
+					if (c == ';') {
+						nextCharPos--;
+						break;
+					}
+				}
+
+				while (currentTokenStart < nextCharPos && valueStr[currentTokenStart] == ' ')
+					currentTokenStart++;
+
+				while (nextCharPos > currentTokenStart && valueStr[nextCharPos - 1] == ' ')
+					nextCharPos--;
+
+				if (currentTokenStart < nextCharPos)
+					tokens.push_back(valueStr.substr(currentTokenStart, (nextCharPos - currentTokenStart)));
+			}
+
+			if (frameMap != nullptr || isWave) {
+				if (tokens.size() != 4)
 					continue;
 
-				if (kv.value[21] != '\"' || kv.value[kv.value.size() - 1] != '\"')
-					continue;
+				const Common::String &textToken = tokens[3];
 
-				Common::String locLineParamSlice = kv.value.substr(0, 21);
+				if (textToken[0] != '\"' || textToken[textToken.size() - 1] != '\"')
+					continue;
 
 				uint colorCode = 0;
 				uint param1 = 0;
 				uint param2 = 0;
-				if (sscanf(locLineParamSlice.c_str(), "0x%x, 0x%x, %u, ", &colorCode, &param1, &param2) == 3) {
+				if (sscanf(tokens[0].c_str(), "0x%x", &colorCode) && sscanf(tokens[1].c_str(), "0x%x", &param1) && sscanf(tokens[2].c_str(), "%u", &param2)) {
 					SubtitleDef *subDef = nullptr;
 
 					if (isWave)
@@ -4099,8 +4192,54 @@ void Runtime::loadSubtitles(Common::CodePage codePage) {
 						subDef->color[2] = (colorCode & 0xff);
 						subDef->unknownValue1 = param1;
 						subDef->durationInDeciseconds = param2;
-						subDef->str = kv.value.substr(22, kv.value.size() - 23).decode(codePage).encode(Common::kUtf8);
+						subDef->str = textToken.substr(1, textToken.size() - 2).decode(codePage).encode(Common::kUtf8);
 					}
+				}
+			} else if (isTextData) {
+				if (tokens.size() != 1)
+					continue;
+
+				const Common::String &textToken = tokens[0];
+
+				if (textToken[0] != '\"' || textToken[textToken.size() - 1] != '\"')
+					continue;
+
+				_locStrings[kv.key] = textToken.substr(1, textToken.size() - 2);
+			} else if (isFontData) {
+				if (tokens.size() != 9)
+					continue;
+
+				const Common::String &fontToken = tokens[0];
+
+				if (fontToken[0] != '\"' || fontToken[fontToken.size() - 1] != '\"')
+					continue;
+
+				TextStyleDef tsDef;
+				tsDef.fontName = fontToken.substr(1, fontToken.size() - 2);
+
+				if (sscanf(tokens[1].c_str(), "%u", &tsDef.size) &&
+					sscanf(tokens[2].c_str(), "%u", &tsDef.unknown1) &&
+					sscanf(tokens[3].c_str(), "%u", &tsDef.unknown2) &&
+					sscanf(tokens[4].c_str(), "%u", &tsDef.unknown3) &&
+					sscanf(tokens[5].c_str(), "0x%x", &tsDef.colorRGB) &&
+					sscanf(tokens[6].c_str(), "0x%x", &tsDef.shadowColorRGB) &&
+					sscanf(tokens[7].c_str(), "%u", &tsDef.unknown4) &&
+					sscanf(tokens[8].c_str(), "%u", &tsDef.unknown5)) {
+					_locTextStyles[kv.key] = tsDef;
+				}
+			} else if (isStringData) {
+				if (tokens.size() != 6)
+					continue;
+
+				UILabelDef labelDef;
+				labelDef.lineID = tokens[0];
+				labelDef.styleDefID = tokens[1];
+
+				if (sscanf(tokens[2].c_str(), "%u", &labelDef.unknown1) &&
+					sscanf(tokens[3].c_str(), "%u", &labelDef.unknown2) &&
+					sscanf(tokens[4].c_str(), "%u", &labelDef.unknown3) &&
+					sscanf(tokens[5].c_str(), "%u", &labelDef.unknown4)) {
+					_locUILabels[kv.key] = labelDef;
 				}
 			}
 		}
@@ -4218,7 +4357,7 @@ void Runtime::dischargeInGameMenuMouseUp() {
 		// Handle click event
 		switch (_inGameMenuActiveElement) {
 		case 0:
-			changeToMenuPage(createMenuReahHelp());
+			changeToMenuPage(createMenuHelp(_gameID == GID_SCHIZM));
 			break;
 		case 1:
 			g_engine->saveGameDialog();
@@ -4227,10 +4366,10 @@ void Runtime::dischargeInGameMenuMouseUp() {
 			g_engine->loadGameDialog();
 			break;
 		case 3:
-			changeToMenuPage(createMenuReahSound());
+			changeToMenuPage(createMenuSound(_gameID == GID_SCHIZM));
 			break;
 		case 4:
-			changeToMenuPage(createMenuReahQuit());
+			changeToMenuPage(createMenuQuit(_gameID == GID_SCHIZM));
 			break;
 		default:
 			break;
@@ -4279,6 +4418,32 @@ void Runtime::drawInGameMenuButton(uint element) {
 
 	_menuSection.surf->blitFrom(*_uiGraphics[4], buttonSrcRect, buttonDestRect);
 	commitSectionToScreen(_menuSection, buttonDestRect);
+}
+
+const Graphics::Font *Runtime::resolveFont(const Common::String &textStyle, uint size) {
+	for (const Common::SharedPtr<FontCacheItem> &item : _fontCache) {
+		if (item->fname == textStyle && item->size == size)
+			return item->font;
+	}
+
+	Common::SharedPtr<FontCacheItem> fcItem(new FontCacheItem());
+	fcItem->fname = textStyle;
+	fcItem->size = size;
+
+
+#ifdef USE_FREETYPE2
+	const char *fontFile = "NotoSans-Regular.ttf";
+
+	fcItem->keepAlive.reset(Graphics::loadTTFFontFromArchive(fontFile, size, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeLight));
+	fcItem->font = fcItem->keepAlive.get();
+#endif
+
+	if (!fcItem->font)
+		fcItem->font = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
+
+	_fontCache.push_back(fcItem);
+
+	return fcItem->font;
 }
 
 void Runtime::onLButtonDown(int16 x, int16 y) {
@@ -5940,7 +6105,14 @@ OPCODE_STUB(ScoreAlways)
 OPCODE_STUB(ScoreNormal)
 
 void Runtime::scriptOpSndPlay(ScriptArg_t arg) {
-	scriptOpSoundL1(arg);
+	TAKE_STACK_STR_NAMED(1, sndNameArgs);
+
+	StackInt_t soundID = 0;
+	SoundInstance *cachedSound = nullptr;
+	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
+
+	if (cachedSound)
+		triggerSound(true, *cachedSound, getSilentSoundVolume(), 0, false, false);
 }
 
 OPCODE_STUB(SndPlayEx)
@@ -5960,9 +6132,8 @@ void Runtime::scriptOpVolumeChange(ScriptArg_t arg) {
 
 	SoundInstance *cachedSound = resolveSoundByID(static_cast<uint>(stackArgs[0]));
 
-	// FIXME: Figure out what the duration scale really is
 	if (cachedSound)
-		triggerSoundRamp(*cachedSound, stackArgs[1], stackArgs[2], false);
+		triggerSoundRamp(*cachedSound, stackArgs[1] * 100, stackArgs[2], false);
 }
 
 OPCODE_STUB(VolumeDown)
