@@ -368,6 +368,7 @@ tentacle	Day of the Tentacle
 
 	e47bcf709d7ab8470bdbfaf02d434e60	-1	ko	DOS	Floppy	Floppy	Fan translation	ScummVM-Kor
 	a4b30b29a419d49a2ab33bd4414939d1	-1	ko	All?	-	CD	Fan translation	ScummVM-Kor
+	3b22276a925732fef7981be31f9e4c9a	7932	he	DOS	CD	1.6	Hebrew fan translation
 
 samnmax	Sam &amp; Max Hit the Road
 	3b301b7892f883ce42ab4be6a274fea6	9040	en	DOS	Floppy	Floppy	-	Andrea Petrucci

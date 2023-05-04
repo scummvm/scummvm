@@ -127,7 +127,7 @@ bool LegacySdlEventSource::handleKbdMouse(Common::Event &event) {
 
 	if (_km.x != oldKmX || _km.y != oldKmY) {
 		if (_graphicsManager) {
-			dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->getWindow()->warpMouseInWindow((Uint16)(_km.x / MULTIPLIER), (Uint16)(_km.y / MULTIPLIER));
+			static_cast<SdlGraphicsManager *>(_graphicsManager)->getWindow()->warpMouseInWindow((Uint16)(_km.x / MULTIPLIER), (Uint16)(_km.y / MULTIPLIER));
 		}
 
 		event.type = Common::EVENT_MOUSEMOVE;
@@ -239,8 +239,8 @@ void LegacySdlEventSource::checkScreenChange() {
 		return;
 	}
 
-	int newMaxX = dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->getWindowWidth()  - 1;
-	int newMaxY = dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->getWindowHeight() - 1;
+	int newMaxX = static_cast<SdlGraphicsManager *>(_graphicsManager)->getWindowWidth()  - 1;
+	int newMaxY = static_cast<SdlGraphicsManager *>(_graphicsManager)->getWindowHeight() - 1;
 
 	if (_km.x_max != newMaxX || _km.y_max != newMaxY) {
 		resetKeyboardEmulation(newMaxX, newMaxY);

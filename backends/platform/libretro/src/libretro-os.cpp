@@ -1293,11 +1293,11 @@ public:
 	void Quit() {
 		Common::Event ev;
 		ev.type = Common::EVENT_QUIT;
-		dynamic_cast<OSystem_RETRO *>(g_system)->getEventManager()->pushEvent(ev);
+		static_cast<OSystem_RETRO *>(g_system)->getEventManager()->pushEvent(ev);
 	}
 
 	void Reset() {
-		dynamic_cast<OSystem_RETRO *>(g_system)->getEventManager()->resetQuit();
+		static_cast<OSystem_RETRO *>(g_system)->getEventManager()->resetQuit();
 	}
 
 	void destroy() {
@@ -1311,19 +1311,19 @@ OSystem *retroBuildOS() {
 }
 
 const Graphics::Surface &getScreen() {
-	return dynamic_cast<OSystem_RETRO *>(g_system)->getScreen();
+	return static_cast<OSystem_RETRO *>(g_system)->getScreen();
 }
 
 void retroProcessMouse(retro_input_state_t aCallback, int device, float gamepad_cursor_speed, float gamepad_acceleration_time, bool analog_response_is_quadratic, int analog_deadzone, float mouse_speed) {
-	dynamic_cast<OSystem_RETRO *>(g_system)->processMouse(aCallback, device, gamepad_cursor_speed, gamepad_acceleration_time, analog_response_is_quadratic, analog_deadzone, mouse_speed);
+	static_cast<OSystem_RETRO *>(g_system)->processMouse(aCallback, device, gamepad_cursor_speed, gamepad_acceleration_time, analog_response_is_quadratic, analog_deadzone, mouse_speed);
 }
 
 void retroQuit() {
-	dynamic_cast<OSystem_RETRO *>(g_system)->Quit();
+	static_cast<OSystem_RETRO *>(g_system)->Quit();
 }
 
 int retroTestGame(const char *game_id, bool autodetect) {
-	return dynamic_cast<OSystem_RETRO *>(g_system)->TestGame(game_id, autodetect);
+	return static_cast<OSystem_RETRO *>(g_system)->TestGame(game_id, autodetect);
 }
 
 void retroSetSystemDir(const char *aPath) {
@@ -1335,17 +1335,17 @@ void retroSetSaveDir(const char *aPath) {
 }
 
 void retroKeyEvent(bool down, unsigned keycode, uint32_t character, uint16_t key_modifiers) {
-	dynamic_cast<OSystem_RETRO *>(g_system)->processKeyEvent(down, keycode, character, key_modifiers);
+	static_cast<OSystem_RETRO *>(g_system)->processKeyEvent(down, keycode, character, key_modifiers);
 }
 
 void retroReset() {
-	dynamic_cast<OSystem_RETRO *>(g_system)->Reset();
+	static_cast<OSystem_RETRO *>(g_system)->Reset();
 }
 
 uint8 getThreadSwitchCaller(){
-	return dynamic_cast<OSystem_RETRO *>(g_system)->getThreadSwitchCaller();
+	return static_cast<OSystem_RETRO *>(g_system)->getThreadSwitchCaller();
 }
 
 void retroDestroy() {
-	dynamic_cast<OSystem_RETRO *>(g_system)->destroy();
+	static_cast<OSystem_RETRO *>(g_system)->destroy();
 }

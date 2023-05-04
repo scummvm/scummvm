@@ -122,44 +122,44 @@ char *osfgets(char *buf, size_t count, osfildef *fp) {
 }
 
 int osfputs(const char *str, osfildef *fp) {
-	return dynamic_cast<Common::WriteStream *>(fp)->write(str, strlen(str)) == strlen(str) ? 0 : -1;
+	return static_cast<Common::WriteStream *>(fp)->write(str, strlen(str)) == strlen(str) ? 0 : -1;
 }
 
 void os_fprintz(osfildef *fp, const char *str) {
-	dynamic_cast<Common::WriteStream *>(fp)->write(str, strlen(str));
+	static_cast<Common::WriteStream *>(fp)->write(str, strlen(str));
 }
 
 void os_fprint(osfildef *fp, const char *str, size_t len) {
 	Common::String s(str, str + MIN(len, strlen(str)));
-	dynamic_cast<Common::WriteStream *>(fp)->write(s.c_str(), s.size());
+	static_cast<Common::WriteStream *>(fp)->write(s.c_str(), s.size());
 }
 
 int osfwb(osfildef *fp, const void *buf, size_t bufl) {
-	return dynamic_cast<Common::WriteStream *>(fp)->write(buf, bufl) == bufl ? 0 : 1;
+	return static_cast<Common::WriteStream *>(fp)->write(buf, bufl) == bufl ? 0 : 1;
 }
 
 int osfflush(osfildef *fp) {
-	return dynamic_cast<Common::WriteStream *>(fp)->flush() ? 0 : 1;
+	return static_cast<Common::WriteStream *>(fp)->flush() ? 0 : 1;
 }
 
 int osfgetc(osfildef *fp) {
-	return dynamic_cast<Common::ReadStream *>(fp)->readByte();
+	return static_cast<Common::ReadStream *>(fp)->readByte();
 }
 
 int osfrb(osfildef *fp, void *buf, size_t bufl) {
-	return dynamic_cast<Common::ReadStream *>(fp)->read(buf, bufl) == bufl ? 0 : 1;
+	return static_cast<Common::ReadStream *>(fp)->read(buf, bufl) == bufl ? 0 : 1;
 }
 
 size_t osfrbc(osfildef *fp, void *buf, size_t bufl) {
-	return dynamic_cast<Common::ReadStream *>(fp)->read(buf, bufl);
+	return static_cast<Common::ReadStream *>(fp)->read(buf, bufl);
 }
 
 long osfpos(osfildef *fp) {
-	return dynamic_cast<Common::SeekableReadStream *>(fp)->pos();
+	return static_cast<Common::SeekableReadStream *>(fp)->pos();
 }
 
 int osfseek(osfildef *fp, long pos, int mode) {
-	return dynamic_cast<Common::SeekableReadStream *>(fp)->seek(pos, mode);
+	return static_cast<Common::SeekableReadStream *>(fp)->seek(pos, mode);
 }
 
 void osfcls(osfildef *fp) {

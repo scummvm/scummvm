@@ -116,7 +116,7 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	initSurface();
 
 	// in 3D, not in overlay
-	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(true, false);
+	static_cast<OSystem_Android *>(g_system)->applyTouchSettings(true, false);
 }
 
 AndroidGraphics3dManager::~AndroidGraphics3dManager() {
@@ -205,7 +205,7 @@ void AndroidGraphics3dManager::initSurface() {
 	if (_touchcontrols_texture) {
 		_touchcontrols_texture->reinit();
 	}
-	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
+	static_cast<OSystem_Android *>(g_system)->getTouchControls().init(
 	    this, JNI::egl_surface_width, JNI::egl_surface_height);
 
 	updateScreenRect();
@@ -239,7 +239,7 @@ void AndroidGraphics3dManager::deinitSurface() {
 		_mouse_texture->release();
 	}
 
-	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
+	static_cast<OSystem_Android *>(g_system)->getTouchControls().init(
 	    nullptr, 0, 0);
 	if (_touchcontrols_texture) {
 		_touchcontrols_texture->release();
@@ -335,7 +335,7 @@ void AndroidGraphics3dManager::updateScreen() {
 		}
 	}
 
-	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().draw();
+	static_cast<OSystem_Android *>(g_system)->getTouchControls().draw();
 
 	if (!JNI::swapBuffers()) {
 		LOGW("swapBuffers failed: 0x%x", glGetError());
@@ -503,7 +503,7 @@ void AndroidGraphics3dManager::showOverlay(bool inGUI) {
 	if (inGUI) {
 		_old_touch_mode = JNI::getTouchMode();
 		// in 3D, in overlay
-		dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(true, true);
+		static_cast<OSystem_Android *>(g_system)->applyTouchSettings(true, true);
 	} else if (_overlay_in_gui) {
 		// Restore touch mode active before overlay was shown
 		JNI::setTouchMode(_old_touch_mode);
@@ -730,7 +730,7 @@ void AndroidGraphics3dManager::warpMouse(int x, int y) {
 	e.type = Common::EVENT_MOUSEMOVE;
 	e.mouse = sMouse;
 
-	dynamic_cast<OSystem_Android *>(g_system)->pushEvent(e);
+	static_cast<OSystem_Android *>(g_system)->pushEvent(e);
 }
 
 void AndroidGraphics3dManager::updateCursorScaling() {

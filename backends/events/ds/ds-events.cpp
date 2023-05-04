@@ -72,7 +72,7 @@ void DSEventSource::addEventsToQueue() {
 		if (held & KEY_TOUCH) {
 			touchPosition touchPos;
 			touchRead(&touchPos);
-			event.mouse = dynamic_cast<OSystem_DS *>(g_system)->transformPoint(touchPos.px, touchPos.py);
+			event.mouse = static_cast<OSystem_DS *>(g_system)->transformPoint(touchPos.px, touchPos.py);
 
 			if (event.mouse.x != _lastTouch.x || event.mouse.y != _lastTouch.y) {
 				event.type = Common::EVENT_MOUSEMOVE;

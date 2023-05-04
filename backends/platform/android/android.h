@@ -88,7 +88,7 @@ extern void checkGlError(const char *expr, const char *file, int line);
 
 #define GLTHREADCHECK \
 	do { \
-		assert(dynamic_cast<OSystem_Android *>(g_system)->isRunningInMainThread()); \
+		assert(static_cast<OSystem_Android *>(g_system)->isRunningInMainThread()); \
 	} while (false)
 
 #else

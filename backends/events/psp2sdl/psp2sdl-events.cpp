@@ -230,8 +230,8 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 	if (numFingersDown >= 1) {
 		int x = _mouseX;
 		int y = _mouseY;
-		int xMax = dynamic_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowWidth() - 1;
-		int yMax = dynamic_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowHeight() - 1;
+		int xMax = static_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowWidth() - 1;
+		int yMax = static_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowHeight() - 1;
 
 		if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
 			convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
@@ -383,8 +383,8 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 }
 
 void PSP2EventSource::convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY) {
-	int screenH = dynamic_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowHeight();
-	int screenW = dynamic_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowWidth();
+	int screenH = static_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowHeight();
+	int screenW = static_cast<WindowedGraphicsManager *>(_graphicsManager)->getWindowWidth();
 
 	const int dispW = TOUCHSCREEN_WIDTH;
 	const int dispH = TOUCHSCREEN_HEIGHT;

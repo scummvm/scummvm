@@ -69,7 +69,7 @@ bool SCXTrack::isPlaying() {
 Audio::Timestamp SCXTrack::getPos() {
 	if (!_stream || _looping)
 		return Audio::Timestamp(0);
-	return dynamic_cast<SCXStream*>(_stream)->getPos();
+	return static_cast<SCXStream*>(_stream)->getPos();
 }
 
 bool SCXTrack::play() {

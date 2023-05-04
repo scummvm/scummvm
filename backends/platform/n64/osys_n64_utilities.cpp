@@ -82,7 +82,7 @@ void vblCallback(void) {
 		sndCallback();
 	}
 
-	dynamic_cast<OSystem_N64 *>(g_system)->readControllerAnalogInput();
+	static_cast<OSystem_N64 *>(g_system)->readControllerAnalogInput();
 }
 
 void sndCallback() {

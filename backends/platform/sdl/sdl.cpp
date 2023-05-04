@@ -106,7 +106,7 @@ OSystem_SDL::~OSystem_SDL() {
 	delete _savefileManager;
 	_savefileManager = nullptr;
 	if (_graphicsManager) {
-		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->deactivateManager();
+		static_cast<SdlGraphicsManager *>(_graphicsManager)->deactivateManager();
 	}
 	delete _graphicsManager;
 	_graphicsManager = nullptr;
@@ -312,7 +312,7 @@ void OSystem_SDL::initBackend() {
 	// so the virtual keyboard can be initialized, but we have to add the
 	// graphics manager as an event observer after initializing the event
 	// manager.
-	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->activateManager();
+	static_cast<SdlGraphicsManager *>(_graphicsManager)->activateManager();
 }
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
@@ -430,7 +430,7 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 void OSystem_SDL::engineInit() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (_graphicsManager) {
-		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
+		static_cast<SdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
 	}
 	// Disable screen saver when engine starts
 	SDL_DisableScreenSaver();
@@ -454,7 +454,7 @@ void OSystem_SDL::engineInit() {
 void OSystem_SDL::engineDone() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (_graphicsManager) {
-		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
+		static_cast<SdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
 	}
 	SDL_EnableScreenSaver();
 #endif
@@ -543,7 +543,7 @@ void OSystem_SDL::fatalError() {
 Common::KeymapArray OSystem_SDL::getGlobalKeymaps() {
 	Common::KeymapArray globalMaps = BaseBackend::getGlobalKeymaps();
 
-	Common::Keymap *keymap = dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->getKeymap();
+	Common::Keymap *keymap = static_cast<SdlGraphicsManager *>(_graphicsManager)->getKeymap();
 	globalMaps.push_back(keymap);
 
 	return globalMaps;

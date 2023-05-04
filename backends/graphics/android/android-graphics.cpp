@@ -77,7 +77,7 @@ AndroidGraphicsManager::AndroidGraphicsManager() :
 	_touchcontrols->updateGLTexture();
 
 	// not in 3D, not in overlay
-	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, false);
+	static_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, false);
 }
 
 AndroidGraphicsManager::~AndroidGraphicsManager() {
@@ -114,7 +114,7 @@ void AndroidGraphicsManager::initSurface() {
 		_touchcontrols->recreate();
 		_touchcontrols->updateGLTexture();
 	}
-	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
+	static_cast<OSystem_Android *>(g_system)->getTouchControls().init(
 	    this, JNI::egl_surface_width, JNI::egl_surface_height);
 
 	handleResize(JNI::egl_surface_width, JNI::egl_surface_height);
@@ -127,7 +127,7 @@ void AndroidGraphicsManager::deinitSurface() {
 	LOGD("deinitializing 2D surface");
 
 	// Deregister us from touch control
-	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
+	static_cast<OSystem_Android *>(g_system)->getTouchControls().init(
 	    nullptr, 0, 0);
 	if (_touchcontrols) {
 		_touchcontrols->destroy();
@@ -161,7 +161,7 @@ void AndroidGraphicsManager::showOverlay(bool inGUI) {
 	if (inGUI) {
 		_old_touch_mode = JNI::getTouchMode();
 		// not in 3D, in overlay
-		dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, true);
+		static_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, true);
 	} else if (_overlayInGUI) {
 		// Restore touch mode active before overlay was shown
 		JNI::setTouchMode(_old_touch_mode);
@@ -206,7 +206,7 @@ void AndroidGraphicsManager::refreshScreen() {
 	//ENTER();
 
 	// Last minute draw of touch controls
-	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().draw();
+	static_cast<OSystem_Android *>(g_system)->getTouchControls().draw();
 
 	JNI::swapBuffers();
 }

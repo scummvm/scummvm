@@ -325,7 +325,7 @@ void TouchControls::buttonDown(Common::JoystickButton jb) {
 	Common::Event ev;
 	ev.type = Common::EVENT_JOYBUTTON_DOWN;
 	ev.joystick.button = jb;
-	dynamic_cast<OSystem_Android *>(g_system)->pushEvent(ev);
+	static_cast<OSystem_Android *>(g_system)->pushEvent(ev);
 }
 
 void TouchControls::buttonUp(Common::JoystickButton jb) {
@@ -336,7 +336,7 @@ void TouchControls::buttonUp(Common::JoystickButton jb) {
 	Common::Event ev;
 	ev.type = Common::EVENT_JOYBUTTON_UP;
 	ev.joystick.button = jb;
-	dynamic_cast<OSystem_Android *>(g_system)->pushEvent(ev);
+	static_cast<OSystem_Android *>(g_system)->pushEvent(ev);
 }
 
 void TouchControls::buttonPress(Common::JoystickButton jb) {
@@ -349,5 +349,5 @@ void TouchControls::buttonPress(Common::JoystickButton jb) {
 	ev1.joystick.button = jb;
 	ev2.type = Common::EVENT_JOYBUTTON_UP;
 	ev2.joystick.button = jb;
-	dynamic_cast<OSystem_Android *>(g_system)->pushEvent(ev1, ev2);
+	static_cast<OSystem_Android *>(g_system)->pushEvent(ev1, ev2);
 }
