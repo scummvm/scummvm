@@ -30,7 +30,7 @@
 namespace Tetraedge {
 
 TeTextBase2::TeTextBase2() : _drawRect(0, 0), _size(0, 0),
-_alignStyle(TeFont3::AlignLeft), _interLine(0.0f), _globalColor(0xff, 0xff, 0xff, 0xff),
+_alignStyle(TeIFont::AlignLeft), _interLine(0.0f), _globalColor(0xff, 0xff, 0xff, 0xff),
 _wrapMode(WrapModeFixed), _strikethrough(false), _fontSize(10), _valueWasSet(true) {
 	_mesh = TeMesh::makeInstance();
 	_mesh->setglTexEnvBlend();
@@ -49,7 +49,7 @@ void TeTextBase2::build() {
 	if (!_text.size() || !_fontSize)
 		return;
 
-	TeIntrusivePtr<TeFont3> font = _fonts[0];
+	TeIntrusivePtr<TeIFont> font = _fonts[0];
 	if (!font.get()) {
 		warning("[TeTextBase2::build()] Warning : font missing");
 		return;
@@ -78,7 +78,7 @@ void TeTextBase2::build() {
 	float lineHeight = font->getHeight(_fontSize);
 	float height = 0;
 	for (const Common::String &line : _wrappedLines) {
-		if (_alignStyle == TeFont3::AlignJustify) {
+		if (_alignStyle == TeIFont::AlignJustify) {
 			warning("TODO: Implement TeTextBase2::computeNbSpaces for Justify");
 			//computeNbSpaces(&line, offset, line.endOffset);
 		}
@@ -185,11 +185,11 @@ TeColor TeTextBase2::currentColor(uint offset) const {
 	return result;
 }
 
-TeIntrusivePtr<TeFont3> TeTextBase2::currentFont(uint offset) {
+TeIntrusivePtr<TeIFont> TeTextBase2::currentFont(uint offset) {
 	if (_fonts.size() == 0)
-		return TeIntrusivePtr<TeFont3>();
+		return TeIntrusivePtr<TeIFont>();
 	int closest_off = -1;
-	TeIntrusivePtr<TeFont3> result;
+	TeIntrusivePtr<TeIFont> result;
 	// Find closest without going over.
 	for (auto &pair : _fonts) {
 		if ((int)pair._key > closest_off && pair._key <= offset) {
@@ -198,7 +198,7 @@ TeIntrusivePtr<TeFont3> TeTextBase2::currentFont(uint offset) {
 		}
 	}
 	if (closest_off == -1)
-		return TeIntrusivePtr<TeFont3>();
+		return TeIntrusivePtr<TeIFont>();
 	return result;
 }
 
@@ -220,7 +220,7 @@ void TeTextBase2::drawEmptyChar(uint offset) {
 }
 
 void TeTextBase2::drawLine(TeImage &img, const Common::String &str, int yoffset) {
-	TeIntrusivePtr<TeFont3> font = _fonts[0];
+	TeIntrusivePtr<TeIFont> font = _fonts[0];
 
 	// Note: We draw this with black because the global color will be applied on
 	// the mesh.
@@ -257,7 +257,7 @@ int TeTextBase2::nextNonSpaceChar(uint offset) {
 	return offset; // TODO: or offset - 1?
 }
 
-void TeTextBase2::setAlignStyle(TeFont3::AlignStyle style) {
+void TeTextBase2::setAlignStyle(TeIFont::AlignStyle style) {
 	_alignStyle = style;
 	_valueWasSet = true;
 }
@@ -267,7 +267,7 @@ void TeTextBase2::setColor(uint offset, const TeColor &color) {
 	_valueWasSet = true;
 }
 
-void TeTextBase2::setFont(uint offset, const TeIntrusivePtr<TeFont3> &newfont) {
+void TeTextBase2::setFont(uint offset, const TeIntrusivePtr<TeIFont> &newfont) {
 	_fonts.setVal(offset, newfont);
 	_valueWasSet = true;
 }

@@ -36,6 +36,7 @@
 #include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_resource_manager.h"
 #include "tetraedge/te/te_renderer.h"
+#include "tetraedge/te/te_font2.h"
 #include "tetraedge/te/te_font3.h"
 #include "tetraedge/te/te_input_mgr.h"
 #include "tetraedge/te/te_sound_manager.h"
@@ -119,12 +120,23 @@ void Application::create() {
 
 	TeResourceManager *resmgr = g_engine->getResourceManager();
 	TeCore *core = g_engine->getCore();
-	_fontComic = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/ComicRelief.ttf"));
-	_fontArgh = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/Argh.ttf"));
-	_fontArial = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/arial.ttf"));
-	_fontChaucer = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/CHAUCER.TTF"));
-	_fontColaborate = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/Colaborate-Regular.otf"));
-	_fontProDisplay = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/ProDisplay.ttf"));
+	// Cache some fonts
+	if (g_engine->gameIsAmerzone()) {
+		resmgr->getResource<TeFont2>(core->findFile("Common/Fonts/Arial_r_10.tef"));
+		resmgr->getResource<TeFont2>(core->findFile("Common/Fonts/Arial_r_12.tef"));
+		resmgr->getResource<TeFont2>(core->findFile("Common/Fonts/Arial_r_16.tef"));
+		resmgr->getResource<TeFont2>(core->findFile("Common/Fonts/Colaborate-Regular_r_16.tef"));
+		resmgr->getResource<TeFont2>(core->findFile("Common/Fonts/Colaborate-Regular_r_24.tef"));
+		resmgr->getResource<TeFont2>(core->findFile("Common/Fonts/Credits.tef"));
+		resmgr->getResource<TeFont2>(core->findFile("Common/Fonts/FontLoadingMenu.tef"));
+	} else {
+		_fontComic = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/ComicRelief.ttf"));
+		_fontArgh = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/Argh.ttf"));
+		_fontArial = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/arial.ttf"));
+		_fontChaucer = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/CHAUCER.TTF"));
+		_fontColaborate = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/Colaborate-Regular.otf"));
+		_fontProDisplay = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/ProDisplay.ttf"));
+	}
 
 	// The app prebuilds some fonts.. cover letters, numbers, a few accented chars, and punctuation.
 	// Skip that here.

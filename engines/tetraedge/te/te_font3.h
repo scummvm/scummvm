@@ -34,6 +34,7 @@
 #include "tetraedge/te/te_image.h"
 #include "tetraedge/te/te_intrusive_ptr.h"
 #include "tetraedge/te/te_3d_texture.h"
+#include "tetraedge/te/te_i_font.h"
 
 struct FT_FaceRec_;
 struct FT_LibraryRec_;
@@ -44,51 +45,26 @@ class Font;
 
 namespace Tetraedge {
 
-class TeFont3 : public TeResource {
+/**
+ * TeFont3 is a minimal wrapper on Graphics::Font for TTF files, supporting
+ * multiple sizes and matching the original TeFont api a bit closer.
+ */
+class TeFont3 : public TeIFont {
 public:
 	TeFont3();
-	~TeFont3();
-
-	enum AlignStyle {
-		AlignLeft,
-		AlignRight,
-		AlignJustify,
-		AlignCenter
-	};
-
-	struct GlyphData {
-		uint32 _charcode;
-		Common::Rect _bitmapSize;
-		TeIntrusivePtr<TeImage> _img;
-	};
+	virtual ~TeFont3();
 
 	bool load(const Common::String &path);
 	bool load(const Common::FSNode &node);
 	void unload();
 
-	GlyphData glyph(uint size, uint charcode);
+private:
 
-	float ascender(uint pxSize);
-	float descender(uint pxSize);
-	float height(uint pxSize);
-	TeVector3f32 kerning(uint pxSize, uint isocode1, uint isocode2);
 	TeIntrusivePtr<Te3DTexture> getFontSizeData(int size) const {
 		return _fontSizeData[size];
 	}
 
-	Common::Rect getBoundingBox(const Common::String &str, int fontSize);
-	int getHeight(int fontSize);
-
-	void draw(TeImage &destImage, const Common::String &str, int fontSize, int yoff, const TeColor &col, AlignStyle alignMode);
-
-	int wordWrapText(const Common::String &str, int fontSize, int maxWidth, Common::Array<Common::String> &lines);
-
-private:
-	void init();
-	Graphics::Font *getAtSize(uint size);
-	Common::CodePage codePage() const;
-
-	Common::CodePage _codePage;
+	Graphics::Font *getAtSize(uint size) override;
 	Common::File _fontFile;
 	Common::HashMap<uint, Graphics::Font *> _fonts;
 	Common::String _loadedPath;

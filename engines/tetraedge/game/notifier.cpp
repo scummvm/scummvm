@@ -56,13 +56,18 @@ void Notifier::launchNextnotifier() {
 	if (_notifierDataArray.empty())
 		return;
 
-	TeVariant textformat = _gui.value("textFormat");
-	Common::String formattedName = Common::String::format(textformat.toString().c_str(), _notifierDataArray[0]._name.c_str());
+	Common::String textformat = _gui.value("textFormat").toString();
+	Common::String formattedName;
+	if (!textformat.empty())
+		formattedName = Common::String::format(textformat.c_str(), _notifierDataArray[0]._name.c_str());
+	else
+		formattedName = _notifierDataArray[0]._name;
 
 	TeITextLayout *text = _gui.textLayout("text");
 	text->setText(formattedName);
 
-	if (!_notifierDataArray[0]._imgpath.empty() && !g_engine->gameIsAmerzone()) {
+	if (!_notifierDataArray[0]._imgpath.empty()) {
+		assert(!g_engine->gameIsAmerzone());
 		_gui.spriteLayoutChecked("image")->load(_notifierDataArray[0]._imgpath);
 	}
 

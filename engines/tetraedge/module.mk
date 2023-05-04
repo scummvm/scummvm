@@ -69,11 +69,13 @@ MODULE_OBJS := \
 	te/te_color.o \
 	te/te_core.o \
 	te/te_extended_text_layout.o \
+	te/te_font2.o \
 	te/te_font3.o \
 	te/te_frame_anim.o \
 	te/te_free_move_zone.o \
 	te/te_frustum.o \
 	te/te_i_3d_object2.o \
+	te/te_i_font.o \
 	te/te_i_layout.o \
 	te/te_i_loc.o \
 	te/te_i_text_layout.o \

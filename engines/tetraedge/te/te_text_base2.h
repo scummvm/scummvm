@@ -26,8 +26,8 @@
 #include "common/hashmap.h"
 
 #include "tetraedge/te/te_color.h"
-#include "tetraedge/te/te_font3.h"
 #include "tetraedge/te/te_intrusive_ptr.h"
+#include "tetraedge/te/te_i_font.h"
 #include "tetraedge/te/te_mesh.h"
 #include "tetraedge/te/te_vector2s32.h"
 
@@ -56,16 +56,16 @@ public:
 	void clearText();
 
 	TeColor currentColor(uint offset) const;
-	TeIntrusivePtr<TeFont3> currentFont(uint offset);
+	TeIntrusivePtr<TeIFont> currentFont(uint offset);
 	void draw();
 	uint endOfWord(uint i) const;
 	void insertNewLine(uint offset);
 	bool isASpace(uint offset) const;
 	int newLines(uint offset) const;
 	int nextNonSpaceChar(uint start);
-	void setAlignStyle(TeFont3::AlignStyle style);
+	void setAlignStyle(TeIFont::AlignStyle style);
 	void setColor(uint offset, const TeColor &color);
-	void setFont(uint offset, const TeIntrusivePtr<TeFont3> &newfont);
+	void setFont(uint offset, const TeIntrusivePtr<TeIFont> &newfont);
 	void setFontSize(int fontSz);
 	void setGlobalColor(const TeColor &color);
 	void setInterLine(float val);
@@ -84,7 +84,7 @@ private:
 	void drawEmptyChar(uint offset);
 	void drawLine(TeImage &img, const Common::String &str, int yoffset);
 
-	TeFont3::AlignStyle _alignStyle;
+	TeIFont::AlignStyle _alignStyle;
 	WrapMode _wrapMode;
 	int _fontSize;
 	bool _valueWasSet;
@@ -101,7 +101,7 @@ private:
 
 	Common::Array<uint32> _lineBreaks;
 	Common::HashMap<uint, TeColor> _colors;
-	Common::HashMap<uint, TeIntrusivePtr<TeFont3>> _fonts;
+	Common::HashMap<uint, TeIntrusivePtr<TeIFont>> _fonts;
 };
 
 } // end namespace Tetraedge

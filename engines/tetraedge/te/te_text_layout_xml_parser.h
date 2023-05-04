@@ -46,7 +46,7 @@ public:
 			KEY_END()
 			XML_KEY(font)
 				XML_PROP(file, true)
-				XML_PROP(size, true)
+				XML_PROP(size, false)
 			KEY_END()
 			XML_KEY(br)
 			KEY_END()

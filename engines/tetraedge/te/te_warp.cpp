@@ -612,6 +612,8 @@ void TeWarp::takeObject(const Common::String &name) {
 }
 
 void TeWarp::unload() {
+	// Not done in original but can happen if user clicks really fast.
+	g_engine->getInputMgr()->_mouseLDownSignal.remove(this, &TeWarp::onMouseLeftDown);
 	unloadTextures();
 	_xCount = 0;
 	_yCount = 0;
