@@ -34,6 +34,7 @@
 #include "gui/chooser.h"
 #include "gui/dlcsdialog.h"
 #include "gui/editgamedialog.h"
+#include "gui/helpdialog.h"
 #include "gui/launcher.h"
 #include "gui/massadd.h"
 #include "gui/message.h"
@@ -80,6 +81,7 @@ enum {
 	kListSearchCmd = 'LSSR',
 	kSearchClearCmd = 'SRCL',
 	kSetGroupMethodCmd = 'GPBY',
+	kHelpCmd = 'HELP',
 
 	kListSwitchCmd = 'LIST',
 	kGridSwitchCmd = 'GRID',
@@ -255,6 +257,9 @@ void LauncherDialog::build() {
 	} else
 #endif
 		new StaticTextWidget(this, _title + ".Version", Common::U32String(gScummVMFullVersion));
+
+	//if (g_system->hasFeature(OSystem::kFeatureHelpDialog))
+		new ButtonWidget(this, _title + ".HelpButton", Common::U32String("?"), _("Help"), kHelpCmd);
 
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit)) {
 		// I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
@@ -790,6 +795,11 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		setResult(-1);
 		close();
 		break;
+	case kHelpCmd: {
+		HelpDialog dlg;
+		dlg.runModal();
+		}
+		break;
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	case kGridSwitchCmd:
 		setResult(kSwitchLauncherDialog);
@@ -1153,7 +1163,7 @@ void LauncherSimple::updateListing() {
 	// Update the filter settings, those are lost when "setList"
 	// is called.
 	_list->setFilter(_searchWidget->getEditString());
-	
+
 	// Close groups that the user closed earlier
 	_list->loadClosedGroups(Common::U32String(groupingModes[_groupBy].name));
 }
@@ -1482,7 +1492,7 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		break;
 	case kSetGroupMethodCmd: {
 		_grid->saveClosedGroups(Common::U32String(groupingModes[_groupBy].name));
-	
+
 		// Change the grouping criteria
 		GroupingMethod newGroupBy = (GroupingMethod)data;
 		if (_groupBy != newGroupBy) {
