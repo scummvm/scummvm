@@ -54,10 +54,10 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		},
 		GID_REAH,
 	},
-	{ // Schizm, 5 CD Version
+	{ // Schizm, DVD/digital Version
 		{
 			"schizm",
-			"CD",
+			"DVD",
 			AD_ENTRY1s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544),
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
