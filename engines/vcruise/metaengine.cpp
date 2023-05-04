@@ -48,11 +48,22 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
-		GAMEOPTION_LAUNCH_DEBUG,
+		GAMEOPTION_FAST_ANIMATIONS,
 		{
 			_s("Faster animations"),
 			_s("Speeds up animations."),
 			"vcruise_fast_animations",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_SKIP_MENU,
+		{
+			_s("Skip main menu"),
+			_s("Starts a new game upon launching instead of going to the main menu."),
+			"vcruise_skip_menu",
 			false,
 			0,
 			0

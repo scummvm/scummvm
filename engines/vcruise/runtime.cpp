@@ -4432,7 +4432,7 @@ const Graphics::Font *Runtime::resolveFont(const Common::String &textStyle, uint
 
 
 #ifdef USE_FREETYPE2
-	const char *fontFile = "NotoSans-Regular.ttf";
+	const char *fontFile = "NotoSans-Bold.ttf";
 
 	fcItem->keepAlive.reset(Graphics::loadTTFFontFromArchive(fontFile, size, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeLight));
 	fcItem->font = fcItem->keepAlive.get();

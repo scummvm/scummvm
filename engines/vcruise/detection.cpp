@@ -39,7 +39,7 @@ static const PlainGameDescriptor vCruiseGames[] = {
 class VCruiseMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	VCruiseMetaEngineDetection() : AdvancedMetaEngineDetection(VCruise::gameDescriptions, sizeof(VCruise::VCruiseGameDescription), vCruiseGames) {
-		_guiOptions = GUIO1(GAMEOPTION_LAUNCH_DEBUG);
+		_guiOptions = GUIO3(GAMEOPTION_LAUNCH_DEBUG, GAMEOPTION_FAST_ANIMATIONS, GAMEOPTION_SKIP_MENU);
 		_maxScanDepth = 1;
 		_directoryGlobs = nullptr;
 		_flags = kADFlagCanPlayUnknownVariants;
