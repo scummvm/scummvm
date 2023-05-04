@@ -1144,10 +1144,12 @@ bool Runtime::bootGame(bool newGame) {
 	_gameState = kGameStateIdle;
 
 	if (newGame) {
-		if (_gameID == GID_SCHIZM)
+		if (ConfMan.hasKey("vcruise_skip_menu") && ConfMan.getBool("vcruise_skip_menu")) {
+			_isInGame = true;
+			changeToScreen(1, 0xb0);
+		} else {
 			changeToScreen(1, 0xb1);
-		else
-			changeToScreen(1, 0xb1);
+		}
 	}
 
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
