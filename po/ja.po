@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-05-04 13:38+0000\n"
-"PO-Revision-Date: 2023-04-30 09:22+0000\n"
+"PO-Revision-Date: 2023-05-05 00:40+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -9048,14 +9048,14 @@ msgstr ""
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
-msgstr ""
+msgstr "クリック感覚の改善"
 
 #: engines/vcruise/metaengine.cpp:43
 msgid ""
 "Allows the mouse to be moved a short distance without cancelling click "
 "interactions.  If this is off, any mouse movement while the mouse button is "
 "held cancels a click interaction."
-msgstr ""
+msgstr "クリック操作をキャンセルせず、ドラッグできるようにします。OFFの場合、マウスでドラッグを行うとクリック操作がキャンセルされます。"
 
 #: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
@@ -9066,14 +9066,12 @@ msgid "Speeds up animations."
 msgstr "アニメを高速化します。"
 
 #: engines/vcruise/metaengine.cpp:75
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Skip main menu"
-msgstr "メインメニューを開く"
+msgstr "メインメニューをスキップ"
 
 #: engines/vcruise/metaengine.cpp:76
 msgid "Starts a new game upon launching instead of going to the main menu."
-msgstr ""
+msgstr "起動時にメインメニューを開かず、新しいゲームを開始します。"
 
 #: engines/vcruise/metaengine.cpp:124
 msgid "Display help screen"
