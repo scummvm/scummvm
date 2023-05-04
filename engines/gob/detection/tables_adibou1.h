@@ -105,6 +105,22 @@
 	0, 0, 0
 },
 
+// supplied by jp438-2 in bug report #13972
+{
+	{
+		"adibou1",
+		"Adi Jnr.",
+		AD_ENTRY1s("intro.stk", "6d234641b74b3bdf746c39a64ff1abcc", 2678326),
+		EN_GRB,
+		kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeAdibou1,
+	kFeaturesAdLib,
+	0, 0, 0
+},
+
 
 // -- Amiga Floppy --
 
