@@ -156,12 +156,20 @@ void TeFont2::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 
 
 	Common::Rect srcRect;
 	srcRect.left = (int)g._vec.x();
-	srcRect.top = _texture.h - (int)g._vec.y();
+	srcRect.top = _texture.h - (int)g._vec.y() - g._ySz;
 	srcRect.right = srcRect.left + g._xSz;
 	srcRect.bottom = srcRect.top + g._ySz;
 
 	int dstX = x + g._xOff;
 	int dstY = _maxHeight - g._yOff;
+
+	if (dstX + srcRect.width() > dst->w)
+		srcRect.right = srcRect.left + (dst->w - dstX);
+	if (dstY + srcRect.height() > dst->h)
+		srcRect.bottom = srcRect.top + (dst->h - dstY);
+
+	debug("TeFont2::drawChar %c (%d, %d) from (%d,%d-%d,%d)", chr, x, y,
+			srcRect.left, srcRect.top, srcRect.right, srcRect.bottom);
 
 	dst->copyRectToSurface(_texture, dstX, dstY, srcRect);
 }
@@ -203,7 +211,7 @@ Common::Rect TeFont2::getBoundingBox(uint32 chr) const {
 
 	Common::Rect rect;
 	rect.left = (int)_glyphs[chr]._xOff;
-	rect.right = rect.left + (int)_glyphs[chr]._xAdvance;
+	rect.right = rect.left + _glyphs[chr]._xSz;
 	rect.top = _maxHeight - _glyphs[chr]._yOff;
 	rect.bottom = _maxHeight;
 	return rect;
