@@ -651,6 +651,7 @@ public:
 	virtual bool pollEvent(Common::Event &event) {
 		_threadSwitchCaller = THREAD_SWITCH_POLL;
 		((LibretroTimerManager *)_timerManager)->checkThread();
+
 		if (!_events.empty()) {
 			event = _events.front();
 			_events.pop_front();
@@ -676,35 +677,27 @@ public:
 	}
 
 	virtual void delayMillis(uint msecs) {
-		// Implement 'non-blocking' sleep...
 		uint32 start_time = getMillis();
 		_threadSwitchCaller = THREAD_SWITCH_DELAY;
 
-		if (timing_inaccuracies_is_enabled()) {
-			// Use janky inaccurate method...
-			uint32 elapsed_time = 0;
-			uint32 time_remaining = msecs;
-			while (time_remaining > 0) {
-				// If delay would take us past the next
-				// thread exit time, exit the thread immediately
-				// (i.e. start burning delay time in the main RetroArch
-				// thread as soon as possible...)
-				((LibretroTimerManager *)_timerManager)->checkThread(time_remaining);
-				// Check how much delay time remains...
-				elapsed_time = getMillis() - start_time;
-				if (time_remaining > elapsed_time) {
-					time_remaining -= elapsed_time;
-					usleep(1000);
-				} else {
-					time_remaining = 0;
-				}
-			}
-		} else {
-			// Use accurate method...
-			while (getMillis() < start_time + msecs) {
-				((LibretroTimerManager *)_timerManager)->checkThread();
+		uint32 elapsed_time = 0;
+		uint32 time_remaining = msecs;
+		while (time_remaining > 0) {
+			/* if remaining delay is lower than last amount of time spent on main thread, burn it in emu thread
+			to improve accuracy */
+			if (time_remaining >= ((LibretroTimerManager *)_timerManager)->spentOnMainThread()) {
+				/* If timing inaccuracies is enabled, when remaining delay would take us past the next
+				thread switch time, we switch immediately in order to burn as much as possible delay time in the main RetroArch
+				thread as soon as possible. */
+				if (timing_inaccuracies_is_enabled() && time_remaining >= ((LibretroTimerManager *)_timerManager)->timeToNextSwitch())
+					((LibretroTimerManager *)_timerManager)->switchThread();
+				else
+					((LibretroTimerManager *)_timerManager)->checkThread();
+			} else
 				usleep(1000);
-			}
+
+			elapsed_time = getMillis() - start_time;
+			time_remaining = time_remaining > elapsed_time ? time_remaining - elapsed_time : 0;
 		}
 	}
 
