@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-04 03:41+0000\n"
+"POT-Creation-Date: 2023-05-04 13:38+0000\n"
 "PO-Revision-Date: 2023-04-30 02:45+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -6812,7 +6812,7 @@ msgstr ""
 "αποθηκευμένη πρόοδός σας θα χαθεί."
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:123
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:134
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
@@ -6991,11 +6991,11 @@ msgstr ""
 "ελαττώσει τη δυσκολία γρίφων και επιμέρους παιχνιδιών (minigames) που "
 "απαιτούν αναγνώριση ήχων."
 
-#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:42
+#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:64
 msgid "Start with debugger"
 msgstr "Εκκίνηση με αποσφαλματωτή"
 
-#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:43
+#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:65
 msgid "Starts with the debugger dashboard active."
 msgstr ""
 "Εκκίνηση με ενεργοποιημένο το περιβάλλον αποσφαλμάτωσης (debugger dashboard)."
@@ -7941,7 +7941,7 @@ msgstr "Esc"
 msgid "Space"
 msgstr "Space"
 
-#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:138
+#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:149
 msgid "Pause game"
 msgstr "Παύση παιχνιδιού"
 
@@ -9427,6 +9427,17 @@ msgstr ""
 "βρείτε στο βίκι: https://wiki.scummvm.org/index.php?title=Crusader:"
 "_No_Remorse."
 
+#: engines/vcruise/metaengine.cpp:42
+msgid "Improved click sensitivity"
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:43
+msgid ""
+"Allows the mouse to be moved a short distance without cancelling click "
+"interactions.  If this is off, any mouse movement while the mouse button is "
+"held cancels a click interaction."
+msgstr ""
+
 #: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
 msgstr "Γρηγορότερες κινήσεις"
@@ -9435,57 +9446,57 @@ msgstr "Γρηγορότερες κινήσεις"
 msgid "Speeds up animations."
 msgstr "Επιταχύνει τις κινήσεις (animations) των χαρακτήρων."
 
-#: engines/vcruise/metaengine.cpp:64
+#: engines/vcruise/metaengine.cpp:75
 #, fuzzy
 #| msgid "Open main menu"
 msgid "Skip main menu"
 msgstr "Άνοιγμα κεντρικού μενού"
 
-#: engines/vcruise/metaengine.cpp:65
+#: engines/vcruise/metaengine.cpp:76
 msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:113
+#: engines/vcruise/metaengine.cpp:124
 msgid "Display help screen"
 msgstr "Προβολή οθόνης βοήθειας"
 
-#: engines/vcruise/metaengine.cpp:118 engines/wintermute/keymapper_tables.h:920
+#: engines/vcruise/metaengine.cpp:129 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Αποθήκευση παιχνιδιού"
 
-#: engines/vcruise/metaengine.cpp:128
+#: engines/vcruise/metaengine.cpp:139
 msgid "Open sound settings"
 msgstr "Άνοιγμα ρυθμίσεων ήχου"
 
-#: engines/vcruise/metaengine.cpp:133
+#: engines/vcruise/metaengine.cpp:144
 msgid "Quit game"
 msgstr "Έξοδος από το παιχνίδι"
 
-#: engines/vcruise/metaengine.cpp:144
+#: engines/vcruise/metaengine.cpp:155
 msgid "Toggle music on/off"
 msgstr "Εναλλαγή μουσικής με/χωρίς"
 
-#: engines/vcruise/metaengine.cpp:149
+#: engines/vcruise/metaengine.cpp:160
 msgid "Toggle sound effects on/off"
 msgstr "Εναλλαγή ηχητικών εφέ με/χωρίς"
 
-#: engines/vcruise/metaengine.cpp:154
+#: engines/vcruise/metaengine.cpp:165
 msgid "Music volume down"
 msgstr "Ένταση μουσικής κάτω"
 
-#: engines/vcruise/metaengine.cpp:159
+#: engines/vcruise/metaengine.cpp:170
 msgid "Music volume up"
 msgstr "Ένταση μουσικής πάνω"
 
-#: engines/vcruise/metaengine.cpp:164
+#: engines/vcruise/metaengine.cpp:175
 msgid "Sound effect volume down"
 msgstr "Ένταση ηχητικών εφέ κάτω"
 
-#: engines/vcruise/metaengine.cpp:169
+#: engines/vcruise/metaengine.cpp:180
 msgid "Sound effect volume up"
 msgstr "Ένταση ηχητικών εφέ πάνω"
 
-#: engines/vcruise/metaengine.cpp:174
+#: engines/vcruise/metaengine.cpp:185
 msgid "Skip current animation"
 msgstr "Παράκαμψη τρέχουσας κίνησης"
 

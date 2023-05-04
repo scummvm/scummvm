@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-04 03:41+0000\n"
+"POT-Creation-Date: 2023-05-04 13:38+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -6759,7 +6759,7 @@ msgid ""
 msgstr "   Seguro que queres saír?   "
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:123
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:134
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 #, fuzzy
@@ -6938,12 +6938,12 @@ msgid ""
 "difficulty of sound recognition puzzles and minigames."
 msgstr ""
 
-#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:42
+#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:64
 #, fuzzy
 msgid "Start with debugger"
 msgstr "Iniciar o depurador"
 
-#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:43
+#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:65
 #, fuzzy
 msgid "Starts with the debugger dashboard active."
 msgstr "Iniciar o depurador"
@@ -7803,7 +7803,7 @@ msgstr "ESC"
 msgid "Space"
 msgstr "Barra espazadora"
 
-#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:138
+#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:149
 msgid "Pause game"
 msgstr "Pausar xogo"
 
@@ -9252,6 +9252,17 @@ msgid ""
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
 
+#: engines/vcruise/metaengine.cpp:42
+msgid "Improved click sensitivity"
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:43
+msgid ""
+"Allows the mouse to be moved a short distance without cancelling click "
+"interactions.  If this is off, any mouse movement while the mouse button is "
+"held cancels a click interaction."
+msgstr ""
+
 #: engines/vcruise/metaengine.cpp:53
 #, fuzzy
 #| msgid "Transitions:"
@@ -9263,74 +9274,74 @@ msgstr "Transicións:"
 msgid "Speeds up animations."
 msgstr "Só voz"
 
-#: engines/vcruise/metaengine.cpp:64
+#: engines/vcruise/metaengine.cpp:75
 #, fuzzy
 msgid "Skip main menu"
 msgstr "~V~olver ao Iniciador"
 
-#: engines/vcruise/metaengine.cpp:65
+#: engines/vcruise/metaengine.cpp:76
 msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:113
+#: engines/vcruise/metaengine.cpp:124
 #, fuzzy
 #| msgid "Display/Hide Info Screen"
 msgid "Display help screen"
 msgstr "Mostrar/Ocultar pantalla de información"
 
-#: engines/vcruise/metaengine.cpp:118 engines/wintermute/keymapper_tables.h:920
+#: engines/vcruise/metaengine.cpp:129 engines/wintermute/keymapper_tables.h:920
 #, fuzzy
 msgid "Save game"
 msgstr "Gardar partida:"
 
-#: engines/vcruise/metaengine.cpp:128
+#: engines/vcruise/metaengine.cpp:139
 #, fuzzy
 #| msgid "Override global audio settings"
 msgid "Open sound settings"
 msgstr "Anular a configuración do son"
 
-#: engines/vcruise/metaengine.cpp:133
+#: engines/vcruise/metaengine.cpp:144
 #, fuzzy
 msgid "Quit game"
 msgstr " (Xogo)"
 
-#: engines/vcruise/metaengine.cpp:144
+#: engines/vcruise/metaengine.cpp:155
 #, fuzzy
 #| msgid "Toggle fullscreen"
 msgid "Toggle music on/off"
 msgstr "Activar/desactivar pantalla completa"
 
-#: engines/vcruise/metaengine.cpp:149
+#: engines/vcruise/metaengine.cpp:160
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Toggle sound effects on/off"
 msgstr "Volume dos efectos de son"
 
-#: engines/vcruise/metaengine.cpp:154
+#: engines/vcruise/metaengine.cpp:165
 #, fuzzy
 #| msgid "Music volume up / down"
 msgid "Music volume down"
 msgstr "Subir/baixar volume de música"
 
-#: engines/vcruise/metaengine.cpp:159
+#: engines/vcruise/metaengine.cpp:170
 #, fuzzy
 #| msgid "Music volume: "
 msgid "Music volume up"
 msgstr "Volume de música: "
 
-#: engines/vcruise/metaengine.cpp:164
+#: engines/vcruise/metaengine.cpp:175
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Sound effect volume down"
 msgstr "Volume dos efectos de son"
 
-#: engines/vcruise/metaengine.cpp:169
+#: engines/vcruise/metaengine.cpp:180
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Sound effect volume up"
 msgstr "Volume dos efectos de son"
 
-#: engines/vcruise/metaengine.cpp:174
+#: engines/vcruise/metaengine.cpp:185
 #, fuzzy
 msgid "Skip current animation"
 msgstr "Só voz"

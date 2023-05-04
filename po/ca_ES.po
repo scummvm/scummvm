@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-04 03:41+0000\n"
+"POT-Creation-Date: 2023-05-04 13:38+0000\n"
 "PO-Revision-Date: 2023-04-30 17:40+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -6548,7 +6548,7 @@ msgstr ""
 "no desat."
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:123
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:134
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
@@ -6702,11 +6702,11 @@ msgid ""
 "difficulty of sound recognition puzzles and minigames."
 msgstr ""
 
-#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:42
+#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:64
 msgid "Start with debugger"
 msgstr "Inicia amb el depurador"
 
-#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:43
+#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:65
 msgid "Starts with the debugger dashboard active."
 msgstr "Inicia amb el tauler de control del depurador actiu."
 
@@ -7507,7 +7507,7 @@ msgstr "Esc"
 msgid "Space"
 msgstr "Espai"
 
-#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:138
+#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:149
 msgid "Pause game"
 msgstr "Pausa la partida"
 
@@ -8886,6 +8886,17 @@ msgid ""
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
 
+#: engines/vcruise/metaengine.cpp:42
+msgid "Improved click sensitivity"
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:43
+msgid ""
+"Allows the mouse to be moved a short distance without cancelling click "
+"interactions.  If this is off, any mouse movement while the mouse button is "
+"held cancels a click interaction."
+msgstr ""
+
 #: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
 msgstr "Animacions més ràpides"
@@ -8894,57 +8905,57 @@ msgstr "Animacions més ràpides"
 msgid "Speeds up animations."
 msgstr "Accelera les animacions."
 
-#: engines/vcruise/metaengine.cpp:64
+#: engines/vcruise/metaengine.cpp:75
 #, fuzzy
 #| msgid "Open main menu"
 msgid "Skip main menu"
 msgstr "Obre el menú principal"
 
-#: engines/vcruise/metaengine.cpp:65
+#: engines/vcruise/metaengine.cpp:76
 msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:113
+#: engines/vcruise/metaengine.cpp:124
 msgid "Display help screen"
 msgstr "Mostra la pantalla d'ajuda"
 
-#: engines/vcruise/metaengine.cpp:118 engines/wintermute/keymapper_tables.h:920
+#: engines/vcruise/metaengine.cpp:129 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Desa la partida"
 
-#: engines/vcruise/metaengine.cpp:128
+#: engines/vcruise/metaengine.cpp:139
 msgid "Open sound settings"
 msgstr "Obre la configuració del so"
 
-#: engines/vcruise/metaengine.cpp:133
+#: engines/vcruise/metaengine.cpp:144
 msgid "Quit game"
 msgstr "Surt del joc"
 
-#: engines/vcruise/metaengine.cpp:144
+#: engines/vcruise/metaengine.cpp:155
 msgid "Toggle music on/off"
 msgstr "Activa/desactiva la música"
 
-#: engines/vcruise/metaengine.cpp:149
+#: engines/vcruise/metaengine.cpp:160
 msgid "Toggle sound effects on/off"
 msgstr "Activa/desactiva els efectes de so"
 
-#: engines/vcruise/metaengine.cpp:154
+#: engines/vcruise/metaengine.cpp:165
 msgid "Music volume down"
 msgstr "Abaixa el volum de música"
 
-#: engines/vcruise/metaengine.cpp:159
+#: engines/vcruise/metaengine.cpp:170
 msgid "Music volume up"
 msgstr "Apuja el volum de música"
 
-#: engines/vcruise/metaengine.cpp:164
+#: engines/vcruise/metaengine.cpp:175
 msgid "Sound effect volume down"
 msgstr "Abaixa el volum de l'efecte de so"
 
-#: engines/vcruise/metaengine.cpp:169
+#: engines/vcruise/metaengine.cpp:180
 msgid "Sound effect volume up"
 msgstr "Apuja el volum de l'efecte de so"
 
-#: engines/vcruise/metaengine.cpp:174
+#: engines/vcruise/metaengine.cpp:185
 msgid "Skip current animation"
 msgstr "Omet l'animació actual"
 

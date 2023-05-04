@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-04 03:41+0000\n"
+"POT-Creation-Date: 2023-05-04 13:38+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -6573,7 +6573,7 @@ msgid ""
 msgstr ""
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:123
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:134
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 #, fuzzy
@@ -6730,11 +6730,11 @@ msgid ""
 "difficulty of sound recognition puzzles and minigames."
 msgstr ""
 
-#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:42
+#: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:64
 msgid "Start with debugger"
 msgstr ""
 
-#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:43
+#: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:65
 msgid "Starts with the debugger dashboard active."
 msgstr ""
 
@@ -7537,7 +7537,7 @@ msgstr ""
 msgid "Space"
 msgstr ""
 
-#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:138
+#: engines/scumm/help.cpp:76 engines/vcruise/metaengine.cpp:149
 #, fuzzy
 msgid "Pause game"
 msgstr "Oyun yükle:"
@@ -8933,6 +8933,17 @@ msgid ""
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
 
+#: engines/vcruise/metaengine.cpp:42
+msgid "Improved click sensitivity"
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:43
+msgid ""
+"Allows the mouse to be moved a short distance without cancelling click "
+"interactions.  If this is off, any mouse movement while the mouse button is "
+"held cancels a click interaction."
+msgstr ""
+
 #: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
 msgstr ""
@@ -8942,67 +8953,67 @@ msgstr ""
 msgid "Speeds up animations."
 msgstr "A~y~arlar..."
 
-#: engines/vcruise/metaengine.cpp:64
+#: engines/vcruise/metaengine.cpp:75
 msgid "Skip main menu"
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:65
+#: engines/vcruise/metaengine.cpp:76
 msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:113
+#: engines/vcruise/metaengine.cpp:124
 msgid "Display help screen"
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:118 engines/wintermute/keymapper_tables.h:920
+#: engines/vcruise/metaengine.cpp:129 engines/wintermute/keymapper_tables.h:920
 #, fuzzy
 msgid "Save game"
 msgstr "Kaydetme Yolu:"
 
-#: engines/vcruise/metaengine.cpp:128
+#: engines/vcruise/metaengine.cpp:139
 #, fuzzy
 #| msgid "Override global audio settings"
 msgid "Open sound settings"
 msgstr "Global ses ayarlarını bastırma"
 
-#: engines/vcruise/metaengine.cpp:133
+#: engines/vcruise/metaengine.cpp:144
 #, fuzzy
 msgid "Quit game"
 msgstr "Oyun"
 
-#: engines/vcruise/metaengine.cpp:144
+#: engines/vcruise/metaengine.cpp:155
 msgid "Toggle music on/off"
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:149
+#: engines/vcruise/metaengine.cpp:160
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Toggle sound effects on/off"
 msgstr "Özel ses efektleri ses düzeyi"
 
-#: engines/vcruise/metaengine.cpp:154
+#: engines/vcruise/metaengine.cpp:165
 #, fuzzy
 msgid "Music volume down"
 msgstr "Müzik cihazı:"
 
-#: engines/vcruise/metaengine.cpp:159
+#: engines/vcruise/metaengine.cpp:170
 #, fuzzy
 msgid "Music volume up"
 msgstr "Müzik cihazı:"
 
-#: engines/vcruise/metaengine.cpp:164
+#: engines/vcruise/metaengine.cpp:175
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Sound effect volume down"
 msgstr "Özel ses efektleri ses düzeyi"
 
-#: engines/vcruise/metaengine.cpp:169
+#: engines/vcruise/metaengine.cpp:180
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Sound effect volume up"
 msgstr "Özel ses efektleri ses düzeyi"
 
-#: engines/vcruise/metaengine.cpp:174
+#: engines/vcruise/metaengine.cpp:185
 #, fuzzy
 msgid "Skip current animation"
 msgstr "A~y~arlar..."
