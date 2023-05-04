@@ -2932,6 +2932,7 @@ void Runtime::startScoreSection() {
 	if (!_musicActive)
 		return;
 
+#ifdef USE_VORBIS
 	Common::HashMap<Common::String, ScoreTrackDef>::const_iterator trackIt = _scoreDefs.find(_scoreTrack);
 	if (trackIt != _scoreDefs.end()) {
 		const ScoreTrackDef::ScoreSectionMap_t &sectionMap = trackIt->_value.sections;
@@ -2962,6 +2963,7 @@ void Runtime::startScoreSection() {
 			}
 		}
 	}
+#endif
 }
 
 void Runtime::changeAnimation(const AnimationDef &animDef, bool consumeFPSOverride) {
