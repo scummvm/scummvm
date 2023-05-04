@@ -6122,7 +6122,17 @@ void Runtime::scriptOpSndPlay(ScriptArg_t arg) {
 OPCODE_STUB(SndPlayEx)
 OPCODE_STUB(SndPlay3D)
 OPCODE_STUB(SndPlaying)
-OPCODE_STUB(SndWait)
+
+void Runtime::scriptOpSndWait(ScriptArg_t arg) {
+	TAKE_STACK_INT(1);
+
+	SoundInstance *snd = resolveSoundByID(stackArgs[0]);
+	if (snd) {
+		_delayCompletionTime = snd->endTime;
+		_gameState = kGameStateDelay;
+	}
+}
+
 OPCODE_STUB(SndHalt)
 OPCODE_STUB(SndToBack)
 OPCODE_STUB(SndStop)
@@ -6186,7 +6196,29 @@ void Runtime::scriptOpString(ScriptArg_t arg) {
 }
 
 OPCODE_STUB(Speech)
-OPCODE_STUB(SpeechEx)
+
+void Runtime::scriptOpSpeechEx(ScriptArg_t arg) {
+	TAKE_STACK_INT_NAMED(2, sndParamArgs);
+	TAKE_STACK_STR_NAMED(1, sndNameArgs);
+
+	StackInt_t soundID = 0;
+	SoundInstance *cachedSound = nullptr;
+	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
+
+	if (cachedSound) {
+		TriggeredOneShot oneShot;
+		oneShot.soundID = soundID;
+		oneShot.uniqueSlot = sndParamArgs[0];
+
+		if (Common::find(_triggeredOneShots.begin(), _triggeredOneShots.end(), oneShot) == _triggeredOneShots.end()) {
+			triggerSound(false, *cachedSound, sndParamArgs[1], 0, false, true);
+			_triggeredOneShots.push_back(oneShot);
+
+			triggerWaveSubtitles(*cachedSound, sndNameArgs[0]);
+		}
+	}
+}
+
 OPCODE_STUB(SpeechTest)
 OPCODE_STUB(Say)
 
