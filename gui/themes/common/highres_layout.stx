@@ -153,11 +153,21 @@
 
 	<dialog name = 'Launcher' overlays = 'screen' resolution = 'y<=x'>
 		<layout type = 'vertical' align = 'center' padding = '23, 23, 8, 40'>
-			<widget name = 'Logo'
-					width = '287'
-					height = '80'
-					rtl = 'no'
-			/>
+			<layout type = 'horizontal'  spacing = '5' padding = '10, 0, 0, 0'>
+				<space size  = 'Globals.Button.Height' />
+				<space />
+				<widget name = 'Logo'
+						width = '287'
+						height = '80'
+						rtl = 'no'
+				/>
+				<space />
+				<widget name = 'HelpButton'
+						height = 'Globals.Button.Height'
+						width = 'Globals.Button.Height'
+						rtl = 'yes'
+				/>
+			</layout>
 			<layout type = 'horizontal'  spacing = '5' padding = '10, 0, 0, 0'>
 				<widget name = 'SearchPic'
 						width = '16'
