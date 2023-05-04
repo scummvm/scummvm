@@ -20,6 +20,7 @@
  */
 
 #include "common/math.h"
+#include "common/savefile.h"
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/application.h"
@@ -132,6 +133,9 @@ bool AmerzoneGame::changeWarp(const Common::String &rawZone, const Common::Strin
 	} else {
         onChangeWarpAnimFinished();
 	}
+
+	_currentZone = rawZone;
+
 	return true;
 }
 
@@ -227,9 +231,17 @@ void AmerzoneGame::initLoadedBackupData() {
 	_luaContext.addBindings(LuaBinds::LuaOpenBinds);
 	Application *app = g_engine->getApplication();
 	if (!_loadName.empty()) {
-		error("TODO: finish AmerzoneGame::initLoadedBackupData for direct load");
+		Common::InSaveFile *saveFile = g_engine->getSaveFileManager()->openForLoading(_loadName);
+		Common::Error result = g_engine->loadGameStream(saveFile);
+		if (result.getCode() == Common::kNoError) {
+			ExtendedSavegameHeader header;
+			if (MetaEngine::readSavegameHeader(saveFile, &header))
+				g_engine->setTotalPlayTime(header.playtime);
+		}
+		changeWarp(_currentZone, "", false);
+	} else {
+		changeWarp(app->firstWarpPath(), app->firstScene(), true);
 	}
-	changeWarp(app->firstWarpPath(), app->firstScene(), true);
 }
 
 void AmerzoneGame::isInDrag(bool inDrag) {

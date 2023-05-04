@@ -72,7 +72,7 @@ int TeIFont::wordWrapText(const Common::String &str, int fontSize, int maxWidth,
 	return retval;
 }
 
-Common::Rect TeIFont::getBoundingBox(const Common::String &str, int fontSize) {
+Common::Rect TeIFont::getBBox(const Common::String &str, int fontSize) {
 	Graphics::Font *font = getAtSize(fontSize);
 	return font->getBoundingBox(str.decode(_codePage));
 }

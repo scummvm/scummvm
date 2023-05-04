@@ -82,7 +82,7 @@ void TeTextBase2::build() {
 			warning("TODO: Implement TeTextBase2::computeNbSpaces for Justify");
 			//computeNbSpaces(&line, offset, line.endOffset);
 		}
-		Common::Rect lineSize = font->getBoundingBox(line, _fontSize);
+		Common::Rect lineSize = font->getBBox(line, _fontSize);
 		if (lineSize.right > _size._x)
 			_size._x = lineSize.right;
 

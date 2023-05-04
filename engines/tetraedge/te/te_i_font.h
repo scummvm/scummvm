@@ -59,7 +59,7 @@ public:
 	virtual TeVector3f32 kerning(uint pxSize, uint isocode1, uint isocode2);
 
 	virtual void draw(TeImage &destImage, const Common::String &str, int fontSize, int yoff, const TeColor &col, AlignStyle alignMode);
-	virtual Common::Rect getBoundingBox(const Common::String &str, int fontSize);
+	virtual Common::Rect getBBox(const Common::String &str, int fontSize);
 	virtual int getHeight(int fontSize);
 	virtual int wordWrapText(const Common::String &str, int fontSize, int maxWidth, Common::Array<Common::String> &lines);
 

@@ -482,7 +482,12 @@ Common::Error Game::syncGame(Common::Serializer &s) {
 		inventory().syncState(s);
 	}
 
-	inventory().cellphone()->syncState(s);
+	if (!g_engine->gameIsAmerzone())
+		inventory().cellphone()->syncState(s);
+
+	// Some of these other values are not needed for Amerzone, but we can safely
+	// save/load them as they're just empty.
+
 	// dialog2().syncState(s); // game saves this here, but doesn't actually save anything
 	_luaContext.syncState(s);
 	s.syncString(_currentZone);
@@ -501,7 +506,10 @@ Common::Error Game::syncGame(Common::Serializer &s) {
 	s.syncString(mpath);
 	if (s.isLoading())
 		_videoMusic.load(mpath);
-	s.syncString(_scene._character->walkModeStr());
+	if (!g_engine->gameIsAmerzone()) {
+		assert(_scene._character);
+		s.syncString(_scene._character->walkModeStr());
+	}
 	s.syncAsByte(_firstInventory);
 	s.syncAsByte(app->tutoActivated());
 

@@ -81,7 +81,8 @@ public:
 	virtual int getCharWidth(uint32 chr) const override;
 	virtual void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 	virtual int getKerningOffset(uint32 left, uint32 right) const override;
-	virtual Common::Rect getBoundingBox(const Common::String &str, int fontSize) override;
+	virtual Common::Rect getBBox(const Common::String &str, int fontSize) override;
+	virtual Common::Rect getBoundingBox(uint32 chr) const override;
 	virtual TeVector3f32 kerning(uint pxSize, uint isocode1, uint isocode2) override;
 
 	virtual float height(uint pxSize) override;

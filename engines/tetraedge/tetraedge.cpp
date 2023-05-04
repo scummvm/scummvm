@@ -160,8 +160,20 @@ bool TetraedgeEngine::canSaveGameStateCurrently() {
 }
 
 bool TetraedgeEngine::canSaveAutosaveCurrently() {
-	return _game && _application && _game->running()
-		&& !_game->currentScene().empty() && !_game->currentZone().empty();
+	if (!_game || !_application)
+		return false;
+
+	bool sceneLoaded;
+
+	if (gameIsAmerzone()) {
+		AmerzoneGame *game = dynamic_cast<AmerzoneGame *>(_game);
+		assert(game);
+		sceneLoaded = (game->warpY() != nullptr);
+	} else {
+		sceneLoaded = !_game->currentScene().empty() && !_game->currentZone().empty();
+	}
+
+	return _game->running() && sceneLoaded;
 }
 
 Common::Error TetraedgeEngine::loadGameState(int slot) {

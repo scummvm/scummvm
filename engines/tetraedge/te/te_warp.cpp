@@ -240,6 +240,9 @@ void TeWarp::load(const Common::String &path, bool flag) {
 		return;
 	_warpPath = path;
 
+	if (path.empty())
+		error("Empty TeWarp path!");
+
 	TeCore *core = g_engine->getCore();
 	Common::FSNode node = core->findFile(_warpPath);
 	if (!node.isReadable()) {

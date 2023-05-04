@@ -180,7 +180,7 @@ TeVector3f32 TeFont2::kerning(uint pxSize, uint isocode1, uint isocode2) {
 	return TeVector3f32();
 }
 
-Common::Rect TeFont2::getBoundingBox(const Common::String &str, int fontSize) {
+Common::Rect TeFont2::getBBox(const Common::String &str, int fontSize) {
 	Common::Rect rect;
 	for (uint i = 0; i < str.size(); i++) {
 		uint c = str[i];
@@ -190,7 +190,22 @@ Common::Rect TeFont2::getBoundingBox(const Common::String &str, int fontSize) {
 		rect.top = MIN(rect.top, (int16)-g._yOff);
 		rect.bottom = MAX(rect.bottom, (int16)(-g._yOff + g._ySz));
 		rect.right += g._xAdvance;
+		if (i < str.size() - 1) {
+			rect.right += kerning(fontSize, c, str[i+1]).x();
+		}
 	}
+	return rect;
+}
+
+Common::Rect TeFont2::getBoundingBox(uint32 chr) const {
+	if (chr > _glyphs.size())
+		return Common::Rect();
+
+	Common::Rect rect;
+	rect.left = (int)_glyphs[chr]._xOff;
+	rect.right = rect.left + (int)_glyphs[chr]._xAdvance;
+	rect.top = _maxHeight - _glyphs[chr]._yOff;
+	rect.bottom = _maxHeight;
 	return rect;
 }
 
