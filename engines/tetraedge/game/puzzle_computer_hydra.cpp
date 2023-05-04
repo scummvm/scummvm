@@ -73,6 +73,7 @@ bool PuzzleComputerHydra::enterChecklistScreen() {
 	exitSelectMode();
 	_checklistStep = 0;
 	_gui.layoutChecked("checklist")->setVisible(true);
+	_gui.layoutChecked("checklist")->setRatioMode(TeILayout::RATIO_MODE_NONE);
 	_gui.spriteLayoutChecked("title")->load("2D/puzzles/Computer_Hydra/CHECKLIST.png");
 	_gui.spriteLayoutChecked("infos")->setVisible(false);
 	clearChecklistScreen();
@@ -88,6 +89,7 @@ bool PuzzleComputerHydra::enterCoordinatesScreen() {
 	_enteredCoord[1] = -1;
 	_enteredCoord[2] = -1;
 	_gui.spriteLayoutChecked("coordinates")->setVisible(true);
+	_gui.spriteLayoutChecked("coordinates")->setRatioMode(TeILayout::RATIO_MODE_NONE);
 	_gui.spriteLayoutChecked("titleCoordinates")->load("2D/puzzles/Computer_Hydra/ENTERDETAILS.png");
 	_gui.spriteLayoutChecked("title")->setVisible(false);
 	_gui.spriteLayoutChecked("infos")->setVisible(false);
@@ -114,6 +116,7 @@ bool PuzzleComputerHydra::enterSelectMode() {
 	_transitionTimer.alarmSignal().remove(this, &PuzzleComputerHydra::enterSelectMode);
 	exitChecklistScreen();
 	_gui.layoutChecked("modeSelect")->setVisible(true);
+	_gui.layoutChecked("modeSelect")->setRatioMode(TeILayout::RATIO_MODE_NONE);
 	_gui.spriteLayoutChecked("title")->load("2D/puzzles/Computer_Hydra/CHOOSEMODE.png");
 	_gui.spriteLayoutChecked("infos")->setVisible(false);
 	return true;
@@ -139,7 +142,6 @@ bool PuzzleComputerHydra::exitCoordinatesScreen() {
 	_gui.buttonLayoutChecked("button8")->setEnable(false);
 	_gui.buttonLayoutChecked("button9")->setEnable(false);
 	_gui.buttonLayoutChecked("cancel")->setEnable(false);
-	_gui.buttonLayoutChecked("exit")->setEnable(false);
 	_gui.spriteLayoutChecked("digit1")->setVisible(false);
 	_gui.spriteLayoutChecked("digit2")->setVisible(false);
 	_gui.spriteLayoutChecked("digit3")->setVisible(false);
@@ -166,6 +168,7 @@ bool PuzzleComputerHydra::hideUnavailableModeMsg() {
 
 void PuzzleComputerHydra::initAll() {
 	_gui.spriteLayoutChecked("screenBase")->setVisible(true);
+	_gui.spriteLayoutChecked("screenBase")->setRatioMode(TeILayout::RATIO_MODE_NONE);
 	_gui.spriteLayoutChecked("title")->setVisible(true);
 	_gui.spriteLayoutChecked("infos")->setVisible(false);
 	_gui.buttonLayoutChecked("confirmDestination")->setVisible(false);
@@ -354,13 +357,13 @@ bool PuzzleComputerHydra::onButtonBoatClicked() {
 
 bool PuzzleComputerHydra::onButtonCancelClicked() {
 	if (_axisNo <= 0)
-		return false;
+		return true;
 	const Common::String dname = Common::String::format("digit%d", _axisNo);
 	_gui.spriteLayoutChecked(dname)->setVisible(false);
 	_axisNo--;
 	_enteredCoord[_axisNo] = -1;
 	_gui.spriteLayoutChecked("infosCoordinates")->setVisible(false);
-	return false;
+	return true;
 }
 
 bool PuzzleComputerHydra::onButtonGrappleClicked() {
