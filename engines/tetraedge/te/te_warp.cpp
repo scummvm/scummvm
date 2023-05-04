@@ -190,6 +190,7 @@ void TeWarp::configMarker(const Common::String &objname, int markerImgNo, long m
 		btnUp->play();
 		warpMarker->marker()->visible(true);
 		// Ensure markers appear below menus and videos.
+		frontLayout.removeChild(&warpMarker->marker()->button());
 		frontLayout.addChildBefore(&warpMarker->marker()->button(), frontLayout.child(0));
 	}
 }
