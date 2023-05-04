@@ -575,7 +575,8 @@ void Game::playTot(int16 function) {
 				break;
 			}
 
-			if (_vm->getGameType() == kGameTypeAdibou1) { // TODO: probably needed by other games (Adi 2?)
+			if (_vm->getGameType() == kGameTypeAdibou1 ||
+				_vm->getGameType() == kGameTypeAdi2) { // TODO: maybe needed by other games
 				_vm->_draw->_needAdjust = _vm->_game->_script->getData()[58];
 				if (_vm->_draw->_needAdjust <= 1 || _vm->_draw->_needAdjust >= 8)
 					_vm->_draw->_needAdjust = 2;
