@@ -133,9 +133,9 @@ void ProcessMouse(WGame &game) {
 	}
 
 	auto windowInfo = game._renderer->getScreenInfos();
-	if (mPosx > windowInfo.width) mPosx = windowInfo.width - 1;
+	if (mPosx > (int32)windowInfo.width) mPosx = windowInfo.width - 1;
 	else if (mPosx <= 0) mPosx = 1;
-	if (mPosy > windowInfo.height) mPosy = windowInfo.height - 1;
+	if (mPosy > (int32)windowInfo.height) mPosy = windowInfo.height - 1;
 	else if (mPosy <= 0) mPosy = 1;
 
 	MoveHeadAngles(diffx, diffy);

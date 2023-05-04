@@ -33,9 +33,12 @@ Fonts::~Fonts() {
 
 uint16 *Fonts::setupFontTable(Common::SeekableReadStream &stream) {
 	uint32 dim = stream.size();
+	// FIXME: This looks slightly wrong. Should this be:
+	// uint16 *tab = new uint16[dim / sizeof(uint16)] {};
+	// to match the loop iteration?
 	uint16 *tab = new uint16[dim] {};
 
-	for (int i = 0; i < dim / sizeof(uint16); i++) {
+	for (uint32 i = 0; i < dim / sizeof(uint16); i++) {
 		tab[i] = stream.readUint16LE();
 	}
 
@@ -53,7 +56,7 @@ void Fonts::loadFont(WGame &game, struct SFont *f, const Common::String &n) {
 	}
 
 	Common::String basename = n.substr(0, n.findLastOf('.'));
-	for (char a = 0; a < MAX_FONT_COLORS; a++) {
+	for (uint a = 0; a < MAX_FONT_COLORS; a++) {
 		Common::String tgaName = constructPath(game.workDirs._miscDir, basename + (a + '0')) + ".tga";
 		if ((f->color[a] = rLoadBitmapImage(game, tgaName.c_str(), rBITMAPSURFACE | rSURFACEFLIP)) <= 0) {
 			DebugLogFile("Failed to load Font2. Quitting ...");

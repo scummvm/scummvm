@@ -373,7 +373,7 @@ bool DataLoad(WGame &game, const Common::String &FileName, uint8 slot) {
 	if (!FileName.empty())
 		strcpy(str, FileName.c_str());
 	else
-		sprintf(str, "%sWm%#02d.sav", game.workDirs._savesDir.c_str(), slot);
+		sprintf(str, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), slot);
 
 	auto stream = openFile(FileName);
 	if (!stream) {

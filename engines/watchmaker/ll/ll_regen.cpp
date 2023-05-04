@@ -215,8 +215,8 @@ void Regen(WGame &game) {
 	auto windowInfo = game._renderer->getScreenInfos();
 	if (ext.x1 < 0) ext.x1 = 0;
 	if (ext.y1 < 0) ext.y1 = 0;
-	if (ext.x2 > windowInfo.width) ext.x2 = windowInfo.width;
-	if (ext.y2 > windowInfo.height) ext.y2 = windowInfo.height;
+	if (ext.x2 > (int32)windowInfo.width) ext.x2 = windowInfo.width;
+	if (ext.y2 > (int32)windowInfo.height) ext.y2 = windowInfo.height;
 #ifdef DEBUG_REGEN
 	DebugFile("Aggiorna video %d,%d %d,%d", ext.x1, ext.y1, ext.x2 - ext.x1, ext.y2 - ext.y1);
 //	DebugLogWindow( "Aggiorna video %d,%d %d,%d", ext.x1, ext.y1, ext.x2-ext.x1, ext.y2-ext.y1 );

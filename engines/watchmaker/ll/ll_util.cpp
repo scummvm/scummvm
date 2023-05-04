@@ -311,8 +311,10 @@ void UpdateRoomVisibility(WGame &game) {
 	}
 
 //	Aggiunge room attuale
-	if (cr = (uint8)getRoomFromStr(init, t3dCurRoom->name))
+	cr = (uint8)getRoomFromStr(init, t3dCurRoom->name);
+	if (!cr) {
 		init.Room[cr].flags |= ROOM_VISIBLE;
+	}
 
 	if (bShowRoomDescriptions)
 		UpdateRoomInfo(game);
@@ -351,13 +353,19 @@ void UpdateRoomVisibility(WGame &game) {
 		if (!(pr = t3dCurRoom->MeshTable[i].PortalList) || (t3dCurRoom->MeshTable[i].Flags & T3D_MESH_NOPORTALCHECK))
 			continue;
 
-		if (cr = (uint8)getRoomFromStr(init, pr->name))
+		cr = (uint8)getRoomFromStr(init, pr->name);
+		if (!cr) {
 			init.Room[cr].flags |= ROOM_VISIBLE;
+		}
 
-		for (j = 0; j < pr->NumMeshes(); j++)
-			if ((pr->MeshTable[j].PortalList) && !(pr->MeshTable[j].Flags & T3D_MESH_NOPORTALCHECK))
-				if (cr = (uint8)getRoomFromStr(init, pr->MeshTable[j].PortalList->name))
+		for (j = 0; j < pr->NumMeshes(); j++) {
+			if ((pr->MeshTable[j].PortalList) && !(pr->MeshTable[j].Flags & T3D_MESH_NOPORTALCHECK)) {
+				cr = (uint8)getRoomFromStr(init, pr->MeshTable[j].PortalList->name);
+				if (!cr) {
 					init.Room[cr].flags |= ROOM_VISIBLE;
+				}
+			}
+		}
 	}
 
 //	Accende le animazioni di backgorund delle stanze che si vedono
