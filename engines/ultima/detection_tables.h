@@ -145,6 +145,40 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GF_VGA_ENHANCED
 	},
 
+	// Ultima VI - French patch by Docwise Dragon
+	// https://sirjohn.de/en/ultima6/ultima-vi-french-translation-patch/
+	// Note: Not all user interface elements are translated in ScummVM
+	{
+		{
+			"ultima6",
+			0,
+			AD_ENTRY1s("converse.a", "35c95d56737d957db7e72193e810053b", 182937),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_ULTIMA6
+		},
+		GAME_ULTIMA6,
+		0
+	},
+
+	// Ultima VI - Enhanced - French patch by Docwise Dragon
+	// https://sirjohn.de/en/ultima6/ultima-vi-french-translation-patch/
+	// Note: Not all user interface elements are translated in ScummVM
+	{
+		{
+			"ultima6_enh",
+			0,
+			AD_ENTRY1s("converse.a", "35c95d56737d957db7e72193e810053b", 182937),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_ULTIMA6
+		},
+		GAME_ULTIMA6,
+		GF_VGA_ENHANCED
+	},
+
 	// Ultima VI - German Patch https://sirjohn.de/ultima-6/
 	// Note: Not all user interface elements are translated in ScummVM
 	{
