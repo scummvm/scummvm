@@ -19,6 +19,7 @@
  *
  */
 
+#include "bladerunner/bladerunner.h"
 #include "bladerunner/script/ai_script.h"
 
 namespace BladeRunner {
@@ -784,6 +785,16 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 		if (_animationFrame == 11) {
 			Actor_Combat_AI_Hit_Attempt(kActorZuben);
+#if !BLADERUNNER_ORIGINAL_BUGS
+			if (Game_Flag_Query(kFlagCT07ZubenAttack)
+			    && !Game_Flag_Query(kFlagMcCoyShotAtZuben)) {
+				// We re-use the flag that indicates that McCoy shot at Zuben,
+				// even though here it's Zuben who hits McCoy.
+				// This should be fine, since it serves the same purpose:
+				// McCoy can no longer spare Zuben if he holsters his gun.
+				Game_Flag_Set(kFlagMcCoyShotAtZuben);
+			}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
