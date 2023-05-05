@@ -130,6 +130,20 @@
 {
 	{
 		"adi2",
+		"Adi Deutsch Klasse 1+2",
+		AD_ENTRY1s("adi2.stk", "157a26943a021d92f5c76f6eb8f18f2a", 12960390),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NOASPECT)
+	},
+	kGameTypeAdi2,
+	kFeatures640x480,
+	"adi2.stk", "ediintro.tot", 0
+},
+{
+	{
+		"adi2",
 		"Adi 2.7.1",
 		AD_ENTRY1s("adi2.stk", "6fa5dffebf5c7243c6af6b8c188ee00a", 19278008),
 		FR_FRA,
