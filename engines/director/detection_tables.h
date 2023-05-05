@@ -446,6 +446,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "vcop2",				"Virtual Cop: Episode Two: The Angel Returns" },
 	{ "veniceglass",		"Venice Under Glass: A Basil Baker Mystery Adventure" },
 	{ "videocasino",		"Video Casino" },
+	{ "virusalert3d",		"Virus Alert 3D" },
 	{ "vjg",				"Vegas Jackpot Gold" },
 	{ "vnc",				"Virtual Nightclub" },
 	{ "voodoolounge",		"The Rolling Stones: Voodoo Lounge" },
@@ -853,6 +854,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "girlspack",			"Girl's Pack!" },
 	{ "glitzerschuppen",	"Der Regenbogenfisch Die Suche Nach Den Glitzerschuppen" },
 	{ "globiabc",			"Globi's ABC" },
+	{ "ichsehewas",			"Ich sehe was..." },
 	{ "janoschpanama",		"JANOSCH: Oh, wie schön ist Panama" },
 	{ "janoschverkehr",		"JANOSCH: Tiger und Bär im Straßenverkehr" },
 	{ "loewe1",				"Löwenzahn 1" },
@@ -6082,6 +6084,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("ibmcdextra", "", "SAMPLER.EXE", "2e62abdad839e42068afdcd0644d7dcf", 929109,
 							   "TOADMM.DIR",  "b67c1bd97094091404ed1cde88279880", 2573710, 500),
 
+	// Full title "Ich sehe was... siehst du es auch?"
+	// Developed by Terzio
+	MACGAME1_l("ichsehewas", "", "Ich sehe was",   "r:fceaf85985d054f37966f843e4dd6b2b", 719129, Common::DE_DEU, 501),
+	WINGAME1_l("ichsehewas", "", "ichsehewas.exe", "t:f5127fbc00272caecc04eccd6bb69eca", 1436195, Common::DE_DEU, 501),
+
 	// Installers for both platforms also use Director
 	MACGAME1_l("incarnatia", "", "incarnatia_PowerMac", "2e7d373f75c014be20cfb04c5cd65dae", 108480, Common::JA_JPN, 501),
 	WINGAME1_l("incarnatia", "", "incarnatia_Win.exe", "38b75ecdedf662326fe4931a68ae60cd", 1414152, Common::JA_JPN, 501),
@@ -8889,6 +8896,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t("spelunx", "", "Spelunx.exe", "965e31ec421fa6dfe8ea157ef38ebd42", 2800981, 1010),
 
 	WINDEMO1_l("tokimemotypegs", "Demo", "tkmkgstype.exe", "1d1646000633ab994404ac38fb350553", 2716404, Common::JA_JPN, 1000),
+
+	// http://virusalert3d.com
+	// Developed by Left Brain Games
+	// Includes 5 free levels, requires activation for 20 additional levels
+	MACGAME1("virusalert3d", "", "Virus Alert 3D", "r:a171b7a952d1ac68ae3cd419d6dfc674", 309959, 1010),
+	WINGAME1("virusalert3d", "", "VirusAlert.exe", "t:e1ee328cc8e9fb693072842b7386ff3e", 3085579, 1010),
 
 //////////////////////////////////////////////////
 //
