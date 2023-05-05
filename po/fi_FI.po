@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-04 13:38+0000\n"
+"POT-Creation-Date: 2023-05-05 13:59+0000\n"
 "PO-Revision-Date: 2023-05-02 21:40+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -5150,7 +5150,7 @@ msgstr ""
 "uudestaan seuraavalla kerralla peliä käynnistäessäsi.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:296
+#: engines/vcruise/vcruise.cpp:293
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Tämä pelitallenne on luotu ScummVM:n uudemmalla versiolla. Lataus ei onnistu."
@@ -6841,14 +6841,14 @@ msgstr "Lopeta kaikki käynnissä olevat videot"
 msgid "Failed to read version information from save file"
 msgstr "Pelitallenteen version lukeminen epäonnistui"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:291
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:288
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Pelitallenteen lukeminen epäonnistui, tallenne ei sisällä validia "
 "versioinformaatiota."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:301
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:298
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -9262,16 +9262,16 @@ msgstr ""
 "tähän ScummVM:ään.\n"
 "Peli toimii silti, mutta ilman musiikkia."
 
-#: engines/vcruise/vcruise.cpp:281
+#: engines/vcruise/vcruise.cpp:278
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "Pelitallenteen lukeminen epäonnistui, tallenne vaikuttaa olevan vaurioitunut."
 
-#: engines/vcruise/vcruise.cpp:286
+#: engines/vcruise/vcruise.cpp:283
 msgid "Failed to read version information from save file."
 msgstr "Pelitallenteen version lukeminen epäonnistui."
 
-#: engines/vcruise/vcruise.cpp:306
+#: engines/vcruise/vcruise.cpp:303
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Tuntematon virhe pelitallennusta ladatessa."
 

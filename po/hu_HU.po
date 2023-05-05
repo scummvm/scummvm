@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-04 13:38+0000\n"
+"POT-Creation-Date: 2023-05-05 13:59+0000\n"
 "PO-Revision-Date: 2023-04-30 09:22+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -5183,7 +5183,7 @@ msgstr ""
 "indításakor újra megkérdezi.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:296
+#: engines/vcruise/vcruise.cpp:293
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "A mentett játék a ScummVM újabb verziójával készült. Nem lehet betölteni."
@@ -6893,14 +6893,14 @@ msgstr "Kényszerítsd a filmek lejátszását a végére"
 msgid "Failed to read version information from save file"
 msgstr "Nem sikerült a mentett játékállás betöltése fájlból"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:291
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:288
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Nem sikerült betölteni a mentést, a mentési fájl nem tartalmaz érvényes "
 "verzióinformációkat."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:301
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:298
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -9328,16 +9328,16 @@ msgstr ""
 "A játék zenéjéhez MP3-támogatás szükséges, ami nem lett lefordítva.\n"
 "A játék továbbra is játszható, de nem lesz benne zene."
 
-#: engines/vcruise/vcruise.cpp:281
+#: engines/vcruise/vcruise.cpp:278
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "Nem sikerült betölteni a mentést, úgy tűnik, hogy a mentési adatok sérültek."
 
-#: engines/vcruise/vcruise.cpp:286
+#: engines/vcruise/vcruise.cpp:283
 msgid "Failed to read version information from save file."
 msgstr "Nem sikerült a mentett játékállás betöltése fájlból."
 
-#: engines/vcruise/vcruise.cpp:306
+#: engines/vcruise/vcruise.cpp:303
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Ismeretlen hiba történt a mentett játék betöltése közben."
 

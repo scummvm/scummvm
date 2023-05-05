@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-04 13:38+0000\n"
+"POT-Creation-Date: 2023-05-05 13:59+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -5251,7 +5251,7 @@ msgstr ""
 "vez que inicies o xogo.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:296
+#: engines/vcruise/vcruise.cpp:293
 #, fuzzy
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
@@ -6962,12 +6962,12 @@ msgstr ""
 msgid "Failed to read version information from save file"
 msgstr "Erro ao cargar a partida do ficheiro."
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:291
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:288
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:301
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:298
 #, fuzzy
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
@@ -9363,19 +9363,19 @@ msgid ""
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:281
+#: engines/vcruise/vcruise.cpp:278
 #, fuzzy
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "Esta partida gardada creouse cunha versión diferente do xogo. Non é posible "
 "cargala."
 
-#: engines/vcruise/vcruise.cpp:286
+#: engines/vcruise/vcruise.cpp:283
 #, fuzzy
 msgid "Failed to read version information from save file."
 msgstr "Erro ao cargar a partida do ficheiro."
 
-#: engines/vcruise/vcruise.cpp:306
+#: engines/vcruise/vcruise.cpp:303
 #, fuzzy
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ", erro ao montar o disco"
