@@ -99,7 +99,7 @@ void Inter_v3::o3_copySprite(OpFuncParams &params) {
 
 	// For the close-up "fading" in the CD version
 	if (_vm->_draw->_destSurface == Draw::kFrontSurface)
-		_vm->_video->sparseRetrace(Draw::kFrontSurface);
+		_vm->_video->sparseRetrace(20);
 }
 
 void Inter_v3::o3_wobble(OpGobParams &params) {
