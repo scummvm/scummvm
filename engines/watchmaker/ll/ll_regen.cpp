@@ -96,7 +96,7 @@ void Regen(WGame &game) {
 #endif
 	upn = 0;
 	memset(refresh, 0, sizeof(refresh));
-	memset(UpdateRect, 0, sizeof(UpdateRect));
+	for (uint32 i = 0; i < ARRAYSIZE(UpdateRect); i++) UpdateRect[i].reset();
 	// I take the Extends of what the engine drew
 	rGetExtends(&ext.x1, &ext.y1, &ext.x2, &ext.y2);
 	// 1 - Compare each element of PaintRect to all OlPaintRect elements
@@ -187,8 +187,9 @@ void Regen(WGame &game) {
 			}
 		}
 
-		if (!found)
-			memset(p, 0, sizeof(struct SRect));
+		if (!found) {
+			if (p) p->reset();
+		}
 	}
 
 	// 4 - Copy on screen only the UpdateRects by stretching them.

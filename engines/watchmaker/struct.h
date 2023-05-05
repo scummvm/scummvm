@@ -417,6 +417,13 @@ struct SRect {
 	int32  x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 	constexpr SRect() = default;
 	constexpr SRect(int32 _x1, int32 _y1, int32 _x2, int32 _y2): x1(_x1), y1(_y1), x2(_x2), y2(_y2) {}
+
+	void reset() {
+		x1 = 0;
+		y1 = 0;
+		x2 = 0;
+		y2 = 0;
+	}
 };
 
 struct SD3DRect {
