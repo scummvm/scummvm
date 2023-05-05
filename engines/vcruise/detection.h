@@ -37,8 +37,6 @@ enum VCruiseGameFlag {
 	VCRUISE_GF_WANT_MP3			= (1 << 0),
 	VCRUISE_GF_WANT_OGG_VORBIS	= (1 << 1),
 	VCRUISE_GF_NEED_JPEG		= (1 << 2),
-	VCRUISE_GF_CD_VARIANT		= (1 << 3),
-	VCRUISE_GF_DVD_VARIANT		= (1 << 4),
 };
 
 struct VCruiseGameDescription {

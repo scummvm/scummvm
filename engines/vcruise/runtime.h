@@ -66,6 +66,13 @@ namespace VCruise {
 static const uint kNumDirections = 8;
 static const uint kNumHighPrecisionDirections = 256;
 static const uint kHighPrecisionDirectionMultiplier = kNumHighPrecisionDirections / kNumDirections;
+static const uint kNumStartConfigs = 3;
+
+enum StartConfig {
+	kStartConfigCheatMenu,
+	kStartConfigInitial,
+	kStartConfigAlt,
+};
 
 class AudioPlayer;
 class MenuInterface;
@@ -283,6 +290,15 @@ struct ScoreTrackDef {
 	typedef Common::HashMap<Common::String, ScoreSectionDef> ScoreSectionMap_t;
 
 	ScoreSectionMap_t sections;
+};
+
+struct StartConfigDef {
+	StartConfigDef();
+
+	uint disc;
+	uint room;
+	uint screen;
+	uint direction;
 };
 
 struct StaticAnimParams {
@@ -508,7 +524,7 @@ class Runtime {
 public:
 	friend class RuntimeMenuInterface;
 
-	Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID, bool isCDVariant, bool isDVDVariant);
+	Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID);
 	virtual ~Runtime();
 
 	void initSections(const Common::Rect &gameRect, const Common::Rect &menuRect, const Common::Rect &trayRect, const Common::Rect &fullscreenMenuRect, const Graphics::PixelFormat &pixFmt);
@@ -531,6 +547,7 @@ public:
 
 	void recordSaveGameSnapshot();
 	void restoreSaveGameSnapshot();
+	Common::SharedPtr<SaveGameSnapshot> generateNewGameSnapshot() const;
 
 	void saveGame(Common::WriteStream *stream) const;
 	LoadGameOutcome loadGame(Common::ReadStream *stream);
@@ -745,6 +762,7 @@ private:
 
 	void loadIndex();
 	void findWaves();
+	void loadConfig(const char *cfgPath);
 	void loadScore();
 	Common::SharedPtr<SoundInstance> loadWave(const Common::String &soundName, uint soundID, const Common::ArchiveMemberPtr &archiveMemberPtr);
 	SoundCache *loadCache(SoundInstance &sound);
@@ -1201,8 +1219,8 @@ private:
 	const Graphics::Font *_subtitleFont;
 	Common::SharedPtr<Graphics::Font> _subtitleFontKeepalive;
 	uint _languageIndex;
-	bool _isDVDVariant;
 	bool _isCDVariant;
+	StartConfigDef _startConfigs[kNumStartConfigs];
 
 	typedef Common::HashMap<uint, SubtitleDef> FrameToSubtitleMap_t;
 	typedef Common::HashMap<uint, FrameToSubtitleMap_t> AnimSubtitleMap_t;

@@ -105,9 +105,6 @@ Common::Error VCruiseEngine::run() {
 
 	syncSoundSettings();
 
-	bool isCDVariant = ((_gameDescription->desc.flags & VCRUISE_GF_CD_VARIANT) != 0);
-	bool isDVDVariant = ((_gameDescription->desc.flags & VCRUISE_GF_DVD_VARIANT) != 0);
-
 	const Graphics::PixelFormat *fmt16_565 = nullptr;
 	const Graphics::PixelFormat *fmt16_555 = nullptr;
 	const Graphics::PixelFormat *fmt32 = nullptr;
@@ -167,7 +164,7 @@ Common::Error VCruiseEngine::run() {
 
 	_system->fillScreen(0);
 
-	_runtime.reset(new Runtime(_system, _mixer, _rootFSNode, _gameDescription->gameID, isCDVariant, isDVDVariant));
+	_runtime.reset(new Runtime(_system, _mixer, _rootFSNode, _gameDescription->gameID));
 	_runtime->initSections(_videoRect, _menuBarRect, _trayRect, Common::Rect(640, 480), _system->getScreenFormat());
 
 	const char *exeName = _gameDescription->desc.filesDescriptions[0].fileName;

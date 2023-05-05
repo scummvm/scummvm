@@ -118,15 +118,7 @@ Common::Point RuntimeMenuInterface::getMouseCoordinate() const {
 }
 
 void RuntimeMenuInterface::restartGame() const {
-	Common::SharedPtr<SaveGameSnapshot> snapshot(new SaveGameSnapshot());
-	
-	snapshot->roomNumber = 1;
-	snapshot->screenNumber = 0xb0;
-
-	if (_runtime->_gameID == GID_SCHIZM)
-		snapshot->loadedAnimation = 200;
-	else
-		snapshot->loadedAnimation = 1;
+	Common::SharedPtr<SaveGameSnapshot> snapshot = _runtime->generateNewGameSnapshot();
 
 	_runtime->_saveGame = snapshot;
 	_runtime->restoreSaveGameSnapshot();
@@ -607,6 +599,9 @@ void TriggeredOneShot::read(Common::ReadStream *stream) {
 ScoreSectionDef::ScoreSectionDef() : volumeOrDurationInSeconds(0) {
 }
 
+StartConfigDef::StartConfigDef() : disc(0), room(0), screen(0), direction(0) {
+}
+
 StaticAnimParams::StaticAnimParams() : initialDelay(0), repeatDelay(0), lockInteractions(false) {
 }
 
@@ -915,7 +910,7 @@ void SaveGameSnapshot::writeString(Common::WriteStream *stream, const Common::St
 FontCacheItem::FontCacheItem() : font(nullptr), size(0) {
 }
 
-Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID, bool isCDVariant, bool isDVDVariant)
+Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _hero(0), _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
 	  _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false),
@@ -931,7 +926,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _listenerX(0), _listenerY(0), _listenerAngle(0), _soundCacheIndex(0),
 	  _isInGame(false),
 	  _subtitleFont(nullptr), _isDisplayingSubtitles(false), _languageIndex(0),
-	  _isCDVariant(isCDVariant), _isDVDVariant(isDVDVariant) {
+	  _isCDVariant(false) {
 
 	for (uint i = 0; i < kNumDirections; i++) {
 		_haveIdleAnimations[i] = false;
@@ -1132,28 +1127,23 @@ bool Runtime::bootGame(bool newGame) {
 	debug(1, "Waves indexed OK");
 
 	if (_gameID == GID_SCHIZM) {
+		loadConfig("Schizm.ini");
+		debug(1, "Config indexed OK");
+
 		loadScore();
 		debug(1, "Score loaded OK");
-
-		if (_isCDVariant == _isDVDVariant)
-			error("Detection entry is malformed, Schizm requires either VCRUISE_GF_CD_VARIANT or VCRUISE_GF_DVD_VARIANT");
+	} else {
+		StartConfigDef &startConfig = _startConfigs[kStartConfigInitial];
+		startConfig.disc = 1;
+		startConfig.room = 1;
+		startConfig.screen = 0xb0;
+		startConfig.direction = 0;
 	}
 
 	_trayBackgroundGraphic = loadGraphic("Pocket", true);
 	_trayHighlightGraphic = loadGraphic("Select", true);
 	_trayCompassGraphic = loadGraphic("Select_1", true);
 	_trayCornerGraphic = loadGraphic("Select_2", true);
-
-	_gameState = kGameStateIdle;
-
-	if (newGame) {
-		if (ConfMan.hasKey("vcruise_skip_menu") && ConfMan.getBool("vcruise_skip_menu")) {
-			_isInGame = true;
-			changeToScreen(1, 0xb0);
-		} else {
-			changeToScreen(1, 0xb1);
-		}
-	}
 
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
 
@@ -1238,6 +1228,16 @@ bool Runtime::bootGame(bool newGame) {
 				_uiGraphics[i] = loadGraphic(Common::String::format("Image%03u", static_cast<uint>(i)), false);
 		} else if (_gameID == GID_SCHIZM) {
 			_uiGraphics[i] = loadGraphic(Common::String::format("Data%03u", i), false);
+		}
+	}
+
+	if (newGame) {
+		if (ConfMan.hasKey("vcruise_skip_menu") && ConfMan.getBool("vcruise_skip_menu")) {
+			_saveGame = generateNewGameSnapshot();
+			restoreSaveGameSnapshot();
+		} else {
+			_gameState = kGameStateIdle;
+			changeToScreen(1, 0xb1);
 		}
 	}
 
@@ -2343,6 +2343,33 @@ void Runtime::findWaves() {
 		name.toLowercase();
 
 		_waves[name] = wave;
+	}
+}
+
+void Runtime::loadConfig(const char *filePath) {
+	Common::INIFile configINI;
+	if (!configINI.loadFromFile(filePath))
+		error("Couldn't load config '%s'", filePath);
+
+	for (uint i = 0; i < kNumStartConfigs; i++) {
+		Common::String cfgKey = Common::String::format("dwStart%02u", i);
+		Common::String startConfigValue;
+
+		if (!configINI.getKey(cfgKey, "TextSettings", startConfigValue))
+			error("Config key '%s' is missing", cfgKey.c_str());
+
+		StartConfigDef &startDef = _startConfigs[i];
+		if (sscanf(startConfigValue.c_str(), "0x%02x,0x%02x,0x%02x,0x%02x", &startDef.disc, &startDef.room, &startDef.screen, &startDef.direction) != 4)
+			error("Start config key '%s' is malformed", cfgKey.c_str());
+	}
+
+	_isCDVariant = false;
+
+	Common::String cdVersionValue;
+	if (configINI.getKey("bStatusVersionCD", "ValueSettings", cdVersionValue)) {
+		uint boolValue = 0;
+		if (sscanf(cdVersionValue.c_str(), "%u", &boolValue) == 1)
+			_isCDVariant = (boolValue != 0);
 	}
 }
 
@@ -4713,6 +4740,21 @@ void Runtime::restoreSaveGameSnapshot() {
 	redrawTray();
 }
 
+Common::SharedPtr<SaveGameSnapshot> Runtime::generateNewGameSnapshot() const {
+	Common::SharedPtr<SaveGameSnapshot> snapshot(new SaveGameSnapshot());
+
+	snapshot->roomNumber = _startConfigs[kStartConfigInitial].room;
+	snapshot->screenNumber = _startConfigs[kStartConfigInitial].screen;
+	snapshot->direction = _startConfigs[kStartConfigInitial].direction;
+
+	if (_gameID == GID_SCHIZM)
+		snapshot->loadedAnimation = 200;
+	else
+		snapshot->loadedAnimation = 1;
+
+	return snapshot;
+}
+
 void Runtime::saveGame(Common::WriteStream *stream) const {
 	_saveGame->write(stream);
 }
@@ -6282,7 +6324,7 @@ OPCODE_STUB(BitOr)
 OPCODE_STUB(AngleGet)
 
 void Runtime::scriptOpIsDVDVersion(ScriptArg_t arg) {
-	_scriptStack.push_back(StackValue(_isDVDVariant ? 1 : 0));
+	_scriptStack.push_back(StackValue(_isCDVariant ? 0 : 1));
 }
 
 void Runtime::scriptOpIsCDVersion(ScriptArg_t arg) {
