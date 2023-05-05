@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-05 13:59+0000\n"
+"POT-Creation-Date: 2023-05-05 20:35+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -451,7 +451,8 @@ msgstr "ההורדה הושלמה. ירדו %d חבילות, %s %S"
 #. I18N: Close dialog button
 #: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:384
 #: gui/gui-manager.cpp:162 gui/textviewer.cpp:53 gui/unknown-game-dialog.cpp:53
-#: backends/platform/android/options.cpp:359 engines/scumm/help.cpp:123
+#: backends/platform/android/options.cpp:359
+#: backends/platform/ios7/ios7_options.mm:128 engines/scumm/help.cpp:123
 #: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
 #: engines/scumm/help.cpp:189 engines/scumm/help.cpp:207
 msgid "Close"
@@ -1340,7 +1341,7 @@ msgstr "לא ניתן לשנות הגדרת סנכרון אנכי"
 msgid "the shader could not be changed"
 msgstr "לא ניתן לשנות את מצב המתיחה"
 
-#: gui/options.cpp:1415
+#: gui/options.cpp:1415 backends/platform/ios7/ios7_options.mm:68
 msgid "Touchpad mouse mode"
 msgstr "מצב משטח מגע"
 
@@ -2947,7 +2948,7 @@ msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "שגיאה: לא ניתן להעתיק את השמירה למשבצת חדשה"
 
 #: engines/engine.cpp:630 engines/savestate.cpp:98
-#: backends/platform/ios7/ios7_osys_main.cpp:254 engines/mm/xeen/saves.cpp:293
+#: backends/platform/ios7/ios7_osys_main.cpp:255 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:216
 msgid "Autosave"
 msgstr "שמירה אוטומטית"
@@ -4147,26 +4148,72 @@ msgstr "הגדלת חומרה (מהיר, אך באיכות נמוכה)"
 msgid "Software scale (good quality, but slower)"
 msgstr "הגדלת תוכנה (באיכות טובה, אך איטית יותר)"
 
-#: backends/platform/ios7/ios7_osys_events.cpp:343
-#: backends/platform/ios7/ios7_osys_events.cpp:474
+#: backends/platform/ios7/ios7_options.mm:67
+#, fuzzy
+#| msgid "Show On-screen control"
+msgid "Show On-screen control (iOS 15 and later)"
+msgstr "הצגת בקרים על המסך"
+
+#: backends/platform/ios7/ios7_options.mm:69
+#, fuzzy
+#| msgid "Mouse-click-and-drag mode enabled."
+msgid "Mouse-click-and-drag mode"
+msgstr "מצב עכבר-לחיצה-וגרירה פעיל."
+
+#: backends/platform/ios7/ios7_options.mm:71
+#, fuzzy
+msgid "Controls Help"
+msgstr "שליטה"
+
+#: backends/platform/ios7/ios7_options.mm:102
+msgid ""
+"Gestures and controls:\n"
+"\n"
+"One finger tap: Left mouse click\n"
+"Two finger tap: Right mouse click\n"
+"Two finger double tap: ESC\n"
+"Two finger swipe (bottom to top): Toggles Click and drag mode\n"
+"Two finger swipe (left to right): Toggles between touch direct mode and "
+"touchpad mode\n"
+"Two finger swipe (right to left): Shows/hides on-screen controls\n"
+"Two finger swipe (top to bottom): Global Main Menu\n"
+"Three finger swipe: Arrow keys\n"
+"Pinch gesture: Enables/disables keyboard\n"
+"Keyboard spacebar: Pause"
+msgstr ""
+
+#: backends/platform/ios7/ios7_options.mm:115
+msgid ""
+"Using the Apple TV remote control:\n"
+"\n"
+"Press Touch area: Left mouse click\n"
+"Press Play/Pause button: Right mouse click\n"
+"Press Back/Menu button in game: Global Main menu\n"
+"Press Back/Menu button in launcher: Apple TV Home\n"
+"Press and hold Play/Pause button: Show keyboard with extra keys\n"
+"Touch (not press) on top of Touch area: Up arrow key\n"
+"Touch (not press) on left of Touch area: Left arrow key\n"
+"Touch (not press) on right of Touch area: Right arrow key\n"
+"Touch (not press) on bottom of Touch area: Down arrow key\n"
+"Keyboard spacebar: Pause"
+msgstr ""
+
+#: backends/platform/ios7/ios7_osys_events.cpp:412
 #: backends/platform/iphone/osys_events.cpp:299
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "מצב עכבר-לחיצה-וגרירה פעיל."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:345
-#: backends/platform/ios7/ios7_osys_events.cpp:476
+#: backends/platform/ios7/ios7_osys_events.cpp:414
 #: backends/platform/iphone/osys_events.cpp:301
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "מצב עכבר-לחיצה-וגרירה כבוי."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:356
-#: backends/platform/ios7/ios7_osys_events.cpp:495
+#: backends/platform/ios7/ios7_osys_events.cpp:435
 #: backends/platform/iphone/osys_events.cpp:312
 msgid "Touchpad mode enabled."
 msgstr "מצב משטח מגע פעיל."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:358
-#: backends/platform/ios7/ios7_osys_events.cpp:497
+#: backends/platform/ios7/ios7_osys_events.cpp:437
 #: backends/platform/iphone/osys_events.cpp:314
 msgid "Touchpad mode disabled."
 msgstr "מצב משטח מגע כבוי."
@@ -10450,10 +10497,6 @@ msgstr ""
 
 #~ msgid "ScummVM Main Menu"
 #~ msgstr "תפריט ראשי של ScummVM"
-
-#, fuzzy
-#~ msgid "Controls"
-#~ msgstr "שליטה"
 
 #~ msgid "~L~eft handed mode"
 #~ msgstr "~ L ~ eft hand mode"
