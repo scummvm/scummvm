@@ -369,16 +369,8 @@ enum LoadGameOutcome {
 	kLoadGameOutcomeSaveIsTooOld,
 };
 
-struct SaveGameSnapshot {
-	SaveGameSnapshot();
-
-	void write(Common::WriteStream *stream) const;
-	LoadGameOutcome read(Common::ReadStream *stream);
-
-	static const uint kSaveGameIdentifier = 0x53566372;
-	static const uint kSaveGameCurrentVersion = 6;
-	static const uint kSaveGameEarliestSupportedVersion = 2;
-
+// State that is swapped when switching between characters in Schizm
+struct SaveGameSwappableState {
 	struct InventoryItem {
 		InventoryItem();
 
@@ -410,15 +402,15 @@ struct SaveGameSnapshot {
 		void read(Common::ReadStream *stream);
 	};
 
-	static Common::String safeReadString(Common::ReadStream *stream);
-	static void writeString(Common::WriteStream *stream, const Common::String &str);
+	SaveGameSwappableState();
 
 	uint roomNumber;
 	uint screenNumber;
 	uint direction;
-	uint hero;
 
-	bool escOn;
+	uint loadedAnimation;
+	uint animDisplayingFrame;
+
 	int musicTrack;
 
 	Common::String scoreTrack;
@@ -426,10 +418,33 @@ struct SaveGameSnapshot {
 	bool musicActive;
 
 	int32 musicVolume;
-
-	uint loadedAnimation;
-	uint animDisplayingFrame;
 	int32 animVolume;
+
+	Common::Array<InventoryItem> inventory;
+	Common::Array<Sound> sounds;
+	Common::Array<RandomAmbientSound> randomAmbientSounds;
+};
+
+struct SaveGameSnapshot {
+	SaveGameSnapshot();
+
+	void write(Common::WriteStream *stream) const;
+	LoadGameOutcome read(Common::ReadStream *stream);
+
+	static const uint kSaveGameIdentifier = 0x53566372;
+	static const uint kSaveGameCurrentVersion = 6;
+	static const uint kSaveGameEarliestSupportedVersion = 2;
+	static const uint kMaxStates = 2;
+
+	static Common::String safeReadString(Common::ReadStream *stream);
+	static void writeString(Common::WriteStream *stream, const Common::String &str);
+
+	uint hero;
+
+	uint numStates;
+	Common::SharedPtr<SaveGameSwappableState> states[kMaxStates];
+
+	bool escOn;
 
 	StaticAnimParams pendingStaticAnimParams;
 	SoundParams3D pendingSoundParams3D;
@@ -438,11 +453,8 @@ struct SaveGameSnapshot {
 	int32 listenerY;
 	int32 listenerAngle;
 
-	Common::Array<InventoryItem> inventory;
-	Common::Array<Sound> sounds;
 	Common::Array<TriggeredOneShot> triggeredOneShots;
 	Common::HashMap<uint32, uint> sayCycles;
-	Common::Array<RandomAmbientSound> randomAmbientSounds;
 
 	Common::HashMap<uint32, int32> variables;
 	Common::HashMap<uint, uint32> timers;
@@ -1214,6 +1226,7 @@ private:
 	uint _soundCacheIndex;
 
 	Common::SharedPtr<SaveGameSnapshot> _saveGame;
+	Common::SharedPtr<SaveGameSwappableState> _altState;
 	bool _isInGame;
 
 	const Graphics::Font *_subtitleFont;

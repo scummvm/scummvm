@@ -650,23 +650,23 @@ Fraction::Fraction() : numerator(0), denominator(1) {
 Fraction::Fraction(uint pNumerator, uint pDenominator) : numerator(pNumerator), denominator(pDenominator) {
 }
 
-SaveGameSnapshot::InventoryItem::InventoryItem() : itemID(0), highlighted(false) {
+SaveGameSwappableState::InventoryItem::InventoryItem() : itemID(0), highlighted(false) {
 }
 
-void SaveGameSnapshot::InventoryItem::write(Common::WriteStream *stream) const {
+void SaveGameSwappableState::InventoryItem::write(Common::WriteStream *stream) const {
 	stream->writeUint32BE(itemID);
 	stream->writeByte(highlighted ? 1 : 0);
 }
 
-void SaveGameSnapshot::InventoryItem::read(Common::ReadStream *stream) {
+void SaveGameSwappableState::InventoryItem::read(Common::ReadStream *stream) {
 	itemID = stream->readUint32BE();
 	highlighted = (stream->readByte() != 0);
 }
 
-SaveGameSnapshot::Sound::Sound() : id(0), volume(0), balance(0), is3D(false), isLooping(false), isSpeech(false), x(0), y(0) {
+SaveGameSwappableState::Sound::Sound() : id(0), volume(0), balance(0), is3D(false), isLooping(false), isSpeech(false), x(0), y(0) {
 }
 
-void SaveGameSnapshot::Sound::write(Common::WriteStream *stream) const {
+void SaveGameSwappableState::Sound::write(Common::WriteStream *stream) const {
 	stream->writeUint32BE(name.size());
 	stream->writeString(name);
 
@@ -684,7 +684,7 @@ void SaveGameSnapshot::Sound::write(Common::WriteStream *stream) const {
 	params3D.write(stream);
 }
 
-void SaveGameSnapshot::Sound::read(Common::ReadStream *stream) {
+void SaveGameSwappableState::Sound::read(Common::ReadStream *stream) {
 	uint nameLen = stream->readUint32BE();
 
 	if (stream->eos() || stream->err() || nameLen > 256)
@@ -706,30 +706,41 @@ void SaveGameSnapshot::Sound::read(Common::ReadStream *stream) {
 	params3D.read(stream);
 }
 
-SaveGameSnapshot::SaveGameSnapshot() : roomNumber(0), screenNumber(0), direction(0), hero(0), escOn(false), musicTrack(0), musicVolume(100), musicActive(true), loadedAnimation(0),
-									   animDisplayingFrame(0), animVolume(100), listenerX(0), listenerY(0), listenerAngle(0) {
+SaveGameSwappableState::SaveGameSwappableState() : roomNumber(0), screenNumber(0), direction(0), musicTrack(0), musicVolume(100), musicActive(true),
+												   animVolume(100), loadedAnimation(0), animDisplayingFrame(0) {
+}
+
+SaveGameSnapshot::SaveGameSnapshot() : hero(0), escOn(false), numStates(1), listenerX(0), listenerY(0), listenerAngle(0) {
 }
 
 void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 	stream->writeUint32BE(kSaveGameIdentifier);
 	stream->writeUint32BE(kSaveGameCurrentVersion);
 
-	stream->writeUint32BE(roomNumber);
-	stream->writeUint32BE(screenNumber);
-	stream->writeUint32BE(direction);
+	stream->writeUint32BE(numStates);
+
+	for (uint sti = 0; sti < numStates; sti++) {
+		stream->writeUint32BE(states[sti]->roomNumber);
+		stream->writeUint32BE(states[sti]->screenNumber);
+		stream->writeUint32BE(states[sti]->direction);
+	}
+
 	stream->writeUint32BE(hero);
 
 	stream->writeByte(escOn ? 1 : 0);
-	stream->writeSint32BE(musicTrack);
-	stream->writeSint32BE(musicVolume);
 
-	writeString(stream, scoreTrack);
-	writeString(stream, scoreSection);
-	stream->writeByte(musicActive ? 1 : 0);
+	for (uint sti = 0; sti < numStates; sti++) {
+		stream->writeSint32BE(states[sti]->musicTrack);
+		stream->writeSint32BE(states[sti]->musicVolume);
 
-	stream->writeUint32BE(loadedAnimation);
-	stream->writeUint32BE(animDisplayingFrame);
-	stream->writeSint32BE(animVolume);
+		writeString(stream, states[sti]->scoreTrack);
+		writeString(stream, states[sti]->scoreSection);
+		stream->writeByte(states[sti]->musicActive ? 1 : 0);
+
+		stream->writeUint32BE(states[sti]->loadedAnimation);
+		stream->writeUint32BE(states[sti]->animDisplayingFrame);
+		stream->writeSint32BE(states[sti]->animVolume);
+	}
 
 	pendingStaticAnimParams.write(stream);
 	pendingSoundParams3D.write(stream);
@@ -738,20 +749,27 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 	stream->writeSint32BE(listenerY);
 	stream->writeSint32BE(listenerAngle);
 
-	stream->writeUint32BE(inventory.size());
-	stream->writeUint32BE(sounds.size());
+	for (uint sti = 0; sti < numStates; sti++) {
+		stream->writeUint32BE(states[sti]->inventory.size());
+		stream->writeUint32BE(states[sti]->sounds.size());
+	}
+
 	stream->writeUint32BE(triggeredOneShots.size());
 	stream->writeUint32BE(sayCycles.size());
-	stream->writeUint32BE(randomAmbientSounds.size());
+
+	for (uint sti = 0; sti < numStates; sti++)
+		stream->writeUint32BE(states[sti]->randomAmbientSounds.size());
 
 	stream->writeUint32BE(variables.size());
 	stream->writeUint32BE(timers.size());
 
-	for (const InventoryItem &invItem : inventory)
-		invItem.write(stream);
+	for (uint sti = 0; sti < numStates; sti++) {
+		for (const SaveGameSwappableState::InventoryItem &invItem : states[sti]->inventory)
+			invItem.write(stream);
 
-	for (const Sound &sound : sounds)
-		sound.write(stream);
+		for (const SaveGameSwappableState::Sound &sound : states[sti]->sounds)
+			sound.write(stream);
+	}
 
 	for (const TriggeredOneShot &triggeredOneShot : triggeredOneShots)
 		triggeredOneShot.write(stream);
@@ -761,8 +779,10 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 		stream->writeUint32BE(cycle._value);
 	}
 
-	for (const RandomAmbientSound &randomAmbientSound : randomAmbientSounds)
-		randomAmbientSound.write(stream);
+	for (uint sti = 0; sti < numStates; sti++) {
+		for (const RandomAmbientSound &randomAmbientSound : states[sti]->randomAmbientSounds)
+			randomAmbientSound.write(stream);
+	}
 
 	for (const Common::HashMap<uint32, int32>::Node &var : variables) {
 		stream->writeUint32BE(var._key);
@@ -790,10 +810,22 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 
 	if (saveVersion < kSaveGameEarliestSupportedVersion)
 		return kLoadGameOutcomeSaveIsTooOld;
-	
-	roomNumber = stream->readUint32BE();
-	screenNumber = stream->readUint32BE();
-	direction = stream->readUint32BE();
+
+	if (saveVersion >= 6)
+		numStates = stream->readUint32BE();
+	else
+		numStates = 1;
+
+	if (numStates < 1 || numStates >= kMaxStates)
+		return kLoadGameOutcomeSaveDataCorrupted;
+
+	for (uint sti = 0; sti < numStates; sti++) {
+		states[sti].reset(new SaveGameSwappableState());
+
+		states[sti]->roomNumber = stream->readUint32BE();
+		states[sti]->screenNumber = stream->readUint32BE();
+		states[sti]->direction = stream->readUint32BE();
+	}
 
 	if (saveVersion >= 6)
 		hero = stream->readUint32BE();
@@ -801,28 +833,31 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 		hero = 0;
 
 	escOn = (stream->readByte() != 0);
-	musicTrack = stream->readSint32BE();
 
-	if (saveVersion >= 5)
-		musicVolume = stream->readSint32BE();
-	else
-		musicVolume = 100;
+	for (uint sti = 0; sti < numStates; sti++) {
+		states[sti]->musicTrack = stream->readSint32BE();
 
-	if (saveVersion >= 6) {
-		scoreTrack = safeReadString(stream);
-		scoreSection = safeReadString(stream);
-		musicActive = (stream->readByte() != 0);
-	} else {
-		musicActive = true;
+		if (saveVersion >= 5)
+			states[sti]->musicVolume = stream->readSint32BE();
+		else
+			states[sti]->musicVolume = 100;
+
+		if (saveVersion >= 6) {
+			states[sti]->scoreTrack = safeReadString(stream);
+			states[sti]->scoreSection = safeReadString(stream);
+			states[sti]->musicActive = (stream->readByte() != 0);
+		} else {
+			states[sti]->musicActive = true;
+		}
+
+		states[sti]->loadedAnimation = stream->readUint32BE();
+		states[sti]->animDisplayingFrame = stream->readUint32BE();
+
+		if (saveVersion >= 6)
+			states[sti]->animVolume = stream->readSint32BE();
+		else
+			states[sti]->animVolume = 100;
 	}
-
-	loadedAnimation = stream->readUint32BE();
-	animDisplayingFrame = stream->readUint32BE();
-
-	if (saveVersion >= 6)
-		animVolume = stream->readSint32BE();
-	else
-		animVolume = 100;
 
 	pendingStaticAnimParams.read(stream);
 	pendingSoundParams3D.read(stream);
@@ -831,17 +866,26 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 	listenerY = stream->readSint32BE();
 	listenerAngle = stream->readSint32BE();
 
-	uint numInventory = stream->readUint32BE();
-	uint numSounds = stream->readUint32BE();
+	uint numInventory[kMaxStates] = {};
+	for (uint sti = 0; sti < numStates; sti++)
+		numInventory[sti] = stream->readUint32BE();
+
+	uint numSounds[kMaxStates] = {};
+	for (uint sti = 0; sti < numStates; sti++)
+		numSounds[sti] = stream->readUint32BE();
+
 	uint numOneShots = stream->readUint32BE();
 
 	uint numSayCycles = 0;
-	if (saveVersion >= 4)
+	uint numRandomAmbientSounds[kMaxStates] = {};
+	if (saveVersion >= 4) {
 		numSayCycles = stream->readUint32BE();
+	}
 
-	uint numRandomAmbientSounds = 0;
-	if (saveVersion >= 3)
-		numRandomAmbientSounds = stream->readUint32BE();
+	if (saveVersion >= 3) {
+		for (uint sti = 0; sti < numStates; sti++)
+			numRandomAmbientSounds[sti] = stream->readUint32BE();
+	}
 
 	uint numVars = stream->readUint32BE();
 	uint numTimers = stream->readUint32BE();
@@ -849,16 +893,22 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 	if (stream->eos() || stream->err())
 		return kLoadGameOutcomeSaveDataCorrupted;
 
-	inventory.resize(numInventory);
-	sounds.resize(numSounds);
+	for (uint sti = 0; sti < numStates; sti++) {
+		states[sti]->inventory.resize(numInventory[sti]);
+		states[sti]->sounds.resize(numSounds[sti]);
+		states[sti]->randomAmbientSounds.resize(numRandomAmbientSounds[sti]);
+	}
+
 	triggeredOneShots.resize(numOneShots);
-	randomAmbientSounds.resize(numRandomAmbientSounds);
 
-	for (uint i = 0; i < numInventory; i++)
-		inventory[i].read(stream);
+	
+	for (uint sti = 0; sti < numStates; sti++) {
+		for (uint i = 0; i < numInventory[sti]; i++)
+			states[sti]->inventory[i].read(stream);
 
-	for (uint i = 0; i < numSounds; i++)
-		sounds[i].read(stream);
+		for (uint i = 0; i < numSounds[sti]; i++)
+			states[sti]->sounds[i].read(stream);
+	}
 
 	for (uint i = 0; i < numOneShots; i++)
 		triggeredOneShots[i].read(stream);
@@ -870,8 +920,10 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 		sayCycles[key] = value;
 	}
 
-	for (uint i = 0; i < numRandomAmbientSounds; i++)
-		randomAmbientSounds[i].read(stream);
+	for (uint sti = 0; sti < numStates; sti++) {
+		for (uint i = 0; i < numRandomAmbientSounds[sti]; i++)
+			states[sti]->randomAmbientSounds[i].read(stream);
+	}
 
 	for (uint i = 0; i < numVars; i++) {
 		uint32 key = stream->readUint32BE();
@@ -1231,12 +1283,13 @@ bool Runtime::bootGame(bool newGame) {
 		}
 	}
 
+	_gameState = kGameStateIdle;
+
 	if (newGame) {
 		if (ConfMan.hasKey("vcruise_skip_menu") && ConfMan.getBool("vcruise_skip_menu")) {
 			_saveGame = generateNewGameSnapshot();
 			restoreSaveGameSnapshot();
 		} else {
-			_gameState = kGameStateIdle;
 			changeToScreen(1, 0xb1);
 		}
 	}
@@ -4562,17 +4615,27 @@ void Runtime::recordSaveGameSnapshot() {
 
 	_saveGame = snapshot;
 
+	snapshot->states[0].reset(new SaveGameSwappableState());
+	if (_gameID == GID_REAH)
+		snapshot->numStates = 1;
+	else if (_gameID == GID_SCHIZM) {
+		snapshot->numStates = 2;
+		snapshot->states[1].reset(new SaveGameSwappableState());
+	}
+
+	SaveGameSwappableState *mainState = snapshot->states[0].get();
+
 	for (const InventoryItem &inventoryItem : _inventory) {
-		SaveGameSnapshot::InventoryItem saveItem;
+		SaveGameSwappableState::InventoryItem saveItem;
 		saveItem.itemID = inventoryItem.itemID;
 		saveItem.highlighted = inventoryItem.highlighted;
 
-		snapshot->inventory.push_back(saveItem);
+		mainState->inventory.push_back(saveItem);
 	}
 
-	snapshot->roomNumber = _roomNumber;
-	snapshot->screenNumber = _screenNumber;
-	snapshot->direction = _direction;
+	mainState->roomNumber = _roomNumber;
+	mainState->screenNumber = _screenNumber;
+	mainState->direction = _direction;
 	snapshot->hero = _hero;
 
 	snapshot->pendingStaticAnimParams = _pendingStaticAnimParams;
@@ -4584,22 +4647,22 @@ void Runtime::recordSaveGameSnapshot() {
 
 	snapshot->escOn = _escOn;
 
-	snapshot->musicTrack = _musicTrack;
-	snapshot->musicActive = _musicActive;
+	mainState->musicTrack = _musicTrack;
+	mainState->musicActive = _musicActive;
 
-	snapshot->musicVolume = _musicVolume;
+	mainState->musicVolume = _musicVolume;
 
 	// If music volume is ramping, use the end volume and skip the ramp
 	if (_musicVolumeRampRatePerMSec != 0)
-		snapshot->musicVolume = _musicVolumeRampEnd;
+		mainState->musicVolume = _musicVolumeRampEnd;
 
-	snapshot->loadedAnimation = _loadedAnimation;
-	snapshot->animDisplayingFrame = _animDisplayingFrame;
+	mainState->loadedAnimation = _loadedAnimation;
+	mainState->animDisplayingFrame = _animDisplayingFrame;
 
 	for (const Common::SharedPtr<SoundInstance> &soundPtr : _activeSounds) {
 		const SoundInstance &sound = *soundPtr;
 
-		SaveGameSnapshot::Sound saveSound;
+		SaveGameSwappableState::Sound saveSound;
 		saveSound.name = sound.name;
 
 		saveSound.id = sound.id;
@@ -4623,7 +4686,7 @@ void Runtime::recordSaveGameSnapshot() {
 
 		saveSound.params3D = sound.params3D;
 
-		snapshot->sounds.push_back(saveSound);
+		mainState->sounds.push_back(saveSound);
 	}
 
 	snapshot->pendingSoundParams3D = _pendingSoundParams3D;
@@ -4635,14 +4698,18 @@ void Runtime::recordSaveGameSnapshot() {
 	snapshot->listenerY = _listenerY;
 	snapshot->listenerAngle = _listenerAngle;
 
-	snapshot->randomAmbientSounds = _randomAmbientSounds;
+	mainState->randomAmbientSounds = _randomAmbientSounds;
 }
 
 void Runtime::restoreSaveGameSnapshot() {
 	uint32 timeBase = g_system->getMillis();
 
-	for (uint i = 0; i < kNumInventorySlots && i < _saveGame->inventory.size(); i++) {
-		const SaveGameSnapshot::InventoryItem &saveItem = _saveGame->inventory[i];
+	_altState = _saveGame->states[1];
+
+	SaveGameSwappableState *mainState = _saveGame->states[0].get();
+
+	for (uint i = 0; i < kNumInventorySlots && i < mainState->inventory.size(); i++) {
+		const SaveGameSwappableState::InventoryItem &saveItem = mainState->inventory[i];
 
 		_inventory[i].itemID = saveItem.itemID;
 		_inventory[i].highlighted = saveItem.highlighted;
@@ -4655,9 +4722,9 @@ void Runtime::restoreSaveGameSnapshot() {
 		}
 	}
 
-	_roomNumber = _saveGame->roomNumber;
-	_screenNumber = _saveGame->screenNumber;
-	_direction = _saveGame->direction;
+	_roomNumber = mainState->roomNumber;
+	_screenNumber = mainState->screenNumber;
+	_direction = mainState->direction;
 	_hero = _saveGame->hero;
 
 	_pendingStaticAnimParams = _saveGame->pendingStaticAnimParams;
@@ -4672,15 +4739,15 @@ void Runtime::restoreSaveGameSnapshot() {
 
 	_escOn = _saveGame->escOn;
 
-	_musicVolume = _saveGame->musicVolume;
+	_musicVolume = mainState->musicVolume;
 	_musicVolumeRampStartTime = 0;
 	_musicVolumeRampStartVolume = 0;
 	_musicVolumeRampRatePerMSec = 0;
 	_musicVolumeRampEnd = _musicVolume;
 
-	_musicActive = _saveGame->musicActive;
+	_musicActive = mainState->musicActive;
 
-	changeMusicTrack(_saveGame->musicTrack);
+	changeMusicTrack(mainState->musicTrack);
 
 	// Stop all sounds since the player instances are stored in the sound cache.
 	for (Common::SharedPtr<SoundInstance> &snd : _activeSounds)
@@ -4697,9 +4764,9 @@ void Runtime::restoreSaveGameSnapshot() {
 	_listenerY = _saveGame->listenerY;
 	_listenerAngle = _saveGame->listenerAngle;
 
-	_randomAmbientSounds = _saveGame->randomAmbientSounds;
+	_randomAmbientSounds = mainState->randomAmbientSounds;
 
-	for (const SaveGameSnapshot::Sound &sound : _saveGame->sounds) {
+	for (const SaveGameSwappableState::Sound &sound : mainState->sounds) {
 		Common::SharedPtr<SoundInstance> si(new SoundInstance());
 
 		si->name = sound.name;
@@ -4719,8 +4786,8 @@ void Runtime::restoreSaveGameSnapshot() {
 			triggerSound(true, *si, si->volume, si->balance, si->is3D, si->isSpeech);
 	}
 
-	uint anim = _saveGame->loadedAnimation;
-	uint frame = _saveGame->animDisplayingFrame;
+	uint anim = mainState->loadedAnimation;
+	uint frame = mainState->animDisplayingFrame;
 
 	AnimationDef animDef;
 	animDef.animNum = anim;
@@ -4743,14 +4810,30 @@ void Runtime::restoreSaveGameSnapshot() {
 Common::SharedPtr<SaveGameSnapshot> Runtime::generateNewGameSnapshot() const {
 	Common::SharedPtr<SaveGameSnapshot> snapshot(new SaveGameSnapshot());
 
-	snapshot->roomNumber = _startConfigs[kStartConfigInitial].room;
-	snapshot->screenNumber = _startConfigs[kStartConfigInitial].screen;
-	snapshot->direction = _startConfigs[kStartConfigInitial].direction;
+	snapshot->numStates = 1;
+	snapshot->states[0].reset(new SaveGameSwappableState());
 
-	if (_gameID == GID_SCHIZM)
-		snapshot->loadedAnimation = 200;
-	else
-		snapshot->loadedAnimation = 1;
+	SaveGameSwappableState *mainState = snapshot->states[0].get();
+
+	mainState->roomNumber = _startConfigs[kStartConfigInitial].room;
+	mainState->screenNumber = _startConfigs[kStartConfigInitial].screen;
+	mainState->direction = _startConfigs[kStartConfigInitial].direction;
+
+	if (_gameID == GID_SCHIZM) {
+		mainState->loadedAnimation = 200;
+
+		snapshot->numStates = 2;
+		snapshot->states[1].reset(new SaveGameSwappableState());
+
+		SaveGameSwappableState *altState = snapshot->states[1].get();
+
+		altState->roomNumber = _startConfigs[kStartConfigAlt].room;
+		altState->screenNumber = _startConfigs[kStartConfigAlt].screen;
+		altState->direction = _startConfigs[kStartConfigAlt].direction;
+
+		altState->loadedAnimation = altState->screenNumber;
+	} else
+		mainState->loadedAnimation = 1;
 
 	return snapshot;
 }
