@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-05-05 20:35+0000\n"
-"PO-Revision-Date: 2023-04-30 17:40+0000\n"
+"PO-Revision-Date: 2023-05-05 23:12+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -4170,21 +4170,16 @@ msgid "Software scale (good quality, but slower)"
 msgstr "Escalat per software (bona qualitat, però més lent)"
 
 #: backends/platform/ios7/ios7_options.mm:67
-#, fuzzy
-#| msgid "Show On-screen control"
 msgid "Show On-screen control (iOS 15 and later)"
-msgstr "Mostra el control En-pantalla"
+msgstr "Mostra el control en pantalla (iOS 15 i posteriors)"
 
 #: backends/platform/ios7/ios7_options.mm:69
-#, fuzzy
-#| msgid "Mouse-click-and-drag mode enabled."
 msgid "Mouse-click-and-drag mode"
-msgstr "S'ha activat el mode de clic-i-arrossega."
+msgstr "Mode de clic-i-arrossega amb el ratolí"
 
 #: backends/platform/ios7/ios7_options.mm:71
-#, fuzzy
 msgid "Controls Help"
-msgstr "Control"
+msgstr "Ajuda de controls"
 
 #: backends/platform/ios7/ios7_options.mm:102
 msgid ""
@@ -5587,15 +5582,15 @@ msgstr "Omet les línies de diàleg"
 
 #: engines/grim/grim.cpp:558
 msgid "Cycle Objects Up"
-msgstr ""
+msgstr "Recorre els objectes cap amunt"
 
 #: engines/grim/grim.cpp:563
 msgid "Cycle Objects Down"
-msgstr ""
+msgstr "Recorre els objectes cap avall"
 
 #: engines/grim/grim.cpp:573
 msgid "Quick Room Exit"
-msgstr ""
+msgstr "Sortida ràpida de la sala"
 
 #: engines/grim/grim.cpp:578
 msgid "Examine/Look"
@@ -5637,13 +5632,15 @@ msgstr ""
 
 #: engines/grim/metaengine.cpp:37
 msgid "Load user patch (unsupported)"
-msgstr ""
+msgstr "Carrega el pedaç d'usuari (no admès)"
 
 #: engines/grim/metaengine.cpp:38
 msgid ""
 "Load an user patch. Please note that the ScummVM team doesn't provide "
 "support for using such patches."
 msgstr ""
+"Carrega un pedaç d'usuari. Tingueu en compte que l'equip de ScummVM no "
+"proporciona suport per utilitzar aquests pedaços."
 
 #: engines/grim/metaengine.cpp:48 engines/zvision/metaengine.cpp:221
 msgid "Show FPS"
@@ -5651,7 +5648,7 @@ msgstr "Mostra els FPS"
 
 #: engines/grim/metaengine.cpp:49
 msgid "Show the current FPS-rate, while you play."
-msgstr ""
+msgstr "Mostra la velocitat actual de FPS, mentre es juga."
 
 #: engines/grim/metaengine.cpp:92
 msgid "Escape from Monkey Island support is not compiled in"
@@ -8953,10 +8950,8 @@ msgid "Speeds up animations."
 msgstr "Accelera les animacions."
 
 #: engines/vcruise/metaengine.cpp:75
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Skip main menu"
-msgstr "Obre el menú principal"
+msgstr "Omet el menú principal"
 
 #: engines/vcruise/metaengine.cpp:76
 msgid "Starts a new game upon launching instead of going to the main menu."
