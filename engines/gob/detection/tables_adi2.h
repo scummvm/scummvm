@@ -212,5 +212,25 @@
 	kFeatures640x480 | kFeaturesSCNDemo,
 	0, 0, 1
 },
+{
+	{
+		"adi2",
+		"Non-Interactive Demo",
+		{
+			{"demo.scn", 0, "16331b4db31b153f241ebcee49b7383d", 170},
+			{"demadi2d.vmd", 0, "658b5502bf0aeb46a39788f6a07e3d97", 7552841},
+			{"demarchd.vmd", 0, "a93184f0e297bb2e1ebfd64c1038e1ae", 5946788},
+			{"demoboud.vmd", 0, "37f3a61852c4485f2cc86b9880b98a6c", 3552135},
+			{0, 0, 0, 0}
+		},
+		DE_DEU,
+		kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
+	},
+	kGameTypeAdi2,
+	kFeatures640x480 | kFeaturesSCNDemo,
+	0, 0, 1
+},
 
 #endif // GOB_DETECTION_TABLES_ADI2_H
