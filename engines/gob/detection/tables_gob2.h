@@ -110,6 +110,20 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
+{ // Included in a German version of Adi 2
+	{
+		"gob2",
+		"",
+		AD_ENTRY1("intro.stk", "271863a3dfc27665fac4b3589a0e735f"),
+		DE_DEU,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeGob2,
+	kFeaturesAdLib,
+	0, 0, 0
+},
 { // Supplied by goodoldgeorg in bug report #4163
 	{
 		"gob2",
