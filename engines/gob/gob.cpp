@@ -613,7 +613,6 @@ Common::Error GobEngine::initGameParts() {
 		break;
 
 	case kGameTypeAdibou2:
-	case kGameTypeAdi2:
 	case kGameTypeAdi4:
 		_init     = new Init_v7(this);
 		_video    = new Video_v6(this);
@@ -627,6 +626,7 @@ Common::Error GobEngine::initGameParts() {
 		break;
 
 	case kGameTypeAdibou1:
+	case kGameTypeAdi2:
 		_init     = new Init_v2(this);
 		_video    = new Video_v2(this);
 		_inter    = new Inter_Adibou1(this);
