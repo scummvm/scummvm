@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-05-04 13:38+0000\n"
-"PO-Revision-Date: 2023-05-04 06:11+0000\n"
+"PO-Revision-Date: 2023-05-05 05:26+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -9354,7 +9354,7 @@ msgstr ""
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
-msgstr ""
+msgstr "Sensibilité des clics améliorée"
 
 #: engines/vcruise/metaengine.cpp:43
 msgid ""
@@ -9362,6 +9362,9 @@ msgid ""
 "interactions.  If this is off, any mouse movement while the mouse button is "
 "held cancels a click interaction."
 msgstr ""
+"Permet de déplacer la souris sur une courte distance sans annuler les "
+"interactions de clic. Si ceci est désactivé, tout mouvement de la souris "
+"alors que le bouton de la souris est maintenu annule une interaction de clic."
 
 #: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
