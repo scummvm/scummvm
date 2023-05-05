@@ -9055,7 +9055,9 @@ msgid ""
 "Allows the mouse to be moved a short distance without cancelling click "
 "interactions.  If this is off, any mouse movement while the mouse button is "
 "held cancels a click interaction."
-msgstr "クリック操作をキャンセルせず、ドラッグできるようにします。OFFの場合、マウスでドラッグを行うとクリック操作がキャンセルされます。"
+msgstr ""
+"クリック操作をキャンセルせず、ドラッグできるようにします。OFFの場合、マウスで"
+"ドラッグを行うとクリック操作がキャンセルされます。"
 
 #: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
