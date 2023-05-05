@@ -54,6 +54,11 @@ bool VQAPlayer::open() {
 		// smoke (overlay) after explosion of Dermo Labs in DR04
 		// This has still frames in the end that so it looked as if the smoke was "frozen"
 		_decoder._loopInfo.loops[0].end  = 58; // 59 up to 74 are still frames
+	} else if (_name.equals("CT01.VQA")) {
+		// In the last frame of the Mainloop (255) a Howie Lee's customer's hand
+		// backwards abruptly the loop looks jarring. We skip the last frame.
+		_decoder._loopInfo.loops[2].end  = 254;
+		_decoder._loopInfo.loops[3].end  = 254;
 	}
 #endif
 
@@ -187,9 +192,8 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 			}
 #endif
 		}
-		if (_frameNext != _frameBeginNext) {
-			_frameNext = _frameBeginNext;
-		}
+
+		_frameNext = _frameBeginNext;
 
 		if (loopEndQueued == -1) {
 			if (_repeatsCount != -1) {

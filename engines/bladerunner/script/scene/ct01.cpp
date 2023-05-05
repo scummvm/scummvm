@@ -26,7 +26,7 @@ namespace BladeRunner {
 enum kCT01Loops {
 	kCT01LoopInshotFromCT12WithSpinner = 0, //   0 -  14
 	kCT01LoopInshot                    = 1, //  15 - 194
-	kCT01LoopMainLoop                  = 2, // 195 - 255
+	kCT01LoopMainLoop                  = 2, // 195 - 255 (plays up to 254 due to a bug fix)
 	kCT01LoopDoorAnim                  = 4, // 256 - 315
 	kCT01LoopOutshot                   = 5, // 316 - 435
 	kCT01LoopInshotFromCT12NoSpinner   = 6, // 436 - 450
