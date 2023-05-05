@@ -4037,12 +4037,19 @@ void Runtime::drawCompass() {
 
 	Common::Rect lowerRightRect = Common::Rect(_traySection.rect.right - 88, 0, _traySection.rect.right, 88);
 
-	if (haveLocation) {
-		if (_gameID == GID_REAH)
+	if (_gameID == GID_REAH) {
+
+		if (haveLocation)
 			_traySection.surf->blitFrom(*_trayCornerGraphic, Common::Point(lowerRightRect.left, lowerRightRect.top));
-	} else {
-		if (_gameID == GID_REAH)
-			_traySection.surf->blitFrom(*_trayBackgroundGraphic, lowerRightRect, lowerRightRect);
+		else
+			_traySection.surf->blitFrom(*_trayBackgroundGraphic, lowerRightRect, Common::Point(lowerRightRect.left, lowerRightRect.top));
+	} else if (_gameID == GID_SCHIZM) {
+		Common::Rect graphicRect = Common::Rect(0u + _hero * 176u, 0, 0u + _hero * 176u + 88, 88);
+
+		if (!haveLocation)
+			graphicRect.translate(88, 0);
+
+		_traySection.surf->blitFrom(*_trayCornerGraphic, graphicRect, Common::Point(lowerRightRect.left, lowerRightRect.top));
 	}
 
 	commitSectionToScreen(_traySection, compassRect);
@@ -4338,13 +4345,13 @@ void Runtime::checkInGameMenuHover() {
 		}
 		break;
 	case kInGameMenuStateClickingOver:
-		if (activeElement != _inGameMenuActiveElement) {
+		if (activeElement != _inGameMenuActiveElement || _mousePos.y >= _menuSection.rect.bottom) {
 			_inGameMenuState = kInGameMenuStateClickingNotOver;
 			drawInGameMenuButton(_inGameMenuActiveElement);
 		}
 		break;
 	case kInGameMenuStateClickingNotOver:
-		if (activeElement == _inGameMenuActiveElement) {
+		if (activeElement == _inGameMenuActiveElement && _mousePos.y < _menuSection.rect.bottom) {
 			_inGameMenuState = kInGameMenuStateClickingOver;
 			drawInGameMenuButton(_inGameMenuActiveElement);
 		}
@@ -6179,6 +6186,7 @@ void Runtime::scriptOpAnimChange(ScriptArg_t arg) {
 
 	(void)stackArgs;
 
+	// Not sure what this does yet.  It is parameterized in some rooms.
 	warning("animChange opcode isn't implemented yet");
 }
 
