@@ -41,10 +41,8 @@ void LibretroTimerManager::switchThread(void) {
 }
 
 void LibretroTimerManager::checkThread(void) {
-	if (g_system->getMillis() >= _nextSwitchTime) {
+	if (g_system->getMillis() >= _nextSwitchTime)
 		switchThread();
-		handler();
-	}
 }
 
 uint32 LibretroTimerManager::timeToNextSwitch(void) {

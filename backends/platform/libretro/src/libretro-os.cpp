@@ -651,7 +651,7 @@ public:
 	virtual bool pollEvent(Common::Event &event) {
 		_threadSwitchCaller = THREAD_SWITCH_POLL;
 		((LibretroTimerManager *)_timerManager)->checkThread();
-
+		((LibretroTimerManager *)_timerManager)->handler();
 		if (!_events.empty()) {
 			event = _events.front();
 			_events.pop_front();
@@ -699,6 +699,7 @@ public:
 			elapsed_time = getMillis() - start_time;
 			time_remaining = time_remaining > elapsed_time ? time_remaining - elapsed_time : 0;
 		}
+		((LibretroTimerManager *)_timerManager)->handler();
 	}
 
 	virtual Common::MutexInternal *createMutex(void) {
