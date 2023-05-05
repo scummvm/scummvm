@@ -148,6 +148,9 @@ static sys_resetinfo resetinfo = {
 };
 
 #ifdef DEBUG_WII_MEMSTATS
+#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
+#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
+
 void wii_memstats(void) {
 	static u32 min_free = UINT_MAX;
 	static u32 temp_free;
