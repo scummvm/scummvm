@@ -4423,17 +4423,22 @@ void GUI_EoB::displayTextBox(int id, int, bool) {
 	int op = _screen->setCurPage(2);
 	int od = _screen->curDimIndex();
 	Screen::FontId of = _screen->setFont(_menuFont);
+
 	_screen->setClearScreenDim(11);
 	const ScreenDim *dm = _screen->getScreenDim(11);
 
 	drawMenuButtonBox(dm->sx << 3, dm->sy, dm->w << 3, dm->h, false, false);
 	_screen->setTextMarginRight((dm->sx + dm->w) << 3);
 
+	Common::String tmp(getMenuString(id));
 	Common::Point txtPos((dm->sx << 3) + 5, dm->sy + 5);
-	if (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformPC98)
-		txtPos = Common::Point(dm->column << 3, (dm->line + 16) & ~7);
+	if (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformPC98) {
+		for (size_t p = tmp.find("  "); p != Common::String::npos; p = tmp.find("  "))
+			tmp.deleteChar(p);		
+		txtPos = Common::Point(dm->sx << 3, (dm->sy + 16) & ~7);
+	}
 
-	_screen->printShadedText(getMenuString(id), txtPos.x, txtPos.y, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+	_screen->printShadedText(tmp.c_str(), txtPos.x, txtPos.y, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 	_screen->setTextMarginRight(Screen::SCREEN_W);
 	_screen->copyRegion(dm->sx << 3, dm->sy, dm->sx << 3, dm->sy, dm->w << 3, dm->h, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
@@ -4565,9 +4570,11 @@ void GUI_EoB::drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool n
 void GUI_EoB::drawTextBox(int dim, int id) {
 	int od = _screen->curDimIndex();
 	_screen->setScreenDim(dim);
-	const ScreenDim *dm = _screen->getScreenDim(dim);
-	Screen::FontId of = _screen->setFont(_vm->_flags.lang == Common::Language::ZH_TWN ? Screen::FontId::FID_CHINESE_FNT : _vm->_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 
+	Screen::FontId of = _screen->setFont(_menuFont);
+	int cs = (_vm->gameFlags().platform == Common::kPlatformPC98 && !_vm->gameFlags().use16ColorMode) ? _screen->setFontStyles(_menuFont, Font::kStyleFat) : -1;
+
+	const ScreenDim *dm = _screen->getScreenDim(dim);
 	if (dm->w <= 22 && dm->h <= 84)
 		_screen->copyRegion(dm->sx << 3, dm->sy, 0, dm->h, dm->w << 3, dm->h, 0, 2, Screen::CR_NO_P_CHECK);
 
@@ -4580,6 +4587,9 @@ void GUI_EoB::drawTextBox(int dim, int id) {
 	_screen->copyRegion(0, 0, dm->sx << 3, dm->sy, dm->w << 3, dm->h, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 	_screen->setScreenDim(od);
+
+	if (cs != -1)
+		_screen->setFontStyles(_screen->_currentFont, cs);
 	_screen->setFont(of);
 }
 
