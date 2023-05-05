@@ -33,7 +33,7 @@
 		AD_ENTRY1s("adi2.stk", "da6f1fb68bff32260c5eecdf9286a2f5", 1533168),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO0()
 	},
 	kGameTypeAdi2,
@@ -47,7 +47,7 @@
 		AD_ENTRY1s("adi2.stk", "23f279615c736dc38320f1348e70c36e", 10817668),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
@@ -61,7 +61,7 @@
 		AD_ENTRY1s("adi2.stk", "d4162c4298f9423ecc1fb04965557e90", 11531214),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
@@ -75,7 +75,7 @@
 		AD_ENTRY1s("adi2.stk", "fcac60e6627f37aee219575b60859de9", 16944268),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
@@ -89,7 +89,7 @@
 		AD_ENTRY1s("adi2.stk", "072d5e2d7826a7c055865568ebf918bb", 16934596),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
@@ -103,7 +103,7 @@
 		AD_ENTRY1s("adi2.stk", "2fb940eb8105b12871f6b88c8c4d1615", 16780058),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
@@ -120,7 +120,7 @@
 		AD_ENTRY1s("adi2.stk", "fde7d98a67dbf859423b6473796e932a", 18044780),
 		DE_DEU,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
@@ -148,7 +148,7 @@
 		AD_ENTRY1s("adi2.stk", "6fa5dffebf5c7243c6af6b8c188ee00a", 19278008),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
@@ -165,7 +165,7 @@
 		AD_ENTRY1s("adi2.stk", "2a40bb48ccbd4e6fb3f7f0fc2f069d80", 17720132),
 		ES_ESP,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
@@ -182,7 +182,7 @@
 		AD_ENTRY1s("adi2.stk", "29694c5a649298a42f87ae731d6d6f6d", 311132),
 		EN_ANY,
 		kPlatformAmiga,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO0()
 	},
 	kGameTypeAdi2,
@@ -205,7 +205,7 @@
 		},
 		EN_ANY,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
