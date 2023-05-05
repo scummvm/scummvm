@@ -6241,7 +6241,21 @@ void Runtime::scriptOpSpeechEx(ScriptArg_t arg) {
 	}
 }
 
-OPCODE_STUB(SpeechTest)
+void Runtime::scriptOpSpeechTest(ScriptArg_t arg) {
+	TAKE_STACK_INT(1);
+
+	bool found = false;
+
+	for (const TriggeredOneShot &oneShot : _triggeredOneShots) {
+		if (oneShot.soundID == static_cast<uint>(stackArgs[0])) {
+			found = true;
+			break;
+		}
+	}
+
+	_scriptStack.push_back(StackValue(found ? 1 : 0));
+}
+
 OPCODE_STUB(Say)
 
 void Runtime::scriptOpRandomInclusive(ScriptArg_t arg) {
