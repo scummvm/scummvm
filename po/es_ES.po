@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-05-05 20:35+0000\n"
-"PO-Revision-Date: 2023-05-04 17:44+0000\n"
+"PO-Revision-Date: 2023-05-05 23:12+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -4210,22 +4210,16 @@ msgid "Software scale (good quality, but slower)"
 msgstr "Escalado por software (buena calidad, pero más lento)"
 
 #: backends/platform/ios7/ios7_options.mm:67
-#, fuzzy
-#| msgid "Show On-screen control"
 msgid "Show On-screen control (iOS 15 and later)"
-msgstr "Mostrar controles en pantalla"
+msgstr "Mostrar controles en pantalla (iOS 15 en adelante)"
 
 #: backends/platform/ios7/ios7_options.mm:69
-#, fuzzy
-#| msgid "Mouse-click-and-drag mode enabled."
 msgid "Mouse-click-and-drag mode"
-msgstr "Modo de arrastre de ratón activado."
+msgstr "Modo de arrastre de ratón"
 
 #: backends/platform/ios7/ios7_options.mm:71
-#, fuzzy
-#| msgid "Controls"
 msgid "Controls Help"
-msgstr "Controles"
+msgstr "Ayuda sobre controles"
 
 #: backends/platform/ios7/ios7_options.mm:102
 msgid ""
@@ -4243,6 +4237,20 @@ msgid ""
 "Pinch gesture: Enables/disables keyboard\n"
 "Keyboard spacebar: Pause"
 msgstr ""
+"Gestos y equivalencias de controles:\n"
+"\n"
+"Tocar con un dedo: botón izquierdo del ratón\n"
+"Tocar con dos dedos: botón derecho del ratón\n"
+"Tocar dos veces con dos dedos: ESC\n"
+"Deslizar con dos dedos (hacia arriba): alternar modo de arrastre de ratón\n"
+"Deslizar con dos dedos (hacia la derecha): alternar entre los modos de "
+"control directo y «touchpad»\n"
+"Deslizar con dos dedos (hacia la izquierda): mostrar u ocultar los controles "
+"en pantalla\n"
+"Deslizar con dos dedos (hacia abajo): menú principal global\n"
+"Deslizar con tres dedos: teclas de dirección\n"
+"Gesto de pellizcar: activar o desactivar el teclado\n"
+"Barra espaciadora del teclado: pausar"
 
 #: backends/platform/ios7/ios7_options.mm:115
 msgid ""
@@ -4259,6 +4267,23 @@ msgid ""
 "Touch (not press) on bottom of Touch area: Down arrow key\n"
 "Keyboard spacebar: Pause"
 msgstr ""
+"Gestos y equivalencias de controles:\n"
+"\n"
+"Pulsar la superficie táctil: botón izquierdo del ratón\n"
+"Pulsar el botón Reproducir/pausar: botón derecho del ratón\n"
+"Pulsar el botón Atrás/Menú dentro de un juego: menú principal global\n"
+"Pulsar el botón Atrás/Menú dentro del iniciador: menú de Apple TV\n"
+"Mantener pulsado el botón Reproducir/pausar: mostrar teclado con botones "
+"adicionales\n"
+"Tocar sin presionar la parte superior de la superficie táctil: tecla "
+"direccional hacia arriba\n"
+"Tocar sin presionar la parte izquierda de la superficie táctil: tecla "
+"direccional hacia la izquierda\n"
+"Tocar sin presionar la parte derecha de la superficie táctil: tecla "
+"direccional hacia la derecha\n"
+"Tocar sin presionar la parte inferior de la superficie táctil: tecla "
+"direccional hacia abajo\n"
+"Barra espaciadora del teclado: pausar"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:412
 #: backends/platform/iphone/osys_events.cpp:299
