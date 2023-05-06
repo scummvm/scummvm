@@ -1042,7 +1042,7 @@ Common::Error ScummEngine::init() {
 			// code in openResourceFile() (and in the Sound class, for MONSTER.SOU
 			// handling).
 			assert(_game.version >= 5 && _game.heversion == 0);
-			_fileHandle = new ScummFile();
+			_fileHandle = new ScummFile(this);
 			_containerFile = _filenamePattern.pattern;
 
 
@@ -1096,11 +1096,11 @@ Common::Error ScummEngine::init() {
 			if (!indexFile || indexFile->id != _game.id) {
 				error("Couldn't find index file description for Steam version");
 			} else {
-				_fileHandle = new ScummSteamFile(*indexFile);
+				_fileHandle = new ScummSteamFile(this, *indexFile);
 			}
 		} else {
 			// Regular access, no container file involved
-			_fileHandle = new ScummFile();
+			_fileHandle = new ScummFile(this);
 		}
 	}
 
@@ -1515,8 +1515,8 @@ void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
 	// COMI demo is excluded from the count since it appears it can't be compressed
 	// DIG demo uses raw VOC files for speech instead of a MONSTER.SOU file
 	if ((_game.id == GID_CMI || _game.id == GID_DIG) && !(_game.features & GF_DEMO)) {
-		BundleDirCache *ch = new BundleDirCache();
-		BundleMgr *bnd = new BundleMgr(ch);
+		BundleDirCache *ch = new BundleDirCache(this);
+		BundleMgr *bnd = new BundleMgr(this, ch);
 		filesAreCompressed |= bnd->isExtCompBun(_game.id);
 		delete bnd;
 		delete ch;

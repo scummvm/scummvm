@@ -29,7 +29,7 @@
 
 namespace Scumm {
 
-BundleDirCache::BundleDirCache() {
+BundleDirCache::BundleDirCache(const ScummEngine *vm) : _vm(vm) {
 	for (int fileId = 0; fileId < ARRAYSIZE(_bundleDirCache); fileId++) {
 		_bundleDirCache[fileId].bundleTable = nullptr;
 		_bundleDirCache[fileId].fileName[0] = 0;
@@ -79,7 +79,7 @@ int BundleDirCache::matchFile(const char *filename) {
 	}
 
 	if (!found) {
-		ScummFile file;
+		ScummFile file(_vm);
 
 		if (g_scumm->openFile(file, filename) == false) {
 			error("BundleDirCache::matchFile() Can't open bundle file: %s", filename);
@@ -137,7 +137,7 @@ int BundleDirCache::matchFile(const char *filename) {
 	}
 }
 
-BundleMgr::BundleMgr(BundleDirCache *cache) {
+BundleMgr::BundleMgr(const ScummEngine *vm, BundleDirCache *cache) {
 	_cache = cache;
 	_bundleTable = nullptr;
 	_compTable = nullptr;
@@ -146,7 +146,7 @@ BundleMgr::BundleMgr(BundleDirCache *cache) {
 	_lastBlockDecompressedSize = 0;
 	_curSampleId = -1;
 	_fileBundleId = -1;
-	_file = new ScummFile();
+	_file = new ScummFile(vm);
 	_compInputBuff = nullptr;
 }
 
