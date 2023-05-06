@@ -1846,7 +1846,7 @@ void ScummEngine_v7::loadLanguageBundle() {
 		ScummEngine::loadLanguageBundle();
 		return;
 	}
-	ScummFile file;
+	ScummFile file(this);
 	int32 size;
 
 	if (_game.id == GID_DIG) {
@@ -2137,7 +2137,7 @@ void ScummEngine::loadLanguageBundle() {
 		return;
 	}
 
-	ScummFile file;
+	ScummFile file(this);
 	openFile(file, "korean.trs");
 
 	if (!file.isOpen()) {

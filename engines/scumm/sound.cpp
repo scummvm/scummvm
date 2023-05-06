@@ -763,7 +763,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			return;
 		}
 
-		file.reset(new ScummFile());
+		file.reset(new ScummFile(_vm));
 		if (!file)
 			error("startTalkSound: Out of memory");
 
@@ -793,7 +793,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		int totalOffset, soundSize, fileSize, headerTag, vctlBlockSize;
 
 		if (_vm->_voiceMode != 2) {
-			file.reset(new ScummFile());
+			file.reset(new ScummFile(_vm));
 			if (!file)
 				error("startTalkSound: Out of memory");
 
@@ -910,7 +910,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			offset += 8;
 		}
 
-		file.reset(new ScummFile());
+		file.reset(new ScummFile(_vm));
 		if (!file)
 			error("startTalkSound: Out of memory");
 
@@ -1256,7 +1256,7 @@ bool Sound::hasSfxFile() const
 
 ScummFile *Sound::restoreDiMUSESpeechFile(const char *fileName) {
 	Common::ScopedPtr<ScummFile> file;
-	file.reset(new ScummFile());
+	file.reset(new ScummFile(_vm));
 	if (!_vm->openFile(*file, fileName)) {
 		return NULL;
 	}
@@ -1305,7 +1305,7 @@ void Sound::setupSfxFile() {
 		{ nullptr, kVOCMode }
 	};
 
-	ScummFile file;
+	ScummFile file(_vm);
 	_offsetTable = nullptr;
 	_sfxFileEncByte = 0;
 	_sfxFilename.clear();

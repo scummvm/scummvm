@@ -891,7 +891,7 @@ void SoundHE::startHETalkSound(uint32 offset) {
 		return;
 	}
 
-	ScummFile file;
+	ScummFile file(_vm);
 	if (!_vm->openFile(file, _sfxFilename)) {
 		warning("startHETalkSound: Could not open speech file %s", _sfxFilename.c_str());
 		return;

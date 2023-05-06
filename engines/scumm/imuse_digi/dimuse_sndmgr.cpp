@@ -42,7 +42,7 @@ ImuseDigiSndMgr::ImuseDigiSndMgr(ScummEngine *scumm) {
 	}
 	_vm = scumm;
 	_disk = 0;
-	_cacheBundleDir = new BundleDirCache();
+	_cacheBundleDir = new BundleDirCache(scumm);
 	assert(_cacheBundleDir);
 	BundleCodecs::initializeImcTables();
 }
@@ -72,7 +72,7 @@ bool ImuseDigiSndMgr::openMusicBundle(SoundDesc *sound, int &disk) {
 	bool result = false;
 	bool compressed = false;
 
-	sound->bundle = new BundleMgr(_cacheBundleDir);
+	sound->bundle = new BundleMgr(_vm, _cacheBundleDir);
 	assert(sound->bundle);
 	if (_vm->_game.id == GID_CMI) {
 		if (_vm->_game.features & GF_DEMO) {
@@ -108,7 +108,7 @@ bool ImuseDigiSndMgr::openVoiceBundle(SoundDesc *sound, int &disk) {
 	bool result = false;
 	bool compressed = false;
 
-	sound->bundle = new BundleMgr(_cacheBundleDir);
+	sound->bundle = new BundleMgr(_vm, _cacheBundleDir);
 	assert(sound->bundle);
 	if (_vm->_game.id == GID_CMI) {
 		if (_vm->_game.features & GF_DEMO) {

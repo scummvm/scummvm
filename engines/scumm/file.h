@@ -29,6 +29,8 @@
 
 namespace Scumm {
 
+class ScummEngine;
+
 class BaseScummFile : public Common::SeekableReadStream {
 protected:
 	byte _encbyte;
@@ -63,12 +65,13 @@ protected:
 	int32	_subFileStart;
 	int32	_subFileLen;
 	bool	_myEos; // Have we read past the end of the subfile?
+	bool    _isMac;
 
 	void setSubfileRange(int32 start, int32 len);
 	void resetSubfile();
 
 public:
-	ScummFile();
+	explicit ScummFile(const ScummEngine *vm);
 
 	bool open(const Common::Path &filename) override;
 	bool openSubFile(const Common::String &filename) override;
@@ -142,7 +145,7 @@ private:
 
 	bool openWithSubRange(const Common::String &filename, int32 subFileStart, int32 subFileLen);
 public:
-	ScummSteamFile(const SteamIndexFile &indexFile) : ScummFile(), _indexFile(indexFile) {}
+	ScummSteamFile(const ScummEngine *vm, const SteamIndexFile &indexFile) : ScummFile(vm), _indexFile(indexFile) {}
 
 	bool open(const Common::Path &filename) override;
 };

@@ -53,8 +53,9 @@ private:
 		IndexNode *indexTable;
 	} _bundleDirCache[4];
 
+	const ScummEngine *_vm;
 public:
-	BundleDirCache();
+	BundleDirCache(const ScummEngine *vm);
 	~BundleDirCache();
 
 	int matchFile(const char *filename);
@@ -67,6 +68,7 @@ public:
 class BundleMgr {
 
 private:
+	const ScummEngine *_vm;
 
 	struct CompTable {
 		int32 offset;
@@ -96,7 +98,7 @@ private:
 
 public:
 
-	BundleMgr(BundleDirCache *_cache);
+	BundleMgr(const ScummEngine *vm, BundleDirCache *_cache);
 	~BundleMgr();
 
 	bool open(const char *filename, bool &isCompressed, bool errorFlag = false);

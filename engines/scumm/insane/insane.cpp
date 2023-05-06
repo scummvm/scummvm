@@ -611,7 +611,7 @@ int32 Insane::processKeyboard() {
 }
 
 void Insane::readFileToMem(const char *name, byte **buf) {
-	ScummFile in;
+	ScummFile in(_vm);
 	uint32 len;
 
 	if (!_vm->openFile(in, name))

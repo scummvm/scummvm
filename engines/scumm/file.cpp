@@ -20,7 +20,9 @@
  */
 
 #include "scumm/file.h"
+#include "scumm/scumm.h"
 
+#include "common/macresman.h"
 #include "common/memstream.h"
 #include "common/substream.h"
 
@@ -35,7 +37,7 @@ void BaseScummFile::close() {
 #pragma mark --- ScummFile ---
 #pragma mark -
 
-ScummFile::ScummFile() : _subFileStart(0), _subFileLen(0), _myEos(false) {
+ScummFile::ScummFile(const ScummEngine *vm) : _subFileStart(0), _subFileLen(0), _myEos(false), _isMac(vm->_game.platform == Common::kPlatformMacintosh) {
 }
 
 void ScummFile::setSubfileRange(int32 start, int32 len) {
@@ -55,7 +57,9 @@ void ScummFile::resetSubfile() {
 }
 
 bool ScummFile::open(const Common::Path &filename) {
-	_baseStream.reset(SearchMan.createReadStreamForMember(filename));
+	_baseStream.reset(_isMac ?
+			  Common::MacResManager::openFileOrDataFork(filename) :
+			  SearchMan.createReadStreamForMember(filename));
 	_debugName = filename.toString();
 	if (_baseStream) {
 		resetSubfile();

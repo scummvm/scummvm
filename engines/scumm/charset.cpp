@@ -64,7 +64,7 @@ void ScummEngine::loadCJKFont() {
 		return;
 	}
 
-	ScummFile fp;
+	ScummFile fp(this);
 
 	if (_game.version <= 5 && _game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) { // FM-TOWNS v3 / v5 Kanji
 #if defined(DISABLE_TOWNS_DUAL_LAYER_MODE) || !defined(USE_RGB_COLOR)
