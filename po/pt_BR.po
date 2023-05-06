@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-05-05 20:35+0000\n"
-"PO-Revision-Date: 2023-04-30 03:56+0000\n"
+"PO-Revision-Date: 2023-05-06 23:40+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -4195,22 +4195,16 @@ msgid "Software scale (good quality, but slower)"
 msgstr "Redimensionamento por Software (boa qualidade, porém mais lento)"
 
 #: backends/platform/ios7/ios7_options.mm:67
-#, fuzzy
-#| msgid "Show On-screen control"
 msgid "Show On-screen control (iOS 15 and later)"
-msgstr "Mostrar controle na tela"
+msgstr "Mostrar controle na tela (iOS 15 ou superior)"
 
 #: backends/platform/ios7/ios7_options.mm:69
-#, fuzzy
-#| msgid "Mouse-click-and-drag mode enabled."
 msgid "Mouse-click-and-drag mode"
-msgstr "Modo clique-e-arraste do mouse ativado."
+msgstr "Modo de clicar e arrastar com o mouse"
 
 #: backends/platform/ios7/ios7_options.mm:71
-#, fuzzy
-#| msgid "Controls"
 msgid "Controls Help"
-msgstr "Controles"
+msgstr "Ajuda sobre Controles"
 
 #: backends/platform/ios7/ios7_options.mm:102
 msgid ""
@@ -4228,6 +4222,21 @@ msgid ""
 "Pinch gesture: Enables/disables keyboard\n"
 "Keyboard spacebar: Pause"
 msgstr ""
+"Gestos e controles:\n"
+"\n"
+"Toque com um dedo: Clique com o botão esquerdo do mouse\n"
+"Toque com dois dedos: Clique com o botão direito do mouse\n"
+"Toque duplo com dois dedos: ESC\n"
+"Deslizar com dois dedos (de baixo para cima): Alterna o modo clicar e "
+"arrastar\n"
+"Deslizar com dois dedos (da esquerda para a direita): Alterna entre o modo "
+"de toque direto e o modo de touchpad\n"
+"Deslizar com dois dedos (da direita para a esquerda): Exibe/oculta os "
+"controles na tela\n"
+"Deslizar com dois dedos (de cima para baixo): Menu Principal Global\n"
+"Deslizar com três dedos: Teclas de seta\n"
+"Gesto de pinça: Ativa/desativa o teclado\n"
+"Barra de espaço do teclado: Pausa"
 
 #: backends/platform/ios7/ios7_options.mm:115
 msgid ""
@@ -4244,6 +4253,23 @@ msgid ""
 "Touch (not press) on bottom of Touch area: Down arrow key\n"
 "Keyboard spacebar: Pause"
 msgstr ""
+"Usando o controle remoto da Apple TV:\n"
+"\n"
+"Pressionar Área de toque: Clique com o botão esquerdo do mouse\n"
+"Pressionar o botão Reproduzir/Pausar: Clique com o botão direito do mouse\n"
+"Pressionar o botão Voltar/Menu durante o jogo: Menu Principal Global\n"
+"Pressionar o botão Voltar/Menu no inicializador: Tela Principal da Apple TV\n"
+"Pressionar e segurar o botão Reproduzir/Pausar: Mostrar teclado com teclas "
+"adicionais\n"
+"Toque (não pressionar) na parte superior da Área de toque: Tecla de seta "
+"para cima\n"
+"Toque (não pressionar) à esquerda da Área de toque: Tecla de seta para a "
+"esquerda\n"
+"Toque (não pressionar) à direita da Área de toque: Tecla de seta para a "
+"direita\n"
+"Toque (não pressionar) na parte inferior da Área de toque: Tecla de seta "
+"para baixo\n"
+"Barra de espaço do teclado: Pausa"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:412
 #: backends/platform/iphone/osys_events.cpp:299
@@ -9302,7 +9328,7 @@ msgstr ""
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
-msgstr ""
+msgstr "Melhorar sensibilidade de clique"
 
 #: engines/vcruise/metaengine.cpp:43
 msgid ""
@@ -9310,6 +9336,10 @@ msgid ""
 "interactions.  If this is off, any mouse movement while the mouse button is "
 "held cancels a click interaction."
 msgstr ""
+"Permite que o mouse seja movido a uma curta distância sem cancelar as "
+"interações de clique.  Se estiver desativado, qualquer movimento do mouse "
+"enquanto o botão do mouse estiver pressionado cancela uma interação de "
+"clique."
 
 #: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
@@ -9320,14 +9350,12 @@ msgid "Speeds up animations."
 msgstr "Acelera as animações."
 
 #: engines/vcruise/metaengine.cpp:75
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Skip main menu"
-msgstr "Abrir menu principal"
+msgstr "Omitir menu principal"
 
 #: engines/vcruise/metaengine.cpp:76
 msgid "Starts a new game upon launching instead of going to the main menu."
-msgstr ""
+msgstr "Inicia um novo jogo ao abrí-lo em vez de ir para o menu principal."
 
 #: engines/vcruise/metaengine.cpp:124
 msgid "Display help screen"
