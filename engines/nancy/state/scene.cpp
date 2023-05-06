@@ -115,11 +115,7 @@ Scene::Scene() :
 		_difficulty(0),
 		_activeConversation(nullptr),
 		_lightning(nullptr),
-		_specialEffect(nullptr),
-		_sliderPuzzleState(nullptr),
-		_rippedLetterPuzzleState(nullptr),
-		_towerPuzzleState(nullptr),
-		_riddlePuzzleState(nullptr) {}
+		_specialEffect(nullptr) {}
 
 Scene::~Scene()  {
 	delete _helpButton;
@@ -130,10 +126,8 @@ Scene::~Scene()  {
 	delete _clock;
 	delete _lightning;
 	delete _specialEffect;
-	delete _sliderPuzzleState;
-	delete _rippedLetterPuzzleState;
-	delete _towerPuzzleState;
-	delete _riddlePuzzleState;
+
+	clearPuzzleData();
 }
 
 void Scene::process() {
@@ -486,7 +480,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	ser.syncAsUint32LE((uint32 &)_timers.pushedPlayTime);
 	ser.syncAsUint32LE((uint32 &)_timers.timerTime);
 	ser.syncAsByte(_timers.timerIsActive);
-	ser.skip(1); // timeOfDay; To be removed on next savefile version bump
+	ser.skip(1, 0, 2);
 
 	g_nancy->setTotalPlayTime((uint32)_timers.lastTotalTime);
 
@@ -500,79 +494,38 @@ void Scene::synchronize(Common::Serializer &ser) {
 	ser.syncAsSint16LE(_lastHintCharacter);
 	ser.syncAsSint16LE(_lastHintID);
 
-	switch (g_nancy->getGameType()) {
-	case kGameTypeVampire:
-		// Fall through to avoid having to bump the savegame version
-		// fall through
-	case kGameTypeNancy1: {
-		// Synchronize SliderPuzzle static data
-		if (!_sliderPuzzleState) {
-			return;
+	// Sync game-specific puzzle data
+
+	// Support for older savefiles
+	if (ser.getVersion() < 3 && g_nancy->getGameType() <= kGameTypeNancy1) {
+		PuzzleData *pd = getPuzzleData(SliderPuzzleData::getTag());
+		if (pd) {
+			pd->synchronize(ser);
 		}
 
-		ser.syncAsByte(_sliderPuzzleState->playerHasTriedPuzzle);
+		return;
+	}
 
-		byte x = 0, y = 0;
+	byte numPuzzleData = _puzzleData.size();
+	ser.syncAsByte(numPuzzleData);
 
-		if (ser.isSaving()) {
-			y = _sliderPuzzleState->playerTileOrder.size();
-			if (y) {
-				x = _sliderPuzzleState->playerTileOrder.back().size();
-			} else {
-				x = 0;
+	if (ser.isSaving()) {
+		for (auto pd : _puzzleData) {
+			uint32 tag = pd._key;
+			ser.syncAsUint32LE(tag);
+			pd._value->synchronize(ser);
+		}
+	} else {
+		clearPuzzleData();
+
+		uint32 tag;
+		for (uint i = 0; i < numPuzzleData; ++i) {
+			ser.syncAsUint32LE(tag);
+			PuzzleData *pd = getPuzzleData(tag);
+			if (pd) {
+				pd->synchronize(ser);
 			}
 		}
-
-		ser.syncAsByte(x);
-		ser.syncAsByte(y);
-
-		_sliderPuzzleState->playerTileOrder.resize(y);
-
-		for (int i = 0; i < y; ++i) {
-			_sliderPuzzleState->playerTileOrder[i].resize(x);
-			ser.syncArray(_sliderPuzzleState->playerTileOrder[i].data(), x, Common::Serializer::Sint16LE);
-		}
-
-		break;
-	}
-	case kGameTypeNancy2 : {
-		if (!_rippedLetterPuzzleState || !_towerPuzzleState || !_riddlePuzzleState) {
-			break;
-		}
-
-		ser.syncAsByte(_rippedLetterPuzzleState->playerHasTriedPuzzle);
-
-		if (ser.isLoading()) {
-			_rippedLetterPuzzleState->order.resize(24);
-			_rippedLetterPuzzleState->rotations.resize(24);
-		}
-
-		ser.syncArray(_rippedLetterPuzzleState->order.data(), 24, Common::Serializer::Byte);
-		ser.syncArray(_rippedLetterPuzzleState->rotations.data(), 24, Common::Serializer::Byte);
-
-		ser.syncAsByte(_towerPuzzleState->playerHasTriedPuzzle);
-
-		if (ser.isLoading()) {
-			_towerPuzzleState->order.resize(3, Common::Array<int8>(6, -1));
-		}
-
-		for (uint i = 0; i < 3; ++i) {
-			ser.syncArray(_towerPuzzleState->order[i].data(), 6, Common::Serializer::Byte);
-		}
-
-		byte numRiddles = _riddlePuzzleState->solvedRiddleIDs.size();
-		ser.syncAsByte(numRiddles);
-
-		if (ser.isLoading()) {
-			_riddlePuzzleState->solvedRiddleIDs.resize(numRiddles);
-		}
-
-		ser.syncArray(_riddlePuzzleState->solvedRiddleIDs.data(), numRiddles, Common::Serializer::Byte);
-
-		break;
-	}
-	default:
-		break;
 	}
 }
 
@@ -602,38 +555,6 @@ void Scene::init() {
 		_hintsRemaining = g_nancy->_hintData->numHints;
 
 		_lastHintCharacter = _lastHintID = -1;
-	}
-
-	// Initialize game-specific data
-	switch (g_nancy->getGameType()) {
-	case kGameTypeVampire:
-		// Fall through to avoid having to bump the savefile version
-		// fall through
-	case kGameTypeNancy1:
-		delete _sliderPuzzleState;
-		_sliderPuzzleState = new SliderPuzzleState();
-		_sliderPuzzleState->playerHasTriedPuzzle = false;
-		
-		break;
-	case kGameTypeNancy2:
-		delete _rippedLetterPuzzleState;
-		_rippedLetterPuzzleState = new RippedLetterPuzzleState();
-		_rippedLetterPuzzleState->playerHasTriedPuzzle = false;
-		_rippedLetterPuzzleState->order.resize(24, 0);
-		_rippedLetterPuzzleState->rotations.resize(24, 0);
-
-		delete _towerPuzzleState;
-		_towerPuzzleState = new TowerPuzzleState();
-		_towerPuzzleState->playerHasTriedPuzzle = false;
-		_towerPuzzleState->order.resize(3, Common::Array<int8>(6, -1));
-
-		delete _riddlePuzzleState;
-		_riddlePuzzleState = new RiddlePuzzleState();
-		_riddlePuzzleState->incorrectRiddleID = -1;
-		
-		break;
-	default:
-		break;
 	}
 
 	initStaticData();
@@ -678,6 +599,22 @@ void Scene::specialEffect(byte type, uint16 fadeToBlackTime, uint16 frameTime) {
 
 	_specialEffect = new Misc::SpecialEffect(type, fadeToBlackTime, frameTime);
 	_specialEffect->init();
+}
+
+PuzzleData *Scene::getPuzzleData(const uint32 tag) {
+	// Lazy initialization ensures both init() and synchronize() will not need
+	// to care about which puzzles a specific game has
+
+	if (_puzzleData.contains(tag)) {
+		return _puzzleData[tag];
+	} else {
+		PuzzleData *newData = makePuzzleData(tag);
+		if (newData) {
+			_puzzleData.setVal(tag, newData);
+		}
+		
+		return newData;
+	}
 }
 
 void Scene::load() {
@@ -947,6 +884,12 @@ void Scene::clearSceneData() {
 
 	if (_lightning) {
 		_lightning->endLightning();
+	}
+}
+
+void Scene::clearPuzzleData() {
+	for (auto &pd : _puzzleData) {
+		delete pd._value;
 	}
 }
 

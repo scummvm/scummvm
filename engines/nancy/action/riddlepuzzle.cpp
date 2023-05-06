@@ -25,6 +25,7 @@
 #include "engines/nancy/util.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/graphics.h"
+#include "engines/nancy/puzzledata.h"
 #include "engines/nancy/state/scene.h"
 
 #include "engines/nancy/action/riddlepuzzle.h"
@@ -45,7 +46,7 @@ void RiddlePuzzle::init() {
 }
 
 void RiddlePuzzle::readData(Common::SeekableReadStream &stream) {
-	_puzzleState = NancySceneState._riddlePuzzleState;
+	_puzzleState = (RiddlePuzzleData *)NancySceneState.getPuzzleData(RiddlePuzzleData::getTag());
 	assert(_puzzleState);
 
 	_viewportTextFontID = stream.readUint16LE();

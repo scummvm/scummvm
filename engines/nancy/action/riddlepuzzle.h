@@ -25,6 +25,9 @@
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Nancy {
+
+struct RiddlePuzzleData;
+
 namespace Action {
 
 class RiddlePuzzle : public RenderActionRecord {
@@ -73,7 +76,7 @@ protected:
 	bool _playerHasHitReturn = false;
 	Common::String _playerInput;
 	uint _riddleID = 0;
-	RiddlePuzzleState *_puzzleState = nullptr;
+	RiddlePuzzleData *_puzzleState = nullptr;
 };
 
 } // End of namespace Action

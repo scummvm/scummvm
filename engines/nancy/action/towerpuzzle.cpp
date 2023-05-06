@@ -25,6 +25,7 @@
 #include "engines/nancy/resource.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
+#include "engines/nancy/puzzledata.h"
 #include "engines/nancy/state/scene.h"
 
 #include "engines/nancy/action/towerpuzzle.h"
@@ -50,7 +51,7 @@ void TowerPuzzle::registerGraphics() {
 }
 
 void TowerPuzzle::readData(Common::SeekableReadStream &stream) {
-	_puzzleState = NancySceneState._towerPuzzleState;
+	_puzzleState = (TowerPuzzleData *)NancySceneState.getPuzzleData(TowerPuzzleData::getTag());
 	assert(_puzzleState);
 
 	readFilename(stream, _imageName);

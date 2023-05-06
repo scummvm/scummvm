@@ -48,6 +48,7 @@ MODULE_OBJS = \
   input.o \
   metaengine.o \
   nancy.o \
+  puzzledata.o \
   renderobject.o \
   resource.o \
   sound.o \

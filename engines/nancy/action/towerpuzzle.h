@@ -25,6 +25,9 @@
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Nancy {
+	
+struct TowerPuzzleData;
+
 namespace Action {
 
 class TowerPuzzle : public RenderActionRecord {
@@ -68,7 +71,7 @@ protected:
 	int8 _heldRingID = -1;
 	int8 _heldRingPoleID = -1;
 	SolveState _solveState = kNotSolved;
-	TowerPuzzleState *_puzzleState;
+	TowerPuzzleData *_puzzleState = nullptr;
 	uint _numRings = 0;
 };
 

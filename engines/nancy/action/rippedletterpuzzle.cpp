@@ -26,6 +26,7 @@
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/cursor.h"
+#include "engines/nancy/puzzledata.h"
 
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/action/rippedletterpuzzle.h"
@@ -55,7 +56,7 @@ void RippedLetterPuzzle::registerGraphics() {
 }
 
 void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
-	_puzzleState = NancySceneState._rippedLetterPuzzleState;
+	_puzzleState = (RippedLetterPuzzleData *)NancySceneState.getPuzzleData(RippedLetterPuzzleData::getTag());
 	assert(_puzzleState);
 
 	readFilename(stream, _imageName);

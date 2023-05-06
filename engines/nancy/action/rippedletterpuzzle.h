@@ -25,6 +25,9 @@
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Nancy {
+
+struct RippedLetterPuzzleData;
+
 namespace Action {
 
 class RippedLetterPuzzle : public RenderActionRecord {
@@ -63,7 +66,7 @@ public:
 	
 	Graphics::ManagedSurface _image;
 	SolveState _solveState = kNotSolved;
-	RippedLetterPuzzleState *_puzzleState = nullptr;
+	RippedLetterPuzzleData *_puzzleState = nullptr;
 
 protected:
 	Common::String getRecordTypeName() const override { return "RippedLetterPuzzle"; }

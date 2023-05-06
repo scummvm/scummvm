@@ -25,6 +25,7 @@
 #include "common/singleton.h"
 
 #include "engines/nancy/commontypes.h"
+#include "engines/nancy/puzzledata.h"
 
 #include "engines/nancy/action/actionmanager.h"
 
@@ -190,11 +191,8 @@ public:
 	// Used from nancy2 onwards
 	void specialEffect(byte type, uint16 fadeToBlackTime, uint16 frameTime);
 
-	// Game-specific data that needs to be saved/loaded
-	SliderPuzzleState *_sliderPuzzleState;
-	RippedLetterPuzzleState *_rippedLetterPuzzleState;
-	TowerPuzzleState *_towerPuzzleState;
-	RiddlePuzzleState *_riddlePuzzleState;
+	// Get the persistent data for a given puzzle type
+	PuzzleData *getPuzzleData(const uint32 tag);
 
 private:
 	void init();
@@ -205,6 +203,7 @@ private:
 	void initStaticData();
 
 	void clearSceneData();
+	void clearPuzzleData();
 
 	enum State {
 		kInit,
@@ -262,6 +261,8 @@ private:
 	UI::InventoryBoxOrnaments *_inventoryBoxOrnaments;
 	UI::Clock *_clock;
 
+	Common::Rect _mapHotspot;
+
 	// General data
 	SceneState _sceneState;
 	PlayFlags _flags;
@@ -275,7 +276,7 @@ private:
 	Misc::Lightning *_lightning;
 	Misc::SpecialEffect *_specialEffect;
 
-	Common::Rect _mapHotspot;
+	Common::HashMap<uint32, PuzzleData *> _puzzleData;
 
 	Action::ActionManager _actionManager;
 	Action::ConversationSound *_activeConversation;
