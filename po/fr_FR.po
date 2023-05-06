@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-05-05 20:35+0000\n"
-"PO-Revision-Date: 2023-05-05 05:26+0000\n"
+"PO-Revision-Date: 2023-05-06 06:12+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -4225,22 +4225,16 @@ msgid "Software scale (good quality, but slower)"
 msgstr "Mise à l'échelle logicielle (bonne qualité mais plus lent)"
 
 #: backends/platform/ios7/ios7_options.mm:67
-#, fuzzy
-#| msgid "Show On-screen control"
 msgid "Show On-screen control (iOS 15 and later)"
-msgstr "Afficher les contrôles sur l'écran"
+msgstr "Afficher les contrôles sur l'écran (iOS 15 et supérieur)"
 
 #: backends/platform/ios7/ios7_options.mm:69
-#, fuzzy
-#| msgid "Mouse-click-and-drag mode enabled."
 msgid "Mouse-click-and-drag mode"
-msgstr "Mode souris cliquer-et-déplacer activé."
+msgstr "Mode clic-souris-et-déplacer"
 
 #: backends/platform/ios7/ios7_options.mm:71
-#, fuzzy
-#| msgid "Controls"
 msgid "Controls Help"
-msgstr "Contrôles"
+msgstr "Aide Contrôles"
 
 #: backends/platform/ios7/ios7_options.mm:102
 msgid ""
@@ -4258,6 +4252,21 @@ msgid ""
 "Pinch gesture: Enables/disables keyboard\n"
 "Keyboard spacebar: Pause"
 msgstr ""
+"Gestes et commandes :\n"
+"\n"
+"Toucher avec un doigt : Clic gauche de la souris\n"
+"Toucher avec deux doigts : Clic droit de la souris\n"
+"Double toucher avec deux doigts : ECHAP\n"
+"Balayage avec deux doigts (de bas en haut) : Bascule en mode cliquer-"
+"déplacer\n"
+"Balayage avec deux doigts (de gauche à droite) : Bascule entre mode tactile "
+"direct et mode touchpad\n"
+"Balayage avec deux doigts (de droite à gauche) : Affiche/masque les "
+"commandes à l'écran\n"
+"Balayage avec deux doigts (de haut en bas) : Menu Principal\n"
+"Balayage avec trois doigts : Touches fléchées\n"
+"Geste de pincement : Active/désactive le clavier\n"
+"Barre Espace du clavier : Pause"
 
 #: backends/platform/ios7/ios7_options.mm:115
 msgid ""
@@ -4274,16 +4283,29 @@ msgid ""
 "Touch (not press) on bottom of Touch area: Down arrow key\n"
 "Keyboard spacebar: Pause"
 msgstr ""
+"Utilisation de la télécommande de l'Apple TV :\n"
+"\n"
+"Appui Zone tactile : Clic gauche de la souris\n"
+"Appui Bouton Lecture/Pause : Clic droit de la souris\n"
+"Appui Bouton Retour/Menu en cours de jeu : Menu Principal\n"
+"Appui Bouton Retour/Menu dans le lanceur : Accueil Apple TV\n"
+"Appui maintenu Bouton Lecture/Pause : Affiche le clavier avec touches "
+"additionnelles\n"
+"Toucher (sans appui) en haut de la zone tactile : Touche Flèche haut\n"
+"Toucher (sans appui) à gauche de la zone tactile : Touche Flèche gauche\n"
+"Toucher (sans appui) à droite de la zone tactile : Touche Flèche droite\n"
+"Toucher (sans appui) en bas de la zone tactile : Touche Flèche bas\n"
+"Barre Espace du clavier : Pause"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:412
 #: backends/platform/iphone/osys_events.cpp:299
 msgid "Mouse-click-and-drag mode enabled."
-msgstr "Mode souris cliquer-et-déplacer activé."
+msgstr "Mode clic-souris-et-déplacer activé."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:414
 #: backends/platform/iphone/osys_events.cpp:301
 msgid "Mouse-click-and-drag mode disabled."
-msgstr "Mode souris cliquer-et-déplacer désactivé."
+msgstr "Mode clic-souris-et-déplacer désactivé."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:435
 #: backends/platform/iphone/osys_events.cpp:312
