@@ -367,12 +367,7 @@ bool GeometricObject::collides(const Math::AABB &boundingBox_) {
 	if (isDestroyed() || isInvisible() || !_boundingBox.isValid() || !boundingBox_.isValid())
 		return false;
 
-	return (_boundingBox.getMax().x() > boundingBox_.getMin().x() &&
-			_boundingBox.getMin().x() < boundingBox_.getMax().x() &&
-			_boundingBox.getMax().y() > boundingBox_.getMin().y() &&
-			_boundingBox.getMin().y() < boundingBox_.getMax().y() &&
-			_boundingBox.getMax().z() > boundingBox_.getMin().z() &&
-			_boundingBox.getMin().z() < boundingBox_.getMax().z());
+	return _boundingBox.collides(boundingBox_);
 }
 
 void GeometricObject::draw(Freescape::Renderer *gfx) {

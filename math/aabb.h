@@ -39,6 +39,7 @@ public:
 	Math::Vector3d getMin() const { return _min; }
 	Math::Vector3d getMax() const { return _max; }
 	bool isValid() const { return _valid; }
+	bool collides(const AABB &aabb);
 
 private:
 	Math::Vector3d _min, _max;
