@@ -1332,7 +1332,7 @@ static const PlainGameDescriptor directorGames[] = {
 
 	// Chinese titles
 	{ "ypl2", 				"勇者泡泡龍2" },							// Yongzhe Paopao Long 2, aka Brave Bubble Dragon 2, aka Bubble Hero 2
-	{ "creativenursery",	"创意学前华丈(一)" },						// Creative Nursery Chinese
+	{ "creativenursery",	"创意学前华文(一)" },						// Creative Nursery Chinese
 
 	// Titles containing Director extras
 	{ "amgpremiere",		"The American Girls Premiere" },
