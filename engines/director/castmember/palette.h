@@ -29,7 +29,7 @@ namespace Director {
 class PaletteCastMember : public CastMember {
 public:
 	PaletteCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
-	int getPaletteId() { return _palette ? _palette->id : 0; }
+	CastMemberID getPaletteId() { return _palette ? _palette->id : CastMemberID(0, 0); }
 	void activatePalette() { if (_palette) g_director->setPalette(_palette->id); }
 
 	Common::String formatInfo() override;

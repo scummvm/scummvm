@@ -94,8 +94,7 @@ public:
 	uint16 getCurrentFrame() { return _currentFrame; }
 	int getNextFrame() { return _nextFrame; }
 
-	int getCurrentPalette();
-	int resolvePaletteId(int id);
+	CastMemberID getCurrentPalette();
 
 	Channel *getChannelById(uint16 id);
 	Sprite *getSpriteById(uint16 id);
@@ -150,7 +149,7 @@ public:
 
 	byte _puppetTempo;
 	bool _puppetPalette;
-	int _lastPalette;
+	CastMemberID _lastPalette;
 	int _paletteTransitionIndex;
 	byte _paletteSnapshotBuffer[768];
 

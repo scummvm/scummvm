@@ -112,12 +112,12 @@ struct StartOptions {
 };
 
 struct PaletteV4 {
-	int id;
+	CastMemberID id;
 	byte *palette;
 	int length;
 
-	PaletteV4(int i, byte *p, int l) : id(i), palette(p), length(l) {}
-	PaletteV4() : id(0), palette(nullptr), length(0) {}
+	PaletteV4(CastMemberID i, byte *p, int l) : id(i), palette(p), length(l) {}
+	PaletteV4() : id(), palette(nullptr), length(0) {}
 };
 
 struct MacShape {
@@ -179,16 +179,16 @@ public:
 	// graphics.cpp
 	bool hasFeature(EngineFeature f) const override;
 
-	void addPalette(int id, byte *palette, int length);
-	bool setPalette(int id);
+	void addPalette(CastMemberID &id, byte *palette, int length);
+	bool setPalette(const CastMemberID &id);
 	void setPalette(byte *palette, uint16 count);
 	void shiftPalette(int startIndex, int endIndex, bool reverse);
 	void clearPalettes();
-	PaletteV4 *getPalette(int id);
+	PaletteV4 *getPalette(const CastMemberID &id);
 	void loadDefaultPalettes();
 
-	const Common::HashMap<int, PaletteV4> &getLoadedPalettes() { return _loadedPalettes; }
-	const Common::HashMap<int, PaletteV4> &getLoaded16Palettes() { return _loaded16Palettes; }
+	const Common::HashMap<CastMemberID, PaletteV4> &getLoadedPalettes() { return _loadedPalettes; }
+	const Common::HashMap<CastMemberID, PaletteV4> &getLoaded16Palettes() { return _loaded16Palettes; }
 	const PaletteV4 &getLoaded4Palette() { return _loaded4Palette; }
 
 	const Common::FSNode *getGameDataDir() const { return &_gameDataDir; }
@@ -276,8 +276,8 @@ private:
 	Graphics::MacPatterns _director3QuickDrawPatterns;
 	PatternTile _builtinTiles[kNumBuiltinTiles];
 
-	Common::HashMap<int, PaletteV4> _loadedPalettes;
-	Common::HashMap<int, PaletteV4> _loaded16Palettes;
+	Common::HashMap<CastMemberID, PaletteV4> _loadedPalettes;
+	Common::HashMap<CastMemberID, PaletteV4> _loaded16Palettes;
 	PaletteV4 _loaded4Palette;
 
 	Graphics::ManagedSurface *_surface;

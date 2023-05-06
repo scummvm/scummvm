@@ -64,8 +64,8 @@ public:
 	uint16 _regY;
 	uint16 _flags2;
 	uint16 _bytes;
-	int _clut;
-	int _ditheredTargetClut;
+	CastMemberID _clut;
+	CastMemberID _ditheredTargetClut;
 
 	uint16 _bitsPerPixel;
 

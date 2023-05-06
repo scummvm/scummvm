@@ -112,12 +112,12 @@ public:
 	void releaseCastMemberWidget();
 
 	void dumpScript(const char *script, ScriptType type, uint16 id);
-	PaletteV4 loadPalette(Common::SeekableReadStreamEndian &stream);
 
 	Common::CodePage getFileEncoding();
 	Common::U32String decodeString(const Common::String &str);
 
 	Common::String formatCastSummary(int castId);
+	PaletteV4 loadPalette(Common::SeekableReadStreamEndian &stream, int id);
 
 private:
 	void loadScriptV2(Common::SeekableReadStreamEndian &stream, uint16 id);

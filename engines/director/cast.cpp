@@ -465,23 +465,19 @@ bool Cast::loadConfig() {
 }
 
 void Cast::loadCast() {
-	// Palette Information
-	Common::Array<uint16> clutList = _castArchive->getResourceIDList(MKTAG('C', 'L', 'U', 'T'));
-	if (clutList.size() == 0) {
-		debugC(2, kDebugLoading, "CLUT resource not found, using default Mac palette");
-	} else {
+	// Palette Information for D2; D3 and higher call this from the cast
+	if (_version < kFileVer300) {
+		Common::Array<uint16> clutList = _castArchive->getResourceIDList(MKTAG('C', 'L', 'U', 'T'));
 		for (uint i = 0; i < clutList.size(); i++) {
 			Common::SeekableReadStreamEndian *pal = _castArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[i]);
 
 			debugC(2, kDebugLoading, "****** Loading Palette CLUT, #%d", clutList[i]);
-			PaletteV4 p = loadPalette(*pal);
-
-			g_director->addPalette(clutList[i], p.palette, p.length);
-
+			PaletteV4 palData = loadPalette(*pal, clutList[i]);
+			CastMemberID cid(clutList[i], DEFAULT_CAST_LIB);
+			g_director->addPalette(cid, palData.palette, palData.length);
 			delete pal;
 		}
 	}
-
 	Common::SeekableReadStreamEndian *r = nullptr;
 
 	// Font Directory
@@ -684,7 +680,7 @@ Common::SeekableReadStreamEndian *Cast::getResource(uint32 tag, uint16 id) {
 	return _castArchive->getResource(tag, id);
 }
 
-PaletteV4 Cast::loadPalette(Common::SeekableReadStreamEndian &stream) {
+PaletteV4 Cast::loadPalette(Common::SeekableReadStreamEndian &stream, int id) {
 	int size = stream.size();
 	debugC(3, kDebugLoading, "Cast::loadPalette(): %d bytes", size);
 	if (debugChannelSet(5, kDebugLoading))
@@ -703,7 +699,7 @@ PaletteV4 Cast::loadPalette(Common::SeekableReadStreamEndian &stream) {
 	}
 	debugC(3, kDebugLoading, "Cast::loadPalette(): %d steps", steps);
 
-	byte *_palette = new byte[steps * 3];
+	byte *palette = new byte[steps * 3];
 
 
 	int colorIndex = 0;
@@ -721,18 +717,18 @@ PaletteV4 Cast::loadPalette(Common::SeekableReadStreamEndian &stream) {
 			break;
 		}
 
-		_palette[3 * colorIndex] = stream.readByte();
+		palette[3 * colorIndex] = stream.readByte();
 		stream.readByte();
 
-		_palette[3 * colorIndex + 1] = stream.readByte();
+		palette[3 * colorIndex + 1] = stream.readByte();
 		stream.readByte();
 
-		_palette[3 * colorIndex + 2] = stream.readByte();
+		palette[3 * colorIndex + 2] = stream.readByte();
 		stream.readByte();
 		colorIndex += 1;
 	}
-
-	return PaletteV4(0, _palette, steps);
+	PaletteV4 pal(CastMemberID(), palette, steps);
+	return pal;
 }
 
 void Cast::loadCastDataVWCR(Common::SeekableReadStreamEndian &stream) {

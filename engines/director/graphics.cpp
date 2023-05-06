@@ -108,41 +108,47 @@ const Common::Rect &DirectorEngine::getTileRect(int num) {
 }
 
 void DirectorEngine::loadDefaultPalettes() {
-	_loadedPalettes[kClutSystemMac] = PaletteV4(kClutSystemMac, macPalette, 256);
-	_loadedPalettes[kClutRainbow] = PaletteV4(kClutRainbow, rainbowPalette, 256);
-	_loadedPalettes[kClutGrayscale] = PaletteV4(kClutGrayscale, grayscalePalette, 256);
-	_loadedPalettes[kClutPastels] = PaletteV4(kClutPastels, pastelsPalette, 256);
-	_loadedPalettes[kClutVivid] = PaletteV4(kClutVivid, vividPalette, 256);
-	_loadedPalettes[kClutNTSC] = PaletteV4(kClutNTSC, ntscPalette, 256);
-	_loadedPalettes[kClutMetallic] = PaletteV4(kClutMetallic, metallicPalette, 256);
-	_loadedPalettes[kClutSystemWin] = PaletteV4(kClutSystemWin, winPalette, 256);
-	_loadedPalettes[kClutSystemWinD5] = PaletteV4(kClutSystemWinD5, winD5Palette, 256);
+	_loadedPalettes[CastMemberID(kClutSystemMac, -1)] = PaletteV4(CastMemberID(kClutSystemMac, -1), macPalette, 256);
+	_loadedPalettes[CastMemberID(kClutRainbow, -1)] = PaletteV4(CastMemberID(kClutRainbow, -1), rainbowPalette, 256);
+	_loadedPalettes[CastMemberID(kClutGrayscale, -1)] = PaletteV4(CastMemberID(kClutGrayscale, -1), grayscalePalette, 256);
+	_loadedPalettes[CastMemberID(kClutPastels, -1)] = PaletteV4(CastMemberID(kClutPastels, -1), pastelsPalette, 256);
+	_loadedPalettes[CastMemberID(kClutVivid, -1)] = PaletteV4(CastMemberID(kClutVivid, -1), vividPalette, 256);
+	_loadedPalettes[CastMemberID(kClutNTSC, -1)] = PaletteV4(CastMemberID(kClutNTSC, -1), ntscPalette, 256);
+	_loadedPalettes[CastMemberID(kClutMetallic, -1)] = PaletteV4(CastMemberID(kClutMetallic, -1), metallicPalette, 256);
+	_loadedPalettes[CastMemberID(kClutSystemWin, -1)] = PaletteV4(CastMemberID(kClutSystemWin, -1), winPalette, 256);
+	_loadedPalettes[CastMemberID(kClutSystemWinD5, -1)] = PaletteV4(CastMemberID(kClutSystemWinD5, -1), winD5Palette, 256);
 
-	_loaded16Palettes[kClutSystemMac] = PaletteV4(kClutSystemMac, mac16Palette, 16);
-	_loaded16Palettes[kClutRainbow] = PaletteV4(kClutRainbow, rainbow16Palette, 16);
-	_loaded16Palettes[kClutGrayscale] = PaletteV4(kClutGrayscale, grayscale16Palette, 16);
-	_loaded16Palettes[kClutPastels] = PaletteV4(kClutPastels, pastels16Palette, 16);
-	_loaded16Palettes[kClutVivid] = PaletteV4(kClutVivid, vivid16Palette, 16);
-	_loaded16Palettes[kClutNTSC] = PaletteV4(kClutNTSC, ntsc16Palette, 16);
-	_loaded16Palettes[kClutMetallic] = PaletteV4(kClutMetallic, metallic16Palette, 16);
-	_loaded16Palettes[kClutSystemWin] = PaletteV4(kClutSystemWin, win16Palette, 16);
-	_loaded16Palettes[kClutSystemWinD5] = PaletteV4(kClutSystemWinD5, winD516Palette, 16);
+	_loaded16Palettes[CastMemberID(kClutSystemMac, -1)] = PaletteV4(CastMemberID(kClutSystemMac, -1), mac16Palette, 16);
+	_loaded16Palettes[CastMemberID(kClutRainbow, -1)] = PaletteV4(CastMemberID(kClutRainbow, -1), rainbow16Palette, 16);
+	_loaded16Palettes[CastMemberID(kClutGrayscale, -1)] = PaletteV4(CastMemberID(kClutGrayscale, -1), grayscale16Palette, 16);
+	_loaded16Palettes[CastMemberID(kClutPastels, -1)] = PaletteV4(CastMemberID(kClutPastels, -1), pastels16Palette, 16);
+	_loaded16Palettes[CastMemberID(kClutVivid, -1)] = PaletteV4(CastMemberID(kClutVivid, -1), vivid16Palette, 16);
+	_loaded16Palettes[CastMemberID(kClutNTSC, -1)] = PaletteV4(CastMemberID(kClutNTSC, -1), ntsc16Palette, 16);
+	_loaded16Palettes[CastMemberID(kClutMetallic, -1)] = PaletteV4(CastMemberID(kClutMetallic, -1), metallic16Palette, 16);
+	_loaded16Palettes[CastMemberID(kClutSystemWin, -1)] = PaletteV4(CastMemberID(kClutSystemWin, -1), win16Palette, 16);
+	_loaded16Palettes[CastMemberID(kClutSystemWinD5, -1)] = PaletteV4(CastMemberID(kClutSystemWinD5, -1), winD516Palette, 16);
 
-	_loaded4Palette = PaletteV4(kClutGrayscale, grayscale4Palette, 4);
+	_loaded4Palette = PaletteV4(CastMemberID(kClutGrayscale, -1), grayscale4Palette, 4);
 }
 
-PaletteV4 *DirectorEngine::getPalette(int id) {
+PaletteV4 *DirectorEngine::getPalette(const CastMemberID &id) {
 	if (!_loadedPalettes.contains(id)) {
-		warning("DirectorEngine::getPalette(): Palette %d not found", id);
-		return nullptr;
+		CastMember *member = getCurrentMovie()->getCastMember(id);
+		if (member && member->_type == kCastPalette) {
+			member->load();
+		}
+		if (!_loadedPalettes.contains(id)) {
+			warning("DirectorEngine::getPalette(): Palette %s not found", id.asString().c_str());
+			return nullptr;
+		}
 	}
 
 	return &_loadedPalettes[id];
 }
 
-void DirectorEngine::addPalette(int id, byte *palette, int length) {
-	if (id < 0) {
-		warning("DirectorEngine::addPalette(): Negative palette ids reserved for default palettes");
+void DirectorEngine::addPalette(CastMemberID &id, byte *palette, int length) {
+	if (id.castLib < 0) {
+		warning("DirectorEngine::addPalette(): Negative cast library ids reserved for default palettes");
 		return;
 	} else if (_loadedPalettes.contains(id)) {
 		delete[] _loadedPalettes[id].palette;
@@ -151,17 +157,16 @@ void DirectorEngine::addPalette(int id, byte *palette, int length) {
 	_loadedPalettes[id] = PaletteV4(id, palette, length);
 }
 
-bool DirectorEngine::setPalette(int id) {
-	if (id == 0) {
+bool DirectorEngine::setPalette(const CastMemberID &id) {
+	if (id.isNull()) {
 		// Palette id of 0 is unused
 		return false;
-	} else if (!_loadedPalettes.contains(id)) {
-		warning("setPalette(): no palette with matching id %d", id);
-		return false;
-	}
+	} 
 
-	PaletteV4 pal = _loadedPalettes[id];
-	setPalette(pal.palette, pal.length);
+	PaletteV4 *pal = getPalette(id);
+	if (!pal)
+		return false;
+	setPalette(pal->palette, pal->length);
 
 	return true;
 }
@@ -210,8 +215,8 @@ void DirectorEngine::shiftPalette(int startIndex, int endIndex, bool reverse) {
 }
 
 void DirectorEngine::clearPalettes() {
-	for (Common::HashMap<int, PaletteV4>::iterator it = _loadedPalettes.begin(); it != _loadedPalettes.end(); ++it) {
-		if (it->_value.id > 0)
+	for (auto it = _loadedPalettes.begin(); it != _loadedPalettes.end(); ++it) {
+		if (it->_value.id.castLib > 0)
 			delete[] it->_value.palette;
 	}
 }
