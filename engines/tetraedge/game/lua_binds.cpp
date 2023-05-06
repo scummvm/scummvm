@@ -120,7 +120,7 @@ static int tolua_ExportedFunctions_PlayMovie00(lua_State *L) {
 		// iOS version.. sometimes has "video" as 3rd param?
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
-		Common::String s3(tolua_tostring(L, 2, nullptr));
+		Common::String s3(tolua_tostring(L, 3, nullptr));
 		PlayMovie(s1, s2);
 		return 0;
 	}
