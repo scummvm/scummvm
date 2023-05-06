@@ -89,7 +89,7 @@ void TeScummvmCodec::setLeftBorderSize(uint val) {
 }
 
 void TeScummvmCodec::setRightBorderSize(uint val) {
-	error("left border not supported.");
+	error("right border not supported.");
 }
 
 void TeScummvmCodec::setBottomBorderSize(uint val) {
