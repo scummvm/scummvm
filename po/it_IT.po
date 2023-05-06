@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-05-05 20:35+0000\n"
-"PO-Revision-Date: 2023-05-05 12:10+0000\n"
+"PO-Revision-Date: 2023-05-06 17:39+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -4218,22 +4218,16 @@ msgid "Software scale (good quality, but slower)"
 msgstr "Ridimensionamento software (di buona qualità, ma più lento)"
 
 #: backends/platform/ios7/ios7_options.mm:67
-#, fuzzy
-#| msgid "Show On-screen control"
 msgid "Show On-screen control (iOS 15 and later)"
-msgstr "Controlli in sovraimpressione"
+msgstr "Controlli in sovraimpressione (iOS 15 e successivi)"
 
 #: backends/platform/ios7/ios7_options.mm:69
-#, fuzzy
-#| msgid "Mouse-click-and-drag mode enabled."
 msgid "Mouse-click-and-drag mode"
-msgstr "Modalità mouse-clicca-e-trascina attivata."
+msgstr "Modalità mouse-clicca-e-trascina"
 
 #: backends/platform/ios7/ios7_options.mm:71
-#, fuzzy
-#| msgid "Controls"
 msgid "Controls Help"
-msgstr "Controlli"
+msgstr "Aiuto controlli"
 
 #: backends/platform/ios7/ios7_options.mm:102
 msgid ""
@@ -4251,6 +4245,21 @@ msgid ""
 "Pinch gesture: Enables/disables keyboard\n"
 "Keyboard spacebar: Pause"
 msgstr ""
+"Gesti e controlli:\n"
+"\n"
+"Tocco con un dito: Clic tasto sinistro mouse\n"
+"Tocco con due dita: Clic tasto destro mouse\n"
+"Doppio tocco con due dita: ESC\n"
+"Scorrimento con due dita (dal basso verso l'alto): Cambia modalità clicca-e-"
+"trascina\n"
+"Scorrimento con due dita (da sinistra a destra): Alterna tra modalità mouse "
+"\"diretto\" o \"touchpad\"\n"
+"Scorrimento con due dita (da destra a sinistra): Mostra/nascondi controlli "
+"in sovraimpressione\n"
+"Scorrimento con due dita (dall'alto verso il basso): Mostra Menù Globale\n"
+"Scorrimento con tre dita: Frecce direzionali\n"
+"Gesto \"pizzica\": Mostra/nascondi tastiera\n"
+"Barra spazio tastiera: pausa"
 
 #: backends/platform/ios7/ios7_options.mm:115
 msgid ""
@@ -4267,6 +4276,20 @@ msgid ""
 "Touch (not press) on bottom of Touch area: Down arrow key\n"
 "Keyboard spacebar: Pause"
 msgstr ""
+"Usando il telecomando per Apple TV:\n"
+"\n"
+"Pressione area Touch: Clic tasto sinistro mouse\n"
+"Pressione tasto Play/Pausa: Clic tasto destro mouse\n"
+"Pressione tasto Indietro/Menu durante il gioco: Mostra Menù Globale\n"
+"Pressione tasto Indietro/Menu nell'elenco giochi: Torna a Apple TV Home\n"
+"Pressione prolungata tasto Play/Pausa: Mostra tastiera con tasti "
+"addizionali\n"
+"Tocco (senza premere) parte alta area Touch: Freccia Direzionale Su\n"
+"Tocco (senza premere) parte sinistra area Touch: Freccia Direzionale "
+"Sinistra\n"
+"Tocco (senza premere) parte destra area Touch: Freccia Direzionale Destra\n"
+"Tocco (senza premere) parte bassa area Touch: Freccia Direzionale Giù\n"
+"Barra spazio tastiera: Pausa"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:412
 #: backends/platform/iphone/osys_events.cpp:299
