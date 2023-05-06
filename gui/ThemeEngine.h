@@ -477,7 +477,8 @@ public:
 	                     WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
 	void drawTab(const Common::Rect &r, int tabHeight, const Common::Array<int> &tabWidths,
-	             const Common::Array<Common::U32String> &tabs, int active, bool rtl = false);
+	             const Common::Array<Common::U32String> &tabs, int active, bool rtl,
+				 ThemeEngine::TextAlignVertical alignV);
 
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState);
 
