@@ -236,7 +236,8 @@ msgstr "Tároló csatlakoztatva."
 
 #: gui/cloudconnectionwizard.cpp:378
 msgid "Make sure the JSON code was copied correctly and retry."
-msgstr "Győződj meg, hogy a JSON kódot megfelelően másoltad, majd próbáld újra."
+msgstr ""
+"Győződj meg, hogy a JSON kódot megfelelően másoltad, majd próbáld újra."
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "If that doesn't work, try again from the beginning."
