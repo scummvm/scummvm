@@ -134,7 +134,7 @@
 		AD_ENTRY1s("adi2.stk", "157a26943a021d92f5c76f6eb8f18f2a", 12960390),
 		DE_DEU,
 		kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
