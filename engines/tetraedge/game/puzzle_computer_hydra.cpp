@@ -130,7 +130,7 @@ bool PuzzleComputerHydra::exitChecklistScreen() {
 bool PuzzleComputerHydra::exitCoordinatesScreen() {
 	_transitionTimer.alarmSignal().remove(this, &PuzzleComputerHydra::enterChecklistScreen);
 	_gui.spriteLayoutChecked("title")->setVisible(true);
-	_gui.spriteLayoutChecked("infos")->setVisible(false);
+	_gui.spriteLayoutChecked("coordinates")->setVisible(false);
 	_gui.buttonLayoutChecked("button0")->setEnable(false);
 	_gui.buttonLayoutChecked("button1")->setEnable(false);
 	_gui.buttonLayoutChecked("button2")->setEnable(false);
