@@ -52,6 +52,8 @@ protected:
 	int _minTabWidth;
 	int _titleSpacing;
 
+	ThemeEngine::TextAlignVertical _alignV;
+
 	int _bodyRP, _bodyTP, _bodyLP, _bodyBP;
 	ThemeEngine::DialogBackground _bodyBackgroundType;
 
@@ -66,8 +68,8 @@ protected:
 	void recalc();
 
 public:
-	TabWidget(GuiObject *boss, int x, int y, int w, int h);
-	TabWidget(GuiObject *boss, const Common::String &name);
+	TabWidget(GuiObject *boss, int x, int y, int w, int h, ThemeEngine::TextAlignVertical alignV = ThemeEngine::kTextAlignVTop);
+	TabWidget(GuiObject *boss, const Common::String &name, ThemeEngine::TextAlignVertical alignV = ThemeEngine::kTextAlignVTop);
 	~TabWidget() override;
 
 	void init();
