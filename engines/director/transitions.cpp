@@ -154,7 +154,7 @@ void Window::stepTransition(TransParams &t, int step) {
 	g_director->draw();
 }
 
-void Window::playTransition(uint frame, uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType, int paletteId) {
+void Window::playTransition(uint frame, uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType, CastMemberID paletteId) {
 	// Play a transition and return the number of subframes rendered
 	TransParams t;
 
@@ -174,7 +174,7 @@ void Window::playTransition(uint frame, uint16 transDuration, uint8 transArea, u
 	t.targetPal = g_director->getPalette();
 	t.targetPalLength = g_director->getPaletteColorCount();
 
-	if (paletteId) {
+	if (!paletteId.isNull()) {
 		PaletteV4 *target = g_director->getPalette(paletteId);
 		if (target) {
 			t.targetPal = target->palette;

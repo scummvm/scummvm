@@ -22,6 +22,8 @@
 #ifndef DIRECTOR_TYPES_H
 #define DIRECTOR_TYPES_H
 
+#include "common/hashmap.h"
+
 namespace Director {
 
 #define CONTINUATION (0xAC)
@@ -394,16 +396,18 @@ struct CastMemberID {
 	CastMemberID(int memberID, int castLibID)
 		: member(memberID), castLib(castLibID) {}
 
-	bool operator==(const CastMemberID &c) {
+	bool operator==(const CastMemberID &c) const {
 		return member == c.member && castLib == c.castLib;
 	}
-	bool operator!=(const CastMemberID &c) {
+	bool operator!=(const CastMemberID &c) const {
 		return member != c.member || castLib != c.castLib;
 	}
 
-	bool isNull() { return member == 0 && castLib == 0; }
+	bool isNull() const { return member == 0 && castLib == 0; }
 
 	Common::String asString() const;
+
+	uint hash() const { return ((castLib & 0xffff) << 16) + (member & 0xffff); }
 };
 
 enum CompareResult {
@@ -428,5 +432,16 @@ const char *castType2str(CastType type);
 const char *spriteType2str(SpriteType type);
 
 } // End of namespace Director
+
+namespace Common {
+
+template<>
+struct Hash<Director::CastMemberID> {
+	uint operator()(const Director::CastMemberID &id) const {
+		return id.hash();
+	}
+};
+
+} // End of namespace Common
 
 #endif
