@@ -313,6 +313,15 @@ SeekableReadStream * MacResManager::openFileOrDataFork(const Path &fileName) {
 	return openFileOrDataFork(fileName, SearchMan);
 }
 
+SeekableReadStream * MacResManager::openDataForkFromMacBinary(SeekableReadStream *inStream, DisposeAfterUse::Flag disposeAfterUse) {
+	if (!inStream && !isMacBinary(*inStream)) {
+		return nullptr;
+	}
+	inStream->seek(MBI_DFLEN);
+	uint32 dataSize = inStream->readUint32BE();
+	return new SeekableSubReadStream(inStream, MBI_INFOHDR, MBI_INFOHDR + dataSize, disposeAfterUse);
+}
+
 SeekableReadStream * MacResManager::openFileOrDataFork(const Path &fileName, Archive &archive) {
 	SeekableReadStream *stream = archive.createReadStreamForMember(fileName);
 	// Our preference is as following:
