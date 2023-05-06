@@ -23,6 +23,7 @@
 #define SCUMM_DETECTION_INTERNAL_H
 
 #include "common/debug.h"
+#include "common/macresman.h"
 #include "common/md5.h"
 #include "common/punycode.h"
 #include "common/translation.h"
@@ -463,8 +464,14 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 		// exist in the directory we are looking at, we can skip to the next
 		// one immediately.
 		Common::String file(generateFilenameForDetection(gfp->pattern, gfp->genMethod, gfp->platform));
-		if (!fileMD5Map.contains(file))
-			continue;
+		Common::Platform platform = gfp->platform;
+		if (!fileMD5Map.contains(file)) {
+			if (fileMD5Map.contains(file + ".bin") && (platform == Common::Platform::kPlatformMacintosh || platform == Common::Platform::kPlatformUnknown)) {
+				file += ".bin";
+				platform = Common::Platform::kPlatformMacintosh;
+			} else
+				continue;
+		}
 
 		// Reset the DetectorResult variable.
 		dr.fp.pattern = gfp->pattern;
@@ -506,9 +513,25 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 			if (tmp)
 				md5str = computeStreamMD5AsString(*tmp, kMD5FileSizeLimit);
 			if (!md5str.empty()) {
+				int filesize = tmp->size();
 
 				d.md5 = md5str;
 				d.md5Entry = findInMD5Table(md5str.c_str());
+
+				if (!d.md5Entry && (platform == Common::Platform::kPlatformMacintosh || platform == Common::Platform::kPlatformUnknown)) {
+					Common::SeekableReadStream *dataStream = Common::MacResManager::openDataForkFromMacBinary(tmp);
+					if (dataStream) {
+						Common::String dataMD5 = computeStreamMD5AsString(*dataStream, kMD5FileSizeLimit);
+						const MD5Table *dataMD5Entry = findInMD5Table(dataMD5.c_str());
+						if (dataMD5Entry) {
+							d.md5 = dataMD5;
+							d.md5Entry = dataMD5Entry;
+							filesize = dataStream->size();
+							platform = Common::Platform::kPlatformMacintosh;
+						}
+						delete dataStream;
+					}
+				}
 
 				dr.md5 = d.md5;
 
@@ -517,7 +540,6 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 					computeGameSettingsFromMD5(fslist, gfp, d.md5Entry, dr);
 
 					// Print some debug info.
-					int filesize = tmp->size();
 					debugC(1, kDebugGlobalDetection, "SCUMM detector found matching file '%s' with MD5 %s, size %d\n",
 						file.c_str(), md5str.c_str(), filesize);
 
@@ -568,8 +590,8 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 			dr.game = *g;
 			dr.extra = g->variant; // FIXME: We (ab)use 'variant' for the 'extra' description for now.
 
-			if (gfp->platform != Common::kPlatformUnknown)
-				dr.game.platform = gfp->platform;
+			if (platform != Common::kPlatformUnknown)
+				dr.game.platform = platform;
 
 
 			// If a variant has been specified, use that!
