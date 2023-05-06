@@ -38,7 +38,6 @@ namespace Tetraedge {
 class TeWarp : public Te3DObject2 {
 public:
 	struct FrameData {
-		int _numWarpBlocs;
 		Common::Array<TeWarpBloc> _warpBlocs;
 		TePickMesh _pickMesh;
 		int _loadedTexCount;

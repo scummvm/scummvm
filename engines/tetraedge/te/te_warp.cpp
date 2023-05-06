@@ -272,13 +272,16 @@ void TeWarp::load(const Common::String &path, bool flag) {
 	_warpBlocs.resize(_xCount * _yCount * 6);
 	for (uint i = 0; i < _xCount * _yCount * 6; i++) {
 		TeWarpBloc::CubeFace face = static_cast<TeWarpBloc::CubeFace>(_file.readByte());
+		// TODO: This is strange, surely we only need to set the offset and create the bloc
+		// once but the code seems to do it xCount * yCount times..
 		for (uint j = 0; j < _xCount * _yCount; j++) {
-			unsigned short offx = _file.readUint16LE();
-			unsigned short offy = _file.readUint16LE();
-			unsigned int blocTexOffset = _file.readUint32LE();
+			uint xoff = _file.readUint16LE();
+			uint yoff = _file.readUint16LE();
+			if (xoff > 1000 || yoff > 1000)
+				error("TeWarp::load: Improbable offsets %d, %d", xoff, yoff);
+			uint32 blocTexOffset = _file.readUint32LE();
 			_warpBlocs[i].setTextureFileOffset(globalTexDataOffset + blocTexOffset);
-			TeVector2s32 offset(offx, offy);
-			_warpBlocs[i].create(face, _xCount, _yCount, offset);
+			_warpBlocs[i].create(face, _xCount, _yCount, TeVector2s32(xoff, yoff));
 		}
 	}
 	_loadedAnimData.resize(numAnims);
@@ -289,21 +292,26 @@ void TeWarp::load(const Common::String &path, bool flag) {
 		aname[4] = '\0';
 		_loadedAnimData[i]._name = aname;
 		uint numFrames = _file.readUint32LE();
+		if (numFrames > 1000)
+			error("TeWarp::load: Improbable frame count %d", numFrames);
 		byte numSomething = _file.readByte();
 		_loadedAnimData[i]._frameDatas.resize(numFrames);
 		for (uint j = 0; j < numFrames; j++) {
 			FrameData &frameData = _loadedAnimData[i]._frameDatas[j];
 			frameData._loadedTexCount = 0;
-			frameData._numWarpBlocs = 0;
 			Common::Array<TeWarpBloc> warpBlocs;
 			for (uint k = 0; k < numSomething; k++) {
 				uint blocCount = _file.readUint32LE();
+				if (blocCount > 1000)
+					error("TeWarp::load: Improbable bloc count %d", blocCount);
 				if (blocCount) {
 					TeWarpBloc::CubeFace face = static_cast<TeWarpBloc::CubeFace>(_file.readByte());
-					warpBlocs.resize(frameData._numWarpBlocs + blocCount);
+					warpBlocs.resize(blocCount);
 					for (auto &warpBloc : warpBlocs) {
 						uint xoff = _file.readUint16LE();
 						uint yoff = _file.readUint16LE();
+						if (xoff > 10000 || yoff > 10000)
+							error("TeWarp::load: Improbable offsets %d, %d", xoff, yoff);
 						uint32 texDataOff = _file.readUint32LE();
 						warpBloc.setTextureFileOffset(globalTexDataOffset + texDataOff);
 						warpBloc.create(face, _someXVal, _someYVal, TeVector2s32(xoff, yoff));
@@ -311,12 +319,16 @@ void TeWarp::load(const Common::String &path, bool flag) {
 							warpBloc.color(TeColor(255, 0, 0, 255));
 					}
 					uint meshSize = _file.readUint32LE();
+					if (meshSize > 1000)
+						error("TeWarp::load: Improbable meshSize %d", meshSize);
 					TePickMesh tmpMesh;
 					tmpMesh.setName(aname);
 					tmpMesh.nbTriangles(meshSize * 2);
 					for (uint m = 0; m < meshSize; m++) {
 						uint xoff = _file.readUint16LE();
 						uint yoff = _file.readUint16LE();
+						if (xoff > 10000 || yoff > 10000)
+							error("TeWarp::load: Improbable offsets %d, %d", xoff, yoff);
 						addQuadToPickMesh(tmpMesh, m * 2, face, TeVector2s32(xoff, yoff), _someMeshX, _someMeshY);
 					}
 					tmpMesh.setEnabled(true);
