@@ -26,6 +26,11 @@
 
 namespace Scumm {
 
+void BaseScummFile::close() {
+  _baseStream.reset();
+  _debugName.clear();
+}
+
 #pragma mark -
 #pragma mark --- ScummFile ---
 #pragma mark -
@@ -35,7 +40,7 @@ ScummFile::ScummFile() : _subFileStart(0), _subFileLen(0), _myEos(false) {
 
 void ScummFile::setSubfileRange(int32 start, int32 len) {
 	// TODO: Add sanity checks
-	const int32 fileSize = File::size();
+	const int32 fileSize = _baseStream->size();
 	assert(start <= fileSize);
 	assert(start + len <= fileSize);
 	_subFileStart = start;
@@ -50,7 +55,9 @@ void ScummFile::resetSubfile() {
 }
 
 bool ScummFile::open(const Common::Path &filename) {
-	if (File::open(filename)) {
+	_baseStream.reset(SearchMan.createReadStreamForMember(filename));
+	_debugName = filename.toString();
+	if (_baseStream) {
 		resetSubfile();
 		return true;
 	} else {
@@ -59,7 +66,7 @@ bool ScummFile::open(const Common::Path &filename) {
 }
 
 bool ScummFile::openSubFile(const Common::String &filename) {
-	assert(isOpen());
+	assert(_baseStream);
 
 	// Disable the XOR encryption and reset any current subfile range
 	setEnc(0);
@@ -117,15 +124,15 @@ bool ScummFile::openSubFile(const Common::String &filename) {
 
 
 bool ScummFile::eos() const {
-	return _subFileLen ? _myEos : File::eos();
+	return _subFileLen ? _myEos : _baseStream->eos();
 }
 
 int64 ScummFile::pos() const {
-	return File::pos() - _subFileStart;
+	return _baseStream->pos() - _subFileStart;
 }
 
 int64 ScummFile::size() const {
-	return _subFileLen ? _subFileLen : File::size();
+	return _subFileLen ? _subFileLen : _baseStream->size();
 }
 
 bool ScummFile::seek(int64 offs, int whence) {
@@ -140,13 +147,13 @@ bool ScummFile::seek(int64 offs, int whence) {
 			offs += _subFileStart;
 			break;
 		case SEEK_CUR:
-			offs += File::pos();
+			offs += _baseStream->pos();
 			break;
 		}
 		assert((int32)_subFileStart <= offs && offs <= (int32)(_subFileStart + _subFileLen));
 		whence = SEEK_SET;
 	}
-	bool ret = File::seek(offs, whence);
+	bool ret = _baseStream->seek(offs, whence);
 	if (ret)
 		_myEos = false;
 	return ret;
@@ -166,7 +173,7 @@ uint32 ScummFile::read(void *dataPtr, uint32 dataSize) {
 		}
 	}
 
-	realLen = File::read(dataPtr, dataSize);
+	realLen = _baseStream->read(dataPtr, dataSize);
 
 
 	// If an encryption byte was specified, XOR the data we just read by it.
@@ -283,7 +290,7 @@ ScummDiskImage::ScummDiskImage(const char *disk1, const char *disk2, GameSetting
 
 byte ScummDiskImage::fileReadByte() {
 	byte b = 0;
-	File::read(&b, 1);
+	_baseStream->read(&b, 1);
 	return b;
 }
 
@@ -299,22 +306,21 @@ bool ScummDiskImage::openDisk(char num) {
 	if (num == '2')
 		num = 2;
 
-	if (_openedDisk != num || !File::isOpen()) {
-		if (File::isOpen())
-			File::close();
-
-		if (num == 1)
-			File::open(_disk1);
-		else if (num == 2)
-			File::open(_disk2);
-		else {
+	if (_openedDisk != num || !_baseStream) {
+		if (num == 1) {
+			_baseStream.reset(SearchMan.createReadStreamForMember(_disk1));
+			_debugName = _disk1;
+		} else if (num == 2) {
+			_baseStream.reset(SearchMan.createReadStreamForMember(_disk2));
+			_debugName = _disk2;
+		} else {
 			error("ScummDiskImage::open(): wrong disk (%c)", num);
 			return false;
 		}
 
 		_openedDisk = num;
 
-		if (!File::isOpen()) {
+		if (!_baseStream) {
 			error("ScummDiskImage::open(): cannot open disk (%d)", num);
 			return false;
 		}
@@ -329,9 +335,9 @@ bool ScummDiskImage::open(const Common::Path &filename) {
 	openDisk(1);
 
 	if (_game.platform == Common::kPlatformApple2GS) {
-		File::seek(142080);
+		_baseStream->seek(142080);
 	} else {
-		File::seek(0);
+		_baseStream->seek(0);
 	}
 
 	signature = fileReadUint16LE();
@@ -348,12 +354,12 @@ bool ScummDiskImage::open(const Common::Path &filename) {
 	openDisk(2);
 
 	if (_game.platform == Common::kPlatformApple2GS) {
-		File::seek(143104);
+		_baseStream->seek(143104);
 		signature = fileReadUint16LE();
 		if (signature != 0x0032)
 			error("Error: signature not found in disk 2");
 	} else {
-		File::seek(0);
+		_baseStream->seek(0);
 		signature = fileReadUint16LE();
 		if (signature != 0x0132)
 			error("Error: signature not found in disk 2");
@@ -371,9 +377,9 @@ uint16 ScummDiskImage::extractIndex(Common::WriteStream *out) {
 	openDisk(1);
 
 	if (_game.platform == Common::kPlatformApple2GS) {
-		File::seek(142080);
+		_baseStream->seek(142080);
 	} else {
-		File::seek(0);
+		_baseStream->seek(0);
 	}
 
 	// skip signature
@@ -457,9 +463,9 @@ uint16 ScummDiskImage::extractResource(Common::WriteStream *out, int res) {
 	openDisk(_roomDisks[res]);
 
 	if (_game.platform == Common::kPlatformApple2GS) {
-		File::seek((AppleSectorOffset[_roomTracks[res]] + _roomSectors[res]) * 256);
+		_baseStream->seek((AppleSectorOffset[_roomTracks[res]] + _roomSectors[res]) * 256);
 	} else {
-		File::seek((C64SectorOffset[_roomTracks[res]] + _roomSectors[res]) * 256);
+		_baseStream->seek((C64SectorOffset[_roomTracks[res]] + _roomSectors[res]) * 256);
 	}
 
 	for (i = 0; i < _resourcesPerFile[res]; i++) {
@@ -505,11 +511,12 @@ void ScummDiskImage::close() {
 	free(_buf);
 	_buf = nullptr;
 
-	File::close();
+	_baseStream.reset();
+	_debugName.clear();
 }
 
 bool ScummDiskImage::openSubFile(const Common::String &filename) {
-	assert(isOpen());
+	assert(_baseStream);
 
 	const char *ext = strrchr(filename.c_str(), '.');
 	char resNum[3];
