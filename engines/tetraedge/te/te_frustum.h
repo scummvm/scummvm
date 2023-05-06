@@ -22,28 +22,24 @@
 #ifndef TETRAEDGE_TE_TE_FRUSTUM_H
 #define TETRAEDGE_TE_TE_FRUSTUM_H
 
+#include "math/frustum.h"
+
 #include "tetraedge/te/te_camera.h"
 #include "tetraedge/te/te_vector3f32.h"
 #include "tetraedge/te/te_matrix4x4.h"
 
 namespace Tetraedge {
 
-class TeFrustum {
+class TeFrustum : public Math::Frustum {
 public:
 	TeFrustum();
 
-	void computeNormal(unsigned int val);
-	void extractPlanAdd(const TeMatrix4x4 &matrix, uint param_2, uint param_3);
-	void extractPlanSub(const TeMatrix4x4 &matrix, uint param_2, uint param_3);
-	bool pointIsIn(const TeVector3f32 &pt) const;
-	bool sphereIsIn(const TeVector3f32 &vec, float f) const;
-	bool triangleIsIn(const TeVector3f32 *vertexes) const;
-	void update(TeCamera *camera);
+	// unused..
+	//void computeNormal(unsigned int val);
+	//bool pointIsIn(const TeVector3f32 &pt) const;
+	//bool sphereIsIn(const TeVector3f32 &vec, float f) const;
 
-private:
-	float planeLen(int num) const;
-	float _m[24];
-
+	void update(TeCamera &camera);
 };
 
 } // end namespace Tetraedge

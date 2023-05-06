@@ -27,15 +27,15 @@
 
 namespace Tetraedge {
 
-TePickMesh::TePickMesh() : _flag(true) {
+TePickMesh::TePickMesh() : _enabled(true) {
 }
 
-TePickMesh::TePickMesh(const TePickMesh &other) : _flag(true) {
+TePickMesh::TePickMesh(const TePickMesh &other) : _enabled(true) {
 	copy(other);
 }
 
 void TePickMesh::copy(const TePickMesh &other) {
-	_flag = other._flag;
+	_enabled = other._enabled;
 	_name = other._name;
 	_v1 = other._v1;
 	_v2 = other._v2;
@@ -54,8 +54,8 @@ void TePickMesh::getTriangle(uint triNum, TeVector3f32 &v1, TeVector3f32 &v2, Te
 	v3 = _verticies[triNum * 3 + 2];
 }
 
-bool TePickMesh::intersect(const Math::Ray &ray, TeVector3f32 &ptOut, float &lenOut) {
-	if (!_flag || _verticies.empty())
+bool TePickMesh::intersect(const Math::Ray &ray, TeVector3f32 &ptOut, float &lenOut) const {
+	if (!_enabled || _verticies.empty())
 		return false;
 	float nearest = FLT_MAX;
 	for (uint i = 0; i < _verticies.size() / 3; i++) {

@@ -136,7 +136,6 @@ void TeWarpBloc::loadTexture(Common::File &file, const Common::String &type) {
 	TeIntrusivePtr<Te3DTexture> tex = Te3DTexture::makeInstance();
 	tex->load(img);
 	_mesh->defaultMaterial(tex);
-	_mesh->materials()[0]._enableLights = false;
 }
 
 void TeWarpBloc::render() {

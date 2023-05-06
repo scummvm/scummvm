@@ -30,7 +30,8 @@ namespace Tetraedge {
 
 class TeTRS;
 
-/* A 4x4 matrix, but stored in *column-major* order to match
+/**
+ * A 4x4 matrix, but stored in *column-major* order to match
  * OpenGL (and the original engine)
  */
 class TeMatrix4x4 {
@@ -65,6 +66,7 @@ public:
 	TeVector3f32 mult4x3(const TeVector3f32 &vec) const;
 
 	Common::String toString() const;
+	Math::Matrix<4, 4> toScummVMMatrix() const;
 
 	void setValue(int row, int col, float val) {
 		operator()(row, col) = val;

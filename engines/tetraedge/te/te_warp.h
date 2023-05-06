@@ -94,7 +94,7 @@ public:
 	AnimData *findAnimation(const Common::String &name);
 	Exit *findExit(const Common::String &name, bool flag);
 	//int getAnimationFrame(const Common::String &name); // unused
-	bool hasObjectOrAnim(const Common::String &name);
+	bool hasObjectOrAnim(const Common::String &name) const;
 	void init();
 	void load(const Common::String &path, bool flag);
 	//void loadTextures(); // unused
@@ -135,8 +135,8 @@ private:
 	bool _preloaded;
 	bool _renderWarpBlocs;
 
-	TePickMesh *_clickedPickMesh;
-	AnimData *_clickedAnimData;
+	const TePickMesh *_clickedPickMesh;
+	const AnimData *_clickedAnimData;
 
 	TeFrustum _frustum;
 
@@ -150,7 +150,6 @@ private:
 	uint _someMeshY;
 	uint _xCount;
 	uint _yCount;
-	uint _numAnims;
 	Common::Array<TeWarpBloc> _warpBlocs;
 	Common::Array<TePickMesh *> _pickMeshes2;
 	Common::Array<AnimData> _loadedAnimData;
