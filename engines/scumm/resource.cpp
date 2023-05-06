@@ -706,7 +706,7 @@ int ScummEngine::loadResource(ResType type, ResId idx) {
 			        "while trying to load res (%s,%d) in room %d at %d+%d in file %s",
 			        tag2str(tag), tag2str(_res->_types[type]._tag),
 					nameOfResType(type), idx, roomNr,
-					_fileOffset, fileOffs, _fileHandle->getName());
+			                _fileOffset, fileOffs, _fileHandle->getDebugName().c_str());
 		}
 
 		size = _fileHandle->readUint32BE();

@@ -235,7 +235,7 @@ bool BundleMgr::loadCompTable(int32 index) {
 	_file->seek(4, SEEK_CUR);
 	_lastBlockDecompressedSize = _file->readUint32BE();
 	if (tag != MKTAG('C','O','M','P')) {
-		debug("BundleMgr::loadCompTable() Compressed sound %d (%s:%d) invalid (%s)", index, _file->getName(), _bundleTable[index].offset, tag2str(tag));
+		debug("BundleMgr::loadCompTable() Compressed sound %d (%s:%d) invalid (%s)", index, _file->getDebugName().c_str(), _bundleTable[index].offset, tag2str(tag));
 		return false;
 	}
 

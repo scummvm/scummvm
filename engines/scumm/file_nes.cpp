@@ -934,7 +934,7 @@ static uint16 write_word(Common::WriteStream *out, uint16 val) {
 
 byte ScummNESFile::fileReadByte() {
 	byte b = 0;
-	File::read(&b, 1);
+	_baseStream->read(&b, 1);
 	return b;
 }
 
@@ -956,7 +956,7 @@ uint16 ScummNESFile::extractResource(Common::WriteStream *output, const Resource
 	if ((res->offset == 0) && (res->length == 0))
 		return 0;	/* there are 8 scripts that are zero bytes long, so we should skip them */
 
-	File::seek(res->offset, SEEK_SET);
+	_baseStream->seek(res->offset, SEEK_SET);
 
 	switch (type) {
 	case NES_GLOBDATA:
@@ -984,8 +984,8 @@ uint16 ScummNESFile::extractResource(Common::WriteStream *output, const Resource
 					reslen += write_byte(output, fileReadByte());
 		}
 
-		if (File::pos() - res->offset != res->length)
-			error("extract_resource - length mismatch while extracting graphics resource (was %04X, should be %04X)", (int32)File::pos() - res->offset, res->length);
+		if (_baseStream->pos() - res->offset != res->length)
+			error("extract_resource - length mismatch while extracting graphics resource (was %04X, should be %04X)", (int32)_baseStream->pos() - res->offset, res->length);
 
 		break;
 
@@ -996,7 +996,7 @@ uint16 ScummNESFile::extractResource(Common::WriteStream *output, const Resource
 		if (len != res->length)
 			error("extract_resource - length mismatch while extracting room/script resource (was %04X, should be %04X)", len, res->length);
 
-		File::seek(-2, SEEK_CUR);
+		_baseStream->seek(-2, SEEK_CUR);
 
 		for (i = 0; i < len; i++)
 			reslen += write_byte(output, fileReadByte());
@@ -1047,8 +1047,8 @@ uint16 ScummNESFile::extractResource(Common::WriteStream *output, const Resource
 		} else
 			error("extract_resource - unknown sound type %d/%d detected",val,cnt);
 
-		if (File::pos() - res->offset != res->length)
-			error("extract_resource - length mismatch while extracting sound resource (was %04X, should be %04X)", (int32)File::pos() - res->offset, res->length);
+		if (_baseStream->pos() - res->offset != res->length)
+			error("extract_resource - length mismatch while extracting sound resource (was %04X, should be %04X)", (int32)_baseStream->pos() - res->offset, res->length);
 
 		break;
 
@@ -1364,7 +1364,7 @@ bool ScummNESFile::open(const Common::Path &filename) {
 
 	if (_ROMset == kROMsetNum) {
 		Common::String md5str;
-		File f;
+		Common::File f;
 		f.open(filename);
 		if (f.isOpen())
 			md5str = Common::computeStreamMD5AsString(f);
@@ -1400,7 +1400,9 @@ bool ScummNESFile::open(const Common::Path &filename) {
 		}
 	}
 
-	if (File::open(filename)) {
+	_baseStream.reset(SearchMan.createReadStreamForMember(filename));
+	_debugName = filename.toString();
+	if (_baseStream) {
 		delete _stream;
 		_stream = nullptr;
 
@@ -1420,11 +1422,12 @@ void ScummNESFile::close() {
 	free(_buf);
 	_buf = nullptr;
 
-	File::close();
+	_baseStream.reset();
+	_debugName.clear();
 }
 
 bool ScummNESFile::openSubFile(const Common::String &filename) {
-	assert(isOpen());
+	assert(_baseStream);
 
 	const char *ext = strrchr(filename.c_str(), '.');
 	char resNum[3];

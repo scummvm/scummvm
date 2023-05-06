@@ -29,20 +29,27 @@
 
 namespace Scumm {
 
-class BaseScummFile : public Common::File {
+class BaseScummFile : public Common::SeekableReadStream {
 protected:
 	byte _encbyte;
+	Common::ScopedPtr<Common::SeekableReadStream> _baseStream;
+	Common::String _debugName;
 
 public:
 	BaseScummFile() : _encbyte(0) {}
 	void setEnc(byte value) { _encbyte = value; }
 
-	bool open(const Common::Path &filename) override = 0;
+	virtual bool open(const Common::Path &filename) = 0;
 	virtual bool openSubFile(const Common::String &filename) = 0;
+	virtual void close();
 
 	int64 pos() const override = 0;
 	int64 size() const override = 0;
 	bool seek(int64 offs, int whence = SEEK_SET) override = 0;
+
+	Common::String getDebugName() const { return _debugName; }
+
+	bool isOpen() const { return !!_baseStream; }
 
 // Unused
 #if 0
