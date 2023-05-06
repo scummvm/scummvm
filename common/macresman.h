@@ -160,6 +160,12 @@ public:
 	static SeekableReadStream *openFileOrDataFork(const Path &fileName);
 
 	/**
+	 * Open data fork of macbinary.
+	 * @return The stream if found, 0 otherwise
+	 */
+	static SeekableReadStream *openDataForkFromMacBinary(SeekableReadStream *inStream, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::NO);
+
+	/**
 	 * See if a Mac data/resource fork pair exists.
 	 * @param fileName The base file name of the file
 	 * @return True if either a data fork or resource fork with this name exists
