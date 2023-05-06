@@ -15,6 +15,8 @@
 #
 # Code is formatted with `black`
 
+from __future__ import annotations
+
 import argparse
 import logging
 import os
