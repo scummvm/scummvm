@@ -560,7 +560,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 			ser.syncArray(_towerPuzzleState->order[i].data(), 6, Common::Serializer::Byte);
 		}
 
-		byte numRiddles;
+		byte numRiddles = _riddlePuzzleState->solvedRiddleIDs.size();
 		ser.syncAsByte(numRiddles);
 
 		if (ser.isLoading()) {
