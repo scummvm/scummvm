@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-05-05 20:35+0000\n"
-"PO-Revision-Date: 2023-04-30 02:45+0000\n"
+"PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -4260,22 +4260,16 @@ msgid "Software scale (good quality, but slower)"
 msgstr "Κλίμακα λογισμικού (καλή ποιότητα, αλλά πιο αργή)"
 
 #: backends/platform/ios7/ios7_options.mm:67
-#, fuzzy
-#| msgid "Show On-screen control"
 msgid "Show On-screen control (iOS 15 and later)"
-msgstr "Προβολή στοιχείων χειρισμού στην οθόνη"
+msgstr "Προβολή στοιχείων χειρισμού στην οθόνη (για iOS 15 ή ανώτερο)"
 
 #: backends/platform/ios7/ios7_options.mm:69
-#, fuzzy
-#| msgid "Mouse-click-and-drag mode enabled."
 msgid "Mouse-click-and-drag mode"
-msgstr "Ενεργοποιήθηκε το click-and-drag με το ποντίκι."
+msgstr "Λειτουργία click-and-drag με το ποντίκι"
 
 #: backends/platform/ios7/ios7_options.mm:71
-#, fuzzy
-#| msgid "Controls"
 msgid "Controls Help"
-msgstr "Χειρισμός"
+msgstr "Βοήθεια Χειρισμού"
 
 #: backends/platform/ios7/ios7_options.mm:102
 msgid ""
@@ -4293,6 +4287,21 @@ msgid ""
 "Pinch gesture: Enables/disables keyboard\n"
 "Keyboard spacebar: Pause"
 msgstr ""
+"Χειρονομίες(Gestures) και χειρισμός:\n"
+"\n"
+"Tap με ένα δάχτυλο: Αριστερό κλικ ποντικιού\n"
+"Tap με δύο δάχτυλα: Δεξί κλικ ποντικιού\n"
+"Διπλό tap με δύο δάχτυλα: ESC\n"
+"Σύρσιμο με δύο δάχτυλα (κάτω προς πάνω): Εναλλαγή λειτουργίας Click and "
+"drag\n"
+"Σύρσιμο με δύο δάχτυλα (αριστερά προς δεξιά): Εναλλαγή μεταξύ άμεσου ελέγχου "
+"και touchpad\n"
+"Σύρσιμο με δύο δάχτυλα (δεξιά προς αριστερά): Εμφάνιση/απόκρυψη στοιχείων "
+"χειρισμού\n"
+"Σύρσιμο με δύο δάχτυλα (πάνω προς κάτω): Καθολικό Κυρίως Μενού\n"
+"Σύρσιμο με τρία δάχτυλα: Πλήκτρα με βελάκια\n"
+"Χειρονομία Τσιμπήματος: Ενεργοποίηση/Απενεργοποίηση πληκτρολογίου\n"
+"Μπάρα πληκτρολογίου (spacebar): Παύση (Pause)"
 
 #: backends/platform/ios7/ios7_options.mm:115
 msgid ""
@@ -4309,6 +4318,18 @@ msgid ""
 "Touch (not press) on bottom of Touch area: Down arrow key\n"
 "Keyboard spacebar: Pause"
 msgstr ""
+"Χρήση του τηλεκοντρόλ για Apple TV:\n"
+"\n"
+"Πάτημα στην περιοχή Αφής: Αριστερό κλικ ποντικιού\n"
+"Κουμπί Play/Pause: Δεξί κλικ ποντικιού\n"
+"Κουμπί Πίσω/Μενού (όσο παίζετε): Καθολικό Κεντρικό Μενού\n"
+"Κουμπί Πίσω/Μενού στον launcher: Αρχική οθόνη (Home) της Apple TV\n"
+"Κουμπί Play/Pause (πάτημα και κράτημα): Πληκτρολόγιο με πρόσθετα πλήκτρα\n"
+"Άγγιγμα (όχι πάτημα) στο πάνω μέρος της περιοχής Αφής: Πάνω βελάκι\n"
+"Άγγιγμα (όχι πάτημα) στο αριστερό μέρος της περιοχής Αφής: Αριστερό βελάκι\n"
+"Άγγιγμα (όχι πάτημα) στο δεξί μέρος της περιοχής Αφής: Δεξί βελάκι\n"
+"Άγγιγμα (όχι πάτημα) στο κάτω μέρος της περιοχής Αφής: Κάτω βελάκι\n"
+"Μπάρα πληκτρολογίου (spacebar): Παύση (Pause)"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:412
 #: backends/platform/iphone/osys_events.cpp:299
@@ -9477,7 +9498,7 @@ msgstr ""
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
-msgstr ""
+msgstr "Βελτιωμένη ευαισθησία σε κλικ"
 
 #: engines/vcruise/metaengine.cpp:43
 msgid ""
@@ -9485,6 +9506,10 @@ msgid ""
 "interactions.  If this is off, any mouse movement while the mouse button is "
 "held cancels a click interaction."
 msgstr ""
+"Επιτρέπει την κίνηση του ποντικιού σε μικρή απόσταση χωρίς να ακυρώνει "
+"αλληλεπιδράσεις που χρησιμοποιούν το κλικ του ποντικιού. Αν απενεργοποιηθεί, "
+"μια οποιαδήποτε κίνηση του ποντικιού ενόσω το κουμπί του ποντικιού είναι "
+"πατημένο, θα ακυρώνει μια αλληλεπίδραση που χρησιμοποιεί κλικ."
 
 #: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
@@ -9495,14 +9520,14 @@ msgid "Speeds up animations."
 msgstr "Επιταχύνει τις κινήσεις (animations) των χαρακτήρων."
 
 #: engines/vcruise/metaengine.cpp:75
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Skip main menu"
-msgstr "Άνοιγμα κεντρικού μενού"
+msgstr "Παράκαμψη κεντρικού μενού"
 
 #: engines/vcruise/metaengine.cpp:76
 msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr ""
+"Ξεκινά ένα νέο παιχνίδι κατά την εκκίνηση αντί να παρουσιάσει το κεντρικό "
+"μενού."
 
 #: engines/vcruise/metaengine.cpp:124
 msgid "Display help screen"
