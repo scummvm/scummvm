@@ -33,9 +33,10 @@
 #include "director/archive.h"
 #include "director/cast.h"
 #include "director/movie.h"
+#include "director/score.h"
+#include "director/util.h"
 #include "director/window.h"
 #include "director/lingo/lingo.h"
-#include "director/util.h"
 
 namespace Director {
 
@@ -90,7 +91,7 @@ Common::Error Window::loadInitialMovie() {
 	}
 
 	_currentMovie->setArchive(_mainArchive);
-
+	_currentMovie->getScore()->_skipTransition = true; 
 	// XLibs are usually loaded in the initial movie.
 	// These may not be present if a --start-movie is specified, so
 	// we sometimes need to load them manually.

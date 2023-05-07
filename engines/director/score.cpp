@@ -87,6 +87,7 @@ Score::Score(Movie *movie) {
 	_playState = kPlayNotStarted;
 
 	_numChannelsDisplayed = 0;
+	_skipTransition = false;
 }
 
 Score::~Score() {
@@ -561,7 +562,10 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 	if (_window->_newMovieStarted)
 		renderCursor(_movie->getWindow()->getMousePos(), true);
 
-	if (!renderTransition(frameId)) {
+	if (_skipTransition) {
+		_window->render();
+		_skipTransition = false;
+	} else if (!renderTransition(frameId)) {
 		bool skip = renderPrePaletteCycle(frameId, mode);
 		setLastPalette(frameId);
 		renderSprites(frameId, mode);

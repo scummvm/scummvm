@@ -123,7 +123,7 @@ public:
 	void dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
 	void dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
 	void transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
-	void transZoom(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
+	void transZoom(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *currentFrame, Graphics::ManagedSurface *nextFrame);
 
 	// window.cpp
 	Common::Point getMousePos();
