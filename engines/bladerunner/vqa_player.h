@@ -86,6 +86,8 @@ class VQAPlayer {
 	bool   _audioStarted;
 	Audio::SoundHandle _soundHandle;
 
+	bool   _specialPS15GlitchFix;
+
 	void (*_callbackLoopEnded)(void *, int frame, int loopId);
 	void  *_callbackData;
 
@@ -112,6 +114,7 @@ public:
 		  _frameNextTime(0),
 		  _hasAudio(false),
 		  _audioStarted(false),
+		  _specialPS15GlitchFix(false),
 		  _callbackLoopEnded(nullptr),
 		  _callbackData(nullptr) { }
 

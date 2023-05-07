@@ -27,6 +27,7 @@
 #if BLADERUNNER_ORIGINAL_SETTINGS
 #include "bladerunner/audio_speech.h"
 #endif
+#include "bladerunner/zbuffer.h"
 
 #include "audio/decoders/raw.h"
 
@@ -47,6 +48,7 @@ bool VQAPlayer::open() {
 	}
 
 #if !BLADERUNNER_ORIGINAL_BUGS
+	_specialPS15GlitchFix = false;
 	// TB05 has wrong end of a loop and this will load empty zbuffer from next loop, which will lead to broken pathfinding
 	if (_name.equals("TB05_2.VQA")) {
 		_decoder._loopInfo.loops[1].end = 60;
@@ -54,11 +56,19 @@ bool VQAPlayer::open() {
 		// smoke (overlay) after explosion of Dermo Labs in DR04
 		// This has still frames in the end that so it looked as if the smoke was "frozen"
 		_decoder._loopInfo.loops[0].end  = 58; // 59 up to 74 are still frames
-	} else if (_name.equals("CT01.VQA")) {
+	} else if (_name.equals("CT01.VQA") || _name.equals("CT01_2.VQA") || _name.equals("CT01_3.VQA") ) {
 		// In the last frame of the Mainloop (255) a Howie Lee's customer's hand
 		// backwards abruptly the loop looks jarring. We skip the last frame.
+		// The issue is also present in the non-spinner versions of the loop
+		// and for all chapters where this scene is available (Acts 1 through 5)
 		_decoder._loopInfo.loops[2].end  = 254;
 		_decoder._loopInfo.loops[3].end  = 254;
+
+		_decoder._loopInfo.loops[7].end  = 510;
+		_decoder._loopInfo.loops[8].end  = 510;
+	} else if (_name.equals("PS15.VQA") || _name.equals("PS15_2.VQA")) {
+		// Fix should be applied in Act 1-3 versions of this background
+		_specialPS15GlitchFix = true;
 	}
 #endif
 
@@ -306,6 +316,21 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 
 void VQAPlayer::updateZBuffer(ZBuffer *zbuffer) {
 	_decoder.decodeZBuffer(zbuffer);
+#if !BLADERUNNER_ORIGINAL_BUGS
+	if (_specialPS15GlitchFix) {
+		// The glitch (bad z-buffer, value zero (0))
+		// is present in the following pixels:
+		//  x: 387, y in [179, 192]
+		//  x: 388, y in [179, 202]
+		for (int y = 179; y < 193; ++y) {
+			_vm->_zbuffer->setDataZbufExplicit(387, y, 10720);
+			_vm->_zbuffer->setDataZbufExplicit(388, y, 10720);
+		}
+		for (int y = 193; y < 203; ++y) {
+			_vm->_zbuffer->setDataZbufExplicit(388, y, 10720);
+		}
+	}
+#endif
 }
 
 void VQAPlayer::updateView(View *view) {
