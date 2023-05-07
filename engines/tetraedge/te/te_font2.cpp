@@ -154,6 +154,9 @@ void TeFont2::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 
 		error("Call to TeFont2::drawChar but no texture loaded");
 	const GlyphData2 g = _glyphs[chr];
 
+	if (!g._xSz || !g._ySz)
+		return;
+
 	Common::Rect srcRect;
 	srcRect.left = (int)g._vec.x();
 	srcRect.top = _texture.h - (int)g._vec.y() - g._ySz;
