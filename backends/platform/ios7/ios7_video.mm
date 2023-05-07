@@ -820,6 +820,13 @@ uint getSizeNextPOT(uint size) {
 #endif
 }
 
+#ifdef __IPHONE_11_0
+// This delegate method is called when the safe area of the view changes
+-(void)safeAreaInsetsDidChange {
+	[self adjustViewFrameForSafeArea];
+}
+#endif
+
 - (void)setViewTransformation {
 	// Scale the shake offset according to the overlay size. We need this to
 	// adjust the overlay mouse click coordinates when an offset is set.
