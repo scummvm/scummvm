@@ -678,27 +678,35 @@ public:
 
 	virtual void delayMillis(uint msecs) {
 		uint32 start_time = getMillis();
+		uint32 elapsed_time = 0;
+
 		_threadSwitchCaller = THREAD_SWITCH_DELAY;
 
-		uint32 elapsed_time = 0;
-		uint32 time_remaining = msecs;
-		while (time_remaining > 0) {
-			/* if remaining delay is lower than last amount of time spent on main thread, burn it in emu thread
-			to improve accuracy */
-			if (time_remaining >= ((LibretroTimerManager *)_timerManager)->spentOnMainThread()) {
-				/* If timing inaccuracies is enabled, when remaining delay would take us past the next
-				thread switch time, we switch immediately in order to burn as much as possible delay time in the main RetroArch
-				thread as soon as possible. */
-				if (timing_inaccuracies_is_enabled() && time_remaining >= ((LibretroTimerManager *)_timerManager)->timeToNextSwitch())
+		if (timing_inaccuracies_is_enabled()) {
+			while (elapsed_time < msecs) {
+				/* When remaining delay would take us past the next thread switch time, we switch immediately
+				in order to burn as much as possible delay time in the main RetroArch thread as soon as possible. */
+				if (msecs - elapsed_time >= ((LibretroTimerManager *)_timerManager)->timeToNextSwitch())
 					((LibretroTimerManager *)_timerManager)->switchThread();
 				else
-					((LibretroTimerManager *)_timerManager)->checkThread();
-			} else
-				usleep(1000);
+					usleep(1000);
 
-			elapsed_time = getMillis() - start_time;
-			time_remaining = time_remaining > elapsed_time ? time_remaining - elapsed_time : 0;
+				/* Actual delay provided will be lower than requested: elapsed time is calculated cumulatively.
+				i.e. the higher the requested delay, the higher the actual delay reduction */
+				elapsed_time += getMillis() - start_time;
+			}
+		} else {
+			while (elapsed_time < msecs) {
+				/* if remaining delay is lower than last amount of time spent on main thread, burn it in emu thread
+				to avoid exceeding requested delay */
+				if (msecs - elapsed_time >= ((LibretroTimerManager *)_timerManager)->spentOnMainThread() && !((LibretroTimerManager *)_timerManager)->timeToNextSwitch())
+					((LibretroTimerManager *)_timerManager)->switchThread();
+				else
+					usleep(1000);
+				elapsed_time = getMillis() - start_time;
+			}
 		}
+
 		((LibretroTimerManager *)_timerManager)->handler();
 	}
 
