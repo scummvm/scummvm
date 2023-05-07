@@ -164,6 +164,7 @@ public:
 	int _activeFade;
 	Cursor _defaultCursor;
 	CursorRef _currentCursor;
+	bool _skipTransition;
 
 	int _numChannelsDisplayed;
 
