@@ -650,16 +650,27 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	if (_rifxType == MKTAG('A', 'P', 'P', 'L')) {
 		if (hasResource(MKTAG('F', 'i', 'l', 'e'), -1)) {
 			// Replace this archive with the embedded archive.
-			uint32 fileId = getResourceIDList(MKTAG('F', 'i', 'l', 'e'))[0];
-			int32 fileOffset = _resources[fileId]->offset;
-			_types.clear();
-			_resources.clear();
-			return openStream(_stream, fileOffset);
-		} else {
-			warning("No 'File' resource present in APPL archive");
-			_stream = nullptr;
-			return false;
+			Common::Array<uint16> subFiles = getResourceIDList(MKTAG('F', 'i', 'l', 'e'));
+			uint numFile;
+			int32 fileOffset = 0;
+			for (numFile = 0; numFile < subFiles.size(); numFile++) {
+				uint32 fileId = subFiles[numFile];
+				fileOffset = _resources[fileId]->offset;
+				endianStream.seek(fileOffset + 8);
+				uint32 tag = endianStream.readUint32();
+				if (tag != MKTAG('X', 't', 'r', 'a') && tag != MKTAG('a', 'r', 't', 'X'))
+					break;
+			}
+			if (numFile < subFiles.size()) {
+				_types.clear();
+				_resources.clear();
+				return openStream(_stream, fileOffset);
+			}
 		}
+
+		warning("No 'File' resource present in APPL archive");
+		_stream = nullptr;
+		return false;
 	}
 
 	if (ConfMan.getBool("dump_scripts")) {
