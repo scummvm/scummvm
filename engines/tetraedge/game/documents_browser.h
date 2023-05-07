@@ -60,9 +60,12 @@ public:
 	void showDocument(const Common::String &str, int startPage);
 	void unload();
 
+	Common::Error syncState(Common::Serializer &s);
+
 	TeLayout &zoomedLayout() { return _zoomedLayout; }
 
 	TeLuaGUI &gui() { return _gui; }
+
 
 private:
 	void loadXMLFile(const Common::String &path);

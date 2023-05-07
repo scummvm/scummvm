@@ -410,4 +410,23 @@ void DocumentsBrowser::unload() {
 	_gui.unload();
 }
 
+Common::Error DocumentsBrowser::syncState(Common::Serializer &s) {
+	uint32 count = _documentData.size();
+	s.syncAsUint32LE(count);
+	if (s.isLoading()) {
+		for (unsigned int i = 0; i < count; i++) {
+			Common::String name;
+			s.syncString(name);
+			addDocument(name);
+		}
+	} else {
+		for (auto &doc : _documentData) {
+			Common::String key = doc._key;
+			s.syncString(key);
+		}
+	}
+	return Common::kNoError;
+}
+
+
 } // end namespace Tetraedge
