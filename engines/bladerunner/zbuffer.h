@@ -67,6 +67,10 @@ public:
 	uint16 *getData() const;
 	uint16 getZValue(int x, int y) const;
 
+#if !BLADERUNNER_ORIGINAL_BUGS
+	void setDataZbufExplicit(int x, int y, uint16 overidingVal);
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 private:
 	void blit(Common::Rect rect);
 

@@ -167,7 +167,8 @@ bool ZBuffer::decodeData(const uint8 *data, int size) {
 	} else {
 		clean();
 		decodePartialZBuffer(data, _zbuf1, size);
-		decodePartialZBuffer(data, _zbuf2, size);
+		//decodePartialZBuffer(data, _zbuf2, size);
+		memcpy(_zbuf2, _zbuf1, size);
 	}
 
 	return true;
@@ -176,6 +177,15 @@ bool ZBuffer::decodeData(const uint8 *data, int size) {
 uint16 *ZBuffer::getData() const {
 	return _zbuf2;
 }
+
+#if !BLADERUNNER_ORIGINAL_BUGS
+void ZBuffer::setDataZbufExplicit(int x, int y, uint16 overidingVal) {
+	assert(x >= 0 && x < _width);
+	assert(y >= 0 && y < _height);
+	_zbuf1[y * _width + x] = overidingVal;
+	_zbuf2[y * _width + x] = overidingVal;
+}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 uint16 ZBuffer::getZValue(int x, int y) const {
 	assert(x >= 0 && x < _width);
