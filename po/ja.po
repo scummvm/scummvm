@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-05-05 20:35+0000\n"
-"PO-Revision-Date: 2023-05-05 00:40+0000\n"
+"PO-Revision-Date: 2023-05-07 15:40+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4136,21 +4136,16 @@ msgid "Software scale (good quality, but slower)"
 msgstr "ソフトウェアスケーリング(低速・高画質)"
 
 #: backends/platform/ios7/ios7_options.mm:67
-#, fuzzy
-#| msgid "Show On-screen control"
 msgid "Show On-screen control (iOS 15 and later)"
-msgstr "画面上コントロールを表示する"
+msgstr "画面上コントロールを表示(iOS 15以上)"
 
 #: backends/platform/ios7/ios7_options.mm:69
-#, fuzzy
-#| msgid "Mouse-click-and-drag mode enabled."
 msgid "Mouse-click-and-drag mode"
-msgstr "クリック&ドラッグモードが有効になりました。"
+msgstr "クリック&ドラッグモード"
 
 #: backends/platform/ios7/ios7_options.mm:71
-#, fuzzy
 msgid "Controls Help"
-msgstr "操作"
+msgstr "操作ヘルプ"
 
 #: backends/platform/ios7/ios7_options.mm:102
 msgid ""
@@ -4168,6 +4163,18 @@ msgid ""
 "Pinch gesture: Enables/disables keyboard\n"
 "Keyboard spacebar: Pause"
 msgstr ""
+"ジェスチャーと操作：\n"
+"\n"
+"指1本でタップ：クリック\n"
+"指2本でタップ：右クリック\n"
+"指2本で2回タップ：ESC\n"
+"指2本でスワイプ(下→上)：クリック/ドラッグモードの切替\n"
+"指2本でスワイプ(左→右)：ダイレクト/パッドモードの切替\n"
+"指2本でスワイプ(右→左)：画面上コントロールの表示/非表示\n"
+"指2本でスワイプ(上→下)：グローバルメインメニュー\n"
+"指3本でスワイプ：矢印キー\n"
+"ピンチ：キーボード有効化/無効化の切替\n"
+"スペースキー：ポーズ"
 
 #: backends/platform/ios7/ios7_options.mm:115
 msgid ""
@@ -4184,6 +4191,18 @@ msgid ""
 "Touch (not press) on bottom of Touch area: Down arrow key\n"
 "Keyboard spacebar: Pause"
 msgstr ""
+"Apple TVのリモコン操作：\n"
+"\n"
+"タッチエリアを押す：クリック\n"
+"再生/一時停止ボタン：右クリック\n"
+"ゲーム中に戻る/メニューボタン：グローバルメインメニュー\n"
+"ランチャーで戻る/メニューボタン：ホーム\n"
+"再生/一時停止ボタンを長押し：キーボードを表示\n"
+"タッチエリア上部にタッチ：上矢印キー\n"
+"タッチエリア左部にタッチ：左矢印キー\n"
+"タッチエリア右部にタッチ：右矢印キー\n"
+"タッチエリア下部にタッチ：下矢印キー\n"
+"スペースキー：ポーズ"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:412
 #: backends/platform/iphone/osys_events.cpp:299
