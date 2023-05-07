@@ -55,7 +55,6 @@ int32 ic1, ic2;
 void doDialog(WGame &game) {
 	Init &init = game.init;
 	struct SItemCommand *ic;
-	char str[T3D_NAMELEN];
 	uint8 r;
 
 	switch (TheMessage->event) {
@@ -184,8 +183,7 @@ void doDialog(WGame &game) {
 				Character[ic->param1]->Flags &= ~T3D_CHARACTER_HIDE;
 				break;
 			case IC_CHANGE_ROOM:
-				snprintf(str, T3D_NAMELEN, "%s.t3d", init.Room[ic->param1].name);
-				ChangeRoom(game, str, 0, aNULL);
+				ChangeRoom(game, Common::String::format("%s.t3d", init.Room[ic->param1].name), 0, aNULL);
 				break;
 			case IC_EXPRESSION:
 				if (Character[ic->param1])

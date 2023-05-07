@@ -187,9 +187,11 @@ t3dF32 SinCosAngle(t3dF32 sinus, t3dF32 cosinus) {
 	cosinus /= t;
 	sinus /= t;
 
-	if ((sinus == cosinus) && (cosinus == 0))
+	if ((sinus == cosinus) && (cosinus == 0)) {
 		return 0;
-	else if (sinus * cosinus >= 0) {
+#if 0
+	// FIXME: Is this duplicate code correct as the 2e4 is identical...
+	} else if (sinus * cosinus >= 0) {
 		// 1e3 quad
 		if (sinus >= 0)
 			// 1 quad
@@ -197,6 +199,7 @@ t3dF32 SinCosAngle(t3dF32 sinus, t3dF32 cosinus) {
 		else
 			// 3 quad
 			return (t3dF32)T3D_PI * 2.0f - (t3dF32)acos(cosinus);
+#endif
 	} else {
 		// 2e4 quad
 		if (sinus >= 0)

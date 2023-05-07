@@ -740,7 +740,7 @@ uint8 CharNextFrame(WGame &game, int32 oc) {
 			PlayerGotoPos[CurPlayer + ocDARRELL] = 0;
 		}
 		an = Char->Walk.WalkSteps[Char->Walk.NumSteps].Act;
-		memset(&Char->Walk.WalkSteps[0], 0, sizeof(Char->Walk.WalkSteps));
+		Char->Walk.WalkSteps[0].reset();
 		Char->Walk.NumSteps = 0;
 		if (an) StartAnim(game, an);
 		return false;

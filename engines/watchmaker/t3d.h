@@ -313,6 +313,14 @@ struct t3dSTEPS {
 	t3dF32  Angle = 0.0f;                   // angle
 	int16  curp = 0;                       // cur panel
 	int16  Act = 0, Frame = 0;             // cur action and frame
+
+	void reset() {
+		Pos = t3dV3F();
+		Angle = 0.0f;
+		curp = 0;
+		Act = 0;
+		Frame = 0;
+	}
 };
 
 struct t3dWALK {
