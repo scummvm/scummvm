@@ -75,7 +75,7 @@ bool TeSpriteLayout::onParentWorldColorChanged() {
 
 bool TeSpriteLayout::load(const Common::String &path) {
 	if (path.empty()) {
-		_tiledSurfacePtr = new TeTiledSurface();
+		_tiledSurfacePtr->unload();
 		return true;
 	}
 
@@ -88,7 +88,7 @@ bool TeSpriteLayout::load(const Common::String &path) {
 
 bool TeSpriteLayout::load(const Common::FSNode &node, const Common::String *forcePath) {
 	if (!node.exists()) {
-		_tiledSurfacePtr = new TeTiledSurface();
+		_tiledSurfacePtr->unload();
 		return false;
 	}
 
