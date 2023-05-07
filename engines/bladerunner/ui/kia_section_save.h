@@ -90,7 +90,9 @@ private:
 	static void inputBoxCallback(void *callbackData, void *source);
 
 	static void onButtonHovered(int buttonId, void *callbackData);
-	static void onButtonPressed(int buttonId, void *callbackData);
+	// NOTE: Renamed the method from onButtonPressed() to onKSSButtonPressed(),
+	// since this static method hides the virtual method of KIASectionBase (which is not static and has different signature)
+	static void onKSSButtonPressed(int buttonId, void *callbackData);
 
 	void changeState(State state);
 	void save();

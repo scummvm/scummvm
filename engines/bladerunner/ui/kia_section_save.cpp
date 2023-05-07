@@ -105,7 +105,7 @@ void KIASectionSave::open() {
 
 	if (!_saveList.empty() || ableToSaveGame) {
 
-		_buttons->activate(onButtonHovered, nullptr, nullptr, onButtonPressed, this);
+		_buttons->activate(onButtonHovered, nullptr, nullptr, onKSSButtonPressed, this);
 		_inputBox->show();
 
 		_scrollBox->clearLines();
@@ -337,7 +337,7 @@ void KIASectionSave::onButtonHovered(int buttonId, void *callbackData) {
 	self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxTEXT3), 100, 0, 0, 50, 0);
 }
 
-void KIASectionSave::onButtonPressed(int buttonId, void *callbackData) {
+void KIASectionSave::onKSSButtonPressed(int buttonId, void *callbackData) {
 	KIASectionSave *self = (KIASectionSave *)callbackData;
 
 	if (buttonId == 0) {
