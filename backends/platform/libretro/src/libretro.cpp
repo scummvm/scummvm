@@ -493,6 +493,8 @@ void retro_init(void) {
 	else
 		log_cb = NULL;
 
+	log_cb(RETRO_LOG_DEBUG, "ScummVM core version: %s\n",__GIT_VERSION);
+
 	struct retro_audio_buffer_status_callback buf_status_cb;
 	buf_status_cb.callback = retro_audio_buff_status_cb;
 	audio_status = environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK, &buf_status_cb) ? (audio_status | AUDIO_STATUS_BUFFER_SUPPORT) : (audio_status & ~AUDIO_STATUS_BUFFER_SUPPORT);
