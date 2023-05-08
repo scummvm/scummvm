@@ -1848,7 +1848,7 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 		copyRect = copyRect.findIntersectingRect(constraintRect);
 
 		if (copyRect.isValidRect() || !copyRect.isEmpty()) {
-			_gameSection.surf->blitFrom(*surface, copyRect, copyRect);
+			_gameSection.surf->blitFrom(*surface, copyRect, copyRect, _animDecoder->getPalette());
 			drawSectionToScreen(_gameSection, copyRect);
 		}
 
