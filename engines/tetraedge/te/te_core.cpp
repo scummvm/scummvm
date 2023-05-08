@@ -205,6 +205,9 @@ Common::FSNode TeCore::findFile(const Common::Path &path) const {
 		"Part1-Full/PC-MacOSX/DefaultDistributor", // Amerzone
 		"Part2-Full/PC-MacOSX/DefaultDistributor", // Amerzone
 		"Part3-Full/PC-MacOSX/DefaultDistributor", // Amerzone
+		"Part1-Full/iPhone-iPad-Android", // Amerzone
+		"Part2-Full/iPhone-iPad-Android", // Amerzone
+		"Part3-Full/iPhone-iPad-Android", // Amerzone
 		"Part1-Part2-Part3-Full/HD",			// Amerzone
 		"Part1-Part2-Part3-Full",				// Amerzone
 		"Part1-Full/HD",						// Amerzone
