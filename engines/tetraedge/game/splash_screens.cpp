@@ -47,6 +47,7 @@ void SplashScreens::enter()	{
 			TeLayout *splash = layoutChecked("splash");
 
 			TeLayout *splashImg = dynamic_cast<TeLayout *>(splash->child(0));
+			assert(splashImg);
 			splashImg->setRatioMode(TeILayout::RATIO_MODE_NONE);
 			splashImg->updateSize();
 
@@ -81,6 +82,7 @@ bool SplashScreens::onAlarm() {
 		splash->onMouseClickValidated().add(this, &SplashScreens::onQuitSplash);
 
 		TeLayout *splashImg = dynamic_cast<TeLayout *>(splash->child(0));
+		assert(splashImg);
 		splashImg->setRatioMode(TeILayout::RATIO_MODE_NONE);
 		splashImg->updateSize();
 
