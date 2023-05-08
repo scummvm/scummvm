@@ -53,6 +53,7 @@ public:
 	Common::Array<HotspotDescription> _hotspots;
 
 protected:
+	bool canHaveHotspot() const override { return true; }
 	Common::String getRecordTypeName() const override { return "HotMultiframeSceneChange"; }
 };
 
@@ -64,6 +65,7 @@ public:
 	HotspotDescription _hotspotDesc;
 
 protected:
+	bool canHaveHotspot() const override { return true; }
 	Common::String getRecordTypeName() const override { return "Hot1FrSceneChange"; }
 };
 
@@ -87,6 +89,7 @@ public:
 	Common::Array<HotspotDescription> _hotspots;
 
 protected:
+	bool canHaveHotspot() const override { return true; }
 	Common::String getRecordTypeName() const override { return "HotMultiframeMultisceneChange"; }
 };
 
@@ -160,6 +163,7 @@ public:
 	HotspotDescription _hotspotDesc;
 
 protected:
+	bool canHaveHotspot() const override { return true; }
 	Common::String getRecordTypeName() const override { return "MapCallHot1Fr"; }
 };
 
@@ -171,6 +175,7 @@ public:
 	Common::Array<HotspotDescription> _hotspots;
 
 protected:
+	bool canHaveHotspot() const override { return true; }
 	Common::String getRecordTypeName() const override { return "MapCallHotMultiframe"; }
 };
 
@@ -270,6 +275,7 @@ public:
 	Common::Array<HotspotDescription> _hotspots;
 
 protected:
+	bool canHaveHotspot() const override { return true; }
 	Common::String getRecordTypeName() const override { return "EventFlagsMultiHS"; }
 };
 
@@ -361,6 +367,7 @@ public:
 	Graphics::ManagedSurface _fullSurface;
 
 protected:
+	bool canHaveHotspot() const override { return true; }
 	Common::String getRecordTypeName() const override { return "ShowInventoryItem"; }
 	bool isViewportRelative() const override { return true; }
 };

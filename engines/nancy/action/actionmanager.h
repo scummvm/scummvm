@@ -42,6 +42,7 @@ class Scene;
 namespace Action {
 
 class ActionRecord;
+struct DependencyRecord;
 
 // The class that handles ActionRecords and their execution
 class ActionManager {
@@ -59,6 +60,8 @@ public:
 	void handleInput(NancyInput &input);
 
 	void processActionRecords();
+	void processDependency(DependencyRecord &dep, ActionRecord &record, bool doNotCheckCursor);
+
 	bool addNewActionRecord(Common::SeekableReadStream &inputData);
 	Common::Array<ActionRecord *> &getActionRecords() { return _records; }
 	ActionRecord *getActionRecord(uint id) { if (id < _records.size()) return _records[id]; else return nullptr;}

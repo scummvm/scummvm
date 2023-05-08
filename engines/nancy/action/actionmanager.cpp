@@ -20,6 +20,7 @@
  */
 
 #include "common/serializer.h"
+#include "common/stack.h"
 #include "common/config-manager.h"
 
 #include "engines/nancy/nancy.h"
@@ -46,49 +47,35 @@ void ActionManager::handleInput(NancyInput &input) {
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				input.input &= ~NancyInput::kLeftMouseButtonUp;
 
-				bool shouldTrigger = false;
-				int16 heldItem = NancySceneState.getHeldItem();
-				if (rec->_itemRequired != -1) {
-					if (heldItem == -1 && rec->_itemRequired == -2) {
-						shouldTrigger = true;
-					} else {
-						if (rec->_itemRequired <= 100) {
-							if (heldItem == rec->_itemRequired) {
-								shouldTrigger = true;
-							}
-						} else if (rec->_itemRequired <= 110 && rec->_itemRequired - 100 != heldItem) {
-							// IDs 100 - 110 mean the record will activate when the object is _not_ the specified one
-							shouldTrigger = true;
-						}
-					}
+				processDependency(rec->_dependencies, *rec, false);
 
-					if (!shouldTrigger) {
-						if (g_nancy->getGameType() >= kGameTypeNancy2) {
-							SoundDescription &sound = g_nancy->_inventoryData->itemDescriptions[rec->_itemRequired].specificCantSound;
-							g_nancy->_sound->loadSound(sound);
-							g_nancy->_sound->playSound(sound);
-						} else {
-							g_nancy->_sound->playSound("CANT");
-						}
+				if (!rec->_dependencies.satisfied) {
+					if (g_nancy->getGameType() >= kGameTypeNancy2 && rec->_cursorDependency != nullptr) {
+						SoundDescription &sound = g_nancy->_inventoryData->itemDescriptions[rec->_cursorDependency->label].specificCantSound;
+						g_nancy->_sound->loadSound(sound);
+						g_nancy->_sound->playSound(sound);
+					} else {
+						g_nancy->_sound->playSound("CANT");
 					}
 				} else {
-					shouldTrigger = true;
-				}
-				if (shouldTrigger) {
 					rec->_state = ActionRecord::ExecutionState::kActionTrigger;
 
-					if (rec->_itemRequired > 100 && rec->_itemRequired <= 110) {
-						rec->_itemRequired -= 100;
-					}
-
-					// Re-add the object to the inventory unless it's marked as a one-time use
-					if (rec->_itemRequired == heldItem && rec->_itemRequired != -1) {
-						if (g_nancy->_inventoryData->itemDescriptions[heldItem].keepItem == kInvItemKeepAlways) {
-							NancySceneState.addItemToInventory(heldItem);
+					if (rec->_cursorDependency) {
+						int16 item = rec->_cursorDependency->label;
+						if (item > 100 && item <= (100 + g_nancy->getStaticData().numItems)) {
+							item -= 100;
 						}
 
-						NancySceneState.setHeldItem(-1);
+						// Re-add the object to the inventory unless it's marked as a one-time use
+						if (item == NancySceneState.getHeldItem() && item != -1) {
+							if (g_nancy->_inventoryData->itemDescriptions[item].keepItem == kInvItemKeepAlways) {
+								NancySceneState.addItemToInventory(item);
+							}
+
+							NancySceneState.setHeldItem(-1);
+						}
 					}
+					
 				}
 
 				break;
@@ -125,13 +112,19 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
 		if (depsDataSize % singleDepSize) {
 			error("Action record type %s has incorrect read size", newRecord->getRecordTypeName().c_str());
 		}
+		
+		if (numDependencies == 0) {
+			newRecord->_dependencies.satisfied = true;
+		}
+
+		Common::Stack<DependencyRecord *> depStack;
+		depStack.push(&newRecord->_dependencies);
 
 		// Initialize the dependencies data
 		inputData.seek(localChunkSize);
-		newRecord->_dependencies.reserve(numDependencies);
 		for (uint16 i = 0; i < numDependencies; ++i) {
-			newRecord->_dependencies.push_back(DependencyRecord());
-			DependencyRecord &dep = newRecord->_dependencies.back();
+			depStack.top()->children.push_back(DependencyRecord());
+			DependencyRecord &dep = depStack.top()->children.back();
 
 			if (singleDepSize == 12) {
 				dep.type = (DependencyType)inputData.readByte();
@@ -150,15 +143,30 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
 			dep.seconds = inputData.readSint16LE();
 			dep.milliseconds = inputData.readSint16LE();
 
-			if (dep.type == DependencyType::kElapsedPlayerTime) {
+			switch (dep.type) {
+			case DependencyType::kElapsedPlayerTime:
 				dep.timeData = dep.hours * 3600000 + dep.minutes * 60000;
 
 				if (g_nancy->getGameType() < kGameTypeNancy3) {
 					// Older titles only checked if the time is less than the one in the dependency
 					dep.condition = 0;
 				}
-			} else if (dep.type != DependencyType::kSceneCount || dep.hours != -1 || dep.minutes != -1 || dep.seconds != -1) {
-				dep.timeData = ((dep.hours * 60 + dep.minutes) * 60 + dep.seconds) * 1000 + dep.milliseconds;
+
+				break;
+			case DependencyType::kSceneCount:
+				break;
+			case DependencyType::kOpenParenthesis:
+				depStack.push(&dep);
+				break;
+			case DependencyType::kCloseParenthesis:
+				depStack.pop();
+				break;			
+			default:
+				if (dep.hours != -1 || dep.minutes != -1 || dep.seconds != -1) {
+					dep.timeData = ((dep.hours * 60 + dep.minutes) * 60 + dep.seconds) * 1000 + dep.milliseconds;
+				}
+				
+				break;
 			}
 		}
 	} else {
@@ -178,226 +186,245 @@ void ActionManager::processActionRecords() {
 		}
 
 		if (!record->_isActive) {
-			for (uint i = 0; i < record->_dependencies.size(); ++i) {
-				DependencyRecord &dep = record->_dependencies[i];
-
-				if (!dep.satisfied) {
-					switch (dep.type) {
-					case DependencyType::kNone:
-						dep.satisfied = true;
-						break;
-					case DependencyType::kInventory:
-						switch (dep.condition) {
-						case kInvEmpty:
-							// Item not in possession or held
-							if (NancySceneState._flags.items[dep.label] == kInvEmpty &&
-								dep.label != NancySceneState._flags.heldItem) {
-								dep.satisfied = true;
-							}
-
-							break;
-						case kInvHolding:
-							if (NancySceneState._flags.items[dep.label] == kInvHolding ||
-								dep.label == NancySceneState._flags.heldItem) {
-								dep.satisfied = true;
-							}
-
-							break;
-						default:
-							break;
-						}
-
-						break;
-					case DependencyType::kEvent:
-						if (NancySceneState.getEventFlag(dep.label, dep.condition)) {
-							// nancy1 has code for some timer array that never gets used
-							// and is discarded from nancy2 onward
-							dep.satisfied = true;
-						}
-
-						break;
-					case DependencyType::kLogic:
-						if (NancySceneState._flags.logicConditions[dep.label].flag == dep.condition) {
-							// Wait for specified time before satisfying dependency condition
-							Time elapsed = NancySceneState._timers.lastTotalTime - NancySceneState._flags.logicConditions[dep.label].timestamp;
-
-							if (elapsed >= dep.timeData) {
-								dep.satisfied = true;
-							}
-						}
-
-						break;
-					case DependencyType::kElapsedGameTime:
-						if (NancySceneState._timers.lastTotalTime >= dep.timeData) {
-							dep.satisfied = true;
-						}
-
-						break;
-					case DependencyType::kElapsedSceneTime:
-						if (NancySceneState._timers.sceneTime >= dep.timeData) {
-							dep.satisfied = true;
-						}
-
-						break;
-					case DependencyType::kElapsedPlayerTime: {
-						// We're only interested in the hours and minutes
-						Time playerTime = NancySceneState._timers.playerTime.getHours() * 3600000 +
-											NancySceneState._timers.playerTime.getMinutes() * 60000;
-						switch (dep.condition) {
-						case 0:
-							dep.satisfied = dep.timeData < playerTime;
-							break;
-						case 1:
-							dep.satisfied = dep.timeData > playerTime;
-							break;
-						case 2:
-							dep.satisfied = dep.timeData == playerTime;
-						}
-
-						break;
-					}
-					case DependencyType::kSceneCount: {
-						// Check how many times a scene has been visited.
-						// This dependency type keeps its data in the time variables
-						int count = NancySceneState._flags.sceneCounts.contains(dep.hours) ?
-							NancySceneState._flags.sceneCounts[dep.hours] : 0;
-						switch (dep.milliseconds) {
-						case 1:
-							if (dep.seconds < count) {
-								dep.satisfied = true;
-							}
-
-							break;
-						case 2:
-							if (dep.seconds > count) {
-								dep.satisfied = true;
-							}
-
-							break;
-						case 3:
-							if (dep.seconds == count) {
-								dep.satisfied = true;
-							}
-
-							break;
-						}
-
-						break;
-					}
-					case DependencyType::kElapsedPlayerDay:
-						if (record->_days == -1) {
-							record->_days = NancySceneState._timers.playerTime.getDays();
-							dep.satisfied = true;
-							break;
-						}
-
-						if (record->_days < NancySceneState._timers.playerTime.getDays()) {
-							record->_days = NancySceneState._timers.playerTime.getDays();
-							for (uint j = 0; j < record->_dependencies.size(); ++j) {
-								if (record->_dependencies[j].type == DependencyType::kElapsedPlayerTime) {
-									record->_dependencies[j].satisfied = false;
-								}
-							}
-						}
-
-						break;
-					case DependencyType::kCursorType: {
-						bool hasUnsatisfiedDeps = false;
-						for (uint j = 0; j < record->_dependencies.size(); ++j) {
-							if (j != i && record->_dependencies[j].satisfied == false) {
-								hasUnsatisfiedDeps = true;
-							}
-						}
-
-						if (hasUnsatisfiedDeps) {
-							break;
-						}
-
-						record->_itemRequired = dep.label;
-
-						if (dep.condition == kCursInvNotHolding) {
-							record->_itemRequired += kCursInvNotHoldingOffset;
-						}
-
-						dep.satisfied = true;
-						break;
-					}
-					case DependencyType::kPlayerTOD:
-						if (dep.label == NancySceneState.getPlayerTOD()) {
-							dep.satisfied = true;
-						}
-
-						break;
-					case DependencyType::kTimerLessThanDependencyTime:
-						if (NancySceneState._timers.timerTime <= dep.timeData) {
-							dep.satisfied = true;
-						}
-
-						break;
-					case DependencyType::kTimerGreaterThanDependencyTime:
-						if (NancySceneState._timers.timerTime > dep.timeData) {
-							dep.satisfied = true;
-						}
-
-						break;
-					case DependencyType::kDifficultyLevel:
-						if (dep.condition == NancySceneState._difficulty) {
-							dep.satisfied = true;
-						}
-
-						break;
-					case DependencyType::kClosedCaptioning:
-						if (ConfMan.getBool("subtitles")) {
-							if (dep.condition == 2) {
-								dep.satisfied = true;
-							}
-						} else {
-							if (dep.condition == 1) {
-								dep.satisfied = true;
-							}
-						}
-
-						break;
-					case DependencyType::kSound:
-						if (g_nancy->_sound->isSoundPlaying(dep.label)) {
-							dep.satisfied = dep.condition == 1;
-						} else {
-							dep.satisfied = dep.condition == 0;
-						}
-
-						break;
-					default:
-						warning("Unimplemented Dependency type %i", (int)dep.type);
-						break;
-					}
-				}
-			}
-
-			// An orFlag marks that its corresponding dependency and the one after it
-			// mutually satisfy each other; if one is satisfied, so is the other
-			for (uint i = 1; i < record->_dependencies.size(); ++i) {
-				if (record->_dependencies[i - 1].orFlag) {
-					if (record->_dependencies[i - 1].satisfied)
-						record->_dependencies[i].satisfied = true;
-					if (record->_dependencies[i].satisfied)
-						record->_dependencies[i - 1].satisfied = true;
-				}
-			}
-
-			// Check if all dependencies have been satisfied, and activate the record if they have
-			uint satisfied = 0;
-			for (uint i = 0; i < record->_dependencies.size(); ++i) {
-				if (record->_dependencies[i].satisfied)
-					++satisfied;
-			}
-
-			if (satisfied == record->_dependencies.size())
+			processDependency(record->_dependencies, *record, record->canHaveHotspot());
+			if (record->_dependencies.satisfied) {
 				record->_isActive = true;
-
+			}
 		}
 
 		if (record->_isActive) {
 			record->execute();
+		}
+	}
+}
+
+void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &record, bool doNotCheckCursor) {
+	if (dep.children.size()) {
+		// Recursively process child dependencies
+		for (uint i = 0; i < dep.children.size(); ++i) {
+			processDependency(dep.children[i], record, doNotCheckCursor);
+		}
+
+		// An orFlag marks that its corresponding dependency and the one after it
+		// mutually satisfy each other; if one is satisfied, so is the other
+		for (uint i = 1; i < dep.children.size(); ++i) {
+			if (dep.children[i - 1].orFlag) {
+				if (dep.children[i - 1].satisfied)
+					dep.children[i].satisfied = true;
+				if (dep.children[i].satisfied)
+					dep.children[i - 1].satisfied = true;
+			}
+		}
+
+		// If all children are satisfied, so is the parent
+		dep.satisfied = true;
+		for (uint i = 0; i < dep.children.size(); ++i) {
+			if (!dep.children[i].satisfied) {
+				dep.satisfied = false;
+				break;
+			}
+		}
+	} else {
+		switch (dep.type) {
+		case DependencyType::kNone:
+			dep.satisfied = true;
+			break;
+		case DependencyType::kInventory:
+			switch (dep.condition) {
+			case kInvEmpty:
+				// Item not in possession or held
+				if (NancySceneState._flags.items[dep.label] == kInvEmpty &&
+					dep.label != NancySceneState._flags.heldItem) {
+					dep.satisfied = true;
+				}
+
+				break;
+			case kInvHolding:
+				if (NancySceneState._flags.items[dep.label] == kInvHolding ||
+					dep.label == NancySceneState._flags.heldItem) {
+					dep.satisfied = true;
+				}
+
+				break;
+			default:
+				break;
+			}
+
+			break;
+		case DependencyType::kEvent:
+			if (NancySceneState.getEventFlag(dep.label, dep.condition)) {
+				// nancy1 has code for some timer array that never gets used
+				// and is discarded from nancy2 onward
+				dep.satisfied = true;
+			}
+
+			break;
+		case DependencyType::kLogic:
+			if (NancySceneState._flags.logicConditions[dep.label].flag == dep.condition) {
+				// Wait for specified time before satisfying dependency condition
+				Time elapsed = NancySceneState._timers.lastTotalTime - NancySceneState._flags.logicConditions[dep.label].timestamp;
+
+				if (elapsed >= dep.timeData) {
+					dep.satisfied = true;
+				}
+			}
+
+			break;
+		case DependencyType::kElapsedGameTime:
+			if (NancySceneState._timers.lastTotalTime >= dep.timeData) {
+				dep.satisfied = true;
+			}
+
+			break;
+		case DependencyType::kElapsedSceneTime:
+			if (NancySceneState._timers.sceneTime >= dep.timeData) {
+				dep.satisfied = true;
+			}
+
+			break;
+		case DependencyType::kElapsedPlayerTime: {
+			// We're only interested in the hours and minutes
+			Time playerTime = NancySceneState._timers.playerTime.getHours() * 3600000 +
+								NancySceneState._timers.playerTime.getMinutes() * 60000;
+			switch (dep.condition) {
+			case 0:
+				dep.satisfied = dep.timeData < playerTime;
+				break;
+			case 1:
+				dep.satisfied = dep.timeData > playerTime;
+				break;
+			case 2:
+				dep.satisfied = dep.timeData == playerTime;
+			}
+
+			break;
+		}
+		case DependencyType::kSceneCount: {
+			// Check how many times a scene has been visited.
+			// This dependency type keeps its data in the time variables
+			int count = NancySceneState._flags.sceneCounts.contains(dep.hours) ?
+				NancySceneState._flags.sceneCounts[dep.hours] : 0;
+			switch (dep.milliseconds) {
+			case 1:
+				if (dep.seconds < count) {
+					dep.satisfied = true;
+				}
+
+				break;
+			case 2:
+				if (dep.seconds > count) {
+					dep.satisfied = true;
+				}
+
+				break;
+			case 3:
+				if (dep.seconds == count) {
+					dep.satisfied = true;
+				}
+
+				break;
+			}
+
+			break;
+		}
+		case DependencyType::kElapsedPlayerDay:
+			if (record._days == -1) {
+				record._days = NancySceneState._timers.playerTime.getDays();
+				dep.satisfied = true;
+				break;
+			}
+
+			if (record._days < NancySceneState._timers.playerTime.getDays()) {
+				record._days = NancySceneState._timers.playerTime.getDays();
+
+				// This is not used in nancy3 and up, so it's a safe assumption that we
+				// do not need to check types recursively
+				for (uint j = 0; j < record._dependencies.children.size(); ++j) {
+					if (record._dependencies.children[j].type == DependencyType::kElapsedPlayerTime) {
+						record._dependencies.children[j].satisfied = false;
+					}
+				}
+			}
+
+			break;
+		case DependencyType::kCursorType: {
+			if (doNotCheckCursor) {
+				dep.satisfied = true;
+				record._cursorDependency = &dep;
+			} else {
+				bool isSatisfied = false;
+				int heldItem = NancySceneState.getHeldItem();
+				if (heldItem == -1 && dep.label == -2) {
+					isSatisfied = true;
+				} else {
+					if (dep.label <= 100) {
+						if (heldItem == dep.label) {
+							isSatisfied = true;
+						}
+					} else if (dep.label - 100 != heldItem) {
+						// IDs above 100 mean the record will activate when the object is _not_ the specified one
+						isSatisfied = true;
+					}
+				}
+
+				if (isSatisfied) {
+					dep.satisfied = true;
+					record._cursorDependency = nullptr;
+				} else {
+					dep.satisfied = false;
+					record._cursorDependency = &dep;
+				}
+			}
+			
+			break;
+		}
+		case DependencyType::kPlayerTOD:
+			if (dep.label == NancySceneState.getPlayerTOD()) {
+				dep.satisfied = true;
+			}
+
+			break;
+		case DependencyType::kTimerLessThanDependencyTime:
+			if (NancySceneState._timers.timerTime <= dep.timeData) {
+				dep.satisfied = true;
+			}
+
+			break;
+		case DependencyType::kTimerGreaterThanDependencyTime:
+			if (NancySceneState._timers.timerTime > dep.timeData) {
+				dep.satisfied = true;
+			}
+
+			break;
+		case DependencyType::kDifficultyLevel:
+			if (dep.condition == NancySceneState._difficulty) {
+				dep.satisfied = true;
+			}
+
+			break;
+		case DependencyType::kClosedCaptioning:
+			if (ConfMan.getBool("subtitles")) {
+				if (dep.condition == 2) {
+					dep.satisfied = true;
+				}
+			} else {
+				if (dep.condition == 1) {
+					dep.satisfied = true;
+				}
+			}
+
+			break;
+		case DependencyType::kSound:
+			if (g_nancy->_sound->isSoundPlaying(dep.label)) {
+				dep.satisfied = dep.condition == 1;
+			} else {
+				dep.satisfied = dep.condition == 0;
+			}
+
+			break;
+		default:
+			warning("Unimplemented Dependency type %i", (int)dep.type);
+			break;
 		}
 	}
 }

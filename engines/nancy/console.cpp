@@ -449,10 +449,10 @@ bool NancyConsole::Cmd_listAcionRecords(int argc, const char **argv) {
 			rec->getRecordTypeName().c_str(),
 			rec->_execType == ActionRecord::kRepeating ? "kRepeating" : "kOneShot");
 
-		if (rec->_dependencies.size()) {
+		if (rec->_dependencies.children.size()) {
 			debugPrintf("\n\tDependencies:");
 
-			for (DependencyRecord &dep : rec->_dependencies) {
+			for (DependencyRecord &dep : rec->_dependencies.children) {
 				debugPrintf("\n\t\t");
 				switch (dep.type) {
 				case DependencyType::kNone :

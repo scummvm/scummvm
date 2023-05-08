@@ -92,6 +92,7 @@ public:
 	bool _isInterruptible;
 
 protected:
+	bool canHaveHotspot() const override { return true; }
 	Common::String getRecordTypeName() const override;
 	bool isViewportRelative() const override { return true; }
 

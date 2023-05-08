@@ -67,6 +67,7 @@ public:
 	Common::Array<SecondaryVideoDescription> _videoDescs;
 
 protected:
+	bool canHaveHotspot() const override { return true; }
 	Common::String getRecordTypeName() const override { return Common::String::format("PlaySecondaryVideoChan%i", channel); }
 	bool isViewportRelative() const override { return true; }
 
