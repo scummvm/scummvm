@@ -214,6 +214,8 @@ protected:
 	void closeTopDialog();
 
 	void redraw();
+	void redrawInternalTopDialogOnly();
+	void redrawInternal();
 
 	void setupCursor();
 	void animateCursor();
