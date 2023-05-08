@@ -227,6 +227,9 @@ void TeTiledSurface::stop() {
 }
 
 void TeTiledSurface::unload() {
+	// Force stop
+	_frameAnim.reset();
+
 	if (_codec) {
 		delete _codec;
 		_codec = nullptr;
