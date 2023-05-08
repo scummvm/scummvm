@@ -1301,12 +1301,15 @@ drawTab(int x, int y, int r, int w, int h, int s) {
 		return;
 
 	bool useClippingVersions = !_clippingArea.contains(Common::Rect(x, y, x + w, y + h));
+	uint32 baseLeft = (Base::_dynamicData >> 16) & 0x7FFF;
+	uint32 baseRight = Base::_dynamicData & 0xFFFF;
+	bool vFlip = (Base::_dynamicData >> 31) != 0;
 
 	if (r == 0 && Base::_bevel > 0) {
 		if (useClippingVersions)
-			drawBevelTabAlgClip(x, y, w, h, Base::_bevel, _bevelColor, _fgColor, (Base::_dynamicData >> 16), (Base::_dynamicData & 0xFFFF));
+			drawBevelTabAlgClip(x, y, w, h, Base::_bevel, _bevelColor, _fgColor, baseLeft, baseRight, vFlip);
 		else
-			drawBevelTabAlg(x, y, w, h, Base::_bevel, _bevelColor, _fgColor, (Base::_dynamicData >> 16), (Base::_dynamicData & 0xFFFF));
+			drawBevelTabAlg(x, y, w, h, Base::_bevel, _bevelColor, _fgColor, baseLeft, baseRight, vFlip);
 		return;
 	}
 
@@ -1325,23 +1328,23 @@ drawTab(int x, int y, int r, int w, int h, int s) {
 		// See the rounded rect alg for how to fix it. (The border should
 		// be drawn before the interior, both inside drawTabAlg.)
 		if (useClippingVersions) {
-			drawTabShadowClip(x, y, w - 2, h, r, s, Base::_shadowIntensity);
-			drawTabAlgClip(x, y, w - 2, h, r, _bgColor, Base::_fillMode);
+			drawTabShadowClip(x, y, w - 2, h, r, s, Base::_shadowIntensity, vFlip);
+			drawTabAlgClip(x, y, w - 2, h, r, _bgColor, Base::_fillMode, 0, 0, vFlip);
 			if (Base::_strokeWidth)
-				drawTabAlgClip(x, y, w, h, r, _fgColor, kFillDisabled, (Base::_dynamicData >> 16), (Base::_dynamicData & 0xFFFF));
+				drawTabAlgClip(x, y, w, h, r, _fgColor, kFillDisabled, baseLeft, baseRight, vFlip);
 		} else {
-			drawTabShadow(x, y, w - 2, h, r, s, Base::_shadowIntensity);
-			drawTabAlg(x, y, w - 2, h, r, _bgColor, Base::_fillMode);
+			drawTabShadow(x, y, w - 2, h, r, s, Base::_shadowIntensity, vFlip);
+			drawTabAlg(x, y, w - 2, h, r, _bgColor, Base::_fillMode, 0, 0, vFlip);
 			if (Base::_strokeWidth)
-				drawTabAlg(x, y, w, h, r, _fgColor, kFillDisabled, (Base::_dynamicData >> 16), (Base::_dynamicData & 0xFFFF));
+				drawTabAlg(x, y, w, h, r, _fgColor, kFillDisabled, baseLeft, baseRight, vFlip);
 		}
 		break;
 
 	case kFillForeground:
 		if (useClippingVersions)
-			drawTabAlgClip(x, y, w, h, r, _fgColor, Base::_fillMode);
+			drawTabAlgClip(x, y, w, h, r, _fgColor, Base::_fillMode, 0, 0, vFlip);
 		else
-			drawTabAlg(x, y, w, h, r, _fgColor, Base::_fillMode);
+			drawTabAlg(x, y, w, h, r, _fgColor, Base::_fillMode, 0, 0, vFlip);
 		break;
 
 	default:
@@ -1418,7 +1421,7 @@ drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 /** TAB ALGORITHM - NON AA */
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer::FillMode fill_m, int baseLeft, int baseRight) {
+drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer::FillMode fill_m, int baseLeft, int baseRight, bool vFlip) {
 	// Don't draw anything for empty rects.
 	if (w <= 0 || h <= 0) {
 		return;
@@ -1520,7 +1523,7 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawTabAlgClip(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer::FillMode fill_m, int baseLeft, int baseRight) {
+drawTabAlgClip(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer::FillMode fill_m, int baseLeft, int baseRight, bool vFlip) {
 	// Don't draw anything for empty rects.
 	if (w <= 0 || h <= 0) {
 		return;
@@ -1635,7 +1638,7 @@ drawTabAlgClip(int x1, int y1, int w, int h, int r, PixelType color, VectorRende
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawTabShadow(int x1, int y1, int w, int h, int r, int offset, uint32 shadowIntensity) {
+drawTabShadow(int x1, int y1, int w, int h, int r, int offset, uint32 shadowIntensity, bool vFlip) {
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 
 	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
@@ -1646,7 +1649,7 @@ drawTabShadow(int x1, int y1, int w, int h, int r, int offset, uint32 shadowInte
 	int ystart = y1;
 	int width = w;
 	int height = h + offset + 1;
-	
+
 	// HACK: shadowIntensity is tailed with 16-bits mantissa. We also represent the
 	// offset as a 16.16 fixed point number here as termination condition to simplify
 	// looping logic. An additional `shadowIntensity` is added to to keep consistent
@@ -1702,7 +1705,7 @@ drawTabShadow(int x1, int y1, int w, int h, int r, int offset, uint32 shadowInte
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawTabShadowClip(int x1, int y1, int w, int h, int r, int offset, uint32 shadowIntensity) {
+drawTabShadowClip(int x1, int y1, int w, int h, int r, int offset, uint32 shadowIntensity, bool vFlip) {
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 
 	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
@@ -1775,7 +1778,7 @@ drawTabShadowClip(int x1, int y1, int w, int h, int r, int offset, uint32 shadow
 /** BEVELED TABS FOR CLASSIC THEME **/
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawBevelTabAlg(int x, int y, int w, int h, int bevel, PixelType top_color, PixelType bottom_color, int baseLeft, int baseRight) {
+drawBevelTabAlg(int x, int y, int w, int h, int bevel, PixelType top_color, PixelType bottom_color, int baseLeft, int baseRight, bool vFlip) {
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 	int i, j;
 
@@ -1818,7 +1821,7 @@ drawBevelTabAlg(int x, int y, int w, int h, int bevel, PixelType top_color, Pixe
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawBevelTabAlgClip(int x, int y, int w, int h, int bevel, PixelType top_color, PixelType bottom_color, int baseLeft, int baseRight) {
+drawBevelTabAlgClip(int x, int y, int w, int h, int bevel, PixelType top_color, PixelType bottom_color, int baseLeft, int baseRight, bool vFlip) {
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 	int i, j;
 
@@ -4067,7 +4070,7 @@ drawLineAlg(int x1, int y1, int x2, int y2, uint dx, uint dy, PixelType color) {
 /** TAB ALGORITHM */
 template<typename PixelType>
 void VectorRendererAA<PixelType>::
-drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer::FillMode fill_m, int baseLeft, int baseRight) {
+drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer::FillMode fill_m, int baseLeft, int baseRight, bool vFlip) {
 	// Don't draw anything for empty rects.
 	if (w <= 0 || h <= 0) {
 		return;
