@@ -86,7 +86,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::EN_GRB,
 	},
-	{ AD_TABLE_END_MARKER, GID_UNKNOWN }
+	{ AD_TABLE_END_MARKER, GID_UNKNOWN, Common::UNK_LANG }
 };
 
 } // End of namespace VCruise
