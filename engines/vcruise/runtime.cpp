@@ -1199,7 +1199,7 @@ bool Runtime::bootGame(bool newGame) {
 
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
 
-	bool foundLang = false;
+	_languageIndex = 1;
 
 	if (_gameID == GID_REAH) {
 		_animSpeedRotation = Fraction(21, 1);	// Probably accurate
@@ -1216,15 +1216,15 @@ bool Runtime::bootGame(bool newGame) {
 			Common::IT_ITA,
 		};
 
-		_languageIndex = 1;
 		uint langCount = sizeof(langIndexes) / sizeof(langIndexes[0]);
 
 		for (uint li = 0; li < langCount; li++) {
 			if (langIndexes[li] == lang) {
 				_languageIndex = li;
-				foundLang = true;
 				break;
 			}
+			if (langIndexes[li] == _defaultLanguage)
+				_languageIndex = li;
 		}
 	} else if (_gameID == GID_SCHIZM) {
 		const Common::Language langIndexes[] = {
@@ -1240,20 +1240,17 @@ bool Runtime::bootGame(bool newGame) {
 			Common::EN_USA,
 		};
 
-		_languageIndex = 1;
 		uint langCount = sizeof(langIndexes) / sizeof(langIndexes[0]);
 
 		for (uint li = 0; li < langCount; li++) {
 			if (langIndexes[li] == lang) {
 				_languageIndex = li;
-				foundLang = true;
 				break;
 			}
+			if (langIndexes[li] == _defaultLanguage)
+				_languageIndex = li;
 		}
 	}
-
-	if (!foundLang)
-		lang = _defaultLanguage;
 
 	Common::CodePage codePage = Common::CodePage::kWindows1252;
 
