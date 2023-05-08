@@ -42,6 +42,7 @@ protected:
 	virtual void onButtonClicked(uint button, bool &outChangedState);
 	virtual void onCheckboxClicked(uint button, bool &outChangedState);
 	virtual void onSliderMoved(uint slider);
+	virtual void onKeymappedEvent(VCruise::KeymappedEvent evt, bool &outChangedState);
 	virtual void eraseSlider(uint sliderIndex) const;
 
 protected:
@@ -206,6 +207,8 @@ public:
 	explicit ReahPauseMenuPage(bool isSchizm);
 
 	void addPageContents() override;
+
+	void onKeymappedEvent(VCruise::KeymappedEvent evt, bool &outChangedState) override;
 };
 
 class ReahSchizmMainMenuPage : public ReahSchizmMenuPage {
@@ -252,6 +255,11 @@ bool ReahSchizmMenuPage::run() {
 		case kOSEventTypeMouseMove:
 			handleMouseMove(evt.pos);
 			break;
+		case kOSEventTypeKeymappedEvent:
+			onKeymappedEvent(evt.keymappedEvent, changedState);
+			if (changedState)
+				return changedState;
+			break;
 		default:
 			break;
 		}
@@ -282,6 +290,9 @@ void ReahSchizmMenuPage::onCheckboxClicked(uint button, bool &outChangedState) {
 }
 
 void ReahSchizmMenuPage::onSliderMoved(uint slider) {
+}
+
+void ReahSchizmMenuPage::onKeymappedEvent(VCruise::KeymappedEvent evt, bool &outChangedState) {
 }
 
 void ReahSchizmMenuPage::eraseSlider(uint sliderIndex) const {
@@ -897,6 +908,14 @@ void ReahPauseMenuPage::addPageContents() {
 		menuSurf->blitFrom(*pauseGraphic, Common::Point(164, 186));
 
 	_menuInterface->commitRect(Common::Rect(0, 44, 640, 392));
+}
+
+void ReahPauseMenuPage::onKeymappedEvent(VCruise::KeymappedEvent evt, bool &outChangedState) {
+	if (evt == VCruise::kKeymappedEventPause) {
+		if (_menuInterface->canSave())
+			outChangedState = _menuInterface->reloadFromCheckpoint();
+		return;
+	}
 }
 
 ReahSchizmMainMenuPage::ReahSchizmMainMenuPage(bool isSchizm) : ReahSchizmMenuPage(isSchizm) {
