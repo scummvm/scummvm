@@ -592,7 +592,7 @@ void t3dFinalizeMaterialList(t3dBODY *b) {
 			MaterialPtr Mat = Face.getMaterial();
 			if (Face.lightmap) {
 				Mat = nullptr;
-				for (auto material : Face.getMaterial()->AddictionalMaterial) {
+				for (const auto &material : Face.getMaterial()->AddictionalMaterial) {
 					if (material->Texture->ID == Face.lightmap->Texture->ID) {
 						Mat = material;
 						break;
@@ -601,7 +601,7 @@ void t3dFinalizeMaterialList(t3dBODY *b) {
 				if (Mat == nullptr) {
 					warning("%s: Can't find Lightmap Sub-Material!", Mesh.name.c_str());
 					warning("%d %d", Face.getMaterial()->NumAddictionalMaterial, Face.lightmap->Texture->ID);
-					for (auto material : Face.getMaterial()->AddictionalMaterial) {
+					for (const auto &material : Face.getMaterial()->AddictionalMaterial) {
 						warning("%d", material->Texture->ID);
 					}
 					continue;
