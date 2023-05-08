@@ -374,7 +374,7 @@ bool AmerzoneGame::onPuzzleEnterAnimLoadTime() {
 	case 2:
 		_puzzleComputerHydra.setScale(TeVector3f32(1, 1, 0.0001f));
 		_puzzleComputerHydra.setPosition(TeVector3f32(0, 0, zoff));
-		_puzzleComputerHydra.setTargetCoordinates(2, 7, 2);
+		_puzzleComputerHydra.setTargetCoordinates(2, 2, 7);
 		_puzzleComputerHydra.enter();
 		break;
 	case 3:
@@ -557,6 +557,7 @@ void AmerzoneGame::update() {
 			_warpY->setMouseLeftUpForMakers();
 	}
 
+	// Note: _orientation*Y* is rotation around *X* axis, and vice-versa.
 	const TeQuaternion rot = TeQuaternion::fromEulerDegrees(TeVector3f32(_orientationY, _orientationX, 0));
 
 	if (_warpX)
@@ -580,6 +581,8 @@ bool AmerzoneGame::onVideoFinished() {
 	TeSpriteLayout *video = _inGameGui.spriteLayoutChecked("video");
 	Common::String vidPath = video->_tiledSurfacePtr->loadedPath();
 	video->setVisible(false);
+	video->_tiledSurfacePtr->unload();
+	video->_tiledSurfacePtr->setLoadedPath("");
 	Application *app = g_engine->getApplication();
 	_videoMusic.stop();
 	if (app->musicOn())
