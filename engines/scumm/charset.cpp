@@ -334,7 +334,7 @@ CharsetRenderer::~CharsetRenderer() {
 }
 
 CharsetRendererCommon::CharsetRendererCommon(ScummEngine *vm)
-	: CharsetRenderer(vm), _bytesPerPixel(0), _fontHeight(0), _numChars(0) {
+	: CharsetRenderer(vm), _bitsPerPixel(0), _fontHeight(0), _numChars(0) {
 	_enableShadow = false;
 	_shadowColor = 0;
 }
@@ -356,7 +356,7 @@ void CharsetRendererCommon::setCurID(int32 id) {
 	else
 		_fontPtr += 29;
 
-	_bytesPerPixel = _fontPtr[0];
+	_bitsPerPixel = _fontPtr[0];
 	_fontHeight = _fontPtr[1];
 	_numChars = READ_LE_UINT16(_fontPtr + 2);
 
@@ -400,7 +400,7 @@ void CharsetRendererV3::setCurID(int32 id) {
 	if (_fontPtr == nullptr)
 		error("CharsetRendererCommon::setCurID: charset %d not found", id);
 
-	_bytesPerPixel = 1;
+	_bitsPerPixel = 1;
 	_numChars = _fontPtr[4];
 	_fontHeight = _fontPtr[5];
 
@@ -1117,7 +1117,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 	byte *back = nullptr;
 	int drawTop = _top - vs->topline;
 
-	if ((_vm->_game.heversion >= 71 && _bytesPerPixel >= 8) || (_vm->_game.heversion >= 90 && _bytesPerPixel == 0)) {
+	if ((_vm->_game.heversion >= 71 && _bitsPerPixel >= 8) || (_vm->_game.heversion >= 90 && _bitsPerPixel == 0)) {
 #ifdef ENABLE_HE
 		if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 			dstPtr = vs->getPixels(0, 0);
@@ -1130,7 +1130,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 		}
 
 		Common::Rect rScreen(vs->w, vs->h);
-		if (_bytesPerPixel >= 8) {
+		if (_bitsPerPixel >= 8) {
 			byte imagePalette[256];
 			memset(imagePalette, 0, sizeof(imagePalette));
 			memcpy(imagePalette, _vm->_charsetColorMap, 4);
@@ -2391,7 +2391,7 @@ bool CharsetRendererTownsClassic::useFontRomCharacter(uint16 chr) const {
 }
 
 void CharsetRendererTownsClassic::processCharsetColors() {
-	for (int i = 0; i < (1 << _bytesPerPixel); i++) {
+	for (int i = 0; i < (1 << _bitsPerPixel); i++) {
 		uint8 c = _vm->_charsetColorMap[i];
 
 		if (c > 16) {
