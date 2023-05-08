@@ -150,7 +150,14 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
 			dep.seconds = inputData.readSint16LE();
 			dep.milliseconds = inputData.readSint16LE();
 
-			if (dep.type != DependencyType::kSceneCount || dep.hours != -1 || dep.minutes != -1 || dep.seconds != -1) {
+			if (dep.type == DependencyType::kElapsedPlayerTime) {
+				dep.timeData = dep.hours * 3600000 + dep.minutes * 60000;
+
+				if (g_nancy->getGameType() < kGameTypeNancy3) {
+					// Older titles only checked if the time is less than the one in the dependency
+					dep.condition = 0;
+				}
+			} else if (dep.type != DependencyType::kSceneCount || dep.hours != -1 || dep.minutes != -1 || dep.seconds != -1) {
 				dep.timeData = ((dep.hours * 60 + dep.minutes) * 60 + dep.seconds) * 1000 + dep.milliseconds;
 			}
 		}
@@ -232,12 +239,23 @@ void ActionManager::processActionRecords() {
 						}
 
 						break;
-					case DependencyType::kElapsedPlayerTime:
-						if (NancySceneState._timers.playerTime >= dep.timeData) {
-							dep.satisfied = true;
+					case DependencyType::kElapsedPlayerTime: {
+						// We're only interested in the hours and minutes
+						Time playerTime = NancySceneState._timers.playerTime.getHours() * 3600000 +
+											NancySceneState._timers.playerTime.getMinutes() * 60000;
+						switch (dep.condition) {
+						case 0:
+							dep.satisfied = dep.timeData < playerTime;
+							break;
+						case 1:
+							dep.satisfied = dep.timeData > playerTime;
+							break;
+						case 2:
+							dep.satisfied = dep.timeData == playerTime;
 						}
 
 						break;
+					}
 					case DependencyType::kSceneCount: {
 						// Check how many times a scene has been visited.
 						// This dependency type keeps its data in the time variables
@@ -346,7 +364,7 @@ void ActionManager::processActionRecords() {
 						} else {
 							dep.satisfied = dep.condition == 0;
 						}
-						
+
 						break;
 					default:
 						warning("Unimplemented Dependency type %i", (int)dep.type);
