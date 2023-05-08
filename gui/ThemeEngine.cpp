@@ -1304,10 +1304,12 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Ar
 
 	int y1 = r.top;
 	int y2 = r.top + tabHeight;
+	uint32 vFlag = 0;
 
 	if (alignV == ThemeEngine::kTextAlignVBottom) {
 		y1 = r.bottom;
 		y2 = r.bottom + tabHeight;
+		vFlag = 1;
 	}
 
 	drawDD(kDDTabBackground, Common::Rect(r.left, y1, r.right, y2));
@@ -1339,7 +1341,7 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Ar
 
 
 		Common::Rect tabRect(r.left + width, y1, r.left + width + tabWidths[current], y2);
-		drawDD(kDDTabInactive, tabRect);
+		drawDD(kDDTabInactive, tabRect, (vFlag << 31));
 		drawDDText(getTextData(kDDTabInactive), getTextColor(kDDTabInactive), tabRect, tabs[current], false, false,
 		           convertTextAlignH(_widgets[kDDTabInactive]->_textAlignH, rtl), _widgets[kDDTabInactive]->_textAlignV);
 		width += tabWidths[current];
@@ -1347,9 +1349,9 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Ar
 
 	if (activePos >= 0) {
 		Common::Rect tabRect(r.left + activePos, y1, r.left + activePos + tabWidths[active], y2);
-		const uint16 tabLeft = activePos;
+		const uint16 tabLeft = activePos & 0x7FFF; // Keep only 15 bits
 		const uint16 tabRight = MAX(r.right - tabRect.right, 0);
-		drawDD(kDDTabActive, tabRect, (tabLeft << 16) | (tabRight & 0xFFFF));
+		drawDD(kDDTabActive, tabRect, (vFlag << 31) | (tabLeft << 16) | (tabRight & 0xFFFF));
 		drawDDText(getTextData(kDDTabActive), getTextColor(kDDTabActive), tabRect, tabs[active], false, false,
 		           convertTextAlignH(_widgets[kDDTabActive]->_textAlignH, rtl), _widgets[kDDTabActive]->_textAlignV);
 	}

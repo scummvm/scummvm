@@ -228,23 +228,23 @@ protected:
 
 	virtual void drawTabAlg(int x, int y, int w, int h, int r,
 	    PixelType color, VectorRenderer::FillMode fill_m,
-	    int baseLeft = 0, int baseRight = 0);
+	    int baseLeft, int baseRight, bool vFlip);
 
 	virtual void drawTabAlgClip(int x, int y, int w, int h, int r,
 		PixelType color, VectorRenderer::FillMode fill_m,
-		int baseLeft = 0, int baseRight = 0);
+		int baseLeft, int baseRight, bool vFlip);
 
-	virtual void drawTabShadow(int x, int y, int w, int h, int r, int offset, uint32 shadowIntensity);
+	virtual void drawTabShadow(int x, int y, int w, int h, int r, int offset, uint32 shadowIntensity, bool vFlip);
 
-	virtual void drawTabShadowClip(int x, int y, int w, int h, int r, int offset, uint32 shadowIntensity);
+	virtual void drawTabShadowClip(int x, int y, int w, int h, int r, int offset, uint32 shadowIntensity, bool vFlip);
 
 	virtual void drawBevelTabAlg(int x, int y, int w, int h,
 	    int bevel, PixelType topColor, PixelType bottomColor,
-	    int baseLeft = 0, int baseRight = 0);
+	    int baseLeft, int baseRight, bool vFlip);
 
 	virtual void drawBevelTabAlgClip(int x, int y, int w, int h,
 		int bevel, PixelType topColor, PixelType bottomColor,
-		int baseLeft = 0, int baseRight = 0);
+		int baseLeft, int baseRight, bool vFlip);
 
 	/**
 	 * SHADOW DRAWING ALGORITHMS
@@ -386,7 +386,7 @@ protected:
 
 	virtual void drawTabAlg(int x, int y, int w, int h, int r,
 	    PixelType color, VectorRenderer::FillMode fill_m,
-	    int baseLeft = 0, int baseRight = 0);
+	    int baseLeft, int baseRight, bool vFlip);
 };
 #endif
 /** @} */

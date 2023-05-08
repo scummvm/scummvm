@@ -24,6 +24,7 @@
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
 #include "gui/widget.h"
+#include "gui/widgets/tab.h"
 
 namespace GUI {
 
@@ -43,6 +44,20 @@ HelpDialog::HelpDialog()
 	_x = (screenW - _w) / 2;
 	_y = (screenH - _h) / 2;
 
+
+	TabWidget *tab = new TabWidget(this, 10, 10, _w - 10, _h - (buttonHeight + 10) * 5 / 2, ThemeEngine::kTextAlignVBottom);
+
+	tab->addTab(_("General"), "GlobalOptions_Graphics", false);
+	tab->addTab(_("Controls"), "GlobalOptions_Graphics", false);
+	tab->addTab(_("More Stuff"), "GlobalOptions_Graphics", false);
+	tab->addTab(_("Even More"), "GlobalOptions_Graphics", false);
+	tab->addTab(_("Bubba"), "GlobalOptions_Graphics", false);
+	tab->addTab(_("Rulez"), "GlobalOptions_Graphics", false);
+	tab->addTab(_("Abra"), "GlobalOptions_Graphics", false);
+	tab->addTab(_("Shwabra"), "GlobalOptions_Graphics", false);
+	tab->addTab(_("Kadabra"), "GlobalOptions_Graphics", false);
+	tab->addTab(_("Kaboom"), "GlobalOptions_Graphics", false);
+	tab->addTab(_("Boomka"), "GlobalOptions_Graphics", false);
 
 	new ButtonWidget(this, _w - buttonWidth - 10, _h - buttonHeight - 10, buttonWidth, buttonHeight, Common::U32String("Close"), Common::U32String(), kCloseCmd);
 }
