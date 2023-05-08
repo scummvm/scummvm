@@ -79,10 +79,20 @@ static int tolua_ExportedFunctions_LoadObjectMaterials01(lua_State *L) {
 	return tolua_ExportedFunctions_LoadObjectMaterials00(L);
 }
 
-static void PlayMovie(const Common::String &vidpath, const Common::String &musicpath) {
+static void PlayMovie(Common::String vidpath, Common::String musicpath) {
 	Application *app = g_engine->getApplication();
 	app->mouseCursorLayout().load(app->defaultCursor());
 	Game *game = g_engine->getGame();
+
+	// WORKAROUND: Fix some broken paths in Amerzone
+	if (musicpath == "Videos/sc19.ogg")
+		musicpath = "Videos/019.ogg";
+	if (vidpath == "Videos/sc18.ogv") {
+		// Need the correct path for callback, call this first.
+		game->playMovie(vidpath, musicpath);
+		vidpath = "Videos/I_018_P2_001.ogv";
+	}
+
 	game->playMovie(vidpath, musicpath);
 }
 
