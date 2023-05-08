@@ -742,22 +742,36 @@ TEMPLATE void BASESTRING::trim() {
 	if (_size == 0)
 		return;
 
+	uint numLeading = 0;
+	while (numLeading < _size) {
+		if (isSpace(_str[numLeading]))
+			numLeading++;
+		else
+			break;
+	}
+
+	uint numTrailing = 0;
+	if (numLeading != _size) {
+		while (numTrailing < _size) {
+			if (isSpace(_str[_size - 1 - numTrailing]))
+				numTrailing++;
+			else
+				break;
+		}
+	}
+
+	if (numLeading == 0 && numTrailing == 0)
+		return;
+
 	makeUnique();
 
-	// Trim trailing whitespace
-	while (_size >= 1 && isSpace(_str[_size - 1]))
-		--_size;
-	_str[_size] = 0;
+	uint newSize = _size - numLeading - numTrailing;
 
-	// Trim leading whitespace
-	value_type *t = _str;
-	while (isSpace(*t))
-		t++;
+	if (numLeading > 0)
+		memmove(_str, _str + numLeading, newSize);
 
-	if (t != _str) {
-		_size -= t - _str;
-		memmove(_str, t, (_size + 1) * sizeof(_str[0]));
-	}
+	_str[newSize] = 0;
+	_size = newSize;
 }
 #endif
 
