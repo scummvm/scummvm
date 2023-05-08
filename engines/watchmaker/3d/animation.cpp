@@ -578,6 +578,7 @@ t3dCHARACTER *t3dLoadCharacter(WGame &game, const char *pname, uint16 num) {
 	//Try to load animation
 	if (t3dLoadAnimation(game, pname, b->Mesh, T3D_MESH_DEFAULTANIM) == -1) {
 		warning("t3dLoadCharacter: Error loading %s", pname);
+		delete[] b;
 		return nullptr;
 	}
 	FixupAnim(b->Mesh, 0, "");
