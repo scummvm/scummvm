@@ -60,6 +60,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 		_oldCharacter = c;
 		c = &_itemsCharacter;
 		party._blacksmithWares.blackData2CharData(_itemsCharacter);
+		_itemsCharacter._class = _oldCharacter->_class;
 		setEquipmentIcons();
 	} else if (mode == ITEMMODE_ENCHANT) {
 		_oldCharacter = c;
@@ -313,6 +314,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 						_oldCharacter = newChar;
 						startingChar = newChar;
 						c = &_itemsCharacter;
+						_itemsCharacter._class = _oldCharacter->_class;
 					} else if (mode == ITEMMODE_SELL || mode == ITEMMODE_REPAIR || mode == ITEMMODE_IDENTIFY) {
 						_oldCharacter = newChar;
 						startingChar = newChar;
