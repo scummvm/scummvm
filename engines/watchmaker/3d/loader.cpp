@@ -331,6 +331,7 @@ t3dBODY* RoomManagerImplementation::loadSingleRoom(const Common::String &_pname,
 	uint16 fileVersion = stream->readByte();
 	if (fileVersion != T3DFILEVERSION) {                                                   // Controlla la versione del file
 		warning("%s file incompatible: current version: %d.\tFile version: %d", name.c_str(), T3DFILEVERSION, fileVersion);
+		delete b;
 		return nullptr;
 	}
 
@@ -340,6 +341,7 @@ t3dBODY* RoomManagerImplementation::loadSingleRoom(const Common::String &_pname,
 			j++;
 		if (j > MAX_LOADED_FILES) {
 			warning("Too many t3d files loaded!");
+			delete b;
 			return nullptr;
 		}
 		if ((j + 1) > NumLoadedFiles)
