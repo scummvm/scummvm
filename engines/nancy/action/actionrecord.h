@@ -57,7 +57,7 @@ enum struct DependencyType : int16 {
 	kTimerGreaterThanDependencyTime	= 14,
 	kDifficultyLevel				= 15,
 	kClosedCaptioning				= 16,
-	kSound							= 17,	// Not implemented
+	kSound							= 17,
 	kOpenParentheses				= 18,	// Not implemented
 	kCloseParentheses				= 19	// Not implemented
 };

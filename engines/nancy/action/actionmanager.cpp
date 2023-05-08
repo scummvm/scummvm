@@ -338,6 +338,15 @@ void ActionManager::processActionRecords() {
 								dep.satisfied = true;
 							}
 						}
+
+						break;
+					case DependencyType::kSound:
+						if (g_nancy->_sound->isSoundPlaying(dep.label)) {
+							dep.satisfied = dep.condition == 1;
+						} else {
+							dep.satisfied = dep.condition == 0;
+						}
+						
 						break;
 					default:
 						warning("Unimplemented Dependency type %i", (int)dep.type);
