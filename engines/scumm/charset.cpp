@@ -31,6 +31,8 @@
 
 namespace Scumm {
 
+static const int kMaxRawJpCharNum = 1500;
+
 /*
 TODO:
 Right now our charset renderers directly access _textSurface, as well as the
@@ -89,14 +91,14 @@ void ScummEngine::loadCJKFont() {
 		_2byteWidth = _2byteHeight = 12;
 		_useCJKMode = true;
 #endif
-	} else if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD && _language == Common::JA_JPN) {
-		int numChar = 1413;
+	} else if ((_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD && _language == Common::JA_JPN)
+		   || (_game.id == GID_INDY4 && _game.platform == Common::kPlatformMacintosh && _language == Common::JA_JPN)) {
 		_2byteWidth = 16;
 		_2byteHeight = 16;
 		_useCJKMode = true;
 		_newLineCharacter = 0x5F;
 		// charset resources are not inited yet, load charset later
-		_2byteFontPtr = new byte[_2byteWidth * _2byteHeight * numChar / 8];
+		_2byteFontPtr = new byte[_2byteWidth * _2byteHeight * kMaxRawJpCharNum / 8];
 		// set byte 0 to 0xFF (0x00 when loaded) to indicate that the font was not loaded
 		_2byteFontPtr[0] = 0xFF;
 	} else if (_language == Common::KO_KOR ||
@@ -244,18 +246,20 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 		idx = ((idx % 256) - 0xb0) * 94 + (idx / 256) - 0xa1;
 		break;
 	case Common::JA_JPN:
-		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD && _language == Common::JA_JPN) {
+		if ((_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
+		    || (_game.id == GID_INDY4 && _game.platform == Common::kPlatformMacintosh)) {
 			// init pointer to charset resource
 			if (_2byteFontPtr[0] == 0xFF) {
 				int charsetId = 5;
-				int numChar = 1413;
+				int numChar = (getResourceSize(rtCharset, charsetId) - 14) / 32;
+				assert(numChar <= kMaxRawJpCharNum);
 				byte *charsetPtr = getResourceAddress(rtCharset, charsetId);
 				if (charsetPtr == nullptr)
 					error("ScummEngine::get2byteCharPtr: charset %d not found", charsetId);
-				memcpy(_2byteFontPtr, charsetPtr + 46, _2byteWidth * _2byteHeight * numChar / 8);
+				memcpy(_2byteFontPtr, charsetPtr + 14, _2byteWidth * _2byteHeight * numChar / 8);
 			}
 
-			idx = (SWAP_CONSTANT_16(idx) & 0x7fff) - 1;
+			idx = (SWAP_CONSTANT_16(idx) & 0x7fff);
 		} else {
 			idx = Graphics::FontTowns::getCharFMTChunk(idx);
 		}
