@@ -28,20 +28,26 @@
 
 #include "vcruise/detection.h"
 
-static const PlainGameDescriptor vCruiseGames[] = {
+static const PlainGameDescriptor g_vcruiseGames[] = {
 	{"reah", "Reah: Face the Unknown"},
 	{"schizm", "Schizm: Mysterious Journey"},
 	{nullptr, nullptr}
+};
+
+static const char *g_vcruiseDirectoryGlobs[] = {
+	"Sfx",
+	"Waves-22",
+	nullptr
 };
 
 #include "vcruise/detection_tables.h"
 
 class VCruiseMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	VCruiseMetaEngineDetection() : AdvancedMetaEngineDetection(VCruise::gameDescriptions, sizeof(VCruise::VCruiseGameDescription), vCruiseGames) {
+	VCruiseMetaEngineDetection() : AdvancedMetaEngineDetection(VCruise::gameDescriptions, sizeof(VCruise::VCruiseGameDescription), g_vcruiseGames) {
 		_guiOptions = GUIO4(GAMEOPTION_FAST_ANIMATIONS, GAMEOPTION_INCREASE_DRAG_DISTANCE, GAMEOPTION_LAUNCH_DEBUG, GAMEOPTION_SKIP_MENU);
-		_maxScanDepth = 1;
-		_directoryGlobs = nullptr;
+		_maxScanDepth = 3;
+		_directoryGlobs = g_vcruiseDirectoryGlobs;
 		_flags = kADFlagCanPlayUnknownVariants;
 	}
 

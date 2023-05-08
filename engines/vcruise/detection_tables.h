@@ -30,31 +30,50 @@ namespace VCruise {
 
 static const VCruiseGameDescription gameDescriptions[] = {
 
-	{ // Reah: Face the Unknown, DVD/digital version
+	{ // Reah: Face the Unknown, English DVD/digital version
 		{
 			"reah",
-			"DVD",
-			AD_ENTRY1s("Reah.exe", "60ec19c53f1323cc7f0314f98d396283", 304128),
+			"English DVD",
+			AD_ENTRY2s("Reah.exe", "60ec19c53f1323cc7f0314f98d396283", 304128,
+					   "0170_b.wav", "5b705300b4fee3ceb821a1b55884a722", 129248),
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			ADGF_TESTING | VCRUISE_GF_WANT_MP3,
 			GUIO0()
 		},
 		GID_REAH,
+		Common::EN_ANY,
 	},
-	{ // Reah: Face the Unknown, 6 CD Version
+	{ // Reah: Face the Unknown, English 6 CD Version
 		{
 			"reah",
-			"CD",
-			AD_ENTRY1s("Reah.exe", "77bc7f7819cdd443f52b193529138c87", 305664),
+			"English CD",
+			AD_ENTRY2s("Reah.exe", "77bc7f7819cdd443f52b193529138c87", 305664,
+					   "0170_b.wav", "5b705300b4fee3ceb821a1b55884a722", 129248),
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			ADGF_TESTING,
 			GUIO0()
 		},
 		GID_REAH,
+		Common::EN_ANY,
 	},
-	{ // Schizm, DVD/digital Version
+	{
+		// Reah: Face the Unknown, German 6 CD Version
+		{
+			"reah",
+			"German CD",
+			AD_ENTRY2s("Reah.exe", "be29f9f9fc9a454488f9d2fb68e26326", 305664,
+					   "0170_b.wav", "117890A4A74815D704FC5064D92F58D1", 1),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING,
+			GUIO0()
+		},
+		GID_REAH,
+		Common::DE_DEU,
+	},
+	{ // Schizm: Mysterious Journey, English DVD/digital Version
 		{
 			"schizm",
 			"DVD",
@@ -65,6 +84,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 		GID_SCHIZM,
+		Common::EN_GRB,
 	},
 	{ AD_TABLE_END_MARKER, GID_UNKNOWN }
 };

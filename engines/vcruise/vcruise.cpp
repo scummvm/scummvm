@@ -164,7 +164,7 @@ Common::Error VCruiseEngine::run() {
 
 	_system->fillScreen(0);
 
-	_runtime.reset(new Runtime(_system, _mixer, _rootFSNode, _gameDescription->gameID));
+	_runtime.reset(new Runtime(_system, _mixer, _rootFSNode, _gameDescription->gameID, _gameDescription->defaultLanguage));
 	_runtime->initSections(_videoRect, _menuBarRect, _trayRect, Common::Rect(640, 480), _system->getScreenFormat());
 
 	const char *exeName = _gameDescription->desc.filesDescriptions[0].fileName;

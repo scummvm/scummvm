@@ -43,6 +43,10 @@ struct VCruiseGameDescription {
 	ADGameDescription desc;
 
 	VCruiseGameID gameID;
+
+	// Specifying the language in the ADGameDescription causes AD to fail to detect the game as a match,
+	// so we have to specify it as UNK_LANG and specify the default language here.
+	Common::Language defaultLanguage;
 };
 
 

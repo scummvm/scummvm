@@ -962,7 +962,7 @@ void SaveGameSnapshot::writeString(Common::WriteStream *stream, const Common::St
 FontCacheItem::FontCacheItem() : font(nullptr), size(0) {
 }
 
-Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
+Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID, Common::Language defaultLanguage)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _hero(0), _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
 	  _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false),
@@ -977,7 +977,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _panoramaState(kPanoramaStateInactive),
 	  _listenerX(0), _listenerY(0), _listenerAngle(0), _soundCacheIndex(0),
 	  _isInGame(false),
-	  _subtitleFont(nullptr), _isDisplayingSubtitles(false), _languageIndex(0),
+	  _subtitleFont(nullptr), _isDisplayingSubtitles(false), _languageIndex(0), _defaultLanguage(defaultLanguage),
 	  _isCDVariant(false) {
 
 	for (uint i = 0; i < kNumDirections; i++) {
@@ -1252,13 +1252,8 @@ bool Runtime::bootGame(bool newGame) {
 		}
 	}
 
-	if (!foundLang) {
-		// Maybe should pick this differently
-		if (_gameID == GID_REAH)
-			lang = Common::EN_ANY;
-		else if (_gameID == GID_SCHIZM)
-			lang = Common::EN_GRB;
-	}
+	if (!foundLang)
+		lang = _defaultLanguage;
 
 	Common::CodePage codePage = Common::CodePage::kWindows1252;
 

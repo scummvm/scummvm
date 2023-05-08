@@ -536,7 +536,7 @@ class Runtime {
 public:
 	friend class RuntimeMenuInterface;
 
-	Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID);
+	Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID, Common::Language defaultLanguage);
 	virtual ~Runtime();
 
 	void initSections(const Common::Rect &gameRect, const Common::Rect &menuRect, const Common::Rect &trayRect, const Common::Rect &fullscreenMenuRect, const Graphics::PixelFormat &pixFmt);
@@ -1234,6 +1234,8 @@ private:
 	uint _languageIndex;
 	bool _isCDVariant;
 	StartConfigDef _startConfigs[kNumStartConfigs];
+
+	Common::Language _defaultLanguage;
 
 	typedef Common::HashMap<uint, SubtitleDef> FrameToSubtitleMap_t;
 	typedef Common::HashMap<uint, FrameToSubtitleMap_t> AnimSubtitleMap_t;
