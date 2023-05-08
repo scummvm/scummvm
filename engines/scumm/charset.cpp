@@ -1103,6 +1103,8 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 		_origWidth++;
 
 	_left += _origWidth;
+	if (is2byte)
+		_left += _cjkSpacing;
 
 	if (_str.right < _left) {
 		_str.right = _left;
@@ -1997,8 +1999,7 @@ void CharsetRendererMac::setColor(byte color) {
 }
 
 #ifdef ENABLE_SCUMM_7_8
-CharsetRendererV7::CharsetRendererV7(ScummEngine *vm) : CharsetRendererClassic(vm),
-	_spacing(vm->_useCJKMode && vm->_language != Common::JA_JPN ? 1 : 0),
+CharsetRendererV7::CharsetRendererV7(ScummEngine *vm) : CharsetRendererClassic(vm, vm->_useCJKMode && vm->_language != Common::JA_JPN ? 1 : 0),
 	_direction(vm->_language == Common::HE_ISR ? -1 : 1),
 	_newStyle(vm->_useCJKMode) {
 }
@@ -2023,7 +2024,7 @@ int CharsetRendererV7::draw2byte(byte *buffer, Common::Rect &clipRect, int x, in
 		}
 		buffer += pitch;
 	}
-	return _origWidth + _spacing;
+	return _origWidth + _cjkSpacing;
 }
 
 int CharsetRendererV7::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) {
@@ -2070,7 +2071,7 @@ int CharsetRendererV7::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, i
 
 int CharsetRendererV7::getCharWidth(uint16 chr) const {
 	if ((chr & 0x80) && _vm->_useCJKMode)
-		return _vm->_2byteWidth + _spacing;
+		return _vm->_2byteWidth + _cjkSpacing;
 
 	int offs = READ_LE_UINT32(_fontPtr + (chr & 0xFF) * 4 + 4);
 	// SCUMM7 does not use the "kerning" from _fontPtr[offs + 2] here (compare CharsetRendererClassic::getCharWidth()
@@ -2221,7 +2222,7 @@ void CharsetRendererNES::drawChar(int chr, Graphics::Surface &s, int x, int y) {
 
 #ifdef USE_RGB_COLOR
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-CharsetRendererTownsClassic::CharsetRendererTownsClassic(ScummEngine *vm) : CharsetRendererClassic(vm), _sjisCurChar(0) {
+CharsetRendererTownsClassic::CharsetRendererTownsClassic(ScummEngine *vm) : CharsetRendererClassic(vm, 0), _sjisCurChar(0) {
 	assert(vm->_game.platform == Common::kPlatformFMTowns);
 }
 
