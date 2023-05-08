@@ -335,7 +335,7 @@ void Add3DStuff(WGame &game) {
 	//DisplayDDBitmap( TrecLogo, 800-10-rGetBitmapRealDimX(TrecLogo),0, 0,0, 0,0 );
 	if (bShowInfo) {
 		//display version
-		uint32 date, time, d, m, yy, h, min;
+		uint32 date = 0, time = 0, d = 0, m = 0, yy = 0, h = 0, min = 0;
 		t3dForceNOFastFile(1);
 		if (t3dGetFileDate(&date, &time, "wm.exe ")) {
 			d = date - (date / 100) * 100;
