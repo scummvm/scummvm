@@ -1794,7 +1794,7 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 			const FrameToSubtitleMap_t &frameMap = animSubtitlesIt->_value;
 
 			FrameToSubtitleMap_t::const_iterator frameIt = frameMap.find(_animDisplayingFrame);
-			if (frameIt != frameMap.end()) {
+			if (frameIt != frameMap.end() && ConfMan.getBool("subtitles")) {
 				if (!millis)
 					millis = g_system->getMillis();
 
@@ -3247,6 +3247,9 @@ void Runtime::triggerSoundRamp(SoundInstance &snd, uint durationMSec, int32 newV
 }
 
 void Runtime::triggerWaveSubtitles(const SoundInstance &snd, const Common::String &id) {
+	if (!ConfMan.getBool("subtitles"))
+		return;
+
 	char appendedCode[4] = {'_', '0', '0', '\0'};
 
 	char digit1 = '0';
