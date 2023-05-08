@@ -289,27 +289,30 @@ bool Debugger::cmdChannels(int argc, const char **argv) {
 }
 
 bool Debugger::cmdCast(int argc, const char **argv) {
-	Cast *cast = g_director->getCurrentMovie()->getCast();
-	Cast *sharedCast = g_director->getCurrentMovie()->getSharedCast();
+	Movie *movie = g_director->getCurrentMovie();
+	Cast *sharedCast = movie->getSharedCast();
 
 	int castId = -1;
 	if (argc == 2)
 		castId = atoi(argv[1]);
 
-	debugPrintf("Cast:\n");
-	if (!cast) {
-		debugPrintf("[empty]\n");
-	} else if (castId > -1 && !cast->getCastMember(castId)) {
-		debugPrintf("[not found]\n");
-	} else {
-		debugPrintf("%s\n", cast->formatCastSummary(castId).c_str());
+	for (auto it : *movie->getCasts()) {
+		debugPrintf("Cast %d:\n", it._key);
+		Cast *cast = it._value;
+		if (!cast) {
+			debugPrintf("[empty]\n");
+		} else if (castId > -1 && !cast->getCastMember(castId, false)) {
+			debugPrintf("[not found]\n");
+		} else {
+			debugPrintf("%s\n", cast->formatCastSummary(castId).c_str());
+		}
+		debugPrintf("\n");
 	}
-	debugPrintf("\n");
 
 	debugPrintf("Shared cast:\n");
 	if (!sharedCast) {
 		debugPrintf("[empty]\n");
-	} else if (castId > -1 && !sharedCast->getCastMember(castId)) {
+	} else if (castId > -1 && !sharedCast->getCastMember(castId, false)) {
 		debugPrintf("[not found]\n");
 	} else {
 		debugPrintf("%s\n", sharedCast->formatCastSummary(castId).c_str());

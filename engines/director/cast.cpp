@@ -115,13 +115,13 @@ Cast::~Cast() {
 	delete _lingoArchive;
 }
 
-CastMember *Cast::getCastMember(int castId) {
+CastMember *Cast::getCastMember(int castId, bool load) {
 	CastMember *result = nullptr;
 
 	if (_loadedCast && _loadedCast->contains(castId)) {
 		result = _loadedCast->getVal(castId);
 	}
-	if (result && _loadMutex) {
+	if (result && load && _loadMutex) {
 		// Archives only support having one stream open at a time,
 		// prevent recursive calls to CastMember::load()
 		_loadMutex = false;
@@ -1379,7 +1379,7 @@ Common::String Cast::formatCastSummary(int castId = -1) {
 	for (auto it = castIds.begin(); it != castIds.end(); ++it) {
 		if (castId > -1 &&  *it != castId)
 			continue;
-		CastMember *castMember = getCastMember(*it);
+		CastMember *castMember = getCastMember(*it, false);
 		CastMemberInfo *castMemberInfo = getCastMemberInfo(*it);
 		Common::String info = castMember->formatInfo();
 		result += Common::String::format("%5d", *it);

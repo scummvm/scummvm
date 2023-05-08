@@ -60,4 +60,10 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	}
 }
 
+Common::String ScriptCastMember::formatInfo() {
+	return Common::String::format(
+		"scriptType: %s", scriptType2str(_scriptType)
+	);
+}
+
 }
