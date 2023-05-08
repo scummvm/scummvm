@@ -238,24 +238,26 @@ void ActionManager::processActionRecords() {
 						}
 
 						break;
-					case DependencyType::kSceneCount:
+					case DependencyType::kSceneCount: {
+						// Check how many times a scene has been visited.
 						// This dependency type keeps its data in the time variables
-						// Also, I'm pretty sure it never gets used
+						int count = NancySceneState._flags.sceneCounts.contains(dep.hours) ?
+							NancySceneState._flags.sceneCounts[dep.hours] : 0;
 						switch (dep.milliseconds) {
 						case 1:
-							if (dep.seconds < NancySceneState._flags.sceneHitCount[dep.hours]) {
+							if (dep.seconds < count) {
 								dep.satisfied = true;
 							}
 
 							break;
 						case 2:
-							if (dep.seconds > NancySceneState._flags.sceneHitCount[dep.hours]) {
+							if (dep.seconds > count) {
 								dep.satisfied = true;
 							}
 
 							break;
 						case 3:
-							if (dep.seconds == NancySceneState._flags.sceneHitCount[dep.hours]) {
+							if (dep.seconds == count) {
 								dep.satisfied = true;
 							}
 
@@ -263,6 +265,7 @@ void ActionManager::processActionRecords() {
 						}
 
 						break;
+					}
 					case DependencyType::kElapsedPlayerDay:
 						if (record->_days == -1) {
 							record->_days = NancySceneState._timers.playerTime.getDays();

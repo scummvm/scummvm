@@ -240,7 +240,7 @@ private:
 
 		LogicCondition logicConditions[30];
 		Common::Array<byte> eventFlags;
-		uint16 sceneHitCount[2001];
+		Common::HashMap<uint16, uint16> sceneCounts;
 		Common::Array<byte> items;
 		int16 heldItem = -1;
 		int16 primaryVideoResponsePicked = -1;

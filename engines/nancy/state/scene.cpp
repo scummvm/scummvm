@@ -486,7 +486,27 @@ void Scene::synchronize(Common::Serializer &ser) {
 
 	ser.syncArray(_flags.eventFlags.data(), g_nancy->getStaticData().numEventFlags, Common::Serializer::Byte);
 
-	ser.syncArray<uint16>(_flags.sceneHitCount, (uint16)2001, Common::Serializer::Uint16LE);
+	// Skip empty sceneCount array
+	ser.skip(2001 * 2, 0, 2);
+
+	uint numSceneCounts = _flags.sceneCounts.size();
+	ser.syncAsUint16LE(numSceneCounts);
+
+	if (ser.isSaving()) {
+		uint16 key;
+		for (auto &entry : _flags.sceneCounts) {
+			key = entry._key;
+			ser.syncAsUint16LE(key);
+			ser.syncAsUint16LE(entry._value);
+		}
+	} else {
+		uint16 key, val;
+		for (uint i = 0; i < numSceneCounts; ++i) {
+			ser.syncAsUint16LE(key);
+			ser.syncAsUint16LE(val);
+			_flags.sceneCounts.setVal(key, val);
+		}
+	}
 
 	ser.syncAsUint16LE(_difficulty);
 	ser.syncArray<uint16>(_hintsRemaining.data(), _hintsRemaining.size(), Common::Serializer::Uint16LE);
@@ -532,10 +552,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 void Scene::init() {
 	_flags.eventFlags.resize(g_nancy->getStaticData().numEventFlags, kEvNotOccurred);
 
-	// Does this ever get used?
-	for (uint i = 0; i < 2001; ++i) {
-		_flags.sceneHitCount[i] = 0;
-	}
+	_flags.sceneCounts.clear();
 
 	_flags.items.resize(g_nancy->getStaticData().numItems, kInvEmpty);
 
@@ -688,6 +705,8 @@ void Scene::load() {
 	}
 
 	_timers.sceneTime = 0;
+
+	_flags.sceneCounts.getOrCreateVal(_sceneState.currentScene.sceneID)++;
 
 	if (_specialEffect) {
 		_specialEffect->afterSceneChange();
