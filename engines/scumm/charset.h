@@ -156,6 +156,7 @@ protected:
 	virtual bool prepareDraw(uint16 chr);
 
 	int _width, _height, _origWidth, _origHeight;
+	const int _cjkSpacing;
 	int _offsX, _offsY;
 	const byte *_charPtr;
 
@@ -163,7 +164,10 @@ protected:
 	VirtScreenNumber _drawScreen;
 
 public:
-	CharsetRendererClassic(ScummEngine *vm) : CharsetRendererPC(vm) {}
+	CharsetRendererClassic(ScummEngine *vm, int cjkSpacing) : CharsetRendererPC(vm), _cjkSpacing(cjkSpacing) {}
+	CharsetRendererClassic(ScummEngine *vm) : CharsetRendererClassic(vm, vm->_game.id == GID_INDY4 &&
+									 vm->_game.platform == Common::kPlatformMacintosh &&
+									 vm->_language == Common::JA_JPN ? -3 : 0) {}
 
 	void printChar(int chr, bool ignoreCharsetMask) override;
 	void drawChar(int chr, Graphics::Surface &s, int x, int y) override;
@@ -324,7 +328,6 @@ public:
 	int setFont(int) override { return 0; }
 	bool newStyleWrapping() const override { return _newStyle; }
 private:
-	const int _spacing;
 	const bool _newStyle;
 	const int _direction;
 };
