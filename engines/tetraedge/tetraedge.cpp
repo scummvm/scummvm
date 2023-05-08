@@ -200,6 +200,12 @@ Common::Error TetraedgeEngine::loadGameStream(Common::SeekableReadStream *stream
 	return retval;
 }
 
+void TetraedgeEngine::closeGameDialogs() {
+	if (!_game)
+		return;
+	_game->closeDialogs();
+}
+
 void TetraedgeEngine::configureSearchPaths() {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	if (_gameDescription->platform != Common::kPlatformIOS)
@@ -215,11 +221,19 @@ int TetraedgeEngine::getDefaultScreenHeight() const {
 }
 
 bool TetraedgeEngine::onKeyUp(const Common::KeyState &state) {
-	if (state.keycode == Common::KEYCODE_l) {
+	switch (state.keycode) {
+	case Common::KEYCODE_l:
 		if (loadGameDialog())
 			_game->initLoadedBackupData();
-	} else if (state.keycode == Common::KEYCODE_s) {
+		break;
+	case Common::KEYCODE_s:
 		saveGameDialog();
+		break;
+	case Common::KEYCODE_ESCAPE:
+		closeGameDialogs();
+		break;
+	default:
+		break;
 	}
 
 	return false;

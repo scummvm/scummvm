@@ -61,6 +61,8 @@ public:
 
 	virtual bool changeWarp(const Common::String &zone, const Common::String &scene, bool fadeFlag) = 0;
 
+	void closeDialogs();
+
 	virtual void draw() = 0;
 	virtual void enter() = 0; // will load game if _loadName is set.
 	// Note: game uses ILayouts here..

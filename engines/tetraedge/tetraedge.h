@@ -81,6 +81,8 @@ public:
 
 	uint32 getFeatures() const;
 
+	void closeGameDialogs();
+
 	/**
 	 * Returns the game Id
 	 */
