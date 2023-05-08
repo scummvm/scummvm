@@ -33,7 +33,7 @@ static const PlainGameDescriptor ULTIMA_GAMES[] = {
 #ifndef RELEASE_BUILD
 	{ "ultima1", "Ultima I: The First Age of Darkness" }, 
 #endif
-	{ "ultima4", "Ultima IV:  Quest of the Avatar" },
+	{ "ultima4", "Ultima IV: Quest of the Avatar" },
 	{ "ultima4_enh", "Ultima IV: Quest of the Avatar - Enhanced" },
 	{ "ultima6", "Ultima VI: The False Prophet" },
 	{ "ultima6_enh", "Ultima VI: The False Prophet - Enhanced" },
