@@ -230,24 +230,17 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 			dep.satisfied = true;
 			break;
 		case DependencyType::kInventory:
-			switch (dep.condition) {
-			case kInvEmpty:
+			if (dep.condition == g_nancy->_false) {
 				// Item not in possession or held
-				if (NancySceneState._flags.items[dep.label] == kInvEmpty &&
+				if (NancySceneState._flags.items[dep.label] == g_nancy->_false &&
 					dep.label != NancySceneState._flags.heldItem) {
 					dep.satisfied = true;
 				}
-
-				break;
-			case kInvHolding:
-				if (NancySceneState._flags.items[dep.label] == kInvHolding ||
+			} else {
+				if (NancySceneState._flags.items[dep.label] == g_nancy->_true ||
 					dep.label == NancySceneState._flags.heldItem) {
 					dep.satisfied = true;
 				}
-
-				break;
-			default:
-				break;
 			}
 
 			break;
@@ -260,14 +253,20 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 
 			break;
 		case DependencyType::kLogic:
-			if (NancySceneState._flags.logicConditions[dep.label].flag == dep.condition) {
-				// Wait for specified time before satisfying dependency condition
-				Time elapsed = NancySceneState._timers.lastTotalTime - NancySceneState._flags.logicConditions[dep.label].timestamp;
+			if (g_nancy->getGameType() <= kGameTypeNancy2) {
+				// First few games used 2 for false and 1 for true, but we store them the
+				// other way around here. So, we need to check for inequality
+				if (!NancySceneState.getLogicCondition(dep.label, dep.condition)) {
+					// Wait for specified time before satisfying dependency condition
+					Time elapsed = NancySceneState._timers.lastTotalTime - NancySceneState._flags.logicConditions[dep.label].timestamp;
 
-				if (elapsed >= dep.timeData) {
-					dep.satisfied = true;
+					if (elapsed >= dep.timeData) {
+						dep.satisfied = true;
+					}
 				}
-			}
+			} else {
+				dep.satisfied = NancySceneState.getLogicCondition(dep.label, dep.condition);
+			}			
 
 			break;
 		case DependencyType::kElapsedGameTime:

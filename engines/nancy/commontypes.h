@@ -46,18 +46,6 @@ static const int8 kFlagNoLabel			= -1;
 static const int8 kEvNoEvent			= -1;
 static const int8 kFrNoFrame			= -1;
 
-// Event flags
-static const byte kEvNotOccurred 		= 1;
-static const byte kEvOccurred 			= 2;
-
-// Logic conditions
-static const byte kLogUsed				= 1;
-static const byte kLogNotUsed			= 2;
-
-// Inventory items flags
-static const byte kInvEmpty				= 1;
-static const byte kInvHolding			= 2;
-
 // Inventory items use types
 static const byte kInvItemUseThenLose	= 0;
 static const byte kInvItemKeepAlways	= 1;

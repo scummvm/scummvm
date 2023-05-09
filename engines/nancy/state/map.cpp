@@ -219,7 +219,7 @@ void TVDMap::load() {
 	Map::load();
 
 	// Determine which version of the map will be shown
-	if (NancySceneState.getEventFlag(82, kEvOccurred)) {
+	if (NancySceneState.getEventFlag(82, g_nancy->_true)) {
 		_mapID = 3;										// Storm
 		//
 	} else {
@@ -387,8 +387,8 @@ void Nancy1Map::load() {
 	Map::load();
 
 	// Determine which version of the map will be shown
-	if (NancySceneState.getEventFlag(40, kEvOccurred) &&	// Has set up sting
-		NancySceneState.getEventFlag(95, kEvOccurred)) {	// Connie chickens
+	if (NancySceneState.getEventFlag(40, g_nancy->_true) &&	// Has set up sting
+		NancySceneState.getEventFlag(95, g_nancy->_true)) {	// Connie chickens
 		_mapID = 1;		// Night
 
 		_activeLocations[1] = _activeLocations[3] = false;

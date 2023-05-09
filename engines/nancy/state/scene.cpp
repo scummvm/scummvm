@@ -285,7 +285,7 @@ byte Scene::getPlayerTOD() const {
 }
 
 void Scene::addItemToInventory(uint16 id) {
-	_flags.items[id] = kInvHolding;
+	_flags.items[id] = g_nancy->_true;
 	if (_flags.heldItem == id) {
 		setHeldItem(-1);
 	}
@@ -294,7 +294,7 @@ void Scene::addItemToInventory(uint16 id) {
 }
 
 void Scene::removeItemFromInventory(uint16 id, bool pickUp) {
-	_flags.items[id] = kInvEmpty;
+	_flags.items[id] = g_nancy->_false;
 
 	if (pickUp) {
 		setHeldItem(id);
@@ -323,7 +323,7 @@ void Scene::setEventFlag(FlagDescription eventFlag) {
 }
 
 bool Scene::getEventFlag(int16 label, byte flag) const {
-	if (label > 1000) {
+	if (label >= 1000) {
 		// In nancy3 and onwards flags begin from 1000
 		label -= 1000;
 	}
@@ -341,7 +341,7 @@ bool Scene::getEventFlag(FlagDescription eventFlag) const {
 
 void Scene::setLogicCondition(int16 label, byte flag) {
 	if (label > kEvNoEvent) {
-		if (label > 2000) {
+		if (label >= 2000) {
 			// In nancy3 and onwards logic conditions begin from 2000
 			label -= 2000;
 		}
@@ -360,7 +360,7 @@ bool Scene::getLogicCondition(int16 label, byte flag) const {
 
 void Scene::clearLogicConditions() {
 	for (auto &cond : _flags.logicConditions) {
-		cond.flag = kLogNotUsed;
+		cond.flag = g_nancy->_false;
 		cond.timestamp = 0;
 	}
 }
@@ -542,11 +542,11 @@ void Scene::synchronize(Common::Serializer &ser) {
 }
 
 void Scene::init() {
-	_flags.eventFlags.resize(g_nancy->getStaticData().numEventFlags, kEvNotOccurred);
+	_flags.eventFlags.resize(g_nancy->getStaticData().numEventFlags, g_nancy->_false);
 
 	_flags.sceneCounts.clear();
 
-	_flags.items.resize(g_nancy->getStaticData().numItems, kInvEmpty);
+	_flags.items.resize(g_nancy->getStaticData().numItems, g_nancy->_false);
 
 	_timers.lastTotalTime = 0;
 	_timers.playerTime = g_nancy->_bootSummary->startTimeHours * 3600000;
@@ -887,7 +887,7 @@ void Scene::initStaticData() {
 void Scene::clearSceneData() {
 	// Clear generic flags only
 	for (uint16 id : g_nancy->getStaticData().genericEventFlags) {
-		_flags.eventFlags[id] = kEvNotOccurred;
+		_flags.eventFlags[id] = g_nancy->_false;
 	}
 
 	clearLogicConditions();
@@ -903,6 +903,8 @@ void Scene::clearPuzzleData() {
 		delete pd._value;
 	}
 }
+
+Scene::PlayFlags::LogicCondition::LogicCondition() : flag(g_nancy->_false) {}
 
 } // End of namespace State
 } // End of namespace Nancy

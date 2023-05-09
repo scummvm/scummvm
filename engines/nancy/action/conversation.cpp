@@ -215,7 +215,7 @@ void ConversationSound::execute() {
 			} else {
 				// NPC has finished talking, we have responses
 				for (uint i = 0; i < 30; ++i) {
-					if (NancySceneState.getLogicCondition(i, kLogUsed)) {
+					if (NancySceneState.getLogicCondition(i, g_nancy->_true)) {
 						int pickedOnScreenResponse = _pickedResponse = i;
 
 						// Adjust to account for hidden responses
@@ -384,7 +384,7 @@ void ConversationSound::ConversationFlag::set() const {
 		NancySceneState.setEventFlag(flag);
 		break;
 	case kFlagInventory:
-		if (flag.flag == kInvHolding) {
+		if (flag.flag == g_nancy->_true) {
 			NancySceneState.addItemToInventory(flag.label);
 		} else {
 			NancySceneState.removeItemFromInventory(flag.label);

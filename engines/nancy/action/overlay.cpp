@@ -80,7 +80,7 @@ void Overlay::readData(Common::SeekableReadStream &stream) {
 			ser.syncAsUint16LE(_interruptCondition.flag);
 		} else {
 			_interruptCondition.label = kEvNoEvent;
-			_interruptCondition.flag = kEvNotOccurred;
+			_interruptCondition.flag = g_nancy->_false;
 		}
 
 	_sceneChange.readData(stream);

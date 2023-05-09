@@ -462,18 +462,18 @@ bool NancyConsole::Cmd_listAcionRecords(int argc, const char **argv) {
 					debugPrintf("kInventory, item %u, %s, %s",
 						dep.label,
 						g_nancy->_inventoryData->itemDescriptions[dep.label].name.c_str(),
-						dep.condition == kInvHolding ? "kInvHolding" : "kInvEmpty");
+						dep.condition == g_nancy->_true ? "true" : "false");
 					break;
 				case DependencyType::kEvent :
 					debugPrintf("kEvent, flag %u, %s, %s",
 						dep.label,
 						g_nancy->getStaticData().eventFlagNames[dep.label].c_str(),
-						dep.condition == kEvOccurred ? "kEvOccurred" : "kEvNotOccurred");
+						dep.condition == g_nancy->_true ? "true" : "false");
 					break;
 				case DependencyType::kLogic :
 					debugPrintf("kLogic, flag %u, %s",
 						dep.label,
-						dep.condition == kLogUsed ? "kLogUsed" : "kLogNotUsed");
+						dep.condition == g_nancy->_true ? "used" : "not used");
 					break;
 				case DependencyType::kElapsedGameTime :
 					debugPrintf("kElapsedGameTime, %i hours, %i minutes, %i seconds, %i milliseconds",
@@ -602,7 +602,7 @@ bool NancyConsole::Cmd_getEventFlags(int argc, const char **argv) {
 			debugPrintf("\nFlag %u, %s, %s",
 				i,
 				g_nancy->getStaticData().eventFlagNames[i].c_str(),
-				NancySceneState.getEventFlag(i) == true ? "kEvOccurred" : "kEvNotOccurred");
+				NancySceneState.getEventFlag(i, g_nancy->_true) == true ? "true" : "false");
 		}
 	} else {
 		for (int i = 1; i < argc; ++i) {
@@ -614,7 +614,7 @@ bool NancyConsole::Cmd_getEventFlags(int argc, const char **argv) {
 			debugPrintf("\nFlag %u, %s, %s",
 				flagID,
 				g_nancy->getStaticData().eventFlagNames[flagID].c_str(),
-				NancySceneState.getEventFlag(flagID) == true ? "kEvOccurred" : "kEvNotOccurred");
+				NancySceneState.getEventFlag(flagID, g_nancy->_true) == true ? "true" : "false");
 
 		}
 	}
@@ -639,13 +639,13 @@ bool NancyConsole::Cmd_setEventFlags(int argc, const char **argv) {
 		}
 
 		if (Common::String(argv[i + 1]).compareTo("true") == 0) {
-			NancySceneState.setEventFlag(flagID, kEvOccurred);
-			debugPrintf("Set flag %i, %s, to kEvOccurred\n",
+			NancySceneState.setEventFlag(flagID, g_nancy->_true);
+			debugPrintf("Set flag %i, %s, to g_nancy->_true\n",
 				flagID,
 				g_nancy->getStaticData().eventFlagNames[flagID].c_str());
 		} else if (Common::String(argv[i + 1]).compareTo("false") == 0) {
-			NancySceneState.setEventFlag(flagID, kEvNotOccurred);
-			debugPrintf("Set flag %i, %s, to kEvNotOccurred\n",
+			NancySceneState.setEventFlag(flagID, g_nancy->_false);
+			debugPrintf("Set flag %i, %s, to g_nancy->_false\n",
 				flagID,
 				g_nancy->getStaticData().eventFlagNames[flagID].c_str());
 		} else {
@@ -672,7 +672,7 @@ bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
 			debugPrintf("\nItem %u, %s, %s",
 				i,
 				g_nancy->_inventoryData->itemDescriptions[i].name.c_str(),
-				NancySceneState.hasItem(i) == kInvHolding ? "kInvHolding" : "kInvEmpty");
+				NancySceneState.hasItem(i) == g_nancy->_true ? "true" : "false");
 		}
 	} else {
 		for (int i = 1; i < argc; ++i) {
@@ -684,7 +684,7 @@ bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
 			debugPrintf("\nItem %u, %s, %s",
 				flagID,
 				g_nancy->_inventoryData->itemDescriptions[flagID].name.c_str(),
-				NancySceneState.hasItem(i) == kInvHolding ? "kInvHolding" : "kInvEmpty");
+				NancySceneState.hasItem(i) == g_nancy->_true ? "true" : "false");
 
 		}
 	}

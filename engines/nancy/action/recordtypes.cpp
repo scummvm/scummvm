@@ -458,7 +458,7 @@ void AddInventoryNoHS::readData(Common::SeekableReadStream &stream) {
 }
 
 void AddInventoryNoHS::execute() {
-	if (NancySceneState.hasItem(_itemID) == kInvEmpty) {
+	if (NancySceneState.hasItem(_itemID) == g_nancy->_false) {
 		NancySceneState.addItemToInventory(_itemID);
 	}
 
@@ -470,7 +470,7 @@ void RemoveInventoryNoHS::readData(Common::SeekableReadStream &stream) {
 }
 
 void RemoveInventoryNoHS::execute() {
-	if (NancySceneState.hasItem(_itemID) == kInvHolding) {
+	if (NancySceneState.hasItem(_itemID) == g_nancy->_true) {
 		NancySceneState.removeItemFromInventory(_itemID, false);
 	}
 

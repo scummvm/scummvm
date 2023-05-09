@@ -125,7 +125,7 @@ void Textbox::handleInput(NancyInput &input) {
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				input.input &= ~NancyInput::kLeftMouseButtonUp;
 				NancySceneState.clearLogicConditions();
-				NancySceneState.setLogicCondition(i);
+				NancySceneState.setLogicCondition(i, g_nancy->_true);
 			}
 
 			break;
