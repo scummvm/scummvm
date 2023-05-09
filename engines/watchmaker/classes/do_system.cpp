@@ -931,9 +931,10 @@ void doSystem(WGame &game) {
 				break;
 			case EFFECT_ROOMINFO:
 				if ((RoomInfo.t_next_letter > TheMessage->wparam1) && ((*RoomInfo.letter_ptr) != '\0')) {
-					char name_backup[64];
+					constexpr int nameSize = ARRAYSIZE(RoomInfo.fullstring);
+					char name_backup[nameSize] = {};
 
-					strcpy(name_backup, RoomInfo.fullstring);
+					Common::strlcpy(name_backup, RoomInfo.fullstring, nameSize - 1);
 					*(RoomInfo.letter_ptr + 1) = '\0';
 
 					game._renderer->clearBitmap(RoomInfo.tnum, 0, 0, RoomInfo.dx, RoomInfo.dy, 0, 0, 0);
