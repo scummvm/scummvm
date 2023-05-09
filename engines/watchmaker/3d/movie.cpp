@@ -56,6 +56,13 @@ gMovie::gMovie(Common::SharedPtr<Common::SeekableReadStream> stream, Texture *te
 	}
 }
 
+gMovie::~gMovie() {
+	delete[] _frameOffsets;
+	delete[] _buffer;
+	delete[] _surfaceBuffer;
+	delete _frameStream;
+}
+
 Common::SharedPtr<gMovie> gLoadMovie(WorkDirs &workDirs, const char *TextName, Texture *texture) {
 	//convert .avi name in .wmm
 	Common::String finalName = replaceExtension(TextName, "wmm");

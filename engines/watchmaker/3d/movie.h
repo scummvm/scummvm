@@ -55,15 +55,12 @@ public:
 	bool _paused = false;
 
 	gMovie(Common::SharedPtr<Common::SeekableReadStream> stream, Texture *texture, const Common::String &name);
+	~gMovie();
 
 	bool setFrame(uint16 newFrame);
 	void loadThisFrameData(uint16 frame);
 	void buildNewFrame(byte *surf, uint16 frame);
 	bool updateMovie();
-
-	~gMovie() {
-		//warning("TODO: Clean up gMovie properly");
-	}
 private:
 	int frameSize(int index);
 	uint32 bufferSize() const;
