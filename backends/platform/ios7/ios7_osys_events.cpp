@@ -288,42 +288,22 @@ bool OSystem_iOS7::handleEvent_touchFirstDragged(Common::Event &event, int x, in
 	_lastDragPosY = y;
 
 	//printf("Mouse dragged at (%u, %u)\n", x, y);
-	int mouseNewPosX;
-	int mouseNewPosY;
 	int deltaX = _lastPadX - x;
 	int deltaY = _lastPadY - y;
 	_lastPadX = x;
 	_lastPadY = y;
 
 	if (_touchpadModeEnabled) {
-		mouseNewPosX = (int)(_videoContext->mouseX - (int)((float)deltaX * getMouseSpeed()));
-		mouseNewPosY = (int)(_videoContext->mouseY - (int)((float)deltaY * getMouseSpeed()));
-
-		int widthCap = _videoContext->overlayInGUI ? _videoContext->overlayWidth : _videoContext->screenWidth;
-		int heightCap = _videoContext->overlayInGUI ? _videoContext->overlayHeight : _videoContext->screenHeight;
-
-		if (mouseNewPosX < 0)
-			mouseNewPosX = 0;
-		else if (mouseNewPosX > widthCap)
-			mouseNewPosX = widthCap;
-
-		if (mouseNewPosY < 0)
-			mouseNewPosY = 0;
-		else if (mouseNewPosY > heightCap)
-			mouseNewPosY = heightCap;
-
+		handleEvent_mouseDelta(event, deltaX, deltaY);
 	} else {
-		mouseNewPosX = x;
-		mouseNewPosY = y;
+		event.type = Common::EVENT_MOUSEMOVE;
+		event.relMouse.x = deltaX;
+		event.relMouse.y = deltaY;
+		event.mouse.x = x;
+		event.mouse.y = y;
+		warpMouse(x, y);
+
 	}
-
-	event.type = Common::EVENT_MOUSEMOVE;
-	event.relMouse.x = deltaX;
-	event.relMouse.y = deltaY;
-	event.mouse.x = mouseNewPosX;
-	event.mouse.y = mouseNewPosY;
-	warpMouse(mouseNewPosX, mouseNewPosY);
-
 	return true;
 }
 
