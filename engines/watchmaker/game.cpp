@@ -211,6 +211,7 @@ WGame::~WGame() {
 	delete sdl;
 	delete _meshModifiers;
 	delete _roomManager;
+	delete _rnd;
 	_vm = nullptr;
 }
 
