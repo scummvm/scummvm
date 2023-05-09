@@ -54,6 +54,8 @@ gMovie::gMovie(Common::SharedPtr<Common::SeekableReadStream> stream, Texture *te
 	for (int i = 0; i < _numFrames; i++) {
 		_frameOffsets[i] = _stream->readUint32LE();
 	}
+
+	_startTime = 0;
 }
 
 gMovie::~gMovie() {
