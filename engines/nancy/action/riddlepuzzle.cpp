@@ -53,13 +53,13 @@ void RiddlePuzzle::readData(Common::SeekableReadStream &stream) {
 	_textboxTextFontID = stream.readUint16LE();
 	_cursorBlinkTime = stream.readUint16LE();
 	readRect(stream, _screenPosition);
-	_typeSound.readData(stream, SoundDescription::kNormal);
-	_eraseSound.readData(stream, SoundDescription::kNormal);
-	_enterSound.readData(stream, SoundDescription::kNormal);
+	_typeSound.readNormal(stream);
+	_eraseSound.readNormal(stream);
+	_enterSound.readNormal(stream);
 	_successSceneChange.readData(stream);
-	_successSound.readData(stream, SoundDescription::kNormal);
+	_successSound.readNormal(stream);
 	_exitSceneChange.readData(stream);
-	_exitSound.readData(stream, SoundDescription::kNormal);
+	_exitSound.readNormal(stream);
 	readRect(stream, _exitHotspot);
 
 	_riddles.resize(stream.readUint16LE()) ;
@@ -72,7 +72,7 @@ void RiddlePuzzle::readData(Common::SeekableReadStream &stream) {
 		stream.read(buf, 128);
 		buf[127] = '\0';
 		riddle.text = buf;
-		riddle.sound.readData(stream, SoundDescription::kNormal);
+		riddle.sound.readNormal(stream);
 
 		for (uint j = 0; j < 8; ++j) {
 			stream.read(buf, 20);
@@ -84,9 +84,9 @@ void RiddlePuzzle::readData(Common::SeekableReadStream &stream) {
 		}
 
 		riddle.sceneIncorrect.readData(stream);
-		riddle.soundIncorrect.readData(stream, SoundDescription::kNormal);
+		riddle.soundIncorrect.readNormal(stream);
 		riddle.sceneCorrect.readData(stream);
-		riddle.soundCorrect.readData(stream, SoundDescription::kNormal);
+		riddle.soundCorrect.readNormal(stream);
 	}
 }
 

@@ -264,7 +264,7 @@ void SoundManager::loadCommonSounds(IFF *boot) {
 		chunk = boot->getChunkStream(s);
 		if (chunk) {
 			SoundDescription &desc = _commonSounds.getOrCreateVal(s);
-			desc.readData(*chunk, SoundDescription::kNormal);
+			desc.readNormal(*chunk);
 			g_nancy->_sound->loadSound(desc);
 			_channels[desc.channelID].isPersistent = true;
 
@@ -276,7 +276,7 @@ void SoundManager::loadCommonSounds(IFF *boot) {
 	chunk = boot->getChunkStream("MSND"); // channel 28
 	if (chunk) {
 		SoundDescription &desc = _commonSounds.getOrCreateVal("MSND");
-		desc.readData(*chunk, SoundDescription::kMenu);
+		desc.readMenu(*chunk);
 		g_nancy->_sound->loadSound(desc);
 		_channels[desc.channelID].isPersistent = true;
 

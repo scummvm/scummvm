@@ -64,17 +64,17 @@ void BombPuzzle::readData(Common::SeekableReadStream &stream) {
 		_solveOrder[i] = stream.readByte();
 	}
 
-	_snipSound.readData(stream, SoundDescription::kNormal);
-	_noToolSound.readData(stream, SoundDescription::kNormal);
+	_snipSound.readNormal(stream);
+	_noToolSound.readNormal(stream);
 	_toolID = stream.readUint16LE();
 
 	_solveSceneChange.readData(stream);
 	stream.skip(2);
-	_solveSound.readData(stream, SoundDescription::kNormal);
+	_solveSound.readNormal(stream);
 
 	_failSceneChange.readData(stream);
 	stream.skip(2);
-	_failSound.readData(stream, SoundDescription::kNormal);
+	_failSound.readNormal(stream);
 
 	switch (NancySceneState.getDifficulty()) {
 		case 0:

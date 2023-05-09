@@ -104,9 +104,9 @@ void SliderPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	stream.skip((6 - _height) * 6 * 2);
 
-	_clickSound.readData(stream, SoundDescription::kNormal);
+	_clickSound.readNormal(stream);
 	_solveExitScene.readData(stream);
-	_solveSound.readData(stream, SoundDescription::kNormal);
+	_solveSound.readNormal(stream);
 	_exitScene.readData(stream);
 	readRect(stream, _exitHotspot);
 }

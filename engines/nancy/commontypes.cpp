@@ -86,19 +86,17 @@ void SecondaryVideoDescription::readData(Common::SeekableReadStream &stream) {
 	stream.skip(0x20);
 }
 
-void SoundDescription::readData(Common::SeekableReadStream &stream, Type type) {
+void SoundDescription::readNormal(Common::SeekableReadStream &stream) {
 	Common::Serializer s(&stream, nullptr);
-	s.setVersion(type);
+	s.setVersion(g_nancy->getGameType());
 
 	readFilename(s, name);
 
-	s.skip(4, kScene, kScene);
 	s.syncAsUint16LE(channelID);
 
 	s.skip(2); // PLAY_SOUND_FROM_HD = 1, PLAY_SOUND_FROM_CDROM = 2
 	s.skip(2); // PLAY_SOUND_AS_DIGI = 1, PLAY_SOUND_AS_STREAM = 2
-	s.skip(4, kNormal, kNormal);
-	s.skip(2, kMenu, kMenu);
+	s.skip(4);
 
 	s.syncAsUint16LE(numLoops);
 	uint16 loopType;
@@ -111,10 +109,83 @@ void SoundDescription::readData(Common::SeekableReadStream &stream, Type type) {
 	s.syncAsUint16LE(volume);
 	s.skip(2); // Second volume, always (?) same as the first
 	
-	s.syncAsUint32LE(samplesPerSec, kNormal, kNormal);
-	s.syncAsUint16LE(panAnchorFrame, kDIGI, kDIGI);
-	s.skip(2, kDIGI, kDIGI);
-	s.skip(4, kMenu, kScene);
+	s.syncAsUint32LE(samplesPerSec);
+}
+
+void SoundDescription::readDIGI(Common::SeekableReadStream &stream) {
+	Common::Serializer s(&stream, nullptr);
+	s.setVersion(g_nancy->getGameType());
+
+	readFilename(s, name);
+
+	s.syncAsUint16LE(channelID);
+
+	s.skip(2); // PLAY_SOUND_FROM_HD = 1, PLAY_SOUND_FROM_CDROM = 2
+	s.skip(2); // PLAY_SOUND_AS_DIGI = 1, PLAY_SOUND_AS_STREAM = 2
+
+	s.syncAsUint16LE(numLoops);
+	uint16 loopType;
+	s.syncAsUint16LE(loopType);
+	if (loopType != 0) { // LOOP_ONCE = 1, LOOP_INFINITE = 0
+		numLoops = 0;
+	}
+	
+	s.skip(2);
+	s.syncAsUint16LE(volume);
+	s.skip(2); // Second volume, always (?) same as the first
+	
+	s.syncAsUint16LE(panAnchorFrame);
+	s.skip(2);
+}
+
+void SoundDescription::readMenu(Common::SeekableReadStream &stream) {
+	Common::Serializer s(&stream, nullptr);
+	s.setVersion(g_nancy->getGameType());
+
+	readFilename(s, name);
+
+	s.syncAsUint16LE(channelID);
+
+	s.skip(2); // PLAY_SOUND_FROM_HD = 1, PLAY_SOUND_FROM_CDROM = 2
+	s.skip(2); // PLAY_SOUND_AS_DIGI = 1, PLAY_SOUND_AS_STREAM = 2
+	s.skip(2);
+
+	s.syncAsUint16LE(numLoops);
+	uint16 loopType;
+	s.syncAsUint16LE(loopType);
+	if (loopType != 0) { // LOOP_ONCE = 1, LOOP_INFINITE = 0
+		numLoops = 0;
+	}
+	
+	s.skip(2);
+	s.syncAsUint16LE(volume);
+	s.skip(2); // Second volume, always (?) same as the first
+	s.skip(4);
+}
+
+void SoundDescription::readScene(Common::SeekableReadStream &stream) {
+	Common::Serializer s(&stream, nullptr);
+	s.setVersion(g_nancy->getGameType());
+
+	readFilename(s, name);
+
+	s.skip(4);
+	s.syncAsUint16LE(channelID);
+
+	s.skip(2); // PLAY_SOUND_FROM_HD = 1, PLAY_SOUND_FROM_CDROM = 2
+	s.skip(2); // PLAY_SOUND_AS_DIGI = 1, PLAY_SOUND_AS_STREAM = 2
+
+	s.syncAsUint16LE(numLoops);
+	uint16 loopType;
+	s.syncAsUint16LE(loopType);
+	if (loopType != 0) { // LOOP_ONCE = 1, LOOP_INFINITE = 0
+		numLoops = 0;
+	}
+	
+	s.skip(2);
+	s.syncAsUint16LE(volume);
+	s.skip(2); // Second volume, always (?) same as the first
+	s.skip(4);
 }
 
 void ConditionalDialogue::readData(Common::SeekableReadStream &stream) {

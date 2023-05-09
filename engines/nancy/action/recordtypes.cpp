@@ -554,7 +554,7 @@ void ShowInventoryItem::execute() {
 }
 
 void PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
-	_sound.readData(stream, SoundDescription::kDIGI);
+	_sound.readDIGI(stream);
 	_sceneChange.readData(stream, g_nancy->getGameType() == kGameTypeVampire);
 
 	_flagOnTrigger.label = stream.readSint16LE();
@@ -589,7 +589,7 @@ void PlayDigiSoundAndDie::execute() {
 }
 
 void PlaySoundPanFrameAnchorAndDie::readData(Common::SeekableReadStream &stream) {
-	_sound.readData(stream, SoundDescription::kDIGI);
+	_sound.readDIGI(stream);
 	stream.skip(2);
 }
 
@@ -600,7 +600,7 @@ void PlaySoundPanFrameAnchorAndDie::execute() {
 }
 
 void PlaySoundMultiHS::readData(Common::SeekableReadStream &stream) {
-	_sound.readData(stream, SoundDescription::kNormal);
+	_sound.readNormal(stream);
 
 	if (g_nancy->getGameType() != kGameTypeVampire) {
 		_sceneChange.readData(stream);
@@ -653,7 +653,7 @@ void PlaySoundMultiHS::execute() {
 
 void HintSystem::readData(Common::SeekableReadStream &stream) {
 	_characterID = stream.readByte();
-	_genericSound.readData(stream, SoundDescription::kNormal);
+	_genericSound.readNormal(stream);
 }
 
 void HintSystem::execute() {

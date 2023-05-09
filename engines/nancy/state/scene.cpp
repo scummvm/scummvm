@@ -74,7 +74,7 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 		readFilename(stream, palettes[2]);
 	}
 
-	sound.readData(stream, SoundDescription::kScene);
+	sound.readScene(stream);
 
 	ser.skip(6);
 	ser.syncAsUint16LE(panningType);

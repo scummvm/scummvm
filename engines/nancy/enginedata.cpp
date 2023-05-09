@@ -124,7 +124,7 @@ INV::INV(Common::SeekableReadStream *chunkStream) {
 	byte textBuf[60];
 
 	if (s.getVersion() >= kGameTypeNancy2) {
-		cantSound.readData(*chunkStream, SoundDescription::kNormal);
+		cantSound.readNormal(*chunkStream);
 		s.syncBytes(textBuf, 60);
 		textBuf[59] = '\0';
 		cantText = (char *)textBuf;
@@ -167,14 +167,14 @@ INV::INV(Common::SeekableReadStream *chunkStream) {
 			textBuf[59] = '\0';
 			item.generalCantText = (char *)textBuf;
 
-			item.specificCantSound.readData(*chunkStream, SoundDescription::kNormal);
-			item.generalCantSound.readData(*chunkStream, SoundDescription::kNormal);
+			item.specificCantSound.readNormal(*chunkStream);
+			item.generalCantSound.readNormal(*chunkStream);
 		} else if (s.getVersion() >= kGameTypeNancy3) {
 			s.syncBytes(textBuf, 60);
 			textBuf[59] = '\0';
 			item.specificCantText = (char *)textBuf;
 
-			item.specificCantSound.readData(*chunkStream, SoundDescription::kNormal);
+			item.specificCantSound.readNormal(*chunkStream);
 		}
 	}
 
@@ -246,7 +246,7 @@ MAP::MAP(Common::SeekableReadStream *chunkStream) {
 
 	sounds.resize(numMaps);
 	for (uint i = 0; i < numMaps; ++i) {
-		sounds[i].readData(*chunkStream, SoundDescription::kMenu);
+		sounds[i].readMenu(*chunkStream);
 	}
 
 	s.skip(0x20);
@@ -345,7 +345,7 @@ CRED::CRED(Common::SeekableReadStream *chunkStream) {
 
 	updateTime = chunkStream->readUint16LE();
 	pixelsToScroll = chunkStream->readUint16LE();
-	sound.readData(*chunkStream, SoundDescription::kMenu);
+	sound.readMenu(*chunkStream);
 
 	delete chunkStream;
 }

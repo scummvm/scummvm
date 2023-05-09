@@ -101,12 +101,12 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 	ser.skip(15 - _sequenceLength, kGameTypeNancy1);
 
 	if (ser.getVersion() != kGameTypeVampire) {
-		_clickSound.readData(stream, SoundDescription::kNormal);
+		_clickSound.readNormal(stream);
 	}
 
 	_solveExitScene.readData(stream, ser.getVersion() == kGameTypeVampire);
 	ser.syncAsUint16LE(_solveSoundDelay);
-	_solveSound.readData(stream, SoundDescription::kNormal);
+	_solveSound.readNormal(stream);
 	_exitScene.readData(stream, ser.getVersion() == kGameTypeVampire);
 	readRect(stream, _exitHotspot);
 }

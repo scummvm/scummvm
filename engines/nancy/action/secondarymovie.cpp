@@ -74,7 +74,7 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	}
 
 	_triggerFlags.readData(stream);
-	_sound.readData(stream, SoundDescription::kNormal);
+	_sound.readNormal(stream);
 	_sceneChange.readData(stream, ser.getVersion() == kGameTypeVampire);
 
 	uint16 numVideoDescs;

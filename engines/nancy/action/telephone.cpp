@@ -65,12 +65,12 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	_genericDialogueSound.readData(stream, SoundDescription::kNormal);
-	_genericButtonSound.readData(stream, SoundDescription::kNormal);
-	_ringSound.readData(stream, SoundDescription::kNormal);
-	_dialToneSound.readData(stream, SoundDescription::kNormal);
-	_dialAgainSound.readData(stream, SoundDescription::kNormal);
-	_hangUpSound.readData(stream, SoundDescription::kNormal);
+	_genericDialogueSound.readNormal(stream);
+	_genericButtonSound.readNormal(stream);
+	_ringSound.readNormal(stream);
+	_dialToneSound.readNormal(stream);
+	_dialAgainSound.readNormal(stream);
+	_hangUpSound.readNormal(stream);
 
 	_buttonSoundNames.reserve(12);
 	for (uint i = 0; i < 12; ++i) {
