@@ -36,6 +36,10 @@ void SceneChangeDescription::readData(Common::SeekableReadStream &stream, bool l
 		stream.skip(2);
 	}
 	continueSceneSound = stream.readUint16LE();
+
+	if (g_nancy->getGameType() >= kGameTypeNancy3) {
+		stream.skip(12); // 3D sound listener position
+	}
 }
 
 void SceneChangeWithFlag::readData(Common::SeekableReadStream &stream, bool longFormat) {
@@ -96,20 +100,18 @@ void SoundDescription::readNormal(Common::SeekableReadStream &stream) {
 
 	s.skip(2); // PLAY_SOUND_FROM_HD = 1, PLAY_SOUND_FROM_CDROM = 2
 	s.skip(2); // PLAY_SOUND_AS_DIGI = 1, PLAY_SOUND_AS_STREAM = 2
-	s.skip(4);
 
-	s.syncAsUint16LE(numLoops);
-	uint16 loopType;
-	s.syncAsUint16LE(loopType);
-	if (loopType != 0) { // LOOP_ONCE = 1, LOOP_INFINITE = 0
-		numLoops = 0;
-	}
+	s.skip(4, kGameTypeVampire, kGameTypeNancy2);
+
+	s.syncAsUint32LE(numLoops);
 	
 	s.skip(2);
+
 	s.syncAsUint16LE(volume);
 	s.skip(2); // Second volume, always (?) same as the first
 	
-	s.syncAsUint32LE(samplesPerSec);
+	s.skip(4, kGameTypeVampire, kGameTypeNancy1); // Prior to nancy2 this field was used for something else
+	s.syncAsUint32LE(samplesPerSec, kGameTypeNancy2, kGameTypeNancy2);
 }
 
 void SoundDescription::readDIGI(Common::SeekableReadStream &stream) {
@@ -123,19 +125,16 @@ void SoundDescription::readDIGI(Common::SeekableReadStream &stream) {
 	s.skip(2); // PLAY_SOUND_FROM_HD = 1, PLAY_SOUND_FROM_CDROM = 2
 	s.skip(2); // PLAY_SOUND_AS_DIGI = 1, PLAY_SOUND_AS_STREAM = 2
 
-	s.syncAsUint16LE(numLoops);
-	uint16 loopType;
-	s.syncAsUint16LE(loopType);
-	if (loopType != 0) { // LOOP_ONCE = 1, LOOP_INFINITE = 0
-		numLoops = 0;
-	}
+	s.syncAsUint32LE(numLoops);
 	
-	s.skip(2);
+	s.skip(2, kGameTypeVampire, kGameTypeNancy2);
 	s.syncAsUint16LE(volume);
 	s.skip(2); // Second volume, always (?) same as the first
 	
-	s.syncAsUint16LE(panAnchorFrame);
-	s.skip(2);
+	s.syncAsUint16LE(panAnchorFrame, kGameTypeVampire, kGameTypeNancy2);
+	s.skip(2, kGameTypeVampire, kGameTypeNancy2);
+
+	s.skip(0x61, kGameTypeNancy3);
 }
 
 void SoundDescription::readMenu(Common::SeekableReadStream &stream) {
@@ -148,19 +147,17 @@ void SoundDescription::readMenu(Common::SeekableReadStream &stream) {
 
 	s.skip(2); // PLAY_SOUND_FROM_HD = 1, PLAY_SOUND_FROM_CDROM = 2
 	s.skip(2); // PLAY_SOUND_AS_DIGI = 1, PLAY_SOUND_AS_STREAM = 2
-	s.skip(2);
 
-	s.syncAsUint16LE(numLoops);
-	uint16 loopType;
-	s.syncAsUint16LE(loopType);
-	if (loopType != 0) { // LOOP_ONCE = 1, LOOP_INFINITE = 0
-		numLoops = 0;
-	}
+	s.skip(2, kGameTypeVampire, kGameTypeNancy2);
+
+	s.syncAsUint32LE(numLoops);
 	
-	s.skip(2);
+	s.skip(2, kGameTypeVampire, kGameTypeNancy2);
+
 	s.syncAsUint16LE(volume);
 	s.skip(2); // Second volume, always (?) same as the first
-	s.skip(4);
+
+	s.skip(4, kGameTypeVampire, kGameTypeNancy2);
 }
 
 void SoundDescription::readScene(Common::SeekableReadStream &stream) {
@@ -172,20 +169,21 @@ void SoundDescription::readScene(Common::SeekableReadStream &stream) {
 	s.skip(4);
 	s.syncAsUint16LE(channelID);
 
-	s.skip(2); // PLAY_SOUND_FROM_HD = 1, PLAY_SOUND_FROM_CDROM = 2
-	s.skip(2); // PLAY_SOUND_AS_DIGI = 1, PLAY_SOUND_AS_STREAM = 2
+	s.skip(2, kGameTypeVampire, kGameTypeNancy2); // PLAY_SOUND_FROM_HD = 1, PLAY_SOUND_FROM_CDROM = 2
+	s.skip(2, kGameTypeVampire, kGameTypeNancy2); // PLAY_SOUND_AS_DIGI = 1, PLAY_SOUND_AS_STREAM = 2
 
-	s.syncAsUint16LE(numLoops);
-	uint16 loopType;
-	s.syncAsUint16LE(loopType);
-	if (loopType != 0) { // LOOP_ONCE = 1, LOOP_INFINITE = 0
-		numLoops = 0;
-	}
+	s.skip(2, kGameTypeNancy3);
+
+	s.syncAsUint32LE(numLoops);
 	
-	s.skip(2);
+	s.skip(2, kGameTypeVampire, kGameTypeNancy2);
 	s.syncAsUint16LE(volume);
 	s.skip(2); // Second volume, always (?) same as the first
-	s.skip(4);
+	s.skip(2);
+	s.skip(4, kGameTypeVampire, kGameTypeNancy2); // Panning, always? at center
+	s.syncAsUint32LE(samplesPerSec, kGameTypeVampire, kGameTypeNancy2);
+
+	s.skip(14, kGameTypeNancy3);
 }
 
 void ConditionalDialogue::readData(Common::SeekableReadStream &stream) {

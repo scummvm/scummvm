@@ -113,6 +113,8 @@ INV::INV(Common::SeekableReadStream *chunkStream) {
 	readRect(s, curtainsScreenPosition);
 	s.syncAsUint16LE(curtainsFrameTime);
 
+	s.skip(2, kGameTypeNancy3); // Unknown, 3000
+
 	readFilename(s, inventoryBoxIconsImageName);
 	readFilename(s, inventoryCursorsImageName);
 
@@ -255,9 +257,9 @@ MAP::MAP(Common::SeekableReadStream *chunkStream) {
 	readRectArray(s, globeSrcs, 8, kGameTypeVampire, kGameTypeVampire);
 	readRect(s, globeDest, kGameTypeVampire, kGameTypeVampire);
 
-	s.skip(2, kGameTypeNancy1, kGameTypeNancy1);
-	readRect(s, buttonSrc, kGameTypeNancy1, kGameTypeNancy1);
-	readRect(s, buttonDest, kGameTypeNancy1, kGameTypeNancy1);
+	s.skip(2, kGameTypeNancy1);
+	readRect(s, buttonSrc, kGameTypeNancy1);
+	readRect(s, buttonDest, kGameTypeNancy1);
 
 	locations.resize(numLocations);
 

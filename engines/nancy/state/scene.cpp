@@ -57,9 +57,7 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 	ser.syncBytes((byte *)buf, 0x32);
 	description = Common::String(buf);
 
-	ser.syncBytes((byte *)buf, 10);
-	buf[9] = 0;
-	videoFile = Common::String(buf);
+	readFilename(stream, videoFile);
 
 	// skip 2 unknown bytes
 	ser.skip(2);
@@ -67,22 +65,16 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 
 	// Load the palette data in The Vampire Diaries
 	ser.skip(4, kGameTypeVampire, kGameTypeVampire);
-	if (ser.getVersion() == kGameTypeVampire) {
-		palettes.resize(3);
-		readFilename(stream, palettes[0]);
-		readFilename(stream, palettes[1]);
-		readFilename(stream, palettes[2]);
-	}
+	readFilenameArray(ser, palettes, 3, kGameTypeVampire, kGameTypeVampire);
 
 	sound.readScene(stream);
 
-	ser.skip(6);
 	ser.syncAsUint16LE(panningType);
 	ser.syncAsUint16LE(numberOfVideoFrames);
-	ser.syncAsUint16LE(soundPanPerFrame);
-	ser.syncAsUint16LE(totalViewAngle);
-	ser.syncAsUint16LE(horizontalScrollDelta);
-	ser.syncAsUint16LE(verticalScrollDelta);
+	ser.syncAsUint16LE(soundPanPerFrame, kGameTypeVampire, kGameTypeNancy2);
+	ser.syncAsUint16LE(totalViewAngle, kGameTypeVampire, kGameTypeNancy2);
+	ser.syncAsUint16LE(horizontalScrollDelta, kGameTypeVampire, kGameTypeNancy2); // horizontalScrollDelta
+	ser.syncAsUint16LE(verticalScrollDelta, kGameTypeVampire, kGameTypeNancy2); // verticalScrollDelta
 	ser.syncAsUint16LE(horizontalEdgeSize);
 	ser.syncAsUint16LE(verticalEdgeSize);
 	ser.syncAsUint16LE((uint32 &)slowMoveTimeDelta);
