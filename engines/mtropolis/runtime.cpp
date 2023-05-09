@@ -840,6 +840,9 @@ bool DynamicList::setAtIndex(size_t index, const DynamicValue &value) {
 		} else {
 			clear();
 			changeToType(value.getType());
+
+			assert(_container);
+
 			return _container->setAtIndex(index, value);
 		}
 	} else {
@@ -6875,7 +6878,7 @@ Project::Segment::Segment() : weakStream(nullptr) {
 Project::StreamDesc::StreamDesc() : streamType(kStreamTypeUnknown), segmentIndex(0), size(0), pos(0) {
 }
 
-Project::AssetDesc::AssetDesc() : typeCode(0), id(0) {
+Project::AssetDesc::AssetDesc() : typeCode(0), id(0), streamID(0) {
 }
 
 Project::Project(Runtime *runtime)
@@ -8000,7 +8003,6 @@ void VisualElementRenderProperties::clearDirty() {
 	_isDirty = false;
 }
 
-/*
 VisualElementRenderProperties &VisualElementRenderProperties::operator=(const VisualElementRenderProperties &other) {
 	_inkMode = other._inkMode;
 	_shape = other._shape;
@@ -8017,10 +8019,9 @@ VisualElementRenderProperties &VisualElementRenderProperties::operator=(const Vi
 
 	return *this;
 }
-*/
 
 VisualElement::VisualElement()
-	: _rect(0, 0, 0, 0), _cachedAbsoluteOrigin(Common::Point(0, 0)), _contentsDirty(true), _directToScreen(false), _visible(false), _layer(0) {
+	: _rect(0, 0, 0, 0), _cachedAbsoluteOrigin(Common::Point(0, 0)), _contentsDirty(true), _directToScreen(false), _visible(false), _visibleByDefault(true), _layer(0) {
 }
 
 bool VisualElement::isVisual() const {

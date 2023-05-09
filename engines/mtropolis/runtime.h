@@ -911,6 +911,7 @@ private:
 	bool convertToTypeNoDereference(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const;
 
 	void setFromOther(const DynamicValue &other);
+	void setFromOther(DynamicValue &&other);
 
 	DynamicValueTypes::DynamicValueType _type;
 	ValueUnion _value;
@@ -2614,6 +2615,7 @@ private:
 class VisualElementRenderProperties {
 public:
 	VisualElementRenderProperties();
+	VisualElementRenderProperties(const VisualElementRenderProperties &) = default;
 
 	enum InkMode {
 		kInkModeCopy = 0x0,
@@ -2677,7 +2679,7 @@ public:
 	bool isDirty() const;
 	void clearDirty();
 
-	//VisualElementRenderProperties &operator=(const VisualElementRenderProperties &other);
+	VisualElementRenderProperties &operator=(const VisualElementRenderProperties &other);
 
 private:
 	InkMode _inkMode;
