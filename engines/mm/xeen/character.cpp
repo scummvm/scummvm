@@ -561,8 +561,9 @@ int Character::itemScan(int itemId) const {
 		const XeenItem &item = _weapons[idx];
 
 		if (item._frame && !item.isBad() && itemId < 11
-				&& itemId != 3 && item._material >= 59 && item._material <= 130) {
+				&& itemId != ENDURANCE && item._material >= 59 && item._material <= 130) {
 			int mIndex = (int)item.getAttributeCategory();
+			// There is no Endurance bonus. This enchantment category skipped.
 			if (mIndex > PERSONALITY)
 				++mIndex;
 
@@ -971,21 +972,21 @@ int Character::getNumAwards() const {
 	return total;
 }
 
-ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
+ItemCategory Character::makeItem(int itemLevel, int itemIndex, int reason) {
 	XeenEngine *vm = Party::_vm;
 	int itemOffset = vm->getGameID() == GType_Swords ? 6 : 0;
 
-	if (!p1)
+	if (!itemLevel)
 		return CATEGORY_WEAPON;
 
 	int itemId = 0;
-	int v4 = vm->getRandomNumber(100);
-	int v6 = vm->getRandomNumber(p1 < 6 ? 100 : 80);
+	int categoryRN = vm->getRandomNumber(100);
+	int subcategoryRN = vm->getRandomNumber(itemLevel < 6 ? 100 : 80);
 	ItemCategory category;
-	int v16 = 0, v14 = 0, miscCharges = 0, miscId = 0, v8 = 0, v12 = 0;
+	int material = 0, attrBonus = 0, miscCharges = 0, miscId = 0, enchantmentType = 0, element = 0;
 
 	// Randomly pick a category and item Id
-	if (p3 == 12) {
+	if (reason == MAKE_ITEM_SPECIAL_EVENT) {
 		if (_itemType < (35 + itemOffset)) {
 			category = CATEGORY_WEAPON;
 			itemId = _itemType;
@@ -1000,80 +1001,81 @@ ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 			itemId = _itemType - (60 + itemOffset);
 		}
 	} else {
-		switch (p3) {
-		case 1:
-			v4 = 35;
+		switch (reason) {
+		case MAKE_ITEM_ENCHANT_WEAPON:
+			categoryRN = 35;
 			break;
-		case 2:
-			v4 = 60;
+		case MAKE_ITEM_ENCHANT_ARMOR:
+			categoryRN = 60;
 			break;
-		case 3:
-			v4 = 100;
+		case MAKE_ITEM_ENCHANT_ACCESSORY: // never used
+			categoryRN = 100;
 			break;
 		default:
 			break;
 		}
 
-		if (p1 == 1) {
-			if (v4 <= 40) {
+		if (itemLevel == 1) {
+			if (categoryRN <= 40) {
 				category = CATEGORY_WEAPON;
-				if (v6 <= 30) {
-					itemId = vm->getRandomNumber(1, 6);
-				} else if (v6 <= 60) {
-					itemId = vm->getRandomNumber(7, 17);
-				} else if (v6 <= 85) {
-					itemId = vm->getRandomNumber(18, 29);
+				if (subcategoryRN <= 30) {
+					itemId = vm->getRandomNumber(1, 6); // swords
+				} else if (subcategoryRN <= 60) {
+					itemId = vm->getRandomNumber(7, 17); // one-handed
+				} else if (subcategoryRN <= 85) {
+					itemId = vm->getRandomNumber(18, 29); // two-handed
 				} else {
-					itemId = vm->getRandomNumber(30, 33);
+					itemId = vm->getRandomNumber(30, 33); // ranged
 				}
-			} else if (v4 <= 85) {
+			} else if (categoryRN <= 85) {
 				category = CATEGORY_ARMOR;
-				itemId = vm->getRandomNumber(1, 7);
+				itemId = vm->getRandomNumber(1, 7); // armor
 			} else {
 				category = CATEGORY_MISC;
-				itemId = vm->getRandomNumber(1, 9);
+				itemId = vm->getRandomNumber(1, 9); // wand
 			}
-		} else if (v4 <= 35) {
+		} else if (categoryRN <= 35) {
 			category = CATEGORY_WEAPON;
-			if (v6 <= 30) {
-				itemId = vm->getRandomNumber(1, 6);
-			} else if (v6 <= 60) {
-				itemId = vm->getRandomNumber(7, 17);
-			} else if (v6 <= 85) {
-				itemId = vm->getRandomNumber(18, 29);
+			if (subcategoryRN <= 30) {
+				itemId = vm->getRandomNumber(1, 6); // swords
+			} else if (subcategoryRN <= 60) {
+				itemId = vm->getRandomNumber(7, 17); // one-handed
+			} else if (subcategoryRN <= 85) {
+				itemId = vm->getRandomNumber(18, 29); // two-handed
 			} else {
-				itemId = vm->getRandomNumber(30, 33);
+				itemId = vm->getRandomNumber(30, 33); // ranged
 			}
-		} else if (v4 <= 60) {
+		} else if (categoryRN <= 60) {
 			category = CATEGORY_ARMOR;
-			itemId = (v6 > 70) ? 8 : vm->getRandomNumber(1, 7);
-		} else if (v6 <= 10) {
+			itemId = (subcategoryRN > 70) ? 8 : vm->getRandomNumber(1, 7); // shield or armor
+
+		} else if (subcategoryRN <= 10) {
 			category = CATEGORY_ARMOR;
-			itemId = 9;
-		} else if (v6 <= 20) {
+			itemId = 9; // helm
+		} else if (subcategoryRN <= 20) {
 			category = CATEGORY_ARMOR;
-			itemId = 13;
-		} else if (v6 <= 35) {
+			itemId = 13; // gauntlets
+		} else if (subcategoryRN <= 35) {
 			category = CATEGORY_ACCESSORY;
-			itemId = 1;
-		} else if (v6 <= 45) {
+			itemId = 1; // ring
+		} else if (subcategoryRN <= 45) {
 			category = CATEGORY_ARMOR;
-			itemId = 10;
-		} else if (v6 <= 55) {
+			itemId = 10; // boots
+		} else if (subcategoryRN <= 55) {
 			category = CATEGORY_ARMOR;
-			itemId = vm->getRandomNumber(11, 12);
-		} else if (v6 <= 65) {
+			itemId = vm->getRandomNumber(11, 12); // cloak, cape
+		} else if (subcategoryRN <= 65) {
 			category = CATEGORY_ACCESSORY;
-			itemId = 2;
-		} else if (v6 <= 75) {
+			itemId = 2; // belt
+		} else if (subcategoryRN <= 75) {
 			category = CATEGORY_ACCESSORY;
-			itemId = vm->getRandomNumber(3, 7);
-		} else if (v6 <= 80) {
+			itemId = vm->getRandomNumber(3, 7); // medal-like
+		} else if (subcategoryRN <= 80) {
 			category = CATEGORY_ACCESSORY;
-			itemId = vm->getRandomNumber(8, 10);
+			itemId = vm->getRandomNumber(8, 10); // amulet-like
 		} else {
 			category = CATEGORY_MISC;
-			itemId = vm->getRandomNumber(1, 9);
+			itemId = vm->getRandomNumber(1, 9); // wand-like
 		}
 	}
 
@@ -1081,101 +1083,111 @@ ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 	newItem.clear();
 	newItem._id = itemId;
 
-	v4 = vm->getRandomNumber(1, 100);
+	int enchanntmentRN = vm->getRandomNumber(1, 100);
 	switch (category) {
 	case CATEGORY_WEAPON:
 	case CATEGORY_ARMOR:
-		if (p1 != 1) {
-			if (v4 <= 70) {
-				v8 = 3;
-			} else if (v4 <= 98) {
-				v8 = 1;
+		if (itemLevel != 1) {
+			if (enchanntmentRN <= 70) {
+				enchantmentType = ENCHANTMENT_TYPE_MATERIAL;
+			} else if (enchanntmentRN <= 98) {
+				enchantmentType = ENCHANTMENT_TYPE_ELEMENT;
 			} else {
-				v8 = 2;
+				enchantmentType = ENCHANTMENT_TYPE_ATTR_BONUS;
 			}
 		}
 		break;
 
 	case CATEGORY_ACCESSORY:
-		if (v4 <= 20) {
-			v8 = 3;
-		} else if (v4 <= 60) {
-			v8 = 1;
+		if (enchanntmentRN <= 20) {
+			enchantmentType = ENCHANTMENT_TYPE_MATERIAL;
+		} else if (enchanntmentRN <= 60) {
+			enchantmentType = ENCHANTMENT_TYPE_ELEMENT;
 		} else {
-			v8 = 2;
+			enchantmentType = ENCHANTMENT_TYPE_ATTR_BONUS;
 		}
 		break;
 
 	case CATEGORY_MISC:
 		newItem._material = itemId;
-		v8 = 4;
+		enchantmentType = ENCHANTMENT_TYPE_USABLE;
 		break;
 
 	default:
 		break;
 	}
 
-	if (p1 != 1 || category == CATEGORY_MISC) {
-		int rval, mult;
-		switch (v8) {
-		case 1:
-			rval = vm->getRandomNumber(1, 100);
-			if (rval <= 25) {
-				mult = 0;
-			} else if (rval <= 45) {
-				mult = 1;
-			} else if (rval <= 60) {
-				mult = 2;
-			} else if (rval <= 75) {
-				mult = 3;
-			} else if (rval <= 95) {
-				mult = 4;
+	if (itemLevel != 1 || category == CATEGORY_MISC) {
+		int rn, enchantmentSubtype, r1, r2;
+		switch (enchantmentType) {
+		case ENCHANTMENT_TYPE_ELEMENT:
+			rn = vm->getRandomNumber(1, 100);
+			if (rn <= 25) {
+				enchantmentSubtype = ELEM_FIRE;
+			} else if (rn <= 45) {
+				enchantmentSubtype = ELEM_ELECTRICITY;
+			} else if (rn <= 60) {
+				enchantmentSubtype = ELEM_COLD;
+			} else if (rn <= 75) {
+				enchantmentSubtype = ELEM_ACID_POISON;
+			} else if (rn <= 95) {
+				enchantmentSubtype = ELEM_ENERGY;
 			} else {
-				mult = 5;
+				enchantmentSubtype = ELEM_MAGIC;
 			}
 
-			v12 = Res.MAKE_ITEM_ARR1[vm->getRandomNumber(Res.MAKE_ITEM_ARR2[mult][p1][0],
-				Res.MAKE_ITEM_ARR2[mult][p1][1])];
+			r1 = Res.MAKE_ITEM_ARR2[enchantmentSubtype][itemLevel][0];
+			r2 = Res.MAKE_ITEM_ARR2[enchantmentSubtype][itemLevel][1];
+			element = Res.MAKE_ITEM_ARR1[vm->getRandomNumber(r1, r2)];
 			break;
-
-		case 2:
-			rval = vm->getRandomNumber(1, 100);
-			if (rval <= 15) {
-				mult = 0;
-			} else if (rval <= 25) {
-				mult = 1;
-			} else if (rval <= 35) {
-				mult = 2;
-			} else if (rval <= 50) {
-				mult = 3;
-			} else if (rval <= 65) {
-				mult = 4;
-			} else if (rval <= 80) {
-				mult = 5;
-			} else if (rval <= 85) {
-				mult = 6;
-			} else if (rval <= 90) {
-				mult = 7;
-			} else if (rval <= 95) {
-				mult = 8;
+		case ENCHANTMENT_TYPE_ATTR_BONUS:
+			rn = vm->getRandomNumber(1, 100);
+			if (rn <= 15) {
+				enchantmentSubtype = ATTR_MIGHT;
+			} else if (rn <= 25) {
+				enchantmentSubtype = ATTR_INTELLECT;
+			} else if (rn <= 35) {
+				enchantmentSubtype = ATTR_PERSONALITY;
+			} else if (rn <= 50) {
+				enchantmentSubtype = ATTR_SPEED;
+			} else if (rn <= 65) {
+				enchantmentSubtype = ATTR_ACCURACY;
+			} else if (rn <= 80) {
+				enchantmentSubtype = ATTR_LUCK;
+			} else if (rn <= 85) {
+				enchantmentSubtype = ATTR_HIT_POINTS;
+			} else if (rn <= 90) {
+				enchantmentSubtype = ATTR_SPELL_POINTS;
+			} else if (rn <= 95) {
+				enchantmentSubtype = ATTR_ARMOR_CLASS;
 			} else {
-				mult = 9;
+				enchantmentSubtype = ATTR_THIEVERY;
 			}
 
-			v14 = Res.MAKE_ITEM_ARR1[vm->getRandomNumber(Res.MAKE_ITEM_ARR3[mult][p1][0],
-				Res.MAKE_ITEM_ARR3[mult][p1][1])];
+			r1 = Res.MAKE_ITEM_ARR3[enchantmentSubtype][itemLevel][0];
+			r2 = Res.MAKE_ITEM_ARR3[enchantmentSubtype][itemLevel][1];
+			// wrong formula here:
+			attrBonus = Res.MAKE_ITEM_ARR1[vm->getRandomNumber(r1, r2)];
 			break;
 
-		case 3:
-			mult = p1 == 7 || vm->getRandomNumber(1, 100) > 70 ? 1 : 0;
-			v16 = vm->getRandomNumber(Res.MAKE_ITEM_ARR4[mult][p1 - 1][0],
-				Res.MAKE_ITEM_ARR4[mult][p1 - 1][1]);
-			if (mult)
-				v16 += 9;
+		case ENCHANTMENT_TYPE_MATERIAL:
+			enchantmentSubtype = itemLevel == 7 || vm->getRandomNumber(1, 100) > 70 ? 1 : 0;
+
+			// It is unclear why itemLevel - 1 is here.
+			r1 = Res.MAKE_ITEM_ARR4[enchantmentSubtype][itemLevel - 1][0];
+			r2 = Res.MAKE_ITEM_ARR4[enchantmentSubtype][itemLevel - 1][1];
+			material = vm->getRandomNumber(r1, r2);
+
+			// Change from common/rare to rare/precious
+			if (enchantmentSubtype)
+				material += 9;
 			break;
 
-		case 4:
-			miscId = vm->getRandomNumber(Res.MAKE_ITEM_ARR5[p1][0], Res.MAKE_ITEM_ARR5[p1][1]);
+		case ENCHANTMENT_TYPE_USABLE:
+			r1 = Res.MAKE_ITEM_ARR5[itemLevel][0];
+			r2 = Res.MAKE_ITEM_ARR5[itemLevel][1];
+
+			miscId = vm->getRandomNumber(r1, r2);
 			miscCharges = vm->getRandomNumber(1, 8);
 			break;
 
@@ -1186,17 +1198,25 @@ ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 
 	switch (category) {
 	case CATEGORY_WEAPON:
-		if (p1 != 1) {
-			newItem._material = (v14 ? v14 + 58 : 0) + (v16 ? v16 + 36 : 0) + v12;
-			if (vm->getRandomNumber(20) == 10)
-				newItem._state._counter = vm->getRandomNumber(1, 6);
+		if (itemLevel != 1) {
+			newItem._material = (attrBonus ? attrBonus + 58 : 0) +
+								(material ? material + 36 : 0) +
+								element;
+
+
+			if (vm->getRandomNumber(20) == 10) {
+				// of undead/golem/dragon/etc-slaying
+				newItem._state._counter = vm->getRandomNumber(EFFECTIVE_DRAGON, EFFECTIVE_ANIMAL);
+			}
 		}
 		break;
 
 	case CATEGORY_ARMOR:
 	case CATEGORY_ACCESSORY:
-		if (p1 != 1) {
-			newItem._material = (v14 ? v14 + 58 : 0) + (v16 ? v16 + 36 : 0) + v12;
+		if (itemLevel != 1) {
+			newItem._material = (attrBonus ? attrBonus + 58 : 0) +
+								(material ? material + 36 : 0) +
+								element;
 		}
 		break;
 
