@@ -143,17 +143,19 @@ void Movie::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
 		stream.readUint32();
 	}
 	for (uint32 i = 0; i < count; i++) {
-		int nameSize = stream.readByte() + 1;
+		int nameSize = stream.readByte();
 		Common::String name = stream.readString('\0', nameSize);
-		int pathSize = stream.readByte() + 1;
+		stream.readByte(); // null
+		int pathSize = stream.readByte();
 		Common::String path = stream.readString('\0', pathSize);
+		stream.readByte(); // null
 		if (pathSize > 1)
 			stream.readUint16();
 		stream.readUint16();
 		uint16 itemCount = stream.readUint16();
 		stream.readUint16();
 		uint16 libId = stream.readUint16() - CAST_LIB_OFFSET;
-		debugC(5, kDebugLoading, "Movie::loadCastLibMapping: name: %s, path: %s, itemCount: %d, libId: %d", name.c_str(), path.c_str(), itemCount, libId);
+		debugC(5, kDebugLoading, "Movie::loadCastLibMapping: name: %s, path: %s, itemCount: %d, libId: %d", utf8ToPrintable(name).c_str(), utf8ToPrintable(path).c_str(), itemCount, libId);
 		Archive *castArchive = _movieArchive;
 		bool isExternal = !path.empty();
 		if (isExternal) {

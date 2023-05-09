@@ -243,6 +243,10 @@ void Cast::loadArchive() {
 }
 
 bool Cast::loadConfig() {
+	if (!_castArchive) {
+		warning("Cast::loadConfig(): No archive specified");
+		return false;
+	}
 	Common::SeekableReadStreamEndian *stream = nullptr;
 	stream = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'C', 'F'));
 	if (!stream) {
