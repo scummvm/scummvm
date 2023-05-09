@@ -20,8 +20,8 @@
  */
 
 #include "watchmaker/windows_hacks.h"
-#include "common/system.h"
 #include "watchmaker/types.h"
+#include "common/system.h"
 
 namespace Watchmaker {
 
@@ -31,11 +31,6 @@ void ResetDIKbd(void) {
 
 uint32 timeGetTime() {
 	return g_system->getMillis();
-}
-
-void GetLocalTime(SYSTEMTIME *) {
-	warning("STUBBED GetLocalTime");
-	return;
 }
 
 void CopyFile(char *, char *, bool) {

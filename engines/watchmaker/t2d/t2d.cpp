@@ -46,6 +46,7 @@
 #include "watchmaker/ll/ll_sound.h"
 #include "watchmaker/ll/ll_system.h"
 #include "watchmaker/renderer.h"
+#include "common/system.h"
 
 namespace Watchmaker {
 
@@ -1272,7 +1273,6 @@ void doT2DMouse(WGame &game) {
 	char Name[MAX_PATH];
 	//Variabili per gestione scrolling
 	int32 StartY = 0, DimY = 0;
-	SYSTEMTIME sysTime;
 	char Text[1000];
 	int16 mouse_x, mouse_y;
 	Init &init = game.init;
@@ -2906,9 +2906,12 @@ void doT2DMouse(WGame &game) {
 
 						if (optionsSlot == -1) break; //Spazi finiti
 
-						GetLocalTime(&sysTime);
-						sprintf(Text, "%02d:%02d.%02d %02d/%02d/%02d", sysTime.hour, sysTime.minutes,
-						        sysTime.seconds, sysTime.day, sysTime.month, sysTime.year);
+						{
+							TimeDate sysTime;
+							g_system->getTimeAndDate(sysTime);
+							sprintf(Text, "%02d:%02d.%02d %02d/%02d/%02d", sysTime.tm_hour, sysTime.tm_min,
+									sysTime.tm_sec, sysTime.tm_mday, sysTime.tm_mon, sysTime.tm_year);
+						}
 						if (DataSave(Text, (uint8) optionsSlot)) {
 							sprintf(Text, "%stemp.tmp", game.workDirs._gameDir.c_str());
 							sprintf(Name, "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), optionsSlot);
