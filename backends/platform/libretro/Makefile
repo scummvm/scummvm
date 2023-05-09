@@ -156,7 +156,7 @@ else ifeq ($(platform), wiiu)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT) rcs
    AR_ALONE = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
-   DEFINES += -DGEKKO -mwup -mcpu=750 -meabi -mhard-float -D__POWERPC__ -D__ppc__ -DRETRO_IS_BIG_ENDIAN=1 -DRETRO_IS_LITTLE_ENDIAN=0
+   DEFINES += -DGEKKO -mwup -mcpu=750 -meabi -mhard-float -D__POWERPC__ -D__ppc__ -DRETRO_IS_BIG_ENDIAN=1 -DRETRO_IS_LITTLE_ENDIAN=0 -DWORDS_BIGENDIAN=1
    DEFINES += -U__INT32_TYPE__ -U __UINT32_TYPE__ -D__INT32_TYPE__=int
    DEFINES += -DHAVE_STRTOUL -DWIIU
    CXXFLAGS := -fpermissive
