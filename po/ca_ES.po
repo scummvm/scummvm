@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-05-05 20:35+0000\n"
-"PO-Revision-Date: 2023-05-05 23:12+0000\n"
+"PO-Revision-Date: 2023-05-10 04:40+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -5695,36 +5695,40 @@ msgstr "Reprodueix les pel·lícules a major velocitat"
 
 #: engines/groovie/metaengine.cpp:61 engines/groovie/metaengine.cpp:73
 msgid "Easier AI"
-msgstr ""
+msgstr "IA fàcil"
 
 #: engines/groovie/metaengine.cpp:62 engines/groovie/metaengine.cpp:74
 msgid "Decrease the difficulty of AI puzzles"
-msgstr ""
+msgstr "Disminueix la dificultat dels trencaclosques de l'IA"
 
 #: engines/groovie/metaengine.cpp:85
 msgid "Updated Credits Music"
-msgstr ""
+msgstr "Música de crèdits actualitzada"
 
 #: engines/groovie/metaengine.cpp:86
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
+"Reprodueix la cançó The Final Hour durant els crèdits en lloc de reutilitzar "
+"cançons MIDI"
 
 #: engines/groovie/metaengine.cpp:97
 msgid "Slim Left/Right Hotspots"
-msgstr ""
+msgstr "Redueix el punts actius a esquerra/dreta"
 
 #: engines/groovie/metaengine.cpp:98
 msgid "Shrinks the hotspots on the left and right sides for exiting puzzles"
 msgstr ""
+"Encongeix els punts actius als costats esquerre i dret per a sortir dels "
+"trencaclosques"
 
 #: engines/groovie/metaengine.cpp:109
 msgid "Speedrun Mode"
-msgstr ""
+msgstr "Mode “Speedrun”"
 
 #: engines/groovie/metaengine.cpp:110
 msgid "Affects the controls for fast forwarding the game"
-msgstr ""
+msgstr "Afecta els controls per a avançar ràpidament la partida"
 
 #: engines/groovie/metaengine.cpp:144
 msgid "GroovieV2 support is not compiled in"
@@ -5760,7 +5764,7 @@ msgstr "Habilita el mode amb trucs (cheats)"
 
 #: engines/hdb/metaengine.cpp:45
 msgid "Debug info and level selection becomes available"
-msgstr ""
+msgstr "La informació de depuració i la selecció de nivell estan disponibles"
 
 #: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:167
 msgid "Move up"
@@ -5791,7 +5795,7 @@ msgstr "Utilitza"
 
 #: engines/hdb/metaengine.cpp:244
 msgid "Clear waypoints"
-msgstr ""
+msgstr "Neteja les fites"
 
 #: engines/hdb/metaengine.cpp:270
 msgid "Debug"
@@ -5799,11 +5803,11 @@ msgstr "Depurador"
 
 #: engines/hopkins/metaengine.cpp:43 engines/hopkins/metaengine.cpp:55
 msgid "Gore Mode"
-msgstr ""
+msgstr "Mode “Gore”"
 
 #: engines/hopkins/metaengine.cpp:44 engines/hopkins/metaengine.cpp:56
 msgid "Enable Gore Mode when available"
-msgstr ""
+msgstr "Activa el mode “Gore” quan estigui disponible"
 
 #: engines/hpl1/metaengine.cpp:81
 msgid "Forward"
@@ -5831,7 +5835,7 @@ msgstr "Inclineu-vos a la dreta"
 
 #: engines/hpl1/metaengine.cpp:88
 msgid "Jump"
-msgstr ""
+msgstr "Salta"
 
 #. I18N: Action in In Cold Blood
 #: engines/hpl1/metaengine.cpp:89 engines/icb/icb.cpp:119
@@ -5849,15 +5853,15 @@ msgstr "Mode de vista"
 
 #: engines/hpl1/metaengine.cpp:94
 msgid "Holster"
-msgstr ""
+msgstr "Enfunda"
 
 #: engines/hpl1/metaengine.cpp:100
 msgid "Notebook"
-msgstr ""
+msgstr "Bloc de notes"
 
 #: engines/hpl1/metaengine.cpp:101
 msgid "Personal Notes"
-msgstr ""
+msgstr "Notes personals"
 
 #: engines/hpl1/metaengine.cpp:102
 msgid "Flashlight"
@@ -5865,7 +5869,7 @@ msgstr "Llanterna"
 
 #: engines/hpl1/metaengine.cpp:103
 msgid "Glowstick"
-msgstr ""
+msgstr "Bengala"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
