@@ -78,21 +78,40 @@ void readRectArray(Common::Serializer &stream, Common::Array<Common::Rect> &inAr
 	}
 }
 
-// Reads an 8-character filename from a 10-character source
+
 void readFilename(Common::SeekableReadStream &stream, Common::String &inString) {
-	char buf[10];
-	stream.read(buf, 10);
-	buf[9] = '\0';
+	char buf[33];
+
+	if (g_nancy->getGameType() <= kGameTypeNancy2) {
+		// Older games only support 8-character filenames, and stored them in a 10 char buffer
+		stream.read(buf, 10);
+		buf[9] = '\0';
+	} else {
+		// Later games support 32-character filenames
+		stream.read(buf, 33);
+		buf[32] = '\0';
+	}
+	
 	inString = buf;
 }
+	
 
 // Reads an 8-character filename from a 10-character source
 void readFilename(Common::Serializer &stream, Common::String &inString, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	Common::Serializer::Version version = stream.getVersion();
 	if (version >= minVersion && version <= maxVersion) {
-		char buf[10];
-		stream.syncBytes((byte *)buf, 10);
-		buf[9] = '\0';
+		char buf[33];
+
+		if (version <= kGameTypeNancy2) {
+			// Older games only support 8-character filenames, and stored them in a 10 char buffer
+			stream.syncBytes((byte *)buf, 10);
+			buf[9] = '\0';
+		} else {
+			// Later games support 32-character filenames
+			stream.syncBytes((byte *)buf, 33);
+			buf[32] = '\0';
+		}
+		
 		inString = buf;
 	}
 }
@@ -108,10 +127,19 @@ void readFilenameArray(Common::Serializer &stream, Common::Array<Common::String>
 	Common::Serializer::Version version = stream.getVersion();
 	if (version >= minVersion && version <= maxVersion) {
 		inArray.resize(num);
-		char buf[10];
+		char buf[33];
+
 		for (Common::String &str : inArray) {
-			stream.syncBytes((byte *)buf, 10);
-			buf[9] = '\0';
+			if (version <= kGameTypeNancy2) {
+				// Older games only support 8-character filenames, and stored them in a 10 char buffer
+				stream.syncBytes((byte *)buf, 10);
+				buf[9] = '\0';
+			} else {
+				// Later games support 32-character filenames
+				stream.syncBytes((byte *)buf, 33);
+				buf[32] = '\0';
+			}
+			
 			str = buf;
 		}
 	}
