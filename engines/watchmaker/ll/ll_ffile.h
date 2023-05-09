@@ -32,10 +32,11 @@ class FastFile {
 	const char *_path = nullptr;
 	int _totalSize = 0;
 public:
-	int _numFiles;
-	FileEntry *_files;
+	int _numFiles = 0;
+	FileEntry *_files = nullptr; // TODO: This could just be a Common::Array
 
 	FastFile(const char *path);
+	~FastFile();
 
 	Common::SharedPtr<Common::SeekableReadStream> resolve(const char *filename);
 };
