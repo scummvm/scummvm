@@ -687,6 +687,8 @@ bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
 
 		int frameDelay = 1000/60;
 		int fadeFrames = kFadeColorFrames[frameRate - 1];
+		if (_vm->getVersion() >= 500)
+			fadeFrames = kFadeColorFramesD5[frameRate - 1];
 		byte calcPal[768];
 
 		// Copy the current palette into the snapshot buffer
@@ -971,11 +973,13 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 
 				int frameDelay = 1000/60;
 				int fadeFrames = kFadeColorFrames[frameRate - 1];
+				if (_vm->getVersion() >= 500)
+					fadeFrames = kFadeColorFramesD5[frameRate - 1];
 
 				// Wait for a fixed time
 				g_director->setPalette(fadePal, 256);
 				g_director->draw();
-				for (int i = 0; i < fadeColorWait; i++) {
+				for (int i = 0; i < kFadeColorWait; i++) {
 					// On click, stop loop and reset palette
 					if (_vm->processEvents(true)) {
 						debugC(2, kDebugImages, "Score::renderPaletteCycle(): interrupted, setting palette to %s", currentPalette.asString().c_str());

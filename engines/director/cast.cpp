@@ -1253,6 +1253,8 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	// For SoundCastMember, read the flags in the CastInfo
 	if (_version >= kFileVer400 && _version < kFileVer600 && member->_type == kCastSound) {
 		((SoundCastMember *)member)->_looping = castInfo.flags & 16 ? 0 : 1;
+	} else if (_version >= kFileVer600 && member->_type == kCastSound) {
+		warning("STUB: Cast::loadCastInfo(): Sound cast member info not yet supported for version %d", _version);
 	}
 
 	// For FilmLoopCastMember, read the flags in the CastInfo
@@ -1261,6 +1263,8 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		((FilmLoopCastMember *)member)->_enableSound = castInfo.flags & 8 ? 1 : 0;
 		((FilmLoopCastMember *)member)->_crop = castInfo.flags & 2 ? 0 : 1;
 		((FilmLoopCastMember *)member)->_center = castInfo.flags & 1 ? 1 : 0;
+	} else if (_version >= kFileVer500 && member->_type == kCastFilmLoop) {
+		warning("STUB: Cast::loadCastInfo(): Film loop cast member info not yet supported for version %d", _version);
 	}
 
 	ci->autoHilite = castInfo.flags & 2;
