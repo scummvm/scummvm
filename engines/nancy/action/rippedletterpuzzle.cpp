@@ -178,7 +178,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 				insideRect.translate(screenHotspot.left, screenHotspot.top);
 
 				if (insideRect.contains(input.mousePos)) {
-					g_nancy->_cursorManager->setCursorType(CursorManager::kRotate);
+					g_nancy->_cursorManager->setCursorType(CursorManager::kRotateCW);
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
 						// Player has clicked, rotate the piece

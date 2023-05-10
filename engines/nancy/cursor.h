@@ -34,14 +34,15 @@ class CursorManager {
 	friend class NancyEngine;
 
 public:
-	enum CursorType { kNormal = 0, kHotspot = 1, kMove = 2, kExit = 3, kRotate = 4, kNormalArrow, kHotspotArrow };
+	enum CursorType { kNormal = 0, kHotspot = 1, kMove = 2, kExit = 3, kRotateCW = 4, kRotateCCW = 5, kTurnLeft = 6, kTurnRight = 7, kNormalArrow, kHotspotArrow };
 
 	CursorManager() :
 		_isInitialized(false),
 		_curItemID(-1),
 		_curCursorType(kNormal),
 		_curCursorID(0),
-		_hasItem(false) {}
+		_hasItem(false),
+		_numCursorTypes(0) {}
 
 	void init(Common::SeekableReadStream *chunkStream);
 
@@ -78,6 +79,7 @@ private:
 	uint _curCursorID;
 	bool _hasItem;
 	bool _isInitialized;
+	int _numCursorTypes;
 };
 
 } // End of namespace Nancy
