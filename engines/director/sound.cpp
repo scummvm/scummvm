@@ -251,6 +251,8 @@ void DirectorSound::registerFade(uint8 soundChannel, bool fadeIn, int ticks) {
 	if (!assertChannel(soundChannel))
 		return;
 
+	debugC(5, kDebugSound, "DirectorSound::registerFade(): registered fading channel %d %s over %d ticks", soundChannel, fadeIn ? "in" : "out", ticks);
+
 	// sound enable is not working on fade sounds, so we just return directly when sounds are not enabling
 	if (!_enable)
 		return;
@@ -265,7 +267,10 @@ void DirectorSound::registerFade(uint8 soundChannel, bool fadeIn, int ticks) {
 }
 
 bool DirectorSound::fadeChannel(uint8 soundChannel) {
-	if (!assertChannel(soundChannel) || !isChannelActive(soundChannel))
+	if (!assertChannel(soundChannel))
+		return false;
+
+	if (!_mixer->isSoundHandleActive(_channels[soundChannel]->handle))
 		return false;
 
 	FadeParams *fade = _channels[soundChannel]->fade;
@@ -285,6 +290,7 @@ bool DirectorSound::fadeChannel(uint8 soundChannel) {
 		fadeVol = MAX((fade->totalTicks - fade->lapsedTicks) * ((float)fade->startVol / fade->totalTicks), (float)0);
 	}
 
+	debugC(5, kDebugSound, "DirectorSound::fadeChannel(): fading channel %d volume to %d", soundChannel, fadeVol);
 	_mixer->setChannelVolume(_channels[soundChannel]->handle, fadeVol);
 	return true;
 }
