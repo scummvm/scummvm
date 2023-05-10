@@ -216,7 +216,7 @@ void AtariGraphicsManager::grabPalette(byte *colors, uint start, uint num) const
 }
 
 void AtariGraphicsManager::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
-	//debug("copyRectToScreen: %d, %d, %d, %d, %d", pitch, x, y, w, h);
+	//debug("copyRectToScreen: %d, %d, %d(%d), %d", x, y, w, pitch, h);
 
 	if (_currentState.mode != GraphicsMode::DirectRendering) {
 		_chunkySurface.copyRectToSurface(buf, pitch, x, y, w, h);
@@ -486,13 +486,20 @@ void AtariGraphicsManager::clearOverlay() {
 }
 
 void AtariGraphicsManager::grabOverlay(Graphics::Surface &surface) const {
-	debug("grabOverlay: %d, %d, %d", surface.pitch, surface.w, surface.h);
+	debug("grabOverlay: %d(%d), %d", surface.w, surface.pitch, surface.h);
 
-	memcpy(surface.getPixels(), _overlaySurface.getPixels(), surface.pitch * surface.h);
+	assert(surface.w >= _overlaySurface.w);
+	assert(surface.h >= _overlaySurface.h);
+	assert(surface.format.bytesPerPixel == _overlaySurface.format.bytesPerPixel);
+
+	const byte *src = (const byte *)_overlaySurface.getPixels();
+	byte *dst = (byte *)surface.getPixels();
+	Graphics::copyBlit(dst, src, surface.pitch,
+		_overlaySurface.pitch, _overlaySurface.w, _overlaySurface.h, _overlaySurface.format.bytesPerPixel);
 }
 
 void AtariGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
-	//debug("copyRectToOverlay: %d, %d, %d, %d, %d", pitch, x, y, w, h);
+	//debug("copyRectToOverlay: %d, %d, %d(%d), %d", x, y, w, pitch, h);
 
 	_overlaySurface.copyRectToSurface(buf, pitch, x, y, w, h);
 	_screen[OVERLAY_BUFFER]->addDirtyRect(Common::Rect(x, y, x + w, y + h));
