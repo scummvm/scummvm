@@ -292,7 +292,8 @@ void TextBoxWrite::readData(Common::SeekableReadStream &stream) {
 	char *buf = new char[size];
 	stream.read(buf, size);
 	buf[size - 1] = '\0';
-	_text = buf;
+
+	UI::Textbox::assembleTextLine(buf, _text, size);
 
 	delete[] buf;
 }
@@ -305,6 +306,7 @@ TextBoxWrite::~TextBoxWrite() {
 void TextBoxWrite::execute() {
 	auto &tb = NancySceneState.getTextbox();
 	tb.clear();
+	tb.overrideFontID(g_nancy->_textboxData->defaultFontID);
 	tb.addTextLine(_text);
 	tb.setVisible(true);
 	NancySceneState.setShouldClearTextbox(false);
