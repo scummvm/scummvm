@@ -30,8 +30,8 @@
 namespace Toon {
 
 Character::Character(ToonEngine *vm) : _vm(vm) {
-	_animationInstance = NULL;
-	_shadowAnimationInstance = NULL;
+	_animationInstance = nullptr;
+	_shadowAnimationInstance = nullptr;
 	_x = 0;
 	_y = 0;
 	_z = 0;
@@ -39,11 +39,11 @@ Character::Character(ToonEngine *vm) : _vm(vm) {
 	_finalY = 0;
 	_sceneAnimationId = -1;
 
-	_walkAnim = NULL;
-	_idleAnim = NULL;
-	_talkAnim = NULL;
-	_shadowAnim = NULL;
-	_specialAnim = NULL;
+	_walkAnim = nullptr;
+	_idleAnim = nullptr;
+	_talkAnim = nullptr;
+	_shadowAnim = nullptr;
+	_specialAnim = nullptr;
 
 	_facing = 0;
 	_flags = 0;
