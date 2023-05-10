@@ -42,6 +42,8 @@ bool Animation::loadAnimation(const Common::String &file) {
 
 	Common::strlcpy(_name, file.c_str(), sizeof(_name));
 
+	_shadowFlag = Common::String(_name).contains("SHADOW");
+
 	uint32 headerSize = READ_LE_UINT32(fileData + 16);
 	uint32 uncompressedBytes = READ_LE_UINT32(fileData + 20);
 	uint32 compressedBytes = READ_LE_UINT32(fileData + 24);
@@ -93,16 +95,22 @@ bool Animation::loadAnimation(const Common::String &file) {
 			_frames[e]._y2 = READ_LE_UINT32(data + 28);
 
 			uint8 *imageData = data + headerSize;
+			uint32 decompressedLZSSDataSize = 0;
+			_frames[e]._dataSize = 0;
 			if (oldRef != -1 || decompressedSize == 0) {
 				_frames[e]._ref = oldRef;
-				_frames[e]._data = 0;
+				_frames[e]._data = nullptr;
+				_frames[e]._dataSize = 0;
 			} else {
 				_frames[e]._ref = -1;
 				_frames[e]._data = new uint8[decompressedSize];
 				if (compressedSize < decompressedSize) {
-					decompressLZSS(imageData, _frames[e]._data, decompressedSize);
+					decompressedLZSSDataSize = decompressLZSS(imageData, _frames[e]._data, decompressedSize);
+//					assert(decompressedSize == decompressedLZSSDataSize);
+					_frames[e]._dataSize = decompressedLZSSDataSize;
 				} else {
 					memcpy(_frames[e]._data, imageData, compressedSize);
+					_frames[e]._dataSize = compressedSize;
 				}
 			}
 
@@ -116,9 +124,11 @@ bool Animation::loadAnimation(const Common::String &file) {
 }
 
 Animation::Animation(ToonEngine *vm) : _vm(vm) {
-	_palette = NULL;
+	_palette = nullptr;
 	_numFrames = 0;
-	_frames = NULL;
+	_frames = nullptr;
+	memset(_name, 0, sizeof(_name));
+	_shadowFlag = false;
 
 	_x1 = _y1 = _x2 = _y2 = 0;
 	_fps = 0;
@@ -216,13 +226,16 @@ void Animation::drawFrameWithMask(Graphics::Surface &surface, int32 frame, int16
 }
 
 void Animation::drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 frame, int16 xx, int16 yy, int32 zz, Picture *mask, int32 scale) {
-	debugC(5, kDebugAnim, "drawFrameWithMaskAndScale(surface, %d, %d, %d, %d, mask, %d)", frame, xx, yy, zz, scale);
+	debugC(5, kDebugAnim, "drawFrameWithMaskAndScale(surface, %d, %d, %d, %d, mask, %d, %s)", frame, xx, yy, zz, scale, _name);
+//	assert(frame < _numFrames && frame >= 0);
 
+	// TODO Why do we go to int16 here from int32?
 	int16 dataFrame = frame;
 
 	if (_frames[frame]._ref != -1)
 		dataFrame = _frames[frame]._ref;
 
+//	assert(dataFrame < _numFrames && dataFrame >= 0);
 	int16 rectX = _frames[frame]._x2 - _frames[frame]._x1;
 	int16 rectY = _frames[frame]._y2 - _frames[frame]._y1;
 
@@ -239,30 +252,36 @@ void Animation::drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 fram
 	_vm->addDirtyRect(xx1, yy1, xx2, yy2);
 
 	int32 destPitch = surface.pitch;
+//	assert(mask != nullptr);
 	int32 destPitchMask = mask->getWidth();
+//	assert(_frames[dataFrame]._data != nullptr);
 	uint8 *c = _frames[dataFrame]._data;
 	uint8 *curRow = (uint8 *)surface.getPixels();
+//	assert(mask->getDataPtr() != nullptr);
 	uint8 *curRowMask = mask->getDataPtr();
+	const uint32 maskDataSize = mask->getWidth() * mask->getHeight();
 
-	bool shadowFlag = Common::String(_name).contains("SHADOW");
-
-	for (int16 y = yy1; y < yy2; y++) {
-		for (int16 x = xx1; x < xx2; x++) {
+	for (int16 y = yy1; y < yy2; ++y) {
+		for (int16 x = xx1; x < xx2; ++x) {
 			if (x < 0 || x >= 1280 || y < 0 || y >= 400)
 				continue;
 
 			uint8 *cur = curRow + x + y * destPitch;
-			uint8 *curMask = curRowMask + x + y * destPitchMask;
+			uint32 nextMaskPos = x + y * destPitchMask;
 
 			// find the good c
 			int16 xs = (x - xx1) * 1024 / scale;
 			int16 ys = (y - yy1) * 1024 / scale;
-			uint8 *cc = &c[ys * w + xs];
-			if (*cc && ((*curMask) >= zz)) {
-				if (shadowFlag)
+			// TODO Maybe check if we overread c here
+//			assert(ys * w + xs >= 0 && ys * w + xs <  _frames[dataFrame]._dataSize)
+			uint8 cc = c[ys * w + xs];
+
+			if (cc && nextMaskPos < maskDataSize && (*(curRowMask + nextMaskPos)) >= zz) {
+				if (_shadowFlag) {
 					*cur = _vm->getShadowLUT()[*cur];
-				else
-					*cur = *cc;
+				} else {
+					*cur = cc;
+				}
 			}
 		}
 	}
@@ -456,7 +475,7 @@ AnimationInstance::AnimationInstance(ToonEngine *vm, AnimationInstanceType type)
 }
 
 void AnimationInstance::render() {
-	debugC(5, kDebugAnim, "render()");
+	debugC(5, kDebugAnim, "AnimationInstance::render()");
 	if (_visible && _animation) {
 		int32 frame = _currentFrame;
 		if (frame < 0)
@@ -757,7 +776,7 @@ void AnimationManager::update(int32 timeIncrement) {
 }
 
 void AnimationManager::render() {
-	debugC(5, kDebugAnim, "render()");
+	debugC(5, kDebugAnim, "AnimationManager::render()");
 	for (uint32 i = 0; i < _instances.size(); i++) {
 		if (_instances[i]->getVisible())
 			_instances[i]->render();
