@@ -234,6 +234,38 @@ private:
 };
 
 /**
+ * PC98 ROM based SJIS compatible font.
+ *
+ * This is used in KYRA and SCI.
+ */
+class FontPC98 : public FontSJISBase {
+public:
+	/**
+	 * Loads the ROM data from "FONT.ROM".
+	 */
+	bool loadData();
+
+	/**
+	 * Loads the ROM data from "FONT.ROM".
+	 */
+	bool loadBMPData();
+
+protected:
+	const uint8 *getCharData(uint16 c) const override;
+
+private:
+	enum {
+		kFont16x16Chars = 8831,
+		kFont8x16Chars = 256
+	};
+
+	uint8 _fontData16x16[kFont16x16Chars * 32];
+	uint8 _fontData8x16[kFont8x16Chars * 16];
+
+	bool hasFeature(int feat) const;
+};
+
+/**
  * PC-Engine System Card based SJIS compatible font.
  *
  * This is used in LOOM.

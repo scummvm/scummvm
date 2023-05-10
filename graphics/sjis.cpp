@@ -48,13 +48,12 @@ FontSJIS *FontSJIS::createFont(const Common::Platform platform) {
 		if (ret->loadData())
 			return ret;
 		delete ret;
-	} // TODO: PC98 font rom support
-	/* else if (platform == Common::kPlatformPC98) {
-		ret = new FontPC98();
-		if (ret->loadData())
-			return ret;
-		delete ret;
-	}*/
+	} else if (platform == Common::kPlatformPC98) {
+		FontPC98 *ret98 = new FontPC98();
+		if (ret98->loadBMPData() || ret98->loadData())
+			return ret98;
+		delete ret98;
+	}
 
 	// Try ScummVM's font.
 	ret = new FontSjisSVM(platform);
@@ -444,6 +443,131 @@ const uint8 *FontTowns::getCharData(uint16 ch) const {
 }
 
 bool FontTowns::hasFeature(int feat) const {
+	static const int features = kFeatDefault | kFeatOutline | kFeatShadow | kFeatFMTownsShadow | kFeatFlipped | kFeatFatPrint;
+	return (features & feat) ? true : false;
+}
+
+// PC98 ROM font
+
+bool FontPC98::loadData() {
+	Common::ScopedPtr<Common::SeekableReadStream> data(SearchMan.createReadStreamForMember("FONT.ROM"));
+	if (!data)
+		return false;
+
+	// First comes 8x8 font that we skip
+	data->seek(256 * 8, SEEK_SET);
+	data->read(_fontData8x16, kFont8x16Chars * 16);
+
+	for (uint i = 0; i < kFont16x16Chars; i++) {
+		byte block[32];
+		data->read(block, 32);
+		// PC98 uses 2 8x16 bitmaps to form one 16x16 glyph. Reshuffle to make a single 16x16 glyph
+		for (uint j = 0; j < 16; j++)
+			_fontData16x16[i * 32 + 2 * j] = block[j];
+		for (uint j = 0; j < 16; j++)
+			_fontData16x16[i * 32 + 2 * j + 1] = block[j + 16];
+	}
+
+	return !data->err();
+}
+
+bool FontPC98::loadBMPData() {
+	Common::ScopedPtr<Common::SeekableReadStream> data(SearchMan.createReadStreamForMember("FONT.BMP"));
+	if (!data)
+		return false;
+
+	if (data->readUint16BE() != MKTAG16('B', 'M')) {
+		warning("Invalid header in font.bmp");
+		return false;
+	}
+
+	data->readUint32LE();
+	data->readUint16LE();
+	data->readUint16LE();
+	uint32 imageOffset = data->readUint32LE();
+
+	uint32 infoSize = data->readUint32LE();
+
+	if (infoSize != 40) {
+		warning("Unexpected header size in font.bmp");
+		return false;
+	}
+
+	if (data->readUint32LE() != 2048 || data->readUint32LE() != 2048) {
+		warning("font.bmp needs to be 2048x2048");
+		return false;
+	}
+
+	if (data->readUint16LE() != 1) {
+		warning("font.bmp needs to be single-planed");
+		return false;
+	}
+
+	if (data->readUint16LE() != 1) {
+		warning("font.bmp needs to be 1bpp");
+		return false;
+	}
+
+	data->seek(imageOffset);
+
+	for (int row = 95; row >= 0; row--)
+		for (int y = 15; y >= 0; y--) {
+			// Skip 16 pixels
+			data->skip(2);
+			for (uint col = 0; col < 96; col++) {
+				byte a = data->readByte();
+				byte b = data->readByte();
+				uint point = row + col * 96;
+				if (point >= kFont16x16Chars)
+					continue;
+				_fontData16x16[point * 32 + y * 2] = ~a;
+				_fontData16x16[point * 32 + y * 2 + 1] = ~b;
+			}
+			data->skip((2048 - 96 * 16 - 16) / 8);
+		}
+
+	data->seek(imageOffset + (2048 - 16) * (2048 / 8));
+
+	for (int y = 15; y >= 0; y--)
+		for (uint i = 0; i < kFont8x16Chars; i++)
+			_fontData8x16[i * 16 + y] = ~data->readByte();
+
+	return true;
+}
+
+const uint8 *FontPC98::getCharData(uint16 ch) const {
+	if (ch < kFont8x16Chars)
+		return _fontData8x16 + ch * 16;
+
+	uint8 lo = ch >> 8, hi = ch & 0xff;
+
+	uint hiblock = 0;
+
+	if (hi >= 0x81 && hi <= 0x9f)
+		hiblock = hi - 0x81;
+	else if (hi >= 0xe0 && hi <= 0xee)
+		hiblock = hi - 0x81 - 0x40;
+	else
+		return nullptr;
+	
+	uint glyph = hiblock * 192;
+
+	if (lo >= 0x3f && lo <= 0x7e)
+		glyph += lo - 0x3f;
+	else if (lo >= 0x80 && lo <= 0x9d)
+		glyph += lo - 0x80 + 64;
+	else if (lo >= 0x9e && lo <= 0xfc)
+		glyph += lo - 0x9e + 96;
+	else
+		return nullptr;
+
+	if (glyph >= kFont16x16Chars)
+		return nullptr;
+	else
+		return _fontData16x16 + glyph * 32;
+}
+
+bool FontPC98::hasFeature(int feat) const {
 	static const int features = kFeatDefault | kFeatOutline | kFeatShadow | kFeatFMTownsShadow | kFeatFlipped | kFeatFatPrint;
 	return (features & feat) ? true : false;
 }
