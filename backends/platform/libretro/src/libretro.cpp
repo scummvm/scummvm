@@ -492,6 +492,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info) {
 void retro_init(void) {
 	const char *sysdir;
 	const char *savedir;
+	const char *coredir;
 
 	struct retro_log_callback log;
 	if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log))
@@ -558,12 +559,15 @@ void retro_init(void) {
 	retro_keyboard_callback cb = {retroKeyEvent};
 	environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, &cb);
 
+	if (! environ_cb(RETRO_ENVIRONMENT_GET_LIBRETRO_PATH, &coredir))
+		coredir = ".";
+
 	if (environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &sysdir))
 		retroSetSystemDir(sysdir);
 	else {
 		if (log_cb)
 			log_cb(RETRO_LOG_WARN, "No System directory specified, using current directory.\n");
-		retroSetSystemDir(".");
+		retroSetSystemDir(coredir);
 	}
 
 	if (environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &savedir))
@@ -571,7 +575,7 @@ void retro_init(void) {
 	else {
 		if (log_cb)
 			log_cb(RETRO_LOG_WARN, "No Save directory specified, using current directory.\n");
-		retroSetSaveDir(".");
+		retroSetSaveDir(coredir);
 	}
 
 	g_system = retroBuildOS();

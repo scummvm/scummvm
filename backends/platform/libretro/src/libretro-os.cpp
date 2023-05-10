@@ -1320,11 +1320,11 @@ int retroTestGame(const char *game_id, bool autodetect) {
 }
 
 void retroSetSystemDir(const char *aPath) {
-	s_systemDir = Common::String(aPath ? aPath : ".");
+	s_systemDir = Common::String(aPath);
 }
 
 void retroSetSaveDir(const char *aPath) {
-	s_saveDir = Common::String(aPath ? aPath : ".");
+	s_saveDir = Common::String(aPath);
 }
 
 void retroKeyEvent(bool down, unsigned keycode, uint32_t character, uint16_t key_modifiers) {
