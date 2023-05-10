@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-05 20:35+0000\n"
+"POT-Creation-Date: 2023-05-10 11:19+0000\n"
 "PO-Revision-Date: 2023-04-23 16:08+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -271,7 +271,7 @@ msgstr "Інше хмарне середовище вже є активним. �
 #: gui/launcher.cpp:487 gui/options.cpp:3367 gui/options.cpp:3741
 #: base/main.cpp:595 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
-#: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:359
+#: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3512
@@ -284,7 +284,7 @@ msgstr "Так"
 #: gui/fluidsynth-dialog.cpp:217 gui/launcher.cpp:415 gui/launcher.cpp:444
 #: gui/launcher.cpp:487 gui/options.cpp:3367 gui/options.cpp:3741
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
-#: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:359
+#: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3512
@@ -880,7 +880,7 @@ msgstr "Взаємодія"
 
 #: gui/gui-manager.cpp:168 engines/metaengine.cpp:120
 #: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:121
-#: engines/grim/grim.cpp:457 engines/grim/grim.cpp:538 engines/icb/icb.cpp:68
+#: engines/grim/grim.cpp:467 engines/grim/grim.cpp:548 engines/icb/icb.cpp:68
 #: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:809
 #: engines/twine/metaengine.cpp:461 engines/twine/metaengine.cpp:528
 #: engines/wintermute/keymapper_tables.h:1290
@@ -893,7 +893,7 @@ msgstr "Догори"
 
 #: gui/gui-manager.cpp:173 engines/metaengine.cpp:126
 #: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:127
-#: engines/grim/grim.cpp:462 engines/grim/grim.cpp:543 engines/icb/icb.cpp:73
+#: engines/grim/grim.cpp:472 engines/grim/grim.cpp:553 engines/icb/icb.cpp:73
 #: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:776
 #: engines/twine/metaengine.cpp:468 engines/twine/metaengine.cpp:536
 #: engines/wintermute/keymapper_tables.h:1296
@@ -906,7 +906,7 @@ msgstr "Донизу"
 
 #: gui/gui-manager.cpp:178 engines/metaengine.cpp:132
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:133
-#: engines/grim/grim.cpp:467 engines/grim/grim.cpp:548 engines/icb/icb.cpp:78
+#: engines/grim/grim.cpp:477 engines/grim/grim.cpp:558 engines/icb/icb.cpp:78
 #: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:789
 #: engines/twine/metaengine.cpp:483 engines/twine/metaengine.cpp:551
 #: engines/wintermute/keymapper_tables.h:320
@@ -920,7 +920,7 @@ msgstr "Наліво"
 
 #: gui/gui-manager.cpp:183 engines/metaengine.cpp:138
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:139
-#: engines/grim/grim.cpp:472 engines/grim/grim.cpp:553 engines/icb/icb.cpp:83
+#: engines/grim/grim.cpp:482 engines/grim/grim.cpp:563 engines/icb/icb.cpp:83
 #: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:796
 #: engines/twine/metaengine.cpp:475 engines/twine/metaengine.cpp:544
 #: engines/wintermute/keymapper_tables.h:326
@@ -3111,7 +3111,7 @@ msgid "Right Click"
 msgstr "Правий клік"
 
 #. I18N: Action in In Cold Blood
-#: engines/metaengine.cpp:82 engines/grim/grim.cpp:525
+#: engines/metaengine.cpp:82 engines/grim/grim.cpp:535
 #: engines/hdb/metaengine.cpp:258 engines/icb/icb.cpp:137
 #: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:596
 #: engines/mohawk/riven.cpp:860 engines/sky/metaengine.cpp:125
@@ -3123,8 +3123,8 @@ msgstr "Пауза"
 msgid "Game menu"
 msgstr "Меню гри"
 
-#: engines/metaengine.cpp:95 engines/grim/grim.cpp:508
-#: engines/grim/grim.cpp:604 engines/mohawk/myst.cpp:567
+#: engines/metaengine.cpp:95 engines/grim/grim.cpp:518
+#: engines/grim/grim.cpp:614 engines/mohawk/myst.cpp:567
 #: engines/mohawk/riven.cpp:831 engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
 #: engines/wintermute/keymapper_tables.h:1276
@@ -3146,8 +3146,8 @@ msgstr "Діалог предиктивного вводу"
 #. and allows confirming popup dialogue prompts (eg. for save game deletion or overwriting)
 #. and also submitting a new save game name, or choosing an existing save game for overwriting.
 #: engines/metaengine.cpp:114 engines/bladerunner/metaengine.cpp:273
-#: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:514
-#: engines/grim/grim.cpp:610 engines/sky/metaengine.cpp:100
+#: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:524
+#: engines/grim/grim.cpp:620 engines/sky/metaengine.cpp:100
 #: engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
 msgstr "Підтвердити"
@@ -4370,8 +4370,8 @@ msgstr "R2"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:83
-#: backends/platform/sdl/miyoo/miyoo.cpp:114 engines/grim/grim.cpp:520
-#: engines/grim/grim.cpp:616 engines/hdb/metaengine.cpp:264
+#: backends/platform/sdl/miyoo/miyoo.cpp:114 engines/grim/grim.cpp:530
+#: engines/grim/grim.cpp:626 engines/hdb/metaengine.cpp:264
 msgid "Menu"
 msgstr "Меню"
 
@@ -5372,7 +5372,7 @@ msgstr "Змінити команду"
 
 #. I18N: Action in In Cold Blood
 #: engines/dragons/metaengine.cpp:149 engines/griffon/metaengine.cpp:152
-#: engines/grim/grim.cpp:497 engines/grim/grim.cpp:593
+#: engines/grim/grim.cpp:507 engines/grim/grim.cpp:603
 #: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:99
 #: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179 engines/scumm/help.cpp:223
 #: engines/scumm/help.cpp:232 engines/scumm/help.cpp:239
@@ -5597,7 +5597,7 @@ msgstr "Атака"
 msgid "Speed Up Cutscene"
 msgstr "Прискорити ролік"
 
-#: engines/grim/grim.cpp:354
+#: engines/grim/grim.cpp:355
 #, c-format
 msgid ""
 "ScummVM found some problems with your game data files.\n"
@@ -5610,46 +5610,46 @@ msgstr ""
 "Чи ви все ж таки хочете запустити %s?"
 
 #. I18N: Action in In Cold Blood
-#: engines/grim/grim.cpp:477 engines/grim/grim.cpp:568
+#: engines/grim/grim.cpp:487 engines/grim/grim.cpp:578
 #: engines/hpl1/metaengine.cpp:87 engines/icb/icb.cpp:131
 #: engines/icb/icb.cpp:197
 msgid "Run"
 msgstr "Бігти"
 
-#: engines/grim/grim.cpp:482 engines/hpl1/metaengine.cpp:95
+#: engines/grim/grim.cpp:492 engines/hpl1/metaengine.cpp:95
 #: engines/scumm/help.cpp:237 engines/scumm/help.cpp:245
 msgid "Examine"
 msgstr "Розглянути"
 
-#: engines/grim/grim.cpp:487 engines/grim/grim.cpp:583
+#: engines/grim/grim.cpp:497 engines/grim/grim.cpp:593
 msgid "Use/Talk"
 msgstr "Ужити/Говорити"
 
-#: engines/grim/grim.cpp:492 engines/grim/grim.cpp:588
+#: engines/grim/grim.cpp:502 engines/grim/grim.cpp:598
 msgid "Pick up/Put away"
 msgstr "Підібрати/Відкласти"
 
-#: engines/grim/grim.cpp:502 engines/grim/grim.cpp:598
+#: engines/grim/grim.cpp:512 engines/grim/grim.cpp:608
 msgid "Skip dialog lines"
 msgstr "Пропустити рядки діалогу"
 
-#: engines/grim/grim.cpp:558
+#: engines/grim/grim.cpp:568
 msgid "Cycle Objects Up"
 msgstr "Прокрутити об'єкти догори"
 
-#: engines/grim/grim.cpp:563
+#: engines/grim/grim.cpp:573
 msgid "Cycle Objects Down"
 msgstr "Прокрутити об'єкти донизу"
 
-#: engines/grim/grim.cpp:573
+#: engines/grim/grim.cpp:583
 msgid "Quick Room Exit"
 msgstr "Швидко вийти з кімнати"
 
-#: engines/grim/grim.cpp:578
+#: engines/grim/grim.cpp:588
 msgid "Examine/Look"
 msgstr "Розглянути/Дивитись"
 
-#: engines/grim/grim.cpp:1354
+#: engines/grim/grim.cpp:1364
 msgid "Error: the game could not be saved."
 msgstr "Помилка: гру не вдалося зберегти."
 
