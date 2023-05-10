@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-10 11:19+0000\n"
+"POT-Creation-Date: 2023-05-10 20:44+0000\n"
 "PO-Revision-Date: 2023-05-05 21:09+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -7506,7 +7506,7 @@ msgstr ""
 "joutua asentamaan alkuperäisen Sierran päivityspaketin.\n"
 "\n"
 
-#: engines/scumm/detection_internal.h:369
+#: engines/scumm/detection_internal.h:370
 msgid ""
 "This version of Monkey Island can't be played, because Limited Run Games "
 "provided corrupted DISK04.LEC and 903.LFL files.\n"
