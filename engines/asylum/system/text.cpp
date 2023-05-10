@@ -190,8 +190,12 @@ void Text::draw(const char *text) {
 		return;
 	}
 
-	if (_vm->getLanguage() == Common::HE_ISR)
-		text = Common::convertBiDiString(text, Common::kWindows1255).c_str();
+	Common::String textRef;
+
+	if (_vm->getLanguage() == Common::HE_ISR) {
+		textRef = Common::convertBiDiString(text, Common::kWindows1255);
+		text = textRef.c_str();
+	}
 	while (*text) {
 		drawChar(text[0]);
 		text++;
