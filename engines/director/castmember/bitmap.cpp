@@ -56,6 +56,10 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	_bitsPerPixel = 0;
 	_external = false;
 
+	if (debugChannelSet(5, kDebugLoading)) {
+		stream.hexdump(stream.size());
+	}
+
 	if (version < kFileVer400) {
 		_flags1 = flags1;	// region: 0 - auto, 1 - matte, 2 - disabled
 
@@ -95,7 +99,8 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		_regY = stream.readUint16();
 		_regX = stream.readUint16();
 
-		_bitsPerPixel = stream.readUint16();
+		stream.readByte();
+		_bitsPerPixel = stream.readByte();
 
 		if (stream.eos()) {
 			_bitsPerPixel = 0;

@@ -67,7 +67,7 @@ public:
 	CastMemberID _clut;
 	CastMemberID _ditheredTargetClut;
 
-	uint16 _bitsPerPixel;
+	uint8 _bitsPerPixel;
 
 	uint32 _tag;
 	bool _noMatte;
