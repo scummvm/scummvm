@@ -42,7 +42,7 @@ struct GameConstants {
 
 struct EventFlagDescription {
 	int16 label;
-	NancyFlag flag;
+	byte flag; // NancyFlag up to nancy2, bool from nancy3 up
 };
 
 struct SceneChangeDescription {

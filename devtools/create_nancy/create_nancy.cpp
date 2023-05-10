@@ -23,11 +23,12 @@
 #include "tvd_data.h"
 #include "nancy1_data.h"
 #include "nancy2_data.h"
+#include "nancy3_data.h"
 
 #define NANCYDAT_MAJOR_VERSION 0
 #define NANCYDAT_MINOR_VERSION 2
 
-#define NANCYDAT_NUM_GAMES 3
+#define NANCYDAT_NUM_GAMES 4
 
 /**
  * Format specifications for nancy.dat:
@@ -60,6 +61,8 @@
  * Game order:
  *      The Vampire Diaries
  *      Nancy Drew: Secrets Can Kill
+ * 		Nancy Drew: Stay Tuned for Danger
+ * 		Nancy Drew: Message in a Haunted Mansion 
 */
 
 void NORETURN_PRE error(const char *s, ...) {
@@ -206,6 +209,20 @@ int main(int argc, char *argv[]) {
                     nullptr,
                     &_nancy2TelephoneRinging,
                     _nancy2EventFlagNames);
+	
+	// Nancy Drew: Message in a Haunted Mansion data
+    gameOffsets.push_back(output.pos());
+	writeGameData(  output,
+                    _nancy3Constants,
+                    _nancy3LanguagesOrder,
+                    &_nancy3ConditionalDialogue,
+                    &_nancy3Goodbyes,
+                    nullptr,
+                    &_nancy3ConditionalDialogueTexts,
+                    &_nancy3GoodbyeTexts,
+                    nullptr,
+                    &_nancy3TelephoneRinging,
+                    _nancy3EventFlagNames);
 
     // Write the offsets for each game in the header
     output.seek(offsetsOffset);
