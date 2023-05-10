@@ -816,7 +816,7 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 	else
 		numStates = 1;
 
-	if (numStates < 1 || numStates >= kMaxStates)
+	if (numStates < 1 || numStates > kMaxStates)
 		return kLoadGameOutcomeSaveDataCorrupted;
 
 	for (uint sti = 0; sti < numStates; sti++) {
@@ -2047,7 +2047,6 @@ bool Runtime::runScript() {
 			DISPATCH_OP(SndClearRandom);
 			DISPATCH_OP(VolumeAdd);
 			DISPATCH_OP(VolumeChange);
-			DISPATCH_OP(VolumeDown);
 			DISPATCH_OP(AnimVolume);
 			DISPATCH_OP(AnimChange);
 			DISPATCH_OP(ScreenName);
@@ -4651,6 +4650,9 @@ void Runtime::recordSaveGameSnapshot() {
 	if (_musicVolumeRampRatePerMSec != 0)
 		mainState->musicVolume = _musicVolumeRampEnd;
 
+	mainState->scoreSection = _scoreSection;
+	mainState->scoreTrack = _scoreTrack;
+
 	mainState->loadedAnimation = _loadedAnimation;
 	mainState->animDisplayingFrame = _animDisplayingFrame;
 
@@ -4742,7 +4744,15 @@ void Runtime::restoreSaveGameSnapshot() {
 
 	_musicActive = mainState->musicActive;
 
-	changeMusicTrack(mainState->musicTrack);
+	if (_gameID == GID_REAH)
+		changeMusicTrack(mainState->musicTrack);
+	if (_gameID == GID_SCHIZM) {
+		if (_musicActive) {
+			_scoreSection = mainState->scoreSection;
+			_scoreTrack = mainState->scoreTrack;
+			startScoreSection();
+		}
+	}
 
 	// Stop all sounds since the player instances are stored in the sound cache.
 	for (Common::SharedPtr<SoundInstance> &snd : _activeSounds)
@@ -5670,7 +5680,7 @@ void Runtime::scriptOpVolumeDn2(ScriptArg_t arg) {
 		resolveSoundByNameOrID(sndIDArgs[0], true, soundID, cachedSound);
 
 		if (cachedSound)
-			triggerSoundRamp(*cachedSound, durationMSec, 0, true);
+			triggerSoundRamp(*cachedSound, durationMSec, getSilentSoundVolume(), true);
 	}
 }
 
@@ -6261,7 +6271,26 @@ void Runtime::scriptOpSndPlay(ScriptArg_t arg) {
 }
 
 OPCODE_STUB(SndPlayEx)
-OPCODE_STUB(SndPlay3D)
+
+void Runtime::scriptOpSndPlay3D(ScriptArg_t arg) {
+	TAKE_STACK_INT_NAMED(5, sndParamArgs);
+	TAKE_STACK_STR_NAMED(1, sndNameArgs);
+
+	StackInt_t soundID = 0;
+	SoundInstance *cachedSound = nullptr;
+	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
+
+	SoundParams3D sndParams;
+	sndParams.unknownRange = sndParamArgs[2];
+	sndParams.minRange = sndParamArgs[3];
+	sndParams.maxRange = sndParamArgs[4];
+
+	if (cachedSound) {
+		setSound3DParameters(*cachedSound, sndParamArgs[0], sndParamArgs[1], sndParams);
+		triggerSound(true, *cachedSound, getSilentSoundVolume(), 0, true, false);
+	}
+}
+
 OPCODE_STUB(SndPlaying)
 
 void Runtime::scriptOpSndWait(ScriptArg_t arg) {
@@ -6290,8 +6319,6 @@ void Runtime::scriptOpVolumeChange(ScriptArg_t arg) {
 	if (cachedSound)
 		triggerSoundRamp(*cachedSound, stackArgs[1] * 100, stackArgs[2], false);
 }
-
-OPCODE_STUB(VolumeDown)
 
 void Runtime::scriptOpAnimVolume(ScriptArg_t arg) {
 	TAKE_STACK_INT(1);
@@ -6399,7 +6426,10 @@ OPCODE_STUB(Garbage)
 OPCODE_STUB(GetRoom)
 OPCODE_STUB(BitAnd)
 OPCODE_STUB(BitOr)
-OPCODE_STUB(AngleGet)
+
+void Runtime::scriptOpAngleGet(ScriptArg_t arg) {
+	_scriptStack.push_back(StackValue(_direction));
+}
 
 void Runtime::scriptOpIsDVDVersion(ScriptArg_t arg) {
 	_scriptStack.push_back(StackValue(_isCDVariant ? 0 : 1));

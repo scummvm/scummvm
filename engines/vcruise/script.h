@@ -176,7 +176,6 @@ enum ScriptOp {
 	kSndClearRandom,
 	kVolumeAdd,
 	kVolumeChange,
-	kVolumeDown,
 	kAnimVolume,
 	kAnimChange,
 	kScreenName,

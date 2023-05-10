@@ -678,7 +678,7 @@ static ScriptNamedInstruction g_schizmNamedInstructions[] = {
 	{"SndStopAll", ProtoOp::kProtoOpScript, ScriptOps::kSndStopAll},
 	{"VolumeAdd", ProtoOp::kProtoOpScript, ScriptOps::kVolumeAdd},
 	{"VolumeChange", ProtoOp::kProtoOpScript, ScriptOps::kVolumeChange},
-	{"VolumeDown", ProtoOp::kProtoOpScript, ScriptOps::kVolumeDown},
+	{"VolumeDown", ProtoOp::kProtoOpScript, ScriptOps::kVolumeDn2},
 	{"esc_on", ProtoOp::kProtoOpScript, ScriptOps::kEscOn},
 	{"esc_off", ProtoOp::kProtoOpScript, ScriptOps::kEscOff},
 	{"esc_get@", ProtoOp::kProtoOpScript, ScriptOps::kEscGet},

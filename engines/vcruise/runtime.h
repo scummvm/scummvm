@@ -1001,7 +1001,6 @@ private:
 	void scriptOpSndClearRandom(ScriptArg_t arg);
 	void scriptOpVolumeAdd(ScriptArg_t arg);
 	void scriptOpVolumeChange(ScriptArg_t arg);
-	void scriptOpVolumeDown(ScriptArg_t arg);
 	void scriptOpAnimVolume(ScriptArg_t arg);
 	void scriptOpAnimChange(ScriptArg_t arg);
 	void scriptOpScreenName(ScriptArg_t arg);
