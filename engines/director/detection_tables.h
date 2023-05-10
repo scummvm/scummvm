@@ -117,6 +117,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "csi",				"CSI: Crime Scene Investigation" },
 	{ "csidarkmotives",		"CSI: Crime Scene Investigation - Dark Motives" },
 	{ "csimiami",			"CSI: Miami" },
+	{ "cutemachine",		"The Cute machine" },
 	{ "daedalus",			"The Daedalus Encounter" },
 	{ "darkeye",			"The Dark Eye" },
 	{ "dazzeloids",			"Dazzeloids" },
@@ -5824,6 +5825,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// 3 CDs, executables are only on CD 1
 	MACGAME1("crystalskull",  "", "Crystal Skull", "c148f66ae3511fb88733102aa27efe7e", 719459,  501),
 	WINGAME1t("crystalskull", "", "CRYS32.EXE",	   "3f5fd025e808943e1fa9b91ce63ef9b7", 1410495, 501),
+
+	WINGAME1("cutemachine", "Windows 3.1", "CUTE.EXE", "2e62abdad839e42068afdcd0644d7dcf", 920035, 500),
+	WINGAME1("cutemachine", "Windows 95", "clickhere.exe", "3460ad87d2ba57104e2810a77b53c220", 1396405, 500),
 
 	WINGAME2("davidsonps", "v1.0", "DPS32.EXE",	  "3460ad87d2ba57104e2810a77b53c220", 1401517,
 								   "DPSHOT.DXR",  "d980c9272bc723c57238a31790b71f11", 1354686, 500),
