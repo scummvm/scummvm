@@ -153,8 +153,6 @@ void Textbox::drawTextbox() {
 
 	for (uint lineID = 0; lineID < _textLines.size(); ++lineID) {
 		Common::String currentLine = _textLines[lineID];
-
-		uint horizontalOffset = 0;
 		bool hasHotspot = false;
 		Rect hotspot;
 
@@ -171,6 +169,11 @@ void Textbox::drawTextbox() {
 		// Replace every newline token with \n
 		while (newLinePos = currentLine.find(_newLineToken), newLinePos != String::npos) {
 			currentLine.replace(newLinePos, ARRAYSIZE(_newLineToken) - 1, "\n");
+		}
+
+		// Replace tab token with four spaces
+		while (newLinePos = currentLine.find(_tabToken), newLinePos != String::npos) {
+			currentLine.replace(newLinePos, ARRAYSIZE(_tabToken) - 1, "    ");
 		}
 
 		// Simply remove telephone end token
@@ -195,86 +198,93 @@ void Textbox::drawTextbox() {
 			lastHotspotPos = hotspotPos;
 		}
 
-		// Subdivide current line into sublines for proper handling of the tab and color tokens
-		// Assumes the tab token is on a new line
-		while (!currentLine.empty()) {
-			if (currentLine.hasPrefix(_tabToken)) {
-				horizontalOffset += font->getStringWidth("    "); // Replace tab with 4 spaces
-				currentLine = currentLine.substr(ARRAYSIZE(_tabToken) - 1);
+		// Scan for color begin and end tokens and keep their positions
+		// in a queue. We do this last so the positions are accurate
+		Common::Queue<uint> colorTokens;
+		while (newLinePos = currentLine.find(_colorBeginToken), newLinePos != String::npos) {
+			currentLine.erase(newLinePos, ARRAYSIZE(_colorBeginToken) - 1);
+			colorTokens.push(newLinePos);
+
+			newLinePos = currentLine.find(_colorEndToken);
+			currentLine.erase(newLinePos, ARRAYSIZE(_colorEndToken) - 1);
+			colorTokens.push(newLinePos);
+		}
+
+		// Do word wrapping on the text, sans tokens
+		Array<Common::String> wrappedLines;
+		font->wordWrap(currentLine, maxWidth, wrappedLines, 0);
+
+		// Setup most of the hotspot
+		if (hasHotspot) {
+			hotspot.left = tbox->borderWidth;
+			hotspot.top = tbox->firstLineOffset - tbox->lineHeight + (_numLines * lineDist) - 1;
+			hotspot.setHeight((wrappedLines.size() * lineDist) - (lineDist - tbox->lineHeight));
+			hotspot.setWidth(0);
+		}
+
+		// Go through the wrapped lines and draw them, making sure to
+		// respect color tokens
+		uint totalCharsDrawn = 0;
+		bool isColor = false;
+		for (Common::String &line : wrappedLines) {
+			uint horizontalOffset = 0;
+
+			// Set the width of the hotspot
+			if (hasHotspot) {
+				hotspot.setWidth(MAX<int16>(hotspot.width(), font->getStringWidth(line)));
 			}
 
-			String currentSubstring;
-			_lastResponseisMultiline = false;
+			while (!line.empty()) {
+				Common::String subLine;
 
-			uint32 nextTabPos = currentLine.find(_tabToken);
-			if (nextTabPos != String::npos) {
-				currentSubstring = currentLine.substr(0, nextTabPos);
-				currentLine = currentLine.substr(nextTabPos);
-			} else {
-				currentSubstring = currentLine;
-				currentLine.clear();
-			}
-			
-			Array<Common::String> wrappedLines;
-			uint numColorLines = 0;
-			uint colorLinesWidth = 0;
+				if (colorTokens.size()) {
+					// Text contains color part
 
-			// Color token denotes a highlighted section of the dialogue
-			// The russian variant of nancy1 makes all player text colored, so we need to do font wrapping here
-			if (currentSubstring.hasPrefix(_colorBeginToken)) {
-				// Found color string, look for end token
-				uint32 colorEndPos = currentSubstring.find(_colorEndToken);
+					if (totalCharsDrawn == colorTokens.front()) {
+						// Token is at begginning of (what's left of) the current line
+						isColor = !isColor;
+						colorTokens.pop();
+					}
 
-				Common::String colorSubstring = currentSubstring.substr(ARRAYSIZE(_colorBeginToken) - 1, colorEndPos - ARRAYSIZE(_colorBeginToken) + 1);
-				currentSubstring = currentSubstring.substr(ARRAYSIZE(_colorBeginToken) + ARRAYSIZE(_colorEndToken) + colorSubstring.size() - 2);
-
-				font->wordWrap(colorSubstring, maxWidth, wrappedLines, 0);
-
-				// Draw the color lines
-				for (uint i = 0; i < wrappedLines.size(); ++i) {
-					font->drawString(&_fullSurface, wrappedLines[i], tbox->borderWidth + horizontalOffset, tbox->firstLineOffset - font->getFontHeight() + _numLines * lineDist, maxWidth, 1);
-					colorLinesWidth = MAX<int16>(colorLinesWidth, font->getStringWidth(wrappedLines[i]));
-					if (i != wrappedLines.size() - 1) {
-						++_numLines;
-						++numColorLines;
+					if (totalCharsDrawn < colorTokens.front() && colorTokens.front() < (totalCharsDrawn + line.size())) {
+						// There's a token inside the current line, so split off the part before it
+						subLine = line.substr(0, colorTokens.front() - totalCharsDrawn);
+						line = line.substr(subLine.size());
 					}
 				}
+
+				// Choose whether to draw the subLine, or the full line
+				Common::String &stringToDraw = subLine.size() ? subLine : line;
+
+				// Draw the normal text
+				font->drawString(				&_fullSurface,
+												stringToDraw,
+												tbox->borderWidth + horizontalOffset,
+												tbox->firstLineOffset - font->getFontHeight() + _numLines * lineDist,
+												maxWidth,
+												isColor);
 				
-				horizontalOffset += font->getStringWidth(wrappedLines.back());
-				wrappedLines.clear();
-			}
-
-			// Do word wrapping on the rest of the text
-			font->wordWrap(currentSubstring, maxWidth, wrappedLines, horizontalOffset);
-
-			if (hasHotspot) {
-				hotspot.left = tbox->borderWidth;
-				hotspot.top = tbox->firstLineOffset - tbox->lineHeight + (_numLines - numColorLines) * lineDist - 1;
-				hotspot.setHeight((wrappedLines.size() + MAX<int16>((numColorLines - 1), 0)) * lineDist - (lineDist - tbox->lineHeight));
-				hotspot.setWidth(0);
-			}
-
-			// Draw the wrapped lines
-			for (uint i = 0; i < wrappedLines.size(); ++i) {
-				font->drawString(&_fullSurface, wrappedLines[i], tbox->borderWidth + (i == 0 ? horizontalOffset : 0), tbox->firstLineOffset - font->getFontHeight() + _numLines * lineDist, maxWidth, 0);
+				// Then, draw the highlight
 				if (hasHotspot) {
-					highlightFont->drawString(&_textHighlightSurface, wrappedLines[i], tbox->borderWidth + (i == 0 ? horizontalOffset : 0), tbox->firstLineOffset - highlightFont->getFontHeight() + _numLines * lineDist, maxWidth, 0);
-					hotspot.setWidth(MAX<int16>(hotspot.width(), font->getStringWidth(wrappedLines[i]) + (i == 0 ? horizontalOffset : 0)));
+					highlightFont->drawString(	&_textHighlightSurface,
+												stringToDraw,
+												tbox->borderWidth + horizontalOffset,
+												tbox->firstLineOffset - font->getFontHeight() + _numLines * lineDist,
+												maxWidth,
+												isColor);
 				}
-				++_numLines;
+
+				if (subLine.size()) {
+					horizontalOffset += font->getStringWidth(subLine);
+					totalCharsDrawn += subLine.size();
+				} else {
+					totalCharsDrawn += line.size();
+					break;
+				}
 			}
 
-			// Make sure to adjust the hotspot width if we had a multi-line color string
-			hotspot.setWidth(MAX<int16>(hotspot.width(), colorLinesWidth));
-
-			// Simulate a bug in the original engine where player text longer than
-			// a single line gets a double newline afterwards
-			if ((wrappedLines.size() + numColorLines) > 1 && hasHotspot) {
-				++_numLines;
-				_lastResponseisMultiline = true;
-			}
-
-			horizontalOffset = 0;
+			++totalCharsDrawn; // Account for newlines, which are removed from the string when doing word wrap
+			++_numLines;
 		}
 
 		// Add the hotspot to the list
@@ -282,7 +292,17 @@ void Textbox::drawTextbox() {
 			_hotspots.push_back(hotspot);
 		}
 
-		// Add a new line after every text line
+		// Simulate a bug in the original engine where player text longer than
+		// a single line gets a double newline afterwards
+		if (wrappedLines.size() > 1 && hasHotspot) {
+			++_numLines;
+
+			if (lineID == _textLines.size() - 1) {
+				_lastResponseisMultiline = true;
+			}
+		}
+
+		// Add a newline after every full piece of text
 		++_numLines;
 	}
 
