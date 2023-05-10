@@ -371,9 +371,10 @@ static void exit_to_frontend(void) {
 }
 
 static void close_emu_thread(void) {
-	retroQuit();
-	while (!retro_emu_thread_exited())
+	while (!retro_emu_thread_exited()) {
+		retroQuit();
 		retro_switch_to_emu_thread();
+	}
 	retro_deinit_emu_thread();
 }
 
