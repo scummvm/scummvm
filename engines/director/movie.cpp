@@ -488,7 +488,7 @@ ScriptContext *Movie::getScriptContext(ScriptType type, CastMemberID id) {
 		if (result == nullptr && _sharedCast) {
 			result = _sharedCast->_lingoArchive->getScriptContext(type, id.member);
 		}
-	} else {
+	} else if (!id.isNull()) {
 		warning("Movie::getScriptContext: Unknown castLib %d", id.castLib);
 	}
 	return result;
