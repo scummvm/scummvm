@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-10 20:44+0000\n"
+"POT-Creation-Date: 2023-05-10 20:52+0000\n"
 "PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -60,7 +60,7 @@ msgstr "Feljebb"
 #: gui/downloadpacksdialog.cpp:267 gui/downloadpacksdialog.cpp:462
 #: gui/editgamedialog.cpp:352 gui/editrecorddialog.cpp:66
 #: gui/filebrowser-dialog.cpp:68 gui/fluidsynth-dialog.cpp:152
-#: gui/massadd.cpp:93 gui/options.cpp:2343 gui/predictivedialog.cpp:68
+#: gui/massadd.cpp:93 gui/options.cpp:2337 gui/predictivedialog.cpp:68
 #: gui/recorderdialog.cpp:73 gui/recorderdialog.cpp:212
 #: gui/remotebrowser.cpp:59 gui/saveload-dialog.cpp:64
 #: gui/saveload-dialog.cpp:455 gui/saveload-dialog.cpp:526
@@ -131,23 +131,23 @@ msgstr ""
 "Ebben a módban a helyi webszervernek futnia kell,\n"
 "így a böngészője adatokat továbbíthat a ScummVM-nek"
 
-#: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:3657
+#: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:3651
 msgid "Stop server"
 msgstr "Szerver leállítás"
 
-#: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:2730
+#: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:2724
 msgid "Run server"
 msgstr "Szerver futtatás"
 
-#: gui/cloudconnectionwizard.cpp:236 gui/options.cpp:3658
+#: gui/cloudconnectionwizard.cpp:236 gui/options.cpp:3652
 msgid "Stop local webserver"
 msgstr "Helyi webszerver leállítása"
 
-#: gui/cloudconnectionwizard.cpp:236 gui/options.cpp:2730
+#: gui/cloudconnectionwizard.cpp:236 gui/options.cpp:2724
 msgid "Run local webserver"
 msgstr "Helyi webszerver futtatása"
 
-#: gui/cloudconnectionwizard.cpp:244 gui/options.cpp:2731 gui/options.cpp:3665
+#: gui/cloudconnectionwizard.cpp:244 gui/options.cpp:2725 gui/options.cpp:3659
 msgid "Not running"
 msgstr "Nem fut"
 
@@ -266,9 +266,9 @@ msgid "Another Storage is working right now. Do you want to interrupt it?"
 msgstr "Egy másik tároló jelenleg már mûködik. Meg akarod szakítani?"
 
 #: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
-#: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:136
-#: gui/fluidsynth-dialog.cpp:217 gui/launcher.cpp:415 gui/launcher.cpp:444
-#: gui/launcher.cpp:487 gui/options.cpp:3367 gui/options.cpp:3741
+#: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:415 gui/launcher.cpp:444
+#: gui/launcher.cpp:487 gui/options.cpp:3361 gui/options.cpp:3735
 #: base/main.cpp:595 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
@@ -280,9 +280,9 @@ msgid "Yes"
 msgstr "Igen"
 
 #: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
-#: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:136
-#: gui/fluidsynth-dialog.cpp:217 gui/launcher.cpp:415 gui/launcher.cpp:444
-#: gui/launcher.cpp:487 gui/options.cpp:3367 gui/options.cpp:3741
+#: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:415 gui/launcher.cpp:444
+#: gui/launcher.cpp:487 gui/options.cpp:3361 gui/options.cpp:3735
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
@@ -304,7 +304,7 @@ msgstr "A JSON kód tartalma hibás."
 #: gui/cloudconnectionwizard.cpp:551 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:543 gui/launcher.cpp:547
-#: gui/massadd.cpp:90 gui/options.cpp:2345 gui/predictivedialog.cpp:69
+#: gui/massadd.cpp:90 gui/options.cpp:2339 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1221 engines/engine.cpp:544 engines/engine.cpp:567
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/buried/saveload.cpp:69
@@ -336,7 +336,7 @@ msgstr "Helytelen JSON."
 msgid "Interrupted."
 msgstr "Interakció"
 
-#: gui/cloudconnectionwizard.cpp:609 gui/options.cpp:3358
+#: gui/cloudconnectionwizard.cpp:609 gui/options.cpp:3352
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -529,11 +529,11 @@ msgid ""
 msgstr ""
 "A játék nyelve. Ne állítsd át a pl. Spanyol nyelvû játékodat Angol nyelvre"
 
-#: gui/editgamedialog.cpp:153 gui/editgamedialog.cpp:168 gui/options.cpp:1587
-#: gui/options.cpp:1602 gui/options.cpp:1619 gui/options.cpp:1633
-#: gui/options.cpp:1673 gui/options.cpp:1689 gui/options.cpp:2086
-#: gui/options.cpp:2508 gui/options.cpp:2561 gui/options.cpp:2779
-#: gui/options.cpp:3245 audio/null.cpp:45
+#: gui/editgamedialog.cpp:153 gui/editgamedialog.cpp:168 gui/options.cpp:1581
+#: gui/options.cpp:1596 gui/options.cpp:1613 gui/options.cpp:1627
+#: gui/options.cpp:1667 gui/options.cpp:1683 gui/options.cpp:2080
+#: gui/options.cpp:2502 gui/options.cpp:2555 gui/options.cpp:2773
+#: gui/options.cpp:3239 audio/null.cpp:45
 #: backends/platform/android/options.cpp:137
 #: backends/platform/android/options.cpp:138 engines/ags/dialogs.cpp:62
 msgid "<default>"
@@ -553,13 +553,13 @@ msgctxt "lowres"
 msgid "Platform:"
 msgstr "Platform:"
 
-#: gui/editgamedialog.cpp:191 gui/options.cpp:2019 gui/options.cpp:2192
+#: gui/editgamedialog.cpp:191 gui/options.cpp:2013 gui/options.cpp:2186
 #: backends/graphics/atari/atari-graphics.cpp:559
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Graphics"
 msgstr "Grafika"
 
-#: gui/editgamedialog.cpp:191 gui/options.cpp:2019 gui/options.cpp:2192
+#: gui/editgamedialog.cpp:191 gui/options.cpp:2013 gui/options.cpp:2186
 msgid "GFX"
 msgstr "GFX"
 
@@ -572,11 +572,11 @@ msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Globális grafikai beállítások felülbírálása"
 
-#: gui/editgamedialog.cpp:212 gui/options.cpp:2226 engines/dialogs.cpp:315
+#: gui/editgamedialog.cpp:212 gui/options.cpp:2220 engines/dialogs.cpp:315
 msgid "Keymaps"
 msgstr "Billentyûzet"
 
-#: gui/editgamedialog.cpp:219 gui/options.cpp:2233 engines/dialogs.cpp:322
+#: gui/editgamedialog.cpp:219 gui/options.cpp:2227 engines/dialogs.cpp:322
 msgid "Backend"
 msgstr "Háttér"
 
@@ -589,7 +589,7 @@ msgctxt "lowres"
 msgid "Override global backend settings"
 msgstr "A globális háttérbeállítások felülírása"
 
-#: gui/editgamedialog.cpp:238 gui/options.cpp:2247 engines/dialogs.cpp:290
+#: gui/editgamedialog.cpp:238 gui/options.cpp:2241 engines/dialogs.cpp:290
 msgid "Audio"
 msgstr "Audió"
 
@@ -602,11 +602,11 @@ msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Globális audió beállítások felülbírálása"
 
-#: gui/editgamedialog.cpp:252 gui/options.cpp:2252
+#: gui/editgamedialog.cpp:252 gui/options.cpp:2246
 msgid "Volume"
 msgstr "Hangerõ"
 
-#: gui/editgamedialog.cpp:254 gui/options.cpp:2254
+#: gui/editgamedialog.cpp:254 gui/options.cpp:2248
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Hangerõ"
@@ -620,7 +620,7 @@ msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Globális hangerõbeállítások felülbírálása"
 
-#: gui/editgamedialog.cpp:270 gui/options.cpp:2262
+#: gui/editgamedialog.cpp:270 gui/options.cpp:2256
 msgid "MIDI"
 msgstr "MIDI"
 
@@ -633,7 +633,7 @@ msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Globális MIDI beállítások felülbírálása"
 
-#: gui/editgamedialog.cpp:285 gui/options.cpp:2268
+#: gui/editgamedialog.cpp:285 gui/options.cpp:2262
 msgid "MT-32"
 msgstr "MT-32"
 
@@ -646,11 +646,11 @@ msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Globális MT-32 beállítások felülbírálása"
 
-#: gui/editgamedialog.cpp:299 gui/options.cpp:2275
+#: gui/editgamedialog.cpp:299 gui/options.cpp:2269
 msgid "Paths"
 msgstr "Mappák"
 
-#: gui/editgamedialog.cpp:301 gui/options.cpp:2277
+#: gui/editgamedialog.cpp:301 gui/options.cpp:2271
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Mappák"
@@ -664,7 +664,7 @@ msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Játék Mappa:"
 
-#: gui/editgamedialog.cpp:315 gui/options.cpp:2464
+#: gui/editgamedialog.cpp:315 gui/options.cpp:2458
 msgid "Extra Path:"
 msgstr "Extra Mappa:"
 
@@ -673,21 +673,21 @@ msgstr "Extra Mappa:"
 msgid "Specifies path to additional data used by the game"
 msgstr "Mappa kiválasztás a játékok kiegészítõ fájljaihoz"
 
-#: gui/editgamedialog.cpp:317 gui/options.cpp:2466
+#: gui/editgamedialog.cpp:317 gui/options.cpp:2460
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Extra Mappa:"
 
-#: gui/editgamedialog.cpp:324 gui/options.cpp:2440
+#: gui/editgamedialog.cpp:324 gui/options.cpp:2434
 msgid "Save Path:"
 msgstr "Mentés Mappa:"
 
 #: gui/editgamedialog.cpp:324 gui/editgamedialog.cpp:326
-#: gui/editgamedialog.cpp:327 gui/options.cpp:2440 gui/options.cpp:2442
+#: gui/editgamedialog.cpp:327 gui/options.cpp:2434 gui/options.cpp:2436
 msgid "Specifies where your saved games are put"
 msgstr "Játékmentések helyének meghatározása"
 
-#: gui/editgamedialog.cpp:326 gui/options.cpp:2442
+#: gui/editgamedialog.cpp:326 gui/options.cpp:2436
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Mentés Mappa:"
@@ -701,25 +701,25 @@ msgid "Statistics"
 msgstr "Statisztika"
 
 #: gui/editgamedialog.cpp:366 gui/editgamedialog.cpp:468
-#: gui/editgamedialog.cpp:530 gui/editgamedialog.cpp:597 gui/options.cpp:1191
-#: gui/options.cpp:2368 gui/options.cpp:2370 gui/options.cpp:2375
-#: gui/options.cpp:2408 gui/options.cpp:2451 gui/options.cpp:2467
-#: gui/options.cpp:2476 gui/options.cpp:2898 gui/options.cpp:2900
-#: gui/options.cpp:2904 gui/options.cpp:2913 gui/options.cpp:3226
-#: gui/options.cpp:3232 gui/options.cpp:3239 gui/options.cpp:3264
-#: gui/options.cpp:3275
+#: gui/editgamedialog.cpp:530 gui/editgamedialog.cpp:597 gui/options.cpp:1187
+#: gui/options.cpp:2362 gui/options.cpp:2364 gui/options.cpp:2369
+#: gui/options.cpp:2402 gui/options.cpp:2445 gui/options.cpp:2461
+#: gui/options.cpp:2470 gui/options.cpp:2892 gui/options.cpp:2894
+#: gui/options.cpp:2898 gui/options.cpp:2907 gui/options.cpp:3220
+#: gui/options.cpp:3226 gui/options.cpp:3233 gui/options.cpp:3258
+#: gui/options.cpp:3269
 msgctxt "path"
 msgid "None"
 msgstr "Nincs"
 
 #: gui/editgamedialog.cpp:371 gui/editgamedialog.cpp:474
-#: gui/editgamedialog.cpp:601 gui/options.cpp:2367 gui/options.cpp:2369
-#: gui/options.cpp:2897 gui/options.cpp:2899 gui/options.cpp:3229
-#: gui/options.cpp:3235 backends/platform/wii/options.cpp:55
+#: gui/editgamedialog.cpp:601 gui/options.cpp:2361 gui/options.cpp:2363
+#: gui/options.cpp:2891 gui/options.cpp:2893 gui/options.cpp:3223
+#: gui/options.cpp:3229 backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "Alapértelmezett"
 
-#: gui/editgamedialog.cpp:523 gui/options.cpp:3269
+#: gui/editgamedialog.cpp:523 gui/options.cpp:3263
 msgid "Select SoundFont"
 msgstr "SoundFont kiválasztás"
 
@@ -727,11 +727,11 @@ msgstr "SoundFont kiválasztás"
 msgid "Select additional game directory"
 msgstr "Válassz mappát a játék kiegészítõkhöz"
 
-#: gui/editgamedialog.cpp:575 gui/options.cpp:3131
+#: gui/editgamedialog.cpp:575 gui/options.cpp:3125
 msgid "Select directory for saved games"
 msgstr "Válaszz játékmentéseknek mappát"
 
-#: gui/editgamedialog.cpp:582 gui/options.cpp:3138
+#: gui/editgamedialog.cpp:582 gui/options.cpp:3132
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "A kiválasztott mappába nem lehet írni, válassz egy másikat."
 
@@ -763,7 +763,7 @@ msgstr "Válassz betöltendõ fájlt"
 msgid "Enter filename for saving"
 msgstr "Írd be a fájlnevet mentéshez"
 
-#: gui/filebrowser-dialog.cpp:136
+#: gui/filebrowser-dialog.cpp:135
 msgid "Do you really want to overwrite the file?"
 msgstr "Biztos hogy felül akarod írni a fájlt?"
 
@@ -820,7 +820,7 @@ msgstr "Színusz"
 msgid "Triangle"
 msgstr "Háromszög"
 
-#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:2292
+#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:2286
 msgid "Misc"
 msgstr "Vegyes"
 
@@ -853,13 +853,13 @@ msgstr "Reset"
 msgid "Reset all FluidSynth settings to their default values."
 msgstr "Minden FluidSynth beállítás alapértelmezett értékre."
 
-#: gui/fluidsynth-dialog.cpp:217
+#: gui/fluidsynth-dialog.cpp:209
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr ""
 "Biztos visszaállítassz minden FluidSynth beállítást alapértelmezett értékre?"
 
-#: gui/gui-manager.cpp:153 gui/options.cpp:2283
+#: gui/gui-manager.cpp:153 gui/options.cpp:2277
 msgid "GUI"
 msgstr "GUI"
 
@@ -1189,39 +1189,39 @@ msgstr "~G~Játék Opc..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1176 gui/launcher.cpp:1370
+#: gui/launcher.cpp:1176 gui/launcher.cpp:1359
 msgid "Unknown Engine"
 msgstr "Ismeretlen Motor"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1193 gui/launcher.cpp:1387
+#: gui/launcher.cpp:1193 gui/launcher.cpp:1376
 msgid "Unknown Publisher"
 msgstr "Ismeretlen Kiadó"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1210 gui/launcher.cpp:1404
+#: gui/launcher.cpp:1210 gui/launcher.cpp:1393
 msgid "No Series"
 msgstr "Nem Sorozat"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1224 gui/launcher.cpp:1418
+#: gui/launcher.cpp:1224 gui/launcher.cpp:1407
 msgid "Language not detected"
 msgstr "Nyelv nincs észlelve"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1238 gui/launcher.cpp:1432
+#: gui/launcher.cpp:1238 gui/launcher.cpp:1421
 msgid "Platform not detected"
 msgstr "Platform nincs észlelve"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1443 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1432 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "Mind"
 
-#: gui/launcher.cpp:1594
+#: gui/launcher.cpp:1581
 msgid "Icons per row:"
 msgstr "Ikonok soronként:"
 
@@ -1306,13 +1306,13 @@ msgstr "Kicsi"
 
 #: gui/options.cpp:446 gui/options.cpp:761 gui/options.cpp:861
 #: gui/options.cpp:866 gui/options.cpp:889 gui/options.cpp:894
-#: gui/options.cpp:1098 gui/options.cpp:1648
+#: gui/options.cpp:1098 gui/options.cpp:1642
 msgctxt "shader"
 msgid "None"
 msgstr "Nincs"
 
-#: gui/options.cpp:496 gui/options.cpp:1000 gui/options.cpp:1166
-#: gui/options.cpp:1335 gui/options.cpp:1792
+#: gui/options.cpp:496 gui/options.cpp:1000 gui/options.cpp:1164
+#: gui/options.cpp:1329 gui/options.cpp:1786
 msgctxt "soundfont"
 msgid "None"
 msgstr "Nincs"
@@ -1349,97 +1349,97 @@ msgstr "a vsync beállítás nem módosítható"
 msgid "the shader could not be changed"
 msgstr "a shader nem változtatható"
 
-#: gui/options.cpp:1415 backends/platform/ios7/ios7_options.mm:68
+#: gui/options.cpp:1409 backends/platform/ios7/ios7_options.mm:68
 msgid "Touchpad mouse mode"
 msgstr "Touchpad egér mód"
 
-#: gui/options.cpp:1420
+#: gui/options.cpp:1414
 msgid "Pointer Speed:"
 msgstr "Mutató Sebesség:"
 
-#: gui/options.cpp:1420 gui/options.cpp:1422 gui/options.cpp:1423
+#: gui/options.cpp:1414 gui/options.cpp:1416 gui/options.cpp:1417
 msgid "Speed for keyboard/joystick mouse pointer control"
 msgstr "Billentyûzet/joystick egérmutató vezérlés sebessége"
 
-#: gui/options.cpp:1422
+#: gui/options.cpp:1416
 msgctxt "lowres"
 msgid "Pointer Speed:"
 msgstr "Mutató Sebesség:"
 
-#: gui/options.cpp:1433
+#: gui/options.cpp:1427
 msgid "Joy Deadzone:"
 msgstr "Joy Holtzóna:"
 
-#: gui/options.cpp:1433 gui/options.cpp:1435 gui/options.cpp:1436
+#: gui/options.cpp:1427 gui/options.cpp:1429 gui/options.cpp:1430
 msgid "Analog joystick Deadzone"
 msgstr "Analóg joystick Holtzóna"
 
-#: gui/options.cpp:1435
+#: gui/options.cpp:1429
 msgctxt "lowres"
 msgid "Joy Deadzone:"
 msgstr "Joy Holtzóna:"
 
-#: gui/options.cpp:1531
+#: gui/options.cpp:1525
 #, c-format
 msgid "%d hidden achievements remaining"
 msgstr "%d rejtett eredmény maradt"
 
-#: gui/options.cpp:1536
+#: gui/options.cpp:1530
 #, c-format
 msgid "Achievements unlocked: %d/%d"
 msgstr "Feloldott teljesítmény: %d/%d"
 
-#: gui/options.cpp:1582
+#: gui/options.cpp:1576
 msgid "Graphics mode:"
 msgstr "Grafikus mód:"
 
-#: gui/options.cpp:1598
+#: gui/options.cpp:1592
 msgid "Render mode:"
 msgstr "Kirajzolás mód:"
 
-#: gui/options.cpp:1598 gui/options.cpp:1601
+#: gui/options.cpp:1592 gui/options.cpp:1595
 msgid "Special dithering modes supported by some games"
 msgstr "Néhány játék támogatja a speciális árnyalási módokat"
 
-#: gui/options.cpp:1614
+#: gui/options.cpp:1608
 msgid "Stretch mode:"
 msgstr "Nyújtás mód:"
 
-#: gui/options.cpp:1630
+#: gui/options.cpp:1624
 msgid "Scaler:"
 msgstr "Méretező:"
 
-#: gui/options.cpp:1645
+#: gui/options.cpp:1639
 msgid "Shader:"
 msgstr "Shader:"
 
-#: gui/options.cpp:1645 gui/options.cpp:1647 gui/options.cpp:1648
+#: gui/options.cpp:1639 gui/options.cpp:1641 gui/options.cpp:1642
 msgid "Specifies path to the shader used for scaling the game screen"
 msgstr ""
 "Megadja a játék képernyőjének méretezéséhez használt shader elérési útját"
 
-#: gui/options.cpp:1647
+#: gui/options.cpp:1641
 msgctxt "lowres"
 msgid "Shader Path:"
 msgstr "Shader Mappa:"
 
-#: gui/options.cpp:1654
+#: gui/options.cpp:1648
 msgid "Update Shaders"
 msgstr "Shader-ek Frissítése"
 
-#: gui/options.cpp:1654
+#: gui/options.cpp:1648
 msgid "Check for updates of shader packs"
 msgstr "Ellenőrizd a shader csomagok frissítését"
 
-#: gui/options.cpp:1660 backends/graphics/sdl/sdl-graphics.cpp:416
+#: gui/options.cpp:1654 backends/graphics/sdl/sdl-graphics.cpp:416
 msgid "Fullscreen mode"
 msgstr "Teljesképernyõs mód"
 
-#: gui/options.cpp:1663
+#: gui/options.cpp:1657
 msgid "V-Sync"
 msgstr "V-Sync"
 
-#: gui/options.cpp:1663
+#: gui/options.cpp:1657
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
@@ -1447,128 +1447,128 @@ msgstr ""
 "Várj amíg a függőleges szinkron frissíti a képernyőt a megszakadás "
 "megelőzéséért"
 
-#: gui/options.cpp:1668
+#: gui/options.cpp:1662
 msgid "Game 3D Renderer:"
 msgstr "3D játék Renderelõ:"
 
-#: gui/options.cpp:1670
+#: gui/options.cpp:1664
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
 msgstr "Játék 3D Renderelő:"
 
-#: gui/options.cpp:1687
+#: gui/options.cpp:1681
 msgid "3D Anti-aliasing:"
 msgstr "3D Élsimított:"
 
-#: gui/options.cpp:1691 engines/mohawk/dialogs.cpp:365
+#: gui/options.cpp:1685 engines/mohawk/dialogs.cpp:365
 msgid "Disabled"
 msgstr "Letiltva"
 
-#: gui/options.cpp:1699
+#: gui/options.cpp:1693
 msgid "Filter graphics"
 msgstr "Grafika szûrése"
 
-#: gui/options.cpp:1699
+#: gui/options.cpp:1693
 msgid "Use linear filtering when scaling graphics"
 msgstr "Lineáris szûrés használata a grafika átméretezésénél"
 
-#: gui/options.cpp:1702
+#: gui/options.cpp:1696
 msgid "Aspect ratio correction"
 msgstr "Képméretarány korrekció"
 
-#: gui/options.cpp:1702
+#: gui/options.cpp:1696
 msgid "Correct aspect ratio for games"
 msgstr "A játékok megfelelő képaránya"
 
-#: gui/options.cpp:1710
+#: gui/options.cpp:1704
 msgid "Preferred device:"
 msgstr "Preferált eszköz:"
 
-#: gui/options.cpp:1710
+#: gui/options.cpp:1704
 msgid "Music device:"
 msgstr "Zeneeszköz:"
 
-#: gui/options.cpp:1710 gui/options.cpp:1712
+#: gui/options.cpp:1704 gui/options.cpp:1706
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr "Elsõdleges hangeszköz vagy hang emulátor beállítások"
 
-#: gui/options.cpp:1710 gui/options.cpp:1712 gui/options.cpp:1713
+#: gui/options.cpp:1704 gui/options.cpp:1706 gui/options.cpp:1707
 msgid "Specifies output sound device or sound card emulator"
 msgstr "Hangeszköz vagy hangkártya emulátor beállítások"
 
-#: gui/options.cpp:1712
+#: gui/options.cpp:1706
 msgctxt "lowres"
 msgid "Preferred dev.:"
 msgstr "Preferált eszk.:"
 
-#: gui/options.cpp:1712
+#: gui/options.cpp:1706
 msgctxt "lowres"
 msgid "Music device:"
 msgstr "Zeneeszköz:"
 
-#: gui/options.cpp:1739
+#: gui/options.cpp:1733
 msgid "AdLib emulator:"
 msgstr "AdLib emulátor:"
 
-#: gui/options.cpp:1739 gui/options.cpp:1742
+#: gui/options.cpp:1733 gui/options.cpp:1736
 msgid "AdLib is used for music in many games"
 msgstr "AdLib meghajtót sok játék használja zenéhez"
 
-#: gui/options.cpp:1755
+#: gui/options.cpp:1749
 msgid "GM device:"
 msgstr "GM eszköz:"
 
-#: gui/options.cpp:1755
+#: gui/options.cpp:1749
 msgid "Specifies default sound device for General MIDI output"
 msgstr "Alapértelmezett hangeszköz General MIDI kimenethez"
 
-#: gui/options.cpp:1766
+#: gui/options.cpp:1760
 msgid "Don't use General MIDI music"
 msgstr "Ne használj General MIDI zenét"
 
-#: gui/options.cpp:1777 gui/options.cpp:1839
+#: gui/options.cpp:1771 gui/options.cpp:1833
 msgid "Use first available device"
 msgstr "Elsõ elérhetõ eszköz használata"
 
-#: gui/options.cpp:1789
+#: gui/options.cpp:1783
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:1789 gui/options.cpp:1791 gui/options.cpp:1792
+#: gui/options.cpp:1783 gui/options.cpp:1785 gui/options.cpp:1786
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr ""
 "Néhány hangkárya, FluidSynth és Timidyti támogatja a SoundFont betöltését"
 
-#: gui/options.cpp:1791
+#: gui/options.cpp:1785
 msgctxt "lowres"
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:1797
+#: gui/options.cpp:1791
 msgid "Mixed AdLib/MIDI mode"
 msgstr "Vegyes AdLib/MIDI mód"
 
-#: gui/options.cpp:1797
+#: gui/options.cpp:1791
 msgid "Use both MIDI and AdLib sound generation"
 msgstr "MIDI és AdLib hanggenerátorok használata"
 
-#: gui/options.cpp:1800
+#: gui/options.cpp:1794
 msgid "MIDI gain:"
 msgstr "MIDI erõsítés:"
 
-#: gui/options.cpp:1810
+#: gui/options.cpp:1804
 msgid "MT-32 Device:"
 msgstr "MT-32 Eszköz:"
 
-#: gui/options.cpp:1810
+#: gui/options.cpp:1804
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr "Roland MT-32/LAPC1/CM32l/CM64 alapértelmezett hangeszközök beállítása"
 
-#: gui/options.cpp:1815
+#: gui/options.cpp:1809
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "Roland MT-32 Hardver (GM emuláció tiltva)"
 
-#: gui/options.cpp:1815 gui/options.cpp:1817
+#: gui/options.cpp:1809 gui/options.cpp:1811
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
@@ -1576,16 +1576,16 @@ msgstr ""
 "Jelöld be, ha hardveres Roland-Kompatibilis hangeszköz van csatlakoztatva a "
 "gépedhez és használni akarod"
 
-#: gui/options.cpp:1817
+#: gui/options.cpp:1811
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Roland MT-32 Hardver (GM emuláció nincs)"
 
-#: gui/options.cpp:1820
+#: gui/options.cpp:1814
 msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "Roland GS eszköz (engedélyezze az MT-32 leképezést)"
 
-#: gui/options.cpp:1820
+#: gui/options.cpp:1814
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
@@ -1593,144 +1593,144 @@ msgstr ""
 "Ellenõrzés ha engedélyezni akarod az emulált MT-32 Folt leképezést a Roland "
 "GS eszközön"
 
-#: gui/options.cpp:1829
+#: gui/options.cpp:1823
 msgid "Don't use Roland MT-32 music"
 msgstr "Ne használj Roland MT-32 zenét"
 
-#: gui/options.cpp:1856
+#: gui/options.cpp:1850
 msgid "Text and speech:"
 msgstr "Szöveg és beszéd:"
 
-#: gui/options.cpp:1860 gui/options.cpp:1870
+#: gui/options.cpp:1854 gui/options.cpp:1864
 msgid "Speech"
 msgstr "Csak beszéd"
 
-#: gui/options.cpp:1861 gui/options.cpp:1871
+#: gui/options.cpp:1855 gui/options.cpp:1865
 msgid "Subtitles"
 msgstr "Csak felirat"
 
-#: gui/options.cpp:1862
+#: gui/options.cpp:1856
 msgid "Both"
 msgstr "Mind"
 
-#: gui/options.cpp:1864
+#: gui/options.cpp:1858
 msgid "Subtitle speed:"
 msgstr "Felirat sebesség:"
 
-#: gui/options.cpp:1866
+#: gui/options.cpp:1860
 msgctxt "lowres"
 msgid "Text and speech:"
 msgstr "Szöveg és beszéd:"
 
-#: gui/options.cpp:1870
+#: gui/options.cpp:1864
 msgid "Spch"
 msgstr "Besz"
 
-#: gui/options.cpp:1871
+#: gui/options.cpp:1865
 msgid "Subs"
 msgstr "Text"
 
-#: gui/options.cpp:1872
+#: gui/options.cpp:1866
 msgctxt "lowres"
 msgid "Both"
 msgstr "Mind"
 
-#: gui/options.cpp:1872
+#: gui/options.cpp:1866
 msgid "Show subtitles and play speech"
 msgstr "Hang és feliratok megjelenítése"
 
-#: gui/options.cpp:1874
+#: gui/options.cpp:1868
 msgctxt "lowres"
 msgid "Subtitle speed:"
 msgstr "Felirat sebesség:"
 
-#: gui/options.cpp:1896
+#: gui/options.cpp:1890
 msgid "Music volume:"
 msgstr "Zene hangerõ:"
 
-#: gui/options.cpp:1898
+#: gui/options.cpp:1892
 msgctxt "lowres"
 msgid "Music volume:"
 msgstr "Zene hangerõ:"
 
-#: gui/options.cpp:1907
+#: gui/options.cpp:1901
 msgid "Mute all"
 msgstr "Elnémítani az összeset"
 
-#: gui/options.cpp:1910
+#: gui/options.cpp:1904
 msgid "SFX volume:"
 msgstr "SFX hangerõ:"
 
-#: gui/options.cpp:1910 gui/options.cpp:1912 gui/options.cpp:1915
+#: gui/options.cpp:1904 gui/options.cpp:1906 gui/options.cpp:1909
 msgid "Special sound effects volume"
 msgstr "Speciális hangeffektusok hangereje"
 
-#: gui/options.cpp:1912
+#: gui/options.cpp:1906
 msgctxt "lowres"
 msgid "SFX volume:"
 msgstr "SFX hangerõ:"
 
-#: gui/options.cpp:1922
+#: gui/options.cpp:1916
 msgid "Speech volume:"
 msgstr "Beszéd hangerõ:"
 
-#: gui/options.cpp:1924
+#: gui/options.cpp:1918
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "Beszéd hangerõ:"
 
-#: gui/options.cpp:2204
+#: gui/options.cpp:2198
 msgid "Control"
 msgstr "Irányitás"
 
-#: gui/options.cpp:2304
+#: gui/options.cpp:2298
 msgid "Cloud"
 msgstr "Felhõ"
 
-#: gui/options.cpp:2306
+#: gui/options.cpp:2300
 msgctxt "lowres"
 msgid "Cloud"
 msgstr "Felhõ"
 
-#: gui/options.cpp:2320
+#: gui/options.cpp:2314
 msgid "LAN"
 msgstr "LAN"
 
-#: gui/options.cpp:2322
+#: gui/options.cpp:2316
 msgctxt "lowres"
 msgid "LAN"
 msgstr "LAN"
 
-#: gui/options.cpp:2332
+#: gui/options.cpp:2326
 msgid "Accessibility"
 msgstr "Hozzáférhetõség"
 
-#: gui/options.cpp:2334
+#: gui/options.cpp:2328
 msgctxt "lowres"
 msgid "Accessibility"
 msgstr "Hozzáférhetõség"
 
-#: gui/options.cpp:2343
+#: gui/options.cpp:2337
 msgid "Discard changes and close the dialog"
 msgstr "Vesd el a módosításokat, és zárd be a párbeszédpanelt"
 
-#: gui/options.cpp:2344
+#: gui/options.cpp:2338
 msgid "Apply"
 msgstr "Alkalmaz"
 
-#: gui/options.cpp:2344
+#: gui/options.cpp:2338
 msgid "Apply changes without closing the dialog"
 msgstr "A módosítások alkalmazása a párbeszédpanel bezárása nélkül"
 
-#: gui/options.cpp:2345
+#: gui/options.cpp:2339
 msgid "Apply changes and close the dialog"
 msgstr "A módosítások alkalmazása és a párbeszédpanel bezárása"
 
-#: gui/options.cpp:2429
+#: gui/options.cpp:2423
 msgid "FluidSynth Settings"
 msgstr "FluidSynth Beállítása"
 
-#: gui/options.cpp:2443
+#: gui/options.cpp:2437
 msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
@@ -1738,76 +1738,76 @@ msgstr ""
 "Meghatározza, hogy a mentett játék hova kerüljön. A piros szín azt jelzi, "
 "hogy az érték ideiglenes, és nem kerül mentésre"
 
-#: gui/options.cpp:2448
+#: gui/options.cpp:2442
+msgid "Theme Path:"
+msgstr "Téma Mappa:"
+
+#: gui/options.cpp:2444
+msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Téma Mappa:"
 
 #: gui/options.cpp:2450
-msgctxt "lowres"
-msgid "Theme Path:"
-msgstr "Téma Mappa:"
-
-#: gui/options.cpp:2456
 msgid "Icon Path:"
 msgstr "Ikon Útvonal:"
 
-#: gui/options.cpp:2458
+#: gui/options.cpp:2452
 msgctxt "lowres"
 msgid "Icon Path:"
 msgstr "Ikon Útvonal:"
 
-#: gui/options.cpp:2459
+#: gui/options.cpp:2453
 msgctxt "path"
 msgid "Default"
 msgstr "Alapértelmezett"
 
-#: gui/options.cpp:2464 gui/options.cpp:2466 gui/options.cpp:2467
+#: gui/options.cpp:2458 gui/options.cpp:2460 gui/options.cpp:2461
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr "Minden jéték és ScummVM kiegészítõ fájljainak mappája"
 
-#: gui/options.cpp:2473
+#: gui/options.cpp:2467
 msgid "Plugins Path:"
 msgstr "Plugin Mappa:"
 
-#: gui/options.cpp:2475
+#: gui/options.cpp:2469
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Plugin Mappa:"
 
-#: gui/options.cpp:2485
+#: gui/options.cpp:2479
 msgid "ScummVM config path: "
 msgstr "ScummVM konfigurációs path: "
 
-#: gui/options.cpp:2498
+#: gui/options.cpp:2492
 msgid "ScummVM log path: "
 msgstr "ScummVM log útvonal: "
 
-#: gui/options.cpp:2503
+#: gui/options.cpp:2497
 msgid "View"
 msgstr "Nézet"
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2513 gui/options.cpp:3245
+#: gui/options.cpp:2507 gui/options.cpp:3239
 msgid "Last browser path: "
 msgstr "Utolsó böngésző elérési út: "
 
-#: gui/options.cpp:2518
+#: gui/options.cpp:2512
 msgid "Theme:"
 msgstr "Téma:"
 
-#: gui/options.cpp:2523
+#: gui/options.cpp:2517
 msgid "GUI scale:"
 msgstr "GUI skála:"
 
-#: gui/options.cpp:2530
+#: gui/options.cpp:2524
 msgid "GUI renderer:"
 msgstr "GUI Renderelõ:"
 
-#: gui/options.cpp:2543
+#: gui/options.cpp:2537
 msgid "Return to the launcher when leaving a game"
 msgstr "Térjen vissza az indítóhoz ha kilép a játékból"
 
-#: gui/options.cpp:2544
+#: gui/options.cpp:2538
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
@@ -1815,27 +1815,27 @@ msgstr ""
 "Térjen vissza az indítóhoz ha kilép a játékból a ScummVM bezárása helyett\n"
 "(ezt a funkciót nem minden játék támogatja)."
 
-#: gui/options.cpp:2551
+#: gui/options.cpp:2545
 msgid "Ask for confirmation on exit"
 msgstr "Kérjen megerősítést kilépéskor"
 
-#: gui/options.cpp:2552
+#: gui/options.cpp:2546
 msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr "Kérjen megerősítést ha bezárja a ScummVM-et vagy ha kilép a játékból."
 
-#: gui/options.cpp:2558
+#: gui/options.cpp:2552
 msgid "GUI language:"
 msgstr "GUI nyelv:"
 
-#: gui/options.cpp:2558
+#: gui/options.cpp:2552
 msgid "Language of ScummVM GUI"
 msgstr "A ScummVM GUI nyelve"
 
-#: gui/options.cpp:2584
+#: gui/options.cpp:2578
 msgid "Switch the ScummVM GUI language to the game language"
 msgstr "Kapcsold át a ScummVM GUI nyelvét a játék nyelvére"
 
-#: gui/options.cpp:2585
+#: gui/options.cpp:2579
 msgid ""
 "When starting a game, change the ScummVM GUI language to the game language. "
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
@@ -1845,11 +1845,11 @@ msgstr ""
 "egy játék a ScummVM mentési és betöltési párbeszédablakot használja, akkor "
 "ugyanaz lesz a nyelv, mint a játéké."
 
-#: gui/options.cpp:2597
+#: gui/options.cpp:2591
 msgid "Use native system file browser"
 msgstr "Használjon natív rendszerfájl böngészõt"
 
-#: gui/options.cpp:2598
+#: gui/options.cpp:2592
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
@@ -1857,50 +1857,50 @@ msgstr ""
 "A ScummVM-é helyett az eredeti rendszer fájlböngészõjét használhatja egy "
 "fájl vagy könyvtár kiválasztásához."
 
-#: gui/options.cpp:2606
+#: gui/options.cpp:2600
 msgid "Update Icons"
 msgstr "Ikonok frissítése"
 
-#: gui/options.cpp:2606
+#: gui/options.cpp:2600
 msgid "Check for updates of icon packs"
 msgstr "Ellenőrizd az ikon csomagok frissítését"
 
-#: gui/options.cpp:2613
+#: gui/options.cpp:2607
 msgid "Autosave:"
 msgstr "Automentés:"
 
-#: gui/options.cpp:2615
+#: gui/options.cpp:2609
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "Automentés:"
 
-#: gui/options.cpp:2626
+#: gui/options.cpp:2620
 msgid "Random seed:"
 msgstr "Véletlen mag:"
 
-#: gui/options.cpp:2626
+#: gui/options.cpp:2620
 msgid "Seed for initializing all random number generators"
 msgstr "Mag az összes véletlenszám-generátor inicializálásához"
 
-#: gui/options.cpp:2634
+#: gui/options.cpp:2628
 msgid "Debug level:"
 msgstr "Hibakeresési szint:"
 
 #. I18N: Debug level -1, no messages
-#: gui/options.cpp:2638 gui/options.cpp:2777
+#: gui/options.cpp:2632 gui/options.cpp:2771
 msgid "None"
 msgstr "Semmi"
 
 #. I18N: Debug level 11, all messages
-#: gui/options.cpp:2644
+#: gui/options.cpp:2638
 msgid "11 (all)"
 msgstr "11 (mind)"
 
-#: gui/options.cpp:2648
+#: gui/options.cpp:2642
 msgid "Enable Discord integration"
 msgstr "Engedélyezze a Discord integrációt"
 
-#: gui/options.cpp:2649
+#: gui/options.cpp:2643
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
@@ -1908,27 +1908,27 @@ msgstr ""
 "Információk megjelenítése a Discordon játszott játékokról, ha a Discord "
 "kliens fut."
 
-#: gui/options.cpp:2659 gui/updates-dialog.cpp:85
+#: gui/options.cpp:2653 gui/updates-dialog.cpp:85
 msgid "Update check:"
 msgstr "Frissítés ellenõrzés:"
 
-#: gui/options.cpp:2659
+#: gui/options.cpp:2653
 msgid "How often to check ScummVM updates"
 msgstr "Milyen gyakran ellenõrizze a ScummVM frissítéseket"
 
-#: gui/options.cpp:2670
+#: gui/options.cpp:2664
 msgid "Check now"
 msgstr "Ellenõrzés most"
 
-#: gui/options.cpp:2678
+#: gui/options.cpp:2672
 msgid "Active storage:"
 msgstr "Aktív tároló:"
 
-#: gui/options.cpp:2678
+#: gui/options.cpp:2672
 msgid "Active cloud storage"
 msgstr "Aktív felhõ tároló"
 
-#: gui/options.cpp:2687
+#: gui/options.cpp:2681
 #, fuzzy
 #| msgctxt "lowres"
 #| msgid ""
@@ -1941,7 +1941,7 @@ msgstr ""
 "4. A tároló még nem engedélyezett. Ellenõrizd a felhasználóneved és "
 "engedélyezd:"
 
-#: gui/options.cpp:2689
+#: gui/options.cpp:2683
 #, fuzzy
 #| msgid ""
 #| "4. Storage is not yet enabled. Verify that username is correct and enable "
@@ -1952,102 +1952,102 @@ msgstr ""
 "4. A tároló még nem engedélyezett. Ellenõrizd a felhasználóneved és "
 "engedélyezd:"
 
-#: gui/options.cpp:2690
+#: gui/options.cpp:2684
 msgid "Enable storage"
 msgstr "Tároló engedélyezése"
 
-#: gui/options.cpp:2690
+#: gui/options.cpp:2684
 msgid "Confirm you want to use this account for this storage"
 msgstr "Erõsítsd meg, hogy ezt a fiókot akarod használni a tároláshoz"
 
-#: gui/options.cpp:2692 backends/platform/wii/options.cpp:113
+#: gui/options.cpp:2686 backends/platform/wii/options.cpp:113
 msgid "Username:"
 msgstr "Felhasználó:"
 
-#: gui/options.cpp:2692
+#: gui/options.cpp:2686
 msgid "Username used by this storage"
 msgstr "Felhasználónév ehhez a tárolóhoz"
 
-#: gui/options.cpp:2693
+#: gui/options.cpp:2687
 msgid "<none>"
 msgstr "<nincs>"
 
-#: gui/options.cpp:2695
+#: gui/options.cpp:2689
 msgid "Used space:"
 msgstr "Használt hely:"
 
-#: gui/options.cpp:2695
+#: gui/options.cpp:2689
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr "ScummVM mentésekhez használt hely ezen a tárolón"
 
-#: gui/options.cpp:2698
+#: gui/options.cpp:2692
 msgid "Last sync:"
 msgstr "Utolsó szink:"
 
-#: gui/options.cpp:2698
+#: gui/options.cpp:2692
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Mikor volt az utoljára mentett játékok szinkronizálása ezen a tárolón"
 
-#: gui/options.cpp:2699 gui/options.cpp:3574
+#: gui/options.cpp:2693 gui/options.cpp:3568
 msgid "<never>"
 msgstr "<soha>"
 
-#: gui/options.cpp:2701
+#: gui/options.cpp:2695
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "A mentett játékok automatikusan szinkronizálódnak indításkor, mentés és "
 "betöltésekor."
 
-#: gui/options.cpp:2703
+#: gui/options.cpp:2697
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "A mentett játékok automatikusan szinkronizálódnak indításkor, mentés és "
 "betöltésekor."
 
-#: gui/options.cpp:2704
+#: gui/options.cpp:2698
 msgid "Sync now"
 msgstr "Szink most"
 
-#: gui/options.cpp:2704
+#: gui/options.cpp:2698
 msgid "Start saved games sync"
 msgstr "Indítsd el a mentett játékok szinkronizálását"
 
-#: gui/options.cpp:2707
+#: gui/options.cpp:2701
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "Töltsd le a játék fájljait a saját felhõ ScummVM mappádból:"
 
-#: gui/options.cpp:2709
+#: gui/options.cpp:2703
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "Töltsd le a játék fájljait a saját felhõ ScummVM mappádból:"
 
-#: gui/options.cpp:2710
+#: gui/options.cpp:2704
 msgid "Download game files"
 msgstr "Játék fájlok letöltése"
 
-#: gui/options.cpp:2710
+#: gui/options.cpp:2704
 msgid "Open downloads manager dialog"
 msgstr "Letöltéskezelõ párbeszédablak megnyitása"
 
-#: gui/options.cpp:2713
+#: gui/options.cpp:2707
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "A tároló fiók megváltoztatásához lépj ki és csatlakozz újra:"
 
-#: gui/options.cpp:2715
+#: gui/options.cpp:2709
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "A tároló fiók megváltoztatásához lépj ki és csatlakozz újra:"
 
-#: gui/options.cpp:2716
+#: gui/options.cpp:2710
 msgid "Disconnect"
 msgstr "Szétkapcsolás"
 
-#: gui/options.cpp:2716
+#: gui/options.cpp:2710
 msgid "Stop using this storage on this device"
 msgstr "Hagyd abba a tároló használatát ezen az eszközön"
 
-#: gui/options.cpp:2719
+#: gui/options.cpp:2713
 #, fuzzy
 #| msgctxt "lowres"
 #| msgid "This storage is not connected yet! To connect,"
@@ -2055,81 +2055,81 @@ msgctxt "lowres"
 msgid "This storage is not connected yet!"
 msgstr "A tároló még nincs csatlakoztatva! A kapcsolódáshoz,"
 
-#: gui/options.cpp:2721
+#: gui/options.cpp:2715
 #, fuzzy
 #| msgid "This storage is not connected yet! To connect,"
 msgid "This storage is not connected yet!"
 msgstr "A tároló még nincs csatlakoztatva! A kapcsolódáshoz,"
 
-#: gui/options.cpp:2722
+#: gui/options.cpp:2716
 #, fuzzy
 #| msgid "3. Connect"
 msgid "Connect"
 msgstr "3. Kapcsolódás"
 
-#: gui/options.cpp:2722
+#: gui/options.cpp:2716
 msgid "Connect your cloud storage account"
 msgstr "Csatlakozás a felhõtároló fiókodhoz"
 
-#: gui/options.cpp:2735
+#: gui/options.cpp:2729
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "/gyökér/ Útvonal:"
 
-#: gui/options.cpp:2735 gui/options.cpp:2737 gui/options.cpp:2738
+#: gui/options.cpp:2729 gui/options.cpp:2731 gui/options.cpp:2732
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr ""
 "Válaszd ki, melyik könyvtár jelenjen meg /gyökér/ néven a Fájlkezelõben"
 
-#: gui/options.cpp:2737
+#: gui/options.cpp:2731
 msgid "/root/ Path:"
 msgstr "/gyökér/ Útvonal:"
 
-#: gui/options.cpp:2743
+#: gui/options.cpp:2737
 msgid "Server's port:"
 msgstr "Szerver portja:"
 
-#: gui/options.cpp:2743
+#: gui/options.cpp:2737
 msgid "Port for server to use"
 msgstr "Port a kiszolgáló számára"
 
-#: gui/options.cpp:2748
+#: gui/options.cpp:2742
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "Futtass kiszolgálót a fájlkezeléshez böngészõvel (ugyanabban a hálózatban)."
 
-#: gui/options.cpp:2749
+#: gui/options.cpp:2743
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
 msgstr "Az Opciók párbeszédpanel bezárása leállítja a szervert."
 
-#: gui/options.cpp:2751
+#: gui/options.cpp:2745
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "Futtass kiszolgálót a fájlkezeléshez böngészõvel (ugyanabban a hálózatban)."
 
-#: gui/options.cpp:2752
+#: gui/options.cpp:2746
 msgid "Closing options dialog will stop the server."
 msgstr "Az Opciók párbeszédpanel bezárása leállítja a szervert."
 
-#: gui/options.cpp:2764
+#: gui/options.cpp:2758
 msgid "Use Text to speech"
 msgstr "Használd a Szövegbõl beszédet"
 
-#: gui/options.cpp:2764
+#: gui/options.cpp:2758
 msgid "Will read text in gui on mouse over."
 msgstr "Olvassa a szöveget gui-ban az egérrel."
 
-#: gui/options.cpp:2838
+#: gui/options.cpp:2832
 msgid "Ignore"
 msgstr "Mellőz"
 
-#: gui/options.cpp:2839
+#: gui/options.cpp:2833
 msgid "Disable autosave"
 msgstr "Automentés letiltás"
 
-#: gui/options.cpp:2840
+#: gui/options.cpp:2834
 msgid ""
 "WARNING: Autosave was enabled. Some of your games have existing saved games "
 "on the autosave slot. You can either move the existing saves to new slots, "
@@ -2144,7 +2144,7 @@ msgstr ""
 "felülírja a mentést).\n"
 "A játékok listája:\n"
 
-#: gui/options.cpp:2849
+#: gui/options.cpp:2843
 msgid ""
 "\n"
 "And more..."
@@ -2152,31 +2152,31 @@ msgstr ""
 "\n"
 "És több..."
 
-#: gui/options.cpp:2850 engines/engine.cpp:596
+#: gui/options.cpp:2844 engines/engine.cpp:596
 msgid "Move"
 msgstr "Mozgás"
 
-#: gui/options.cpp:2863
+#: gui/options.cpp:2857
 msgid "ERROR: Failed to move the following saved games:\n"
 msgstr "HIBA: Nem sikerült áthelyezni a következő mentett játékokat:\n"
 
-#: gui/options.cpp:2955
+#: gui/options.cpp:2949
 msgid "Failed to change cloud storage!"
 msgstr "Felhõtároló csere nem sikerült!"
 
-#: gui/options.cpp:2958
+#: gui/options.cpp:2952
 msgid "Another cloud storage is already active."
 msgstr "Egy másik felhõtároló már aktív."
 
-#: gui/options.cpp:3069
+#: gui/options.cpp:3063
 msgid "Theme does not support selected language!"
 msgstr "A téma nem támogatja a választott nyelvet!"
 
-#: gui/options.cpp:3072
+#: gui/options.cpp:3066
 msgid "Theme cannot be loaded!"
 msgstr "A témát nem lehet betölteni!"
 
-#: gui/options.cpp:3075
+#: gui/options.cpp:3069
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -2184,47 +2184,47 @@ msgstr ""
 "\n"
 "A különbözõ beállítások visszaállítva."
 
-#: gui/options.cpp:3147
+#: gui/options.cpp:3141
 msgid "Select directory for GUI themes"
 msgstr "GUI téma mappa kiválasztása"
 
-#: gui/options.cpp:3157
+#: gui/options.cpp:3151
 msgid "Select directory for GUI launcher thumbnails"
 msgstr "Válaszd ki a GUI bélyegképeinek könyvtárát"
 
-#: gui/options.cpp:3167
+#: gui/options.cpp:3161
 msgid "Select directory for extra files"
 msgstr "Mappa választás az extra fájloknak"
 
-#: gui/options.cpp:3178
+#: gui/options.cpp:3172
 msgid "Select directory for plugins"
 msgstr "Plugin mappa kiválasztása"
 
-#: gui/options.cpp:3191
+#: gui/options.cpp:3185
 msgid "Select directory for Files Manager /root/"
 msgstr "Válassz mappát a Fájlkezelõnek /gyökér/"
 
-#: gui/options.cpp:3207
+#: gui/options.cpp:3201
 msgid "icon packs"
 msgstr "ikon csomagok"
 
-#: gui/options.cpp:3218
+#: gui/options.cpp:3212
 msgid "shader packs"
 msgstr "shader csomagok"
 
-#: gui/options.cpp:3367
+#: gui/options.cpp:3361
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Ez a tároló már aktív. Meg akarod szakítani?"
 
-#: gui/options.cpp:3376
+#: gui/options.cpp:3370
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Várj amíg a jelenlegi tároló befejezi és próbáld újra."
 
-#: gui/options.cpp:3572 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:3566 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<épp most>"
 
-#: gui/options.cpp:3715
+#: gui/options.cpp:3709
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -2232,7 +2232,7 @@ msgstr ""
 "A kérés nem sikerült.\n"
 "Ellenõrizd az internetkapcsolatot."
 
-#: gui/options.cpp:3739
+#: gui/options.cpp:3733
 msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
@@ -2240,7 +2240,7 @@ msgstr ""
 "Egy tesztminta megjelenítve.\n"
 "Megtartod ezeket a shader skaláris beállításokat?"
 
-#: gui/options.cpp:3742
+#: gui/options.cpp:3736
 #, c-format
 msgid "Reverting automatically in %d seconds"
 msgstr "Auto visszaállítás %d másodperc múlva"

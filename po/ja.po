@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-10 20:44+0000\n"
+"POT-Creation-Date: 2023-05-10 20:52+0000\n"
 "PO-Revision-Date: 2023-05-07 15:40+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -60,7 +60,7 @@ msgstr "上へ"
 #: gui/downloadpacksdialog.cpp:267 gui/downloadpacksdialog.cpp:462
 #: gui/editgamedialog.cpp:352 gui/editrecorddialog.cpp:66
 #: gui/filebrowser-dialog.cpp:68 gui/fluidsynth-dialog.cpp:152
-#: gui/massadd.cpp:93 gui/options.cpp:2343 gui/predictivedialog.cpp:68
+#: gui/massadd.cpp:93 gui/options.cpp:2337 gui/predictivedialog.cpp:68
 #: gui/recorderdialog.cpp:73 gui/recorderdialog.cpp:212
 #: gui/remotebrowser.cpp:59 gui/saveload-dialog.cpp:64
 #: gui/saveload-dialog.cpp:455 gui/saveload-dialog.cpp:526
@@ -127,23 +127,23 @@ msgstr ""
 "ブラウザーがScummVMにデータを転送するため、\n"
 "このモードではLocal Webserverの起動が必要です"
 
-#: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:3657
+#: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:3651
 msgid "Stop server"
 msgstr "サーバーを停止"
 
-#: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:2730
+#: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:2724
 msgid "Run server"
 msgstr "サーバーを起動"
 
-#: gui/cloudconnectionwizard.cpp:236 gui/options.cpp:3658
+#: gui/cloudconnectionwizard.cpp:236 gui/options.cpp:3652
 msgid "Stop local webserver"
 msgstr "ローカルサーバーを停止する"
 
-#: gui/cloudconnectionwizard.cpp:236 gui/options.cpp:2730
+#: gui/cloudconnectionwizard.cpp:236 gui/options.cpp:2724
 msgid "Run local webserver"
 msgstr "ローカルサーバーを起動する"
 
-#: gui/cloudconnectionwizard.cpp:244 gui/options.cpp:2731 gui/options.cpp:3665
+#: gui/cloudconnectionwizard.cpp:244 gui/options.cpp:2725 gui/options.cpp:3659
 msgid "Not running"
 msgstr "停止中"
 
@@ -255,9 +255,9 @@ msgid "Another Storage is working right now. Do you want to interrupt it?"
 msgstr "すでに別のストレージが使用されています。切断しますか?"
 
 #: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
-#: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:136
-#: gui/fluidsynth-dialog.cpp:217 gui/launcher.cpp:415 gui/launcher.cpp:444
-#: gui/launcher.cpp:487 gui/options.cpp:3367 gui/options.cpp:3741
+#: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:415 gui/launcher.cpp:444
+#: gui/launcher.cpp:487 gui/options.cpp:3361 gui/options.cpp:3735
 #: base/main.cpp:595 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
@@ -269,9 +269,9 @@ msgid "Yes"
 msgstr "はい"
 
 #: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
-#: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:136
-#: gui/fluidsynth-dialog.cpp:217 gui/launcher.cpp:415 gui/launcher.cpp:444
-#: gui/launcher.cpp:487 gui/options.cpp:3367 gui/options.cpp:3741
+#: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:415 gui/launcher.cpp:444
+#: gui/launcher.cpp:487 gui/options.cpp:3361 gui/options.cpp:3735
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
@@ -293,7 +293,7 @@ msgstr "JSONコードの内容が不正です。"
 #: gui/cloudconnectionwizard.cpp:551 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:543 gui/launcher.cpp:547
-#: gui/massadd.cpp:90 gui/options.cpp:2345 gui/predictivedialog.cpp:69
+#: gui/massadd.cpp:90 gui/options.cpp:2339 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1221 engines/engine.cpp:544 engines/engine.cpp:567
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/buried/saveload.cpp:69
@@ -323,7 +323,7 @@ msgstr "不正なJSONです。"
 msgid "Interrupted."
 msgstr "接続失敗。"
 
-#: gui/cloudconnectionwizard.cpp:609 gui/options.cpp:3358
+#: gui/cloudconnectionwizard.cpp:609 gui/options.cpp:3352
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -514,11 +514,11 @@ msgid ""
 "English"
 msgstr "ゲームの言語です。スペイン語版を英語版に変換はしません"
 
-#: gui/editgamedialog.cpp:153 gui/editgamedialog.cpp:168 gui/options.cpp:1587
-#: gui/options.cpp:1602 gui/options.cpp:1619 gui/options.cpp:1633
-#: gui/options.cpp:1673 gui/options.cpp:1689 gui/options.cpp:2086
-#: gui/options.cpp:2508 gui/options.cpp:2561 gui/options.cpp:2779
-#: gui/options.cpp:3245 audio/null.cpp:45
+#: gui/editgamedialog.cpp:153 gui/editgamedialog.cpp:168 gui/options.cpp:1581
+#: gui/options.cpp:1596 gui/options.cpp:1613 gui/options.cpp:1627
+#: gui/options.cpp:1667 gui/options.cpp:1683 gui/options.cpp:2080
+#: gui/options.cpp:2502 gui/options.cpp:2555 gui/options.cpp:2773
+#: gui/options.cpp:3239 audio/null.cpp:45
 #: backends/platform/android/options.cpp:137
 #: backends/platform/android/options.cpp:138 engines/ags/dialogs.cpp:62
 msgid "<default>"
@@ -538,13 +538,13 @@ msgctxt "lowres"
 msgid "Platform:"
 msgstr "プラットフォーム："
 
-#: gui/editgamedialog.cpp:191 gui/options.cpp:2019 gui/options.cpp:2192
+#: gui/editgamedialog.cpp:191 gui/options.cpp:2013 gui/options.cpp:2186
 #: backends/graphics/atari/atari-graphics.cpp:559
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Graphics"
 msgstr "画像"
 
-#: gui/editgamedialog.cpp:191 gui/options.cpp:2019 gui/options.cpp:2192
+#: gui/editgamedialog.cpp:191 gui/options.cpp:2013 gui/options.cpp:2186
 msgid "GFX"
 msgstr "GFX"
 
@@ -557,11 +557,11 @@ msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "グローバルグラフィック設定を上書き"
 
-#: gui/editgamedialog.cpp:212 gui/options.cpp:2226 engines/dialogs.cpp:315
+#: gui/editgamedialog.cpp:212 gui/options.cpp:2220 engines/dialogs.cpp:315
 msgid "Keymaps"
 msgstr "キーマップ"
 
-#: gui/editgamedialog.cpp:219 gui/options.cpp:2233 engines/dialogs.cpp:322
+#: gui/editgamedialog.cpp:219 gui/options.cpp:2227 engines/dialogs.cpp:322
 msgid "Backend"
 msgstr "バックエンド"
 
@@ -574,7 +574,7 @@ msgctxt "lowres"
 msgid "Override global backend settings"
 msgstr "バックエンドのグローバル設定を上書き"
 
-#: gui/editgamedialog.cpp:238 gui/options.cpp:2247 engines/dialogs.cpp:290
+#: gui/editgamedialog.cpp:238 gui/options.cpp:2241 engines/dialogs.cpp:290
 msgid "Audio"
 msgstr "オーディオ"
 
@@ -587,11 +587,11 @@ msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "グローバルオーディオ設定を上書き"
 
-#: gui/editgamedialog.cpp:252 gui/options.cpp:2252
+#: gui/editgamedialog.cpp:252 gui/options.cpp:2246
 msgid "Volume"
 msgstr "ボリューム"
 
-#: gui/editgamedialog.cpp:254 gui/options.cpp:2254
+#: gui/editgamedialog.cpp:254 gui/options.cpp:2248
 msgctxt "lowres"
 msgid "Volume"
 msgstr "音量"
@@ -605,7 +605,7 @@ msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "全般の音量設定を上書きする"
 
-#: gui/editgamedialog.cpp:270 gui/options.cpp:2262
+#: gui/editgamedialog.cpp:270 gui/options.cpp:2256
 msgid "MIDI"
 msgstr "MIDI"
 
@@ -618,7 +618,7 @@ msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "全般のMIDI設定を上書きする"
 
-#: gui/editgamedialog.cpp:285 gui/options.cpp:2268
+#: gui/editgamedialog.cpp:285 gui/options.cpp:2262
 msgid "MT-32"
 msgstr "MT-32"
 
@@ -631,11 +631,11 @@ msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "全般のMT-32設定を上書きする"
 
-#: gui/editgamedialog.cpp:299 gui/options.cpp:2275
+#: gui/editgamedialog.cpp:299 gui/options.cpp:2269
 msgid "Paths"
 msgstr "フォルダー"
 
-#: gui/editgamedialog.cpp:301 gui/options.cpp:2277
+#: gui/editgamedialog.cpp:301 gui/options.cpp:2271
 msgctxt "lowres"
 msgid "Paths"
 msgstr "フォルダー"
@@ -649,7 +649,7 @@ msgctxt "lowres"
 msgid "Game Path:"
 msgstr "ゲームフォルダー："
 
-#: gui/editgamedialog.cpp:315 gui/options.cpp:2464
+#: gui/editgamedialog.cpp:315 gui/options.cpp:2458
 msgid "Extra Path:"
 msgstr "追加フォルダー："
 
@@ -658,21 +658,21 @@ msgstr "追加フォルダー："
 msgid "Specifies path to additional data used by the game"
 msgstr "使用する追加データのパスを指定"
 
-#: gui/editgamedialog.cpp:317 gui/options.cpp:2466
+#: gui/editgamedialog.cpp:317 gui/options.cpp:2460
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "追加フォルダー："
 
-#: gui/editgamedialog.cpp:324 gui/options.cpp:2440
+#: gui/editgamedialog.cpp:324 gui/options.cpp:2434
 msgid "Save Path:"
 msgstr "セーブのフォルダー："
 
 #: gui/editgamedialog.cpp:324 gui/editgamedialog.cpp:326
-#: gui/editgamedialog.cpp:327 gui/options.cpp:2440 gui/options.cpp:2442
+#: gui/editgamedialog.cpp:327 gui/options.cpp:2434 gui/options.cpp:2436
 msgid "Specifies where your saved games are put"
 msgstr "指定されたフォルダーにセーブデータが保存されます"
 
-#: gui/editgamedialog.cpp:326 gui/options.cpp:2442
+#: gui/editgamedialog.cpp:326 gui/options.cpp:2436
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "セーブのフォルダー："
@@ -686,25 +686,25 @@ msgid "Statistics"
 msgstr "統計"
 
 #: gui/editgamedialog.cpp:366 gui/editgamedialog.cpp:468
-#: gui/editgamedialog.cpp:530 gui/editgamedialog.cpp:597 gui/options.cpp:1191
-#: gui/options.cpp:2368 gui/options.cpp:2370 gui/options.cpp:2375
-#: gui/options.cpp:2408 gui/options.cpp:2451 gui/options.cpp:2467
-#: gui/options.cpp:2476 gui/options.cpp:2898 gui/options.cpp:2900
-#: gui/options.cpp:2904 gui/options.cpp:2913 gui/options.cpp:3226
-#: gui/options.cpp:3232 gui/options.cpp:3239 gui/options.cpp:3264
-#: gui/options.cpp:3275
+#: gui/editgamedialog.cpp:530 gui/editgamedialog.cpp:597 gui/options.cpp:1187
+#: gui/options.cpp:2362 gui/options.cpp:2364 gui/options.cpp:2369
+#: gui/options.cpp:2402 gui/options.cpp:2445 gui/options.cpp:2461
+#: gui/options.cpp:2470 gui/options.cpp:2892 gui/options.cpp:2894
+#: gui/options.cpp:2898 gui/options.cpp:2907 gui/options.cpp:3220
+#: gui/options.cpp:3226 gui/options.cpp:3233 gui/options.cpp:3258
+#: gui/options.cpp:3269
 msgctxt "path"
 msgid "None"
 msgstr "未設定"
 
 #: gui/editgamedialog.cpp:371 gui/editgamedialog.cpp:474
-#: gui/editgamedialog.cpp:601 gui/options.cpp:2367 gui/options.cpp:2369
-#: gui/options.cpp:2897 gui/options.cpp:2899 gui/options.cpp:3229
-#: gui/options.cpp:3235 backends/platform/wii/options.cpp:55
+#: gui/editgamedialog.cpp:601 gui/options.cpp:2361 gui/options.cpp:2363
+#: gui/options.cpp:2891 gui/options.cpp:2893 gui/options.cpp:3223
+#: gui/options.cpp:3229 backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "デフォルト"
 
-#: gui/editgamedialog.cpp:523 gui/options.cpp:3269
+#: gui/editgamedialog.cpp:523 gui/options.cpp:3263
 msgid "Select SoundFont"
 msgstr "SoundFontファイルを選択してください"
 
@@ -712,11 +712,11 @@ msgstr "SoundFontファイルを選択してください"
 msgid "Select additional game directory"
 msgstr "ゲームの追加データのフォルダーを選択してください"
 
-#: gui/editgamedialog.cpp:575 gui/options.cpp:3131
+#: gui/editgamedialog.cpp:575 gui/options.cpp:3125
 msgid "Select directory for saved games"
 msgstr "セーブデータのフォルダーを選択してください"
 
-#: gui/editgamedialog.cpp:582 gui/options.cpp:3138
+#: gui/editgamedialog.cpp:582 gui/options.cpp:3132
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "選択されたディレクトリーに保存できません。別の場所を選択してください。"
 
@@ -748,7 +748,7 @@ msgstr "ロードするファイルを選択してください"
 msgid "Enter filename for saving"
 msgstr "セーブデータの名前を入力してください"
 
-#: gui/filebrowser-dialog.cpp:136
+#: gui/filebrowser-dialog.cpp:135
 msgid "Do you really want to overwrite the file?"
 msgstr "本当に上書きしてもよろしいですか?"
 
@@ -805,7 +805,7 @@ msgstr "サイン"
 msgid "Triangle"
 msgstr "三角"
 
-#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:2292
+#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:2286
 msgid "Misc"
 msgstr "その他"
 
@@ -838,12 +838,12 @@ msgstr "リセット"
 msgid "Reset all FluidSynth settings to their default values."
 msgstr "FluidSynthの設定をデフォルトにリセットします。"
 
-#: gui/fluidsynth-dialog.cpp:217
+#: gui/fluidsynth-dialog.cpp:209
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr "FluidSynthの設定を全てリセットしてもよろしいですか?"
 
-#: gui/gui-manager.cpp:153 gui/options.cpp:2283
+#: gui/gui-manager.cpp:153 gui/options.cpp:2277
 msgid "GUI"
 msgstr "GUI"
 
@@ -1170,39 +1170,39 @@ msgstr "ゲーム設定(~G~)..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1176 gui/launcher.cpp:1370
+#: gui/launcher.cpp:1176 gui/launcher.cpp:1359
 msgid "Unknown Engine"
 msgstr "不明なエンジン"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1193 gui/launcher.cpp:1387
+#: gui/launcher.cpp:1193 gui/launcher.cpp:1376
 msgid "Unknown Publisher"
 msgstr "不明な販売元"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1210 gui/launcher.cpp:1404
+#: gui/launcher.cpp:1210 gui/launcher.cpp:1393
 msgid "No Series"
 msgstr "シリーズなし"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1224 gui/launcher.cpp:1418
+#: gui/launcher.cpp:1224 gui/launcher.cpp:1407
 msgid "Language not detected"
 msgstr "検出されない言語"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1238 gui/launcher.cpp:1432
+#: gui/launcher.cpp:1238 gui/launcher.cpp:1421
 msgid "Platform not detected"
 msgstr "検出されない機種"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1443 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1432 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "すべて"
 
-#: gui/launcher.cpp:1594
+#: gui/launcher.cpp:1581
 msgid "Icons per row:"
 msgstr "1行のアイコン："
 
@@ -1291,13 +1291,13 @@ msgstr "スモール"
 
 #: gui/options.cpp:446 gui/options.cpp:761 gui/options.cpp:861
 #: gui/options.cpp:866 gui/options.cpp:889 gui/options.cpp:894
-#: gui/options.cpp:1098 gui/options.cpp:1648
+#: gui/options.cpp:1098 gui/options.cpp:1642
 msgctxt "shader"
 msgid "None"
 msgstr "なし"
 
-#: gui/options.cpp:496 gui/options.cpp:1000 gui/options.cpp:1166
-#: gui/options.cpp:1335 gui/options.cpp:1792
+#: gui/options.cpp:496 gui/options.cpp:1000 gui/options.cpp:1164
+#: gui/options.cpp:1329 gui/options.cpp:1786
 msgctxt "soundfont"
 msgid "None"
 msgstr "なし"
@@ -1334,240 +1334,240 @@ msgstr "垂直同期設定を変更できませんでした"
 msgid "the shader could not be changed"
 msgstr "シェーダーを変更できませんでした"
 
-#: gui/options.cpp:1415 backends/platform/ios7/ios7_options.mm:68
+#: gui/options.cpp:1409 backends/platform/ios7/ios7_options.mm:68
 msgid "Touchpad mouse mode"
 msgstr "タッチパッドマウスモード"
 
-#: gui/options.cpp:1420
+#: gui/options.cpp:1414
 msgid "Pointer Speed:"
 msgstr "ポインターの速度："
 
-#: gui/options.cpp:1420 gui/options.cpp:1422 gui/options.cpp:1423
+#: gui/options.cpp:1414 gui/options.cpp:1416 gui/options.cpp:1417
 msgid "Speed for keyboard/joystick mouse pointer control"
 msgstr "キーボードとジョイスティックのポインターの速度"
 
-#: gui/options.cpp:1422
+#: gui/options.cpp:1416
 msgctxt "lowres"
 msgid "Pointer Speed:"
 msgstr "ポインターの速度："
 
-#: gui/options.cpp:1433
+#: gui/options.cpp:1427
 msgid "Joy Deadzone:"
 msgstr "ジョイスティックのNull領域："
 
-#: gui/options.cpp:1433 gui/options.cpp:1435 gui/options.cpp:1436
+#: gui/options.cpp:1427 gui/options.cpp:1429 gui/options.cpp:1430
 msgid "Analog joystick Deadzone"
 msgstr "アナログジョイスティックのNull領域"
 
-#: gui/options.cpp:1435
+#: gui/options.cpp:1429
 msgctxt "lowres"
 msgid "Joy Deadzone:"
 msgstr "ジョイスティックのNull領域："
 
-#: gui/options.cpp:1531
+#: gui/options.cpp:1525
 #, c-format
 msgid "%d hidden achievements remaining"
 msgstr "%dロックされた実績があります"
 
-#: gui/options.cpp:1536
+#: gui/options.cpp:1530
 #, c-format
 msgid "Achievements unlocked: %d/%d"
 msgstr "解除された実績：%d／%d"
 
-#: gui/options.cpp:1582
+#: gui/options.cpp:1576
 msgid "Graphics mode:"
 msgstr "画像モード："
 
-#: gui/options.cpp:1598
+#: gui/options.cpp:1592
 msgid "Render mode:"
 msgstr "レンダー："
 
-#: gui/options.cpp:1598 gui/options.cpp:1601
+#: gui/options.cpp:1592 gui/options.cpp:1595
 msgid "Special dithering modes supported by some games"
 msgstr "ゲームによって使える特別なディザリングモード"
 
-#: gui/options.cpp:1614
+#: gui/options.cpp:1608
 msgid "Stretch mode:"
 msgstr "拡大モード："
 
-#: gui/options.cpp:1630
+#: gui/options.cpp:1624
 msgid "Scaler:"
 msgstr "スケーラー："
 
-#: gui/options.cpp:1645
+#: gui/options.cpp:1639
 msgid "Shader:"
 msgstr "シェーダー："
 
-#: gui/options.cpp:1645 gui/options.cpp:1647 gui/options.cpp:1648
+#: gui/options.cpp:1639 gui/options.cpp:1641 gui/options.cpp:1642
 msgid "Specifies path to the shader used for scaling the game screen"
 msgstr "画面のスケーリングに使用するシェーダーのパスを指定"
 
-#: gui/options.cpp:1647
+#: gui/options.cpp:1641
 msgctxt "lowres"
 msgid "Shader Path:"
 msgstr "パス："
 
-#: gui/options.cpp:1654
+#: gui/options.cpp:1648
 msgid "Update Shaders"
 msgstr "シェーダーの更新"
 
-#: gui/options.cpp:1654
+#: gui/options.cpp:1648
 msgid "Check for updates of shader packs"
 msgstr "シェーダーパックの更新を確認"
 
-#: gui/options.cpp:1660 backends/graphics/sdl/sdl-graphics.cpp:416
+#: gui/options.cpp:1654 backends/graphics/sdl/sdl-graphics.cpp:416
 msgid "Fullscreen mode"
 msgstr "全面モード"
 
-#: gui/options.cpp:1663
+#: gui/options.cpp:1657
 msgid "V-Sync"
 msgstr "V-Sync"
 
-#: gui/options.cpp:1663
+#: gui/options.cpp:1657
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
 msgstr "ティアリング防止のため、垂直同期の更新を待つ"
 
-#: gui/options.cpp:1668
+#: gui/options.cpp:1662
 msgid "Game 3D Renderer:"
 msgstr "ゲームの3Dレンダラー："
 
-#: gui/options.cpp:1670
+#: gui/options.cpp:1664
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
 msgstr "3Dレンダラー："
 
-#: gui/options.cpp:1687
+#: gui/options.cpp:1681
 msgid "3D Anti-aliasing:"
 msgstr "3Dアンチエイリアス："
 
-#: gui/options.cpp:1691 engines/mohawk/dialogs.cpp:365
+#: gui/options.cpp:1685 engines/mohawk/dialogs.cpp:365
 msgid "Disabled"
 msgstr "無効"
 
-#: gui/options.cpp:1699
+#: gui/options.cpp:1693
 msgid "Filter graphics"
 msgstr "画像フィルター"
 
-#: gui/options.cpp:1699
+#: gui/options.cpp:1693
 msgid "Use linear filtering when scaling graphics"
 msgstr "線形フィルターによる画像を拡大する"
 
-#: gui/options.cpp:1702
+#: gui/options.cpp:1696
 msgid "Aspect ratio correction"
 msgstr "縦横比調整"
 
-#: gui/options.cpp:1702
+#: gui/options.cpp:1696
 msgid "Correct aspect ratio for games"
 msgstr "ゲームの縦横比を調整する"
 
-#: gui/options.cpp:1710
+#: gui/options.cpp:1704
 msgid "Preferred device:"
 msgstr "優先デバイス："
 
-#: gui/options.cpp:1710
+#: gui/options.cpp:1704
 msgid "Music device:"
 msgstr "音楽デバイス："
 
-#: gui/options.cpp:1710 gui/options.cpp:1712
+#: gui/options.cpp:1704 gui/options.cpp:1706
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr "優先の音楽デバイスかエミュレーター"
 
-#: gui/options.cpp:1710 gui/options.cpp:1712 gui/options.cpp:1713
+#: gui/options.cpp:1704 gui/options.cpp:1706 gui/options.cpp:1707
 msgid "Specifies output sound device or sound card emulator"
 msgstr "出力用の音楽デバイスかエミュレーター"
 
-#: gui/options.cpp:1712
+#: gui/options.cpp:1706
 msgctxt "lowres"
 msgid "Preferred dev.:"
 msgstr "優先デバイス："
 
-#: gui/options.cpp:1712
+#: gui/options.cpp:1706
 msgctxt "lowres"
 msgid "Music device:"
 msgstr "音楽デバイス："
 
-#: gui/options.cpp:1739
+#: gui/options.cpp:1733
 msgid "AdLib emulator:"
 msgstr "AdLibエミュレーター："
 
-#: gui/options.cpp:1739 gui/options.cpp:1742
+#: gui/options.cpp:1733 gui/options.cpp:1736
 msgid "AdLib is used for music in many games"
 msgstr "多くのゲームがAdLibで音楽を再生します"
 
-#: gui/options.cpp:1755
+#: gui/options.cpp:1749
 msgid "GM device:"
 msgstr "GMデバイス："
 
-#: gui/options.cpp:1755
+#: gui/options.cpp:1749
 msgid "Specifies default sound device for General MIDI output"
 msgstr "デフォルトのGeneral MIDI出力デバイス"
 
-#: gui/options.cpp:1766
+#: gui/options.cpp:1760
 msgid "Don't use General MIDI music"
 msgstr "General MIDIを使用しない"
 
-#: gui/options.cpp:1777 gui/options.cpp:1839
+#: gui/options.cpp:1771 gui/options.cpp:1833
 msgid "Use first available device"
 msgstr "最初の使用可能デバイスを使用する"
 
-#: gui/options.cpp:1789
+#: gui/options.cpp:1783
 msgid "SoundFont:"
 msgstr "SoundFont："
 
-#: gui/options.cpp:1789 gui/options.cpp:1791 gui/options.cpp:1792
+#: gui/options.cpp:1783 gui/options.cpp:1785 gui/options.cpp:1786
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr ""
 "SoundFontはいくつかのオーディオカード、FluidSynth、Timidityでサポートされてい"
 "ます"
 
-#: gui/options.cpp:1791
+#: gui/options.cpp:1785
 msgctxt "lowres"
 msgid "SoundFont:"
 msgstr "SoundFont："
 
-#: gui/options.cpp:1797
+#: gui/options.cpp:1791
 msgid "Mixed AdLib/MIDI mode"
 msgstr "AdLibとMIDIの混合モード"
 
-#: gui/options.cpp:1797
+#: gui/options.cpp:1791
 msgid "Use both MIDI and AdLib sound generation"
 msgstr "音楽再生にMIDIとAdLibを同時に利用する"
 
-#: gui/options.cpp:1800
+#: gui/options.cpp:1794
 msgid "MIDI gain:"
 msgstr "MIDIゲイン："
 
-#: gui/options.cpp:1810
+#: gui/options.cpp:1804
 msgid "MT-32 Device:"
 msgstr "MT-32デバイス："
 
-#: gui/options.cpp:1810
+#: gui/options.cpp:1804
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr "Roland MT-32/LAPC1/CM32l/CM64出力のデフォルトデバイス"
 
-#: gui/options.cpp:1815
+#: gui/options.cpp:1809
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "実物のローランドMT-32（エミュレーターを無効にする）"
 
-#: gui/options.cpp:1815 gui/options.cpp:1817
+#: gui/options.cpp:1809 gui/options.cpp:1811
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
 msgstr ""
 "コンピューターに接続されてる実物のローランドMT-32があればチェックしてください"
 
-#: gui/options.cpp:1817
+#: gui/options.cpp:1811
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
 msgstr "実物のローランドMT-32（エミュレーターを無効にする）"
 
-#: gui/options.cpp:1820
+#: gui/options.cpp:1814
 msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "ローランドGSデバイス（MT-32マッピングを有効にする）"
 
-#: gui/options.cpp:1820
+#: gui/options.cpp:1814
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
@@ -1575,144 +1575,144 @@ msgstr ""
 "ローランドGSでMT-32をエミュレートするパッチマッピングを使う時はチェックしてく"
 "ださい"
 
-#: gui/options.cpp:1829
+#: gui/options.cpp:1823
 msgid "Don't use Roland MT-32 music"
 msgstr "ローランドMT-32の音楽を使用しない"
 
-#: gui/options.cpp:1856
+#: gui/options.cpp:1850
 msgid "Text and speech:"
 msgstr "字幕と音声："
 
-#: gui/options.cpp:1860 gui/options.cpp:1870
+#: gui/options.cpp:1854 gui/options.cpp:1864
 msgid "Speech"
 msgstr "音声"
 
-#: gui/options.cpp:1861 gui/options.cpp:1871
+#: gui/options.cpp:1855 gui/options.cpp:1865
 msgid "Subtitles"
 msgstr "字幕"
 
-#: gui/options.cpp:1862
+#: gui/options.cpp:1856
 msgid "Both"
 msgstr "両方"
 
-#: gui/options.cpp:1864
+#: gui/options.cpp:1858
 msgid "Subtitle speed:"
 msgstr "字幕の速度："
 
-#: gui/options.cpp:1866
+#: gui/options.cpp:1860
 msgctxt "lowres"
 msgid "Text and speech:"
 msgstr "字幕と音声："
 
-#: gui/options.cpp:1870
+#: gui/options.cpp:1864
 msgid "Spch"
 msgstr "音声"
 
-#: gui/options.cpp:1871
+#: gui/options.cpp:1865
 msgid "Subs"
 msgstr "字幕"
 
-#: gui/options.cpp:1872
+#: gui/options.cpp:1866
 msgctxt "lowres"
 msgid "Both"
 msgstr "両方"
 
-#: gui/options.cpp:1872
+#: gui/options.cpp:1866
 msgid "Show subtitles and play speech"
 msgstr "字幕を表示して音声を再生する"
 
-#: gui/options.cpp:1874
+#: gui/options.cpp:1868
 msgctxt "lowres"
 msgid "Subtitle speed:"
 msgstr "字幕の速度："
 
-#: gui/options.cpp:1896
+#: gui/options.cpp:1890
 msgid "Music volume:"
 msgstr "音楽の音量："
 
-#: gui/options.cpp:1898
+#: gui/options.cpp:1892
 msgctxt "lowres"
 msgid "Music volume:"
 msgstr "音楽の音量："
 
-#: gui/options.cpp:1907
+#: gui/options.cpp:1901
 msgid "Mute all"
 msgstr "全て消音"
 
-#: gui/options.cpp:1910
+#: gui/options.cpp:1904
 msgid "SFX volume:"
 msgstr "効果音の音量："
 
-#: gui/options.cpp:1910 gui/options.cpp:1912 gui/options.cpp:1915
+#: gui/options.cpp:1904 gui/options.cpp:1906 gui/options.cpp:1909
 msgid "Special sound effects volume"
 msgstr "音響効果の音量"
 
-#: gui/options.cpp:1912
+#: gui/options.cpp:1906
 msgctxt "lowres"
 msgid "SFX volume:"
 msgstr "効果音の音量："
 
-#: gui/options.cpp:1922
+#: gui/options.cpp:1916
 msgid "Speech volume:"
 msgstr "音声の音量："
 
-#: gui/options.cpp:1924
+#: gui/options.cpp:1918
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "音声の音量："
 
-#: gui/options.cpp:2204
+#: gui/options.cpp:2198
 msgid "Control"
 msgstr "操作"
 
-#: gui/options.cpp:2304
+#: gui/options.cpp:2298
 msgid "Cloud"
 msgstr "クラウド"
 
-#: gui/options.cpp:2306
+#: gui/options.cpp:2300
 msgctxt "lowres"
 msgid "Cloud"
 msgstr "クラウド"
 
-#: gui/options.cpp:2320
+#: gui/options.cpp:2314
 msgid "LAN"
 msgstr "ネットワーク"
 
-#: gui/options.cpp:2322
+#: gui/options.cpp:2316
 msgctxt "lowres"
 msgid "LAN"
 msgstr "ネットワーク"
 
-#: gui/options.cpp:2332
+#: gui/options.cpp:2326
 msgid "Accessibility"
 msgstr "アクセシビリティ"
 
-#: gui/options.cpp:2334
+#: gui/options.cpp:2328
 msgctxt "lowres"
 msgid "Accessibility"
 msgstr "アクセシビリティ"
 
-#: gui/options.cpp:2343
+#: gui/options.cpp:2337
 msgid "Discard changes and close the dialog"
 msgstr "変更を破棄してダイアログを閉じます"
 
-#: gui/options.cpp:2344
+#: gui/options.cpp:2338
 msgid "Apply"
 msgstr "適用"
 
-#: gui/options.cpp:2344
+#: gui/options.cpp:2338
 msgid "Apply changes without closing the dialog"
 msgstr "ダイアログを閉じずに変更を適用する"
 
-#: gui/options.cpp:2345
+#: gui/options.cpp:2339
 msgid "Apply changes and close the dialog"
 msgstr "変更を適用してダイアログを閉じます"
 
-#: gui/options.cpp:2429
+#: gui/options.cpp:2423
 msgid "FluidSynth Settings"
 msgstr "FluidSynthの設定"
 
-#: gui/options.cpp:2443
+#: gui/options.cpp:2437
 msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
@@ -1720,76 +1720,76 @@ msgstr ""
 "ゲームのセーブ箇所を指定します。赤は、一時的な(保存されない)データである事を"
 "示します"
 
-#: gui/options.cpp:2448
+#: gui/options.cpp:2442
+msgid "Theme Path:"
+msgstr "テーマのフォルダー："
+
+#: gui/options.cpp:2444
+msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "テーマのフォルダー："
 
 #: gui/options.cpp:2450
-msgctxt "lowres"
-msgid "Theme Path:"
-msgstr "テーマのフォルダー："
-
-#: gui/options.cpp:2456
 msgid "Icon Path:"
 msgstr "アイコン:"
 
-#: gui/options.cpp:2458
+#: gui/options.cpp:2452
 msgctxt "lowres"
 msgid "Icon Path:"
 msgstr "アイコン:"
 
-#: gui/options.cpp:2459
+#: gui/options.cpp:2453
 msgctxt "path"
 msgid "Default"
 msgstr "初期パス"
 
-#: gui/options.cpp:2464 gui/options.cpp:2466 gui/options.cpp:2467
+#: gui/options.cpp:2458 gui/options.cpp:2460 gui/options.cpp:2461
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr "ScummVMとゲームの追加ファイルのフォルダー"
 
-#: gui/options.cpp:2473
+#: gui/options.cpp:2467
 msgid "Plugins Path:"
 msgstr "拡張のフォルダー："
 
-#: gui/options.cpp:2475
+#: gui/options.cpp:2469
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "拡張のフォルダー："
 
-#: gui/options.cpp:2485
+#: gui/options.cpp:2479
 msgid "ScummVM config path: "
 msgstr "ScummVMの設定パス： "
 
-#: gui/options.cpp:2498
+#: gui/options.cpp:2492
 msgid "ScummVM log path: "
 msgstr "ScummVMのログ： "
 
-#: gui/options.cpp:2503
+#: gui/options.cpp:2497
 msgid "View"
 msgstr "表示"
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2513 gui/options.cpp:3245
+#: gui/options.cpp:2507 gui/options.cpp:3239
 msgid "Last browser path: "
 msgstr "最後に使用したブラウザーのパス： "
 
-#: gui/options.cpp:2518
+#: gui/options.cpp:2512
 msgid "Theme:"
 msgstr "テーマ："
 
-#: gui/options.cpp:2523
+#: gui/options.cpp:2517
 msgid "GUI scale:"
 msgstr "GUIスケーリング："
 
-#: gui/options.cpp:2530
+#: gui/options.cpp:2524
 msgid "GUI renderer:"
 msgstr "GUIのレンダラー："
 
-#: gui/options.cpp:2543
+#: gui/options.cpp:2537
 msgid "Return to the launcher when leaving a game"
 msgstr "ゲーム終了時、ランチャーへ戻る"
 
-#: gui/options.cpp:2544
+#: gui/options.cpp:2538
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
@@ -1797,27 +1797,27 @@ msgstr ""
 "ゲーム終了時、ScummVMを閉じずランチャーへ戻ります\n"
 "(全てのゲームでサポートしている機能ではありません)。"
 
-#: gui/options.cpp:2551
+#: gui/options.cpp:2545
 msgid "Ask for confirmation on exit"
 msgstr "終了前に確認する"
 
-#: gui/options.cpp:2552
+#: gui/options.cpp:2546
 msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr "ゲーム、またはScummVMの終了前に確認します。"
 
-#: gui/options.cpp:2558
+#: gui/options.cpp:2552
 msgid "GUI language:"
 msgstr "GUIの言語："
 
-#: gui/options.cpp:2558
+#: gui/options.cpp:2552
 msgid "Language of ScummVM GUI"
 msgstr "ScummVMのGUIの表示言語"
 
-#: gui/options.cpp:2584
+#: gui/options.cpp:2578
 msgid "Switch the ScummVM GUI language to the game language"
 msgstr "ScummVMのGUIの言語をゲームの言語に合わせる"
 
-#: gui/options.cpp:2585
+#: gui/options.cpp:2579
 msgid ""
 "When starting a game, change the ScummVM GUI language to the game language. "
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
@@ -1826,11 +1826,11 @@ msgstr ""
 "ゲームを起動する時、ScummVMのGUIをゲームの言語に合わせます。そうするとロード"
 "／セーブなどのダイアログがゲームと同じ言語に表示されます。"
 
-#: gui/options.cpp:2597
+#: gui/options.cpp:2591
 msgid "Use native system file browser"
 msgstr "システムのファイルブラウザを使う"
 
-#: gui/options.cpp:2598
+#: gui/options.cpp:2592
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
@@ -1838,50 +1838,50 @@ msgstr ""
 "ファイルやフォルダーを選ぶ時、ScummVMのファイルブラウザの代わりにシステムの"
 "ファイルブラウザを使う。"
 
-#: gui/options.cpp:2606
+#: gui/options.cpp:2600
 msgid "Update Icons"
 msgstr "アップデートアイコン"
 
-#: gui/options.cpp:2606
+#: gui/options.cpp:2600
 msgid "Check for updates of icon packs"
 msgstr "アイコンパックの更新を確認"
 
-#: gui/options.cpp:2613
+#: gui/options.cpp:2607
 msgid "Autosave:"
 msgstr "自動セーブ："
 
-#: gui/options.cpp:2615
+#: gui/options.cpp:2609
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "自動セーブ："
 
-#: gui/options.cpp:2626
+#: gui/options.cpp:2620
 msgid "Random seed:"
 msgstr "シード値："
 
-#: gui/options.cpp:2626
+#: gui/options.cpp:2620
 msgid "Seed for initializing all random number generators"
 msgstr "乱数ジェネレーターを初期するためのシード値"
 
-#: gui/options.cpp:2634
+#: gui/options.cpp:2628
 msgid "Debug level:"
 msgstr "デバッグLV："
 
 #. I18N: Debug level -1, no messages
-#: gui/options.cpp:2638 gui/options.cpp:2777
+#: gui/options.cpp:2632 gui/options.cpp:2771
 msgid "None"
 msgstr "なし"
 
 #. I18N: Debug level 11, all messages
-#: gui/options.cpp:2644
+#: gui/options.cpp:2638
 msgid "11 (all)"
 msgstr "11(全て)"
 
-#: gui/options.cpp:2648
+#: gui/options.cpp:2642
 msgid "Enable Discord integration"
 msgstr "Discordとの連携を可能にする"
 
-#: gui/options.cpp:2649
+#: gui/options.cpp:2643
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
@@ -1889,207 +1889,207 @@ msgstr ""
 "Discordクライアントが起動していれば、Discordでプレイ中のゲームの情報を表示し"
 "ます。"
 
-#: gui/options.cpp:2659 gui/updates-dialog.cpp:85
+#: gui/options.cpp:2653 gui/updates-dialog.cpp:85
 msgid "Update check:"
 msgstr "アップデートの確認："
 
-#: gui/options.cpp:2659
+#: gui/options.cpp:2653
 msgid "How often to check ScummVM updates"
 msgstr "ScummVMのアップデートの自動確認の頻度"
 
-#: gui/options.cpp:2670
+#: gui/options.cpp:2664
 msgid "Check now"
 msgstr "今すぐ確認"
 
-#: gui/options.cpp:2678
+#: gui/options.cpp:2672
 msgid "Active storage:"
 msgstr "使用中ストレージ："
 
-#: gui/options.cpp:2678
+#: gui/options.cpp:2672
 msgid "Active cloud storage"
 msgstr "使用中のクラウドストレージ"
 
-#: gui/options.cpp:2687
+#: gui/options.cpp:2681
 msgctxt "lowres"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr "ストレージが無効です。ユーザー名を確認し、有効にしてください："
 
-#: gui/options.cpp:2689
+#: gui/options.cpp:2683
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr "ストレージが無効です。ユーザー名を確認し、有効にしてください："
 
-#: gui/options.cpp:2690
+#: gui/options.cpp:2684
 msgid "Enable storage"
 msgstr "有効にする"
 
-#: gui/options.cpp:2690
+#: gui/options.cpp:2684
 msgid "Confirm you want to use this account for this storage"
 msgstr "ストレージにこのアカウントを使うことを確認する"
 
-#: gui/options.cpp:2692 backends/platform/wii/options.cpp:113
+#: gui/options.cpp:2686 backends/platform/wii/options.cpp:113
 msgid "Username:"
 msgstr "ユーザー名："
 
-#: gui/options.cpp:2692
+#: gui/options.cpp:2686
 msgid "Username used by this storage"
 msgstr "このストーレジのユーザー名"
 
-#: gui/options.cpp:2693
+#: gui/options.cpp:2687
 msgid "<none>"
 msgstr "＜なし＞"
 
-#: gui/options.cpp:2695
+#: gui/options.cpp:2689
 msgid "Used space:"
 msgstr "使用容量："
 
-#: gui/options.cpp:2695
+#: gui/options.cpp:2689
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr "ScummVMのセーブデータの現在使用中容量"
 
-#: gui/options.cpp:2698
+#: gui/options.cpp:2692
 msgid "Last sync:"
 msgstr "前回の同期："
 
-#: gui/options.cpp:2698
+#: gui/options.cpp:2692
 msgid "When was the last time saved games were synced with this storage"
 msgstr "前回クラウドストーレジにセーブデータを同期した時"
 
-#: gui/options.cpp:2699 gui/options.cpp:3574
+#: gui/options.cpp:2693 gui/options.cpp:3568
 msgid "<never>"
 msgstr "＜無い＞"
 
-#: gui/options.cpp:2701
+#: gui/options.cpp:2695
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "セーブデータはゲームを起動する時とロード／セーブする時に自動に同期されます。"
 
-#: gui/options.cpp:2703
+#: gui/options.cpp:2697
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "セーブデータはゲームを起動する時とロード／セーブする時に自動に同期されます。"
 
-#: gui/options.cpp:2704
+#: gui/options.cpp:2698
 msgid "Sync now"
 msgstr "今すぐ同期"
 
-#: gui/options.cpp:2704
+#: gui/options.cpp:2698
 msgid "Start saved games sync"
 msgstr "セーブデータの同期を始まる"
 
-#: gui/options.cpp:2707
+#: gui/options.cpp:2701
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
 "ScummVMのクラウドフォルダーからセーブデータをダウンロードすることができます："
 
-#: gui/options.cpp:2709
+#: gui/options.cpp:2703
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
 "ScummVMのクラウドフォルダーからセーブデータをダウンロードすることができます："
 
-#: gui/options.cpp:2710
+#: gui/options.cpp:2704
 msgid "Download game files"
 msgstr "ゲームデータをダウンロードする"
 
-#: gui/options.cpp:2710
+#: gui/options.cpp:2704
 msgid "Open downloads manager dialog"
 msgstr "ダウンロード管理のダイアログを開く"
 
-#: gui/options.cpp:2713
+#: gui/options.cpp:2707
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "アカウントを変えるには一旦切断してから再接続してください："
 
-#: gui/options.cpp:2715
+#: gui/options.cpp:2709
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "アカウントを変えるには一旦切断してから再接続してください："
 
-#: gui/options.cpp:2716
+#: gui/options.cpp:2710
 msgid "Disconnect"
 msgstr "切断"
 
-#: gui/options.cpp:2716
+#: gui/options.cpp:2710
 msgid "Stop using this storage on this device"
 msgstr "このデバイスでストーレジの使用を停止する"
 
-#: gui/options.cpp:2719
+#: gui/options.cpp:2713
 msgctxt "lowres"
 msgid "This storage is not connected yet!"
 msgstr "ストレージに接続していません!"
 
-#: gui/options.cpp:2721
+#: gui/options.cpp:2715
 msgid "This storage is not connected yet!"
 msgstr "ストレージに接続していません!"
 
-#: gui/options.cpp:2722
+#: gui/options.cpp:2716
 msgid "Connect"
 msgstr "接続"
 
-#: gui/options.cpp:2722
+#: gui/options.cpp:2716
 msgid "Connect your cloud storage account"
 msgstr "クラウドストーレジを接続する"
 
-#: gui/options.cpp:2735
+#: gui/options.cpp:2729
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "/root/ フォルダー:"
 
-#: gui/options.cpp:2735 gui/options.cpp:2737 gui/options.cpp:2738
+#: gui/options.cpp:2729 gui/options.cpp:2731 gui/options.cpp:2732
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr "ファイルマネジャーの/root/に使うフォルダーを選択する"
 
-#: gui/options.cpp:2737
+#: gui/options.cpp:2731
 msgid "/root/ Path:"
 msgstr "/root/ フォルダー:"
 
-#: gui/options.cpp:2743
+#: gui/options.cpp:2737
 msgid "Server's port:"
 msgstr "サーバーのポート番号："
 
-#: gui/options.cpp:2743
+#: gui/options.cpp:2737
 msgid "Port for server to use"
 msgstr "使用するサーバーのポート番号"
 
-#: gui/options.cpp:2748
+#: gui/options.cpp:2742
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "サーバーを起動し、ファイルをブラウザーで管理します(同一ネットワーク内のみ)。"
 
-#: gui/options.cpp:2749
+#: gui/options.cpp:2743
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
 msgstr "設定ウィンドウを閉じると、サーバーは停止されます。"
 
-#: gui/options.cpp:2751
+#: gui/options.cpp:2745
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "サーバーを起動し、ファイルをブラウザーで管理します(同一ネットワーク内のみ)。"
 
-#: gui/options.cpp:2752
+#: gui/options.cpp:2746
 msgid "Closing options dialog will stop the server."
 msgstr "設定ウィンドウを閉じると、サーバーは停止されます。"
 
-#: gui/options.cpp:2764
+#: gui/options.cpp:2758
 msgid "Use Text to speech"
 msgstr "テキストの読み上げ機能を使用する"
 
-#: gui/options.cpp:2764
+#: gui/options.cpp:2758
 msgid "Will read text in gui on mouse over."
 msgstr "マウスオーバーで文字を読み上げます。"
 
-#: gui/options.cpp:2838
+#: gui/options.cpp:2832
 msgid "Ignore"
 msgstr "無視"
 
-#: gui/options.cpp:2839
+#: gui/options.cpp:2833
 msgid "Disable autosave"
 msgstr "オートセーブを無効化"
 
-#: gui/options.cpp:2840
+#: gui/options.cpp:2834
 msgid ""
 "WARNING: Autosave was enabled. Some of your games have existing saved games "
 "on the autosave slot. You can either move the existing saves to new slots, "
@@ -2102,7 +2102,7 @@ msgstr ""
 "この警告を無視できます(上書き前に確認されます)。\n"
 "対象のゲーム：\n"
 
-#: gui/options.cpp:2849
+#: gui/options.cpp:2843
 msgid ""
 "\n"
 "And more..."
@@ -2110,31 +2110,31 @@ msgstr ""
 "\n"
 "続きを表示..."
 
-#: gui/options.cpp:2850 engines/engine.cpp:596
+#: gui/options.cpp:2844 engines/engine.cpp:596
 msgid "Move"
 msgstr "移動"
 
-#: gui/options.cpp:2863
+#: gui/options.cpp:2857
 msgid "ERROR: Failed to move the following saved games:\n"
 msgstr "エラー：セーブデータの移動に失敗しました:\n"
 
-#: gui/options.cpp:2955
+#: gui/options.cpp:2949
 msgid "Failed to change cloud storage!"
 msgstr "クラウドストレージの変更に失敗しました!"
 
-#: gui/options.cpp:2958
+#: gui/options.cpp:2952
 msgid "Another cloud storage is already active."
 msgstr "他のクラウドストーレジは既に使用中です。"
 
-#: gui/options.cpp:3069
+#: gui/options.cpp:3063
 msgid "Theme does not support selected language!"
 msgstr "テーマは選択された言語をサポートしていません!"
 
-#: gui/options.cpp:3072
+#: gui/options.cpp:3066
 msgid "Theme cannot be loaded!"
 msgstr "テーマを読み込みできませんでした！"
 
-#: gui/options.cpp:3075
+#: gui/options.cpp:3069
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -2142,47 +2142,47 @@ msgstr ""
 "\n"
 "設定を復元します。"
 
-#: gui/options.cpp:3147
+#: gui/options.cpp:3141
 msgid "Select directory for GUI themes"
 msgstr "GUIテーマのフォルダーを選択してください"
 
-#: gui/options.cpp:3157
+#: gui/options.cpp:3151
 msgid "Select directory for GUI launcher thumbnails"
 msgstr "GUIランチャーのサムネイルフォルダーを選択"
 
-#: gui/options.cpp:3167
+#: gui/options.cpp:3161
 msgid "Select directory for extra files"
 msgstr "追加ファイルのフォルダーを選択してください"
 
-#: gui/options.cpp:3178
+#: gui/options.cpp:3172
 msgid "Select directory for plugins"
 msgstr "プラグインのフォルダーを選択してください"
 
-#: gui/options.cpp:3191
+#: gui/options.cpp:3185
 msgid "Select directory for Files Manager /root/"
 msgstr "ルートディレクトリーとして使用するフォルダーを選択してください"
 
-#: gui/options.cpp:3207
+#: gui/options.cpp:3201
 msgid "icon packs"
 msgstr "アイコンパック"
 
-#: gui/options.cpp:3218
+#: gui/options.cpp:3212
 msgid "shader packs"
 msgstr "シェーダーパック"
 
-#: gui/options.cpp:3367
+#: gui/options.cpp:3361
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "ストレージを使用中です。切断してもよろしいですか?"
 
-#: gui/options.cpp:3376
+#: gui/options.cpp:3370
 msgid "Wait until current Storage finishes up and try again."
 msgstr "ストレージへのアップロード完了後に再実施してください。"
 
-#: gui/options.cpp:3572 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:3566 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "＜只今＞"
 
-#: gui/options.cpp:3715
+#: gui/options.cpp:3709
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -2190,7 +2190,7 @@ msgstr ""
 "リクエストが完了しませんでした。\n"
 "インターネットへの接続状態を確認してください。"
 
-#: gui/options.cpp:3739
+#: gui/options.cpp:3733
 msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
@@ -2198,7 +2198,7 @@ msgstr ""
 "テストパターンが表示されるはずです。\n"
 "このシェーダースケーラの設定を維持しますか?"
 
-#: gui/options.cpp:3742
+#: gui/options.cpp:3736
 #, c-format
 msgid "Reverting automatically in %d seconds"
 msgstr "%d秒後に自動で復帰します"
