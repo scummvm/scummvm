@@ -1492,7 +1492,7 @@ void DarkmoonSequenceHelper::printText(int index, int color) {
 	for (int yOffs = 0; !str.empty(); yOffs += fontHeight) {
 		uint linebrk = str.findFirstOf('\r');
 		Common::String str2 = (linebrk != Common::String::npos) ? str.substr(0, linebrk) : str;
-		_screen->printText(str2.c_str(), (dm->sx * xAlignFactor + ((dm->w * xAlignFactor - str2.size()) >> 1)) << (4 - xAlignFactor), dm->sy + yOffs, color, dm->unkA);
+		_screen->printText(str2.c_str(), (dm->sx * xAlignFactor + ((dm->w * xAlignFactor - str2.size()) >> 1)) << (4 - xAlignFactor), dm->sy + yOffs, color, dm->col2);
 		str = (linebrk != Common::String::npos) ? str.substr(linebrk + 1) : "";
 	}
 

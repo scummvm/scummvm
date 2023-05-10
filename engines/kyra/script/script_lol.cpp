@@ -564,7 +564,7 @@ int LoLEngine::olol_clearDialogueField(EMCState *script) {
 
 	_screen->setScreenDim(5);
 	const ScreenDim *d = _screen->getScreenDim(5);
-	_screen->fillRect(d->sx, d->sy, d->sx + d->w - (_flags.use16ColorMode ? 3 : 2), d->sy + d->h - 2, d->unkA);
+	_screen->fillRect(d->sx, d->sy, d->sx + d->w - (_flags.use16ColorMode ? 3 : 2), d->sy + d->h - 2, d->col2);
 	_txt->clearDim(4);
 	_txt->resetDimTextPositions(4);
 
@@ -2530,7 +2530,7 @@ int LoLEngine::tlol_clearTextField(const TIM *tim, const uint16 *param) {
 		return 1;
 	_screen->setScreenDim(5);
 	const ScreenDim *d = _screen->_curDim;
-	_screen->fillRect(d->sx, d->sy, d->sx + d->w - (_flags.use16ColorMode ? 3 : 2), d->sy + d->h - 2, d->unkA);
+	_screen->fillRect(d->sx, d->sy, d->sx + d->w - (_flags.use16ColorMode ? 3 : 2), d->sy + d->h - 2, d->col2);
 	_txt->clearDim(4);
 	_txt->resetDimTextPositions(4);
 	return 1;

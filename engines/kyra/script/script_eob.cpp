@@ -550,8 +550,8 @@ int EoBInfProcessor::oeob_printMessage_v1(int8 *data) {
 	_vm->txt()->printMessage(col);
 	_vm->txt()->printMessage(str);
 
-	col[1] = _vm->gameFlags().platform == Common::kPlatformSegaCD ? 0xFF : _vm->txt()->colorMap()[_screen->_curDim->unk8];
-	col[3] = _vm->txt()->colorMap()[_screen->_curDim->unkA];
+	col[1] = _vm->gameFlags().platform == Common::kPlatformSegaCD ? 0xFF : _vm->txt()->colorMap()[_screen->_curDim->col1];
+	col[3] = _vm->txt()->colorMap()[_screen->_curDim->col2];
 	_vm->txt()->printMessage(col);
 
 	if (lineBreak)

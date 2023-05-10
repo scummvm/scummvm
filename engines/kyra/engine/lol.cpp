@@ -1692,7 +1692,7 @@ void LoLEngine::restoreAfterDialogueSequence(int controlMode) {
 		_updateFlags &= 0xFFFD;
 	} else {
 		const ScreenDim *d = _screen->getScreenDim(5);
-		_screen->fillRect(d->sx, d->sy, d->sx + d->w - (_flags.use16ColorMode ? 3 : 2), d->sy + d->h - 2, d->unkA);
+		_screen->fillRect(d->sx, d->sy, d->sx + d->w - (_flags.use16ColorMode ? 3 : 2), d->sy + d->h - 2, d->col2);
 		_txt->clearDim(4);
 		_txt->setupField(false);
 	}

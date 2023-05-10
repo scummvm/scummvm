@@ -3232,7 +3232,7 @@ void GUI_EoB::createScreenThumbnail(Graphics::Surface &dst) {
 void GUI_EoB::simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int itemOffset) {
 	if (menuItemsMask == -1) {
 		_menuNumItems = _screen->getScreenDim(19 + menuId)->h;
-		_menuCur = _screen->getScreenDim(19 + menuId)->unk8;
+		_menuCur = _screen->getScreenDim(19 + menuId)->col1;
 		return;
 	}
 
@@ -4431,7 +4431,7 @@ void GUI_EoB::displayTextBox(int id, int, bool) {
 
 	Common::Point txtPos((dm->sx << 3) + 5, dm->sy + 5);
 	if (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformPC98)
-		txtPos = Common::Point(dm->sx << 3, (dm->sy + 16) & ~7);
+		txtPos = Common::Point(dm->column << 3, (dm->line + 16) & ~7);
 
 	_screen->printShadedText(getMenuString(id), txtPos.x, txtPos.y, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 	_screen->setTextMarginRight(Screen::SCREEN_W);

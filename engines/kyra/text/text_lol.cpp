@@ -140,11 +140,11 @@ void TextDisplayer_LoL::printDialogueText2(int dim, const char *str, EMCState *s
 		if (_vm->_updateFlags & 2) {
 			oldDim = clearDim(4);
 			_textDimData[4].color1 = _vm->gameFlags().use16ColorMode ? 0x33 : 254;
-			_textDimData[4].color2 = _screen->_curDim->unkA;
+			_textDimData[4].color2 = _screen->_curDim->col2;
 		} else {
 			oldDim = clearDim(3);
 			_textDimData[3].color1 = _vm->gameFlags().use16ColorMode ? 0x33 : 192;
-			_textDimData[3].color2 = _screen->_curDim->unkA;
+			_textDimData[3].color2 = _screen->_curDim->col2;
 			if (!_vm->gameFlags().use16ColorMode)
 				_screen->copyColor(192, 254);
 			_vm->enableTimer(11);
@@ -156,7 +156,7 @@ void TextDisplayer_LoL::printDialogueText2(int dim, const char *str, EMCState *s
 		_screen->setScreenDim(dim);
 		_lineCount = 0;
 		_textDimData[dim].color1 = _vm->gameFlags().use16ColorMode ? 0x33 : 254;
-		_textDimData[dim].color2 = _screen->_curDim->unkA;
+		_textDimData[dim].color2 = _screen->_curDim->col2;
 	}
 
 	int cp = _screen->setCurPage(0);

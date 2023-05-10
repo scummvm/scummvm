@@ -67,10 +67,10 @@ TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(e
 
 	for (int i = 0; i < _screen->screenDimTableCount(); i++) {
 		const ScreenDim *d = _screen->getScreenDim(i);
-		_textDimData[i].color1 = _colorMap[d->unk8];
-		_textDimData[i].color2 = _colorMap[d->unkA];
-		_textDimData[i].line = d->unkC;
-		_textDimData[i].column = d->unkE;
+		_textDimData[i].color1 = _colorMap[d->col1];
+		_textDimData[i].color2 = _colorMap[d->col2];
+		_textDimData[i].line = d->line;
+		_textDimData[i].column = d->column;
 	}
 
 	_table1 = new char[128]();
@@ -628,8 +628,8 @@ void TextDisplayer_rpg::printMessage(const char *str, int textColor, ...) {
 int TextDisplayer_rpg::clearDim(int dim) {
 	int res = _screen->curDimIndex();
 	_screen->setScreenDim(dim);
-	_textDimData[dim].color1 = _colorMap[_screen->_curDim->unk8];
-	_textDimData[dim].color2 = (_vm->game() == GI_LOL || _vm->gameFlags().platform == Common::kPlatformAmiga) ? _colorMap[_screen->_curDim->unkA] : _vm->guiSettings()->colors.fill;
+	_textDimData[dim].color1 = _colorMap[_screen->_curDim->col1];
+	_textDimData[dim].color2 = (_vm->game() == GI_LOL || _vm->gameFlags().platform == Common::kPlatformAmiga) ? _colorMap[_screen->_curDim->col2] : _vm->guiSettings()->colors.fill;
 	clearCurDim();
 	return res;
 }

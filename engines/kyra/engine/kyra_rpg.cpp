@@ -353,13 +353,13 @@ uint16 KyraRpgEngine::processDialogue() {
 		if (!textEnabled() && _currentControlMode) {
 			screen()->setScreenDim(5);
 			const ScreenDim *d = screen()->getScreenDim(5);
-			screen()->fillRect(d->sx, d->sy + d->h - 9, d->sx + d->w - 1, d->sy + d->h - 1, d->unkA);
+			screen()->fillRect(d->sx, d->sy + d->h - 9, d->sx + d->w - 1, d->sy + d->h - 1, d->col2);
 		} else {
 			const ScreenDim *d = screen()->_curDim;
 			if (gameFlags().use16ColorMode)
-				screen()->fillRect(d->sx, d->sy, d->sx + d->w - 3, d->sy + d->h - 2, d->unkA);
+				screen()->fillRect(d->sx, d->sy, d->sx + d->w - 3, d->sy + d->h - 2, d->col2);
 			else
-				screen()->fillRect(d->sx, d->sy, d->sx + d->w - 2, d->sy + d->h - 1, d->unkA);
+				screen()->fillRect(d->sx, d->sy, d->sx + d->w - 2, d->sy + d->h - 1, d->col2);
 			txt()->clearDim(4);
 			txt()->resetDimTextPositions(4);
 		}

@@ -49,10 +49,10 @@ struct ScreenDim {
 	uint16 sy;
 	uint16 w;
 	uint16 h;
-	uint16 unk8;
-	uint16 unkA;
-	uint16 unkC;
-	uint16 unkE;
+	uint16 col1;
+	uint16 col2;
+	uint16 line;
+	uint16 column;
 };
 
 /**
