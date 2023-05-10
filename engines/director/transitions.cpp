@@ -1219,8 +1219,10 @@ void Window::initTransParams(TransParams &t, Common::Rect &clipRect) {
 		t.steps = 1;
 	}
 
-	t.stepDuration = t.duration / t.steps;
+	if (debugChannelSet(-1, kDebugFast))
+		t.steps = 1;
 
+	t.stepDuration = t.duration / t.steps;
 }
 
 } // End of namespace Director
