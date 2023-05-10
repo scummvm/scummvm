@@ -188,14 +188,21 @@ void reset_performance_tuner() {
 	}
 }
 
-static void update_variables(void) {
-	struct retro_variable var;
-
+void retro_osd_notification(const char* msg) {
+	if (!msg || *msg == '\0')
+		return;
 	struct retro_message_ext retro_msg;
 	retro_msg.type = RETRO_MESSAGE_TYPE_NOTIFICATION;
 	retro_msg.target = RETRO_MESSAGE_TARGET_OSD;
 	retro_msg.duration = 3000;
-	retro_msg.msg = "";
+	retro_msg.msg = msg;
+	environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
+}
+
+static void update_variables(void) {
+	struct retro_variable var;
+
+	const char* osd_msg = "";
 
 	var.key = "scummvm_gamepad_cursor_speed";
 	var.value = NULL;
@@ -288,15 +295,13 @@ static void update_variables(void) {
 	if (!(audio_status & AUDIO_STATUS_BUFFER_SUPPORT)) {
 		if (frameskip_type > 1) {
 			log_cb(RETRO_LOG_WARN, "Selected frameskip mode not available.\n");
-			retro_msg.msg = "Selected frameskip mode not available";
-			environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
+			retro_osd_notification("Selected frameskip mode not available");
 			frameskip_type = 0;
 		}
 
 		if (performance_switch) {
 			log_cb(RETRO_LOG_WARN, "Auto performance tuner not available.\n");
-			retro_msg.msg = "Auto performance tuner not available";
-			environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
+			retro_osd_notification("Auto performance tuner not available");
 			performance_switch = 0;
 		}
 	}
@@ -304,8 +309,6 @@ static void update_variables(void) {
 	if (old_frameskip_type != frameskip_type) {
 		audio_status |= AUDIO_STATUS_UPDATE_LATENCY;
 	}
-
-
 }
 
 bool timing_inaccuracies_is_enabled(){
@@ -332,6 +335,8 @@ void parse_command_params(char *cmdline) {
 	int j = 0;
 	int cmdlen = strlen(cmdline);
 	bool quotes = false;
+
+	if (!cmdlen) return;
 
 	/* Append a new line to the end of the command to signify it's finished. */
 	cmdline[cmdlen] = '\n';
@@ -616,14 +621,8 @@ bool retro_load_game(const struct retro_game_info *game) {
 		Common::FSNode detect_target = Common::FSNode(game->path);
 		Common::FSNode parent_dir = detect_target.getParent();
 		char target_id[400] = {0};
-		char buffer[400];
+		char buffer[400] = {0};
 		int test_game_status = TEST_GAME_KO_NOT_FOUND;
-
-		struct retro_message_ext retro_msg;
-		retro_msg.type = RETRO_MESSAGE_TYPE_NOTIFICATION;
-		retro_msg.target = RETRO_MESSAGE_TARGET_OSD;
-		retro_msg.duration = 3000;
-		retro_msg.msg = "";
 
 		const char *target_file_ext = ".scummvm";
 		int target_file_ext_pos = strlen(game->path) - strlen(target_file_ext);
@@ -685,19 +684,15 @@ bool retro_load_game(const struct retro_game_info *game) {
 			break;
 		case TEST_GAME_KO_MULTIPLE_RESULTS:
 			log_cb(RETRO_LOG_WARN, "[scummvm] Multiple targets found for '%s' in scummvm.ini\n", target_id);
-			retro_msg.msg = "Multiple targets found";
+			retro_osd_notification("Multiple targets found");
 			break;
 		case TEST_GAME_KO_NOT_FOUND:
 		default:
 			log_cb(RETRO_LOG_WARN, "[scummvm] Game not found. Check path and content of '%s'\n", game->path);
-			retro_msg.msg = "Game not found";
+			retro_osd_notification("Game not found");
 		}
 
-		if (retro_msg.msg[0] != '\0') {
-			environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
-		} else {
-			parse_command_params(buffer);
-		}
+		parse_command_params(buffer);
 	} else {
 		game_buf_ptr = NULL;
 	}

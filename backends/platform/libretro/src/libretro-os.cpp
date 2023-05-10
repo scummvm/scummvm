@@ -70,6 +70,12 @@
 
 extern retro_log_printf_t log_cb;
 
+extern bool timing_inaccuracies_is_enabled(void);
+extern bool consecutive_screen_updates_is_enabled(void);
+extern void reset_performance_tuner(void);
+extern void retro_osd_notification(const char* msg);
+extern float frame_rate;
+
 #include "common/mutex.h"
 
 /**
@@ -318,11 +324,6 @@ static Common::String s_saveDir;
 #endif
 
 Common::List<Common::Event> _events;
-
-extern bool timing_inaccuracies_is_enabled(void);
-extern bool consecutive_screen_updates_is_enabled(void);
-extern void reset_performance_tuner(void);
-extern float frame_rate;
 
 class OSystem_RETRO : public EventsBaseBackend, public PaletteManager {
 public:
