@@ -146,13 +146,13 @@ void EMCInterpreter::unload(EMCData *data) {
 		return;
 
 	delete[] data->text;
-	data->text = NULL;
+	data->text = nullptr;
 
 	delete[] data->ordr;
-	data->ordr = NULL;
+	data->ordr = nullptr;
 
 	delete[] data->data;
-	 data->data = NULL;
+	data->data = nullptr;
 }
 
 void EMCInterpreter::init(EMCState *scriptStat, const EMCData *data) {

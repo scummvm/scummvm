@@ -30,10 +30,10 @@ namespace Toon {
 
 AudioManager::AudioManager(ToonEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	for (int32 i = 0; i < 16; i++)
-		_channels[i] = NULL;
+		_channels[i] = nullptr;
 
 	for (int32 i = 0; i < 4; i++)
-		_audioPacks[i] = NULL;
+		_audioPacks[i] = nullptr;
 
 	for (int32 i = 0; i < 4; i++) {
 		_ambientSFXs[i]._delay = 0;
@@ -79,7 +79,7 @@ void AudioManager::removeInstance(AudioStreamInstance *inst) {
 
 	for (int32 i = 0; i < 16; i++) {
 		if (inst == _channels[i])
-			_channels[i] = NULL;
+			_channels[i] = nullptr;
 	}
 }
 
@@ -202,7 +202,7 @@ void AudioManager::stopCurrentVoice() {
 
 void AudioManager::closeAudioPack(int32 id) {
 	delete _audioPacks[id];
-	_audioPacks[id] = NULL;
+	_audioPacks[id] = nullptr;
 }
 
 bool AudioManager::loadAudioPack(int32 id, const Common::String &indexFile, const Common::String &packFile) {
@@ -240,11 +240,11 @@ void AudioManager::stopMusic(bool fade) {
 
 AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer, Common::SeekableReadStream *stream , bool looping, bool deleteFileStreamAtEnd) {
 	_compBufferSize = 0;
-	_buffer = NULL;
+	_buffer = nullptr;
 	_bufferSize = 0;
 	_bufferMaxSize = 0;
 	_mixer = mixer;
-	_compBuffer = NULL;
+	_compBuffer = nullptr;
 	_bufferOffset = 0;
 	_lastSample = 0;
 	_lastStepIndex = 0;
@@ -488,8 +488,8 @@ void AudioStreamInstance::setVolume(int32 volume) {
 }
 
 AudioStreamPackage::AudioStreamPackage(ToonEngine *vm) : _vm(vm) {
-	_indexBuffer = NULL;
-	_file = NULL;
+	_indexBuffer = nullptr;
+	_file = nullptr;
 }
 
 AudioStreamPackage::~AudioStreamPackage() {

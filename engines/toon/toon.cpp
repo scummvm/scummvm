@@ -113,7 +113,7 @@ void ToonEngine::init() {
 	resources()->openPackage("SUBTITLES.PAK");
 
 	for (int32 i = 0; i < 32; i++)
-		_characters[i] = NULL;
+		_characters[i] = nullptr;
 
 	_characters[0] = new CharacterDrew(this);
 	_characters[1] = new CharacterFlux(this);
@@ -1546,72 +1546,72 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	: Engine(syst), _gameDescription(gameDescription),
 	_language(gameDescription->language), _rnd("toon") {
 	_tickLength = 16;
-	_currentPicture = NULL;
-	_inventoryPicture = NULL;
-	_currentMask = NULL;
+	_currentPicture = nullptr;
+	_inventoryPicture = nullptr;
+	_currentMask = nullptr;
 	_showConversationText = true;
 	_textSpeed = 60;
 	_useAlternativeFont = false;
 	_isDemo = _gameDescription->flags & ADGF_DEMO;
 	_isEnglishDemo = _isDemo && _gameDescription->language == Common::EN_ANY;
 
-	_resources = NULL;
-	_animationManager = NULL;
-	_moviePlayer = NULL;
-	_mainSurface = NULL;
+	_resources = nullptr;
+	_animationManager = nullptr;
+	_moviePlayer = nullptr;
+	_mainSurface = nullptr;
 
-	_finalPalette = NULL;
-	_backupPalette = NULL;
-	_additionalPalette1 = NULL;
-	_additionalPalette2 = NULL;
+	_finalPalette = nullptr;
+	_backupPalette = nullptr;
+	_additionalPalette1 = nullptr;
+	_additionalPalette2 = nullptr;
 	_additionalPalette2Present = false;
-	_cutawayPalette = NULL;
-	_universalPalette = NULL;
-	_fluxPalette = NULL;
+	_cutawayPalette = nullptr;
+	_universalPalette = nullptr;
+	_fluxPalette = nullptr;
 
-	_roomScaleData = NULL;
-	_shadowLUT = NULL;
+	_roomScaleData = nullptr;
+	_shadowLUT = nullptr;
 
-	_conversationData = NULL;
+	_conversationData = nullptr;
 
-	_fontRenderer = NULL;
-	_fontToon = NULL;
-	_fontEZ = NULL;
-	_hotspots = NULL;
-	_genericTexts = NULL;
-	_roomTexts = NULL;
-	_script_func = NULL;
-	_script = NULL;
+	_fontRenderer = nullptr;
+	_fontToon = nullptr;
+	_fontEZ = nullptr;
+	_hotspots = nullptr;
+	_genericTexts = nullptr;
+	_roomTexts = nullptr;
+	_script_func = nullptr;
+	_script = nullptr;
 
 	_mouseX = 0;
 	_mouseY = 0;
 	_mouseButton = 0;
 	_lastMouseButton = 0;
 
-	_saveBufferStream = NULL;
+	_saveBufferStream = nullptr;
 
-	_pathFinding = NULL;
+	_pathFinding = nullptr;
 	setDebugger(new ToonConsole(this));
 
-	_cursorAnimation = NULL;
-	_cursorAnimationInstance = NULL;
-	_dialogIcons = NULL;
-	_inventoryIcons = NULL;
-	_inventoryIconSlots = NULL;
-	_genericTexts = NULL;
-	_audioManager = NULL;
-	_gameState = NULL;
+	_cursorAnimation = nullptr;
+	_cursorAnimationInstance = nullptr;
+	_dialogIcons = nullptr;
+	_inventoryIcons = nullptr;
+	_inventoryIconSlots = nullptr;
+	_genericTexts = nullptr;
+	_audioManager = nullptr;
+	_gameState = nullptr;
 
-	_locationDirNotVisited = NULL;
-	_locationDirVisited = NULL;
-	_specialInfoLine = NULL;
+	_locationDirNotVisited = nullptr;
+	_locationDirVisited = nullptr;
+	_specialInfoLine = nullptr;
 
 	for (int i = 0; i < 64; i++) {
 		_sceneAnimations[i]._active = false;
 	}
 
 	for (int i = 0; i < 32; i++) {
-		_characters[i] = NULL;
+		_characters[i] = nullptr;
 	}
 
 	memset(&_scriptData, 0, sizeof(EMCData));
@@ -2471,14 +2471,14 @@ void ToonEngine::exitScene() {
 			// see if one character shares this instance
 			for (int32 c = 0; c < 32; c++) {
 				if (_characters[c] && _characters[c]->getAnimationInstance() == _sceneAnimations[i]._animInstance) {
-					_characters[c]->setAnimationInstance(NULL);
+					_characters[c]->setAnimationInstance(nullptr);
 				}
 			}
 
 			delete _sceneAnimations[i]._originalAnimInstance;
-			_sceneAnimations[i]._animInstance = NULL;
-			_sceneAnimations[i]._animation = NULL;
-			_sceneAnimations[i]._originalAnimInstance = NULL;
+			_sceneAnimations[i]._animInstance = nullptr;
+			_sceneAnimations[i]._animation = nullptr;
+			_sceneAnimations[i]._originalAnimInstance = nullptr;
 		}
 	}
 	for (int32 i = 0; i < 64; i++) {
@@ -2602,7 +2602,7 @@ void ToonEngine::setFont(bool alternative) {
 
 void ToonEngine::drawInfoLine() {
 	if (_currentHotspotItem != 0 && !_gameState->_mouseHidden && !_gameState->_inConversation) {
-		const char *infoTool = NULL;
+		const char *infoTool = nullptr;
 		if (_currentHotspotItem >= 0 && _currentHotspotItem < 2000) {
 			infoTool = _roomTexts->getText(_currentHotspotItem);
 		} else if (_currentHotspotItem <= -1) {
@@ -5616,8 +5616,8 @@ void SceneAnimation::load(ToonEngine *vm, Common::ReadStream *stream) {
 		//vm->getAnimationManager()->addInstance(_animInstance);
 		_originalAnimInstance = _animInstance;
 	} else {
-		_animInstance = NULL;
-		_originalAnimInstance = NULL;
+		_animInstance = nullptr;
+		_originalAnimInstance = nullptr;
 	}
 
 	// load animation if any

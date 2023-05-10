@@ -27,7 +27,7 @@ namespace Toon {
 
 TextResource::TextResource(ToonEngine *vm) : _vm(vm) {
 	_numTexts = 0;
-	_textData = NULL;
+	_textData = nullptr;
 }
 
 TextResource::~TextResource(void) {
@@ -84,7 +84,7 @@ char *TextResource::getText(int32 offset) {
 		}
 	}
 	if (found < 0)
-		return NULL;
+		return nullptr;
 
 	int32 realOffset = READ_LE_UINT16((uint16 *)_textData + 1 + _numTexts + found);
 	return (char *)_textData + realOffset;

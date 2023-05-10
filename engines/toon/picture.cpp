@@ -62,7 +62,7 @@ bool Picture::loadPicture(const Common::String &file) {
 			memcpy(_palette, _data + dstsize - (dstsize & 0x7ff), _paletteEntries * 3);
 			_vm->fixPaletteEntries(_palette, _paletteEntries);
 		} else {
-			_palette = NULL;
+			_palette = nullptr;
 		}
 		return true;
 	}
@@ -77,7 +77,7 @@ bool Picture::loadPicture(const Common::String &file) {
 			memcpy(_palette, fileData + 16, _paletteEntries * 3);
 			_vm->fixPaletteEntries(_palette, _paletteEntries);
 		} else {
-			_palette = NULL;
+			_palette = nullptr;
 		}
 
 		// size can only be 640x400 or 1280x400
@@ -136,8 +136,8 @@ bool Picture::loadPicture(const Common::String &file) {
 }
 
 Picture::Picture(ToonEngine *vm) : _vm(vm) {
-	_data = NULL;
-	_palette = NULL;
+	_data = nullptr;
+	_palette = nullptr;
 
 	_width = 0;
 	_height = 0;
@@ -153,7 +153,7 @@ Picture::~Picture() {
 void Picture::setupPalette() {
 	debugC(1, kDebugPicture, "setupPalette()");
 
-	if (_palette != NULL) {
+	if (_palette != nullptr) {
 		if (_useFullPalette)
 			_vm->setPaletteEntries(_palette, 0, 256);
 		else
