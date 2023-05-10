@@ -705,6 +705,7 @@ bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
 			// the previous frame's layout.
 			debugC(2, kDebugImages, "Score::renderPrePaletteCycle(): fading palette to %s over %d frames", currentPalette.asString().c_str(), fadeFrames);
 			for (int i = 0; i < fadeFrames; i++) {
+				uint32 startTime = g_system->getMillis();
 				lerpPalette(
 					calcPal,
 					_paletteSnapshotBuffer, 256,
@@ -714,13 +715,19 @@ bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
 				);
 				g_director->setPalette(calcPal, 256);
 				g_director->draw();
+				if (_activeFade) {
+					if (!_soundManager->fadeChannel(_activeFade))
+					_activeFade = 0;
+				}
 				// On click, stop loop and reset palette
 				if (_vm->processEvents(true)) {
 					debugC(2, kDebugImages, "Score::renderPrePaletteCycle(): interrupted, setting palette to %s", currentPalette.asString().c_str());
 					g_director->setPalette(currentPalette);
 					return true;
 				}
-				g_director->delayMillis(frameDelay);
+				uint32 endTime = g_system->getMillis();
+				int diff = (int)frameDelay - (int)(endTime - startTime);
+				g_director->delayMillis(MAX(0, diff));
 			}
 
 		} else {
@@ -742,6 +749,7 @@ bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
 			}
 
 			for (int i = 0; i < fadeFrames; i++) {
+				uint32 startTime = g_system->getMillis();
 				lerpPalette(
 					calcPal,
 					_paletteSnapshotBuffer, 256,
@@ -751,13 +759,19 @@ bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
 				);
 				g_director->setPalette(calcPal, 256);
 				g_director->draw();
+				if (_activeFade) {
+					if (!_soundManager->fadeChannel(_activeFade))
+					_activeFade = 0;
+				}
 				// On click, stop loop and reset palette
 				if (_vm->processEvents(true)) {
 					debugC(2, kDebugImages, "Score::renderPrePaletteCycle(): interrupted, setting palette to %s", currentPalette.asString().c_str());
 					g_director->setPalette(currentPalette);
 					return true;
 				}
-				g_director->delayMillis(frameDelay);
+				uint32 endTime = g_system->getMillis();
+				int diff = (int)frameDelay - (int)(endTime - startTime);
+				g_director->delayMillis(MAX(0, diff));
 			}
 		}
 	}
@@ -855,25 +869,39 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 			debugC(2, kDebugImages, "Score::renderPaletteCycle(): color cycle palette %s, from colors %d to %d, over %d steps %d times", currentPalette.asString().c_str(), firstColor, lastColor, steps, _frames[frameId]->_palette.cycleCount);
 			for (int i = 0; i < _frames[frameId]->_palette.cycleCount; i++) {
 				for (int j = 0; j < steps; j++) {
+					uint32 startTime = g_system->getMillis();
 					g_director->shiftPalette(firstColor, lastColor, false);
 					g_director->draw();
+					if (_activeFade) {
+						if (!_soundManager->fadeChannel(_activeFade))
+						_activeFade = 0;
+					}
 					// On click, stop loop and reset palette
 					if (_vm->processEvents(true)) {
 						g_director->setPalette(currentPalette);
 						return;
 					}
-					g_director->delayMillis(delay);
+					uint32 endTime = g_system->getMillis();
+					int diff = (int)delay - (int)(endTime - startTime);
+					g_director->delayMillis(MAX(0, diff));
 				}
 				if (_frames[frameId]->_palette.autoReverse) {
 					for (int j = 0; j < steps; j++) {
+						uint32 startTime = g_system->getMillis();
 						g_director->shiftPalette(firstColor, lastColor, true);
 						g_director->draw();
+						if (_activeFade) {
+							if (!_soundManager->fadeChannel(_activeFade))
+							_activeFade = 0;
+						}
 						// On click, stop loop and reset palette
 						if (_vm->processEvents(true)) {
 							g_director->setPalette(currentPalette);
 							return;
 						}
-						g_director->delayMillis(delay);
+						uint32 endTime = g_system->getMillis();
+						int diff = (int)delay - (int)(endTime - startTime);
+						g_director->delayMillis(MAX(0, diff));
 					}
 				}
 			}
@@ -980,18 +1008,26 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 				g_director->setPalette(fadePal, 256);
 				g_director->draw();
 				for (int i = 0; i < kFadeColorWait; i++) {
+					uint32 startTime = g_system->getMillis();
+					if (_activeFade) {
+						if (!_soundManager->fadeChannel(_activeFade))
+						_activeFade = 0;
+					}
 					// On click, stop loop and reset palette
 					if (_vm->processEvents(true)) {
 						debugC(2, kDebugImages, "Score::renderPaletteCycle(): interrupted, setting palette to %s", currentPalette.asString().c_str());
 						g_director->setPalette(currentPalette);
 						return;
 					}
-					g_director->delayMillis(frameDelay);
+					uint32 endTime = g_system->getMillis();
+					int diff = (int)frameDelay - (int)(endTime - startTime);
+					g_director->delayMillis(MAX(0, diff));
 				}
 
 				debugC(2, kDebugImages, "Score::renderPaletteCycle(): fading palette to %s over %d frames", currentPalette.asString().c_str(), fadeFrames);
 
 				for (int i = 0; i < fadeFrames; i++) {
+					uint32 startTime = g_system->getMillis();
 					lerpPalette(
 						calcPal,
 						fadePal, 256,
@@ -1001,13 +1037,19 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 					);
 					g_director->setPalette(calcPal, 256);
 					g_director->draw();
+					if (_activeFade) {
+						if (!_soundManager->fadeChannel(_activeFade))
+						_activeFade = 0;
+					}
 					// On click, stop loop and reset palette
 					if (_vm->processEvents(true)) {
 						debugC(2, kDebugImages, "Score::renderPaletteCycle(): interrupted, setting palette to %s", currentPalette.asString().c_str());
 						g_director->setPalette(currentPalette);
 						return;
 					}
-					g_director->delayMillis(frameDelay);
+					uint32 endTime = g_system->getMillis();
+					int diff = (int)frameDelay - (int)(endTime - startTime);
+					g_director->delayMillis(MAX(0, diff));
 				}
 
 			}
