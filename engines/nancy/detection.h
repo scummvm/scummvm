@@ -31,7 +31,10 @@ enum GameType {
 	kGameTypeVampire = 1,
 	kGameTypeNancy1 = 2,
 	kGameTypeNancy2 = 3,
-	kGameTypeNancy3 = 4
+	kGameTypeNancy3 = 4,
+	kGameTypeNancy4 = 5,
+	kGameTypeNancy5 = 6,
+	kGameTypeNancy6 = 7
 };
 
 enum NancyGameFlags {
