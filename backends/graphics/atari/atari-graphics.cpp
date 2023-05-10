@@ -57,11 +57,10 @@ AtariGraphicsManager::AtariGraphicsManager() {
 	if (!ConfMan.hasKey("gui_theme"))
 		ConfMan.set("gui_theme", "builtin");
 
-	// make "data" the default theme path (defining DATA_PATH as "data"
-	// is forbidden, it must be an absolute path, see bug #14174)
-	ConfMan.registerDefault("themepath", "data");
+	// make "themes" the default theme path
+	ConfMan.registerDefault("themepath", "themes");
 	if (!ConfMan.hasKey("themepath"))
-		ConfMan.set("themepath", "data");
+		ConfMan.set("themepath", "themes");
 
 	ConfMan.flushToDisk();
 

@@ -279,9 +279,8 @@ Slow GUI
 Themes handling is quite slow - each theme must be depacked, each one contains
 quite a few XML files to parse and quite a few images to load/convert. That's
 the reason why the built-in one is used as default, it dramatically speeds up
-loading time. A compromise solution is to depack the theme in an equally named
-directory (i.e. avoiding the depacking phase) but you need a filesystem with
-long name support for that to work.
+loading time. To speed things up in other cases, the "fat" version is
+distributed with repackaged theme files with compression level zero.
 
 
 Known issues

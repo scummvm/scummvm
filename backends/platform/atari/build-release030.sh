@@ -34,3 +34,9 @@ fi
 make -j 16
 rm -rf dist-generic
 make dist-generic
+
+# remove themes
+rm -f dist-generic/scummvm/data/*.zip
+
+# readme.txt
+cp ../backends/platform/atari/readme.txt dist-generic/scummvm

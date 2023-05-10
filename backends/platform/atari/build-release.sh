@@ -33,3 +33,17 @@ fi
 make -j 16
 rm -rf dist-generic
 make dist-generic
+
+# move themes into 'themes' folder (with compression level zero for faster depacking)
+mkdir -p dist-generic/scummvm/themes
+cd dist-generic/scummvm/themes
+(
+for f in ../data/*.zip
+do
+	unzip -d tmp "$f" && cd tmp && zip -0 ../$(basename "$f") * && cd .. && rm -r tmp && rm "$f"
+done
+)
+cd -
+
+# readme.txt
+cp ../backends/platform/atari/readme.txt dist-generic/scummvm
