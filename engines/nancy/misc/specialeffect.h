@@ -65,7 +65,7 @@ protected:
 	uint16 _fadeToBlackTime = 0;
 	uint16 _frameTime = 0;
 
-	uint _currentFrame = 0;
+	int _currentFrame = 0;
 	uint _numFrames = 0;
 	SPEC *_specialEffectData = nullptr;
 };

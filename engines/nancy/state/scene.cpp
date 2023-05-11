@@ -106,8 +106,7 @@ Scene::Scene() :
 		_actionManager(),
 		_difficulty(0),
 		_activeConversation(nullptr),
-		_lightning(nullptr),
-		_specialEffect(nullptr) {}
+		_lightning(nullptr) {}
 
 Scene::~Scene()  {
 	delete _helpButton;
@@ -117,7 +116,6 @@ Scene::~Scene()  {
 	delete _inventoryBoxOrnaments;
 	delete _clock;
 	delete _lightning;
-	delete _specialEffect;
 
 	clearPuzzleData();
 }
@@ -142,7 +140,6 @@ void Scene::process() {
 			g_nancy->_sound->loadSound(_sceneState.summary.sound);
 			g_nancy->_sound->playSound(_sceneState.summary.sound);
 		}
-		run(); // Extra run() call to fix the single frame with a wrong palette in TVD
 		// fall through
 	case kRun:
 		run();
@@ -200,10 +197,6 @@ void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte con
 
 	if (paletteID != -1) {
 		_sceneState.nextScene.paletteID = paletteID;
-	}
-
-	if (_specialEffect) {
-		_specialEffect->onSceneChange();
 	}
 
 	_state = kLoad;
@@ -602,12 +595,8 @@ void Scene::beginLightning(int16 distance, uint16 pulseTime, int16 rgbPercent) {
 }
 
 void Scene::specialEffect(byte type, uint16 fadeToBlackTime, uint16 frameTime) {
-	if (_specialEffect) {
-		delete _specialEffect;
-	}
-
-	_specialEffect = new Misc::SpecialEffect(type, fadeToBlackTime, frameTime);
-	_specialEffect->init();
+	_specialEffects.push(Misc::SpecialEffect(type, fadeToBlackTime, frameTime));
+	_specialEffects.back().init();
 }
 
 PuzzleData *Scene::getPuzzleData(const uint32 tag) {
@@ -627,6 +616,10 @@ PuzzleData *Scene::getPuzzleData(const uint32 tag) {
 }
 
 void Scene::load() {
+	if (_specialEffects.size()) {
+		_specialEffects.front().onSceneChange();
+	}
+
 	clearSceneData();
 
 	// Scene IDs are prefixed with S inside the cif tree; e.g 100 -> S100
@@ -700,10 +693,6 @@ void Scene::load() {
 
 	_flags.sceneCounts.getOrCreateVal(_sceneState.currentScene.sceneID)++;
 
-	if (_specialEffect) {
-		_specialEffect->afterSceneChange();
-	}
-
 	_state = kStartSound;
 }
 
@@ -714,17 +703,18 @@ void Scene::run() {
 		return;
 	}
 
-	if (_specialEffect && _specialEffect->isInitialized()) {
-		if (_specialEffect->isDone()) {
-			delete _specialEffect;
-			_specialEffect = nullptr;
-			g_nancy->_graphicsManager->redrawAll();
-		}
-
-		return;
-	}
-
 	Time currentPlayTime = g_nancy->getTotalPlayTime();
+
+	if (_specialEffects.size()) {
+		if (_specialEffects.front().isInitialized()) {
+			if (_specialEffects.front().isDone()) {
+				_specialEffects.pop();
+				g_nancy->_graphicsManager->redrawAll();
+			}
+		} else {
+			_specialEffects.front().afterSceneChange();
+		}
+	}
 
 	Time deltaTime = currentPlayTime - _timers.lastTotalTime;
 	_timers.lastTotalTime = currentPlayTime;

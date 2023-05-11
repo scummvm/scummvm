@@ -42,7 +42,7 @@ void SpecialEffect::init() {
 }
 
 void SpecialEffect::updateGraphics() {
-	if (g_nancy->getTotalPlayTime() > _nextFrameTime && _currentFrame < _numFrames) {
+	if (g_nancy->getTotalPlayTime() > _nextFrameTime && _currentFrame < (int)_numFrames && isInitialized()) {
 		++_currentFrame;
 		_nextFrameTime += _frameTime;
 
@@ -57,6 +57,10 @@ void SpecialEffect::onSceneChange() {
 }
 
 void SpecialEffect::afterSceneChange() {
+	if (_fadeFrom.empty()) {
+		return;
+	}
+
 	if (_type == kSceneChangeFadeCrossDissolve) {
 		g_nancy->_graphicsManager->screenshotViewport(_fadeTo);
 	} else {
@@ -66,7 +70,7 @@ void SpecialEffect::afterSceneChange() {
 
 	// Workaround for the way ManagedSurface handles transparency. Both pure black
 	// and pure white appear in scenes with SpecialEffects, and those happen to be
-	// the two default values transBlitFrom uses for transColor. By doing this
+	// the two default values transBlitFrom uses for transColor. By doing this,
 	// transColor gets set to the one color guaranteed to not appear in any scene,
 	// and transparency works correctly
 	_fadeTo.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
@@ -79,7 +83,7 @@ void SpecialEffect::afterSceneChange() {
 
 bool SpecialEffect::isDone() const {
 	if (_type == kSceneChangeFadeCrossDissolve) {
-		return _currentFrame >= _numFrames;
+		return _currentFrame >= (int)_numFrames;
 	} else {
 		return g_nancy->getTotalPlayTime() > _fadeToBlackEndTime;
 	}

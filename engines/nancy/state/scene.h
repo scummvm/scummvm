@@ -23,6 +23,7 @@
 #define NANCY_STATE_SCENE_H
 
 #include "common/singleton.h"
+#include "common/queue.h"
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/puzzledata.h"
@@ -275,7 +276,7 @@ private:
 	NancyState::NancyState _gameStateRequested;
 
 	Misc::Lightning *_lightning;
-	Misc::SpecialEffect *_specialEffect;
+	Common::Queue<Misc::SpecialEffect> _specialEffects;
 
 	Common::HashMap<uint32, PuzzleData *> _puzzleData;
 
