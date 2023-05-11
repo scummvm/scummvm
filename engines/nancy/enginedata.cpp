@@ -39,7 +39,8 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) {
 	
 	s.skip(0x17, kGameTypeVampire, kGameTypeVampire);
 	s.skip(0x49, kGameTypeNancy1, kGameTypeNancy1);
-	s.skip(0x43, kGameTypeNancy2, kGameTypeNancy3);
+	s.skip(0x43, kGameTypeNancy2);
+	
 	s.syncAsUint16LE(firstScene.sceneID);
 	s.skip(0xC, kGameTypeVampire, kGameTypeVampire); // Palette name + unknown 2 bytes
 	s.syncAsUint16LE(firstScene.frameID);
@@ -48,7 +49,8 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) {
 	s.syncAsUint16LE(startTimeMinutes);
 
 	s.skip(0xA7, kGameTypeVampire, kGameTypeNancy2);
-	s.skip(4, kGameTypeNancy3);
+	s.skip(4, kGameTypeNancy3, kGameTypeNancy3);
+	s.skip(3, kGameTypeNancy4);
 
 	s.skip(8, kGameTypeVampire, kGameTypeVampire);
 	readRect(s, extraButtonHotspot, kGameTypeVampire, kGameTypeVampire);
