@@ -44,7 +44,7 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 		_numCursorTypes = 5;
 		break;
 	default:
-		_numCursorTypes = 9;
+		_numCursorTypes = 8;
 	}
 
 	uint numCursors = g_nancy->getStaticData().numNonItemCursors + g_nancy->getStaticData().numItems * _numCursorTypes;
