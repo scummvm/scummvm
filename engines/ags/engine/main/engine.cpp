@@ -23,6 +23,7 @@
 // Engine initialization
 //
 
+#include "ags/lib/std/chrono.h"
 #include "ags/shared/core/platform.h"
 #include "ags/lib/allegro.h" // allegro_install and _exit
 #include "ags/engine/ac/asset_helper.h"
@@ -71,6 +72,7 @@
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/error.h"
+#include "ags/shared/util/file.h"
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/ags.h"
@@ -808,6 +810,42 @@ void allegro_bitmap_test_init() {
 	test_allegro_bitmap = nullptr;
 	// Switched the test off for now
 	//test_allegro_bitmap = AllegroBitmap::CreateBitmap(320,200,32);
+
+	const uint64_t bench_runs[] = {10000, 10, 100, 1000, 10000, 100000};
+
+	Bitmap *benchgfx1 = BitmapHelper::CreateRawBitmapOwner(load_bmp("benchgfx1.bmp", nullptr));
+	if (benchgfx1 != nullptr) {
+		Debug::Printf(kDbgMsg_Info, "Benchmark ver 1");
+		if (_G(gfxDriver)->UsesMemoryBackBuffer()) 
+			_G(gfxDriver)->GetMemoryBackBuffer()->Clear();
+
+		const Rect &view = _GP(play).GetMainViewport();
+		Bitmap *tsc = BitmapHelper::CreateBitmapCopy(benchgfx1, _GP(game).GetColorDepth());
+		IDriverDependantBitmap *ddb = _G(gfxDriver)->CreateDDBFromBitmap(tsc, false, true);
+
+		for (long unsigned int i = 0; i < sizeof(bench_runs)/sizeof(uint64_t); i++) {
+			_G(gfxDriver)->ClearDrawLists();
+			_G(gfxDriver)->BeginSpriteBatch(view);
+			for (uint64_t j = 0; j < bench_runs[i]; j++) {
+				_G(gfxDriver)->DrawSprite(0, 0, ddb);
+			}
+			_G(gfxDriver)->EndSpriteBatch();
+
+			Debug::Printf(kDbgMsg_Info, "Starting Allegro Bitmap Test Bench 1");
+			uint32_t start = std::chrono::high_resolution_clock::now();
+			render_to_screen();
+			uint32_t end = std::chrono::high_resolution_clock::now();
+			Debug::Printf(kDbgMsg_Info, "Done! Results (%llu iterations):", bench_runs[i]);
+			Debug::Printf(kDbgMsg_Info, "exec time (mills): %u", end - start);
+		}
+		
+		_G(gfxDriver)->DestroyDDB(ddb);
+		delete benchgfx1;
+		delete tsc;
+		_G(platform)->Delay(1000);
+	} else {
+		warning("Couldn't load the test bench graphics!");
+	}
 }
 
 // Define location of the game data either using direct settings or searching
