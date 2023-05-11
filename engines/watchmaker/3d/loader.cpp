@@ -337,9 +337,10 @@ t3dBODY* RoomManagerImplementation::loadSingleRoom(const Common::String &_pname,
 
 	{
 		uint16 j = 1;
-		while (LoadedFiles[j].b != nullptr)
+		while (j < MAX_LOADED_FILES && LoadedFiles[j].b != nullptr) {
 			j++;
-		if (j > MAX_LOADED_FILES) {
+		}
+		if (j >= MAX_LOADED_FILES) {
 			warning("Too many t3d files loaded!");
 			delete b;
 			return nullptr;
