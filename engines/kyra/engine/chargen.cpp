@@ -2015,6 +2015,8 @@ bool TransferPartyWiz::start() {
 		for (int i = 0; i < 6; i++)
 			delete[] _vm->_characters[i].faceShape;
 		memset(_vm->_characters, 0, sizeof(EoBCharacter) * 6);
+		_screen->clearPage(0);
+		_screen->clearPage(2);
 		return false;
 	}
 
@@ -2036,6 +2038,9 @@ bool TransferPartyWiz::start() {
 
 	convertInventory();
 	giveKhelbensCoin();
+
+	_screen->clearPage(0);
+	_screen->clearPage(2);
 
 	return true;
 }
@@ -2072,8 +2077,9 @@ bool TransferPartyWiz::selectAndLoadTransferFile() {
 		return false;
 
 	Common::String target = _vm->_gui->transferTargetMenu(eobTargets);
+	_screen->clearPage(0);
 	_screen->copyPage(12, 0);
-
+	
 	if (target.empty())
 		return true;
 
@@ -2083,35 +2089,50 @@ bool TransferPartyWiz::selectAndLoadTransferFile() {
 		delete in;
 		if (_vm->_gui->confirmDialogue2(15, -2, 1))
 			return true;
+		_screen->clearPage(0);
 	}
 
 	_screen->copyPage(12, 0);
 
 	bool result = _vm->_gui->transferFileMenu(target, dest);
+	_screen->clearPage(0);
 	_screen->copyPage(12, 0);
 
 	return result;
 }
 
 int TransferPartyWiz::selectCharactersMenu() {
+	static const int16 coordDef[] = { 0, 272, 43, 9, 288 };
+	static const int16 coordJp[] = { 2, 259, 56, 8, 280 };
+	const int16 *coord = coordDef;
+
 	_screen->setCurPage(2);
-	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+	Screen::FontId of = _screen->setFont(_vm->_conFont);
 	_screen->clearCurPage();
 
 	_vm->gui_drawBox(0, 0, 320, 163, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
-	_screen->printText(_strings2[0], 5, 3, _vm->guiSettings()->colors.guiColorWhite, 0);
-	_screen->printText(_strings2[1], 5, 10, _vm->guiSettings()->colors.guiColorWhite, 0);
 
+	_screen->setFont(_vm->_invFont1);
 	for (int i = 0; i < 6; i++)
 		drawCharPortraitWithStats(i, 0);
+	_screen->setFont(_vm->_conFont);
 
-	_vm->gui_drawBox(4, 148, 43, 12, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
-	_vm->gui_drawBox(272, 148, 43, 12, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
+	if (_vm->_flags.lang == Common::JA_JPN) {
+		_screen->printText(_strings2[0], 4, 4, _vm->guiSettings()->colors.guiColorWhite, 0);
+		_screen->printText(_strings2[1], 4, 12, _vm->guiSettings()->colors.guiColorWhite, 0);
+		coord = coordJp;
+	} else {
+		_screen->printText(_strings2[0], 5, 3, _vm->guiSettings()->colors.guiColorWhite, 0);
+		_screen->printText(_strings2[1], 5, 10, _vm->guiSettings()->colors.guiColorWhite, 0);
+	}
 
-	_screen->printShadedText(_labels[0], 9, 151, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-	_screen->printShadedText(_labels[1], 288, 151, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+	_vm->gui_drawBox(4, 148 - coord[0], coord[2], 12 + coord[0], _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
+	_vm->gui_drawBox(coord[1], 148 - coord[0], coord[2], 12 + coord[0], _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
+	_screen->printShadedText(_labels[0], coord[3], 151 - (coord[0] >> 1), _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+	_screen->printShadedText(_labels[1], coord[4], 151 - (coord[0] >> 1), _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);	
 
 	_screen->setCurPage(0);
+	_screen->clearPage(0);
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 
@@ -2161,17 +2182,19 @@ int TransferPartyWiz::selectCharactersMenu() {
 		if (highlight < 6) {
 			if (_vm->_characters[highlight].flags & 1) {
 				selection ^= (1 << highlight);
+				_screen->setFont(_vm->_invFont1);
 				drawCharPortraitWithStats(highlight, (selection & (1 << highlight)) ? true : false);
+				_screen->setFont(_vm->_conFont);
 				_screen->updateScreen();
 			}
 			continue;
 		}
 
-		int x = (highlight - 6) * 268 + 4;
-		_vm->gui_drawBox(x, 148, 43, 12, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.fill, -1);
+		int x = (highlight - 6) * (coord[1] - 4) + 4;
+		_vm->gui_drawBox(x, 148 - coord[0], coord[2], 12 + coord[0], _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.fill, -1);
 		_screen->updateScreen();
 		_vm->_system->delayMillis(80);
-		_vm->gui_drawBox(x, 148, 43, 12, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, -1);
+		_vm->gui_drawBox(x, 148 - coord[0], coord[2], 12 + coord[0], _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, -1);
 		_screen->updateScreen();
 
 		if (highlight == 6 || _vm->shouldQuit()) {
@@ -2236,9 +2259,13 @@ void TransferPartyWiz::drawCharPortraitWithStats(int charIndex, bool enabled) {
 }
 
 void TransferPartyWiz::updateHighlight(int index) {
-	static const int16 xPos[] = { 9, 288 };
+	static const int16 xPosDef[] = { 9, 288 };
+	static const int16 xPosJp[] = { 8, 280 };
+	const int16 *xPos = (_vm->_flags.lang == Common::JA_JPN) ? xPosJp : xPosDef;
+	int16 yPos = (_vm->_flags.lang == Common::JA_JPN) ? 150 : 151;
+
 	if (_highlight > 5 && _highlight != index)
-		_screen->printText(_labels[_highlight - 6], xPos[_highlight - 6], 151, _vm->guiSettings()->colors.guiColorWhite, 0);
+		_screen->printText(_labels[_highlight - 6], xPos[_highlight - 6], yPos, _vm->guiSettings()->colors.guiColorWhite, 0);
 
 	if (index < 6) {
 		_vm->_gui->updateBoxFrameHighLight(14 + index);
@@ -2252,7 +2279,7 @@ void TransferPartyWiz::updateHighlight(int index) {
 	if (_highlight < 6)
 		_vm->_gui->updateBoxFrameHighLight(-1);
 
-	_screen->printText(_labels[index - 6], xPos[index - 6], 151, _vm->guiSettings()->colors.guiColorLightRed, 0);
+	_screen->printText(_labels[index - 6], xPos[index - 6], yPos, _vm->guiSettings()->colors.guiColorLightRed, 0);
 	_screen->updateScreen();
 	_highlight = index;
 }
