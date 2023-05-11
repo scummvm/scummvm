@@ -6414,7 +6414,12 @@ void Runtime::scriptOpRandomInclusive(ScriptArg_t arg) {
 		_scriptStack.push_back(StackValue(_rng->getRandomNumber(stackArgs[0])));
 }
 
-OPCODE_STUB(HeroOut)
+void Runtime::scriptOpHeroOut(ScriptArg_t arg) {
+	TAKE_STACK_INT(3);
+
+	error("HeroOut not implemented");
+}
+
 OPCODE_STUB(HeroGetPos)
 OPCODE_STUB(HeroSetPos)
 
