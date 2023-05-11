@@ -484,7 +484,12 @@ void SfxData::load(Common::SeekableReadStream &stream, Audio::Mixer *mixer) {
 				}
 
 				if (!presets.empty()) {
-					for (Common::String &tokenRef : tokens) {
+					for (uint tokenIndex = 0; tokenIndex < tokens.size(); tokenIndex++) {
+						// Ignore presets for the sound name.  This fixes some breakage in e.g. Anim0134.sfx using elevator as both a sample and preset.
+						if (tokenIndex == 1)
+							continue;
+
+						Common::String &tokenRef = tokens[tokenIndex];
 						Common::HashMap<Common::String, Common::String>::const_iterator presetIt = presets.find(tokenRef);
 						if (presetIt != presets.end())
 							tokenRef = presetIt->_value;
@@ -878,12 +883,11 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 	listenerAngle = stream->readSint32BE();
 
 	uint numInventory[kMaxStates] = {};
-	for (uint sti = 0; sti < numStates; sti++)
-		numInventory[sti] = stream->readUint32BE();
-
 	uint numSounds[kMaxStates] = {};
-	for (uint sti = 0; sti < numStates; sti++)
+	for (uint sti = 0; sti < numStates; sti++) {
+		numInventory[sti] = stream->readUint32BE();
 		numSounds[sti] = stream->readUint32BE();
+	}
 
 	uint numOneShots = stream->readUint32BE();
 
