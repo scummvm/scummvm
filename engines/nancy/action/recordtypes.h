@@ -410,6 +410,18 @@ protected:
 	Common::String getRecordTypeName() const override { return "PlaySoundMultiHS"; }
 };
 
+class StopSound : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	uint _channelID;
+	SceneChangeWithFlag _sceneChange;
+
+protected:
+	Common::String getRecordTypeName() const override { return "StopSound"; }
+};
+
 class HintSystem : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;

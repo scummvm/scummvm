@@ -146,6 +146,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new PlaySoundPanFrameAnchorAndDie();
 	case 153:
 		return new PlaySoundMultiHS();
+	case 154:
+		return new StopSound();
+	case 155:
+		return new StopSound(); // StopAndUnloadSound, but we always unload
 	case 160:
 		return new HintSystem();
 	case 201:

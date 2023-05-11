@@ -653,6 +653,16 @@ void PlaySoundMultiHS::execute() {
 	}
 }
 
+void StopSound::readData(Common::SeekableReadStream &stream) {
+	_channelID = stream.readUint16LE();
+	_sceneChange.readData(stream);
+}
+
+void StopSound::execute() {
+	g_nancy->_sound->stopSound(_channelID);
+	_sceneChange.execute();
+}
+
 void HintSystem::readData(Common::SeekableReadStream &stream) {
 	_characterID = stream.readByte();
 	_genericSound.readNormal(stream);
