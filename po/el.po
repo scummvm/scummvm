@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-10 21:03+0000\n"
+"POT-Creation-Date: 2023-05-10 22:03+0000\n"
 "PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -547,7 +547,7 @@ msgid "Platform:"
 msgstr "Πλατφόρμα:"
 
 #: gui/editgamedialog.cpp:191 gui/options.cpp:2013 gui/options.cpp:2186
-#: backends/graphics/atari/atari-graphics.cpp:566
+#: backends/graphics/atari/atari-graphics.cpp:565
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Graphics"
 msgstr "Γραφικά"
@@ -3489,7 +3489,7 @@ msgstr "Προσθήκη νέου φακέλου"
 msgid "Choose a new folder"
 msgstr "Επιλογή νέου φακέλου"
 
-#: backends/graphics/atari/atari-graphics.cpp:570
+#: backends/graphics/atari/atari-graphics.cpp:569
 #: backends/graphics/sdl/sdl-graphics.cpp:447
 msgid "Toggle aspect ratio correction"
 msgstr "Εναλλαγή διόρθωσης αναλογίας διαστάσεων"
