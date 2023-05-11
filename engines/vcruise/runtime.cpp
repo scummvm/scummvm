@@ -1273,8 +1273,9 @@ bool Runtime::bootGame(bool newGame) {
 	else if (lang == Common::EL_GRC)
 		codePage = Common::CodePage::kWindows1253;
 
-	loadSubtitles(codePage);
-	debug(1, "Subtitles loaded OK");
+	if (loadSubtitles(codePage)) {
+		debug(1, "Subtitles loaded OK");
+	}
 
 	_uiGraphics.resize(24);
 	for (uint i = 0; i < _uiGraphics.size(); i++) {
@@ -4196,7 +4197,7 @@ Common::SharedPtr<Graphics::Surface> Runtime::loadGraphic(const Common::String &
 	return surf;
 }
 
-void Runtime::loadSubtitles(Common::CodePage codePage) {
+bool Runtime::loadSubtitles(Common::CodePage codePage) {
 	Common::String filePath = Common::String::format("Log/Speech%02u.txt", _languageIndex);
 
 	Common::INIFile ini;
@@ -4205,7 +4206,7 @@ void Runtime::loadSubtitles(Common::CodePage codePage) {
 
 	if (!ini.loadFromFile(filePath)) {
 		warning("Couldn't load subtitle data");
-		return;
+		return false;
 	}
 
 	for (const Common::INIFile::Section &section : ini.getSections()) {
@@ -4359,6 +4360,8 @@ void Runtime::loadSubtitles(Common::CodePage codePage) {
 			}
 		}
 	}
+
+	return true;
 }
 
 void Runtime::changeToMenuPage(MenuPage *menuPage) {

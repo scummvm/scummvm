@@ -852,7 +852,7 @@ private:
 	Common::String getFileNameForItemGraphic(uint itemID) const;
 	Common::SharedPtr<Graphics::Surface> loadGraphic(const Common::String &graphicName, bool required);
 
-	void loadSubtitles(Common::CodePage codePage);
+	bool loadSubtitles(Common::CodePage codePage);
 
 	void changeToMenuPage(MenuPage *menuPage);
 
