@@ -89,6 +89,12 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 
 	_hasItem = false;
 
+	// kNormalArrow, kHotspotArrow, kExit, kTurnLeft and kTurnRight are
+	// cases where the selected cursor is _always_ shown, regardless
+	// of whether or not an item is held. All other types of cursor
+	// are overridable when holding an item. Every item cursor has
+	// _numItemCursor variants, one corresponding to every numbered
+	// value of the CursorType enum.
 	switch (type) {
 	case kNormalArrow:
 		if (gameType <= kGameTypeNancy1) {
@@ -99,7 +105,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 			_curCursorID = 8;
 		}
 		
-		break;
+		return;
 	case kHotspotArrow:
 		if (gameType <= kGameTypeNancy1) {
 			_curCursorID = 5;
@@ -109,27 +115,52 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 			_curCursorID = 9;
 		}
 
-		break;
-	case kExit:
-		if (gameType != kGameTypeVampire) {
-			_curCursorID = 3;
-			break;
-		}
-		// fall through
-	default: {
-		uint itemsOffset = 0;
-		if (itemID == -1) {
-			// No item held, set to eyeglass
-			itemID = 0;
+		return;
+	case kTurnLeft:
+		// Only valid for nancy3 and up
+		if (gameType >= kGameTypeNancy3) {
+			_curCursorID = kTurnLeft;
+			return;
 		} else {
-			// Item held
-			itemsOffset = g_nancy->getStaticData().numNonItemCursors;
-			_hasItem = true;
+			type = kMove;
 		}
 
-		_curCursorID = (itemID * _numCursorTypes) + itemsOffset + type;
+		break;
+	case kTurnRight:
+		// Only valid for nancy3 and up
+		if (gameType >= kGameTypeNancy3) {
+			_curCursorID = kTurnRight;
+			return;
+		} else {
+			type = kMove;
+		}
+		
+		break;
+	case kExit:
+		// Not valid in TVD
+		if (gameType != kGameTypeVampire) {
+			_curCursorID = 3;
+			return;
+		}
+		
+		break;
+	default:
+		break;
 	}
+
+	// Special cases have been handled, now choose correct
+	// item cursor if holding something
+	uint itemsOffset = 0;
+	if (itemID == -1) {
+		// No item held, set to eyeglass
+		itemID = 0;
+	} else {
+		// Item held
+		itemsOffset = g_nancy->getStaticData().numNonItemCursors;
+		_hasItem = true;
 	}
+
+	_curCursorID = (itemID * _numCursorTypes) + itemsOffset + type;
 }
 
 void CursorManager::setCursorType(CursorType type) {
