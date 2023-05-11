@@ -88,6 +88,7 @@ public:
 	void processEvent(const Common::Event &event, Dialog *const activeDialog);
 	Common::Keymap *getKeymap() const;
 	void scheduleTopDialogRedraw();
+	void scheduleFullRedraw();
 
 	bool isActive() const	{ return ! _dialogStack.empty(); }
 

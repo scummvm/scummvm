@@ -811,6 +811,10 @@ void GuiManager::scheduleTopDialogRedraw() {
 		_redrawStatus = kRedrawTopDialog;
 }
 
+void GuiManager::scheduleFullRedraw() {
+	_redrawStatus = kRedrawFull;
+}
+
 void GuiManager::giveFocusToDialog(Dialog *dialog) {
 	int16 dialogX = _globalMousePosition.x - dialog->_x;
 	int16 dialogY = _globalMousePosition.y - dialog->_y;

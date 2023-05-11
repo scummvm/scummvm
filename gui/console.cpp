@@ -247,7 +247,7 @@ void ConsoleDialog::handleTickle() {
 			//_slideMode = kNoSlideMode;
 			close();
 		} else
-			g_gui.scheduleTopDialogRedraw();
+			g_gui.scheduleFullRedraw();
 	}
 
 	_scrollBar->handleTickle();
