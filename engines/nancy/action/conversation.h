@@ -31,7 +31,7 @@ namespace Action {
 // The base class for conversations, with no video data
 class ConversationSound : public RenderActionRecord {
 public:
-	ConversationSound() : RenderActionRecord(8) {}
+	ConversationSound();
 	virtual ~ConversationSound();
 
 	void init() override;
@@ -108,6 +108,8 @@ protected:
 
 	bool _hasDrawnTextbox = false;
 	int16 _pickedResponse = -1;
+
+	const byte _noResponse;
 };
 
 // Conversation with an AVF video. Originally called PlayPrimaryVideoChan0

@@ -39,6 +39,10 @@
 namespace Nancy {
 namespace Action {
 
+ConversationSound::ConversationSound() :
+	RenderActionRecord(8),
+	_noResponse(g_nancy->getGameType() <= kGameTypeNancy2 ? 10 : 20) {}
+
 ConversationSound::~ConversationSound() {
 	if (NancySceneState.getActiveConversation() == this) {
 		NancySceneState.setActiveConversation(nullptr);
@@ -180,11 +184,11 @@ void ConversationSound::execute() {
 			}
 
 			// Add responses when conditions have been satisfied
-			if (_conditionalResponseCharacterID != 10) {
+			if (_conditionalResponseCharacterID != _noResponse) {
 				addConditionalDialogue();
 			}
 
-			if (_goodbyeResponseCharacterID != 10) {
+			if (_goodbyeResponseCharacterID != _noResponse) {
 				addGoodbye();
 			}
 
@@ -541,6 +545,7 @@ void ConversationCel::updateGraphics() {
 }
 
 void ConversationCel::readData(Common::SeekableReadStream &stream) {
+	Nancy::GameType gameType = g_nancy->getGameType();
 	Common::String xsheetName, bodyTreeName, headTreeName;
 	readFilename(stream, xsheetName);
 	readFilename(stream, bodyTreeName);
@@ -577,14 +582,31 @@ void ConversationCel::readData(Common::SeekableReadStream &stream) {
 		g_nancy->_resource->loadImage(imageName, cel.bodySurf, bodyTreeName, &cel.bodySrc, &cel.bodyDest);
 		readFilename(xsheet, imageName);
 		g_nancy->_resource->loadImage(imageName, cel.headSurf, headTreeName, &cel.headSrc, &cel.headDest);
-		xsheet.skip(28);
+
+		// Zeroes
+		if (gameType >= kGameTypeNancy3) {
+			xsheet.skip(74);
+		} else {
+			xsheet.skip(28);
+		}
 	}
 
 	// Continue reading the AR stream
-	stream.skip(0x17);
+
+	// Zeroes
+	if (g_nancy->getGameType() >= kGameTypeNancy3) {
+		stream.skip(66);
+	} else {
+		stream.skip(20);
+	}
+
+	// Something related to quality
+	stream.skip(3);
+
 	_firstFrame = stream.readUint16LE();
 	_lastFrame = stream.readUint16LE();
 
+	// A few more quality-related bytes and more zeroes
 	stream.skip(0x8E);
 
 	ConversationSound::readData(stream);
