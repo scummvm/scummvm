@@ -228,6 +228,13 @@ void Textbox::drawTextbox() {
 		bool isColor = false;
 		for (Common::String &line : wrappedLines) {
 			uint horizontalOffset = 0;
+			
+			// Trim whitespaces at end of wrapped lines to make counting
+			// of characters consistent. We do this manually since we _want_
+			// some whitespaces at the beginning of a line (e.g. tabs)
+			if (Common::isSpace(line.lastChar())) {
+				line.deleteLastChar();
+			}
 
 			// Set the width of the hotspot
 			if (hasHotspot) {
