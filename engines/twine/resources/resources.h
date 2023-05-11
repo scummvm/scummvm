@@ -174,6 +174,7 @@ public:
 	/** Font buffer pointer */
 	int32 _fontBufSize = 0;
 	uint8 *_fontPtr = nullptr;
+	uint8 *_sjisFontPtr = nullptr;
 
 	SpriteData _spriteShadowPtr;
 	SpriteBoundingBoxData _spriteBoundingBox;

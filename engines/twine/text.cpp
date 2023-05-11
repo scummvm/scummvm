@@ -48,9 +48,12 @@ namespace TwinE {
 #define VOX_EXT ".vox"
 
 static const int32 PADDING = 8;
+static const int kLBASJISCharWidth = 24;
+static const int kLBASJISCharHeight = 24;
 
 Text::Text(TwinEEngine *engine) : _engine(engine) {
 	Common::fill(&_currMenuTextBuffer[0], &_currMenuTextBuffer[256], 0);
+	_isShiftJIS = _engine->getGameLang() == Common::Language::JA_JPN;
 }
 
 Text::~Text() {
@@ -172,7 +175,45 @@ void Text::initSceneTextBank() {
 	initDial((TextBankId)((int)_engine->_scene->_sceneTextBank + (int)TextBankId::Citadel_Island));
 }
 
-void Text::drawCharacter(int32 x, int32 y, uint8 character) {
+void Text::drawCharacter(int32 x, int32 y, uint16 character) {
+	const uint8 usedColor = _dialTextColor;
+
+	if (_isShiftJIS && character > 0x100 && _engine->_resources->_sjisFontPtr) {
+		int index = 0;
+		if (character >= 0x8140 && character <= 0x9fff)
+			index = character - 0x8140;
+		else if (character >= 0xe040 && character <= 0xeaff)
+			index = character - 0xe040 + 8320;
+		else {
+			drawCharacter(x, y, '?');
+			return;
+		}
+
+		byte *glyphPtr = _engine->_resources->_sjisFontPtr + index * (kLBASJISCharHeight * kLBASJISCharWidth / 8);
+
+		for (uint8 fontY = 0; fontY < kLBASJISCharHeight; ++fontY) {
+			byte bits = 0;
+			int remBits = 0;
+			for (uint8 fontX = 0; fontX < kLBASJISCharWidth; ++fontX) {
+				if (remBits == 0) {
+					remBits = 8;
+					bits = *glyphPtr++;
+				}
+				int32 tempX = x + fontX;
+				int32 tempY = y + fontY;
+				if ((bits & 0x80) && tempX >= 0 && tempX < (_engine->width() - 1) && tempY >= 0 && tempY < (_engine->height() - 1)) {
+					_engine->_frontVideoBuffer.setPixel(tempX, tempY, usedColor);
+				}
+
+				remBits--;
+				bits <<= 1;
+			}
+		}
+		return;
+	}
+
+	if (character > 0x100)
+		character = '?';
 	Common::MemoryReadStream stream(_engine->_resources->_fontPtr, _engine->_resources->_fontBufSize);
 	stream.seek(character * 4);
 	stream.seek(stream.readSint16LE());
@@ -180,8 +221,6 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) {
 	const uint8 sizeY = stream.readByte();
 	x += stream.readByte();
 	y += stream.readByte();
-
-	const uint8 usedColor = _dialTextColor;
 
 	int32 tempX = x;
 	int32 tempY = y;
@@ -216,7 +255,7 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) {
 	}
 }
 
-void Text::drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color, Common::Rect &dirtyRect) {
+void Text::drawCharacterShadow(int32 x, int32 y, uint16 character, int32 color, Common::Rect &dirtyRect) {
 	if (character == ' ') {
 		return;
 	}
@@ -237,6 +276,14 @@ void Text::drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color, C
 	}
 }
 
+uint16 Text::getNextChar(const char *&dialogue) {
+	uint16 currChar = *dialogue++ & 0xff;
+	if (_isShiftJIS && ((currChar >= 0x81 && currChar <= 0x9f)
+			    || (currChar >= 0xe0 && currChar <= 0xea)) && ((*dialogue & 0xff) >= 0x40))
+		currChar = (currChar << 8) | (*dialogue++ & 0xff);
+	return currChar;
+}
+
 void Text::drawText(int32 x, int32 y, const char *dialogue, bool shadow) {
 	// if the font is not defined
 	if (_engine->_resources->_fontPtr == nullptr) {
@@ -244,7 +291,7 @@ void Text::drawText(int32 x, int32 y, const char *dialogue, bool shadow) {
 	}
 
 	do {
-		const uint8 currChar = (uint8)*dialogue++; // read the next char from the string
+		const uint16 currChar = getNextChar(dialogue); // read the next char from the string
 		if (currChar == '\0') {
 			break;
 		}
@@ -271,7 +318,7 @@ int32 Text::getTextSize(const char *dialogue) {
 	int32 dialTextSize = 0;
 
 	do {
-		const uint8 currChar = (uint8) * (dialogue++);
+		const uint16 currChar = getNextChar(dialogue);
 		if (currChar == '\0') {
 			break;
 		}
@@ -517,14 +564,22 @@ void Text::fadeInCharacters(int32 counter, int32 fontColor) {
 	_engine->copyBlockPhys(dirtyRect);
 }
 
-int32 Text::getCharWidth(uint8 chr) const {
+int32 Text::getCharWidth(uint16 chr) const {
+	if (_isShiftJIS && (chr > 0x100))
+		return kLBASJISCharWidth;
+	if (chr > 0x100)
+		chr = '?';
 	Common::MemoryReadStream stream(_engine->_resources->_fontPtr, _engine->_resources->_fontBufSize);
 	stream.seek(chr * 4);
 	stream.seek(stream.readSint16LE());
 	return stream.readByte();
 }
 
-int32 Text::getCharHeight(uint8 chr) const {
+int32 Text::getCharHeight(uint16 chr) const {
+	if (_isShiftJIS && (chr > 0x100))
+		return kLBASJISCharHeight;
+	if (chr > 0x100)
+		chr = '?';
 	Common::MemoryReadStream stream(_engine->_resources->_fontPtr, _engine->_resources->_fontBufSize);
 	stream.seek(chr * 4);
 	stream.seek(stream.readSint16LE() + 1);
@@ -551,7 +606,7 @@ ProgressiveTextState Text::updateProgressiveText() { // NextDialCar
 		_dialTextXPos = _dialTextBox.left + PADDING;
 		_dialTextYPos = _dialTextBox.top + PADDING;
 	}
-	const char currentChar = *_progressiveTextBufferPtr;
+	const uint16 currentChar = getNextChar(_progressiveTextBufferPtr);
 	assert(currentChar != '\0');
 	fillFadeInBuffer(_dialTextXPos, _dialTextYPos, currentChar);
 	fadeInCharacters(_fadeInCharactersPos, _dialTextStartColor);
@@ -562,9 +617,6 @@ ProgressiveTextState Text::updateProgressiveText() { // NextDialCar
 	} else {
 		_dialTextXPos += charWidth + 2;
 	}
-
-	// next character
-	_progressiveTextBufferPtr++;
 
 	// reaching 0-byte means a new line - as we are fading in per line
 	if (*_progressiveTextBufferPtr != '\0') {

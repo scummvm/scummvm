@@ -20,6 +20,7 @@
  */
 
 #include "twine/resources/resources.h"
+#include "common/file.h"
 #include "common/tokenizer.h"
 #include "common/util.h"
 #include "twine/audio/sound.h"
@@ -40,6 +41,7 @@ Resources::~Resources() {
 		free(_samplesTable[i]);
 	}
 	free(_fontPtr);
+	free(_sjisFontPtr);
 }
 
 void Resources::initPalettes() {
@@ -138,6 +140,15 @@ void Resources::initResources() {
 	_fontBufSize = HQR::getAllocEntry(&_fontPtr, Resources::HQR_RESS_FILE, RESSHQR_LBAFONT);
 	if (_fontBufSize == 0) {
 		error("Failed to load font");
+	}
+
+	const int kMinSjisSize = 11072 * 24 * 3;
+	Common::File f24;
+	if (f24.open("FNT24.DAT") && f24.size() >= kMinSjisSize) {
+		// Rest is garbage
+		_sjisFontPtr = (byte *)malloc(kMinSjisSize);
+		assert(_sjisFontPtr);
+		f24.read(_sjisFontPtr, kMinSjisSize);
 	}
 
 	_engine->_text->setFontParameters(2, 8);
