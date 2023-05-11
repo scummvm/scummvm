@@ -110,7 +110,11 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
 		uint singleDepSize = g_nancy->getGameType() <= kGameTypeNancy2 ? 12 : 16;
 		uint numDependencies = depsDataSize / singleDepSize;
 		if (depsDataSize % singleDepSize) {
-			error("Action record type %s has incorrect read size", newRecord->getRecordTypeName().c_str());
+			error("Action record type %s has incorrect read size!\nScene S%u, AR %u, description:\n%s",
+				newRecord->getRecordTypeName().c_str(),
+				NancySceneState.getSceneInfo().sceneID,
+				_records.size(),
+				newRecord->_description.c_str());
 		}
 		
 		if (numDependencies == 0) {
