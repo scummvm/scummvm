@@ -76,7 +76,6 @@ public:
 	~DDSTextureData() override {
 		delete[] _data;
 	}
-	DxtCompression _compression;
 	int getWidth() const override {
 		return _header.width;
 	}
