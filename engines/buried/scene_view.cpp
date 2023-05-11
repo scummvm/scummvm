@@ -1450,6 +1450,9 @@ bool SceneViewWindow::getCurrentSceneLocation(Location &location) {
 }
 
 bool SceneViewWindow::playSynchronousAnimation(int animationID) {
+	if (!_currentScene)
+		return false;
+
 	TempCursorChange cursorChange(kCursorWait);
 
 	Common::Array<AnimEvent> animDatabase = getAnimationDatabase(_currentScene->_staticData.location.timeZone, _currentScene->_staticData.location.environment);
@@ -1475,7 +1478,7 @@ bool SceneViewWindow::playSynchronousAnimation(int animationID) {
 	if (_globalFlags.bcTranslateEnabled == 1 && animDatabase[i].audioStreamCount > 1)
 		animationMovie->setAudioTrack(2);
 
-	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_START) == SC_FALSE)
+	if (_currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_START) == SC_FALSE)
 		return false;
 
 	animationMovie->seekToFrame(animDatabase[i].startFrame);
@@ -1555,6 +1558,9 @@ bool SceneViewWindow::playSynchronousAnimationExtern(int animationID) {
 }
 
 bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, int top) {
+	if (!_currentScene)
+		return false;
+
 	TempCursorChange cursorChange(kCursorWait);
 
 	Common::Array<AnimEvent> animDatabase = getAnimationDatabase(_currentScene->_staticData.location.timeZone, _currentScene->_staticData.location.environment);
@@ -1582,7 +1588,7 @@ bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, 
 	if (_globalFlags.bcTranslateEnabled == 1 && animDatabase[i].audioStreamCount > 1)
 		animationMovie->setAudioTrack(2);
 
-	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_START) == SC_FALSE)
+	if (_currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_START) == SC_FALSE)
 		return false;
 
 	animationMovie->seekToFrame(animDatabase[i].startFrame);
@@ -1622,6 +1628,9 @@ bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, 
 }
 
 bool SceneViewWindow::playClippedSynchronousAnimation(int animationID, int left, int top, int right, int bottom) {
+	if (!_currentScene)
+		return false;
+
 	TempCursorChange cursorChange(kCursorWait);
 
 	Common::Array<AnimEvent> animDatabase = getAnimationDatabase(_currentScene->_staticData.location.timeZone, _currentScene->_staticData.location.environment);
@@ -1652,7 +1661,7 @@ bool SceneViewWindow::playClippedSynchronousAnimation(int animationID, int left,
 	if (_globalFlags.bcTranslateEnabled == 1 && animDatabase[i].audioStreamCount > 1)
 		animationMovie->setAudioTrack(2);
 
-	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_START) == SC_FALSE)
+	if (_currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_START) == SC_FALSE)
 		return false;
 
 	animationMovie->seekToFrame(animDatabase[i].startFrame);
