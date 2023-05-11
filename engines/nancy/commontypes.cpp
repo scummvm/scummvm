@@ -65,6 +65,11 @@ void BitmapDescription::readData(Common::SeekableReadStream &stream, bool frameI
 	} else {
 		frameID = stream.readUint32LE();
 	}
+
+	if (g_nancy->getGameType() >= kGameTypeNancy3) {
+		// Most likely transparency
+		stream.skip(2);
+	}
 	
 	readRect(stream, src);
 	readRect(stream, dest);
