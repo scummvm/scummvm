@@ -570,7 +570,6 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		_isBigEndian = false;
 	} else {
 		warning("RIFXArchive::openStream(): RIFX or XFIR expected but %s found", tag2str(headerTag));
-		_stream = nullptr;
 		return false;
 	}
 
@@ -642,10 +641,8 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	delete dumpStream;
 
 	// If we couldn't read the map, we can't do anything past this point.
-	if (!readMapSuccess) {
-		_stream = nullptr;
+	if (!readMapSuccess)
 		return false;
-	}
 
 	if (_rifxType == MKTAG('A', 'P', 'P', 'L')) {
 		if (hasResource(MKTAG('F', 'i', 'l', 'e'), -1)) {
@@ -669,7 +666,6 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		}
 
 		warning("No 'File' resource present in APPL archive");
-		_stream = nullptr;
 		return false;
 	}
 

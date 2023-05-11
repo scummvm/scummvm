@@ -302,6 +302,11 @@ Archive *Window::loadEXE(const Common::String movie) {
 			delete exeStream;
 			return nullptr;
 		}
+
+		if (result)
+			result->setPathName(movie);
+
+		return result;
 	}
 
 	if (result)
