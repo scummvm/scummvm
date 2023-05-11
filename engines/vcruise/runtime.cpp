@@ -710,7 +710,8 @@ SaveGameSwappableState::SaveGameSwappableState() : roomNumber(0), screenNumber(0
 												   animVolume(100), loadedAnimation(0), animDisplayingFrame(0) {
 }
 
-SaveGameSnapshot::SaveGameSnapshot() : hero(0), escOn(false), numStates(1), listenerX(0), listenerY(0), listenerAngle(0) {
+SaveGameSnapshot::SaveGameSnapshot() : hero(0), swapOutRoom(0), swapOutScreen(0), swapOutDirection(0),
+	escOn(false), numStates(1), listenerX(0), listenerY(0), listenerAngle(0) {
 }
 
 void SaveGameSnapshot::write(Common::WriteStream *stream) const {
@@ -726,6 +727,9 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 	}
 
 	stream->writeUint32BE(hero);
+	stream->writeUint32BE(swapOutRoom);
+	stream->writeUint32BE(swapOutScreen);
+	stream->writeUint32BE(swapOutDirection);
 
 	stream->writeByte(escOn ? 1 : 0);
 
@@ -827,10 +831,17 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 		states[sti]->direction = stream->readUint32BE();
 	}
 
-	if (saveVersion >= 6)
+	if (saveVersion >= 6) {
 		hero = stream->readUint32BE();
-	else
+		swapOutScreen = stream->readUint32BE();
+		swapOutRoom = stream->readUint32BE();
+		swapOutDirection = stream->readUint32BE();
+	} else {
 		hero = 0;
+		swapOutScreen = 0;
+		swapOutRoom = 0;
+		swapOutDirection = 0;
+	}
 
 	escOn = (stream->readByte() != 0);
 
@@ -963,7 +974,8 @@ FontCacheItem::FontCacheItem() : font(nullptr), size(0) {
 }
 
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID, Common::Language defaultLanguage)
-	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _hero(0), _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
+	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _hero(0), _swapOutRoom(0), _swapOutScreen(0), _swapOutDirection(0),
+	  _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
 	  _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false),
 	  _musicTrack(0), _musicActive(true), _scoreSectionEndTime(0), _musicVolume(getDefaultSoundVolume()), _musicVolumeRampStartTime(0), _musicVolumeRampStartVolume(0), _musicVolumeRampRatePerMSec(0), _musicVolumeRampEnd(0),
@@ -2655,6 +2667,10 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 
 	if (changedScreen) {
 		_gyros.reset();
+
+		_swapOutDirection = 0;
+		_swapOutRoom = 0;
+		_swapOutScreen = 0;
 
 		if (_scriptSet) {
 			RoomScriptSetMap_t::const_iterator roomScriptIt = _scriptSet->roomScripts.find(_roomNumber);
@@ -4723,6 +4739,9 @@ void Runtime::restoreSaveGameSnapshot() {
 	_screenNumber = mainState->screenNumber;
 	_direction = mainState->direction;
 	_hero = _saveGame->hero;
+	_swapOutRoom = _saveGame->swapOutRoom;
+	_swapOutScreen = _saveGame->swapOutScreen;
+	_swapOutDirection = _saveGame->swapOutDirection;
 
 	_pendingStaticAnimParams = _saveGame->pendingStaticAnimParams;
 
@@ -6417,7 +6436,9 @@ void Runtime::scriptOpRandomInclusive(ScriptArg_t arg) {
 void Runtime::scriptOpHeroOut(ScriptArg_t arg) {
 	TAKE_STACK_INT(3);
 
-	error("HeroOut not implemented");
+	_swapOutRoom = stackArgs[0];
+	_swapOutScreen = stackArgs[1];
+	_swapOutDirection = stackArgs[2];
 }
 
 OPCODE_STUB(HeroGetPos)

@@ -440,6 +440,9 @@ struct SaveGameSnapshot {
 	static void writeString(Common::WriteStream *stream, const Common::String &str);
 
 	uint hero;
+	uint swapOutRoom;
+	uint swapOutScreen;
+	uint swapOutDirection;
 
 	uint numStates;
 	Common::SharedPtr<SaveGameSwappableState> states[kMaxStates];
@@ -1064,6 +1067,10 @@ private:
 	uint _screenNumber;
 	uint _direction;
 	uint _hero;
+
+	uint _swapOutRoom;
+	uint _swapOutScreen;
+	uint _swapOutDirection;
 
 	GyroState _gyros;
 
