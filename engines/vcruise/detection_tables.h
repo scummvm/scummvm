@@ -76,7 +76,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			"reah",
 			"German CD",
 			AD_ENTRY2s("Reah.exe", "be29f9f9fc9a454488f9d2fb68e26326", 305664,
-					   "0170_b.wav", "478a76fe6c311e824f64f0ec1deec1fc", 121220),
+					   "0170_b.wav", "5f84af02d1193ce9c47fe0dc821f0613", 121220),
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			ADGF_TESTING,
