@@ -308,7 +308,7 @@ void Scene::setHeldItem(int16 id)  {
 }
 
 void Scene::setEventFlag(int16 label, byte flag) {
-	if (label > 1000) {
+	if (label >= 1000) {
 		// In nancy3 and onwards flags begin from 1000
 		label -= 1000;
 	}
