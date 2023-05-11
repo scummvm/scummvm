@@ -88,9 +88,6 @@ void retroQuit(void);
 void retroReset(void);
 int retroTestGame(const char *game_id, bool autodetect);
 
-void retroSetSystemDir(const char *aPath);
-void retroSetSaveDir(const char *aPath);
-
 void retroKeyEvent(bool down, unsigned keycode, uint32_t character, uint16_t key_modifiers);
 
 uint8 getThreadSwitchCaller(void);

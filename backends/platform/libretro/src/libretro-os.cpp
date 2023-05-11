@@ -75,6 +75,8 @@ extern bool consecutive_screen_updates_is_enabled(void);
 extern void reset_performance_tuner(void);
 extern void retro_osd_notification(const char* msg);
 extern float frame_rate;
+extern const char * retro_get_system_dir(void);
+extern const char * retro_get_save_dir(void);
 
 #include "common/mutex.h"
 
@@ -292,6 +294,9 @@ static INLINE void copyRectToSurface(uint8_t *pixels, int out_pitch, const uint8
 
 static Common::String s_systemDir;
 static Common::String s_saveDir;
+static Common::String s_extraDir;
+static Common::String s_themeDir;
+static Common::String s_lastDir;
 
 #ifdef FRONTEND_SUPPORTS_RGB565
 #define SURF_BPP 2
@@ -372,13 +377,13 @@ public:
 		memset(_joypadmouseButtons, 0, sizeof(_joypadmouseButtons));
 		memset(_joypadkeyboardButtons, 0, sizeof(_joypadkeyboardButtons));
 
+		s_systemDir = Common::String(retro_get_system_dir());
+		s_saveDir = Common::String(retro_get_save_dir());
+		s_themeDir = s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_THEME_SUBDIR;
+		s_extraDir = s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_EXTRA_SUBDIR;
+		s_lastDir = s_systemDir;
+
 		_startTime = getMillis();
-
-		if (s_systemDir.empty())
-			s_systemDir = ".";
-
-		if (s_saveDir.empty())
-			s_saveDir = ".";
 	}
 
 	virtual ~OSystem_RETRO() {
@@ -391,7 +396,26 @@ public:
 	}
 
 	virtual void initBackend() {
+
 		_savefileManager = new DefaultSaveFileManager(s_saveDir);
+
+		if (! ConfMan.hasKey("themepath")) {
+			if (! Common::FSNode(s_themeDir).exists())
+				retro_osd_notification("ScummVM theme folder not found.");
+			else
+				ConfMan.set("themepath", s_themeDir);
+		}
+
+		if (! ConfMan.hasKey("extrapath")) {
+			if (! Common::FSNode(s_extraDir).exists())
+				retro_osd_notification("ScummVM datafiles folder not found. Some engines/features will not work.");
+			else
+				ConfMan.set("extrapath", s_extraDir);
+		}
+
+		if (! ConfMan.hasKey("browser_lastpath"))
+			ConfMan.set("browser_lastpath", s_lastDir);
+
 #ifdef FRONTEND_SUPPORTS_RGB565
 		_overlay.create(RES_W_OVERLAY, RES_H_OVERLAY, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 #else
@@ -1317,14 +1341,6 @@ void retroQuit() {
 
 int retroTestGame(const char *game_id, bool autodetect) {
 	return dynamic_cast<OSystem_RETRO *>(g_system)->TestGame(game_id, autodetect);
-}
-
-void retroSetSystemDir(const char *aPath) {
-	s_systemDir = Common::String(aPath);
-}
-
-void retroSetSaveDir(const char *aPath) {
-	s_saveDir = Common::String(aPath);
 }
 
 void retroKeyEvent(bool down, unsigned keycode, uint32_t character, uint16_t key_modifiers) {
