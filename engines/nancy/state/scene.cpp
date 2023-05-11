@@ -892,6 +892,8 @@ void Scene::clearPuzzleData() {
 	for (auto &pd : _puzzleData) {
 		delete pd._value;
 	}
+
+	_puzzleData.clear();
 }
 
 Scene::PlayFlags::LogicCondition::LogicCondition() : flag(g_nancy->_false) {}
