@@ -163,6 +163,7 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
 				depStack.push(&dep);
 				break;
 			case DependencyType::kCloseParenthesis:
+				depStack.top()->children.pop_back();
 				depStack.pop();
 				break;			
 			default:
