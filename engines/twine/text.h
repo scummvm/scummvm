@@ -65,15 +65,20 @@ private:
 		int32 inChar = 0;
 		int32 inPixel = 0;
 	};
+	struct LineCharacter {
+		int16 chr = 0;
+		int16 x = 0;
+	};
 	WordSize getWordSize(const char *completeText, char *wordBuf, int32 wordBufSize);
 	uint16 getNextChar(const char *&dialogue);
 	void processTextLine();
+	void appendProgressiveTextBuffer(const char *s, int &x, uint &i);
 	// draw next page arrow polygon
 	void renderContinueReadingTriangle();
 	/**
 	 * @see fadeInCharacters
 	 */
-	void fillFadeInBuffer(int16 x, int16 y, int16 chr);
+	void fillFadeInBuffer(int16 baseX, int16 y, const LineCharacter &chr);
 	/**
 	 * Blend in characters for a text scrolling in
 	 *
@@ -84,14 +89,14 @@ private:
 
 	TextBankId _currentBankIdx = TextBankId::None;
 
-	char _progressiveTextBuffer[256] {'\0'};
+	LineCharacter _progressiveTextBuffer[256];
 	const char *_currentTextPosition = nullptr;
 
-	int32 _dialTextXPos = 0;
+	int32 _dialTextBaseXPos = 0;
 	int32 _dialTextYPos = 0;
 
 	/** Current position of in the buffer of characters that are currently faded in */
-	const char *_progressiveTextBufferPtr = nullptr;
+	const LineCharacter *_progressiveTextBufferPtr = nullptr;
 
 	int32 _dialTextBoxCurrentLine = 0;
 	struct BlendInCharacter {
@@ -137,6 +142,7 @@ private:
 	int32 _dialTextBoxMaxX = 0; // dialogueBoxParam2
 
 	bool _isShiftJIS = false;
+	bool _isVisualRTL = false;
 
 	bool displayText(TextId index, bool showText, bool playVox, bool loop);
 public:
@@ -193,6 +199,7 @@ public:
 	void initInventoryDialogueBox();
 
 	void initText(TextId index);
+	void initLine();
 	void initInventoryText(InventoryItems index);
 	void initItemFoundText(InventoryItems index);
 	void fadeInRemainingChars();

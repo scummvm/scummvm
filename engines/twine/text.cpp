@@ -54,6 +54,7 @@ static const int kLBASJISCharHeight = 24;
 Text::Text(TwinEEngine *engine) : _engine(engine) {
 	Common::fill(&_currMenuTextBuffer[0], &_currMenuTextBuffer[256], 0);
 	_isShiftJIS = _engine->getGameLang() == Common::Language::JA_JPN;
+	_isVisualRTL = _engine->getGameLang() == Common::Language::HE_ISR;
 }
 
 Text::~Text() {
@@ -374,9 +375,10 @@ void Text::initText(TextId index) {
 	_hasValidTextHandle = true;
 
 	_dialTextBoxCurrentLine = 0;
-	_progressiveTextBuffer[0] = '\0';
+	_progressiveTextBuffer[0].chr = '\0';
+	_progressiveTextBuffer[0].x = 0;
 	_fadeInCharactersPos = 0;
-	_dialTextXPos = _dialTextBox.left + PADDING;
+	_dialTextBaseXPos = _dialTextBox.left + PADDING;
 	_dialTextYPos = _dialTextBox.top + PADDING;
 	_currentTextPosition = _currDialTextPtr;
 
@@ -388,19 +390,23 @@ void Text::initText(TextId index) {
 }
 
 void Text::initProgressiveTextBuffer() {
-	Common::fill(&_progressiveTextBuffer[0], &_progressiveTextBuffer[sizeof(_progressiveTextBuffer)], ' ');
+	for (uint i = 0; i < ARRAYSIZE(_progressiveTextBuffer); i++) {
+		_progressiveTextBuffer[i].chr = ' ';
+		_progressiveTextBuffer[i].x = (_dialCharSpace + 1) * i;
+	}
 	// the end of the buffer defines how fast the next page is shown - as the
 	// whitespaces are handled in the fade in process, too. But we need at least 32 chars,
 	// to completly fade in the last characters of a full page (see TEXT_MAX_FADE_IN_CHR)
-	_progressiveTextBuffer[sizeof(_progressiveTextBuffer) - 1] = '\0';
+	_progressiveTextBuffer[sizeof(_progressiveTextBuffer) - 1].chr = '\0';
+	_progressiveTextBuffer[sizeof(_progressiveTextBuffer) - 1].x = 0;
 	_progressiveTextBufferPtr = _progressiveTextBuffer;
 	_dialTextBoxCurrentLine = 0;
 }
 
-void Text::fillFadeInBuffer(int16 x, int16 y, int16 chr) {
+void Text::fillFadeInBuffer(int16 baseX, int16 y, const LineCharacter &chr) {
 	if (_fadeInCharactersPos < TEXT_MAX_FADE_IN_CHR) {
-		_fadeInCharacters[_fadeInCharactersPos].chr = chr;
-		_fadeInCharacters[_fadeInCharactersPos].x = x;
+		_fadeInCharacters[_fadeInCharactersPos].chr = chr.chr;
+		_fadeInCharacters[_fadeInCharactersPos].x = baseX + chr.x;
 		_fadeInCharacters[_fadeInCharactersPos].y = y;
 		_fadeInCharactersPos++;
 		return;
@@ -412,8 +418,8 @@ void Text::fillFadeInBuffer(int16 x, int16 y, int16 chr) {
 		_fadeInCharacters[var2] = _fadeInCharacters[var1];
 		counter2++;
 	}
-	_fadeInCharacters[TEXT_MAX_FADE_IN_CHR - 1].chr = chr;
-	_fadeInCharacters[TEXT_MAX_FADE_IN_CHR - 1].x = x;
+	_fadeInCharacters[TEXT_MAX_FADE_IN_CHR - 1].chr = chr.chr;
+	_fadeInCharacters[TEXT_MAX_FADE_IN_CHR - 1].x = baseX + chr.x;
 	_fadeInCharacters[TEXT_MAX_FADE_IN_CHR - 1].y = y;
 }
 
@@ -436,6 +442,26 @@ Text::WordSize Text::getWordSize(const char *completeText, char *wordBuf, int32 
 	return size;
 }
 
+void Text::appendProgressiveTextBuffer(const char *s, int &x, uint &i) {
+	while (1) {
+		if (i >= ARRAYSIZE(_progressiveTextBuffer) - 1)
+			return;
+		uint16 chr = getNextChar(s);
+		if (!chr)
+			return;
+		_progressiveTextBuffer[i].chr = chr;
+		_progressiveTextBuffer[i].x = x;
+		i++;
+
+		if (chr == ' ') {
+		        x += _dialCharSpace + 1;
+		} else {
+			x += getCharWidth(chr) + 2;
+		}
+	}
+}
+
+
 void Text::processTextLine() {
 	const char *buffer = _currentTextPosition;
 	_dialCharSpace = 7;
@@ -443,7 +469,10 @@ void Text::processTextLine() {
 
 	int32 lineBreakX = 0;
 	int32 spaceCharCount = 0;
-	_progressiveTextBuffer[0] = '\0';
+	int x = 0;
+	uint i = 0;
+	_progressiveTextBuffer[0].chr = '\0';
+	_progressiveTextBuffer[0].x = '\0';
 
 	for (;;) {
 		if (*buffer == ' ') {
@@ -473,8 +502,7 @@ void Text::processTextLine() {
 			buffer++;
 			if (lineBreakX == 0) {
 				lineBreakX = 7;
-				*(_progressiveTextBuffer + 0) = ' ';
-				*(_progressiveTextBuffer + 1) = '\0';
+				appendProgressiveTextBuffer(" ", x, i);
 			}
 			// new page?
 			if (wordBuf[1] == 'P') {
@@ -486,8 +514,8 @@ void Text::processTextLine() {
 
 		buffer += wordSize.inChar;
 		_currentTextPosition = buffer;
-		strncat(_progressiveTextBuffer, wordBuf, sizeof(_progressiveTextBuffer) - strlen(_progressiveTextBuffer) - 1);
-		strncat(_progressiveTextBuffer, " ", sizeof(_progressiveTextBuffer) - strlen(_progressiveTextBuffer) - 1);
+		appendProgressiveTextBuffer(wordBuf, x, i);
+		appendProgressiveTextBuffer(" ", x, i);
 		spaceCharCount++;
 
 		lineBreakX += wordSize.inPixel + _dialCharSpace;
@@ -496,6 +524,17 @@ void Text::processTextLine() {
 			continue;
 		}
 		break;
+	}
+
+	_progressiveTextBuffer[i].chr = 0;
+	_progressiveTextBuffer[i].x = 0;
+
+	if (_isVisualRTL) {
+		for (uint j = 0; j < i / 2; j++) {
+			LineCharacter t = _progressiveTextBuffer[j];
+			_progressiveTextBuffer[j] = _progressiveTextBuffer[i - j - 1];
+			_progressiveTextBuffer[i - j - 1] = t;
+		}
 	}
 
 	if (spaceCharCount > 0) {
@@ -599,27 +638,20 @@ ProgressiveTextState Text::updateProgressiveText() { // NextDialCar
 		return ProgressiveTextState::End;
 	}
 
-	if (*_progressiveTextBufferPtr == '\0') {
+	if (_progressiveTextBufferPtr->chr == '\0') {
 		initProgressiveTextBuffer();
 		processTextLine();
 		initDialogueBox();
-		_dialTextXPos = _dialTextBox.left + PADDING;
+		_dialTextBaseXPos = _dialTextBox.left + PADDING;
 		_dialTextYPos = _dialTextBox.top + PADDING;
 	}
-	const uint16 currentChar = getNextChar(_progressiveTextBufferPtr);
-	assert(currentChar != '\0');
-	fillFadeInBuffer(_dialTextXPos, _dialTextYPos, currentChar);
+	LineCharacter currentChar = *_progressiveTextBufferPtr++;
+	assert(currentChar.chr != '\0');
+	fillFadeInBuffer(_dialTextBaseXPos, _dialTextYPos, currentChar);
 	fadeInCharacters(_fadeInCharactersPos, _dialTextStartColor);
-	const int8 charWidth = getCharWidth(currentChar);
-
-	if (currentChar == ' ') {
-		_dialTextXPos += _dialCharSpace + 1;
-	} else {
-		_dialTextXPos += charWidth + 2;
-	}
 
 	// reaching 0-byte means a new line - as we are fading in per line
-	if (*_progressiveTextBufferPtr != '\0') {
+	if (_progressiveTextBufferPtr->chr != '\0') {
 		return ProgressiveTextState::ContinueRunning;
 	}
 
@@ -633,7 +665,7 @@ ProgressiveTextState Text::updateProgressiveText() { // NextDialCar
 	_dialTextBoxCurrentLine++;
 
 	_dialTextYPos += lineHeight;
-	_dialTextXPos = _dialTextBox.left + PADDING;
+	_dialTextBaseXPos = _dialTextBox.left + PADDING;
 
 	if (_dialTextBoxCurrentLine >= _dialTextBoxLines) {
 		renderContinueReadingTriangle();
