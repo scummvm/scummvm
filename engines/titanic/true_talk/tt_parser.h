@@ -162,12 +162,12 @@ private:
 	/**
 	 * Add a concept node
 	 */
-	int addConcept(TTconcept *concept);
+	int addConcept(TTconcept *c);
 
 	/**
 	 * Detaches a concept from the main concept list if prseent, then deletes it
 	 */
-	void removeConcept(TTconcept *concept);
+	void removeConcept(TTconcept *c);
 
 	/**
 	 * Detaches a node from the main node list
@@ -184,7 +184,7 @@ private:
 
 	int checkForAction();
 	int fn2(TTword *word);
-	bool checkConcept2(TTconcept *concept, int conceptMode);
+	bool checkConcept2(TTconcept *conceptP, int conceptMode);
 	int filterConcepts(int conceptMode, int conceptIndex);
 	bool resetConcept(TTconcept **conceptPP, int conceptIndex);
 public:
