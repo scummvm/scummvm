@@ -50,6 +50,8 @@ public:
 	/** In-game palette (should not be used, except in special case. otherwise use other images functions instead) */
 	uint8 _palette[NUMOFCOLORS * 3]{0};
 
+	int32 mapLba2Palette(int32 palIndex);
+
 	/** converted in-game palette */
 	uint32 _paletteRGBA[NUMOFCOLORS]{0};
 

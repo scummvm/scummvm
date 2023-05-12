@@ -164,6 +164,7 @@ public:
 
 	int32 _body = -1; // costumeIndex - index into bodyTable
 	BodyType _genBody = BodyType::btNormal;
+	BodyType _saveGenBody = BodyType::btNormal; // lba2
 	AnimationTypes _genAnim = AnimationTypes::kAnimNone;
 	AnimationTypes _nextGenAnim = AnimationTypes::kStanding;
 	AnimationTypes _ptrAnimAction = AnimationTypes::kAnimNone;
@@ -198,6 +199,7 @@ public:
 	int32 _moveScriptSize = 0;
 
 	int32 _offsetLife = 0;
+	int32 _saveOffsetLife = 0; // lba2
 	uint8 *_lifeScript = nullptr;
 	int32 _lifeScriptSize = 0;
 
@@ -261,8 +263,6 @@ private:
 	/** Hero 3D entity for protopack behaviour */
 	EntityData _heroEntityPROTOPACK;
 
-	void initSpriteActor(int32 actorIdx);
-
 	/**
 	 * Initialize 3D actor body
 	 * @param bodyIdx 3D actor body index
@@ -276,6 +276,7 @@ public:
 	Actor(TwinEEngine *engine);
 
 	HeroBehaviourType _heroBehaviour = HeroBehaviourType::kNormal; // Comportement
+	HeroBehaviourType _saveHeroBehaviour = HeroBehaviourType::kNormal; // SaveComportementHero (lba2)
 	/** Hero auto aggressive mode */
 	bool _combatAuto = true;
 	/** Previous Hero behaviour */
@@ -298,6 +299,8 @@ public:
 
 	/** Hero anim for behaviour menu */
 	int16 _heroAnimIdx[4];
+
+	void initSpriteActor(int32 actorIdx);
 
 	/** Restart hero variables while opening new scenes */
 	void restartHeroScene();

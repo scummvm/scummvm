@@ -1026,7 +1026,7 @@ int32 ScriptLife::lSET_FLAG_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 /**
- * Set a new behaviour for the current actor. (Paramter = Comportament number)
+ * Set a new behaviour for the current actor. (Parameter = Comportament number)
  * @note Opcode @c 0x20
  * @note Was only used in the lba editor
  */
@@ -1530,17 +1530,6 @@ int32 ScriptLife::lPLAY_FLA(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 /**
- * Play Midis (Parameter = Midis Index)
- * @note Opcode @c 0x41
- */
-int32 ScriptLife::lPLAY_MIDI(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int32 midiIdx = ctx.stream.readByte();
-	engine->_music->playMidiMusic(midiIdx); // TODO: improve this
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::PLAY_MIDI(%i)", (int)midiIdx);
-	return 0;
-}
-
-/**
  * To increment the clover box current value.
  * @note Opcode @c 0x42
  */
@@ -1857,26 +1846,6 @@ int32 ScriptLife::lEXPLODE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 /**
- * Turn on bubbles while actors talk.
- * @note Opcode @c 0x59
- */
-int32 ScriptLife::lBUBBLE_ON(TwinEEngine *engine, LifeScriptContext &ctx) {
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BUBBLE_ON()");
-	engine->_text->_showDialogueBubble = true;
-	return 0;
-}
-
-/**
- * Turn off bubbles while actors talk.
- * @note Opcode @c 0x5A
- */
-int32 ScriptLife::lBUBBLE_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BUBBLE_OFF()");
-	engine->_text->_showDialogueBubble = false;
-	return 0;
-}
-
-/**
  * The actor will ask something with choices to choose. (Parameter = Actor Index, Parameter = Text Index in the current Text Bank)
  * @note Opcode @c 0x5B
  */
@@ -1995,16 +1964,6 @@ int32 ScriptLife::lTHE_END(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_scene->_sceneHero->_beta = engine->_actor->_previousHeroAngle;
 	engine->autoSave();
 	return 1; // break;
-}
-
-/**
- * Stop the current played midi.
- * @note Opcode @c 0x63
- */
-int32 ScriptLife::lMIDI_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::MIDI_OFF()");
-	engine->_music->stopMidiMusic();
-	return 0;
 }
 
 /**

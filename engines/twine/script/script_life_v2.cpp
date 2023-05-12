@@ -20,96 +20,96 @@
  */
 
 #include "twine/script/script_life_v2.h"
-#include "twine/resources/resources.h"
-#include "twine/script/script_move_v2.h"
 #include "twine/renderer/screens.h"
+#include "twine/resources/resources.h"
+#include "twine/scene/movements.h"
+#include "twine/script/script_move_v2.h"
 #include "twine/twine.h"
 
 namespace TwinE {
 
 static const ScriptLifeFunction function_map[] = {
-	{"END", ScriptLifeV2::lEND},
-	{"NOP", ScriptLifeV2::lNOP},
-	{"SNIF", ScriptLifeV2::lSNIF},
-	{"OFFSET", ScriptLifeV2::lOFFSET},
-	{"NEVERIF", ScriptLifeV2::lNEVERIF},
-	{"", ScriptLifeV2::lEMPTY}, // unused
-	{"NO_IF", ScriptLifeV2::lNO_IF},
-	{"", ScriptLifeV2::lEMPTY}, // unused
-	{"", ScriptLifeV2::lEMPTY}, // unused
-	{"", ScriptLifeV2::lEMPTY}, // unused
+	{"END", ScriptLife::lEND},
+	{"NOP", ScriptLife::lNOP},
+	{"SNIF", ScriptLife::lSNIF},
+	{"OFFSET", ScriptLife::lOFFSET},
+	{"NEVERIF", ScriptLife::lNEVERIF},
+	{"", ScriptLife::lEMPTY}, // unused
+	{"NO_IF", ScriptLife::lNO_IF},
+	{"", ScriptLife::lEMPTY}, // unused
+	{"", ScriptLife::lEMPTY}, // unused
+	{"", ScriptLife::lEMPTY}, // unused
 	{"PALETTE", ScriptLifeV2::lPALETTE},
-	{"RETURN", ScriptLifeV2::lRETURN},
-	{"IF", ScriptLifeV2::lIF},
-	{"SWIF", ScriptLifeV2::lSWIF},
-	{"ONEIF", ScriptLifeV2::lONEIF},
-	{"ELSE", ScriptLifeV2::lELSE},
-	{"ENDIF", ScriptLifeV2::lEMPTY}, // End of a conditional statement (e.g. IF)
-	{"BODY", ScriptLifeV2::lBODY},
-	{"BODY_OBJ", ScriptLifeV2::lBODY_OBJ},
-	{"ANIM", ScriptLifeV2::lANIM},
-	{"ANIM_OBJ", ScriptLifeV2::lANIM_OBJ},
+	{"RETURN", ScriptLife::lRETURN},
+	{"IF", ScriptLife::lIF},
+	{"SWIF", ScriptLife::lSWIF},
+	{"ONEIF", ScriptLife::lONEIF},
+	{"ELSE", ScriptLife::lELSE},
+	{"ENDIF", ScriptLife::lEMPTY}, // End of a conditional statement (e.g. IF)
+	{"BODY", ScriptLife::lBODY},
+	{"BODY_OBJ", ScriptLife::lBODY_OBJ},
+	{"ANIM", ScriptLife::lANIM},
+	{"ANIM_OBJ", ScriptLife::lANIM_OBJ},
 	{"SET_CAMERA", ScriptLifeV2::lSET_CAMERA},
 	{"CAMERA_CENTER", ScriptLifeV2::lCAMERA_CENTER},
-	{"SET_TRACK", ScriptLifeV2::lSET_TRACK},
-	{"SET_TRACK_OBJ", ScriptLifeV2::lSET_TRACK_OBJ},
-	{"MESSAGE", ScriptLifeV2::lMESSAGE},
-	{"FALLABLE", ScriptLifeV2::lFALLABLE},
-	{"SET_DIRMODE", ScriptLifeV2::lSET_DIRMODE},
-	{"SET_DIRMODE_OBJ", ScriptLifeV2::lSET_DIRMODE_OBJ},
-	{"CAM_FOLLOW", ScriptLifeV2::lCAM_FOLLOW},
-	{"SET_BEHAVIOUR", ScriptLifeV2::lSET_BEHAVIOUR},
-	{"SET_FLAG_CUBE", ScriptLifeV2::lSET_FLAG_CUBE},
-	{"COMPORTEMENT", ScriptLifeV2::lCOMPORTEMENT},
-	{"SET_COMPORTEMENT", ScriptLifeV2::lSET_COMPORTEMENT},
-	{"SET_COMPORTEMENT_OBJ", ScriptLifeV2::lSET_COMPORTEMENT_OBJ},
-	{"END_COMPORTEMENT", ScriptLifeV2::lEND_COMPORTEMENT},
-	{"SET_FLAG_GAME", ScriptLifeV2::lSET_FLAG_GAME},
-	{"KILL_OBJ", ScriptLifeV2::lKILL_OBJ},
-	{"SUICIDE", ScriptLifeV2::lSUICIDE},
-	{"USE_ONE_LITTLE_KEY", ScriptLifeV2::lUSE_ONE_LITTLE_KEY},
-	{"GIVE_GOLD_PIECES", ScriptLifeV2::lGIVE_GOLD_PIECES},
-	{"END_LIFE", ScriptLifeV2::lEND_LIFE},
-	{"STOP_L_TRACK", ScriptLifeV2::lSTOP_L_TRACK},
-	{"RESTORE_L_TRACK", ScriptLifeV2::lRESTORE_L_TRACK},
-	{"MESSAGE_OBJ", ScriptLifeV2::lMESSAGE_OBJ},
-	{"INC_CHAPTER", ScriptLifeV2::lINC_CHAPTER},
-	{"FOUND_OBJECT", ScriptLifeV2::lFOUND_OBJECT},
-	{"SET_DOOR_LEFT", ScriptLifeV2::lSET_DOOR_LEFT},
-	{"SET_DOOR_RIGHT", ScriptLifeV2::lSET_DOOR_RIGHT},
-	{"SET_DOOR_UP", ScriptLifeV2::lSET_DOOR_UP},
-	{"SET_DOOR_DOWN", ScriptLifeV2::lSET_DOOR_DOWN},
-	{"GIVE_BONUS", ScriptLifeV2::lGIVE_BONUS},
-	{"CHANGE_CUBE", ScriptLifeV2::lCHANGE_CUBE},
-	{"OBJ_COL", ScriptLifeV2::lOBJ_COL},
-	{"BRICK_COL", ScriptLifeV2::lBRICK_COL},
-	{"OR_IF", ScriptLifeV2::lOR_IF},
-	{"INVISIBLE", ScriptLifeV2::lINVISIBLE},
+	{"SET_TRACK", ScriptLife::lSET_TRACK},
+	{"SET_TRACK_OBJ", ScriptLife::lSET_TRACK_OBJ},
+	{"MESSAGE", ScriptLife::lMESSAGE},
+	{"FALLABLE", ScriptLife::lFALLABLE},
+	{"SET_DIRMODE", ScriptLife::lSET_DIRMODE},
+	{"SET_DIRMODE_OBJ", ScriptLife::lSET_DIRMODE_OBJ},
+	{"CAM_FOLLOW", ScriptLife::lCAM_FOLLOW},
+	{"SET_BEHAVIOUR", ScriptLife::lSET_BEHAVIOUR},
+	{"SET_FLAG_CUBE", ScriptLife::lSET_FLAG_CUBE},
+	{"COMPORTEMENT", ScriptLife::lCOMPORTEMENT},
+	{"SET_COMPORTEMENT", ScriptLife::lSET_COMPORTEMENT},
+	{"SET_COMPORTEMENT_OBJ", ScriptLife::lSET_COMPORTEMENT_OBJ},
+	{"END_COMPORTEMENT", ScriptLife::lEND_COMPORTEMENT},
+	{"SET_FLAG_GAME", ScriptLife::lSET_FLAG_GAME},
+	{"KILL_OBJ", ScriptLife::lKILL_OBJ},
+	{"SUICIDE", ScriptLife::lSUICIDE},
+	{"USE_ONE_LITTLE_KEY", ScriptLife::lUSE_ONE_LITTLE_KEY},
+	{"GIVE_GOLD_PIECES", ScriptLife::lGIVE_GOLD_PIECES},
+	{"END_LIFE", ScriptLife::lEND_LIFE},
+	{"STOP_L_TRACK", ScriptLife::lSTOP_L_TRACK},
+	{"RESTORE_L_TRACK", ScriptLife::lRESTORE_L_TRACK},
+	{"MESSAGE_OBJ", ScriptLife::lMESSAGE_OBJ},
+	{"INC_CHAPTER", ScriptLife::lINC_CHAPTER},
+	{"FOUND_OBJECT", ScriptLife::lFOUND_OBJECT},
+	{"SET_DOOR_LEFT", ScriptLife::lSET_DOOR_LEFT},
+	{"SET_DOOR_RIGHT", ScriptLife::lSET_DOOR_RIGHT},
+	{"SET_DOOR_UP", ScriptLife::lSET_DOOR_UP},
+	{"SET_DOOR_DOWN", ScriptLife::lSET_DOOR_DOWN},
+	{"GIVE_BONUS", ScriptLife::lGIVE_BONUS},
+	{"CHANGE_CUBE", ScriptLife::lCHANGE_CUBE},
+	{"OBJ_COL", ScriptLife::lOBJ_COL},
+	{"BRICK_COL", ScriptLife::lBRICK_COL},
+	{"OR_IF", ScriptLife::lOR_IF},
+	{"INVISIBLE", ScriptLife::lINVISIBLE},
 	{"SHADOW_OBJ", ScriptLifeV2::lSHADOW_OBJ},
-	{"POS_POINT", ScriptLifeV2::lPOS_POINT},
-	{"SET_MAGIC_LEVEL", ScriptLifeV2::lSET_MAGIC_LEVEL},
-	{"SUB_MAGIC_POINT", ScriptLifeV2::lSUB_MAGIC_POINT},
-	{"SET_LIFE_POINT_OBJ", ScriptLifeV2::lSET_LIFE_POINT_OBJ},
-	{"SUB_LIFE_POINT_OBJ", ScriptLifeV2::lSUB_LIFE_POINT_OBJ},
-	{"HIT_OBJ", ScriptLifeV2::lHIT_OBJ},
+	{"POS_POINT", ScriptLife::lPOS_POINT},
+	{"SET_MAGIC_LEVEL", ScriptLife::lSET_MAGIC_LEVEL},
+	{"SUB_MAGIC_POINT", ScriptLife::lSUB_MAGIC_POINT},
+	{"SET_LIFE_POINT_OBJ", ScriptLife::lSET_LIFE_POINT_OBJ},
+	{"SUB_LIFE_POINT_OBJ", ScriptLife::lSUB_LIFE_POINT_OBJ},
+	{"HIT_OBJ", ScriptLife::lHIT_OBJ},
 	{"PLAY_ACF", ScriptLifeV2::lPLAY_ACF},
-	{"PLAY_MIDI", ScriptLifeV2::lPLAY_MIDI},
 	{"ECLAIR", ScriptLifeV2::lECLAIR},
-	{"INC_CLOVER_BOX", ScriptLifeV2::lINC_CLOVER_BOX},
-	{"SET_USED_INVENTORY", ScriptLifeV2::lSET_USED_INVENTORY},
-	{"ADD_CHOICE", ScriptLifeV2::lADD_CHOICE},
-	{"ASK_CHOICE", ScriptLifeV2::lASK_CHOICE},
+	{"INC_CLOVER_BOX", ScriptLife::lINC_CLOVER_BOX},
+	{"SET_USED_INVENTORY", ScriptLife::lSET_USED_INVENTORY},
+	{"ADD_CHOICE", ScriptLife::lADD_CHOICE},
+	{"ASK_CHOICE", ScriptLife::lASK_CHOICE},
 	{"INIT_BUGGY", ScriptLifeV2::lINIT_BUGGY},
 	{"MEMO_ARDOISE", ScriptLifeV2::lMEMO_ARDOISE},
-	{"SET_HOLO_POS", ScriptLifeV2::lSET_HOLO_POS},
-	{"CLR_HOLO_POS", ScriptLifeV2::lCLR_HOLO_POS},
-	{"ADD_FUEL", ScriptLifeV2::lADD_FUEL},
-	{"SUB_FUEL", ScriptLifeV2::lSUB_FUEL},
-	{"SET_GRM", ScriptLifeV2::lSET_GRM},
+	{"SET_HOLO_POS", ScriptLife::lSET_HOLO_POS},
+	{"CLR_HOLO_POS", ScriptLife::lCLR_HOLO_POS},
+	{"ADD_FUEL", ScriptLife::lADD_FUEL},
+	{"SUB_FUEL", ScriptLife::lSUB_FUEL},
+	{"SET_GRM", ScriptLife::lSET_GRM},
 	{"SET_CHANGE_CUBE", ScriptLifeV2::lSET_CHANGE_CUBE},
 	{"MESSAGE_ZOE", ScriptLifeV2::lMESSAGE_ZOE}, // lSAY_MESSAGE
-	{"FULL_POINT", ScriptLifeV2::lFULL_POINT},
-	{"BETA", ScriptLifeV2::lBETA},
+	{"FULL_POINT", ScriptLife::lFULL_POINT},
+	{"BETA", ScriptLife::lBETA},
 	{"FADE_TO_PAL", ScriptLifeV2::lFADE_TO_PAL},
 	{"ACTION", ScriptLifeV2::lACTION},
 	{"SET_FRAME", ScriptLifeV2::lSET_FRAME},
@@ -120,22 +120,22 @@ static const ScriptLifeFunction function_map[] = {
 	{"ADD_MESSAGE", ScriptLifeV2::lADD_MESSAGE},
 	{"BUBBLE", ScriptLifeV2::lBUBBLE},
 	{"NO_CHOC", ScriptLifeV2::lNO_CHOC},
-	{"ASK_CHOICE_OBJ", ScriptLifeV2::lASK_CHOICE_OBJ},
+	{"ASK_CHOICE_OBJ", ScriptLife::lASK_CHOICE_OBJ},
 	{"CINEMA_MODE", ScriptLifeV2::lCINEMA_MODE},
 	{"SAVE_HERO", ScriptLifeV2::lSAVE_HERO},
 	{"RESTORE_HERO", ScriptLifeV2::lRESTORE_HERO},
-	{"ANIM_SET", ScriptLifeV2::lANIM_SET},
+	{"ANIM_SET", ScriptLife::lANIM_SET},
 	{"RAIN", ScriptLifeV2::lRAIN}, // LM_PLUIE
-	{"GAME_OVER", ScriptLifeV2::lGAME_OVER},
-	{"THE_END", ScriptLifeV2::lTHE_END},
+	{"GAME_OVER", ScriptLife::lGAME_OVER},
+	{"THE_END", ScriptLife::lTHE_END},
 	{"ESCALATOR", ScriptLifeV2::lESCALATOR},
 	{"PLAY_MUSIC", ScriptLifeV2::lPLAY_MUSIC},
 	{"TRACK_TO_VAR_GAME", ScriptLifeV2::lTRACK_TO_VAR_GAME},
 	{"VAR_GAME_TO_TRACK", ScriptLifeV2::lVAR_GAME_TO_TRACK},
 	{"ANIM_TEXTURE", ScriptLifeV2::lANIM_TEXTURE},
 	{"ADD_MESSAGE_OBJ", ScriptLifeV2::lADD_MESSAGE_OBJ},
-	{"BRUTAL_EXIT", ScriptLifeV2::lBRUTAL_EXIT},
-	{"REM", ScriptLifeV2::lEMPTY}, // unused
+	{"BRUTAL_EXIT", ScriptLife::lBRUTAL_EXIT},
+	{"REM", ScriptLife::lEMPTY}, // unused
 	{"LADDER", ScriptLifeV2::lLADDER},
 	{"SET_ARMOR", ScriptLifeV2::lSET_ARMOR},
 	{"SET_ARMOR_OBJ", ScriptLifeV2::lSET_ARMOR_OBJ},
@@ -145,9 +145,9 @@ static const ScriptLifeFunction function_map[] = {
 	{"SWITCH", ScriptLifeV2::lSWITCH},
 	{"OR_CASE", ScriptLifeV2::lOR_CASE},
 	{"CASE", ScriptLifeV2::lCASE},
-	{"DEFAULT", ScriptLifeV2::lEMPTY}, // unused
+	{"DEFAULT", ScriptLife::lEMPTY}, // unused
 	{"BREAK", ScriptLifeV2::lBREAK},
-	{"END_SWITCH", ScriptLifeV2::lEMPTY}, // unused
+	{"END_SWITCH", ScriptLife::lEMPTY}, // unused
 	{"SET_HIT_ZONE", ScriptLifeV2::lSET_HIT_ZONE},
 	{"SAVE_COMPORTEMENT", ScriptLifeV2::lSAVE_COMPORTEMENT},
 	{"RESTORE_COMPORTEMENT", ScriptLifeV2::lRESTORE_COMPORTEMENT},
@@ -161,19 +161,19 @@ static const ScriptLifeFunction function_map[] = {
 	{"SUB_VAR_GAME", ScriptLifeV2::lSUB_VAR_GAME},
 	{"ADD_VAR_CUBE", ScriptLifeV2::lADD_VAR_CUBE},
 	{"SUB_VAR_CUBE", ScriptLifeV2::lSUB_VAR_CUBE},
-	{"NOP", ScriptLifeV2::lEMPTY}, // unused
+	{"NOP", ScriptLife::lEMPTY}, // unused
 	{"SET_RAIL", ScriptLifeV2::lSET_RAIL},
 	{"INVERSE_BETA", ScriptLifeV2::lINVERSE_BETA},
 	{"NO_BODY", ScriptLifeV2::lNO_BODY},
-	{"GIVE_GOLD_PIECES", ScriptLifeV2::lGIVE_GOLD_PIECES},
+	{"GIVE_GOLD_PIECES", ScriptLife::lGIVE_GOLD_PIECES},
 	{"STOP_L_TRACK_OBJ", ScriptLifeV2::lSTOP_L_TRACK_OBJ},
 	{"RESTORE_L_TRACK_OBJ", ScriptLifeV2::lRESTORE_L_TRACK_OBJ},
 	{"SAVE_COMPORTEMENT_OBJ", ScriptLifeV2::lSAVE_COMPORTEMENT_OBJ},
 	{"RESTORE_COMPORTEMENT_OBJ", ScriptLifeV2::lRESTORE_COMPORTEMENT_OBJ},
-	{"SPY", ScriptLifeV2::lEMPTY}, // unused
-	{"DEBUG", ScriptLifeV2::lEMPTY}, // unused
-	{"DEBUG_OBJ", ScriptLifeV2::lEMPTY}, // unused
-	{"POPCORN", ScriptLifeV2::lEMPTY}, // unused
+	{"SPY", ScriptLife::lEMPTY},       // unused
+	{"DEBUG", ScriptLife::lEMPTY},     // unused
+	{"DEBUG_OBJ", ScriptLife::lEMPTY}, // unused
+	{"POPCORN", ScriptLife::lEMPTY},   // unused
 	{"FLOW_POINT", ScriptLifeV2::lFLOW_POINT},
 	{"FLOW_OBJ", ScriptLifeV2::lFLOW_OBJ},
 	{"SET_ANIM_DIAL", ScriptLifeV2::lSET_ANIM_DIAL},
@@ -187,7 +187,7 @@ static const ScriptLifeFunction function_map[] = {
 };
 
 int32 ScriptLifeV2::lPALETTE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int32 palIndex = ctx.stream.readByte();
+	const int32 palIndex = engine->_screens->mapLba2Palette(ctx.stream.readByte());
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::PALETTE(%i)", palIndex);
 	ScopedEngineFreeze scoped(engine);
 	HQR::getEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, palIndex);
@@ -197,13 +197,22 @@ int32 ScriptLifeV2::lPALETTE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	return 0;
 }
 
+int32 ScriptLifeV2::lFADE_TO_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
+	const int32 palIndex = engine->_screens->mapLba2Palette(ctx.stream.readByte());
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FADE_TO_PAL(%i)", palIndex);
+	// TODO: implement
+	return -1;
+}
+
 int32 ScriptLifeV2::lPLAY_MUSIC(TwinEEngine *engine, LifeScriptContext &ctx) {
 	// TODO: game var 157 is checked here
 	return lPLAY_CD_TRACK(engine, ctx);
 }
 
 int32 ScriptLifeV2::lTRACK_TO_VAR_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	const int32 num = ctx.stream.readByte();
+	engine->_gameState->setGameFlag(num, MAX<int32>(0, ctx.actor->_labelIdx));
+	return 0;
 }
 
 int32 ScriptLifeV2::lVAR_GAME_TO_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -227,7 +236,9 @@ int32 ScriptLifeV2::lCAMERA_CENTER(TwinEEngine *engine, LifeScriptContext &ctx) 
 }
 
 int32 ScriptLifeV2::lBUBBLE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	engine->_text->_showDialogueBubble = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BUBBLE(%s)", engine->_text->_showDialogueBubble ? "true" : "false");
+	return 0;
 }
 
 int32 ScriptLifeV2::lNO_CHOC(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -239,11 +250,19 @@ int32 ScriptLifeV2::lCINEMA_MODE(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lSAVE_HERO(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SAVE_HERO()");
+	engine->_actor->_saveHeroBehaviour = engine->_actor->_heroBehaviour;
+	ActorStruct *actor = engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX);
+	actor->_saveGenBody = actor->_genBody;
+	return 0;
 }
 
 int32 ScriptLifeV2::lRESTORE_HERO(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::RESTORE_HERO()");
+	engine->_actor->setBehaviour(engine->_actor->_saveHeroBehaviour);
+	ActorStruct *actor = engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX);
+	engine->_actor->initBody(actor->_saveGenBody, OWN_ACTOR_SCENE_INDEX);
+	return 0;
 }
 
 int32 ScriptLifeV2::lRAIN(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -263,7 +282,14 @@ int32 ScriptLifeV2::lPLAY_ACF(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lSHADOW_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	const int actorIdx = ctx.stream.readByte();
+	const bool castShadow = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SHADOW_OBJ(%i, %s)", actorIdx, castShadow ? "true" : "false");
+	ActorStruct *actor = engine->_scene->getActor(actorIdx);
+	if (actor->_lifePoint > 0) {
+		actor->_staticFlags.bDoesntCastShadow = !castShadow;
+	}
+	return 0;
 }
 
 int32 ScriptLifeV2::lECLAIR(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -286,12 +312,10 @@ int32 ScriptLifeV2::lMESSAGE_ZOE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	return -1;
 }
 
-int32 ScriptLifeV2::lFADE_TO_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
-}
-
 int32 ScriptLifeV2::lACTION(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ACTION()");
+	engine->_movements->setActionNormal(true);
+	return 0;
 }
 
 int32 ScriptLifeV2::lSET_FRAME(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -299,7 +323,13 @@ int32 ScriptLifeV2::lSET_FRAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lSET_SPRITE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	int16 num = ctx.stream.readSint16LE();
+	if (ctx.actor->_staticFlags.bIsSpriteActor) {
+		ActorStruct *actor = engine->_scene->getActor(ctx.actorIdx);
+		actor->_sprite = num;
+		engine->_actor->initSpriteActor(ctx.actorIdx);
+	}
+	return 0;
 }
 
 int32 ScriptLifeV2::lSET_FRAME_3DS(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -342,7 +372,7 @@ int32 ScriptLifeV2::lSWITCH(TwinEEngine *engine, LifeScriptContext &ctx) {
 	return -1;
 }
 
-int32 ScriptLifeV2::lOR_CASE (TwinEEngine *engine, LifeScriptContext &ctx) {
+int32 ScriptLifeV2::lOR_CASE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	return -1;
 }
 
@@ -367,11 +397,13 @@ int32 ScriptLifeV2::lSET_HIT_ZONE(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lSAVE_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	ctx.actor->_saveOffsetLife = ctx.actor->_offsetLife;
+	return 0;
 }
 
 int32 ScriptLifeV2::lRESTORE_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	ctx.actor->_offsetLife = ctx.actor->_saveOffsetLife;
+	return 0;
 }
 
 int32 ScriptLifeV2::lSAMPLE(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -462,7 +494,7 @@ int32 ScriptLifeV2::lFLOW_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	return -1;
 }
 
-int32 ScriptLifeV2::lFLOW_OBJ (TwinEEngine *engine, LifeScriptContext &ctx) {
+int32 ScriptLifeV2::lFLOW_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	return -1;
 }
 
@@ -486,7 +518,7 @@ int32 ScriptLifeV2::lPARM_SAMPLE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	return -1;
 }
 
-int32 ScriptLifeV2::lNEW_SAMPLE (TwinEEngine *engine, LifeScriptContext &ctx) {
+int32 ScriptLifeV2::lNEW_SAMPLE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	return -1;
 }
 

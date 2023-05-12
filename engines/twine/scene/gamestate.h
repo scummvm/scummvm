@@ -69,7 +69,7 @@ private:
 	 * been closed down). Makes the Tavern open again and groboclone not appear any more.
 	 */
 	// TODO: why not NUM_GAME_FLAGS?
-	uint8 _gameStateFlags[256];
+	uint8 _gameStateFlags[256]; // ListVarGame
 	// only lba1 - lba2 uses 253 gameflag
 	int16 _gameChapter = 0;
 
@@ -78,7 +78,7 @@ public:
 
 	/**
 	 * LBA engine chapter
-	 *  0: Inprisoned
+	 *  0: Imprisoned
 	 *  1: Escape from the citadel
 	 *  2: Zoe got captured
 	 *  3: - looking for a young girl
