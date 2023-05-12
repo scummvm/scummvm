@@ -1563,7 +1563,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 
 uint16 Screen::fetchChar(const char *&s) const {
 	const int fontType = _fonts[_currentFont]->getType();
-	if (fontType == Font::kASCII)
+	if (fontType == Font::kASCII || fontType == Font::kJIS_X0201)
 		return (uint8)*s++;
 
 	uint16 ch = (uint8)*s++;

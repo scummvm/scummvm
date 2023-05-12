@@ -318,7 +318,8 @@ uint16 Font12x12PC98::convert(uint16 c) const {
 	return c;
 }
 
-PC98Font::PC98Font(uint8 shadowColor, bool useOverlay, int scaleV, const uint8 *convTable) : OldDOSFont(Common::kRenderVGA, shadowColor), _convTable(convTable), _outputWidth(0), _outputHeight(0) {
+PC98Font::PC98Font(uint8 shadowColor, bool useOverlay, int scaleV, const uint8 *convTable1, const char *convTable2, const char *convTable3) : OldDOSFont(Common::kRenderVGA, shadowColor),
+	_convTable1(convTable1), _convTable2(convTable2), _convTable3(convTable3), _outputWidth(0), _outputHeight(0), _type(convTable1 && convTable2 && convTable3 ? kJIS_X0201 : kASCII) {
 	_numGlyphsMax = 256;
 	_useOverlay = useOverlay;
 	_scaleV = scaleV;
@@ -340,7 +341,10 @@ bool PC98Font::load(Common::SeekableReadStream &file) {
 }
 
 uint16 PC98Font::convert(uint16 c) const {
-	if (!_convTable || c < 128)
+	if (_type == kJIS_X0201)
+		c = makeTwoByte(c);
+
+	if (!_convTable1 || c < 128)
 		return c;
 
 	uint8 lo = c & 0xff;
@@ -348,19 +352,46 @@ uint16 PC98Font::convert(uint16 c) const {
 
 	if (lo == 0x81) {
 		if (hi >= 0x40 && hi <= 0xac)
-			return _convTable[hi - 0x40];
+			return _convTable1[hi - 0x40];
 	} else if (lo == 0x82) {
 		if (hi >= 0x4f && hi <= 0x58)
-			return hi + 0xe1;
+			return hi - 31;
 		if (hi >= 0x60 && hi <= 0x79)
-			return hi - 0x1f;
+			return hi - 31;
 		if (hi >= 0x81 && hi <= 0x9a)
-			return hi - 0x20;
+			return hi - 32;
 	} else if (lo == 0x83 && hi >= 0x40 && hi <= 0x93) {
-		return hi + 0x40;
+		return hi + 64;
 	}
 
 	return 0;
+}
+
+uint16 PC98Font::makeTwoByte(uint16 c) const {
+	if (!_convTable2 || !_convTable3)
+		return c;
+
+	uint8 l = c & 0xFF;
+	uint8 h = c >> 8;
+
+	if (h || l < 32 || l == 127) {
+		return c;
+	} else if (l < 127) {
+		c = (l - 32) * 2;
+		assert(c < 190);
+		l = _convTable2[c];
+		h = _convTable2[c + 1];
+	} else if (l < 212) {
+		h = l - 64;
+		l = 0x83;
+	} else {
+		c = (l - 212) * 2;
+		assert(c < 8);
+		l = _convTable3[c];
+		h = _convTable3[c + 1];
+	}
+
+	return (h << 8) | l;
 }
 
 } // End of namespace Kyra

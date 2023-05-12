@@ -1715,10 +1715,13 @@ bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 	}
 
 	if (_vm->gameFlags().platform == Common::kPlatformPC98 && _vm->game() == GI_EOB2) {
-		if (fontId == FID_SJIS_SMALL_FNT)
-			fnt = new PC98Font(12, true, 2, _vm->staticres()->loadRawData(kEoB2FontConvertTbl, temp));
-		else
+		if (fontId == FID_SJIS_SMALL_FNT) {
+			const char *const *tbl = _vm->staticres()->loadStrings(kEoB2Ascii2SjisTables2, temp);
+			assert(temp > 1);
+			fnt = new PC98Font(12, true, 2, _vm->staticres()->loadRawData(kEoB2FontConvertTbl, temp), tbl[0], tbl[1]);
+		} else {
 			fnt = new PC98Font(12, false, 1);
+		}
 	} else if (fontId == FID_SJIS_SMALL_FNT) {
 		if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 			fnt = new SJISFont12x12(_vm->staticres()->loadRawDataBe16(kEoB2FontLookupTbl, temp));

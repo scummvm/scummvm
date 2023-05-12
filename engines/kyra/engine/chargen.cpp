@@ -1965,6 +1965,8 @@ private:
 	Item convertItem(Item eob1Item);
 	void giveKhelbensCoin();
 
+	Common::String convertFromJISX0201(const Common::String &src);
+
 	EoBCoreEngine *_vm;
 	Screen_EoB *_screen;
 
@@ -2225,6 +2227,8 @@ int TransferPartyWiz::selectCharactersMenu() {
 	return selection;
 }
 
+
+
 void TransferPartyWiz::drawCharPortraitWithStats(int charIndex, bool enabled) {
 	int16 x = (charIndex % 2) * 159;
 	int16 y = (charIndex / 2) * 40;
@@ -2288,6 +2292,12 @@ void TransferPartyWiz::convertStats() {
 	for (int i = 0; i < 6; i++) {
 		EoBCharacter *c = &_vm->_characters[i];
 		uint32 aflags = 0;
+
+		if (_vm->_flags.lang == Common::JA_JPN && _vm->_flags.platform == Common::kPlatformPC98) {
+			Common::String cname(c->name);
+			cname = convertFromJISX0201(cname);
+			Common::strlcpy(c->name, cname.c_str(), cname.size() + 1);
+		}
 
 		for (int ii = 0; ii < 25; ii++) {
 			if (c->mageSpellsAvailableFlags & (1 << ii)) {
@@ -2469,6 +2479,78 @@ void TransferPartyWiz::giveKhelbensCoin() {
 		_vm->_characters[0].inventory[2] = 0;
 		_vm->createInventoryItem(&_vm->_characters[0], 93, -1, 2);
 	}
+}
+
+Common::String TransferPartyWiz::convertFromJISX0201(const Common::String &src) {
+	int temp;
+	const char *t1 = _vm->_ascii2SjisTables[3];
+	//Common::String t2 = _vm->_ascii2SjisTables[1];
+	//Common::String t3 = _vm->_ascii2SjisTables[2];
+	const uint8 *t4 = _vm->staticres()->loadRawData(kEoB2FontConvertTbl, temp);
+
+	char tmp[30] = "";
+	char *d = tmp;
+	uint8 last = '\0';
+
+	for (const char *s = src.c_str(); *s; ++s) {
+		if (*s != '\xde' && *s != '\xdf') {
+			uint8 c = *s;
+
+			if (c == 176) {
+				c = 45;
+			} else if (c < 32 || c > 221 || (c > 126 && c != 176 && c < 166)) {
+				continue;
+			} else if (c > 126) {
+				uint8 h = t1[(c - 166) << 1];
+				uint8 l = t1[((c - 166) << 1) + 1];
+
+				if (h == 0x81) {
+					if (l > 0xac)
+						continue;
+					c = t4[l - 64];
+
+				} else if (h == 0x82) {
+					if (l >= 0x4f && l <= 0x58)
+						c = l - 31;
+					else if (l >= 0x60 && l <= 0x79)
+						c = l - 31;
+					else if (l >= 0x81 && l <= 0x9a)
+						c = l - 32;
+					else
+						continue;
+
+				} else if (h == 0x83 && l >= 0x40 && l <= 0x93) {
+					c = l + 64;
+				} else {
+					continue;
+				}
+			}
+
+			*d++ = last = c;
+
+		} else if (last) {
+			if (last > 127) {
+				//char tb[3] = "\0\0";
+				if (*s == '\xde') {
+					//size_t p = t3.find(tb);
+					//if (p != Common::String::npos)
+						last = last + 1;
+
+				} else {
+					//size_t p = t2.find(tb);
+					//if (p != Common::String::npos)
+						last = last + 2;
+				}
+			}
+			d--;
+			*d++ = last;
+			last = '\0';
+		}
+	}
+
+	*d = '\0';
+
+	return tmp;
 }
 
 // Start functions

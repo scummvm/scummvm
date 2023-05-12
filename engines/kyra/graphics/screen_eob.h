@@ -408,14 +408,14 @@ private:
 
 /**
 * OldDOSFont variant used in EOB I PC-98. It uses the same drawing routine, but has a different loader. It contains
-* ASCII and Katakana characters and requires several conversion tables to display these. It gets drawn on the hires overlay.
+* ASCII and Katakana characters in JIS X 0201 and requires several conversion tables to display these. It gets drawn on the hires overlay.
 */
 class Font12x12PC98 : public OldDOSFont{
 public:
 	Font12x12PC98(uint8 shadowColor, const uint16 *convTable1, const uint16 *convTable2, const uint8 *lookupTable);
 	~Font12x12PC98() override;
 	bool usesOverlay() const override { return true; }
-	Type getType() const override { return kSJIS; }
+	Type getType() const override { return kJIS_X0201; }
 	int getHeight() const override { return _height >> 1; }
 	int getWidth() const override { return _width >> 1; }
 	int getCharWidth(uint16 c) const override { return _width >> 1; };
@@ -433,19 +433,24 @@ private:
 */
 class PC98Font : public OldDOSFont {
 public:
-	PC98Font(uint8 shadowColor, bool useOverlay, int scaleV, const uint8 *convTable = 0);
+	PC98Font(uint8 shadowColor, bool useOverlay, int scaleV, const uint8 *convTable1 = 0, const char *convTable2 = 0, const char *convTable3 = 0);
 	~PC98Font() override {}
 	bool load(Common::SeekableReadStream &file) override;
 	int getHeight() const override { return _outputHeight; }
 	int getWidth() const override { return _outputWidth; }
 	int getCharWidth(uint16 c) const override { return _outputWidth; };
+	Type getType() const override { return _type; }
 
 private:
 	uint16 convert(uint16 c) const override;
-	const uint8 *_convTable;
+	uint16 makeTwoByte(uint16 c) const;
+
+	const uint8 *_convTable1;
+	const char *_convTable2, *_convTable3;
 
 	int _outputHeight;
 	int _outputWidth;
+	const Type _type;
 };
 
 /**

@@ -66,6 +66,7 @@ public:
 	 */
 	enum Type {
 		kASCII = 0,
+		kJIS_X0201,
 		kSJIS,
 		kBIG5,
 		kJohab
