@@ -46,7 +46,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 	{ // Reah: Face the Unknown, English digital (GOG) version
 		{
 			"reah",
-			"English Digital + German Community Patch",
+			"English Digital",
 			AD_ENTRY2s("Reah.exe", "60ec19c53f1323cc7f0314f98d396283", 304128,
 					   "0170_b.wav", "5b705300b4fee3ceb821a1b55884a722", 129248),
 			Common::UNK_LANG,
