@@ -170,6 +170,9 @@ void ConversationSound::execute() {
 		_state = kRun;
 		NancySceneState.setActiveConversation(this);
 
+		// Do not draw first frame since video won't be loaded yet
+		g_nancy->_graphicsManager->suppressNextDraw();
+
 		// Do not fall through to give the execution one loop for event flag changes
 		// This fixes TVD scene 750
 		break;
