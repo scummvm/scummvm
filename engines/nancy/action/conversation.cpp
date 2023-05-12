@@ -533,6 +533,9 @@ void ConversationCel::updateGraphics() {
 	if (_state == kRun && currentTime > _nextFrameTime && _curFrame <= _lastFrame) {
 		Cel &curCel = _cels[_curFrame];
 
+		g_nancy->_resource->loadImage(curCel.bodyCelName, curCel.bodySurf, _bodyTreeName, &curCel.bodySrc, &curCel.bodyDest);
+		g_nancy->_resource->loadImage(curCel.headCelName, curCel.headSurf, _headTreeName, &curCel.headSrc, &curCel.headDest);
+
 		_drawSurface.create(curCel.bodySurf, curCel.bodySrc);
 		moveTo(curCel.bodyDest);
 
@@ -546,10 +549,10 @@ void ConversationCel::updateGraphics() {
 
 void ConversationCel::readData(Common::SeekableReadStream &stream) {
 	Nancy::GameType gameType = g_nancy->getGameType();
-	Common::String xsheetName, bodyTreeName, headTreeName;
+	Common::String xsheetName;
 	readFilename(stream, xsheetName);
-	readFilename(stream, bodyTreeName);
-	readFilename(stream, headTreeName);
+	readFilename(stream, _bodyTreeName);
+	readFilename(stream, _headTreeName);
 	
 	uint xsheetDataSize = 0;
 	byte *xsbuf = g_nancy->_resource->loadData(xsheetName, xsheetDataSize);
@@ -574,14 +577,11 @@ void ConversationCel::readData(Common::SeekableReadStream &stream) {
 	_frameTime = xsheet.readUint16LE();
 	xsheet.skip(2);
 
-	Common::String imageName;
 	_cels.resize(numFrames);
 	for (uint i = 0; i < numFrames; ++i) {
 		Cel &cel = _cels[i];
-		readFilename(xsheet, imageName);
-		g_nancy->_resource->loadImage(imageName, cel.bodySurf, bodyTreeName, &cel.bodySrc, &cel.bodyDest);
-		readFilename(xsheet, imageName);
-		g_nancy->_resource->loadImage(imageName, cel.headSurf, headTreeName, &cel.headSrc, &cel.headDest);
+		readFilename(xsheet, cel.bodyCelName);
+		readFilename(xsheet, cel.headCelName);
 
 		// Zeroes
 		if (gameType >= kGameTypeNancy3) {
