@@ -2046,7 +2046,7 @@ bool EoBCoreEngine::checkPassword() {
 	return true;
 }
 
-Common::String EoBCoreEngine::convertAsciiToSjis(const Common::String &str) {
+Common::String EoBCoreEngine::makeTwoByteString(const Common::String &str) {
 	if (_flags.platform != Common::kPlatformFMTowns)
 		return str;
 

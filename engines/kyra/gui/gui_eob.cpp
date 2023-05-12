@@ -2904,7 +2904,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 					if (_vm->_flags.platform == Common::kPlatformFMTowns && _keyPressed.ascii > 31 && _keyPressed.ascii < 123) {
 						Common::String s;
 						s.insertChar(in & 0xff, 0);
-						s = _vm->convertAsciiToSjis(s);
+						s = _vm->makeTwoByteString(s);
 						if (s.empty()) {
 							in = 0;
 						} else {
@@ -3966,7 +3966,8 @@ bool GUI_EoB::restParty() {
 	for (int l = 0; !res && restLoop && !_vm->shouldQuit();) {
 		l++;
 
-		int cs = (_vm->gameFlags().platform == Common::kPlatformSegaCD && _vm->gameFlags().lang == Common::JA_JPN) ? _screen->setFontStyles(_screen->_currentFont, Font::kStyleNarrow1) : -1;
+		int cs = (_vm->gameFlags().platform == Common::kPlatformSegaCD && _vm->gameFlags().lang == Common::JA_JPN) ? _screen->setFontStyles(_screen->_currentFont, Font::kStyleNarrow1) :
+			((_vm->gameFlags().platform == Common::kPlatformPC98 && !_vm->gameFlags().use16ColorMode) ? _screen->setFontStyles(_menuFont, Font::kStyleNone) : -1);
 
 		// Regenerate spells
 		for (int i = 0; i < 6; i++) {

@@ -319,7 +319,7 @@ uint16 Font12x12PC98::convert(uint16 c) const {
 }
 
 PC98Font::PC98Font(uint8 shadowColor, bool useOverlay, int scaleV, const uint8 *convTable1, const char *convTable2, const char *convTable3) : OldDOSFont(Common::kRenderVGA, shadowColor),
-	_convTable1(convTable1), _convTable2(convTable2), _convTable3(convTable3), _outputWidth(0), _outputHeight(0), _type(convTable1 && convTable2 && convTable3 ? kJIS_X0201 : kASCII) {
+	_convTable1(convTable1), _convTable2(convTable2), _convTable3(convTable3), _outputWidth(0), _outputHeight(0), _type(convTable1 && convTable2 && convTable3 ? kSJIS : kASCII) {
 	_numGlyphsMax = 256;
 	_useOverlay = useOverlay;
 	_scaleV = scaleV;
@@ -341,7 +341,7 @@ bool PC98Font::load(Common::SeekableReadStream &file) {
 }
 
 uint16 PC98Font::convert(uint16 c) const {
-	if (_type == kJIS_X0201)
+	if (_type == kSJIS)
 		c = makeTwoByte(c);
 
 	if (!_convTable1 || c < 128)

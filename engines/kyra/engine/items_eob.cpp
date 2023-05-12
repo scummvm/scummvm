@@ -500,7 +500,7 @@ void EoBCoreEngine::printFullItemName(Item item) {
 
 	int cs = (_flags.platform == Common::kPlatformSegaCD && _flags.lang == Common::JA_JPN && _screen->getNumberOfCharacters((tmpString).c_str()) >= 17) ? _screen->setFontStyles(_screen->_currentFont, Font::kStyleNarrow2) : -1;
 
-	_txt->printMessage(convertAsciiToSjis(tmpString).c_str());
+	_txt->printMessage(makeTwoByteString(tmpString).c_str());
 
 	if (cs != -1)
 		_screen->setFontStyles(_screen->_currentFont, cs);

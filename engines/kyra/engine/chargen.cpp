@@ -1966,6 +1966,7 @@ private:
 	void giveKhelbensCoin();
 
 	Common::String convertFromJISX0201(const Common::String &src);
+	Common::String makeTwoByteString(const Common::String &src);
 
 	EoBCoreEngine *_vm;
 	Screen_EoB *_screen;
@@ -2227,8 +2228,6 @@ int TransferPartyWiz::selectCharactersMenu() {
 	return selection;
 }
 
-
-
 void TransferPartyWiz::drawCharPortraitWithStats(int charIndex, bool enabled) {
 	int16 x = (charIndex % 2) * 159;
 	int16 y = (charIndex / 2) * 40;
@@ -2296,7 +2295,8 @@ void TransferPartyWiz::convertStats() {
 		if (_vm->_flags.lang == Common::JA_JPN && _vm->_flags.platform == Common::kPlatformPC98) {
 			Common::String cname(c->name);
 			cname = convertFromJISX0201(cname);
-			Common::strlcpy(c->name, cname.c_str(), cname.size() + 1);
+			cname = makeTwoByteString(cname);
+			Common::strlcpy(c->name, cname.c_str(), sizeof(c->name));
 		}
 
 		for (int ii = 0; ii < 25; ii++) {
@@ -2551,6 +2551,29 @@ Common::String TransferPartyWiz::convertFromJISX0201(const Common::String &src) 
 	*d = '\0';
 
 	return tmp;
+}
+
+Common::String TransferPartyWiz::makeTwoByteString(const Common::String &src) {
+	Common::String n;
+	for (const uint8 *s = (const uint8*)src.c_str(); *s; ++s) {
+		if (*s < 32 || *s == 127) {
+			n += (char)*s;
+		} else if (*s < 127) {
+			uint8 c = (*s - 32) * 2;
+			assert(c < 190);
+			n += _vm->_ascii2SjisTables2[0][c];
+			n += _vm->_ascii2SjisTables2[0][c + 1];
+		} else if (*s < 212) {
+			n += '\x83';
+			n += (char)(*s - 64);
+		} else {
+			uint8 c = (*s - 212) * 2;
+			assert(c < 8);
+			n += _vm->_ascii2SjisTables2[1][c];
+			n += _vm->_ascii2SjisTables2[1][c + 1];
+		}
+	}
+	return n;
 }
 
 // Start functions

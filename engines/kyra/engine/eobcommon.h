@@ -915,7 +915,7 @@ protected:
 	virtual void seq_segaPausePlayer(bool pause) {}
 	bool checkPassword();
 
-	Common::String convertAsciiToSjis(const Common::String &str);
+	Common::String makeTwoByteString(const Common::String &str);
 
 	virtual int resurrectionSelectDialogue() = 0;
 	virtual void useHorn(int charIndex, int weaponSlot) {}
