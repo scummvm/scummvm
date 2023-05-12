@@ -4031,7 +4031,11 @@ void Runtime::redrawTray() {
 
 void Runtime::clearTray() {
 	uint32 blackColor = _traySection.surf->format.RGBToColor(0, 0, 0);
-	_traySection.surf->fillRect(Common::Rect(0, 0, _traySection.surf->w, _traySection.surf->h), blackColor);
+	Common::Rect trayRect(0, 0, _traySection.surf->w, _traySection.surf->h);
+
+	_traySection.surf->fillRect(trayRect, blackColor);
+
+	this->commitSectionToScreen(_traySection, trayRect);
 }
 
 void Runtime::drawInventory(uint slot) {
