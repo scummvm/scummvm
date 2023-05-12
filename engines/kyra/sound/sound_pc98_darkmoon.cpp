@@ -123,9 +123,9 @@ void SoundPC98_Darkmoon::updateVolumeSettings() {
 	if (!_driver || !_ready)
 		return;
 
-	bool mute = false;
-	if (ConfMan.hasKey("mute"))
-		mute = ConfMan.getBool("mute");
+	//bool mute = false;
+	//if (ConfMan.hasKey("mute"))
+	//	mute = ConfMan.getBool("mute");
 
 	//_driver->setMusicVolume((mute ? 0 : ConfMan.getInt("music_volume")));
 	//_driver->setSoundEffectVolume((mute ? 0 : ConfMan.getInt("sfx_volume")));
