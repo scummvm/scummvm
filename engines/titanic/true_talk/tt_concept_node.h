@@ -58,7 +58,7 @@ public:
 	bool isValid() const { return _status == SS_VALID; }
 
 	TTconcept **setConcept(int conceptIndex, TTconcept *src);
-	int replaceConcept(int mode, int conceptIndex, TTconcept *concept);
+	int replaceConcept(int mode, int conceptIndex, TTconcept *conceptP);
 	int changeConcept(int mode, TTconcept **conceptPP, int conceptIndex);
 	bool createConcept(int mode, int conceptIndex, TTword *word);
 

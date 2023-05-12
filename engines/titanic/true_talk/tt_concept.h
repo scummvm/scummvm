@@ -166,9 +166,9 @@ public:
 	int getTheWordId() const;
 };
 
-extern bool isWordId(const TTconcept *concept, int id);
+extern bool isWordId(const TTconcept *conceptP, int id);
 
-extern int getWordId(const TTconcept *concept);
+extern int getWordId(const TTconcept *conceptP);
 
 } // End of namespace Titanic
 

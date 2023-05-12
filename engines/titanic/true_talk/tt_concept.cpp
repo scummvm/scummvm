@@ -308,12 +308,12 @@ int TTconcept::getTheWordId() const {
 	return _wordP ? _wordP->_id : 0;
 }
 
-bool isWordId(const TTconcept *concept, int id) {
-	return concept ? concept->isTheWordId(id) : 0;
+bool isWordId(const TTconcept *conceptP, int id) {
+	return conceptP ? conceptP->isTheWordId(id) : 0;
 }
 
-int getWordId(const TTconcept *concept) {
-	return concept ? concept->getTheWordId() : 0;
+int getWordId(const TTconcept *conceptP) {
+	return conceptP ? conceptP->getTheWordId() : 0;
 }
 
 } // End of namespace Titanic
