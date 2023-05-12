@@ -980,8 +980,8 @@ FontCacheItem::FontCacheItem() : font(nullptr), size(0) {
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID, Common::Language defaultLanguage)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _hero(0), _swapOutRoom(0), _swapOutScreen(0), _swapOutDirection(0),
 	  _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
-	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
-	  _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false),
+	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingPreIdleActions(false), _havePendingReturnToIdleState(false),
+	  _havePendingCompletionCheck(false), _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false),
 	  _musicTrack(0), _musicActive(true), _scoreSectionEndTime(0), _musicVolume(getDefaultSoundVolume()), _musicVolumeRampStartTime(0), _musicVolumeRampStartVolume(0), _musicVolumeRampRatePerMSec(0), _musicVolumeRampEnd(0),
 	  _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _loadedAnimationHasSound(false), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0), _animVolume(getDefaultSoundVolume()),
@@ -1335,7 +1335,7 @@ bool Runtime::runIdle() {
 	if (_havePendingScreenChange) {
 		_havePendingScreenChange = false;
 
-		_havePendingReturnToIdleState = true;
+		_havePendingPreIdleActions = true;
 
 		changeToScreen(_roomNumber, _screenNumber);
 		return true;
@@ -1344,6 +1344,12 @@ bool Runtime::runIdle() {
 	if (_havePendingPlayAmbientSounds) {
 		_havePendingPlayAmbientSounds = false;
 		triggerAmbientSounds();
+	}
+
+	if (_havePendingPreIdleActions) {
+		_havePendingPreIdleActions = false;
+
+		triggerPreIdleActions();
 	}
 
 	if (_havePendingReturnToIdleState) {
@@ -1356,6 +1362,7 @@ bool Runtime::runIdle() {
 
 	uint32 timestamp = g_system->getMillis();
 
+	// Try to keep this in sync with runDelay
 	if (_animPlayWhileIdle) {
 		assert(_haveIdleAnimations[_direction]);
 
@@ -1493,9 +1500,46 @@ bool Runtime::runIdle() {
 }
 
 bool Runtime::runDelay() {
+	uint32 timestamp = g_system->getMillis();
+
 	if (g_system->getMillis() >= _delayCompletionTime) {
 		_gameState = kGameStateScript;
 		return true;
+	}
+
+	if (_havePendingPreIdleActions) {
+		_havePendingPreIdleActions = false;
+
+		triggerPreIdleActions();
+	}
+
+	// Play static animations.  Try to keep this in sync with runIdle
+	if (_animPlayWhileIdle) {
+		assert(_haveIdleAnimations[_direction]);
+
+		StaticAnimation &sanim = _idleAnimations[_direction];
+		bool looping = (sanim.params.repeatDelay == 0);
+
+		bool animEnded = false;
+		continuePlayingAnimation(looping, false, animEnded);
+
+		if (!looping && animEnded) {
+			_animPlayWhileIdle = false;
+			sanim.nextStartTime = timestamp + sanim.params.repeatDelay * 1000u;
+			sanim.currentAlternation = 1 - sanim.currentAlternation;
+
+			if (_idleLockInteractions)
+				_idleLockInteractions = false;
+		}
+	} else if (_haveIdleAnimations[_direction]) {
+		StaticAnimation &sanim = _idleAnimations[_direction];
+		if (sanim.nextStartTime <= timestamp) {
+			const AnimationDef &animDef = sanim.animDefs[sanim.currentAlternation];
+			changeAnimation(animDef, animDef.firstFrame, false, _animSpeedStaticAnim);
+			_animPlayWhileIdle = true;
+
+			_idleLockInteractions = sanim.params.lockInteractions;
+		}
 	}
 
 	return false;
@@ -1721,7 +1765,7 @@ bool Runtime::runGyroAnimation() {
 
 void Runtime::exitGyroIdle() {
 	_gameState = kGameStateScript;
-	_havePendingReturnToIdleState = true;
+	_havePendingPreIdleActions = true;
 
 	// In Reah, gyro interactions stop the script.
 	if (_gameID == GID_REAH)
@@ -2129,8 +2173,16 @@ void Runtime::terminateScript() {
 
 	drawCompass();
 
-	if (_havePendingScreenChange)
+	if (_havePendingScreenChange) {
+		// TODO: Check Reah to see if this condition is okay there too.
+		// This is needed to avoid resetting static animations twice, which causes problems with,
+		// for example, the second screen on Hannah's path resetting the idle animations after
+		// the VO stops.
+		if (_gameID == GID_SCHIZM)
+			_havePendingScreenChange = false;
+
 		changeToScreen(_roomNumber, _screenNumber);
+	}
 
 	if (_scriptEnv.exitToMenu && _gameState == kGameStateIdle) {
 		changeToCursor(_cursors[kCursorArrow]);
@@ -2211,7 +2263,7 @@ void Runtime::startTerminatingHorizontalPan(bool isRight) {
 	_panoramaState = kPanoramaStateInactive;
 
 	// Need to return to idle after direction change
-	_havePendingReturnToIdleState = true;
+	_havePendingPreIdleActions = true;
 }
 
 bool Runtime::popOSEvent(OSEvent &evt) {
@@ -2699,7 +2751,7 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 		for (uint i = 0; i < kNumDirections; i++)
 			_haveIdleAnimations[i] = false;
 
-		_havePendingReturnToIdleState = true;
+		_havePendingPreIdleActions = true;
 		_haveIdleStaticAnimation = false;
 		_idleCurrentStaticAnimation.clear();
 		_havePendingPlayAmbientSounds = true;
@@ -2708,12 +2760,15 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 	}
 }
 
-void Runtime::returnToIdleState() {
-	debug(1, "Returned to idle state in room %u screen 0%x facing direction %u", _roomNumber, _screenNumber, _direction);
+void Runtime::triggerPreIdleActions() {
+	debug(1, "Triggering pre-idle actions in room %u screen 0%x facing direction %u", _roomNumber, _screenNumber, _direction);
+
+	_havePendingReturnToIdleState = true;
 
 	uint32 timestamp = g_system->getMillis();
 
 	_animPlayWhileIdle = false;
+	_idleLockInteractions = false;
 
 	if (_haveIdleAnimations[_direction]) {
 		StaticAnimation &sanim = _idleAnimations[_direction];
@@ -2726,8 +2781,11 @@ void Runtime::returnToIdleState() {
 			sanim.currentAlternation = 1;
 		}
 	}
+}
+
+void Runtime::returnToIdleState() {
+	debug(1, "Returned to idle state in room %u screen 0%x facing direction %u", _roomNumber, _screenNumber, _direction);
 	
-	_idleLockInteractions = false;
 	_idleIsOnInteraction = false;
 	_idleHaveClickInteraction = false;
 	_idleHaveDragInteraction = false;
@@ -3163,8 +3221,12 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 		_animFrameRateLock = Fraction(_scriptEnv.fpsOverride, 1);
 		_scriptEnv.fpsOverride = 0;
 	} else {
-		if (!_fastAnimationMode && _animDecoder && !_loadedAnimationHasSound)
-			_animFrameRateLock = defaultFrameRate;
+		if (_animDecoder && !_loadedAnimationHasSound) {
+			if (_fastAnimationMode)
+				_animFrameRateLock = Fraction(25, 1);
+			else
+				_animFrameRateLock = defaultFrameRate;
+		}
 	}
 
 	if (_animFrameRateLock.numerator) {
@@ -5229,7 +5291,7 @@ void Runtime::scriptOpStatic(ScriptArg_t arg) {
 
 	changeAnimation(animDef, animDef.lastFrame, false, _animSpeedStaticAnim);
 
-	_havePendingReturnToIdleState = true;
+	_havePendingPreIdleActions = true;
 	_haveHorizPanAnimations = false;
 	_haveIdleStaticAnimation = true;
 	_idleCurrentStaticAnimation = animDef.animName;

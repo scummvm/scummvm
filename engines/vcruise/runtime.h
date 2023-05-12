@@ -786,6 +786,7 @@ private:
 	void resolveSoundByNameOrID(const StackValue &stackValue, bool load, StackInt_t &outSoundID, SoundInstance *&outWave);
 
 	void changeToScreen(uint roomNumber, uint screenNumber);
+	void triggerPreIdleActions();
 	void returnToIdleState();
 	void changeToCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &cursor);
 	bool dischargeIdleMouseMove();
@@ -1099,7 +1100,18 @@ private:
 	uint _activeScreenNumber;
 	bool _havePendingScreenChange;
 	bool _forceScreenChange;
+
+	// returnToIdleState executes any actions that must be executed upon returning to idle state from either
+	// a panorama or the first script that executes upon reaching a screen.
+	//
+	// Unfortunately, this was done slightly prematurely since Schizm plays idle animations during pre-idle
+	// delays and Reah never needs to do that, so _havePendingPreIdleActions exists to handle those actions
+	// during pre-idle upon arriving at a screen.
+	//
+	// Pre-idle actions are executed once upon either entering Idle OR Delay state.
+	bool _havePendingPreIdleActions;
 	bool _havePendingReturnToIdleState;
+
 	bool _havePendingCompletionCheck;
 	GameState _gameState;
 
