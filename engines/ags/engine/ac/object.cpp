@@ -122,21 +122,8 @@ int Object_GetBaseline(ScriptObject *objj) {
 
 void Object_AnimateEx(ScriptObject *objj, int loop, int delay, int repeat,
 	int blocking, int direction, int sframe, int volume = 100) {
-	if (direction == FORWARDS)
-		direction = 0;
-	else if (direction == BACKWARDS)
-		direction = 1;
-	if (blocking == BLOCKING)
-		blocking = 1;
-	else if (blocking == IN_BACKGROUND)
-		blocking = 0;
 
-	if ((repeat < 0) || (repeat > 1))
-		quit("!Object.Animate: invalid repeat value");
-	if ((blocking < 0) || (blocking > 1))
-		quit("!Object.Animate: invalid blocking value");
-	if ((direction < 0) || (direction > 1))
-		quit("!Object.Animate: invalid direction");
+	ValidateViewAnimParams("Object.Animate", repeat, blocking, direction);
 
 	AnimateObjectImpl(objj->id, loop, delay, repeat, direction, blocking, sframe, volume);
 }
@@ -553,6 +540,31 @@ int check_click_on_object(int roomx, int roomy, int mood) {
 	if (aa < 0) return 0;
 	RunObjectInteraction(aa, mood);
 	return 1;
+}
+
+void ValidateViewAnimParams(const char *apiname, int &repeat, int &blocking, int &direction) {
+	if (blocking == BLOCKING)
+		blocking = 1;
+	else if (blocking == IN_BACKGROUND)
+		blocking = 0;
+
+	if (direction == FORWARDS)
+		direction = 0;
+	else if (direction == BACKWARDS)
+		direction = 1;
+
+	if ((repeat < 0) || (repeat > 1)) {
+		debug_script_warn("%s: invalid repeat value %d, will treat as REPEAT (1).", apiname, repeat);
+		repeat = 1;
+	}
+	if ((blocking < 0) || (blocking > 1)) {
+		debug_script_warn("%s: invalid blocking value %d, will treat as BLOCKING (1)", apiname, blocking);
+		blocking = 1;
+	}
+	if ((direction < 0) || (direction > 1)) {
+		debug_script_warn("%s: invalid direction value %d, will treat as BACKWARDS (1)", apiname, direction);
+		direction = 1;
+	}
 }
 
 // General view animation algorithm: find next loop and frame, depending on anim settings

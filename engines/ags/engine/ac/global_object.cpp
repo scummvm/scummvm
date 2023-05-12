@@ -221,14 +221,15 @@ void AnimateObjectImpl(int obn, int loopn, int spdd, int rept, int direction, in
 		quit("!AnimateObject: object has not been assigned a view");
 	if (loopn < 0 || loopn >= _GP(views)[_G(objs)[obn].view].numLoops)
 		quit("!AnimateObject: invalid loop number specified");
-	if (sframe < 0 || sframe >= _GP(views)[_G(objs)[obn].view].loops[loopn].numFrames)
-		quit("!AnimateObject: invalid starting frame number specified");
-	if ((direction < 0) || (direction > 1))
-		quit("!AnimateObjectEx: invalid direction");
-	if ((rept < 0) || (rept > 2))
-		quit("!AnimateObjectEx: invalid repeat value");
 	if (_GP(views)[_G(objs)[obn].view].loops[loopn].numFrames < 1)
 		quit("!AnimateObject: no frames in the specified view loop");
+	if (sframe < 0 || sframe >= _GP(views)[_G(objs)[obn].view].loops[loopn].numFrames)
+		quit("!AnimateObject: invalid starting frame number specified");
+
+	if ((direction < 0) || (direction > 1))
+		quit("!AnimateObjectEx: invalid direction");
+	if (((rept + 1) < ANIM_ONCE) || ((rept + 1) > ANIM_ONCERESET)) // will convert to 1-based repeat below
+		quit("!AnimateObjectEx: invalid repeat value");
 
 	// reverse animation starts at the *previous frame*
 	if (direction) {

@@ -60,15 +60,6 @@ void Button_AnimateEx(GUIButton *butt, int view, int loop, int speed,
 	int guin = butt->ParentId;
 	int objn = butt->Id;
 
-	if (direction == FORWARDS)
-		direction = 0;
-	else if (direction == BACKWARDS)
-		direction = 1;
-	if (blocking == BLOCKING)
-		blocking = 1;
-	else if (blocking == IN_BACKGROUND)
-		blocking = 0;
-
 	if ((view < 1) || (view > _GP(game).numviews))
 		quit("!AnimateButton: invalid view specified");
 	view--;
@@ -76,12 +67,8 @@ void Button_AnimateEx(GUIButton *butt, int view, int loop, int speed,
 		quit("!AnimateButton: invalid loop specified for view");
 	if (sframe < 0 || sframe >= _GP(views)[view].loops[loop].numFrames)
 		quit("!AnimateButton: invalid starting frame number specified");
-	if ((repeat < 0) || (repeat > 1))
-		quit("!AnimateButton: invalid repeat value");
-	if ((blocking < 0) || (blocking > 1))
-		quit("!AnimateButton: invalid blocking value");
-	if ((direction < 0) || (direction > 1))
-		quit("!AnimateButton: invalid direction");
+
+	ValidateViewAnimParams("Button.Animate", repeat, blocking, direction);
 
 	volume = Math::Clamp(volume, 0, 100);
 

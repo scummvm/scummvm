@@ -102,6 +102,10 @@ int     is_pos_in_sprite(int xx, int yy, int arx, int ary, Shared::Bitmap *sprit
 // X and Y co-ordinates must be in native format
 // X and Y are ROOM coordinates
 int     check_click_on_object(int roomx, int roomy, int mood);
+// TODO: pick out some kind of "animation" struct
+// Tests if the standard animate parameters are in valid range, if not then clamps them and
+// reports a script warning.
+void ValidateViewAnimParams(const char *apiname, int &repeat, int &blocking, int &direction);
 // General view animation algorithm: find next loop and frame, depending on anim settings;
 // loop and frame values are passed by reference and will be updated;
 // returns whether the animation should continue.
