@@ -52,7 +52,8 @@
 
 #include "backends/platform/libretro/include/libretro-threads.h"
 #include "backends/platform/libretro/include/libretro-core-options.h"
-#include "backends/platform/libretro/include/os.h"
+#include "backends/platform/libretro/include/libretro-os.h"
+#include "backends/platform/libretro/include/libretro-defs.h"
 
 static struct retro_game_info game_buf;
 static struct retro_game_info * game_buf_ptr;
@@ -377,7 +378,7 @@ static void exit_to_frontend(void) {
 
 static void close_emu_thread(void) {
 	while (!retro_emu_thread_exited()) {
-		retroQuit();
+		LIBRETRO_G_SYSTEM->requestQuit();
 		retro_switch_to_emu_thread();
 	}
 	retro_deinit_emu_thread();
@@ -583,14 +584,14 @@ void retro_init(void) {
 		log_cb(RETRO_LOG_INFO, "Frontend supports RGB565 -will use that instead of XRGB1555.\n");
 #endif
 
-	retro_keyboard_callback cb = {retroKeyEvent};
+	retro_keyboard_callback cb = {LIBRETRO_G_SYSTEM->processKeyEvent};
 	environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, &cb);
 
-	g_system = retroBuildOS();
+	g_system = new OSystem_libretro();
 }
 
 void retro_deinit(void) {
-	retroDestroy();
+	LIBRETRO_G_SYSTEM->destroy();
 	free(sound_buffer);
 }
 
@@ -665,7 +666,7 @@ bool retro_load_game(const struct retro_game_info *game) {
 				return false;
 			}
 
-			test_game_status = retroTestGame(target_id, false);
+			test_game_status = LIBRETRO_G_SYSTEM->testGame(target_id, false);
 		} else {
 			if (detect_target.isDirectory()) {
 				parent_dir = detect_target;
@@ -677,7 +678,7 @@ bool retro_load_game(const struct retro_game_info *game) {
 				}
 			}
 
-			test_game_status = retroTestGame(parent_dir.getPath().c_str(), true);
+			test_game_status = LIBRETRO_G_SYSTEM->testGame(parent_dir.getPath().c_str(), true);
 		}
 
 		// Preliminary game scan results
@@ -770,7 +771,7 @@ void retro_run(void) {
 			/* No frame skipping if
 			- no incoming audio (e.g. GUI)
 			- doing a THREAD_SWITCH_UPDATE loop */
-			skip_frame = skip_frame && !(audio_status & AUDIO_STATUS_MUTE) && !(getThreadSwitchCaller() & THREAD_SWITCH_UPDATE);
+			skip_frame = skip_frame && !(audio_status & AUDIO_STATUS_MUTE) && !(LIBRETRO_G_SYSTEM->getThreadSwitchCaller() & THREAD_SWITCH_UPDATE);
 
 			/* Reset frameskip counter if not flagged */
 			if ((!skip_frame && frameskip_counter) || frameskip_counter >= FRAMESKIP_MAX) {
@@ -831,7 +832,7 @@ void retro_run(void) {
 
 			/* Retrieve video */
 			if ((audio_video_enable & 1) && !skip_frame) {
-				const Graphics::Surface &screen = getScreen();
+				const Graphics::Surface &screen = LIBRETRO_G_SYSTEM->getScreen();
 				video_cb(screen.getPixels(), screen.w, screen.h, screen.pitch);
 			}
 
@@ -850,10 +851,10 @@ void retro_run(void) {
 
 			current_frame++;
 
-		} while (getThreadSwitchCaller() & THREAD_SWITCH_UPDATE);
+		} while (LIBRETRO_G_SYSTEM->getThreadSwitchCaller() & THREAD_SWITCH_UPDATE);
 
 		poll_cb();
-		retroProcessMouse(input_cb, retro_device, gampad_cursor_speed, gamepad_acceleration_time, analog_response_is_quadratic, analog_deadzone, mouse_speed);
+		LIBRETRO_G_SYSTEM->processMouse(input_cb, retro_device, gampad_cursor_speed, gamepad_acceleration_time, analog_response_is_quadratic, analog_deadzone, mouse_speed);
 	}
 }
 
@@ -865,7 +866,7 @@ void retro_reset(void) {
 	close_emu_thread();
 	init_command_params();
 	retro_load_game(game_buf_ptr);
-	retroReset();
+	LIBRETRO_G_SYSTEM->resetQuit();
 }
 
 // Stubs

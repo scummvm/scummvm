@@ -1,4 +1,4 @@
-/* Copyright (C) 2022 Giovanni Cascione <ing.cascione@gmail.com>
+/* Copyright (C) 2023 Giovanni Cascione <ing.cascione@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include "common/timer.h"
 #include "backends/platform/libretro/include/libretro-threads.h"
 #include "backends/platform/libretro/include/libretro-timer.h"
-#include "backends/platform/libretro/include/os.h"
+#include "backends/platform/libretro/include/libretro-defs.h"
 
 LibretroTimerManager::LibretroTimerManager(uint32 refresh_rate) {
 	if (! refresh_rate > 0)

@@ -15,9 +15,9 @@
 */
 
 #include <stdio.h>
-#include "backends/platform/libretro/include/libretro-threads.h"
-#include "backends/platform/libretro/include/os.h"
+#include <libretro.h>
 #include "base/main.h"
+#include "backends/platform/libretro/include/libretro-threads.h"
 
 #define EMU_WAITING    (1 << 0)
 #define MAIN_WAITING   (1 << 1)
@@ -39,13 +39,8 @@ static scond_t *emu_cond;
 static scond_t *main_cond;
 #endif
 
-static bool retro_current_thread_is_main() {
-#ifdef USE_LIBCO
-	return (co_active() == main_thread);
-#else
-	return (sthread_get_current_thread_id() == main_thread_id);
-#endif
-}
+extern char cmd_params[20][200];
+extern char cmd_params_num;
 
 static void retro_exit_to_main_thread() {
 #ifdef USE_LIBCO
