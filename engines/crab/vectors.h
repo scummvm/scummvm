@@ -81,8 +81,8 @@ public:
 		x -= v.x;
 		y -= v.y;
 	}
-	bool operator==(const Vector2D &v) { return x == v.x && y == v.y; }
-	bool operator!=(const Vector2D &v) { return x != v.x || y != v.y; }
+	bool operator==(const Vector2D &v) const { return x == v.x && y == v.y; }
+	bool operator!=(const Vector2D &v) const { return x != v.x || y != v.y; }
 	friend Vector2D operator-(const Vector2D &v1, const Vector2D &v2) {
 		return Vector2D(v1.x - v2.x, v1.y - v2.y);
 	}
