@@ -55,6 +55,8 @@ void TileSet::Load(const std::string &path, rapidxml::xml_node<char> *node) {
 			img.Load(loc.c_str());
 			total_rows = img.H() / tile_h;
 			total_cols = img.W() / tile_w;
+			warning("Total rows : %d Total cols: %d gid: %d", total_rows, total_cols, first_gid);
+
 		}
 	}
 
@@ -84,7 +86,17 @@ void TileSet::Draw(const Vector2i &pos, const TileInfo &tile) {
 		clip.x = ((tile.gid - first_gid) % total_cols) * tile_w;
 		clip.y = ((tile.gid - first_gid) / total_cols) * tile_h;
 
-		img.Draw(pos.x, pos.y, &clip, tile.flip);
+		// Try to cache tiles
+		if (tiles.count(tile) > 0) {
+			tiles[tile].FastDraw(pos.x, pos.y);
+		} else if (tiles.count(tile) < 1) {
+			pyrodactyl::image::Image im;
+			im.Load(img, &clip, tile.flip);
+			im.FastDraw(pos.x, pos.y);
+			tiles[tile] = im;
+		}
+
+		//img.FastDraw(pos.x, pos.y, &clip, tile.flip);
 
 		/*if(tile.flip != FLIP_NONE && GameDebug)
 		pyrodactyl::text::gTextManager.Draw(pos.x,pos.y,NumberToString(tile.flip),0);*/

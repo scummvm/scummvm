@@ -55,6 +55,7 @@ struct TileInfo {
 		gid = 0;
 		flip = FLIP_NONE;
 	}
+
 	TileInfo(rapidxml::xml_node<char> *node) {
 		// Load the gid of the tile
 		if (!LoadNum(gid, "gid", node))
@@ -87,6 +88,10 @@ struct TileInfo {
 
 		// Clear the flags
 		gid &= ~(FlippedHorizontallyFlag | FlippedVerticallyFlag | FlippedAntiDiagonallyFlag);
+	}
+
+	bool operator==(const TileInfo& other) const {
+		return (gid == other.gid) && (flip == other.flip);
 	}
 };
 } // End of namespace TMX

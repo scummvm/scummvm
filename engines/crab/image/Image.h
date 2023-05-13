@@ -45,6 +45,8 @@ namespace image {
 class Image {
 	// The dimensions of the image
 	int w, h;
+	int id;
+	TextureFlipType _flip;
 
 	// The actual hardware texture
 	//SDL_Texture *texture;
@@ -90,10 +92,13 @@ public:
 	bool Load(rapidxml::xml_node<char> *node, const char *name);
 	bool Load(Graphics::Surface *surface);
 	bool Load(Graphics::ManagedSurface *surface);
+	bool Load(const Image &image, Rect *clip, const TextureFlipType &flip);
+
 
 	// Draw the openGL texture
 	void Draw(const int &x, const int &y, Common::Rect *clip = NULL, const TextureFlipType &flip = FLIP_NONE);
 	void Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &flip = FLIP_NONE);
+	void FastDraw(const int &x, const int &y);
 
 	// Delete the openGL texture
 	void Delete();
