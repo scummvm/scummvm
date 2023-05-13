@@ -31,6 +31,7 @@ enum TheEntityType {
 	kTheBeepOn,
 	kTheButtonStyle,
 	kTheCast,
+	kTheCastlibs,
 	kTheCastMembers,
 	kTheCenterStage,
 	kTheChars,

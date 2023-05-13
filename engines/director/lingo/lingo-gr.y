@@ -137,7 +137,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS
 %token tCHAR tCHARS tITEM tITEMS tLINE tLINES tWORD tWORDS
 %token tABBREVIATED tABBREV tABBR tLONG tSHORT
-%token tDATE tLAST tMENU tMENUS tMENUITEM tMENUITEMS tNUMBER tTHE tTIME tXTRAS
+%token tDATE tLAST tMENU tMENUS tMENUITEM tMENUITEMS tNUMBER tTHE tTIME tXTRAS tCASTLIBS
 %token tSOUND tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tMETHOD tENDIF tENDREPEAT tENDTELL
 %token tASSERTERROR
@@ -720,7 +720,8 @@ thenumberof:
 	| tTHE tNUMBER tOF tLINES inof simpleexpr	{ $$ = new TheNumberOfNode(kNumberOfLines, $simpleexpr); }
 	| tTHE tNUMBER tOF tMENUITEMS inof menu		{ $$ = new TheNumberOfNode(kNumberOfMenuItems, $menu); }
 	| tTHE tNUMBER tOF tMENUS					{ $$ = new TheNumberOfNode(kNumberOfMenus, nullptr); }
-	| tTHE tNUMBER tOF tXTRAS					{ $$ = new TheNumberOfNode(kNumberOfXtras, nullptr); }
+	| tTHE tNUMBER tOF tXTRAS					{ $$ = new TheNumberOfNode(kNumberOfXtras, nullptr); } // D5
+	| tTHE tNUMBER tOF tCASTLIBS				{ $$ = new TheNumberOfNode(kNumberOfCastlibs, nullptr); } // D5
 	;
 
 inof: tIN | tOF ;

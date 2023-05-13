@@ -169,6 +169,7 @@ after		{ count(); return tAFTER; }		// D3
 and			{ count(); return tAND; }
 before		{ count(); return tBEFORE; }	// D3
 cast		{ count(); return tCAST; }
+castlibs	{ count(); return tCASTLIBS; }	// D5
 char		{ count(); return tCHAR; }		// D3
 chars		{ count(); return tCHARS; }
 contains	{ count(); return tCONTAINS; }
