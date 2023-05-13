@@ -125,6 +125,7 @@ void Cursor::HandleEvents(const Common::Event &event) {
 // Purpose: Draw
 //------------------------------------------------------------------------
 void Cursor::Draw() {
+/*
 	//warning("Drawing cursor: %d %d", motion.x, motion.y);
 	if (hover) {
 		if (pressed)
@@ -137,6 +138,7 @@ void Cursor::Draw() {
 		else
 			img.Draw(motion.x, motion.y);
 	}
+*/
 }
 
 } // End of namespace Crab

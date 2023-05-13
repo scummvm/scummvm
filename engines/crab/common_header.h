@@ -64,6 +64,9 @@
 
 #include "graphics/surface.h"
 #include "graphics/managed_surface.h"
+#include "graphics/cursor.h"
+#include "graphics/wincursor.h"
+#include "graphics/cursorman.h"
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
 
