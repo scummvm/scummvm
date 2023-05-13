@@ -255,6 +255,15 @@ void App::Run() {
 				pyrodactyl::text::gTextManager.Draw(0, 0, NumberToString(fpsval), 0);
 		}
 #endif
+		if (g_system->getMillis() - lasts > 1000) {
+				lasts = g_system->getMillis();
+				fpsval = fpscount;
+				fpscount = 1;
+			} else
+				++fpscount;
+
+			if (CurrentStateID >= 0)
+				pyrodactyl::text::gTextManager.Draw(0, 0, NumberToString(fpsval).c_str(), 0);
 		//const Graphics::ManagedSurface *s = g_engine->_renderSurface;
 		//g_system->copyRectToScreen(s->getPixels(), s->pitch, 0, 0, s->w, s->h);
 		g_engine->_screen->update();
