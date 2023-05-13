@@ -55,6 +55,7 @@ public:
 	Object *shootRay(const Math::Ray &ray);
 	bool checkInSight(const Math::Ray &ray, float maxDistance);
 	ObjectArray checkCollisions(const Math::AABB &boundingBox);
+	Math::Vector3d resolveCollisions(Math::Vector3d const &lastPosition, Math::Vector3d const &newPosition, int playerHeight);
 	void addObjectFromArea(int16 id, Area *global);
 	void addObject(Object *obj);
 	void addFloor();

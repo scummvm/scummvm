@@ -158,7 +158,7 @@ void FreescapeEngine::rise() {
 		changePlayerHeight(_playerHeightNumber);
 	}
 
-	bool collided = checkCollisions(true) || _position.y() >= 2016;
+	bool collided = /*checkCollisions(true) ||*/ _position.y() >= 2016;
 	if (collided) {
 		if (_currentArea->getAreaID() == previousAreaID) {
 			if (_flyMode)
@@ -181,7 +181,7 @@ void FreescapeEngine::lower() {
 
 	if (_flyMode) {
 		_position.setValue(1, _position.y() - (_playerSteps[_playerStepIndex] * 0.5));
-		bool collided = checkCollisions(true);
+		bool collided = false; //checkCollisions(true);
 		if (collided) {
 			if (_currentArea->getAreaID() == previousAreaID) {
 				_position = _lastPosition;
@@ -222,21 +222,26 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	stepFront.z() = floor(stepFront.z()) + 0.5;
 
 	float positionY = _position.y();
+	Math::Vector3d destination;
 	switch (direction) {
 	case kForwardMovement:
-		_position = _position + stepFront;
+		destination = _position + stepFront;
 		break;
 	case kBackwardMovement:
-		_position = _position - stepFront;
+		destination = _position - stepFront;
 		break;
 	case kRightMovement:
-		_position = _position - stepRight;
+		destination = _position - stepRight;
 		break;
 	case kLeftMovement:
-		_position = _position + stepRight;
+		destination = _position + stepRight;
 		break;
 	}
 
+	if (!_flyMode)
+		destination.y() = positionY;
+	resolveCollisions(destination);
+	/*
 	// restore y coordinate
 	if (!_flyMode)
 		_position.set(_position.x(), positionY, _position.z());
@@ -306,6 +311,7 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 			}
 		}
 	}
+	*/
 
 	_lastPosition = _position;
 	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
@@ -315,66 +321,64 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	clearGameBit(31);
 }
 
-bool FreescapeEngine::checkFloor(Math::Vector3d currentPosition) {
-	debugC(1, kFreescapeDebugMove, "Checking floor under the player");
-	bool collided = checkCollisions(false);
-	assert(!collided);
+void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
+	Math::Vector3d newPosition = position;
+	Math::Vector3d lastPosition = _lastPosition;
 
-	_position.set(_position.x(), _position.y() - 2, _position.z());
-	collided = checkCollisions(false);
-	_position = currentPosition;
-	return collided;
-}
-
-bool FreescapeEngine::tryStepUp(Math::Vector3d currentPosition) {
-	debugC(1, kFreescapeDebugMove, "Try to step up!");
-	_position.set(_position.x(), _position.y() + 64, _position.z());
-	bool collided = checkCollisions(false);
-	if (collided) {
-		_position = currentPosition;
-		return false;
-	} else {
-		// Try to step down
-		return true;
+	int previousAreaID = _currentArea->getAreaID();
+	runCollisionConditions(lastPosition, newPosition);
+	if (_currentArea->getAreaID() != previousAreaID) {
+		return;
 	}
-}
 
-bool FreescapeEngine::tryStepDown(Math::Vector3d currentPosition) {
-	debugC(1, kFreescapeDebugMove, "Try to step down!");
-	_position.set(_position.x(), _position.y() - 1, _position.z());
-	if (checkFloor(_position)) {
-		return true;
-	} else {
-		_position = currentPosition;
-		return false;
+	newPosition = _currentArea->resolveCollisions(lastPosition, newPosition, _playerHeight);
+
+	if (_flyMode) {
+		_position = newPosition;
+		return;
 	}
+
+	if ((lastPosition - newPosition).length() < 1) { // If the player has not moved
+		// Try to step up
+		newPosition = position;
+		newPosition.y() = newPosition.y() + 64;
+
+		lastPosition = _lastPosition;
+		lastPosition.y() = lastPosition.y() + 64;
+
+		newPosition = _currentArea->resolveCollisions(lastPosition, newPosition, _playerHeight);
+	}
+
+	/*if ((lastPosition - newPosition).length() >= 1) { // Step up
+		playSound(4, false);
+	}*/
+
+	lastPosition = newPosition;
+	newPosition.y() = -8192;
+	newPosition = _currentArea->resolveCollisions(lastPosition, newPosition, _playerHeight);
+	int fallen = lastPosition.y() - newPosition.y();
+
+	if (fallen > 64)
+		_hasFallen = !_disableFalling;
+
+	if (!_hasFallen && fallen > 0) {
+		// Position in Y was changed, let's re-run effects
+		runCollisionConditions(lastPosition, newPosition);
+	}
+	_position = newPosition;
 }
 
-bool FreescapeEngine::checkCollisions(bool executeCode) {
+void FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, Math::Vector3d const newPosition) {
 	if (_noClipMode)
-		return false;
-	Math::AABB boundingBox(_lastPosition, _lastPosition);
+		return;
 
-	Math::Vector3d v1(_position.x() + 1, _position.y() + 1, _position.z() + 1);
-	Math::Vector3d v2(_position.x() - 1, _position.y() - _playerHeight, _position.z() - 1);
+	// We need to make sure the bounding box touches the floor so we will expand it and run the collision checking
+	uint tolerance = 3;
+	Math::Vector3d v(newPosition.x() - 1, newPosition.y() - _playerHeight - tolerance, newPosition.z() - 1);
+	Math::AABB boundingBox(lastPosition, lastPosition);
+	boundingBox.expand(v);
 
-	boundingBox.expand(v1);
-	boundingBox.expand(v2);
 	ObjectArray objs = _currentArea->checkCollisions(boundingBox);
-	bool collided = !objs.empty();
-
-	// If we don't need to execute code, we can finish here
-	if (!executeCode) {
-		return collided;
-	}
-
-	// If we need to execute code, we need to make sure the bounding box touches the floor
-	// so we will expand it and re-run the collision checking
-	uint tolerance = 1;
-	Math::Vector3d v3(_position.x() - 1, _position.y() - _playerHeight - tolerance, _position.z() - 1);
-	boundingBox.expand(v3);
-
-	objs = _currentArea->checkCollisions(boundingBox);
 
 	// sort so the condition from those objects that are larger are executed last
 	struct {
@@ -393,7 +397,7 @@ bool FreescapeEngine::checkCollisions(bool executeCode) {
 		// The following check stops the player from going through big solid objects such as walls
 		// FIXME: find a better workaround of this
 		if (gobj->getSize().length() > 3000) {
-			if (largeObjectWasBlocking)
+			if (largeObjectWasBlocking && !(isDriller() && _currentArea->getAreaID() == 14))
 				continue;
 			largeObjectWasBlocking = true;
 		}
@@ -403,9 +407,6 @@ bool FreescapeEngine::checkCollisions(bool executeCode) {
 		if (areaID != _currentArea->getAreaID())
 			break;
 	}
-	// We still need to return the original result, not the collision using the expanded bounding box
-	// This will avoid detecting the floor constantly
-	return collided;
 }
 
 } // namespace Freescape
