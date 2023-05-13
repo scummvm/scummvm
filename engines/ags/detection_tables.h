@@ -1068,6 +1068,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "disquiet", "Disquiet" },
 	{ "distancenoobject", "Distance no object" },
 	{ "djdeceased", "D. Jones: Deceased" },
+	{ "dobutsu", "Dobutsu no Costco" },
 	{ "doctormaze", "The Amazing Doctor Maze" },
 	{ "doctormuttonchop", "Doctor Muttonchop" },
 	{ "doctorwho", "Doctor Who: Time Snare" },
@@ -4234,6 +4235,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("aboardtheadventure", "Aboard.exe", "3c3f8f6c6fdcc519464477d3627b60f6", 125813308),
 	DEMO_ENTRY_EN("abscission", "Abscission.exe", "418a9aaa044bfc5b7a79ba96fe679b60", 54341372),  // v1.0.3
 	DEMO_ENTRY_EN("abscission", "Abscission Demo.exe", "418a9aaa044bfc5b7a79ba96fe679b60", 311033029),  // Steam
+	DEMO_ENTRY_EN("abscission", "Abscission Demo.exe", "7633f0919378749cebf6dacba61ca0e1", 313386788),  // Steam
 	DEMO_ENTRY_EN("absurdistan", "Absurdistan - Demo.exe", "4588012d3077d6b6791fce8cd4b15885", 35712363),  // v1.3
 	DEMO_ENTRY_EN("acaixa", "A caixa.exe", "f434ba41ed68ef8d5224254027aad1f4", 48866212),
 	DEMO_ENTRY_EN("acuriouspastime", "Curious.exe", "3e46b32a00fd4e6b9f68754f854695c5", 27346489),
@@ -5541,6 +5543,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("distancenoobject", "Distance no object.exe", "5cca0f8af961d2bc1c6e475437d3b23b", 98011325),  // Windows
 	GAME_ENTRY_EN("distancenoobject", "Distance no object.ags", "60b1978b591c4ffcb63e81e69d425343", 94977705),  // Linux
 	GAME_ENTRY_EN("djdeceased", "RON.exe", "0710e2ec71042617f565c01824f0cf3c", 1175250),
+	GAME_ENTRY_EN("dobutsu", "Dobutsu no Costco.exe", "b781cc4ab0fbe647615fafa4830ec308", 29725433),
 	GAME_ENTRY_EN("doctormaze", "Maze.exe", "825ccacaabe2a3b0cd48d6f8deb42d72", 43934617),
 	GAME_ENTRY_EN("doctormuttonchop", "muttonchop.exe", "57e261dd3bb45761af4a002775e45710", 5781714),
 	GAME_ENTRY_EN("doctormuttonchop", "muttonchop.exe", "57e261dd3bb45761af4a002775e45710", 5847364),
@@ -5628,8 +5631,10 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("elegantmurdermystery", "DH.exe", "0b7529a76f38283d6e850b8d56526fc1", 2098899),
 	GAME_ENTRY_EN_PLATFORM("elevation", "Elevation.ags", "bf06b9759714464c095e1c1e597f1e86", 4362276, "Beta"),  // Linux
 	GAME_ENTRY_EN_PLATFORM("elevation", "Elevation.ags", "3063ec0d8db8305d1dc61d7862650f11", 4363999, "Beta"),
+	GAME_ENTRY_EN("elevation", "Elevation.ags", "46d792c62262d9f83e476f96a4bfb74b", 4490040),
 	GAME_ENTRY_EN_PLATFORM("elevation", "Elevation.exe", "2f2bc0b9c539d20529c0e343315d5f65", 7471160, "Beta"),  // Windows
 	GAME_ENTRY_EN_PLATFORM("elevation", "Elevation.exe", "2f2bc0b9c539d20529c0e343315d5f65", 7472883, "Beta"),
+	GAME_ENTRY_EN("elevation", "Elevation.exe", "82e7377dcb9236fc9b622e12baa64a49", 7605580),
 	GAME_ENTRY_EN("elevator", "Elevator.exe", "f10516e88ec858700804ee69d041aead", 29506915),
 	GAME_ENTRY_EN("elevatorriseabyss", "T_E_R.exe", "f120690b506dd63cd7d1112ea6af2f77", 13366126),
 	GAME_ENTRY_LANG("elfer", "socer.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 1911767, Common::DE_DEU),
