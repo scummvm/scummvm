@@ -245,7 +245,10 @@ void DrillerEngine::drawInfoMenu() {
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
-	drawStringInSurface(Common::String::format("%10s : %s", "sector", _currentArea->_name.c_str()), 69, 25, front, black, surface);
+	Common::String areaName = _currentArea->_name;
+	areaName.trim();
+
+	drawStringInSurface(Common::String::format("%10s : %s", "sector", areaName.c_str()), 69, 25, front, black, surface);
 	Common::String rigStatus;
 	Common::String gasFound;
 	Common::String perTapped;
