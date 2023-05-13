@@ -1716,6 +1716,10 @@ void GrimEngine::enableCutscene(uint32 number) {
 	_cutsceneEnabled[number] = true;
 }
 
+Graphics::RendererType GrimEngine::getRendererType() {
+	return g_driver->type;
+}
+
 void GrimEngine::setSaveMetaData(const char *meta1, int meta2, const char *meta3) {
 	_saveMeta1 = meta1;
 	_saveMeta2 = meta2;
