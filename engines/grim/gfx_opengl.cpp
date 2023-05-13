@@ -80,6 +80,7 @@ GfxOpenGL::GfxOpenGL() : _smushNumTex(0),
 		_useDepthShader(false), _fragmentProgram(0), _useDimShader(0),
 		_dimFragProgram(0), _maxLights(0), _storedDisplay(nullptr),
 		_emergFont(0), _alpha(1.f) {
+	type = Graphics::RendererType::kRendererTypeOpenGL;
 	// GL_LEQUAL as glDepthFunc ensures that subsequent drawing attempts for
 	// the same triangles are not ignored by the depth test.
 	// That's necessary for EMI where some models have multiple faces which

@@ -36,6 +36,7 @@ Debugger::Debugger() :
 	registerCmd("lua_do", WRAP_METHOD(Debugger, cmd_lua_do));
 	registerCmd("jump", WRAP_METHOD(Debugger, cmd_jump));
 	registerCmd("set_renderer", WRAP_METHOD(Debugger, cmd_set_renderer));
+	registerCmd("get_renderer", WRAP_METHOD(Debugger, cmd_get_renderer));
 	registerCmd("save", WRAP_METHOD(Debugger, cmd_save));
 	registerCmd("load", WRAP_METHOD(Debugger, cmd_load));
 }
@@ -105,6 +106,12 @@ bool Debugger::cmd_set_renderer(int argc, const char **argv) {
 	ConfMan.set("renderer", Graphics::Renderer::getTypeCode(renderer));
 	g_grim->changeHardwareState();
 	return false;
+}
+
+bool Debugger::cmd_get_renderer(int argc, const char **argv) {
+	auto rendererCodeStr = Graphics::Renderer::getTypeCode(g_grim->getRendererType());
+	debugPrintf("%s\n", rendererCodeStr.c_str());
+	return true;
 }
 
 bool Debugger::cmd_save(int argc, const char **argv) {

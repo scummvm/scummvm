@@ -29,6 +29,8 @@
 #include "common/hashmap.h"
 #include "common/events.h"
 
+#include "graphics/renderer.h"
+
 #include "engines/grim/textobject.h"
 #include "engines/grim/iris.h"
 #include "engines/grim/detection.h"
@@ -172,6 +174,8 @@ public:
 	void enableCutscene(uint32 number);
 
 	Commentary *getCommentary() { return _commentary; }
+
+	Graphics::RendererType getRendererType();
 
 	// TODO: Refactor.
 	void setSaveMetaData(const char*, int, const char*);

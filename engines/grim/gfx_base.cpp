@@ -46,6 +46,7 @@
 namespace Grim {
 
 GfxBase::GfxBase() :
+		type(Graphics::RendererType::kRendererTypeDefault),
 		_renderBitmaps(true), _renderZBitmaps(true), _shadowModeActive(false),
 		_currentPos(0, 0, 0), _dimLevel(0.0f),
 		_screenWidth(0), _screenHeight(0),

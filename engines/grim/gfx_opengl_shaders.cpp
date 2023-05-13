@@ -205,6 +205,7 @@ GfxBase *CreateGfxOpenGLShader() {
 }
 
 GfxOpenGLS::GfxOpenGLS() {
+	type = Graphics::RendererType::kRendererTypeOpenGLShaders;
 	_smushTexId = 0;
 	_matrixStack.push(Math::Matrix4());
 	_fov = -1.0;
