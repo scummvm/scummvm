@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-10 22:03+0000\n"
+"POT-Creation-Date: 2023-05-12 14:08+0000\n"
 "PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -4967,7 +4967,7 @@ msgstr "Folytatás"
 
 #: engines/bladerunner/detection_tables.h:90
 #: engines/bladerunner/detection_tables.h:101
-#: engines/kyra/detection_tables.h:76
+#: engines/kyra/detection_tables.h:77
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
@@ -6025,11 +6025,11 @@ msgstr "Remora"
 msgid "Side Step"
 msgstr "Oldallépés"
 
-#: engines/kyra/detection_tables.h:74
+#: engines/kyra/detection_tables.h:75
 msgid "Missing language specific game code and/or resources."
 msgstr "Hiányzik a nyelvre jellemző játékkód és/vagy erőforrás."
 
-#: engines/kyra/detection_tables.h:75
+#: engines/kyra/detection_tables.h:76
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
@@ -6037,18 +6037,18 @@ msgstr ""
 "Hiányzik a nyelvre jellemző játékkód és/vagy erőforrás ehhez a rajongói "
 "fordításhoz."
 
-#: engines/kyra/detection_tables.h:77
+#: engines/kyra/detection_tables.h:78
 msgid "Demo plays simple animations without using Westwood's Engine."
 msgstr ""
 "A Demo egyszerű animációkat játszik le Westwood Motor használata nélkül."
 
-#: engines/kyra/detection_tables.h:1368
+#: engines/kyra/detection_tables.h:1369
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr ""
 "Helytelenül adtad hozzá a játékot. Kérlek, add hozzá a játék gyökérmappáját."
 
 #. I18N: The file in the game directory needs to be extracted
-#: engines/kyra/detection_tables.h:1384
+#: engines/kyra/detection_tables.h:1385
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."

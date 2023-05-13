@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-10 22:03+0000\n"
+"POT-Creation-Date: 2023-05-12 14:08+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -4876,7 +4876,7 @@ msgstr "המשך"
 
 #: engines/bladerunner/detection_tables.h:90
 #: engines/bladerunner/detection_tables.h:101
-#: engines/kyra/detection_tables.h:76
+#: engines/kyra/detection_tables.h:77
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
@@ -5930,26 +5930,26 @@ msgstr "הסרה"
 msgid "Side Step"
 msgstr "החלק שמאלה"
 
-#: engines/kyra/detection_tables.h:74
+#: engines/kyra/detection_tables.h:75
 msgid "Missing language specific game code and/or resources."
 msgstr "חסרים קוד ו/או משאבי משחק תלויי-שפה."
 
-#: engines/kyra/detection_tables.h:75
+#: engines/kyra/detection_tables.h:76
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
 msgstr "חסרים קוד ו/או משאבי משחק תלויי-שפה עבור תרגום מעריצים זה."
 
-#: engines/kyra/detection_tables.h:77
+#: engines/kyra/detection_tables.h:78
 msgid "Demo plays simple animations without using Westwood's Engine."
 msgstr "גרסת ההדגמה מנגנת הנפשות פשוטות ללא שימוש במנוע של Westwood."
 
-#: engines/kyra/detection_tables.h:1368
+#: engines/kyra/detection_tables.h:1369
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr "המשחק נוסף בצורה שגויה. נא להוסיף את תיקית השורש של המשחק."
 
 #. I18N: The file in the game directory needs to be extracted
-#: engines/kyra/detection_tables.h:1384
+#: engines/kyra/detection_tables.h:1385
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."

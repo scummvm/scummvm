@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-10 22:03+0000\n"
+"POT-Creation-Date: 2023-05-12 14:08+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -4901,7 +4901,7 @@ msgstr "مواصلة"
 
 #: engines/bladerunner/detection_tables.h:90
 #: engines/bladerunner/detection_tables.h:101
-#: engines/kyra/detection_tables.h:76
+#: engines/kyra/detection_tables.h:77
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
@@ -5946,27 +5946,27 @@ msgstr "Remora"
 msgid "Side Step"
 msgstr "خطوة جانبية"
 
-#: engines/kyra/detection_tables.h:74
+#: engines/kyra/detection_tables.h:75
 msgid "Missing language specific game code and/or resources."
 msgstr "رمز اللعبة و / أو الموارد الخاصة بلغة معينة مفقودة."
 
-#: engines/kyra/detection_tables.h:75
+#: engines/kyra/detection_tables.h:76
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
 msgstr ""
 "لا يتوفر رمز اللعبة و / أو الموارد الخاصة باللغة المحددة لترجمة المعجبين هذه."
 
-#: engines/kyra/detection_tables.h:77
+#: engines/kyra/detection_tables.h:78
 msgid "Demo plays simple animations without using Westwood's Engine."
 msgstr "يعرض العرض التوضيحي رسومًا متحركة بسيطة بدون استخدام محرك Westwood."
 
-#: engines/kyra/detection_tables.h:1368
+#: engines/kyra/detection_tables.h:1369
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr "لقد أضفت اللعبة بشكل غير صحيح. الرجاء إضافة المجلد الجذر للعبة."
 
 #. I18N: The file in the game directory needs to be extracted
-#: engines/kyra/detection_tables.h:1384
+#: engines/kyra/detection_tables.h:1385
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."

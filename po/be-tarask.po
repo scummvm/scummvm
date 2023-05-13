@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-10 22:03+0000\n"
+"POT-Creation-Date: 2023-05-12 14:08+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -4918,7 +4918,7 @@ msgstr "Працягнуць"
 
 #: engines/bladerunner/detection_tables.h:90
 #: engines/bladerunner/detection_tables.h:101
-#: engines/kyra/detection_tables.h:76
+#: engines/kyra/detection_tables.h:77
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
@@ -6000,11 +6000,11 @@ msgstr "В~ы~даліць гульню"
 msgid "Side Step"
 msgstr "Сьлізганьне налева"
 
-#: engines/kyra/detection_tables.h:74
+#: engines/kyra/detection_tables.h:75
 msgid "Missing language specific game code and/or resources."
 msgstr "Бракуе адмысловага коду гульні й (або) рэсурсаў для гэтай мовы."
 
-#: engines/kyra/detection_tables.h:75
+#: engines/kyra/detection_tables.h:76
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
@@ -6012,18 +6012,18 @@ msgstr ""
 "Бракуе адмысловага коду гульні й (або) рэсурсаў для гэтага аматарскага "
 "перакладу."
 
-#: engines/kyra/detection_tables.h:77
+#: engines/kyra/detection_tables.h:78
 msgid "Demo plays simple animations without using Westwood's Engine."
 msgstr ""
 "Дэманстрацыя грае простыя анімацыі без выкарыстоўваньня рухавіку ад Westwood."
 
-#: engines/kyra/detection_tables.h:1368
+#: engines/kyra/detection_tables.h:1369
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr ""
 "Вы няправільна дадалі гульню. Калі ласка, дадайце каранёвую тэчку гульні."
 
 #. I18N: The file in the game directory needs to be extracted
-#: engines/kyra/detection_tables.h:1384
+#: engines/kyra/detection_tables.h:1385
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
