@@ -128,18 +128,19 @@ extern int yydebug;
     tNUMBER = 329,                 /* tNUMBER  */
     tTHE = 330,                    /* tTHE  */
     tTIME = 331,                   /* tTIME  */
-    tSOUND = 332,                  /* tSOUND  */
-    tSPRITE = 333,                 /* tSPRITE  */
-    tINTERSECTS = 334,             /* tINTERSECTS  */
-    tWITHIN = 335,                 /* tWITHIN  */
-    tTELL = 336,                   /* tTELL  */
-    tPROPERTY = 337,               /* tPROPERTY  */
-    tON = 338,                     /* tON  */
-    tMETHOD = 339,                 /* tMETHOD  */
-    tENDIF = 340,                  /* tENDIF  */
-    tENDREPEAT = 341,              /* tENDREPEAT  */
-    tENDTELL = 342,                /* tENDTELL  */
-    tASSERTERROR = 343             /* tASSERTERROR  */
+    tXTRAS = 332,                  /* tXTRAS  */
+    tSOUND = 333,                  /* tSOUND  */
+    tSPRITE = 334,                 /* tSPRITE  */
+    tINTERSECTS = 335,             /* tINTERSECTS  */
+    tWITHIN = 336,                 /* tWITHIN  */
+    tTELL = 337,                   /* tTELL  */
+    tPROPERTY = 338,               /* tPROPERTY  */
+    tON = 339,                     /* tON  */
+    tMETHOD = 340,                 /* tMETHOD  */
+    tENDIF = 341,                  /* tENDIF  */
+    tENDREPEAT = 342,              /* tENDREPEAT  */
+    tENDTELL = 343,                /* tENDTELL  */
+    tASSERTERROR = 344             /* tASSERTERROR  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -163,7 +164,7 @@ union YYSTYPE
 	Director::Node *node;
 	Director::NodeList *nodelist;
 
-#line 167 "engines/director/lingo/lingo-gr.h"
+#line 168 "engines/director/lingo/lingo-gr.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -175,7 +176,7 @@ typedef union YYSTYPE YYSTYPE;
 extern YYSTYPE yylval;
 
 
-//int yyparse (void);
+int yyparse (void);
 
 
 #endif /* !YY_YY_ENGINES_DIRECTOR_LINGO_LINGO_GR_H_INCLUDED  */

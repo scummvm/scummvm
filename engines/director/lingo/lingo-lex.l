@@ -267,6 +267,7 @@ with		{ count(); return tWITH; }
 within		{ count(); return tWITHIN; }
 word		{ count(); return tWORD; }
 words		{ count(); return tWORDS; }
+xtras		{ count(); return tXTRAS; } // D5
 
 [<][>]			{ count(); return tNEQ; }
 [>][=]			{ count(); return tGE; }
