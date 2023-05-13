@@ -421,6 +421,13 @@ void wouttextxy(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t
 		return;                   // each char is clipped but this speeds it up
 
 	if (_GP(fonts)[fontNumber].Renderer != nullptr) {
+		if (text_color == makeacol32(255, 0, 255, 255)) { // transparent color (magenta)
+			// WORKAROUND: Some Allegro routines are not implemented and alfont treats some magenta texts as invisible
+			// even if the alpha channel is fully opaque
+			// Slightly change the value if the game uses that color for fonts, so that they don't turn invisible
+			debug(0, "Overriding transparent text color!");
+			text_color--;
+		}
 		_GP(fonts)[fontNumber].Renderer->RenderText(texx, fontNumber, (BITMAP *)ds->GetAllegroBitmap(), xxx, yyy, text_color);
 	}
 }
