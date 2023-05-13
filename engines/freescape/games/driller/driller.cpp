@@ -799,9 +799,15 @@ bool DrillerEngine::checkIfGameEnded() {
 			insertTemporaryMessage(_messagesList[19], _countdown - 2);
 			_gameStateVars[32] = 0;  // Avoid repeating the message
 		}
-		drawFrame();
-		_gfx->flipBuffer();
-		g_system->updateScreen();
+
+		// Draw a few frames
+		for (int i = 0; i < 10; i++) {
+			drawFrame();
+			_gfx->flipBuffer();
+			g_system->updateScreen();
+			g_system->delayMillis(10);
+		}
+
 		g_system->delayMillis(5000);
 		return true;
 	}
