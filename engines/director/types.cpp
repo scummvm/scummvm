@@ -30,7 +30,10 @@ const char *scriptTypes[] = {
 	"CastScript",
 	"MovieScript",
 	"EventScript",
-	"TestScript"
+	"TestScript",
+	"ScriptType5",
+	"ScriptType6",
+	"ParentScript",
 };
 
 const char *scriptType2str(ScriptType scr) {

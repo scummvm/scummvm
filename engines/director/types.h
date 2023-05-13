@@ -64,7 +64,8 @@ enum ScriptType {
 	kMovieScript = 2,
 	kEventScript = 3,
 	kTestScript = 4,
-	kMaxScriptType = 4	// Sync with types.cpp:28, array scriptTypes[]
+	kParentScript = 7,
+	kMaxScriptType = 7	// Sync with types.cpp:28, array scriptTypes[]
 };
 
 enum ScriptFlag {
