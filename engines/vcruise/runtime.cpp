@@ -385,11 +385,19 @@ void SfxData::load(Common::SeekableReadStream &stream, Audio::Mixer *mixer) {
 					c = '/';
 			}
 
+			size_t commentPos = sfxPath.find(';');
+			if (commentPos != Common::String::npos) {
+				sfxPath = sfxPath.substr(0, commentPos);
+				sfxPath.trim();
+			}
+
 			sfxPath = Common::String("Sfx/") + sfxPath;
 
 			Common::File f;
-			if (!f.open(sfxPath))
+			if (!f.open(sfxPath)) {
 				warning("SfxData::load: Could not open sample file '%s'", sfxPath.c_str());
+				continue;
+			}
 
 			int64 size = f.size();
 			if (size <= 0 || size > 0x1fffffffu) {
@@ -2760,6 +2768,28 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 	}
 }
 
+void Runtime::changeHero() {
+	recordSaveGameSnapshot();
+
+	Common::SharedPtr<SaveGameSwappableState> currentState = _saveGame->states[0];
+	Common::SharedPtr<SaveGameSwappableState> alternateState = _saveGame->states[1];
+
+	if (_swapOutRoom && _swapOutScreen) {
+		// Some scripts may kick the player out to another location on swap back,
+		// such as the elevator in the first area on Hannah's quest
+		currentState->roomNumber = _swapOutRoom;
+		currentState->screenNumber = _swapOutScreen;
+		currentState->direction = _direction;
+	}
+
+	_saveGame->states[0] = alternateState;
+	_saveGame->states[1] = currentState;
+
+	_saveGame->hero ^= 1u;
+
+	restoreSaveGameSnapshot();
+}
+
 void Runtime::triggerPreIdleActions() {
 	debug(1, "Triggering pre-idle actions in room %u screen 0%x facing direction %u", _roomNumber, _screenNumber, _direction);
 
@@ -2869,6 +2899,13 @@ bool Runtime::dischargeIdleMouseMove() {
 		}
 	}
 
+	if (_gameID == GID_SCHIZM && !isOnInteraction) {
+		if (_traySection.rect.contains(_mousePos) && (_traySection.rect.right - _mousePos.x) < 88u) {
+			isOnInteraction = true;
+			interactionID = kHeroChangeInteractionID;
+		}
+	}
+
 	if (_idleIsOnInteraction && (!isOnInteraction || interactionID != _idleInteractionID)) {
 		// Mouse left the previous interaction
 		_idleIsOnInteraction = false;
@@ -2882,12 +2919,17 @@ bool Runtime::dischargeIdleMouseMove() {
 		_idleIsOnInteraction = true;
 		_idleInteractionID = interactionID;
 
-		// New interaction, is there a script?
-		Common::SharedPtr<Script> script = findScriptForInteraction(interactionID);
+		if (interactionID == kHeroChangeInteractionID) {
+			changeToCursor(_cursors[16]);
+			_idleHaveClickInteraction = true;
+		} else {
+			// New interaction, is there a script?
+			Common::SharedPtr<Script> script = findScriptForInteraction(interactionID);
 
-		if (script) {
-			activateScript(script, ScriptEnvironmentVars());
-			return true;
+			if (script) {
+				activateScript(script, ScriptEnvironmentVars());
+				return true;
+			}
 		}
 	}
 
@@ -2929,17 +2971,22 @@ bool Runtime::dischargeIdleMouseDown() {
 
 bool Runtime::dischargeIdleClick() {
 	if (_idleIsOnInteraction && _idleHaveClickInteraction) {
-		// Interaction, is there a script?
-		Common::SharedPtr<Script> script = findScriptForInteraction(_idleInteractionID);
-
-		_idleIsOnInteraction = false;	// ?
-
-		if (script) {
-			ScriptEnvironmentVars vars;
-			vars.lmb = true;
-
-			activateScript(script, vars);
+		if (_gameID == GID_SCHIZM && _idleInteractionID == kHeroChangeInteractionID) {
+			changeHero();
 			return true;
+		} else {
+			// Interaction, is there a script?
+			Common::SharedPtr<Script> script = findScriptForInteraction(_idleInteractionID);
+
+			_idleIsOnInteraction = false; // ?
+
+			if (script) {
+				ScriptEnvironmentVars vars;
+				vars.lmb = true;
+
+				activateScript(script, vars);
+				return true;
+			}
 		}
 	}
 
@@ -3787,13 +3834,12 @@ void Runtime::compileSchizmLogicSet(const uint *roomNumbers, uint numRooms) {
 	Common::SharedPtr<ScriptSet> scriptSet(new ScriptSet());
 
 	for (uint i = 0; i < numRooms; i++) {
-
 		Common::String logicFileName = Common::String::format("Log/Room%02u.log", roomNumbers[i]);
 
 		Common::File logicFile;
 		if (logicFile.open(logicFileName)) {
 			debug(1, "Compiling script %s...", logicFileName.c_str());
-			compileSchizmLogicFile(*scriptSet, logicFile, static_cast<uint>(logicFile.size()), logicFileName, gs.get());
+			compileSchizmLogicFile(*scriptSet, roomNumbers[i], logicFile, static_cast<uint>(logicFile.size()), logicFileName, gs.get());
 			logicFile.close();
 		}
 	}
@@ -4703,7 +4749,7 @@ void Runtime::recordSaveGameSnapshot() {
 		snapshot->numStates = 1;
 	else if (_gameID == GID_SCHIZM) {
 		snapshot->numStates = 2;
-		snapshot->states[1].reset(new SaveGameSwappableState());
+		snapshot->states[1] = _altState;
 	}
 
 	SaveGameSwappableState *mainState = snapshot->states[0].get();

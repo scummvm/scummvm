@@ -149,7 +149,7 @@ struct ScriptNamedInstruction {
 
 class ScriptCompiler {
 public:
-	ScriptCompiler(TextParser &parser, const Common::String &blamePath, ScriptDialect dialect, IScriptCompilerGlobalState *gs);
+	ScriptCompiler(TextParser &parser, const Common::String &blamePath, ScriptDialect dialect, uint roomNumber, IScriptCompilerGlobalState *gs);
 
 	void compileScriptSet(ScriptSet *ss);
 
@@ -181,6 +181,7 @@ private:
 	const Common::String _blamePath;
 
 	ScriptDialect _dialect;
+	uint _roomNumber;
 
 	const char *_scrToken;
 	const char *_eroomToken;
@@ -192,9 +193,9 @@ private:
 
 class ScriptCompilerGlobalState : public IScriptCompilerGlobalState {
 public:
-	void define(const Common::String &key, const Common::String &value) override;
+	void define(const Common::String &key, uint roomNumber, int32 value) override;
 
-	const Common::String *getTokenReplacement(const Common::String &str) const override;
+	bool getDefine(const Common::String &str, uint &outRoomNumber, int32 &outValue) const override;
 
 	uint getFunctionIndex(const Common::String &fnName) override;
 	void setFunction(uint fnIndex, const Common::SharedPtr<Script> &fn) override;
@@ -204,14 +205,21 @@ public:
 	Common::SharedPtr<Script> getFunction(uint fnIndex) const override;
 
 private:
-	Common::HashMap<Common::String, Common::String> _defs;
+	struct Def {
+		Def();
+
+		int32 _value;
+		uint _roomNumber;
+	};
+
+	Common::HashMap<Common::String, Def> _defs;
 
 	Common::HashMap<Common::String, uint> _functionNameToIndex;
 	Common::Array<Common::SharedPtr<Script> > _functions;
 };
 
-ScriptCompiler::ScriptCompiler(TextParser &parser, const Common::String &blamePath, ScriptDialect dialect, IScriptCompilerGlobalState *gs)
-	: _numberParsingMode(kNumberParsingHex), _parser(parser), _blamePath(blamePath), _dialect(dialect), _gs(gs),
+ScriptCompiler::ScriptCompiler(TextParser &parser, const Common::String &blamePath, ScriptDialect dialect, uint roomNumber, IScriptCompilerGlobalState *gs)
+	: _numberParsingMode(kNumberParsingHex), _parser(parser), _blamePath(blamePath), _dialect(dialect), _roomNumber(roomNumber), _gs(gs),
 	  _scrToken(nullptr), _eroomToken(nullptr) {
 }
 
@@ -418,7 +426,21 @@ void ScriptCompiler::compileRoomScriptSet(RoomScriptSet *rss) {
 			if (!_parser.parseToken(value, state))
 				error("Error compiling script at line %i col %i: Expected value", static_cast<int>(state._lineNum), static_cast<int>(state._col));
 
-			_gs->define(key, value);
+			bool isNegative = false;
+			if (value[0] == '-') {
+				isNegative = true;
+				value = value.substr(1);
+			}
+
+			uint32 number = 0;
+			if (!parseNumber(value, number))
+				error("Error compiling script at line %i col %i: Expected number", static_cast<int>(state._lineNum), static_cast<int>(state._col));
+
+			int32 signedNumber = static_cast<int32>(number);
+			if (isNegative)
+				signedNumber = -signedNumber;
+
+			_gs->define(key, _roomNumber, signedNumber);
 		} else if (_dialect == kScriptDialectSchizm && token == "~Fun") {
 			Common::String fnName;
 			if (!_parser.parseToken(fnName, state))
@@ -782,16 +804,15 @@ static ScriptNamedInstruction g_schizmNamedInstructions[] = {
 	{"allowedSave", ProtoOp::kProtoOpNoop, ScriptOps::kInvalid},
 };
 
-bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::String &tokenBase) {
-	const Common::String *tokenPtr = &tokenBase;
-
+bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::String &token) {
 	if (_dialect == kScriptDialectSchizm) {
-		const Common::String *ppToken = _gs->getTokenReplacement(tokenBase);
-		if (ppToken)
-			tokenPtr = ppToken;
+		uint roomNumber = 0;
+		int32 value = 0;
+		if (_gs->getDefine(token, roomNumber, value)) {
+			script.instrs.push_back(ProtoInstruction(ScriptOps::kNumber, value));
+			return true;
+		}
 	}
-
-	const Common::String &token = *tokenPtr;
 
 	if (_dialect == kScriptDialectSchizm && token.hasPrefix("-")) {
 		uint32 unumber = 0;
@@ -889,11 +910,14 @@ bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::
 		}
 
 		if (token.size() >= 2 && token.hasSuffix("!")) {
-			if (compileInstructionToken(script, token.substr(0, token.size() - 1))) {
-				script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kVarGlobalStore, 0));
-				return true;
-			} else
+			uint roomNumber = 0;
+			int32 varNumber = 0;
+			if (!_gs->getDefine(token.substr(0, token.size() - 1), roomNumber, varNumber) || varNumber < 0)
 				return false;
+
+			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kNumber, (roomNumber << 16) + static_cast<uint>(varNumber)));
+			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kVarGlobalStore, 0));
+			return true;
 		}
 
 		// HACK: Work around bugged variable name in Room02.log
@@ -903,11 +927,14 @@ bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::
 		}
 
 		if (token.size() >= 2 && token.hasSuffix("@")) {
-			if (compileInstructionToken(script, token.substr(0, token.size() - 1))) {
-				script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kVarGlobalLoad, 0));
-				return true;
-			} else
+			uint roomNumber = 0;
+			int32 varNumber = 0;
+			if (!_gs->getDefine(token.substr(0, token.size() - 1), roomNumber, varNumber) || varNumber < 0)
 				return false;
+
+			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kNumber, (roomNumber << 16) + static_cast<uint>(varNumber)));
+			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kVarGlobalLoad, 0));
+			return true;
 		}
 
 		// Does this look like a screen name?
@@ -1252,16 +1279,24 @@ uint ScriptCompiler::indexString(const Common::String &str) {
 	return it->_value;
 }
 
-void ScriptCompilerGlobalState::define(const Common::String &key, const Common::String &value) {
-	_defs.setVal(key, value);
+ScriptCompilerGlobalState::Def::Def() : _value(0), _roomNumber(0) {
 }
 
-const Common::String *ScriptCompilerGlobalState::getTokenReplacement(const Common::String &str) const {
-	Common::HashMap<Common::String, Common::String>::const_iterator it = _defs.find(str);
-	if (it == _defs.end())
-		return nullptr;
+void ScriptCompilerGlobalState::define(const Common::String &key, uint roomNumber, int32 value) {
+	Def &def = _defs[key];
 
-	return &it->_value;
+	def._roomNumber = roomNumber;
+	def._value = value;
+}
+
+bool ScriptCompilerGlobalState::getDefine(const Common::String &str, uint &outRoomNumber, int32 &outValue) const {
+	Common::HashMap<Common::String, Def>::const_iterator it = _defs.find(str);
+	if (it == _defs.end())
+		return false;
+
+	outRoomNumber = it->_value._roomNumber;
+	outValue = it->_value._value;
+	return true;
 }
 
 uint ScriptCompilerGlobalState::getFunctionIndex(const Common::String &fnName) {
@@ -1302,11 +1337,11 @@ Common::SharedPtr<Script> ScriptCompilerGlobalState::getFunction(uint fnIndex) c
 IScriptCompilerGlobalState::~IScriptCompilerGlobalState() {
 }
 
-static void compileLogicFile(ScriptSet &scriptSet, Common::ReadStream &stream, uint streamSize, const Common::String &blamePath, ScriptDialect dialect, IScriptCompilerGlobalState *gs) {
+static void compileLogicFile(ScriptSet &scriptSet, Common::ReadStream &stream, uint streamSize, const Common::String &blamePath, ScriptDialect dialect, uint roomNumber, IScriptCompilerGlobalState *gs) {
 	LogicUnscrambleStream unscrambleStream(&stream, streamSize);
 	TextParser parser(&unscrambleStream);
 
-	ScriptCompiler compiler(parser, blamePath, dialect, gs);
+	ScriptCompiler compiler(parser, blamePath, dialect, roomNumber, gs);
 
 	compiler.compileScriptSet(&scriptSet);
 }
@@ -1318,12 +1353,12 @@ Common::SharedPtr<IScriptCompilerGlobalState> createScriptCompilerGlobalState() 
 Common::SharedPtr<ScriptSet> compileReahLogicFile(Common::ReadStream &stream, uint streamSize, const Common::String &blamePath) {
 	Common::SharedPtr<ScriptSet> scriptSet(new ScriptSet());
 
-	compileLogicFile(*scriptSet, stream, streamSize, blamePath, kScriptDialectReah, nullptr);
+	compileLogicFile(*scriptSet, stream, streamSize, blamePath, kScriptDialectReah, 0, nullptr);
 	return scriptSet;
 }
 
-void compileSchizmLogicFile(ScriptSet &scriptSet, Common::ReadStream &stream, uint streamSize, const Common::String &blamePath, IScriptCompilerGlobalState *gs) {
-	compileLogicFile(scriptSet, stream, streamSize, blamePath, kScriptDialectSchizm, gs);
+void compileSchizmLogicFile(ScriptSet &scriptSet, uint roomNumber, Common::ReadStream &stream, uint streamSize, const Common::String &blamePath, IScriptCompilerGlobalState *gs) {
+	compileLogicFile(scriptSet, stream, streamSize, blamePath, kScriptDialectSchizm, roomNumber, gs);
 }
 
 } // namespace VCruise

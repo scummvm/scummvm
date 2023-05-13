@@ -786,6 +786,7 @@ private:
 	void resolveSoundByNameOrID(const StackValue &stackValue, bool load, StackInt_t &outSoundID, SoundInstance *&outWave);
 
 	void changeToScreen(uint roomNumber, uint screenNumber);
+	void changeHero();
 	void triggerPreIdleActions();
 	void returnToIdleState();
 	void changeToCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &cursor);
@@ -1239,6 +1240,8 @@ private:
 	static const int kPanoramaPanningMarginY = 11;
 
 	static const uint kSoundCacheSize = 16;
+
+	static const uint kHeroChangeInteractionID = 0xffffffffu;
 
 	Common::Pair<Common::String, Common::SharedPtr<SoundCache> > _soundCache[kSoundCacheSize];
 	uint _soundCacheIndex;
