@@ -84,8 +84,6 @@ void HUD::Load(const std::string &filename, pyrodactyl::level::TalkNotify &tn, p
 }
 
 void HUD::Draw(pyrodactyl::event::Info &info, const std::string &id) {
-	warning("STUB: HUD::Draw()");
-
 	bg.Draw();
 	menu.Draw();
 
