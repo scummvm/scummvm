@@ -1221,7 +1221,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 				// point number (Standard Apple Numeric Environment [SANE] data type
 				// Extended).
 				if (length != 10) {
-					error("Constant float expected to be 10 bytes");
+					error("Constant float expected to be 10 bytes but got %d", length);
 					break;
 				}
 				uint16 signAndExponent = READ_BE_UINT16(&constsStore[pointer]);
