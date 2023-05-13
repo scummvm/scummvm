@@ -29,6 +29,7 @@
  */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include "graphics/blit.h"
 #include "crab/crab.h"
 #include "crab/image/Image.h"
 #include "image/png.h"
@@ -94,7 +95,8 @@ bool Image::Load(const Common::String &path) {
 	ImageDecoder decoder;
 
 	if (FileOpen(path, &file) && decoder.loadStream(file)) {
-		texture = new Graphics::ManagedSurface(decoder.getSurface());
+		texture = new Graphics::ManagedSurface(decoder.getSurface()->w, decoder.getSurface()->h, *g_engine->_format);
+		texture->blitFrom(decoder.getSurface());
 		w = texture->w;
 		h = texture->h;
 
@@ -136,6 +138,35 @@ bool Image::Load(rapidxml::xml_node<char> *node, const char *name) {
 		return Load(node->first_attribute(name)->value());
 
 	return false;
+}
+
+bool Image::Load(const Image &image, Rect *clip, const TextureFlipType &flip) {
+	Delete();
+
+	Common::Rect srcRect {0, 0, static_cast<int16>(w + 0), static_cast<int16>(h + 0)};
+
+	if (clip)
+		srcRect = {static_cast<int16>(clip->x), static_cast<int16>(clip->y), static_cast<int16>(clip->x + clip->w), static_cast<int16>(clip->y + clip->h)};
+
+	texture = new Graphics::ManagedSurface();
+	texture->copyFrom(image.texture->getSubArea(srcRect));
+
+	switch(flip) {
+		case FLIP_NONE:
+		break;
+
+		case FLIP_X:
+		texture->surfacePtr()->flipHorizontal(Common::Rect(texture->w, texture->h));
+		break;
+
+		default:
+		warning("Flipped texture: %d", flip);
+	}
+
+	w = texture->w;
+	h = texture->h;
+
+	return true;
 }
 
 //------------------------------------------------------------------------
@@ -242,6 +273,64 @@ void Image::Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &
 	g_engine->_screen->blitFrom(s, Common::Rect(s->w, s->h), destRect);
 	//g_engine->_renderSurface->blitFrom(s, Common::Rect(s->w, s->h), destRect);
 }
+
+void Image::FastDraw(const int &x, const int &y) {
+	Common::Rect destRect {static_cast<int16>(x), static_cast<int16>(y), static_cast<int16>(w + x), static_cast<int16>(h + y)};
+	int in_y = 0, in_x = 0;
+
+	// Handle off-screen clipping
+	if (destRect.top < 0) {
+		destRect.top = 0;
+		in_y += -y;
+	}
+
+	if (destRect.left < 0) {
+		destRect.left = 0;
+		in_x += -x;
+	}
+
+	if (destRect.bottom > 720) {
+		//in_y += destRect.bottom - 720;
+		destRect.bottom = 720;
+	}
+
+	if (destRect.right > 1280) {
+		//in_x += destRect.right - 1280;
+		destRect.right = 1280;
+	}
+
+
+	uint8 a, g, b, r;
+
+	const int he = destRect.height();
+	const int destW = destRect.width();
+	uint32 *out = (uint32*)g_engine->_screen->getBasePtr(destRect.left, destRect.top);
+	uint32 *in = (uint32*)texture->getBasePtr(in_x, in_y);
+
+	const uint32 outPitch = g_engine->_screen->pitch / sizeof(uint32);
+	const uint32 inPitch = texture->pitch / sizeof(uint32);
+
+	//if (*in & 0xff == 0) {
+	//	return;
+	//}
+
+	for (int y = 0; y < he; y++) {
+		uint32 *out1 = out;
+		uint32 *in1 = in;
+		for (int x = 0; x < destW; x++, out1++, in1++) {
+			if (*in1 & 0xff) {
+				*(out1) = *(in1);
+			}
+		}
+		out += outPitch;
+		in += inPitch;
+		//memcpy(out, in, destRect.width() * 4);
+	}
+
+	//g_engine->_screen->blitFrom(*texture, Common::Rect(in_x, in_y, in_x + destRect.width(), he + in_y), destRect);
+	g_engine->_screen->addDirtyRect(destRect);
+}
+
 
 //------------------------------------------------------------------------
 // Purpose: Delete texture data
