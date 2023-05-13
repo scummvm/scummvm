@@ -138,12 +138,12 @@ void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {
 	_gfx->selectColorFromFourColorPalette(color, r, g, b);
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
-	color = 0;
+	color = _currentArea->_usualBackgroundColor;
 	if (_gfx->_colorRemaps && _gfx->_colorRemaps->contains(color)) {
 		color = (*_gfx->_colorRemaps)[color];
 	}
 
-	_gfx->readFromPalette(color, r, g, b);
+	_gfx->selectColorFromFourColorPalette(color, r, g, b);
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	int score = _gameStateVars[k8bitVariableScore];
