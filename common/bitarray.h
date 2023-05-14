@@ -64,7 +64,7 @@ public:
 		_bits[bit / 8] &= ~(1 << (bit % 8));
 	}
 
-	bool get(uint bit) {
+	bool get(uint bit) const {
 		return _bits[bit / 8] & (1 << (bit % 8));
 	}
 
