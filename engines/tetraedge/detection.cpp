@@ -55,11 +55,11 @@ DetectedGame TetraedgeMetaEngineDetection::toDetectedGame(const ADDetectedGame &
 	DetectedGame game = AdvancedMetaEngineDetection::toDetectedGame(adGame);
 
 	// The AdvancedDetector model only allows specifying a single supported
-	// game language. All games support multiple languages.  Only Syberia 1
+	// game language. All games support multiple languages.  Only Syberia 1-* and Syberia 2-iOS
 	// supports RU.
 	for (const Common::Language *language = getGameLanguages(); *language != Common::UNK_LANG; language++) {
-		// "ru" only present on syberia 1
-		if (game.gameId != "syberia" && *language == Common::RU_RUS)
+		// "ru" only present on syberia 1 and syberia2-ios
+		if (!(game.gameId == "syberia" || (game.gameId == "syberia2" && game.platform == Common::Platform::kPlatformIOS)) && *language == Common::RU_RUS)
 			continue;
 		game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(*language));
 	}
