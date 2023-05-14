@@ -153,10 +153,13 @@ struct ScriptEnvironmentVars {
 	uint panInteractionID;
 	uint fpsOverride;
 	uint lastHighlightedItem;
+	uint animChangeFrameOffset;
+	uint animChangeNumFrames;
 	bool lmb;
 	bool lmbDrag;
 	bool esc;
 	bool exitToMenu;
+	bool animChangeSet;
 };
 
 struct SfxSound {
@@ -756,6 +759,7 @@ private:
 	bool runDelay();
 	bool runHorizontalPan(bool isRight);
 	bool runScript();
+	bool requireAvailableStack(uint n);
 	bool runWaitForAnimation();
 	bool runWaitForFacing();
 	bool runWaitForFacingToAnim();
@@ -824,6 +828,7 @@ private:
 	void stopSubtitles();
 
 	AnimationDef stackArgsToAnimDef(const StackInt_t *args) const;
+	void adjustUsingAnimChange(AnimationDef &animDef) const;
 	void pushAnimDef(const AnimationDef &animDef);
 
 	void activateScript(const Common::SharedPtr<Script> &script, const ScriptEnvironmentVars &envVars);
@@ -1047,6 +1052,7 @@ private:
 	void scriptOpPuzzleDone(ScriptArg_t arg);
 	void scriptOpPuzzleWhoWon(ScriptArg_t arg);
 	void scriptOpFn(ScriptArg_t arg);
+	void scriptOpItemHighlightSetTrue(ScriptArg_t arg);
 
 	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _cursors;		// Cursors indexed as CURSOR_CUR_##
 	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _cursorsShort;	// Cursors indexed as CURSOR_#

@@ -216,6 +216,7 @@ enum ScriptOp {
 	kPuzzleDone,
 	kPuzzleWhoWon,
 	kFn,
+	kItemHighlightSetTrue,
 
 	kNumOps,
 };

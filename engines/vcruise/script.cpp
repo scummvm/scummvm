@@ -761,7 +761,7 @@ static ScriptNamedInstruction g_schizmNamedInstructions[] = {
 	{"save0", ProtoOp::kProtoOpNoop, ScriptOps::kSave0},
 	{"hidePanel", ProtoOp::kProtoOpNoop, ScriptOps::kHidePanel},
 	{"ItemExist@", ProtoOp::kProtoOpScript, ScriptOps::kItemCheck},
-	{"ItemSelect!", ProtoOp::kProtoOpScript, ScriptOps::kItemHighlightSet},
+	{"ItemSelect!", ProtoOp::kProtoOpScript, ScriptOps::kItemHighlightSetTrue},
 	{"ItemPlace@", ProtoOp::kProtoOpScript, ScriptOps::kItemHaveSpace},
 	{"ItemPutInto!", ProtoOp::kProtoOpScript, ScriptOps::kItemAdd},
 	{"ItemRemove!", ProtoOp::kProtoOpScript, ScriptOps::kItemRemove},

@@ -186,7 +186,8 @@ const MapScreenDirectionDef *MapDef::getScreenDirection(uint screen, uint direct
 	return screenDirections[screen][direction].get();
 }
 
-ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), lmbDrag(false), esc(false), exitToMenu(false), panInteractionID(0), fpsOverride(0), lastHighlightedItem(0) {
+ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), lmbDrag(false), esc(false), exitToMenu(false), animChangeSet(false),
+	panInteractionID(0), fpsOverride(0), lastHighlightedItem(0), animChangeFrameOffset(0), animChangeNumFrames(0) {
 }
 
 OSEvent::OSEvent() : type(kOSEventTypeInvalid), keyCode(static_cast<Common::KeyCode>(0)), keymappedEvent(kKeymappedEventNone), timestamp(0) {
@@ -2155,6 +2156,7 @@ bool Runtime::runScript() {
 			DISPATCH_OP(PuzzleDone);
 			DISPATCH_OP(PuzzleWhoWon);
 			DISPATCH_OP(Fn);
+			DISPATCH_OP(ItemHighlightSetTrue);
 
 		default:
 			error("Unimplemented opcode %i", static_cast<int>(instr.op));
@@ -2165,6 +2167,15 @@ bool Runtime::runScript() {
 }
 
 #undef DISPATCH_OP
+
+bool Runtime::requireAvailableStack(uint n) {
+	if (_scriptStack.size() < n) {
+		error("Script stack underflow");
+		return false;
+	}
+
+	return true;
+}
 
 void Runtime::terminateScript() {
 	_scriptCallStack.clear();
@@ -3801,6 +3812,22 @@ AnimationDef Runtime::stackArgsToAnimDef(const StackInt_t *args) const {
 	return def;
 }
 
+void Runtime::adjustUsingAnimChange(AnimationDef &animDef) const {
+	if (_scriptEnv.animChangeSet) {
+		uint origFirstFrame = animDef.firstFrame;
+		uint origLastFrame = animDef.lastFrame;
+
+		uint newFirstFrame = origFirstFrame + _scriptEnv.animChangeFrameOffset;
+		uint newLastFrame = newFirstFrame + _scriptEnv.animChangeNumFrames;
+
+		if (newLastFrame > origLastFrame || newFirstFrame > origLastFrame)
+			warning("animChange ops overran the original animation bounds");
+
+		animDef.firstFrame = newFirstFrame;
+		animDef.lastFrame = newLastFrame;
+	}
+}
+
 void Runtime::pushAnimDef(const AnimationDef &animDef) {
 	_scriptStack.push_back(StackValue(animDef.animNum));
 	_scriptStack.push_back(StackValue(animDef.firstFrame));
@@ -5028,21 +5055,17 @@ LoadGameOutcome Runtime::loadGame(Common::ReadStream *stream) {
 #endif
 
 #define PEEK_STACK(n)                                                                         \
-	if (this->_scriptStack.size() < (n)) {                                                    \
-		error("Script stack underflow");                                                      \
+	if (!requireAvailableStack(n))                                                            \
 		return;                                                                               \
-	}                                                                                         \
 	const StackValue *stackArgs = &this->_scriptStack[this->_scriptStack.size() - (n)]
 
 
 #define TAKE_STACK_INT_NAMED(n, arrayName)                                                    \
 	StackInt_t arrayName[n];                                                                  \
 	do {                                                                                      \
-		const uint stackSize = _scriptStack.size();                                           \
-		if (stackSize < (n)) {                                                                \
-			error("Script stack underflow");                                                  \
+		if (!requireAvailableStack(n))                                                        \
 			return;                                                                           \
-		}                                                                                     \
+		const uint stackSize = _scriptStack.size();                                           \
 		const StackValue *stackArgsPtr = &this->_scriptStack[stackSize - (n)];                \
 		for (uint i = 0; i < (n); i++) {                                                      \
 			if (stackArgsPtr[i].type != StackValue::kNumber)                                  \
@@ -5057,11 +5080,9 @@ LoadGameOutcome Runtime::loadGame(Common::ReadStream *stream) {
 #define TAKE_STACK_STR_NAMED(n, arrayName)                                     \
 	Common::String arrayName[n];                                               \
 	do {                                                                       \
-		const uint stackSize = _scriptStack.size();                            \
-		if (stackSize < (n)) {                                                 \
-			error("Script stack underflow");                                   \
+		if (!requireAvailableStack(n))                                         \
 			return;                                                            \
-		}                                                                      \
+		const uint stackSize = _scriptStack.size();                            \
 		const StackValue *stackArgsPtr = &this->_scriptStack[stackSize - (n)]; \
 		for (uint i = 0; i < (n); i++) {                                       \
 			if (stackArgsPtr[i].type != StackValue::kString)                   \
@@ -5076,11 +5097,9 @@ LoadGameOutcome Runtime::loadGame(Common::ReadStream *stream) {
 #define TAKE_STACK_VAR_NAMED(n, arrayName)                                     \
 	StackValue arrayName[n];                                                   \
 	do {                                                                       \
-		const uint stackSize = _scriptStack.size();                            \
-		if (stackSize < (n)) {                                                 \
-			error("Script stack underflow");                                   \
+		if (!requireAvailableStack(n))                                         \
 			return;                                                            \
-		}                                                                      \
+		const uint stackSize = _scriptStack.size();                            \
 		const StackValue *stackArgsPtr = &this->_scriptStack[stackSize - (n)]; \
 		for (uint i = 0; i < (n); i++)                                         \
 			arrayName[i] = Common::move(stackArgsPtr[i]);                      \
@@ -5282,6 +5301,8 @@ void Runtime::scriptOpAnimS(ScriptArg_t arg) {
 
 	AnimationDef animDef = stackArgsToAnimDef(stackArgs + 0);
 
+	adjustUsingAnimChange(animDef);
+
 	// Static animations start on the last frame
 	changeAnimation(animDef, animDef.lastFrame, false);
 
@@ -5297,6 +5318,9 @@ void Runtime::scriptOpAnim(ScriptArg_t arg) {
 	TAKE_STACK_INT(kAnimDefStackArgs + 2);
 
 	AnimationDef animDef = stackArgsToAnimDef(stackArgs + 0);
+
+	adjustUsingAnimChange(animDef);
+
 	changeAnimation(animDef, animDef.firstFrame, true, _animSpeedDefault);
 
 	_gameState = kGameStateWaitingForAnimation;
@@ -5446,6 +5470,20 @@ void Runtime::scriptOpItemHighlightSet(ScriptArg_t arg) {
 
 		if (item.itemID == static_cast<uint>(stackArgs[0])) {
 			item.highlighted = isHighlighted;
+			drawInventory(slot);
+			break;
+		}
+	}
+}
+
+void Runtime::scriptOpItemHighlightSetTrue(ScriptArg_t arg) {
+	TAKE_STACK_INT(1);
+
+	for (uint slot = 0; slot < kNumInventorySlots; slot++) {
+		InventoryItem &item = _inventory[slot];
+
+		if (item.itemID == static_cast<uint>(stackArgs[0])) {
+			item.highlighted = true;
 			drawInventory(slot);
 			break;
 		}
@@ -6487,10 +6525,12 @@ void Runtime::scriptOpAnimVolume(ScriptArg_t arg) {
 void Runtime::scriptOpAnimChange(ScriptArg_t arg) {
 	TAKE_STACK_INT(2);
 
-	(void)stackArgs;
+	if (stackArgs[1] == 0)
+		error("animChange frame count shouldn't be zero");
 
-	// Not sure what this does yet.  It is parameterized in some rooms.
-	warning("animChange opcode isn't implemented yet");
+	_scriptEnv.animChangeSet = true;
+	_scriptEnv.animChangeFrameOffset = stackArgs[0];
+	_scriptEnv.animChangeNumFrames = stackArgs[1] - 1;
 }
 
 void Runtime::scriptOpScreenName(ScriptArg_t arg) {
