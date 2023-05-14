@@ -181,6 +181,8 @@ public:
 	 */
 	inline void setPixel(int x, int y, int pixel) {
 		assert(format.bytesPerPixel > 0 && format.bytesPerPixel <= 4);
+		if (x < 0 || x >= w || y < 0 || y >= h)
+			return;
 		if (format.bytesPerPixel == 1)
 			*((uint8 *)getBasePtr(x, y)) = pixel;
 		else if (format.bytesPerPixel == 2)
