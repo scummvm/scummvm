@@ -314,6 +314,8 @@ Common::String WetEngine::getLocalizedString(const Common::String name) {
 			return "NOM :";
 		case Common::ES_ESP:
 			return "NOMBRE :";
+		case Common::KO_KOR:
+			return "\xb7\xa1\x9f\x71\xb7\xb3\x9d\x62:";
 		default:
 			return "ENTER NAME :";
 		}
