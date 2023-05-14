@@ -40,7 +40,7 @@
 #ifdef USE_WII_DI
 #include <di/di.h>
 #endif
-#ifdef DEBUG_WII_GDB
+#if defined(DEBUG_WII_GDB) || defined (DEBUG_WII_GDB_NETWORK)
 #include <debug.h>
 #endif
 #include <gxflux/gfx_con.h>
@@ -59,7 +59,7 @@ void reset_cb(u32, void *) {
 #else
 void reset_cb(void) {
 #endif
-#ifdef DEBUG_WII_GDB
+#if defined(DEBUG_WII_GDB) || defined (DEBUG_WII_GDB_NETWORK)
 	printf("attach gdb now\n");
 	_break();
 #else
@@ -88,7 +88,7 @@ static void show_console(int code) {
 	for (i = 0; i < 60 * 3; ++i)
 		VIDEO_WaitVSync();
 
-#ifdef DEBUG_WII_GDB
+#if defined(DEBUG_WII_GDB) || defined (DEBUG_WII_GDB_NETWORK)
 	printf("attach gdb now\n");
 	_break();
 #endif
@@ -172,6 +172,14 @@ void wii_memstats(void) {
 }
 #endif
 
+#ifdef DEBUG_WII_GDB_NETWORK
+#define GDBSTUB_NETWORK_TCP_PORT 5656
+
+const char *tcp_localip = "192.168.123.101";
+const char *tcp_netmask = "255.255.255.0";
+const char *tcp_gateway = "192.168.123.100";
+#endif
+
 int main(int argc, char *argv[]) {
 	s32 res;
 
@@ -190,6 +198,10 @@ int main(int argc, char *argv[]) {
 
 #ifdef DEBUG_WII_GDB
 	DEBUG_Init(GDBSTUB_DEVICE_USB, 1);
+#endif
+
+#ifdef DEBUG_WII_GDB_NETWORK
+	DEBUG_Init(GDBSTUB_DEVICE_TCP, GDBSTUB_NETWORK_TCP_PORT);
 #endif
 
 	printf("startup as ");
