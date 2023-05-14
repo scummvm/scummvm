@@ -1267,6 +1267,10 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		warning("STUB: Cast::loadCastInfo(): Film loop cast member info not yet supported for version %d", _version);
 	}
 
+	// For PaletteCastMember, run load() as we need it right now
+	if (member->_type == kCastPalette)
+		member->load();
+
 	ci->autoHilite = castInfo.flags & 2;
 	ci->scriptId = castInfo.scriptId;
 	if (ci->scriptId != 0)

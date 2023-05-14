@@ -149,7 +149,6 @@ public:
 
 	byte _puppetTempo;
 	bool _puppetPalette;
-	CastMemberID _lastPalette;
 	int _paletteTransitionIndex;
 	byte _paletteSnapshotBuffer[768];
 
@@ -178,7 +177,6 @@ private:
 	uint16 _nextFrame;
 	int _currentLabel;
 	DirectorSound *_soundManager;
-	int _currentPalette;
 
 	int _previousBuildBotBuild = -1;
 };

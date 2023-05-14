@@ -260,6 +260,7 @@ public:
 	uint16 _wmWidth;
 	uint16 _wmHeight;
 	byte _fpsLimit;
+	CastMemberID _lastPalette;
 
 private:
 	byte _currentPalette[768];

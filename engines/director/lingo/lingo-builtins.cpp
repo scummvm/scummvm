@@ -2427,10 +2427,10 @@ void LB::b_puppetPalette(int nargs) {
 
 		// FIXME: set system palette decided by platform, should be fixed after windows palette is working.
 		// try to set mac system palette if lastPalette is 0.
-		if (score->_lastPalette.isNull())
+		if (g_director->_lastPalette.isNull())
 			g_director->setPalette(CastMemberID(kClutSystemMac, -1));
 		else
-			g_director->setPalette(score->_lastPalette);
+			g_director->setPalette(g_director->_lastPalette);
 	}
 
 	// TODO: Implement advanced features that use these.
