@@ -32,4 +32,13 @@ bool InventoryObjectsXmlParser::parserCallback_Object(ParserNode *node) {
 	return true;
 }
 
+bool InventoryObjectsXmlParser::handleUnknownKey(ParserNode *node) {
+	if (node->name == "value") {
+		warning("Garbage entry <value> in inventory file");
+		return true;
+	}
+	parserError("Unknown key");
+	return false;
+}
+
 } // end namespace Tetraedge
