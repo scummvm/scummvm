@@ -205,6 +205,12 @@ public:
 	Common::SharedPtr<Script> getFunction(uint fnIndex) const override;
 
 private:
+	// Defs are linked to room numbers to deal with some weird variable sharing behavior.  In Reah,
+	// variables are bound to room, but in Schizm they are clearly not.  fnInitNewGame in Room01.log
+	// initializes a lot of things in various rooms, but some of those IDs also collide with other
+	// things.  For example, dwNawigat2SZ is 13, and is read in Room20, but variable ID 13 is also
+	// used for dwStartSound47 in Room47 to determine if sounds have started, and it is expected
+	// to be initially 0 there.
 	struct Def {
 		Def();
 
