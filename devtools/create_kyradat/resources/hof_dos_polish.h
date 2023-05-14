@@ -99,7 +99,7 @@ static const char *const k2SeqplayStringsDOSPolish[103] = {
     "Nowa gra",
     "Zako""\xE4""cz gr""\xA9""",
     "Specjalne podzi""\xA9""kowania dla",
-    "MIPS Computer Group",
+    "IPS Computer Group",
     "Tim Fritz",
     "Kenny Dunne"
 };
