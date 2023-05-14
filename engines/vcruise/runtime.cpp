@@ -1029,7 +1029,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	_menuInterface.reset(new RuntimeMenuInterface(this));
 
 	for (int32 i = 0; i < 49; i++)
-		_dbToVolume[i] = decibelsToLinear(i - 49, Audio::Mixer::kMaxChannelVolume, Audio::Mixer::kMaxChannelVolume);
+		_dbToVolume[i] = decibelsToLinear(i - 49, Audio::Mixer::kMaxChannelVolume / 2, Audio::Mixer::kMaxChannelVolume / 2);
 }
 
 Runtime::~Runtime() {
@@ -3766,7 +3766,7 @@ uint Runtime::applyVolumeScale(int32 volume) const {
 		else if (volume < 0)
 			return 0;
 
-		return volume * Audio::Mixer::kMaxChannelVolume / 100;
+		return volume * Audio::Mixer::kMaxChannelVolume / 200;
 	}
 }
 
@@ -6419,9 +6419,9 @@ void Runtime::scriptOpSndPlay3D(ScriptArg_t arg) {
 	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
 
 	SoundParams3D sndParams;
-	sndParams.unknownRange = sndParamArgs[2];
-	sndParams.minRange = sndParamArgs[3];
-	sndParams.maxRange = sndParamArgs[4];
+	sndParams.minRange = sndParamArgs[2];
+	sndParams.maxRange = sndParamArgs[3];
+	sndParams.unknownRange = sndParamArgs[4]; // Doesn't appear to be the same thing as Reah.  Usually 1000, sometimes 2000 or 3000.
 
 	if (cachedSound) {
 		setSound3DParameters(*cachedSound, sndParamArgs[0], sndParamArgs[1], sndParams);
