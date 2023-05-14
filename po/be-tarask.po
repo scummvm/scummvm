@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-14 20:39+0000\n"
+"POT-Creation-Date: 2023-05-14 20:41+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -67,7 +67,8 @@ msgstr "Угару"
 #: gui/saveload-dialog.cpp:455 gui/saveload-dialog.cpp:526
 #: gui/saveload-dialog.cpp:828 gui/saveload-dialog.cpp:1220
 #: gui/shaderbrowser-dialog.cpp:81 gui/themebrowser.cpp:54
-#: gui/unknown-game-dialog.cpp:53 base/main.cpp:595 engines/engine.cpp:741
+#: gui/unknown-game-dialog.cpp:53 base/main.cpp:595
+#: dists/android.strings.xml.cpp:43 engines/engine.cpp:741
 #: backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
@@ -305,7 +306,8 @@ msgstr ""
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:543 gui/launcher.cpp:547
 #: gui/massadd.cpp:90 gui/options.cpp:2339 gui/predictivedialog.cpp:69
-#: gui/saveload-dialog.cpp:1221 engines/engine.cpp:544 engines/engine.cpp:567
+#: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:32
+#: engines/engine.cpp:544 engines/engine.cpp:567
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1818
@@ -2292,7 +2294,7 @@ msgstr "Запісаць ці прайграць гульнёвы працэс"
 
 #: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:212
 #: gui/saveload-dialog.cpp:459 gui/saveload-dialog.cpp:526
-#: engines/engine.cpp:590
+#: dists/android.strings.xml.cpp:44 engines/engine.cpp:590
 msgid "Delete"
 msgstr "Выдаліць"
 
@@ -2718,6 +2720,109 @@ msgstr "ҐБ"
 #: common/util.cpp:206
 msgid "TB"
 msgstr "ТБ"
+
+#: dists/android.strings.xml.cpp:30
+#, fuzzy
+#| msgid "Quit ScummVM"
+msgid "ScummVM"
+msgstr "Выйсьці са ScummVM"
+
+#: dists/android.strings.xml.cpp:31
+msgid "Graphic adventure game engine"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:33
+#: backends/events/default/default-events.cpp:217
+#: backends/events/default/default-events.cpp:358
+#: engines/adl/metaengine.cpp:328 engines/hdb/metaengine.cpp:275
+#: engines/mohawk/myst_stacks/menu.cpp:317
+#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/scumm/help.cpp:80
+#: engines/scumm/help.cpp:82 engines/zvision/metaengine.cpp:272
+#: engines/zvision/metaengine.cpp:290
+msgid "Quit"
+msgstr "Выйсьце"
+
+#: dists/android.strings.xml.cpp:34
+msgid "Config File Error"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:35
+msgid "Unable to read ScummVM config file or create a new one!"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:36
+#, fuzzy
+#| msgid "Save Path:"
+msgid "Save Path Error"
+msgstr "Шлях заховаў:"
+
+#: dists/android.strings.xml.cpp:37
+msgid "Unable to create or access default save path!"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:38
+#, fuzzy
+#| msgid "Icon Path:"
+msgid "Icons Path Error"
+msgstr "Шлях да значкоў:"
+
+#: dists/android.strings.xml.cpp:39
+msgid "Unable to create or access default icons and shaders path!"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:40
+msgid ""
+"Unable to access the globally set save path! Please revert to default from "
+"ScummVM Options"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:41
+#, fuzzy
+#| msgid "Toggle Drag Mode"
+msgid "Toggle virtual keyboard"
+msgstr "Пералучыць рэжым перацягу"
+
+#: dists/android.strings.xml.cpp:42 engines/scumm/help.cpp:78
+#: engines/scumm/help.cpp:82 engines/scumm/help.cpp:84
+#: engines/scumm/help.cpp:98 engines/scumm/help.cpp:99
+#: engines/scumm/help.cpp:100
+msgid "Alt"
+msgstr "Alt"
+
+#: dists/android.strings.xml.cpp:45
+msgid "Done"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:46
+msgid "Mode change"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:47
+#, fuzzy
+#| msgid "Shift key"
+msgid "Shift"
+msgstr "Кнопка Shift"
+
+#: dists/android.strings.xml.cpp:48 engines/dragons/metaengine.cpp:154
+#: engines/scumm/help.cpp:84 engines/scumm/help.cpp:87
+msgid "Enter"
+msgstr "Увод"
+
+#: dists/android.strings.xml.cpp:49
+#, fuzzy
+#| msgid "Close"
+msgid "Close popup"
+msgstr "Закрыць"
+
+#: dists/android.strings.xml.cpp:50
+msgid ""
+"Please select the *root* of your external (physical) SD card. This is "
+"required for ScummVM to access this path: "
+msgstr ""
+
+#: dists/android.strings.xml.cpp:51
+msgid "Storage Access Framework Permissions for ScummVM were revoked!"
+msgstr ""
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:32
@@ -3314,16 +3419,6 @@ msgid ""
 msgstr ""
 "Ці сапраўды вы хочаце выйсьці?\n"
 "Увесь незахаваны поступ будзе страчаны."
-
-#: backends/events/default/default-events.cpp:217
-#: backends/events/default/default-events.cpp:358
-#: engines/adl/metaengine.cpp:328 engines/hdb/metaengine.cpp:275
-#: engines/mohawk/myst_stacks/menu.cpp:317
-#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/scumm/help.cpp:80
-#: engines/scumm/help.cpp:82 engines/zvision/metaengine.cpp:272
-#: engines/zvision/metaengine.cpp:290
-msgid "Quit"
-msgstr "Выйсьце"
 
 #: backends/events/default/default-events.cpp:332
 msgid "Global"
@@ -5341,11 +5436,6 @@ msgstr "Зьмяніць загад"
 #: engines/zvision/metaengine.cpp:232
 msgid "Inventory"
 msgstr "Рыштунак"
-
-#: engines/dragons/metaengine.cpp:154 engines/scumm/help.cpp:84
-#: engines/scumm/help.cpp:87
-msgid "Enter"
-msgstr "Увод"
 
 #: engines/dragons/metaengine.cpp:220
 msgid "Debug Graphics"
@@ -7832,12 +7922,6 @@ msgstr "Ctrl"
 msgid "Load saved game 1-10"
 msgstr "Заладаваць гульню 1-10"
 
-#: engines/scumm/help.cpp:78 engines/scumm/help.cpp:82
-#: engines/scumm/help.cpp:84 engines/scumm/help.cpp:98
-#: engines/scumm/help.cpp:99 engines/scumm/help.cpp:100
-msgid "Alt"
-msgstr "Alt"
-
 #: engines/scumm/help.cpp:78
 msgid "Save game 1-10"
 msgstr "Захаваць гульню 1-10"
@@ -10244,11 +10328,6 @@ msgstr ""
 
 #~ msgid "Invalid Scene ID!"
 #~ msgstr "Няпэўны ID сцэны!"
-
-#, fuzzy
-#~| msgid "Shift key"
-#~ msgid "Shift"
-#~ msgstr "Кнопка Shift"
 
 #~ msgid "Show item costs in standard inventory mode"
 #~ msgstr "Паказваць кошт рэчаў у стандартным рэжыме рыштунку"
