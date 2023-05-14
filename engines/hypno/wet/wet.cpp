@@ -596,46 +596,143 @@ void WetEngine::loadFonts() {
 	_font08.set_size(file.size()*8);
 	_font08.set_bits((byte *)font);
 
+	file.close();
 	free(font);
+
+	if (_language == Common::KO_KOR) {
+		if (!file.open("C_MISC/G9A.SYF"))
+			error("Cannot open Korean font");
+
+		font = (byte *)malloc(file.size());
+		file.read(font, file.size());
+
+		_fontg9a.set_size(file.size()*8);
+		_fontg9a.set_bits((byte *)font);
+
+		free(font);
+	}
+}
+
+uint16 WetEngine::getNextChar(const Common::String &str, uint32 &c) {
+	if (c >= str.size())
+		return 0;
+	if (_language == Common::KO_KOR && (str[c] & 0x80) && c + 1 < str.size()) {
+		uint16 r = (str[c] << 8) | (str[c+1] & 0xff);
+		c += 2;
+		return r;
+	}
+
+	return str[c++];
+}
+
+void WetEngine::drawGlyph(const Common::BitArray &font, int x, int y, int bitoffset, int width, int height, int pitch, uint32 color, bool invert) {
+	for (int i = 0; i < width; i++) {
+		for (int j = 0; j < height; j++) {
+			if (font.get(bitoffset + j * pitch + i) == invert)
+				_compositeSurface->setPixel(x + (width - i - 1), y + j, color);
+		}
+	}
+}
+
+void WetEngine::drawKoreanChar(uint16 chr, int &curx, int y, uint32 color) {
+	// TODO: What do the first 13 bytes and a byte before ASCII char mean?
+	if (chr < 0x100) {
+		if (chr < 0x20 || chr >= 0x80) {
+			return;
+		}
+		drawGlyph(_fontg9a, curx, y, 104 + 19 * 8 * (chr - 0x20), 9, 9, 16, color, true);
+		curx += 9;
+		return;
+	}
+
+	int initial = (chr >> 10) & 0x1f;
+	int mid = (chr >> 5) & 0x1f;
+	int fin = chr & 0x1f;
+
+	int initidx = initial - 1;
+	static const int mididxlut[0x20] = {
+		-1, -1, 0, 1, 2, 3, 4, 5, -1, -1, 6, 7, 8, 9,
+		10, 11, -1, -1, 12, 13, 14, 15, 16, 17, -1, -1,
+		18, 19, 20, 21, -1, -1};
+	int mididx = mididxlut[mid];
+	int finidx = fin >= 0x12 ? fin - 2 : fin - 1;
+
+	if (initidx < 0 || initidx > 19 || mididx < 0 || mididx > 21 || finidx < 0 || finidx >= 27)
+		return;
+
+	const int mid_to_init_lut[32] = {
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 3, 3,
+		0, 0, 3, 1, 2, 4, 4, 4,
+		0, 0, 2, 1, 3, 0, 0, 0,
+	};
+	const int mid_to_fin_lut[32] = {
+		0, 0, 0, 0, 2, 0, 2, 1,
+		0, 0, 2, 1, 2, 3, 0, 2,
+		0, 0, 1, 3, 3, 1, 2, 1,
+		0, 0, 3, 3, 1, 1, 0, 0,
+	};
+	int initialvariant = 2 * mid_to_init_lut[mid] + (fin == 1 ? 0 : 1);
+	int midvariant = (fin == 1 ? 0 : 1) + (initial == 1 || initial == 2 || initial == 17 ? 0 : 2);
+	int finvariant = mid_to_fin_lut[mid];
+
+	int initialglyph = initidx == 0 ? 0 : initidx * 10 + initialvariant - 9;
+	int midglyph = mididx == 0 ? 0 : 4 * mididx + midvariant - 3;
+	int finglyph = finidx == 0 ? 0 : 4 * finidx + finvariant - 3;
+
+	drawGlyph(_fontg9a, curx, y, 1836 * 8 + 16 * 9 * initialglyph, 9, 9, 16, color, true);
+	drawGlyph(_fontg9a, curx, y, 1836 * 8 + 16 * 9 * 191 + 16 * 9 * midglyph, 9, 9, 16, color, true);
+	drawGlyph(_fontg9a, curx, y, 1836 * 8 + 16 * 9 * 276 + 16 * 9 * finglyph, 9, 9, 16, color, true);
+	curx += 9;
 }
 
 void WetEngine::drawString(const Common::String &font, const Common::String &str, int x, int y, int w, uint32 color) {
 	int offset = 0;
-	if (font == "block05.fgx") {
-		for (uint32 c = 0; c < str.size(); c++) {
+	int curx = x;
+	if (font == "g9a.syf" && _language == Common::KO_KOR) {
+		for (uint32 c = 0; c < str.size(); ) {
+			uint16 chr = getNextChar(str, c);
+			drawKoreanChar(chr, curx, y, color);
+		}
+	} else if (font == "block05.fgx") {
+		for (uint32 c = 0; c < str.size(); ) {
+			uint16 chr = getNextChar(str, c);
+
+			if (chr >= 0x100 && _language == Common::KO_KOR) {
+				drawKoreanChar(chr, curx, y, color);
+				continue;
+			}
 
 			offset = 0;
-			if (str[c] == ':')
+			if (chr == ':')
 				offset = 1;
-			else if (str[c] == '.')
+			else if (chr == '.')
 				offset = 4;
 
-			for (int i = 0; i < 5; i++) {
-				for (int j = 0; j < 5; j++) {
-					if (!_font05.get(275 + 40*str[c] + j*8 + i))
-						_compositeSurface->setPixel(x + 5 - i + 6*c, offset + y + j, color);
-				}
-			}
+			drawGlyph(_font05, curx + 1, offset + y, 275 + 40*chr, 5, 5, 8, color, false);
+			curx += 6;
 		}
 	} else if (font == "scifi08.fgx") {
-		for (uint32 c = 0; c < str.size(); c++) {
-			if (str[c] == 0)
+		for (uint32 c = 0; c < str.size();) {
+			uint16 chr = getNextChar(str, c);
+			if (chr >= 0x100 && _language == Common::KO_KOR) {
+				drawKoreanChar(chr, curx, y, color);
 				continue;
-			assert(str[c] >= 32);
+			}
+
+			if (chr == 0)
+				continue;
+			assert(chr >= 32);
 			offset = 0;
-			if (str[c] == 't')
+			if (chr == 't')
 				offset = 0;
-			else if (str[c] == 'i' || str[c] == '%')
+			else if (chr == 'i' || chr == '%')
 				offset = 1;
-			else if (Common::isLower(str[c]) || str[c] == ':')
+			else if (Common::isLower(chr) || chr == ':')
 				offset = 2;
 
-			for (int i = 0; i < 6; i++) {
-				for (int j = 0; j < 8; j++) {
-					if (!_font08.get(1554 + 72*(str[c]-32) + j*8 + i))
-						_compositeSurface->setPixel(x + 6 - i + 7*c, offset + y + j, color);
-				}
-			}
+			drawGlyph(_font08, curx + 1, offset + y, 1554 + 72*(chr-32), 6, 8, 8, color, false);
+			curx += 7;
 		}
 	} else
 		error("Invalid font: '%s'", font.c_str());
