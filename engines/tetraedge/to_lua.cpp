@@ -444,6 +444,10 @@ void tolua_pushnumber(lua_State *L, double val) {
 	lua_pushnumber(L, val);
 }
 
+void tolua_pushstring(lua_State *L, const char *val) {
+	lua_pushstring(L, val);
+}
+
 } // end namespace ToLua
 
 } // end namespace Tetraedge
