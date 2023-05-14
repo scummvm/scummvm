@@ -6578,8 +6578,62 @@ void Runtime::scriptOpHeroOut(ScriptArg_t arg) {
 	_swapOutDirection = stackArgs[2];
 }
 
-OPCODE_STUB(HeroGetPos)
-OPCODE_STUB(HeroSetPos)
+void Runtime::scriptOpHeroGetPos(ScriptArg_t arg) {
+	TAKE_STACK_INT(1);
+
+	bool thisHero = false;
+	switch (stackArgs[0]) {
+	case 0:
+		thisHero = (_hero == 0);
+		break;
+	case 1:
+		thisHero = (_hero == 1);
+		break;
+	case 2:
+		thisHero = false;
+		break;
+	default:
+		error("Unhandled heroGetPos argument %i", static_cast<int>(stackArgs[0]));
+		return;
+	}
+
+	uint roomNumber = thisHero ? _roomNumber : _altState->roomNumber;
+	uint screenNumber = thisHero ? _screenNumber : _altState->screenNumber;
+	uint direction = thisHero ? _direction : _altState->direction;
+
+	uint combined = (roomNumber << 16) | (screenNumber << 8) | direction;
+
+	_scriptStack.push_back(StackValue(static_cast<StackInt_t>(combined)));
+}
+
+void Runtime::scriptOpHeroSetPos(ScriptArg_t arg) {
+	TAKE_STACK_INT(2);
+
+	bool thisHero = false;
+	switch (stackArgs[0]) {
+	case 0:
+		thisHero = (_hero == 0);
+		break;
+	case 1:
+		thisHero = (_hero == 1);
+		break;
+	case 2:
+		thisHero = false;
+		break;
+	default:
+		error("Unhandled heroGetPos argument %i", static_cast<int>(stackArgs[0]));
+		return;
+	}
+
+	if (!thisHero) {
+		error("heroSetPos for the current hero isn't supported (and Schizm's game scripts shouldn't be doing it).");
+		return;
+	}
+
+	_altState->roomNumber = (stackArgs[1] >> 16) & 0xff;
+	_altState->screenNumber = (stackArgs[1] >> 8) & 0xff;
+	_altState->direction = stackArgs[1] & 0xff;
+}
 
 void Runtime::scriptOpHeroGet(ScriptArg_t arg) {
 	_scriptStack.push_back(StackValue(_hero));
@@ -6587,8 +6641,18 @@ void Runtime::scriptOpHeroGet(ScriptArg_t arg) {
 
 OPCODE_STUB(Garbage)
 OPCODE_STUB(GetRoom)
-OPCODE_STUB(BitAnd)
-OPCODE_STUB(BitOr)
+
+void Runtime::scriptOpBitAnd(ScriptArg_t arg) {
+	TAKE_STACK_INT(2);
+
+	_scriptStack.push_back(StackValue(stackArgs[0] & stackArgs[1]));
+}
+
+void Runtime::scriptOpBitOr(ScriptArg_t arg) {
+	TAKE_STACK_INT(2);
+
+	_scriptStack.push_back(StackValue(stackArgs[0] | stackArgs[1]));
+}
 
 void Runtime::scriptOpAngleGet(ScriptArg_t arg) {
 	_scriptStack.push_back(StackValue(_direction));
@@ -6605,9 +6669,35 @@ void Runtime::scriptOpIsCDVersion(ScriptArg_t arg) {
 OPCODE_STUB(Disc)
 OPCODE_STUB(HidePanel)
 OPCODE_STUB(RotateUpdate)
-OPCODE_STUB(Mul)
-OPCODE_STUB(Div)
-OPCODE_STUB(Mod)
+
+void Runtime::scriptOpMul(ScriptArg_t arg) {
+	TAKE_STACK_INT(2);
+
+	_scriptStack.push_back(StackValue(stackArgs[0] * stackArgs[1]));
+}
+
+void Runtime::scriptOpDiv(ScriptArg_t arg) {
+	TAKE_STACK_INT(2);
+
+	if (stackArgs[1] == 0) {
+		error("Division by zero");
+		return;
+	}
+
+	_scriptStack.push_back(StackValue(stackArgs[0] / stackArgs[1]));
+}
+
+void Runtime::scriptOpMod(ScriptArg_t arg) {
+	TAKE_STACK_INT(2);
+
+	if (stackArgs[1] == 0) {
+		error("Division by zero");
+		return;
+	}
+
+	_scriptStack.push_back(StackValue(stackArgs[0] % stackArgs[1]));
+}
+
 OPCODE_STUB(CyfraGet)
 OPCODE_STUB(PuzzleInit)
 OPCODE_STUB(PuzzleCanPress)
