@@ -19,7 +19,7 @@
  *
  */
 
-// The code in this file is currently used in KYRA, SCI, SCUMM, SAGA, 
+// The code in this file is currently used in KYRA, SCI, SCUMM, SAGA,
 // and AGOS. If none of those are enabled, we will skip compiling it.
 // We also enable this code for ScummVM builds including support
 // for dynamic engine plugins.
@@ -243,7 +243,7 @@ public:
 	/**
 	 * Loads the ROM data from "FONT.ROM".
 	 */
-	bool loadData();
+	bool loadData() override;
 
 	/**
 	 * Loads the ROM data from "FONT.ROM".
@@ -262,7 +262,7 @@ private:
 	uint8 _fontData16x16[kFont16x16Chars * 32];
 	uint8 _fontData8x16[kFont8x16Chars * 16];
 
-	bool hasFeature(int feat) const;
+	bool hasFeature(int feat) const override;
 };
 
 /**
