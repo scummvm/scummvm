@@ -786,6 +786,7 @@ private:
 	void resolveSoundByNameOrID(const StackValue &stackValue, bool load, StackInt_t &outSoundID, SoundInstance *&outWave);
 
 	void changeToScreen(uint roomNumber, uint screenNumber);
+	void clearIdleAnimations();
 	void changeHero();
 	void triggerPreIdleActions();
 	void returnToIdleState();

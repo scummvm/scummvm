@@ -2756,6 +2756,8 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 			_havePanDownFromDirection[i] = false;
 		}
 
+		clearIdleAnimations();
+
 		for (uint i = 0; i < kNumDirections; i++)
 			_haveIdleAnimations[i] = false;
 
@@ -2768,6 +2770,16 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 	}
 }
 
+void Runtime::clearIdleAnimations() {
+	for (uint i = 0; i < kNumDirections; i++)
+		_haveIdleAnimations[i] = false;
+
+	_havePendingPreIdleActions = true;
+	_haveIdleStaticAnimation = false;
+	_idleCurrentStaticAnimation.clear();
+	_havePendingPlayAmbientSounds = true;
+}
+
 void Runtime::changeHero() {
 	recordSaveGameSnapshot();
 
@@ -2776,7 +2788,8 @@ void Runtime::changeHero() {
 
 	if (_swapOutRoom && _swapOutScreen) {
 		// Some scripts may kick the player out to another location on swap back,
-		// such as the elevator in the first area on Hannah's quest
+		// such as the elevator in the first area on Hannah's quest.  This is done
+		// via the "heroOut" op.
 		currentState->roomNumber = _swapOutRoom;
 		currentState->screenNumber = _swapOutScreen;
 		currentState->direction = _direction;
@@ -2786,6 +2799,8 @@ void Runtime::changeHero() {
 	_saveGame->states[1] = currentState;
 
 	_saveGame->hero ^= 1u;
+
+	changeToCursor(_cursors[kCursorArrow]);
 
 	restoreSaveGameSnapshot();
 }
@@ -3186,7 +3201,7 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 }
 
 void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride, const Fraction &defaultFrameRate) {
-	debug("changeAnimation: %u -> %u  Initial %u", animDef.firstFrame, animDef.lastFrame, initialFrame);
+	debug("changeAnimation: Anim: %u  Range: %u -> %u  Initial %u", animDef.animNum, animDef.firstFrame, animDef.lastFrame, initialFrame);
 
 	_animPlaylist.reset();
 
@@ -5214,6 +5229,7 @@ void Runtime::scriptOpAnimF(ScriptArg_t arg) {
 	_screenNumber = stackArgs[kAnimDefStackArgs + 0];
 	_direction = stackArgs[kAnimDefStackArgs + 1];
 	_havePendingScreenChange = true;
+	clearIdleAnimations();
 
 	uint cursorID = kCursorArrow;
 	if (_scriptEnv.panInteractionID == kPanUpInteraction)
@@ -5287,6 +5303,8 @@ void Runtime::scriptOpAnim(ScriptArg_t arg) {
 	_screenNumber = stackArgs[kAnimDefStackArgs + 0];
 	_direction = stackArgs[kAnimDefStackArgs + 1];
 	_havePendingScreenChange = true;
+
+	clearIdleAnimations();
 
 	if (_loadedAnimationHasSound)
 		changeToCursor(nullptr);
