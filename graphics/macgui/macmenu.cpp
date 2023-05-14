@@ -240,7 +240,6 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources *exe, MacWindowManager
 	Common::Stack<bool> popups;
 
 	int depth = 0;
-	int curMenuItemId = 0;
 	bool lastPopUp = false;
 	while (depth >= 0) {
 		uint16 flags = menuData->readUint16LE();
@@ -275,9 +274,6 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources *exe, MacWindowManager
 					if (menus.size())
 						menus.pop();
 				}
-
-				if (depth == 0)
-					curMenuItemId++;
 
 				lastPopUp = popups.pop();
 			}
