@@ -46,10 +46,10 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 	}
 
 	_pitch = rotation.x();
-	if (ABS(_objExecutingCodeSize.x()) <= ABS(_objExecutingCodeSize.z()))
-		_yaw = rotation.y() - 90;
-	else
+	if (_objExecutingCodeSize.length() == 0 || ABS(_objExecutingCodeSize.x()) > ABS(_objExecutingCodeSize.z()))
 		_yaw = rotation.y() + 90;
+	else
+		_yaw = rotation.y() - 90;
 
 	debugC(1, kFreescapeDebugMove, "entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
 

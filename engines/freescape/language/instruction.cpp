@@ -93,7 +93,7 @@ void FreescapeEngine::executeObjectConditions(GeometricObject *obj, bool shot, b
 	assert(obj != nullptr);
 	if (!obj->_conditionSource.empty()) {
 		_firstSound = true;
-		_objExecutingCodeSize = obj->getSize();
+		_objExecutingCodeSize = collided ? obj->getSize() : Math::Vector3d();
 		if (collided)
 			debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", obj->_conditionSource.c_str());
 		else if (shot)
