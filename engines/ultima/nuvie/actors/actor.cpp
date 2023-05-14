@@ -422,7 +422,7 @@ bool Actor::can_be_moved() {
 }
 
 bool Actor::can_be_passed(Actor *other) {
-// ethereal actors can always pass us
+	// ethereal actors can always pass us
 	return (other->ethereal || is_passable());
 }
 
