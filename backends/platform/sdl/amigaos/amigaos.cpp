@@ -103,7 +103,7 @@ void OSystem_AmigaOS::initBackend() {
 	ConfMan.registerDefault("audio_buffer_size", "2048");
 	ConfMan.registerDefault("aspect_ratio", true);
 	ConfMan.registerDefault("fullscreen", true);
-	ConfMan.registerDefault("gfx_mode", "opengl");
+	ConfMan.registerDefault("gfx_mode", "surfacesdl");
 	ConfMan.registerDefault("stretch_mode", "stretch");
 	ConfMan.registerDefault("gui_mode", "antialias");
 	ConfMan.registerDefault("gui_theme", "scummremastered");
@@ -121,7 +121,7 @@ void OSystem_AmigaOS::initBackend() {
 		ConfMan.setBool("fullscreen", true);
 	}
 	if (!ConfMan.hasKey("gfx_mode")) {
-		ConfMan.set("gfx_mode", "opengl");
+		ConfMan.set("gfx_mode", "surfacesdl");
 	}
 	if (!ConfMan.hasKey("stretch_mode")) {
 		ConfMan.set("stretch_mode", "stretch");
