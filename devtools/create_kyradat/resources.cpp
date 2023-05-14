@@ -81,6 +81,7 @@
 #include "resources/hof_dos_russian.h"
 #include "resources/hof_dos_spanish.h"
 #include "resources/hof_dos_chinese_trad.h"
+#include "resources/hof_dos_polish.h"
 
 #include "resources/hof_dos_cddemo.h"
 #include "resources/hof_dos_cddemo_english.h"
@@ -1303,6 +1304,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ k2IngameTlkDemoStrings, kKyra2, kPlatformDOS, kTalkieDemoVersion, DE_DEU, &k2IngameTlkDemoStringsDOSCDDemoGermanProvider },
 	{ k2SeqplayPakFiles, kKyra2, kPlatformDOS, kNoSpecial, UNK_LANG, &k2SeqplayPakFilesDOSProvider },
 	{ k2SeqplayStrings, kKyra2, kPlatformDOS, kNoSpecial, EN_ANY, &k2SeqplayStringsDOSEnglishProvider },
+	{ k2SeqplayStrings, kKyra2, kPlatformDOS, kNoSpecial, PL_POL, &k2SeqplayStringsDOSPolishProvider },
 	{ k2SeqplaySfxFiles, kKyra2, kPlatformDOS, kNoSpecial, UNK_LANG, &k2SeqplaySfxFilesDOSProvider },
 	{ k2SeqplayIntroTracks, kKyra2, kPlatformDOS, kNoSpecial, UNK_LANG, &k2SeqplayIntroTracksDOSProvider },
 	{ k2SeqplayFinaleTracks, kKyra2, kPlatformDOS, kNoSpecial, UNK_LANG, &k2SeqplayFinaleTracksDOSProvider },
@@ -1376,6 +1378,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ k2FontData, kKyra2, kPlatformDOS, kNoSpecial, IT_ITA, &k2FontDataDOSDummyProvider },
 	{ k2FontData, kKyra2, kPlatformDOS, kNoSpecial, ES_ESP, &k2FontDataDOSDummyProvider },
 	{ k2FontData, kKyra2, kPlatformDOS, kNoSpecial, RU_RUS, &k2FontDataDOSDummyProvider },
+	{ k2FontData, kKyra2, kPlatformDOS, kNoSpecial, PL_POL, &k2FontDataDOSDummyProvider },
 	{ k2FontData, kKyra2, kPlatformDOS, kNoSpecial, ZH_TWN, &k2FontDataDOSChineseTradProvider },
 	{ k3MainMenuStrings, kKyra3, kPlatformDOS, kTalkieVersion, EN_ANY, &k3MainMenuStringsDOSCDEnglishProvider },
 	{ k3MainMenuStrings, kKyra3, kPlatformDOS, kTalkieVersion, FR_FRA, &k3MainMenuStringsDOSCDFrenchProvider },

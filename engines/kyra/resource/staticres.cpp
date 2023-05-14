@@ -38,7 +38,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 121
+#define RESFILE_VERSION 122
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -98,6 +98,7 @@ const IndexTable iLanguageTable[] = {
 	{ Common::ZH_TWN, 10 },
 	{ Common::KO_KOR, 11 },
 	{ Common::CS_CZE, 12 },
+	{ Common::PL_POL, 13 },
 	{ -1, -1 }
 };
 
@@ -1506,6 +1507,7 @@ const char *const KyraEngine_HoF::_languageExtension[] = {
 	"ITA",      Italian and Spanish were never included
 	"SPA"*/
 	"JPN",
+	"POL"
 };
 
 const char *const KyraEngine_HoF::_scriptLangExt[] = {

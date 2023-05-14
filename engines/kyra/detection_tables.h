@@ -677,14 +677,14 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_FLOPPY_FLAGS
 	},
 
-	{ // Floppy version extracted. Bugreport #7666
+	{ // Floppy version extracted
 		{
 			"kyra2",
-			msg_fanTrans_missingLangResources, // Reason for being unsupported
+			"Extracted",
 			AD_ENTRY1s("FATE.PAK", "ac81bcd4aa6e0921a87eb099827a8b06", 107309),
 			Common::PL_POL,
 			Common::kPlatformDOS,
-			ADGF_UNSUPPORTED,
+			ADGF_NO_FLAGS,
 			GUIO6(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
 		},
 		KYRA2_FLOPPY_FLAGS
