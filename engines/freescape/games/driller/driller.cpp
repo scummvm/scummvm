@@ -180,8 +180,13 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	_gfx->setColorRemaps(&_currentArea->_colorRemaps);
 
 	swapPalette(areaID);
-	_currentArea->_skyColor = 0;
-	_currentArea->_usualBackgroundColor = 0;
+
+	if (isDOS() || isAmiga() || isAtariST()) {
+		_currentArea->_skyColor = 0;
+		_currentArea->_usualBackgroundColor = 0;
+	} else if (isCPC()) {
+		_currentArea->_skyColor = _currentArea->_usualBackgroundColor;
+	}
 
 	resetInput();
 }
