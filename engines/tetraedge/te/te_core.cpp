@@ -131,6 +131,23 @@ bool TeCore::onActivityTrackingAlarm() {
 	error("TODO: Implement TeCore::onActivityTrackingAlarm");
 }
 
+static Common::FSNode getChildCaseInsensitive(const Common::FSNode &parent, const Common::String &child) {
+	Common::FSNode cand = parent.getChild(child);
+	if (cand.exists())
+		return cand;
+
+	Common::FSList childList;
+	if (!parent.getChildren(childList, Common::FSNode::kListAll, true))
+		return Common::FSNode();
+
+	for (Common::FSList::iterator it = childList.begin(); it != childList.end(); it++) {
+		if (it->getName().equalsIgnoreCase(child))
+			return *it;
+	}
+
+	return Common::FSNode();
+}
+
 static Common::FSNode _findSubPath(const Common::FSNode &parent, const Common::Path &childPath) {
 	if (childPath.empty())
 		return parent;
@@ -138,7 +155,9 @@ static Common::FSNode _findSubPath(const Common::FSNode &parent, const Common::P
 	const Common::StringArray comps = childPath.splitComponents();
 	unsigned int i;
 	for (i = 0; i < comps.size(); i++) {
-		childNode = childNode.getChild(comps[i]);
+		if (comps[i].empty())
+			continue;
+		childNode = getChildCaseInsensitive(childNode, comps[i]);
 		if (!childNode.exists())
 			break;
 	}
