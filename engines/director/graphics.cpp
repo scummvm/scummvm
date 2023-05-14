@@ -133,14 +133,8 @@ void DirectorEngine::loadDefaultPalettes() {
 
 PaletteV4 *DirectorEngine::getPalette(const CastMemberID &id) {
 	if (!_loadedPalettes.contains(id)) {
-		CastMember *member = getCurrentMovie()->getCastMember(id);
-		if (member && member->_type == kCastPalette) {
-			member->load();
-		}
-		if (!_loadedPalettes.contains(id)) {
-			warning("DirectorEngine::getPalette(): Palette %s not found", id.asString().c_str());
-			return nullptr;
-		}
+		warning("DirectorEngine::getPalette(): Palette %s not found", id.asString().c_str());
+		return nullptr;
 	}
 
 	return &_loadedPalettes[id];
@@ -161,13 +155,12 @@ bool DirectorEngine::setPalette(const CastMemberID &id) {
 	if (id.isNull()) {
 		// Palette id of 0 is unused
 		return false;
-	} 
+	}
 
 	PaletteV4 *pal = getPalette(id);
 	if (!pal)
 		return false;
 	setPalette(pal->palette, pal->length);
-
 	return true;
 }
 

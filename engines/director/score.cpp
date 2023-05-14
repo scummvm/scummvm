@@ -66,7 +66,6 @@ Score::Score(Movie *movie) {
 
 	_puppetTempo = 0x00;
 	_puppetPalette = false;
-	_lastPalette = CastMemberID(0, 0);
 	_paletteTransitionIndex = 0;
 	memset(_paletteSnapshotBuffer, 0, 768);
 
@@ -105,7 +104,7 @@ Score::~Score() {
 }
 
 CastMemberID Score::getCurrentPalette() {
-	return _lastPalette;
+	return g_director->_lastPalette;
 }
 
 bool Score::processImmediateFrameScript(Common::String s, int id) {
@@ -275,12 +274,6 @@ void Score::startPlay() {
 
 		return;
 	}
-
-	_lastPalette = _frames[_currentFrame]->_palette.paletteId;
-	if (_lastPalette.isNull())
-		_lastPalette = _movie->getCast()->_defaultPalette;
-	debugC(2, kDebugImages, "Score::startPlay(): palette changed to %s", _lastPalette.asString().c_str());
-	_vm->setPalette(_lastPalette);
 
 	// All frames in the same movie have the same number of channels
 	if (_playState != kPlayStopped)
@@ -800,17 +793,17 @@ void Score::setLastPalette(uint16 frameId) {
 
 	// If the palette is defined in the frame and doesn't match
 	// the current one, set it
-	bool paletteChanged = (currentPalette != _lastPalette) && (!currentPalette.isNull());
+	bool paletteChanged = (currentPalette != g_director->_lastPalette) && (!currentPalette.isNull());
 	if (paletteChanged) {
 		debugC(2, kDebugImages, "Score::setLastPalette(): palette changed to %s, from %s", currentPalette.asString().c_str(), isCachedPalette ? "cache" :"frame");
-		_lastPalette = currentPalette;
+		g_director->_lastPalette = currentPalette;
 		_paletteTransitionIndex = 0;
 
 		// Switch to a new palette immediately if:
 		// - this is color cycling mode, or
 		// - the cached palette ID is different (i.e. we jumped in the score)
 		if (_frames[frameId]->_palette.colorCycling || isCachedPalette)
-			g_director->setPalette(_lastPalette);
+			g_director->setPalette(g_director->_lastPalette);
 	}
 
 }
@@ -1615,9 +1608,9 @@ Common::String Score::formatChannelInfo() {
 		result += Common::String::format("PAL:    paletteId: %s, firstColor: %d, lastColor: %d, flags: %d, cycleCount: %d, speed: %d, frameCount: %d, fade: %d, delay: %d, style: %d, currentId: %s, defaultId: %s\n",
 			frame._palette.paletteId.asString().c_str(), frame._palette.firstColor, frame._palette.lastColor, frame._palette.flags,
 			frame._palette.cycleCount, frame._palette.speed, frame._palette.frameCount,
-			frame._palette.fade, frame._palette.delay, frame._palette.style, _lastPalette.asString().c_str(), defaultPalette.asString().c_str());
+			frame._palette.fade, frame._palette.delay, frame._palette.style, g_director->_lastPalette.asString().c_str(), defaultPalette.asString().c_str());
 	} else {
-		result += Common::String::format("PAL:    paletteId: 000, currentId: %s, defaultId: %s\n", _lastPalette.asString().c_str(), defaultPalette.asString().c_str());
+		result += Common::String::format("PAL:    paletteId: 000, currentId: %s, defaultId: %s\n", g_director->_lastPalette.asString().c_str(), defaultPalette.asString().c_str());
 	}
 	result += Common::String::format("TRAN:   transType: %d, transDuration: %d, transChunkSize: %d\n",
 		frame._transType, frame._transDuration, frame._transChunkSize);
