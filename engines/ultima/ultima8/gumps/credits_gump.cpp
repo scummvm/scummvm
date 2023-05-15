@@ -170,6 +170,9 @@ void CreditsGump::run() {
 	}
 
 	if (_state == CS_PLAYING && available <= 160) {
+		// This shouldn't happen, but just in case..
+		if (nextblock == -1)
+			nextblock = 0;
 		// time to render next block
 		Rect bounds;
 		_scroll[nextblock]->GetSurfaceDims(bounds);

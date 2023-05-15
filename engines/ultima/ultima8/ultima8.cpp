@@ -137,7 +137,7 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
 		_fontOverride(false), _fontAntialiasing(false), _audioMixer(0), _inverterGump(nullptr),
 	    _lerpFactor(256), _inBetweenFrame(false), _crusaderTeleporting(false), _moveKeyFrame(0),
-		_highRes(false) {
+		_highRes(false), _priorFrameCounterTime(0) {
 	_instance = this;
 }
 
@@ -150,7 +150,6 @@ Ultima8Engine::~Ultima8Engine() {
 	delete _mouse;
 	delete _gameData;
 	delete _world;
-	delete _ucMachine;
 	delete _fontManager;
 	delete _screen;
 	delete _fileSystem;
