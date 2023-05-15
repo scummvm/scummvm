@@ -185,14 +185,14 @@ public:
 	bool isVisibleMarker(const Common::String &name);
 	TeVector2f32 layerSize();
 
-	virtual bool load(const Common::FSNode &node) override;
-	void loadBackground(const Common::FSNode &node);
+	virtual bool load(const TetraedgeFSNode &node) override;
+	void loadBackground(const TetraedgeFSNode &node);
 	bool loadBillboard(const Common::String &name);
 	void loadBlockers();
 	bool loadCharacter(const Common::String &name);
-	void loadInteractions(const Common::FSNode &node);
-	bool loadLights(const Common::FSNode &node);
-	void loadMarkers(const Common::FSNode &node);
+	void loadInteractions(const TetraedgeFSNode &node);
+	bool loadLights(const TetraedgeFSNode &node);
+	void loadMarkers(const TetraedgeFSNode &node);
 	bool loadObject(const Common::String &oname);
 	bool loadObjectMaterials(const Common::String &name);
 	bool loadObjectMaterials(const Common::String &path, const Common::String &name);

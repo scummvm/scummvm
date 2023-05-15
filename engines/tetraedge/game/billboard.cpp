@@ -37,7 +37,7 @@ bool Billboard::load(const Common::String &path) {
 	TeIntrusivePtr<Te3DTexture> texture = Te3DTexture::makeInstance();
 	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
 	TeCore *core = g_engine->getCore();
-	Common::FSNode texnode = core->findFile(game->sceneZonePath().join(path));
+	TetraedgeFSNode texnode = core->findFile(game->sceneZonePath().join(path));
 	texture->load(texnode);
 	_model->setName(path);
 	Common::Array<TeVector3f32> quad;

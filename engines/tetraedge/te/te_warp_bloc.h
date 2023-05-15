@@ -55,7 +55,7 @@ public:
 	void create();
 	void index(uint offset, uint val);
 	bool isLoaded() const;
-	void loadTexture(Common::File &file, const Common::String &type);
+	void loadTexture(Common::SeekableReadStream &file, const Common::String &type);
 	//void operator=(const TeWarpBloc &other); // unused
 	//bool operator==(const TeWarpBloc &other); // unused
 	void render();

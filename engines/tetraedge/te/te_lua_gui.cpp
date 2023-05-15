@@ -182,7 +182,7 @@ bool TeLuaGUI::load(const Common::String &subPath) {
 	return load(core->findFile(subPath));
 }
 
-bool TeLuaGUI::load(const Common::FSNode &node) {
+bool TeLuaGUI::load(const TetraedgeFSNode &node) {
 	unload();
 	_scriptPath = node.getPath();
 	// Not the same as original, we abstract the search logic a bit.

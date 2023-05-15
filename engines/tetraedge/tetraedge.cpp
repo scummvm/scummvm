@@ -362,5 +362,21 @@ void TetraedgeEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	g_engine->getApplication()->getSavegameThumbnail(thumb);
 }
 
+bool TetraedgeFSNode::getChildren(TetraedgeFSList &fslist, Common::FSNode::ListMode mode, bool hidden) const {
+	Common::FSList tmpfslist;
+	if (!_fsnode.getChildren(tmpfslist, mode, hidden))
+		return false;
+	fslist.clear();
+	for(Common::FSList::iterator it = tmpfslist.begin(); it != tmpfslist.end(); it++)
+		fslist.push_back(TetraedgeFSNode(*it));
+	return true;
+}
+
+void TetraedgeFSNode::maybeAddToSearchMan() const {
+	const Common::String path = getPath();
+	if (!SearchMan.hasArchive(path))
+		SearchMan.addDirectory(path, _fsnode);
+}
+
 
 } // namespace Tetraedge

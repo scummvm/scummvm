@@ -44,7 +44,7 @@ bool Te3DTexture::hasAlpha() const {
 }
 
 /*static*/
-TeIntrusivePtr<Te3DTexture> Te3DTexture::load2(const Common::FSNode &node, bool alphaOnly) {
+TeIntrusivePtr<Te3DTexture> Te3DTexture::load2(const TetraedgeFSNode &node, bool alphaOnly) {
 	const Common::String fullPath = node.getPath() + ".3dtex";
 
 	TeResourceManager *resMgr = g_engine->getResourceManager();
@@ -67,7 +67,7 @@ TeIntrusivePtr<Te3DTexture> Te3DTexture::load2(const Common::FSNode &node, bool 
 	}
 }
 
-bool Te3DTexture::load(const Common::FSNode &node) {
+bool Te3DTexture::load(const TetraedgeFSNode &node) {
 	TeResourceManager *resmgr = g_engine->getResourceManager();
 	TeIntrusivePtr<TeImage> img = resmgr->getResource<TeImage>(node);
 	bool result = load(*img);

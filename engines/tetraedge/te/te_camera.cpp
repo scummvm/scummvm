@@ -169,7 +169,7 @@ void TeCamera::loadXml(const Common::Path &path) {
 	setName(path.getLastComponent().toString());
 	_projectionMatrixType = 3;
 	TeCore *core = g_engine->getCore();
-	Common::FSNode node = core->findFile(path);
+	TetraedgeFSNode node = core->findFile(path);
 	if (!node.isReadable()) {
 		//
 		// WORKAROUND: scenes/A3_Village/34015 has Camera34010, not 34015
@@ -186,7 +186,7 @@ void TeCamera::loadXml(const Common::Path &path) {
 	}
 	TeCameraXmlParser parser;
 	parser._cam = this;
-	if (!parser.loadFile(node))
+	if (!node.loadXML(parser))
 		error("TeCamera::loadXml: can't load file %s", node.getPath().c_str());
 	if (!parser.parse())
 		error("TeCamera::loadXml: error parsing %s", node.getPath().c_str());

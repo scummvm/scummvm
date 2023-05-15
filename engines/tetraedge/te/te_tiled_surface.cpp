@@ -60,7 +60,7 @@ byte TeTiledSurface::isLoaded() {
 	return _tiledTexture && _tiledTexture->isLoaded();
 }
 
-bool TeTiledSurface::load(const Common::FSNode &node) {
+bool TeTiledSurface::load(const TetraedgeFSNode &node) {
 	unload();
 
 	TeResourceManager *resmgr = g_engine->getResourceManager();

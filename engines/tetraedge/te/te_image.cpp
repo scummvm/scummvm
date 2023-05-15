@@ -99,7 +99,7 @@ bool TeImage::isExtensionSupported(const Common::Path &path) {
 	error("TODO: Implement TeImage::isExtensionSupported");
 }
 
-bool TeImage::load(const Common::FSNode &node) {
+bool TeImage::load(const TetraedgeFSNode &node) {
 	TeCore *core = g_engine->getCore();
 	TeICodec *codec = core->createVideoCodec(Common::Path(node.getPath()));
 	if (!node.isReadable() || !codec->load(node)) {

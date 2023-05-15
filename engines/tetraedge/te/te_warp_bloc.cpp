@@ -123,7 +123,7 @@ bool TeWarpBloc::isLoaded() const {
 	return _mesh->materials().size() > 0 && _mesh->material(0)->_texture;
 }
 
-void TeWarpBloc::loadTexture(Common::File &file, const Common::String &type) {
+void TeWarpBloc::loadTexture(Common::SeekableReadStream &file, const Common::String &type) {
 	if (isLoaded())
 		return;
 

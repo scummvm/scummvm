@@ -26,11 +26,13 @@
 #include "common/system.h"
 #include "common/error.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
 #include "common/random.h"
 #include "common/serializer.h"
 #include "common/util.h"
+#include "common/formats/xmlparser.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
@@ -49,6 +51,28 @@ class TeSoundManager;
 class TeRenderer;
 class TeResourceManager;
 class TeInputMgr;
+
+class TetraedgeFSNode;
+
+class TetraedgeFSList : public Common::Array<TetraedgeFSNode> {};
+class TetraedgeFSNode {
+public:
+	TetraedgeFSNode() {}
+	explicit TetraedgeFSNode(const Common::FSNode &fsnode) : _fsnode(fsnode) {}
+
+	Common::SeekableReadStream *createReadStream() const { return _fsnode.createReadStream(); }
+	bool isReadable() const { return _fsnode.isReadable(); }
+	bool isDirectory() const { return _fsnode.isDirectory(); }
+	Common::String getPath() const { return _fsnode.getPath(); }
+	bool exists() const { return _fsnode.exists(); }
+	bool loadXML(Common::XMLParser &parser) const { return parser.loadFile(_fsnode); }
+	Common::String getName() const { return _fsnode.getName(); }
+	bool getChildren(TetraedgeFSList &fslist, Common::FSNode::ListMode mode = Common::FSNode::kListDirectoriesOnly, bool hidden = true) const;
+	bool operator<(const TetraedgeFSNode& node) const { return _fsnode < node._fsnode; }
+	void maybeAddToSearchMan() const;
+private:
+	Common::FSNode _fsnode;
+};
 
 class TetraedgeEngine : public Engine {
 public:

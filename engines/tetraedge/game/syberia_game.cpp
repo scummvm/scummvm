@@ -463,11 +463,11 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 
 	TeCore *core = g_engine->getCore();
 
-	const Common::FSNode intLuaNode = core->findFile(scenePath.join(Common::String::format("Int%s.lua", scene.c_str())));
-	const Common::FSNode logicLuaNode = core->findFile(scenePath.join(Common::String::format("Logic%s.lua", scene.c_str())));
-	const Common::FSNode setLuaNode = core->findFile(scenePath.join(Common::String::format("Set%s.lua", scene.c_str())));
-	Common::FSNode forLuaNode = core->findFile(scenePath.join(Common::String::format("For%s.lua", scene.c_str())));
-	const Common::FSNode markerLuaNode = core->findFile(scenePath.join(Common::String::format("Marker%s.lua", scene.c_str())));
+	const TetraedgeFSNode intLuaNode = core->findFile(scenePath.join(Common::String::format("Int%s.lua", scene.c_str())));
+	const TetraedgeFSNode logicLuaNode = core->findFile(scenePath.join(Common::String::format("Logic%s.lua", scene.c_str())));
+	const TetraedgeFSNode setLuaNode = core->findFile(scenePath.join(Common::String::format("Set%s.lua", scene.c_str())));
+	TetraedgeFSNode forLuaNode = core->findFile(scenePath.join(Common::String::format("For%s.lua", scene.c_str())));
+	const TetraedgeFSNode markerLuaNode = core->findFile(scenePath.join(Common::String::format("Marker%s.lua", scene.c_str())));
 
 	bool intLuaExists = intLuaNode.exists();
 	bool logicLuaExists = logicLuaNode.exists();
@@ -507,7 +507,7 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 	_scene.hitObjectGui().unload();
 	Common::Path geomPath(Common::String::format("scenes/%s/Geometry%s.bin",
 												 zone.c_str(), zone.c_str()));
-	Common::FSNode geomFile = core->findFile(geomPath);
+	TetraedgeFSNode geomFile = core->findFile(geomPath);
 	if (geomFile.isReadable()) {
 		// Syberia 1, load geom bin
 		_scene.load(geomFile);

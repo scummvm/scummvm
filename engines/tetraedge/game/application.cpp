@@ -168,7 +168,7 @@ void Application::create() {
 
 	// Try alternate langs..
 	int i = 0;
-	Common::FSNode textFileNode;
+	TetraedgeFSNode textFileNode;
 	while (i < ARRAYSIZE(allLangs)) {
 		textFileNode = core->findFile(textsPath.join(core->language() + ".xml"));
 		if (textFileNode.isReadable())

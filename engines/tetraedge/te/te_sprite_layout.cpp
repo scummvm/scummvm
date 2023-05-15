@@ -80,13 +80,13 @@ bool TeSpriteLayout::load(const Common::String &path) {
 	}
 
 	TeCore *core = g_engine->getCore();
-	Common::FSNode node = core->findFile(path);
+	TetraedgeFSNode node = core->findFile(path);
 	if (!load(node, &path))
 		return false;
 	return true;
 }
 
-bool TeSpriteLayout::load(const Common::FSNode &node, const Common::String *forcePath) {
+bool TeSpriteLayout::load(const TetraedgeFSNode &node, const Common::String *forcePath) {
 	if (!node.exists()) {
 		_tiledSurfacePtr->unload();
 		return false;

@@ -147,10 +147,10 @@ static Common::FSNode _findSubPath(const Common::FSNode &parent, const Common::P
 	return Common::FSNode();
 }
 
-Common::FSNode TeCore::findFile(const Common::Path &path) const {
+TetraedgeFSNode TeCore::findFile(const Common::Path &path) const {
 	Common::FSNode node(path);
 	if (node.exists())
-		return node;
+		return TetraedgeFSNode(node);
 
 	const Common::FSNode gameRoot(ConfMan.get("path"));
 	if (!gameRoot.isDirectory())
@@ -244,21 +244,21 @@ Common::FSNode TeCore::findFile(const Common::Path &path) const {
 			testPath.joinInPlace(fname);
 			node = _findSubPath(resNode, testPath);
 			if (node.exists())
-				return node;
+				return TetraedgeFSNode(node);
 
 			// also try the other way around
 			if (!lang.empty() && suffix) {
 				testPath = dir.join(lang).joinInPlace(suffix).join(fname);
 				node = _findSubPath(resNode, testPath);
 				if (node.exists())
-					return node;
+					return TetraedgeFSNode(node);
 			}
 		}
 	}
 
 	// Didn't find it at all..
 	debug("TeCore::findFile Searched but didn't find %s", path.toString().c_str());
-	return Common::FSNode(path);
+	return TetraedgeFSNode(Common::FSNode(path));
 }
 
 } // end namespace Tetraedge

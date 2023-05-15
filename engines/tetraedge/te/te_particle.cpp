@@ -53,7 +53,7 @@ bool TeParticle::loadTexture(const Common::String &filename) {
 	const Common::Path path(filename);
 	_texture = Te3DTexture::makeInstance();
 	TeCore *core = g_engine->getCore();
-	Common::FSNode texnode = core->findFile(path);
+	TetraedgeFSNode texnode = core->findFile(path);
 	return _texture->load(texnode);
 }
 

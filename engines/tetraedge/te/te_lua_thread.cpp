@@ -254,9 +254,9 @@ void TeLuaThread::applyScriptWorkarounds(char *buf, const Common::String &fileNa
 	}
 }
 
-void TeLuaThread::executeFile(const Common::FSNode &node) {
-	Common::File scriptFile;
-	if (!scriptFile.open(node)) {
+void TeLuaThread::executeFile(const TetraedgeFSNode &node) {
+	Common::ScopedPtr<Common::SeekableReadStream> scriptFile(node.createReadStream());
+	if (!scriptFile) {
 		warning("TeLuaThread::executeFile: File %s can't be opened", node.getName().c_str());
 		return;
 	}
@@ -265,11 +265,11 @@ void TeLuaThread::executeFile(const Common::FSNode &node) {
 	debug("TeLuaThread::executeFile: %s", node.getName().c_str());
 #endif
 
-	int64 fileLen = scriptFile.size();
+	int64 fileLen = scriptFile->size();
 	char *buf = new char[fileLen + 1];
-	scriptFile.read(buf, fileLen);
+	scriptFile->read(buf, fileLen);
 	buf[fileLen] = 0;
-	scriptFile.close();
+	scriptFile.reset();
 
 	applyScriptWorkarounds(buf, node.getName());
 
