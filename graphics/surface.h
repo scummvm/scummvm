@@ -79,7 +79,7 @@ struct Surface {
 	 *
 	 * @note This might not equal w * bytesPerPixel.
 	 */
-	int16 pitch;
+	int32 pitch;
 
 protected:
 	/**

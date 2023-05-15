@@ -103,7 +103,7 @@ public:
 public:
 	int16 &w;           /*!< Width of the surface rectangle. */
 	int16 &h;           /*!< Height of the surface rectangle. */
-	int16 &pitch;       /*!< Pitch of the surface rectangle. See @ref Surface::pitch. */
+	int32 &pitch;       /*!< Pitch of the surface rectangle. See @ref Surface::pitch. */
 	PixelFormat &format; /*!< Pixel format of the surface. See @ref PixelFormat. */
 public:
 	/**
