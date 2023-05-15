@@ -715,7 +715,7 @@ static int tolua_ExportedFunctions_SetVisibleCellphone00(lua_State *L) {
 
 static void ShowObject(const Common::String &objName);
 
-static void StartAnimation(const Common::String name, int loops, bool repeat) {
+static void StartAnimation(const Common::String &name, int loops, bool repeat) {
 	ShowObject(name);
 	Game *game = g_engine->getGame();
 	if (game->startAnimation(name, loops, repeat))
@@ -1202,8 +1202,7 @@ static void RotateGroundObject(const Common::String &name, float x, float y, flo
 	Object3D *obj = game->scene().object3D(name);
 	if (!obj)
 		error("[RotateGroundObject] Object not found %s", name.c_str());
-	TeQuaternion rot = obj->model()->rotation();
-	obj->_rotateStart = rot;
+	obj->_rotateStart = obj->model()->rotation();
 	obj->_rotateAmount = TeVector3f32(x, y, z);
 	obj->_rotateTimer.start();
 	obj->_rotateTime = time;
