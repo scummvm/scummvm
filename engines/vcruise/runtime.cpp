@@ -1896,11 +1896,11 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 					VCruise::AudioPlayer &audioPlayer = *playlistEntry.sample->audioPlayer;
 
 					if (playlistEntry.isUpdate) {
-						audioPlayer.setVolumeAndBalance(applyVolumeScale(playlistEntry.volume), playlistEntry.balance);
+						audioPlayer.setVolumeAndBalance(applyVolumeScale(playlistEntry.volume), applyBalanceScale(playlistEntry.balance));
 					} else {
 						audioPlayer.stop();
 						playlistEntry.sample->audioStream->seek(0);
-						audioPlayer.play(applyVolumeScale(playlistEntry.volume), playlistEntry.balance);
+						audioPlayer.play(applyVolumeScale(playlistEntry.volume), applyBalanceScale(playlistEntry.balance));
 					}
 
 					// No break, it's possible for there to be multiple sounds in the same frame
@@ -3648,7 +3648,7 @@ void Runtime::update3DSounds() {
 
 bool Runtime::computeEffectiveVolumeAndBalance(SoundInstance &snd) {
 	uint effectiveVolume = applyVolumeScale(snd.volume);
-	int32 effectiveBalance = snd.balance;
+	int32 effectiveBalance = applyBalanceScale(snd.balance);
 
 	double radians = Common::deg2rad<double>(_listenerAngle);
 	int32 cosAngle = static_cast<int32>(cos(radians) * (1 << 15));
@@ -3794,6 +3794,19 @@ uint Runtime::applyVolumeScale(int32 volume) const {
 
 		return volume * Audio::Mixer::kMaxChannelVolume / 200;
 	}
+}
+
+int Runtime::applyBalanceScale(int32 balance) const {
+	if (balance < -100)
+		balance = -100;
+	else if (balance > 100)
+		balance = 100;
+
+	// Avoid undefined divide rounding behavior, round toward zero
+	if (balance < 0)
+		return -((-balance) * 127 / 100);
+	else
+		return balance * 127 / 100;
 }
 
 AnimationDef Runtime::stackArgsToAnimDef(const StackInt_t *args) const {
@@ -6362,8 +6375,22 @@ void Runtime::scriptOpAnimName(ScriptArg_t arg) {
 
 
 	Common::HashMap<Common::String, AnimationDef>::const_iterator it = roomDef->animations.find(_scriptSet->strings[arg]);
-	if (it == roomDef->animations.end())
-		error("Can't resolve animation for room, couldn't find animation '%s'", _scriptSet->strings[arg].c_str());
+	if (it == roomDef->animations.end()) {
+		bool found = false;
+		for (const Common::SharedPtr<RoomDef> &altRoomDef : _roomDefs) {
+			it = altRoomDef->animations.find(_scriptSet->strings[arg]);
+
+			// Hack to fix PortR_Zwierz_morph being in the wrong room
+			if (it != altRoomDef->animations.end()) {
+				warning("Couldn't resolve animation '%s' in its normal room, but found it in another one, this may cause problems", _scriptSet->strings[arg].c_str());
+				found = true;
+				break;
+			}
+		}
+
+		if (!found)
+			error("Can't resolve animation for room, couldn't find animation '%s'", _scriptSet->strings[arg].c_str());
+	}
 
 	pushAnimDef(it->_value);
 }
@@ -6464,7 +6491,17 @@ void Runtime::scriptOpSndPlay(ScriptArg_t arg) {
 		triggerSound(true, *cachedSound, getSilentSoundVolume(), 0, false, false);
 }
 
-OPCODE_STUB(SndPlayEx)
+void Runtime::scriptOpSndPlayEx(ScriptArg_t arg) {
+	TAKE_STACK_INT_NAMED(2, sndParamArgs);
+	TAKE_STACK_STR_NAMED(1, sndNameArgs);
+
+	StackInt_t soundID = 0;
+	SoundInstance *cachedSound = nullptr;
+	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
+
+	if (cachedSound)
+		triggerSound(true, *cachedSound, sndParamArgs[0], sndParamArgs[1], false, false);
+}
 
 void Runtime::scriptOpSndPlay3D(ScriptArg_t arg) {
 	TAKE_STACK_INT_NAMED(5, sndParamArgs);
@@ -6499,7 +6536,16 @@ void Runtime::scriptOpSndWait(ScriptArg_t arg) {
 
 OPCODE_STUB(SndHalt)
 OPCODE_STUB(SndToBack)
-OPCODE_STUB(SndStop)
+
+void Runtime::scriptOpSndStop(ScriptArg_t arg) {
+	TAKE_STACK_INT(1);
+
+	SoundInstance *cachedSound = resolveSoundByID(stackArgs[0]);
+
+	if (cachedSound)
+		stopSound(*cachedSound);
+}
+
 OPCODE_STUB(SndStopAll)
 OPCODE_STUB(SndAddRandom)
 OPCODE_STUB(SndClearRandom)

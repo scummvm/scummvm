@@ -370,8 +370,10 @@ void ScriptCompiler::compileScriptSet(ScriptSet *ss) {
 				uint32 roomNumber = 0;
 
 				if (_parser.parseToken(token, state)) {
-					// Many Schizm rooms use 0xxh as the room number and are empty.  In this case the room is discarded.
-					if (_dialect != kScriptDialectSchizm || token != "0xxh") {
+					// Many Schizm rooms use 0xxh as the room number and are empty.  In this case it's supposed to use a previous valid room.
+					if (_dialect == kScriptDialectSchizm && token == "0xxh") {
+						ss->isAutoGenFromPrevious = true;
+					} else {
 						if (!parseNumber(token, roomNumber))
 							error("Error compiling script at line %i col %i: Expected number but found '%s'", static_cast<int>(state._lineNum), static_cast<int>(state._col), token.c_str());
 
@@ -773,6 +775,10 @@ static ScriptNamedInstruction g_schizmNamedInstructions[] = {
 	{"puzzleDone", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleDone},
 	{"puzzleWhoWon", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleWhoWon},
 	{"fn", ProtoOp::kProtoOpScript, ScriptOps::kFn},
+	{"parm1", ProtoOp::kProtoOpScript, ScriptOps::kParm1},
+	{"parm2", ProtoOp::kProtoOpScript, ScriptOps::kParm2},
+	{"parm3", ProtoOp::kProtoOpScript, ScriptOps::kParm3},
+	{"parmG", ProtoOp::kProtoOpScript, ScriptOps::kParmG},
 
 	{"+", ProtoOp::kProtoOpScript, ScriptOps::kAdd},
 	{"-", ProtoOp::kProtoOpScript, ScriptOps::kSub},
@@ -965,12 +971,15 @@ bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::
 			return true;
 		}
 
+		// Disabled since Room02 is a cheat room and so not needed.
+#if 0
 		// HACK: Work around broken volume variable names in Room02.  Some of these appear to have "par"
 		// where it should be "vol" but some are garbage.  Figure this out later.
 		if (token.hasPrefix("par")) {
 			script.instrs.push_back(ProtoInstruction(kProtoOpScript, ScriptOps::kGarbage, indexString(token)));
 			return true;
 		}
+#endif
 	}
 
 	return false;
@@ -1338,6 +1347,9 @@ void ScriptCompilerGlobalState::dumpFunctionNames(Common::Array<Common::String> 
 
 Common::SharedPtr<Script> ScriptCompilerGlobalState::getFunction(uint fnIndex) const {
 	return _functions[fnIndex];
+}
+
+ScriptSet::ScriptSet() : isAutoGenFromPrevious(false) {
 }
 
 IScriptCompilerGlobalState::~IScriptCompilerGlobalState() {

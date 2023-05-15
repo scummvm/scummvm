@@ -252,11 +252,15 @@ struct RoomScriptSet {
 };
 
 struct ScriptSet {
+	ScriptSet();
+
 	RoomScriptSetMap_t roomScripts;
 
 	Common::Array<Common::SharedPtr<Script> > functions;
 	Common::Array<Common::String> functionNames;
 	Common::Array<Common::String> strings;
+
+	bool isAutoGenFromPrevious;
 };
 
 struct FunctionDef {

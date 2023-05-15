@@ -823,6 +823,7 @@ private:
 	int32 getSilentSoundVolume() const;
 	int32 getDefaultSoundVolume() const;
 	uint applyVolumeScale(int32 volume) const;
+	int applyBalanceScale(int32 balance) const;
 
 	void triggerWaveSubtitles(const SoundInstance &sound, const Common::String &id);
 	void stopSubtitles();
