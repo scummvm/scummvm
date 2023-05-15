@@ -48,8 +48,10 @@ void saveGUISnapshot(Graphics::Surface surf, const Common::String &filename) {
 }
 
 void dumpDialogs(const Common::String &message, int res, const Common::String &lang) {
+#ifdef USE_TRANSLATION
 	// Update GUI language
 	TransMan.setLanguage(lang);
+#endif
 
 	// Update resolution
 	ConfMan.setInt("last_window_width", res, Common::ConfigManager::kApplicationDomain);
@@ -87,7 +89,9 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 }
 
 void dumpAllDialogs(const Common::String &message) {
+#ifdef USE_TRANSLATION
 	auto originalLang = TransMan.getCurrentLanguage();
+#endif
 	int original_window_width = ConfMan.getInt("last_window_width", Common::ConfigManager::kApplicationDomain);
 	int original_window_height = ConfMan.getInt("last_window_height", Common::ConfigManager::kApplicationDomain);
 	Common::List<Common::String> list = Common::getLanguageList();
@@ -104,7 +108,9 @@ void dumpAllDialogs(const Common::String &message) {
 		dumpDialogs(message, res_to_test[0], lang);
 	}
 
+#ifdef USE_TRANSLATION
 	TransMan.setLanguage(originalLang);
+#endif
 	ConfMan.setInt("last_window_width", original_window_width, Common::ConfigManager::kApplicationDomain);
 	ConfMan.setInt("last_window_height", original_window_height, Common::ConfigManager::kApplicationDomain);
 	g_system->initSize(original_window_width, original_window_height);
