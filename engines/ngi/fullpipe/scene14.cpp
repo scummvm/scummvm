@@ -403,8 +403,6 @@ void sceneHandler14_kickAnimation() {
 }
 
 void sceneHandler14_declineCallback(int *arg) {
-	Common::Point point;
-
 	if (g_vars->scene14_dudeIsKicking) {
 		*arg = (int)(sqrt((double)(g_nmi->_mouseVirtY - g_vars->scene14_mouseCursorPos.y)
 							 * (g_nmi->_mouseVirtY - g_vars->scene14_mouseCursorPos.y)

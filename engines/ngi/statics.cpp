@@ -1735,8 +1735,6 @@ void Movement::initStatics(StaticANIObject *ani) {
 
 	_currMovement->setDynamicPhaseIndex(_currMovement->_updateFlag1 != 0 ? 1 : 0);
 
-	Common::Point point;
-
 	int x1 = _currMovement->_staticsObj1->getDimensions().x - _mx;
 
 	_mx = x1 - _currMovement->_currDynamicPhase->getDimensions().x;
