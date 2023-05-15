@@ -28,6 +28,24 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSGalaxySteam {
 
+struct SteamData : public IAGSScriptManagedObject {
+public:
+	Common::String steamLanguage = "english";
+
+	int Dispose(const char *address, bool force) override {
+		delete this;
+		return true;
+	}
+
+	const char *GetType() override {
+		return "SteamData";
+	};
+
+	int Serialize(const char *address, char *buffer, int bufsize) override {
+		return 0;
+	}
+};
+
 void AGS2Client::AGS_EngineStartup(IAGSEngine *engine) {
 	PluginBase::AGS_EngineStartup(engine);
 
@@ -109,15 +127,6 @@ void AGS2Client::ResetStatsAndAchievements(ScriptMethodParams &params) {
 }
 
 void AGS2Client::get_Initialized(ScriptMethodParams &params) {
-	// TODO: remove this after GetCurrentGameLanguage() is implemented
-	if (ConfMan.get("gameid") == "heroinesquest" ||
-		ConfMan.get("gameid") == "killyourself"
-	) {
-		warning("AGS2Client::get_Initialized() is returning fake value to avoid calling GetCurrentGameLanguage() by game");
-		params._result = 0;
-		return;
-	}
-
 	params._result = AchMan.isReady();
 }
 
@@ -157,8 +166,10 @@ void AGS2Client::GetUserName(ScriptMethodParams &params) {
 }
 
 void AGS2Client::GetCurrentGameLanguage(ScriptMethodParams &params) {
-	warning("AGS2Client::GetCurrentGameLanguage() is not implemented");
-	params._result = 0;
+	SteamData *steam_data = new SteamData();
+	_engine->RegisterManagedObject(steam_data, steam_data);
+	warning("AGS2Client::GetCurrentGameLanguage() is not implemented - Returning \'%s\'", steam_data->steamLanguage.c_str());
+	params._result = steam_data->steamLanguage.c_str();
 }
 
 void AGS2Client::FindLeaderboard(ScriptMethodParams &params) {
