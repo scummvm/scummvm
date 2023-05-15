@@ -451,7 +451,8 @@ int ccInstance::Run(int32_t curpc) {
 	FunctionCallStack func_callstack;
 
 	const auto timeout = std::chrono::milliseconds(_G(timeoutCheckMs));
-	const auto timeout_abort = std::chrono::milliseconds(_G(timeoutAbortMs));
+	// NOTE: removed timeout_abort check for now: was working *logically* wrong;
+	//const auto timeout_abort = std::chrono::milliseconds(_G(timeoutAbortMs));
 	_lastAliveTs = AGS_Clock::now();
 
 	while ((flags & INSTF_ABORTED) == 0) {
