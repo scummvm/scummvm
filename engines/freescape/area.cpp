@@ -330,20 +330,12 @@ float sweepAABB(Math::AABB const &a, Math::AABB const &b, Math::Vector3d const &
 	return h;
 }
 
-Math::AABB createPlayerAABB(Math::Vector3d const position, int playerHeight) {
-	Math::AABB boundingBox(position, position);
-
-	Math::Vector3d v1(position.x() + 1, position.y() + 1, position.z() + 1);
-	Math::Vector3d v2(position.x() - 1, position.y() - playerHeight, position.z() - 1);
-
-	boundingBox.expand(v1);
-	boundingBox.expand(v2);
-	return boundingBox;
-}
+extern Math::AABB createPlayerAABB(Math::Vector3d const position, int playerHeight);
 
 Math::Vector3d Area::resolveCollisions(const Math::Vector3d &lastPosition_, const Math::Vector3d &newPosition_, int playerHeight) {
 	Math::Vector3d position = newPosition_;
 	Math::Vector3d lastPosition = lastPosition_;
+	Math::AABB boundingBox = createPlayerAABB(lastPosition, playerHeight);
 
 	float epsilon = 1.5;
 	int i = 0;
@@ -352,7 +344,6 @@ Math::Vector3d Area::resolveCollisions(const Math::Vector3d &lastPosition_, cons
 		Math::Vector3d normal;
 		Math::Vector3d direction = position - lastPosition;
 
-		Math::AABB boundingBox = createPlayerAABB(lastPosition, playerHeight);
 		for (auto &obj : _drawableObjects) {
 			if (!obj->isDestroyed() && !obj->isInvisible()) {
 				GeometricObject *gobj = (GeometricObject *)obj;

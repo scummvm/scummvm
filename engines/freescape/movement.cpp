@@ -23,6 +23,17 @@
 
 namespace Freescape {
 
+Math::AABB createPlayerAABB(Math::Vector3d const position, int playerHeight) {
+	Math::AABB boundingBox(position, position);
+
+	Math::Vector3d v1(position.x() + 1, position.y() + 1, position.z() + 1);
+	Math::Vector3d v2(position.x() - 1, position.y() - playerHeight, position.z() - 1);
+
+	boundingBox.expand(v1);
+	boundingBox.expand(v2);
+	return boundingBox;
+}
+
 void FreescapeEngine::gotoArea(uint16 areaID, int entranceID) {
 	error("Function \"%s\" not implemented", __FUNCTION__);
 }
@@ -149,27 +160,26 @@ void FreescapeEngine::rise() {
 	debugC(1, kFreescapeDebugMove, "playerHeightNumber: %d", _playerHeightNumber);
 	int previousAreaID = _currentArea->getAreaID();
 	if (_flyMode) {
-		_position.setValue(1, _position.y() + _playerSteps[_playerStepIndex]);
+		Math::Vector3d destination = _position;
+		destination.y() = destination.y() + _playerSteps[_playerStepIndex];
+		resolveCollisions(destination);
 	} else {
 		if (_playerHeightNumber == int(_playerHeights.size()) - 1)
 			return;
 
 		_playerHeightNumber++;
 		changePlayerHeight(_playerHeightNumber);
-	}
 
-	bool collided = /*checkCollisions(true) ||*/ _position.y() >= 2016;
-	if (collided) {
-		if (_currentArea->getAreaID() == previousAreaID) {
-			if (_flyMode)
-				_position = _lastPosition;
-			else {
+		Math::AABB boundingBox = createPlayerAABB(_position, _playerHeight);
+		ObjectArray objs = _currentArea->checkCollisions(boundingBox);
+		bool collided = objs.size() > 0;
+		if (collided) {
+			if (_currentArea->getAreaID() == previousAreaID) {
 				_playerHeightNumber--;
 				changePlayerHeight(_playerHeightNumber);
 			}
 		}
 	}
-
 	_lastPosition = _position;
 	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	executeMovementConditions();
@@ -177,16 +187,10 @@ void FreescapeEngine::rise() {
 
 void FreescapeEngine::lower() {
 	debugC(1, kFreescapeDebugMove, "playerHeightNumber: %d", _playerHeightNumber);
-	int previousAreaID = _currentArea->getAreaID();
-
 	if (_flyMode) {
-		_position.setValue(1, _position.y() - (_playerSteps[_playerStepIndex] * 0.5));
-		bool collided = false; //checkCollisions(true);
-		if (collided) {
-			if (_currentArea->getAreaID() == previousAreaID) {
-				_position = _lastPosition;
-			}
-		}
+		Math::Vector3d destination = _position;
+		destination.y() = destination.y() - _playerSteps[_playerStepIndex];
+		resolveCollisions(destination);
 	} else {
 		if (_playerHeightNumber == 0)
 			return;
