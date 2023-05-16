@@ -259,8 +259,6 @@ struct ScriptSet {
 	Common::Array<Common::SharedPtr<Script> > functions;
 	Common::Array<Common::String> functionNames;
 	Common::Array<Common::String> strings;
-
-	bool isAutoGenFromPrevious;
 };
 
 struct FunctionDef {
@@ -286,7 +284,8 @@ struct IScriptCompilerGlobalState {
 
 Common::SharedPtr<IScriptCompilerGlobalState> createScriptCompilerGlobalState();
 Common::SharedPtr<ScriptSet> compileReahLogicFile(Common::ReadStream &stream, uint streamSize, const Common::String &blamePath);
-void compileSchizmLogicFile(ScriptSet &scriptSet, uint roomNumber, Common::ReadStream &stream, uint streamSize, const Common::String &blamePath, IScriptCompilerGlobalState *gs);
+void compileSchizmLogicFile(ScriptSet &scriptSet, uint loadAsRoom, uint fileRoom, Common::ReadStream &stream, uint streamSize, const Common::String &blamePath, IScriptCompilerGlobalState *gs);
+bool checkSchizmLogicForDuplicatedRoom(Common::ReadStream &stream, uint streamSize);
 
 }
 

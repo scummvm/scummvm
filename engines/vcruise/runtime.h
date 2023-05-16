@@ -783,6 +783,7 @@ private:
 	void findWaves();
 	void loadConfig(const char *cfgPath);
 	void loadScore();
+	void loadDuplicateRooms();
 	Common::SharedPtr<SoundInstance> loadWave(const Common::String &soundName, uint soundID, const Common::ArchiveMemberPtr &archiveMemberPtr);
 	SoundCache *loadCache(SoundInstance &sound);
 	void resolveSoundByName(const Common::String &soundName, bool load, StackInt_t &outSoundID, SoundInstance *&outWave);
@@ -1137,6 +1138,7 @@ private:
 	VCruiseGameID _gameID;
 
 	Common::Array<Common::SharedPtr<RoomDef> > _roomDefs;
+	Common::Array<uint> _roomDuplicationOffsets;
 	Common::SharedPtr<ScriptSet> _scriptSet;
 
 	Common::Array<CallStackFrame> _scriptCallStack;

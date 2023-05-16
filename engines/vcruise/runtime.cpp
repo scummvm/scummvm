@@ -1209,6 +1209,15 @@ bool Runtime::bootGame(bool newGame) {
 
 		loadScore();
 		debug(1, "Score loaded OK");
+
+		// Duplicate rooms must be identified in advance because they can take effect before the room logic is loaded.
+		// For example, in room 37, when taking the hanging lift across, the room is changed to room 28 and then
+		// animation PortD_Zwierz_morph is used, is an animation mapped to room 25, but we can't know that room 28 is
+		// a duplicate of room 25 unless we check the logic file for rooms 26-28.  Additionally, we can't just scan
+		// downward for missing animations elsewhere because PRZYCUMIE_KRZESELKO is mapped to animations 25 and 26,
+		// but the frame range for 27 and 28 is supposed to use room 25 (the root of the duplication), not 26.
+		loadDuplicateRooms();
+		debug(1, "Duplicated rooms identified OK");
 	} else {
 		StartConfigDef &startConfig = _startConfigs[kStartConfigInitial];
 		startConfig.disc = 1;
@@ -2551,6 +2560,38 @@ void Runtime::loadScore() {
 		warning("Couldn't load music score");
 }
 
+void Runtime::loadDuplicateRooms() {
+	assert(_gameID == GID_SCHIZM);
+
+	Common::ArchiveMemberList logics;
+	SearchMan.listMatchingMembers(logics, "Log/Room##.log", true);
+
+	for (const Common::ArchiveMemberPtr &logic : logics) {
+		Common::String name = logic->getName();
+
+		char d10 = name[4];
+		char d1 = name[5];
+
+		uint roomNumber = (d10 - '0') * 10 + (d1 - '0');
+
+		Common::SharedPtr<Common::SeekableReadStream> stream(logic->createReadStream());
+		if (stream) {
+			if (checkSchizmLogicForDuplicatedRoom(*stream, stream->size())) {
+				if (_roomDuplicationOffsets.size() < roomNumber)
+					_roomDuplicationOffsets.resize(roomNumber + 1);
+				_roomDuplicationOffsets[roomNumber] = 1;
+			}
+		} else {
+			warning("Logic for room %u couldn't be checked for duplication");
+		}
+	}
+
+	for (uint i = 1; i < _roomDuplicationOffsets.size(); i++) {
+		if (_roomDuplicationOffsets[i])
+			_roomDuplicationOffsets[i] += _roomDuplicationOffsets[i - 1];
+	}
+}
+
 Common::SharedPtr<SoundInstance> Runtime::loadWave(const Common::String &soundName, uint soundID, const Common::ArchiveMemberPtr &archiveMemberPtr) {
 	for (const Common::SharedPtr<SoundInstance> &activeSound : _activeSounds) {
 		if (activeSound->name == soundName)
@@ -3889,12 +3930,18 @@ void Runtime::compileSchizmLogicSet(const uint *roomNumbers, uint numRooms) {
 	Common::SharedPtr<ScriptSet> scriptSet(new ScriptSet());
 
 	for (uint i = 0; i < numRooms; i++) {
-		Common::String logicFileName = Common::String::format("Log/Room%02u.log", roomNumbers[i]);
+		uint roomNumber = roomNumbers[i];
+		uint roomFile = roomNumber;
+
+		if (roomNumber < _roomDuplicationOffsets.size())
+			roomFile -= _roomDuplicationOffsets[roomNumber];
+
+		Common::String logicFileName = Common::String::format("Log/Room%02u.log", roomFile);
 
 		Common::File logicFile;
 		if (logicFile.open(logicFileName)) {
 			debug(1, "Compiling script %s...", logicFileName.c_str());
-			compileSchizmLogicFile(*scriptSet, roomNumbers[i], logicFile, static_cast<uint>(logicFile.size()), logicFileName, gs.get());
+			compileSchizmLogicFile(*scriptSet, roomNumber, roomFile, logicFile, static_cast<uint>(logicFile.size()), logicFileName, gs.get());
 			logicFile.close();
 		}
 	}
@@ -6369,30 +6416,52 @@ void Runtime::scriptOpAnimName(ScriptArg_t arg) {
 	if (_roomNumber >= _roomDefs.size())
 		error("Can't resolve animation for room, room number was invalid");
 
+	Common::String &animName = _scriptSet->strings[arg];
+
+	// In Reah, animations are mapped to rooms.
+	// 
+	// In Schizm this can get very complicated: It supports overlapping room logics which in some cases
+	// have animation ranges mapped to a different animation.
+	//
+	// For example, in Schizm, rooms 25-28 all share one logic file and their corresponding animations are
+	// largely duplicates of each other with different skies.
+	//
+	// It appears that the animation to select is based on the remapped room if the animation can't be
+	// found in its primary room.
+	//
+	// For example, PRZYCUMIE_KRZESELKO is mapped to an animation range in room 25 and another range in
+	// room 26, and there is no mapping for room 28.  In this case, the animation frame range from room 25
+	// is used, but it is remapped to animation 28.
 	Common::SharedPtr<RoomDef> roomDef = _roomDefs[_roomNumber];
-	if (!roomDef)
-		error("Can't resolve animation for room, room number was invalid");
-
-
-	Common::HashMap<Common::String, AnimationDef>::const_iterator it = roomDef->animations.find(_scriptSet->strings[arg]);
-	if (it == roomDef->animations.end()) {
-		bool found = false;
-		for (const Common::SharedPtr<RoomDef> &altRoomDef : _roomDefs) {
-			it = altRoomDef->animations.find(_scriptSet->strings[arg]);
-
-			// Hack to fix PortR_Zwierz_morph being in the wrong room
-			if (it != altRoomDef->animations.end()) {
-				warning("Couldn't resolve animation '%s' in its normal room, but found it in another one, this may cause problems", _scriptSet->strings[arg].c_str());
-				found = true;
-				break;
-			}
+	if (roomDef) {
+		Common::HashMap<Common::String, AnimationDef>::const_iterator it = roomDef->animations.find(animName);
+		if (it != roomDef->animations.end()) {
+			pushAnimDef(it->_value);
+			return;
 		}
-
-		if (!found)
-			error("Can't resolve animation for room, couldn't find animation '%s'", _scriptSet->strings[arg].c_str());
 	}
 
-	pushAnimDef(it->_value);
+	if (_roomNumber < _roomDuplicationOffsets.size() && _roomDuplicationOffsets[_roomNumber] != 0) {
+		int roomToUse = _roomNumber - _roomDuplicationOffsets[_roomNumber];
+
+		roomDef = _roomDefs[roomToUse];
+
+		Common::HashMap<Common::String, AnimationDef>::const_iterator it = roomDef->animations.find(animName);
+		if (it != roomDef->animations.end()) {
+			AnimationDef animDef = it->_value;
+
+			if (animDef.animNum == roomToUse)
+				animDef.animNum = _roomNumber;
+			else if (animDef.animNum == -roomToUse)
+				animDef.animNum = -static_cast<int>(_roomNumber);
+
+			pushAnimDef(animDef);
+			return;
+		}
+	}
+
+
+	error("Can't resolve animation for room, couldn't find animation '%s'", animName.c_str());
 }
 
 void Runtime::scriptOpValueName(ScriptArg_t arg) {
@@ -6726,7 +6795,10 @@ void Runtime::scriptOpHeroGet(ScriptArg_t arg) {
 }
 
 OPCODE_STUB(Garbage)
-OPCODE_STUB(GetRoom)
+
+void Runtime::scriptOpGetRoom(ScriptArg_t arg) {
+	_scriptStack.push_back(StackValue(_roomNumber));
+}
 
 void Runtime::scriptOpBitAnd(ScriptArg_t arg) {
 	TAKE_STACK_INT(2);

@@ -149,7 +149,7 @@ struct ScriptNamedInstruction {
 
 class ScriptCompiler {
 public:
-	ScriptCompiler(TextParser &parser, const Common::String &blamePath, ScriptDialect dialect, uint roomNumber, IScriptCompilerGlobalState *gs);
+	ScriptCompiler(TextParser &parser, const Common::String &blamePath, ScriptDialect dialect, uint loadAsRoom, uint fileRoom, IScriptCompilerGlobalState *gs);
 
 	void compileScriptSet(ScriptSet *ss);
 
@@ -181,7 +181,8 @@ private:
 	const Common::String _blamePath;
 
 	ScriptDialect _dialect;
-	uint _roomNumber;
+	uint _loadAsRoom;
+	uint _fileRoom;
 
 	const char *_scrToken;
 	const char *_eroomToken;
@@ -224,8 +225,8 @@ private:
 	Common::Array<Common::SharedPtr<Script> > _functions;
 };
 
-ScriptCompiler::ScriptCompiler(TextParser &parser, const Common::String &blamePath, ScriptDialect dialect, uint roomNumber, IScriptCompilerGlobalState *gs)
-	: _numberParsingMode(kNumberParsingHex), _parser(parser), _blamePath(blamePath), _dialect(dialect), _roomNumber(roomNumber), _gs(gs),
+ScriptCompiler::ScriptCompiler(TextParser &parser, const Common::String &blamePath, ScriptDialect dialect, uint loadAsRoom, uint fileRoom, IScriptCompilerGlobalState *gs)
+	: _numberParsingMode(kNumberParsingHex), _parser(parser), _blamePath(blamePath), _dialect(dialect), _loadAsRoom(loadAsRoom), _fileRoom(fileRoom), _gs(gs),
 	  _scrToken(nullptr), _eroomToken(nullptr) {
 }
 
@@ -370,15 +371,13 @@ void ScriptCompiler::compileScriptSet(ScriptSet *ss) {
 				uint32 roomNumber = 0;
 
 				if (_parser.parseToken(token, state)) {
-					// Many Schizm rooms use 0xxh as the room number and are empty.  In this case it's supposed to use a previous valid room.
-					if (_dialect == kScriptDialectSchizm && token == "0xxh") {
-						ss->isAutoGenFromPrevious = true;
-					} else {
-						if (!parseNumber(token, roomNumber))
-							error("Error compiling script at line %i col %i: Expected number but found '%s'", static_cast<int>(state._lineNum), static_cast<int>(state._col), token.c_str());
+					if (!parseNumber(token, roomNumber))
+						error("Error compiling script at line %i col %i: Expected number but found '%s'", static_cast<int>(state._lineNum), static_cast<int>(state._col), token.c_str());
 
-						ss->roomScripts[roomNumber] = roomScript;
-					}
+					if (_dialect == kScriptDialectSchizm && roomNumber == _fileRoom)
+						roomNumber = _loadAsRoom;
+
+					ss->roomScripts[roomNumber] = roomScript;
 				} else {
 					error("Error compiling script at line %i col %i: Expected number", static_cast<int>(state._lineNum), static_cast<int>(state._col));
 				}
@@ -448,7 +447,8 @@ void ScriptCompiler::compileRoomScriptSet(RoomScriptSet *rss) {
 			if (isNegative)
 				signedNumber = -signedNumber;
 
-			_gs->define(key, _roomNumber, signedNumber);
+			// TODO: Figure out if the vars should be scoped in _fileRoom or _loadAsRoom in the case of duplicate rooms
+			_gs->define(key, _fileRoom, signedNumber);
 		} else if (_dialect == kScriptDialectSchizm && token == "~Fun") {
 			Common::String fnName;
 			if (!_parser.parseToken(fnName, state))
@@ -1349,17 +1349,17 @@ Common::SharedPtr<Script> ScriptCompilerGlobalState::getFunction(uint fnIndex) c
 	return _functions[fnIndex];
 }
 
-ScriptSet::ScriptSet() : isAutoGenFromPrevious(false) {
+ScriptSet::ScriptSet() {
 }
 
 IScriptCompilerGlobalState::~IScriptCompilerGlobalState() {
 }
 
-static void compileLogicFile(ScriptSet &scriptSet, Common::ReadStream &stream, uint streamSize, const Common::String &blamePath, ScriptDialect dialect, uint roomNumber, IScriptCompilerGlobalState *gs) {
+static void compileLogicFile(ScriptSet &scriptSet, Common::ReadStream &stream, uint streamSize, const Common::String &blamePath, ScriptDialect dialect, uint loadAsRoom, uint fileRoom, IScriptCompilerGlobalState *gs) {
 	LogicUnscrambleStream unscrambleStream(&stream, streamSize);
 	TextParser parser(&unscrambleStream);
 
-	ScriptCompiler compiler(parser, blamePath, dialect, roomNumber, gs);
+	ScriptCompiler compiler(parser, blamePath, dialect, loadAsRoom, fileRoom, gs);
 
 	compiler.compileScriptSet(&scriptSet);
 }
@@ -1371,12 +1371,36 @@ Common::SharedPtr<IScriptCompilerGlobalState> createScriptCompilerGlobalState() 
 Common::SharedPtr<ScriptSet> compileReahLogicFile(Common::ReadStream &stream, uint streamSize, const Common::String &blamePath) {
 	Common::SharedPtr<ScriptSet> scriptSet(new ScriptSet());
 
-	compileLogicFile(*scriptSet, stream, streamSize, blamePath, kScriptDialectReah, 0, nullptr);
+	compileLogicFile(*scriptSet, stream, streamSize, blamePath, kScriptDialectReah, 0, 0, nullptr);
 	return scriptSet;
 }
 
-void compileSchizmLogicFile(ScriptSet &scriptSet, uint roomNumber, Common::ReadStream &stream, uint streamSize, const Common::String &blamePath, IScriptCompilerGlobalState *gs) {
-	compileLogicFile(scriptSet, stream, streamSize, blamePath, kScriptDialectSchizm, roomNumber, gs);
+void compileSchizmLogicFile(ScriptSet &scriptSet, uint loadAsRoom, uint fileRoom, Common::ReadStream &stream, uint streamSize, const Common::String &blamePath, IScriptCompilerGlobalState *gs) {
+	compileLogicFile(scriptSet, stream, streamSize, blamePath, kScriptDialectSchizm, loadAsRoom, fileRoom, gs);
 }
+
+bool checkSchizmLogicForDuplicatedRoom(Common::ReadStream &stream, uint streamSize) {
+	LogicUnscrambleStream unscrambleStream(&stream, streamSize);
+	TextParser parser(&unscrambleStream);
+
+	TextParserState state;
+	Common::String token;
+
+	const char *expectedTokenSequence[] = {"~Room", "0xxh", "~ERoom"};
+
+	for (const char *tokenExpected : expectedTokenSequence) {
+		if (!parser.parseToken(token, state))
+			return false;
+
+		if (token != tokenExpected)
+			return false;
+	}
+
+	if (parser.parseToken(token, state))
+		return false;
+
+	return true;
+}
+
 
 } // namespace VCruise
