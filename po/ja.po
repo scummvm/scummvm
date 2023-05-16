@@ -2744,7 +2744,9 @@ msgstr "デフォルトのアイコンパスにアクセス/作成できませ�
 msgid ""
 "Unable to access the globally set save path! Please revert to default from "
 "ScummVM Options"
-msgstr "グローバルで設定されたセーブフォルダーにアクセスできません! リセットして下さい"
+msgstr ""
+"グローバルで設定されたセーブフォルダーにアクセスできません! リセットして下さ"
+"い"
 
 #: dists/android.strings.xml.cpp:41
 msgid "Toggle virtual keyboard"
@@ -2782,7 +2784,9 @@ msgstr "ポップアップを閉じる"
 msgid ""
 "Please select the *root* of your external (physical) SD card. This is "
 "required for ScummVM to access this path: "
-msgstr "外付け(物理)SDカードのルートを選択して下さい。ScummVMがアクセスするために必要です： "
+msgstr ""
+"外付け(物理)SDカードのルートを選択して下さい。ScummVMがアクセスするために必要"
+"です： "
 
 #: dists/android.strings.xml.cpp:51
 msgid "Storage Access Framework Permissions for ScummVM were revoked!"

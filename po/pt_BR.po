@@ -2785,7 +2785,8 @@ msgstr "Erro na Pasta de Ícones"
 
 #: dists/android.strings.xml.cpp:39
 msgid "Unable to create or access default icons and shaders path!"
-msgstr "Não foi possível criar ou acessar o caminho padrão de ícones e shaders!"
+msgstr ""
+"Não foi possível criar ou acessar o caminho padrão de ícones e shaders!"
 
 #: dists/android.strings.xml.cpp:40
 msgid ""
