@@ -6878,7 +6878,7 @@ Project::Segment::Segment() : weakStream(nullptr) {
 Project::StreamDesc::StreamDesc() : streamType(kStreamTypeUnknown), segmentIndex(0), size(0), pos(0) {
 }
 
-Project::AssetDesc::AssetDesc() : typeCode(0), id(0), streamID(0) {
+Project::AssetDesc::AssetDesc() : typeCode(0), id(0), streamID(0), filePosition(0) {
 }
 
 Project::Project(Runtime *runtime)
