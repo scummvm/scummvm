@@ -68,6 +68,7 @@ const PlatformDescription g_platforms[] = {
 	{ "shockwave", "shockwave", "shock", "Shockwave", kPlatformShockwave },
 	{ "zx", "zx", "zx", "ZX Spectrum", kPlatformZX },
 	{ "ti994", "ti994", "ti994", "TI-99/4A", kPlatformTI994 },
+	{ "switch", "switch", "switch", "Nintendo Switch", kPlatformNintendoSwitch },
 
 	{ nullptr, nullptr, nullptr, "Default", kPlatformUnknown }
 };
