@@ -179,6 +179,19 @@ public:
 	virtual Common::String parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const;
 
 	/**
+	 * The default version of this method will just return optionsStrings.
+	 * However it also allows the meta engine to post process
+	 * result and add/remove languages as needed.
+	 *
+	 * @param optionsString		Options string that from the config manager.
+	 * @param domain			Domain of the current target.
+	 *
+	 * @return    The list of languages in the same format as options string.
+	 *
+	 */
+	virtual Common::String customizeGuiOptionsLanguages(const Common::String &optionsString, const Common::String &domain) const;
+
+	/**
 	 * Return a list of engine specified debug channels
 	 *
 	 * If engine has no specified debug channels or not supported yet, then it will return NULL

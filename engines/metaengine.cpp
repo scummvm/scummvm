@@ -41,6 +41,10 @@ Common::String MetaEngineDetection::parseAndCustomizeGuiOptions(const Common::St
 	return parseGameGUIOptions(optionsString);
 }
 
+Common::String MetaEngineDetection::customizeGuiOptionsLanguages(const Common::String &optionsString, const Common::String &domain) const {
+	return optionsString;
+}
+
 Common::String MetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
 	if (!target)
 		target = getName();

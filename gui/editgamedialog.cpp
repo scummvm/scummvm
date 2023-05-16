@@ -154,7 +154,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 		_langPopUp->appendEntry("", (uint32)Common::UNK_LANG);
 		const Common::LanguageDescription *l = Common::g_languages;
 		for (; l->code; ++l) {
-			if (checkGameGUIOptionLanguage(l->id, _guioptionsString))
+			if (checkGameGUIOptionLanguage(l->id, _guioptionsLanguages))
 				_langPopUp->appendEntry(l->description, l->id);
 		}
 	}
