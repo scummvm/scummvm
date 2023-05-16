@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-05-15 10:43+0000\n"
-"PO-Revision-Date: 2023-05-06 23:40+0000\n"
+"PO-Revision-Date: 2023-05-16 10:40+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -2744,14 +2744,12 @@ msgid "TB"
 msgstr "TB"
 
 #: dists/android.strings.xml.cpp:30
-#, fuzzy
-#| msgid "Quit ScummVM"
 msgid "ScummVM"
-msgstr "Sair do ScummVM"
+msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
 msgid "Graphic adventure game engine"
-msgstr ""
+msgstr "Engine de jogos de aventura"
 
 #: dists/android.strings.xml.cpp:33
 #: backends/events/default/default-events.cpp:217
@@ -2766,43 +2764,40 @@ msgstr "Sair"
 
 #: dists/android.strings.xml.cpp:34
 msgid "Config File Error"
-msgstr ""
+msgstr "Erro no Arquivo de Configuração"
 
 #: dists/android.strings.xml.cpp:35
 msgid "Unable to read ScummVM config file or create a new one!"
 msgstr ""
+"Não foi possível ler o arquivo de configuração do ScummVM ou criar um novo!"
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Save Path:"
 msgid "Save Path Error"
-msgstr "Salvamento:"
+msgstr "Erro na Pasta de Jogo Salvo"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Unable to create or access default save path!"
-msgstr ""
+msgstr "Não foi possível criar ou acessar o caminho de salvamento padrão!"
 
 #: dists/android.strings.xml.cpp:38
-#, fuzzy
-#| msgid "Icon Path:"
 msgid "Icons Path Error"
-msgstr "Ícones:"
+msgstr "Erro na Pasta de Ícones"
 
 #: dists/android.strings.xml.cpp:39
 msgid "Unable to create or access default icons and shaders path!"
-msgstr ""
+msgstr "Não foi possível criar ou acessar o caminho padrão de ícones e shaders!"
 
 #: dists/android.strings.xml.cpp:40
 msgid ""
 "Unable to access the globally set save path! Please revert to default from "
 "ScummVM Options"
 msgstr ""
+"Não foi possível acessar o caminho de salvamento definido globalmente! Por "
+"favor, reverta para o padrão nas Opções do ScummVM"
 
 #: dists/android.strings.xml.cpp:41
-#, fuzzy
-#| msgid "Virtual keyboard"
 msgid "Toggle virtual keyboard"
-msgstr "Teclado virtual"
+msgstr "Alternar teclado virtual"
 
 #: dists/android.strings.xml.cpp:42 engines/scumm/help.cpp:78
 #: engines/scumm/help.cpp:82 engines/scumm/help.cpp:84
@@ -2813,13 +2808,11 @@ msgstr "Alt"
 
 #: dists/android.strings.xml.cpp:45
 msgid "Done"
-msgstr ""
+msgstr "Concluir"
 
 #: dists/android.strings.xml.cpp:46
-#, fuzzy
-#| msgid "Exchange"
 msgid "Mode change"
-msgstr "Trocar"
+msgstr "Alternar modo"
 
 #: dists/android.strings.xml.cpp:47
 msgid "Shift"
@@ -2831,20 +2824,22 @@ msgid "Enter"
 msgstr "Enter"
 
 #: dists/android.strings.xml.cpp:49
-#, fuzzy
-#| msgid "Close"
 msgid "Close popup"
-msgstr "Fechar"
+msgstr "Fechar caixa de diálogo"
 
 #: dists/android.strings.xml.cpp:50
 msgid ""
 "Please select the *root* of your external (physical) SD card. This is "
 "required for ScummVM to access this path: "
 msgstr ""
+"Selecione a *raiz* do seu cartão SD externo (físico). Isso é necessário para "
+"o ScummVM acessar este caminho: "
 
 #: dists/android.strings.xml.cpp:51
 msgid "Storage Access Framework Permissions for ScummVM were revoked!"
 msgstr ""
+"As permissões do Framework de Acesso ao Armazenamento para ScummVM foram "
+"revogadas!"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:32
