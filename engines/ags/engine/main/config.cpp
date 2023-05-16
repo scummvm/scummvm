@@ -391,7 +391,16 @@ void post_config() {
 }
 
 void save_config_file() {
-	// ScummVM doesn't write out any configuration changes
+	// Translation / localization
+	if (!_GP(usetup).translation.IsEmpty()) {
+		ConfMan.getActiveDomain()->setVal("translation", _GP(usetup).translation.GetCStr());
+		ConfMan.flushToDisk();
+	} else if (ConfMan.getActiveDomain()->contains("translation")) {
+		ConfMan.getActiveDomain()->erase("translation");
+		ConfMan.flushToDisk();
+	}
+
+	// ScummVM doesn't write out other configuration changes
 }
 
 } // namespace AGS3
