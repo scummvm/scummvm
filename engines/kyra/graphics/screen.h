@@ -366,6 +366,8 @@ private:
 	void processColorMap() override;
 };
 
+#ifdef ENABLE_LOL
+
 class ChineseOneByteFontLoL final : public ChineseFont {
 public:
 	ChineseOneByteFontLoL(int pitch) : ChineseFont(pitch, 8, 14, 8, 16, 0, 0) { _pixelColorShading = false; }
@@ -387,6 +389,8 @@ private:
 	uint32 getFontOffset(uint16 c) const override;
 	void processColorMap() override;
 };
+
+#endif
 
 class ChineseOneByteFontHOF final : public ChineseFont {
 public:

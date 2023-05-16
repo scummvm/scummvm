@@ -1398,11 +1398,15 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 				if (_vm->game() == GI_KYRA2) {
 					fn1 = new ChineseOneByteFontHOF(SCREEN_W);
 					fn2 = new ChineseTwoByteFontHOF(SCREEN_W);
-				} else if (_vm->game() == GI_LOL) {
+				}
+#ifdef ENABLE_LOL
+				else if (_vm->game() == GI_LOL) {
 					// Same as next one but with different spacing
 					fn1 = new ChineseOneByteFontLoL(SCREEN_W);
 					fn2 = new ChineseTwoByteFontLoL(SCREEN_W);
-				} else {
+				}
+#endif
+				else {
 					fn1 = new ChineseOneByteFontMR(SCREEN_W);
 					fn2 = new ChineseTwoByteFontMR(SCREEN_W);
 				}
