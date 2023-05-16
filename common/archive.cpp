@@ -103,6 +103,72 @@ void Archive::dumpArchive(String destPath) {
 	free(data);
 }
 
+bool DefaultListableCaseInsensitiveArchive::hasDirectory(const Common::Path &path) const {
+	prepareMaps();
+	Common::String pathStr = path.toString(_separator);
+	if (pathStr.lastChar() == _separator)
+		pathStr.deleteLastChar();
+	return _directoryMap.contains(pathStr) || _fileMap.contains(pathStr);
+}
+
+bool DefaultListableCaseInsensitiveArchive::getChildren(const Common::Path &path, Common::Array<Common::String> &list, ListMode mode, bool hidden) const {
+	list.clear();
+	prepareMaps();
+	Common::String pathStr = path.toString(_separator);
+	if (pathStr.lastChar() == _separator)
+		pathStr.deleteLastChar();
+	if (!_fileMap.contains(pathStr) && !_directoryMap.contains(pathStr))
+		return false;
+	if (mode == kListDirectoriesOnly || mode == kListAll)
+		for (SubfileSet::iterator its = _directoryMap[pathStr].begin(); its != _directoryMap[pathStr].end(); its++)
+		  if (hidden || its->_key.firstChar() != '.')
+				list.push_back(its->_key);
+	if (mode == kListFilesOnly || mode == kListAll)
+		for (SubfileSet::iterator its = _fileMap[pathStr].begin(); its != _fileMap[pathStr].end(); its++)
+			if (hidden || its->_key.firstChar() != '.')
+				list.push_back(its->_key);
+	return true;
+}
+
+void DefaultListableCaseInsensitiveArchive::prepareMaps() const {
+	if (_mapsAreReady)
+		return;
+	ArchiveMemberList list;
+	listMembers(list);
+
+	for (ArchiveMemberList::iterator it = list.begin(); it != list.end(); it++) {
+		Common::String name = normalizePath((*it)->getName(), _separator);
+		size_t lastSep = name.rfind(_separator);
+		if (lastSep == Common::String::npos) {
+			_fileMap[""][name] = true;
+			continue;
+		}
+		if (lastSep != name.size() - 1) {
+			Common::String parent = name.substr(0, lastSep);
+			Common::String fname = name.substr(lastSep + 1);
+			_fileMap[parent][fname] = true;
+		}
+
+		int prevSep = -1;
+		for (uint i = 0; i <= lastSep; i++)
+			if (name[i] == _separator) {
+				Common::String parent = prevSep < 0 ? "" : name.substr(0, prevSep);
+				Common::String dname = name.substr(prevSep + 1, i - (prevSep + 1));
+				_directoryMap[parent][dname] = true;
+				prevSep = i;
+			}
+	}
+
+	for (AllfileMap::iterator itd = _directoryMap.begin();
+	     itd != _directoryMap.end(); itd++) {
+		for (SubfileSet::iterator its = itd->_value.begin(); its != itd->_value.end(); its++) {
+			_fileMap[itd->_key].erase(its->_key);
+		}
+	}
+
+	_mapsAreReady = true;
+}
+
 SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMember(const Path &path) const {
 	String translated = translatePath(path);
 	bool isNew = false;

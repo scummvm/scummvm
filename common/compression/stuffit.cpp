@@ -53,9 +53,6 @@ public:
 	int listMembers(Common::ArchiveMemberList &list) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
 	Common::SharedArchiveContents readContentsForPath(const Common::String& name) const override;
-	Common::String translatePath(const Common::Path &path) const override {
-		return path.toString();
-	}
 
 private:
 	struct FileEntry {
@@ -83,7 +80,7 @@ private:
 	void readTree14(Common::BitStream8LSB *bits, SIT14Data *dat, uint16 codesize, uint16 *result) const;
 };
 
-StuffItArchive::StuffItArchive() : Common::MemcachingCaseInsensitiveArchive() {
+StuffItArchive::StuffItArchive() : Common::MemcachingCaseInsensitiveArchive('/') {
 	_stream = nullptr;
 }
 
