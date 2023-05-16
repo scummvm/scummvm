@@ -50,7 +50,7 @@ class Mouse {
 	int _randomX;
 	int _randomY;
 
-	uint8 _drawModeBitFlags; // replaces the additive bool with a set of bit flags (including flags for additive mode)
+	uint16 _drawModeBitFlags; // replaces the additive bool with a set of bit flags (including flags for additive mode)
 
 public:
 	Mouse(BladeRunnerEngine *vm);
@@ -76,12 +76,21 @@ public:
 	Vector3 getXYZ(int x, int y) const;
 
 	typedef enum mouseDrawFlags {
-		REDCROSSHAIRS    = 0x01,
-		YELLOWCROSSHAIRS = 0x02,
-		BLUECROSSHAIRS   = 0x04,
-		SPECIAL          = 0x08,
-		ADDITIVE_MODE0   = 0x10,
-		ADDITIVE_MODE1   = 0x20
+		REDCROSSHAIRS    = 0x0001,
+		YELLOWCROSSHAIRS = 0x0002,
+		BLUECROSSHAIRS   = 0x0004,
+		SPECIAL          = 0x0008,
+		ADDITIVE_MODE0   = 0x0010,
+		ADDITIVE_MODE1   = 0x0020,
+		CUSTOM           = 0x0040,
+		EXIT_UP          = 0x0080,
+		EXIT_DOWN        = 0x0100,
+		EXIT_LEFT        = 0x0200,
+		EXIT_RIGHT       = 0x0400,
+		ESPER_UP         = 0x0800,
+		ESPER_DOWN       = 0x1000,
+		ESPER_LEFT       = 0x2000,
+		ESPER_RIGHT      = 0x4000
 	} MouseDrawFlags;
 };
 

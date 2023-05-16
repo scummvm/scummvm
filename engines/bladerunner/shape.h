@@ -47,10 +47,12 @@ class Shape {
 
 	bool load(Common::SeekableReadStream *stream);
 
+	void drawFilledTriangleAux(Graphics::Surface &surface, const int &dst_x, const int &dst_y, int x1, int y1, int x2, int y2, int x3, int y3, uint32 colorRGB) const;
+
 public:
 	~Shape();
 
-	void draw(Graphics::Surface &surface, int x, int y, uint8 drawModeBitFlags = 0) const;
+	void draw(Graphics::Surface &surface, int x, int y, uint16 drawModeBitFlags = 0) const;
 
 	int getWidth() const { return _width; }
 	int getHeight() const { return _height; }

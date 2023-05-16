@@ -1899,7 +1899,7 @@ bool Debugger::cmdRegion(int argc, const char **argv) {
 
 /**
 * click:  Toggle showing mouse click info in the text console (not the debugger window)
-* beta:   Toggle beta crosshairs for aiming in combat mode
+* beta:   Toggle beta crosshairs for aiming in combat mode, exit cursors (custom) and ESPER edge cursors (custom)
 * add0:   Toggle semi-transparent hotspot cursor (additive draw mode 0)
 * add1:   Toggle semi-transparent hotspot cursor (additive draw mode 1)
 */
