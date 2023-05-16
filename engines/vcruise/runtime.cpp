@@ -2221,6 +2221,21 @@ void Runtime::terminateScript() {
 	}
 }
 
+RoomScriptSet *Runtime::getRoomScriptSetForCurrentRoom() const {
+	if (!_scriptSet)
+		return nullptr;
+
+	uint roomNumber = _roomNumber;
+	if (roomNumber < _roomDuplicationOffsets.size())
+		roomNumber -= _roomDuplicationOffsets[roomNumber];
+
+	RoomScriptSetMap_t::const_iterator it = _scriptSet->roomScripts.find(roomNumber);
+	if (it == _scriptSet->roomScripts.end())
+		return nullptr;
+
+	return it->_value.get();
+}
+
 bool Runtime::checkCompletionConditions() {
 	bool succeeded = true;
 	for (uint i = 0; i < GyroState::kNumGyros; i++) {
@@ -2251,9 +2266,10 @@ bool Runtime::checkCompletionConditions() {
 
 	// Activate the corresponding failure or success interaction if present
 	if (_scriptSet) {
-		RoomScriptSetMap_t::const_iterator roomScriptIt = _scriptSet->roomScripts.find(_roomNumber);
-		if (roomScriptIt != _scriptSet->roomScripts.end()) {
-			const ScreenScriptSetMap_t &screenScriptsMap = roomScriptIt->_value->screenScripts;
+		RoomScriptSet *roomScriptSet = getRoomScriptSetForCurrentRoom();
+
+		if (roomScriptSet) {
+			const ScreenScriptSetMap_t &screenScriptsMap = roomScriptSet->screenScripts;
 			ScreenScriptSetMap_t::const_iterator screenScriptIt = screenScriptsMap.find(_screenNumber);
 			if (screenScriptIt != screenScriptsMap.end()) {
 				const ScreenScriptSet &screenScriptSet = *screenScriptIt->_value;
@@ -2790,9 +2806,10 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 		_swapOutScreen = 0;
 
 		if (_scriptSet) {
-			RoomScriptSetMap_t::const_iterator roomScriptIt = _scriptSet->roomScripts.find(_roomNumber);
-			if (roomScriptIt != _scriptSet->roomScripts.end()) {
-				const ScreenScriptSetMap_t &screenScriptsMap = roomScriptIt->_value->screenScripts;
+			RoomScriptSet *roomScriptSet = getRoomScriptSetForCurrentRoom();
+
+			if (roomScriptSet) {
+				const ScreenScriptSetMap_t &screenScriptsMap = roomScriptSet->screenScripts;
 				ScreenScriptSetMap_t::const_iterator screenScriptIt = screenScriptsMap.find(_screenNumber);
 				if (screenScriptIt != screenScriptsMap.end()) {
 					const Common::SharedPtr<Script> &script = screenScriptIt->_value->entryScript;
@@ -4097,13 +4114,11 @@ void Runtime::drawDebugOverlay() {
 
 Common::SharedPtr<Script> Runtime::findScriptForInteraction(uint interactionID) const {
 	if (_scriptSet) {
-		RoomScriptSetMap_t::const_iterator roomScriptIt = _scriptSet->roomScripts.find(_roomNumber);
+		RoomScriptSet *roomScriptSet = getRoomScriptSetForCurrentRoom();
 
-		if (roomScriptIt != _scriptSet->roomScripts.end()) {
-			const RoomScriptSet &roomScriptSet = *roomScriptIt->_value;
-
-			ScreenScriptSetMap_t::const_iterator screenScriptIt = roomScriptSet.screenScripts.find(_screenNumber);
-			if (screenScriptIt != roomScriptSet.screenScripts.end()) {
+		if (roomScriptSet) {
+			ScreenScriptSetMap_t::const_iterator screenScriptIt = roomScriptSet->screenScripts.find(_screenNumber);
+			if (screenScriptIt != roomScriptSet->screenScripts.end()) {
 				const ScreenScriptSet &screenScriptSet = *screenScriptIt->_value;
 
 				ScriptMap_t::const_iterator interactionScriptIt = screenScriptSet.interactionScripts.find(interactionID);
@@ -6364,9 +6379,10 @@ void Runtime::scriptOpGoto(ScriptArg_t arg) {
 	Common::SharedPtr<Script> newScript = nullptr;
 
 	if (_scriptSet) {
-		RoomScriptSetMap_t::const_iterator roomScriptIt = _scriptSet->roomScripts.find(_roomNumber);
-		if (roomScriptIt != _scriptSet->roomScripts.end()) {
-			const ScreenScriptSetMap_t &screenScriptsMap = roomScriptIt->_value->screenScripts;
+		RoomScriptSet *roomScriptSet = getRoomScriptSetForCurrentRoom();
+
+		if (roomScriptSet) {
+			const ScreenScriptSetMap_t &screenScriptsMap = roomScriptSet->screenScripts;
 			ScreenScriptSetMap_t::const_iterator screenScriptIt = screenScriptsMap.find(_screenNumber);
 			if (screenScriptIt != screenScriptsMap.end()) {
 				const ScreenScriptSet &screenScriptSet = *screenScriptIt->_value;
@@ -6546,8 +6562,15 @@ void Runtime::scriptOpMusicPlayScore(ScriptArg_t arg) {
 	startScoreSection();
 }
 
-OPCODE_STUB(ScoreAlways)
-OPCODE_STUB(ScoreNormal)
+void Runtime::scriptOpScoreAlways(ScriptArg_t arg) {
+	// This op should temporarily disable music mute
+	warning("ScoreAlways opcode isn't implemented yet");
+}
+
+void Runtime::scriptOpScoreNormal(ScriptArg_t arg) {
+	// This op should re-enable music mute
+	warning("ScoreNormal opcode isn't implemented yet");
+}
 
 void Runtime::scriptOpSndPlay(ScriptArg_t arg) {
 	TAKE_STACK_STR_NAMED(1, sndNameArgs);
@@ -6615,10 +6638,24 @@ void Runtime::scriptOpSndStop(ScriptArg_t arg) {
 		stopSound(*cachedSound);
 }
 
-OPCODE_STUB(SndStopAll)
+void Runtime::scriptOpSndStopAll(ScriptArg_t arg) {
+	for (const Common::SharedPtr<SoundInstance> &snd : _activeSounds)
+		stopSound(*snd);
+}
+
 OPCODE_STUB(SndAddRandom)
 OPCODE_STUB(SndClearRandom)
-OPCODE_STUB(VolumeAdd)
+
+
+
+void Runtime::scriptOpVolumeAdd(ScriptArg_t arg) {
+	TAKE_STACK_INT(3);
+
+	SoundInstance *cachedSound = resolveSoundByID(static_cast<uint>(stackArgs[0]));
+
+	if (cachedSound)
+		triggerSoundRamp(*cachedSound, stackArgs[1] * 100, cachedSound->volume + stackArgs[2], false);
+}
 
 void Runtime::scriptOpVolumeChange(ScriptArg_t arg) {
 	TAKE_STACK_INT(3);
@@ -6650,11 +6687,10 @@ void Runtime::scriptOpAnimChange(ScriptArg_t arg) {
 
 void Runtime::scriptOpScreenName(ScriptArg_t arg) {
 	const Common::String &scrName = _scriptSet->strings[arg];
-	RoomScriptSetMap_t::const_iterator scriptSetIt = _scriptSet->roomScripts.find(_roomNumber);
-	if (scriptSetIt == _scriptSet->roomScripts.end())
-		error("Couldn't resolve room number to find screen name: '%s'", scrName.c_str());
 
-	const RoomScriptSet *rss = scriptSetIt->_value.get();
+	RoomScriptSet *rss = getRoomScriptSetForCurrentRoom();
+	if (!rss)
+		error("Couldn't resolve room number to find screen name: '%s'", scrName.c_str());
 
 	ScreenNameMap_t::const_iterator screenNameIt = rss->screenNames.find(scrName);
 	if (screenNameIt == rss->screenNames.end())
@@ -6669,7 +6705,20 @@ void Runtime::scriptOpExtractByte(ScriptArg_t arg) {
 	_scriptStack.push_back(StackValue(static_cast<StackInt_t>((stackArgs[0] >> (stackArgs[1] * 8) & 0xff))));
 }
 
-OPCODE_STUB(InsertByte)
+void Runtime::scriptOpInsertByte(ScriptArg_t arg) {
+	TAKE_STACK_INT(3);
+
+	StackInt_t value = stackArgs[0];
+	StackInt_t valueToInsert = (stackArgs[1] & 0xff);
+	int bytePos = stackArgs[2];
+
+	StackInt_t mask = static_cast<StackInt_t>(0xff) << (bytePos * 8);
+
+	value -= (value & mask);
+	value += (valueToInsert << (bytePos * 8));
+
+	_scriptStack.push_back(StackValue(value));
+}
 
 void Runtime::scriptOpString(ScriptArg_t arg) {
 	_scriptStack.push_back(StackValue(_scriptSet->strings[arg]));
@@ -6824,9 +6873,20 @@ void Runtime::scriptOpIsCDVersion(ScriptArg_t arg) {
 	_scriptStack.push_back(StackValue(_isCDVariant ? 1 : 0));
 }
 
-OPCODE_STUB(Disc)
+void Runtime::scriptOpDisc(ScriptArg_t arg) {
+	TAKE_STACK_INT(1);
+
+	(void)stackArgs;
+
+	// Always pass correct disc checks
+	_scriptStack.push_back(StackValue(1));
+}
+
 OPCODE_STUB(HidePanel)
-OPCODE_STUB(RotateUpdate)
+
+void Runtime::scriptOpRotateUpdate(ScriptArg_t arg) {
+	warning("RotateUpdate op not implemented yet");
+}
 
 void Runtime::scriptOpMul(ScriptArg_t arg) {
 	TAKE_STACK_INT(2);

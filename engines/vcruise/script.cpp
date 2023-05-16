@@ -374,9 +374,6 @@ void ScriptCompiler::compileScriptSet(ScriptSet *ss) {
 					if (!parseNumber(token, roomNumber))
 						error("Error compiling script at line %i col %i: Expected number but found '%s'", static_cast<int>(state._lineNum), static_cast<int>(state._col), token.c_str());
 
-					if (_dialect == kScriptDialectSchizm && roomNumber == _fileRoom)
-						roomNumber = _loadAsRoom;
-
 					ss->roomScripts[roomNumber] = roomScript;
 				} else {
 					error("Error compiling script at line %i col %i: Expected number", static_cast<int>(state._lineNum), static_cast<int>(state._col));

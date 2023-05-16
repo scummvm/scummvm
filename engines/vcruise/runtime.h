@@ -83,6 +83,7 @@ struct ScriptSet;
 struct Script;
 struct IScriptCompilerGlobalState;
 struct Instruction;
+struct RoomScriptSet;
 
 enum GameState {
 	kGameStateBoot,							// Booting the game
@@ -770,6 +771,7 @@ private:
 	void drawSectionToScreen(const RenderSection &section, const Common::Rect &rect);
 	void commitSectionToScreen(const RenderSection &section, const Common::Rect &rect);
 	void terminateScript();
+	RoomScriptSet *getRoomScriptSetForCurrentRoom() const;
 	bool checkCompletionConditions();
 
 	void startTerminatingHorizontalPan(bool isRight);
