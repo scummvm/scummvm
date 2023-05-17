@@ -30,6 +30,8 @@
 
 #include "freescape/language/instruction.h"
 #include "freescape/objects/object.h"
+#include "freescape/objects/group.h"
+
 
 namespace Freescape {
 
@@ -50,6 +52,7 @@ public:
 	void remapColor(int index, int color);
 	void unremapColor(int index);
 	void draw(Renderer *gfx);
+	void drawGroup(Renderer *gfx, Group *group);
 	void show();
 
 	Object *shootRay(const Math::Ray &ray);

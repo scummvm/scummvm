@@ -26,6 +26,7 @@ MODULE_OBJS := \
 	movement.o \
 	neo.o \
 	objects/geometricobject.o \
+	objects/group.o \
 	objects/sensor.o \
 	scr.o \
 	sound.o \

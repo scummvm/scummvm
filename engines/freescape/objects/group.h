@@ -28,15 +28,16 @@ namespace Freescape {
 
 class Group : public Object {
 public:
-	Group(uint16 objectID_,
-		const Math::Vector3d &origin_,
-		const Math::Vector3d &rotation_) {
-		_objectID = objectID_;
-		_origin = origin_;
-		_rotation = rotation_;
-	}
+	Group(uint16 objectID_, uint16 flags_, const Common::Array<byte> data_);
+	void assemble(Object *obj);
+
+	Common::Array<Object *> _objects;
+	Common::Array<Math::Vector3d> _objectPositions;
+	Common::Array<int16> _objectIndices;
+	Common::Array<int16> _objectIds;
 
 	ObjectType getType() override { return ObjectType::kGroupType; };
+	bool isDrawable() override { return true; }
 	void draw(Freescape::Renderer *gfx) override { error("cannot render Group"); };
 	void scale(int factor) override { warning("cannot scale Group"); };
 	Object *duplicate() override { error("cannot duplicate Group"); };

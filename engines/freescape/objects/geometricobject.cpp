@@ -171,6 +171,16 @@ GeometricObject::GeometricObject(
 }
 
 void GeometricObject::setOrigin(Math::Vector3d origin_) {
+	if (isPolygon(_type)) {
+		Math::Vector3d offset = origin_ - _origin;
+		offset = 32 * offset;
+		for (int i = 0; i < int(_ordinates->size()); i = i + 3) {
+			(*_ordinates)[i    ] += uint16(offset.x());
+			(*_ordinates)[i + 1] += uint16(offset.y());
+			(*_ordinates)[i + 2] += uint16(offset.z());
+		}
+	}
+
 	_origin = origin_;
 	computeBoundingBox();
 }

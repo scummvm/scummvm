@@ -277,11 +277,23 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 
 	case kGroupType:
 		debugC(1, kFreescapeDebugParser, "Object of type 'group'");
-		file->seek(byteSizeOfObject, SEEK_CUR);
+		Common::Array<uint8> groupDataArray;
+		groupDataArray.push_back(uint8(position.x()));
+		groupDataArray.push_back(uint8(position.y()));
+		groupDataArray.push_back(uint8(position.z()));
+
+		groupDataArray.push_back(uint8(v.x()));
+		groupDataArray.push_back(uint8(v.y()));
+		groupDataArray.push_back(uint8(v.z()));
+
+		byteSizeOfObject++;
+		while(--byteSizeOfObject > 0)
+			groupDataArray.push_back(file->readByte());
+
 		return new Group(
 			objectID,
-			position,
-			v);
+			rawFlagsAndType,
+			groupDataArray);
 		break;
 	}
 	// Unreachable
@@ -485,6 +497,12 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	for (uint8 object = 0; object < numberOfObjects && areaNumber != 192; object++) {
 		debugC(1, kFreescapeDebugParser, "Reading object: %d", object);
 		Object *newObject = load8bitObject(file);
+
+		if (newObject->getType() == ObjectType::kGroupType) {
+			Group *group = (Group *)newObject;
+			for (ObjectMap::iterator it = objectsByID->begin(); it != objectsByID->end(); ++it)
+				group->assemble(it->_value);
+		}
 
 		if (newObject) {
 			newObject->scale(scale);
