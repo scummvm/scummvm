@@ -27,14 +27,13 @@ namespace Freescape {
 Group::Group(uint16 objectID_, uint16 flags_, const Common::Array<byte> data_) {
 	_objectID = objectID_;
 	_flags = flags_;
+	_scale = 0;
 
 	int i;
 	for (i = 0; i < 9; i++) {
 		debugC(1, kFreescapeDebugParser, "group data[%d] = %d", i, data_[i]);
 		if (data_[i] > 0)
 			_objectIds.push_back(data_[i]);
-		/*else
-			break;*/
 	}
 	i = 9;
 	while (i < int(data_.size())) {
@@ -47,9 +46,9 @@ Group::Group(uint16 objectID_, uint16 flags_, const Common::Array<byte> data_) {
 		//assert(data_[i] < _objectIds.size());
 		_objectIndices.push_back(data_[i]);
 
-		debug("data[%d] = %d", i + 1, data_[i + 1]);
-		debug("data[%d] = %d", i + 2, data_[i + 2]);
-		debug("data[%d] = %d", i + 3, data_[i + 3]);
+		debugC(1, kFreescapeDebugParser, "group data[%d] = %d", i + 1, data_[i + 1]);
+		debugC(1, kFreescapeDebugParser, "group data[%d] = %d", i + 2, data_[i + 2]);
+		debugC(1, kFreescapeDebugParser, "group data[%d] = %d", i + 3, data_[i + 3]);
 		Math::Vector3d position(data_[i + 1], data_[i + 2], data_[i + 3]);
 		_objectPositions.push_back(position);
 
@@ -59,8 +58,7 @@ Group::Group(uint16 objectID_, uint16 flags_, const Common::Array<byte> data_) {
 	if (isDestroyed()) // If the object is destroyed, restore it
 		restore();
 
-	_flags = _flags & ~0x80;
-	assert(!isInitiallyInvisible());
+	makeInitiallyVisible();
 	makeVisible();
 }
 
@@ -80,11 +78,18 @@ void Group::assemble(Object *obj) {
 		int index = _objectIndices[i];
 		if (index == objectIndex) {
 			Object *duplicate = obj->duplicate();
+			assert(_scale > 0);
 			Math::Vector3d position = _objectPositions[i];
+
+			if (!GeometricObject::isPolygon(obj->getType()))
+				position = 32 * position / _scale;
+
 			duplicate->setOrigin(position);
+			assert(!duplicate->isDestroyed());
 			_objects[i] = duplicate;
 		}
 	}
+	obj->makeInitiallyInvisible();
 }
 
 } // End of namespace Freescape

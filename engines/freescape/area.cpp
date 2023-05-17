@@ -222,21 +222,24 @@ void Area::resetArea() {
 }
 
 
-void Area::draw(Freescape::Renderer *gfx) {
+void Area::draw(Freescape::Renderer *gfx, uint32 ticks) {
 	assert(_drawableObjects.size() > 0);
 	for (auto &obj : _drawableObjects) {
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
 			if (obj->getType() != ObjectType::kGroupType)
 				obj->draw(gfx);
 			else
-				drawGroup(gfx, (Group *)obj);
+				drawGroup(gfx, (Group *)obj, ticks);
 		}
 	}
 }
 
-void Area::drawGroup(Freescape::Renderer *gfx, Group* group) {
-	for (auto &obj : group->_objects) {
-		obj->draw(gfx);
+void Area::drawGroup(Freescape::Renderer *gfx, Group* group, uint32 ticks) {
+	uint32 groupSize = group->_objects.size();
+	for (uint32 i = 0; i < groupSize ; i++) {
+		if ((ticks / 10) % (groupSize + 1) == i) {
+			group->_objects[i]->draw(gfx);
+		}
 	}
 }
 

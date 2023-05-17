@@ -51,8 +51,8 @@ public:
 	uint8 getScale();
 	void remapColor(int index, int color);
 	void unremapColor(int index);
-	void draw(Renderer *gfx);
-	void drawGroup(Renderer *gfx, Group *group);
+	void draw(Renderer *gfx, uint32 ticks);
+	void drawGroup(Renderer *gfx, Group *group, uint32 ticks);
 	void show();
 
 	Object *shootRay(const Math::Ray &ray);
