@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-05-15 10:43+0000\n"
-"PO-Revision-Date: 2023-04-23 16:08+0000\n"
+"PO-Revision-Date: 2023-05-17 15:40+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -111,14 +111,10 @@ msgid "Manual mode"
 msgstr "Ручний режим"
 
 #: gui/cloudconnectionwizard.cpp:183
-#, fuzzy
-#| msgid "Will ask you to run Local Webserver"
 msgid "Will ask you to run the Local Webserver"
 msgstr "Вас буде попрошено запустити локальний веб-сервер"
 
 #: gui/cloudconnectionwizard.cpp:185
-#, fuzzy
-#| msgid "Requires Local Webserver feature"
 msgid "Requires the Local Webserver feature"
 msgstr "Потребує локального веб-серверу"
 
@@ -127,12 +123,12 @@ msgid "Quick Mode: Step 1"
 msgstr "Швидкий Режим: Крок 1"
 
 #: gui/cloudconnectionwizard.cpp:206
-#, fuzzy
-#| msgid "In this mode, Local Webserver must be running,"
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
-msgstr "В цьому режимі має бути запущено локльний веб-сервер,"
+msgstr ""
+"В цьому режимі має бути запущено локальний веб-сервер,\n"
+"аби ваш переглядач інтернету міг передати дані до ScummVM"
 
 #: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:3651
 msgid "Stop server"
@@ -160,7 +156,7 @@ msgstr "Швидкий Режим: Крок 2"
 
 #: gui/cloudconnectionwizard.cpp:263
 msgid "Now, open this link in your browser:"
-msgstr ""
+msgstr "А зараз відкрийте наступну лінку у вашому переглядачі:"
 
 #: gui/cloudconnectionwizard.cpp:264 gui/cloudconnectionwizard.cpp:319
 #: gui/message.cpp:218 gui/message.cpp:222
@@ -172,10 +168,12 @@ msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
 msgstr ""
+"Він автоматично передасть дані до ScummVM,\n"
+"а також покаже помилки, якщо вони виникнуть."
 
 #: gui/cloudconnectionwizard.cpp:279
 msgid "Local Webserver address: "
-msgstr ""
+msgstr "Адреса локального веб-сервера: "
 
 #: gui/cloudconnectionwizard.cpp:295
 msgid "Quick Mode: Success"
