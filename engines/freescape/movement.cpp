@@ -379,7 +379,7 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 
 void FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, Math::Vector3d const newPosition) {
 	// We need to make sure the bounding box touches the floor so we will expand it and run the collision checking
-	uint tolerance = 3;
+	uint tolerance = isCastle() ? 1 : 3;
 	Math::Vector3d v(newPosition.x() - 1, newPosition.y() - _playerHeight - tolerance, newPosition.z() - 1);
 	Math::AABB boundingBox(lastPosition, lastPosition);
 	boundingBox.expand(v);
