@@ -226,8 +226,17 @@ void Area::draw(Freescape::Renderer *gfx) {
 	assert(_drawableObjects.size() > 0);
 	for (auto &obj : _drawableObjects) {
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
-			obj->draw(gfx);
+			if (obj->getType() != ObjectType::kGroupType)
+				obj->draw(gfx);
+			else
+				drawGroup(gfx, (Group *)obj);
 		}
+	}
+}
+
+void Area::drawGroup(Freescape::Renderer *gfx, Group* group) {
+	for (auto &obj : group->_objects) {
+		obj->draw(gfx);
 	}
 }
 

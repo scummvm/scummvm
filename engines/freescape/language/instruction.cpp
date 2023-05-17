@@ -203,6 +203,9 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 		case Token::REDRAW:
 			executeRedraw(instruction);
 			break;
+		case Token::EXECUTE:
+			executeExecute(instruction);
+			break;
 		case Token::DELAY:
 			executeDelay(instruction);
 			break;
@@ -248,6 +251,12 @@ void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
 	g_system->updateScreen();
 	g_system->delayMillis(10);
 	waitForSounds();
+}
+
+void FreescapeEngine::executeExecute(FCLInstruction &instruction) {
+	// TODO
+	uint16 objId = instruction._source;
+	debugC(1, kFreescapeDebugCode, "Executing instructions from object %d", objId);
 }
 
 void FreescapeEngine::executeSound(FCLInstruction &instruction) {
