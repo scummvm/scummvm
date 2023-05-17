@@ -526,8 +526,12 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 
 	int width = _width;
 	int height = _height;
+	bool immediate = _sprite->_immediate;
 
 	*_sprite = *nextSprite;
+
+	// Persist the immediate flag
+	_sprite->_immediate = immediate;
 
 	// TODO: auto expand text size is meaning less for us, not all text
 	// since we are using initialRect for the text cast member now, then the sprite size is meaning less for us.
