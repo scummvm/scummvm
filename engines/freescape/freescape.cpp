@@ -288,7 +288,7 @@ void FreescapeEngine::drawFrame() {
 	}
 
 	drawBackground();
-	_currentArea->draw(_gfx);
+	_currentArea->draw(_gfx, _ticks);
 
 	if (_underFireFrames > 0) {
 		for (auto &it : _sensors) {

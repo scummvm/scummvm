@@ -498,14 +498,14 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		debugC(1, kFreescapeDebugParser, "Reading object: %d", object);
 		Object *newObject = load8bitObject(file);
 
-		if (newObject->getType() == ObjectType::kGroupType) {
-			Group *group = (Group *)newObject;
-			for (ObjectMap::iterator it = objectsByID->begin(); it != objectsByID->end(); ++it)
-				group->assemble(it->_value);
-		}
-
 		if (newObject) {
 			newObject->scale(scale);
+			if (newObject->getType() == ObjectType::kGroupType) {
+				Group *group = (Group *)newObject;
+				for (ObjectMap::iterator it = objectsByID->begin(); it != objectsByID->end(); ++it)
+					group->assemble(it->_value);
+			}
+
 			if (newObject->getType() == kEntranceType) {
 				if (entrancesByID->contains(newObject->getObjectID() & 0x7fff))
 					error("WARNING: replacing object id %d (%d)", newObject->getObjectID(), newObject->getObjectID() & 0x7fff);

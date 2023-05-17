@@ -35,11 +35,12 @@ public:
 	Common::Array<Math::Vector3d> _objectPositions;
 	Common::Array<int16> _objectIndices;
 	Common::Array<int16> _objectIds;
+	int _scale;
 
 	ObjectType getType() override { return ObjectType::kGroupType; };
 	bool isDrawable() override { return true; }
 	void draw(Freescape::Renderer *gfx) override { error("cannot render Group"); };
-	void scale(int factor) override { warning("cannot scale Group"); };
+	void scale(int scale_) override { _scale = scale_; };
 	Object *duplicate() override { error("cannot duplicate Group"); };
 };
 

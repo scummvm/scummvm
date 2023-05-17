@@ -71,6 +71,8 @@ public:
 	void makeInvisible() { _flags = _flags | 0x40; }
 	void makeVisible() { _flags = _flags & ~0x40; }
 	bool isInitiallyInvisible() { return _flags & 0x80; }
+	void makeInitiallyInvisible() { _flags = _flags | 0x80; }
+	void makeInitiallyVisible() { _flags = _flags & ~0x80; }
 	bool isDestroyed() { return _flags & 0x20; }
 	void destroy() { _flags = _flags | 0x20; }
 	void restore() { _flags = _flags & ~0x20; }
