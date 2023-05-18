@@ -297,7 +297,7 @@ public:
  * This is done both in non-flat and flat mode.
  *
  */
-class FSDirectory : public AbstractListableArchive {
+class FSDirectory : public Archive {
 	FSNode _node;
 	int _depth;
 	bool _flat;

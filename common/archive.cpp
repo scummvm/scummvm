@@ -381,6 +381,34 @@ bool SearchSet::hasFile(const Path &path) const {
 	return false;
 }
 
+bool SearchSet::hasDirectory(const Common::Path &path) const {
+	if (path.empty())
+		return true;
+
+	ArchiveNodeList::const_iterator it = _list.begin();
+	for (; it != _list.end(); ++it) {
+		if (it->_arc->hasDirectory(path))
+			return true;
+	}
+
+	return false;
+}
+
+bool SearchSet::getChildren(const Common::Path &path, Common::Array<Common::String> &list, ListMode mode, bool hidden) const {
+	bool hasAny = false;
+	ArchiveNodeList::const_iterator it = _list.begin();
+	list.clear();
+	for (; it != _list.end(); ++it) {
+		Common::Array<Common::String> tmpList;
+		if (it->_arc->getChildren(path, tmpList, mode, hidden)) {
+			list.push_back(tmpList);
+			hasAny = true;
+		}
+	}
+
+	return hasAny;
+}
+
 int SearchSet::listMatchingMembers(ArchiveMemberList &list, const Path &pattern, bool matchPathComponents) const {
 	int matches = 0;
 
