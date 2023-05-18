@@ -67,6 +67,7 @@ enum Platform : int8 {
 	kPlatformWii,
 	kPlatformPSX,
 	kPlatformPS2,
+	kPlatformPS3,
 	kPlatformXbox,
 	kPlatformCDi,
 	kPlatformIOS,
