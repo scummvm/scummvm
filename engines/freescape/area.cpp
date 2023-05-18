@@ -236,10 +236,10 @@ void Area::draw(Freescape::Renderer *gfx, uint32 ticks) {
 
 void Area::drawGroup(Freescape::Renderer *gfx, Group* group, uint32 ticks) {
 	uint32 groupSize = group->_objects.size();
+	uint32 frameSize = group->_objectPositions.size();
 	for (uint32 i = 0; i < groupSize ; i++) {
-		if ((ticks / 10) % (groupSize + 1) == i) {
-			group->_objects[i]->draw(gfx);
-		}
+		group->assemble((ticks / 10) % frameSize, i);
+		group->_objects[i]->draw(gfx);
 	}
 }
 

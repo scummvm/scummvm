@@ -503,7 +503,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 			if (newObject->getType() == ObjectType::kGroupType) {
 				Group *group = (Group *)newObject;
 				for (ObjectMap::iterator it = objectsByID->begin(); it != objectsByID->end(); ++it)
-					group->assemble(it->_value);
+					group->linkObject(it->_value);
 			}
 
 			if (newObject->getType() == kEntranceType) {
