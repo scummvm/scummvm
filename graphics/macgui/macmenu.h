@@ -165,6 +165,8 @@ public:
 	void setAction(MacMenuItem *menuItem, int actionId);
 	int getAction(MacMenuItem *menuItem);
 
+	int getLastSelectedMenuItem() { return _lastActiveItem; };
+	int getLastSelectedSubmenuItem() { return _lastActiveSubItem; };
 
 protected:
 	Common::Rect _bbox;
@@ -175,6 +177,7 @@ protected:
 	Common::Array<MacMenuSubMenu *> _menustack;
 
 	void renderSubmenu(MacMenuSubMenu *menu, bool recursive = true);
+	void calcSubMenuBounds(MacMenuSubMenu *menu, int x, int y);
 
 private:
 	ManagedSurface _tempSurface;
@@ -191,7 +194,6 @@ private:
 	void processSubmenuTabs(MacMenuSubMenu *submenu);
 
 	int calcSubMenuWidth(MacMenuSubMenu *menu);
-	void calcSubMenuBounds(MacMenuSubMenu *menu, int x, int y);
 
 	bool keyEvent(Common::Event &event);
 	bool mouseRelease(int x, int y);
@@ -211,6 +213,9 @@ private:
 
 	int _activeItem;
 	int _activeSubItem;
+
+	int _lastActiveItem;
+	int _lastActiveSubItem;
 
 	void (*_ccallback)(int action, Common::String &text, void *data);
 	void (*_unicodeccallback)(int action, Common::U32String &text, void *data);
