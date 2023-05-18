@@ -24,6 +24,7 @@
 
 #include "graphics/managed_surface.h"
 #include "ags/lib/allegro/base.h"
+#include "ags/lib/allegro/color.h"
 #include "common/array.h"
 
 namespace AGS3 {
@@ -265,6 +266,96 @@ public:
 	// kTintBlenderMode and kTintLightBlenderMode
 	void blendTintSprite(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha, bool light) const;
 
+	template<int FormatType>
+	void drawInner(int yStart, int xStart, uint32_t transColor, uint32_t alphaMask, PALETTE palette, bool useTint, bool sameFormat, const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea, bool horizFlip, bool vertFlip, bool skipTrans, int srcAlpha, int tintRed, int tintGreen, int tintBlue, const Common::Rect &dstRect, const Common::Rect &srcArea) {
+		const int xDir = horizFlip ? -1 : 1;
+		byte rSrc, gSrc, bSrc, aSrc;
+		byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
+		
+		for (int destY = yStart, yCtr = 0; yCtr < dstRect.height(); ++destY, ++yCtr) {
+			if (destY < 0 || destY >= destArea.h)
+				continue;
+			byte *destP = (byte *)destArea.getBasePtr(0, destY);
+			const byte *srcP = (const byte *)src.getBasePtr(
+			                       horizFlip ? srcArea.right - 1 : srcArea.left,
+			                       vertFlip ? srcArea.bottom - 1 - yCtr :
+			                       srcArea.top + yCtr);
+
+			// Loop through the pixels of the row
+			for (int destX = xStart, xCtr = 0, xCtrBpp = 0; xCtr < dstRect.width(); ++destX, ++xCtr, xCtrBpp += src.format.bytesPerPixel) {
+				if (destX < 0 || destX >= destArea.w)
+					continue;
+
+				const byte *srcVal = srcP + xDir * xCtrBpp;
+				uint32 srcCol = getColor(srcVal, src.format.bytesPerPixel);
+
+				// Check if this is a transparent color we should skip
+				if (skipTrans && ((srcCol & alphaMask) == transColor))
+					continue;
+
+				byte *destVal = (byte *)&destP[destX * format.bytesPerPixel];
+
+				// When blitting to the same format we can just copy the color
+				if (format.bytesPerPixel == 1) {
+					*destVal = srcCol;
+					continue;
+				} else if (sameFormat && srcAlpha == -1) {
+					if (format.bytesPerPixel == 4)
+						*(uint32 *)destVal = srcCol;
+					else
+						*(uint16 *)destVal = srcCol;
+					continue;
+				}
+
+				// We need the rgb values to do blending and/or convert between formats
+				if (src.format.bytesPerPixel == 1) {
+					const RGB &rgb = palette[srcCol];
+					aSrc = 0xff;
+					rSrc = rgb.r;
+					gSrc = rgb.g;
+					bSrc = rgb.b;
+				} else {
+					if (FormatType == 1) {
+						aSrc = srcCol >> src.format.aShift & 0xff;
+						rSrc = srcCol >> src.format.rShift & 0xff;
+						gSrc = srcCol >> src.format.gShift & 0xff;
+						bSrc = srcCol >> src.format.bShift & 0xff;
+					} else {
+						src.format.colorToARGB(srcCol, aSrc, rSrc, gSrc, bSrc);
+					}
+				}
+
+				if (srcAlpha == -1) {
+					// This means we don't use blending.
+					aDest = aSrc;
+					rDest = rSrc;
+					gDest = gSrc;
+					bDest = bSrc;
+				} else {
+					if (useTint) {
+						rDest = rSrc;
+						gDest = gSrc;
+						bDest = bSrc;
+						aDest = aSrc;
+						rSrc = tintRed;
+						gSrc = tintGreen;
+						bSrc = tintBlue;
+						aSrc = srcAlpha;
+					} else {
+						// TODO: move this to blendPixel to only do it when needed?
+						format.colorToARGB(getColor(destVal, format.bytesPerPixel), aDest, rDest, gDest, bDest);
+					}
+					blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha);
+				}
+
+				uint32 pixel = format.ARGBToColor(aDest, rDest, gDest, bDest);
+				if (format.bytesPerPixel == 4)
+					*(uint32 *)destVal = pixel;
+				else
+					*(uint16 *)destVal = pixel;
+			}
+		}
+	}
 
 	inline uint32 getColor(const byte *data, byte bpp) const {
 		switch (bpp) {
