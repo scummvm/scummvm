@@ -43,7 +43,7 @@ public:
 	friend class Lab;
 };
 
-class Lab : public Common::Archive {
+class Lab : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	bool open(const Common::String &filename, bool keepStream = false);
 	Lab();

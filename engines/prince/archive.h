@@ -28,7 +28,7 @@
 
 namespace Prince {
 
-class PtcArchive : public Common::Archive {
+class PtcArchive : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	PtcArchive();
 	~PtcArchive() override;

@@ -46,7 +46,7 @@ enum {
 	TITLE_IMAGE = 9999
 };
 
-class Pics : public Common::Archive {
+class Pics : public Common::DefaultListableCaseInsensitiveArchive {
 	struct ImageContext {
 		Common::File _file;
 		uint _picIndex;

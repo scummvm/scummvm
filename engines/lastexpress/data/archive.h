@@ -41,7 +41,7 @@
 
 namespace LastExpress {
 
-class HPFArchive : public Common::Archive {
+class HPFArchive : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	HPFArchive(const Common::String &path);
 

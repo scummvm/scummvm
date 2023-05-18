@@ -125,7 +125,7 @@ public:
 /**
  * Resources manager
  */
-class Resources : public Common::Archive {
+class Resources : public Common::DefaultListableCaseInsensitiveArchive {
 	struct LocalResource {
 		Common::String _name;
 		Common::Array<byte> _data;

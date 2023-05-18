@@ -53,7 +53,7 @@ struct ZfsEntryHeader {
 
 typedef Common::HashMap<Common::String, ZfsEntryHeader *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ZfsEntryHeaderMap;
 
-class ZfsArchive : public Common::Archive {
+class ZfsArchive : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	ZfsArchive(const Common::String &fileName);
 	ZfsArchive(const Common::String &fileName, Common::SeekableReadStream *stream);

@@ -39,7 +39,7 @@
 /**
  * Adapter to be able to use Common::Archive based code from the AD.
  */
-class FileMapArchive : public Common::Archive {
+class FileMapArchive : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	FileMapArchive(const AdvancedMetaEngineDetection::FileMap &fileMap) : _fileMap(fileMap) {}
 

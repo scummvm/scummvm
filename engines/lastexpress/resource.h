@@ -33,7 +33,7 @@ class Background;
 class Cursor;
 class Font;
 
-class ResourceManager : public Common::Archive {
+class ResourceManager : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	ResourceManager(bool demo);
 	~ResourceManager() override;

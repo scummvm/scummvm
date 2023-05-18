@@ -27,7 +27,7 @@
 
 namespace Grim {
 
-class LangFilter : public Common::Archive {
+class LangFilter : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	LangFilter(Common::Archive *arc, Common::Language lang);
 	~LangFilter();

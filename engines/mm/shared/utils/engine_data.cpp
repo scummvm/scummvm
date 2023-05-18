@@ -59,7 +59,7 @@ public:
  * The data archive class encapsulates access to a specific subfolder
  * for the game within the engine data zip file as a generic "data" folder
  */
-class DataArchive : public Common::Archive {
+class DataArchive : public Common::DefaultListableCaseInsensitiveArchive {
 private:
 	Common::Archive *_zip;
 	Common::String _publicFolder;
@@ -116,7 +116,7 @@ public:
  * recreate the data file every time a change is made. mm.dat then just has
  * to be recreated prior to a release or when the changes are completed and stable
  */
-class DataArchiveProxy : public Common::Archive {
+class DataArchiveProxy : public Common::DefaultListableCaseInsensitiveArchive {
 	friend class DataArchive;
 private:
 	Common::FSNode _folder;

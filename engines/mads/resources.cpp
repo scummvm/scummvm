@@ -33,7 +33,7 @@ enum ResourceType {RESTYPE_ROOM, RESTYPE_SC, RESTYPE_TEXT, RESTYPE_QUO, RESTYPE_
 /**
  * HAG Archives implementation
  */
-class HagArchive : public Common::Archive {
+class HagArchive : public Common::DefaultListableCaseInsensitiveArchive {
 private:
 	/**
 	 * Details of a single entry in a HAG file index

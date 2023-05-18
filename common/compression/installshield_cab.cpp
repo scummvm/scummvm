@@ -55,7 +55,7 @@ namespace Common {
 
 namespace {
 
-class InstallShieldCabinet : public Archive {
+class InstallShieldCabinet : public DefaultListableCaseInsensitiveArchive {
 public:
 	InstallShieldCabinet();
 

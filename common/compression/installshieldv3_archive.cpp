@@ -26,7 +26,7 @@
 
 namespace Common {
 
-InstallShieldV3::InstallShieldV3() : Common::Archive() {
+InstallShieldV3::InstallShieldV3() : Common::DefaultListableCaseInsensitiveArchive('\\') {
 	_stream = nullptr;
 }
 

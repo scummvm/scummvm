@@ -27,7 +27,7 @@
 
 namespace Director {
 
-class CachedArchive : public Common::Archive {
+class CachedArchive : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	struct InputEntry {
 		Common::String name;

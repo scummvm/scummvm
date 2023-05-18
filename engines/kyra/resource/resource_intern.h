@@ -34,7 +34,7 @@ namespace Kyra {
 
 class Resource;
 
-class PlainArchive : public Common::Archive {
+class PlainArchive : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	struct Entry {
 		Entry() : offset(0), size(0) {}
@@ -61,7 +61,7 @@ private:
 	FileMap _files;
 };
 
-class TlkArchive : public Common::Archive {
+class TlkArchive : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	TlkArchive(Common::ArchiveMemberPtr file, uint16 entryCount, const uint32 *fileEntries);
 	~TlkArchive() override;
@@ -79,7 +79,7 @@ private:
 	const uint32 *const _fileEntries;
 };
 
-class CachedArchive : public Common::Archive {
+class CachedArchive : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	struct InputEntry {
 		Common::String name;

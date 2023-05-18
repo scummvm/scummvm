@@ -32,7 +32,7 @@
 
 namespace Common {
 
-class InstallShieldV3 : public Common::Archive {
+class InstallShieldV3 : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	InstallShieldV3();
 	~InstallShieldV3() override;

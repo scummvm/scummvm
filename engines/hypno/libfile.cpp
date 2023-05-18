@@ -24,7 +24,7 @@
 
 namespace Hypno {
 
-LibFile::LibFile() : Common::Archive() {
+LibFile::LibFile() : Common::DefaultListableCaseInsensitiveArchive() {
 	_libfile = nullptr;
 	_encrypted = true;
 }
