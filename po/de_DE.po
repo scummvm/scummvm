@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-05-15 10:43+0000\n"
-"PO-Revision-Date: 2023-05-10 17:31+0000\n"
+"PO-Revision-Date: 2023-05-18 01:27+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -2752,14 +2752,12 @@ msgid "TB"
 msgstr "TB"
 
 #: dists/android.strings.xml.cpp:30
-#, fuzzy
-#| msgid "Quit ScummVM"
 msgid "ScummVM"
-msgstr "ScummVM beenden"
+msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
 msgid "Graphic adventure game engine"
-msgstr ""
+msgstr "Spiele-Engine für Grafik-Adventures"
 
 #: dists/android.strings.xml.cpp:33
 #: backends/events/default/default-events.cpp:217
@@ -2774,43 +2772,39 @@ msgstr "Beenden"
 
 #: dists/android.strings.xml.cpp:34
 msgid "Config File Error"
-msgstr ""
+msgstr "Fehler in Konfigurationsdatei"
 
 #: dists/android.strings.xml.cpp:35
 msgid "Unable to read ScummVM config file or create a new one!"
-msgstr ""
+msgstr "Fehler beim Lesen oder Erstellen der ScummVM-Konfigurationsdatei!"
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Save Path:"
 msgid "Save Path Error"
-msgstr "Spielstände:"
+msgstr "Speicherpfad-Fehler"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Unable to create or access default save path!"
-msgstr ""
+msgstr "Fehler beim Erzeugen oder Zugriff auf den Speicherpfad!"
 
 #: dists/android.strings.xml.cpp:38
-#, fuzzy
-#| msgid "Icon Path:"
 msgid "Icons Path Error"
-msgstr "Icon-Pfad:"
+msgstr "Iconpfad-Fehler"
 
 #: dists/android.strings.xml.cpp:39
 msgid "Unable to create or access default icons and shaders path!"
-msgstr ""
+msgstr "Fehler beim Erzeugen oder Zugriff auf den Icon- und Shader-Pfad!"
 
 #: dists/android.strings.xml.cpp:40
 msgid ""
 "Unable to access the globally set save path! Please revert to default from "
 "ScummVM Options"
 msgstr ""
+"Auf den global gesetzten Speicherpfad konnte nicht zugegriffen werden! Bitte "
+"nutze die ScummVM-Optionen, um auf die Standard-Einstellung zurückzugekehren"
 
 #: dists/android.strings.xml.cpp:41
-#, fuzzy
-#| msgid "Virtual keyboard"
 msgid "Toggle virtual keyboard"
-msgstr "Virtuelle Tastatur"
+msgstr "Virtuelle Tastatur umschalten"
 
 #: dists/android.strings.xml.cpp:42 engines/scumm/help.cpp:78
 #: engines/scumm/help.cpp:82 engines/scumm/help.cpp:84
@@ -2821,13 +2815,11 @@ msgstr "Alt"
 
 #: dists/android.strings.xml.cpp:45
 msgid "Done"
-msgstr ""
+msgstr "Fertig"
 
 #: dists/android.strings.xml.cpp:46
-#, fuzzy
-#| msgid "Exchange"
 msgid "Mode change"
-msgstr "Austauschen"
+msgstr "Modus ändern"
 
 #: dists/android.strings.xml.cpp:47
 msgid "Shift"
@@ -2839,20 +2831,20 @@ msgid "Enter"
 msgstr "Enter"
 
 #: dists/android.strings.xml.cpp:49
-#, fuzzy
-#| msgid "Close"
 msgid "Close popup"
-msgstr "Schließen"
+msgstr "Popup schließen"
 
 #: dists/android.strings.xml.cpp:50
 msgid ""
 "Please select the *root* of your external (physical) SD card. This is "
 "required for ScummVM to access this path: "
 msgstr ""
+"Bitte wähle das *Stammverzeichnis* deiner externen SD-Karte. Dies wird von "
+"ScummVM für den Zugriff auf folgenden Pfad benötigt: "
 
 #: dists/android.strings.xml.cpp:51
 msgid "Storage Access Framework Permissions for ScummVM were revoked!"
-msgstr ""
+msgstr "Die Storage Access Framework Permissions für ScummVM wurden widerrufen!"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:32
@@ -4327,6 +4319,20 @@ msgid ""
 "Pinch gesture: Enables/disables keyboard\n"
 "Keyboard spacebar: Pause"
 msgstr ""
+"Gesten und STeuerung:\n"
+"\n"
+"Tippen: Linke Maustaste\n"
+"Mit zwei Fingern tippen: Rechte Maustaste\n"
+"Mit zwei Fingern doppelt tippen: ESC\n"
+"Mit zwei Fingern wischen (unten nach oben): Schaltet Maus-Modus um\n"
+"Mit zwei Fingern wischen (links nach rechts): Schaltet zwischen direkter "
+"Touch-Eingabe und Touchpad-Modus um\n"
+"Mit zwei Fingern wischen (rechts nach links): Zeigt/verbirgt die On-Screen-"
+"Steuerung\n"
+"Mit zwei Fingern wischen (oben nach unten): Globales Hauptmenü\n"
+"Mit drei Fingern wischen: Pfeiltasten\n"
+"Pinch-Geste: Tastatur aktivieren/deaktivieren\n"
+"Leertaste: Pause"
 
 #: backends/platform/ios7/ios7_options.mm:115
 msgid ""
@@ -4343,6 +4349,18 @@ msgid ""
 "Touch (not press) on bottom of Touch area: Down arrow key\n"
 "Keyboard spacebar: Pause"
 msgstr ""
+"Verwendung der Apple TV-Fernbedienung:\n"
+"\n"
+"Touch-Bereich drücken: Linke Maustaste\n"
+"Play/Pause-Button drücken: Rechte Maustaste\n"
+"Zurück/Menü-Button im Spiel: Globales Hauptmenü\n"
+"Zurück/Menü-Button im Launcher: Apple TV-Hauptmenü\n"
+"Play/Pause-Button halten: Tastatur mit weiteren Tasten anzeigen\n"
+"Oberen Bereich des Touch-Feldes antippen: Pfeiltaste nach oben\n"
+"Linken Bereich des Touch-Feldes antippen: Pfeiltaste nach links\n"
+"Rechten Bereich des Touch-Feldes antippen: Pfeiltaste nach rechts\n"
+"Unteren Bereich des Touch-Feldes antippen: Pfeiltaste nach unten\n"
+"Leertaste: Pause"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:466
 #: backends/platform/iphone/osys_events.cpp:299
@@ -9453,7 +9471,7 @@ msgstr ""
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
-msgstr ""
+msgstr "Verbesserte Klick-Empfindlichkeit"
 
 #: engines/vcruise/metaengine.cpp:43
 msgid ""
@@ -9461,6 +9479,9 @@ msgid ""
 "interactions.  If this is off, any mouse movement while the mouse button is "
 "held cancels a click interaction."
 msgstr ""
+"Die Maus kann über kurze Distanzen bewegt werden, ohne, dass Klick-"
+"Interaktionen abgebrochen werden.  Wenn diese option deaktiviert ist, werden "
+"Mausklicks abgebrochen, wenn die Maus währenddessen bewegt wird."
 
 #: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
