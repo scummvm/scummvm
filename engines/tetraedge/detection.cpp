@@ -67,7 +67,8 @@ Common::String TetraedgeMetaEngineDetection::customizeGuiOptionsLanguages(const 
 
 	static const char *subDirs[] = {
 		nullptr,
-		"PC-MacOSX-Android-iPhone-iPad"
+		"PC-MacOSX-Android-iPhone-iPad",
+		"PS3"
 	};
 
 	bool hasLang[ARRAYSIZE(languages)];

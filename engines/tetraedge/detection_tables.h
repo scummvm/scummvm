@@ -158,6 +158,16 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
 	},
 
+	{
+		"syberia",
+	        nullptr,
+		AD_ENTRY1s("InGame.data", "5cb78f2c8aac837fe53596ecfe921b38", 2195),
+		Common::UNK_LANG,
+		Common::kPlatformPS3,
+		ADGF_UNSUPPORTED,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+
 	// v1.0.2 Buka release
 	{
 		"syberia2",
@@ -232,6 +242,16 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		Common::UNK_LANG,
 		Common::kPlatformIOS,
 		ADGF_UNSTABLE,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+
+	{
+		"syberia2",
+		nullptr,
+		AD_ENTRY1s("Debug.data", "d5cfcba9b725e746df39109e7e1b0564", 7024),
+		Common::UNK_LANG,
+		Common::kPlatformPS3,
+		ADGF_UNSUPPORTED,
 		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
 	},
 

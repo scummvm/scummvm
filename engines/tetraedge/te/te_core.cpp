@@ -173,6 +173,7 @@ TetraedgeFSNode TeCore::findFile(const Common::Path &path, bool quiet) const {
 		"PC-PS3-Android-MacOSX-iPhone-iPad-NX",
 		"PC-PS3-Android",
 		"PC-Android",
+		"PS3",
 		"Android",
 		"Android/HD",
 		"Android-iPhone-iPad",

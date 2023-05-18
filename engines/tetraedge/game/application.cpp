@@ -76,6 +76,9 @@ _permanentHelp(true), _musicOn(true) {
 		platform = "NX";
 		core->fileFlagSystemSetFlag("pad", "padDisabled");
 		break;
+	case Common::Platform::kPlatformPS3:
+		platform = "PS3";
+		break;
 	default:
 		error("Unsupported platform");
 	}
