@@ -43,6 +43,7 @@ namespace Audio {
 
 class AudioStream;
 class SeekableAudioStream;
+class LoopingAudioStream;
 
 } // End of namespace Audio
 
@@ -216,8 +217,14 @@ struct SoundCache {
 	~SoundCache();
 
 	Common::SharedPtr<Audio::SeekableAudioStream> stream;
-	Common::SharedPtr<Audio::AudioStream> loopingStream;
+	Common::SharedPtr<Audio::LoopingAudioStream> loopingStream;
 	Common::SharedPtr<AudioPlayer> player;
+};
+
+enum SoundLoopingType {
+	kSoundLoopingTypeNotLooping,	// Was never looping
+	kSoundLoopingTypeTerminated,	// Was looping and then converted into non-looping
+	kSoundLoopingTypeLooping,		// Is looping
 };
 
 struct SoundInstance {
@@ -242,7 +249,7 @@ struct SoundInstance {
 	int32 effectiveBalance;
 
 	bool is3D;
-	bool isLooping;
+	SoundLoopingType loopingType;
 	bool isSpeech;
 	bool isSilencedLoop;	// Loop is still playing but reached 0 volume so the player was unloaded
 	int32 x;
@@ -250,6 +257,7 @@ struct SoundInstance {
 
 	SoundParams3D params3D;
 
+	uint32 startTime;
 	uint32 endTime;
 	uint32 duration;
 };
@@ -817,6 +825,7 @@ private:
 	void triggerSound(bool looping, SoundInstance &sound, int32 volume, int32 balance, bool is3D, bool isSpeech);
 	void triggerSoundRamp(SoundInstance &sound, uint durationMSec, int32 newVolume, bool terminateOnCompletion);
 	void stopSound(SoundInstance &sound);
+	void convertLoopingSoundToNonLooping(SoundInstance &sound);
 	void updateSounds(uint32 timestamp);
 	void updateSubtitles();
 	void update3DSounds();
@@ -1170,6 +1179,7 @@ private:
 	Common::SharedPtr<Video::AVIDecoder> _animDecoder;
 	Common::SharedPtr<SfxPlaylist> _animPlaylist;
 	AnimDecoderState _animDecoderState;
+	bool _animTerminateAtStartOfFrame;
 	uint _animPendingDecodeFrame;
 	uint _animDisplayingFrame;
 	uint _animFirstFrame;

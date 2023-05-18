@@ -555,7 +555,7 @@ SoundCache::~SoundCache() {
 
 SoundInstance::SoundInstance()
 	: id(0), rampStartVolume(0), rampEndVolume(0), rampRatePerMSec(0), rampStartTime(0), rampTerminateOnCompletion(false),
-	  volume(0), balance(0), effectiveBalance(0), effectiveVolume(0), is3D(false), isLooping(false), isSpeech(false), isSilencedLoop(false), x(0), y(0), endTime(0), duration(0) {
+	  volume(0), balance(0), effectiveBalance(0), effectiveVolume(0), is3D(false), loopingType(kSoundLoopingTypeNotLooping), isSpeech(false), isSilencedLoop(false), x(0), y(0), startTime(0), endTime(0), duration(0) {
 }
 
 SoundInstance::~SoundInstance() {
@@ -993,7 +993,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _havePendingCompletionCheck(false), _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false),
 	  _musicTrack(0), _musicActive(true), _scoreSectionEndTime(0), _musicVolume(getDefaultSoundVolume()), _musicVolumeRampStartTime(0), _musicVolumeRampStartVolume(0), _musicVolumeRampRatePerMSec(0), _musicVolumeRampEnd(0),
 	  _panoramaDirectionFlags(0),
-	  _loadedAnimation(0), _loadedAnimationHasSound(false), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0), _animVolume(getDefaultSoundVolume()),
+	  _loadedAnimation(0), _loadedAnimationHasSound(false), _animTerminateAtStartOfFrame(true), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0), _animVolume(getDefaultSoundVolume()),
 	  _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleLockInteractions(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
 	  _inGameMenuState(kInGameMenuStateInvisible), _inGameMenuActiveElement(0), _inGameMenuButtonActive {false, false, false, false, false},
@@ -1791,6 +1791,8 @@ void Runtime::exitGyroIdle() {
 }
 
 void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAnimationEnded) {
+	bool terminateAtStartOfFrame = _animTerminateAtStartOfFrame;
+
 	outAnimationEnded = false;
 
 	if (!_animDecoder) {
@@ -1834,6 +1836,11 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 
 		if (!needNewFrame)
 			break;
+
+		if (!terminateAtStartOfFrame && !loop && _animPendingDecodeFrame > _animLastFrame) {
+			outAnimationEnded = true;
+			return;
+		}
 
 		// We check this here for timing reasons: The no-loop case after the draw terminates the animation as soon as the last frame
 		// starts delaying without waiting for the time until the next frame to expire.
@@ -1932,7 +1939,7 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 		}
 
 		if (!loop) {
-			if (_animDisplayingFrame >= _animLastFrame) {
+			if (terminateAtStartOfFrame && _animDisplayingFrame >= _animLastFrame) {
 				_animDecoder->pauseVideo(true);
 				_animDecoderState = kAnimDecoderStatePaused;
 
@@ -3342,6 +3349,7 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 	_animLastFrame = animDef.lastFrame;
 	_animConstraintRect = animDef.constraintRect;
 	_animFrameRateLock = Fraction();
+	_animTerminateAtStartOfFrame = true;
 
 	SfxData::PlaylistMap_t::const_iterator playlistIt = _sfxData.playlists.find(animDef.animName);
 
@@ -3381,11 +3389,13 @@ void Runtime::setSound3DParameters(SoundInstance &snd, int32 x, int32 y, const S
 }
 
 void Runtime::triggerSound(bool looping, SoundInstance &snd, int32 volume, int32 balance, bool is3D, bool isSpeech) {
+	SoundLoopingType oldLoopingType = snd.loopingType;
+
 	snd.volume = volume;
 	snd.balance = balance;
 	snd.is3D = is3D;
-	snd.isLooping = looping;
 	snd.isSpeech = isSpeech;
+	snd.loopingType = (looping ? kSoundLoopingTypeLooping : kSoundLoopingTypeNotLooping);
 
 	computeEffectiveVolumeAndBalance(snd);
 
@@ -3417,8 +3427,9 @@ void Runtime::triggerSound(bool looping, SoundInstance &snd, int32 volume, int32
 	}
 
 	// Construct looping stream if needed and none exists
-	if (looping && !cache->loopingStream) {
+	if (looping && !cache->loopingStream || oldLoopingType == kSoundLoopingTypeTerminated) {
 		cache->player.reset();
+		cache->loopingStream.reset();
 		cache->loopingStream.reset(new Audio::LoopingAudioStream(cache->stream.get(), 0, DisposeAfterUse::NO, true));
 	}
 
@@ -3439,10 +3450,11 @@ void Runtime::triggerSound(bool looping, SoundInstance &snd, int32 volume, int32
 		cache->player->play(snd.effectiveVolume, snd.effectiveBalance);
 	}
 
+	snd.startTime = g_system->getMillis();
 	if (looping)
 		snd.endTime = 0;
 	else
-		snd.endTime = g_system->getMillis(true) + static_cast<uint32>(cache->stream->getLength().msecs()) + 1000u;
+		snd.endTime = snd.startTime + snd.duration + 1000u;
 }
 
 void Runtime::triggerSoundRamp(SoundInstance &snd, uint durationMSec, int32 newVolume, bool terminateOnCompletion) {
@@ -3452,7 +3464,7 @@ void Runtime::triggerSoundRamp(SoundInstance &snd, uint durationMSec, int32 newV
 	snd.rampStartTime = g_system->getMillis();
 	snd.rampRatePerMSec = 65536;
 
-	if (!snd.isLooping && newVolume == getSilentSoundVolume())
+	if (snd.loopingType == kSoundLoopingTypeLooping && newVolume == getSilentSoundVolume())
 		snd.rampTerminateOnCompletion = true;
 
 	if (durationMSec)
@@ -3531,6 +3543,21 @@ void Runtime::stopSound(SoundInstance &sound) {
 	sound.isSilencedLoop = false;
 }
 
+void Runtime::convertLoopingSoundToNonLooping(SoundInstance &sound) {
+	if (!sound.cache)
+		return;
+
+	if (sound.cache->loopingStream) {
+		sound.cache->loopingStream->setRemainingIterations(1);
+		sound.loopingType = kSoundLoopingTypeTerminated;
+
+		uint32 currentTime = g_system->getMillis();
+
+		uint32 alreadyPlayedTime = ((currentTime - sound.startTime) % sound.duration);
+		sound.endTime = currentTime + sound.duration - alreadyPlayedTime;
+	}
+}
+
 void Runtime::updateSounds(uint32 timestamp) {
 	for (uint sndIndex = 0; sndIndex < _activeSounds.size(); sndIndex++) {
 		SoundInstance &snd = *_activeSounds[sndIndex];
@@ -3567,7 +3594,7 @@ void Runtime::updateSounds(uint32 timestamp) {
 			snd.endTime = 0;
 		}
 
-		if (snd.isLooping) {
+		if (snd.loopingType == kSoundLoopingTypeLooping) {
 			if (snd.volume <= getSilentSoundVolume()) {
 				if (!snd.isSilencedLoop) {
 					if (snd.cache) {
@@ -4928,7 +4955,7 @@ void Runtime::recordSaveGameSnapshot() {
 		}
 
 		saveSound.is3D = sound.is3D;
-		saveSound.isLooping = sound.isLooping;
+		saveSound.isLooping = (sound.loopingType == kSoundLoopingTypeLooping);
 		saveSound.isSpeech = sound.isSpeech;
 		saveSound.x = sound.x;
 		saveSound.y = sound.y;
@@ -5034,7 +5061,7 @@ void Runtime::restoreSaveGameSnapshot() {
 		si->volume = sound.volume;
 		si->balance = sound.balance;
 		si->is3D = sound.is3D;
-		si->isLooping = sound.isLooping;
+		si->loopingType = (sound.isLooping ? kSoundLoopingTypeLooping : kSoundLoopingTypeNotLooping);
 		si->isSpeech = sound.isSpeech;
 		si->x = sound.x;
 		si->y = sound.y;
@@ -5380,6 +5407,12 @@ void Runtime::scriptOpAnimS(ScriptArg_t arg) {
 
 	// Static animations start on the last frame
 	changeAnimation(animDef, animDef.lastFrame, false);
+
+	// We use different behavior from the original game to mostly speed up one-frame animations by terminating them
+	// at the start of the last frame instead of the end of the last frame.  However, this causes the mechanical
+	// keyboard to play all of the pin animations at once which is kind of annoying.
+	if (_gameID == GID_SCHIZM && animDef.animName.hasPrefix("WEJSCIE_DN"))
+		_animTerminateAtStartOfFrame = false;
 
 	_gameState = kGameStateWaitingForAnimation;
 	_screenNumber = stackArgs[kAnimDefStackArgs + 0];
@@ -6626,7 +6659,18 @@ void Runtime::scriptOpSndWait(ScriptArg_t arg) {
 	}
 }
 
-OPCODE_STUB(SndHalt)
+void Runtime::scriptOpSndHalt(ScriptArg_t arg) {
+	TAKE_STACK_INT(1);
+
+	SoundInstance *snd = resolveSoundByID(stackArgs[0]);
+	if (snd) {
+		convertLoopingSoundToNonLooping(*snd);
+
+		_delayCompletionTime = snd->endTime;
+		_gameState = kGameStateDelay;
+	}
+}
+
 OPCODE_STUB(SndToBack)
 
 void Runtime::scriptOpSndStop(ScriptArg_t arg) {
