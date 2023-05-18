@@ -203,6 +203,7 @@ public:
 	 * @return Pointer to a new empty menu.
 	 */
 	MacMenu *addMenu();
+	void addMenu(int id, MacMenu *menu);
 
 	void removeMenu();
 	void activateMenu();
@@ -371,6 +372,7 @@ public:
 	Common::String getMenuItemName(MacMenuItem *menuItem);
 	int getMenuItemAction(MacMenuItem *menuItem);
 	MacMenu *getMenu();
+	MacMenu *getMenu(int id);
 
 public:
 	MacFontManager *_fontMan;
