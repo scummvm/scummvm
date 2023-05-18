@@ -547,6 +547,9 @@ struct FontCacheItem {
 	Common::SharedPtr<Graphics::Font> keepAlive;
 };
 
+typedef Common::HashMap<Common::String, uint> ScreenNameToRoomMap_t;
+typedef Common::HashMap<uint, ScreenNameToRoomMap_t> RoomToScreenNameToRoomMap_t;
+
 class Runtime {
 public:
 	friend class RuntimeMenuInterface;
@@ -794,6 +797,7 @@ private:
 	void loadConfig(const char *cfgPath);
 	void loadScore();
 	void loadDuplicateRooms();
+	void loadAllSchizmScreenNames();
 	Common::SharedPtr<SoundInstance> loadWave(const Common::String &soundName, uint soundID, const Common::ArchiveMemberPtr &archiveMemberPtr);
 	SoundCache *loadCache(SoundInstance &sound);
 	void resolveSoundByName(const Common::String &soundName, bool load, StackInt_t &outSoundID, SoundInstance *&outWave);
@@ -1150,6 +1154,7 @@ private:
 
 	Common::Array<Common::SharedPtr<RoomDef> > _roomDefs;
 	Common::Array<uint> _roomDuplicationOffsets;
+	RoomToScreenNameToRoomMap_t _globalRoomScreenNameToScreenIDs;
 	Common::SharedPtr<ScriptSet> _scriptSet;
 
 	Common::Array<CallStackFrame> _scriptCallStack;

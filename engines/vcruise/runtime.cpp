@@ -1218,6 +1218,9 @@ bool Runtime::bootGame(bool newGame) {
 		// but the frame range for 27 and 28 is supposed to use room 25 (the root of the duplication), not 26.
 		loadDuplicateRooms();
 		debug(1, "Duplicated rooms identified OK");
+
+		loadAllSchizmScreenNames();
+		debug(1, "Screen names resolved OK");
 	} else {
 		StartConfigDef &startConfig = _startConfigs[kStartConfigInitial];
 		startConfig.disc = 1;
@@ -2612,6 +2615,46 @@ void Runtime::loadDuplicateRooms() {
 	for (uint i = 1; i < _roomDuplicationOffsets.size(); i++) {
 		if (_roomDuplicationOffsets[i])
 			_roomDuplicationOffsets[i] += _roomDuplicationOffsets[i - 1];
+	}
+}
+
+void Runtime::loadAllSchizmScreenNames() {
+	assert(_gameID == GID_SCHIZM);
+
+	Common::ArchiveMemberList logics;
+	SearchMan.listMatchingMembers(logics, "Log/Room##.log", true);
+
+	Common::Array<uint> roomsToCompile;
+
+	for (const Common::ArchiveMemberPtr &logic : logics) {
+		Common::String name = logic->getName();
+
+		char d10 = name[4];
+		char d1 = name[5];
+
+		uint roomNumber = (d10 - '0') * 10 + (d1 - '0');
+
+		// Rooms 1 and 3 are always compiled.  2 is a cheat room that contains garbage.
+		if (roomNumber > 3)
+			roomsToCompile.push_back(roomNumber);
+	}
+
+	Common::sort(roomsToCompile.begin(), roomsToCompile.end());
+
+	for (uint roomNumber : roomsToCompile) {
+		if (roomNumber >= _roomDuplicationOffsets.size() || _roomDuplicationOffsets[roomNumber] == 0) {
+			uint roomSetToCompile[3] = {1, 3, roomNumber};
+
+			compileSchizmLogicSet(roomSetToCompile, 3);
+
+			for (const RoomScriptSetMap_t::Node &rssNode : _scriptSet->roomScripts) {
+				if (rssNode._key != roomNumber)
+					continue;
+
+				for (const ScreenNameMap_t::Node &snNode : rssNode._value->screenNames)
+					_globalRoomScreenNameToScreenIDs[roomNumber][snNode._key] = snNode._value;
+			}
+		}
 	}
 }
 
@@ -4453,6 +4496,7 @@ Common::SharedPtr<Graphics::Surface> Runtime::loadGraphic(const Common::String &
 
 	Common::SharedPtr<Graphics::Surface> surf(new Graphics::Surface());
 	surf->copyFrom(*bmpDecoder.getSurface());
+	surf.reset(surf->convertTo(Graphics::createPixelFormat<8888>()));
 
 	return surf;
 }
@@ -6732,15 +6776,21 @@ void Runtime::scriptOpAnimChange(ScriptArg_t arg) {
 void Runtime::scriptOpScreenName(ScriptArg_t arg) {
 	const Common::String &scrName = _scriptSet->strings[arg];
 
-	RoomScriptSet *rss = getRoomScriptSetForCurrentRoom();
-	if (!rss)
-		error("Couldn't resolve room number to find screen name: '%s'", scrName.c_str());
+	uint roomNumber = _roomNumber;
+	if (roomNumber < _roomDuplicationOffsets.size())
+		roomNumber -= _roomDuplicationOffsets[roomNumber];
 
-	ScreenNameMap_t::const_iterator screenNameIt = rss->screenNames.find(scrName);
-	if (screenNameIt == rss->screenNames.end())
-		error("Couldn't resolve screen name '%s'", scrName.c_str());
+	RoomToScreenNameToRoomMap_t::const_iterator roomIt = _globalRoomScreenNameToScreenIDs.find(roomNumber);
+	if (roomIt != _globalRoomScreenNameToScreenIDs.end()) {
+		ScreenNameToRoomMap_t::const_iterator screenIt = roomIt->_value.find(scrName);
 
-	_scriptStack.push_back(StackValue(static_cast<StackInt_t>(screenNameIt->_value)));
+		if (screenIt != roomIt->_value.end()) {
+			_scriptStack.push_back(StackValue(static_cast<StackInt_t>(screenIt->_value)));
+			return;
+		}
+	}
+
+	error("Couldn't resolve screen name '%s'", scrName.c_str());
 }
 
 void Runtime::scriptOpExtractByte(ScriptArg_t arg) {
