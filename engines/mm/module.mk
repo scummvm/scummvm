@@ -195,6 +195,7 @@ MODULE_OBJS += \
 	mm1/views_enh/interactions/interaction_query.o \
 	mm1/views_enh/interactions/leprechaun.o \
 	mm1/views_enh/interactions/lion.o \
+	mm1/views_enh/interactions/lord_archer.o \
 	mm1/views_enh/interactions/prisoners.o \
 	mm1/views_enh/interactions/resistances.o \
 	mm1/views_enh/interactions/ruby.o \

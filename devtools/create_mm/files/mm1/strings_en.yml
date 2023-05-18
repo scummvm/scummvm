@@ -1591,16 +1591,23 @@ maps:
 
 	map40:
 		message2: "Etched in gold, message 2 reads:\nOne,-riddles-value-you-you-5-card-must-\nclaimed.-dreams,-..."
-		archer: "\"I am lord archer, the raven,\ni take from those who have and give to\nthose who have not! submit (Y/N)?\""
+		archer: "\"I am lord archer, the raven,\nI take from those who have and give to\nthose who have not! submit (Y/N)?\""
 		giants: "Giants hurl boulders!"
 		button: "A button on the wall, push it (Y/N)?"
-		squish: "Squish! the party is impaled on a wall\nof spears!"
-		boulder: "A boulder says:\"there should be 5 tests\""
+		squish: "Squish! The party is impaled on a wall\nof spears!"
+		boulder: "A boulder says:\"There should be 5 tests\""
 		test1: "The first test"
 		test2: "The second test"
 		test3: "The third test"
 		test4: "The fourth test"
 		conveyor_belt: "Conveyor belt..."
+	emap40:
+		message2: "Etched in gold, message 2 reads:\n\"One,-riddles-value-you-you-\n5-card-must-claimed.-Dreams,-...\""
+		boulder: "A boulder says: \"There should be 5 tests\""
+		title: "Lord Archer"
+		archer: "\"I am Lord Archer, the raven.\nI take from those who have and give to those who have not! Submit (Y/N)?\""
+		yes: "\x01""37Yes"
+		no: "\x01""37No"
 
 	map41:
 		message3: "Etched in gold, message 3 reads:\nFor-tasks-and-rating.-be-from-6th-\nfrustrations!-the-to-in"
@@ -1613,14 +1620,18 @@ maps:
 		stairs_up: "Spiralling stairs go up,take them (Y/N)?"
 		tapestry1: "A tapestry on the wall depicts a gray\nminotaur stomping on a group of knights."
 		tapestry2: "A tapestry on the wall depicts\na kingdom ruled by minotaurs"
+	emap41:
+		message3: "Etched in gold, message 3 reads:\n\"For-tasks-and-rating.-be-from-6th-\nfrustrations!-the-to-in\""
 
 	map42:
-		message9: "etched in gold, message 9 reads:\nSuccessful-that-training,-the-worthy-\nthe-visit-yet-inner-reality,-order,"
+		message9: "Etched in gold, message 9 reads:\nSuccessful-that-training,-the-worthy-\nthe-visit-yet-inner-reality,-order,"
 		defeated: "The master of this stronghold\nhas been defeated!"
 		sign1: "Enter the maze of the minotaur...\nif you dare!"
 		statue1: "Standing atop a pedestal in the center\nof the room is a statue of a small sable\nand white dog. "
 		statue2: "It comes to life and\nspeaks,\"Congratulations, you've\ncompleted a major quest (+10000 exp)\nremember b.j.!\""
 		statue3: "Desecrate it (Y/N)?"
+	emap43:
+		message9: "Etched in gold, message 9 reads:\n\"Successful-that-training,-the-worthy-\nthe-visit-yet-inner-reality,-order,\""
 
 	map43:
 		exit: "Exit castle, (Y/N)?"
