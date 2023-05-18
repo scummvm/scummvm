@@ -394,10 +394,20 @@ MacMenu *MacWindowManager::addMenu() {
 	return _menu;
 }
 
+void MacWindowManager::addMenu(int id, MacMenu *menu) {
+	_windows[id] = menu;
+}
+
 MacMenu *MacWindowManager::getMenu() {
 	if (_menu) {
 		return _menu;
 	}
+	return nullptr;
+}
+
+MacMenu *MacWindowManager::getMenu(int id) {
+	if (_windows.contains(id))
+		return (MacMenu *)_windows[id];
 	return nullptr;
 }
 
