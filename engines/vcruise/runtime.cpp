@@ -2598,7 +2598,7 @@ void Runtime::loadDuplicateRooms() {
 				_roomDuplicationOffsets[roomNumber] = 1;
 			}
 		} else {
-			warning("Logic for room %u couldn't be checked for duplication");
+			warning("Logic for room %u couldn't be checked for duplication", roomNumber);
 		}
 	}
 
@@ -2984,7 +2984,7 @@ bool Runtime::dischargeIdleMouseMove() {
 	}
 
 	if (_gameID == GID_SCHIZM && !isOnInteraction) {
-		if (_traySection.rect.contains(_mousePos) && (_traySection.rect.right - _mousePos.x) < 88u) {
+		if (_traySection.rect.contains(_mousePos) && (_traySection.rect.right - _mousePos.x) < (int) 88u) {
 			isOnInteraction = true;
 			interactionID = kHeroChangeInteractionID;
 		}
