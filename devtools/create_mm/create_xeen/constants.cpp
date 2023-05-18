@@ -562,7 +562,7 @@ const int LangConstants::METAL_DAMAGE[22] = {
 };
 
 const int LangConstants::METAL_DAMAGE_PERCENT[22] = {
-	253, 252, 3, 2, 1, 2, 3, 4, 6, 0, 1,
+	-3, -4, 3, 2, 1, 2, 3, 4, 6, 0, 1,
 	1, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10
 };
 

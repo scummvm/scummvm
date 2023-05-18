@@ -69,7 +69,7 @@ bool FileManager::setup() {
 
 	// Set up the engine data file
 	Common::U32String errMsg;
-	if (!MM::load_engine_data("xeen", 1, 0, errMsg)) {
+	if (!MM::load_engine_data("xeen", 1, 1, errMsg)) {
 		GUIErrorMessage(errMsg);
 		return false;
 	}
