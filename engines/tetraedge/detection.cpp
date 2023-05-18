@@ -19,9 +19,13 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/file.h"
+
 #include "tetraedge/detection.h"
 #include "tetraedge/metaengine.h"
 #include "tetraedge/detection_tables.h"
+#include "tetraedge/obb_archive.h"
 
 const DebugChannelDef TetraedgeMetaEngineDetection::debugFlagList[] = {
 	{ Tetraedge::kDebugGraphics, "Graphics", "Graphics debug level" },
@@ -37,35 +41,84 @@ TetraedgeMetaEngineDetection::TetraedgeMetaEngineDetection() : AdvancedMetaEngin
 	_flags = kADFlagMatchFullPaths;
 }
 
-static const Common::Language *getGameLanguages() {
-	static Common::Language languages[] = {
-		Common::EN_ANY,
-		Common::FR_FRA,
-		Common::DE_DEU,
-		Common::IT_ITA,
-		Common::ES_ESP,
-		Common::RU_RUS,
-		Common::HE_ISR,  // This is a Fan-translation, which requires additional patch
-		Common::UNK_LANG
+Common::String TetraedgeMetaEngineDetection::customizeGuiOptionsLanguages(const Common::String &optionsString, const Common::String &domain) const {
+	Common::String result;
+
+	struct {
+		Common::Language id;
+		const char *code;
+	} languages[] = {
+		{ Common::EN_ANY, "en" },
+		{ Common::FR_FRA, "fr" },
+		{ Common::DE_DEU, "de" },
+		{ Common::IT_ITA, "it" },
+		{ Common::ES_ESP, "es" },
+		{ Common::RU_RUS, "ru" },
+		{ Common::HE_ISR, "he" }  // This is a Fan-translation, which requires additional patch
 	};
-	return languages;
-}
 
-DetectedGame TetraedgeMetaEngineDetection::toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const {
-	DetectedGame game = AdvancedMetaEngineDetection::toDetectedGame(adGame);
+	static const char *obbNames[] = {
+		"main.5.com.microids.syberia.obb",
+		"main.12.com.microids.syberia.obb",
+		"main.2.ru.buka.syberia1.obb",
+		"main.4.com.microids.syberia2.obb",
+		"main.2.ru.buka.syberia2.obb",
+	};
 
-	// The AdvancedDetector model only allows specifying a single supported
-	// game language. All games support multiple languages.  Only Syberia 1
-	// supports RU.
-	for (const Common::Language *language = getGameLanguages(); *language != Common::UNK_LANG; language++) {
-		// "ru" only present on syberia 1
-		if (game.gameId != "syberia" && *language == Common::RU_RUS)
-			continue;
-		game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(*language));
+	static const char *subDirs[] = {
+		nullptr,
+		"PC-MacOSX-Android-iPhone-iPad"
+	};
+
+	bool hasLang[ARRAYSIZE(languages)];
+
+	memset(hasLang, 0, sizeof(hasLang));
+
+	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", domain));
+
+	Common::FSNode dir(ConfMan.get("path", domain));
+
+	if (platform == Common::Platform::kPlatformMacintosh)
+		dir = dir.getChild("Resources");
+
+	for (uint i = 0; i < ARRAYSIZE(languages); i++) {
+		Common::FSNode base = dir.getChild("texts");
+		for (uint k = 0; k < ARRAYSIZE(subDirs); k++) {
+			Common::FSNode base2 = subDirs[k] ? base.getChild(subDirs[k]) : base;
+			if (base2.getChild(Common::String::format("%s.xml", languages[i].code)).exists())
+				hasLang[i] = true;
+		}
 	}
 
-	return game;
-}
+	if (platform == Common::Platform::kPlatformAndroid)
+		for (uint j = 0; j < ARRAYSIZE(obbNames); j++) {
+			Common::FSNode obbPath = dir.getChild(obbNames[j]);
+			Common::File obbFile;
+			if (!obbPath.exists() || !obbFile.open(obbPath))
+				continue;
 
+			Tetraedge::ObbArchive::FileMap fileMap;
+			if (!Tetraedge::ObbArchive::readFileMap(obbFile, fileMap))
+				continue;
+
+			for (uint i = 0; i < ARRAYSIZE(languages); i++)
+				for (uint k = 0; k < ARRAYSIZE(subDirs); k++) {
+					Common::String dname = "texts/";
+					if (subDirs[k]) {
+						dname += subDirs[k];
+						dname += "/";
+					}
+					if (fileMap.contains(dname + languages[i].code))
+						hasLang[i] = true;
+				}
+		}
+
+
+	for (uint i = 0; i < ARRAYSIZE(languages); i++)
+		if(hasLang[i])
+			result += " " + Common::getGameGUIOptionsDescriptionLanguage(languages[i].id);
+
+	return result;
+}
 
 REGISTER_PLUGIN_STATIC(TETRAEDGE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, TetraedgeMetaEngineDetection);
