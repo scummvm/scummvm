@@ -2844,7 +2844,8 @@ msgstr ""
 
 #: dists/android.strings.xml.cpp:51
 msgid "Storage Access Framework Permissions for ScummVM were revoked!"
-msgstr "Die Storage Access Framework Permissions für ScummVM wurden widerrufen!"
+msgstr ""
+"Die Storage Access Framework Permissions für ScummVM wurden widerrufen!"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:32
