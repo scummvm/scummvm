@@ -49,7 +49,7 @@ struct function {
 		return *_fn;
 	}
 
-	operator bool() const {
+	operator bool() {
 		return _fn != nullptr;
 	}
 };

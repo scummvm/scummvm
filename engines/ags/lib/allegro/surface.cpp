@@ -140,12 +140,8 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	Graphics::Surface destArea = dest.getSubArea(destRect);
 
 	// Define scaling and other stuff used by the drawing loops
-	const int xDir = horizFlip ? -1 : 1;
 	bool useTint = (tintRed >= 0 && tintGreen >= 0 && tintBlue >= 0);
 	bool sameFormat = (src.format == format);
-
-	byte rSrc, gSrc, bSrc, aSrc;
-	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
 
 	PALETTE palette;
 	if (src.format.bytesPerPixel == 1 && format.bytesPerPixel != 1) {
@@ -166,81 +162,10 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	int xStart = (dstRect.left < destRect.left) ? dstRect.left - destRect.left : 0;
 	int yStart = (dstRect.top < destRect.top) ? dstRect.top - destRect.top : 0;
 
-	for (int destY = yStart, yCtr = 0; yCtr < dstRect.height(); ++destY, ++yCtr) {
-		if (destY < 0 || destY >= destArea.h)
-			continue;
-		byte *destP = (byte *)destArea.getBasePtr(0, destY);
-		const byte *srcP = (const byte *)src.getBasePtr(
-		                       horizFlip ? srcArea.right - 1 : srcArea.left,
-		                       vertFlip ? srcArea.bottom - 1 - yCtr :
-		                       srcArea.top + yCtr);
-
-		// Loop through the pixels of the row
-		for (int destX = xStart, xCtr = 0, xCtrBpp = 0; xCtr < dstRect.width(); ++destX, ++xCtr, xCtrBpp += src.format.bytesPerPixel) {
-			if (destX < 0 || destX >= destArea.w)
-				continue;
-
-			const byte *srcVal = srcP + xDir * xCtrBpp;
-			uint32 srcCol = getColor(srcVal, src.format.bytesPerPixel);
-
-			// Check if this is a transparent color we should skip
-			if (skipTrans && ((srcCol & alphaMask) == transColor))
-				continue;
-
-			byte *destVal = (byte *)&destP[destX * format.bytesPerPixel];
-
-			// When blitting to the same format we can just copy the color
-			if (format.bytesPerPixel == 1) {
-				*destVal = srcCol;
-				continue;
-			} else if (sameFormat && srcAlpha == -1) {
-				if (format.bytesPerPixel == 4)
-					*(uint32 *)destVal = srcCol;
-				else
-					*(uint16 *)destVal = srcCol;
-				continue;
-			}
-
-			// We need the rgb values to do blending and/or convert between formats
-			if (src.format.bytesPerPixel == 1) {
-				const RGB &rgb = palette[srcCol];
-				aSrc = 0xff;
-				rSrc = rgb.r;
-				gSrc = rgb.g;
-				bSrc = rgb.b;
-			} else
-				src.format.colorToARGB(srcCol, aSrc, rSrc, gSrc, bSrc);
-
-			if (srcAlpha == -1) {
-				// This means we don't use blending.
-				aDest = aSrc;
-				rDest = rSrc;
-				gDest = gSrc;
-				bDest = bSrc;
-			} else {
-				if (useTint) {
-					rDest = rSrc;
-					gDest = gSrc;
-					bDest = bSrc;
-					aDest = aSrc;
-					rSrc = tintRed;
-					gSrc = tintGreen;
-					bSrc = tintBlue;
-					aSrc = srcAlpha;
-				} else {
-					// TODO: move this to blendPixel to only do it when needed?
-					format.colorToARGB(getColor(destVal, format.bytesPerPixel), aDest, rDest, gDest, bDest);
-				}
-				blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha);
-			}
-
-			uint32 pixel = format.ARGBToColor(aDest, rDest, gDest, bDest);
-			if (format.bytesPerPixel == 4)
-				*(uint32 *)destVal = pixel;
-			else
-				*(uint16 *)destVal = pixel;
-		}
-	}
+#define DRAWINNER(formattype) drawInner<formattype>(yStart, xStart, transColor, alphaMask, palette, useTint, sameFormat, src, destArea, horizFlip, vertFlip, skipTrans, srcAlpha, tintRed, tintGreen, tintBlue, dstRect, srcArea)
+	if (sameFormat && format.bytesPerPixel == 4) DRAWINNER(1);
+	else DRAWINNER(0);
+#undef DRAWINNER
 }
 
 void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
