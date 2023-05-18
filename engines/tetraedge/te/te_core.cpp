@@ -262,4 +262,17 @@ TetraedgeFSNode TeCore::findFile(const Common::Path &path) const {
 	return TetraedgeFSNode(nullptr, path);
 }
 
+TeLuaFileDesc TeCore::findScript(const Common::Path &path) const {
+	TetraedgeFSNode cand(findFile(path));
+	if (cand.exists())
+		return TeLuaFileDesc(cand, false);
+	Common::String fname = path.getLastComponent().toString();
+	if (fname.hasSuffixIgnoreCase(".lua"))
+		fname = fname.substr(0, fname.size() - 4);
+	TetraedgeFSNode cand2(findFile(path.getParent().join(fname + ".data")));
+	if (cand2.exists())
+		return TeLuaFileDesc(cand2, true);
+	return TeLuaFileDesc(cand, false);
+}
+
 } // end namespace Tetraedge

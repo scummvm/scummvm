@@ -161,8 +161,14 @@ void TeLuaThread::execute(const Common::String &fname, const TeVariant &p1, cons
 	}
 }
 
-void TeLuaThread::applyScriptWorkarounds(char *buf, const Common::String &fileName) {
+void TeLuaThread::applyScriptWorkarounds(char *buf, const Common::String &fileNameIn) {
 	char *fixline;
+
+	Common::String fileName(fileNameIn);
+
+	if (fileName.hasSuffix(".data")) {
+		fileName = fileName.substr(0, fileName.size() - 5) + ".lua";
+	}
 
 	//
 	// WORKAROUND: Some script files have rogue ";" lines in them with nothing
@@ -254,8 +260,8 @@ void TeLuaThread::applyScriptWorkarounds(char *buf, const Common::String &fileNa
 	}
 }
 
-void TeLuaThread::executeFile(const TetraedgeFSNode &node) {
-	Common::ScopedPtr<Common::SeekableReadStream> scriptFile(node.createReadStream());
+void TeLuaThread::executeFile(const TeLuaFileDesc &node) {
+	Common::ScopedPtr<Common::SeekableReadStream> scriptFile(node._node.createReadStream());
 	if (!scriptFile) {
 		warning("TeLuaThread::executeFile: File %s can't be opened", node.getName().c_str());
 		return;
@@ -268,6 +274,9 @@ void TeLuaThread::executeFile(const TetraedgeFSNode &node) {
 	int64 fileLen = scriptFile->size();
 	char *buf = new char[fileLen + 1];
 	scriptFile->read(buf, fileLen);
+	if (node._isObfuscated)
+		for (uint i = 0; i < fileLen; i++)
+			buf[i]--;
 	buf[fileLen] = 0;
 	scriptFile.reset();
 

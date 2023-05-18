@@ -63,6 +63,7 @@ public:
 	// adds things like "PC-MacOSX" to the path, and there is not clear logic
 	// to them, so here we are.
 	TetraedgeFSNode findFile(const Common::Path &path) const;
+	TeLuaFileDesc findScript(const Common::Path &path) const;
 
 	bool _coreNotReady;
 

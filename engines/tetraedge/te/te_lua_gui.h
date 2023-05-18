@@ -78,7 +78,7 @@ public:
 	TeSpriteLayout *spriteLayoutChecked(const Common::String &name);
 
 	bool load(const Common::String &subPath);
-	bool load(const TetraedgeFSNode &node);
+	bool load(const TeLuaFileDesc &node);
 	void unload();
 
 	TeVariant value(const Common::String &key);

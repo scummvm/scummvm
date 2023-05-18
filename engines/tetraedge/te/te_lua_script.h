@@ -43,13 +43,13 @@ public:
 	void execute(const Common::String &fname, const TeVariant &p1, const TeVariant &p2);
 	void execute(const Common::String &fname, const TeVariant &p1, const TeVariant &p2, const TeVariant &p3);
 
-	void load(const TetraedgeFSNode &node);
+	void load(const TeLuaFileDesc &node);
 	void unload();
 
 private:
 	TeLuaContext *_luaContext;
 
-	TetraedgeFSNode _scriptNode;
+	TeLuaFileDesc _scriptNode;
 	bool _started;
 };
 

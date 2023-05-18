@@ -991,7 +991,7 @@ bool InGameScene::loadLights(const TetraedgeFSNode &node) {
 	return true;
 }
 
-void InGameScene::loadMarkers(const TetraedgeFSNode &node) {
+void InGameScene::loadMarkers(const TeLuaFileDesc &node) {
 	_markerGui.load(node);
 	TeLayout *bg = _bgGui.layoutChecked("background");
 	TeSpriteLayout *root = Game::findSpriteLayoutByName(bg, "root");
@@ -1400,7 +1400,7 @@ void InGameScene::loadBlockers() {
 	}
 }
 
-void InGameScene::loadBackground(const TetraedgeFSNode &node) {
+void InGameScene::loadBackground(const TeLuaFileDesc &node) {
 	_youkiManager.reset();
 	_bgGui.load(node);
 	TeLayout *bg = _bgGui.layout("background");
@@ -1436,7 +1436,7 @@ bool InGameScene::loadBillboard(const Common::String &name) {
 	}
 }
 
-void InGameScene::loadInteractions(const TetraedgeFSNode &node) {
+void InGameScene::loadInteractions(const TeLuaFileDesc &node) {
 	_hitObjectGui.load(node);
 	TeLayout *bgbackground = _bgGui.layoutChecked("background");
 	Game *game = g_engine->getGame();

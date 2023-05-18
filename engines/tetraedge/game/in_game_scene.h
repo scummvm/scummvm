@@ -186,13 +186,13 @@ public:
 	TeVector2f32 layerSize();
 
 	virtual bool load(const TetraedgeFSNode &node) override;
-	void loadBackground(const TetraedgeFSNode &node);
+	void loadBackground(const TeLuaFileDesc &node);
 	bool loadBillboard(const Common::String &name);
 	void loadBlockers();
 	bool loadCharacter(const Common::String &name);
-	void loadInteractions(const TetraedgeFSNode &node);
+	void loadInteractions(const TeLuaFileDesc &node);
 	bool loadLights(const TetraedgeFSNode &node);
-	void loadMarkers(const TetraedgeFSNode &node);
+	void loadMarkers(const TeLuaFileDesc &node);
 	bool loadObject(const Common::String &oname);
 	bool loadObjectMaterials(const Common::String &name);
 	bool loadObjectMaterials(const Common::String &path, const Common::String &name);

@@ -77,6 +77,18 @@ private:
 	Common::Path _archivePath;
 };
 
+struct TeLuaFileDesc {
+	TetraedgeFSNode _node;
+	bool _isObfuscated;
+
+	TeLuaFileDesc() : _node(), _isObfuscated(false) {}
+	TeLuaFileDesc(TetraedgeFSNode node, bool isObfuscated) : _node(node), _isObfuscated(isObfuscated) {}
+
+	bool exists() const { return _node.exists(); }
+	Common::String getName() const { return _node.getName(); }
+	Common::String getPath() const { return _node.getPath(); }
+};
+
 class TetraedgeEngine : public Engine {
 public:
 	enum TetraedgeGameType {

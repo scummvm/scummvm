@@ -324,7 +324,7 @@ void DocumentsBrowser::showDocument(const Common::String &docName, int startPage
 	sprite->load(docNode);
 	TeVector2s32 spriteSize = sprite->_tiledSurfacePtr->tiledTexture()->totalSize();
 
-	TetraedgeFSNode luaNode = core->findFile(docPathBase.append(".lua"));
+	TeLuaFileDesc luaNode = core->findScript(docPathBase.append(".lua"));
 	if (luaNode.exists()) {
 		_zoomedDocGui.load(luaNode);
 		sprite->addChild(_zoomedDocGui.layoutChecked("root"));

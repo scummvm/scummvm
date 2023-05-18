@@ -179,10 +179,10 @@ TeSpriteLayout *TeLuaGUI::spriteLayoutChecked(const Common::String &name) {
 
 bool TeLuaGUI::load(const Common::String &subPath) {
 	TeCore *core = g_engine->getCore();
-	return load(core->findFile(subPath));
+	return load(core->findScript(subPath));
 }
 
-bool TeLuaGUI::load(const TetraedgeFSNode &node) {
+bool TeLuaGUI::load(const TeLuaFileDesc &node) {
 	unload();
 	_scriptPath = node.getPath();
 	// Not the same as original, we abstract the search logic a bit.

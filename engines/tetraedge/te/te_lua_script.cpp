@@ -82,13 +82,13 @@ void TeLuaScript::execute(const Common::String &fname, const TeVariant &p1, cons
 	}
 }
 
-void TeLuaScript::load(const TetraedgeFSNode &node) {
+void TeLuaScript::load(const TeLuaFileDesc &node) {
 	_started = false;
 	_scriptNode = node;
 }
 
 void TeLuaScript::unload() {
-	_scriptNode = TetraedgeFSNode();
+	_scriptNode = TeLuaFileDesc();
 	_started = false;
 }
 
