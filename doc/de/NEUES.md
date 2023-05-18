@@ -15,6 +15,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Allgemein:
    - libvpx wurde als neue, optionale Abhängigkeit hinzugefügt. 
    - libmikmod wurde als neue, optionale Abhängigkeit hinzugefügt.
+   - Unterstützung für PC98-Font-ROMs hinzugefügt.
 
  Asylum:
    - Unterstützung für die chinesische Version von Sanitarium hinzugefügt.
@@ -26,11 +27,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für die chinesische Version von Grim Fandango hinzugefügt.
    - Unterstützung für die von Fargus, ENPY und 7Wolf erstellte russische Version
      von Grim Fandango hinzugefügt.
-   - Unterstützung für die chineische Version von EOB2 hinzugefügt.
 
  Kyra:
    - Unterstützung für die französische Amiga-Version von Kyra1 und die tschechische DOS-Fan-Übersetzung hinzugefügt.
    - Spielsteuerung und Menüdarstellung für alle Plattformen verbessert.
+   - Unterstützung für die chinesische Version von EOB2 hinzugefügt.
 
  SCUMM:
    - Unterstützung für die entpackten RuSCUMM-Patches für russische Übersetzungen hinzugefügt.
