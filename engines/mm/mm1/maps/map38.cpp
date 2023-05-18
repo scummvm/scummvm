@@ -44,10 +44,9 @@ void Map38::special() {
 		}
 	}
 
-	send(SoundMessage(STRING["maps.map38.ringing"]));
 	g_maps->_mapPos = Common::Point(getRandomNumber(16) - 1,
 		getRandomNumber(16) - 1);
-	updateGame();
+	send(SoundMessage(STRING["maps.map38.ringing"]));
 }
 
 void Map38::special00() {

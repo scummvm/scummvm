@@ -1572,16 +1572,22 @@ maps:
 		face1: "Inset in the wall, a stone face\nyells: \"My brain hurts!\""
 		face2: "Inset in the wall, a stone face\nspeaks: \"I would pay highly for a green\nhandled, pearl encrusted abelnuski.\""
 		face3: "Inset in the wall, a stone face\nspeaks: \"I see all, hear all,\nknow nothing...\""
-		face4: "Inset in the wall, a stone face\nproclaims: \"Okrim is watching.\nhe studies your weaknesses!\""
+		face4: "Inset in the wall, a stone face\nproclaims: \"Okrim is watching.\nHe studies your weaknesses!\""
 		ringing: "A strange ringing sound startles\nthe party. You are teleported!"
+	emap38:
+		message4: "Etched in gold, message 4 reads:\n"Of-be-has-true-knowledge-plane-\na-level-to-reality-it\""
 
 	map39:
 		message6: "Etched in gold, message 6 reads:\nbook-done.-a-self-that-from-key-you-\nbe-to-seems"
 		ruby1: "In the center of the room, a huge ruby\nstands atop a pedestal. hexagonally\nshaped, it glows rhythmically!\nMesmerized by its light, you hear:\nGlass that glitters, rubies that glow\nWhen i twinkle, I cast a rainbow\nWhat am i? :> ..............."
-		ruby2: "Wrong!  a bright flash..."
+		ruby2: "Wrong!  A bright flash..."
 		door_repels: "A silver door repels you!"
 		door_glows: "A silver door, your silver key glows!"
 		stairs_up: "Stairs to surface, take them (Y/N)?"
+	emap39:
+		message6: "Etched in gold, message 6 reads:\n\"Book-done.-A-self-that-from-\nkey-you-be-to-seems\""
+		title: "Ruby"
+		ruby1: "In the center of the room, a huge hexagonal ruby stands glowing atop a pedestal. You hear: Glass that glitters, rubies that glow when i twinkle, I cast a rainbow.\nWhat am i?"
 
 	map40:
 		message2: "Etched in gold, message 2 reads:\nOne,-riddles-value-you-you-5-card-must-\nclaimed.-dreams,-..."

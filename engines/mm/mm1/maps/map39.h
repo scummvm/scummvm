@@ -76,6 +76,8 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
+
+	void riddleAnswered(const Common::String &answer);
 };
 
 } // namespace Maps

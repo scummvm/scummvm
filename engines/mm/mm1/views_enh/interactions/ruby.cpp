@@ -19,33 +19,26 @@
  *
  */
 
-#include "mm/mm1/views/maps/ruby.h"
+#include "mm/mm1/views_enh/interactions/ruby.h"
 #include "mm/mm1/maps/map39.h"
 #include "mm/mm1/globals.h"
-#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Maps {
+namespace ViewsEnh {
+namespace Interactions {
 
-Ruby::Ruby() : AnswerEntry("Ruby", Common::Point(14, 7), 12) {
-	_bounds = getLineBounds(17, 24);
-}
-
-void Ruby::draw() {
-	clearSurface();
-	writeString(0, 1, STRING["maps.map39.ruby1"]);
-	AnswerEntry::draw();
+Ruby::Ruby() : InteractionQuery("Ruby", 12) {
+	_title = STRING["maps.emap39.title"];
+	addText(STRING["maps.emap39.ruby1"]);
 }
 
 void Ruby::answerEntered() {
 	MM1::Maps::Map39 &map = *static_cast<MM1::Maps::Map39 *>(g_maps->_currentMap);
-	close();
 	map.riddleAnswered(_answer);
 }
 
-} // namespace Maps
-} // namespace Views
+} // namespace Interactions
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM

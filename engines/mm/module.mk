@@ -197,6 +197,7 @@ MODULE_OBJS += \
 	mm1/views_enh/interactions/lion.o \
 	mm1/views_enh/interactions/prisoners.o \
 	mm1/views_enh/interactions/resistances.o \
+	mm1/views_enh/interactions/ruby.o \
 	mm1/views_enh/interactions/statue.o \
 	mm1/views_enh/interactions/trivia.o \
 	mm1/views_enh/interactions/volcano_god.o \
