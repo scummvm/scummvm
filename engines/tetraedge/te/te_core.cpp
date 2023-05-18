@@ -164,7 +164,18 @@ TetraedgeFSNode TeCore::findFile(const Common::Path &path) const {
 		"PC-MacOSX-Xbox360-PS3/PC-MacOSX",
 		"PC-MacOSX-MacOSXAppStore-Android-iPhone-iPad",
 		"PC-MacOSX-MacOSXAppStore-Xbox360-Android-iPad-iPhone",
+		"PC-MacOSX-PS3-Xbox360-iPhone-iPad-Android",
+		"PC-MacOSX-PS3-Xbox360-Android-iPhone-iPad",
+		"PC-PS3-Android-MacOSX-iPhone-iPad-NX",
+		"PC-PS3-Android",
+		"PC-Android",
+		"Android",
+		"Android/HD",
+		"Android-iPhone-iPad",
+		"Android-iPhone-iPad/Android",
 		"Android-iPhone-iPad-PC-MacOSX",
+		"Android-MacOSX-iPhone-iPad/padDisabled",
+		"padDisabled",
 		"Full",
 		"Part1-Full",
 		"Part2-Full-Part1",
@@ -180,6 +191,7 @@ TetraedgeFSNode TeCore::findFile(const Common::Path &path) const {
 		"iPhone-iPad/HD/Freemium",				// iOS Syb 1
 		"Android-MacOSX-iPhone-iPad",			// iOS Syb 1
 		"Freemium-BUKAFree/HD",					// iOS Syb 1
+		"Freemium-DefaultDistributor-BUKA-BUKAFree/Android",
 		"Part3-Full",							// iOS Syb 1 paid
 		"DefaultDistributor-Freemium",			// iOS Syb 1 paid
 		"iPhone-iPad/DefaultDistributor",		// iOS Syb 1 paid
@@ -208,7 +220,8 @@ TetraedgeFSNode TeCore::findFile(const Common::Path &path) const {
 		"de-es-fr-it-en",
 		"en-es-fr-de-it",
 		"es-en-fr-de-it",
-		"de-en-es-fr-it"
+		"de-en-es-fr-it",
+		"de-en-es-fr-ru",
 	};
 
 	// Note: the audio files for a few videos have a weird path
