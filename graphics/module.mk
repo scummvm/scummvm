@@ -27,6 +27,7 @@ MODULE_OBJS := \
 	macgui/macdialog.o \
 	macgui/macfontmanager.o \
 	macgui/macmenu.o \
+	macgui/macpopupmenu.o \
 	macgui/mactext.o \
 	macgui/mactextwindow.o \
 	macgui/macwidget.o \
