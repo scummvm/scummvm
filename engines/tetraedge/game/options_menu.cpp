@@ -64,7 +64,10 @@ void OptionsMenu::enter() {
 		app->music().volume(1.0);
 	}
 
-	buttonLayoutChecked("quitButton")->onMouseClickValidated().add(this, &OptionsMenu::onQuitButton);
+	Tetraedge::TeButtonLayout *quitButton = buttonLayout("quitButton");
+	if (quitButton) {
+		quitButton->onMouseClickValidated().add(this, &OptionsMenu::onQuitButton);
+	}
 	buttonLayoutChecked("creditsButton")->onMouseClickValidated().add(this, &OptionsMenu::onCreditsButton);
 	TeButtonLayout *supportBtn = buttonLayout("supportButton");
 	if (supportBtn) {
