@@ -131,7 +131,11 @@ bool TeCore::onActivityTrackingAlarm() {
 	error("TODO: Implement TeCore::onActivityTrackingAlarm");
 }
 
-TetraedgeFSNode TeCore::findFile(const Common::Path &path) const {
+void TeCore::warnUnfoundFile(const Common::Path &path) {
+	debug("TeCore::findFile Searched but didn't find %s", path.toString().c_str());
+}
+
+TetraedgeFSNode TeCore::findFile(const Common::Path &path, bool quiet) const {
 	Common::Array<TetraedgeFSNode> dirNodes;
 	const Common::Path dir = path.getParent();
 
@@ -258,20 +262,22 @@ TetraedgeFSNode TeCore::findFile(const Common::Path &path) const {
 		}
 
 	// Didn't find it at all..
-	debug("TeCore::findFile Searched but didn't find %s", path.toString().c_str());
+	if (!quiet)
+		warnUnfoundFile(path);
 	return TetraedgeFSNode(nullptr, path);
 }
 
 TeLuaFileDesc TeCore::findScript(const Common::Path &path) const {
-	TetraedgeFSNode cand(findFile(path));
+	TetraedgeFSNode cand(findFile(path, true));
 	if (cand.exists())
 		return TeLuaFileDesc(cand, false);
 	Common::String fname = path.getLastComponent().toString();
 	if (fname.hasSuffixIgnoreCase(".lua"))
 		fname = fname.substr(0, fname.size() - 4);
-	TetraedgeFSNode cand2(findFile(path.getParent().join(fname + ".data")));
+	TetraedgeFSNode cand2(findFile(path.getParent().join(fname + ".data"), true));
 	if (cand2.exists())
 		return TeLuaFileDesc(cand2, true);
+	warnUnfoundFile(path);
 	return TeLuaFileDesc(cand, false);
 }
 

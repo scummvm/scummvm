@@ -80,9 +80,11 @@ bool TeSpriteLayout::load(const Common::String &path) {
 	}
 
 	TeCore *core = g_engine->getCore();
-	TetraedgeFSNode node = core->findFile(path);
+	TetraedgeFSNode node = core->findFile(path, true);
 	if (!node.exists() && path.hasSuffix(".anim"))
 		node = core->findFile(path + "cached");
+	if (!node.exists())
+		TeCore::warnUnfoundFile(path);
 	if (!load(node, &path))
 		return false;
 	return true;
