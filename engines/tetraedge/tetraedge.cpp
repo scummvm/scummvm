@@ -481,4 +481,8 @@ bool TetraedgeFSNode::operator<(const TetraedgeFSNode& node) const {
 	return getPath() < node.getPath();
 }
 
+int TetraedgeFSNode::getDepth() const {
+	return _archivePath.splitComponents().size();
+}
+
 } // namespace Tetraedge

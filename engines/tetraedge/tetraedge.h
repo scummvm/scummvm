@@ -65,6 +65,7 @@ public:
 	bool isReadable() const;
 	bool isDirectory() const;
 	Common::String getPath() const;
+	int getDepth() const;
 	bool exists() const;
 	bool loadXML(Common::XMLParser &parser) const;
 	Common::String getName() const;
