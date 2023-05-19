@@ -626,6 +626,17 @@ publish-appcast:
 	cp dists/macosx/scummvm_appcast.xml ../scummvm-web/public_html/appcasts/macosx/release.xml
 
 
+APPDIR = AppDir
+
+# AppImage tool doesn't check for metainfo.xml, only appdata.xml
+appimage:
+	@if [ -z "${LINUXDEPLOY}" ]; then echo "LINUXDEPLOY variable must be set to the path of linuxdeploy binary" >&2; exit 1; fi
+	@if [ "$(prefix)" != '/usr' ]; then echo "Please re-run configure with --prefix=/usr" >&2; exit 1; fi
+	rm -rf "$(APPDIR)"
+	$(MAKE) install DESTDIR="$(APPDIR)"
+	ln -s org.scummvm.scummvm.metainfo.xml "$(APPDIR)/$(datarootdir)/metainfo/org.scummvm.scummvm.appdata.xml"
+	VERSION="$(VERSION)$(VER_REV)" "${LINUXDEPLOY}" --appdir="$(APPDIR)" -o appimage
+
 #
 # Special target to generate project files for various IDEs
 # Mainly Win32-specific
@@ -653,11 +664,10 @@ endif
 	@echo Now run
 	@echo -e "\tgit commit -m 'DISTS: Generated Code::Blocks and MSVC project files'"
 
-
 release-checks:
 	devtools/release-checks.sh
 
 # Mark special targets as phony
 .PHONY: install-data install install-strip uninstall dist-generic
 .PHONY: bundle-pack bundle iphonebundle ios7bundle tvosbundle iphone osxsnap publish-appcast
-.PHONY: ideprojects release-checks
+.PHONY: appimage ideprojects release-checks
