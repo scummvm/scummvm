@@ -7,7 +7,7 @@
   <name>ScummVM</name>
   <summary>Interpreter for numerous adventure games and role-playing games</summary>
   <summary xml:lang="ar">مترجم للعديد من ألعاب المغامرات ولعب الأدوار</summary>
-  <summary xml:lang="be">Інтэрпрэтатар многіх авантурных і ролявых гульняў</summary>
+  <summary xml:lang="be-tarask">Інтэрпрэтатар многіх авантурных і ролявых гульняў</summary>
   <summary xml:lang="ca">Intèrpret per a nombrosos jocs d'aventura i jocs de rol</summary>
   <summary xml:lang="de">Interpreter für zahlreiche Adventure-Spiele und RPGs</summary>
   <summary xml:lang="es">Intérprete de numerosas aventuras gráficas y RPG</summary>
@@ -21,8 +21,8 @@
   <summary xml:lang="nb">Programvaretolk for utallige eventyr- og rollespill</summary>
   <summary xml:lang="nl">Interpreter voor diverse adventure spellen en rollenspellen</summary>
   <summary xml:lang="pl">Interpreter wielu gier przygodowych oraz RPG</summary>
-  <summary xml:lang="pt">Interpretador para vários jogos de aventura e RPG</summary>
-  <summary xml:lang="pt">Interpretador de vários jogos de aventura e RPGs</summary>
+  <summary xml:lang="pt-BR">Interpretador para vários jogos de aventura e RPG</summary>
+  <summary xml:lang="pt-PT">Interpretador de vários jogos de aventura e RPGs</summary>
   <summary xml:lang="ru">Интерпретатор множества приключенческих и ролевых игр</summary>
   <summary xml:lang="uk">Інтерпретатор для численних пригодницьких і рольових ігор</summary>
   <developer_name>The ScummVM Team</developer_name>
@@ -38,219 +38,219 @@
       ScummVM just replaces the executables shipped with the game,
       allowing you to play them on systems for which they were never designed!
     </p>
-    <p xml:lang="ar">ScummVM هو برنامج يسمح لك بتشغيل مجموعة متنوعة من ألعاب المغامرات وألعاب 
-تقمص الأدوار الرسومية والتأشير والنقر ، بشرط أن يكون لديك بالفعل ملفات 
-البيانات الخاصة بهم. الجزء الذكي في هذا الأمر: يستبدل ScummVM الملفات 
-التنفيذية التي يتم شحنها مع اللعبة ، مما يتيح لك تشغيلها على أنظمة لم يتم 
+    <p xml:lang="ar">ScummVM هو برنامج يسمح لك بتشغيل مجموعة متنوعة من ألعاب المغامرات وألعاب
+تقمص الأدوار الرسومية والتأشير والنقر ، بشرط أن يكون لديك بالفعل ملفات
+البيانات الخاصة بهم. الجزء الذكي في هذا الأمر: يستبدل ScummVM الملفات
+التنفيذية التي يتم شحنها مع اللعبة ، مما يتيح لك تشغيلها على أنظمة لم يتم
 تصميمها من أجلها مطلقًا!</p>
-    <p xml:lang="be">ScummVM — гэта праграма для запуску розных клясічных графічных point-and-
-click авантурных і ралявых гульняў, пры ўмове, што вы маеце зьвесткі тых 
-гульняў. Карацей, ScummVM проста замяняе выканальныя файлы гульняў, 
+    <p xml:lang="be-tarask">ScummVM — гэта праграма для запуску розных клясічных графічных point-and-
+click авантурных і ралявых гульняў, пры ўмове, што вы маеце зьвесткі тых
+гульняў. Карацей, ScummVM проста замяняе выканальныя файлы гульняў,
 дазваляючы гуляць на сістэмах, на якія іх ніколі не распрацоўвалі!</p>
-    <p xml:lang="ca">ScummVM és un programa que permet executar una àmplia varietat de jocs 
-clàssics d'aventures gràfiques «point-and-click» i jocs de rol, sempre que 
-ja tingueu els seus fitxers de dades. La part intel·ligent sobre això: 
-ScummVM només substitueix els executables originals del joc, permetent-vos 
+    <p xml:lang="ca">ScummVM és un programa que permet executar una àmplia varietat de jocs
+clàssics d'aventures gràfiques «point-and-click» i jocs de rol, sempre que
+ja tingueu els seus fitxers de dades. La part intel·ligent sobre això:
+ScummVM només substitueix els executables originals del joc, permetent-vos
 jugar-los en sistemes per als quals mai van ser dissenyats!</p>
-    <p xml:lang="de">ScummVM ist ein Programm, welches dir ermöglicht, zahlreiche Adventures und 
-RPGs auszuführen, vorausgesetzt, du bist im Besitz der passenden 
-Spieldateien. ScummVM ersetzt dabei die ausführbaren Programmdateien, die 
-ursprünglich mit dem Spiel mitgeliefert wurden. Dadurch können diese Spiele 
+    <p xml:lang="de">ScummVM ist ein Programm, welches dir ermöglicht, zahlreiche Adventures und
+RPGs auszuführen, vorausgesetzt, du bist im Besitz der passenden
+Spieldateien. ScummVM ersetzt dabei die ausführbaren Programmdateien, die
+ursprünglich mit dem Spiel mitgeliefert wurden. Dadurch können diese Spiele
 auf Systemen gespielt werden, für welche sie nie entwickelt wurden!</p>
-    <p xml:lang="el">Το ScummVM είναι μια εφαρμογή που σας επιτρέπει να παίξετε μια ευρεία 
-ποικιλία από κλασσικά παιχνίδια περιπέτειας point-and-click, και ρόλων 
-(adventure και role-playing), αρκεί να έχετε στην κατοχή σας τα αρχεία 
-δεδομένων τους. Το ενδιαφέρον σε αυτή την υπόθεση είναι το εξής: το ScummVM 
-απλά αντικαθιστά τα εκτελέσιμα που συνόδευαν τα παιχνίδια, επιτρέποντάς σας 
+    <p xml:lang="el">Το ScummVM είναι μια εφαρμογή που σας επιτρέπει να παίξετε μια ευρεία
+ποικιλία από κλασσικά παιχνίδια περιπέτειας point-and-click, και ρόλων
+(adventure και role-playing), αρκεί να έχετε στην κατοχή σας τα αρχεία
+δεδομένων τους. Το ενδιαφέρον σε αυτή την υπόθεση είναι το εξής: το ScummVM
+απλά αντικαθιστά τα εκτελέσιμα που συνόδευαν τα παιχνίδια, επιτρέποντάς σας
 να τα παίξετε σε συστήματα για τα οποία δεν είχαν σχεδιαστεί ποτέ!</p>
-    <p xml:lang="es">ScummVM es un programa que te permite ejecutar una amplia selección de 
-aventuras gráficas «point-and-click» y RPG clásicos, siempre y cuando ya 
-tengas sus archivos de datos. Lo interesante es que ScummVM se limita a 
-sustituir los ejecutables de cada juego, ¡lo que permite jugarlos en 
+    <p xml:lang="es">ScummVM es un programa que te permite ejecutar una amplia selección de
+aventuras gráficas «point-and-click» y RPG clásicos, siempre y cuando ya
+tengas sus archivos de datos. Lo interesante es que ScummVM se limita a
+sustituir los ejecutables de cada juego, ¡lo que permite jugarlos en
 sistemas para los que nunca fueron diseñados!</p>
-    <p xml:lang="fi">ScummVM on ohjelma jonka avulla voit pelata lukuisia klassisia graafisia 
-seikkailu- ja roolipelejä, olettaen että sinulla on jo pelien datatiedostot. 
-Tämä on fiksua koska: ScummVM korvaa itse ajettavan peliohjelman, joten voit 
+    <p xml:lang="fi">ScummVM on ohjelma jonka avulla voit pelata lukuisia klassisia graafisia
+seikkailu- ja roolipelejä, olettaen että sinulla on jo pelien datatiedostot.
+Tämä on fiksua koska: ScummVM korvaa itse ajettavan peliohjelman, joten voit
 pelata pelejä jopa alustoilla joille pelejä ei koskaan suunniteltu!</p>
-    <p xml:lang="fr">ScummVM est un programme qui vous permet d'exécuter une grande variété de 
-jeux d'aventure graphique point-and-click et de jeux de rôle, à condition 
-que vous ayez déjà leurs fichiers de données. Ce qui est génial dans tout 
-ça : ScummVM remplace simplement les exécutables livrés avec les jeux, ce 
-qui vous permet de jouer sur des systèmes pour lesquels ces jeux n'ont 
+    <p xml:lang="fr">ScummVM est un programme qui vous permet d'exécuter une grande variété de
+jeux d'aventure graphique point-and-click et de jeux de rôle, à condition
+que vous ayez déjà leurs fichiers de données. Ce qui est génial dans tout
+ça : ScummVM remplace simplement les exécutables livrés avec les jeux, ce
+qui vous permet de jouer sur des systèmes pour lesquels ces jeux n'ont
 jamais été conçus !</p>
     <p xml:lang="he">ScummVM הינה תכנה שמאפשרת להריץ מגוון רחב של משחקי הרפתקאות גרפיים הצבע-
-והקלק ומשחקי תפקידים, בהינתן קבצי הנתונים שלהם. החלק המעניין הוא: ScummVM 
-מחליפה רק את קובץ הריצה שהגיע עם המשחק, מה שמאפשר לשחק בהם על מערכות אליהם 
+והקלק ומשחקי תפקידים, בהינתן קבצי הנתונים שלהם. החלק המעניין הוא: ScummVM
+מחליפה רק את קובץ הריצה שהגיע עם המשחק, מה שמאפשר לשחק בהם על מערכות אליהם
 המשחק מעולם לא תוכנן!</p>
-    <p xml:lang="hu">A ScummVM egy olyan program, mely számos klasszikus grafikus point-and-click 
-kalandjáték és szerepjáték futtatását teszi lehetővé, feltéve, hogy már 
-rendelkeznek az adatfájljaikkal. Az okos rész ebben: A ScummVM csak 
-kicseréli a játékkal szállított futtatható fájlokat, lehetővé téve számukra, 
+    <p xml:lang="hu">A ScummVM egy olyan program, mely számos klasszikus grafikus point-and-click
+kalandjáték és szerepjáték futtatását teszi lehetővé, feltéve, hogy már
+rendelkeznek az adatfájljaikkal. Az okos rész ebben: A ScummVM csak
+kicseréli a játékkal szállított futtatható fájlokat, lehetővé téve számukra,
 hogy olyan rendszereken játsszák őket, amelyekre soha nem lettek tervezve!</p>
-    <p xml:lang="it">ScummVM è un programma che permette di eseguire svariate avventure grafiche 
-e giochi di ruolo classici, a patto di averne a disposizione i files 
-originali. Il bello è che ScummVM sostituisce gli eseguibili originari, 
-permettendo di eseguire i giochi su piattaforme per cui non erano neppure 
+    <p xml:lang="it">ScummVM è un programma che permette di eseguire svariate avventure grafiche
+e giochi di ruolo classici, a patto di averne a disposizione i files
+originali. Il bello è che ScummVM sostituisce gli eseguibili originari,
+permettendo di eseguire i giochi su piattaforme per cui non erano neppure
 mai stati pensati!</p>
     <p xml:lang="ja">ScummVMは、データファイルが既にある場合に、さまざまな古典的なグラフィカルポイ
 ントアンドクリックアドベンチャーゲームやロールプレイングゲームを実行できるよ
 うにするプログラムです。これに関する巧妙な部分：ScummVMは、ゲームに付属してい
 る実行可能ファイルを置き換えるだけなので、設計されたことのないシステムで実行
 できます!</p>
-    <p xml:lang="ko">ScummVM은 데이터 파일을 가진 경우 다양한 고전 그래픽 포인트 앤 클릭 어드벤처 
-게임과 롤플레잉 게임을 실행할 수 있게 하는 프로그램입니다. ScummVM은 게임과 
-함께 제공된 실행파일을 대체하기 때문에 원래 게임이 실행되도록 설계되지 않은 
+    <p xml:lang="ko">ScummVM은 데이터 파일을 가진 경우 다양한 고전 그래픽 포인트 앤 클릭 어드벤처
+게임과 롤플레잉 게임을 실행할 수 있게 하는 프로그램입니다. ScummVM은 게임과
+함께 제공된 실행파일을 대체하기 때문에 원래 게임이 실행되도록 설계되지 않은
 시스템에서도 실행할 수 있습니다!</p>
-    <p xml:lang="nb">ScummVM er et program som lar deg kjøre et bredt assortiment av klassiske 
-pek-og-klikk-eventyrspill og rollespill – forutsatt at du allerede har 
-datafilene til spillet. Det finurlige med det hele er at ScummVM kun 
-erstatter selve programdelen av spillet og gjør det slik at du kan spille 
+    <p xml:lang="nb">ScummVM er et program som lar deg kjøre et bredt assortiment av klassiske
+pek-og-klikk-eventyrspill og rollespill – forutsatt at du allerede har
+datafilene til spillet. Det finurlige med det hele er at ScummVM kun
+erstatter selve programdelen av spillet og gjør det slik at du kan spille
 det på plattformer det aldri var utviklet til å kjøre på!</p>
-    <p xml:lang="nl">ScummVM is een programma die het mogelijk maakt om een grote verscheidenheid 
-aan klassieke grafische point-and-click adventure spellen en rollenspellen 
-te spelen, mits je de benodigde data bestanden al hebt. Het unieke hiervan 
-is: ScummVM vervangt de executables die bij het spel geleverd worden, 
+    <p xml:lang="nl">ScummVM is een programma die het mogelijk maakt om een grote verscheidenheid
+aan klassieke grafische point-and-click adventure spellen en rollenspellen
+te spelen, mits je de benodigde data bestanden al hebt. Het unieke hiervan
+is: ScummVM vervangt de executables die bij het spel geleverd worden,
 waardoor je ze kan spelen op systemen waar ze niet voor waren gemaakt!</p>
-    <p xml:lang="pl">ScummVM to program pozwalający na uruchomienie bogatego wyboru klasycznych 
-graficznych gier przygodowych typu „wskaż i kliknij”, oraz gier RPG - pod 
-warunkiem posiadania ich danych. ScummVM podmienia oryginalny program gier, 
+    <p xml:lang="pl">ScummVM to program pozwalający na uruchomienie bogatego wyboru klasycznych
+graficznych gier przygodowych typu „wskaż i kliknij”, oraz gier RPG - pod
+warunkiem posiadania ich danych. ScummVM podmienia oryginalny program gier,
 pozwalając na granie w nie na systemach, na które nigdy nie były napisane!</p>
-    <p xml:lang="pt">ScummVM é um programa que permite que você execute uma ampla variedade de 
-jogos clássicos de point-and-click (apontar e clicar) e RPG, desde que você 
-já tenha seus arquivos de dados. A melhor parte: ScummVM apenas substitui os 
-executáveis do jogo, permitindo que você os jogue em sistemas para os quais 
+    <p xml:lang="pt-BR">ScummVM é um programa que permite que você execute uma ampla variedade de
+jogos clássicos de point-and-click (apontar e clicar) e RPG, desde que você
+já tenha seus arquivos de dados. A melhor parte: ScummVM apenas substitui os
+executáveis do jogo, permitindo que você os jogue em sistemas para os quais
 eles nunca foram projetados!</p>
-    <p xml:lang="ru">ScummVM - это программа, которая позволяет запускать широкий спектр 
-классических графических приключенческих игр и ролевых игр, при условии, что 
-у вас уже есть их файлы данных. Самое умное в этом: ScummVM просто заменяет 
-исполняемые файлы, поставляемые с игрой, позволяя вам играть в них на 
+    <p xml:lang="ru">ScummVM - это программа, которая позволяет запускать широкий спектр
+классических графических приключенческих игр и ролевых игр, при условии, что
+у вас уже есть их файлы данных. Самое умное в этом: ScummVM просто заменяет
+исполняемые файлы, поставляемые с игрой, позволяя вам играть в них на
 системах, для которых они никогда не были разработаны!</p>
-    <p xml:lang="uk">ScummVM - це програма, яка дозволяє запускати широкий спектр класичних 
-графічних пригодницьких ігор та рольових ігор, якщо у вас вже є їх файли 
-даних. Щонайголовніше: ScummVM просто замінює виконувані файли, що 
-постачаються разом із грою, дозволяючи відтворювати їх у системах, для яких 
+    <p xml:lang="uk">ScummVM - це програма, яка дозволяє запускати широкий спектр класичних
+графічних пригодницьких ігор та рольових ігор, якщо у вас вже є їх файли
+даних. Щонайголовніше: ScummVM просто замінює виконувані файли, що
+постачаються разом із грою, дозволяючи відтворювати їх у системах, для яких
 вони ніколи не були розроблені!</p>
     <p>
       Currently, ScummVM supports a huge library of adventures with over 250 games in total.
       It supports many classics published by legendary studios like LucasArts, Sierra On-Line,
       Revolution Software, Cyan, Inc. and Westwood Studios.
     </p>
-    <p xml:lang="ar">حاليًا ، تدعم ScummVM مكتبة ضخمة من المغامرات تضم أكثر من 4000 لعبة في 
-المجموع. وهو يدعم العديد من الكلاسيكيات التي نشرتها الاستوديوهات الأسطورية 
-مثل LucasArts و Sierra On-Line و Revolution Software و Cyan، Inc. و Westwood 
+    <p xml:lang="ar">حاليًا ، تدعم ScummVM مكتبة ضخمة من المغامرات تضم أكثر من 4000 لعبة في
+المجموع. وهو يدعم العديد من الكلاسيكيات التي نشرتها الاستوديوهات الأسطورية
+مثل LucasArts و Sierra On-Line و Revolution Software و Cyan، Inc. و Westwood
 Studios.</p>
-    <p xml:lang="be">На гэты момант ScummVM падтрымлівае вялічэзную бібліятэку авантур, дзе болей 
-за 4000 гульняў. Вы зможаце дакрануцца да многіх клясічных твораў, выданых 
-леґэндарнымі студыямі як LucasArts, Sierra On-Line, Revolution Software, 
+    <p xml:lang="be-tarask">На гэты момант ScummVM падтрымлівае вялічэзную бібліятэку авантур, дзе болей
+за 4000 гульняў. Вы зможаце дакрануцца да многіх клясічных твораў, выданых
+леґэндарнымі студыямі як LucasArts, Sierra On-Line, Revolution Software,
 Cyan, Inc. і Westwood Studios.</p>
-    <p xml:lang="ca">Actualment, ScummVM suporta una enorme biblioteca d'aventures amb més de 
-4.000 jocs en total. Dóna suport a molts clàssics publicats per estudis 
-llegendaris com LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. i 
+    <p xml:lang="ca">Actualment, ScummVM suporta una enorme biblioteca d'aventures amb més de
+4.000 jocs en total. Dóna suport a molts clàssics publicats per estudis
+llegendaris com LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. i
 Westwood Studios.</p>
     <p xml:lang="de">Aktuell unterstützt ScummVM eine umfangreiche Bibliothek von Adventure-
-Spielen mit insgesamt über 4000 Spielen. Unterstützt werden viele Klassiker, 
-die von legendären Studios wie LucasArts, Sierra On-Line, Revolution 
+Spielen mit insgesamt über 4000 Spielen. Unterstützt werden viele Klassiker,
+die von legendären Studios wie LucasArts, Sierra On-Line, Revolution
 Software, Cyan Inc. und den Westwood Studios entwickelt wurden.</p>
-    <p xml:lang="el">Το ScummVM υποστηρίζει μια τεράστια βιβλιοθήκη από παιχνίδια περιπέτειας 
-(adventure games) με περισσότερους από 4000 τίτλους συνολικά. Υποστηρίζει 
-πολλούς από τους κλασσικούς τίτλους που έχουν εκδώσει θρυλικά στούντιο όπως 
-οι LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. και Westwood 
+    <p xml:lang="el">Το ScummVM υποστηρίζει μια τεράστια βιβλιοθήκη από παιχνίδια περιπέτειας
+(adventure games) με περισσότερους από 4000 τίτλους συνολικά. Υποστηρίζει
+πολλούς από τους κλασσικούς τίτλους που έχουν εκδώσει θρυλικά στούντιο όπως
+οι LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. και Westwood
 Studios.</p>
-    <p xml:lang="es">ScummVM es compatible con una inmensa biblioteca de más de 4 000 juegos en 
-total. Funciona con muchos de los clásicos publicados por estudios 
-legendarios como LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. 
+    <p xml:lang="es">ScummVM es compatible con una inmensa biblioteca de más de 4 000 juegos en
+total. Funciona con muchos de los clásicos publicados por estudios
+legendarios como LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc.
 y Westwood Studios.</p>
-    <p xml:lang="fi">Tällä hetkellä ScummVM tukee jättimäistä seikkailujen kirjastoa, kaikkiaan 
-yli 4000 peliä. Se tukee lukuisia klassikkoja legendaarisilta studioilta 
-kuten LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. ja Westwood 
+    <p xml:lang="fi">Tällä hetkellä ScummVM tukee jättimäistä seikkailujen kirjastoa, kaikkiaan
+yli 4000 peliä. Se tukee lukuisia klassikkoja legendaarisilta studioilta
+kuten LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. ja Westwood
 Studios.</p>
-    <p xml:lang="fr">Actuellement, ScummVM supporte une énorme collection d'aventures avec plus 
-de 4000 jeux au total. Il prend en charge de nombreux classiques publiés par 
-des studios légendaires comme LucasArts, Sierra On-Line, Revolution 
+    <p xml:lang="fr">Actuellement, ScummVM supporte une énorme collection d'aventures avec plus
+de 4000 jeux au total. Il prend en charge de nombreux classiques publiés par
+des studios légendaires comme LucasArts, Sierra On-Line, Revolution
 Software, Cyan, Inc. et Westwood Studios.</p>
-    <p xml:lang="he">נכון להיום, ScummVM תומכת בספריה ענקית של הרפתקאות, עם למעלה מ-4000 משחקים 
+    <p xml:lang="he">נכון להיום, ScummVM תומכת בספריה ענקית של הרפתקאות, עם למעלה מ-4000 משחקים
 בסך הכל. ביניהם מיטב הקלאסיקות של אולפנים אגדיים כמו LucasArts, Sierra On-
 Line, Revolution Software, Cyan, Inc. וגם Westwood Studios.</p>
-    <p xml:lang="hu">Jelenleg a ScummVM egy hatalmas kalandkönyvtárat támogat, összesen több mint 
-4000 játékkal. Támogatja számos legendás stúdió által kiadott klasszikust, 
-mint például a LucasArts, a Sierra On-Line, a Revolution Software, a Cyan, 
+    <p xml:lang="hu">Jelenleg a ScummVM egy hatalmas kalandkönyvtárat támogat, összesen több mint
+4000 játékkal. Támogatja számos legendás stúdió által kiadott klasszikust,
+mint például a LucasArts, a Sierra On-Line, a Revolution Software, a Cyan,
 Inc. és a Westwood Studios.</p>
-    <p xml:lang="it">Attualmente, ScummVM supporta una vastissima collezione di giochi di 
-avventura, per un totale di oltre 4000 titoli. Tra questi, molti giochi 
+    <p xml:lang="it">Attualmente, ScummVM supporta una vastissima collezione di giochi di
+avventura, per un totale di oltre 4000 titoli. Tra questi, molti giochi
 rinomati pubblicati da editori leggendari come la LucasArts, la Sierra On-
 Line, la Revolution Software, la Cyan, Inc. o i Westwood Studios.</p>
     <p xml:lang="ja">現在、ScummVMは、合計4000を超えるゲームを備えた膨大なアドベンチャーライブラリ
 をサポートしています。 LucasArts、Sierra On-Line、Revolution Software、Cyan、
 Inc.、WestwoodStudiosなどの伝説的なスタジオによって公開された多くのクラシック
 をサポートしています.</p>
-    <p xml:lang="ko">현재 ScummVM은 합계 4000개를 넘는 수많은 어드벤처 게임을 지원합니다. 
-LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc., 그리고 Westwood 
+    <p xml:lang="ko">현재 ScummVM은 합계 4000개를 넘는 수많은 어드벤처 게임을 지원합니다.
+LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc., 그리고 Westwood
 Studios 같은 전설적인 스튜디오에서 발표된 많은 고전을 지원합니다.</p>
-    <p xml:lang="nb">For øyeblikket støtter ScummVM et eventyrlig bibliotek på over 4000 
-spilltitler totalt. Det støtter mange klassikere utgitt av legendariske 
-spillstudioer som bl.a. LucasArts, Sierra On-Line, Revolution Software, 
+    <p xml:lang="nb">For øyeblikket støtter ScummVM et eventyrlig bibliotek på over 4000
+spilltitler totalt. Det støtter mange klassikere utgitt av legendariske
+spillstudioer som bl.a. LucasArts, Sierra On-Line, Revolution Software,
 Cyan, Inc. og Westwood Studios.</p>
-    <p xml:lang="nl">Momenteel ondersteunt ScummVM een enorme hoeveelheid adventures van meer dan 
-4000 spellen in totaal. Het ondersteunt vele klassiekers gepubliceerd door 
-legendarische studios als LucasArts, Sierra On-Line, Revolution Software, 
+    <p xml:lang="nl">Momenteel ondersteunt ScummVM een enorme hoeveelheid adventures van meer dan
+4000 spellen in totaal. Het ondersteunt vele klassiekers gepubliceerd door
+legendarische studios als LucasArts, Sierra On-Line, Revolution Software,
 Cyan, Inc. en Westwood Studios.</p>
-    <p xml:lang="pl">Obecnie ScummVM obsługuje wielki katalog przygód liczący razem ponad 4000 
-gier. Obsługuje wiele klasycznych gier wydanych przez legandarne studia 
-takie jak LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. oraz 
+    <p xml:lang="pl">Obecnie ScummVM obsługuje wielki katalog przygód liczący razem ponad 4000
+gier. Obsługuje wiele klasycznych gier wydanych przez legandarne studia
+takie jak LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. oraz
 Westwood Studios.</p>
-    <p xml:lang="pt">Atualmente o ScummVM suporta uma enorme biblioteca de aventuras com mais de 
-4000 jogos no total. Ele suporta muitos clássicos publicados por estúdios 
-lendários como LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. e 
+    <p xml:lang="pt-BR">Atualmente o ScummVM suporta uma enorme biblioteca de aventuras com mais de
+4000 jogos no total. Ele suporta muitos clássicos publicados por estúdios
+lendários como LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. e
 Westwood Studios.</p>
-    <p xml:lang="ru">В настоящее время ScummVM поддерживает огромную библиотеку приключений, 
-насчитывающую в общей сложности более 4000 игр. Он поддерживает множество 
-классических произведений, выпущенных легендарными студиями, такими как 
-LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. и Westwood 
+    <p xml:lang="ru">В настоящее время ScummVM поддерживает огромную библиотеку приключений,
+насчитывающую в общей сложности более 4000 игр. Он поддерживает множество
+классических произведений, выпущенных легендарными студиями, такими как
+LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. и Westwood
 Studios.</p>
-    <p xml:lang="uk">В даний час ScummVM підтримує величезну бібліотеку пригодницьких ігор із 
-загальною кількістю понад 4000. Проект підтримує багато класичних творів, 
-опублікованих такими легендарними студіями, як LucasArts, Sierra On-Line, 
+    <p xml:lang="uk">В даний час ScummVM підтримує величезну бібліотеку пригодницьких ігор із
+загальною кількістю понад 4000. Проект підтримує багато класичних творів,
+опублікованих такими легендарними студіями, як LucasArts, Sierra On-Line,
 Revolution Software, Cyan, Inc. та Westwood Studios.</p>
     <p>
       Next to ground-breaking titles like the Monkey Island series, Broken Sword,
       Myst, Blade Runner and countless other games you will find
       some really obscure adventures and truly hidden gems to explore.
     </p>
-    <p xml:lang="ar">بجانب العناوين الرائدة مثل سلسلة Monkey Island و Broken Sword و Myst و Blade 
-Runner وعدد لا يحصى من الألعاب الأخرى ، ستجد بعض المغامرات الغامضة حقًا 
+    <p xml:lang="ar">بجانب العناوين الرائدة مثل سلسلة Monkey Island و Broken Sword و Myst و Blade
+Runner وعدد لا يحصى من الألعاب الأخرى ، ستجد بعض المغامرات الغامضة حقًا
 والأحجار الكريمة المخفية حقًا لاستكشافها.</p>
-    <p xml:lang="be">Разам з рэвалюцыйнымі гульнямі як Monkey Island, Broken Sword, Myst, Blade 
-Runner і безьлічам іншых гульняў, вы знойдзіце насамрэч малавядомыя авантуры 
+    <p xml:lang="be-tarask">Разам з рэвалюцыйнымі гульнямі як Monkey Island, Broken Sword, Myst, Blade
+Runner і безьлічам іншых гульняў, вы знойдзіце насамрэч малавядомыя авантуры
 й прыхаваныя скарбы.</p>
-    <p xml:lang="ca">Al costat de títols innovadors com la sèrie Monkey Island, Broken Sword, 
-Myst, Blade Runner i molts altres jocs trobareu algunes aventures realment 
+    <p xml:lang="ca">Al costat de títols innovadors com la sèrie Monkey Island, Broken Sword,
+Myst, Blade Runner i molts altres jocs trobareu algunes aventures realment
 fosques i altres gemmes realment ocultes per explorar.</p>
-    <p xml:lang="de">Neben bahnbrechenden Titel wie der Monkey Island-Serie, Baphomets Fluch, 
-Myst, Blade Runner und zahllosen weiteren Spielen wirst du auch einige 
+    <p xml:lang="de">Neben bahnbrechenden Titel wie der Monkey Island-Serie, Baphomets Fluch,
+Myst, Blade Runner und zahllosen weiteren Spielen wirst du auch einige
 wirklich kuriose Adventures und versteckte Schätze entdecken.</p>
-    <p xml:lang="el">Μαζί με καινοτόμους για την εποχή τους τίτλους, όπως ήταν οι σειρές Monkey 
-Island, Broken Sword, Myst, Blade Runner και αμέτρητα άλλα παιχνίδια, θα 
-βρείτε και μερικούς σχετικά άγνωστους τίτλους περιπέτειας και πραγματικά 
+    <p xml:lang="el">Μαζί με καινοτόμους για την εποχή τους τίτλους, όπως ήταν οι σειρές Monkey
+Island, Broken Sword, Myst, Blade Runner και αμέτρητα άλλα παιχνίδια, θα
+βρείτε και μερικούς σχετικά άγνωστους τίτλους περιπέτειας και πραγματικά
 κρυμμένα διαμαντάκια για να εξερευνήσετε.</p>
-    <p xml:lang="es">Podrás jugar a títulos tan innovadores como las sagas de Monkey Island, 
-Broken Sword, Myst, Blade Runner como aventuras menos conocidas y otras 
+    <p xml:lang="es">Podrás jugar a títulos tan innovadores como las sagas de Monkey Island,
+Broken Sword, Myst, Blade Runner como aventuras menos conocidas y otras
 joyas ocultas.</p>
-    <p xml:lang="fi">Uraauurtaneiden Monkey Island-, Broken Sword-, Myst-, Blade Runner- ja 
-lukuisten muiden pelien ohelta löydät myös vähemmän tunnettuja helmiä 
+    <p xml:lang="fi">Uraauurtaneiden Monkey Island-, Broken Sword-, Myst-, Blade Runner- ja
+lukuisten muiden pelien ohelta löydät myös vähemmän tunnettuja helmiä
 tutkittavaksesi.</p>
-    <p xml:lang="fr">À côté de titres révolutionnaires comme la série Monkey Island, Broken Sword 
-(Les Chevaliers de Baphomet) , Myst, Blade Runner et d'innombrables autres 
-jeux, vous trouverez des aventures vraiment obscures et des pépites vraiment 
+    <p xml:lang="fr">À côté de titres révolutionnaires comme la série Monkey Island, Broken Sword
+(Les Chevaliers de Baphomet) , Myst, Blade Runner et d'innombrables autres
+jeux, vous trouverez des aventures vraiment obscures et des pépites vraiment
 bien cachées à explorer.</p>
-    <p xml:lang="he">לצד כותרים פורצי דרך כמו סדרת אי הקופים, חרב שבורה, Myst, בלייד ראנר 
-ואינספור משחקים נוספים תוכלו למצוא גם הרפתקאות עמומות ופנינות נסתרות של ממש 
+    <p xml:lang="he">לצד כותרים פורצי דרך כמו סדרת אי הקופים, חרב שבורה, Myst, בלייד ראנר
+ואינספור משחקים נוספים תוכלו למצוא גם הרפתקאות עמומות ופנינות נסתרות של ממש
 שמחכות שתגלו אותן.</p>
-    <p xml:lang="hu">Az olyan úttörő címek mellett, mint a Monkey Island sorozat, a Broken Sword, 
-a Myst, a Blade Runner és számtalan más játék, valóban homályos kalandokat 
+    <p xml:lang="hu">Az olyan úttörő címek mellett, mint a Monkey Island sorozat, a Broken Sword,
+a Myst, a Blade Runner és számtalan más játék, valóban homályos kalandokat
 és valóban rejtett drágaköveket találhat.</p>
-    <p xml:lang="it">Pietre miliari come la saga di Monkey Island, Broken Sword, Myst, Blade 
-Runner e innumerevoli altri titoli tutti da scoprire. Potrai trovare 
-avventure sconosciute ai più ma anche dei gioiellini ingiustamente 
+    <p xml:lang="it">Pietre miliari come la saga di Monkey Island, Broken Sword, Myst, Blade
+Runner e innumerevoli altri titoli tutti da scoprire. Potrai trovare
+avventure sconosciute ai più ma anche dei gioiellini ingiustamente
 dimenticati.</p>
     <p xml:lang="ja">モンキーアイランドシリーズ、ブロークンソード、ミスト、ブレードランナー、その
 他の無数のゲームなどの画期的なタイトルの横に、いくつかの本当にあいまいな冒険
@@ -258,25 +258,25 @@ dimenticati.</p>
     <p xml:lang="ko">Monkey Island 시리즈, Broken Sword, Myst, Blade Runner와 같이 획기적인 타이틀
 을 비롯해, 잘 알려지지 않은 어드벤처 게임과 진정한 숨겨진 보석을 찾아볼 수 있
 습니다.</p>
-    <p xml:lang="nb">Sammen med banebrytende titler som Monkey Island-serien, Broken Sword, Myst, 
-Blade Runner og utallige andre spill finner du også enkelte kuriositeter og 
+    <p xml:lang="nb">Sammen med banebrytende titler som Monkey Island-serien, Broken Sword, Myst,
+Blade Runner og utallige andre spill finner du også enkelte kuriositeter og
 skjulte skatter det kan være verdt å gi et forsøk.</p>
-    <p xml:lang="nl">Naast spraakmakende titels zoals de Monkey Island series, Broken Sword, 
-Myst, Blade Runner en talloze andere spellen zal je enkele vage adventures 
+    <p xml:lang="nl">Naast spraakmakende titels zoals de Monkey Island series, Broken Sword,
+Myst, Blade Runner en talloze andere spellen zal je enkele vage adventures
 vinden en echte verborgen pareltjes ontdekken.</p>
-    <p xml:lang="pl">Poza przełomowymi tytułami, takimi jak seria Monkey Island, Broken Sword, 
-Myst, Blade Runner i wieloma innymi, znajdziesz tu również wiele mało 
+    <p xml:lang="pl">Poza przełomowymi tytułami, takimi jak seria Monkey Island, Broken Sword,
+Myst, Blade Runner i wieloma innymi, znajdziesz tu również wiele mało
 znanych przygód i naprawdę mało znanych perełek.</p>
-    <p xml:lang="pt">Ao lado de títulos inovadores como a série Monkey Island, Broken Sword, 
-Myst, Blade Runner e inúmeros outros jogos, você encontrará algumas 
+    <p xml:lang="pt-BR">Ao lado de títulos inovadores como a série Monkey Island, Broken Sword,
+Myst, Blade Runner e inúmeros outros jogos, você encontrará algumas
 aventuras realmente obscuras e verdadeiras joias raras para explorar.</p>
-    <p xml:lang="ru">Наряду с новаторскими играми, такими как серия Monkey Island, Broken Sword, 
-Myst, Blade Runner и бесчисленное множество других игр, вы найдете 
-действительно малоизвестные приключения и действительно скрытые сокровища 
+    <p xml:lang="ru">Наряду с новаторскими играми, такими как серия Monkey Island, Broken Sword,
+Myst, Blade Runner и бесчисленное множество других игр, вы найдете
+действительно малоизвестные приключения и действительно скрытые сокровища
 для исследования.</p>
-    <p xml:lang="uk">Окрім новаторських ігор, як-от серії Monkey Island, Broken Sword, Myst, 
-Blade Runner та незліченної кількості інших, ви знайдете декілька справді 
-маловідомих пригодницьких ігор та справді прихованих дорогоцінних каменів, 
+    <p xml:lang="uk">Окрім новаторських ігор, як-от серії Monkey Island, Broken Sword, Myst,
+Blade Runner та незліченної кількості інших, ви знайдете декілька справді
+маловідомих пригодницьких ігор та справді прихованих дорогоцінних каменів,
 які слід дослідити.</p>
   </description>
   <screenshots>

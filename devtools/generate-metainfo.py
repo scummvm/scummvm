@@ -5,8 +5,10 @@
 
 import re
 import os
+import xml.sax.saxutils
 
-metainfo_xml_template = '''<?xml version="1.0" encoding="UTF-8"?>
+METAINFO_OUTPUT_FILE = 'dists/org.scummvm.scummvm.metainfo.xml'
+METAINFO_XML_TEMPLATE = '''<?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2020-2023 The ScummVM Team -->
 <component type="desktop-application">
   <id>org.scummvm.scummvm</id>
@@ -98,163 +100,162 @@ metainfo_xml_template = '''<?xml version="1.0" encoding="UTF-8"?>
 </component>
 '''
 
-def extract_summary(file):
-    with open('../po/' + file) as f:
+SUMMARY_TAG = 'dists/org.scummvm.scummvm.metainfo.xml.cpp:32'
+SUMMARY_PAT = r'  <summary xml:lang="xy">I18N: One line summary as shown in *nix distributions</summary>'
+PAR_TAGS = [
+    'dists/org.scummvm.scummvm.metainfo.xml.cpp:37', # Paragraph 1
+    'dists/org.scummvm.scummvm.metainfo.xml.cpp:45', # Paragraph 2
+    'dists/org.scummvm.scummvm.metainfo.xml.cpp:51', # Paragraph 3
+]
+PAR_PATS = [
+    r'    <p xml:lang="xy">I18N: 1 of 3 paragraph of ScummVM description in *nix distributions</p>',
+    r'    <p xml:lang="xy">I18N: 2 of 3 paragraph of ScummVM description in *nix distributions</p>',
+    r'    <p xml:lang="xy">I18N: 3 of 3 paragraph of ScummVM description in *nix distributions</p>',
+]
+
+BASE_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
+
+def extract_po_line(file, tag):
+    with open(os.path.join(BASE_PATH, 'po', file), 'r') as f:
         content = f.read()
-    pattern = r'#: dists\/org\.scummvm\.scummvm\.metainfo\.xml\.cpp:32\nmsgid ".+"\nmsgstr "(.+)"'
-    summary_match = re.search(pattern, content)
-    if summary_match:
-        summary = summary_match.group(1)
-        return summary.strip()
+    pattern = r'#: {0}\nmsgid ".+"\nmsgstr "(.+)"\n'.format(re.escape(tag))
+    line_match = re.search(pattern, content)
+    if line_match:
+        return line_match.group(1)
     else:
         return None
 
 
-def extract_par1(file):
-    with open('../po/' + file) as f:
+def extract_po_par(file, tag):
+    with open(os.path.join(BASE_PATH, 'po', file), 'r') as f:
         content = f.read()
-    pattern = r'#: dists\/org\.scummvm\.scummvm\.metainfo\.xml\.cpp:37\nmsgid ""\n(.+\n)*msgstr ""\n((.+\n)*)'
-    par1_match = re.search(pattern, content)
-    if par1_match:
-        par1 = par1_match.group(2)
-        if par1:
-            return par1.strip()
-        else:
-            return None
+    pattern = r'#: {0}\nmsgid ""\n(?:".*"\n)+msgstr ""\n((?:".+"\n)+)'.format(re.escape(tag))
+    par_match = re.search(pattern, content)
+    if par_match:
+        par = par_match.group(1)
+        # Remove trailing \n
+        par = par[:-1]
+        # Remove quotes at start and end of line
+        return [line[1:-1] for line in par.split('\n')]
     else:
         return None
 
 
-def extract_par2(file):
-    with open('../po/' + file) as f:
-        content = f.read()
-    pattern = r'#: dists\/org\.scummvm\.scummvm\.metainfo\.xml\.cpp:45\nmsgid ""\n(.+\n)*msgstr ""\n((.+\n)*)'
-    par2_match = re.search(pattern, content)
-    if par2_match:
-        par2 = par2_match.group(2)
-        if par2:
-            return par2.strip()
-        else:
-            return None
-    else:
-        return None
+def po_to_lang(po_file_name):
+    # Remove .po extension
+    lang = po_file_name[:-3]
 
+    region_subtag = None
+    variant_subtag = None
+    # we use - for locale modifier (tarask)
+    if '-' in lang:
+        lang, variant_subtag = lang.split('-', maxsplit=1)
 
-def extract_par3(file):
-    with open('../po/' + file) as f:
-        content = f.read()
-    pattern = r'#: dists\/org\.scummvm\.scummvm\.metainfo\.xml\.cpp:51\nmsgid ""\n(.+\n)*msgstr ""\n((.+\n)*)'
-    par3_match = re.search(pattern, content)
-    if par3_match:
-        par3 = par3_match.group(2)
-        if par3:
-            return par3.strip()
-        else:
-            return None
-    else:
-        return None
+    if '_' in lang:
+        lang, region_subtag = lang.split('_', maxsplit=1)
+
+    primary_subtag = lang
+
+    assert(len(primary_subtag) == 2)
+    assert(region_subtag is None or len(region_subtag) == 2)
+    assert(variant_subtag is None or 6 <= len(variant_subtag) <= 8)
+
+    lang = primary_subtag.lower()
+    if region_subtag:
+        lang += '-' + region_subtag.upper()
+    if variant_subtag:
+        lang += '-' + variant_subtag.lower()
+
+    return primary_subtag, lang
 
 
 def get_summary_translations(po_file_names):
-    summary_translations = ""
+    summary_translations = []
 
-    # first_translation is used to determine the indentation (first translation will not require any indentation)
-    first_translation = True
-
-    for file in po_file_names:
-        summary = extract_summary(file)
-        if (summary is None):
+    for file, lang in po_file_names.items():
+        summary = extract_po_line(file, SUMMARY_TAG)
+        if summary is None:
             continue
 
-        lang = '"' + file[0] + file[1] + '"'
-        summary_translations += ('' if first_translation else '  ') + '<summary xml:lang=' + \
-            lang + '>' + summary + '</summary>\n'
-        first_translation = False
+        summary = xml.sax.saxutils.escape(summary)
 
-    summary_translations = summary_translations.rstrip('\n')
+        summary_translations.append('  <summary xml:lang="{0}">{1}</summary>'.format(
+                lang, summary))
 
-    return summary_translations
+    return '\n'.join(summary_translations)
 
 
-def substitute_summary_translations(summary_translations, xml):
-    pattern = r'<summary xml:lang="xy">I18N: One line summary as shown in \*nix distributions<\/summary>'
-
-    metainfo_xml = re.sub(pattern, summary_translations, xml)
-
-    return metainfo_xml
+def substitute_summary_translations(po_file_names, xml):
+    summary_translations = get_summary_translations(po_file_names)
+    return xml.replace(SUMMARY_PAT, summary_translations)
 
 
-def get_parx_translations(x, po_file_names):
-    parx_translations = ""
-    first_translation = True
+def get_parx_translations(po_file_names, tag):
+    parx_translations = []
 
-    for file in po_file_names:
-        parx = ""
-        if (x == 1):
-            parx = extract_par1(file)
-        elif (x == 2):
-            parx = extract_par2(file)
-        else:
-            parx = extract_par3(file)
+    for file, lang in po_file_names.items():
+        parx = extract_po_par(file, tag)
 
-        if (parx is None):
+        if parx is None:
             continue
 
-        # parx also contains " (quotes) around the text; so we need to replace them with empty character
-        # otherwise " (quotes) will appear in scummvm.metainfo.xml generated file
-        parx = parx.replace('"', '')
+        # In XML a newline will be replace by a space character
+        # Join everything making it pretty and remove trailing spaces
+        parx = '\n'.join(line.rstrip(' ') for line in parx)
+        parx = xml.sax.saxutils.escape(parx)
 
-        lang = '"' + file[0] + file[1] + '"'
-        parx_translations += ('' if first_translation else '    ') + '<p xml:lang=' + \
-            lang + '>' + parx + '</p>\n'
-        first_translation = False
+        parx_translations.append('    <p xml:lang="{0}">{1}</p>'.format(lang, parx))
 
-    parx_translations = parx_translations.rstrip('\n')
-
-    return parx_translations
+    return '\n'.join(parx_translations)
 
 
-def substitute_parx_translations(x, parx_translations, xml):
-    pattern = r'<p xml:lang="xy">I18N: 1 of 3 paragraph of ScummVM description in \*nix distributions<\/p>'
-
-    if (x == 2):
-        pattern = r'<p xml:lang="xy">I18N: 2 of 3 paragraph of ScummVM description in \*nix distributions<\/p>'
-    elif (x == 3):
-        pattern = r'<p xml:lang="xy">I18N: 3 of 3 paragraph of ScummVM description in \*nix distributions<\/p>'
-
-    metainfo_xml = re.sub(pattern, parx_translations, xml)
-    return metainfo_xml
+def substitute_parx_translations(po_file_names, xml):
+    for tag, pat in zip(PAR_TAGS, PAR_PATS):
+        parx_translations = get_parx_translations(po_file_names, tag)
+        xml = xml.replace(pat, parx_translations)
+    return xml
 
 
 def get_po_files():
     po_file_names = []
-    for filename in os.listdir("../po/"):
+    for filename in os.listdir(os.path.join(BASE_PATH, 'po')):
         if filename.endswith(".po"):
             po_file_names.append(filename)
 
     po_file_names.sort()
 
-    return po_file_names
+    po_langs = {}
+    last_primary = None
+    last_file = None
+    for file in po_file_names:
+        primary_subtag, lang = po_to_lang(file)
+        if last_primary != primary_subtag:
+            # We are sorted so it's a new primary group
+            last_primary = primary_subtag
+            did_dedup = False
+            # Try with primary subtag first
+            po_langs[file] = primary_subtag
+        else:
+            if not did_dedup:
+                # Fix last file name because we have duplicate
+                po_langs[last_file] = po_to_lang(last_file)[1]
+                did_dedup = True
+            # We got a duplicate lang code: deduplicate
+            po_langs[file] = lang
+        last_file = file
+
+    return po_langs
 
 
 def main():
     po_file_names = get_po_files()
 
-    summary_translations = get_summary_translations(po_file_names)
     xml = substitute_summary_translations(
-        summary_translations, metainfo_xml_template)
+        po_file_names, METAINFO_XML_TEMPLATE)
 
-    par1_translations = get_parx_translations(1, po_file_names)
-    xml = substitute_parx_translations(1, par1_translations, xml)
+    xml = substitute_parx_translations(po_file_names, xml)
 
-    par2_translations = get_parx_translations(2, po_file_names)
-    xml = substitute_parx_translations(2, par2_translations, xml)
-
-    par3_translations = get_parx_translations(3, po_file_names)
-    xml = substitute_parx_translations(3, par3_translations, xml)
-
-    # write to org.scummvm.scummvm.metainfo.xml file
-    with open("../dists/org.scummvm.scummvm.metainfo.xml", "w") as f:
+    with open(os.path.join(BASE_PATH, METAINFO_OUTPUT_FILE), 'w') as f:
         f.write(xml)
 
 
