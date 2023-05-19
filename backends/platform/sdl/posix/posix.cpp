@@ -289,14 +289,21 @@ Common::String OSystem_POSIX::getScreenshotsPath() {
 
 void OSystem_POSIX::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 #ifdef DATA_PATH
-	const char *snap = getenv("SNAP");
-	if (snap) {
-		Common::String dataPath = Common::String(snap) + DATA_PATH;
+	const char *path = nullptr;
+	if (!path) {
+		path = getenv("SNAP");
+	}
+	if (!path) {
+		path = getenv("APPDIR");
+	}
+	if (path) {
+		Common::Path dataPath(path);
+		dataPath.joinInPlace(DATA_PATH);
 		Common::FSNode dataNode(dataPath);
 		if (dataNode.exists() && dataNode.isDirectory()) {
 			// This is the same priority which is used for the data path (below),
 			// but we insert this one first, so it will be searched first.
-			s.add(dataPath, new Common::FSDirectory(dataNode, 4), priority);
+			s.add(dataNode.getPath(), new Common::FSDirectory(dataNode, 4), priority);
 		}
 	}
 #endif
