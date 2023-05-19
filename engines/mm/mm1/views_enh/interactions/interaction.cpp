@@ -42,6 +42,7 @@ Interaction::Interaction(const Common::String &name, int portrait) : PartyView(n
 }
 
 void Interaction::addText(const Common::String &str) {
+	setReduced(false);
 	_lines = splitLines(searchAndReplace(str, "\n", " "));
 }
 

@@ -19,39 +19,36 @@
  *
  */
 
-#include "mm/mm1/views_enh/interactions/lord_archer.h"
-#include "mm/mm1/maps/map40.h"
-#include "mm/mm1/globals.h"
+#ifndef MM1_VIEWS_ENH_INTERACTIONS_DOG_STATUE_H
+#define MM1_VIEWS_ENH_INTERACTIONS_DOG_STATUE_H
 
+#include "mm/mm1/views_enh/interactions/interaction.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 namespace Interactions {
 
-LordArcher::LordArcher() : Interaction("LordArcher", 33) {
-	_title = STRING["maps.emap40.title"];
-	addText(STRING["maps.emap40.archer"]);
-	addButton(STRING["maps.yes"], 'Y');
-	addButton(STRING["maps.no"], 'N');
-}
+class DogStatue : public Interaction {
+private:
+	bool _completedQuests = false;
+protected:
+	/**
+	 * Handles any action/press
+	 */
+	void viewAction() override;
 
-bool LordArcher::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_y || msg.keycode == Common::KEYCODE_n) {
-		MM1::Maps::Map40 &map = *static_cast<MM1::Maps::Map40 *>(g_maps->_currentMap);
-		close();
+public:
+	DogStatue();
+	virtual ~DogStatue() {}
 
-		if (msg.keycode == Common::KEYCODE_y) {
-			map.archerSubmit();
-		} else {
-			map.archerResist();
-		}
-	}
-
-	return true;
-}
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+};
 
 } // namespace Interactions
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
+
+#endif

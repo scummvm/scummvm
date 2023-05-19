@@ -98,7 +98,7 @@ protected:
 	}
 
 public:
-	Interaction(const Common::String &name, int portrait);
+	Interaction(const Common::String &name, int portrait = -1);
 
 	/**
 	 * Handles game messages

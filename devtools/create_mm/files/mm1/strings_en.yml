@@ -948,6 +948,8 @@ maps:
 	passage_outside2: "Passage outside, exit (Y/N)?"
 	accept: "Accept"
 	decline: "Decline"
+	yes: "\x01""37Yes"
+	no: "\x01""37No"
 
 	desert:
 		its_hot: "It's hot... "
@@ -1606,32 +1608,32 @@ maps:
 		boulder: "A boulder says: \"There should be 5 tests\""
 		title: "Lord Archer"
 		archer: "\"I am Lord Archer, the raven.\nI take from those who have and give to those who have not! Submit (Y/N)?\""
-		yes: "\x01""37Yes"
-		no: "\x01""37No"
 
 	map41:
 		message3: "Etched in gold, message 3 reads:\nFor-tasks-and-rating.-be-from-6th-\nfrustrations!-the-to-in"
 		dung: "Minotaur dung slushes beneath you!"
 		sign1: "The enchanted chamber"
 		sign2: "Cleptomian guild, do not disturb!"
-		sign3: "The council of strength is in session"
-		sign4: "The uglies club - members only!"
+		sign3: "The Council of Strength is in session"
+		sign4: "The Uglies Club - Members only!"
 		sign5: "Specimen tank - keep closed"
 		stairs_up: "Spiralling stairs go up,take them (Y/N)?"
 		tapestry1: "A tapestry on the wall depicts a gray\nminotaur stomping on a group of knights."
 		tapestry2: "A tapestry on the wall depicts\na kingdom ruled by minotaurs"
 	emap41:
-		message3: "Etched in gold, message 3 reads:\n\"For-tasks-and-rating.-be-from-6th-\nfrustrations!-the-to-in\""
+		message3: "Etched in gold, message 3 reads:\n\"For-tasks-and-rating.-Be-from-\n6th-frustrations!-The-to-in\""
+		stairs_up: "Spiralling stairs go up, take them (Y/N)?"
 
 	map42:
 		message9: "Etched in gold, message 9 reads:\nSuccessful-that-training,-the-worthy-\nthe-visit-yet-inner-reality,-order,"
 		defeated: "The master of this stronghold\nhas been defeated!"
 		sign1: "Enter the maze of the minotaur...\nif you dare!"
 		statue1: "Standing atop a pedestal in the center\nof the room is a statue of a small sable\nand white dog. "
-		statue2: "It comes to life and\nspeaks,\"Congratulations, you've\ncompleted a major quest (+10000 exp)\nremember b.j.!\""
+		statue2: "It comes to life and\nspeaks,\"Congratulations, you've\ncompleted a major quest (+10000 exp)\nRemember B.J.!\""
 		statue3: "Desecrate it (Y/N)?"
-	emap43:
-		message9: "Etched in gold, message 9 reads:\n\"Successful-that-training,-the-worthy-\nthe-visit-yet-inner-reality,-order,\""
+	emap42:
+		title: "Dog Statue"
+		message9: "Etched in gold, message 9 reads:\n\"Successful-that-training,-the-\nworthy-the-visit-yet-inner-\nreality,-order,\""
 
 	map43:
 		exit: "Exit castle, (Y/N)?"
