@@ -46,6 +46,10 @@ static const PlainGameDescriptor bladeRunnerGames[] = {
 	{nullptr, nullptr}
 };
 
+static const char *const directoryGlobs[] = {
+	"BASE",
+	nullptr
+};
 } // End of namespace BladeRunner
 
 class BladeRunnerMetaEngineDetection : public AdvancedMetaEngineDetection {
@@ -72,6 +76,8 @@ BladeRunnerMetaEngineDetection::BladeRunnerMetaEngineDetection()
 		// and expects ScummVM to detect both, offer a choice on which to add,
 		// and finally launch the proper one depending on which was added.
 		_flags = kADFlagUseExtraAsHint;
+		_maxScanDepth = 2;
+		_directoryGlobs = BladeRunner::directoryGlobs;
 }
 
 const char *BladeRunnerMetaEngineDetection::getName() const {
