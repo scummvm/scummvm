@@ -352,6 +352,12 @@ void BladeRunnerEngine::pauseEngineIntern(bool pause) {
 
 Common::Error BladeRunnerEngine::run() {
 	Common::Array<Common::String> missingFiles;
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "base");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cd1");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cd2");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cd3");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cd4");
 	if (!_isNonInteractiveDemo && !checkFiles(missingFiles)) {
 		Common::String missingFileStr = "";
 		for (uint i = 0; i < missingFiles.size(); ++i) {
@@ -558,15 +564,9 @@ bool BladeRunnerEngine::checkFiles(Common::Array<Common::String> &missingFiles) 
 	bool hasHdFrames = Common::File::exists("HDFRAMES.DAT");
 
 	if (!hasHdFrames) {
-		requiredFiles.clear();
-		requiredFiles.push_back("CDFRAMES1.DAT");
-		requiredFiles.push_back("CDFRAMES2.DAT");
-		requiredFiles.push_back("CDFRAMES3.DAT");
-		requiredFiles.push_back("CDFRAMES4.DAT");
-
-		for (uint i = 0; i < requiredFiles.size(); ++i) {
-			if (!Common::File::exists(requiredFiles[i])) {
-				missingFiles.push_back(requiredFiles[i]);
+		for (uint i = 1; i <= 4; ++i) {
+			if (!Common::File::exists(Common::String::format("CDFRAMES%d.DAT", i)) && !Common::File::exists(Common::String::format("CD%d/CDFRAMES.DAT", i))) {
+				missingFiles.push_back(Common::String::format("CD%d/CDFRAMES.DAT", i));
 			}
 		}
 	}

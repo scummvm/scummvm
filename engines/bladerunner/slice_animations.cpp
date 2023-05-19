@@ -135,6 +135,11 @@ bool SliceAnimations::openFrames(int fileNumber) {
 			_framesPageFile.close(_framesPageFile._fileNumber);
 		}
 		_framesPageFile._fileNumber = fileNumber;
+
+		if (_framesPageFile.open(Common::String::format("CD%d/CDFRAMES.DAT", fileNumber), fileNumber)) {
+			return true;
+		}
+
 		// For Chapter1 we try both CDFRAMES.DAT and CDFRAMES1.DAT
 		if (fileNumber == 1 && _framesPageFile.open("CDFRAMES.DAT", fileNumber)) {
 			return true;
@@ -151,11 +156,13 @@ bool SliceAnimations::openFrames(int fileNumber) {
 			_framesPageFile.close(i);
 			if (i == 1
 			    && (!_framesPageFile.open("CDFRAMES.DAT", i))
+			    && (!_framesPageFile.open(Common::String::format("CD%d/CDFRAMES.DAT", i), i))
 			    && (!_framesPageFile.open(Common::String::format("CDFRAMES%d.DAT", i), i))
 			) {
 				// For Chapter1 we try both CDFRAMES.DAT and CDFRAMES1.DAT
 				return false;
 			} else if (i != 1 &&
+				   (!_framesPageFile.open(Common::String::format("CD%d/CDFRAMES.DAT", i), i)) &&
 			          !_framesPageFile.open(Common::String::format("CDFRAMES%d.DAT", i), i)
 			) {
 				return false;
