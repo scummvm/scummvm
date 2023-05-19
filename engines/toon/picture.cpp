@@ -118,7 +118,6 @@ bool Picture::loadPicture(const Common::String &file) {
 		uint32 decSize = READ_BE_UINT32(fileData + 4);
 
 		_data = new uint8[decSize];
-
 		decSize = rnc.unpackM2(fileData, _data);
 
 		if (decSize > TOON_SCREEN_WIDTH * TOON_SCREEN_HEIGHT + 768)
@@ -282,21 +281,23 @@ void Picture::floodFillNotWalkableOnMask(int16 x, int16 y) {
 		pt.y++;
 		bool spanLeft = false;
 		bool spanRight = false;
-		while (_data[pt.x + pt.y * _width] & 0x1F && pt.y < _height) {
-			_data[pt.x + pt.y * _width] &= 0xE0;
-			if (!spanLeft && pt.x > 0 && _data[pt.x - 1 + pt.y * _width] & 0x1F) {
+		uint32 nextDataPos = pt.x + pt.y * _width;
+		while (pt.y < _height && _data[nextDataPos] & 0x1F) {
+			_data[nextDataPos] &= 0xE0;
+			if (!spanLeft && pt.x > 0 && _data[nextDataPos - 1] & 0x1F) {
 				stack.push(Common::Point(pt.x - 1, pt.y));
 				spanLeft = 1;
-			} else if (spanLeft && pt.x > 0 && !(_data[pt.x - 1 + pt.y * _width] & 0x1F)) {
+			} else if (spanLeft && pt.x > 0 && !(_data[nextDataPos - 1] & 0x1F)) {
 				spanLeft = 0;
 			}
-			if (!spanRight && pt.x < _width - 1 && _data[pt.x + 1 + pt.y * _width] & 0x1F) {
+			if (!spanRight && pt.x < _width - 1 && _data[nextDataPos + 1] & 0x1F) {
 				stack.push(Common::Point(pt.x + 1, pt.y));
 				spanRight = 1;
-			} else if (spanRight && pt.x < _width - 1 && !(_data[pt.x + 1 + pt.y * _width] & 0x1F)) {
+			} else if (spanRight && pt.x < _width - 1 && !(_data[nextDataPos + 1] & 0x1F)) {
 				spanRight = 0;
 			}
 			pt.y++;
+			nextDataPos = pt.x + pt.y * _width;
 		}
 	}
 }
