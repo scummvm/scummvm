@@ -554,9 +554,9 @@ const uint8 *FontPC98::getCharData(uint16 ch) const {
 
 	if (lo >= 0x3f && lo <= 0x7e)
 		glyph += lo - 0x3f;
-	else if (lo >= 0x80 && lo <= 0x9d)
+	else if (lo >= 0x80 && lo <= 0x9e)
 		glyph += lo - 0x80 + 64;
-	else if (lo >= 0x9e && lo <= 0xfc)
+	else if (lo >= 0x9f && lo <= 0xfc)
 		glyph += lo - 0x9e + 96;
 	else
 		return nullptr;
