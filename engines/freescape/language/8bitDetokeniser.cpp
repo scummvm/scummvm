@@ -50,7 +50,7 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 		 2, 1, 1, 2, 1, 1, 2, 1,
 		 1, 2, 2, 1, 2, 0, 0, 0,
 		 1, 1, 0, 1, 1, 1, 1, 1,
-		 2, 2, 1, 1, 0, 0, 0, 0,
+		 2, 2, 1, 1, 0, 1, 0, 0,
 		 0, 0, 0, 0, 0, 0, 2, 2,
 		 1};
 
@@ -115,7 +115,7 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 		// check we have enough bytes left to read
 		if (opcode > 48) {
 			debugC(1, kFreescapeDebugParser, "%s", detokenisedStream.c_str());
-			if (opcode != 0x3f && opcode != 0x3b)
+			if (opcode != 0x3f)
 				error("ERROR: failed to read opcode: %x", opcode);
 			break;
 		}
@@ -302,6 +302,11 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 		case 34: // show a message on screen
 			detokenisedStream += "PRINT (";
 			currentInstruction = FCLInstruction(Token::PRINT);
+			break;
+
+		case 37:
+			detokenisedStream += "STARTANIM (";
+			currentInstruction = FCLInstruction(Token::STARTANIM);
 			break;
 
 		case 12:
