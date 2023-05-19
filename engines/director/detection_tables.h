@@ -853,6 +853,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "dieveteranen",		"Die Veteranen: So nutzlos wie eine Fuge von Bach" },
 	{ "dudenmeyer",			"Duden/Meyer Multimedia sampler" },
 	{ "flaschenfahrrad",	"Das Verkehrs-Lernspiel: Fred und das Flaschenfahrrad" },
+	{ "frankiekaraoke",		"Frankie Tierwelt Karaoke" },
 	{ "girlspack",			"Girl's Pack!" },
 	{ "glitzerschuppen",	"Der Regenbogenfisch Die Suche Nach Den Glitzerschuppen" },
 	{ "globiabc",			"Globi's ABC" },
@@ -872,11 +873,14 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "max3",				"Max and the Haunted Castle" },
 	{ "mrmore",				"Mr. More Interaktive" },
 	{ "otelo",				"o.tel.o Online 01011" },
+	{ "ponkymath12",		"Durchstarten mit Ponky: Mathe 1. + 2. Klasse" },
 	{ "ravecard2001",		"Ravecard 2001" },
 	{ "ravensburger",		"Ravensburger Interactive Demo-Sampler" },
 	{ "raveshuttle",		"Rave Shuttle: The Cosmic Challenge" },
 	{ "ritterrost",			"Ritter Rost - Die Eiserne Burg" },
 	{ "sachabenteuer",		"Toggolino Sachabenteuer" },
+	{ "schulerhilfemath1",	"Schülerhilfe Mathe: Klasse 1." },
+	{ "schulerhilfemath2",	"Schülerhilfe Mathe: Klasse 2." },
 	{ "tkkgkit",			"TKKG: Identikit" },
 	{ "zwergnase",			"Zwerg Nase: Ein interaktives Märchen" },
 
@@ -8175,6 +8179,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("fractiondecimal", "", "Fd.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 4775506, 800),
 
+	// Bundled with a German demo of Adibou 3
+	// TRAC report #14471
+	WINGAME1_l("frankiekaraoke", "", "FRANKIE TIERWELT - KARAOKE.EXE", "t:378fd2eba117bcaaa09da56e609e8c17", 2250316, Common::DE_DEU, 850),
+
 	// Found as mini-game on Chillin Out ECD from Smash Hits magazine
 	WINGAME1("freeallangels", "", "FREE ALL ANGELS.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2248678, 800),
 
@@ -8394,6 +8402,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("polis3", "", "launcher.exe", "0c81c84ca4966313ad27d47daba44537", 2860282,
 							 "polis3.dxr",	 "1a391250c502a1f55da5a4d0438b493d", 3533782, Common::ES_ESP, 851),
 
+	// TRAC report #14466
+	WINGAME1_l("ponkymath12", "", "Ponky.exe", "t:5b2098a2c502dfad2af75cf032add68f", 2947862, Common::DE_DEU, 800),
+
 	WINGAME1("poohb", "", "POOHBABY.EXE",		 "e24d4bab978b1a5c2326d2c56cf4d781", 2290422, 800),
 
 	MACGAME1("poohp", "", "PoohP.Mac",			 "4ea5fc09f79eee6dded94dc40f303779", 197191,  800),
@@ -8453,6 +8464,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Produced and developed by New Tier Inc., Scottsdale, Arizona
 	WINGAME1("saspurs2001", "", "Spurs.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 5924396, 800),
 	WINGAME1("saspurs2005", "", "Spurs.exe", "98e75b2c5561f9be40aa745f35f22244", 5508840, 800),
+
+	// TRAC reports #14464-5
+	WINGAME1_l("schulerhilfemath1", "", "Lernen_M1.exe", "t:5289dab290c43955358aea9c3a1c153a", 2247878, Common::DE_DEU, 800),
+	WINGAME1_l("schulerhilfemath2", "", "Lernen_M2.exe", "t:018f01d3520a2f5f34cacfd592979985", 2246363, Common::DE_DEU, 800),
 
 	MACDEMO1("secretkeys", "Demo", "Secret Keys Demo", "a44511b8ff0e46b4f9c85dd1cb58d458", 155771, 851),
 	WINDEMO1("secretkeys", "Demo", "Secret Keys Demo.exe", "0c81c84ca4966313ad27d47daba44537", 2200706, 851),
