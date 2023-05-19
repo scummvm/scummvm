@@ -28,6 +28,8 @@
 #include "bladerunner/time.h"
 
 #include "common/debug.h"
+#include "common/unicode-bidi.h"
+#include "common/md5.h"
 
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
@@ -130,6 +132,7 @@ Subtitles::Subtitles(BladeRunnerEngine *vm) {
 	}
 	_font = nullptr;
 	_useUTF8 = false;
+	_useWindows1255 = false;
 	_useHDC = false;
 	_subtitlesDataActive.resize(kNumOfSubtitleRoles);
 	_loadAvgStr = "";
@@ -255,6 +258,10 @@ void Subtitles::init(void) {
 		// 10PT or TAHOMA24 or KIA6PT  have all caps glyphs (and also are too big or too small) so they are not appropriate.
 		_font = Font::load(_vm, _subtitlesInfo.fontName, -1, true);
 		_useUTF8 = false;
+
+		Common::ScopedPtr<Common::SeekableReadStream> fontStream(_vm->getResourceStream(_subtitlesInfo.fontName));
+		Common::String fontMd5 = fontStream ? Common::computeStreamMD5AsString(*fontStream) : "";
+		_useWindows1255 = (fontMd5 == "ea36012bc34e3859cc1d7d9b3f9fc443");
 	} else if (_subtitlesInfo.fontType == Subtitles::kSubtitlesFontTypeTTF) {
 #if defined(USE_FREETYPE2)
 		Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->getResourceStream(_subtitlesInfo.fontName));
@@ -633,6 +640,9 @@ void Subtitles::draw(Graphics::Surface &s) {
 					_subtitlesDataActive[i].lines32.clear();
 					_subtitlesDataActive[i].prevText32 = _subtitlesDataActive[i].currentText32;
 					_font->wordWrapText(_subtitlesDataActive[i].currentText32, kTextMaxWidth, _subtitlesDataActive[i].lines32, 0, Graphics::kWordWrapEvenWidthLines | Graphics::kWordWrapOnExplicitNewLines);
+					for (Common::Array<Common::U32String>::iterator it = _subtitlesDataActive[i].lines32.begin();
+					     it != _subtitlesDataActive[i].lines32.end(); it++)
+						*it = Common::convertBiDiU32String(*it).visual;
 				}
 				linesNum = _subtitlesDataActive[i].lines32.size();
 			} else {
@@ -641,6 +651,10 @@ void Subtitles::draw(Graphics::Surface &s) {
 					_subtitlesDataActive[i].lines.clear();
 					_subtitlesDataActive[i].prevText = _subtitlesDataActive[i].currentText;
 					_font->wordWrapText(_subtitlesDataActive[i].currentText, kTextMaxWidth, _subtitlesDataActive[i].lines, 0, Graphics::kWordWrapEvenWidthLines | Graphics::kWordWrapOnExplicitNewLines);
+					if (_useWindows1255)
+						for (Common::Array<Common::String>::iterator it = _subtitlesDataActive[i].lines.begin();
+						     it != _subtitlesDataActive[i].lines.end(); it++)
+							*it = Common::convertBiDiString(*it, Common::CodePage::kWindows1255);
 				}
 				linesNum = _subtitlesDataActive[i].lines.size();
 			}

@@ -124,6 +124,7 @@ class Subtitles {
 
 	Graphics::Font *_font;
 	bool            _useUTF8;
+	bool            _useWindows1255;
 	bool            _useHDC;
 	Common::Array<Common::String>       _subtitlesEXC;
 	Common::Array<SubtitlesData>        _subtitlesDataActive;
