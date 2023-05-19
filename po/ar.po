@@ -2823,12 +2823,12 @@ msgid "Storage Access Framework Permissions for ScummVM were revoked!"
 msgstr ""
 
 #. I18N: One line summary as shown in *nix distributions
-#: dists/scummvm.appdata.xml.cpp:32
+#: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
 msgid "Interpreter for numerous adventure games and role-playing games"
 msgstr "مترجم للعديد من ألعاب المغامرات ولعب الأدوار"
 
 #. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
-#: dists/scummvm.appdata.xml.cpp:37
+#: dists/org.scummvm.scummvm.metainfo.xml.cpp:37
 msgid ""
 "ScummVM is a program which allows you to run a wide variety of classic "
 "graphical point-and-click adventure games and role-playing games, provided "
@@ -2843,7 +2843,7 @@ msgstr ""
 "تصميمها من أجلها مطلقًا!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
-#: dists/scummvm.appdata.xml.cpp:45
+#: dists/org.scummvm.scummvm.metainfo.xml.cpp:45
 msgid ""
 "Currently, ScummVM supports a huge library of adventures with over 4000 "
 "games in total. It supports many classics published by legendary studios "
@@ -2856,7 +2856,7 @@ msgstr ""
 "Studios."
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
-#: dists/scummvm.appdata.xml.cpp:51
+#: dists/org.scummvm.scummvm.metainfo.xml.cpp:51
 msgid ""
 "Next to ground-breaking titles like the Monkey Island series, Broken Sword, "
 "Myst, Blade Runner and countless other games you will find some really "

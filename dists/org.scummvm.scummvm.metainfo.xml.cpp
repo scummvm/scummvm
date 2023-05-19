@@ -21,7 +21,7 @@
 
 /*
  * This is a dummy file used for sticking strings from
- * scummvm.appdata.xml into our translation system
+ * org.scummvm.scummvm.metainfo.xml into our translation system
  *
  */
 

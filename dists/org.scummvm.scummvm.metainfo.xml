@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2020-2023 The ScummVM Team -->
-<component type="desktop">
-  <id>scummvm.desktop</id>
+<component type="desktop-application">
+  <id>org.scummvm.scummvm</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
   <name>ScummVM</name>
   <summary>Interpreter for numerous adventure games and role-playing games</summary>
+  <summary xml:lang="ar">مترجم للعديد من ألعاب المغامرات ولعب الأدوار</summary>
   <summary xml:lang="be">Інтэрпрэтатар многіх авантурных і ролявых гульняў</summary>
   <summary xml:lang="ca">Intèrpret per a nombrosos jocs d'aventura i jocs de rol</summary>
   <summary xml:lang="de">Interpreter für zahlreiche Adventure-Spiele und RPGs</summary>
@@ -25,8 +26,9 @@
   <summary xml:lang="ru">Интерпретатор множества приключенческих и ролевых игр</summary>
   <summary xml:lang="uk">Інтерпретатор для численних пригодницьких і рольових ігор</summary>
   <developer_name>The ScummVM Team</developer_name>
+  <launchable type="desktop-id">org.scummvm.scummvm.desktop</launchable>
   <provides>
-    <id>scummvm.desktop</id>
+    <binary>scummvm</binary>
   </provides>
   <description>
     <p>
@@ -36,6 +38,11 @@
       ScummVM just replaces the executables shipped with the game,
       allowing you to play them on systems for which they were never designed!
     </p>
+    <p xml:lang="ar">ScummVM هو برنامج يسمح لك بتشغيل مجموعة متنوعة من ألعاب المغامرات وألعاب 
+تقمص الأدوار الرسومية والتأشير والنقر ، بشرط أن يكون لديك بالفعل ملفات 
+البيانات الخاصة بهم. الجزء الذكي في هذا الأمر: يستبدل ScummVM الملفات 
+التنفيذية التي يتم شحنها مع اللعبة ، مما يتيح لك تشغيلها على أنظمة لم يتم 
+تصميمها من أجلها مطلقًا!</p>
     <p xml:lang="be">ScummVM — гэта праграма для запуску розных клясічных графічных point-and-
 click авантурных і ралявых гульняў, пры ўмове, што вы маеце зьвесткі тых 
 гульняў. Карацей, ScummVM проста замяняе выканальныя файлы гульняў, 
@@ -128,6 +135,10 @@ eles nunca foram projetados!</p>
       It supports many classics published by legendary studios like LucasArts, Sierra On-Line,
       Revolution Software, Cyan, Inc. and Westwood Studios.
     </p>
+    <p xml:lang="ar">حاليًا ، تدعم ScummVM مكتبة ضخمة من المغامرات تضم أكثر من 4000 لعبة في 
+المجموع. وهو يدعم العديد من الكلاسيكيات التي نشرتها الاستوديوهات الأسطورية 
+مثل LucasArts و Sierra On-Line و Revolution Software و Cyan، Inc. و Westwood 
+Studios.</p>
     <p xml:lang="be">На гэты момант ScummVM падтрымлівае вялічэзную бібліятэку авантур, дзе болей 
 за 4000 гульняў. Вы зможаце дакрануцца да многіх клясічных твораў, выданых 
 леґэндарнымі студыямі як LucasArts, Sierra On-Line, Revolution Software, 
@@ -205,6 +216,9 @@ Revolution Software, Cyan, Inc. та Westwood Studios.</p>
       Myst, Blade Runner and countless other games you will find
       some really obscure adventures and truly hidden gems to explore.
     </p>
+    <p xml:lang="ar">بجانب العناوين الرائدة مثل سلسلة Monkey Island و Broken Sword و Myst و Blade 
+Runner وعدد لا يحصى من الألعاب الأخرى ، ستجد بعض المغامرات الغامضة حقًا 
+والأحجار الكريمة المخفية حقًا لاستكشافها.</p>
     <p xml:lang="be">Разам з рэвалюцыйнымі гульнямі як Monkey Island, Broken Sword, Myst, Blade 
 Runner і безьлічам іншых гульняў, вы знойдзіце насамрэч малавядомыя авантуры 
 й прыхаваныя скарбы.</p>

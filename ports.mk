@@ -17,9 +17,9 @@ install-data:
 	$(INSTALL) -d "$(DESTDIR)$(datadir)"
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/applications"
-	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.desktop" "$(DESTDIR)$(datarootdir)/applications/scummvm.desktop"
+	$(INSTALL) -c -m 644 "$(srcdir)/dists/org.scummvm.scummvm.desktop" "$(DESTDIR)$(datarootdir)/applications/org.scummvm.scummvm.desktop"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/metainfo"
-	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.appdata.xml" "$(DESTDIR)$(datarootdir)/metainfo/scummvm.appdata.xml"
+	$(INSTALL) -c -m 644 "$(srcdir)/dists/org.scummvm.scummvm.metainfo.xml" "$(DESTDIR)$(datarootdir)/metainfo/org.scummvm.scummvm.metainfo.xml"
 ifneq ($(DIST_FILES_SHADERS),)
 	$(INSTALL) -d "$(DESTDIR)$(datadir)/shaders"
 	$(INSTALL) -c -m 644 $(DIST_FILES_SHADERS) "$(DESTDIR)$(datadir)/shaders"
@@ -48,8 +48,8 @@ uninstall:
 	rm -f "$(DESTDIR)$(datarootdir)/icons/hicolor/scalable/apps/scummvm.svg"
 	rm -rf "$(DESTDIR)$(docdir)"
 	rm -rf "$(DESTDIR)$(datadir)"
-	rm -f "$(DESTDIR)$(datarootdir)/applications/scummvm.desktop"
-	rm -f "$(DESTDIR)$(datarootdir)/metainfo/scummvm.appdata.xml"
+	rm -f "$(DESTDIR)$(datarootdir)/applications/org.scummvm.scummvm.desktop"
+	rm -f "$(DESTDIR)$(datarootdir)/metainfo/org.scummvm.scummvm.metainfo.xml"
 ifdef DYNAMIC_MODULES
 	rm -rf "$(DESTDIR)$(libdir)/scummvm/"
 endif

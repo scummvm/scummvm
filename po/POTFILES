@@ -39,7 +39,7 @@ common/updates.cpp
 common/util.cpp
 
 dists/android.strings.xml.cpp
-dists/scummvm.appdata.xml.cpp
+dists/org.scummvm.scummvm.metainfo.xml.cpp
 
 engines/achievements.cpp
 engines/advancedDetector.cpp

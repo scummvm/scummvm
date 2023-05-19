@@ -43,7 +43,7 @@ UnityTaskbarManager::UnityTaskbarManager() {
 
 	_loop = g_main_loop_new(NULL, FALSE);
 
-	_launcher = unity_launcher_entry_get_for_desktop_id("scummvm.desktop");
+	_launcher = unity_launcher_entry_get_for_desktop_id("org.scummvm.scummvm.desktop");
 }
 
 UnityTaskbarManager::~UnityTaskbarManager() {

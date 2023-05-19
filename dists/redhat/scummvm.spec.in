@@ -64,7 +64,7 @@ make %{_smp_mflags}
 %install
 make DESTDIR=%{buildroot} install
 install -m644 -D dists/redhat/scummvm48.png %{buildroot}%{_datadir}/icons/hicolor/48x48/apps/scummvm.png
-desktop-file-install --vendor scummvm --dir=%{buildroot}/%{_datadir}/applications dists/scummvm.desktop
+desktop-file-install --vendor scummvm --dir=%{buildroot}/%{_datadir}/applications dists/org.scummvm.scummvm.desktop
 
 %clean
 rm -Rf ${RPM_BUILD_ROOT}
@@ -92,7 +92,7 @@ fi
 %{_datadir}/pixmaps/scummvm.xpm
 %{_datadir}/icons/hicolor/48x48/apps/scummvm.png
 %{_datadir}/icons/hicolor/scalable/apps/scummvm.svg
-%{_datadir}/metainfo/scummvm.appdata.xml
+%{_datadir}/metainfo/org.scummvm.scummvm.metainfo.xml
 %{_datadir}/scummvm/*
 %{_mandir}/man6/scummvm.6*
 

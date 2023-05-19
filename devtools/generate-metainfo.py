@@ -1,23 +1,24 @@
 #!/usr/bin/env python3
 
-# This script generates a dists/scummvm.appdata.xml file with multilanguage support.
+# This script generates dists/org.scummvm.scummvm.metainfo.xml file with multilanguage support.
 # The multilanguage data is extracted from po/*.po files
 
 import re
 import os
 
-appdata_xml_template = '''<?xml version="1.0" encoding="UTF-8"?>
+metainfo_xml_template = '''<?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2020-2023 The ScummVM Team -->
-<component type="desktop">
-  <id>scummvm.desktop</id>
+<component type="desktop-application">
+  <id>org.scummvm.scummvm</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
   <name>ScummVM</name>
   <summary>Interpreter for numerous adventure games and role-playing games</summary>
   <summary xml:lang="xy">I18N: One line summary as shown in *nix distributions</summary>
   <developer_name>The ScummVM Team</developer_name>
+  <launchable type="desktop-id">org.scummvm.scummvm.desktop</launchable>
   <provides>
-    <id>scummvm.desktop</id>
+    <binary>scummvm</binary>
   </provides>
   <description>
     <p>
@@ -97,11 +98,10 @@ appdata_xml_template = '''<?xml version="1.0" encoding="UTF-8"?>
 </component>
 '''
 
-
 def extract_summary(file):
     with open('../po/' + file) as f:
         content = f.read()
-    pattern = r'#: dists\/scummvm\.appdata\.xml\.cpp:32\nmsgid ".+"\nmsgstr "(.+)"'
+    pattern = r'#: dists\/org\.scummvm\.scummvm\.metainfo\.xml\.cpp:32\nmsgid ".+"\nmsgstr "(.+)"'
     summary_match = re.search(pattern, content)
     if summary_match:
         summary = summary_match.group(1)
@@ -113,7 +113,7 @@ def extract_summary(file):
 def extract_par1(file):
     with open('../po/' + file) as f:
         content = f.read()
-    pattern = r'#: dists\/scummvm\.appdata\.xml\.cpp:37\nmsgid ""\n(.+\n)*msgstr ""\n((.+\n)*)'
+    pattern = r'#: dists\/org\.scummvm\.scummvm\.metainfo\.xml\.cpp:37\nmsgid ""\n(.+\n)*msgstr ""\n((.+\n)*)'
     par1_match = re.search(pattern, content)
     if par1_match:
         par1 = par1_match.group(2)
@@ -128,7 +128,7 @@ def extract_par1(file):
 def extract_par2(file):
     with open('../po/' + file) as f:
         content = f.read()
-    pattern = r'#: dists\/scummvm\.appdata\.xml\.cpp:45\nmsgid ""\n(.+\n)*msgstr ""\n((.+\n)*)'
+    pattern = r'#: dists\/org\.scummvm\.scummvm\.metainfo\.xml\.cpp:45\nmsgid ""\n(.+\n)*msgstr ""\n((.+\n)*)'
     par2_match = re.search(pattern, content)
     if par2_match:
         par2 = par2_match.group(2)
@@ -143,7 +143,7 @@ def extract_par2(file):
 def extract_par3(file):
     with open('../po/' + file) as f:
         content = f.read()
-    pattern = r'#: dists\/scummvm\.appdata\.xml\.cpp:51\nmsgid ""\n(.+\n)*msgstr ""\n((.+\n)*)'
+    pattern = r'#: dists\/org\.scummvm\.scummvm\.metainfo\.xml\.cpp:51\nmsgid ""\n(.+\n)*msgstr ""\n((.+\n)*)'
     par3_match = re.search(pattern, content)
     if par3_match:
         par3 = par3_match.group(2)
@@ -179,9 +179,9 @@ def get_summary_translations(po_file_names):
 def substitute_summary_translations(summary_translations, xml):
     pattern = r'<summary xml:lang="xy">I18N: One line summary as shown in \*nix distributions<\/summary>'
 
-    appdata_xml = re.sub(pattern, summary_translations, xml)
+    metainfo_xml = re.sub(pattern, summary_translations, xml)
 
-    return appdata_xml
+    return metainfo_xml
 
 
 def get_parx_translations(x, po_file_names):
@@ -201,7 +201,7 @@ def get_parx_translations(x, po_file_names):
             continue
 
         # parx also contains " (quotes) around the text; so we need to replace them with empty character
-        # otherwise " (quotes) will appear in scummvm.appdata.xml generated file
+        # otherwise " (quotes) will appear in scummvm.metainfo.xml generated file
         parx = parx.replace('"', '')
 
         lang = '"' + file[0] + file[1] + '"'
@@ -222,8 +222,8 @@ def substitute_parx_translations(x, parx_translations, xml):
     elif (x == 3):
         pattern = r'<p xml:lang="xy">I18N: 3 of 3 paragraph of ScummVM description in \*nix distributions<\/p>'
 
-    appdata_xml = re.sub(pattern, parx_translations, xml)
-    return appdata_xml
+    metainfo_xml = re.sub(pattern, parx_translations, xml)
+    return metainfo_xml
 
 
 def get_po_files():
@@ -242,7 +242,7 @@ def main():
 
     summary_translations = get_summary_translations(po_file_names)
     xml = substitute_summary_translations(
-        summary_translations, appdata_xml_template)
+        summary_translations, metainfo_xml_template)
 
     par1_translations = get_parx_translations(1, po_file_names)
     xml = substitute_parx_translations(1, par1_translations, xml)
@@ -253,8 +253,8 @@ def main():
     par3_translations = get_parx_translations(3, po_file_names)
     xml = substitute_parx_translations(3, par3_translations, xml)
 
-    # write to scummvm.appdata.xml file
-    with open("../dists/scummvm.appdata.xml", "w") as f:
+    # write to org.scummvm.scummvm.metainfo.xml file
+    with open("../dists/org.scummvm.scummvm.metainfo.xml", "w") as f:
         f.write(xml)
 
 
