@@ -83,7 +83,7 @@ void Interaction::draw() {
 
 	// Write out any buttons
 	if (!_buttons.empty()) {
-		_textPos = Common::Point(0, (8 + _lines.size()) * 8);
+		_textPos = Common::Point(0, (6 + _lines.size()) * 9);
 		setReduced(true);
 
 		// Create a blank button

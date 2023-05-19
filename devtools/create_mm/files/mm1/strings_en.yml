@@ -1522,7 +1522,7 @@ maps:
 		inspectron3: "\"Return not until thy quest is complete\""
 		inspectron4: "\"Sorry, but since you are currently\nquested, i can't engage your services.\""
 		inspectron5: "Well done, quest complete! +%u exp"
-		message: "Etched in silver, message a reads:\natis-19-31ud54aeupi1"
+		message: "Etched in silver, message A reads:\natis-19-31ud54aeupi1"
 		slide: "A slide!"
 		vault: "Empty vault, alarm!"
 	emap35:
@@ -1645,7 +1645,7 @@ maps:
 		ironfist3: "\"Return not until thy quest is complete\""
 		ironfist4: "\"Sorry, but since you are currently\nquested, i can't engage your services.\""
 		ironfist5: "Well done, quest complete! +%u exp"
-		message_b: "Etched in silver, message b reads:\nrstia-,e1,;/11rn;/m-"
+		message_b: "Etched in silver, message B reads:\nrstia-,e1,;/11rn;/m-"
 		guards: "Castle guards exclaim,\n\"No merchants pass! Begone peasants.\""
 		quests:
 			1: "Find the stronghold in ravens wood"
