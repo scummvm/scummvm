@@ -25,7 +25,7 @@ ifneq ($(DIST_FILES_SHADERS),)
 	$(INSTALL) -c -m 644 $(DIST_FILES_SHADERS) "$(DESTDIR)$(datadir)/shaders"
 endif
 
-install: install-data
+install: $(EXECUTABLE) $(PLUGINS) install-data
 	$(INSTALL) -d "$(DESTDIR)$(bindir)"
 	$(INSTALL) -c -m 755 "./$(EXECUTABLE)" "$(DESTDIR)$(bindir)/$(EXECUTABLE)"
 ifdef DYNAMIC_MODULES
@@ -33,7 +33,7 @@ ifdef DYNAMIC_MODULES
 	$(INSTALL) -c -m 644 $(PLUGINS) "$(DESTDIR)$(libdir)/scummvm/"
 endif
 
-install-strip: install-data
+install-strip: $(EXECUTABLE) $(PLUGINS) install-data
 	$(INSTALL) -d "$(DESTDIR)$(bindir)"
 	$(INSTALL) -c -s -m 755 "./$(EXECUTABLE)" "$(DESTDIR)$(bindir)/$(EXECUTABLE)"
 ifdef DYNAMIC_MODULES
@@ -629,4 +629,6 @@ release-checks:
 	devtools/release-checks.sh
 
 # Mark special targets as phony
-.PHONY: deb bundle osxsnap install uninstall
+.PHONY: install-data install install-strip uninstall dist-generic
+.PHONY: bundle-pack bundle iphonebundle ios7bundle tvosbundle iphone osxsnap publish-appcast
+.PHONY: ideprojects release-checks
