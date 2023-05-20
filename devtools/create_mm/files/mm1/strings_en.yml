@@ -1607,7 +1607,7 @@ maps:
 		message2: "Etched in gold, message 2 reads:\n\"One,-riddles-value-you-you-\n5-card-must-claimed.-Dreams,-...\""
 		boulder: "A boulder says: \"There should be 5 tests\""
 		title: "Lord Archer"
-		archer: "\"I am Lord Archer, the raven.\nI take from those who have and give to those who have not! Submit (Y/N)?\""
+		archer: "\"I am Lord Archer, the Raven.\nI take from those who have and give to those who have not! Submit (Y/N)?\""
 
 	map41:
 		message3: "Etched in gold, message 3 reads:\nFor-tasks-and-rating.-be-from-6th-\nfrustrations!-the-to-in"
@@ -1674,13 +1674,17 @@ maps:
 		walls: "The Walls Glow Ominously"
 		message: "Etched in stone:\n\"28 days out. No food, low on supplies.\nWe fear the worst yet we continue-Corak"
 		passage: "A cavernous passage, take it (Y/N)?"
+	emap45:
+		message8: "Etched in gold, message 8 reads:\nThe-are-quests,-increases-\nidentify,-apply.-locations,-end-\nattained-my-sequel"
 
 	map46:
 		shakes: "The ground shakes!"
 		clerics: "Clerics of the South just below-Corak"
+	emap46:
+		clerics: "Clerics of the South just below. Corak"
 
 	map47:
-		message5: "Etched in gold, message 5 reads:\nsCoop:-the-discoveries-your-to-return-\nthe-your-for-dreams-is"
+		message5: "Etched in gold, message 5 reads:\nScoop:-the-discoveries-your-to-return-\nthe-your-for-dreams-is"
 		gong: "Covered with cryptic symbols, a large\nbrass gong hangs from the ceiling.\nStrike it (Y/N)?"
 		tones:
 			1: "A loud tone resounds\nthroughout the room!"
@@ -1692,6 +1696,9 @@ maps:
 		poof: "Poof!"
 		painting: "On the right wall is a painting of a\nbox,on the left a painting of a curtain."
 		door_number: "Door number %c"
+	emap47:
+		message5: "Etched in gold, message 5 reads:\n\"Scoop:-the-discoveries-your-to-\nreturn-the-your-for-dreams-is\""
+		painting: "On the right wall is a painting of a box, on the left a painting of a curtain."
 
 	map48:
 		orango1: "A strange alien being in a shimmering\nsilver jumpsuit proclaims, \"This is a\nsoul maze and you are its prisoner!\nTo escape, you must find your captor's\nname hidden within these walls.\"\n\nanswer:>"
