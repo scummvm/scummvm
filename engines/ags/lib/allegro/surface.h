@@ -296,121 +296,133 @@ public:
 			}
 
 			if (FormatType == 0) {
-			// Loop through the pixels of the row
-			for (; xCtr < xCtrWidth; ++destX, ++xCtr, xCtrBpp += src.format.bytesPerPixel) {
-				const byte *srcVal = srcP + xDir * xCtrBpp;
-				uint32 srcCol = getColor(srcVal, src.format.bytesPerPixel);
+				// Loop through the pixels of the row
+				for (; xCtr < xCtrWidth; ++destX, ++xCtr, xCtrBpp += src.format.bytesPerPixel) {
+					const byte *srcVal = srcP + xDir * xCtrBpp;
+					uint32 srcCol = getColor(srcVal, src.format.bytesPerPixel);
 
-				// Check if this is a transparent color we should skip
-				if (skipTrans && ((srcCol & alphaMask) == transColor))
-					continue;
+					// Check if this is a transparent color we should skip
+					if (skipTrans && ((srcCol & alphaMask) == transColor))
+						continue;
 
-				byte *destVal = (byte *)&destP[destX * format.bytesPerPixel];
+					byte *destVal = (byte *)&destP[destX * format.bytesPerPixel];
 
-				// When blitting to the same format we can just copy the color
-				if (format.bytesPerPixel == 1) {
-					*destVal = srcCol;
-					continue;
-				} else if (sameFormat && srcAlpha == -1) {
-					if (format.bytesPerPixel == 4)
-						*(uint32 *)destVal = srcCol;
-					else
-						*(uint16 *)destVal = srcCol;
-					continue;
-				}
+					// When blitting to the same format we can just copy the color
+					if (format.bytesPerPixel == 1) {
+						*destVal = srcCol;
+						continue;
+					} else if (sameFormat && srcAlpha == -1) {
+						if (format.bytesPerPixel == 4)
+							*(uint32 *)destVal = srcCol;
+						else
+							*(uint16 *)destVal = srcCol;
+						continue;
+					}
 
-				// We need the rgb values to do blending and/or convert between formats
-				if (src.format.bytesPerPixel == 1) {
-					const RGB &rgb = palette[srcCol];
-					aSrc = 0xff;
-					rSrc = rgb.r;
-					gSrc = rgb.g;
-					bSrc = rgb.b;
-				} else {
-					// if (FormatType == 1) {
-					// 	aSrc = srcCol >> src.format.aShift & 0xff;
-					// 	rSrc = srcCol >> src.format.rShift & 0xff;
-					// 	gSrc = srcCol >> src.format.gShift & 0xff;
-					// 	bSrc = srcCol >> src.format.bShift & 0xff;
-					// } else {
-						src.format.colorToARGB(srcCol, aSrc, rSrc, gSrc, bSrc);
-					// }
-				}
+					// We need the rgb values to do blending and/or convert between formats
+					if (src.format.bytesPerPixel == 1) {
+						const RGB &rgb = palette[srcCol];
+						aSrc = 0xff;
+						rSrc = rgb.r;
+						gSrc = rgb.g;
+						bSrc = rgb.b;
+					} else {
+						// if (FormatType == 1) {
+						// 	aSrc = srcCol >> src.format.aShift & 0xff;
+						// 	rSrc = srcCol >> src.format.rShift & 0xff;
+						// 	gSrc = srcCol >> src.format.gShift & 0xff;
+						// 	bSrc = srcCol >> src.format.bShift & 0xff;
+						// } else {
+							src.format.colorToARGB(srcCol, aSrc, rSrc, gSrc, bSrc);
+						// }
+					}
 
-				if (srcAlpha == -1) {
-					// This means we don't use blending.
-					aDest = aSrc;
-					rDest = rSrc;
-					gDest = gSrc;
-					bDest = bSrc;
-				} else {
-					if (useTint) {
+					if (srcAlpha == -1) {
+						// This means we don't use blending.
+						aDest = aSrc;
 						rDest = rSrc;
 						gDest = gSrc;
 						bDest = bSrc;
-						aDest = aSrc;
-						rSrc = tintRed;
-						gSrc = tintGreen;
-						bSrc = tintBlue;
-						aSrc = srcAlpha;
 					} else {
-						// TODO: move this to blendPixel to only do it when needed?
-						// format.colorToARGB(getColor(destVal, format.bytesPerPixel), aDest, rDest, gDest, bDest);
+						if (useTint) {
+							rDest = rSrc;
+							gDest = gSrc;
+							bDest = bSrc;
+							aDest = aSrc;
+							rSrc = tintRed;
+							gSrc = tintGreen;
+							bSrc = tintBlue;
+							aSrc = srcAlpha;
+						} else {
+							// TODO: move this to blendPixel to only do it when needed?
+							// format.colorToARGB(getColor(destVal, format.bytesPerPixel), aDest, rDest, gDest, bDest);
+						}
+						blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha, useTint, destVal);
 					}
-					blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha, useTint, destVal);
-				}
 
-				uint32 pixel = format.ARGBToColor(aDest, rDest, gDest, bDest);
-				if (format.bytesPerPixel == 4)
-					*(uint32 *)destVal = pixel;
-				else
-					*(uint16 *)destVal = pixel;
-			} // FormatType == 0
+					uint32 pixel = format.ARGBToColor(aDest, rDest, gDest, bDest);
+					if (format.bytesPerPixel == 4)
+						*(uint32 *)destVal = pixel;
+					else
+						*(uint16 *)destVal = pixel;
+				} // FormatType == 0
 			} else { // FormatType == 1
-			uint32x4_t maskedAlphas = vld1q_dup_u32(&alphaMask);
-			uint32x4_t transColors = vld1q_dup_u32(&transColor);
-			uint32 alpha = srcAlpha ? srcAlpha + 1 : srcAlpha;
-			uint8x16_t srcCols;
-			for (; xCtr + 4 < dstRect.width(); destX += 4, xCtr += 4, xCtrBpp += src.format.bytesPerPixel*4) {
-				uint32 *destPtr = (uint32 *)&destP[destX * format.bytesPerPixel];
-				if (srcAlpha != -1) {
-					uint8x16_t srcColsRaw = vld1q_u8(srcP + xDir * xCtrBpp);
-					uint8x16_t destColsRaw = vld1q_u8((uint8 *)destPtr);
-					uint8x16_t diff = vqsubq_u32(srcColsRaw, destColsRaw);
-					diff = vmulq_u8(diff, vmovq_n_u8(alpha));
-					diff = vshrq_n_u8(diff, 8);
-					diff = vaddq_u8(diff, destColsRaw);
-					srcCols = vld1q_u32((const uint32 *)&diff);
-				} else {
-					srcCols = vld1q_u32((const uint32 *)(srcP + xDir * xCtrBpp));
-				}
-				uint32x4_t anded = vandq_u32(srcCols, maskedAlphas);
-				uint32x4_t mask1 = skipTrans ? vceqq_u32(anded, transColors) : vmovq_n_u32(0);
-				if (srcAlpha != -1) mask1 = vorrq_u32(mask1, vmovq_n_u32(0xff000000));
-				uint32x4_t mask2 = vmvnq_u32(mask1);
-				uint32x4_t destCols2 = vandq_u32(vld1q_u32(destPtr), mask1);
-				uint32x4_t srcCols2 = vandq_u32(srcCols, mask2);
-				uint32x4_t final = vorrq_u32(destCols2, srcCols2);
-				vst1q_u32(destPtr, final);
-			}
-			// Get the last x values
-			for (; xCtr < xCtrWidth; ++destX, ++xCtr, xCtrBpp += src.format.bytesPerPixel) {
-				const uint32 *srcCol = (const uint32 *)(srcP + xDir * xCtrBpp);
-				// Check if this is a transparent color we should skip
-				if (skipTrans && ((*srcCol & alphaMask) == transColor))
-					continue;
+				uint32x4_t maskedAlphas = vld1q_dup_u32(&alphaMask);
+				uint32x4_t transColors = vld1q_dup_u32(&transColor);
+				uint32 alpha = srcAlpha ? srcAlpha + 1 : srcAlpha;
+				uint32x4_t alphas = vld1q_dup_u32(&alpha);
+				for (; xCtr + 4 < xCtrWidth; destX += 4, xCtr += 4, xCtrBpp += src.format.bytesPerPixel*4) {
+					uint32 *destPtr = (uint32 *)&destP[destX * format.bytesPerPixel];
+					uint32x4_t srcColsO = vld1q_u32((const uint32 *)(srcP + xDir * xCtrBpp));
+					uint32x4_t srcCols = srcColsO;
+					if (srcAlpha != -1) {
+						uint32x4_t destCols = vld1q_u32(destPtr);
+						destCols = vandq_u32(destCols, vmovq_n_u32(0x00ffffff));
+						uint32x4_t srcColsCopy = srcCols;
+						srcColsCopy = vandq_u32(srcColsCopy, vmovq_n_u32(0xff00ff));
+						uint32x4_t destColsCopy = destCols;
+						destColsCopy = vandq_u32(destColsCopy, vmovq_n_u32(0xff00ff));
+						srcColsCopy = vsubq_u32(srcColsCopy, destColsCopy);
+						srcColsCopy = vmulq_u32(srcColsCopy, alphas);
+						srcColsCopy = vshrq_n_u32(srcColsCopy, 8);
+						srcColsCopy = vaddq_u32(srcColsCopy, destCols);
 
-				byte *destVal = (byte *)&destP[destX * format.bytesPerPixel];
-				uint32 destCol = srcAlpha == -1 ? *srcCol : *(uint32 *)destVal;
-				if (srcAlpha != -1) {
-					//uint8 aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest;
-					format.colorToARGB(destCol, aDest, rDest, gDest, bDest);
-					src.format.colorToARGB(*srcCol, aSrc, rSrc, gSrc, bSrc);
-					rgbBlend(rSrc, gSrc, bSrc, rDest, gDest, bDest, srcAlpha);
-					destCol = format.ARGBToColor(aDest, rDest, gDest, bDest);
+						srcCols = vandq_u32(srcCols, vmovq_n_u32(0xff00));
+						destCols = vandq_u32(destCols, vmovq_n_u32(0xff00));
+						srcCols = vsubq_u32(srcCols, destCols);
+						srcCols = vmulq_u32(srcCols, alphas);
+						srcCols = vshrq_n_u32(srcCols, 8);
+						srcCols = vaddq_u32(srcCols, destCols);
+						srcColsCopy = vandq_u32(srcColsCopy, vmovq_n_u32(0xff00ff));
+						srcCols = vandq_u32(srcCols, vmovq_n_u32(0xff00));
+						srcCols = vorrq_u32(srcCols, srcColsCopy);
+					}
+					uint32x4_t anded = vandq_u32(srcColsO, maskedAlphas);
+					uint32x4_t mask1 = skipTrans ? vceqq_u32(anded, transColors) : vmovq_n_u32(0);
+					uint32x4_t mask2 = vmvnq_u32(mask1);
+					uint32x4_t destCols2 = vandq_u32(vld1q_u32(destPtr), mask1);
+					uint32x4_t srcCols2 = vandq_u32(srcCols, mask2);
+					uint32x4_t final = vorrq_u32(destCols2, srcCols2);
+					vst1q_u32(destPtr, final);
 				}
-				*(uint32 *)destVal = destCol;
-			}
+				// Get the last x values
+				for (; xCtr < xCtrWidth; ++destX, ++xCtr, xCtrBpp += src.format.bytesPerPixel) {
+					const uint32 *srcCol = (const uint32 *)(srcP + xDir * xCtrBpp);
+					// Check if this is a transparent color we should skip
+					if (skipTrans && ((*srcCol & alphaMask) == transColor))
+						continue;
+
+					byte *destVal = (byte *)&destP[destX * format.bytesPerPixel];
+					uint32 destCol = srcAlpha == -1 ? *srcCol : *(uint32 *)destVal;
+					if (srcAlpha != -1) {
+						//uint8 aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest;
+						format.colorToARGB(destCol, aDest, rDest, gDest, bDest);
+						src.format.colorToARGB(*srcCol, aSrc, rSrc, gSrc, bSrc);
+						rgbBlend(rSrc, gSrc, bSrc, rDest, gDest, bDest, srcAlpha);
+						destCol = format.ARGBToColor(aDest, rDest, gDest, bDest);
+					}
+					*(uint32 *)destVal = destCol;
+				}
 			} // FormatType == 1
 		}
 	}
