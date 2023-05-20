@@ -548,7 +548,8 @@ void CharacterGenerator::drawButton(int index, int buttonState) {
 		const uint8 *bt = &_chargenSegaButtonCoords[index * 5];
 		_screen->sega_getRenderer()->fillRectWithTiles(0, bt[0], bt[1], bt[2], bt[3], (index > 9 ? 0x24BC : 0x2411) + bt[4] + (buttonState ? (bt[2] * bt[3]) : 0), true);
 		_screen->sega_getRenderer()->render(0, bt[0], bt[1], bt[2], bt[3]);
-		_screen->updateScreen();
+		if (buttonState)
+			_screen->updateScreen();
 		return;
 	}
 
@@ -588,7 +589,7 @@ void CharacterGenerator::drawButton(int index, int buttonState) {
 
 	_screen->copyRegion(160, 0, c->destX << 3, c->destY, p->w << 3, p->h, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
-}
+ }
 
 void CharacterGenerator::processButtonClick(int index) {
 	drawButton(index, 1);
