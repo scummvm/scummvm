@@ -136,7 +136,7 @@ void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset)
 	for (uint i = 0; i < _areaMap.size() + 2; i++) {
 		int label = readField(file, 8);
 		auto palette = new byte[16][3];
-		debugC(1, kFreescapeDebugParser, "Loading palette for area: %d", label);
+		debugC(1, kFreescapeDebugParser, "Loading palette for area: %d at %lx", label, file->pos());
 		for (int c = 0; c < 16; c++) {
 			int v = file->readUint16BE();
 			r = (v & 0xf00) >> 8;
@@ -212,9 +212,6 @@ byte kDrillerCGAPaletteRedGreenData[4][3] = {
 };
 
 void FreescapeEngine::swapPalette(uint16 levelID) {
-	if (!_border)
-		return;
-
 	if (isAmiga() || isAtariST()) {
 		// The following palette was not available in the demo, so we select another one
 		if (isDemo() && levelID == 32)
@@ -225,6 +222,9 @@ void FreescapeEngine::swapPalette(uint16 levelID) {
 		_gfx->_inkColor = _areaMap[levelID]->_inkColor;
 		_gfx->_paperColor = _areaMap[levelID]->_paperColor;
 		_gfx->_underFireBackgroundColor = _areaMap[levelID]->_underFireBackgroundColor;
+
+		if (!_border)
+			return;
 
 		byte *palette = (byte *)malloc(sizeof(byte) * 4 * 3);
 		for (int c = 0; c < 4; c++) {
@@ -253,9 +253,14 @@ void FreescapeEngine::swapPalette(uint16 levelID) {
 		}
 
 		assert(entry->areaId == levelID);
+		if (!_border)
+			return;
 		_border->setPalette(_gfx->_palette, 0, 4);
 		processBorder();
 	} else if (isDOS() && _renderMode == Common::kRenderEGA) {
+		if (!_border)
+			return;
+
 		_border->setPalette(_gfx->_palette, 0, 4);
 		processBorder();
 	}
