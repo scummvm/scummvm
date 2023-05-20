@@ -1641,7 +1641,7 @@ maps:
 		tower: "The tower"
 		throne_room: "Throne room"
 		ironfist1: "Lord Ironfist speaks:\n"
-		ironfist2: "\"Your services are needed!\" accept(Y/N)?"
+		ironfist2: "\"Your services are needed!\" Accept(Y/N)?"
 		ironfist3: "\"Return not until thy quest is complete\""
 		ironfist4: "\"Sorry, but since you are currently\nquested, i can't engage your services.\""
 		ironfist5: "Well done, quest complete! +%u exp"
@@ -1655,6 +1655,9 @@ maps:
 			5: "Find the shipwreck of the jolly raven"
 			6: "Defeat the pirate ghost ship anarchist"
 			7: "Defeat the stronghold in ravens wood"
+	emap43:
+		title: "Lord Ironfist"
+		ironfist2: "\"Your services are needed!\" Accept (Y/N)?"
 
 	map44:
 		message_f: "Etched in silver, message F reads:\ntstst,e1,d-ds15a1drh"
