@@ -78,7 +78,7 @@ void Resources::addToCache(const Common::String &packName, const Common::String 
 	_cacheSize += fileSize;
 
 	while (_cacheSize > MAX_CACHE_SIZE) {
-		CacheEntry *bestEntry = 0;
+		CacheEntry *bestEntry = nullptr;
 		for (Common::Array<CacheEntry *>::iterator entry = _resourceCache.begin(); entry != _resourceCache.end(); ++entry) {
 			if ((*entry)->_data) {
 				if (!bestEntry || ((*entry)->_age >= bestEntry->_age && (*entry)->_size >= bestEntry->_size)) {
@@ -90,7 +90,7 @@ void Resources::addToCache(const Common::String &packName, const Common::String 
 			break;
 
 		free(bestEntry->_data);
-		bestEntry->_data = 0;
+		bestEntry->_data = nullptr;
 		_cacheSize -= bestEntry->_size;
 		debugC(5, kDebugResource, "Freed %s (%s) to reclaim %d bytes", bestEntry->_fileName.c_str(), bestEntry->_packName.c_str(), bestEntry->_size);
 	}
@@ -153,7 +153,7 @@ uint8 *Resources::getFileData(const Common::String &fileName, uint32 *fileSize) 
 		Common::File file;
 		bool opened = file.open(fileName);
 		if (!opened)
-			return 0;
+			return nullptr;
 
 		*fileSize = file.size();
 		uint8 *memory = (uint8 *)new uint8[*fileSize];
@@ -164,7 +164,7 @@ uint8 *Resources::getFileData(const Common::String &fileName, uint32 *fileSize) 
 	} else {
 
 		uint32 locFileSize = 0;
-		uint8 *locFileData = 0;
+		uint8 *locFileData = nullptr;
 
 		if (getFromCache(fileName, &locFileSize, &locFileData)) {
 			*fileSize = locFileSize;
@@ -180,7 +180,7 @@ uint8 *Resources::getFileData(const Common::String &fileName, uint32 *fileSize) 
 				return locFileData;
 			}
 		}
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -190,22 +190,23 @@ Common::SeekableReadStream *Resources::openFile(const Common::String &fileName) 
 	// first try to find files outside of .pak
 	// some patched files have not been included in package.
 	if (Common::File::exists(fileName)) {
-		Common::File *file = new Common::File();
-		bool opened = file->open(fileName);
-		if (!opened) {
-			delete file;
-			return 0;
+		Common::File file;
+		if (file.open(fileName)) {
+			Common::SeekableReadStream *stream = file.readStream(file.size());
+			file.close();
+			return stream;
+		} else {
+			return nullptr;
 		}
-		return file;
 	} else {
 		for (uint32 i = 0; i < _pakFiles.size(); i++) {
-			Common::SeekableReadStream *stream = 0;
+			Common::SeekableReadStream *stream = nullptr;
 			stream = _pakFiles[i]->createReadStream(fileName);
 			if (stream)
 				return stream;
 		}
 
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -224,7 +225,7 @@ Common::SeekableReadStream *PakFile::createReadStream(const Common::String &file
 	if (buffer)
 		return new Common::MemoryReadStream(buffer, fileSize, DisposeAfterUse::YES);
 	else
-		return 0;
+		return nullptr;
 }
 
 uint8 *PakFile::getFileData(const Common::String &fileName, uint32 *fileSize) {
