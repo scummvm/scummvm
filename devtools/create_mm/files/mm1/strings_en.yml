@@ -1703,7 +1703,10 @@ maps:
 	map48:
 		orango1: "A strange alien being in a shimmering\nsilver jumpsuit proclaims, \"This is a\nsoul maze and you are its prisoner!\nTo escape, you must find your captor's\nname hidden within these walls.\"\n\nanswer:>"
 		orango2: "Keep looking!"
-		orango3: "Agent orango seventeen reporting:\nImposter xx21a7-3 voided!\nStarphase 5281.6 at 120-varn-161 pod #41\nYou are now rank 1 and eligible for\ntransfer. Find inner sanctum for new\nassignment. The walls begin to fade...\n(press space)"
+		orango3: "Agent Orango seventeen reporting:\nImposter xx21a7-3 voided!\nStarphase 5281.6 at 120-varn-161 pod #41\nYou are now rank 1 and eligible for\ntransfer. Find inner sanctum for new\nassignment. The walls begin to fade...\n(press space)"
+	emap48:
+		title: "Strange Alien"
+		orango1: "A strange alien being in a silver jumpsuit proclaims, \"This is a soul maze and you are its prisoner!\nTo escape, you must find your captor's name hidden within these walls.\""
 
 	map49:
 		chute: "A chute..."

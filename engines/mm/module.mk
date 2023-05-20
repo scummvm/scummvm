@@ -198,6 +198,7 @@ MODULE_OBJS += \
 	mm1/views_enh/interactions/lion.o \
 	mm1/views_enh/interactions/lord_archer.o \
 	mm1/views_enh/interactions/lord_ironfist.o \
+	mm1/views_enh/interactions/orango.o \
 	mm1/views_enh/interactions/prisoners.o \
 	mm1/views_enh/interactions/resistances.o \
 	mm1/views_enh/interactions/ruby.o \

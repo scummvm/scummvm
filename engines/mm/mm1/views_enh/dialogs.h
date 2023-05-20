@@ -69,6 +69,7 @@
 #include "mm/mm1/views_enh/interactions/lion.h"
 #include "mm/mm1/views_enh/interactions/lord_archer.h"
 #include "mm/mm1/views_enh/interactions/lord_ironfist.h"
+#include "mm/mm1/views_enh/interactions/orango.h"
 #include "mm/mm1/views_enh/interactions/prisoners.h"
 #include "mm/mm1/views_enh/interactions/resistances.h"
 #include "mm/mm1/views_enh/interactions/ruby.h"
@@ -107,6 +108,7 @@ private:
 	ViewsEnh::Interactions::Lion _lion;
 	ViewsEnh::Interactions::LordArcher _lordArcher;
 	ViewsEnh::Interactions::LordIronfist _lordIronfist;
+	ViewsEnh::Interactions::Orango _orango;
 	ViewsEnh::Interactions::Resistances _resistances;
 	ViewsEnh::Interactions::Ruby _ruby;
 	ViewsEnh::Interactions::Statue _statue;

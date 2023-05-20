@@ -19,47 +19,30 @@
  *
  */
 
-#include "mm/mm1/maps/map48.h"
-#include "mm/mm1/maps/maps.h"
-#include "mm/mm1/events.h"
-#include "mm/mm1/globals.h"
-#include "mm/mm1/sound.h"
+#ifndef MM1_VIEWS_ENH_INTERACTIONS_ORANGO_H
+#define MM1_VIEWS_ENH_INTERACTIONS_ORANGO_H
+
+#include "mm/mm1/views_enh/interactions/interaction_query.h"
 
 namespace MM {
 namespace MM1 {
-namespace Maps {
+namespace ViewsEnh {
+namespace Interactions {
 
-#define ANSWER_OFFSET 274
+class Orango : public InteractionQuery {
+protected:
+	/**
+	 * Answer entered
+	 */
+	void answerEntered() override;
 
-void Map48::special() {
-	g_events->addView("Orango");
-}
+public:
+	Orango();
+};
 
-void Map48::orangoAnswer(const Common::String &answer) {
-	Common::String properAnswer;
-	for (int i = 0; i < 15 && _data[ANSWER_OFFSET + i]; ++i)
-		properAnswer += (_data[ANSWER_OFFSET + i] & 0x7f) + 29;
-
- 	if (answer.equalsIgnoreCase(properAnswer)) {
-		for (uint i = 0; i < g_globals->_party.size(); ++i) {
-			Character &c = g_globals->_party[i];
-			c._flags[13] |= CHARFLAG13_ALAMAR;
-		}
-
-		g_maps->_mapPos = Common::Point(8, 5);
-		g_maps->changeMap(0x604, 1);
-
-		SoundMessage msg(STRING["maps.map48.orango3"]);
-		msg._largeMessage = true;
-		send(msg);
-
-	} else {
-		g_maps->_mapPos.x++;
-		updateGame();
-		send(SoundMessage(13, 2, STRING["maps.map48.orango2"]));
-	}
-}
-
-} // namespace Maps
+} // namespace Interactions
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
+
+#endif
