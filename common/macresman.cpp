@@ -314,7 +314,7 @@ SeekableReadStream * MacResManager::openFileOrDataFork(const Path &fileName) {
 }
 
 SeekableReadStream * MacResManager::openDataForkFromMacBinary(SeekableReadStream *inStream, DisposeAfterUse::Flag disposeAfterUse) {
-	if (!inStream && !isMacBinary(*inStream)) {
+	if (!inStream || !isMacBinary(*inStream)) {
 		return nullptr;
 	}
 	inStream->seek(MBI_DFLEN);
