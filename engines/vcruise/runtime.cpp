@@ -2634,8 +2634,9 @@ void Runtime::loadAllSchizmScreenNames() {
 
 		uint roomNumber = (d10 - '0') * 10 + (d1 - '0');
 
-		// Rooms 1 and 3 are always compiled.  2 is a cheat room that contains garbage.
-		if (roomNumber > 3)
+		// Rooms 1 and 3 are always compiled.  2 is a cheat room that contains garbage.  We still need to compile room 1
+		// to get the START screen to start the game though.
+		if (roomNumber > 3 && roomNumber != 1)
 			roomsToCompile.push_back(roomNumber);
 	}
 
@@ -2645,7 +2646,11 @@ void Runtime::loadAllSchizmScreenNames() {
 		if (roomNumber >= _roomDuplicationOffsets.size() || _roomDuplicationOffsets[roomNumber] == 0) {
 			uint roomSetToCompile[3] = {1, 3, roomNumber};
 
-			compileSchizmLogicSet(roomSetToCompile, 3);
+			uint numRooms = 3;
+			if (roomNumber == 1)
+				numRooms = 2;
+
+			compileSchizmLogicSet(roomSetToCompile, numRooms);
 
 			for (const RoomScriptSetMap_t::Node &rssNode : _scriptSet->roomScripts) {
 				if (rssNode._key != roomNumber)
@@ -5454,11 +5459,15 @@ void Runtime::scriptOpAnimS(ScriptArg_t arg) {
 	// Static animations start on the last frame
 	changeAnimation(animDef, animDef.lastFrame, false);
 
-	// We use different behavior from the original game to mostly speed up one-frame animations by terminating them
-	// at the start of the last frame instead of the end of the last frame.  However, this causes the mechanical
-	// keyboard to play all of the pin animations at once which is kind of annoying.
-	if (_gameID == GID_SCHIZM && animDef.animName.hasPrefix("WEJSCIE_DN"))
-		_animTerminateAtStartOfFrame = false;
+	// We have a choice of when to terminate animations: At the start of the final frame, or at the end of the final frame.
+	// Terminating at the start of the final frame means many frames can play in a single gameplay frame.
+	//
+	// In Reah, we terminate at the start because it doesn't really cause problems anywhere and helps some things like
+	// the basket weight puzzle in the bathhouse.
+	//
+	// In Schizm, several things like the mechanical computer and balloon gas puzzle pressure meter don't behave
+	// well when doing this, so we terminate at the end of the frame instead there.
+	_animTerminateAtStartOfFrame = (_gameID == GID_SCHIZM);
 
 	_gameState = kGameStateWaitingForAnimation;
 	_screenNumber = stackArgs[kAnimDefStackArgs + 0];
