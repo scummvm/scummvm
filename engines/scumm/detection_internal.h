@@ -330,6 +330,19 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id, co
 		}
 	}
 
+	Common::FSNode videoDir;
+	Common::FSNode txtFile;
+	if (id == GID_DIG
+	    && searchFSNode(fslist, "VIDEO", videoDir)
+	    && videoDir.isDirectory()
+	    && (txtFile = videoDir.getChild("DIGTXT.TRS"), txtFile.exists())
+	    && tmp.open(txtFile)) {
+		tmp.readLine();
+		tmp.readLine();
+		if ("somaR eilrahC" == tmp.readLine())
+			return Common::HE_ISR;
+	}
+
 	return originalLanguage;
 }
 
