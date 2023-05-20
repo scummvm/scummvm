@@ -3953,7 +3953,7 @@ AnimationDef Runtime::stackArgsToAnimDef(const StackInt_t *args) const {
 	return def;
 }
 
-void Runtime::adjustUsingAnimChange(AnimationDef &animDef) const {
+void Runtime::consumeAnimChangeAndAdjustAnim(AnimationDef &animDef) {
 	if (_scriptEnv.animChangeSet) {
 		uint origFirstFrame = animDef.firstFrame;
 		uint origLastFrame = animDef.lastFrame;
@@ -3966,6 +3966,8 @@ void Runtime::adjustUsingAnimChange(AnimationDef &animDef) const {
 
 		animDef.firstFrame = newFirstFrame;
 		animDef.lastFrame = newLastFrame;
+
+		_scriptEnv.animChangeSet = false;
 	}
 }
 
@@ -5447,7 +5449,7 @@ void Runtime::scriptOpAnimS(ScriptArg_t arg) {
 
 	AnimationDef animDef = stackArgsToAnimDef(stackArgs + 0);
 
-	adjustUsingAnimChange(animDef);
+	consumeAnimChangeAndAdjustAnim(animDef);
 
 	// Static animations start on the last frame
 	changeAnimation(animDef, animDef.lastFrame, false);
@@ -5471,7 +5473,7 @@ void Runtime::scriptOpAnim(ScriptArg_t arg) {
 
 	AnimationDef animDef = stackArgsToAnimDef(stackArgs + 0);
 
-	adjustUsingAnimChange(animDef);
+	consumeAnimChangeAndAdjustAnim(animDef);
 
 	changeAnimation(animDef, animDef.firstFrame, true, _animSpeedDefault);
 

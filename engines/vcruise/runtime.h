@@ -845,7 +845,7 @@ private:
 	void stopSubtitles();
 
 	AnimationDef stackArgsToAnimDef(const StackInt_t *args) const;
-	void adjustUsingAnimChange(AnimationDef &animDef) const;
+	void consumeAnimChangeAndAdjustAnim(AnimationDef &animDef);
 	void pushAnimDef(const AnimationDef &animDef);
 
 	void activateScript(const Common::SharedPtr<Script> &script, const ScriptEnvironmentVars &envVars);
