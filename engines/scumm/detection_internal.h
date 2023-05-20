@@ -239,6 +239,22 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id, co
 			return Common::KO_KOR;
 		}
 
+		Common::FSNode videoDir;
+		Common::FSNode txtFile;
+		Common::File tmp;
+		if (id == GID_FT
+		    && searchFSNode(fslist, "VIDEO", videoDir)
+		    && videoDir.isDirectory()
+		    && (txtFile = videoDir.getChild("CREDITS.TRS"), txtFile.exists())
+		    && tmp.open(txtFile)) {
+			tmp.readLine();
+			tmp.readLine();
+			tmp.readLine();
+			tmp.readLine();
+			if (tmp.readLine().hasSuffix("darnoC yoR"))
+				return Common::HE_ISR;
+		}
+
 		return originalLanguage;
 	}
 
