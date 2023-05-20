@@ -239,6 +239,11 @@ void FreescapeEngine::playMusic(const Common::String filename) {
 }
 
 void FreescapeEngine::playSoundFx(int index, bool sync) {
+	if (_soundsFx.size() == 0) {
+		debugC(1, kFreescapeDebugMedia, "WARNING: Sounds are not loaded");
+		return;
+	}
+
 	int size = _soundsFx[index]->size;
 	int sampleRate = _soundsFx[index]->sampleRate;
 	byte *data = _soundsFx[index]->data;

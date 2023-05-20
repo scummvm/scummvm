@@ -35,6 +35,7 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 
 	_playerWidth = 8;
 	_playerDepth = 8;
+	_option = nullptr;
 }
 
 CastleEngine::~CastleEngine() {
@@ -290,9 +291,7 @@ void CastleEngine::loadAssetsAmigaDemo() {
 
 	loadMessagesVariableSize(&file, 0x8bb2, 164);
 	load8bitBinary(&file, 0x162a6, 16);
-	assert(0);
-	//loadPalettes(&file, 0x0);
-
+	loadPalettes(&file, 0x151a6);
 	//file.close();
 	//file.open("driller");
 	//if (!file.isOpen())

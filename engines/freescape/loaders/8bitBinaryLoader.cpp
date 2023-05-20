@@ -99,6 +99,13 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		error("Not enough bytes %d to read object %d with type %d", byteSizeOfObject, objectID, objectType);
 	}
 
+	if (objectType > ObjectType::kGroupType && isDemo()) {
+		// Castle DOS demo has an invalid object, which should not be parsed.
+		debugC(1, kFreescapeDebugParser, "WARNING: invalid object %d!", objectID);
+		readArray(file, byteSizeOfObject - 9);
+		return nullptr;
+	}
+
 	assert(byteSizeOfObject >= 9);
 	byteSizeOfObject = byteSizeOfObject - 9;
 	if (objectID == 255 && objectType == ObjectType::kEntranceType) {
@@ -114,7 +121,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 
 		byteSizeOfObject++;
 		while(--byteSizeOfObject > 0)
-			structureArray.push_back(file->readByte());
+			structureArray.push_back(readField(file, 8));
 		return new GlobalStructure(structureArray);
 	} else if (objectID == 254 && objectType == ObjectType::kEntranceType) {
 		debugC(1, kFreescapeDebugParser, "Found the area connections (objectID: 254 with size %d)", byteSizeOfObject + 6);
@@ -288,7 +295,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 
 		byteSizeOfObject++;
 		while(--byteSizeOfObject > 0)
-			groupDataArray.push_back(file->readByte());
+			groupDataArray.push_back(readField(file, 8));
 
 		return new Group(
 			objectID,
@@ -516,7 +523,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 					error("WARNING: replacing object id %d", newObject->getObjectID());
 				(*objectsByID)[newObject->getObjectID()] = newObject;
 			}
-		} else
+		} else if (!(isDemo() && isCastle()))
 			error("Failed to read an object!");
 	}
 	long int endLastObject = file->pos();
@@ -570,8 +577,13 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	uint8 numberOfAreas = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Number of areas: %d", numberOfAreas);
 
-	if (isDOS() && isCastle()) // Castle Master for DOS has an invalid number of areas
-		numberOfAreas = isDemo() ? 31 : 104;
+	// Castle Master seems to have invalid number of areas?
+	if (isCastle()) {
+		if (isDOS())
+			numberOfAreas = isDemo() ? 31 : 104;
+		else if (isAmiga())
+			numberOfAreas = isDemo() ? 86 : 104;
+	}
 
 	uint32 dbSize = readField(file, 16);
 	debugC(1, kFreescapeDebugParser, "Database ends at %x", dbSize);
