@@ -33,6 +33,10 @@ SubtitleRenderer::SubtitleRenderer(ToonEngine *vm) : _vm(vm) {
 }
 
 SubtitleRenderer::~SubtitleRenderer() {
+	if (_subSurface) {
+		_subSurface->free();
+		delete _subSurface;
+	}
 }
 
 
