@@ -19,7 +19,7 @@
  *
  */
 
-#include "mm/mm1/views_enh/interactions/Orango.h"
+#include "mm/mm1/views_enh/interactions/orango.h"
 #include "mm/mm1/maps/map48.h"
 #include "mm/mm1/globals.h"
 
