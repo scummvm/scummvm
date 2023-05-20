@@ -815,6 +815,7 @@ void allegro_bitmap_test_init() {
 	Bitmap *dest = BitmapHelper::CreateBitmap(100, 100, benchgfx1->GetColorDepth());
 	uint64_t bench_runs[] = {1000, 10000, 100000};
 	if (benchgfx1 != nullptr) {
+		_G(_blender_mode) = kRgbToRgbBlender; // Using normal blender mode
 		for (long unsigned int i = 0; i < sizeof(bench_runs)/sizeof(uint64_t); i++) {
 			Debug::Printf(kDbgMsg_Info, "Starting Allegro Bitmap Test Bench 2 (%d bpp)", benchgfx1->GetColorDepth());
 			uint32_t start = std::chrono::high_resolution_clock::now();

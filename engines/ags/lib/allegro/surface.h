@@ -27,6 +27,11 @@
 #include "ags/lib/allegro/color.h"
 #include "common/array.h"
 
+#if defined(__aarch64__)
+// M1/M2 SIMD intrensics
+#include "arm_neon.h"
+#endif
+
 namespace AGS3 {
 
 class BITMAP {
@@ -131,7 +136,7 @@ public:
 	// unsigned int blender_func(unsigned long x, unsigned long y, unsigned long n)
 	// when x is the sprite color, y the destination color, and n an alpha value
 
-	void blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const;
+	void blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha, bool useTint, byte *destVal) const;
 
 
 	inline void rgbBlend(uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
@@ -280,12 +285,19 @@ public:
 			                       horizFlip ? srcArea.right - 1 : srcArea.left,
 			                       vertFlip ? srcArea.bottom - 1 - yCtr :
 			                       srcArea.top + yCtr);
+			int destX = xStart, xCtr = 0, xCtrBpp = 0, xCtrWidth = dstRect.width();
+			if (xStart < 0) {
+				xCtr = -xStart;
+				xCtrBpp = xCtr * src.format.bytesPerPixel;
+				destX = 0;
+			}
+			if (xStart + xCtrWidth > destArea.w) {
+				xCtrWidth = destArea.w - xStart;
+			}
 
+			if (FormatType == 0) {
 			// Loop through the pixels of the row
-			for (int destX = xStart, xCtr = 0, xCtrBpp = 0; xCtr < dstRect.width(); ++destX, ++xCtr, xCtrBpp += src.format.bytesPerPixel) {
-				if (destX < 0 || destX >= destArea.w)
-					continue;
-
+			for (; xCtr < xCtrWidth; ++destX, ++xCtr, xCtrBpp += src.format.bytesPerPixel) {
 				const byte *srcVal = srcP + xDir * xCtrBpp;
 				uint32 srcCol = getColor(srcVal, src.format.bytesPerPixel);
 
@@ -315,14 +327,14 @@ public:
 					gSrc = rgb.g;
 					bSrc = rgb.b;
 				} else {
-					if (FormatType == 1) {
-						aSrc = srcCol >> src.format.aShift & 0xff;
-						rSrc = srcCol >> src.format.rShift & 0xff;
-						gSrc = srcCol >> src.format.gShift & 0xff;
-						bSrc = srcCol >> src.format.bShift & 0xff;
-					} else {
+					// if (FormatType == 1) {
+					// 	aSrc = srcCol >> src.format.aShift & 0xff;
+					// 	rSrc = srcCol >> src.format.rShift & 0xff;
+					// 	gSrc = srcCol >> src.format.gShift & 0xff;
+					// 	bSrc = srcCol >> src.format.bShift & 0xff;
+					// } else {
 						src.format.colorToARGB(srcCol, aSrc, rSrc, gSrc, bSrc);
-					}
+					// }
 				}
 
 				if (srcAlpha == -1) {
@@ -343,9 +355,9 @@ public:
 						aSrc = srcAlpha;
 					} else {
 						// TODO: move this to blendPixel to only do it when needed?
-						format.colorToARGB(getColor(destVal, format.bytesPerPixel), aDest, rDest, gDest, bDest);
+						// format.colorToARGB(getColor(destVal, format.bytesPerPixel), aDest, rDest, gDest, bDest);
 					}
-					blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha);
+					blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha, useTint, destVal);
 				}
 
 				uint32 pixel = format.ARGBToColor(aDest, rDest, gDest, bDest);
@@ -353,7 +365,53 @@ public:
 					*(uint32 *)destVal = pixel;
 				else
 					*(uint16 *)destVal = pixel;
+			} // FormatType == 0
+			} else { // FormatType == 1
+			uint32x4_t maskedAlphas = vld1q_dup_u32(&alphaMask);
+			uint32x4_t transColors = vld1q_dup_u32(&transColor);
+			uint32 alpha = srcAlpha ? srcAlpha + 1 : srcAlpha;
+			uint8x16_t srcCols;
+			for (; xCtr + 4 < dstRect.width(); destX += 4, xCtr += 4, xCtrBpp += src.format.bytesPerPixel*4) {
+				uint32 *destPtr = (uint32 *)&destP[destX * format.bytesPerPixel];
+				if (srcAlpha != -1) {
+					uint8x16_t srcColsRaw = vld1q_u8(srcP + xDir * xCtrBpp);
+					uint8x16_t destColsRaw = vld1q_u8((uint8 *)destPtr);
+					uint8x16_t diff = vqsubq_u32(srcColsRaw, destColsRaw);
+					diff = vmulq_u8(diff, vmovq_n_u8(alpha));
+					diff = vshrq_n_u8(diff, 8);
+					diff = vaddq_u8(diff, destColsRaw);
+					srcCols = vld1q_u32((const uint32 *)&diff);
+				} else {
+					srcCols = vld1q_u32((const uint32 *)(srcP + xDir * xCtrBpp));
+				}
+				uint32x4_t anded = vandq_u32(srcCols, maskedAlphas);
+				uint32x4_t mask1 = skipTrans ? vceqq_u32(anded, transColors) : vmovq_n_u32(0);
+				if (srcAlpha != -1) mask1 = vorrq_u32(mask1, vmovq_n_u32(0xff000000));
+				uint32x4_t mask2 = vmvnq_u32(mask1);
+				uint32x4_t destCols2 = vandq_u32(vld1q_u32(destPtr), mask1);
+				uint32x4_t srcCols2 = vandq_u32(srcCols, mask2);
+				uint32x4_t final = vorrq_u32(destCols2, srcCols2);
+				vst1q_u32(destPtr, final);
 			}
+			// Get the last x values
+			for (; xCtr < xCtrWidth; ++destX, ++xCtr, xCtrBpp += src.format.bytesPerPixel) {
+				const uint32 *srcCol = (const uint32 *)(srcP + xDir * xCtrBpp);
+				// Check if this is a transparent color we should skip
+				if (skipTrans && ((*srcCol & alphaMask) == transColor))
+					continue;
+
+				byte *destVal = (byte *)&destP[destX * format.bytesPerPixel];
+				uint32 destCol = srcAlpha == -1 ? *srcCol : *(uint32 *)destVal;
+				if (srcAlpha != -1) {
+					//uint8 aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest;
+					format.colorToARGB(destCol, aDest, rDest, gDest, bDest);
+					src.format.colorToARGB(*srcCol, aSrc, rSrc, gSrc, bSrc);
+					rgbBlend(rSrc, gSrc, bSrc, rDest, gDest, bDest, srcAlpha);
+					destCol = format.ARGBToColor(aDest, rDest, gDest, bDest);
+				}
+				*(uint32 *)destVal = destCol;
+			}
+			} // FormatType == 1
 		}
 	}
 
