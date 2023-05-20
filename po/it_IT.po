@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-15 10:43+0000\n"
+"POT-Creation-Date: 2023-05-20 21:27+0000\n"
 "PO-Revision-Date: 2023-05-15 22:13+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -5057,7 +5057,7 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Carica comunque"
 
-#: engines/bladerunner/bladerunner.cpp:398
+#: engines/bladerunner/bladerunner.cpp:404
 msgid "Failed to initialize resources"
 msgstr "Inizializzazione risorse fallita"
 

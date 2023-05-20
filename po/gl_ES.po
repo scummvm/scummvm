@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-15 10:43+0000\n"
+"POT-Creation-Date: 2023-05-20 21:27+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -5069,7 +5069,7 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Iniciar de todos os xeitos"
 
-#: engines/bladerunner/bladerunner.cpp:398
+#: engines/bladerunner/bladerunner.cpp:404
 #, fuzzy
 msgid "Failed to initialize resources"
 msgstr "Erro ao cambiar o almacenamento na nube!"

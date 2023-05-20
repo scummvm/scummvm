@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-15 10:43+0000\n"
+"POT-Creation-Date: 2023-05-20 21:27+0000\n"
 "PO-Revision-Date: 2023-02-13 09:34+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -5044,7 +5044,7 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Přesto přidat"
 
-#: engines/bladerunner/bladerunner.cpp:398
+#: engines/bladerunner/bladerunner.cpp:404
 #, fuzzy
 msgid "Failed to initialize resources"
 msgstr "Připojení úložiště selhalo."
