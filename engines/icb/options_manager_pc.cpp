@@ -6203,7 +6203,7 @@ void OptionsManager::DrawSlideShow() {
 
 		// Lock the buffers now so bink has somewhere ot put it's data
 		uint8 *surface = (uint8 *)surface_manager->Lock_surface(m_mySlotSurface1ID);
-		int16 pitch = surface_manager->Get_pitch(m_mySlotSurface1ID);
+		int32 pitch = surface_manager->Get_pitch(m_mySlotSurface1ID);
 		uint32 height = surface_manager->Get_height(m_mySlotSurface1ID);
 
 		// Screen coordinates
