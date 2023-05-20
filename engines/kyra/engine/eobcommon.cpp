@@ -702,7 +702,7 @@ void EoBCoreEngine::writeSettings() {
 	if (_sound) {
 		if (_flags.platform == Common::kPlatformPC98 || _flags.platform == Common::kPlatformSegaCD) {
 			if (!_configMusic)
-				snd_playSong(0);
+				snd_stopSound();
 		} else if (!_configSounds) {
 			_sound->haltTrack();
 		}

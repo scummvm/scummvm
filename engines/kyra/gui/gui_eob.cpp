@@ -2322,12 +2322,17 @@ void GUI_EoB::runCampMenu() {
 	Button *buttonList = 0;
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
+		bool buttonsUnchanged = true;
+
 		if (newMenu != -1) {
 			drawCampMenu();
+
 			if (newMenu == 2) {
 				updateOptionsStrings();
 				if (_vm->gameFlags().platform == Common::kPlatformSegaCD)
 					keepButtons = false;
+				else
+					buttonsUnchanged = false;
 			}
 			if (!keepButtons) {
 				releaseButtons(buttonList);
@@ -2569,8 +2574,11 @@ void GUI_EoB::runCampMenu() {
 		} else {
 			Common::Point p = _vm->getMousePos();
 			for (Button *b = buttonList; b; b = b->nextButton) {
-				if ((b->arg & 2) && _vm->posWithinRect(p.x, p.y, b->x, b->y, b->x + b->width, b->y + b->height))
+				if ((b->arg & 2) && _vm->posWithinRect(p.x, p.y, b->x, b->y, b->x + b->width, b->y + b->height)) {
+					if (highlightButton && highlightButton != b && !prevHighlightButton)
+						prevHighlightButton = highlightButton;
 					highlightButton = b;
+				}
 			}
 		}
 
@@ -2584,7 +2592,7 @@ void GUI_EoB::runCampMenu() {
 		_charSelectRedraw = redrawPortraits = false;
 
 		if (prevHighlightButton != highlightButton && newMenu == -1 && runLoop) {
-			drawMenuButton(prevHighlightButton, false, false, true);
+			drawMenuButton(prevHighlightButton, false, false, buttonsUnchanged);
 			drawMenuButton(highlightButton, false, true, false);
 			_screen->updateScreen();
 			prevHighlightButton = highlightButton;
