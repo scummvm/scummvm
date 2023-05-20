@@ -367,13 +367,15 @@ public:
 						*(uint16 *)destVal = pixel;
 				} // FormatType == 0
 			} else { // FormatType == 1
+				const byte *srcP2 = srcP;
+				if (horizFlip && xCtr + 4 < xCtrWidth) srcP2 -= src.format.bytesPerPixel * 3;
 				uint32x4_t maskedAlphas = vld1q_dup_u32(&alphaMask);
 				uint32x4_t transColors = vld1q_dup_u32(&transColor);
 				uint32 alpha = srcAlpha ? srcAlpha + 1 : srcAlpha;
 				uint32x4_t alphas = vld1q_dup_u32(&alpha);
 				for (; xCtr + 4 < xCtrWidth; destX += 4, xCtr += 4, xCtrBpp += src.format.bytesPerPixel*4) {
 					uint32 *destPtr = (uint32 *)&destP[destX * format.bytesPerPixel];
-					uint32x4_t srcColsO = vld1q_u32((const uint32 *)(srcP + xDir * xCtrBpp));
+					uint32x4_t srcColsO = vld1q_u32((const uint32 *)(srcP2 + xDir * xCtrBpp));
 					uint32x4_t srcCols = srcColsO;
 					if (srcAlpha != -1) {
 						uint32x4_t destCols = vld1q_u32(destPtr);
@@ -403,6 +405,10 @@ public:
 					uint32x4_t destCols2 = vandq_u32(vld1q_u32(destPtr), mask1);
 					uint32x4_t srcCols2 = vandq_u32(srcCols, mask2);
 					uint32x4_t final = vorrq_u32(destCols2, srcCols2);
+					if (horizFlip) {
+						final = vrev64q_u32(final);
+						final = vcombine_u32(vget_high_u32(final), vget_low_u32(final));
+					}
 					vst1q_u32(destPtr, final);
 				}
 				// Get the last x values
