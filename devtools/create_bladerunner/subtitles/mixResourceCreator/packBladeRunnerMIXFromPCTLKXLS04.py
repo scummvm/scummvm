@@ -124,6 +124,7 @@ from xlrd import *
 from struct import *
 from subtlsVersTextResource import *
 from extracsTextResource import *
+from pythonCompat import *
 
 COMPANY_EMAIL = "classic.adventures.in.greek@gmail.com"
 APP_VERSION = "1.96"
@@ -265,14 +266,14 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 								if ( fontCateg_targetEnc_OOOGlyphs_Tuple[2] is not None \
 									and fontCateg_targetEnc_OOOGlyphs_Tuple[2] != ''):
 									# split at comma, then split at ':' and store tuples of character
-									explicitOutOfOrderGlyphsTokenUnicode = unicode(fontCateg_targetEnc_OOOGlyphs_Tuple[2], 'utf-8') # unicode(fontCateg_targetEnc_OOOGlyphs_Tuple[2], 'utf-8')
+									explicitOutOfOrderGlyphsTokenUnicode = makeUnicode(fontCateg_targetEnc_OOOGlyphs_Tuple[2]) # unicode(fontCateg_targetEnc_OOOGlyphs_Tuple[2], 'utf-8')
 									#explicitOutOfOrderGlyphsTokenStr =  unicode.encode("%s" % explicitOutOfOrderGlyphsTokenUnicode, gTargetEncoding)
 									#explicitOutOfOrderGlyphsTokenStr =  explicitOutOfOrderGlyphsTokenUnicode.decode(gTargetEncoding) # unicode.encode("%s" % explicitOutOfOrderGlyphsTokenUnicode, 'utf-8')
 									tokensOfOutOfOrderGlyphsStrList = explicitOutOfOrderGlyphsTokenUnicode.split(',')
 									for tokenX in tokensOfOutOfOrderGlyphsStrList:
 										tokensOfTupleList = tokenX.split(':')
 										if len(tokensOfTupleList) == 2:
-											tmpListOfOutOfOrderGlyphs.append( (unichr(ord(tokensOfTupleList[0])), unichr(ord(tokensOfTupleList[1])))  )
+											tmpListOfOutOfOrderGlyphs.append( (getUnicodeSym(tokensOfTupleList[0]), getUnicodeSym(tokensOfTupleList[1]))  )
 										else:
 											print ('[Error] Bad tuple syntax in configureFontsTranslation text file!')
 											configureTranslationFailed = True
@@ -686,7 +687,7 @@ def translateQuoteToAsciiProper(cellObj, pSheetName):
 		newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(localTargetEncoding)
 	except Exception as e:
 		print ("[Error] Could not encode text in " + localTargetEncoding + "::" + str(e))
-		newQuoteReplaceSpecialsRetStr = "??????????"
+		newQuoteReplaceSpecialsRetStr = b"??????????"
 	#try:
 	#	newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(localTargetEncoding)
 	#except:
@@ -1084,7 +1085,7 @@ def inputXLS(pathtoInputExcelFilename):
 				#write strings with null terminator
 				for idxe in range(0, len(gTableOfStringEntries)):
 					outTRxFile.write(gTableOfStringEntries[idxe])
-					outTRxFile.write('\0')
+					outTRxFile.write(b'\0')
 				outTRxFile.close()
 	return
 

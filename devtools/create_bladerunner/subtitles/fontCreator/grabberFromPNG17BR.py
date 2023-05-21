@@ -129,9 +129,14 @@ try:
 except ImportError:
 	from os import errno
 
+pathToParent = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)
+pathToCommon = os.path.join(pathToParent, "common")
+sys.path.append(pathToCommon)
+
 from os import walk, path
 from struct import *
 from fonFileLib import *
+from pythonCompat import *
 
 COMPANY_EMAIL = "classic.adventures.in.greek@gmail.com"
 APP_VERSION = "1.10"
@@ -172,10 +177,8 @@ class grabberFromPNG:
 	origEncoding = 'windows-1252'
 	defaultTargetLang = "greek"
 	defaultTargetEncoding = 'windows-1253' #greek
-	defaultTargetEncodingUnicode = unicode(defaultTargetEncoding, 'utf-8')
 
 	targetEncoding = 'windows-1253'
-	targetEncodingUnicode = unicode(targetEncoding, 'utf-8')
 
 	overrideEncodingPath = ""
 	originalFontName = ''
@@ -264,35 +267,34 @@ class grabberFromPNG:
 					nameKeyTupl = tokenNameKeyPair.split('=', 1)
 					try:
 						if len(nameKeyTupl) == 2 and nameKeyTupl[0] == 'targetEncoding' and nameKeyTupl[1] is not None and nameKeyTupl[1] != '-' and nameKeyTupl[1] != '':
-							self.targetEncodingUnicode = unicode(nameKeyTupl[1], 'utf-8')
-							self.targetEncoding = unicode.encode("%s" % self.targetEncodingUnicode, self.origEncoding)
+							self.targetEncoding = nameKeyTupl[1]
 						elif len(nameKeyTupl) == 2 and nameKeyTupl[0] == 'asciiCharList' and nameKeyTupl[1] is not None and nameKeyTupl[1] != '':
-							targetLangOrderAndListOfForeignLettersStrUnicode = unicode(nameKeyTupl[1], 'utf-8')
+							targetLangOrderAndListOfForeignLettersStrUnicode = makeUnicode(nameKeyTupl[1])
 						elif len(nameKeyTupl) == 2 and nameKeyTupl[0] == 'explicitKerningList' and nameKeyTupl[1] is not None and nameKeyTupl[1] != '-' and nameKeyTupl[1] != '':
 							# split at comma, then split at ':' and store tuples of character and explicit kerning
-							explicitKerningTokenUnicode = unicode(nameKeyTupl[1], 'utf-8')
-							explicitKerningTokenStr = unicode.encode("%s" % explicitKerningTokenUnicode, self.targetEncoding)
-							tokensOfExplicitKerningTokenStrList = explicitKerningTokenStr.split(',')
+							explicitKerningTokenUnicode = makeUnicode(nameKeyTupl[1])
+							explicitKerningTokenStr = unicodeEncode("%s" % explicitKerningTokenUnicode, self.targetEncoding)
+							tokensOfExplicitKerningTokenStrList = encodedSplit(explicitKerningTokenStr, ',')
 							for tokenX in tokensOfExplicitKerningTokenStrList:
-								tokensOfTupleList = tokenX.split(':')
+								tokensOfTupleList = encodedSplit(tokenX, ':')
 								self.listOfExplicitKerning.append((ord(tokensOfTupleList[0]), int(tokensOfTupleList[1])) )
 						elif len(nameKeyTupl) == 2 and nameKeyTupl[0] == 'explicitWidthIncrement' and nameKeyTupl[1] is not None and nameKeyTupl[1] != '-' and nameKeyTupl[1] != '':
 							# split at comma, then split at ':' and store tuples of character and explicit additional width - POSITIVE VALUES ONLY
-							explicitWidthIncrementTokenUnicode = unicode(nameKeyTupl[1], 'utf-8')
-							explicitWidthIncrementTokenStr =  unicode.encode("%s" % explicitWidthIncrementTokenUnicode, self.targetEncoding)
-							tokensOfWidthIncrementStrList = explicitWidthIncrementTokenStr.split(',')
+							explicitWidthIncrementTokenUnicode = makeUnicode(nameKeyTupl[1])
+							explicitWidthIncrementTokenStr = unicodeEncode("%s" % explicitWidthIncrementTokenUnicode, self.targetEncoding)
+							tokensOfWidthIncrementStrList = encodedSplit(explicitWidthIncrementTokenStr, ',')
 							for tokenX in tokensOfWidthIncrementStrList:
-								tokensOfTupleList = tokenX.split(':')
+								tokensOfTupleList = encodedSplit(tokenX, ':')
 								self.listOfWidthIncrements.append((ord(tokensOfTupleList[0]), int(tokensOfTupleList[1])))
 						elif len(nameKeyTupl) == 2 and nameKeyTupl[0] == 'specialOutOfOrderGlyphsUTF8ToAsciiTargetEncoding' and nameKeyTupl[1] is not None and nameKeyTupl[1] != '-' and nameKeyTupl[1] != '':
 							# split at comma, then split at ':' and store tuples of character
-							explicitOutOfOrderGlyphsTokenUnicode = unicode(nameKeyTupl[1], 'utf-8') # unicode(nameKeyTupl[1], 'utf-8')
+							explicitOutOfOrderGlyphsTokenUnicode = makeUnicode(nameKeyTupl[1]) # unicode(nameKeyTupl[1], 'utf-8')
 							#explicitOutOfOrderGlyphsTokenStr =  unicode.encode("%s" % explicitOutOfOrderGlyphsTokenUnicode, self.targetEncoding)
 							#explicitOutOfOrderGlyphsTokenStr =  explicitOutOfOrderGlyphsTokenUnicode.decode(self.targetEncoding) # unicode.encode("%s" % explicitOutOfOrderGlyphsTokenUnicode, 'utf-8')
 							tokensOfOutOfOrderGlyphsStrList = explicitOutOfOrderGlyphsTokenUnicode.split(',')
 							for tokenX in tokensOfOutOfOrderGlyphsStrList:
 								tokensOfTupleList = tokenX.split(':')
-								self.listOfOutOfOrderGlyphs.append( (unichr(ord(tokensOfTupleList[0])), unichr(ord(tokensOfTupleList[1]))) )
+								self.listOfOutOfOrderGlyphs.append( (getUnicodeSym(tokensOfTupleList[0]), getUnicodeSym(tokensOfTupleList[1])) )
 						elif len(nameKeyTupl) == 2 and nameKeyTupl[0] == 'originalFontName' and nameKeyTupl[1] is not None and nameKeyTupl[1] != '-' and nameKeyTupl[1] != '':
 							self.originalFontName =  nameKeyTupl[1]
 					except:
@@ -331,19 +333,17 @@ class grabberFromPNG:
 			print ("[Error] Override encoding file parsing has failed: Error Code 1.") #" Initializing for {0}...".format(self.defaultTargetLang)
 			#if gTraceModeEnabled:
 			#	self.targetEncoding = self.defaultTargetEncoding
-			#	self.targetEncodingUnicode = self.defaultTargetEncodingUnicode
 			#	targetLangOrderAndListOfForeignLettersStrUnicode = unicode(allOfGreekChars, 'utf-8')
 			#	print '[Debug] ', targetLangOrderAndListOfForeignLettersStrUnicode
 			sys.exit(1)	# terminate if override Failed (Blade Runner)
 
 		try:
-			targetLangOrderAndListOfForeignLettersStr = unicode.encode("%s" % targetLangOrderAndListOfForeignLettersStrUnicode, self.targetEncoding)
+			targetLangOrderAndListOfForeignLettersStr = unicodeEncode("%s" % targetLangOrderAndListOfForeignLettersStrUnicode, self.targetEncoding)
 		except:
 			## error
 			print ("[Error] Override encoding file parsing has failed: Error Code 2.") #"Initializing for {0}...".format(self.defaultTargetLang)
 			#if gTraceModeEnabled:
 			#	self.targetEncoding = self.defaultTargetEncoding
-			#	self.targetEncodingUnicode = self.defaultTargetEncodingUnicode
 			#	targetLangOrderAndListOfForeignLettersStrUnicode = unicode(allOfGreekChars, 'utf-8')
 			#	targetLangOrderAndListOfForeignLettersStr = unicode.encode("%s" % targetLangOrderAndListOfForeignLettersStrUnicode, self.targetEncoding)
 			#	print '[Debug] ' + targetLangOrderAndListOfForeignLettersStrUnicode
@@ -352,7 +352,7 @@ class grabberFromPNG:
 		targetLangOrderAndListOfForeignLetters = list(targetLangOrderAndListOfForeignLettersStr)
 		if gTraceModeEnabled:
 			print ('[Debug] ', targetLangOrderAndListOfForeignLetters, len(targetLangOrderAndListOfForeignLetters))	   # new
-		self.targetLangOrderAndListOfForeignLettersAsciiValues = [ord(i) for i in targetLangOrderAndListOfForeignLetters]
+		self.targetLangOrderAndListOfForeignLettersAsciiValues = makeToBytes(targetLangOrderAndListOfForeignLetters)
 		if gTraceModeEnabled:
 			print ('[Debug] ', self.targetLangOrderAndListOfForeignLettersAsciiValues, len(self.targetLangOrderAndListOfForeignLettersAsciiValues))
 		self.maxAsciiValueInEncoding = max(self.targetLangOrderAndListOfForeignLettersAsciiValues)
