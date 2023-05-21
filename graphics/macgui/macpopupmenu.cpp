@@ -55,6 +55,29 @@ bool MacPopUp::draw(ManagedSurface *g, bool forceRedraw) {
 	return true;
 }
 
+void MacPopUp::closeMenu() {
+	// Special handling of popup closing (for example when displaying closing animation)
+	int activeSubItem = getLastSelectedSubmenuItem(); // Find selected item
+
+	if (activeSubItem != -1) {
+		// Do the blinking animation
+		for (int i = 0; i < kNumBlinks; i++) {
+			_items[0]->submenu->highlight = -1; // No selection
+			draw(_wm->_screen, true);
+			g_system->updateScreen();
+			g_system->delayMillis(kBlinkDelay);
+
+			_items[0]->submenu->highlight = activeSubItem; // Selection
+			draw(_wm->_screen, true);
+			g_system->updateScreen();
+			g_system->delayMillis(kBlinkDelay);
+		}
+	}
+
+	// Close now
+	MacMenu::closeMenu();
+}
+
 uint32 MacPopUp::drawAndSelectMenu(int x, int y, int item) {
 	_mouseX = x;
 	_mouseY = y;
@@ -73,9 +96,6 @@ uint32 MacPopUp::drawAndSelectMenu(int x, int y, int item) {
 	// Display menu and update according to events
 	this->draw(_wm->_screen);
 	eventLoop();
-
-	// Close menu
-	closeMenu();
 
 	int activeSubItem = getLastSelectedSubmenuItem();
 	if (activeSubItem == -1)
