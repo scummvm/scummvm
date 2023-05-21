@@ -69,32 +69,32 @@ MODULE_OBJS += \
 	mm1/views/locations/tavern.o \
 	mm1/views/locations/temple.o \
 	mm1/views/locations/training.o \
-	mm1/views/maps/access_code.o \
-	mm1/views/maps/alamar.o \
-	mm1/views/maps/alien.o \
-	mm1/views/maps/answer_entry.o \
-	mm1/views/maps/arenko.o \
-	mm1/views/maps/arrested.o \
-	mm1/views/maps/chess.o \
-	mm1/views/maps/dog_statue.o \
-	mm1/views/maps/ghost.o \
-	mm1/views/maps/giant.o \
-	mm1/views/maps/gypsy.o \
-	mm1/views/maps/hacker.o \
-	mm1/views/maps/ice_princess.o \
-	mm1/views/maps/inspectron.o \
-	mm1/views/maps/keeper.o \
-	mm1/views/maps/leprechaun.o \
-	mm1/views/maps/lion.o \
-	mm1/views/maps/lord_archer.o \
-	mm1/views/maps/lord_ironfist.o \
-	mm1/views/maps/orango.o \
-	mm1/views/maps/prisoners.o \
-	mm1/views/maps/resistances.o \
-	mm1/views/maps/ruby.o \
-	mm1/views/maps/trivia.o \
-	mm1/views/maps/volcano_god.o \
-	mm1/views/maps/won_game.o \
+	mm1/views/interactions/access_code.o \
+	mm1/views/interactions/alamar.o \
+	mm1/views/interactions/alien.o \
+	mm1/views/interactions/answer_entry.o \
+	mm1/views/interactions/arenko.o \
+	mm1/views/interactions/arrested.o \
+	mm1/views/interactions/chess.o \
+	mm1/views/interactions/dog_statue.o \
+	mm1/views/interactions/ghost.o \
+	mm1/views/interactions/giant.o \
+	mm1/views/interactions/gypsy.o \
+	mm1/views/interactions/hacker.o \
+	mm1/views/interactions/ice_princess.o \
+	mm1/views/interactions/inspectron.o \
+	mm1/views/interactions/keeper.o \
+	mm1/views/interactions/leprechaun.o \
+	mm1/views/interactions/lion.o \
+	mm1/views/interactions/lord_archer.o \
+	mm1/views/interactions/lord_ironfist.o \
+	mm1/views/interactions/orango.o \
+	mm1/views/interactions/prisoners.o \
+	mm1/views/interactions/resistances.o \
+	mm1/views/interactions/ruby.o \
+	mm1/views/interactions/trivia.o \
+	mm1/views/interactions/volcano_god.o \
+	mm1/views/interactions/won_game.o \
 	mm1/views/spells/spell_view.o \
 	mm1/views/spells/cast_spell.o \
 	mm1/views/spells/detect_magic.o \
