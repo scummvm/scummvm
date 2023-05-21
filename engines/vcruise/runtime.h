@@ -576,6 +576,7 @@ public:
 	bool canLoad() const;
 
 	void recordSaveGameSnapshot();
+	void recordSounds(SaveGameSwappableState &state);
 	void restoreSaveGameSnapshot();
 	Common::SharedPtr<SaveGameSnapshot> generateNewGameSnapshot() const;
 

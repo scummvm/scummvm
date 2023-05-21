@@ -4987,6 +4987,23 @@ void Runtime::recordSaveGameSnapshot() {
 	mainState->loadedAnimation = _loadedAnimation;
 	mainState->animDisplayingFrame = _animDisplayingFrame;
 
+	recordSounds(*mainState);
+
+	snapshot->pendingSoundParams3D = _pendingSoundParams3D;
+
+	snapshot->triggeredOneShots = _triggeredOneShots;
+	snapshot->sayCycles = _sayCycles;
+
+	snapshot->listenerX = _listenerX;
+	snapshot->listenerY = _listenerY;
+	snapshot->listenerAngle = _listenerAngle;
+}
+
+void Runtime::recordSounds(SaveGameSwappableState &state) {
+	state.sounds.clear();
+
+	state.randomAmbientSounds = _randomAmbientSounds;
+
 	for (const Common::SharedPtr<SoundInstance> &soundPtr : _activeSounds) {
 		const SoundInstance &sound = *soundPtr;
 
@@ -5001,7 +5018,7 @@ void Runtime::recordSaveGameSnapshot() {
 		// Skip ramp
 		if (sound.rampRatePerMSec != 0) {
 			if (sound.rampTerminateOnCompletion)
-				continue;	// Don't even save this
+				continue; // Don't even save this
 
 			saveSound.volume = sound.rampEndVolume;
 		}
@@ -5014,19 +5031,8 @@ void Runtime::recordSaveGameSnapshot() {
 
 		saveSound.params3D = sound.params3D;
 
-		mainState->sounds.push_back(saveSound);
+		state.sounds.push_back(saveSound);
 	}
-
-	snapshot->pendingSoundParams3D = _pendingSoundParams3D;
-
-	snapshot->triggeredOneShots = _triggeredOneShots;
-	snapshot->sayCycles = _sayCycles;
-
-	snapshot->listenerX = _listenerX;
-	snapshot->listenerY = _listenerY;
-	snapshot->listenerAngle = _listenerAngle;
-
-	mainState->randomAmbientSounds = _randomAmbientSounds;
 }
 
 void Runtime::restoreSaveGameSnapshot() {
@@ -6745,7 +6751,9 @@ void Runtime::scriptOpSndHalt(ScriptArg_t arg) {
 	}
 }
 
-OPCODE_STUB(SndToBack)
+void Runtime::scriptOpSndToBack(ScriptArg_t arg) {
+	recordSounds(*_altState);
+}
 
 void Runtime::scriptOpSndStop(ScriptArg_t arg) {
 	TAKE_STACK_INT(1);
