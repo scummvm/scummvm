@@ -5996,9 +5996,6 @@ void Runtime::scriptOpSParmX(ScriptArg_t arg) {
 	_pendingStaticAnimParams.initialDelay = stackArgs[0];
 	_pendingStaticAnimParams.repeatDelay = stackArgs[1];
 	_pendingStaticAnimParams.lockInteractions = (stackArgs[2] != 0);
-
-	//if (_pendingStaticAnimParams.lockInteractions)
-	//	error("Locking interactions for animation is not implemented yet");
 }
 
 void Runtime::scriptOpSAnimX(ScriptArg_t arg) {
