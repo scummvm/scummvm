@@ -50,6 +50,28 @@ bool Rect::Collide(Rect box) {
 	return true; // bounding boxes intersect
 }
 
+void Rect::Extend(Rect box) {
+	int left1 = x;
+	int right1 = x + w;
+	int top1 = y;
+	int bottom1 = y + h;
+
+	const int left2 = box.x;
+	const int right2 = box.x + box.w;
+	const int top2 = box.y;
+	const int bottom2 = box.y + box.h;
+
+	left1 = MIN(left1, left2);
+	right1 = MAX(right1, right2);
+	top1 = MIN(top1, top2);
+	bottom1 = MAX(bottom1, bottom2);
+
+	x = left1;
+	y = top1;
+	w = right1 - left1;
+	h = bottom1 - top1;
+}
+
 Direction Rect::ResolveX(Rect collider) {
 	// Check left edge of collider
 	if (x < collider.x && collider.x < x + w)

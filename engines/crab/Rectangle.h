@@ -62,6 +62,9 @@ public:
 	// Is this rectangle colliding with another rectangle?
 	bool Collide(Rect box);
 
+	// Extend this rectangle to fully contain another rectangle
+	void Extend(Rect box);
+
 	// Resolving a collision means we need to correct the position of the target rectangle to just outside of the reference rectangle
 	// To do this, first we need to determine which edges of the rectangles are colliding
 
