@@ -551,6 +551,7 @@ void Score::update() {
 }
 
 void Score::renderFrame(uint16 frameId, RenderMode mode) {
+	uint32 start = g_system->getMillis(false);
 	// Force cursor update if a new movie's started.
 	if (_window->_newMovieStarted)
 		renderCursor(_movie->getWindow()->getMousePos(), true);
@@ -575,6 +576,8 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 		renderCursor(_movie->getWindow()->getMousePos());
 		_cursorDirty = false;
 	}
+	uint32 end = g_system->getMillis(false);
+	debugC(5, kDebugLoading, "Score::renderFrame() finished in %d millis", end - start);
 }
 
 bool Score::renderTransition(uint16 frameId) {
@@ -694,6 +697,12 @@ bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
 		}
 
 		if (_frames[frameId]->_palette.normal) {
+			// If the target palette ID is the same as the previous palette ID,
+			// a normal fade is a no-op.
+			if (_frames[frameId]->_palette.paletteId == g_director->_lastPalette) {
+				return false;
+			}
+
 			// For fade palette transitions, the whole fade happens with
 			// the previous frame's layout.
 			debugC(2, kDebugImages, "Score::renderPrePaletteCycle(): fading palette to %s over %d frames", currentPalette.asString().c_str(), fadeFrames);
