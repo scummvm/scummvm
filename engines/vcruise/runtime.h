@@ -640,7 +640,7 @@ private:
 
 		void reset();
 
-		static const uint kNumGyros = 4;
+		static const uint kNumGyros = 5;
 
 		Gyro gyros[kNumGyros];
 
