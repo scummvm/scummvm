@@ -1740,9 +1740,13 @@ maps:
 
 	map51:
 		substance: "Without experimental substance\nthere is no hope...poof!"
+	emap51:
+		substance: "Without experimental substance there is no hope... Poof!"
 
 	map52:
 		summoned: "You have been summoned...poof!"
+	emap52:
+		summoned: "You have been summoned... Poof!"
 
 	map53:
 		sign: "Danger! Dungeon under construction."
@@ -1760,3 +1764,10 @@ maps:
 		keeper3: "In a serene voice, the data keeper says,\n\"Welcome to your inner sanctum\nVarnlings! I am very pleased that you've\nmade it this far. You are to be\ncommended. I've been monitoring your\nprogress.\" Turning to the strange\nmechanical device, he inserts a flat\nobject into a slot. Your party's current\nperformance total=%u"
 		keeper4: "\"You are not yet worthy for transfer.   Return after defeating the imposter.\""
 		keeper5: "Excellent rating! this is a rare        occasion, for only a privileged few are given the opportunity for transfer to\nanother V.A.R.N. (Vehicular Astropod\nResearch Nacelle). Return now to the\nInn of Sorpigal for rest and celebration\nthen continue on to your new assignment at the Gates To Another World...\"       (+50000 exp for your accomplishment!)\n----------------------------------------\nPlease send your performance total to\nNew World Computing, Inc.\n  P. O. Box 2068  Van Nuys, CA  91404"
+	emap54:
+		keeper: "Keeper"
+		keeper2: "In a serene voice, the data keeper says, \"Welcome to your inner sanctum Varnlings! I am very pleased that you've made it this far. You are to be commended. I've been monitoring your\nprogress.\""
+		keeper3: "Turning to the strange mechanical device, he inserts a flat object into a slot. Your party's current performance total=%u."
+		keeper4: "\"You are not yet worthy for transfer. Return after defeating the imposter.\""
+		keeper5: "Excellent rating! this is a rare occasion, for only a privileged few are given the opportunity for transfer to another V.A.R.N. (Vehicular Astropod\nResearch Nacelle)."
+		keeper6: "Return now to the\nInn of Sorpigal for rest and celebration then continue on to your new assignment at the Gates To Another World...\" (+50000 exp for your accomplishment!)"

@@ -66,6 +66,7 @@
 #include "mm/mm1/views_enh/interactions/hacker.h"
 #include "mm/mm1/views_enh/interactions/ice_princess.h"
 #include "mm/mm1/views_enh/interactions/inspectron.h"
+#include "mm/mm1/views_enh/interactions/keeper.h"
 #include "mm/mm1/views_enh/interactions/leprechaun.h"
 #include "mm/mm1/views_enh/interactions/lion.h"
 #include "mm/mm1/views_enh/interactions/lord_archer.h"
@@ -106,6 +107,7 @@ private:
 	ViewsEnh::Interactions::Hacker _hacker;
 	ViewsEnh::Interactions::IcePrincess _icePrincess;
 	ViewsEnh::Interactions::Inspectron _inspectron;
+	ViewsEnh::Interactions::Keeper _keeper;
 	ViewsEnh::Interactions::Leprechaun _leprechaun;
 	ViewsEnh::Interactions::Lion _lion;
 	ViewsEnh::Interactions::LordArcher _lordArcher;
