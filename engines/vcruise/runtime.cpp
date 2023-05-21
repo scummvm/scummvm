@@ -2819,8 +2819,8 @@ void Runtime::resolveSoundByNameOrID(const StackValue &stackValue, bool load, St
 }
 
 void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
-	bool changedRoom = (roomNumber != _loadedRoomNumber) || _forceScreenChange;
-	bool changedScreen = (screenNumber != _activeScreenNumber) || changedRoom;
+	bool changedRoom = (roomNumber != _loadedRoomNumber);
+	bool changedScreen = (screenNumber != _activeScreenNumber) || changedRoom || _forceScreenChange;
 
 	_forceScreenChange = false;
 
@@ -2855,7 +2855,6 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 			}
 		} else
 			error("Don't know how to compile scripts for this game");
-
 
 		_map.clear();
 
