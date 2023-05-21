@@ -35,7 +35,7 @@ class extracTextResource:
 
 	def printExtracTemplate(self):
 		for (idTre, textTre) in EXTRAC_TEXT_RESOURCE_TUPLE_LIST:
-			print "%s\t%s" % (idTre, textTre)
+			print ("%s\t%s" % (idTre, textTre))
 		return
 
 	def getExtracEntriesList(self):
@@ -43,7 +43,7 @@ class extracTextResource:
 
 if __name__ == '__main__':
 	#	 main()
-	print "[Debug] Running %s as main module" % (my_module_name)
+	print ("[Debug] Running %s as main module" % (my_module_name))
 	traceModeEnabled = False
 	excrTRInstance = extracTextResource(traceModeEnabled)
 	excrTRInstance.printExtracTemplate()
