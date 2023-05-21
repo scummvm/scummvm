@@ -273,7 +273,7 @@ void Animation::drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 fram
 			int16 xs = (x - xx1) * 1024 / scale;
 			int16 ys = (y - yy1) * 1024 / scale;
 			// TODO Maybe check if we overread c here
-//			assert(ys * w + xs >= 0 && ys * w + xs <  _frames[dataFrame]._dataSize)
+//			assert(ys * w + xs >= 0 && ys * w + xs <  _frames[dataFrame]._dataSize);
 			uint8 cc = c[ys * w + xs];
 
 			if (cc && nextMaskPos < maskDataSize && (*(curRowMask + nextMaskPos)) >= zz) {
@@ -456,7 +456,7 @@ void AnimationInstance::update(int32 timeIncrement) {
 AnimationInstance::AnimationInstance(ToonEngine *vm, AnimationInstanceType type) : _vm(vm) {
 	_id = 0;
 	_type = type;
-	_animation = 0;
+	_animation = nullptr;
 	_currentFrame = 0;
 	_currentTime = 0;
 	_fps = 15;
@@ -476,7 +476,7 @@ AnimationInstance::AnimationInstance(ToonEngine *vm, AnimationInstanceType type)
 
 void AnimationInstance::render() {
 	debugC(5, kDebugAnim, "AnimationInstance::render()");
-	if (_visible && _animation) {
+	if (_visible && _animation != nullptr) {
 		int32 frame = _currentFrame;
 		if (frame < 0)
 			frame = 0;
@@ -509,7 +509,7 @@ void AnimationInstance::render() {
 
 void AnimationInstance::renderOnPicture() {
 	debugC(5, kDebugAnim, "renderOnPicture()");
-	if (_visible && _animation)
+	if (_visible && _animation != nullptr)
 		_animation->drawFrameOnPicture(_currentFrame, _x, _y);
 }
 
@@ -541,7 +541,7 @@ void AnimationInstance::setAnimationRange(int32 rangeStart, int32 rangeEnd) {
 
 void AnimationInstance::setPosition(int16 x, int16 y, int32 z, bool relative) {
 	debugC(5, kDebugAnim, "setPosition(%d, %d, %d, %d)", x, y, z, (relative) ? 1 : 0);
-	if (relative || !_animation) {
+	if (relative || _animation == nullptr) {
 		_x = x;
 		_y = y;
 		_z = z;
@@ -614,7 +614,7 @@ void AnimationInstance::getRect(int16 *x1, int16 *y1, int16 *x2, int16 *y2) cons
 
 void AnimationInstance::setX(int16 x, bool relative) {
 	debugC(1, kDebugAnim, "setX(%d, %d)", x, (relative) ? 1 : 0);
-	if (relative || !_animation)
+	if (relative || _animation == nullptr)
 		_x = x;
 	else
 		_x = x - _animation->_x1;
@@ -622,7 +622,7 @@ void AnimationInstance::setX(int16 x, bool relative) {
 
 void AnimationInstance::setY(int16 y, bool relative) {
 	debugC(1, kDebugAnim, "setY(%d, %d)", y, (relative) ? 1 : 0);
-	if (relative || !_animation)
+	if (relative || _animation == nullptr)
 		_y = y;
 	else
 		_y = y - _animation->_y1;
