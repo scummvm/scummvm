@@ -24,77 +24,77 @@ datetimeLibFound = False
 try:
 	import os
 except ImportError:
-	print "[Error] os python library is required to be installed!"
+	print ("[Error] os python library is required to be installed!")
 else:
 	osLibFound = True
 
 try:
 	import sys
 except ImportError:
-	print "[Error] sys python library is required to be installed!"
+	print ("[Error] sys python library is required to be installed!")
 else:
 	sysLibFound = True
 
 try:
 	import shutil
 except ImportError:
-	print "[Error] Shutil python library is required to be installed!"
+	print ("[Error] Shutil python library is required to be installed!")
 else:
 	shutilLibFound = True
 
 try:
 	import ctypes
 except ImportError:
-	print "[Error] ctypes python library is required to be installed!"
+	print ("[Error] ctypes python library is required to be installed!")
 else:
 	ctypesLibFound = True
 
 try:
 	from datetime import datetime
 except ImportError:
-	print "[Error] datetime python library is required to be installed!"
+	print ("[Error] datetime python library is required to be installed!")
 else:
 	datetimeLibFound = True
 
 try:
 	import csv
 except ImportError:
-	print "[Error] csv python library is required to be installed!"
+	print ("[Error] csv python library is required to be installed!")
 else:
 	csvLibFound = True
 
 try:
 	import xlrd
 except ImportError:
-	print "[Error] xlrd python library is required to be installed!"
+	print ("[Error] xlrd python library is required to be installed!")
 else:
 	xlrdLibFound = True
 
 try:
 	import xlwt
 except ImportError:
-	print "[Error] xlwt python library is required to be installed!"
+	print ("[Error] xlwt python library is required to be installed!")
 else:
 	xlwtLibFound = True
 
 try:
 	from xlutils.copy import copy
 except ImportError:
-	print "[Error] xlutils python library is required to be installed!"
+	print ("[Error] xlutils python library is required to be installed!")
 else:
 	xlutilsLibFound = True
 
 try:
 	import re
 except ImportError:
-	print "[Error] re (Regular expression operations) python library is required to be installed!"
+	print ("[Error] re (Regular expression operations) python library is required to be installed!")
 else:
 	reLibFound = True
 
 try:
 	import struct
 except ImportError:
-	print "[Error] struct python library is required to be installed!"
+	print ("[Error] struct python library is required to be installed!")
 else:
 	structLibFound = True
 
@@ -215,21 +215,21 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 		configureFontsTranslationTextFile = u'configureFontsTranslation.txt'
 		relPath = u'.'
 		pathToConfigureFontsTranslationTxt = os.path.join(relPath, configureFontsTranslationTextFile)
-		print "[Warning] Font Translation Configuration file not found in arguments. Attempting to open local file %s if it exists" % (configureFontsTranslationTextFile)
+		print ("[Warning] Font Translation Configuration file not found in arguments. Attempting to open local file %s if it exists" % (configureFontsTranslationTextFile))
 
 	configureTranslationFailed = False
 	try:
 		if os.access(pathToConfigureFontsTranslationTxt, os.F_OK):
-			print "[Info] Font Translation Configuration file found: {0}".format(pathToConfigureFontsTranslationTxt)
+			print ("[Info] Font Translation Configuration file found: {0}".format(pathToConfigureFontsTranslationTxt))
 			conFontsTranslationFile = open(pathToConfigureFontsTranslationTxt, 'r')
 			linesLst = conFontsTranslationFile.readlines()
 			conFontsTranslationFile.close()
 			if linesLst is None or len(linesLst) == 0:
-				print '[Error] Empty configureFontsTranslation text file!'
+				print ('[Error] Empty configureFontsTranslation text file!')
 				configureTranslationFailed = True
 			else:
 				if gTraceModeEnabled:
-					print "[Debug] Parsing Font Translation Configuration file info..."
+					print ("[Debug] Parsing Font Translation Configuration file info...")
 				involvedTokensLst =[]
 				for readEncodLine in linesLst:
 					tmplineTokens = re.findall("[^\t\n]+",readEncodLine )
@@ -253,8 +253,8 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 								tmpFontCateg = fontCateg_targetEnc_OOOGlyphs_Tuple[0]
 								tmpTargetEncodingForThisFont = fontCateg_targetEnc_OOOGlyphs_Tuple[1]
 								if ( tmpFontCateg not in zip(*DEFAULT_TARGET_ENCODING_PER_FONT)[0]):
-									print '[Error] Invalid Font name specified in configureFontsTranslation text file!'
-									print '        Valid values are: ', ", ".join( zip(*DEFAULT_TARGET_ENCODING_PER_FONT)[0] )
+									print ('[Error] Invalid Font name specified in configureFontsTranslation text file!')
+									print ('        Valid values are: ', ", ".join( zip(*DEFAULT_TARGET_ENCODING_PER_FONT)[0] ))
 									configureTranslationFailed = True
 									break
 
@@ -274,7 +274,7 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 										if len(tokensOfTupleList) == 2:
 											tmpListOfOutOfOrderGlyphs.append( (unichr(ord(tokensOfTupleList[0])), unichr(ord(tokensOfTupleList[1])))  )
 										else:
-											print '[Error] Bad tuple syntax in configureFontsTranslation text file!'
+											print ('[Error] Bad tuple syntax in configureFontsTranslation text file!')
 											configureTranslationFailed = True
 
 									if not configureTranslationFailed \
@@ -283,7 +283,7 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 									elif configureTranslationFailed:
 										break
 							else:
-								print '[Error] Bad line syntax in configureFontsTranslation text file!'
+								print ('[Error] Bad line syntax in configureFontsTranslation text file!')
 								configureTranslationFailed = True
 								break
 					except:
@@ -301,20 +301,20 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 
 					if len(gTargetEncodingPerFont) != len(DEFAULT_TARGET_ENCODING_PER_FONT):
 						# should never happen
-						print '[Error] Failed to populate internal target encoding per font structure!'
+						print ('[Error] Failed to populate internal target encoding per font structure!')
 						configureTranslationFailed = True
 					else:
 						if gTraceModeEnabled:
-							print '[Debug] My encodings list: ', gTargetEncodingPerFont
+							print ('[Debug] My encodings list: ', gTargetEncodingPerFont)
 						configureTranslationFailed = False
 
 	except:
-		print "[Error] while trying to access file for Font Translation Configuration info: %s" % (pathToConfigureFontsTranslationTxt)
+		print ("[Error] while trying to access file for Font Translation Configuration info: %s" % (pathToConfigureFontsTranslationTxt))
 		raise
 		configureTranslationFailed = True
 
 	if 	configureTranslationFailed == True:
-		print "[Error] Could not find proper Font Translation Configuration info in: %s" % (pathToConfigureFontsTranslationTxt)
+		print ("[Error] Could not find proper Font Translation Configuration info in: %s" % (pathToConfigureFontsTranslationTxt))
 		sys.exit(1)	# terminate if override Failed (Blade Runner)
 	#
 	#
@@ -329,7 +329,7 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 	#	tmplistOfOutOfOrderGlyphs.append((u'\xe9', u'\xa7')) # e for (liver) pate
 	#	gListOfFontNamesToOutOfOrderGlyphs.append( (tmpFontType, tmplistOfOutOfOrderGlyphs))
 	if gTraceModeEnabled:
-		print "[Info] Explicit Out Of Order Glyphs List: " , gListOfFontNamesToOutOfOrderGlyphs
+		print ("[Info] Explicit Out Of Order Glyphs List: " , gListOfFontNamesToOutOfOrderGlyphs)
 	# arrange list properly:
 	# check if the list contains same item as key and value (in different pairs)
 	# if such case then the pair with the key should precede the pair with the value matched,
@@ -353,7 +353,7 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 					break # the whole while loop
 			gArrangedListOfFontNamesToOutOfOrderGlyphs.append( ( itFontName, itOOOGlyphList))
 	if gTraceModeEnabled:
-		print "[Debug] Arranged Glyphs Delegates List: " , gArrangedListOfFontNamesToOutOfOrderGlyphs
+		print ("[Debug] Arranged Glyphs Delegates List: " , gArrangedListOfFontNamesToOutOfOrderGlyphs)
 	return
 
 #
@@ -369,10 +369,10 @@ def initActorPropertyEntries(thePathToActorNamesTxt):
 		actorNamesTextFile = u'actornames.txt'
 		relPath = u'.'
 		thePathToActorNamesTxt = os.path.join(relPath, actorNamesTextFile)
-		print "[Warning] Actor names text file %s not found in arguments. Attempting to open local file if it exists" % (thePathToActorNamesTxt)
+		print ("[Warning] Actor names text file %s not found in arguments. Attempting to open local file if it exists" % (thePathToActorNamesTxt))
 
 	if os.access(thePathToActorNamesTxt, os.F_OK):
-		print "[Info] Actor names text file found: {0}".format(thePathToActorNamesTxt)
+		print ("[Info] Actor names text file found: {0}".format(thePathToActorNamesTxt))
 
 		with open(thePathToActorNamesTxt) as tsv:
 			for line in csv.reader(tsv, dialect="excel-tab"):
@@ -387,7 +387,7 @@ def initActorPropertyEntries(thePathToActorNamesTxt):
 		tsv.close()
 	else:
 		## error
-		print "[Error] Actor names text file not found: {0}".format(thePathToActorNamesTxt)
+		print ("[Error] Actor names text file not found: {0}".format(thePathToActorNamesTxt))
 		sys.exit(1)	# terminate if finding actor names file failed (Blade Runner)
 
 def getActorShortNameById(lookupActorId):
@@ -443,7 +443,7 @@ def calculateFoldHash(strFileName):
 		hash = ((hash << 1) | ((hash >> 31) & 1)) + groupSum
 	hash &= 0xFFFFFFFF	   # mask here!
 	if gTraceModeEnabled:
-		print '[Debug] ', (strParam +': '  +''.join('{:08X}'.format(hash)))
+		print ('[Debug] ', (strParam +': '  +''.join('{:08X}'.format(hash))))
 	return hash
 
 #
@@ -492,7 +492,7 @@ def getSupportedTranslatedTrxFilenamesList():
 #
 def outputMIX():
 	# output file should be DEFAULT_SUBTITLES_MIX_OUTPUT_NAME
-	print "[Info] Writing to output MIX file: %s..." % (DEFAULT_SUBTITLES_MIX_OUTPUT_NAME)
+	print ("[Info] Writing to output MIX file: %s..." % (DEFAULT_SUBTITLES_MIX_OUTPUT_NAME))
 
 	errorFound = False
 	outMIXFile = None
@@ -502,7 +502,7 @@ def outputMIX():
 		outMIXFile = open(outputMixPath, 'wb')
 	except Exception as e:
 		errorFound = True
-		print '[Error] Unable to write to output MIX file. ' + str(e)
+		print ('[Error] Unable to write to output MIX file. ' + str(e))
 	if not errorFound:
 		# Write header
 		# 2 bytes: number of entries (NumFiles)
@@ -537,8 +537,8 @@ def outputMIX():
 		mergedListOfSupportedSubtitleSheets = getSupportedSubtitleSheetsList()
 
 		if gTraceModeEnabled:
-			print "[Trace] mergedListOfSupportedSubtitleSheets="
-			print mergedListOfSupportedSubtitleSheets
+			print ("[Trace] mergedListOfSupportedSubtitleSheets=")
+			print (mergedListOfSupportedSubtitleSheets)
 
 		for sheetDialogueName in mergedListOfSupportedSubtitleSheets:
 			sheetDialogueNameTRx = sheetDialogueName
@@ -607,8 +607,8 @@ def outputMIX():
 				break
 
 		outMIXFile.close()
-		print "[Info] Total Resource files packed in %s: %d" % (DEFAULT_SUBTITLES_MIX_OUTPUT_NAME, numOfFiles)
-		print "[Info] Done."
+		print ("[Info] Total Resource files packed in %s: %d" % (DEFAULT_SUBTITLES_MIX_OUTPUT_NAME, numOfFiles))
+		print ("[Info] Done.")
 	return
 #
 # END FOR MIX FILE
@@ -685,7 +685,7 @@ def translateQuoteToAsciiProper(cellObj, pSheetName):
 	try:
 		newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(localTargetEncoding)
 	except Exception as e:
-		print "[Error] Could not encode text in " + localTargetEncoding + "::" + str(e)
+		print ("[Error] Could not encode text in " + localTargetEncoding + "::" + str(e))
 		newQuoteReplaceSpecialsRetStr = "??????????"
 	#try:
 	#	newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(localTargetEncoding)
@@ -707,8 +707,8 @@ def parseIntCellValue(cell_obj_value, row_idx, col_idx, xl_sheet_name, xl_sheet_
 	try:
 		retCandValue =	int(cell_obj_value)
 	except Exception as e:
-		print "\n[Error] Invalid cell value at row: %d, column: %d in sheet: %s (rows: %d, columns: %d)" %(row_idx+1, col_idx+1, xl_sheet_name, xl_sheet_nrows, xl_sheet_ncols)
-		print "\tPlease check for redundant empty rows or invalid cell values.\n"
+		print ("\n[Error] Invalid cell value at row: %d, column: %d in sheet: %s (rows: %d, columns: %d)" %(row_idx+1, col_idx+1, xl_sheet_name, xl_sheet_nrows, xl_sheet_ncols))
+		print ("\tPlease check for redundant empty rows or invalid cell values.\n")
 		sys.exit()
 	return retCandValue
 
@@ -725,18 +725,18 @@ def inputXLS(pathtoInputExcelFilename):
 	# Check if no extension or invalid extension
 	if excelFileExtension is None \
 			and not (excelFileExtension.lower() == "xls" or excelFileExtension.lower() == "xlsx"):
-		print "[Error] Bad file extension found for the Excel input file %s. Supported extensions are '.xls' and 'xlsx'" % (excelFileExtension, pathtoInputExcelFilename)
+		print ("[Error] Bad file extension found for the Excel input file %s. Supported extensions are '.xls' and 'xlsx'" % (excelFileExtension, pathtoInputExcelFilename))
 		sys.exit(1) # Terminate if the input Excel had unsupported extension (or none)
 
 	try:
 		xl_workbook = xlrd.open_workbook(pathtoInputExcelFilename, encoding_override="utf-8")
 		if xl_workbook is not None:
-			print "[Info] Opened Excel input file: %s" % (pathtoInputExcelFilename)
+			print ("[Info] Opened Excel input file: %s" % (pathtoInputExcelFilename))
 	except Exception as e:
-		print '[Error] Could not open the Excel input file: '  + str(e)
+		print ('[Error] Could not open the Excel input file: '  + str(e))
 
 	if xl_workbook is None:
-		print '[Error] Giving up. Could not open the specified Excel input file.'
+		print ('[Error] Giving up. Could not open the specified Excel input file.')
 		sys.exit(1) # Terminate if the input Excel was not found
 	# List sheet names, and pull a sheet by name
 	#
@@ -765,16 +765,16 @@ def inputXLS(pathtoInputExcelFilename):
 	xl_sheet = None
 	try:
 		if gTraceModeEnabled:
-			print '[Debug] Checking for existence of sheet: ' + SUPPORTED_DIALOGUE_VERSION_SHEET
+			print ('[Debug] Checking for existence of sheet: ' + SUPPORTED_DIALOGUE_VERSION_SHEET)
 		xl_sheet = xl_workbook.sheet_by_name(SUPPORTED_DIALOGUE_VERSION_SHEET)
 	except Exception as e:
 		if gTraceModeEnabled:
-			print '[Debug] Could not open requested sheet: ' + SUPPORTED_DIALOGUE_VERSION_SHEET + ' in Excel::' + str(e)
+			print ('[Debug] Could not open requested sheet: ' + SUPPORTED_DIALOGUE_VERSION_SHEET + ' in Excel::' + str(e))
 
 	if xl_sheet is None:
 		# we didn't find a sheet for version info, so we should auto-create a Sheet for it
 		if gTraceModeEnabled:
-			print '[Debug] Sheet: %s was not found. Creating a temporary sheet for version info...' % (SUPPORTED_DIALOGUE_VERSION_SHEET)
+			print ('[Debug] Sheet: %s was not found. Creating a temporary sheet for version info...' % (SUPPORTED_DIALOGUE_VERSION_SHEET))
 		sbtlVersTRInstance = sbtlVersTextResource(gTraceModeEnabled)
 		bookCopy = copy(xl_workbook)
 		xl_sheet = bookCopy.add_sheet(SUPPORTED_DIALOGUE_VERSION_SHEET)
@@ -799,17 +799,17 @@ def inputXLS(pathtoInputExcelFilename):
 					# We assume utf-8 charset (since we get the text from a python script)
 					objUTF8Unicode = unicode(objStr, 'utf-8')
 				except Exception as e:
-					print '[Error] Failed to create unicode string: ' + str(e)
+					print ('[Error] Failed to create unicode string: ' + str(e))
 					objUTF8Unicode = unicode("???", 'utf-8')
 				xl_sheet.write(m, i1, objUTF8Unicode)
 		try:
 			bookCopy.save(pathtoInputExcelFilename)
 		except Exception as e:
-			print "[Error] Giving up: Could not save to output Excel file:: " + str(e)
+			print ("[Error] Giving up: Could not save to output Excel file:: " + str(e))
 			sys.exit(1) # Terminate if we couldn't write to output Excel file
 
 		if gTraceModeEnabled:
-			print '[Debug] Sheet: %s was created successfully.' % (SUPPORTED_DIALOGUE_VERSION_SHEET)
+			print ('[Debug] Sheet: %s was created successfully.' % (SUPPORTED_DIALOGUE_VERSION_SHEET))
 		inputXLS(pathtoInputExcelFilename)
 		return
 	# end of check for a version info sheet
@@ -818,16 +818,16 @@ def inputXLS(pathtoInputExcelFilename):
 	xl_sheet = None
 	try:
 		if gTraceModeEnabled:
-			print '[Debug] Checking for existence of sheet: ' + SUPPORTED_EX_CR_SHEET
+			print ('[Debug] Checking for existence of sheet: ' + SUPPORTED_EX_CR_SHEET)
 		xl_sheet = xl_workbook.sheet_by_name(SUPPORTED_EX_CR_SHEET)
 	except Exception as e:
 		if gTraceModeEnabled:
-			print '[Debug] Could not open requested sheet: ' + SUPPORTED_EX_CR_SHEET + ' in Excel::' + str(e)
+			print ('[Debug] Could not open requested sheet: ' + SUPPORTED_EX_CR_SHEET + ' in Excel::' + str(e))
 
 	if xl_sheet is None:
 		# we didn't find a sheet for extra info, so we should auto-create a Sheet for it
 		if gTraceModeEnabled:
-			print '[Debug] Sheet: %s was not found. Creating a temporary sheet for version info...' % (SUPPORTED_EX_CR_SHEET)
+			print ('[Debug] Sheet: %s was not found. Creating a temporary sheet for version info...' % (SUPPORTED_EX_CR_SHEET))
 		excrTRInstance = extracTextResource(gTraceModeEnabled)
 		bookCopy = copy(xl_workbook)
 		xl_sheet = bookCopy.add_sheet(SUPPORTED_EX_CR_SHEET)
@@ -852,34 +852,34 @@ def inputXLS(pathtoInputExcelFilename):
 					# We assume utf-8 charset (since we get the text from a python script)
 					objUTF8Unicode = unicode(objStr, 'utf-8')
 				except Exception as e:
-					print '[Error] Failed to create unicode string: ' + str(e)
+					print ('[Error] Failed to create unicode string: ' + str(e))
 					objUTF8Unicode = unicode("???", 'utf-8')
 				xl_sheet.write(m, i1, objUTF8Unicode)
 		try:
 			bookCopy.save(pathtoInputExcelFilename)
 		except Exception as e:
-			print "[Error] Giving up: Could not save to output Excel file:: " + str(e)
+			print ("[Error] Giving up: Could not save to output Excel file:: " + str(e))
 			sys.exit(1) # Terminate if we couldn't write to output Excel file
 
 		if gTraceModeEnabled:
-			print '[Debug] Sheet: %s was created successfully.' % (SUPPORTED_EX_CR_SHEET)
+			print ('[Debug] Sheet: %s was created successfully.' % (SUPPORTED_EX_CR_SHEET))
 		inputXLS(pathtoInputExcelFilename)
 		return
 	# end of check for a extra info sheet
 
 	if gTraceModeEnabled:
-		print '[Debug] mergedListOfSupportedSubtitleSheetsAndTranslatedTREs: ', mergedListOfSupportedSubtitleSheetsAndTranslatedTREs
+		print ('[Debug] mergedListOfSupportedSubtitleSheetsAndTranslatedTREs: ', mergedListOfSupportedSubtitleSheetsAndTranslatedTREs)
 	for sheetDialogueName in mergedListOfSupportedSubtitleSheetsAndTranslatedTREs:
 		xl_sheet = None
 		try:
 			xl_sheet = xl_workbook.sheet_by_name(sheetDialogueName)
 		except Exception as e:
 			if gTraceModeEnabled:
-				print '[Debug] Could not open requested sheet: ' + sheetDialogueName + ' in Excel::' + str(e)
+				print ('[Debug] Could not open requested sheet: ' + sheetDialogueName + ' in Excel::' + str(e))
 
 		if xl_sheet is None:
 			if (not gTraceModeEnabled) and (sheetDialogueName not in supportedTranslatedTrxFilenamesList):
-				print '[Warning] %s sheet was not found in input Excel file.' % (sheetDialogueName)
+				print ('[Warning] %s sheet was not found in input Excel file.' % (sheetDialogueName))
 
 		if xl_sheet is not None:
 			if gTraceModeEnabled:
@@ -912,11 +912,11 @@ def inputXLS(pathtoInputExcelFilename):
 
 			if xl_sheet.name in supportedInGameQuotesSheetsList:
 				if gTraceModeEnabled:
-					print '[Debug] IN GAME QUOTES'
+					print ('[Debug] IN GAME QUOTES')
 				mode = 1 #in-game quote
 			elif xl_sheet.name in mergedListOfSupportedSubtitleSheets:
 				if gTraceModeEnabled:
-					print '[Debug] VQA SCENE DIALOGUE'
+					print ('[Debug] VQA SCENE DIALOGUE')
 				mode = 2 #VQA
 				# check if the VQA sheets are of the old format or the new format
 				cell_obj = xl_sheet.cell(1, 0)
@@ -924,7 +924,7 @@ def inputXLS(pathtoInputExcelFilename):
 					vqaSheetFormatVersion = 1
 			elif xl_sheet.name in supportedTranslatedTrxFilenamesList:
 				if gTraceModeEnabled:
-					print '[Debug] TRANSLATED TEXT RESOURCE'
+					print ('[Debug] TRANSLATED TEXT RESOURCE')
 				mode = 3 # Translated TRE
 			#
 			del gTableOfStringIds[:]
@@ -1048,9 +1048,9 @@ def inputXLS(pathtoInputExcelFilename):
 
 			gTableOfStringOffsets.append(curStrStartOffset) # the final extra offset entry
 			if gTraceModeEnabled:
-				print '[Debug] Longest Length: %d, Quotes above threshold (%d): %d' % (longestLength, predefinedLengthThreshold, quoteNumAboveThreshold)
+				print ('[Debug] Longest Length: %d, Quotes above threshold (%d): %d' % (longestLength, predefinedLengthThreshold, quoteNumAboveThreshold))
 				for extremQuotTuple in extremeQuotesList:
-					print "[Debug] Id: %d, Q: %s" % (extremQuotTuple[0], extremQuotTuple[1])
+					print ("[Debug] Id: %d, Q: %s" % (extremQuotTuple[0], extremQuotTuple[1]))
 			#
 			# WRITE TO TRE FILE
 			#
@@ -1104,8 +1104,8 @@ def getLanguageDescCodeTuple(candidateLangDescriptionStr):
 
 def printInfoMessageForLanguageSelectionSyntax():
 	tmpCSVSupportedLangDescValues = ", ".join( zip(*SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST)[0] )
-	print "Valid values for language selection are: %s" % (tmpCSVSupportedLangDescValues)
-	print "Default value is: %s (%s)" % (DEFAULT_LANG_DESC_CODE[0], DEFAULT_LANG_DESC_CODE[2])
+	print ("Valid values for language selection are: %s" % (tmpCSVSupportedLangDescValues))
+	print ("Default value is: %s (%s)" % (DEFAULT_LANG_DESC_CODE[0], DEFAULT_LANG_DESC_CODE[2]))
 	return
 #
 #
@@ -1130,39 +1130,39 @@ def main(argsCL):
 	candidateLangDescriptionTxt = ""
 
 	invalidSyntax = False
-	print "Running %s (%s)..." % (APP_NAME_SPACED, APP_VERSION)
+	print ("Running %s (%s)..." % (APP_NAME_SPACED, APP_VERSION))
 	#print "Len of sysargv = %s" % (len(argsCL))
 	if len(argsCL) == 2:
 		if(argsCL[1] == '--help'or argsCL[1] == '-h'):
-			print "%s %s supports Westwood's Blade Runner PC Game (1997)." % (APP_NAME_SPACED, APP_VERSION)
-			print APP_SHORT_DESC
-			print "Created by Praetorian of the classic adventures in Greek team."
-			print "Always keep backups!"
-			print "--------------------"
-			print "Preparatory steps:"
-			print "1. Copy the transcript Excel file (eg. BladeRunnerPCTLK.xlsx, latest version, downloaded from Google Sheets) in some folder on your PC."
-			print "--------------------"
-			print "%s takes 1 mandatory argument:" % (APP_WRAPPER_NAME)
-			print "Valid syntax: "
-			print "%s -x path_to_BladeRunnerPCTLK_xlsx [-ian path_to_actornames_txt] [-cft path_to_configureFontsTranslation_txt] [-ld gameInputLanguageDescription] [--trace]" % (APP_WRAPPER_NAME)
-			print "-x is followed by the path to the excel file with the subtitle quotes."
-			print "-ian is followed by the path to actornames.txt, if it's not in the current working directory."
-			print "-cft is followed by the path to configureFontsTranslation.txt, if it's not in the current working directory."
-			print "-ld is followed by the language description of the target game version that you will install the subtitles to."
+			print ("%s %s supports Westwood's Blade Runner PC Game (1997)." % (APP_NAME_SPACED, APP_VERSION))
+			print (APP_SHORT_DESC)
+			print ("Created by Praetorian of the classic adventures in Greek team.")
+			print ("Always keep backups!")
+			print ("--------------------")
+			print ("Preparatory steps:")
+			print ("1. Copy the transcript Excel file (eg. BladeRunnerPCTLK.xlsx, latest version, downloaded from Google Sheets) in some folder on your PC.")
+			print ("--------------------")
+			print ("%s takes 1 mandatory argument:" % (APP_WRAPPER_NAME))
+			print ("Valid syntax: ")
+			print ("%s -x path_to_BladeRunnerPCTLK_xlsx [-ian path_to_actornames_txt] [-cft path_to_configureFontsTranslation_txt] [-ld gameInputLanguageDescription] [--trace]" % (APP_WRAPPER_NAME))
+			print ("-x is followed by the path to the excel file with the subtitle quotes.")
+			print ("-ian is followed by the path to actornames.txt, if it's not in the current working directory.")
+			print ("-cft is followed by the path to configureFontsTranslation.txt, if it's not in the current working directory.")
+			print ("-ld is followed by the language description of the target game version that you will install the subtitles to.")
 			printInfoMessageForLanguageSelectionSyntax()
-			print "The --trace switch enables more debug messages being printed during execution."
-			print "--------------------"
-			print "If the app finishes successfully, it creates a %sx file and a few other Text Resource (TRx) files " % (SUPPORTED_INGAME_DIALOGUE_SHEETS[0])
-			print "for each VQAs sheet in the input Excel file respectively. Additionally, a %s file containing all " % (DEFAULT_SUBTITLES_MIX_OUTPUT_NAME)
-			print "of the resources in the Excel file and a few extra (subtitle font, (optional) edited fonts) is created as well."
-			print "All output files are written in the current working directory."
-			print "--------------------"
-			print "Thank you for using this app."
-			print "Please provide any feedback to: %s " % (COMPANY_EMAIL)
+			print ("The --trace switch enables more debug messages being printed during execution.")
+			print ("--------------------")
+			print ("If the app finishes successfully, it creates a %sx file and a few other Text Resource (TRx) files " % (SUPPORTED_INGAME_DIALOGUE_SHEETS[0]))
+			print ("for each VQAs sheet in the input Excel file respectively. Additionally, a %s file containing all " % (DEFAULT_SUBTITLES_MIX_OUTPUT_NAME))
+			print ("of the resources in the Excel file and a few extra (subtitle font, (optional) edited fonts) is created as well.")
+			print ("All output files are written in the current working directory.")
+			print ("--------------------")
+			print ("Thank you for using this app.")
+			print ("Please provide any feedback to: %s " % (COMPANY_EMAIL))
 			sys.exit()
 		elif(argsCL[1] == '--version' or argsCL[1] == '-v'):
-			print "%s %s supports Westwood's Blade Runner PC Game (1997)." % (APP_NAME_SPACED, APP_VERSION)
-			print "Please provide any feedback to: %s " % (COMPANY_EMAIL)
+			print ("%s %s supports Westwood's Blade Runner PC Game (1997)." % (APP_NAME_SPACED, APP_VERSION))
+			print ("Please provide any feedback to: %s " % (COMPANY_EMAIL))
 			sys.exit()
 		else:
 			invalidSyntax = True
@@ -1178,7 +1178,7 @@ def main(argsCL):
 				elif (argsCL[i] == '-ld'):
 					candidateLangDescriptionTxt = argsCL[i+1]
 			elif sys.argv[i] == '--trace':
-				print "[Info] Trace mode enabled (more debug messages)."
+				print ("[Info] Trace mode enabled (more debug messages).")
 				gTraceModeEnabled = True
 			elif argsCL[i][:1] == '-':
 				invalidSyntax = True
@@ -1189,21 +1189,21 @@ def main(argsCL):
 
 		gActiveLanguageDescriptionCodeTuple = getLanguageDescCodeTuple(candidateLangDescriptionTxt)
 		if (not invalidSyntax) and gActiveLanguageDescriptionCodeTuple is None:
-			print "[Error] Invalid language code was specified"
+			print ("[Error] Invalid language code was specified")
 			printInfoMessageForLanguageSelectionSyntax()
 			invalidSyntax = True
 
 		if not invalidSyntax:
-			print "[Info] Game Language Selected: %s (%s)" % (gActiveLanguageDescriptionCodeTuple[0], gActiveLanguageDescriptionCodeTuple[2])
+			print ("[Info] Game Language Selected: %s (%s)" % (gActiveLanguageDescriptionCodeTuple[0], gActiveLanguageDescriptionCodeTuple[2]))
 			#
 			# Early check for external subtitles font file, since we no longer support internal font
 			relPath = u'.'
 			thePathToExternalFontFileFon = os.path.join(relPath, DEFAULT_SUBTITLES_FONT_NAME)
 			if not os.path.isfile(thePathToExternalFontFileFon):
-				print "[Error] Font file %s for subtitles was not found!" % (thePathToExternalFontFileFon)
+				print ("[Error] Font file %s for subtitles was not found!" % (thePathToExternalFontFileFon))
 				sys.exit(1)
 			else:
-				print "[Info] Supported font file for subtitles found: {0}".format(thePathToExternalFontFileFon)
+				print ("[Info] Supported font file for subtitles found: {0}".format(thePathToExternalFontFileFon))
 
 			# parse any overrideEncoding file if exists:
 			initOverrideEncoding(pathToConfigureFontsTranslationTxt)
@@ -1213,7 +1213,7 @@ def main(argsCL):
 			initActorPropertyEntries(pathToActorNamesTxt)
 			#if gTraceModeEnabled:
 			#	for actorEntryTmp in gActorPropertyEntries:
-			#		print "[Debug] Found actor: %s %s %s" % (actorEntryTmp[0], actorEntryTmp[1], actorEntryTmp[2])
+			#		print ("[Debug] Found actor: %s %s %s" % (actorEntryTmp[0], actorEntryTmp[1], actorEntryTmp[2]))
 			inputXLS(pathToQuoteExcelFile)
 			outputMIX()
 
@@ -1221,16 +1221,16 @@ def main(argsCL):
 		invalidSyntax = True
 
 	if invalidSyntax == True:
-		print "[Error] Invalid syntax\n Try: \n %s --help for more info \n %s --version for version info " % (APP_WRAPPER_NAME, APP_WRAPPER_NAME)
-		print "Valid syntax: "
-		print "%s -x path_to_BladeRunnerPCTLK_xlsx [-ian path_to_actornames_txt] [-cft path_to_configureFontsTranslation_txt] [-ld gameInputLanguageDescription] [--trace]" % (APP_WRAPPER_NAME)
-		print "\nDetected arguments:"
+		print ("[Error] Invalid syntax\n Try: \n %s --help for more info \n %s --version for version info " % (APP_WRAPPER_NAME, APP_WRAPPER_NAME))
+		print ("Valid syntax: ")
+		print ("%s -x path_to_BladeRunnerPCTLK_xlsx [-ian path_to_actornames_txt] [-cft path_to_configureFontsTranslation_txt] [-ld gameInputLanguageDescription] [--trace]" % (APP_WRAPPER_NAME))
+		print ("\nDetected arguments:")
 		tmpi = 0
 		for tmpArg in argsCL:
 			if tmpi==0: #skip first argument
 				tmpi+=1
 				continue
-			print "Argument: %s" % (tmpArg)
+			print ("Argument: %s" % (tmpArg))
 			tmpi+=1
 
 # Total unique quotes seems to be 5495!
