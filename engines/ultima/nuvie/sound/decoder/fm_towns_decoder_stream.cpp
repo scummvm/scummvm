@@ -75,7 +75,7 @@ int FMtownsDecoderStream::readBuffer(sint16 *buffer, const int numSamples) {
 	//DEBUG(0,LEVEL_INFORMATIONAL, "numSamples = %d. buf_pos = %d, buf_len = %d\n", numSamples, buf_pos, buf_len);
 
 	for (; j < numSamples && i < buf_len;) {
-		buffer[j] = convertSample(READ_LE_UINT16(&raw_audio_buf[i]));
+		buffer[j] = convertSample(static_cast<uint16>(raw_audio_buf[i]));
 		j++;
 		i++;
 	}
