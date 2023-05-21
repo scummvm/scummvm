@@ -1716,6 +1716,7 @@ void ScummEngine::saveCursorPreMenu() {
 	if (_game.version > 6) {
 		// Backup the current cursor graphics and parameters
 		// and set up the main menu cursor...
+		// V6 handles this within scripts, so this is not needed.
 		_curGrabbedCursor = (byte *)malloc(sizeof(_grabbedCursor));
 		if (_curGrabbedCursor) {
 			memcpy(_curGrabbedCursor, _grabbedCursor, sizeof(_grabbedCursor));
@@ -1726,12 +1727,6 @@ void ScummEngine::saveCursorPreMenu() {
 			_curCursorHotspotY = _cursor.hotspotY;
 			setDefaultCursor();
 		}
-	} else if (_game.version == 6) {
-		// V6 handles cursor substitution via scripts, but it handles
-		// setting dimensions and hotspot here; since manually changing
-		// cursor parameters at this stage glitches the cursor itself,
-		// let's call this function without saving anything unlike above...
-		setDefaultCursor();
 	}
 
 	CursorMan.showMouse(true);
@@ -1784,9 +1779,12 @@ void ScummEngine::showMainMenu() {
 	// Pause the engine
 	PauseToken pt = pauseEngine();
 
-	// Run the entrance savescreen script, if available
-	if (VAR_SAVELOAD_SCRIPT != 0xFF)
-		runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, nullptr);
+	// Run the entrance savescreen script, if available.
+	// This is only available in v6 and automatically brings up the
+	// default cross cursor. The post-save/load script will restore
+	// the previous cursor.
+	if (VAR_PRE_SAVELOAD_SCRIPT != 0xFF)
+		runScript(VAR(VAR_PRE_SAVELOAD_SCRIPT), 0, 0, nullptr);
 
 	_saveSound = 1;
 	_shakeTempSavedState = _shakeEnabled;
@@ -1978,8 +1976,8 @@ void ScummEngine::showMainMenu() {
 	// Run the exit savescreen script, if available
 	if (_saveScriptParam != 0 || _game.version == 6) {
 		args[0] = _saveScriptParam;
-		if (VAR_SAVELOAD_SCRIPT2 != 0xFF) {
-			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, args);
+		if (VAR_POST_SAVELOAD_SCRIPT != 0xFF) {
+			runScript(VAR(VAR_POST_SAVELOAD_SCRIPT), 0, 0, args);
 			_saveScriptParam = 0;
 		}
 	}

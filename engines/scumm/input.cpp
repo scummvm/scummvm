@@ -1242,16 +1242,16 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		mainmenuKeyEnabled = true;
 
 	if (mainmenuKeyEnabled && !isUsingOriginalGUI() && (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(0))) {
-		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
-			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, nullptr);
+		if (VAR_PRE_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
+			runScript(VAR(VAR_PRE_SAVELOAD_SCRIPT), 0, 0, nullptr);
 
 		openMainMenuDialog();		// Display global main menu
 
 		// reload options
 		_enableAudioOverride = ConfMan.getBool("audio_override");
 
-		if (VAR_SAVELOAD_SCRIPT2 != 0xFF && _currentRoom != 0)
-			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, nullptr);
+		if (VAR_POST_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
+			runScript(VAR(VAR_POST_SAVELOAD_SCRIPT), 0, 0, nullptr);
 
 	} else if (restartKeyEnabled && !isUsingOriginalGUI() && (lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.hasFlags(0))) {
 		confirmRestartDialog();
