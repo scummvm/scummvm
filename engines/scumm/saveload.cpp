@@ -1438,6 +1438,17 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint16LE(_cursor.height, VER(20));
 	s.syncAsSint16LE(_cursor.hotspotX, VER(20));
 	s.syncAsSint16LE(_cursor.hotspotY, VER(20));
+
+	// Post-load fix for broken SAMNMAX savegames which contain invalid
+	// cursor values; the value we're setting here should not count since
+	// it's being replaced by the post-load script, as long as it's not zero.
+	if (_game.version == 6 && (_cursor.width == 0 || _cursor.height == 0)) {
+		_cursor.width = 15;
+		_cursor.height = 15;
+		_cursor.hotspotX = 7;
+		_cursor.hotspotY = 7;
+	}
+
 	s.syncAsByte(_cursor.animate, VER(20));
 	s.syncAsByte(_cursor.animateIndex, VER(20));
 
