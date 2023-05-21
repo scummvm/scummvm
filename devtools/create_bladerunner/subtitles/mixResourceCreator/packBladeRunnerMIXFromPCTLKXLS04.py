@@ -252,14 +252,14 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 									and fontCateg_targetEnc_OOOGlyphs_Tuple[1] != ''):
 								tmpFontCateg = fontCateg_targetEnc_OOOGlyphs_Tuple[0]
 								tmpTargetEncodingForThisFont = fontCateg_targetEnc_OOOGlyphs_Tuple[1]
-								if ( tmpFontCateg not in zip(*DEFAULT_TARGET_ENCODING_PER_FONT)[0]):
+								if ( tmpFontCateg not in list(zip(*DEFAULT_TARGET_ENCODING_PER_FONT))[0]):
 									print ('[Error] Invalid Font name specified in configureFontsTranslation text file!')
-									print ('        Valid values are: ', ", ".join( zip(*DEFAULT_TARGET_ENCODING_PER_FONT)[0] ))
+									print ('        Valid values are: ', ", ".join( list(zip(*DEFAULT_TARGET_ENCODING_PER_FONT))[0] ))
 									configureTranslationFailed = True
 									break
 
 								elif len(gTargetEncodingPerFont) == 0 \
-									or (tmpFontCateg not in zip(*gTargetEncodingPerFont)[0]):
+									or (tmpFontCateg not in list(zip(*gTargetEncodingPerFont))[0]):
 									gTargetEncodingPerFont.append(  ( tmpFontCateg,  tmpTargetEncodingForThisFont) )
 
 								if ( fontCateg_targetEnc_OOOGlyphs_Tuple[2] is not None \
@@ -295,7 +295,7 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 				if (configureTranslationFailed == False):
 					for tmpFontToTargetEncCateg in DEFAULT_TARGET_ENCODING_PER_FONT:
 						if (len (gTargetEncodingPerFont) == 0 \
-							or  tmpFontToTargetEncCateg[0] not in zip(*gTargetEncodingPerFont)[0]):
+							or  tmpFontToTargetEncCateg[0] not in list(zip(*gTargetEncodingPerFont))[0]):
 							# append the defaults for the mappings not explicitly specified in configureFontsTranslation
 							gTargetEncodingPerFont.append(tmpFontToTargetEncCateg)
 
@@ -1103,7 +1103,7 @@ def getLanguageDescCodeTuple(candidateLangDescriptionStr):
 	return resultTuple
 
 def printInfoMessageForLanguageSelectionSyntax():
-	tmpCSVSupportedLangDescValues = ", ".join( zip(*SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST)[0] )
+	tmpCSVSupportedLangDescValues = ", ".join( list(zip(*SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST))[0] )
 	print ("Valid values for language selection are: %s" % (tmpCSVSupportedLangDescValues))
 	print ("Default value is: %s (%s)" % (DEFAULT_LANG_DESC_CODE[0], DEFAULT_LANG_DESC_CODE[2]))
 	return
