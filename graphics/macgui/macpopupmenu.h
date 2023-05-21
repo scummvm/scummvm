@@ -36,7 +36,12 @@ public:
 	Common::String getItemText(int item);
 
 	bool draw(ManagedSurface *g, bool forceRedraw = false) override;
+	void closeMenu() override;
+
 private:
+	int kBlinkDelay = 15; // Blink delay for closing animation
+	int kNumBlinks = 3; // Number of blinks
+
 	int _mouseX;
 	int _mouseY;
 	int _menuItemId;

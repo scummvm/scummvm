@@ -148,7 +148,7 @@ public:
 
 	void printMenu(int level = 0, MacMenuSubMenu *submenu = nullptr);
 
-	void closeMenu();
+	virtual void closeMenu();
 
 	bool checkIntersects(Common::Rect &rect);
 
