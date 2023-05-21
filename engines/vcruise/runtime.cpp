@@ -5400,6 +5400,8 @@ void Runtime::scriptOpAnimF(ScriptArg_t arg) {
 		changeAnimation(*faceDirectionAnimDef, initialFrame, false, _animSpeedRotation);
 		_gameState = kGameStateWaitingForFacingToAnim;
 	} else {
+		consumeAnimChangeAndAdjustAnim(animDef);	// Needed for Schizm when entering the statue after finishing the temple.
+
 		changeAnimation(animDef, animDef.firstFrame, true, _animSpeedDefault);
 		_gameState = kGameStateWaitingForAnimation;
 	}
@@ -6678,11 +6680,21 @@ void Runtime::scriptOpSndPlay(ScriptArg_t arg) {
 
 void Runtime::scriptOpSndPlayEx(ScriptArg_t arg) {
 	TAKE_STACK_INT_NAMED(2, sndParamArgs);
-	TAKE_STACK_STR_NAMED(1, sndNameArgs);
+	TAKE_STACK_VAR_NAMED(1, sndNameArgs);
+
+	Common::String soundName;
+	if (sndNameArgs[0].type == StackValue::kString)
+		soundName = sndNameArgs[0].value.s;
+	else if (sndNameArgs[0].type == StackValue::kNumber) {
+		// Sometimes the name is a string, such as the bell puzzle in the temple.
+		// In this case the number is the name, with no suffix.
+		soundName = Common::String::format("%i", static_cast<int>(sndNameArgs[0].value.i));
+	} else
+		error("Invalid sound name type for SndPlayEx");
 
 	StackInt_t soundID = 0;
 	SoundInstance *cachedSound = nullptr;
-	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
+	resolveSoundByName(soundName, true, soundID, cachedSound);
 
 	if (cachedSound)
 		triggerSound(true, *cachedSound, sndParamArgs[0], sndParamArgs[1], false, false);
@@ -6702,8 +6714,10 @@ void Runtime::scriptOpSndPlay3D(ScriptArg_t arg) {
 	sndParams.unknownRange = sndParamArgs[4]; // Doesn't appear to be the same thing as Reah.  Usually 1000, sometimes 2000 or 3000.
 
 	if (cachedSound) {
+		// FIXME: Should this be looping?  In the prayer bell puzzle, the prayer sounds (such as 6511_prayer)
+		// don't have a SndHalt afterwards, so 
 		setSound3DParameters(*cachedSound, sndParamArgs[0], sndParamArgs[1], sndParams);
-		triggerSound(true, *cachedSound, getSilentSoundVolume(), 0, true, false);
+		triggerSound(false, *cachedSound, getSilentSoundVolume(), 0, true, false);
 	}
 }
 
@@ -6935,11 +6949,11 @@ void Runtime::scriptOpHeroSetPos(ScriptArg_t arg) {
 		thisHero = false;
 		break;
 	default:
-		error("Unhandled heroGetPos argument %i", static_cast<int>(stackArgs[0]));
+		error("Unhandled heroSetPos argument %i", static_cast<int>(stackArgs[0]));
 		return;
 	}
 
-	if (!thisHero) {
+	if (thisHero) {
 		error("heroSetPos for the current hero isn't supported (and Schizm's game scripts shouldn't be doing it).");
 		return;
 	}
@@ -7029,15 +7043,7 @@ void Runtime::scriptOpMod(ScriptArg_t arg) {
 void Runtime::scriptOpGetDigit(ScriptArg_t arg) {
 	TAKE_STACK_INT(2);
 
-	StackInt_t power = stackArgs[1];
-	StackInt_t divisor = 1;
-
-	while (power > 0) {
-		power--;
-		divisor *= 10;
-	}
-
-	StackInt_t digit = (stackArgs[0] / divisor) % 10;
+	StackInt_t digit = (stackArgs[0] >> (stackArgs[1] * 4)) & 0xf;
 
 	_scriptStack.push_back(StackValue(digit));
 }
