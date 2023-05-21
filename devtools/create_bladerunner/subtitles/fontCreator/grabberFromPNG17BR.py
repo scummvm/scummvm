@@ -467,7 +467,7 @@ class grabberFromPNG:
 		return
 
 	def setOverrideEncodingPath(self, pOverrideEncodingPath):
- 		self.overrideEncodingPath = pOverrideEncodingPath
+		self.overrideEncodingPath = pOverrideEncodingPath
 		return
 
 ##
