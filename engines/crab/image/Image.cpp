@@ -245,7 +245,10 @@ void Image::Draw(const int &x, const int &y, Common::Rect *clip, const TextureFl
 
 }
 
-void Image::Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &flip) {
+void Image::Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &flip, Graphics::ManagedSurface *surf) {
+	if (surf == NULL)
+		surf = g_engine->_screen;
+
 	Common::Rect srcRect {0, 0, static_cast<int16>(w + 0), static_cast<int16>(h + 0)};
 	Common::Rect destRect {static_cast<int16>(x), static_cast<int16>(y), static_cast<int16>(w + x), static_cast<int16>(h + y)};
 
@@ -270,37 +273,20 @@ void Image::Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &
 		warning("Flipped texture: %d", flip);
 	}
 
-	g_engine->_screen->blitFrom(s, Common::Rect(s->w, s->h), destRect);
+	surf->blitFrom(s, Common::Rect(s->w, s->h), destRect);
 	//g_engine->_renderSurface->blitFrom(s, Common::Rect(s->w, s->h), destRect);
 }
 
-void Image::FastDraw(const int &x, const int &y) {
+void Image::FastDraw(const int &x, const int &y, Rect *clip) {
 	Common::Rect destRect {static_cast<int16>(x), static_cast<int16>(y), static_cast<int16>(w + x), static_cast<int16>(h + y)};
 	int in_y = 0, in_x = 0;
 
-	// Handle off-screen clipping
-	if (destRect.top < 0) {
-		destRect.top = 0;
-		in_y += -y;
+	if (clip) {
+		destRect.setWidth(clip->w);
+		destRect.setHeight(clip->h);
+		in_x = clip->x;
+		in_y = clip->y;
 	}
-
-	if (destRect.left < 0) {
-		destRect.left = 0;
-		in_x += -x;
-	}
-
-	if (destRect.bottom > 720) {
-		//in_y += destRect.bottom - 720;
-		destRect.bottom = 720;
-	}
-
-	if (destRect.right > 1280) {
-		//in_x += destRect.right - 1280;
-		destRect.right = 1280;
-	}
-
-
-	uint8 a, g, b, r;
 
 	const int he = destRect.height();
 	const int destW = destRect.width();
@@ -310,24 +296,12 @@ void Image::FastDraw(const int &x, const int &y) {
 	const uint32 outPitch = g_engine->_screen->pitch / sizeof(uint32);
 	const uint32 inPitch = texture->pitch / sizeof(uint32);
 
-	//if (*in & 0xff == 0) {
-	//	return;
-	//}
-
 	for (int y = 0; y < he; y++) {
-		uint32 *out1 = out;
-		uint32 *in1 = in;
-		for (int x = 0; x < destW; x++, out1++, in1++) {
-			if (*in1 & 0xff) {
-				*(out1) = *(in1);
-			}
-		}
+		memcpy(out, in, destW * 4);
 		out += outPitch;
 		in += inPitch;
-		//memcpy(out, in, destRect.width() * 4);
 	}
 
-	//g_engine->_screen->blitFrom(*texture, Common::Rect(in_x, in_y, in_x + destRect.width(), he + in_y), destRect);
 	g_engine->_screen->addDirtyRect(destRect);
 }
 
