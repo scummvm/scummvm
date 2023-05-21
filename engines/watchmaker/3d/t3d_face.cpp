@@ -58,7 +58,7 @@ const gMaterial *t3dFACE::getMaterial() const {
 	if (_mat) {
 		return _mat.get();
 	} else {
-		assert(0);
+		error("t3dFACE::getMaterial(): No material loaded");
 	}
 }
 

@@ -208,7 +208,7 @@ GLenum translateBlendFactorToGL(BlendFactor factor) {
 	case BlendFactor::INVDESTCOLOR:
 		return GL_ONE_MINUS_DST_COLOR;
 	default:
-		assert(false);
+		return GL_INVALID_VALUE;
 	}
 }
 
