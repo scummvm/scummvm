@@ -2167,7 +2167,7 @@ bool Runtime::runScript() {
 			DISPATCH_OP(Mul);
 			DISPATCH_OP(Div);
 			DISPATCH_OP(Mod);
-			DISPATCH_OP(CyfraGet);
+			DISPATCH_OP(GetDigit);
 			DISPATCH_OP(PuzzleInit);
 			DISPATCH_OP(PuzzleCanPress);
 			DISPATCH_OP(PuzzleDoMove1);
@@ -5323,11 +5323,15 @@ void Runtime::scriptOpSAnimL(ScriptArg_t arg) {
 void Runtime::scriptOpChangeL(ScriptArg_t arg) {
 	TAKE_STACK_INT(1);
 
-	// ChangeL changes the screen number, but it also forces screen entry scripts to replay, which is
-	// needed for things like the fountain.
+	// ChangeL changes the screen number.
+	// In Reah, it also forces screen entry scripts to replay, which is needed for things like the fountain.
+	// In Schizm, doing this causes an infinite loop in the temple when approaching the bells puzzle
+	// (Room 65 screen 0b2h) due to fnMlynekZerowanie -> 1 fnMlynkiLokacja -> changeL to MLYNKIZLEWEJ1
 	_screenNumber = stackArgs[0];
 	_havePendingScreenChange = true;
-	_forceScreenChange = true;
+
+	if (_gameID == GID_REAH)
+		_forceScreenChange = true;
 }
 
 void Runtime::scriptOpAnimR(ScriptArg_t arg) {
@@ -7021,7 +7025,22 @@ void Runtime::scriptOpMod(ScriptArg_t arg) {
 	_scriptStack.push_back(StackValue(stackArgs[0] % stackArgs[1]));
 }
 
-OPCODE_STUB(CyfraGet)
+void Runtime::scriptOpGetDigit(ScriptArg_t arg) {
+	TAKE_STACK_INT(2);
+
+	StackInt_t power = stackArgs[1];
+	StackInt_t divisor = 1;
+
+	while (power > 0) {
+		power--;
+		divisor *= 10;
+	}
+
+	StackInt_t digit = (stackArgs[0] / divisor) % 10;
+
+	_scriptStack.push_back(StackValue(digit));
+}
+
 OPCODE_STUB(PuzzleInit)
 OPCODE_STUB(PuzzleCanPress)
 OPCODE_STUB(PuzzleDoMove1)

@@ -208,7 +208,7 @@ enum ScriptOp {
 	kMul,
 	kDiv,
 	kMod,
-	kCyfraGet,	// Cyfra = digit?
+	kGetDigit,
 	kPuzzleInit,
 	kPuzzleCanPress,
 	kPuzzleDoMove1,

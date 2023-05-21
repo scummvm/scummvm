@@ -1061,7 +1061,7 @@ private:
 	void scriptOpMul(ScriptArg_t arg);
 	void scriptOpDiv(ScriptArg_t arg);
 	void scriptOpMod(ScriptArg_t arg);
-	void scriptOpCyfraGet(ScriptArg_t arg);
+	void scriptOpGetDigit(ScriptArg_t arg);
 	void scriptOpPuzzleInit(ScriptArg_t arg);
 	void scriptOpPuzzleCanPress(ScriptArg_t arg);
 	void scriptOpPuzzleDoMove1(ScriptArg_t arg);

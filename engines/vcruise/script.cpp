@@ -764,7 +764,7 @@ static ScriptNamedInstruction g_schizmNamedInstructions[] = {
 	{"ItemPlace@", ProtoOp::kProtoOpScript, ScriptOps::kItemHaveSpace},
 	{"ItemPutInto!", ProtoOp::kProtoOpScript, ScriptOps::kItemAdd},
 	{"ItemRemove!", ProtoOp::kProtoOpScript, ScriptOps::kItemRemove},
-	{"cyfra@", ProtoOp::kProtoOpScript, ScriptOps::kCyfraGet},
+	{"cyfra@", ProtoOp::kProtoOpScript, ScriptOps::kGetDigit},	// Cyfra = digit
 	{"puzzleInit", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleInit},
 	{"puzzleCanPress", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleCanPress},
 	{"puzzleDoMove1", ProtoOp::kProtoOpScript, ScriptOps::kPuzzleDoMove1},
