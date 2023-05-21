@@ -27,6 +27,7 @@
 #include "common/textconsole.h"
 #include "graphics/managed_surface.h"
 #include "image/bmp.h"
+#include "ultima/nuvie/screen/screen.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -92,7 +93,11 @@ Graphics::ManagedSurface *SDL_LoadBMP(const char *filename) {
 		error("Could not load bitmap - %s", filename);
 
 	const Graphics::Surface *src = decoder.getSurface();
-	Graphics::ManagedSurface *dest = new Graphics::ManagedSurface(src->w, src->h, src->format);
+	Screen *const screen = Game::get_game()->get_screen();
+	assert (screen);
+	Graphics::ManagedSurface *const screenSurface = screen->get_sdl_surface();
+	assert (screenSurface);
+	Graphics::ManagedSurface *dest = new Graphics::ManagedSurface(src->w, src->h, screenSurface->format);
 	dest->blitFrom(*src);
 
 	return dest;
