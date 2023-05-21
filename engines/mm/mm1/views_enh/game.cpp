@@ -54,6 +54,19 @@ void Game::draw() {
 }
 
 bool Game::msgKeypress(const KeypressMessage &msg) {
+	switch (msg.keycode) {
+	case Common::KEYCODE_F5:
+		if (g_engine->canSaveGameStateCurrently())
+			g_engine->saveGameDialog();
+		break;
+	case Common::KEYCODE_F7:
+		if (g_engine->canLoadGameStateCurrently())
+			g_engine->loadGameDialog();
+		break;
+	default:
+		break;
+	}
+
 	return true;
 }
 
