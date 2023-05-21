@@ -262,7 +262,10 @@ void AtariGraphicsManager::updateScreen() {
 			// hard to repair them. So instead of polluting the engine with
 			// Surface::init() & delete[] Surface::getPixels() just use this hack.
 			Common::String engineId = activeDomain->getValOrDefault("engineid");
-			if (engineId == "parallaction") {
+			if (engineId == "parallaction"
+				|| engineId == "mohawk"
+				|| engineId == "sherlock"
+				|| engineId == "tsage") {
 				g_unalignedPitch = true;
 			}
 		}
