@@ -850,7 +850,7 @@ private:
 	void pushAnimDef(const AnimationDef &animDef);
 
 	void activateScript(const Common::SharedPtr<Script> &script, const ScriptEnvironmentVars &envVars);
-	void compileSchizmLogicSet(const uint *roomNumbers, uint numRooms);
+	Common::SharedPtr<ScriptSet> compileSchizmLogicSet(const uint *roomNumbers, uint numRooms) const;
 
 	bool parseIndexDef(IndexParseType parseType, uint roomNumber, const Common::String &key, const Common::String &value);
 	void allocateRoomsUpTo(uint roomNumber);

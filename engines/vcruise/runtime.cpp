@@ -1822,15 +1822,22 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 
 	for (;;) {
 		bool needNewFrame = false;
+		bool needInitialTimestamp = false;
 
 		if (needsFirstFrame) {
 			needNewFrame = true;
 			needsFirstFrame = false;
+			needInitialTimestamp = true;
 		} else {
 			if (_animFrameRateLock.numerator) {
-				// if ((millis - startTime) / 1000 * frameRate / frameRateDenominator) >= framesDecoded
-				if ((millis - _animStartTime) * static_cast<uint64>(_animFrameRateLock.numerator) >= (static_cast<uint64>(_animFramesDecoded) * static_cast<uint64>(_animFrameRateLock.denominator) * 1000u))
+				if (_animFramesDecoded == 0) {
 					needNewFrame = true;
+					needInitialTimestamp = true;
+				} else {
+					// if ((millis - startTime) / 1000 * frameRate / frameRateDenominator) >= framesDecoded
+					if ((millis - _animStartTime) * static_cast<uint64>(_animFrameRateLock.numerator) >= (static_cast<uint64>(_animFramesDecoded) * static_cast<uint64>(_animFrameRateLock.denominator) * 1000u))
+						needNewFrame = true;
+				}
 			} else {
 				if (_animDecoder->getTimeToNextFrame() == 0)
 					needNewFrame = true;
@@ -1859,6 +1866,13 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 		}
 
 		const Graphics::Surface *surface = _animDecoder->decodeNextFrame();
+
+		// Get the start timestamp when the first frame finishes decoding so disk seeks don't cause frame skips
+		if (needInitialTimestamp) {
+			millis = g_system->getMillis();
+			_animStartTime = millis;
+		}
+
 		if (!surface) {
 			outAnimationEnded = true;
 			return;
@@ -2650,9 +2664,9 @@ void Runtime::loadAllSchizmScreenNames() {
 			if (roomNumber == 1)
 				numRooms = 2;
 
-			compileSchizmLogicSet(roomSetToCompile, numRooms);
+			Common::SharedPtr<ScriptSet> scriptSet = compileSchizmLogicSet(roomSetToCompile, numRooms);
 
-			for (const RoomScriptSetMap_t::Node &rssNode : _scriptSet->roomScripts) {
+			for (const RoomScriptSetMap_t::Node &rssNode : scriptSet->roomScripts) {
 				if (rssNode._key != roomNumber)
 					continue;
 
@@ -2827,7 +2841,8 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 			if (roomNumber != 1 && roomNumber != 3)
 				roomsToCompile[numRoomsToCompile++] = roomNumber;
 
-			compileSchizmLogicSet(roomsToCompile, numRoomsToCompile);
+			_scriptSet.reset();
+			_scriptSet = compileSchizmLogicSet(roomsToCompile, numRoomsToCompile);
 		} else if (_gameID == GID_REAH) {
 			_scriptSet.reset();
 
@@ -3418,7 +3433,7 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 
 	if (_animFrameRateLock.numerator) {
 		_animFramesDecoded = 0;
-		_animStartTime = g_system->getMillis();
+		_animStartTime = 0;
 	}
 
 	debug(1, "Animation last frame set to %u", animDef.lastFrame);
@@ -4017,9 +4032,7 @@ void Runtime::activateScript(const Common::SharedPtr<Script> &script, const Scri
 	_gameState = kGameStateScript;
 }
 
-void Runtime::compileSchizmLogicSet(const uint *roomNumbers, uint numRooms) {
-	_scriptSet.reset();
-
+Common::SharedPtr<ScriptSet> Runtime::compileSchizmLogicSet(const uint *roomNumbers, uint numRooms) const {
 	Common::SharedPtr<IScriptCompilerGlobalState> gs = createScriptCompilerGlobalState();
 
 	Common::SharedPtr<ScriptSet> scriptSet(new ScriptSet());
@@ -4055,7 +4068,9 @@ void Runtime::compileSchizmLogicSet(const uint *roomNumbers, uint numRooms) {
 			warning("Function '%s' was referenced but not defined", scriptSet->functionNames[i].c_str());
 	}
 
-	_scriptSet = scriptSet;
+	optimizeScriptSet(*scriptSet);
+
+	return scriptSet;
 }
 
 bool Runtime::parseIndexDef(IndexParseType parseType, uint roomNumber, const Common::String &key, const Common::String &value) {
