@@ -973,6 +973,9 @@ int Character::getNumAwards() const {
 }
 
 ItemCategory Character::makeItem(int itemLevel, int itemIndex, int reason) {
+	assert(1 <= itemLevel && itemLevel <= 7);
+	assert(0 <= itemIndex && itemIndex < INV_ITEMS_TOTAL);
+
 	XeenEngine *vm = Party::_vm;
 	int itemOffset = vm->getGameID() == GType_Swords ? 6 : 0;
 
@@ -981,6 +984,7 @@ ItemCategory Character::makeItem(int itemLevel, int itemIndex, int reason) {
 
 	int itemId = 0;
 	int categoryRN = vm->getRandomNumber(100);
+	// generate no wands, no bows and less two-handed weapons on levels 6 and 7
 	int subcategoryRN = vm->getRandomNumber(itemLevel < 6 ? 100 : 80);
 	ItemCategory category;
 	int material = 0, attrBonus = 0, miscCharges = 0, miscId = 0, enchantmentType = 0, element = 0;
@@ -1084,6 +1088,7 @@ ItemCategory Character::makeItem(int itemLevel, int itemIndex, int reason) {
 	newItem._id = itemId;
 
 	int enchanntmentRN = vm->getRandomNumber(1, 100);
+
 	switch (category) {
 	case CATEGORY_WEAPON:
 	case CATEGORY_ARMOR:
@@ -1136,9 +1141,9 @@ ItemCategory Character::makeItem(int itemLevel, int itemIndex, int reason) {
 				enchantmentSubtype = ELEM_MAGIC;
 			}
 
-			r1 = Res.MAKE_ITEM_ARR2[enchantmentSubtype][itemLevel][0];
-			r2 = Res.MAKE_ITEM_ARR2[enchantmentSubtype][itemLevel][1];
-			element = Res.MAKE_ITEM_ARR1[vm->getRandomNumber(r1, r2)];
+			r1 = Res.MAKE_ITEM_ARR2[enchantmentSubtype][itemLevel - 1][0];
+			r2 = Res.MAKE_ITEM_ARR2[enchantmentSubtype][itemLevel - 1][1];
+			element = Res.MAKE_ITEM_ARR1[enchantmentSubtype] + vm->getRandomNumber(r1, r2);
 			break;
 		case ENCHANTMENT_TYPE_ATTR_BONUS:
 			rn = vm->getRandomNumber(1, 100);
@@ -1164,16 +1169,19 @@ ItemCategory Character::makeItem(int itemLevel, int itemIndex, int reason) {
 				enchantmentSubtype = ATTR_THIEVERY;
 			}
 
-			r1 = Res.MAKE_ITEM_ARR3[enchantmentSubtype][itemLevel][0];
-			r2 = Res.MAKE_ITEM_ARR3[enchantmentSubtype][itemLevel][1];
-			// wrong formula here:
-			attrBonus = Res.MAKE_ITEM_ARR1[vm->getRandomNumber(r1, r2)];
+			{
+				// similar to Res.ATTRIBUTE_CATEGORIES
+				const int SUBTYPE_OFFSETS[] = {0, 10, 18, 26, 34, 40, 46, 51, 57, 62, 72};
+
+				r1 = Res.MAKE_ITEM_ARR3[enchantmentSubtype][itemLevel - 1][0];
+				r2 = Res.MAKE_ITEM_ARR3[enchantmentSubtype][itemLevel - 1][1];
+				attrBonus = SUBTYPE_OFFSETS[enchantmentSubtype] + vm->getRandomNumber(r1, r2);
+			}
 			break;
 
 		case ENCHANTMENT_TYPE_MATERIAL:
-			enchantmentSubtype = itemLevel == 7 || vm->getRandomNumber(1, 100) > 70 ? 1 : 0;
 
-			// It is unclear why itemLevel - 1 is here.
+			enchantmentSubtype = itemLevel == 7 || vm->getRandomNumber(1, 100) > 70 ? 1 : 0;
 			r1 = Res.MAKE_ITEM_ARR4[enchantmentSubtype][itemLevel - 1][0];
 			r2 = Res.MAKE_ITEM_ARR4[enchantmentSubtype][itemLevel - 1][1];
 			material = vm->getRandomNumber(r1, r2);

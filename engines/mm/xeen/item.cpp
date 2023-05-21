@@ -64,11 +64,12 @@ void XeenItem::synchronize(Common::Serializer &s) {
 }
 
 ElementalCategory XeenItem::getElementalCategory() const {
-	assert(_material < 36);
+	assert(_material <= 36);
 	return getElementalCategory(_material);
 }
 
 ElementalCategory XeenItem::getElementalCategory(int material) {
+	assert(material <= 36);
 	int idx;
 	for (idx = 0; Res.ELEMENTAL_CATEGORIES[idx] < material; ++idx)
 		;
@@ -77,6 +78,7 @@ ElementalCategory XeenItem::getElementalCategory(int material) {
 }
 
 AttributeCategory XeenItem::getAttributeCategory() const {
+	assert(59 <= _material && _material <= 130);
 	int m = _material - 59;
 	int idx;
 	for (idx = 0; Res.ATTRIBUTE_CATEGORIES[idx] < m; ++idx)
