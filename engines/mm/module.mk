@@ -181,6 +181,7 @@ MODULE_OBJS += \
 	mm1/views_enh/won_game.o \
 	mm1/views_enh/yes_no.o \
 	mm1/views_enh/interactions/access_code.o \
+	mm1/views_enh/interactions/alamar.o \
 	mm1/views_enh/interactions/alien.o \
 	mm1/views_enh/interactions/arenko.o \
 	mm1/views_enh/interactions/arrested.o \

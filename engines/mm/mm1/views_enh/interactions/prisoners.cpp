@@ -135,7 +135,7 @@ MutatedPrisoner::MutatedPrisoner() :
 }
 
 MaidenPrisoner::MaidenPrisoner() :
-	Prisoner("MaidenPrisoner", 1, STRING["maps.prisoners.maiden"],
+	Prisoner("MaidenPrisoner", 2, STRING["maps.prisoners.maiden"],
 		CHARFLAG1_8, GOOD, EVIL) {
 }
 

@@ -1711,9 +1711,9 @@ maps:
 	map49:
 		chute: "A chute..."
 		catapult: "A catapult ejects you from the tower!"
-		message_e: "Etched in silver, message e reads:\noei/:1-33-1ek5;d-et,"
-		alamar1: "The omnipotent king alamar speaks,\n\n"
-		alamar2: "\"Varnlings, i quest thee to find the\nCrypt of Carmenca. away with you...\""
+		message_e: "Etched in silver, message E reads:\noei/:1-33-1ek5;d-et,"
+		alamar1: "The omnipotent King Alamar speaks,\n\n"
+		alamar2: "\"Varnlings, I quest thee to find the\nCrypt of Carmenca. Away with you...\""
 		alamar3: "\"My saviors, you're always welcome here!\nYou should find the inner sanctum...\nLive long and prosper.\""
 		alamar4: "\"You've discovered my true identity!\nInto the soul maze you go...\""
 		guards1: "Castle guards exclaim,\n\"No Merchants Pass! begone peasants.\""
@@ -1722,6 +1722,9 @@ maps:
 		trap: "Singe! Acid trap."
 		explosion: "Boom! A fiery explosion."
 		throne_room: "Throne room"
+	emap49:
+		king_alamar: "King Alamar"
+		sheltem: "Imposter King Alamar"
 
 	map50:
 		message7: "Etched in gold, message 7 reads:\nThese-and-that-must-can-different-\nshall-have-from-a-jvc"
