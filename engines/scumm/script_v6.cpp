@@ -1043,6 +1043,11 @@ void ScummEngine_v6::o6_cursorCommand() {
 			} else {
 				obj = popRoomAndObj(&room);
 			}
+
+			// Post-load fix for broken SAMNMAX savegames (see bug no. 14467)
+			if (_game.id == GID_SAMNMAX && obj == 0 && room == 93)
+				break;
+
 			setCursorFromImg(obj, room, 1);
 			break;
 		}
