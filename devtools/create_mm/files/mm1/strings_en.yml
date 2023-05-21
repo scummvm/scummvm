@@ -1577,7 +1577,7 @@ maps:
 		face4: "Inset in the wall, a stone face\nproclaims: \"Okrim is watching.\nHe studies your weaknesses!\""
 		ringing: "A strange ringing sound startles\nthe party. You are teleported!"
 	emap38:
-		message4: "Etched in gold, message 4 reads:\n"Of-be-has-true-knowledge-plane-\na-level-to-reality-it\""
+		message4: "Etched in gold, message 4 reads:\nOf-be-has-true-knowledge-plane-\na-level-to-reality-it"
 
 	map39:
 		message6: "Etched in gold, message 6 reads:\nbook-done.-a-self-that-from-key-you-\nbe-to-seems"
@@ -1587,7 +1587,7 @@ maps:
 		door_glows: "A silver door, your silver key glows!"
 		stairs_up: "Stairs to surface, take them (Y/N)?"
 	emap39:
-		message6: "Etched in gold, message 6 reads:\n\"Book-done.-A-self-that-from-\nkey-you-be-to-seems\""
+		message6: "Etched in gold, message 6 reads:\nBook-done.-A-self-that-from-\nkey-you-be-to-seems"
 		title: "Ruby"
 		ruby1: "In the center of the room, a huge hexagonal ruby stands glowing atop a pedestal. You hear: Glass that glitters, rubies that glow when i twinkle, I cast a rainbow.\nWhat am i?"
 
@@ -1604,7 +1604,7 @@ maps:
 		test4: "The fourth test"
 		conveyor_belt: "Conveyor belt..."
 	emap40:
-		message2: "Etched in gold, message 2 reads:\n\"One,-riddles-value-you-you-\n5-card-must-claimed.-Dreams,-...\""
+		message2: "Etched in gold, message 2 reads:\nOne,-riddles-value-you-you-\n5-card-must-claimed.-Dreams,-..."
 		boulder: "A boulder says: \"There should be 5 tests\""
 		title: "Lord Archer"
 		archer: "\"I am Lord Archer, the Raven.\nI take from those who have and give to those who have not! Submit (Y/N)?\""
@@ -1621,7 +1621,7 @@ maps:
 		tapestry1: "A tapestry on the wall depicts a gray\nminotaur stomping on a group of knights."
 		tapestry2: "A tapestry on the wall depicts\na kingdom ruled by minotaurs"
 	emap41:
-		message3: "Etched in gold, message 3 reads:\n\"For-tasks-and-rating.-Be-from-\n6th-frustrations!-The-to-in\""
+		message3: "Etched in gold, message 3 reads:\nFor-tasks-and-rating.-Be-from-\n6th-frustrations!-The-to-in"
 		stairs_up: "Spiralling stairs go up, take them (Y/N)?"
 
 	map42:
@@ -1633,7 +1633,7 @@ maps:
 		statue3: "Desecrate it (Y/N)?"
 	emap42:
 		title: "Dog Statue"
-		message9: "Etched in gold, message 9 reads:\n\"Successful-that-training,-the-\nworthy-the-visit-yet-inner-\nreality,-order,\""
+		message9: "Etched in gold, message 9 reads:\nSuccessful-that-training,-the-\nworthy-the-visit-yet-inner-\nreality,-order,"
 
 	map43:
 		exit: "Exit castle, (Y/N)?"
@@ -1697,7 +1697,7 @@ maps:
 		painting: "On the right wall is a painting of a\nbox,on the left a painting of a curtain."
 		door_number: "Door number %c"
 	emap47:
-		message5: "Etched in gold, message 5 reads:\n\"Scoop:-the-discoveries-your-to-\nreturn-the-your-for-dreams-is\""
+		message5: "Etched in gold, message 5 reads:\nScoop:-the-discoveries-your-to-\nreturn-the-your-for-dreams-is"
 		painting: "On the right wall is a painting of a box, on the left a painting of a curtain."
 
 	map48:
@@ -1728,13 +1728,15 @@ maps:
 
 	map50:
 		message7: "Etched in gold, message 7 reads:\nThese-and-that-must-can-different-\nshall-have-from-a-jvc"
-		sign1: "Club dead...\nthe antidote to humanization!"
-		sign2: "Temple of the old order"
+		sign1: "Club Dead...\nThe antidote to humanization!"
+		sign2: "Temple of the Old Order"
 		sign3: "Glass room"
 		sign4: "Ruby room"
 		sign5: "Twinkle room"
 		sign6: "Rainbow room"
 		grate: "The crystal grate repels you!"
+	emap50:
+		message7: "Etched in gold, message 7 reads:\nThese-and-that-must-can-\ndifferent-shall-have-from-a-jvc"
 
 	map51:
 		substance: "Without experimental substance\nthere is no hope...poof!"
