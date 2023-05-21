@@ -23,6 +23,7 @@
 #include "mm/mm1/views_enh/game.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/metaengine.h"
+#include "mm/mm1/mm1.h"
 
 namespace MM {
 namespace MM1 {
@@ -54,6 +55,16 @@ void Game::draw() {
 
 bool Game::msgKeypress(const KeypressMessage &msg) {
 	return true;
+}
+
+bool Game::msgMouseDown(const MouseDownMessage &msg) {
+	if (Common::Rect(109, 137, 122, 147).contains(msg._pos) &&
+			msg._button == MouseDownMessage::MB_LEFT) {
+		g_engine->openMainMenuDialog();
+		return true;
+	} else {
+		return Views::TextView::msgMouseDown(msg);
+	}
 }
 
 bool Game::msgAction(const ActionMessage &msg) {
