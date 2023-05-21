@@ -2636,7 +2636,7 @@ void Runtime::loadAllSchizmScreenNames() {
 
 		// Rooms 1 and 3 are always compiled.  2 is a cheat room that contains garbage.  We still need to compile room 1
 		// to get the START screen to start the game though.
-		if (roomNumber > 3 && roomNumber != 1)
+		if (roomNumber > 3 || roomNumber == 1)
 			roomsToCompile.push_back(roomNumber);
 	}
 
