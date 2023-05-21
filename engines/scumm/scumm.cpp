@@ -2824,7 +2824,7 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 			// If we are here, it means that we are loading a game from the ScummVM menu;
 			// let's call the exit save/load script (only used in v6) to restore the cursor
 			// properly.
-			if (VAR_SAVELOAD_SCRIPT2 != 0xFF && _currentRoom != 0)
+			if (success && VAR_SAVELOAD_SCRIPT2 != 0xFF && _currentRoom != 0)
 				runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, nullptr);
 		}
 
