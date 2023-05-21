@@ -491,7 +491,10 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		}
 	} else if (isCastle()) {
 		byte idx = readField(file, 8);
-		name = _messagesList[idx + 41];
+		if (isAmiga())
+			name = _messagesList[idx + 51];
+		else
+			name = _messagesList[idx + 41];
 		extraColor[0] = readField(file, 8);
 		extraColor[1] = readField(file, 8);
 		extraColor[2] = readField(file, 8);
@@ -582,7 +585,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		if (isDOS())
 			numberOfAreas = isDemo() ? 31 : 104;
 		else if (isAmiga())
-			numberOfAreas = isDemo() ? 86 : 104;
+			numberOfAreas = isDemo() ? 87 : 104;
 	}
 
 	uint32 dbSize = readField(file, 16);

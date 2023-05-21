@@ -292,21 +292,17 @@ void CastleEngine::loadAssetsAmigaDemo() {
 	loadMessagesVariableSize(&file, 0x8bb2, 164);
 	load8bitBinary(&file, 0x162a6, 16);
 	loadPalettes(&file, 0x151a6);
-	//file.close();
-	//file.open("driller");
-	//if (!file.isOpen())
-	//	error("Failed to open 'driller' file");
 
-	//loadFonts(&file, 0xa30);
-	//loadMessagesFixedSize(&file, 0x3960, 14, 20);
-	//loadGlobalObjects(&file, 0x3716, 8);
-
+	file.seek(0x2be96); // Area 255
+	_areaMap[255] = load8bitArea(&file, 16);
 	file.close();
-	//file.open("soundfx");
-	//if (!file.isOpen())
-	//	error("Failed to open 'soundfx' executable for Amiga");
 
-	//loadSoundsFx(&file, 0, 25);
+
+	_areaMap[2]->_groundColor = 1;
+	for (auto &it : _areaMap)
+		it._value->addStructure(_areaMap[255]);
+
+	_areaMap[2]->addFloor();
 }
 
 
