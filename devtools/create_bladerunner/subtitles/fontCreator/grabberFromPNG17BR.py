@@ -124,7 +124,12 @@ if 	(not osLibFound) \
 	sys.stdout.write("[Error] Errors were found when trying to import required python libraries\n")
 	sys.exit(1)
 
-from os import walk, errno, path
+try:
+	import errno
+except ImportError:
+	from os import errno
+
+from os import walk, path
 from struct import *
 from fonFileLib import *
 
