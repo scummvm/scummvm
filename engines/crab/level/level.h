@@ -140,6 +140,9 @@ public:
 	// The path of the preview image
 	std::string preview_path;
 
+	// A full rendered image of the level
+	pyrodactyl::image::Image img;
+
 	Level() { Reset(); }
 	~Level() {}
 
@@ -193,6 +196,8 @@ public:
 	LevelResult InternalEvents(pyrodactyl::event::Info &info, std::vector<pyrodactyl::event::EventResult> &result,
 							   std::vector<pyrodactyl::event::EventSeqInfo> &end_seq, bool EventInProgress);
 
+	void PreDraw();
+	void PreDrawObjects(Graphics::ManagedSurface *surf);
 	void Draw(pyrodactyl::event::Info &info);
 
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);

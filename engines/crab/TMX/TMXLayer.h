@@ -93,6 +93,8 @@ public:
 	// This is also the collision rectangle of the prop and auto hide layer
 	Rect pos;
 
+	Common::List<Rect> boundRect;
+
 	// The rate of scrolling of image, used for parallax
 	Vector2f rate;
 

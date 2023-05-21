@@ -144,6 +144,8 @@ bool Game::LoadLevel(const std::string &id, int player_x, int player_y) {
 
 		// Initialize journal
 		info.journal.Init(level.PlayerID());
+
+		level.PreDraw();
 		return true;
 	}
 

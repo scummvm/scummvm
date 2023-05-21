@@ -29,6 +29,7 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/TMX/TMXTileSet.h"
 #include "crab/text/TextManager.h"
 
@@ -86,24 +87,97 @@ void TileSet::Draw(const Vector2i &pos, const TileInfo &tile) {
 		clip.x = ((tile.gid - first_gid) % total_cols) * tile_w;
 		clip.y = ((tile.gid - first_gid) / total_cols) * tile_h;
 
-		// Try to cache tiles
-		if (tiles.count(tile) > 0) {
-			tiles[tile].FastDraw(pos.x, pos.y);
-		} else if (tiles.count(tile) < 1) {
-			pyrodactyl::image::Image im;
-			im.Load(img, &clip, tile.flip);
-			im.FastDraw(pos.x, pos.y);
-			tiles[tile] = im;
-		}
-
-		//img.FastDraw(pos.x, pos.y, &clip, tile.flip);
-
-		/*if(tile.flip != FLIP_NONE && GameDebug)
-		pyrodactyl::text::gTextManager.Draw(pos.x,pos.y,NumberToString(tile.flip),0);*/
+		img.Draw(pos.x, pos.y, &clip, tile.flip);
 	}
 }
 
-void TileSetGroup::Draw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos) {
+void TileSet::PreDraw(const Vector2i &pos, const TileInfo &tile, Graphics::ManagedSurface *surf) {
+	if (tile.gid != 0) {
+		clip.x = ((tile.gid - first_gid) % total_cols) * tile_w;
+		clip.y = ((tile.gid - first_gid) / total_cols) * tile_h;
+
+		img.Draw(pos.x, pos.y, &clip, tile.flip, surf);
+	}
+}
+
+void TileSetGroup::PreDraw(MapLayer &layer, const Vector2i &tile_size, Graphics::ManagedSurface *surf) {
+	start.x = 0;
+	start.y = 0;
+
+	finish.x = layer.tile.size() - 1;
+	finish.y = layer.tile.at(0).size() - 1;
+
+	v.x = start.y * tile_size.x;
+	v.y = start.x * tile_size.y;
+
+	for (int x = start.x; x < finish.x; ++x) {
+			for (int y = start.y; y < finish.y; ++y) {
+				for (int i = tileset.size() - 1; i >= 0; --i)
+					if (layer.tile[x][y].gid >= tileset[i].first_gid) {
+						tileset[i].PreDraw(v, layer.tile[x][y], surf);
+						layer.boundRect.push_back(Rect(v.x, v.y, tile_size.x, tile_size.y));
+						break;
+					}
+
+				v.x += tile_size.x;
+			}
+
+			v.x = start.y * tile_size.x;
+			v.y += tile_size.y;
+	}
+
+	Common::List<Rect>::iterator rOuter, rInner;
+
+	// Process the bound rect list to find any rects to merge
+	for (rOuter = layer.boundRect.begin(); rOuter != layer.boundRect.end(); ++rOuter) {
+		rInner = rOuter;
+		while (++rInner != layer.boundRect.end()) {
+			if ((*rOuter).Collide(*rInner)) {
+				rOuter->Extend(*rInner);
+				layer.boundRect.erase(rInner);
+				rInner = rOuter;
+			}
+		}
+	}
+}
+
+void TileSetGroup::ForceDraw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos) {
+	layer.collide = layer.pos.Collide(player_pos);
+
+	// Normal and prop layers are drawn this way
+	// The row and column we start drawing at
+	start.x = player_pos.y / tile_size.y;
+	start.y = player_pos.x / tile_size.x;
+
+	// The row and column we end drawing at
+	finish.x = (player_pos.y + player_pos.h) / tile_size.y + 1;
+	finish.y = (player_pos.x + player_pos.w) / tile_size.x + 1;
+
+	if (finish.x > layer.tile.size())
+		finish.x = layer.tile.size();
+	if (finish.y > layer.tile[0].size())
+		finish.y = layer.tile.at(0).size();
+
+	v.x = start.y * tile_size.x - camera.x;
+	v.y = start.x * tile_size.y - camera.y;
+
+	for (int x = start.x; x < finish.x; ++x) {
+		for (int y = start.y; y < finish.y; ++y) {
+			for (int i = tileset.size() - 1; i >= 0; --i)
+				if (layer.tile[x][y].gid >= tileset[i].first_gid) {
+					tileset[i].Draw(v, layer.tile[x][y]);
+					break;
+				}
+
+			v.x += tile_size.x;
+		}
+
+		v.x = start.y * tile_size.x - camera.x;
+		v.y += tile_size.y;
+	}
+}
+
+void TileSetGroup::Draw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos, pyrodactyl::image::Image &img) {
 	if (layer.type == LAYER_IMAGE)
 		layer.img.Draw(-1.0f * camera.x * layer.rate.x, -1.0f * camera.y * layer.rate.y);
 	else if (layer.type == LAYER_PARALLAX) {
@@ -158,23 +232,16 @@ void TileSetGroup::Draw(MapLayer &layer, const Rect &camera, const Vector2i &til
 		if (finish.y > layer.tile[0].size())
 			finish.y = layer.tile.at(0).size();
 
-		v.x = start.y * tile_size.x - camera.x;
-		v.y = start.x * tile_size.y - camera.y;
+		v.x = camera.x;
+		v.y = camera.y;
 
-		for (int x = start.x; x < finish.x; ++x) {
-			for (int y = start.y; y < finish.y; ++y) {
-				for (int i = tileset.size() - 1; i >= 0; --i)
-					if (layer.tile[x][y].gid >= tileset[i].first_gid) {
-						tileset[i].Draw(v, layer.tile[x][y]);
-						break;
-					}
+		Vector2i end;
 
-				v.x += tile_size.x;
-			}
+		end.x = camera.x + g_engine->_screen->w;
+		end.y = camera.y + g_engine->_screen->h;
 
-			v.x = start.y * tile_size.x - camera.x;
-			v.y += tile_size.y;
-		}
+		Rect clip(v.x, v.y, end.x - v.x, end.y - v.y);
+		img.FastDraw(0, 0, &clip);
 	}
 }
 
