@@ -3475,7 +3475,8 @@ void Runtime::triggerSound(bool looping, SoundInstance &snd, int32 volume, int32
 	}
 
 	// Construct looping stream if needed and none exists
-	if (looping && !cache->loopingStream || oldLoopingType == kSoundLoopingTypeTerminated) {
+	// FIXME: Bracket group in following if statement needs confirming as intended form...
+	if ((looping && !cache->loopingStream) || oldLoopingType == kSoundLoopingTypeTerminated) {
 		cache->player.reset();
 		cache->loopingStream.reset();
 		cache->loopingStream.reset(new Audio::LoopingAudioStream(cache->stream.get(), 0, DisposeAfterUse::NO, true));
