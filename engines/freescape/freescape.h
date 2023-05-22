@@ -531,6 +531,7 @@ public:
 
 	void loadAssetsDOSFullGame() override;
 	void loadAssetsDOSDemo() override;
+	void loadAssetsAmigaFullGame() override;
 
 	void loadAssetsZXDemo() override;
 
@@ -548,6 +549,7 @@ private:
 	void addECDs(Area *area);
 	void addECD(Area *area, const Math::Vector3d position, int index);
 	void addWalls(Area *area);
+	Common::SeekableReadStream *decryptFile(const Common::String filename);
 };
 
 class EclipseEngine : public FreescapeEngine {
