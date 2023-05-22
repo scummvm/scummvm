@@ -186,7 +186,7 @@ const MapScreenDirectionDef *MapDef::getScreenDirection(uint screen, uint direct
 	return screenDirections[screen][direction].get();
 }
 
-ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), lmbDrag(false), esc(false), exitToMenu(false), animChangeSet(false),
+ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), lmbDrag(false), esc(false), exitToMenu(false), animChangeSet(false), isEntryScript(false),
 	panInteractionID(0), fpsOverride(0), lastHighlightedItem(0), animChangeFrameOffset(0), animChangeNumFrames(0) {
 }
 
@@ -2326,7 +2326,7 @@ bool Runtime::checkCompletionConditions() {
 				if (interactionScriptIt != screenScriptSet.interactionScripts.end()) {
 					const Common::SharedPtr<Script> &script = interactionScriptIt->_value;
 					if (script) {
-						activateScript(script, ScriptEnvironmentVars());
+						activateScript(script, false, ScriptEnvironmentVars());
 						return true;
 					}
 				}
@@ -2907,7 +2907,7 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 				if (screenScriptIt != screenScriptsMap.end()) {
 					const Common::SharedPtr<Script> &script = screenScriptIt->_value->entryScript;
 					if (script)
-						activateScript(script, ScriptEnvironmentVars());
+						activateScript(script, true, ScriptEnvironmentVars());
 				}
 			}
 		}
@@ -3081,7 +3081,7 @@ bool Runtime::dischargeIdleMouseMove() {
 
 				ScriptEnvironmentVars vars;
 				vars.panInteractionID = interactionID;
-				activateScript(script, vars);
+				activateScript(script, false, vars);
 				return true;
 			}
 		}
@@ -3129,7 +3129,7 @@ bool Runtime::dischargeIdleMouseMove() {
 			Common::SharedPtr<Script> script = findScriptForInteraction(interactionID);
 
 			if (script) {
-				activateScript(script, ScriptEnvironmentVars());
+				activateScript(script, false, ScriptEnvironmentVars());
 				return true;
 			}
 		}
@@ -3162,7 +3162,7 @@ bool Runtime::dischargeIdleMouseDown() {
 			ScriptEnvironmentVars vars;
 			vars.lmbDrag = true;
 
-			activateScript(script, vars);
+			activateScript(script, false, vars);
 			return true;
 		}
 	}
@@ -3186,7 +3186,7 @@ bool Runtime::dischargeIdleClick() {
 				ScriptEnvironmentVars vars;
 				vars.lmb = true;
 
-				activateScript(script, vars);
+				activateScript(script, false, vars);
 				return true;
 			}
 		}
@@ -4060,13 +4060,14 @@ void Runtime::pushAnimDef(const AnimationDef &animDef) {
 	_scriptStack.push_back(StackValue(animNameIndex));
 }
 
-void Runtime::activateScript(const Common::SharedPtr<Script> &script, const ScriptEnvironmentVars &envVars) {
+void Runtime::activateScript(const Common::SharedPtr<Script> &script, bool isEntryScript, const ScriptEnvironmentVars &envVars) {
 	if (script->instrs.size() == 0)
 		return;
 
 	assert(_gameState != kGameStateScript);
 
 	_scriptEnv = envVars;
+	_scriptEnv.isEntryScript = isEntryScript;
 
 	CallStackFrame frame;
 	frame._script = script;
@@ -5410,13 +5411,20 @@ void Runtime::scriptOpChangeL(ScriptArg_t arg) {
 	TAKE_STACK_INT(1);
 
 	// ChangeL changes the screen number.
+	//
+	// If this isn't an entry script, then this must also re-trigger the entry script.
+	//
 	// In Reah, it also forces screen entry scripts to replay, which is needed for things like the fountain.
-	// In Schizm, doing this causes an infinite loop in the temple when approaching the bells puzzle
-	// (Room 65 screen 0b2h) due to fnMlynekZerowanie -> 1 fnMlynkiLokacja -> changeL to MLYNKIZLEWEJ1
+	//
+	// In Schizm, it's needed for the preset buttons in the airship navigation coordinates to work correctly
+	// (Room 41 screen 0c2h)
+	//
+	// The check is required because otherwise, this causes an infinite loop in the temple when approaching the
+	// bells puzzle (Room 65 screen 0b2h) due to fnMlynekZerowanie -> 1 fnMlynkiLokacja -> changeL to MLYNKIZLEWEJ1
 	_screenNumber = stackArgs[0];
 	_havePendingScreenChange = true;
 
-	if (_gameID == GID_REAH)
+	if (!_scriptEnv.isEntryScript)
 		_forceScreenChange = true;
 }
 

@@ -163,6 +163,7 @@ struct ScriptEnvironmentVars {
 	bool esc;
 	bool exitToMenu;
 	bool animChangeSet;
+	bool isEntryScript;
 };
 
 struct SfxSound {
@@ -852,7 +853,7 @@ private:
 	void consumeAnimChangeAndAdjustAnim(AnimationDef &animDef);
 	void pushAnimDef(const AnimationDef &animDef);
 
-	void activateScript(const Common::SharedPtr<Script> &script, const ScriptEnvironmentVars &envVars);
+	void activateScript(const Common::SharedPtr<Script> &script, bool isEntryScript, const ScriptEnvironmentVars &envVars);
 	Common::SharedPtr<ScriptSet> compileSchizmLogicSet(const uint *roomNumbers, uint numRooms) const;
 
 	bool parseIndexDef(IndexParseType parseType, uint roomNumber, const Common::String &key, const Common::String &value);
