@@ -425,42 +425,28 @@ namespace Graphics {
 /**
  * Fills several pixels in a row with a given color.
  *
- * This is a replacement function for Common::fill, using an unrolled
- * loop to maximize performance on most architectures.
- * This function may (and should) be overloaded in any child renderers
- * for portable platforms with platform-specific assembly code.
- *
- * This fill operation is extensively used throughout the renderer, so this
- * counts as one of the main bottlenecks. Please replace it with assembly
- * when possible!
- *
  * @param first Pointer to the first pixel to fill.
  * @param last Pointer to the last pixel to fill.
  * @param color Color of the pixel
  */
 template<typename PixelType>
 void colorFill(PixelType *first, PixelType *last, PixelType color) {
+	STATIC_ASSERT(sizeof(PixelType) == 1 || sizeof(PixelType) == 2 || sizeof(PixelType) == 4, Unsupported_PixelType);
+
 	int count = (last - first);
-	if (!count)
-		return;
-	int n = (count + 7) >> 3;
-	switch (count % 8) {
-	default:
-	case 0:	do {
-	       		*first++ = color; // fall through
-	case 7:		*first++ = color; // fall through
-	case 6:		*first++ = color; // fall through
-	case 5:		*first++ = color; // fall through
-	case 4:		*first++ = color; // fall through
-	case 3:		*first++ = color; // fall through
-	case 2:		*first++ = color; // fall through
-	case 1:		*first++ = color;
-	       	} while (--n > 0);
-	}
+
+	if (sizeof(PixelType) == 1)
+		memset((uint8 *)first, color, count);
+	else if (sizeof(PixelType) == 2)
+		Common::memset2((uint16 *)first, color, count);
+	else
+		Common::memset4((uint32 *)first, color, count);
 }
 
 template<typename PixelType>
 void colorFillClip(PixelType *first, PixelType *last, PixelType color, int realX, int realY, Common::Rect &clippingArea) {
+	STATIC_ASSERT(sizeof(PixelType) == 1 || sizeof(PixelType) == 2 || sizeof(PixelType) == 4, Unsupported_PixelType);
+
 	if (realY < clippingArea.top || realY >= clippingArea.bottom)
 		return;
 
@@ -481,23 +467,12 @@ void colorFillClip(PixelType *first, PixelType *last, PixelType color, int realX
 		count -= diff;
 	}
 
-	if (!count)
-		return;
-
-	int n = (count + 7) >> 3;
-	switch (count % 8) {
-	default:
-	case 0:	do {
-	       		*first++ = color; // fall through
-	case 7:		*first++ = color; // fall through
-	case 6:		*first++ = color; // fall through
-	case 5:		*first++ = color; // fall through
-	case 4:		*first++ = color; // fall through
-	case 3:		*first++ = color; // fall through
-	case 2:		*first++ = color; // fall through
-	case 1:		*first++ = color;
-	       	} while (--n > 0);
-	}
+	if (sizeof(PixelType) == 1)
+		memset((uint8 *)first, color, count);
+	else if (sizeof(PixelType) == 2)
+		Common::memset2((uint16 *)first, color, count);
+	else
+		Common::memset4((uint32 *)first, color, count);
 }
 
 /**
