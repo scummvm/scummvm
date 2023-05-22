@@ -24,6 +24,7 @@
 
 #include "mm/mm1/views_enh/button_container.h"
 #include "mm/mm1/views_enh/map.h"
+#include "mm/shared/xeen/sprites.h"
 
 namespace MM {
 namespace MM1 {
@@ -49,6 +50,7 @@ class GameCommands : public ButtonContainer {
 
 private:
 	Minimap _minimap;
+	Shared::Xeen::SpriteResource _iconSprites;
 public:
 	GameCommands(UIElement *owner);
 	virtual ~GameCommands() {}

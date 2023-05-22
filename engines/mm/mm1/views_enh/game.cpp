@@ -70,16 +70,6 @@ bool Game::msgKeypress(const KeypressMessage &msg) {
 	return true;
 }
 
-bool Game::msgMouseDown(const MouseDownMessage &msg) {
-	if (Common::Rect(109, 137, 122, 147).contains(msg._pos) &&
-			msg._button == MouseDownMessage::MB_LEFT) {
-		g_engine->openMainMenuDialog();
-		return true;
-	} else {
-		return Views::TextView::msgMouseDown(msg);
-	}
-}
-
 bool Game::msgAction(const ActionMessage &msg) {
 	switch (msg._action) {
 	case KEYBIND_BASH:
@@ -87,6 +77,9 @@ bool Game::msgAction(const ActionMessage &msg) {
 		break;
 	case KEYBIND_MAP:
 		addView("MapPopup");
+		return true;
+	case KEYBIND_MENU:
+		g_engine->openMainMenuDialog();
 		return true;
 	case KEYBIND_PROTECT:
 		addView("Protect");
