@@ -493,6 +493,8 @@ void BuildStepList(int32 oc, uint8 dp, uint8 back) {
 
 	// arrotonda la fine
 	if ((w->NumSteps > 2)) {
+		// FIXME: The following code should be checked for correct intended logic as
+		//        it's previous form had sequence point issues.
 		angle = lastangle;
 		lastangle = w->WalkSteps[w->NumSteps - 2].Angle;
 		if (angle != lastangle) {
