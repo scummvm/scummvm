@@ -88,7 +88,8 @@ struct RoomScriptSet;
 
 enum GameState {
 	kGameStateBoot,							// Booting the game
-	kGameStateWaitingForAnimation,			// Waiting for a blocking animation with no stop frame complete, then resuming script
+	kGameStateWaitingForAnimation,			// Waiting for a blocking animation with no stop frame to complete, then resuming script
+	kGameStateWaitingForAnimationToDelay,	// Waiting for a blocking animation with no stop frame to complete, then going to delay
 	kGameStateWaitingForFacing,				// Waiting for a blocking animation with a stop frame to complete, then resuming script
 	kGameStateWaitingForFacingToAnim,		// Waiting for a blocking animation to complete, then playing _postFacingAnimDef and switching to kGameStateWaitingForAnimation
 	kGameStateQuit,							// Quitting
@@ -419,6 +420,7 @@ struct SaveGameSwappableState {
 	uint roomNumber;
 	uint screenNumber;
 	uint direction;
+	bool havePendingPostSwapScreenReset;
 
 	uint loadedAnimation;
 	uint animDisplayingFrame;
@@ -444,7 +446,7 @@ struct SaveGameSnapshot {
 	LoadGameOutcome read(Common::ReadStream *stream);
 
 	static const uint kSaveGameIdentifier = 0x53566372;
-	static const uint kSaveGameCurrentVersion = 6;
+	static const uint kSaveGameCurrentVersion = 7;
 	static const uint kSaveGameEarliestSupportedVersion = 2;
 	static const uint kMaxStates = 2;
 
@@ -774,6 +776,7 @@ private:
 	bool runScript();
 	bool requireAvailableStack(uint n);
 	bool runWaitForAnimation();
+	bool runWaitForAnimationToDelay();
 	bool runWaitForFacing();
 	bool runWaitForFacingToAnim();
 	bool runGyroIdle();
@@ -808,7 +811,7 @@ private:
 	void changeToScreen(uint roomNumber, uint screenNumber);
 	void clearIdleAnimations();
 	void changeHero();
-	void triggerPreIdleActions();
+	bool triggerPreIdleActions();
 	void returnToIdleState();
 	void changeToCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &cursor);
 	bool dischargeIdleMouseMove();
@@ -1137,6 +1140,7 @@ private:
 	// Pre-idle actions are executed once upon either entering Idle OR Delay state.
 	bool _havePendingPreIdleActions;
 	bool _havePendingReturnToIdleState;
+	bool _havePendingPostSwapScreenReset;
 
 	bool _havePendingCompletionCheck;
 	GameState _gameState;

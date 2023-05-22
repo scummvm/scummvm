@@ -720,8 +720,9 @@ void SaveGameSwappableState::Sound::read(Common::ReadStream *stream) {
 	params3D.read(stream);
 }
 
-SaveGameSwappableState::SaveGameSwappableState() : roomNumber(0), screenNumber(0), direction(0), musicTrack(0), musicVolume(100), musicActive(true),
-												   animVolume(100), loadedAnimation(0), animDisplayingFrame(0) {
+SaveGameSwappableState::SaveGameSwappableState() : roomNumber(0), screenNumber(0), direction(0), havePendingPostSwapScreenReset(false),
+												   musicTrack(0), musicVolume(100), musicActive(true), animVolume(100),
+												   loadedAnimation(0), animDisplayingFrame(0) {
 }
 
 SaveGameSnapshot::SaveGameSnapshot() : hero(0), swapOutRoom(0), swapOutScreen(0), swapOutDirection(0),
@@ -738,6 +739,7 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 		stream->writeUint32BE(states[sti]->roomNumber);
 		stream->writeUint32BE(states[sti]->screenNumber);
 		stream->writeUint32BE(states[sti]->direction);
+		stream->writeByte(states[sti]->havePendingPostSwapScreenReset ? 1 : 0);
 	}
 
 	stream->writeUint32BE(hero);
@@ -843,6 +845,9 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 		states[sti]->roomNumber = stream->readUint32BE();
 		states[sti]->screenNumber = stream->readUint32BE();
 		states[sti]->direction = stream->readUint32BE();
+
+		if (saveVersion >= 7)
+			states[sti]->havePendingPostSwapScreenReset = (stream->readByte() != 0);
 	}
 
 	if (saveVersion >= 6) {
@@ -989,7 +994,7 @@ FontCacheItem::FontCacheItem() : font(nullptr), size(0) {
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID, Common::Language defaultLanguage)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _hero(0), _swapOutRoom(0), _swapOutScreen(0), _swapOutDirection(0),
 	  _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
-	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingPreIdleActions(false), _havePendingReturnToIdleState(false),
+	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingPreIdleActions(false), _havePendingReturnToIdleState(false), _havePendingPostSwapScreenReset(false),
 	  _havePendingCompletionCheck(false), _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false),
 	  _musicTrack(0), _musicActive(true), _scoreSectionEndTime(0), _musicVolume(getDefaultSoundVolume()), _musicVolumeRampStartTime(0), _musicVolumeRampStartVolume(0), _musicVolumeRampRatePerMSec(0), _musicVolumeRampEnd(0),
 	  _panoramaDirectionFlags(0),
@@ -1155,6 +1160,9 @@ bool Runtime::runFrame() {
 			break;
 		case kGameStateWaitingForAnimation:
 			moreActions = runWaitForAnimation();
+			break;
+		case kGameStateWaitingForAnimationToDelay:
+			moreActions = runWaitForAnimationToDelay();
 			break;
 		case kGameStateWaitingForFacing:
 			moreActions = runWaitForFacing();
@@ -1370,7 +1378,8 @@ bool Runtime::runIdle() {
 	if (_havePendingPreIdleActions) {
 		_havePendingPreIdleActions = false;
 
-		triggerPreIdleActions();
+		if (triggerPreIdleActions())
+			return true;
 	}
 
 	if (_havePendingReturnToIdleState) {
@@ -1531,7 +1540,8 @@ bool Runtime::runDelay() {
 	if (_havePendingPreIdleActions) {
 		_havePendingPreIdleActions = false;
 
-		triggerPreIdleActions();
+		if (triggerPreIdleActions())
+			return true;
 	}
 
 	// Play static animations.  Try to keep this in sync with runIdle
@@ -1639,6 +1649,19 @@ bool Runtime::runWaitForAnimation() {
 		} else if (evt.type == kOSEventTypeKeymappedEvent && evt.keymappedEvent == kKeymappedEventSkipAnimation) {
 			_animFrameRateLock = Fraction(600, 1);
 		}
+	}
+
+	// Yield
+	return false;
+}
+
+bool Runtime::runWaitForAnimationToDelay() {
+	bool animEnded = false;
+	continuePlayingAnimation(false, false, animEnded);
+
+	if (animEnded) {
+		_gameState = kGameStateDelay;
+		return true;
 	}
 
 	// Yield
@@ -2930,7 +2953,8 @@ void Runtime::changeHero() {
 		// via the "heroOut" op.
 		currentState->roomNumber = _swapOutRoom;
 		currentState->screenNumber = _swapOutScreen;
-		currentState->direction = _direction;
+		currentState->direction = _swapOutDirection;
+		currentState->havePendingPostSwapScreenReset = true;
 	}
 
 	_saveGame->states[0] = alternateState;
@@ -2943,7 +2967,7 @@ void Runtime::changeHero() {
 	restoreSaveGameSnapshot();
 }
 
-void Runtime::triggerPreIdleActions() {
+bool Runtime::triggerPreIdleActions() {
 	debug(1, "Triggering pre-idle actions in room %u screen 0%x facing direction %u", _roomNumber, _screenNumber, _direction);
 
 	_havePendingReturnToIdleState = true;
@@ -2963,7 +2987,31 @@ void Runtime::triggerPreIdleActions() {
 			_animPlayWhileIdle = true;
 			sanim.currentAlternation = 1;
 		}
+
+		_havePendingPostSwapScreenReset = false;
+	} else if (_havePendingPostSwapScreenReset) {
+		_havePendingPostSwapScreenReset = false;
+
+		if (_haveHorizPanAnimations) {
+			AnimationDef animDef = _panRightAnimationDef;
+			uint rotationFrame = _direction * (animDef.lastFrame - animDef.firstFrame) / kNumDirections + animDef.firstFrame;
+			animDef.firstFrame = rotationFrame;
+			animDef.lastFrame = rotationFrame;
+
+			changeAnimation(animDef, false);
+
+			if (_gameState == kGameStateScript || _gameState == kGameStateIdle || _gameState == kGameStateScriptReset)
+				_gameState = kGameStateWaitingForAnimation;
+			else if (_gameState == kGameStateDelay)
+				_gameState = kGameStateWaitingForAnimationToDelay;
+			else
+				error("Triggered pre-idle actions from an unexpected game state");
+		}
+
+		return true;
 	}
+
+	return false;
 }
 
 void Runtime::returnToIdleState() {
@@ -3339,7 +3387,7 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 }
 
 void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride, const Fraction &defaultFrameRate) {
-	debug("changeAnimation: Anim: %u  Range: %u -> %u  Initial %u", animDef.animNum, animDef.firstFrame, animDef.lastFrame, initialFrame);
+	debug("changeAnimation: Anim: %i  Range: %u -> %u  Initial %u", animDef.animNum, animDef.firstFrame, animDef.lastFrame, initialFrame);
 
 	_animPlaylist.reset();
 
@@ -4473,7 +4521,23 @@ void Runtime::drawCompass() {
 }
 
 bool Runtime::isTrayVisible() const {
-	return _subtitleQueue.size() == 0 && !_loadedAnimationHasSound && _isInGame && (_gameState != kGameStateMenu);
+	if (_subtitleQueue.size() == 0 && _isInGame && (_gameState != kGameStateMenu)) {
+		// In Reah, animations with sounds are cutscenes that hide the tray.  In Schizm, the tray continues displaying.
+		//
+		// This is important in some situations, e.g. after "reuniting" with Hannah in the lower temple, if you go left,
+		// a ghost will give you a key.  Since that animation has sound, you'll return to idle in that animation,
+		// which will keep the tray hidden because it has sound.
+		if (_gameID == GID_REAH && _loadedAnimationHasSound)
+			return false;
+
+		// Don't display tray during the intro cinematic.
+		if (_gameID == GID_SCHIZM && _loadedAnimation == 200)
+			return false;
+
+		return true;
+	}
+
+	return false;
 }
 
 void Runtime::resetInventoryHighlights() {
@@ -4975,6 +5039,7 @@ void Runtime::recordSaveGameSnapshot() {
 	mainState->roomNumber = _roomNumber;
 	mainState->screenNumber = _screenNumber;
 	mainState->direction = _direction;
+	mainState->havePendingPostSwapScreenReset = false;
 	snapshot->hero = _hero;
 
 	snapshot->pendingStaticAnimParams = _pendingStaticAnimParams;
@@ -5073,6 +5138,7 @@ void Runtime::restoreSaveGameSnapshot() {
 	_roomNumber = mainState->roomNumber;
 	_screenNumber = mainState->screenNumber;
 	_direction = mainState->direction;
+	_havePendingPostSwapScreenReset = mainState->havePendingPostSwapScreenReset;
 	_hero = _saveGame->hero;
 	_swapOutRoom = _saveGame->swapOutRoom;
 	_swapOutScreen = _saveGame->swapOutScreen;
@@ -6980,6 +7046,7 @@ void Runtime::scriptOpHeroSetPos(ScriptArg_t arg) {
 	_altState->roomNumber = (stackArgs[1] >> 16) & 0xff;
 	_altState->screenNumber = (stackArgs[1] >> 8) & 0xff;
 	_altState->direction = stackArgs[1] & 0xff;
+	_altState->havePendingPostSwapScreenReset = true;
 }
 
 void Runtime::scriptOpHeroGet(ScriptArg_t arg) {
