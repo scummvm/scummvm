@@ -492,15 +492,19 @@ void BuildStepList(int32 oc, uint8 dp, uint8 back) {
 	w->WalkSteps[w->NumSteps++].curp = w->CurPanel;
 
 	// arrotonda la fine
-	if ((w->NumSteps > 2) && ((angle = lastangle) != (lastangle = w->WalkSteps[w->NumSteps - 2].Angle))) {
-		approx = angle - lastangle;
-		if (approx > T3D_PI) approx = -T3D_PI * 2 + approx;
-		else if (approx < -T3D_PI) approx = T3D_PI * 2 + approx;
-		approx /= 4.0f;
+	if ((w->NumSteps > 2)) {
+		angle = lastangle;
+		lastangle = w->WalkSteps[w->NumSteps - 2].Angle;
+		if (angle != lastangle) {
+			approx = angle - lastangle;
+			if (approx > T3D_PI) approx = -T3D_PI * 2 + approx;
+			else if (approx < -T3D_PI) approx = T3D_PI * 2 + approx;
+			approx /= 4.0f;
 
-		if (--LastStep > 0) w->WalkSteps[LastStep].Angle = angle - approx * 1.0f;
-		if (--LastStep > 0) w->WalkSteps[LastStep].Angle = angle - approx * 2.0f;
-		if (--LastStep > 0) w->WalkSteps[LastStep].Angle = angle - approx * 3.0f;
+			if (--LastStep > 0) w->WalkSteps[LastStep].Angle = angle - approx * 1.0f;
+			if (--LastStep > 0) w->WalkSteps[LastStep].Angle = angle - approx * 2.0f;
+			if (--LastStep > 0) w->WalkSteps[LastStep].Angle = angle - approx * 3.0f;
+		}
 	}
 	if (LastStep < 0) LastStep = 0;
 	lastangle = w->WalkSteps[0].Angle;
