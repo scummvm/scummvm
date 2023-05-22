@@ -148,7 +148,6 @@ Common::String Globals::operator[](const Common::String &name) const {
 	return result;
 }
 
-
 void Globals::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_startingTown);
 

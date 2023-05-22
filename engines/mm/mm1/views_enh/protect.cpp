@@ -43,7 +43,6 @@ void Protect::draw() {
 
 	// Protection spells
 	for (int i = 0; i < 7; ++i) {
-		g_globals->_activeSpells._arr[i] = 3;
 		if (g_globals->_activeSpells._arr[i]) {
 			Common::String line = Common::String::format("%s %s + %d%%",
 				STRING["dialogs.protect.protection"].c_str(),
@@ -54,7 +53,6 @@ void Protect::draw() {
 	}
 
 	// Light spell
-	g_globals->_activeSpells._arr[7] = 5;
 	if (g_globals->_activeSpells._arr[7]) {
 		writeString(0, yp += 8, Common::String::format("%s%d)",
 			STRING["dialogs.protect.8"].c_str(),
@@ -63,7 +61,6 @@ void Protect::draw() {
 
 	// The rest
 	for (int i = 8; i < 18; ++i) {
-		g_globals->_activeSpells._arr[i] = 3;
 		if (i == 13)
 			yp += 8;
 
@@ -71,7 +68,7 @@ void Protect::draw() {
 			Common::String line = STRING[Common::String::format(
 				"dialogs.protect.%d", i + 1)];
 			if (i == 17) {
-				line += Common::String::format(" %d %s",
+				line += Common::String::format("%d %s",
 					g_globals->_activeSpells._arr[17],
 					STRING["dialogs.protect.to_attacks"].c_str()
 				);
