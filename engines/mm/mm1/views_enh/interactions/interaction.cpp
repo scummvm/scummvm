@@ -146,16 +146,6 @@ bool Interaction::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_ESCAPE) {
 		leave();
 
-	} else if (msg._action == KEYBIND_SELECT) {
-		// ***DEBUG*** - Used for cycling through portraits.
-		// To let me pick good portraits from Xeen
-		_lines.clear();
-		++_portraitNum;
-		_portrait.load(Common::String::format("face%02d.fac", _portraitNum));
-
-		Interaction::draw();
-		writeNumber(20, 70, _portraitNum);
-
 	} else if (!PartyView::msgAction(msg)) {
 		viewAction();
 	}
