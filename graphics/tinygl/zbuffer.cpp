@@ -29,55 +29,12 @@
 
 #include "common/scummsys.h"
 #include "common/endian.h"
+#include "common/memory.h"
 
 #include "graphics/tinygl/zbuffer.h"
 #include "graphics/tinygl/zgl.h"
 
 namespace TinyGL {
-
-// adr must be aligned on an 'int'
-static void memset_s(void *adr, int val, int count) {
-	int n, v;
-	uint *p;
-	unsigned short *q;
-
-	p = (uint *)adr;
-	v = val | (val << 16);
-
-	n = count >> 3;
-	for (int i = 0; i < n; i++) {
-		p[0] = v;
-		p[1] = v;
-		p[2] = v;
-		p[3] = v;
-		p += 4;
-	}
-
-	q = (unsigned short *) p;
-	n = count & 7;
-	for (int i = 0; i < n; i++)
-		*q++ = val;
-}
-
-static void memset_l(void *adr, int val, int count) {
-	int n, v;
-	uint *p;
-
-	p = (uint *)adr;
-	v = val;
-	n = count >> 2;
-	for (int i = 0; i < n; i++) {
-		p[0] = v;
-		p[1] = v;
-		p[2] = v;
-		p[3] = v;
-		p += 4;
-	}
-
-	n = count & 3;
-	for (int i = 0; i < n; i++)
-		*p++ = val;
-}
 
 FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelFormat &format, bool enableStencilBuffer) {
 	_pbufWidth = width;
@@ -131,8 +88,8 @@ void FrameBuffer::clear(int clearZ, int z, int clearColor, int r, int g, int b,
 			// All "z" bytes are identical, use memset (fast)
 			memset(_zbuf, zc[0], sizeof(uint) * _pbufWidth * _pbufHeight);
 		} else {
-			// Cannot use memset, use a variant working on integers (slow)
-			memset_l(_zbuf, z, _pbufWidth * _pbufHeight);
+			// Cannot use memset, use a variant working on integers (possibly slower)
+			Common::memset4((uint32 *)_zbuf, z, _pbufWidth * _pbufHeight);
 		}
 	}
 	if (clearColor) {
@@ -145,13 +102,13 @@ void FrameBuffer::clear(int clearZ, int z, int clearColor, int r, int g, int b,
 			// All "color" bytes are identical, use memset (fast)
 			memset(pp, colorc[0], _pbufPitch * _pbufHeight);
 		} else {
-			// Cannot use memset, use a variant working on shorts/ints (slow)
+			// Cannot use memset, use a variant working on shorts/ints (possibly slower)
 			switch(_pbufBpp) {
 			case 2:
-				memset_s(pp, color, _pbufWidth * _pbufHeight);
+				Common::memset2((uint16 *)pp, color, _pbufWidth * _pbufHeight);
 				break;
 			case 4:
-				memset_l(pp, color, _pbufWidth * _pbufHeight);
+				Common::memset4((uint32 *)pp, color, _pbufWidth * _pbufHeight);
 				break;
 			default:
 				error("Unsupported pixel size %i", _pbufBpp);
@@ -167,20 +124,20 @@ void FrameBuffer::clearRegion(int x, int y, int w, int h, bool clearZ, int z,
                               bool clearColor, int r, int g, int b, bool clearStencil, int stencilValue) {
 	if (clearZ) {
 		int height = h;
-		uint *zbuf = _zbuf + (y * _pbufWidth);
+		uint *zbuf = _zbuf + (y * _pbufWidth) + x;
 		const uint8 *zc = (const uint8 *)&z;
 		uint i;
 		for (i = 1; i < sizeof(z) && zc[0] == zc[i]; i++) { ; }
 		if (i == sizeof(z)) {
 			// All "z" bytes are identical, use memset (fast)
 			while (height--) {
-				memset(zbuf + x, zc[0], sizeof(*zbuf) * w);
+				memset(zbuf, zc[0], sizeof(*zbuf) * w);
 				zbuf += _pbufWidth;
 			}
 		} else {
-			// Cannot use memset, use a variant working on integers (slow)
+			// Cannot use memset, use a variant working on integers (possibly slower)
 			while (height--) {
-				memset_l(zbuf + x, z, w);
+				Common::memset4((uint32 *)zbuf, z, w);
 				zbuf += _pbufWidth;
 			}
 		}
@@ -199,14 +156,14 @@ void FrameBuffer::clearRegion(int x, int y, int w, int h, bool clearZ, int z,
 				pp += _pbufPitch;
 			}
 		} else {
-			// Cannot use memset, use a variant working on shorts/ints (slow)
+			// Cannot use memset, use a variant working on shorts/ints (possibly slower)
 			while (height--) {
 				switch(_pbufBpp) {
 				case 2:
-					memset_s(pp, color, w);
+					Common::memset2((uint16 *)pp, color, w);
 					break;
 				case 4:
-					memset_l(pp, color, w);
+					Common::memset4((uint32 *)pp, color, w);
 					break;
 				default:
 					error("Unsupported pixel size %i", _pbufBpp);
