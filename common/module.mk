@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	language.o \
 	localization.o \
 	macresman.o \
+	memory.o \
 	memorypool.o \
 	md5.o \
 	mutex.o \
