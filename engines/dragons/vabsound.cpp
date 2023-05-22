@@ -179,7 +179,7 @@ int16 VabSound::getBaseToneKey(uint16 program, uint16 key) {
 	if (program < _header.numVAG) {
 		for (int i = 0; i < _programAttrs[program].tones; i++) {
 			if (_toneAttrs[i].prog == program && _toneAttrs[i].min <= key && _toneAttrs[i].max >= key) {
-				debug("tone key %d center %d mode %d shift %d min %d, max %d adsr 1 %d adsr 2 %d pbmin %d pbmax %d",
+				debug(3, "tone key %d center %d mode %d shift %d min %d, max %d adsr 1 %d adsr 2 %d pbmin %d pbmax %d",
 		  			key, _toneAttrs[i].center, _toneAttrs[i].mode, _toneAttrs[i].shift, _toneAttrs[i].min, _toneAttrs[i].max,
 					  _toneAttrs[i].adsr1, _toneAttrs[i].adsr2, _toneAttrs[i].pbmin, _toneAttrs[i].pbmax);
 				return _toneAttrs[i].center;
