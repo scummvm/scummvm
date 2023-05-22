@@ -21,6 +21,7 @@
 
 #include "common/algorithm.h"
 #include "common/endian.h"
+#include "common/memory.h"
 #include "common/util.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
@@ -224,10 +225,10 @@ void Surface::hLine(int x, int y, int x2, uint32 color) {
 		memset(ptr, (byte)color, x2 - x + 1);
 	} else if (format.bytesPerPixel == 2) {
 		uint16 *ptr = (uint16 *)getBasePtr(x, y);
-		Common::fill(ptr, ptr + (x2 - x + 1), (uint16)color);
+		Common::memset2(ptr, (uint16)color, x2 - x + 1);
 	} else if (format.bytesPerPixel == 4) {
 		uint32 *ptr = (uint32 *)getBasePtr(x, y);
-		Common::fill(ptr, ptr + (x2 - x + 1), color);
+		Common::memset4(ptr, (uint32)color, x2 - x + 1);
 	} else {
 		error("Surface::hLine: bytesPerPixel must be 1, 2, or 4");
 	}
@@ -286,29 +287,29 @@ void Surface::fillRect(Common::Rect r, uint32 color) {
 		if ((uint16)color != ((color & 0xff) | (color & 0xff) << 8))
 			useMemset = false;
 	} else if (format.bytesPerPixel == 4) {
-		useMemset = false;
+		lineLen *= 4;
+		if ((uint32)color != ((color & 0xff) | (color & 0xff) << 8 | (color & 0xff) << 16 | (color & 0xff) << 24))
+			useMemset = false;
 	} else if (format.bytesPerPixel != 1) {
 		error("Surface::fillRect: bytesPerPixel must be 1, 2, or 4");
 	}
 
+	byte *ptr = (byte *)getBasePtr(r.left, r.top);
 	if (useMemset) {
-		byte *ptr = (byte *)getBasePtr(r.left, r.top);
 		while (height--) {
 			memset(ptr, (byte)color, lineLen);
 			ptr += pitch;
 		}
 	} else {
 		if (format.bytesPerPixel == 2) {
-			uint16 *ptr = (uint16 *)getBasePtr(r.left, r.top);
 			while (height--) {
-				Common::fill(ptr, ptr + width, (uint16)color);
-				ptr += pitch / 2;
+				Common::memset2((uint16 *)ptr, (uint16)color, width);
+				ptr += pitch;
 			}
 		} else {
-			uint32 *ptr = (uint32 *)getBasePtr(r.left, r.top);
 			while (height--) {
-				Common::fill(ptr, ptr + width, color);
-				ptr += pitch / 4;
+				Common::memset4((uint32 *)ptr, (uint32)color, width);
+				ptr += pitch;
 			}
 		}
 	}
