@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-21 19:17+0000\n"
+"POT-Creation-Date: 2023-05-22 22:12+0000\n"
 "PO-Revision-Date: 2023-05-19 23:40+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -5394,7 +5394,7 @@ msgstr ""
 "Peli ei salli lopettamista tässä kohdassa. Oletko varma että haluat "
 "kumminkin lopettaa?"
 
-#: engines/dragons/dragons.cpp:1885
+#: engines/dragons/dragons.cpp:1884
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"

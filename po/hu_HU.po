@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-21 19:17+0000\n"
+"POT-Creation-Date: 2023-05-22 22:12+0000\n"
 "PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -5434,7 +5434,7 @@ msgid ""
 msgstr ""
 "A játék most megakadályozza a kilépést. Biztos, hogy mégis ki akarsz lépni?"
 
-#: engines/dragons/dragons.cpp:1885
+#: engines/dragons/dragons.cpp:1884
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-21 19:17+0000\n"
+"POT-Creation-Date: 2023-05-22 22:12+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -5387,7 +5387,7 @@ msgstr ""
 "Гульня не дазваляе выйсьці цяпер. Ці сапраўды вы хочаце выйсьці, ня гледзячы "
 "на гэта?"
 
-#: engines/dragons/dragons.cpp:1885
+#: engines/dragons/dragons.cpp:1884
 #, fuzzy, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-21 19:17+0000\n"
+"POT-Creation-Date: 2023-05-22 22:12+0000\n"
 "PO-Revision-Date: 2023-05-18 01:27+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -5453,7 +5453,7 @@ msgstr ""
 "An dieser Stelle ist nicht vorgesehen, das Spiel zu beenden. Möchtest du das "
 "Spiel dennoch verlassen?"
 
-#: engines/dragons/dragons.cpp:1885
+#: engines/dragons/dragons.cpp:1884
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"
