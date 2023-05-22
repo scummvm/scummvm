@@ -156,7 +156,8 @@ bool GameMessages::msgMouseDown(const MouseDownMessage &msg) {
 	// If yes/no prompting, also pass events to buttons view
 	if (_yCallback)
 		return send("MessagesYesNo", msg);
-	return false;
+
+	return msgAction(KeybindingAction(KEYBIND_SELECT));
 }
 
 bool GameMessages::msgMouseUp(const MouseUpMessage &msg) {

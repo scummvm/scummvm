@@ -278,6 +278,7 @@ dialogs:
 	unlock:
 		success: "Success!"
 		failed: "Unlock failed!"
+		none: "Unlock: No door present"
 	view_characters:
 		title: "View all characters"
 		legend1: "'a'-'%c' to view a character"
