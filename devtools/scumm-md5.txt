@@ -85,6 +85,7 @@ maniac	Maniac Mansion
 
 	f0d294891b813d3dcc525b89bc318815	1988	ru	DOS	V2	V2	-	Fan translation?, sev
 	06865ea0fae1aeef2d6b96d8ae7ecc41	1988	ru	DOS	V2	V2	-	Fan translation	PRCA RuSCUMM 1.0
+	7c731228dc1cdc33ed426313d89d07e7	1988	he	DOS	V2	V2	-	Hebrew fan translation
 
 zak	Zak McKracken and the Alien Mindbenders
 	254fede2f15dbb32a23760d601b01816	1914	en	C64	V1	-	-
@@ -393,6 +394,7 @@ samnmax	Sam &amp; Max Hit the Road
 	0425954a9db5c340861672892c3e678d	7505	en	All	-	Demo	-	Kirben
 	b9fce749c3e9da0d41c78213c179631b	7505	en	DOS	CD	Demo	-	eientei
 	6dead580b0ff14d5f7b33b4219f04159	16556335	en	Mac	-	Demo	Mac bundle	Fingolfin
+	31b614ab9a637f771f39405f0500da86	9080	he	DOS	-	CD	-	Hebrew fan translation
 
 ft	Full Throttle
 	41958e24d03181ff9a381a66d048a581	-1	br	All?	-	-	-	Danilo E.S.
@@ -411,6 +413,7 @@ ft	Full Throttle
 	32a433dea56b86a55b59e4ff7d755711	7885	en	DOS	Demo	Demo	-
 	9d7b67be003fea60be4dcbd193611936	11164	en	Mac	Demo	Demo	-	Fingolfin
 	9b7452b5cd6d3ffb2b2f5118010af84f	116463537	en	Mac	Demo	Demo	Mac bundle	Fingolfin, Joachim Eberhard
+	8ead2c01c48c2e3d15d6a89b86cd84ab	19697	he	DOS	-	-	-	Hebrew fan translation
 
 dig	The Dig
 	d8323015ecb8b10bf53474f6e6b0ae33	16304	All	All	-	-	-	Fingolfin
@@ -425,6 +428,7 @@ dig	The Dig
 
 	362c1d281fb9899254cda66ad246c66a	3472	en	All	Demo	Demo	-	Fingolfin
 	cd9c05e755d7bf8e9b9590ad1ebe273e	45156007	en	Mac	Demo	Demo	Mac bundle	Fingolfin
+	3221ab85c833fbc0e6cf54ad55b4c082	16304	he	DOS	-	-	-	Hebrew fan translation
 
 comi	The Curse of Monkey Island
 	fe60d6b5ff51b0553ac59963123b5777	76791	All	Windows	-	-	-	Fingolfin
