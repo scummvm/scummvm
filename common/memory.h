@@ -35,6 +35,22 @@ namespace Common {
  */
 
 /**
+ * Fills memory [dst, dst + count) with the value val.
+ *
+ * This is a replacement function for Common::fill, using an unrolled
+ * loop to maximize performance on most architectures.
+ *
+ * This fill operation is extensively used throughout the graphics code,
+ * so this counts as one of the main bottlenecks. Please replace it with
+ * assembly when possible!
+ *
+ * Note that pointers passed to these functions must be aligned correctly.
+ */
+void memset2(uint16 *dst, uint16 val, size_t count);
+void memset4(uint32 *dst, uint32 val, size_t count);
+void memset8(uint64 *dst, uint64 val, size_t count);
+
+/**
  * Copies data from the range [first, last) to [dst, dst + (last - first)).
  * It requires the range [dst, dst + (last - first)) to be valid and
  * uninitialized.
