@@ -64,9 +64,9 @@ else:
 	csvLibFound = True
 
 try:
-	import xlrd
+	import pandas
 except ImportError:
-	print ("[Error] xlrd python library is required to be installed!")
+	print ("[Error] pandas python library is required to be installed!")
 else:
 	xlrdLibFound = True
 
@@ -76,13 +76,6 @@ except ImportError:
 	print ("[Error] xlwt python library is required to be installed!")
 else:
 	xlwtLibFound = True
-
-try:
-	from xlutils.copy import copy
-except ImportError:
-	print ("[Error] xlutils python library is required to be installed!")
-else:
-	xlutilsLibFound = True
 
 try:
 	import re
@@ -108,7 +101,6 @@ if 	(not osLibFound) \
 	or (not csvLibFound) \
 	or (not xlrdLibFound) \
 	or (not xlwtLibFound) \
-	or (not xlutilsLibFound) \
 	or (not reLibFound) \
 	or (not structLibFound):
 	sys.stdout.write("[Error] Errors were found when trying to import required python libraries\n")
@@ -630,12 +622,11 @@ def outputMIX():
 	# TODO all strings are NULL terminated in the TRE file!
 
 def translateQuoteToAsciiProper(cellObj, pSheetName):
-	if cellObj.ctype == xlrd.XL_CELL_NUMBER:
-		return '%.2f' % cellObj.value
-	newQuoteReplaceSpecials =  cellObj.value.encode("utf-8")
+	if isinstance(cellObj, float):
+		return ('%.2f' % cellObj).encode('ascii')
+	newQuoteReplaceSpecials =  cellObj
 	#if gTraceModeEnabled:
 	#	print ('[Debug] Encoded to unicode: %s' % (newQuoteReplaceSpecials))
-	newQuoteReplaceSpecials = newQuoteReplaceSpecials.decode("utf-8")
 
 	pertinentListOfOutOfOrderGlyphs = []
 
@@ -713,6 +704,17 @@ def parseIntCellValue(cell_obj_value, row_idx, col_idx, xl_sheet_name, xl_sheet_
 		sys.exit()
 	return retCandValue
 
+def addSheet(filename, book, new_sheetname, new_sheet):
+	sheet_names = book.sheet_names
+	sheets = [book.parse(i, header=None) for i in range(len(sheet_names))]
+	try:
+		with pandas.ExcelWriter(filename) as writer:
+			new_sheet.to_excel(writer, sheet_name=new_sheetname, index=False, header=False)
+			for (name, sheet) in zip(sheet_names, sheets):
+				sheet.to_excel(writer, sheet_name=name, index=False, header=False)
+	except Exception as e:
+		print ("[Error] Giving up: Could not save to output Excel file:: " + str(e))
+		sys.exit(1) # Terminate if we couldn't write to output Excel file
 
 def inputXLS(pathtoInputExcelFilename):
 	global gNumOfSpokenQuotes
@@ -730,7 +732,7 @@ def inputXLS(pathtoInputExcelFilename):
 		sys.exit(1) # Terminate if the input Excel had unsupported extension (or none)
 
 	try:
-		xl_workbook = xlrd.open_workbook(pathtoInputExcelFilename, encoding_override="utf-8")
+		xl_workbook = pandas.ExcelFile(pathtoInputExcelFilename)
 		if xl_workbook is not None:
 			print ("[Info] Opened Excel input file: %s" % (pathtoInputExcelFilename))
 	except Exception as e:
@@ -767,7 +769,7 @@ def inputXLS(pathtoInputExcelFilename):
 	try:
 		if gTraceModeEnabled:
 			print ('[Debug] Checking for existence of sheet: ' + SUPPORTED_DIALOGUE_VERSION_SHEET)
-		xl_sheet = xl_workbook.sheet_by_name(SUPPORTED_DIALOGUE_VERSION_SHEET)
+		xl_sheet = xl_workbook.parse(SUPPORTED_DIALOGUE_VERSION_SHEET, header=None)
 	except Exception as e:
 		if gTraceModeEnabled:
 			print ('[Debug] Could not open requested sheet: ' + SUPPORTED_DIALOGUE_VERSION_SHEET + ' in Excel::' + str(e))
@@ -777,37 +779,11 @@ def inputXLS(pathtoInputExcelFilename):
 		if gTraceModeEnabled:
 			print ('[Debug] Sheet: %s was not found. Creating a temporary sheet for version info...' % (SUPPORTED_DIALOGUE_VERSION_SHEET))
 		sbtlVersTRInstance = sbtlVersTextResource(gTraceModeEnabled)
-		bookCopy = copy(xl_workbook)
-		xl_sheet = bookCopy.add_sheet(SUPPORTED_DIALOGUE_VERSION_SHEET)
-		n = 0
-		col1_name = 'Subtitles Version Info'
-		xl_sheet.write(n, 0, col1_name)
-		# Second Row
-		n = 1
-		col1_name = 'ID'
-		col2_name = 'Value'
-		col3_name = 'Notes'
-		xl_sheet.write(n, 0, col1_name)
-		xl_sheet.write(n, 1, col2_name)
-		xl_sheet.write(n, 2, col3_name)
-		n += 1
-		objUTF8Unicode = None
-		for m, e1 in enumerate(sbtlVersTRInstance.getSbtlVersEntriesList(), n):
-			xl_sheet.write(m, 0, e1[0])
-			for i1 in range(1,3):
-				objStr = e1[i1]
-				try:
-					# We assume utf-8 charset (since we get the text from a python script)
-					objUTF8Unicode = unicode(objStr, 'utf-8')
-				except Exception as e:
-					print ('[Error] Failed to create unicode string: ' + str(e))
-					objUTF8Unicode = unicode("???", 'utf-8')
-				xl_sheet.write(m, i1, objUTF8Unicode)
-		try:
-			bookCopy.save(pathtoInputExcelFilename)
-		except Exception as e:
-			print ("[Error] Giving up: Could not save to output Excel file:: " + str(e))
-			sys.exit(1) # Terminate if we couldn't write to output Excel file
+		xl_sheet = pandas.DataFrame([
+			['Subtitles Version Info'],
+			['ID', 'Value', 'Notes']
+		] + sbtlVersTRInstance.getSbtlVersEntriesList())
+		addSheet(pathtoInputExcelFilename, xl_workbook, SUPPORTED_DIALOGUE_VERSION_SHEET, xl_sheet)
 
 		if gTraceModeEnabled:
 			print ('[Debug] Sheet: %s was created successfully.' % (SUPPORTED_DIALOGUE_VERSION_SHEET))
@@ -820,7 +796,7 @@ def inputXLS(pathtoInputExcelFilename):
 	try:
 		if gTraceModeEnabled:
 			print ('[Debug] Checking for existence of sheet: ' + SUPPORTED_EX_CR_SHEET)
-		xl_sheet = xl_workbook.sheet_by_name(SUPPORTED_EX_CR_SHEET)
+		xl_sheet = xl_workbook.parse(SUPPORTED_EX_CR_SHEET, header=None)
 	except Exception as e:
 		if gTraceModeEnabled:
 			print ('[Debug] Could not open requested sheet: ' + SUPPORTED_EX_CR_SHEET + ' in Excel::' + str(e))
@@ -830,37 +806,10 @@ def inputXLS(pathtoInputExcelFilename):
 		if gTraceModeEnabled:
 			print ('[Debug] Sheet: %s was not found. Creating a temporary sheet for version info...' % (SUPPORTED_EX_CR_SHEET))
 		excrTRInstance = extracTextResource(gTraceModeEnabled)
-		bookCopy = copy(xl_workbook)
-		xl_sheet = bookCopy.add_sheet(SUPPORTED_EX_CR_SHEET)
-		n = 0
-		col1_name = 'Extra Info'
-		xl_sheet.write(n, 0, col1_name)
-		# Second Row
-		n = 1
-		col1_name = 'ID'
-		col2_name = 'Value'
-		col3_name = 'Notes'
-		xl_sheet.write(n, 0, col1_name)
-		xl_sheet.write(n, 1, col2_name)
-		xl_sheet.write(n, 2, col3_name)
-		n += 1
-		objUTF8Unicode = None
-		for m, e1 in enumerate(excrTRInstance.getExtracEntriesList(), n):
-			xl_sheet.write(m, 0, e1[0])
-			for i1 in range(1,3):
-				objStr = e1[i1]
-				try:
-					# We assume utf-8 charset (since we get the text from a python script)
-					objUTF8Unicode = unicode(objStr, 'utf-8')
-				except Exception as e:
-					print ('[Error] Failed to create unicode string: ' + str(e))
-					objUTF8Unicode = unicode("???", 'utf-8')
-				xl_sheet.write(m, i1, objUTF8Unicode)
-		try:
-			bookCopy.save(pathtoInputExcelFilename)
-		except Exception as e:
-			print ("[Error] Giving up: Could not save to output Excel file:: " + str(e))
-			sys.exit(1) # Terminate if we couldn't write to output Excel file
+		xl_sheet = pandas.DataFrame([['Extra Info'], ['ID', 'Value', 'Notes']]
+					    + excrTRInstance.getExtracEntriesList())
+
+		addSheet(pathtoInputExcelFilename, xl_workbook, SUPPORTED_EX_CR_SHEET, xl_sheet)
 
 		if gTraceModeEnabled:
 			print ('[Debug] Sheet: %s was created successfully.' % (SUPPORTED_EX_CR_SHEET))
@@ -873,7 +822,7 @@ def inputXLS(pathtoInputExcelFilename):
 	for sheetDialogueName in mergedListOfSupportedSubtitleSheetsAndTranslatedTREs:
 		xl_sheet = None
 		try:
-			xl_sheet = xl_workbook.sheet_by_name(sheetDialogueName)
+			xl_sheet = xl_workbook.parse(sheetDialogueName, header=None)
 		except Exception as e:
 			if gTraceModeEnabled:
 				print ('[Debug] Could not open requested sheet: ' + sheetDialogueName + ' in Excel::' + str(e))
@@ -884,8 +833,8 @@ def inputXLS(pathtoInputExcelFilename):
 
 		if xl_sheet is not None:
 			if gTraceModeEnabled:
-				print ('[Debug] Sheet name: %s' % xl_sheet.name)
-			gNumOfSpokenQuotes = xl_sheet.nrows - 2 # all rows minus the first TWO rows with headers
+				print ('[Debug] Sheet name: %s' % sheetDialogueName)
+			gNumOfSpokenQuotes = xl_sheet.shape[0] - 2 # all rows minus the first TWO rows with headers
 			if gTraceModeEnabled:
 				print ('[Debug] Number of spoken quotes: %d' % gNumOfSpokenQuotes)
 			# stats for debug
@@ -911,19 +860,19 @@ def inputXLS(pathtoInputExcelFilename):
 			# 1: new version - Col order: "Frame Start", "Frame End", "Subtitle", "Time Start", "Time End", "By Actor", "Notes"
 			vqaSheetFormatVersion = 0
 
-			if xl_sheet.name in supportedInGameQuotesSheetsList:
+			if sheetDialogueName in supportedInGameQuotesSheetsList:
 				if gTraceModeEnabled:
 					print ('[Debug] IN GAME QUOTES')
 				mode = 1 #in-game quote
-			elif xl_sheet.name in mergedListOfSupportedSubtitleSheets:
+			elif sheetDialogueName in mergedListOfSupportedSubtitleSheets:
 				if gTraceModeEnabled:
 					print ('[Debug] VQA SCENE DIALOGUE')
 				mode = 2 #VQA
 				# check if the VQA sheets are of the old format or the new format
-				cell_obj = xl_sheet.cell(1, 0)
-				if cell_obj is not None and cell_obj.value.lower() == 'frame start':
+				cell_obj = xl_sheet.iat[1, 0]
+				if cell_obj is not None and isinstance(cell_obj, str) and cell_obj.lower() == 'frame start':
 					vqaSheetFormatVersion = 1
-			elif xl_sheet.name in supportedTranslatedTrxFilenamesList:
+			elif sheetDialogueName in supportedTranslatedTrxFilenamesList:
 				if gTraceModeEnabled:
 					print ('[Debug] TRANSLATED TEXT RESOURCE')
 				mode = 3 # Translated TRE
@@ -931,11 +880,12 @@ def inputXLS(pathtoInputExcelFilename):
 			del gTableOfStringIds[:]
 			del gTableOfStringEntries[:]
 			del gTableOfStringOffsets[:]
-			for row_idx in range(2, xl_sheet.nrows):
+			for row_idx in range(2, xl_sheet.shape[0]):
 				#if gTraceModeEnabled:
 				#	print "[Debug] Line %d" % (row_idx)
-				for col_idx in range(0, xl_sheet.ncols):
-					cell_obj = xl_sheet.cell(row_idx, col_idx)
+				for col_idx in range(0, xl_sheet.shape[1]):
+					cell_obj = xl_sheet.iat[row_idx, col_idx]
+#					print ('[Debug] Coord: [%d, %d, %s] cell_obj: [%s]' % (col_idx, row_idx, sheetDialogueName, cell_obj))
 					#
 					# FOR IN-GAME QUOTES -- Iterate through columns starting from col 0. We need cols: 0, 2
 					#
@@ -944,12 +894,12 @@ def inputXLS(pathtoInputExcelFilename):
 						#	print ('[Debug] Column: [%s] cell_obj: [%s]' % (col_idx, cell_obj))
 						if(col_idx == 0):
 							#switchFlagShowQuote = False
-							twoTokensfirstColSplitAtDotXLS = cell_obj.value.split('.', 1)
+							twoTokensfirstColSplitAtDotXLS = cell_obj.split('.', 1)
 							if len(twoTokensfirstColSplitAtDotXLS) == 2:
 								twoTokensfirstColSplitAtDashXLS = twoTokensfirstColSplitAtDotXLS[0].split('-', 1)
 								if len(twoTokensfirstColSplitAtDashXLS) == 2:
-									tmpActorPart = parseIntCellValue(twoTokensfirstColSplitAtDashXLS[0], row_idx, col_idx, xl_sheet.name, xl_sheet.nrows, xl_sheet.ncols)
-									tmpSubQuotePart = parseIntCellValue(twoTokensfirstColSplitAtDashXLS[1], row_idx, col_idx, xl_sheet.name, xl_sheet.nrows, xl_sheet.ncols)
+									tmpActorPart = parseIntCellValue(twoTokensfirstColSplitAtDashXLS[0], row_idx, col_idx, sheetDialogueName, xl_sheet.shape[0], xl_sheet.shape[1])
+									tmpSubQuotePart = parseIntCellValue(twoTokensfirstColSplitAtDashXLS[1], row_idx, col_idx, sheetDialogueName, xl_sheet.shape[0], xl_sheet.shape[1])
 									tmpQuoteID = tmpActorPart * 10000 + tmpSubQuotePart
 									#if gTraceModeEnabled:
 									#	print ('[Debug] Row_idx: %d. Tag: %s, QuoteId: [%d]' % (row_idx, twoTokensfirstColSplitAtDotXLS[0], tmpQuoteID))
@@ -964,7 +914,7 @@ def inputXLS(pathtoInputExcelFilename):
 								#	print ('[Debug] object: %s' % (cell_obj))
 								##	newQuoteReplaceSpecials =	 cell_obj.value.decode("utf-8") # unicode(cell_obj.value, 'windows-1252')
 								##	print ('[Debug] decoded to unicode: %s ' % (newQuoteReplaceSpecials)) # error with char xf1
-							newQuoteReplaceSpecialsAscii = translateQuoteToAsciiProper(cell_obj, xl_sheet.name)
+							newQuoteReplaceSpecialsAscii = translateQuoteToAsciiProper(cell_obj, sheetDialogueName)
 							#if switchFlagShowQuote == True:
 								#if gTraceModeEnabled:
 								#	print ('[Debug] length: %d: %s' % (len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
@@ -987,17 +937,17 @@ def inputXLS(pathtoInputExcelFilename):
 					#
 					elif mode == 2:
 						if (col_idx == 2): # subtitle text
-							newQuoteReplaceSpecialsAscii = translateQuoteToAsciiProper(cell_obj, xl_sheet.name)
+							newQuoteReplaceSpecialsAscii = translateQuoteToAsciiProper(cell_obj, sheetDialogueName)
 							#print ('[Debug] length: %d: %s' % (len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
 							#print ':'.join(x.encode('hex') for x in newQuoteReplaceSpecialsAscii)	# seems to work.  new chars are non-printable but exist in string
 							# don't append to gTableOfStringEntries yet
 						elif (vqaSheetFormatVersion == 1 and col_idx == 0) or (vqaSheetFormatVersion == 0 and col_idx == 9):
 							# startFrame
 							#print "[Debug] cell: %s" % (cell_obj.value)
-							tmpStartFrame = parseIntCellValue(cell_obj.value, row_idx, col_idx, xl_sheet.name, xl_sheet.nrows, xl_sheet.ncols)
+							tmpStartFrame = parseIntCellValue(cell_obj, row_idx, col_idx, sheetDialogueName, xl_sheet.shape[0], xl_sheet.shape[1])
 						elif (vqaSheetFormatVersion == 1 and col_idx == 1) or (vqaSheetFormatVersion == 0 and col_idx == 10):
 							# endFrame
-							tmpEndFrame = parseIntCellValue(cell_obj.value, row_idx, col_idx, xl_sheet.name, xl_sheet.nrows, xl_sheet.ncols)
+							tmpEndFrame = parseIntCellValue(cell_obj, row_idx, col_idx, sheetDialogueName, xl_sheet.shape[0], xl_sheet.shape[1])
 						if (vqaSheetFormatVersion == 1 and col_idx == 2) or (vqaSheetFormatVersion == 0 and col_idx == 10):
 							# do the final processing when you reached the final meaningful column
 							tmpQuoteID = tmpStartFrame | (tmpEndFrame << 16) # top 16 bits are end frame (up to 65536 frames which is enough) and low 16 bits are startFrame
@@ -1017,7 +967,7 @@ def inputXLS(pathtoInputExcelFilename):
 						if gTraceModeEnabled:
 							print ('[Debug] Column: [%s] cell_obj: [%s]' % (col_idx, cell_obj))
 						if(col_idx == 0):
-							tmpQuoteID = parseIntCellValue(cell_obj.value, row_idx, col_idx, xl_sheet.name, xl_sheet.nrows, xl_sheet.ncols)
+							tmpQuoteID = parseIntCellValue(cell_obj, row_idx, col_idx, sheetDialogueName, xl_sheet.shape[0], xl_sheet.shape[1])
 							gTableOfStringIds.append(tmpQuoteID)
 						elif(col_idx == 1) :
 							#if switchFlagShowQuote == True:
@@ -1025,14 +975,14 @@ def inputXLS(pathtoInputExcelFilename):
 							#	 print ('[Debug] object: %s' % (cell_obj))
 							#	 #newQuoteReplaceSpecials =	 cell_obj.value.decode("utf-8") # unicode(cell_obj.value, 'windows-1252')
 							#	 #print ('[Debug] decoded to unicode: %s ' % (newQuoteReplaceSpecials)) # error with char xf1
-							newQuoteReplaceSpecialsAscii = translateQuoteToAsciiProper(cell_obj, xl_sheet.name)
-							if xl_sheet.name == SUPPORTED_DIALOGUE_VERSION_SHEET:
+							newQuoteReplaceSpecialsAscii = translateQuoteToAsciiProper(cell_obj, sheetDialogueName)
+							if sheetDialogueName == SUPPORTED_DIALOGUE_VERSION_SHEET:
 								if tmpQuoteID == 2:
 								#generate date timestamp
 									now = datetime.now()
-									newQuoteReplaceSpecialsAscii = now.strftime("%H:%M:%S %d/%m/%Y")
+									newQuoteReplaceSpecialsAscii = makeAscii(now.strftime("%H:%M:%S %d/%m/%Y"))
 								elif tmpQuoteID == 3:
-									newQuoteReplaceSpecialsAscii = gActiveLanguageDescriptionCodeTuple[2]
+									newQuoteReplaceSpecialsAscii = makeAscii(gActiveLanguageDescriptionCodeTuple[2])
 							#if switchFlagShowQuote == True:
 							#	 print ('[Debug] length: %d: %s' % (len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
 							#print ':'.join(x.encode('hex') for x in newQuoteReplaceSpecialsAscii)	 # seems to work.  new chars are non-printable but exist in string
