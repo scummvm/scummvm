@@ -1648,6 +1648,7 @@ bool Runtime::runWaitForAnimation() {
 			}
 		} else if (evt.type == kOSEventTypeKeymappedEvent && evt.keymappedEvent == kKeymappedEventSkipAnimation) {
 			_animFrameRateLock = Fraction(600, 1);
+			_animFramesDecoded = 0;	// Reset decoder count so the start time resyncs
 		}
 	}
 
@@ -3478,10 +3479,8 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 		}
 	}
 
-	if (_animFrameRateLock.numerator) {
-		_animFramesDecoded = 0;
-		_animStartTime = 0;
-	}
+	_animFramesDecoded = 0;
+	_animStartTime = 0;
 
 	debug(1, "Animation last frame set to %u", animDef.lastFrame);
 }
@@ -6779,8 +6778,12 @@ void Runtime::scriptOpSndPlayEx(ScriptArg_t arg) {
 	SoundInstance *cachedSound = nullptr;
 	resolveSoundByName(soundName, true, soundID, cachedSound);
 
+	// TODO: Need to figure out how looping is determined here.
+	// It looks like SndPlayEx is only used for non-looping.  For example,
+	// 3512_pour is called with SndPlayEx.  However, this doesn't explain what
+	// the SndHalt opcode is used for.
 	if (cachedSound)
-		triggerSound(true, *cachedSound, sndParamArgs[0], sndParamArgs[1], false, false);
+		triggerSound(false, *cachedSound, sndParamArgs[0], sndParamArgs[1], false, false);
 }
 
 void Runtime::scriptOpSndPlay3D(ScriptArg_t arg) {
