@@ -184,7 +184,7 @@ void Info::VarDel(const std::string &name) {
 void Info::TraitAdd(const std::string &per_id, const int &trait_id) {
 	if (PersonValid(per_id)) // Valid person id
 	{
-		if (trait_id >= 0 && trait_id < gEventStore.trait.size()) // Valid trait id
+		if (trait_id >= 0 && (unsigned int)trait_id < gEventStore.trait.size()) // Valid trait id
 		{
 			// Check for duplicate traits, DONT award anything if duplicate found
 			Person *p = &PersonGet(per_id);
@@ -203,7 +203,7 @@ void Info::TraitAdd(const std::string &per_id, const int &trait_id) {
 void Info::TraitDel(const std::string &per_id, const int &trait_id) {
 	if (PersonValid(per_id)) // Valid person id
 	{
-		if (trait_id > 0 && trait_id < gEventStore.trait.size()) // Valid trait id
+		if (trait_id > 0 && (unsigned int)trait_id < gEventStore.trait.size()) // Valid trait id
 		{
 			Person *p = &PersonGet(per_id);
 
