@@ -19,34 +19,83 @@
  *
  */
 #include "common/file.h"
+#include "common/memstream.h"
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
 
-void DrillerEngine::loadAssetsAtariFullGame() {
+Common::SeekableReadStream *DrillerEngine::decryptFileAtari(const Common::String filename) {
 	Common::File file;
-	file.open("x.prg");
-
+	file.open(filename);
 	if (!file.isOpen())
-		error("Failed to open 'x.prg' executable for AtariST");
+		error("Failed to open %s", filename.c_str());
 
-	_border = loadAndConvertNeoImage(&file, 0x1371a);
-	byte *palette = (byte *)malloc(16 * 3);
-	for (int i = 0; i < 16; i++) { // gray scale palette
-		palette[i * 3 + 0] = i * (255 / 16);
-		palette[i * 3 + 1] = i * (255 / 16);
-		palette[i * 3 + 2] = i * (255 / 16);
+	int size = file.size();
+	byte *encryptedBuffer = (byte *)malloc(size);
+	file.read(encryptedBuffer, size);
+	file.close();
+
+	byte *a6 = encryptedBuffer + 0x118;
+	byte *a5 = encryptedBuffer + size - 4;
+	uint64 key = 0xb9f11bce;
+
+	while (a6 <= a5) {
+		uint64 d0 = (a6[0] << 24) | (a6[1] << 16) | (a6[2] << 8) | a6[3];
+		d0 += key;
+		d0 = uint32(d0);
+
+		a6[0] = byte((d0 >> 24) & 0xFF);
+		a6[1] = byte((d0 >> 16) & 0xFF);
+		a6[2] = byte((d0 >> 8) & 0xFF);
+		a6[3] = byte(d0 & 0xFF);
+
+		key += 0x51684624;
+		key = uint32(key);
+		a6 += 4;
 	}
-	_title = loadAndConvertNeoImage(&file, 0x10, palette);
 
-	loadFonts(&file, 0x8a32);
-	loadMessagesFixedSize(&file, 0xc5d8, 14, 20);
-	loadGlobalObjects(&file, 0xbccc, 8);
-	load8bitBinary(&file, 0x29b3c, 16);
-	loadPalettes(&file, 0x296fa);
-	loadSoundsFx(&file, 0x30da6, 25);
+	return (new Common::MemoryReadStream(encryptedBuffer, size));
+}
+
+void DrillerEngine::loadAssetsAtariFullGame() {
+
+	if (_variant & GF_ATARI_RETAIL) {
+		Common::SeekableReadStream *stream = decryptFileAtari("x.prg");
+
+		_border = loadAndConvertNeoImage(stream, 0x14b96);
+		_title = loadAndConvertNeoImage(stream, 0x1c916);
+
+		loadFonts(stream, 0x8a92);
+		loadMessagesFixedSize(stream, 0xda22, 14, 20);
+		loadGlobalObjects(stream, 0xd116, 8);
+		load8bitBinary(stream, 0x2afb8, 16);
+		loadPalettes(stream, 0x2ab76);
+		//loadSoundsFx(&file, 0x30da6, 25);
+	} else if (_variant & GF_ATARI_BUDGET) {
+		Common::File file;
+		file.open("x.prg");
+
+		if (!file.isOpen())
+			error("Failed to open 'x.prg' executable for AtariST");
+
+		_border = loadAndConvertNeoImage(&file, 0x1371a);
+		byte *palette = (byte *)malloc(16 * 3);
+		for (int i = 0; i < 16; i++) { // gray scale palette
+			palette[i * 3 + 0] = i * (255 / 16);
+			palette[i * 3 + 1] = i * (255 / 16);
+			palette[i * 3 + 2] = i * (255 / 16);
+		}
+		_title = loadAndConvertNeoImage(&file, 0x10, palette);
+
+		loadFonts(&file, 0x8a32);
+		loadMessagesFixedSize(&file, 0xc5d8, 14, 20);
+		loadGlobalObjects(&file, 0xbccc, 8);
+		load8bitBinary(&file, 0x29b3c, 16);
+		loadPalettes(&file, 0x296fa);
+		loadSoundsFx(&file, 0x30da6, 25);
+	}
 }
 
 void DrillerEngine::loadAssetsAtariDemo() {

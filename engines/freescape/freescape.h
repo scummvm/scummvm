@@ -427,6 +427,8 @@ enum DrillerReleaseFlags {
 		GF_CPC_RETAIL2 = (1 << 6),
 		GF_CPC_BUDGET = (1 << 7),
 		GF_CPC_VIRTUALWORLDS = (1 << 8),
+		GF_ATARI_RETAIL = (1 << 9),
+		GF_ATARI_BUDGET = (1 << 10),
 };
 
 class DrillerEngine : public FreescapeEngine {
@@ -509,6 +511,8 @@ private:
 
 	uint32 getPixel8bitTitleImage(int index);
 	void renderPixels8bitTitleImage(Graphics::ManagedSurface *surface, int &i, int &j, int pixels);
+
+	Common::SeekableReadStream *decryptFileAtari(const Common::String filename);
 };
 
 class DarkEngine : public FreescapeEngine {
