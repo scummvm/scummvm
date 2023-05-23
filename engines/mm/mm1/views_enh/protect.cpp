@@ -28,7 +28,7 @@ namespace ViewsEnh {
 
 Protect::Protect() : ScrollView("Protect") {
 	setBounds(Common::Rect(0, 0, 320, 200));
-	addButton(&g_globals->_escSprites, Common::Point(120, 166), 0, KEYBIND_ESCAPE);
+	addButton(&g_globals->_escSprites, Common::Point(134, 170), 0, KEYBIND_ESCAPE, true);
 }
 
 void Protect::draw() {
