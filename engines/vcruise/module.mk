@@ -2,6 +2,7 @@ MODULE := engines/vcruise
 
 MODULE_OBJS = \
 	audio_player.o \
+	sampleloop.o \
 	metaengine.o \
 	menu.o \
 	runtime.o \

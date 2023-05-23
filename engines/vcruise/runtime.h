@@ -85,6 +85,8 @@ struct Script;
 struct IScriptCompilerGlobalState;
 struct Instruction;
 struct RoomScriptSet;
+struct SoundLoopInfo;
+class SampleLoopAudioStream;
 
 enum GameState {
 	kGameStateBoot,							// Booting the game
@@ -215,18 +217,18 @@ struct SoundParams3D {
 	void read(Common::ReadStream *stream);
 };
 
+
 struct SoundCache {
+	SoundCache();
 	~SoundCache();
 
-	Common::SharedPtr<Audio::SeekableAudioStream> stream;
-	Common::SharedPtr<Audio::LoopingAudioStream> loopingStream;
-	Common::SharedPtr<AudioPlayer> player;
-};
+	Common::SharedPtr<SoundLoopInfo> loopInfo;
 
-enum SoundLoopingType {
-	kSoundLoopingTypeNotLooping,	// Was never looping
-	kSoundLoopingTypeTerminated,	// Was looping and then converted into non-looping
-	kSoundLoopingTypeLooping,		// Is looping
+	Common::SharedPtr<Audio::SeekableAudioStream> stream;
+	Common::SharedPtr<SampleLoopAudioStream> loopingStream;
+	Common::SharedPtr<AudioPlayer> player;
+
+	bool isLoopActive;
 };
 
 struct SoundInstance {
@@ -251,9 +253,10 @@ struct SoundInstance {
 	int32 effectiveBalance;
 
 	bool is3D;
-	SoundLoopingType loopingType;
+	bool isLooping;
 	bool isSpeech;
-	bool isSilencedLoop;	// Loop is still playing but reached 0 volume so the player was unloaded
+	bool restartWhenAudible;
+	bool tryToLoopWhenRestarted;
 	int32 x;
 	int32 y;
 
@@ -405,6 +408,7 @@ struct SaveGameSwappableState {
 
 		bool is3D;
 		bool isLooping;
+		bool tryToLoopWhenRestarted;
 		bool isSpeech;
 
 		int32 x;
@@ -413,7 +417,7 @@ struct SaveGameSwappableState {
 		SoundParams3D params3D;
 
 		void write(Common::WriteStream *stream) const;
-		void read(Common::ReadStream *stream);
+		void read(Common::ReadStream *stream, uint saveGameVersion);
 	};
 
 	SaveGameSwappableState();
@@ -447,7 +451,7 @@ struct SaveGameSnapshot {
 	LoadGameOutcome read(Common::ReadStream *stream);
 
 	static const uint kSaveGameIdentifier = 0x53566372;
-	static const uint kSaveGameCurrentVersion = 7;
+	static const uint kSaveGameCurrentVersion = 8;
 	static const uint kSaveGameEarliestSupportedVersion = 2;
 	static const uint kMaxStates = 2;
 
@@ -700,6 +704,12 @@ private:
 		kInGameMenuStateClickingInactive,
 	};
 
+	enum SoundLoopBehavior {
+		kSoundLoopBehaviorNo,
+		kSoundLoopBehaviorYes,
+		kSoundLoopBehaviorAuto,
+	};
+
 	static const uint kPanLeftInteraction = 1;
 	static const uint kPanDownInteraction = 2;
 	static const uint kPanRightInteraction = 3;
@@ -831,7 +841,7 @@ private:
 	void applyAnimationVolume();
 
 	void setSound3DParameters(SoundInstance &sound, int32 x, int32 y, const SoundParams3D &soundParams3D);
-	void triggerSound(bool looping, SoundInstance &sound, int32 volume, int32 balance, bool is3D, bool isSpeech);
+	void triggerSound(SoundLoopBehavior loopBehavior, SoundInstance &sound, int32 volume, int32 balance, bool is3D, bool isSpeech);
 	void triggerSoundRamp(SoundInstance &sound, uint durationMSec, int32 newVolume, bool terminateOnCompletion);
 	void stopSound(SoundInstance &sound);
 	void convertLoopingSoundToNonLooping(SoundInstance &sound);
