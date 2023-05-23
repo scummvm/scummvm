@@ -290,9 +290,9 @@ std::vector<PathfindingGraphNode const *> const PathfindingAgent::getPrunedSolut
 	std::vector<PathfindingGraphNode const *> returnVec = temp;
 
 	// Any node that is not adjacent to an obstacle or an obstacle corner can be removed.
-	for (int i = 0; i < temp.size(); ++i) {
+	for (int i = 0; (unsigned int)i < temp.size(); ++i) {
 		if (!temp[i]->AdjacentToObstacle()) {
-			if (i > 0 && i < temp.size() - 1) {
+			if (i > 0 && (unsigned int)i < temp.size() - 1) {
 				// This check to see if the node is a "corner" to an obstacle that should not be pruned
 				// to prevent hanging on corners.
 				std::vector<PathfindingGraphNode *> corners = grid->CornerCheck(temp[i - 1], temp[i + 1]);

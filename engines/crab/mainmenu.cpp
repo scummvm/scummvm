@@ -161,7 +161,7 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 		int choice = me_main.HandleEvents(Event);
 		if (choice >= 0) {
 			for (unsigned i = 0; i < me_main.element.size(); ++i)
-				me_main.element.at(i).State(i == choice);
+				me_main.element.at(i).State(i == (unsigned int)choice);
 
 			switch (choice) {
 			case 0:
