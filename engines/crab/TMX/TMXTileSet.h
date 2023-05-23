@@ -46,7 +46,7 @@ struct TileSet {
 	std::string loc;
 
 	// The first gid of the tileset
-	int first_gid;
+	GidFormat first_gid;
 
 	// Dimensions of tiles
 	int tile_w, tile_h;

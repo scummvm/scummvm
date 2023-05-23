@@ -153,9 +153,9 @@ void TileSetGroup::ForceDraw(MapLayer &layer, const Rect &camera, const Vector2i
 	finish.x = (player_pos.y + player_pos.h) / tile_size.y + 1;
 	finish.y = (player_pos.x + player_pos.w) / tile_size.x + 1;
 
-	if (finish.x > layer.tile.size())
+	if (finish.x > (int)layer.tile.size())
 		finish.x = layer.tile.size();
-	if (finish.y > layer.tile[0].size())
+	if (finish.y > (int)layer.tile[0].size())
 		finish.y = layer.tile.at(0).size();
 
 	v.x = start.y * tile_size.x - camera.x;
@@ -187,7 +187,7 @@ void TileSetGroup::Draw(MapLayer &layer, const Rect &camera, const Vector2i &til
 
 		// The row and column we end drawing at
 		finish.x = layer.tile.size() - 1;
-		finish.y = finish.y = layer.tile.at(0).size() - 1;
+		finish.y = layer.tile.at(0).size() - 1;
 
 		v.x = (start.y * tile_size.x - camera.x) * layer.rate.x;
 		v.y = (start.x * tile_size.y - camera.y) * layer.rate.y;
@@ -227,9 +227,9 @@ void TileSetGroup::Draw(MapLayer &layer, const Rect &camera, const Vector2i &til
 		finish.x = (camera.y + camera.h) / tile_size.y + 1;
 		finish.y = (camera.x + camera.w) / tile_size.x + 1;
 
-		if (finish.x > layer.tile.size())
+		if (finish.x > (int)layer.tile.size())
 			finish.x = layer.tile.size();
-		if (finish.y > layer.tile[0].size())
+		if (finish.y > (int)layer.tile[0].size())
 			finish.y = layer.tile.at(0).size();
 
 		v.x = camera.x;
