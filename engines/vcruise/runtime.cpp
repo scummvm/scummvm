@@ -6865,7 +6865,24 @@ void Runtime::scriptOpSndPlay3D(ScriptArg_t arg) {
 	}
 }
 
-OPCODE_STUB(SndPlaying)
+void Runtime::scriptOpSndPlaying(ScriptArg_t arg) {
+	TAKE_STACK_INT(1);
+
+	SoundInstance *snd = resolveSoundByID(stackArgs[0]);
+	if (!snd || !snd->cache) {
+		_scriptStack.push_back(StackValue(0));
+		return;
+	}
+
+	if (snd->cache->isLoopActive) {
+		_scriptStack.push_back(StackValue(1));
+		return;
+	}
+
+	bool hasEnded = (snd->endTime < g_system->getMillis());
+
+	_scriptStack.push_back(StackValue(hasEnded ? 1 : 0));
+}
 
 void Runtime::scriptOpSndWait(ScriptArg_t arg) {
 	TAKE_STACK_INT(1);
