@@ -126,22 +126,22 @@ SDL_Surface *TextManager::RenderTextBlended(const FontKey &font, const std::stri
 }
 #endif
 
-Graphics::ManagedSurface *TextManager::RenderTextBlended(const FontKey &font, const std::string &text, const int &color) {
+Graphics::ManagedSurface *TextManager::RenderTextBlended(const FontKey &fKey, const std::string &text, const int &color) {
 	SDL_Color sdlcolor = colpool.Get(color);
 	uint32 col = g_engine->_format->ARGBToColor(255, sdlcolor.r, sdlcolor.g, sdlcolor.b);
 
 	Graphics::ManagedSurface *surf = nullptr;
 
 	if (text.empty()) {
-		Common::Rect rec = GetFont(font)->getBoundingBox(" ");
+		Common::Rect rec = GetFont(fKey)->getBoundingBox(" ");
 		int h = rec.height();
 		surf = new Graphics::ManagedSurface(rec.width(), h + (h / 2), *g_engine->_format);
-		GetFont(font)->drawString(surf, " ", 0, 0, rec.width(), col);
+		GetFont(fKey)->drawString(surf, " ", 0, 0, rec.width(), col);
 	} else {
-		Common::Rect rec = GetFont(font)->getBoundingBox(text.c_str());
+		Common::Rect rec = GetFont(fKey)->getBoundingBox(text.c_str());
 		int h = rec.height();
 		surf = new Graphics::ManagedSurface(rec.width(), h + (h / 2), *g_engine->_format);
-		GetFont(font)->drawString(surf, text.c_str(), 0, 0, rec.width(), col);
+		GetFont(fKey)->drawString(surf, text.c_str(), 0, 0, rec.width(), col);
 	}
 
 	return surf;
@@ -225,10 +225,11 @@ void TextManager::Draw(const int &x, const int &y, const std::string &text, cons
 	}
 }
 
-void TextManager::Draw(const int &x, int y, const std::string &text, const int &color, const FontKey &font, const Align &align,
+void TextManager::Draw(const int &x, int y, const std::string &text, const int &color, const FontKey &fKey, const Align &align,
 					   const unsigned int &line_width, const unsigned int &line_height, const bool &background) {
-	for (int start_pos = 0, len = text.length(); start_pos < len; y += line_height) {
-		int end_pos = start_pos + 1, last_interrupt = -1;
+	for (unsigned int start_pos = 0, len = text.length(); start_pos < len; y += line_height) {
+		unsigned int end_pos = start_pos + 1;
+		int last_interrupt = -1;
 		std::string word;
 
 		while (end_pos - start_pos <= line_width) {
@@ -245,19 +246,19 @@ void TextManager::Draw(const int &x, int y, const std::string &text, const int &
 
 		if (last_interrupt >= 0) // wrap a word around
 		{
-			for (int i = 0; i < last_interrupt - start_pos; i++)
+			for (unsigned int i = 0; i < last_interrupt - start_pos; i++)
 				word += text[start_pos + i];
 
 			start_pos = last_interrupt + 1;
 		} else // word bigger than line, just thunk
 		{
-			for (int i = 0; i < end_pos - start_pos; i++)
+			for (unsigned int i = 0; i < end_pos - start_pos; i++)
 				word += text[start_pos + i];
 
 			start_pos += line_width;
 		}
 
-		Draw(x, y, word, color, font, align, background);
+		Draw(x, y, word, color, fKey, align, background);
 	}
 }
 
