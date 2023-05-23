@@ -76,9 +76,9 @@ void Person::Load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTe
 			if (statnode->first_attribute("template") == NULL) {
 				stat.Load(statnode);
 			} else {
-				unsigned int index = 0;
+				int index = 0;
 				LoadNum(index, "template", statnode);
-				if (index < stem.collection.size() && index >= 0)
+				if (index >= 0 && (unsigned int)index < stem.collection.size())
 					for (int i = 0; i < STAT_TOTAL; i++)
 						stat.val[i] = stem.collection[index].val[i];
 			}
