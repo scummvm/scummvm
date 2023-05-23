@@ -112,7 +112,7 @@ public:
 	void PreDraw(MapLayer &layer, const Vector2i &tile_size, Graphics::ManagedSurface *surf);
 	void ForceDraw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos);
 };
-}; // End of namespace TMX
+} // End of namespace TMX
 
 } // End of namespace Crab
 
