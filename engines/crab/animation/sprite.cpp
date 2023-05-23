@@ -265,9 +265,9 @@ void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera) {
 
 	if (GameDebug) {
 		// Nice boxes for the frames and box_v, box_d
-		Rect bounds = BoundRect(), vul = BoxV(), dmg = BoxD(), pos = PosRect();
+		Rect bounds = BoundRect(), vul = BoxV(), dmg = BoxD(), debugpos = PosRect();
 		bounds.Draw(-camera.x, -camera.y);
-		pos.Draw(-camera.x, -camera.y, 255, 255, 255);
+		debugpos.Draw(-camera.x, -camera.y, 255, 255, 255);
 		dmg.Draw(-camera.x, -camera.y, 255, 0, 0);
 		vul.Draw(-camera.x, -camera.y, 0, 0, 255);
 

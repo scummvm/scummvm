@@ -90,7 +90,7 @@ public:
 
 	void CurCombo(pyrodactyl::input::FightInput &input) { input = move[cur].input; }
 
-	bool ValidMove() { return cur >= 0 && cur < move.size(); }
+	bool ValidMove() { return cur >= 0 && (unsigned int)cur < move.size(); }
 	bool Empty() { return move.empty(); }
 
 	bool Flip(TextureFlipType &flip, Direction d);
