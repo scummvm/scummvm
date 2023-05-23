@@ -97,6 +97,7 @@ class Maps;
 class Map : public Game::GameLogic {
 protected:
 	Common::String _name;
+	Common::String _description;
 	uint16 _id;
 	uint _mapIndex;
 	byte _defaultSection;
@@ -136,7 +137,7 @@ public:
 	uint8 _visited[MAP_SIZE];
 public:
 	Map(uint index, const Common::String &name, uint16 id,
-		byte defaultSection);
+		byte defaultSection, const char *desc = nullptr);
 	virtual ~Map() {}
 
 	/**
@@ -162,6 +163,12 @@ public:
 	 * Gets the map name
 	 */
 	Common::String getName() const { return _name; }
+
+	/**
+	 * Gets the map description for the map display
+	 */
+	Common::String getDescription() const { return _description; }
+
 
 	/**
 	 * Returns the map Id
