@@ -87,7 +87,7 @@ public:
 
 	void Marker(const std::string &title, const bool &val);
 
-	void Add(const std::string &title, const std::string &text);
+	void Add(const std::string &title, const std::string &txt);
 	void Add(const pyrodactyl::event::Quest &q);
 	void Erase(const int &index);
 

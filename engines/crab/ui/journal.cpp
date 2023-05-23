@@ -129,7 +129,7 @@ void Journal::Draw(const std::string &id) {
 //------------------------------------------------------------------------
 bool Journal::HandleEvents(const std::string &id, const Common::Event &Event) {
 	int choice = category.HandleEvents(Event);
-	if (choice >= 0 && choice < category.element.size())
+	if (choice >= 0 && (unsigned int)choice < category.element.size())
 		Select(id, choice);
 
 	// Check if select is valid

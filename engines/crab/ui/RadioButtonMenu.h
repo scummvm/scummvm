@@ -68,7 +68,7 @@ public:
 		if (result >= 0) {
 			select = result;
 
-			for (int i = 0; i < element.size(); ++i)
+			for (int i = 0; i < (int)element.size(); ++i)
 				element.at(i).state = (i == result);
 		}
 

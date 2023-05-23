@@ -51,7 +51,7 @@ void TraitMenu::Load(rapidxml::xml_node<char> *node) {
 	if (NodeValid("desc", node))
 		desc.Load(node->first_node("desc"));
 
-	for (auto i = 0; i < size; ++i) {
+	for (unsigned int i = 0; i < size; ++i) {
 		TraitButton b;
 		b.Init(ref, inc.x * (i % cols), inc.y * (i / cols));
 		menu.element.push_back(b);
@@ -76,7 +76,7 @@ void TraitMenu::Draw(const pyrodactyl::people::Person *obj) {
 		for (; i != menu.element.end(); ++i)
 			i->Draw();
 
-		if (select > -1 && select < obj->trait.size())
+		if (select > -1 && (unsigned int)select < obj->trait.size())
 			desc.Draw(obj->trait.at(select).desc);
 	} else
 		for (auto &i : menu.element)
@@ -93,7 +93,7 @@ void TraitMenu::HandleEvents(pyrodactyl::people::Person *obj, const Common::Even
 		select = choice;
 
 		if (obj != nullptr) {
-			if (select > -1 && select < obj->trait.size())
+			if (select > -1 && (unsigned int)select < obj->trait.size())
 				obj->trait.at(select).unread = false;
 		}
 	}

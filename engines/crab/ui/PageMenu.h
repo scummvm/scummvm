@@ -207,7 +207,7 @@ public:
 			current_page--;
 			UpdateInfo();
 
-			if (current_page < 0)
+			if ((int)current_page < 0)
 				current_page = 0;
 		}
 

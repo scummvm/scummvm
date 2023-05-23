@@ -71,10 +71,10 @@ void QuestText::Draw(pyrodactyl::event::Quest &q) {
 	stop = q.text.size();
 
 	// Keep count of lines and pages - remember a single entry can take more than one line
-	int page_count = 0, page_start = 0;
+	unsigned int page_count = 0, page_start = 0;
 
 	// Start from line 0, page 0 and scan the list of entries
-	for (int i = 0, line_count = 0; i < q.text.size(); ++i) {
+	for (unsigned int i = 0, line_count = 0; i < q.text.size(); ++i) {
 		// Increment the number of lines by one text entry
 		line_count += (q.text[i].size() / line.x) + 1;
 
@@ -120,7 +120,7 @@ void QuestText::Draw(pyrodactyl::event::Quest &q) {
 		// Count the number of lines, because a single entry can take more than one line
 		int count = 0;
 
-		for (unsigned int i = start; i < stop; ++i) {
+		for (unsigned int i = start; i < (unsigned int)stop; ++i) {
 			img.Draw(inc.x * count, inc.y * count);
 
 			// Draw first entry in selected color, and older quest entries in standard color
@@ -136,12 +136,8 @@ void QuestText::Draw(pyrodactyl::event::Quest &q) {
 }
 
 void QuestText::HandleEvents(pyrodactyl::event::Quest &q, const Common::Event &Event) {
-	if (current_page > 0 && prev.HandleEvents(Event) == BUAC_LCLICK) {
+	if (current_page > 0 && prev.HandleEvents(Event) == BUAC_LCLICK)
 		current_page--;
-
-		if (current_page < 0)
-			current_page = 0;
-	}
 
 	if (current_page < total_page - 1 && next.HandleEvents(Event) == BUAC_LCLICK) {
 		current_page++;

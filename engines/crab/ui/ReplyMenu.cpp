@@ -64,7 +64,7 @@ void ReplyMenu::Load(const std::string &filename) {
 int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const std::string &cur_id, PersonHandler &oh, const Common::Event &Event) {
 	// After that, check if the user has clicked on any reply option
 	int choice = Menu<ReplyButton>::HandleEvents(Event);
-	if (choice >= 0 && choice < dat.reply.size()) {
+	if (choice >= 0 && (unsigned int)choice < dat.reply.size()) {
 		bool play_sound = false;
 
 		// Loop through any opinion changes required
