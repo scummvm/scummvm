@@ -46,7 +46,7 @@ class OptionSelect {
 		TextData data;
 
 		void Draw(const int &index) {
-			if (index >= 0 && index < text.size())
+			if (index >= 0 && (unsigned int)index < text.size())
 				data.Draw(text.at(index));
 		}
 	} option;

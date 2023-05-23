@@ -134,7 +134,7 @@ void GameSaveMenu::Draw() {
 		float base_x = menu.BaseX(count), base_y = menu.BaseY(count);
 		td_b[DATA_LASTMODIFIED].Draw(slot_info[i].last_modified, base_x, base_y);
 
-		if (i == index && state == STATE_NAME)
+		if (i == (unsigned int)index && state == STATE_NAME)
 			ta_name.Draw();
 		else
 			td_b[DATA_SAVENAME].Draw(slot_info[i].name, base_x, base_y);

@@ -60,7 +60,7 @@ void OptionSelect::Draw() {
 	if (cur > 0)
 		prev.Draw();
 
-	if (cur < option.text.size() - 1)
+	if ((unsigned int)cur < option.text.size() - 1)
 		next.Draw();
 }
 
@@ -75,7 +75,7 @@ bool OptionSelect::HandleEvents(const Common::Event &Event) {
 		}
 	}
 
-	if (cur < option.text.size() - 1) {
+	if ((unsigned int)cur < option.text.size() - 1) {
 
 		// Don't check for keyboard inputs for now
 		if (next.HandleEvents(Event) == BUAC_LCLICK) {

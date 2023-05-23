@@ -36,8 +36,8 @@ namespace Crab {
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::ui;
 
-void HoverInfo::Init(const HoverInfo &h, const int &XOffset, const int &YOffset) {
-	*this = h;
+void HoverInfo::Init(const HoverInfo &hInfo, const int &XOffset, const int &YOffset) {
+	*this = hInfo;
 	x += XOffset;
 	y += YOffset;
 }

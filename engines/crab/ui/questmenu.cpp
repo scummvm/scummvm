@@ -82,16 +82,16 @@ void QuestMenu::Load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 // Purpose: Add an entry to the menu
 //------------------------------------------------------------------------
-void QuestMenu::Add(const std::string &title, const std::string &text) {
+void QuestMenu::Add(const std::string &title, const std::string &txt) {
 	for (auto i = quest.begin(); i != quest.end(); ++i)
 		if (i->title == title) // We already have the quest entry
 		{
-			i->text.push_front(text); // Just add the new string to the start of the quest messages and return
+			i->text.push_front(txt); // Just add the new string to the start of the quest messages and return
 			i->unread = true;
 			return;
 		}
 
-	Quest q(title, text, true, false);
+	Quest q(title, txt, true, false);
 	quest.push_front(q);
 	menu.Add();
 	unread = true;
@@ -129,7 +129,7 @@ void QuestMenu::Draw(Button &bu_map) {
 		auto base_x = menu.BaseX(count), base_y = menu.BaseY(count);
 
 		// Only draw in _s color if we are on the same button and page
-		if (sel_bu == count && sel_page == menu.CurrentPage())
+		if ((unsigned int)sel_bu == count && (unsigned int)sel_page == menu.CurrentPage())
 			gTextManager.Draw(base_x + off_title.x, base_y + off_title.y, quest[i].title, col_s, font, align);
 		else
 			gTextManager.Draw(base_x + off_title.x, base_y + off_title.y, quest[i].title, col_n, font, align);
@@ -140,7 +140,7 @@ void QuestMenu::Draw(Button &bu_map) {
 		}
 	}
 
-	if (sel_quest >= 0 && sel_quest < quest.size()) {
+	if (sel_quest >= 0 && (unsigned int)sel_quest < quest.size()) {
 		text.Draw(quest.at(sel_quest));
 
 		if (quest.at(sel_quest).marker)
@@ -167,7 +167,7 @@ bool QuestMenu::HandleEvents(Button &bu_map, std::string &map_title, const Commo
 		menu.Image(sel_bu, sel_page, img_s);
 	}
 
-	if (sel_quest >= 0 && sel_quest < quest.size()) {
+	if (sel_quest >= 0 && (unsigned int)sel_quest < quest.size()) {
 		if (quest.at(sel_quest).marker)
 			if (bu_map.HandleEvents(Event) == BUAC_LCLICK) {
 				// The title of the quest selected by the "show in map" button
@@ -220,7 +220,7 @@ bool QuestMenu::HandleEvents(Button &bu_map, std::string &map_title, const SDL_E
 // Purpose: Select an entry
 //------------------------------------------------------------------------
 void QuestMenu::Select(const int &quest_index) {
-	if (quest_index >= 0 && quest_index < quest.size()) {
+	if (quest_index >= 0 && (unsigned int)quest_index < quest.size()) {
 		if (sel_bu >= 0 && sel_page >= 0)
 			menu.Image(sel_bu, sel_page, img_n);
 

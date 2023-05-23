@@ -426,7 +426,7 @@ void Map::Update(pyrodactyl::event::Info &info) {
 // Purpose: Add a rectangle to the revealed world map data
 //------------------------------------------------------------------------
 void Map::RevealAdd(const int &id, const Rect &area) {
-	if (id < map.size()) {
+	if ((unsigned int)id < map.size()) {
 		for (auto i = map.at(id).reveal.begin(); i != map.at(id).reveal.end(); ++i)
 			if (*i == area)
 				return;
