@@ -88,6 +88,6 @@ extern Cursor gMouse;
 } // End of namespace input
 } // End of namespace pyrodactyl
 
-};
+} // End of namespace Crab
 
 #endif // CRAB_CURSOR_H
