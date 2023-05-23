@@ -296,7 +296,7 @@ void Image::FastDraw(const int &x, const int &y, Rect *clip) {
 	const uint32 outPitch = g_engine->_screen->pitch / sizeof(uint32);
 	const uint32 inPitch = texture->pitch / sizeof(uint32);
 
-	for (int y = 0; y < he; y++) {
+	for (int y_ = 0; y_ < he; y_++) {
 		memcpy(out, in, destW * 4);
 		out += outPitch;
 		in += inPitch;
