@@ -349,7 +349,7 @@ bool TMXMap::InsideWalk(const Vector2i &pos) {
 }
 
 bool TMXMap::CollideWithTrigger(const Rect rect, int index) {
-	if (area_trig.size() > index)
+	if (area_trig.size() > (unsigned int)index)
 		return area_trig.at(index).Collide(rect).intersect;
 
 	return false;
