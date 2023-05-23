@@ -157,7 +157,20 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO4(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
-	{
+	{ // Retail release
+		"driller",
+		"",
+		{
+			{"x.prg", 0, "d002983a8b652f25b18a09425db78c4c", 293159},
+			{"playseq.prg", 0, "535e9f6baf132831aa7fa066a06f242e", 973},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		GF_ATARI_RETAIL,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{ // Budget release
 		"driller",
 		"",
 		{
@@ -167,7 +180,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
-		ADGF_NO_FLAGS,
+		GF_ATARI_BUDGET,
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
 	{
@@ -340,7 +353,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"spacestationoblivion",
 		"",
 		{
-			{"x.prg", 0, "10c556ee637bf03bcc1a051277542102", 293264},
+			{"x.prg", 0, "bf546ee243c38f51d9beb25c203ccb93", 292624},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
