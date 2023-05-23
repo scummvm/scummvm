@@ -83,9 +83,9 @@ void Level::Draw(pyrodactyl::event::Info &info) {
 
 		// Draw the background sprites
 		for (; b != background.end(); ++b) {
-			if (b->layer > layer_count) // We don't have any sprites to draw at this layer
+			if ((unsigned int)b->layer > layer_count) // We don't have any sprites to draw at this layer
 				break;
-			else if (b->layer == layer_count && b->Visible())
+			else if ((unsigned int)b->layer == layer_count && b->Visible())
 				b->Draw(info, camera);
 		}
 
@@ -99,9 +99,9 @@ void Level::Draw(pyrodactyl::event::Info &info) {
 
 	// Draw the background sprites
 	for (; b != background.end(); ++b) {
-		if (b->layer > layer_count) // We don't have any sprites to draw at this layer
+		if ((unsigned int)b->layer > layer_count) // We don't have any sprites to draw at this layer
 			break;
-		else if (b->layer >= layer_count && b->Visible())
+		else if ((unsigned int)b->layer >= layer_count && b->Visible())
 			b->Draw(info, camera);
 	}
 
@@ -160,7 +160,7 @@ void Level::DrawObjects(pyrodactyl::event::Info &info) {
 			auto obj = b->second;
 			if (a->pos.y + a->pos.h < obj->Y() + obj->H()) {
 				for (auto &i : a->boundRect) {
-					i.Draw(-camera.x, -camera.y, 128, 128, 0, 256);
+					i.Draw(-camera.x, -camera.y, 128, 128, 0, 255);
 					if (i.Collide(objects[player_index].PosRect())) {
 						gImageManager.tileset.ForceDraw(*a, camera, terrain.tile_size, objects[player_index].PosRect());
 					}
@@ -186,7 +186,7 @@ void Level::DrawObjects(pyrodactyl::event::Info &info) {
 		} else if (b == obj_seq.end()) {
 			for (; a != terrain.prop.end(); ++a) {
 				for (auto &i : a->boundRect) {
-					i.Draw(-camera.x, -camera.y, 128, 128, 0, 256);
+					i.Draw(-camera.x, -camera.y, 128, 128, 0, 255);
 					if (i.Collide(objects[player_index].PosRect())) {
 						gImageManager.tileset.ForceDraw(*a, camera, terrain.tile_size, objects[player_index].PosRect());
 					}

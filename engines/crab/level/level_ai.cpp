@@ -87,7 +87,7 @@ LevelResult Level::InternalEvents(Info &info, std::vector<EventResult> &result, 
 //------------------------------------------------------------------------
 void Level::Think(Info &info, std::vector<EventResult> &result,
 				  std::vector<EventSeqInfo> &end_seq, std::string &id) {
-	int index = 0;
+	unsigned int index = 0;
 	for (auto i = objects.begin(); i != objects.end(); ++i, ++index) {
 		// Only bother if the sprite is visible
 		if (i->Visible()) {
@@ -139,7 +139,7 @@ void Level::Think(Info &info, std::vector<EventResult> &result,
 						objects[player_index].ExchangeDamage(info, *i, sc_default);
 				} else {
 					// For the player sprite
-					Rect boundRect = i->BoundRect();
+					boundRect = i->BoundRect();
 
 					i->pathing.SetPosition(Vector2f((float)(boundRect.x + boundRect.w / 2), (float)boundRect.y + boundRect.h / 2));
 					i->pathing.Update(0);
@@ -171,7 +171,7 @@ void Level::Think(Info &info, std::vector<EventResult> &result,
 // Purpose: Once a player provokes any sprite, call this function
 //------------------------------------------------------------------------
 void Level::BattleAlert(Info &info) {
-	int index = 0;
+	unsigned int index = 0;
 	for (auto i = objects.begin(); i != objects.end(); ++i, ++index) {
 		if (index != player_index && i->Visible() && info.State(i->ID()) != PST_KO) {
 			switch (info.Type(i->ID())) {
@@ -209,7 +209,7 @@ void Level::MoveObject(Info &info, pyrodactyl::anim::Sprite &s) {
 // Purpose: If any other object is trying to kill you, you are in combat
 //------------------------------------------------------------------------
 bool Level::PlayerInCombat(Info &info) {
-	int index = 0;
+	unsigned int index = 0;
 	for (auto i = objects.begin(); i != objects.end(); ++i, ++index)
 		if (index != player_index && info.State(i->ID()) == PST_FIGHT && i->Visible())
 			return true;

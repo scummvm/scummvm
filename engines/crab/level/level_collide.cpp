@@ -123,7 +123,7 @@ bool Level::LayerVisible(Sprite *obj) {
 	if (obj->layer < 0)
 		return true;
 
-	if (obj->layer < terrain.layer.size())
+	if ((unsigned int)obj->layer < terrain.layer.size())
 		return terrain.layer.at(obj->layer).collide;
 
 	return false;
@@ -147,7 +147,7 @@ bool Level::CollidingWithObject(Info &info, std::string &id) {
 	// Clip and Bounding rectangle of player
 	Rect p_pos = objects[player_index].PosRect(), p_bound = objects[player_index].BoundRect();
 
-	int index = 0;
+	unsigned int index = 0;
 	for (auto i = objects.begin(); i != objects.end(); ++i, ++index) {
 		if (i->Visible() && player_index != index && info.State(i->ID()) == PST_NORMAL) {
 			// Clip and bounding rectangles for the NPC sprite
