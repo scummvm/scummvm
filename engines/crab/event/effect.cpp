@@ -105,20 +105,20 @@ void Effect::Load(rapidxml::xml_node<char> *node) {
 	LoadStr(val, "val", node, echo_val);
 }
 
-void Effect::ChangeOpinion(pyrodactyl::event::Info &info, pyrodactyl::people::OpinionType type) {
+void Effect::ChangeOpinion(pyrodactyl::event::Info &info, pyrodactyl::people::OpinionType opType) {
 	int old_op = 0;
 
 	// Only bother if the person exists and has a valid opinion
-	if (info.OpinionGet(subject, type, old_op)) {
+	if (info.OpinionGet(subject, opType, old_op)) {
 		if (operation == "=")
-			info.OpinionSet(subject, type, StringToNumber<int>(val));
+			info.OpinionSet(subject, opType, StringToNumber<int>(val));
 		else if (operation == "+")
-			info.OpinionChange(subject, type, StringToNumber<int>(val));
+			info.OpinionChange(subject, opType, StringToNumber<int>(val));
 		else if (operation == "-")
-			info.OpinionChange(subject, type, -1 * StringToNumber<int>(val));
+			info.OpinionChange(subject, opType, -1 * StringToNumber<int>(val));
 
 		int new_op = 0;
-		info.OpinionGet(subject, type, new_op);
+		info.OpinionGet(subject, opType, new_op);
 
 		if (new_op > old_op)
 			info.sound.rep_inc = true;
