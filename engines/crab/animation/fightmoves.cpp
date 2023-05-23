@@ -64,7 +64,7 @@ void FightMoves::Load(rapidxml::xml_node<char> *node) {
 // Purpose: Return current or next move
 //------------------------------------------------------------------------
 bool FightMoves::CurMove(FightMove &fm) {
-	if (cur >= 0 && cur < move.size()) {
+	if (cur >= 0 && (unsigned int)cur < move.size()) {
 		fm = move.at(cur);
 		return true;
 	}
@@ -73,7 +73,7 @@ bool FightMoves::CurMove(FightMove &fm) {
 }
 
 bool FightMoves::NextMove(FightMove &fm) {
-	if (next >= 0 && next < move.size()) {
+	if (next >= 0 && (unsigned int)next < move.size()) {
 		fm = move.at(next);
 		return true;
 	}
@@ -86,7 +86,7 @@ bool FightMoves::NextMove(FightMove &fm) {
 //------------------------------------------------------------------------
 bool FightMoves::CurFrame(FightAnimFrame &faf, const Direction &d) {
 	// Check validity of current move
-	if (cur >= 0 && cur < move.size()) {
+	if (cur >= 0 && (unsigned int)cur < move.size()) {
 		// Check validity of current frame
 		if (frame_cur < frame_total && frame_cur < move.at(cur).frames[d].frame.size()) {
 			faf = move.at(cur).frames[d].frame.at(frame_cur);
@@ -102,7 +102,7 @@ bool FightMoves::CurFrame(FightAnimFrame &faf, const Direction &d) {
 //------------------------------------------------------------------------
 FrameUpdateResult FightMoves::UpdateFrame(const Direction &d) {
 	// Check validity of current move
-	if (cur >= 0 && cur < move.size()) {
+	if (cur >= 0 && (unsigned int)cur < move.size()) {
 		// Check validity of current frame
 		if (frame_cur < frame_total && frame_cur < move.at(cur).frames[d].frame.size()) {
 			// Has the current frame finished playing?
@@ -127,7 +127,7 @@ FrameUpdateResult FightMoves::UpdateFrame(const Direction &d) {
 unsigned int FightMoves::FindMove(const pyrodactyl::input::FightAnimationType &type, const int &state) {
 	unsigned int pos = 0;
 	for (auto i = move.begin(); i != move.end(); ++i, ++pos)
-		if (i->input.type == type && i->input.state == state)
+		if (i->input.type == type && i->input.state == (unsigned int)state)
 			return pos;
 
 	pos = 0;
@@ -156,7 +156,7 @@ bool FightMoves::ForceUpdate(const unsigned int &index, pyrodactyl::input::Fight
 	frame_cur = 0;
 	cur = index;
 
-	if (cur < move.size()) {
+	if ((unsigned int)cur < move.size()) {
 		if (move[cur].unlock.Result()) {
 			frame_total = move[cur].frames[d].frame.size();
 			if (frame_total > 0) {
