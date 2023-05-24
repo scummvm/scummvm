@@ -74,7 +74,7 @@ MainMenu::MainMenu() {
 				if (helpconf.ready()) {
 					rapidxml::xml_node<char> *hnode = helpconf.Doc()->first_node("help");
 					if (NodeValid(hnode))
-						gHelpScreen.Load(hnode);
+						g_engine->_helpScreen->Load(hnode);
 				}
 			}
 
@@ -276,7 +276,7 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 		break;
 
 	case STATE_HELP:
-		gHelpScreen.HandleEvents(Event);
+		g_engine->_helpScreen->HandleEvents(Event);
 		break;
 
 	default:
@@ -408,7 +408,7 @@ void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 		break;
 
 	case STATE_HELP:
-		gHelpScreen.HandleEvents(Event);
+		g_engine->_helpScreen->HandleEvents(Event);
 		break;
 
 	default:
@@ -470,9 +470,9 @@ void MainMenu::ChangeState(MenuState ms, const bool &start) {
 
 	// If switching to help screen, load latest image otherwise remove it from memory
 	if (state == STATE_HELP)
-		gHelpScreen.Refresh();
+		g_engine->_helpScreen->Refresh();
 	else
-		gHelpScreen.Clear();
+		g_engine->_helpScreen->Clear();
 }
 
 //------------------------------------------------------------------------
@@ -543,7 +543,7 @@ void MainMenu::Draw() {
 		break;
 
 	case STATE_HELP:
-		gHelpScreen.Draw();
+		g_engine->_helpScreen->Draw();
 		back.Draw();
 		me_main.Draw();
 		break;
@@ -563,7 +563,7 @@ void MainMenu::SetUI() {
 	gOptionMenu.SetUI();
 	mod.SetUI();
 	gLoadMenu.SetUI();
-	gHelpScreen.SetUI();
+	g_engine->_helpScreen->SetUI();
 	credits.SetUI();
 
 	accept.SetUI();

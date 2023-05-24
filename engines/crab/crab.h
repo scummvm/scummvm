@@ -81,6 +81,10 @@ namespace event {
 	struct GameEventStore;
 } // End of namespace event
 
+namespace ui {
+class SlideShow;
+} // End of namespace ui
+
 } // End of namespace pyrodactyl
 
 class CrabEngine : public Engine {
@@ -104,6 +108,8 @@ public:
 
 	// Should these really be inside the Engine class?
 	LoadingScreen *_loadingScreen = nullptr;
+	pyrodactyl::ui::SlideShow *_helpScreen = nullptr;
+
 
 	Common::FSNode _gameDataDir;
 
