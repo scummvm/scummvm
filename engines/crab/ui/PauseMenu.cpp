@@ -54,7 +54,7 @@ bool PauseMenu::Draw(Button &back) {
 		back.Draw();
 		break;
 	case STATE_LOAD:
-		gLoadMenu.Draw();
+		g_engine->_loadMenu->Draw();
 		back.Draw();
 		break;
 	case STATE_OPTION:
@@ -85,7 +85,7 @@ PauseSignal PauseMenu::HandleEvents(const Common::Event &Event, Button &back) {
 				break;
 			case 2:
 				state = STATE_LOAD;
-				//gLoadMenu.ScanDir();
+				//g_engine->_loadMenu->ScanDir();
 				break;
 			case 3:
 				state = STATE_OPTION;
@@ -115,7 +115,7 @@ PauseSignal PauseMenu::HandleEvents(const Common::Event &Event, Button &back) {
 		}
 		break;
 	case STATE_LOAD:
-		if (gLoadMenu.HandleEvents(Event))
+		if (g_engine->_loadMenu->HandleEvents(Event))
 			return PS_LOAD;
 		else if (back.HandleEvents(Event) == BUAC_LCLICK)
 			state = STATE_NORMAL;
@@ -146,7 +146,7 @@ PauseSignal PauseMenu::HandleEvents(const SDL_Event &Event, Button &back) {
 				break;
 			case 2:
 				state = STATE_LOAD;
-				gLoadMenu.ScanDir();
+				g_engine->_loadMenu->ScanDir();
 				break;
 			case 3:
 				state = STATE_OPTION;
@@ -176,7 +176,7 @@ PauseSignal PauseMenu::HandleEvents(const SDL_Event &Event, Button &back) {
 		}
 		break;
 	case STATE_LOAD:
-		if (gLoadMenu.HandleEvents(Event))
+		if (g_engine->_loadMenu->HandleEvents(Event))
 			return PS_LOAD;
 		else if (back.HandleEvents(Event) == BUAC_LCLICK)
 			state = STATE_NORMAL;

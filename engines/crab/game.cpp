@@ -174,7 +174,7 @@ void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 				break;
 			}
 		} else if (state == STATE_LOSE_LOAD) {
-			if (gLoadMenu.HandleEvents(Event)) {
+			if (g_engine->_loadMenu->HandleEvents(Event)) {
 				ShouldChangeState = true;
 				NewStateID = GAMESTATE_LOAD_GAME;
 				return;
@@ -230,7 +230,7 @@ void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					} else if (gInput.Equals(IG_QUICKLOAD, Event) == SDL_RELEASED && !info.IronMan()) {
 						ShouldChangeState = true;
 						NewStateID = GAMESTATE_LOAD_GAME;
-						gLoadMenu.SelectedPath(FullPath(savefile.quick));
+						g_engine->_loadMenu->SelectedPath(FullPath(savefile.quick));
 						return;
 					}
 #endif
@@ -330,7 +330,7 @@ void Game::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &
 				break;
 			}
 		} else if (state == STATE_LOSE_LOAD) {
-			if (gLoadMenu.HandleEvents(Event)) {
+			if (g_engine->_loadMenu->HandleEvents(Event)) {
 				ShouldChangeState = true;
 				NewStateID = GAMESTATE_LOAD_GAME;
 				return;
@@ -385,7 +385,7 @@ void Game::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &
 					} else if (gInput.Equals(IG_QUICKLOAD, Event) == SDL_RELEASED && !info.IronMan()) {
 						ShouldChangeState = true;
 						NewStateID = GAMESTATE_LOAD_GAME;
-						gLoadMenu.SelectedPath(FullPath(savefile.quick));
+						g_engine->_loadMenu->SelectedPath(FullPath(savefile.quick));
 						return;
 					}
 
@@ -549,7 +549,7 @@ void Game::Draw() {
 		hud.gom.Draw();
 		break;
 	case STATE_LOSE_LOAD:
-		gLoadMenu.Draw();
+		g_engine->_loadMenu->Draw();
 		hud.back.Draw();
 		break;
 	default:
@@ -862,7 +862,7 @@ void Game::SetUI() {
 	map.SetUI();
 	hud.SetUI();
 
-	gLoadMenu.SetUI();
+	g_engine->_loadMenu->SetUI();
 	g_engine->_optionMenu->SetUI();
 
 	gem.SetUI();

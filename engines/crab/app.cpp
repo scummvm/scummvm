@@ -177,8 +177,8 @@ void App::Run() {
 
 			case GAMESTATE_LOAD_GAME:
 #if 0
-				if (boost::filesystem::exists(pyrodactyl::ui::gLoadMenu.SelectedPath()))
-					CurrentState = new Game(pyrodactyl::ui::gLoadMenu.SelectedPath());
+				if (boost::filesystem::exists(g_engine->_loadMenu->SelectedPath()))
+					CurrentState = new Game(pyrodactyl::ui::.SelectedPath());
 				else
 					CurrentState = new Game();
 

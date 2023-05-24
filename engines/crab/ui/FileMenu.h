@@ -270,7 +270,6 @@ public:
 	}
 };
 
-extern FileMenu<SaveFileData> gLoadMenu;
 } // End of namespace ui
 } // End of namespace pyrodactyl
 

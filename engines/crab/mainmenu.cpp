@@ -65,7 +65,7 @@ MainMenu::MainMenu() {
 				if (loadconf.ready()) {
 					rapidxml::xml_node<char> *loadnode = loadconf.Doc()->first_node("load_menu");
 					if (NodeValid(loadnode))
-						gLoadMenu.Load(loadnode);
+						g_engine->_loadMenu->Load(loadnode);
 				}
 			}
 
@@ -165,7 +165,7 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 
 			switch (choice) {
 			case 0:
-				if (gLoadMenu.SelectNewestFile()) {
+				if (g_engine->_loadMenu->SelectNewestFile()) {
 					ChangeState(STATE_NORMAL);
 					ShouldChangeState = true;
 					NewStateID = GAMESTATE_LOAD_GAME;
@@ -176,7 +176,7 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 				break;
 			case 2:
 				ChangeState(STATE_LOAD);
-				gLoadMenu.ScanDir();
+				g_engine->_loadMenu->ScanDir();
 				break;
 			case 3:
 				ChangeState(STATE_OPTIONS);
@@ -235,7 +235,7 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 		break;
 
 	case STATE_LOAD:
-		if (gLoadMenu.HandleEvents(Event)) {
+		if (g_engine->_loadMenu->HandleEvents(Event)) {
 			ChangeState(STATE_NORMAL);
 			ShouldChangeState = true;
 			NewStateID = GAMESTATE_LOAD_GAME;
@@ -299,7 +299,7 @@ void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 
 			switch (choice) {
 			case 0:
-				if (gLoadMenu.SelectNewestFile()) {
+				if (g_engine->_loadMenu->SelectNewestFile()) {
 					ChangeState(STATE_NORMAL);
 					ShouldChangeState = true;
 					NewStateID = GAMESTATE_LOAD_GAME;
@@ -310,7 +310,7 @@ void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 				break;
 			case 2:
 				ChangeState(STATE_LOAD);
-				gLoadMenu.ScanDir();
+				g_engine->_loadMenu->ScanDir();
 				break;
 			case 3:
 				ChangeState(STATE_OPTIONS);
@@ -367,7 +367,7 @@ void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 		break;
 
 	case STATE_LOAD:
-		if (gLoadMenu.HandleEvents(Event)) {
+		if (g_engine->_loadMenu->HandleEvents(Event)) {
 			ChangeState(STATE_NORMAL);
 			ShouldChangeState = true;
 			NewStateID = GAMESTATE_LOAD_GAME;
@@ -462,7 +462,7 @@ void MainMenu::ChangeState(MenuState ms, const bool &start) {
 	me_main.UseKeyboard((state == STATE_NORMAL));
 
 	// Continue button is only enabled if there is a save to load
-	me_main.element.at(0).visible = !gLoadMenu.Empty();
+	me_main.element.at(0).visible = !g_engine->_loadMenu->Empty();
 
 	// Enable credits and quit button if outside all menus, otherwise disable it
 	me_main.element.at(6).visible = (state == STATE_NORMAL);
@@ -514,7 +514,7 @@ void MainMenu::Draw() {
 		break;
 
 	case STATE_LOAD:
-		gLoadMenu.Draw();
+		g_engine->_loadMenu->Draw();
 		back.Draw();
 		me_main.Draw();
 		break;
@@ -562,7 +562,7 @@ void MainMenu::SetUI() {
 	back.SetUI();
 	g_engine->_optionMenu->SetUI();
 	mod.SetUI();
-	gLoadMenu.SetUI();
+	g_engine->_loadMenu->SetUI();
 	g_engine->_helpScreen->SetUI();
 	credits.SetUI();
 
