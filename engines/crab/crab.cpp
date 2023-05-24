@@ -92,6 +92,7 @@ Common::Error CrabEngine::run() {
 	_screen = new Graphics::Screen(1280, 720, *_format);
 
 	_imageManager = new pyrodactyl::image::ImageManager();
+	_mouse = new pyrodactyl::input::Cursor();
 
 	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
 	CursorMan.replaceCursor(cursor);

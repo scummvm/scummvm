@@ -84,7 +84,6 @@ public:
 	bool Pressed() { return pressed; }
 };
 
-extern Cursor gMouse;
 } // End of namespace input
 } // End of namespace pyrodactyl
 

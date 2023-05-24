@@ -156,7 +156,7 @@ bool Game::LoadLevel(const std::string &id, int player_x, int player_y) {
 // Purpose: Handle events
 //------------------------------------------------------------------------
 void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {
-	gMouse.HandleEvents(Event);
+	g_engine->_mouse->HandleEvents(Event);
 
 //	if (GameDebug)
 //		debug_console.HandleEvents(Event);
@@ -312,7 +312,7 @@ void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 // Purpose: Handle events
 //------------------------------------------------------------------------
 void Game::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {
-	gMouse.HandleEvents(Event);
+	g_engine->_mouse->HandleEvents(Event);
 
 	if (GameDebug)
 		debug_console.HandleEvents(Event);
@@ -558,7 +558,7 @@ void Game::Draw() {
 
 	if (GameDebug)
 		debug_console.Draw(info);
-	gMouse.Draw();
+	g_engine->_mouse->Draw();
 }
 
 //------------------------------------------------------------------------

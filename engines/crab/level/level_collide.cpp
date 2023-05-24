@@ -52,24 +52,24 @@ bool Level::ContainsClick(const std::string &id, const Common::Event &Event) {
 		for (auto &i : objects) {
 			Rect r = i.PosRect();
 
-			if (r.Contains(gMouse.motion.x + camera.x, gMouse.motion.y + camera.y)) {
+			if (r.Contains(g_engine->_mouse->motion.x + camera.x, g_engine->_mouse->motion.y + camera.y)) {
 				// This is to show the sprite's name on top of their head
 				i.hover = true;
 
 				// This is to update the mouse cursor only if we're in talking range of a sprite
 				if (i.ID() == id)
-					gMouse.hover = true;
+					g_engine->_mouse->hover = true;
 			} else
 				i.hover = false;
 		}
 
 		return false;
-	} else if (gMouse.Pressed()) {
+	} else if (g_engine->_mouse->Pressed()) {
 		for (auto &i : objects) {
 			if (i.ID() == id) {
 				Rect r = i.PosRect();
-				if (r.Contains(gMouse.button.x + camera.x, gMouse.button.y + camera.y)) {
-					gMouse.hover = true;
+				if (r.Contains(g_engine->_mouse->button.x + camera.x, g_engine->_mouse->button.y + camera.y)) {
+					g_engine->_mouse->hover = true;
 					return true;
 				}
 			}
@@ -89,24 +89,24 @@ bool Level::ContainsClick(const std::string &id, const SDL_Event &Event) {
 		for (auto &i : objects) {
 			Rect r = i.PosRect();
 
-			if (r.Contains(gMouse.motion.x + camera.x, gMouse.motion.y + camera.y)) {
+			if (r.Contains(g_engine->_mouse->motion.x + camera.x, g_engine->_mouse->motion.y + camera.y)) {
 				// This is to show the sprite's name on top of their head
 				i.hover = true;
 
 				// This is to update the mouse cursor only if we're in talking range of a sprite
 				if (i.ID() == id)
-					gMouse.hover = true;
+					g_engine->_mouse->hover = true;
 			} else
 				i.hover = false;
 		}
 
 		return false;
-	} else if (gMouse.Pressed()) {
+	} else if (g_engine->_mouse->Pressed()) {
 		for (auto &i : objects) {
 			if (i.ID() == id) {
 				Rect r = i.PosRect();
-				if (r.Contains(gMouse.button.x + camera.x, gMouse.button.y + camera.y)) {
-					gMouse.hover = true;
+				if (r.Contains(g_engine->_mouse->button.x + camera.x, g_engine->_mouse->button.y + camera.y)) {
+					g_engine->_mouse->hover = true;
 					return true;
 				}
 			}

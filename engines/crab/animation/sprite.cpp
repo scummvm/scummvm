@@ -344,7 +344,7 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 
 	// This is for Diablo style hold-mouse-button-in-direction-of-movement
 	// This is only used if - point and click movement isn't being used, cursor is not inside the hud, the cursor is a normal cursor and the mouse is pressed
-	if (!ai_data.dest.active && !gMouse.inside_hud && !gMouse.hover && gMouse.Pressed()) {
+	if (!ai_data.dest.active && !g_engine->_mouse->inside_hud && !g_engine->_mouse->hover && g_engine->_mouse->Pressed()) {
 		// To find where the click is w.r.t sprite, we need to see where it is being drawn
 		int x = pos.x - camera.x - anim_set.AnchorX(dir), y = pos.y - camera.y - anim_set.AnchorY(dir);
 
@@ -353,17 +353,17 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 		int w = b.w, h = b.h;
 
 		// X axis
-		if (gMouse.motion.x > x + w)
+		if (g_engine->_mouse->motion.x > x + w)
 			XVel(player_speed * sc.walk_vel_mod.x);
-		else if (gMouse.motion.x < x)
+		else if (g_engine->_mouse->motion.x < x)
 			XVel(-player_speed * sc.walk_vel_mod.x);
 		else
 			XVel(0.0f);
 
 		// Y axis
-		if (gMouse.motion.y > y + h)
+		if (g_engine->_mouse->motion.y > y + h)
 			YVel(player_speed * sc.walk_vel_mod.y);
-		else if (gMouse.motion.y < y)
+		else if (g_engine->_mouse->motion.y < y)
 			YVel(-player_speed * sc.walk_vel_mod.y);
 		else
 			YVel(0.0f);
@@ -411,7 +411,7 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 
 	// This is for Diablo style hold-mouse-button-in-direction-of-movement
 	// This is only used if - point and click movement isn't being used, cursor is not inside the hud, the cursor is a normal cursor and the mouse is pressed
-	if (!ai_data.dest.active && !gMouse.inside_hud && !gMouse.hover && gMouse.Pressed()) {
+	if (!ai_data.dest.active && !g_engine->_mouse->inside_hud && !g_engine->_mouse->hover && g_engine->_mouse->Pressed()) {
 		// To find where the click is w.r.t sprite, we need to see where it is being drawn
 		int x = pos.x - camera.x - anim_set.AnchorX(dir), y = pos.y - camera.y - anim_set.AnchorY(dir);
 
@@ -420,17 +420,17 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 		int w = b.w, h = b.h;
 
 		// X axis
-		if (gMouse.motion.x > x + w)
+		if (g_engine->_mouse->motion.x > x + w)
 			XVel(player_speed * sc.walk_vel_mod.x);
-		else if (gMouse.motion.x < x)
+		else if (g_engine->_mouse->motion.x < x)
 			XVel(-player_speed * sc.walk_vel_mod.x);
 		else
 			XVel(0.0f);
 
 		// Y axis
-		if (gMouse.motion.y > y + h)
+		if (g_engine->_mouse->motion.y > y + h)
 			YVel(player_speed * sc.walk_vel_mod.y);
-		else if (gMouse.motion.y < y)
+		else if (g_engine->_mouse->motion.y < y)
 			YVel(-player_speed * sc.walk_vel_mod.y);
 		else
 			YVel(0.0f);

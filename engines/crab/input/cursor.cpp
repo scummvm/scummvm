@@ -34,15 +34,9 @@
 //=============================================================================
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/input/cursor.h"
+#include "crab/crab.h"
 
 namespace Crab {
-
-namespace pyrodactyl {
-namespace input {
-Cursor gMouse;
-}
-} // End of namespace pyrodactyl
-
 using namespace pyrodactyl::input;
 
 //------------------------------------------------------------------------
@@ -83,7 +77,7 @@ void Cursor::Load(rapidxml::xml_node<char> *node) {
 // Purpose: Handle Events
 //------------------------------------------------------------------------
 void Cursor::HandleEvents(const Common::Event &event) {
-	gMouse.hover = false;
+	g_engine->_mouse->hover = false;
 #if 0
 	if (event.type == SDL_MOUSEMOTION) {
 		motion.x = Event.motion.x;
