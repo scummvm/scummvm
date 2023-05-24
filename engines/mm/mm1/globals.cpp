@@ -150,6 +150,7 @@ Common::String Globals::operator[](const Common::String &name) const {
 
 void Globals::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_startingTown);
+	s.syncAsByte(_minimapOn);
 
 	// Sync the state information
 	_party.synchronize(s);

@@ -67,8 +67,12 @@ bool GameCommands::msgAction(const ActionMessage & msg) {
 	return false;
 }
 
+void GameCommands::Minimap::toggleMinimap() {
+	g_globals->_minimapOn = !g_globals->_minimapOn;
+}
+
 void GameCommands::Minimap::draw() {
-	if (_minimapOn && g_maps->_currentMap->mappingAllowed())
+	if (g_globals->_minimapOn && g_maps->_currentMap->mappingAllowed())
 		Map::draw();
 }
 
