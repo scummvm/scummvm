@@ -345,6 +345,12 @@ void CharacterInfo::showAttribute(int attrNum) {
 	int attrib = REDUCED_TO_EXPANDED(attrNum);
 	assert(attrib < 20);
 
+	if (attrib == 12) {
+		// Show active party spells
+		g_events->addView("Protect");
+		return;
+	}
+
 	Common::Rect bounds(STAT_POS[0][attrib], STAT_POS[1][attrib],
 		STAT_POS[0][attrib] + 143, STAT_POS[1][attrib] + 44);
 	_statInfo.setBounds(bounds);
@@ -389,6 +395,12 @@ void CharacterInfo::showAttribute(int attrNum) {
 		_statInfo.addText("/", 2, 0, ALIGN_MIDDLE);
 		_statInfo.addText(Common::String::format("%u", BASE[attrib]),
 			2, 0, ALIGN_LEFT, xc + 8);
+
+	} else if (attrib == 15) {
+		// Experience
+		_statInfo.addLine(STRING["enhdialogs.character.stats.experience"], ALIGN_MIDDLE);
+		_statInfo.addLine(Common::String::format("%u", c._exp), ALIGN_MIDDLE);
+
 	} else if (attrib >= 16 && attrib <= 18) {
 		bounds.bottom -= 8;
 		_statInfo.setBounds(bounds);
@@ -407,84 +419,13 @@ void CharacterInfo::showAttribute(int attrNum) {
 		_statInfo.addLine(Common::String::format("%u %s",
 			value, STRING["enhdialogs.character.long.on_hand"].c_str()),
 			ALIGN_MIDDLE);
+	} else {
+		// Condition
+		Common::String conditionStr = c.getConditionString();
+
+		_statInfo.addLine(STRING["enhdialogs.character.stats.condition"], ALIGN_MIDDLE);
+		_statInfo.addLine(conditionStr, ALIGN_MIDDLE);
 	}
-
-	/*
-	case 15:
-		// Experience
-		stat1 = c.getCurrentExperience();
-		stat2 = c.experienceToNextLevel();
-		msg = Common::String::format(Res.EXPERIENCE_TEXT,
-			Res.STAT_NAMES[attrib], stat1,
-			stat2 == 0 ? Res.ELIGIBLE : Common::String::format("%d", stat2).c_str()
-		);
-		bounds.setHeight(43);
-		break;
-
-	case 19:
-	{
-		// Conditions
-		Common::String lines[20];
-		const char **_tmpConditions = c._sex == FEMALE ? (const char **)Res.CONDITION_NAMES_F : (const char **)Res.CONDITION_NAMES_M;
-		int total = 0;
-		for (int condition = CURSED; condition <= ERADICATED; ++condition) {
-			if (c._conditions[condition]) {
-				if (condition >= UNCONSCIOUS) {
-					lines[condition] = Common::String::format("\n\t020%s",
-						_tmpConditions[condition]);
-				} else {
-					lines[condition] = Common::String::format("\n\t020%s\t095-%d",
-						_tmpConditions[condition], c._conditions[condition]);
-				}
-
-				++total;
-			}
-		}
-
-		Condition condition = c.worstCondition();
-		if (condition == NO_CONDITION) {
-			lines[0] = Common::String::format("\n\t020%s", Res.GOOD);
-			++total;
-		}
-
-		if (party._blessed) {
-			lines[16] = Common::String::format(Res.BLESSED, party._blessed);
-			++total;
-		}
-		if (party._powerShield) {
-			lines[17] = Common::String::format(Res.POWER_SHIELD, party._powerShield);
-			++total;
-		}
-		if (party._holyBonus) {
-			lines[18] = Common::String::format(Res.HOLY_BONUS, party._holyBonus);
-			++total;
-		}
-		if (party._heroism) {
-			lines[19] = Common::String::format(Res.HEROISM, party._heroism);
-			++total;
-		}
-
-		msg = Common::String::format("\x2\x3""c%s\x3l%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\x1",
-			Res.CONSUMABLE_NAMES[3], lines[0].c_str(), lines[1].c_str(),
-			lines[2].c_str(), lines[3].c_str(), lines[4].c_str(),
-			lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
-			lines[8].c_str(), lines[9].c_str(), lines[10].c_str(),
-			lines[11].c_str(), lines[12].c_str(), lines[13].c_str(),
-			lines[14].c_str(), lines[15].c_str(), lines[16].c_str(),
-			lines[17].c_str(), lines[18].c_str(), lines[19].c_str()
-		);
-
-		bounds.top -= ((total - 1) / 2) * 8;
-		bounds.setHeight(total * 9 + 26);
-		if (bounds.bottom >= SCREEN_HEIGHT)
-			bounds.moveTo(bounds.left, SCREEN_HEIGHT - bounds.height() - 1);
-		break;
-	}
-
-	default:
-		break;
-	}
-	*/
 
 	_statInfo.addView();
 }
