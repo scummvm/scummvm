@@ -863,7 +863,7 @@ void Game::SetUI() {
 	hud.SetUI();
 
 	gLoadMenu.SetUI();
-	gOptionMenu.SetUI();
+	g_engine->_optionMenu->SetUI();
 
 	gem.SetUI();
 	info.SetUI();

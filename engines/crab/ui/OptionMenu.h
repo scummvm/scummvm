@@ -117,7 +117,6 @@ public:
 	void SaveState();
 };
 
-extern OptionMenu gOptionMenu;
 } // End of namespace ui
 } // End of namespace pyrodactyl
 

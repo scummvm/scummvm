@@ -52,9 +52,9 @@ MainMenu::MainMenu() {
 
 			back.Load(node->first_node("back"));
 
-			if (!gOptionMenu.loaded) {
-				gOptionMenu.Load(node->first_node("option")->first_attribute("path")->value());
-				gOptionMenu.loaded = true;
+			if (!g_engine->_optionMenu->loaded) {
+				g_engine->_optionMenu->Load(node->first_node("option")->first_attribute("path")->value());
+				g_engine->_optionMenu->loaded = true;
 			}
 
 			mod.Load(node->first_node("mod")->first_attribute("path")->value());
@@ -225,7 +225,7 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 		break;
 #endif
 	case STATE_OPTIONS:
-		if (gOptionMenu.HandleEvents(back, Event))
+		if (g_engine->_optionMenu->HandleEvents(back, Event))
 			ChangeState(STATE_NORMAL);
 		break;
 
@@ -357,7 +357,7 @@ void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 		break;
 #endif
 	case STATE_OPTIONS:
-		if (gOptionMenu.HandleEvents(back, Event))
+		if (g_engine->_optionMenu->HandleEvents(back, Event))
 			ChangeState(STATE_NORMAL);
 		break;
 
@@ -425,7 +425,7 @@ void MainMenu::InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID) 
 		i.InternalEvents();
 
 	if (state == STATE_OPTIONS)
-		gOptionMenu.InternalEvents();
+		g_engine->_optionMenu->InternalEvents();
 }
 
 //------------------------------------------------------------------------
@@ -505,7 +505,7 @@ void MainMenu::Draw() {
 		break;
 
 	case STATE_OPTIONS:
-		gOptionMenu.Draw(back);
+		g_engine->_optionMenu->Draw(back);
 		me_main.Draw();
 		break;
 
@@ -560,7 +560,7 @@ void MainMenu::SetUI() {
 	logo.SetUI();
 
 	back.SetUI();
-	gOptionMenu.SetUI();
+	g_engine->_optionMenu->SetUI();
 	mod.SetUI();
 	gLoadMenu.SetUI();
 	g_engine->_helpScreen->SetUI();
