@@ -1987,6 +1987,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("ganbareinuchan2", "Demo", "xn--n8jyc6a7frdqb0ywhp41xex4bh34xxa2b", "8ea9e9a699c61edddffd79ddd0c994d7", 290398, Common::JA_JPN, 402),
 
 	MACGAME1_l("ganbareinuchan2", "", "INUCHAN2", "0c7bbb4b24823e5ab871cb4c1d6f3710", 483187, Common::JA_JPN, 404),
+	WINGAME1t_l("ganbareinuchan2", "", "INUCHAN2.EXE", "9a2ad46629d992ba5ad9fbe3ae5554bc", 739941, Common::JA_JPN, 404),
 
 	WINGAME1_l("henachoco", "", "HENADB.EXE", "b1f5f97ce93cafe828621843ff05df76", 2366787, Common::JA_JPN, 400),
 
