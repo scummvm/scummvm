@@ -41,13 +41,6 @@ namespace Crab {
 
 using namespace pyrodactyl::image;
 
-// Stuff we use throughout the game
-namespace pyrodactyl {
-namespace image {
-ImageManager gImageManager;
-}
-} // End of namespace pyrodactyl
-
 //------------------------------------------------------------------------
 // Purpose: Load assets here.
 //------------------------------------------------------------------------
