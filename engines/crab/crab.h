@@ -74,10 +74,13 @@ namespace Crab {
 class App;
 struct CrabGameDescription;
 
+class LoadingScreen;
+
 namespace pyrodactyl {
 namespace event {
 	struct GameEventStore;
 } // End of namespace event
+
 } // End of namespace pyrodactyl
 
 class CrabEngine : public Engine {
@@ -98,6 +101,10 @@ public:
 	pyrodactyl::input::Cursor *_mouse = nullptr;
 	pyrodactyl::event::GameEventStore *_eventStore = nullptr;
 	pyrodactyl::text::TextManager *_textManager = nullptr;
+
+	// Should these really be inside the Engine class?
+	LoadingScreen *_loadingScreen = nullptr;
+
 	Common::FSNode _gameDataDir;
 
 	CrabEngine(OSystem *syst, const ADGameDescription *gameDesc);

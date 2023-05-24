@@ -71,8 +71,6 @@ public:
 	void Quit();
 };
 
-extern LoadingScreen gLoadScreen;
-
 } // End of namespace Crab
 
 #endif // CRAB_LOADINGSCREEN_H

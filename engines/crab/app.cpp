@@ -313,7 +313,7 @@ App::~App() {
 	pyrodactyl::music::gMusicManager.Quit();
 	g_engine->_textManager->Quit();
 	pyrodactyl::input::gInput.Quit();
-	gLoadScreen.Quit();
+	g_engine->_loadingScreen->Quit();
 
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(gWindow);

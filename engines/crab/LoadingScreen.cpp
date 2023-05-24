@@ -86,6 +86,4 @@ void LoadingScreen::Quit() {
 		i->Delete();
 }
 
-LoadingScreen gLoadScreen;
-
 } // End of namespace Crab

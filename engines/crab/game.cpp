@@ -57,7 +57,7 @@ void Game::LoadGame(const std::string &filename) {
 }
 
 void Game::Init(const std::string &filename) {
-	gLoadScreen.Dim();
+	g_engine->_loadingScreen->Dim();
 	g_engine->_eventStore->Clear();
 	game_over.Clear(false);
 	state = STATE_GAME;
@@ -114,7 +114,7 @@ void Game::Init(const std::string &filename) {
 
 bool Game::LoadLevel(const std::string &id, int player_x, int player_y) {
 	if (gFilePath.level.contains(id.c_str())) {
-		gLoadScreen.Draw();
+		g_engine->_loadingScreen->Draw();
 
 		// Load the assets local to this level
 		// If the filename is same as the previous one, skip loading

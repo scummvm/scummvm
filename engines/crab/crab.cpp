@@ -95,6 +95,7 @@ Common::Error CrabEngine::run() {
 	_mouse = new pyrodactyl::input::Cursor();
 	_eventStore = new pyrodactyl::event::GameEventStore();
 	_textManager = new pyrodactyl::text::TextManager();
+	_loadingScreen = new LoadingScreen();
 
 	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
 	CursorMan.replaceCursor(cursor);
