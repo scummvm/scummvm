@@ -42,10 +42,7 @@ class GameCommands : public ButtonContainer {
 			_minimapOn = !_minimapOn;
 			g_events->redraw();
 		}
-		void draw() override {
-			if (_minimapOn)
-				Map::draw();
-		}
+		void draw() override;
 	};
 
 private:

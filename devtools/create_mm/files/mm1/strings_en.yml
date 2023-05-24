@@ -587,6 +587,7 @@ enhdialogs:
 		south: "South"
 		east: "East"
 		west: "West"
+		disabled: "Mapping is currently unavailable here"
 	market:
 		title: "Market"
 		buy_food: "Buy food"

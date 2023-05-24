@@ -79,13 +79,6 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
-
-	/**
-	 * This map has some random spinners, so we want to
-	 * disable mapping in enhanced mode to avoid spoiling
-	 * the surprise
-	 */
-	bool mappingAllowed() const override { return false; }
 };
 
 } // namespace Maps

@@ -76,7 +76,10 @@ bool Game::msgAction(const ActionMessage &msg) {
 		send("Bash", GameMessage("SHOW"));
 		break;
 	case KEYBIND_MAP:
-		addView("MapPopup");
+		if (g_maps->_currentMap->mappingAllowed())
+			addView("MapPopup");
+		else
+			send(InfoMessage(STRING["enhdialogs.map.disabled"]));
 		return true;
 	case KEYBIND_MENU:
 		g_engine->openMainMenuDialog();
