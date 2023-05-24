@@ -51,7 +51,6 @@ class PathfindingAgent;
 
 namespace pyrodactyl {
 namespace anim {
-const Vector3f ZERO_VEL;
 
 class Sprite {
 protected:
