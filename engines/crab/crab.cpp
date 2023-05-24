@@ -85,10 +85,8 @@ Common::String CrabEngine::getGameId() const {
 }
 
 Common::Error CrabEngine::run() {
-	// Initialize 320x200 paletted graphics mode
 	_format = new Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 	initGraphics(1280, 720, _format);
-	_renderSurface = new Graphics::ManagedSurface(1920, 1080, *_format);
 	_screen = new Graphics::Screen(1280, 720, *_format);
 
 	_imageManager = new pyrodactyl::image::ImageManager();
