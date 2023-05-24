@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/AlphaImage.h"
 #include "crab/text/TextManager.h"
 
@@ -62,13 +64,13 @@ void AlphaImage::InternalEvents() {
 		}
 	}
 
-	if (gImageManager.ValidTexture(img))
-		gImageManager.GetTexture(img).Alpha(alpha.cur);
+	if (g_engine->_imageManager->ValidTexture(img))
+		g_engine->_imageManager->GetTexture(img).Alpha(alpha.cur);
 }
 
 void AlphaImage::Draw(const int &XOffset, const int &YOffset) {
-	if (gImageManager.ValidTexture(img))
-		gImageManager.GetTexture(img).Draw(pos.x + XOffset, pos.y + YOffset);
+	if (g_engine->_imageManager->ValidTexture(img))
+		g_engine->_imageManager->GetTexture(img).Draw(pos.x + XOffset, pos.y + YOffset);
 }
 
 } // End of namespace Crab

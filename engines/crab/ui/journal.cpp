@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/journal.h"
 
 namespace Crab {
@@ -115,7 +117,7 @@ void Journal::Draw(const std::string &id) {
 			int count = 0;
 			for (auto i = category.element.begin(); i != category.element.end() && count < JE_TOTAL; ++i, ++count)
 				if (jo.menu[count].unread)
-					gImageManager.NotifyDraw(i->x + i->w, i->y);
+					g_engine->_imageManager->NotifyDraw(i->x + i->w, i->y);
 
 			if (select >= 0 && select < JE_TOTAL)
 				jo.menu[select].Draw(bu_map);

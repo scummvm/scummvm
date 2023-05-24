@@ -63,6 +63,7 @@
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
+#include "crab/image/ImageManager.h"
 
 #include "crab/detection.h"
 
@@ -85,9 +86,9 @@ public:
 	Graphics::Screen *_screen = nullptr;
 	Graphics::PixelFormat *_format = nullptr;
 	Graphics::ManagedSurface *_renderSurface = nullptr;
+	pyrodactyl::image::ImageManager *_imageManager = nullptr;
 	Common::FSNode _gameDataDir;
 
-public:
 	CrabEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~CrabEngine() override;
 	void initializePath(const Common::FSNode &gamePath) override;

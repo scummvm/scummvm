@@ -31,7 +31,7 @@
 #ifndef CRAB_SHADOW_H
 #define CRAB_SHADOW_H
 
-#include "crab/image/ImageManager.h"
+#include "crab/crab.h"
 #include "crab/common_header.h"
 #include "crab/vectors.h"
 
@@ -57,7 +57,7 @@ struct ShadowData {
 
 		using namespace pyrodactyl::image;
 		Image dat;
-		gImageManager.GetTexture(img, dat);
+		g_engine->_imageManager->GetTexture(img, dat);
 		size.x = dat.W() / 2;
 		size.y = dat.H() / 2;
 	}

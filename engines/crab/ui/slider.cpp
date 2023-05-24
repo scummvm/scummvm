@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/slider.h"
 
 namespace Crab {
@@ -42,8 +44,8 @@ void Slider::Load(rapidxml::xml_node<char> *node, const int &Min, const int &Max
 		bar.Load(node->first_node("bar"));
 
 		knob.y = bar.y;
-		knob.w = gImageManager.GetTexture(knob.img.normal).W();
-		knob.h = gImageManager.GetTexture(knob.img.normal).H();
+		knob.w = g_engine->_imageManager->GetTexture(knob.img.normal).W();
+		knob.h = g_engine->_imageManager->GetTexture(knob.img.normal).H();
 		knob.canmove = true;
 
 		min = Min;
@@ -140,8 +142,8 @@ void Slider::SetUI() {
 
 	knob.x = bar.x + ((bar.w - knob.w) * value / (max - min));
 	knob.y = bar.y;
-	knob.w = gImageManager.GetTexture(knob.img.normal).W();
-	knob.h = gImageManager.GetTexture(knob.img.normal).H();
+	knob.w = g_engine->_imageManager->GetTexture(knob.img.normal).W();
+	knob.h = g_engine->_imageManager->GetTexture(knob.img.normal).H();
 }
 
 } // End of namespace Crab

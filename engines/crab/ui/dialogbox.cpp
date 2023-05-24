@@ -32,6 +32,8 @@
 // Author:   Arvind
 // Purpose:  Dialog box!
 //=============================================================================
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/dialogbox.h"
 
 namespace Crab {
@@ -61,9 +63,9 @@ void GameDialogBox::Load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 void GameDialogBox::Draw(const bool &player) {
 	if (player)
-		gImageManager.Draw(pos.x, pos.y, bg_p);
+		g_engine->_imageManager->Draw(pos.x, pos.y, bg_p);
 	else
-		gImageManager.Draw(pos.x, pos.y, bg);
+		g_engine->_imageManager->Draw(pos.x, pos.y, bg);
 }
 
 //------------------------------------------------------------------------

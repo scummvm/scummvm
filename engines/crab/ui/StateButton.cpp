@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/StateButton.h"
 
 namespace Crab {
@@ -74,8 +76,8 @@ void StateButton::State(const bool val) {
 	}
 
 	// Images might be different in size
-	w = gImageManager.GetTexture(img.normal).W();
-	h = gImageManager.GetTexture(img.normal).H();
+	w = g_engine->_imageManager->GetTexture(img.normal).W();
+	h = g_engine->_imageManager->GetTexture(img.normal).H();
 }
 
 void StateButton::Img(const StateButtonImage &sbi) {

@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/level/level_objects.h"
 
 namespace Crab {
@@ -37,12 +39,12 @@ using namespace pyrodactyl::level;
 
 void PlayerDestMarker::Load(rapidxml::xml_node<char> *node) {
 	LoadImgKey(img, "dest", node);
-	size.x = gImageManager.GetTexture(img).W();
-	size.y = gImageManager.GetTexture(img).H();
+	size.x = g_engine->_imageManager->GetTexture(img).W();
+	size.y = g_engine->_imageManager->GetTexture(img).H();
 }
 
 void PlayerDestMarker::Draw(const Vector2i &pos, const Rect &camera) {
-	gImageManager.Draw(pos.x - (size.x / 2) - camera.x, pos.y - (size.y / 2) - camera.y, img);
+	g_engine->_imageManager->Draw(pos.x - (size.x / 2) - camera.x, pos.y - (size.y / 2) - camera.y, img);
 }
 
 } // End of namespace Crab

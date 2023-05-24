@@ -71,7 +71,7 @@ void ChapterIntro::Draw(pyrodactyl::event::Info &info, std::string &text,
 
 	if (cur_sp != nullptr) {
 		Rect clip = cur_sp->DialogClip(state);
-		gImageManager.Draw(pos.x, pos.y, cur_sp->Img(), &clip);
+		g_engine->_imageManager->Draw(pos.x, pos.y, cur_sp->Img(), &clip);
 	}
 }
 

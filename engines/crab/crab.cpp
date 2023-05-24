@@ -91,6 +91,8 @@ Common::Error CrabEngine::run() {
 	_renderSurface = new Graphics::ManagedSurface(1920, 1080, *_format);
 	_screen = new Graphics::Screen(1280, 720, *_format);
 
+	_imageManager = new pyrodactyl::image::ImageManager();
+
 	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
 	CursorMan.replaceCursor(cursor);
 	delete cursor;

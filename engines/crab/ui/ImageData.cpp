@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/ImageData.h"
 
 namespace Crab {
@@ -47,9 +49,9 @@ void ImageData::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 
 void ImageData::Draw(const int &XOffset, const int &YOffset) {
 	if (crop)
-		gImageManager.Draw(x + XOffset, y + YOffset, key, &clip);
+		g_engine->_imageManager->Draw(x + XOffset, y + YOffset, key, &clip);
 	else
-		gImageManager.Draw(x + XOffset, y + YOffset, key);
+		g_engine->_imageManager->Draw(x + XOffset, y + YOffset, key);
 }
 
 } // End of namespace Crab

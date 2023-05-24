@@ -120,7 +120,7 @@ bool Game::LoadLevel(const std::string &id, int player_x, int player_y) {
 		// If the filename is same as the previous one, skip loading
 		if (gFilePath.current_r != gFilePath.level[id.c_str()].asset) {
 			gFilePath.current_r = gFilePath.level[id.c_str()].asset;
-			gImageManager.LoadMap(gFilePath.level[id.c_str()].asset);
+			g_engine->_imageManager->LoadMap(gFilePath.level[id.c_str()].asset);
 		}
 
 		// Load the level itself
@@ -502,7 +502,7 @@ void Game::Draw() {
 	if (gem.draw_game)
 		level.Draw(info);
 	else
-		gImageManager.BlackScreen();
+		g_engine->_imageManager->BlackScreen();
 	switch (state) {
 	case STATE_GAME:
 		if (gem.EventInProgress())
@@ -511,36 +511,36 @@ void Game::Draw() {
 			hud.Draw(info, level.PlayerID());
 		break;
 	case STATE_PAUSE:
-		gImageManager.DimScreen();
+		g_engine->_imageManager->DimScreen();
 		hud.pause.Draw(hud.back);
 		hud.Draw(info, level.PlayerID());
 		break;
 	case STATE_MAP:
-		gImageManager.DimScreen();
+		g_engine->_imageManager->DimScreen();
 		map.Draw(info);
 		hud.Draw(info, level.PlayerID());
 		hud.back.Draw();
 		break;
 	case STATE_JOURNAL:
-		gImageManager.DimScreen();
+		g_engine->_imageManager->DimScreen();
 		info.journal.Draw(level.PlayerID());
 		hud.Draw(info, level.PlayerID());
 		hud.back.Draw();
 		break;
 	case STATE_CHARACTER:
-		gImageManager.DimScreen();
+		g_engine->_imageManager->DimScreen();
 		gem.per.Draw(info, level.PlayerID());
 		hud.Draw(info, level.PlayerID());
 		hud.back.Draw();
 		break;
 	case STATE_INVENTORY:
-		gImageManager.DimScreen();
+		g_engine->_imageManager->DimScreen();
 		info.InvDraw(level.PlayerID());
 		hud.Draw(info, level.PlayerID());
 		hud.back.Draw();
 		break;
 	case STATE_HELP:
-		gImageManager.DimScreen();
+		g_engine->_imageManager->DimScreen();
 		gHelpScreen.Draw();
 		hud.back.Draw();
 		hud.Draw(info, level.PlayerID());
@@ -802,7 +802,7 @@ void Game::SaveState(const std::string &filename, const bool &overwrite) {
 void Game::Quit(bool &ShouldChangeState, GameStateID &NewStateID, const GameStateID &NewStateVal) {
 	ShouldChangeState = true;
 	NewStateID = NewStateVal;
-	gImageManager.LoadMap(gFilePath.mainmenu_r);
+	g_engine->_imageManager->LoadMap(gFilePath.mainmenu_r);
 }
 //------------------------------------------------------------------------
 // Purpose: Change our internal state

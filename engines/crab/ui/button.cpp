@@ -32,6 +32,8 @@
 // Author:   Arvind
 // Purpose:  Contains the button functions
 //=============================================================================
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/button.h"
 
 namespace Crab {
@@ -103,17 +105,17 @@ void Button::Reset() {
 void Button::Draw(const int &XOffset, const int &YOffset, Rect *clip) {
 	if (visible) {
 		if (mousepressed) {
-			gImageManager.Draw(x + XOffset, y + YOffset, img.select, clip);
+			g_engine->_imageManager->Draw(x + XOffset, y + YOffset, img.select, clip);
 
 			tooltip.Draw(XOffset, YOffset);
 			caption.Draw(true, XOffset, YOffset);
 		} else if (hover_mouse || hover_key) {
-			gImageManager.Draw(x + XOffset, y + YOffset, img.hover, clip);
+			g_engine->_imageManager->Draw(x + XOffset, y + YOffset, img.hover, clip);
 
 			tooltip.Draw(XOffset, YOffset);
 			caption.Draw(true, XOffset, YOffset);
 		} else {
-			gImageManager.Draw(x + XOffset, y + YOffset, img.normal, clip);
+			g_engine->_imageManager->Draw(x + XOffset, y + YOffset, img.normal, clip);
 			caption.Draw(false, XOffset, YOffset);
 		}
 	}
@@ -125,13 +127,13 @@ void Button::ImageCaptionOnlyDraw(const int &XOffset, const int &YOffset, Rect *
 #if 0
 	if (visible) {
 		if (mousepressed) {
-			gImageManager.Draw(x + XOffset, y + YOffset, img.select, clip);
+			g_engine->_imageManager->Draw(x + XOffset, y + YOffset, img.select, clip);
 			caption.Draw(true, XOffset, YOffset);
 		} else if (hover_mouse || hover_key) {
-			gImageManager.Draw(x + XOffset, y + YOffset, img.hover, clip);
+			g_engine->_imageManager->Draw(x + XOffset, y + YOffset, img.hover, clip);
 			caption.Draw(true, XOffset, YOffset);
 		} else {
-			gImageManager.Draw(x + XOffset, y + YOffset, img.normal, clip);
+			g_engine->_imageManager->Draw(x + XOffset, y + YOffset, img.normal, clip);
 			caption.Draw(false, XOffset, YOffset);
 		}
 	}

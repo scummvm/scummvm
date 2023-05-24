@@ -27,7 +27,8 @@
  * Licensed under MIT
  *
  */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/element.h"
 
 namespace Crab {
@@ -46,7 +47,7 @@ void Element::Init(const int &X, const int &Y, const Align &align_x, const Align
 		w = W;
 		h = H;
 	} else {
-		Image dat = gImageManager.GetTexture(img);
+		Image dat = g_engine->_imageManager->GetTexture(img);
 		w = dat.W();
 		h = dat.H();
 	}
@@ -62,12 +63,12 @@ void Element::Load(rapidxml::xml_node<char> *node, ImageKey img, const bool &ech
 	BasicLoad(node, echo);
 
 	if (node->first_attribute("w") == NULL)
-		w = gImageManager.GetTexture(img).W();
+		w = g_engine->_imageManager->GetTexture(img).W();
 	else
 		LoadNum(w, "w", node);
 
 	if (node->first_attribute("h") == NULL)
-		h = gImageManager.GetTexture(img).H();
+		h = g_engine->_imageManager->GetTexture(img).H();
 	else
 		LoadNum(h, "h", node);
 

@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/animation/AnimationFrame.h"
 
 namespace Crab {
@@ -73,7 +75,7 @@ void AnimationFrame::Draw(const uint32 &timestamp) {
 		SDL_SetRenderDrawColor(gRenderer, col.r, col.g, col.b, col.a);
 		SDL_RenderFillRect(gRenderer, NULL);
 
-		gImageManager.Draw(x, y, img);
+		g_engine->_imageManager->Draw(x, y, img);
 		text.Draw();
 	}
 #endif

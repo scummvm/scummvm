@@ -74,7 +74,7 @@ void Sprite::Load(rapidxml::xml_node<char> *node, std::vector<std::string> &anim
 		LoadNum(layer, "layer", node, false);
 
 		Image dat;
-		gImageManager.GetTexture(image, dat);
+		g_engine->_imageManager->GetTexture(image, dat);
 		img_size.x = dat.W();
 		img_size.y = dat.H();
 
@@ -250,17 +250,17 @@ void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera) {
 	ShadowOffset sh = anim_set.Shadow(dir);
 	if (sh.valid) {
 		// Draw using custom offset
-		gImageManager.Draw(x + clip.w / 2 - anim_set.shadow.size.x + sh.x,
+		g_engine->_imageManager->Draw(x + clip.w / 2 - anim_set.shadow.size.x + sh.x,
 						   y + clip.h - anim_set.shadow.size.y + sh.y,
 						   anim_set.shadow.img);
 	} else {
 		// Draw using default offset
-		gImageManager.Draw(x + clip.w / 2 - anim_set.shadow.size.x + anim_set.shadow.offset.x,
+		g_engine->_imageManager->Draw(x + clip.w / 2 - anim_set.shadow.size.x + anim_set.shadow.offset.x,
 						   y + clip.h - anim_set.shadow.size.y + anim_set.shadow.offset.y,
 						   anim_set.shadow.img);
 	}
 
-	gImageManager.Draw(x, y, image, &clip, anim_set.Flip(dir));
+	g_engine->_imageManager->Draw(x, y, image, &clip, anim_set.Flip(dir));
 	img_eff.Draw(x, y);
 
 	if (GameDebug) {

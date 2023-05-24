@@ -269,6 +269,10 @@ void Image::Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &
 		s->flipHorizontal(Common::Rect(s->w, s->h));
 		break;
 
+		case FLIP_Y:
+		s->flipVertical(Common::Rect(s->w, s->h));
+		break;
+
 		default:
 		warning("Flipped texture: %d", flip);
 	}

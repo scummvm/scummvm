@@ -61,9 +61,9 @@ void StatInfo::Draw(const int &val, const int &max) {
 
 		int i = 0;
 		for (; i < val; ++i)
-			gImageManager.Draw(dim.x + i * dim.w, dim.y + i * dim.h, full);
+			g_engine->_imageManager->Draw(dim.x + i * dim.w, dim.y + i * dim.h, full);
 		for (; i < max; ++i)
-			gImageManager.Draw(dim.x + i * dim.w, dim.y + i * dim.h, empty);
+			g_engine->_imageManager->Draw(dim.x + i * dim.w, dim.y + i * dim.h, empty);
 	}
 #endif
 }

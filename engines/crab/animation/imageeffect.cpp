@@ -28,7 +28,8 @@
  *
  */
 
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/animation/imageeffect.h"
 
 namespace Crab {
@@ -44,7 +45,7 @@ void ImageEffect::Load(rapidxml::xml_node<char> *node) {
 
 void ImageEffect::Draw(const int &XOffset, const int &YOffset) {
 	if (visible)
-		pyrodactyl::image::gImageManager.Draw(x + XOffset, y + YOffset, img);
+		g_engine->_imageManager->Draw(x + XOffset, y + YOffset, img);
 }
 
 } // End of namespace Crab
