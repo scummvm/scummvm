@@ -42,7 +42,7 @@ void AGSController::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(Controller::GetAxis, AGSController::Controller_GetAxis);
 	SCRIPT_METHOD(Controller::GetPOV, AGSController::Controller_GetPOV);
 	SCRIPT_METHOD(Controller::IsButtonDown, AGSController::Controller_IsButtonDown);
-	SCRIPT_METHOD(Controller::GetName ^ 0, AGSController::Controller_GetName);
+	SCRIPT_METHOD(Controller::GetName^0, AGSController::Controller_GetName);
 	SCRIPT_METHOD(Controller::Rumble, AGSController::Controller_Rumble);
 	SCRIPT_METHOD(Controller::IsButtonDownOnce, AGSController::Controller_IsButtonDownOnce);
 	SCRIPT_METHOD(Controller::PressAnyKey, AGSController::Controller_PressAnyKey);
