@@ -58,7 +58,7 @@ void GameEvent::Load(rapidxml::xml_node<char> *node) {
 		special = 0;
 	} else if (Type == "reply") {
 		type = EVENT_REPLY;
-		gEventStore.AddConv(node, special);
+		g_engine->_eventStore->AddConv(node, special);
 	} else if (Type == "animation") {
 		type = EVENT_ANIM;
 		LoadNum(special, "anim", node);

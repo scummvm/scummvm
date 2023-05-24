@@ -73,6 +73,12 @@ namespace Crab {
 class App;
 struct CrabGameDescription;
 
+namespace pyrodactyl {
+namespace event {
+	struct GameEventStore;
+} // End of namespace event
+} // End of namespace pyrodactyl
+
 class CrabEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
@@ -89,6 +95,7 @@ public:
 	Graphics::ManagedSurface *_renderSurface = nullptr;
 	pyrodactyl::image::ImageManager *_imageManager = nullptr;
 	pyrodactyl::input::Cursor *_mouse = nullptr;
+	pyrodactyl::event::GameEventStore *_eventStore = nullptr;
 	Common::FSNode _gameDataDir;
 
 	CrabEngine(OSystem *syst, const ADGameDescription *gameDesc);

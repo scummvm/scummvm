@@ -58,7 +58,7 @@ void Game::LoadGame(const std::string &filename) {
 
 void Game::Init(const std::string &filename) {
 	gLoadScreen.Dim();
-	pyrodactyl::event::gEventStore.Clear();
+	g_engine->_eventStore->Clear();
 	game_over.Clear(false);
 	state = STATE_GAME;
 	savefile.auto_slot = false;
@@ -94,7 +94,7 @@ void Game::Init(const std::string &filename) {
 			gem.Load(node->first_node("event"), pop_default);
 
 			LoadStr(path, "store", node->first_node("event"));
-			pyrodactyl::event::gEventStore.Load(path);
+			g_engine->_eventStore->Load(path);
 		}
 
 		if (NodeValid("map", node)) {

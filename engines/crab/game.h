@@ -124,7 +124,7 @@ private:
 	}
 
 	// Load the current player image
-	void PlayerImg() { hud.PlayerImg(pyrodactyl::event::gEventStore.img.at(info.PlayerImg())); }
+	void PlayerImg() { hud.PlayerImg(g_engine->_eventStore->img.at(info.PlayerImg())); }
 
 public:
 	Game() { StartNewGame(); }

@@ -32,12 +32,6 @@
 
 namespace Crab {
 
-namespace pyrodactyl {
-namespace event {
-GameEventStore gEventStore;
-}
-} // End of namespace pyrodactyl
-
 using namespace pyrodactyl::event;
 
 void GameEventStore::AddConv(rapidxml::xml_node<char> *node, unsigned int &index) {

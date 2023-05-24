@@ -83,7 +83,6 @@ struct GameEventStore {
 	void SetAchievement(const int &id);
 };
 
-extern GameEventStore gEventStore;
 } // End of namespace event
 } // End of namespace pyrodactyl
 
