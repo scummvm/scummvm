@@ -141,7 +141,7 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, Common::Eve
 					if (info.PersonValid(cur_event->title))
 						info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->title).name);
 
-				int choice = reply.HandleEvents(info, gEventStore.con.at(cur_event->special), cur_event->title, oh, Event);
+				int choice = reply.HandleEvents(info, g_engine->_eventStore->con.at(cur_event->special), cur_event->title, oh, Event);
 				if (choice >= 0) {
 					event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq, choice);
 					oh.show_journal = false;
@@ -228,7 +228,7 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, SDL_Event &
 					if (info.PersonValid(cur_event->title))
 						info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->title).name);
 
-				int choice = reply.HandleEvents(info, gEventStore.con.at(cur_event->special), cur_event->title, oh, Event);
+				int choice = reply.HandleEvents(info, g_engine->_eventStore->con.at(cur_event->special), cur_event->title, oh, Event);
 				if (choice >= 0) {
 					event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq, choice);
 					oh.show_journal = false;
@@ -281,7 +281,7 @@ void Manager::InternalEvents(Info &info, Level &level, std::vector<EventResult> 
 				using namespace pyrodactyl::anim;
 
 				DrawType draw_val = DRAW_SAME;
-				if (gEventStore.anim.at(cur_event->special).InternalEvents(draw_val))
+				if (g_engine->_eventStore->anim.at(cur_event->special).InternalEvents(draw_val))
 					event_map[info.CurLocID()].NextEvent(active_seq, info, level.PlayerID(), result, end_seq);
 
 				if (draw_val == DRAW_STOP)
@@ -320,7 +320,7 @@ void Manager::Draw(Info &info, HUD &hud, Level &level) {
 	if (event_map.count(info.CurLocID()) > 0 && event_map[info.CurLocID()].EventInProgress(active_seq)) {
 		switch (cur_event->type) {
 		case EVENT_ANIM:
-			gEventStore.anim.at(cur_event->special).Draw();
+			g_engine->_eventStore->anim.at(cur_event->special).Draw();
 			break;
 		case EVENT_DIALOG:
 			g_engine->_imageManager->DimScreen();
@@ -374,10 +374,10 @@ void Manager::CalcActiveSeq(Info &info, Level &level, const Rect &camera) {
 
 		switch (cur_event->type) {
 		case EVENT_ANIM:
-			gEventStore.anim.at(cur_event->special).Start();
+			g_engine->_eventStore->anim.at(cur_event->special).Start();
 			break;
 		case EVENT_REPLY:
-			reply.Cache(info, gEventStore.con.at(cur_event->special));
+			reply.Cache(info, g_engine->_eventStore->con.at(cur_event->special));
 			break;
 		default:
 			break;
