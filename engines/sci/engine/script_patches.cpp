@@ -4079,6 +4079,34 @@ static const uint16 gk1EndGameFontPatch[] = {
 	PATCH_END
 };
 
+// The Italian fan translation by Enrico Rolfi replaced GK1CD's SCI2 interpreter
+//  with an SCI2.1 version from a different game. This changed the kernel table.
+//  The GK1 scripts were altered to match. ScummVM provides GK1 with the SCI2
+//  table it expects, so these scripts are incompatible. Fortunately, only one
+//  kernel function is affected. kDisposeTextBitmap only appears in SCI2, so its
+//  calls were replaced with the equivalent kBitmap(Destroy) for SCI2.1.
+//
+// We fix this incompatibility by patching all ten kBitmap(Destroy) calls back
+//  to kDisposeTextBitmap. By patching just the callk instructions, the Destroy
+//  subop (1) on the stack becomes the new parameter count. The old parameter
+//  count (2) remains on the stack until the next ret instruction. This allows
+//  one patch to work on all calls.
+//
+// Applies to: Italian fan translation, PC CD version
+// Responsible methods: DEdit:hilite, DText:dispose, DText:draw, DSelector:dispose, 
+//                      SRDialog:update, BookButton:hilite, TapeButton:doit
+//                      TellerButton:hilite, TopicButton:hilite
+static const uint16 gk1ItalianTranslationSignature[] = {
+	SIG_MAGICDWORD,
+	0x43, 0x91, SIG_UINT16(0x0004),     // callk 91 0004 [ SCI2: invalid, SCI2.1: kBitmap ]
+	SIG_END
+};
+
+static const uint16 gk1ItalianTranslationPatch[] = {
+	0x43, 0x2e, PATCH_UINT16(0x0002),   // callk 2e 0002 [ kDisposeTextBitmap ]
+	PATCH_END
+};
+
 // Narrator lockup fix for GK1 CD / Mac, see sciNarratorLockupSignature.
 //  The custom code in these versions overlaps with the generic patch signature
 //  so we enable the correct one based on game version and platform.
@@ -4163,6 +4191,13 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   710, "fix day 9 mummy animation (floppy)",          1, gk1MummyAnimateFloppySignature,   gk1MummyAnimateFloppyPatch },
 	{  true,   710, "fix day 9 mummy animation (cd)",              1, gk1MummyAnimateCDSignature,       gk1MummyAnimateCDPatch },
 	{  true,   800, "fix day 10 honfour unlock door lockup",       1, gk1HonfourUnlockDoorSignature,    gk1HonfourUnlockDoorPatch },
+	{  true,    91, "italian translation compatibility",           3, gk1ItalianTranslationSignature,   gk1ItalianTranslationPatch },
+	{  true,   815, "italian translation compatibility",           1, gk1ItalianTranslationSignature,   gk1ItalianTranslationPatch },
+	{  true,   920, "italian translation compatibility",           1, gk1ItalianTranslationSignature,   gk1ItalianTranslationPatch },
+	{  true, 64913, "italian translation compatibility",           1, gk1ItalianTranslationSignature,   gk1ItalianTranslationPatch },
+	{  true, 64914, "italian translation compatibility",           1, gk1ItalianTranslationSignature,   gk1ItalianTranslationPatch },
+	{  true, 64915, "italian translation compatibility",           2, gk1ItalianTranslationSignature,   gk1ItalianTranslationPatch },
+	{  true, 64990, "italian translation compatibility",           1, gk1ItalianTranslationSignature,   gk1ItalianTranslationPatch },
 	{ false, 64928, "floppy: Narrator lockup fix",                 1, sciNarratorLockupSignature,       sciNarratorLockupPatch },
 	{ false, 64928, "cd/mac: Narrator lockup fix",                 1, gk1NarratorLockupSignature,       gk1NarratorLockupPatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
