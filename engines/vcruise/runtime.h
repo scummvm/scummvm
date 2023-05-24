@@ -76,6 +76,7 @@ enum StartConfig {
 };
 
 class AudioPlayer;
+class CircuitPuzzle;
 class MenuInterface;
 class MenuPage;
 class RuntimeMenuInterface;
@@ -903,6 +904,9 @@ private:
 
 	const Graphics::Font *resolveFont(const Common::String &textStyle, uint size);
 
+	bool resolveCircuitPuzzleInteraction(const Common::Point &relMouse, Common::Point &outCoord, bool &outIsDown) const;
+	static Common::Rect padCircuitInteractionRect(const Common::Rect &rect);
+
 	// Script things
 	void scriptOpNumber(ScriptArg_t arg);
 	void scriptOpRotate(ScriptArg_t arg);
@@ -1131,6 +1135,10 @@ private:
 
 	AnimationDef _postFacingAnimDef;
 
+	Common::SharedPtr<CircuitPuzzle> _circuitPuzzle;
+	AnimationDef _circuitPuzzleBlockAnimation;
+	AnimationDef _circuitPuzzleConnectAnimation;
+
 	Common::HashMap<uint32, int32> _variables;
 	Common::HashMap<uint, uint32> _timers;
 
@@ -1227,6 +1235,10 @@ private:
 	bool _idleHaveClickInteraction;
 	bool _idleHaveDragInteraction;
 	uint _idleInteractionID;
+
+	bool _idleIsOnOpenCircuitPuzzleLink;
+	bool _idleIsCircuitPuzzleLinkDown;
+	Common::Point _idleCircuitPuzzleCoord;
 
 	InGameMenuState _inGameMenuState;
 	uint _inGameMenuActiveElement;

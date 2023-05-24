@@ -50,6 +50,7 @@
 #include "gui/message.h"
 
 #include "vcruise/audio_player.h"
+#include "vcruise/circuitpuzzle.h"
 #include "vcruise/sampleloop.h"
 #include "vcruise/menu.h"
 #include "vcruise/runtime.h"
@@ -1012,7 +1013,8 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _loadedAnimationHasSound(false), _animTerminateAtStartOfFrame(true), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0), _animVolume(getDefaultSoundVolume()),
 	  _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
-	  _animPlayWhileIdle(false), _idleLockInteractions(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
+	  _animPlayWhileIdle(false), _idleLockInteractions(false), _idleIsOnInteraction(false), _idleIsOnOpenCircuitPuzzleLink(false), _idleIsCircuitPuzzleLinkDown(false),
+	  _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
 	  _inGameMenuState(kInGameMenuStateInvisible), _inGameMenuActiveElement(0), _inGameMenuButtonActive {false, false, false, false, false},
 	  _lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0), _lmbDragTolerance(0),
 	  _delayCompletionTime(0),
@@ -3140,7 +3142,33 @@ bool Runtime::dischargeIdleMouseMove() {
 		resetInventoryHighlights();
 	}
 
-	if (isOnInteraction && _idleIsOnInteraction == false) {
+	bool changedCircuitState = false;
+	bool isOnCircuitLink = false;
+	bool isCircuitLinkDown = false;
+	Common::Point circuitCoord;
+	if (_circuitPuzzle) {
+		isOnCircuitLink = resolveCircuitPuzzleInteraction(relMouse, circuitCoord, isCircuitLinkDown);
+
+		if (isOnCircuitLink != _idleIsOnOpenCircuitPuzzleLink)
+			changedCircuitState = true;
+		else {
+			if (isOnCircuitLink && (circuitCoord != _idleCircuitPuzzleCoord || isCircuitLinkDown != _idleIsCircuitPuzzleLinkDown))
+				changedCircuitState = true;
+		}
+	}
+
+	if (changedCircuitState) {
+		_idleIsOnOpenCircuitPuzzleLink = isOnCircuitLink;
+		if (isOnCircuitLink) {
+			_idleCircuitPuzzleCoord = circuitCoord;
+			_idleIsCircuitPuzzleLinkDown = isCircuitLinkDown;
+		} else {
+			_idleCircuitPuzzleCoord = Common::Point(0, 0);
+			_idleIsCircuitPuzzleLinkDown = false;
+		}
+	}
+
+	if (isOnInteraction && (_idleIsOnInteraction == false || changedCircuitState)) {
 		_idleIsOnInteraction = true;
 		_idleInteractionID = interactionID;
 
@@ -5004,6 +5032,45 @@ const Graphics::Font *Runtime::resolveFont(const Common::String &textStyle, uint
 	_fontCache.push_back(fcItem);
 
 	return fcItem->font;
+}
+
+bool Runtime::resolveCircuitPuzzleInteraction(const Common::Point &relMouse, Common::Point &outCoord, bool &outIsDown) const {
+	if (!_circuitPuzzle)
+		return false;
+
+	for (uint cy = 0; cy < CircuitPuzzle::kBoardHeight; cy++) {
+		for (uint cx = 0; cx < CircuitPuzzle::kBoardWidth; cx++) {
+			Common::Point cellCoord(cx, cy);
+
+			const CircuitPuzzle::CellRectSpec *rectSpec = _circuitPuzzle->getCellRectSpec(cellCoord);
+			if (_circuitPuzzle->isCellDownLinkOpen(cellCoord)) {
+				if (padCircuitInteractionRect(rectSpec->_downLinkRect).contains(relMouse)) {
+					outCoord = cellCoord;
+					outIsDown = true;
+					return true;
+				}
+			}
+			if (_circuitPuzzle->isCellRightLinkOpen(cellCoord)) {
+				if (padCircuitInteractionRect(rectSpec->_rightLinkRect).contains(relMouse)) {
+					outCoord = cellCoord;
+					outIsDown = false;
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+Common::Rect Runtime::padCircuitInteractionRect(const Common::Rect &rect) {
+	Common::Rect result = rect;
+	result.right += 4;
+	result.bottom += 4;
+	result.top -= 3;
+	result.left -= 3;
+
+	return result;
 }
 
 void Runtime::onLButtonDown(int16 x, int16 y) {
@@ -7212,12 +7279,112 @@ void Runtime::scriptOpGetDigit(ScriptArg_t arg) {
 	_scriptStack.push_back(StackValue(digit));
 }
 
-OPCODE_STUB(PuzzleInit)
-OPCODE_STUB(PuzzleCanPress)
-OPCODE_STUB(PuzzleDoMove1)
-OPCODE_STUB(PuzzleDoMove2)
+void Runtime::scriptOpPuzzleInit(ScriptArg_t arg) {
+	TAKE_STACK_INT(kAnimDefStackArgs * 2 + 3);
+
+	AnimationDef animDef1 = stackArgsToAnimDef(stackArgs + 0);
+	AnimationDef animDef2 = stackArgsToAnimDef(stackArgs + kAnimDefStackArgs);
+
+	int firstMover = stackArgs[kAnimDefStackArgs * 2 + 0];
+	int firstMover2 = stackArgs[kAnimDefStackArgs * 2 + 1];
+	int unknownParam = stackArgs[kAnimDefStackArgs * 2 + 2];
+
+	if (firstMover != firstMover2 || unknownParam != 0)
+		error("PuzzleInit had a weird parameter");
+
+	if (firstMover == 2)
+		error("AI moving first not implemented yet");
+
+	_circuitPuzzle.reset(new CircuitPuzzle(firstMover));
+	_circuitPuzzleConnectAnimation = animDef1;
+	_circuitPuzzleBlockAnimation = animDef2;
+}
+
+void Runtime::scriptOpPuzzleWhoWon(ScriptArg_t arg) {
+	StackInt_t winner = 0;
+	if (_circuitPuzzle) {
+		switch (_circuitPuzzle->checkConclusion()) {
+		case CircuitPuzzle::kConclusionNone:
+			winner = 0;
+			break;
+		case CircuitPuzzle::kConclusionPlayerWon:
+			winner = 1;
+			break;
+		case CircuitPuzzle::kConclusionPlayerLost:
+			winner = 2;
+			break;
+		default:
+			error("Unhandled puzzle conclusion");
+			break;
+		}
+	}
+
+	_scriptStack.push_back(StackValue(winner));
+}
+
+void Runtime::scriptOpPuzzleCanPress(ScriptArg_t arg) {
+	_scriptStack.push_back(StackValue(_idleIsOnOpenCircuitPuzzleLink ? 1 : 0));
+}
+
+void Runtime::scriptOpPuzzleDoMove1(ScriptArg_t arg) {
+	if (!_idleIsOnOpenCircuitPuzzleLink)
+		error("Attempted puzzleDoMove1 but don't have a circuit point");
+
+	if (!_circuitPuzzle)
+		error("Attempted puzzleDoMove1 but the circuit puzzle is gone");
+
+	_circuitPuzzle->addLink(_idleCircuitPuzzleCoord, _idleIsCircuitPuzzleLinkDown ? CircuitPuzzle::kCellDirectionDown : CircuitPuzzle::kCellDirectionRight);
+
+	SoundInstance *snd = nullptr;
+	StackInt_t soundID = 0;
+	resolveSoundByName("85_connect", true, soundID, snd);
+
+	if (snd)
+		triggerSound(kSoundLoopBehaviorNo, *snd, 0, 0, false, false);
+
+	const CircuitPuzzle::CellRectSpec *rectSpec = _circuitPuzzle->getCellRectSpec(_idleCircuitPuzzleCoord);
+
+	if (rectSpec) {
+		AnimationDef animDef = _circuitPuzzleConnectAnimation;
+		animDef.constraintRect = _idleIsCircuitPuzzleLinkDown ? rectSpec->_downLinkRect : rectSpec->_rightLinkRect;
+
+		changeAnimation(animDef, false);
+
+		_gameState = kGameStateWaitingForAnimation;
+	}
+}
+
+void Runtime::scriptOpPuzzleDoMove2(ScriptArg_t arg) {
+	if (!_circuitPuzzle)
+		error("Attempted puzzleDoMove2 but the circuit puzzle is gone");
+
+	CircuitPuzzle::CellDirection actionDirection = CircuitPuzzle::kCellDirectionDown;
+	Common::Point actionCoord;
+
+	if (_circuitPuzzle->executeAIAction(*_rng, actionCoord, actionDirection)) {
+		SoundInstance *snd = nullptr;
+		StackInt_t soundID = 0;
+		resolveSoundByName("85_block", true, soundID, snd);
+
+		if (snd)
+			triggerSound(kSoundLoopBehaviorNo, *snd, 0, 0, false, false);
+
+		const CircuitPuzzle::CellRectSpec *rectSpec = _circuitPuzzle->getCellRectSpec(actionCoord);
+
+		if (rectSpec) {
+			AnimationDef animDef = _circuitPuzzleBlockAnimation;
+			animDef.constraintRect = (actionDirection == CircuitPuzzle::kCellDirectionDown) ? rectSpec->_downBarrierRect : rectSpec->_rightBarrierRect;
+
+			changeAnimation(animDef, false);
+
+			_gameState = kGameStateWaitingForAnimation;
+		}
+	}
+}
+
 OPCODE_STUB(PuzzleDone)
-OPCODE_STUB(PuzzleWhoWon)
+
+
 OPCODE_STUB(Fn)
 
 #undef TAKE_STACK_STR

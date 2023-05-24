@@ -2,10 +2,11 @@ MODULE := engines/vcruise
 
 MODULE_OBJS = \
 	audio_player.o \
-	sampleloop.o \
+	circuitpuzzle.o \
 	metaengine.o \
 	menu.o \
 	runtime.o \
+	sampleloop.o \
 	script.o \
 	textparser.o \
 	vcruise.o
