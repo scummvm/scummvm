@@ -45,8 +45,6 @@ namespace image {
 class Image {
 	// The dimensions of the image
 	int w, h;
-	int id;
-	TextureFlipType _flip;
 
 	// The actual hardware texture
 	//SDL_Texture *texture;
