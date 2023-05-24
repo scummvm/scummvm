@@ -62,7 +62,10 @@ enum GameVersion {
 	GAME_VER_HR1_COARSE,
 	GAME_VER_HR1_VF1,
 	GAME_VER_HR1_VF2,
-	GAME_VER_HR1_PD
+	GAME_VER_HR1_PD,
+	GAME_VER_HR4_V1_0,
+	GAME_VER_HR4_V1_1,
+	GAME_VER_HR4_LNG
 };
 
 struct AdlGameDescription {

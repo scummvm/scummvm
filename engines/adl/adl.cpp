@@ -298,11 +298,45 @@ byte AdlEngine::inputKey(bool showCursor) const {
 	return key;
 }
 
-void AdlEngine::loadWords(Common::ReadStream &stream, WordMap &map, Common::StringArray &pri) const {
+void AdlEngine::waitKey(uint32 ms, Common::KeyCode keycode) const {
+	uint32 start = g_system->getMillis();
+
+	while (!shouldQuit()) {
+		Common::Event event;
+		if (pollEvent(event)) {
+			if (event.type == Common::EVENT_KEYDOWN)
+				if (keycode == Common::KEYCODE_INVALID || keycode == event.kbd.keycode)
+					return;
+		}
+
+		if (ms && g_system->getMillis() - start >= ms)
+			return;
+
+		g_system->delayMillis(16);
+	}
+}
+
+void AdlEngine::loadWords(Common::ReadStream &stream, WordMap &map, Common::StringArray &pri, uint count) const {
 	uint index = 0;
 
 	map.clear();
 	pri.clear();
+
+	// WORKAROUND: Several games contain one or more word lists without a terminator
+	switch (getGameType()) {
+	case GAME_TYPE_HIRES3:
+		if (&map == &_verbs)
+			count = 72;
+		else
+			count = 113;
+		break;
+	case GAME_TYPE_HIRES5:
+		if (_state.region == 15 && &map == &_nouns)
+			count = 81;
+		break;
+	default:
+		break;
+	}
 
 	while (1) {
 		++index;
@@ -327,17 +361,8 @@ void AdlEngine::loadWords(Common::ReadStream &stream, WordMap &map, Common::Stri
 		if (synonyms == 0xff)
 			break;
 
-		// WORKAROUND: Missing verb list terminator in hires3
-		if (getGameType() == GAME_TYPE_HIRES3 && index == 72 && synonyms == 0)
-			return;
-
-		// WORKAROUND: Missing noun list terminator in hires3
-		if (getGameType() == GAME_TYPE_HIRES3 && index == 113)
-			return;
-
-		// WORKAROUND: Missing noun list terminator in hires5 region 15
-		if (getGameType() == GAME_TYPE_HIRES5 && _state.region == 15 && index == 81)
-			return;
+		if (index == count)
+			break;
 
 		for (uint i = 0; i < synonyms; ++i) {
 			if (stream.read((char *)buf, IDI_WORD_SIZE) < IDI_WORD_SIZE)

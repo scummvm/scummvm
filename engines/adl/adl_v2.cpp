@@ -43,6 +43,27 @@ AdlEngine_v2::AdlEngine_v2(OSystem *syst, const AdlGameDescription *gd) :
 		_picOnScreen(0),
 		_itemsOnScreen(0) { }
 
+void AdlEngine_v2::mapExeStrings(const Common::StringArray &strings) {
+	if (strings.size() < 11)
+		error("Not enough strings found in executable");
+
+	// Parser messages
+	_strings.verbError = strings[2];
+	_strings.nounError = strings[3];
+	_strings.enterCommand = strings[4];
+
+	// Line feeds
+	_strings.lineFeeds = strings[0];
+
+	// Opcode strings
+	_strings_v2.saveInsert = strings[5];
+	_strings_v2.saveReplace = strings[6];
+	_strings_v2.restoreInsert = strings[7];
+	_strings_v2.restoreReplace = strings[8];
+	_strings.playAgain = strings[9];
+	_strings.pressReturn = strings[10];
+}
+
 void AdlEngine_v2::insertDisk(byte volume) {
 	delete _disk;
 	_disk = new DiskImage();
