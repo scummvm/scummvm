@@ -63,7 +63,7 @@ make %{_smp_mflags}
 
 %install
 make DESTDIR=%{buildroot} install
-install -m644 -D dists/redhat/scummvm48.png %{buildroot}%{_datadir}/icons/hicolor/48x48/apps/scummvm.png
+install -m644 -D dists/redhat/scummvm48.png %{buildroot}%{_datadir}/icons/hicolor/48x48/apps/org.scummvm.scummvm.png
 desktop-file-install --vendor scummvm --dir=%{buildroot}/%{_datadir}/applications dists/org.scummvm.scummvm.desktop
 
 %clean
@@ -89,9 +89,9 @@ fi
 %doc AUTHORS README.md NEWS.md COPYING LICENSES/COPYING.BSD LICENSES/COPYING.LGPL LICENSES/COPYING.FREEFONT LICENSES/COPYING.OFL LICENSES/COPYING.ISC LICENSES/COPYING.LUA LICENSES/COPYING.MIT LICENSES/COPYING.MKV LICENSES/COPYING.TINYGL LICENSES/COPYING.GLAD COPYRIGHT
 %attr(0755,root,root)%{_bindir}/scummvm
 %{_datadir}/applications/*
-%{_datadir}/pixmaps/scummvm.xpm
-%{_datadir}/icons/hicolor/48x48/apps/scummvm.png
-%{_datadir}/icons/hicolor/scalable/apps/scummvm.svg
+%{_datadir}/pixmaps/org.scummvm.scummvm.xpm
+%{_datadir}/icons/hicolor/48x48/apps/org.scummvm.scummvm.png
+%{_datadir}/icons/hicolor/scalable/apps/org.scummvm.scummvm.svg
 %{_datadir}/metainfo/org.scummvm.scummvm.metainfo.xml
 %{_datadir}/scummvm/*
 %{_mandir}/man6/scummvm.6*
