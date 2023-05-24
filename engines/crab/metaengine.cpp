@@ -49,6 +49,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/translation.h"
 
 #include "crab/crab.h"

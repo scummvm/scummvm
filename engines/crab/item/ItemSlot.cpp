@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/item/ItemSlot.h"
 
 namespace Crab {
@@ -109,7 +111,7 @@ void ItemSlot::Draw() {
 		item.Draw(x, y);
 
 	if (unread)
-		pyrodactyl::image::gImageManager.NotifyDraw(x + w, y);
+		g_engine->_imageManager->NotifyDraw(x + w, y);
 }
 
 //------------------------------------------------------------------------

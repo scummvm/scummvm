@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/TraitButton.h"
 
 namespace Crab {
@@ -50,7 +52,7 @@ void TraitButton::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 
 void TraitButton::Draw(const int &XOffset, const int &YOffset, Rect *clip) {
 	if (trait_img != 0)
-		gImageManager.Draw(x + offset.x, y + offset.y, trait_img);
+		g_engine->_imageManager->Draw(x + offset.x, y + offset.y, trait_img);
 
 	StateButton::Draw(XOffset, YOffset, clip);
 }

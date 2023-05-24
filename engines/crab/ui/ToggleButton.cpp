@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/ToggleButton.h"
 
 namespace Crab {
@@ -48,9 +50,9 @@ void ToggleButton::Draw(const int &XOffset, const int &YOffset, Rect *clip) {
 	Button::Draw(XOffset, YOffset, clip);
 
 	if (state)
-		gImageManager.Draw(x + offset.x, y + offset.y, on);
+		g_engine->_imageManager->Draw(x + offset.x, y + offset.y, on);
 	else
-		gImageManager.Draw(x + offset.x, y + offset.y, off);
+		g_engine->_imageManager->Draw(x + offset.x, y + offset.y, off);
 }
 
 ButtonAction ToggleButton::HandleEvents(const Common::Event &Event, const int &XOffset, const int &YOffset) {

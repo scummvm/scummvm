@@ -89,7 +89,7 @@ void PersonHandler::Draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameE
 		else if (sprite_align.y == ALIGN_RIGHT)
 			y -= r.h;
 
-		gImageManager.Draw(x, y, s->Img(), &r);
+		g_engine->_imageManager->Draw(x, y, s->Img(), &r);
 	}
 
 	if (info.PersonValid(person_id)) {

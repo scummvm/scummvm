@@ -309,7 +309,7 @@ App::~App() {
 #if 0
 	// SteamAPI_Shutdown();
 
-	pyrodactyl::image::gImageManager.Quit();
+	g_engine->_imageManager->Quit();
 	pyrodactyl::music::gMusicManager.Quit();
 	pyrodactyl::text::gTextManager.Quit();
 	pyrodactyl::input::gInput.Quit();

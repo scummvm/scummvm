@@ -90,7 +90,7 @@ void PersonScreen::Draw(pyrodactyl::event::Info &info, const std::string &id) {
 
 	if (cur_sp != nullptr) {
 		Rect clip = cur_sp->DialogClip(PST_NORMAL);
-		gImageManager.Draw(img.x, img.y, cur_sp->Img(), &clip);
+		g_engine->_imageManager->Draw(img.x, img.y, cur_sp->Img(), &clip);
 	}
 }
 

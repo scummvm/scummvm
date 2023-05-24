@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/item/Item.h"
 
 namespace Crab {
@@ -115,7 +117,7 @@ void Item::StatChange(Person &obj, bool increase) {
 }
 
 void Item::Draw(const int &x, const int &y) {
-	gImageManager.Draw(x, y, img);
+	g_engine->_imageManager->Draw(x, y, img);
 }
 
 } // End of namespace Crab

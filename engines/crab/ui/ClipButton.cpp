@@ -28,7 +28,8 @@
  *
  */
 
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/ClipButton.h"
 
 namespace Crab {
@@ -44,8 +45,8 @@ void ClipButton::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 	else {
 		clip.x = 0;
 		clip.y = 0;
-		clip.w = gImageManager.GetTexture(img.normal).W();
-		clip.h = gImageManager.GetTexture(img.normal).H();
+		clip.w = g_engine->_imageManager->GetTexture(img.normal).W();
+		clip.h = g_engine->_imageManager->GetTexture(img.normal).H();
 	}
 }
 

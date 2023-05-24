@@ -323,7 +323,7 @@ void Manager::Draw(Info &info, HUD &hud, Level &level) {
 			gEventStore.anim.at(cur_event->special).Draw();
 			break;
 		case EVENT_DIALOG:
-			gImageManager.DimScreen();
+			g_engine->_imageManager->DimScreen();
 			if (oh.show_journal) {
 				info.journal.Draw(level.PlayerID());
 				hud.back.Draw();
@@ -331,7 +331,7 @@ void Manager::Draw(Info &info, HUD &hud, Level &level) {
 				oh.Draw(info, cur_event, cur_event->title, player, cur_sp);
 			break;
 		case EVENT_REPLY:
-			gImageManager.DimScreen();
+			g_engine->_imageManager->DimScreen();
 			if (oh.show_journal) {
 				info.journal.Draw(level.PlayerID());
 				hud.back.Draw();
@@ -345,7 +345,7 @@ void Manager::Draw(Info &info, HUD &hud, Level &level) {
 			textin.Draw();
 			break;
 		case EVENT_SPLASH:
-			gImageManager.DimScreen();
+			g_engine->_imageManager->DimScreen();
 			if (intro.show_traits) {
 				per.Draw(info, cur_event->title);
 				hud.back.Draw();

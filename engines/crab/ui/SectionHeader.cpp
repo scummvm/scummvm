@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/SectionHeader.h"
 
 namespace Crab {
@@ -53,23 +55,23 @@ void SectionHeader::Load(rapidxml::xml_node<char> *node) {
 		SDL_Surface *surf = gTextManager.RenderTextBlended(font, text, col);
 
 		if (align == ALIGN_CENTER) {
-			left.x = x - surf->w / 2 - gImageManager.GetTexture(img).W();
-			left.y = y - surf->h / 2 + gImageManager.GetTexture(img).H() / 2;
+			left.x = x - surf->w / 2 - g_engine->_imageManager->GetTexture(img).W();
+			left.y = y - surf->h / 2 + g_engine->_imageManager->GetTexture(img).H() / 2;
 
 			right.x = x + surf->w / 2;
-			right.y = y - surf->h / 2 + gImageManager.GetTexture(img).H() / 2;
+			right.y = y - surf->h / 2 + g_engine->_imageManager->GetTexture(img).H() / 2;
 		} else if (align == ALIGN_LEFT) {
-			left.x = x - gImageManager.GetTexture(img).W();
-			left.y = y + surf->h / 2 - gImageManager.GetTexture(img).H() / 2;
+			left.x = x - g_engine->_imageManager->GetTexture(img).W();
+			left.y = y + surf->h / 2 - g_engine->_imageManager->GetTexture(img).H() / 2;
 
 			right.x = x + surf->w;
-			right.y = y + surf->h / 2 - gImageManager.GetTexture(img).H() / 2;
+			right.y = y + surf->h / 2 - g_engine->_imageManager->GetTexture(img).H() / 2;
 		} else {
-			left.x = x - surf->w - gImageManager.GetTexture(img).W();
-			left.y = y + surf->h / 2 - gImageManager.GetTexture(img).H() / 2;
+			left.x = x - surf->w - g_engine->_imageManager->GetTexture(img).W();
+			left.y = y + surf->h / 2 - g_engine->_imageManager->GetTexture(img).H() / 2;
 
 			right.x = x;
-			right.y = y + surf->h / 2 - gImageManager.GetTexture(img).H() / 2;
+			right.y = y + surf->h / 2 - g_engine->_imageManager->GetTexture(img).H() / 2;
 		}
 
 		SDL_FreeSurface(surf);
@@ -84,10 +86,10 @@ void SectionHeader::Draw(const int &XOffset, const int &YOffset) {
 
 void SectionHeader::Draw(const std::string &str, const int &XOffset, const int &YOffset) {
 	if (draw_l)
-		gImageManager.Draw(left.x + XOffset, left.y + YOffset, img);
+		g_engine->_imageManager->Draw(left.x + XOffset, left.y + YOffset, img);
 
 	if (draw_r)
-		gImageManager.Draw(right.x + XOffset, right.y + YOffset, img, (Rect*)NULL, FLIP_X);
+		g_engine->_imageManager->Draw(right.x + XOffset, right.y + YOffset, img, (Rect*)NULL, FLIP_X);
 
 	TextData::Draw(str, XOffset, YOffset);
 }

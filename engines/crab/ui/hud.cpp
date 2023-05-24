@@ -60,7 +60,7 @@ void HUD::Load(const std::string &filename, pyrodactyl::level::TalkNotify &tn, p
 			if (NodeValid("notify", node)) {
 				rapidxml::xml_node<char> *notifynode = node->first_node("notify");
 
-				LoadImgKey(gImageManager.notify, "img", notifynode);
+				LoadImgKey(g_engine->_imageManager->notify, "img", notifynode);
 				tn.Load(notifynode);
 				pdm.Load(notifynode);
 
@@ -88,22 +88,22 @@ void HUD::Draw(pyrodactyl::event::Info &info, const std::string &id) {
 	menu.Draw();
 
 	if (info.unread.journal) {
-		gImageManager.Draw(menu.element.at(HS_JOURNAL).x + menu.element.at(HS_JOURNAL).w - clip.w / 2,
+		g_engine->_imageManager->Draw(menu.element.at(HS_JOURNAL).x + menu.element.at(HS_JOURNAL).w - clip.w / 2,
 						   menu.element.at(HS_JOURNAL).y - clip.h / 2, notify_anim, &clip);
 	}
 
 	if (info.unread.inventory) {
-		gImageManager.Draw(menu.element.at(HS_INV).x + menu.element.at(HS_INV).w - clip.w / 2,
+		g_engine->_imageManager->Draw(menu.element.at(HS_INV).x + menu.element.at(HS_INV).w - clip.w / 2,
 						   menu.element.at(HS_INV).y - clip.h / 2, notify_anim, &clip);
 	}
 
 	if (info.unread.trait) {
-		gImageManager.Draw(menu.element.at(HS_CHAR).x + menu.element.at(HS_CHAR).w - clip.w / 2,
+		g_engine->_imageManager->Draw(menu.element.at(HS_CHAR).x + menu.element.at(HS_CHAR).w - clip.w / 2,
 						   menu.element.at(HS_CHAR).y - clip.h / 2, notify_anim, &clip);
 	}
 
 	if (info.unread.map) {
-		gImageManager.Draw(menu.element.at(HS_MAP).x + menu.element.at(HS_MAP).w - clip.w / 2,
+		g_engine->_imageManager->Draw(menu.element.at(HS_MAP).x + menu.element.at(HS_MAP).w - clip.w / 2,
 						   menu.element.at(HS_MAP).y - clip.h / 2, notify_anim, &clip);
 	}
 //#endif
@@ -115,7 +115,7 @@ void HUD::InternalEvents(bool ShowMap) {
 	if (timer.TargetReached()) {
 		clip.x += clip.w;
 
-		if (clip.x >= gImageManager.GetTexture(notify_anim).W())
+		if (clip.x >= g_engine->_imageManager->GetTexture(notify_anim).W())
 			clip.x = 0;
 
 		timer.Start();

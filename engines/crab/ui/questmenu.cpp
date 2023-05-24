@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/questmenu.h"
 
 namespace Crab {
@@ -136,7 +138,7 @@ void QuestMenu::Draw(Button &bu_map) {
 
 		if (quest.at(i).unread) {
 			using namespace pyrodactyl::image;
-			gImageManager.Draw(base_x + off_unread.x, base_y + off_unread.y, gImageManager.notify);
+			g_engine->_imageManager->Draw(base_x + off_unread.x, base_y + off_unread.y, g_engine->_imageManager->notify);
 		}
 	}
 

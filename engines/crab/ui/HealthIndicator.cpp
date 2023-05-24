@@ -28,7 +28,8 @@
  *
  */
 
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/HealthIndicator.h"
 
 namespace Crab {
@@ -54,9 +55,9 @@ void HealthIndicator::Draw(int num) {
 	for (auto i = img.begin(); i != img.end(); ++i)
 		if (num == i->val) {
 			using namespace pyrodactyl::image;
-			gImageManager.Draw(x, y, i->normal);
-			gImageManager.GetTexture(i->glow).Alpha(alpha);
-			gImageManager.Draw(x, y, i->glow);
+			g_engine->_imageManager->Draw(x, y, i->normal);
+			g_engine->_imageManager->GetTexture(i->glow).Alpha(alpha);
+			g_engine->_imageManager->Draw(x, y, i->glow);
 
 			if (inc) {
 				alpha += 2;
