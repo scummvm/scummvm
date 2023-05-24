@@ -72,7 +72,7 @@ private:
 		&Map49::special22
 	};
 public:
-	Map49() : Map(49, "alamar", 0xb07, 3) {}
+	Map49() : Map(49, "alamar", 0xb07, 3, "Castle Alamar") {}
 
 	/**
 	 * Handles all special stuff that happens on the map

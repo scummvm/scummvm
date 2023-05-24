@@ -77,7 +77,7 @@ private:
 		&Map42::special04
 	};
 public:
-	Map42() : Map(42, "enf2", 0x704, 3) {}
+	Map42() : Map(42, "enf2", 0x704, 3, "Minotaur Stronghold 1") {}
 
 	/**
 	 * Handles all special stuff that happens on the map

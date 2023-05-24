@@ -79,7 +79,7 @@ private:
 		&Map40::special02
 	};
 public:
-	Map40() : Map(40, "rwl2", 0x702, 3) {}
+	Map40() : Map(40, "rwl2", 0x702, 3, "Warrior's Stronghold 2") {}
 
 	/**
 	 * Handles all special stuff that happens on the map

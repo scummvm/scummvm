@@ -70,7 +70,7 @@ private:
 		&Map39::special18
 	};
 public:
-	Map39() : Map(39, "rwl1", 0xf02, 3) {}
+	Map39() : Map(39, "rwl1", 0xf02, 3, "Warrior's Stronghold 1") {}
 
 	/**
 	 * Handles all special stuff that happens on the map
