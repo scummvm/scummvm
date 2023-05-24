@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/map.h"
 
 namespace Crab {
@@ -197,7 +199,7 @@ void Map::Move(const Common::Event &Event) {
 		bool click = false;
 		int count = 0;
 		for (auto &i : scroll.element) {
-			if (i.Contains(gMouse.button)) {
+			if (i.Contains(g_engine->_mouse->button)) {
 				if (count == DIRECTION_UP)
 					vel.y = -1 * speed;
 				else if (count == DIRECTION_DOWN)
@@ -227,8 +229,8 @@ void Map::Move(const Common::Event &Event) {
 
 	case Common::EVENT_MOUSEMOVE:
 		if (pan) {
-			camera.x -= gMouse.rel.x;
-			camera.y -= gMouse.rel.y;
+			camera.x -= g_engine->_mouse->rel.x;
+			camera.y -= g_engine->_mouse->rel.y;
 			Validate();
 		}
 		break;
@@ -272,7 +274,7 @@ void Map::Move(const SDL_Event &Event) {
 		bool click = false;
 		int count = 0;
 		for (auto &i : scroll.element) {
-			if (i.Contains(gMouse.button)) {
+			if (i.Contains(g_engine->_mouse->button)) {
 				if (count == DIRECTION_UP)
 					vel.y = -1 * speed;
 				else if (count == DIRECTION_DOWN)
@@ -299,8 +301,8 @@ void Map::Move(const SDL_Event &Event) {
 		break;
 	case SDL_MOUSEMOTION:
 		if (pan) {
-			camera.x -= gMouse.rel.x;
-			camera.y -= gMouse.rel.y;
+			camera.x -= g_engine->_mouse->rel.x;
+			camera.y -= g_engine->_mouse->rel.y;
 			Validate();
 		}
 		break;

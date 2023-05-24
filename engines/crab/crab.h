@@ -64,6 +64,7 @@
 #include "engines/savestate.h"
 #include "graphics/screen.h"
 #include "crab/image/ImageManager.h"
+#include "crab/input/cursor.h"
 
 #include "crab/detection.h"
 
@@ -87,6 +88,7 @@ public:
 	Graphics::PixelFormat *_format = nullptr;
 	Graphics::ManagedSurface *_renderSurface = nullptr;
 	pyrodactyl::image::ImageManager *_imageManager = nullptr;
+	pyrodactyl::input::Cursor *_mouse = nullptr;
 	Common::FSNode _gameDataDir;
 
 	CrabEngine(OSystem *syst, const ADGameDescription *gameDesc);

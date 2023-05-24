@@ -32,6 +32,8 @@
 // Author:   Arvind
 // Purpose:  Contains the image manager class - used to manage in-game images
 //=============================================================================
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/image/ImageManager.h"
 #include "crab/XMLDoc.h"
 
@@ -85,8 +87,8 @@ void ImageManager::LoadMap(const Common::String &filename, const MapID &mapid) {
 
 		if (NodeValid("mouse", node, false)) {
 			using namespace pyrodactyl::input;
-			gMouse.Quit();
-			gMouse.Load(node->first_node("mouse"));
+			g_engine->_mouse->Quit();
+			g_engine->_mouse->Load(node->first_node("mouse"));
 		}
 	}
 }

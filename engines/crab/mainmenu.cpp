@@ -155,7 +155,7 @@ MainMenu::MainMenu() {
 // Purpose: Event/input handling Events
 //------------------------------------------------------------------------
 void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {
-	gMouse.HandleEvents(Event);
+	g_engine->_mouse->HandleEvents(Event);
 
 	if (state != STATE_CREDITS) {
 		int choice = me_main.HandleEvents(Event);
@@ -289,7 +289,7 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 // Purpose: Event/input handling Events
 //------------------------------------------------------------------------
 void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {
-	gMouse.HandleEvents(Event);
+	g_engine->_mouse->HandleEvents(Event);
 
 	if (state != STATE_CREDITS) {
 		int choice = me_main.HandleEvents(Event);
@@ -552,7 +552,7 @@ void MainMenu::Draw() {
 		break;
 	}
 
-	gMouse.Draw();
+	g_engine->_mouse->Draw();
 }
 
 void MainMenu::SetUI() {
