@@ -461,14 +461,17 @@ bool CircuitPuzzle::executeAIAction(Common::RandomSource &randomSource, Common::
 				bool isWallBlock = false;
 				if (_previousAction._direction == kCellDirectionRight && pblock._direction == kCellDirectionRight && _previousAction._point.x == pblock._point.x)
 					isWallBlock = true;
-				//else if (_previousAction._direction == kCellDirectionDown && pblock._direction == kCellDirectionDown && _previousAction._point.y == pblock._point.y)
-				//	isWallBlock = true;
+#if 0
+				else if (_previousAction._direction == kCellDirectionDown && pblock._direction == kCellDirectionDown && _previousAction._point.y == pblock._point.y)
+					isWallBlock = true;
+#endif
 
 				// If this forms a vertical wall, it's quality 2
 				if (isWallBlock)
 					quality = 2;
 				else {
-					// If this forms a corner, it's quality 1
+					// If this forms a corner, it's quality 1 (disabled, this seems less accurate)
+#if 0
 					if (_previousAction._direction != pblock._direction) {
 						Common::Point prevAdjacent = _previousAction._point;
 						if (_previousAction._direction == kCellDirectionRight)
@@ -485,6 +488,7 @@ bool CircuitPuzzle::executeAIAction(Common::RandomSource &randomSource, Common::
 						if (prevAdjacent == pblock._point || prevAdjacent == pblockAdjacent || _previousAction._point == pblock._point || _previousAction._point == pblockAdjacent)
 							quality = 1;
 					}
+#endif
 				}
 
 				blockQualities[i] = quality;
