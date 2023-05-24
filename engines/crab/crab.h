@@ -78,14 +78,16 @@ class LoadingScreen;
 
 namespace pyrodactyl {
 namespace event {
-	struct GameEventStore;
+struct GameEventStore;
 } // End of namespace event
 
 namespace ui {
 class SlideShow;
 class OptionMenu;
+
 template<typename FileType>
 class FileMenu;
+
 class SaveFileData;
 } // End of namespace ui
 
@@ -104,7 +106,7 @@ protected:
 public:
 	Graphics::Screen *_screen = nullptr;
 	Graphics::PixelFormat *_format = nullptr;
-	Graphics::ManagedSurface *_renderSurface = nullptr;
+
 	pyrodactyl::image::ImageManager *_imageManager = nullptr;
 	pyrodactyl::input::Cursor *_mouse = nullptr;
 	pyrodactyl::event::GameEventStore *_eventStore = nullptr;
