@@ -83,6 +83,7 @@ namespace event {
 
 namespace ui {
 class SlideShow;
+class OptionMenu;
 } // End of namespace ui
 
 } // End of namespace pyrodactyl
@@ -109,7 +110,7 @@ public:
 	// Should these really be inside the Engine class?
 	LoadingScreen *_loadingScreen = nullptr;
 	pyrodactyl::ui::SlideShow *_helpScreen = nullptr;
-
+	pyrodactyl::ui::OptionMenu *_optionMenu = nullptr;
 
 	Common::FSNode _gameDataDir;
 

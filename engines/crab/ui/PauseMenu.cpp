@@ -58,7 +58,7 @@ bool PauseMenu::Draw(Button &back) {
 		back.Draw();
 		break;
 	case STATE_OPTION:
-		gOptionMenu.Draw(back);
+		g_engine->_optionMenu->Draw(back);
 		return true;
 	default:
 		break;
@@ -109,8 +109,8 @@ PauseSignal PauseMenu::HandleEvents(const Common::Event &Event, Button &back) {
 			state = STATE_NORMAL;
 		break;
 	case STATE_OPTION:
-		if (gOptionMenu.HandleEvents(back, Event)) {
-			gOptionMenu.Reset();
+		if (g_engine->_optionMenu->HandleEvents(back, Event)) {
+			g_engine->_optionMenu->Reset();
 			state = STATE_NORMAL;
 		}
 		break;
@@ -170,8 +170,8 @@ PauseSignal PauseMenu::HandleEvents(const SDL_Event &Event, Button &back) {
 			state = STATE_NORMAL;
 		break;
 	case STATE_OPTION:
-		if (gOptionMenu.HandleEvents(back, Event)) {
-			gOptionMenu.Reset();
+		if (g_engine->_optionMenu->HandleEvents(back, Event)) {
+			g_engine->_optionMenu->Reset();
 			state = STATE_NORMAL;
 		}
 		break;
@@ -190,7 +190,7 @@ PauseSignal PauseMenu::HandleEvents(const SDL_Event &Event, Button &back) {
 #endif
 
 bool PauseMenu::DisableHotkeys() {
-	return (state == STATE_SAVE && save.DisableHotkeys()) || (state == STATE_OPTION && gOptionMenu.DisableHotkeys());
+	return (state == STATE_SAVE && save.DisableHotkeys()) || (state == STATE_OPTION && g_engine->_optionMenu->DisableHotkeys());
 }
 
 void PauseMenu::SetUI() {
