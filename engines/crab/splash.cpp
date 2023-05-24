@@ -62,7 +62,7 @@ Splash::~Splash() {
 //------------------------------------------------------------------------
 void Splash::InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 	if (first_run == false) {
-		gLoadScreen.Load();
+		g_engine->_loadingScreen->Load();
 		g_engine->_imageManager->Init();
 		g_engine->_textManager->Init();
 		load_complete = true;
