@@ -64,7 +64,7 @@ void Splash::InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 	if (first_run == false) {
 		gLoadScreen.Load();
 		g_engine->_imageManager->Init();
-		pyrodactyl::text::gTextManager.Init();
+		g_engine->_textManager->Init();
 		load_complete = true;
 	}
 

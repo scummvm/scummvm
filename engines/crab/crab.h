@@ -65,6 +65,7 @@
 #include "graphics/screen.h"
 #include "crab/image/ImageManager.h"
 #include "crab/input/cursor.h"
+#include "crab/text/TextManager.h"
 
 #include "crab/detection.h"
 
@@ -96,6 +97,7 @@ public:
 	pyrodactyl::image::ImageManager *_imageManager = nullptr;
 	pyrodactyl::input::Cursor *_mouse = nullptr;
 	pyrodactyl::event::GameEventStore *_eventStore = nullptr;
+	pyrodactyl::text::TextManager *_textManager = nullptr;
 	Common::FSNode _gameDataDir;
 
 	CrabEngine(OSystem *syst, const ADGameDescription *gameDesc);

@@ -284,12 +284,12 @@ void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera) {
 
 		/*int health = 0;
 		info.StatGet(id, pyrodactyl::stat::STAT_HEALTH, health);
-		gTextManager.Draw(x + 60.0f, y - 100.0f, NumberToString(health), 0);
+		g_engine->_textManager->Draw(x + 60.0f, y - 100.0f, NumberToString(health), 0);
 
 		pyrodactyl::people::PersonState state = info.State(id);
-		gTextManager.Draw(x, y - 60.0f, NumberToString(state), 0);
+		g_engine->_textManager->Draw(x, y - 60.0f, NumberToString(state), 0);
 
-		gTextManager.Draw(x + 120.0f, y - 60.0f, NumberToString(ai_data.dest.y), 0);*/
+		g_engine->_textManager->Draw(x + 120.0f, y - 60.0f, NumberToString(ai_data.dest.y), 0);*/
 
 		if (pathing.m_vSolution.size() > 0) {
 			for (auto iter = pathing.m_vSolution.begin(); iter != pathing.m_vSolution.end(); ++iter) {

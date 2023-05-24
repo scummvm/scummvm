@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/QuestText.h"
 
 namespace Crab {
@@ -125,7 +127,7 @@ void QuestText::Draw(pyrodactyl::event::Quest &q) {
 
 			// Draw first entry in selected color, and older quest entries in standard color
 			if (i == 0)
-				gTextManager.Draw(x, y, q.text[i], col_s, font, align, line.x, line.y);
+				g_engine->_textManager->Draw(x, y, q.text[i], col_s, font, align, line.x, line.y);
 			else
 				ParagraphData::Draw(q.text[i], inc.x * count, inc.y * count);
 

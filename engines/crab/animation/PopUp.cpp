@@ -116,11 +116,11 @@ void PopUpCollection::InternalEvents(pyrodactyl::event::Info &info, const std::s
 void PopUp::Draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop, const Rect &camera) {
 	if (show) {
 		if (x + pop.x < camera.w / 3)
-			pyrodactyl::text::gTextManager.Draw(x + pop.x, y + pop.y, text, pop.col, pop.font, ALIGN_LEFT, pop.line.x, pop.line.y, true);
+			g_engine->_textManager->Draw(x + pop.x, y + pop.y, text, pop.col, pop.font, ALIGN_LEFT, pop.line.x, pop.line.y, true);
 		else if (x + pop.x > (2 * camera.w) / 3)
-			pyrodactyl::text::gTextManager.Draw(x + pop.x, y + pop.y, text, pop.col, pop.font, ALIGN_RIGHT, pop.line.x, pop.line.y, true);
+			g_engine->_textManager->Draw(x + pop.x, y + pop.y, text, pop.col, pop.font, ALIGN_RIGHT, pop.line.x, pop.line.y, true);
 		else
-			pyrodactyl::text::gTextManager.Draw(x + pop.x, y + pop.y, text, pop.col, pop.font, ALIGN_CENTER, pop.line.x, pop.line.y, true);
+			g_engine->_textManager->Draw(x + pop.x, y + pop.y, text, pop.col, pop.font, ALIGN_CENTER, pop.line.x, pop.line.y, true);
 	}
 }
 

@@ -159,9 +159,9 @@ void CreditScreen::Draw() {
 		if (i->heading) {
 			cur.y += heading.inc;
 			if (cur.y > -30 && cur.y < gScreenSettings.cur.h + 40) // Only draw text if it is actually visible on screen
-				gTextManager.Draw(cur.x, cur.y, i->text, heading.color, heading.font, heading.align);
+				g_engine->_textManager->Draw(cur.x, cur.y, i->text, heading.color, heading.font, heading.align);
 		} else if (cur.y > -30 && cur.y < gScreenSettings.cur.h + 40)
-			gTextManager.Draw(cur.x, cur.y, i->text, paragraph.color, paragraph.font, paragraph.align);
+			g_engine->_textManager->Draw(cur.x, cur.y, i->text, paragraph.color, paragraph.font, paragraph.align);
 
 		// If our cur value has reached below the screen, simply exit the loop as we won't draw anything else
 		if (cur.y > gScreenSettings.cur.h + 40)

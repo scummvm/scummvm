@@ -269,8 +269,8 @@ void TMXMap::DrawDebug(const Rect &camera) {
 
 	for (auto i = area_stairs.begin(); i != area_stairs.end(); ++i) {
 		i->Draw(-camera.x, -camera.y, 0, 254, 0, 254);
-		//gTextManager.Draw(i->rect.x - camera.x + 100, i->rect.y - camera.y, NumberToString(i->modifier.x).c_str(), 0);
-		//gTextManager.Draw(i->rect.x - camera.x + 200, i->rect.y - camera.y, NumberToString(i->modifier.y).c_str(), 0);
+		//g_engine->_textManager->Draw(i->rect.x - camera.x + 100, i->rect.y - camera.y, NumberToString(i->modifier.x).c_str(), 0);
+		//g_engine->_textManager->Draw(i->rect.x - camera.x + 200, i->rect.y - camera.y, NumberToString(i->modifier.y).c_str(), 0);
 	}
 
 	// Draw the pathfinding grid (SZ)
@@ -289,7 +289,7 @@ void TMXMap::DrawDebug(const Rect &camera) {
 		i->pos.Draw(-camera.x, -camera.y, 254, 216, 0);
 
 	area_walk.Draw(-camera.x, -camera.y, 254, 254, 254, 254);
-	// gTextManager.Draw(0, 200, NumberToString(sprite_layer), 0);
+	// g_engine->_textManager->Draw(0, 200, NumberToString(sprite_layer), 0);
 
 	// Use this if you want to draw poly lines in debug
 	/*bool start = true;
@@ -306,8 +306,8 @@ void TMXMap::DrawDebug(const Rect &camera) {
 
 	DrawLine(prev.x - camera.x, prev.y - camera.y, j->x - camera.x, j->y - camera.y, 0, 0, 0, 254);
 
-	gTextManager.Draw(j->x - camera.x + 100, j->y - camera.y, NumberToString(j->x), 0);
-	gTextManager.Draw(j->x - camera.x + 200, j->y - camera.y, NumberToString(j->y), 0);
+	g_engine->_textManager->Draw(j->x - camera.x + 100, j->y - camera.y, NumberToString(j->x), 0);
+	g_engine->_textManager->Draw(j->x - camera.x + 200, j->y - camera.y, NumberToString(j->y), 0);
 
 	prev = *j;
 	}
