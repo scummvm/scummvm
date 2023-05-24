@@ -84,6 +84,9 @@ namespace event {
 namespace ui {
 class SlideShow;
 class OptionMenu;
+template<typename FileType>
+class FileMenu;
+class SaveFileData;
 } // End of namespace ui
 
 } // End of namespace pyrodactyl
@@ -111,6 +114,7 @@ public:
 	LoadingScreen *_loadingScreen = nullptr;
 	pyrodactyl::ui::SlideShow *_helpScreen = nullptr;
 	pyrodactyl::ui::OptionMenu *_optionMenu = nullptr;
+	pyrodactyl::ui::FileMenu<pyrodactyl::ui::SaveFileData> *_loadMenu = nullptr;
 
 	Common::FSNode _gameDataDir;
 

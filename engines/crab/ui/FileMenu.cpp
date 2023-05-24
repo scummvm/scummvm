@@ -34,7 +34,7 @@ namespace Crab {
 
 namespace pyrodactyl {
 namespace ui {
-FileMenu<SaveFileData> gLoadMenu;
+
 }
 } // End of namespace pyrodactyl
 

@@ -98,6 +98,7 @@ Common::Error CrabEngine::run() {
 	_loadingScreen = new LoadingScreen();
 	_helpScreen = new pyrodactyl::ui::SlideShow();
 	_optionMenu = new pyrodactyl::ui::OptionMenu();
+	_loadMenu = new pyrodactyl::ui::FileMenu<pyrodactyl::ui::SaveFileData>();
 
 	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
 	CursorMan.replaceCursor(cursor);
