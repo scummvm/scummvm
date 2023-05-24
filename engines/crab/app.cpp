@@ -252,7 +252,7 @@ void App::Run() {
 				++fpscount;
 
 			if (CurrentStateID >= 0)
-				pyrodactyl::text::gTextManager.Draw(0, 0, NumberToString(fpsval), 0);
+				g_engine->_textManager->Draw(0, 0, NumberToString(fpsval), 0);
 		}
 #endif
 		if (g_system->getMillis() - lasts > 1000) {
@@ -263,7 +263,7 @@ void App::Run() {
 				++fpscount;
 
 			if (CurrentStateID >= 0)
-				pyrodactyl::text::gTextManager.Draw(0, 0, NumberToString(fpsval).c_str(), 0);
+				g_engine->_textManager->Draw(0, 0, NumberToString(fpsval).c_str(), 0);
 		//const Graphics::ManagedSurface *s = g_engine->_renderSurface;
 		//g_system->copyRectToScreen(s->getPixels(), s->pitch, 0, 0, s->w, s->h);
 		g_engine->_screen->update();
@@ -311,7 +311,7 @@ App::~App() {
 
 	g_engine->_imageManager->Quit();
 	pyrodactyl::music::gMusicManager.Quit();
-	pyrodactyl::text::gTextManager.Quit();
+	g_engine->_textManager->Quit();
 	pyrodactyl::input::gInput.Quit();
 	gLoadScreen.Quit();
 

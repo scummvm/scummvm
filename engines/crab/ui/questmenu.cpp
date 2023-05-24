@@ -132,9 +132,9 @@ void QuestMenu::Draw(Button &bu_map) {
 
 		// Only draw in _s color if we are on the same button and page
 		if ((unsigned int)sel_bu == count && (unsigned int)sel_page == menu.CurrentPage())
-			gTextManager.Draw(base_x + off_title.x, base_y + off_title.y, quest[i].title, col_s, font, align);
+			g_engine->_textManager->Draw(base_x + off_title.x, base_y + off_title.y, quest[i].title, col_s, font, align);
 		else
-			gTextManager.Draw(base_x + off_title.x, base_y + off_title.y, quest[i].title, col_n, font, align);
+			g_engine->_textManager->Draw(base_x + off_title.x, base_y + off_title.y, quest[i].title, col_n, font, align);
 
 		if (quest.at(i).unread) {
 			using namespace pyrodactyl::image;

@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/ParagraphData.h"
 
 namespace Crab {
@@ -42,7 +44,7 @@ bool ParagraphData::Load(rapidxml::xml_node<char> *node, Rect *parent, const boo
 }
 
 void ParagraphData::Draw(const std::string &val, const int &XOffset, const int &YOffset) {
-	pyrodactyl::text::gTextManager.Draw(x + XOffset, y + YOffset, val, col, font, align, line.x, line.y);
+	g_engine->_textManager->Draw(x + XOffset, y + YOffset, val, col, font, align, line.x, line.y);
 }
 
 } // End of namespace Crab

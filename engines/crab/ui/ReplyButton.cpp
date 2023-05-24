@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/ReplyButton.h"
 
 namespace Crab {
@@ -57,11 +59,11 @@ void ReplyButton::Load(rapidxml::xml_node<char> *node) {
 void ReplyButton::Draw(const int &XOffset, const int &YOffset) {
 	if (visible) {
 		if (mousepressed)
-			gTextManager.Draw(x + XOffset, y + YOffset, text, col_s, font, align, line_size.x, line_size.y);
+			g_engine->_textManager->Draw(x + XOffset, y + YOffset, text, col_s, font, align, line_size.x, line_size.y);
 		else if (hover_mouse || hover_key)
-			gTextManager.Draw(x + XOffset, y + YOffset, text, col_h, font, align, line_size.x, line_size.y);
+			g_engine->_textManager->Draw(x + XOffset, y + YOffset, text, col_h, font, align, line_size.x, line_size.y);
 		else
-			gTextManager.Draw(x + XOffset, y + YOffset, text, col_b, font, align, line_size.x, line_size.y);
+			g_engine->_textManager->Draw(x + XOffset, y + YOffset, text, col_b, font, align, line_size.x, line_size.y);
 	}
 }
 
@@ -71,10 +73,10 @@ void ReplyButton::Cache(const std::string &val, const int &spacing, const int &b
 	// Find out about the font
 	int width = 0, height = 0;
 #if 0
-	TTF_SizeText(gTextManager.GetFont(font), val.c_str(), &width, &height);
+	TTF_SizeText(g_engine->_textManager->GetFont(font), val.c_str(), &width, &height);
 #endif
-	width = gTextManager.GetFont(font)->getStringWidth(val.c_str());
-	height = gTextManager.GetFont(font)->getFontHeight();
+	width = g_engine->_textManager->GetFont(font)->getStringWidth(val.c_str());
+	height = g_engine->_textManager->GetFont(font)->getFontHeight();
 
 	// Find out how many line sizes will the text take
 	int lines = ((text.length() - 1) / line_size.x) + 1;

@@ -55,7 +55,7 @@ void TalkNotify::Draw(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s
 	// Find the sprite name
 	std::string text = info.GetName(s.ID());
 
-	gTextManager.Draw(pos.x - camera.x, pos.y - camera.y, text, col, font, align, true);
+	g_engine->_textManager->Draw(pos.x - camera.x, pos.y - camera.y, text, col, font, align, true);
 }
 
 } // End of namespace Crab

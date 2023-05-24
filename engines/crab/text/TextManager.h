@@ -116,7 +116,6 @@ public:
 			  const unsigned int &line_width, const unsigned int &line_height, const bool &background = false);
 };
 
-extern TextManager gTextManager;
 } // End of namespace text
 } // End of namespace pyrodactyl
 

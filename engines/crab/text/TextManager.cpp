@@ -37,12 +37,6 @@ namespace Crab {
 
 using namespace pyrodactyl::text;
 
-namespace pyrodactyl {
-namespace text {
-TextManager gTextManager;
-}
-} // End of namespace pyrodactyl
-
 //------------------------------------------------------------------------
 // Purpose: Initialize, set cache etc
 //------------------------------------------------------------------------

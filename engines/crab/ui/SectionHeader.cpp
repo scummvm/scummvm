@@ -52,7 +52,7 @@ void SectionHeader::Load(rapidxml::xml_node<char> *node) {
 		LoadBool(draw_l, "left", node);
 		LoadBool(draw_r, "right", node);
 
-		SDL_Surface *surf = gTextManager.RenderTextBlended(font, text, col);
+		SDL_Surface *surf = g_engine->_textManager->RenderTextBlended(font, text, col);
 
 		if (align == ALIGN_CENTER) {
 			left.x = x - surf->w / 2 - g_engine->_imageManager->GetTexture(img).W();
