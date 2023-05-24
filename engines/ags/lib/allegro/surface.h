@@ -213,11 +213,11 @@ public:
 
 	inline uint32x4_t argbBlendSIMD(uint32x4_t srcCols, uint32x4_t destCols) const {
 		float16x4_t sAlphas = vcvt_f16_f32(vcvtq_f32_u32(vshrq_n_u32(srcCols, 24)));
-		sAlphas = vdiv_f16(sAlphas, vmov_n_f16(255.0));
+		sAlphas = vmul_n_f16(sAlphas, 1.0 / 255.0);
 		float16x8_t sAlphas1 = vcombine_f16(vmov_n_f16(vduph_lane_f16(sAlphas, 0)), vmov_n_f16(vduph_lane_f16(sAlphas, 1)));
 		float16x8_t sAlphas2 = vcombine_f16(vmov_n_f16(vduph_lane_f16(sAlphas, 2)), vmov_n_f16(vduph_lane_f16(sAlphas, 3)));
 		float16x4_t dAlphas = vcvt_f16_f32(vcvtq_f32_u32(vshrq_n_u32(srcCols, 24)));
-		dAlphas = vdiv_f16(dAlphas, vmov_n_f16(255.0));
+		dAlphas = vmul_n_f16(dAlphas, 1.0 / 255.0);
 		dAlphas = vmul_f16(dAlphas, vsub_f16(vmov_n_f16(1.0), sAlphas));
 		float16x8_t dAlphas1 = vcombine_f16(vmov_n_f16(vduph_lane_f16(dAlphas, 0)), vmov_n_f16(vduph_lane_f16(dAlphas, 1)));
 		float16x8_t dAlphas2 = vcombine_f16(vmov_n_f16(vduph_lane_f16(dAlphas, 2)), vmov_n_f16(vduph_lane_f16(dAlphas, 3)));
@@ -228,11 +228,13 @@ public:
 		srcRgb1 = vmulq_f16(srcRgb1, sAlphas1);
 		destRgb1 = vmulq_f16(destRgb1, dAlphas1);
 		srcRgb1 = vaddq_f16(srcRgb1, destRgb1);
-		srcRgb1 = vdivq_f16(srcRgb1, vaddq_f16(sAlphas1, dAlphas1));
+		float16x8_t alphasRec = vrecpeq_f16(vaddq_f16(sAlphas1, dAlphas1));
+		srcRgb1 = vmulq_f16(srcRgb1, alphasRec);
 		srcRgb2 = vmulq_f16(srcRgb2, sAlphas2);
 		destRgb2 = vmulq_f16(destRgb2, dAlphas2);
 		srcRgb2 = vaddq_f16(srcRgb2, destRgb2);
-		srcRgb2 = vdivq_f16(srcRgb2, vaddq_f16(sAlphas2, dAlphas2));
+		alphasRec = vrecpeq_f16(vaddq_f16(sAlphas2, dAlphas2));
+		srcRgb2 = vmulq_f16(srcRgb2, alphasRec);
 		uint16x4_t alphas = vcvta_u16_f16(vmul_n_f16(vadd_f16(sAlphas, dAlphas), 255.0));
 		srcRgb1 = vcopyq_lane_u16(srcRgb1, 0, alphas, 0);
 		srcRgb1 = vcopyq_lane_u16(srcRgb1, 4, alphas, 1);
@@ -332,130 +334,156 @@ public:
 	// kTintBlenderMode and kTintLightBlenderMode for SIMD
 	uint32x4_t blendTintSpriteSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint32x4_t alphas, bool light) const;
 
+	template<int DestBytesPerPixel, int SrcBytesPerPixel>
+	inline void drawPixelSIMD(byte *destPtr, const byte *srcP2, uint32x4_t tint, uint32x4_t alphas, uint32x4_t maskedAlphas, uint32x4_t transColors, int xDir, int xCtrBpp, int srcAlpha, int skipTrans, bool horizFlip, bool useTint, uint32x4_t skipMask) {
+		uint32x4_t srcCols, destCol;
+		if (SrcBytesPerPixel == 4) {
+			destCol = vld1q_u32((uint32 *)destPtr);
+			srcCols = vld1q_u32((const uint32 *)(srcP2 + xDir * xCtrBpp));
+		} else {
+			// RGB565 -> ARGB8888
+			uint32x4_t rawDest = vmovl_u16(vld1_u16((uint16 *)destPtr));
+			uint32x4_t rawSrc = vmovl_u16(vld1_u16((const uint16 *)(srcP2 + xDir * xCtrBpp)));
+			uint32x4_t colors = vshrq_n_u32(vandq_u32(rawDest, vmovq_n_u32(0xf800)), 11);
+			uint32x4_t red = vshlq_n_u32(vorrq_u32(vshlq_n_u32(colors, 3), vshrq_n_u32(colors, 2)), 16);
+			colors = vshrq_n_u32(vandq_u32(rawDest, vmovq_n_u32(0x07e0)), 5);
+			uint32x4_t green = vshlq_n_u32(vorrq_u32(vshlq_n_u32(colors, 2), vshrq_n_u32(colors, 4)), 8);
+			colors = vandq_u32(rawDest, vmovq_n_u32(0x001f));
+			uint32x4_t blue = vorrq_u32(vshlq_n_u32(colors, 3), vshrq_n_u32(colors, 2));
+			destCol = vorrq_u32(vorrq_u32(red, green), blue);
+			
+			colors = vshrq_n_u32(vandq_u32(rawSrc, vmovq_n_u32(0xf800)), 11);
+			red = vshlq_n_u32(vorrq_u32(vshlq_n_u32(colors, 3), vshrq_n_u32(colors, 2)), 16);
+			colors = vshrq_n_u32(vandq_u32(rawSrc, vmovq_n_u32(0x07e0)), 5);
+			green = vshlq_n_u32(vorrq_u32(vshlq_n_u32(colors, 2), vshrq_n_u32(colors, 4)), 8);
+			colors = vandq_u32(rawSrc, vmovq_n_u32(0x001f));
+			blue = vorrq_u32(vshlq_n_u32(colors, 3), vshrq_n_u32(colors, 2));
+			srcCols = vorrq_u32(vorrq_u32(vorrq_u32(red, green), blue), vmovq_n_u32(0xff000000));
+		}
+		uint32x4_t anded = vandq_u32(srcCols, maskedAlphas);
+		if (srcAlpha != -1) {
+			// take into account for useTint
+			if (useTint) {
+				srcCols = blendPixelSIMD(tint, srcCols, alphas);
+			} else {
+				srcCols = blendPixelSIMD(srcCols, destCol, alphas);
+			}
+		}
+		uint32x4_t mask1 = skipTrans ? vceqq_u32(anded, transColors) : vmovq_n_u32(0);
+		mask1 = vorrq_u32(mask1, skipMask);
+		uint32x4_t destCols2 = vandq_u32(destCol, mask1);
+		uint32x4_t srcCols2 = vandq_u32(srcCols, vmvnq_u32(mask1));
+		uint32x4_t final = vorrq_u32(destCols2, srcCols2);
+		if (horizFlip) {
+			final = vrev64q_u32(final);
+			final = vcombine_u32(vget_high_u32(final), vget_low_u32(final));
+		}
+		if (DestBytesPerPixel == 4) {
+			vst1q_u32((uint32 *)destPtr, final);
+		} else {
+			uint32x4_t final16 = vshrq_n_u32(vandq_u32(final, vmovq_n_u32(0x000000ff)), 3);
+			final16 = vorrq_u32(final16, vshlq_n_u32(vshrq_n_u32(vandq_u32(final, vmovq_n_u32(0x0000ff00)), 8+3), 5));
+			final16 = vorrq_u32(final16, vshlq_n_u32(vshrq_n_u32(vandq_u32(final, vmovq_n_u32(0x00ff0000)), 16+3), 11));
+			vst1_u16((uint16 *)destPtr, vmovn_u32(final16));
+		}
+	}
+
 	// This template handles 2bpp and 4bpp, the other specializations handle 1bpp and format conversion blits
 	template<int DestBytesPerPixel, int SrcBytesPerPixel>
 	void drawInner(int yStart, int xStart, uint32_t transColor, uint32_t alphaMask, PALETTE palette, bool useTint, bool sameFormat, const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea, bool horizFlip, bool vertFlip, bool skipTrans, int srcAlpha, int tintRed, int tintGreen, int tintBlue, const Common::Rect &dstRect, const Common::Rect &srcArea, const BlenderMode blenderMode) {
 		const int xDir = horizFlip ? -1 : 1;
 		byte rSrc, gSrc, bSrc, aSrc;
 		byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
-		const bool isRgbToRgbBlender = blenderMode == kRgbToRgbBlender;
 		uint32x4_t tint = vshlq_n_u32(vdupq_n_u32(srcAlpha), 24);
 		tint = vorrq_u32(tint, vshlq_n_u32(vdupq_n_u32(tintRed), 16));
 		tint = vorrq_u32(tint, vshlq_n_u32(vdupq_n_u32(tintGreen), 8));
 		tint = vorrq_u32(tint, vdupq_n_u32(tintBlue));
+		uint32x4_t maskedAlphas = vld1q_dup_u32(&alphaMask);
+		uint32x4_t transColors = vld1q_dup_u32(&transColor);
+		int rgbCorrectedAlpha = srcAlpha;
+		if (blenderMode != kRgbToArgbBlender && blenderMode != kTintBlenderMode &&
+			blenderMode != kTintLightBlenderMode && blenderMode != kOpaqueBlenderMode &&
+			blenderMode != kArgbToRgbBlender) {
+			rgbCorrectedAlpha += !!srcAlpha;
+		}
+		uint32x4_t alphas = vld1q_dup_u32(&rgbCorrectedAlpha);
+		uint32x4_t addIndexes = {0, 1, 2, 3};
+		if (horizFlip) addIndexes = {3, 2, 1, 0};
 		
-		for (int destY = yStart, yCtr = 0; yCtr < dstRect.height(); ++destY, ++yCtr) {
-			if (destY < 0 || destY >= destArea.h)
+		int xCtrStart = 0, xCtrBppStart = 0, xCtrWidth = dstRect.width();
+		if (xStart + xCtrWidth > destArea.w) {
+			xCtrWidth = destArea.w - xStart;
+		}
+		if (xStart < 0) {
+			xCtrStart = -xStart;
+			xCtrBppStart = xCtrStart * SrcBytesPerPixel;
+			xStart = 0;
+		}
+		int destY = yStart, yCtr = 0, yCtrHeight = (xCtrWidth % 4 == 0) ? dstRect.height() : (dstRect.height() - 1);
+		if (yStart < 0) {
+			yCtr = -yStart;
+			destY = 0;
+		}
+		if (yStart + yCtrHeight > destArea.h) {
+			yCtrHeight = destArea.h - yStart;
+		}
+		
+		byte *destP = (byte *)destArea.getBasePtr(0, destY);
+		const byte *srcP = (const byte *)src.getBasePtr(
+		                       horizFlip ? srcArea.right - 4 : srcArea.left,
+		                       vertFlip ? srcArea.bottom - 1 - yCtr : srcArea.top + yCtr);
+		for (; yCtr < yCtrHeight; ++destY, ++yCtr) {
+			uint32x4_t xCtrWidthSIMD = vmovq_n_u32(xCtrWidth);
+			for (int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = xStart; xCtr < xCtrWidth; destX += 4, xCtr += 4, xCtrBpp += SrcBytesPerPixel*4) {
+				byte *destPtr = &destP[destX * DestBytesPerPixel];
+				uint32x4_t skipMask = vcgeq_u32(vaddq_u32(vdupq_n_u32(xCtr), addIndexes), xCtrWidthSIMD);
+				drawPixelSIMD<DestBytesPerPixel, SrcBytesPerPixel>(destPtr, srcP, tint, alphas, maskedAlphas, transColors, xDir, xCtrBpp, srcAlpha, skipTrans, horizFlip, useTint, skipMask);
+			}
+
+			destP += destArea.pitch;
+			srcP += vertFlip ? -src.pitch : src.pitch;
+		}
+
+		// Get the last x values of the last row
+		if (xCtrWidth % 4 == 0) return;
+		int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = xStart;
+		for (; xCtr + 4 < xCtrWidth; destX += 4, xCtr += 4, xCtrBpp += SrcBytesPerPixel*4) {
+			byte *destPtr = &destP[destX * DestBytesPerPixel];
+			drawPixelSIMD<DestBytesPerPixel, SrcBytesPerPixel>(destPtr, srcP, tint, alphas, maskedAlphas, transColors, xDir, xCtrBpp, srcAlpha, skipTrans, horizFlip, useTint, vmovq_n_u32(0));
+		}
+		if (horizFlip) srcP += SrcBytesPerPixel * 3;
+		for (; xCtr < xCtrWidth; ++destX, ++xCtr, xCtrBpp += SrcBytesPerPixel) {
+			const byte *srcColPtr = (const byte *)(srcP + xDir * xCtrBpp);
+			byte *destVal = (byte *)&destP[destX * DestBytesPerPixel];
+			uint32 srcCol = getColor(srcColPtr, SrcBytesPerPixel);
+			
+			// Check if this is a transparent color we should skip
+			if (skipTrans && ((srcCol & alphaMask) == transColor))
 				continue;
-			byte *destP = (byte *)destArea.getBasePtr(0, destY);
-			const byte *srcP = (const byte *)src.getBasePtr(
-			                       horizFlip ? srcArea.right - 1 : srcArea.left,
-			                       vertFlip ? srcArea.bottom - 1 - yCtr :
-			                       srcArea.top + yCtr);
-			int destX = xStart, xCtr = 0, xCtrBpp = 0, xCtrWidth = dstRect.width();
-			if (xStart < 0) {
-				xCtr = -xStart;
-				xCtrBpp = xCtr * SrcBytesPerPixel;
-				destX = 0;
-			}
-			if (xStart + xCtrWidth > destArea.w) {
-				xCtrWidth = destArea.w - xStart;
-			}
 
-
-			const byte *srcP2 = srcP;
-			if (horizFlip && xCtr + 4 < xCtrWidth) srcP2 -= SrcBytesPerPixel * 3;
-			uint32x4_t maskedAlphas = vld1q_dup_u32(&alphaMask);
-			uint32x4_t transColors = vld1q_dup_u32(&transColor);
-			uint32 alpha = srcAlpha && isRgbToRgbBlender ? srcAlpha + 1 : srcAlpha;
-			uint32x4_t alphas = vld1q_dup_u32(&alpha);
-			for (; xCtr + 4 < xCtrWidth; destX += 4, xCtr += 4, xCtrBpp += SrcBytesPerPixel*4) {
-				byte *destPtr = destPtr = &destP[destX * DestBytesPerPixel];
-				uint32x4_t srcColsO, destCol;
-				if (SrcBytesPerPixel == 4) {
-					destCol = vld1q_u32((uint32 *)destPtr);
-					srcColsO = vld1q_u32((const uint32 *)(srcP2 + xDir * xCtrBpp));
+			src.format.colorToARGB(srcCol, aSrc, rSrc, gSrc, bSrc);
+			if (srcAlpha != -1) {
+				if (useTint) {
+					rDest = rSrc;
+					gDest = gSrc;
+					bDest = bSrc;
+					aDest = aSrc;
+					rSrc = tintRed;
+					gSrc = tintGreen;
+					bSrc = tintBlue;
+					aSrc = srcAlpha;
 				} else {
-					// RGB565 -> ARGB8888
-					uint32x4_t rawDest = vmovl_u16(vld1_u16((uint16 *)destPtr));
-					uint32x4_t rawSrc = vmovl_u16(vld1_u16((const uint16 *)(srcP2 + xDir * xCtrBpp)));
-					uint32x4_t colors = vshrq_n_u32(vandq_u32(rawDest, vmovq_n_u32(0xf800)), 11);
-					uint32x4_t red = vshlq_n_u32(vorrq_u32(vshlq_n_u32(colors, 3), vshrq_n_u32(colors, 2)), 16);
-					colors = vshrq_n_u32(vandq_u32(rawDest, vmovq_n_u32(0x07e0)), 5);
-					uint32x4_t green = vshlq_n_u32(vorrq_u32(vshlq_n_u32(colors, 2), vshrq_n_u32(colors, 4)), 8);
-					colors = vandq_u32(rawDest, vmovq_n_u32(0x001f));
-					uint32x4_t blue = vorrq_u32(vshlq_n_u32(colors, 3), vshrq_n_u32(colors, 2));
-					destCol = vorrq_u32(vorrq_u32(red, green), blue);
-					
-					colors = vshrq_n_u32(vandq_u32(rawSrc, vmovq_n_u32(0xf800)), 11);
-					red = vshlq_n_u32(vorrq_u32(vshlq_n_u32(colors, 3), vshrq_n_u32(colors, 2)), 16);
-					colors = vshrq_n_u32(vandq_u32(rawSrc, vmovq_n_u32(0x07e0)), 5);
-					green = vshlq_n_u32(vorrq_u32(vshlq_n_u32(colors, 2), vshrq_n_u32(colors, 4)), 8);
-					colors = vandq_u32(rawSrc, vmovq_n_u32(0x001f));
-					blue = vorrq_u32(vshlq_n_u32(colors, 3), vshrq_n_u32(colors, 2));
-					srcColsO = vorrq_u32(vorrq_u32(vorrq_u32(red, green), blue), vmovq_n_u32(0xff000000));
+					format.colorToARGB(getColor(destVal, DestBytesPerPixel), aDest, rDest, gDest, bDest);
 				}
-				uint32x4_t srcCols = srcColsO;
-				if (srcAlpha != -1) {
-					// take into account for useTint
-					if (useTint) {
-						srcCols = blendPixelSIMD(tint, srcCols, alphas);
-					} else {
-						srcCols = blendPixelSIMD(srcCols, destCol, alphas);
-					}
-				}
-				uint32x4_t anded = vandq_u32(srcColsO, maskedAlphas);
-				uint32x4_t mask1 = skipTrans ? vceqq_u32(anded, transColors) : vmovq_n_u32(0);
-				uint32x4_t destCols2 = vandq_u32(destCol, mask1);
-				uint32x4_t srcCols2 = vandq_u32(srcCols, vmvnq_u32(mask1));
-				uint32x4_t final = vorrq_u32(destCols2, srcCols2);
-				if (horizFlip) {
-					final = vrev64q_u32(final);
-					final = vcombine_u32(vget_high_u32(final), vget_low_u32(final));
-				}
-				if (DestBytesPerPixel == 4) {
-					vst1q_u32((uint32 *)destPtr, final);
-				} else {
-					uint32x4_t final16 = vshrq_n_u32(vandq_u32(final, vmovq_n_u32(0x000000ff)), 3);
-					final16 = vorrq_u32(final16, vshlq_n_u32(vshrq_n_u32(vandq_u32(final, vmovq_n_u32(0x0000ff00)), 8+3), 5));
-					final16 = vorrq_u32(final16, vshlq_n_u32(vshrq_n_u32(vandq_u32(final, vmovq_n_u32(0x00ff0000)), 16+3), 11));
-					vst1_u16((uint16 *)destPtr, vmovn_u32(final16));
-				}
+				blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha, useTint, destVal);
+				srcCol = format.ARGBToColor(aDest, rDest, gDest, bDest);
+			} else {
+				srcCol = format.ARGBToColor(aSrc, rSrc, gSrc, bSrc);
 			}
-			// Get the last x values
-			for (; xCtr < xCtrWidth; ++destX, ++xCtr, xCtrBpp += SrcBytesPerPixel) {
-				const byte *srcColPtr = (const byte *)(srcP + xDir * xCtrBpp);
-				byte *destVal = (byte *)&destP[destX * DestBytesPerPixel];
-				uint32 srcCol = getColor(srcColPtr, SrcBytesPerPixel);
-				
-				// Check if this is a transparent color we should skip
-				if (skipTrans && ((srcCol & alphaMask) == transColor))
-					continue;
-
-				src.format.colorToARGB(srcCol, aSrc, rSrc, gSrc, bSrc);
-				if (srcAlpha != -1) {
-					if (useTint) {
-						rDest = rSrc;
-						gDest = gSrc;
-						bDest = bSrc;
-						aDest = aSrc;
-						rSrc = tintRed;
-						gSrc = tintGreen;
-						bSrc = tintBlue;
-						aSrc = srcAlpha;
-					} else {
-						format.colorToARGB(getColor(destVal, DestBytesPerPixel), aDest, rDest, gDest, bDest);
-					}
-					blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha, useTint, destVal);
-					srcCol = format.ARGBToColor(aDest, rDest, gDest, bDest);
-				} else {
-					srcCol = format.ARGBToColor(aSrc, rSrc, gSrc, bSrc);
-				}
-				if (DestBytesPerPixel == 4)
-					*(uint32 *)destVal = srcCol;
-				else
-					*(uint16 *)destVal = srcCol;
-			}
+			if (DestBytesPerPixel == 4)
+				*(uint32 *)destVal = srcCol;
+			else
+				*(uint16 *)destVal = srcCol;
 		}
 	}
 
@@ -466,26 +494,32 @@ public:
 		byte rSrc, gSrc, bSrc, aSrc;
 		byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
 		
-		for (int destY = yStart, yCtr = 0; yCtr < dstRect.height(); ++destY, ++yCtr) {
-			if (destY < 0 || destY >= destArea.h)
-				continue;
-			byte *destP = (byte *)destArea.getBasePtr(0, destY);
-			const byte *srcP = (const byte *)src.getBasePtr(
-			                       horizFlip ? srcArea.right - 1 : srcArea.left,
-			                       vertFlip ? srcArea.bottom - 1 - yCtr :
-			                       srcArea.top + yCtr);
-			int destX = xStart, xCtr = 0, xCtrBpp = 0, xCtrWidth = dstRect.width();
-			if (xStart < 0) {
-				xCtr = -xStart;
-				xCtrBpp = xCtr * src.format.bytesPerPixel;
-				destX = 0;
-			}
-			if (xStart + xCtrWidth > destArea.w) {
-				xCtrWidth = destArea.w - xStart;
-			}
+		int xCtrStart = 0, xCtrBppStart = 0, xCtrWidth = dstRect.width();
+		if (xStart + xCtrWidth > destArea.w) {
+			xCtrWidth = destArea.w - xStart;
+		}
+		if (xStart < 0) {
+			xCtrStart = -xStart;
+			xCtrBppStart = xCtrStart * src.format.bytesPerPixel;
+			xStart = 0;
+		}
+		int destY = yStart, yCtr = 0, yCtrHeight = dstRect.height();
+		if (yStart < 0) {
+			yCtr = -yStart;
+			destY = 0;
+		}
+		if (yStart + yCtrHeight > destArea.h) {
+			yCtrHeight = destArea.h - yStart;
+		}
 
+		byte *destP = (byte *)destArea.getBasePtr(0, destY);
+		const byte *srcP = (const byte *)src.getBasePtr(
+		                       horizFlip ? srcArea.right - 1 : srcArea.left,
+		                       vertFlip ? srcArea.bottom - 1 - yCtr :
+		                       srcArea.top + yCtr);
+		for (; yCtr < dstRect.height(); ++destY, ++yCtr) {
 			// Loop through the pixels of the row
-			for (; xCtr < xCtrWidth; ++destX, ++xCtr, xCtrBpp += src.format.bytesPerPixel) {
+			for (int destX = xStart, xCtr = xCtrStart, xCtrBpp = xCtrBppStart; xCtr < xCtrWidth; ++destX, ++xCtr, xCtrBpp += src.format.bytesPerPixel) {
 				const byte *srcVal = srcP + xDir * xCtrBpp;
 				uint32 srcCol = getColor(srcVal, src.format.bytesPerPixel);
 
@@ -544,40 +578,44 @@ public:
 				else
 					*(uint16 *)destVal = pixel;
 			}
+
+			destP += destArea.pitch;
+			srcP += vertFlip ? -src.pitch : src.pitch;
 		}
 	}
 	
 	template<>
 	void drawInner<1, 1>(int yStart, int xStart, uint32_t transColor, uint32_t alphaMask, PALETTE palette, bool useTint, bool sameFormat, const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea, bool horizFlip, bool vertFlip, bool skipTrans, int srcAlpha, int tintRed, int tintGreen, int tintBlue, const Common::Rect &dstRect, const Common::Rect &srcArea, const BlenderMode blenderMode) {
 		const int xDir = horizFlip ? -1 : 1;
-		// byte rSrc, gSrc, bSrc, aSrc;
-		// byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
+		uint8x16_t transColors = vld1q_dup_u8(&transColor);
 		
-		for (int destY = yStart, yCtr = 0; yCtr < dstRect.height(); ++destY, ++yCtr) {
-			if (destY < 0 || destY >= destArea.h)
-				continue;
-			byte *destP = (byte *)destArea.getBasePtr(0, destY);
-			const byte *srcP = (const byte *)src.getBasePtr(
-			                       horizFlip ? srcArea.right - 1 : srcArea.left,
-			                       vertFlip ? srcArea.bottom - 1 - yCtr :
-			                       srcArea.top + yCtr);
-			int destX = xStart, xCtr = 0, xCtrBpp = 0, xCtrWidth = dstRect.width();
-			if (xStart < 0) {
-				xCtr = -xStart;
-				xCtrBpp = xCtr * src.format.bytesPerPixel;
-				destX = 0;
-			}
-			if (xStart + xCtrWidth > destArea.w) {
-				xCtrWidth = destArea.w - xStart;
-			}
-
-			const byte *srcP2 = srcP;
-			if (horizFlip && xCtr + 16 < xCtrWidth) srcP2 -= 15;
-			uint8x16_t transColors = vld1q_dup_u8(&transColor);
-			for (; xCtr + 16 < xCtrWidth; destX += 16, xCtr += 16, xCtrBpp += 16) {
+		int xCtrStart = 0, xCtrWidth = dstRect.width();
+		if (xStart + xCtrWidth > destArea.w) {
+			xCtrWidth = destArea.w - xStart;
+		}
+		if (xStart < 0) {
+			xCtrStart = -xStart;
+			xStart = 0;
+		}
+		int destY = yStart, yCtr = 0, yCtrHeight = dstRect.height();
+		if (yStart < 0) {
+			yCtr = -yStart;
+			destY = 0;
+		}
+		if (yStart + yCtrHeight > destArea.h) {
+			yCtrHeight = destArea.h - yStart;
+		}
+		
+		byte *destP = (byte *)destArea.getBasePtr(0, destY);
+		const byte *srcP = (const byte *)src.getBasePtr(
+		                       horizFlip ? srcArea.right - 16 : srcArea.left,
+		                       vertFlip ? srcArea.bottom - 1 - yCtr : srcArea.top + yCtr);
+		for (; yCtr < yCtrHeight; ++destY, ++yCtr) {
+			int xCtr = xCtrStart, destX = xStart;
+			for (; xCtr + 16 < xCtrWidth; destX += 16, xCtr += 16) {
 				byte *destPtr = &destP[destX];
 				uint8x16_t destCols = vld1q_u8(destPtr);
-				uint8x16_t srcCols = vld1q_u8(srcP2 + xDir * xCtrBpp);
+				uint8x16_t srcCols = vld1q_u8(srcP + xDir * xCtr);
 				uint8x16_t mask1 = skipTrans ? vceqq_u8(srcCols, transColors) : vmovq_n_u8(0);
 				uint8x16_t final = vorrq_u8(vandq_u8(srcCols, vmvnq_u8(mask1)), vandq_u8(destCols, mask1));
 				if (horizFlip) {
@@ -587,8 +625,9 @@ public:
 				vst1q_u8(destPtr, final);
 			}
 			// Get the last x values
-			for (; xCtr < xCtrWidth; ++destX, ++xCtr, ++xCtrBpp) {
-				const byte *srcCol = (const byte *)(srcP + xDir * xCtrBpp);
+			if (horizFlip) srcP += 15;
+			for (; xCtr < xCtrWidth; ++destX, ++xCtr) {
+				const byte *srcCol = (const byte *)(srcP + xDir * xCtr);
 				// Check if this is a transparent color we should skip
 				if (skipTrans && *srcCol == transColor)
 					continue;
@@ -596,6 +635,9 @@ public:
 				byte *destVal = (byte *)&destP[destX];
 				*destVal = *srcCol;
 			}
+			if (horizFlip) srcP -= 15;
+			destP += destArea.pitch;
+			srcP += vertFlip ? -src.pitch : src.pitch;
 		}
 	}
 
