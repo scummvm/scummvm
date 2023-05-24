@@ -80,7 +80,6 @@ public:
 	void SetUI();
 };
 
-extern SlideShow gHelpScreen;
 } // End of namespace ui
 } // End of namespace pyrodactyl
 

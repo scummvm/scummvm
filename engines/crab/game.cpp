@@ -298,7 +298,7 @@ void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					info.inv.HandleEvents(level.PlayerID(), Event);
 					break;
 				case STATE_HELP:
-					gHelpScreen.HandleEvents(Event);
+					g_engine->_helpScreen->HandleEvents(Event);
 				default:
 					break;
 				}
@@ -452,7 +452,7 @@ void Game::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &
 					info.inv.HandleEvents(level.PlayerID(), Event);
 					break;
 				case STATE_HELP:
-					gHelpScreen.HandleEvents(Event);
+					g_engine->_helpScreen->HandleEvents(Event);
 				default:
 					break;
 				}
@@ -541,7 +541,7 @@ void Game::Draw() {
 		break;
 	case STATE_HELP:
 		g_engine->_imageManager->DimScreen();
-		gHelpScreen.Draw();
+		g_engine->_helpScreen->Draw();
 		hud.back.Draw();
 		hud.Draw(info, level.PlayerID());
 		break;
@@ -819,9 +819,9 @@ void Game::ToggleState(const State &s) {
 
 	// Only load help screen image if we have to
 	if (state == STATE_HELP)
-		pyrodactyl::ui::gHelpScreen.Refresh();
+		g_engine->_helpScreen->Refresh();
 	else
-		pyrodactyl::ui::gHelpScreen.Clear();
+		g_engine->_helpScreen->Clear();
 }
 
 //------------------------------------------------------------------------

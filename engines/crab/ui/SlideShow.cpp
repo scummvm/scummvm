@@ -32,12 +32,6 @@
 
 namespace Crab {
 
-namespace pyrodactyl {
-namespace ui {
-SlideShow gHelpScreen;
-}
-} // End of namespace pyrodactyl
-
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::input;
