@@ -31,13 +31,6 @@
 #include "crab/GameParam.h"
 
 namespace Crab {
-
-// Temporary values go here
-TempValue gTemp;
-
-// The global file path object
-FilePaths gFilePath;
-
 // Are we in debug mode or not?
 bool GameDebug = false;
 
