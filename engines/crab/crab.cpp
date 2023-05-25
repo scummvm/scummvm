@@ -90,13 +90,16 @@ Common::Error CrabEngine::run() {
 	_screen = new Graphics::Screen(1280, 720, *_format);
 
 	_imageManager = new pyrodactyl::image::ImageManager();
-	_mouse = new pyrodactyl::input::Cursor();
-	_eventStore = new pyrodactyl::event::GameEventStore();
 	_textManager = new pyrodactyl::text::TextManager();
 	_inputManager = new pyrodactyl::input::InputManager();
 	_musicManager = new pyrodactyl::music::MusicManager();
+
+	_mouse = new pyrodactyl::input::Cursor();
+	_eventStore = new pyrodactyl::event::GameEventStore();
+
 	_loadingScreen = new LoadingScreen();
 	_helpScreen = new pyrodactyl::ui::SlideShow();
+
 	_optionMenu = new pyrodactyl::ui::OptionMenu();
 	_loadMenu = new pyrodactyl::ui::FileMenu<pyrodactyl::ui::SaveFileData>();
 
