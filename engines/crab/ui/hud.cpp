@@ -172,7 +172,7 @@ void HUD::SetTooltip() {
 	for (auto i = menu.element.begin(); i != menu.element.end() && count < tooltip.size(); ++i, ++count)
 		i->tooltip.text = tooltip.at(count) + " (" + i->hotkey.Name() + ")";
 
-	menu.element.at(HS_PAUSE).tooltip.text = tooltip.at(HS_PAUSE) + " (" + SDL_GetScancodeName(gInput.iv[IG_PAUSE].key) + ")";
+	menu.element.at(HS_PAUSE).tooltip.text = tooltip.at(HS_PAUSE) + " (" + SDL_GetScancodeName(g_engine->_inputManager->iv[IG_PAUSE].key) + ")";
 #endif
 }
 

@@ -32,12 +32,6 @@
 
 namespace Crab {
 
-namespace pyrodactyl {
-namespace input {
-InputManager gInput;
-}
-} // End of namespace pyrodactyl
-
 using namespace pyrodactyl::input;
 //using namespace boost::filesystem;
 

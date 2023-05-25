@@ -202,7 +202,7 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 	}
 
 #if 0
-	if (gInput.Equals(IU_BACK, Event) == SDL_PRESSED || (back.HandleEvents(Event) && (state != STATE_SAVENAME && state != STATE_CREDITS))) {
+	if (g_engine->_inputManager->Equals(IU_BACK, Event) == SDL_PRESSED || (back.HandleEvents(Event) && (state != STATE_SAVENAME && state != STATE_CREDITS))) {
 		if (state == STATE_SAVENAME)
 			ChangeState(STATE_DIFF);
 		else if (state != STATE_NORMAL)
@@ -335,7 +335,7 @@ void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 		}
 	}
 
-	if (gInput.Equals(IU_BACK, Event) == SDL_PRESSED || (back.HandleEvents(Event) && (state != STATE_SAVENAME && state != STATE_CREDITS))) {
+	if (g_engine->_inputManager->Equals(IU_BACK, Event) == SDL_PRESSED || (back.HandleEvents(Event) && (state != STATE_SAVENAME && state != STATE_CREDITS))) {
 		if (state == STATE_SAVENAME)
 			ChangeState(STATE_DIFF);
 		else if (state != STATE_NORMAL)

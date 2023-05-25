@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/KeyBindMenu.h"
 
 namespace Crab {
@@ -102,10 +104,10 @@ void KeyBindMenu::InitMenu(const int &type) {
 		int yoffset = inc.y * ((i / 2) % dim.x) + divide.y * ((i / 2) / dim.x);
 
 		menu[type].element.at(i).Init(prim, xoffset, yoffset);
-		menu[type].element.at(i).caption.text = SDL_GetScancodeName(gInput.iv[start + (i / 2)].key);
+		menu[type].element.at(i).caption.text = SDL_GetScancodeName(g_engine->_inputManager->iv[start + (i / 2)].key);
 
 		menu[type].element.at(i + 1).Init(alt, xoffset, yoffset);
-		menu[type].element.at(i + 1).caption.text = SDL_GetScancodeName(gInput.iv[start + (i / 2)].alt);
+		menu[type].element.at(i + 1).caption.text = SDL_GetScancodeName(g_engine->_inputManager->iv[start + (i / 2)].alt);
 	}
 #endif
 }
@@ -118,7 +120,7 @@ void KeyBindMenu::DrawDesc(const int &type) {
 		int xoffset = inc.x * i + divide.x * (i / dim.x);
 		int yoffset = inc.y * (i % dim.x) + divide.y * (i / dim.x);
 
-		desc.Draw(gInput.iv[i + start].name, xoffset, yoffset);
+		desc.Draw(g_engine->_inputManager->iv[i + start].name, xoffset, yoffset);
 	}
 }
 
@@ -137,8 +139,8 @@ void KeyBindMenu::SetCaption() {
 	StartAndSize(sel_controls.cur, start, size);
 
 	for (int i = 0; i < size * 2; i += 2) {
-		menu[sel_controls.cur].element.at(i).caption.text = SDL_GetScancodeName(gInput.iv[start + (i / 2)].key);
-		menu[sel_controls.cur].element.at(i + 1).caption.text = SDL_GetScancodeName(gInput.iv[start + (i / 2)].alt);
+		menu[sel_controls.cur].element.at(i).caption.text = SDL_GetScancodeName(g_engine->_inputManager->iv[start + (i / 2)].key);
+		menu[sel_controls.cur].element.at(i + 1).caption.text = SDL_GetScancodeName(g_engine->_inputManager->iv[start + (i / 2)].alt);
 	}
 #endif
 }
@@ -208,19 +210,19 @@ void KeyBindMenu::SwapKey(const SDL_Scancode &find) {
 	int pos = start + (choice / 2);
 
 	for (int i = start; i < start + size; ++i) {
-		if (gInput.iv[i].key == find) {
-			gInput.iv[i].key = gInput.iv[pos].key;
+		if (g_engine->_inputManager->iv[i].key == find) {
+			g_engine->_inputManager->iv[i].key = g_engine->_inputManager->iv[pos].key;
 			break;
-		} else if (gInput.iv[i].alt == find) {
-			gInput.iv[i].alt = gInput.iv[pos].key;
+		} else if (g_engine->_inputManager->iv[i].alt == find) {
+			g_engine->_inputManager->iv[i].alt = g_engine->_inputManager->iv[pos].key;
 			break;
 		}
 	}
 
 	if (choice % 2 == 0)
-		gInput.iv[pos].key = find;
+		g_engine->_inputManager->iv[pos].key = find;
 	else
-		gInput.iv[pos].alt = find;
+		g_engine->_inputManager->iv[pos].alt = find;
 }
 #endif
 

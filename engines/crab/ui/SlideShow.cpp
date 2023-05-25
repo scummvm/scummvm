@@ -99,13 +99,13 @@ void SlideShow::HandleEvents(const SDL_Event &Event) {
 	using namespace pyrodactyl::input;
 
 	if (index > 0)
-		if (prev.HandleEvents(Event) == BUAC_LCLICK || (usekeyboard && gInput.Equals(IU_LEFT, Event) == SDL_PRESSED)) {
+		if (prev.HandleEvents(Event) == BUAC_LCLICK || (usekeyboard && g_engine->_inputManager->Equals(IU_LEFT, Event) == SDL_PRESSED)) {
 			index--;
 			Refresh();
 		}
 
 	if (index < path.size() - 1)
-		if (next.HandleEvents(Event) == BUAC_LCLICK || (usekeyboard && gInput.Equals(IU_RIGHT, Event) == SDL_PRESSED)) {
+		if (next.HandleEvents(Event) == BUAC_LCLICK || (usekeyboard && g_engine->_inputManager->Equals(IU_RIGHT, Event) == SDL_PRESSED)) {
 			index++;
 			Refresh();
 		}

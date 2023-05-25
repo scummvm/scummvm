@@ -93,6 +93,7 @@ Common::Error CrabEngine::run() {
 	_mouse = new pyrodactyl::input::Cursor();
 	_eventStore = new pyrodactyl::event::GameEventStore();
 	_textManager = new pyrodactyl::text::TextManager();
+	_inputManager = new pyrodactyl::input::InputManager();
 	_loadingScreen = new LoadingScreen();
 	_helpScreen = new pyrodactyl::ui::SlideShow();
 	_optionMenu = new pyrodactyl::ui::OptionMenu();

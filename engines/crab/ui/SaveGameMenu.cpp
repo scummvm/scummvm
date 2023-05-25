@@ -110,7 +110,7 @@ bool GameSaveMenu::HandleEvents(const SDL_Event &Event) {
 			return true;
 		}
 
-		if (gInput.Equals(IU_BACK, Event) == SDL_RELEASED) {
+		if (g_engine->_inputManager->Equals(IU_BACK, Event) == SDL_RELEASED) {
 			ta_name.text = "New Save";
 			state = STATE_NORMAL;
 		}
