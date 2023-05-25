@@ -682,7 +682,7 @@ void Sprite::TakeDamage(Info &info, Sprite &s) {
 		else if (f.eff.hurt != -1)
 			ForceUpdateMove(f.eff.hurt);
 
-		gMusicManager.PlayEffect(f.eff.hit, 0);
+		g_engine->_musicManager->PlayEffect(f.eff.hit, 0);
 		img_eff = f.eff.img;
 	}
 

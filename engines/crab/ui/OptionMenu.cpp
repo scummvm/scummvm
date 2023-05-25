@@ -396,7 +396,7 @@ void OptionMenu::SaveState() {
 	// root node
 	rapidxml::xml_node<char> *root = doc.allocate_node(rapidxml::node_element, "settings");
 	g_engine->_screenSettings->SaveState(doc, root);
-	gMusicManager.SaveState(doc, root);
+	g_engine->_musicManager->SaveState(doc, root);
 
 	doc.append_node(root);
 	std::string xml_as_string;
