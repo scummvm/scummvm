@@ -36,12 +36,6 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::music;
 
-namespace pyrodactyl {
-namespace ui {
-OptionMenu gOptionMenu;
-}
-} // End of namespace pyrodactyl
-
 void OptionMenu::Load(const std::string &filename) {
 	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
