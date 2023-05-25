@@ -161,7 +161,7 @@ ButtonAction Button::HandleEvents(const Common::Event &Event, const int &XOffset
 
 			if (!hover_prev) {
 				hover_prev = true;
-				gMusicManager.PlayEffect(se_hover, 0);
+				g_engine->_musicManager->PlayEffect(se_hover, 0);
 			}
 		} else {
 			hover_prev = false;
@@ -183,13 +183,13 @@ ButtonAction Button::HandleEvents(const Common::Event &Event, const int &XOffset
 			if (dim.Contains(g_engine->_mouse->button.x, g_engine->_mouse->button.y)) {
 				mousepressed = false;
 				if (Event.type == Common::EVENT_LBUTTONUP) {
-					gMusicManager.PlayEffect(se_click, 0);
+					g_engine->_musicManager->PlayEffect(se_click, 0);
 					return BUAC_LCLICK;
 				} else if (Event.type == Common::EVENT_RBUTTONUP)
 					return BUAC_RCLICK;
 			}
 		} else if (hotkey.HandleEvents(Event)) {
-			gMusicManager.PlayEffect(se_click, 0);
+			g_engine->_musicManager->PlayEffect(se_click, 0);
 			return BUAC_LCLICK;
 		}
 	}
@@ -212,7 +212,7 @@ ButtonAction Button::HandleEvents(const SDL_Event &Event, const int &XOffset, co
 
 			if (!hover_prev) {
 				hover_prev = true;
-				gMusicManager.PlayEffect(se_hover, 0);
+				g_engine->_musicManager->PlayEffect(se_hover, 0);
 			}
 		} else {
 			hover_prev = false;
@@ -234,13 +234,13 @@ ButtonAction Button::HandleEvents(const SDL_Event &Event, const int &XOffset, co
 			if (dim.Contains(g_engine->_mouse->button.x, g_engine->_mouse->button.y)) {
 				mousepressed = false;
 				if (Event.button.button == SDL_BUTTON_LEFT) {
-					gMusicManager.PlayEffect(se_click, 0);
+					g_engine->_musicManager->PlayEffect(se_click, 0);
 					return BUAC_LCLICK;
 				} else if (Event.button.button == SDL_BUTTON_RIGHT)
 					return BUAC_RCLICK;
 			}
 		} else if (hotkey.HandleEvents(Event)) {
-			gMusicManager.PlayEffect(se_click, 0);
+			g_engine->_musicManager->PlayEffect(se_click, 0);
 			return BUAC_LCLICK;
 		}
 	}

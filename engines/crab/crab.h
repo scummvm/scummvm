@@ -67,6 +67,7 @@
 #include "crab/input/cursor.h"
 #include "crab/input/input.h"
 #include "crab/text/TextManager.h"
+#include "crab/music/MusicManager.h"
 #include "crab/ScreenSettings.h"
 
 #include "crab/detection.h"
@@ -114,6 +115,7 @@ public:
 	pyrodactyl::event::GameEventStore *_eventStore = nullptr;
 	pyrodactyl::text::TextManager *_textManager = nullptr;
 	pyrodactyl::input::InputManager *_inputManager = nullptr;
+	pyrodactyl::music::MusicManager *_musicManager = nullptr;
 
 	// Should these really be inside the Engine class?
 	LoadingScreen *_loadingScreen = nullptr;

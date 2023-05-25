@@ -299,7 +299,7 @@ void App::LoadSettings(const Common::String &filename) {
 
 			// Start the sound subsystem
 #if 0
-			pyrodactyl::music::gMusicManager.Load(node);
+			g_engine->_musicManager->Load(node);
 #endif
 		}
 	}
@@ -310,7 +310,7 @@ App::~App() {
 	// SteamAPI_Shutdown();
 
 	g_engine->_imageManager->Quit();
-	pyrodactyl::music::gMusicManager.Quit();
+	g_engine->_musicManager->Quit();
 	g_engine->_textManager->Quit();
 	g_engine->_inputManager->Quit();
 	g_engine->_loadingScreen->Quit();

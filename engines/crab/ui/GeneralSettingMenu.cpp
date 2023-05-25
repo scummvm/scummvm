@@ -49,10 +49,10 @@ void GeneralSettingMenu::Load(rapidxml::xml_node<char> *node) {
 			notice_volume.Load(musnode->first_node("desc"));
 
 	//	if (NodeValid("music", musnode))
-	//		vol_music.Load(musnode->first_node("music"), 0, MIX_MAX_VOLUME, gMusicManager.VolMusic());
+	//		vol_music.Load(musnode->first_node("music"), 0, MIX_MAX_VOLUME, g_engine->_musicManager->VolMusic());
 
 	//	if (NodeValid("effects", musnode))
-	//		vol_effects.Load(musnode->first_node("effects"), 0, MIX_MAX_VOLUME, gMusicManager.VolEffects());
+	//		vol_effects.Load(musnode->first_node("effects"), 0, MIX_MAX_VOLUME, g_engine->_musicManager->VolEffects());
 	}
 
 	if (NodeValid("mouse_trap", node))
@@ -74,10 +74,10 @@ void GeneralSettingMenu::Load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 void GeneralSettingMenu::HandleEvents(const Common::Event &Event) {
 	if (vol_music.HandleEvents(Event))
-		gMusicManager.VolMusic(vol_music.Value());
+		g_engine->_musicManager->VolMusic(vol_music.Value());
 
 	if (vol_effects.HandleEvents(Event))
-		gMusicManager.VolEffects(vol_effects.Value());
+		g_engine->_musicManager->VolEffects(vol_effects.Value());
 
 	// No need to change screen here
 	if (save_on_exit.HandleEvents(Event))
@@ -99,10 +99,10 @@ void GeneralSettingMenu::HandleEvents(const Common::Event &Event) {
 //------------------------------------------------------------------------
 void GeneralSettingMenu::HandleEvents(const SDL_Event &Event) {
 	if (vol_music.HandleEvents(Event))
-		gMusicManager.VolMusic(vol_music.Value());
+		g_engine->_musicManager->VolMusic(vol_music.Value());
 
 	if (vol_effects.HandleEvents(Event))
-		gMusicManager.VolEffects(vol_effects.Value());
+		g_engine->_musicManager->VolEffects(vol_effects.Value());
 
 	// No need to change screen here
 	if (save_on_exit.HandleEvents(Event))
@@ -149,10 +149,10 @@ void GeneralSettingMenu::Draw() {
 //------------------------------------------------------------------------
 void GeneralSettingMenu::RestoreBackup() {
 	vol_music.RestoreBackup();
-	gMusicManager.VolMusic(vol_music.Value());
+	g_engine->_musicManager->VolMusic(vol_music.Value());
 
 	vol_effects.RestoreBackup();
-	gMusicManager.VolEffects(vol_effects.Value());
+	g_engine->_musicManager->VolEffects(vol_effects.Value());
 }
 
 //------------------------------------------------------------------------

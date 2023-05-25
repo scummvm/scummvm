@@ -94,6 +94,7 @@ Common::Error CrabEngine::run() {
 	_eventStore = new pyrodactyl::event::GameEventStore();
 	_textManager = new pyrodactyl::text::TextManager();
 	_inputManager = new pyrodactyl::input::InputManager();
+	_musicManager = new pyrodactyl::music::MusicManager();
 	_loadingScreen = new LoadingScreen();
 	_helpScreen = new pyrodactyl::ui::SlideShow();
 	_optionMenu = new pyrodactyl::ui::OptionMenu();

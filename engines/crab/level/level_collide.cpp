@@ -174,9 +174,9 @@ bool Level::CollidingWithLevel(Info &info, Sprite &s) {
 
 	if (terrain.CollideWithMusic(s.BoundRect(), music)) {
 		if (music.track)
-			gMusicManager.PlayMusic(music.id);
+			g_engine->_musicManager->PlayMusic(music.id);
 		else
-			gMusicManager.PlayEffect(music.id, music.loops);
+			g_engine->_musicManager->PlayEffect(music.id, music.loops);
 	}
 
 	// If we are colliding with something, return true

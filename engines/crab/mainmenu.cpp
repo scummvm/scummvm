@@ -437,16 +437,16 @@ void MainMenu::ChangeState(MenuState ms, const bool &start) {
 	// Just play the appropriate music
 	if (start) {
 		if (ms == STATE_CREDITS)
-			gMusicManager.PlayMusic(music_key.credits);
+			g_engine->_musicManager->PlayMusic(music_key.credits);
 		else
-			gMusicManager.PlayMusic(music_key.normal);
+			g_engine->_musicManager->PlayMusic(music_key.normal);
 	} else {
 		// This is not our first run, which means some music track is already playing
 		// Only change tracks when going from main menu->credits or credits->main menu
 		if (state == STATE_CREDITS && ms != STATE_CREDITS)
-			gMusicManager.PlayMusic(music_key.normal);
+			g_engine->_musicManager->PlayMusic(music_key.normal);
 		else if (state != STATE_CREDITS && ms == STATE_CREDITS)
-			gMusicManager.PlayMusic(music_key.credits);
+			g_engine->_musicManager->PlayMusic(music_key.credits);
 	}
 
 	// Set current state

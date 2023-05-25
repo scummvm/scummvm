@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/event/effect.h"
 #include "crab/music/MusicManager.h"
 
@@ -209,15 +211,15 @@ bool Effect::Execute(pyrodactyl::event::Info &info, const std::string &player_id
 			if (subject == "music") {
 				if (operation == "play") {
 					MusicKey m = StringToNumber<MusicKey>(val);
-					gMusicManager.PlayMusic(m);
+					g_engine->_musicManager->PlayMusic(m);
 				} else if (operation == "stop")
-					gMusicManager.Stop();
+					g_engine->_musicManager->Stop();
 				else if (operation == "pause")
-					gMusicManager.Pause();
+					g_engine->_musicManager->Pause();
 				else if (operation == "resume")
-					gMusicManager.Resume();
+					g_engine->_musicManager->Resume();
 			} else
-				gMusicManager.PlayEffect(StringToNumber<ChunkKey>(val), 0);
+				g_engine->_musicManager->PlayEffect(StringToNumber<ChunkKey>(val), 0);
 			break;
 
 		case EFF_MONEY:
