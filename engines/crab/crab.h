@@ -126,6 +126,7 @@ public:
 	pyrodactyl::ui::FileMenu<pyrodactyl::ui::SaveFileData> *_loadMenu = nullptr;
 
 	FilePaths *_filePath = nullptr;
+	TempValue *_tempData = nullptr;
 	ScreenSettings *_screenSettings = nullptr;
 
 	Common::FSNode _gameDataDir;

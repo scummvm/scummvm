@@ -142,12 +142,12 @@ MainMenu::MainMenu() {
 		}
 	}
 
-	if (gTemp.credits)
+	if (g_engine->_tempData->credits)
 		ChangeState(STATE_CREDITS, true);
 	else
 		ChangeState(STATE_NORMAL, true);
 
-	gTemp.credits = false;
+	g_engine->_tempData->credits = false;
 	g_engine->_filePath->current_r = g_engine->_filePath->mainmenu_r;
 }
 
@@ -249,7 +249,7 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 		// First menu option is Non-iron man, second is iron man
 		// For the second choice, we must display a prompt to choose the name of the save game
 		if (choice == 0) {
-			gTemp.ironman = false;
+			g_engine->_tempData->ironman = false;
 			ShouldChangeState = true;
 			NewStateID = GAMESTATE_NEW_GAME;
 		} else if (choice == 1)
@@ -259,8 +259,8 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 	case STATE_SAVENAME:
 		if (save.HandleEvents(Event) || accept.HandleEvents(Event)) {
 			if (save.text != "") {
-				gTemp.filename = save.text.c_str();
-				gTemp.ironman = true;
+				g_engine->_tempData->filename = save.text.c_str();
+				g_engine->_tempData->ironman = true;
 				ShouldChangeState = true;
 				NewStateID = GAMESTATE_NEW_GAME;
 			} else
@@ -381,7 +381,7 @@ void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 		// First menu option is Non-iron man, second is iron man
 		// For the second choice, we must display a prompt to choose the name of the save game
 		if (choice == 0) {
-			gTemp.ironman = false;
+			g_engine->_tempData->ironman = false;
 			ShouldChangeState = true;
 			NewStateID = GAMESTATE_NEW_GAME;
 		} else if (choice == 1)
@@ -391,8 +391,8 @@ void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 	case STATE_SAVENAME:
 		if (save.HandleEvents(Event) || accept.HandleEvents(Event)) {
 			if (save.text != "") {
-				gTemp.filename = save.text;
-				gTemp.ironman = true;
+				g_engine->_tempData->filename = save.text;
+				g_engine->_tempData->ironman = true;
 				ShouldChangeState = true;
 				NewStateID = GAMESTATE_NEW_GAME;
 			} else

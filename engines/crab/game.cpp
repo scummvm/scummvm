@@ -43,8 +43,8 @@ using namespace pyrodactyl::input;
 void Game::StartNewGame() {
 	Init(g_engine->_filePath->mod_cur.c_str());
 	LoadLevel(info.CurLocID());
-	info.IronMan(gTemp.ironman);
-	savefile.ironman = gTemp.filename.c_str();
+	info.IronMan(g_engine->_tempData->ironman);
+	savefile.ironman = g_engine->_tempData->filename.c_str();
 	clock.Start();
 	hud.pause.UpdateMode(info.IronMan());
 
@@ -629,7 +629,7 @@ bool Game::ApplyResult() {
 			map.Update(info);
 			break;
 		case ER_QUIT:
-			gTemp.credits = (i->val == "credits");
+			g_engine->_tempData->credits = (i->val == "credits");
 			return true;
 		default:
 			break;
