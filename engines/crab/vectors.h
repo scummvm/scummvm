@@ -56,10 +56,13 @@ public:
 	}
 
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name) {
+		warning("STUB: Vector2D::SaveState()");
+#if 0
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, name);
 		child->append_attribute(doc.allocate_attribute("x", gStrPool.Get((int)x)));
 		child->append_attribute(doc.allocate_attribute("y", gStrPool.Get((int)y)));
 		root->append_node(child);
+#endif
 	}
 
 	double Magnitude() { return sqrt(x * x + y * y); }
