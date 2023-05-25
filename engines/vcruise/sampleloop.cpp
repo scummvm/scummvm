@@ -264,7 +264,7 @@ int SampleLoopAudioStream::readBuffer(int16 *buffer, int numSamples) {
 		int consecutiveSamplesAvailable = 0;
 		bool terminateIfReadCompletes = false;
 
-		if (_ignoreLoops) {
+		if (ignoreLoops) {
 			consecutiveSamplesAvailable = _streamSamples - _currentSampleOffset;
 			terminateIfReadCompletes = true;
 		} else if (_currentLoop < 0) {

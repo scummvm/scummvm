@@ -258,8 +258,8 @@ void CircuitPuzzleVisitedSet::clear() {
 }
 
 CircuitPuzzleAIEvaluator::CircuitPuzzleAIEvaluator() {
-	for (int x = 0; x < CircuitPuzzle::kBoardWidth; x++)
-		for (int y = 0; y < CircuitPuzzle::kBoardHeight; y++)
+	for (uint x = 0; x < CircuitPuzzle::kBoardWidth; x++)
+		for (uint y = 0; y < CircuitPuzzle::kBoardHeight; y++)
 			stepsToReach[x][y] = kMaxMovesToReach;
 }
 
