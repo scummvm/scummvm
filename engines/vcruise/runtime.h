@@ -167,6 +167,7 @@ struct ScriptEnvironmentVars {
 	bool exitToMenu;
 	bool animChangeSet;
 	bool isEntryScript;
+	bool puzzleWasSet;
 };
 
 struct SfxSound {

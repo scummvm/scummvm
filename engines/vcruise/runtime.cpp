@@ -188,7 +188,7 @@ const MapScreenDirectionDef *MapDef::getScreenDirection(uint screen, uint direct
 	return screenDirections[screen][direction].get();
 }
 
-ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), lmbDrag(false), esc(false), exitToMenu(false), animChangeSet(false), isEntryScript(false),
+ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), lmbDrag(false), esc(false), exitToMenu(false), animChangeSet(false), isEntryScript(false), puzzleWasSet(false),
 	panInteractionID(0), fpsOverride(0), lastHighlightedItem(0), animChangeFrameOffset(0), animChangeNumFrames(0) {
 }
 
@@ -2268,8 +2268,14 @@ void Runtime::terminateScript() {
 		// This is needed to avoid resetting static animations twice, which causes problems with,
 		// for example, the second screen on Hannah's path resetting the idle animations after
 		// the VO stops.
-		if (_gameID == GID_SCHIZM)
+		if (_gameID == GID_SCHIZM) {
 			_havePendingScreenChange = false;
+
+			// The circuit puzzle doesn't call puzzleDone unless you zoom back into the puzzle,
+			// which can cause the puzzle to leak.  Clean it up here instead.
+			if (!_scriptEnv.puzzleWasSet)
+				_circuitPuzzle.reset();
+		}
 
 		changeToScreen(_roomNumber, _screenNumber);
 	}
@@ -7292,12 +7298,14 @@ void Runtime::scriptOpPuzzleInit(ScriptArg_t arg) {
 	if (firstMover != firstMover2 || unknownParam != 0)
 		error("PuzzleInit had a weird parameter");
 
-	if (firstMover == 2)
-		error("AI moving first not implemented yet");
-
 	_circuitPuzzle.reset(new CircuitPuzzle(firstMover));
 	_circuitPuzzleConnectAnimation = animDef1;
 	_circuitPuzzleBlockAnimation = animDef2;
+
+	_scriptEnv.puzzleWasSet = true;
+
+	if (firstMover == 2)
+		scriptOpPuzzleDoMove2(0);
 }
 
 void Runtime::scriptOpPuzzleWhoWon(ScriptArg_t arg) {
@@ -7382,7 +7390,9 @@ void Runtime::scriptOpPuzzleDoMove2(ScriptArg_t arg) {
 	}
 }
 
-OPCODE_STUB(PuzzleDone)
+void Runtime::scriptOpPuzzleDone(ScriptArg_t arg) {
+	_circuitPuzzle.reset();
+}
 
 
 OPCODE_STUB(Fn)
