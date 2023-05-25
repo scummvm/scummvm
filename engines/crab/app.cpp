@@ -87,13 +87,13 @@ bool App::Init() {
 	SDL_DisplayMode d;
 	if (SDL_GetDesktopDisplayMode(0, &d) == 0) {
 		// Store the default desktop values before starting our own screen
-		gScreenSettings.desktop.w = d.w;
-		gScreenSettings.desktop.h = d.h;
+		g_engine->_screenSettings->desktop.w = d.w;
+		g_engine->_screenSettings->desktop.h = d.h;
 	}
 
 	// Set up the screen - use windowed mode at start in order to prevent loss of texture on context switching
 	gWindow = SDL_CreateWindow("Unrest", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-							   gScreenSettings.cur.w, gScreenSettings.cur.h, SDL_WINDOW_SHOWN);
+							   g_engine->_screenSettings->cur.w, g_engine->_screenSettings->cur.h, SDL_WINDOW_SHOWN);
 
 	if (gWindow == nullptr)
 		return false;
@@ -122,7 +122,7 @@ bool App::Init() {
 	g_engine->_inputManager->Init();
 
 	LoadSettings("res/settings.xml");
-	gScreenSettings.in_game = false;
+	g_engine->_screenSettings->in_game = false;
 	return true;
 }
 
@@ -155,24 +155,24 @@ void App::Run() {
 			switch (NextStateID) {
 			case GAMESTATE_TITLE:
 				CurrentState = new Splash();
-				gScreenSettings.in_game = false;
+				g_engine->_screenSettings->in_game = false;
 
 				// Now apply all settings - except resolution because that's already set at the start
-				gScreenSettings.SetFullscreen();
-				gScreenSettings.SetWindowBorder();
-				gScreenSettings.SetVsync();
-				gScreenSettings.SetGamma();
-				gScreenSettings.SetMouseTrap();
+				g_engine->_screenSettings->SetFullscreen();
+				g_engine->_screenSettings->SetWindowBorder();
+				g_engine->_screenSettings->SetVsync();
+				g_engine->_screenSettings->SetGamma();
+				g_engine->_screenSettings->SetMouseTrap();
 				break;
 
 			case GAMESTATE_MAIN_MENU:
 				CurrentState = new MainMenu();
-				gScreenSettings.in_game = false;
+				g_engine->_screenSettings->in_game = false;
 				break;
 
 			case GAMESTATE_NEW_GAME:
 				CurrentState = new Game();
-				gScreenSettings.in_game = true;
+				g_engine->_screenSettings->in_game = true;
 				break;
 
 			case GAMESTATE_LOAD_GAME:
@@ -182,7 +182,7 @@ void App::Run() {
 				else
 					CurrentState = new Game();
 
-				gScreenSettings.in_game = true;
+				g_engine->_screenSettings->in_game = true;
 				break;
 #endif
 
@@ -219,8 +219,8 @@ void App::Run() {
 				NextStateID = GAMESTATE_EXIT;
 			} else if (Event.type == SDL_KEYDOWN && Event.key.keysym.scancode == SDL_SCANCODE_RETURN && Event.key.keysym.mod & KMOD_ALT) {
 				// Toggle full-screen if user presses ALT+ENTER
-				gScreenSettings.fullscreen = !gScreenSettings.fullscreen;
-				gScreenSettings.SetFullscreen();
+				g_engine->_screenSettings->fullscreen = !g_engine->_screenSettings->fullscreen;
+				g_engine->_screenSettings->SetFullscreen();
 			} else if (Event.type == SDL_KEYUP && Event.key.keysym.scancode == SDL_SCANCODE_GRAVE && Event.key.keysym.mod & KMOD_CTRL)
 				GameDebug = !GameDebug;
 			g_engine->_inputManager->HandleController(Event);
@@ -234,9 +234,9 @@ void App::Run() {
 
 
 		// Do we have to reposition our interface?
-		if (gScreenSettings.change_interface) {
+		if (g_engine->_screenSettings->change_interface) {
 			CurrentState->SetUI();
-			gScreenSettings.change_interface = false;
+			g_engine->_screenSettings->change_interface = false;
 		}
 
 		// Do state Drawing
@@ -274,11 +274,11 @@ void App::Run() {
 #endif
 
 		// Cap the frame rate
-		if (fps.Ticks() < 1000u / gScreenSettings.fps) {
+		if (fps.Ticks() < 1000u / g_engine->_screenSettings->fps) {
 #if 0
-			SDL_Delay((1000u / gScreenSettings.fps) - fps.Ticks());
+			SDL_Delay((1000u / g_engine->_screenSettings->fps) - fps.Ticks());
 #endif
-			uint32 delay = (1000u / gScreenSettings.fps) - fps.Ticks();
+			uint32 delay = (1000u / g_engine->_screenSettings->fps) - fps.Ticks();
 			//warning("Delay by %d ms", delay);
 			g_system->delayMillis(delay);
 		}
@@ -291,11 +291,11 @@ void App::LoadSettings(const Common::String &filename) {
 		rapidxml::xml_node<char> *node = settings.Doc()->first_node("settings");
 		if (NodeValid(node)) {
 			// Load the version
-			LoadNum(gScreenSettings.version, "version", node);
+			LoadNum(g_engine->_screenSettings->version, "version", node);
 
 			// Load screen settings
 			if (NodeValid("screen", node))
-				gScreenSettings.Load(node->first_node("screen"));
+				g_engine->_screenSettings->Load(node->first_node("screen"));
 
 			// Start the sound subsystem
 #if 0

@@ -45,7 +45,7 @@ class LoadingScreen {
 
 		Screen(rapidxml::xml_node<char> *node) { bg.Load(node, "bg"); }
 		void Delete() { bg.Delete(); }
-		void Draw() { bg.Draw((gScreenSettings.cur.w - bg.W()) / 2, (gScreenSettings.cur.h - bg.H()) / 2); }
+		void Draw() { bg.Draw((g_engine->_screenSettings->cur.w - bg.W()) / 2, (g_engine->_screenSettings->cur.h - bg.H()) / 2); }
 	};
 
 	// The different loading screens

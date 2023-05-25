@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/GfxSettingMenu.h"
 
 namespace Crab {
@@ -59,7 +61,7 @@ void GfxSettingMenu::Load(rapidxml::xml_node<char> *node) {
 	}
 
 	if (NodeValid("brightness", node))
-		brightness.Load(node->first_node("brightness"), 0, 100, gScreenSettings.gamma * 100);
+		brightness.Load(node->first_node("brightness"), 0, 100, g_engine->_screenSettings->gamma * 100);
 }
 
 //------------------------------------------------------------------------
@@ -67,7 +69,7 @@ void GfxSettingMenu::Load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 void GfxSettingMenu::Draw() {
 	// Window border doesn't matter if you are in fullscreen
-	if (!gScreenSettings.fullscreen)
+	if (!g_engine->_screenSettings->fullscreen)
 		border.Draw();
 
 	// Draw toggle buttons
@@ -76,7 +78,7 @@ void GfxSettingMenu::Draw() {
 	vsync.Draw();
 
 	// Quality and resolution can only be changed in the main menu
-	if (!gScreenSettings.in_game) {
+	if (!g_engine->_screenSettings->in_game) {
 		// Tree quality button
 		quality.Draw();
 	} else
@@ -92,31 +94,31 @@ void GfxSettingMenu::Draw() {
 int GfxSettingMenu::HandleEvents(const Common::Event &Event) {
 	if (fullscreen.HandleEvents(Event)) {
 		// Setting video flags is necessary when toggling fullscreen
-		gScreenSettings.fullscreen = !gScreenSettings.fullscreen;
-		gScreenSettings.SetFullscreen();
+		g_engine->_screenSettings->fullscreen = !g_engine->_screenSettings->fullscreen;
+		g_engine->_screenSettings->SetFullscreen();
 	}
 
 	// Vsync doesn't need to set the change value
 	if (vsync.HandleEvents(Event)) {
-		gScreenSettings.vsync = !gScreenSettings.vsync;
-		gScreenSettings.SetVsync();
+		g_engine->_screenSettings->vsync = !g_engine->_screenSettings->vsync;
+		g_engine->_screenSettings->SetVsync();
 	}
 
 	// Quality and resolution can only be changed in the main menu
-	if (!gScreenSettings.in_game) {
+	if (!g_engine->_screenSettings->in_game) {
 		if (quality.HandleEvents(Event))
-			gScreenSettings.quality = !gScreenSettings.quality;
+			g_engine->_screenSettings->quality = !g_engine->_screenSettings->quality;
 	}
 
 	// Window border doesn't matter if you are in fullscreen
-	if (border.HandleEvents(Event) && !gScreenSettings.fullscreen) {
-		gScreenSettings.border = !gScreenSettings.border;
-		gScreenSettings.SetWindowBorder();
+	if (border.HandleEvents(Event) && !g_engine->_screenSettings->fullscreen) {
+		g_engine->_screenSettings->border = !g_engine->_screenSettings->border;
+		g_engine->_screenSettings->SetWindowBorder();
 	}
 
 	if (brightness.HandleEvents(Event)) {
-		gScreenSettings.gamma = static_cast<float>(brightness.Value()) / 100.0f;
-		gScreenSettings.SetGamma();
+		g_engine->_screenSettings->gamma = static_cast<float>(brightness.Value()) / 100.0f;
+		g_engine->_screenSettings->SetGamma();
 	}
 
 	return resolution.HandleEvents(Event);
@@ -129,31 +131,31 @@ int GfxSettingMenu::HandleEvents(const Common::Event &Event) {
 int GfxSettingMenu::HandleEvents(const SDL_Event &Event) {
 	if (fullscreen.HandleEvents(Event)) {
 		// Setting video flags is necessary when toggling fullscreen
-		gScreenSettings.fullscreen = !gScreenSettings.fullscreen;
-		gScreenSettings.SetFullscreen();
+		g_engine->_screenSettings->fullscreen = !g_engine->_screenSettings->fullscreen;
+		g_engine->_screenSettings->SetFullscreen();
 	}
 
 	// Vsync doesn't need to set the change value
 	if (vsync.HandleEvents(Event)) {
-		gScreenSettings.vsync = !gScreenSettings.vsync;
-		gScreenSettings.SetVsync();
+		g_engine->_screenSettings->vsync = !g_engine->_screenSettings->vsync;
+		g_engine->_screenSettings->SetVsync();
 	}
 
 	// Quality and resolution can only be changed in the main menu
-	if (!gScreenSettings.in_game) {
+	if (!g_engine->_screenSettings->in_game) {
 		if (quality.HandleEvents(Event))
-			gScreenSettings.quality = !gScreenSettings.quality;
+			g_engine->_screenSettings->quality = !g_engine->_screenSettings->quality;
 	}
 
 	// Window border doesn't matter if you are in fullscreen
-	if (border.HandleEvents(Event) && !gScreenSettings.fullscreen) {
-		gScreenSettings.border = !gScreenSettings.border;
-		gScreenSettings.SetWindowBorder();
+	if (border.HandleEvents(Event) && !g_engine->_screenSettings->fullscreen) {
+		g_engine->_screenSettings->border = !g_engine->_screenSettings->border;
+		g_engine->_screenSettings->SetWindowBorder();
 	}
 
 	if (brightness.HandleEvents(Event)) {
-		gScreenSettings.gamma = static_cast<float>(brightness.Value()) / 100.0f;
-		gScreenSettings.SetGamma();
+		g_engine->_screenSettings->gamma = static_cast<float>(brightness.Value()) / 100.0f;
+		g_engine->_screenSettings->SetGamma();
 	}
 
 	return resolution.HandleEvents(Event);
@@ -164,10 +166,10 @@ int GfxSettingMenu::HandleEvents(const SDL_Event &Event) {
 // Purpose: Keep button settings synced with our screen settings
 //------------------------------------------------------------------------
 void GfxSettingMenu::InternalEvents() {
-	fullscreen.state = gScreenSettings.fullscreen;
-	vsync.state = gScreenSettings.vsync;
-	border.state = gScreenSettings.border;
-	quality.state = gScreenSettings.quality;
+	fullscreen.state = g_engine->_screenSettings->fullscreen;
+	vsync.state = g_engine->_screenSettings->vsync;
+	border.state = g_engine->_screenSettings->border;
+	quality.state = g_engine->_screenSettings->quality;
 }
 
 //------------------------------------------------------------------------

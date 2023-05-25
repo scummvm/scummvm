@@ -60,7 +60,7 @@ void LoadingScreen::Draw() {
 		screen.at(cur).Draw();
 
 	// Draw the loading text
-	text.Draw((gScreenSettings.cur.w - text.W()) / 2, (gScreenSettings.cur.h - text.H()) / 2);
+	text.Draw((g_engine->_screenSettings->cur.w - text.W()) / 2, (g_engine->_screenSettings->cur.h - text.H()) / 2);
 
 	// Update the screen
 	//SDL_RenderPresent(gRenderer);

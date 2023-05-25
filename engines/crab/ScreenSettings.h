@@ -151,8 +151,6 @@ public:
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 };
 
-extern ScreenSettings gScreenSettings;
-
 }
 
 #endif // CRAB_SCREENSETTINGS_H

@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/OptionMenu.h"
 
 namespace Crab {
@@ -164,7 +166,7 @@ bool OptionMenu::HandleEvents(Button &back, const Common::Event &Event) {
 			if (result == 1) {
 				state = STATE_CONFIRM;
 				timer.Start();
-				gScreenSettings.SetResolution();
+				g_engine->_screenSettings->SetResolution();
 				gfx.SetInfo();
 			} else if (result == 2)
 				state = STATE_ENTER_W;
@@ -180,23 +182,23 @@ bool OptionMenu::HandleEvents(Button &back, const Common::Event &Event) {
 		switch (state) {
 		case STATE_ENTER_W:
 			if (prompt_w.HandleEvents(Event, true) || accept.HandleEvents(Event) == BUAC_LCLICK) {
-				gScreenSettings.cur.w = StringToNumber<int>(prompt_w.text);
+				g_engine->_screenSettings->cur.w = StringToNumber<int>(prompt_w.text);
 				state = STATE_ENTER_H;
 			} else if (cancel.HandleEvents(Event) == BUAC_LCLICK) {
-				gScreenSettings.RestoreBackup();
+				g_engine->_screenSettings->RestoreBackup();
 				gfx.SetInfo();
 				state = STATE_GRAPHICS;
 			}
 			break;
 		case STATE_ENTER_H:
 			if (prompt_h.HandleEvents(Event, true) || accept.HandleEvents(Event) == BUAC_LCLICK) {
-				gScreenSettings.cur.h = StringToNumber<int>(prompt_h.text);
+				g_engine->_screenSettings->cur.h = StringToNumber<int>(prompt_h.text);
 				state = STATE_CONFIRM;
 				timer.Start();
-				gScreenSettings.SetResolution();
+				g_engine->_screenSettings->SetResolution();
 				gfx.SetInfo();
 			} else if (cancel.HandleEvents(Event) == BUAC_LCLICK) {
-				gScreenSettings.RestoreBackup();
+				g_engine->_screenSettings->RestoreBackup();
 				gfx.SetInfo();
 				state = STATE_GRAPHICS;
 			}
@@ -207,8 +209,8 @@ bool OptionMenu::HandleEvents(Button &back, const Common::Event &Event) {
 				state = STATE_GRAPHICS;
 				timer.Stop();
 			} else if (cancel.HandleEvents(Event)) {
-				gScreenSettings.RestoreBackup();
-				gScreenSettings.SetResolution();
+				g_engine->_screenSettings->RestoreBackup();
+				g_engine->_screenSettings->SetResolution();
 				gfx.SetInfo();
 				state = STATE_GRAPHICS;
 			}
@@ -247,7 +249,7 @@ bool OptionMenu::HandleEvents(Button &back, const SDL_Event &Event) {
 			if (result == 1) {
 				state = STATE_CONFIRM;
 				timer.Start();
-				gScreenSettings.SetResolution();
+				g_engine->_screenSettings->SetResolution();
 				gfx.SetInfo();
 			} else if (result == 2)
 				state = STATE_ENTER_W;
@@ -263,23 +265,23 @@ bool OptionMenu::HandleEvents(Button &back, const SDL_Event &Event) {
 		switch (state) {
 		case STATE_ENTER_W:
 			if (prompt_w.HandleEvents(Event, true) || accept.HandleEvents(Event) == BUAC_LCLICK) {
-				gScreenSettings.cur.w = StringToNumber<int>(prompt_w.text);
+				g_engine->_screenSettings->cur.w = StringToNumber<int>(prompt_w.text);
 				state = STATE_ENTER_H;
 			} else if (cancel.HandleEvents(Event) == BUAC_LCLICK) {
-				gScreenSettings.RestoreBackup();
+				g_engine->_screenSettings->RestoreBackup();
 				gfx.SetInfo();
 				state = STATE_GRAPHICS;
 			}
 			break;
 		case STATE_ENTER_H:
 			if (prompt_h.HandleEvents(Event, true) || accept.HandleEvents(Event) == BUAC_LCLICK) {
-				gScreenSettings.cur.h = StringToNumber<int>(prompt_h.text);
+				g_engine->_screenSettings->cur.h = StringToNumber<int>(prompt_h.text);
 				state = STATE_CONFIRM;
 				timer.Start();
-				gScreenSettings.SetResolution();
+				g_engine->_screenSettings->SetResolution();
 				gfx.SetInfo();
 			} else if (cancel.HandleEvents(Event) == BUAC_LCLICK) {
-				gScreenSettings.RestoreBackup();
+				g_engine->_screenSettings->RestoreBackup();
 				gfx.SetInfo();
 				state = STATE_GRAPHICS;
 			}
@@ -290,8 +292,8 @@ bool OptionMenu::HandleEvents(Button &back, const SDL_Event &Event) {
 				state = STATE_GRAPHICS;
 				timer.Stop();
 			} else if (cancel.HandleEvents(Event)) {
-				gScreenSettings.RestoreBackup();
-				gScreenSettings.SetResolution();
+				g_engine->_screenSettings->RestoreBackup();
+				g_engine->_screenSettings->SetResolution();
 				gfx.SetInfo();
 				state = STATE_GRAPHICS;
 			}
@@ -339,23 +341,23 @@ bool OptionMenu::HandleTabs(Button &back, const SDL_Event &Event) {
 			g_engine->_inputManager->Save();
 			SaveState();
 			general.CreateBackup();
-			gScreenSettings.CreateBackup();
+			g_engine->_screenSettings->CreateBackup();
 			return true;
 
 		case 5:
 			// Revert all changes made to settings and exit
 			g_engine->_inputManager->RestoreBackup();
 			keybind.SetCaption();
-			gScreenSettings.RestoreBackup();
+			g_engine->_screenSettings->RestoreBackup();
 			general.RestoreBackup();
 
 			SDL_DisplayMode current;
 			if (SDL_GetCurrentDisplayMode(0, &current) == 0) {
-				if (gScreenSettings.cur.w != current.w || gScreenSettings.cur.h != current.h)
+				if (g_engine->_screenSettings->cur.w != current.w || g_engine->_screenSettings->cur.h != current.h)
 					gfx.SetInfo();
 			}
 
-			gScreenSettings.SetResolution();
+			g_engine->_screenSettings->SetResolution();
 			return true;
 		default:
 			break;
@@ -372,8 +374,8 @@ void OptionMenu::InternalEvents() {
 	general.InternalEvents();
 
 	if (state == STATE_CONFIRM && timer.TargetReached()) {
-		gScreenSettings.RestoreBackup();
-		gScreenSettings.SetResolution();
+		g_engine->_screenSettings->RestoreBackup();
+		g_engine->_screenSettings->SetResolution();
 		gfx.SetInfo();
 		state = STATE_GRAPHICS;
 	}
@@ -393,7 +395,7 @@ void OptionMenu::SaveState() {
 
 	// root node
 	rapidxml::xml_node<char> *root = doc.allocate_node(rapidxml::node_element, "settings");
-	gScreenSettings.SaveState(doc, root);
+	g_engine->_screenSettings->SaveState(doc, root);
 	gMusicManager.SaveState(doc, root);
 
 	doc.append_node(root);

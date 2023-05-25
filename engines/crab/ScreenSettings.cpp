@@ -32,9 +32,6 @@
 
 namespace Crab {
 
-// Our screen settings object
-ScreenSettings gScreenSettings;
-
 // Our global renderer
 //SDL_Renderer *gRenderer = nullptr;
 Graphics::Surface *gRendererSurface = nullptr;

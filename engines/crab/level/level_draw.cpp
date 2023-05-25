@@ -247,8 +247,8 @@ void Level::SetCamera() {
 	Vector2i focus = objects[player_index].CamFocus();
 
 	// Center the camera over the player
-	camera.x = focus.x - (gScreenSettings.cur.w / 2);
-	camera.y = focus.y - (gScreenSettings.cur.h / 2);
+	camera.x = focus.x - (g_engine->_screenSettings->cur.w / 2);
+	camera.y = focus.y - (g_engine->_screenSettings->cur.h / 2);
 
 	// Keep the camera in bounds
 	if (camera.x > terrain.W() - camera.w)

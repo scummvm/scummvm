@@ -125,7 +125,7 @@ bool Sprite::MoveToLocPathfinding(Vector2i &dest, const float &velocity, const S
 	// If the destination is not the pathing goal, we must reach it exactly before moving on.
 	if (immediateDest != Vector2i(pathing.destination.x, pathing.destination.y)) {
 		Timer fps;
-		float deltaTime = 1.0f / (float)gScreenSettings.fps;
+		float deltaTime = 1.0f / (float)g_engine->_screenSettings->fps;
 
 		// Project how far we will travel next frame.
 		Vector2f velVec = Vector2f(sc.walk_vel_mod.x * velocity * deltaTime, sc.walk_vel_mod.y * velocity * deltaTime);
