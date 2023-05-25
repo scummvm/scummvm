@@ -51,6 +51,9 @@ void Cursor::Reset() {
 
 	rel.x = 0;
 	rel.y = 0;
+
+	// set to -1, so its set to 0 on first update
+	state = -1;
 }
 
 //------------------------------------------------------------------------
@@ -78,6 +81,8 @@ void Cursor::Load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 void Cursor::HandleEvents(const Common::Event &event) {
 	g_engine->_mouse->hover = false;
+	byte oldState = state;
+
 #if 0
 	if (event.type == SDL_MOUSEMOTION) {
 		motion.x = Event.motion.x;
@@ -112,6 +117,22 @@ void Cursor::HandleEvents(const Common::Event &event) {
 
 		button.x = event.mouse.x;
 		button.y = event.mouse.y;
+	}
+
+	state = hover | (pressed << 1);
+
+	if (state != oldState) {
+		if (hover) {
+			if (pressed)
+				CursorMan.replaceCursor(img_hover_s.texture->rawSurface(), 0, 0, 0);
+			else
+				CursorMan.replaceCursor(img_hover.texture->rawSurface(), 0, 0, 0);
+		} else {
+			if (pressed)
+				CursorMan.replaceCursor(img_s.texture->rawSurface(), 0, 0, 0);
+			else
+				CursorMan.replaceCursor(img.texture->rawSurface(), 0, 0, 0);
+		}
 	}
 }
 
