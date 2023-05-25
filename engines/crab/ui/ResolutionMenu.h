@@ -77,12 +77,7 @@ public:
 	int HandleEvents(const SDL_Event &Event);
 #endif
 
-	void SetInfo() {
-		info.text = def_info;
-		info.text += NumberToString(gScreenSettings.cur.w).c_str();
-		info.text += " x ";
-		info.text += NumberToString(gScreenSettings.cur.h).c_str();
-	}
+	void SetInfo();
 
 	void SetUI();
 };

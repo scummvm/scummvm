@@ -28,6 +28,9 @@
  *
  */
 
+
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/GeneralSettingMenu.h"
 
 namespace Crab {
@@ -63,7 +66,7 @@ void GeneralSettingMenu::Load(rapidxml::xml_node<char> *node) {
 
 	// Sync popup text value with actual value
 	for (auto &i : text_speed.element)
-		i.state = (i.val == gScreenSettings.text_speed);
+		i.state = (i.val == g_engine->_screenSettings->text_speed);
 }
 
 //------------------------------------------------------------------------
@@ -78,16 +81,16 @@ void GeneralSettingMenu::HandleEvents(const Common::Event &Event) {
 
 	// No need to change screen here
 	if (save_on_exit.HandleEvents(Event))
-		gScreenSettings.save_on_exit = !gScreenSettings.save_on_exit;
+		g_engine->_screenSettings->save_on_exit = !g_engine->_screenSettings->save_on_exit;
 
 	if (mouse_trap.HandleEvents(Event)) {
-		gScreenSettings.mouse_trap = !gScreenSettings.mouse_trap;
-		gScreenSettings.SetMouseTrap();
+		g_engine->_screenSettings->mouse_trap = !g_engine->_screenSettings->mouse_trap;
+		g_engine->_screenSettings->SetMouseTrap();
 	}
 
 	int result = text_speed.HandleEvents(Event);
 	if (result >= 0)
-		gScreenSettings.text_speed = text_speed.element.at(result).val;
+		g_engine->_screenSettings->text_speed = text_speed.element.at(result).val;
 }
 
 #if 0
@@ -103,16 +106,16 @@ void GeneralSettingMenu::HandleEvents(const SDL_Event &Event) {
 
 	// No need to change screen here
 	if (save_on_exit.HandleEvents(Event))
-		gScreenSettings.save_on_exit = !gScreenSettings.save_on_exit;
+		g_engine->_screenSettings->save_on_exit = !g_engine->_screenSettings->save_on_exit;
 
 	if (mouse_trap.HandleEvents(Event)) {
-		gScreenSettings.mouse_trap = !gScreenSettings.mouse_trap;
-		gScreenSettings.SetMouseTrap();
+		g_engine->_screenSettings->mouse_trap = !g_engine->_screenSettings->mouse_trap;
+		g_engine->_screenSettings->SetMouseTrap();
 	}
 
 	int result = text_speed.HandleEvents(Event);
 	if (result >= 0)
-		gScreenSettings.text_speed = text_speed.element.at(result).val;
+		g_engine->_screenSettings->text_speed = text_speed.element.at(result).val;
 }
 #endif
 
@@ -120,8 +123,8 @@ void GeneralSettingMenu::HandleEvents(const SDL_Event &Event) {
 // Purpose: Sync our buttons with screen settings
 //------------------------------------------------------------------------
 void GeneralSettingMenu::InternalEvents() {
-	save_on_exit.state = gScreenSettings.save_on_exit;
-	mouse_trap.state = gScreenSettings.mouse_trap;
+	save_on_exit.state = g_engine->_screenSettings->save_on_exit;
+	mouse_trap.state = g_engine->_screenSettings->mouse_trap;
 }
 
 //------------------------------------------------------------------------

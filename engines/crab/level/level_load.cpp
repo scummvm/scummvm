@@ -188,7 +188,7 @@ void Level::LoadMoves(const std::string &filename) {
 
 			// See if there is an alternate moveset for low quality setting
 			// If no, just load the regular one
-			if (!gScreenSettings.quality) {
+			if (!g_engine->_screenSettings->quality) {
 				if (!LoadStr(anim_set[pos], "path_low", n))
 					LoadStr(anim_set[pos], "path", n);
 			} else

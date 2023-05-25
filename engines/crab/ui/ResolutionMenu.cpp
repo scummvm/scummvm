@@ -28,7 +28,8 @@
  *
  */
 
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/ui/ResolutionMenu.h"
 
 namespace Crab {
@@ -61,7 +62,7 @@ void ResolutionMenu::Load(rapidxml::xml_node<char> *node) {
 			LoadNum(d.w, "x", n);
 			LoadNum(d.h, "y", n);
 
-			if (gScreenSettings.ValidDimension(d)) {
+			if (g_engine->_screenSettings->ValidDimension(d)) {
 				dim.push_back(d);
 				Button b;
 				b.Init(ref, inc.x * (count_slot % columns), inc.y * (count_slot / columns));
@@ -105,7 +106,7 @@ int ResolutionMenu::HandleEvents(const Common::Event &Event) {
 	case STATE_CHANGE: {
 		int choice = Menu::HandleEvents(Event);
 		if (choice >= 0) {
-			gScreenSettings.cur = dim[choice];
+			g_engine->_screenSettings->cur = dim[choice];
 			state = STATE_NORMAL;
 			return 1;
 		}
@@ -135,7 +136,7 @@ int ResolutionMenu::HandleEvents(const SDL_Event &Event) {
 	case STATE_CHANGE: {
 		int choice = Menu::HandleEvents(Event);
 		if (choice >= 0) {
-			gScreenSettings.cur = dim[choice];
+			g_engine->_screenSettings->cur = dim[choice];
 			state = STATE_NORMAL;
 			return 1;
 		}
@@ -155,6 +156,13 @@ int ResolutionMenu::HandleEvents(const SDL_Event &Event) {
 	return 0;
 }
 #endif
+
+void ResolutionMenu::SetInfo() {
+	info.text = def_info;
+	info.text += NumberToString(g_engine->_screenSettings->cur.w).c_str();
+	info.text += " x ";
+	info.text += NumberToString(g_engine->_screenSettings->cur.h).c_str();
+}
 
 void ResolutionMenu::SetUI() {
 	cancel.SetUI();

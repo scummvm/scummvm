@@ -62,7 +62,7 @@ void ImageManager::LoadMap(const Common::String &filename, const MapID &mapid) {
 				bool valid = false;
 				Common::String path;
 
-				if (!gScreenSettings.quality)
+				if (!g_engine->_screenSettings->quality)
 					valid = LoadStr(path, "path_low", n, false);
 
 				if (!valid)

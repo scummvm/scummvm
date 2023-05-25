@@ -67,6 +67,7 @@
 #include "crab/input/cursor.h"
 #include "crab/input/input.h"
 #include "crab/text/TextManager.h"
+#include "crab/ScreenSettings.h"
 
 #include "crab/detection.h"
 
@@ -119,6 +120,8 @@ public:
 	pyrodactyl::ui::SlideShow *_helpScreen = nullptr;
 	pyrodactyl::ui::OptionMenu *_optionMenu = nullptr;
 	pyrodactyl::ui::FileMenu<pyrodactyl::ui::SaveFileData> *_loadMenu = nullptr;
+
+	ScreenSettings *_screenSettings = nullptr;
 
 	Common::FSNode _gameDataDir;
 
