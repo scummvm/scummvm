@@ -183,9 +183,6 @@ struct TempValue {
 
 // Our global objects
 
-// Where we store some temporary data used in between GameState swapping
-extern TempValue gTemp;
-
 // Whether to draw debug outlines on polygons
 extern bool GameDebug;
 
