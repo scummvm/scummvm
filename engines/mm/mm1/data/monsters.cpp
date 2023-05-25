@@ -28,6 +28,28 @@
 namespace MM {
 namespace MM1 {
 
+static const uint16 PALETTE[76] = {
+	0xf470, 0xf420, 0xfe20, 0x0000, 0xf420, 0xf620, 0xf460, 0xf6e0,
+	// 8
+	0xf510, 0xfe40, 0xf420, 0xf410, 0xfd50, 0x0000, 0xf430, 0xfc30,
+	// 16
+	0x0000, 0x0000, 0xf420, 0x0000, 0xf420, 0x0000, 0x0000, 0xf4e0,
+	// 24
+	0xf430, 0xfd60, 0x0000, 0x0000, 0x0000, 0xf470, 0x0000, 0x0000,
+	// 32
+	0xf430, 0x0000, 0x0000, 0xf420, 0xf220, 0xf420, 0xfdd0, 0xf420,
+	// 40
+	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xfa50,
+	// 48
+	0x0000, 0xf620, 0x0000, 0xf420, 0x0000, 0xf4e0, 0x0000, 0xf140,
+	// 56
+	0x0000, 0x0000, 0xf520, 0x0000, 0xfc10, 0x0000, 0xf420, 0xfe10,
+	// 64
+	0xf520, 0xf4a0, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+	// 72
+	0x0000, 0x0000, 0x0000, 0xf420
+};
+
 Monsters::Monsters() : _monPix(MONPIX_DTA) {
 }
 
@@ -67,18 +89,19 @@ bool Monsters::load() {
 	return true;
 }
 
-Graphics::ManagedSurface Monsters::getMonsterImage(int monsterNum) {
-	Common::SeekableReadStream *entry = _monPix.load(monsterNum);
+Graphics::ManagedSurface Monsters::getMonsterImage(int imgNum) {
+	Common::SeekableReadStream *entry = _monPix.load(imgNum);
 	entry->skip(2);
 
 	// Decode the image
 	Graphics::ManagedSurface img;
 	Gfx::ScreenDecoder decoder;
-	// TODO: Figure out if the indexes are map-dependant
-	decoder._indexes[0] = 0;
-	decoder._indexes[1] = 2;
-	decoder._indexes[2] = 4;
-	decoder._indexes[3] = 15;
+
+	const uint pal = PALETTE[imgNum];
+	decoder._indexes[0] = pal & 0xf;
+	decoder._indexes[1] = (pal >> 4) & 0xf;
+	decoder._indexes[2] = (pal >> 8) & 0xf;
+	decoder._indexes[3] = (pal >> 12) & 0xf;
 
 	if (!decoder.loadStream(*entry, 104, 96))
 		error("Failed decoding monster image");
