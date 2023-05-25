@@ -6997,11 +6997,6 @@ void Runtime::scriptOpSndStopAll(ScriptArg_t arg) {
 		stopSound(*snd);
 }
 
-OPCODE_STUB(SndAddRandom)
-OPCODE_STUB(SndClearRandom)
-
-
-
 void Runtime::scriptOpVolumeAdd(ScriptArg_t arg) {
 	TAKE_STACK_INT(3);
 
@@ -7084,8 +7079,6 @@ void Runtime::scriptOpString(ScriptArg_t arg) {
 	_scriptStack.push_back(StackValue(_scriptSet->strings[arg]));
 }
 
-OPCODE_STUB(Speech)
-
 void Runtime::scriptOpSpeechEx(ScriptArg_t arg) {
 	TAKE_STACK_INT_NAMED(2, sndParamArgs);
 	TAKE_STACK_STR_NAMED(1, sndNameArgs);
@@ -7122,8 +7115,6 @@ void Runtime::scriptOpSpeechTest(ScriptArg_t arg) {
 
 	_scriptStack.push_back(StackValue(found ? 1 : 0));
 }
-
-OPCODE_STUB(Say)
 
 void Runtime::scriptOpRandomInclusive(ScriptArg_t arg) {
 	TAKE_STACK_INT(1);
@@ -7204,8 +7195,6 @@ void Runtime::scriptOpHeroGet(ScriptArg_t arg) {
 	_scriptStack.push_back(StackValue(_hero));
 }
 
-OPCODE_STUB(Garbage)
-
 void Runtime::scriptOpGetRoom(ScriptArg_t arg) {
 	_scriptStack.push_back(StackValue(_roomNumber));
 }
@@ -7243,7 +7232,11 @@ void Runtime::scriptOpDisc(ScriptArg_t arg) {
 	_scriptStack.push_back(StackValue(1));
 }
 
-OPCODE_STUB(HidePanel)
+void Runtime::scriptOpHidePanel(ScriptArg_t arg) {
+	_isInGame = false;
+
+	clearTray();
+}
 
 void Runtime::scriptOpRotateUpdate(ScriptArg_t arg) {
 	warning("RotateUpdate op not implemented yet");
@@ -7394,7 +7387,17 @@ void Runtime::scriptOpPuzzleDone(ScriptArg_t arg) {
 	_circuitPuzzle.reset();
 }
 
+// Only used in fnRandomBirds and fnRandomMachines in Room 60, both of which are unused
+OPCODE_STUB(SndAddRandom)
+OPCODE_STUB(SndClearRandom)
 
+// Only used in Room 02 (cheat room, which isn't supported)
+OPCODE_STUB(Speech)
+OPCODE_STUB(Say)
+OPCODE_STUB(Garbage)
+
+// Referenced in Room 30 screen 0a4 interaction 0a0, however there is no interaction with that ID,
+// so this is unreachable.
 OPCODE_STUB(Fn)
 
 #undef TAKE_STACK_STR

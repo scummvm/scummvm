@@ -759,7 +759,7 @@ static ScriptNamedInstruction g_schizmNamedInstructions[] = {
 	{"dvd@", ProtoOp::kProtoOpScript, ScriptOps::kIsDVDVersion},
 	{"disc", ProtoOp::kProtoOpScript, ScriptOps::kDisc},
 	{"save0", ProtoOp::kProtoOpNoop, ScriptOps::kSave0},
-	{"hidePanel", ProtoOp::kProtoOpNoop, ScriptOps::kHidePanel},
+	{"hidePanel", ProtoOp::kProtoOpScript, ScriptOps::kHidePanel},
 	{"ItemExist@", ProtoOp::kProtoOpScript, ScriptOps::kItemCheck},
 	{"ItemSelect!", ProtoOp::kProtoOpScript, ScriptOps::kItemHighlightSetTrue},
 	{"ItemPlace@", ProtoOp::kProtoOpScript, ScriptOps::kItemHaveSpace},
