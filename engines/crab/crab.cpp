@@ -107,11 +107,8 @@ Common::Error CrabEngine::run() {
 	_tempData = new TempValue();
 	_screenSettings = new ScreenSettings();
 
-	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
-	CursorMan.replaceCursor(cursor);
-	delete cursor;
-
 	CursorMan.showMouse(true);
+	_mouse->Reset();
 
 	// Set the engine's debugger console
 	setDebugger(new Console());

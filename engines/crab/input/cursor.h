@@ -54,6 +54,8 @@ class Cursor {
 	// Mouse image changes slightly if left click button is pressed
 	bool pressed;
 
+	byte state;
+
 public:
 	// Various coordinates
 	Vector2i motion, button, rel;
