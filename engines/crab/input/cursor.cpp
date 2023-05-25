@@ -119,7 +119,7 @@ void Cursor::HandleEvents(const Common::Event &event) {
 		button.y = event.mouse.y;
 	}
 
-	state = hover | (pressed << 1);
+	state = (hover ? 1 : 0) | (pressed << 1);
 
 	if (state != oldState) {
 		if (hover) {
