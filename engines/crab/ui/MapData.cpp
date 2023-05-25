@@ -57,8 +57,8 @@ void MapData::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> 
 	for (auto d = dest.begin(); d != dest.end(); ++d) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "pos");
 		child->append_attribute(doc.allocate_attribute("name", d->name.c_str()));
-		child->append_attribute(doc.allocate_attribute("x", gStrPool.Get(d->pos.x)));
-		child->append_attribute(doc.allocate_attribute("y", gStrPool.Get(d->pos.y)));
+		child->append_attribute(doc.allocate_attribute("x", gStrPool->Get(d->pos.x)));
+		child->append_attribute(doc.allocate_attribute("y", gStrPool->Get(d->pos.y)));
 		child_dest->append_node(child);
 	}
 	root->append_node(child_dest);

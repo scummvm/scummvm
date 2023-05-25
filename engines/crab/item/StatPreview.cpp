@@ -58,7 +58,7 @@ void StatPreview::Draw(Item &item, pyrodactyl::stat::StatDrawHelper &helper) {
 		int count = 0;
 		for (auto i = item.bonus.begin(); i != item.bonus.end(); ++i, ++count) {
 			stat.Draw(helper.Name(i->type), inc_s.x * count, inc_s.y * count);
-			unit.Draw(gStrPool.Get(i->val), inc_u.x * count, inc_u.y * count);
+			unit.Draw(gStrPool->Get(i->val), inc_u.x * count, inc_u.y * count);
 		}
 	}
 }

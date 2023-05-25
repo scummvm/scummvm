@@ -209,7 +209,7 @@ void InputManager::Save() {
 
 	// root node
 	rapidxml::xml_node<char> *root = doc.allocate_node(rapidxml::node_element, "controls");
-	root->append_attribute(doc.allocate_attribute("version", gStrPool.Get(version)));
+	root->append_attribute(doc.allocate_attribute("version", gStrPool->Get(version)));
 	for (int i = 0; i < IT_TOTAL; i++)
 		iv[i].SaveState(doc, root, "i");
 

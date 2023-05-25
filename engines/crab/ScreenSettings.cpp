@@ -144,15 +144,15 @@ void ScreenSettings::SetMouseTrap() {
 }
 
 void ScreenSettings::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-	root->append_attribute(doc.allocate_attribute("version", gStrPool.Get(version)));
+	root->append_attribute(doc.allocate_attribute("version", gStrPool->Get(version)));
 
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "screen");
-	child->append_attribute(doc.allocate_attribute("w", gStrPool.Get(cur.w)));
-	child->append_attribute(doc.allocate_attribute("h", gStrPool.Get(cur.h)));
-	child->append_attribute(doc.allocate_attribute("fps", gStrPool.Get(fps)));
+	child->append_attribute(doc.allocate_attribute("w", gStrPool->Get(cur.w)));
+	child->append_attribute(doc.allocate_attribute("h", gStrPool->Get(cur.h)));
+	child->append_attribute(doc.allocate_attribute("fps", gStrPool->Get(fps)));
 
-	child->append_attribute(doc.allocate_attribute("gamma", gStrPool.FGet(gamma)));
-	child->append_attribute(doc.allocate_attribute("text_speed", gStrPool.FGet(text_speed)));
+	child->append_attribute(doc.allocate_attribute("gamma", gStrPool->FGet(gamma)));
+	child->append_attribute(doc.allocate_attribute("text_speed", gStrPool->FGet(text_speed)));
 
 	SaveBool(vsync, "vsync", doc, child);
 	SaveBool(border, "border", doc, child);

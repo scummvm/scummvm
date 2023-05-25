@@ -105,6 +105,7 @@ Common::Error CrabEngine::run() {
 
 	_filePath = new FilePaths();
 	_tempData = new TempValue();
+	gStrPool = new StringPool();
 	_screenSettings = new ScreenSettings();
 
 	CursorMan.showMouse(true);

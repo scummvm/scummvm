@@ -88,8 +88,8 @@ public:
 			rapidxml::xml_node<char> *child;
 			child = doc.allocate_node(rapidxml::node_element, "axis");
 
-			//child->append_attribute(doc.allocate_attribute("id", gStrPool.Get(id)));
-			child->append_attribute(doc.allocate_attribute("val", gStrPool.Get(val)));
+			//child->append_attribute(doc.allocate_attribute("id", gStrPool->Get(id)));
+			child->append_attribute(doc.allocate_attribute("val", gStrPool->Get(val)));
 
 			SaveBool(greater, "greater", doc, child);
 

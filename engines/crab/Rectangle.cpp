@@ -118,10 +118,10 @@ void Rect::Draw(const int &XOffset, const int &YOffset, const uint8 &r, const ui
 
 void Rect::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, name);
-	child->append_attribute(doc.allocate_attribute("x", gStrPool.Get(x)));
-	child->append_attribute(doc.allocate_attribute("y", gStrPool.Get(y)));
-	child->append_attribute(doc.allocate_attribute("w", gStrPool.Get(w)));
-	child->append_attribute(doc.allocate_attribute("h", gStrPool.Get(h)));
+	child->append_attribute(doc.allocate_attribute("x", gStrPool->Get(x)));
+	child->append_attribute(doc.allocate_attribute("y", gStrPool->Get(y)));
+	child->append_attribute(doc.allocate_attribute("w", gStrPool->Get(w)));
+	child->append_attribute(doc.allocate_attribute("h", gStrPool->Get(h)));
 	root->append_node(child);
 }
 
