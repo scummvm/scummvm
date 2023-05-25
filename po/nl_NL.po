@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-05-22 22:12+0000\n"
-"PO-Revision-Date: 2023-03-21 14:26+0000\n"
+"PO-Revision-Date: 2023-05-25 20:16+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -102,26 +102,20 @@ msgid "Cloud Connection Wizard"
 msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:179
-#, fuzzy
-#| msgid "Quick load"
 msgid "Quick mode"
-msgstr "Snel laden"
+msgstr "Snelle modus"
 
 #: gui/cloudconnectionwizard.cpp:180
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Manual mode"
-msgstr "Snelle modus"
+msgstr "Handmatige modus"
 
 #: gui/cloudconnectionwizard.cpp:183
 msgid "Will ask you to run the Local Webserver"
 msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:185
-#, fuzzy
-#| msgid "Run local webserver"
 msgid "Requires the Local Webserver feature"
-msgstr "Draai lokale webserver"
+msgstr "Vereist de lokale webserver functie"
 
 #: gui/cloudconnectionwizard.cpp:201
 msgid "Quick Mode: Step 1"
@@ -181,10 +175,8 @@ msgid "Quick Mode: Success"
 msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:299 gui/cloudconnectionwizard.cpp:398
-#, fuzzy
-#| msgid "Connect your cloud storage account"
 msgid "Your cloud storage has been connected!"
-msgstr "Verbind uw cloud opslag account"
+msgstr "Uw cloud opslag is gekoppeld!"
 
 #: gui/cloudconnectionwizard.cpp:300 gui/cloudconnectionwizard.cpp:399
 msgid "Finish"
@@ -195,10 +187,8 @@ msgid "Manual Mode: Step 1"
 msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:318
-#, fuzzy
-#| msgid "1. Open this link:"
 msgid "Open this link in your browser:"
-msgstr "1. Open deze link:"
+msgstr "Open deze link in uw browser:"
 
 #: gui/cloudconnectionwizard.cpp:321
 msgid ""
@@ -228,10 +218,8 @@ msgid "Manual Mode: Something went wrong"
 msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:377
-#, fuzzy
-#| msgid "Storage connected."
 msgid "Cloud storage was not connected."
-msgstr "Opslag verbonden."
+msgstr "Cloud opslag was niet gekoppeld."
 
 #: gui/cloudconnectionwizard.cpp:378
 msgid "Make sure the JSON code was copied correctly and retry."
@@ -250,18 +238,14 @@ msgid "Manual Mode: Success"
 msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:422
-#, fuzzy
-#| msgid "Backend"
 msgid "Back"
-msgstr "Backend"
+msgstr "Terug"
 
 #: gui/cloudconnectionwizard.cpp:430 gui/saveload-dialog.cpp:829
 msgid "Next"
 msgstr "Volgende"
 
 #: gui/cloudconnectionwizard.cpp:493
-#, fuzzy
-#| msgid "Another Storage is working now. Do you want to interrupt it?"
 msgid "Another Storage is working right now. Do you want to interrupt it?"
 msgstr "Een andere opslag is actief. Wilt u die onderbreken?"
 
@@ -293,8 +277,6 @@ msgid "No"
 msgstr "Nee"
 
 #: gui/cloudconnectionwizard.cpp:502
-#, fuzzy
-#| msgid "Wait until current Storage finishes up and try again."
 msgid "Wait until current Storage finishes and try again."
 msgstr "Wacht totdat de huidige opslag klaar is en probeer het opnieuw."
 
@@ -329,17 +311,13 @@ msgid "OK"
 msgstr "OK"
 
 #: gui/cloudconnectionwizard.cpp:552
-#, fuzzy
-#| msgid "Incorrect rs file."
 msgid "Incorrect JSON."
-msgstr "Ongeldig rs bestand."
+msgstr "Ongeldig JSON bestand."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:559
-#, fuzzy
-#| msgid "Interact"
 msgid "Interrupted."
-msgstr "Interactie"
+msgstr "Onderbroken."
 
 #: gui/cloudconnectionwizard.cpp:609 gui/options.cpp:3352
 msgid ""
@@ -1790,10 +1768,8 @@ msgid "ScummVM config path: "
 msgstr "ScummVM configuratie pad: "
 
 #: gui/options.cpp:2492
-#, fuzzy
-#| msgid "ScummVM config path: "
 msgid "ScummVM log path: "
-msgstr "ScummVM configuratie pad: "
+msgstr "ScummVM log pad: "
 
 #: gui/options.cpp:2497
 msgid "View"
@@ -1899,10 +1875,8 @@ msgid "Seed for initializing all random number generators"
 msgstr ""
 
 #: gui/options.cpp:2628
-#, fuzzy
-#| msgid "Debug Menu"
 msgid "Debug level:"
-msgstr "Debug Menu"
+msgstr "Debug level:"
 
 #. I18N: Debug level -1, no messages
 #: gui/options.cpp:2632 gui/options.cpp:2771
@@ -1947,28 +1921,18 @@ msgid "Active cloud storage"
 msgstr "Actieve cloud opslag"
 
 #: gui/options.cpp:2681
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgctxt "lowres"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. Opslag is nog niet geactiveerd. Verifieer dat de gebruikersnaam correct "
-"is en activeer het:"
+"Opslag is nog niet gekoppeld. Controleer de gebruikersnaam en activeer het:"
 
 #: gui/options.cpp:2683
-#, fuzzy
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. Opslag is nog niet geactiveerd. Verifieer dat de gebruikersnaam correct "
-"is en activeer het:"
+"Opslag is nog niet gekoppeld. Verifieer dat de gebruikersnaam correct is en "
+"activeer het:"
 
 #: gui/options.cpp:2684
 msgid "Enable storage"
@@ -2070,24 +2034,17 @@ msgid "Stop using this storage on this device"
 msgstr "Stop met het gebruik van deze opslag op dit apparaat"
 
 #: gui/options.cpp:2713
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "This storage is not connected yet! To connect,"
 msgctxt "lowres"
 msgid "This storage is not connected yet!"
-msgstr "De opslag is nog niet verbonden! Om te verbinden,"
+msgstr "De opslag is nog niet gekoppeld!"
 
 #: gui/options.cpp:2715
-#, fuzzy
-#| msgid "This storage is not connected yet! To connect,"
 msgid "This storage is not connected yet!"
-msgstr "De opslag is nog niet verbonden! Om te verbinden,"
+msgstr "Deze opslag is nog niet verbonden!"
 
 #: gui/options.cpp:2716
-#, fuzzy
-#| msgid "3. Connect"
 msgid "Connect"
-msgstr "3. Verbinden"
+msgstr "Verbinden"
 
 #: gui/options.cpp:2716
 msgid "Connect your cloud storage account"
@@ -2742,10 +2699,8 @@ msgid "TB"
 msgstr "TB"
 
 #: dists/android.strings.xml.cpp:30
-#, fuzzy
-#| msgid "Quit ScummVM"
 msgid "ScummVM"
-msgstr "Hiermee verlaat u ScummVM"
+msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
 msgid "Graphic adventure game engine"
@@ -2771,20 +2726,16 @@ msgid "Unable to read ScummVM config file or create a new one!"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Save Path:"
 msgid "Save Path Error"
-msgstr "Bewaar Pad:"
+msgstr "Bewaar Pad Fout"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Unable to create or access default save path!"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:38
-#, fuzzy
-#| msgid "Icon Path:"
 msgid "Icons Path Error"
-msgstr "Icoon Pad:"
+msgstr "Icoon Pad Fout"
 
 #: dists/android.strings.xml.cpp:39
 msgid "Unable to create or access default icons and shaders path!"
@@ -2797,10 +2748,8 @@ msgid ""
 msgstr ""
 
 #: dists/android.strings.xml.cpp:41
-#, fuzzy
-#| msgid "Virtual keyboard"
 msgid "Toggle virtual keyboard"
-msgstr "Virtueel toetsenbord"
+msgstr "Virtueel toetsenbord aan-/uitzetten"
 
 #: dists/android.strings.xml.cpp:42 engines/scumm/help.cpp:78
 #: engines/scumm/help.cpp:82 engines/scumm/help.cpp:84
@@ -2827,10 +2776,8 @@ msgid "Enter"
 msgstr "Enter"
 
 #: dists/android.strings.xml.cpp:49
-#, fuzzy
-#| msgid "Close"
 msgid "Close popup"
-msgstr "Sluiten"
+msgstr "Popup sluiten"
 
 #: dists/android.strings.xml.cpp:50
 msgid ""
@@ -3067,9 +3014,8 @@ msgstr ""
 "voor details."
 
 #: engines/engine.cpp:591
-#, fuzzy
 msgid "Skip autosave"
-msgstr "Lege auto-opgeslagen spel"
+msgstr "automatisch opslaan overslaan"
 
 #: engines/engine.cpp:593
 #, c-format
@@ -3237,14 +3183,12 @@ msgid "Confirm"
 msgstr "Bevestig"
 
 #: engines/metaengine.cpp:390
-#, fuzzy
 msgid "Autosave on"
-msgstr "Automatisch opslaan"
+msgstr "Automatisch opslaan aan"
 
 #: engines/metaengine.cpp:390
-#, fuzzy
 msgid "Autosave off"
-msgstr "Automatisch opslaan"
+msgstr "Automatisch opslaan uit"
 
 #: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:177
 msgid "OpenGL"
@@ -3780,10 +3724,8 @@ msgid "D-pad Right"
 msgstr "D-pad Rechts"
 
 #: backends/keymapper/hardware-input.cpp:270
-#, fuzzy
-#| msgid "D-pad Left"
 msgid "D-pad Center"
-msgstr "D-pad Links"
+msgstr "D-pad Midden"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
@@ -4294,22 +4236,16 @@ msgid "Software scale (good quality, but slower)"
 msgstr "Software schalen (langzamer, maar goede kwaliteit)"
 
 #: backends/platform/ios7/ios7_options.mm:67
-#, fuzzy
-#| msgid "Show On-screen control"
 msgid "Show On-screen control (iOS 15 and later)"
-msgstr "Toon scherm-besturing"
+msgstr "Toon besturing (iOS 15 en later)"
 
 #: backends/platform/ios7/ios7_options.mm:69
-#, fuzzy
-#| msgid "Mouse-click-and-drag mode enabled."
 msgid "Mouse-click-and-drag mode"
-msgstr "Muis-klik-en-sleepmodus aangezet."
+msgstr "Muis-klik-en-sleepmodus"
 
 #: backends/platform/ios7/ios7_options.mm:71
-#, fuzzy
-#| msgid "Controls"
 msgid "Controls Help"
-msgstr "Besturing"
+msgstr "Besturing Help"
 
 #: backends/platform/ios7/ios7_options.mm:102
 msgid ""
@@ -5901,10 +5837,8 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "Ondersteuning voor GroovieV2 is niet meegecompileerd"
 
 #: engines/groovie/saveload.cpp:52
-#, fuzzy
-#| msgid "Run server"
 msgid "Reserved"
-msgstr "Start server"
+msgstr "Gereserveerd"
 
 #: engines/groovie/script.cpp:660
 msgid "Failed to save game"
@@ -5978,40 +5912,28 @@ msgid "Enable Gore Mode when available"
 msgstr "Gore modus inschakelen waar mogelijk"
 
 #: engines/hpl1/metaengine.cpp:81
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forward"
-msgstr "Beweeg Vooruit"
+msgstr "Vooruit"
 
 #: engines/hpl1/metaengine.cpp:82
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backward"
-msgstr "Beweeg Achteruit"
+msgstr "Achteruit"
 
 #: engines/hpl1/metaengine.cpp:83 engines/mm/mm1/metaengine.cpp:99
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Strafe Left"
 msgstr "Schuif Links"
 
 #: engines/hpl1/metaengine.cpp:84 engines/mm/mm1/metaengine.cpp:100
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Strafe Right"
 msgstr "Schuif Rechts"
 
 #: engines/hpl1/metaengine.cpp:85
-#, fuzzy
-#| msgid "Pad Left"
 msgid "Lean Left"
-msgstr "Pad Links"
+msgstr "Leun Links"
 
 #: engines/hpl1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Pad Right"
 msgid "Lean Right"
-msgstr "Pad Rechts"
+msgstr "leun Rechts"
 
 #: engines/hpl1/metaengine.cpp:88
 msgid "Jump"
@@ -6020,22 +5942,16 @@ msgstr ""
 #. I18N: Action in In Cold Blood
 #: engines/hpl1/metaengine.cpp:89 engines/icb/icb.cpp:119
 #: engines/icb/icb.cpp:185
-#, fuzzy
-#| msgid "Touch"
 msgid "Crouch"
-msgstr "Aanraken"
+msgstr "Hurken"
 
 #: engines/hpl1/metaengine.cpp:92
-#, fuzzy
-#| msgid "Interact"
 msgid "Interact Mode"
-msgstr "Interactie"
+msgstr "Interactie Modus"
 
 #: engines/hpl1/metaengine.cpp:93
-#, fuzzy
-#| msgid "Gore Mode"
 msgid "Look Mode"
-msgstr "Gore Modus"
+msgstr "Kijk Modus"
 
 #: engines/hpl1/metaengine.cpp:94
 msgid "Holster"
@@ -6050,10 +5966,8 @@ msgid "Personal Notes"
 msgstr ""
 
 #: engines/hpl1/metaengine.cpp:102
-#, fuzzy
-#| msgid "Fly straight"
 msgid "Flashlight"
-msgstr "Vlieg recht"
+msgstr "Zaklantaarn"
 
 #: engines/hpl1/metaengine.cpp:103
 msgid "Glowstick"
@@ -6113,16 +6027,13 @@ msgstr ""
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:113
-#, fuzzy
 msgid "Remora"
-msgstr "Spel ~V~erwijderen"
+msgstr "Remora"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:125 engines/icb/icb.cpp:191
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Side Step"
-msgstr "Schuif Links"
+msgstr "Zijstap"
 
 #: engines/kyra/detection_tables.h:75
 msgid "Missing language specific game code and/or resources."
@@ -6360,14 +6271,7 @@ msgid "Choose Spell"
 msgstr "Kies Spreuk"
 
 #: engines/kyra/gui/saveload_eob.cpp:598
-#, fuzzy, c-format
-#| msgid ""
-#| "The following original saved game file has been found in your game path:\n"
-#| "\n"
-#| "%s %s\n"
-#| "\n"
-#| "Do you wish to use this saved game file with ScummVM?\n"
-#| "\n"
+#, c-format
 msgid ""
 "The following original saved game file has been found in your game path:\n"
 "\n"
@@ -6378,7 +6282,7 @@ msgid ""
 msgstr ""
 "Het volgende originele opgeslagen spel was gevonden in uw spel pad:\n"
 "\n"
-"%s %s\n"
+"%s %S\n"
 "\n"
 "Wilt u dit opgeslagen spel gebruiken in ScummVM?\n"
 "\n"
@@ -6566,10 +6470,8 @@ msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:67
-#, fuzzy
-#| msgid "Unlock"
 msgid "Block"
-msgstr "Maak open"
+msgstr "Blokkeer"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69
@@ -6583,10 +6485,8 @@ msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:73
-#, fuzzy
-#| msgid "Right"
 msgid "Fight"
-msgstr "Rechts"
+msgstr "Vecht"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:75 engines/mm/mm1/metaengine.cpp:116
@@ -7721,10 +7621,8 @@ msgstr "Nieuw spel opslaan"
 
 #. I18N: Name of the online game session
 #: engines/scumm/dialog-createsession.cpp:40
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Name:"
-msgstr "Spelmenu"
+msgstr "Spelnaam:"
 
 #. I18N: The user's name for online
 #: engines/scumm/dialog-createsession.cpp:44
@@ -9406,16 +9304,12 @@ msgid ""
 msgstr ""
 
 #: engines/vcruise/metaengine.cpp:53
-#, fuzzy
-#| msgid "Transitions:"
 msgid "Faster animations"
-msgstr "~O~vergangen:"
+msgstr "Snellere animaties"
 
 #: engines/vcruise/metaengine.cpp:54
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Speeds up animations."
-msgstr "Spraak Opties"
+msgstr "Versnelt animaties."
 
 #: engines/vcruise/metaengine.cpp:75
 #, fuzzy
@@ -9468,10 +9362,8 @@ msgid "Music volume down"
 msgstr "Muziek volume omhoog / omlaag"
 
 #: engines/vcruise/metaengine.cpp:170
-#, fuzzy
-#| msgid "Music volume: "
 msgid "Music volume up"
-msgstr "Muziek volume: "
+msgstr "Muziek harder"
 
 #: engines/vcruise/metaengine.cpp:175
 #, fuzzy
