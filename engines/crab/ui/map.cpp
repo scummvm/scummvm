@@ -475,7 +475,7 @@ void Map::DestDel(const std::string &name) {
 void Map::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "map");
 
-	child->append_attribute(doc.allocate_attribute("cur", gStrPool.Get(cur)));
+	child->append_attribute(doc.allocate_attribute("cur", gStrPool->Get(cur)));
 	SaveBool(overlay, "overlay", doc, child);
 
 	for (auto r = map.begin(); r != map.end(); ++r) {

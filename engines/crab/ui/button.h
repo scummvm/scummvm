@@ -73,9 +73,9 @@ struct ButtonImage {
 	}
 
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-		root->append_attribute(doc.allocate_attribute("img_b", gStrPool.Get(normal)));
-		root->append_attribute(doc.allocate_attribute("img_s", gStrPool.Get(select)));
-		root->append_attribute(doc.allocate_attribute("img_h", gStrPool.Get(hover)));
+		root->append_attribute(doc.allocate_attribute("img_b", gStrPool->Get(normal)));
+		root->append_attribute(doc.allocate_attribute("img_s", gStrPool->Get(select)));
+		root->append_attribute(doc.allocate_attribute("img_h", gStrPool->Get(hover)));
 	}
 };
 

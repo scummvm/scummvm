@@ -108,7 +108,7 @@ void Person::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *
 	child->append_attribute(doc.allocate_attribute("name", name.c_str()));
 
 	unsigned int val = static_cast<unsigned int>(state);
-	child->append_attribute(doc.allocate_attribute("state", gStrPool.Get(val)));
+	child->append_attribute(doc.allocate_attribute("state", gStrPool->Get(val)));
 
 	opinion.SaveState(doc, child);
 

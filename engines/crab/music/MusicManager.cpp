@@ -160,11 +160,11 @@ void MusicManager::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<c
 
 #if 0
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "sound");
-	child->append_attribute(doc.allocate_attribute("music", gStrPool.Get(Mix_VolumeMusic(-1))));
-	child->append_attribute(doc.allocate_attribute("effects", gStrPool.Get(Mix_Volume(0, -1))));
-	child->append_attribute(doc.allocate_attribute("frequency", gStrPool.Get(freq)));
-	child->append_attribute(doc.allocate_attribute("channels", gStrPool.Get(channels)));
-	child->append_attribute(doc.allocate_attribute("chunk_size", gStrPool.Get(chunksize)));
+	child->append_attribute(doc.allocate_attribute("music", gStrPool->Get(Mix_VolumeMusic(-1))));
+	child->append_attribute(doc.allocate_attribute("effects", gStrPool->Get(Mix_Volume(0, -1))));
+	child->append_attribute(doc.allocate_attribute("frequency", gStrPool->Get(freq)));
+	child->append_attribute(doc.allocate_attribute("channels", gStrPool->Get(channels)));
+	child->append_attribute(doc.allocate_attribute("chunk_size", gStrPool->Get(chunksize)));
 	root->append_node(child);
 #endif
 }

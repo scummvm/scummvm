@@ -61,10 +61,10 @@ void Trait::Clear() {
 //------------------------------------------------------------------------
 void Trait::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *rootname) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, rootname);
-	child->append_attribute(doc.allocate_attribute("id", gStrPool.Get(id)));
+	child->append_attribute(doc.allocate_attribute("id", gStrPool->Get(id)));
 	child->append_attribute(doc.allocate_attribute("name", name.c_str()));
 	child->append_attribute(doc.allocate_attribute("desc", desc.c_str()));
-	child->append_attribute(doc.allocate_attribute("img", gStrPool.Get(img)));
+	child->append_attribute(doc.allocate_attribute("img", gStrPool->Get(img)));
 
 	SaveBool(unread, "unread", doc, child);
 

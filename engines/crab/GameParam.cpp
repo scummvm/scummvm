@@ -35,7 +35,7 @@ namespace Crab {
 bool GameDebug = false;
 
 // A temporary list of strings we use when storing numbers in a file
-StringPool gStrPool;
+StringPool *gStrPool;
 
 // Generate random numbers using this
 //RandomNumberGen gRandom;

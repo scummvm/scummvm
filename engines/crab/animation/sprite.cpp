@@ -733,8 +733,8 @@ void Sprite::InternalEvents(Info &info, const std::string &player_id, std::vecto
 //------------------------------------------------------------------------
 void Sprite::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	root->append_attribute(doc.allocate_attribute("id", id.c_str()));
-	root->append_attribute(doc.allocate_attribute("x", gStrPool.Get(pos.x)));
-	root->append_attribute(doc.allocate_attribute("y", gStrPool.Get(pos.y)));
+	root->append_attribute(doc.allocate_attribute("x", gStrPool->Get(pos.x)));
+	root->append_attribute(doc.allocate_attribute("y", gStrPool->Get(pos.y)));
 }
 
 //------------------------------------------------------------------------

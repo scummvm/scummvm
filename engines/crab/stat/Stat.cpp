@@ -104,10 +104,10 @@ void Stat::Validate() {
 
 void Stat::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, name);
-	child->append_attribute(doc.allocate_attribute("cur", gStrPool.Get(cur)));
-	child->append_attribute(doc.allocate_attribute("def", gStrPool.Get(def)));
-	child->append_attribute(doc.allocate_attribute("min", gStrPool.Get(min)));
-	child->append_attribute(doc.allocate_attribute("max", gStrPool.Get(max)));
+	child->append_attribute(doc.allocate_attribute("cur", gStrPool->Get(cur)));
+	child->append_attribute(doc.allocate_attribute("def", gStrPool->Get(def)));
+	child->append_attribute(doc.allocate_attribute("min", gStrPool->Get(min)));
+	child->append_attribute(doc.allocate_attribute("max", gStrPool->Get(max)));
 	root->append_node(child);
 }
 

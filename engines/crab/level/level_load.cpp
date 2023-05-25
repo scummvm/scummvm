@@ -213,7 +213,7 @@ void Level::LoadConst(const std::string &filename) {
 // Purpose: Save all sprite positions to save file
 //------------------------------------------------------------------------
 void Level::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-	root->append_attribute(doc.allocate_attribute("player_index", gStrPool.Get(player_index)));
+	root->append_attribute(doc.allocate_attribute("player_index", gStrPool->Get(player_index)));
 
 	for (auto &i : objects) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "sprite");

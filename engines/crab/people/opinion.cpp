@@ -72,9 +72,9 @@ void Opinion::Validate(const OpinionType &type) {
 
 void Opinion::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "opinion");
-	child->append_attribute(doc.allocate_attribute("like", gStrPool.Get(val[OPI_LIKE])));
-	child->append_attribute(doc.allocate_attribute("fear", gStrPool.Get(val[OPI_FEAR])));
-	child->append_attribute(doc.allocate_attribute("respect", gStrPool.Get(val[OPI_RESPECT])));
+	child->append_attribute(doc.allocate_attribute("like", gStrPool->Get(val[OPI_LIKE])));
+	child->append_attribute(doc.allocate_attribute("fear", gStrPool->Get(val[OPI_FEAR])));
+	child->append_attribute(doc.allocate_attribute("respect", gStrPool->Get(val[OPI_RESPECT])));
 	root->append_node(child);
 }
 

@@ -187,7 +187,7 @@ struct TempValue {
 extern bool GameDebug;
 
 // Strings are stored here to avoid duplicates and invalid values when writing to XML
-extern StringPool gStrPool;
+extern StringPool *gStrPool;
 
 // Generate random numbers using this
 //extern RandomNumberGen gRandom;

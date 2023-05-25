@@ -76,12 +76,12 @@ bool EventSeqGroup::ActiveSeq(unsigned int &active_seq) {
 void EventSeqGroup::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	for (auto i = end.begin(); i != end.end(); ++i) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "end");
-		child->value(gStrPool.Get(*i));
+		child->value(gStrPool->Get(*i));
 		root->append_node(child);
 	}
 
 	for (auto i = seq.begin(); i != seq.end(); ++i)
-		i->second.SaveState(doc, root, gStrPool.Get(i->first));
+		i->second.SaveState(doc, root, gStrPool->Get(i->first));
 }
 
 void EventSeqGroup::LoadState(rapidxml::xml_node<char> *node) {
