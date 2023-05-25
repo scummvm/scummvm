@@ -65,6 +65,15 @@ void AGSController::Controller_Update() {
 }
 
 void AGSController::ControllerCount(ScriptMethodParams &params) {
+
+	// WORKAROUND: The current implementation doesn't work at all, in UIHY at least
+	// Just disable the gamepad for now, also to prevent accessing the controller options
+	// that crash everything
+	if ((ConfMan.get("gameid") == "untilihaveyou")) {
+		debug(0, "AGSController: Returning ControllerCount=0 to force-disable controller!");
+		params._result = 0;
+		return;
+	}
 	int joystickNum = ConfMan.getInt("joystick_num");
 	params._result = (joystickNum == -1) ? 0 : 1;
 }
@@ -129,6 +138,15 @@ void AGSController::Controller_BatteryStatus(ScriptMethodParams &params) {
 
 void AGSController::ClickMouse(ScriptMethodParams &params) {
 	PARAMS1(int, button);
+
+	// WORKAROUND: This method is used to fake mouseclicks in the game menus (for keyboard
+	// and gamepad control) but the implementation using eventmanager doesn't seem to work
+	// Just use PluginSimulateMouseClick, which matches AGSController original implementation
+	if ((ConfMan.get("gameid") == "untilihaveyou")) {
+		PluginSimulateMouseClick(button);
+		return;
+	}
+
 	assert(button < 3);
 	Common::EventType DOWN[3] = {
 		Common::EVENT_LBUTTONDOWN, Common::EVENT_RBUTTONDOWN, Common::EVENT_MBUTTONDOWN
