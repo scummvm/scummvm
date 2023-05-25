@@ -28,6 +28,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/ui/ModMenu.h"
 
 namespace Crab {
@@ -71,8 +72,8 @@ void ModMenu::Load(const std::string &filename) {
 			hov[DATA_WEBSITE].Load(offnode->first_node("website_title"));
 		}
 
-		extension = gFilePath.mod_ext.c_str();
-		directory = gFilePath.mod_path.c_str();
+		extension = g_engine->_filePath->mod_ext.c_str();
+		directory = g_engine->_filePath->mod_path.c_str();
 		ScanDir();
 	}
 }
@@ -80,7 +81,7 @@ void ModMenu::Load(const std::string &filename) {
 bool ModMenu::HandleEvents(const Common::Event &Event) {
 	int choice = menu.HandleEvents(Event);
 	if (choice >= 0) {
-		gFilePath.mod_cur = slot_info[menu.Index() + choice].path.c_str();
+		g_engine->_filePath->mod_cur = slot_info[menu.Index() + choice].path.c_str();
 		return true;
 	}
 
@@ -91,7 +92,7 @@ bool ModMenu::HandleEvents(const Common::Event &Event) {
 bool ModMenu::HandleEvents(const SDL_Event &Event) {
 	int choice = menu.HandleEvents(Event);
 	if (choice >= 0) {
-		gFilePath.mod_cur = slot_info[menu.Index() + choice].path;
+		g_engine->_filePath->mod_cur = slot_info[menu.Index() + choice].path;
 		return true;
 	}
 

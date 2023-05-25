@@ -31,6 +31,7 @@
 #ifndef CRAB_FILEMENU_H
 #define CRAB_FILEMENU_H
 
+#include "crab/crab.h"
 #include "crab/ui/FileData.h"
 #include "crab/ui/ImageData.h"
 #include "crab/ui/PageMenu.h"
@@ -172,8 +173,8 @@ public:
 			hov[DATA_PLAYERNAME].Load(offnode->first_node("player_name_title"));
 		}
 
-		extension = gFilePath.save_ext.c_str();
-		directory = (gFilePath.appdata + gFilePath.save_dir).c_str();
+		extension = g_engine->_filePath->save_ext.c_str();
+		directory = (g_engine->_filePath->appdata + g_engine->_filePath->save_dir).c_str();
 		ScanDir();
 	}
 

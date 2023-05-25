@@ -41,7 +41,7 @@ using namespace pyrodactyl::input;
 // Purpose: Loading stuff
 //------------------------------------------------------------------------
 void Game::StartNewGame() {
-	Init(gFilePath.mod_cur.c_str());
+	Init(g_engine->_filePath->mod_cur.c_str());
 	LoadLevel(info.CurLocID());
 	info.IronMan(gTemp.ironman);
 	savefile.ironman = gTemp.filename.c_str();
@@ -52,7 +52,7 @@ void Game::StartNewGame() {
 }
 
 void Game::LoadGame(const std::string &filename) {
-	Init(gFilePath.mod_cur.c_str());
+	Init(g_engine->_filePath->mod_cur.c_str());
 	LoadState(filename);
 }
 
@@ -74,7 +74,7 @@ void Game::Init(const std::string &filename) {
 		std::string path;
 		if (NodeValid("level", node)) {
 			LoadStr(path, "list", node->first_node("level"));
-			gFilePath.LoadLevel(path.c_str());
+			g_engine->_filePath->LoadLevel(path.c_str());
 		}
 
 		if (NodeValid("hud", node)) {
@@ -113,23 +113,23 @@ void Game::Init(const std::string &filename) {
 }
 
 bool Game::LoadLevel(const std::string &id, int player_x, int player_y) {
-	if (gFilePath.level.contains(id.c_str())) {
+	if (g_engine->_filePath->level.contains(id.c_str())) {
 		g_engine->_loadingScreen->Draw();
 
 		// Load the assets local to this level
 		// If the filename is same as the previous one, skip loading
-		if (gFilePath.current_r != gFilePath.level[id.c_str()].asset) {
-			gFilePath.current_r = gFilePath.level[id.c_str()].asset;
-			g_engine->_imageManager->LoadMap(gFilePath.level[id.c_str()].asset);
+		if (g_engine->_filePath->current_r != g_engine->_filePath->level[id.c_str()].asset) {
+			g_engine->_filePath->current_r = g_engine->_filePath->level[id.c_str()].asset;
+			g_engine->_imageManager->LoadMap(g_engine->_filePath->level[id.c_str()].asset);
 		}
 
 		// Load the level itself
 		level.pop = pop_default;
-		level.Load(gFilePath.level[id.c_str()].layout.c_str(), info, game_over, player_x, player_y);
+		level.Load(g_engine->_filePath->level[id.c_str()].layout.c_str(), info, game_over, player_x, player_y);
 
 		// Set the current location
 		info.CurLocID(id);
-		info.CurLocName(gFilePath.level[id.c_str()].name.c_str());
+		info.CurLocName(g_engine->_filePath->level[id.c_str()].name.c_str());
 		map.player_pos = level.map_loc;
 
 		// Update and center the world map to the player current position
@@ -802,7 +802,7 @@ void Game::SaveState(const std::string &filename, const bool &overwrite) {
 void Game::Quit(bool &ShouldChangeState, GameStateID &NewStateID, const GameStateID &NewStateVal) {
 	ShouldChangeState = true;
 	NewStateID = NewStateVal;
-	g_engine->_imageManager->LoadMap(gFilePath.mainmenu_r);
+	g_engine->_imageManager->LoadMap(g_engine->_filePath->mainmenu_r);
 }
 //------------------------------------------------------------------------
 // Purpose: Change our internal state

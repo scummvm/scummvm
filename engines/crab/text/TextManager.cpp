@@ -45,7 +45,7 @@ void TextManager::Init() {
 	Quit();
 
 	// Load the list of fonts
-	XMLDoc font_list(gFilePath.font);
+	XMLDoc font_list(g_engine->_filePath->font);
 	if (font_list.ready()) {
 		rapidxml::xml_node<char> *node = font_list.Doc()->first_node("fonts");
 
@@ -77,7 +77,7 @@ void TextManager::Init() {
 		}
 	}
 
-	colpool.Load(gFilePath.colors.c_str());
+	colpool.Load(g_engine->_filePath->colors.c_str());
 }
 
 void TextManager::Reset() {

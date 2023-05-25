@@ -91,10 +91,10 @@ bool ImageManager::Init() {
 	Quit();
 
 	// Load common assets
-	LoadMap(gFilePath.common, MAP_COMMON);
+	LoadMap(g_engine->_filePath->common, MAP_COMMON);
 
 	// Load main menu assets
-	LoadMap(gFilePath.current_r, MAP_CURRENT);
+	LoadMap(g_engine->_filePath->current_r, MAP_CURRENT);
 
 	invalid_img = map[MAP_COMMON][0];
 

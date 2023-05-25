@@ -43,7 +43,7 @@ using namespace pyrodactyl::ui;
 // Purpose: Constructor
 //------------------------------------------------------------------------
 MainMenu::MainMenu() {
-	XMLDoc conf(gFilePath.mainmenu_l);
+	XMLDoc conf(g_engine->_filePath->mainmenu_l);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("main_menu");
 		if (NodeValid(node)) {
@@ -148,7 +148,7 @@ MainMenu::MainMenu() {
 		ChangeState(STATE_NORMAL, true);
 
 	gTemp.credits = false;
-	gFilePath.current_r = gFilePath.mainmenu_r;
+	g_engine->_filePath->current_r = g_engine->_filePath->mainmenu_r;
 }
 
 //------------------------------------------------------------------------
@@ -490,9 +490,9 @@ void MainMenu::Draw() {
 		logo.Draw();
 
 		// Draw the game name and mod path if a mod is loaded
-		if (gFilePath.mod_cur != "res/default.xml") {
+		if (g_engine->_filePath->mod_cur != "res/default.xml") {
 			g_engine->_textManager->Draw(g_engine->_screenSettings->cur.w / 2, g_engine->_screenSettings->cur.h / 2, "Unrest", 0, 0, ALIGN_CENTER);
-			//g_engine->_textManager->Draw(g_engine->_screenSettings->cur.w / 2, g_engine->_screenSettings->cur.h / 2 + 50, gFilePath.mod_cur, 5, 1, ALIGN_CENTER);
+			//g_engine->_textManager->Draw(g_engine->_screenSettings->cur.w / 2, g_engine->_screenSettings->cur.h / 2 + 50, g_engine->_filePath->mod_cur, 5, 1, ALIGN_CENTER);
 		}
 
 		me_main.Draw();
