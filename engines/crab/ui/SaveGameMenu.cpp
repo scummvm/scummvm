@@ -28,6 +28,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/ui/SaveGameMenu.h"
 
 namespace Crab {
@@ -71,11 +72,11 @@ void GameSaveMenu::ScanDir() {
 		unsigned int count_slot = 0, count_menu = 0;
 
 		// For the save menu, the first slot is a "blank" slot - to create a new save file
-		AddButton(gFilePath.save_dir + "New Save" + gFilePath.save_ext, count_menu, count_slot);
+		AddButton(g_engine->_filePath->save_dir + "New Save" + g_engine->_filePath->save_ext, count_menu, count_slot);
 
 		// Next, we must load all the files with the same extension as our save file
 		for (auto i = file_in_dir.begin(); i != file_in_dir.end(); ++i)
-			if (is_regular_file(*i) && i->extension().string() == gFilePath.save_ext)
+			if (is_regular_file(*i) && i->extension().string() == g_engine->_filePath->save_ext)
 				AddButton(*i, count_menu, count_slot);
 	}
 

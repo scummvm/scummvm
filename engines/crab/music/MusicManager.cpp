@@ -73,7 +73,7 @@ void MusicManager::PlayMusic(const MusicKey &id) {
 
 #if 0
 	if (bg.id != id) {
-		XMLDoc track_list(gFilePath.sound_music);
+		XMLDoc track_list(g_engine->_filePath->sound_music);
 		if (track_list.ready()) {
 			rapidxml::xml_node<char> *node = track_list.Doc()->first_node("music");
 			for (auto n = node->first_node(); n != NULL; n = n->next_sibling()) {
@@ -141,7 +141,7 @@ bool MusicManager::Load(rapidxml::xml_node<char> *node) {
 	VolMusic(volume_mus);
 
 	// Load sound effects
-	XMLDoc track_list(gFilePath.sound_effect);
+	XMLDoc track_list(g_engine->_filePath->sound_effect);
 	if (track_list.ready()) {
 		rapidxml::xml_node<char> *tnode = track_list.Doc()->first_node("effects");
 		if (NodeValid(tnode)) {

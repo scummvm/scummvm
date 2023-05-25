@@ -402,7 +402,7 @@ void OptionMenu::SaveState() {
 	std::string xml_as_string;
 	rapidxml::print(std::back_inserter(xml_as_string), doc);
 
-	std::string settingpath = gFilePath.appdata;
+	std::string settingpath = g_engine->_filePath->appdata;
 	settingpath += "settings.xml";
 
 	std::ofstream save(settingpath, std::ios::out);

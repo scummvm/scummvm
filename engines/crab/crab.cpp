@@ -103,6 +103,8 @@ Common::Error CrabEngine::run() {
 	_optionMenu = new pyrodactyl::ui::OptionMenu();
 	_loadMenu = new pyrodactyl::ui::FileMenu<pyrodactyl::ui::SaveFileData>();
 
+	_filePath = new FilePaths();
+
 	_screenSettings = new ScreenSettings();
 
 	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();

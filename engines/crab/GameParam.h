@@ -189,9 +189,6 @@ extern TempValue gTemp;
 // Whether to draw debug outlines on polygons
 extern bool GameDebug;
 
-// Paths of all files
-extern FilePaths gFilePath;
-
 // Strings are stored here to avoid duplicates and invalid values when writing to XML
 extern StringPool gStrPool;
 

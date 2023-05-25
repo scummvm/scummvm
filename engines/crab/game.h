@@ -115,10 +115,10 @@ private:
 	void CreateSaveGame(const SaveGameType &savetype);
 
 	std::string FullPath(const std::string &filename) {
-		std::string res = gFilePath.appdata.c_str();
-		res += gFilePath.save_dir.c_str();
+		std::string res = g_engine->_filePath->appdata.c_str();
+		res += g_engine->_filePath->save_dir.c_str();
 		res += filename;
-		res += gFilePath.save_ext.c_str();
+		res += g_engine->_filePath->save_ext.c_str();
 
 		return res;
 	}

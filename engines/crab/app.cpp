@@ -56,7 +56,7 @@ bool App::Init() {
 #endif
 
 	// Load paths for important files
-	gFilePath.Load("res/paths.xml");
+	g_engine->_filePath->Load("res/paths.xml");
 
 	// Initialize Steam
 	// SteamAPI_Init();
@@ -65,7 +65,7 @@ bool App::Init() {
 	{
 		const std::string DEFAULT_FILENAME = "res/settings.xml";
 
-		std::string filename = gFilePath.appdata;
+		std::string filename = g_engine->_filePath->appdata;
 		filename += "settings.xml";
 
 		using namespace boost::filesystem;
@@ -99,7 +99,7 @@ bool App::Init() {
 		return false;
 
 	// Set the window icon
-	SDL_Surface *icon = IMG_Load(gFilePath.icon.c_str());
+	SDL_Surface *icon = IMG_Load(g_engine->_filePath->icon.c_str());
 	SDL_SetWindowIcon(gWindow, icon);
 	SDL_FreeSurface(icon);
 

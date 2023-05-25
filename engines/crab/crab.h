@@ -69,6 +69,7 @@
 #include "crab/text/TextManager.h"
 #include "crab/music/MusicManager.h"
 #include "crab/ScreenSettings.h"
+#include "crab/GameParam.h"
 
 #include "crab/detection.h"
 
@@ -124,6 +125,7 @@ public:
 	pyrodactyl::ui::OptionMenu *_optionMenu = nullptr;
 	pyrodactyl::ui::FileMenu<pyrodactyl::ui::SaveFileData> *_loadMenu = nullptr;
 
+	FilePaths *_filePath = nullptr;
 	ScreenSettings *_screenSettings = nullptr;
 
 	Common::FSNode _gameDataDir;

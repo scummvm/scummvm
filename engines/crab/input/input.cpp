@@ -112,7 +112,7 @@ void InputManager::Init() {
 #if 0
 	const std::string DEFAULT_FILENAME = "res/controls.xml";
 
-	std::string filename = gFilePath.appdata.c_str();
+	std::string filename = g_engine->_filePath->appdata.c_str();
 	filename += "controls.xml";
 
 	if (!is_regular_file(filename)) {
@@ -198,7 +198,7 @@ void InputManager::Save() {
 #if 0
 	rapidxml::xml_document<char> doc;
 
-	std::string filename = gFilePath.appdata;
+	std::string filename = g_engine->_filePath->appdata;
 	filename += "controls.xml";
 
 	// xml declaration
