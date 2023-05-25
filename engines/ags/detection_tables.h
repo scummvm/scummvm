@@ -3777,8 +3777,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	// Commercial game that likely uses custom extensions. Not only does it seem
 	// to use AGSController plugin built-in, even when I hooked up AGSController for
 	// the stand-alone AGS 3.5 interpreter, it hangs just like in ScummVM
-	UNSUPPORTED_DEMO_ENTRY("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 457842687),
-	UNSUPPORTED_GAME_ENTRY("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1089857773), // Steam
 	UNSUPPORTED_GAME_ENTRY("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1072879555),
 	// 2.55 game, but uses a plugin agsflashlight. Also, even with AGS interpreter
 	// hacked to specify plugin, errors on loading room107 saying that
@@ -4178,6 +4176,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756040362), // Linux/Windows v.1.0.0 (GOG v1.31)
 	GAME_ENTRY_EN_GOG("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756041833), // Linux/Windows v.1.0.1 (GOG v1.32)
 	GAME_ENTRY_EN_GOG("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756042001), // Linux/Windows v.1.0.2 (GOG v1.4)
+	GAME_ENTRY_EN_STEAM("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1089857773), // Steam
 	GAME_ENTRY_EN_STEAM("waitingfortheloop", "waitingfortheloop.exe", "0241777c2537fc5d077c05cde10bfa9f", 51472537),
 	GAME_ENTRY_EN("waitingfortheloop", "waitingfortheloop.exe", "0241777c2537fc5d077c05cde10bfa9f", 51273604),
 	GAME_ENTRY("welcometosunnymunarvagir", "alpha4.ags", "392dbdd0697ae32af4cfe5212f9213c5", 23000263),
@@ -4713,6 +4712,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_LANG("tsomi2", "The Secret of Monkey Island 2.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5075308, Common::ES_ESP),
 	DEMO_ENTRY_LANG("ultimalatinvii", "UltimaVIILatin1.0.exe", "63f8a60cc094996bd070e68cb3c4722c", 83843416, Common::ES_ESP),  // v1.00 demo/beta
 	GAME_ENTRY_LANG_PLATFORM("ultimalatinvii", "UltimaLauncher.exe", "63f8a60cc094996bd070e68cb3c4722c", 9065961, Common::ES_ESP, "Launcher"),
+	DEMO_ENTRY_EN("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 457842687),
+	DEMO_ENTRY_EN("untilihaveyou", "Until I Have You Demo.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 479749741),
 	DEMO_ENTRY_EN("updatequest", "U-Quest.exe", "06a03fe35791b0578068ab1873455463", 1776804),
 	DEMO_ENTRY_EN("valis", "valis 0.70.exe", "0710e2ec71042617f565c01824f0cf3c", 4348394),
 	DEMO_ENTRY_LANG("villard", "VMF_DEMO 2.0.1.exe", "534f936a0fac0c6f72b6ce6aaa6c9ce2", 653406938, Common::IT_ITA),
