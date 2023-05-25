@@ -126,7 +126,7 @@ exit_loop:
 
 		// Add monster details to list
 		_monsterLevel = _monsterSummaries[i]._level;
-		const Monster &srcMons = g_globals->_monsters[_monsterSummaries[i]._num];
+		const Monster &srcMons = (*g_globals->_monsters)[_monsterSummaries[i]._num];
 		_monsterList.push_back(srcMons);
 		Monster &mons = _monsterList.back();
 		mons._level = _monsterSummaries[i]._level;
@@ -158,7 +158,7 @@ void Encounter::randomAdjust() {
 
 const Monster *Encounter::getMonster() {
 	assert(_monsterNum > 0 && _monsterLevel > 0);
-	return &g_globals->_monsters[_monsterNum + ((_monsterLevel - 1) * 16)];
+	return &(*g_globals->_monsters)[_monsterNum + ((_monsterLevel - 1) * 16)];
 }
 
 bool Encounter::checkSurroundParty() const {

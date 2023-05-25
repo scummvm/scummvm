@@ -38,6 +38,7 @@ Globals::Globals() {
 }
 
 Globals::~Globals() {
+	delete _monsters;
 	g_globals = nullptr;
 }
 
@@ -66,7 +67,8 @@ bool Globals::load(bool isEnhanced) {
 	if (!_font.load("font.bmp"))
 		return false;
 
-	if (!_monsters.load() || !_items.load())
+	_monsters = new Monsters();
+	if (!_monsters->load() || !_items.load())
 		return false;
 
 	// Load roster

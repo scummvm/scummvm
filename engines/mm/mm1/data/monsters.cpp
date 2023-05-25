@@ -19,13 +19,17 @@
  *
  */
 
+#include "common/file.h"
 #include "mm/mm1/data/monsters.h"
 #include "mm/mm1/gfx/dta.h"
 #include "mm/mm1/gfx/screen_decoder.h"
-#include "common/file.h"
+#include "mm/mm1/mm1.h"
 
 namespace MM {
 namespace MM1 {
+
+Monsters::Monsters() : _monPix(MONPIX_DTA) {
+}
 
 bool Monsters::load() {
 	Common::File f;

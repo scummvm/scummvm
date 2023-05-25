@@ -22,7 +22,6 @@
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "mm/mm1/events.h"
 #include "mm/mm1/gfx/dta.h"
 #include "mm/mm1/gfx/screen_decoder.h"
 #include "mm/mm1/maps/maps.h"
@@ -81,6 +80,7 @@
 #include "mm/mm1/maps/map52.h"
 #include "mm/mm1/maps/map53.h"
 #include "mm/mm1/maps/map54.h"
+#include "mm/mm1/mm1.h"
 
 namespace MM {
 namespace MM1 {

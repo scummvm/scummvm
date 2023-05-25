@@ -28,8 +28,8 @@ namespace MM {
 namespace MM1 {
 namespace Gfx {
 
-#define WALLPIX_DTA "wallpix.dta"
-#define MONPIX_DTA "monpix.dta"
+#define WALLPIX_DTA (g_engine->isEnhanced() ? "gfx/wallpix.dta" : "wallpix.dta")
+#define MONPIX_DTA (g_engine->isEnhanced() ? "gfx/monpix.dta" : "monpix.dta")
 
 class DTA {
 public:

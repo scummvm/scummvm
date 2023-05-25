@@ -54,7 +54,7 @@ public:
 	bool _heardRumor = false;
 	Game::Encounter _encounters;
 	Game::Combat *_combat = nullptr;
-	Monsters _monsters;
+	Monsters *_monsters = nullptr;
 	Treasure _treasure;
 	byte _delay = 5;
 	int _nonCombatEffectCtr = 0, _combatEffectCtr = 0;

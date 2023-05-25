@@ -113,7 +113,7 @@ private:
 	Monster _monsters[MONSTERS_COUNT];
 	Gfx::DTA _monPix;
 public:
-	Monsters() : _monPix(MONPIX_DTA) {}
+	Monsters();
 
 	/**
 	 * Load the monster list
