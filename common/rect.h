@@ -161,6 +161,12 @@ struct Rect {
 		assert(isValidRect());
 	}
 	/**
+	 * Create a rectangle with the top-left corner at the position @p topLeft
+	 * and the given width @p w and height @p h.
+	 */
+	constexpr Rect(const Point &topLeft, int16 w, int16 h) : top(topLeft.y), left(topLeft.x), bottom(topLeft.y + h), right(topLeft.x + w) {
+	}
+	/**
 	 * Create a rectangle with the top-left corner at the given position (x1, y1)
 	 * and the bottom-right corner at the position (x2, y2).
 	 *
