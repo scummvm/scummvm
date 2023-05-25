@@ -118,6 +118,7 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 void UpdatesDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	if (cmd == kProceedCmd) {
 		ConfMan.setInt("updates_check", _updatesPopUp->getSelectedTag());
+		ConfMan.flushToDisk();
 
 		if (g_system->getUpdateManager()) {
 			if (_updatesPopUp->getSelectedTag() == Common::UpdateManager::kUpdateIntervalNotSupported) {
