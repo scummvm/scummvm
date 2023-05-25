@@ -28,6 +28,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/input/fightinput.h"
 
 namespace Crab {
@@ -40,9 +42,9 @@ void FightInput::Load(rapidxml::xml_node<char> *node) {
 }
 
 FightAnimationType FightInput::HandleEvents(const Common::Event &Event) {
-	if (gInput.State(IG_ATTACK))
+	if (g_engine->_inputManager->State(IG_ATTACK))
 		return FA_ATTACK;
-	else if (gInput.State(IG_BLOCK))
+	else if (g_engine->_inputManager->State(IG_BLOCK))
 		return FA_BLOCK;
 
 	return FA_IDLE;
@@ -50,9 +52,9 @@ FightAnimationType FightInput::HandleEvents(const Common::Event &Event) {
 
 #if 0
 FightAnimationType FightInput::HandleEvents(const SDL_Event &Event) {
-	if (gInput.State(IG_ATTACK))
+	if (g_engine->_inputManager->State(IG_ATTACK))
 		return FA_ATTACK;
-	else if (gInput.State(IG_BLOCK))
+	else if (g_engine->_inputManager->State(IG_BLOCK))
 		return FA_BLOCK;
 
 	return FA_IDLE;

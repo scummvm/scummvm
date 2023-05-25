@@ -144,8 +144,6 @@ public:
 	void Save();
 };
 
-// The saved key values
-extern InputManager gInput;
 } // End of namespace input
 } // End of namespace pyrodactyl
 

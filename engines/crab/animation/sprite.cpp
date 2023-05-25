@@ -372,20 +372,20 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 		#if 0
 		// Disable destination as soon as player presses a direction key
 		// X axis
-		if (gInput.State(IG_LEFT)) {
+		if (g_engine->_inputManager->State(IG_LEFT)) {
 			ai_data.dest.active = false;
 			XVel(-player_speed * sc.walk_vel_mod.x);
-		} else if (gInput.State(IG_RIGHT)) {
+		} else if (g_engine->_inputManager->State(IG_RIGHT)) {
 			ai_data.dest.active = false;
 			XVel(player_speed * sc.walk_vel_mod.x);
 		} else if (!ai_data.dest.active)
 			XVel(0.0f);
 
 		// Y axis
-		if (gInput.State(IG_UP)) {
+		if (g_engine->_inputManager->State(IG_UP)) {
 			ai_data.dest.active = false;
 			YVel(-player_speed * sc.walk_vel_mod.y);
-		} else if (gInput.State(IG_DOWN)) {
+		} else if (g_engine->_inputManager->State(IG_DOWN)) {
 			ai_data.dest.active = false;
 			YVel(player_speed * sc.walk_vel_mod.y);
 		} else if (!ai_data.dest.active)
@@ -438,20 +438,20 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 	{
 		// Disable destination as soon as player presses a direction key
 		// X axis
-		if (gInput.State(IG_LEFT)) {
+		if (g_engine->_inputManager->State(IG_LEFT)) {
 			ai_data.dest.active = false;
 			XVel(-player_speed * sc.walk_vel_mod.x);
-		} else if (gInput.State(IG_RIGHT)) {
+		} else if (g_engine->_inputManager->State(IG_RIGHT)) {
 			ai_data.dest.active = false;
 			XVel(player_speed * sc.walk_vel_mod.x);
 		} else if (!ai_data.dest.active)
 			XVel(0.0f);
 
 		// Y axis
-		if (gInput.State(IG_UP)) {
+		if (g_engine->_inputManager->State(IG_UP)) {
 			ai_data.dest.active = false;
 			YVel(-player_speed * sc.walk_vel_mod.y);
-		} else if (gInput.State(IG_DOWN)) {
+		} else if (g_engine->_inputManager->State(IG_DOWN)) {
 			ai_data.dest.active = false;
 			YVel(player_speed * sc.walk_vel_mod.y);
 		} else if (!ai_data.dest.active)

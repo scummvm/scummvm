@@ -116,10 +116,10 @@ bool App::Init() {
 	SDL_DisableScreenSaver();
 
 	// Initial check for controllers on the system
-	pyrodactyl::input::gInput.AddController();
+	g_engine->_inputManager->AddController();
 #endif
 	// Initialize and load input
-	pyrodactyl::input::gInput.Init();
+	g_engine->_inputManager->Init();
 
 	LoadSettings("res/settings.xml");
 	gScreenSettings.in_game = false;
@@ -223,7 +223,7 @@ void App::Run() {
 				gScreenSettings.SetFullscreen();
 			} else if (Event.type == SDL_KEYUP && Event.key.keysym.scancode == SDL_SCANCODE_GRAVE && Event.key.keysym.mod & KMOD_CTRL)
 				GameDebug = !GameDebug;
-			pyrodactyl::input::gInput.HandleController(Event);
+			g_engine->_inputManager->HandleController(Event);
 		}
 #endif
 		while (g_system->getEventManager()->pollEvent(e)) {
@@ -312,7 +312,7 @@ App::~App() {
 	g_engine->_imageManager->Quit();
 	pyrodactyl::music::gMusicManager.Quit();
 	g_engine->_textManager->Quit();
-	pyrodactyl::input::gInput.Quit();
+	g_engine->_inputManager->Quit();
 	g_engine->_loadingScreen->Quit();
 
 	SDL_DestroyRenderer(gRenderer);

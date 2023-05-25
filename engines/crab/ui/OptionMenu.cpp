@@ -342,7 +342,7 @@ bool OptionMenu::HandleTabs(Button &back, const SDL_Event &Event) {
 
 		case 4:
 			// Save settings to file
-			pyrodactyl::input::gInput.Save();
+			g_engine->_inputManager->Save();
 			SaveState();
 			general.CreateBackup();
 			gScreenSettings.CreateBackup();
@@ -350,7 +350,7 @@ bool OptionMenu::HandleTabs(Button &back, const SDL_Event &Event) {
 
 		case 5:
 			// Revert all changes made to settings and exit
-			pyrodactyl::input::gInput.RestoreBackup();
+			g_engine->_inputManager->RestoreBackup();
 			keybind.SetCaption();
 			gScreenSettings.RestoreBackup();
 			general.RestoreBackup();

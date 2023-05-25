@@ -82,7 +82,7 @@ bool TextArea::HandleEvents(const SDL_Event &Event, bool numbers_only) {
 
 		// If backspace was pressed and the string isn't blank, remove a character from the end
 		text.erase(text.length() - 1);
-	} else if (gInput.Equals(IU_ACCEPT, Event) == SDL_RELEASED && text.length() != 0) {
+	} else if (g_engine->_inputManager->Equals(IU_ACCEPT, Event) == SDL_RELEASED && text.length() != 0) {
 		// Now play the accept sound
 		pyrodactyl::music::gMusicManager.PlayEffect(se_accept, 0);
 

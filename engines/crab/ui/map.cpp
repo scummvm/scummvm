@@ -238,18 +238,18 @@ void Map::Move(const Common::Event &Event) {
 		warning("STUB: Map keyboard processing");
 #if 0
 		// Move the map camera if player presses the direction keys
-		if (gInput.Equals(IU_UP, Event) == SDL_PRESSED)
+		if (g_engine->_inputManager->Equals(IU_UP, Event) == SDL_PRESSED)
 			vel.y = -1 * speed;
-		else if (gInput.Equals(IU_DOWN, Event) == SDL_PRESSED)
+		else if (g_engine->_inputManager->Equals(IU_DOWN, Event) == SDL_PRESSED)
 			vel.y = speed;
-		else if (gInput.Equals(IU_RIGHT, Event) == SDL_PRESSED)
+		else if (g_engine->_inputManager->Equals(IU_RIGHT, Event) == SDL_PRESSED)
 			vel.x = speed;
-		else if (gInput.Equals(IU_LEFT, Event) == SDL_PRESSED)
+		else if (g_engine->_inputManager->Equals(IU_LEFT, Event) == SDL_PRESSED)
 			vel.x = -1 * speed;
 		// Stop moving when we release a key (but only in that direction)
-		else if (gInput.Equals(IU_UP, Event) == SDL_RELEASED || gInput.Equals(IU_DOWN, Event) == SDL_RELEASED)
+		else if (g_engine->_inputManager->Equals(IU_UP, Event) == SDL_RELEASED || g_engine->_inputManager->Equals(IU_DOWN, Event) == SDL_RELEASED)
 			vel.y = 0;
-		else if (gInput.Equals(IU_LEFT, Event) == SDL_RELEASED || gInput.Equals(IU_RIGHT, Event) == SDL_RELEASED)
+		else if (g_engine->_inputManager->Equals(IU_LEFT, Event) == SDL_RELEASED || g_engine->_inputManager->Equals(IU_RIGHT, Event) == SDL_RELEASED)
 			vel.x = 0;
 		break;
 	}
@@ -308,18 +308,18 @@ void Map::Move(const SDL_Event &Event) {
 		break;
 	default: {
 		// Move the map camera if player presses the direction keys
-		if (gInput.Equals(IU_UP, Event) == SDL_PRESSED)
+		if (g_engine->_inputManager->Equals(IU_UP, Event) == SDL_PRESSED)
 			vel.y = -1 * speed;
-		else if (gInput.Equals(IU_DOWN, Event) == SDL_PRESSED)
+		else if (g_engine->_inputManager->Equals(IU_DOWN, Event) == SDL_PRESSED)
 			vel.y = speed;
-		else if (gInput.Equals(IU_RIGHT, Event) == SDL_PRESSED)
+		else if (g_engine->_inputManager->Equals(IU_RIGHT, Event) == SDL_PRESSED)
 			vel.x = speed;
-		else if (gInput.Equals(IU_LEFT, Event) == SDL_PRESSED)
+		else if (g_engine->_inputManager->Equals(IU_LEFT, Event) == SDL_PRESSED)
 			vel.x = -1 * speed;
 		// Stop moving when we release a key (but only in that direction)
-		else if (gInput.Equals(IU_UP, Event) == SDL_RELEASED || gInput.Equals(IU_DOWN, Event) == SDL_RELEASED)
+		else if (g_engine->_inputManager->Equals(IU_UP, Event) == SDL_RELEASED || g_engine->_inputManager->Equals(IU_DOWN, Event) == SDL_RELEASED)
 			vel.y = 0;
-		else if (gInput.Equals(IU_LEFT, Event) == SDL_RELEASED || gInput.Equals(IU_RIGHT, Event) == SDL_RELEASED)
+		else if (g_engine->_inputManager->Equals(IU_LEFT, Event) == SDL_RELEASED || g_engine->_inputManager->Equals(IU_RIGHT, Event) == SDL_RELEASED)
 			vel.x = 0;
 		break;
 	}

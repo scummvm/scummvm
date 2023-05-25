@@ -41,7 +41,7 @@ void HotKey::Load(rapidxml::xml_node<char> *node) {
 #if 0
 bool HotKey::HandleEvents(const SDL_Event &Event) {
 	if (input > IT_NONE && input < IT_TOTAL) {
-		int result = gInput.Equals(input, Event);
+		int result = g_engine->_inputManager->Equals(input, Event);
 
 		if (result == SDL_PRESSED)
 			keydown = true;
@@ -66,7 +66,7 @@ const char *HotKey::Name() {
 
 #if 0
 	if (input > IT_NONE && input < IT_TOTAL)
-		return SDL_GetScancodeName(gInput.iv[input].key);
+		return SDL_GetScancodeName(g_engine->_inputManager->iv[input].key);
 #endif
 
 	return "";

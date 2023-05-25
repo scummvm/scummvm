@@ -157,7 +157,7 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 
 			tone.value.at(element_count) = dat.reply.at(reply_count).tone;
 
-			//std::string text = SDL_GetScancodeName(gInput.iv[IU_REPLY_0 + element_count].key);
+			//std::string text = SDL_GetScancodeName(g_engine->_inputManager->iv[IU_REPLY_0 + element_count].key);
 			//text += ". " + i->text;
 			std::string text = i->text;
 			info.InsertName(text);

@@ -128,26 +128,26 @@ protected:
 
 		if (!element.empty()) {
 			if (path_type != PATH_HORIZONTAL) {
-				if (gInput.Equals(IU_DOWN, Event) == SDL_PRESSED) {
+				if (g_engine->_inputManager->Equals(IU_DOWN, Event) == SDL_PRESSED) {
 					Next();
 					latest_input = KEYBOARD;
-				} else if (gInput.Equals(IU_UP, Event) == SDL_PRESSED) {
+				} else if (g_engine->_inputManager->Equals(IU_UP, Event) == SDL_PRESSED) {
 					Prev();
 					latest_input = KEYBOARD;
 				}
 			}
 
 			if (path_type != PATH_VERTICAL) {
-				if (gInput.Equals(IU_RIGHT, Event) == SDL_PRESSED) {
+				if (g_engine->_inputManager->Equals(IU_RIGHT, Event) == SDL_PRESSED) {
 					Next();
 					latest_input = KEYBOARD;
-				} else if (gInput.Equals(IU_LEFT, Event) == SDL_PRESSED) {
+				} else if (g_engine->_inputManager->Equals(IU_LEFT, Event) == SDL_PRESSED) {
 					Prev();
 					latest_input = KEYBOARD;
 				}
 			}
 
-			if (gInput.Equals(IU_ACCEPT, Event) == SDL_PRESSED && hover_index != -1)
+			if (g_engine->_inputManager->Equals(IU_ACCEPT, Event) == SDL_PRESSED && hover_index != -1)
 				return hover_index;
 
 			// We pressed a key, which means we have to update the hovering status

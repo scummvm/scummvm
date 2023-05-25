@@ -92,14 +92,14 @@ bool OptionSelect::HandleEvents(const SDL_Event &Event) {
 	using namespace pyrodactyl::input;
 
 	if (cur > 0) {
-		if (prev.HandleEvents(Event) == BUAC_LCLICK || (usekeyboard && gInput.Equals(IU_LEFT, Event) == SDL_PRESSED)) {
+		if (prev.HandleEvents(Event) == BUAC_LCLICK || (usekeyboard && g_engine->_inputManager->Equals(IU_LEFT, Event) == SDL_PRESSED)) {
 			cur--;
 			return true;
 		}
 	}
 
 	if (cur < option.text.size() - 1) {
-		if (next.HandleEvents(Event) == BUAC_LCLICK || (usekeyboard && gInput.Equals(IU_RIGHT, Event) == SDL_PRESSED)) {
+		if (next.HandleEvents(Event) == BUAC_LCLICK || (usekeyboard && g_engine->_inputManager->Equals(IU_RIGHT, Event) == SDL_PRESSED)) {
 			cur++;
 			return true;
 		}

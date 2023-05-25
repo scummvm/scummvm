@@ -213,7 +213,7 @@ void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 						Quit(ShouldChangeState, NewStateID, GAMESTATE_MAIN_MENU);
 				} else {
 					// Update the talk key state
-					info.TalkKeyDown = gInput.State(IG_TALK) || level.ContainsClick(info.LastPerson(), Event);
+					info.TalkKeyDown = g_engine->_inputManager->State(IG_TALK) || level.ContainsClick(info.LastPerson(), Event);
 
 					level.HandleEvents(info, Event);
 
@@ -224,10 +224,10 @@ void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					}
 
 #if 0
-					if (gInput.Equals(IG_QUICKSAVE, Event) == SDL_RELEASED) {
+					if (g_engine->_inputManager->Equals(IG_QUICKSAVE, Event) == SDL_RELEASED) {
 						CreateSaveGame(SAVEGAME_QUICK);
 						return;
-					} else if (gInput.Equals(IG_QUICKLOAD, Event) == SDL_RELEASED && !info.IronMan()) {
+					} else if (g_engine->_inputManager->Equals(IG_QUICKLOAD, Event) == SDL_RELEASED && !info.IronMan()) {
 						ShouldChangeState = true;
 						NewStateID = GAMESTATE_LOAD_GAME;
 						g_engine->_loadMenu->SelectedPath(FullPath(savefile.quick));
@@ -369,7 +369,7 @@ void Game::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &
 						Quit(ShouldChangeState, NewStateID, GAMESTATE_MAIN_MENU);
 				} else {
 					// Update the talk key state
-					info.TalkKeyDown = gInput.State(IG_TALK) || level.ContainsClick(info.LastPerson(), Event);
+					info.TalkKeyDown = g_engine->_inputManager->State(IG_TALK) || level.ContainsClick(info.LastPerson(), Event);
 
 					level.HandleEvents(info, Event);
 
@@ -379,10 +379,10 @@ void Game::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &
 						return;
 					}
 
-					if (gInput.Equals(IG_QUICKSAVE, Event) == SDL_RELEASED) {
+					if (g_engine->_inputManager->Equals(IG_QUICKSAVE, Event) == SDL_RELEASED) {
 						CreateSaveGame(SAVEGAME_QUICK);
 						return;
-					} else if (gInput.Equals(IG_QUICKLOAD, Event) == SDL_RELEASED && !info.IronMan()) {
+					} else if (g_engine->_inputManager->Equals(IG_QUICKLOAD, Event) == SDL_RELEASED && !info.IronMan()) {
 						ShouldChangeState = true;
 						NewStateID = GAMESTATE_LOAD_GAME;
 						g_engine->_loadMenu->SelectedPath(FullPath(savefile.quick));
