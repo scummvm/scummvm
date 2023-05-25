@@ -37,12 +37,6 @@ namespace Crab {
 
 using namespace pyrodactyl::music;
 
-namespace pyrodactyl {
-namespace music {
-MusicManager gMusicManager;
-}
-} // End of namespace pyrodactyl
-
 //------------------------------------------------------------------------
 // Purpose: Clear stored data
 //------------------------------------------------------------------------
