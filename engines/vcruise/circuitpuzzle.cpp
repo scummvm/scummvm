@@ -329,23 +329,18 @@ CircuitPuzzle::CircuitPuzzle(int layout) : _havePreviousAction(false) {
 }
 
 bool CircuitPuzzle::executeAIAction(Common::RandomSource &randomSource, Common::Point &outCoord, CellDirection &outBlockDirection) {
-	// I've attempted to figure out what Schizm's AI algorithm does to no avail.
+	// Don't know exactly what algorithm Schizm uses, we use something that approximates the original
+	// pretty well most of the time:
+	// - Identify all connection paths that are tied for the fewest number of new connections required to win.
+	// - Enumerate all open connections on those paths.
+	// - If the previous move blocked a horizontal connection (i.e. with a vertical barrier), prioritize
+	//   connections on the same X coordinate as that block.
+	// - Block a random connection from the candidates.
 	//
-	// What we do, which is approximately what Schizm's AI does, is find all paths tied for the shortest path to the goal
-	// and randomly block a point on that path.  Sometimes Schizm's AI will fail to a 1-distance spot, and sometimes it will fail
-	// to opportunistically block a spot that would cause the AI to immediatley win, so this isn't a perfect reproduction of it,
-	// but it is very close.
+	// There seem to be times that Schizm doesn't do this.  In particular, Schizm will (rarely) fail to block
+	// a connection even if it's the only connection that will immediately win the puzzle for the player.
 	//
-	// We solve this as a series of 2 flood fills:
-	// - First, each point is assigned a maximum distance score
-	// - Next, all points connected to the start point (0,0) are assigned a score of 0.
-	// - Next, all points are progressively expanded to determine the minimum number of
-	//   connections needed to reach the point.
-	// - If the end point is assigned a score, then flood fill stops and the backtrace phase
-	//   begins.  The backtrace phase collects all links starting from the end that link to
-	//   another point with 1 less move required to reach it.
-	// - A random link is chosen as the AI move.
-
+	// It also doesn't prioritize making moves that will immediately win for the AI.
 	CircuitPuzzleAIEvaluator evaluator;
 
 	computeStepsToReach(evaluator);
@@ -442,7 +437,6 @@ bool CircuitPuzzle::executeAIAction(Common::RandomSource &randomSource, Common::
 	// All potential blocks are now on the shortest path.
 	// Try to mimic some of the AI behavior of Schizm to form wall advances.
 	// The highest-priority move is one that runs parallel to the previous move.
-	// If no such move exists, then a move that shares a corner is priority.
 	uint selectedBlock = 0;
 	if (numPotentialBlocks > 1) {
 		uint blockQualities[kMaxLinks];
