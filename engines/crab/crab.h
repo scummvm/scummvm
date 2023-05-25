@@ -111,11 +111,12 @@ public:
 	Graphics::PixelFormat *_format = nullptr;
 
 	pyrodactyl::image::ImageManager *_imageManager = nullptr;
-	pyrodactyl::input::Cursor *_mouse = nullptr;
-	pyrodactyl::event::GameEventStore *_eventStore = nullptr;
 	pyrodactyl::text::TextManager *_textManager = nullptr;
 	pyrodactyl::input::InputManager *_inputManager = nullptr;
 	pyrodactyl::music::MusicManager *_musicManager = nullptr;
+
+	pyrodactyl::input::Cursor *_mouse = nullptr;
+	pyrodactyl::event::GameEventStore *_eventStore = nullptr;
 
 	// Should these really be inside the Engine class?
 	LoadingScreen *_loadingScreen = nullptr;
