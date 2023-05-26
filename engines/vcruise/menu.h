@@ -63,6 +63,7 @@ public:
 	virtual void quitGame() const = 0;
 	virtual bool canSave() const = 0;
 	virtual bool reloadFromCheckpoint() const = 0;
+	virtual void setMusicMute(bool muted) const = 0;
 
 	virtual void drawLabel(Graphics::ManagedSurface *surface, const Common::String &labelID, const Common::Rect &contentRect) const = 0;
 };

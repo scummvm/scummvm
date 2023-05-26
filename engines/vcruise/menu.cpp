@@ -901,7 +901,14 @@ void ReahSoundMenuPage::applyMusicVolume() const {
 	ConfMan.setInt("music_volume", vol, ConfMan.getActiveDomainName());
 	ConfMan.setBool("vcruise_mute_music", !_musicChecked, ConfMan.getActiveDomainName());
 
+	// Try to avoid changing music volume right before stopping music to avoid an audio pop
+	if (!_musicChecked)
+		_menuInterface->setMusicMute(true);
+
 	g_engine->syncSoundSettings();
+
+	if (_musicChecked)
+		_menuInterface->setMusicMute(false);
 }
 
 ReahQuitMenuPage::ReahQuitMenuPage(bool isSchizm) : ReahMenuBarPage(kMenuBarButtonQuit, isSchizm) {

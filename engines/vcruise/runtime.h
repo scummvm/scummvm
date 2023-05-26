@@ -437,6 +437,7 @@ struct SaveGameSwappableState {
 	Common::String scoreTrack;
 	Common::String scoreSection;
 	bool musicActive;
+	bool musicMuteDisabled;
 
 	int32 musicVolume;
 	int32 animVolume;
@@ -453,7 +454,7 @@ struct SaveGameSnapshot {
 	LoadGameOutcome read(Common::ReadStream *stream);
 
 	static const uint kSaveGameIdentifier = 0x53566372;
-	static const uint kSaveGameCurrentVersion = 8;
+	static const uint kSaveGameCurrentVersion = 9;
 	static const uint kSaveGameEarliestSupportedVersion = 2;
 	static const uint kMaxStates = 2;
 
@@ -837,6 +838,7 @@ private:
 
 	void changeMusicTrack(int musicID);
 	void startScoreSection();
+	void setMusicMute(bool muted);
 
 	void changeAnimation(const AnimationDef &animDef, bool consumeFPSOverride);
 	void changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride);
@@ -1194,6 +1196,8 @@ private:
 	int _musicTrack;
 	int32 _musicVolume;
 	bool _musicActive;
+	bool _musicMute;
+	bool _musicMuteDisabled;
 
 	Common::String _scoreTrack;
 	Common::String _scoreSection;

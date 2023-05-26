@@ -79,6 +79,7 @@ public:
 	void quitGame() const override;
 	bool canSave() const override;
 	bool reloadFromCheckpoint() const override;
+	void setMusicMute(bool muted) const override;
 
 	void drawLabel(Graphics::ManagedSurface *surface, const Common::String &labelID, const Common::Rect &contentRect) const override;
 
@@ -163,6 +164,10 @@ bool RuntimeMenuInterface::reloadFromCheckpoint() const {
 
 	_runtime->restoreSaveGameSnapshot();
 	return true;
+}
+
+void RuntimeMenuInterface::setMusicMute(bool muted) const {
+	_runtime->setMusicMute(muted);
 }
 
 void RuntimeMenuInterface::drawLabel(Graphics::ManagedSurface *surface, const Common::String &labelID, const Common::Rect &contentRect) const {
@@ -739,7 +744,7 @@ void SaveGameSwappableState::Sound::read(Common::ReadStream *stream, uint saveGa
 }
 
 SaveGameSwappableState::SaveGameSwappableState() : roomNumber(0), screenNumber(0), direction(0), havePendingPostSwapScreenReset(false),
-												   musicTrack(0), musicVolume(100), musicActive(true), animVolume(100),
+												   musicTrack(0), musicVolume(100), musicActive(true), musicMuteDisabled(false), animVolume(100),
 												   loadedAnimation(0), animDisplayingFrame(0) {
 }
 
@@ -774,6 +779,7 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 		writeString(stream, states[sti]->scoreTrack);
 		writeString(stream, states[sti]->scoreSection);
 		stream->writeByte(states[sti]->musicActive ? 1 : 0);
+		stream->writeByte(states[sti]->musicMuteDisabled ? 1 : 0);
 
 		stream->writeUint32BE(states[sti]->loadedAnimation);
 		stream->writeUint32BE(states[sti]->animDisplayingFrame);
@@ -898,6 +904,11 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 			states[sti]->musicActive = true;
 		}
 
+		if (saveVersion >= 9)
+			states[sti]->musicMuteDisabled = (stream->readByte() != 0);
+		else
+			states[sti]->musicMuteDisabled = false;
+
 		states[sti]->loadedAnimation = stream->readUint32BE();
 		states[sti]->animDisplayingFrame = stream->readUint32BE();
 
@@ -1014,7 +1025,8 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingPreIdleActions(false), _havePendingReturnToIdleState(false), _havePendingPostSwapScreenReset(false),
 	  _havePendingCompletionCheck(false), _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false),
-	  _musicTrack(0), _musicActive(true), _scoreSectionEndTime(0), _musicVolume(getDefaultSoundVolume()), _musicVolumeRampStartTime(0), _musicVolumeRampStartVolume(0), _musicVolumeRampRatePerMSec(0), _musicVolumeRampEnd(0),
+	  _musicTrack(0), _musicActive(true), _musicMute(false), _musicMuteDisabled(false),
+	  _scoreSectionEndTime(0), _musicVolume(getDefaultSoundVolume()), _musicVolumeRampStartTime(0), _musicVolumeRampStartVolume(0), _musicVolumeRampRatePerMSec(0), _musicVolumeRampEnd(0),
 	  _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _loadedAnimationHasSound(false),
 	  _animTerminateAtStartOfFrame(true), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0), _animVolume(getDefaultSoundVolume()),
@@ -1228,6 +1240,11 @@ bool Runtime::bootGame(bool newGame) {
 
 	if (!ConfMan.hasKey("vcruise_increase_drag_distance") || ConfMan.hasKey("vcruise_increase_drag_distance"))
 		_lmbDragTolerance = 3;
+
+	if (ConfMan.hasKey("vcruise_mute_music") && !ConfMan.getBool("vcruise_mute_music"))
+		_musicMute = true;
+	else
+		_musicMute = false;
 
 	debug(1, "Booting V-Cruise game...");
 	loadIndex();
@@ -2502,12 +2519,17 @@ void Runtime::processUniversalKeymappedEvents(KeymappedEvent evt) {
 	const int soundSettingGranularity = 25;
 
 	switch (evt) {
-	case kKeymappedEventMusicToggle:
-		ConfMan.setBool("vcruise_mute_music", !(ConfMan.hasKey("vcruise_mute_music")) || !(ConfMan.getBool("vcruise_mute_music")), ConfMan.getActiveDomainName());
-		g_engine->syncSoundSettings();
-		if (_menuPage)
-			_menuPage->onSettingsChanged();
-		break;
+	case kKeymappedEventMusicToggle: {
+			if (ConfMan.hasKey("vcruise_mute_music") && !ConfMan.getBool("vcruise_mute_music"))
+				setMusicMute(false);
+			else
+				setMusicMute(true);
+
+			ConfMan.setBool("vcruise_mute_music", _musicMute, ConfMan.getActiveDomainName());
+
+			if (_menuPage)
+				_menuPage->onSettingsChanged();
+		} break;
 	case kKeymappedEventMusicVolumeUp: {
 			int newVol = ConfMan.getInt("music_volume") + soundSettingGranularity;
 			if (newVol > Audio::Mixer::kMaxMixerVolume)
@@ -3443,6 +3465,9 @@ void Runtime::changeMusicTrack(int track) {
 	if (!_musicActive)
 		return;
 
+	if (_musicMute && !_musicMuteDisabled)
+		return;
+
 	Common::String wavFileName = Common::String::format("Sfx/Music-%02i.wav", static_cast<int>(track));
 	Common::File *wavFile = new Common::File();
 	if (wavFile->open(wavFileName)) {
@@ -3460,8 +3485,12 @@ void Runtime::changeMusicTrack(int track) {
 
 void Runtime::startScoreSection() {
 	_musicPlayer.reset();
+	_scoreSectionEndTime = 0;
 
 	if (!_musicActive)
+		return;
+
+	if (_musicMute && !_musicMuteDisabled)
 		return;
 
 #ifdef USE_VORBIS
@@ -3496,6 +3525,31 @@ void Runtime::startScoreSection() {
 		}
 	}
 #endif
+}
+
+void Runtime::setMusicMute(bool muted) {
+	if (muted == _musicMute)
+		return;
+
+	bool prevIsActuallyMuted = (_musicMute && !_musicMuteDisabled);
+
+	_musicMute = muted;
+
+	bool isActuallyMuted = (_musicMute && !_musicMuteDisabled);
+
+	if (prevIsActuallyMuted != isActuallyMuted) {
+		if (isActuallyMuted) {
+			// Became muted
+			_musicPlayer.reset();
+			_scoreSectionEndTime = 0;
+		} else {
+			// Became unmuted
+			if (_gameID == GID_REAH)
+				changeMusicTrack(_musicTrack);
+			else if (_gameID == GID_SCHIZM)
+				startScoreSection();
+		}
+	}
 }
 
 void Runtime::changeAnimation(const AnimationDef &animDef, bool consumeFPSOverride) {
@@ -3904,6 +3958,22 @@ void Runtime::updateSounds(uint32 timestamp) {
 
 		if (newVolume == _musicVolumeRampEnd)
 			_musicVolumeRampRatePerMSec = 0;
+	}
+
+	if (_scoreSectionEndTime != 0 && _scoreSectionEndTime < timestamp) {
+
+#ifdef USE_VORBIS
+		Common::HashMap<Common::String, ScoreTrackDef>::const_iterator trackIt = _scoreDefs.find(_scoreTrack);
+		if (trackIt != _scoreDefs.end()) {
+			const ScoreTrackDef::ScoreSectionMap_t &sectionMap = trackIt->_value.sections;
+
+			ScoreTrackDef::ScoreSectionMap_t::const_iterator sectionIt = sectionMap.find(_scoreSection);
+			if (sectionIt != sectionMap.end())
+				_scoreSection = sectionIt->_value.nextSection;
+
+			startScoreSection();
+		}
+#endif
 	}
 }
 
@@ -5258,6 +5328,7 @@ void Runtime::recordSaveGameSnapshot() {
 
 	mainState->musicTrack = _musicTrack;
 	mainState->musicActive = _musicActive;
+	mainState->musicMuteDisabled = _musicMuteDisabled;
 
 	mainState->musicVolume = _musicVolume;
 
@@ -5369,6 +5440,7 @@ void Runtime::restoreSaveGameSnapshot() {
 	_musicVolumeRampEnd = _musicVolume;
 
 	_musicActive = mainState->musicActive;
+	_musicMuteDisabled = mainState->musicMuteDisabled;
 
 	if (_gameID == GID_REAH)
 		changeMusicTrack(mainState->musicTrack);
@@ -6957,13 +7029,22 @@ void Runtime::scriptOpMusicPlayScore(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpScoreAlways(ScriptArg_t arg) {
-	// This op should temporarily disable music mute
-	warning("ScoreAlways opcode isn't implemented yet");
+	assert(_gameID == GID_SCHIZM);
+
+	_musicMuteDisabled = true;
+
+	// We don't call startScoreSection here because ScoreAlways is always followed by a PlayScore
+	// that triggers the actual music, and we don't want to play any amount of the score that's about
+	// to be disabled.  PlayScore will call startScoreSection after changing to the correct section.
 }
 
 void Runtime::scriptOpScoreNormal(ScriptArg_t arg) {
-	// This op should re-enable music mute
-	warning("ScoreNormal opcode isn't implemented yet");
+	_musicMuteDisabled = false;
+
+	if (_musicMute) {
+		_musicPlayer.reset();
+		_scoreSectionEndTime = 0;
+	}
 }
 
 void Runtime::scriptOpSndPlay(ScriptArg_t arg) {

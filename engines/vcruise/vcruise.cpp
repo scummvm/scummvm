@@ -240,16 +240,14 @@ void VCruiseEngine::syncSoundSettings() {
 	if (!speechMute)
 		speechMute = ConfMan.getBool("speech_mute");
 
-	bool muteMusic = false;
-	if (ConfMan.hasKey("vcruise_mute_music"))
-		muteMusic = ConfMan.getBool("vcruise_mute_music");
-
 	bool muteSound = ConfMan.getBool("vcruise_mute_sound");
 	if (ConfMan.hasKey("vcruise_mute_sound"))
 		muteSound = ConfMan.getBool("vcruise_mute_sound");
 
+	// We don't mute music here because Schizm has a special behavior that bypasses music mute when using one
+	// of the ships to transition zones.
 	_mixer->muteSoundType(Audio::Mixer::kPlainSoundType, mute || muteSound);
-	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, mute || muteMusic);
+	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, mute);
 	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, mute || muteSound);
 	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, speechMute || muteSound);
 
