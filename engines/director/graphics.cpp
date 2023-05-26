@@ -675,42 +675,4 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 
 }
 
-void DirectorPlotData::inkBlitStretchSurface(Common::Rect &srcRect, const Graphics::Surface *mask) {
-	if (!srf)
-		return;
-
-	// TODO: Determine why colourization causes problems in Warlock
-	if (sprite == kTextSprite)
-		applyColor = false;
-
-	int scaleX = SCALE_THRESHOLD * srcRect.width() / destRect.width();
-	int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
-
-	srcPoint.y = abs(srcRect.top - destRect.top);
-
-	for (int i = 0, scaleYCtr = 0; i < destRect.height(); i++, scaleYCtr += scaleY, srcPoint.y++) {
-		if (d->_wm->_pixelformat.bytesPerPixel == 1) {
-			srcPoint.x = abs(srcRect.left - destRect.left);
-			const byte *msk = mask ? (const byte *)mask->getBasePtr(srcPoint.x, srcPoint.y) : nullptr;
-
-			for (int xCtr = 0, scaleXCtr = 0; xCtr < destRect.width(); xCtr++, scaleXCtr += scaleX, srcPoint.x++) {
-				if (!mask || !(*msk++)) {
-				(d->getInkDrawPixel())(destRect.left + xCtr, destRect.top + i,
-										preprocessColor(*((byte *)srf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD))), this);
-				}
-			}
-		} else {
-			srcPoint.x = abs(srcRect.left - destRect.left);
-			const uint32 *msk = mask ? (const uint32 *)mask->getBasePtr(srcPoint.x, srcPoint.y) : nullptr;
-
-			for (int xCtr = 0, scaleXCtr = 0; xCtr < destRect.width(); xCtr++, scaleXCtr += scaleX, srcPoint.x++) {
-				if (!mask || !(*msk++)) {
-				(d->getInkDrawPixel())(destRect.left + xCtr, destRect.top + i,
-										preprocessColor(*((int *)srf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD))), this);
-				}
-			}
-		}
-	}
-}
-
 } // End of namespace Director

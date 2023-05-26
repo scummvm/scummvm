@@ -320,7 +320,6 @@ struct DirectorPlotData {
 	uint32 preprocessColor(uint32 src);
 	void inkBlitShape(Common::Rect &srcRect);
 	void inkBlitSurface(Common::Rect &srcRect, const Graphics::Surface *mask);
-	void inkBlitStretchSurface(Common::Rect &srcRect, const Graphics::Surface *mask);
 
 	DirectorPlotData(DirectorEngine *d_, SpriteType s, InkType i, int a, uint32 b, uint32 f) : d(d_), sprite(s), ink(i), alpha(a), backColor(b), foreColor(f) {
 		colorWhite = d->_wm->_colorWhite;

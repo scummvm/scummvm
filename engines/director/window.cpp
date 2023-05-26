@@ -242,12 +242,7 @@ void Window::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Mana
 	if (pd.ms) {
 		pd.inkBlitShape(srcRect);
 	} else if (pd.srf) {
-		if (channel->isStretched()) {
-			srcRect = channel->getBbox(true);
-			pd.inkBlitStretchSurface(srcRect, channel->getMask());
-		} else {
-			pd.inkBlitSurface(srcRect, channel->getMask());
-		}
+		pd.inkBlitSurface(srcRect, channel->getMask());
 	} else {
 		if (debugChannelSet(kDebugImages, 4)) {
 			CastType castType = channel->_sprite->_cast ? channel->_sprite->_cast->_type : kCastTypeNull;
