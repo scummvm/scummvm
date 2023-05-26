@@ -801,6 +801,7 @@ private:
 	void drawSectionToScreen(const RenderSection &section, const Common::Rect &rect);
 	void commitSectionToScreen(const RenderSection &section, const Common::Rect &rect);
 	void terminateScript();
+	void quitToMenu();
 	RoomScriptSet *getRoomScriptSetForCurrentRoom() const;
 	bool checkCompletionConditions();
 

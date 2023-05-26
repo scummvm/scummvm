@@ -992,9 +992,11 @@ void ReahQuitMenuPage::onButtonClicked(uint button, bool &outChangedState) {
 
 	if (button == kButtonYes) {
 		if (_isSchizm && _menuInterface->isInGame())
-			_menuInterface->changeMenu(new ReahSchizmMainMenuPage(_isSchizm));
+			_menuInterface->quitToMenu();
 		else
 			_menuInterface->quitGame();
+
+		outChangedState = true;
 	} else if (button == kButtonNo)
 		onButtonClicked(kMenuBarButtonReturn, outChangedState);
 }

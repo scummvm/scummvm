@@ -77,6 +77,7 @@ public:
 	void goToCredits() const override;
 	void changeMenu(MenuPage *newPage) const override;
 	void quitGame() const override;
+	void quitToMenu() const override;
 	bool canSave() const override;
 	bool reloadFromCheckpoint() const override;
 	void setMusicMute(bool muted) const override;
@@ -145,6 +146,10 @@ void RuntimeMenuInterface::goToCredits() const {
 
 void RuntimeMenuInterface::changeMenu(MenuPage *newPage) const {
 	_runtime->changeToMenuPage(newPage);
+}
+
+void RuntimeMenuInterface::quitToMenu() const {
+	_runtime->quitToMenu();
 }
 
 void RuntimeMenuInterface::quitGame() const {
@@ -2352,20 +2357,29 @@ void Runtime::terminateScript() {
 		changeToScreen(_roomNumber, _screenNumber);
 	}
 
-	if (exitToMenu && _gameState == kGameStateIdle) {
-		changeToCursor(_cursors[kCursorArrow]);
+	if (exitToMenu && _gameState == kGameStateIdle)
+		quitToMenu();
+}
 
-		if (_gameID == GID_SCHIZM && _musicActive) {
-			_scoreTrack = "music99";
-			_scoreSection = "start";
-			startScoreSection();
-		}
+void Runtime::quitToMenu() {
+	changeToCursor(_cursors[kCursorArrow]);
 
-		if (_gameID == GID_REAH || _gameID == GID_SCHIZM)
-			changeToMenuPage(createMenuMain(_gameID == GID_SCHIZM));
-		else
-			error("Missing main menu behavior for this game");
+	if (_gameID == GID_SCHIZM && _musicActive) {
+		_scoreTrack = "music99";
+		_scoreSection = "start";
+		startScoreSection();
 	}
+
+	for (Common::SharedPtr<SoundInstance> &snd : _activeSounds)
+		stopSound(*snd);
+
+	_activeSounds.clear();
+	_isInGame = false;
+
+	if (_gameID == GID_REAH || _gameID == GID_SCHIZM)
+		changeToMenuPage(createMenuMain(_gameID == GID_SCHIZM));
+	else
+		error("Missing main menu behavior for this game");
 }
 
 RoomScriptSet *Runtime::getRoomScriptSetForCurrentRoom() const {
