@@ -582,7 +582,10 @@ void ReahMenuBarPage::onButtonClicked(uint button, bool &outChangedState) {
 		outChangedState = true;
 		break;
 	case kMenuBarButtonQuit:
-		_menuInterface->changeMenu(new ReahQuitMenuPage(_isSchizm));
+		if (_isSchizm && !_menuInterface->isInGame())
+			_menuInterface->changeMenu(new ReahSchizmMainMenuPage(_isSchizm));
+		else
+			_menuInterface->changeMenu(new ReahQuitMenuPage(_isSchizm));
 		outChangedState = true;
 		break;
 
@@ -980,9 +983,12 @@ void ReahQuitMenuPage::addPageContents() {
 void ReahQuitMenuPage::onButtonClicked(uint button, bool &outChangedState) {
 	ReahMenuBarPage::onButtonClicked(button, outChangedState);
 
-	if (button == kButtonYes)
-		_menuInterface->quitGame();
-	else if (button == kButtonNo)
+	if (button == kButtonYes) {
+		if (_isSchizm && _menuInterface->isInGame())
+			_menuInterface->changeMenu(new ReahSchizmMainMenuPage(_isSchizm));
+		else
+			_menuInterface->quitGame();
+	} else if (button == kButtonNo)
 		onButtonClicked(kMenuBarButtonReturn, outChangedState);
 }
 
@@ -1119,7 +1125,6 @@ void ReahSchizmMainMenuPage::onButtonClicked(uint button, bool &outChangedState)
 		break;
 
 	case kButtonQuit:
-		// In Schizm, quitting from the main menu doesn't prompt
 		if (_isSchizm)
 			_menuInterface->quitGame();
 		else

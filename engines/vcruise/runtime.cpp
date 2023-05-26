@@ -71,6 +71,7 @@ public:
 	Graphics::ManagedSurface *getMenuSurface() const override;
 	bool hasDefaultSave() const override;
 	bool hasAnySave() const override;
+	bool isInGame() const override;
 	Common::Point getMouseCoordinate() const override;
 	void restartGame() const override;
 	void goToCredits() const override;
@@ -113,6 +114,10 @@ bool RuntimeMenuInterface::hasDefaultSave() const {
 
 bool RuntimeMenuInterface::hasAnySave() const {
 	return static_cast<VCruiseEngine *>(g_engine)->hasAnySave();
+}
+
+bool RuntimeMenuInterface::isInGame() const {
+	return _runtime->_isInGame;
 }
 
 Common::Point RuntimeMenuInterface::getMouseCoordinate() const {
