@@ -55,6 +55,9 @@ public:
 	void setPicture(PictureReference &picture);
 	void setPicture(Image::ImageDecoder &image, bool adjustSize);
 
+	Common::Point getRegistrationOffset() override;
+	Common::Point getRegistrationOffset(int16 width, int16 height) override;
+
 	Picture *_picture = nullptr;
 	Graphics::Surface *_ditheredImg;
 	Graphics::FloodFill *_matte;

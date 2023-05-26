@@ -278,7 +278,7 @@ void Score::startPlay() {
 	// All frames in the same movie have the same number of channels
 	if (_playState != kPlayStopped)
 		for (uint i = 0; i < _frames[1]->_sprites.size(); i++)
-			_channels.push_back(new Channel(_frames[1]->_sprites[i], i));
+			_channels.push_back(new Channel(this, _frames[1]->_sprites[i], i));
 
 	if (_vm->getVersion() >= 300)
 		_movie->processEvent(kEventStartMovie);

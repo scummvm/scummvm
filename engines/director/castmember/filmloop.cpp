@@ -31,6 +31,7 @@
 #include "director/channel.h"
 #include "director/movie.h"
 #include "director/window.h"
+#include "director/castmember/bitmap.h"
 #include "director/castmember/filmloop.h"
 
 namespace Director {
@@ -88,7 +89,7 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 		int16 width = src._width * widgetRect.width() / _initialRect.width();
 		int16 height = src._height * widgetRect.height() / _initialRect.height();
 
-		Channel chan(&src);
+		Channel chan(nullptr, &src);
 		chan._currentPoint = Common::Point(absX, absY);
 		chan._width = width;
 		chan._height = height;
@@ -214,7 +215,10 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 					s->_value._castId.asString().c_str(), s->_value._startPoint.x, s->_value._startPoint.y,
 					s->_value._width, s->_value._height);
 
-			Common::Point topLeft = s->_value._startPoint + s->_value.getRegistrationOffset();
+			Common::Point topLeft = s->_value._startPoint;
+			if (s->_value._cast) {
+				topLeft -= s->_value._cast->getRegistrationOffset(s->_value._width, s->_value._height);
+			}
 			Common::Rect spriteBbox(
 				topLeft.x,
 				topLeft.y,
@@ -353,7 +357,10 @@ void FilmLoopCastMember::loadFilmLoopDataV4(Common::SeekableReadStreamEndian &st
 					s->_value._castId.asString().c_str(), s->_value._startPoint.x, s->_value._startPoint.y,
 					s->_value._width, s->_value._height);
 
-			Common::Point topLeft = s->_value._startPoint + s->_value.getRegistrationOffset();
+			Common::Point topLeft = s->_value._startPoint;
+			if (s->_value._cast) {
+				topLeft -= s->_value._cast->getRegistrationOffset(s->_value._width, s->_value._height);
+			}
 			Common::Rect spriteBbox(
 				topLeft.x,
 				topLeft.y,
@@ -430,6 +437,14 @@ void FilmLoopCastMember::load() {
 
 void FilmLoopCastMember::unload() {
 	// No unload necessary.
+}
+
+Common::Point FilmLoopCastMember::getRegistrationOffset() {
+	return Common::Point(_initialRect.width() / 2, _initialRect.height() / 2);
+}
+
+Common::Point FilmLoopCastMember::getRegistrationOffset(int16 width, int16 height) {
+	return Common::Point(width / 2, height / 2);
 }
 
 } // End of namespace Director

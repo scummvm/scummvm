@@ -86,6 +86,11 @@ public:
 
 	virtual Common::String formatInfo() { return Common::String(); };
 
+	virtual Common::Rect getBbox();
+	virtual Common::Rect getBbox(int16 width, int16 height);
+	virtual Common::Point getRegistrationOffset() { return Common::Point(0, 0); }
+	virtual Common::Point getRegistrationOffset(int16 width, int16 height) { return Common::Point(0, 0); }
+
 	CastType _type;
 	Common::Rect _initialRect;
 	Common::Rect _boundingRect;

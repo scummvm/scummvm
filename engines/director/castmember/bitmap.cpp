@@ -675,6 +675,15 @@ void BitmapCastMember::setPicture(Image::ImageDecoder &image, bool adjustSize) {
 	setModified(true);
 }
 
+Common::Point BitmapCastMember::getRegistrationOffset() {
+	return Common::Point(_regX - _initialRect.left, _regY - _initialRect.top);
+}
+
+Common::Point BitmapCastMember::getRegistrationOffset(int16 width, int16 height) {
+	Common::Point offset = getRegistrationOffset();
+	return Common::Point(offset.x * width / _initialRect.width(), offset.y * height / _initialRect.height());
+}
+
 bool BitmapCastMember::hasField(int field) {
 	switch (field) {
 	case kTheDepth:

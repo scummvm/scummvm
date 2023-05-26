@@ -161,8 +161,12 @@ bool Movie::processEvent(Common::Event &event) {
 		if (_currentDraggedChannel) {
 			if (_currentDraggedChannel->_sprite->_moveable) {
 				pos = _window->getMousePos();
-
-				_currentDraggedChannel->addDelta(pos - _draggingSpritePos);
+				if (!_currentDraggedChannel->_sprite->_trails) {
+					g_director->getCurrentMovie()->getWindow()->addDirtyRect(_currentDraggedChannel->getBbox());
+				}
+				_currentDraggedChannel->setPosition(pos.x, pos.y);
+				_currentDraggedChannel->_dirty = true;
+				g_director->getCurrentMovie()->getWindow()->addDirtyRect(_currentDraggedChannel->getBbox());
 				_draggingSpritePos = pos;
 			} else {
 				_currentDraggedChannel = nullptr;

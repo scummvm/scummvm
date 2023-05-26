@@ -2699,14 +2699,14 @@ void LB::b_zoomBox(int nargs) {
 	Common::Rect endRect = score->_channels[endSpriteId]->getBbox();
 	if (endRect.isEmpty()) {
 		if ((uint)curFrame + 1 < score->_frames.size()) {
-			Channel endChannel(score->_frames[curFrame + 1]->_sprites[endSpriteId]);
+			Channel endChannel(nullptr, score->_frames[curFrame + 1]->_sprites[endSpriteId]);
 			endRect = endChannel.getBbox();
 		}
 	}
 
 	if (endRect.isEmpty()) {
 		if ((uint)curFrame - 1 > 0) {
-			Channel endChannel(score->_frames[curFrame - 1]->_sprites[endSpriteId]);
+			Channel endChannel(nullptr, score->_frames[curFrame - 1]->_sprites[endSpriteId]);
 			endRect = endChannel.getBbox();
 		}
 	}
