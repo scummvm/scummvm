@@ -681,7 +681,7 @@ Common::Point BitmapCastMember::getRegistrationOffset() {
 
 Common::Point BitmapCastMember::getRegistrationOffset(int16 width, int16 height) {
 	Common::Point offset = getRegistrationOffset();
-	return Common::Point(offset.x * width / _initialRect.width(), offset.y * height / _initialRect.height());
+	return Common::Point(offset.x * width / MAX((int16)1, _initialRect.width()), offset.y * height / MAX((int16)1, _initialRect.height()));
 }
 
 bool BitmapCastMember::hasField(int field) {
