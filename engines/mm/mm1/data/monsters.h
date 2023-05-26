@@ -131,7 +131,7 @@ public:
 	/**
 	 * Get a monster image
 	 */
-	Graphics::ManagedSurface getMonsterImage(int monsterNum);
+	Graphics::ManagedSurface getMonsterImage(int imgNum);
 };
 
 } // namespace MM1
