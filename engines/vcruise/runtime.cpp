@@ -2274,6 +2274,13 @@ bool Runtime::requireAvailableStack(uint n) {
 void Runtime::terminateScript() {
 	_scriptCallStack.clear();
 
+	// Collect any script env vars that affect script termination, then clear so this doesn't leak into
+	// future executions.
+	bool puzzleWasSet = _scriptEnv.puzzleWasSet;
+	bool exitToMenu = _scriptEnv.exitToMenu;
+
+	_scriptEnv = ScriptEnvironmentVars();
+
 	if (_gameState == kGameStateScript)
 		_gameState = kGameStateIdle;
 
@@ -2296,14 +2303,14 @@ void Runtime::terminateScript() {
 
 			// The circuit puzzle doesn't call puzzleDone unless you zoom back into the puzzle,
 			// which can cause the puzzle to leak.  Clean it up here instead.
-			if (!_scriptEnv.puzzleWasSet)
+			if (!puzzleWasSet)
 				_circuitPuzzle.reset();
 		}
 
 		changeToScreen(_roomNumber, _screenNumber);
 	}
 
-	if (_scriptEnv.exitToMenu && _gameState == kGameStateIdle) {
+	if (exitToMenu && _gameState == kGameStateIdle) {
 		changeToCursor(_cursors[kCursorArrow]);
 		if (_gameID == GID_REAH || _gameID == GID_SCHIZM)
 			changeToMenuPage(createMenuMain(_gameID == GID_SCHIZM));
@@ -5391,9 +5398,6 @@ void Runtime::restoreSaveGameSnapshot() {
 
 	_gameState = kGameStateWaitingForAnimation;
 	_isInGame = true;
-
-	// Clear script env vars so nothing triggers from terminateScript
-	_scriptEnv = ScriptEnvironmentVars();
 
 	_havePendingScreenChange = true;
 	_forceScreenChange = true;
