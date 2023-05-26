@@ -1192,6 +1192,10 @@ bool Runtime::runFrame() {
 			break;
 		case kGameStateMenu:
 			moreActions = _menuPage->run();
+
+			if (_gameState != kGameStateMenu)
+				_menuPage.reset();
+
 			break;
 		default:
 			error("Unknown game state");
