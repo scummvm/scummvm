@@ -533,7 +533,7 @@ struct TextStyleDef {
 	uint unknown3;	// Seems to always be 0 for English, other values for other languages
 	uint colorRGB;
 	uint shadowColorRGB;
-	uint unknown4;
+	uint alignment;	// Modulo 10 seems to be alignment: 0 = left, 1 = center, 2 = right
 	uint unknown5;	// Possibly drop shadow offset
 };
 

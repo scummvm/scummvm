@@ -1388,7 +1388,21 @@ void Runtime::drawLabel(Graphics::ManagedSurface *surface, const Common::String 
 	int strWidth = font->getStringWidth(text);
 	int strHeight = font->getFontHeight();
 
-	Common::Point textPos(contentRect.left + (contentRect.width() - strWidth) / 2, contentRect.top + (static_cast<int>(labelDef.graphicHeight) - strHeight) / 2);
+	Common::Point textPos;
+
+	switch (styleIt->_value.alignment % 10u) {
+	case 1:
+		textPos.x = contentRect.left + (contentRect.width() - strWidth) / 2;
+		break;
+	case 2:
+		textPos.x = contentRect.left - strWidth;
+		break;
+	default:
+		textPos.x = contentRect.left;
+		break;
+	}
+
+	textPos.y = contentRect.top + (static_cast<int>(labelDef.graphicHeight) - strHeight) / 2;
 
 	if (shadowColorRGB != 0) {
 		Common::Point shadowPos = textPos + Common::Point(shadowOffset, shadowOffset);
@@ -4830,7 +4844,7 @@ bool Runtime::loadSubtitles(Common::CodePage codePage) {
 				if (textToken[0] != '\"' || textToken[textToken.size() - 1] != '\"')
 					continue;
 
-				_locStrings[kv.key] = textToken.substr(1, textToken.size() - 2);
+				_locStrings[kv.key] = textToken.substr(1, textToken.size() - 2).decode(codePage).encode(Common::kUtf8);
 			} else if (isFontData) {
 				if (tokens.size() != 9)
 					continue;
@@ -4849,7 +4863,7 @@ bool Runtime::loadSubtitles(Common::CodePage codePage) {
 					sscanf(tokens[4].c_str(), "%u", &tsDef.unknown3) &&
 					sscanf(tokens[5].c_str(), "0x%x", &tsDef.colorRGB) &&
 					sscanf(tokens[6].c_str(), "0x%x", &tsDef.shadowColorRGB) &&
-					sscanf(tokens[7].c_str(), "%u", &tsDef.unknown4) &&
+					sscanf(tokens[7].c_str(), "%u", &tsDef.alignment) &&
 					sscanf(tokens[8].c_str(), "%u", &tsDef.unknown5)) {
 					_locTextStyles[kv.key] = tsDef;
 				}

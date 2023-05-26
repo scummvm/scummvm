@@ -666,10 +666,34 @@ ReahHelpMenuPage::ReahHelpMenuPage(bool isSchizm) : ReahMenuBarPage(kMenuBarButt
 }
 
 void ReahHelpMenuPage::addPageContents() {
+	Graphics::ManagedSurface *menuSurf = _menuInterface->getMenuSurface();
+
 	Graphics::Surface *helpBG = _menuInterface->getUIGraphic(12);
+
 	if (helpBG) {
-		_menuInterface->getMenuSurface()->blitFrom(*helpBG, Common::Point(0, 44));
+		menuSurf->blitFrom(*helpBG, Common::Point(0, 44));
 		_menuInterface->commitRect(Common::Rect(0, 44, helpBG->w, 44 + helpBG->h));
+	}
+
+	if (_isSchizm) {
+		for (int htX = 0; htX < 2; htX++) {
+			for (int htY = 0; htY < 6; htY++) {
+				Common::String labelID = Common::String::format("szData012_%02i", htX * 6 + htY + 2);
+
+				Common::Point topLeft = Common::Point(htX * 280 + 60, htY * 25 + 140);
+				Common::Rect rect(topLeft.x, topLeft.y, topLeft.x + 280, topLeft.y + 25);
+
+				_menuInterface->drawLabel(menuSurf, labelID, rect);
+
+				_menuInterface->commitRect(rect);
+			}
+		}
+
+		Common::Rect titleRect(240, 80, 400, 124);
+
+		_menuInterface->drawLabel(menuSurf, "szData012_01", titleRect);
+
+		_menuInterface->commitRect(titleRect);
 	}
 }
 
@@ -1056,6 +1080,13 @@ void ReahSchizmMainMenuPage::start() {
 		Common::Rect interactiveRect(buttonCoords[i].x, buttonCoords[i].y, buttonCoords[i].x + buttonSize.x, buttonCoords[i].y + 34);
 
 		_buttons.push_back(Button(buttonGraphic, graphicRect, screenRect, interactiveRect, Common::Point(buttonSize.x, 0), isEnabled, buttonStates[i]));
+	}
+
+	if (_isSchizm) {
+		Common::Rect copyrightRect = Common::Rect(6, 456, 308, 480);
+
+		_menuInterface->drawLabel(menuSurf, "szData000_01", copyrightRect);
+		_menuInterface->commitRect(copyrightRect);
 	}
 
 	ReahSchizmMenuPage::start();
