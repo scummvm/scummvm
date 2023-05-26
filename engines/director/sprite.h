@@ -83,7 +83,6 @@ public:
 	MacShape *getShape();
 	uint32 getForeColor();
 	uint32 getBackColor();
-	Common::Point getRegistrationOffset();
 
 	Frame *_frame;
 	Score *_score;

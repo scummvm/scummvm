@@ -278,37 +278,6 @@ uint32 Sprite::getForeColor() {
 	}
 }
 
-Common::Point Sprite::getRegistrationOffset() {
-	Common::Point result(0, 0);
-	if (!_cast)
-		return result;
-
-	switch (_cast->_type) {
-	case kCastBitmap:
-		{
-			BitmapCastMember *bc = (BitmapCastMember *)(_cast);
-
-			// stretch the offset
-			if (!_stretch && (_width != bc->_initialRect.width() || _height != bc->_initialRect.height())) {
-				result.x = (bc->_initialRect.left - bc->_regX) * _width / bc->_initialRect.width();
-				result.y = (bc->_initialRect.top - bc->_regY) * _height / bc->_initialRect.height();
-			} else {
-				result.x = bc->_initialRect.left - bc->_regX;
-				result.y = bc->_initialRect.top - bc->_regY;
-			}
-		}
-		break;
-	case kCastDigitalVideo:
-	case kCastFilmLoop:
-		result.x = _cast->_initialRect.width() >> 1;
-		result.y = _cast->_initialRect.height() >> 1;
-		break;
-	default:
-		break;
-	}
-	return result;
-}
-
 void Sprite::updateEditable() {
 	if (!_cast)
 		return;

@@ -324,6 +324,14 @@ Common::String DigitalVideoCastMember::formatInfo() {
 	);
 }
 
+Common::Point DigitalVideoCastMember::getRegistrationOffset() {
+	return Common::Point(_initialRect.width() / 2, _initialRect.height() / 2);
+}
+
+Common::Point DigitalVideoCastMember::getRegistrationOffset(int16 width, int16 height) {
+	return Common::Point(width / 2, height / 2);
+}
+
 bool DigitalVideoCastMember::hasField(int field) {
 	switch (field) {
 	case kTheCenter:

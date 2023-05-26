@@ -34,10 +34,11 @@ namespace Director {
 
 class Sprite;
 class Cursor;
+class Score;
 
 class Channel {
 public:
-	Channel(Sprite *sp, int priority = 0);
+	Channel(Score *sc, Sprite *sp, int priority = 0);
 	Channel(const Channel &channel);
 	Channel& operator=(const Channel &channel);
 	~Channel();
@@ -59,6 +60,7 @@ public:
 	void setWidth(int w);
 	void setHeight(int h);
 	void setBbox(int l, int t, int r, int b);
+	void setPosition(int x, int y);
 	void setCast(CastMemberID memberID);
 	void setClean(Sprite *nextSprite, int spriteId, bool partial = false);
 	void setEditable(bool editable);
@@ -71,7 +73,6 @@ public:
 
 	void updateGlobalAttr();
 
-	void addDelta(Common::Point pos);
 	bool canKeepWidget(CastMemberID castId);
 	bool canKeepWidget(Sprite *currentSprite, Sprite *nextSprite);
 
@@ -86,8 +87,6 @@ public:
 	bool hasSubChannels();
 	Common::Array<Channel> *getSubChannels();
 
-	void addRegistrationOffset(Common::Point &pos, bool subtract = false);
-
 public:
 	Sprite *_sprite;
 	Cursor _cursor;
@@ -97,7 +96,6 @@ public:
 	bool _visible;
 	uint _constraint;
 	Common::Point _currentPoint;
-	Common::Point _delta;
 	Graphics::ManagedSurface *_mask;
 
 	int _priority;
@@ -115,8 +113,7 @@ public:
 
 private:
 	Graphics::ManagedSurface *getSurface();
-	Common::Point getPosition();
-
+	Score *_score;
 };
 
 } // End of namespace Director

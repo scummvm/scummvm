@@ -57,6 +57,9 @@ public:
 
 	Common::String formatInfo() override;
 
+	Common::Point getRegistrationOffset() override;
+	Common::Point getRegistrationOffset(int16 width, int16 height) override;
+
 	Common::String _filename;
 
 	uint32 _vflags;

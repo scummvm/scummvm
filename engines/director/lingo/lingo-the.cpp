@@ -1550,9 +1550,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			movie->getWindow()->addDirtyRect(channel->getBbox());
 			channel->_dirty = true;
 		}
-
-		channel->_currentPoint.x = d.asPoint().x;
-		channel->_currentPoint.y = d.asPoint().y;
+		channel->setPosition(d.asPoint().x, d.asPoint().y);
 		break;
 	case kTheLocH:
 		if (d.asInt() != channel->_currentPoint.x) {
@@ -1562,7 +1560,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 				movie->getWindow()->addDirtyRect(channel->getBbox());
 				channel->_dirty = true;
 			}
-			channel->_currentPoint.x = d.asInt();
+			channel->setPosition(d.asInt(), channel->_currentPoint.y);
 		}
 		break;
 	case kTheLocV:
@@ -1571,7 +1569,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 				movie->getWindow()->addDirtyRect(channel->getBbox());
 				channel->_dirty = true;
 			}
-			channel->_currentPoint.y = d.asInt();
+			channel->setPosition(channel->_currentPoint.x, d.asInt());
 		}
 		break;
 	case kTheMoveableSprite:
