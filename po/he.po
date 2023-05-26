@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-22 22:12+0000\n"
+"POT-Creation-Date: 2023-05-26 05:47+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -5246,7 +5246,7 @@ msgstr ""
 "יש ללחוץ על אישור כדי להמירם כעת, אחרת תשאלו בפעם הבאה שהמשחק יתחיל.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:293
+#: engines/vcruise/vcruise.cpp:291
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr "המשחק שנשמר נוצר באמצעות גרסה חדשה יותר של ScummVM. לא ניתן לטעון."
 
@@ -6943,12 +6943,12 @@ msgstr "סיום מידי של כל הסרטים שמתנגנים"
 msgid "Failed to read version information from save file"
 msgstr "נכשל בקריאת מידע הגרסה מקובץ השמירה"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:288
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:286
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr "טעינת השמירה נכשלה, קובץ השמירה אינו מכיל מידע גרסה תקף."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:298
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:296
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -9316,7 +9316,7 @@ msgid ""
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:278
+#: engines/vcruise/vcruise.cpp:276
 #, fuzzy
 #| msgid ""
 #| "Failed to load save, the save file doesn't contain valid version "
@@ -9324,13 +9324,13 @@ msgstr ""
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr "טעינת השמירה נכשלה, קובץ השמירה אינו מכיל מידע גרסה תקף."
 
-#: engines/vcruise/vcruise.cpp:283
+#: engines/vcruise/vcruise.cpp:281
 #, fuzzy
 #| msgid "Failed to read version information from save file"
 msgid "Failed to read version information from save file."
 msgstr "נכשל בקריאת מידע הגרסה מקובץ השמירה"
 
-#: engines/vcruise/vcruise.cpp:303
+#: engines/vcruise/vcruise.cpp:301
 #, fuzzy
 #| msgid "An internal error occurred while attempting to write save game data"
 msgid "An unknown error occurred while attempting to load the saved game."

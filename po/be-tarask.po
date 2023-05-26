@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-22 22:12+0000\n"
+"POT-Creation-Date: 2023-05-26 05:47+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -5295,7 +5295,7 @@ msgstr ""
 "зноўку.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:293
+#: engines/vcruise/vcruise.cpp:291
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Захаваная гульня была зроблена цераз навейшую вэрсію ScummVM. Заладаваць "
@@ -7037,12 +7037,12 @@ msgstr ""
 msgid "Failed to read version information from save file"
 msgstr "Ня выйшла заладаваць захаваную гульню з файлу."
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:288
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:286
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:298
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:296
 #, fuzzy
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
@@ -9446,19 +9446,19 @@ msgid ""
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:278
+#: engines/vcruise/vcruise.cpp:276
 #, fuzzy
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "Захаваная гульня была зроблена цераз навейшую вэрсію ScummVM. Заладаваць "
 "немажліва."
 
-#: engines/vcruise/vcruise.cpp:283
+#: engines/vcruise/vcruise.cpp:281
 #, fuzzy
 msgid "Failed to read version information from save file."
 msgstr "Ня выйшла заладаваць захаваную гульню з файлу."
 
-#: engines/vcruise/vcruise.cpp:303
+#: engines/vcruise/vcruise.cpp:301
 #, fuzzy
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ", памылка падчас умацаваньня мены"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-22 22:12+0000\n"
+"POT-Creation-Date: 2023-05-26 05:47+0000\n"
 "PO-Revision-Date: 2023-05-18 01:27+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -5358,7 +5358,7 @@ msgstr ""
 "wenn Du das Spiel erneut startest.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:293
+#: engines/vcruise/vcruise.cpp:291
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Dieser Spielstand wurde mit einer neueren Version von ScummVM erstellt und "
@@ -7088,14 +7088,14 @@ msgstr ""
 "Die Versions-Informationen konnten nicht aus der Spielstand-Datei ausgelesen "
 "werden"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:288
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:286
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Spielstand konnte nicht geladen werden, da die Spielstand-Datei keine "
 "gültigen Versions-Informationen enthält."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:298
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:296
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -9566,19 +9566,19 @@ msgstr ""
 "nicht vorhanden ist.\n"
 "Das Spiel wird spielbar sein, jedoch ohne Musik wiedergegeben."
 
-#: engines/vcruise/vcruise.cpp:278
+#: engines/vcruise/vcruise.cpp:276
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "Spielstand konnte nicht geladen werden, da die Spielstand-Datei vermutlich "
 "beschädigt ist."
 
-#: engines/vcruise/vcruise.cpp:283
+#: engines/vcruise/vcruise.cpp:281
 msgid "Failed to read version information from save file."
 msgstr ""
 "Die Versions-Informationen konnten nicht aus der Spielstand-Datei ausgelesen "
 "werden."
 
-#: engines/vcruise/vcruise.cpp:303
+#: engines/vcruise/vcruise.cpp:301
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ""
 "Beim Versuch, die Spielstand-Dateien zu laden, ist ein unbekannte Fehler "
