@@ -1016,7 +1016,8 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _havePendingCompletionCheck(false), _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false),
 	  _musicTrack(0), _musicActive(true), _scoreSectionEndTime(0), _musicVolume(getDefaultSoundVolume()), _musicVolumeRampStartTime(0), _musicVolumeRampStartVolume(0), _musicVolumeRampRatePerMSec(0), _musicVolumeRampEnd(0),
 	  _panoramaDirectionFlags(0),
-	  _loadedAnimation(0), _loadedAnimationHasSound(false), _animTerminateAtStartOfFrame(true), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0), _animVolume(getDefaultSoundVolume()),
+	  _loadedAnimation(0), _loadedAnimationHasSound(false),
+	  _animTerminateAtStartOfFrame(true), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0), _animVolume(getDefaultSoundVolume()),
 	  _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleLockInteractions(false), _idleIsOnInteraction(false), _idleIsOnOpenCircuitPuzzleLink(false), _idleIsCircuitPuzzleLinkDown(false),
 	  _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
@@ -1026,7 +1027,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _panoramaState(kPanoramaStateInactive),
 	  _listenerX(0), _listenerY(0), _listenerAngle(0), _soundCacheIndex(0),
 	  _isInGame(false),
-	  _subtitleFont(nullptr), _isDisplayingSubtitles(false), _languageIndex(0), _defaultLanguage(defaultLanguage),
+	  _subtitleFont(nullptr), _isDisplayingSubtitles(false), _isSubtitleSourceAnimation(false), _languageIndex(0), _defaultLanguage(defaultLanguage),
 	  _isCDVariant(false) {
 
 	for (uint i = 0; i < kNumDirections; i++) {
@@ -1989,6 +1990,7 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 
 				_subtitleQueue.clear();
 				_isDisplayingSubtitles = false;
+				_isSubtitleSourceAnimation = true;
 
 				SubtitleQueueItem queueItem;
 				queueItem.startTime = millis;
@@ -3561,7 +3563,8 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 
 		_loadedAnimationHasSound = (_animDecoder->getAudioTrackCount() > 0);
 
-		stopSubtitles();
+		if (_isSubtitleSourceAnimation)
+			stopSubtitles();
 	}
 
 	if (_animDecoderState == kAnimDecoderStatePlaying) {
@@ -3771,6 +3774,7 @@ void Runtime::triggerWaveSubtitles(const SoundInstance &snd, const Common::Strin
 void Runtime::stopSubtitles() {
 	_subtitleQueue.clear();
 	_isDisplayingSubtitles = false;
+	_isSubtitleSourceAnimation = false;
 	redrawTray();
 }
 

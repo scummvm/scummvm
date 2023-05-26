@@ -1323,6 +1323,7 @@ private:
 	Common::HashMap<Common::String, SubtitleDef> _waveSubtitles;
 	Common::Array<SubtitleQueueItem> _subtitleQueue;
 	bool _isDisplayingSubtitles;
+	bool _isSubtitleSourceAnimation;
 
 	Common::HashMap<Common::String, Common::String> _locStrings;
 	Common::HashMap<Common::String, TextStyleDef> _locTextStyles;
