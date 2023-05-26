@@ -71,6 +71,20 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_REAH,
 		Common::EN_ANY,
 	},
+	{ // Reah: Face the Unknown, English 6 CD Version (Project Two Interactive variation)
+		{
+			"reah",
+			"English CD",
+			AD_ENTRY2s("Reah.exe", "77bc7f7819cdd443f52b193529138c87", 305664,
+					   "0170_b.wav", "36c0bf57ab5a748ef6699a159195b3ae", 124356),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING,
+			GUIO0()
+		},
+		GID_REAH,
+		Common::EN_ANY,
+	},
 	{ // Reah: Face the Unknown, German 6 CD Version
 		{
 			"reah",
