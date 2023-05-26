@@ -63,7 +63,7 @@ public:
 	virtual bool canSave() const = 0;
 	virtual bool reloadFromCheckpoint() const = 0;
 
-	virtual void getLabelDef(const Common::String &labelID, const Graphics::Font *&outFont, const Common::String *&outTextUTF8, uint32 &outColor, uint32 &outShadowColor) const = 0;
+	virtual void drawLabel(Graphics::ManagedSurface *surface, const Common::String &labelID, const Common::Rect &contentRect) const = 0;
 };
 
 class MenuPage {

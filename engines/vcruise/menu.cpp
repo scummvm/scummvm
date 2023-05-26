@@ -77,12 +77,15 @@ protected:
 
 	struct Button {
 		Button();
-		Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Point &stateOffset, bool enabled);
-		Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Point &stateOffset, bool enabled, const Common::String (&states)[4]);
+		Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Rect &interactiveRect, const Common::Point &stateOffset, bool enabled);
+		Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Rect &interactiveRect, const Common::Point &stateOffset, bool enabled, const Common::String (&states)[4]);
+		Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenAndInteractiveRect, const Common::Point &stateOffset, bool enabled);
+		Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenAndInteractiveRect, const Common::Point &stateOffset, bool enabled, const Common::String (&states)[4]);
 
 		Graphics::Surface *_graphic;
 		Common::Rect _graphicRect;
 		Common::Rect _screenRect;
+		Common::Rect _interactiveRect;
 		Common::Point _stateOffset;
 		bool _enabled;
 
@@ -168,6 +171,8 @@ private:
 	enum SoundMenuCheckbox {
 		kCheckboxSound = 0,
 		kCheckboxMusic,
+
+		kCheckboxSubtitle,
 	};
 
 	enum SoundMenuSlider {
@@ -181,11 +186,14 @@ private:
 	Common::SharedPtr<Graphics::ManagedSurface> _sliderKeyGraphic;
 
 	static const int kSoundSliderWidth = 300;
-	static const int kSoundSliderY = 127;
-	static const int kMusicSliderY = 275;
+	static const int kReahSoundSliderY = 127;
+	static const int kReahMusicSliderY = 275;
+	static const int kSchizmSoundSliderY = 100;
+	static const int kSchizmMusicSliderY = 220;
 
 	bool _soundChecked;
 	bool _musicChecked;
+	bool _subtitleChecked;
 };
 
 class ReahQuitMenuPage : public ReahMenuBarPage {
@@ -304,7 +312,7 @@ void ReahSchizmMenuPage::handleMouseMove(const Common::Point &pt) {
 		for (uint buttonIndex = 0; buttonIndex < _buttons.size(); buttonIndex++) {
 			const Button &button = _buttons[buttonIndex];
 
-			if (button._enabled && button._screenRect.contains(pt)) {
+			if (button._enabled && button._interactiveRect.contains(pt)) {
 				drawButtonInState(buttonIndex, kButtonStateHighlighted);
 
 				_interactionIndex = buttonIndex;
@@ -316,7 +324,7 @@ void ReahSchizmMenuPage::handleMouseMove(const Common::Point &pt) {
 		for (uint checkboxIndex = 0; checkboxIndex < _checkboxes.size(); checkboxIndex++) {
 			const Button &checkbox = _checkboxes[checkboxIndex];
 
-			if (checkbox._screenRect.contains(pt)) {
+			if (checkbox._interactiveRect.contains(pt)) {
 				drawCheckboxInState(checkboxIndex, checkbox._enabled ? kCheckboxStateOnHighlighted : kCheckboxStateOffHighlighted);
 
 				_interactionIndex = checkboxIndex;
@@ -340,7 +348,7 @@ void ReahSchizmMenuPage::handleMouseMove(const Common::Point &pt) {
 
 	case kInteractionStateOverButton: {
 			const Button &button = _buttons[_interactionIndex];
-			if (!button._screenRect.contains(pt)) {
+			if (!button._interactiveRect.contains(pt)) {
 				drawButtonInState(_interactionIndex, kButtonStateIdle);
 
 				_interactionState = kInteractionStateNotInteracting;
@@ -350,7 +358,7 @@ void ReahSchizmMenuPage::handleMouseMove(const Common::Point &pt) {
 
 	case kInteractionStateClickingOnButton: {
 			const Button &button = _buttons[_interactionIndex];
-			if (!button._screenRect.contains(pt)) {
+			if (!button._interactiveRect.contains(pt)) {
 				drawButtonInState(_interactionIndex, kButtonStateHighlighted);
 
 				_interactionState = kInteractionStateClickingOffButton;
@@ -359,7 +367,7 @@ void ReahSchizmMenuPage::handleMouseMove(const Common::Point &pt) {
 
 	case kInteractionStateClickingOffButton: {
 			const Button &button = _buttons[_interactionIndex];
-			if (button._screenRect.contains(pt)) {
+			if (button._interactiveRect.contains(pt)) {
 				drawButtonInState(_interactionIndex, kButtonStatePressed);
 
 				_interactionState = kInteractionStateClickingOnButton;
@@ -398,7 +406,7 @@ void ReahSchizmMenuPage::handleMouseMove(const Common::Point &pt) {
 
 	case kInteractionStateOverCheckbox: {
 			const Button &checkbox = _checkboxes[_interactionIndex];
-			if (!checkbox._screenRect.contains(pt)) {
+			if (!checkbox._interactiveRect.contains(pt)) {
 				drawCheckboxInState(_interactionIndex, checkbox._enabled ? kCheckboxStateOn : kCheckboxStateOff);
 
 				_interactionState = kInteractionStateNotInteracting;
@@ -408,7 +416,7 @@ void ReahSchizmMenuPage::handleMouseMove(const Common::Point &pt) {
 
 	case kInteractionStateClickingOnCheckbox: {
 			const Button &checkbox = _checkboxes[_interactionIndex];
-			if (!checkbox._screenRect.contains(pt)) {
+			if (!checkbox._interactiveRect.contains(pt)) {
 				drawCheckboxInState(_interactionIndex, checkbox._enabled ? kCheckboxStateOnHighlighted : kCheckboxStateOffHighlighted);
 
 				_interactionState = kInteractionStateClickingOffCheckbox;
@@ -417,7 +425,7 @@ void ReahSchizmMenuPage::handleMouseMove(const Common::Point &pt) {
 
 	case kInteractionStateClickingOffCheckbox: {
 			const Button &checkbox = _checkboxes[_interactionIndex];
-			if (checkbox._screenRect.contains(pt)) {
+			if (checkbox._interactiveRect.contains(pt)) {
 				drawCheckboxInState(_interactionIndex, checkbox._enabled ? kCheckboxStateOffHighlighted : kCheckboxStateOnHighlighted);
 
 				_interactionState = kInteractionStateClickingOnCheckbox;
@@ -520,14 +528,30 @@ void ReahMenuBarPage::start() {
 
 	if (graphic) {
 		for (int buttonIndex = 0; buttonIndex < 5; buttonIndex++) {
+			Common::String states[4];
+
+			for (int sti = 0; sti < 4; sti++)
+				states[sti] = Common::String::format("szData004_%02i", buttonIndex + sti * 5 + 1);
+
 			Common::Rect buttonRect(128 * buttonIndex, 0, 128 * buttonIndex + 128, 44);
-			_buttons.push_back(Button(graphic, buttonRect, buttonRect, Common::Point(0, 44), menuButtonsEnabled[buttonIndex]));
+			_buttons.push_back(Button(graphic, buttonRect, buttonRect, Common::Point(0, 44), menuButtonsEnabled[buttonIndex], states));
 		}
 	}
 
 	Graphics::Surface *returnButtonGraphic = _menuInterface->getUIGraphic(9);
-	if (returnButtonGraphic)
-		_buttons.push_back(Button(returnButtonGraphic, Common::Rect(0, 0, 112, 44), Common::Rect(519, 423, 631, 467), Common::Point(0, 44), true));
+	if (returnButtonGraphic) {
+		Common::String states[4];
+		for (int i = 0; i < 4; i++)
+			states[i] = Common::String::format("szData009_%02i", i + 1);
+
+		Common::Rect screenRect = Common::Rect(519, 423, 631, 467);
+		Common::Rect interactiveRect = screenRect;
+
+		if (_isSchizm)
+			interactiveRect.bottom = interactiveRect.top + 32;
+
+		_buttons.push_back(Button(returnButtonGraphic, Common::Rect(0, 0, 112, 44), screenRect, interactiveRect, Common::Point(0, 44), true, states));
+	}
 
 	Graphics::Surface *lowerBarGraphic = _menuInterface->getUIGraphic(8);
 
@@ -601,30 +625,7 @@ void ReahSchizmMenuPage::drawButtonFromListInState(const Common::Array<Button> &
 	Graphics::ManagedSurface *menuSurf = _menuInterface->getMenuSurface();
 	menuSurf->blitFrom(*button._graphic, graphicRect, button._screenRect);
 
-	const Graphics::Font *font = nullptr;
-	const Common::String *labelTextUTF8 = nullptr;
-	uint32 textColor;
-	uint32 shadowColor;
-	_menuInterface->getLabelDef(button._buttonStates[state], font, labelTextUTF8, textColor, shadowColor);
-
-	if (font && labelTextUTF8) {
-		Common::U32String text = labelTextUTF8->decode(Common::kUtf8);
-
-		int strWidth = font->getStringWidth(text);
-		int strHeight = font->getFontHeight();
-
-		Common::Point textPos(button._screenRect.left + (button._screenRect.width() - strWidth) / 2, button._screenRect.top + (button._screenRect.height() - strHeight) / 2);
-
-		if (shadowColor != 0) {
-			Common::Point shadowPos = textPos + Common::Point(1, 1);
-
-			uint32 realShadowColor = menuSurf->format.RGBToColor((shadowColor >> 16) & 0xff, (shadowColor >> 8) & 0xff, shadowColor & 0xff);
-			font->drawString(menuSurf, text, shadowPos.x, shadowPos.y, strWidth, realShadowColor);
-		}
-
-		uint32 realTextColor = menuSurf->format.RGBToColor((textColor >> 16) & 0xff, (textColor >> 8) & 0xff, textColor & 0xff);
-		font->drawString(menuSurf, text, textPos.x, textPos.y, strWidth, realTextColor);
-	}
+	_menuInterface->drawLabel(menuSurf, button._buttonStates[state], button._screenRect);
 
 	_menuInterface->commitRect(Common::Rect(button._screenRect.left, button._screenRect.top, button._screenRect.left + graphicRect.width(), button._screenRect.top + graphicRect.height()));
 }
@@ -632,15 +633,26 @@ void ReahSchizmMenuPage::drawButtonFromListInState(const Common::Array<Button> &
 ReahSchizmMenuPage::Button::Button() : _graphic(nullptr), _enabled(true) {
 }
 
-ReahSchizmMenuPage::Button::Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Point &stateOffset, bool enabled)
-	: _graphic(graphic), _graphicRect(graphicRect), _screenRect(screenRect), _stateOffset(stateOffset), _enabled(enabled) {
+ReahSchizmMenuPage::Button::Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Rect &interactiveRect, const Common::Point &stateOffset, bool enabled)
+	: _graphic(graphic), _graphicRect(graphicRect), _screenRect(screenRect), _interactiveRect(interactiveRect), _stateOffset(stateOffset), _enabled(enabled) {
 }
 
-ReahSchizmMenuPage::Button::Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Point &stateOffset, bool enabled, const Common::String (&states)[4])
-	: _graphic(graphic), _graphicRect(graphicRect), _screenRect(screenRect), _stateOffset(stateOffset), _enabled(enabled) {
+ReahSchizmMenuPage::Button::Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenRect, const Common::Rect &interactiveRect, const Common::Point &stateOffset, bool enabled, const Common::String (&states)[4])
+	: _graphic(graphic), _graphicRect(graphicRect), _screenRect(screenRect), _interactiveRect(interactiveRect), _stateOffset(stateOffset), _enabled(enabled) {
 	for (int i = 0; i < 4; i++)
 		this->_buttonStates[i] = states[i];
 }
+
+ReahSchizmMenuPage::Button::Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenAndInteractiveRect, const Common::Point &stateOffset, bool enabled)
+	: _graphic(graphic), _graphicRect(graphicRect), _screenRect(screenAndInteractiveRect), _interactiveRect(screenAndInteractiveRect), _stateOffset(stateOffset), _enabled(enabled) {
+}
+
+ReahSchizmMenuPage::Button::Button(Graphics::Surface *graphic, const Common::Rect &graphicRect, const Common::Rect &screenAndInteractiveRect, const Common::Point &stateOffset, bool enabled, const Common::String(&states)[4])
+	: _graphic(graphic), _graphicRect(graphicRect), _screenRect(screenAndInteractiveRect), _interactiveRect(screenAndInteractiveRect), _stateOffset(stateOffset), _enabled(enabled) {
+	for (int i = 0; i < 4; i++)
+		this->_buttonStates[i] = states[i];
+}
+
 
 ReahSchizmMenuPage::Slider::Slider() : _graphic(nullptr), _value(0), _maxValue(1) {
 }
@@ -661,7 +673,7 @@ void ReahHelpMenuPage::addPageContents() {
 	}
 }
 
-ReahSoundMenuPage::ReahSoundMenuPage(bool isSchizm) : ReahMenuBarPage(kMenuBarButtonSound, isSchizm), _soundChecked(false), _musicChecked(false) {
+ReahSoundMenuPage::ReahSoundMenuPage(bool isSchizm) : ReahMenuBarPage(kMenuBarButtonSound, isSchizm), _soundChecked(false), _musicChecked(false), _subtitleChecked(false) {
 }
 
 void ReahSoundMenuPage::addPageContents() {
@@ -692,8 +704,36 @@ void ReahSoundMenuPage::addPageContents() {
 
 	Graphics::Surface *soundGraphics = _menuInterface->getUIGraphic(17);
 	if (soundGraphics) {
-		_checkboxes.push_back(Button(soundGraphics, Common::Rect(0, 0, 112, 44), Common::Rect(77, 90, 77 + 112, 90 + 44), Common::Point(0, 44), _soundChecked));
-		_checkboxes.push_back(Button(soundGraphics, Common::Rect(112, 0, 224, 44), Common::Rect(77, 231, 77 + 112, 231 + 44), Common::Point(0, 44), _musicChecked));
+		Common::Point checkboxSize = _isSchizm ? Common::Point(200, 44) : Common::Point(112, 44);
+
+		Common::Rect checkboxGraphicRects[4];
+
+		for (int i = 0; i < 4; i++)
+			checkboxGraphicRects[i] = Common::Rect(checkboxSize.x * i, 0, checkboxSize.x * (i + 1), checkboxSize.y);
+
+		// Schizm has a blank spot where a "Louder" checkbox was
+		const Common::Rect &musicGraphicRect = _isSchizm ? checkboxGraphicRects[2] : checkboxGraphicRects[1];
+
+		Common::Point soundCheckboxScreenCoord = _isSchizm ? Common::Point(50, 100) : Common::Point(77, 90);
+		Common::Point musicCheckboxScreenCoord = _isSchizm ? Common::Point(50, 220) : Common::Point(77, 231);
+		Common::Point subtitleCheckboxScreenCoord = Common::Point(50, 280);
+
+		Common::Rect soundCheckboxScreenRect = Common::Rect(soundCheckboxScreenCoord.x, soundCheckboxScreenCoord.y, soundCheckboxScreenCoord.x + checkboxSize.x, soundCheckboxScreenCoord.y + checkboxSize.y);
+		Common::Rect musicCheckboxScreenRect = Common::Rect(musicCheckboxScreenCoord.x, musicCheckboxScreenCoord.y, musicCheckboxScreenCoord.x + checkboxSize.x, musicCheckboxScreenCoord.y + checkboxSize.y);
+		Common::Rect subtitleCheckboxScreenRect = Common::Rect(subtitleCheckboxScreenCoord.x, subtitleCheckboxScreenCoord.y, subtitleCheckboxScreenCoord.x + checkboxSize.x, subtitleCheckboxScreenCoord.y + checkboxSize.y);
+
+		Common::String checkStates[3][4];
+
+		const int baseStates[3] = {1, 3, 4};
+		for (int i = 0; i < 3; i++)
+			for (int j = 0; j < 4; j++)
+				checkStates[i][j] = Common::String::format("szData017_%02i", static_cast<int>(baseStates[i] + j * 4));
+
+		_checkboxes.push_back(Button(soundGraphics, checkboxGraphicRects[0], soundCheckboxScreenRect, Common::Point(0, checkboxSize.y), _soundChecked, checkStates[0]));
+		_checkboxes.push_back(Button(soundGraphics, musicGraphicRect, musicCheckboxScreenRect, Common::Point(0, checkboxSize.y), _musicChecked, checkStates[1]));
+
+		if (_isSchizm)
+			_checkboxes.push_back(Button(soundGraphics, checkboxGraphicRects[3], subtitleCheckboxScreenRect, Common::Point(0, checkboxSize.y), _subtitleChecked, checkStates[2]));
 
 		Common::Point sliderSize(40, 60);
 
@@ -702,9 +742,11 @@ void ReahSoundMenuPage::addPageContents() {
 		Graphics::PixelFormat srcFormat = soundGraphics->format;
 		Graphics::PixelFormat dstFormat = _sliderKeyGraphic->format;
 
+		int sliderGraphicLeftX = (_isSchizm ? 800 : 224);
+
 		for (int y = 0; y < sliderSize.y; y++) {
 			for (int x = 0; x < sliderSize.x; x++) {
-				uint32 maskColor = soundGraphics->getPixel(224 + x, y + 60);
+				uint32 maskColor = soundGraphics->getPixel(sliderGraphicLeftX + x, y + 60);
 
 				byte r = 0;
 				byte g = 0;
@@ -715,7 +757,7 @@ void ReahSoundMenuPage::addPageContents() {
 				if (r > 128) {
 					dstColor = dstFormat.ARGBToColor(0, 0, 0, 0);
 				} else {
-					uint32 srcColor = soundGraphics->getPixel(224 + x, y);
+					uint32 srcColor = soundGraphics->getPixel(sliderGraphicLeftX + x, y);
 					srcFormat.colorToRGB(srcColor, r, g, b);
 					dstColor = dstFormat.ARGBToColor(255, r, g, b);
 				}
@@ -724,8 +766,13 @@ void ReahSoundMenuPage::addPageContents() {
 			}
 		}
 
-		_sliders.push_back(Slider(_sliderKeyGraphic->surfacePtr(), Common::Rect(236, kSoundSliderY, 236 + 40, kSoundSliderY + 60), sndVol * kSoundSliderWidth / Audio::Mixer::kMaxMixerVolume, kSoundSliderWidth));
-		_sliders.push_back(Slider(_sliderKeyGraphic->surfacePtr(), Common::Rect(236, kMusicSliderY, 236 + 40, kMusicSliderY + 60), musVol * kSoundSliderWidth / Audio::Mixer::kMaxMixerVolume, kSoundSliderWidth));
+		int sliderScreenLeftX = (_isSchizm ? 250 : 236);
+
+		int soundSliderY = (_isSchizm ? kSchizmSoundSliderY : kReahSoundSliderY);
+		int musicSliderY = (_isSchizm ? kSchizmMusicSliderY : kReahMusicSliderY);
+
+		_sliders.push_back(Slider(_sliderKeyGraphic->surfacePtr(), Common::Rect(sliderScreenLeftX, soundSliderY, sliderScreenLeftX + 40, soundSliderY + 60), sndVol * kSoundSliderWidth / Audio::Mixer::kMaxMixerVolume, kSoundSliderWidth));
+		_sliders.push_back(Slider(_sliderKeyGraphic->surfacePtr(), Common::Rect(sliderScreenLeftX, musicSliderY, sliderScreenLeftX + 40, musicSliderY + 60), musVol * kSoundSliderWidth / Audio::Mixer::kMaxMixerVolume, kSoundSliderWidth));
 	}
 }
 
@@ -748,6 +795,7 @@ void ReahSoundMenuPage::onSettingsChanged() {
 
 	_soundChecked = !soundMute;
 	_musicChecked = !musicMute;
+	_subtitleChecked = true;
 
 	eraseSlider(kSliderSound);
 	eraseSlider(kSliderMusic);
@@ -766,6 +814,9 @@ void ReahSoundMenuPage::onSettingsChanged() {
 
 	drawCheckboxInState(kCheckboxSound, _soundChecked ? kCheckboxStateOn : kCheckboxStateOff);
 	drawCheckboxInState(kCheckboxMusic, _musicChecked ? kCheckboxStateOn : kCheckboxStateOff);
+
+	if (_isSchizm)
+		drawCheckboxInState(kCheckboxSubtitle, _subtitleChecked ? kCheckboxStateOn : kCheckboxStateOff);
 }
 
 void ReahSoundMenuPage::eraseSlider(uint sliderIndex) const {
@@ -791,6 +842,10 @@ void ReahSoundMenuPage::onCheckboxClicked(uint button, bool &outChangedState) {
 	if (button == kCheckboxMusic) {
 		_musicChecked = _checkboxes[button]._enabled;
 		applyMusicVolume();
+	}
+	if (button == kCheckboxSubtitle) {
+		_subtitleChecked = _checkboxes[button]._enabled;
+		//applySubtitles();
 	}
 
 	outChangedState = false;
@@ -873,14 +928,29 @@ void ReahQuitMenuPage::addPageContents() {
 	Graphics::Surface *buttonsGraphic = _menuInterface->getUIGraphic(15);
 
 	if (buttonsGraphic) {
-		_buttons.push_back(Button(buttonsGraphic, Common::Rect(224, 0, 336, 44), Common::Rect(174, 246, 286, 290), Common::Point(0, 44), true));
-		_buttons.push_back(Button(buttonsGraphic, Common::Rect(336, 0, 448, 44), Common::Rect(351, 248, 463, 292), Common::Point(0, 44), true));
+		int noButtonY = _isSchizm ? 246 : 248;
+
+		Common::String states[2][4];
+
+		for (int i = 0; i < 2; i++)
+			for (int j = 0; j < 4; j++)
+				states[i][j] = Common::String::format("szData015_%02i", i + j * 4 + 3);
+
+		_buttons.push_back(Button(buttonsGraphic, Common::Rect(224, 0, 336, 44), Common::Rect(174, 246, 286, 290), Common::Point(0, 44), true, states[0]));
+		_buttons.push_back(Button(buttonsGraphic, Common::Rect(336, 0, 448, 44), Common::Rect(351, noButtonY, 463, noButtonY + 44), Common::Point(0, 44), true, states[1]));
 	}
 
 	_menuInterface->commitRect(Common::Rect(0, 44, 640, 392));
 
 	// Disable the "Return" button since the "No" button is functionally the same (and Reah does this)
 	_buttons[kMenuBarButtonReturn]._enabled = false;
+
+	if (_isSchizm) {
+		Common::Rect promptRect = Common::Rect(82, 174, 558, 215);
+		_menuInterface->drawLabel(menuSurf, "szData014_04", promptRect);
+
+		_menuInterface->commitRect(promptRect);
+	}
 }
 
 void ReahQuitMenuPage::onButtonClicked(uint button, bool &outChangedState) {
@@ -983,8 +1053,9 @@ void ReahSchizmMainMenuPage::start() {
 
 		Common::Rect graphicRect(0, coordScale * buttonSize.y, buttonSize.x, (coordScale + 1) * buttonSize.y);
 		Common::Rect screenRect(buttonCoords[i].x, buttonCoords[i].y, buttonCoords[i].x + buttonSize.x, buttonCoords[i].y + buttonSize.y);
+		Common::Rect interactiveRect(buttonCoords[i].x, buttonCoords[i].y, buttonCoords[i].x + buttonSize.x, buttonCoords[i].y + 34);
 
-		_buttons.push_back(Button(buttonGraphic, graphicRect, screenRect, Common::Point(buttonSize.x, 0), isEnabled, buttonStates[i]));
+		_buttons.push_back(Button(buttonGraphic, graphicRect, screenRect, interactiveRect, Common::Point(buttonSize.x, 0), isEnabled, buttonStates[i]));
 	}
 
 	ReahSchizmMenuPage::start();
@@ -1017,7 +1088,12 @@ void ReahSchizmMainMenuPage::onButtonClicked(uint button, bool &outChangedState)
 		break;
 
 	case kButtonQuit:
-		_menuInterface->changeMenu(new ReahQuitMenuPage(_isSchizm));
+		// In Schizm, quitting from the main menu doesn't prompt
+		if (_isSchizm)
+			_menuInterface->quitGame();
+		else
+			_menuInterface->changeMenu(new ReahQuitMenuPage(_isSchizm));
+
 		outChangedState = true;
 		break;
 	}

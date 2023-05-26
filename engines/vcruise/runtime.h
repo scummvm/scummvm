@@ -540,10 +540,10 @@ struct TextStyleDef {
 struct UILabelDef {
 	Common::String lineID;
 	Common::String styleDefID;
-	uint unknown1;
-	uint unknown2;
-	uint unknown3;
-	uint unknown4;
+	uint graphicLeft;
+	uint graphicTop;
+	uint graphicWidth;
+	uint graphicHeight;
 };
 
 struct FontCacheItem {
@@ -594,7 +594,8 @@ public:
 
 	bool bootGame(bool newGame);
 
-	void getLabelDef(const Common::String &labelID, const Graphics::Font *&outFont, const Common::String *&outTextUTF8, uint32 &outColor, uint32 &outShadowColor);
+	void drawLabel(Graphics::ManagedSurface *surface, const Common::String &labelID, const Common::Rect &contentRect);
+	void getLabelDef(const Common::String &labelID, const Graphics::Font *&outFont, const Common::String *&outTextUTF8, uint32 &outColor, uint32 &outShadowColor, uint32 &outShadowOffset);
 
 private:
 	enum IndexParseType {

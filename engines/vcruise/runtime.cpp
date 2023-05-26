@@ -79,7 +79,7 @@ public:
 	bool canSave() const override;
 	bool reloadFromCheckpoint() const override;
 
-	void getLabelDef(const Common::String &labelID, const Graphics::Font *&outFont, const Common::String *&outTextUTF8, uint32 &outColor, uint32 &outShadowColor) const override;
+	void drawLabel(Graphics::ManagedSurface *surface, const Common::String &labelID, const Common::Rect &contentRect) const override;
 
 private:
 	Runtime *_runtime;
@@ -129,11 +129,12 @@ void RuntimeMenuInterface::restartGame() const {
 void RuntimeMenuInterface::goToCredits() const {
 	_runtime->clearScreen();
 
-	if (_runtime->_gameID == GID_REAH) {
+	if (_runtime->_gameID == GID_REAH)
 		_runtime->changeToScreen(40, 0xa1);
-	} else {
+	else if (_runtime->_gameID == GID_SCHIZM)
+		_runtime->changeToScreen(1, 0xb2);
+	else
 		error("Don't know what screen to go to for credits for this game");
-	}
 }
 
 void RuntimeMenuInterface::changeMenu(MenuPage *newPage) const {
@@ -159,10 +160,9 @@ bool RuntimeMenuInterface::reloadFromCheckpoint() const {
 	return true;
 }
 
-void RuntimeMenuInterface::getLabelDef(const Common::String &labelID, const Graphics::Font *&outFont, const Common::String *&outTextUTF8, uint32 &outColor, uint32 &outShadowColor) const {
-	return _runtime->getLabelDef(labelID, outFont, outTextUTF8, outColor, outShadowColor);
+void RuntimeMenuInterface::drawLabel(Graphics::ManagedSurface *surface, const Common::String &labelID, const Common::Rect &contentRect) const {
+	_runtime->drawLabel(surface, labelID, contentRect);
 }
-
 
 AnimationDef::AnimationDef() : animNum(0), firstFrame(0), lastFrame(0) {
 }
@@ -1349,29 +1349,52 @@ bool Runtime::bootGame(bool newGame) {
 	return true;
 }
 
-void Runtime::getLabelDef(const Common::String &labelID, const Graphics::Font *&outFont, const Common::String *&outTextUTF8, uint32 &outColor, uint32 &outShadowColor) {
-	outFont = nullptr;
-	outTextUTF8 = nullptr;
-	outColor = 0;
-	outShadowColor = 0;
-
+void Runtime::drawLabel(Graphics::ManagedSurface *surface, const Common::String &labelID, const Common::Rect &contentRect) {
 	Common::HashMap<Common::String, UILabelDef>::const_iterator labelDefIt = _locUILabels.find(labelID);
-	if (labelDefIt != _locUILabels.end()) {
-		const UILabelDef &labelDef = labelDefIt->_value;
+	if (labelDefIt == _locUILabels.end())
+		return;
 
-		Common::HashMap<Common::String, Common::String>::const_iterator lineIt = _locStrings.find(labelDef.lineID);
+	const UILabelDef &labelDef = labelDefIt->_value;
 
-		if (lineIt != _locStrings.end()) {
-			Common::HashMap<Common::String, TextStyleDef>::const_iterator styleIt = _locTextStyles.find(labelDef.styleDefID);
+	Common::HashMap<Common::String, Common::String>::const_iterator lineIt = _locStrings.find(labelDef.lineID);
 
-			if (styleIt != _locTextStyles.end()) {
-				outFont = resolveFont(styleIt->_value.fontName, styleIt->_value.size);
-				outColor = styleIt->_value.colorRGB;
-				outShadowColor = styleIt->_value.shadowColorRGB;
-				outTextUTF8 = &lineIt->_value;
-			}
-		}
+	if (lineIt == _locStrings.end())
+		return;
+
+	Common::HashMap<Common::String, TextStyleDef>::const_iterator styleIt = _locTextStyles.find(labelDef.styleDefID);
+
+	if (styleIt == _locTextStyles.end())
+		return;
+
+	const Graphics::Font *font = resolveFont(styleIt->_value.fontName, styleIt->_value.size);
+	if (!font)
+		return;
+
+	const Common::String &textUTF8 = lineIt->_value;
+	if (textUTF8.size() == 0)
+		return;
+
+	uint32 textColorRGB = styleIt->_value.colorRGB;
+	uint32 shadowColorRGB = styleIt->_value.shadowColorRGB;
+
+	uint shadowOffset = styleIt->_value.size / 10u;
+
+	Common::U32String text = textUTF8.decode(Common::kUtf8);
+
+	int strWidth = font->getStringWidth(text);
+	int strHeight = font->getFontHeight();
+
+	Common::Point textPos(contentRect.left + (contentRect.width() - strWidth) / 2, contentRect.top + (static_cast<int>(labelDef.graphicHeight) - strHeight) / 2);
+
+	if (shadowColorRGB != 0) {
+		Common::Point shadowPos = textPos + Common::Point(shadowOffset, shadowOffset);
+
+		uint32 realShadowColor = surface->format.RGBToColor((shadowColorRGB >> 16) & 0xff, (shadowColorRGB >> 8) & 0xff, shadowColorRGB & 0xff);
+		font->drawString(surface, text, shadowPos.x, shadowPos.y, strWidth, realShadowColor);
 	}
+
+	uint32 realTextColor = surface->format.RGBToColor((textColorRGB >> 16) & 0xff, (textColorRGB >> 8) & 0xff, textColorRGB & 0xff);
+	font->drawString(surface, text, textPos.x, textPos.y, strWidth, realTextColor);
 }
 
 bool Runtime::runIdle() {
@@ -4827,10 +4850,10 @@ bool Runtime::loadSubtitles(Common::CodePage codePage) {
 				labelDef.lineID = tokens[0];
 				labelDef.styleDefID = tokens[1];
 
-				if (sscanf(tokens[2].c_str(), "%u", &labelDef.unknown1) &&
-					sscanf(tokens[3].c_str(), "%u", &labelDef.unknown2) &&
-					sscanf(tokens[4].c_str(), "%u", &labelDef.unknown3) &&
-					sscanf(tokens[5].c_str(), "%u", &labelDef.unknown4)) {
+				if (sscanf(tokens[2].c_str(), "%u", &labelDef.graphicLeft) &&
+					sscanf(tokens[3].c_str(), "%u", &labelDef.graphicTop) &&
+					sscanf(tokens[4].c_str(), "%u", &labelDef.graphicWidth) &&
+					sscanf(tokens[5].c_str(), "%u", &labelDef.graphicHeight)) {
 					_locUILabels[kv.key] = labelDef;
 				}
 			}
@@ -5011,6 +5034,15 @@ void Runtime::drawInGameMenuButton(uint element) {
 	Common::Rect buttonSrcRect = Common::Rect(buttonTopLeftPoint.x, buttonTopLeftPoint.y, buttonTopLeftPoint.x + 128, buttonTopLeftPoint.y + _menuSection.rect.height());
 
 	_menuSection.surf->blitFrom(*_uiGraphics[4], buttonSrcRect, buttonDestRect);
+
+	if (_gameID == GID_SCHIZM) {
+		int labelNumber = static_cast<int>(element) + 1 + buttonState * 5;
+
+		Common::String labelID = Common::String::format("szData004_%02i", labelNumber);
+
+		drawLabel(_menuSection.surf.get(), labelID, buttonDestRect);
+	}
+
 	commitSectionToScreen(_menuSection, buttonDestRect);
 }
 
@@ -5024,12 +5056,19 @@ const Graphics::Font *Runtime::resolveFont(const Common::String &textStyle, uint
 	fcItem->fname = textStyle;
 	fcItem->size = size;
 
-
 #ifdef USE_FREETYPE2
-	const char *fontFile = "NotoSans-Bold.ttf";
+	const char *fontFile = nullptr;
 
-	fcItem->keepAlive.reset(Graphics::loadTTFFontFromArchive(fontFile, size, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeLight));
-	fcItem->font = fcItem->keepAlive.get();
+	if (textStyle == "Verdana")
+		fontFile = "NotoSans-Bold.ttf";
+	else if (textStyle == "Arial")
+		fontFile = "LiberationSans-Bold.ttf";
+
+	if (fontFile) {
+		// Pass as 61dpi to account for weird scaling
+		fcItem->keepAlive.reset(Graphics::loadTTFFontFromArchive(fontFile, size, Graphics::kTTFSizeModeCharacter, 61, Graphics::kTTFRenderModeLight));
+		fcItem->font = fcItem->keepAlive.get();
+	}
 #endif
 
 	if (!fcItem->font)
