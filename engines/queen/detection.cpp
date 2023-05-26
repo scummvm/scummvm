@@ -363,6 +363,19 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// DOS CD - Hebrew
+	{
+		{
+			"queen",
+			"CD",
+			AD_ENTRY1s("queen.1c", "a88effce52227a1842636ce753c2e646", 100455438),
+			Common::HE_ISR,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO2(GAMEOPTION_ALT_INTRO, GAMEOPTION_ALT_FONT)
+		},
+	},
+
 	// DOS CD - Italian (Compressed Freeware Release v1.0)
 	{
 		{
