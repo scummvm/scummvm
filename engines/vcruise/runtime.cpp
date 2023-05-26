@@ -2335,6 +2335,13 @@ void Runtime::terminateScript() {
 
 	if (exitToMenu && _gameState == kGameStateIdle) {
 		changeToCursor(_cursors[kCursorArrow]);
+
+		if (_gameID == GID_SCHIZM && _musicActive) {
+			_scoreTrack = "music99";
+			_scoreSection = "start";
+			startScoreSection();
+		}
+
 		if (_gameID == GID_REAH || _gameID == GID_SCHIZM)
 			changeToMenuPage(createMenuMain(_gameID == GID_SCHIZM));
 		else
