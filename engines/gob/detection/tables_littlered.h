@@ -141,6 +141,20 @@
 	kFeaturesAdLib | kFeaturesEGA,
 	0, 0, 0
 },
+{ // Included in a German version of Adi 2
+	{
+		"littlered",
+		"",
+		AD_ENTRY1s("intro.stk", "1c00173d73a3691cc93948f6575d7c75", 1188138),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeLittleRed,
+	kFeaturesAdLib | kFeaturesEGA,
+	0, 0, 0
+},
 {
 	{
 		"littlered",
