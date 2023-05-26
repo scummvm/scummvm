@@ -5392,6 +5392,9 @@ void Runtime::restoreSaveGameSnapshot() {
 	_gameState = kGameStateWaitingForAnimation;
 	_isInGame = true;
 
+	// Clear script env vars so nothing triggers from terminateScript
+	_scriptEnv = ScriptEnvironmentVars();
+
 	_havePendingScreenChange = true;
 	_forceScreenChange = true;
 
