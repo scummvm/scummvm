@@ -120,7 +120,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544),
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
 			GUIO0()
 		},
 		GID_SCHIZM,
