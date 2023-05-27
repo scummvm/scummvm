@@ -81,7 +81,6 @@ void Cursor::Load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 void Cursor::HandleEvents(const Common::Event &event) {
 	g_engine->_mouse->hover = false;
-	byte oldState = state;
 
 #if 0
 	if (event.type == SDL_MOUSEMOTION) {
@@ -118,7 +117,13 @@ void Cursor::HandleEvents(const Common::Event &event) {
 		button.x = event.mouse.x;
 		button.y = event.mouse.y;
 	}
+}
 
+//------------------------------------------------------------------------
+// Purpose: Draw
+//------------------------------------------------------------------------
+void Cursor::Draw() {
+	uint8 oldState = state;
 	state = (hover ? 1 : 0) | (pressed << 1);
 
 	if (state != oldState) {
@@ -134,26 +139,6 @@ void Cursor::HandleEvents(const Common::Event &event) {
 				CursorMan.replaceCursor(img.texture->rawSurface(), 0, 0, 0);
 		}
 	}
-}
-
-//------------------------------------------------------------------------
-// Purpose: Draw
-//------------------------------------------------------------------------
-void Cursor::Draw() {
-/*
-	//warning("Drawing cursor: %d %d", motion.x, motion.y);
-	if (hover) {
-		if (pressed)
-			img_hover_s.Draw(motion.x + hover_offset.x, motion.y + hover_offset.y);
-		else
-			img_hover.Draw(motion.x + hover_offset.x, motion.y + hover_offset.y);
-	} else {
-		if (pressed)
-			img_s.Draw(motion.x, motion.y);
-		else
-			img.Draw(motion.x, motion.y);
-	}
-*/
 }
 
 } // End of namespace Crab
