@@ -1016,6 +1016,14 @@ void ReahPauseMenuPage::addPageContents() {
 	if (pauseGraphic)
 		menuSurf->blitFrom(*pauseGraphic, Common::Point(164, 186));
 
+	if (_isSchizm) {
+		Common::Rect labelRect1 = Common::Rect(164, 192, 476, 216);
+		Common::Rect labelRect2 = Common::Rect(164, 216, 476, 240);
+
+		_menuInterface->drawLabel(menuSurf, "szData020_01", labelRect1);
+		_menuInterface->drawLabel(menuSurf, "szData020_02", labelRect2);
+	}
+
 	_menuInterface->commitRect(Common::Rect(0, 44, 640, 392));
 }
 
