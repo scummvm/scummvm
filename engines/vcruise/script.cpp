@@ -445,8 +445,8 @@ void ScriptCompiler::compileRoomScriptSet(RoomScriptSet *rss) {
 			if (isNegative)
 				signedNumber = -signedNumber;
 
-			// TODO: Figure out if the vars should be scoped in _fileRoom or _loadAsRoom in the case of duplicate rooms
-			_gs->define(key, _fileRoom, signedNumber);
+			// Based on testing, this should be _loadAsRoom
+			_gs->define(key, _loadAsRoom, signedNumber);
 		} else if (_dialect == kScriptDialectSchizm && token == "~Fun") {
 			Common::String fnName;
 			if (!_parser.parseToken(fnName, state))
