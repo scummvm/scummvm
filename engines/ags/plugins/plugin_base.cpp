@@ -42,6 +42,7 @@
 #include "ags/plugins/ags_sock/ags_sock.h"
 #include "ags/plugins/ags_sprite_font/ags_sprite_font.h"
 #include "ags/plugins/ags_sprite_font/ags_sprite_font_clifftop.h"
+#include "ags/plugins/ags_sprite_video/ags_sprite_video.h"
 #include "ags/plugins/ags_tcp_ip/ags_tcp_ip.h"
 #include "ags/plugins/ags_touch/ags_touch.h"
 #include "ags/plugins/ags_trans/ags_trans.h"
@@ -93,6 +94,9 @@ Plugins::PluginBase *pluginOpen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("agsCreditz2"))
 		return new AGSCreditz::AGSCreditz2();
+
+	if (fname.equalsIgnoreCase("ags_d3d") || fname.equalsIgnoreCase("ags_spritevideo"))
+		return new AGSSpriteVideo::AGSSpriteVideo();
 
 	if (fname.equalsIgnoreCase("AGS_Fire"))
 		return new AGSFire::AGSFire();
