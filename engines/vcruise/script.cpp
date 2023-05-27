@@ -683,7 +683,7 @@ static ScriptNamedInstruction g_reahNamedInstructions[] = {
 	{"saveAs", ProtoOp::kProtoOpScript, ScriptOps::kSaveAs},
 	{"save0", ProtoOp::kProtoOpNoop, ScriptOps::kSave0},
 	{"exit", ProtoOp::kProtoOpScript, ScriptOps::kExit},
-	{"allowedSave", ProtoOp::kProtoOpScript, ScriptOps::kBlockSaves},
+	{"allowedSave", ProtoOp::kProtoOpScript, ScriptOps::kAllowSaves},
 };
 
 
@@ -811,7 +811,7 @@ static ScriptNamedInstruction g_schizmNamedInstructions[] = {
 	{"ret", ProtoOp::kProtoOpScript, ScriptOps::kReturn},
 
 	{"backStart", ProtoOp::kProtoOpScript, ScriptOps::kBackStart},
-	{"allowedSave", ProtoOp::kProtoOpScript, ScriptOps::kBlockSaves},
+	{"allowedSave", ProtoOp::kProtoOpScript, ScriptOps::kAllowSaves},
 };
 
 bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::String &token) {

@@ -1022,7 +1022,7 @@ private:
 	void scriptOpSaveAs(ScriptArg_t arg);
 	void scriptOpSave0(ScriptArg_t arg);
 	void scriptOpExit(ScriptArg_t arg);
-	void scriptOpBlockSaves(ScriptArg_t arg);
+	void scriptOpAllowSaves(ScriptArg_t arg);
 
 	void scriptOpAnimName(ScriptArg_t arg);
 	void scriptOpValueName(ScriptArg_t arg);
@@ -1252,6 +1252,8 @@ private:
 
 	bool _idleIsCircuitPuzzleLinkDown;
 	Common::Point _idleCircuitPuzzleCoord;
+
+	bool _forceAllowSaves;
 
 	InGameMenuState _inGameMenuState;
 	uint _inGameMenuActiveElement;

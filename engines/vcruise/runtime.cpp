@@ -1037,6 +1037,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _animTerminateAtStartOfFrame(true), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0), _animVolume(getDefaultSoundVolume()),
 	  _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleLockInteractions(false), _idleIsOnInteraction(false), _idleIsOnOpenCircuitPuzzleLink(false), _idleIsCircuitPuzzleLinkDown(false),
+	  _forceAllowSaves(false),
 	  _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
 	  _inGameMenuState(kInGameMenuStateInvisible), _inGameMenuActiveElement(0), _inGameMenuButtonActive {false, false, false, false, false},
 	  _lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0), _lmbDragTolerance(0),
@@ -2844,6 +2845,7 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 		_haveIdleStaticAnimation = false;
 		_idleCurrentStaticAnimation.clear();
 		_havePendingPlayAmbientSounds = true;
+		_forceAllowSaves = false;
 
 		recordSaveGameSnapshot();
 	}
@@ -4518,7 +4520,7 @@ void Runtime::drawCompass() {
 	}
 
 	// Try to keep this logic in sync with canSave(true)
-	haveLocation = haveHorizontalRotate;
+	haveLocation = (haveHorizontalRotate || _forceAllowSaves);
 	//haveLocation = haveLocation || haveUp || haveDown;
 
 	const Common::Rect blackoutRects[4] = {
@@ -5181,7 +5183,7 @@ void Runtime::onKeymappedEvent(KeymappedEvent kme) {
 
 bool Runtime::canSave(bool onCurrentScreen) const {
 	if (onCurrentScreen) {
-		return (_mostRecentlyRecordedSaveState.get() != nullptr && _haveHorizPanAnimations);
+		return (_mostRecentlyRecordedSaveState.get() != nullptr && (_haveHorizPanAnimations || _forceAllowSaves));
 	} else {
 		return _mostRecentValidSaveState.get() != nullptr && _isInGame;
 	}

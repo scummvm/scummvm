@@ -1361,8 +1361,8 @@ void Runtime::scriptOpBackStart(ScriptArg_t arg) {
 	_scriptEnv.exitToMenu = true;
 }
 
-void Runtime::scriptOpBlockSaves(ScriptArg_t arg) {
-	warning("SAVES SHOULD BE BLOCKED ON THIS SCREEN");
+void Runtime::scriptOpAllowSaves(ScriptArg_t arg) {
+	_forceAllowSaves = true;
 }
 
 void Runtime::scriptOpAnimName(ScriptArg_t arg) {
@@ -2184,7 +2184,7 @@ bool Runtime::runScript() {
 			DISPATCH_OP(SaveAs);
 			DISPATCH_OP(Save0);
 			DISPATCH_OP(Exit);
-			DISPATCH_OP(BlockSaves);
+			DISPATCH_OP(AllowSaves);
 
 			DISPATCH_OP(AnimName);
 			DISPATCH_OP(ValueName);

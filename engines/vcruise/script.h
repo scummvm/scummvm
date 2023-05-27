@@ -146,7 +146,7 @@ enum ScriptOp {
 	kSaveAs,
 	kSave0,
 	kExit,
-	kBlockSaves,
+	kAllowSaves,
 
 	kAnimName,
 	kValueName,
