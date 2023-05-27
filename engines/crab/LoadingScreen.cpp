@@ -28,6 +28,7 @@
  *
  */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/LoadingScreen.h"
 #include "crab/XMLDoc.h"
 
@@ -61,6 +62,8 @@ void LoadingScreen::Draw() {
 
 	// Draw the loading text
 	text.Draw((g_engine->_screenSettings->cur.w - text.W()) / 2, (g_engine->_screenSettings->cur.h - text.H()) / 2);
+
+	g_engine->_screen->update();
 
 	// Update the screen
 	//SDL_RenderPresent(gRenderer);

@@ -62,7 +62,7 @@ public:
 	~LoadingScreen(){};
 
 	void Change() {
-	//	cur = gRandom.Num() % screen.size();
+		cur = g_engine->getRandomNumber(screen.size() - 1);
 	}
 
 	void Load();
