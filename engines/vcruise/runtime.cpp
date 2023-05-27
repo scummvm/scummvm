@@ -5307,7 +5307,7 @@ bool Runtime::canSave(bool onCurrentScreen) const {
 	if (onCurrentScreen) {
 		return (_mostRecentlyRecordedSaveState.get() != nullptr && _haveHorizPanAnimations);
 	} else {
-		return _mostRecentValidSaveState.get() != nullptr;
+		return _mostRecentValidSaveState.get() != nullptr && _isInGame;
 	}
 }
 
