@@ -72,6 +72,11 @@ private:
 protected:
 	void timeout() override;
 
+	/**
+	 * Called when the selected character has been switched
+	 */
+	void charSwitched(Character *priorChar) override;
+	
 public:
 	CharacterInfo();
 	virtual ~CharacterInfo() {}

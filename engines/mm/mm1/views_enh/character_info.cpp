@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/character_info.h"
+#include "mm/mm1/views_enh/scroll_popup.h"
 #include "mm/shared/utils/strings.h"
 #include "mm/mm1/globals.h"
 
@@ -82,10 +83,13 @@ CharacterInfo::CharacterInfo() :
 
 bool CharacterInfo::msgFocus(const FocusMessage &msg) {
 	_viewIcon.load("view.icn");
-	_cursorCell = 0;
+
+	// Don't reset selection after having viewed an attribute
+	if (dynamic_cast<ScrollPopup *>(msg._priorView) == nullptr)
+		_cursorCell = 0;
+
 	showCursor(true);
 	delayFrames(CURSOR_BLINK_FRAMES);
-
 	return PartyView::msgFocus(msg);
 }
 
@@ -320,6 +324,13 @@ void CharacterInfo::showCursor(bool flag) {
 void CharacterInfo::timeout() {
 	showCursor(!_cursorVisible);
 	delayFrames(CURSOR_BLINK_FRAMES);
+}
+
+void CharacterInfo::charSwitched(Character *priorChar) {
+	PartyView::charSwitched(priorChar);
+
+	_cursorCell = 0;
+	redraw();
 }
 
 void CharacterInfo::showAttribute(int attrNum) {
