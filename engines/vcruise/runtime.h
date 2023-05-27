@@ -909,7 +909,10 @@ private:
 
 	const Graphics::Font *resolveFont(const Common::String &textStyle, uint size);
 
-	bool resolveCircuitPuzzleInteraction(const Common::Point &relMouse, Common::Point &outCoord, bool &outIsDown) const;
+	bool resolveCircuitPuzzleInteraction(const Common::Point &relMouse, Common::Point &outCoord, bool &outIsDown, Common::Rect &outHighlightRect) const;
+	void clearCircuitPuzzle();
+	void clearCircuitHighlightRect(const Common::Rect &rect);
+	void drawCircuitHighlightRect(const Common::Rect &rect);
 	static Common::Rect padCircuitInteractionRect(const Common::Rect &rect);
 
 	// Script things
@@ -1245,6 +1248,8 @@ private:
 	uint _idleInteractionID;
 
 	bool _idleIsOnOpenCircuitPuzzleLink;
+	Common::Rect _idleCircuitPuzzleLinkHighlightRect;
+
 	bool _idleIsCircuitPuzzleLinkDown;
 	Common::Point _idleCircuitPuzzleCoord;
 

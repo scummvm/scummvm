@@ -2071,11 +2071,13 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 }
 
 void Runtime::drawSectionToScreen(const RenderSection &section, const Common::Rect &rect) {
+	const RenderSection *sourceSection = &section;
+
 	if (_debugMode && (&_gameSection == &section)) {
-		_gameDebugBackBuffer.surf->blitFrom(*section.surf, rect, rect);
+		_gameDebugBackBuffer.surf->blitFrom(*sourceSection->surf, rect, rect);
 		commitSectionToScreen(_gameDebugBackBuffer, rect);
 	} else
-		commitSectionToScreen(section, rect);
+		commitSectionToScreen(*sourceSection, rect);
 }
 
 void Runtime::commitSectionToScreen(const RenderSection &section, const Common::Rect &rect) {
@@ -2347,7 +2349,7 @@ void Runtime::terminateScript() {
 			// The circuit puzzle doesn't call puzzleDone unless you zoom back into the puzzle,
 			// which can cause the puzzle to leak.  Clean it up here instead.
 			if (!puzzleWasSet)
-				_circuitPuzzle.reset();
+				clearCircuitPuzzle();
 		}
 
 		changeToScreen(_roomNumber, _screenNumber);
@@ -3258,9 +3260,13 @@ bool Runtime::dischargeIdleMouseMove() {
 	bool changedCircuitState = false;
 	bool isOnCircuitLink = false;
 	bool isCircuitLinkDown = false;
+
+	bool wasOnOpenCircuitLink = _idleIsOnOpenCircuitPuzzleLink;
+
 	Common::Point circuitCoord;
+	Common::Rect circuitHighlightRect;
 	if (_circuitPuzzle) {
-		isOnCircuitLink = resolveCircuitPuzzleInteraction(relMouse, circuitCoord, isCircuitLinkDown);
+		isOnCircuitLink = resolveCircuitPuzzleInteraction(relMouse, circuitCoord, isCircuitLinkDown, circuitHighlightRect);
 
 		if (isOnCircuitLink != _idleIsOnOpenCircuitPuzzleLink)
 			changedCircuitState = true;
@@ -3272,13 +3278,24 @@ bool Runtime::dischargeIdleMouseMove() {
 
 	if (changedCircuitState) {
 		_idleIsOnOpenCircuitPuzzleLink = isOnCircuitLink;
+
+		if (wasOnOpenCircuitLink)
+			clearCircuitHighlightRect(_idleCircuitPuzzleLinkHighlightRect);
+
 		if (isOnCircuitLink) {
+			// Started being on a circuit link
+			_idleCircuitPuzzleLinkHighlightRect = circuitHighlightRect;
+			drawCircuitHighlightRect(_idleCircuitPuzzleLinkHighlightRect);
+
 			_idleCircuitPuzzleCoord = circuitCoord;
 			_idleIsCircuitPuzzleLinkDown = isCircuitLinkDown;
 		} else {
+			// No longer on a circuit link
 			_idleCircuitPuzzleCoord = Common::Point(0, 0);
 			_idleIsCircuitPuzzleLinkDown = false;
 		}
+
+		_idleCircuitPuzzleLinkHighlightRect = circuitHighlightRect;
 	}
 
 	if (isOnInteraction && (_idleIsOnInteraction == false || changedCircuitState)) {
@@ -5220,7 +5237,7 @@ const Graphics::Font *Runtime::resolveFont(const Common::String &textStyle, uint
 	return fcItem->font;
 }
 
-bool Runtime::resolveCircuitPuzzleInteraction(const Common::Point &relMouse, Common::Point &outCoord, bool &outIsDown) const {
+bool Runtime::resolveCircuitPuzzleInteraction(const Common::Point &relMouse, Common::Point &outCoord, bool &outIsDown, Common::Rect &outHighlightRect) const {
 	if (!_circuitPuzzle)
 		return false;
 
@@ -5233,6 +5250,7 @@ bool Runtime::resolveCircuitPuzzleInteraction(const Common::Point &relMouse, Com
 				if (padCircuitInteractionRect(rectSpec->_downLinkRect).contains(relMouse)) {
 					outCoord = cellCoord;
 					outIsDown = true;
+					outHighlightRect = rectSpec->_downLinkRect;
 					return true;
 				}
 			}
@@ -5240,6 +5258,7 @@ bool Runtime::resolveCircuitPuzzleInteraction(const Common::Point &relMouse, Com
 				if (padCircuitInteractionRect(rectSpec->_rightLinkRect).contains(relMouse)) {
 					outCoord = cellCoord;
 					outIsDown = false;
+					outHighlightRect = rectSpec->_rightLinkRect;
 					return true;
 				}
 			}
@@ -5247,6 +5266,77 @@ bool Runtime::resolveCircuitPuzzleInteraction(const Common::Point &relMouse, Com
 	}
 
 	return false;
+}
+
+void Runtime::clearCircuitPuzzle() {
+	_circuitPuzzle.reset();
+}
+
+void Runtime::clearCircuitHighlightRect(const Common::Rect &rectBase) {
+	// This is an invert, so these operations are symmetrical
+	drawCircuitHighlightRect(rectBase);
+}
+
+void Runtime::drawCircuitHighlightRect(const Common::Rect &rectBase) {
+	Common::Rect rect(rectBase.left, rectBase.top, rectBase.right + 1, rectBase.bottom + 1);
+
+	Graphics::ManagedSurface *surf = _gameSection.surf.get();
+	uint32 invertMask = surf->format.ARGBToColor(0, 255, 255, 255);
+
+	const uint kNumSpans = 4;
+
+	void *spanStarts[kNumSpans];
+	int32 spanSteps[kNumSpans];
+	uint spanNumPixels[kNumSpans];
+
+	spanStarts[0] = surf->getBasePtr(rect.left, rect.top);
+	spanStarts[1] = surf->getBasePtr(rect.left, rect.bottom - 1);
+	spanStarts[2] = surf->getBasePtr(rect.left, rect.top + 1);
+	spanStarts[3] = surf->getBasePtr(rect.right - 1, rect.top + 1);
+
+	spanSteps[0] = surf->format.bytesPerPixel;
+	spanSteps[1] = surf->format.bytesPerPixel;
+	spanSteps[2] = surf->pitch;
+	spanSteps[3] = surf->pitch;
+
+	spanNumPixels[0] = rect.width();
+	spanNumPixels[1] = rect.width();
+	spanNumPixels[2] = rect.height() - 2;
+	spanNumPixels[3] = rect.height() - 2;
+
+	for (uint spanIndex = 0; spanIndex < kNumSpans; spanIndex++) {
+		void *pixelPtr = spanStarts[spanIndex];
+		int32 step = spanSteps[spanIndex];
+		uint numPixels = spanNumPixels[spanIndex];
+
+		switch (surf->format.bytesPerPixel) {
+		case 1:
+			while (numPixels > 0) {
+				(*static_cast<byte *>(pixelPtr)) ^= invertMask;
+				numPixels--;
+				pixelPtr = static_cast<byte *>(pixelPtr) + step;
+			}
+			break;
+		case 2:
+			while (numPixels > 0) {
+				(*static_cast<uint16 *>(pixelPtr)) ^= invertMask;
+				numPixels--;
+				pixelPtr = static_cast<byte *>(pixelPtr) + step;
+			}
+			break;
+		case 4:
+			while (numPixels > 0) {
+				(*static_cast<uint32 *>(pixelPtr)) ^= invertMask;
+				numPixels--;
+				pixelPtr = static_cast<byte *>(pixelPtr) + step;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	drawSectionToScreen(_gameSection, rect);
 }
 
 Common::Rect Runtime::padCircuitInteractionRect(const Common::Rect &rect) {
@@ -7512,6 +7602,7 @@ void Runtime::scriptOpPuzzleInit(ScriptArg_t arg) {
 	if (firstMover != firstMover2 || unknownParam != 0)
 		error("PuzzleInit had a weird parameter");
 
+	clearCircuitPuzzle();
 	_circuitPuzzle.reset(new CircuitPuzzle(firstMover));
 	_circuitPuzzleConnectAnimation = animDef1;
 	_circuitPuzzleBlockAnimation = animDef2;
@@ -7574,6 +7665,11 @@ void Runtime::scriptOpPuzzleDoMove1(ScriptArg_t arg) {
 
 		_gameState = kGameStateWaitingForAnimation;
 	}
+
+	clearCircuitHighlightRect(_idleCircuitPuzzleLinkHighlightRect);
+	_idleIsOnOpenCircuitPuzzleLink = false;
+
+	changeToCursor(_cursors[kCursorArrow]);
 }
 
 void Runtime::scriptOpPuzzleDoMove2(ScriptArg_t arg) {
