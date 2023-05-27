@@ -354,6 +354,7 @@ void Encounter::surrender() {
 	} else {
 		g_maps->_mapPos.x = map[Maps::MAP_SURRENDER_X];
 		g_maps->_mapPos.y = map[Maps::MAP_SURRENDER_Y];
+		g_maps->visitedTile();
 
 		// Randomly remove food, gems, or gold from the party
 		int val = getRandomNumber(200);

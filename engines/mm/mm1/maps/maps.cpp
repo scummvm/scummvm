@@ -415,7 +415,15 @@ void Maps::changeMap(uint16 id, byte section) {
 	select(id, section);
 	loadTiles();
 
+	visitedTile();
+
 	g_events->send("Game", GameMessage("UPDATE"));
+}
+
+void Maps::visitedTile() {
+	byte &visited = _currentMap->_visited[_mapPos.y * MAP_W + _mapPos.x];
+	if (!visited)
+		visited = VISITED_NORMAL;
 }
 
 void Maps::clearSpecial() {

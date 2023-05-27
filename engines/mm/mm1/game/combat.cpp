@@ -1604,6 +1604,7 @@ void Combat::retreat() {
 		Maps::Map &map = *maps._currentMap;
 		maps._mapPos = Common::Point(map[Maps::MAP_FLEE_X],
 			map[Maps::MAP_FLEE_Y]);
+		maps.visitedTile();
 
 		g_globals->_treasure.clear0();
 		combatDone();
