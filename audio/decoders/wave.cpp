@@ -62,6 +62,13 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 		stream.read(buf, 4);
 	}
 
+	if (memcmp(buf, "JUNK", 4) == 0) {
+		uint32 junksize = stream.readUint32LE();
+		// skip junk padding (add 1 byte if odd)
+		stream.skip(junksize + (junksize % 2));
+		stream.read(buf, 4);
+	}
+
 	if (memcmp(buf, "fmt ", 4) != 0) {
 		warning("getWavInfo: No 'fmt' header");
 		return false;
