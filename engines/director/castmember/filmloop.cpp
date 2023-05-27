@@ -89,6 +89,9 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 		int16 width = src._width * widgetRect.width() / _initialRect.width();
 		int16 height = src._height * widgetRect.height() / _initialRect.height();
 
+		// Film loop frames are constructed as a series of Channels, much like how a normal frame 
+		// is rendered by the Score. We don't include a pointer to the current Score here,
+		// that's only for querying the constraint channel which is not used.
 		Channel chan(nullptr, &src);
 		chan._currentPoint = Common::Point(absX, absY);
 		chan._width = width;
@@ -443,8 +446,8 @@ Common::Point FilmLoopCastMember::getRegistrationOffset() {
 	return Common::Point(_initialRect.width() / 2, _initialRect.height() / 2);
 }
 
-Common::Point FilmLoopCastMember::getRegistrationOffset(int16 width, int16 height) {
-	return Common::Point(width / 2, height / 2);
+Common::Point FilmLoopCastMember::getRegistrationOffset(int16 currentWidth, int16 currentHeight) {
+	return Common::Point(currentWidth / 2, currentHeight / 2);
 }
 
 } // End of namespace Director

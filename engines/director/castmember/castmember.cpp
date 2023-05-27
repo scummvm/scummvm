@@ -79,9 +79,9 @@ Common::Rect CastMember::getBbox() {
 	return result;
 }
 
-Common::Rect CastMember::getBbox(int16 width, int16 height) {
-	Common::Rect result(width, height);
-	Common::Point offset = getRegistrationOffset(width, height);
+Common::Rect CastMember::getBbox(int16 currentWidth, int16 currentHeight) {
+	Common::Rect result(currentWidth, currentHeight);
+	Common::Point offset = getRegistrationOffset(currentWidth, currentHeight);
 	result.moveTo(-offset.x, -offset.y);
 	return result;
 }

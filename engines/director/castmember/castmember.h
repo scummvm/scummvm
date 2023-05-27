@@ -86,10 +86,16 @@ public:
 
 	virtual Common::String formatInfo() { return Common::String(); };
 
+	// Return the default bounding box of the cast member. The origin is at the registration offset.
 	virtual Common::Rect getBbox();
-	virtual Common::Rect getBbox(int16 width, int16 height);
+	// Return the bounding box of the cast member, assuming a stretched width and height value.
+	// The origin is at the registration offset.
+	virtual Common::Rect getBbox(int16 currentWidth, int16 currentHeight);
+	// Return the default registration offset. Offset is relative to the top-left corner of the widget.
 	virtual Common::Point getRegistrationOffset() { return Common::Point(0, 0); }
-	virtual Common::Point getRegistrationOffset(int16 width, int16 height) { return Common::Point(0, 0); }
+	// Return the registration offset, assuming a stretched width and height value.
+	// Offset is relative to the top-left corner of the widget.
+	virtual Common::Point getRegistrationOffset(int16 currentWidth, int16 currentHeight) { return Common::Point(0, 0); }
 
 	CastType _type;
 	Common::Rect _initialRect;
