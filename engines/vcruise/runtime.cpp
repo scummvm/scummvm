@@ -2341,6 +2341,11 @@ void Runtime::terminateScript() {
 
 	drawCompass();
 
+	if (exitToMenu && _gameState == kGameStateIdle) {
+		quitToMenu();
+		return;
+	}
+
 	if (_havePendingScreenChange) {
 		// TODO: Check Reah to see if this condition is okay there too.
 		// This is needed to avoid resetting static animations twice, which causes problems with,
@@ -2357,9 +2362,6 @@ void Runtime::terminateScript() {
 
 		changeToScreen(_roomNumber, _screenNumber);
 	}
-
-	if (exitToMenu && _gameState == kGameStateIdle)
-		quitToMenu();
 }
 
 void Runtime::quitToMenu() {
