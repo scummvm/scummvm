@@ -129,7 +129,7 @@ Common::Point RuntimeMenuInterface::getMouseCoordinate() const {
 void RuntimeMenuInterface::restartGame() const {
 	Common::SharedPtr<SaveGameSnapshot> snapshot = _runtime->generateNewGameSnapshot();
 
-	_runtime->_saveGame = snapshot;
+	_runtime->_mostRecentValidSaveState = snapshot;
 	_runtime->restoreSaveGameSnapshot();
 }
 
@@ -160,11 +160,11 @@ void RuntimeMenuInterface::quitGame() const {
 }
 
 bool RuntimeMenuInterface::canSave() const {
-	return _runtime->canSave();
+	return _runtime->canSave(false);
 }
 
 bool RuntimeMenuInterface::reloadFromCheckpoint() const {
-	if (!_runtime->canSave())
+	if (!_runtime->canSave(false))
 		return false;
 
 	_runtime->restoreSaveGameSnapshot();
@@ -1371,7 +1371,7 @@ bool Runtime::bootGame(bool newGame) {
 
 	if (newGame) {
 		if (ConfMan.hasKey("vcruise_skip_menu") && ConfMan.getBool("vcruise_skip_menu")) {
-			_saveGame = generateNewGameSnapshot();
+			_mostRecentValidSaveState = generateNewGameSnapshot();
 			restoreSaveGameSnapshot();
 		} else {
 			changeToScreen(1, 0xb1);
@@ -2226,6 +2226,7 @@ bool Runtime::runScript() {
 			DISPATCH_OP(SaveAs);
 			DISPATCH_OP(Save0);
 			DISPATCH_OP(Exit);
+			DISPATCH_OP(BlockSaves);
 
 			DISPATCH_OP(AnimName);
 			DISPATCH_OP(ValueName);
@@ -3072,10 +3073,14 @@ void Runtime::clearIdleAnimations() {
 }
 
 void Runtime::changeHero() {
+	assert(canSave(true));
+
 	recordSaveGameSnapshot();
 
-	Common::SharedPtr<SaveGameSwappableState> currentState = _saveGame->states[0];
-	Common::SharedPtr<SaveGameSwappableState> alternateState = _saveGame->states[1];
+	SaveGameSnapshot *snapshot = _mostRecentlyRecordedSaveState.get();
+
+	Common::SharedPtr<SaveGameSwappableState> currentState = snapshot->states[0];
+	Common::SharedPtr<SaveGameSwappableState> alternateState = snapshot->states[1];
 
 	if (_swapOutRoom && _swapOutScreen) {
 		// Some scripts may kick the player out to another location on swap back,
@@ -3087,12 +3092,14 @@ void Runtime::changeHero() {
 		currentState->havePendingPostSwapScreenReset = true;
 	}
 
-	_saveGame->states[0] = alternateState;
-	_saveGame->states[1] = currentState;
+	snapshot->states[0] = alternateState;
+	snapshot->states[1] = currentState;
 
-	_saveGame->hero ^= 1u;
+	snapshot->hero ^= 1u;
 
 	changeToCursor(_cursors[kCursorArrow]);
+
+	_mostRecentValidSaveState = _mostRecentlyRecordedSaveState;
 
 	restoreSaveGameSnapshot();
 }
@@ -3146,6 +3153,9 @@ bool Runtime::triggerPreIdleActions() {
 
 void Runtime::returnToIdleState() {
 	debug(1, "Returned to idle state in room %u screen 0%x facing direction %u", _roomNumber, _screenNumber, _direction);
+
+	if (canSave(true))
+		_mostRecentValidSaveState = _mostRecentlyRecordedSaveState;
 	
 	_idleIsOnInteraction = false;
 	_idleHaveClickInteraction = false;
@@ -3231,7 +3241,7 @@ bool Runtime::dischargeIdleMouseMove() {
 	}
 
 	if (_gameID == GID_SCHIZM && !isOnInteraction) {
-		if (_traySection.rect.contains(_mousePos) && (_traySection.rect.right - _mousePos.x) < (int) 88u) {
+		if (_traySection.rect.contains(_mousePos) && (_traySection.rect.right - _mousePos.x) < (int) 88u && canSave(true)) {
 			isOnInteraction = true;
 			interactionID = kHeroChangeInteractionID;
 		}
@@ -3758,6 +3768,9 @@ void Runtime::triggerSound(SoundLoopBehavior soundLoopBehavior, SoundInstance &s
 			cache->player->setVolumeAndBalance(snd.effectiveVolume, snd.effectiveBalance);
 		}
 	} else {
+		if (!snd.isLooping)
+			cache->stream->rewind();
+
 		cache->player.reset(new AudioPlayer(_mixer, snd.isLooping ? cache->loopingStream.staticCast<Audio::AudioStream>() : cache->stream.staticCast<Audio::AudioStream>(), soundType));
 		cache->player->play(snd.effectiveVolume, snd.effectiveBalance);
 	}
@@ -4702,7 +4715,9 @@ void Runtime::drawCompass() {
 		break;
 	}
 
-	haveLocation = (haveUp || haveDown || haveHorizontalRotate);
+	// Try to keep this logic in sync with canSave(true)
+	haveLocation = haveHorizontalRotate;
+	//haveLocation = haveLocation || haveUp || haveDown;
 
 	const Common::Rect blackoutRects[4] = {
 		Common::Rect(0, 40, 36, 62),  // Left
@@ -5006,7 +5021,7 @@ void Runtime::checkInGameMenuHover() {
 			_inGameMenuButtonActive[0] = true;
 
 			// Save
-			_inGameMenuButtonActive[1] = (_saveGame != nullptr);
+			_inGameMenuButtonActive[1] = (_mostRecentlyRecordedSaveState != nullptr);
 
 			// Load
 			_inGameMenuButtonActive[2] = static_cast<VCruiseEngine *>(g_engine)->hasAnySave();
@@ -5287,8 +5302,12 @@ void Runtime::onKeymappedEvent(KeymappedEvent kme) {
 	queueOSEvent(evt);
 }
 
-bool Runtime::canSave() const {
-	return !!_saveGame;
+bool Runtime::canSave(bool onCurrentScreen) const {
+	if (onCurrentScreen) {
+		return (_mostRecentlyRecordedSaveState.get() != nullptr && _haveHorizPanAnimations);
+	} else {
+		return _mostRecentValidSaveState.get() != nullptr;
+	}
 }
 
 bool Runtime::canLoad() const {
@@ -5299,13 +5318,13 @@ void Runtime::recordSaveGameSnapshot() {
 	if (!_isInGame)
 		return;
 
-	_saveGame.reset();
+	_mostRecentlyRecordedSaveState.reset();
 
 	uint32 timeBase = g_system->getMillis();
 
 	Common::SharedPtr<SaveGameSnapshot> snapshot(new SaveGameSnapshot());
 
-	_saveGame = snapshot;
+	_mostRecentlyRecordedSaveState = snapshot;
 
 	snapshot->states[0].reset(new SaveGameSwappableState());
 	if (_gameID == GID_REAH)
@@ -5406,11 +5425,15 @@ void Runtime::recordSounds(SaveGameSwappableState &state) {
 }
 
 void Runtime::restoreSaveGameSnapshot() {
+	_mostRecentlyRecordedSaveState = _mostRecentValidSaveState;
+
+	SaveGameSnapshot *snapshot = _mostRecentValidSaveState.get();
+
 	uint32 timeBase = g_system->getMillis();
 
-	_altState = _saveGame->states[1];
+	_altState = snapshot->states[1];
 
-	SaveGameSwappableState *mainState = _saveGame->states[0].get();
+	SaveGameSwappableState *mainState = snapshot->states[0].get();
 
 	for (uint i = 0; i < kNumInventorySlots && i < mainState->inventory.size(); i++) {
 		const SaveGameSwappableState::InventoryItem &saveItem = mainState->inventory[i];
@@ -5430,22 +5453,24 @@ void Runtime::restoreSaveGameSnapshot() {
 	_screenNumber = mainState->screenNumber;
 	_direction = mainState->direction;
 	_havePendingPostSwapScreenReset = mainState->havePendingPostSwapScreenReset;
-	_hero = _saveGame->hero;
-	_swapOutRoom = _saveGame->swapOutRoom;
-	_swapOutScreen = _saveGame->swapOutScreen;
-	_swapOutDirection = _saveGame->swapOutDirection;
+	_hero = snapshot->hero;
+	_swapOutRoom = snapshot->swapOutRoom;
+	_swapOutScreen = snapshot->swapOutScreen;
+	_swapOutDirection = snapshot->swapOutDirection;
 
-	_pendingStaticAnimParams = _saveGame->pendingStaticAnimParams;
+	_pendingStaticAnimParams = snapshot->pendingStaticAnimParams;
 
 	_variables.clear();
-	_variables = _saveGame->variables;
+	_variables = snapshot->variables;
 
 	_timers.clear();
 
-	for (const Common::HashMap<uint, uint32>::Node &timerNode : _saveGame->timers)
+	_havePendingPostSwapScreenReset = true;
+
+	for (const Common::HashMap<uint, uint32>::Node &timerNode : snapshot->timers)
 		_timers[timerNode._key] = timerNode._value + timeBase;
 
-	_escOn = _saveGame->escOn;
+	_escOn = snapshot->escOn;
 
 	_musicVolume = mainState->musicVolume;
 	_musicVolumeRampStartTime = 0;
@@ -5454,16 +5479,31 @@ void Runtime::restoreSaveGameSnapshot() {
 	_musicVolumeRampEnd = _musicVolume;
 
 	_musicActive = mainState->musicActive;
-	_musicMuteDisabled = mainState->musicMuteDisabled;
 
-	if (_gameID == GID_REAH)
-		changeMusicTrack(mainState->musicTrack);
-	if (_gameID == GID_SCHIZM) {
-		if (_musicActive) {
-			_scoreSection = mainState->scoreSection;
-			_scoreTrack = mainState->scoreTrack;
-			startScoreSection();
+	if (_musicActive) {
+		bool musicMutedBeforeRestore = (_musicMute && _musicMuteDisabled);
+		bool musicMutedAfterRestore = (_musicMute && mainState->musicMuteDisabled);
+		bool isNewTrack = (_scoreTrack != mainState->scoreTrack);
+
+		_musicMuteDisabled = mainState->musicMuteDisabled;
+		_scoreTrack = mainState->scoreTrack;
+
+		if (_gameID == GID_REAH)
+			changeMusicTrack(mainState->musicTrack);
+		if (_gameID == GID_SCHIZM) {
+			// Only restart music if a new track is playing
+			if (isNewTrack)
+				_scoreSection = mainState->scoreSection;
+
+			if (!musicMutedBeforeRestore && musicMutedAfterRestore) {
+				_musicPlayer.reset();
+				_scoreSectionEndTime = 0;
+			} else if (!musicMutedAfterRestore && (isNewTrack || musicMutedBeforeRestore))
+				startScoreSection();
 		}
+	} else {
+		_musicPlayer.reset();
+		_scoreSectionEndTime = 0;
 	}
 
 	// Stop all sounds since the player instances are stored in the sound cache.
@@ -5472,14 +5512,14 @@ void Runtime::restoreSaveGameSnapshot() {
 
 	_activeSounds.clear();
 
-	_pendingSoundParams3D = _saveGame->pendingSoundParams3D;
+	_pendingSoundParams3D = snapshot->pendingSoundParams3D;
 
-	_triggeredOneShots = _saveGame->triggeredOneShots;
-	_sayCycles = _saveGame->sayCycles;
+	_triggeredOneShots = snapshot->triggeredOneShots;
+	_sayCycles = snapshot->sayCycles;
 
-	_listenerX = _saveGame->listenerX;
-	_listenerY = _saveGame->listenerY;
-	_listenerAngle = _saveGame->listenerAngle;
+	_listenerX = snapshot->listenerX;
+	_listenerY = snapshot->listenerY;
+	_listenerAngle = snapshot->listenerAngle;
 
 	_randomAmbientSounds = mainState->randomAmbientSounds;
 
@@ -5559,7 +5599,7 @@ Common::SharedPtr<SaveGameSnapshot> Runtime::generateNewGameSnapshot() const {
 }
 
 void Runtime::saveGame(Common::WriteStream *stream) const {
-	_saveGame->write(stream);
+	_mostRecentValidSaveState->write(stream);
 }
 
 LoadGameOutcome Runtime::loadGame(Common::ReadStream *stream) {
@@ -5571,7 +5611,7 @@ LoadGameOutcome Runtime::loadGame(Common::ReadStream *stream) {
 	if (outcome != kLoadGameOutcomeSucceeded)
 		return outcome;
 
-	_saveGame = snapshot;
+	_mostRecentValidSaveState = snapshot;
 	restoreSaveGameSnapshot();
 
 	return outcome;
@@ -6718,7 +6758,8 @@ void Runtime::scriptOpSave0(ScriptArg_t arg) {
 
 void Runtime::scriptOpExit(ScriptArg_t arg) {
 	_isInGame = false;
-	_saveGame.reset();
+	_mostRecentlyRecordedSaveState.reset();
+	_mostRecentValidSaveState.reset();
 
 	if (_gameID == GID_REAH) {
 		_havePendingScreenChange = true;
@@ -6906,6 +6947,10 @@ void Runtime::scriptOpEscGet(ScriptArg_t arg) {
 
 void Runtime::scriptOpBackStart(ScriptArg_t arg) {
 	_scriptEnv.exitToMenu = true;
+}
+
+void Runtime::scriptOpBlockSaves(ScriptArg_t arg) {
+	warning("SAVES SHOULD BE BLOCKED ON THIS SCREEN");
 }
 
 void Runtime::scriptOpAnimName(ScriptArg_t arg) {

@@ -308,11 +308,11 @@ Common::Error VCruiseEngine::loadGameStream(Common::SeekableReadStream *stream) 
 }
 
 bool VCruiseEngine::canSaveAutosaveCurrently() {
-	return _runtime->canSave();
+	return _runtime->canSave(false);
 }
 
 bool VCruiseEngine::canSaveGameStateCurrently() {
-	return _runtime->canSave();
+	return _runtime->canSave(false);
 }
 
 bool VCruiseEngine::canLoadGameStateCurrently() {

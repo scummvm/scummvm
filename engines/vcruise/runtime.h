@@ -582,7 +582,7 @@ public:
 	void onKeyDown(Common::KeyCode keyCode);
 	void onKeymappedEvent(KeymappedEvent evt);
 
-	bool canSave() const;
+	bool canSave(bool onCurrentScreen) const;
 	bool canLoad() const;
 
 	void recordSaveGameSnapshot();
@@ -1019,6 +1019,7 @@ private:
 	void scriptOpSaveAs(ScriptArg_t arg);
 	void scriptOpSave0(ScriptArg_t arg);
 	void scriptOpExit(ScriptArg_t arg);
+	void scriptOpBlockSaves(ScriptArg_t arg);
 
 	void scriptOpAnimName(ScriptArg_t arg);
 	void scriptOpValueName(ScriptArg_t arg);
@@ -1308,7 +1309,8 @@ private:
 	Common::Pair<Common::String, Common::SharedPtr<SoundCache> > _soundCache[kSoundCacheSize];
 	uint _soundCacheIndex;
 
-	Common::SharedPtr<SaveGameSnapshot> _saveGame;
+	Common::SharedPtr<SaveGameSnapshot> _mostRecentValidSaveState;			// Always valid
+	Common::SharedPtr<SaveGameSnapshot> _mostRecentlyRecordedSaveState;		// Might be invalid, becomes valid if the player returns to idle
 	Common::SharedPtr<SaveGameSwappableState> _altState;
 	bool _isInGame;
 
