@@ -2909,7 +2909,7 @@ bool Runtime::triggerPreIdleActions() {
 		sanim.nextStartTime = timestamp + sanim.params.initialDelay * 1000u;
 
 		if (sanim.params.initialDelay == 0) {
-			changeAnimation(sanim.animDefs[0], false);
+			changeAnimation(sanim.animDefs[0], sanim.animDefs[0].firstFrame, false, _animSpeedStaticAnim);
 			_animPlayWhileIdle = true;
 			sanim.currentAlternation = 1;
 		}
