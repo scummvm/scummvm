@@ -51,7 +51,7 @@ public:
 	void unload() override;
 
 	Common::Point getRegistrationOffset() override;
-	Common::Point getRegistrationOffset(int16 width, int16 height) override;
+	Common::Point getRegistrationOffset(int16 currentWidth, int16 currentHeight) override;
 
 	bool _enableSound;
 	bool _looping;
