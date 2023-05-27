@@ -5000,6 +5000,8 @@ void Runtime::changeToMenuPage(MenuPage *menuPage) {
 
 	_gameState = kGameStateMenu;
 
+	changeToCursor(_cursors[kCursorArrow]);
+
 	menuPage->init(_menuInterface.get());
 	menuPage->start();
 }
