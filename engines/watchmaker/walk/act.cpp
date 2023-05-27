@@ -266,8 +266,9 @@ void CheckCharacterWithoutBounds(WGame &game, int32 oc, const uint8 *dpl, uint8 
 
 	Char->Walk.Panel = t3dCurRoom->Panel[t3dCurRoom->CurLevel];
 	Char->Walk.PanelNum = t3dCurRoom->NumPanels[t3dCurRoom->CurLevel];
-	if ((t3dCurRoom) && (&t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel]))
+	if (t3dCurRoom) {
 		CurFloorY = t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel];
+	}
 
 	Char->Mesh->Flags |= T3D_MESH_DEFAULTANIM;
 	t3dVectCopy(&Char->Pos, &Char->Mesh->Trasl);
@@ -309,8 +310,9 @@ void FixPos(int32 oc) {
 	t3dCHARACTER *Ch = Character[oc];
 	t3dMESH *mesh = Ch->Mesh;
 
-	if ((t3dCurRoom) && (&t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel]))
+	if (t3dCurRoom) {
 		CurFloorY = t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel];
+	}
 	mesh->Trasl.y = CurFloorY;
 	t3dVectCopy(&Ch->Pos, &mesh->Trasl);
 	t3dVectInit(&Ch->Dir, 0.0f, 0.0f, -1.0f);
@@ -599,8 +601,9 @@ bool CheckCharacterWithBounds(WGame &game, int32 oc, t3dV3F *Pos, uint8 dp, uint
 
 	Char->Walk.Panel = t3dCurRoom->Panel[t3dCurRoom->CurLevel];
 	Char->Walk.PanelNum = t3dCurRoom->NumPanels[t3dCurRoom->CurLevel];
-	if ((t3dCurRoom) && (&t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel]))
+	if (t3dCurRoom) {
 		CurFloorY = t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel];
+	}
 
 	for (i = 0; i < T3D_MAX_CHARACTERS; i++) {
 //		Se il personaggio non e' nascosto e ha pannelli, li aggiunge

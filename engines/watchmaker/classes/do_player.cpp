@@ -434,8 +434,7 @@ void ChangePlayer(WGame &game, uint8 oc) {
 	if (Player && t3dCurRoom) {
 		Player->Walk.Panel = t3dCurRoom->Panel[t3dCurRoom->CurLevel];
 		Player->Walk.PanelNum = t3dCurRoom->NumPanels[t3dCurRoom->CurLevel];
-		if (&t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel])
-			Player->Mesh->Trasl.y = Player->Pos.y = CurFloorY = t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel];
+		Player->Mesh->Trasl.y = Player->Pos.y = CurFloorY = t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel];
 	}
 
 //	Inizia il Fade

@@ -645,8 +645,7 @@ void ProcessCamera(WGame &game) {
 			Player->Walk.OldPanel = -1;
 			for (a = 0; a < Player->Walk.NumSteps; a++)
 				Player->Walk.WalkSteps[a].curp = -1;
-			if (&t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel])
-				CurFloorY = t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel];
+			CurFloorY = t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel];
 		}
 
 
