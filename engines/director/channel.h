@@ -60,7 +60,7 @@ public:
 	void setWidth(int w);
 	void setHeight(int h);
 	void setBbox(int l, int t, int r, int b);
-	void setPosition(int x, int y);
+	void setPosition(int x, int y, bool force = false);
 	void setCast(CastMemberID memberID);
 	void setClean(Sprite *nextSprite, int spriteId, bool partial = false);
 	void setEditable(bool editable);

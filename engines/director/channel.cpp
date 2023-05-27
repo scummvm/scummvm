@@ -569,8 +569,8 @@ void Channel::setBbox(int l, int t, int r, int b) {
 	}
 }
 
-void Channel::setPosition(int x, int y) {
-	if (_sprite->_puppet) {
+void Channel::setPosition(int x, int y, bool force) {
+	if (_sprite->_puppet || force) {
 		Common::Point newPos(x, y);
 		if (_constraint > 0 && _score && _constraint <= _score->_channels.size()) {
 			Common::Rect constraintBbox = _score->_channels[_constraint]->getBbox();
