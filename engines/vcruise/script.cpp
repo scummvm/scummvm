@@ -460,7 +460,9 @@ void ScriptCompiler::compileRoomScriptSet(RoomScriptSet *rss) {
 
 			if (_gs->getFunction(fnIndex)) {
 				// This triggers on fnSoundFountain_Start and fnSoundFountain_Stop in Room30.
-				// fnSoundFountain_Start is called in Room31, so might not matter there?  But fnSoundFountain_Stop is called in Room30.
+				// fnSoundFountain_Start is called in Room31, so that doesn't collide, but
+				// fnSoundFountain_Stop is called in Room30.  Based on testing, the correct
+				// behavior is to call the Room30 version, so we do want to override here.
 				warning("Function '%s' was defined multiple times", fnName.c_str());
 			}
 
