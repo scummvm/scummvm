@@ -258,26 +258,26 @@ void Image::Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &
 		destRect.bottom = static_cast<int16>(clip->h + y);
 	}
 
-	Graphics::Surface *s = new Graphics::Surface();
-	s->copyFrom(texture->getSubArea(srcRect));
+	Graphics::ManagedSurface s;
+	s.copyFrom(texture->getSubArea(srcRect));
 
 	switch(flip) {
 		case FLIP_NONE:
 		break;
 
 		case FLIP_X:
-		s->flipHorizontal(Common::Rect(s->w, s->h));
+		s.surfacePtr()->flipHorizontal(Common::Rect(s.w, s.h));
 		break;
 
 		case FLIP_Y:
-		s->flipVertical(Common::Rect(s->w, s->h));
+		s.surfacePtr()->flipVertical(Common::Rect(s.w, s.h));
 		break;
 
 		default:
 		warning("Flipped texture: %d", flip);
 	}
 
-	surf->blitFrom(s, Common::Rect(s->w, s->h), destRect);
+	surf->blitFrom(s, Common::Rect(s.w, s.h), destRect);
 	//g_engine->_renderSurface->blitFrom(s, Common::Rect(s->w, s->h), destRect);
 }
 
