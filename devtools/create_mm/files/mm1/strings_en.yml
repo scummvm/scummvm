@@ -19,7 +19,7 @@ dialogs:
 		weapons: "weapons     price"
 		misc: "misc       price"
 		backpack: "backpack     price"
-		thankyou: "thank you!"
+		thankyou: "Thank you!"
 	character:
 		legend1: "'q' quick ref     'c' cast    'r' remove"
 		legend2: " # view other     'd' discard 's' share"
