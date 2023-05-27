@@ -2047,4 +2047,225 @@ OPCODE_STUB(Fn)
 #undef PEEK_STACK
 #undef OPCODE_STUB
 
+
+#ifdef DISPATCH_OP
+#error "DISPATCH_OP already defined"
+#endif
+
+#define DISPATCH_OP(op)          \
+	case ScriptOps::k##op:       \
+		this->scriptOp##op(arg); \
+		break
+
+bool Runtime::runScript() {
+	if (_scriptCallStack.empty()) {
+		terminateScript();
+		return true;
+	}
+
+	CallStackFrame &frame = _scriptCallStack.back();
+	const Common::Array<Instruction> &instrs = frame._script->instrs;
+
+	while (_gameState == kGameStateScript) {
+		uint instrNum = frame._nextInstruction;
+
+		if (instrNum >= instrs.size()) {
+			_scriptCallStack.pop_back();
+			return true;
+		}
+
+		frame._nextInstruction = instrNum + 1u;
+
+		const Instruction &instr = instrs[instrNum];
+		int32 arg = instr.arg;
+
+		switch (instr.op) {
+			DISPATCH_OP(Number);
+			DISPATCH_OP(Rotate);
+			DISPATCH_OP(Angle);
+			DISPATCH_OP(AngleGGet);
+			DISPATCH_OP(Speed);
+			DISPATCH_OP(SAnimL);
+			DISPATCH_OP(ChangeL);
+
+			DISPATCH_OP(AnimR);
+			DISPATCH_OP(AnimF);
+			DISPATCH_OP(AnimN);
+			DISPATCH_OP(AnimG);
+			DISPATCH_OP(AnimS);
+			DISPATCH_OP(Anim);
+
+			DISPATCH_OP(Static);
+			DISPATCH_OP(VarLoad);
+			DISPATCH_OP(VarStore);
+			DISPATCH_OP(VarAddAndStore);
+			DISPATCH_OP(VarGlobalLoad);
+			DISPATCH_OP(VarGlobalStore);
+			DISPATCH_OP(ItemCheck);
+			DISPATCH_OP(ItemRemove);
+			DISPATCH_OP(ItemHighlightSet);
+			DISPATCH_OP(ItemAdd);
+			DISPATCH_OP(ItemHaveSpace);
+			DISPATCH_OP(ItemClear);
+			DISPATCH_OP(SetCursor);
+			DISPATCH_OP(SetRoom);
+			DISPATCH_OP(LMB);
+			DISPATCH_OP(LMB1);
+			DISPATCH_OP(SoundS1);
+			DISPATCH_OP(SoundS2);
+			DISPATCH_OP(SoundS3);
+			DISPATCH_OP(SoundL1);
+			DISPATCH_OP(SoundL2);
+			DISPATCH_OP(SoundL3);
+			DISPATCH_OP(3DSoundS2);
+			DISPATCH_OP(3DSoundL2);
+			DISPATCH_OP(3DSoundL3);
+			DISPATCH_OP(StopAL);
+			DISPATCH_OP(Range);
+			DISPATCH_OP(AddXSound);
+			DISPATCH_OP(ClrXSound);
+			DISPATCH_OP(StopSndLA);
+			DISPATCH_OP(StopSndLO);
+
+			DISPATCH_OP(Music);
+			DISPATCH_OP(MusicVolRamp);
+			DISPATCH_OP(Parm0);
+			DISPATCH_OP(Parm1);
+			DISPATCH_OP(Parm2);
+			DISPATCH_OP(Parm3);
+			DISPATCH_OP(ParmG);
+			DISPATCH_OP(SParmX);
+			DISPATCH_OP(SAnimX);
+
+			DISPATCH_OP(VolumeDn2);
+			DISPATCH_OP(VolumeDn3);
+			DISPATCH_OP(VolumeDn4);
+			DISPATCH_OP(VolumeUp3);
+			DISPATCH_OP(Random);
+			DISPATCH_OP(Drop);
+			DISPATCH_OP(Dup);
+			DISPATCH_OP(Swap);
+			DISPATCH_OP(Say1);
+			DISPATCH_OP(Say2);
+			DISPATCH_OP(Say3);
+			DISPATCH_OP(Say3Get);
+			DISPATCH_OP(SetTimer);
+			DISPATCH_OP(GetTimer);
+			DISPATCH_OP(Delay);
+			DISPATCH_OP(LoSet);
+			DISPATCH_OP(LoGet);
+			DISPATCH_OP(HiSet);
+			DISPATCH_OP(HiGet);
+
+			DISPATCH_OP(Not);
+			DISPATCH_OP(And);
+			DISPATCH_OP(Or);
+			DISPATCH_OP(Add);
+			DISPATCH_OP(Sub);
+			DISPATCH_OP(Negate);
+			DISPATCH_OP(CmpEq);
+			DISPATCH_OP(CmpGt);
+			DISPATCH_OP(CmpLt);
+
+			DISPATCH_OP(BitLoad);
+			DISPATCH_OP(BitSet0);
+			DISPATCH_OP(BitSet1);
+
+			DISPATCH_OP(Disc1);
+			DISPATCH_OP(Disc2);
+			DISPATCH_OP(Disc3);
+
+			DISPATCH_OP(Goto);
+
+			DISPATCH_OP(EscOn);
+			DISPATCH_OP(EscOff);
+			DISPATCH_OP(EscGet);
+			DISPATCH_OP(BackStart);
+			DISPATCH_OP(SaveAs);
+			DISPATCH_OP(Save0);
+			DISPATCH_OP(Exit);
+			DISPATCH_OP(BlockSaves);
+
+			DISPATCH_OP(AnimName);
+			DISPATCH_OP(ValueName);
+			DISPATCH_OP(VarName);
+			DISPATCH_OP(SoundName);
+			DISPATCH_OP(CursorName);
+			DISPATCH_OP(Dubbing);
+
+			DISPATCH_OP(CheckValue);
+			DISPATCH_OP(Jump);
+
+			// Schizm ops
+			DISPATCH_OP(CallFunction);
+			DISPATCH_OP(Return);
+
+			DISPATCH_OP(MusicStop);
+			DISPATCH_OP(MusicPlayScore);
+			DISPATCH_OP(ScoreAlways);
+			DISPATCH_OP(ScoreNormal);
+			DISPATCH_OP(SndPlay);
+			DISPATCH_OP(SndPlayEx);
+			DISPATCH_OP(SndPlay3D);
+			DISPATCH_OP(SndPlaying);
+			DISPATCH_OP(SndWait);
+			DISPATCH_OP(SndHalt);
+			DISPATCH_OP(SndToBack);
+			DISPATCH_OP(SndStop);
+			DISPATCH_OP(SndStopAll);
+			DISPATCH_OP(SndAddRandom);
+			DISPATCH_OP(SndClearRandom);
+			DISPATCH_OP(VolumeAdd);
+			DISPATCH_OP(VolumeChange);
+			DISPATCH_OP(AnimVolume);
+			DISPATCH_OP(AnimChange);
+			DISPATCH_OP(ScreenName);
+			DISPATCH_OP(ExtractByte);
+			DISPATCH_OP(InsertByte);
+			DISPATCH_OP(String);
+			DISPATCH_OP(CmpNE);
+			DISPATCH_OP(CmpLE);
+			DISPATCH_OP(CmpGE);
+			DISPATCH_OP(Speech);
+			DISPATCH_OP(SpeechEx);
+			DISPATCH_OP(SpeechTest);
+			DISPATCH_OP(Say);
+			DISPATCH_OP(RandomInclusive);
+			DISPATCH_OP(HeroOut);
+			DISPATCH_OP(HeroGetPos);
+			DISPATCH_OP(HeroSetPos);
+			DISPATCH_OP(HeroGet);
+			DISPATCH_OP(Garbage);
+			DISPATCH_OP(GetRoom);
+			DISPATCH_OP(BitAnd);
+			DISPATCH_OP(BitOr);
+			DISPATCH_OP(AngleGet);
+			DISPATCH_OP(IsCDVersion);
+			DISPATCH_OP(IsDVDVersion);
+			DISPATCH_OP(Disc);
+			DISPATCH_OP(HidePanel);
+			DISPATCH_OP(RotateUpdate);
+			DISPATCH_OP(Mul);
+			DISPATCH_OP(Div);
+			DISPATCH_OP(Mod);
+			DISPATCH_OP(GetDigit);
+			DISPATCH_OP(PuzzleInit);
+			DISPATCH_OP(PuzzleCanPress);
+			DISPATCH_OP(PuzzleDoMove1);
+			DISPATCH_OP(PuzzleDoMove2);
+			DISPATCH_OP(PuzzleDone);
+			DISPATCH_OP(PuzzleWhoWon);
+			DISPATCH_OP(Fn);
+			DISPATCH_OP(ItemHighlightSetTrue);
+
+		default:
+			error("Unimplemented opcode %i", static_cast<int>(instr.op));
+		}
+	}
+
+	return true;
+}
+
+#undef DISPATCH_OP
+
 } // End of namespace VCruise
