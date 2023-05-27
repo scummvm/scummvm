@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	menu.o \
 	runtime.o \
+	runtime_scriptexec.o \
 	sampleloop.o \
 	script.o \
 	textparser.o \
