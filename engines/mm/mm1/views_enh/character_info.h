@@ -36,13 +36,19 @@ class CharacterInfo : public PartyView {
 	struct IconPos {
 		int _frame; int _x; int _y;
 	};
+	class AttributeView : public ScrollPopup {
+	public:
+		AttributeView() : ScrollPopup("ScrollText") {}
+		virtual ~AttributeView() {}
+		bool msgFocus(const FocusMessage &msg) override;
+	};
 private:
 	Shared::Xeen::SpriteResource _viewIcon;
 	static const IconPos ICONS[CHAR_ICONS_COUNT];
 	Common::String ICONS_TEXT[CHAR_ICONS_COUNT];
 	int _cursorCell = 0;
 	bool _cursorVisible = false;
-	ScrollPopup _statInfo;
+	AttributeView _statInfo;
 private:
 	/**
 	 * Draw the title text

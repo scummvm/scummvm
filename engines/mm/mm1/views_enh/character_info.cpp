@@ -61,9 +61,13 @@ const CharacterInfo::IconPos CharacterInfo::ICONS[CHAR_ICONS_COUNT] = {
 	{ 46, 277, 99 }
 };
 
+bool CharacterInfo::AttributeView::msgFocus(const FocusMessage &msg) {
+	ScrollPopup::msgFocus(msg);
+	g_events->send("GameParty", GameMessage("CHAR_HIGHLIGHT", (int)true));
+	return true;
+}
 
-CharacterInfo::CharacterInfo() :
-		PartyView("CharacterInfo"), _statInfo("ScrollText") {
+CharacterInfo::CharacterInfo() : PartyView("CharacterInfo") {
 	_bounds = Common::Rect(0, 0, 320, 146);
 	_statInfo.setReduced(true);
 
