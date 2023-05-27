@@ -1318,6 +1318,10 @@ bool Runtime::bootGame(bool newGame) {
 				_languageIndex = li;
 		}
 	} else if (_gameID == GID_SCHIZM) {
+		_animSpeedRotation = Fraction(21, 1); // Probably accurate
+		_animSpeedStaticAnim = Fraction(21, 1); // Probably accurate
+		_animSpeedDefault = Fraction(21, 1);  // Probably accurate
+
 		const Common::Language langIndexes[] = {
 			Common::PL_POL,
 			Common::EN_GRB,
