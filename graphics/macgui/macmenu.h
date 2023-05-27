@@ -174,7 +174,11 @@ protected:
 	ItemArray _items;
 	bool _isVisible;
 	bool _dimensionsDirty;
+	int _menuDropdownItemHeight;
 	Common::Array<MacMenuSubMenu *> _menustack;
+
+	int _activeItem;
+	int _activeSubItem;
 
 	void renderSubmenu(MacMenuSubMenu *menu, bool recursive = true);
 	void calcSubMenuBounds(MacMenuSubMenu *menu, int x, int y);
@@ -182,7 +186,6 @@ protected:
 private:
 	ManagedSurface _tempSurface;
 	TextAlign _align;
-	int _menuDropdownItemHeight;
 	int _menuLeftDropdownPadding;
 	int _menuRightDropdownPadding;
 
@@ -210,9 +213,6 @@ private:
 
 	const Font *_font;
 	Font *_loadedFont;
-
-	int _activeItem;
-	int _activeSubItem;
 
 	int _lastActiveItem;
 	int _lastActiveSubItem;

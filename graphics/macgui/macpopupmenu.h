@@ -38,6 +38,10 @@ public:
 	bool draw(ManagedSurface *g, bool forceRedraw = false) override;
 	void closeMenu() override;
 
+	// Extra functions
+	void setSmart(bool smart) {
+		_isSmart = smart;
+	}
 private:
 	int kBlinkDelay = 15; // Blink delay for closing animation
 	int kNumBlinks = 3; // Number of blinks
@@ -46,6 +50,10 @@ private:
 	int _mouseY;
 	int _menuItemId;
 	int _menuId;
+
+	bool _isSmart = false;
+	int _offsetY = 0;
+	int _prevCheckedItem = -1;
 
 	bool mouseClicked(int x, int y);
 };

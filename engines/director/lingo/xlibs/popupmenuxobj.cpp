@@ -177,8 +177,8 @@ void PopUpMenuXObj::m_popNum(int nargs) {
 
 	// Convert window coordinates to screen coordinates
 	Common::Rect windowRect = g_director->getCurrentWindow()->getInnerDimensions();
-	int screenTop = top + windowRect.top;
-	int screenLeft = left + windowRect.left;
+	int screenTop = top + windowRect.top - 1;
+	int screenLeft = left + windowRect.left - 1;
 
 	Graphics::MacPopUp *menu = static_cast<Graphics::MacPopUp *>(g_director->_wm->getMenu(me->_menuId));
 	int selected = menu->drawAndSelectMenu(screenLeft, screenTop, itemNum);
@@ -194,8 +194,8 @@ void PopUpMenuXObj::m_popText(int nargs) {
 
 	// Convert window coordinates to screen coordinates
 	Common::Rect windowRect = g_director->getCurrentWindow()->getInnerDimensions();
-	int screenTop = top + windowRect.top;
-	int screenLeft = left + windowRect.left;
+	int screenTop = top + windowRect.top - 1;
+	int screenLeft = left + windowRect.left - 1;
 
 	Graphics::MacPopUp *menu = static_cast<Graphics::MacPopUp *>(g_director->_wm->getMenu(me->_menuId));
 	int selected = menu->drawAndSelectMenu(screenLeft, screenTop, itemNum);
@@ -204,6 +204,13 @@ void PopUpMenuXObj::m_popText(int nargs) {
 	g_lingo->push(Datum(selectedText));
 }
 
+void PopUpMenuXObj::m_smart(int nargs) {
+	PopUpMenuXObject *me = static_cast<PopUpMenuXObject *>(g_lingo->_state->me.u.obj);
+	bool isSmart = g_lingo->pop().asInt() != 0;
+
+	Graphics::MacPopUp *menu = static_cast<Graphics::MacPopUp *>(g_director->_wm->getMenu(me->_menuId));
+	menu->setSmart(isSmart);
+}
 
 XOBJSTUBNR(PopUpMenuXObj::m_appendMenu)
 XOBJSTUBNR(PopUpMenuXObj::m_disableItem)
@@ -212,7 +219,6 @@ XOBJSTUB(PopUpMenuXObj::m_getItem, "")
 XOBJSTUB(PopUpMenuXObj::m_getMenuID, 0)
 XOBJSTUBNR(PopUpMenuXObj::m_setItem)
 XOBJSTUBNR(PopUpMenuXObj::m_setItemMark)
-XOBJSTUBNR(PopUpMenuXObj::m_smart)
 XOBJSTUBNR(PopUpMenuXObj::m_setItemIcon)
 
 } // End of namespace Director
