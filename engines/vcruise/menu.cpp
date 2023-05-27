@@ -728,6 +728,7 @@ void ReahSoundMenuPage::addPageContents() {
 
 	_soundChecked = !soundMute;
 	_musicChecked = !musicMute;
+	_subtitleChecked = ConfMan.getBool("subtitles");
 
 	Graphics::Surface *soundGraphics = _menuInterface->getUIGraphic(17);
 	if (soundGraphics) {
@@ -872,7 +873,7 @@ void ReahSoundMenuPage::onCheckboxClicked(uint button, bool &outChangedState) {
 	}
 	if (button == kCheckboxSubtitle) {
 		_subtitleChecked = _checkboxes[button]._enabled;
-		//applySubtitles();
+		ConfMan.setBool("subtitles", _subtitleChecked);
 	}
 
 	outChangedState = false;
@@ -882,7 +883,7 @@ void ReahSoundMenuPage::onSliderMoved(uint slider) {
 	if (slider == kSliderSound && _soundChecked)
 		applySoundVolume();
 
-	if (slider == kSliderMusic && _musicChecked)
+	if (slider == kSliderMusic)
 		applyMusicVolume();
 }
 
