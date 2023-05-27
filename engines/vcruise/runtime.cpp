@@ -2351,6 +2351,13 @@ void Runtime::terminateScript() {
 		}
 
 		changeToScreen(_roomNumber, _screenNumber);
+
+		// Run any return-to-idle actions so idle mouse moves are discharged again, even if the screen didn't change.
+		// This is necessary to ensure that dischargeIdleMouseMove is called after animS even if it goes back to the same
+		// screen, which is necessary to make sure that clicking the pegs on top of the mechanical computer in Schizm
+		// resets the mouse cursor to interactive again.
+		if (_gameID == GID_SCHIZM)
+			_havePendingReturnToIdleState = true;
 	}
 }
 
