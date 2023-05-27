@@ -37,7 +37,7 @@ bool MacPopUp::draw(ManagedSurface *g, bool forceRedraw) {
 		return false;
 
 	if (_dimensionsDirty)
-		calcSubMenuBounds(_items[0]->submenu, _mouseX, _mouseY);
+		calcSubMenuBounds(_items[0]->submenu, _mouseX, _mouseY + _offsetY);
 
 	if (!_contentIsDirty && !forceRedraw)
 		return false;
@@ -74,6 +74,22 @@ void MacPopUp::closeMenu() {
 		}
 	}
 
+	if (_isSmart && activeSubItem != -1) {
+		// Smart menu, open menu at offset position (so selected item under cursor)
+		int yDisplace = -activeSubItem * _menuDropdownItemHeight;
+		_offsetY = _mouseY + yDisplace > 0 ? yDisplace : -_mouseY; // If offset sum gets out of window, then position menu to 0 (ie below top of window)
+
+		// Checkmark handling
+		setCheckMark(_items[0]->submenu->items[activeSubItem], true);
+
+		// // Uncheck previous item if checked
+		if (_prevCheckedItem != -1 && _prevCheckedItem != activeSubItem) {
+			setCheckMark(_items[0]->submenu->items[_prevCheckedItem], false);
+		}
+
+		_prevCheckedItem = activeSubItem;
+	}
+
 	// Close now
 	MacMenu::closeMenu();
 }
@@ -92,6 +108,14 @@ uint32 MacPopUp::drawAndSelectMenu(int x, int y, int item) {
 	// Push our submenu to stack
 	_menustack.clear();
 	_menustack.push_back(_items[0]->submenu);
+
+	// Highlight previous item if smart menu
+	if (_isSmart && getLastSelectedSubmenuItem() != -1) {
+		_activeItem = 0;
+		_activeSubItem = getLastSelectedSubmenuItem();
+		// Also select the item
+		_items[0]->submenu->highlight = getLastSelectedSubmenuItem();
+	}
 
 	// Display menu and update according to events
 	this->draw(_wm->_screen);
