@@ -630,12 +630,18 @@ APPDIR = AppDir
 
 # AppImage tool doesn't check for metainfo.xml, only appdata.xml
 appimage:
-	@if [ -z "${LINUXDEPLOY}" ]; then echo "LINUXDEPLOY variable must be set to the path of linuxdeploy binary" >&2; exit 1; fi
+	@if [ -z "${LINUXDEPLOY}" -a -z "${APPIMAGETOOL}" ]; then echo "LINUXDEPLOY or APPIMAGETOOL variables must be set to the path of linuxdeploy or go-appimage binaries" >&2; exit 1; fi
 	@if [ "$(prefix)" != '/usr' ]; then echo "Please re-run configure with --prefix=/usr" >&2; exit 1; fi
 	rm -rf "$(APPDIR)"
 	$(MAKE) install DESTDIR="$(APPDIR)"
 	ln -s org.scummvm.scummvm.metainfo.xml "$(APPDIR)/$(datarootdir)/metainfo/org.scummvm.scummvm.appdata.xml"
-	VERSION="$(VERSION)$(VER_REV)" "${LINUXDEPLOY}" --appdir="$(APPDIR)" -o appimage
+	if [ -n "${APPIMAGETOOL}" ]; then \
+		"${APPIMAGETOOL}" -s deploy "$(APPDIR)/$(datarootdir)/applications/org.scummvm.scummvm.desktop" && \
+		LD_LIBRARY_PATH='' find AppDir -type f -exec ldd {} 2>&1 \; | grep '=>' | ( ! grep -v AppDir ) && \
+		VERSION="$(VERSION)$(VER_REV)" "${APPIMAGETOOL}" "$(APPDIR)" ; \
+	else \
+		VERSION="$(VERSION)$(VER_REV)" "${LINUXDEPLOY}" --appdir="$(APPDIR)" -o appimage ; \
+	fi
 
 #
 # Special target to generate project files for various IDEs
