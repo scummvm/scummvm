@@ -1575,10 +1575,7 @@ bool Runtime::runIdle() {
 			if (!_lmbDown) {
 				switch (osEvent.keymappedEvent) {
 				case kKeymappedEventHelp:
-					if (_gameID == GID_REAH)
-						changeToMenuPage(createMenuHelp(_gameID == GID_SCHIZM));
-					else
-						error("Don't have a help menu for this game");
+					changeToMenuPage(createMenuHelp(_gameID == GID_SCHIZM));
 					return true;
 				case kKeymappedEventLoadGame:
 					if (g_engine->loadGameDialog())
@@ -1589,18 +1586,11 @@ bool Runtime::runIdle() {
 						return true;
 					break;
 				case kKeymappedEventPause:
-					if (_gameID == GID_REAH)
-						changeToMenuPage(createMenuPause(_gameID == GID_SCHIZM));
-					else
-						error("Don't have a pause menu for this game");
+					changeToMenuPage(createMenuPause(_gameID == GID_SCHIZM));
 					return true;
 				case kKeymappedEventQuit:
-					if (_gameID == GID_REAH)
-						changeToMenuPage(createMenuQuit(_gameID == GID_SCHIZM));
-					else
-						error("Don't have a quit menu for this game");
+					changeToMenuPage(createMenuQuit(_gameID == GID_SCHIZM));
 					return true;
-
 				default:
 					break;
 				}
