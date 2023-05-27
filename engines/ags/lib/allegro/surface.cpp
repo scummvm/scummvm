@@ -388,6 +388,32 @@ uint32x4_t BITMAP::blendPixelSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint3
 	}
 }
 
+uint16x8_t BITMAP::blendPixelSIMD2Bpp(uint16x8_t srcCols, uint16x8_t destCols, uint16x8_t alphas) const {
+	switch (_G(_blender_mode)) {
+	case kSourceAlphaBlender:
+	case kAdditiveBlenderMode:
+	case kOpaqueBlenderMode:
+		return rgbBlendSIMD2Bpp(srcCols, destCols, vmovq_n_u16(0xff));
+	case kArgbToArgbBlender:
+	case kArgbToRgbBlender:
+	case kRgbToArgbBlender:
+	case kRgbToRgbBlender:
+	case kAlphaPreservedBlenderMode:
+		return rgbBlendSIMD2Bpp(srcCols, destCols, alphas);
+	case kTintBlenderMode:
+	case kTintLightBlenderMode:
+		uint32x4_t srcColsLo = simd2BppTo4Bpp(vget_low_u16(srcCols));
+		uint32x4_t srcColsHi = simd2BppTo4Bpp(vget_high_u16(srcCols));
+		uint32x4_t destColsLo = simd2BppTo4Bpp(vget_low_u16(destCols));
+		uint32x4_t destColsHi = simd2BppTo4Bpp(vget_high_u16(destCols));
+		uint32x4_t alphasLo = simd2BppTo4Bpp(vget_low_u16(alphas));
+		uint32x4_t alphasHi = simd2BppTo4Bpp(vget_high_u16(alphas));
+		uint16x4_t lo = simd4BppTo2Bpp(blendTintSpriteSIMD(srcColsLo, destColsLo, alphasLo, _G(_blender_mode) == kTintLightBlenderMode));
+		uint16x4_t hi = simd4BppTo2Bpp(blendTintSpriteSIMD(srcColsHi, destColsHi, alphasHi, _G(_blender_mode) == kTintLightBlenderMode));
+		return vcombine_u16(lo, hi);
+	}
+}
+
 void BITMAP::blendTintSprite(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha, bool light) const {
 	// Used from draw_lit_sprite after set_blender_mode(kTintBlenderMode or kTintLightBlenderMode)
 	// Original blender function: _myblender_color32 and _myblender_color32_light

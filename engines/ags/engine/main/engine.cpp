@@ -813,6 +813,8 @@ void allegro_bitmap_test_init() {
 	
 	Bitmap *benchgfx1 = BitmapHelper::CreateRawBitmapOwner(load_bmp("benchgfx1.bmp", nullptr));
 	Bitmap *dest = BitmapHelper::CreateBitmap(100, 100, benchgfx1->GetColorDepth());
+	Bitmap *dest2 = BitmapHelper::CreateBitmapCopy(dest, 16);
+	Bitmap *benchgfx2 = BitmapHelper::CreateBitmapCopy(benchgfx1, 16);
 	uint64_t bench_runs[] = {1000, 10000, 100000};
 	if (benchgfx1 != nullptr) {
 		_G(_blender_mode) = kRgbToRgbBlender; // Using normal blender mode
@@ -825,10 +827,21 @@ void allegro_bitmap_test_init() {
 			uint32_t end = std::chrono::high_resolution_clock::now();
 			Debug::Printf(kDbgMsg_Info, "Done! Results (%llu iterations):", bench_runs[i]);
 			Debug::Printf(kDbgMsg_Info, "exec time (mills): %u", end - start);
+			
+			Debug::Printf(kDbgMsg_Info, "Starting Allegro Bitmap Test Bench 2 (16 bpp)");
+			start = std::chrono::high_resolution_clock::now();
+			for (uint64_t j = 0; j < bench_runs[i]; j++) {
+				dest2->Blit(benchgfx2, 0, 0, kBitmap_Transparency);
+			}
+			end = std::chrono::high_resolution_clock::now();
+			Debug::Printf(kDbgMsg_Info, "Done! Results (%llu iterations):", bench_runs[i]);
+			Debug::Printf(kDbgMsg_Info, "exec time (mills): %u", end - start);
 		}
 		
 		delete benchgfx1;
 		delete dest;
+		delete benchgfx2;
+		delete dest2;
 	} else {
 		warning("Couldn't load the test bench graphics!");
 	}
