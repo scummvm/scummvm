@@ -1928,6 +1928,8 @@ void Runtime::scriptOpPuzzleInit(ScriptArg_t arg) {
 	_circuitPuzzleConnectAnimation = animDef1;
 	_circuitPuzzleBlockAnimation = animDef2;
 
+	_idleIsOnOpenCircuitPuzzleLink = false;
+
 	_scriptEnv.puzzleWasSet = true;
 
 	if (firstMover == 2)
@@ -1935,7 +1937,7 @@ void Runtime::scriptOpPuzzleInit(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpPuzzleWhoWon(ScriptArg_t arg) {
-	StackInt_t winner = 0;
+	StackInt_t winner = 2;
 	if (_circuitPuzzle) {
 		switch (_circuitPuzzle->checkConclusion()) {
 		case CircuitPuzzle::kConclusionNone:
@@ -1946,6 +1948,9 @@ void Runtime::scriptOpPuzzleWhoWon(ScriptArg_t arg) {
 			break;
 		case CircuitPuzzle::kConclusionPlayerLost:
 			winner = 2;
+
+			// Clear puzzle so circuit highlights stop appearing
+			_circuitPuzzle.reset();
 			break;
 		default:
 			error("Unhandled puzzle conclusion");
