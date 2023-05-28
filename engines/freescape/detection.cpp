@@ -162,7 +162,6 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		{
 			{"x.prg", 0, "d002983a8b652f25b18a09425db78c4c", 293159},
-			{"playseq.prg", 0, "535e9f6baf132831aa7fa066a06f242e", 973},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
@@ -175,12 +174,24 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		{
 			{"x.prg", 0, "1a79e68e6c2c223c96de0ca2d65149ae", 293062},
-			{"playseq.prg", 0, "535e9f6baf132831aa7fa066a06f242e", 973},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
 		GF_ATARI_BUDGET,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{ // Virtual Worlds release
+		"driller",
+		"This relese requieres unpacking, check the wiki for instructions:\nhttps://wiki.scummvm.org/index.php?title=Driller#AtariST_releases",
+		{
+			{"d.pak", 0, "607b44b9d31e0da5668b653e03d25efe", 706},
+			{"dril.all", 0, "65277222effa1eb4d73b234245001d75", 158158},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_UNSUPPORTED,
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
 	{
@@ -354,6 +365,18 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		{
 			{"x.prg", 0, "bf546ee243c38f51d9beb25c203ccb93", 292624},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_UNSUPPORTED,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"spacestationoblivion",
+		"",
+		{
+			{"x.prg", 0, "10c556ee637bf03bcc1a051277542102", 293264},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
