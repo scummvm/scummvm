@@ -67,7 +67,7 @@ void BlacksmithItems::drawTitle() {
 	if (_mode == SELL_MODE) {
 		// Show sell mode title
 		Common::String title = Common::String::format(
-			STRING["enhdialogs.blacksmith.backpack_for"].c_str(),
+			STRING["enhdialogs.items.backpack_for"].c_str(),
 			c._name,
 			STRING[Common::String::format("stats.classes.%d", c._class)].c_str()
 		);
