@@ -267,7 +267,7 @@ void Runtime::scriptOpAnimN(ScriptArg_t arg) {
 	uint stopFrame = 0;
 	if (computeFaceDirectionAnimation(stackArgs[0], faceDirectionAnimDef, initialFrame, stopFrame)) {
 		_animStopFrame = stopFrame;
-		changeAnimation(*faceDirectionAnimDef, initialFrame, false);
+		changeAnimation(*faceDirectionAnimDef, initialFrame, false, _animSpeedRotation);
 		_gameState = kGameStateWaitingForFacing;
 	}
 
