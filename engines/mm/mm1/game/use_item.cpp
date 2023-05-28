@@ -91,9 +91,7 @@ Common::String UseItem::nonCombatUseItem(Inventory &inv, Inventory::Entry &invEn
 				Game::SpellsParty::cast(_spellIndex, g_globals->_currCharacter);
 
 			} else {
-				// TODO: find out area of Character _effectId is used as an offset for
-				//error("TODO: _effectId used as a character offset to increase attribute?");
-				//add temorary equip bonus to character parameters
+				// Add temorary equip bonus to character parameters
 				applyItemBonus (item->_tempBonus_id, item->_tempBonus_value);
 
 				if (g_globals->_nonCombatEffectCtr)
