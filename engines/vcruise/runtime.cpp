@@ -1176,6 +1176,8 @@ bool Runtime::runFrame() {
 			moreActions = bootGame(true);
 			break;
 		case kGameStateQuit:
+			// Flush any settings changes made in-game
+			ConfMan.flushToDisk();
 			return false;
 		case kGameStateIdle:
 			moreActions = runIdle();
@@ -1247,7 +1249,7 @@ bool Runtime::bootGame(bool newGame) {
 	if (!ConfMan.hasKey("vcruise_increase_drag_distance") || ConfMan.hasKey("vcruise_increase_drag_distance"))
 		_lmbDragTolerance = 3;
 
-	if (ConfMan.hasKey("vcruise_mute_music") && !ConfMan.getBool("vcruise_mute_music"))
+	if (ConfMan.hasKey("vcruise_mute_music") && ConfMan.getBool("vcruise_mute_music"))
 		_musicMute = true;
 	else
 		_musicMute = false;
