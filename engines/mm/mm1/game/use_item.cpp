@@ -88,8 +88,17 @@ Common::String UseItem::nonCombatUseItem(Inventory &inv, Inventory::Entry &invEn
 
 			if (item->_tempBonus_id== 0xff) {
 				setSpell(item->_spellId, 0, 0);
-				Game::SpellsParty::cast(_spellIndex, g_globals->_currCharacter);
-
+				SpellResult result = Game::SpellsParty::cast(_spellIndex, g_globals->_currCharacter);
+				switch (result) {
+				case SR_SUCCESS_DONE:
+					msg = STRING["spells.done"];
+					break;
+				case SR_FAILED:
+					msg = STRING["spells.failed"];
+					break;
+				case SR_SUCCESS_SILENT:
+					break;
+				}
 			} else {
 				// Add temorary equip bonus to character parameters
 				applyItemBonus (item->_tempBonus_id, item->_tempBonus_value);
@@ -100,7 +109,6 @@ Common::String UseItem::nonCombatUseItem(Inventory &inv, Inventory::Entry &invEn
 
 				g_globals->_party.updateAC();
 				msg = STRING["spells.done"];
-				return "";
 			}
 		} else {
 			msg = STRING["dialogs.character.use_noncombat.no_charges_left"];

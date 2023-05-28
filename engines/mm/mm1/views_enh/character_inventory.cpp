@@ -275,7 +275,10 @@ void CharacterInventory::useItem() {
 	else
 		msg = Game::UseItem::nonCombatUseItem(inv, *invEntry, _mode == BACKPACK_MODE);
 
-	displayMessage(msg);
+	if (!msg.empty())
+		displayMessage(msg);
+	else
+		g_events->replaceView("Game", true);
 }
 
 void CharacterInventory::discardItem() {
