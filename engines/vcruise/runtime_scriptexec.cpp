@@ -1996,6 +1996,9 @@ void Runtime::scriptOpPuzzleDoMove1(ScriptArg_t arg) {
 	_idleIsOnOpenCircuitPuzzleLink = false;
 
 	changeToCursor(_cursors[kCursorArrow]);
+
+	// Return to idle so the mouse changes to the correct cursor if it's moved over a new link while waiting for the animation
+	_havePendingReturnToIdleState = true;
 }
 
 void Runtime::scriptOpPuzzleDoMove2(ScriptArg_t arg) {
