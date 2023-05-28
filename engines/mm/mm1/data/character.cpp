@@ -382,16 +382,12 @@ Character::LevelIncrease Character::increaseLevel() {
 }
 
 Character::BuyResult Character::buyItem(byte itemId) {
-	g_globals->_items.getItem(itemId);
-
 	// Check if backpack is full
-	int slotIndex = 0;
-	while (slotIndex < INVENTORY_COUNT && _backpack[slotIndex])
-		++slotIndex;
-	if (slotIndex == INVENTORY_COUNT)
+	if (_backpack.full())
 		return BUY_BACKPACK_FULL;
 
 	// Check character has enough gold
+	g_globals->_items.getItem(itemId);
 	Item &item = g_globals->_currItem;
 	if (_gold < item._cost)
 		return BUY_NOT_ENOUGH_GOLD;

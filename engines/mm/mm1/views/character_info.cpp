@@ -120,6 +120,12 @@ void CharacterInfo::timeout() {
 	}
 }
 
+bool CharacterInfo::msgFocus(const FocusMessage &msg) {
+	CharacterBase::msgFocus(msg);
+	_state = DISPLAY;
+	return true;
+}
+
 bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 	switch (_state) {
 	case DISPLAY:

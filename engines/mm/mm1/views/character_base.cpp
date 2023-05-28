@@ -140,22 +140,28 @@ void CharacterBase::printInventory() {
 	writeString(0, 12, STRING["stats.inventory"]);
 
 	// Print the equipped and backpack items
-	for (int i = 0; i < INVENTORY_COUNT; ++i) {
+	for (uint i = 0; i < INVENTORY_COUNT; ++i) {
 		// Equippied item
 		writeChar(0, 13 + i, '1' + i);
 		writeChar(')');
 		_textPos.x++;
-		if (re._equipped[i])
-			writeString(STRING[Common::String::format("stats.items.%d",
-				(int)re._equipped[i]._id)]);
+
+		if (i < re._equipped.size()) {
+			g_globals->_items.getItem(re._equipped[i]._id);
+			const Item &item = g_globals->_currItem;
+			writeString(item._name);
+		}
 
 		// Backpack item
 		writeChar(20, 13 + i, 'A' + i);
 		writeChar(')');
 		_textPos.x++;
-		if (re._backpack[i])
-			writeString(STRING[Common::String::format("stats.items.%d",
-			(int)re._backpack[i]._id)]);
+
+		if (i < re._backpack.size()) {
+			g_globals->_items.getItem(re._backpack[i]._id);
+			const Item &item = g_globals->_currItem;
+			writeString(item._name);
+		}
 	}
 }
 
