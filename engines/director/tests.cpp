@@ -63,13 +63,13 @@ void Window::testFontScaling() {
 
 	const Graphics::MacFONTFont *font1 = (const Graphics::MacFONTFont *)_wm->_fontMan->getFont(origFont);
 
-	Graphics::MacFONTFont::testBlit(font1, &surface, 0, x, y + 200, 500);
+	Graphics::MacFONTFont::testBlit(font1, &surface, 0xff, x, y + 200, 500);
 
-	Graphics::MacFont bigFont(Graphics::kMacFontNewYork, 15);
+	Graphics::MacFont bigFont(Graphics::kMacFontChicago, 12);
 
 	font1 = (const Graphics::MacFONTFont *)_wm->_fontMan->getFont(bigFont);
 
-	Graphics::MacFONTFont::testBlit(font1, &surface, 0, x, y + 50 + 200, 500);
+	Graphics::MacFONTFont::testBlit(font1, &surface, 0xff, x, y + 50 + 170, w - 10);
 
 	const char *text = "d";
 
