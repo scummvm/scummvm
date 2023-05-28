@@ -1170,12 +1170,13 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 
 			if (menu->items[i]->checked) {
 				const Font *font = getMenuFont(menu->items[i]->style);
+				int checkSymbol = _wm->_fontMan->hasBuiltInFonts() ? 0xD7 : 18;
 
 				int padding = _align == kTextAlignRight ? -_menuRightDropdownPadding: _menuLeftDropdownPadding;
-				int offset = padding - font->getCharWidth(195);
+				int offset = padding - font->getCharWidth(checkSymbol);
 
 				// calculating the padding and offset, we draw the √ at the center
-				font->drawChar(s, 195, tx - padding + offset, ty, color);
+				font->drawChar(s, checkSymbol, tx - padding + offset, ty, color);
 			}
 
 			if (!acceleratorText.empty() && shortcutPos == -1)
