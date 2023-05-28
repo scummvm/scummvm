@@ -189,6 +189,7 @@ void BlacksmithItems::itemSelected() {
 }
 
 void BlacksmithItems::charSwitched(Character *priorChar) {
+	ItemsView::charSwitched(priorChar);
 	populateItems();
 	redraw();
 }
