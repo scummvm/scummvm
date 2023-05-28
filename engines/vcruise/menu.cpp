@@ -710,13 +710,8 @@ void ReahSoundMenuPage::addPageContents() {
 		_menuInterface->commitRect(Common::Rect(0, 44, soundBG->w, 44 + soundBG->h));
 	}
 
-	int sndVol = 0;
-	if (ConfMan.hasKey("sfx_volume"))
-		sndVol = ConfMan.getInt("sfx_volume");
-
-	int musVol = 0;
-	if (ConfMan.hasKey("music_volume"))
-		musVol = ConfMan.getInt("music_volume");
+	int sndVol = ConfMan.getInt("sfx_volume");
+	int musVol = musVol = ConfMan.getInt("music_volume");
 
 	bool musicMute = false;
 	if (ConfMan.hasKey("vcruise_mute_music"))
@@ -805,13 +800,8 @@ void ReahSoundMenuPage::addPageContents() {
 }
 
 void ReahSoundMenuPage::onSettingsChanged() {
-	int sndVol = 0;
-	if (ConfMan.hasKey("sfx_volume"))
-		sndVol = ConfMan.getInt("sfx_volume");
-
-	int musVol = 0;
-	if (ConfMan.hasKey("music_volume"))
-		musVol = ConfMan.getInt("music_volume");
+	int sndVol = ConfMan.getInt("sfx_volume");
+	int musVol = ConfMan.getInt("music_volume");
 
 	bool musicMute = false;
 	if (ConfMan.hasKey("vcruise_mute_music"))
