@@ -100,6 +100,7 @@ MODULE_OBJS = \
 	lingo/xlibs/printomatic.o \
 	lingo/xlibs/qtmovie.o \
 	lingo/xlibs/qtvr.o \
+	lingo/xlibs/quicktime.o \
 	lingo/xlibs/registercomponent.o \
 	lingo/xlibs/serialportxobj.o \
 	lingo/xlibs/soundjam.o \
