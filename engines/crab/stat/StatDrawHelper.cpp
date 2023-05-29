@@ -28,24 +28,25 @@
  *
  */
 
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/stat/StatDrawHelper.h"
 
 namespace Crab {
 
-//using namespace pyrodactyl::text;
+using namespace pyrodactyl::text;
 using namespace pyrodactyl::stat;
 using namespace pyrodactyl::people;
 
 void StatInfo::Load(rapidxml::xml_node<char> *node) {
 	if (NodeValid(node)) {
 		LoadBool(active, "active", node);
-		//desc.Load(node->first_node("info"));
+		desc.Load(node->first_node("info"));
 		LoadStr(text, "text", node->first_node("info"));
 
 		if (NodeValid("value", node)) {
 			rapidxml::xml_node<char> *valuenode = node->first_node("value");
-			//dim.Load(valuenode);
+			dim.Load(valuenode);
 			LoadImgKey(full, "full", valuenode);
 			LoadImgKey(empty, "empty", valuenode);
 		}
@@ -53,8 +54,6 @@ void StatInfo::Load(rapidxml::xml_node<char> *node) {
 }
 
 void StatInfo::Draw(const int &val, const int &max) {
-	warning("STUB: StatInfo::Draw()");
-#if 0
 	if (active) {
 		using namespace pyrodactyl::image;
 		desc.Draw(text);
@@ -65,7 +64,6 @@ void StatInfo::Draw(const int &val, const int &max) {
 		for (; i < max; ++i)
 			g_engine->_imageManager->Draw(dim.x + i * dim.w, dim.y + i * dim.h, empty);
 	}
-#endif
 }
 
 void StatDrawHelper::Load(rapidxml::xml_node<char> *node) {
