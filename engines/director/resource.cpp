@@ -55,6 +55,9 @@ Common::Error Window::loadInitialMovie() {
 	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 	Common::String movie = (_vm->getGameGID() == GID_TESTALL) ? getNextMovieFromQueue().movie : _vm->getEXEName();
 
+	if (movie.empty())
+		return Common::kPathNotFile;
+
 	loadINIStream();
 	_mainArchive = openArchive(movie);
 
@@ -100,7 +103,7 @@ Common::Error Window::loadInitialMovie() {
 	}
 
 	_currentMovie->setArchive(_mainArchive);
-	_currentMovie->getScore()->_skipTransition = true; 
+	_currentMovie->getScore()->_skipTransition = true;
 	// XLibs are usually loaded in the initial movie.
 	// These may not be present if a --start-movie is specified, so
 	// we sometimes need to load them manually.
