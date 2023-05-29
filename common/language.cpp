@@ -54,6 +54,7 @@ namespace Common {
 
 const LanguageDescription g_languages[] = {
 	{ "ar",    "ar", "Arabic", AR_ARB }, // Modern Standard Arabic
+	{ "bg", "bg_BG", "Bulgarian", BG_BUL },
 	{ "ca", "ca_ES", "Catalan", CA_ESP },
 	{ "zh",    "zh", "Chinese", ZH_ANY }, // Generic Chinese (when only one game version exist)
 	{ "cn", "zh_CN", "Chinese (Simplified)", ZH_CHN },
