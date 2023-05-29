@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/spells/cast_spell.h"
+#include "mm/mm1/game/spells_party.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
@@ -140,7 +141,27 @@ void CastSpell::updateSelectedSpell() {
 }
 
 void CastSpell::castSpell(Character *target) {
-	warning("TODO: cast spell");
+	if (!isMagicAllowed()) {
+		g_events->send(InfoMessage(STRING["spells.magic_doesnt_work"]));
+
+	} else {
+		// Cast the spell
+		Game::SpellResult result = Game::SpellsParty::cast(_spellIndex, target);
+
+		switch (result) {
+		case Game::SR_FAILED:
+			g_events->send(InfoMessage(STRING["spells.failed"]));
+			break;
+
+		case Game::SR_SUCCESS_DONE:
+			g_events->send(InfoMessage(STRING["spells.done"]));
+			break;
+
+		default:
+			// Spell done, but don't display done message
+			break;
+		}
+	}
 }
 
 void CastSpell::spellError() {

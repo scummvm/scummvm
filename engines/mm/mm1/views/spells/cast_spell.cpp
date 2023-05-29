@@ -196,7 +196,7 @@ void CastSpell::performSpell(Character *chr) {
 	c._gems = MAX(c._gems - _requiredGems, 0);
 
 	if (!isMagicAllowed()) {
-		spellDone(STRING["dialogs.misc.magic_doesnt_work"], 5);
+		spellDone(STRING["spells.magic_doesnt_work"], 5);
 	} else {
 		// Cast the spell
 		switch (Game::SpellsParty::cast(_spellIndex, chr)) {
