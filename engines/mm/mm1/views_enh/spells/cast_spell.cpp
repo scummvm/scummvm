@@ -82,15 +82,19 @@ void CastSpell::draw() {
 bool CastSpell::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode == Common::KEYCODE_c) {
 		// Cast a spell
-		if (!canCast()) {
-			close();
-			spellError();
-		} else if (hasCharTarget()) {
-			addView("CharacterSelect");
-		} else {
-			close();
-			castSpell();
+		const Character &c = *g_globals->_currCharacter;
+		if (c._nonCombatSpell != -1) {
+			if (!canCast()) {
+				close();
+				spellError();
+			} else if (hasCharTarget()) {
+				addView("CharacterSelect");
+			} else {
+				close();
+				castSpell();
+			}
 		}
+
 		return true;
 
 	} else if (msg.keycode == Common::KEYCODE_n) {
