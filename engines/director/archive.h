@@ -149,6 +149,36 @@ protected:
 	Common::HashMap<uint32, KeyMap> _keyData;
 };
 
+/*******************************************
+ *
+ * Projector Archive
+ *
+ *******************************************/
+
+class ProjectorArchive : public Common::Archive {
+public:
+	ProjectorArchive(Common::String path);
+	~ProjectorArchive() override;
+
+	bool hasFile(const Common::Path &path) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
+	bool isLoaded() { return _isLoaded; }
+private:
+	Common::SeekableReadStream *createBufferedReadStream();
+	bool loadArchive(Common::SeekableReadStream *stream);
+
+	struct Entry {
+		uint32 offset;
+		uint32 size;
+	};
+	typedef Common::HashMap<Common::String, Entry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+	FileMap _files;
+	Common::String _path;
+
+	bool _isLoaded;
+};
 } // End of namespace Director
 
 #endif

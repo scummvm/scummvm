@@ -63,6 +63,15 @@ Common::Error Window::loadInitialMovie() {
 		return Common::kNoGameDataFoundError;
 	}
 
+	// Load multiple-resources based executable file (Projector)
+	ProjectorArchive *multiArchive = new ProjectorArchive(_vm->getRawEXEName());
+	if (multiArchive->isLoaded()) {
+		// A valid projector archive, add to SearchMan
+		SearchMan.add(_vm->getRawEXEName(), multiArchive);
+	} else {
+		delete multiArchive;
+	}
+	
 	_currentMovie = new Movie(this);
 	_currentPath = getPath(movie, _currentPath);
 	Common::String sharedCastPath = getSharedCastPath();
@@ -531,35 +540,6 @@ void Window::loadStartMovieXLibs() {
 	g_lingo->openXLib("SerialPort", kXObj);
 }
 
-/*******************************************
- *
- * Projector Archive
- *
- *******************************************/
-
-class ProjectorArchive : public Common::Archive {
-public:
-	ProjectorArchive(Common::String path);
-	~ProjectorArchive() override;
-
-	bool hasFile(const Common::Path &path) const override;
-	int listMembers(Common::ArchiveMemberList &list) const override;
-	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
-	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
-
-private:
-	Common::SeekableReadStream *createBufferedReadStream();
-	bool loadArchive(Common::SeekableReadStream *stream);
-
-	struct Entry {
-		uint32 offset;
-		uint32 size;
-	};
-	typedef Common::HashMap<Common::String, Entry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
-	FileMap _files;
-	Common::String _path;
-};
-
 ProjectorArchive::ProjectorArchive(Common::String path)
 	: _path(path), _files() {
 
@@ -567,7 +547,7 @@ ProjectorArchive::ProjectorArchive(Common::String path)
 	Common::SeekableReadStream *stream = createBufferedReadStream();
 
 	// Build our filemap using the buffered stream
-	loadArchive(stream);
+	_isLoaded = loadArchive(stream);
 
 	delete stream;
 }

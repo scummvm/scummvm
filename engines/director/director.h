@@ -159,6 +159,7 @@ public:
 	Common::Language getLanguage() const;
 	Common::String getTargetName() { return _targetName; }
 	const char *getExtra();
+	Common::String getRawEXEName() const;
 	Common::String getEXEName() const;
 	StartMovie getStartMovie() const;
 	void parseOptions();
