@@ -36,6 +36,7 @@ static const PlainGameDescriptor g_vcruiseGames[] = {
 
 static const char *g_vcruiseDirectoryGlobs[] = {
 	"Sfx",
+	"Waves-12",
 	"Waves-22",
 	nullptr
 };
