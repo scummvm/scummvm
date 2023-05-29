@@ -103,6 +103,10 @@ void Archive::dumpArchive(String destPath) {
 	free(data);
 }
 
+char Archive::getPathSeparator() const {
+	return '/';
+}
+
 SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMember(const Path &path) const {
 	String translated = translatePath(path);
 	bool isNew = false;

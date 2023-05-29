@@ -155,6 +155,11 @@ public:
 	 * Dump all files from the archive to the given directory
 	 */
 	void dumpArchive(String destPath);
+
+	/**
+	 * Returns the separator used by internal paths in the archive
+	 */
+	virtual char getPathSeparator() const;
 };
 
 class MemcachingCaseInsensitiveArchive;
