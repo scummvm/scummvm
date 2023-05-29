@@ -243,7 +243,7 @@ void ObsidianGameDataHandler::unpackMacRetailInstaller(Common::Array<Common::Sha
 		error("Obsidian Installer has no data fork");
 
 	// Not counted/persisted because the StuffIt archive owns the stream.  It will also delete it if createStuffItArchive fails.
-	_installerArchive.reset(Common::createStuffItArchive(installerDataForkStream));
+	_installerArchive.reset(Common::createStuffItArchive(installerDataForkStream, true));
 	installerDataForkStream = nullptr;
 
 	persistentResources.push_back(PersistentResource<Common::Archive>::wrap(_installerArchive));

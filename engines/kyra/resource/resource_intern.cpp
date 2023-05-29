@@ -1223,7 +1223,7 @@ Common::Archive *StuffItLoader::load(Resource *owner, const Common::String &file
 
 Common::Archive *StuffItLoader::load(Resource *owner, Common::SeekableReadStream *stream, const Common::String& debugName) {
 	if (stream) {
-		Common::Archive *archive = Common::createStuffItArchive(stream);
+		Common::Archive *archive = Common::createStuffItArchive(stream, true);
 		return archive;
 	}
 

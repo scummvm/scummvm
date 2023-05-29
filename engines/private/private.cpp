@@ -152,7 +152,7 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 	else
 		file = Common::MacResManager::openFileOrDataFork(isDemo() ? "Private Eye Demo Installer" : "Private Eye Installer");
 	if (file) {
-		Common::Archive *s = createStuffItArchive(file);
+		Common::Archive *s = createStuffItArchive(file, true);
 		Common::SeekableReadStream *file2 = nullptr;
 		if (s)
 			file2 = s->createReadStreamForMember(isDemo() ? "demogame.mac" : "game.mac");
