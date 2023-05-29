@@ -6,7 +6,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Neue Spiele:
    - Unterstützung für die macOS-Versionen von Syberia und Syberia II hinzugefügt.
    - Unterstützung für The Vampire Diaries und Nancy Drew: Secrets Can Kill hinzugefügt.
-   - Unterstützung für Reah: Face the Unknown hinzugefügt.
+   - Unterstützung für Reah: Face the Unknown und Schizm: Mysterious Journey hinzugefügt.
 
  Neue Plattformen:
    - Vollständig erneute Portierung für libretro hinzugefügt.
