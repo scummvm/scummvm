@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-05-29 03:48+0000\n"
-"PO-Revision-Date: 2023-05-14 22:30+0000\n"
+"PO-Revision-Date: 2023-05-29 09:44+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -6708,6 +6708,9 @@ msgid ""
 "of Xeen\n"
 "or Clouds of Xeen to your Might and Magic 1 game folder"
 msgstr ""
+"Para ejecutar el modo mejorado, debes copiar el archivo xeen.cc de una "
+"copia\n"
+"de World of Xeen o Clouds of Xeen en tu carpeta de Might and Magic 1"
 
 #: engines/mm/shared/utils/engine_data.cpp:277
 #: engines/ultima/shared/engine/data_archive.cpp:80
