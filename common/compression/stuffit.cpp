@@ -53,9 +53,8 @@ public:
 	int listMembers(Common::ArchiveMemberList &list) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
 	Common::SharedArchiveContents readContentsForPath(const Common::String& name) const override;
-	Common::String translatePath(const Common::Path &path) const override {
-		return path.toString(':');
-	}
+	Common::String translatePath(const Common::Path &path) const override;
+	char getPathSeparator() const override;
 
 private:
 	struct FileEntry {
@@ -74,6 +73,8 @@ private:
 	typedef Common::HashMap<Common::String, Common::MacFinderInfoData, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> MetadataMap;
 	MetadataMap _metadataMap;
 
+	bool _flattenTree;
+
 	// Decompression Functions
 	bool decompress13(Common::SeekableReadStream *src, byte *dst, uint32 uncompressedSize) const;
 	void decompress14(Common::SeekableReadStream *src, byte *dst, uint32 uncompressedSize) const;
@@ -83,7 +84,7 @@ private:
 	void readTree14(Common::BitStream8LSB *bits, SIT14Data *dat, uint16 codesize, uint16 *result) const;
 };
 
-StuffItArchive::StuffItArchive() : Common::MemcachingCaseInsensitiveArchive() {
+StuffItArchive::StuffItArchive() : Common::MemcachingCaseInsensitiveArchive(), _flattenTree(false) {
 	_stream = nullptr;
 }
 
@@ -108,6 +109,7 @@ bool StuffItArchive::open(Common::SeekableReadStream *stream, bool flattenTree) 
 	close();
 
 	_stream = stream;
+	_flattenTree = flattenTree;
 
 	if (!_stream)
 		return false;
@@ -323,6 +325,14 @@ Common::SharedArchiveContents StuffItArchive::readContentsForPath(const Common::
 	}
 
 	return Common::SharedArchiveContents(uncompressedBlock, entry.uncompressedSize);
+}
+
+Common::String StuffItArchive::translatePath(const Common::Path &path) const {
+	return _flattenTree ? path.getLastComponent().toString() : path.toString(':');
+}
+
+char StuffItArchive::getPathSeparator() const {
+	return ':';
 }
 
 void StuffItArchive::update14(uint16 first, uint16 last, byte *code, uint16 *freq) const {

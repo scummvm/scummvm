@@ -94,6 +94,7 @@ public:
 	int listMembers(Common::ArchiveMemberList &list) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
+	char getPathSeparator() const override;
 
 private:
 	bool getFileDescIndex(const Common::Path &path, uint &outIndex, ArchiveMember::SubstreamType &outSubstreamType) const;
@@ -388,6 +389,10 @@ Common::SeekableReadStream *MacVISEArchive::createReadStreamForMember(const Comm
 		return nullptr;
 
 	return archiveMember->createReadStream();
+}
+
+char MacVISEArchive::getPathSeparator() const {
+	return ':';
 }
 
 bool MacVISEArchive::getFileDescIndex(const Common::Path &path, uint &outIndex, ArchiveMember::SubstreamType &outSubstreamType) const {
