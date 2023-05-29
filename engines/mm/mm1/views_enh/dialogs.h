@@ -24,7 +24,6 @@
 
 #include "mm/mm1/events.h"
 #include "mm/mm1/views/bash.h"
-#include "mm/mm1/views/title.h"
 #include "mm/mm1/views_enh/character_info.h"
 #include "mm/mm1/views_enh/character_inventory.h"
 #include "mm/mm1/views_enh/character_select.h"
@@ -44,6 +43,7 @@
 #include "mm/mm1/views_enh/quick_ref.h"
 #include "mm/mm1/views_enh/rest.h"
 #include "mm/mm1/views_enh/search.h"
+#include "mm/mm1/views_enh/title.h"
 #include "mm/mm1/views_enh/trade.h"
 #include "mm/mm1/views_enh/trap.h"
 #include "mm/mm1/views_enh/unlock.h"
@@ -155,6 +155,7 @@ private:
 	ViewsEnh::QuickRef _quickRef;
 	ViewsEnh::Rest _rest;
 	ViewsEnh::Search _search;
+	ViewsEnh::Title _title;
 	ViewsEnh::Trade _trade;
 	ViewsEnh::Trap _trap;
 	ViewsEnh::Unlock _unlock;
@@ -164,7 +165,6 @@ private:
 	ViewsEnh::WhoWillTry _whoWillTry;
 	ViewsEnh::WonGame _wonGame;
 	Views::Bash _bash;
-	Views::Title _title;
 public:
 	Dialogs() {}
 };
