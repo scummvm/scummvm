@@ -24,6 +24,7 @@
 #include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "mm/mm1/mm1.h"
@@ -95,12 +96,12 @@ void MM1Engine::setupNormal() {
 }
 
 bool MM1Engine::setupEnhanced() {
-	if (!Common::File::exists("xeen.cc")) {// || !Common::File::exists("dark.cc")) {
-		GUIErrorMessage(
+	if (!Common::File::exists("xeen.cc")) {
+		GUIErrorMessage(_(
 			"In order to run in Enhanced mode,  please copy xeen.cc "
-			"and dark.cc from a copy of World of Xeen\n"
-			"or Dark Side of Xeen to your Might and Magic 1 game folder"
-		);
+			"from a copy of World of Xeen\n"
+			"or Clouds of Xeen to your Might and Magic 1 game folder"
+		));
 
 		return false;
 	}
