@@ -52,8 +52,8 @@ class SeekableReadStream;
  *
  * May return 0 in case of a failure.
  */
-Archive *createStuffItArchive(const String &fileName);
-Archive *createStuffItArchive(SeekableReadStream *stream);
+Archive *createStuffItArchive(const String &fileName, bool flattenTree = false);
+Archive *createStuffItArchive(SeekableReadStream *stream, bool flattenTree = false);
 
 /** @} */
 
