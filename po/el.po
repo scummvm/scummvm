@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-26 19:14+0000\n"
+"POT-Creation-Date: 2023-05-29 03:48+0000\n"
 "PO-Revision-Date: 2023-05-18 10:28+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -6768,6 +6768,13 @@ msgstr "Might and Magic 1"
 #: engines/mm/mm1/metaengine.cpp:157
 msgid "Might and Magic 1 - Cheats"
 msgstr "Might and Magic 1 - Κόλπα (Cheats)"
+
+#: engines/mm/mm1/mm1.cpp:101
+msgid ""
+"In order to run in Enhanced mode,  please copy xeen.cc from a copy of World "
+"of Xeen\n"
+"or Clouds of Xeen to your Might and Magic 1 game folder"
+msgstr ""
 
 #: engines/mm/shared/utils/engine_data.cpp:277
 #: engines/ultima/shared/engine/data_archive.cpp:80
