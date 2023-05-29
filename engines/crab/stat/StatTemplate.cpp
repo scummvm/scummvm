@@ -37,16 +37,12 @@ namespace Crab {
 using namespace pyrodactyl::stat;
 
 void StatTemplates::Load(const std::string &filename) {
-	warning("STUB: StatTemplates::Load()");
-
-#if 0
-	XMLDoc conf(filename);
+	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("templates");
 		for (auto n = node->first_node("stats"); n != NULL; n = n->next_sibling("stats"))
 			collection.push_back(n);
 	}
-#endif
 }
 
 } // End of namespace Crab
