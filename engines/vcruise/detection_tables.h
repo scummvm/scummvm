@@ -127,6 +127,104 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::EN_GRB,
 	},
+	{ // Schizm: Mysterious Journey, German DVD/digital Version
+		{
+			"schizm",
+			"German DVD",
+			AD_ENTRY2s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+					   "0001_a.wav", "f2b7eccfb1e9af0282b541c5eac66cc7", 1613240),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::DE_DEU,
+	},
+	{ // Schizm: Mysterious Journey, Spanish DVD/digital Version
+		{
+			"schizm",
+			"Spanish DVD",
+			AD_ENTRY2s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+					   "0001_a.wav", "7a398f17e847a46de629a09fa6178b00", 1409560),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::ES_ESP,
+	},
+	{ // Schizm: Mysterious Journey, French DVD/digital Version
+		{
+			"schizm",
+			"French DVD",
+			AD_ENTRY2s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+					   "0001_a.wav", "cd46a5df85a879bf293871b5911abcc3", 1305470),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::FR_FRA,
+	},
+	{ // Schizm: Mysterious Journey, Hungarian DVD/digital Version
+		{
+			"schizm",
+			"Hungarian DVD",
+			AD_ENTRY2s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+					   "0001_a.wav", "9838f59fce21ba3a1eecc3d84c5be8b1", 1502674),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::HU_HUN,
+	},
+	{ // Schizm: Mysterious Journey, Italian DVD/digital Version
+		{
+			"schizm",
+			"Italian DVD",
+			AD_ENTRY2s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+					   "0001_a.wav", "6d8e4b97710b858525d9965ef1e627ab", 1280506),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::IT_ITA,
+	},
+	{ // Schizm: Mysterious Journey, Polish DVD/digital Version
+		{
+			"schizm",
+			"Polish DVD",
+			AD_ENTRY2s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+					   "0001_a.wav", "4fc0053f66657e416b69419106d238a5", 1592106),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::PL_POL,
+	},
+	{ // Schizm: Mysterious Journey, Russian DVD/digital Version
+		{
+			"schizm",
+			"Russian DVD",
+			AD_ENTRY2s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+					   "0001_a.wav", "ba8fc041a92f1afceee35bdbb84eb2cd", 1427794),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::RU_RUS,
+	},
 	{ AD_TABLE_END_MARKER, GID_UNKNOWN, Common::UNK_LANG }
 };
 
