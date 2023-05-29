@@ -711,7 +711,7 @@ void ReahSoundMenuPage::addPageContents() {
 	}
 
 	int sndVol = ConfMan.getInt("sfx_volume");
-	int musVol = musVol = ConfMan.getInt("music_volume");
+	int musVol = ConfMan.getInt("music_volume");
 
 	bool musicMute = false;
 	if (ConfMan.hasKey("vcruise_mute_music"))
