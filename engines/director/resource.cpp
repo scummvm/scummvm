@@ -545,6 +545,10 @@ ProjectorArchive::ProjectorArchive(Common::String path)
 
 	// Buffer 100K into memory
 	Common::SeekableReadStream *stream = createBufferedReadStream();
+	if (!stream) {
+		_isLoaded = false;
+		return;
+	}
 
 	// Build our filemap using the buffered stream
 	_isLoaded = loadArchive(stream);
@@ -556,8 +560,10 @@ Common::SeekableReadStream *ProjectorArchive::createBufferedReadStream() {
 	const uint32 READ_BUFFER_SIZE = 1024 * 100;
 
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(_path);
-	if (!stream)
-		error("ProjectorArchive::createBufferedReadStream(): Cannot open %s", _path.c_str());
+	if (!stream) {
+		warning("ProjectorArchive::createBufferedReadStream(): Cannot open %s", _path.c_str());
+		return nullptr;
+	}
 
 	return Common::wrapBufferedSeekableReadStream(stream, READ_BUFFER_SIZE, DisposeAfterUse::YES);
 }
