@@ -2111,7 +2111,12 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 	_mouseCurState.hotX = hotspotX;
 	_mouseCurState.hotY = hotspotY;
 
-	_mouseKeyColor = keyColor;
+	bool keycolorChanged = false;
+
+	if (_mouseKeyColor != keyColor) {
+		_mouseKeyColor = keyColor;
+		keycolorChanged = true;
+	}
 
 	_cursorDontScale = dontScale;
 
@@ -2163,11 +2168,28 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 			_mouseScaler = _scalerPlugin->createInstance(_cursorFormat);
 		}
 #endif
+
+		// Force setup of border
+		keycolorChanged = true;
 	}
 
-	SDL_SetColorKey(_mouseOrigSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, _mouseKeyColor);
+	if (keycolorChanged) {
+		SDL_SetColorKey(_mouseOrigSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, _mouseKeyColor);
+	}
 
 	SDL_LockSurface(_mouseOrigSurface);
+
+	if (keycolorChanged && _mouseScaler && _maxExtraPixels > 0 && _cursorFormat.aBits() == 0) {
+		// We have extra pixels and no alpha channel, we must use color key on the borders
+		Graphics::Surface cursorSurface;
+		Common::Rect border(0, 0, _mouseCurState.w + _maxExtraPixels * 2, _mouseCurState.h + _maxExtraPixels * 2);
+		cursorSurface.init(border.width(), border.height(), border.width() * _cursorFormat.bytesPerPixel,
+				_mouseOrigSurface->pixels, _cursorFormat);
+		for(unsigned int i = 0; i < _maxExtraPixels; i++) {
+			cursorSurface.frameRect(border, _mouseKeyColor);
+			border.grow(-1);
+		}
+	}
 
 	// Draw from [_maxExtraPixels,_maxExtraPixels] since scalers will read past boudaries
 	Graphics::copyBlit((byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _mouseOrigSurface->format->BytesPerPixel,
