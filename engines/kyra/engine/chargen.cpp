@@ -2005,8 +2005,11 @@ TransferPartyWiz::~TransferPartyWiz() {
 bool TransferPartyWiz::start() {
 	_screen->copyPage(0, 12);
 
-	if (!selectAndLoadTransferFile())
+	if (!selectAndLoadTransferFile()) {
+		_screen->clearPage(0);
+		_screen->clearPage(2);
 		return false;
+	}
 
 	convertStats();
 
