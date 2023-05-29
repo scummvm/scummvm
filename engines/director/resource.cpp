@@ -559,7 +559,7 @@ Common::SeekableReadStream *ProjectorArchive::createBufferedReadStream() {
 	if (!stream)
 		error("ProjectorArchive::createBufferedReadStream(): Cannot open %s", _path.c_str());
 
-	return Common::wrapBufferedSeekableReadStream(stream, READ_BUFFER_SIZE, DisposeAfterUse::NO);
+	return Common::wrapBufferedSeekableReadStream(stream, READ_BUFFER_SIZE, DisposeAfterUse::YES);
 }
 
 ProjectorArchive::~ProjectorArchive() {
