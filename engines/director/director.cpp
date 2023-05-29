@@ -290,12 +290,17 @@ Common::CodePage DirectorEngine::getPlatformEncoding() {
 	return getEncoding(getPlatform(), getLanguage());
 }
 
+Common::String DirectorEngine::getRawEXEName() const {
+	// Returns raw executable name (without getting overloaded from --start-movie option)
+	return Common::punycode_decodefilename(Common::lastPathComponent(_gameDescription->desc.filesDescriptions[0].fileName, '/'));
+}
+
 Common::String DirectorEngine::getEXEName() const {
 	StartMovie startMovie = getStartMovie();
 	if (startMovie.startMovie.size() > 0)
 		return startMovie.startMovie;
 
-	return Common::punycode_decodefilename(Common::lastPathComponent(_gameDescription->desc.filesDescriptions[0].fileName, '/'));
+	return getRawEXEName();
 }
 
 void DirectorEngine::parseOptions() {
