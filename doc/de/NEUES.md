@@ -5,6 +5,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Allgemein:
    - Die Wiedergabe-Geschwindigkeit von Theora-Videos wurde korrigiert.
+   - Log-Betrachter für die scummvm.log-Datei hinzugefügt.
+   - Das Debug-Level kann nun in der ScummVM-GUI angepasst werden.
 
  AGI:
    - In den Spiel-Optionen kann jetzt wieder ein beliebiger Render-Modus ausgewählt werden.
@@ -27,6 +29,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  iOS-Portierung:
    - Die Auswahl des Standard-Themes funktioniert jetzt auch auf modernen Geräten korrekt.
+   - Verbesserte Unterstützung für Autostart-Konfigurationen.
+
+ macOS-Portierung:
+   - Verbesserte Unterstützung für Autostart-Konfigurationen.
 
  RISC OS-Portierung:
    - Absturz unter RISC OS 5 bei der Nutzung von Spielen, die viel RAM benötigen, behoben.
