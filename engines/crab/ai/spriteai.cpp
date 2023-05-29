@@ -29,6 +29,7 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "crab/crab.h"
 #include "crab/animation/sprite.h"
 
 namespace Crab {
@@ -253,9 +254,6 @@ void Sprite::Attack(pyrodactyl::event::Info &info, Sprite &target_sp, const Spri
 }
 
 void Sprite::FlyAround(const Rect &camera, const SpriteConstant &sc) {
-	warning("STUB: Sprite::FlyAround()");
-
-#if 0
 	// Is this sprite flying right now?
 	if (ai_data.walk.enabled) {
 		// We're flying towards the left edge
@@ -265,7 +263,7 @@ void Sprite::FlyAround(const Rect &camera, const SpriteConstant &sc) {
 				ai_data.walk.enabled = false;
 
 				// Start the timer, set a semi-random time
-				ai_data.walk.timer.Target(sc.fly.delay_min + (gRandom.Num() % sc.fly.delay_max));
+				ai_data.walk.timer.Target(sc.fly.delay_min + (g_engine->getRandomNumber(sc.fly.delay_max)));
 				ai_data.walk.timer.Start();
 			}
 		}
@@ -276,7 +274,7 @@ void Sprite::FlyAround(const Rect &camera, const SpriteConstant &sc) {
 				ai_data.walk.enabled = false;
 
 				// Start the timer, set a semi-random time
-				ai_data.walk.timer.Target(sc.fly.delay_min + (gRandom.Num() % sc.fly.delay_max));
+				ai_data.walk.timer.Target(sc.fly.delay_min + (g_engine->getRandomNumber(sc.fly.delay_max)));
 				ai_data.walk.timer.Start();
 			}
 		}
@@ -293,7 +291,7 @@ void Sprite::FlyAround(const Rect &camera, const SpriteConstant &sc) {
 			ai_data.walk.timer.Stop();
 
 			// Decide if the sprite flies from the left or right of the camera
-			if (gRandom.Num() % 2 == 1) {
+			if ((g_engine->getRandomNumber(2))) {
 				// Fly in from the right
 				X(camera.x + camera.w + sc.fly.start.x);
 				XVel(-1.0f * sc.fly.vel.x);
@@ -309,14 +307,13 @@ void Sprite::FlyAround(const Rect &camera, const SpriteConstant &sc) {
 				dir = DIRECTION_RIGHT;
 			}
 
-			Y(camera.y + sc.fly.start.y + (gRandom.Num() % (camera.h - (2 * sc.fly.start.y))));
+			Y(camera.y + sc.fly.start.y + (g_engine->getRandomNumber(camera.h - (2 * sc.fly.start.y))));
 			YVel(sc.fly.vel.y);
 
 			// Set state to flying
 			ai_data.walk.enabled = true;
 		}
 	}
-#endif
 }
 
 } // End of namespace Crab
