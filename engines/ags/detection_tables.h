@@ -263,6 +263,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	// Commercial games
 	{ "3geeks", "3 GEEKS" },
 	{ "aboardtheadventure","Aboard the Adventure" },
+	{ "abscission", "Abscission" },
 	{ "alemmo", "Al Emmo And The Lost Dutchman's Mine" },
 	{ "alemmoanozira", "Al Emmo's Postcards from Anozira" },
 	{ "alum", "Alum" },
@@ -335,13 +336,17 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "mybigsisterrm", "My Big Sister: Remastered" },
 	{ "nellycootalot-hd", "Nelly Cootalot: Spoonbeaks Ahoy! HD" },
 	{ "neofeud", "Neofeud" },
+	{ "nightmareframes", "Nightmare Frames" },
 	{ "odissea", "Odissea - An Almost True Story" },
+	{ "oldskies", "Old Skies" },
 	{ "oott", "Order of the Thorne: The King's Challenge" },
 	{ "perfecttides", "Perfect Tides" },
 	{ "perfidiouspetrolstation", "The Perfidious Petrol Station" },
+	{ "personalrocket", "Personal Rocket" },
 	{ "phantomfellows", "The Phantom Fellows" },
 	{ "primordia", "Primordia" },
 	{ "projectorface", "Projector Face" },
+	{ "puzzlebots", "Puzzle Bots" },
 	{ "qfi", "Quest for Infamy" },
 	{ "quantumnauts", "Quantumnauts" },
 	{ "quantumnauts2", "Quantumnauts 2" },
@@ -446,7 +451,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "abettermousetrap", "A Better Mouse Trap" },
 	{ "ablemabel", "Able Mabel gets a Job" },
 	{ "abominationobtainer", "Abomination Obtainer" },
-	{ "abscission", "Abscission" },
 	{ "absent", "Absent" },
 	{ "absentpart1", "Absent - Part I: Innocent Until Proven Guilty" },
 	{ "absin", "Absin - An Interactive Mystery" },
@@ -499,6 +503,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "agsawards2016", "AGS Awards Ceremony 2016" },
 	{ "agsawards2017", "AGS Awards Ceremony 2017" },
 	{ "agsawards2020", "AGS Awards Ceremony 2020" },
+	{ "agsawards2022", "AGS Awards Ceremony 2022" },
 	{ "agsawardsbp", "AGS Awards Backstage Pass" },
 	{ "agscamerastd", "AGS Cameras Tech Demo" },
 	{ "agschess", "AGS Chess" },
@@ -524,7 +529,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "aidaschristmas", "Aida's Strange Christmas" },
 	{ "aidashalloween", "Aida's Bizarre Halloween" },
 	{ "ainthegoffantabulousw", "Adventures in the Galaxy of Fantabulous Wonderment" },
-	{ "airwaveifoughtthelawandthelawone", "~airwave~ - I Fought the Law, And the Law One" },
+	{ "airwave", "~airwave~ - I Fought the Law, And the Law One" },
 	{ "alandlordsdream", "A Landlord's Dream" },
 	{ "alansaveschristmas", "Alan saves Christmas (and most of the world too)" },
 	{ "aliceinwonderlandis", "Lewis Carroll's Alice In Wonderland - an interactive storybook" },
@@ -2161,7 +2166,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "niemandsland", "Das Niemandsland" },
 	{ "nightandday", "Night and Day" },
 	{ "nightmare", "Nightmare" },
-	{ "nightmareframes", "Nightmare Frames" },
 	{ "nightoftheravingfeminist", "Night of the Raving Feminist" },
 	{ "nightofthetesticle", "Night of the Testicle" },
 	{ "nightowl", "The Night Owl Murder" },
@@ -2212,7 +2216,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "ohitschristmas", "Oh, it's Christmas" },
 	{ "ohnonotagain", "Oh no not again!" },
 	{ "oldmansea", "The Old Man and the Sea" },
-	{ "oldskies", "Old Skies" },
 	{ "olol", "Olol" },  // aka Custard's 1 hour game
 	{ "omfgparadox", "OMFGPARADOX!" },
 	{ "omnipotenttarot", "Omnipotent Tarot" },
@@ -2320,7 +2323,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "perelman", "Perelman" },
 	{ "perilsofpoom", "Perils of Poom" },
 	{ "persephonediary", "Persephone's Diary: Secrets of the South" },
-	{ "personalrocket", "Personal Rocket" },
 	{ "pesterquest", "Pester Quest: From n00b to newb" },
 	{ "petshopincident", "The Pet Shop Incident" },
 	{ "petalrose", "Petals Around the Rose" },
@@ -2429,7 +2431,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "purposeretired", "Purpose : Retired" },
 	{ "pussiehunt", "Pussie Hunt" },
 	{ "puzzlepumice", "Puzzle of the Pulchritudinous Pumice" },
-	{ "puzzlebots", "Puzzle Bots" },
 	{ "pxenophobe", "Project Xenophobe" },
 	{ "qfheroes", "Quest for Heroes" },
 	{ "questblackdiamond", "The Quest for the Black Diamond" },
@@ -4837,6 +4838,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("agsawards2017", "AGS Awards 2017.exe", "78dd4ca028ee0156b6a093d6d780aa65", 799003462),
 	GAME_ENTRY_EN("agsawards2020", "AGS Awards 2020.exe", "1466cb5cd32c5ce4a4dbc6e4975f8991", 346110549),
 	GAME_ENTRY_EN("agsawards2020", "AGS Awards 2020.exe", "1466cb5cd32c5ce4a4dbc6e4975f8991", 346114803),
+	GAME_ENTRY_EN("agsawards2022", "AGS Awards 2022.exe", "e0c91ac3e4bbfad799b958afb5878d32", 926641116),  // Win
+	GAME_ENTRY_EN("agsawards2022", "AGS Awards 2022.ags", "2abf435d01917e3a598fc370dfe43af0", 923130246),  // Linux
+	GAME_ENTRY_EN("agsawards2022", "ac2game.dat", "2abf435d01917e3a598fc370dfe43af0", 923130246),  // Mac
 	GAME_ENTRY_EN("agsawardsbp", "AGS Awards Backstage Pass.exe", "82da2565c456dcfb265ded6fe3189c0b", 6458787),
 	GAME_ENTRY_EN("agscamerastd", "camdemo.exe", "17009da9820f5aa86d0588023d497db8", 26012159),  // Windows
 	GAME_ENTRY_EN("agscamerastd", "camdemo.ags", "4e6e999d090581aea259ee10428d5628", 22977515),  // Linux
@@ -4866,7 +4870,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("aidashalloween", "Aida's Bizarre Halloween.exe", "18f5fd85de78efca16c7bafce54e3f63", 23337412),
 	GAME_ENTRY_EN("ainthegoffantabulousw", "gfw.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 7991208),
 	GAME_ENTRY_EN("ainthegoffantabulousw", "gfw.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 7991393),
-	GAME_ENTRY_EN("airwaveifoughtthelawandthelawone", "~airwave~.exe", "18456f28d9bf843b087e80072c85beca", 22521544),
+	GAME_ENTRY_EN("airwave", "~airwave~.exe", "18456f28d9bf843b087e80072c85beca", 22521544),
 	GAME_ENTRY_EN_PLATFORM("alandlordsdream", "Game.exe", "0241777c2537fc5d077c05cde10bfa9f", 6212265, "MAGS"),  // v1.1
 	GAME_ENTRY("alandlordsdream", "Game.exe", "9cd9563150a69bc1d4eacda0ff3557f8", 7197801),  // v1.2 En-Es-It
 	GAME_ENTRY("alandlordsdream", "Game.exe", "7db052bc30700d1f30f5330f5814f519", 8060425),  // v1.4?
