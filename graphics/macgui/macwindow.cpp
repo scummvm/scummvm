@@ -147,6 +147,15 @@ void MacWindow::setDimensions(const Common::Rect &r) {
 	_wm->setFullRefresh(true);
 }
 
+void MacWindow::setInnerDimensions(const Common::Rect &r) {
+	resizeInner(r.width(), r.height());
+	_innerDims.moveTo(r.left, r.top);
+	updateOuterDims();
+
+	_contentIsDirty = true;
+	_wm->setFullRefresh(true);
+}
+
 void MacWindow::setBackgroundPattern(int pattern) {
 	_pattern = pattern;
 	_hasPattern = true;

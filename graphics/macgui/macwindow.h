@@ -234,6 +234,14 @@ public:
 	void setDimensions(const Common::Rect &r) override;
 
 	/**
+	 * Change the inner dimension of the window.
+	 * Note that this changes the window inner dimension and calculates
+	 * outer dimension (ie with border, etc)
+	 * @param r The desired dimensions of the window.
+	 */
+	void setInnerDimensions(const Common::Rect &r);
+
+	/**
 	 * Set a background pattern for the window.
 	 * @param pattern
 	 */
