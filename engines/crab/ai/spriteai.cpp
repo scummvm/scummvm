@@ -291,7 +291,7 @@ void Sprite::FlyAround(const Rect &camera, const SpriteConstant &sc) {
 			ai_data.walk.timer.Stop();
 
 			// Decide if the sprite flies from the left or right of the camera
-			if ((g_engine->getRandomNumber(2))) {
+			if (g_engine->getRandomNumber(1)) {
 				// Fly in from the right
 				X(camera.x + camera.w + sc.fly.start.x);
 				XVel(-1.0f * sc.fly.vel.x);
