@@ -3162,6 +3162,23 @@ void LB::b_window(int nargs) {
 		}
 	}
 
+	// Refer window by-indexing, lingo can request using "window #index" where #index is the index of window that is previously
+	// created, in tutorial workshop `rect of window`, a window is created using 'open(window "ball")' and the same window is
+	// referenced by 'window 1', ie 'put the rect of window 1 into field 9'
+	if (d.type == INT || d.type == FLOAT) {
+		int windowIndex = d.asInt() - 1;
+
+		if (windowIndex >= 0 && windowIndex < (int)windowList->arr.size()) {
+			if (windowList->arr[windowIndex].type == OBJECT && windowList->arr[windowIndex].u.obj->getObjType() == kWindowObj) {
+				Window *window = static_cast<Window *>(windowList->arr[windowIndex].u.obj);
+				g_lingo->push(window);
+				return;
+			}
+		} else {
+			warning("LB::b_window: Window referenced by index %d, out of bounds.", windowIndex);
+		}
+	}
+
 	Graphics::MacWindowManager *wm = g_director->getMacWindowManager();
 	Window *window = new Window(wm->getNextId(), false, false, false, wm, g_director, false);
 	window->setName(windowName);
