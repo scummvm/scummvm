@@ -162,7 +162,7 @@ void PathfindingAgent::Update(long timeslice) {
 		//{
 		//	for(int y = -1; y < 2; ++y)
 		//	{
-		std::vector<PathfindingGraphNode *>::iterator i;
+		Common::Array<PathfindingGraphNode *>::iterator i;
 
 		for (i = current->location->neighborNodes.begin(); i != current->location->neighborNodes.end(); ++i) {
 			// Get the new tile to check
@@ -255,8 +255,8 @@ void PathfindingAgent::shutdown() {
 	grid = NULL;
 }
 
-std::vector<PathfindingGraphNode const *> const PathfindingAgent::getSolution(PathfindingGraphNode *destNode) const {
-	std::vector<PathfindingGraphNode const *> temp;
+Common::Array<PathfindingGraphNode const *> const PathfindingAgent::getSolution(PathfindingGraphNode *destNode) const {
+	Common::Array<PathfindingGraphNode const *> temp;
 
 	PlannerNode *current = NULL;
 
@@ -284,10 +284,10 @@ std::vector<PathfindingGraphNode const *> const PathfindingAgent::getSolution(Pa
 	return temp;
 }
 
-std::vector<PathfindingGraphNode const *> const PathfindingAgent::getPrunedSolution(PathfindingGraphNode *destNode) {
-	std::vector<PathfindingGraphNode const *> temp = getSolution(destNode);
+Common::Array<PathfindingGraphNode const *> const PathfindingAgent::getPrunedSolution(PathfindingGraphNode *destNode) {
+	Common::Array<PathfindingGraphNode const *> temp = getSolution(destNode);
 
-	std::vector<PathfindingGraphNode const *> returnVec = temp;
+	Common::Array<PathfindingGraphNode const *> returnVec = temp;
 
 	// Any node that is not adjacent to an obstacle or an obstacle corner can be removed.
 	for (int i = 0; (unsigned int)i < temp.size(); ++i) {
@@ -295,10 +295,10 @@ std::vector<PathfindingGraphNode const *> const PathfindingAgent::getPrunedSolut
 			if (i > 0 && (unsigned int)i < temp.size() - 1) {
 				// This check to see if the node is a "corner" to an obstacle that should not be pruned
 				// to prevent hanging on corners.
-				std::vector<PathfindingGraphNode *> corners = grid->CornerCheck(temp[i - 1], temp[i + 1]);
+				Common::Array<PathfindingGraphNode *> corners = grid->CornerCheck(temp[i - 1], temp[i + 1]);
 
 				if (corners.size() == 0) {
-					std::vector<PathfindingGraphNode const *>::iterator theEnd = std::remove(returnVec.begin(), returnVec.end(), temp[i]);
+					Common::Array<PathfindingGraphNode const *>::iterator theEnd = std::remove(returnVec.begin(), returnVec.end(), temp[i]);
 					returnVec.erase(theEnd);
 				}
 			}

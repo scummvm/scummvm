@@ -50,8 +50,8 @@ class PathfindingGraphNode {
 	Rect collisionRect; // Represents spaced covered by the node.
 
 public:
-	std::vector<PathfindingGraphNode *> neighborNodes;
-	std::vector<float> neighborCosts; // The movement cost for the neighbor nodes (distance to the node X the nodes movement cost)
+	Common::Array<PathfindingGraphNode *> neighborNodes;
+	Common::Array<float> neighborCosts; // The movement cost for the neighbor nodes (distance to the node X the nodes movement cost)
 									  // This is stored to prevent having to recalculate each frame.
 
 	PathfindingGraphNode(void);
@@ -69,7 +69,7 @@ public:
 	// are equidistant
 	void AddNeighbor(PathfindingGraphNode *node, bool ignoreDistance);
 
-	// const std::vector< PathfindingGraphNode*>& GetNeighbors() const;
+	// const Common::Array< PathfindingGraphNode*>& GetNeighbors() const;
 
 	Rect GetRect() const { return collisionRect; }
 

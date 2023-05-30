@@ -53,7 +53,7 @@ bool MapLayer::Load(const std::string &path, rapidxml::xml_node<char> *node) {
 		} else {
 			type = LAYER_NORMAL;
 			int i = 0;
-			std::vector<TileInfo> t;
+			Common::Array<TileInfo> t;
 
 			//.tmx stores tiles row-first
 			for (auto n = node->first_node("data")->first_node("tile"); n != NULL; n = n->next_sibling("tile")) {

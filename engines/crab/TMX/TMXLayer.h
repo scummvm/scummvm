@@ -81,7 +81,7 @@ public:
 class MapLayer : public Layer {
 public:
 	// The tiles in the layer
-	std::vector<std::vector<TileInfo> > tile;
+	Common::Array<Common::Array<TileInfo> > tile;
 
 	// The type of layer
 	LayerType type;

@@ -94,7 +94,7 @@ struct TileSet {
 };
 
 class TileSetGroup {
-	std::vector<TileSet> tileset;
+	Common::Array<TileSet> tileset;
 
 	// The latest tile position
 	Vector2i v;

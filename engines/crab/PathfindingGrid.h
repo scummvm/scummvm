@@ -85,7 +85,7 @@ public:
 
 	// Return true if two nodes share and adjacency to the same blocked node.
 	// Can be used to find corners that shouldn't be cut.
-	std::vector<PathfindingGraphNode *> CornerCheck(const PathfindingGraphNode *node1, const PathfindingGraphNode *node2);
+	Common::Array<PathfindingGraphNode *> CornerCheck(const PathfindingGraphNode *node1, const PathfindingGraphNode *node2);
 };
 
 } // End of namespace Crab
