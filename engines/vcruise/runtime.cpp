@@ -61,6 +61,12 @@
 
 namespace VCruise {
 
+struct CodePageGuess {
+	Common::CodePage codePage;
+	const char *searchString;
+	const char *languageName;
+};
+
 class RuntimeMenuInterface : public MenuInterface {
 public:
 	explicit RuntimeMenuInterface(Runtime *runtime);
@@ -1371,23 +1377,34 @@ bool Runtime::bootGame(bool newGame) {
 
 	Common::CodePage codePage = resolveCodePageForLanguage(lang);
 
-	bool subtitlesLoadedOK = loadSubtitles(codePage);
+	bool subtitlesLoadedOK = loadSubtitles(codePage, false);
 
-	if (!loadSubtitles(codePage)) {
+	if (!subtitlesLoadedOK) {
 		lang = _defaultLanguage;
 		_languageIndex = _defaultLanguageIndex;
 
 		warning("Localization data failed to load, retrying with default language");
 
 		codePage = resolveCodePageForLanguage(lang);
-		subtitlesLoadedOK = loadSubtitles(codePage);
+		subtitlesLoadedOK = loadSubtitles(codePage, false);
 
-		if (!subtitlesLoadedOK)
-			warning("Localization data failed to load!  Text and subtitles will be disabled.");
+		if (!subtitlesLoadedOK) {
+			if (_languageIndex != 0) {
+				codePage = Common::CodePage::kWindows1250;
+				_languageIndex = 0;
+				_defaultLanguageIndex = 0;
+
+				warning("Localization data failed to load again, trying one more time and guessing the encoding.");
+
+				subtitlesLoadedOK = loadSubtitles(codePage, true);
+			}
+		}
 	}
 
 	if (subtitlesLoadedOK)
-		debug(1, "Subtitles loaded OK");
+		debug(1, "Localization data loaded OK");
+	else
+		warning("Localization data failed to load!  Text and subtitles will be disabled.");
 
 	_uiGraphics.resize(24);
 	for (uint i = 0; i < _uiGraphics.size(); i++) {
@@ -4689,7 +4706,7 @@ Common::SharedPtr<Graphics::Surface> Runtime::loadGraphic(const Common::String &
 	return surf;
 }
 
-bool Runtime::loadSubtitles(Common::CodePage codePage) {
+bool Runtime::loadSubtitles(Common::CodePage codePage, bool guessCodePage) {
 	Common::String filePath = Common::String::format("Log/Speech%02u.txt", _languageIndex);
 
 	Common::INIFile ini;
@@ -4701,6 +4718,37 @@ bool Runtime::loadSubtitles(Common::CodePage codePage) {
 		return false;
 	}
 
+	if (guessCodePage) {
+		bool guessedCodePage = false;
+
+		Common::String checkString;
+		if (ini.getKey("szQuestion2", "szTextData", checkString)) {
+			const CodePageGuess guesses[] = {
+				{Common::CodePage::kWindows1252, "previously", "English"},
+				{Common::CodePage::kWindows1252, "\x7c" "berschrieben", "German"},
+				{Common::CodePage::kWindows1250, "poprzedni", "Polish"},
+				{Common::CodePage::kWindows1252, "pr\xe9" "c\xe9" "dement", "French"},
+				{Common::CodePage::kWindows1252, "opgeslagen", "Dutch"},
+				{Common::CodePage::kWindows1252, "partida", "Spanish"},
+				{Common::CodePage::kWindows1252, "precedentemente", "Italian"},
+				{Common::CodePage::kWindows1251, "\xf1\xee\xf5\xf0\xe0\xed\xe5\xed\xed\xf3\xfe", "Russian"},
+				{Common::CodePage::kWindows1253, "\xf0\xf1\xef\xe7\xe3\xef\xfd\xec\xe5\xed\xef", "Greek"},
+			};
+
+			for (const CodePageGuess &guess : guesses) {
+				if (checkString.contains(guess.searchString)) {
+					codePage = guess.codePage;
+					warning("Fallback language detection: Guessed language as %s", guess.languageName);
+					guessedCodePage = true;
+					break;
+				}
+			}
+		}
+
+		if (!guessedCodePage)
+			warning("Couldn't guess text encoding from localization content, please report this as a bug!");
+	}
+
 	for (const Common::INIFile::Section &section : ini.getSections()) {
 		if (section.name == "Anims")
 			continue;	// Ignore
@@ -4708,9 +4756,9 @@ bool Runtime::loadSubtitles(Common::CodePage codePage) {
 		FrameToSubtitleMap_t *frameMap = nullptr;
 		bool isWave = false;
 
-		if (section.name.substr(0, 5) == "Disc-")
+		if (section.name.hasPrefix("Disc-"))
 			isWave = true;
-		else if (section.name.size() == 8 && section.name.substr(0, 4) == "Anim") {
+		else if (section.name.size() == 8 && section.name.hasPrefix("Anim")) {
 			uint animID = 0;
 			if (sscanf(section.name.substr(4, 4).c_str(), "%u", &animID) == 1)
 				frameMap = &_animSubtitles[animID];
