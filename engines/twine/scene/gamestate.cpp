@@ -85,7 +85,7 @@ void GameState::initGameStateVars() {
 }
 
 void GameState::initHeroVars() {
-	_engine->_actor->resetActor(OWN_ACTOR_SCENE_INDEX); // reset Hero
+	_engine->_actor->initObject(OWN_ACTOR_SCENE_INDEX); // reset Hero
 
 	_magicBall = -1;
 

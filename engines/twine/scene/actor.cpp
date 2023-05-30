@@ -60,7 +60,7 @@ void Actor::restartHeroScene() {
 	sceneHero->_offsetTrack = -1;
 	sceneHero->_labelIdx = -1;
 	sceneHero->_offsetLife = 0;
-	sceneHero->_zone = -1;
+	sceneHero->_zoneSce = -1;
 	sceneHero->_beta = _previousHeroAngle;
 
 	_engine->_movements->initRealAngle(sceneHero->_beta, sceneHero->_beta, LBAAngles::ANGLE_0, &sceneHero->realAngle);
@@ -274,8 +274,7 @@ void Actor::initActor(int16 actorIdx) {
 	actor->_offsetLife = 0;
 }
 
-// InitObject
-void Actor::resetActor(int16 actorIdx) {
+void Actor::initObject(int16 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	*actor = ActorStruct();
 

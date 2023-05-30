@@ -1088,7 +1088,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 				_actor->processActorCarrier(a);
 				actor->_dynamicFlags.bIsDead = 1;
 				actor->_body = -1;
-				actor->_zone = -1;
+				actor->_zoneSce = -1;
 			}
 		}
 

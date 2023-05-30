@@ -194,7 +194,7 @@ bool Scene::loadSceneLBA2() {
 	_nbObjets = (int16)stream.readUint16LE();
 	int cnt = 1;
 	for (int32 a = 1; a < _nbObjets; a++, cnt++) {
-		_engine->_actor->resetActor(a);
+		_engine->_actor->initObject(a);
 		ActorStruct *act = &_sceneActors[a];
 		setActorStaticFlags(act, stream.readUint32LE());
 
@@ -325,7 +325,7 @@ bool Scene::loadSceneLBA1() {
 	_nbObjets = (int16)stream.readUint16LE();
 	int cnt = 1;
 	for (int32 a = 1; a < _nbObjets; a++, cnt++) {
-		_engine->_actor->resetActor(a);
+		_engine->_actor->initObject(a);
 
 		ActorStruct *act = &_sceneActors[a];
 		setActorStaticFlags(act, stream.readUint16LE());
@@ -540,7 +540,7 @@ void Scene::changeScene() {
 	_engine->_actor->loadHeroEntities();
 
 	_sceneHero->_controlMode = ControlMode::kManual;
-	_sceneHero->_zone = -1;
+	_sceneHero->_zoneSce = -1;
 	_sceneHero->_offsetLife = 0;
 	_sceneHero->_offsetTrack = -1;
 	_sceneHero->_labelIdx = -1;
@@ -708,7 +708,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 	int32 currentY = actor->_pos.y;
 	int32 currentZ = actor->_pos.z;
 
-	actor->_zone = -1;
+	actor->_zoneSce = -1;
 	bool tmpCellingGrid = false;
 
 	if (IS_HERO(actorIdx)) {
@@ -746,7 +746,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 				}
 				break;
 			case ZoneType::kSceneric:
-				actor->_zone = zone->num;
+				actor->_zoneSce = zone->num;
 				break;
 			case ZoneType::kGrid:
 				if (_currentlyFollowedActor == actorIdx) {

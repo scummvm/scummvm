@@ -163,12 +163,12 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	}
 	case kcZONE:
 		debugCN(3, kDebugLevels::kDebugScripts, "zone(");
-		engine->_scene->_currentScriptValue = ctx.actor->_zone;
+		engine->_scene->_currentScriptValue = ctx.actor->_zoneSce;
 		break;
 	case kcZONE_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
 		debugCN(3, kDebugLevels::kDebugScripts, "zone_obj(%i, ", actorIdx);
-		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_zone;
+		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_zoneSce;
 		break;
 	}
 	case kcBODY:
@@ -1091,7 +1091,7 @@ int32 ScriptLife::lKILL_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
 	otherActor->_dynamicFlags.bIsDead = 1;
 	otherActor->_body = -1;
-	otherActor->_zone = -1;
+	otherActor->_zoneSce = -1;
 	otherActor->setLife(0);
 
 	return 0;
@@ -1106,7 +1106,7 @@ int32 ScriptLife::lSUICIDE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_actor->processActorCarrier(ctx.actorIdx);
 	ctx.actor->_dynamicFlags.bIsDead = 1;
 	ctx.actor->_body = -1;
-	ctx.actor->_zone = -1;
+	ctx.actor->_zoneSce = -1;
 	ctx.actor->setLife(0);
 
 	return 0;
@@ -1617,7 +1617,7 @@ int32 ScriptLife::lINIT_PINGOUIN(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ActorStruct *penguin = engine->_scene->getActor(penguinActor);
 	penguin->_dynamicFlags.bIsDead = 1;
 	penguin->_body = -1;
-	penguin->_zone = -1;
+	penguin->_zoneSce = -1;
 	return 0;
 }
 

@@ -179,13 +179,13 @@ public:
 	int32 _hitBy = -1;
 	BonusParameter _bonusParameter;
 	int32 _beta = 0; // facing angle of actor. Minumum is 0 (SW). Going counter clock wise (BETA in original sources)
-	int32 _speed = 40; // speed of movement
+	int32 _speed = 40; // SRot - speed of movement
 	ControlMode _controlMode = ControlMode::kNoMove;
 	int32 _delayInMillis = 0;
-	int32 _cropLeft = 0;
-	int32 _cropTop = 0;
-	int32 _cropRight = 0;
-	int32 _cropBottom = 0;
+	int32 _cropLeft = 0;      // Info
+	int32 _cropTop = 0;       // Info1
+	int32 _cropRight = 0;     // Info2
+	int32 _cropBottom = 0;    // Info3
 	int32 _followedActor = 0; // same as info3
 	int32 _bonusAmount = 0;
 	int32 _talkColor = COLOR_BLACK;
@@ -217,7 +217,7 @@ public:
 	 * actor id we are standing on
 	 */
 	int32 _carryBy = -1;
-	int32 _zone = -1;
+	int32 _zoneSce = -1;
 
 	int32 _animStepBeta = 0;
 	IVec3 _animStep;
@@ -337,7 +337,7 @@ public:
 	 * Reset actor
 	 * @param actorIdx actor index to init
 	 */
-	void resetActor(int16 actorIdx);
+	void initObject(int16 actorIdx);
 
 	/**
 	 * Process hit actor
