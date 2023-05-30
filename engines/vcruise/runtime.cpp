@@ -143,6 +143,11 @@ void RuntimeMenuInterface::restartGame() const {
 void RuntimeMenuInterface::goToCredits() const {
 	_runtime->clearScreen();
 
+	// In Schizm, exiting credits doesn't transition to the main menu screen,
+	// so we must force a screen change for when the user clicks Credits after
+	// leaving the credits screen
+	_runtime->_forceScreenChange = true;
+
 	if (_runtime->_gameID == GID_REAH)
 		_runtime->changeToScreen(40, 0xa1);
 	else if (_runtime->_gameID == GID_SCHIZM)
