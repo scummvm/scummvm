@@ -68,7 +68,7 @@ protected:
 
 	// Archived methods for loading poly lines in tiled
 	// void LoadPath(rapidxml::xml_node<char> *node);
-	// const Vector2i GetPoint(const Vector2i &ref, std::string &x, std::string &y);
+	// const Vector2i GetPoint(const Vector2i &ref, Common::String &x, Common::String &y);
 
 public:
 	// The exits to different levels
@@ -106,7 +106,7 @@ public:
 	~TMXMap() {}
 
 	void Reset();
-	void Load(const std::string &path, std::string filename);
+	void Load(const Common::String &path, Common::String filename);
 
 	void DrawDebug(const Rect &camera);
 

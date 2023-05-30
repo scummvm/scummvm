@@ -65,7 +65,7 @@ enum LayerType {
 class Layer {
 public:
 	// Name of the layer
-	std::string name;
+	Common::String name;
 
 	// Dimensions of the layer in terms of tiles
 	int w, h;
@@ -105,7 +105,7 @@ public:
 		type = LAYER_NORMAL;
 		collide = false;
 	}
-	bool Load(const std::string &path, rapidxml::xml_node<char> *node);
+	bool Load(const Common::String &path, rapidxml::xml_node<char> *node);
 };
 } // End of namespace TMX
 
