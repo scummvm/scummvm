@@ -113,6 +113,20 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_REAH,
 		Common::EN_ANY,
 	},
+	{ // Schizm: Mysterious Journey, English CD Version
+		{
+			"schizm",
+			"English CD",
+			AD_ENTRY2s("Schizm.exe", "24bb1831a53b3969d9d1a9302740de4a", 368640,
+					   "0001_a.wav", "374d93abc3422840623acc618ecb2b1e", 1553784),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::EN_GRB,
+	},
 	{ // Schizm: Mysterious Journey, English DVD/digital Version
 		{
 			"schizm",
