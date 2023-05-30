@@ -40,13 +40,26 @@ CastSpell::CastSpell() : PartyView("CastSpell") {
 }
 
 bool CastSpell::msgFocus(const FocusMessage &msg) {
-	(void)PartyView::msgFocus(msg);
+	if (!isInCombat())
+		(void)PartyView::msgFocus(msg);
+
 	updateSelectedSpell();
 	return true;
 }
 
+bool CastSpell::msgUnfocus(const UnfocusMessage &msg) {
+	if (!isInCombat())
+		(void)PartyView::msgUnfocus(msg);
+
+	return true;
+}
+
 void CastSpell::draw() {
-	PartyView::draw();
+	if (!isInCombat()) {
+		PartyView::draw();
+	} else {
+		ScrollView::draw();
+	}
 	_fontReduced = false;
 
 	const Character &c = *g_globals->_currCharacter;
@@ -56,11 +69,12 @@ void CastSpell::draw() {
 
 	setTextColor(37);
 
+	int spellNum = c.spellNumber();
 	Common::String spellName = STRING["enhdialogs.cast_spell.none"];
-	if (c._nonCombatSpell >= 0 && c._nonCombatSpell < 47) {
-		spellName = STRING[Common::String::format("spells.cleric.%d", c._nonCombatSpell)];
-	} else if (c._nonCombatSpell >= 47) {
-		spellName = STRING[Common::String::format("spells.wizard.%d", c._nonCombatSpell - 47)];
+	if (spellNum >= 0 && spellNum < 47) {
+		spellName = STRING[Common::String::format("spells.cleric.%d", spellNum)];
+	} else if (spellNum >= 47) {
+		spellName = STRING[Common::String::format("spells.wizard.%d", spellNum - 47)];
 	}
 	writeString(0, 60, spellName, ALIGN_MIDDLE);
 
@@ -82,8 +96,7 @@ void CastSpell::draw() {
 bool CastSpell::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode == Common::KEYCODE_c) {
 		// Cast a spell
-		const Character &c = *g_globals->_currCharacter;
-		if (c._nonCombatSpell != -1) {
+		if (_spellIndex != -1) {
 			if (!canCast()) {
 				close();
 				spellError();
@@ -101,8 +114,10 @@ bool CastSpell::msgKeypress(const KeypressMessage &msg) {
 		// Select a new spell
 		addView("Spellbook");
 		return true;
-	} else {
+	} else if (!isInCombat()) {
 		return PartyView::msgKeypress(msg);
+	} else {
+		return false;
 	}
 }
 
@@ -111,8 +126,10 @@ bool CastSpell::msgAction(const ActionMessage &msg) {
 		close();
 		return true;
 
-	} else {
+	} else if (!isInCombat()) {
 		return PartyView::msgAction(msg);
+	} else {
+		return false;
 	}
 }
 
@@ -132,13 +149,15 @@ bool CastSpell::msgGame(const GameMessage &msg) {
 void CastSpell::updateSelectedSpell() {
 	const Character &c = *g_globals->_currCharacter;
 
-	if (c._nonCombatSpell == -1) {
+	int spellNum = c.spellNumber();
+	if (spellNum == -1) {
 		_requiredSp = _requiredGems = 0;
+		_spellIndex = -1;
 
 	} else {
 		int lvl, num;
-		getSpellLevelNum(c._nonCombatSpell, lvl, num);
-		assert(getSpellIndex(&c, lvl, num) == c._nonCombatSpell);
+		getSpellLevelNum(spellNum, lvl, num);
+		assert(getSpellIndex(&c, lvl, num) == spellNum);
 
 		setSpell(&c, lvl, num);
 	}
@@ -150,6 +169,9 @@ void CastSpell::charSwitched(Character *priorChar) {
 }
 
 void CastSpell::castSpell(Character *target) {
+	if (_spellIndex == -1)
+		return;
+
 	if (!isMagicAllowed()) {
 		g_events->send(InfoMessage(STRING["spells.magic_doesnt_work"]));
 

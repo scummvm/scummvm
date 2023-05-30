@@ -470,6 +470,16 @@ struct Character : public PrimaryAttributes {
 	int _nonCombatSpell = -1;
 	int _combatSpell = -1;
 
+	/**
+	 * Get the selected combat/noncombat spell number
+	 */
+	int spellNumber() const;
+
+	/**
+	 * Sets the selected spell
+	 */
+	void setSpellNumber(int spellNum);
+
 	Character();
 
 	/**

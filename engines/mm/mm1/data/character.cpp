@@ -737,5 +737,16 @@ Common::String Character::getConditionString(ConditionEnum cond) {
 	}
 }
 
+int Character::spellNumber() const {
+	return g_events->isInCombat() ? _combatSpell : _nonCombatSpell;
+}
+
+void Character::setSpellNumber(int spellNum) {
+	if (g_events->isInCombat())
+		_combatSpell = spellNum;
+	else
+		_nonCombatSpell = spellNum;
+}
+
 } // namespace MM1
 } // namespace MM
