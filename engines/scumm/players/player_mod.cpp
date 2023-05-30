@@ -177,7 +177,7 @@ void Player_MOD::do_mix(int16 *data, uint len) {
 				_mixpos = 0;
 				len -= dlen;
 			} else {
-				_mixpos = len;
+				_mixpos += len;
 				dlen = len;
 				len = 0;
 			}
