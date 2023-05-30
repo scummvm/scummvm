@@ -1858,7 +1858,7 @@ Player_V2A::Player_V2A(ScummEngine *scumm, Audio::Mixer *mixer) {
 	}
 
 	_mod = new Player_MOD(mixer);
-	_mod->setUpdateProc(update_proc, this, 60);
+	_mod->setUpdateProc(update_proc, this, _vm->getTimerFrequency() / 4);
 }
 
 Player_V2A::~Player_V2A() {
