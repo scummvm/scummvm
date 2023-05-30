@@ -73,6 +73,7 @@ void BodyData::loadBones(Common::SeekableReadStream &stream) {
 		/*int32 field_20 =*/ stream.readSint32LE();
 		/*int32 field_24 =*/ stream.readSint32LE();
 
+		// PatchObjet in original sources
 		BodyBone bone;
 		bone.parent = baseElementOffset == -1 ? 0xffff : baseElementOffset / 38;
 		bone.vertex = basePoint;
