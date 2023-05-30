@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DLC Metadata Schema",
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "shortDescription": { "type": "string" },
+    "installPath": { "type": "string" },
+    "developer": { "type": "string" },
+    "publisher": { "type": "string" },
+    "websiteURL": { "type": "string", "format": "uri" },
+    "forumURL": { "type": "string", "format": "uri" },
+    "statsURL": { "type": "string", "format": "uri" },
+    "manualURL": { "type": "string", "format": "uri" },
+    "metacriticEntry": { "type": "string" },
+    "searchKeywords": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "supportedLanguages": {
+      "type": "object",
+      "properties": {
+        "interface": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "audio": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "subtitles": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "systemRequirements": { "type": "string" },
+    "genres": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "storeCategories": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "players": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "supportedFeatures": { "type": "string" },
+    "thirdPartyDRM": { "type": "string" },
+    "license": { "type": "string" },
+    "supportContactInfo": {
+      "type": "object",
+      "properties": {
+        "websiteURL": { "type": "string", "format": "uri" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" }
+      },
+      "anyOf": [
+        { "required": ["websiteURL"] },
+        { "required": ["email"] },
+        { "required": ["phone"] }
+      ]
+    },
+    "graphicalAssets": {
+      "type": "object",
+      "properties": {
+        "screenshots": {
+          "type": "array",
+          "items": { "type": "string", "format": "uri" }
+        },
+        "headerImage": { "type": "string", "format": "uri" },
+        "smallCapsuleImage": { "type": "string", "format": "uri" },
+        "largeCapsuleImage": { "type": "string", "format": "uri" },
+        "trailer": { "type": "string", "format": "uri" },
+        "StoreLogo": { "type": "string", "format": "uri" },
+        "Square44x44Logo": { "type": "string", "format": "uri" },
+        "Square150x150Logo": { "type": "string", "format": "uri" },
+        "BackgroundColor": { "type": "string", "format": "uri" }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "description",
+    "shortDescription",
+    "supportedLanguages",
+    "genres",
+    "storeCategories",
+    "supportContactInfo",
+    "graphicalAssets"
+  ]
+}
