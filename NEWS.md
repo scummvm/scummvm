@@ -42,6 +42,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Sword2:
    - Added support for Chinese translation.
 
+ TwinE:
+   - Added support for Japanese translation.
+
  Ultima:
    - Improve Ultima VI responsiveness.
    - Fix crash loading Ultima VI savegames when dialogs are open.
