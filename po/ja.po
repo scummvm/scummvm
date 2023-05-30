@@ -6548,7 +6548,8 @@ msgid ""
 "of Xeen\n"
 "or Clouds of Xeen to your Might and Magic 1 game folder"
 msgstr ""
-"エンハンスドモードで動かす場合、World of Xeen・Clouds of Xeen・Clouds of Xeen\n"
+"エンハンスドモードで動かす場合、World of Xeen・Clouds of Xeen・Clouds of "
+"Xeen\n"
 "のいずれかよりxeen.ccをMight Magic 1のフォルダーにコピーしてください"
 
 #: engines/mm/shared/utils/engine_data.cpp:277
