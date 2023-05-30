@@ -777,7 +777,7 @@ bool EoBCoreEngine::checkPartyStatus(bool handleDeath) {
 	gui_drawAllCharPortraitsWithStats();
 
 	if (checkPartyStatusExtra()) {
-		Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+		Screen::FontId of = _screen->setFont(_titleFont);
 		gui_updateControls();
 		int x = 0;
 		int y = 0;
