@@ -36,6 +36,7 @@ public:
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
+	bool msgMouseDown(const MouseDownMessage &msg) override;
 };
 
 } // namespace ViewsEnh

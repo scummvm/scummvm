@@ -45,6 +45,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("encounters", WRAP_METHOD(Console, cmdEncounters));
 	registerCmd("specials", WRAP_METHOD(Console, cmdSpecials));
 	registerCmd("special", WRAP_METHOD(Console, cmdSpecial));
+	registerCmd("view", WRAP_METHOD(Console, cmdView));
 }
 
 bool Console::cmdDumpMap(int argc, const char **argv) {
@@ -469,6 +470,16 @@ bool Console::cmdSpecial(int argc, const char **argv) {
 	// Execute the specials handler for the map
 	map.special();
 	return false;
+}
+
+bool Console::cmdView(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("view <view name>\n");
+		return true;
+	} else {
+		g_events->addView(argv[1]);
+		return false;
+	}
 }
 
 } // namespace MM1

@@ -95,6 +95,11 @@ protected:
 	 */
 	bool cmdSpecial(int argc, const char **argv);
 
+	/**
+	 * Add a specific view
+	 */
+	bool cmdView(int argc, const char **argv);
+
 public:
 	Console();
 	~Console() override {}
