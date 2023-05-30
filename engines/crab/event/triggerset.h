@@ -41,7 +41,7 @@ namespace event {
 class TriggerSet {
 	// The conditions needed to unlock whatever we want
 	// Places where this is used - events, levels, fighting moves
-	std::vector<Trigger> statement;
+	Common::Array<Trigger> statement;
 
 	// Is the thing unlocked or not?
 	bool result;

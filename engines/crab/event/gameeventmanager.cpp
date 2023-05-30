@@ -96,7 +96,7 @@ void Manager::Load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
-void Manager::HandleEvents(Info &info, const std::string &player_id, Common::Event &Event, HUD &hud, Level &level, std::vector<EventResult> &result) {
+void Manager::HandleEvents(Info &info, const std::string &player_id, Common::Event &Event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
 	// If an event is already being performed
 	if (event_map.count(info.CurLocID()) > 0 && event_map[info.CurLocID()].EventInProgress(active_seq)) {
 		switch (cur_event->type) {
@@ -183,7 +183,7 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, Common::Eve
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
-void Manager::HandleEvents(Info &info, const std::string &player_id, SDL_Event &Event, HUD &hud, Level &level, std::vector<EventResult> &result) {
+void Manager::HandleEvents(Info &info, const std::string &player_id, SDL_Event &Event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
 	// If an event is already being performed
 	if (event_map.count(info.CurLocID()) > 0 && event_map[info.CurLocID()].EventInProgress(active_seq)) {
 		switch (cur_event->type) {
@@ -270,7 +270,7 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, SDL_Event &
 //------------------------------------------------------------------------
 // Purpose: Internal Events
 //------------------------------------------------------------------------
-void Manager::InternalEvents(Info &info, Level &level, std::vector<EventResult> &result) {
+void Manager::InternalEvents(Info &info, Level &level, Common::Array<EventResult> &result) {
 	if (event_map.count(info.CurLocID()) > 0) {
 		if (event_map[info.CurLocID()].EventInProgress(active_seq)) {
 			switch (cur_event->type) {

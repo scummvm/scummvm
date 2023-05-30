@@ -72,7 +72,7 @@ protected:
 
 public:
 	// The exits to different levels
-	std::vector<pyrodactyl::level::Exit> area_exit;
+	Common::Array<pyrodactyl::level::Exit> area_exit;
 
 	// The layer on top of which objects walk
 	unsigned int sprite_layer;
@@ -121,7 +121,7 @@ public:
 	bool CollideWithMusic(const Rect rect, pyrodactyl::level::MusicInfo &music);
 
 	bool CollideWithTrigger(const Rect rect, int index);
-	void CollideWithTrigger(const Rect rect, std::vector<int> &collision_table);
+	void CollideWithTrigger(const Rect rect, Common::Array<int> &collision_table);
 
 	int W() { return w; }
 	int H() { return h; }

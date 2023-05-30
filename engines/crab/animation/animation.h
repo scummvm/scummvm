@@ -42,7 +42,7 @@ namespace pyrodactyl {
 namespace anim {
 class Animation {
 	// All the frames are updated simultaneously rather than sequentially
-	std::vector<AnimationFrame> frame;
+	Common::Array<AnimationFrame> frame;
 
 	// Length of the entire animation in milliseconds
 	uint32 length;

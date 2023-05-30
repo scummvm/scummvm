@@ -70,7 +70,7 @@ private:
 
 	// These things don't need to be saved
 	pyrodactyl::ui::HUD hud;
-	std::vector<pyrodactyl::event::EventResult> event_res;
+	Common::Array<pyrodactyl::event::EventResult> event_res;
 	pyrodactyl::ui::ParagraphData pop_default;
 	pyrodactyl::ui::DebugConsole debug_console;
 

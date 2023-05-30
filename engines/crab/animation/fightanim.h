@@ -75,7 +75,7 @@ class FightAnimFrames {
 
 public:
 	// The individual frames for each direction
-	std::vector<FightAnimFrame> frame;
+	Common::Array<FightAnimFrame> frame;
 
 	// The current clip
 	unsigned int current_clip;

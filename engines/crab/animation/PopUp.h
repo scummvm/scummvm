@@ -60,7 +60,7 @@ struct PopUp {
 	pyrodactyl::event::TriggerSet visible;
 
 	// Effects for changing variables and other related stuff
-	std::vector<pyrodactyl::event::Effect> effect;
+	Common::Array<pyrodactyl::event::Effect> effect;
 
 	// The text displayed
 	std::string text;
@@ -86,12 +86,12 @@ struct PopUp {
 
 	// return true if we should proceed to next event, false otherwise
 	bool InternalEvents(pyrodactyl::event::Info &info, const std::string &player_id,
-						std::vector<pyrodactyl::event::EventResult> &result, std::vector<pyrodactyl::event::EventSeqInfo> &end_seq);
+						Common::Array<pyrodactyl::event::EventResult> &result, Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq);
 };
 
 struct PopUpCollection {
 	// Collection of environmental dialog
-	std::vector<PopUp> element;
+	Common::Array<PopUp> element;
 
 	// The current dialog being played
 	int cur;
@@ -116,7 +116,7 @@ struct PopUpCollection {
 	void Load(rapidxml::xml_node<char> *node);
 
 	void InternalEvents(pyrodactyl::event::Info &info, const std::string &player_id,
-						std::vector<pyrodactyl::event::EventResult> &result, std::vector<pyrodactyl::event::EventSeqInfo> &end_seq);
+						Common::Array<pyrodactyl::event::EventResult> &result, Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq);
 
 	void Draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop, const Rect &camera);
 };

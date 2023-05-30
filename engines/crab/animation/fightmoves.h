@@ -49,7 +49,7 @@ const unsigned int SPRITE_STATE_OVERRIDE = std::numeric_limits<unsigned int>::ma
 
 class FightMoves {
 	// The fighting moves of a sprite
-	std::vector<FightMove> move;
+	Common::Array<FightMove> move;
 
 	// The currently selected move
 	int cur;
@@ -81,7 +81,7 @@ public:
 
 	unsigned int FindMove(const pyrodactyl::input::FightAnimationType &type, const int &state);
 
-	void ListAttackMoves(std::vector<unsigned int> &list);
+	void ListAttackMoves(Common::Array<unsigned int> &list);
 
 	bool ForceUpdate(const unsigned int &index, pyrodactyl::input::FightInput &input, const Direction &d);
 

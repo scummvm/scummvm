@@ -66,7 +66,7 @@ class AnimationFrames {
 
 public:
 	// The frames for the animation
-	std::vector<AnimFrame> frame;
+	Common::Array<AnimFrame> frame;
 
 	// The current clip
 	unsigned int current_clip;

@@ -108,7 +108,7 @@ struct Effect {
 
 	void Load(rapidxml::xml_node<char> *node);
 	bool Execute(pyrodactyl::event::Info &info, const std::string &player_id,
-				 std::vector<EventResult> &result, std::vector<EventSeqInfo> &end_seq);
+				 Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq);
 
 	void ChangeOpinion(pyrodactyl::event::Info &info, pyrodactyl::people::OpinionType type);
 };

@@ -39,7 +39,7 @@ namespace Crab {
 namespace pyrodactyl {
 namespace stat {
 struct StatTemplates {
-	std::vector<StatGroup> collection;
+	Common::Array<StatGroup> collection;
 
 public:
 	StatTemplates(void) {}

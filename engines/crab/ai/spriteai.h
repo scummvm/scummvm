@@ -63,7 +63,7 @@ struct SpriteAIData {
 		Timer delay;
 
 		// The list of moves that can be performed while attacking
-		std::vector<unsigned int> attack;
+		Common::Array<unsigned int> attack;
 
 		FightData() { state = FIGHTSTATE_GETNEXTMOVE; }
 	} fight;

@@ -71,7 +71,7 @@ class MainMenu : public GameState {
 	pyrodactyl::ui::ImageData bg;
 
 	// The lights on the background image
-	std::vector<pyrodactyl::ui::AlphaImage> lights;
+	Common::Array<pyrodactyl::ui::AlphaImage> lights;
 
 	// The game logo
 	pyrodactyl::ui::ImageData logo;

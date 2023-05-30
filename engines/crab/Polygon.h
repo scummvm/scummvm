@@ -59,10 +59,10 @@ class Polygon2D {
 
 public:
 	// A list of all points
-	std::vector<Vector2f> point;
+	Common::Array<Vector2f> point;
 
 	// A list of all edges
-	std::vector<Vector2f> edge;
+	Common::Array<Vector2f> edge;
 
 	Polygon2D() {}
 	Polygon2D(rapidxml::xml_node<char> *node, Rect &bounds) { Load(node, bounds); }

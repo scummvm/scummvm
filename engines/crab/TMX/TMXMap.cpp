@@ -355,7 +355,7 @@ bool TMXMap::CollideWithTrigger(const Rect rect, int index) {
 	return false;
 }
 
-void TMXMap::CollideWithTrigger(const Rect rect, std::vector<int> &collision_table) {
+void TMXMap::CollideWithTrigger(const Rect rect, Common::Array<int> &collision_table) {
 	int index = 0;
 	collision_table.clear();
 

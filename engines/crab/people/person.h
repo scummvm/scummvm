@@ -72,10 +72,10 @@ struct Person {
 	// ImageKey pic;
 
 	// The trigger areas the person is in right now
-	std::vector<int> trig;
+	Common::Array<int> trig;
 
 	// The traits of a person
-	std::vector<Trait> trait;
+	Common::Array<Trait> trait;
 
 	Person();
 	void Load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTemplates &stem);
