@@ -138,11 +138,18 @@ bool CharacterManage::msgAction(const ActionMessage &msg) {
 		}
 
 		return true;
-	} else if (msg._action == KEYBIND_SELECT && _state == RENAME) {
-		Common::strcpy_s(c._name, _newName.c_str());
-		c._name[15] = '\0';
-		setMode(DISPLAY);
-		return true;
+	} else if (msg._action == KEYBIND_SELECT) {
+		if (_state == RENAME) {
+			Common::strcpy_s(c._name, _newName.c_str());
+			c._name[15] = '\0';
+			setMode(DISPLAY);
+			return true;
+		} else if (_state == DELETE) {
+			// Removes the character and returns to View All Characters
+			g_globals->_roster.remove(g_globals->_currCharacter);
+			_changed = true;
+			close();
+		}
 	}
 
 	return CharacterBase::msgAction(msg);
