@@ -138,7 +138,7 @@ void CharacterBase::printInventory() {
 		writeString(160 - _innerBounds.left, BACKPACK_Y + 9 * (i + 1),
 			Common::String::format("%c) ", 'A' + i));
 		if (i < c._backpack.size()) {
-			g_globals->_items.getItem(c._equipped[i]._id);
+			g_globals->_items.getItem(c._backpack[i]._id);
 			const Item &item = g_globals->_currItem;
 			writeString(item._name);
 		}
