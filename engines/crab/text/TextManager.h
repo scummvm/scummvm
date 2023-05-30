@@ -49,7 +49,7 @@ namespace pyrodactyl {
 namespace text {
 class TextManager {
 	// The collection of stored fonts
-	std::vector<Graphics::Font *> font;
+	Common::Array<Graphics::Font *> font;
 
 	// The size of the cache
 	int cache_size;
@@ -77,7 +77,7 @@ class TextManager {
 	};
 
 	// Text Cache - done to avoid having to render a texture every time text is drawn
-	std::vector<TextCacheUnit> cache;
+	Common::Array<TextCacheUnit> cache;
 
 	// The oldest element in the text cache
 	int oldest;

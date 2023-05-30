@@ -43,7 +43,7 @@ namespace text {
 
 class ColorPool {
 
-	std::vector<SDL_Color> pool;
+	Common::Array<SDL_Color> pool;
 
 	// Default invalid color
 	SDL_Color invalid;
