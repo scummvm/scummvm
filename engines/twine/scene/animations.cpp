@@ -653,7 +653,8 @@ void Animations::doAnim(int32 actorIdx) {
 
 		if (col != ShapeType::kNone) {
 			if (col == ShapeType::kSolid) {
-				actor->_pos.y = processActor.y = (processActor.y / SIZE_BRICK_Y) * SIZE_BRICK_Y + SIZE_BRICK_Y; // go upper
+				processActor.y = (processActor.y / SIZE_BRICK_Y) * SIZE_BRICK_Y + SIZE_BRICK_Y; // go upper
+				actor->_pos.y = processActor.y;
 			} else {
 				collision->reajustPos(processActor, col);
 			}
