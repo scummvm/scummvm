@@ -53,6 +53,12 @@ private:
 	 */
 	void spellError();
 
+protected:
+	/**
+	 * Called when the selected character has been switched
+	 */
+	void charSwitched(Character *priorChar) override;
+
 public:
 	CastSpell();
 	virtual ~CastSpell() {}

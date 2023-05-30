@@ -144,6 +144,11 @@ void CastSpell::updateSelectedSpell() {
 	}
 }
 
+void CastSpell::charSwitched(Character *priorChar) {
+	PartyView::charSwitched(priorChar);
+	updateSelectedSpell();
+}
+
 void CastSpell::castSpell(Character *target) {
 	if (!isMagicAllowed()) {
 		g_events->send(InfoMessage(STRING["spells.magic_doesnt_work"]));
