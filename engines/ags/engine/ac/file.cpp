@@ -381,8 +381,16 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 		}
 #endif
 	} else if (sc_path.CompareLeft(GameDataDirToken) == 0) {
+#if AGS_PLATFORM_SCUMMVM
+		// the shared data dir should be remapped to the savedir otherwise some games
+		// are unable to create additional files
+		debugC(::AGS::kDebugFilePath, "Remapping %s to save folder", GameDataDirToken);
+		parent_dir = get_save_game_directory();
+		child_path = sc_path.Mid(strlen(GameSavedgamesDirToken));
+#else
 		parent_dir = GetGameAppDataDir();
 		child_path = sc_path.Mid(strlen(GameDataDirToken));
+#endif
 	} else {
 		child_path = sc_path;
 
