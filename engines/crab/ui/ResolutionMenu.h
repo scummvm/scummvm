@@ -50,7 +50,7 @@ class ResolutionMenu : public ButtonMenu {
 	Button change, cancel, custom;
 
 	// Menu stores the button for each of the item in the dimension array
-	std::vector<Dimension> dim;
+	Common::Array<Dimension> dim;
 
 	// The reference button for resolution
 	Button ref;

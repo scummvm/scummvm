@@ -59,7 +59,7 @@ protected:
 	std::string extension, directory;
 
 	// The save information for each slot
-	std::vector<FileType> slot_info;
+	Common::Array<FileType> slot_info;
 	TextData td_b[DATA_BUTTON_TOTAL];
 
 	// The titles for loc_name, difficulty, time_played and player_name

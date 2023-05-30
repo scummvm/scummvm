@@ -85,7 +85,7 @@ class ProgressBar : public ClipButton {
 		}
 	};
 
-	std::vector<CaptionText> ct;
+	Common::Array<CaptionText> ct;
 
 public:
 	ProgressBar() {
