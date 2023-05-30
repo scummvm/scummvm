@@ -221,7 +221,13 @@ Common::StringArray TextView::splitLines(const Common::String &str,
 							endP = startP + p;
 					}
 				}
-				assert(endP > startP);
+
+				if (endP <= startP) {
+					// No place to word wrap, and it's longer than the width.
+					// So just use the entirety of the remainder
+					endP = startP + strlen(startP) - 1;
+					break;
+				}
 
 				strWidth = font.getStringWidth(Common::String(startP, endP));
 			}
