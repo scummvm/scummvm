@@ -227,9 +227,15 @@ void Character::synchronize(Common::Serializer &s, int portraitNum) {
 	s.syncAsByte(_worthiness);
 	s.syncAsByte(_alignmentCtr);
 	s.syncBytes(_flags, 14);
+
 	s.syncAsByte(_portrait);
-	if (s.isLoading() && portraitNum != -1)
-		_portrait = portraitNum;
+	if (s.isLoading()) {
+		if (portraitNum != -1)
+			_portrait = portraitNum;
+		else if (portraitNum >= NUM_PORTRAITS)
+			// Ensure only valid portrait numbers are specified
+			_portrait = 0;
+	}
 
 	if (s.isLoading())
 		loadFaceSprites();
