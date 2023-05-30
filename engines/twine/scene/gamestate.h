@@ -68,8 +68,7 @@ private:
 	 * 107: Set to 1 after Twinsen kills yellow groboclone in the Citadel Island Tavern (after the Tavern has
 	 * been closed down). Makes the Tavern open again and groboclone not appear any more.
 	 */
-	// TODO: why not NUM_GAME_FLAGS?
-	uint8 _gameStateFlags[256]; // ListVarGame
+	uint8 _listFlagGame[NUM_GAME_FLAGS];
 	// only lba1 - lba2 uses 253 gameflag
 	int16 _gameChapter = 0;
 

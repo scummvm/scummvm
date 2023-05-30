@@ -206,7 +206,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		int32 flagIdx = ctx.stream.readByte();
 		debugCN(3, kDebugLevels::kDebugScripts, "flag_cube(%i, ", flagIdx);
 		conditionValueSize = ReturnType::RET_U8;
-		engine->_scene->_currentScriptValue = engine->_scene->_sceneFlags[flagIdx];
+		engine->_scene->_currentScriptValue = engine->_scene->_listFlagCube[flagIdx];
 		break;
 	}
 	case kcCONE_VIEW: {
@@ -1020,7 +1020,7 @@ int32 ScriptLife::lSET_FLAG_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 flagValue = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_FLAG_CUBE(%i, %i)", (int)flagIdx, (int)flagValue);
 
-	engine->_scene->_sceneFlags[flagIdx] = flagValue;
+	engine->_scene->_listFlagCube[flagIdx] = flagValue;
 
 	return 0;
 }

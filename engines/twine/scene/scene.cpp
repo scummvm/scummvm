@@ -452,8 +452,8 @@ bool Scene::initScene(int32 index) {
 void Scene::resetScene() {
 	_engine->_extra->resetExtras();
 
-	for (int32 i = 0; i < ARRAYSIZE(_sceneFlags); i++) {
-		_sceneFlags[i] = 0;
+	for (int32 i = 0; i < ARRAYSIZE(_listFlagCube); i++) {
+		_listFlagCube[i] = 0;
 	}
 
 	for (int32 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
