@@ -86,13 +86,10 @@ void AnimationFrames::Load(rapidxml::xml_node<char> *node) {
 		}
 	}
 
-#if 0
 	if (random)
-		current_clip = gRandom.Num() % frame.size();
+		current_clip = g_engine->getRandomNumber(frame.size() - 1);
 	else
 		current_clip = 0;
-#endif
-	current_clip = 0;
 }
 
 bool AnimationFrames::UpdateClip() {
