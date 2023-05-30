@@ -66,8 +66,8 @@ void EventSequence::InternalEvents(pyrodactyl::event::Info &info) {
 //------------------------------------------------------------------------
 // Purpose: Go to next event
 //------------------------------------------------------------------------
-void EventSequence::NextEvent(pyrodactyl::event::Info &info, const std::string &player_id, std::vector<EventResult> &result,
-							  std::vector<EventSeqInfo> &end_seq, int NextEventChoice) {
+void EventSequence::NextEvent(pyrodactyl::event::Info &info, const std::string &player_id, Common::Array<EventResult> &result,
+							  Common::Array<EventSeqInfo> &end_seq, int NextEventChoice) {
 	bool sync = false;
 	event_in_progress = false;
 

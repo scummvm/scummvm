@@ -45,7 +45,7 @@ class EventSeqGroup {
 	SeqMap seq;
 
 	// The sequences that have ended in this group
-	std::vector<unsigned int> end;
+	Common::Array<unsigned int> end;
 
 public:
 	EventSeqGroup(void) {}
@@ -57,8 +57,8 @@ public:
 	bool ActiveSeq(unsigned int &active_seq);
 
 	GameEvent *CurEvent(const unsigned int &id);
-	void NextEvent(const unsigned int &id, Info &info, const std::string &player_id, std::vector<EventResult> &result,
-				   std::vector<EventSeqInfo> &end_seq, const int choice = -1);
+	void NextEvent(const unsigned int &id, Info &info, const std::string &player_id, Common::Array<EventResult> &result,
+				   Common::Array<EventSeqInfo> &end_seq, const int choice = -1);
 
 	void InternalEvents(Info &info);
 

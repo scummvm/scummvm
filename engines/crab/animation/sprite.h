@@ -186,7 +186,7 @@ public:
 
 	void Load(rapidxml::xml_node<char> *node, std::vector<std::string> &animations);
 	void InternalEvents(pyrodactyl::event::Info &info, const std::string &player_id,
-						std::vector<pyrodactyl::event::EventResult> &result, std::vector<pyrodactyl::event::EventSeqInfo> &end_seq);
+						Common::Array<pyrodactyl::event::EventResult> &result, Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq);
 
 	void Draw(pyrodactyl::event::Info &info, const Rect &camera);
 	void DrawPopup(pyrodactyl::ui::ParagraphData &pop, const Rect &camera);
@@ -223,7 +223,7 @@ public:
 
 	// AI behavior routine for sprites running away from the player
 	// Requires every exit in the level be accessible
-	void Flee(pyrodactyl::event::Info &info, std::vector<pyrodactyl::level::Exit> &area_exit, const pyrodactyl::ai::SpriteConstant &sc);
+	void Flee(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::level::Exit> &area_exit, const pyrodactyl::ai::SpriteConstant &sc);
 
 	// Used for sprites that fly across semi randomly on the screen
 	void FlyAround(const Rect &camera, const pyrodactyl::ai::SpriteConstant &sc);

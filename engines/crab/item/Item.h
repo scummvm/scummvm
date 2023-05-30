@@ -51,7 +51,7 @@ struct Item {
 	std::string type;
 
 	// The stat bonuses provided by the item
-	std::vector<pyrodactyl::stat::Bonus> bonus;
+	Common::Array<pyrodactyl::stat::Bonus> bonus;
 
 	// The price
 	unsigned int value;

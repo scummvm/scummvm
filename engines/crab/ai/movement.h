@@ -55,7 +55,7 @@ struct MovementSet {
 	};
 
 	// The path followed by the sprite
-	std::vector<Movement> path;
+	Common::Array<Movement> path;
 
 	// If true, sprite repeats the path pattern after reaching the last co-ordinate
 	bool repeat;

@@ -49,7 +49,7 @@ class LoadingScreen {
 	};
 
 	// The different loading screens
-	std::vector<Screen> screen;
+	Common::Array<Screen> screen;
 
 	// The current loading screen
 	unsigned int cur;

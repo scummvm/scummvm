@@ -53,7 +53,7 @@ GameEvent *EventSeqGroup::CurEvent(const unsigned int &id) {
 }
 
 void EventSeqGroup::NextEvent(const unsigned int &id, Info &info, const std::string &player_id,
-							  std::vector<EventResult> &result, std::vector<EventSeqInfo> &end_seq, const int choice) {
+							  Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq, const int choice) {
 	return seq[id].NextEvent(info, player_id, result, end_seq, choice);
 }
 

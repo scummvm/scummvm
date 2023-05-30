@@ -97,7 +97,7 @@ public:
 	//!   - There must be no <code>NULL</code> pointers in the heap.
 	//! \post
 	//!   - All nodes should be sorted by this heap's comparator.
-	void enumerate(std::vector<Node const *> &sorted) const;
+	void enumerate(Common::Array<Node const *> &sorted) const;
 };
 
 template<typename Node>
@@ -140,7 +140,7 @@ void PriorityQueue<Node>::remove(Node const *node) {
 }
 
 template<typename Node>
-void PriorityQueue<Node>::enumerate(std::vector<Node const *> &sorted) const {
+void PriorityQueue<Node>::enumerate(Common::Array<Node const *> &sorted) const {
 	sorted.resize(open.size());
 	std::copy(open.begin(), open.end(), sorted.begin());
 }

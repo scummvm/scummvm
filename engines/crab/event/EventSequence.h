@@ -44,7 +44,7 @@ namespace Crab {
 namespace pyrodactyl {
 namespace event {
 class EventSequence {
-	std::vector<GameEvent> events;
+	Common::Array<GameEvent> events;
 	bool event_in_progress;
 
 	// The event currently in execution - updated only when all trigger conditions are met in InternalEvents
@@ -53,7 +53,7 @@ class EventSequence {
 	// The events that can happen next - these are updated when the cur event is over
 	// This means cur and next operate in an alternating way
 	// scan next until find event, make it cur, end cur and update next, repeat
-	std::vector<unsigned int> next;
+	Common::Array<unsigned int> next;
 
 public:
 	EventSequence() {
@@ -67,8 +67,8 @@ public:
 
 	// See if we should trigger any event
 	void InternalEvents(pyrodactyl::event::Info &info);
-	void NextEvent(Info &info, const std::string &player_id, std::vector<EventResult> &result,
-				   std::vector<EventSeqInfo> &end_seq, int NextEventChoice = -1);
+	void NextEvent(Info &info, const std::string &player_id, Common::Array<EventResult> &result,
+				   Common::Array<EventSeqInfo> &end_seq, int NextEventChoice = -1);
 
 	bool EventInProgress() { return event_in_progress; }
 	void EventInProgress(bool val) { event_in_progress = val; }

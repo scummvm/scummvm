@@ -45,7 +45,7 @@ using namespace pyrodactyl::event;
 //------------------------------------------------------------------------
 // Purpose: Let the level tick along and notify if we go into an exit
 //------------------------------------------------------------------------
-LevelResult Level::InternalEvents(Info &info, std::vector<EventResult> &result, std::vector<EventSeqInfo> &end_seq, bool EventInProgress) {
+LevelResult Level::InternalEvents(Info &info, Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq, bool EventInProgress) {
 	LevelResult l_result;
 
 	// input.InternalEvents();
@@ -85,8 +85,8 @@ LevelResult Level::InternalEvents(Info &info, std::vector<EventResult> &result, 
 //------------------------------------------------------------------------
 // Purpose: Let the AI think and animate the level
 //------------------------------------------------------------------------
-void Level::Think(Info &info, std::vector<EventResult> &result,
-				  std::vector<EventSeqInfo> &end_seq, std::string &id) {
+void Level::Think(Info &info, Common::Array<EventResult> &result,
+				  Common::Array<EventSeqInfo> &end_seq, std::string &id) {
 	unsigned int index = 0;
 	for (auto i = objects.begin(); i != objects.end(); ++i, ++index) {
 		// Only bother if the sprite is visible

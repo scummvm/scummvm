@@ -69,13 +69,13 @@ class Level {
 	std::vector<std::string> anim_set;
 
 	// The movement sets for sprites in levels
-	std::vector<pyrodactyl::ai::MovementSet> move_set;
+	Common::Array<pyrodactyl::ai::MovementSet> move_set;
 
 	// These sprites are only for animated objects and cannot be interacted with
-	std::vector<pyrodactyl::anim::Sprite> background;
+	Common::Array<pyrodactyl::anim::Sprite> background;
 
 	// These sprites fly across the screen randomly
-	std::vector<pyrodactyl::anim::Sprite> fly;
+	Common::Array<pyrodactyl::anim::Sprite> fly;
 
 	// The id of the music track being played
 	MusicInfo music;
@@ -102,8 +102,8 @@ class Level {
 	void SortObjectsToDraw();
 	void MoveObject(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s);
 
-	void Think(pyrodactyl::event::Info &info, std::vector<pyrodactyl::event::EventResult> &result,
-			   std::vector<pyrodactyl::event::EventSeqInfo> &end_seq, std::string &id);
+	void Think(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event::EventResult> &result,
+			   Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq, std::string &id);
 
 	void DrawObjects(pyrodactyl::event::Info &info);
 	void SetCamera();
@@ -112,7 +112,7 @@ class Level {
 
 public:
 	// The objects in the level, and the player character
-	std::vector<pyrodactyl::anim::Sprite> objects;
+	Common::Array<pyrodactyl::anim::Sprite> objects;
 
 	// The notification text drawn if the player is able to talk to a sprite
 	TalkNotify talk_notify;
@@ -193,8 +193,8 @@ public:
 #if 0
 	void HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event);
 #endif
-	LevelResult InternalEvents(pyrodactyl::event::Info &info, std::vector<pyrodactyl::event::EventResult> &result,
-							   std::vector<pyrodactyl::event::EventSeqInfo> &end_seq, bool EventInProgress);
+	LevelResult InternalEvents(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event::EventResult> &result,
+							   Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq, bool EventInProgress);
 
 	void PreDraw();
 	void PreDrawObjects(Graphics::ManagedSurface *surf);

@@ -121,7 +121,7 @@ public:
 		path filedir(directory);
 		if (exists(filedir) && is_directory(filedir)) {
 			directory_iterator dir_it(filedir);
-			std::vector<path> file_in_dir;
+			Common::Array<path> file_in_dir;
 
 			std::copy(directory_iterator(filedir), directory_iterator(), std::back_inserter(file_in_dir));
 			std::sort(file_in_dir.begin(), file_in_dir.end(), PathCompare);

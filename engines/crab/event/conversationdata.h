@@ -54,7 +54,7 @@ struct ReplyChoice {
 
 	// The changes to opinion that are possible for this reply
 	// All NPCs affected by this conversation
-	std::vector<ChangeVal> change;
+	Common::Array<ChangeVal> change;
 
 	ReplyChoice() {
 		tone = 0;
@@ -67,7 +67,7 @@ struct ReplyChoice {
 
 struct ConversationData {
 	// The set of replies
-	std::vector<ReplyChoice> reply;
+	Common::Array<ReplyChoice> reply;
 
 	ConversationData() {}
 

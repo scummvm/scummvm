@@ -153,7 +153,7 @@ bool Sprite::MoveToLocPathfinding(Vector2i &dest, const float &velocity, const S
 //------------------------------------------------------------------------
 // Purpose: AI routine for running to the nearest exit, then disappearing
 //------------------------------------------------------------------------
-void Sprite::Flee(pyrodactyl::event::Info &info, std::vector<pyrodactyl::level::Exit> &area_exit, const SpriteConstant &sc) {
+void Sprite::Flee(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::level::Exit> &area_exit, const SpriteConstant &sc) {
 	switch (ai_data.flee.state) {
 	case FLEESTATE_GETNEARESTEXIT: {
 		if (area_exit.empty()) {

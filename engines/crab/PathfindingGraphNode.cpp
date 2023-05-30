@@ -92,7 +92,7 @@ bool PathfindingGraphNode::AdjacentToNode(PathfindingGraphNode *otherNode) {
 }
 
 //
-// const std::vector< PathfindingGraphNode*>& PathfindingGraphNode::GetNeighbors() const
+// const Common::Array< PathfindingGraphNode*>& PathfindingGraphNode::GetNeighbors() const
 //{
 //	return neighborNodes;
 //}

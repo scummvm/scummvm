@@ -69,7 +69,7 @@ void PopUpCollection::Load(rapidxml::xml_node<char> *node) {
 // Purpose: Internal events
 //------------------------------------------------------------------------
 bool PopUp::InternalEvents(pyrodactyl::event::Info &info, const std::string &player_id,
-						   std::vector<EventResult> &result, std::vector<EventSeqInfo> &end_seq) {
+						   Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq) {
 	if (visible.Evaluate(info) || started_show) {
 		if (delay.TargetReached()) {
 			if (duration.TargetReached(g_engine->_screenSettings->text_speed)) {
@@ -92,7 +92,7 @@ bool PopUp::InternalEvents(pyrodactyl::event::Info &info, const std::string &pla
 }
 
 void PopUpCollection::InternalEvents(pyrodactyl::event::Info &info, const std::string &player_id,
-									 std::vector<EventResult> &result, std::vector<EventSeqInfo> &end_seq) {
+									 Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq) {
 	if (cur >= 0 && (unsigned int)cur < element.size()) {
 		if (element[cur].InternalEvents(info, player_id, result, end_seq)) {
 			if (element[cur].next <= 0 || (unsigned int)element[cur].next >= element.size()) {

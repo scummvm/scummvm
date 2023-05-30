@@ -474,7 +474,7 @@ void Game::InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 		{
 			// HACK: Since sequences can only be ended in GameEventManager, we use this empty array
 			// to get effects to work for levels
-			std::vector<pyrodactyl::event::EventSeqInfo> end_seq;
+			Common::Array<pyrodactyl::event::EventSeqInfo> end_seq;
 			ApplyResult(level.InternalEvents(info, event_res, end_seq, gem.EventInProgress()));
 		}
 

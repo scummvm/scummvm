@@ -76,13 +76,13 @@ struct GameEvent {
 	unsigned int special;
 
 	// The variables changed/added in the event
-	std::vector<Effect> effect;
+	Common::Array<Effect> effect;
 
 	// The triggers for the event
 	TriggerSet trig;
 
 	// The id of the next event
-	std::vector<EventID> next;
+	Common::Array<EventID> next;
 
 	GameEvent();
 	GameEvent(rapidxml::xml_node<char> *node) { Load(node); }

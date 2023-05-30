@@ -56,7 +56,7 @@ protected:
 
 	// THIS IS NOT THE DEFINITIVE LIST OF ENDED SEQUENCES
 	// JUST A TEMPORARY LIST OF EVENT SEQUENCES TO PASS AROUND
-	std::vector<EventSeqInfo> end_seq;
+	Common::Array<EventSeqInfo> end_seq;
 
 	// The objects used to draw the dialog box and opinion bars
 	pyrodactyl::ui::PersonHandler oh;
@@ -93,13 +93,13 @@ public:
 	void Draw(Info &info, pyrodactyl::ui::HUD &hud, pyrodactyl::level::Level &level);
 
 	// cur_per is also updated here
-	void InternalEvents(Info &info, pyrodactyl::level::Level &level, std::vector<EventResult> &result);
+	void InternalEvents(Info &info, pyrodactyl::level::Level &level, Common::Array<EventResult> &result);
 
 	void HandleEvents(Info &info, const std::string &player_id, Common::Event &Event,
-					  pyrodactyl::ui::HUD &hud, pyrodactyl::level::Level &level, std::vector<EventResult> &result);
+					  pyrodactyl::ui::HUD &hud, pyrodactyl::level::Level &level, Common::Array<EventResult> &result);
 #if 0
 	void HandleEvents(Info &info, const std::string &player_id, SDL_Event &Event,
-					  pyrodactyl::ui::HUD &hud, pyrodactyl::level::Level &level, std::vector<EventResult> &result);
+					  pyrodactyl::ui::HUD &hud, pyrodactyl::level::Level &level, Common::Array<EventResult> &result);
 #endif
 
 	void CalcActiveSeq(Info &info, pyrodactyl::level::Level &level, const Rect &camera);

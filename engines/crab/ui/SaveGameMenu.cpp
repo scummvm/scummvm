@@ -62,7 +62,7 @@ void GameSaveMenu::ScanDir() {
 
 	if (exists(savedir) && is_directory(savedir)) {
 		directory_iterator dir_it(savedir);
-		std::vector<boost::filesystem::path> file_in_dir;
+		Common::Array<boost::filesystem::path> file_in_dir;
 		file_in_dir.clear();
 
 		// Find all files in the save directory, sort them according to last modified

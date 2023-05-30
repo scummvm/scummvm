@@ -43,10 +43,10 @@ namespace event {
 // This structure is responsible for storing the special data structures for events like replies, conversations
 struct GameEventStore {
 	// Data related to conversation events
-	std::vector<ConversationData> con;
+	Common::Array<ConversationData> con;
 
 	// Data related to animations
-	std::vector<pyrodactyl::anim::Animation> anim;
+	Common::Array<pyrodactyl::anim::Animation> anim;
 
 	// Data related to the tones of a character
 	struct ToneData {
@@ -54,13 +54,13 @@ struct GameEventStore {
 	};
 
 	// This sets the text the player sees as "tone" during the reply menu
-	std::vector<ToneData> tone;
+	Common::Array<ToneData> tone;
 
 	// We need to change player character images when switching between characters
-	std::vector<pyrodactyl::ui::StateButtonImage> img;
+	Common::Array<pyrodactyl::ui::StateButtonImage> img;
 
 	// The set of traits for various characters
-	std::vector<pyrodactyl::people::Trait> trait;
+	Common::Array<pyrodactyl::people::Trait> trait;
 
 	// Steam UserStats interface
 	// ISteamUserStats *m_pSteamUserStats;

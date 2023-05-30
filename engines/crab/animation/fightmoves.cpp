@@ -141,7 +141,7 @@ unsigned int FightMoves::FindMove(const pyrodactyl::input::FightAnimationType &t
 //------------------------------------------------------------------------
 // Purpose: Function for AI
 //------------------------------------------------------------------------
-void FightMoves::ListAttackMoves(std::vector<unsigned int> &list) {
+void FightMoves::ListAttackMoves(Common::Array<unsigned int> &list) {
 	list.clear();
 	unsigned int pos = 0;
 	for (auto i = move.begin(); i != move.end(); ++i, ++pos)
