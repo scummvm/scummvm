@@ -27,7 +27,7 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-#define RIGHT_X 220
+#define RIGHT_X 200
 
 void CreateCharacters::NewCharacter::clear() {
 	Common::fill(_attribs1, _attribs1 + 7, 0);
@@ -135,6 +135,7 @@ void CreateCharacters::NewCharacter::save() {
 	re._backpack[0]._id = 1;
 	const int ALIGNMENT_VALS[3] = { 0, 0x10, 0x20 };
 	re._alignmentCtr = ALIGNMENT_VALS[re._alignmentInitial];
+	re._portrait = _portrait;
 
 	g_globals->_roster.save();
 }
