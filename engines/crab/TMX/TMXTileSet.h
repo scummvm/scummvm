@@ -40,10 +40,10 @@ namespace Crab {
 namespace TMX {
 struct TileSet {
 	// The name of the tileset
-	std::string name;
+	Common::String name;
 
 	// The location of the tileset image on the disk
-	std::string loc;
+	Common::String loc;
 
 	// The first gid of the tileset
 	GidFormat first_gid;
@@ -83,12 +83,12 @@ struct TileSet {
 	}
 
 	TileSet() { Init(); }
-	TileSet(const std::string &path, rapidxml::xml_node<char> *node) {
+	TileSet(const Common::String &path, rapidxml::xml_node<char> *node) {
 		Init();
 		Load(path, node);
 	}
 
-	void Load(const std::string &path, rapidxml::xml_node<char> *node);
+	void Load(const Common::String &path, rapidxml::xml_node<char> *node);
 	void Draw(const Vector2i &pos, const TileInfo &tile);
 	void PreDraw(const Vector2i &pos, const TileInfo &tile, Graphics::ManagedSurface *surf);
 };
@@ -107,7 +107,7 @@ public:
 
 	void Reset();
 
-	void Load(const std::string &path, rapidxml::xml_node<char> *node);
+	void Load(const Common::String &path, rapidxml::xml_node<char> *node);
 	void Draw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos, pyrodactyl::image::Image &img);
 	void PreDraw(MapLayer &layer, const Vector2i &tile_size, Graphics::ManagedSurface *surf);
 	void ForceDraw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos);

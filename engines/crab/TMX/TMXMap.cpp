@@ -62,7 +62,7 @@ TMXMap::TMXMap() {
 // Purpose: Load stuff via a .tmx file set to xml storage (no compression)
 //------------------------------------------------------------------------
 
-void TMXMap::Load(const std::string &path, std::string filename) {
+void TMXMap::Load(const Common::String &path, Common::String filename) {
 	XMLDoc conf((path + filename).c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("map");
@@ -110,7 +110,7 @@ void TMXMap::Load(const std::string &path, std::string filename) {
 			// see the level at which the sprites will be drawn
 			for (auto groupnode = node->first_node(); groupnode != NULL; groupnode = groupnode->next_sibling()) {
 				// Store the name for easy comparison
-				std::string name = groupnode->name();
+				Common::String name = groupnode->name();
 
 				if (name == "layer" || name == "imagelayer") // Is this a tile or an image layer
 				{
@@ -129,7 +129,7 @@ void TMXMap::Load(const std::string &path, std::string filename) {
 					layer_count++;
 				} else if (name == "objectgroup") // Is this an object layer
 				{
-					std::string group_name;
+					Common::String group_name;
 					LoadStr(group_name, "name", groupnode);
 					if (group_name == "exit") {
 						for (auto n = groupnode->first_node("object"); n != NULL; n = n->next_sibling("object")) {
@@ -196,7 +196,7 @@ void TMXMap::Load(const std::string &path, std::string filename) {
 //		rapidxml::xml_node<char> *linenode = n->first_node("polyline");
 //		if (linenode != NULL)
 //		{
-//			std::string points, x, y;
+//			Common::String points, x, y;
 //			LoadStr(points, "points", linenode);
 //
 //			path.resize(pos + 1);
@@ -221,7 +221,7 @@ void TMXMap::Load(const std::string &path, std::string filename) {
 //------------------------------------------------------------------------
 // Purpose: Convert point from string to vector
 //------------------------------------------------------------------------
-// const Vector2i TMXMap::GetPoint(const Vector2i &ref, std::string &x, std::string &y)
+// const Vector2i TMXMap::GetPoint(const Vector2i &ref, Common::String &x, Common::String &y)
 //{
 //	Vector2i v;
 //	v.x = ref.x + StringToNumber<int>(x);

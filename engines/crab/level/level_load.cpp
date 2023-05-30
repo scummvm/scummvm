@@ -75,7 +75,7 @@ void Level::Load(const std::string &filename, pyrodactyl::event::Info &info,
 
 			if (NodeValid("map", node)) {
 				rapidxml::xml_node<char> *mapnode = node->first_node("map");
-				std::string path, tmxfile;
+				Common::String path, tmxfile;
 				LoadStr(path, "path", mapnode);
 				LoadStr(tmxfile, "file", mapnode);
 
