@@ -1270,7 +1270,7 @@ protected:
 	void snd_stopSound();
 	void snd_fadeOut(int del = 160);
 	virtual void snd_loadAmigaSounds(int level, int sub) = 0;
-	virtual void snd_updateLevelScore() {}
+	virtual void snd_updateLevelScore() = 0;
 
 	const char **_amigaSoundMap;
 	const char *const *_amigaLevelSoundList1;

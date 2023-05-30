@@ -24,8 +24,8 @@
 #ifndef KYRA_SOUND_CAPCOM98_H
 #define KYRA_SOUND_CAPCOM98_H
 
+#include "audio/mididrv.h"
 #include "common/scummsys.h"
-//#include "common/array.h"
 
 namespace Audio {
 	class Mixer;
@@ -37,8 +37,24 @@ class CapcomPC98AudioDriverInternal;
 
 class CapcomPC98AudioDriver {
 public:
-	CapcomPC98AudioDriver();
+	CapcomPC98AudioDriver(Audio::Mixer *mixer, MidiDriver::DeviceHandle dev);
 	~CapcomPC98AudioDriver();
+
+	bool isUsable() const;
+
+	// All data passed to the following functions has to be maintained by the caller.
+	void reset();
+	void loadFMInstruments(const uint8 *data);
+	void startSong(const uint8 *data, uint8 volume, bool loop);
+	void stopSong();
+	void startSoundEffect(const uint8 *data, uint8 volume);
+	void stopSoundEffect();
+	int checkSoundMarker() const;
+	bool songIsPlaying() const;
+	bool soundEffectIsPlaying() const;
+
+	void setMusicVolume(int volume);
+	void setSoundEffectVolume(int volume);
 
 private:
 	CapcomPC98AudioDriverInternal *_drv;

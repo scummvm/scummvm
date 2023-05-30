@@ -606,6 +606,11 @@ bool DarkMoonEngine::restParty_extraAbortCondition() {
 	return true;
 }
 
+void DarkMoonEngine::snd_playLevelScore() {
+	if (_flags.platform == Common::kPlatformPC98)
+		snd_playSong(0);
+}
+
 void DarkMoonEngine::snd_loadAmigaSounds(int level, int sub) {
 	if (_flags.platform != Common::kPlatformAmiga)
 		return;
@@ -691,9 +696,9 @@ void DarkMoonEngine::snd_loadAmigaSounds(int level, int sub) {
 	_amigaCurSoundIndex = sndIndex;
 }
 
-void DarkMoonEngine::snd_playLevelScore() {
-	if (_flags.platform == Common::kPlatformPC98)
-		snd_playSong(0);
+void DarkMoonEngine::snd_updateLevelScore() {
+	if (_flags.platform == Common::kPlatformPC98 && !_sound->isPlaying())
+		snd_playLevelScore();
 }
 
 void DarkMoonEngine::useHorn(int charIndex, int weaponSlot) {

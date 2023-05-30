@@ -120,8 +120,9 @@ private:
 	bool restParty_extraAbortCondition() override;
 
 	// Sound
-	void snd_loadAmigaSounds(int level, int sub) override;
 	void snd_playLevelScore() override;
+	void snd_loadAmigaSounds(int level, int sub) override;
+	void snd_updateLevelScore() override;
 
 	const char *const *_amigaSoundFiles2;
 	const char *const *_amigaSoundMapExtra;

@@ -273,7 +273,7 @@ void DarkMoonEngine::seq_playIntro() {
 	// PC-98 --- SFX 0
 
 	if (!skipFlag() && !shouldQuit())
-		snd_playSong(12);
+		snd_playSong(_flags.platform == Common::kPlatformPC98 ? 54 : 12);
 
 	_screen->copyRegion(0, 0, 8, 8, 304, 128, 2, 0, Screen::CR_NO_P_CHECK);
 	sq.setPalette(9);
@@ -346,7 +346,8 @@ void DarkMoonEngine::seq_playIntro() {
 
 	sq.printText(3, textColor1);    // The message was urgent.
 
-	// PC-98 --- SFX 1
+	if (_flags.platform == Common::kPlatformPC98)
+		snd_playSong(55);
 
 	sq.loadScene(1, 2);
 	sq.waitForSongNotifier(++songCurPos);
@@ -446,7 +447,8 @@ void DarkMoonEngine::seq_playIntro() {
 
 	sq.animCommand(16);
 
-	// PC-98 --- SFX 2
+	if (_flags.platform == Common::kPlatformPC98)
+		snd_playSong(56);
 
 	sq.printText(7, textColor2);    // Thank you for coming so quickly
 	sq.animCommand(16);
@@ -592,7 +594,8 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(20);
 	sq.animCommand(18);
 
-	// PC-98 --- SFX 3
+	if (_flags.platform == Common::kPlatformPC98)
+		snd_playSong(57);
 
 	sq.fadeText();
 	sq.animCommand(29);
@@ -618,7 +621,7 @@ void DarkMoonEngine::seq_playIntro() {
 	else {
 		_screen->setScreenDim(17);
 		_screen->clearCurDim();
-		snd_playSoundEffect(14);
+		snd_playSoundEffect(_flags.platform == Common::kPlatformPC98 ? 12 : 14);
 
 		if (_configRenderMode != Common::kRenderEGA)
 			sq.fadePalette(10, 1);
@@ -659,7 +662,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.delay(18);
 
 	if (!skipFlag() && !shouldQuit() && _flags.platform != Common::kPlatformAmiga)
-		snd_playSong(1);
+		snd_playSong(_flags.platform == Common::kPlatformPC98 ? 52 : 1);
 	sq.update(2);
 
 	sq.loadScene(1, 2);
@@ -784,8 +787,10 @@ void DarkMoonEngine::seq_playFinale() {
 
 	sq.waitForSongNotifier(3);
 
+	int sfxOffset = (_flags.platform == Common::kPlatformPC98) ? -1 : 0;
+
 	if (!skipFlag() && !shouldQuit())
-		snd_playSoundEffect(7);
+		snd_playSoundEffect(7 + sfxOffset);
 	sq.delay(8);
 
 	sq.animCommand(10);
@@ -819,7 +824,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.waitForSongNotifier(4);
 
 	if (!skipFlag() && !shouldQuit())
-		snd_playSoundEffect(7);
+		snd_playSoundEffect(7 + sfxOffset);
 	sq.delay(8);
 
 	sq.animCommand(10);
@@ -856,7 +861,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.delay(36);
 
 	if (!skipFlag() && !shouldQuit())
-		snd_playSoundEffect(11);
+		snd_playSoundEffect(11 + sfxOffset);
 
 	sq.delay(54);
 	sq.fadeText();
@@ -865,7 +870,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.waitForSongNotifier(5);
 
 	if (!skipFlag() && !shouldQuit())
-		snd_playSoundEffect(6);
+		snd_playSoundEffect(6 + sfxOffset);
 
 	if (_flags.platform == Common::kPlatformAmiga)
 		sq.copyPalette(6, 0);
@@ -882,7 +887,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.animCommand(19);
 	sq.animCommand(19, 36);
 	if (!skipFlag() && !shouldQuit())
-		snd_playSoundEffect(12);
+		snd_playSoundEffect(12 + sfxOffset);
 	sq.fadeText();
 
 	sq.printText(17, textColor2);           // Thank you
@@ -892,12 +897,12 @@ void DarkMoonEngine::seq_playFinale() {
 
 	sq.printText(18, textColor2);           // You have earned my deepest respect
 	if (!skipFlag() && !shouldQuit())
-		snd_playSoundEffect(11);
+		snd_playSoundEffect(11 + sfxOffset);
 	sq.animCommand(20);
 	sq.animCommand(19);
 	sq.animCommand(19);
 	if (!skipFlag() && !shouldQuit())
-		snd_playSoundEffect(11);
+		snd_playSoundEffect(11 + sfxOffset);
 	sq.delay(36);
 	sq.fadeText();
 
@@ -905,13 +910,13 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.animCommand(19);
 	sq.animCommand(19, 18);
 	if (!skipFlag() && !shouldQuit())
-		snd_playSoundEffect(11);
+		snd_playSoundEffect(11 + sfxOffset);
 	sq.animCommand(20, 18);
 	sq.fadeText();
 
 	sq.delay(28);
 	if (!skipFlag() && !shouldQuit())
-		snd_playSoundEffect(12);
+		snd_playSoundEffect(12 + sfxOffset);
 	sq.delay(3);
 
 	sq.loadScene(5, 2);
@@ -919,26 +924,26 @@ void DarkMoonEngine::seq_playFinale() {
 		_screen->copyRegion(0, 0, 8, 8, 304, 128, 2, 0, Screen::CR_NO_P_CHECK);
 	} else {
 		sq.updateAmigaSound();
-		snd_playSoundEffect(6);
+		snd_playSoundEffect(6 + sfxOffset);
 		if (_configRenderMode != Common::kRenderEGA)
 			sq.setPaletteWithoutTextColor(0);
 		_screen->crossFadeRegion(0, 0, 8, 8, 304, 128, 2, 0);
 	}
 
 	if (!skipFlag() && !shouldQuit())
-		snd_playSoundEffect(12);
+		snd_playSoundEffect(12 + sfxOffset);
 	sq.delay(5);
 	if (!skipFlag() && !shouldQuit())
-		snd_playSoundEffect(11);
+		snd_playSoundEffect(11 + sfxOffset);
 	sq.delay(11);
 	if (!skipFlag() && !shouldQuit())
-		snd_playSoundEffect(12);
+		snd_playSoundEffect(12 + sfxOffset);
 	sq.delay(7);
 	if (!skipFlag() && !shouldQuit())
-		snd_playSoundEffect(11);
+		snd_playSoundEffect(11 + sfxOffset);
 	sq.delay(12);
 	if (!skipFlag() && !shouldQuit())
-		snd_playSoundEffect(12);
+		snd_playSoundEffect(12 + sfxOffset);
 	sq.updateAmigaSound();
 
 	removeInputTop();
@@ -958,7 +963,7 @@ void DarkMoonEngine::seq_playFinale() {
 
 	sq.delay(18);
 	if (!skipFlag() && !shouldQuit() && _flags.platform != Common::kPlatformAmiga)
-		snd_playSong(_flags.platform == Common::kPlatformFMTowns ? 16 : 1);
+		snd_playSong(_flags.platform == Common::kPlatformFMTowns ? 16 : (_flags.platform == Common::kPlatformPC98 ? 52 : 1));
 
 	int temp = 0;
 

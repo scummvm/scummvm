@@ -537,7 +537,7 @@ void EoBCoreEngine::initStaticResource() {
 		_sound->initAudioResourceInfo(kMusicIntro, &intro);
 		_sound->initAudioResourceInfo(kMusicFinale, &finale);
 
-	} else if (_flags.platform != Common::kPlatformPC98) {
+	} else if (_flags.platform != Common::kPlatformPC98 || _flags.gameID == GI_EOB2) {
 		const char *const *files = _staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
 		SoundResourceInfo_PC ingame(files, temp);
 		files = _staticres->loadStrings(kEoBBaseSoundFilesIntro, temp);

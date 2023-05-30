@@ -2526,7 +2526,7 @@ void GUI_EoB::runCampMenu() {
 					else if (_vm->_configMusic)
 						_vm->snd_playSong(11);
 					else
-						_vm->snd_playSong(0);
+						_vm->snd_stopSound();
 				} else {
 					_vm->_configSounds ^= true;
 					_vm->_configMusic = _vm->_configSounds ? 1 : 0;

@@ -540,13 +540,14 @@ public:
 	~SoundPC98_Darkmoon() override;
 
 	kType getMusicType() const override;
+	kType getSfxType() const override;
 
 	bool init() override;
 
 	void initAudioResourceInfo(int set, void *info) override;
 	void selectAudioResourceSet(int set) override;
 	bool hasSoundFile(uint file) const override { return true; }
-	void loadSoundFile(uint file) override {}
+	void loadSoundFile(uint file) override;
 	void loadSoundFile(Common::String name) override;
 
 	void playTrack(uint8 track) override;
@@ -565,11 +566,22 @@ public:
 	void resetTrigger() override;
 
 private:
+	void restartBackgroundMusic();
+	const uint8 *getData(uint16 track) const;
+
 	KyraEngine_v1 *_vm;
 	CapcomPC98AudioDriver *_driver;
+	uint8 *_soundData, *_fileBuffer;
 
+	int _lastTrack;
+
+	const SoundResourceInfo_PC *res() const {return _resInfo[_currentResourceSet]; }
+	SoundResourceInfo_PC *_resInfo[3];
 	int _currentResourceSet;
 
+	Common::String _soundFileLoaded;
+
+	MidiDriver::DeviceHandle _dev;
 	kType _drvType;
 	bool _ready;
 };

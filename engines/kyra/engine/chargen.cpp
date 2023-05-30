@@ -89,6 +89,7 @@ private:
 	uint16 _chargenMaxStats[7];
 
 	const uint8 _menuColor1, _menuColor2, _menuColor3;
+	const uint8 _trackNo;
 
 	const char *const *_chargenStrings1;
 	const char *const *_chargenStrings2;
@@ -141,7 +142,9 @@ CharacterGenerator::CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen) : 
 	_updateBoxShapesIndex(0), _lastUpdateBoxShapesIndex(0), _magicShapesBox(6), _activeBox(0),
 	_menuColor1(vm->gameFlags().platform == Common::kPlatformSegaCD ? 0xFF : (vm->_configRenderMode == Common::kRenderCGA ? 1 : vm->guiSettings()->colors.guiColorWhite)),
 	_menuColor2(vm->gameFlags().platform == Common::kPlatformSegaCD ? 0x55 : vm->guiSettings()->colors.guiColorLightRed),
-	_menuColor3(vm->gameFlags().platform == Common::kPlatformSegaCD ? 0x99 : vm->guiSettings()->colors.guiColorBlack) {
+	_menuColor3(vm->gameFlags().platform == Common::kPlatformSegaCD ? 0x99 : vm->guiSettings()->colors.guiColorBlack),
+	_trackNo(vm->game() == GI_EOB1 ? (vm->gameFlags().platform == Common::kPlatformPC98 ? 1 :
+		(vm->gameFlags().platform == Common::kPlatformSegaCD ? 8: 20)) : (vm->gameFlags().platform == Common::kPlatformPC98 ? 53 : 13)) {
 
 	_chargenStatStrings = _vm->_chargenStatStrings;
 	_chargenRaceSexStrings = _vm->_chargenRaceSexStrings;
@@ -352,7 +355,7 @@ bool CharacterGenerator::createCustomParty(const uint8 ***faceShapes) {
 	checkForCompleteParty();
 	initButtonsFromList(0, 5);
 
-	_vm->snd_playSong(_vm->game() == GI_EOB1 ? (_vm->gameFlags().platform == Common::kPlatformPC98 ? 1 : (_vm->gameFlags().platform == Common::kPlatformSegaCD ? 8: 20)) : 13);
+	_vm->snd_playSong(_trackNo);
 	_activeBox = 0;
 
 	for (bool loop = true; loop && (!_vm->shouldQuit());) {
@@ -894,13 +897,13 @@ int CharacterGenerator::getInput(Button *buttonList) {
 
 	if (_vm->game() == GI_EOB1 && _vm->sound()->checkTrigger()) {
 		_vm->sound()->resetTrigger();
-		_vm->snd_playSong(20);
+		_vm->snd_playSong(_trackNo);
 	} else if (_vm->game() == GI_EOB2 && !_vm->sound()->isPlaying()) {
 		// WORKAROUND for EOB II: The original implements the same sound trigger check as in EOB I.
 		// However, Westwood seems to have forgotten to set the trigger at the end of the AdLib song,
 		// so that the music will not loop. We simply check whether the sound driver is still playing.
 		_vm->delay(3 * _vm->_tickLength);
-		_vm->snd_playSong(13);
+		_vm->snd_playSong(_trackNo);
 	}
 
 	return _vm->checkInput(buttonList, false, 0);
