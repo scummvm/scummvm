@@ -1206,6 +1206,10 @@ bool Datum::isCastRef() const {
 	return (type == CASTREF || type == FIELDREF);
 }
 
+bool Datum::isArray() const {
+	return (type == ARRAY || type == POINT || type == RECT);
+}
+
 const char *Datum::type2str(bool ilk) const {
 	static char res[20];
 
