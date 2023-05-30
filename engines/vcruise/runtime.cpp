@@ -1383,7 +1383,7 @@ bool Runtime::bootGame(bool newGame) {
 		subtitlesLoadedOK = loadSubtitles(codePage);
 
 		if (!subtitlesLoadedOK)
-			warning("Localization data failed to load!  Text and subtitles will be disabled.")
+			warning("Localization data failed to load!  Text and subtitles will be disabled.");
 	}
 
 	if (subtitlesLoadedOK)
