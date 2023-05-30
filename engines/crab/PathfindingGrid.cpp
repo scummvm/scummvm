@@ -222,7 +222,7 @@ PathfindingGraphNode *PathfindingGrid::GetNearestOpenNode(Vector2f nodePos, Vect
 
 	float shortestDistance = 0.0f;
 
-	std::list<PathfindingGraphNode *> checkNodes;
+	Common::List<PathfindingGraphNode *> checkNodes;
 	checkNodes.push_back(startNode);
 
 	Common::Array<PathfindingGraphNode *> allUsedNodes;

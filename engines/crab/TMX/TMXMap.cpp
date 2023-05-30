@@ -317,7 +317,7 @@ void TMXMap::DrawDebug(const Rect &camera) {
 //------------------------------------------------------------------------
 // Purpose: Collision functions
 //------------------------------------------------------------------------
-void TMXMap::CollideWithNoWalk(const Rect bounding_box, std::list<CollisionData> &colliders) {
+void TMXMap::CollideWithNoWalk(const Rect bounding_box, Common::List<CollisionData> &colliders) {
 	CollisionData res;
 	for (auto i = area_nowalk.begin(); i != area_nowalk.end(); ++i) {
 		res = i->Collide(bounding_box);

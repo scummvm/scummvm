@@ -114,7 +114,7 @@ public:
 	bool InsideWalk(const Vector2i &pos);
 
 	bool InsideNoWalk(const Vector2i &pos);
-	void CollideWithNoWalk(const Rect bounding_box, std::list<CollisionData> &colliders);
+	void CollideWithNoWalk(const Rect bounding_box, Common::List<CollisionData> &colliders);
 
 	bool CollideWithExit(const Rect rect, LevelResult &res);
 	bool CollideWithStairs(const Rect rect, Vector2f &vel_mod);
