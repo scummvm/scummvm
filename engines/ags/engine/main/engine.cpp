@@ -811,10 +811,9 @@ void allegro_bitmap_test_init() {
 	// Switched the test off for now
 	//test_allegro_bitmap = AllegroBitmap::CreateBitmap(320,200,32);
 	
-	Bitmap *benchgfx1 = BitmapHelper::CreateRawBitmapOwner(load_bmp("benchgfx1.bmp", nullptr));
-	Bitmap *dest = BitmapHelper::CreateBitmap(100, 100, benchgfx1->GetColorDepth());
-	Bitmap *dest2 = BitmapHelper::CreateBitmapCopy(dest, 16);
-	Bitmap *benchgfx2 = BitmapHelper::CreateBitmapCopy(benchgfx1, 16);
+	Bitmap *benchgfx132 = BitmapHelper::CreateRawBitmapOwner(load_bmp("benchgfx1.bmp", nullptr));
+	Bitmap *benchgfx1 = BitmapHelper::CreateBitmapCopy(benchgfx132, 16);
+	Bitmap *dest = BitmapHelper::CreateBitmap(100, 100, 16);
 	uint64_t bench_runs[] = {1000, 10000, 100000};
 	if (benchgfx1 != nullptr) {
 		_G(_blender_mode) = kRgbToRgbBlender; // Using normal blender mode
@@ -822,26 +821,20 @@ void allegro_bitmap_test_init() {
 			Debug::Printf(kDbgMsg_Info, "Starting Allegro Bitmap Test Bench 2 (%d bpp)", benchgfx1->GetColorDepth());
 			uint32_t start = std::chrono::high_resolution_clock::now();
 			for (uint64_t j = 0; j < bench_runs[i]; j++) {
-				dest->Blit(benchgfx1, 0, 0, kBitmap_Transparency);
+				dest->StretchBlt(benchgfx1, Rect(0, 0, 90, 90), kBitmap_Transparency);
+				//dest->Blit(benchgfx1, 0, 0, kBitmap_Transparency);
 			}
 			uint32_t end = std::chrono::high_resolution_clock::now();
 			Debug::Printf(kDbgMsg_Info, "Done! Results (%llu iterations):", bench_runs[i]);
 			Debug::Printf(kDbgMsg_Info, "exec time (mills): %u", end - start);
-			
-			Debug::Printf(kDbgMsg_Info, "Starting Allegro Bitmap Test Bench 2 (16 bpp)");
-			start = std::chrono::high_resolution_clock::now();
-			for (uint64_t j = 0; j < bench_runs[i]; j++) {
-				dest2->Blit(benchgfx2, 0, 0, kBitmap_Transparency);
-			}
-			end = std::chrono::high_resolution_clock::now();
-			Debug::Printf(kDbgMsg_Info, "Done! Results (%llu iterations):", bench_runs[i]);
-			Debug::Printf(kDbgMsg_Info, "exec time (mills): %u", end - start);
 		}
+
+		dest->Clear();
+		dest->StretchBlt(benchgfx1, Rect(0, 0, 19, 19), kBitmap_Transparency);
+		dest->SaveToFile("benchgfx1result1.bmp", NULL);
 		
 		delete benchgfx1;
 		delete dest;
-		delete benchgfx2;
-		delete dest2;
 	} else {
 		warning("Couldn't load the test bench graphics!");
 	}
