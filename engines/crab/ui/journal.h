@@ -77,7 +77,7 @@ class Journal {
 	};
 
 	// This contains journal entries for all characters
-	std::vector<Group> journal;
+	Common::Array<Group> journal;
 
 	// The reference quest menu, used to copy layouts
 	QuestMenu ref;

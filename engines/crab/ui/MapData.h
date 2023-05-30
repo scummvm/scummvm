@@ -43,7 +43,7 @@ struct MapData {
 	std::string path_bg, path_overlay;
 
 	// The places the player has revealed in this world map
-	std::vector<Rect> reveal;
+	Common::Array<Rect> reveal;
 
 	struct MarkerData {
 		// The name of the marker, same name as the quest
@@ -54,7 +54,7 @@ struct MapData {
 	};
 
 	// The set of destinations currently active
-	std::vector<MarkerData> dest;
+	Common::Array<MarkerData> dest;
 
 	MapData() {}
 	MapData(rapidxml::xml_node<char> *node) { Load(node); }

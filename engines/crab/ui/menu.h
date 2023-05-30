@@ -50,7 +50,7 @@ protected:
 	int hover_index;
 
 	// The order in which a keyboard or gamepad traverses the menu
-	std::vector<unsigned int> path;
+	Common::Array<unsigned int> path;
 
 	// Are keyboard buttons enabled?
 	bool use_keyboard;
@@ -165,7 +165,7 @@ protected:
 
 public:
 	// The collection of buttons in the menu
-	std::vector<T> element;
+	Common::Array<T> element;
 
 	Menu() {
 		hover_index = -1;

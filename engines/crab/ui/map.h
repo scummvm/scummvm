@@ -48,7 +48,7 @@ namespace pyrodactyl {
 namespace ui {
 class Map {
 	// We have multiple world maps, each with their own data
-	std::vector<MapData> map;
+	Common::Array<MapData> map;
 
 	// Index of the currently visible map
 	unsigned int cur;

@@ -45,7 +45,7 @@ class HealthIndicator {
 	};
 
 	int x, y;
-	std::vector<HealthImage> img;
+	Common::Array<HealthImage> img;
 
 	// Related to the pulse effect
 	uint8 alpha;

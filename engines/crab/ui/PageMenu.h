@@ -46,7 +46,7 @@ class PageMenu {
 	Button prev, next;
 
 	// Each page is stored separately in a menu object
-	std::vector<Menu<T> > menu;
+	Common::Array<Menu<T> > menu;
 
 	// Keep track of which page we are at, and how many elements we keep in a page
 	unsigned int current_page, elements_per_page, rows, cols;

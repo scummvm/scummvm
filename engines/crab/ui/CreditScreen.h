@@ -56,7 +56,7 @@ class CreditScreen {
 	pyrodactyl::ui::ImageData bg, logo;
 
 	// The names displayed in the credits
-	std::vector<CreditText> list;
+	Common::Array<CreditText> list;
 
 	// The starting position
 	Vector2i start;
