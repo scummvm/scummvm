@@ -102,7 +102,7 @@ void PathfindingGrid::SetupNodes(TMXMap map) {
 
 			pos.y += cellSize.y;
 
-			std::vector<Shape> noWalk = map.AreaNoWalk();
+			Common::Array<Shape> noWalk = map.AreaNoWalk();
 
 			// Check if the square should count as blocked
 			for (auto i = noWalk.begin(); i != noWalk.end(); ++i) {
@@ -114,7 +114,7 @@ void PathfindingGrid::SetupNodes(TMXMap map) {
 
 			// Check for stairs if the cell isn't blocked
 			if (nodes[x][y].movementCost >= 0.0f) {
-				std::vector<pyrodactyl::level::Stairs> stairs = map.AreaStairs();
+				Common::Array<pyrodactyl::level::Stairs> stairs = map.AreaStairs();
 
 				for (auto i = stairs.begin(); i != stairs.end(); ++i) {
 					if (i->Collide(nodes[x][y].collisionRect).intersect) {
@@ -195,8 +195,8 @@ PathfindingGraphNode *PathfindingGrid::GetNodeAtPoint(Vector2f point) {
 	return &nodes[x][y];
 }
 
-std::vector<PathfindingGraphNode *> PathfindingGrid::CornerCheck(const PathfindingGraphNode *node1, const PathfindingGraphNode *node2) {
-	std::vector<PathfindingGraphNode *> returnNodes;
+Common::Array<PathfindingGraphNode *> PathfindingGrid::CornerCheck(const PathfindingGraphNode *node1, const PathfindingGraphNode *node2) {
+	Common::Array<PathfindingGraphNode *> returnNodes;
 
 	// Iterat through both nodes neighbors. If a blocked neighbor is found that is shared between the two,
 	// It is a corner to them.
@@ -225,7 +225,7 @@ PathfindingGraphNode *PathfindingGrid::GetNearestOpenNode(Vector2f nodePos, Vect
 	std::list<PathfindingGraphNode *> checkNodes;
 	checkNodes.push_back(startNode);
 
-	std::vector<PathfindingGraphNode *> allUsedNodes;
+	Common::Array<PathfindingGraphNode *> allUsedNodes;
 	allUsedNodes.push_back(startNode);
 
 	// Iterate through the nodes, check if they are open then check their distance from the compare point.

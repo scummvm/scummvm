@@ -55,16 +55,16 @@ protected:
 	Rect area_walk;
 
 	// The non-walk able areas in the level
-	std::vector<Shape> area_nowalk;
+	Common::Array<Shape> area_nowalk;
 
 	// The trigger rectangles in the level
-	std::vector<Shape> area_trig;
+	Common::Array<Shape> area_trig;
 
 	// Stairs modify the player walking speed
-	std::vector<pyrodactyl::level::Stairs> area_stairs;
+	Common::Array<pyrodactyl::level::Stairs> area_stairs;
 
 	// Music areas change the music if player collides with them
-	std::vector<pyrodactyl::level::MusicArea> area_music;
+	Common::Array<pyrodactyl::level::MusicArea> area_music;
 
 	// Archived methods for loading poly lines in tiled
 	// void LoadPath(rapidxml::xml_node<char> *node);
@@ -90,10 +90,10 @@ public:
 	Vector2i path_size;
 
 	// The layers of tiles in the level
-	std::vector<MapLayer> layer;
+	Common::Array<MapLayer> layer;
 
 	// The props in the level
-	std::vector<MapLayer> prop;
+	Common::Array<MapLayer> prop;
 
 	PathfindingGrid *grid; // The grid of graph nodes used for navigating.
 
@@ -126,8 +126,8 @@ public:
 	int W() { return w; }
 	int H() { return h; }
 	Rect AreaWalk() { return area_walk; }
-	std::vector<Shape> AreaNoWalk() { return area_nowalk; }
-	std::vector<pyrodactyl::level::Stairs> AreaStairs() { return area_stairs; }
+	Common::Array<Shape> AreaNoWalk() { return area_nowalk; }
+	Common::Array<pyrodactyl::level::Stairs> AreaStairs() { return area_stairs; }
 };
 } // End of namespace TMX
 

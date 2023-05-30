@@ -100,7 +100,7 @@ public:
 	bool solutionFound;
 	bool noSolution;
 
-	std::vector<PathfindingGraphNode const *> m_vSolution;
+	Common::Array<PathfindingGraphNode const *> m_vSolution;
 
 	void SetNodeBufferDistance(float w) { nodeBufferDistance = w; }
 	float GetNodeBufferDistance() { return nodeBufferDistance; }
@@ -147,11 +147,11 @@ public:
 	bool isDone() const;
 
 	//! \brief Returns an unmodifiable view of the solution path found by this algorithm.
-	std::vector<PathfindingGraphNode const *> const getSolution(PathfindingGraphNode *destNode) const;
+	Common::Array<PathfindingGraphNode const *> const getSolution(PathfindingGraphNode *destNode) const;
 
 	// Get the solution removing any nodes that are completely surrounded by open space.
 	// This will result in a more linear path to the goal.
-	std::vector<PathfindingGraphNode const *> const getPrunedSolution(PathfindingGraphNode *destNode);
+	Common::Array<PathfindingGraphNode const *> const getPrunedSolution(PathfindingGraphNode *destNode);
 
 	//! \brief Resets the algorithm.
 	void exit();
