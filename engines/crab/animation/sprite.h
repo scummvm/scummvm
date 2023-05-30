@@ -118,7 +118,7 @@ public:
 	bool hover;
 
 	// The list of collisions currently taking place with the sprite
-	std::list<CollisionData> collide_data;
+	Common::List<CollisionData> collide_data;
 
 	Sprite();
 	~Sprite() {}
