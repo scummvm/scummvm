@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "twine/parser/anim.h"
+#include "twine/parser/body.h"
 #include "twine/parser/entity.h"
 #include "twine/shared.h"
 
@@ -139,6 +140,7 @@ private:
 	bool _brickCausesDamage = false;
 
 	EntityData _entityData;
+
 public:
 	StaticFlagsStruct _staticFlags;
 	DynamicFlagsStruct _dynamicFlags;
@@ -271,6 +273,8 @@ private:
 	int32 searchBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox);
 
 	void loadBehaviourEntity(ActorStruct *actor, EntityData &entityData, int16 &bodyAnimIndex, int32 index);
+
+	void copyInterAnim(const BodyData &src, BodyData &dest);
 
 public:
 	Actor(TwinEEngine *engine);

@@ -186,10 +186,10 @@ bool BodyData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
 		bbox.maxs.y = stream.readSint16LE();
 		bbox.mins.z = stream.readSint16LE();
 		bbox.maxs.z = stream.readSint16LE();
+		offsetToData = stream.readSint16LE();
 
 		// using this value as the offset crashes the demo of lba1 - see https://bugs.scummvm.org/ticket/14294
-		// const uint16 offset = stream.readUint16LE();
-		// stream.skip(offset);
+		// stream.seek(offsetToData);
 		stream.seek(0x1A);
 
 		loadVertices(stream);

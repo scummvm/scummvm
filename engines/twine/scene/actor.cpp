@@ -189,6 +189,7 @@ void Actor::initBody(BodyType bodyIdx, int16 actorIdx) {
 		return;
 	}
 
+	const int32 oldBody = localActor->_body;
 	localActor->_body = newBody;
 	localActor->_genBody = bodyIdx;
 
@@ -217,11 +218,22 @@ void Actor::initBody(BodyType bodyIdx, int16 actorIdx) {
 		localActor->_boundingBox.mins.z = -size;
 		localActor->_boundingBox.maxs.z = size;
 	}
-#if 0
-	if (oldbody != -1 && localActor->_anim != -1) {
-		copyInterAnim(_engine->_resources->_bodyData[oldbody], _engine->_resources->_bodyData[localActor->_body]);
+	if (oldBody != -1 && localActor->_anim != -1) {
+		copyInterAnim(_engine->_resources->_bodyData[oldBody], _engine->_resources->_bodyData[localActor->_body]);
 	}
-#endif
+}
+
+void Actor::copyInterAnim(const BodyData &src, BodyData &dest) {
+	if (!src.isAnimated() || !dest.isAnimated()) {
+		return;
+	}
+
+	const int16 numBones = MIN<int16>((int16)src.getNumBones(), (int16)dest.getNumBones());
+	for (int16 i = 0; i < numBones; ++i) {
+		const BoneFrame *srcBoneFrame = src.getBoneState(i);
+		BoneFrame *destBoneFrame = dest.getBoneState(i);
+		*destBoneFrame = *srcBoneFrame;
+	}
 }
 
 void Actor::initActor(int16 actorIdx) {
