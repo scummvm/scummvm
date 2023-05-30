@@ -51,7 +51,7 @@ SDL_Color &ColorPool::Get(const int &num) {
 	if (pool.size() <= static_cast<unsigned int>(num))
 		return invalid;
 
-	return pool.at(num);
+	return pool[num];
 }
 
 } // End of namespace Crab

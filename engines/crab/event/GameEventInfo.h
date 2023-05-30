@@ -185,9 +185,9 @@ public:
 	// Draw the inventory
 	void InvDraw(const std::string &id) {
 		if (var.count(money_var) > 0)
-			inv.Draw(people.at(id), var.at(money_var));
+			inv.Draw(people[id], var[money_var]);
 		else
-			inv.Draw(people.at(id), 0);
+			inv.Draw(people[id], 0);
 	}
 
 	// Get whether game is iron man or not

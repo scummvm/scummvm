@@ -105,7 +105,7 @@ void TileSetGroup::PreDraw(MapLayer &layer, const Vector2i &tile_size, Graphics:
 	start.y = 0;
 
 	finish.x = layer.tile.size() - 1;
-	finish.y = layer.tile.at(0).size() - 1;
+	finish.y = layer.tile[0].size() - 1;
 
 	v.x = start.y * tile_size.x;
 	v.y = start.x * tile_size.y;
@@ -156,7 +156,7 @@ void TileSetGroup::ForceDraw(MapLayer &layer, const Rect &camera, const Vector2i
 	if (finish.x > (int)layer.tile.size())
 		finish.x = layer.tile.size();
 	if (finish.y > (int)layer.tile[0].size())
-		finish.y = layer.tile.at(0).size();
+		finish.y = layer.tile[0].size();
 
 	v.x = start.y * tile_size.x - camera.x;
 	v.y = start.x * tile_size.y - camera.y;
@@ -187,7 +187,7 @@ void TileSetGroup::Draw(MapLayer &layer, const Rect &camera, const Vector2i &til
 
 		// The row and column we end drawing at
 		finish.x = layer.tile.size() - 1;
-		finish.y = layer.tile.at(0).size() - 1;
+		finish.y = layer.tile[0].size() - 1;
 
 		v.x = (start.y * tile_size.x - camera.x) * layer.rate.x;
 		v.y = (start.x * tile_size.y - camera.y) * layer.rate.y;
@@ -230,7 +230,7 @@ void TileSetGroup::Draw(MapLayer &layer, const Rect &camera, const Vector2i &til
 		if (finish.x > (int)layer.tile.size())
 			finish.x = layer.tile.size();
 		if (finish.y > (int)layer.tile[0].size())
-			finish.y = layer.tile.at(0).size();
+			finish.y = layer.tile[0].size();
 
 		v.x = camera.x;
 		v.y = camera.y;

@@ -136,16 +136,16 @@ void QuestMenu::Draw(Button &bu_map) {
 		else
 			g_engine->_textManager->Draw(base_x + off_title.x, base_y + off_title.y, quest[i].title, col_n, font, align);
 
-		if (quest.at(i).unread) {
+		if (quest[i].unread) {
 			using namespace pyrodactyl::image;
 			g_engine->_imageManager->Draw(base_x + off_unread.x, base_y + off_unread.y, g_engine->_imageManager->notify);
 		}
 	}
 
 	if (sel_quest >= 0 && (unsigned int)sel_quest < quest.size()) {
-		text.Draw(quest.at(sel_quest));
+		text.Draw(quest[sel_quest]);
 
-		if (quest.at(sel_quest).marker)
+		if (quest[sel_quest].marker)
 			bu_map.Draw();
 	}
 }
@@ -163,21 +163,21 @@ bool QuestMenu::HandleEvents(Button &bu_map, std::string &map_title, const Commo
 		sel_page = menu.CurrentPage();
 		sel_quest = menu.Index() + sel_bu;
 
-		quest.at(sel_quest).unread = false;
+		quest[sel_quest].unread = false;
 		text.Reset();
 
 		menu.Image(sel_bu, sel_page, img_s);
 	}
 
 	if (sel_quest >= 0 && (unsigned int)sel_quest < quest.size()) {
-		if (quest.at(sel_quest).marker)
+		if (quest[sel_quest].marker)
 			if (bu_map.HandleEvents(Event) == BUAC_LCLICK) {
 				// The title of the quest selected by the "show in map" button
-				map_title = quest.at(sel_quest).title;
+				map_title = quest[sel_quest].title;
 				return true;
 			}
 
-		text.HandleEvents(quest.at(sel_quest), Event);
+		text.HandleEvents(quest[sel_quest], Event);
 	}
 
 	return false;
@@ -197,21 +197,21 @@ bool QuestMenu::HandleEvents(Button &bu_map, std::string &map_title, const SDL_E
 		sel_page = menu.CurrentPage();
 		sel_quest = menu.Index() + sel_bu;
 
-		quest.at(sel_quest).unread = false;
+		quest[sel_quest].unread = false;
 		text.Reset();
 
 		menu.Image(sel_bu, sel_page, img_s);
 	}
 
 	if (sel_quest >= 0 && sel_quest < quest.size()) {
-		if (quest.at(sel_quest).marker)
+		if (quest[sel_quest].marker)
 			if (bu_map.HandleEvents(Event) == BUAC_LCLICK) {
 				// The title of the quest selected by the "show in map" button
-				map_title = quest.at(sel_quest).title;
+				map_title = quest[sel_quest].title;
 				return true;
 			}
 
-		text.HandleEvents(quest.at(sel_quest), Event);
+		text.HandleEvents(quest[sel_quest], Event);
 	}
 
 	return false;
@@ -234,7 +234,7 @@ void QuestMenu::Select(const int &quest_index) {
 
 		sel_bu = quest_index % menu.ElementsPerPage();
 
-		quest.at(quest_index).unread = false;
+		quest[quest_index].unread = false;
 		text.Reset();
 
 		menu.Image(sel_bu, sel_page, img_s);

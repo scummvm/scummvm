@@ -68,7 +68,7 @@ int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const std::string
 		bool play_sound = false;
 
 		// Loop through any opinion changes required
-		for (auto &i : dat.reply[element.at(choice).index].change) {
+		for (auto &i : dat.reply[element[choice].index].change) {
 			if (i.id == cur_id) {
 				// This is a special case because we also need to update the opinion bars
 				oh.OpinionChange(info, i.id, OPI_LIKE, i.val[OPI_LIKE]);
@@ -93,7 +93,7 @@ int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const std::string
 		}
 #endif
 
-		return dat.reply[element.at(choice).index].nextid;
+		return dat.reply[element[choice].index].nextid;
 	}
 
 	return -1;
@@ -107,7 +107,7 @@ int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const std::string
 		bool play_sound = false;
 
 		// Loop through any opinion changes required
-		for (auto &i : dat.reply[element.at(choice).index].change) {
+		for (auto &i : dat.reply[element[choice].index].change) {
 			if (i.id == cur_id) {
 				// This is a special case because we also need to update the opinion bars
 				oh.OpinionChange(info, i.id, OPI_LIKE, i.val[OPI_LIKE]);
@@ -130,7 +130,7 @@ int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const std::string
 				info.sound.rep_inc = true;
 		}
 
-		return dat.reply[element.at(choice).index].nextid;
+		return dat.reply[element[choice].index].nextid;
 	}
 
 	return -1;
@@ -152,10 +152,10 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 
 	for (auto i = dat.reply.begin(); i != dat.reply.end() && reply_count < dat.reply.size(); ++i, ++reply_count) {
 		if (i->unlock.Evaluate(info)) {
-			element.at(element_count).visible = true;
-			element.at(element_count).index = reply_count;
+			element[element_count].visible = true;
+			element[element_count].index = reply_count;
 
-			tone.value.at(element_count) = dat.reply.at(reply_count).tone;
+			tone.value[element_count] = dat.reply[reply_count].tone;
 
 			//std::string text = SDL_GetScancodeName(g_engine->_inputManager->iv[IU_REPLY_0 + element_count].key);
 			//text += ". " + i->text;
@@ -163,9 +163,9 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 			info.InsertName(text);
 
 			if (element_count == 0)
-				element.at(element_count).Cache(text, spacing, 0, &bg);
+				element[element_count].Cache(text, spacing, 0, &bg);
 			else
-				element.at(element_count).Cache(text, spacing, element.at(element_count - 1).y + element.at(element_count - 1).h, &bg);
+				element[element_count].Cache(text, spacing, element[element_count - 1].y + element[element_count - 1].h, &bg);
 
 			// Increment the element count only if the reply is unlocked
 			// This means we will keep checking against element 0 until we find an unlocked reply
@@ -176,7 +176,7 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 
 	// Unused element buttons are hidden
 	for (; element_count < element.size(); element_count++)
-		element.at(element_count).visible = false;
+		element[element_count].visible = false;
 }
 
 void ReplyMenu::SetUI() {

@@ -91,7 +91,7 @@ void GameEventStore::SetAchievement(const int &id) {
 		if (id == 0)
 			m_pSteamUserStats->SetAchievement("a0");
 		else
-			m_pSteamUserStats->SetAchievement(trait.at(id).id_str.c_str());
+			m_pSteamUserStats->SetAchievement(trait[id].id_str.c_str());
 
 		m_pSteamUserStats->StoreStats();
 	}

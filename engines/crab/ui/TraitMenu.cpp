@@ -79,7 +79,7 @@ void TraitMenu::Draw(const pyrodactyl::people::Person *obj) {
 			i->Draw();
 
 		if (select > -1 && (unsigned int)select < obj->trait.size())
-			desc.Draw(obj->trait.at(select).desc);
+			desc.Draw(obj->trait[select].desc);
 	} else
 		for (auto &i : menu.element)
 			i.Draw();
@@ -91,12 +91,12 @@ void TraitMenu::HandleEvents(pyrodactyl::people::Person *obj, const Common::Even
 		for (auto i = menu.element.begin(); i != menu.element.end(); ++i)
 			i->State(false);
 
-		menu.element.at(choice).State(true);
+		menu.element[choice].State(true);
 		select = choice;
 
 		if (obj != nullptr) {
 			if (select > -1 && (unsigned int)select < obj->trait.size())
-				obj->trait.at(select).unread = false;
+				obj->trait[select].unread = false;
 		}
 	}
 }
@@ -108,12 +108,12 @@ void TraitMenu::HandleEvents(pyrodactyl::people::Person *obj, const SDL_Event &E
 		for (auto i = menu.element.begin(); i != menu.element.end(); ++i)
 			i->State(false);
 
-		menu.element.at(choice).State(true);
+		menu.element[choice].State(true);
 		select = choice;
 
 		if (obj != nullptr) {
 			if (select > -1 && select < obj->trait.size())
-				obj->trait.at(select).unread = false;
+				obj->trait[select].unread = false;
 		}
 	}
 }

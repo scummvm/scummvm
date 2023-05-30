@@ -50,13 +50,13 @@ void MovementSet::Load(rapidxml::xml_node<char> *node) {
 bool MovementSet::InternalEvents(const Rect rect) {
 	if (enabled) {
 		// If we are at the current waypoint, get to the next waypoint
-		if (path.at(cur).target.Collide(rect)) {
+		if (path[cur].target.Collide(rect)) {
 			cur = (cur + 1) % path.size();
 			timer.Start();
 		}
 
 		// Wait according to the delay value in the node
-		if (timer.Ticks() >= path.at(cur).delay)
+		if (timer.Ticks() >= path[cur].delay)
 			return true;
 	}
 

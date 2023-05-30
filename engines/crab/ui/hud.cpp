@@ -88,29 +88,29 @@ void HUD::Draw(pyrodactyl::event::Info &info, const std::string &id) {
 	menu.Draw();
 
 	if (info.unread.journal) {
-		g_engine->_imageManager->Draw(menu.element.at(HS_JOURNAL).x + menu.element.at(HS_JOURNAL).w - clip.w / 2,
-						   menu.element.at(HS_JOURNAL).y - clip.h / 2, notify_anim, &clip);
+		g_engine->_imageManager->Draw(menu.element[HS_JOURNAL].x + menu.element[HS_JOURNAL].w - clip.w / 2,
+						   menu.element[HS_JOURNAL].y - clip.h / 2, notify_anim, &clip);
 	}
 
 	if (info.unread.inventory) {
-		g_engine->_imageManager->Draw(menu.element.at(HS_INV).x + menu.element.at(HS_INV).w - clip.w / 2,
-						   menu.element.at(HS_INV).y - clip.h / 2, notify_anim, &clip);
+		g_engine->_imageManager->Draw(menu.element[HS_INV].x + menu.element[HS_INV].w - clip.w / 2,
+						   menu.element[HS_INV].y - clip.h / 2, notify_anim, &clip);
 	}
 
 	if (info.unread.trait) {
-		g_engine->_imageManager->Draw(menu.element.at(HS_CHAR).x + menu.element.at(HS_CHAR).w - clip.w / 2,
-						   menu.element.at(HS_CHAR).y - clip.h / 2, notify_anim, &clip);
+		g_engine->_imageManager->Draw(menu.element[HS_CHAR].x + menu.element[HS_CHAR].w - clip.w / 2,
+						   menu.element[HS_CHAR].y - clip.h / 2, notify_anim, &clip);
 	}
 
 	if (info.unread.map) {
-		g_engine->_imageManager->Draw(menu.element.at(HS_MAP).x + menu.element.at(HS_MAP).w - clip.w / 2,
-						   menu.element.at(HS_MAP).y - clip.h / 2, notify_anim, &clip);
+		g_engine->_imageManager->Draw(menu.element[HS_MAP].x + menu.element[HS_MAP].w - clip.w / 2,
+						   menu.element[HS_MAP].y - clip.h / 2, notify_anim, &clip);
 	}
 //#endif
 }
 
 void HUD::InternalEvents(bool ShowMap) {
-	menu.element.at(HS_MAP).visible = ShowMap;
+	menu.element[HS_MAP].visible = ShowMap;
 
 	if (timer.TargetReached()) {
 		clip.x += clip.w;
@@ -170,9 +170,9 @@ void HUD::SetTooltip() {
 #if 0
 	int count = 0;
 	for (auto i = menu.element.begin(); i != menu.element.end() && count < tooltip.size(); ++i, ++count)
-		i->tooltip.text = tooltip.at(count) + " (" + i->hotkey.Name() + ")";
+		i->tooltip.text = tooltip[count] + " (" + i->hotkey.Name() + ")";
 
-	menu.element.at(HS_PAUSE).tooltip.text = tooltip.at(HS_PAUSE) + " (" + SDL_GetScancodeName(g_engine->_inputManager->iv[IG_PAUSE].key) + ")";
+	menu.element[HS_PAUSE].tooltip.text = tooltip[HS_PAUSE] + " (" + SDL_GetScancodeName(g_engine->_inputManager->iv[IG_PAUSE].key) + ")";
 #endif
 }
 

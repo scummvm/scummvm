@@ -58,7 +58,7 @@ void LoadingScreen::Draw() {
 
 	// Draw the current screen
 	if (cur < screen.size())
-		screen.at(cur).Draw();
+		screen[cur].Draw();
 
 	// Draw the loading text
 	text.Draw((g_engine->_screenSettings->cur.w - text.W()) / 2, (g_engine->_screenSettings->cur.h - text.H()) / 2);

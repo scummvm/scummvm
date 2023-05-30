@@ -119,7 +119,7 @@ void SlideShow::Refresh() {
 	img.Delete();
 
 	if (index >= 0 && index < path.size())
-		img.Load(path.at(index));
+		img.Load(path[index]);
 #endif
 }
 

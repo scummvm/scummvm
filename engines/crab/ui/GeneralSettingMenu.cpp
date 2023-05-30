@@ -90,7 +90,7 @@ void GeneralSettingMenu::HandleEvents(const Common::Event &Event) {
 
 	int result = text_speed.HandleEvents(Event);
 	if (result >= 0)
-		g_engine->_screenSettings->text_speed = text_speed.element.at(result).val;
+		g_engine->_screenSettings->text_speed = text_speed.element[result].val;
 }
 
 #if 0
@@ -115,7 +115,7 @@ void GeneralSettingMenu::HandleEvents(const SDL_Event &Event) {
 
 	int result = text_speed.HandleEvents(Event);
 	if (result >= 0)
-		g_engine->_screenSettings->text_speed = text_speed.element.at(result).val;
+		g_engine->_screenSettings->text_speed = text_speed.element[result].val;
 }
 #endif
 

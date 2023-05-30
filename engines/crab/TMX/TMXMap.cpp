@@ -157,7 +157,7 @@ void TMXMap::Load(const std::string &path, std::string filename) {
 							if (area_trig.size() <= pos)
 								area_trig.resize(pos + 1);
 
-							area_trig.at(pos) = s;
+							area_trig[pos] = s;
 						}
 					} else if (group_name == "stairs") {
 						for (auto n = groupnode->first_node("object"); n != NULL; n = n->next_sibling("object")) {
@@ -206,7 +206,7 @@ void TMXMap::Load(const std::string &path, std::string filename) {
 //				if (*i == ',') comma = true;
 //				else if (*i == ' ')
 //				{
-//					path.at(pos).push_back(GetPoint(start, x, y));
+//					path[pos].push_back(GetPoint(start, x, y));
 //					comma = false;
 //					x.clear();
 //					y.clear();
@@ -214,7 +214,7 @@ void TMXMap::Load(const std::string &path, std::string filename) {
 //				else if (comma) y.push_back(*i);
 //				else x.push_back(*i);
 //			}
-//			path.at(pos).push_back(GetPoint(start, x, y));
+//			path[pos].push_back(GetPoint(start, x, y));
 //		}
 //	}
 //}
@@ -350,7 +350,7 @@ bool TMXMap::InsideWalk(const Vector2i &pos) {
 
 bool TMXMap::CollideWithTrigger(const Rect rect, int index) {
 	if (area_trig.size() > (unsigned int)index)
-		return area_trig.at(index).Collide(rect).intersect;
+		return area_trig[index].Collide(rect).intersect;
 
 	return false;
 }

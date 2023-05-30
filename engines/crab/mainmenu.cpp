@@ -161,7 +161,7 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 		int choice = me_main.HandleEvents(Event);
 		if (choice >= 0) {
 			for (unsigned i = 0; i < me_main.element.size(); ++i)
-				me_main.element.at(i).State(i == (unsigned int)choice);
+				me_main.element[i].State(i == (unsigned int)choice);
 
 			switch (choice) {
 			case 0:
@@ -295,7 +295,7 @@ void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 		int choice = me_main.HandleEvents(Event);
 		if (choice >= 0) {
 			for (unsigned i = 0; i < me_main.element.size(); ++i)
-				me_main.element.at(i).State(i == choice);
+				me_main.element[i].State(i == choice);
 
 			switch (choice) {
 			case 0:
@@ -455,18 +455,18 @@ void MainMenu::ChangeState(MenuState ms, const bool &start) {
 	// We are entering the normal state, i.e outside all menus - reset color of menu items
 	if (state == STATE_NORMAL) {
 		for (unsigned i = 0; i < me_main.element.size(); ++i)
-			me_main.element.at(i).State(false);
+			me_main.element[i].State(false);
 	}
 
 	// Enable keyboard navigation if outside all menus, otherwise disable it
 	me_main.UseKeyboard((state == STATE_NORMAL));
 
 	// Continue button is only enabled if there is a save to load
-	me_main.element.at(0).visible = !g_engine->_loadMenu->Empty();
+	me_main.element[0].visible = !g_engine->_loadMenu->Empty();
 
 	// Enable credits and quit button if outside all menus, otherwise disable it
-	me_main.element.at(6).visible = (state == STATE_NORMAL);
-	me_main.element.at(7).visible = (state == STATE_NORMAL);
+	me_main.element[6].visible = (state == STATE_NORMAL);
+	me_main.element[7].visible = (state == STATE_NORMAL);
 
 	// If switching to help screen, load latest image otherwise remove it from memory
 	if (state == STATE_HELP)

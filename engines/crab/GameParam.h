@@ -125,7 +125,7 @@ public:
 		if (pool_i.count(num) == 0)
 			pool_i[num] = NumberToString<int>(num);
 
-		return pool_i.at(num).c_str();
+		return pool_i[num].c_str();
 #endif
 		if (pool_i.contains(num) == false)
 			pool_i[num] = NumberToString<int>(num);

@@ -67,12 +67,12 @@ void TextManager::Init() {
 				if (font.size() <= pos)
 					font.resize(pos + 1);
 #if 0
-				font.at(pos) = TTF_OpenFont(path->value(), StringToNumber<int>(size->value()));
-				TTF_SetFontHinting(font.at(pos), TTF_HINTING_LIGHT);
+				font[pos] = TTF_OpenFont(path->value(), StringToNumber<int>(size->value()));
+				TTF_SetFontHinting(font[pos], TTF_HINTING_LIGHT);
 #endif
 				Common::File file;
 				FileOpen(path->value(), &file);
-				font.at(pos) = Graphics::loadTTFFont(file, StringToNumber<int>(size->value()));
+				font[pos] = Graphics::loadTTFFont(file, StringToNumber<int>(size->value()));
 			}
 		}
 	}

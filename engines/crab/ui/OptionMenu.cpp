@@ -50,7 +50,7 @@ void OptionMenu::Load(const std::string &filename) {
 				menu.Load(node->first_node("state"));
 
 				if (!menu.element.empty())
-					menu.element.at(0).State(true);
+					menu.element[0].State(true);
 			}
 
 			if (NodeValid("keybind", node))
@@ -101,7 +101,7 @@ void OptionMenu::Reset() {
 	state = STATE_GENERAL;
 
 	for (unsigned i = 0; i < menu.element.size(); ++i)
-		menu.element.at(i).State(i == STATE_GENERAL);
+		menu.element[i].State(i == STATE_GENERAL);
 }
 
 void OptionMenu::Draw(Button &back) {
@@ -320,7 +320,7 @@ bool OptionMenu::HandleTabs(Button &back, const SDL_Event &Event) {
 	if (choice >= 0) {
 		if (choice < 4)
 			for (unsigned i = 0; i < menu.element.size(); ++i)
-				menu.element.at(i).State(i == choice);
+				menu.element[i].State(i == choice);
 
 		switch (choice) {
 		case 0:

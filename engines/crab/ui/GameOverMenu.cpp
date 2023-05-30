@@ -69,7 +69,7 @@ int GameOverMenu::HandleEvents(const SDL_Event &Event) {
 void GameOverMenu::Draw() {
 	bg.Draw();
 	if (cur < quote.size())
-		title.Draw(quote.at(cur));
+		title.Draw(quote[cur]);
 
 	menu.Draw();
 }
