@@ -594,6 +594,7 @@ public:
 	LoadGameOutcome loadGame(Common::ReadStream *stream);
 
 	bool bootGame(bool newGame);
+	static Common::CodePage resolveCodePageForLanguage(Common::Language lang);
 
 	void drawLabel(Graphics::ManagedSurface *surface, const Common::String &labelID, const Common::Rect &contentRect);
 	void getLabelDef(const Common::String &labelID, const Graphics::Font *&outFont, const Common::String *&outTextUTF8, uint32 &outColor, uint32 &outShadowColor, uint32 &outShadowOffset);
@@ -1323,6 +1324,7 @@ private:
 
 	const Graphics::Font *_subtitleFont;
 	Common::SharedPtr<Graphics::Font> _subtitleFontKeepalive;
+	uint _defaultLanguageIndex;
 	uint _languageIndex;
 	bool _isCDVariant;
 	StartConfigDef _startConfigs[kNumStartConfigs];

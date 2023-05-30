@@ -1045,7 +1045,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _panoramaState(kPanoramaStateInactive),
 	  _listenerX(0), _listenerY(0), _listenerAngle(0), _soundCacheIndex(0),
 	  _isInGame(false),
-	  _subtitleFont(nullptr), _isDisplayingSubtitles(false), _isSubtitleSourceAnimation(false), _languageIndex(0), _defaultLanguage(defaultLanguage),
+	  _subtitleFont(nullptr), _isDisplayingSubtitles(false), _isSubtitleSourceAnimation(false), _languageIndex(0), _defaultLanguageIndex(0), _defaultLanguage(defaultLanguage),
 	  _isCDVariant(false) {
 
 	for (uint i = 0; i < kNumDirections; i++) {
@@ -1294,6 +1294,7 @@ bool Runtime::bootGame(bool newGame) {
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
 
 	_languageIndex = 1;
+	_defaultLanguageIndex = 1;
 
 	if (_gameID == GID_REAH) {
 		_animSpeedRotation = Fraction(21, 1);	// Probably accurate
@@ -1311,6 +1312,11 @@ bool Runtime::bootGame(bool newGame) {
 		};
 
 		uint langCount = sizeof(langIndexes) / sizeof(langIndexes[0]);
+
+		for (uint li = 0; li < langCount; li++) {
+			if (langIndexes[li] == _defaultLanguage)
+				_defaultLanguageIndex = li;
+		}
 
 		for (uint li = 0; li < langCount; li++) {
 			if (langIndexes[li] == lang) {
@@ -1336,9 +1342,22 @@ bool Runtime::bootGame(bool newGame) {
 			Common::RU_RUS,
 			Common::EL_GRC,
 			Common::EN_USA,
+
+			// Additional subs present in Steam release
+			Common::BG_BUL,
+			Common::ZH_TWN,
+			Common::JA_JPN,
+			Common::HU_HUN,
+			Common::ZH_CHN,
+			Common::CS_CZE,
 		};
 
 		uint langCount = sizeof(langIndexes) / sizeof(langIndexes[0]);
+
+		for (uint li = 0; li < langCount; li++) {
+			if (langIndexes[li] == _defaultLanguage)
+				_defaultLanguageIndex = li;
+		}
 
 		for (uint li = 0; li < langCount; li++) {
 			if (langIndexes[li] == lang) {
@@ -1350,18 +1369,22 @@ bool Runtime::bootGame(bool newGame) {
 		}
 	}
 
-	Common::CodePage codePage = Common::CodePage::kWindows1252;
+	Common::CodePage codePage = resolveCodePageForLanguage(lang);
 
-	if (lang == Common::PL_POL)
-		codePage = Common::CodePage::kWindows1250;
-	else if (lang == Common::RU_RUS)
-		codePage = Common::CodePage::kWindows1251;
-	else if (lang == Common::EL_GRC)
-		codePage = Common::CodePage::kWindows1253;
+	bool subtitlesLoadedOK = loadSubtitles(codePage);
 
-	if (loadSubtitles(codePage)) {
-		debug(1, "Subtitles loaded OK");
+	if (!loadSubtitles(codePage)) {
+		lang = _defaultLanguage;
+		_languageIndex = _defaultLanguageIndex;
+
+		warning("Localization data failed to load, retrying with default language");
+
+		codePage = resolveCodePageForLanguage(lang);
+		subtitlesLoadedOK = loadSubtitles(codePage);
 	}
+
+	if (subtitlesLoadedOK)
+		debug(1, "Subtitles loaded OK");
 
 	_uiGraphics.resize(24);
 	for (uint i = 0; i < _uiGraphics.size(); i++) {
@@ -1386,6 +1409,27 @@ bool Runtime::bootGame(bool newGame) {
 	}
 
 	return true;
+}
+
+Common::CodePage Runtime::resolveCodePageForLanguage(Common::Language lang) {
+	switch (lang) {
+	case Common::PL_POL:
+	case Common::CS_CZE:
+		return Common::CodePage::kWindows1250;
+	case Common::RU_RUS:
+	case Common::BG_BUL:
+		return Common::CodePage::kWindows1251;
+	case Common::EL_GRC:
+		return Common::CodePage::kWindows1253;
+	case Common::ZH_TWN:
+		return Common::CodePage::kBig5;
+	case Common::JA_JPN:
+		return Common::CodePage::kWindows932; // Uses Shift-JIS, which Windows 932 is an extension of
+	case Common::ZH_CHN:
+		return Common::CodePage::kGBK;
+	default:
+		return Common::CodePage::kWindows1252;
+	}
 }
 
 void Runtime::drawLabel(Graphics::ManagedSurface *surface, const Common::String &labelID, const Common::Rect &contentRect) {
