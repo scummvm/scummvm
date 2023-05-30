@@ -279,7 +279,7 @@ void Actor::initObject(int16 actorIdx) {
 	*actor = ActorStruct();
 
 	actor->_actorIdx = actorIdx;
-	actor->_pos = IVec3(0, -1, 0);
+	actor->_pos = IVec3(0, SIZE_BRICK_Y, 0);
 
 	memset(&actor->_staticFlags, 0, sizeof(StaticFlagsStruct));
 	memset(&actor->_dynamicFlags, 0, sizeof(DynamicFlagsStruct));
