@@ -63,6 +63,7 @@ namespace VCruise {
 
 struct CodePageGuess {
 	Common::CodePage codePage;
+	Runtime::CharSet charSet;
 	const char *searchString;
 	const char *languageName;
 };
@@ -1051,7 +1052,8 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _panoramaState(kPanoramaStateInactive),
 	  _listenerX(0), _listenerY(0), _listenerAngle(0), _soundCacheIndex(0),
 	  _isInGame(false),
-	  _subtitleFont(nullptr), _isDisplayingSubtitles(false), _isSubtitleSourceAnimation(false), _languageIndex(0), _defaultLanguageIndex(0), _defaultLanguage(defaultLanguage),
+	  _subtitleFont(nullptr), _isDisplayingSubtitles(false), _isSubtitleSourceAnimation(false),
+	  _languageIndex(0), _defaultLanguageIndex(0), _defaultLanguage(defaultLanguage), _charSet(kCharSetLatin),
 	  _isCDVariant(false) {
 
 	for (uint i = 0; i < kNumDirections; i++) {
@@ -1375,7 +1377,8 @@ bool Runtime::bootGame(bool newGame) {
 		}
 	}
 
-	Common::CodePage codePage = resolveCodePageForLanguage(lang);
+	Common::CodePage codePage = Common::CodePage::kASCII;
+	resolveCodePageForLanguage(lang, codePage, _charSet);
 
 	bool subtitlesLoadedOK = loadSubtitles(codePage, false);
 
@@ -1385,7 +1388,7 @@ bool Runtime::bootGame(bool newGame) {
 
 		warning("Localization data failed to load, retrying with default language");
 
-		codePage = resolveCodePageForLanguage(lang);
+		resolveCodePageForLanguage(lang, codePage, _charSet);
 		subtitlesLoadedOK = loadSubtitles(codePage, false);
 
 		if (!subtitlesLoadedOK) {
@@ -1394,7 +1397,7 @@ bool Runtime::bootGame(bool newGame) {
 				_languageIndex = 0;
 				_defaultLanguageIndex = 0;
 
-				warning("Localization data failed to load again, trying one more time and guessing the encoding.");
+				warning("Localization data failed to load again, trying one more time and guessing the encoding");
 
 				subtitlesLoadedOK = loadSubtitles(codePage, true);
 			}
@@ -1431,24 +1434,38 @@ bool Runtime::bootGame(bool newGame) {
 	return true;
 }
 
-Common::CodePage Runtime::resolveCodePageForLanguage(Common::Language lang) {
+void Runtime::resolveCodePageForLanguage(Common::Language lang, Common::CodePage &outCodePage, CharSet &outCharSet) {
 	switch (lang) {
 	case Common::PL_POL:
 	case Common::CS_CZE:
-		return Common::CodePage::kWindows1250;
+		outCodePage = Common::CodePage::kWindows1250;
+		outCharSet = kCharSetLatin;
+		return;
 	case Common::RU_RUS:
 	case Common::BG_BUL:
-		return Common::CodePage::kWindows1251;
+		outCodePage = Common::CodePage::kWindows1251;
+		outCharSet = kCharSetCyrillic;
+		return;
 	case Common::EL_GRC:
-		return Common::CodePage::kWindows1253;
+		outCodePage = Common::CodePage::kWindows1253;
+		outCharSet = kCharSetGreek;
+		return;
 	case Common::ZH_TWN:
-		return Common::CodePage::kBig5;
+		outCodePage = Common::CodePage::kBig5;
+		outCharSet = kCharSetChineseTraditional;
+		return;
 	case Common::JA_JPN:
-		return Common::CodePage::kWindows932; // Uses Shift-JIS, which Windows 932 is an extension of
+		outCodePage = Common::CodePage::kWindows932;
+		outCharSet = kCharSetJapanese;
+		return;
 	case Common::ZH_CHN:
-		return Common::CodePage::kGBK;
+		outCodePage = Common::CodePage::kGBK;
+		outCharSet = kCharSetChineseSimplified;
+		return;
 	default:
-		return Common::CodePage::kWindows1252;
+		outCodePage = Common::CodePage::kWindows1252;
+		outCharSet = kCharSetLatin;
+		return;
 	}
 }
 
@@ -4724,15 +4741,15 @@ bool Runtime::loadSubtitles(Common::CodePage codePage, bool guessCodePage) {
 		Common::String checkString;
 		if (ini.getKey("szQuestion2", "szTextData", checkString)) {
 			const CodePageGuess guesses[] = {
-				{Common::CodePage::kWindows1252, "previously", "English"},
-				{Common::CodePage::kWindows1252, "\x7c" "berschrieben", "German"},
-				{Common::CodePage::kWindows1250, "poprzedni", "Polish"},
-				{Common::CodePage::kWindows1252, "pr\xe9" "c\xe9" "dement", "French"},
-				{Common::CodePage::kWindows1252, "opgeslagen", "Dutch"},
-				{Common::CodePage::kWindows1252, "partida", "Spanish"},
-				{Common::CodePage::kWindows1252, "precedentemente", "Italian"},
-				{Common::CodePage::kWindows1251, "\xf1\xee\xf5\xf0\xe0\xed\xe5\xed\xed\xf3\xfe", "Russian"},
-				{Common::CodePage::kWindows1253, "\xf0\xf1\xef\xe7\xe3\xef\xfd\xec\xe5\xed\xef", "Greek"},
+				{Common::CodePage::kWindows1252, kCharSetLatin, "previously", "English"},
+				{Common::CodePage::kWindows1252, kCharSetLatin, "\x7c" "berschrieben", "German"},
+				{Common::CodePage::kWindows1250, kCharSetLatin, "poprzedni", "Polish"},
+				{Common::CodePage::kWindows1252, kCharSetLatin, "pr\xe9" "c\xe9" "dement", "French"},
+				{Common::CodePage::kWindows1252, kCharSetLatin, "opgeslagen", "Dutch"},
+				{Common::CodePage::kWindows1252, kCharSetLatin, "partida", "Spanish"},
+				{Common::CodePage::kWindows1252, kCharSetLatin, "precedentemente", "Italian"},
+				{Common::CodePage::kWindows1251, kCharSetCyrillic, "\xf1\xee\xf5\xf0\xe0\xed\xe5\xed\xed\xf3\xfe", "Russian"},
+				{Common::CodePage::kWindows1253, kCharSetGreek, "\xf0\xf1\xef\xe7\xe3\xef\xfd\xec\xe5\xed\xef", "Greek"},
 			};
 
 			for (const CodePageGuess &guess : guesses) {
@@ -5102,10 +5119,43 @@ const Graphics::Font *Runtime::resolveFont(const Common::String &textStyle, uint
 #ifdef USE_FREETYPE2
 	const char *fontFile = nullptr;
 
-	if (textStyle == "Verdana")
-		fontFile = "NotoSans-Bold.ttf";
-	else if (textStyle == "Arial")
-		fontFile = "LiberationSans-Bold.ttf";
+	if (textStyle == "Verdana") {
+		switch (_charSet) {
+		case kCharSetGreek:
+		case kCharSetLatin:
+		case kCharSetCyrillic:
+		default:
+			fontFile = "NotoSans-Bold.ttf";
+			break;
+		case kCharSetChineseSimplified:
+			fontFile = "NotoSansSC-Bold.ttf";
+			break;
+		case kCharSetChineseTraditional:
+			fontFile = "NotoSansTC-Bold.ttf";
+			break;
+		case kCharSetJapanese:
+			fontFile = "NotoSansJP-Bold.ttf";
+			break;
+		}
+	} else if (textStyle == "Arial") {
+		switch (_charSet) {
+		case kCharSetGreek:
+		case kCharSetLatin:
+		case kCharSetCyrillic:
+		default:
+			fontFile = "LiberationSans-Bold.ttf";
+			break;
+		case kCharSetChineseSimplified:
+			fontFile = "NotoSansSC-Bold.ttf";
+			break;
+		case kCharSetChineseTraditional:
+			fontFile = "NotoSansTC-Bold.ttf";
+			break;
+		case kCharSetJapanese:
+			fontFile = "NotoSansJP-Bold.ttf";
+			break;
+		}
+	}
 
 	if (fontFile) {
 		// Pass as 61dpi to account for weird scaling

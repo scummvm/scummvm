@@ -564,6 +564,15 @@ class Runtime {
 public:
 	friend class RuntimeMenuInterface;
 
+	enum CharSet {
+		kCharSetLatin,
+		kCharSetGreek,
+		kCharSetCyrillic,
+		kCharSetJapanese,
+		kCharSetChineseTraditional,
+		kCharSetChineseSimplified,
+	};
+
 	Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID, Common::Language defaultLanguage);
 	virtual ~Runtime();
 
@@ -594,7 +603,7 @@ public:
 	LoadGameOutcome loadGame(Common::ReadStream *stream);
 
 	bool bootGame(bool newGame);
-	static Common::CodePage resolveCodePageForLanguage(Common::Language lang);
+	static void resolveCodePageForLanguage(Common::Language lang, Common::CodePage &outCodePage, CharSet &outCharSet);
 
 	void drawLabel(Graphics::ManagedSurface *surface, const Common::String &labelID, const Common::Rect &contentRect);
 	void getLabelDef(const Common::String &labelID, const Graphics::Font *&outFont, const Common::String *&outTextUTF8, uint32 &outColor, uint32 &outShadowColor, uint32 &outShadowOffset);
@@ -1326,6 +1335,7 @@ private:
 	Common::SharedPtr<Graphics::Font> _subtitleFontKeepalive;
 	uint _defaultLanguageIndex;
 	uint _languageIndex;
+	CharSet _charSet;
 	bool _isCDVariant;
 	StartConfigDef _startConfigs[kNumStartConfigs];
 
