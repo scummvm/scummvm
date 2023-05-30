@@ -69,7 +69,7 @@ public:
 			select = result;
 
 			for (int i = 0; i < (int)element.size(); ++i)
-				element.at(i).state = (i == result);
+				element[i].state = (i == result);
 		}
 
 		return result;
@@ -83,7 +83,7 @@ public:
 			select = result;
 
 			for (int i = 0; i < element.size(); ++i)
-				element.at(i).state = (i == result);
+				element[i].state = (i == result);
 		}
 
 		return result;

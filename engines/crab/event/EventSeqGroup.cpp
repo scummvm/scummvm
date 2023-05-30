@@ -45,16 +45,16 @@ void EventSeqGroup::AddSeq(const unsigned int &id, std::string &path) {
 }
 
 bool EventSeqGroup::EventInProgress(const unsigned int &id) {
-	return seq.count(id) > 0 && seq.at(id).EventInProgress();
+	return seq.count(id) > 0 && seq[id].EventInProgress();
 }
 
 GameEvent *EventSeqGroup::CurEvent(const unsigned int &id) {
-	return seq.at(id).CurrentEvent();
+	return seq[id].CurrentEvent();
 }
 
 void EventSeqGroup::NextEvent(const unsigned int &id, Info &info, const std::string &player_id,
 							  std::vector<EventResult> &result, std::vector<EventSeqInfo> &end_seq, const int choice) {
-	return seq.at(id).NextEvent(info, player_id, result, end_seq, choice);
+	return seq[id].NextEvent(info, player_id, result, end_seq, choice);
 }
 
 void EventSeqGroup::InternalEvents(Info &info) {

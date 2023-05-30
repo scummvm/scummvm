@@ -78,8 +78,8 @@ public:
 
 	void Clear() {
 		menu.resize(1);
-		menu.at(0).Clear();
-		menu.at(0).UseKeyboard(true);
+		menu[0].Clear();
+		menu[0].UseKeyboard(true);
 	}
 
 	// Get the elements per page
@@ -97,8 +97,8 @@ public:
 
 	// Get the index of the hovered element in the menu
 	int HoverIndex() {
-		if (menu.at(current_page).HoverIndex() >= 0)
-			return (current_page * elements_per_page) + menu.at(current_page).HoverIndex();
+		if (menu[current_page].HoverIndex() >= 0)
+			return (current_page * elements_per_page) + menu[current_page].HoverIndex();
 
 		return -1;
 	}
@@ -111,7 +111,7 @@ public:
 	const int &CurX(const int &count) { return menu[current_page].element[count].x; }
 	const int &CurY(const int &count) { return menu[current_page].element[count].y; }
 
-	void Image(const int &slot, const int &page, ButtonImage &bi) { menu.at(page).element.at(slot).Img(bi); }
+	void Image(const int &slot, const int &page, ButtonImage &bi) { menu[page].element[slot].Img(bi); }
 
 	void AssignPaths() {
 		for (auto m = menu.begin(); m != menu.end(); ++m)
@@ -175,7 +175,7 @@ public:
 			++page;
 			slot = 0;
 			menu.resize(page + 1);
-			menu.at(page).UseKeyboard(true);
+			menu[page].UseKeyboard(true);
 		}
 
 		T b;
@@ -189,13 +189,13 @@ public:
 
 	void Add() {
 		unsigned int page = menu.size() - 1;
-		unsigned int slot = menu.at(page).element.size();
+		unsigned int slot = menu[page].element.size();
 		Add(slot, page);
 	}
 
 	void Erase() {
 		unsigned int page = menu.size() - 1;
-		menu.at(page).element.pop_back();
+		menu[page].element.pop_back();
 		AssignPaths();
 		UpdateInfo();
 	}
@@ -219,7 +219,7 @@ public:
 				current_page = menu.size() - 1;
 		}
 
-		return menu.at(current_page).HandleEvents(Event);
+		return menu[current_page].HandleEvents(Event);
 	}
 
 #if 0
@@ -242,13 +242,13 @@ public:
 				current_page = menu.size() - 1;
 		}
 
-		return menu.at(current_page).HandleEvents(Event);
+		return menu[current_page].HandleEvents(Event);
 	}
 #endif
 
 	void Draw() {
 		status.Draw(info);
-		menu.at(current_page).Draw();
+		menu[current_page].Draw();
 
 		if (current_page > 0)
 			prev.Draw();

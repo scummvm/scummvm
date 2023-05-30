@@ -349,13 +349,13 @@ public:
 			for (unsigned int i = 1; i < element.size(); i++) {
 				path.push_back(i);
 
-				int prev_x = element.at(i - 1).x;
-				int prev_y = element.at(i - 1).y;
+				int prev_x = element[i - 1].x;
+				int prev_y = element[i - 1].y;
 
-				if (same_x && element.at(i).x != prev_x)
+				if (same_x && element[i].x != prev_x)
 					same_x = false;
 
-				if (same_y && element.at(i).y != prev_y)
+				if (same_y && element[i].y != prev_y)
 					same_y = false;
 			}
 		}

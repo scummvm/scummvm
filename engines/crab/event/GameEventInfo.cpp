@@ -98,12 +98,12 @@ void Info::LoadPeople(const std::string &filename) {
 //------------------------------------------------------------------------
 void Info::Type(const std::string &id, const PersonType &val) {
 	if (people.count(id) > 0)
-		people.at(id).type = val;
+		people[id].type = val;
 }
 
 PersonType Info::Type(const std::string &id) {
 	if (people.count(id) > 0)
-		return people.at(id).type;
+		return people[id].type;
 
 	return PE_NEUTRAL;
 }
@@ -113,12 +113,12 @@ PersonType Info::Type(const std::string &id) {
 //------------------------------------------------------------------------
 void Info::State(const std::string &id, const PersonState &val) {
 	if (people.count(id) > 0)
-		people.at(id).state = val;
+		people[id].state = val;
 }
 
 PersonState Info::State(const std::string &id) {
 	if (people.count(id) > 0)
-		return people.at(id).state;
+		return people[id].state;
 
 	return PST_NORMAL;
 }
@@ -130,7 +130,7 @@ bool Info::VarGet(const std::string &name, int &val) {
 	if (var.count(name) == 0)
 		return false;
 	else
-		val = var.at(name);
+		val = var[name];
 	return true;
 }
 
@@ -150,28 +150,28 @@ void Info::VarAdd(const std::string &name, const int &val) {
 	if (var.count(name) == 0)
 		VarSet(name, 0);
 
-	var.at(name) += val;
+	var[name] += val;
 }
 
 void Info::VarSub(const std::string &name, const int &val) {
 	if (var.count(name) == 0)
 		VarSet(name, 0);
 
-	var.at(name) -= val;
+	var[name] -= val;
 }
 
 void Info::VarMul(const std::string &name, const int &val) {
 	if (var.count(name) == 0)
 		VarSet(name, 0);
 
-	var.at(name) *= val;
+	var[name] *= val;
 }
 
 void Info::VarDiv(const std::string &name, const int &val) {
 	if (var.count(name) == 0)
 		VarSet(name, 0);
 
-	var.at(name) /= val;
+	var[name] /= val;
 }
 
 void Info::VarDel(const std::string &name) {
@@ -193,9 +193,9 @@ void Info::TraitAdd(const std::string &per_id, const int &trait_id) {
 				if (i->id == trait_id)
 					return;
 
-			p->trait.push_back(g_engine->_eventStore->trait.at(trait_id));
+			p->trait.push_back(g_engine->_eventStore->trait[trait_id]);
 
-			g_engine->_eventStore->SetAchievement(g_engine->_eventStore->trait.at(trait_id).id);
+			g_engine->_eventStore->SetAchievement(g_engine->_eventStore->trait[trait_id].id);
 		}
 	}
 }
@@ -224,18 +224,18 @@ bool Info::OpinionGet(const std::string &name, const pyrodactyl::people::Opinion
 	if (people.count(name) == 0)
 		return false;
 
-	val = people.at(name).opinion.val[type];
+	val = people[name].opinion.val[type];
 	return true;
 }
 
 void Info::OpinionChange(const std::string &name, const pyrodactyl::people::OpinionType &type, int val) {
 	if (people.count(name) > 0)
-		people.at(name).opinion.Change(type, val);
+		people[name].opinion.Change(type, val);
 }
 
 void Info::OpinionSet(const std::string &name, const pyrodactyl::people::OpinionType &type, int val) {
 	if (people.count(name) > 0)
-		people.at(name).opinion.Set(type, val);
+		people[name].opinion.Set(type, val);
 }
 
 //------------------------------------------------------------------------
@@ -245,18 +245,18 @@ bool Info::StatGet(const std::string &name, const pyrodactyl::stat::StatType &ty
 	if (people.count(name) == 0)
 		return false;
 
-	num = people.at(name).stat.val[type].cur;
+	num = people[name].stat.val[type].cur;
 	return true;
 }
 
 void Info::StatSet(const std::string &name, const pyrodactyl::stat::StatType &type, const int &num) {
 	if (people.count(name) > 0)
-		people.at(name).stat.Set(type, num);
+		people[name].stat.Set(type, num);
 }
 
 void Info::StatChange(const std::string &name, const pyrodactyl::stat::StatType &type, const int &num) {
 	if (people.count(name) > 0)
-		people.at(name).stat.Change(type, num);
+		people[name].stat.Change(type, num);
 }
 
 //------------------------------------------------------------------------
@@ -266,7 +266,7 @@ bool Info::PersonGet(const std::string &id, pyrodactyl::people::Person &p) {
 	if (people.count(id) == 0)
 		return false;
 
-	p = people.at(id);
+	p = people[id];
 	return true;
 }
 
@@ -277,12 +277,12 @@ bool Info::PersonValid(const std::string &id) {
 pyrodactyl::people::Person &Info::PersonGet(const std::string &id) {
 	// Make sure to check PersonValid before doing this!
 	// Only use this to change parts of an object
-	return people.at(id);
+	return people[id];
 }
 
 bool Info::CollideWithTrigger(const std::string &id, int rect_index) {
 	if (people.count(id) > 0) {
-		for (auto i = people.at(id).trig.begin(); i != people.at(id).trig.end(); ++i)
+		for (auto i = people[id].trig.begin(); i != people[id].trig.end(); ++i)
 			if (*i == rect_index)
 				return true;
 	}
@@ -297,14 +297,14 @@ void Info::InsertName(std::string &msg) {
 	// We scan the dialog for #id values, which we convert to actual NPC names
 	for (unsigned int i = 0; i < msg.size(); ++i) {
 		// The # symbol indicates that the next string until an end character needs to be replaced by the name
-		if (msg.at(i) == '#') {
+		if (msg[i] == '#') {
 			// The position we want to start from, and the length of the substring
 			unsigned int start = i, end = i + 1, len = 0;
 
 			// First make sure # wasn't the end of the string
 			for (; end < msg.size(); ++end, ++len)
-				if (msg.at(end) == ',' || msg.at(end) == '.' || msg.at(end) == '!' || msg.at(end) == ' ' ||
-					msg.at(end) == '?' || msg.at(end) == '-' || msg.at(end) == '\'' || msg.at(end) == '\"')
+				if (msg[end] == ',' || msg[end] == '.' || msg[end] == '!' || msg[end] == ' ' ||
+					msg[end] == '?' || msg[end] == '-' || msg[end] == '\'' || msg[end] == '\"')
 					break;
 
 			if (end < msg.size()) {

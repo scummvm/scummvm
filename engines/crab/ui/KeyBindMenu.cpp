@@ -103,11 +103,11 @@ void KeyBindMenu::InitMenu(const int &type) {
 		int xoffset = inc.x * (i / 2) + divide.x * ((i / 2) / dim.x);
 		int yoffset = inc.y * ((i / 2) % dim.x) + divide.y * ((i / 2) / dim.x);
 
-		menu[type].element.at(i).Init(prim, xoffset, yoffset);
-		menu[type].element.at(i).caption.text = SDL_GetScancodeName(g_engine->_inputManager->iv[start + (i / 2)].key);
+		menu[type].element[i].Init(prim, xoffset, yoffset);
+		menu[type].element[i].caption.text = SDL_GetScancodeName(g_engine->_inputManager->iv[start + (i / 2)].key);
 
-		menu[type].element.at(i + 1).Init(alt, xoffset, yoffset);
-		menu[type].element.at(i + 1).caption.text = SDL_GetScancodeName(g_engine->_inputManager->iv[start + (i / 2)].alt);
+		menu[type].element[i + 1].Init(alt, xoffset, yoffset);
+		menu[type].element[i + 1].caption.text = SDL_GetScancodeName(g_engine->_inputManager->iv[start + (i / 2)].alt);
 	}
 #endif
 }
@@ -139,8 +139,8 @@ void KeyBindMenu::SetCaption() {
 	StartAndSize(sel_controls.cur, start, size);
 
 	for (int i = 0; i < size * 2; i += 2) {
-		menu[sel_controls.cur].element.at(i).caption.text = SDL_GetScancodeName(g_engine->_inputManager->iv[start + (i / 2)].key);
-		menu[sel_controls.cur].element.at(i + 1).caption.text = SDL_GetScancodeName(g_engine->_inputManager->iv[start + (i / 2)].alt);
+		menu[sel_controls.cur].element[i].caption.text = SDL_GetScancodeName(g_engine->_inputManager->iv[start + (i / 2)].key);
+		menu[sel_controls.cur].element[i + 1].caption.text = SDL_GetScancodeName(g_engine->_inputManager->iv[start + (i / 2)].alt);
 	}
 #endif
 }
@@ -156,7 +156,7 @@ void KeyBindMenu::HandleEvents(const Common::Event &Event) {
 	case STATE_NORMAL:
 		choice = menu[sel_controls.cur].HandleEvents(Event);
 		if (choice >= 0) {
-			prompt.Swap(menu[sel_controls.cur].element.at(choice).caption);
+			prompt.Swap(menu[sel_controls.cur].element[choice].caption);
 			state = STATE_KEY;
 			break;
 		}
@@ -166,7 +166,7 @@ void KeyBindMenu::HandleEvents(const Common::Event &Event) {
 		if (Event.type == SDL_KEYDOWN) {
 			SwapKey(Event.key.keysym.scancode);
 			SetCaption();
-			menu[sel_controls.cur].element.at(choice).caption.col = prompt.col_prev;
+			menu[sel_controls.cur].element[choice].caption.col = prompt.col_prev;
 			state = STATE_NORMAL;
 		}
 		break;
@@ -185,7 +185,7 @@ void KeyBindMenu::HandleEvents(const SDL_Event &Event) {
 	case STATE_NORMAL:
 		choice = menu[sel_controls.cur].HandleEvents(Event);
 		if (choice >= 0) {
-			prompt.Swap(menu[sel_controls.cur].element.at(choice).caption);
+			prompt.Swap(menu[sel_controls.cur].element[choice].caption);
 			state = STATE_KEY;
 			break;
 		}
@@ -195,7 +195,7 @@ void KeyBindMenu::HandleEvents(const SDL_Event &Event) {
 		if (Event.type == SDL_KEYDOWN) {
 			SwapKey(Event.key.keysym.scancode);
 			SetCaption();
-			menu[sel_controls.cur].element.at(choice).caption.col = prompt.col_prev;
+			menu[sel_controls.cur].element[choice].caption.col = prompt.col_prev;
 			state = STATE_NORMAL;
 		}
 		break;

@@ -91,9 +91,9 @@ void Journal::Init(const std::string &id) {
 //------------------------------------------------------------------------
 void Journal::Select(const std::string &id, const int &choice) {
 	for (unsigned int i = 0; i < category.element.size(); ++i)
-		category.element.at(i).State(false);
+		category.element[i].State(false);
 
-	category.element.at(choice).State(true);
+	category.element[choice].State(true);
 	select = choice;
 
 	// Always find valid journal group first
@@ -224,7 +224,7 @@ void Journal::Move(const std::string &id, const std::string &Title, const bool &
 					break;
 
 			if (index < jo.menu[source].quest.size()) {
-				jo.menu[destination].Add(jo.menu[source].quest.at(index));
+				jo.menu[destination].Add(jo.menu[source].quest[index]);
 				jo.menu[source].Erase(index);
 			}
 

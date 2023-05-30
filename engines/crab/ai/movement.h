@@ -82,7 +82,7 @@ struct MovementSet {
 	void Load(rapidxml::xml_node<char> *node);
 
 	bool InternalEvents(const Rect rect);
-	Rect Target() { return path.at(cur).target; }
+	Rect Target() { return path[cur].target; }
 };
 } // End of namespace ai
 } // End of namespace pyrodactyl

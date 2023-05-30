@@ -124,7 +124,7 @@ bool Level::LayerVisible(Sprite *obj) {
 		return true;
 
 	if ((unsigned int)obj->layer < terrain.layer.size())
-		return terrain.layer.at(obj->layer).collide;
+		return terrain.layer[obj->layer].collide;
 
 	return false;
 }

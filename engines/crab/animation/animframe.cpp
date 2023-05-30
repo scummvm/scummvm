@@ -103,7 +103,7 @@ bool AnimationFrames::UpdateClip() {
 }
 
 const AnimFrame &AnimationFrames::CurrentFrame() {
-	return frame.at(current_clip);
+	return frame[current_clip];
 }
 
 } // End of namespace Crab

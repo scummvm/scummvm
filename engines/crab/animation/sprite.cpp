@@ -82,7 +82,7 @@ void Sprite::Load(rapidxml::xml_node<char> *node, std::vector<std::string> &anim
 		LoadNum(index, "moveset", node);
 
 		if (index < animations.size())
-			anim_set.Load(animations.at(index));
+			anim_set.Load(animations[index]);
 
 		anim_set.fight.ListAttackMoves(ai_data.fight.attack);
 

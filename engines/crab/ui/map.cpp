@@ -99,7 +99,7 @@ void Map::Draw(pyrodactyl::event::Info &info) {
 
 	if (overlay) {
 		// The overlay needs to be clipped as well, so we must find the intersection of the camera and the clip itself
-		for (auto &i : map.at(cur).reveal) {
+		for (auto &i : map[cur].reveal) {
 			Rect r = i;
 			int X = pos.x + i.x - camera.x, Y = pos.y + i.y - camera.y;
 
@@ -176,10 +176,10 @@ void Map::Validate() {
 		camera.y = 0;
 
 	// decide visibility of scroll buttons
-	scroll.element.at(DIRECTION_RIGHT).visible = !(camera.x == size.x - camera.w);
-	scroll.element.at(DIRECTION_DOWN).visible = !(camera.y == size.y - camera.h);
-	scroll.element.at(DIRECTION_LEFT).visible = !(camera.x == 0);
-	scroll.element.at(DIRECTION_UP).visible = !(camera.y == 0);
+	scroll.element[DIRECTION_RIGHT].visible = !(camera.x == size.x - camera.w);
+	scroll.element[DIRECTION_DOWN].visible = !(camera.y == size.y - camera.h);
+	scroll.element[DIRECTION_LEFT].visible = !(camera.x == 0);
+	scroll.element[DIRECTION_UP].visible = !(camera.y == 0);
 }
 
 //------------------------------------------------------------------------
@@ -350,7 +350,7 @@ void Map::InternalEvents(pyrodactyl::event::Info &info) {
 bool Map::HandleEvents(pyrodactyl::event::Info &info, const Common::Event &Event) {
 	int choice = travel.HandleEvents(Event, -1 * camera.x, -1 * camera.y);
 	if (choice >= 0) {
-		cur_loc = travel.element.at(choice).loc;
+		cur_loc = travel.element[choice].loc;
 		pan = false;
 		return true;
 	}
@@ -371,7 +371,7 @@ bool Map::HandleEvents(pyrodactyl::event::Info &info, const Common::Event &Event
 bool Map::HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event) {
 	int choice = travel.HandleEvents(Event, -1 * camera.x, -1 * camera.y);
 	if (choice >= 0) {
-		cur_loc = travel.element.at(choice).loc;
+		cur_loc = travel.element[choice].loc;
 		pan = false;
 		return true;
 	}
@@ -393,14 +393,14 @@ void Map::SetImage(const unsigned int &val, const bool &force) {
 		img_bg.Delete();
 		img_overlay.Delete();
 
-		img_bg.Load(map.at(cur).path_bg.c_str());
-		img_overlay.Load(map.at(cur).path_overlay.c_str());
+		img_bg.Load(map[cur].path_bg.c_str());
+		img_overlay.Load(map[cur].path_overlay.c_str());
 
 		size.x = img_bg.W();
 		size.y = img_bg.H();
 
 		marker.Clear();
-		for (auto &i : map.at(cur).dest)
+		for (auto &i : map[cur].dest)
 			marker.AddButton(i.name, i.pos.x, i.pos.y);
 
 		marker.AssignPaths();
@@ -429,11 +429,11 @@ void Map::Update(pyrodactyl::event::Info &info) {
 //------------------------------------------------------------------------
 void Map::RevealAdd(const int &id, const Rect &area) {
 	if ((unsigned int)id < map.size()) {
-		for (auto i = map.at(id).reveal.begin(); i != map.at(id).reveal.end(); ++i)
+		for (auto i = map[id].reveal.begin(); i != map[id].reveal.end(); ++i)
 			if (*i == area)
 				return;
 
-		map.at(id).reveal.push_back(area);
+		map[id].reveal.push_back(area);
 	}
 }
 
@@ -442,7 +442,7 @@ void Map::RevealAdd(const int &id, const Rect &area) {
 //------------------------------------------------------------------------
 void Map::DestAdd(const std::string &name, const int &x, const int &y) {
 	if (cur < map.size()) {
-		for (auto i = map.at(cur).dest.begin(); i != map.at(cur).dest.end(); ++i) {
+		for (auto i = map[cur].dest.begin(); i != map[cur].dest.end(); ++i) {
 			if (i->name == name) {
 				i->pos.x = x;
 				i->pos.y = y;
@@ -450,7 +450,7 @@ void Map::DestAdd(const std::string &name, const int &x, const int &y) {
 			}
 		}
 
-		map.at(cur).DestAdd(name, x, y);
+		map[cur].DestAdd(name, x, y);
 		marker.AddButton(name, x, y);
 		marker.AssignPaths();
 	}
@@ -458,9 +458,9 @@ void Map::DestAdd(const std::string &name, const int &x, const int &y) {
 
 void Map::DestDel(const std::string &name) {
 	if (cur < map.size()) {
-		for (auto i = map.at(cur).dest.begin(); i != map.at(cur).dest.end(); ++i) {
+		for (auto i = map[cur].dest.begin(); i != map[cur].dest.end(); ++i) {
 			if (i->name == name) {
-				map.at(cur).dest.erase(i);
+				map[cur].dest.erase(i);
 				break;
 			}
 		}
