@@ -42,12 +42,12 @@ namespace ui {
 class OptionSelect {
 	struct
 	{
-		std::vector<std::string> text;
+		Common::Array<Common::String> text;
 		TextData data;
 
 		void Draw(const int &index) {
 			if (index >= 0 && (unsigned int)index < text.size())
-				data.Draw(text[index]);
+				data.Draw(text[index].c_str());
 		}
 	} option;
 
