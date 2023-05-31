@@ -3183,7 +3183,7 @@ void LB::b_window(int nargs) {
 	Window *window = new Window(wm->getNextId(), false, false, false, wm, g_director, false);
 	window->setName(windowName);
 	window->setTitle(windowName);
-	window->resize(1, 1, true);
+	window->resizeInner(1, 1);
 	window->setVisible(false, true);
 	wm->addWindowInitialized(window);
 	windowList->arr.push_back(window);

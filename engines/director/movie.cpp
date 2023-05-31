@@ -209,7 +209,7 @@ bool Movie::loadArchive() {
 	// If the stage dimensions are different, delete it and start again.
 	// Otherwise, do not clear it so there can be a nice transition.
 	if (_window->getSurface()->w != _movieRect.width() || _window->getSurface()->h != _movieRect.height()) {
-		_window->resize(_movieRect.width(), _movieRect.height(), true);
+		_window->resizeInner(_movieRect.width(), _movieRect.height());
 		recenter = true;
 	}
 

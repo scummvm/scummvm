@@ -90,20 +90,29 @@ void MacWindow::setActive(bool active) {
 
 bool MacWindow::isActive() const { return _active; }
 
-void MacWindow::resize(int w, int h, bool inner) {
+void MacWindow::resize(int w, int h) {
 	if (_composeSurface->w == w && _composeSurface->h == h)
 		return;
 
-	if (inner) {
-		_innerDims.setWidth(w);
-		_innerDims.setHeight(h);
-		updateOuterDims();
-	} else {
-		_dims.setWidth(w);
-		_dims.setHeight(h);
-		updateInnerDims();
-	}
+	_dims.setWidth(w);
+	_dims.setHeight(h);
+	updateInnerDims();
+	
+	rebuildSurface();
+}
 
+void MacWindow::resizeInner(int w, int h) {
+	if (_composeSurface->w == w && _composeSurface->h == h)
+		return;
+
+	_innerDims.setWidth(w);
+	_innerDims.setHeight(h);
+	updateOuterDims();
+
+	rebuildSurface();
+}
+
+void MacWindow::rebuildSurface() {
 	_composeSurface->free();
 	_composeSurface->create(_innerDims.width(), _innerDims.height(), _wm->_pixelformat);
 

@@ -99,7 +99,7 @@ void MacTextWindow::init(bool cursorHandler) {
 	}
 }
 
-void MacTextWindow::resize(int w, int h, bool inner) {
+void MacTextWindow::resize(int w, int h) {
 	if (_composeSurface->w == w && _composeSurface->h == h)
 		return;
 
