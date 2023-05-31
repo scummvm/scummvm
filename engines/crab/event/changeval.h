@@ -40,7 +40,7 @@ namespace pyrodactyl {
 namespace event {
 struct ChangeVal {
 	// The person whose opinion is changed
-	std::string id;
+	Common::String id;
 
 	// How much does opinion change?
 	int val[pyrodactyl::people::OPI_TOTAL];

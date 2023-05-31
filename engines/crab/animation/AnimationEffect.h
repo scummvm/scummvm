@@ -72,7 +72,7 @@ struct AnimationEffect {
 			LoadNum(start, "start", effnode);
 			LoadNum(finish, "finish", effnode);
 
-			std::string str;
+			Common::String str;
 			LoadStr(str, "type", effnode);
 			if (str == "fade_in")
 				type = FADE_IN;

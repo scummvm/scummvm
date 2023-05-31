@@ -35,7 +35,7 @@
 
 namespace Crab {
 
-void OpenURL(const std::string &url_str);
+void OpenURL(const Common::String &url_str);
 
 } // End of namespace Crab
 

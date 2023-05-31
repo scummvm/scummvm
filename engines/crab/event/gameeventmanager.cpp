@@ -62,7 +62,7 @@ void Manager::Load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 
 				for (auto n = loc->first_node("file"); n != NULL; n = n->next_sibling("file")) {
 					unsigned int id;
-					std::string path;
+					Common::String path;
 					LoadNum(id, "name", n);
 					LoadStr(path, "path", n);
 					event_map[loc_name].AddSeq(id, path);
@@ -96,7 +96,7 @@ void Manager::Load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
-void Manager::HandleEvents(Info &info, const std::string &player_id, Common::Event &Event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
+void Manager::HandleEvents(Info &info, const Common::String &player_id, Common::Event &Event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
 	// If an event is already being performed
 	if (event_map.contains(info.CurLocID().c_str()) > 0 && event_map[info.CurLocID().c_str()].EventInProgress(active_seq)) {
 		switch (cur_event->type) {
@@ -183,7 +183,7 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, Common::Eve
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
-void Manager::HandleEvents(Info &info, const std::string &player_id, SDL_Event &Event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
+void Manager::HandleEvents(Info &info, const Common::String &player_id, SDL_Event &Event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
 	// If an event is already being performed
 	if (event_map.contains(info.CurLocID().c_str()) > 0 && event_map[info.CurLocID().c_str()].EventInProgress(active_seq)) {
 		switch (cur_event->type) {
@@ -388,7 +388,7 @@ void Manager::CalcActiveSeq(Info &info, Level &level, const Rect &camera) {
 //------------------------------------------------------------------------
 // Purpose: Get/set info
 //------------------------------------------------------------------------
-void Manager::EndSequence(const std::string &curloc) {
+void Manager::EndSequence(const Common::String &curloc) {
 	if (end_seq.empty() == false) {
 		for (auto i = end_seq.begin(); i != end_seq.end(); ++i)
 			if (i->cur)

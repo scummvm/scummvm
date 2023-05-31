@@ -41,7 +41,7 @@ void Exit::Load(rapidxml::xml_node<char> *node) {
 	if (NodeValid("properties", node)) {
 		rapidxml::xml_node<char> *propertynode = node->first_node("properties");
 		for (auto n = propertynode->first_node("property"); n != NULL; n = n->next_sibling("property")) {
-			std::string node_name;
+			Common::String node_name;
 			LoadStr(node_name, "name", n);
 			if (node_name == "entry_x") {
 				if (!LoadNum(entry.x, "value", n))

@@ -62,7 +62,7 @@ bool ChapterIntro::HandleEvents(SDL_Event &Event) {
 }
 #endif
 
-void ChapterIntro::Draw(pyrodactyl::event::Info &info, std::string &text,
+void ChapterIntro::Draw(pyrodactyl::event::Info &info, Common::String &text,
 						pyrodactyl::anim::Sprite *cur_sp, const pyrodactyl::people::PersonState &state) {
 	dialog.Draw(false);
 	dialog.Draw(info, text);

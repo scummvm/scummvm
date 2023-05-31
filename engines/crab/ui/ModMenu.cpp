@@ -35,7 +35,7 @@ namespace Crab {
 
 using namespace pyrodactyl::ui;
 
-void ModMenu::Load(const std::string &filename) {
+void ModMenu::Load(const Common::String &filename) {
 	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("mod_menu");

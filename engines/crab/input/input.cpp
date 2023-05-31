@@ -106,13 +106,13 @@ const int InputManager::Equals(const InputType &val, const SDL_Event &Event) {
 //------------------------------------------------------------------------
 void InputManager::Init() {
 
-	const std::string DEFAULT_FILENAME = "res/controls.xml";
+	const Common::String DEFAULT_FILENAME = "res/controls.xml";
 	Load(DEFAULT_FILENAME);
 
 #if 0
-	const std::string DEFAULT_FILENAME = "res/controls.xml";
+	const Common::String DEFAULT_FILENAME = "res/controls.xml";
 
-	std::string filename = g_engine->_filePath->appdata.c_str();
+	Common::String filename = g_engine->_filePath->appdata.c_str();
 	filename += "controls.xml";
 
 	if (!is_regular_file(filename)) {
@@ -136,7 +136,7 @@ void InputManager::Init() {
 //------------------------------------------------------------------------
 // Purpose: Load key & controller binding settings from file
 //------------------------------------------------------------------------
-void InputManager::Load(const std::string &filename) {
+void InputManager::Load(const Common::String &filename) {
 	XMLDoc control_list(filename.c_str());
 	if (control_list.ready()) {
 		rapidxml::xml_node<char> *node = control_list.Doc()->first_node("controls");
@@ -198,7 +198,7 @@ void InputManager::Save() {
 #if 0
 	rapidxml::xml_document<char> doc;
 
-	std::string filename = g_engine->_filePath->appdata;
+	Common::String filename = g_engine->_filePath->appdata;
 	filename += "controls.xml";
 
 	// xml declaration
@@ -214,7 +214,7 @@ void InputManager::Save() {
 		iv[i].SaveState(doc, root, "i");
 
 	doc.append_node(root);
-	std::string xml_as_string;
+	Common::String xml_as_string;
 	rapidxml::print(std::back_inserter(xml_as_string), doc);
 
 	std::ofstream save(filename, std::ios::out);

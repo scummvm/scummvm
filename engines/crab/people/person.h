@@ -45,7 +45,7 @@ namespace pyrodactyl {
 namespace people {
 struct Person {
 	// The id of the object
-	std::string id;
+	Common::String id;
 
 	// Opinion of the person towards the player
 	Opinion opinion;
@@ -57,13 +57,13 @@ struct Person {
 	pyrodactyl::stat::StatGroup stat;
 
 	// Name of object
-	std::string name;
+	Common::String name;
 
 	// Type of object
 	PersonType type;
 
 	// Sometimes a person's journal entry isn't the same as their name
-	std::string journal_name;
+	Common::String journal_name;
 
 	// If this is true, use the alternate journal name instead
 	bool alt_journal_name;
@@ -87,7 +87,7 @@ struct Person {
 	void LoadState(rapidxml::xml_node<char> *node);
 };
 
-typedef std::unordered_map<std::string, Person> PersonMap;
+typedef Common::HashMap<Common::String, Person> PersonMap;
 } // End of namespace people
 } // End of namespace pyrodactyl
 

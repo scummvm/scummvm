@@ -55,7 +55,7 @@ struct PolygonCollisionResult {
 // Purpose: A simple 2D Polygon class
 //------------------------------------------------------------------------
 class Polygon2D {
-	void AddPoint(const Vector2f &ref, const std::string &x, const std::string &y, Vector2f &min, Vector2f &max);
+	void AddPoint(const Vector2f &ref, const Common::String &x, const Common::String &y, Vector2f &min, Vector2f &max);
 
 public:
 	// A list of all points

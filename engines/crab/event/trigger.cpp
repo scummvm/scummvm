@@ -35,7 +35,7 @@ namespace Crab {
 using namespace pyrodactyl::event;
 
 void Trigger::Load(rapidxml::xml_node<char> *node) {
-	std::string ty;
+	Common::String ty;
 	LoadStr(ty, "type", node);
 
 	// Should we throw a warning about missing fields? Depends on the type of trigger
@@ -71,7 +71,7 @@ void Trigger::Load(rapidxml::xml_node<char> *node) {
 	LoadStr(operation, "operation", node, echo_op);
 	LoadStr(val, "val", node);
 
-	std::string str;
+	Common::String str;
 	LoadStr(str, "rel", node, false);
 	if (str == "or")
 		rel = OP_OR;

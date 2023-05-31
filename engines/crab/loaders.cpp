@@ -47,14 +47,14 @@ bool NodeValid(const Common::String &name, rapidxml::xml_node<char> *parent_node
 	if (parent_node == NULL) {
 		/*if (echo)
 		{
-		std::string error_msg = "parent node of " + name + " not found \n";
+		Common::String error_msg = "parent node of " + name + " not found \n";
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, "XML error", error_msg.c_str(), NULL);
 		}*/
 		return false;
 	} else if (parent_node->first_node(name.c_str()) == NULL) {
 		/*if (echo)
 		{
-		std::string error_msg = "child node " + name + " of parent node " + parent_node->name() + " not found \n";
+		Common::String error_msg = "child node " + name + " of parent node " + parent_node->name() + " not found \n";
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, "XML error", error_msg.c_str(), NULL);
 		}*/
 		return false;
@@ -69,7 +69,7 @@ bool LoadStr(Common::String &val, const Common::String &name, rapidxml::xml_node
 	else {
 		/*if (echo)
 		{
-		std::string error_msg = "string " + name + " not found in " + node->name() + "\n";
+		Common::String error_msg = "string " + name + " not found in " + node->name() + "\n";
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, "XML error", error_msg.c_str(), NULL);
 		}*/
 		return false;
@@ -84,7 +84,7 @@ bool LoadStr(std::string &val, const std::string &name, rapidxml::xml_node<char>
 	else {
 		/*if (echo)
 		{
-		std::string error_msg = "string " + name + " not found in " + node->name() + "\n";
+		Common::String error_msg = "string " + name + " not found in " + node->name() + "\n";
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, "XML error", error_msg.c_str(), NULL);
 		}*/
 		return false;

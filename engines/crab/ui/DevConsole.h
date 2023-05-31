@@ -54,7 +54,7 @@ class DebugConsole {
 	TextArea text_field;
 
 	// The variable name we're tracking
-	std::string var_name;
+	Common::String var_name;
 
 public:
 	DebugConsole() { state = STATE_NORMAL; }
@@ -63,7 +63,7 @@ public:
 	// Only restrict input when we're in variable state
 	bool RestrictInput() { return (state == STATE_VAR || menu.HoverIndex() != -1); }
 
-	void Load(const std::string &filename);
+	void Load(const Common::String &filename);
 	void Draw(pyrodactyl::event::Info &info);
 
 #if 0

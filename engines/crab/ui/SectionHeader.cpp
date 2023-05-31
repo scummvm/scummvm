@@ -84,7 +84,7 @@ void SectionHeader::Draw(const int &XOffset, const int &YOffset) {
 	Draw(text, XOffset, YOffset);
 }
 
-void SectionHeader::Draw(const std::string &str, const int &XOffset, const int &YOffset) {
+void SectionHeader::Draw(const Common::String &str, const int &XOffset, const int &YOffset) {
 	if (draw_l)
 		g_engine->_imageManager->Draw(left.x + XOffset, left.y + YOffset, img);
 

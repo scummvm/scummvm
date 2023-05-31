@@ -59,8 +59,8 @@ public:
 			hr = StringToNumber<uint32>(str_hrs);
 
 			std::size_t found_2 = str.findFirstOf(seperator);
-			if (found_2 > 0 && found_2 != std::string::npos) {
-				str_sec = str.substr(found_2 + 1, std::string::npos);
+			if (found_2 > 0 && found_2 != Common::String::npos) {
+				str_sec = str.substr(found_2 + 1, Common::String::npos);
 				sec = StringToNumber<uint32>(str_sec);
 
 				str_min = str.substr(found_1 + seperator.size(), found_2 - (2 * seperator.size()));

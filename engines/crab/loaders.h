@@ -73,7 +73,7 @@ bool LoadEnum(T &val, const Common::String &name, rapidxml::xml_node<char> *node
 	else {
 		/*if (echo)
 		{
-		std::string error_msg = "attribute " + name + " not found in node " + node->parent()->name() + " -> " + node->name();
+		Common::String error_msg = "attribute " + name + " not found in node " + node->parent()->name() + " -> " + node->name();
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, "XML error", error_msg.c_str(), NULL);
 		}*/
 		return false;

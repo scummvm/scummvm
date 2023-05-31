@@ -38,7 +38,7 @@ using namespace pyrodactyl::event;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::people;
 
-void PersonScreen::Load(const std::string &filename) {
+void PersonScreen::Load(const Common::String &filename) {
 	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("character");
@@ -58,7 +58,7 @@ void PersonScreen::Load(const std::string &filename) {
 	}
 }
 
-void PersonScreen::HandleEvents(pyrodactyl::event::Info &info, const std::string &id, const Common::Event &Event) {
+void PersonScreen::HandleEvents(pyrodactyl::event::Info &info, const Common::String &id, const Common::Event &Event) {
 	if (info.PersonValid(id))
 		menu.HandleEvents(&info.PersonGet(id), Event);
 	else
@@ -66,7 +66,7 @@ void PersonScreen::HandleEvents(pyrodactyl::event::Info &info, const std::string
 }
 
 #if 0
-void PersonScreen::HandleEvents(pyrodactyl::event::Info &info, const std::string &id, const SDL_Event &Event) {
+void PersonScreen::HandleEvents(pyrodactyl::event::Info &info, const Common::String &id, const SDL_Event &Event) {
 	if (info.PersonValid(id))
 		menu.HandleEvents(&info.PersonGet(id), Event);
 	else
@@ -79,7 +79,7 @@ void PersonScreen::InternalEvents() {
 		cur_sp->DialogUpdateClip(PST_NORMAL);
 }
 
-void PersonScreen::Draw(pyrodactyl::event::Info &info, const std::string &id) {
+void PersonScreen::Draw(pyrodactyl::event::Info &info, const Common::String &id) {
 	bg.Draw();
 
 	if (info.PersonValid(id)) {
@@ -94,7 +94,7 @@ void PersonScreen::Draw(pyrodactyl::event::Info &info, const std::string &id) {
 	}
 }
 
-void PersonScreen::Cache(Info &info, const std::string &id, pyrodactyl::level::Level &level) {
+void PersonScreen::Cache(Info &info, const Common::String &id, pyrodactyl::level::Level &level) {
 	cur_sp = level.GetSprite(id);
 
 	if (info.PersonValid(id))

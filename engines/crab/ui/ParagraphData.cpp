@@ -43,7 +43,7 @@ bool ParagraphData::Load(rapidxml::xml_node<char> *node, Rect *parent, const boo
 	return TextData::Load(node, parent, echo);
 }
 
-void ParagraphData::Draw(const std::string &val, const int &XOffset, const int &YOffset) {
+void ParagraphData::Draw(const Common::String &val, const int &XOffset, const int &YOffset) {
 	g_engine->_textManager->Draw(x + XOffset, y + YOffset, val, col, font, align, line.x, line.y);
 }
 

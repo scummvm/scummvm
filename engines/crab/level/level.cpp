@@ -70,7 +70,7 @@ void Level::Reset() {
 //------------------------------------------------------------------------
 // Purpose: Get index of a sprite in the object array
 //------------------------------------------------------------------------
-pyrodactyl::anim::Sprite *Level::GetSprite(const std::string &id) {
+pyrodactyl::anim::Sprite *Level::GetSprite(const Common::String &id) {
 	int count = 0;
 	for (auto i = objects.begin(); i != objects.end(); ++i, ++count)
 		if (i->ID() == id)
@@ -146,7 +146,7 @@ void Level::HandleEvents(Info &info, const SDL_Event &Event) {
 //------------------------------------------------------------------------
 // Purpose: Swap the player sprites
 //------------------------------------------------------------------------
-void Level::PlayerID(const std::string &ID, const int &X, const int &Y) {
+void Level::PlayerID(const Common::String &ID, const int &X, const int &Y) {
 	int index = 0;
 	for (auto i = objects.begin(); i != objects.end(); ++i, ++index) {
 		if (i->ID() == ID) {

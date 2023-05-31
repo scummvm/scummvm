@@ -51,7 +51,7 @@ double Sprite::DistSq(const Sprite &s) {
 void Sprite::MoveToDest(pyrodactyl::event::Info &info, const SpriteConstant &sc) {
 	if (ai_data.dest.active) {
 		int num = 0;
-		info.StatGet(id, pyrodactyl::stat::STAT_SPEED, num);
+		info.StatGet(id.c_str(), pyrodactyl::stat::STAT_SPEED, num);
 		++num;
 		float player_speed = static_cast<float>(num);
 
@@ -66,7 +66,7 @@ void Sprite::MoveToDest(pyrodactyl::event::Info &info, const SpriteConstant &sc)
 void Sprite::MoveToDestPathfinding(pyrodactyl::event::Info &info, const SpriteConstant &sc) {
 	if (ai_data.dest.active) {
 		int num = 0;
-		info.StatGet(id, pyrodactyl::stat::STAT_SPEED, num);
+		info.StatGet(id.c_str(), pyrodactyl::stat::STAT_SPEED, num);
 		++num;
 		float player_speed = static_cast<float>(num);
 
@@ -189,7 +189,7 @@ void Sprite::Flee(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::level
 			break;
 		} else {
 			int num = 0;
-			info.StatGet(id, pyrodactyl::stat::STAT_SPEED, num);
+			info.StatGet(id.c_str(), pyrodactyl::stat::STAT_SPEED, num);
 			++num;
 			float velocity = static_cast<float>(num);
 

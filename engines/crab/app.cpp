@@ -63,9 +63,9 @@ bool App::Init() {
 #if 0
 	// Load the settings corresponding to the latest version
 	{
-		const std::string DEFAULT_FILENAME = "res/settings.xml";
+		const Common::String DEFAULT_FILENAME = "res/settings.xml";
 
-		std::string filename = g_engine->_filePath->appdata;
+		Common::String filename = g_engine->_filePath->appdata;
 		filename += "settings.xml";
 
 		using namespace boost::filesystem;

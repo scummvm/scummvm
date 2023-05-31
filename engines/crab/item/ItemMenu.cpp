@@ -120,7 +120,7 @@ bool ItemMenu::Equip(Item &item) {
 //------------------------------------------------------------------------
 // Purpose: Remove all instances of an item
 //------------------------------------------------------------------------
-bool ItemMenu::Del(const std::string &id) {
+bool ItemMenu::Del(const Common::String &id) {
 	bool result = false;
 
 	for (auto &i : element)
@@ -138,7 +138,7 @@ bool ItemMenu::Del(const std::string &id) {
 //------------------------------------------------------------------------
 // Purpose: Find out if we have an item with a name
 //------------------------------------------------------------------------
-bool ItemMenu::Has(const std::string &container, const std::string &id) {
+bool ItemMenu::Has(const Common::String &container, const Common::String &id) {
 	for (auto i = element.begin(); i != element.end(); ++i)
 		if (i->item.id == id) {
 			if (container == "equip") {

@@ -35,7 +35,7 @@ namespace Crab {
 
 namespace pyrodactyl {
 namespace stat {
-StatType StringToStatType(const std::string &val) {
+StatType StringToStatType(const Common::String &val) {
 	if (val == STATNAME_HEALTH)
 		return STAT_HEALTH;
 	else if (val == STATNAME_ATTACK)

@@ -56,7 +56,7 @@ class TextArea : public TextData {
 	pyrodactyl::music::ChunkKey se_entry, se_erase, se_accept;
 
 public:
-	std::string text;
+	Common::String text;
 
 	TextArea(void) : text("") {
 		size = 20;

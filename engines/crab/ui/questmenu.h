@@ -77,17 +77,17 @@ public:
 	void Load(rapidxml::xml_node<char> *node);
 	void Draw(Button &bu_map);
 
-	bool HandleEvents(Button &bu_map, std::string &map_title, const Common::Event &Event);
+	bool HandleEvents(Button &bu_map, Common::String &map_title, const Common::Event &Event);
 #if 0
-	bool HandleEvents(Button &bu_map, std::string &map_title, const SDL_Event &Event);
+	bool HandleEvents(Button &bu_map, Common::String &map_title, const SDL_Event &Event);
 #endif
 
 	void UseKeyboard(const bool &val) { menu.UseKeyboard(val); }
 	void AssignPaths() { menu.AssignPaths(); }
 
-	void Marker(const std::string &title, const bool &val);
+	void Marker(const Common::String &title, const bool &val);
 
-	void Add(const std::string &title, const std::string &txt);
+	void Add(const Common::String &title, const Common::String &txt);
 	void Add(const pyrodactyl::event::Quest &q);
 	void Erase(const int &index);
 

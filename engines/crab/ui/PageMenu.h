@@ -59,7 +59,7 @@ class PageMenu {
 
 	// Display "Page 1 of 3" style information for the menu
 	TextData status;
-	std::string info;
+	Common::String info;
 
 public:
 	PageMenu() {

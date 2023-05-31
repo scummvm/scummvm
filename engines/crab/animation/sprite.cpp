@@ -650,7 +650,7 @@ bool Sprite::TakingDamage(Sprite &sp, const SpriteConstant &sc) {
 			if (BoxV().Collide(sp.BoxD()))
 				return true;
 
-	/*std::string words = NumberToString(BoxV().x) + " " + NumberToString(BoxV().y)+ " " + NumberToString(BoxV().w)
+	/*Common::String words = NumberToString(BoxV().x) + " " + NumberToString(BoxV().y)+ " " + NumberToString(BoxV().w)
 	+ " " + NumberToString(BoxV().h) + "\n" + NumberToString(sp.BoxD().x) + " " + NumberToString(sp.BoxD().y)
 	+ " " + NumberToString(sp.BoxD().w) + " " + NumberToString(sp.BoxD().h) + "\n";
 	fprintf(stdout,words.c_str());*/
@@ -724,7 +724,7 @@ void Sprite::ExchangeDamage(Info &info, Sprite &s, const SpriteConstant &sc) {
 //------------------------------------------------------------------------
 // Purpose: Update status of ambient dialog via popup object
 //------------------------------------------------------------------------
-void Sprite::InternalEvents(Info &info, const std::string &player_id, Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq) {
+void Sprite::InternalEvents(Info &info, const Common::String &player_id, Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq) {
 	popup.InternalEvents(info, player_id, result, end_seq);
 }
 

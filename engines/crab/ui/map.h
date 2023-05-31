@@ -102,7 +102,7 @@ class Map {
 
 public:
 	// The currently selected location
-	std::string cur_loc;
+	Common::String cur_loc;
 
 	// The coordinates of the player's current location
 	Vector2i player_pos;
@@ -115,7 +115,7 @@ public:
 	}
 	~Map() {}
 
-	void Load(const std::string &filename, pyrodactyl::event::Info &info);
+	void Load(const Common::String &filename, pyrodactyl::event::Info &info);
 
 	void Draw(pyrodactyl::event::Info &info);
 	bool HandleEvents(pyrodactyl::event::Info &info, const Common::Event &Event);
@@ -132,9 +132,9 @@ public:
 	void Validate();
 
 	void RevealAdd(const int &id, const Rect &area);
-	void DestAdd(const std::string &name, const int &x, const int &y);
-	void DestDel(const std::string &name);
-	void SelectDest(const std::string &name);
+	void DestAdd(const Common::String &name, const int &x, const int &y);
+	void DestDel(const Common::String &name);
+	void SelectDest(const Common::String &name);
 
 	void Update(pyrodactyl::event::Info &info);
 	void SetImage(const unsigned int &val, const bool &force = false);

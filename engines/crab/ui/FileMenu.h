@@ -53,10 +53,10 @@ protected:
 	PageButtonMenu menu;
 
 	// The final filename that is selected
-	std::string selected;
+	Common::String selected;
 
 	// The extension and directory used by this menu
-	std::string extension, directory;
+	Common::String extension, directory;
 
 	// The save information for each slot
 	Common::Array<FileType> slot_info;
@@ -73,7 +73,7 @@ protected:
 		pyrodactyl::image::Image preview;
 
 		// Fallback path if there is no preview image or if we fail to load it
-		std::string no_preview_path;
+		Common::String no_preview_path;
 
 		// Position of image
 		Element pos;
@@ -106,8 +106,8 @@ public:
 		hover = false;
 	}
 
-	std::string SelectedPath() { return selected; }
-	void SelectedPath(const std::string &val) { selected = val; }
+	Common::String SelectedPath() { return selected; }
+	void SelectedPath(const Common::String &val) { selected = val; }
 
 	void ScanDir() {
 		warning("STUB: FileMenu::ScanDir()");

@@ -57,7 +57,7 @@ enum EventResultType {
 
 struct EventResult {
 	EventResultType type;
-	std::string val;
+	Common::String val;
 	int x, y;
 
 	EventResult() : val("") {
@@ -69,7 +69,7 @@ struct EventResult {
 
 struct EventSeqInfo {
 	bool cur;
-	std::string loc, val;
+	Common::String loc, val;
 
 	EventSeqInfo() { cur = false; }
 	EventSeqInfo(const bool &Cur) { cur = Cur; }
@@ -101,13 +101,13 @@ enum EffectType {
 
 struct Effect {
 	EffectType type;
-	std::string subject, operation, val;
+	Common::String subject, operation, val;
 
 	Effect() { type = EFF_VAR; }
 	~Effect() {}
 
 	void Load(rapidxml::xml_node<char> *node);
-	bool Execute(pyrodactyl::event::Info &info, const std::string &player_id,
+	bool Execute(pyrodactyl::event::Info &info, const Common::String &player_id,
 				 Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq);
 
 	void ChangeOpinion(pyrodactyl::event::Info &info, pyrodactyl::people::OpinionType type);

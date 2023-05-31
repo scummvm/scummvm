@@ -50,7 +50,7 @@ void GameEvent::Load(rapidxml::xml_node<char> *node) {
 	LoadStr(dialog, "dialog", node);
 	LoadEnum(state, "state", node, false);
 
-	std::string Type;
+	Common::String Type;
 	LoadStr(Type, "type", node);
 
 	if (Type == "dlg") {

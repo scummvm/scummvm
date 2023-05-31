@@ -40,10 +40,10 @@ namespace pyrodactyl {
 namespace event {
 struct Quest {
 	// The title of the quest
-	std::string title;
+	Common::String title;
 
 	// The objective text, the last one being the current objective
-	std::deque<std::string> text;
+	std::deque<Common::String> text;
 
 	// Keep track of which quests the player has read
 	bool unread;
@@ -55,7 +55,7 @@ struct Quest {
 		unread = true;
 		marker = false;
 	}
-	Quest(const std::string &Title, const std::string &Text, const bool &Unread, const bool &Marker);
+	Quest(const Common::String &Title, const Common::String &Text, const bool &Unread, const bool &Marker);
 
 	void LoadState(rapidxml::xml_node<char> *node);
 	void SaveState(rapidxml::xml_document<char> &doc, rapidxml::xml_node<char> *root);

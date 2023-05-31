@@ -36,7 +36,7 @@
 namespace Crab {
 
 class LevelPaths {
-	std::string layout, asset;
+	Common::String layout, asset;
 
 public:
 	LevelPaths() {

@@ -39,7 +39,7 @@ void MapData::Load(rapidxml::xml_node<char> *node) {
 	LoadStr(path_overlay, "overlay", node);
 }
 
-void MapData::DestAdd(const std::string &name, const int &x, const int &y) {
+void MapData::DestAdd(const Common::String &name, const int &x, const int &y) {
 	MarkerData md;
 	md.name = name;
 	md.pos.x = x;

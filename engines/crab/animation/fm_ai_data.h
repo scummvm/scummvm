@@ -65,7 +65,7 @@ struct FightMoveAIData {
 
 		range.Load(node->first_node("range"));
 
-		std::string str;
+		Common::String str;
 		LoadStr(str, "type", node, false);
 		if (str == "attack")
 			type = MOVE_ATTACK;

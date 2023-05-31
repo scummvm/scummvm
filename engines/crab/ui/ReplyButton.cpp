@@ -67,7 +67,7 @@ void ReplyButton::Draw(const int &XOffset, const int &YOffset) {
 	}
 }
 
-void ReplyButton::Cache(const std::string &val, const int &spacing, const int &bottom_edge, Rect *parent) {
+void ReplyButton::Cache(const Common::String &val, const int &spacing, const int &bottom_edge, Rect *parent) {
 	text = val;
 
 	// Find out about the font
@@ -79,7 +79,7 @@ void ReplyButton::Cache(const std::string &val, const int &spacing, const int &b
 	height = g_engine->_textManager->GetFont(font)->getFontHeight();
 
 	// Find out how many line sizes will the text take
-	int lines = ((text.length() - 1) / line_size.x) + 1;
+	int lines = ((text.size() - 1) / line_size.x) + 1;
 
 	x = orig.x;
 	y = orig.y;

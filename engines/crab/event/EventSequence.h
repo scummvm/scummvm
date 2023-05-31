@@ -67,14 +67,14 @@ public:
 
 	// See if we should trigger any event
 	void InternalEvents(pyrodactyl::event::Info &info);
-	void NextEvent(Info &info, const std::string &player_id, Common::Array<EventResult> &result,
+	void NextEvent(Info &info, const Common::String &player_id, Common::Array<EventResult> &result,
 				   Common::Array<EventSeqInfo> &end_seq, int NextEventChoice = -1);
 
 	bool EventInProgress() { return event_in_progress; }
 	void EventInProgress(bool val) { event_in_progress = val; }
 
 	// Load and save
-	void Load(const std::string &filename);
+	void Load(const Common::String &filename);
 
 	void SaveState(rapidxml::xml_document<char> &doc, rapidxml::xml_node<char> *root, const char *name);
 	void LoadState(rapidxml::xml_node<char> *node);

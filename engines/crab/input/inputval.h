@@ -43,7 +43,7 @@ namespace input {
 class InputVal {
 public:
 	// Name of the key (such as "punch", "up")
-	std::string name;
+	Common::String name;
 
 	// Keyboard keys
 	//SDL_Scancode key, alt;

@@ -89,7 +89,7 @@ class InputManager {
 	InputVal backup[IT_TOTAL];
 
 	// Load key configuration from file
-	void Load(const std::string &filename);
+	void Load(const Common::String &filename);
 
 	// The current version of the input scheme
 	unsigned int version;

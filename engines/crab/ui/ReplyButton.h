@@ -50,7 +50,7 @@ class ReplyButton : public Button {
 	Rect orig;
 
 	// The text for this button
-	std::string text;
+	Common::String text;
 
 public:
 	// The object it points to
@@ -72,7 +72,7 @@ public:
 	// Used to calculate size and set the string
 	// Spacing is the minimum space between buttons added in case of overflow
 	// Bottom edge is the y+h value of the previous choice
-	void Cache(const std::string &val, const int &spacing, const int &bottom_edge, Rect *parent);
+	void Cache(const Common::String &val, const int &spacing, const int &bottom_edge, Rect *parent);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

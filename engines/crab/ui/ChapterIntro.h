@@ -63,7 +63,7 @@ public:
 	bool HandleEvents(SDL_Event &Event);
 #endif
 
-	void Draw(pyrodactyl::event::Info &info, std::string &text,
+	void Draw(pyrodactyl::event::Info &info, Common::String &text,
 			  pyrodactyl::anim::Sprite *cur_sp, const pyrodactyl::people::PersonState &state);
 };
 } // End of namespace ui

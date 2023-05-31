@@ -41,7 +41,7 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::input;
 
-void HUD::Load(const std::string &filename, pyrodactyl::level::TalkNotify &tn, pyrodactyl::level::PlayerDestMarker &pdm) {
+void HUD::Load(const Common::String &filename, pyrodactyl::level::TalkNotify &tn, pyrodactyl::level::PlayerDestMarker &pdm) {
 	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("hud");
@@ -83,7 +83,7 @@ void HUD::Load(const std::string &filename, pyrodactyl::level::TalkNotify &tn, p
 	}
 }
 
-void HUD::Draw(pyrodactyl::event::Info &info, const std::string &id) {
+void HUD::Draw(pyrodactyl::event::Info &info, const Common::String &id) {
 	bg.Draw();
 	menu.Draw();
 

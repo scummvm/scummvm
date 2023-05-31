@@ -42,7 +42,7 @@ namespace pyrodactyl {
 namespace ui {
 class SectionHeader : public TextData {
 	// The content of the header
-	std::string text;
+	Common::String text;
 
 	// This image surrounds the text like <img> text <img>, with the right image being flipped horizontally
 	ImageKey img;
@@ -64,7 +64,7 @@ public:
 	void Load(rapidxml::xml_node<char> *node);
 
 	void Draw(const int &XOffset = 0, const int &YOffset = 0);
-	void Draw(const std::string &str, const int &XOffset = 0, const int &YOffset = 0);
+	void Draw(const Common::String &str, const int &XOffset = 0, const int &YOffset = 0);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

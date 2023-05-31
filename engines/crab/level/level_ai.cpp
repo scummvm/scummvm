@@ -86,7 +86,7 @@ LevelResult Level::InternalEvents(Info &info, Common::Array<EventResult> &result
 // Purpose: Let the AI think and animate the level
 //------------------------------------------------------------------------
 void Level::Think(Info &info, Common::Array<EventResult> &result,
-				  Common::Array<EventSeqInfo> &end_seq, std::string &id) {
+				  Common::Array<EventSeqInfo> &end_seq, Common::String &id) {
 	unsigned int index = 0;
 	for (auto i = objects.begin(); i != objects.end(); ++i, ++index) {
 		// Only bother if the sprite is visible

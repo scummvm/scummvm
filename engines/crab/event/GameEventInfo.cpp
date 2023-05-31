@@ -79,13 +79,13 @@ void Info::Load(rapidxml::xml_node<char> *node) {
 	inv.ItemFile(node->first_node("item")->first_attribute("list")->value());
 }
 
-void Info::LoadPeople(const std::string &filename) {
+void Info::LoadPeople(const Common::String &filename) {
 	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("people");
 		if (NodeValid(node)) {
 			for (auto n = node->first_node(); n != NULL; n = n->next_sibling()) {
-				std::string str;
+				Common::String str;
 				LoadStr(str, "id", n);
 				people[str].Load(n, stem);
 			}
@@ -96,13 +96,13 @@ void Info::LoadPeople(const std::string &filename) {
 //------------------------------------------------------------------------
 // Purpose: Get/Set information about object type
 //------------------------------------------------------------------------
-void Info::Type(const std::string &id, const PersonType &val) {
-	if (people.count(id) > 0)
+void Info::Type(const Common::String &id, const PersonType &val) {
+	if (people.contains(id) > 0)
 		people[id].type = val;
 }
 
-PersonType Info::Type(const std::string &id) {
-	if (people.count(id) > 0)
+PersonType Info::Type(const Common::String &id) {
+	if (people.contains(id) > 0)
 		return people[id].type;
 
 	return PE_NEUTRAL;
@@ -111,13 +111,13 @@ PersonType Info::Type(const std::string &id) {
 //------------------------------------------------------------------------
 // Purpose: Get/Set information about object state
 //------------------------------------------------------------------------
-void Info::State(const std::string &id, const PersonState &val) {
-	if (people.count(id) > 0)
+void Info::State(const Common::String &id, const PersonState &val) {
+	if (people.contains(id) > 0)
 		people[id].state = val;
 }
 
-PersonState Info::State(const std::string &id) {
-	if (people.count(id) > 0)
+PersonState Info::State(const Common::String &id) {
+	if (people.contains(id) > 0)
 		return people[id].state;
 
 	return PST_NORMAL;
@@ -126,15 +126,15 @@ PersonState Info::State(const std::string &id) {
 //------------------------------------------------------------------------
 // Purpose: Get/Set information about variables
 //------------------------------------------------------------------------
-bool Info::VarGet(const std::string &name, int &val) {
-	if (var.count(name) == 0)
+bool Info::VarGet(const Common::String &name, int &val) {
+	if (var.contains(name) == 0)
 		return false;
 	else
 		val = var[name];
 	return true;
 }
 
-void Info::VarSet(const std::string &name, const std::string &val) {
+void Info::VarSet(const Common::String &name, const Common::String &val) {
 	int var_val = 0;
 	bool assign_to_var = std::find_if(val.begin(), val.end(), IsChar) != val.end();
 
@@ -146,42 +146,42 @@ void Info::VarSet(const std::string &name, const std::string &val) {
 	var[name] = var_val;
 }
 
-void Info::VarAdd(const std::string &name, const int &val) {
-	if (var.count(name) == 0)
+void Info::VarAdd(const Common::String &name, const int &val) {
+	if (var.contains(name) == 0)
 		VarSet(name, 0);
 
 	var[name] += val;
 }
 
-void Info::VarSub(const std::string &name, const int &val) {
-	if (var.count(name) == 0)
+void Info::VarSub(const Common::String &name, const int &val) {
+	if (var.contains(name) == 0)
 		VarSet(name, 0);
 
 	var[name] -= val;
 }
 
-void Info::VarMul(const std::string &name, const int &val) {
-	if (var.count(name) == 0)
+void Info::VarMul(const Common::String &name, const int &val) {
+	if (var.contains(name) == 0)
 		VarSet(name, 0);
 
 	var[name] *= val;
 }
 
-void Info::VarDiv(const std::string &name, const int &val) {
-	if (var.count(name) == 0)
+void Info::VarDiv(const Common::String &name, const int &val) {
+	if (var.contains(name) == 0)
 		VarSet(name, 0);
 
 	var[name] /= val;
 }
 
-void Info::VarDel(const std::string &name) {
+void Info::VarDel(const Common::String &name) {
 	var.erase(name);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Get/Set person traits
 //------------------------------------------------------------------------
-void Info::TraitAdd(const std::string &per_id, const int &trait_id) {
+void Info::TraitAdd(const Common::String &per_id, const int &trait_id) {
 	if (PersonValid(per_id)) // Valid person id
 	{
 		if (trait_id >= 0 && (unsigned int)trait_id < g_engine->_eventStore->trait.size()) // Valid trait id
@@ -200,7 +200,7 @@ void Info::TraitAdd(const std::string &per_id, const int &trait_id) {
 	}
 }
 
-void Info::TraitDel(const std::string &per_id, const int &trait_id) {
+void Info::TraitDel(const Common::String &per_id, const int &trait_id) {
 	if (PersonValid(per_id)) // Valid person id
 	{
 		if (trait_id > 0 && (unsigned int)trait_id < g_engine->_eventStore->trait.size()) // Valid trait id
@@ -220,68 +220,68 @@ void Info::TraitDel(const std::string &per_id, const int &trait_id) {
 //------------------------------------------------------------------------
 // Purpose: Get/Set information about object opinion
 //------------------------------------------------------------------------
-bool Info::OpinionGet(const std::string &name, const pyrodactyl::people::OpinionType &type, int &val) {
-	if (people.count(name) == 0)
+bool Info::OpinionGet(const Common::String &name, const pyrodactyl::people::OpinionType &type, int &val) {
+	if (people.contains(name) == 0)
 		return false;
 
 	val = people[name].opinion.val[type];
 	return true;
 }
 
-void Info::OpinionChange(const std::string &name, const pyrodactyl::people::OpinionType &type, int val) {
-	if (people.count(name) > 0)
+void Info::OpinionChange(const Common::String &name, const pyrodactyl::people::OpinionType &type, int val) {
+	if (people.contains(name) > 0)
 		people[name].opinion.Change(type, val);
 }
 
-void Info::OpinionSet(const std::string &name, const pyrodactyl::people::OpinionType &type, int val) {
-	if (people.count(name) > 0)
+void Info::OpinionSet(const Common::String &name, const pyrodactyl::people::OpinionType &type, int val) {
+	if (people.contains(name) > 0)
 		people[name].opinion.Set(type, val);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Get/Set information about object stats
 //------------------------------------------------------------------------
-bool Info::StatGet(const std::string &name, const pyrodactyl::stat::StatType &type, int &num) {
-	if (people.count(name) == 0)
+bool Info::StatGet(const Common::String &name, const pyrodactyl::stat::StatType &type, int &num) {
+	if (people.contains(name) == 0)
 		return false;
 
 	num = people[name].stat.val[type].cur;
 	return true;
 }
 
-void Info::StatSet(const std::string &name, const pyrodactyl::stat::StatType &type, const int &num) {
-	if (people.count(name) > 0)
+void Info::StatSet(const Common::String &name, const pyrodactyl::stat::StatType &type, const int &num) {
+	if (people.contains(name) > 0)
 		people[name].stat.Set(type, num);
 }
 
-void Info::StatChange(const std::string &name, const pyrodactyl::stat::StatType &type, const int &num) {
-	if (people.count(name) > 0)
+void Info::StatChange(const Common::String &name, const pyrodactyl::stat::StatType &type, const int &num) {
+	if (people.contains(name) > 0)
 		people[name].stat.Change(type, num);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Get person object
 //------------------------------------------------------------------------
-bool Info::PersonGet(const std::string &id, pyrodactyl::people::Person &p) {
-	if (people.count(id) == 0)
+bool Info::PersonGet(const Common::String &id, pyrodactyl::people::Person &p) {
+	if (people.contains(id) == 0)
 		return false;
 
 	p = people[id];
 	return true;
 }
 
-bool Info::PersonValid(const std::string &id) {
-	return people.count(id) > 0;
+bool Info::PersonValid(const Common::String &id) {
+	return people.contains(id) > 0;
 }
 
-pyrodactyl::people::Person &Info::PersonGet(const std::string &id) {
+pyrodactyl::people::Person &Info::PersonGet(const Common::String &id) {
 	// Make sure to check PersonValid before doing this!
 	// Only use this to change parts of an object
 	return people[id];
 }
 
-bool Info::CollideWithTrigger(const std::string &id, int rect_index) {
-	if (people.count(id) > 0) {
+bool Info::CollideWithTrigger(const Common::String &id, int rect_index) {
+	if (people.contains(id) > 0) {
 		for (auto i = people[id].trig.begin(); i != people[id].trig.end(); ++i)
 			if (*i == rect_index)
 				return true;
@@ -293,7 +293,7 @@ bool Info::CollideWithTrigger(const std::string &id, int rect_index) {
 //------------------------------------------------------------------------
 // Purpose: Replace all #values with their appropriate names in a string
 //------------------------------------------------------------------------
-void Info::InsertName(std::string &msg) {
+void Info::InsertName(Common::String &msg) {
 	// We scan the dialog for #id values, which we convert to actual NPC names
 	for (unsigned int i = 0; i < msg.size(); ++i) {
 		// The # symbol indicates that the next string until an end character needs to be replaced by the name
@@ -309,7 +309,7 @@ void Info::InsertName(std::string &msg) {
 
 			if (end < msg.size()) {
 				// We use start+1 here because # isn't part of the id
-				std::string s = msg.substr(start + 1, len);
+				Common::String s = msg.substr(start + 1, len);
 
 				// We use length+1 here because otherwise it lets the last character stay in dialog
 				if (PersonValid(s))
@@ -319,7 +319,7 @@ void Info::InsertName(std::string &msg) {
 	}
 }
 
-std::string Info::GetName(const std::string &id) {
+Common::String Info::GetName(const Common::String &id) {
 	if (PersonValid(id))
 		return PersonGet(id).name;
 
@@ -370,7 +370,7 @@ void Info::LoadState(rapidxml::xml_node<char> *node) {
 		var[v->first_attribute("id")->value()] = StringToNumber<int>(v->first_attribute("val")->value());
 
 	for (rapidxml::xml_node<char> *p = node->first_node("object"); p != NULL; p = p->next_sibling("object")) {
-		std::string id;
+		Common::String id;
 		LoadStr(id, "id", p);
 		people[id].LoadState(p);
 	}
