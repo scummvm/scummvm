@@ -227,7 +227,7 @@ Datum Window::getStageRect() {
 }
 
 void Window::reset() {
-	resize(_composeSurface->w, _composeSurface->h, true);
+	resizeInner(_composeSurface->w, _composeSurface->h);
 	_contentIsDirty = true;
 }
 
