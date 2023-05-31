@@ -6497,6 +6497,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("rolypolys", "",	 "KOTOWZ32.EXE", "b2afd5fd125c07052c26a9210d1fbd69", 1411360, Common::JA_JPN, 501),
 	WINDEMO1t_l("rolypolys2", "Demo", "DEMO32.EXE",	 "a08e306c9beca27115c25f934f89dbda", 1411230, Common::JA_JPN, 501),
 	MACDEMO1_l("rolypolys2", "Banabana 1-go Demo", "xn--1-jguha2ab3kr732a", "1da813df08575abf9f94ec1151852005", 719664, Common::JA_JPN, 501),
+	MACGAME1t_l("rolypolys2", "", "xn--1-oguawb0115c", "e017d8408acb387c53add0be7f2733fc", 721947, Common::JA_JPN, 501),
+	// Decomposed variant of the above
+	MACGAME1t_l("rolypolys2", "", "xn--1-vdua9qb0ac7113e", "e017d8408acb387c53add0be7f2733fc", 721947, Common::JA_JPN, 501),
+	WINGAME1t_l("rolypolys2", "", "WINSTART/RP2.EXE", "7a37411203e932ab057ea73481354941", 1410466, Common::JA_JPN, 501),
 
 	// Original Mac filename is ロンロン
 	// Original Win filename is ロンロン.EXE
