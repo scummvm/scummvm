@@ -1690,12 +1690,12 @@ i586-mingw32msvc)
 	_host_cpu=i586
 	;;
 ios7)
-	_host_os=iphone
+	_host_os=iphoneos
 	_host_cpu=arm
 	_host_alias=arm-apple-darwin11
 	;;
 ios7-arm64)
-	_host_os=iphone
+	_host_os=iphoneos
 	# Remains of configure not knowing about arm64
 	_host_cpu=aarch64
 	_host_alias=arm64-apple-darwin11
@@ -1812,7 +1812,7 @@ switch)
 	docdir='${prefix}/doc'
 	;;
 tvos)
-	_host_os=iphone
+	_host_os=iphoneos
 	# Remains of configure not knowing about arm64
 	_host_cpu=aarch64
 	_host_alias=arm64-apple-darwin11
@@ -4528,7 +4528,7 @@ case $_host_os in
 	amigaos* | dreamcast | ds | gamecube | kolibrios | mingw* | morphos | n64 | ps3 | psp2 | psp | riscos | wii)
 		_posix=no
 		;;
-	3ds | android | beos* | bsd* | cygwin* | darwin* | dragonfly* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | serenity* | solaris* | sunos* | switch | uclinux*)
+	3ds | android | beos* | bsd* | cygwin* | darwin* | dragonfly* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphoneos | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | serenity* | solaris* | sunos* | switch | uclinux*)
 		_posix=yes
 		;;
 	os2-emx*)
@@ -5814,7 +5814,7 @@ case $_host_os in
 		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -framework Foundation -framework CoreServices -framework CoreMIDI -framework CoreAudio -framework AudioToolbox -lglib-2.0 -lintl -liconv -lreadline"
 	;;
 
-	iphone)
+	iphoneos)
 		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -framework Foundation -framework CoreMIDI -lglib-2.0 -lintl -liconv"
 	;;
 
