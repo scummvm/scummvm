@@ -788,7 +788,7 @@ def generate_parser() -> argparse.ArgumentParser:
             help="always encode using MacBinary, even for files with no resource fork",
             default=False,
         )
-        parser_iso.add_argument(
+        parser_macbinary.add_argument(
             "--addmacbinaryext",
             action="store_true",
             help="add .bin extension when using MacBinary",
