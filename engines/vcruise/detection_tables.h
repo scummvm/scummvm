@@ -113,7 +113,6 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_REAH,
 		Common::EN_ANY,
 	},
-	#if 0
 	{ // Schizm: Mysterious Journey, English CD Version
 		{
 			"schizm",
@@ -128,7 +127,6 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::EN_GRB,
 	},
-	#endif
 	{ // Schizm: Mysterious Journey, English DVD/digital Version
 		{
 			"schizm",
