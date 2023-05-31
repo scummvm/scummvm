@@ -113,6 +113,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_REAH,
 		Common::EN_ANY,
 	},
+	#if 0
 	{ // Schizm: Mysterious Journey, English CD Version
 		{
 			"schizm",
@@ -127,6 +128,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::EN_GRB,
 	},
+	#endif
 	{ // Schizm: Mysterious Journey, English DVD/digital Version
 		{
 			"schizm",
@@ -239,6 +241,137 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::RU_RUS,
 	},
+
+	// Steam versions
+	{
+		// Schizm: Mysterious Journey, English Steam (16-language) Version
+		{
+			"schizm",
+			"English Steam",
+			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+					   "0001_a.wav", "374d93abc3422840623acc618ecb2b1e", 1553784,
+					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_STEAM_LANGUAGES,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::EN_GRB,
+	},
+	{
+		// Schizm: Mysterious Journey, German Steam (16-language) Version
+		{
+			"schizm",
+			"German Steam",
+			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+					   "0001_a.wav", "f2b7eccfb1e9af0282b541c5eac66cc7", 1613240,
+					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_STEAM_LANGUAGES,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::DE_DEU,
+	},
+	{
+		// Schizm: Mysterious Journey, Spanish Steam (16-language) Version
+		{
+			"schizm",
+			"Spanish Steam",
+			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+					   "0001_a.wav", "7a398f17e847a46de629a09fa6178b00", 1409560,
+					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_STEAM_LANGUAGES,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::ES_ESP,
+	},
+	{
+		// Schizm: Mysterious Journey, French Steam (16-language) Version
+		{
+			"schizm",
+			"French Steam",
+			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+					   "0001_a.wav", "cd46a5df85a879bf293871b5911abcc3", 1305470,
+					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_STEAM_LANGUAGES,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::FR_FRA,
+	},
+	{
+		// Schizm: Mysterious Journey, Hungarian Steam (16-language) Version
+		{
+			"schizm",
+			"Hungarian DVD",
+			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+					   "0001_a.wav", "9838f59fce21ba3a1eecc3d84c5be8b1", 1502674,
+					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_STEAM_LANGUAGES,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::HU_HUN,
+	},
+	{
+		// Schizm: Mysterious Journey, Italian Steam (16-language) Version
+		{
+			"schizm",
+			"Italian Steam",
+			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+					   "0001_a.wav", "6d8e4b97710b858525d9965ef1e627ab", 1280506,
+					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_STEAM_LANGUAGES,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::IT_ITA,
+	},
+	{
+		// Schizm: Mysterious Journey, Polish Steam (16-language) Version
+		{
+			"schizm",
+			"Polish Steam",
+			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+					   "0001_a.wav", "4fc0053f66657e416b69419106d238a5", 1592106,
+					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_STEAM_LANGUAGES,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::PL_POL,
+	},
+	{
+		// Schizm: Mysterious Journey, Russian Steam (16-language) Version
+		{
+			"schizm",
+			"Russian Steam",
+			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+					   "0001_a.wav", "ba8fc041a92f1afceee35bdbb84eb2cd", 1427794,
+					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_STEAM_LANGUAGES,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::RU_RUS,
+	},
+
 	{ AD_TABLE_END_MARKER, GID_UNKNOWN, Common::UNK_LANG }
 };
 

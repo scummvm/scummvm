@@ -1443,6 +1443,7 @@ void Runtime::resolveCodePageForLanguage(Common::Language lang, Common::CodePage
 	switch (lang) {
 	case Common::PL_POL:
 	case Common::CS_CZE:
+	case Common::HU_HUN:
 		outCodePage = Common::CodePage::kWindows1250;
 		outCharSet = kCharSetLatin;
 		return;
@@ -1460,7 +1461,7 @@ void Runtime::resolveCodePageForLanguage(Common::Language lang, Common::CodePage
 		outCharSet = kCharSetChineseTraditional;
 		return;
 	case Common::JA_JPN:
-		outCodePage = Common::CodePage::kWindows932;
+		outCodePage = Common::CodePage::kWindows932;	// Shift-JIS compatible
 		outCharSet = kCharSetJapanese;
 		return;
 	case Common::ZH_CHN:
@@ -4755,6 +4756,13 @@ bool Runtime::loadSubtitles(Common::CodePage codePage, bool guessCodePage) {
 				{Common::CodePage::kWindows1252, kCharSetLatin, "precedentemente", "Italian"},
 				{Common::CodePage::kWindows1251, kCharSetCyrillic, "\xf1\xee\xf5\xf0\xe0\xed\xe5\xed\xed\xf3\xfe", "Russian"},
 				{Common::CodePage::kWindows1253, kCharSetGreek, "\xf0\xf1\xef\xe7\xe3\xef\xfd\xec\xe5\xed\xef", "Greek"},
+
+				{Common::CodePage::kWindows1251, kCharSetCyrillic, "\xe7\xe0\xef\xe8\xf1\xe0\xed\xe0\xf2\xe0", "Bulgarian"},
+				{Common::CodePage::kBig5, kCharSetChineseTraditional, "\xc0\x78\xa6\x73", "Chinese (Traditional)"},
+				{Common::CodePage::kGBK, kCharSetChineseSimplified, "\xb4\xa2\xb4\xe6", "Chinese (Simplified)"},
+				{Common::CodePage::kWindows1250, kCharSetLatin, "j\x6at\xe9k\xe1ll\xe1st", "Hungarian"},
+				{Common::CodePage::kWindows932, kCharSetJapanese, "\x8f\xe3\x8f\x91\x82\xab", "Japanese"},
+				{Common::CodePage::kWindows1250, kCharSetLatin, "p\xf8" "edchoz\xed", "Czech"},
 			};
 
 			for (const CodePageGuess &guess : guesses) {

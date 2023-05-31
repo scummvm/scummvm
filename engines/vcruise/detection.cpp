@@ -36,6 +36,7 @@ static const PlainGameDescriptor g_vcruiseGames[] = {
 
 static const char *g_vcruiseDirectoryGlobs[] = {
 	"Sfx",
+	"Log",
 	"Waves-12",
 	"Waves-22",
 	nullptr
@@ -90,12 +91,14 @@ public:
 			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::RU_RUS));
 
 			// Steam version languages
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::BG_BUL));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ZH_TWN));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::JA_JPN));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::HU_HUN));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ZH_CHN));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::CS_CZE));
+			if (adGame.desc->flags & VCruise::VCRUISE_GF_STEAM_LANGUAGES) {
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::BG_BUL));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ZH_TWN));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::JA_JPN));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::HU_HUN));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ZH_CHN));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::CS_CZE));
+			}
 		}
 
 		return game;
