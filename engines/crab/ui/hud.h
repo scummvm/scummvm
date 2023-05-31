@@ -79,7 +79,7 @@ class HUD {
 	Timer timer;
 
 	// The original tooltips as provided in the xml
-	std::vector<std::string> tooltip;
+	Common::Array<Common::String> tooltip;
 
 public:
 	GameOverMenu gom;
