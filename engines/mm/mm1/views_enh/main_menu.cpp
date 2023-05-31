@@ -45,7 +45,7 @@ bool MainMenu::msgUnfocus(const UnfocusMessage &msg) {
 }
 
 void MainMenu::loadCircles() {
-	const Common::Rect r(0, 0, CIRCLE_RADIUS * 2, CIRCLE_RADIUS * 2);
+	const Common::Rect r(0, 0, (CIRCLE_RADIUS + 1) * 2, (CIRCLE_RADIUS + 1) * 2);
 	Gfx::ScreenDecoder decoder;
 	decoder._indexes[0] = 0;
 	decoder._indexes[1] = 2;
@@ -57,7 +57,7 @@ void MainMenu::loadCircles() {
 			const Graphics::Surface *src = decoder.getSurface();
 			Graphics::ManagedSurface *dest = &_circles[i];
 
-			dest->create(CIRCLE_RADIUS * 2, CIRCLE_RADIUS * 2);
+			dest->create((CIRCLE_RADIUS + 1) * 2, (CIRCLE_RADIUS + 1) * 2);
 			dest->fillRect(r, 255);
 			dest->setTransparentColor(255);
 			copyCircle(src, dest);
@@ -83,7 +83,7 @@ void MainMenu::copyCircle(const Graphics::Surface *src,
 			y--;
 			p += 2 * (x - y) + 1;
 		}
-		drawCircleLine(src, dest, x, y);
+		drawCircleLine(src, dest, x + 1, y + 1);
 	}
 }
 
@@ -95,6 +95,9 @@ void MainMenu::drawCircleLine(const Graphics::Surface *src,
 	src1 = (const byte *)src->getBasePtr(CIRCLE_X + CIRCLE_RADIUS - x, CIRCLE_Y + CIRCLE_RADIUS + y);
 	src2 = (const byte *)src->getBasePtr(CIRCLE_X + CIRCLE_RADIUS + x, CIRCLE_Y + CIRCLE_RADIUS + y);
 	dest1 = (byte *)dest->getBasePtr(CIRCLE_RADIUS - x, CIRCLE_RADIUS + y);
+
+const byte *dest2 = dest1 + (src2 - src1);
+assert(dest2 < (const byte *)dest->getBasePtr(0, dest->h));
 	Common::copy(src1, src2, dest1);
 
 	src1 = (const byte *)src->getBasePtr(CIRCLE_X + CIRCLE_RADIUS - x, CIRCLE_Y + CIRCLE_RADIUS - y);
