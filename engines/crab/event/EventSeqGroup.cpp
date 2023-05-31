@@ -45,7 +45,7 @@ void EventSeqGroup::AddSeq(const unsigned int &id, std::string &path) {
 }
 
 bool EventSeqGroup::EventInProgress(const unsigned int &id) {
-	return seq.count(id) > 0 && seq[id].EventInProgress();
+	return seq.contains(id) > 0 && seq[id].EventInProgress();
 }
 
 GameEvent *EventSeqGroup::CurEvent(const unsigned int &id) {
@@ -59,13 +59,13 @@ void EventSeqGroup::NextEvent(const unsigned int &id, Info &info, const std::str
 
 void EventSeqGroup::InternalEvents(Info &info) {
 	for (auto it = seq.begin(); it != seq.end(); ++it)
-		it->second.InternalEvents(info);
+		it->_value.InternalEvents(info);
 }
 
 bool EventSeqGroup::ActiveSeq(unsigned int &active_seq) {
 	for (auto i = seq.begin(); i != seq.end(); ++i)
-		if (i->second.EventInProgress()) {
-			active_seq = i->first;
+		if (i->_value.EventInProgress()) {
+			active_seq = i->_key;
 			return true;
 		}
 
@@ -81,7 +81,7 @@ void EventSeqGroup::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<
 	}
 
 	for (auto i = seq.begin(); i != seq.end(); ++i)
-		i->second.SaveState(doc, root, gStrPool->Get(i->first));
+		i->_value.SaveState(doc, root, gStrPool->Get(i->_key));
 }
 
 void EventSeqGroup::LoadState(rapidxml::xml_node<char> *node) {
@@ -91,7 +91,7 @@ void EventSeqGroup::LoadState(rapidxml::xml_node<char> *node) {
 	for (auto n = node->first_node("set"); n != NULL; n = n->next_sibling("set"))
 		if (n->first_attribute("name") != NULL) {
 			unsigned int id = StringToNumber<unsigned int>(n->first_attribute("name")->value());
-			if (seq.count(id) > 0)
+			if (seq.contains(id) > 0)
 				seq[id].LoadState(n);
 		}
 }
