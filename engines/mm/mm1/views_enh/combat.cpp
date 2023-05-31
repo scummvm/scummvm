@@ -125,7 +125,6 @@ void Combat::draw() {
 	case MONSTER_ADVANCES:
 		writeBottomText(0, 0, _monsterName);
 		writeString(STRING["dialogs.combat.advances"]);
-		writeSpaces(30);
 		writeRound();
 		writeMonsters();
 		delaySeconds(2);

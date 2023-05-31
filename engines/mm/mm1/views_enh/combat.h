@@ -31,11 +31,6 @@ namespace ViewsEnh {
 
 class Combat : public ScrollView, public Game::Combat {
 private:
-	// TODO: Stuff to refactor
-	void writeSpaces(int count) { error("TODO"); }
-	void clearLines(int y1, int y2) { error("TODO"); }
-
-private:
 	LineArray _monsterSpellLines;
 	uint _attackableCount = 0;
 	InfoMessage _spellResult;
