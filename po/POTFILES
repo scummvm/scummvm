@@ -102,7 +102,6 @@ backends/platform/ds/osystem_ds.cpp
 backends/platform/ios7/ios7_options.mm
 backends/platform/ios7/ios7_osys_events.cpp
 backends/platform/ios7/ios7_osys_main.cpp
-backends/platform/iphone/osys_events.cpp
 backends/platform/maemo/maemo.cpp
 backends/platform/sdl/macosx/appmenu_osx.mm
 backends/platform/sdl/macosx/macosx.cpp

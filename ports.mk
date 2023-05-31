@@ -199,33 +199,6 @@ else
 bundle: scummvm-static plugins bundle-pack
 endif
 
-iphonebundle: iphone
-	mkdir -p $(bundle_name)
-	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
-	sed -i'' -e 's/$$(PRODUCT_BUNDLE_IDENTIFIER)/org.scummvm.scummvm/' $(bundle_name)/Info.plist
-	sed -i'' -e 's/$$(EXECUTABLE_NAME)/ScummVM/' $(bundle_name)/Info.plist
-	cp $(DIST_FILES_DOCS) $(bundle_name)/
-	cp $(DIST_FILES_THEMES) $(bundle_name)/
-ifdef DIST_FILES_NETWORKING
-	cp $(DIST_FILES_NETWORKING) $(bundle_name)/
-endif
-ifdef DIST_FILES_ENGINEDATA
-	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
-endif
-ifdef DIST_FILES_VKEYBD
-	cp $(DIST_FILES_VKEYBD) $(bundle_name)/
-endif
-ifneq ($(DIST_FILES_SHADERS),)
-	cp $(DIST_FILES_SHADERS) $(bundle_name)/
-endif
-	$(STRIP) scummvm
-	chmod 755 scummvm
-	cp scummvm $(bundle_name)/ScummVM
-	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/
-	cp $(srcdir)/dists/iphone/icon-72.png $(bundle_name)/
-	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/
-	codesign -s - --deep --force $(bundle_name)
-
 ios7bundle: iphone
 	mkdir -p $(bundle_name)
 	awk 'BEGIN {s=0}\
@@ -485,10 +458,8 @@ OSX_STATIC_LIBS += -liconv \
                 $(STATICLIBPATH)/lib/libglib-2.0.a \
                 $(STATICLIBPATH)/lib/libintl.a
 
-ifneq ($(BACKEND), iphone)
 ifneq ($(BACKEND), ios7)
 OSX_STATIC_LIBS += -lreadline -framework AudioUnit
-endif
 endif
 endif
 endif
@@ -563,7 +534,7 @@ scummvm-static: $(DETECT_OBJS) $(OBJS)
 		$(OSX_STATIC_LIBS) \
 		$(OSX_ZLIB)
 
-# Special target to create a static linked binary for the iPhone (legacy, and iOS 7+)
+# Special target to create a static linked binary for the iOS and tvOS devices (ios7 backend)
 iphone: $(DETECT_OBJS) $(OBJS)
 	+$(LD) $(LDFLAGS) -o scummvm $(DETECT_OBJS) $(OBJS) \
 		$(OSX_STATIC_LIBS) \

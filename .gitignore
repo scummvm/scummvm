@@ -101,12 +101,10 @@ lib*.a
 #Ignore XCode user data and build files
 xcuserdata
 project.xcworkspace
-/dists/iphone/build
-/dists/iphone/scummvm.xcodeproj
-/dists/iphone/create_project
 /dists/macosx/build
 /dists/macosx/scummvm.xcodeproj
 /dists/macosx/create_project
+/dists/ios7/create_project
 /devtools/create_project/xcode/build
 
 /dists/msvc/[Dd]ebug*/

@@ -844,8 +844,8 @@ Usage: $0 [OPTIONS]...
 Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (3ds, atari, android, dc, dingux, ds, gcw0,
-                          gph, iphone, ios7, ios7-arm64, maemo, n64, null, opendingux,
-                          openpandora, psp, psp2, samsungtv, sdl, switch, wii) [sdl]
+                          gph, ios7, maemo, n64, null, opendingux, openpandora,
+                          psp, psp2, samsungtv, sdl, switch, wii) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -885,7 +885,6 @@ Special configuration feature:
                                            gcw0 for GCW Zero
                                            gp2x for GP2X
                                            gp2xwiz for GP2X Wiz
-                                           iphone for Apple iPhone (iOS <= 6)
                                            ios7 for Apple iPhone / iPad (iOS >= 7)
                                            ios7-arm64 for Apple iPhone / iPad (iOS >= 7, 64-bit)
                                            kos32 for Kolibri OS
@@ -1689,11 +1688,6 @@ gp2xwiz)
 i586-mingw32msvc)
 	_host_os=mingw32msvc
 	_host_cpu=i586
-	;;
-iphone)
-	_host_os=iphone
-	_host_cpu=arm
-	_host_alias=arm-apple-darwin9
 	;;
 ios7)
 	_host_os=iphone
@@ -3611,17 +3605,6 @@ if test -n "$_host"; then
 			_timidity=no
 			_port_mk="backends/platform/gph/gp2xwiz-bundle.mk"
 			;;
-		iphone)
-			add_line_to_config_mk 'IPHONE = 1'
-			append_var DEFINES "-DIPHONE"
-			append_var ASFLAGS "-arch armv6"
-			_backend="iphone"
-			_build_scalers=no
-			_build_aspect=no
-			_mt32emu=no
-			_seq_midi=no
-			_timidity=no
-			;;
 		ios7*)
 			add_line_to_config_mk 'IPHONE = 1'
 			append_var DEFINES "-DIPHONE -DIPHONE_IOS7"
@@ -4011,11 +3994,6 @@ case $_backend in
 		fi
 		_sdlconfig=sdl-config
 		_sdl=auto
-		;;
-	iphone)
-		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
-		append_var LIBS "-framework QuartzCore -framework CoreFoundation -framework Foundation"
-		append_var LIBS "-framework AudioToolbox -framework CoreAudio"
 		;;
 	ios7)
 		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
@@ -4474,7 +4452,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | dingux | dc | ds | gph | iphone | ios7 | kolibrios | maemo | null | opendingux | miyoomini | miyoo | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
+	3ds | android | dingux | dc | ds | gph | ios7 | kolibrios | maemo | null | opendingux | miyoomini | miyoo | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else

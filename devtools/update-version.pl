@@ -37,7 +37,6 @@ my @subs_files = qw(
 	dists/slackware/scummvm.SlackBuild
 	dists/macosx/Info.plist
 	dists/macosx/dockplugin/Info.plist
-	dists/iphone/Info.plist
 	dists/ios7/Info.plist
 	dists/tvos/Info.plist
 	dists/irix/scummvm.spec
