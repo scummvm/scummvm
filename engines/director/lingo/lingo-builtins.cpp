@@ -526,7 +526,7 @@ void LB::b_offset(int nargs) {
 	Common::String source = g_lingo->pop().asString();
 	Common::String target = g_lingo->pop().asString();
 
-	const char *str = strstr(source.c_str(), target.c_str());
+	const char *str = d_strstr(source.c_str(), target.c_str());
 
 	if (str == nullptr)
 		g_lingo->push(Datum(0));

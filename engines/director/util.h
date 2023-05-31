@@ -95,6 +95,9 @@ int charToNum(Common::u32char_type_t ch);
 Common::u32char_type_t numToChar(int num);
 int compareStrings(const Common::String &s1, const Common::String &s2);
 
+// Our implementation of strstr() with Director character order
+const char *d_strstr(const char *str, const char *substr);
+
 Common::String encodePathForDump(const Common::String &path);
 
 Common::String utf8ToPrintable(const Common::String &str);

@@ -1478,6 +1478,29 @@ int compareStrings(const Common::String &s1, const Common::String &s2) {
 	return c1 - c2;
 }
 
+const char *d_strstr(const char *str, const char *substr) {
+	int len = strlen(substr);
+	const char *ref = substr;
+
+	while (*str && *ref) {
+		uint32 c1 = getCharOrder(*str);
+		uint32 c2 = getCharOrder(*ref);
+
+		str++;
+
+		if (c1 == c2)
+			ref++;
+
+		if (!*ref)
+			return (str - len);
+
+		if (len == (ref - substr))
+			ref = substr;
+	}
+
+	return NULL;
+}
+
 void DirectorEngine::delayMillis(uint32 delay) {
 	if (debugChannelSet(-1, kDebugFast))
 		return;
