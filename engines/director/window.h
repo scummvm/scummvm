@@ -142,6 +142,7 @@ public:
 	void setTitleVisible(bool titleVisible) { _titleVisible = titleVisible; updateBorderType(); };
 	bool isTitleVisible() { return _titleVisible; };
 	Datum getStageRect();
+	bool setStageRect(Datum datum);
 
 	void updateBorderType();
 
