@@ -642,3 +642,35 @@ bool OSystem_iOS7::isKeyboardShown() const {
 	});
 	return isShown;
 }
+
+uint OSystem_iOS7::createOpenGLContext() {
+	// TODO: Implement creation of OpenGL context
+	// The context will be used by scummvm system running on
+	// background thread.
+	return 0;
+}
+
+void OSystem_iOS7::destroyOpenGLContext() {
+	// TODO: Implement destroy of OpenGL context
+}
+
+void OSystem_iOS7::refreshScreen() const {
+	// TODO: Implement presentation of the renderBuffer
+	// Present the renderBuffer on the openGLContext
+}
+
+int OSystem_iOS7::getScreenWidth() const {
+	// TODO: Return width of screen buffer
+	return 0;
+}
+
+int OSystem_iOS7::getScreenHeight() const {
+	// TODO: Return height of screen buffer
+	return 0;
+}
+
+float OSystem_iOS7::getSystemHiDPIScreenFactor() const {
+	// TODO: Return HiDPI screen factor
+	return 0.0;
+}
+

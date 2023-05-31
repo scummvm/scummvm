@@ -163,6 +163,10 @@ bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targe
 		if (name.length() > 5 && name.substr(0, 5) == "ios7_") {
 			return true;
 		}
+		// macOS target: we skip all files with the "ios-" prefix
+		if (name.length() > 4 && name.substr(0, 4) == "ios-") {
+			return true;
+		}
 		// parent directory
 		const std::string directory = fileID.substr(0, fileID.length() - fileName.length());
 		static const std::string iphone_directory = "backends/platform/ios7";

@@ -6127,6 +6127,10 @@ if test "$_opengl_mode" != none ; then
 			_opengl_mode=gles2
 			_opengl_glad=yes
 			;;
+		ios7)
+			_opengl_mode=gles2
+			_opengl_glad=yes
+			;;
 		openpandora)
 			# Enable GLES only if user explicitely requested it
 			# Backend is SDL based so GLAD is supported
