@@ -63,6 +63,7 @@ void CharacterManage::draw() {
 		break;
 
 	case RENAME:
+		_state = DISPLAY;
 		writeString(80, 172, STRING["dialogs.view_character.name"]);
 		_textEntry.display(130, 180, 15, false,
 			[]() {
