@@ -236,7 +236,7 @@ void Level::SortObjectsToDraw() {
 	// add each object to the map to sort it
 	obj_seq.clear();
 	for (auto &object : objects)
-		obj_seq.insert(std::pair<int, Sprite *>(object.Y() + object.H(), &object));
+		obj_seq.insert(Common::Pair<int, Sprite *>(object.Y() + object.H(), &object));
 }
 
 //------------------------------------------------------------------------
