@@ -66,7 +66,7 @@ class Level {
 	Common::MultiMap<int, pyrodactyl::anim::Sprite *> obj_seq;
 
 	// The file index which contains the fighting moves of all characters
-	std::vector<std::string> anim_set;
+	Common::Array<Common::String> anim_set;
 
 	// The movement sets for sprites in levels
 	Common::Array<pyrodactyl::ai::MovementSet> move_set;
