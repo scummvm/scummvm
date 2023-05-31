@@ -54,7 +54,7 @@ enum TriggerType {
 
 struct Trigger {
 	TriggerType type;
-	std::string target, subject, operation, val;
+	Common::String target, subject, operation, val;
 
 	// Relation to the next trigger
 	RelOp rel;

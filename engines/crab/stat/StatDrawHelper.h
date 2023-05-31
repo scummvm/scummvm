@@ -42,7 +42,7 @@ namespace stat {
 struct StatInfo {
 	// Used to draw stat value and description
 	pyrodactyl::ui::TextData desc;
-	std::string text;
+	Common::String text;
 
 	Rect dim;
 	ImageKey full, empty;
@@ -68,7 +68,7 @@ public:
 	void Load(rapidxml::xml_node<char> *node);
 	void DrawInfo(const pyrodactyl::people::Person &obj);
 
-	const std::string &Name(const StatType &type) { return info[type].text; }
+	const Common::String &Name(const StatType &type) { return info[type].text; }
 };
 } // End of namespace stat
 } // End of namespace pyrodactyl

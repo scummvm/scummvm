@@ -88,7 +88,7 @@ void TextManager::Reset() {
 //------------------------------------------------------------------------
 // Purpose: Search cache for rendered text
 //------------------------------------------------------------------------
-int TextManager::Search(const std::string &text, int col, FontKey fontid) {
+int TextManager::Search(const Common::String &text, int col, FontKey fontid) {
 	int pos = 0;
 	for (auto i = cache.begin(); i != cache.end(); ++i, ++pos)
 		if (i->empty == false && i->text == text && i->EqualCol(col) && i->font == fontid)
@@ -112,7 +112,7 @@ int TextManager::FindFreeSlot() {
 // Purpose: Render the SDL surface for text
 //------------------------------------------------------------------------
 #if 0
-SDL_Surface *TextManager::RenderTextBlended(const FontKey &font, const std::string &text, const int &color) {
+SDL_Surface *TextManager::RenderTextBlended(const FontKey &font, const Common::String &text, const int &color) {
 	if (text.empty())
 		return TTF_RenderText_Blended(GetFont(font), " ", colpool.Get(color));
 
@@ -120,7 +120,7 @@ SDL_Surface *TextManager::RenderTextBlended(const FontKey &font, const std::stri
 }
 #endif
 
-Graphics::ManagedSurface *TextManager::RenderTextBlended(const FontKey &fKey, const std::string &text, const int &color) {
+Graphics::ManagedSurface *TextManager::RenderTextBlended(const FontKey &fKey, const Common::String &text, const int &color) {
 	SDL_Color sdlcolor = colpool.Get(color);
 	uint32 col = g_engine->_format->ARGBToColor(255, sdlcolor.r, sdlcolor.g, sdlcolor.b);
 
@@ -144,7 +144,7 @@ Graphics::ManagedSurface *TextManager::RenderTextBlended(const FontKey &fKey, co
 //------------------------------------------------------------------------
 // Purpose: Draw text
 //------------------------------------------------------------------------
-void TextManager::Draw(const int &x, const int &y, const std::string &text, const int &color,
+void TextManager::Draw(const int &x, const int &y, const Common::String &text, const int &color,
 					   const FontKey &fontk, const Align &align, const bool &background) {
 	//warning("STUB: TextManager::Draw()");
 
@@ -219,12 +219,12 @@ void TextManager::Draw(const int &x, const int &y, const std::string &text, cons
 	}
 }
 
-void TextManager::Draw(const int &x, int y, const std::string &text, const int &color, const FontKey &fKey, const Align &align,
+void TextManager::Draw(const int &x, int y, const Common::String &text, const int &color, const FontKey &fKey, const Align &align,
 					   const unsigned int &line_width, const unsigned int &line_height, const bool &background) {
-	for (unsigned int start_pos = 0, len = text.length(); start_pos < len; y += line_height) {
+	for (unsigned int start_pos = 0, len = text.size(); start_pos < len; y += line_height) {
 		unsigned int end_pos = start_pos + 1;
 		int last_interrupt = -1;
-		std::string word;
+		Common::String word;
 
 		while (end_pos - start_pos <= line_width) {
 			if (end_pos == len || text[end_pos] == '`') {

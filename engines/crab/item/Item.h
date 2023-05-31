@@ -42,13 +42,13 @@ namespace pyrodactyl {
 namespace item {
 struct Item {
 	// The id, name and description of the item
-	std::string id, name, desc;
+	Common::String id, name, desc;
 
 	// The image for the item
 	ImageKey img;
 
 	// The type of item
-	std::string type;
+	Common::String type;
 
 	// The stat bonuses provided by the item
 	Common::Array<pyrodactyl::stat::Bonus> bonus;

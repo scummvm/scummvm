@@ -59,13 +59,13 @@ public:
 	ReplyMenu() { spacing = 20; }
 	~ReplyMenu() {}
 
-	void Load(const std::string &filename);
+	void Load(const Common::String &filename);
 
 	int HandleEvents(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat,
-					 const std::string &cur_id, PersonHandler &oh, const Common::Event &Event);
+					 const Common::String &cur_id, PersonHandler &oh, const Common::Event &Event);
 #if 0
 	int HandleEvents(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat,
-					 const std::string &cur_id, PersonHandler &oh, const SDL_Event &Event);
+					 const Common::String &cur_id, PersonHandler &oh, const SDL_Event &Event);
 #endif
 
 	void Draw();

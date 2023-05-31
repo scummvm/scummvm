@@ -70,7 +70,7 @@ class ProgressBar : public ClipButton {
 	// The caption text changes depending on the value of the progress bar - we store all possible text here
 	struct CaptionText {
 		// The text to be drawn
-		std::string text;
+		Common::String text;
 
 		// The above text is drawn only if the progress bar value is greater than this val
 		int val;

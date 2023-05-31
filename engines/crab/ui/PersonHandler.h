@@ -76,7 +76,7 @@ class PersonHandler {
 	Button jb;
 
 	// The person id of the changed opinion, we use this to reset bar
-	std::string prev;
+	Common::String prev;
 
 public:
 	// Used by other objects to see if journal needs to be displayed or not
@@ -85,7 +85,7 @@ public:
 	PersonHandler() { show_journal = false; }
 	~PersonHandler() {}
 
-	void Reset(const std::string &id);
+	void Reset(const Common::String &id);
 
 	void Load(rapidxml::xml_node<char> *node);
 
@@ -102,10 +102,10 @@ public:
 
 	void InternalEvents(const pyrodactyl::people::PersonState &state, pyrodactyl::anim::Sprite *s);
 
-	void Draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameEvent *Event, const std::string &person_id,
+	void Draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameEvent *Event, const Common::String &person_id,
 			  const bool &player, pyrodactyl::anim::Sprite *s = nullptr);
 
-	void OpinionChange(pyrodactyl::event::Info &info, const std::string &id,
+	void OpinionChange(pyrodactyl::event::Info &info, const Common::String &id,
 					   const pyrodactyl::people::OpinionType &type, const int &val);
 
 	void SetUI();

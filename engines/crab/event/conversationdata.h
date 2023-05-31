@@ -41,7 +41,7 @@ namespace pyrodactyl {
 namespace event {
 struct ReplyChoice {
 	// The text for the reply
-	std::string text;
+	Common::String text;
 
 	// The tone of the response
 	unsigned int tone;

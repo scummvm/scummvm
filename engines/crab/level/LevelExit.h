@@ -41,7 +41,7 @@ namespace Crab {
 namespace pyrodactyl {
 namespace level {
 struct Exit {
-	std::string name;
+	Common::String name;
 	Shape dim;
 	Vector2i entry;
 

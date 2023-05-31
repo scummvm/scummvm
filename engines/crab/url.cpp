@@ -43,7 +43,7 @@ namespace Crab {
 #include <CoreFoundation/CFBundle.h>
 #endif
 
-void OpenURL(const std::string &url_str) {
+void OpenURL(const Common::String &url_str) {
 #ifdef __WIN32__
 	ShellExecuteA(NULL, "open", url_str.c_str(), NULL, NULL, SW_SHOW);
 #endif
@@ -61,7 +61,7 @@ void OpenURL(const std::string &url_str) {
 #endif
 
 #ifdef __GNUC__
-	std::string command = "xdg-open " + url_str;
+	Common::String command = "xdg-open " + url_str;
 	system(command.c_str());
 #endif
 }

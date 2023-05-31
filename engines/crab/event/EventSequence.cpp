@@ -38,7 +38,7 @@ using namespace pyrodactyl::event;
 //------------------------------------------------------------------------
 // Purpose: Load
 //------------------------------------------------------------------------
-void EventSequence::Load(const std::string &filename) {
+void EventSequence::Load(const Common::String &filename) {
 	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("events");
@@ -66,7 +66,7 @@ void EventSequence::InternalEvents(pyrodactyl::event::Info &info) {
 //------------------------------------------------------------------------
 // Purpose: Go to next event
 //------------------------------------------------------------------------
-void EventSequence::NextEvent(pyrodactyl::event::Info &info, const std::string &player_id, Common::Array<EventResult> &result,
+void EventSequence::NextEvent(pyrodactyl::event::Info &info, const Common::String &player_id, Common::Array<EventResult> &result,
 							  Common::Array<EventSeqInfo> &end_seq, int NextEventChoice) {
 	bool sync = false;
 	event_in_progress = false;

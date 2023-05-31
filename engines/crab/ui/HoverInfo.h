@@ -42,7 +42,7 @@ namespace ui {
 class HoverInfo : public TextData {
 public:
 	bool enabled;
-	std::string text;
+	Common::String text;
 
 	HoverInfo(void) { enabled = false; }
 	~HoverInfo(void) {}

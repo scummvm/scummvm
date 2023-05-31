@@ -41,7 +41,7 @@ using namespace pyrodactyl::music;
 using namespace pyrodactyl::event;
 using namespace pyrodactyl::people;
 
-void ReplyMenu::Load(const std::string &filename) {
+void ReplyMenu::Load(const Common::String &filename) {
 	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("conversation");
@@ -61,7 +61,7 @@ void ReplyMenu::Load(const std::string &filename) {
 	}
 }
 
-int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const std::string &cur_id, PersonHandler &oh, const Common::Event &Event) {
+int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const Common::String &cur_id, PersonHandler &oh, const Common::Event &Event) {
 	// After that, check if the user has clicked on any reply option
 	int choice = Menu<ReplyButton>::HandleEvents(Event);
 	if (choice >= 0 && (unsigned int)choice < dat.reply.size()) {
@@ -100,7 +100,7 @@ int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const std::string
 }
 
 #if 0
-int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const std::string &cur_id, PersonHandler &oh, const SDL_Event &Event) {
+int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const Common::String &cur_id, PersonHandler &oh, const SDL_Event &Event) {
 	// After that, check if the user has clicked on any reply option
 	int choice = Menu<ReplyButton>::HandleEvents(Event);
 	if (choice >= 0 && choice < dat.reply.size()) {
@@ -157,9 +157,9 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 
 			tone.value[element_count] = dat.reply[reply_count].tone;
 
-			//std::string text = SDL_GetScancodeName(g_engine->_inputManager->iv[IU_REPLY_0 + element_count].key);
+			//Common::String text = SDL_GetScancodeName(g_engine->_inputManager->iv[IU_REPLY_0 + element_count].key);
 			//text += ". " + i->text;
-			std::string text = i->text;
+			Common::String text = i->text;
 			info.InsertName(text);
 
 			if (element_count == 0)

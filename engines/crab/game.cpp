@@ -42,7 +42,7 @@ using namespace pyrodactyl::input;
 //------------------------------------------------------------------------
 void Game::StartNewGame() {
 	Init(g_engine->_filePath->mod_cur.c_str());
-	LoadLevel(info.CurLocID());
+	LoadLevel(info.CurLocID().c_str());
 	info.IronMan(g_engine->_tempData->ironman);
 	savefile.ironman = g_engine->_tempData->filename.c_str();
 	clock.Start();
@@ -51,12 +51,12 @@ void Game::StartNewGame() {
 	CreateSaveGame(SAVEGAME_EVENT);
 }
 
-void Game::LoadGame(const std::string &filename) {
+void Game::LoadGame(const Common::String &filename) {
 	Init(g_engine->_filePath->mod_cur.c_str());
 	LoadState(filename);
 }
 
-void Game::Init(const std::string &filename) {
+void Game::Init(const Common::String &filename) {
 	g_engine->_loadingScreen->Dim();
 	g_engine->_eventStore->Clear();
 	game_over.Clear(false);
@@ -71,7 +71,7 @@ void Game::Init(const std::string &filename) {
 
 		info.Load(node);
 
-		std::string path;
+		Common::String path;
 		if (NodeValid("level", node)) {
 			LoadStr(path, "list", node->first_node("level"));
 			g_engine->_filePath->LoadLevel(path.c_str());
@@ -112,7 +112,7 @@ void Game::Init(const std::string &filename) {
 	}
 }
 
-bool Game::LoadLevel(const std::string &id, int player_x, int player_y) {
+bool Game::LoadLevel(const Common::String &id, int player_x, int player_y) {
 	if (g_engine->_filePath->level.contains(id.c_str())) {
 		g_engine->_loadingScreen->Draw();
 
@@ -128,7 +128,7 @@ bool Game::LoadLevel(const std::string &id, int player_x, int player_y) {
 		level.Load(g_engine->_filePath->level[id.c_str()].layout.c_str(), info, game_over, player_x, player_y);
 
 		// Set the current location
-		info.CurLocID(id);
+		info.CurLocID(id.c_str());
 		info.CurLocName(g_engine->_filePath->level[id.c_str()].name.c_str());
 		map.player_pos = level.map_loc;
 
@@ -213,7 +213,7 @@ void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 						Quit(ShouldChangeState, NewStateID, GAMESTATE_MAIN_MENU);
 				} else {
 					// Update the talk key state
-					info.TalkKeyDown = g_engine->_inputManager->State(IG_TALK) || level.ContainsClick(info.LastPerson(), Event);
+					info.TalkKeyDown = g_engine->_inputManager->State(IG_TALK) || level.ContainsClick(info.LastPerson().c_str(), Event);
 
 					level.HandleEvents(info, Event);
 
@@ -535,7 +535,7 @@ void Game::Draw() {
 		break;
 	case STATE_INVENTORY:
 		g_engine->_imageManager->DimScreen();
-		info.InvDraw(level.PlayerID());
+		info.InvDraw(level.PlayerID().c_str());
 		hud.Draw(info, level.PlayerID());
 		hud.back.Draw();
 		break;
@@ -592,9 +592,9 @@ bool Game::ApplyResult() {
 			break;
 		case ER_TRAIT:
 			if (i->x == 42)
-				info.TraitDel(i->val, i->y);
+				info.TraitDel(i->val.c_str(), i->y);
 			else
-				info.TraitAdd(i->val, i->y);
+				info.TraitAdd(i->val.c_str(), i->y);
 			break;
 		case ER_LEVEL:
 			if (i->val == "Map")
@@ -661,7 +661,7 @@ void Game::ApplyResult(LevelResult result) {
 //------------------------------------------------------------------------
 // Purpose: Save/load game
 //------------------------------------------------------------------------
-void Game::LoadState(const std::string &filename) {
+void Game::LoadState(const Common::String &filename) {
 	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("save");
@@ -681,7 +681,7 @@ void Game::LoadState(const std::string &filename) {
 
 			PlayerImg();
 
-			std::string loc;
+			Common::String loc;
 			LoadStr(loc, "loc_id", node);
 			LoadLevel(loc);
 
@@ -699,7 +699,7 @@ void Game::LoadState(const std::string &filename) {
 //------------------------------------------------------------------------
 // Purpose: Write game state to file
 //------------------------------------------------------------------------
-void Game::SaveState(const std::string &filename, const bool &overwrite) {
+void Game::SaveState(const Common::String &filename, const bool &overwrite) {
 	warning("STUB: Game::SaveState()");
 
 #if 0
@@ -716,21 +716,21 @@ void Game::SaveState(const std::string &filename, const bool &overwrite) {
 	doc.append_node(root);
 
 	// Save location id
-	std::string loc = info.CurLocID();
+	Common::String loc = info.CurLocID();
 	root->append_attribute(doc.allocate_attribute("loc_id", loc.c_str()));
 
 	// Save location name
-	std::string loc_name = info.CurLocName();
+	Common::String loc_name = info.CurLocName();
 	root->append_attribute(doc.allocate_attribute("loc_name", loc_name.c_str()));
 
 	// Save player character name
-	std::string char_name;
+	Common::String char_name;
 	if (info.PersonValid(level.PlayerID()))
 		char_name = info.PersonGet(level.PlayerID()).name;
 	root->append_attribute(doc.allocate_attribute("char_name", char_name.c_str()));
 
 	// Difficulty
-	std::string diff = "Normal";
+	Common::String diff = "Normal";
 	if (info.IronMan())
 		diff = "Iron Man";
 	root->append_attribute(doc.allocate_attribute("diff", diff.c_str()));
@@ -742,7 +742,7 @@ void Game::SaveState(const std::string &filename, const bool &overwrite) {
 	root->append_attribute(doc.allocate_attribute("preview", level.preview_path.c_str()));
 
 	// Time played
-	std::string playtime = clock.GetTime();
+	Common::String playtime = clock.GetTime();
 	root->append_attribute(doc.allocate_attribute("time", playtime.c_str()));
 
 	rapidxml::xml_node<char> *child_gem = doc.allocate_node(rapidxml::node_element, "events");
@@ -761,10 +761,10 @@ void Game::SaveState(const std::string &filename, const bool &overwrite) {
 	level.SaveState(doc, child_level);
 	root->append_node(child_level);
 
-	std::string xml_as_string;
+	Common::String xml_as_string;
 	rapidxml::print(std::back_inserter(xml_as_string), doc);
 
-	std::string fullpath = FullPath(filename);
+	Common::String fullpath = FullPath(filename);
 
 	// We don't check for duplicates for auto-saves and iron man saves
 	if (!overwrite) {
@@ -772,7 +772,7 @@ void Game::SaveState(const std::string &filename, const bool &overwrite) {
 		if (boost::filesystem::exists(fullpath)) {
 			// Copy the original filename, add a _1 at the end
 			// Start from one because that's how humans count
-			std::string result = filename + "_1";
+			Common::String result = filename + "_1";
 			int count = 1;
 
 			// Keep trying a filename until it no longer exists or we reach an insanely high number

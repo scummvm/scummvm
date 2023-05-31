@@ -87,7 +87,7 @@ private:
 	// The name of the auto save and quick save files
 	struct SaveFile {
 		bool auto_slot;
-		std::string auto_1, auto_2, auto_quit, quick, ironman;
+		Common::String auto_1, auto_2, auto_quit, quick, ironman;
 
 		SaveFile() : auto_1("AutoSave 1"), auto_2("AutoSave 2"), auto_quit("AutoSave"), quick("Quick Save") { auto_slot = false; }
 
@@ -100,22 +100,22 @@ private:
 	} savefile;
 
 	void StartNewGame();
-	void LoadGame(const std::string &filename);
+	void LoadGame(const Common::String &filename);
 	static void Quit(bool &ShouldChangeState, GameStateID &NewStateID, const GameStateID &NewStateVal);
 
 	bool ApplyResult();
 	void ApplyResult(LevelResult result);
 
 	// Load a level
-	bool LoadLevel(const std::string &id, int player_x = -1, int player_y = -1);
+	bool LoadLevel(const Common::String &id, int player_x = -1, int player_y = -1);
 
 	void ToggleState(const State &s);
 
 	// A nice simple function for saving games
 	void CreateSaveGame(const SaveGameType &savetype);
 
-	std::string FullPath(const std::string &filename) {
-		std::string res = g_engine->_filePath->appdata.c_str();
+	Common::String FullPath(const Common::String &filename) {
+		Common::String res = g_engine->_filePath->appdata.c_str();
 		res += g_engine->_filePath->save_dir.c_str();
 		res += filename;
 		res += g_engine->_filePath->save_ext.c_str();
@@ -128,10 +128,10 @@ private:
 
 public:
 	Game() { StartNewGame(); }
-	Game(const std::string &filename) { LoadGame(filename); }
+	Game(const Common::String &filename) { LoadGame(filename); }
 	~Game() {}
 
-	void Init(const std::string &filename);
+	void Init(const Common::String &filename);
 
 	void HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID);
 #if 0
@@ -140,10 +140,10 @@ public:
 	void InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID);
 	void Draw();
 
-	void LoadState(const std::string &filename);
+	void LoadState(const Common::String &filename);
 
 	// Raw function to save game to file - generally, using the CreateSaveGame function is recommended
-	void SaveState(const std::string &filename, const bool &overwrite);
+	void SaveState(const Common::String &filename, const bool &overwrite);
 
 	void AutoSave() { CreateSaveGame(SAVEGAME_EXIT); }
 

@@ -49,7 +49,7 @@ class ItemSlot : public pyrodactyl::ui::StateButton {
 
 public:
 	// The type of item allowed in this slot (can be overridden by item_type)
-	std::string item_type;
+	Common::String item_type;
 
 	// Is the slot empty?
 	bool empty;

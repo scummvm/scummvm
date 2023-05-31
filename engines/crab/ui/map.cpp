@@ -41,7 +41,7 @@ using namespace pyrodactyl::input;
 //------------------------------------------------------------------------
 // Purpose: Load stuff that can't be modified by the user
 //------------------------------------------------------------------------
-void Map::Load(const std::string &filename, pyrodactyl::event::Info &info) {
+void Map::Load(const Common::String &filename, pyrodactyl::event::Info &info) {
 	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("map");
@@ -410,7 +410,7 @@ void Map::SetImage(const unsigned int &val, const bool &force) {
 //------------------------------------------------------------------------
 // Purpose: Select the marker corresponding to a quest title
 //------------------------------------------------------------------------
-void Map::SelectDest(const std::string &name) {
+void Map::SelectDest(const Common::String &name) {
 	marker.SelectDest(name);
 }
 
@@ -440,7 +440,7 @@ void Map::RevealAdd(const int &id, const Rect &area) {
 //------------------------------------------------------------------------
 // Purpose: Add or remove a destination marker from the world map
 //------------------------------------------------------------------------
-void Map::DestAdd(const std::string &name, const int &x, const int &y) {
+void Map::DestAdd(const Common::String &name, const int &x, const int &y) {
 	if (cur < map.size()) {
 		for (auto i = map[cur].dest.begin(); i != map[cur].dest.end(); ++i) {
 			if (i->name == name) {
@@ -456,7 +456,7 @@ void Map::DestAdd(const std::string &name, const int &x, const int &y) {
 	}
 }
 
-void Map::DestDel(const std::string &name) {
+void Map::DestDel(const Common::String &name) {
 	if (cur < map.size()) {
 		for (auto i = map[cur].dest.begin(); i != map[cur].dest.end(); ++i) {
 			if (i->name == name) {

@@ -53,7 +53,7 @@ void ItemSlot::Load(rapidxml::xml_node<char> *node) {
 		no_type = false;
 	}
 
-	std::string name = node->name();
+	Common::String name = node->name();
 	if (name == "equip")
 		category = SLOT_EQUIP;
 	else

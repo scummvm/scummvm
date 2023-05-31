@@ -56,8 +56,8 @@ public:
 		h = H;
 	}
 
-	bool Load(rapidxml::xml_node<char> *node, const bool &echo = true, const std::string &x_name = "x",
-			  const std::string &y_name = "y", const std::string &w_name = "w", const std::string &h_name = "h");
+	bool Load(rapidxml::xml_node<char> *node, const bool &echo = true, const Common::String &x_name = "x",
+			  const Common::String &y_name = "y", const Common::String &w_name = "w", const Common::String &h_name = "h");
 
 	// Is this rectangle colliding with another rectangle?
 	bool Collide(Rect box);

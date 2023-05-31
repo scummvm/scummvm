@@ -42,7 +42,7 @@ enum LevelResultType { LR_NONE,
 
 struct LevelResult {
 	LevelResultType type;
-	std::string val;
+	Common::String val;
 	int x, y;
 
 	LevelResult() : val("") {

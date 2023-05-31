@@ -46,7 +46,7 @@ using namespace pyrodactyl::music;
 //------------------------------------------------------------------------
 // Purpose: See if player clicked on a sprite they are colliding with
 //------------------------------------------------------------------------
-bool Level::ContainsClick(const std::string &id, const Common::Event &Event) {
+bool Level::ContainsClick(const Common::String &id, const Common::Event &Event) {
 	// If mouse is moved and is hovering on the specified sprite (id), set hover = true
 	if (Event.type == Common::EVENT_MOUSEMOVE) {
 		for (auto &i : objects) {
@@ -83,7 +83,7 @@ bool Level::ContainsClick(const std::string &id, const Common::Event &Event) {
 //------------------------------------------------------------------------
 // Purpose: See if player clicked on a sprite they are colliding with
 //------------------------------------------------------------------------
-bool Level::ContainsClick(const std::string &id, const SDL_Event &Event) {
+bool Level::ContainsClick(const Common::String &id, const SDL_Event &Event) {
 	// If mouse is moved and is hovering on the specified sprite (id), set hover = true
 	if (Event.type == SDL_MOUSEMOTION) {
 		for (auto &i : objects) {
@@ -131,7 +131,7 @@ bool Level::LayerVisible(Sprite *obj) {
 
 //------------------------------------------------------------------------
 // Purpose: Check if a sprite is colliding with the trigger areas
-// std::string &id is set to the id of colliding object
+// Common::String &id is set to the id of colliding object
 //------------------------------------------------------------------------
 void Level::CalcTrigCollide(Info &info) {
 	for (auto i = objects.begin(); i != objects.end(); ++i)
@@ -141,9 +141,9 @@ void Level::CalcTrigCollide(Info &info) {
 
 //------------------------------------------------------------------------
 // Purpose: Check if a sprite is colliding with interactive objects
-// std::string &id is set to the id of colliding object
+// Common::String &id is set to the id of colliding object
 //------------------------------------------------------------------------
-bool Level::CollidingWithObject(Info &info, std::string &id) {
+bool Level::CollidingWithObject(Info &info, Common::String &id) {
 	// Clip and Bounding rectangle of player
 	Rect p_pos = objects[player_index].PosRect(), p_bound = objects[player_index].BoundRect();
 

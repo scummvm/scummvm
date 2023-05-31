@@ -58,7 +58,7 @@ public:
 	MapMarkerMenu() {}
 	~MapMarkerMenu() {}
 
-	void AddButton(const std::string &name, const int &x, const int &y) {
+	void AddButton(const Common::String &name, const int &x, const int &y) {
 		StateButton b;
 		b.Init(ref, x, y);
 		b.tooltip.text = name;
@@ -68,12 +68,12 @@ public:
 	void Clear() { menu.element.clear(); }
 	void AssignPaths() { menu.AssignPaths(); }
 
-	void SelectDest(const std::string &name) {
+	void SelectDest(const Common::String &name) {
 		for (auto &i : menu.element)
 			i.State(i.tooltip.text == name);
 	}
 
-	void Erase(const std::string &name) {
+	void Erase(const Common::String &name) {
 		for (auto i = menu.element.begin(); i != menu.element.end(); ++i) {
 			if (i->tooltip.text == name) {
 				menu.element.erase(i);

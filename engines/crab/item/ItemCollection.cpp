@@ -61,16 +61,16 @@ void ItemCollection::Load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 // Purpose: Add a character's inventory if not added already
 //------------------------------------------------------------------------
-void ItemCollection::Init(const std::string &char_id) {
-	if (item.count(char_id) == 0)
+void ItemCollection::Init(const Common::String &char_id) {
+	if (item.contains(char_id) == 0)
 		item[char_id].Init(ref, inc, rows, cols, usekeyboard);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
-void ItemCollection::HandleEvents(const std::string &char_id, const Common::Event &Event) {
-	if (item.count(char_id) > 0)
+void ItemCollection::HandleEvents(const Common::String &char_id, const Common::Event &Event) {
+	if (item.contains(char_id) > 0)
 		item[char_id].HandleEvents(Event);
 }
 
@@ -78,8 +78,8 @@ void ItemCollection::HandleEvents(const std::string &char_id, const Common::Even
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
-void ItemCollection::HandleEvents(const std::string &char_id, const SDL_Event &Event) {
-	if (item.count(char_id) > 0)
+void ItemCollection::HandleEvents(const Common::String &char_id, const SDL_Event &Event) {
+	if (item.contains(char_id) > 0)
 		item[char_id].HandleEvents(Event);
 }
 #endif
@@ -87,23 +87,23 @@ void ItemCollection::HandleEvents(const std::string &char_id, const SDL_Event &E
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void ItemCollection::Draw(const std::string &char_id) {
-	if (item.count(char_id) > 0)
+void ItemCollection::Draw(const Common::String &char_id) {
+	if (item.contains(char_id) > 0)
 		item[char_id].Draw(item_info);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Delete an item from a character's inventory
 //------------------------------------------------------------------------
-void ItemCollection::Del(const std::string &char_id, const std::string &item_id) {
-	if (item.count(char_id) > 0)
+void ItemCollection::Del(const Common::String &char_id, const Common::String &item_id) {
+	if (item.contains(char_id) > 0)
 		item[char_id].Del(item_id);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Add an item to a character's inventory
 //------------------------------------------------------------------------
-void ItemCollection::Add(const std::string &char_id, Item &item_data) {
+void ItemCollection::Add(const Common::String &char_id, Item &item_data) {
 	// We might want to give a player character not yet encountered an item before we ever meet them
 	// Which is why we add a new inventory in case the character inventory does not exist yet
 	Init(char_id);
@@ -114,8 +114,8 @@ void ItemCollection::Add(const std::string &char_id, Item &item_data) {
 //------------------------------------------------------------------------
 // Purpose: Find if a character has an item
 //------------------------------------------------------------------------
-bool ItemCollection::Has(const std::string &char_id, const std::string &container, const std::string &item_id) {
-	if (item.count(char_id) > 0)
+bool ItemCollection::Has(const Common::String &char_id, const Common::String &container, const Common::String &item_id) {
+	if (item.contains(char_id) > 0)
 		return item[char_id].Has(container, item_id);
 
 	return false;
@@ -137,8 +137,8 @@ void ItemCollection::LoadState(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 void ItemCollection::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	for (auto i = item.begin(); i != item.end(); ++i) {
-		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, i->first.c_str());
-		i->second.SaveState(doc, child);
+		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, i->_key.c_str());
+		i->_value.SaveState(doc, child);
 		root->append_node(child);
 	}
 }
@@ -150,7 +150,7 @@ void ItemCollection::SetUI() {
 	item_info.SetUI();
 
 	for (auto i = item.begin(); i != item.end(); ++i)
-		i->second.SetUI();
+		i->_value.SetUI();
 }
 
 } // End of namespace Crab

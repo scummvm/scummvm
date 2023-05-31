@@ -40,7 +40,7 @@ using namespace pyrodactyl::ui;
 //------------------------------------------------------------------------
 // Purpose: Load game
 //------------------------------------------------------------------------
-void Journal::Load(const std::string &filename) {
+void Journal::Load(const Common::String &filename) {
 	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("objectives");
@@ -65,7 +65,7 @@ void Journal::Load(const std::string &filename) {
 //------------------------------------------------------------------------
 // Purpose: Prepare a new character's journal
 //------------------------------------------------------------------------
-void Journal::Init(const std::string &id) {
+void Journal::Init(const Common::String &id) {
 	int found = false;
 
 	for (auto &i : journal)
@@ -89,7 +89,7 @@ void Journal::Init(const std::string &id) {
 //------------------------------------------------------------------------
 // Purpose: Select a category
 //------------------------------------------------------------------------
-void Journal::Select(const std::string &id, const int &choice) {
+void Journal::Select(const Common::String &id, const int &choice) {
 	for (unsigned int i = 0; i < category.element.size(); ++i)
 		category.element[i].State(false);
 
@@ -107,7 +107,7 @@ void Journal::Select(const std::string &id, const int &choice) {
 //------------------------------------------------------------------------
 // Purpose: Draw stuff
 //------------------------------------------------------------------------
-void Journal::Draw(const std::string &id) {
+void Journal::Draw(const Common::String &id) {
 	bg.Draw();
 	category.Draw();
 
@@ -129,7 +129,7 @@ void Journal::Draw(const std::string &id) {
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-bool Journal::HandleEvents(const std::string &id, const Common::Event &Event) {
+bool Journal::HandleEvents(const Common::String &id, const Common::Event &Event) {
 	int choice = category.HandleEvents(Event);
 	if (choice >= 0 && (unsigned int)choice < category.element.size())
 		Select(id, choice);
@@ -149,7 +149,7 @@ bool Journal::HandleEvents(const std::string &id, const Common::Event &Event) {
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-bool Journal::HandleEvents(const std::string &id, const SDL_Event &Event) {
+bool Journal::HandleEvents(const Common::String &id, const SDL_Event &Event) {
 	int choice = category.HandleEvents(Event);
 	if (choice >= 0 && choice < category.element.size())
 		Select(id, choice);
@@ -169,7 +169,7 @@ bool Journal::HandleEvents(const std::string &id, const SDL_Event &Event) {
 //------------------------------------------------------------------------
 // Purpose: Add an entry to journal
 //------------------------------------------------------------------------
-void Journal::Add(const std::string &id, const std::string &Category, const std::string &Title, const std::string &Text) {
+void Journal::Add(const Common::String &id, const Common::String &Category, const Common::String &Title, const Common::String &Text) {
 	// Always find valid journal group first
 	for (auto &jo : journal)
 		if (jo.id == id) {
@@ -192,7 +192,7 @@ void Journal::Add(const std::string &id, const std::string &Category, const std:
 //------------------------------------------------------------------------
 // Purpose: Set the marker of a quest
 //------------------------------------------------------------------------
-void Journal::Marker(const std::string &id, const std::string &Title, const bool &val) {
+void Journal::Marker(const Common::String &id, const Common::String &Title, const bool &val) {
 	// Always find valid journal group first
 	for (auto &jo : journal)
 		if (jo.id == id) {
@@ -204,7 +204,7 @@ void Journal::Marker(const std::string &id, const std::string &Title, const bool
 //------------------------------------------------------------------------
 // Purpose: Move an entry from one category to another
 //------------------------------------------------------------------------
-void Journal::Move(const std::string &id, const std::string &Title, const bool &completed) {
+void Journal::Move(const Common::String &id, const Common::String &Title, const bool &completed) {
 	JournalCategory source, destination;
 	if (completed) {
 		source = JE_CUR;
@@ -235,7 +235,7 @@ void Journal::Move(const std::string &id, const std::string &Title, const bool &
 //------------------------------------------------------------------------
 // Purpose: Open a specific entry in the journal
 //------------------------------------------------------------------------
-void Journal::Open(const std::string &id, const JournalCategory &Category, const std::string &Title) {
+void Journal::Open(const Common::String &id, const JournalCategory &Category, const Common::String &Title) {
 	// Always find valid journal group first
 	for (auto &jo : journal)
 		if (jo.id == id) {
@@ -278,7 +278,7 @@ void Journal::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> 
 
 void Journal::LoadState(rapidxml::xml_node<char> *node) {
 	for (rapidxml::xml_node<char> *n = node->first_node("journal"); n != NULL; n = n->next_sibling("journal")) {
-		std::string id;
+		Common::String id;
 		LoadStr(id, "id", n);
 
 		Init(id);

@@ -70,7 +70,7 @@ void PersonHandler::Load(rapidxml::xml_node<char> *node) {
 		jb.Load(node->first_node("journal"));
 }
 
-void PersonHandler::Draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameEvent *Event, const std::string &person_id,
+void PersonHandler::Draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameEvent *Event, const Common::String &person_id,
 						 const bool &player, pyrodactyl::anim::Sprite *s) {
 	// Draw the dialog box background
 	dlbox.Draw(player);
@@ -152,7 +152,7 @@ void PersonHandler::InternalEvents(const pyrodactyl::people::PersonState &state,
 		s->DialogUpdateClip(state);
 }
 
-void PersonHandler::OpinionChange(pyrodactyl::event::Info &info, const std::string &id, const pyrodactyl::people::OpinionType &type, const int &val) {
+void PersonHandler::OpinionChange(pyrodactyl::event::Info &info, const Common::String &id, const pyrodactyl::people::OpinionType &type, const int &val) {
 	if (info.PersonValid(id)) {
 		// First, get the value of the object's opinion
 		int old = 0;
@@ -172,7 +172,7 @@ void PersonHandler::OpinionChange(pyrodactyl::event::Info &info, const std::stri
 	}
 }
 
-void PersonHandler::Reset(const std::string &id) {
+void PersonHandler::Reset(const Common::String &id) {
 	if (prev != id) {
 		using namespace pyrodactyl::people;
 		opinion[OPI_LIKE].Reset();

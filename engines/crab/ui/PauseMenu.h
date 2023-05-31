@@ -95,7 +95,7 @@ public:
 
 	void Reset() { state = STATE_NORMAL; }
 	void ScanDir() { save.ScanDir(); }
-	std::string SaveFile() { return save.SelectedPath(); }
+	Common::String SaveFile() { return save.SelectedPath(); }
 	bool DisableHotkeys();
 
 	// Should we allow the pause key(default escape) to quit to main menu?

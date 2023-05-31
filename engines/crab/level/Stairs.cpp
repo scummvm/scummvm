@@ -40,7 +40,7 @@ void Stairs::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 	if (NodeValid("properties", node, echo)) {
 		auto pnode = node->first_node("properties");
 		for (auto n = pnode->first_node("property"); n != NULL; n = n->next_sibling("property")) {
-			std::string name;
+			Common::String name;
 			if (LoadStr(name, "name", n, echo)) {
 				if (name == "x")
 					LoadNum(modifier.x, "value", n, echo);

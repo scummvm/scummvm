@@ -50,7 +50,7 @@ struct GameEventStore {
 
 	// Data related to the tones of a character
 	struct ToneData {
-		std::string text;
+		Common::String text;
 	};
 
 	// This sets the text the player sees as "tone" during the reply menu
@@ -77,7 +77,7 @@ struct GameEventStore {
 		con.clear();
 		anim.clear();
 	}
-	void Load(const std::string &filename);
+	void Load(const Common::String &filename);
 
 	void AddConv(rapidxml::xml_node<char> *node, unsigned int &index);
 	void SetAchievement(const int &id);

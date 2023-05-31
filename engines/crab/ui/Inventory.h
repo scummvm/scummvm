@@ -53,7 +53,7 @@ class Inventory {
 	// pyrodactyl::stat::StatDrawHelper helper;
 
 	// The file where all the item information is stored
-	std::string itemfile;
+	Common::String itemfile;
 
 	// Used to draw the money value
 	Button money;
@@ -62,25 +62,25 @@ public:
 	Inventory() {}
 	~Inventory() {}
 
-	void Init(const std::string &char_id) { collection.Init(char_id); }
+	void Init(const Common::String &char_id) { collection.Init(char_id); }
 
-	void LoadItem(const std::string &char_id, const std::string &name);
-	void AddItem(const std::string &char_id, pyrodactyl::item::Item &item);
-	void DelItem(const std::string &char_id, const std::string &item_id);
-	bool HasItem(const std::string &char_id, const std::string &container, const std::string &item_id);
+	void LoadItem(const Common::String &char_id, const Common::String &name);
+	void AddItem(const Common::String &char_id, pyrodactyl::item::Item &item);
+	void DelItem(const Common::String &char_id, const Common::String &item_id);
+	bool HasItem(const Common::String &char_id, const Common::String &container, const Common::String &item_id);
 
-	void Load(const std::string &filename);
+	void Load(const Common::String &filename);
 	void Draw(pyrodactyl::people::Person &obj, const int &money_val);
 
-	void HandleEvents(const std::string &char_id, const Common::Event &Event);
+	void HandleEvents(const Common::String &char_id, const Common::Event &Event);
 #if 0
-	void HandleEvents(const std::string &char_id, const SDL_Event &Event);
+	void HandleEvents(const Common::String &char_id, const SDL_Event &Event);
 #endif
 
 	void LoadState(rapidxml::xml_node<char> *node);
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 
-	void ItemFile(const std::string &filename) { itemfile = filename; }
+	void ItemFile(const Common::String &filename) { itemfile = filename; }
 
 	void SetUI();
 };

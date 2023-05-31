@@ -40,7 +40,7 @@ void EventSeqGroup::EndSeq(const unsigned int &id) {
 	end.push_back(id);
 }
 
-void EventSeqGroup::AddSeq(const unsigned int &id, std::string &path) {
+void EventSeqGroup::AddSeq(const unsigned int &id, Common::String &path) {
 	seq[id].Load(path);
 }
 
@@ -52,7 +52,7 @@ GameEvent *EventSeqGroup::CurEvent(const unsigned int &id) {
 	return seq[id].CurrentEvent();
 }
 
-void EventSeqGroup::NextEvent(const unsigned int &id, Info &info, const std::string &player_id,
+void EventSeqGroup::NextEvent(const unsigned int &id, Info &info, const Common::String &player_id,
 							  Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq, const int choice) {
 	return seq[id].NextEvent(info, player_id, result, end_seq, choice);
 }

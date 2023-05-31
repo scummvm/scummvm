@@ -78,8 +78,8 @@ public:
 
 	bool Swap(ItemMenu &target, int index);
 	bool Equip(Item &item);
-	bool Del(const std::string &id);
-	bool Has(const std::string &container, const std::string &id);
+	bool Del(const Common::String &id);
+	bool Has(const Common::String &container, const Common::String &id);
 
 	// Used to calculate enabled slots
 	// void SetEnable();

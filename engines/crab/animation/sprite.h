@@ -55,7 +55,7 @@ namespace anim {
 class Sprite {
 protected:
 	// Used to sync sprite to character
-	std::string id;
+	Common::String id;
 
 	// The position of the sprite
 	Vector2i pos;
@@ -158,7 +158,7 @@ public:
 	float YVel() { return vel.y; }
 	Vector2f Vel() { return vel; }
 
-	const std::string &ID() { return id; }
+	const Common::String &ID() { return id; }
 
 	int W() { return clip.w; }
 	int H() { return clip.h; }
@@ -185,7 +185,7 @@ public:
 	void ExchangeDamage(pyrodactyl::event::Info &info, Sprite &s, const pyrodactyl::ai::SpriteConstant &sc);
 
 	void Load(rapidxml::xml_node<char> *node, Common::Array<Common::String> &animations);
-	void InternalEvents(pyrodactyl::event::Info &info, const std::string &player_id,
+	void InternalEvents(pyrodactyl::event::Info &info, const Common::String &player_id,
 						Common::Array<pyrodactyl::event::EventResult> &result, Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq);
 
 	void Draw(pyrodactyl::event::Info &info, const Rect &camera);

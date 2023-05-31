@@ -43,13 +43,13 @@ struct Trait {
 	int id;
 
 	// Used for achievements
-	std::string id_str;
+	Common::String id_str;
 
 	// The name of the trait
-	std::string name;
+	Common::String name;
 
 	// The description of the trait
-	std::string desc;
+	Common::String desc;
 
 	// The image used to draw the trait
 	ImageKey img;

@@ -42,7 +42,7 @@ namespace item {
 // All the items owned by characters controlled by the player
 class ItemCollection {
 	// The items for all player characters
-	std::unordered_map<std::string, ItemMenu> item;
+	Common::HashMap<Common::String, ItemMenu> item;
 
 	// The reference information for these menus used to display these items
 
@@ -71,22 +71,22 @@ public:
 
 	void Load(rapidxml::xml_node<char> *node);
 
-	void HandleEvents(const std::string &char_id, const Common::Event &Event);
+	void HandleEvents(const Common::String &char_id, const Common::Event &Event);
 #if 0
-	void HandleEvents(const std::string &char_id, const SDL_Event &Event);
+	void HandleEvents(const Common::String &char_id, const SDL_Event &Event);
 #endif
 
-	void Init(const std::string &char_id);
-	void Draw(const std::string &char_id);
+	void Init(const Common::String &char_id);
+	void Draw(const Common::String &char_id);
 
 	// Requires: id of the character, the item information
-	void Add(const std::string &char_id, Item &item_data);
+	void Add(const Common::String &char_id, Item &item_data);
 
 	// Requires: id of the character from which to remove the item, and id of the item
-	void Del(const std::string &char_id, const std::string &item_id);
+	void Del(const Common::String &char_id, const Common::String &item_id);
 
 	// Requires: id of the character, the name of the container and name of the item
-	bool Has(const std::string &char_id, const std::string &container, const std::string &item_id);
+	bool Has(const Common::String &char_id, const Common::String &container, const Common::String &item_id);
 
 	void LoadState(rapidxml::xml_node<char> *node);
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);

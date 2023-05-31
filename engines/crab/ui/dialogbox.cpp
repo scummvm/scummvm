@@ -71,9 +71,9 @@ void GameDialogBox::Draw(const bool &player) {
 //------------------------------------------------------------------------
 // Purpose: Draw the dialog box text
 //------------------------------------------------------------------------
-void GameDialogBox::Draw(pyrodactyl::event::Info &info, std::string &message) {
+void GameDialogBox::Draw(pyrodactyl::event::Info &info, Common::String &message) {
 	// Create a copy of the string
-	std::string msg = message;
+	Common::String msg = message;
 	info.InsertName(msg);
 
 	text.Draw(message);

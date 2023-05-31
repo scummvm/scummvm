@@ -70,7 +70,7 @@ struct StatGroup {
 	void Load(rapidxml::xml_node<char> *node);
 };
 
-StatType StringToStatType(const std::string &val);
+StatType StringToStatType(const Common::String &val);
 const char *StatTypeToString(const StatType &val);
 } // End of namespace stat
 } // End of namespace pyrodactyl

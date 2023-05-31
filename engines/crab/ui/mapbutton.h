@@ -42,7 +42,7 @@ namespace ui {
 class MapButton : public Button {
 public:
 	// The id of the location
-	std::string loc;
+	Common::String loc;
 
 	// Conditions needed for the location to be unlocked in world map
 	pyrodactyl::event::TriggerSet unlock;

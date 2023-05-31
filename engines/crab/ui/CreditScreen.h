@@ -46,7 +46,7 @@ class CreditScreen {
 	// Text and formatting information
 	struct CreditText {
 		// Title of the section (stuff like programmer, designer etc)
-		std::string text;
+		Common::String text;
 
 		// The style it should be drawn in
 		bool heading;
@@ -111,7 +111,7 @@ public:
 	CreditScreen() { Reset(); }
 	~CreditScreen() {}
 
-	void Load(const std::string &filename);
+	void Load(const Common::String &filename);
 	void Reset();
 
 	bool HandleEvents(Common::Event &Event);

@@ -63,7 +63,7 @@ struct PopUp {
 	Common::Array<pyrodactyl::event::Effect> effect;
 
 	// The text displayed
-	std::string text;
+	Common::String text;
 
 	// The next popup we should go to, negative values means the end
 	int next;
@@ -85,7 +85,7 @@ struct PopUp {
 	void Draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop, const Rect &camera);
 
 	// return true if we should proceed to next event, false otherwise
-	bool InternalEvents(pyrodactyl::event::Info &info, const std::string &player_id,
+	bool InternalEvents(pyrodactyl::event::Info &info, const Common::String &player_id,
 						Common::Array<pyrodactyl::event::EventResult> &result, Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq);
 };
 
@@ -115,7 +115,7 @@ struct PopUpCollection {
 
 	void Load(rapidxml::xml_node<char> *node);
 
-	void InternalEvents(pyrodactyl::event::Info &info, const std::string &player_id,
+	void InternalEvents(pyrodactyl::event::Info &info, const Common::String &player_id,
 						Common::Array<pyrodactyl::event::EventResult> &result, Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq);
 
 	void Draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop, const Rect &camera);

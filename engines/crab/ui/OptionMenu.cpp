@@ -38,7 +38,7 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::music;
 
-void OptionMenu::Load(const std::string &filename) {
+void OptionMenu::Load(const Common::String &filename) {
 	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("option");
@@ -399,10 +399,10 @@ void OptionMenu::SaveState() {
 	g_engine->_musicManager->SaveState(doc, root);
 
 	doc.append_node(root);
-	std::string xml_as_string;
+	Common::String xml_as_string;
 	rapidxml::print(std::back_inserter(xml_as_string), doc);
 
-	std::string settingpath = g_engine->_filePath->appdata;
+	Common::String settingpath = g_engine->_filePath->appdata;
 	settingpath += "settings.xml";
 
 	std::ofstream save(settingpath, std::ios::out);

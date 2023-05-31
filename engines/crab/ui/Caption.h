@@ -44,7 +44,7 @@ public:
 	bool enabled;
 	int col_s;
 
-	std::string text;
+	Common::String text;
 
 	Caption(void) {
 		col_s = 0;

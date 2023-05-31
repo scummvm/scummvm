@@ -40,7 +40,7 @@ float IntervalDistance(float minA, float maxA, float minB, float maxB) {
 	return minA - maxB;
 }
 
-void Polygon2D::AddPoint(const Vector2f &ref, const std::string &x, const std::string &y, Vector2f &min, Vector2f &max) {
+void Polygon2D::AddPoint(const Vector2f &ref, const Common::String &x, const Common::String &y, Vector2f &min, Vector2f &max) {
 	Vector2f p;
 	p.x = ref.x + StringToNumber<float>(x);
 	p.y = ref.y + StringToNumber<float>(y);
@@ -70,7 +70,7 @@ void Polygon2D::Load(rapidxml::xml_node<char> *node, Rect &bounds) {
 	point.clear();
 	rapidxml::xml_node<char> *polynode = node->first_node("polygon");
 	if (polynode != NULL) {
-		std::string points, x, y;
+		Common::String points, x, y;
 		LoadStr(points, "points", polynode);
 
 		bool comma = false;
@@ -83,9 +83,9 @@ void Polygon2D::Load(rapidxml::xml_node<char> *node, Rect &bounds) {
 				x.clear();
 				y.clear();
 			} else if (comma)
-				y.push_back(*i);
+				y += *i;
 			else
-				x.push_back(*i);
+				x += *i;
 		}
 
 		AddPoint(ref, x, y, min, max);

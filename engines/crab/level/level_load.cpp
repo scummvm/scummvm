@@ -51,14 +51,14 @@ bool CompSpriteLayer(const Sprite &a, const Sprite &b) {
 //------------------------------------------------------------------------
 // Purpose: Load the level
 //------------------------------------------------------------------------
-void Level::Load(const std::string &filename, pyrodactyl::event::Info &info,
+void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
 				 pyrodactyl::event::TriggerSet &game_over, const int &player_x, const int &player_y) {
 	Reset();
 	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("level");
 		if (NodeValid(node)) {
-			std::string vis;
+			Common::String vis;
 			LoadStr(vis, "map", node, false);
 			if (vis == "false")
 				showmap.Set(false);
@@ -103,7 +103,7 @@ void Level::Load(const std::string &filename, pyrodactyl::event::Info &info,
 					Sprite s;
 					s.Load(n, anim_set);
 
-					std::string str = n->name();
+					Common::String str = n->name();
 					if (str == "player") {
 						player_index = objects.size();
 						if (player_x != -1 && player_y != -1) {
@@ -175,7 +175,7 @@ void Level::Load(const std::string &filename, pyrodactyl::event::Info &info,
 //------------------------------------------------------------------------
 // Purpose: Build an index of all animation files, called once at start
 //------------------------------------------------------------------------
-void Level::LoadMoves(const std::string &filename) {
+void Level::LoadMoves(const Common::String &filename) {
 	XMLDoc mov_list(filename.c_str());
 	if (mov_list.ready()) {
 		rapidxml::xml_node<char> *node = mov_list.Doc()->first_node("movelist");
@@ -200,7 +200,7 @@ void Level::LoadMoves(const std::string &filename) {
 //------------------------------------------------------------------------
 // Purpose: Load the default sprite constant parameters
 //------------------------------------------------------------------------
-void Level::LoadConst(const std::string &filename) {
+void Level::LoadConst(const Common::String &filename) {
 	XMLDoc doc(filename.c_str());
 	if (doc.ready()) {
 		rapidxml::xml_node<char> *node = doc.Doc()->first_node("constant");

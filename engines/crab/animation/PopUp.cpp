@@ -68,7 +68,7 @@ void PopUpCollection::Load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 // Purpose: Internal events
 //------------------------------------------------------------------------
-bool PopUp::InternalEvents(pyrodactyl::event::Info &info, const std::string &player_id,
+bool PopUp::InternalEvents(pyrodactyl::event::Info &info, const Common::String &player_id,
 						   Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq) {
 	if (visible.Evaluate(info) || started_show) {
 		if (delay.TargetReached()) {
@@ -91,7 +91,7 @@ bool PopUp::InternalEvents(pyrodactyl::event::Info &info, const std::string &pla
 	return false;
 }
 
-void PopUpCollection::InternalEvents(pyrodactyl::event::Info &info, const std::string &player_id,
+void PopUpCollection::InternalEvents(pyrodactyl::event::Info &info, const Common::String &player_id,
 									 Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq) {
 	if (cur >= 0 && (unsigned int)cur < element.size()) {
 		if (element[cur].InternalEvents(info, player_id, result, end_seq)) {

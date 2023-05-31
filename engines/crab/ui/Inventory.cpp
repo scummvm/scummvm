@@ -40,7 +40,7 @@ using namespace pyrodactyl::people;
 //------------------------------------------------------------------------
 // Purpose: Load layout
 //------------------------------------------------------------------------
-void Inventory::Load(const std::string &filename) {
+void Inventory::Load(const Common::String &filename) {
 	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("inventory");
@@ -59,13 +59,13 @@ void Inventory::Load(const std::string &filename) {
 	}
 }
 
-void Inventory::LoadItem(const std::string &char_id, const std::string &id) {
+void Inventory::LoadItem(const Common::String &char_id, const Common::String &id) {
 	Item i;
 	XMLDoc item_list(itemfile.c_str());
 	if (item_list.ready()) {
 		rapidxml::xml_node<char> *node = item_list.Doc()->first_node("items");
 		for (auto n = node->first_node("item"); n != NULL; n = n->next_sibling("item")) {
-			std::string str = n->first_attribute("id")->value();
+			Common::String str = n->first_attribute("id")->value();
 			if (id == str) {
 				i.Load(n);
 				AddItem(char_id, i);
@@ -75,15 +75,15 @@ void Inventory::LoadItem(const std::string &char_id, const std::string &id) {
 	}
 }
 
-void Inventory::DelItem(const std::string &char_id, const std::string &item_id) {
+void Inventory::DelItem(const Common::String &char_id, const Common::String &item_id) {
 	collection.Del(char_id, item_id);
 }
 
-void Inventory::AddItem(const std::string &char_id, Item &item) {
+void Inventory::AddItem(const Common::String &char_id, Item &item) {
 	collection.Add(char_id, item);
 }
 
-bool Inventory::HasItem(const std::string &char_id, const std::string &container, const std::string &item_id) {
+bool Inventory::HasItem(const Common::String &char_id, const Common::String &container, const Common::String &item_id) {
 	return collection.Has(char_id, container, item_id);
 }
 
@@ -102,7 +102,7 @@ void Inventory::Draw(Person &obj, const int &money_val) {
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
-void Inventory::HandleEvents(const std::string &char_id, const Common::Event &Event) {
+void Inventory::HandleEvents(const Common::String &char_id, const Common::Event &Event) {
 	collection.HandleEvents(char_id, Event);
 	money.HandleEvents(Event);
 }
@@ -111,7 +111,7 @@ void Inventory::HandleEvents(const std::string &char_id, const Common::Event &Ev
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
-void Inventory::HandleEvents(const std::string &char_id, const SDL_Event &Event) {
+void Inventory::HandleEvents(const Common::String &char_id, const SDL_Event &Event) {
 	collection.HandleEvents(char_id, Event);
 	money.HandleEvents(Event);
 }

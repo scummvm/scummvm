@@ -52,14 +52,14 @@ void Person::Load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTe
 			opinion.Load(node->first_node("opinion"));
 
 		if (node->first_attribute("type") != NULL) {
-			std::string t;
+			Common::String t;
 			LoadStr(t, "type", node);
 			type = StringToPersonType(t);
 		} else
 			type = PE_NEUTRAL;
 
 		if (node->first_attribute("state") != NULL) {
-			std::string s;
+			Common::String s;
 			LoadStr(s, "state", node);
 			state = StringToPersonState(s);
 		} else

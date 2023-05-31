@@ -63,10 +63,10 @@ struct GameEvent {
 	EventID id;
 
 	// The heading for the dialog spoken
-	std::string title;
+	Common::String title;
 
 	// The dialog spoken in the event
-	std::string dialog;
+	Common::String dialog;
 
 	// The state decides which animation is drawn in the dialog box
 	pyrodactyl::people::PersonState state;

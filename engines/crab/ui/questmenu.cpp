@@ -84,7 +84,7 @@ void QuestMenu::Load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 // Purpose: Add an entry to the menu
 //------------------------------------------------------------------------
-void QuestMenu::Add(const std::string &title, const std::string &txt) {
+void QuestMenu::Add(const Common::String &title, const Common::String &txt) {
 	for (auto i = quest.begin(); i != quest.end(); ++i)
 		if (i->title == title) // We already have the quest entry
 		{
@@ -115,7 +115,7 @@ void QuestMenu::Erase(const int &index) {
 //------------------------------------------------------------------------
 // Purpose: Indicate that this quest has an associated map marker in world map
 //------------------------------------------------------------------------
-void QuestMenu::Marker(const std::string &title, const bool &val) {
+void QuestMenu::Marker(const Common::String &title, const bool &val) {
 	for (auto i = quest.begin(); i != quest.end(); ++i)
 		if (i->title == title)
 			i->marker = val;
@@ -153,7 +153,7 @@ void QuestMenu::Draw(Button &bu_map) {
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-bool QuestMenu::HandleEvents(Button &bu_map, std::string &map_title, const Common::Event &Event) {
+bool QuestMenu::HandleEvents(Button &bu_map, Common::String &map_title, const Common::Event &Event) {
 	int res = menu.HandleEvents(Event);
 	if (res != -1) {
 		if (sel_bu >= 0 && sel_page >= 0)
@@ -187,7 +187,7 @@ bool QuestMenu::HandleEvents(Button &bu_map, std::string &map_title, const Commo
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-bool QuestMenu::HandleEvents(Button &bu_map, std::string &map_title, const SDL_Event &Event) {
+bool QuestMenu::HandleEvents(Button &bu_map, Common::String &map_title, const SDL_Event &Event) {
 	int res = menu.HandleEvents(Event);
 	if (res != -1) {
 		if (sel_bu >= 0 && sel_page >= 0)

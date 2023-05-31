@@ -60,8 +60,8 @@ enum PersonState { PST_NORMAL,
 				   PST_KO,
 				   PST_DYING };
 
-PersonType StringToPersonType(const std::string &val);
-PersonState StringToPersonState(const std::string &val);
+PersonType StringToPersonType(const Common::String &val);
+PersonState StringToPersonState(const Common::String &val);
 } // End of namespace people
 } // End of namespace pyrodactyl
 

@@ -51,11 +51,11 @@ class Info {
 	pyrodactyl::stat::StatTemplates stem;
 
 	// The variables set by the events so far
-	typedef std::unordered_map<std::string, int> VarMap;
+	typedef Common::HashMap<Common::String, int> VarMap;
 	VarMap var;
 
 	// The last object player interacted with
-	std::string lastobj;
+	Common::String lastobj;
 
 	// Is the game Iron Man or not?
 	// Iron man means only one save - no reloading
@@ -64,10 +64,10 @@ class Info {
 	// The player's current location
 	struct PlayerLoc {
 		// id of the player's current location
-		std::string id;
+		Common::String id;
 
 		// The name of the player's current location
-		std::string name;
+		Common::String name;
 
 		PlayerLoc() : id(""), name("") {}
 	} loc;
@@ -75,7 +75,7 @@ class Info {
 	// This image changes to reflect the playable character
 	int player_img;
 
-	void LoadPeople(const std::string &filename);
+	void LoadPeople(const Common::String &filename);
 
 public:
 	// The player's one stop shop for objectives and lore
@@ -97,7 +97,7 @@ public:
 	} unread;
 
 	// This is the variable corresponding to money that is drawn
-	std::string money_var;
+	Common::String money_var;
 
 	// Has the player pressed the talk key
 	bool TalkKeyDown;
@@ -125,66 +125,66 @@ public:
 	void Load(rapidxml::xml_node<char> *node);
 
 	// Person related stuff
-	void Type(const std::string &id, const pyrodactyl::people::PersonType &val);
-	pyrodactyl::people::PersonType Type(const std::string &id);
+	void Type(const Common::String &id, const pyrodactyl::people::PersonType &val);
+	pyrodactyl::people::PersonType Type(const Common::String &id);
 
-	void State(const std::string &id, const pyrodactyl::people::PersonState &val);
-	pyrodactyl::people::PersonState State(const std::string &id);
+	void State(const Common::String &id, const pyrodactyl::people::PersonState &val);
+	pyrodactyl::people::PersonState State(const Common::String &id);
 
 	// Opinion
-	bool OpinionGet(const std::string &name, const pyrodactyl::people::OpinionType &type, int &val);
-	void OpinionSet(const std::string &name, const pyrodactyl::people::OpinionType &type, int val);
-	void OpinionChange(const std::string &name, const pyrodactyl::people::OpinionType &type, int val);
+	bool OpinionGet(const Common::String &name, const pyrodactyl::people::OpinionType &type, int &val);
+	void OpinionSet(const Common::String &name, const pyrodactyl::people::OpinionType &type, int val);
+	void OpinionChange(const Common::String &name, const pyrodactyl::people::OpinionType &type, int val);
 
 	// Stats
-	bool StatGet(const std::string &name, const pyrodactyl::stat::StatType &type, int &num);
-	void StatSet(const std::string &name, const pyrodactyl::stat::StatType &type, const int &num);
-	void StatChange(const std::string &name, const pyrodactyl::stat::StatType &type, const int &num);
+	bool StatGet(const Common::String &name, const pyrodactyl::stat::StatType &type, int &num);
+	void StatSet(const Common::String &name, const pyrodactyl::stat::StatType &type, const int &num);
+	void StatChange(const Common::String &name, const pyrodactyl::stat::StatType &type, const int &num);
 
 	// Variables
-	bool VarGet(const std::string &name, int &val);
-	void VarSet(const std::string &name, const std::string &val);
-	void VarAdd(const std::string &name, const int &val);
-	void VarSub(const std::string &name, const int &val);
-	void VarMul(const std::string &name, const int &val);
-	void VarDiv(const std::string &name, const int &val);
-	void VarDel(const std::string &name);
+	bool VarGet(const Common::String &name, int &val);
+	void VarSet(const Common::String &name, const Common::String &val);
+	void VarAdd(const Common::String &name, const int &val);
+	void VarSub(const Common::String &name, const int &val);
+	void VarMul(const Common::String &name, const int &val);
+	void VarDiv(const Common::String &name, const int &val);
+	void VarDel(const Common::String &name);
 
 	// The trait functions
-	void TraitAdd(const std::string &per_id, const int &trait_id);
-	void TraitDel(const std::string &per_id, const int &trait_id);
+	void TraitAdd(const Common::String &per_id, const int &trait_id);
+	void TraitDel(const Common::String &per_id, const int &trait_id);
 
 	// Player character button
 	void PlayerImg(const int &val) { player_img = val; }
 	int PlayerImg() { return player_img; }
 
-	std::string CurLocID() { return loc.id; }
-	void CurLocID(const std::string &id) { loc.id = id; }
+	Common::String CurLocID() { return loc.id; }
+	void CurLocID(const Common::String &id) { loc.id = id; }
 
-	std::string CurLocName() { return loc.name; }
-	void CurLocName(const std::string &name) { loc.name = name; }
+	Common::String CurLocName() { return loc.name; }
+	void CurLocName(const Common::String &name) { loc.name = name; }
 
 	// Player stuff
-	std::string LastPerson() { return lastobj; }
-	void LastPerson(const std::string &name) { lastobj = name; }
+	Common::String LastPerson() { return lastobj; }
+	void LastPerson(const Common::String &name) { lastobj = name; }
 
 	// Return the variable map for stuff like visibility checks
 	VarMap &MapGet() { return var; }
-	bool PersonGet(const std::string &id, pyrodactyl::people::Person &p);
+	bool PersonGet(const Common::String &id, pyrodactyl::people::Person &p);
 
-	bool PersonValid(const std::string &id);
-	pyrodactyl::people::Person &PersonGet(const std::string &id);
+	bool PersonValid(const Common::String &id);
+	pyrodactyl::people::Person &PersonGet(const Common::String &id);
 
 	// Is an object colliding with a trigger area
-	bool CollideWithTrigger(const std::string &id, int rect_index);
+	bool CollideWithTrigger(const Common::String &id, int rect_index);
 
 	// Replace all #values with their appropriate names in a string
-	void InsertName(std::string &msg);
-	std::string GetName(const std::string &id);
+	void InsertName(Common::String &msg);
+	Common::String GetName(const Common::String &id);
 
 	// Draw the inventory
-	void InvDraw(const std::string &id) {
-		if (var.count(money_var) > 0)
+	void InvDraw(const Common::String &id) {
+		if (var.contains(money_var) > 0)
 			inv.Draw(people[id], var[money_var]);
 		else
 			inv.Draw(people[id], 0);
@@ -194,7 +194,7 @@ public:
 	bool IronMan() { return ironman; }
 	void IronMan(const bool &val) { ironman = val; }
 	void LoadIronMan(rapidxml::xml_node<char> *node) {
-		std::string str;
+		Common::String str;
 		LoadStr(str, "diff", node);
 		ironman = (str == "Iron Man");
 	}

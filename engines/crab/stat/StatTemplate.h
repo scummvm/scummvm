@@ -45,7 +45,7 @@ public:
 	StatTemplates(void) {}
 	~StatTemplates(void) {}
 
-	void Load(const std::string &filename);
+	void Load(const Common::String &filename);
 };
 } // End of namespace stat
 } // End of namespace pyrodactyl

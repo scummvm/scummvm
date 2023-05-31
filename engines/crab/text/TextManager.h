@@ -59,7 +59,7 @@ class TextManager {
 
 	// The data stored in our cache - text and texture
 	struct TextCacheUnit {
-		std::string text;
+		Common::String text;
 		int col;
 		FontKey font;
 
@@ -88,7 +88,7 @@ class TextManager {
 	// The rectangle used to store the darkened rectangle coordinates
 	SDL_Rect rect;
 
-	int Search(const std::string &text, int col, FontKey fontid);
+	int Search(const Common::String &text, int col, FontKey fontid);
 	int FindFreeSlot();
 
 public:
@@ -104,15 +104,15 @@ public:
 
 
 	Graphics::Font *GetFont(const FontKey &fontid) { return font[fontid]; }
-	Graphics::ManagedSurface *RenderTextBlended(const FontKey &font, const std::string &text, const int &color);
+	Graphics::ManagedSurface *RenderTextBlended(const FontKey &font, const Common::String &text, const int &color);
 #if 0
-	SDL_Surface *RenderTextBlended(const FontKey &font, const std::string &text, const int &color);
+	SDL_Surface *RenderTextBlended(const FontKey &font, const Common::String &text, const int &color);
 #endif
 
-	void Draw(const int &x, const int &y, const std::string &text, const int &color,
+	void Draw(const int &x, const int &y, const Common::String &text, const int &color,
 			  const FontKey &font = 0, const Align &align = ALIGN_LEFT, const bool &background = false);
 
-	void Draw(const int &x, int y, const std::string &text, const int &color, const FontKey &font, const Align &align,
+	void Draw(const int &x, int y, const Common::String &text, const int &color, const FontKey &font, const Align &align,
 			  const unsigned int &line_width, const unsigned int &line_height, const bool &background = false);
 };
 

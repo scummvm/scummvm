@@ -46,7 +46,7 @@ class ResolutionMenu : public ButtonMenu {
 	} state;
 
 	HoverInfo info;
-	std::string def_info;
+	Common::String def_info;
 	Button change, cancel, custom;
 
 	// Menu stores the button for each of the item in the dimension array

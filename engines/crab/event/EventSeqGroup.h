@@ -51,13 +51,13 @@ public:
 	EventSeqGroup(void) {}
 	~EventSeqGroup(void) {}
 
-	void AddSeq(const unsigned int &id, std::string &path);
+	void AddSeq(const unsigned int &id, Common::String &path);
 	void EndSeq(const unsigned int &id);
 	bool EventInProgress(const unsigned int &id);
 	bool ActiveSeq(unsigned int &active_seq);
 
 	GameEvent *CurEvent(const unsigned int &id);
-	void NextEvent(const unsigned int &id, Info &info, const std::string &player_id, Common::Array<EventResult> &result,
+	void NextEvent(const unsigned int &id, Info &info, const Common::String &player_id, Common::Array<EventResult> &result,
 				   Common::Array<EventSeqInfo> &end_seq, const int choice = -1);
 
 	void InternalEvents(Info &info);

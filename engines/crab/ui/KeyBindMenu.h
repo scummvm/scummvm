@@ -75,7 +75,7 @@ class KeyBindMenu {
 
 	struct PromptInfo {
 		int col, col_prev;
-		std::string text;
+		Common::String text;
 
 		PromptInfo() {
 			col = 0;

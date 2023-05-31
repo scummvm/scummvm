@@ -41,13 +41,13 @@ namespace pyrodactyl {
 namespace ui {
 class FileData {
 public:
-	std::string name, path, last_modified;
+	Common::String name, path, last_modified;
 	//FileData(const boost::filesystem::path &filepath);
 };
 
 class SaveFileData : public FileData {
 public:
-	std::string loc_id, loc_name, char_name, diff, time, preview;
+	Common::String loc_id, loc_name, char_name, diff, time, preview;
 
 	// This is to account for the first save slot, called "New Save", which doesn't actually have a file
 	bool blank;
@@ -58,7 +58,7 @@ public:
 
 class ModFileData : public FileData {
 public:
-	std::string author, version, info, website, preview;
+	Common::String author, version, info, website, preview;
 	//ModFileData(boost::filesystem::path filepath);
 };
 

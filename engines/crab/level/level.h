@@ -94,7 +94,7 @@ class Level {
 	pyrodactyl::ai::SpriteConstant sc_default;
 
 	// Protected level functions
-	bool CollidingWithObject(pyrodactyl::event::Info &info, std::string &id);
+	bool CollidingWithObject(pyrodactyl::event::Info &info, Common::String &id);
 	bool CollidingWithLevel(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s);
 	bool PlayerInCombat(pyrodactyl::event::Info &info);
 	void BattleAlert(pyrodactyl::event::Info &info);
@@ -103,7 +103,7 @@ class Level {
 	void MoveObject(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s);
 
 	void Think(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event::EventResult> &result,
-			   Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq, std::string &id);
+			   Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq, Common::String &id);
 
 	void DrawObjects(pyrodactyl::event::Info &info);
 	void SetCamera();
@@ -138,7 +138,7 @@ public:
 	pyrodactyl::ui::ParagraphData pop;
 
 	// The path of the preview image
-	std::string preview_path;
+	Common::String preview_path;
 
 	// A full rendered image of the level
 	pyrodactyl::image::Image img;
@@ -158,8 +158,8 @@ public:
 
 	void PlayerStop() { objects[player_index].Stop(); }
 
-	const std::string &PlayerID() { return objects[player_index].ID(); }
-	void PlayerID(const std::string &ID, const int &X, const int &Y);
+	const Common::String &PlayerID() { return objects[player_index].ID(); }
+	void PlayerID(const Common::String &ID, const int &X, const int &Y);
 
 	void ShowMap(bool val) { showmap.normal = val; }
 	bool ShowMap() { return showmap.current; }
@@ -170,24 +170,24 @@ public:
 	void CalcProperties(pyrodactyl::event::Info &info);
 
 	// Loading function
-	void Load(const std::string &filename, pyrodactyl::event::Info &info, pyrodactyl::event::TriggerSet &game_over,
+	void Load(const Common::String &filename, pyrodactyl::event::Info &info, pyrodactyl::event::TriggerSet &game_over,
 			  const int &player_x = -1, const int &player_y = -1);
 
 	// One time load called first-time
-	void LoadMoves(const std::string &filename);
-	void LoadConst(const std::string &filename);
+	void LoadMoves(const Common::String &filename);
+	void LoadConst(const Common::String &filename);
 
 	// Used to see if a sprite collides with a rectangle
 	void CalcTrigCollide(pyrodactyl::event::Info &info);
 
 	// See if a player clicked on the sprite in contact
-	bool ContainsClick(const std::string &id, const Common::Event &Event);
+	bool ContainsClick(const Common::String &id, const Common::Event &Event);
 #if 0
-	bool ContainsClick(const std::string &id, const SDL_Event &Event);
+	bool ContainsClick(const Common::String &id, const SDL_Event &Event);
 #endif
 
 	// Get index of a sprite in the object array
-	pyrodactyl::anim::Sprite *GetSprite(const std::string &id);
+	pyrodactyl::anim::Sprite *GetSprite(const Common::String &id);
 
 	void HandleEvents(pyrodactyl::event::Info &info, const Common::Event &Event);
 #if 0
