@@ -199,7 +199,7 @@ else
 bundle: scummvm-static plugins bundle-pack
 endif
 
-ios7bundle: iphone
+ios7bundle: scummvm-static-ios
 	mkdir -p $(bundle_name)
 	awk 'BEGIN {s=0}\
 		/<key>CFBundleIcons<\/key>/ {\
@@ -320,7 +320,7 @@ endif
 	cp $(srcdir)/dists/ios7/Images.xcassets/LaunchImage.launchimage/ScummVM-splash-750x1334.png $(bundle_name)/LaunchImage-800-667h@2x.png
 	codesign -s - --deep --force $(bundle_name)
 
-tvosbundle: iphone
+tvosbundle: scummvm-static-ios
 	mkdir -p $(bundle_name)
 	awk 'BEGIN {s=0}\
 		/<key>CFBundleIcons<\/key>/ {\
@@ -535,7 +535,7 @@ scummvm-static: $(DETECT_OBJS) $(OBJS)
 		$(OSX_ZLIB)
 
 # Special target to create a static linked binary for the iOS and tvOS devices (ios7 backend)
-iphone: $(DETECT_OBJS) $(OBJS)
+scummvm-static-ios: $(DETECT_OBJS) $(OBJS)
 	+$(LD) $(LDFLAGS) -o scummvm $(DETECT_OBJS) $(OBJS) \
 		$(OSX_STATIC_LIBS) \
 		-framework UIKit -framework CoreGraphics -framework OpenGLES -framework GameController \
