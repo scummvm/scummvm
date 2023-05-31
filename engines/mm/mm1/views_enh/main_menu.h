@@ -33,16 +33,14 @@ private:
 	Graphics::ManagedSurface _circles[2];
 
 	/**
-	 * Loads the two title surfaces and extracts the
-	 * circle area from them for display
+	 * Draws the two circles from the original game screens
 	 */
-	void loadCircles();
+	void drawCircles();
 
 	/**
 	 * Copies the circle
 	 */
-	void copyCircle(const Graphics::Surface *src,
-		Graphics::ManagedSurface *dest);
+	void copyCircle(const Graphics::Surface *src, const Common::Point &destPos);
 
 	/**
 	 * Copies a line segment within the circle
@@ -54,8 +52,6 @@ public:
 	MainMenu() : ScrollView("MainMenu") {}
 	virtual ~MainMenu() {}
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
 };

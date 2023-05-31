@@ -31,21 +31,7 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-bool MainMenu::msgFocus(const FocusMessage &msg) {
-	ScrollView::msgFocus(msg);
-	loadCircles();
-	return true;
-}
-
-bool MainMenu::msgUnfocus(const UnfocusMessage &msg) {
-	ScrollView::msgUnfocus(msg);
-	_circles[0].clear();
-	_circles[1].clear();
-	return true;
-}
-
-void MainMenu::loadCircles() {
-	const Common::Rect r(0, 0, (CIRCLE_RADIUS + 1) * 2, (CIRCLE_RADIUS + 1) * 2);
+void MainMenu::drawCircles() {
 	Gfx::ScreenDecoder decoder;
 	decoder._indexes[0] = 0;
 	decoder._indexes[1] = 2;
@@ -55,25 +41,30 @@ void MainMenu::loadCircles() {
 	for (int i = 0; i < 2; ++i) {
 		if (decoder.loadFile(Common::String::format("screen%d", i))) {
 			const Graphics::Surface *src = decoder.getSurface();
-			Graphics::ManagedSurface *dest = &_circles[i];
 
-			dest->create((CIRCLE_RADIUS + 1) * 2, (CIRCLE_RADIUS + 1) * 2);
-			dest->fillRect(r, 255);
-			dest->setTransparentColor(255);
-			copyCircle(src, dest);
+			if (i == 0) {
+				copyCircle(src, Common::Point(160 - CIRCLE_RADIUS * 2 - 10, 10));
+			} else {
+				copyCircle(src, Common::Point(160 + 10, 10));
+			}
 		}
 	}
 }
 
 void MainMenu::copyCircle(const Graphics::Surface *src,
-		Graphics::ManagedSurface *dest) {
+		const Common::Point &destPos) {
 	int radius = CIRCLE_RADIUS;
 	int x = 0;
 	int y = radius;
 	int p = 1 - radius;
 
-	/* Plot first set of points */
-	drawCircleLine(src, dest, x, y);
+	Graphics::ManagedSurface s = getSurface();
+	Graphics::ManagedSurface dest(s, Common::Rect(
+		destPos.x, destPos.y, destPos.x + CIRCLE_RADIUS * 2,
+		destPos.y + CIRCLE_RADIUS * 2));
+
+	// Plot first set of points
+	drawCircleLine(src, &dest, x, y);
 
 	while (x < y) {
 		x++;
@@ -83,7 +74,7 @@ void MainMenu::copyCircle(const Graphics::Surface *src,
 			y--;
 			p += 2 * (x - y) + 1;
 		}
-		drawCircleLine(src, dest, x + 1, y + 1);
+		drawCircleLine(src, &dest, x + 1, y + 1);
 	}
 }
 
@@ -95,9 +86,6 @@ void MainMenu::drawCircleLine(const Graphics::Surface *src,
 	src1 = (const byte *)src->getBasePtr(CIRCLE_X + CIRCLE_RADIUS - x, CIRCLE_Y + CIRCLE_RADIUS + y);
 	src2 = (const byte *)src->getBasePtr(CIRCLE_X + CIRCLE_RADIUS + x, CIRCLE_Y + CIRCLE_RADIUS + y);
 	dest1 = (byte *)dest->getBasePtr(CIRCLE_RADIUS - x, CIRCLE_RADIUS + y);
-
-const byte *dest2 = dest1 + (src2 - src1);
-assert(dest2 < (const byte *)dest->getBasePtr(0, dest->h));
 	Common::copy(src1, src2, dest1);
 
 	src1 = (const byte *)src->getBasePtr(CIRCLE_X + CIRCLE_RADIUS - x, CIRCLE_Y + CIRCLE_RADIUS - y);
@@ -121,8 +109,7 @@ void MainMenu::draw() {
 	s.clear(0);
 	ScrollView::draw();
 
-	s.blitFrom(_circles[0], Common::Point(160 - CIRCLE_RADIUS * 2 - 10, 10));
-	s.blitFrom(_circles[1], Common::Point(160 + 10, 10));
+	drawCircles();
 
 	writeString(0, 100, STRING["dialogs.main_menu.title3"], ALIGN_MIDDLE);
 	writeString(0, 110, STRING["dialogs.main_menu.title4"], ALIGN_MIDDLE);
