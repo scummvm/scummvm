@@ -63,7 +63,7 @@ class Level {
 	unsigned int player_index;
 
 	// The order in which to draw the sprites
-	std::multimap<int, pyrodactyl::anim::Sprite *> obj_seq;
+	Common::MultiMap<int, pyrodactyl::anim::Sprite *> obj_seq;
 
 	// The file index which contains the fighting moves of all characters
 	std::vector<std::string> anim_set;
