@@ -215,15 +215,30 @@ void Window::setStageColor(uint32 stageColor, bool forceReset) {
 }
 
 Datum Window::getStageRect() {
-	Graphics::ManagedSurface *surface = getSurface();
+	Common::Rect rect = getInnerDimensions();
 	Datum d;
 	d.type = RECT;
 	d.u.farr = new FArray;
-	d.u.farr->arr.push_back(0);
-	d.u.farr->arr.push_back(0);
-	d.u.farr->arr.push_back(surface->w);
-	d.u.farr->arr.push_back(surface->h);
+	d.u.farr->arr.push_back(rect.left);
+	d.u.farr->arr.push_back(rect.top);
+	d.u.farr->arr.push_back(rect.right);
+	d.u.farr->arr.push_back(rect.bottom);
+
 	return d;
+}
+
+bool Window::setStageRect(Datum datum) {
+	if (datum.type != RECT) {
+		warning("Window::setStageRect(): bad argument passed to rect field");
+		return false;
+	}
+
+	// Unpack rect from datum
+	Common::Rect rect = Common::Rect(datum.u.farr->arr[0].asInt(), datum.u.farr->arr[1].asInt(), datum.u.farr->arr[2].asInt(), datum.u.farr->arr[3].asInt());
+
+	setInnerDimensions(rect);
+
+	return true;
 }
 
 void Window::reset() {

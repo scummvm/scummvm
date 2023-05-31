@@ -618,6 +618,8 @@ bool Window::setField(int field, const Datum &value) {
 	case kTheWindowType:
 		setWindowType(value.asInt());
 		return true;
+	case kTheRect:
+		return setStageRect(value);
 	default:
 		warning("Window::setField: unhandled field '%s'", g_lingo->field2str(field));
 		return false;
