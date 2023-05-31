@@ -59,7 +59,7 @@ struct AnimSet {
 
 	AnimSet() {}
 
-	void Load(const std::string &filename);
+	void Load(const Common::String &filename);
 
 	TextureFlipType Flip(const Direction &dir);
 	const ShadowOffset &Shadow(const Direction &dir);

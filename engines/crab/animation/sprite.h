@@ -184,7 +184,7 @@ public:
 	void TakeDamage(pyrodactyl::event::Info &info, Sprite &s);
 	void ExchangeDamage(pyrodactyl::event::Info &info, Sprite &s, const pyrodactyl::ai::SpriteConstant &sc);
 
-	void Load(rapidxml::xml_node<char> *node, std::vector<std::string> &animations);
+	void Load(rapidxml::xml_node<char> *node, Common::Array<Common::String> &animations);
 	void InternalEvents(pyrodactyl::event::Info &info, const std::string &player_id,
 						Common::Array<pyrodactyl::event::EventResult> &result, Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq);
 
