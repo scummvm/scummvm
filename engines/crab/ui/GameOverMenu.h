@@ -45,7 +45,7 @@ class GameOverMenu {
 	ImageData bg;
 
 	// The selection of quotes, we pick one out of these
-	std::vector<std::string> quote;
+	Common::Array<Common::String> quote;
 
 	// The current picked quote
 	unsigned int cur;

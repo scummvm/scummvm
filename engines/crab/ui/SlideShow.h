@@ -42,7 +42,7 @@ namespace pyrodactyl {
 namespace ui {
 class SlideShow {
 	// The list of images and where they are located, and the current image
-	std::vector<std::string> path;
+	Common::Array<Common::String> path;
 
 	// We only load the current image in memory
 	pyrodactyl::image::Image img;

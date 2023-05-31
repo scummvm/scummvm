@@ -56,7 +56,7 @@ void SlideShow::Load(rapidxml::xml_node<char> *node) {
 
 		path.clear();
 		for (auto n = node->first_node("slide"); n != NULL; n = n->next_sibling("slide")) {
-			std::string p;
+			Common::String p;
 			LoadStr(p, "path", n);
 			path.push_back(p);
 		}
