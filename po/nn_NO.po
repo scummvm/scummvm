@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-29 03:48+0000\n"
+"POT-Creation-Date: 2023-05-31 19:15+0000\n"
 "PO-Revision-Date: 2022-10-02 04:37+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -4374,24 +4374,20 @@ msgid ""
 msgstr ""
 
 #: backends/platform/ios7/ios7_osys_events.cpp:466
-#: backends/platform/iphone/osys_events.cpp:299
 #, fuzzy
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "Touchpadmodus påslått."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:468
-#: backends/platform/iphone/osys_events.cpp:301
 #, fuzzy
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "Touchpadmodus avslått."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:489
-#: backends/platform/iphone/osys_events.cpp:312
 msgid "Touchpad mode enabled."
 msgstr "Touchpadmodus påslått."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:491
-#: backends/platform/iphone/osys_events.cpp:314
 msgid "Touchpad mode disabled."
 msgstr "Touchpadmodus avslått."
 
