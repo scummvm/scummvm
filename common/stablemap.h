@@ -112,9 +112,10 @@ public:
 	Val &operator[](const Key &theKey) {
 		iterator it = _items.lowerBound(theKey);
 		if (it == this->end() || !compareEqual(it->first, theKey)) {
-			return _items.insert(theKey).second;
+			iterator i = _items.insert(value_type(theKey, Val()));
+			return i->second;
 		}
-		return *it->second;
+		return it->second;
 	}
 
 	/**
@@ -166,7 +167,7 @@ public:
 	}
 
 private:
-	bool compareEqual(const Key &a, const Key &b) {
+	bool compareEqual(const Key &a, const Key &b) const {
 		return !_comp(a, b) && !_comp(b, a);
 	}
 
