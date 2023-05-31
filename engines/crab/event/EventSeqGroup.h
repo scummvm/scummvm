@@ -39,7 +39,7 @@ namespace Crab {
 namespace pyrodactyl {
 namespace event {
 class EventSeqGroup {
-	typedef std::unordered_map<unsigned int, EventSequence> SeqMap;
+	typedef Common::HashMap<unsigned int, EventSequence> SeqMap;
 
 	// The event sequences in this group
 	SeqMap seq;
