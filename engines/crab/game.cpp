@@ -690,7 +690,7 @@ void Game::LoadState(const std::string &filename) {
 
 			gem.per.Cache(info, level.PlayerID(), level);
 
-			std::string playtime;
+			Common::String playtime;
 			LoadStr(playtime, "time", node);
 			clock.Start(playtime);
 		}

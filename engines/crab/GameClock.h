@@ -39,7 +39,7 @@ namespace Crab {
 class GameClock {
 	Timer timer;
 	uint32 start;
-	std::string seperator;
+	Common::String seperator;
 
 public:
 	GameClock() : seperator(" : ") { start = 0; }
@@ -49,21 +49,21 @@ public:
 		timer.Start();
 	}
 
-	void Start(const std::string &str) {
+	void Start(const Common::String &str) {
 		uint32 ms = 0, hr = 0, min = 0, sec = 0;
-		std::string str_hrs, str_min, str_sec;
+		Common::String str_hrs, str_min, str_sec;
 
-		std::size_t found_1 = str.find_first_of(seperator);
-		if (found_1 > 0 && found_1 != std::string::npos) {
+		std::size_t found_1 = str.findFirstOf(seperator);
+		if (found_1 > 0 && found_1 != Common::String::npos) {
 			str_hrs = str.substr(0, found_1);
 			hr = StringToNumber<uint32>(str_hrs);
 
-			std::size_t found_2 = str.find_last_of(seperator);
+			std::size_t found_2 = str.findFirstOf(seperator);
 			if (found_2 > 0 && found_2 != std::string::npos) {
 				str_sec = str.substr(found_2 + 1, std::string::npos);
 				sec = StringToNumber<uint32>(str_sec);
 
-				str_min = str.substr(found_1 + seperator.length(), found_2 - (2 * seperator.length()));
+				str_min = str.substr(found_1 + seperator.size(), found_2 - (2 * seperator.size()));
 				min = StringToNumber<uint32>(str_min);
 			}
 		}
@@ -72,7 +72,7 @@ public:
 		Start(ms);
 	}
 
-	std::string GetTime() {
+	Common::String GetTime() {
 		uint32 ms = start + timer.Ticks();
 
 		uint32 x = ms / 1000;
@@ -81,7 +81,7 @@ public:
 		uint32 minutes = x % 60;
 		uint32 hours = x / 60;
 
-		std::string time_str = NumberToString(hours).c_str();
+	Common::String time_str = NumberToString(hours).c_str();
 		time_str += seperator;
 		time_str += NumberToString(minutes).c_str();
 		time_str += seperator;
