@@ -49,7 +49,7 @@ namespace event {
 class Manager {
 protected:
 	// All the events in the game
-	std::unordered_map<std::string, EventSeqGroup> event_map;
+	Common::HashMap<Common::String, EventSeqGroup> event_map;
 
 	// The currently happening or active sequence
 	unsigned int active_seq;

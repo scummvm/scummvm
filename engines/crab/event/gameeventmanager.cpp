@@ -57,7 +57,7 @@ void Manager::Load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 		if (conf.ready()) {
 			rapidxml::xml_node<char> *lnode = conf.Doc()->first_node("event_list");
 			for (rapidxml::xml_node<char> *loc = lnode->first_node("loc"); loc != NULL; loc = loc->next_sibling("loc")) {
-				std::string loc_name;
+				Common::String loc_name;
 				LoadStr(loc_name, "name", loc);
 
 				for (auto n = loc->first_node("file"); n != NULL; n = n->next_sibling("file")) {
@@ -98,7 +98,7 @@ void Manager::Load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 //------------------------------------------------------------------------
 void Manager::HandleEvents(Info &info, const std::string &player_id, Common::Event &Event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
 	// If an event is already being performed
-	if (event_map.count(info.CurLocID()) > 0 && event_map[info.CurLocID()].EventInProgress(active_seq)) {
+	if (event_map.contains(info.CurLocID().c_str()) > 0 && event_map[info.CurLocID().c_str()].EventInProgress(active_seq)) {
 		switch (cur_event->type) {
 		case EVENT_DIALOG:
 			if (oh.show_journal) {
@@ -119,7 +119,7 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, Common::Eve
 				}
 
 				if (oh.HandleDlboxEvents(Event)) {
-					event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
+					event_map[info.CurLocID().c_str()].NextEvent(active_seq, info, player_id, result, end_seq);
 					oh.show_journal = false;
 				}
 			}
@@ -127,7 +127,7 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, Common::Eve
 		case EVENT_ANIM:
 			// Skip animation if key pressed or mouse pressed
 			if (Event.type == Common::EVENT_LBUTTONUP || Event.type == Common::EVENT_RBUTTONUP)
-				event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
+				event_map[info.CurLocID().c_str()].NextEvent(active_seq, info, player_id, result, end_seq);
 			break;
 		case EVENT_REPLY:
 			if (oh.show_journal) {
@@ -143,7 +143,7 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, Common::Eve
 
 				int choice = reply.HandleEvents(info, g_engine->_eventStore->con[cur_event->special], cur_event->title, oh, Event);
 				if (choice >= 0) {
-					event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq, choice);
+					event_map[info.CurLocID().c_str()].NextEvent(active_seq, info, player_id, result, end_seq, choice);
 					oh.show_journal = false;
 				}
 			}
@@ -155,7 +155,7 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, Common::Eve
 					info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->title).name);
 
 			if (textin.HandleEvents(Event))
-				event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
+				event_map[info.CurLocID().c_str()].NextEvent(active_seq, info, player_id, result, end_seq);
 			break;
 		case EVENT_SPLASH:
 			if (intro.show_traits) {
@@ -165,7 +165,7 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, Common::Eve
 					intro.show_traits = false;
 			} else {
 				if (intro.HandleEvents(Event))
-					event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
+					event_map[info.CurLocID().c_str()].NextEvent(active_seq, info, player_id, result, end_seq);
 
 				if (intro.show_traits)
 					per.Cache(info, level.PlayerID(), level);
@@ -175,7 +175,7 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, Common::Eve
 			break;
 		}
 
-		EndSequence(info.CurLocID());
+		EndSequence(info.CurLocID().c_str());
 	}
 }
 
@@ -185,7 +185,7 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, Common::Eve
 //------------------------------------------------------------------------
 void Manager::HandleEvents(Info &info, const std::string &player_id, SDL_Event &Event, HUD &hud, Level &level, Common::Array<EventResult> &result) {
 	// If an event is already being performed
-	if (event_map.count(info.CurLocID()) > 0 && event_map[info.CurLocID()].EventInProgress(active_seq)) {
+	if (event_map.contains(info.CurLocID().c_str()) > 0 && event_map[info.CurLocID().c_str()].EventInProgress(active_seq)) {
 		switch (cur_event->type) {
 		case EVENT_DIALOG:
 			if (oh.show_journal) {
@@ -206,7 +206,7 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, SDL_Event &
 				}
 
 				if (oh.HandleDlboxEvents(Event)) {
-					event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
+					event_map[info.CurLocID().c_str()].NextEvent(active_seq, info, player_id, result, end_seq);
 					oh.show_journal = false;
 				}
 			}
@@ -214,7 +214,7 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, SDL_Event &
 		case EVENT_ANIM:
 			// Skip animation if key pressed or mouse pressed
 			if (Event.type == SDL_KEYUP || Event.type == SDL_MOUSEBUTTONUP)
-				event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
+				event_map[info.CurLocID().c_str()].NextEvent(active_seq, info, player_id, result, end_seq);
 			break;
 		case EVENT_REPLY:
 			if (oh.show_journal) {
@@ -230,7 +230,7 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, SDL_Event &
 
 				int choice = reply.HandleEvents(info, g_engine->_eventStore->con[cur_event->special], cur_event->title, oh, Event);
 				if (choice >= 0) {
-					event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq, choice);
+					event_map[info.CurLocID().c_str()].NextEvent(active_seq, info, player_id, result, end_seq, choice);
 					oh.show_journal = false;
 				}
 			}
@@ -242,7 +242,7 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, SDL_Event &
 					info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->title).name);
 
 			if (textin.HandleEvents(Event))
-				event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
+				event_map[info.CurLocID().c_str()].NextEvent(active_seq, info, player_id, result, end_seq);
 			break;
 		case EVENT_SPLASH:
 			if (intro.show_traits) {
@@ -252,7 +252,7 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, SDL_Event &
 					intro.show_traits = false;
 			} else {
 				if (intro.HandleEvents(Event))
-					event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
+					event_map[info.CurLocID().c_str()].NextEvent(active_seq, info, player_id, result, end_seq);
 
 				if (intro.show_traits)
 					per.Cache(info, level.PlayerID(), level);
@@ -262,7 +262,7 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, SDL_Event &
 			break;
 		}
 
-		EndSequence(info.CurLocID());
+		EndSequence(info.CurLocID().c_str());
 	}
 }
 #endif
@@ -271,8 +271,8 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, SDL_Event &
 // Purpose: Internal Events
 //------------------------------------------------------------------------
 void Manager::InternalEvents(Info &info, Level &level, Common::Array<EventResult> &result) {
-	if (event_map.count(info.CurLocID()) > 0) {
-		if (event_map[info.CurLocID()].EventInProgress(active_seq)) {
+	if (event_map.contains(info.CurLocID().c_str()) > 0) {
+		if (event_map[info.CurLocID().c_str()].EventInProgress(active_seq)) {
 			switch (cur_event->type) {
 			case EVENT_DIALOG:
 				UpdateDialogBox(info, level);
@@ -282,7 +282,7 @@ void Manager::InternalEvents(Info &info, Level &level, Common::Array<EventResult
 
 				DrawType draw_val = DRAW_SAME;
 				if (g_engine->_eventStore->anim[cur_event->special].InternalEvents(draw_val))
-					event_map[info.CurLocID()].NextEvent(active_seq, info, level.PlayerID(), result, end_seq);
+					event_map[info.CurLocID().c_str()].NextEvent(active_seq, info, level.PlayerID(), result, end_seq);
 
 				if (draw_val == DRAW_STOP)
 					draw_game = false;
@@ -290,7 +290,7 @@ void Manager::InternalEvents(Info &info, Level &level, Common::Array<EventResult
 					draw_game = true;
 			} break;
 			case EVENT_SILENT:
-				event_map[info.CurLocID()].NextEvent(active_seq, info, level.PlayerID(), result, end_seq);
+				event_map[info.CurLocID().c_str()].NextEvent(active_seq, info, level.PlayerID(), result, end_seq);
 				break;
 			case EVENT_REPLY:
 				UpdateDialogBox(info, level);
@@ -302,9 +302,9 @@ void Manager::InternalEvents(Info &info, Level &level, Common::Array<EventResult
 				break;
 			}
 
-			EndSequence(info.CurLocID());
+			EndSequence(info.CurLocID().c_str());
 		} else {
-			event_map[info.CurLocID()].InternalEvents(info);
+			event_map[info.CurLocID().c_str()].InternalEvents(info);
 			CalcActiveSeq(info, level, level.Camera());
 		}
 	}
@@ -317,7 +317,7 @@ void Manager::UpdateDialogBox(Info &info, Level &level) {
 // Purpose: Draw
 //------------------------------------------------------------------------
 void Manager::Draw(Info &info, HUD &hud, Level &level) {
-	if (event_map.count(info.CurLocID()) > 0 && event_map[info.CurLocID()].EventInProgress(active_seq)) {
+	if (event_map.contains(info.CurLocID().c_str()) > 0 && event_map[info.CurLocID().c_str()].EventInProgress(active_seq)) {
 		switch (cur_event->type) {
 		case EVENT_ANIM:
 			g_engine->_eventStore->anim[cur_event->special].Draw();
@@ -363,9 +363,9 @@ void Manager::Draw(Info &info, HUD &hud, Level &level) {
 // Purpose: Calculate the current sequence in progress
 //------------------------------------------------------------------------
 void Manager::CalcActiveSeq(Info &info, Level &level, const Rect &camera) {
-	if (event_map[info.CurLocID()].ActiveSeq(active_seq)) {
+	if (event_map[info.CurLocID().c_str()].ActiveSeq(active_seq)) {
 		// Set all the pointers to the new values
-		cur_event = event_map[info.CurLocID()].CurEvent(active_seq);
+		cur_event = event_map[info.CurLocID().c_str()].CurEvent(active_seq);
 		oh.Reset(cur_event->title);
 		cur_sp = level.GetSprite(cur_event->title);
 
@@ -392,9 +392,9 @@ void Manager::EndSequence(const std::string &curloc) {
 	if (end_seq.empty() == false) {
 		for (auto i = end_seq.begin(); i != end_seq.end(); ++i)
 			if (i->cur)
-				event_map[curloc].EndSeq(active_seq);
-			else if (event_map.count(i->loc) > 0)
-				event_map[i->loc].EndSeq(StringToNumber<unsigned int>(i->val));
+				event_map[curloc.c_str()].EndSeq(active_seq);
+			else if (event_map.contains(i->loc.c_str()) > 0)
+				event_map[i->loc.c_str()].EndSeq(StringToNumber<unsigned int>(i->val));
 
 		active_seq = UINT_MAX;
 		end_seq.clear();
@@ -413,8 +413,8 @@ bool Manager::EventInProgress() {
 void Manager::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	for (auto i = event_map.begin(); i != event_map.end(); ++i) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "loc");
-		child->append_attribute(doc.allocate_attribute("name", i->first.c_str()));
-		i->second.SaveState(doc, child);
+		child->append_attribute(doc.allocate_attribute("name", i->_key.c_str()));
+		i->_value.SaveState(doc, child);
 		root->append_node(child);
 	}
 }
@@ -425,8 +425,8 @@ void Manager::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> 
 void Manager::LoadState(rapidxml::xml_node<char> *node) {
 	for (auto n = node->first_node("loc"); n != NULL; n = n->next_sibling("loc")) {
 		if (n->first_attribute("name") != NULL) {
-			std::string name = n->first_attribute("name")->value();
-			if (event_map.count(name) > 0)
+			Common::String name = n->first_attribute("name")->value();
+			if (event_map.contains(name) > 0)
 				event_map[name].LoadState(n);
 		}
 	}
