@@ -69,6 +69,7 @@ void Combat::disableAttacks() {
 bool Combat::msgFocus(const FocusMessage &msg) {
 	g_globals->_currCharacter = g_globals->_combatParty[_currentChar];
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_COMBAT);
+	_firstDraw = true;
 
 	return true;
 }
@@ -115,6 +116,17 @@ bool Combat::msgGame(const GameMessage &msg) {
 }
 
 void Combat::draw() {
+	if (_firstDraw) {
+		_firstDraw = false;
+		if (_mode != SELECT_OPTION) {
+			// Do an initial screen draw to get everything displayed
+			Mode mode = _mode;
+			_mode = SELECT_OPTION;
+			draw();
+			_mode = mode;
+		}
+	}
+
 	switch (_mode) {
 	case NEXT_ROUND:
 		writeMonsters();

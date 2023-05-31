@@ -34,6 +34,7 @@ private:
 	LineArray _monsterSpellLines;
 	uint _attackableCount = 0;
 	InfoMessage _spellResult;
+	bool _firstDraw = false;
 	// Combat options that have sub-option selection
 	enum SelectedOption {
 		OPTION_NONE, OPTION_DELAY, OPTION_EXCHANGE,
