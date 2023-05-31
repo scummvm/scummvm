@@ -46,7 +46,7 @@ void GameOverMenu::Load(rapidxml::xml_node<char> *node) {
 			title.Load(tinode);
 
 			for (auto n = tinode->first_node("quote"); n != NULL; n = n->next_sibling("quote")) {
-				std::string str;
+				Common::String str;
 				LoadStr(str, "text", n);
 				quote.push_back(str);
 			}
@@ -69,7 +69,7 @@ int GameOverMenu::HandleEvents(const SDL_Event &Event) {
 void GameOverMenu::Draw() {
 	bg.Draw();
 	if (cur < quote.size())
-		title.Draw(quote[cur]);
+		title.Draw(quote[cur].c_str());
 
 	menu.Draw();
 }
