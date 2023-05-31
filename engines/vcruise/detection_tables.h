@@ -113,6 +113,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_REAH,
 		Common::EN_ANY,
 	},
+
 	{ // Schizm: Mysterious Journey, English CD Version
 		{
 			"schizm",
@@ -121,16 +122,31 @@ static const VCruiseGameDescription gameDescriptions[] = {
 					   "0001_a.wav", "374d93abc3422840623acc618ecb2b1e", 1553784),
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
-			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
+			ADGF_TESTING | ADGF_CD | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
 			GUIO0()
 		},
 		GID_SCHIZM,
 		Common::EN_GRB,
 	},
-	{ // Schizm: Mysterious Journey, English DVD/digital Version
+	{ // Schizm: Mysterious Journey, German DVD Version
 		{
 			"schizm",
-			"English DVD",
+			"German DVD",
+			AD_ENTRY2s("Schizm.exe", "3d63307697c72f3fd6cafb378f61ca2b", 364544,
+					   "0001_a.wav", "f2b7eccfb1e9af0282b541c5eac66cc7", 1613240),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::DE_DEU,
+	},
+
+	{ // Schizm: Mysterious Journey, English digital 10-language (GOG) version
+		{
+			"schizm",
+			"English Digital",
 			AD_ENTRY2s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
 					   "0001_a.wav", "374d93abc3422840623acc618ecb2b1e", 1553784),
 			Common::UNK_LANG,
@@ -141,10 +157,10 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::EN_GRB,
 	},
-	{ // Schizm: Mysterious Journey, German DVD/digital Version
+	{ // Schizm: Mysterious Journey, German digital 10-language (GOG) version
 		{
 			"schizm",
-			"German DVD",
+			"German Digital",
 			AD_ENTRY2s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
 					   "0001_a.wav", "f2b7eccfb1e9af0282b541c5eac66cc7", 1613240),
 			Common::UNK_LANG,
@@ -155,10 +171,10 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::DE_DEU,
 	},
-	{ // Schizm: Mysterious Journey, Spanish DVD/digital Version
+	{ // Schizm: Mysterious Journey, German digital 10-language (GOG) version
 		{
 			"schizm",
-			"Spanish DVD",
+			"Spanish Digital",
 			AD_ENTRY2s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
 					   "0001_a.wav", "7a398f17e847a46de629a09fa6178b00", 1409560),
 			Common::UNK_LANG,
@@ -169,10 +185,10 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::ES_ESP,
 	},
-	{ // Schizm: Mysterious Journey, French DVD/digital Version
+	{ // Schizm: Mysterious Journey, French digital 10-language (GOG) version
 		{
 			"schizm",
-			"French DVD",
+			"French Digital",
 			AD_ENTRY2s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
 					   "0001_a.wav", "cd46a5df85a879bf293871b5911abcc3", 1305470),
 			Common::UNK_LANG,
@@ -183,10 +199,10 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::FR_FRA,
 	},
-	{ // Schizm: Mysterious Journey, Hungarian DVD/digital Version
+	{ // Schizm: Mysterious Journey, Hungarian digital 10-language (GOG) version
 		{
 			"schizm",
-			"Hungarian DVD",
+			"Hungarian Digital",
 			AD_ENTRY2s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
 					   "0001_a.wav", "9838f59fce21ba3a1eecc3d84c5be8b1", 1502674),
 			Common::UNK_LANG,
@@ -197,10 +213,10 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::HU_HUN,
 	},
-	{ // Schizm: Mysterious Journey, Italian DVD/digital Version
+	{ // Schizm: Mysterious Journey, Italian digital 10-language (GOG) version
 		{
 			"schizm",
-			"Italian DVD",
+			"Italian Digital",
 			AD_ENTRY2s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
 					   "0001_a.wav", "6d8e4b97710b858525d9965ef1e627ab", 1280506),
 			Common::UNK_LANG,
@@ -211,10 +227,10 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::IT_ITA,
 	},
-	{ // Schizm: Mysterious Journey, Polish DVD/digital Version
+	{ // Schizm: Mysterious Journey, Polish digital 10-language (GOG) version
 		{
 			"schizm",
-			"Polish DVD",
+			"Polish Digital",
 			AD_ENTRY2s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
 					   "0001_a.wav", "4fc0053f66657e416b69419106d238a5", 1592106),
 			Common::UNK_LANG,
@@ -225,10 +241,10 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::PL_POL,
 	},
-	{ // Schizm: Mysterious Journey, Russian DVD/digital Version
+	{ // Schizm: Mysterious Journey, Russian digital 10-language (GOG) version
 		{
 			"schizm",
-			"Russian DVD",
+			"Russian Digital",
 			AD_ENTRY2s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
 					   "0001_a.wav", "ba8fc041a92f1afceee35bdbb84eb2cd", 1427794),
 			Common::UNK_LANG,
@@ -240,12 +256,11 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 	},
 
-	// Steam versions
-	{
-		// Schizm: Mysterious Journey, English Steam (16-language) Version
+	// Steam (16-language) versions
+	{ // Schizm: Mysterious Journey, English digital 16-language (Steam) version
 		{
 			"schizm",
-			"English Steam",
+			"English Digital",
 			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
 					   "0001_a.wav", "374d93abc3422840623acc618ecb2b1e", 1553784,
 					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
@@ -257,11 +272,10 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::EN_GRB,
 	},
-	{
-		// Schizm: Mysterious Journey, German Steam (16-language) Version
+	{ // Schizm: Mysterious Journey, German digital 16-language (Steam) version
 		{
 			"schizm",
-			"German Steam",
+			"German Digital",
 			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
 					   "0001_a.wav", "f2b7eccfb1e9af0282b541c5eac66cc7", 1613240,
 					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
@@ -273,11 +287,10 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::DE_DEU,
 	},
-	{
-		// Schizm: Mysterious Journey, Spanish Steam (16-language) Version
+	{ // Schizm: Mysterious Journey, Spanish digital 16-language (Steam) version
 		{
 			"schizm",
-			"Spanish Steam",
+			"Spanish Digital",
 			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
 					   "0001_a.wav", "7a398f17e847a46de629a09fa6178b00", 1409560,
 					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
@@ -289,11 +302,10 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::ES_ESP,
 	},
-	{
-		// Schizm: Mysterious Journey, French Steam (16-language) Version
+	{ // Schizm: Mysterious Journey, French digital 16-language (Steam) version
 		{
 			"schizm",
-			"French Steam",
+			"French Digital",
 			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
 					   "0001_a.wav", "cd46a5df85a879bf293871b5911abcc3", 1305470,
 					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
@@ -305,11 +317,10 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::FR_FRA,
 	},
-	{
-		// Schizm: Mysterious Journey, Hungarian Steam (16-language) Version
+	{ // Schizm: Mysterious Journey, Hungarian digital 16-language (Steam) version
 		{
 			"schizm",
-			"Hungarian DVD",
+			"Hungarian Digital",
 			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
 					   "0001_a.wav", "9838f59fce21ba3a1eecc3d84c5be8b1", 1502674,
 					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
@@ -321,11 +332,10 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::HU_HUN,
 	},
-	{
-		// Schizm: Mysterious Journey, Italian Steam (16-language) Version
+	{ // Schizm: Mysterious Journey, Italian digital 16-language (Steam) version
 		{
 			"schizm",
-			"Italian Steam",
+			"Italian Digital",
 			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
 					   "0001_a.wav", "6d8e4b97710b858525d9965ef1e627ab", 1280506,
 					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
@@ -337,11 +347,10 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::IT_ITA,
 	},
-	{
-		// Schizm: Mysterious Journey, Polish Steam (16-language) Version
+	{ // Schizm: Mysterious Journey, Polish digital 16-language (Steam) version
 		{
 			"schizm",
-			"Polish Steam",
+			"Polish Digital",
 			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
 					   "0001_a.wav", "4fc0053f66657e416b69419106d238a5", 1592106,
 					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
@@ -353,11 +362,10 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::PL_POL,
 	},
-	{
-		// Schizm: Mysterious Journey, Russian Steam (16-language) Version
+	{ // Schizm: Mysterious Journey, Russian digital 16-language (Steam) version
 		{
 			"schizm",
-			"Russian Steam",
+			"Russian Digital",
 			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
 					   "0001_a.wav", "ba8fc041a92f1afceee35bdbb84eb2cd", 1427794,
 					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
