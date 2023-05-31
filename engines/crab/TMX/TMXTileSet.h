@@ -57,17 +57,6 @@ struct TileSet {
 	// The image used by the tileset
 	pyrodactyl::image::Image img;
 
-	struct MyHash {
-		std::size_t operator()(const TileInfo& s) const {
-			std::size_t h1 = std::hash<int>{}(s.gid);
-			std::size_t h2 = std::hash<int>{}(s.flip);
-			return h1 ^ (h2 << 1);
-		}
-	};
-
-	// Vector to hold textures for individual tiles in the tileset
-	std::unordered_map<TileInfo, pyrodactyl::image::Image, MyHash> tiles;
-
 	// Stuff used to store temporary data
 
 	// The rectangle used to store clip info
@@ -79,7 +68,6 @@ struct TileSet {
 		tile_h = 1;
 		total_rows = 1;
 		total_cols = 1;
-		tiles.clear();
 	}
 
 	TileSet() { Init(); }
