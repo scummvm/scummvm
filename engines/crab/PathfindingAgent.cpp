@@ -136,7 +136,7 @@ void PathfindingAgent::Update(long timeslice) {
 		return;
 	}
 
-	std::map<PathfindingGraphNode *, PlannerNode *>::iterator currentIter;
+	Common::StableMap<PathfindingGraphNode *, PlannerNode *>::iterator currentIter;
 
 	do {
 		PlannerNode *current = nodeQueue.front();
@@ -232,7 +232,7 @@ bool PathfindingAgent::isDone() const {
 
 // Clear everything.
 void PathfindingAgent::exit() {
-	std::map<PathfindingGraphNode *, PlannerNode *>::iterator iter;
+	Common::StableMap<PathfindingGraphNode *, PlannerNode *>::iterator iter;
 	if (!m_mCreatedList.empty()) {
 		for (iter = m_mCreatedList.begin(); iter != m_mCreatedList.end(); ++iter) {
 			delete (*iter).second;

@@ -112,7 +112,7 @@ public:
 
 	PriorityQueue<PlannerNode> nodeQueue;
 
-	std::map<PathfindingGraphNode *, PlannerNode *> m_mCreatedList;
+	Common::StableMap<PathfindingGraphNode *, PlannerNode *> m_mCreatedList;
 
 	// void SetSprite(pyrodactyl::anim::Sprite* s){entitySprite = s;}
 

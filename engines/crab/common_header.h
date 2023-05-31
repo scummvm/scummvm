@@ -56,6 +56,7 @@
 #include "common/path.h"
 #include "common/str.h"
 #include "common/hashmap.h"
+#include "common/stablemap.h"
 #include "common/list.h"
 #include "common/rect.h"
 #include "common/stream.h"
