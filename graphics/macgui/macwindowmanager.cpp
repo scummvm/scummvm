@@ -164,6 +164,8 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 	_needsRemoval = false;
 
 	_activeWidget = nullptr;
+	_lockedWidget = nullptr;
+
 	_mouseDown = false;
 	_hoveredWidget = nullptr;
 
@@ -335,6 +337,13 @@ void MacWindowManager::setActiveWidget(MacWidget *widget) {
 
 	if (_activeWidget)
 		_activeWidget->setActive(true);
+}
+
+void MacWindowManager::setLockedWidget(MacWidget *widget) {
+	if (_lockedWidget == widget)
+		return;
+
+	_lockedWidget = widget;
 }
 
 void MacWindowManager::clearWidgetRefs(MacWidget *widget) {
@@ -1024,7 +1033,8 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 	for (Common::List<BaseMacWindow *>::const_iterator it = _windowStack.end(); it != _windowStack.begin();) {
 		it--;
 		BaseMacWindow *w = *it;
-
+		if (_lockedWidget != nullptr && w != _lockedWidget)
+			continue;
 		if (w->hasAllFocus() || (w->isEditable() && event.type == Common::EVENT_KEYDOWN) ||
 				w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)
