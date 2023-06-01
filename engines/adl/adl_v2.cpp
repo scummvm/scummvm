@@ -314,7 +314,7 @@ void AdlEngine_v2::drawItems() {
 		if (item->region == _state.region && item->room == _state.room && !item->isOnScreen) {
 			if (item->state == IDI_ITEM_DROPPED) {
 				// Draw dropped item if in normal view
-				if (getCurRoom().picture == getCurRoom().curPicture)
+				if (getCurRoom().picture == getCurRoom().curPicture && _itemsOnScreen < _itemOffsets.size())
 					drawItem(*item, _itemOffsets[_itemsOnScreen++]);
 			} else {
 				// Draw fixed item if current view is in the pic list
