@@ -267,6 +267,8 @@ void DirectorSound::registerFade(uint8 soundChannel, bool fadeIn, int ticks) {
 
 	_channels[soundChannel]->fade = new FadeParams(startVol, targetVol, ticks, _window->getVM()->getMacTicks(), fadeIn);
 	_mixer->setChannelVolume(_channels[soundChannel]->handle, startVol);
+
+	_channels[soundChannel]->volume = startVol;
 }
 
 bool DirectorSound::fadeChannel(uint8 soundChannel) {
@@ -295,6 +297,9 @@ bool DirectorSound::fadeChannel(uint8 soundChannel) {
 
 	debugC(5, kDebugSound, "DirectorSound::fadeChannel(): fading channel %d volume to %d", soundChannel, fadeVol);
 	_mixer->setChannelVolume(_channels[soundChannel]->handle, fadeVol);
+
+	_channels[soundChannel]->volume = fadeVol;
+
 	return true;
 }
 
