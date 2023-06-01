@@ -115,7 +115,6 @@ void GroupedListWidget::sortGroups() {
 
 	);
 
-	uint curListSize = 0;
 	for (uint i = 0; i != _groupHeaders.size(); ++i) {
 		Common::U32String header = _groupHeaders[i];
 		Common::U32String displayedHeader;
@@ -132,14 +131,12 @@ void GroupedListWidget::sortGroups() {
 			displayedHeader.toUppercase();
 
 			_list.push_back(_groupHeaderPrefix + displayedHeader + _groupHeaderSuffix);
-			++curListSize;
 		}
 
 		if (_groupExpanded[groupID]) {
 			for (int *k = _itemsInGroup[groupID].begin(); k != _itemsInGroup[groupID].end(); ++k) {
 				_list.push_back(Common::U32String(_groupsVisible ? "    " : "") + _dataList[*k].orig);
 				_listIndex.push_back(*k);
-				++curListSize;
 			}
 		}
 	}
