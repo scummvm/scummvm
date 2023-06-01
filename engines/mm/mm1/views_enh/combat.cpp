@@ -169,7 +169,7 @@ void Combat::draw() {
 	case DEFEATED_MONSTERS:
 		writeDefeat();
 		Sound::sound2(SOUND_3);
-		delaySeconds(3);
+		delaySeconds(5);
 		return;
 	default:
 		break;
@@ -707,16 +707,18 @@ void Combat::clearPartyArea() {
 }
 
 void Combat::writeDefeat() {
-	writeString(10, 0, "+----------------------------+");
-	for (int y = 1; y < 8; ++y)
-		writeString(10, y, "!                            !");
-	writeString(10, 8, "+----------------------------+");
+	Common::String line1 = STRING["dialogs.combat.defeating1"];
+	Common::String line2 = STRING["dialogs.combat.defeating2"];
+	line1 = Common::String(line1.c_str() + 1, line1.c_str() + line1.size() - 2);
+	line2 = Common::String(line2.c_str() + 1, line2.c_str() + line2.size() - 2);
+	Common::String line3 = Common::String::format("%d %s",
+		_totalExperience, STRING["dialogs.combat.xp"].c_str());
 
-	writeString(10, 2, STRING["dialogs.combat.defeating1"]);
-	writeString(10, 4, STRING["dialogs.combat.defeating2"]);
-	writeNumber(14, 6, _totalExperience);
-	_textPos.x++;
-	writeString(STRING["dialogs.combat.xp"]);
+	setBounds(Common::Rect(50, 40, 270, 100));
+	ScrollView::draw();
+	writeLine(0, line1, ALIGN_MIDDLE);
+	writeLine(2, line2, ALIGN_MIDDLE);
+	writeLine(4, line3, ALIGN_MIDDLE);
 }
 
 void Combat::highlightNextRound() {
