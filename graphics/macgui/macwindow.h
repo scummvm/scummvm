@@ -283,6 +283,18 @@ public:
 	 * @param title Target title.
 	 */
 	void setTitle(const Common::String &title);
+
+	/**
+	 * Set visibility of window title.
+	 * @param visible visibility of window.
+	 */
+	virtual void setTitleVisible(bool visible);
+
+	/**
+	 * Get visibility of window title.
+	 */
+	bool isTitleVisible();
+
 	/**
 	 * Accessor to get the title of the window.
 	 * @return Title.
@@ -405,6 +417,7 @@ private:
 	bool _resizable;
 
 	bool _closeable;
+	bool _isTitleVisible;
 
 	int _borderWidth;
 
@@ -414,6 +427,7 @@ private:
 	WindowClick _highlightedPart;
 
 	Common::String _title;
+	Common::String _shadowedTitle;
 
 	int _borderType;
 };
