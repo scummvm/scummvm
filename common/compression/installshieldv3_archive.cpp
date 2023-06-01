@@ -153,4 +153,8 @@ Common::SeekableReadStream *InstallShieldV3::createReadStreamForMember(const Com
 	return Common::decompressDCL(_stream, entry.compressedSize, entry.uncompressedSize);
 }
 
+char InstallShieldV3::getPathSeparator() const {
+	return '\\';
+}
+
 } // End of namespace Common

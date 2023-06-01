@@ -46,6 +46,7 @@ public:
 	int listMembers(Common::ArchiveMemberList &list) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
+	char getPathSeparator() const override;
 
 private:
 	struct FileEntry {
