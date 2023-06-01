@@ -415,8 +415,8 @@ It remove(It first, It last, const T& val) {
 }
 
 /**
- * Finds the first item in the range [first, last) for which comp(item, val)
- * (item < val by default) is false.
+ * Returns an iterator to the first item in the range [first, last) for which comp(item, val)
+ * (item < val by default) is false, or last if no such item is found.
  * Items in the range [first, last) need to be partitioned by comp(item, val), that is,
  * all items for which comp(item, val) is true (items that are less than val)
  * come before all items for which the expression is false (items that are bigger than or
@@ -437,8 +437,8 @@ RandomIt lowerBound(RandomIt first, RandomIt last, const V &val, Comp comp = {})
 }
 
 /**
- * Finds the first item in the range [first, last) for which comp(val, item)
- * (val < item by default) is true.
+ * Returns an iterator to the first item in the range [first, last) for which comp(val, item)
+ * (val < item by default) is true, or last if no such item is found.
  * Items in the range [first, last) need to be partitioned by !comp(val, item), that is,
  * all items for which !comp(val, item) is true (items that are less than or equal to val),
  * come before all items for which the expression is false (items that are greater than val).
