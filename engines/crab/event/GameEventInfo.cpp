@@ -136,7 +136,7 @@ bool Info::VarGet(const Common::String &name, int &val) {
 
 void Info::VarSet(const Common::String &name, const Common::String &val) {
 	int var_val = 0;
-	bool assign_to_var = std::find_if(val.begin(), val.end(), IsChar) != val.end();
+	bool assign_to_var = Common::find_if(val.begin(), val.end(), IsChar) != val.end();
 
 	if (assign_to_var)
 		VarGet(val, var_val);
