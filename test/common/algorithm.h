@@ -182,4 +182,52 @@ public:
 			TS_ASSERT_EQUALS(checkEqual(original.begin(), r, expected.begin()), true);
 		}
 	}
+
+	void test_lower_bound_equal_found() {
+		const auto test = [](const int *first, const int *last, int value) {
+			const auto it = Common::lowerBound(first, last, value);
+			TS_ASSERT(first <= it && it < last);
+			TS_ASSERT_EQUALS(*it, value);
+		};
+		const int one[] = {1};
+		const int values[] = {1, 2, 4, 10, 50, 100, 900, 1000};
+		test(one, one + ARRAYSIZE(one), 1);
+		test(values, values + ARRAYSIZE(values), 1);
+		test(values, values + ARRAYSIZE(values), 1000);
+		test(values, values + ARRAYSIZE(values), 4);
+	}
+
+	void test_lower_bound_greater_found() {
+		const auto test = [](const int *first, const int *last, int value, int expected) {
+			const auto it = Common::lowerBound(first, last, value);
+			TS_ASSERT(first <= it && it < last);
+			TS_ASSERT_EQUALS(*it, expected);
+		};
+		const int one[] = {1};
+		const int values[] = {2, 3, 4, 10, 50, 100, 900, 1000};
+		test(one, one + ARRAYSIZE(one), 0, 1);
+		test(values, values + ARRAYSIZE(values), 1, 2);
+		test(values, values + ARRAYSIZE(values), 950, 1000);
+		test(values, values + ARRAYSIZE(values), 20, 50);
+	}
+
+	void test_lower_bound_element_nothing_found() {
+		const int values[] = {1, 2, 3, 6, 8, 10, 20, 50};
+		const auto last = values + ARRAYSIZE(values);
+		const auto it = Common::lowerBound(values, last, 100);
+		TS_ASSERT_EQUALS(it, last);
+	}
+
+	void test_lower_bound_empty_input() {
+		{
+			const int values[] = {1};
+			const auto last = values + ARRAYSIZE(values);
+			const auto it = Common::lowerBound(last, last, 1);
+			TS_ASSERT_EQUALS(it, last);
+		}
+		{
+			const auto it = Common::lowerBound((int *)nullptr, (int *)nullptr, 1);
+			TS_ASSERT_EQUALS(it, nullptr);
+		}
+	}
 };
