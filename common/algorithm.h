@@ -414,6 +414,40 @@ It remove(It first, It last, const T& val) {
 	return first;
 }
 
+/**
+ * Finds the first item in the range [first, last) for which comp(item, val)
+ * (item < val by default) is false.
+ * This function is the equivalent of std::lower_bound for random access iterators.
+ */
+template<typename RandomIt, typename V, typename Comp = Less<V> >
+RandomIt lowerBound(RandomIt first, RandomIt last, const V &val, Comp comp = {}) {
+	while (first < last) {
+		const RandomIt mid = first + distance(first, last) / 2;
+		if (comp(*mid, val))
+			first = mid + 1;
+		else
+			last = mid;
+	}
+	return first;
+}
+
+/**
+ * Finds the first item in the range [first, last) for which comp(val, item)
+ * (val < item by default) is true.
+ * This function is the equivalent of std::upper_bound for random access iterators.
+ */
+template<typename RandomIt, typename V, typename Comp = Less<V> >
+RandomIt upperBound(RandomIt first, RandomIt last, const V &val, Comp comp = {}) {
+	while (first < last) {
+		const RandomIt mid = first + distance(first, last) / 2;
+		if (!comp(val, *mid))
+			first = mid + 1;
+		else
+			last = mid;
+	}
+	return first;
+}
+
 /** @} */
 
 } // End of namespace Common
