@@ -804,12 +804,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		{
 			switch (field) {
 			case kTheVolume:
-				{
-					SoundChannel *chan = _vm->getCurrentWindow()->getSoundManager()->getChannel(id.asInt());
-					if (chan) {
-						d = (int)chan->volume;
-					}
-				}
+				d = _vm->getCurrentWindow()->getSoundManager()->getChannelVolume(id.asInt());
 				break;
 			default:
 				warning("Lingo::getTheEntity(): Unprocessed getting field \"%s\" of entity %s", field2str(field), entity2str(entity));

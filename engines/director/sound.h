@@ -205,6 +205,7 @@ public:
 	bool fadeChannel(uint8 soundChannel);
 
 	bool isChannelActive(uint8 soundChannel);
+	uint8 getChannelVolume(uint8 soundChannel);
 	void stopSound(uint8 soundChannel);
 	void stopSound();
 
@@ -213,7 +214,6 @@ private:
 	bool isLastPlayedSound(uint8 soundChannel, const SoundID &soundId);
 	bool shouldStopOnZero(uint8 soundChannel);
 
-	uint8 getChannelVolume(uint8 soundChannel);
 	void setSoundLevelInternal(uint8 soundChannel, uint8 soundLevel);
 	bool assertChannel(int soundChannel);
 	void cancelFade(uint8 soundChannel);
