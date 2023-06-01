@@ -163,7 +163,7 @@ void Picture::setupPalette() {
 void Picture::drawMask(Graphics::Surface &surface, int16 x, int16 y, int16 dx, int16 dy) {
 	debugC(1, kDebugPicture, "drawMask(surface, %d, %d, %d, %d)", x, y, dx, dy);
 
-	for (int32 i = 0; i < 128; i++) {
+	for (int32 i = 0; i < 128; ++i) {
 		byte color[3];
 		color[0] = i * 2;
 		color[1] = i * 2;
@@ -182,18 +182,20 @@ void Picture::drawMask(Graphics::Surface &surface, int16 x, int16 y, int16 dx, i
 	uint8 *c = _data + _width * dy + dx;
 	uint8 *curRow = (uint8 *)surface.getBasePtr(x, y);
 
-	for (int16 yy = 0; yy < ry; yy++) {
-		uint8 *curSrc = c;
-		uint8 *cur = curRow;
-		for (int16 xx = 0; xx < rx; xx++) {
-			//*cur = (*curSrc >> 5) * 8; // & 0x1f;
-			*cur = (*curSrc & 0x1f) ? 127 : 0;
+	if (_width > dx) {
+		for (int16 yy = 0; yy < ry; ++yy) {
+			uint8 *curSrc = c;
+			uint8 *cur = curRow;
+			for (int16 xx = 0; xx < rx; ++xx) {
+				//*cur = (*curSrc >> 5) * 8; // & 0x1f;
+				*cur = (*curSrc & 0x1f) ? 127 : 0;
 
-			curSrc++;
-			cur++;
+				++curSrc;
+				++cur;
+			}
+			curRow += destPitch;
+			c += srcPitch;
 		}
-		curRow += destPitch;
-		c += srcPitch;
 	}
 }
 
@@ -207,26 +209,30 @@ void Picture::drawWithRectList(Graphics::Surface& surface, int16 x, int16 y, int
 	int32 destPitch = surface.pitch;
 	int32 srcPitch = _width;
 
-	for (uint32 i = 0; i < rectArray.size(); i++) {
-
+	for (uint32 i = 0; i < rectArray.size(); ++i) {
 		Common::Rect rect = rectArray[i];
 
 		int16 fillRx = MIN<int32>(rx, rect.right - rect.left);
 		int16 fillRy = MIN<int32>(ry, rect.bottom - rect.top);
 
-		uint8 *c = _data + _width * (dy + rect.top) + (dx + rect.left);
-		uint8 *curRow = (uint8 *)surface.getBasePtr(x + rect.left, y + rect.top);
+		if (_width > dx + rect.left) {
+			// Sometimes rect dimensions refer to the larger width ie. 1280, while the picture width is 640
+			// The if clause above is a simple check to avoid those cases.
+			// TODO maybe something smarter could be done to prevent adding such problematic rectangles to the list
+			uint8 *c = _data + _width * (dy + rect.top) + (dx + rect.left);
+			uint8 *curRow = (uint8 *)surface.getBasePtr(x + rect.left, y + rect.top);
 
-		for (int16 yy = 0; yy < fillRy; yy++) {
-			uint8 *curSrc = c;
-			uint8 *cur = curRow;
-			for (int16 xx = 0; xx < fillRx; xx++) {
-				*cur = *curSrc;
-				curSrc++;
-				cur++;
+			for (int16 yy = 0; yy < fillRy; ++yy) {
+				uint8 *curSrc = c;
+				uint8 *cur = curRow;
+				for (int16 xx = 0; xx < fillRx; ++xx) {
+					*cur = *curSrc;  // Here is where the drawing happens (starting from rect Top Left)
+					++curSrc;    // This goes to the next entry of _data (to be read)
+					++cur;       // This goes to the next address BasePtr of surface (to write there, on surface)
+				}
+				c += srcPitch;       // data "row" is increased by srcPitch (_width)
+				curRow += destPitch; // surface row is increased by destPitch
 			}
-			curRow += destPitch;
-			c += srcPitch;
 		}
 	}
 }
@@ -245,16 +251,18 @@ void Picture::draw(Graphics::Surface &surface, int16 x, int16 y, int16 dx, int16
 	uint8 *c = _data + _width * dy + dx;
 	uint8 *curRow = (uint8 *)surface.getBasePtr(x, y);
 
-	for (int16 yy = 0; yy < ry; yy++) {
-		uint8 *curSrc = c;
-		uint8 *cur = curRow;
-		for (int16 xx = 0; xx < rx; xx++) {
-			*cur = *curSrc;
-			curSrc++;
-			cur++;
+	if (_width > dx) {
+		for (int16 yy = 0; yy < ry; ++yy) {
+			uint8 *curSrc = c;
+			uint8 *cur = curRow;
+			for (int16 xx = 0; xx < rx; ++xx) {
+				*cur = *curSrc;
+				++curSrc;
+				++cur;
+			}
+			curRow += destPitch;
+			c += srcPitch;
 		}
-		curRow += destPitch;
-		c += srcPitch;
 	}
 }
 
@@ -277,8 +285,8 @@ void Picture::floodFillNotWalkableOnMask(int16 x, int16 y) {
 	while (!stack.empty()) {
 		Common::Point pt = stack.pop();
 		while (_data[pt.x + pt.y * _width] & 0x1F && pt.y >= 0)
-			pt.y--;
-		pt.y++;
+			--pt.y;
+		++pt.y;
 		bool spanLeft = false;
 		bool spanRight = false;
 		uint32 nextDataPos = pt.x + pt.y * _width;
@@ -296,7 +304,7 @@ void Picture::floodFillNotWalkableOnMask(int16 x, int16 y) {
 			} else if (spanRight && pt.x < _width - 1 && !(_data[nextDataPos + 1] & 0x1F)) {
 				spanRight = 0;
 			}
-			pt.y++;
+			++pt.y;
 			nextDataPos = pt.x + pt.y * _width;
 		}
 	}
@@ -327,12 +335,12 @@ void Picture::drawLineOnMask(int16 x, int16 y, int16 x2, int16 y2, bool walkable
 	int32 cdx = (dx << 16) / t;
 	int32 cdy = (dy << 16) / t;
 
-	for (int16 i = t; i > 0; i--) {
+	for (int16 i = t; i > 0; --i) {
 		int32 rx = bx >> 16;
 		int32 ry = by >> 16;
 
-		if ( rx >= 0 && rx < _width-1 && ry >= 0 && ry < _height) {	// sanity check: some lines in the game
-																	// were drawing outside the screen causing corruption
+		if ( rx >= 0 && rx < _width-1 && ry >= 0 && ry < _height) { // sanity check: some lines in the game
+		                                                            // were drawing outside the screen causing corruption
 			if (!walkable) {
 				_data[_width * ry + rx] &= 0xe0;
 				_data[_width * ry + rx + 1] &= 0xe0;

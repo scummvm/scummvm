@@ -1685,6 +1685,7 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 
 ToonEngine::~ToonEngine() {
 	delete _currentPicture;
+	delete _currentCutaway;
 	delete _currentMask;
 	delete _inventoryPicture;
 
@@ -3532,6 +3533,8 @@ void ToonEngine::deleteMouseItem() {
 
 void ToonEngine::showCutaway(const Common::String &cutawayPicture) {
 	_gameState->_inCutaway = true;
+	delete _currentCutaway;
+	_currentCutaway = nullptr;
 	_currentCutaway = new Picture(this);
 	if (cutawayPicture.empty()) {
 		Common::String name = _gameState->_locations[_gameState->_currentScene]._cutaway;
@@ -3551,7 +3554,7 @@ void ToonEngine::hideCutaway() {
 	_gameState->_sackVisible = true;
 	delete _currentCutaway;
 	_gameState->_currentScrollValue = _oldScrollValue;
-	_currentCutaway = 0;
+	_currentCutaway = nullptr;
 	_currentPicture->setupPalette();
 	dirtyAllScreen();
 	flushPalette();
