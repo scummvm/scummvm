@@ -106,6 +106,9 @@ uint8 DirectorSound::getChannelVolume(uint8 soundChannel) {
 	if (!assertChannel(soundChannel))
 		return 0;
 
+	if (!_mixer->isSoundHandleActive(_channels[soundChannel]->handle))
+		return 0;
+
 	return _enable ? _channels[soundChannel]->volume : 0;
 }
 
