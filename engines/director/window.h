@@ -139,8 +139,7 @@ public:
 
 	void setWindowType(int type) { _windowType = type; updateBorderType(); }
 	int getWindowType() const { return _windowType; }
-	void setTitleVisible(bool titleVisible) { _titleVisible = titleVisible; updateBorderType(); };
-	bool isTitleVisible() { return _titleVisible; };
+	void setTitleVisible(bool titleVisible);
 	Datum getStageRect();
 	bool setStageRect(Datum datum);
 
@@ -215,7 +214,6 @@ private:
 	int16 _startFrame;
 
 	int _windowType;
-	bool _titleVisible;
 
 private:
 

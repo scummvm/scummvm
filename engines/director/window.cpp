@@ -60,7 +60,6 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_startFrame = _vm->getStartMovie().startFrame;
 
 	_windowType = -1;
-	_titleVisible = true;
 	updateBorderType();
 }
 
@@ -214,6 +213,13 @@ void Window::setStageColor(uint32 stageColor, bool forceReset) {
 	}
 }
 
+void Window::setTitleVisible(bool titleVisible) {
+	MacWindow::setTitleVisible(titleVisible);
+	updateBorderType();
+
+	setVisible(true); // Activate this window on top
+}
+
 Datum Window::getStageRect() {
 	Common::Rect rect = getInnerDimensions();
 	Datum d;
@@ -309,7 +315,7 @@ bool Window::setNextMovie(Common::String &movieFilenameRaw) {
 void Window::updateBorderType() {
 	if (_isStage) {
 		setBorderType(3);
-	} else if (!_titleVisible) {
+	} else if (!isTitleVisible()) {
 		setBorderType(2);
 	} else {
 		setBorderType(MAX(0, MIN(_windowType, 16)));
