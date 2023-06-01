@@ -139,7 +139,7 @@ public:
 
 	void setWindowType(int type) { _windowType = type; updateBorderType(); }
 	int getWindowType() const { return _windowType; }
-	void setTitleVisible(bool titleVisible);
+	void setTitleVisible(bool titleVisible) override;
 	Datum getStageRect();
 	bool setStageRect(Datum datum);
 	void setModal(bool modal);
