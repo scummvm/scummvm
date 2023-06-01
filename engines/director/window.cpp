@@ -60,6 +60,8 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_startFrame = _vm->getStartMovie().startFrame;
 
 	_windowType = -1;
+	_isModal = false;
+
 	updateBorderType();
 }
 
@@ -245,6 +247,18 @@ bool Window::setStageRect(Datum datum) {
 	setInnerDimensions(rect);
 
 	return true;
+}
+
+void Window::setModal(bool modal) {
+	if (_isModal && !modal) {
+		_wm->setLockedWidget(nullptr);
+		_isModal = false;
+	} else if (!_isModal && modal) {
+		_wm->setLockedWidget(this);
+		_isModal = true;
+	}
+	
+	setVisible(true); // Activate this window on top
 }
 
 void Window::reset() {

@@ -142,6 +142,8 @@ public:
 	void setTitleVisible(bool titleVisible);
 	Datum getStageRect();
 	bool setStageRect(Datum datum);
+	void setModal(bool modal);
+	bool getModal() { return _isModal; };
 
 	void updateBorderType();
 
@@ -214,6 +216,7 @@ private:
 	int16 _startFrame;
 
 	int _windowType;
+	bool _isModal;
 
 private:
 
