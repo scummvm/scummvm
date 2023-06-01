@@ -1221,8 +1221,8 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 
 	// Setup backbuffer state.
 
-	// Default to black as clear color.
-	_backBuffer.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	// Default to opaque black as clear color.
+	_backBuffer.setClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	_pipeline->setFramebuffer(&_backBuffer);
 
