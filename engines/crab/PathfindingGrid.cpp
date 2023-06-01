@@ -203,7 +203,7 @@ Common::Array<PathfindingGraphNode *> PathfindingGrid::CornerCheck(const Pathfin
 	for (auto iter : node1->neighborNodes) {
 		for (auto iter2 : node2->neighborNodes) {
 			if (iter == iter2 && iter->movementCost < 0) {
-				if (returnNodes.size() == 0 || (*(std::find(returnNodes.begin(), returnNodes.end(), iter))) == NULL)
+				if (returnNodes.size() == 0 || (*(Common::find(returnNodes.begin(), returnNodes.end(), iter))) == NULL)
 					returnNodes.push_back(iter);
 			}
 		}
@@ -242,7 +242,7 @@ PathfindingGraphNode *PathfindingGrid::GetNearestOpenNode(Vector2f nodePos, Vect
 		} else {
 			for (unsigned int i = 0; i < checkNodes.front()->neighborNodes.size(); ++i) {
 				// If the neighbor hasn't been checked yet, add it to the list to check.
-				if (std::find(allUsedNodes.begin(), allUsedNodes.end(), checkNodes.front()->neighborNodes[i]) == allUsedNodes.end()) {
+				if (Common::find(allUsedNodes.begin(), allUsedNodes.end(), checkNodes.front()->neighborNodes[i]) == allUsedNodes.end()) {
 					allUsedNodes.push_back(checkNodes.front()->neighborNodes[i]);
 					checkNodes.push_back(checkNodes.front()->neighborNodes[i]);
 				}
