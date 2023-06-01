@@ -157,11 +157,29 @@ public:
 	}
 
 	void test_container_remove() {
-		Common::Array<int> original {1, 2, 3, 10, 4, 5};
-		Common::Array<int> expected {1, 2, 3, 4, 5};
+		{
+			Common::Array<int> original {1, 2, 3, 10, 4, 5};
+			Common::Array<int> expected {1, 2, 3, 4, 5};
 
-		Common::remove(original.begin(), original.end(), 10);
+			Common::Array<int>::iterator r = Common::remove(original.begin(), original.end(), 10);
 
-		TS_ASSERT_EQUALS(checkEqual(expected.begin(), expected.end(), original.begin()), true);
+			TS_ASSERT_EQUALS(checkEqual(original.begin(), r, expected.begin()), true);
+		}
+		{
+			Common::Array<int> original {1, 2, 2, 3, 4, 4, 2, 1, 0};
+			Common::Array<int> expected {1, 3, 4, 4, 1, 0};
+
+			Common::Array<int>::iterator r = Common::remove(original.begin(), original.end(), 2);
+
+			TS_ASSERT_EQUALS(checkEqual(original.begin(), r, expected.begin()), true);
+		}
+		{
+			Common::Array<int> original {0, 1, 2, 3, 0, 3, 2, 1, 0};
+			Common::Array<int> expected {1, 2, 3, 3, 2, 1};
+
+			Common::Array<int>::iterator r = Common::remove(original.begin(), original.end(), 0);
+
+			TS_ASSERT_EQUALS(checkEqual(original.begin(), r, expected.begin()), true);
+		}
 	}
 };
