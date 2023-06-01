@@ -104,6 +104,8 @@ dialogs:
 		option1: "'C'.......Create New Characters"
 		option2: "'V'.......View All Characters"
 		option3: "'#'.......Go to Town"
+		option3e1: "'1' to '5'"
+		option3e2: "Go to Town"
 		copyright1: "Copr. 1986,1987-Jon Van Caneghem"
 		copyright2: "All Rights Reserved"
 		scummvm: "Enhanced version provided by ScummVM"

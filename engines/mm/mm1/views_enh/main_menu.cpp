@@ -116,14 +116,15 @@ void MainMenu::draw() {
 
 	Common::String line1 = STRING["dialogs.main_menu.option1"];
 	Common::String line2 = STRING["dialogs.main_menu.option2"];
-	Common::String line3 = STRING["dialogs.main_menu.option3"];
+	Common::String line31 = STRING["dialogs.main_menu.option3e1"];
+	Common::String line32 = STRING["dialogs.main_menu.option3e2"];
 
 	writeString(80, 120, Common::String(line1.c_str(), line1.c_str() + 3));
 	writeString(80, 130, Common::String(line2.c_str(), line2.c_str() + 3));
-	writeString(80, 140, Common::String(line3.c_str(), line3.c_str() + 3));
+	writeString(43, 140, line31);
 	writeString(110, 120, Common::String(line1.c_str() + line1.findLastOf('.') + 1));
 	writeString(110, 130, Common::String(line2.c_str() + line2.findLastOf('.') + 1));
-	writeString(110, 140, Common::String(line3.c_str() + line3.findLastOf('.') + 1));
+	writeString(110, 140, line32);
 
 	writeString(0, 165, STRING["dialogs.main_menu.copyright1"], ALIGN_MIDDLE);
 	writeString(0, 175, STRING["dialogs.main_menu.scummvm"], ALIGN_MIDDLE);
