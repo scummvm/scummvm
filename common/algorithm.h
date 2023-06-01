@@ -417,6 +417,11 @@ It remove(It first, It last, const T& val) {
 /**
  * Finds the first item in the range [first, last) for which comp(item, val)
  * (item < val by default) is false.
+ * Items in the range [first, last) need to be partitioned by comp(item, val), that is,
+ * all items for which comp(item, val) is true (items that are less than val)
+ * come before all items for which the expression is false (items that are bigger than or
+ * equal to val). A sorted range conforms to the requirement.
+ *
  * This function is the equivalent of std::lower_bound for random access iterators.
  */
 template<typename RandomIt, typename V, typename Comp = Less<V> >
@@ -434,6 +439,11 @@ RandomIt lowerBound(RandomIt first, RandomIt last, const V &val, Comp comp = {})
 /**
  * Finds the first item in the range [first, last) for which comp(val, item)
  * (val < item by default) is true.
+ * Items in the range [first, last) need to be partitioned by !comp(val, item), that is,
+ * all items for which !comp(val, item) is true (items that are less than or equal to val),
+ * come before all items for which the expression is false (items that are greater than val).
+ * A sorted range conforms to the requirement.
+ *
  * This function is the equivalent of std::upper_bound for random access iterators.
  */
 template<typename RandomIt, typename V, typename Comp = Less<V> >
