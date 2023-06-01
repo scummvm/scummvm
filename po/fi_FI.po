@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-05-31 19:15+0000\n"
+"POT-Creation-Date: 2023-06-01 12:05+0000\n"
 "PO-Revision-Date: 2023-05-19 23:40+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -2917,7 +2917,7 @@ msgstr "Palaa p~e~livalitsimeen"
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:742
 #: engines/sci/engine/kfile.cpp:1076 engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3768
+#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3771
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:628
 #: engines/wage/saveload.cpp:751 engines/zvision/file/save_manager.cpp:48
 msgid "Save game:"
@@ -2939,7 +2939,7 @@ msgstr "Tallenna peli:"
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
 #: engines/sci/engine/kfile.cpp:1076 engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3768
+#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3771
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:628
 #: engines/wage/saveload.cpp:751 engines/zvision/file/save_manager.cpp:48
 #: engines/zvision/metaengine.cpp:262
@@ -4620,7 +4620,7 @@ msgstr "Tarkista päivitykset..."
 #: engines/hugo/hugo.cpp:424 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:301 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:464 engines/teenagent/resources.cpp:97
-#: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5373
+#: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5376
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
 msgstr "\"%s\" pelimoottorin datatiedostoa ei löydetty."
@@ -4628,7 +4628,7 @@ msgstr "\"%s\" pelimoottorin datatiedostoa ei löydetty."
 #: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:956
 #: engines/hugo/hugo.cpp:436 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:309 engines/supernova/supernova.cpp:469
-#: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5386
+#: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5389
 #, c-format
 msgid "The '%s' engine data file is corrupt."
 msgstr "\"%s\" pelimoottorin datatiedosto on korruptoitunut."
@@ -4636,7 +4636,7 @@ msgstr "\"%s\" pelimoottorin datatiedosto on korruptoitunut."
 #: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:967
 #: engines/hugo/hugo.cpp:446 engines/lure/lure.cpp:69
 #: engines/mortevielle/mortevielle.cpp:319 engines/tony/tony.cpp:211
-#: engines/toon/toon.cpp:5397
+#: engines/toon/toon.cpp:5400
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
@@ -4777,7 +4777,7 @@ msgstr "Lisää pelinnopeusvalikko (kuten PC-versiossa)"
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:745
 #: engines/sci/engine/kfile.cpp:1206 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3862
+#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3865
 #: engines/zvision/file/save_manager.cpp:61
 msgid "Restore game:"
 msgstr "Lataa pelitallenne:"
@@ -4797,7 +4797,7 @@ msgstr "Lataa pelitallenne:"
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:746
 #: engines/sci/engine/kfile.cpp:1206 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3862
+#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3865
 #: engines/zvision/file/save_manager.cpp:61 engines/zvision/metaengine.cpp:267
 msgid "Restore"
 msgstr "Lataa tallenne"
@@ -8935,7 +8935,7 @@ msgstr "Tallennuksen #%d pikalataus epäonnistui"
 msgid "Are you sure you want to exit?"
 msgstr "Haluatko varmasti poistua?"
 
-#: engines/toon/toon.cpp:1910
+#: engines/toon/toon.cpp:1911
 #, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr "Datatiedostoa \"%s\" ei löydetty."
