@@ -62,7 +62,7 @@ public:
 	void clear();
 
 	//! \brief Returns the number of nodes currently in the heap.
-	std::size_t size() const;
+	size_t size() const;
 
 	//! \brief Pushes the specified node onto the heap.
 	//!
@@ -115,7 +115,7 @@ void PriorityQueue<Node>::clear() {
 }
 
 template<typename Node>
-std::size_t PriorityQueue<Node>::size() const {
+size_t PriorityQueue<Node>::size() const {
 	return open.size();
 }
 

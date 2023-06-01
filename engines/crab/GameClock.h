@@ -53,12 +53,12 @@ public:
 		uint32 ms = 0, hr = 0, min = 0, sec = 0;
 		Common::String str_hrs, str_min, str_sec;
 
-		std::size_t found_1 = str.findFirstOf(seperator);
+		size_t found_1 = str.findFirstOf(seperator);
 		if (found_1 > 0 && found_1 != Common::String::npos) {
 			str_hrs = str.substr(0, found_1);
 			hr = StringToNumber<uint32>(str_hrs);
 
-			std::size_t found_2 = str.findFirstOf(seperator);
+			size_t found_2 = str.findFirstOf(seperator);
 			if (found_2 > 0 && found_2 != Common::String::npos) {
 				str_sec = str.substr(found_2 + 1, Common::String::npos);
 				sec = StringToNumber<uint32>(str_sec);
