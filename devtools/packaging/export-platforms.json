@@ -1,0 +1,19 @@
+{
+	"android": {
+		"target": "android",
+		"prepare": {
+			"type": "python-script",
+			"location": "android/generate_asset_pack.py",
+			"successMessage": "Asset pack required for bundling stage is successfully created!"
+		},
+		"bundle": {
+			"type": "python-script",
+			"location": "android/add_packs.py",
+			"successMessage": "Android App Bundle is successfully created in output/android. You can now manually upload this file on Google Play Console."
+		},
+		"upload": {
+			"type": "none"
+		}
+	},
+	"steam": {}
+}
