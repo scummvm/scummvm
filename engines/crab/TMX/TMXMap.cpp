@@ -177,7 +177,7 @@ void TMXMap::Load(const Common::String &path, Common::String filename) {
 			}
 
 			// Sort the props in the level according to y axis
-			std::sort(prop.begin(), prop.end(), PropCompare);
+			Common::sort(prop.begin(), prop.end(), PropCompare);
 		}
 	}
 }
