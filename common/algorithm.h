@@ -390,6 +390,25 @@ void replace(It begin, It end, const Dat &original, const Dat &replaced) {
 	}
 }
 
+/**
+ * Removes all elements that are equal to value from the range [first, last).
+ * This function is the equivalent of std::remove.
+ */
+template<class It, class T>
+It remove(It first, It last, const T& val) {
+	first = find(first, last, val);
+	if (first != last) {
+		It i = first;
+		while (++i != last) {
+			if (!(*i == val)) {
+				*first = move(*i);
+				first++;
+			}
+		}
+	}
+	return first;
+}
+
 /** @} */
 
 } // End of namespace Common

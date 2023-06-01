@@ -4,6 +4,7 @@
 #include "common/func.h"
 #include "common/algorithm.h"
 #include "common/list.h"
+#include "common/array.h"
 #include "common/str.h"
 
 class AlgorithmTestSuite : public CxxTest::TestSuite {
@@ -153,5 +154,14 @@ public:
 		Common::replace(original.begin(), original.end(), 3, 5);
 
 		TS_ASSERT_EQUALS(checkEqual(original.begin(), original.end(), expected.begin()), true);
+	}
+
+	void test_container_remove() {
+		Common::Array<int> original {1, 2, 3, 10, 4, 5};
+		Common::Array<int> expected {1, 2, 3, 4, 5};
+
+		Common::remove(original.begin(), original.end(), 10);
+
+		TS_ASSERT_EQUALS(checkEqual(expected.begin(), expected.end(), original.begin()), true);
 	}
 };
