@@ -262,6 +262,14 @@
 //
 #if !defined(HAVE_CONFIG_H)
 
+	// If -fsanitize=undefined or -fsanitize=alignment is in use, and the
+	// compiler happens to report it, make sure SCUMM_NEED_ALIGNMENT is
+	// defined, in order to avoid false positives when not using the
+	// "configure" script to enable UBSan.
+	#if __has_feature(undefined_behavior_sanitizer)
+		#define SCUMM_NEED_ALIGNMENT
+	#endif
+
 	#if defined(__DC__) || \
 		  defined(__DS__) || \
 		  defined(__3DS__) || \
