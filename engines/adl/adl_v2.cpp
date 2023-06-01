@@ -189,6 +189,12 @@ void AdlEngine_v2::printString(const Common::String &str) {
 
 void AdlEngine_v2::drawItem(Item &item, const Common::Point &pos) {
 	item.isOnScreen = true;
+
+	if (item.picture == 0 || (uint)(item.picture - 1) >= _itemPics.size()) {
+		warning("Item picture %d not found", item.picture);
+		return;
+	}
+
 	StreamPtr stream(_itemPics[item.picture - 1]->createReadStream());
 	stream->readByte(); // Skip clear opcode
 	_graphics->drawPic(*stream, pos);
@@ -196,7 +202,7 @@ void AdlEngine_v2::drawItem(Item &item, const Common::Point &pos) {
 
 void AdlEngine_v2::loadRoom(byte roomNr) {
 	if (Common::find(_brokenRooms.begin(), _brokenRooms.end(), roomNr) != _brokenRooms.end()) {
-		debug("Warning: attempt to load non-existent room %d", roomNr);
+		warning("Attempt to load non-existent room %d", roomNr);
 		_roomData.description.clear();
 		_roomData.pictures.clear();
 		_roomData.commands.clear();
