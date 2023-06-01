@@ -1711,7 +1711,11 @@ void start_character_turning(CharacterInfo *chinf, int useloop, int no_diagonal)
 			break;
 		if ((turnlooporder[ii] >= 4) && (no_diagonal > 0))
 			continue;
-		if (_GP(views)[chinf->view].loops[turnlooporder[ii]].numFrames < 1)
+		// Upstream does not do this check
+		// The value of turnlooporder should be checked before addressing the
+		// loops vector, to avoid going OOB and triggering an assertion
+		if (((uint)turnlooporder[ii] < _GP(views)[chinf->view].loops.size()) &&
+			(_GP(views)[chinf->view].loops[turnlooporder[ii]].numFrames < 1))
 			continue;
 		if (turnlooporder[ii] < _GP(views)[chinf->view].numLoops)
 			chinf->walking += TURNING_AROUND;
