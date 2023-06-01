@@ -376,12 +376,12 @@ static const ADGameDescription gameDescriptions[] = {
 		"spacestationoblivion",
 		"",
 		{
-			{"x.prg", 0, "10c556ee637bf03bcc1a051277542102", 293264},
+			{"x.prg", 0, "7fc6ef316be4819d88d8031738571a50", 293264},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
-		ADGF_UNSUPPORTED,
+		GF_ATARI_BUDGET,
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
 	{
