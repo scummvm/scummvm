@@ -393,6 +393,11 @@ void replace(It begin, It end, const Dat &original, const Dat &replaced) {
 /**
  * Removes all elements that are equal to value from the range [first, last).
  * This function is the equivalent of std::remove.
+ * 
+ * @param[in] first Iterator to the first position to be examined.
+ * @param[in] last  Iterator to the last position.
+ * @param[in] val   Value to be removed.
+ * @return          An iterator to the new end of the range.
  */
 template<class It, class T>
 It remove(It first, It last, const T& val) {
