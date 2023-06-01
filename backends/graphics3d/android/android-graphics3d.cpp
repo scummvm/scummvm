@@ -969,7 +969,7 @@ void AndroidGraphics3dManager::clearScreen(FixupType type, byte count) {
 
 	for (byte i = 0; i < count; ++i) {
 		// clear screen
-		GLCALL(glClearColor(0, 0, 0, 1 << 16));
+		GLCALL(glClearColor(0.f, 0.f, 0.f, 1.f));
 		GLCALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
 		switch (type) {
