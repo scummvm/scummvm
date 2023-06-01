@@ -124,7 +124,7 @@ void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
 					background.push_back(s);
 				}
 
-				std::sort(background.begin(), background.end(), CompSpriteLayer);
+				Common::sort(background.begin(), background.end(), CompSpriteLayer);
 			}
 
 			if (NodeValid("fly", node)) {
