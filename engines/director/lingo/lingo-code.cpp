@@ -251,7 +251,7 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 
 	if (funcSym.ctx) {
 		_state->context = funcSym.ctx;
-		*_state->context->_refCount += 1;
+		_state->context->incRefCount();
 	}
 
 	DatumHash *localvars = new DatumHash;
@@ -343,10 +343,7 @@ void Lingo::popContext(bool aborting) {
 		error("handler %s popped extra %d values", fp->sp.name->c_str(), fp->stackSizeBefore - _stack.size());
 	}
 
-	*_state->context->_refCount -= 1;
-	if (*_state->context->_refCount <= 0) {
-		delete _state->context;
-	}
+	_state->context->decRefCount();
 
 	_state->script = fp->retScript;
 	_state->context = fp->retContext;

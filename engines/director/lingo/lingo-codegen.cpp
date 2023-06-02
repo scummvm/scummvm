@@ -386,7 +386,7 @@ void LingoCompiler::registerFactory(Common::String &name) {
 			_assemblyArchive->factoryContexts[_assemblyId] = new Common::HashMap<Common::String, ScriptContext *>();
 		}
 		if (!_assemblyArchive->factoryContexts[_assemblyId]->contains(name)) {
-			*_assemblyContext->_refCount += 1;
+			_assemblyContext->incRefCount();
 			(*_assemblyArchive->factoryContexts[_assemblyId])[name] = _assemblyContext;
 		}
 	}
