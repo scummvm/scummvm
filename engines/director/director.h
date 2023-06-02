@@ -211,6 +211,14 @@ public:
 	Common::CodePage getPlatformEncoding();
 
 	Archive *createArchive();
+	Archive *openArchive(const Common::String movie);
+	Archive *loadEXE(const Common::String movie);
+	Archive *loadEXEv3(Common::SeekableReadStream *stream);
+	Archive *loadEXEv4(Common::SeekableReadStream *stream);
+	Archive *loadEXEv5(Common::SeekableReadStream *stream);
+	Archive *loadEXEv7(Common::SeekableReadStream *stream);
+	Archive *loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
+	Archive *loadMac(const Common::String movie);
 
 	bool desktopEnabled();
 
@@ -243,9 +251,10 @@ public:
 	Common::Rect _fixStageRect;
 	Common::List<Common::String> _extraSearchPath;
 
+	// Owner of all Archive objects.
 	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _allOpenResFiles;
-	// Opened Resource Files that were opened by OpenResFile
-	Common::HashMap<Common::String, MacArchive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;
+	// Handles to resource files that were opened by OpenResFile.
+	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;
 
 	Common::Array<Graphics::WinCursorGroup *> _winCursor;
 

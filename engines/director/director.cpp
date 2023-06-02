@@ -143,8 +143,8 @@ DirectorEngine::~DirectorEngine() {
 	delete _wm;
 	delete _surface;
 
-	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _allOpenResFiles.begin(); it != _allOpenResFiles.end(); ++it) {
-		delete it->_value;
+	for (auto &it : _allOpenResFiles) {
+		delete it._value;
 	}
 
 	for (uint i = 0; i < _winCursor.size(); i++)

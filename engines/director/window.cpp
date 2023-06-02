@@ -354,8 +354,7 @@ void Window::loadNewSharedCast(Cast *previousSharedCast) {
 	}
 
 	// Clean up the previous sharedCast
-	if (!previousSharedCastPath.empty()) {
-		g_director->_allOpenResFiles.erase(previousSharedCastPath);
+	if (previousSharedCast) {
 		delete previousSharedCast;
 	}
 
@@ -379,11 +378,12 @@ bool Window::loadNextMovie() {
 	delete _currentMovie;
 	_currentMovie = nullptr;
 
-	Archive *mov = openArchive(_currentPath + Common::lastPathComponent(_nextMovie.movie, g_director->_dirSeparator));
+	Archive *mov = g_director->openArchive(_currentPath + Common::lastPathComponent(_nextMovie.movie, g_director->_dirSeparator));
 
 	if (!mov)
 		return false;
 
+	probeResources(mov);
 	_currentMovie = new Movie(this);
 	_currentMovie->setArchive(mov);
 

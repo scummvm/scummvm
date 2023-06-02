@@ -88,12 +88,6 @@ Cast::~Cast() {
 		for (Common::HashMap<int, const Stxt *>::iterator it = _loadedStxts->begin(); it != _loadedStxts->end(); ++it)
 			delete it->_value;
 
-	if (_castArchive) {
-		_castArchive->close();
-		delete _castArchive;
-		_castArchive = nullptr;
-	}
-
 	if (_loadedCast)
 		for (Common::HashMap<int, CastMember *>::iterator it = _loadedCast->begin(); it != _loadedCast->end(); ++it)
 			if (it->_value) {
@@ -828,15 +822,7 @@ void Cast::loadExternalSound(Common::SeekableReadStreamEndian &stream) {
 
 	Common::String resPath = g_director->getCurrentPath() + str;
 
-	if (!g_director->_allOpenResFiles.contains(resPath)) {
-		MacArchive *resFile = new MacArchive();
-
-		if (resFile->openFile(resPath)) {
-			g_director->_allOpenResFiles.setVal(resPath, resFile);
-		} else {
-			delete resFile;
-		}
-	}
+	g_director->openArchive(resPath);
 }
 
 static void readEditInfo(EditInfo *info, Common::ReadStreamEndian *stream) {

@@ -95,12 +95,7 @@ Movie::Movie(Window *window) {
 }
 
 Movie::~Movie() {
-	// _movieArchive is shared with the cast, so the cast will free it
 	delete _cast;
-
-	if (_sharedCast)
-		g_director->_allOpenResFiles.erase(_sharedCast->getArchive()->getPathName());
-
 	delete _sharedCast;
 	delete _score;
 }
@@ -348,22 +343,17 @@ void Movie::clearSharedCast() {
 	if (!_sharedCast)
 		return;
 
-	g_director->_allOpenResFiles.erase(_sharedCast->getArchive()->getPathName());
-
 	delete _sharedCast;
-
 	_sharedCast = nullptr;
 }
 
 void Movie::loadSharedCastsFrom(Common::String filename) {
 	clearSharedCast();
 
-	Archive *sharedCast = _vm->createArchive();
+	Archive *sharedCast = _vm->openArchive(filename);
 
-	if (!sharedCast->openFile(filename)) {
+	if (!sharedCast) {
 		warning("loadSharedCastsFrom(): No shared cast %s", filename.c_str());
-
-		delete sharedCast;
 
 		return;
 	}
@@ -376,29 +366,21 @@ void Movie::loadSharedCastsFrom(Common::String filename) {
 	_sharedCast = new Cast(this, DEFAULT_CAST_LIB, true, false);
 	_sharedCast->setArchive(sharedCast);
 	_sharedCast->loadArchive();
-
-	// Register the resfile so that Cursor::readFromResource can find it
-	g_director->_allOpenResFiles.setVal(sharedCast->getPathName(), sharedCast);
 }
 
 Archive *Movie::loadExternalCastFrom(Common::String filename) {
-	Archive *externalCast = _vm->createArchive();
+	Archive *externalCast = _vm->openArchive(filename);
 
-	if (!externalCast->openFile(filename)) {
+	if (!externalCast) {
 		warning("Movie::loadExternalCastFrom(): Cast file %s not found", filename.c_str());
-
-		delete externalCast;
 
 		return nullptr;
 	}
-	externalCast->setPathName(filename);
 
 	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 	debug(0, "@@@@   Loading external cast '%s'", filename.c_str());
 	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
-	// Store the archive for later
-	g_director->_allOpenResFiles.setVal(externalCast->getPathName(), externalCast);
 	return externalCast;
 }
 

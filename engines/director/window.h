@@ -171,17 +171,8 @@ public:
 
 	// resource.cpp
 	Common::Error loadInitialMovie();
-	void probeProjector(const Common::String &movie);
-	void probeMacBinary(MacArchive *archive);
+	void probeResources(Archive *archive);
 	void loadINIStream();
-	Archive *openArchive(const Common::String movie);
-	Archive *loadEXE(const Common::String movie);
-	Archive *loadEXEv3(Common::SeekableReadStream *stream);
-	Archive *loadEXEv4(Common::SeekableReadStream *stream);
-	Archive *loadEXEv5(Common::SeekableReadStream *stream);
-	Archive *loadEXEv7(Common::SeekableReadStream *stream);
-	Archive *loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
-	Archive *loadMac(const Common::String movie);
 	void loadStartMovieXLibs();
 
 	// lingo/lingo-object.cpp
