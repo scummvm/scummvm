@@ -252,9 +252,10 @@ void Window::loadINIStream() {
 }
 
 Archive *Window::loadEXE(const Common::String movie) {
-	Common::SeekableReadStream *exeStream = SearchMan.createReadStreamForMember(Common::Path(movie, g_director->_dirSeparator));
+	Common::Path path(movie, g_director->_dirSeparator);
+	Common::SeekableReadStream *exeStream = SearchMan.createReadStreamForMember(path);
 	if (!exeStream) {
-		warning("Window::loadEXE(): Failed to open EXE '%s'", g_director->getEXEName().c_str());
+		warning("Window::loadEXE(): Failed 1 to open EXE '%s'", g_director->getEXEName().c_str());
 		return nullptr;
 	}
 
@@ -273,9 +274,9 @@ Archive *Window::loadEXE(const Common::String movie) {
 			return nullptr;
 		}
 	} else {
-		Common::WinResources *exe = Common::WinResources::createFromEXE(movie);
+		Common::WinResources *exe = Common::WinResources::createFromEXE(path.toString());
 		if (!exe) {
-			warning("Window::loadEXE(): Failed to open EXE '%s'", g_director->getEXEName().c_str());
+			warning("Window::loadEXE(): Failed 2 to open EXE '%s'", g_director->getEXEName().c_str());
 			delete exeStream;
 			return nullptr;
 		}
