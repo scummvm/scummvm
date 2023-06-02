@@ -25,7 +25,7 @@
 #include "gui/message.h"
 #include "common/translation.h"
 #include "common/config-manager.h"
-
+#include "backends/graphics/ios/ios-graphics.h"
 #include "backends/platform/ios7/ios7_osys_main.h"
 
 static const int kQueuedInputEventDelay = 50;
@@ -181,13 +181,13 @@ bool OSystem_iOS7::handleEvent_touchFirstDown(Common::Event &event, int x, int y
 	_lastPadY = y;
 
 	if (!_touchpadModeEnabled) {
-		warpMouse(x, y);
+		Common::Point mouse(x, y);
+		dynamic_cast<iOSCommonGraphics *>(_graphicsManager)->notifyMousePosition(mouse);
 	}
 
 	if (_mouseClickAndDragEnabled) {
 		event.type = Common::EVENT_LBUTTONDOWN;
-		event.mouse.x = _videoContext->mouseX;
-		event.mouse.y = _videoContext->mouseY;
+		handleEvent_mouseEvent(event, 0, 0);
 		return true;
 	} else {
 		_lastMouseDown = getMillis();
@@ -204,17 +204,14 @@ bool OSystem_iOS7::handleEvent_touchFirstUp(Common::Event &event, int x, int y) 
 			return false;
 	} else if (_mouseClickAndDragEnabled) {
 		event.type = Common::EVENT_LBUTTONUP;
-		event.mouse.x = _videoContext->mouseX;
-		event.mouse.y = _videoContext->mouseY;
+		handleEvent_mouseEvent(event, 0, 0);
 	} else {
 		if (getMillis() - _lastMouseDown < 250) {
 			event.type = Common::EVENT_LBUTTONDOWN;
-			event.mouse.x = _videoContext->mouseX;
-			event.mouse.y = _videoContext->mouseY;
+			handleEvent_mouseEvent(event, 0, 0);
 
 			_queuedInputEvent.type = Common::EVENT_LBUTTONUP;
-			_queuedInputEvent.mouse.x = _videoContext->mouseX;
-			_queuedInputEvent.mouse.y = _videoContext->mouseY;
+			handleEvent_mouseEvent(_queuedInputEvent, 0, 0);
 			_lastMouseTap = getMillis();
 			_queuedEventTime = _lastMouseTap + kQueuedInputEventDelay;
 		} else
@@ -229,12 +226,10 @@ bool OSystem_iOS7::handleEvent_touchSecondDown(Common::Event &event, int x, int 
 
 	if (_mouseClickAndDragEnabled) {
 		event.type = Common::EVENT_LBUTTONUP;
-		event.mouse.x = _videoContext->mouseX;
-		event.mouse.y = _videoContext->mouseY;
+		handleEvent_mouseEvent(event, 0, 0);
 
 		_queuedInputEvent.type = Common::EVENT_RBUTTONDOWN;
-		_queuedInputEvent.mouse.x = _videoContext->mouseX;
-		_queuedInputEvent.mouse.y = _videoContext->mouseY;
+		handleEvent_mouseEvent(_queuedInputEvent, 0, 0);
 	} else
 		return false;
 
@@ -259,11 +254,9 @@ bool OSystem_iOS7::handleEvent_touchSecondUp(Common::Event &event, int x, int y)
 		} else if (!_mouseClickAndDragEnabled) {
 			//printf("Rightclick!\n");
 			event.type = Common::EVENT_RBUTTONDOWN;
-			event.mouse.x = _videoContext->mouseX;
-			event.mouse.y = _videoContext->mouseY;
+			handleEvent_mouseEvent(event, 0, 0);
 			_queuedInputEvent.type = Common::EVENT_RBUTTONUP;
-			_queuedInputEvent.mouse.x = _videoContext->mouseX;
-			_queuedInputEvent.mouse.y = _videoContext->mouseY;
+			handleEvent_mouseEvent(_queuedInputEvent, 0, 0);
 			_lastSecondaryTap = curTime;
 			_queuedEventTime = curTime + kQueuedInputEventDelay;
 		} else {
@@ -273,20 +266,13 @@ bool OSystem_iOS7::handleEvent_touchSecondUp(Common::Event &event, int x, int y)
 	}
 	if (_mouseClickAndDragEnabled) {
 		event.type = Common::EVENT_RBUTTONUP;
-		event.mouse.x = _videoContext->mouseX;
-		event.mouse.y = _videoContext->mouseY;
+		handleEvent_mouseEvent(event, 0, 0);
 	}
 
 	return true;
 }
 
 bool OSystem_iOS7::handleEvent_touchFirstDragged(Common::Event &event, int x, int y) {
-	if (_lastDragPosX == x && _lastDragPosY == y)
-		return false;
-
-	_lastDragPosX = x;
-	_lastDragPosY = y;
-
 	//printf("Mouse dragged at (%u, %u)\n", x, y);
 	int deltaX = _lastPadX - x;
 	int deltaY = _lastPadY - y;
@@ -296,13 +282,11 @@ bool OSystem_iOS7::handleEvent_touchFirstDragged(Common::Event &event, int x, in
 	if (_touchpadModeEnabled) {
 		handleEvent_mouseDelta(event, deltaX, deltaY);
 	} else {
+		// Update mouse position
+		Common::Point mousePos(x, y);
+		dynamic_cast<iOSCommonGraphics *>(_graphicsManager)->notifyMousePosition(mousePos);
 		event.type = Common::EVENT_MOUSEMOVE;
-		event.relMouse.x = deltaX;
-		event.relMouse.y = deltaY;
-		event.mouse.x = x;
-		event.mouse.y = y;
-		warpMouse(x, y);
-
+		handleEvent_mouseEvent(event, deltaX, deltaY);
 	}
 	return true;
 }
@@ -313,54 +297,45 @@ bool OSystem_iOS7::handleEvent_touchSecondDragged(Common::Event &event, int x, i
 
 void OSystem_iOS7::handleEvent_mouseLeftButtonDown(Common::Event &event, int x, int y) {
 	event.type = Common::EVENT_LBUTTONDOWN;
-	event.mouse.x = _videoContext->mouseX;
-	event.mouse.y = _videoContext->mouseY;
+	handleEvent_mouseEvent(event, 0, 0);
 }
 
 void OSystem_iOS7::handleEvent_mouseLeftButtonUp(Common::Event &event, int x, int y) {
 	event.type = Common::EVENT_LBUTTONUP;
-	event.mouse.x = _videoContext->mouseX;
-	event.mouse.y = _videoContext->mouseY;
+	handleEvent_mouseEvent(event, 0, 0);
 }
 
 void OSystem_iOS7::handleEvent_mouseRightButtonDown(Common::Event &event, int x, int y) {
 	event.type = Common::EVENT_RBUTTONDOWN;
-	event.mouse.x = _videoContext->mouseX;
-	event.mouse.y = _videoContext->mouseY;
+	handleEvent_mouseEvent(event, 0, 0);
 }
 
 void OSystem_iOS7::handleEvent_mouseRightButtonUp(Common::Event &event, int x, int y) {
 	event.type = Common::EVENT_RBUTTONUP;
-	event.mouse.x = _videoContext->mouseX;
-	event.mouse.y = _videoContext->mouseY;
+	handleEvent_mouseEvent(event, 0, 0);
 }
 
 void OSystem_iOS7::handleEvent_mouseDelta(Common::Event &event, int deltaX, int deltaY) {
-	int mouseNewPosX = (int)(_videoContext->mouseX - (int)((float)deltaX * getMouseSpeed()));
-	int mouseNewPosY = (int)(_videoContext->mouseY - (int)((float)deltaY * getMouseSpeed()));
+	Common::Point mouseOldPos = dynamic_cast<iOSCommonGraphics *>(_graphicsManager)->getMousePosition();
 
-	int widthCap = _videoContext->overlayInGUI ? _videoContext->overlayWidth : _videoContext->screenWidth;
-	int heightCap = _videoContext->overlayInGUI ? _videoContext->overlayHeight : _videoContext->screenHeight;
+	Common::Point newMousePos((int)(mouseOldPos.x - (int)((float)deltaX * getMouseSpeed())), (int)(mouseOldPos.y - (int)((float)deltaY * getMouseSpeed())));
 
-	// Make sure the mouse position is valid
-	if (mouseNewPosX < 0)
-		mouseNewPosX = 0;
-	else if (mouseNewPosX > widthCap)
-		mouseNewPosX = widthCap;
-	if (mouseNewPosY < 0)
-		mouseNewPosY = 0;
-	else if (mouseNewPosY > heightCap)
-		mouseNewPosY = heightCap;
+	// Update mouse position
+	dynamic_cast<iOSCommonGraphics *>(_graphicsManager)->notifyMousePosition(newMousePos);
 
 	event.type = Common::EVENT_MOUSEMOVE;
-	event.relMouse.x = deltaX;
-	event.relMouse.y = deltaY;
-	event.mouse.x = mouseNewPosX;
-	event.mouse.y = mouseNewPosY;
-
-	// Move the mouse on screen
-	warpMouse(mouseNewPosX, mouseNewPosY);
+	handleEvent_mouseEvent(event, deltaX, deltaY);
 }
+
+void OSystem_iOS7::handleEvent_mouseEvent(Common::Event &event, int relX, int relY) {
+	Common::Point mouse = dynamic_cast<iOSCommonGraphics *>(_graphicsManager)->getMousePosition();
+	dynamic_cast<iOSCommonGraphics *>(_graphicsManager)->notifyMousePosition(mouse);
+
+	event.relMouse.x = relX;
+	event.relMouse.y = relY;
+	event.mouse = mouse;
+}
+
 
 void  OSystem_iOS7::handleEvent_orientationChanged(int orientation) {
 	//printf("Orientation: %i\n", orientation);

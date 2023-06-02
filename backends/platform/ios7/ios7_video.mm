@@ -104,8 +104,6 @@ uint getSizeNextPOT(uint size) {
 
 @implementation iPhoneView
 
-@synthesize pointerPosition;
-
 + (Class)layerClass {
 	return [CAEAGLLayer class];
 }

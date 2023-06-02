@@ -91,8 +91,6 @@ protected:
 	bool _touchpadModeEnabled;
 	int _lastPadX;
 	int _lastPadY;
-	int _lastDragPosX;
-	int _lastDragPosY;
 
 	Common::Array<Common::Rect> _dirtyRects;
 	Common::Array<Common::Rect> _dirtyOverlayRects;
@@ -221,6 +219,7 @@ protected:
 	void handleEvent_mouseRightButtonDown(Common::Event &event, int x, int y);
 	void handleEvent_mouseRightButtonUp(Common::Event &event, int x, int y);
 	void handleEvent_mouseDelta(Common::Event &event, int deltaX, int deltaY);
+	void handleEvent_mouseEvent(Common::Event &event, int relX, int relY);
 
 	void rebuildSurface();
 	float getMouseSpeed();

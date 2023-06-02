@@ -90,7 +90,7 @@ OSystem_iOS7::OSystem_iOS7() :
 	_mouseNeedTextureUpdate(false), _secondaryTapped(false), _lastSecondaryTap(0),
 	_screenOrientation(kScreenOrientationFlippedLandscape),
 	_fullScreenIsDirty(false), _fullScreenOverlayIsDirty(false),
-	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0),
+	_mouseDirty(false), _timeSuspended(0),  _screenChangeCount(0),
 	_mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = ConfMan.getBool("touchpad_mode");
