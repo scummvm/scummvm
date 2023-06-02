@@ -74,25 +74,28 @@ bool TextEntry::msgKeypress(const KeypressMessage &msg) {
 		// Single character numeric fields, particular spell
 		// level/number selection, return immediately
 		if (_isNumeric && _maxLen == 1)
-			kc = Common::KEYCODE_RETURN;
-	}
-
-	if (kc == Common::KEYCODE_RETURN && !_text.empty()) {
-		drawText();
-		close();
-		_enterFn(_text);
-		return true;
+			msgAction(ActionMessage(KEYBIND_SELECT));
 	}
 
 	return false;
 }
 
 bool TextEntry::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE) {
+	switch (msg._action) {
+	case KEYBIND_ESCAPE:
 		drawText();
 		close();
 		_abortFn();
 		return true;
+
+	case KEYBIND_SELECT:
+		drawText();
+		close();
+		_enterFn(_text);
+		return true;
+
+	default:
+		break;
 	}
 
 	return false;

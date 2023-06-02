@@ -61,8 +61,10 @@ bool CastSpell::msgGame(const GameMessage &msg) {
 	return true;
 }
 
-bool CastSpell::msgUnfocus(const UnfocusMessage &msg) {
-	_state = SELECT_SPELL;
+bool CastSpell::msgFocus(const FocusMessage &msg) {
+	if (dynamic_cast<TextEntry *>(msg._priorView) == nullptr)
+		_state = SELECT_SPELL;
+
 	return true;
 }
 
@@ -78,12 +80,24 @@ void CastSpell::setState(State state) {
 }
 
 void CastSpell::draw() {
+	clearSurface();
+	escToGoBack(0);
+
+	writeString(7, 0, STRING["dialogs.character.cast_spell"]);
+	if (_state >= SELECT_NUMBER) {
+		writeChar(' ');
+		writeNumber(_spellLevel);
+		writeString(19, 1, STRING["dialogs.character.number"]);
+	}
+
+	if (_state > SELECT_NUMBER) {
+		writeChar(' ');
+		writeNumber(_spellIndex);
+	}
+
 	switch (_state) {
 	case SELECT_SPELL:
-		clearSurface();
-		escToGoBack(0);
-		writeString(7, 0, STRING["dialogs.character.cast_spell"]);
-
+		_state = ENDING;
 		_textEntry.display(27, 20, 1, true,
 			[]() {
 				CastSpell *view =
@@ -99,9 +113,7 @@ void CastSpell::draw() {
 		break;
 
 	case SELECT_NUMBER:
-		clearLines(1, 1);
-		writeString(19, 1, STRING["dialogs.character.number"]);
-
+		_state = ENDING;
 		_textEntry.display(27, 21, 1, true,
 			[]() {
 				CastSpell *view =
@@ -128,6 +140,7 @@ void CastSpell::draw() {
 		break;
 
 	default:
+		clearSurface();
 		break;
 	}
 }

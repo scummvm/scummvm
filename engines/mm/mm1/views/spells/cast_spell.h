@@ -72,7 +72,7 @@ public:
 	}
 
 	bool msgGame(const GameMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
+	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool msgAction(const ActionMessage &msg) override;
 	void timeout() override;
