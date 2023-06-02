@@ -6,9 +6,20 @@ import sys
 
 def prepare(ex, game, location):
     if ex["prepare"]["type"] == "python-script":
-        # hardcoded for now
-        subprocess.run(sys.executable + " scripts/" + ex["prepare"]["location"] + " --packagename scummvm --assetpackname beneath-a-steel-sky --deliverymode on-demand --assetsdir " +
-                       location + " --outdir output", shell=True)
+        cmd = sys.executable + " scripts/" + ex["prepare"]["location"]
+        for key in ex["prepare"]["options"].keys():
+            cmd += " " + key + " "
+            value = ex["prepare"]["options"][key]
+            if value == "$location":
+                cmd += location
+            elif value[0] == '$':
+                # check in game's metadata
+                cmd += game[value[1:]]
+            else:
+                cmd += value
+
+        subprocess.run(cmd, shell=True)
+        print(ex["prepare"]["successMessage"])
 
 
 def main():
