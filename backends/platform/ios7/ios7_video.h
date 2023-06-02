@@ -54,7 +54,8 @@ uint getSizeNextPOT(uint size);
 
 	UIBackgroundTaskIdentifier _backgroundSaveStateTask;
 
-	EAGLContext *_context;
+	EAGLContext *_mainContext;
+	EAGLContext *_openGLContext;
 	GLuint _viewRenderbuffer;
 	GLuint _viewFramebuffer;
 	GLuint _screenTexture;
@@ -99,6 +100,12 @@ uint getSizeNextPOT(uint size);
 - (id)initWithFrame:(struct CGRect)frame;
 
 - (VideoContext *)getVideoContext;
+
+- (uint)createOpenGLContext;
+- (void)destroyOpenGLContext;
+- (void)refreshScreen;
+- (int)getScreenWidth;
+- (int)getScreenHeight;
 
 - (void)setGameScreenCoords;
 - (void)initSurface;
