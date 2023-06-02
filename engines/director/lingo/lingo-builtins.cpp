@@ -2645,6 +2645,8 @@ void LB::b_spriteBox(int nargs) {
 	int spriteId = g_lingo->pop().asInt();
 	Channel *channel = g_director->getCurrentMovie()->getScore()->getChannelById(spriteId);
 
+	channel->_sprite->_stretch = true;
+
 	if (!channel)
 		return;
 
