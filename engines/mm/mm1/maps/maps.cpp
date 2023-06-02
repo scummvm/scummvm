@@ -80,6 +80,7 @@
 #include "mm/mm1/maps/map52.h"
 #include "mm/mm1/maps/map53.h"
 #include "mm/mm1/maps/map54.h"
+#include "mm/mm1/maps/map55.h"
 #include "mm/mm1/mm1.h"
 
 namespace MM {
@@ -182,6 +183,7 @@ Maps::Maps() {
 	_maps.push_back(new Map52());
 	_maps.push_back(new Map53());
 	_maps.push_back(new Map54());
+	_maps.push_back(new Map55());
 }
 
 Maps::~Maps() {

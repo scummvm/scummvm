@@ -74,6 +74,7 @@
 #include "mm/mm1/views_enh/interactions/prisoners.h"
 #include "mm/mm1/views_enh/interactions/resistances.h"
 #include "mm/mm1/views_enh/interactions/ruby.h"
+#include "mm/mm1/views_enh/interactions/scummvm.h"
 #include "mm/mm1/views_enh/interactions/statue.h"
 #include "mm/mm1/views_enh/interactions/trivia.h"
 #include "mm/mm1/views_enh/interactions/volcano_god.h"
@@ -114,6 +115,7 @@ private:
 	ViewsEnh::Interactions::Orango _orango;
 	ViewsEnh::Interactions::Resistances _resistances;
 	ViewsEnh::Interactions::Ruby _ruby;
+	ViewsEnh::Interactions::ScummVM _scummVM;
 	ViewsEnh::Interactions::Statue _statue;
 	ViewsEnh::Interactions::Trivia _trivia;
 	ViewsEnh::Interactions::VolcanoGod _volcanoGod;

@@ -19,41 +19,29 @@
  *
  */
 
-#include "mm/mm1/views_enh/interactions/leprechaun.h"
+#include "mm/mm1/views_enh/interactions/scummvm.h"
 #include "mm/mm1/globals.h"
+
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 namespace Interactions {
 
-Leprechaun::Leprechaun() : Interaction("Leprechaun", 15) {
-	_title = STRING["maps.emap00.leprechaun_title"];
-	addText(STRING["maps.emap00.leprechaun"]);
-	addButton(STRING["stats.towns.1"], '1');
-	addButton(STRING["stats.towns.2"], '2');
-	addButton(STRING["stats.towns.3"], '3');
-	addButton(STRING["stats.towns.4"], '4');
-	addButton(STRING["stats.towns.5"], '5');
+ScummVM::ScummVM() : Interaction("ScummVM", 38) {
+	_title = STRING["maps.map55.title"];
+	addText(STRING["maps.map55.message"]);
 }
 
-bool Leprechaun::msgFocus(const FocusMessage &msg) {
-	Interaction::msgFocus(msg);
-	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
-	return true;
-}
-
-bool Leprechaun::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode >= Common::KEYCODE_1 && msg.keycode <= Common::KEYCODE_5) {
-		teleportToTown(msg.ascii);
-		return true;
-	} else if (msg.keycode == Common::KEYCODE_6) {
-		g_maps->turnRight();
-		g_maps->_mapPos = Common::Point(8, 3);
-		g_maps->changeMap(0x4242, 1);
+void ScummVM::viewAction() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		c._gold += 10000;
+		c._gems = MIN((int)c._gems + 1000, 0xffff);
 	}
 
-	return false;
+	g_maps->_mapPos = Common::Point(8, 3);
+	g_maps->changeMap(0x604, 1);
 }
 
 } // namespace Interactions

@@ -204,6 +204,7 @@ MODULE_OBJS += \
 	mm1/views_enh/interactions/prisoners.o \
 	mm1/views_enh/interactions/resistances.o \
 	mm1/views_enh/interactions/ruby.o \
+	mm1/views_enh/interactions/scummvm.o \
 	mm1/views_enh/interactions/statue.o \
 	mm1/views_enh/interactions/trivia.o \
 	mm1/views_enh/interactions/volcano_god.o \
@@ -273,7 +274,8 @@ MODULE_OBJS += \
 	mm1/maps/map51.o \
 	mm1/maps/map52.o \
 	mm1/maps/map53.o \
-	mm1/maps/map54.o
+	mm1/maps/map54.o \
+	mm1/maps/map55.o
 endif
 
 ifdef ENABLE_XEEN

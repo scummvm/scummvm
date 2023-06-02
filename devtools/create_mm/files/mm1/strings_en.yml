@@ -1775,3 +1775,7 @@ maps:
 		keeper4: "\"You are not yet worthy for transfer. Return after defeating the imposter.\""
 		keeper5: "Excellent rating! this is a rare occasion, for only a privileged few are given the opportunity for transfer to another V.A.R.N. (Vehicular Astropod\nResearch Nacelle)."
 		keeper6: "Return now to the\nInn of Sorpigal for rest and celebration then continue on to your new assignment at the Gates To Another World...\" (+50000 exp for your accomplishment!)"
+
+	emap55:
+		title: "ScummVM"
+		message: "Well done! I didn't think anyone would ever find this secret map. You deserve a hefty reward. +10000 Gold, +1000 Gems each"
