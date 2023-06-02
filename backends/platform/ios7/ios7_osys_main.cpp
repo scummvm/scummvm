@@ -44,6 +44,7 @@
 
 #include "gui/gui-manager.h"
 
+#include "backends/graphics/ios/ios-graphics.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "backends/mutex/pthread/pthread-mutex.h"
@@ -120,6 +121,7 @@ OSystem_iOS7::~OSystem_iOS7() {
 	if (_framebuffer.getPixels() != _videoContext->screenTexture.getPixels())
 		_framebuffer.free();
 	_mouseBuffer.free();
+	delete _graphicsManager;
 }
 
 bool OSystem_iOS7::touchpadModeEnabled() const {
@@ -145,6 +147,8 @@ void OSystem_iOS7::initBackend() {
 
 	_startTime = CACurrentMediaTime();
 
+	_graphicsManager = new iOSGraphicsManager();
+
 	setupMixer();
 
 	setTimerCallback(&OSystem_iOS7::timerHandler, 10);
@@ -166,7 +170,7 @@ bool OSystem_iOS7::hasFeature(Feature f) {
 		return true;
 
 	default:
-		return false;
+		return ModularGraphicsBackend::hasFeature(f);
 	}
 }
 
@@ -190,6 +194,7 @@ void OSystem_iOS7::setFeatureState(Feature f, bool enable) {
 		break;
 
 	default:
+		ModularGraphicsBackend::setFeatureState(f, enable);
 		break;
 	}
 }
@@ -206,7 +211,7 @@ bool OSystem_iOS7::getFeatureState(Feature f) {
 		return isKeyboardShown();
 
 	default:
-		return false;
+		return ModularGraphicsBackend::getFeatureState(f);
 	}
 }
 
