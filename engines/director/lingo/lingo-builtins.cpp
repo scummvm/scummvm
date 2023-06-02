@@ -1114,13 +1114,7 @@ void LB::b_closeDA(int nargs) {
 void LB::b_closeResFile(int nargs) {
 	// closeResFile closes only resource files that were opened with openResFile.
 
-	if (nargs == 0) { // Close all open resesource files
-		for (Common::HashMap<Common::String, MacArchive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator
-				it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
-			// also clean up the global resource file hashmap
-			g_director->_allOpenResFiles.erase(it->_key);
-			delete it->_value;
-		}
+	if (nargs == 0) { // Close all open resource files
 		g_director->_openResFiles.clear();
 		return;
 	}
@@ -1129,11 +1123,7 @@ void LB::b_closeResFile(int nargs) {
 	Common::String resFileName = g_director->getCurrentWindow()->getCurrentPath() + d.asString();
 
 	if (g_director->_openResFiles.contains(resFileName)) {
-		auto archive = g_director->_openResFiles.getVal(resFileName);
-		delete archive;
 		g_director->_openResFiles.erase(resFileName);
-		// also clean up the global resource file hashmap
-		g_director->_allOpenResFiles.erase(resFileName);
 	}
 }
 
@@ -1218,21 +1208,13 @@ void LB::b_openDA(int nargs) {
 void LB::b_openResFile(int nargs) {
 	Datum d = g_lingo->pop();
 	Common::String resPath = g_director->getCurrentWindow()->getCurrentPath() + d.asString();
-
-	if (g_director->getPlatform() == Common::kPlatformWindows) {
-		warning("STUB: BUILDBOT: b_openResFile(%s) on Windows", d.asString().c_str());
-		return;
-	}
+	resPath = pathMakeRelative(resPath);
 
 	if (!g_director->_allOpenResFiles.contains(resPath)) {
-		MacArchive *resFile = new MacArchive();
-
-		if (resFile->openFile(pathMakeRelative(resPath))) {
+		Archive *arch = g_director->openArchive(resPath);
+		if (arch) {
 			// Track responsibility. closeResFile may only close resource files opened by openResFile.
-			g_director->_openResFiles.setVal(resPath, resFile);
-			g_director->_allOpenResFiles.setVal(resPath, resFile);
-		} else {
-			delete resFile;
+			g_director->_openResFiles.setVal(resPath, arch);
 		}
 	}
 }
@@ -1244,40 +1226,36 @@ void LB::b_openXlib(int nargs) {
 
 	Datum d = g_lingo->pop();
 	if (g_director->getPlatform() == Common::kPlatformMacintosh) {
-		// try opening the file as a resfile
+		// try opening the file as a Macintosh resource fork
 		Common::String resPath = g_director->getCurrentWindow()->getCurrentPath() + d.asString();
-		if (!g_director->_allOpenResFiles.contains(resPath)) {
-			MacArchive *resFile = new MacArchive();
+		MacArchive *resFile = new MacArchive();
+		if (resFile->openFile(resPath)) {
+			uint32 XCOD = MKTAG('X', 'C', 'O', 'D');
+			uint32 XCMD = MKTAG('X', 'C', 'M', 'D');
+			uint32 XFCN = MKTAG('X', 'F', 'C', 'N');
 
-			if (resFile->openFile(pathMakeRelative(resPath))) {
-				g_director->_allOpenResFiles.setVal(resPath, resFile);
-				uint32 XCOD = MKTAG('X', 'C', 'O', 'D');
-				uint32 XCMD = MKTAG('X', 'C', 'M', 'D');
-				uint32 XFCN = MKTAG('X', 'F', 'C', 'N');
+			Common::Array<uint16> rsrcList = resFile->getResourceIDList(XCOD);
 
-				Common::Array<uint16> rsrcList = resFile->getResourceIDList(XCOD);
-
-				for (uint i = 0; i < rsrcList.size(); i++) {
-					xlibName = resFile->getResourceDetail(XCOD, rsrcList[i]).name.c_str();
-					g_lingo->openXLib(xlibName, kXObj);
-				}
-
-				rsrcList = resFile->getResourceIDList(XCMD);
-				for (uint i = 0; i < rsrcList.size(); i++) {
-					xlibName = resFile->getResourceDetail(XCMD, rsrcList[i]).name.c_str();
-					g_lingo->openXLib(xlibName, kXObj);
-				}
-
-				rsrcList = resFile->getResourceIDList(XFCN);
-				for (uint i = 0; i < rsrcList.size(); i++) {
-					xlibName = resFile->getResourceDetail(XFCN, rsrcList[i]).name.c_str();
-					g_lingo->openXLib(xlibName, kXObj);
-				}
-				return;
-			} else {
-				delete resFile;
+			for (uint i = 0; i < rsrcList.size(); i++) {
+				xlibName = resFile->getResourceDetail(XCOD, rsrcList[i]).name.c_str();
+				g_lingo->openXLib(xlibName, kXObj);
 			}
+
+			rsrcList = resFile->getResourceIDList(XCMD);
+			for (uint i = 0; i < rsrcList.size(); i++) {
+				xlibName = resFile->getResourceDetail(XCMD, rsrcList[i]).name.c_str();
+				g_lingo->openXLib(xlibName, kXObj);
+			}
+
+			rsrcList = resFile->getResourceIDList(XFCN);
+			for (uint i = 0; i < rsrcList.size(); i++) {
+				xlibName = resFile->getResourceDetail(XFCN, rsrcList[i]).name.c_str();
+				g_lingo->openXLib(xlibName, kXObj);
+			}
+			delete resFile;
+			return;
 		}
+		delete resFile;
 	}
 
 	xlibName = getFileName(d.asString());

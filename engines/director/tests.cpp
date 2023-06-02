@@ -190,10 +190,8 @@ Common::HashMap<Common::String, Movie *> *Window::scanMovies(const Common::Strin
 				continue;
 			}
 
-			Archive *arc = _vm->createArchive();
-
 			warning("name: %s", i->getName().c_str());
-			arc->openFile(i->getName());
+			Archive *arc = _vm->openArchive(i->getName());
 			Movie *m = new Movie(this);
 			m->setArchive(arc);
 			nameMap->setVal(m->getMacName(), m);

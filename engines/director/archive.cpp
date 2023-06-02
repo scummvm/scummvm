@@ -388,19 +388,19 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	stream->seek(startOffset);
 
 	if (convertTagToUppercase(stream->readUint32BE()) != MKTAG('R', 'I', 'F', 'F')) {
-		warning("RIFFArchive::openStream(): RIFF expected but not found");
+		debugC(5, kDebugLoading, "RIFFArchive::openStream(): RIFF expected but not found");
 		return false;
 	}
 
 	stream->readUint32LE(); // size
 
 	if (convertTagToUppercase(stream->readUint32BE()) != MKTAG('R', 'M', 'M', 'P')) {
-		warning("RIFFArchive::openStream(): RMMP expected but not found");
+		debugC(5, kDebugLoading, "RIFFArchive::openStream(): RMMP expected but not found");
 		return false;
 	}
 
 	if (convertTagToUppercase(stream->readUint32BE()) != MKTAG('C', 'F', 'T', 'C')) {
-		warning("RIFFArchive::openStream(): CFTC expected but not found");
+		debugC(5, kDebugLoading, "RIFFArchive::openStream(): CFTC expected but not found");
 		return false;
 	}
 
@@ -549,12 +549,12 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			// We need to look at the resource fork to detect XCOD resources
 			Common::SeekableSubReadStream *macStream = new Common::SeekableSubReadStream(stream, 0, stream->size());
 			MacArchive *macArchive = new MacArchive();
-			if (!macArchive->openStream(macStream)) {
-				delete macArchive;
-				delete macStream;
+			if (macArchive->openStream(macStream)) {
+				g_director->getCurrentWindow()->probeResources(macArchive);
 			} else {
-				g_director->getCurrentWindow()->probeMacBinary(macArchive);
+				delete macStream;
 			}
+			delete macArchive;
 
 			// Then read the data fork
 			moreOffset = Common::MacResManager::getDataForkOffset();
