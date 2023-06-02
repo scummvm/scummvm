@@ -50,10 +50,11 @@ Archive *DirectorEngine::createArchive() {
 }
 
 Common::Error Window::loadInitialMovie() {
-	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-	debug(0, "@@@@   Loading initial movie");
-	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 	Common::String movie = (_vm->getGameGID() == GID_TESTALL) ? getNextMovieFromQueue().movie : _vm->getEXEName();
+
+	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+	debug(0, "@@@@   Loading initial movie '%s'", movie.c_str());
+	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 	if (movie.empty())
 		return Common::kPathNotFile;
@@ -74,7 +75,7 @@ Common::Error Window::loadInitialMovie() {
 	} else {
 		delete multiArchive;
 	}
-	
+
 	_currentMovie = new Movie(this);
 	_currentPath = getPath(movie, _currentPath);
 	Common::String sharedCastPath = getSharedCastPath();
