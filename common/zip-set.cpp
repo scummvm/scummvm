@@ -85,8 +85,8 @@ bool generateZipSet(SearchSet &searchSet, const char *defaultFile, const char *p
 
 		if (!dat) {
 			warning("generateZipSet: Could not find '%s'", defaultFile);
-			delete file;
 		}
+		delete file;
 	}
 
 	if (dat) {
