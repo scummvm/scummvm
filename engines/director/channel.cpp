@@ -554,7 +554,7 @@ void Channel::setHeight(int h) {
 }
 
 void Channel::setBbox(int l, int t, int r, int b) {
-	if (_sprite->_puppet) {
+	if (_sprite->_puppet || _sprite->_stretch) {
 		if (!(_sprite->_cast && _sprite->_cast->_type == kCastShape) && !_sprite->_stretch)
 			return;
 		_width = r - l;
@@ -566,6 +566,9 @@ void Channel::setBbox(int l, int t, int r, int b) {
 		}
 		_currentPoint.x = (int16)(l - source.left);
 		_currentPoint.y = (int16)(t - source.top);
+
+		if (_width <= 0 || _height <= 0)
+			_width = _height = 0;
 	}
 }
 
