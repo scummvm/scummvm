@@ -157,18 +157,14 @@ LingoState::~LingoState() {
 		if (callstack[i]->retLocalVars)
 			delete callstack[i]->retLocalVars;
 		if (callstack[i]->retContext) {
-			*callstack[i]->retContext->_refCount -= 1;
-			if (*callstack[i]->retContext->_refCount == 0)
-				delete callstack[i]->retContext;
+			callstack[i]->retContext->decRefCount();
 		}
 		delete callstack[i];
 	}
 	if (localVars)
 		delete localVars;
 	if (context) {
-		*context->_refCount -= 1;
-		if (*context->_refCount == 0)
-			delete context;
+		context->decRefCount();
 	}
 
 }
@@ -251,25 +247,19 @@ LingoArchive::~LingoArchive() {
 	for (ScriptContextHash::iterator it = lctxContexts.begin(); it != lctxContexts.end(); ++it){
 		ScriptContext *script = it->_value;
 		if (script->getOnlyInLctxContexts()) {
-			*script->_refCount -= 1;
-			if (*script->_refCount <= 0)
-				delete script;
+			script->decRefCount();
 		}
 	}
 
 	for (int i = 0; i <= kMaxScriptType; i++) {
 		for (ScriptContextHash::iterator it = scriptContexts[i].begin(); it != scriptContexts[i].end(); ++it) {
-			*it->_value->_refCount -= 1;
-			if (*it->_value->_refCount <= 0)
-				delete it->_value;
+			it->_value->decRefCount();
 		}
 	}
 
-	for (auto it : factoryContexts) {
-		for (auto jt : *it._value) {
-			*jt._value->_refCount -= 1;
-			if (*jt._value->_refCount <= 0)
-				delete jt._value;
+	for (auto &it : factoryContexts) {
+		for (auto &jt : *it._value) {
+			jt._value->decRefCount();
 		}
 		delete it._value;
 	}
@@ -373,7 +363,7 @@ void LingoArchive::addCode(const Common::U32String &code, ScriptType type, uint1
 	ScriptContext *sc = g_lingo->_compiler->compileLingo(code, this, type, CastMemberID(id, cast->_castLibID), contextName, false, preprocFlags);
 	if (sc) {
 		scriptContexts[type][id] = sc;
-		*sc->_refCount += 1;
+		sc->incRefCount();
 	}
 }
 
@@ -382,10 +372,7 @@ void LingoArchive::removeCode(ScriptType type, uint16 id) {
 	if (!ctx)
 		return;
 
-	*ctx->_refCount -= 1;
-	if (*ctx->_refCount <= 0) {
-		delete ctx;
-	}
+	ctx->decRefCount();
 	scriptContexts[type].erase(id);
 }
 

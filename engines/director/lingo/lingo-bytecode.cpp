@@ -1639,7 +1639,7 @@ void LingoArchive::addCodeV4(Common::SeekableReadStreamEndian &stream, uint16 lc
 	ScriptContext *ctx = g_lingo->_compiler->compileLingoV4(stream, lctxIndex, this, archName, version);
 	if (ctx) {
 		lctxContexts[lctxIndex] = ctx;
-		*ctx->_refCount += 1;
+		ctx->incRefCount();
 	}
 }
 
