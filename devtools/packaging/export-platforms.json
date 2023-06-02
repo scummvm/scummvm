@@ -4,6 +4,13 @@
 		"prepare": {
 			"type": "python-script",
 			"location": "android/generate_asset_pack.py",
+			"options": {
+				"--packagename": "scummvm",
+				"--assetpackname": "$name",
+				"--deliverymode": "on-demand",
+				"--assetsdir": "$location",
+				"--outdir": "output/android"
+			},
 			"successMessage": "Asset pack required for bundling stage is successfully created!"
 		},
 		"bundle": {
