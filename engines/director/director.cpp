@@ -291,6 +291,9 @@ Common::CodePage DirectorEngine::getPlatformEncoding() {
 }
 
 Common::String DirectorEngine::getRawEXEName() const {
+	if (!_gameDescription->desc.filesDescriptions[0].fileName)
+		return Common::String();
+
 	// Returns raw executable name (without getting overloaded from --start-movie option)
 	return Common::Path(_gameDescription->desc.filesDescriptions[0].fileName).toString(g_director->_dirSeparator);
 }
