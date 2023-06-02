@@ -42,6 +42,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Sword2:
    - Unterstützung für die chinesische Übersetzung hinzugefügt.
 
+ Twine:
+   - Unterstützung für die japanische Übersetzung hinzugefügt.
+
  Ultima:
    - Reaktionsgeschwindigkeit von Ultima VI verbessert.
    - Absturz beim Laden von Spielständen in Ultima VI behoben, der auftritt, wenn Dialoge geöffnet sind.
