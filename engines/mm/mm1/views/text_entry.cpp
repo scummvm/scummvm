@@ -56,8 +56,6 @@ void TextEntry::drawText() {
 }
 
 bool TextEntry::msgKeypress(const KeypressMessage &msg) {
-	Common::KeyCode kc = msg.keycode;
-
 	if (msg.keycode == Common::KEYCODE_BACKSPACE &&
 			!_text.empty()) {
 		_text.deleteLastChar();
