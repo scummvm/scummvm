@@ -2645,10 +2645,11 @@ void LB::b_spriteBox(int nargs) {
 	int spriteId = g_lingo->pop().asInt();
 	Channel *channel = g_director->getCurrentMovie()->getScore()->getChannelById(spriteId);
 
-	channel->_sprite->_stretch = true;
-
 	if (!channel)
 		return;
+
+	// This automatically sets the sctretch mode
+	channel->_sprite->_stretch = true;
 
 	g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 	channel->setBbox(l, t, r, b);
