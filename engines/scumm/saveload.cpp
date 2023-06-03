@@ -1858,8 +1858,11 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 			for (int v = 102 + 6; v <= 111; v++)
 				VAR(v) = 0;
 
-		// make sure the appropriate verbs and arrows are displayed
-		runInventoryScript(0);
+		// Make sure the appropriate verbs and arrows are displayed.
+		// We avoid doing that in room 50 (save room) since it can crash
+		// the game and trigger several unwanted side effects (bug #14387).
+		if (_currentRoom != 50)
+			runInventoryScript(0);
 	}
 
 	//
