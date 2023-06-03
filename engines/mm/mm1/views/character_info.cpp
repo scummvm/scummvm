@@ -171,12 +171,14 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 		if (msg.keycode >= Common::KEYCODE_a &&
 				msg.keycode <= Common::KEYCODE_f)
 			equipItem(msg.keycode - Common::KEYCODE_a);
+		redraw();
 		break;
 
 	case REMOVE:
 		if (msg.keycode >= Common::KEYCODE_1 &&
 			msg.keycode <= Common::KEYCODE_6)
 			removeItem(msg.keycode - Common::KEYCODE_1);
+		redraw();
 		break;
 
 	case SHARE:
