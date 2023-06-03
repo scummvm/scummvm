@@ -343,19 +343,6 @@ private:
 	Node *_leftmost = nullptr;
 	size_t _size = 0;
 
-	Node *merge(Node *left, Node *right) {
-		if (!right)
-			return left;
-		else if (!left)
-			return right;
-		else {
-			auto lm = leftmost(right);
-			lm->left = left;
-			left->parent = lm;
-			return right;
-		}
-	}
-
 	BasicIterator internalInsert(Node **starting_point, const ValueType &val) {
 		auto it = starting_point;
 		Node *parent = nullptr;
