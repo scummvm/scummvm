@@ -29,8 +29,6 @@ namespace Game {
 void DetectMagic::getMagicStrings() {
 	Inventory &inv = g_globals->_currCharacter->_backpack;
 	for (uint i = 0; i < inv.size(); ++i) {
-		Common::String s;
-
 		int itemId = inv[i]._id;
 		bool flag = false;
 		if (itemId < 12)

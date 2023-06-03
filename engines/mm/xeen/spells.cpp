@@ -163,7 +163,7 @@ void Spells::castItemSpell(int itemSpellId) {
 		MS_Hynotize, MS_WalkOnWater, NO_SPELL, MS_DetectMonster, MS_Fireball,
 		MS_ColdRay, MS_CurePoison, MS_AcidSpray, MS_TimeDistortion, MS_DragonSleep,
 		MS_CureDisease, MS_Teleport, MS_FingerOfDeath, MS_CureParalysis, MS_GolemStopper,
-		MS_PoisonVolley, MS_DeadlySwarm, MS_SuperShelter, MS_DayOfProtection, MS_DayOfProtection,
+		MS_PoisonVolley, MS_DeadlySwarm, MS_SuperShelter, MS_DayOfProtection, MS_DayOfSorcery,
 		MS_CreateFood, MS_FieryFlail, MS_RechargeItem, MS_FantasticFreeze, MS_TownPortal,
 		MS_StoneToFlesh, MS_RaiseDead, MS_Etheralize, MS_DancingSword, MS_MoonRay,
 		MS_MassDistortion, MS_PrismaticLight, MS_EnchantItem, MS_Incinerate, MS_HolyWord,
