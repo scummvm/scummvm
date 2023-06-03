@@ -134,6 +134,7 @@ MODULE_OBJS += \
 	mm1/views/wheel_spin.o \
 	mm1/views_enh/spells/cast_spell.o \
 	mm1/views_enh/spells/spellbook.o \
+	mm1/views_enh/spells/location.o \
 	mm1/views_enh/button_container.o \
 	mm1/views_enh/character_base.o \
 	mm1/views_enh/character_info.o \

@@ -87,6 +87,7 @@
 #include "mm/mm1/views_enh/locations/training.h"
 #include "mm/mm1/views_enh/spells/cast_spell.h"
 #include "mm/mm1/views_enh/spells/spellbook.h"
+#include "mm/mm1/views_enh/spells/location.h"
 
 namespace MM {
 namespace MM1 {
@@ -137,6 +138,7 @@ private:
 	ViewsEnh::Locations::Training _training;
 	ViewsEnh::Spells::CastSpell _castSpell;
 	ViewsEnh::Spells::Spellbook _spellbook;
+	ViewsEnh::Spells::Location _location;
 	ViewsEnh::CharacterInfo _characterInfo;
 	ViewsEnh::CharacterInfoCombat _characterInfoCombat;
 	ViewsEnh::CharacterInventory _characterInventory;

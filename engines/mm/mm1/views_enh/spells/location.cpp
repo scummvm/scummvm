@@ -19,16 +19,20 @@
  *
  */
 
-#include "mm/mm1/views/spells/location.h"
+#include "mm/mm1/views_enh/spells/location.h"
 #include "mm/mm1/globals.h"
+
+#define TEXT_X1 160
+#define TEXT_X2 195
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace ViewsEnh {
 namespace Spells {
 
-Location::Location() : SpellView("Location") {
-	_bounds = getLineBounds(20, 24);
+Location::Location() : ScrollView("Location") {
+	setBounds(Common::Rect(0, 144, 234, 200));
+	addButton(&g_globals->_escSprites, Common::Point(5, 28), 0, KEYBIND_ESCAPE, true);
 }
 
 void Location::draw() {
@@ -36,10 +40,12 @@ void Location::draw() {
 	Maps::Map &map = *maps._currentMap;
 	byte v;
 
-	clearSurface();
-	escToGoBack(0);
+	ScrollView::draw();
 
-	writeString(0, 0, STRING["dialogs.spells.location_loc"]);
+	setReduced(true);
+	writeString(20, 30, STRING["enhdialogs.misc.go_back"]);
+
+	writeLine(0, STRING["dialogs.spells.location_loc"], ALIGN_LEFT, 0);
 
 	v = map[Maps::MAP_TYPE];
 	if (v == 0xff) {
@@ -56,28 +62,29 @@ void Location::draw() {
 			writeString(STRING["dialogs.spells.location_castle"]);
 		}
 
-		writeString(21, 0, STRING["dialogs.spells.location_sector"]);
+		writeLine(0, STRING["dialogs.spells.location_sector"], ALIGN_LEFT, 111);
 		writeChar(map[Maps::MAP_SECTOR1] & 0x7f);
 		writeChar('-');
 		writeChar(map[Maps::MAP_SECTOR2] & 0x7f);
 
-		writeString(21, 1, STRING["dialogs.spells.location_surface_x"]);
+		writeLine(1, STRING["dialogs.spells.location_surface_x"], ALIGN_RIGHT, TEXT_X1);
 		writeString("X=");
 
 		if (map[Maps::MAP_TYPE]) {
 			writeNumber(map[Maps::MAP_SURFACE_X]);
-			writeString(35, 1, "Y=");
+			writeLine(1, "Y=", ALIGN_LEFT, TEXT_X2);
 			writeNumber(map[Maps::MAP_SURFACE_Y]);
 
-			writeString(22, 2, STRING["dialogs.spells.location_inside_x"]);
+			writeLine(2, STRING["dialogs.spells.location_inside_x"], ALIGN_RIGHT, TEXT_X1);
 			writeString("X=");
 		}
 
 		writeNumber(maps._mapPos.x);
-		writeString(35, 2, "Y=");
+		_textPos.x = TEXT_X2;
+		writeString("Y=");
 		writeNumber(maps._mapPos.y);
 
-		writeString(22, 3, STRING["dialogs.spells.location_facing"]);
+		writeLine(3, STRING["dialogs.spells.location_facing"], ALIGN_RIGHT, TEXT_X1);
 		switch (maps._forwardMask) {
 		case Maps::DIRMASK_N:
 			writeChar('N');
@@ -93,16 +100,18 @@ void Location::draw() {
 			break;
 		}
 	}
+
+	setReduced(false);
 }
 
 bool Location::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_SELECT || msg._action == KEYBIND_ESCAPE)
-		close();
+		g_events->replaceView("Game", true);
 
 	return true;
 }
 
 } // namespace Spells
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
