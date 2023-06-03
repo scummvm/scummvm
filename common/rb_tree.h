@@ -43,6 +43,15 @@ struct Identity {
 };
 
 /**
+ * @defgroup common_rb_tree Red-black tree
+ * @ingroup common
+ *
+ * @brief API for operating on a red black tree.
+ *
+ * @{
+ */
+
+/**
  * Red-black tree implementation with insertion and deletion algorithms based on the ones
  * found in Introduction to Algorithms by Cormen, Leiserson, Rivest and Stein.
  * Used in the implementation of Common::StableMap and Common::MultiMap
@@ -50,7 +59,6 @@ struct Identity {
 template<class ValueType, class Key, class KeyProj, class KeyComp = Common::Less<Key> >
 class RBTree {
 public:
-
 	enum class Color {
 		kRed,
 		kBlack,
@@ -111,25 +119,29 @@ public:
 		Node *_current = nullptr;
 	};
 
-	using BasicIterator = Iterator<ValueType &, ValueType *>;
-	using ConstIterator = Iterator<const ValueType &, const ValueType *>;
+	using BasicIterator = Iterator<ValueType &, ValueType *>;             /*!< RBTree iterator. */
+	using ConstIterator = Iterator<const ValueType &, const ValueType *>; /*!< Const-qualified RBTree iterator. */
 
 	RBTree(KeyComp comp = {}) : _comp(Common::move(comp)) {
 	}
 
+	/** Construct an RBTree as a copy of the given tree @p other . */
 	RBTree(const RBTree &other) : _comp(other._comp) {
 		for (const auto &val : other)
 			insert(val);
 	}
 
+	/** Construct an RBTree by moving the contents of the given tree (using the C++11 move semantics). */
 	RBTree(RBTree &&other) : _root(other._root), _leftmost(other._leftmost), _size(other._size), _comp(Common::move(other._comp)) {
 	}
 
+	/** Assign the given tree to this tree. */
 	RBTree &operator=(const RBTree &rhs) {
 		*this = RBTree(rhs);
 		return *this;
 	}
 
+	/** Moves the contents of the given tree into this tree (using the C++11 move semantics). */
 	RBTree &operator=(RBTree &&rhs) {
 		clear();
 		_root = rhs._root;
@@ -142,6 +154,7 @@ public:
 		return *this;
 	}
 
+	/** Clears the contents of the tree. */
 	void clear() {
 		erase(begin(), end());
 		_size = 0;
@@ -149,14 +162,22 @@ public:
 		_leftmost = nullptr;
 	}
 
+	/** Return an iterator pointing to the last element in the tree. */
 	BasicIterator begin() { return BasicIterator{_leftmost}; }
 
+	/** Return a const iterator pointing to the first element of the tree. */
 	ConstIterator begin() const { return ConstIterator{_leftmost}; }
 
+	/** Return an iterator pointing to the last element in the tree. */
 	BasicIterator end() { return BasicIterator{nullptr}; }
 
+	/** Return a const iterator pointing to the last element of the tree. */
 	ConstIterator end() const { return ConstIterator{nullptr}; }
 
+	/**
+	 * Returns an iterator to the first item thas is not less than @p key
+	 * in the tree (or end() if this cannot be found).
+	 */
 	BasicIterator lowerBound(const Key &key) {
 		Node *it = _root;
 		Node *res = nullptr;
@@ -171,6 +192,10 @@ public:
 		return BasicIterator{res};
 	}
 
+	/**
+	 * Returns a const iterator to the first item thas is not less than @p key
+	 * in the tree (or end() if this cannot be found).
+	 */
 	ConstIterator lowerBound(const Key &key) const {
 		Node *it = _root;
 		Node *res = nullptr;
@@ -185,6 +210,10 @@ public:
 		return ConstIterator{res};
 	}
 
+	/**
+	 * Returns an iterator to the first item bigger than @p key
+	 * in the tree (or end() if this cannot be found).
+	 */
 	BasicIterator upperBound(const Key &key) {
 		Node *it = _root;
 		Node *res = nullptr;
@@ -199,6 +228,10 @@ public:
 		return BasicIterator{res};
 	}
 
+	/**
+	 * Return a const iterator to the first item bigger than @p key
+	 * in the tree (or end() if this cannot be found).
+	 */
 	ConstIterator upperBound(const Key &key) const {
 		Node *it = _root;
 		Node *res = nullptr;
@@ -213,6 +246,7 @@ public:
 		return ConstIterator{res};
 	}
 
+	/** Erases the item in the tree pointed by @p it .*/
 	BasicIterator erase(BasicIterator it) {
 		Node *const z = it._current;
 		Node *y = z;
@@ -253,26 +287,52 @@ public:
 		return ret;
 	}
 
+	/**
+	 * Erase the elements from @p first to @p last and return an iterator pointing to the next element in the map.
+	 * @note
+	 * If [first, last) is not a valid range for the tree, the behaviour is undefined.
+	 */
 	BasicIterator erase(BasicIterator first, BasicIterator last) {
 		while (first != last)
 			erase(first++);
 		return last;
 	}
 
+	/** Inserts a value @p val into the tree returning an iterator for the inserted value. */
 	BasicIterator insert(const ValueType &val) {
 		return internalInsert(&_root, val);
 	}
 
-	// requires that either start is lowerbound of val or start is end()
-	// otherwise the resulting tree could be unsorted
+	/**
+	 * Inserts the element @p val starting from @p start instead of the tree's root.
+	 * This operations is meant for efficient insertions after a call to lowerBound.
+	 * For example:
+	 * @code
+	 * auto it = tree.lowerBound(value);
+	 * if (it == tree.end() || *it != value)
+	 *    tree.insert(it, value);
+	 * @endcode
+	 * inserts 'value' if its not contained in 'tree' (assumes that key and value type are the same)
+	 * @note
+	 * If @p start is not the lower bound, or it's not end(),
+	 * the resulting tree could be unsorted.
+	 */
 	BasicIterator insert(BasicIterator start, const ValueType &val) {
 		if (start == end())
 			return insert(val);
 		return internalInsert(&start._current, val);
 	}
 
+	/** Returns the number of values in the tree. */
 	size_t size() const { return _size; }
 
+	/**
+	 * Returns true if the tree is empty.
+	 * Shorthand for:
+	 * @code
+	 * tree.size() == 0
+	 * @endcode
+	 */
 	bool isEmpty() const { return _size == 0; }
 
 	~RBTree() { clear(); }
@@ -505,6 +565,8 @@ private:
 			t->color = Color::kBlack;
 	}
 };
+
+/** @} */
 
 } // End of namespace Common
 
