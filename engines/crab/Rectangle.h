@@ -37,18 +37,16 @@
 
 namespace Crab {
 
-struct SDL_Rect {
+//------------------------------------------------------------------------
+// Purpose: A simple rectangle class
+//------------------------------------------------------------------------
+struct Rect {
+
 	int x;
 	int y;
 	int w;
 	int h;
-};
 
-//------------------------------------------------------------------------
-// Purpose: A simple rectangle class
-//------------------------------------------------------------------------
-class Rect : public SDL_Rect {
-public:
 	Rect(int X = 0, int Y = 0, int W = 0, int H = 0) {
 		x = X;
 		y = Y;
