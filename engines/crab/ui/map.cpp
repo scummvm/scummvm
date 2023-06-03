@@ -91,9 +91,7 @@ void Map::Load(const Common::String &filename, pyrodactyl::event::Info &info) {
 // Purpose: Draw
 //------------------------------------------------------------------------
 void Map::Draw(pyrodactyl::event::Info &info) {
-	warning("STUB: Map::Draw()");
 
-#if 0
 	// The map graphic is clipped to fit inside the UI
 	img_bg.Draw(pos.x, pos.y, &camera);
 
@@ -145,7 +143,6 @@ void Map::Draw(pyrodactyl::event::Info &info) {
 	marker.Draw(pos, player_pos, camera);
 
 	scroll.Draw();
-#endif
 }
 
 //------------------------------------------------------------------------
