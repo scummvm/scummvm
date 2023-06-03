@@ -83,6 +83,8 @@ int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const Common::Str
 			}
 		}
 
+		(void)play_sound;
+
 #if 0
 		// Right now we play sound randomly
 		if (play_sound) {
