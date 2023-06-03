@@ -65,6 +65,10 @@ public:
 		notify = -1;
 		rep_inc = -1;
 		rep_dec = -1;
+
+		(void)freq;
+		(void)channels;
+		(void)chunksize;
 	}
 	~MusicManager() {}
 
