@@ -173,6 +173,13 @@ void TextManager::Draw(const int &x, const int &y, const Common::String &text, c
 	if (background) {
 		rect.w = cache[pos].img.W() + (2 * pad_bg.x);
 		rect.h = cache[pos].img.H() + (2 * pad_bg.y);
+
+		uint32 col = g_engine->_format->ARGBToColor(128, 0, 0, 0);
+		Graphics::Surface surf;
+		surf.create(rect.w, rect.h, *g_engine->_format);
+		surf.fillRect(Common::Rect(rect.w, rect.h), col);
+		g_engine->_screen->blitFrom(surf, Common::Point(rect.x, rect.y));
+
 #if 0
 		SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 128);
@@ -185,8 +192,6 @@ void TextManager::Draw(const int &x, const int &y, const Common::String &text, c
 #if 0
 			SDL_RenderFillRect(gRenderer, &rect);
 #endif
-			uint32 col = g_engine->_format->ARGBToColor(128, 0, 0, 0);
-			g_engine->_screen->fillRect(Common::Rect(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h), col);
 			cache[pos].img.Draw(x, y);
 		} else if (align == ALIGN_CENTER) {
 			rect.x = x - cache[pos].img.W() / 2 - pad_bg.x;
@@ -195,8 +200,6 @@ void TextManager::Draw(const int &x, const int &y, const Common::String &text, c
 #if 0
 			SDL_RenderFillRect(gRenderer, &rect);
 #endif
-			uint32 col = g_engine->_format->ARGBToColor(128, 0, 0, 0);
-			g_engine->_screen->fillRect(Common::Rect(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h), col);
 			cache[pos].img.Draw(x - cache[pos].img.W() / 2, y - cache[pos].img.H() / 2);
 		} else {
 			rect.x = x - cache[pos].img.W() - pad_bg.x;
@@ -205,8 +208,6 @@ void TextManager::Draw(const int &x, const int &y, const Common::String &text, c
 #if 0
 			SDL_RenderFillRect(gRenderer, &rect);
 #endif
-			uint32 col = g_engine->_format->ARGBToColor(128, 0, 0, 0);
-			g_engine->_screen->fillRect(Common::Rect(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h), col);
 			cache[pos].img.Draw(x - cache[pos].img.W(), y);
 		}
 	} else {
