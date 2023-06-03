@@ -321,6 +321,7 @@ MODULE_OBJS = \
 	plugins/ags_blend/ags_blend.o \
 	plugins/ags_clipboard/ags_clipboard.o \
 	plugins/ags_collision_detector/ags_collision_detector.o \
+	plugins/ags_consoles/ags_consoles.o \
 	plugins/ags_controller/ags_controller.o \
 	plugins/ags_creditz/ags_creditz.o \
 	plugins/ags_creditz/ags_creditz1.o \
