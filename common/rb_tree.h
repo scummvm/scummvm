@@ -162,7 +162,7 @@ public:
 		_leftmost = nullptr;
 	}
 
-	/** Return an iterator pointing to the last element in the tree. */
+	/** Return an iterator pointing to the first element in the tree. */
 	BasicIterator begin() { return BasicIterator{_leftmost}; }
 
 	/** Return a const iterator pointing to the first element of the tree. */
@@ -288,7 +288,7 @@ public:
 	}
 
 	/**
-	 * Erase the elements from @p first to @p last and return an iterator pointing to the next element in the map.
+	 * Erase the elements from @p first to @p last and return an iterator pointing to the next element in the tree.
 	 * @note
 	 * If [first, last) is not a valid range for the tree, the behaviour is undefined.
 	 */
