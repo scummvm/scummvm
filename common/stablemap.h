@@ -145,12 +145,17 @@ public:
 		return _items.erase(first, last);
 	}
 
-	/** Erases the item in the map pointed by @p it .*/
-	iterator erase(const Key &theKey) {
+	/**
+	 * Erases the item with the given key.
+	 * Returns the number of elements removed (0 or 1)
+	 */
+	size_t erase(const Key &theKey) {
 		iterator it = find(theKey);
-		if (it != this->end())
-			return erase(it);
-		return it;
+		if (it != this->end()) {
+			erase(it);
+			return 1;
+		}
+		return 0;
 	}
 
 	/**
