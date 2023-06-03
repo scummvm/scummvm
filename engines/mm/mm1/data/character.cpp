@@ -232,8 +232,8 @@ void Character::synchronize(Common::Serializer &s, int portraitNum) {
 	if (s.isLoading()) {
 		if (portraitNum != -1)
 			_portrait = portraitNum;
-		else if (portraitNum >= NUM_PORTRAITS)
-			// Ensure only valid portrait numbers are specified
+		if (_portrait >= NUM_PORTRAITS)
+			// Ensure portrait number is valid
 			_portrait = 0;
 	}
 
