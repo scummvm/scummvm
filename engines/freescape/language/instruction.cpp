@@ -93,6 +93,7 @@ void FreescapeEngine::executeObjectConditions(GeometricObject *obj, bool shot, b
 	assert(obj != nullptr);
 	if (!obj->_conditionSource.empty()) {
 		_firstSound = true;
+		_syncSound = false;
 		_objExecutingCodeSize = collided ? obj->getSize() : Math::Vector3d();
 		if (collided)
 			debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", obj->_conditionSource.c_str());
@@ -250,7 +251,15 @@ void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
 	_gfx->flipBuffer();
 	g_system->updateScreen();
 	g_system->delayMillis(10);
-	waitForSounds();
+
+	drawFrame();
+	_gfx->flipBuffer();
+	g_system->updateScreen();
+	g_system->delayMillis(isCPC() ? 100 : 10);
+
+	if (_syncSound) {
+		waitForSounds();
+	}
 }
 
 void FreescapeEngine::executeExecute(FCLInstruction &instruction) {
