@@ -27,70 +27,79 @@
 namespace Common {
 
 /**
- * associative container meant as a drop-in replacement the C++ standard library's std::map
+ * @defgroup common_stablemap stable map
+ * @ingroup common
+ *
+ * @brief API for operating on a key value map
+ *
+ * @{
+ */
+
+/**
+ * Ordered associative container meant as a drop-in replacement
+ * for the C++ standard library's std::map.
  */
 template<class Key, class Val, class CompFunc = Common::Less<Key> >
 class StableMap {
 	using TreeT = RBTree<Pair<Key, Val>, Key, PairFirst<Key, Val>, CompFunc>;
 
 public:
-	using value_type = Pair<Key, Val>;
-	using iterator = typename TreeT::BasicIterator;
-	using const_iterator = typename TreeT::ConstIterator;
+	using value_type = Pair<Key, Val>;                    /*!< Type of the value obtained by dereferencing a StableMap iterator. */
+	using iterator = typename TreeT::BasicIterator;       /*!< StableMap iterator. */
+	using const_iterator = typename TreeT::ConstIterator; /*!< Const-qualified StableMap iterator. */
 
-	/**
-	 * Clears the map
-	 */
+	/** Clears the contents of the map */
 	void clear() {
 		_items.clear();
 	}
 
-	/**
-	 * Gets the iterator start
-	 */
+	/** Return an iterator pointing to the first element in the map. */
 	iterator begin() {
 		return _items.begin();
 	}
 
-	/**
-	 * Get the iterator end
-	 */
+	/** Return an iterator pointing to the last element in the map. */
 	iterator end() {
 		return _items.end();
 	}
 
-	/**
-	 * Get the const iterator start
-	 */
+	/** Return a const iterator pointing to the first element in the map. */
 	const_iterator begin() const {
 		return _items.begin();
 	}
 
-	/**
-	 * Get the const iterator end
-	 */
+	/** Return a const iterator pointing to the last element in the map. */
 	const_iterator end() const {
 		return _items.end();
 	}
 
 	/**
-	 * Returns an iterator for the first element of the map that is
-	 * not less than the given key
+	 * Returns an iterator to the first item thas is not less than @p key
+	 * in the map (or end() if this cannot be found).
 	 */
 	const_iterator lower_bound(const Key &key) const {
 		return _items.lowerBound(key);
 	}
 
+	/**
+	 * Returns a const iterator to the first item thas is not less than @p key
+	 * in the map (or end() if this cannot be found).
+	 */
 	iterator lower_bound(const Key &key) {
 		return _items.lowerBound(key);
 	}
 
+	/**
+	 * Returns an iterator to the first item bigger than @p key
+	 * in the map (or end() if this cannot be found).
+	 */
 	iterator upper_bound(const Key &key) {
 		return _items.upperBound(key);
 	}
 
 	/**
-	 * Find the entry with the given key
+	 * Returns an iterator to the item with the given key,
+	 * or end() if the item was not found.
 	 */
 	iterator find(const Key &theKey) {
 		iterator it = _items.lowerBound(theKey);
@@ -99,6 +108,10 @@ public:
 		return this->end();
 	}
 
+	/**
+	 * Returns a const iterator to the item with the given key,
+	 * or end() if the item was not found.
+	 */
 	const_iterator find(const Key &theKey) const {
 		const_iterator it = _items.lowerBound(theKey);
 		if (it != this->end() && compareEqual(it->first, theKey))
@@ -118,17 +131,21 @@ public:
 		return it->second;
 	}
 
-	/**
-	 * Erases an entry in the map
-	 */
+	/** Erases the item in the map pointed by @p it .*/
 	iterator erase(iterator it) {
 		return _items.erase(it);
 	}
 
+	/**
+	 * Erase the elements from @p first to @p last and return an iterator pointing to the next element in the map.
+	 * @note
+	 * If [first, last) is not a valid range for the map, the behaviour is undefined.
+	 */
 	iterator erase(iterator first, iterator last) {
 		return _items.erase(first, last);
 	}
 
+	/** Erases the item in the map pointed by @p it .*/
 	iterator erase(const Key &theKey) {
 		iterator it = find(theKey);
 		if (it != this->end())
@@ -136,6 +153,11 @@ public:
 		return it;
 	}
 
+	/**
+	 * Tries to insert the value @p val in the map. If the value is inserted,
+	 * the pair (it, true), where it is the iterator to the inserted value,
+	 * is returned, otherwise (lower_bound(val), false) is returned
+	 */
 	Pair<iterator, bool> insert(const value_type &val) {
 		iterator it = _items.lowerBound(val.first);
 		if (it == this->end() || !compareEqual(it->first, val.first))
@@ -143,13 +165,18 @@ public:
 		return {it, false};
 	}
 
-	/**
-	 * Returns the size of the map
-	 */
+	/** Returns the size of the map. */
 	size_t size() const {
 		return _items.size();
 	}
 
+	/**
+	 * Returns true if the map is empty.
+	 * Shorthand for:
+	 * @code
+	 * map.size() == 0
+	 * @endcode
+	 */
 	bool empty() const {
 		return _items.isEmpty();
 	}
@@ -174,6 +201,8 @@ private:
 	TreeT _items;
 	CompFunc _comp;
 };
+
+/** @} */
 
 } // End of namespace Common
 
