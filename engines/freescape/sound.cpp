@@ -38,7 +38,8 @@ void FreescapeEngine::playSound(int index, bool sync) {
 		_syncSound = sync;
 		return;
 	}
-	waitForSounds();
+	if (_syncSound)
+		waitForSounds();
 	switch (index) {
 	case 1:
 		if (_usePrerecordedSounds) {
@@ -267,8 +268,13 @@ void FreescapeEngine::stopAllSounds() {
 }
 
 void FreescapeEngine::waitForSounds() {
-	while (!_speaker->endOfStream())
-		g_system->delayMillis(10);
+	if (_usePrerecordedSounds || isAmiga() || isAtariST())
+		while (_mixer->isSoundIDActive(-1))
+			g_system->delayMillis(10);
+	else {
+		while (!_speaker->endOfStream())
+			g_system->delayMillis(10);
+	}
 }
 
 bool FreescapeEngine::isPlayingSound() {

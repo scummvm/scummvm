@@ -433,6 +433,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 			_gameStateVars[32]++;
 		} else
 			_drillStatusByArea[_currentArea->getAreaID()] = kDrillerRigOutOfPlace;
+		executeMovementConditions();
 	} else if (keycode == Common::KEYCODE_c) {
 		if (isDOS() && isDemo()) // No support for drilling here yet
 			return;
@@ -473,6 +474,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 		uint32 scoreToRemove = uint32(maxScore * success) / 100;
 		assert(scoreToRemove <= uint32(_gameStateVars[k8bitVariableScore]));
 		_gameStateVars[k8bitVariableScore] -= scoreToRemove;
+		executeMovementConditions();
 	}
 }
 
