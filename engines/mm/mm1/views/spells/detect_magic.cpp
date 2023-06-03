@@ -27,13 +27,6 @@ namespace MM1 {
 namespace Views {
 namespace Spells {
 
-void DetectMagic::show() {
-	UIElement *view = dynamic_cast<DetectMagic *>(g_events->findView("DetectMagic"));
-	assert(view);
-
-	view->open();
-}
-
 DetectMagic::DetectMagic() : SpellView("DetectMagic") {
 	_bounds = getLineBounds(20, 24);
 }
@@ -46,44 +39,12 @@ void DetectMagic::draw() {
 	_textPos.x = 20;
 	_textPos.y = 0;
 
+	getMagicStrings();
 	Inventory &inv = g_globals->_currCharacter->_backpack;
 	for (uint i = 0; i < inv.size(); ++i) {
 		writeChar('A' + i);
 		writeChar(')');
-
-		int itemId = inv[i]._id;
-		bool flag = false;
-		if (itemId < 12)
-			flag = false;
-		else if (itemId < 61)
-			flag = true;
-		else if (itemId < 66)
-			flag = false;
-		else if (itemId < 86)
-			flag = true;
-		else if (itemId < 93)
-			flag = false;
-		else if (itemId < 121)
-			flag = true;
-		else if (itemId < 128)
-			flag = false;
-		else if (itemId < 156)
-			flag = true;
-		else if (itemId < 158)
-			flag = false;
-		else if (itemId < 255)
-			flag = true;
-		else
-			flag = false;
-
-		if (flag) {
-			writeString("Y (");
-			writeNumber(inv[i]._charges);
-			writeChar(')');
-
-		} else {
-			writeChar('N');
-		}
+		writeString(_strings[i]);
 
 		// Move to write position for next item (if any)
 		if (_textPos.x < 30) {
@@ -95,8 +56,10 @@ void DetectMagic::draw() {
 	}
 }
 
-bool DetectMagic::msgKeypress(const KeypressMessage &msg) {
-	close();
+bool DetectMagic::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_SELECT || msg._action == KEYBIND_ESCAPE)
+		close();
+
 	return true;
 }
 

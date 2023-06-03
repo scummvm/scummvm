@@ -627,7 +627,7 @@ SpellResult SpellsParty::cleric75_sunRay() {
 }
 
 SpellResult SpellsParty::wizard12_detectMagic() {
-	Views::Spells::DetectMagic::show();
+	g_events->replaceView("DetectMagic");
 	return SR_SUCCESS_SILENT;
 }
 

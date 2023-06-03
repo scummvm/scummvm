@@ -19,42 +19,27 @@
  *
  */
 
-#ifndef MM1_VIEWS_SPELLS_DETECT_MAGIC_H
-#define MM1_VIEWS_SPELLS_DETECT_MAGIC_H
+#ifndef MM1_GAME_DETECT_MAGIC_H
+#define MM1_GAME_DETECT_MAGIC_H
 
-#include "mm/mm1/views/spells/spell_view.h"
-#include "mm/mm1/game/detect_magic.h"
+#include "common/rect.h"
+#include "mm/mm1/data/character.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Spells {
+namespace Game {
 
-class DetectMagic : public SpellView, public MM1::Game::DetectMagic {
-public:
-	/**
-	 * Constructor
-	 */
-	DetectMagic();
+class DetectMagic {
+protected:
+	Common::String _strings[INVENTORY_COUNT];
 
 	/**
-	 * Destructor
+	 * Gets the magic flags 
 	 */
-	virtual ~DetectMagic() {}
-
-	/**
-	 * Draw the view contents
-	 */
-	void draw() override;
-
-	/**
-	 * Action handler
-	 */
-	bool msgAction(const ActionMessage &msg) override;
+	void getMagicStrings();
 };
 
-} // namespace Spells
-} // namespace Views
+} // namespace Game
 } // namespace MM1
 } // namespace MM
 

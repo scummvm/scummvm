@@ -38,6 +38,7 @@ MODULE_OBJS += \
 	mm1/data/treasure.o \
 	mm1/game/arenko.o \
 	mm1/game/arrested.o \
+	mm1/game/detect_magic.o \
 	mm1/game/game_logic.o \
 	mm1/game/combat.o \
 	mm1/game/encounter.o \

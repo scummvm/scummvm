@@ -19,43 +19,51 @@
  *
  */
 
-#ifndef MM1_VIEWS_SPELLS_DETECT_MAGIC_H
-#define MM1_VIEWS_SPELLS_DETECT_MAGIC_H
-
-#include "mm/mm1/views/spells/spell_view.h"
 #include "mm/mm1/game/detect_magic.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Spells {
+namespace Game {
 
-class DetectMagic : public SpellView, public MM1::Game::DetectMagic {
-public:
-	/**
-	 * Constructor
-	 */
-	DetectMagic();
+void DetectMagic::getMagicStrings() {
+	Inventory &inv = g_globals->_currCharacter->_backpack;
+	for (uint i = 0; i < inv.size(); ++i) {
+		Common::String s;
 
-	/**
-	 * Destructor
-	 */
-	virtual ~DetectMagic() {}
+		int itemId = inv[i]._id;
+		bool flag = false;
+		if (itemId < 12)
+			flag = false;
+		else if (itemId < 61)
+			flag = true;
+		else if (itemId < 66)
+			flag = false;
+		else if (itemId < 86)
+			flag = true;
+		else if (itemId < 93)
+			flag = false;
+		else if (itemId < 121)
+			flag = true;
+		else if (itemId < 128)
+			flag = false;
+		else if (itemId < 156)
+			flag = true;
+		else if (itemId < 158)
+			flag = false;
+		else if (itemId < 255)
+			flag = true;
+		else
+			flag = false;
 
-	/**
-	 * Draw the view contents
-	 */
-	void draw() override;
+		if (flag) {
+			_strings[i] = Common::String::format("Y (%d)", inv[i]._charges);
+		} else {
+			_strings[i] = "N";
+		}
+	}
+}
 
-	/**
-	 * Action handler
-	 */
-	bool msgAction(const ActionMessage &msg) override;
-};
-
-} // namespace Spells
-} // namespace Views
+} // namespace Game
 } // namespace MM1
 } // namespace MM
-
-#endif
