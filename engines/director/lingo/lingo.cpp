@@ -1412,26 +1412,31 @@ void Lingo::executeImmediateScripts(Frame *frame) {
 }
 
 void Lingo::executePerFrameHook(int frame, int subframe) {
-	if (_vm->getVersion() < 400) {
-		if (_perFrameHook.type == OBJECT) {
-			Symbol method = _perFrameHook.u.obj->getMethod("mAtFrame");
-			if (method.type != VOIDSYM) {
-				debugC(1, kDebugLingoExec, "Executing perFrameHook : <%s>(mAtFrame, %d, %d)", _perFrameHook.asString(true).c_str(), frame, subframe);
-				push(_perFrameHook);
-				push(frame);
-				push(subframe);
-				LC::call(method, 3, false);
+	// Execute perFrameHook and actorList stepFrame, if any is available
+	// Starting D4, stepFrame of each objects in actorList is executed
+	// however the support for legacy mAtFrame is still there. (in future versions)
+	if (_perFrameHook.type == OBJECT) {
+		Symbol method = _perFrameHook.u.obj->getMethod("mAtFrame");
+		if (method.type != VOIDSYM) {
+			debugC(1, kDebugLingoExec, "Executing perFrameHook : <%s>(mAtFrame, %d, %d)", _perFrameHook.asString(true).c_str(), frame, subframe);
+			push(_perFrameHook);
+			push(frame);
+			push(subframe);
+			LC::call(method, 3, false);
+			execute();
+		}
+	}
+
+	if (_vm->getVersion() >= 400) {
+		if (_actorList.u.farr->arr.size() > 0 && _vm->getVersion() >= 400) {
+			for (uint i = 0; i < _actorList.u.farr->arr.size(); i++) {
+				Datum actor = _actorList.u.farr->arr[i];
+				Symbol method = actor.u.obj->getMethod("stepFrame");
+				if (method.nargs == 1)
+					push(actor);
+				LC::call(method, method.nargs, false);
 				execute();
 			}
-		}
-	} else if (_actorList.u.farr->arr.size() > 0) {
-		for (uint i = 0; i < _actorList.u.farr->arr.size(); i++) {
-			Datum actor = _actorList.u.farr->arr[i];
-			Symbol method = actor.u.obj->getMethod("stepFrame");
-			if (method.nargs == 1)
-				push(actor);
-			LC::call(method, method.nargs, false);
-			execute();
 		}
 	}
 }
