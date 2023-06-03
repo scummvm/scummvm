@@ -19,57 +19,24 @@
  *
  */
 
-#ifndef MM1_VIEWS_SPELLS_FLY_H
-#define MM1_VIEWS_SPELLS_FLY_H
+#ifndef MM1_GAME_FLY_H
+#define MM1_GAME_FLY_H
 
-#include "mm/mm1/views/spells/spell_view.h"
-#include "mm/mm1/game/fly.h"
+#include "common/rect.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Spells {
+namespace Game {
 
-class Fly : public SpellView, public MM1::Game::Fly {
-private:
-	enum Mode { SELECT_X, SELECT_Y, CAST };
-	Mode _mode = SELECT_X;
-	int _xIndex = 0, _yIndex = 0;
-
-public:
+class Fly {
+protected:
 	/**
-	 * Constructor
+	 * Handles teleporting to the given map
 	 */
-	Fly();
-
-	/**
-	 * Destructor
-	 */
-	virtual ~Fly() {}
-
-	/**
-	 * Show the view
-	 */
-	bool msgFocus(const FocusMessage &) override;
-
-	/**
-	 * Draw the view contents
-	 */
-	void draw() override;
-
-	/**
-	 * Keypress handler
-	 */
-	bool msgKeypress(const KeypressMessage &msg) override;
-
-	/**
-	 * Action handler
-	 */
-	bool msgAction(const ActionMessage &msg) override;
+	void fly(int mapIndex);
 };
 
-} // namespace Spells
-} // namespace Views
+} // namespace Game
 } // namespace MM1
 } // namespace MM
 

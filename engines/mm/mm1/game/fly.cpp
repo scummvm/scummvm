@@ -19,58 +19,52 @@
  *
  */
 
-#ifndef MM1_VIEWS_SPELLS_FLY_H
-#define MM1_VIEWS_SPELLS_FLY_H
-
-#include "mm/mm1/views/spells/spell_view.h"
 #include "mm/mm1/game/fly.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Spells {
+namespace Game {
 
-class Fly : public SpellView, public MM1::Game::Fly {
-private:
-	enum Mode { SELECT_X, SELECT_Y, CAST };
-	Mode _mode = SELECT_X;
-	int _xIndex = 0, _yIndex = 0;
-
-public:
-	/**
-	 * Constructor
-	 */
-	Fly();
-
-	/**
-	 * Destructor
-	 */
-	virtual ~Fly() {}
-
-	/**
-	 * Show the view
-	 */
-	bool msgFocus(const FocusMessage &) override;
-
-	/**
-	 * Draw the view contents
-	 */
-	void draw() override;
-
-	/**
-	 * Keypress handler
-	 */
-	bool msgKeypress(const KeypressMessage &msg) override;
-
-	/**
-	 * Action handler
-	 */
-	bool msgAction(const ActionMessage &msg) override;
+static const byte FLY_MAP_ID1[20] = {
+	1, 0, 4, 5, 0x12,
+	2, 3, 0x11, 5, 6,
+	2, 1, 4, 6, 0x1A,
+	3, 3, 4, 1, 0x1B
 };
 
-} // namespace Spells
-} // namespace Views
+static const byte FLY_MAP_ID2[20] = {
+	0xF, 0xA, 3, 5, 1,
+	5, 7, 0xA, 0xB, 7,
+	0xB, 1, 9, 1, 0xB,
+	1, 0xD, 0xF, 8, 1
+};
+
+static const byte FLY_MAP_X[20] = {
+	15, 8, 11, 0, 9,
+	15, 3, 10, 4, 11,
+	15, 3, 3, 7, 12,
+	14, 11, 5, 7, 15
+};
+
+static const byte FLY_MAP_Y[20] = {
+	7, 10, 0, 8, 11,
+	7, 2, 10, 0, 0,
+	15, 3, 9, 0, 6,
+	14, 15, 15, 7, 15
+};
+
+void Fly::fly(int mapIndex) {
+	if (mapIndex != -1) {
+		Maps::Maps &maps = *g_maps;
+		int id = FLY_MAP_ID1[mapIndex] | ((int)FLY_MAP_ID2[mapIndex] << 8);
+
+		maps._mapPos.x = FLY_MAP_X[mapIndex];
+		maps._mapPos.y = FLY_MAP_Y[mapIndex];
+		maps.changeMap(id, 2);
+	}
+}
+
+} // namespace Game
 } // namespace MM1
 } // namespace MM
-
-#endif

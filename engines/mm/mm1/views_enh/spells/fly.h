@@ -19,18 +19,18 @@
  *
  */
 
-#ifndef MM1_VIEWS_SPELLS_FLY_H
-#define MM1_VIEWS_SPELLS_FLY_H
+#ifndef MM1_VIEWS_ENH_SPELLS_FLY_H
+#define MM1_VIEWS_ENH_SPELLS_FLY_H
 
-#include "mm/mm1/views/spells/spell_view.h"
+#include "mm/mm1/views_enh/scroll_view.h"
 #include "mm/mm1/game/fly.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace ViewsEnh {
 namespace Spells {
 
-class Fly : public SpellView, public MM1::Game::Fly {
+class Fly : public ScrollView, public MM1::Game::Fly {
 private:
 	enum Mode { SELECT_X, SELECT_Y, CAST };
 	Mode _mode = SELECT_X;
@@ -66,10 +66,15 @@ public:
 	 * Action handler
 	 */
 	bool msgAction(const ActionMessage &msg) override;
+
+	/**
+	 * Timeout handler
+	 */
+	void timeout() override;
 };
 
 } // namespace Spells
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
 

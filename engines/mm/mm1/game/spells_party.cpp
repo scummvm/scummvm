@@ -135,34 +135,6 @@ SpellsParty::SpellFn SpellsParty::SPELLS[SPELLS_COUNT] = {
 	wizard75_prismaticLight
 };
 
-byte FLY_MAP_ID1[20] = {
-	1, 0, 4, 5, 0x12,
-	2, 3, 0x11, 5, 6,
-	2, 1, 4, 6, 0x1A,
-	3, 3, 4, 1, 0x1B
-};
-
-byte FLY_MAP_ID2[20] = {
-	0xF, 0xA, 3, 5, 1,
-	5, 7, 0xA, 0xB, 7,
-	0xB, 1, 9, 1, 0xB,
-	1, 0xD, 0xF, 8, 1
-};
-
-byte FLY_MAP_X[20] = {
-	15, 8, 11, 0, 9,
-	15, 3, 10, 4, 11,
-	15, 3, 3, 7, 12,
-	14, 11, 5, 7, 15
-};
-
-byte FLY_MAP_Y[20] = {
-	7, 10, 0, 8, 11,
-	7, 2, 10, 0, 0,
-	15, 3, 9, 0, 6,
-	14, 15, 15, 7, 15
-};
-
 SpellResult SpellsParty::cast(uint spell, Character *destChar) {
 	assert(spell < SPELLS_COUNT);
 	_destChar = destChar;
@@ -787,19 +759,7 @@ SpellResult SpellsParty::wizard31_fireball() {
 }
 
 SpellResult SpellsParty::wizard32_fly() {
-	Views::Spells::Fly::show(
-		[](int mapIndex) {
-			if (mapIndex != -1) {
-				Maps::Maps &maps = *g_maps;
-				int id = FLY_MAP_ID1[mapIndex] | ((int)FLY_MAP_ID2[mapIndex] << 8);
-
-				maps._mapPos.x = FLY_MAP_X[mapIndex];
-				maps._mapPos.y = FLY_MAP_Y[mapIndex];
-				maps.changeMap(id, 2);
-			}
-		}
-	);
-
+	g_events->addView("Fly");
 	return SR_SUCCESS_SILENT;
 }
 

@@ -19,20 +19,26 @@
  *
  */
 
-#include "mm/mm1/views/spells/fly.h"
+#include "mm/mm1/views_enh/spells/fly.h"
 #include "mm/mm1/globals.h"
+
+#define TEXT_X1 160
+#define TEXT_X2 195
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace ViewsEnh {
 namespace Spells {
 
-Fly::Fly() : SpellView("Fly") {
-	_bounds = getLineBounds(21, 24);
+#define TEXT_X 120
+
+Fly::Fly() : ScrollView("Fly") {
+	setBounds(Common::Rect(0, 144, 234, 200));
+	addButton(&g_globals->_escSprites, Common::Point(5, 28), 0, KEYBIND_ESCAPE, true);
 }
 
 bool Fly::msgFocus(const FocusMessage &msg) {
-	SpellView::msgFocus(msg);
+	ScrollView::msgFocus(msg);
 
 	_mode = SELECT_X;
 	_xIndex = _yIndex = 0;
@@ -40,20 +46,20 @@ bool Fly::msgFocus(const FocusMessage &msg) {
 }
 
 void Fly::draw() {
-	clearSurface();
-	escToGoBack(0);
+	ScrollView::draw();
 
-	writeString(9, 0, STRING["dialogs.spells.fly_to_x"]);
+	setReduced(true);
+	writeString(20, 30, STRING["enhdialogs.misc.go_back"]);
+
+	writeLine(0, STRING["dialogs.spells.fly_to_x"], ALIGN_RIGHT, TEXT_X);
 	writeChar((_mode == SELECT_X) ? '_' : 'A' + _xIndex);
 
 	if (_mode == SELECT_Y || _mode == CAST) {
-		writeString(16, 1, STRING["dialogs.spells.fly_to_y"]);
+		writeLine(1, STRING["dialogs.spells.fly_to_y"], ALIGN_RIGHT, TEXT_X);
 		writeChar((_mode == SELECT_Y) ? '_' : '1' + _yIndex);
 	}
 
-	if (_mode == CAST) {
-		writeString(24, 3, STRING["spells.enter_to_cast"]);
-	}
+	setReduced(false);
 }
 
 bool Fly::msgKeypress(const KeypressMessage &msg) {
@@ -69,6 +75,8 @@ bool Fly::msgKeypress(const KeypressMessage &msg) {
 		// Y map selected
 		_mode = CAST;
 		_yIndex = msg.keycode - Common::KEYCODE_1;
+
+		delaySeconds(1);
 		redraw();
 	}
 
@@ -76,22 +84,27 @@ bool Fly::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool Fly::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE) {
-		close();
-		fly(-1);
+	if (endDelay())
 		return true;
 
-	} else if (_mode == CAST && msg._action == KEYBIND_SELECT) {
-		// Spell was cast
-		close();
-		int mapIndex = _yIndex * 5 + _xIndex;
-		fly(mapIndex);
+	if (msg._action == KEYBIND_ESCAPE) {
+		cancelDelay();
+		g_events->replaceView("Game", true);
+		fly(-1);
+		return true;
 	}
 
 	return false;
 }
 
+void Fly::timeout() {
+	// Spell was cast
+	g_events->replaceView("Game", true);
+	int mapIndex = _yIndex * 5 + _xIndex;
+	fly(mapIndex);
+}
+
 } // namespace Spells
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
