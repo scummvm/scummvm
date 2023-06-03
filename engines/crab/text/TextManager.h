@@ -86,7 +86,7 @@ class TextManager {
 	ColorPool colpool;
 
 	// The rectangle used to store the darkened rectangle coordinates
-	SDL_Rect rect;
+	Rect rect;
 
 	int Search(const Common::String &text, int col, FontKey fontid);
 	int FindFreeSlot();
