@@ -1703,6 +1703,7 @@ void start_character_turning(CharacterInfo *chinf, int useloop, int no_diagonal)
 		no_diagonal = 0;
 
 	for (ii = fromidx; ii != toidx; ii -= go_anticlock) {
+		// Wrap the loop order into range [0-7]
 		if (ii < 0)
 			ii = 7;
 		if (ii >= 8)
@@ -1710,15 +1711,12 @@ void start_character_turning(CharacterInfo *chinf, int useloop, int no_diagonal)
 		if (ii == toidx)
 			break;
 		if ((turnlooporder[ii] >= 4) && (no_diagonal > 0))
-			continue;
-		// Upstream does not do this check
-		// The value of turnlooporder should be checked before addressing the
-		// loops vector, to avoid going OOB and triggering an assertion
-		if (((uint)turnlooporder[ii] < _GP(views)[chinf->view].loops.size()) &&
-			(_GP(views)[chinf->view].loops[turnlooporder[ii]].numFrames < 1))
-			continue;
-		if (turnlooporder[ii] < _GP(views)[chinf->view].numLoops)
-			chinf->walking += TURNING_AROUND;
+			continue; // there are no diagonal loops
+		if (turnlooporder[ii] >= _GP(views)[chinf->view].numLoops)
+			continue; // no such loop
+		if (_GP(views)[chinf->view].loops[turnlooporder[ii]].numFrames < 1)
+			continue; // no frames in such loop
+		chinf->walking += TURNING_AROUND;
 	}
 
 }
