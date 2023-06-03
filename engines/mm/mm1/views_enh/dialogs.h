@@ -87,6 +87,7 @@
 #include "mm/mm1/views_enh/locations/training.h"
 #include "mm/mm1/views_enh/spells/cast_spell.h"
 #include "mm/mm1/views_enh/spells/spellbook.h"
+#include "mm/mm1/views_enh/spells/detect_magic.h"
 #include "mm/mm1/views_enh/spells/fly.h"
 #include "mm/mm1/views_enh/spells/location.h"
 
@@ -139,6 +140,7 @@ private:
 	ViewsEnh::Locations::Training _training;
 	ViewsEnh::Spells::CastSpell _castSpell;
 	ViewsEnh::Spells::Spellbook _spellbook;
+	ViewsEnh::Spells::DetectMagic _detectMagic;
 	ViewsEnh::Spells::Fly _fly;
 	ViewsEnh::Spells::Location _location;
 	ViewsEnh::CharacterInfo _characterInfo;
