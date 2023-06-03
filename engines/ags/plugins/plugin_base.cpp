@@ -26,6 +26,7 @@
 #include "ags/plugins/ags_blend/ags_blend.h"
 #include "ags/plugins/ags_clipboard/ags_clipboard.h"
 #include "ags/plugins/ags_collision_detector/ags_collision_detector.h"
+#include "ags/plugins/ags_consoles/ags_consoles.h"
 #include "ags/plugins/ags_controller/ags_controller.h"
 #include "ags/plugins/ags_creditz/ags_creditz1.h"
 #include "ags/plugins/ags_creditz/ags_creditz2.h"
@@ -82,6 +83,9 @@ Plugins::PluginBase *pluginOpen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("AGSClipboard"))
 		return new AGSClipboard::AGSClipboard();
+
+	if (fname.equalsIgnoreCase("AGSConsoles"))
+		return new AGSConsoles::AGSConsoles();
 
 	if (fname.equalsIgnoreCase("AGSController"))
 		return new AGSController::AGSController();
