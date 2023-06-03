@@ -41,7 +41,7 @@ class CharacterInfo : public CharacterBase, MM1::Game::EquipRemove,
 	public MM1::Game::UseItem {
 private:
 	enum ViewState {
-		DISPLAY, EQUIP, GATHER, REMOVE, SHARE,
+		DISPLAY, DISCARD, EQUIP, GATHER, REMOVE, SHARE,
 		TRADE_WITH, TRADE_KIND, TRADE_ITEM, USE };
 	ViewState _state = DISPLAY;
 	Common::String _newName;
@@ -50,6 +50,11 @@ private:
 	TransferKind _tradeKind = TK_GEMS;
 	TextEntry _textEntry;
 private:
+	/**
+	 * Discards the item at the given index
+	 */
+	void discardItem(uint index);
+
 	/**
 	 * Equips the item at the given index
 	 */

@@ -47,6 +47,11 @@ void CharacterInfo::draw() {
 		writeString(0, 24, STRING["dialogs.character.legend4"]);
 		break;
 
+	case DISCARD:
+		writeString(0, 20, STRING["dialogs.character.discard"]);
+		escToGoBack(0);
+		break;
+
 	case EQUIP:
 		writeString(0, 20, STRING["dialogs.character.equip"]);
 		escToGoBack(0);
@@ -133,6 +138,11 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 		case Common::KEYCODE_c:
 			send("CastSpell", GameMessage("SPELL", 0));
 			break;
+		case Common::KEYCODE_d:
+			if (!g_globals->_currCharacter->_backpack.empty())
+				_state = DISCARD;
+			redraw();
+			break;
 		case Common::KEYCODE_e:
 			if (!g_globals->_currCharacter->_backpack.empty())
 				_state = EQUIP;
@@ -165,6 +175,13 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 		default:
 			break;
 		 }
+		break;
+
+	case DISCARD:
+		if (msg.keycode >= Common::KEYCODE_a &&
+			msg.keycode <= Common::KEYCODE_f)
+			discardItem(msg.keycode - Common::KEYCODE_a);
+		redraw();
 		break;
 
 	case EQUIP:
@@ -303,6 +320,13 @@ bool CharacterInfo::msgGame(const GameMessage &msg) {
 	}
 
 	return false;
+}
+
+void CharacterInfo::discardItem(uint index) {
+	Inventory &inv = g_globals->_currCharacter->_backpack;
+	if (index < inv.size())
+		inv.removeAt(index);
+	_state = DISPLAY;
 }
 
 void CharacterInfo::equipItem(uint index) {

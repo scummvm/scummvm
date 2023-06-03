@@ -25,6 +25,7 @@ dialogs:
 		legend2: " # view other     'd' discard 's' share"
 		legend3: "                  'e' equip   't' trade"
 		legend4: "'esc' to go back  'g' gather  'u' use"
+		discard: "discard which item: 'a'-'f'?"
 		equip: "equip which item: 'a'-'f'?"
 		remove: "remove which item: '1'-'6'?"
 		which: "which item: 'a'-'f'?"
