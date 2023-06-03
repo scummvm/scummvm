@@ -690,7 +690,7 @@ SpellResult SpellsParty::wizard15_leatherSkin() {
 }
 
 SpellResult SpellsParty::wizard17_location() {
-	Views::Spells::Location::show();
+	g_events->replaceView("Location");
 	return SR_SUCCESS_SILENT;
 }
 
@@ -974,7 +974,7 @@ SpellResult SpellsParty::wizard71_astralSpell() {
 }
 
 SpellResult SpellsParty::wizard72_duplication() {
-	g_events->addView("Duplication");
+	g_events->replaceView("Duplication");
 	return SR_SUCCESS_SILENT;
 }
 

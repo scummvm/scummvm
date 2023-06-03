@@ -233,7 +233,7 @@ void CastSpell::performSpell(Character *chr) {
 
 		default:
 			// Spell done, but don't display done message
-			if (isInCombat())
+			if (isFocused())
 				close();
 			break;
 		}

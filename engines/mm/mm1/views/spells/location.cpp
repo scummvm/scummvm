@@ -27,13 +27,6 @@ namespace MM1 {
 namespace Views {
 namespace Spells {
 
-void Location::show() {
-	UIElement *view = dynamic_cast<Location *>(g_events->findView("Location"));
-	assert(view);
-
-	view->open();
-}
-
 Location::Location() : SpellView("Location") {
 	_bounds = getLineBounds(20, 24);
 }
@@ -100,8 +93,10 @@ void Location::draw() {
 	}
 }
 
-bool Location::msgKeypress(const KeypressMessage &msg) {
-	close();
+bool Location::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_SELECT || msg._action == KEYBIND_ESCAPE)
+		close();
+
 	return true;
 }
 
