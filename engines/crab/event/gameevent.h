@@ -85,7 +85,7 @@ struct GameEvent {
 	Common::Array<EventID> next;
 
 	GameEvent();
-	GameEvent(rapidxml::xml_node<char> *node) { Load(node); }
+	GameEvent(rapidxml::xml_node<char> *node) : GameEvent() { Load(node); }
 	~GameEvent() {}
 
 	void Load(rapidxml::xml_node<char> *node);
