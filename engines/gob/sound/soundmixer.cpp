@@ -148,7 +148,8 @@ void SoundMixer::play(SoundDesc &sndDesc, int16 repCount, int16 frequency,
 }
 
 void SoundMixer::checkEndSample() {
-	if ((_repCount == -1) || (--_repCount > 0)) {
+	if ((_repCount == -1) || (_repCount - 1 > 0)) {
+        --_repCount;
 		_offset = 0;
 		_offsetFrac = 0;
 		_end = false;
