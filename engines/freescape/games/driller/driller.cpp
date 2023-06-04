@@ -756,7 +756,8 @@ void DrillerEngine::initGameState() {
 
 bool DrillerEngine::checkIfGameEnded() {
 	if (isDemo() && _demoMode)
-		return (_demoData[_demoIndex + 1] == 0x5f);
+		if (_demoData[_demoIndex + 1] == 0x5f)
+			return true;
 
 	if (_countdown <= 0) {
 		insertTemporaryMessage(_messagesList[14], _countdown - 2);
@@ -800,12 +801,16 @@ bool DrillerEngine::checkIfGameEnded() {
 
 	if (_forceEndGame) {
 		_forceEndGame = false;
-		insertTemporaryMessage(_messagesList[18], _countdown - 2);
-		drawFrame();
-		_gfx->flipBuffer();
-		g_system->updateScreen();
-		g_system->delayMillis(2000);
-		gotoArea(127, 0);
+		if (isDemo())
+			return true;
+		else {
+			insertTemporaryMessage(_messagesList[18], _countdown - 2);
+			drawFrame();
+			_gfx->flipBuffer();
+			g_system->updateScreen();
+			g_system->delayMillis(2000);
+			gotoArea(127, 0);
+		}
 	}
 
 	if (_currentArea->getAreaID() == 127) {
