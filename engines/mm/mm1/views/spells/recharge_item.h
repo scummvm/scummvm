@@ -32,11 +32,6 @@ namespace Spells {
 class RechargeItem : public SpellView {
 public:
 	/**
-	 * Show the view
-	 */
-	static void show();
-public:
-	/**
 	 * Constructor
 	 */
 	RechargeItem();

@@ -921,6 +921,7 @@ SpellResult SpellsParty::wizard64_protectionFromMagic() {
 }
 
 SpellResult SpellsParty::wizard65_rechargeItem() {
+	g_events->replaceView("RechargeItem");
 	return SR_FAILED;
 }
 

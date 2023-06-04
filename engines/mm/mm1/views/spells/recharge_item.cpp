@@ -28,13 +28,6 @@ namespace MM1 {
 namespace Views {
 namespace Spells {
 
-void RechargeItem::show() {
-	UIElement *view = dynamic_cast<RechargeItem *>(g_events->findView("RechargeItem"));
-	assert(view);
-
-	view->open();
-}
-
 RechargeItem::RechargeItem() : SpellView("RechargeItem") {
 	_bounds = getLineBounds(20, 24);
 }
@@ -43,7 +36,7 @@ void RechargeItem::draw() {
 	clearSurface();
 	escToGoBack(0);
 
-	writeString(10, 0, STRING["dialogs.charcater.which_item"]);
+	writeString(10, 0, STRING["dialogs.character.which"]);
 }
 
 bool RechargeItem::msgKeypress(const KeypressMessage &msg) {
@@ -64,6 +57,7 @@ bool RechargeItem::msgKeypress(const KeypressMessage &msg) {
 				inv[itemIndex]._charges +
 				g_engine->getRandomNumber(4),
 				(int)item->_maxCharges);
+			spellDone();
 		}
 	}
 
