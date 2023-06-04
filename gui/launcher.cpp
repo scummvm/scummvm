@@ -880,6 +880,8 @@ static Common::String buildQualifiedGameName(const Common::String &engineId, con
 }
 
 void LauncherChooser::genGameList() {
+	debug(6, "Generating game list");
+
 	const PluginList &plugins = EngineMan.getPlugins();
 	for (auto iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
@@ -889,6 +891,8 @@ void LauncherChooser::genGameList() {
 			_games[buildQualifiedGameName(metaEngine.getName(), v->gameId)] = v->description;
 		}
 	}
+
+	debug(6, "Finished generating game list: %d", _games.size());
 }
 
 static Common::Array<LauncherEntry> generateEntries(const Common::ConfigManager::DomainMap &domains, const Common::StringMap &games) {

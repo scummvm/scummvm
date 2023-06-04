@@ -780,6 +780,8 @@ void ThemeEngine::loadTheme(const Common::String &themeId) {
 			_widgets[i]->calcBackgroundOffset();
 		}
 	}
+
+	debug(6, "Finished loading theme %s", themeId.c_str());
 }
 
 void ThemeEngine::unloadTheme() {
