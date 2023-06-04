@@ -564,6 +564,7 @@ enhdialogs:
 		discard: "Discard"
 		use: "Use"
 		charge: "Charge"
+		copy: "Copy"
 		buttons:
 		buttons:
 			weapons: "\x01""37Weap"
@@ -581,6 +582,7 @@ enhdialogs:
 			trade: "\x01""37Trade"		
 			use: "\x01""37Use"
 			charge: "\x01""37Charg"
+			copy: "\x01""37Copy"
 	location:
 		store: "Store"
 		options: "options"

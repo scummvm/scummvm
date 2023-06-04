@@ -88,6 +88,7 @@
 #include "mm/mm1/views_enh/spells/cast_spell.h"
 #include "mm/mm1/views_enh/spells/spellbook.h"
 #include "mm/mm1/views_enh/spells/detect_magic.h"
+#include "mm/mm1/views_enh/spells/duplication.h"
 #include "mm/mm1/views_enh/spells/fly.h"
 #include "mm/mm1/views_enh/spells/location.h"
 #include "mm/mm1/views_enh/spells/recharge_item.h"
@@ -143,6 +144,7 @@ private:
 	ViewsEnh::Spells::CastSpell _castSpell;
 	ViewsEnh::Spells::Spellbook _spellbook;
 	ViewsEnh::Spells::DetectMagic _detectMagic;
+	ViewsEnh::Spells::Duplication _duplicateItem;
 	ViewsEnh::Spells::Fly _fly;
 	ViewsEnh::Spells::Location _location;
 	ViewsEnh::Spells::RechargeItem _rechargeItem;

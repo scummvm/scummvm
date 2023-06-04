@@ -19,18 +19,18 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_SPELLS_RECHARGE_ITEM_H
-#define MM1_VIEWS_ENH_SPELLS_RECHARGE_ITEM_H
+#ifndef MM1_VIEWS_ENH_SPELLS_DUPLICATE_ITEM_H
+#define MM1_VIEWS_ENH_SPELLS_DUPLICATE_ITEM_H
 
 #include "mm/mm1/views_enh/character_inventory.h"
-#include "mm/mm1/game/recharge_item.h"
+#include "mm/mm1/game/duplication.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 namespace Spells {
 
-class RechargeItem : public CharacterInventory, public MM1::Game::RechargeItem {
+class Duplication : public CharacterInventory, public MM1::Game::Duplication {
 protected:
 	/**
 	 * Handle action with selected button mode and selected item
@@ -41,12 +41,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	RechargeItem();
+	Duplication();
 
 	/**
 	 * Destructor
 	 */
-	virtual ~RechargeItem() {}
+	virtual ~Duplication() {}
 
 	bool msgKeypress(const KeypressMessage &msg) override;
 };

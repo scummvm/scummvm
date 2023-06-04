@@ -39,7 +39,7 @@ RechargeItem::RechargeItem() : CharacterInventory("RechargeItem") {
 bool RechargeItem::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode == Common::KEYCODE_a || msg.keycode == Common::KEYCODE_b ||
 			(msg.keycode >= Common::KEYCODE_1 && msg.keycode <= Common::KEYCODE_6)) {
-		// Allow switching between 
+		// Keys we can allow the base view to handle 
 		CharacterInventory::msgKeypress(msg);
 
 	} else if (msg.keycode == Common::KEYCODE_c) {

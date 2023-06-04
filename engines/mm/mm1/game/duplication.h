@@ -19,53 +19,27 @@
  *
  */
 
-#ifndef MM1_VIEWS_SPELLS_DUPLICATION_H
-#define MM1_VIEWS_SPELLS_DUPLICATION_H
+#ifndef MM1_GAME_DUPLICATION_H
+#define MM1_GAME_DUPLICATION_H
 
-#include "mm/mm1/views/spells/spell_view.h"
-#include "mm/mm1/game/duplication.h"
+#include "mm/mm1/game/game_logic.h"
+#include "mm/mm1/data/character.h"
+#include "mm/mm1/data/items.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Spells {
+namespace Game {
 
-class Duplication : public SpellView, public MM1::Game::Duplication {
-private:
-	enum Mode { SELECT_ITEM, CAST };
-	Mode _mode = SELECT_ITEM;
-	char _direction = '\0';
-	int _squares = 0;
-
-public:
+class Duplication : public GameLogic {
+protected:
 	/**
-	 * Constructor
+	 * Charge a given item
+	 * @returns Returns true if the spell succeeded
 	 */
-	Duplication();
-
-	/**
-	 * Destructor
-	 */
-	virtual ~Duplication() {}
-
-	/**
-	 * Draw the view contents
-	 */
-	void draw() override;
-
-	/**
-	 * Keypress handler
-	 */
-	bool msgKeypress(const KeypressMessage &msg) override;
-
-	/**
-	 * Action handler
-	 */
-	bool msgAction(const ActionMessage &msg) override;
+	bool duplicate(Character &c, Inventory &inv, int itemIndex);
 };
 
-} // namespace Spells
-} // namespace Views
+} // namespace Game
 } // namespace MM1
 } // namespace MM
 

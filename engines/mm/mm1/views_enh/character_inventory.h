@@ -35,7 +35,7 @@ class CharacterInventory : public ItemsView, public Game::EquipRemove,
 		public Game::UseItem {
 protected:
 	enum SelectedButton {
-		BTN_NONE, BTN_EQUIP, BTN_REMOVE, BTN_DISCARD, BTN_USE, BTN_CHARGE
+		BTN_NONE, BTN_EQUIP, BTN_REMOVE, BTN_DISCARD, BTN_USE, BTN_CHARGE, BTN_COPY
 	};
 	enum DisplayMode {
 		ARMS_MODE, BACKPACK_MODE

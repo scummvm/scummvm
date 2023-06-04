@@ -19,7 +19,7 @@
  *
  */
 
-#include "mm/mm1/views_enh/spells/recharge_item.h"
+#include "mm/mm1/views_enh/spells/duplication.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
@@ -27,34 +27,34 @@ namespace MM1 {
 namespace ViewsEnh {
 namespace Spells {
 
-RechargeItem::RechargeItem() : CharacterInventory("RechargeItem") {
+Duplication::Duplication() : CharacterInventory("Duplication") {
 	clearButtons();
 
 	addButton(2, STRING["enhdialogs.items.buttons.arms"], Common::KEYCODE_a);
 	addButton(6, STRING["enhdialogs.items.buttons.backpack"], Common::KEYCODE_b);
-	addButton(8, STRING["enhdialogs.items.buttons.charge"], Common::KEYCODE_c);
+	addButton(14, STRING["enhdialogs.items.buttons.copy"], Common::KEYCODE_c);
 	addButton(16, STRING["enhdialogs.misc.exit"], Common::KEYCODE_ESCAPE);
 }
 
-bool RechargeItem::msgKeypress(const KeypressMessage &msg) {
+bool Duplication::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode == Common::KEYCODE_a || msg.keycode == Common::KEYCODE_b ||
 			(msg.keycode >= Common::KEYCODE_1 && msg.keycode <= Common::KEYCODE_6)) {
-		// Allow switching between 
+		// Keys we can allow the base view to handle 
 		CharacterInventory::msgKeypress(msg);
 
-	} else if (msg.keycode == Common::KEYCODE_c) {
-		selectButton(BTN_CHARGE);
+	} else if (msg.keycode == Common::KEYCODE_c || msg.keycode == Common::KEYCODE_d) {
+		selectButton(BTN_COPY);
 	}
 
 	return true;
 }
 
-void RechargeItem::performAction() {
-	assert(_selectedButton == BTN_CHARGE);
+void Duplication::performAction() {
+	assert(_selectedButton == BTN_COPY);
 	Inventory &inv = _mode == ARMS_MODE ? g_globals->_currCharacter->_equipped :
 		g_globals->_currCharacter->_backpack;
 
-	bool result = charge(inv, _selectedItem);
+	bool result = duplicate(*g_globals->_currCharacter, inv, _selectedItem);
 	close();
 
 	g_events->send(InfoMessage(STRING[result ? "spells.done" : "spells.failed"]));

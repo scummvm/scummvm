@@ -19,54 +19,35 @@
  *
  */
 
-#ifndef MM1_VIEWS_SPELLS_DUPLICATION_H
-#define MM1_VIEWS_SPELLS_DUPLICATION_H
-
-#include "mm/mm1/views/spells/spell_view.h"
 #include "mm/mm1/game/duplication.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Spells {
+namespace Game {
 
-class Duplication : public SpellView, public MM1::Game::Duplication {
-private:
-	enum Mode { SELECT_ITEM, CAST };
-	Mode _mode = SELECT_ITEM;
-	char _direction = '\0';
-	int _squares = 0;
+bool Duplication::duplicate(Character &c, Inventory &inv, int itemIndex) {
+	if (c._backpack.full())
+		// No space to duplicate
+		return false;
 
-public:
-	/**
-	 * Constructor
-	 */
-	Duplication();
+	if (getRandomNumber(100) == 100) {
+		// OMG: The original seriously had this fringe
+		// case that happens so rarely
+		inv.removeAt(itemIndex);	// Break item
+		return false;
 
-	/**
-	 * Destructor
-	 */
-	virtual ~Duplication() {}
+	} else if (inv[itemIndex]._id >= 230) {
+		// Item range that can't be duplicated
+		return false;
 
-	/**
-	 * Draw the view contents
-	 */
-	void draw() override;
+	} else {
+		// Add a copy of the item
+		c._backpack.add(inv[itemIndex]._id, inv[itemIndex]._charges);
+		return true;
+	}
+}
 
-	/**
-	 * Keypress handler
-	 */
-	bool msgKeypress(const KeypressMessage &msg) override;
-
-	/**
-	 * Action handler
-	 */
-	bool msgAction(const ActionMessage &msg) override;
-};
-
-} // namespace Spells
-} // namespace Views
+} // namespace Game
 } // namespace MM1
 } // namespace MM
-
-#endif

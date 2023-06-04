@@ -41,6 +41,7 @@ MODULE_OBJS += \
 	mm1/game/detect_magic.o \
 	mm1/game/game_logic.o \
 	mm1/game/combat.o \
+	mm1/game/duplication.o \
 	mm1/game/encounter.o \
 	mm1/game/equip_remove.o \
 	mm1/game/fly.o \
@@ -138,6 +139,7 @@ MODULE_OBJS += \
 	mm1/views_enh/spells/cast_spell.o \
 	mm1/views_enh/spells/spellbook.o \
 	mm1/views_enh/spells/detect_magic.o \
+	mm1/views_enh/spells/duplication.o \
 	mm1/views_enh/spells/fly.o \
 	mm1/views_enh/spells/location.o \
 	mm1/views_enh/spells/recharge_item.o \
