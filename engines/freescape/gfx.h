@@ -96,6 +96,7 @@ public:
 	virtual void drawBackground(uint8 color);
 
 	Common::Rect viewport() const;
+	virtual Common::Point nativeResolution() { return Common::Point(_screenW, _screenH); }
 
 	// palette
 	void readFromPalette(uint8 index, uint8 &r, uint8 &g, uint8 &b);
