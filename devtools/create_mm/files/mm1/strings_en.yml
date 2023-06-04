@@ -744,10 +744,10 @@ spells:
 	monsters_destroyed: "Some monsters were destroyed!"
 	casts_spell: "casts a spell:"
 
-	enter_to_cast: "'enter' to cast"
-	cast_on_char: "cast on: '1'-'%d'?"
-	cast_on_monster: "cast on: 'a'-'%c'?"
-	which_town: "which town (1-5)?"
+	enter_to_cast: "'Enter' to cast"
+	cast_on_char: "Cast on: '1'-'%d'?"
+	cast_on_monster: "Cast on: 'a'-'%c'?"
+	which_town: "Which town (1-5)?"
 
 	info:
 		hp: "hp = "

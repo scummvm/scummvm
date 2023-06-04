@@ -19,21 +19,19 @@
  *
  */
 
-#ifndef MM1_VIEWS_SPELLS_TELEPORT_H
-#define MM1_VIEWS_SPELLS_TELEPORT_H
+#ifndef MM1_VIEWS_ENH_SPELLS_TELEPORT_H
+#define MM1_VIEWS_ENH_SPELLS_TELEPORT_H
 
-#include "mm/mm1/views/spells/spell_view.h"
+#include "mm/mm1/views_enh/scroll_view.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace ViewsEnh {
 namespace Spells {
 
-class Teleport : public SpellView {
+class Teleport : public ScrollView {
 private:
-	enum Mode {
-		SELECT_DIRECTION, SELECT_SQUARES, CAST
-	};
+	enum Mode { SELECT_DIRECTION, SELECT_SQUARES, CAST };
 	Mode _mode = SELECT_DIRECTION;
 	char _direction = '\0';
 	int _squares = 0;
@@ -52,7 +50,8 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Teleport() {}
+	virtual ~Teleport() {
+	}
 
 	/**
 	 * Show the view
@@ -76,7 +75,7 @@ public:
 };
 
 } // namespace Spells
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
 

@@ -141,6 +141,7 @@ MODULE_OBJS += \
 	mm1/views_enh/spells/fly.o \
 	mm1/views_enh/spells/location.o \
 	mm1/views_enh/spells/recharge_item.o \
+	mm1/views_enh/spells/teleport.o \
 	mm1/views_enh/button_container.o \
 	mm1/views_enh/character_base.o \
 	mm1/views_enh/character_info.o \

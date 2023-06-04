@@ -19,54 +19,61 @@
  *
  */
 
-#include "mm/mm1/views/spells/teleport.h"
+#include "mm/mm1/views_enh/spells/teleport.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace ViewsEnh {
 namespace Spells {
 
-Teleport::Teleport() : SpellView("Teleport") {
-	_bounds = getLineBounds(20, 24);
+#define TEXT_X 120
+
+Teleport::Teleport() : ScrollView("Teleport") {
+	setBounds(Common::Rect(0, 144, 234, 200));
+	addButton(&g_globals->_escSprites, Common::Point(5, 28), 0, KEYBIND_ESCAPE, true);
 }
 
 bool Teleport::msgFocus(const FocusMessage &msg) {
-	SpellView::msgFocus(msg);
+	ScrollView::msgFocus(msg);
 
 	_mode = SELECT_DIRECTION;
 	return 0;
 }
 
 void Teleport::draw() {
-	clearSurface();
-	escToGoBack(0);
+	ScrollView::draw();
 
-	writeString(10, 1, STRING["dialogs.spells.teleport_dir"]);
+	setReduced(true);
+	writeString(20, 30, STRING["enhdialogs.misc.go_back"]);
+
+	writeLine(0, STRING["dialogs.spells.teleport_dir"], ALIGN_RIGHT, TEXT_X);
 	writeChar((_mode == SELECT_DIRECTION) ? '_' : _direction);
 
-	if (_mode != SELECT_DIRECTION) {
-		writeString(11, 2, STRING["dialogs.spells.teleport_squares"]);
+	if (_mode == SELECT_SQUARES || _mode == CAST) {
+		writeLine(1, STRING["dialogs.spells.teleport_squares"], ALIGN_RIGHT, TEXT_X);
 		writeChar((_mode == SELECT_SQUARES) ? '_' : '0' + _squares);
 	}
 
 	if (_mode == CAST)
-		writeString(23, 4, STRING["spells.enter_to_cast"]);
+		writeString(0, 30, STRING["spells.enter_to_cast"], ALIGN_RIGHT);
+
+	setReduced(false);
 }
 
 bool Teleport::msgKeypress(const KeypressMessage &msg) {
 	if (_mode == SELECT_DIRECTION && (
-			msg.keycode == Common::KEYCODE_n ||
-			msg.keycode == Common::KEYCODE_s ||
-			msg.keycode == Common::KEYCODE_e ||
-			msg.keycode == Common::KEYCODE_w)) {
+		msg.keycode == Common::KEYCODE_n ||
+		msg.keycode == Common::KEYCODE_s ||
+		msg.keycode == Common::KEYCODE_e ||
+		msg.keycode == Common::KEYCODE_w)) {
 		_direction = toupper(msg.ascii);
 		_mode = SELECT_SQUARES;
 		redraw();
 
 	} else if (_mode == SELECT_SQUARES && (
-			msg.keycode >= Common::KEYCODE_0 &&
-			msg.keycode <= Common::KEYCODE_9)) {
+		msg.keycode >= Common::KEYCODE_0 &&
+		msg.keycode <= Common::KEYCODE_9)) {
 		_squares = msg.keycode - Common::KEYCODE_0;
 		_mode = CAST;
 		redraw();
@@ -97,8 +104,9 @@ void Teleport::teleport() {
 	Maps::Maps &maps = *g_maps;
 	Maps::Map &map = *maps._currentMap;
 
+	close();
 	if (map[Maps::MAP_FLAGS] & 2) {
-		spellFailed();
+		g_events->send(SoundMessage(STRING["spells.failed"]));
 
 	} else {
 		switch (_direction) {
@@ -118,12 +126,11 @@ void Teleport::teleport() {
 			return;
 		}
 
-		close();
 		send("Game", GameMessage("UPDATE"));
 	}
 }
 
 } // namespace Spells
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM

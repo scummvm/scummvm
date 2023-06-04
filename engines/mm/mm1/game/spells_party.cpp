@@ -885,7 +885,7 @@ SpellResult SpellsParty::wizard54_shelter() {
 }
 
 SpellResult SpellsParty::wizard55_teleport() {
-	Views::Spells::Teleport::show();
+	g_events->replaceView("Teleport");
 	return SR_SUCCESS_SILENT;
 }
 
