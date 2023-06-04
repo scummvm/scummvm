@@ -59,44 +59,41 @@ bool TextEntry::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode == Common::KEYCODE_BACKSPACE &&
 			!_text.empty()) {
 		_text.deleteLastChar();
-		drawText();
-		return true;
+		redraw();
+
 	} else if (msg.ascii >= 32 && msg.ascii <= 127 &&
 			_text.size() < _maxLen) {
 		if (_isNumeric && (msg.ascii < '0' || msg.ascii > '9'))
 			return true;
 
 		_text += msg.ascii;
-		drawText();
 
 		// Single character numeric fields, particular spell
 		// level/number selection, return immediately
-		if (_isNumeric && _maxLen == 1)
+		if (_isNumeric && _maxLen == 1) {
+			drawText();
 			msgAction(ActionMessage(KEYBIND_SELECT));
-	}
+		}
 
-	return false;
-}
+		redraw();
 
-bool TextEntry::msgAction(const ActionMessage &msg) {
-	switch (msg._action) {
-	case KEYBIND_ESCAPE:
-		drawText();
-		close();
-		_abortFn();
-		return true;
-
-	case KEYBIND_SELECT:
+	} else if (msg.keycode == Common::KEYCODE_RETURN && !_text.empty()) {
 		drawText();
 		close();
 		_enterFn(_text);
-		return true;
-
-	default:
-		break;
 	}
 
-	return false;
+	return true;
+}
+
+bool TextEntry::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		drawText();
+		close();
+		_abortFn();
+	}
+
+	return true;
 }
 
 } // namespace Views
