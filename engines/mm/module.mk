@@ -46,6 +46,7 @@ MODULE_OBJS += \
 	mm1/game/fly.o \
 	mm1/game/leprechaun.o \
 	mm1/game/monster_touch.o \
+	mm1/game/recharge_item.o \
 	mm1/game/rest.o \
 	mm1/game/spell_casting.o \
 	mm1/game/spells_party.o \
@@ -139,6 +140,7 @@ MODULE_OBJS += \
 	mm1/views_enh/spells/detect_magic.o \
 	mm1/views_enh/spells/fly.o \
 	mm1/views_enh/spells/location.o \
+	mm1/views_enh/spells/recharge_item.o \
 	mm1/views_enh/button_container.o \
 	mm1/views_enh/character_base.o \
 	mm1/views_enh/character_info.o \

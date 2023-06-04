@@ -23,13 +23,14 @@
 #define MM1_VIEWS_SPELLS_RECHARGE_ITEM_H
 
 #include "mm/mm1/views/spells/spell_view.h"
+#include "mm/mm1/game/recharge_item.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Spells {
 
-class RechargeItem : public SpellView {
+class RechargeItem : public SpellView, public MM1::Game::RechargeItem {
 public:
 	/**
 	 * Constructor

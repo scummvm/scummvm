@@ -19,53 +19,28 @@
  *
  */
 
-#include "mm/mm1/views/spells/recharge_item.h"
-#include "mm/mm1/globals.h"
-#include "mm/mm1/mm1.h"
+#ifndef MM1_GAME_RECHARGE_ITEM_H
+#define MM1_GAME_RECHARGE_ITEM_H
+
+#include "mm/mm1/game/game_logic.h"
+#include "mm/mm1/data/character.h"
+#include "mm/mm1/data/items.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Spells {
+namespace Game {
 
-RechargeItem::RechargeItem() : SpellView("RechargeItem") {
-	_bounds = getLineBounds(20, 24);
-}
+class RechargeItem : public GameLogic {
+protected:
+	/**
+	 * Charge a given item
+	 * @returns Returns true if the spell succeeded
+	 */
+	bool charge(Inventory &inv, int itemIndex);
+};
 
-void RechargeItem::draw() {
-	clearSurface();
-	escToGoBack(0);
-
-	writeString(10, 0, STRING["dialogs.character.which"]);
-}
-
-bool RechargeItem::msgKeypress(const KeypressMessage &msg) {
-	Inventory &inv = g_globals->_currCharacter->_backpack;
-
-	if (msg.keycode >= Common::KEYCODE_a &&
-			msg.keycode < (Common::KEYCODE_a + (int)inv.size())) {
-		int itemIndex = msg.keycode - Common::KEYCODE_a;
-
-		if (charge(inv, itemIndex)) {
-			spellDone();
-		} else {
-			spellFailed();
-		}
-	}
-
-	return true;
-}
-
-bool RechargeItem::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE) {
-		close();
-		return true;
-	}
-
-	return false;
-}
-
-} // namespace Spells
-} // namespace Views
+} // namespace Game
 } // namespace MM1
 } // namespace MM
+
+#endif

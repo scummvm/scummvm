@@ -19,53 +19,41 @@
  *
  */
 
-#include "mm/mm1/views/spells/recharge_item.h"
-#include "mm/mm1/globals.h"
-#include "mm/mm1/mm1.h"
+#ifndef MM1_VIEWS_ENH_SPELLS_RECHARGE_ITEM_H
+#define MM1_VIEWS_ENH_SPELLS_RECHARGE_ITEM_H
+
+#include "mm/mm1/views_enh/character_inventory.h"
+#include "mm/mm1/game/recharge_item.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace ViewsEnh {
 namespace Spells {
 
-RechargeItem::RechargeItem() : SpellView("RechargeItem") {
-	_bounds = getLineBounds(20, 24);
-}
+class RechargeItem : public CharacterInventory, public MM1::Game::RechargeItem {
+protected:
+	/**
+	 * Handle action with selected button mode and selected item
+	 */
+	void performAction() override;
 
-void RechargeItem::draw() {
-	clearSurface();
-	escToGoBack(0);
+public:
+	/**
+	 * Constructor
+	 */
+	RechargeItem();
 
-	writeString(10, 0, STRING["dialogs.character.which"]);
-}
+	/**
+	 * Destructor
+	 */
+	virtual ~RechargeItem() {}
 
-bool RechargeItem::msgKeypress(const KeypressMessage &msg) {
-	Inventory &inv = g_globals->_currCharacter->_backpack;
-
-	if (msg.keycode >= Common::KEYCODE_a &&
-			msg.keycode < (Common::KEYCODE_a + (int)inv.size())) {
-		int itemIndex = msg.keycode - Common::KEYCODE_a;
-
-		if (charge(inv, itemIndex)) {
-			spellDone();
-		} else {
-			spellFailed();
-		}
-	}
-
-	return true;
-}
-
-bool RechargeItem::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE) {
-		close();
-		return true;
-	}
-
-	return false;
-}
+	bool msgKeypress(const KeypressMessage &msg) override;
+};
 
 } // namespace Spells
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
+
+#endif

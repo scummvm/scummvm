@@ -90,6 +90,7 @@
 #include "mm/mm1/views_enh/spells/detect_magic.h"
 #include "mm/mm1/views_enh/spells/fly.h"
 #include "mm/mm1/views_enh/spells/location.h"
+#include "mm/mm1/views_enh/spells/recharge_item.h"
 
 namespace MM {
 namespace MM1 {
@@ -143,6 +144,7 @@ private:
 	ViewsEnh::Spells::DetectMagic _detectMagic;
 	ViewsEnh::Spells::Fly _fly;
 	ViewsEnh::Spells::Location _location;
+	ViewsEnh::Spells::RechargeItem _rechargeItem;
 	ViewsEnh::CharacterInfo _characterInfo;
 	ViewsEnh::CharacterInfoCombat _characterInfoCombat;
 	ViewsEnh::CharacterInventory _characterInventory;

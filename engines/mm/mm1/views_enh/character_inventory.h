@@ -33,15 +33,17 @@ namespace ViewsEnh {
 
 class CharacterInventory : public ItemsView, public Game::EquipRemove,
 		public Game::UseItem {
-private:
+protected:
+	enum SelectedButton {
+		BTN_NONE, BTN_EQUIP, BTN_REMOVE, BTN_DISCARD, BTN_USE, BTN_CHARGE
+	};
 	enum DisplayMode {
 		ARMS_MODE, BACKPACK_MODE
 	};
-	DisplayMode _mode = ARMS_MODE;
-	enum SelectedButton {
-		BTN_NONE, BTN_EQUIP, BTN_REMOVE, BTN_DISCARD, BTN_USE
-	};
 	SelectedButton _selectedButton = BTN_NONE;
+	DisplayMode _mode = ARMS_MODE;
+
+private:
 	Common::String _tradeMode;
 	int _tradeAmount;
 
@@ -54,16 +56,6 @@ private:
 	 * Displays the title row
 	 */
 	void drawTitle();
-
-	/**
-	 * Selects a button mode
-	 */
-	void selectButton(SelectedButton btnMode);
-
-	/**
-	 * Handle action with selected button mode and selected item
-	 */
-	void performAction();
 
 	/**
 	 * Equip an item
@@ -116,9 +108,21 @@ protected:
 	 */
 	void charSwitched(Character *priorChar) override;
 
+	/**
+	 * Handle action with selected button mode and selected item
+	 */
+	virtual void performAction();
+
+	/**
+	 * Selects a button mode
+	 */
+	void selectButton(SelectedButton btnMode);
+
 public:
 	CharacterInventory();
+	CharacterInventory(const Common::String &name);
 	virtual ~CharacterInventory() {}
+	void setup();
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
