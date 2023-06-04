@@ -57,7 +57,9 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 	}
 
 	_pitch = rotation.x();
-	if (_objExecutingCodeSize.length() == 0 || ABS(_objExecutingCodeSize.x()) > ABS(_objExecutingCodeSize.z()))
+	if (rotation.y() > 0 && rotation.y() <= 45)
+		_yaw = rotation.y();
+	else if (rotation.y() <= 0 || (rotation.y() >= 180 && rotation.y() < 270))
 		_yaw = rotation.y() + 90;
 	else
 		_yaw = rotation.y() - 90;
