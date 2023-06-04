@@ -30,6 +30,7 @@
 
 #ifndef CRAB_NUMSTR_H
 #define CRAB_NUMSTR_H
+#include <cstring>
 #include "crab/common_header.h"
 
 namespace Crab {
@@ -63,11 +64,28 @@ Common::String NumberToString(T Number) {
 	return revStr;
 }
 
-template<typename T>
-T StringToNumber(char *Text) {
-	std::stringstream ss(Text);
-	T result;
-	return (ss >> result) ? result : 0;
+template<typename T> 
+inline T StringToNumber(char *Text) {
+	int res = 0;
+	if (sscanf(Text, "%d", &res) > 0)
+		return static_cast<T>(res); // static cast to deal with signed to unsigned conversions
+	return 0;
+}
+
+template<>
+inline float StringToNumber<float>(char *Text) {
+	float res = 0.0f;
+	if (sscanf(Text, "%f", &res) > 0)
+		return res;
+	return 0.0f;
+}
+
+template<>
+inline double StringToNumber<double>(char *Text) {
+	double res = 0.0;
+	if (sscanf(Text, "%lf", &res) > 0)
+		return res;
+	return 0.0;
 }
 
 template<typename T>
