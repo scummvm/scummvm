@@ -999,8 +999,8 @@ static const char *const kEoB2FinaleCPSFilesDOSChinese[13] = {
 	"DESTROY2.CPS",
 	"MAGIC.CPS",
 	"DESTROY3.CPS",
-	"CREDITS2.CPS",
-	"CREDITS3.CPS",
+	"",
+	"",
 	"HEROES.CPS",
 	"THANKS.CPS"
 };

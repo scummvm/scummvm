@@ -949,8 +949,11 @@ void DarkMoonEngine::seq_playFinale() {
 	removeInputTop();
 	resetSkipFlag(true);
 
-	sq.loadScene(10, 2);
-	sq.loadScene(9, 2);
+	// The Chinese version has neither the credits player nor the data files for it.
+	if (_flags.lang != Common::ZH_TWN) {
+		sq.loadScene(10, 2);
+		sq.loadScene(9, 2);
+	}
 
 	if (_flags.platform == Common::kPlatformAmiga) {
 		sq.setPalette(7);
@@ -965,22 +968,24 @@ void DarkMoonEngine::seq_playFinale() {
 	if (!skipFlag() && !shouldQuit() && _flags.platform != Common::kPlatformAmiga)
 		snd_playSong(_flags.platform == Common::kPlatformFMTowns ? 16 : (_flags.platform == Common::kPlatformPC98 ? 52 : 1));
 
-	int temp = 0;
+	if (_flags.lang != Common::ZH_TWN) {
+		int temp = 0;
 
-	static const char *const tryFiles[2] = {
-		"CREDITS.TXT",
-		"CREDITS4.CPS"
-	};
+		static const char *const tryFiles[2] = {
+			"CREDITS.TXT",
+			"CREDITS4.CPS"
+		};
 
-	const uint8 *creditsFileData = 0;
-	for (int i = 0; i < ARRAYSIZE(tryFiles) && !creditsFileData; ++i)
-		creditsFileData = _res->fileData(tryFiles[i], 0);
+		const uint8 *creditsFileData = 0;
+		for (int i = 0; i < ARRAYSIZE(tryFiles) && !creditsFileData; ++i)
+			creditsFileData = _res->fileData(tryFiles[i], 0);
 
-	const uint8 *creditsData = creditsFileData ? creditsFileData : _staticres->loadRawData(kEoB2CreditsData, temp);
+		const uint8 *creditsData = creditsFileData ? creditsFileData : _staticres->loadRawData(kEoB2CreditsData, temp);
 
-	seq_playCredits(&sq, creditsData, 18, 2, 6, 2);
+		seq_playCredits(&sq, creditsData, 18, 2, 6, 2);
 
-	delete[] creditsFileData;
+		delete[] creditsFileData;
+	}
 
 	sq.delay(90);
 
