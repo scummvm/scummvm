@@ -178,7 +178,6 @@ void TextManager::Draw(const int &x, const int &y, const Common::String &text, c
 		Graphics::Surface surf;
 		surf.create(rect.w, rect.h, *g_engine->_format);
 		surf.fillRect(Common::Rect(rect.w, rect.h), col);
-		g_engine->_screen->blitFrom(surf, Common::Point(rect.x, rect.y));
 
 #if 0
 		SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
@@ -188,6 +187,7 @@ void TextManager::Draw(const int &x, const int &y, const Common::String &text, c
 		if (align == ALIGN_LEFT) {
 			rect.x = x - pad_bg.x;
 			rect.y = y - pad_bg.y;
+			g_engine->_screen->blitFrom(surf, Common::Point(rect.x, rect.y));
 
 #if 0
 			SDL_RenderFillRect(gRenderer, &rect);
@@ -196,6 +196,7 @@ void TextManager::Draw(const int &x, const int &y, const Common::String &text, c
 		} else if (align == ALIGN_CENTER) {
 			rect.x = x - cache[pos].img.W() / 2 - pad_bg.x;
 			rect.y = y - cache[pos].img.H() / 2 - pad_bg.y;
+			g_engine->_screen->blitFrom(surf, Common::Point(rect.x, rect.y));
 
 #if 0
 			SDL_RenderFillRect(gRenderer, &rect);
@@ -204,6 +205,7 @@ void TextManager::Draw(const int &x, const int &y, const Common::String &text, c
 		} else {
 			rect.x = x - cache[pos].img.W() - pad_bg.x;
 			rect.y = y - pad_bg.y;
+			g_engine->_screen->blitFrom(surf, Common::Point(rect.x, rect.y));
 
 #if 0
 			SDL_RenderFillRect(gRenderer, &rect);
