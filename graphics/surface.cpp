@@ -937,20 +937,31 @@ void Surface::ditherFloyd(const byte *srcPalette, int srcPaletteCount, Surface *
 				dst++;
 			}
 		}
-	} else if (dstFormat == PixelFormat(1, 3, 3, 2, 0, 5, 2, 0, 0)) {
+	} else if (dstFormat == PixelFormat(1, 3, 3, 2, 0, 5, 2, 0, 0) || dstFormat == PixelFormat(1, 1, 2, 1, 0, 3, 1, 0, 0)) {
+		const int rShift = dstFormat.rLoss - dstFormat.rShift;
+		const int gShift = dstFormat.gLoss - dstFormat.gShift;
+		const int bShift = dstFormat.bLoss - dstFormat.bShift;
+
+		const int rMask = dstFormat.rMax() << dstFormat.rShift;
+		const int gMask = dstFormat.gMax() << dstFormat.gShift;
+		const int bMask = dstFormat.bMax() << dstFormat.bShift;
+
+		const int rLossMask = (1 << dstFormat.rLoss) - 1;
+		const int gLossMask = (1 << dstFormat.gLoss) - 1;
+		const int bLossMask = (1 << dstFormat.bLoss) - 1;
+
 		for (int y = 0; y < h; y++) {
 			const byte *src = &tmpSurf[y * w * 3];
 			byte *dst = (byte *)dstSurf->getBasePtr(0, y);
 
 			for (int x = 0; x < w; x++) {
 				byte r = src[0], g = src[1], b = src[2];
-				byte col = (r & 0xe0) | ((g >> 3) & 0x1c) | ((b >> 6) & 3);
 
-				*dst = col;
+				*dst = ((r >> rShift) & rMask) | ((g >> gShift) & gMask) | ((b >> bShift) & bMask);
 
-				int qr = r & 0x1f;
-				int qg = g & 0x1f;
-				int qb = b & 0x3f;
+				int qr = r & rLossMask;
+				int qg = g & gLossMask;
+				int qb = b & bLossMask;
 
 				const DitherParams *params = algos[method].params;
 
