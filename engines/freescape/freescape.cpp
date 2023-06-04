@@ -468,22 +468,25 @@ void FreescapeEngine::processInput() {
 			if (_shootMode) {
 				{
 					bool shouldWarp = false;
-					_crossairPosition = mousePos;
-					if (mousePos.x < _viewArea.left) {
+					Common::Point resolution = _gfx->nativeResolution();
+					_crossairPosition.x = _screenW * mousePos.x / resolution.x;
+					_crossairPosition.y = _screenH * mousePos.y / resolution.y;
+
+					if (_crossairPosition.x < _viewArea.left) {
 						_crossairPosition.x = _viewArea.left + 1;
 						shouldWarp = true;
 					}
 
-					if  (mousePos.x > _viewArea.right) {
+					if  (_crossairPosition.x > _viewArea.right) {
 						_crossairPosition.x = _viewArea.right - 1;
 						shouldWarp = true;
 					}
-					if (mousePos.y < _viewArea.top) {
+					if (_crossairPosition.y < _viewArea.top) {
 						_crossairPosition.y =  _viewArea.top + 1;
 						shouldWarp = true;
 					}
 
-					if  (mousePos.y > _viewArea.bottom) {
+					if  (_crossairPosition.y > _viewArea.bottom) {
 						_crossairPosition.y = _viewArea.bottom - 1;
 						shouldWarp = true;
 					}
@@ -508,6 +511,9 @@ void FreescapeEngine::processInput() {
 				bool touchedScreenControls = false;
 
 				#if defined(__ANDROID__) || defined(IPHONE)
+				Common::Point resolution = _gfx->nativeResolution();
+				mousPos.x = _screenW * mousePos.x / resolution.x;
+				mousPos.y = _screenH * mousePos.y / resolution.y;
 				touchedScreenControls = onScreenControls(mousePos);
 				#endif
 

@@ -73,6 +73,12 @@ void OpenGLShaderRenderer::freeTexture(Texture *texture) {
 	delete texture;
 }
 
+Common::Point OpenGLShaderRenderer::nativeResolution() {
+	GLint vect[4];
+	glGetIntegerv(GL_VIEWPORT, vect);
+	return Common::Point(vect[2], vect[3]);
+}
+
 void OpenGLShaderRenderer::init() {
 	computeScreenViewport();
 
