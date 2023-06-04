@@ -32,7 +32,7 @@ RechargeItem::RechargeItem() : CharacterInventory("RechargeItem") {
 
 	addButton(2, STRING["enhdialogs.items.buttons.arms"], Common::KEYCODE_a);
 	addButton(6, STRING["enhdialogs.items.buttons.backpack"], Common::KEYCODE_b);
-	addButton(8, STRING["enhdialogs.items.buttons.charge"], Common::KEYCODE_c);
+	addButton(14, STRING["enhdialogs.items.buttons.charge"], Common::KEYCODE_c);
 	addButton(16, STRING["enhdialogs.misc.exit"], Common::KEYCODE_ESCAPE);
 }
 
