@@ -512,8 +512,8 @@ void FreescapeEngine::processInput() {
 
 				#if defined(__ANDROID__) || defined(IPHONE)
 				Common::Point resolution = _gfx->nativeResolution();
-				mousPos.x = _screenW * mousePos.x / resolution.x;
-				mousPos.y = _screenH * mousePos.y / resolution.y;
+				mousePos.x = _screenW * mousePos.x / resolution.x;
+				mousePos.y = _screenH * mousePos.y / resolution.y;
 				touchedScreenControls = onScreenControls(mousePos);
 				#endif
 
