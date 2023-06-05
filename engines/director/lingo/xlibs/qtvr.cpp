@@ -90,6 +90,7 @@ static MethodProto xlibMethods[] = {
 	{ "setVPanAngle",			QTVR::m_setVPanAngle,			1, 1,	400 },	// D4
 	{ "setZoomAngle",			QTVR::m_setZoomAngle,			1, 1,	400 },	// D4
 	{ "update",					QTVR::m_update,					0, 0,	400 },	// D4
+	{ nullptr,					nullptr,						0, 0,	0 }
 };
 
 QTVRXObject::QTVRXObject(ObjectType ObjectType) :Object<QTVRXObject>("QTVR") {
