@@ -37,7 +37,9 @@ namespace Crab {
 namespace pyrodactyl {
 namespace event {
 bool IsChar(char c) {
-	return !isdigit(c);
+	if (c >= '0' && c <= '9')
+		return false;
+	return true;
 }
 } // End of namespace event
 } // End of namespace pyrodactyl
