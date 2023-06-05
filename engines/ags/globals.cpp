@@ -154,7 +154,7 @@ Globals::Globals() {
 	_pushbuttonlightcolor = COL253;
 
 	// debug.cpp globals
-	_fps = std::numeric_limits<float>::quiet_undefined();
+	_fps = std::numeric_limits<float>::quiet_NaN();
 	_display_fps = kFPS_Hide;
 	_debug_line = new String[DEBUG_CONSOLE_NUMLINES];
 	_DebugMsgBuff = new std::unique_ptr<AGS::Engine::MessageBuffer>();

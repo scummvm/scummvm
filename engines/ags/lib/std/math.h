@@ -22,22 +22,16 @@
 #ifndef AGS_STD_MATH_H
 #define AGS_STD_MATH_H
 
-#include "common/hashmap.h"
-#include "ags/lib/std/utility.h"
+#include "common/scummsys.h"
 
 namespace AGS3 {
 namespace std {
 
-// Not all platforms define INFINITY
-#ifndef INFINITY
-#define INFINITY   ((float)(1e+300 * 1e+300)) // This must overflow
-#endif
-
-#define FLOAT_UNASSIGNED (float)999999.0
-
+// In scummsys we include <math.h> and not <cmath>
+// Make sure we have isnan in the std namespace.
 template<class T>
-inline bool isUndefined(T val) {
-	return val == FLOAT_UNASSIGNED;
+inline bool isnan(T val) {
+	return ::isnan(val);
 }
 
 } // namespace std
