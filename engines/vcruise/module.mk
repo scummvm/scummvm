@@ -3,7 +3,6 @@ MODULE := engines/vcruise
 MODULE_OBJS = \
 	audio_player.o \
 	circuitpuzzle.o \
-	gentee_installer.o \
 	metaengine.o \
 	menu.o \
 	runtime.o \

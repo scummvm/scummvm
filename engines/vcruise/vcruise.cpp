@@ -21,6 +21,8 @@
 
 #include "engines/util.h"
 
+#include "common/compression/gentee_installer.h"
+
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -36,7 +38,6 @@
 
 #include "vcruise/runtime.h"
 #include "vcruise/vcruise.h"
-#include "vcruise/gentee_installer.h"
 
 namespace VCruise {
 
@@ -109,7 +110,7 @@ Common::Error VCruiseEngine::run() {
 		if (!f->open(_gameDescription->desc.filesDescriptions[0].fileName))
 			error("Couldn't open installer package '%s'", _gameDescription->desc.filesDescriptions[0].fileName);
 
-		Common::Archive *installerPackageArchive = createGenteeInstallerArchive(f, "#setuppath#\\", true);
+		Common::Archive *installerPackageArchive = Common::createGenteeInstallerArchive(f, "#setuppath#\\", true);
 		if (!installerPackageArchive)
 			error("Couldn't load installer package '%s'", _gameDescription->desc.filesDescriptions[0].fileName);
 
