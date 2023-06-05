@@ -298,7 +298,7 @@ Common::Array<PathfindingGraphNode const *> const PathfindingAgent::getPrunedSol
 				Common::Array<PathfindingGraphNode *> corners = grid->CornerCheck(temp[i - 1], temp[i + 1]);
 
 				if (corners.size() == 0) {
-					Common::Array<PathfindingGraphNode const *>::iterator theEnd = std::remove(returnVec.begin(), returnVec.end(), temp[i]);
+					Common::Array<PathfindingGraphNode const *>::iterator theEnd = Common::remove(returnVec.begin(), returnVec.end(), temp[i]);
 					returnVec.erase(theEnd);
 				}
 			}
