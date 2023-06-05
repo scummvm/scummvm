@@ -19,12 +19,12 @@
  *
  */
 
-#ifndef VCRUISE_GENTEEINSTALLER_H
-#define VCRUISE_GENTEEINSTALLER_H
+#ifndef COMMON_GENTEE_INSTALLER_H
+#define COMMON_GENTEE_INSTALLER_H
 
 #include "common/archive.h"
 
-namespace VCruise {
+namespace Common {
 
 // NOTE for future implementation:
 // A Gentee Installer setup executable can be deployed with a package file (pak1.pak, etc.) or the
@@ -48,6 +48,6 @@ namespace VCruise {
  */
 Common::Archive *createGenteeInstallerArchive(Common::SeekableReadStream *stream, const char *prefixToRemove, bool threadSafe);
 
-} // End of namespace VCruise
+} // End of namespace Common
 
 #endif

@@ -25,9 +25,9 @@
 #include "common/bufferedstream.h"
 #include "common/substream.h"
 
-#include "vcruise/gentee_installer.h"
+#include "common/compression/gentee_installer.h"
 
-namespace VCruise {
+namespace Common {
 
 namespace GenteeInstaller {
 
@@ -931,4 +931,4 @@ Common::Archive *createGenteeInstallerArchive(Common::SeekableReadStream *stream
 	return archive;
 }
 
-} // End of namespace VCruise
+} // End of namespace Common
