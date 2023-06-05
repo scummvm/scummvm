@@ -88,19 +88,19 @@ void QuestMenu::Add(const Common::String &title, const Common::String &txt) {
 	for (auto i = quest.begin(); i != quest.end(); ++i)
 		if (i->title == title) // We already have the quest entry
 		{
-			i->text.push_front(txt); // Just add the new string to the start of the quest messages and return
+			i->text.insert_at(0, txt); // Just add the new string to the start of the quest messages and return
 			i->unread = true;
 			return;
 		}
 
 	Quest q(title, txt, true, false);
-	quest.push_front(q);
+	quest.insert_at(0, q);
 	menu.Add();
 	unread = true;
 }
 
 void QuestMenu::Add(const pyrodactyl::event::Quest &q) {
-	quest.push_front(q);
+	quest.insert_at(0, q);
 	menu.Add();
 }
 
