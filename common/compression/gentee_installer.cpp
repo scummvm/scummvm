@@ -37,9 +37,12 @@ struct HuffmanTreeNode {
 	HuffmanTreeNode *_parent;
 	HuffmanTreeNode *_children[2];
 
-	// NOTE: This must be signed! The decoder is buggy and can produce negative frequency values because
-	// the normalization algorithm is broken (it halves all frequency counts, which causes parent nodes to
-	// desync if both child frequencies are odd) which can cause frequencies to become negative.
+	// NOTE: This must be signed! The decoder uses a broken normalization algorithm which halves all frequency
+	// counts (instead of only halving leaf counts and recomputing parent nodes), which causes parent nodes
+	// to desync if both children have odd frequencies.  This can cause the rebalancing algorithm to assign
+	// negative numbers to frequencies, which in turn affects other comparisons through the decoder.
+	//
+	// We need to accurately replicate this bug to get the correct decode behavior.
 	int32 _freq;
 
 	uint16 _symbol;
