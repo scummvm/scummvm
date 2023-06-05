@@ -782,14 +782,12 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 							--i._state._counter;
 
 							_oldCharacter = &c;
-							// FIXME: Some spells use combat._oldCharacter, and it may not be set
-							// if an item is used directly after the game is started
-							if (!combat._oldCharacter)
-								combat._oldCharacter = &c;
+							combat._oldCharacter = _oldCharacter;
 
 							windows[30].close();
 							windows[29].close();
 							windows[24].close();
+
 							spells.castItemSpell(i._id);
 
 							if (!i._state._counter) {
