@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-05 02:09+0000\n"
+"POT-Creation-Date: 2023-06-05 19:24+0000\n"
 "PO-Revision-Date: 2023-05-29 10:06+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -530,7 +530,7 @@ msgstr ""
 #: gui/options.cpp:2502 gui/options.cpp:2555 gui/options.cpp:2773
 #: gui/options.cpp:3239 audio/null.cpp:45
 #: backends/platform/android/options.cpp:137
-#: backends/platform/android/options.cpp:138 engines/ags/dialogs.cpp:62
+#: backends/platform/android/options.cpp:138 engines/ags/dialogs.cpp:63
 msgid "<default>"
 msgstr "<προκαθορισμένη>"
 
@@ -5016,23 +5016,32 @@ msgstr ""
 "Roland MT32 σε αυτά του General MIDI. Είναι πιθανό ότι\n"
 "ορισμένα κομμάτια θα ακούγονται εσφαλμένα."
 
-#: engines/ags/dialogs.cpp:58
+#: engines/ags/dialogs.cpp:59
 msgid "Game language:"
 msgstr "Γλώσσα παιχνιδιού:"
 
-#: engines/ags/dialogs.cpp:58
+#: engines/ags/dialogs.cpp:59
 msgid "Language to use for multilingual games"
 msgstr "Η γλώσσα που θα χρησιμοποιηθεί για πολυγλωσσικά παιχνίδια"
 
-#: engines/ags/dialogs.cpp:78
+#: engines/ags/dialogs.cpp:79
 msgid "Force antialiased text"
 msgstr "Επιβολή εξομαλυμένου κειμένου"
 
-#: engines/ags/dialogs.cpp:78
+#: engines/ags/dialogs.cpp:79
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 "Χρήση εξομάλυνσης για τη σχεδίαση κειμένου ακόμα κι αν το παιχνίδι δεν το "
 "απαιτεί"
+
+#: engines/ags/dialogs.cpp:82 engines/grim/metaengine.cpp:48
+#: engines/zvision/metaengine.cpp:221
+msgid "Show FPS"
+msgstr "Προβολή FPS"
+
+#: engines/ags/dialogs.cpp:82 engines/grim/metaengine.cpp:49
+msgid "Show the current FPS-rate, while you play."
+msgstr "Προβολή του τρέχοντος ρυθμού καρέ (FPS), όσο παίζετε."
 
 #: engines/ags/ags.cpp:132
 msgid ""
@@ -5898,14 +5907,6 @@ msgstr ""
 "Φόρτωση μιας διορθωτικής παρέμβασης (patch) από το χρήστη. Παρακαλούμε "
 "σημειώστε ότι η ομάδα του ScummVM δεν παρέχει υποστήριξη για τη χρήση "
 "τέτοιων παρεμβάσεων (patches)."
-
-#: engines/grim/metaengine.cpp:48 engines/zvision/metaengine.cpp:221
-msgid "Show FPS"
-msgstr "Προβολή FPS"
-
-#: engines/grim/metaengine.cpp:49
-msgid "Show the current FPS-rate, while you play."
-msgstr "Προβολή του τρέχοντος ρυθμού καρέ (FPS), όσο παίζετε."
 
 #: engines/grim/metaengine.cpp:92
 msgid "Escape from Monkey Island support is not compiled in"

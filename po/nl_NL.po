@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-05 02:09+0000\n"
+"POT-Creation-Date: 2023-06-05 19:24+0000\n"
 "PO-Revision-Date: 2023-05-25 20:16+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -515,7 +515,7 @@ msgstr ""
 #: gui/options.cpp:2502 gui/options.cpp:2555 gui/options.cpp:2773
 #: gui/options.cpp:3239 audio/null.cpp:45
 #: backends/platform/android/options.cpp:137
-#: backends/platform/android/options.cpp:138 engines/ags/dialogs.cpp:62
+#: backends/platform/android/options.cpp:138 engines/ags/dialogs.cpp:63
 msgid "<default>"
 msgstr "<standaard>"
 
@@ -4863,21 +4863,30 @@ msgstr ""
 "vertalen naar General MIDI instrumenten. Het is mogelijk\n"
 "dat sommige geluidssporen niet goed klinken."
 
-#: engines/ags/dialogs.cpp:58
+#: engines/ags/dialogs.cpp:59
 msgid "Game language:"
 msgstr "Spel taal:"
 
-#: engines/ags/dialogs.cpp:58
+#: engines/ags/dialogs.cpp:59
 msgid "Language to use for multilingual games"
 msgstr "De te gebruiken taal voor meertalige spellen"
 
-#: engines/ags/dialogs.cpp:78
+#: engines/ags/dialogs.cpp:79
 msgid "Force antialiased text"
 msgstr "Forceer antialiasen van text"
 
-#: engines/ags/dialogs.cpp:78
+#: engines/ags/dialogs.cpp:79
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr "Antialias tekst zelfs als het spel er niet om vraagt"
+
+#: engines/ags/dialogs.cpp:82 engines/grim/metaengine.cpp:48
+#: engines/zvision/metaengine.cpp:221
+msgid "Show FPS"
+msgstr "Toon FPS"
+
+#: engines/ags/dialogs.cpp:82 engines/grim/metaengine.cpp:49
+msgid "Show the current FPS-rate, while you play."
+msgstr "Toon huidige FPS tijdens spelen."
 
 #: engines/ags/ags.cpp:132
 msgid ""
@@ -5724,14 +5733,6 @@ msgid ""
 msgstr ""
 "Laad een gebruikers patch. Merk op dat het ScummVM team geen ondersteuning "
 "biedt voor zulke patches."
-
-#: engines/grim/metaengine.cpp:48 engines/zvision/metaengine.cpp:221
-msgid "Show FPS"
-msgstr "Toon FPS"
-
-#: engines/grim/metaengine.cpp:49
-msgid "Show the current FPS-rate, while you play."
-msgstr "Toon huidige FPS tijdens spelen."
 
 #: engines/grim/metaengine.cpp:92
 msgid "Escape from Monkey Island support is not compiled in"

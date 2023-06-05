@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-05 02:09+0000\n"
+"POT-Creation-Date: 2023-06-05 19:24+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -539,7 +539,7 @@ msgstr ""
 #: gui/options.cpp:2502 gui/options.cpp:2555 gui/options.cpp:2773
 #: gui/options.cpp:3239 audio/null.cpp:45
 #: backends/platform/android/options.cpp:137
-#: backends/platform/android/options.cpp:138 engines/ags/dialogs.cpp:62
+#: backends/platform/android/options.cpp:138 engines/ags/dialogs.cpp:63
 msgid "<default>"
 msgstr "<standard>"
 
@@ -4953,23 +4953,33 @@ msgstr ""
 "dem i generel MIDI. Trods det kan det ske\n"
 "at nogle stykker ikke lyder korrekt."
 
-#: engines/ags/dialogs.cpp:58
+#: engines/ags/dialogs.cpp:59
 #, fuzzy
 msgid "Game language:"
 msgstr "GUI-sprog:"
 
-#: engines/ags/dialogs.cpp:58
+#: engines/ags/dialogs.cpp:59
 #, fuzzy
 msgid "Language to use for multilingual games"
 msgstr "AdLib bliver brugt til musik i mange spil"
 
-#: engines/ags/dialogs.cpp:78
+#: engines/ags/dialogs.cpp:79
 #, fuzzy
 msgid "Force antialiased text"
 msgstr "Antialias"
 
-#: engines/ags/dialogs.cpp:78
+#: engines/ags/dialogs.cpp:79
 msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
+
+#: engines/ags/dialogs.cpp:82 engines/grim/metaengine.cpp:48
+#: engines/zvision/metaengine.cpp:221
+#, fuzzy
+msgid "Show FPS"
+msgstr "Vis FPS-tæller"
+
+#: engines/ags/dialogs.cpp:82 engines/grim/metaengine.cpp:49
+msgid "Show the current FPS-rate, while you play."
 msgstr ""
 
 #: engines/ags/ags.cpp:132
@@ -5816,15 +5826,6 @@ msgstr ""
 msgid ""
 "Load an user patch. Please note that the ScummVM team doesn't provide "
 "support for using such patches."
-msgstr ""
-
-#: engines/grim/metaengine.cpp:48 engines/zvision/metaengine.cpp:221
-#, fuzzy
-msgid "Show FPS"
-msgstr "Vis FPS-tæller"
-
-#: engines/grim/metaengine.cpp:49
-msgid "Show the current FPS-rate, while you play."
 msgstr ""
 
 #: engines/grim/metaengine.cpp:92

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-05 02:09+0000\n"
+"POT-Creation-Date: 2023-06-05 19:24+0000\n"
 "PO-Revision-Date: 2023-05-18 01:27+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -532,7 +532,7 @@ msgstr ""
 #: gui/options.cpp:2502 gui/options.cpp:2555 gui/options.cpp:2773
 #: gui/options.cpp:3239 audio/null.cpp:45
 #: backends/platform/android/options.cpp:137
-#: backends/platform/android/options.cpp:138 engines/ags/dialogs.cpp:62
+#: backends/platform/android/options.cpp:138 engines/ags/dialogs.cpp:63
 msgid "<default>"
 msgstr "<Standard>"
 
@@ -4948,23 +4948,32 @@ msgstr ""
 "Es ist dennoch möglich, dass ein paar Musikstücke\n"
 "nicht richtig abgespielt werden."
 
-#: engines/ags/dialogs.cpp:58
+#: engines/ags/dialogs.cpp:59
 msgid "Game language:"
 msgstr "Spielsprache:"
 
-#: engines/ags/dialogs.cpp:58
+#: engines/ags/dialogs.cpp:59
 msgid "Language to use for multilingual games"
 msgstr "Verwendete Sprache in mehrsprachigen Spielen"
 
-#: engines/ags/dialogs.cpp:78
+#: engines/ags/dialogs.cpp:79
 msgid "Force antialiased text"
 msgstr "Kantenglättung für Text erzwingen"
 
-#: engines/ags/dialogs.cpp:78
+#: engines/ags/dialogs.cpp:79
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 "Erzwinge Kantenglättung für die Text-Darstellung, auch wenn das Spiel dies "
 "nicht selbst anfordert"
+
+#: engines/ags/dialogs.cpp:82 engines/grim/metaengine.cpp:48
+#: engines/zvision/metaengine.cpp:221
+msgid "Show FPS"
+msgstr "Bildwiederholrate anzeigen"
+
+#: engines/ags/dialogs.cpp:82 engines/grim/metaengine.cpp:49
+msgid "Show the current FPS-rate, while you play."
+msgstr "Zeigt die aktuelle Bildwiederholrate an, während Sie spielen."
 
 #: engines/ags/ags.cpp:132
 msgid ""
@@ -5822,14 +5831,6 @@ msgid ""
 msgstr ""
 "Lade einen benutzerdefinierten Patch. Bitte beachten Sie, dass das ScummVM "
 "Team keine Unterstützung für solche Patches anbietet."
-
-#: engines/grim/metaengine.cpp:48 engines/zvision/metaengine.cpp:221
-msgid "Show FPS"
-msgstr "Bildwiederholrate anzeigen"
-
-#: engines/grim/metaengine.cpp:49
-msgid "Show the current FPS-rate, while you play."
-msgstr "Zeigt die aktuelle Bildwiederholrate an, während Sie spielen."
 
 #: engines/grim/metaengine.cpp:92
 msgid "Escape from Monkey Island support is not compiled in"
