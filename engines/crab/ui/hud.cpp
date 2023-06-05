@@ -42,7 +42,7 @@ using namespace pyrodactyl::image;
 using namespace pyrodactyl::input;
 
 void HUD::Load(const Common::String &filename, pyrodactyl::level::TalkNotify &tn, pyrodactyl::level::PlayerDestMarker &pdm) {
-	XMLDoc conf(filename.c_str());
+	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("hud");
 		if (NodeValid(node)) {
@@ -77,7 +77,7 @@ void HUD::Load(const Common::String &filename, pyrodactyl::level::TalkNotify &tn
 
 		// Create a copy of all the tooltips
 		for (auto i = menu.element.begin(); i != menu.element.end(); ++i)
-			tooltip.push_back(i->tooltip.text.c_str());
+			tooltip.push_back(i->tooltip.text);
 
 		SetTooltip();
 	}

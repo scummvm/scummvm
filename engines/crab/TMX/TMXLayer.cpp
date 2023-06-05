@@ -49,7 +49,7 @@ bool MapLayer::Load(const Common::String &path, rapidxml::xml_node<char> *node) 
 			rapidxml::xml_node<char> *imgnode = node->first_node("image");
 
 			if (imgnode->first_attribute("source") != NULL)
-				img.Load((path + imgnode->first_attribute("source")->value()).c_str());
+				img.Load((path + imgnode->first_attribute("source")->value()));
 		} else {
 			type = LAYER_NORMAL;
 			int i = 0;

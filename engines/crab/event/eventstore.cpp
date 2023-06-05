@@ -51,7 +51,7 @@ void GameEventStore::Load(const Common::String &filename) {
 	// if (m_pSteamUserStats != nullptr)
 	// m_pSteamUserStats->RequestCurrentStats();
 
-	XMLDoc conf(filename.c_str());
+	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("store");
 

@@ -54,7 +54,7 @@ bool CompSpriteLayer(const Sprite &a, const Sprite &b) {
 void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
 				 pyrodactyl::event::TriggerSet &game_over, const int &player_x, const int &player_y) {
 	Reset();
-	XMLDoc conf(filename.c_str());
+	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("level");
 		if (NodeValid(node)) {
@@ -176,7 +176,7 @@ void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
 // Purpose: Build an index of all animation files, called once at start
 //------------------------------------------------------------------------
 void Level::LoadMoves(const Common::String &filename) {
-	XMLDoc mov_list(filename.c_str());
+	XMLDoc mov_list(filename);
 	if (mov_list.ready()) {
 		rapidxml::xml_node<char> *node = mov_list.Doc()->first_node("movelist");
 		for (auto n = node->first_node("set"); n != NULL; n = n->next_sibling("set")) {
@@ -201,7 +201,7 @@ void Level::LoadMoves(const Common::String &filename) {
 // Purpose: Load the default sprite constant parameters
 //------------------------------------------------------------------------
 void Level::LoadConst(const Common::String &filename) {
-	XMLDoc doc(filename.c_str());
+	XMLDoc doc(filename);
 	if (doc.ready()) {
 		rapidxml::xml_node<char> *node = doc.Doc()->first_node("constant");
 		if (NodeValid(node))

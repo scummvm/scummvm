@@ -173,8 +173,8 @@ public:
 			hov[DATA_PLAYERNAME].Load(offnode->first_node("player_name_title"));
 		}
 
-		extension = g_engine->_filePath->save_ext.c_str();
-		directory = (g_engine->_filePath->appdata + g_engine->_filePath->save_dir).c_str();
+		extension = g_engine->_filePath->save_ext;
+		directory = (g_engine->_filePath->appdata + g_engine->_filePath->save_dir);
 		ScanDir();
 	}
 
@@ -223,8 +223,8 @@ public:
 			if (!img.loaded || prev_hover != i) {
 				img.loaded = true;
 				prev_hover = i;
-				if (!img.preview.Load(slot_info[i].preview.c_str()))
-					img.preview.Load(img.no_preview_path.c_str());
+				if (!img.preview.Load(slot_info[i].preview))
+					img.preview.Load(img.no_preview_path);
 			}
 
 			hover = true;

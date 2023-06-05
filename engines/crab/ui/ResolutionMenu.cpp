@@ -66,9 +66,9 @@ void ResolutionMenu::Load(rapidxml::xml_node<char> *node) {
 				dim.push_back(d);
 				Button b;
 				b.Init(ref, inc.x * (count_slot % columns), inc.y * (count_slot / columns));
-				b.caption.text = NumberToString(d.w).c_str();
+				b.caption.text = NumberToString(d.w);
 				b.caption.text += " x ";
-				b.caption.text += NumberToString(d.h).c_str();
+				b.caption.text += NumberToString(d.h);
 				element.push_back(b);
 			}
 		}
@@ -159,9 +159,9 @@ int ResolutionMenu::HandleEvents(const SDL_Event &Event) {
 
 void ResolutionMenu::SetInfo() {
 	info.text = def_info;
-	info.text += NumberToString(g_engine->_screenSettings->cur.w).c_str();
+	info.text += NumberToString(g_engine->_screenSettings->cur.w);
 	info.text += " x ";
-	info.text += NumberToString(g_engine->_screenSettings->cur.h).c_str();
+	info.text += NumberToString(g_engine->_screenSettings->cur.h);
 }
 
 void ResolutionMenu::SetUI() {

@@ -39,7 +39,7 @@ using namespace pyrodactyl::event;
 // Purpose: Load
 //------------------------------------------------------------------------
 void EventSequence::Load(const Common::String &filename) {
-	XMLDoc conf(filename.c_str());
+	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("events");
 		for (auto n = node->first_node("event"); n != NULL; n = n->next_sibling("event")) {

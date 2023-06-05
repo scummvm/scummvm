@@ -63,7 +63,7 @@ TMXMap::TMXMap() {
 //------------------------------------------------------------------------
 
 void TMXMap::Load(const Common::String &path, Common::String filename) {
-	XMLDoc conf((path + filename).c_str());
+	XMLDoc conf((path + filename));
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("map");
 		if (NodeValid(node)) {
@@ -269,8 +269,8 @@ void TMXMap::DrawDebug(const Rect &camera) {
 
 	for (auto i = area_stairs.begin(); i != area_stairs.end(); ++i) {
 		i->Draw(-camera.x, -camera.y, 0, 254, 0, 254);
-		//g_engine->_textManager->Draw(i->rect.x - camera.x + 100, i->rect.y - camera.y, NumberToString(i->modifier.x).c_str(), 0);
-		//g_engine->_textManager->Draw(i->rect.x - camera.x + 200, i->rect.y - camera.y, NumberToString(i->modifier.y).c_str(), 0);
+		//g_engine->_textManager->Draw(i->rect.x - camera.x + 100, i->rect.y - camera.y, NumberToString(i->modifier.x), 0);
+		//g_engine->_textManager->Draw(i->rect.x - camera.x + 200, i->rect.y - camera.y, NumberToString(i->modifier.y), 0);
 	}
 
 	// Draw the pathfinding grid (SZ)

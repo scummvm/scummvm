@@ -77,7 +77,7 @@ void TextManager::Init() {
 		}
 	}
 
-	colpool.Load(g_engine->_filePath->colors.c_str());
+	colpool.Load(g_engine->_filePath->colors);
 }
 
 void TextManager::Reset() {
@@ -132,10 +132,10 @@ Graphics::ManagedSurface *TextManager::RenderTextBlended(const FontKey &fKey, co
 		surf = new Graphics::ManagedSurface(rec.width(), h + (h / 2), *g_engine->_format);
 		GetFont(fKey)->drawString(surf, " ", 0, 0, rec.width(), col);
 	} else {
-		Common::Rect rec = GetFont(fKey)->getBoundingBox(text.c_str());
+		Common::Rect rec = GetFont(fKey)->getBoundingBox(text);
 		int h = rec.height();
 		surf = new Graphics::ManagedSurface(rec.width(), h + (h / 2), *g_engine->_format);
-		GetFont(fKey)->drawString(surf, text.c_str(), 0, 0, rec.width(), col);
+		GetFont(fKey)->drawString(surf, text, 0, 0, rec.width(), col);
 	}
 
 	return surf;

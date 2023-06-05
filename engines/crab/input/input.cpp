@@ -137,7 +137,7 @@ void InputManager::Init() {
 // Purpose: Load key & controller binding settings from file
 //------------------------------------------------------------------------
 void InputManager::Load(const Common::String &filename) {
-	XMLDoc control_list(filename.c_str());
+	XMLDoc control_list(filename);
 	if (control_list.ready()) {
 		rapidxml::xml_node<char> *node = control_list.Doc()->first_node("controls");
 		if (NodeValid(node)) {
