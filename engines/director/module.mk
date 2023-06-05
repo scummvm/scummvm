@@ -59,6 +59,7 @@ MODULE_OBJS = \
 	lingo/xlibs/batqt.o \
 	lingo/xlibs/blitpict.o \
 	lingo/xlibs/cdromxobj.o \
+	lingo/xlibs/colorxobj.o \
 	lingo/xlibs/darkenscreen.o \
 	lingo/xlibs/developerStack.o \
 	lingo/xlibs/dialogsxobj.o \
