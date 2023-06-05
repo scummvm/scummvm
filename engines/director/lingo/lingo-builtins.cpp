@@ -1076,26 +1076,57 @@ void LB::b_setProp(int nargs) {
 }
 
 static bool sortArrayHelper(const Datum &lhs, const Datum &rhs) {
-	return lhs.asInt() < rhs.asInt();
+	return lhs.asString() < rhs.asString();
+}
+
+static bool sortNumericArrayHelper(const Datum &lhs, const Datum &rhs) {
+	return lhs.asFloat() < rhs.asFloat();
 }
 
 static bool sortPArrayHelper(const PCell &lhs, const PCell &rhs) {
 	return lhs.p.asString() < rhs.p.asString();
 }
 
+static bool sortNumericPArrayHelper(const PCell &lhs, const PCell &rhs) {
+	return lhs.p.asFloat() < rhs.p.asFloat();
+}
+
 void LB::b_sort(int nargs) {
 	// in D4 manual, p266. linear list is sorted by values
 	// property list is sorted alphabetically by properties
-	// once the list is sorted, it maintains it's sort order even when we add new variables using add command
+	// once the list is sorted, it maintains its sort order even when we add new variables using add command
 	// see b_append to get more details.
 	Datum list = g_lingo->pop();
 
 	if (list.type == ARRAY) {
-		Common::sort(list.u.farr->arr.begin(), list.u.farr->arr.end(), sortArrayHelper);
+		// Check to see if the array is full of numbers
+		bool isNumeric = true;
+		for (const auto &it : list.u.farr->arr) {
+			isNumeric &= it.isNumeric();
+		}
+		if (isNumeric) {
+			// Sorting an array of numbers will use numeric sort order.
+			Common::sort(list.u.farr->arr.begin(), list.u.farr->arr.end(), sortNumericArrayHelper);
+		} else {
+			// Sorting an array of strings will use the string sort order.
+			// Sorting an array of mixed types is undefined behaviour; sometimes the interpreter
+			// will give an answer nearly the same as the string sort order, other times
+			// the interpreter will softlock.
+			Common::sort(list.u.farr->arr.begin(), list.u.farr->arr.end(), sortArrayHelper);
+		}
 		list.u.farr->_sorted = true;
 
 	} else if (list.type == PARRAY) {
-		Common::sort(list.u.parr->arr.begin(), list.u.parr->arr.end(), sortPArrayHelper);
+		// Check to see if the array is full of numbers
+		bool isNumeric = true;
+		for (const auto &it : list.u.parr->arr) {
+			isNumeric &= it.p.isNumeric();
+		}
+		if (isNumeric) {
+			Common::sort(list.u.parr->arr.begin(), list.u.parr->arr.end(), sortNumericPArrayHelper);
+		} else {
+			Common::sort(list.u.parr->arr.begin(), list.u.parr->arr.end(), sortPArrayHelper);
+		}
 		list.u.parr->_sorted = true;
 
 	} else {
