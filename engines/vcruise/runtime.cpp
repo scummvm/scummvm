@@ -1304,7 +1304,14 @@ bool Runtime::bootGame(bool newGame) {
 	_trayCompassGraphic = loadGraphic("Select_1", true);
 	_trayCornerGraphic = loadGraphic("Select_2", true);
 
-	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
+	Common::Language lang = _defaultLanguage;
+
+	if (ConfMan.hasKey("language")) {
+		lang = Common::parseLanguage(ConfMan.get("language"));
+		debug(2, "Using user-selected language %s", Common::getLanguageDescription(lang));
+	} else {
+		debug(2, "Defaulted language to %s", Common::getLanguageDescription(lang));
+	}
 
 	_languageIndex = 1;
 	_defaultLanguageIndex = 1;
@@ -1382,6 +1389,8 @@ bool Runtime::bootGame(bool newGame) {
 		}
 	}
 
+	debug(2, "Language index: %u   Default language index: %u", _languageIndex, _defaultLanguageIndex);
+
 	Common::CodePage codePage = Common::CodePage::kASCII;
 	resolveCodePageForLanguage(lang, codePage, _charSet);
 
@@ -1408,6 +1417,8 @@ bool Runtime::bootGame(bool newGame) {
 			}
 		}
 	}
+
+	debug(2, "Final language selection: %s   Code page: %i   Language index: %u", Common::getLanguageDescription(lang), static_cast<int>(codePage), _languageIndex);
 
 	if (subtitlesLoadedOK)
 		debug(1, "Localization data loaded OK");
