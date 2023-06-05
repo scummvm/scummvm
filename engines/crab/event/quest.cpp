@@ -35,7 +35,7 @@ namespace Crab {
 using namespace pyrodactyl::event;
 
 Quest::Quest(const Common::String &Title, const Common::String &Text, const bool &Unread, const bool &Marker) : title(Title) {
-	text.push_front(Text);
+	text.insert_at(0, Text);
 	unread = Unread;
 	marker = Marker;
 }

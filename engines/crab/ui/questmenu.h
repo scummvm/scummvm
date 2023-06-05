@@ -66,7 +66,7 @@ class QuestMenu {
 
 public:
 	// All the quests currently in this menu
-	std::deque<pyrodactyl::event::Quest> quest;
+	Common::Array<pyrodactyl::event::Quest> quest;
 
 	// Keep track of unread notifications for each category button
 	bool unread;

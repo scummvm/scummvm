@@ -43,7 +43,7 @@ struct Quest {
 	Common::String title;
 
 	// The objective text, the last one being the current objective
-	std::deque<Common::String> text;
+	Common::Array<Common::String> text;
 
 	// Keep track of which quests the player has read
 	bool unread;
