@@ -2637,7 +2637,7 @@ void Runtime::loadDuplicateRooms() {
 		Common::SharedPtr<Common::SeekableReadStream> stream(logic->createReadStream());
 		if (stream) {
 			if (checkSchizmLogicForDuplicatedRoom(*stream, stream->size())) {
-				if (_roomDuplicationOffsets.size() < roomNumber)
+				if (_roomDuplicationOffsets.size() <= roomNumber)
 					_roomDuplicationOffsets.resize(roomNumber + 1);
 				_roomDuplicationOffsets[roomNumber] = 1;
 			}
@@ -3615,6 +3615,9 @@ void Runtime::triggerSound(SoundLoopBehavior soundLoopBehavior, SoundInstance &s
 	snd.restartWhenAudible = false;
 
 	SoundCache *cache = loadCache(snd);
+
+	if (!cache)
+		return;
 
 	switch (soundLoopBehavior) {
 	case kSoundLoopBehaviorYes:
