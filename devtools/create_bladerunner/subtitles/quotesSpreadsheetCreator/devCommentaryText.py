@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 #
 
-my_module_version = "1.00"
-my_module_name = "devCommentaryText"
+MY_MODULE_VERSION = "1.10"
+MY_MODULE_NAME = "devCommentaryText"
 
 # All game versions should have the English text pre-filled in the POGO sheet
 DEV_AUDIO_COMMENTARY_TUPLE_LIST = [
@@ -59,46 +59,46 @@ class devCommentaryText(object):
 
 	def printTexts(self):
 		if self.m_traceModeEnabled:
-			print "[Trace] Printing all dev commentary text"
-		print "\nAUDIO COMMENTARY"
-		print "------------------"
+			print ("[Trace] Printing all dev commentary text")
+		print ("\nAUDIO COMMENTARY")
+		print ("------------------")
 		for (idTre, textTre) in DEV_AUDIO_COMMENTARY_TUPLE_LIST:
-			print "%s\t%s" % (idTre, textTre)
-		print "\nEXTRA SPEECH AUDIO"
-		print "------------------"
+			print ("%s\t%s" % (idTre, textTre))
+		print ("\nEXTRA SPEECH AUDIO")
+		print ("------------------")
 		for (idTre, textTre) in EXTRA_SPEECH_AUDIO_TUPLE_LIST:
-			print "%s\t%s" % (idTre, textTre)
-		print "\nI_SEZ QUOTES"
-		print "------------------"
+			print ("%s\t%s" % (idTre, textTre))
+		print ("\nI_SEZ QUOTES")
+		print ("------------------")
 		for (idTre, textTre) in DEV_ISEZ_QUOTES_TUPLE_LIST:
-			print "%s\t%s" % (idTre, textTre)
+			print ("%s\t%s" % (idTre, textTre))
 		return
 
 	def getAudioCommentaryTextEntriesList(self):
 		if self.m_traceModeEnabled:
-			print "[Trace] getAudioCommentaryTextEntriesList"
+			print ("[Trace] getAudioCommentaryTextEntriesList")
 		return DEV_AUDIO_COMMENTARY_TUPLE_LIST
 
 	def getISEZTextEntriesList(self):
 
 		if self.m_traceModeEnabled:
-			print "[Trace] getISEZTextEntriesList"
+			print ("[Trace] getISEZTextEntriesList")
 		return DEV_ISEZ_QUOTES_TUPLE_LIST
 
 	def getExtraSpeechAudioEntriesList(self):
 		if self.m_traceModeEnabled:
-			print "[Trace] getExtraSpeechAudioEntriesList"
+			print ("[Trace] getExtraSpeechAudioEntriesList")
 		return EXTRA_SPEECH_AUDIO_TUPLE_LIST
 #
 #
 #
 if __name__ == '__main__':
 	# main()
-	print "[Debug] Running %s as main module" % (my_module_name)
+	print ("[Debug] Running %s (%s) as main module" % (MY_MODULE_NAME, MY_MODULE_VERSION))
 	traceModeEnabled = False
 	devCommentaryTextInstance = devCommentaryText(traceModeEnabled)
 	devCommentaryTextInstance.printTexts()
 else:
 	#debug
-	#print "[Debug] Running	 %s imported from another module" % (my_module_name)
+	#print ("[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION))
 	pass

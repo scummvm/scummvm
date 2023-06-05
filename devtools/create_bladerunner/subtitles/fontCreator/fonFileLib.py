@@ -44,7 +44,7 @@ if 	(not osLibFound) \
 
 from struct import *
 
-MY_MODULE_VERSION = "0.80"
+MY_MODULE_VERSION = "0.90"
 MY_MODULE_NAME    = "fonFileLib"
 
 class FonHeader(object):
@@ -193,7 +193,7 @@ class fonFile(object):
 			targHeight = 480
 
 		imTargetGameFont = Image.new("RGBA",(targWidth, targHeight), (0,0,0,0))
-		#print imTargetGameFont.getbands()
+		#print (imTargetGameFont.getbands())
 		#
 		# Now fill in the image segment
 		# Fonts in image segment are stored in pixel colors from TOP to Bottom, Left to Right per GLYPH.
@@ -207,7 +207,7 @@ class fonFile(object):
 			# TODO mark glyph OUTLINES? (optional by switch)
 			(glyphXoffs, glyphYoffs, glyphWidth, glyphHeight, glyphDataOffs) = self.glyphDetailEntriesLst[idx]
 			glyphDataOffs = glyphDataOffs * 2
-			#print idx, glyphDataOffs
+			#print (idx, glyphDataOffs)
 			currX = 0
 			currY = 0
 			if (glyphWidth == 0 or glyphHeight == 0):
@@ -220,7 +220,7 @@ class fonFile(object):
 				glyphDataOffs += 2
 
 #				 if pixelColor > 0x8000:
-#					 print "[Debug] WEIRD CASE" # NEVER HAPPENS - TRANSPARENCY IS ON/OFF. There's no grades of transparency
+#					 print ("[Debug] WEIRD CASE" # NEVER HAPPENS - TRANSPARENCY IS ON/OFF. There's no grades of transparency)
 				rgbacolour = (0,0,0,0)
 				if pixelColor == 0x8000:
 					rgbacolour = (0,0,0,0) # alpha: 0.0 fully transparent
@@ -238,9 +238,9 @@ class fonFile(object):
 				imTargetGameFont.putpixel(( (drawIdx + 1) * (self.header().maxGlyphWidth + paddingBetweenGlyphsX ) + currX, paddingFromTopY + glyphYoffs + currY), rgbacolour)
 				currX += 1
 		try:
-			imTargetGameFont.save(os.path.join('.', self.simpleFontFileName + ".PNG"), "PNG")
+			imTargetGameFont.save(os.path.join(u'.', self.simpleFontFileName + ".PNG"), "PNG")
 		except Exception as e:
-			print ('[Error] Unable to write to output PNG file. ' + str(e))
+			print ("[Error] Unable to write to output PNG file. " + str(e))
 
 	def header(self):
 		return self.m_header
@@ -261,12 +261,12 @@ if __name__ == '__main__':
 	inFONFileName =  'SUBTLS_E.FON'    # Subtitles font custom
 
 	if len(sys.argv[1:])  > 0 \
-		and os.path.isfile(os.path.join('.', sys.argv[1])) \
+		and os.path.isfile(os.path.join(u'.', sys.argv[1])) \
 		and len(sys.argv[1]) >= 5 \
 		and sys.argv[1][-3:].upper() == 'FON':
 		inFONFileName = sys.argv[1]
 		print ("[Info] Attempting to use %s as input FON file..." % (inFONFileName))
-	elif os.path.isfile(os.path.join('.', inFONFileName)):
+	elif os.path.isfile(os.path.join(u'.', inFONFileName)):
 		print ("[Info] Using default %s as input FON file..." % (inFONFileName))
 	else:
 		print ("[Error] No valid input file argument was specified and default input file %s is missing." % (inFONFileName))
@@ -275,7 +275,7 @@ if __name__ == '__main__':
 	if not errorFound:
 		try:
 			print ("[Info] Opening %s" % (inFONFileName))
-			inFONFile = open(os.path.join('.',inFONFileName), 'rb')
+			inFONFile = open(os.path.join(u'.', inFONFileName), 'rb')
 		except:
 			errorFound = True
 			print ("[Error] Unexpected event:", sys.exc_info()[0])
@@ -293,5 +293,5 @@ if __name__ == '__main__':
 			inFONFile.close()
 else:
 	#debug
-	#print "[Debug] Running	 %s imported from another module" % (MY_MODULE_NAME)
+	#print ("[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION))
 	pass

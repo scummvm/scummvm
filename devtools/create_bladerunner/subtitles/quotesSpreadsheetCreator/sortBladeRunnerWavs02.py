@@ -16,35 +16,35 @@ csvLibFound = False
 try:
 	import os
 except ImportError:
-	print "[Error] os python library is required to be installed!"
+	print ("[Error] os python library is required to be installed!")
 else:
 	osLibFound = True
 
 try:
 	import sys
 except ImportError:
-	print "[Error] sys python library is required to be installed!"
+	print ("[Error] sys python library is required to be installed!")
 else:
 	sysLibFound = True
 
 try:
 	import shutil
 except ImportError:
-	print "[Error] Shutil python library is required to be installed!"
+	print ("[Error] Shutil python library is required to be installed!")
 else:
 	shutilLibFound = True
 
 try:
 	import xlwt
 except ImportError:
-	print "[Error] xlwt python library is required to be installed!"
+	print ("[Error] xlwt python library is required to be installed!")
 else:
 	xlwtLibFound = True
 
 try:
 	import csv
 except ImportError:
-	print "[Error] csv python library is required to be installed!"
+	print ("[Error] csv python library is required to be installed!")
 else:
 	csvLibFound = True
 
@@ -56,8 +56,12 @@ if 	(not osLibFound) \
 	sys.stdout.write("[Error] Errors were found when trying to import required python libraries\n")
 	sys.exit(1)
 
+try:
+	import errno
+except ImportError:
+	from os import errno
 
-from os import walk, errno, path
+from os import walk, path
 
 pathToParent = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)
 pathToCommon = os.path.join(pathToParent, "common")
@@ -70,13 +74,14 @@ from pogoTextResource import *
 from devCommentaryText import *
 from subtlsVersTextResource import *
 from vqasTextResource import *
+from pythonCompat import *
 
 # encoding=utf8
 #reload(sys)
 #sys.setdefaultencoding('utf8')
 
 COMPANY_EMAIL = "classic.adventures.in.greek@gmail.com"
-APP_VERSION = "1.60"
+APP_VERSION = "1.70"
 APP_NAME = "sortBladeRunnerWavs"
 APP_WRAPPER_NAME = "quotesSpreadsheetCreator.py"
 APP_NAME_SPACED = "Blade Runner Transcript Excel Creator (bare bones)"
@@ -182,7 +187,7 @@ def calculateFoldHash(strFileName):
 				groupSum |= 0
 		hash = ((hash << 1) | ((hash >> 31) & 1)) + groupSum
 	hash &= 0xFFFFFFFF	   # mask here!
-	#print (strParam +': '  +''.join('{:08X}'.format(hash)))
+	#print (strParam + ": " + ''.join('{:08X}'.format(hash)))
 	return hash
 
 # Fill the gActorPropertyEntries table
@@ -191,25 +196,24 @@ def initActorPropertyEntries(thePathToActorNamesTxt):
 	global gActorPropertyEntries
 	firstLine = True
 	gActorPropertyEntriesWasInit = False
-	#print "[Debug] opening actornames"
+	#print ("[Debug] opening actornames")
 	if thePathToActorNamesTxt is None or not thePathToActorNamesTxt:
 
 		actorNamesTextFile = u'actornames.txt'
-		relPath = u'.'
-		thePathToActorNamesTxt = os.path.join(relPath, actorNamesTextFile)
-		print "[Warning] Actor names text file %s not found in arguments. Attempting to open local file if it exists" % (thePathToActorNamesTxt)
+		thePathToActorNamesTxt = os.path.join(u'.', actorNamesTextFile)
+		print ("[Warning] Actor names text file %s not found in arguments. Attempting to open local file if it exists" % (thePathToActorNamesTxt))
 
 	if os.access(thePathToActorNamesTxt, os.F_OK):
-		print "[Info] Actor names text file found: {0}.".format(thePathToActorNamesTxt)
+		print ("[Info] Actor names text file found: {0}.".format(thePathToActorNamesTxt))
 
-		with open(thePathToActorNamesTxt) as tsv:
+		with openWithUTF8Encoding(thePathToActorNamesTxt, 'r') as tsv:
 			if gTraceModeEnabled:
-				print "[Debug] Parsing Override Encoding file info..."
+				print ("[Debug] Parsing Override Encoding file info...")
 			for line in csv.reader(tsv, dialect="excel-tab"):
 				#skip first line header
 				if firstLine == True:
 					#if gTraceModeEnabled:
-					#	print "[Debug] Skipping Header line in Excel sheet"
+					#	print ("[Debug] Skipping Header line in Excel sheet")
 					firstLine = False
 				else:
 					gActorPropertyEntries.append(line)
@@ -217,7 +221,7 @@ def initActorPropertyEntries(thePathToActorNamesTxt):
 		tsv.close()
 	else:
 		## error
-		print "[Error] Actor names text file not found: {0}.".format(thePathToActorNamesTxt)
+		print ("[Error] Actor names text file not found: {0}.".format(thePathToActorNamesTxt))
 		sys.exit(1)	# terminate if finding actor names file failed (Blade Runner)
 
 def getActorShortNameById(lookupActorId):
@@ -253,7 +257,7 @@ def getActorShortNameAndLocalQuoteIdByAUDHashID(audHashId):
 	actorShortName = ''
 	actorLocalQuoteId = 0
 	if not gActorPropertyEntriesWasInit:
-		print "[Error] actor properties were not initialized!"
+		print ("[Error] actor properties were not initialized!")
 		return (actorId, actorShortName, actorLocalQuoteId)
 
 	for actorEntryTmp in gActorPropertyEntries:
@@ -288,7 +292,7 @@ def inputTLKsExport(inputTLKpath, outputWAVpath, pExportWavFilesMode, pExtractDe
 	#				file size
 	if not pExportWavFilesMode and not pExtractDevCommAndExtraSFXMode:
 		return # nothing to do
-	print "[Info] Checking in:\n\t%s\n\tfor TLK or MIX files containing supported speech audio (AUD) to export as WAV to:\n\t%s" % (inputTLKpath, outputWAVpath)
+	print ("[Info] Checking in:\n\t%s\n\tfor TLK or MIX files containing supported speech audio (AUD) to export as WAV to:\n\t%s" % (inputTLKpath, outputWAVpath))
 	inputTLKFilesForSpeechFound = []
 	inputMIXFilesForSpeechFound = []	# breaking after first for loop yields only the top directory files, which is what we want
 	for (dirpath, dirnames, filenames) in walk(inputTLKpath):
@@ -305,34 +309,34 @@ def inputTLKsExport(inputTLKpath, outputWAVpath, pExportWavFilesMode, pExtractDe
 
 	if pExportWavFilesMode:
 		if len(inputTLKFilesForSpeechFound) == 0:
-			print "[Error] No valid speech audio files (TLK) were found in the specified input path (-ip switch)"
+			print ("[Error] No valid speech audio files (TLK) were found in the specified input path (-ip switch)")
 			sys.exit(1)
 	if pExtractDevCommAndExtraSFXMode:
 		if len(inputMIXFilesForSpeechFound) == 0:
-			print "[Error] No valid extras speech audio files (MIX) were found in the specified input path (-ip switch)"
+			print ("[Error] No valid extras speech audio files (MIX) were found in the specified input path (-ip switch)")
 			sys.exit(1)
 
 	# get the supported AUD files from TLK or MIX archives
 	for tmpTLKorMIXFileTuple in (inputTLKFilesForSpeechFound + inputMIXFilesForSpeechFound):
 		if gTraceModeEnabled:
-			print "[Info] Found supported audio file: %s" % ('"' + inputTLKpath + tmpTLKorMIXFileTuple[0] + '"')
+			print ("[Info] Found supported audio file: %s" % ('"' + inputTLKpath + tmpTLKorMIXFileTuple[0] + '"'))
 		errorFound = False
 		inTLKorMIXFile = None
 		fileIsMIX = False
-		#print "[Trace] Type of file is: %s" % (tmpTLKorMIXFileTuple[0][-3:])
+		#print ("[Trace] Type of file is: %s" % (tmpTLKorMIXFileTuple[0][-3:]))
 		if tmpTLKorMIXFileTuple[0][-3:].upper() == 'MIX':
 			fileIsMIX = True
-			print "[Info] Checking MIX file %s for speech audio (-xdevs mode)... " % (tmpTLKorMIXFileTuple[0])
+			print ("[Info] Checking MIX file %s for speech audio (-xdevs mode)... " % (tmpTLKorMIXFileTuple[0]))
 		#
 		# Create output folder if not exists at output path
 		if gTraceModeEnabled:
-			print "[Debug] Ensuring output directory %s" % (os.path.join(outputWAVpath, tmpTLKorMIXFileTuple[1] ))
+			print ("[Debug] Ensuring output directory %s" % (os.path.join(outputWAVpath, tmpTLKorMIXFileTuple[1] )))
 		ensure_dir(os.path.join(outputWAVpath, tmpTLKorMIXFileTuple[1] ) )
 		try:
 			inTLKorMIXFile = open(os.path.join(inputTLKpath,tmpTLKorMIXFileTuple[0]), 'rb')
 		except:
 			errorFound = True
-			print "[Error] Unexpected event:", sys.exc_info()[0]
+			print ("[Error] Unexpected event:", sys.exc_info()[0])
 			raise
 		if not errorFound:
 			tmpBuff = inTLKorMIXFile.read(2)
@@ -349,9 +353,9 @@ def inputTLKsExport(inputTLKpath, outputWAVpath, pExportWavFilesMode, pExtractDe
 			# 12 bytes per TLK entry in entries table
 			# quick size validation
 			if gTraceModeEnabled:
-				print "[Debug] Entries: %d, Data segment size: %d bytes" % (numOfAUDEntriesToExtract, allTlkFileSize)
+				print ("[Debug] Entries: %d, Data segment size: %d bytes" % (numOfAUDEntriesToExtract, allTlkFileSize))
 			if allActualBytesInMixFile != 2 + 4 + 12 * numOfAUDEntriesToExtract + allTlkFileSize:
-				print "[Error] Audio Archive file size mismatch with reported size in header for %s!" % (tmpTLKorMIXFileTuple[0])
+				print ("[Error] Audio Archive file size mismatch with reported size in header for %s!" % (tmpTLKorMIXFileTuple[0]))
 			else:
 				#
 				# 12 bytes per entry
@@ -374,20 +378,20 @@ def inputTLKsExport(inputTLKpath, outputWAVpath, pExportWavFilesMode, pExtractDe
 					targetSimpleAudFileName = ''.join('{:08X}'.format(idOfAUDEntry)).upper()+'.AUD'
 					foundSupportedAUDFromMIXFile = False
 					if fileIsMIX:	# MIX file like SFX.MIX which has some spoken dialogue
-						#print 'idOfEntry: %d' % (idOfAUDEntry)
-						for suppAUDFromMIXFileName in zip(*SUPPORTED_EXPORTED_AUD_FROM_MIX_FILES)[0]:
-							#print 'checked with: %d' % (calculateFoldHash(suppAUDFromMIXFileName))
+						#print ("idOfEntry: %d" % (idOfAUDEntry))
+						for suppAUDFromMIXFileName in list(zip(*SUPPORTED_EXPORTED_AUD_FROM_MIX_FILES))[0]:
+							#print ("checked with: %d" % (calculateFoldHash(suppAUDFromMIXFileName)))
 							if(idOfAUDEntry == calculateFoldHash(suppAUDFromMIXFileName)):
 								foundSupportedAUDFromMIXFile = True
 								targetSimpleAudFileName = suppAUDFromMIXFileName
 								break
 						if foundSupportedAUDFromMIXFile:
 							if gTraceModeEnabled:
-								print "[Debug] Entry: %s, offset: %s, Data segment size: %s bytes" % (''.join('{:08X}'.format(idOfAUDEntry)), ''.join('{:08X}'.format(offsetOfAUDEntry)),''.join('{:08X}'.format(sizeOfAUDEntry)))
-								#print "[Debug] Filename: " + targetSimpleAudFileName
+								print ("[Debug] Entry: %s, offset: %s, Data segment size: %s bytes" % (''.join('{:08X}'.format(idOfAUDEntry)), ''.join('{:08X}'.format(offsetOfAUDEntry)),''.join('{:08X}'.format(sizeOfAUDEntry))))
+								#print ("[Debug] Filename: " + targetSimpleAudFileName)
 					else:			# TLK file
 						if gTraceModeEnabled:
-							print "[Debug] Entry: %s, offset: %s, Data segment size: %s bytes" % (''.join('{:08X}'.format(idOfAUDEntry)), ''.join('{:08X}'.format(offsetOfAUDEntry)),''.join('{:08X}'.format(sizeOfAUDEntry)))
+							print ("[Debug] Entry: %s, offset: %s, Data segment size: %s bytes" % (''.join('{:08X}'.format(idOfAUDEntry)), ''.join('{:08X}'.format(offsetOfAUDEntry)),''.join('{:08X}'.format(sizeOfAUDEntry))))
 					#
 					# put file in AUD object
 					# do we need AUD decode?
@@ -403,7 +407,7 @@ def inputTLKsExport(inputTLKpath, outputWAVpath, pExportWavFilesMode, pExtractDe
 					if foundSupportedAUDFromMIXFile or not fileIsMIX:
 						inTLKorMIXFile.seek(2 + 4 + 12*numOfAUDEntriesToExtract + offsetOfAUDEntry)
 						if(offsetOfAUDEntry + sizeOfAUDEntry > allTlkFileSize):
-							print "[Error] audio file (AUD) file size mismatch with reported size in entry header!"
+							print ("[Error] audio file (AUD) file size mismatch with reported size in entry header!")
 						else:
 							targetSimpleWavFileName = targetSimpleAudFileName[:-4] + '.WAV' # remove the .AUD before adding the .WAV
 							if not fileIsMIX: # TLK file
@@ -416,19 +420,19 @@ def inputTLKsExport(inputTLKpath, outputWAVpath, pExportWavFilesMode, pExtractDe
 								thisAudFile = audFile(gTraceModeEnabled)
 								if (thisAudFile.loadAudFile(audFileBuffer, allTlkFileSize, targetSimpleAudFileName)):
 									if gTraceModeEnabled:
-										print "[Debug] Audio file (AUD) file %s was loaded successfully!" % (targetSimpleAudFileName)
-									#print os.path.join(outputWAVpath, tmpTLKorMIXFileTuple[1], targetSimpleWavFileName)
+										print ("[Debug] Audio file (AUD) file %s was loaded successfully!" % (targetSimpleAudFileName))
+									#print (os.path.join(outputWAVpath, tmpTLKorMIXFileTuple[1], targetSimpleWavFileName))
 									# tmpTLKorMIXFileTuple[1] is the subfolder where the AUD -> WAV files for this archive are written
 									if not os.path.isfile(os.path.join(outputWAVpath, tmpTLKorMIXFileTuple[1], targetSimpleWavFileName) ):
 										thisAudFile.export_as_wav(audFileBuffer, os.path.join(outputWAVpath, tmpTLKorMIXFileTuple[1], targetSimpleWavFileName) )
 									else:
 										if gTraceModeEnabled:
-											print "[Info] Output file %s already exists. Skipping..." % (os.path.join(outputWAVpath, tmpTLKorMIXFileTuple[1], targetSimpleWavFileName))
+											print ("[Info] Output file %s already exists. Skipping..." % (os.path.join(outputWAVpath, tmpTLKorMIXFileTuple[1], targetSimpleWavFileName)))
 								else:
-									print "[Warning] Failed to load a proper audio file (AUD) %s (to export it to %s)! Size of input is: %d" % (targetSimpleAudFileName, targetSimpleWavFileName,  sizeOfAUDEntry)
+									print ("[Warning] Failed to load a proper audio file (AUD) %s (to export it to %s)! Size of input is: %d" % (targetSimpleAudFileName, targetSimpleWavFileName,  sizeOfAUDEntry))
 							else:
-								print "[Error] while reading audio file (AUD) file %s into mem buffer" % (targetSimpleAudFileName)
-								#print "[Error] while reading audio file (AUD) file %s into mem buffer" % (''.join('{:08X}'.format(idOfMIXEntry)))
+								print ("[Error] while reading audio file (AUD) file %s into mem buffer" % (targetSimpleAudFileName))
+								#print ("[Error] while reading audio file (AUD) file %s into mem buffer" % (''.join('{:08X}'.format(idOfMIXEntry))))
 			inTLKorMIXFile.close()
 
 
@@ -439,7 +443,7 @@ def inputTLKsExport(inputTLKpath, outputWAVpath, pExportWavFilesMode, pExtractDe
 
 def appendVQAPlaceHolderSheets(excelOutBook = None):
 	if excelOutBook != None:
-		print "[Info] Appending placeholder sheets for supported video cutscenes (VQA)..."
+		print ("[Info] Appending placeholder sheets for supported video cutscenes (VQA)...")
 		currVQAFileNameLclzd = None
 		for currVQAFileNameDesc in SUPPORTED_PLACEHOLDER_VQA_ENGLISH_FILES + SUPPORTED_PLACEHOLDER_VQA_LOCALIZED_FILES:
 			if currVQAFileNameDesc in SUPPORTED_PLACEHOLDER_VQA_ENGLISH_FILES:
@@ -448,7 +452,7 @@ def appendVQAPlaceHolderSheets(excelOutBook = None):
 				currVQAFileNameLclzd = currVQAFileNameDesc[0] + ('%s' % (gActiveLanguageDescriptionCodeTuple[1])) + '.VQA'
 			if 	currVQAFileNameLclzd is not None:
 				if gTraceModeEnabled:
-					print "[Debug] Creating placeholder sheet %s: %s!" % (currVQAFileNameLclzd, currVQAFileNameDesc[1])
+					print ("[Debug] Creating placeholder sheet %s: %s!" % (currVQAFileNameLclzd, currVQAFileNameDesc[1]))
 				sh = excelOutBook.add_sheet(currVQAFileNameLclzd)
 				# First Row
 				n = 0 # keeps track of rows
@@ -477,19 +481,19 @@ def appendVQAPlaceHolderSheets(excelOutBook = None):
 					for i1 in range(2,6):
 						objStr = e1[i1]
 						try:
-							objUTF8Unicode = unicode(objStr, 'utf-8')
+							objUTF8Unicode = makeUnicode(objStr)
 						except Exception as e:
-							print '[Error] Failed to create unicode string: ' + str(e)
-							objUTF8Unicode = unicode("???", 'utf-8')
+							print ("[Error] Failed to create unicode string: " + str(e))
+							objUTF8Unicode = makeUnicode("???")
 						sh.write(m, i1, objUTF8Unicode)
 	return
 
 def appendPOGOTextSheet(excelOutBook = None):
 	if excelOutBook != None:
-		print "[Info] Appending POGO sheet..."
+		print ("[Info] Appending POGO sheet...")
 		currTreFileName = '%s%s' % (SUPPORTED_SPECIAL_POGO_FILE, gActiveLanguageDescriptionCodeTuple[1]) # POGO
 		if gTraceModeEnabled:
-			print "[Debug] TR%s file %s was loaded successfully!" % (gActiveLanguageDescriptionCodeTuple[1], currTreFileName) # POGO
+			print ("[Debug] TR%s file %s was loaded successfully!" % (gActiveLanguageDescriptionCodeTuple[1], currTreFileName)) # POGO
 		sh = excelOutBook.add_sheet(currTreFileName)
 		n = 0 # keeps track of rows
 		col1_name = 'Text Resource File: %s' % (currTreFileName)
@@ -509,10 +513,10 @@ def appendPOGOTextSheet(excelOutBook = None):
 			objStr = e1[1]
 			try:
 				# We assume utf-8 charset for POGO (since we get the text from a python script)
-				objUTF8Unicode = unicode(objStr, 'utf-8')
+				objUTF8Unicode = makeUnicode(objStr)
 			except Exception as e:
-				print '[Error] Failed to create unicode string: ' + str(e)
-				objUTF8Unicode = unicode("???", 'utf-8')
+				print ("[Error] Failed to create unicode string: " + str(e))
+				objUTF8Unicode = makeUnicode("???")
 			sh.write(m, 1, objUTF8Unicode)
 
 # aux: populate a row in extra audio sheets
@@ -529,10 +533,10 @@ def auxPopulateExtraSpeechAudioRow(sh = None, n = 0, pFilenameStr = '', pTextStr
 			sh.write(n, 0, pFilenameStr)				# Filename
 			# We assume utf-8 charset for Audio Commentary and extra text entries (since we get the text from a python script)
 			try:
-				objUTF8Unicode = unicode(pTextStr, 'utf-8')
+				objUTF8Unicode = makeUnicode(pTextStr)
 			except Exception as e:
-				print '[Error] Failed to create unicode string: ' + str(e)
-				objUTF8Unicode = unicode("???", 'utf-8')
+				print ("[Error] Failed to create unicode string: " + str(e))
+				objUTF8Unicode = makeUnicode("???")
 			sh.write(n, 1, objUTF8Unicode)				# Quote
 			sh.write(n, 2, 'N/A')						# By Actor
 			sh.write(n, 3, '')							# Notes
@@ -548,7 +552,7 @@ def auxPopulateExtraSpeechAudioRow(sh = None, n = 0, pFilenameStr = '', pTextStr
 				if len(twoTokensOfRelDirnameAndFilenameXLS) == 3:
 					tokensOfFilename = twoTokensOfRelDirnameAndFilenameXLS[0].split('#', 3)
 					#ShortHandFileName
-					if (tokensOfFilename[0][:-4]+'.AUD') in zip(*SUPPORTED_EXPORTED_AUD_FROM_MIX_FILES)[0] \
+					if (tokensOfFilename[0][:-4]+'.AUD') in list(zip(*SUPPORTED_EXPORTED_AUD_FROM_MIX_FILES))[0] \
 						and (tokensOfFilename[0][:-4]+'.AUD') == dcAUDFilename:
 						shortHandFileName = tokensOfFilename[0]
 						# real path of filename
@@ -573,7 +577,7 @@ def appendDevCommentarySheet(excelOutBook = None, listOfExtraWavsForDevSheet = N
 		and len(listOfExtraWavsForDevSheet) > 0:
 
 		objUTF8Unicode = None
-		print "[Info] Appending Developer Commentary sheet..."
+		print ("[Info] Appending Developer Commentary sheet...")
 
 		sh = excelOutBook.add_sheet("DEV AUDIO")
 		devCommentaryTextInstance = devCommentaryText(gTraceModeEnabled)
@@ -644,21 +648,21 @@ def appendDevCommentarySheet(excelOutBook = None, listOfExtraWavsForDevSheet = N
 			sh.write(n, 0, idStr)
 			# We assume utf-8 charset for I_SEZ Commentary (since we get the text from a python script)
 			try:
-				objUTF8Unicode = unicode(textStr, 'utf-8')
+				objUTF8Unicode = makeUnicode(textStr)
 			except Exception as e:
-				print '[Error] Failed to create unicode string: ' + str(e)
-				objUTF8Unicode = unicode("???", 'utf-8')
+				print ("[Error] Failed to create unicode string: " + str(e))
+				objUTF8Unicode = makeUnicode("???")
 			sh.write(n, 1, objUTF8Unicode)
-			sh.write(n, 2, 'N/A')	# by actor
-			sh.write(n, 3, '')	# notes
-			sh.write(n, 4, 'N/A')	# to actor
-			sh.write(n, 5, 'N/A')	# Resources
-			sh.write(n, 6, 'N/A')	# ShortHandFilename and URL
+			sh.write(n, 2, 'N/A')   # by actor
+			sh.write(n, 3, '')      # notes
+			sh.write(n, 4, 'N/A')   # to actor
+			sh.write(n, 5, 'N/A')   # Resources
+			sh.write(n, 6, 'N/A')   # ShortHandFilename and URL
 			n+=1
 	return
 
 def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
-	print "[Info] Checking in %s for MIX files to extract Text Resources (TR%ss) from..." % (inputMIXpath, gActiveLanguageDescriptionCodeTuple[1])
+	print ("[Info] Checking in %s for MIX files to extract Text Resources (TR%ss) from..." % (inputMIXpath, gActiveLanguageDescriptionCodeTuple[1]))
 	inputMIXFilesFound = []
 	objUTF8Unicode = None
 	# breaking after first for loop yields only the top directory files, which is what we want
@@ -670,12 +674,12 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 		break
 
 	if len(inputMIXFilesFound) == 0:
-		print "[Error] No supported game archive resource files (MIX) were found in the specified input path (-ip switch)"
+		print ("[Error] No supported game archive resource files (MIX) were found in the specified input path (-ip switch)")
 		sys.exit(1)
 
 	for tmpMIXfileName in inputMIXFilesFound:
 		if gTraceModeEnabled:
-			print "[Info] Found MIX file: %s" % ('"' + tmpMIXfileName + '"')
+			print ("[Info] Found MIX file: %s" % ('"' + tmpMIXfileName + '"'))
 		errorFound = False
 		inMIXFile = None
 		#
@@ -683,7 +687,7 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 			inMIXFile = open(os.path.join(inputMIXpath,tmpMIXfileName), 'rb')
 		except:
 			errorFound = True
-			print "[Error] Unexpected event:", sys.exc_info()[0]
+			print ("[Error] Unexpected event:", sys.exc_info()[0])
 			raise
 		if not errorFound:
 			totalTREs = 0
@@ -701,9 +705,9 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 			# 12 bytes per MIX entry in entries table
 			# quick size validation
 			if gTraceModeEnabled:
-				print "[Debug] Entries: %d, Data segment size: %d bytes" % (numOfTREEntriesToExtract, allMixFileSize)
+				print ("[Debug] Entries: %d, Data segment size: %d bytes" % (numOfTREEntriesToExtract, allMixFileSize))
 			if allActualBytesInMixFile != 2 + 4 + 12 * numOfTREEntriesToExtract + allMixFileSize:
-				print "[Error] MIX file size mismatch with reported size in header for %s!" % (tmpMIXfileName)
+				print ("[Error] MIX file size mismatch with reported size in header for %s!" % (tmpMIXfileName))
 			else:
 				#
 				# 12 bytes per entry
@@ -734,7 +738,7 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 
 					if (foundTREFile == True):
 						if gTraceModeEnabled:
-							print "[Debug] Entry Name: %s, Entry ID: %s, offset: %s, Data segment size: %s bytes" % (currTreFileName, ''.join('{:08X}'.format(idOfMIXEntry)), ''.join('{:08X}'.format(offsetOfMIXEntry)),''.join('{:08X}'.format(sizeOfMIXEntry)))
+							print ("[Debug] Entry Name: %s, Entry ID: %s, offset: %s, Data segment size: %s bytes" % (currTreFileName, ''.join('{:08X}'.format(idOfMIXEntry)), ''.join('{:08X}'.format(offsetOfMIXEntry)),''.join('{:08X}'.format(sizeOfMIXEntry))))
 						#
 						# IF TRE FILE:
 						# put file in TRE object
@@ -742,7 +746,7 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 						#
 						inMIXFile.seek(2 + 4 + 12*numOfTREEntriesToExtract + offsetOfMIXEntry)
 						if(offsetOfMIXEntry + sizeOfMIXEntry > allMixFileSize):
-							print "[Error] TR%s file size mismatch with reported size in entry header!" % (gActiveLanguageDescriptionCodeTuple[1])
+							print ("[Error] TR%s file size mismatch with reported size in entry header!" % (gActiveLanguageDescriptionCodeTuple[1]))
 						else:
 							treFileBuffer = inMIXFile.read(sizeOfMIXEntry)
 							if (len(treFileBuffer) == sizeOfMIXEntry):
@@ -750,7 +754,7 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 								thisTreFile = treFile(gTraceModeEnabled)
 								if (thisTreFile.loadTreFile(treFileBuffer, allMixFileSize, currTreFileName)):
 									if gTraceModeEnabled:
-										print "[Debug] TR%s file %s was loaded successfully!" % (gActiveLanguageDescriptionCodeTuple[1], currTreFileName)
+										print ("[Debug] TR%s file %s was loaded successfully!" % (gActiveLanguageDescriptionCodeTuple[1], currTreFileName))
 									if excelOutBook != None:
 										sh = excelOutBook.add_sheet(currTreFileName)
 										n = 0 # keeps track of rows
@@ -779,57 +783,96 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 												# in ERRORMSG TRx.
 												# Eg. in Spanish version they use \xa2 (correct with IBM437) and \xf3 (correct with Latin-1) for the 'ó' character
 												#  or in French version 'è' uses both \x8a and \xe8
-												objEncodeSafeStr = ""
-												for i in range(0, len(objStr)):
-													# ENG version has no buggy character exceptions
-													# GER version has no buggy character exceptions
-													# FRA version
-													if (objStr[i] == '\x82'): # FRA - ERRORMSG.TRF
-														objEncodeSafeStr += '\xe9'	# fixing buggy character 'é'
-													elif (objStr[i] == '\x85'): # FRA - ERRORMSG.TRF (also used in ITA ERRORMSG.TRI - same glyph)
-														objEncodeSafeStr += '\xe0'	 # fixing buggy character 'à'
-													elif (objStr[i] == '\x8a'): # FRA - ERRORMSG.TRF (also used in ITA ERRORMSG.TRI - same glyph)
-														objEncodeSafeStr += '\xe8'    # fixing buggy character 'è'
-													# ITA version
-													#elif (objStr[i] == '\x85'): # ITA - ERRORMSG.TRI [commented out: already covered in FRA check above]
-													#	objEncodeSafeStr += '\xe0'	 # buggy - fixed above
-													#elif (objStr[i] == '\x8a'): # ITA - ERRORMSG.TRI [commented out: already covered in FRA check above]
-													#	objEncodeSafeStr += '\xe8'    # buggy - fixed above
-													elif (objStr[i] == '\x97'): # ITA - ERRORMSG.TRI
-														objEncodeSafeStr += '\xf9'    # fixing buggy character 'ù'
-													# ESP version
-													elif (objStr[i] == '\xa2'): # ESP - ERRORMSG.TRS
-														objEncodeSafeStr += '\xf3' 	# fixing buggy character 'ó'
-													else:
-														objEncodeSafeStr += objStr[i]
-													#
-													try:
-														objUTF8Unicode = unicode(objEncodeSafeStr, 'latin-1')
-													except Exception as e:
-														print '[Error] Failed to create unicode string: ' + str(e)
-														objUTF8Unicode = unicode("???", 'latin-1')
+												if sys.version_info[0] <= 2:
+													objEncodeSafeStr = ""
+													for i in range(0, len(objStr)):
+														# ENG version has no buggy character exceptions
+														# GER version has no buggy character exceptions
+														# FRA version
+														if (objStr[i] == '\x82'): # FRA - ERRORMSG.TRF
+															objEncodeSafeStr += '\xe9'	# fixing buggy character 'é'
+														elif (objStr[i] == '\x85'): # FRA - ERRORMSG.TRF (also used in ITA ERRORMSG.TRI - same glyph)
+															objEncodeSafeStr += '\xe0'	 # fixing buggy character 'à'
+														elif (objStr[i] == '\x8a'): # FRA - ERRORMSG.TRF (also used in ITA ERRORMSG.TRI - same glyph)
+															objEncodeSafeStr += '\xe8'    # fixing buggy character 'è'
+														# ITA version
+														#elif (objStr[i] == '\x85'): # ITA - ERRORMSG.TRI [commented out: already covered in FRA check above]
+														#	objEncodeSafeStr += '\xe0'	 # buggy - fixed above
+														#elif (objStr[i] == '\x8a'): # ITA - ERRORMSG.TRI [commented out: already covered in FRA check above]
+														#	objEncodeSafeStr += '\xe8'    # buggy - fixed above
+														elif (objStr[i] == '\x97'): # ITA - ERRORMSG.TRI
+															objEncodeSafeStr += '\xf9'    # fixing buggy character 'ù'
+														# ESP version
+														elif (objStr[i] == '\xa2'): # ESP - ERRORMSG.TRS
+															objEncodeSafeStr += '\xf3' 	# fixing buggy character 'ó'
+														else:
+															objEncodeSafeStr += objStr[i]
+														#
+														try:
+															objUTF8Unicode = unicode(objEncodeSafeStr, 'latin-1')
+														except Exception as e:
+															print ("[Error] Failed to create unicode string: " + str(e))
+															objUTF8Unicode = unicode("???", 'latin-1')
+												else:
+													#python 3 case:
+													objEncodeSafeStr = bytearray(b'')
+													for i in range(0, len(objStr)):
+														# ENG version has no buggy character exceptions
+														# GER version has no buggy character exceptions
+														# FRA version
+														if (objStr[i] == b'\x82'): # FRA - ERRORMSG.TRF
+															objEncodeSafeStr.append(b'\xe9') # fixing buggy character 'é'
+														elif (objStr[i] == b'\x85'): # FRA - ERRORMSG.TRF (also used in ITA ERRORMSG.TRI - same glyph)
+															objEncodeSafeStr.append(b'\xe0') # fixing buggy character 'à'
+														elif (objStr[i] == b'\x8a'): # FRA - ERRORMSG.TRF (also used in ITA ERRORMSG.TRI - same glyph)
+															objEncodeSafeStr.append(b'\xe8') # fixing buggy character 'è'
+														# ITA version
+														#elif (objStr[i] == b'\x85'): # ITA - ERRORMSG.TRI [commented out: already covered in FRA check above]
+														#	objEncodeSafeStr.append(b'\xe0') # buggy - fixed above
+														#elif (objStr[i] == b'\x8a'): # ITA - ERRORMSG.TRI [commented out: already covered in FRA check above]
+														#	objEncodeSafeStr.append(b'\xe8') # buggy - fixed above
+														elif (objStr[i] == b'\x97'): # ITA - ERRORMSG.TRI
+															objEncodeSafeStr.append(b'\xf9') # fixing buggy character 'ù'
+														# ESP version
+														elif (objStr[i] == b'\xa2'): # ESP - ERRORMSG.TRS
+															objEncodeSafeStr.append(b'\xf3') # fixing buggy character 'ó'
+														else:
+															objEncodeSafeStr.append(objStr[i])
+														#
+														try:
+															objUTF8Unicode = objEncodeSafeStr.decode('latin-1')
+														except Exception as e:
+															print ("[Error] Failed to create unicode string: " + str(e))
+															objUTF8Unicode = b"???".decode('latin-1')
+
 											else:
 											# all the other official game TRx use the KIA6PT.FON
 											# There could be variances of the KIA6PT.FON per Blade Runner version
 											# TODO: For now, we assume that there aren't significant variances that warrant a more elaborate approach
 											# TODO: Tested for EN, DEU, FRA, ITA, ESP. Pending testing for Russian version.
 												try:
-													objUTF8Unicode = unicode(objStr, 'cp437')
+													if sys.version_info[0] <= 2:
+														objUTF8Unicode = unicode(objStr, 'cp437')
+													else:
+														objUTF8Unicode = objStr.decode('cp437')
 												except Exception as e:
-													print '[Error] Failed to create unicode string: ' + str(e)
-													objUTF8Unicode = unicode("???", 'cp437')
+													print ("[Error] Failed to create unicode string: " + str(e))
+													if sys.version_info[0] <= 2:
+														objUTF8Unicode = unicode("???", 'cp437')
+													else:
+														objUTF8Unicode = b"???".decode('cp437')
 											sh.write(m, 1, objUTF8Unicode)
 									#for tupleIdString in thisTreFile.stringEntriesLst:
-									#	#print "[Debug] Id: %d\t Text: %s" % (tupleIdString[0], tupleIdString[1])
+									#	#print ("[Debug] Id: %d\t Text: %s" % (tupleIdString[0], tupleIdString[1]))
 									#	pass
 									totalTREs =  totalTREs + 1
 								else:
-									print "[Error] while loading TR%s %s file!" % (gActiveLanguageDescriptionCodeTuple[1], currTreFileName)
+									print ("[Error] while loading TR%s %s file!" % (gActiveLanguageDescriptionCodeTuple[1], currTreFileName))
 							else:
-								print "[Error] while reading TR%s file %s into mem buffer" % (gActiveLanguageDescriptionCodeTuple[1], currTreFileName)
-								#print "[Error] while reading TR%s file %s into mem buffer" % (gActiveLanguageDescriptionCodeTuple[1], ''.join('{:08X}'.format(idOfMIXEntry)))
+								print ("[Error] while reading TR%s file %s into mem buffer" % (gActiveLanguageDescriptionCodeTuple[1], currTreFileName))
+								#print ("[Error] while reading TR%s file %s into mem buffer" % (gActiveLanguageDescriptionCodeTuple[1], ''.join('{:08X}'.format(idOfMIXEntry))))
 			inMIXFile.close()
-			print "[Info] Total TR%ss processed: %d " % (gActiveLanguageDescriptionCodeTuple[1], totalTREs)
+			print ("[Info] Total TR%ss processed: %d " % (gActiveLanguageDescriptionCodeTuple[1], totalTREs))
 	return
 
 
@@ -869,12 +912,12 @@ def outputXLS(filename, sheet, listTlkWavs, listDevsWavs, parseTREResourcesAlso 
 				# We assume utf-8 charset (since we get the text from a python script)
 				# populate row with quote ID == 3 and column B with the description of language used in the command's execution (or assumed)
 				if tmpQuoteID == 3 and i1 == 1:
-					objUTF8Unicode = unicode(gActiveLanguageDescriptionCodeTuple[2], 'utf-8')
+					objUTF8Unicode = makeUnicode(gActiveLanguageDescriptionCodeTuple[2])
 				else:
-					objUTF8Unicode = unicode(objStr, 'utf-8')
+					objUTF8Unicode = makeUnicode(objStr)
 			except Exception as e:
-				print '[Error] Failed to create unicode string: ' + str(e)
-				objUTF8Unicode = unicode("???", 'utf-8')
+				print ("[Error] Failed to create unicode string: " + str(e))
+				objUTF8Unicode = makeUnicode("???")
 			vrsn_sheet.write(m, i1, objUTF8Unicode)
 	#
 	# Add ingame quotes sheet
@@ -890,7 +933,7 @@ def outputXLS(filename, sheet, listTlkWavs, listDevsWavs, parseTREResourcesAlso 
 	#
 	#
 	# You may need to group the variables together
-	#for n, (v_desc, v) in enumerate(zip(desc, variables)):
+	#for n, (v_desc, v) in enumerate(list(zip(desc, variables))):
 		#sh.write(n, 0, v_desc)
 		#sh.write(n, 1, v)
 	col1_name = 'BladeRunnerTLK In-Game dialogue / voiceover quotes'
@@ -984,22 +1027,22 @@ def outputXLS(filename, sheet, listTlkWavs, listDevsWavs, parseTREResourcesAlso 
 
 	try:
 		book.save(filename)
-		print "[Info] Done."
+		print ("[Info] Done.")
 	except Exception as e:
-		print "[Error] Could not save the output Excel file:: " + str(e)
+		print ("[Error] Could not save the output Excel file:: " + str(e))
 
 #
 # Aux function to weed out duplicates from wav file lists
 # valid listTypes: 'TLKWAVS', 'EXTRAMIXWAVS'
 def wavDupsRemove(listOfWavFiles, listType):
 	if listType != 'TLKWAVS' and listType != 'EXTRAMIXWAVS':
-		print '[Error] Invalid listtype %s specified to remove duplicate wav files' % (listType)
+		print ("[Error] Invalid listtype %s specified to remove duplicate wav files" % (listType))
 		sys.exit(1)
 
 	listOfWavFilesNoDups = []
 	for filenameSrcTmp in listOfWavFiles:
 		duplicateFound = False
-		#print "[Debug]Converted %s" % (filenameSrcTmp)
+		#print ("[Debug] Converted %s" % (filenameSrcTmp))
 		# Weed out duplicates by copying to another table (quick and dirty)
 		twoTokensOfRelDirnameAndFilenameSrc = filenameSrcTmp.split('&', 2)
 		tmpRelDirNameSrc = twoTokensOfRelDirnameAndFilenameSrc[1] # eg. TLK1
@@ -1024,14 +1067,14 @@ def wavDupsRemove(listOfWavFiles, listType):
 				#concatenate actorID and quoteID for search key
 				keyForDuplicateSearchTarg =	 threeTokensOfQuoteFilenameTarg[0] + threeTokensOfQuoteFilenameTarg[1]
 			if(keyForDuplicateSearchSrc == keyForDuplicateSearchTarg):
-				#print "[Debug] Found duplicate %s" % (filenameSrcTmp)
+				#print ("[Debug] Found duplicate %s" % (filenameSrcTmp))
 				duplicateFound = True
 				listOfWavFilesNoDups[fileTargIdx] = twoTokensOfRelDirnameAndFilenameTarg[0] + '&' +  tmpRelDirNameSrc + ',' + tmpRelDirNameTarg + '&' + twoTokensOfRelDirnameAndFilenameTarg[2]
 				break
 		if(duplicateFound == False):
 			listOfWavFilesNoDups.append(filenameSrcTmp)
 	#for filenameSrcTmp in listOfWavFilesNoDups:
-	#	print "[Debug] Unique %s" % (filenameSrcTmp)
+	#	print ("[Debug] Unique %s" % (filenameSrcTmp))
 	return listOfWavFilesNoDups
 
 #
@@ -1049,9 +1092,9 @@ def getLanguageDescCodeTuple(candidateLangDescriptionStr):
 	return resultTuple
 
 def printInfoMessageForLanguageSelectionSyntax():
-	tmpCSVSupportedLangDescValues = ", ".join( zip(*SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST)[0] )
-	print "Valid values for language selection are: %s" % (tmpCSVSupportedLangDescValues)
-	print "Default value is: %s (%s)" % (DEFAULT_LANG_DESC_CODE[0], DEFAULT_LANG_DESC_CODE[2])
+	tmpCSVSupportedLangDescValues = ", ".join( list(zip(*SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST))[0] )
+	print ("Valid values for language selection are: %s" % (tmpCSVSupportedLangDescValues))
+	print ("Default value is: %s (%s)" % (DEFAULT_LANG_DESC_CODE[0], DEFAULT_LANG_DESC_CODE[2]))
 	return
 #
 #
@@ -1085,37 +1128,37 @@ def main(argsCL):
 	extractPOGOTextMode = False
 
 	invalidSyntax = False
-	print "Running %s (%s)..." % (APP_NAME_SPACED, APP_VERSION)
-	#print "Len of sysargv = %s" % (len(argsCL))
+	print ("Running %s (%s)..." % (APP_NAME_SPACED, APP_VERSION))
+	#print ("Len of sysargv = %s" % (len(argsCL)))
 	if len(argsCL) == 2:
 		if(argsCL[1] == '--help'or argsCL[1] == '-h'):
-			print "%s %s supports Westwood's Blade Runner PC Game (1997)." % (APP_NAME_SPACED, APP_VERSION)
-			print APP_SHORT_DESC
-			print "Created by Praetorian of the classic adventures in Greek team."
-			print "Always keep backups!"
-			print "--------------------"
-			print "%s takes has one mandatory argument, ie. the folder of the exported WAV files:" % (APP_WRAPPER_NAME)
-			print "Valid syntax: %s -op folderpath_for_exported_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-ld gameInputLanguageDescription] [-xwav] [-xtre] [-xdevs] [-xpogo] [--trace]" % (APP_WRAPPER_NAME)
-			print "The -op switch has an argument that is the path for exported WAV files folder. The -op switch is REQUIRED always."
-			print "The -ip switch has an argument that is the path for the input (TLK or MIX) files folder (can be the same as the Blade Runner installation folder)."
-			print "The -ian switch is followed by the path to actornames.txt, if it's not in the current working directory."
-			print "The -m switch has an argument that is a replacement string for the path to the folder of exported WAV files which will be used as a prefix for the links in the output XLS file."
-			print "The -ld switch has an argument that is the language description of the original game files that you use as input."
+			print ("%s %s supports Westwood's Blade Runner PC Game (1997)." % (APP_NAME_SPACED, APP_VERSION))
+			print (APP_SHORT_DESC)
+			print ("Created by Praetorian of the classic adventures in Greek team.")
+			print ("Always keep backups!")
+			print ("--------------------")
+			print ("%s takes has one mandatory argument, ie. the folder of the exported WAV files:" % (APP_WRAPPER_NAME))
+			print ("Valid syntax: %s -op folderpath_for_exported_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-ld gameInputLanguageDescription] [-xwav] [-xtre] [-xdevs] [-xpogo] [--trace]" % (APP_WRAPPER_NAME))
+			print ("The -op switch has an argument that is the path for exported WAV files folder. The -op switch is REQUIRED always.")
+			print ("The -ip switch has an argument that is the path for the input (TLK or MIX) files folder (can be the same as the Blade Runner installation folder).")
+			print ("The -ian switch is followed by the path to actornames.txt, if it's not in the current working directory.")
+			print ("The -m switch has an argument that is a replacement string for the path to the folder of exported WAV files which will be used as a prefix for the links in the output XLS file.")
+			print ("The -ld switch has an argument that is the language description of the original game files that you use as input.")
 			printInfoMessageForLanguageSelectionSyntax()
-			print "The -xwav switch enables the WAV audio export mode from the TLK files. It requires an INPUT path to be set with the -ip switch."
-			print "The -xtre switch enables the TRx parsing mode from the original MIX files. It requires an INPUT path to be set with the -ip switch."
-			print "The -xdevs switch will add a sheet for Developer Commentary text and some additional voice-overs from SFX.MIX."
-			print "The -xpogo switch will add a sheet for the POGO text."
-			print "The --trace switch enables more debug messages being printed during execution."
-			print "--------------------"
-			print "If the app finishes successfully, a file named %s-(language)%s will be created in the current working folder." % (OUTPUT_XLS_FILENAME, OUTPUT_XLS_FILENAME_EXT)
-			print "--------------------"
-			print "Thank you for using this app."
-			print "Please provide any feedback to: %s " % (COMPANY_EMAIL)
+			print ("The -xwav switch enables the WAV audio export mode from the TLK files. It requires an INPUT path to be set with the -ip switch.")
+			print ("The -xtre switch enables the TRx parsing mode from the original MIX files. It requires an INPUT path to be set with the -ip switch.")
+			print ("The -xdevs switch will add a sheet for Developer Commentary text and some additional voice-overs from SFX.MIX.")
+			print ("The -xpogo switch will add a sheet for the POGO text.")
+			print ("The --trace switch enables more debug messages being printed during execution.")
+			print ("--------------------")
+			print ("If the app finishes successfully, a file named %s-(language)%s will be created in the current working folder." % (OUTPUT_XLS_FILENAME, OUTPUT_XLS_FILENAME_EXT))
+			print ("--------------------")
+			print ("Thank you for using this app.")
+			print ("Please provide any feedback to: %s " % (COMPANY_EMAIL))
 			sys.exit()
 		elif(argsCL[1] == '--version' or argsCL[1] == '-v'):
-			print "%s %s supports Westwood's Blade Runner PC Game (1997)." % (APP_NAME_SPACED, APP_VERSION)
-			print "Please provide any feedback to: %s " % (COMPANY_EMAIL)
+			print ("%s %s supports Westwood's Blade Runner PC Game (1997)." % (APP_NAME_SPACED, APP_VERSION))
+			print ("Please provide any feedback to: %s " % (COMPANY_EMAIL))
 			sys.exit()
 		else:
 			invalidSyntax = True
@@ -1135,61 +1178,61 @@ def main(argsCL):
 					candidateLangDescriptionTxt = argsCL[i+1]
 
 			elif (argsCL[i] == '-xwav'):
-				print "[Info] Export WAVs from TLK files mode enabled (only missing files will be exported)."
+				print ("[Info] Export WAVs from TLK files mode enabled (only missing files will be exported).")
 				exportWavFilesMode = True
 			elif (argsCL[i] == '-xtre'):
-				print "[Info] Extract Text Resources (TRx) mode enabled."
+				print ("[Info] Extract Text Resources (TRx) mode enabled.")
 				extractTreFilesMode = True
 			elif (argsCL[i] == '-xdevs'):
-				print "[Info] Additional Sheet for developer commentary and extra SFX mode enabled."
+				print ("[Info] Additional Sheet for developer commentary and extra SFX mode enabled.")
 				extractDevCommAndExtraSFXMode = True
 			elif (argsCL[i] == '-xpogo'):
-				print "[Info] Additional Sheet for POGO text mode enabled."
+				print ("[Info] Additional Sheet for POGO text mode enabled.")
 				extractPOGOTextMode = True
 			elif argsCL[i] == '--trace':
-				print "[Info] Trace mode enabled (more debug messages)."
+				print ("[Info] Trace mode enabled (more debug messages).")
 				gTraceModeEnabled = True
 			elif argsCL[i][:1] == '-':
 				invalidSyntax = True
 				break
 
 		if (not exportWavFilesMode):
-			print "[Info] Export WAVs from TLK files mode disabled."
+			print ("[Info] Export WAVs from TLK files mode disabled.")
 		if (not extractTreFilesMode):
-			print "[Info] Extract Text Resources (TRx) mode disabled."
+			print ("[Info] Extract Text Resources (TRx) mode disabled.")
 		if (not extractDevCommAndExtraSFXMode):
-			print "[Info] Additional Sheet for developer commentary and extra SFX mode disabled."
+			print ("[Info] Additional Sheet for developer commentary and extra SFX mode disabled.")
 		if (not extractPOGOTextMode):
-			print "[Info] Additional Sheet for POGO text mode disabled."
+			print ("[Info] Additional Sheet for POGO text mode disabled.")
 
 		if not TMProotFolderWithExportedFiles: # this argument is mandatory
-			print "[Error] The output path for exported files (-op switch) argument is mandatory!"
+			print ("[Error] The output path for exported files (-op switch) argument is mandatory!")
 			invalidSyntax = True
 
 		if (not invalidSyntax) \
 			and (exportWavFilesMode == True or extractDevCommAndExtraSFXMode == True or extractTreFilesMode == True) \
 			and (TMProotFolderWithInputTLKFiles == ''):
-			print "[Error] No game input path (-ip switch) specified, while any of the export audio to WAV mode (-xwav), the export extras (-xdevs) or the extract Text Resources mode (-xtre) is enabled."
+			print ("[Error] No game input path (-ip switch) specified, while any of the export audio to WAV mode (-xwav), the export extras (-xdevs) or the extract Text Resources mode (-xtre) is enabled.")
 			invalidSyntax = True
 
 		if (not invalidSyntax) \
 			and (exportWavFilesMode == False and extractDevCommAndExtraSFXMode == False and extractTreFilesMode == False) \
 			and (TMProotFolderWithInputTLKFiles != ''):
-			print "[Warning] Specified game input path (-ip switch) will be ignored, since the export audio to WAV mode (-xwav), the export extras (-xdevs) and the extract Text Resources mode (-xtre) are disabled."
+			print ("[Warning] Specified game input path (-ip switch) will be ignored, since the export audio to WAV mode (-xwav), the export extras (-xdevs) and the extract Text Resources mode (-xtre) are disabled.")
 			# not invalid syntax though
 
 		gActiveLanguageDescriptionCodeTuple = getLanguageDescCodeTuple(candidateLangDescriptionTxt)
 		if (not invalidSyntax) and gActiveLanguageDescriptionCodeTuple is None:
-			print "[Error] Invalid language code was specified"
+			print ("[Error] Invalid language code was specified")
 			printInfoMessageForLanguageSelectionSyntax()
 			invalidSyntax = True
 
 		if not invalidSyntax:
-			print "[Info] Game Language Selected: %s (%s)" % (gActiveLanguageDescriptionCodeTuple[0], gActiveLanguageDescriptionCodeTuple[2])
+			print ("[Info] Game Language Selected: %s (%s)" % (gActiveLanguageDescriptionCodeTuple[0], gActiveLanguageDescriptionCodeTuple[2]))
 			# parse Actors files:
 			initActorPropertyEntries(pathToActorNamesTxt)
 			#for actorEntryTmp in gActorPropertyEntries:
-			#	print "[Debug] Found actor: %s %s %s" % (actorEntryTmp[0], actorEntryTmp[1], actorEntryTmp[2])
+			#	print ("[Debug] Found actor: %s %s %s" % (actorEntryTmp[0], actorEntryTmp[1], actorEntryTmp[2]))
 			#
 			# Early checks for invalid cases
 			# 1. if TMProotFolderWithInputTLKFiles is not valid and -xtre or -xwav -> error!
@@ -1198,10 +1241,10 @@ def main(argsCL):
 			# 2. if not -wav and -op path is invalid then empty INGQUOT sheet -> error
 			# 3 [We check for this further bellow, before call for outputXLS]. if not -wav and -op path is empty (has no WAVs) then empty INGQUOT sheet -> Treat as an error case!
 			if ((exportWavFilesMode == True or extractDevCommAndExtraSFXMode == True or extractTreFilesMode == True) and (not os.path.isdir(TMProotFolderWithInputTLKFiles))):
-				print "[Error] Invalid game input path (-ip switch) was specified, while the export audio to WAV mode (-xwav), export extras (-xdevs) or the extract Text Resources mode (-xtre) is enabled."
+				print ("[Error] Invalid game input path (-ip switch) was specified, while the export audio to WAV mode (-xwav), export extras (-xdevs) or the extract Text Resources mode (-xtre) is enabled.")
 				sys.exit(1)
 			if ((exportWavFilesMode == False and extractDevCommAndExtraSFXMode == False) and (not os.path.isdir(TMProotFolderWithExportedFiles))):
-				print "[Error] Invalid output path for exported files (-op switch) was specified, while the export audio to WAV mode (-xwav) and export extras (-xdevs) are disabled (if enabled, it would create the path)."
+				print ("[Error] Invalid output path for exported files (-op switch) was specified, while the export audio to WAV mode (-xwav) and export extras (-xdevs) are disabled (if enabled, it would create the path).")
 				sys.exit(1)
 			#
 			# Checking for the optional case of parsing the input TLK files to export to WAV
@@ -1213,8 +1256,8 @@ def main(argsCL):
 				#	inputMIXExtractTREs(TMProotFolderWithInputTLKFiles)
 			#
 			# Parsing the exported WAV files
-			# NO: depending on the mode don't parse the irrellevant WAVs?
-			print "[Info] Parsing the (exported) WAV audio files in the -op path.\n\tPlease wait (this could take a while)..."
+			# NO: depending on the mode don't parse the irrelevant WAVs?
+			print ("[Info] Parsing the (exported) WAV audio files in the -op path.\n\tPlease wait (this could take a while)...")
 			# The broad search here is intentional
 			for (dirpath, dirnames, filenames) in walk(TMProotFolderWithExportedFiles):
 				for nameIdx, nameTmp in enumerate(filenames):
@@ -1239,12 +1282,12 @@ def main(argsCL):
 							if (posOfTLKWithinRightmostToken != -1 \
 								or posOfSFXWithinRightmostToken != -1):
 								relDirName = pTokenTmp	# don't break, we are interested in right-most matching token in the path
-						#if (nameTmp.upper()[:-4] + '.AUD') in zip(*SUPPORTED_EXPORTED_AUD_FROM_MIX_FILES)[0]:
-						#	print '[Trace] 1 file: %s' % (nameTmp.upper())
-						#	print 'TLKss %d vs SFXss:%d ' % (idxOfLastTLKToken, idxOfLastSFXToken)
+						#if (nameTmp.upper()[:-4] + '.AUD') in list(zip(*SUPPORTED_EXPORTED_AUD_FROM_MIX_FILES))[0]:
+						#	print ("[Trace] 1 file: %s" % (nameTmp.upper()))
+						#	print ("TLKss %d vs SFXss:%d " % (idxOfLastTLKToken, idxOfLastSFXToken))
 
 						if (idxOfLastSFXToken > idxOfLastTLKToken \
-							and (nameTmp.upper()[:-4] + '.AUD') in zip(*SUPPORTED_EXPORTED_AUD_FROM_MIX_FILES)[0]):
+							and (nameTmp.upper()[:-4] + '.AUD') in list(zip(*SUPPORTED_EXPORTED_AUD_FROM_MIX_FILES))[0]):
 							gMIXWavFiles.append(filenames[nameIdx] +'&' + relDirName + '&' + os.path.join(dirpath, nameTmp))
 						else:
 							gTLKWavFiles.append(filenames[nameIdx] +'&' + relDirName + '&' + os.path.join(dirpath, nameTmp))
@@ -1252,7 +1295,7 @@ def main(argsCL):
 			for fileIdx, filenameTmp in enumerate(gTLKWavFiles):
 				twoTokensOfFilenameAndRelDirname = filenameTmp.split('&', 1)
 				if len(twoTokensOfFilenameAndRelDirname) != 2:
-					print "[Error] While attempting filename and relative dirname split: %s" % (filenameTmp)
+					print ("[Error] While attempting filename and relative dirname split: %s" % (filenameTmp))
 					sys.exit(0)
 				#
 				# Remove WAV extension here
@@ -1272,11 +1315,11 @@ def main(argsCL):
 							threeTokensOfFilename.append(tmpActorFullName)
 						else:
 					#fatal error if something cannot convert to spot it immediately
-							print "[Error] in actorIdMatch match: %s %s" % (tmpActorId, twoTokensOfFilenameAndRelDirname[0][:-4])
+							print ("[Error] in actorIdMatch match: %s %s" % (tmpActorId, twoTokensOfFilenameAndRelDirname[0][:-4]))
 							sys.exit(0)
 					else:
 					#fatal error if something cannot convert to spot it immediately
-						print "[Error] in shorthand match: %s %s" % (threeTokensOfFilename[0], twoTokensOfFilenameAndRelDirname[0][:-4])
+						print ("[Error] in shorthand match: %s %s" % (threeTokensOfFilename[0], twoTokensOfFilenameAndRelDirname[0][:-4]))
 						sys.exit(0)
 					#
 					#
@@ -1292,7 +1335,7 @@ def main(argsCL):
 					filenameTmp =  tmpHealedSimpleFilename + '&' + twoTokensOfFilenameAndRelDirname[1]
 					gTLKWavFiles[fileIdx] = filenameTmp
 				else:
-					print "[Error] in splitting tokens on _: %s" % (filenameTmp)
+					print ("[Error] in splitting tokens on _: %s" % (filenameTmp))
 					sys.exit(0)
 			#
 			# Now handle the extra speech files (-xdevs mode)
@@ -1301,11 +1344,11 @@ def main(argsCL):
 				# (we will put it in another sheet)
 				twoTokensOfFilenameAndRelDirname = filenameTmp.split('&', 1)
 				if len(twoTokensOfFilenameAndRelDirname) != 2:
-					print "[Error] While attempting filename and relative dirname split on extra speech file: %s" % (filenameTmp)
+					print ("[Error] While attempting filename and relative dirname split on extra speech file: %s" % (filenameTmp))
 					sys.exit(0)
 
 				if (gTraceModeEnabled):
-					print "[Debug] No healing action needed on: %s" % (twoTokensOfFilenameAndRelDirname[0])
+					print ("[Debug] No healing action needed on: %s" % (twoTokensOfFilenameAndRelDirname[0]))
 
 			#sort in-place
 			#
@@ -1318,32 +1361,32 @@ def main(argsCL):
 			#
 			gTLKWavFilesNoDups = wavDupsRemove(gTLKWavFiles, 'TLKWAVS')
 			if len(gTLKWavFilesNoDups) == 0:
-				print "[Error] No supported speech audio files (WAV) were found in the output folder path (-op switch)."
+				print ("[Error] No supported speech audio files (WAV) were found in the output folder path (-op switch).")
 				sys.exit(1)
 			#
 			# Remove duplicates from extra speech files (-xdevs mode)
 			#
 			gMIXWavFilesNoDups = wavDupsRemove(gMIXWavFiles, 'EXTRAMIXWAVS')
 			if extractDevCommAndExtraSFXMode and len(gMIXWavFilesNoDups) == 0:
-				print "[Error] No supported extra speech audio files (WAV) were found in the output folder path (-op switch)."
+				print ("[Error] No supported extra speech audio files (WAV) were found in the output folder path (-op switch).")
 				sys.exit(1)
 
 			constructedOutputFilename = "%s-%s%s" % (OUTPUT_XLS_FILENAME, gActiveLanguageDescriptionCodeTuple[2], OUTPUT_XLS_FILENAME_EXT)
-			print "[Info] Creating output excel %s file..." % (constructedOutputFilename)
+			print ("[Info] Creating output excel %s file..." % (constructedOutputFilename))
 			outputXLS(constructedOutputFilename, OUTPUT_XLS_QUOTES_SHEET + gActiveLanguageDescriptionCodeTuple[1] + '.TR' + gActiveLanguageDescriptionCodeTuple[1], gTLKWavFilesNoDups, gMIXWavFilesNoDups, extractTreFilesMode, extractDevCommAndExtraSFXMode, extractPOGOTextMode, TMProotFolderWithInputTLKFiles)
 	else:
 		invalidSyntax = True
 
 	if invalidSyntax == True:
-		print "[Error] Invalid syntax!\n Try: \n %s --help for more info \n %s --version for version info " % (APP_WRAPPER_NAME, APP_WRAPPER_NAME)
-		print "Valid syntax: %s -op folderpath_for_exported_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-ld gameInputLanguageDescription] [-xwav] [-xtre] [-xdevs] [-xpogo] [--trace]" % (APP_WRAPPER_NAME)
-		print "\nDetected arguments:"
+		print ("[Error] Invalid syntax!\n Try: \n %s --help for more info \n %s --version for version info " % (APP_WRAPPER_NAME, APP_WRAPPER_NAME))
+		print ("Valid syntax: %s -op folderpath_for_exported_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-ld gameInputLanguageDescription] [-xwav] [-xtre] [-xdevs] [-xpogo] [--trace]" % (APP_WRAPPER_NAME))
+		print ("\nDetected arguments:")
 		tmpi = 0
 		for tmpArg in argsCL:
 			if tmpi==0: #skip first argument
 				tmpi+=1
 				continue
-			print "Argument: %s" % (tmpArg)
+			print ("Argument: %s" % (tmpArg))
 			tmpi+=1
 
 # 00_0000 -- DealsInInsects					dupl TLK01, TLK0A
@@ -1359,5 +1402,5 @@ if __name__ == '__main__':
 	main(sys.argv[0:])
 else:
 	## debug
-	#print '[Debug] %s was imported from another module' % (APP_WRAPPER_NAME)
+	#print ("[Debug] %s was imported from another module" % (APP_WRAPPER_NAME))
 	pass

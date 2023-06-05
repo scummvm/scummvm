@@ -9,21 +9,21 @@ structLibFound = False
 try:
 	import os
 except ImportError:
-	print "[Error] os python library is required to be installed!"
+	print ("[Error] os python library is required to be installed!")
 else:
 	osLibFound = True
 
 try:
 	import sys
 except ImportError:
-	print "[Error] sys python library is required to be installed!"
+	print ("[Error] sys python library is required to be installed!")
 else:
 	sysLibFound = True
 
 try:
 	import struct
 except ImportError:
-	print "[Error] struct python library is required to be installed!"
+	print ("[Error] struct python library is required to be installed!")
 else:
 	structLibFound = True
 
@@ -33,9 +33,14 @@ if 	(not osLibFound) \
 	sys.stdout.write("[Error] Errors were found when trying to import required python libraries\n")
 	sys.exit(1)
 
-from struct import *
+pathToParent = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)
+pathToCommon = os.path.join(pathToParent, "common")
+sys.path.append(pathToCommon)
 
-MY_MODULE_VERSION = "0.50"
+from struct import *
+from pythonCompat import *
+
+MY_MODULE_VERSION = "0.70"
 MY_MODULE_NAME = "treFileLib"
 
 
@@ -74,7 +79,7 @@ class treFile(object):
 			# string IDs table (each entry is unsigned integer 4 bytes)
 			#
 			if self.m_traceModeEnabled:
-				print "[Info] Total texts in Text Resource file: %d" % (self.header().numOfTextResources)
+				print ("[Info] Total texts in Text Resource file: %d" % (self.header().numOfTextResources))
 			for idx in range(0, self.header().numOfTextResources):
 				tmpTuple = struct.unpack_from('I', treBytesBuff, offsInTreFile)  # unsigned integer 4 bytes
 				self.stringEntriesLst.append( (tmpTuple[0], '') )
@@ -92,7 +97,7 @@ class treFile(object):
 			#absStartOfOffsetTable = absStartOfIndexTable + (self.header().numOfTextResources * 4)
 			#absStartOfStringTable = absStartOfOffsetTable + ((self.header().numOfTextResources+1) * 4)
 
-			#print "[Debug] buffer type: " , type(treBytesBuff) # it is str
+			#print ("[Debug] buffer type: ", type(treBytesBuff)) # it is str
 
 			for idx in range(0, self.header().numOfTextResources):
 				currOffset = self.stringOffsets[idx] + absStartOfIndexTable
@@ -101,18 +106,30 @@ class treFile(object):
 				# to split the substring starting at the indicated offset each time, at the null character, and get the first string token.
 				# This works ok.
 				#
-				allTextsFound = treBytesBuff[currOffset:].split('\x00')
+				print (treBytesBuff[currOffset:])
+				if sys.version_info[0] <= 2:
+					allTextsFound = treBytesBuff[currOffset:].split('\x00')
+				else:
+					allTextsFound = treBytesBuff[currOffset:].split(b'\0')
+				print (allTextsFound[0])
 				### check "problematic" character cases:
 				##if self.m_traceModeEnabled:
 				##	if  currOffset == 5982 or currOffset == 6050 or currOffset == 2827  or currOffset == 2880:
-				##		print "[Debug] Offs: %d\tFound String: %s" % ( currOffset,''.join(allTextsFound[0]) )
+				##		print ("[Debug] Offs: %d\tFound String: %s" % (currOffset, ''.join(allTextsFound[0]) ))
 				(theId, stringOfIdx) = self.stringEntriesLst[idx]
-				self.stringEntriesLst[idx] = (theId, ''.join(allTextsFound[0]))
+				if sys.version_info[0] <= 2:
+					self.stringEntriesLst[idx] = (theId, ''.join(allTextsFound[0]))
+				else:
+					self.stringEntriesLst[idx] = (theId, allTextsFound[0])
+
 				if self.m_traceModeEnabled:
-					print "[Trace] ID: %d\tFound String: %s" % ( theId,''.join(allTextsFound[0]) )
+					if sys.version_info[0] <= 2:
+						print ("[Trace] ID: %d\tFound String: %s" % (theId, ''.join(allTextsFound[0]) ))
+					else:
+						print ("[Trace] ID: %d\tFound String: %s" % (theId, allTextsFound[0] ))
 			return True
-  		except:
-			print "[Error] Loading Text Resource %s failed!" % (self.simpleTextResourceFileName)
+		except Exception as e:
+			print ("[Error] Loading Text Resource %s failed!" % (self.simpleTextResourceFileName) + " " + str(e))
 			return False
 
 	def header(self):
@@ -129,36 +146,36 @@ if __name__ == '__main__':
 	inTREFileName =  'ACTORS.TRE'
 
 	if len(sys.argv[1:])  > 0 \
-		and os.path.isfile(os.path.join('.', sys.argv[1])) \
+		and os.path.isfile(os.path.join(u'.', sys.argv[1])) \
 		and len(sys.argv[1]) >= 5 \
 		and sys.argv[1][-3:].upper() == 'TRE':
 		inTREFileName = sys.argv[1]
-		print "[Info] Attempting to use %s as input TRE file..." % (inTREFileName)
-	elif os.path.isfile(os.path.join('.', inTREFileName)):
-		print "[Info] Using default %s as input TRE file..." % (inTREFileName)
+		print ("[Info] Attempting to use %s as input TRE file..." % (inTREFileName))
+	elif os.path.isfile(os.path.join(u'.', inTREFileName)):
+		print ("[Info] Using default %s as input TRE file..." % (inTREFileName))
 	else:
-		print "[Error] No valid input file argument was specified and default input file %s is missing." % (inTREFileName)
+		print ("[Error] No valid input file argument was specified and default input file %s is missing." % (inTREFileName))
 		errorFound = True
 
 	if not errorFound:
 		try:
-			print "[Info] Opening %s" % (inTREFileName)
-			inTREFile = open(os.path.join('.',inTREFileName), 'rb')
+			print ("[Info] Opening %s" % (inTREFileName))
+			inTREFile = open(os.path.join(u'.', inTREFileName), 'rb')
 		except:
 			errorFound = True
-			print "[Error] Unexpected event: ", sys.exc_info()[0]
+			print ("[Error] Unexpected event: ", sys.exc_info()[0])
 			raise
 		if not errorFound:
 			allOfTreFileInBuffer = inTREFile.read()
 			treFileInstance = treFile(True)
 			if treFileInstance.m_traceModeEnabled:
-				print "[Debug] Running %s (%s) as main module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
+				print ("[Debug] Running %s (%s) as main module" % (MY_MODULE_NAME, MY_MODULE_VERSION))
 			if treFileInstance.loadTreFile(allOfTreFileInBuffer, len(allOfTreFileInBuffer), inTREFileName):
-				print "[Info] Text Resource file loaded successfully!"
+				print ("[Info] Text Resource file loaded successfully!")
 			else:
-				print "[Error] Error while loading Text Resource file!"
+				print ("[Error] Error while loading Text Resource file!")
 			inTREFile.close()
 else:
 	#debug
-	#print "[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
+	#print ("[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION))
 	pass

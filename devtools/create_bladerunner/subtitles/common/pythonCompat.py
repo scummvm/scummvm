@@ -3,9 +3,9 @@
 
 import sys
 
-def makeUnicode(inp):
+def makeUnicode(inp, enc='utf-8'):
         if sys.version_info[0] <= 2:
-                return unicode(inp, 'utf-8')
+                return unicode(inp, enc)
         else:
                 return inp
 
@@ -38,3 +38,8 @@ def makeToBytes(s):
 	if sys.version_info[0] <= 2:
 		return [ord(i) for i in s]
 	return bytes(i for i in s)
+
+def openWithUTF8Encoding(filepath, mode):
+	if sys.version_info[0] <= 2:
+		return open(filepath, mode)
+	return open(filepath, mode, encoding='utf-8')

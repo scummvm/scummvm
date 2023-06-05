@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 #
 
-my_module_version = "1.60"
-my_module_name = "vqasTextResource"
+MY_MODULE_VERSION = "1.70"
+MY_MODULE_NAME = "vqasTextResource"
 
 # Timestamps and placeholder cells for all supported VQAs ((row 2 and below)
 WSTLGO_VQA_TEXT_RESOURCE_TUPLE_LIST = [
@@ -471,16 +471,16 @@ class vqasTextResource(object):
 
 	def printAllVqasTextResource(self):
 		if self.m_traceModeEnabled:
-			print "[Trace] printing all VQAs Text"
+			print ("[Trace] printing all VQAs Text")
 		for (vqaKeyStr, vqaTreList) in ALL_VQA_TEXT_RESOURCES_LISTS:
-			print "VQA prefix: %s" % (vqaKeyStr)
+			print ("VQA prefix: %s" % (vqaKeyStr))
 			for (startFrameTre, endFrameTre, textTre, timeStartTre, timeEndTre, byActorTre) in vqaTreList:
-				print "%s\t%s\t%s\t%s\t%s\t%s" % (startFrameTre, endFrameTre, textTre, timeStartTre, timeEndTre, byActorTre)
+				print ("%s\t%s\t%s\t%s\t%s\t%s" % (startFrameTre, endFrameTre, textTre, timeStartTre, timeEndTre, byActorTre))
 		return
 
 	def getVqaEntriesList(self, sVQASheetPrefix):
 		if self.m_traceModeEnabled:
-			print "[Trace] getVqaEntriesList()"
+			print ("[Trace] getVqaEntriesList()")
 		for (vqaKeyStr, vqaTreList) in ALL_VQA_TEXT_RESOURCES_LISTS:
 			if (vqaKeyStr == sVQASheetPrefix.upper()):
 				return vqaTreList
@@ -490,11 +490,11 @@ class vqasTextResource(object):
 #
 if __name__ == '__main__':
 	# main()
-	print "[Debug] Running %s as main module" % (my_module_name)
+	print ("[Debug] Running %s (%s) as main module" % (MY_MODULE_NAME, MY_MODULE_VERSION))
 	traceModeEnabled = False
 	vqaTRInstance = vqasTextResource(traceModeEnabled)
 	vqaTRInstance.printAllVqasTextResource()
 else:
 	#debug
-	#print "[Debug] Running	 %s imported from another module" % (my_module_name)
+	#print ("[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION))
 	pass

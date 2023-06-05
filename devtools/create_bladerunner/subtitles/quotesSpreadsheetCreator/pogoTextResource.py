@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 #
 
-my_module_version = "1.00"
-my_module_name = "pogoTextResource"
+MY_MODULE_VERSION = "1.10"
+MY_MODULE_NAME = "pogoTextResource"
 
 # All game versions should have the English text pre-filled in the POGO sheet
 POGO_TEXT_RESOURCE_TUPLE_LIST = [
@@ -178,14 +178,14 @@ class pogoTextResource(object):
 
 	def printPogo(self):
 		if self.m_traceModeEnabled:
-			print "[Trace] printing Pogo..."
+			print ("[Trace] printing Pogo...")
 		for (idTre, textTre) in POGO_TEXT_RESOURCE_TUPLE_LIST:
-			print "%s\t%s" % (idTre, textTre)
+			print ("%s\t%s" % (idTre, textTre))
 		return
 
 	def getPogoEntriesList(self):
 		if self.m_traceModeEnabled:
-			print "[Trace] getPogoEntriesList()"
+			print ("[Trace] getPogoEntriesList()")
 		return POGO_TEXT_RESOURCE_TUPLE_LIST
 
 #
@@ -193,11 +193,11 @@ class pogoTextResource(object):
 #
 if __name__ == '__main__':
 	# main()
-	print "[Debug] Running %s as main module" % (my_module_name)
+	print ("[Debug] Running %s (%s) as main module" % (MY_MODULE_NAME, MY_MODULE_VERSION))
 	traceModeEnabled = False
 	pogoTRInstance = pogoTextResource(traceModeEnabled)
 	pogoTRInstance.printPogo()
 else:
 	#debug
-	#print "[Debug] Running	 %s imported from another module" % (my_module_name)
+	#print ("[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION))
 	pass

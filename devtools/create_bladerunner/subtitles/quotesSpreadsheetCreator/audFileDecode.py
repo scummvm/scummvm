@@ -7,7 +7,7 @@ structLibFound = False
 try:
 	import ctypes
 except ImportError:
-	print "[Error] ctypes python library is required to be installed!"
+	print ("[Error] ctypes python library is required to be installed!")
 else:
 	ctypesLibFound = True
 
@@ -17,7 +17,7 @@ if 	(not ctypesLibFound):
 
 from struct import *
 
-MY_MODULE_VERSION = "0.60"
+MY_MODULE_VERSION = "0.70"
 MY_MODULE_NAME = "audFileDecode"
 
 aud_ima_index_adjust_table = [-1, -1, -1, -1, 2, 4, 6, 8]
@@ -53,16 +53,16 @@ def aud_decode_ima_chunk(audioBufferIn, index, sample, cs_chunk):
 	audioBufferOut = []
 	#for i in range(0, len(audioBufferIn)):
 	#if self.m_traceModeEnabled:
-	#	print '[Debug] %d: %d'%(i, int(audioBufferIn[i]))
+	#	print ("[Debug] %d: %d" % (i, int(audioBufferIn[i])))
 
 	for sample_index in range (0, cs_chunk):
 		try:
 			code = audioBufferIn[sample_index >> 1]
 		except:
 			code = 0xa9 # dummy workaround because the c code is accessing an out of bounds index sometimes due to this shift here
-		#print "[Debug] cs_chunk: %d, sample_index: %d, shifted: %d, code: %d" % (cs_chunk, sample_index, sample_index >> 1, int(audioBufferIn[sample_index >> 1]))
-		#print "[Debug] cs_chunk: %s, sample_index: %s, shifted: %s, code: %s" % \
-		#		(''.join('{:04X}'.format(cs_chunk)), ''.join('{:02X}'.format(sample_index)), ''.join('{:02X}'.format(sample_index >> 1)), ''.join('{:04X}'.format(int(code))))
+		#print ("[Debug] cs_chunk: %d, sample_index: %d, shifted: %d, code: %d" % (cs_chunk, sample_index, sample_index >> 1, int(audioBufferIn[sample_index >> 1])))
+		#print ("[Debug] cs_chunk: %s, sample_index: %s, shifted: %s, code: %s" % \
+		#		(''.join('{:04X}'.format(cs_chunk)), ''.join('{:02X}'.format(sample_index)), ''.join('{:02X}'.format(sample_index >> 1)), ''.join('{:04X}'.format(int(code)))))
 		code = code >> 4  if (sample_index & 1) else code & 0xf
 		step = aud_ima_step_table[index]
 		delta = step >> 3
@@ -83,7 +83,7 @@ def aud_decode_ima_chunk(audioBufferIn, index, sample, cs_chunk):
 		audioBufferOut.append(ctypes.c_short( sample ).value )
 		#audioBufferOut.append(sample) # it's not different from above... ctypes.c_short( sample ).value
 		#if self.m_traceModeEnabled:
-		#	print "[Debug] audio_out[%s]: %s" % (''.join('{:02X}'.format(sample_index)), ''.join('{:02X}'.format(audioBufferOut[sample_index])));
+		#	print ("[Debug] audio_out[%s]: %s" % (''.join('{:02X}'.format(sample_index)), ''.join('{:02X}'.format(audioBufferOut[sample_index]))))
 		index += aud_ima_index_adjust_table[code & 7]
 		if (index < 0):
 			index = 0
@@ -219,9 +219,9 @@ if __name__ == '__main__':
 	#	 main()
 	decodeInstance = audFileDecode()
 	if decodeInstance.m_traceModeEnabled:
-		print "[Debug] Running %s (%s) as main module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
+		print ("[Debug] Running %s (%s) as main module" % (MY_MODULE_NAME, MY_MODULE_VERSION))
 
 else:
 	#debug
-	#print "[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
+	#print ("[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION))
 	pass

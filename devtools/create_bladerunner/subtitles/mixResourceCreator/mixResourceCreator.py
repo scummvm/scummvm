@@ -8,7 +8,7 @@ except ImportError:
 else:
 	sysLibFound = True
 
-if 	(not sysLibFound):
+if (not sysLibFound):
 	sys.stdout.write("[Error] Errors were found when trying to import required python libraries\n")
 	sys.exit(1)
 
