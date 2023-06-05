@@ -33,6 +33,7 @@ namespace ViewsEnh {
 #define MONSTERS_X 120
 #define BOTTOM_Y 120
 #define LINE_H 8
+#define MONSTER_H 7
 
 Combat::Combat() : ScrollView("Combat") {
 }
@@ -400,7 +401,7 @@ bool Combat::msgMouseUp(const MouseUpMessage &msg) {
 		// Check for entries in the monster list being pressed
 		if (msg._pos.x >= MONSTERS_X && msg._pos.x < 310
 				&& msg._pos.y >= _innerBounds.top && msg._pos.y < 100) {
-			uint monsterNum = (msg._pos.y - _innerBounds.top) / LINE_H;
+			uint monsterNum = (msg._pos.y - _innerBounds.top) / MONSTER_H;
 			if (monsterNum < _remainingMonsters.size()) {
 				char c = 'a' + monsterNum;
 				msgKeypress(KeypressMessage(Common::KeyState(
@@ -640,16 +641,16 @@ void Combat::writeMonsters() {
 	clearArea(Common::Rect(MONSTERS_X, 0, 320, 100));
 
 	for (int i = 0; i < (int)_remainingMonsters.size(); ++i) {
-		writeString(MONSTERS_X, i * LINE_H, (i < _attackersCount) ? "+" : " ");
+		writeString(MONSTERS_X, i * MONSTER_H, (i < _attackersCount) ? "+" : " ");
 
 		unsigned char c = 'A' + i;
 		if ((i == _activeMonsterNum) && (_mode == MONSTER_ADVANCES ||
 			_mode == MONSTER_ATTACK || _mode == MONSTER_SPELL))
 			c |= 0x80;
 		mStr.setChar(c, 0);
-		writeString(MONSTERS_X + 16, i * LINE_H, mStr, ALIGN_RIGHT);
+		writeString(MONSTERS_X + 16, i * MONSTER_H, mStr, ALIGN_RIGHT);
 
-		writeString(MONSTERS_X + 22, i * LINE_H, _remainingMonsters[i]->_name);
+		writeString(MONSTERS_X + 22, i * MONSTER_H, _remainingMonsters[i]->_name);
 		writeMonsterStatus(i);
 	}
 }
