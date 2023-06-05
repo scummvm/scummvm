@@ -47,6 +47,12 @@
 		return; \
 	}
 
+#define TYPECHECK4(datum, t1, t2, t3, t4)	\
+	if ((datum).type != (t1) && (datum).type != (t2) && (datum).type != (t3) && (datum).type != (t4)) { \
+		warning("BUILDBOT: %s: %s arg should be of type %s, %s, %s, or %s, not %s", __FUNCTION__, #datum, #t1, #t2, #t3, #t4, (datum).type2str()); \
+		return; \
+	}
+
 #define ARRBOUNDSCHECK(idx,array) \
 	if ((idx)-1 < 0 || (idx) > (int)(array).u.farr->arr.size()) { \
 		warning("BUILDBOT: %s: index out of bounds (%d of %d)", __FUNCTION__, (idx), (array).u.farr->arr.size()); \

@@ -801,6 +801,7 @@ void LB::b_getAt(int nargs) {
 
 	switch (list.type) {
 	case ARRAY:
+	case POINT:
 	case RECT:
 		ARRBOUNDSCHECK(index, list);
 		g_lingo->push(list.u.farr->arr[index - 1]);
@@ -810,7 +811,7 @@ void LB::b_getAt(int nargs) {
 		g_lingo->push(list.u.parr->arr[index - 1].v);
 		break;
 	default:
-		TYPECHECK3(list, ARRAY, PARRAY, RECT);
+		TYPECHECK4(list, ARRAY, PARRAY, POINT, RECT);
 	}
 }
 
