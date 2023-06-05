@@ -42,7 +42,7 @@ using namespace pyrodactyl::event;
 using namespace pyrodactyl::people;
 
 void ReplyMenu::Load(const Common::String &filename) {
-	XMLDoc conf(filename.c_str());
+	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("conversation");
 		if (NodeValid(node)) {

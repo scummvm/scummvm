@@ -115,10 +115,10 @@ private:
 	void CreateSaveGame(const SaveGameType &savetype);
 
 	Common::String FullPath(const Common::String &filename) {
-		Common::String res = g_engine->_filePath->appdata.c_str();
-		res += g_engine->_filePath->save_dir.c_str();
+		Common::String res = g_engine->_filePath->appdata;
+		res += g_engine->_filePath->save_dir;
 		res += filename;
-		res += g_engine->_filePath->save_ext.c_str();
+		res += g_engine->_filePath->save_ext;
 
 		return res;
 	}

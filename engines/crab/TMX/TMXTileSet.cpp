@@ -53,7 +53,7 @@ void TileSet::Load(const Common::String &path, rapidxml::xml_node<char> *node) {
 			LoadStr(filename, "source", imgnode);
 			loc = path + filename;
 
-			img.Load(loc.c_str());
+			img.Load(loc);
 			total_rows = img.H() / tile_h;
 			total_cols = img.W() / tile_w;
 			warning("Total rows : %d Total cols: %d gid: %d", total_rows, total_cols, first_gid);

@@ -42,7 +42,7 @@ using namespace pyrodactyl::input;
 // Purpose: Load stuff that can't be modified by the user
 //------------------------------------------------------------------------
 void Map::Load(const Common::String &filename, pyrodactyl::event::Info &info) {
-	XMLDoc conf(filename.c_str());
+	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("map");
 		if (NodeValid(node)) {
@@ -393,8 +393,8 @@ void Map::SetImage(const unsigned int &val, const bool &force) {
 		img_bg.Delete();
 		img_overlay.Delete();
 
-		img_bg.Load(map[cur].path_bg.c_str());
-		img_overlay.Load(map[cur].path_overlay.c_str());
+		img_bg.Load(map[cur].path_bg);
+		img_overlay.Load(map[cur].path_overlay);
 
 		size.x = img_bg.W();
 		size.y = img_bg.H();

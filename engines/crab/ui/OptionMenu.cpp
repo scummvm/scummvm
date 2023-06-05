@@ -39,7 +39,7 @@ using namespace pyrodactyl::image;
 using namespace pyrodactyl::music;
 
 void OptionMenu::Load(const Common::String &filename) {
-	XMLDoc conf(filename.c_str());
+	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("option");
 		if (NodeValid(node)) {
@@ -139,7 +139,7 @@ void OptionMenu::Draw(Button &back) {
 			break;
 		case STATE_CONFIRM:
 			notice_res.Draw();
-			countdown.Draw(NumberToString(timer.RemainingTicks() / 1000).c_str());
+			countdown.Draw(NumberToString(timer.RemainingTicks() / 1000));
 			break;
 		default:
 			break;

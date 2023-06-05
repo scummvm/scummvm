@@ -41,10 +41,10 @@ using namespace pyrodactyl::input;
 // Purpose: Loading stuff
 //------------------------------------------------------------------------
 void Game::StartNewGame() {
-	Init(g_engine->_filePath->mod_cur.c_str());
-	LoadLevel(info.CurLocID().c_str());
+	Init(g_engine->_filePath->mod_cur);
+	LoadLevel(info.CurLocID());
 	info.IronMan(g_engine->_tempData->ironman);
-	savefile.ironman = g_engine->_tempData->filename.c_str();
+	savefile.ironman = g_engine->_tempData->filename;
 	clock.Start();
 	hud.pause.UpdateMode(info.IronMan());
 
@@ -52,7 +52,7 @@ void Game::StartNewGame() {
 }
 
 void Game::LoadGame(const Common::String &filename) {
-	Init(g_engine->_filePath->mod_cur.c_str());
+	Init(g_engine->_filePath->mod_cur);
 	LoadState(filename);
 }
 
@@ -65,7 +65,7 @@ void Game::Init(const Common::String &filename) {
 	gem.Init();
 	info.Init();
 
-	XMLDoc conf(filename.c_str());
+	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("config");
 
@@ -74,7 +74,7 @@ void Game::Init(const Common::String &filename) {
 		Common::String path;
 		if (NodeValid("level", node)) {
 			LoadStr(path, "list", node->first_node("level"));
-			g_engine->_filePath->LoadLevel(path.c_str());
+			g_engine->_filePath->LoadLevel(path);
 		}
 
 		if (NodeValid("hud", node)) {
@@ -113,23 +113,23 @@ void Game::Init(const Common::String &filename) {
 }
 
 bool Game::LoadLevel(const Common::String &id, int player_x, int player_y) {
-	if (g_engine->_filePath->level.contains(id.c_str())) {
+	if (g_engine->_filePath->level.contains(id)) {
 		g_engine->_loadingScreen->Draw();
 
 		// Load the assets local to this level
 		// If the filename is same as the previous one, skip loading
-		if (g_engine->_filePath->current_r != g_engine->_filePath->level[id.c_str()].asset) {
-			g_engine->_filePath->current_r = g_engine->_filePath->level[id.c_str()].asset;
-			g_engine->_imageManager->LoadMap(g_engine->_filePath->level[id.c_str()].asset);
+		if (g_engine->_filePath->current_r != g_engine->_filePath->level[id].asset) {
+			g_engine->_filePath->current_r = g_engine->_filePath->level[id].asset;
+			g_engine->_imageManager->LoadMap(g_engine->_filePath->level[id].asset);
 		}
 
 		// Load the level itself
 		level.pop = pop_default;
-		level.Load(g_engine->_filePath->level[id.c_str()].layout.c_str(), info, game_over, player_x, player_y);
+		level.Load(g_engine->_filePath->level[id].layout, info, game_over, player_x, player_y);
 
 		// Set the current location
-		info.CurLocID(id.c_str());
-		info.CurLocName(g_engine->_filePath->level[id.c_str()].name.c_str());
+		info.CurLocID(id);
+		info.CurLocName(g_engine->_filePath->level[id].name);
 		map.player_pos = level.map_loc;
 
 		// Update and center the world map to the player current position
@@ -213,7 +213,7 @@ void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 						Quit(ShouldChangeState, NewStateID, GAMESTATE_MAIN_MENU);
 				} else {
 					// Update the talk key state
-					info.TalkKeyDown = g_engine->_inputManager->State(IG_TALK) || level.ContainsClick(info.LastPerson().c_str(), Event);
+					info.TalkKeyDown = g_engine->_inputManager->State(IG_TALK) || level.ContainsClick(info.LastPerson(), Event);
 
 					level.HandleEvents(info, Event);
 
@@ -535,7 +535,7 @@ void Game::Draw() {
 		break;
 	case STATE_INVENTORY:
 		g_engine->_imageManager->DimScreen();
-		info.InvDraw(level.PlayerID().c_str());
+		info.InvDraw(level.PlayerID());
 		hud.Draw(info, level.PlayerID());
 		hud.back.Draw();
 		break;
@@ -592,9 +592,9 @@ bool Game::ApplyResult() {
 			break;
 		case ER_TRAIT:
 			if (i->x == 42)
-				info.TraitDel(i->val.c_str(), i->y);
+				info.TraitDel(i->val, i->y);
 			else
-				info.TraitAdd(i->val.c_str(), i->y);
+				info.TraitAdd(i->val, i->y);
 			break;
 		case ER_LEVEL:
 			if (i->val == "Map")
@@ -662,7 +662,7 @@ void Game::ApplyResult(LevelResult result) {
 // Purpose: Save/load game
 //------------------------------------------------------------------------
 void Game::LoadState(const Common::String &filename) {
-	XMLDoc conf(filename.c_str());
+	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("save");
 		if (NodeValid(node)) {

@@ -134,9 +134,9 @@ public:
 	}
 
 	void UpdateInfo() {
-		info = NumberToString(current_page + 1).c_str();
+		info = NumberToString(current_page + 1);
 		info += " of ";
-		info += NumberToString(menu.size()).c_str();
+		info += NumberToString(menu.size());
 	}
 
 	void Load(rapidxml::xml_node<char> *node) {

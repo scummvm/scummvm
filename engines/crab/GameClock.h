@@ -81,11 +81,11 @@ public:
 		uint32 minutes = x % 60;
 		uint32 hours = x / 60;
 
-	Common::String time_str = NumberToString(hours).c_str();
+	Common::String time_str = NumberToString(hours);
 		time_str += seperator;
-		time_str += NumberToString(minutes).c_str();
+		time_str += NumberToString(minutes);
 		time_str += seperator;
-		time_str += NumberToString(seconds).c_str();
+		time_str += NumberToString(seconds);
 
 		return time_str;
 	}

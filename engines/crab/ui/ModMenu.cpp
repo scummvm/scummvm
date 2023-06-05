@@ -36,7 +36,7 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 
 void ModMenu::Load(const Common::String &filename) {
-	XMLDoc conf(filename.c_str());
+	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("mod_menu");
 
@@ -72,8 +72,8 @@ void ModMenu::Load(const Common::String &filename) {
 			hov[DATA_WEBSITE].Load(offnode->first_node("website_title"));
 		}
 
-		extension = g_engine->_filePath->mod_ext.c_str();
-		directory = g_engine->_filePath->mod_path.c_str();
+		extension = g_engine->_filePath->mod_ext;
+		directory = g_engine->_filePath->mod_path;
 		ScanDir();
 	}
 }
@@ -81,7 +81,7 @@ void ModMenu::Load(const Common::String &filename) {
 bool ModMenu::HandleEvents(const Common::Event &Event) {
 	int choice = menu.HandleEvents(Event);
 	if (choice >= 0) {
-		g_engine->_filePath->mod_cur = slot_info[menu.Index() + choice].path.c_str();
+		g_engine->_filePath->mod_cur = slot_info[menu.Index() + choice].path;
 		return true;
 	}
 
@@ -115,8 +115,8 @@ void ModMenu::Draw() {
 		if (!img.loaded || prev_hover != i) {
 			img.loaded = true;
 			prev_hover = i;
-			if (!img.preview.Load(slot_info[i].preview.c_str()))
-				img.preview.Load(img.no_preview_path.c_str());
+			if (!img.preview.Load(slot_info[i].preview))
+				img.preview.Load(img.no_preview_path);
 		}
 
 		hover = true;
