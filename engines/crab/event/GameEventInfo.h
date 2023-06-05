@@ -184,7 +184,7 @@ public:
 
 	// Draw the inventory
 	void InvDraw(const Common::String &id) {
-		if (var.contains(money_var) > 0)
+		if (var.contains(money_var))
 			inv.Draw(people[id], var[money_var]);
 		else
 			inv.Draw(people[id], 0);
