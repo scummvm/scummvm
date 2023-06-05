@@ -178,6 +178,7 @@ struct Datum {	/* interpreter stack type */
 	bool isVarRef() const;
 	bool isCastRef() const;
 	bool isArray() const;
+	bool isNumeric() const;
 
 	const char *type2str(bool ilk = false) const;
 

@@ -1197,6 +1197,10 @@ bool Datum::isArray() const {
 	return (type == ARRAY || type == POINT || type == RECT);
 }
 
+bool Datum::isNumeric() const {
+	return (type == INT || type == FLOAT);
+}
+
 const char *Datum::type2str(bool ilk) const {
 	static char res[20];
 
