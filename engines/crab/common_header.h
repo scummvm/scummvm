@@ -31,27 +31,7 @@
 #ifndef CRAB_COMMON_HEADER_H
 #define CRAB_COMMON_HEADER_H
 
-#include <algorithm>
-#include <cmath>
-//#include <ctime>
-#include <deque>
-//#include <fstream>
 #include <limits>
-#include <map>
-//#include <random>
-//#include <sstream>
-#include <list>
-#include <string>
-#include <unordered_map>
-#include <vector>
-#include <sstream>
-
-#if 0
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_ttf.h>
-#endif
 
 #include "common/path.h"
 #include "common/str.h"
