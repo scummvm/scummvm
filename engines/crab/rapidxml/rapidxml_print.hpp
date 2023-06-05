@@ -1,18 +1,15 @@
 #ifndef RAPIDXML_PRINT_HPP_INCLUDED
 #define RAPIDXML_PRINT_HPP_INCLUDED
 
+// The file below has been edited to clean-up the includes as necessiated by ScummVM.
+// Notably, code which was dependent on streams has been removed.
+
 // Copyright (C) 2006, 2009 Marcin Kalicinski
 // Version 1.13
 // Revision $DateTime: 2009/05/13 01:46:17 $
 //! \file rapidxml_print.hpp This file contains rapidxml printer implementation
 
 #include "rapidxml.hpp"
-
-// Only include streams if not disabled
-#ifndef RAPIDXML_NO_STREAMS
-#include <ostream>
-#include <iterator>
-#endif
 
 namespace rapidxml
 {
@@ -399,32 +396,6 @@ namespace rapidxml
 	{
 		return internal::print_node(out, &node, flags, 0);
 	}
-
-#ifndef RAPIDXML_NO_STREAMS
-
-	//! Prints XML to given output stream.
-	//! \param out Output stream to print to.
-	//! \param node Node to be printed. Pass xml_document to print entire document.
-	//! \param flags Flags controlling how XML is printed.
-	//! \return Output stream.
-	template<class Ch>
-	inline std::basic_ostream<Ch> &print(std::basic_ostream<Ch> &out, const xml_node<Ch> &node, int flags = 0)
-	{
-		print(std::ostream_iterator<Ch>(out), node, flags);
-		return out;
-	}
-
-	//! Prints formatted XML to given output stream. Uses default printing flags. Use print() function to customize printing process.
-	//! \param out Output stream to print to.
-	//! \param node Node to be printed.
-	//! \return Output stream.
-	template<class Ch>
-	inline std::basic_ostream<Ch> &operator <<(std::basic_ostream<Ch> &out, const xml_node<Ch> &node)
-	{
-		return print(out, node);
-	}
-
-#endif
 }
 
 #endif

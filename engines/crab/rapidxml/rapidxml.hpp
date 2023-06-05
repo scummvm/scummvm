@@ -1,17 +1,15 @@
 #ifndef RAPIDXML_HPP_INCLUDED
 #define RAPIDXML_HPP_INCLUDED
 
+// The file below has been edited to clean-up the includes as necessiated by ScummVM.
+// Notably, code which was dependent on exception header has been removed.
+
 // Copyright (C) 2006, 2009 Marcin Kalicinski
 // Version 1.13
 // Revision $DateTime: 2009/05/13 01:46:17 $
 //! \file rapidxml.hpp This file contains rapidxml parser and DOM implementation
 
-// If standard library is disabled, user must provide implementations of required functions and typedefs
-#if !defined(RAPIDXML_NO_STDLIB)
-    #include <cstdlib>      // For std::size_t
-    #include <cassert>      // For assert
-    #include <new>          // For placement new
-#endif
+#include "common/scummsys.h"
 
 // On MSVC, disable "conditional expression is constant" warning (level 4).
 // This warning is almost impossible to avoid with certain types of templated code
@@ -22,8 +20,6 @@
 
 ///////////////////////////////////////////////////////////////////////////
 // RAPIDXML_PARSE_ERROR
-
-#if defined(RAPIDXML_NO_EXCEPTIONS)
 
 #define RAPIDXML_PARSE_ERROR(what, where) { parse_error_handler(what, where); assert(0); }
 
@@ -47,61 +43,6 @@ namespace rapidxml
     //! \param where Pointer to character data where error was detected.
     void parse_error_handler(const char *what, void *where);
 }
-
-#else
-
-#include <exception>    // For std::exception
-
-#define RAPIDXML_PARSE_ERROR(what, where) throw parse_error(what, where)
-
-namespace rapidxml
-{
-    //! Parse error exception.
-    //! This exception is thrown by the parser when an error occurs.
-    //! Use what() function to get human-readable error message.
-    //! Use where() function to get a pointer to position within source text where error was detected.
-    //! <br><br>
-    //! If throwing exceptions by the parser is undesirable,
-    //! it can be disabled by defining RAPIDXML_NO_EXCEPTIONS macro before rapidxml.hpp is included.
-    //! This will cause the parser to call rapidxml::parse_error_handler() function instead of throwing an exception.
-    //! This function must be defined by the user.
-    //! <br><br>
-    //! This class derives from <code>std::exception</code> class.
-    class parse_error: public std::exception
-    {
-    public:
-
-        //! Constructs parse error
-        parse_error(const char *what, void *where)
-            : m_what(what)
-            , m_where(where)
-        {
-        }
-
-        //! Gets human readable description of error.
-        //! \return Pointer to null terminated description of the error.
-        virtual const char *what() const throw()
-        {
-            return m_what;
-        }
-
-        //! Gets pointer to character data where error happened.
-        //! Ch should be the same as char type of xml_document that produced the error.
-        //! \return Pointer to location within the parsed string where error occured.
-        template<class Ch>
-        Ch *where() const
-        {
-            return reinterpret_cast<Ch *>(m_where);
-        }
-
-    private:
-
-        const char *m_what;
-        void *m_where;
-    };
-}
-
-#endif
 
 ///////////////////////////////////////////////////////////////////////////
 // Pool sizes
