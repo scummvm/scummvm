@@ -128,7 +128,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_SCHIZM,
 		Common::EN_GRB,
 	},
-	{ // Schizm: Mysterious Journey, German DVD Version
+	{ // Schizm: Mysterious Journey, German DVD Version (installed)
 		{
 			"schizm",
 			"German DVD",
@@ -137,6 +137,33 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::DE_DEU,
+	},
+		
+	{ // Schizm: Mysterious Journey, Polish DVD Version
+		{
+			"schizm",
+			"Polish DVD",
+			AD_ENTRY1s("disk1.pak", "a3453878ad86d012b483a82e04276667", 272507257),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_GENTEE_PACKAGE,
+			GUIO0()
+		},
+		GID_SCHIZM,
+		Common::PL_POL,
+	},
+	{ // Schizm: Mysterious Journey, German DVD Version
+		{
+			"schizm",
+			"German DVD",
+			AD_ENTRY1s("disk1.pak", "dcb27eb3d8a0029c551df5f779af36fc", 274285596),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_OGG_VORBIS | VCRUISE_GF_NEED_JPEG | VCRUISE_GF_GENTEE_PACKAGE,
 			GUIO0()
 		},
 		GID_SCHIZM,
