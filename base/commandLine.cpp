@@ -49,6 +49,10 @@
 #define DETECTOR_TESTING_HACK
 #define UPGRADE_ALL_TARGETS_HACK
 
+#ifdef SDL_BACKEND
+#include "backends/platform/sdl/sdl-sys.h"
+#endif
+
 namespace Base {
 
 #ifndef DISABLE_COMMAND_LINE
@@ -60,10 +64,6 @@ static const char USAGE_STRING[] =
 	"\n"
 	"Try '%s --help' for more options.\n"
 ;
-
-#ifdef SDL_BACKEND
-#include "backends/platform/sdl/sdl-sys.h"
-#endif
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
 static const char HELP_STRING1[] =
