@@ -50,7 +50,10 @@ class SeekableReadStream;
  * This factory method creates an Archive instance corresponding to the content
  * of the StuffIt compressed file with the given name.
  *
- * May return 0 in case of a failure.
+ * @param fileName        The file name to load
+ * @param flattenTree     If true, removes the directory prefixes from all file paths
+ *
+ * @return                The StuffIt archive
  */
 Archive *createStuffItArchive(const String &fileName, bool flattenTree = false);
 Archive *createStuffItArchive(SeekableReadStream *stream, bool flattenTree = false);
