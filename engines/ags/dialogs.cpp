@@ -49,6 +49,7 @@ private:
 	Common::StringArray _traFileNames;
 
 	GUI::CheckboxWidget *_forceTextAACheckbox;
+	GUI::CheckboxWidget *_displayFPSCheckbox;
 };
 
 AGSOptionsWidget::AGSOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
@@ -76,6 +77,9 @@ AGSOptionsWidget::AGSOptionsWidget(GuiObject *boss, const Common::String &name, 
 
 	// Force font antialiasing
 	_forceTextAACheckbox = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + ".textAA", _("Force antialiased text"), _("Use antialiasing to draw text even if the game does not ask for it"));
+
+	// Display fps
+	_displayFPSCheckbox = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + ".displayFPS", _("Show FPS"), _("Show the current FPS-rate, while you play."));
 }
 
 void AGSOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
@@ -87,6 +91,7 @@ void AGSOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Strin
 	layouts.addWidget("translation", "PopUp").closeLayout();
 
 	layouts.addWidget("textAA", "Checkbox");
+	layouts.addWidget("displayFPS", "Checkbox");
 
 	layouts.closeLayout().closeDialog();
 }
@@ -116,6 +121,14 @@ void AGSOptionsWidget::load() {
 		if (parseBool(forceTextAA, val))
 			_forceTextAACheckbox->setState(val);
 	}
+
+	Common::String displayFPS;
+	gameConfig->tryGetVal("display_fps", displayFPS);
+	if (!displayFPS.empty()) {
+		bool val;
+		if (parseBool(displayFPS, val))
+			_displayFPSCheckbox->setState(val);
+	}
 }
 
 bool AGSOptionsWidget::save() {
@@ -126,6 +139,7 @@ bool AGSOptionsWidget::save() {
 		ConfMan.removeKey("translation", _domain);
 
 	ConfMan.setBool("force_text_aa", _forceTextAACheckbox->getState(), _domain);
+	ConfMan.setBool("display_fps", _displayFPSCheckbox->getState(), _domain);
 
 	return true;
 }
