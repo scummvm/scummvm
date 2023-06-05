@@ -49,7 +49,7 @@ public:
 		asset = Asset;
 	}
 
-	const char *LayoutPath() { return layout; }
+	const char *LayoutPath() { return layout.c_str(); }
 	void LayoutPath(const char *str) { layout = str; }
 
 	const char *AssetPath() { return asset.c_str(); }
