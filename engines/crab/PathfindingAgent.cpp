@@ -79,7 +79,7 @@ void PathfindingAgent::SetDestination(Vector2f d, bool r) {
 	destination = d;
 
 	// TODO: This could be optimized to cache the route somehow... (SZ)
-	exit();
+	reset();
 
 	m_pStartTile = grid->GetNodeAtPoint(position);
 	// m_pGoalTile = grid->GetNodeAtPoint(d);
@@ -231,7 +231,7 @@ bool PathfindingAgent::isDone() const {
 }
 
 // Clear everything.
-void PathfindingAgent::exit() {
+void PathfindingAgent::reset() {
 	Common::StableMap<PathfindingGraphNode *, PlannerNode *>::iterator iter;
 	if (!m_mCreatedList.empty()) {
 		for (iter = m_mCreatedList.begin(); iter != m_mCreatedList.end(); ++iter) {
@@ -250,7 +250,7 @@ void PathfindingAgent::exit() {
 }
 
 void PathfindingAgent::shutdown() {
-	exit();
+	reset();
 
 	grid = NULL;
 }
