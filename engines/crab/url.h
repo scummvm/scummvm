@@ -31,7 +31,7 @@
 #ifndef CRAB_URL_H
 #define CRAB_URL_H
 
-#include <string>
+#include "crab/common_header.h"
 
 namespace Crab {
 

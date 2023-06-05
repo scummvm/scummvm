@@ -31,7 +31,7 @@
 #ifndef LEVELPATHS_H
 #define LEVELPATHS_H
 
-#include <string>
+#include "crab/common_header.h"
 
 namespace Crab {
 
