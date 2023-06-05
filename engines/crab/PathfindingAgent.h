@@ -154,7 +154,7 @@ public:
 	Common::Array<PathfindingGraphNode const *> const getPrunedSolution(PathfindingGraphNode *destNode);
 
 	//! \brief Resets the algorithm.
-	void exit();
+	void reset();
 
 	//! \brief Uninitializes the algorithm before the tile map is unloaded.
 	void shutdown();
