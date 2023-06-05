@@ -31,7 +31,6 @@
 #ifndef CRAB_PATHFINDINGGRID_H
 #define CRAB_PATHFINDINGGRID_H
 
-#include <math.h>
 #include "crab/PathfindingGraphNode.h"
 #include "crab/common_header.h"
 
