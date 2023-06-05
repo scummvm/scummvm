@@ -1,6 +1,7 @@
 {
 	"beneath-a-steel-sky": {
 		"name": "beneath-a-steel-sky",
+		"packname": "beneath_a_steel_sky",
 		"description": "A science-fiction thriller set in a bleak post-apocalyptic vision of the future, Beneath a Steel Sky revolves around \"Union City\", where selfishness, rivalry, and corruption by its citizens seems to be all too common, those who can afford it live underground, away from the pollution and social problems which are plaguing the city. \n\nYou take on the role of Robert Foster, an outcast of sorts from the city since a boy who was raised in a remote environment outside of Union City simply termed \"the gap\". Robert's mother took him away from Union City as a child on their way to \"Hobart\" but the helicopter crashed on its way, unfortunately Robert's mother dies, but he survives and is left to be raised by a local tribe from the gap. \n\nYears later, Union City security drops by and abducts Robert, killing his tribe in the process; upon reaching the city the helicopter taking him there crashes with him escaping, high upon a tower block in the middle of the city he sets out to discover the truth about his past, and to seek vengeance for the killing of his tribe. \n\nNote that this package only contains game-data. The game engine is provided by ScummVM.",
 		"shortDescription": "Adventure sci-fi thriller game for ScummVM",
 		"supportedLanguages": {
@@ -17,7 +18,34 @@
 			"screenshots": [
 				"https://www.scummvm.org/data/screenshots/sky/sky/sky_dos_en_1_1.jpg",
 				"https://www.scummvm.org/data/screenshots/sky/sky/sky_dos_en_1_2.jpg"
-			]
+			],
+			"StoreLogo": "https://raw.githubusercontent.com/scummvm/scummvm-icons/master/icons/sky-sky.png"
+		}
+	},
+	"broken-sword-2.5": {
+		"name": "broken-sword-2.5",
+		"packname": "broken_sword_2.5",
+		"description": "Broken Sword 2.5: The Return of the Templars (original title: Baphomets Fluch 2.5) is a fan game of the Broken Sword series, which was given clearance to be developed, and certain art assets were granted to the team, by Revolution Software. It takes place between the first and second games. George travels to France after he receives a letter stating Nico had died. His relief to find her alive is short-lived, as he soon finds out that she has been accused of murdering the mayor of Paris. The two must clear Nico's name, and discover who is actually behind the murder. \n\nNote that this package only contains game-data. The game engine is provided by ScummVM.",
+		"shortDescription": "Fan game of the Broken Sword series for ScummVM",
+		"supportedLanguages": {
+			"interface": ["english"],
+			"audio": ["english"],
+			"subtitles": ["english"]
+		},
+		"genres": ["Adventure", "Free to Play", "Point & Click"],
+		"storeCategories": ["Games"],
+		"supportContactInfo": {
+			"websiteURL": "https://www.scummvm.org/"
+		},
+		"graphicalAssets": {
+			"screenshots": [
+				"https://www.scummvm.org/data/screenshots/sword25/sword25/sword25_win_de_1_10.jpg",
+				"https://www.scummvm.org/data/screenshots/sword25/sword25/sword25_win_de_1_11.jpg",
+				"https://www.scummvm.org/data/screenshots/sword25/sword25/sword25_win_de_1_12.jpg",
+				"https://www.scummvm.org/data/screenshots/sword25/sword25/sword25_win_de_1_13.jpg",
+				"https://www.scummvm.org/data/screenshots/sword25/sword25/sword25_win_de_1_14.jpg"
+			],
+			"StoreLogo": "https://raw.githubusercontent.com/scummvm/scummvm-icons/master/icons/sword25-sword25.png"
 		}
 	}
 }
