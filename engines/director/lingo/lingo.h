@@ -332,6 +332,7 @@ public:
 	int getMenuItemsNum(Datum &d);
 	int getXtrasNum();
 	int getCastlibsNum();
+	int getMembersNum();
 
 	void executeHandler(const Common::String &name);
 	void executeScript(ScriptType type, CastMemberID id);

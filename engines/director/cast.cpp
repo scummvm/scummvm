@@ -179,6 +179,14 @@ int Cast::getCastSize() {
 	return _loadedCast->size();
 }
 
+int Cast::getCastMaxID() {
+	int result = 0;
+	for (auto &it : *_loadedCast) {
+		result = MAX(result, it._key);
+	}
+	return result;
+}
+
 Common::Rect Cast::getCastMemberInitialRect(int castId) {
 	CastMember *cast = _loadedCast->getVal(castId);
 

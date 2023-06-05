@@ -397,7 +397,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = getCastlibsNum();
 		break;
 	case kTheCastMembers:
-		d = (int)(movie->getCast()->getCastSize() + (movie->_sharedCast ? movie->_sharedCast->getCastSize() : 0));
+		d = getMembersNum();
 		break;
 	case kTheCenterStage:
 		d = g_director->_centerStage;
@@ -1230,6 +1230,12 @@ int Lingo::getCastlibsNum() {
 	return _vm->getCurrentMovie()->getCasts()->size();
 }
 
+int Lingo::getMembersNum() {
+	// FIXME: deal with D5 castlibs
+	Movie *movie = _vm->getCurrentMovie();
+	return (MAX(movie->getCast()->getCastMaxID(), (movie->_sharedCast ? movie->_sharedCast->getCastMaxID() : 0)));
+}
+
 int Lingo::getXtrasNum() {
 	return _openXLibs.size();
 }
@@ -1684,6 +1690,11 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 			d = 0;
 		} else if (field == kTheNumber) {
 			d = -1;
+		} else if (id.member <= getMembersNum()) {
+			// If a cast member with the ID doesn't exist,
+			// but the ID isn't greater than the biggest cast member ID,
+			// Lingo will not crash, and instead return a VOID.
+			return d;
 		} else {
 			g_lingo->lingoError("Lingo::getTheCast(): CastMember %s not found", id1.asString().c_str());
 		}
