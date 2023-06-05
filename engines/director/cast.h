@@ -95,6 +95,7 @@ public:
 	void loadSord(Common::SeekableReadStreamEndian &stream);
 
 	int getCastSize();
+	int getCastMaxID();
 	Common::Rect getCastMemberInitialRect(int castId);
 	void setCastMemberModified(int castId);
 	CastMember *setCastMember(CastMemberID castId, CastMember *cast);
