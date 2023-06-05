@@ -32,7 +32,6 @@
 // Author:   Arvind
 // Purpose:  The tray where you have inventory, map and GameObjectives icons
 //=============================================================================
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/ui/hud.h"
 
 namespace Crab {

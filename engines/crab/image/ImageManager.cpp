@@ -32,7 +32,6 @@
 // Author:   Arvind
 // Purpose:  Contains the image manager class - used to manage in-game images
 //=============================================================================
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/crab.h"
 #include "crab/image/ImageManager.h"
 #include "crab/XMLDoc.h"

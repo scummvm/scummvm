@@ -28,7 +28,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/PathfindingGrid.h"
 #include "crab/TMX/TMXMap.h"
 
