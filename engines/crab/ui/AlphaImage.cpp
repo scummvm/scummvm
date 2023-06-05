@@ -28,7 +28,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/crab.h"
 #include "crab/ui/AlphaImage.h"
 #include "crab/text/TextManager.h"

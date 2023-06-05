@@ -28,7 +28,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/game.h"
 
 namespace Crab {

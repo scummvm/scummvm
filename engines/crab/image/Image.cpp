@@ -27,7 +27,6 @@
  * Licensed under MIT
  *
  */
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "graphics/blit.h"
 #include "crab/crab.h"

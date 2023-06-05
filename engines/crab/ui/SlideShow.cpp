@@ -27,7 +27,6 @@
  * Licensed under MIT
  *
  */
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/ui/SlideShow.h"
 
 namespace Crab {

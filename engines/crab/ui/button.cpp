@@ -32,7 +32,6 @@
 // Author:   Arvind
 // Purpose:  Contains the button functions
 //=============================================================================
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/crab.h"
 #include "crab/ui/button.h"
 

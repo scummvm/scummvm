@@ -28,7 +28,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/TMX/TMXMap.h"
 #include "crab/text/TextManager.h"
 #include "crab/collision.h"
