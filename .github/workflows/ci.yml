@@ -39,7 +39,7 @@ jobs:
         uses: lukka/run-vcpkg@v11
         id: runvcpkg
         with:
-          vcpkgGitCommitId: 5a101fc741f41cf05e13fe660168d32c516fb658
+          vcpkgGitCommitId: 662dbb50e63af15baa2909b7eac5b1b87e86a0aa
       - name: Integrate vcpkg
         run: |
           ${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}/vcpkg integrate install
@@ -59,7 +59,7 @@ jobs:
         run: |
           mkdir build-scummvm
           cd build-scummvm
-          ../devtools/create_project/cmake/Debug/create_project.exe .. --msvc --vcpkg --enable-all-engines ${{ matrix.configflags }}
+          ../devtools/create_project/cmake/Debug/create_project.exe .. --msvc --vcpkg --enable-all-engines ${{ matrix.configFlags }}
           ls
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.1.3
@@ -130,7 +130,7 @@ jobs:
           cd ../../../
       - name: Call create_project
         run: |
-          ./devtools/create_project/xcode/build/Release/create_project . --xcode --enable-all-engines ${{ matrix.configflags }}
+          ./devtools/create_project/xcode/build/Release/create_project . --xcode --enable-all-engines ${{ matrix.configFlags }}
           ls
       - name: Build cache
         uses: mikehardy/buildcache-action@v2
@@ -180,7 +180,7 @@ jobs:
           max-size: 1G
       - name: Call configure
         run: |
-          CXX='${{ matrix.cxx }}' ./configure --enable-all-engines ${{ matrix.configflags }}
+          CXX='${{ matrix.cxx }}' ./configure --enable-all-engines ${{ matrix.configFlags }}
       - name: Build scummvm
         run: |
           make -j2
