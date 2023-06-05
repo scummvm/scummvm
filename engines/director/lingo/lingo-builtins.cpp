@@ -1745,6 +1745,8 @@ void LB::b_objectp(int nargs) {
 	Datum res;
 	if (d.type == OBJECT) {
 		res = !d.u.obj->isDisposed();
+	} else if (d.type == ARRAY || d.type == PARRAY) {
+		res = 1;
 	} else {
 		res = 0;
 	}
