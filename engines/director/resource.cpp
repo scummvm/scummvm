@@ -560,9 +560,10 @@ ProjectorArchive::ProjectorArchive(Common::String path)
 Common::SeekableReadStream *ProjectorArchive::createBufferedReadStream() {
 	const uint32 READ_BUFFER_SIZE = 1024 * 100;
 
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(_path);
+	Common::Path path(_path, g_director->_dirSeparator);
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(path);
 	if (!stream) {
-		warning("ProjectorArchive::createBufferedReadStream(): Cannot open %s", _path.c_str());
+		warning("ProjectorArchive::createBufferedReadStream(): Cannot open %s", path.toString().c_str());
 		return nullptr;
 	}
 
