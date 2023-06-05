@@ -43,7 +43,7 @@ namespace Crab {
 //! class template and the <a href="http://www.sgi.com/tech/stl/">STL</a> heap operations.
 template<typename Node>
 class PriorityQueue {
-	std::deque<Node *> open;
+	Common::Array<Node *> open;
 	bool (*compare)(Node const *, Node const *);
 
 public:
@@ -121,7 +121,7 @@ size_t PriorityQueue<Node>::size() const {
 
 template<typename Node>
 void PriorityQueue<Node>::push(Node *node) {
-	open.insert(std::upper_bound(open.begin(), open.end(), node, compare), node);
+	open.insert(Common::upperBound(open.begin(), open.end(), node, compare), node);
 }
 
 template<typename Node>
@@ -136,13 +136,13 @@ void PriorityQueue<Node>::pop() {
 
 template<typename Node>
 void PriorityQueue<Node>::remove(Node const *node) {
-	open.erase(std::remove(open.begin(), open.end(), node), open.end());
+	open.erase(Common::remove(open.begin(), open.end(), node), open.end());
 }
 
 template<typename Node>
 void PriorityQueue<Node>::enumerate(Common::Array<Node const *> &sorted) const {
 	sorted.resize(open.size());
-	std::copy(open.begin(), open.end(), sorted.begin());
+	Common::copy(open.begin(), open.end(), sorted.begin());
 }
 
 } // End of namespace Crab
