@@ -28,6 +28,8 @@
 #endif
 #define kSwitchLauncherDialog -2
 
+#include "common/hashmap.h"
+
 #include "gui/dialog.h"
 #include "gui/widgets/popup.h"
 #include "gui/MetadataParser.h"
@@ -86,11 +88,24 @@ class StaticTextWidget;
 class EditTextWidget;
 class SaveLoadChooser;
 class PopUpWidget;
-class LauncherChooser;
+
+struct LauncherEntry {
+	Common::String key;
+	Common::String engineid;
+	Common::String gameid;
+	Common::String description;
+	Common::String title;
+	const Common::ConfigManager::Domain *domain;
+
+	LauncherEntry(const Common::String &k, const Common::String &e, const Common::String &g,
+				  const Common::String &d, const Common::String &t, const Common::ConfigManager::Domain *v) :
+		key(k), engineid(e), gameid(g), description(d), title(t), domain(v) {
+	}
+};
 
 class LauncherDialog : public Dialog {
 public:
-	LauncherDialog(const Common::String &dialogName, LauncherChooser *chooser);
+	LauncherDialog(const Common::String &dialogName);
 	~LauncherDialog() override;
 
 	void rebuild();
@@ -129,7 +144,6 @@ protected:
 	Common::String	_title;
 	Common::String	_search;
 	MetadataParser	_metadataParser;
-	LauncherChooser *_launcherChooser = nullptr;
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	ButtonWidget		*_listButton;
@@ -185,6 +199,8 @@ protected:
 	 */
 	void loadGame(int item);
 
+	Common::Array<LauncherEntry> generateEntries(const Common::ConfigManager::DomainMap &domains);
+
 	/**
 	 * Select the target with the given name in the launcher game list.
 	 * Also scrolls the list so that the newly selected item is visible.
@@ -194,13 +210,14 @@ protected:
 	virtual void selectTarget(const Common::String &target) = 0;
 	virtual int getSelected() = 0;
 private:
+	Common::HashMap<Common::String, Common::StringMap, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _engines;
+
 	bool checkModifier(int modifier);
 };
 
 class LauncherChooser {
 protected:
 	LauncherDialog *_impl;
-	Common::StringMap _games;
 
 public:
 	LauncherChooser();
@@ -208,11 +225,6 @@ public:
 
 	int runModal();
 	void selectLauncher();
-
-	const Common::StringMap &getGameList() { return _games; }
-
-private:
-	void genGameList();
 };
 
 } // End of namespace GUI
