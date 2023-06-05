@@ -525,7 +525,7 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 			const Graphics::WinFont *winfont = (const Graphics::WinFont *)font;
 
 			if (winfont->getFontHeight() != macFont->getSize())
-				warning("MacFontManager::getFont(): For font '%s' windows font '%s' is used of a different size %d", macFont->getName().c_str(), winfont->getName().c_str(), winfont->getFontHeight());
+				debug(5, "MacFontManager::getFont(): For font '%s' windows font '%s' is used of a different size %d", macFont->getName().c_str(), winfont->getName().c_str(), winfont->getFontHeight());
 		}
 	}
 
