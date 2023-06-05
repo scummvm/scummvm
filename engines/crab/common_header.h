@@ -31,8 +31,7 @@
 #ifndef CRAB_COMMON_HEADER_H
 #define CRAB_COMMON_HEADER_H
 
-#include <limits>
-
+#include "common/scummsys.h"
 #include "common/path.h"
 #include "common/str.h"
 #include "common/hashmap.h"
