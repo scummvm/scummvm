@@ -2851,6 +2851,271 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 	}
 }
 
+void ScummEngine_v0::terminateSaveMenuScript() {
+	// Stop the script which handles the save menu strings
+	stopScript(128);
+
+	// Terminate the cutscene state
+	o_endCutscene();
+
+	// Stop code for all the objects in the save screen
+	stopObjectCode();
+}
+
+void ScummEngine_v2::terminateSaveMenuScript() {
+	if (_game.id == GID_MANIAC) {
+		if (_game.version == 1 && _game.platform != Common::kPlatformNES) {
+			// Clear state 08 for objects 182 and 193
+			int obj[] = {182, 193};
+
+			for (int i = 0; i < ARRAYSIZE(obj); i++) {
+				putState(obj[i], getState(obj[i]) & ~kObjectState_08);
+				markObjectRectAsDirty(obj[i]);
+				clearDrawObjectQueue();
+			}
+		}
+
+		// Stop the script which handles the save menu strings
+		stopScript(133);
+
+		if (_game.version == 2 || _game.platform == Common::kPlatformNES) {
+			// Restart if needed
+			if (readVar(164) == 0) {
+				restart();
+			}
+		}
+
+		// Terminate the cutscene state
+		endCutscene();
+
+		// Stop code for all the objects in the save screen
+		stopObjectCode();
+	} else if (_game.id == GID_ZAK) {
+		// Stop the script which handles the save menu strings
+		stopScript(8);
+
+		// Terminate the cutscene state
+		endCutscene();
+
+		// Save actor 1 costume in VAR(1), and if it's costume 30, run script 108
+		Actor *a = derefActor(1, "terminateSaveMenuScript");
+		if (a) {
+			VAR(1) = a->_costume;
+			if (VAR(1) == 30)
+				runScript(108, false, false, nullptr);
+		}
+
+		// Stop code for all the objects in the save screen
+		stopObjectCode();
+	}
+}
+
+void ScummEngine_v3::terminateSaveMenuScript() {
+	if (_game.id == GID_ZAK) {
+		// Restore variables
+		runScript(204, false, false, nullptr);
+
+		// Stop the script which handles the save screen strings
+		stopScript(203);
+
+		// Restore the verbs (adapted from o5_saveRestoreVerbs(), SO_RESTORE_VERBS)
+		int a = 1;
+		int b = 125;
+		int c = 4;
+		int slot, slot2;
+		while (a <= b) {
+			slot = getVerbSlot(a, c);
+			if (slot) {
+				slot2 = getVerbSlot(a, 0);
+				if (slot2)
+					killVerb(slot2);
+				slot = getVerbSlot(a, c);
+				_verbs[slot].saveid = 0;
+				drawVerb(slot, 0);
+				verbMouseOver(0);
+			}
+			a++;
+		}
+
+		// Restore VAR_VERB_SCRIPT with whatever value was in local variable 3
+		VAR(VAR_VERB_SCRIPT) = readVar(0x4003);
+
+		// Reallocate some strings (in the same order as the script does)
+		for (int i = 10; i < 24; i++) {
+			loadPtrToResource(rtString, i, nullptr);
+		}
+
+		loadPtrToResource(rtString, 9, nullptr);
+		loadPtrToResource(rtString, 8, nullptr);
+		loadPtrToResource(rtString, 33, nullptr);
+
+		// Terminate the cutscene state
+		endCutscene();
+
+		// Restore the previous sound
+		if (readVar(305)) {
+			_sound->addSoundToQueue(readVar(305));
+		}
+
+		// Show the cursor
+		_cursor.state++;
+		verbMouseOver(0);
+
+		// Enable user interaction
+		_userPut++;
+
+		// Stop code for all the objects in the save screen
+		stopObjectCode();
+	} else if (_game.id == GID_INDY3) {
+		// Restore variables
+		runScript(204, false, false, nullptr);
+		runScript(206, false, false, nullptr);
+
+		// Stop the script which handles the save screen strings
+		stopScript(203);
+
+		// Restore VAR_VERB_SCRIPT with whatever value was in local variable 4
+		VAR(VAR_VERB_SCRIPT) = readVar(0x4004);
+
+		// Reallocate some strings (in the same order as the script does)
+		for (int i = 10; i < 24; i++) {
+			loadPtrToResource(rtString, i, nullptr);
+		}
+
+		loadPtrToResource(rtString, 9, nullptr);
+		loadPtrToResource(rtString, 8, nullptr);
+		loadPtrToResource(rtString, 33, nullptr);
+
+		// Indy3 VGA only: draw a black box
+		if ((_game.features & GF_OLD256) && _game.platform != Common::kPlatformFMTowns)
+			drawBox(0, 160, 319, 190, 0);
+
+		// Restore the verbs (adapted from o5_saveRestoreVerbs(), SO_RESTORE_VERBS)
+		int a = 1;
+		int b = 125;
+		int c = 4;
+		int slot, slot2;
+		while (a <= b) {
+			slot = getVerbSlot(a, c);
+			if (slot) {
+				slot2 = getVerbSlot(a, 0);
+				if (slot2)
+					killVerb(slot2);
+				slot = getVerbSlot(a, c);
+				_verbs[slot].saveid = 0;
+				drawVerb(slot, 0);
+				verbMouseOver(0);
+			}
+			a++;
+		}
+
+		// Re-stop script 203 (probably an oversight in the script)
+		stopScript(203);
+
+		// Restore the previous sound
+		if (readVar(0x4007)) {
+			_sound->addSoundToQueue(readVar(0x4007));
+		}
+
+		// Terminate the cutscene state
+		endCutscene();
+
+		// If local variable 0 and the override flag are set, chain script 119
+		if (readVar(0x4000)) {
+			if (VAR(VAR_OVERRIDE)) {
+				int cur = _currentScript;
+
+				vm.slot[cur].number = 0;
+				vm.slot[cur].status = ssDead;
+				_currentScript = 0xFF;
+
+				runScript(119, vm.slot[cur].freezeResistant, vm.slot[cur].recursive, nullptr);
+			}
+		}
+
+		// Show the cursor
+		_cursor.state++;
+		verbMouseOver(0);
+
+		// Enable user interaction
+		_userPut++;
+
+		// Stop code for all the objects in the save screen
+		stopObjectCode();
+	} else if (_game.id == GID_LOOM) {
+		if (_game.platform == Common::kPlatformFMTowns)
+			// Stop the script which handles the save screen strings
+			stopScript(202);
+
+		// Set VAR(VAR_VERB_SCRIPT) to local variable 2
+		VAR(VAR_VERB_SCRIPT) = readVar(0x4002);
+
+		// Reallocate some strings (in the same order as the script does)
+		for (int i = 9; i < 21; i++) {
+			loadPtrToResource(rtString, i, nullptr);
+		}
+
+		// Stop the script which handles the save screen strings
+		// (in FM-Towns case this will be a duplicate call)
+		stopScript(202);
+
+		if (_game.platform == Common::kPlatformFMTowns) {
+			// Set bit 14 of VAR(214) to 0
+			writeVar(0x8d6e, 0);
+		} else {
+			// Set bit 13 of VAR(214) to 0
+			writeVar(0x8d6d, 0);
+		}
+
+		// Set variable 100 to 0
+		VAR(100) = 0;
+
+		if (_game.platform == Common::kPlatformFMTowns) {
+			// Set the states of objects 909, 908, 903 and 904 to 0
+			int obj[] = {909, 908, 903, 904};
+			for (int i = 0; i < ARRAYSIZE(obj); i++) {
+				putState(obj[i], 0);
+				markObjectRectAsDirty(obj[i]);
+				if (_bgNeedsRedraw)
+					clearDrawObjectQueue();
+			}
+		}
+
+		// Terminate the cutscene state
+		endCutscene();
+
+		// Launch sound restore script
+		if (_game.platform == Common::kPlatformFMTowns && VAR(163)) {
+			int soundArgs[NUM_SCRIPT_LOCAL];
+			memset(soundArgs, 0, sizeof(soundArgs));
+			soundArgs[0] = VAR(163);
+			runScript(38, false, false, soundArgs);
+		}
+
+		// Show the cursor
+		_cursor.state++;
+		verbMouseOver(0);
+
+		// Enable user interaction
+		_userPut++;
+
+		// Chain script 5 (or 6 for FM-Towns)
+		int chainedArgs[NUM_SCRIPT_LOCAL];
+		int cur = _currentScript;
+		int scriptToChain = _game.platform == Common::kPlatformFMTowns ? 6 : 5;
+
+		chainedArgs[0] = 0;
+		vm.slot[cur].number = 0;
+		vm.slot[cur].status = ssDead;
+		_currentScript = 0xFF;
+
+		runScript(scriptToChain, vm.slot[cur].freezeResistant, vm.slot[cur].recursive, chainedArgs);
+
+		// Stop code for all the objects in the save screen
+		stopObjectCode();
+	}
+}
+
 void ScummEngine_v3::scummLoop_handleSaveLoad() {
 	if (isUsingOriginalGUI() && _saveLoadFlag == 0 && !_loadFromLauncher)
 		return;
@@ -2866,66 +3131,92 @@ void ScummEngine_v3::scummLoop_handleSaveLoad() {
 		bool restoreFMTownsSounds = (_townsPlayer != nullptr);
 
 		if (_game.id == GID_LOOM) {
-			// HACK as in game save stuff isn't supported exactly as in the original interpreter when using the
-			// ScummVM save/load dialog. The original save/load screen uses a special script (which we cannot
-			// call without displaying that screen) which will also makes some necessary follow-up operations. We
-			// simply try to achieve that manually. It fixes bugs #6011 and #13369.
-			// We just have to kind of pretend that we've gone through the save/load "room" (with all the right
-			// variables in place), so that all the operations get triggered properly.
-			// The Mac, DOS Talkie and PC-Engine don't have the bugs. We can rely on our old hack there, since
-			// it wouldn't work otherwise, anyway.
-			int args[NUM_SCRIPT_LOCAL];
-			memset(args, 0, sizeof(args));
+			if (_currentRoom == 70) {
+				// If we are in the menu room (70), it means that we've saved
+				// the game from the original save menu and we are attempting
+				// to load it either from ScummVM launcher or from the GMM.
+				// This means that we have to terminate the menu script gracefully.
+				//
+				// Note that these post-load operations and the post-load fixes in the
+				// "else" block below work on totally different assumptions:
+				//
+				// - The formers assume that we saved the game from the original menu,
+				//   that we are loading it from GMM/launcher, and that we have to progress
+				//   the script in order to bring it to its post-load termination state.
+				//
+				// - The latters assume that we are loading a game which was saved within
+				//   GMM/launcher to begin with, so the post-load fixes are aimed at executing
+				//   only some of these operations (since we're not in the save room anyway).
+				updateScriptPtr();
+				getScriptBaseAddress();
+				resetScriptPointer();
 
-			uint saveLoadVar = 100;
-			if (_game.platform == Common::kPlatformMacintosh)
-				saveLoadVar = 105;
-			else if (_game.platform == Common::kPlatformPCEngine || _game.version == 4)
-				saveLoadVar = 150;
+				terminateSaveMenuScript();
+			} else {
+				// HACK as in game save stuff isn't supported exactly as in the original interpreter when using the
+				// ScummVM save/load dialog. The original save/load screen uses a special script (which we cannot
+				// call without displaying that screen) which will also makes some necessary follow-up operations. We
+				// simply try to achieve that manually. It fixes bugs #6011 and #13369.
+				// We just have to kind of pretend that we've gone through the save/load "room" (with all the right
+				// variables in place), so that all the operations get triggered properly.
+				// The Mac, DOS Talkie and PC-Engine don't have the bugs. We can rely on our old hack there, since
+				// it wouldn't work otherwise, anyway.
+				int args[NUM_SCRIPT_LOCAL];
+				memset(args, 0, sizeof(args));
 
-			// Run this hack only under conditions where the original save script could actually be executed.
-			// Otherwise this would cause all sorts of glitches. Also exclude Mac, PC-Engine and DOS Talkie...
-			if (saveLoadVar == 100 && _userPut > 0 && !isScriptRunning(VAR(VAR_VERB_SCRIPT))) {
-				uint16 prevFlag = VAR(214) & 0x6000;
-				beginCutscene(args);
-				uint16 blockVerbsFlag = VAR(214) & (0x6000 ^ prevFlag);
-				if (Actor *a = derefActor(VAR(VAR_EGO))) {
-					// This is used to restore the correct camera position.
-					VAR(171) = a->_walkbox;
-					VAR(172) = a->getRealPos().x;
-					VAR(173) = a->getRealPos().y;
+				uint saveLoadVar = 100;
+				if (_game.platform == Common::kPlatformMacintosh)
+					saveLoadVar = 105;
+				else if (_game.platform == Common::kPlatformPCEngine || _game.version == 4)
+					saveLoadVar = 150;
+
+				// Run this hack only under conditions where the original save script could actually be executed.
+				// Otherwise this would cause all sorts of glitches. Also exclude Mac, PC-Engine and DOS Talkie...
+				if (saveLoadVar == 100 && _userPut > 0 && !isScriptRunning(VAR(VAR_VERB_SCRIPT))) {
+					uint16 prevFlag = VAR(214) & 0x6000;
+					beginCutscene(args);
+					uint16 blockVerbsFlag = VAR(214) & (0x6000 ^ prevFlag);
+					if (Actor *a = derefActor(VAR(VAR_EGO))) {
+						// This is used to restore the correct camera position.
+						VAR(171) = a->_walkbox;
+						VAR(172) = a->getRealPos().x;
+						VAR(173) = a->getRealPos().y;
+					}
+					startScene(70, nullptr, 0);
+					VAR(saveLoadVar) = 0;
+					VAR(214) &= ~blockVerbsFlag;
+					endCutscene();
+
+					if (_game.platform == Common::kPlatformFMTowns && VAR(163)) {
+						// Sound restore script. Unlike other versions which handle this
+						// inside the usual entry scripts, FM-Towns calls this from the save script.
+						memset(args, 0, sizeof(args));
+						args[0] = VAR(163);
+						runScript(38, false, false, args);
+					}
+
+					restoreFMTownsSounds = false;
+
+				} else if (VAR(saveLoadVar) == 2) {
+					// This is our old hack. If verbs should be shown restore them.
+					byte restoreScript = (_game.platform == Common::kPlatformFMTowns) ? 17 : 18;
+					args[0] = 2;
+					runScript(restoreScript, 0, 0, args);
+					// Reset two variables, similiar to what the save script would do, to avoid minor glitches
+					// of the verb image on the right of the distaff (image remainung blank when moving the
+					// mouse cursor over an object, bug #13369).
+					VAR(saveLoadVar + 2) = VAR(saveLoadVar + 3) = 0;
 				}
-				startScene(70, nullptr, 0);
-				VAR(saveLoadVar) = 0;
-				VAR(214) &= ~blockVerbsFlag;
-				endCutscene();
-
-				if (_game.platform == Common::kPlatformFMTowns && VAR(163)) {
-					// Sound restore script. Unlike other versions which handle this
-					// inside the usual entry scripts, FM-Towns calls this from the save script.
-					memset(args, 0, sizeof(args));
-					args[0] = VAR(163);
-					runScript(38, false, false, args);
-				}
-
-				restoreFMTownsSounds = false;
-
-			} else if (VAR(saveLoadVar) == 2) {
-				// This is our old hack. If verbs should be shown restore them.
-				byte restoreScript = (_game.platform == Common::kPlatformFMTowns) ? 17 : 18;
-				args[0] = 2;
-				runScript(restoreScript, 0, 0, args);
-				// Reset two variables, similiar to what the save script would do, to avoid minor glitches
-				// of the verb image on the right of the distaff (image remainung blank when moving the
-				// mouse cursor over an object, bug #13369).
-				VAR(saveLoadVar + 2) = VAR(saveLoadVar + 3) = 0;
 			}
-
 		} else {
-			if (_game.platform == Common::kPlatformNES) {
+			if (_game.platform == Common::kPlatformNES && _currentRoom != 50) {
 				// WORKAROUND: Original save/load script ran this script
 				// after game load, and o2_loadRoomWithEgo() does as well
-				// this script starts character-dependent music
+				// this script starts character-dependent music.
+				//
+				// (This will not be run if the current room is the save room,
+				// as terminateSaveMenuScript() will be gracefully handling that)
+				//
 				// Fixes bug #3362: MANIACNES: Music Doesn't Start On Load Game
 				if (_game.platform == Common::kPlatformNES) {
 					runScript(5, 0, 0, nullptr);
@@ -2933,7 +3224,7 @@ void ScummEngine_v3::scummLoop_handleSaveLoad() {
 						_sound->addSoundToQueue(VAR(224));
 				}
 
-			} else if (_game.platform != Common::kPlatformC64 && _game.platform != Common::kPlatformMacintosh) {
+			} else if (_game.platform != Common::kPlatformMacintosh) {
 				// MM and ZAK (v1/2)
 				int saveLoadRoom = 50;
 				int saveLoadVar = 21;
@@ -2947,8 +3238,24 @@ void ScummEngine_v3::scummLoop_handleSaveLoad() {
 					saveLoadVar = 115;
 				}
 
-				// Only execute this if the original would even allow saving in that situation
-				if (VAR(saveLoadVar) == saveLoadEnable && _userPut > 0 && !(VAR_VERB_SCRIPT != 0xFF && isScriptRunning(VAR(VAR_VERB_SCRIPT)))) {
+				if (_currentRoom == saveLoadRoom) {
+					// If we are in the menu room, it means that we've saved
+					// the game from the original save menu and we are attempting
+					// to load it either from ScummVM launcher or from the GMM.
+					// This means that we have to terminate the menu script gracefully.
+
+					// Just as noted above, when handling post-load fixes for LOOM:
+					// these post-load operations work on different assumptions from
+					// the ones necessary for the post-load fixes on the "else if" block.
+					updateScriptPtr();
+					getScriptBaseAddress();
+					resetScriptPointer();
+
+					terminateSaveMenuScript();
+				} else if (_game.platform != Common::kPlatformC64 &&
+					VAR(saveLoadVar) == saveLoadEnable && _userPut > 0 &&
+					!(VAR_VERB_SCRIPT != 0xFF && isScriptRunning(VAR(VAR_VERB_SCRIPT)))) {
+					// Only execute this if the original would even allow saving in that situation
 					int args[NUM_SCRIPT_LOCAL];
 					memset(args, 0, sizeof(args));
 					beginCutscene(args);

@@ -86,6 +86,7 @@ protected:
 	void processInput() override;
 
 	void saveLoadWithSerializer(Common::Serializer &s) override;
+	void terminateSaveMenuScript() override;
 
 	bool objIsActor(int obj) override;
 	int objToActor(int obj) override;

@@ -614,6 +614,8 @@ protected:
 
 	virtual void runBootscript();
 
+	virtual void terminateSaveMenuScript() {};
+
 	// Event handling
 public:
 	void parseEvents();	// Used by IMuseDigital::startSound
