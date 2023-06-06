@@ -165,6 +165,11 @@ public:
 	/** Returns the number of bytes used for MD5-based detection, or 0 if not supported. */
 	virtual uint getMD5Bytes() const = 0;
 
+	/** Returns the number of game variants or -1 if unknown */
+	virtual int getGameVariantCount() const {
+		return -1;
+	}
+
 	/**
 	 * The default version of this method will just parse the options string from
 	 * the config manager. However it also allows the meta engine to post process

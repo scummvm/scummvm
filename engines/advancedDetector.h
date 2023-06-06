@@ -396,6 +396,13 @@ public:
 
 	uint getMD5Bytes() const override final { return _md5Bytes; }
 
+	int getGameVariantCount() const override final {
+		uint count = 0;
+		for (const byte *descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != nullptr; descPtr += _descItemSize)
+			++count;
+		return count;
+	}
+
 protected:
 	/**
 	 * A hashmap of files and their MD5 checksums.
