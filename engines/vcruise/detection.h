@@ -40,6 +40,7 @@ enum VCruiseGameFlag {
 	VCRUISE_GF_GENTEE_PACKAGE	= (1 << 3),
 	
 	VCRUISE_GF_STEAM_LANGUAGES	= (1 << 4),
+	VCRUISE_GF_FORCE_LANGUAGE	= (1 << 5),
 };
 
 struct VCruiseGameDescription {

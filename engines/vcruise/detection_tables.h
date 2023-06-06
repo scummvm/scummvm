@@ -113,6 +113,21 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		GID_REAH,
 		Common::EN_ANY,
 	},
+	{ // Reah: Face the Unknown, English digital (GOG) version + Russian VO/subtitles community patch
+		{
+			"reah",
+			"English Digital + Russian Community Patch",
+			AD_ENTRY3s("Reah.exe", "60ec19c53f1323cc7f0314f98d396283", 304128,
+					   "0170_b.wav", "4632023ed0bab3fc800abfa5ef65ceaf", 121220,
+					   "Speech01.txt", "a4eaace1299de1d70805532fc0643a77", 72689),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_TESTING | VCRUISE_GF_WANT_MP3 | VCRUISE_GF_FORCE_LANGUAGE,
+			GUIO0()
+		},
+		GID_REAH,
+		Common::RU_RUS,
+	},
 
 	{ // Schizm: Mysterious Journey, English CD Version
 		{

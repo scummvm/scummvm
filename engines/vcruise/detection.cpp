@@ -70,34 +70,36 @@ public:
 
 		VCruise::VCruiseGameID gameID = reinterpret_cast<const VCruise::VCruiseGameDescription *>(adGame.desc)->gameID;
 
-		if (gameID == VCruise::GID_REAH) {
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::NL_NLD));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::PL_POL));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
-		} else if (gameID == VCruise::GID_SCHIZM) {
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_USA));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_GRB));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::NL_NLD));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::PL_POL));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EL_GRC));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::RU_RUS));
+		if ((adGame.desc->flags & VCruise::VCRUISE_GF_FORCE_LANGUAGE) == 0) {
+			if (gameID == VCruise::GID_REAH) {
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::NL_NLD));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::PL_POL));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
+			} else if (gameID == VCruise::GID_SCHIZM) {
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_USA));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_GRB));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::NL_NLD));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::PL_POL));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EL_GRC));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::RU_RUS));
 
-			// Steam version languages
-			if (adGame.desc->flags & VCruise::VCRUISE_GF_STEAM_LANGUAGES) {
-				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::BG_BUL));
-				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ZH_TWN));
-				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::JA_JPN));
-				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::HU_HUN));
-				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ZH_CHN));
-				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::CS_CZE));
+				// Steam version languages
+				if (adGame.desc->flags & VCruise::VCRUISE_GF_STEAM_LANGUAGES) {
+					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::BG_BUL));
+					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ZH_TWN));
+					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::JA_JPN));
+					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::HU_HUN));
+					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ZH_CHN));
+					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::CS_CZE));
+				}
 			}
 		}
 
