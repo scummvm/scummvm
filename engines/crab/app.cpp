@@ -227,6 +227,16 @@ void App::Run() {
 #endif
 		while (g_system->getEventManager()->pollEvent(e)) {
 
+			switch (e.type) {
+				case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+					g_engine->_inputManager->_ivState[e.customType] = true;
+					break;
+
+				case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+					g_engine->_inputManager->_ivState[e.customType] = false;
+					break;
+			}
+
 			// Do state Event handling
 			CurrentState->HandleEvents(e, ShouldChangeState, NextStateID);
 		}

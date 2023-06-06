@@ -98,6 +98,9 @@ public:
 	InputManager() {
 		//controller = nullptr;
 		version = 0;
+
+		for (int i = 0; i < IT_TOTAL; i++)
+			_ivState[i] = false;
 	}
 	~InputManager() {}
 	void Quit() {
@@ -114,6 +117,7 @@ public:
 
 	// Inputs used in the game
 	InputVal iv[IT_TOTAL];
+	bool _ivState[IT_TOTAL];
 
 	// Our controller object
 	//SDL_GameController *controller;

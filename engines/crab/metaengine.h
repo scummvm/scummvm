@@ -67,6 +67,8 @@ public:
 	 */
 	bool hasFeature(MetaEngineFeature f) const override;
 
+	Common::KeymapArray initKeymaps(const char *target) const override;
+
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 };
 
