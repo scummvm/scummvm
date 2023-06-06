@@ -92,7 +92,7 @@ const String &GUIButton::GetText() const {
 }
 
 bool GUIButton::IsImageButton() const {
-	return Image != 0;
+	return Image > 0;
 }
 
 bool GUIButton::IsClippingImage() const {
@@ -331,6 +331,7 @@ void GUIButton::WriteToSavegame(Stream *out) const {
 }
 
 void GUIButton::DrawImageButton(Bitmap *ds, int x, int y, bool draw_disabled) {
+	assert(CurrentImage >= 0);
 	// NOTE: the CLIP flag only clips the image, not the text
 	if (IsClippingImage() && !GUI::Options.ClipControls)
 		ds->SetClip(RectWH(x, y, Width, Height));
