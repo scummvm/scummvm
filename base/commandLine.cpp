@@ -90,8 +90,8 @@ static const char HELP_STRING1[] =
 	"                           Use --path=PATH to specify a directory.\n"
 	"  --game=ID                In combination with --add or --detect only adds or attempts to\n"
 	"                           detect the game with id ID.\n"
-	"  --engine=ID              In combination with --list-games, --list-all-games, or --stats only lists\n"
-	"                           games for this engine. Multiple engines can be listed separated by a coma.\n"
+	"  --engine=ID              In combination with --list-games, --list-all-games, --list-targets, or --stats only\n"
+	"                           lists games for this engine. Multiple engines can be listed separated by a coma.\n"
 	"  --auto-detect            Display a list of games from current or specified directory\n"
 	"                           and start the first one. Use --path=PATH to specify a directory.\n"
 	"  --recursive              In combination with --add or --detect recurse down all subdirectories\n"
@@ -1066,7 +1066,14 @@ static void listAllEngines() {
 }
 
 /** List all targets which are configured in the config file. */
-static void listTargets() {
+static void listTargets(const Common::String &engineID) {
+	const bool any = engineID.empty();
+	Common::StringArray engines;
+	if (!any) {
+		Common::StringTokenizer tokenizer(engineID, ",");
+		engines = tokenizer.split();
+	}
+
 	printf("Target               Description                                           \n"
 	       "-------------------- ------------------------------------------------------\n");
 
@@ -1079,18 +1086,24 @@ static void listTargets() {
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 		Common::String name(iter->_key);
 		Common::String description(iter->_value.getValOrDefault("description"));
+		Common::String engine;
+		if (!any)
+			engine = iter->_value.getValOrDefault("engineid");
 
 		// If there's no description, fallback on the default description.
-		if (description.empty()) {
+		if (description.empty() || (!any && engine.empty())) {
 			QualifiedGameDescriptor g = EngineMan.findTarget(name);
-			if (!g.description.empty())
+			if (description.empty() && !g.description.empty())
 				description = g.description;
+			if (!any && engine.empty() && !g.engineId.empty())
+				engine = g.engineId;
 		}
 		// If there's still no description, we cannot come up with one. Insert some dummy text.
 		if (description.empty())
 			description = "<Unknown game>";
 
-		targets.push_back(Common::String::format("%-20s %s", name.c_str(), description.c_str()));
+		if (any || Common::find(engines.begin(), engines.end(), engine) != engines.end())
+			targets.push_back(Common::String::format("%-20s %s", name.c_str(), description.c_str()));
 	}
 
 	Common::sort(targets.begin(), targets.end());
@@ -1788,7 +1801,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	// --list-games). This must be done after the config file and the plugins
 	// have been loaded.
 	if (command == "list-targets") {
-		listTargets();
+		listTargets(settings["engine"]);
 		return cmdDoExit;
 	} else if (command == "list-all-debugflags") {
 		listAllEngineDebugFlags();
