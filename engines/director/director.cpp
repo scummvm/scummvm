@@ -69,6 +69,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	// Setup mixer
 	syncSoundSettings();
+	_defaultVolume = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
 
 	// Load Palettes
 	loadDefaultPalettes();

@@ -158,6 +158,7 @@ class DirectorSound {
 private:
 	Window *_window;
 	Common::HashMap<int, SoundChannel *> _channels;
+	Common::HashMap<int, int> _volumes;
 	Audio::SoundHandle _scriptSound;
 	Audio::Mixer *_mixer;
 	Audio::PCSpeaker *_speaker;
@@ -208,6 +209,7 @@ public:
 	uint8 getChannelVolume(uint8 soundChannel);
 	void stopSound(uint8 soundChannel);
 	void stopSound();
+	void setChannelDefaultVolume(int soundChannel);
 
 private:
 	void setLastPlayedSound(uint8 soundChannel, SoundID soundId, bool stopOnZero = true);

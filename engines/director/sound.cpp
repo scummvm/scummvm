@@ -87,6 +87,8 @@ void DirectorSound::playFile(Common::String filename, uint8 soundChannel) {
 
 	cancelFade(soundChannel);
 	stopSound(soundChannel);
+
+	setChannelDefaultVolume(soundChannel);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel]->handle, sound, -1, getChannelVolume(soundChannel));
 
 	// Set the last played sound so that cast member 0 in the sound channel doesn't stop this file.
@@ -109,6 +111,12 @@ uint8 DirectorSound::getChannelVolume(uint8 soundChannel) {
 	return _enable ? _channels[soundChannel]->volume : 0;
 }
 
+void DirectorSound::setChannelDefaultVolume(int soundChannel) {
+	int vol = _volumes.getValOrDefault(soundChannel, g_director->_defaultVolume);
+
+	_channels[soundChannel]->volume = vol;
+}
+
 void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
 	if (!assertChannel(soundChannel))
 		return;
@@ -116,6 +124,9 @@ void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
 	cancelFade(soundChannel);
 
 	_mixer->stopHandle(_channels[soundChannel]->handle);
+
+	setChannelDefaultVolume(soundChannel);
+
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel]->handle, &stream, -1, getChannelVolume(soundChannel));
 }
 
@@ -623,6 +634,8 @@ void DirectorSound::playFPlaySound(const Common::Array<Common::String> &fplayLis
 void DirectorSound::setSoundLevelInternal(uint8 soundChannel, uint8 soundLevel) {
 	// we have 8 level of sounds, and in ScummVM, we have range 0 to 255, thus 1 level represent 32
 	_channels[soundChannel]->volume = soundLevel * 32;
+	_volumes[soundChannel] = soundLevel * 32;
+
 	if (_enable && isChannelActive(soundChannel))
 		_mixer->setChannelVolume(_channels[soundChannel]->handle, _channels[soundChannel]->volume);
 }

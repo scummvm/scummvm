@@ -230,6 +230,7 @@ public:
 	Graphics::PixelFormat _pixelformat;
 
 	uint32 _debugDraw = 0;
+	int _defaultVolume = 255;
 
 public:
 	int _colorDepth;
