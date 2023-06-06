@@ -382,8 +382,8 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 		return reterr;
 
 	// NOTE that if proper multithreading is added this will need
-	// to be reconsidered, since the GC could be run in the middle 
-	// of a RET from a function or something where there is an 
+	// to be reconsidered, since the GC could be run in the middle
+	// of a RET from a function or something where there is an
 	// object with ref count 0 that is in use
 	_GP(pool).RunGarbageCollectionIfAppropriate();
 
@@ -988,9 +988,11 @@ int ccInstance::Run(int32_t curpc) {
 
 			runningInst = wasRunning;
 
-			if (oldstack != registers[SREG_SP]) {
-				cc_error("stack corrupt after function call");
-				return -1;
+			if ((flags & INSTF_ABORTED) == 0) {
+				if (oldstack != registers[SREG_SP]) {
+					cc_error("stack corrupt after function call");
+					return -1;
+				}
 			}
 
 			next_call_needs_object = 0;
