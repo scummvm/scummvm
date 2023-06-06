@@ -368,7 +368,6 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 			YVel(0.0f);
 	} else // Keyboard movement
 	{
-		#if 0
 		// Disable destination as soon as player presses a direction key
 		// X axis
 		if (g_engine->_inputManager->State(IG_LEFT)) {
@@ -389,7 +388,7 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 			YVel(player_speed * sc.walk_vel_mod.y);
 		} else if (!ai_data.dest.active)
 			YVel(0.0f);
-		#endif
+
 	}
 
 	UpdateMove(input.HandleEvents(Event));
