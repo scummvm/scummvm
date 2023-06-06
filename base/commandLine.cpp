@@ -76,6 +76,7 @@ static const char HELP_STRING1[] =
 	"  -t, --list-targets       Display list of configured targets and exit\n"
 	"  --list-engines           Display list of supported engines and exit\n"
 	"  --list-all-engines       Display list of all detection engines and exit\n"
+	"  --stats                  Display statistics about engines and games and exit\n"
 	"  --list-debugflags=engine Display list of engine specified debugflags\n"
 	"                           if engine=global or engine is not specified, then it will list global debugflags\n"
 	"  --list-all-debugflags    Display list of all engine specified debugflags\n"
@@ -89,7 +90,7 @@ static const char HELP_STRING1[] =
 	"                           Use --path=PATH to specify a directory.\n"
 	"  --game=ID                In combination with --add or --detect only adds or attempts to\n"
 	"                           detect the game with id ID.\n"
-	"  --engine=ID              In combination with --list-games or --list-all-games only lists\n"
+	"  --engine=ID              In combination with --list-games, --list-all-games, or --stats only lists\n"
 	"                           games for this engine.\n"
 	"  --auto-detect            Display a list of games from current or specified directory\n"
 	"                           and start the first one. Use --path=PATH to specify a directory.\n"
@@ -619,6 +620,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_COMMAND("list-all-engines")
 			END_COMMAND
 
+			DO_LONG_COMMAND("stats")
+			END_COMMAND
+
 			DO_COMMAND('a', "add")
 			END_COMMAND
 
@@ -1083,6 +1087,38 @@ static void listTargets() {
 
 	for (Common::Array<Common::String>::const_iterator i = targets.begin(), end = targets.end(); i != end; ++i)
 		printf("%s\n", i->c_str());
+}
+
+static void printStatistics(const Common::String &engineID) {
+	const bool summary = engineID.empty();
+	const bool all = engineID == "all";
+	Common::StringArray engines;
+	if (!summary && !all) {
+		Common::StringTokenizer tokenizer(engineID, ",");
+		engines = tokenizer.split();
+	}
+
+	if (!summary)
+		printf("Engine ID       Number of games\n"
+		       "--------------- ---------------\n");
+
+	int engineCount = 0, gameCount = 0;
+	const PluginList &plugins = EngineMan.getPlugins();
+	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
+
+		if (summary || all || Common::find(engines.begin(), engines.end(), metaEngine.getName()) != engines.end()) {
+			PlainGameList list = metaEngine.getSupportedGames();
+			++engineCount;
+			gameCount += list.size();
+			if (!summary)
+				printf("%-15s %15d\n", metaEngine.getName(), list.size());
+		}
+	}
+	if (engines.size() != 1) {
+		printf("--------------- ---------------\n");
+		printf("Engines: %4d   Games: %8d\n", engineCount, gameCount);
+	}
 }
 
 static void printDebugFlags(const DebugChannelDef *debugChannels) {
@@ -1761,6 +1797,9 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		return cmdDoExit;
 	} else if (command == "list-all-engines") {
 		listAllEngines();
+		return cmdDoExit;
+	} else if (command == "stats") {
+		printStatistics(settings["engine"]);
 		return cmdDoExit;
 #ifdef ENABLE_EVENTRECORDER
 	} else if (command == "list-records") {
