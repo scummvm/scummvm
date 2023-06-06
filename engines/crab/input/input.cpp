@@ -39,7 +39,7 @@ using namespace pyrodactyl::input;
 // Purpose: Return pressed/depressed state of key
 //------------------------------------------------------------------------
 bool InputManager::State(const InputType &val) {
-	warning("STUB: InputManager::State()");
+	return _ivState[val];
 
 #if 0
 	const Uint8 *keystate = SDL_GetKeyboardState(NULL);
@@ -56,7 +56,7 @@ bool InputManager::State(const InputType &val) {
 	}
 #endif
 
-	return false;
+	//return false;
 }
 
 #if 0

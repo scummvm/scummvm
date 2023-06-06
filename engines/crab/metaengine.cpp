@@ -55,6 +55,10 @@
 #include "crab/detection.h"
 #include "crab/metaengine.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 namespace Crab {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
@@ -80,6 +84,46 @@ const ADExtraGuiOptionsMap *CrabMetaEngine::getAdvancedExtraGuiOptions() const {
 Common::Error CrabMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new Crab::CrabEngine(syst, desc);
 	return Common::kNoError;
+}
+
+Common::KeymapArray CrabMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+
+	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGame, "Unrest", "Unrest");
+
+	Action *act;
+
+	act = new Action(kStandardActionMoveUp, _("Up"));
+	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IG_UP);
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("JOY_UP");
+	keymap->addAction(act);
+
+	act = new Action(kStandardActionMoveDown, _("Down"));
+	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IG_DOWN);
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("JOY_DOWN");
+	keymap->addAction(act);
+
+	act = new Action(kStandardActionMoveLeft, _("Left"));
+	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IG_LEFT);
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("JOY_LEFT");
+	keymap->addAction(act);
+
+	act = new Action(kStandardActionMoveRight, _("Right"));
+	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IG_RIGHT);
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	keymap->addAction(act);
+
+	act = new Action("TALK", _("Talk/Interact"));
+	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IG_TALK);
+	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("JOY_A");
+	keymap->addAction(act);
+
+	return Keymap::arrayOf(keymap);
 }
 
 bool CrabMetaEngine::hasFeature(MetaEngineFeature f) const {
