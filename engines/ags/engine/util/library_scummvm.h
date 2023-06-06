@@ -58,7 +58,8 @@ public:
 		if (_library == nullptr)
 			return false;
 		_name = libraryName;
-		_path = GetFilenameForLib(libraryName);;
+		_filename = GetFilenameForLib(libraryName);
+		_path = "./";
 		return true;
 	}
 
@@ -67,6 +68,7 @@ public:
 			Plugins::pluginClose(_library);
 			_library = nullptr;
 			_name = "";
+			_filename = "";
 			_path = "";
 		}
 	}

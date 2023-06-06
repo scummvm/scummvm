@@ -843,7 +843,7 @@ void pl_run_plugin_init_gfx_hooks(const char *driverName, void *data) {
 	}
 }
 
-Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> &infos) {
+Engine::GameInitError pl_register_plugins(const std::vector<PluginInfo> &infos) {
 	_GP(plugins).clear();
 	_GP(plugins).reserve(MAXPLUGINS);
 

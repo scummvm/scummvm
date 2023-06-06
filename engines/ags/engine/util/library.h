@@ -37,16 +37,27 @@ public:
 
 	virtual ~BaseLibrary() {}
 
-	String GetName() const { return _name; }
-	String GetFilePath() const { return _path; }
+	// Get library name; returns empty string if not loaded
+	inline String GetName() const { return _name; }
+	// Get actual filename; returns empty string if not loaded
+	inline String GetFileName() const { return _filename; }
+	// Get path used to load the library; or empty string is not loaded.
+	// NOTE: this is NOT a fully qualified path, but a lookup path.
+	inline String GetPath() const { return _path; }
 
+	// Returns expected filename form for the dynamic library of a given name
 	virtual String GetFilenameForLib(const String &libname) = 0;
+
+	// Try load a library of a given name
 	virtual bool Load(const String &libname) = 0;
+	// Unload a library; does nothing if was not loaded
 	virtual void Unload() = 0;
+	// Tells if library is loaded
 	virtual bool IsLoaded() const = 0;
 
 protected:
 	String _name;
+	String _filename;
 	String _path;
 };
 
