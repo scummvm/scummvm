@@ -192,7 +192,7 @@ void OpenGLRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, 
 }
 
 void OpenGLRenderer::renderPlayerShoot(byte color, const Common::Point position, const Common::Rect viewArea) {
-	uint8 a, r, g, b;
+	uint8 r, g, b;
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -202,11 +202,8 @@ void OpenGLRenderer::renderPlayerShoot(byte color, const Common::Point position,
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderZX) {
 		r = g = b = 255;
 	} else {
-		uint32 pixel = 0x0;
-		glReadPixels(g_system->getWidth() / 2, g_system->getHeight() / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel);
-		_texturePixelFormat.colorToARGB(pixel, a, r, g, b);
-		color = indexFromColor(r, g, b);
-		readFromPalette((color + 3) % (_renderMode == Common::kRenderCGA ? 4 : 16), r, g, b);
+		glEnable(GL_COLOR_LOGIC_OP);
+		glLogicOp(GL_INVERT);
 	}
 
 	glDisable(GL_DEPTH_TEST);
@@ -232,6 +229,7 @@ void OpenGLRenderer::renderPlayerShoot(byte color, const Common::Point position,
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glLineWidth(1);
 
+	glDisable(GL_COLOR_LOGIC_OP);
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 }
