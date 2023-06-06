@@ -31,7 +31,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("wallpix.dta", "86a7ef03fd5bf434d83012b07fa92680", 123059),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO0()
 		},
 		GType_MightAndMagic1,
@@ -46,7 +46,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("wallpix.dta", "86a7ef03fd5bf434d83012b07fa92680", 123059),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO0()
 		},
 		GType_MightAndMagic1,
