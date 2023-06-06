@@ -42,6 +42,7 @@ typedef unsigned int uint;
 #include <limits.h>
 #include <math.h>
 #include <new>
+#include <limits>
 
 #include <nds/arm9/sassert.h>
 #undef assert

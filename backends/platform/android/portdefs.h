@@ -33,6 +33,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <new>
+#include <limits>
 
 // This is defined in snprintf.c
 #ifdef __cplusplus
