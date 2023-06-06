@@ -473,7 +473,7 @@ endif
 ifdef ENABLE_WINTERMUTE
 DIST_FILES_ENGINEDATA+=wintermute.zip
 endif
-ifdef ENABLE_XEEN
+ifdef ENABLE_MM
 DIST_FILES_ENGINEDATA+=mm.dat
 endif
 ifdef ENABLE_FREESCAPE
