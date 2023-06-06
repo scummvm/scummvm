@@ -124,6 +124,7 @@ void Combat::monsterIndexOf() {
 
 void Combat::monsterSetPtr(int monsterNum) {
 	_monsterP = &g_globals->_encounters._monsterList[monsterNum];
+	monsterIndexOf();
 }
 
 void Combat::setupCanAttacks() {
