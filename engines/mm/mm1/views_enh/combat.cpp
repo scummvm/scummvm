@@ -730,7 +730,8 @@ void Combat::highlightNextRound() {
 	for (uint i = 0; i < s.size(); ++i)
 		s.setChar(s[i] | 0x80, i);
 
-	writeString(0, 1, s);
+	setReduced(false);
+	writeString(0, LINE_H, s);
 }
 
 void Combat::writeMonsterEffects() {
