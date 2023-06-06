@@ -91,7 +91,7 @@ static const char HELP_STRING1[] =
 	"  --game=ID                In combination with --add or --detect only adds or attempts to\n"
 	"                           detect the game with id ID.\n"
 	"  --engine=ID              In combination with --list-games, --list-all-games, or --stats only lists\n"
-	"                           games for this engine.\n"
+	"                           games for this engine. Multiple engines can be listed separated by a coma.\n"
 	"  --auto-detect            Display a list of games from current or specified directory\n"
 	"                           and start the first one. Use --path=PATH to specify a directory.\n"
 	"  --recursive              In combination with --add or --detect recurse down all subdirectories\n"
@@ -985,6 +985,11 @@ unknownOption:
 /** List all available game IDs, i.e. all games which any loaded plugin supports. */
 static void listGames(const Common::String &engineID) {
 	const bool all = engineID.empty();
+	Common::StringArray engines;
+	if (!all) {
+		Common::StringTokenizer tokenizer(engineID, ",");
+		engines = tokenizer.split();
+	}
 
 	printf("Game ID                        Full Title                                                 \n"
 	       "------------------------------ -----------------------------------------------------------\n");
@@ -997,7 +1002,7 @@ static void listGames(const Common::String &engineID) {
 			continue;
 		}
 
-		if (all || (p->getName() == engineID)) {
+		if (all || Common::find(engines.begin(), engines.end(), p->getName()) != engines.end()) {
 			PlainGameList list = p->get<MetaEngineDetection>().getSupportedGames();
 			for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
 				printf("%-30s %s\n", buildQualifiedGameName(p->get<MetaEngineDetection>().getName(), v->gameId).c_str(), v->description);
@@ -1009,6 +1014,11 @@ static void listGames(const Common::String &engineID) {
 /** List all known game IDs, i.e. all games which can be detected. */
 static void listAllGames(const Common::String &engineID) {
 	const bool any = engineID.empty();
+	Common::StringArray engines;
+	if (!any) {
+		Common::StringTokenizer tokenizer(engineID, ",");
+		engines = tokenizer.split();
+	}
 
 	printf("Game ID                        Full Title                                                 \n"
 	       "------------------------------ -----------------------------------------------------------\n");
@@ -1017,7 +1027,7 @@ static void listAllGames(const Common::String &engineID) {
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 
-		if (any || (metaEngine.getName() == engineID)) {
+		if (any || Common::find(engines.begin(), engines.end(), metaEngine.getName()) != engines.end()) {
 			PlainGameList list = metaEngine.getSupportedGames();
 			for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
 				printf("%-30s %s\n", buildQualifiedGameName(metaEngine.getName(), v->gameId).c_str(), v->description);
