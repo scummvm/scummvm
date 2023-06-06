@@ -1122,8 +1122,8 @@ static void printStatistics(const Common::String &engineID) {
 	}
 
 	if (!summary)
-		printf("Engine ID        Number of games    Added targets\n"
-		       "--------------- ---------------- ----------------\n");
+		printf("Engine ID        Number of games    Game variants    Added targets\n"
+		       "--------------- ---------------- ---------------- ----------------\n");
 
 	int targetCount = 0;
 	Common::HashMap<Common::String, int> engineTargetCount;
@@ -1147,8 +1147,8 @@ static void printStatistics(const Common::String &engineID) {
 		++targetCount;
 	}
 
-
-	int engineCount = 0, gameCount = 0;
+	bool approximation = false;
+	int engineCount = 0, gameCount = 0, variantCount = 0;
 	const PluginList &plugins = EngineMan.getPlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
@@ -1156,18 +1156,30 @@ static void printStatistics(const Common::String &engineID) {
 			PlainGameList list = metaEngine.getSupportedGames();
 			++engineCount;
 			gameCount += list.size();
+			int variants = metaEngine.getGameVariantCount();
+			if (variants == -1) {
+				approximation = true;
+				variantCount += list.size();
+			} else
+				variantCount += variants;
 			if (!summary) {
 				int targets = 0;
 				Common::HashMap<Common::String, int>::const_iterator engineIter = engineTargetCount.find(metaEngine.getName());
 				if (engineIter != engineTargetCount.end())
 					targets = engineIter->_value;
-				printf("%-15s %16d %16d\n", metaEngine.getName(), list.size(), targets);
+				if (variants != -1)
+					printf("%-15s %16d %16d %16d\n", metaEngine.getName(), list.size(), variants, targets);
+				else
+					printf("%-15s %16d %16s %16d\n", metaEngine.getName(), list.size(), "?", targets);
 			}
 		}
 	}
 	if (engines.size() != 1) {
-		printf("--------------- ---------------- ----------------\n");
-		printf("Engines: %6d Games: %9d Targets: %7d\n", engineCount, gameCount, targetCount);
+		printf("--------------- ---------------- ---------------- ----------------\n");
+		if (approximation)
+			printf("Engines: %6d Games: %9d Variants: %5d+ Targets: %7d\n", engineCount, gameCount, variantCount, targetCount);
+		else
+			printf("Engines: %6d Games: %9d Variants: %6d Targets: %7d\n", engineCount, gameCount, variantCount, targetCount);
 	}
 }
 
