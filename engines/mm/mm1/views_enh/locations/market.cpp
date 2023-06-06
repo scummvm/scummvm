@@ -90,9 +90,9 @@ bool Market::msgAction(const ActionMessage &msg) {
 	} else if (msg._action == KEYBIND_ESCAPE) {
 		leave();
 		return true;
+	} else {
+		return Location::msgAction(msg);
 	}
-
-	return false;
 }
 
 
