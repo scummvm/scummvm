@@ -1442,7 +1442,11 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	// Post-load fix for broken SAMNMAX savegames which contain invalid
 	// cursor values; the value we're setting here should not count since
 	// it's being replaced by the post-load script, as long as it's not zero.
-	if (_game.version == 6 && (_cursor.width == 0 || _cursor.height == 0)) {
+	// The same also happens for the Mac version of INDY3: the cursor was being
+	// handled directly with a CursorMan.replaceCursor() without specifying any
+	// values for the _cursor object (#14498). Let's fix that with the proper values.
+	if ((_game.version == 6 || (_game.id == GID_INDY3 && _macScreen)) &&
+		(_cursor.width == 0 || _cursor.height == 0)) {
 		_cursor.width = 15;
 		_cursor.height = 15;
 		_cursor.hotspotX = 7;

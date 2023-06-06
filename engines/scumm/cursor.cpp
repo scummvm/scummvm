@@ -1009,6 +1009,11 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 		};
 
 		_cursor.animate = 0;
+		_cursor.width = 15;
+		_cursor.height = 15;
+		_cursor.hotspotX = 7;
+		_cursor.hotspotY = 7;
+
 		CursorMan.replaceCursor(buf, 15, 15, 7, 7, 0xFF);
 		return;
 	}
