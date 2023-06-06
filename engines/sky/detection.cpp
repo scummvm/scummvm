@@ -72,6 +72,13 @@ public:
 	uint getMD5Bytes() const override {
 		return 0;
 	}
+
+	int getGameVariantCount() const override {
+		int entries = 0;
+		for (const SkyVersion *sv = skyVersions; sv->dinnerTableEntries; ++sv)
+			++entries;
+		return entries;
+	}
 };
 
 const char *SkyMetaEngineDetection::getEngineName() const {

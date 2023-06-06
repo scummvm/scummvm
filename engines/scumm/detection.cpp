@@ -88,6 +88,12 @@ public:
 	uint getMD5Bytes() const override {
 		 return 1024 * 1024;
 	}
+	int getGameVariantCount() const override {
+		int entries = 0;
+		for (const GameSettings *g = gameVariantsTable; g->gameid; ++g)
+			++entries;
+		return entries;
+	}
 
 	Common::String parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const override;
 };
