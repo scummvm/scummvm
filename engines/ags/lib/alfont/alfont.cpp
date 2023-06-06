@@ -222,6 +222,8 @@ static void _alfont_uncache_glyphs(ALFONT_FONT *f) {
 
 
 static void _alfont_uncache_glyph_number(ALFONT_FONT *f, int glyph_number) {
+	if ((glyph_number < 0) || (glyph_number >= f->face->num_glyphs))
+		return;
 	if (f->cached_glyphs) {
 		if (f->cached_glyphs[glyph_number].is_cached) {
 			f->cached_glyphs[glyph_number].is_cached = 0;
@@ -248,6 +250,9 @@ static void _alfont_delete_glyphs(ALFONT_FONT *f) {
 
 
 static void _alfont_cache_glyph(ALFONT_FONT *f, int glyph_number) {
+	if ((glyph_number < 0) || (glyph_number >= f->face->num_glyphs))
+		return;
+
 	/* if glyph not cached yet */
 	if (!f->cached_glyphs[glyph_number].is_cached) {
 		FT_Glyph new_glyph;
@@ -1040,6 +1045,10 @@ void alfont_textout_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int
 			else
 				glyph_index_tmp = character;
 
+			/* if out of existing glyph range -- skip it */
+			if ((glyph_index_tmp < 0) || (glyph_index_tmp >= f->face->num_glyphs))
+				continue;
+
 			/* cache the glyph */
 			_alfont_cache_glyph(f, glyph_index_tmp);
 			cglyph_tmp = f->cached_glyphs[glyph_index_tmp];
@@ -1077,6 +1086,10 @@ void alfont_textout_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int
 			glyph_index = Get_Char_Index(f->face, character);
 		else
 			glyph_index = character;
+
+		/* if out of existing glyph range -- skip it */
+		if ((glyph_index < 0) || (glyph_index >= f->face->num_glyphs))
+			continue;
 
 		/* cache the glyph */
 		_alfont_cache_glyph(f, glyph_index);
@@ -2114,6 +2127,10 @@ void alfont_textout_ex(BITMAP * bmp, ALFONT_FONT * f, const char *s, int x, int 
 			else
 				glyph_index_tmp = character;
 
+			/* if out of existing glyph range -- skip it */
+			if ((glyph_index_tmp < 0) || (glyph_index_tmp >= f->face->num_glyphs))
+				continue;
+
 			/* cache the glyph */
 			_alfont_cache_glyph(f, glyph_index_tmp);
 			cglyph_tmp = f->cached_glyphs[glyph_index_tmp];
@@ -2150,6 +2167,10 @@ void alfont_textout_ex(BITMAP * bmp, ALFONT_FONT * f, const char *s, int x, int 
 			glyph_index = Get_Char_Index(f->face, character);
 		else
 			glyph_index = character;
+
+		/* if out of existing glyph range -- skip it */
+		if ((glyph_index < 0) || (glyph_index >= f->face->num_glyphs))
+			continue;
 
 		/* cache the glyph */
 		_alfont_cache_glyph(f, glyph_index);
@@ -2896,6 +2917,10 @@ int alfont_text_length(ALFONT_FONT * f, const char *str) {
 			else
 				glyph_index_tmp = character;
 
+			/* if out of existing glyph range -- skip it */
+			if ((glyph_index_tmp < 0) || (glyph_index_tmp >= f->face->num_glyphs))
+				continue;
+
 			/* cache the glyph */
 			_alfont_cache_glyph(f, glyph_index_tmp);
 			if (max_advancex < f->cached_glyphs[glyph_index_tmp].advancex)
@@ -2928,6 +2953,10 @@ int alfont_text_length(ALFONT_FONT * f, const char *str) {
 			total_length += v.x >> 6;
 		}*/
 		last_glyph_index = glyph_index;
+
+		/* if out of existing glyph range -- skip it */
+		if ((glyph_index < 0) || (glyph_index >= f->face->num_glyphs))
+			continue;
 
 		/* cache */
 		_alfont_cache_glyph(f, glyph_index);
@@ -3007,6 +3036,10 @@ int alfont_char_length(ALFONT_FONT * f, int character) {
 	  total_length += v.x >> 6;
 	}*/
 	last_glyph_index = glyph_index;
+
+	/* if out of existing glyph range -- imagine empty char */
+	if ((glyph_index < 0) || (glyph_index >= f->face->num_glyphs))
+		return 0;
 
 	if (f->fixed_width == TRUE) {
 		_alfont_uncache_glyph_number(f, glyph_index);
@@ -4137,7 +4170,7 @@ int alfont_ugetxc(ALFONT_FONT * f, const char **s) {
 	return character;
 }
 
-// Following function alfont_get_string is removed from compilation because it 
+// Following function alfont_get_string is removed from compilation because it
 // is implemented with the use of non-standart malloc_usable_size function
 // (defined as _msize). This may cause linking errors on some Linux systems or
 // if using particular compilers.
