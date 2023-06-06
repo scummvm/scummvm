@@ -1122,25 +1122,52 @@ static void printStatistics(const Common::String &engineID) {
 	}
 
 	if (!summary)
-		printf("Engine ID       Number of games\n"
-		       "--------------- ---------------\n");
+		printf("Engine ID        Number of games    Added targets\n"
+		       "--------------- ---------------- ----------------\n");
+
+	int targetCount = 0;
+	Common::HashMap<Common::String, int> engineTargetCount;
+	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+	for (Common::ConfigManager::DomainMap::const_iterator iter = domains.begin(); iter != domains.end(); ++iter) {
+		if (!summary) {
+			Common::String engine(iter->_value.getValOrDefault("engineid"));
+			if (engine.empty()) {
+				QualifiedGameDescriptor g = EngineMan.findTarget(iter->_key);
+				if (!g.engineId.empty())
+					engine = g.engineId;
+			}
+			if (!all && Common::find(engines.begin(), engines.end(), engine) == engines.end())
+				continue;
+			Common::HashMap<Common::String, int>::iterator engineIter = engineTargetCount.find(engine);
+			if (engineIter == engineTargetCount.end())
+				engineTargetCount[engine] = 1;
+			else
+				++(engineIter->_value);
+		}
+		++targetCount;
+	}
+
 
 	int engineCount = 0, gameCount = 0;
 	const PluginList &plugins = EngineMan.getPlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
-
 		if (summary || all || Common::find(engines.begin(), engines.end(), metaEngine.getName()) != engines.end()) {
 			PlainGameList list = metaEngine.getSupportedGames();
 			++engineCount;
 			gameCount += list.size();
-			if (!summary)
-				printf("%-15s %15d\n", metaEngine.getName(), list.size());
+			if (!summary) {
+				int targets = 0;
+				Common::HashMap<Common::String, int>::const_iterator engineIter = engineTargetCount.find(metaEngine.getName());
+				if (engineIter != engineTargetCount.end())
+					targets = engineIter->_value;
+				printf("%-15s %16d %16d\n", metaEngine.getName(), list.size(), targets);
+			}
 		}
 	}
 	if (engines.size() != 1) {
-		printf("--------------- ---------------\n");
-		printf("Engines: %4d   Games: %8d\n", engineCount, gameCount);
+		printf("--------------- ---------------- ----------------\n");
+		printf("Engines: %6d Games: %9d Targets: %7d\n", engineCount, gameCount, targetCount);
 	}
 }
 
