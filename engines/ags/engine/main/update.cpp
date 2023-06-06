@@ -23,7 +23,6 @@
 // Game update procedure
 //
 
-#include "ags/lib/std/math.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/character.h"
 #include "ags/engine/ac/character_extras.h"

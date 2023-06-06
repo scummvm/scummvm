@@ -27,7 +27,6 @@
 //=============================================================================
 
 #include "ags/engine/ac/route_finder_impl_legacy.h"
-#include "ags/lib/std/math.h"
 
 #include "ags/shared/ac/common.h"   // quit()
 #include "ags/shared/ac/common_defines.h"

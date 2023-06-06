@@ -20,7 +20,6 @@
  */
 
 #include "common/savefile.h"
-#include "ags/lib/std/math.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/ac/audio_clip_type.h"
 #include "ags/engine/ac/global_game.h"

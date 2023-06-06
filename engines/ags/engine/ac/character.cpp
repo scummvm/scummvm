@@ -60,7 +60,6 @@
 #include "ags/engine/main/update.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/util/string_compat.h"
-#include "ags/lib/std/math.h"
 #include "ags/engine/gfx/graphics_driver.h"
 #include "ags/engine/script/runtime_script_value.h"
 #include "ags/engine/ac/dynobj/cc_character.h"

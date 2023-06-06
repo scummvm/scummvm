@@ -19,7 +19,6 @@
  *
  */
 
-#include "ags/lib/std/math.h"
 #include "ags/engine/ac/dynamic_sprite.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/draw.h"
