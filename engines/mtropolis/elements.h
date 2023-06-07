@@ -269,6 +269,7 @@ private:
 	MiniscriptInstructionOutcome scriptRangeWriteRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
 	MiniscriptInstructionOutcome scriptSetRangeTyped(MiniscriptThread *thread, const IntRange &value);
 	MiniscriptInstructionOutcome scriptSetRangeTyped(MiniscriptThread *thread, const Common::Point &value);
+	MiniscriptInstructionOutcome scriptSetRangeTyped(MiniscriptThread *thread, const Label &value);
 
 	void onPauseStateChanged() override;
 

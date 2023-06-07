@@ -5512,6 +5512,11 @@ void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dis
 				if (RuntimeObject *obj = payload.getObject().object.lock().get())
 					valueStr += Common::String::format(" %x", obj->getStaticGUID());
 				break;
+			case DynamicValueTypes::kLabel:
+				valueStr = Common::String::format("Label(%u,%u)", static_cast<uint>(payload.getLabel().superGroupID), static_cast<uint>(payload.getLabel().id));
+				if (const Common::String *labelName = _project->findNameOfLabel(payload.getLabel()))
+					valueStr = valueStr + "[\"" + (*labelName) + "\"]";
+				break;
 			default:
 				valueStr = "<BAD TYPE> (this is a bug!)";
 				break;

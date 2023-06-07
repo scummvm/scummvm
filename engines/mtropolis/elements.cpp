@@ -1213,6 +1213,9 @@ MiniscriptInstructionOutcome MToonElement::writeRefAttribute(MiniscriptThread *t
 
 VThreadState MToonElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (Event(EventIDs::kPlay, 0).respondsTo(msg->getEvent())) {
+		// If the range set fails, then the mToon should play anyway, so ignore the result
+		(void)scriptSetRange(nullptr, msg->getValue());
+
 		StartPlayingTaskData *startPlayingTaskData = runtime->getVThread().pushTask("MToonElement::startPlayingTask", this, &MToonElement::startPlayingTask);
 		startPlayingTaskData->runtime = runtime;
 
@@ -1227,7 +1230,7 @@ VThreadState MToonElement::consumeCommand(Runtime *runtime, const Common::Shared
 		becomeVisibleTaskData->desiredFlag = false;
 		becomeVisibleTaskData->runtime = runtime;
 
-		StopPlayingTaskData *stopPlayingTaskData = runtime->getVThread().pushTask("MToonElement::startPlayingTask", this, &MToonElement::stopPlayingTask);
+		StopPlayingTaskData *stopPlayingTaskData = runtime->getVThread().pushTask("MToonElement::stopPlayingTask", this, &MToonElement::stopPlayingTask);
 		stopPlayingTaskData->runtime = runtime;
 		return kVThreadReturn;
 	}
@@ -1553,30 +1556,12 @@ MiniscriptInstructionOutcome MToonElement::scriptSetRange(MiniscriptThread *thre
 		return scriptSetRangeTyped(thread, value.getIntRange());
 	if (value.getType() == DynamicValueTypes::kPoint)
 		return scriptSetRangeTyped(thread, value.getPoint());
-	if (value.getType() == DynamicValueTypes::kLabel) {
-		const Common::String *nameStrPtr = thread->getRuntime()->getProject()->findNameOfLabel(value.getLabel());
-		if (!nameStrPtr) {
-			thread->error("mToon range label wasn't found");
-			return kMiniscriptInstructionOutcomeFailed;
-		}
+	if (value.getType() == DynamicValueTypes::kLabel)
+		return scriptSetRangeTyped(thread, value.getLabel());
 
-		if (!_metadata) {
-			thread->error("mToon range couldn't be resolved because the metadata wasn't loaded yet");
-			return kMiniscriptInstructionOutcomeFailed;
-		}
+	if (thread)
+		thread->error("Invalid type for mToon range");
 
-		for (const MToonMetadata::FrameRangeDef &frameRange : _metadata->frameRanges) {
-			if (caseInsensitiveEqual(frameRange.name, *nameStrPtr)) {
-				// Frame ranges in the metadata are 0-based, but setting the range is 1-based, so add 1
-				return scriptSetRangeTyped(thread, IntRange(frameRange.startFrame + 1, frameRange.endFrame + 1));
-			}
-		}
-
-		thread->error("mToon range was assigned to a label but the label doesn't exist in the mToon data");
-		return kMiniscriptInstructionOutcomeFailed;
-	}
-
-	thread->error("Invalid type for mToon range");
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
@@ -1658,6 +1643,33 @@ MiniscriptInstructionOutcome MToonElement::scriptSetRangeTyped(MiniscriptThread 
 MiniscriptInstructionOutcome MToonElement::scriptSetRangeTyped(MiniscriptThread *thread, const Common::Point &pointRef) {
 	IntRange intRange(pointRef.x, pointRef.y);
 	return scriptSetRangeTyped(thread, intRange);
+}
+
+MiniscriptInstructionOutcome MToonElement::scriptSetRangeTyped(MiniscriptThread *thread, const Label &label) {
+	const Common::String *nameStrPtr = getRuntime()->getProject()->findNameOfLabel(label);
+	if (!nameStrPtr) {
+		if (thread)
+			thread->error("mToon range label wasn't found");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	if (!_metadata) {
+		if (thread)
+			thread->error("mToon range couldn't be resolved because the metadata wasn't loaded yet");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	for (const MToonMetadata::FrameRangeDef &frameRange : _metadata->frameRanges) {
+		if (caseInsensitiveEqual(frameRange.name, *nameStrPtr)) {
+			// Frame ranges in the metadata are 0-based, but setting the range is 1-based, so add 1
+			return scriptSetRangeTyped(thread, IntRange(frameRange.startFrame + 1, frameRange.endFrame + 1));
+		}
+	}
+
+	if (thread)
+		thread->error("mToon range was assigned to a label but the label doesn't exist in the mToon data");
+
+	return kMiniscriptInstructionOutcomeFailed;
 }
 
 void MToonElement::onPauseStateChanged() {

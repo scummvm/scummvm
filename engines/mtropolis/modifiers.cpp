@@ -3504,6 +3504,21 @@ VThreadState ObjectReferenceVariableModifierV1::consumeMessage(Runtime *runtime,
 	return kVThreadError;
 }
 
+
+bool ObjectReferenceVariableModifierV1::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "object") {
+		ObjectReferenceVariableV1Storage *storage = static_cast<ObjectReferenceVariableV1Storage *>(_storage.get());
+
+		if (storage->_value.expired())
+			result.clear();
+		else
+			result.setObject(storage->_value);
+		return true;
+	}
+
+	return VariableModifier::readAttribute(thread, result, attrib);
+}
+
 bool ObjectReferenceVariableModifierV1::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
 	ObjectReferenceVariableV1Storage *storage = static_cast<ObjectReferenceVariableV1Storage *>(_storage.get());
 
