@@ -10,6 +10,7 @@ The official English, German, French, Italian and Spanish versions of the game s
     *   pandas (tested with 1.5.3)
     *   openpyxl (tested with 3.1.2)
     *   xlwt (tested with 1.3.0)
+
     You could also use Python 2.7, but that is no longer the recommended way, since Python 2.7 reached the end of its life on January 1st, 2020 and is no longer maintained.
     For legacy purposes, the libraries required for running the scripts with Python 2.7 are:
     *   Pillow (tested with 6.2.2) or PIL (tested with 1.1.7)
@@ -41,7 +42,7 @@ The official English, German, French, Italian and Spanish versions of the game s
         python devtools/create_bladerunner/subtitles/quotesSpreadsheetCreator/quoteSpreadsheetCreator.py -op "/c/Westwood/Blade Runner/AUDIO_FRA" -ip "/c/Westwood/Blade Runner" -ian "devtools/create_bladerunner/subtitles/common/actornames.txt" -xwav -ld FR_FRA
         ```
 
-7.  When you've completed the above step, an Excel file should be created in your current folder, named "out-French.xls". Open this file with a spreadsheet editor app (tested with Microsoft Excel 2007 and LibreOffice Calc 6.2.4) and select the "INGQUO_#.TR#" sheet.
+7.  Once you've completed the above step, an Excel file should be created in your current folder, named "out-French.xls". Open this file with a spreadsheet editor app (tested with Microsoft Excel 2007 and LibreOffice Calc 6.2.4) and select the "INGQUO_#.TR#" sheet.
     *   Please keep the column A ("Filename") as is. Do not modify the contents of this column.
 
     *   Edit column B ("Quote") to put in the text for your transcript of the corresponding audio file
@@ -162,7 +163,9 @@ The __text configuration file "configureFontsTranslation.txt"__ is a __text file
     *   a '\#' character after the font type
 
     *   the name of the 8-bit string encoding (codepage) (eg. cp437 or windows-1252) that should be used to store the texts that uses this particular font "type" in the game's TRx text resource files. Valid values can be the standard encodings listed in python's page:
+
         For Python 3.10: <https://docs.python.org/3.10/library/codecs.html#standard-encodings>
+
         For Python 2.7: <https://docs.python.org/2.7/library/codecs.html#standard-encodings>
 
     *   a '\#' character after the target Encoding
