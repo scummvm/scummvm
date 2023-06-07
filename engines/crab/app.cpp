@@ -235,6 +235,10 @@ void App::Run() {
 				case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
 					g_engine->_inputManager->_ivState[e.customType] = false;
 					break;
+
+				// explicitly specify the default block to turn off unhandled case warnings
+				default:
+					break;
 			}
 
 			// Do state Event handling
