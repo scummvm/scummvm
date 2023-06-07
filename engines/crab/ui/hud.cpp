@@ -164,15 +164,11 @@ void HUD::State(const int &val) {
 }
 
 void HUD::SetTooltip() {
-	warning("STUB: HUD::SetTooltip()");
-
-#if 0
-	int count = 0;
+	unsigned int count = 0;
 	for (auto i = menu.element.begin(); i != menu.element.end() && count < tooltip.size(); ++i, ++count)
 		i->tooltip.text = tooltip[count] + " (" + i->hotkey.Name() + ")";
 
-	menu.element[HS_PAUSE].tooltip.text = tooltip[HS_PAUSE] + " (" + SDL_GetScancodeName(g_engine->_inputManager->iv[IG_PAUSE].key) + ")";
-#endif
+	menu.element[HS_PAUSE].tooltip.text = tooltip[HS_PAUSE] + " (" + g_engine->_inputManager->GetAssociatedKey(IG_PAUSE) + ")";
 }
 
 void HUD::SetUI() {
