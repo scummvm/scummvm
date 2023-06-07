@@ -158,9 +158,9 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 
 			tone.value[element_count] = dat.reply[reply_count].tone;
 
-			//Common::String text = SDL_GetScancodeName(g_engine->_inputManager->iv[IU_REPLY_0 + element_count].key);
-			//text += ". " + i->text;
-			Common::String text = i->text;
+			const InputType type = static_cast<InputType>(IU_REPLY_0 + element_count);
+			Common::String text = g_engine->_inputManager->GetAssociatedKey(type);
+			text += ". " + i->text;
 			info.InsertName(text);
 
 			if (element_count == 0)
