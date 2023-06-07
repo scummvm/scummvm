@@ -137,6 +137,8 @@ public:
 	// Initialize the controller if it is plugged in
 	void AddController();
 
+	Common::String GetAssociatedKey(const InputType &type) const;
+
 #if 0
 	// Handle plugging and unplugging of controllers on the fly
 	void HandleController(const SDL_Event &Event);

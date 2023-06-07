@@ -28,6 +28,9 @@
  *
  */
 
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/action.h"
+#include "crab/crab.h"
 #include "crab/input/input.h"
 
 namespace Crab {
@@ -187,6 +190,22 @@ void InputManager::CreateBackup() {
 void InputManager::RestoreBackup() {
 	for (int i = 0; i < IT_TOTAL; ++i)
 		iv[i] = backup[i];
+}
+
+Common::String InputManager::GetAssociatedKey(const InputType &type) const {
+	Common::Keymap *keymap = g_system->getEventManager()->getKeymapper()->getKeymap("Unrest");
+	const Common::Keymap::ActionArray actions = keymap->getActions();
+	Common::String res = "";
+
+	for (Common::Action *action : actions) {
+		if (action->event.customType == type) {
+			res = Common::String(keymap->getActionMapping(action)[0].description);
+			res.toUppercase();
+			break;
+		}
+	}
+
+	return res;
 }
 
 //------------------------------------------------------------------------
