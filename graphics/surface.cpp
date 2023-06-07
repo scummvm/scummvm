@@ -769,6 +769,12 @@ void Surface::ditherFloyd(const byte *srcPalette, int srcPaletteCount, Surface *
 				src += 2;
 				format.colorToRGB(color, r, g, b);
 				break;
+			case 3:
+				color = *((const uint32 *)src);
+				color >>= 8;
+				src += 3;
+				format.colorToRGB(color, r, g, b);
+				break;
 			case 4:
 				color = *((const uint32 *)src);
 				src += 4;
