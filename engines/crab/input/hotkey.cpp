@@ -28,6 +28,7 @@
  *
  */
 
+#include "crab/crab.h"
 #include "crab/input/hotkey.h"
 
 namespace Crab {
@@ -36,6 +37,8 @@ using namespace pyrodactyl::input;
 
 void HotKey::Load(rapidxml::xml_node<char> *node) {
 	LoadEnum(input, "input", node);
+
+	name = g_engine->_inputManager->GetAssociatedKey(input);
 }
 
 #if 0
@@ -56,13 +59,17 @@ bool HotKey::HandleEvents(const SDL_Event &Event) {
 #endif
 
 bool HotKey::HandleEvents(const Common::Event &Event) {
-	warning("STUB: HotKey::HandleEvents()");
+	//warning("STUB: HotKey::HandleEvents()");
+
+	if (input > IT_NONE && input < IT_TOTAL) {
+		return g_engine->_inputManager->State(input);
+	}
 
 	return false;
 }
 
 const char *HotKey::Name() {
-	warning("STUB: HotKey::Name()");
+	return name.c_str();
 
 #if 0
 	if (input > IT_NONE && input < IT_TOTAL)

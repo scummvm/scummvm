@@ -31,6 +31,7 @@
 #ifndef CRAB_HOTKEY_H
 #define CRAB_HOTKEY_H
 
+#include "crab/crab.h"
 #include "crab/common_header.h"
 #include "crab/input/input.h"
 
@@ -46,13 +47,20 @@ class HotKey {
 	// Has the key been pressed?
 	bool keydown;
 
+	// Description of the key associated with the Input
+	Common::String name;
+
 public:
 	HotKey() {
 		input = IT_NONE;
 		keydown = false;
 	}
 
-	void Set(const InputType &val) { input = val; }
+	void Set(const InputType &val) {
+		input = val;
+		name = g_engine->_inputManager->GetAssociatedKey(input);
+	}
+
 	const char *Name();
 
 	void Load(rapidxml::xml_node<char> *node);
