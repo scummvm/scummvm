@@ -269,7 +269,7 @@ U32String punycode_decode(const String &src1) {
 			}
 		}
 
-		if (noncode) {
+		if (noncode && di < srclen) {
 			tail = String(src.c_str() + di) + tail;
 			src = String(src.c_str(), di);
 			srclen = src.size();
