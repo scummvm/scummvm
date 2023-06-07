@@ -444,7 +444,7 @@ const char *recIndent() {
 
 bool isAbsolutePath(Common::String &path) {
 	// Starts with Mac directory notation for the game root
-	if (path.hasPrefix("@:"))
+	if (path.hasPrefix(Common::String("@") + g_director->_dirSeparator))
 		return true;
 	// Starts with a Windows drive letter
 	if (path.size() >= 3
@@ -471,7 +471,7 @@ Common::String convertPath(Common::String &path) {
 
 	if (path.hasPrefix("::")) { // Parent directory
 		idx = 2;
-	} else if (path.hasPrefix("@:")) { // Root of the game
+	} else if (path.hasPrefix(Common::String("@") + g_director->_dirSeparator)) { // Root of the game
 		idx = 2;
 	} else if (path.size() >= 3
 					&& Common::isAlpha(path[0])
