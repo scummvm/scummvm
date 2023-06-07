@@ -64,8 +64,8 @@ void Button::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 	LoadNum(se_click, "click", node, echo);
 	LoadNum(se_hover, "hover", node, echo);
 
-	//if (NodeValid("hotkey", node, false))
-	//	hotkey.Load(node->first_node("hotkey"));
+	if (NodeValid("hotkey", node, false))
+		hotkey.Load(node->first_node("hotkey"));
 
 	tooltip.Load(node->first_node("tooltip"), this);
 	caption.Load(node->first_node("caption"), this);
