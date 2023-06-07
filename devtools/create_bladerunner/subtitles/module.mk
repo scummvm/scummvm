@@ -37,7 +37,7 @@ $(FONT_OUTPUT): $(BLADERUNNER_SUBTITLES_SAMPLE_INPUT_FOLDER)/$(INPUT_FONT_GLYPHS
 	$(info If successful, a $(FONT_OUTPUT) file will be created in your working directory)
 	$(info This is an intermediate file. You don't need to copy this in your Blade Runner game directory)
 	$(info ---------)
-	$(BLADERUNNER_SUBTITLES_SCRIPTS_ROOT_FOLDER)/fontCreator/fontCreator.py -im $(BLADERUNNER_SUBTITLES_SAMPLE_INPUT_FOLDER)/$(INPUT_FONT_GLYPHS_PNG_FILENAME) -oe $(BLADERUNNER_SUBTITLES_SAMPLE_INPUT_FOLDER)/$(INPUT_FONT_GLYPHS_PNG_AUX_CONF_FILENAME) -om $(FONT_OUTPUT) -pxLL 42 -pxTT 30 -pxKn 1 -pxWS 7 --trace
+	$(BLADERUNNER_SUBTITLES_SCRIPTS_ROOT_FOLDER)/fontCreator/fontCreator.py -im $(BLADERUNNER_SUBTITLES_SAMPLE_INPUT_FOLDER)/$(INPUT_FONT_GLYPHS_PNG_FILENAME) -oe $(BLADERUNNER_SUBTITLES_SAMPLE_INPUT_FOLDER)/$(INPUT_FONT_GLYPHS_PNG_AUX_CONF_FILENAME) -om $(FONT_OUTPUT) -pxLL 42 -pxTT 30 -pxKn 1 -pxWS 7
 
 # Creation of final output mix file SUBTILES.MIX
 # The MIX file will pack the fonts file $(FONT_OUTPUT) as well as resources created from the transcript (EXCEL) file $(INPUT_TRANSCRIPT_FILENAME)
@@ -55,5 +55,5 @@ $(TOOL_OUTPUT): $(FONT_OUTPUT) $(INPUT_TRANSCRIPT_FILEPATH) $(BLADERUNNER_SUBTIT
 	$(info If successful, a $(TOOL_OUTPUT) file will be created in your working directory)
 	$(info Please, copy this $(TOOL_OUTPUT) into your Blade Runner game directory!)
 	$(info ---------)
-	$(BLADERUNNER_SUBTITLES_SCRIPTS_ROOT_FOLDER)/mixResourceCreator/mixResourceCreator.py -x $(INPUT_TRANSCRIPT_FILEPATH) -ian $(BLADERUNNER_SUBTITLES_SCRIPTS_ROOT_FOLDER)/common/actornames.txt -cft $(BLADERUNNER_SUBTITLES_SAMPLE_INPUT_FOLDER)/$(INPUT_TRANSCRIPT_AUX_CONF_FILENAME) -ld EFIGS --trace
+	$(BLADERUNNER_SUBTITLES_SCRIPTS_ROOT_FOLDER)/mixResourceCreator/mixResourceCreator.py -x $(INPUT_TRANSCRIPT_FILEPATH) -ian $(BLADERUNNER_SUBTITLES_SCRIPTS_ROOT_FOLDER)/common/actornames.txt -cft $(BLADERUNNER_SUBTITLES_SAMPLE_INPUT_FOLDER)/$(INPUT_TRANSCRIPT_AUX_CONF_FILENAME) -ld EFIGS
 	-$(RM) $(INTERMEDIATE_RESOURCE_FILES_UI) $(INTERMEDIATE_RESOURCE_FILES_SUBS)

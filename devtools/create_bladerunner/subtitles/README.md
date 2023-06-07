@@ -1,11 +1,22 @@
 # Blade Runner (Westwood Studios, 1997) Subtitles Support
-Some tools written in __Python 2.7__ to help add support for subtitles in Westwood's point and click adventure game Blade Runner (1997) for PC.
+Some tools written in __Python 3.x (tested with 3.10.11) and backwards compatible with Python 2.7 (tested with 2.7.18)__ to help add support for subtitles in Westwood's point and click adventure game Blade Runner (1997) for PC.
 The official English, German, French, Italian and Spanish versions of the game should be supported.
 
 ## Quick guide for volunteer transcribers
 1.  Please make sure you have an audio player installed in your Operating System (such as VLC).
 
-2.  You will need python 2.7 installed for this guide, as well as the python libraries Pillow (or PIL), xlrd, xlwt, wave and xlutils.
+2.  You will need Python 3.10 (recommended) installed for this guide, as well as the Python libraries:
+    *   Pillow (tested with 9.5.0)
+    *   pandas (tested with 1.5.3)
+    *   openpyxl (tested with 3.1.2)
+    *   xlwt (tested with 1.3.0)
+    You could also use Python 2.7, but that is no longer the recommended way, since Python 2.7 reached the end of its life on January 1st, 2020 and is no longer maintained.
+    For legacy purposes, the libraries required for running the scripts with Python 2.7 are:
+    *   Pillow (tested with 6.2.2) or PIL (tested with 1.1.7)
+    *   pandas (tested with 0.24.2)
+    *   openpyxl (tested with 2.6.4)
+    *   xlwt (tested with 1.3.0)
+    *   xlutils (tested with 2.0.0)
 
 3.  Using git, checkout the latest revision of the ScummVM repository from GitHub.
 
@@ -23,11 +34,11 @@ The official English, German, French, Italian and Spanish versions of the game s
 6.  Export all speech audio from the game and create an Excel file (xls) with links to the audio files.
     *   You will need to have some free HDD space for this step (around 650MB).
 
-    *   Using a command line interface (eg MSYS2) navigate to the ScummVM repository folder and issue a command like the one below, making sure you specify the correct target language code for your requirements; supported language codes are "EN\_ANY" for English, "FR\_FRA" for French, "DE\_DEU" for German, "IT\_ITA" for Italian, "ES\_ESP" for Spanish and "RU\_RUS" for Russian (version by Fargus Multimedia).
+    *   Using a command line interface (eg. MSYS2) navigate to the ScummVM repository folder and issue a command like the one below, making sure you specify the correct target language code for your requirements; supported language codes are "EN\_ANY" for English, "FR\_FRA" for French, "DE\_DEU" for German, "IT\_ITA" for Italian, "ES\_ESP" for Spanish and "RU\_RUS" for Russian (version by Fargus Multimedia).
 
     *   In the following example we assume we need to export the audio from the French version of the game. This could take a few minutes to complete. Please refer to the [quotesSpreadsheetCreator](#quotesspreadsheetcreator-quotespreadsheetcreatorpy) section of this document for more command-line options for this tool.
         ```bash
-        python2.7 devtools/create_bladerunner/subtitles/quotesSpreadsheetCreator/quoteSpreadsheetCreator.py -op "/c/Westwood/Blade Runner/AUDIO_FRA" -ip "/c/Westwood/Blade Runner" -ian "devtools/create_bladerunner/subtitles/common/actornames.txt" -xwav -ld FR_FRA
+        python devtools/create_bladerunner/subtitles/quotesSpreadsheetCreator/quoteSpreadsheetCreator.py -op "/c/Westwood/Blade Runner/AUDIO_FRA" -ip "/c/Westwood/Blade Runner" -ian "devtools/create_bladerunner/subtitles/common/actornames.txt" -xwav -ld FR_FRA
         ```
 
 7.  When you've completed the above step, an Excel file should be created in your current folder, named "out-French.xls". Open this file with a spreadsheet editor app (tested with Microsoft Excel 2007 and LibreOffice Calc 6.2.4) and select the "INGQUO_#.TR#" sheet.
@@ -66,14 +77,14 @@ You need to follow these instructions:
     make devtools/create_bladerunner/subtitles
     ```
 
-6.  You may need to install some required Python 2 libraries such as Pillow (or PIL), xlrd, xlwt and wave (which is part of the Python 2 Standard Library).
+6.  You may need to install some required Python 3 (or 2) libraries such as Pillow (or PIL), pandas, openpyxl, xlwt.
 
 7.  Copy the output file "SUBTITLES.MIX", created in the ScummVM root folder, into your Blade Runner game directory.
 
 8.  Launch the Blade Runner game using ScummVM.
 
 ## quotesSpreadsheetCreator (quoteSpreadsheetCreator.py)
-(requires python libs *xlwt* (tested with version 1.3.0), *wave* (included in the Python 2 Standard Library)
+(requires Python libs *xlwt* (tested with version 1.3.0 for both Python 3 and Python 2.7))
 
 A tool to gather all the speech audio filenames in an Excel file which will include a column with links to the audio file location on the PC. By Ctrl+MouseClick on that column's entries you should be able to listen to the corresponding WAV file.
 
@@ -111,19 +122,19 @@ Syntax Notes:
 
 Usage:
 ```bash
-python2.7 quoteSpreadsheetCreator.py -op folderpath_for_exported_wav_Files [-ip folderpath_for_TLK_Files] [-ian pathToActorNamesTxt] [-m stringPathToReplaceFolderpathInExcelLinks] [-ld languageDescription] [-xwav] [-xtre] [--trace]
+python quoteSpreadsheetCreator.py -op folderpath_for_exported_wav_Files [-ip folderpath_for_TLK_Files] [-ian pathToActorNamesTxt] [-m stringPathToReplaceFolderpathInExcelLinks] [-ld languageDescription] [-xwav] [-xtre] [--trace]
 ```
 
 The tool __requires__ a valid path to the actornames.txt file; this file is included in the samples folder.
 
 ## mixResourceCreator (mixResourceCreator.py)
-(requires python libs *xlrd* (tested with version 1.2.0), *xlwt* (tested with version 1.3.0), *xlutils* (tested with version 2.0.0))
+(requires Python libs *xlwt* (tested with version 1.3.0 for both Python 3 and Python 2.7) and, only for Python 2.7, *xlutils* (version 2.0.0))
 
 A tool to process the aforementioned Excel file with the dialogue transcriptions and output text resource files (TRx) that will be packed along with the external font (see fontCreator tool) into a SUBTITLES.MIX file. Multiple TRx files will be created intermediately in order to fully support subtitles in the game. One TRx file includes all in-game spoken quotes and the rest of them correspond to any VQA video sequence that contain voice acting.
 
 Usage:
 ```bash
-python2.7 mixResourceCreator.py -x excelWithTranscriptSheets.xlsx [-ian pathToActorNamesTxt] [-cft pathToConfigureFontsTranslationTxt] [--trace]
+python mixResourceCreator.py -x excelWithTranscriptSheets.xlsx [-ian pathToActorNamesTxt] [-cft pathToConfigureFontsTranslationTxt] [--trace]
 ```
 
 The tool __requires__ a valid path to the actornames.txt file, which is included in the samples folder.
@@ -151,7 +162,8 @@ The __text configuration file "configureFontsTranslation.txt"__ is a __text file
     *   a '\#' character after the font type
 
     *   the name of the 8-bit string encoding (codepage) (eg. cp437 or windows-1252) that should be used to store the texts that uses this particular font "type" in the game's TRx text resource files. Valid values can be the standard encodings listed in python's page:
-        <https://docs.python.org/2.7/library/codecs.html#standard-encodings>
+        For Python 3.10: <https://docs.python.org/3.10/library/codecs.html#standard-encodings>
+        For Python 2.7: <https://docs.python.org/2.7/library/codecs.html#standard-encodings>
 
     *   a '\#' character after the target Encoding
 
@@ -172,7 +184,7 @@ Additionally, __all the new and edited fonts (FON files that were output by the 
 It's important to keep the naming of those files unchanged. __Supported name values for imported FON files__ are: SUBTLS\_E.FON, KIA6PT.FON, TAHOMA18.FON, TAHOMA24.FON and SYSTEM.FON (practically you won't be using the last one).
 
 ## fontCreator (fontCreator.py)
-(requires python Image library *Pillow* (tested with version 5.4.1))
+(requires Python Image library *Pillow* (tested with version 9.5.0 for Python 3, and version 6.2.2 for Python 2.7))
 
 A tool to support __both__ the exporting of fonts from the game (to PNG images) __and__ the creation of a font file (FON) in order to resolve various issues with the available fonts (included in the game's own resource files). These issues include alignment, kerning, corrupted format, limited charset and unsupported characters -- especially for languages with too many non-Latin symbols in their alphabet.
 This font tool's code is based off the Monkey Island Special Edition's Translator (<https://github.com/ShadowNate/MISETranslator>).
@@ -181,20 +193,21 @@ Usage:
 
 Syntax A - To export game fonts to PNG images:
 ```bash
-python2.7 fontCreator.py -ip folderpathForMIXFiles
+python fontCreator.py -ip folderpathForMIXFiles
 ```
 
 Syntax B - To create the subtitle's font:
 ```bash
-python2.7 fontCreator.py -im imageRowPNGFilename -om targetFONfilename [-oe pathToOverrideEncodingTxt] -pxLL minSpaceBetweenLettersInRowLeftToLeft -pxTT minSpaceBetweenLettersInColumnTopToTop -pxKn kerningForFirstDummyFontLetter -pxWS whiteSpaceWidthInPixels [-pxYo yOffsetInPixels] [--noAutoTabCalculation] [--noSpecialGlyphs] [--trace]
+python fontCreator.py -im imageRowPNGFilename -om targetFONfilename [-oe pathToOverrideEncodingTxt] -pxLL minSpaceBetweenLettersInRowLeftToLeft -pxTT minSpaceBetweenLettersInColumnTopToTop -pxKn kerningForFirstDummyFontLetter -pxWS whiteSpaceWidthInPixels [-pxYo yOffsetInPixels] [--noAutoTabCalculation] [--noSpecialGlyphs] [--trace]
 ```
 
 This tool __requires an override encoding text file__ in its Syntax B mode (subtitle font creation). You can specify the path to this file after a "-oe" switch. If you don't provide this path, the script will search for an "overrideEncoding.txt" file in the current working directory.
 
 The override encoding file is a __text file that should be saved in a UTF-8 encoding (no BOM)__, that contains the following:
 
-1.  A key "targetEncoding" with a value of the name of the ASCII codepage (8-bit encoding) that should be used for the character fonts (eg windows-1253). Valid values can be the standard encodings listed in python's page:
-    <https://docs.python.org/2.7/library/codecs.html#standard-encodings>
+1.  A key "targetEncoding" with a value of the name of the ASCII codepage (8-bit encoding) that should be used for the character fonts (eg windows-1253). Valid values can be the standard encodings listed in Python's page:
+    *   For Python 3.10: <https://docs.python.org/3.10/library/codecs.html#standard-encodings>
+    *   For Python 2.7: <https://docs.python.org/2.7/library/codecs.html#standard-encodings>
 
 2.  A key "asciiCharList" with value the "all-characters" string with all the printable characters that will be used in-game, from the specified codepage. Keep in mind that:
     *   The first such character (typically this is the '!' character) should be repeated twice!
