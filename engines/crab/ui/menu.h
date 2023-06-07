@@ -35,6 +35,7 @@
 #ifndef CRAB_MENU_H
 #define CRAB_MENU_H
 
+#include "crab/crab.h"
 #include "crab/image/ImageManager.h"
 #include "crab/ui/button.h"
 #include "crab/common_header.h"
@@ -77,7 +78,7 @@ protected:
 		} else {
 			unsigned int curpos = 0;
 			for (; curpos < path.size(); curpos++)
-				if (path[curpos] == hover_index)
+				if ((int)path[curpos] == hover_index)
 					break;
 
 			for (unsigned int nextloc = (curpos + 1) % element.size(); nextloc != curpos; nextloc = (nextloc + 1) % element.size())
@@ -101,11 +102,11 @@ protected:
 		} else {
 			unsigned int curpos = 0;
 			for (; curpos < path.size(); curpos++)
-				if (path[curpos] == hover_index)
+				if ((int)path[curpos] == hover_index)
 					break;
 
 			int nextloc = curpos - 1;
-			while (nextloc != curpos) {
+			while (nextloc != (int)curpos) {
 				if (nextloc < 0)
 					nextloc = element.size() - 1;
 
@@ -117,6 +118,48 @@ protected:
 				nextloc--;
 			}
 		}
+	}
+
+	//------------------------------------------------------------------------
+	// Purpose: Handle keyboard input
+	//------------------------------------------------------------------------
+	int HandleKeyboard(const Common::Event &Event) {
+		using namespace pyrodactyl::input;
+
+		if (!element.empty()) {
+			if (path_type != PATH_HORIZONTAL) {
+				if (g_engine->_inputManager->State(IU_DOWN)) {
+					Next();
+					latest_input = KEYBOARD;
+				} else if (g_engine->_inputManager->State(IU_UP)) {
+					Prev();
+					latest_input = KEYBOARD;
+				}
+			}
+
+			if (path_type != PATH_VERTICAL) {
+				if (g_engine->_inputManager->State(IU_RIGHT)) {
+					Next();
+					latest_input = KEYBOARD;
+				} else if (g_engine->_inputManager->State(IU_LEFT)) {
+					Prev();
+					latest_input = KEYBOARD;
+				}
+			}
+
+			if (g_engine->_inputManager->State(IU_ACCEPT) && hover_index != -1)
+				return hover_index;
+
+			// We pressed a key, which means we have to update the hovering status
+			if (latest_input == KEYBOARD) {
+				// Update hover status of keys according to the current index
+				int i = 0;
+				for (auto it = element.begin(); it != element.end(); ++it, ++i)
+					it->hover_key = (i == hover_index);
+			}
+		}
+
+		return -1;
 	}
 
 #if 0
@@ -210,7 +253,6 @@ public:
 	//------------------------------------------------------------------------
 	int HandleEvents(const Common::Event &Event, const int &XOffset = 0, const int &YOffset = 0) {
 		// The keyboard/joystick event handling bit
-		/*
 		if (use_keyboard) {
 			int result = HandleKeyboard(Event);
 
@@ -221,7 +263,6 @@ public:
 				return result;
 			}
 		}
-		*/
 
 		// Check if we have moved or clicked the mouse
 		if (Common::isMouseEvent(Event)) {
@@ -251,13 +292,11 @@ public:
 			}
 		}
 
-		/*
 		if (latest_input == KEYBOARD) {
 			// The latest input is the keyboard, which means we have to forget the mouse hover states
 			for (auto it = element.begin(); it != element.end(); ++it)
 				it->hover_mouse = false;
 		}
-		*/
 		return -1;
 	}
 
