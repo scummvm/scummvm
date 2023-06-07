@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "ags/engine/ac/game_setup.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_audio.h"
@@ -93,6 +94,15 @@ void PlayVideo(const char *name, int skip, int scr_flags) {
 		return;
 	if (_G(debug_flags) & DBG_NOVIDEO)
 		return;
+
+	// WORKAROUND: This video uses an unsupported codec and
+	// the decoder current implementation doesn't allow to
+	// continue gracefully
+	if (ConfMan.get("gameid") == "donnaavengerofblood" &&
+		!strcmp(name, "terminus")) {
+		warning("Skipped unsupported \'terminus\' video");
+		return;
+	}
 
 	// Convert PlayVideo flags to common video flags
 	/* NOTE: historically using decimal "flags"
