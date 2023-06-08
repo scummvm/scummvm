@@ -540,6 +540,7 @@ uint32 DecompressingStream::read(void *dataPtr, uint32 dataSize) {
 	uint32 bytesAvailable = _decompressedSize - _pos;
 
 	if (dataSize > bytesAvailable) {
+		_eosFlag = true;
 		dataSize = bytesAvailable;
 	}
 
