@@ -89,116 +89,17 @@ Common::Error CrabMetaEngine::createInstance(OSystem *syst, Engine **engine, con
 Common::KeymapArray CrabMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 
-	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGame, "Unrest", "Unrest");
+	KeymapArray arr;
 
-	Action *act;
+	Keymap *gameKeymaps = Crab::pyrodactyl::input::InputManager::GetDefaultKeyMapsForGame();
+	Keymap *uiKeymaps = Crab::pyrodactyl::input::InputManager::GetDefaultKeyMapsForUI();
+	Keymap *hudKeymaps = Crab::pyrodactyl::input::InputManager::GetDefaultKeyMapsForHUD();
 
-	act = new Action(kStandardActionMoveUp, _("Up"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IG_UP);
-	act->addDefaultInputMapping("UP");
-	act->addDefaultInputMapping("JOY_UP");
-	keymap->addAction(act);
+	arr.push_back(gameKeymaps);
+	arr.push_back(uiKeymaps);
+	arr.push_back(hudKeymaps);
 
-	act = new Action(kStandardActionMoveDown, _("Down"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IG_DOWN);
-	act->addDefaultInputMapping("DOWN");
-	act->addDefaultInputMapping("JOY_DOWN");
-	keymap->addAction(act);
-
-	act = new Action(kStandardActionMoveLeft, _("Left"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IG_LEFT);
-	act->addDefaultInputMapping("LEFT");
-	act->addDefaultInputMapping("JOY_LEFT");
-	keymap->addAction(act);
-
-	act = new Action(kStandardActionMoveRight, _("Right"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IG_RIGHT);
-	act->addDefaultInputMapping("RIGHT");
-	act->addDefaultInputMapping("JOY_RIGHT");
-	keymap->addAction(act);
-
-	act = new Action("TALK", _("Talk/Interact"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IG_TALK);
-	act->addDefaultInputMapping("RETURN");
-	act->addDefaultInputMapping("JOY_A");
-	keymap->addAction(act);
-
-	act = new Action("MAP", _("Map"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IG_MAP);
-	act->addDefaultInputMapping("m");
-	keymap->addAction(act);
-
-	act = new Action("JOURNAL", _("Journal"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IG_JOURNAL);
-	act->addDefaultInputMapping("j");
-	keymap->addAction(act);
-
-	act = new Action("INVENTORY", _("Inventory"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IG_INVENTORY);
-	act->addDefaultInputMapping("i");
-	keymap->addAction(act);
-
-	act = new Action("TRAITS", _("Traits"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IG_CHARACTER);
-	act->addDefaultInputMapping("t");
-	keymap->addAction(act);
-
-
-	act = new Action("UI_UP", _("Up"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IU_UP);
-	act->addDefaultInputMapping("UP");
-	act->addDefaultInputMapping("JOY_UP");
-	keymap->addAction(act);
-
-	act = new Action("UI_DOWN", _("Down"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IU_DOWN);
-	act->addDefaultInputMapping("DOWN");
-	act->addDefaultInputMapping("JOY_DOWN");
-	keymap->addAction(act);
-
-	act = new Action("UI_LEFT", _("Left"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IU_LEFT);
-	act->addDefaultInputMapping("LEFT");
-	act->addDefaultInputMapping("JOY_LEFT");
-	keymap->addAction(act);
-
-	act = new Action("UI_RIGHT", _("Right"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IU_RIGHT);
-	act->addDefaultInputMapping("RIGHT");
-	act->addDefaultInputMapping("JOY_RIGHT");
-	keymap->addAction(act);
-
-	act = new Action("REPLY1", _("Reply 1"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IU_REPLY_0);
-	act->addDefaultInputMapping("1");
-	keymap->addAction(act);
-
-	act = new Action("REPLY2", _("Reply 2"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IU_REPLY_1);
-	act->addDefaultInputMapping("2");
-	keymap->addAction(act);
-
-	act = new Action("REPLY3", _("Reply 3"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IU_REPLY_2);
-	act->addDefaultInputMapping("3");
-	keymap->addAction(act);
-
-	act = new Action("REPLY4", _("Reply 4"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IU_REPLY_3);
-	act->addDefaultInputMapping("4");
-	keymap->addAction(act);
-
-	act = new Action("REPLY5", _("Reply 5"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IU_REPLY_4);
-	act->addDefaultInputMapping("5");
-	keymap->addAction(act);
-
-	act = new Action("REPLY6", _("Reply 6"));
-	act->setCustomEngineActionEvent(Crab::pyrodactyl::input::IU_REPLY_5);
-	act->addDefaultInputMapping("6");
-	keymap->addAction(act);
-
-	return Keymap::arrayOf(keymap);
+	return arr;
 }
 
 bool CrabMetaEngine::hasFeature(MetaEngineFeature f) const {

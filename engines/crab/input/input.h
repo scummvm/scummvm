@@ -31,6 +31,10 @@
 #ifndef CRAB_INPUT_H
 #define CRAB_INPUT_H
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "crab/common_header.h"
 #include "crab/input/inputval.h"
 
@@ -80,6 +84,11 @@ enum InputType {
 	IT_TOTAL
 };
 
+enum KeyBindingMode {
+	KBM_GAME = 0,
+	KBM_UI = 1
+};
+
 // Constants related to menu size
 const int IG_START = IG_UP, IG_SIZE = IG_BLOCK - IG_START + 1;
 const int IU_START = IU_UP, IU_SIZE = IT_TOTAL - IU_START;
@@ -94,15 +103,32 @@ class InputManager {
 	// The current version of the input scheme
 	unsigned int version;
 
+	// The current mode of keymap applied
+	KeyBindingMode _keyMode;
+
 public:
 	InputManager() {
 		//controller = nullptr;
 		version = 0;
 
+		ClearInputs();
+	}
+
+	~InputManager() {}
+
+	static Common::Keymap* GetDefaultKeyMapsForGame();
+	static Common::Keymap* GetDefaultKeyMapsForUI();
+	static Common::Keymap* GetDefaultKeyMapsForHUD();
+
+	void ClearInputs() {
 		for (int i = 0; i < IT_TOTAL; i++)
 			_ivState[i] = false;
 	}
-	~InputManager() {}
+
+	void SetKeyBindingMode(KeyBindingMode mode);
+
+	KeyBindingMode GetKeyBindingMode() const { return _keyMode; }
+
 	void Quit() {
 		warning("STUB: InputManager::Quit()");
 
