@@ -8897,7 +8897,7 @@ void VisualElement::renderBrightenScanline(TElement *element, size_t numElements
 }
 
 template<class TElement>
-static void VisualElement::renderDarkenScanline(TElement *element, size_t numElements, TElement rMask, TElement rSub, TElement gMask, TElement gSub, TElement bMask, TElement bSub) {
+void VisualElement::renderDarkenScanline(TElement *element, size_t numElements, TElement rMask, TElement rSub, TElement gMask, TElement gSub, TElement bMask, TElement bSub) {
 	TElement rZero = ~rMask;
 	TElement gZero = ~gMask;
 	TElement bZero = ~bMask;
