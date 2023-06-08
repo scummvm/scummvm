@@ -387,6 +387,8 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 	stream->seek(startOffset);
 
+	_stream = stream;
+
 	if (convertTagToUppercase(stream->readUint32BE()) != MKTAG('R', 'I', 'F', 'F')) {
 		debugC(5, kDebugLoading, "RIFFArchive::openStream(): RIFF expected but not found");
 		return false;
@@ -409,8 +411,6 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	stream->readUint32LE(); // unknown (always 0?)
 
 	Common::DumpFile out;
-
-	_stream = stream;
 
 	while ((uint32)stream->pos() < startPos + cftcSize) {
 		uint32 tag = convertTagToUppercase(stream->readUint32BE());
