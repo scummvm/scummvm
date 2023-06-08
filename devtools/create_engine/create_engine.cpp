@@ -47,6 +47,15 @@ static const char *const FILENAMES[] = {
 	"metaengine.h", "module.mk", "xyzzy.cpp",
 	"xyzzy.h", "POTFILES", nullptr
 };
+static const char *const FILENAMES_EVENTS[] = {
+	"configure.engine", "console.cpp", "console.h",
+	"credits.pl", "detection.cpp", "detection.h",
+	"detection_tables.h", "events.cpp", "events.h",
+	"messages.cpp", "messages.h", "metaengine.cpp",
+	"metaengine.h", "module.mk", "xyzzy.cpp", "xyzzy.h",
+	"POTFILES", "views.h", "view1.cpp", "view1.h", nullptr
+};
+
 const char *const ENGINES = "create_project ..\\.. --msvc\n";
 
 bool fileExists(const char *name) {
@@ -108,9 +117,11 @@ void process_file(FILE *in, FILE *out) {
 }
 
 // Copies and processes the specified file
-void process_file(const char *filename, const char *prefix, const char *prefix2) {
+void process_file(const char *filename, const char *prefix, const char *prefix2,
+		bool isEvents) {
 	char srcFilename[MAX_LINE_LENGTH], destFilename[MAX_LINE_LENGTH];
-	snprintf(srcFilename, MAX_LINE_LENGTH, "%s/files/%s", prefix2, filename);
+	const char *srcFormat = isEvents ? "%s/files_events/%s" : "%s/files/%s";
+	snprintf(srcFilename, MAX_LINE_LENGTH, srcFormat, prefix2, filename);
 	if (!strncmp(filename, "xyzzy.", 6))
 		snprintf(destFilename, MAX_LINE_LENGTH, "%s/engines/%s/%s.%s",
 			prefix, engineLowercase, engineLowercase, filename + 6);
@@ -183,10 +194,13 @@ void create_batch_file(const char *prefix) {
 }
 
 int main(int argc, char *argv[]) {
-	if (argc != 2) {
+	if (argc < 2) {
 		printf("Please specify engine name as a parameter\n");
+		printf("With an optional -events to create an events based engine.\n");
 		return 0;
 	}
+
+	bool isEvents = (argc == 3) && !strcmp(argv[2], "-events");
 
 	// Set up different cased engine names
 	for (size_t i = 0; i < strlen(argv[1]) + 1; ++i) {
@@ -225,8 +239,9 @@ int main(int argc, char *argv[]) {
 	printf("done\n");
 
 	// Process the files
-	for (const char *const *filename = FILENAMES; *filename; ++filename)
-		process_file(*filename, prefix, prefix2);
+	const char *const *filenames = isEvents ? FILENAMES_EVENTS : FILENAMES;
+	for (const char *const *filename = filenames; *filename; ++filename)
+		process_file(*filename, prefix, prefix2, isEvents);
 
 	create_batch_file(prefix);
 
