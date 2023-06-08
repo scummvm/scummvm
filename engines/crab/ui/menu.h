@@ -35,6 +35,7 @@
 #ifndef CRAB_MENU_H
 #define CRAB_MENU_H
 
+#include "crab/metaengine.h"
 #include "crab/crab.h"
 #include "crab/image/ImageManager.h"
 #include "crab/ui/button.h"
@@ -125,6 +126,10 @@ protected:
 	//------------------------------------------------------------------------
 	int HandleKeyboard(const Common::Event &Event) {
 		using namespace pyrodactyl::input;
+
+		if (g_engine->_inputManager->GetKeyBindingMode() != KBM_UI) {
+			g_engine->_inputManager->SetKeyBindingMode(KBM_UI);
+		}
 
 		if (!element.empty()) {
 			if (path_type != PATH_HORIZONTAL) {
@@ -260,6 +265,7 @@ public:
 			if (result != -1) {
 				// Reset the menu state
 				Reset();
+				g_engine->_inputManager->SetKeyBindingMode(pyrodactyl::input::KBM_GAME);
 				return result;
 			}
 		}
@@ -278,6 +284,7 @@ public:
 			if (it->HandleEvents(Event, XOffset, YOffset) == BUAC_LCLICK) {
 				// Reset the menu state
 				Reset();
+				g_engine->_inputManager->SetKeyBindingMode(pyrodactyl::input::KBM_GAME);
 				return i;
 			}
 

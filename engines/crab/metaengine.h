@@ -52,6 +52,7 @@
 #ifndef CRAB_METAENGINE_H
 #define CRAB_METAENGINE_H
 
+#include "backends/keymapper/keymapper.h"
 #include "engines/advancedDetector.h"
 
 class CrabMetaEngine : public AdvancedMetaEngine {
