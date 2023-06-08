@@ -2756,6 +2756,8 @@ public:
 	const VisualElementRenderProperties &getRenderProperties() const;
 	const Common::WeakPtr<GraphicModifier> &getPrimaryGraphicModifier() const;
 
+	void setShading(int16 topLeftBevelShading, int16 bottomRightBevelShading, int16 interiorShading, uint32 bevelSize);
+
 	void setTransitionProperties(const VisualElementTransitionProperties &props);
 	const VisualElementTransitionProperties &getTransitionProperties() const;
 
@@ -2803,12 +2805,29 @@ protected:
 
 	static VisualElement *recursiveFindItemWithLayer(VisualElement *element, int32 layer);
 
+	void renderShading(Graphics::Surface &surf) const;
+
+	static uint32 quantizeShading(uint32 mask, int16 shading);
+
+	static void renderShadingScanlineDynamic(void *data, size_t numElements, uint32 rMask, uint32 rAdd, uint32 gMask, uint32 gAdd, uint32 bMask, uint32 bAdd, bool isBrighten, byte bytesPerPixel);
+
+	template<class TElement>
+	static void renderBrightenScanline(TElement *element, size_t numElements, TElement rMask, TElement rAdd, TElement gMask, TElement gAdd, TElement bMask, TElement bAdd);
+
+	template<class TElement>
+	static void renderDarkenScanline(TElement *element, size_t numElements, TElement rMask, TElement rSub, TElement gMask, TElement gSub, TElement bMask, TElement bSub);
+
 	bool _directToScreen;
 	bool _visible;
 	bool _visibleByDefault;
 	Common::Rect _rect;
 	Common::Point _cachedAbsoluteOrigin;
 	uint16 _layer;
+
+	int16 _topLeftBevelShading;
+	int16 _bottomRightBevelShading;
+	int16 _interiorShading;
+	uint32 _bevelSize;
 
 	Common::SharedPtr<DragMotionProperties> _dragProps;
 

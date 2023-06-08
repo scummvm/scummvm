@@ -59,6 +59,7 @@ public:
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Behavior Modifier"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
+	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 private:
@@ -998,8 +999,23 @@ private:
 		kTypeToneUp,
 	};
 
+	struct ApplyTaskData {
+		ApplyTaskData() : runtime(nullptr) {}
+
+		Runtime *runtime;
+	};
+
+	struct RemoveTaskData {
+		RemoveTaskData() : runtime(nullptr) {}
+
+		Runtime *runtime;
+	};
+
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	const char *getDefaultName() const override;
+
+	VThreadState applyTask(const ApplyTaskData &taskData);
+	VThreadState removeTask(const RemoveTaskData &taskData);
 
 	Event _applyWhen;
 	Event _removeWhen;

@@ -4381,11 +4381,10 @@ bool Runtime::runFrame() {
 		if (_forceCursorRefreshOnce) {
 			_forceCursorRefreshOnce = false;
 
-			_mouseOverObject.reset();
-
 			UpdateMousePositionTaskData *taskData = _vthread->pushTask("Runtime::updateMousePositionTask", this, &Runtime::updateMousePositionTask);
 			taskData->x = _cachedMousePosition.x;
 			taskData->y = _cachedMousePosition.y;
+			continue;
 		}
 
 		if (_queuedProjectDesc) {
@@ -8026,7 +8025,8 @@ VisualElementRenderProperties &VisualElementRenderProperties::operator=(const Vi
 }
 
 VisualElement::VisualElement()
-	: _rect(0, 0, 0, 0), _cachedAbsoluteOrigin(Common::Point(0, 0)), _contentsDirty(true), _directToScreen(false), _visible(false), _visibleByDefault(true), _layer(0) {
+	: _rect(0, 0, 0, 0), _cachedAbsoluteOrigin(Common::Point(0, 0)), _contentsDirty(true), _directToScreen(false), _visible(false), _visibleByDefault(true), _layer(0),
+	  _topLeftBevelShading(0), _bottomRightBevelShading(0), _interiorShading(0), _bevelSize(0) {
 }
 
 bool VisualElement::isVisual() const {
@@ -8431,6 +8431,17 @@ const Common::WeakPtr<GraphicModifier> &VisualElement::getPrimaryGraphicModifier
 	return _primaryGraphicModifier;
 }
 
+void VisualElement::setShading(int16 topLeftBevelShading, int16 bottomRightBevelShading, int16 interiorShading, uint32 bevelSize) {
+	if (_topLeftBevelShading != topLeftBevelShading || _bottomRightBevelShading != bottomRightBevelShading || _interiorShading != interiorShading || _bevelSize != bevelSize) {
+		_topLeftBevelShading = topLeftBevelShading;
+		_bottomRightBevelShading = bottomRightBevelShading;
+		_interiorShading = interiorShading;
+		_bevelSize = bevelSize;
+
+		_contentsDirty = true;
+	}
+}
+
 bool VisualElement::needsRender() const {
 	if (_renderProps.isDirty() || _prevRect != _rect || _contentsDirty)
 		return true;
@@ -8725,6 +8736,195 @@ VisualElement *VisualElement::recursiveFindItemWithLayer(VisualElement *element,
 	}
 
 	return nullptr;
+}
+
+void VisualElement::renderShading(Graphics::Surface &surf) const {
+	uint32 bevelSize = _bevelSize;
+	uint32 w = surf.w;
+	uint32 h = surf.h;
+
+	uint32 maxHBevel = (w + 1) / 2;
+	uint32 maxVBevel = (h + 1) / 2;
+
+	if (bevelSize > maxHBevel)
+		bevelSize = maxHBevel;
+	if (bevelSize > maxVBevel)
+		bevelSize = maxVBevel;
+
+	uint32 rMask = surf.format.ARGBToColor(0, 255, 0, 0);
+	uint32 gMask = surf.format.ARGBToColor(0, 0, 255, 0);
+	uint32 bMask = surf.format.ARGBToColor(0, 0, 0, 255);
+
+	byte bytesPerPixel = surf.format.bytesPerPixel;
+
+	if (_topLeftBevelShading != 0) {
+		bool isBrighten = (_topLeftBevelShading > 0);
+
+		uint32 rAdd = quantizeShading(rMask, _topLeftBevelShading);
+		uint32 gAdd = quantizeShading(gMask, _topLeftBevelShading);
+		uint32 bAdd = quantizeShading(bMask, _topLeftBevelShading);
+
+		// Top bar
+		for (uint y = 0; y < bevelSize; y++)
+			renderShadingScanlineDynamic(surf.getBasePtr(0, y), w - y, rMask, rAdd, gMask, gAdd, bMask, bAdd, isBrighten, bytesPerPixel);
+
+		// Left bar
+		uint leftBarEndY = h + 1 - bevelSize;
+		for (uint y = bevelSize; y < leftBarEndY; y++)
+			renderShadingScanlineDynamic(surf.getBasePtr(0, y), bevelSize, rMask, rAdd, gMask, gAdd, bMask, bAdd, isBrighten, bytesPerPixel);
+
+		// Lower diagonal
+		for (uint y = leftBarEndY; y < h; y++)
+			renderShadingScanlineDynamic(surf.getBasePtr(0, y), bevelSize - 1 - (y - leftBarEndY), rMask, rAdd, gMask, gAdd, bMask, bAdd, isBrighten, bytesPerPixel);
+	}
+
+	if (_bottomRightBevelShading != 0) {
+		bool isBrighten = (_bottomRightBevelShading > 0);
+
+		uint32 rAdd = quantizeShading(rMask, _bottomRightBevelShading);
+		uint32 gAdd = quantizeShading(gMask, _bottomRightBevelShading);
+		uint32 bAdd = quantizeShading(bMask, _bottomRightBevelShading);
+
+		// Upper diagonal
+		for (uint y = 1; y < bevelSize; y++)
+			renderShadingScanlineDynamic(surf.getBasePtr(w - y, y), y, rMask, rAdd, gMask, gAdd, bMask, bAdd, isBrighten, bytesPerPixel);
+
+		uint rightBarEndY = h - bevelSize;
+		if (rightBarEndY < bevelSize)
+			rightBarEndY = bevelSize;
+
+		uint rightBarX = w - bevelSize;
+		if (rightBarX < bevelSize)
+			rightBarX = bevelSize;
+
+		// Right bar
+		for (uint y = bevelSize; y < rightBarEndY; y++)
+			renderShadingScanlineDynamic(surf.getBasePtr(rightBarX, y), w - rightBarX, rMask, rAdd, gMask, gAdd, bMask, bAdd, isBrighten, bytesPerPixel);
+
+		// Bottom bar
+		for (uint y = rightBarEndY; y < h; y++) {
+			uint bottomBarStartX = bevelSize - (y - rightBarEndY);
+			renderShadingScanlineDynamic(surf.getBasePtr(bottomBarStartX, y), w - bottomBarStartX, rMask, rAdd, gMask, gAdd, bMask, bAdd, isBrighten, bytesPerPixel);
+		}
+	}
+
+	if (_interiorShading != 0) {
+		uint32 startX = bevelSize;
+		uint32 endX = w - bevelSize;
+		uint32 startY = bevelSize;
+		uint32 endY = h - bevelSize;
+
+		if (startX < endX && startY < endY) {
+			bool isBrighten = (_bottomRightBevelShading > 0);
+
+			uint32 rAdd = quantizeShading(rMask, _bottomRightBevelShading);
+			uint32 gAdd = quantizeShading(gMask, _bottomRightBevelShading);
+			uint32 bAdd = quantizeShading(bMask, _bottomRightBevelShading);
+
+			for (uint y = startY; y < endY; y++)
+				renderShadingScanlineDynamic(surf.getBasePtr(startX, y), endX - startX, rMask, rAdd, gMask, gAdd, bMask, bAdd, isBrighten, bytesPerPixel);
+		}
+	}
+}
+
+uint32 VisualElement::quantizeShading(uint32 mask, int16 shading) {
+	uint32 absShading = (shading < 0) ? static_cast<int32>(-shading) : static_cast<int32>(shading);
+
+	if ((mask & 0xff) == 0) {
+		// Nothing in the low bytes, so shift down to avoid upper bits overflow
+		return ((mask >> 8) * absShading) & mask;
+	}
+
+	// Something was in the low bits, so avoid lower bits underflow instead
+	return ((mask * absShading) >> 8) & mask;
+}
+
+void VisualElement::renderShadingScanlineDynamic(void *data, size_t numElements, uint32 rMask, uint32 rAdd, uint32 gMask, uint32 gAdd, uint32 bMask, uint32 bAdd, bool isBrighten, byte bytesPerPixel) {
+	if (isBrighten) {
+		switch (bytesPerPixel) {
+		case 2:
+			renderBrightenScanline<uint16>(static_cast<uint16 *>(data), numElements, rMask, rAdd, gMask, gAdd, bMask, bAdd);
+			break;
+		case 4:
+			renderBrightenScanline<uint32>(static_cast<uint32 *>(data), numElements, rMask, rAdd, gMask, gAdd, bMask, bAdd);
+			break;
+		default:
+			break;
+		}
+	} else {
+		switch (bytesPerPixel) {
+		case 2:
+			renderDarkenScanline<uint16>(static_cast<uint16 *>(data), numElements, rMask, rAdd, gMask, gAdd, bMask, bAdd);
+			break;
+		case 4:
+			renderDarkenScanline<uint32>(static_cast<uint32 *>(data), numElements, rMask, rAdd, gMask, gAdd, bMask, bAdd);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+template<class TElement>
+void VisualElement::renderBrightenScanline(TElement *element, size_t numElements, TElement rMask, TElement rAdd, TElement gMask, TElement gAdd, TElement bMask, TElement bAdd) {
+	TElement rLimit = rMask - rAdd;
+	TElement gLimit = gMask - gAdd;
+	TElement bLimit = bMask - bAdd;
+
+	while (numElements > 0) {
+		TElement v = *element;
+
+		if ((v & rMask) > rLimit)
+			v |= rMask;
+		else
+			v += rAdd;
+
+		if ((v & gMask) > gLimit)
+			v |= gMask;
+		else
+			v += gAdd;
+
+		if ((v & bMask) > bLimit)
+			v |= bMask;
+		else
+			v += bAdd;
+
+		*element = v;
+
+		numElements--;
+		element++;
+	}
+}
+
+template<class TElement>
+static void VisualElement::renderDarkenScanline(TElement *element, size_t numElements, TElement rMask, TElement rSub, TElement gMask, TElement gSub, TElement bMask, TElement bSub) {
+	TElement rZero = ~rMask;
+	TElement gZero = ~gMask;
+	TElement bZero = ~bMask;
+
+	while (numElements > 0) {
+		TElement v = *element;
+
+		if ((v & rMask) < rSub)
+			v &= rZero;
+		else
+			v -= rSub;
+
+		if ((v & gMask) < gSub)
+			v &= gZero;
+		else
+			v -= gSub;
+
+		if ((v & bMask) < bSub)
+			v &= bZero;
+		else
+			v -= bSub;
+
+		*element = v;
+
+		numElements--;
+		element++;
+	}
 }
 
 bool NonVisualElement::isVisual() const {

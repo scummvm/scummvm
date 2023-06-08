@@ -73,10 +73,14 @@ MiniscriptInstructionOutcome GraphicElement::writeRefAttribute(MiniscriptThread 
 
 
 void GraphicElement::render(Window *window) {
-	if (_renderProps.getInkMode() == VisualElementRenderProperties::kInkModeDefault || _renderProps.getInkMode() == VisualElementRenderProperties::kInkModeInvisible || _rect.isEmpty()) {
-		// Not rendered at all
-		_mask.reset();
-		return;
+	bool haveEffect = (_bottomRightBevelShading != 0 || _topLeftBevelShading != 0 || _interiorShading != 0);
+
+	if (!haveEffect) {
+		if (_renderProps.getInkMode() == VisualElementRenderProperties::kInkModeDefault || _renderProps.getInkMode() == VisualElementRenderProperties::kInkModeInvisible || _rect.isEmpty()) {
+			// Not rendered at all
+			_mask.reset();
+			return;
+		}
 	}
 
 	if (!_visible)
@@ -182,9 +186,6 @@ void GraphicElement::render(Window *window) {
 					Common::Point *leftVert = triPoints[half][1];
 					Common::Point *rightVert = triPoints[half][2];
 
-					if (leftVert->x == rightVert->x || commonPoint->y == points[1].y)
-						continue; // Degenerate tri
-
 					if (leftVert->x > rightVert->x) {
 						Common::Point *temp = leftVert;
 						leftVert = rightVert;
@@ -255,10 +256,27 @@ void GraphicElement::render(Window *window) {
 							xSpan[ray] = resolved;
 						}
 
-						int32 spanWidth = xSpan[1] - xSpan[0];
-						uint8 *bits = static_cast<uint8 *>(_mask->getBasePtr(xSpan[0], y));
-						for (int32 i = 0; i < spanWidth; i++)
-							bits[i] ^= 0xff;
+						if (xSpan[1] < xSpan[0]) {
+							int32 temp = xSpan[1];
+							xSpan[1] = xSpan[0];
+							xSpan[0] = temp;
+						}
+
+						// Clip to the graphic area
+						if (y >= 0 && y < static_cast<int32>(height)) {
+							for (int i = 0; i < 2; i++) {
+								int32 &xVal = xSpan[i];
+								if (xVal < 0)
+									xVal = 0;
+								if (xVal >= static_cast<int32>(width))
+									xVal = width - 1;
+							}
+
+							int32 spanWidth = xSpan[1] - xSpan[0];
+							uint8 *bits = static_cast<uint8 *>(_mask->getBasePtr(xSpan[0], y));
+							for (int32 i = 0; i < spanWidth; i++)
+								bits[i] ^= 0xff;
+						}
 					}
 				}
 			}
@@ -413,9 +431,63 @@ void GraphicElement::render(Window *window) {
 				}
 			}
 		} break;
+	case VisualElementRenderProperties::kInkModeInvisible:
+	case VisualElementRenderProperties::kInkModeDefault:
+		break;
 	default:
 		warning("Unimplemented graphic ink mode");
 		return;
+	}
+
+	// TODO: The accurate behavior for polys is complicated.
+	// It looks like the way that it works is that a "line mask" is constructed by inverting the mask, dilating it
+	// by HALF the bevel size, then masking that out using the original mask, which results in a border mask.
+	// Then, the bevel diagonal is computed as simply a line going from the lower-left corner to the top-right corner.
+
+	if (_interiorShading) {
+		const Graphics::PixelFormat &pixFmt = window->getPixelFormat();
+
+		if (pixFmt.bytesPerPixel > 1) {
+			uint32 rMask = pixFmt.ARGBToColor(0, 255, 0, 0);
+			uint32 gMask = pixFmt.ARGBToColor(0, 0, 255, 0);
+			uint32 bMask = pixFmt.ARGBToColor(0, 0, 0, 255);
+
+			uint32 rAdd = quantizeShading(rMask, _interiorShading);
+			uint32 gAdd = quantizeShading(gMask, _interiorShading);
+			uint32 bAdd = quantizeShading(bMask, _interiorShading);
+
+			bool isBrighten = (_interiorShading > 0);
+
+			Graphics::ManagedSurface *windowSurface = window->getSurface().get();
+
+			for (int32 srcY = clippedSrcRect.top; srcY < clippedSrcRect.bottom; srcY++) {
+				int32 spanWidth = clippedDrawRect.width();
+
+				int32 effectLength = 0;
+
+				if (_mask) {
+					const uint8 *maskBytes = static_cast<const uint8 *>(_mask->getBasePtr(clippedSrcRect.left, srcY));
+
+					for (int32 x = 0; x < spanWidth; x++) {
+						if (maskBytes[x])
+							effectLength++;
+						else {
+							if (effectLength > 0) {
+								void *effectPixels = windowSurface->getBasePtr(clippedDrawRect.left + x - effectLength, srcY + srcToDestY);
+								renderShadingScanlineDynamic(effectPixels, effectLength, rMask, rAdd, gMask, gAdd, bMask, bAdd, isBrighten, windowSurface->format.bytesPerPixel);
+							}
+							effectLength = 0;
+						}
+					}
+				} else
+					effectLength = spanWidth;  
+				
+				if (effectLength > 0) {
+					void *effectPixels = windowSurface->getBasePtr(clippedDrawRect.left + spanWidth - effectLength, srcY + srcToDestY);
+					renderShadingScanlineDynamic(effectPixels, effectLength, rMask, rAdd, gMask, gAdd, bMask, bAdd, isBrighten, windowSurface->format.bytesPerPixel);
+				}
+			}
+		}
 	}
 }
 
@@ -1106,6 +1178,16 @@ void ImageElement::render(Window *window) {
 		}
 
 		uint8 alpha = _transitionProps.getAlpha();
+
+		Graphics::Surface *postShadingSource = optimized->surfacePtr();
+
+		Graphics::Surface tempSurface;
+		if (_interiorShading != 0 || (_bevelSize > 0 && (_bottomRightBevelShading != 0 || _topLeftBevelShading != 0))) {
+			tempSurface.copyFrom(*postShadingSource);
+			renderShading(tempSurface);
+			postShadingSource = &tempSurface;
+		}
+
 
 		if (inkMode == VisualElementRenderProperties::kInkModeBackgroundMatte || inkMode == VisualElementRenderProperties::kInkModeBackgroundTransparent) {
 			const ColorRGB8 transColorRGB8 = _renderProps.getBackColor();

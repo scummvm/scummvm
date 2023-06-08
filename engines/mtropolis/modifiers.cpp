@@ -163,6 +163,15 @@ void BehaviorModifier::disable(Runtime *runtime) {
 		child->disable(runtime);
 }
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void BehaviorModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+
+	report->declareDynamic("switchable", _switchable ? "true" : "false");
+	report->declareDynamic("enabled", _isEnabled ? "true" : "false");
+}
+#endif
+
 VThreadState BehaviorModifier::switchTask(const SwitchTaskData &taskData) {
 	if (_isEnabled != taskData.targetState) {
 		_isEnabled = taskData.targetState;
@@ -2532,11 +2541,25 @@ bool ImageEffectModifier::respondsToEvent(const Event &evt) const {
 }
 
 VThreadState ImageEffectModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	warning("Image effect modifier not implemented");
+	if (_removeWhen.respondsTo(msg->getEvent())) {
+		RemoveTaskData *removeTask = runtime->getVThread().pushTask("ImageEffectModifier::removeTask", this, &ImageEffectModifier::removeTask);
+		removeTask->runtime = runtime;
+	}
+	if (_applyWhen.respondsTo(msg->getEvent())) {
+		ApplyTaskData *applyTask = runtime->getVThread().pushTask("ImageEffectModifier::applyTask", this, &ImageEffectModifier::applyTask);
+		applyTask->runtime = runtime;
+	}
+
 	return kVThreadReturn;
 }
 
 void ImageEffectModifier::disable(Runtime *runtime) {
+	Structural *structural = findStructuralOwner();
+	if (!structural || !structural->isElement() || !static_cast<Element *>(structural)->isVisual())
+		return;
+
+	VisualElement *visual = static_cast<VisualElement *>(structural);
+	visual->setShading(0, 0, 0, 0);
 }
 
 Common::SharedPtr<Modifier> ImageEffectModifier::shallowClone() const {
@@ -2545,6 +2568,41 @@ Common::SharedPtr<Modifier> ImageEffectModifier::shallowClone() const {
 
 const char *ImageEffectModifier::getDefaultName() const {
 	return "Image Effect Modifier";
+}
+
+VThreadState ImageEffectModifier::applyTask(const ApplyTaskData &taskData) {
+	Structural *structural = findStructuralOwner();
+	if (!structural || !structural->isElement() || !static_cast<Element *>(structural)->isVisual())
+		return kVThreadReturn;
+
+	VisualElement *visual = static_cast<VisualElement *>(structural);
+
+	int16 shadingLevel = static_cast<int16>(_toneAmount) * 256 / 100;
+
+	switch (_type) {
+	case kTypeDeselectedBevels:
+		visual->setShading(-shadingLevel, shadingLevel, 0, _bevelWidth);
+		break;
+	case kTypeSelectedBevels:
+		visual->setShading(shadingLevel, -shadingLevel, 0, _bevelWidth);
+		break;
+	case kTypeToneUp:
+		visual->setShading(0, 0, shadingLevel, 0);
+		break;
+	case kTypeToneDown:
+		visual->setShading(0, 0, -shadingLevel, 0);
+		break;
+	default:
+		break;
+	}
+
+	return kVThreadReturn;
+}
+
+VThreadState ImageEffectModifier::removeTask(const RemoveTaskData &taskData) {
+	this->disable(taskData.runtime);
+
+	return kVThreadReturn;
 }
 
 ReturnModifier::ReturnModifier() {
