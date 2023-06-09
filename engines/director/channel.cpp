@@ -364,6 +364,11 @@ void Channel::setCast(CastMemberID memberID) {
 	_width = _sprite->_width;
 	_height = _sprite->_height;
 	replaceWidget();
+
+	if (!_sprite->_puppet && g_director->getVersion() >= 600) {
+		// Based on Director in a Nutshell, page 15
+		_sprite->_autoPuppet = true;
+	}
 }
 
 void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
@@ -541,12 +546,22 @@ void Channel::setWidth(int w) {
 	if (!(_sprite->_cast && _sprite->_cast->_type == kCastShape) && !_sprite->_stretch)
 		return;
 	_width = MAX<int>(w, 0);
+
+	if (!_sprite->_puppet && g_director->getVersion() >= 600) {
+		// Based on Director in a Nutshell, page 15
+		_sprite->_autoPuppet = true;
+	}
 }
 
 void Channel::setHeight(int h) {
 	if (!(_sprite->_cast && _sprite->_cast->_type == kCastShape) && !_sprite->_stretch)
 		return;
 	_height = MAX<int>(h, 0);
+
+	if (!_sprite->_puppet && g_director->getVersion() >= 600) {
+		// Based on Director in a Nutshell, page 15
+		_sprite->_autoPuppet = true;
+	}
 }
 
 void Channel::setBbox(int l, int t, int r, int b) {
@@ -566,6 +581,11 @@ void Channel::setBbox(int l, int t, int r, int b) {
 		if (_width <= 0 || _height <= 0)
 			_width = _height = 0;
 	}
+
+	if (!_sprite->_puppet && g_director->getVersion() >= 600) {
+		// Based on Director in a Nutshell, page 15
+		_sprite->_autoPuppet = true;
+	}
 }
 
 void Channel::setPosition(int x, int y, bool force) {
@@ -576,6 +596,11 @@ void Channel::setPosition(int x, int y, bool force) {
 		newPos.y = MIN(constraintBbox.bottom, MAX(constraintBbox.top, newPos.y));
 	}
 	_currentPoint = newPos;
+
+	if (!_sprite->_puppet && g_director->getVersion() >= 600) {
+		// Based on Director in a Nutshell, page 15
+		_sprite->_autoPuppet = true;
+	}
 }
 
 // here is the place for deciding whether the widget can be keep or not

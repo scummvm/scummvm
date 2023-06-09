@@ -62,6 +62,7 @@ Sprite::Sprite(Frame *frame) {
 	_moveable = false;
 	_editable = false;
 	_puppet = false;
+	_autoPuppet = false; // Based on Director in a Nutshell, page 15
 	_immediate = false;
 	_backColor = g_director->_wm->_colorWhite;
 	_foreColor = g_director->_wm->_colorBlack;
@@ -105,6 +106,7 @@ Sprite& Sprite::operator=(const Sprite &sprite) {
 	_moveable = sprite._moveable;
 	_editable = sprite._editable;
 	_puppet = sprite._puppet;
+	_autoPuppet = sprite._autoPuppet;
 	_immediate = sprite._immediate;
 	_backColor = sprite._backColor;
 	_foreColor = sprite._foreColor;
