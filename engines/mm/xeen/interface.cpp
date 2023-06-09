@@ -51,12 +51,124 @@ PartyDrawer::PartyDrawer(XeenEngine *vm): _vm(vm) {
 	_hiliteChar = HILIGHT_CHAR_NONE;
 }
 
+static inline int clipToFaceWidth(int i) {
+	const int faceWidth = 32;
+	return CLIP(i, 0, faceWidth);
+}
+
+static inline int unzero(int i) {
+	if (i) return i;
+	return 1;
+}
+
+void PartyDrawer::drawHitPoints(int charIndex) {
+	Combat &combat = *_vm->_combat;
+	Party &party = *_vm->_party;
+	Windows &windows = *_vm->_windows;
+	bool inCombat = _vm->_mode == MODE_COMBAT;
+	Window &win = windows[0];
+	Character &c = inCombat ? *combat._combatParty[charIndex] : party._activeParty[charIndex];
+
+	enum {
+		BLACK = 0,
+		STONE = 20,
+
+		BRIGHT_GREEN = 80,
+		GREEN = 85,
+		YELLOW = 55,
+		RED = 185,
+		DARK_BLUE = 78,
+
+		BRIGHT_BLUE = 70,
+		BLUE = 75
+	};
+
+	int hp = c._currentHp;
+	int sp = c._currentSp;
+
+	int maxHp = c.getMaxHP();
+	int maxSp =  c.getMaxSP();
+
+	int gemFrame;
+	int hpColor = GREEN;
+
+	if (hp < 1) {
+		gemFrame = 4;
+	} else if (hp > maxHp) {
+		gemFrame = 3;
+	} else if (hp == maxHp) {
+		gemFrame = 0;
+	} else if (hp < (maxHp / 4)) {
+		gemFrame = 2;
+		hpColor = RED;
+	} else{
+		hpColor = YELLOW;
+		gemFrame = 1;
+	}
+	if (!g_vm->_extOptions._showHpSpBars) {
+		_hpSprites.draw(0, gemFrame, Common::Point(Res.HP_BARS_X[charIndex], 182));
+	} else {
+		const int faceWidth = 32;
+
+		const int barLeft = Res.CHAR_FACES_X[charIndex];
+		const int barRight = Res.CHAR_FACES_X[charIndex] + 32;
+		const int barHeight = 3;
+
+		const int frameTop = 183;
+		const int frameBottom = 190;
+		const int frameColor = STONE;
+		const int hpBarTop = 184;
+		const int hpBarBottom = hpBarTop + barHeight;
+
+		const int spBarTop = 188;
+		const int spBarBottom = spBarTop + barHeight;
+
+		int hpPart = clipToFaceWidth( (hp * faceWidth) / unzero(maxHp) );
+		int boostedHpPart = 0;
+		if (hp > maxHp) {
+			boostedHpPart = clipToFaceWidth(faceWidth * (hp - maxHp) / unzero(hp + maxHp) );
+		}
+
+		int spPart = clipToFaceWidth( (sp * faceWidth) / unzero(maxSp) );
+		int boostedSpPart = 0;
+		if (sp > maxSp) {
+			boostedSpPart = clipToFaceWidth( faceWidth * (sp - maxSp) / unzero(sp + maxSp) );
+		}
+
+		int negativeHpPart = 32;
+		if (hp < 0) {
+			negativeHpPart = faceWidth - clipToFaceWidth((-hp * faceWidth) / unzero(maxHp));
+		}
+
+		win.fillRect(Common::Rect(barLeft, frameTop, barRight, frameBottom), frameColor);
+
+		win.fillRect(Common::Rect(barLeft, hpBarTop, barRight, hpBarBottom), BLACK);
+		win.fillRect(Common::Rect(barLeft, hpBarTop, barLeft + hpPart, hpBarBottom), hpColor);
+		if (boostedHpPart != 0) {
+			win.fillRect(Common::Rect(barLeft, hpBarTop, barLeft + boostedHpPart, hpBarBottom), BRIGHT_GREEN);
+		}
+
+		if (negativeHpPart != 32) {
+			win.fillRect(Common::Rect(barLeft + negativeHpPart, hpBarTop, barLeft + faceWidth, hpBarBottom), DARK_BLUE);
+		}
+
+		if (maxSp != 0) {
+			win.fillRect(Common::Rect(barLeft, spBarTop, barRight, spBarBottom), BLACK);
+			win.fillRect(Common::Rect(barLeft, spBarTop, barLeft + spPart, spBarBottom), BLUE);
+			if (boostedSpPart) {
+				win.fillRect(Common::Rect(barLeft, spBarTop, barLeft + boostedSpPart, spBarBottom), BRIGHT_BLUE);
+			}
+		}
+	}
+}
+
 void PartyDrawer::drawParty(bool updateFlag) {
 	Combat &combat = *_vm->_combat;
 	Party &party = *_vm->_party;
 	Resources &res = *_vm->_resources;
 	Windows &windows = *_vm->_windows;
 	bool inCombat = _vm->_mode == MODE_COMBAT;
+
 	_restoreSprites.draw(0, 0, Common::Point(8, 149));
 
 	// Handle drawing the party faces
@@ -75,23 +187,7 @@ void PartyDrawer::drawParty(bool updateFlag) {
 	}
 
 	for (uint idx = 0; idx < partyCount; ++idx) {
-		Character &c = inCombat ? *combat._combatParty[idx] : party._activeParty[idx];
-
-		// Draw the Hp bar
-		int maxHp = c.getMaxHP();
-		int frame;
-		if (c._currentHp < 1)
-			frame = 4;
-		else if (c._currentHp > maxHp)
-			frame = 3;
-		else if (c._currentHp == maxHp)
-			frame = 0;
-		else if (c._currentHp < (maxHp / 4))
-			frame = 2;
-		else
-			frame = 1;
-
-		_hpSprites.draw(0, frame, Common::Point(Res.HP_BARS_X[idx], 182));
+		drawHitPoints(idx);
 	}
 
 	if (_hiliteChar != HILIGHT_CHAR_NONE)
@@ -533,6 +629,10 @@ void Interface::perform() {
 		if (CastSpell::show(_vm) != -1) {
 			chargeStep();
 			doStepCode();
+			// update spell point bar
+			if (g_vm->_extOptions._showHpSpBars) {
+				drawParty(true);
+			}
 		}
 		break;
 
@@ -1601,6 +1701,10 @@ void Interface::doCombat() {
 				// Cast spell
 				if (CastSpell::show(_vm) != -1) {
 					nextChar();
+					// update spell point bar
+					if (g_vm->_extOptions._showHpSpBars) {
+						drawParty(true);
+					}
 				} else {
 					highlightChar(combat._whosTurn);
 				}

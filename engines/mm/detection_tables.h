@@ -19,7 +19,12 @@
  *
  */
 
+#include "engines/advancedDetector.h"
+#include "engines/mm/detection.h"
+
 namespace MM {
+
+#define GUIO_XEEN GUIO3(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR, GAMEOPTION_SHOW_HP_SP_BARS)
 
 static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 #ifdef ENABLE_MM1
@@ -65,7 +70,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+			GUIO_XEEN
 		},
 		GType_WorldOfXeen,
 		0
@@ -81,7 +86,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+			GUIO_XEEN
 		},
 		GType_WorldOfXeen,
 		0
@@ -101,7 +106,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+			GUIO_XEEN
 		},
 		GType_WorldOfXeen,
 		0
@@ -117,7 +122,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+			GUIO_XEEN
 		},
 		GType_WorldOfXeen,
 		0
@@ -133,7 +138,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+			GUIO_XEEN
 		},
 		GType_WorldOfXeen,
 		0
@@ -150,7 +155,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+			GUIO_XEEN
 		},
 		GType_WorldOfXeen,
 		0
@@ -165,7 +170,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+			GUIO_XEEN
 		},
 		GType_Clouds,
 		0
@@ -180,7 +185,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+			GUIO_XEEN
 		},
 		GType_Clouds,
 		0
@@ -195,7 +200,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+			GUIO_XEEN
 		},
 		GType_Clouds,
 		0
@@ -210,7 +215,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::ZH_TWN,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+			GUIO_XEEN
 		},
 		GType_Clouds,
 		0
@@ -226,7 +231,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+			GUIO_XEEN
 		},
 		GType_Clouds,
 		0
@@ -241,7 +246,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+			GUIO_XEEN
 		},
 		GType_DarkSide,
 		0
@@ -256,7 +261,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+			GUIO_XEEN
 		},
 		GType_DarkSide,
 		0
@@ -272,7 +277,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+			GUIO_XEEN
 		},
 		GType_DarkSide,
 		0
@@ -287,7 +292,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::ZH_TWN,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+			GUIO_XEEN
 		},
 		GType_DarkSide,
 		0
@@ -303,7 +308,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+			GUIO_XEEN
 		},
 		GType_DarkSide,
 		0
@@ -318,7 +323,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+			GUIO_XEEN
 		},
 		GType_Swords,
 		0
