@@ -294,6 +294,8 @@ private:
 	// NOTE: To produce proper behavior, these are not sanitized until playMedia.  render must tolerate invalid values without changing them.
 	IntRange _playRange;
 	int32 _cel;
+
+	bool _hasIssuedRenderWarning;
 };
 
 class TextLabelElement : public VisualElement {

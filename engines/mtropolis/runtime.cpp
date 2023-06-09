@@ -6888,7 +6888,7 @@ Project::AssetDesc::AssetDesc() : typeCode(0), id(0), streamID(0), filePosition(
 Project::Project(Runtime *runtime)
 	: Structural(runtime), _projectFormat(Data::kProjectFormatUnknown), _isBigEndian(false),
 	  _haveGlobalObjectInfo(false), _haveProjectStructuralDef(false), _playMediaSignaller(new PlayMediaSignaller()),
-	  _keyboardEventSignaller(new KeyboardEventSignaller()) {
+	  _keyboardEventSignaller(new KeyboardEventSignaller()), _guessedVersion(MTropolisVersions::kMTropolisVersion1_0) {
 }
 
 Project::~Project() {
@@ -7405,6 +7405,10 @@ const SubtitleTables &Project::getSubtitles() const {
 	return _subtitles;
 }
 
+MTropolisVersions::MTropolisVersion Project::guessVersion() const {
+	return _guessedVersion;
+}
+
 void Project::loadPresentationSettings(const Data::PresentationSettings &presentationSettings) {
 	_presentationSettings.bitsPerPixel = presentationSettings.bitsPerPixel;
 	if (_presentationSettings.bitsPerPixel != 8 && _presentationSettings.bitsPerPixel != 16) {
@@ -7455,6 +7459,14 @@ void Project::loadAssetCatalog(const Data::AssetCatalog &assetCatalog) {
 				_assetNameToID[assetDesc.name] = assetDesc.id;
 		}
 	}
+
+	if (assetCatalog.getRevision() <= 2)
+		_guessedVersion = MTropolisVersions::kMTropolisVersion1_0;
+	else if (assetCatalog.getRevision() <= 4)
+		_guessedVersion = MTropolisVersions::kMTropolisVersion1_1;
+	else
+		_guessedVersion = MTropolisVersions::kMTropolisVersion2_0;
+
 }
 
 void Project::loadGlobalObjectInfo(ChildLoaderStack &loaderStack, const Data::GlobalObjectInfo& globalObjectInfo) {

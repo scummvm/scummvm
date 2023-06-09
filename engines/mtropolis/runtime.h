@@ -327,6 +327,16 @@ bool isCommand(EventID eventID);
 
 } // End of namespace EventIDs
 
+namespace MTropolisVersions {
+
+enum MTropolisVersion {
+	kMTropolisVersion1_0,
+	kMTropolisVersion1_1,
+	kMTropolisVersion2_0,
+};
+
+} // End of namespace MTropolisVersions
+
 MiniscriptInstructionOutcome pointWriteRefAttrib(Common::Point &point, MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib);
 Common::String pointToString(const Common::Point &point);
 
@@ -1559,8 +1569,10 @@ public:
 
 	const byte *getPalette() const;
 
+	static const uint kNumColors = 256;
+
 private:
-	byte _colors[256 * 3];
+	byte _colors[kNumColors * 3];
 };
 
 class Runtime {
@@ -2415,6 +2427,8 @@ public:
 
 	const SubtitleTables &getSubtitles() const;
 
+	MTropolisVersions::MTropolisVersion guessVersion() const;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Project"; }
 #endif
@@ -2527,6 +2541,8 @@ private:
 	Common::SharedPtr<KeyboardEventSignaller> _keyboardEventSignaller;
 
 	SubtitleTables _subtitles;
+
+	MTropolisVersions::MTropolisVersion _guessedVersion;
 };
 
 class Section : public Structural {

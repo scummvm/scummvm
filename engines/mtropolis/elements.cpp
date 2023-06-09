@@ -1223,7 +1223,7 @@ MiniscriptInstructionOutcome ImageElement::scriptSetFlushPriority(MiniscriptThre
 
 MToonElement::MToonElement()
 	: _cacheBitmap(false), _maintainRate(false), _assetID(0), _rateTimes100000(0), _flushPriority(0), _celStartTimeMSec(0),
-	  _isPlaying(false), _renderedFrame(0), _playRange(IntRange(1, 1)), _cel(1) {
+	  _isPlaying(false), _renderedFrame(0), _playRange(IntRange(1, 1)), _cel(1), _hasIssuedRenderWarning(false) {
 }
 
 MToonElement::~MToonElement() {
@@ -1308,9 +1308,15 @@ VThreadState MToonElement::consumeCommand(Runtime *runtime, const Common::Shared
 		return kVThreadReturn;
 	}
 	if (Event(EventIDs::kStop, 0).respondsTo(msg->getEvent())) {
-		ChangeFlagTaskData *becomeVisibleTaskData = runtime->getVThread().pushTask("MToonElement::changeVisibilityTask", static_cast<VisualElement *>(this), &MToonElement::changeVisibilityTask);
-		becomeVisibleTaskData->desiredFlag = false;
-		becomeVisibleTaskData->runtime = runtime;
+		// mTropolis 1.0 will not fire a Hidden event when an mToon is stopped even though it is hidden in the process.
+		// MTI depends on this, otherwise 2 hints will play at once when clicking a song button on the piano.
+		// This same bug does NOT apply to the "Shown" event firing on Play (as happens above).
+		if (runtime->getProject()->guessVersion() >= MTropolisVersions::kMTropolisVersion1_1) {
+			ChangeFlagTaskData *hideTaskData = runtime->getVThread().pushTask("MToonElement::changeVisibilityTask", static_cast<VisualElement *>(this), &MToonElement::changeVisibilityTask);
+			hideTaskData->desiredFlag = false;
+			hideTaskData->runtime = runtime;
+		} else
+			setVisible(runtime, false);
 
 		StopPlayingTaskData *stopPlayingTaskData = runtime->getVThread().pushTask("MToonElement::stopPlayingTask", this, &MToonElement::stopPlayingTask);
 		stopPlayingTaskData->runtime = runtime;
@@ -1366,8 +1372,9 @@ void MToonElement::render(Window *window) {
 
 		_cachedMToon->getOrRenderFrame(_renderedFrame, frame, _renderSurface);
 
+		const Palette *palette = nullptr;
 		if (_renderSurface->format.bytesPerPixel == 1) {
-			const Palette *palette = getPalette().get();
+			palette = getPalette().get();
 			if (!palette)
 				palette = &getRuntime()->getGlobalPalette();
 
@@ -1402,7 +1409,30 @@ void MToonElement::render(Window *window) {
 
 			if (inkMode == VisualElementRenderProperties::kInkModeBackgroundMatte || inkMode == VisualElementRenderProperties::kInkModeBackgroundTransparent) {
 				ColorRGB8 transColorRGB8 = _renderProps.getBackColor();
-				uint32 transColor = _renderSurface->format.ARGBToColor(255, transColorRGB8.r, transColorRGB8.g, transColorRGB8.b);
+				uint32 transColor = 0;
+
+				if (_renderSurface->format.bytesPerPixel == 1) {
+					assert(palette);
+
+					const byte *paletteData = palette->getPalette();
+					bool foundColor = false;
+					for (uint i = 0; i < Palette::kNumColors; i++) {
+						if (transColorRGB8 == ColorRGB8(paletteData[i * 3 + 0], paletteData[i * 3 + 1], paletteData[i * 3 + 2])) {
+							if (foundColor) {
+								warning("mToon is rendered color key but has multiple palette entries matching the transparent color, this may not render correctly");
+								_hasIssuedRenderWarning = true;
+								break;
+							} else {
+								foundColor = true;
+								transColor = i;
+
+								if (_hasIssuedRenderWarning)
+									break;
+							}
+						}
+					}
+				} else
+					_renderSurface->format.ARGBToColor(255, transColorRGB8.r, transColorRGB8.g, transColorRGB8.b);
 
 				window->getSurface()->transBlitFrom(*_renderSurface, srcRect, destRect, transColor);
 			} else if (inkMode == VisualElementRenderProperties::kInkModeCopy || inkMode == VisualElementRenderProperties::kInkModeDefault) {
