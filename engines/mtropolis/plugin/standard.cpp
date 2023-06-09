@@ -3017,9 +3017,14 @@ void ListVariableModifier::debugInspect(IDebugInspectionReport *report) const {
 		case DynamicValueTypes::kList:
 			report->declareLoose(Common::String::format("[%i] = List", cardinal));
 			break;
-		case DynamicValueTypes::kObject:
-			report->declareLoose(Common::String::format("[%i] = Object?", cardinal));
-			break;
+		case DynamicValueTypes::kObject: {
+				RuntimeObject *obj = storage->_list->getObjectReference()[i].object.lock().get();
+
+				if (obj)
+					report->declareLoose(Common::String::format("[%i] = Object %x", cardinal, static_cast<uint>(obj->getRuntimeGUID())));
+				else
+					report->declareLoose(Common::String::format("[%i] = Object (Invalid)", cardinal));
+			} break;
 		default:
 			report->declareLoose(Common::String::format("[%i] = <BAD TYPE>", cardinal));
 			break;
