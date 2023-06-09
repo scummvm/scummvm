@@ -1432,7 +1432,7 @@ void MToonElement::render(Window *window) {
 						}
 					}
 				} else
-					_renderSurface->format.ARGBToColor(255, transColorRGB8.r, transColorRGB8.g, transColorRGB8.b);
+					transColor = _renderSurface->format.ARGBToColor(255, transColorRGB8.r, transColorRGB8.g, transColorRGB8.b);
 
 				window->getSurface()->transBlitFrom(*_renderSurface, srcRect, destRect, transColor);
 			} else if (inkMode == VisualElementRenderProperties::kInkModeCopy || inkMode == VisualElementRenderProperties::kInkModeDefault) {
@@ -1649,11 +1649,11 @@ MiniscriptInstructionOutcome MToonElement::scriptSetCel(MiniscriptThread *thread
 	// in fact play from that cel even if it's out of range.  The mariachi hint room near the
 	// Bureau booths in Obsidian depends on this behavior, since it sets the mToon cel and then
 	// sets the range based on the cel value.
-
-	if (newCel < 1)
+	//
+	// We also need to loop around to 1 (exactly) if the range is exceeded.  MTI depends on this
+	// in the piano to loop the sound bank display mToon.
+	if (newCel < 1 || newCel > maxCel)
 		newCel = 1;
-	if (newCel > maxCel)
-		newCel = maxCel;
 
 	if (newCel != _cel) {
 		_cel = newCel;
