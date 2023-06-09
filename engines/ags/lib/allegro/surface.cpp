@@ -27,6 +27,8 @@
 #include "common/textconsole.h"
 #include "graphics/screen.h"
 
+//#define WYATTOPT
+
 namespace AGS3 {
 
 BITMAP::BITMAP(Graphics::ManagedSurface *owner) : _owner(owner),
@@ -162,6 +164,7 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	int xStart = (dstRect.left < destRect.left) ? dstRect.left - destRect.left : 0;
 	int yStart = (dstRect.top < destRect.top) ? dstRect.top - destRect.top : 0;
 
+#ifdef WYATTOPT
 #define DRAWINNER(func) func(yStart, xStart, transColor, alphaMask, palette, useTint, sameFormat, src, destArea, horizFlip, vertFlip, skipTrans, srcAlpha, tintRed, tintGreen, tintBlue, dstRect, srcArea, _G(_blender_mode), 0, 0)
 	if (sameFormat) {
 		switch (format.bytesPerPixel) {
@@ -177,6 +180,86 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 		DRAWINNER(drawInnerGeneric<0>);
 	}
 #undef DRAWINNER
+#else
+	byte rSrc, gSrc, bSrc, aSrc;
+	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
+	const int xDir = horizFlip ? -1 : 1;
+	for (int destY = yStart, yCtr = 0; yCtr < dstRect.height(); ++destY, ++yCtr) {
+		if (destY < 0 || destY >= destArea.h)
+			continue;
+		byte *destP = (byte *)destArea.getBasePtr(0, destY);
+		const byte *srcP = (const byte *)src.getBasePtr(
+		                       horizFlip ? srcArea.right - 1 : srcArea.left,
+		                       vertFlip ? srcArea.bottom - 1 - yCtr :
+		                       srcArea.top + yCtr);
+
+		// Loop through the pixels of the row
+		for (int destX = xStart, xCtr = 0, xCtrBpp = 0; xCtr < dstRect.width(); ++destX, ++xCtr, xCtrBpp += src.format.bytesPerPixel) {
+			if (destX < 0 || destX >= destArea.w)
+				continue;
+
+			const byte *srcVal = srcP + xDir * xCtrBpp;
+			uint32 srcCol = getColor(srcVal, src.format.bytesPerPixel);
+
+			// Check if this is a transparent color we should skip
+			if (skipTrans && ((srcCol & alphaMask) == transColor))
+				continue;
+
+			byte *destVal = (byte *)&destP[destX * format.bytesPerPixel];
+
+			// When blitting to the same format we can just copy the color
+			if (format.bytesPerPixel == 1) {
+				*destVal = srcCol;
+				continue;
+			} else if (sameFormat && srcAlpha == -1) {
+				if (format.bytesPerPixel == 4)
+					*(uint32 *)destVal = srcCol;
+				else
+					*(uint16 *)destVal = srcCol;
+				continue;
+			}
+
+			// We need the rgb values to do blending and/or convert between formats
+			if (src.format.bytesPerPixel == 1) {
+				const RGB &rgb = palette[srcCol];
+				aSrc = 0xff;
+				rSrc = rgb.r;
+				gSrc = rgb.g;
+				bSrc = rgb.b;
+			} else
+				src.format.colorToARGB(srcCol, aSrc, rSrc, gSrc, bSrc);
+
+			if (srcAlpha == -1) {
+				// This means we don't use blending.
+				aDest = aSrc;
+				rDest = rSrc;
+				gDest = gSrc;
+				bDest = bSrc;
+			} else {
+				if (useTint) {
+					rDest = rSrc;
+					gDest = gSrc;
+					bDest = bSrc;
+					aDest = aSrc;
+					rSrc = tintRed;
+					gSrc = tintGreen;
+					bSrc = tintBlue;
+					aSrc = srcAlpha;
+				} else {
+					// TODO: move this to blendPixel to only do it when needed?
+					format.colorToARGB(getColor(destVal, format.bytesPerPixel), aDest, rDest, gDest, bDest);
+				}
+				blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha);
+			}
+
+			uint32 pixel = format.ARGBToColor(aDest, rDest, gDest, bDest);
+			if (format.bytesPerPixel == 4)
+				*(uint32 *)destVal = pixel;
+			else
+				*(uint16 *)destVal = pixel;
+		}
+	}
+#endif
 }
 
 void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
@@ -226,6 +309,7 @@ void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	int xStart = (dstRect.left < destRect.left) ? dstRect.left - destRect.left : 0;
 	int yStart = (dstRect.top < destRect.top) ? dstRect.top - destRect.top : 0;
 
+#ifdef WYATTOPT
 #define DRAWINNER(func) func(yStart, xStart, transColor, alphaMask, palette, 0, sameFormat, src, destArea, false, false, skipTrans, srcAlpha, 0, 0, 0, dstRect, srcRect, _G(_blender_mode), scaleX, scaleY)
 	if (sameFormat) {
 		switch (format.bytesPerPixel) {
@@ -241,6 +325,74 @@ void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 		DRAWINNER(drawInnerGeneric<SCALE_THRESHOLD>);
 	}
 #undef DRAWINNER
+#else
+	byte rSrc, gSrc, bSrc, aSrc;
+	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
+	for (int destY = yStart, yCtr = 0, scaleYCtr = 0; yCtr < dstRect.height();
+	        ++destY, ++yCtr, scaleYCtr += scaleY) {
+		if (destY < 0 || destY >= destArea.h)
+			continue;
+		byte *destP = (byte *)destArea.getBasePtr(0, destY);
+		const byte *srcP = (const byte *)src.getBasePtr(
+		                       srcRect.left, srcRect.top + scaleYCtr / SCALE_THRESHOLD);
+
+		// Loop through the pixels of the row
+		for (int destX = xStart, xCtr = 0, scaleXCtr = 0; xCtr < dstRect.width();
+		        ++destX, ++xCtr, scaleXCtr += scaleX) {
+			if (destX < 0 || destX >= destArea.w)
+				continue;
+
+			const byte *srcVal = srcP + scaleXCtr / SCALE_THRESHOLD * src.format.bytesPerPixel;
+			uint32 srcCol = getColor(srcVal, src.format.bytesPerPixel);
+
+			// Check if this is a transparent color we should skip
+			if (skipTrans && ((srcCol & alphaMask) == transColor))
+				continue;
+
+			byte *destVal = (byte *)&destP[destX * format.bytesPerPixel];
+
+			// When blitting to the same format we can just copy the color
+			if (format.bytesPerPixel == 1) {
+				*destVal = srcCol;
+				continue;
+			} else if (sameFormat && srcAlpha == -1) {
+				if (format.bytesPerPixel == 4)
+					*(uint32 *)destVal = srcCol;
+				else
+					*(uint16 *)destVal = srcCol;
+				continue;
+			}
+
+			// We need the rgb values to do blending and/or convert between formats
+			if (src.format.bytesPerPixel == 1) {
+				const RGB &rgb = palette[srcCol];
+				aSrc = 0xff;
+				rSrc = rgb.r;
+				gSrc = rgb.g;
+				bSrc = rgb.b;
+			} else
+				src.format.colorToARGB(srcCol, aSrc, rSrc, gSrc, bSrc);
+
+			if (srcAlpha == -1) {
+				// This means we don't use blending.
+				aDest = aSrc;
+				rDest = rSrc;
+				gDest = gSrc;
+				bDest = bSrc;
+			} else {
+				// TODO: move this to blendPixel to only do it when needed?
+				format.colorToARGB(getColor(destVal, format.bytesPerPixel), aDest, rDest, gDest, bDest);
+				blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha);
+			}
+
+			uint32 pixel = format.ARGBToColor(aDest, rDest, gDest, bDest);
+			if (format.bytesPerPixel == 4)
+				*(uint32 *)destVal = pixel;
+			else
+				*(uint16 *)destVal = pixel;
+		}
+	}
+#endif
 }
 
 void BITMAP::blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha, bool useTint, byte *destVal) const {
@@ -284,6 +436,42 @@ void BITMAP::blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &a
 		break;
 	}
 }
+#ifndef WYATTOPT
+void BITMAP::blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
+	switch (_G(_blender_mode)) {
+	case kSourceAlphaBlender:
+		blendSourceAlpha(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
+		break;
+	case kArgbToArgbBlender:
+		blendArgbToArgb(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
+		break;
+	case kArgbToRgbBlender:
+		blendArgbToRgb(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
+		break;
+	case kRgbToArgbBlender:
+		blendRgbToArgb(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
+		break;
+	case kRgbToRgbBlender:
+		blendRgbToRgb(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
+		break;
+	case kAlphaPreservedBlenderMode:
+		blendPreserveAlpha(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
+		break;
+	case kOpaqueBlenderMode:
+		blendOpaque(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
+		break;
+	case kAdditiveBlenderMode:
+		blendAdditiveAlpha(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
+		break;
+	case kTintBlenderMode:
+		blendTintSprite(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha, false);
+		break;
+	case kTintLightBlenderMode:
+		blendTintSprite(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha, true);
+		break;
+	}
+}
+#endif
 
 uint32x4_t BITMAP::blendPixelSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint32x4_t alphas) const {
 	uint32x4_t srcAlphas, difAlphas, mask, ch1, ch2;

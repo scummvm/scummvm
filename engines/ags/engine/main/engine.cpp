@@ -810,34 +810,53 @@ void allegro_bitmap_test_init() {
 	test_allegro_bitmap = nullptr;
 	// Switched the test off for now
 	//test_allegro_bitmap = AllegroBitmap::CreateBitmap(320,200,32);
-	
-	Bitmap *benchgfx132 = BitmapHelper::CreateRawBitmapOwner(load_bmp("benchgfx1.bmp", nullptr));
-	Bitmap *benchgfx1 = BitmapHelper::CreateBitmapCopy(benchgfx132, 16);
-	Bitmap *dest = BitmapHelper::CreateBitmap(100, 100, 16);
-	uint64_t bench_runs[] = {1000, 10000, 100000};
-	if (benchgfx1 != nullptr) {
-		_G(_blender_mode) = kRgbToRgbBlender; // Using normal blender mode
-		for (long unsigned int i = 0; i < sizeof(bench_runs)/sizeof(uint64_t); i++) {
-			Debug::Printf(kDbgMsg_Info, "Starting Allegro Bitmap Test Bench 2 (%d bpp)", benchgfx1->GetColorDepth());
-			uint32_t start = std::chrono::high_resolution_clock::now();
-			for (uint64_t j = 0; j < bench_runs[i]; j++) {
-				dest->StretchBlt(benchgfx1, Rect(0, 0, 90, 90), kBitmap_Transparency);
-				//dest->Blit(benchgfx1, 0, 0, kBitmap_Transparency);
-			}
-			uint32_t end = std::chrono::high_resolution_clock::now();
-			Debug::Printf(kDbgMsg_Info, "Done! Results (%llu iterations):", bench_runs[i]);
-			Debug::Printf(kDbgMsg_Info, "exec time (mills): %u", end - start);
-		}
 
-		dest->Clear();
-		dest->StretchBlt(benchgfx1, Rect(0, 0, 19, 19), kBitmap_Transparency);
-		dest->SaveToFile("benchgfx1result1.bmp", NULL);
-		
-		delete benchgfx1;
-		delete dest;
-	} else {
-		warning("Couldn't load the test bench graphics!");
+	return;
+
+	PALETTE gfx8pal;
+	Bitmap *benchgfx32 = BitmapHelper::CreateRawBitmapOwner(load_bmp("benchgfx32.bmp", nullptr));
+	Bitmap *benchgfx16 = BitmapHelper::CreateBitmapCopy(benchgfx32, 16);
+	Bitmap *benchgfx8 = BitmapHelper::CreateRawBitmapOwner(load_bmp("benchgfx8.bmp", gfx8pal));
+	Bitmap *dest32 = BitmapHelper::CreateBitmap(100, 100, 32);
+	Bitmap *dest16 = BitmapHelper::CreateBitmap(100, 100, 16);
+	Bitmap *dest8 = BitmapHelper::CreateBitmap(100, 100, 8);
+	Debug::Printf(kDbgMsg_Info, "%d %d %d %d %d %d", benchgfx32, benchgfx16, benchgfx8, dest32, dest16, dest8);
+	int benchRuns[] = {1000, 10000, 100000};
+	int blenderModes[] = {kRgbToRgbBlender, kSourceAlphaBlender, kArgbToArgbBlender, kOpaqueBlenderMode, kTintLightBlenderMode};
+	const char *modeNames[] = {"RGB to RGB", "Source Alpha", "ARGB to ARGB", "Opaque", "Tint with Light"};
+	Bitmap *destinations[] = {dest32, dest16, dest8};
+	Bitmap *graphics[] = {benchgfx32, benchgfx16, benchgfx8};
+	int bpps[] = {32, 16, 8};
+	for (int dest = 0; dest < 3; dest++) {
+		for (int gfx = 0; gfx < 3; gfx++) {
+			if (dest == 2 && gfx != 2) continue;
+			for (int mode = 0; mode < sizeof(blenderModes) / sizeof(int); mode++) {
+				for (int runs = 0; runs < sizeof(benchRuns)/sizeof(int); runs++) {
+					uint32 start, end;
+					_G(_blender_mode) = (AGS3::BlenderMode)blenderModes[mode];
+					if (runs == 2) Debug::Printf(kDbgMsg_Info, "Dest: %d bpp, Gfx: %d bpp, Blender: %s, Stretched: false, Iters: %d", bpps[dest], bpps[gfx], modeNames[mode], benchRuns[runs]);
+					start = std::chrono::high_resolution_clock::now();
+					for (int i = 0; i < benchRuns[runs]; i++)
+						destinations[dest]->Blit(graphics[gfx], 0, 0, kBitmap_Transparency);
+					end = std::chrono::high_resolution_clock::now();
+					if (runs == 2) Debug::Printf(kDbgMsg_Info, "exec time (mills): %u\n", end - start);
+					if (runs == 2) Debug::Printf(kDbgMsg_Info, "Dest: %d bpp, Gfx: %d bpp, Blender: %s, Stretched: true, Iters: %d", bpps[dest], bpps[gfx], modeNames[mode], benchRuns[runs]);
+					start = std::chrono::high_resolution_clock::now();
+					for (int i = 0; i < benchRuns[runs]; i++)
+						destinations[dest]->StretchBlt(graphics[gfx], Rect(0, 0, 99, 99), kBitmap_Transparency);
+					end = std::chrono::high_resolution_clock::now();
+					if (runs == 2) Debug::Printf(kDbgMsg_Info, "exec time (mills): %u\n", end - start);
+				}
+			}
+		}
 	}
+	
+	delete benchgfx32;
+	delete benchgfx16;
+	delete benchgfx8;
+	delete dest32;
+	delete dest16;
+	delete dest8;
 }
 
 // Define location of the game data either using direct settings or searching

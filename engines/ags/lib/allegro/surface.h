@@ -31,6 +31,7 @@
 // M1/M2 SIMD intrensics
 #include "arm_neon.h"
 #endif
+//#define WYATTOPT
 
 namespace AGS3 {
 
@@ -139,7 +140,9 @@ public:
 	void blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha, bool useTint, byte *destVal) const;
 	uint32x4_t blendPixelSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint32x4_t alphas) const;
 	uint16x8_t blendPixelSIMD2Bpp(uint16x8_t srcCols, uint16x8_t destCols, uint16x8_t alphas) const;
-
+#ifndef WYATTOPT
+	void blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const;
+#endif
 
 	inline void rgbBlend(uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
 		// Note: the original's handling varies slightly for R & B vs G.
@@ -162,6 +165,7 @@ public:
 	}
 
 	inline uint16x8_t rgbBlendSIMD2Bpp(uint16x8_t srcCols, uint16x8_t destCols, uint16x8_t alphas) const {
+		alphas = vaddq_u16(alphas, vandq_u16(vceqq_u16(alphas, vmovq_n_u16(0)), vmovq_n_u16(1)));
 		uint16x8_t srcComps[] = {
 			vandq_u16(srcCols, vmovq_n_u16(0x1f)),
 			vandq_u16(vshrq_n_u16(srcCols, 5), vmovq_n_u16(0x3f)),
@@ -187,6 +191,7 @@ public:
 	}
 
 	inline uint32x4_t rgbBlendSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint32x4_t alphas, bool preserveAlpha) const {
+		alphas = vaddq_u32(alphas, vandq_u32(vceqq_u32(alphas, vmovq_n_u32(0)), vmovq_n_u32(1)));
 		uint32x4_t alpha = vandq_u32(destCols, vmovq_n_u32(0xff000000));
 		uint32x4_t srcColsCopy = srcCols;
 		srcColsCopy = vandq_u32(srcColsCopy, vmovq_n_u32(0xff00ff));
@@ -242,7 +247,7 @@ public:
 		sAlphas = vmul_n_f16(sAlphas, 1.0 / 255.0);
 		float16x8_t sAlphas1 = vcombine_f16(vmov_n_f16(vduph_lane_f16(sAlphas, 0)), vmov_n_f16(vduph_lane_f16(sAlphas, 1)));
 		float16x8_t sAlphas2 = vcombine_f16(vmov_n_f16(vduph_lane_f16(sAlphas, 2)), vmov_n_f16(vduph_lane_f16(sAlphas, 3)));
-		float16x4_t dAlphas = vcvt_f16_f32(vcvtq_f32_u32(vshrq_n_u32(srcCols, 24)));
+		float16x4_t dAlphas = vcvt_f16_f32(vcvtq_f32_u32(vshrq_n_u32(destCols, 24)));
 		dAlphas = vmul_n_f16(dAlphas, 1.0 / 255.0);
 		dAlphas = vmul_f16(dAlphas, vsub_f16(vmov_n_f16(1.0), sAlphas));
 		float16x8_t dAlphas1 = vcombine_f16(vmov_n_f16(vduph_lane_f16(dAlphas, 0)), vmov_n_f16(vduph_lane_f16(dAlphas, 1)));
@@ -262,11 +267,11 @@ public:
 		alphasRec = vrecpeq_f16(vaddq_f16(sAlphas2, dAlphas2));
 		srcRgb2 = vmulq_f16(srcRgb2, alphasRec);
 		uint16x4_t alphas = vcvta_u16_f16(vmul_n_f16(vadd_f16(sAlphas, dAlphas), 255.0));
-		srcRgb1 = vcopyq_lane_u16(srcRgb1, 0, alphas, 0);
-		srcRgb1 = vcopyq_lane_u16(srcRgb1, 4, alphas, 1);
-		srcRgb2 = vcopyq_lane_u16(srcRgb2, 0, alphas, 2);
-		srcRgb2 = vcopyq_lane_u16(srcRgb2, 4, alphas, 3);
-		return vcombine_u32(vreinterpret_u32_u8(vmovn_u16(srcRgb1)), vreinterpret_u32_u8(vmovn_u16(srcRgb2)));
+		srcRgb1 = vcopyq_lane_u16(srcRgb1, 3, alphas, 0);
+		srcRgb1 = vcopyq_lane_u16(srcRgb1, 7, alphas, 1);
+		srcRgb2 = vcopyq_lane_u16(srcRgb2, 3, alphas, 2);
+		srcRgb2 = vcopyq_lane_u16(srcRgb2, 7, alphas, 3);
+		return vcombine_u32(vreinterpret_u32_u8(vmovn_u16(vcvtq_u16_f16(srcRgb1))), vreinterpret_u32_u8(vmovn_u16(vcvtq_u16_f16(srcRgb2))));
 	}
 
 	// kRgbToRgbBlender
@@ -448,13 +453,7 @@ public:
 		tint = vorrq_u32(tint, vdupq_n_u32(tintBlue));
 		uint32x4_t maskedAlphas = vld1q_dup_u32(&alphaMask);
 		uint32x4_t transColors = vld1q_dup_u32(&transColor);
-		int rgbCorrectedAlpha = srcAlpha;
-		if (blenderMode != kRgbToArgbBlender && blenderMode != kTintBlenderMode &&
-			blenderMode != kTintLightBlenderMode && blenderMode != kOpaqueBlenderMode &&
-			blenderMode != kArgbToRgbBlender) {
-			rgbCorrectedAlpha += !!srcAlpha;
-		}
-		uint32x4_t alphas = vld1q_dup_u32(&rgbCorrectedAlpha);
+		uint32x4_t alphas = vld1q_dup_u32(&srcAlpha);
 		uint32x4_t addIndexes = {0, 1, 2, 3};
 		if (horizFlip) addIndexes = {3, 2, 1, 0};
 		uint32x4_t scaleAdds = {0, (uint32)scaleX, (uint32)scaleX*2, (uint32)scaleX*3};
@@ -585,11 +584,7 @@ public:
 		byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
 		uint16x8_t tint = vdupq_n_u16(src.format.ARGBToColor(srcAlpha, tintRed, tintGreen, tintBlue));
 		uint16x8_t transColors = vdupq_n_u16(transColor);
-		int rgbCorrectedAlpha = srcAlpha;
-		if (blenderMode != kTintBlenderMode && blenderMode != kTintLightBlenderMode) {
-			rgbCorrectedAlpha += !!srcAlpha;
-		}
-		uint16x8_t alphas = vdupq_n_u16(rgbCorrectedAlpha);
+		uint16x8_t alphas = vdupq_n_u16(srcAlpha);
 		uint16x8_t addIndexes = {0, 1, 2, 3, 4, 5, 6, 7};
 		if (horizFlip) addIndexes = {7, 6, 5, 4, 3, 2, 1, 0};
 		uint32x4_t scaleAdds = {0, (uint32)scaleX, (uint32)scaleX*2, (uint32)scaleX*3};
