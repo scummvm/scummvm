@@ -1240,13 +1240,19 @@ void LB::b_openDA(int nargs) {
 void LB::b_openResFile(int nargs) {
 	Datum d = g_lingo->pop();
 	Common::String resPath = g_director->getCurrentWindow()->getCurrentPath() + d.asString();
-	resPath = pathMakeRelative(resPath);
+
+	if (g_director->getPlatform() == Common::kPlatformWindows) {
+ 		warning("STUB: BUILDBOT: b_openResFile(%s) on Windows", d.asString().c_str());
+ 		return;
+ 	}
 
 	if (!g_director->_allOpenResFiles.contains(resPath)) {
-		Archive *arch = g_director->openArchive(resPath);
-		if (arch) {
-			// Track responsibility. closeResFile may only close resource files opened by openResFile.
+		MacArchive *arch = new MacArchive();
+		if (arch->openFile(pathMakeRelative(resPath))) {
 			g_director->_openResFiles.setVal(resPath, arch);
+			g_director->_allOpenResFiles.setVal(resPath, arch);
+		} else {
+			delete arch;
 		}
 	}
 }
