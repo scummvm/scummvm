@@ -62,6 +62,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Xeen:
    - Renamed 'xeen' engine to 'mm' for Might & Magic.
+   - Added custom engine option to replace the health gems with HP/SP bars.
 
 
 #### 2.7.1 (2023-XX-XX)
