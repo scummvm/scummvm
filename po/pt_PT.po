@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-10 16:21+0000\n"
+"POT-Creation-Date: 2023-06-10 21:37+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -266,8 +266,8 @@ msgstr "Outro armazenamento está ocupado. Deseja interrompê-lo?"
 
 #: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:415 gui/launcher.cpp:444
-#: gui/launcher.cpp:487 gui/options.cpp:3361 gui/options.cpp:3735
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:405 gui/launcher.cpp:434
+#: gui/launcher.cpp:477 gui/options.cpp:3361 gui/options.cpp:3735
 #: base/main.cpp:595 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
@@ -280,8 +280,8 @@ msgstr "Sim"
 
 #: gui/cloudconnectionwizard.cpp:493 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:415 gui/launcher.cpp:444
-#: gui/launcher.cpp:487 gui/options.cpp:3361 gui/options.cpp:3735
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:405 gui/launcher.cpp:434
+#: gui/launcher.cpp:477 gui/options.cpp:3361 gui/options.cpp:3735
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
@@ -304,7 +304,7 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:551 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
-#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:543 gui/launcher.cpp:547
+#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:533 gui/launcher.cpp:537
 #: gui/massadd.cpp:90 gui/options.cpp:2339 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:32
 #: engines/engine.cpp:544 engines/engine.cpp:567
@@ -350,7 +350,7 @@ msgstr ""
 msgid "Select directory where to download game data"
 msgstr "Selecione a pasta de transferências de ficheiros do jogo"
 
-#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:543 gui/launcher.cpp:288
+#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:543 gui/launcher.cpp:291
 msgid "Select directory with game data"
 msgstr "Selecione a pasta com os ficheiros do jogo"
 
@@ -386,7 +386,7 @@ msgstr ""
 "Parece que a sua ligação é limitada. Deseja mesmo assim transferir os "
 "ficheiros?"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:589
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:635
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "O ScummVM não conseguiu abrir a pasta especificada!"
 
@@ -557,7 +557,7 @@ msgid "Platform:"
 msgstr "Plataforma:"
 
 #: gui/editgamedialog.cpp:191 gui/options.cpp:2013 gui/options.cpp:2186
-#: backends/graphics/atari/atari-graphics.cpp:565
+#: backends/graphics/atari/atari-graphics.cpp:568
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Graphics"
 msgstr "Gráficos"
@@ -998,109 +998,109 @@ msgctxt "group"
 msgid "Platform"
 msgstr "Plataforma"
 
-#: gui/launcher.cpp:212
+#: gui/launcher.cpp:215
 msgid "Select Group by"
 msgstr "Agrupar por"
 
-#: gui/launcher.cpp:216 gui/launcher.cpp:803
+#: gui/launcher.cpp:219 gui/launcher.cpp:849
 #, fuzzy
 msgid "Group:"
 msgstr "Agrupar por:"
 
-#: gui/launcher.cpp:218
+#: gui/launcher.cpp:221
 msgid "Select a criteria to group the entries"
 msgstr "Selecione um critério de agrupamento dos jogos"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
-#: gui/launcher.cpp:247 engines/dialogs.cpp:95
+#: gui/launcher.cpp:250 engines/dialogs.cpp:95
 msgid "~Q~uit"
 msgstr "~S~air"
 
-#: gui/launcher.cpp:247 backends/platform/sdl/macosx/appmenu_osx.mm:252
+#: gui/launcher.cpp:250 backends/platform/sdl/macosx/appmenu_osx.mm:252
 msgid "Quit ScummVM"
 msgstr "Sair do ScummVM"
 
 #. I18N: Button About ScummVM program. b is the shortcut, Ctrl+b, put it in parens for non-latin (~b~)
-#: gui/launcher.cpp:251
+#: gui/launcher.cpp:254
 msgid "A~b~out"
 msgstr "So~b~re"
 
-#: gui/launcher.cpp:251 backends/platform/sdl/macosx/appmenu_osx.mm:246
+#: gui/launcher.cpp:254 backends/platform/sdl/macosx/appmenu_osx.mm:246
 msgid "About ScummVM"
 msgstr "Sobre o ScummVM"
 
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
-#: gui/launcher.cpp:253
+#: gui/launcher.cpp:256
 msgid "Global ~O~ptions..."
 msgstr "~O~pções Gerais..."
 
-#: gui/launcher.cpp:253
+#: gui/launcher.cpp:256
 msgid "Change global ScummVM options"
 msgstr "Alterar opções gerais do ScummVM"
 
-#: gui/launcher.cpp:253
+#: gui/launcher.cpp:256
 msgctxt "lowres"
 msgid "Global ~O~pts..."
 msgstr "~O~p. Gerais..."
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
-#: gui/launcher.cpp:258
+#: gui/launcher.cpp:261
 msgid "~A~dd Game..."
 msgstr "~A~dicionar Jogo..."
 
-#: gui/launcher.cpp:258
+#: gui/launcher.cpp:261
 msgid "Add games to the list"
 msgstr "Adicionar jogos à lista"
 
-#: gui/launcher.cpp:258
+#: gui/launcher.cpp:261
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~A~dicionar..."
 
 #. I18N: Button caption. R is the shortcut, Ctrl+R, put it in parens for non-latin (~R~)
-#: gui/launcher.cpp:262
+#: gui/launcher.cpp:265
 msgid "~R~emove Game"
 msgstr "~R~emover Jogo"
 
-#: gui/launcher.cpp:262
+#: gui/launcher.cpp:265
 msgid "Remove game from the list. The game data files stay intact"
 msgstr ""
 "Remover jogo da lista. Os ficheiros de dados do jogo permanecem intactos"
 
-#: gui/launcher.cpp:262
+#: gui/launcher.cpp:265
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "~R~emover Jogo"
 
 #. I18N: Button caption. Mass add games
-#: gui/launcher.cpp:265
+#: gui/launcher.cpp:268
 msgid "Mass Add..."
 msgstr "Adic. Vários..."
 
 #. I18N: Button caption for lower resolution GUI. Mass add games
-#: gui/launcher.cpp:268
+#: gui/launcher.cpp:271
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Vários..."
 
-#: gui/launcher.cpp:276 gui/launcher.cpp:773 gui/shaderbrowser-dialog.cpp:62
+#: gui/launcher.cpp:279 gui/launcher.cpp:819 gui/shaderbrowser-dialog.cpp:62
 #: gui/shaderbrowser-dialog.cpp:98
 msgid "Search in game list"
 msgstr "Pesquisar na lista de jogos"
 
-#: gui/launcher.cpp:280 gui/launcher.cpp:794 gui/shaderbrowser-dialog.cpp:66
+#: gui/launcher.cpp:283 gui/launcher.cpp:840 gui/shaderbrowser-dialog.cpp:66
 #: gui/shaderbrowser-dialog.cpp:108
 msgid "Search:"
 msgstr "Pesquisa:"
 
-#: gui/launcher.cpp:291 engines/dialogs.cpp:98 engines/engine.cpp:909
+#: gui/launcher.cpp:294 engines/dialogs.cpp:98 engines/engine.cpp:909
 #: engines/mm/xeen/saves.cpp:259 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
 #: engines/wage/saveload.cpp:741
 msgid "Load game:"
 msgstr "Carregar jogo:"
 
-#: gui/launcher.cpp:291 engines/dialogs.cpp:98 engines/engine.cpp:909
+#: gui/launcher.cpp:294 engines/dialogs.cpp:98 engines/engine.cpp:909
 #: engines/mm/xeen/saves.cpp:259 engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
@@ -1108,13 +1108,13 @@ msgstr "Carregar jogo:"
 msgid "Load"
 msgstr "Carregar"
 
-#: gui/launcher.cpp:403
+#: gui/launcher.cpp:393
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
 "De momento, esta pasta não pode ser utilizada, existe uma transferência em "
 "curso!"
 
-#: gui/launcher.cpp:414
+#: gui/launcher.cpp:404
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -1122,113 +1122,113 @@ msgstr ""
 "Deseja mesmo executar o detector de adição em massa? Tal poderá, "
 "potencialmente, adicionar um elevado número de jogos."
 
-#: gui/launcher.cpp:444
+#: gui/launcher.cpp:434
 msgid "Do you really want to remove this game configuration?"
 msgstr "Deseja mesmo remover a configuração deste jogo?"
 
-#: gui/launcher.cpp:486
+#: gui/launcher.cpp:476
 msgid "Do you want to load saved game?"
 msgstr "Deseja carregar o jogo guardado?"
 
-#: gui/launcher.cpp:543
+#: gui/launcher.cpp:533
 msgid "This game does not support loading games from the launcher."
 msgstr "Este jogo não permite carregar jogos a partir do menu principal."
 
-#: gui/launcher.cpp:547
+#: gui/launcher.cpp:537
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 "O ScummVM não conseguiu encontrar nenhum motor capaz de executar o jogo "
 "selecionado!"
 
-#: gui/launcher.cpp:608
+#: gui/launcher.cpp:654
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "O ScummVM não conseguiu encontrar nenhum jogo na pasta especificada!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:624
+#: gui/launcher.cpp:670
 msgid "Unknown variant"
 msgstr "Versão desconhecida"
 
-#: gui/launcher.cpp:630
+#: gui/launcher.cpp:676
 msgid "Pick the game:"
 msgstr "Escolha o jogo:"
 
-#: gui/launcher.cpp:843 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:889 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "Lista"
 
-#: gui/launcher.cpp:844 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:890 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "Mosaico"
 
-#: gui/launcher.cpp:1073
+#: gui/launcher.cpp:1052
 msgid "~S~tart"
 msgstr "~I~niciar"
 
-#: gui/launcher.cpp:1073
+#: gui/launcher.cpp:1052
 msgid "Start selected game"
 msgstr "Iniciar jogo seleccionado"
 
-#: gui/launcher.cpp:1076
+#: gui/launcher.cpp:1055
 msgid "~L~oad..."
 msgstr "~C~arregar..."
 
-#: gui/launcher.cpp:1076
+#: gui/launcher.cpp:1055
 msgid "Load saved game for selected game"
 msgstr "Carregar jogo guardado do jogo selecionado"
 
-#: gui/launcher.cpp:1078
+#: gui/launcher.cpp:1057
 msgid "Record..."
 msgstr "Gravar..."
 
-#: gui/launcher.cpp:1084
+#: gui/launcher.cpp:1063
 msgid "~G~ame Options..."
 msgstr "Opções do ~J~ogo..."
 
-#: gui/launcher.cpp:1084
+#: gui/launcher.cpp:1063
 msgid "Change game options"
 msgstr "Alterar opções do jogo"
 
-#: gui/launcher.cpp:1084
+#: gui/launcher.cpp:1063
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "Op. ~J~ogo..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1176 gui/launcher.cpp:1359
+#: gui/launcher.cpp:1155 gui/launcher.cpp:1338
 msgid "Unknown Engine"
 msgstr "Motor desconhecido"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1193 gui/launcher.cpp:1376
+#: gui/launcher.cpp:1172 gui/launcher.cpp:1355
 msgid "Unknown Publisher"
 msgstr "Editora desconhecida"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1210 gui/launcher.cpp:1393
+#: gui/launcher.cpp:1189 gui/launcher.cpp:1372
 msgid "No Series"
 msgstr "Sem série"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1224 gui/launcher.cpp:1407
+#: gui/launcher.cpp:1203 gui/launcher.cpp:1386
 msgid "Language not detected"
 msgstr "Idioma desconhecido"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1238 gui/launcher.cpp:1421
+#: gui/launcher.cpp:1217 gui/launcher.cpp:1400
 msgid "Platform not detected"
 msgstr "Plataforma desconhecida"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1432 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1411 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "Todos"
 
-#: gui/launcher.cpp:1581
+#: gui/launcher.cpp:1560
 msgid "Icons per row:"
 msgstr ""
 
@@ -3487,7 +3487,7 @@ msgstr ""
 msgid "Choose a new folder"
 msgstr "Escolher ficheiro para carregar"
 
-#: backends/graphics/atari/atari-graphics.cpp:569
+#: backends/graphics/atari/atari-graphics.cpp:572
 #: backends/graphics/sdl/sdl-graphics.cpp:447
 msgid "Toggle aspect ratio correction"
 msgstr "Alternar correção da taxa de proporção"
