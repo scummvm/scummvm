@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-10 21:37+0000\n"
+"POT-Creation-Date: 2023-06-10 23:03+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -6469,6 +6469,35 @@ msgstr "움직이는 게임 인터페이스"
 msgid "Naughty game mode"
 msgstr "꾸러기 게임 모드"
 
+#: engines/mm/metaengine.cpp:46
+msgid "Show item costs in standard inventory mode"
+msgstr "일반 인벤토리 모드에서 아이템 가격을 표시"
+
+#: engines/mm/metaengine.cpp:47
+msgid ""
+"Shows item costs in standard inventory mode, allowing the value of items to "
+"be compared"
+msgstr ""
+"일반 인벤토리 모드에서 아이템 가격을 표시해 가치를 비교할 수 있게 합니다"
+
+#: engines/mm/metaengine.cpp:57
+msgid "More durable armor"
+msgstr "방어구 내구력을 증가"
+
+#: engines/mm/metaengine.cpp:58
+msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
+msgstr "방어구가 부서지는 캐릭터 HP를 -10에서 -80으로 변경합니다"
+
+#: engines/mm/metaengine.cpp:68
+#, fuzzy
+#| msgid "Enable hit point bar graphs"
+msgid "Hitpoint bars"
+msgstr "HP 바 그래프를 활성화합니다"
+
+#: engines/mm/metaengine.cpp:69
+msgid "Replace a colored gem with bars for hit points and spell points."
+msgstr ""
+
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
 #: engines/twine/metaengine.cpp:432 engines/wintermute/keymapper_tables.h:60
@@ -10283,22 +10312,6 @@ msgstr ""
 
 #~ msgid "Invalid Scene ID!"
 #~ msgstr "씬 ID가 잘못되었습니다!"
-
-#~ msgid "Show item costs in standard inventory mode"
-#~ msgstr "일반 인벤토리 모드에서 아이템 가격을 표시"
-
-#~ msgid ""
-#~ "Shows item costs in standard inventory mode, allowing the value of items "
-#~ "to be compared"
-#~ msgstr ""
-#~ "일반 인벤토리 모드에서 아이템 가격을 표시해 가치를 비교할 수 있게 합니다"
-
-#~ msgid "More durable armor"
-#~ msgstr "방어구 내구력을 증가"
-
-#~ msgid ""
-#~ "Armor won't break until character is at -80HP, rather than merely -10HP"
-#~ msgstr "방어구가 부서지는 캐릭터 HP를 -10에서 -80으로 변경합니다"
 
 #~ msgid "Show SAF revoke permissions overlay button"
 #~ msgstr "SAF 권한 승인 취소 오버레이 버튼을 표시"

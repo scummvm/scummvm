@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-10 21:37+0000\n"
+"POT-Creation-Date: 2023-06-10 23:03+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -6510,6 +6510,34 @@ msgstr "Анімаваны інтэрфейс гульні"
 msgid "Naughty game mode"
 msgstr "Гарэзны рэжым гульні"
 
+#: engines/mm/metaengine.cpp:46
+msgid "Show item costs in standard inventory mode"
+msgstr "Паказаць кошт рэчаў ў рэжыме звычайнага інвентара"
+
+#: engines/mm/metaengine.cpp:47
+msgid ""
+"Shows item costs in standard inventory mode, allowing the value of items to "
+"be compared"
+msgstr "Паказаць кошт рэчаў ў рэжыме звычайнага інвентара дзеля параўнання"
+
+#: engines/mm/metaengine.cpp:57
+msgid "More durable armor"
+msgstr "Мацнейшая браня"
+
+#: engines/mm/metaengine.cpp:58
+msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
+msgstr "Браня не зламаецца, пакуль у героя не стане -80HP замест усяго -10HP"
+
+#: engines/mm/metaengine.cpp:68
+#, fuzzy
+#| msgid "Enable hit point bar graphs"
+msgid "Hitpoint bars"
+msgstr "Уключыць адлюстраванне палосак здароўя"
+
+#: engines/mm/metaengine.cpp:69
+msgid "Replace a colored gem with bars for hit points and spell points."
+msgstr ""
+
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
 #: engines/twine/metaengine.cpp:432 engines/wintermute/keymapper_tables.h:60
@@ -10326,22 +10354,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Invalid Scene ID!"
 #~ msgstr "Несапраўдны шлях!"
-
-#~ msgid "Show item costs in standard inventory mode"
-#~ msgstr "Паказаць кошт рэчаў ў рэжыме звычайнага інвентара"
-
-#~ msgid ""
-#~ "Shows item costs in standard inventory mode, allowing the value of items "
-#~ "to be compared"
-#~ msgstr "Паказаць кошт рэчаў ў рэжыме звычайнага інвентара дзеля параўнання"
-
-#~ msgid "More durable armor"
-#~ msgstr "Мацнейшая браня"
-
-#~ msgid ""
-#~ "Armor won't break until character is at -80HP, rather than merely -10HP"
-#~ msgstr ""
-#~ "Браня не зламаецца, пакуль у героя не стане -80HP замест усяго -10HP"
 
 #~ msgctxt "lowres"
 #~ msgid "Misc"

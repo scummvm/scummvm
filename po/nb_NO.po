@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-10 21:37+0000\n"
+"POT-Creation-Date: 2023-06-10 23:03+0000\n"
 "PO-Revision-Date: 2023-04-15 16:26+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -6508,6 +6508,37 @@ msgstr "Animert spillgrensesnitt"
 msgid "Naughty game mode"
 msgstr "Frekk spillmodus"
 
+#: engines/mm/metaengine.cpp:46
+msgid "Show item costs in standard inventory mode"
+msgstr "Vis gjenstandspris i den ordinære utstyrslistemodusen"
+
+#: engines/mm/metaengine.cpp:47
+msgid ""
+"Shows item costs in standard inventory mode, allowing the value of items to "
+"be compared"
+msgstr ""
+"Viser gjenstandspris i den ordinære utstyrsmodusen, så det blir enklere å "
+"sammenligne verdien på gjenstander"
+
+#: engines/mm/metaengine.cpp:57
+msgid "More durable armor"
+msgstr "Sterkere rustning"
+
+#: engines/mm/metaengine.cpp:58
+msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
+msgstr ""
+"Rustning knuser ikke før en karakter er på -80 HP (fremfor knappe -10 HP)"
+
+#: engines/mm/metaengine.cpp:68
+#, fuzzy
+#| msgid "Enable hit point bar graphs"
+msgid "Hitpoint bars"
+msgstr "Aktiver hit point-bar grafer"
+
+#: engines/mm/metaengine.cpp:69
+msgid "Replace a colored gem with bars for hit points and spell points."
+msgstr ""
+
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
 #: engines/twine/metaengine.cpp:432 engines/wintermute/keymapper_tables.h:60
@@ -10405,24 +10436,6 @@ msgstr ""
 
 #~ msgid "Invalid Scene ID!"
 #~ msgstr "Ugyldig scene-ID!"
-
-#~ msgid "Show item costs in standard inventory mode"
-#~ msgstr "Vis gjenstandspris i den ordinære utstyrslistemodusen"
-
-#~ msgid ""
-#~ "Shows item costs in standard inventory mode, allowing the value of items "
-#~ "to be compared"
-#~ msgstr ""
-#~ "Viser gjenstandspris i den ordinære utstyrsmodusen, så det blir enklere å "
-#~ "sammenligne verdien på gjenstander"
-
-#~ msgid "More durable armor"
-#~ msgstr "Sterkere rustning"
-
-#~ msgid ""
-#~ "Armor won't break until character is at -80HP, rather than merely -10HP"
-#~ msgstr ""
-#~ "Rustning knuser ikke før en karakter er på -80 HP (fremfor knappe -10 HP)"
 
 #~ msgid "Show SAF revoke permissions overlay button"
 #~ msgstr "Vis overleggsknapp for tilbaketrekking av SAF-tillatelser"

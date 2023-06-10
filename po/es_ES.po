@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-10 21:37+0000\n"
+"POT-Creation-Date: 2023-06-10 23:03+0000\n"
 "PO-Revision-Date: 2023-05-29 09:44+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -6561,6 +6561,38 @@ msgstr "Interfaz de juego animada"
 msgid "Naughty game mode"
 msgstr "Modo de juego picante"
 
+#: engines/mm/metaengine.cpp:46
+msgid "Show item costs in standard inventory mode"
+msgstr "Mostrar coste de los objetos en modo de inventario estándar"
+
+#: engines/mm/metaengine.cpp:47
+msgid ""
+"Shows item costs in standard inventory mode, allowing the value of items to "
+"be compared"
+msgstr ""
+"Muestra el coste de los objetos en el modo de inventario estándar, "
+"permitiendo comparar su valor"
+
+#: engines/mm/metaengine.cpp:57
+msgid "More durable armor"
+msgstr "Armadura más duradera"
+
+#: engines/mm/metaengine.cpp:58
+msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
+msgstr ""
+"La armadura no se romperá hasta que el personaje pierda 80PV, en vez de "
+"solamente 10PV"
+
+#: engines/mm/metaengine.cpp:68
+#, fuzzy
+#| msgid "Enable hit point bar graphs"
+msgid "Hitpoint bars"
+msgstr "Activar las barras de energía"
+
+#: engines/mm/metaengine.cpp:69
+msgid "Replace a colored gem with bars for hit points and spell points."
+msgstr ""
+
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
 #: engines/twine/metaengine.cpp:432 engines/wintermute/keymapper_tables.h:60
@@ -10463,25 +10495,6 @@ msgstr ""
 
 #~ msgid "Invalid Scene ID!"
 #~ msgstr "¡ID de escena no válido!"
-
-#~ msgid "Show item costs in standard inventory mode"
-#~ msgstr "Mostrar coste de los objetos en modo de inventario estándar"
-
-#~ msgid ""
-#~ "Shows item costs in standard inventory mode, allowing the value of items "
-#~ "to be compared"
-#~ msgstr ""
-#~ "Muestra el coste de los objetos en el modo de inventario estándar, "
-#~ "permitiendo comparar su valor"
-
-#~ msgid "More durable armor"
-#~ msgstr "Armadura más duradera"
-
-#~ msgid ""
-#~ "Armor won't break until character is at -80HP, rather than merely -10HP"
-#~ msgstr ""
-#~ "La armadura no se romperá hasta que el personaje pierda 80PV, en vez de "
-#~ "solamente 10PV"
 
 #~ msgid "Show SAF revoke permissions overlay button"
 #~ msgstr "Mostrar botón superpuesto para revocar permisos del SAF"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-10 21:37+0000\n"
+"POT-Creation-Date: 2023-06-10 23:03+0000\n"
 "PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -6514,6 +6514,36 @@ msgstr "Animált játék felület"
 msgid "Naughty game mode"
 msgstr "Pajkos játékmód"
 
+#: engines/mm/metaengine.cpp:46
+msgid "Show item costs in standard inventory mode"
+msgstr "Elem költségek megjelenítése a szokásos leltári módban"
+
+#: engines/mm/metaengine.cpp:47
+msgid ""
+"Shows item costs in standard inventory mode, allowing the value of items to "
+"be compared"
+msgstr ""
+"Az elem költségeket a szokásos leltári módban mutatja, lehetõvé téve az elem "
+"értékek összehasonlítását"
+
+#: engines/mm/metaengine.cpp:57
+msgid "More durable armor"
+msgstr "Tartósabb páncél"
+
+#: engines/mm/metaengine.cpp:58
+msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
+msgstr "A páncél nem szakad el, karakter -80 HP-nál, hanem csak -10 HP-nál"
+
+#: engines/mm/metaengine.cpp:68
+#, fuzzy
+#| msgid "Enable hit point bar graphs"
+msgid "Hitpoint bars"
+msgstr "Hit point sáv grafika engedélyezése"
+
+#: engines/mm/metaengine.cpp:69
+msgid "Replace a colored gem with bars for hit points and spell points."
+msgstr ""
+
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
 #: engines/twine/metaengine.cpp:432 engines/wintermute/keymapper_tables.h:60
@@ -10365,23 +10395,6 @@ msgstr ""
 
 #~ msgid "Invalid Scene ID!"
 #~ msgstr "Érvénytelen Jelenet ID!"
-
-#~ msgid "Show item costs in standard inventory mode"
-#~ msgstr "Elem költségek megjelenítése a szokásos leltári módban"
-
-#~ msgid ""
-#~ "Shows item costs in standard inventory mode, allowing the value of items "
-#~ "to be compared"
-#~ msgstr ""
-#~ "Az elem költségeket a szokásos leltári módban mutatja, lehetõvé téve az "
-#~ "elem értékek összehasonlítását"
-
-#~ msgid "More durable armor"
-#~ msgstr "Tartósabb páncél"
-
-#~ msgid ""
-#~ "Armor won't break until character is at -80HP, rather than merely -10HP"
-#~ msgstr "A páncél nem szakad el, karakter -80 HP-nál, hanem csak -10 HP-nál"
 
 #~ msgid "Show SAF revoke permissions overlay button"
 #~ msgstr "A SAF visszavonási engedélyek átfedés gomb megjelenítése"

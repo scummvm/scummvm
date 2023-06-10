@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-10 21:37+0000\n"
+"POT-Creation-Date: 2023-06-10 23:03+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -6415,6 +6415,34 @@ msgstr "ממשק משחק אנימציה"
 msgid "Naughty game mode"
 msgstr "מצב משחק שובב"
 
+#: engines/mm/metaengine.cpp:46
+msgid "Show item costs in standard inventory mode"
+msgstr "הצג עלויות פריט במצב מלאי רגיל"
+
+#: engines/mm/metaengine.cpp:47
+msgid ""
+"Shows item costs in standard inventory mode, allowing the value of items to "
+"be compared"
+msgstr "מציג עלויות פריט במצב מלאי רגיל, ומאפשר להשוות בין ערך הפריטים"
+
+#: engines/mm/metaengine.cpp:57
+msgid "More durable armor"
+msgstr "שריון עמיד יותר"
+
+#: engines/mm/metaengine.cpp:58
+msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
+msgstr "השריון לא ישבר עד שהדמות תהיה ב -80 כ\"ס, ולא רק -10 כ\"ס"
+
+#: engines/mm/metaengine.cpp:68
+#, fuzzy
+#| msgid "Enable hit point bar graphs"
+msgid "Hitpoint bars"
+msgstr "אפשר תרשימי סרגל נקודות נקודה"
+
+#: engines/mm/metaengine.cpp:69
+msgid "Replace a colored gem with bars for hit points and spell points."
+msgstr ""
+
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
 #: engines/twine/metaengine.cpp:432 engines/wintermute/keymapper_tables.h:60
@@ -10210,21 +10238,6 @@ msgstr ""
 
 #~ msgid "Invalid Scene ID!"
 #~ msgstr "מזהה זירה שגוי!"
-
-#~ msgid "Show item costs in standard inventory mode"
-#~ msgstr "הצג עלויות פריט במצב מלאי רגיל"
-
-#~ msgid ""
-#~ "Shows item costs in standard inventory mode, allowing the value of items "
-#~ "to be compared"
-#~ msgstr "מציג עלויות פריט במצב מלאי רגיל, ומאפשר להשוות בין ערך הפריטים"
-
-#~ msgid "More durable armor"
-#~ msgstr "שריון עמיד יותר"
-
-#~ msgid ""
-#~ "Armor won't break until character is at -80HP, rather than merely -10HP"
-#~ msgstr "השריון לא ישבר עד שהדמות תהיה ב -80 כ\"ס, ולא רק -10 כ\"ס"
 
 #~ msgid "Show SAF revoke permissions overlay button"
 #~ msgstr "הצגת כפתור שלילת הרשאות SAF"

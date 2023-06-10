@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-10 21:37+0000\n"
+"POT-Creation-Date: 2023-06-10 23:03+0000\n"
 "PO-Revision-Date: 2023-03-20 15:33+0000\n"
 "Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -6484,6 +6484,38 @@ msgstr "Animowany interfejs gry"
 msgid "Naughty game mode"
 msgstr ""
 
+#: engines/mm/metaengine.cpp:46
+msgid "Show item costs in standard inventory mode"
+msgstr "Pokazuj koszt przedmiotów w standardowym trybie ekwipunku"
+
+#: engines/mm/metaengine.cpp:47
+msgid ""
+"Shows item costs in standard inventory mode, allowing the value of items to "
+"be compared"
+msgstr ""
+"Pokazuje koszt przedmiotów w standardowym trybie ekwipunku, co pozwala na "
+"porównywanie ich wartości"
+
+#: engines/mm/metaengine.cpp:57
+msgid "More durable armor"
+msgstr "Wytrzymalszy pancerz"
+
+#: engines/mm/metaengine.cpp:58
+msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
+msgstr ""
+"Pancerz nie pęknie, dopóki postać nie będzie mieć -80PŻ, zamiast zaledwie "
+"-10PŻ"
+
+#: engines/mm/metaengine.cpp:68
+#, fuzzy
+#| msgid "Enable hit point bar graphs"
+msgid "Hitpoint bars"
+msgstr "Włącz histogramy punktów życia"
+
+#: engines/mm/metaengine.cpp:69
+msgid "Replace a colored gem with bars for hit points and spell points."
+msgstr ""
+
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
 #: engines/twine/metaengine.cpp:432 engines/wintermute/keymapper_tables.h:60
@@ -10330,25 +10362,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Invalid Scene ID!"
 #~ msgstr "Nieprawidłowa ścieżka dostępu!"
-
-#~ msgid "Show item costs in standard inventory mode"
-#~ msgstr "Pokazuj koszt przedmiotów w standardowym trybie ekwipunku"
-
-#~ msgid ""
-#~ "Shows item costs in standard inventory mode, allowing the value of items "
-#~ "to be compared"
-#~ msgstr ""
-#~ "Pokazuje koszt przedmiotów w standardowym trybie ekwipunku, co pozwala na "
-#~ "porównywanie ich wartości"
-
-#~ msgid "More durable armor"
-#~ msgstr "Wytrzymalszy pancerz"
-
-#~ msgid ""
-#~ "Armor won't break until character is at -80HP, rather than merely -10HP"
-#~ msgstr ""
-#~ "Pancerz nie pęknie, dopóki postać nie będzie mieć -80PŻ, zamiast zaledwie "
-#~ "-10PŻ"
 
 #~ msgid "Show SAF revoke permissions overlay button"
 #~ msgstr "Wyświetlaj przycisk do anulowania zezwoleń SAF"

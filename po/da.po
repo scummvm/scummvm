@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-10 21:37+0000\n"
+"POT-Creation-Date: 2023-06-10 23:03+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -6548,6 +6548,38 @@ msgstr "Animeret spilbrugerflade"
 msgid "Naughty game mode"
 msgstr "Uhyggelig spiltilstand"
 
+#: engines/mm/metaengine.cpp:46
+msgid "Show item costs in standard inventory mode"
+msgstr "Vis tingenes priser i standard-inventar-tilstand"
+
+#: engines/mm/metaengine.cpp:47
+msgid ""
+"Shows item costs in standard inventory mode, allowing the value of items to "
+"be compared"
+msgstr ""
+"Viser tingenes priser i standard-inventar-tilstand, så tingenes værdier kan "
+"sammenlignes"
+
+#: engines/mm/metaengine.cpp:57
+msgid "More durable armor"
+msgstr "Bedre rustning"
+
+#: engines/mm/metaengine.cpp:58
+msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
+msgstr ""
+"Rustningen går ikke i stykker før karakteren er på -80HP, i stedet for blot "
+"-10HP"
+
+#: engines/mm/metaengine.cpp:68
+#, fuzzy
+#| msgid "Enable hit point bar graphs"
+msgid "Hitpoint bars"
+msgstr "Aktivér træfpoint (HP) søjlediagrammer"
+
+#: engines/mm/metaengine.cpp:69
+msgid "Replace a colored gem with bars for hit points and spell points."
+msgstr ""
+
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
 #: engines/twine/metaengine.cpp:432 engines/wintermute/keymapper_tables.h:60
@@ -10443,25 +10475,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Invalid Scene ID!"
 #~ msgstr "Ugyldig sti!"
-
-#~ msgid "Show item costs in standard inventory mode"
-#~ msgstr "Vis tingenes priser i standard-inventar-tilstand"
-
-#~ msgid ""
-#~ "Shows item costs in standard inventory mode, allowing the value of items "
-#~ "to be compared"
-#~ msgstr ""
-#~ "Viser tingenes priser i standard-inventar-tilstand, så tingenes værdier "
-#~ "kan sammenlignes"
-
-#~ msgid "More durable armor"
-#~ msgstr "Bedre rustning"
-
-#~ msgid ""
-#~ "Armor won't break until character is at -80HP, rather than merely -10HP"
-#~ msgstr ""
-#~ "Rustningen går ikke i stykker før karakteren er på -80HP, i stedet for "
-#~ "blot -10HP"
 
 #~ msgctxt "lowres"
 #~ msgid "Misc"

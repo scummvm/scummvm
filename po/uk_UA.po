@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-10 21:37+0000\n"
+"POT-Creation-Date: 2023-06-10 23:03+0000\n"
 "PO-Revision-Date: 2023-05-17 15:40+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -6504,6 +6504,36 @@ msgstr "Анімований інтерфейс гри"
 msgid "Naughty game mode"
 msgstr "Відвертий режим гри"
 
+#: engines/mm/metaengine.cpp:46
+msgid "Show item costs in standard inventory mode"
+msgstr "Показати витрати на предмет у стандартному режимі інвентаризації"
+
+#: engines/mm/metaengine.cpp:47
+msgid ""
+"Shows item costs in standard inventory mode, allowing the value of items to "
+"be compared"
+msgstr ""
+"Показує вартість предметів у стандартному режимі інвентаризації, що дозволяє "
+"порівнювати значення предметів"
+
+#: engines/mm/metaengine.cpp:57
+msgid "More durable armor"
+msgstr "Більш міцна броня"
+
+#: engines/mm/metaengine.cpp:58
+msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
+msgstr "Броня не зламається, поки персонаж не досягне -80HP, а не лише -10HP"
+
+#: engines/mm/metaengine.cpp:68
+#, fuzzy
+#| msgid "Enable hit point bar graphs"
+msgid "Hitpoint bars"
+msgstr "Ввімкнути графічні стовпчики здоров'я"
+
+#: engines/mm/metaengine.cpp:69
+msgid "Replace a colored gem with bars for hit points and spell points."
+msgstr ""
+
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
 #: engines/twine/metaengine.cpp:432 engines/wintermute/keymapper_tables.h:60
@@ -10358,24 +10388,6 @@ msgstr ""
 
 #~ msgid "Invalid Scene ID!"
 #~ msgstr "Недійсний ID сцени!"
-
-#~ msgid "Show item costs in standard inventory mode"
-#~ msgstr "Показати витрати на предмет у стандартному режимі інвентаризації"
-
-#~ msgid ""
-#~ "Shows item costs in standard inventory mode, allowing the value of items "
-#~ "to be compared"
-#~ msgstr ""
-#~ "Показує вартість предметів у стандартному режимі інвентаризації, що "
-#~ "дозволяє порівнювати значення предметів"
-
-#~ msgid "More durable armor"
-#~ msgstr "Більш міцна броня"
-
-#~ msgid ""
-#~ "Armor won't break until character is at -80HP, rather than merely -10HP"
-#~ msgstr ""
-#~ "Броня не зламається, поки персонаж не досягне -80HP, а не лише -10HP"
 
 #~ msgid "Show SAF revoke permissions overlay button"
 #~ msgstr "Показати кнопку SAF (доступу до картки пам'яті)"
