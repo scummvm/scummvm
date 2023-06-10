@@ -29,7 +29,7 @@
 
 namespace Tinsel {
 
-#define MAX_SOUNDREELS	5
+#define MAX_SOUNDREELS	10
 
 struct SOUNDREELS {
 	SCNHANDLE hFilm;	// The 'film'
