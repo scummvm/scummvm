@@ -52,6 +52,23 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 		GType_MightAndMagic1,
 		GF_ENHANCED
 	},
+
+	{
+		// Might and Magic 1 (Gfx Pack)
+		// This isn't directly supported, because using it would allow playing
+		// the game without actually having the original game files
+		{
+			"mm1",
+			nullptr,
+			AD_ENTRY1s("wallpix.dta", "64af4dad1f86aedf307e8184a9f12ba9", 164220),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GType_MightAndMagic1,
+		GF_GFX_PACK
+	},
 #endif
 
 #ifdef ENABLE_XEEN

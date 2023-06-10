@@ -36,7 +36,8 @@ enum {
 
 enum GameFeature {
 	GF_NONE = 0,
-	GF_ENHANCED = 1
+	GF_ENHANCED = 1,
+	GF_GFX_PACK = 2
 };
 
 struct MightAndMagicGameDescription {

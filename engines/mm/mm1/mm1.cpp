@@ -52,6 +52,13 @@ MM1Engine::~MM1Engine() {
 }
 
 Common::Error MM1Engine::run() {
+	if (_gameDescription->features & GF_GFX_PACK) {
+		GUIErrorMessage(_("You cannot run the game directly from the Graphics Overhaul Mod. "
+			"Instead, it will automatically be available if you detect the original game "
+			"and select Enhanced mode."));
+		return Common::kNoError;
+	}
+
 	// Initialize graphics mode
 	initGraphics(320, 200);
 
