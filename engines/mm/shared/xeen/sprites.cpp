@@ -80,7 +80,7 @@ SpriteResource &SpriteResource::operator=(const SpriteResource &src) {
 void SpriteResource::load(const Common::String &filename) {
 	_filename = filename;
 	Common::File f;
-	if (f.open(filename)) {
+	if (g_engine->getGameID() == GType_MightAndMagic1 && f.open(filename)) {
 		load(f);
 	} else {
 		File f2(filename);
