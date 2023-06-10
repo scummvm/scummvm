@@ -3755,18 +3755,24 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 
 		switch (stackTop.propagationStage) {
 		case PropagationStack::kStageCheckAndSendCommand:
-			if (_root.expired())
+			if (_root.expired()) {
+				_terminated = true;
 				return kVThreadReturn;
+			}
 			stackTop.propagationStage = PropagationStack::kStageSendCommand;
 			break;
 		case PropagationStack::kStageCheckAndSendToStructural:
-			if (_root.expired())
+			if (_root.expired()) {
+				_terminated = true;
 				return kVThreadReturn;
+			}
 			stackTop.propagationStage = PropagationStack::kStageSendToStructuralSelf;
 			break;
 		case PropagationStack::kStageCheckAndSendToModifier:
-			if (_root.expired())
+			if (_root.expired()) {
+				_terminated = true;
 				return kVThreadReturn;
+			}
 			stackTop.propagationStage = PropagationStack::kStageSendToModifier;
 			break;
 		case PropagationStack::kStageSendToModifier: {
