@@ -76,7 +76,7 @@ It's time to generate the Xcode project. Run the following on the command line:
 
 .. code::
 
-    ../scummvm/devtools/create_project/xcode/build/Release/create_project ../scummvm --xcode --use-xcframework --enable-faad --enable-fluidsynth --enable-gif --enable-mikmod --enable-mpeg2 --enable-vpx --disable-nasm --disable-opengl_game_classic --disable-taskbar --disable-tts
+    ../scummvm/devtools/create_project/xcode/build/Release/create_project ../scummvm --xcode --use-xcframework --enable-faad --enable-fluidsynth --enable-gif --enable-mikmod --enable-mpeg2 --enable-vpx --disable-nasm --disable-taskbar --disable-tts
 
 The resulting directory structure looks like this:
 
