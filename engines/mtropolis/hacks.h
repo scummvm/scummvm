@@ -54,6 +54,7 @@ struct Hacks {
 	bool allowAssetsFromOtherScenes;
 	bool mtiVariableReferencesHack;
 	bool mtiSceneReturnHack;
+	bool mtiHispaniolaMToonHack;
 
 	uint midiVolumeScale;	// 256 = 1.0
 

@@ -143,11 +143,12 @@ MToonMetadata::MToonMetadata() : imageFormat(kImageFormatWindows), bitsPerPixel(
 CachedMToon::RleFrame::RleFrame() : version(0), width(0), height(0), isKeyframe(0) {
 }
 
-CachedMToon::CachedMToon() : _isRLETemporalCompressed(false) {
+CachedMToon::CachedMToon() : _isRLETemporalCompressed(false), _hackFlags(0) {
 }
 
-bool CachedMToon::loadFromStream(const Common::SharedPtr<MToonMetadata> &metadata, Common::ReadStream *stream, size_t size) {
+bool CachedMToon::loadFromStream(const Common::SharedPtr<MToonMetadata> &metadata, Common::ReadStream *stream, size_t size, uint hackFlags) {
 	_metadata = metadata;
+	_hackFlags = hackFlags;
 
 	Common::Array<uint8> data;
 	data.resize(size);
@@ -207,7 +208,7 @@ void CachedMToon::decompressFrames(const Common::Array<uint8> &data) {
 }
 
 template<class TNumber, uint32 TLiteralMask, uint32 TTransparentRowSkipMask>
-bool CachedMToon::decompressMToonRLE(const RleFrame &frame, const Common::Array<TNumber> &coefsArray, Graphics::ManagedSurface &surface, bool isBottomUp) {
+bool CachedMToon::decompressMToonRLE(const RleFrame &frame, const Common::Array<TNumber> &coefsArray, Graphics::ManagedSurface &surface, bool isBottomUp, uint hackFlags) {
 	assert(sizeof(TNumber) == surface.format.bytesPerPixel);
 
 	size_t size = coefsArray.size();
@@ -244,7 +245,12 @@ bool CachedMToon::decompressMToonRLE(const RleFrame &frame, const Common::Array<
 
 			if (transparentCountCode & TTransparentRowSkipMask) {
 				// Vertical skip
-				y += (transparentCountCode - TTransparentRowSkipMask);
+				uint32 skipAmount = transparentCountCode - TTransparentRowSkipMask;
+
+				if ((hackFlags & MToonHackFlags::kMTIHispaniolaMPZHack) && (transparentCountCode - TTransparentRowSkipMask) == (TTransparentRowSkipMask - 2))
+					skipAmount = 0;
+
+				y += skipAmount;
 				x = 0;
 				if (y < h) {
 					rowData = static_cast<TNumber *>(surface.getBasePtr(0, isBottomUp ? (h - 1 - y) : y));
@@ -303,11 +309,11 @@ void CachedMToon::decompressRLEFrameToImage(size_t frameIndex, Graphics::Managed
 
 	bool decompressedOK = false;
 	if (_rleOptimizedFormat.bytesPerPixel == 4) {
-		decompressedOK = decompressMToonRLE<uint32, 0x80000000u, 0x80000000u>(_rleData[frameIndex], _rleData[frameIndex].data32, surface, isBottomUp);
+		decompressedOK = decompressMToonRLE<uint32, 0x80000000u, 0x80000000u>(_rleData[frameIndex], _rleData[frameIndex].data32, surface, isBottomUp, _hackFlags);
 	} else if (_rleOptimizedFormat.bytesPerPixel == 2) {
-		decompressedOK = decompressMToonRLE<uint16, 0x8000u, 0x8000u>(_rleData[frameIndex], _rleData[frameIndex].data16, surface, isBottomUp);
+		decompressedOK = decompressMToonRLE<uint16, 0x8000u, 0x8000u>(_rleData[frameIndex], _rleData[frameIndex].data16, surface, isBottomUp, _hackFlags);
 	} else if (_rleOptimizedFormat.bytesPerPixel == 1) {
-		decompressedOK = decompressMToonRLE<uint8, 0x80u, 0x80u>(_rleData[frameIndex], _rleData[frameIndex].data8, surface, isBottomUp);
+		decompressedOK = decompressMToonRLE<uint8, 0x80u, 0x80u>(_rleData[frameIndex], _rleData[frameIndex].data8, surface, isBottomUp, _hackFlags);
 	} else
 		error("Unknown mToon encoding");
 
@@ -502,7 +508,7 @@ void CachedMToon::decompressQuickTimeFrame(const Common::Array<uint8> &data, siz
 }
 
 template<class TSrcNumber, uint32 TSrcLiteralMask, uint32 TSrcTransparentSkipMask, class TDestNumber, uint32 TDestLiteralMask, uint32 TDestTransparentSkipMask>
-void CachedMToon::rleReformat(RleFrame &frame, const Common::Array<TSrcNumber> &srcData, const Graphics::PixelFormat &srcFormatRef, Common::Array<TDestNumber> &destData, const Graphics::PixelFormat &destFormatRef) {
+void CachedMToon::rleReformat(RleFrame &frame, const Common::Array<TSrcNumber> &srcData, const Graphics::PixelFormat &srcFormatRef, Common::Array<TDestNumber> &destData, const Graphics::PixelFormat &destFormatRef, uint hackFlags) {
 	const Graphics::PixelFormat srcFormat = srcFormatRef;
 	const Graphics::PixelFormat destFormat = destFormatRef;
 
@@ -594,14 +600,14 @@ void CachedMToon::optimizeRLE(const Graphics::PixelFormat &targetFormatRef) {
 	for (size_t i = 0; i < numFrames; i++) {
 		if (_rleInternalFormat.bytesPerPixel == 2) {
 			if (targetFormat.bytesPerPixel == 4)
-				rleReformat<uint16, 0x8000u, 0x8000u, uint32, 0x80000000u, 0x80000000u>(_rleData[i], _rleData[i].data16, _rleInternalFormat, _rleData[i].data32, targetFormat);
+				rleReformat<uint16, 0x8000u, 0x8000u, uint32, 0x80000000u, 0x80000000u>(_rleData[i], _rleData[i].data16, _rleInternalFormat, _rleData[i].data32, targetFormat, _hackFlags);
 			else if (targetFormat.bytesPerPixel == 2)
-				rleReformat<uint16, 0x8000u, 0x8000u, uint16, 0x8000u, 0x8000u>(_rleData[i], _rleData[i].data16, _rleInternalFormat, _rleData[i].data16, targetFormat);
+				rleReformat<uint16, 0x8000u, 0x8000u, uint16, 0x8000u, 0x8000u>(_rleData[i], _rleData[i].data16, _rleInternalFormat, _rleData[i].data16, targetFormat, _hackFlags);
 		} else if (_rleInternalFormat.bytesPerPixel == 4) {
 			if (targetFormat.bytesPerPixel == 4)
-				rleReformat<uint32, 0x80000000u, 0x80000000u, uint32, 0x80000000u, 0x80000000u>(_rleData[i], _rleData[i].data32, _rleInternalFormat, _rleData[i].data32, targetFormat);
+				rleReformat<uint32, 0x80000000u, 0x80000000u, uint32, 0x80000000u, 0x80000000u>(_rleData[i], _rleData[i].data32, _rleInternalFormat, _rleData[i].data32, targetFormat, _hackFlags);
 			else if (targetFormat.bytesPerPixel == 2)
-				rleReformat<uint32, 0x80000000u, 0x80000000u, uint16, 0x8000u, 0x8000u>(_rleData[i], _rleData[i].data32, _rleInternalFormat, _rleData[i].data16, targetFormat);
+				rleReformat<uint32, 0x80000000u, 0x80000000u, uint16, 0x8000u, 0x8000u>(_rleData[i], _rleData[i].data32, _rleInternalFormat, _rleData[i].data16, targetFormat, _hackFlags);
 		}
 	}
 
@@ -644,11 +650,11 @@ void CachedMToon::getOrRenderFrame(uint32 prevFrame, uint32 targetFrame, Common:
 
 		for (size_t i = firstFrameToRender; i <= targetFrame; i++) {
 			if (_rleOptimizedFormat.bytesPerPixel == 1)
-				decompressMToonRLE<uint8, 0x80u, 0x80u>(_rleData[i], _rleData[i].data8, *surface, isBottomUp);
+				decompressMToonRLE<uint8, 0x80u, 0x80u>(_rleData[i], _rleData[i].data8, *surface, isBottomUp, _hackFlags);
 			else if (_rleOptimizedFormat.bytesPerPixel == 2)
-				decompressMToonRLE<uint16, 0x8000u, 0x8000u>(_rleData[i], _rleData[i].data16, *surface, isBottomUp);
+				decompressMToonRLE<uint16, 0x8000u, 0x8000u>(_rleData[i], _rleData[i].data16, *surface, isBottomUp, _hackFlags);
 			else if (_rleOptimizedFormat.bytesPerPixel == 4)
-				decompressMToonRLE<uint32, 0x80000000u, 0x80000000u>(_rleData[i], _rleData[i].data32, *surface, isBottomUp);
+				decompressMToonRLE<uint32, 0x80000000u, 0x80000000u>(_rleData[i], _rleData[i].data32, *surface, isBottomUp, _hackFlags);
 		}
 	}
 }
@@ -656,8 +662,6 @@ void CachedMToon::getOrRenderFrame(uint32 prevFrame, uint32 targetFrame, Common:
 const Common::SharedPtr<MToonMetadata>& CachedMToon::getMetadata() const {
 	return _metadata;
 }
-
-
 
 AudioMetadata::AudioMetadata() : encoding(kEncodingUncompressed), durationMSec(0),
 	sampleRate(0), channels(0), bitsPerSample(0), isBigEndian(false) {
@@ -1097,11 +1101,14 @@ bool MToonAsset::load(AssetLoaderContext &context, const Data::MToonAsset &data)
 	return true;
 }
 
+MToonAsset::MToonAsset() : _frameDataPosition(0), _sizeOfFrameData(0), _streamIndex(0){
+}
+
 AssetType MToonAsset::getAssetType() const {
 	return kAssetTypeMToon;
 }
 
-const Common::SharedPtr<CachedMToon> &MToonAsset::loadAndCacheMToon(Runtime *runtime) {
+const Common::SharedPtr<CachedMToon> &MToonAsset::loadAndCacheMToon(Runtime *runtime, uint hackFlags) {
 	if (_cachedMToon)
 		return _cachedMToon;
 
@@ -1117,7 +1124,7 @@ const Common::SharedPtr<CachedMToon> &MToonAsset::loadAndCacheMToon(Runtime *run
 		return _cachedMToon;
 	}
 
-	if (!cachedMToon->loadFromStream(_metadata, stream, _sizeOfFrameData)) {
+	if (!cachedMToon->loadFromStream(_metadata, stream, _sizeOfFrameData, hackFlags)) {
 		warning("mToon data failed to load");
 		return _cachedMToon;
 	}

@@ -44,6 +44,7 @@ Hacks::Hacks() {
 	allowAssetsFromOtherScenes = false;
 	mtiVariableReferencesHack = false;
 	mtiSceneReturnHack = false;
+	mtiHispaniolaMToonHack = false;
 }
 
 Hacks::~Hacks() {
@@ -1054,6 +1055,10 @@ void addMTIQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
 	// scene, which is supposed to activate a scene transtion modifier in the scene that transitions to itself.
 	// This doesn't work because the modifier is gone when the scene is unloaded.
 	hacks.mtiSceneReturnHack = true;
+
+	// Weird rendering bug in the MTZ-1000 Hispaniola mToon, it has a skip code that would normally skip 127 rows but
+	// doing that causes a big hole in the image.
+	hacks.mtiHispaniolaMToonHack = true;
 }
 
 } // End of namespace HackSuites
