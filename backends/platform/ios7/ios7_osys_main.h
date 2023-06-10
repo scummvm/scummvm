@@ -97,6 +97,8 @@ public:
 	void setFeatureState(Feature f, bool enable) override;
 	bool getFeatureState(Feature f) override;
 
+	bool setGraphicsMode(int mode, uint flags) override;
+
 	bool touchpadModeEnabled() const;
 
 	uint createOpenGLContext();
@@ -108,6 +110,9 @@ public:
 
 #if defined(USE_OPENGL) && defined(USE_GLAD)
 	void *getOpenGLProcAddress(const char *name) const override;
+#endif
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+	OpenGL::ContextType getOpenGLType() const override { return OpenGL::kContextGLES2; }
 #endif
 
 public:
