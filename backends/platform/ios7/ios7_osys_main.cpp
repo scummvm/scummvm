@@ -42,9 +42,11 @@
 #include "engines/engine.h"
 #include "engines/metaengine.h"
 
+#include "graphics/cursorman.h"
 #include "gui/gui-manager.h"
 
 #include "backends/graphics/ios/ios-graphics.h"
+#include "backends/graphics3d/ios/ios-graphics3d.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "backends/mutex/pthread/pthread-mutex.h"
@@ -153,6 +155,8 @@ bool OSystem_iOS7::hasFeature(Feature f) {
 	case kFeatureOpenUrl:
 	case kFeatureNoQuit:
 	case kFeatureKbdMouseSpeed:
+	case kFeatureOpenGLForGame:
+	case kFeatureShadersForGame:
 		return true;
 
 	default:
@@ -181,6 +185,65 @@ bool OSystem_iOS7::getFeatureState(Feature f) {
 		return ModularGraphicsBackend::getFeatureState(f);
 	}
 }
+
+bool OSystem_iOS7::setGraphicsMode(int mode, uint flags) {
+	bool render3d = flags & OSystem::kGfxModeRender3d;
+
+	// Utilize the same way to switch between 2D and 3D graphics manager as
+	// in SDL based backends and Android.
+	iOSCommonGraphics *commonGraphics = dynamic_cast<iOSCommonGraphics *>(_graphicsManager);
+	iOSCommonGraphics::State gfxManagerState = commonGraphics->getState();
+
+	bool supports3D = _graphicsManager->hasFeature(kFeatureOpenGLForGame);
+	bool switchedManager = false;
+
+	// If the new mode and the current mode are not from the same graphics
+	// manager, delete and create the new mode graphics manager
+	if (render3d && !supports3D) {
+		delete _graphicsManager;
+		iOSGraphics3dManager *manager = new iOSGraphics3dManager();
+		_graphicsManager = manager;
+		commonGraphics = manager;
+		switchedManager = true;
+	} else if (!render3d && supports3D) {
+		delete _graphicsManager;
+		iOSGraphicsManager *manager = new iOSGraphicsManager();
+		_graphicsManager = manager;
+		commonGraphics = manager;
+		switchedManager = true;
+	}
+
+	if (switchedManager) {
+		// Setup the graphics mode and size first
+		// This is needed so that we can check the supported pixel formats when
+		// restoring the state.
+		_graphicsManager->beginGFXTransaction();
+		if (!_graphicsManager->setGraphicsMode(mode, flags))
+			return false;
+		_graphicsManager->initSize(gfxManagerState.screenWidth, gfxManagerState.screenHeight);
+		_graphicsManager->endGFXTransaction();
+
+		// This failing will probably have bad consequences...
+		//if (!androidGraphicsManager->setState(gfxManagerState)) {
+		//	return false;
+		//}
+
+		// Next setup the cursor again
+		CursorMan.pushCursor(0, 0, 0, 0, 0, 0);
+		CursorMan.popCursor();
+
+		// Next setup cursor palette if needed
+		if (_graphicsManager->getFeatureState(kFeatureCursorPalette)) {
+			CursorMan.pushCursorPalette(0, 0, 0);
+			CursorMan.popCursorPalette();
+		}
+
+		_graphicsManager->beginGFXTransaction();
+		return true;
+	} else {
+		return _graphicsManager->setGraphicsMode(mode, flags);
+	}
+ }
 
 void OSystem_iOS7::suspendLoop() {
 	bool done = false;
