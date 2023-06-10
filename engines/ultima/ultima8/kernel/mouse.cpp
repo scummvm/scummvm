@@ -55,6 +55,8 @@ bool Mouse::buttonDown(MouseButton button) {
 	assert(button != MOUSE_LAST);
 	bool handled = false;
 	uint32 now = g_system->getMillis();
+	uint32 timeout = g_system->getDoubleClickTime();
+	timeout = timeout > 0 ? timeout : DOUBLE_CLICK_TIMEOUT;
 
 	MButton &mbutton = _mouseButton[button];
 
@@ -72,7 +74,7 @@ bool Mouse::buttonDown(MouseButton button) {
 	mbutton.setState(MBS_DOWN);
 	mbutton.clearState(MBS_HANDLED);
 
-	if (mbutton.isUnhandledDoubleClick()) {
+	if (mbutton.isUnhandledDoubleClick(timeout)) {
 		if (_dragging == Mouse::DRAG_NOT) {
 			Gump *gump = getGump(mbutton._downGump);
 			if (gump) {
@@ -515,9 +517,13 @@ void Mouse::stopDragging(int mx, int my) {
 }
 
 void Mouse::handleDelayedEvents() {
+	uint32 now = g_system->getMillis();
+	uint32 timeout = g_system->getDoubleClickTime();
+	timeout = timeout > 0 ? timeout : DOUBLE_CLICK_TIMEOUT;
+
 	for (int button = 0; button < MOUSE_LAST; ++button) {
 		if (!(_mouseButton[button]._state & (MBS_HANDLED | MBS_DOWN)) &&
-			!_mouseButton[button].lastWithinDblClkTimeout()) {
+			!_mouseButton[button].lastWithinDblClkTimeout(now, timeout)) {
 			Gump *gump = getGump(_mouseButton[button]._downGump);
 			if (gump) {
 				int32 mx = _mouseButton[button]._downPoint.x;

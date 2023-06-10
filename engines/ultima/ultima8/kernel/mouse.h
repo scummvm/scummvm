@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-const unsigned int DOUBLE_CLICK_TIMEOUT = 200;
+const unsigned int DOUBLE_CLICK_TIMEOUT = 300;
 
 enum MouseButtonState {
 	MBS_DOWN = 0x1,
@@ -58,20 +58,18 @@ struct MButton {
 		_state &= ~state;
 	}
 
-	bool curWithinDblClkTimeout() {
-		uint32 now = g_system->getMillis();
-		return now - _curDown <= DOUBLE_CLICK_TIMEOUT;
+	bool curWithinDblClkTimeout(uint32 now, uint32 timeout) {
+		return now - _curDown <= timeout;
 	}
 
-	bool lastWithinDblClkTimeout() {
-		uint32 now = g_system->getMillis();
-		return now - _lastDown <= DOUBLE_CLICK_TIMEOUT;
+	bool lastWithinDblClkTimeout(uint32 now, uint32 timeout) {
+		return now - _lastDown <= timeout;
 	}
 
 	//! A convenience function - true if the current state is down, unhandled, and within the double click timeout.
-	bool isUnhandledDoubleClick() {
+	bool isUnhandledDoubleClick(uint32 timeout) {
 		return isState(MBS_DOWN) && !isState(MBS_HANDLED) &&
-				(_curDown - _lastDown) <= DOUBLE_CLICK_TIMEOUT;
+				(_curDown - _lastDown) <= timeout;
 	}
 
 };

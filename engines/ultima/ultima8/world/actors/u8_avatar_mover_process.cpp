@@ -52,15 +52,19 @@ void U8AvatarMoverProcess::handleHangingMode() {
 	if (stasis)
 		return;
 
+	uint32 now = g_system->getMillis();
+	uint32 timeout = g_system->getDoubleClickTime();
+	timeout = timeout > 0 ? timeout : DOUBLE_CLICK_TIMEOUT;
+
 	bool m0clicked = false;
 	//bool m1clicked = false;
 	if (!_mouseButton[0].isState(MBS_HANDLED) &&
-		!_mouseButton[0].curWithinDblClkTimeout()) {
+		!_mouseButton[0].curWithinDblClkTimeout(now, timeout)) {
 		m0clicked = true;
 		_mouseButton[0].setState(MBS_HANDLED);
 	}
 	if (!_mouseButton[1].isState(MBS_HANDLED) &&
-		!_mouseButton[1].curWithinDblClkTimeout()) {
+		!_mouseButton[1].curWithinDblClkTimeout(now, timeout)) {
 		//m1clicked = true;
 		_mouseButton[1].setState(MBS_HANDLED);
 	}
@@ -116,17 +120,21 @@ void U8AvatarMoverProcess::handleCombatMode() {
 	if (stasis)
 		return;
 
+	uint32 now = g_system->getMillis();
+	uint32 timeout = g_system->getDoubleClickTime();
+	timeout = timeout > 0 ? timeout : DOUBLE_CLICK_TIMEOUT;
+
 	bool m0clicked = false;
 	bool m1clicked = false;
 
 	if (!_mouseButton[0].isState(MBS_HANDLED) &&
-	    !_mouseButton[0].curWithinDblClkTimeout()) {
+	    !_mouseButton[0].curWithinDblClkTimeout(now, timeout)) {
 		m0clicked = true;
 		_mouseButton[0].setState(MBS_HANDLED);
 	}
 
 	if (!_mouseButton[1].isState(MBS_HANDLED) &&
-	    !_mouseButton[1].curWithinDblClkTimeout()) {
+	    !_mouseButton[1].curWithinDblClkTimeout(now, timeout)) {
 		m1clicked = true;
 		_mouseButton[1].setState(MBS_HANDLED);
 	}
@@ -152,7 +160,7 @@ void U8AvatarMoverProcess::handleCombatMode() {
 
 	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 
-	if (_mouseButton[0].isUnhandledDoubleClick()) {
+	if (_mouseButton[0].isUnhandledDoubleClick(timeout)) {
 		_mouseButton[0].setState(MBS_HANDLED);
 		_mouseButton[0]._lastDown = 0;
 
@@ -174,7 +182,7 @@ void U8AvatarMoverProcess::handleCombatMode() {
 		return;
 	}
 
-	if (_mouseButton[1].isUnhandledDoubleClick()) {
+	if (_mouseButton[1].isUnhandledDoubleClick(timeout)) {
 		_mouseButton[1].setState(MBS_HANDLED);
 		_mouseButton[1]._lastDown = 0;
 
@@ -356,18 +364,22 @@ void U8AvatarMoverProcess::handleNormalMode() {
 		return;
 	}
 
+	uint32 now = g_system->getMillis();
+	uint32 timeout = g_system->getDoubleClickTime();
+	timeout = timeout > 0 ? timeout : DOUBLE_CLICK_TIMEOUT;
+
 	bool m0clicked = false;
 	bool m1clicked = false;
 
 	// check mouse state to see what needs to be done
 	if (!_mouseButton[0].isState(MBS_HANDLED) &&
-		!_mouseButton[0].curWithinDblClkTimeout()) {
+		!_mouseButton[0].curWithinDblClkTimeout(now, timeout)) {
 		m0clicked = true;
 		_mouseButton[0].setState(MBS_HANDLED);
 	}
 
 	if (!_mouseButton[1].isState(MBS_HANDLED) &&
-	    !_mouseButton[1].curWithinDblClkTimeout()) {
+	    !_mouseButton[1].curWithinDblClkTimeout(now, timeout)) {
 		m1clicked = true;
 		_mouseButton[1].setState(MBS_HANDLED);
 	}
@@ -431,7 +443,7 @@ void U8AvatarMoverProcess::handleNormalMode() {
 			down = _mouseButton[0]._curDown - down;
 		}
 
-		if (down < DOUBLE_CLICK_TIMEOUT) {
+		if (down < timeout) {
 			// Both buttons pressed within the timeout
 			_mouseButton[0].setState(MBS_HANDLED);
 			_mouseButton[1].setState(MBS_HANDLED);
@@ -446,7 +458,7 @@ void U8AvatarMoverProcess::handleNormalMode() {
 		setMovementFlag(MOVE_JUMP);
 	}
 
-	if (_mouseButton[1].isUnhandledDoubleClick()) {
+	if (_mouseButton[1].isUnhandledDoubleClick(timeout)) {
 		Gump *desktopgump = Ultima8Engine::get_instance()->getDesktopGump();
 		int32 mx, my;
 		mouse->getMouseCoords(mx, my);
