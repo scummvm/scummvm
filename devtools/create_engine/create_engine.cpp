@@ -41,19 +41,24 @@ char engineLowercase[MAX_ENGINE_NAME_LENGTH];
 
 // List of files to be copied to create engine
 static const char *const FILENAMES[] = {
-	"configure.engine", "console.cpp", "console.h",
-	"credits.pl", "detection.cpp", "detection.h",
-	"detection_tables.h", "metaengine.cpp",
-	"metaengine.h", "module.mk", "xyzzy.cpp",
-	"xyzzy.h", "POTFILES", nullptr
+	"files/configure.engine", "files/console.cpp", "files/console.h",
+	"files/credits.pl", "files/detection.cpp", "files/detection.h",
+	"files/detection_tables.h", "files/metaengine.cpp",
+	"files/metaengine.h", "files/module.mk", "files/xyzzy.cpp",
+	"files/xyzzy.h", "files/POTFILES", nullptr
 };
+
 static const char *const FILENAMES_EVENTS[] = {
-	"configure.engine", "console.cpp", "console.h",
-	"credits.pl", "detection.cpp", "detection.h",
-	"detection_tables.h", "events.cpp", "events.h",
-	"messages.cpp", "messages.h", "metaengine.cpp",
-	"metaengine.h", "module.mk", "xyzzy.cpp", "xyzzy.h",
-	"POTFILES", "views.h", "view1.cpp", "view1.h", nullptr
+	"files/configure.engine", "files/console.cpp", "files/console.h",
+	"files/credits.pl", "files/detection.cpp", "files/detection.h",
+	"files/detection_tables.h",
+	"files_events/events.cpp", "files_events/events.h",
+	"files_events/messages.cpp", "files_events/messages.h",
+	"files/metaengine.cpp", "files/metaengine.h",
+	"files_events/module.mk", "files_events/xyzzy.cpp",
+	"files_events/xyzzy.h", "files/POTFILES",
+	"files_events/views.h", "files_events/view1.cpp",
+	"files_events/view1.h", nullptr
 };
 
 const char *const ENGINES = "create_project ..\\.. --msvc\n";
@@ -117,11 +122,11 @@ void process_file(FILE *in, FILE *out) {
 }
 
 // Copies and processes the specified file
-void process_file(const char *filename, const char *prefix, const char *prefix2,
-		bool isEvents) {
+void process_file(const char *filePath, const char *prefix, const char *prefix2) {
 	char srcFilename[MAX_LINE_LENGTH], destFilename[MAX_LINE_LENGTH];
-	const char *srcFormat = isEvents ? "%s/files_events/%s" : "%s/files/%s";
-	snprintf(srcFilename, MAX_LINE_LENGTH, srcFormat, prefix2, filename);
+	const char *filename = strchr(filePath, '/') + 1;
+
+	snprintf(srcFilename, MAX_LINE_LENGTH, "%s/%s", prefix2, filePath);
 	if (!strncmp(filename, "xyzzy.", 6))
 		snprintf(destFilename, MAX_LINE_LENGTH, "%s/engines/%s/%s.%s",
 			prefix, engineLowercase, engineLowercase, filename + 6);
@@ -241,7 +246,7 @@ int main(int argc, char *argv[]) {
 	// Process the files
 	const char *const *filenames = isEvents ? FILENAMES_EVENTS : FILENAMES;
 	for (const char *const *filename = filenames; *filename; ++filename)
-		process_file(*filename, prefix, prefix2, isEvents);
+		process_file(*filename, prefix, prefix2);
 
 	create_batch_file(prefix);
 
