@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-09 05:48+0000\n"
+"POT-Creation-Date: 2023-06-10 16:21+0000\n"
 "PO-Revision-Date: 2023-04-05 10:46+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -6651,7 +6651,14 @@ msgstr "Might and Magic 1"
 msgid "Might and Magic 1 - Cheats"
 msgstr "Might and Magic 1 - Читы"
 
-#: engines/mm/mm1/mm1.cpp:101
+#: engines/mm/mm1/mm1.cpp:56
+msgid ""
+"You cannot run the game directly from the Graphics Overhaul Mod. Instead, it "
+"will automatically be available if you detect the original game and select "
+"Enhanced mode."
+msgstr ""
+
+#: engines/mm/mm1/mm1.cpp:108
 msgid ""
 "In order to run in Enhanced mode,  please copy xeen.cc from a copy of World "
 "of Xeen\n"
