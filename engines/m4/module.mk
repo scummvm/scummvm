@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	m4.o \
 	console.o \
 	f_info.o \
+	globals.o \
 	metaengine.o
 
 # This module can be built as a plugin

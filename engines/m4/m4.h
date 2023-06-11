@@ -35,6 +35,7 @@
 #include "graphics/screen.h"
 
 #include "m4/detection.h"
+#include "m4/globals.h"
 
 namespace M4 {
 
