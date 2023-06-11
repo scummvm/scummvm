@@ -1261,7 +1261,7 @@ void OpenGLGraphicsManager::grabPalette(byte *colors, uint start, uint num) cons
 
 void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height) {
 	// Setup backbuffer size.
-	_backBuffer.setDimensions(width, height);
+	_backBuffer.setSize(width, height);
 
 	uint overlayWidth = width;
 	uint overlayHeight = height;
