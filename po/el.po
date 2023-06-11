@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-10 23:03+0000\n"
+"POT-Creation-Date: 2023-06-11 04:30+0000\n"
 "PO-Revision-Date: 2023-06-11 06:27+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -6657,8 +6657,8 @@ msgstr "Μπάρες για hitpoints"
 #: engines/mm/metaengine.cpp:69
 msgid "Replace a colored gem with bars for hit points and spell points."
 msgstr ""
-"Αντικατάσταση ενός χρωματιστού πετραδιού (gem) με μπάρες για hit points ("
-"πόντοι για υγεία) και spell points (πόντοι για ξόρκια)."
+"Αντικατάσταση ενός χρωματιστού πετραδιού (gem) με μπάρες για hit points "
+"(πόντοι για υγεία) και spell points (πόντοι για ξόρκια)."
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
@@ -7883,10 +7883,18 @@ msgstr ""
 "της Sierra.\n"
 "\n"
 
-#: engines/scumm/detection_internal.h:370
+#: engines/scumm/detection_internal.h:384
+#, fuzzy
+#| msgid ""
+#| "This version of Monkey Island can't be played, because Limited Run Games "
+#| "provided corrupted DISK04.LEC and 903.LFL files.\n"
+#| "\n"
+#| "Please contact their technical support for replacement files, or look "
+#| "online for some guides which can help you recover valid files from the "
+#| "KryoFlux dumps that Limited Run Games also provided."
 msgid ""
 "This version of Monkey Island can't be played, because Limited Run Games "
-"provided corrupted DISK04.LEC and 903.LFL files.\n"
+"provided corrupted DISK03.LEC, DISK04.LEC and 903.LFL files.\n"
 "\n"
 "Please contact their technical support for replacement files, or look online "
 "for some guides which can help you recover valid files from the KryoFlux "
