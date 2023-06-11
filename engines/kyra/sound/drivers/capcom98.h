@@ -49,9 +49,13 @@ public:
 	void stopSong();
 	void startSoundEffect(const uint8 *data, uint8 volume);
 	void stopSoundEffect();
+
 	int checkSoundMarker() const;
 	bool songIsPlaying() const;
 	bool soundEffectIsPlaying() const;
+
+	void fadeOut();
+	void allNotesOff();
 
 	void setMusicVolume(int volume);
 	void setSoundEffectVolume(int volume);

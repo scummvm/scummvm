@@ -592,7 +592,7 @@ void CharacterGenerator::drawButton(int index, int buttonState) {
 
 	_screen->copyRegion(160, 0, c->destX << 3, c->destY, p->w << 3, p->h, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
- }
+}
 
 void CharacterGenerator::processButtonClick(int index) {
 	drawButton(index, 1);

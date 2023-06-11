@@ -559,11 +559,12 @@ public:
 
 	void beginFadeOut() override;
 
+	void pause(bool paused) override;
+
 	void updateVolumeSettings() override;
 
 	int checkTrigger() override;
-
-	void resetTrigger() override;
+	void resetTrigger() override {} // This sound class is for EOB II only, this method is not needed there.
 
 private:
 	void restartBackgroundMusic();

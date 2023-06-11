@@ -346,7 +346,7 @@ void DarkMoonEngine::seq_playIntro() {
 
 	sq.printText(3, textColor1);    // The message was urgent.
 
-	if (_flags.platform == Common::kPlatformPC98)
+	if (!skipFlag() && !shouldQuit() && _flags.platform == Common::kPlatformPC98)
 		snd_playSong(55);
 
 	sq.loadScene(1, 2);
@@ -447,7 +447,7 @@ void DarkMoonEngine::seq_playIntro() {
 
 	sq.animCommand(16);
 
-	if (_flags.platform == Common::kPlatformPC98)
+	if (!skipFlag() && !shouldQuit() && _flags.platform == Common::kPlatformPC98)
 		snd_playSong(56);
 
 	sq.printText(7, textColor2);    // Thank you for coming so quickly
@@ -594,7 +594,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(20);
 	sq.animCommand(18);
 
-	if (_flags.platform == Common::kPlatformPC98)
+	if (!skipFlag() && !shouldQuit() && _flags.platform == Common::kPlatformPC98)
 		snd_playSong(57);
 
 	sq.fadeText();

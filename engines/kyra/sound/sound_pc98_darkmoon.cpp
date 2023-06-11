@@ -182,16 +182,16 @@ void SoundPC98_Darkmoon::stopAllSoundEffects() {
 }
 
 void SoundPC98_Darkmoon::beginFadeOut() {
-	haltTrack();
-	stopAllSoundEffects();
+	_driver->fadeOut();
+}
+
+void SoundPC98_Darkmoon::pause(bool paused) {
+	if (_ready && paused)
+		_driver->allNotesOff();
 }
 
 int SoundPC98_Darkmoon::checkTrigger() {
 	return _driver ? _driver->checkSoundMarker() : 99;
-}
-
-void SoundPC98_Darkmoon::resetTrigger() {
-
 }
 
 void SoundPC98_Darkmoon::restartBackgroundMusic() {
