@@ -95,11 +95,13 @@ void AndroidGraphicsManager::initSurface() {
 	if (JNI::egl_bits_per_pixel == 16) {
 		// We default to RGB565 and RGBA5551 which is closest to what we setup in Java side
 		notifyContextCreate(OpenGL::kContextGLES2,
+				new OpenGL::Backbuffer(),
 				Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
 				Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
 	} else {
 		// If not 16, this must be 24 or 32 bpp so make use of them
 		notifyContextCreate(OpenGL::kContextGLES2,
+				new OpenGL::Backbuffer(),
 #ifdef SCUMM_BIG_ENDIAN
 				Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),
 				Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)
@@ -231,7 +233,7 @@ void AndroidGraphicsManager::refreshScreen() {
 }
 
 void AndroidGraphicsManager::touchControlDraw(int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) {
-	_backBuffer.enableBlend(OpenGL::Framebuffer::kBlendModeTraditionalTransparency);
+	_targetBuffer->enableBlend(OpenGL::Framebuffer::kBlendModeTraditionalTransparency);
 	OpenGL::Pipeline *pipeline = getPipeline();
 	pipeline->activate();
 	pipeline->drawTexture(_touchcontrols->getGLTexture(),

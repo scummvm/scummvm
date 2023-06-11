@@ -547,7 +547,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		warning("Unable to %s VSync: %s", _vsync ? "enable" : "disable", SDL_GetError());
 	}
 
-	notifyContextCreate(_glContextType, rgba8888, rgba8888);
+	notifyContextCreate(_glContextType, new OpenGL::Backbuffer(), rgba8888, rgba8888);
 	int actualWidth, actualHeight;
 	getWindowSizeFromSdl(&actualWidth, &actualHeight);
 
@@ -616,7 +616,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	_lastVideoModeLoad = SDL_GetTicks();
 
 	if (_hwScreen) {
-		notifyContextCreate(_glContextType, rgba8888, rgba8888);
+		notifyContextCreate(_glContextType, new OpenGL::Backbuffer(), rgba8888, rgba8888);
 		handleResize(_hwScreen->w, _hwScreen->h);
 	}
 
