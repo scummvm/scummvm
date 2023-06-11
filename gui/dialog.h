@@ -82,6 +82,8 @@ public:
 	void	setFocusWidget(Widget *widget);
 	Widget *getFocusWidget() { return _focusedWidget; }
 
+	bool isDragging() const { return _dragWidget != nullptr; }
+
 	void setTickleWidget(Widget *widget) { _tickleWidget = widget; }
 	void unSetTickleWidget() { _tickleWidget = nullptr; }
 	Widget *getTickleWidget() { return _tickleWidget; }
