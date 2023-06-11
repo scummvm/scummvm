@@ -2714,18 +2714,6 @@ Common::SharedPtr<SoundInstance> Runtime::loadWave(const Common::String &soundNa
 			return activeSound;
 	}
 
-	Common::SeekableReadStream *stream = archiveMemberPtr->createReadStream();
-	if (!stream) {
-		warning("Couldn't open read stream for sound '%s'", soundName.c_str());
-		return nullptr;
-	}
-
-	Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
-	if (!audioStream) {
-		warning("Couldn't open audio stream for sound '%s'", soundName.c_str());
-		return nullptr;
-	}
-
 	Common::SharedPtr<SoundInstance> soundInstance(new SoundInstance());
 
 	soundInstance->name = soundName;
