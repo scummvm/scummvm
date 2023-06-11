@@ -1533,12 +1533,30 @@ bool Score::readOneFrame(bool saveOffset) {
 	return false; // Error in loading frame
 }
 
-Frame *Score::quickSelect(int frameNum){
-	// This function is for quickly selecting the frame number, and returning the frame
+Frame *Score::getFrameData(int frameNum){
+	// This function is for previewing selected frame,
+	// It doesn't make any changes to current render state
 	// In case of any problem, it returns nullptr.
-	if (loadFrame(frameNum))
+	// Be sure to delete this frame after use!
+
+	// Backup variables
+	int curFrameNumber = _curFrameNumber;
+	Frame *frame = _frame;
+	_frame = nullptr; // To avoid later deletion of frame inside renderOneFrame()
+	byte channelData[kChannelDataSize];
+	memcpy(channelData, _channelData, kChannelDataSize);
+
+	bool isFrameRead = loadFrame(frameNum);
+
+	// Start restoring all states
+	_curFrameNumber = curFrameNumber;
+	_frame = frame;
+	memcpy(_channelData, channelData, kChannelDataSize);
+
+	if (isFrameRead) {
 		return _frame;
-		
+	}
+
 	return nullptr;
 }
 
@@ -1651,10 +1669,9 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 
 	bool *scriptRefs = (bool *)calloc(_actions.size() + 1, sizeof(bool));
 
-	int currentFrame = _curFrameNumber;
 	// Now let's scan which scripts are actually referenced
 	for (uint i = 0; i < getTotalFrames(); i++) {
-		Frame *frame_i = quickSelect(i);
+		Frame *frame_i = getFrameData(i);
 		if ((uint)frame_i->_actionId.member <= _actions.size())
 			scriptRefs[frame_i->_actionId.member] = true;
 
@@ -1663,8 +1680,6 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 				scriptRefs[frame_i->_sprites[j]->_scriptId.member] = true;
 		}
 	}
-	_curFrameNumber = currentFrame;
-	loadFrame(_curFrameNumber);
 
 	Common::HashMap<uint16, Common::String>::iterator j;
 
