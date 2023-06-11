@@ -37,6 +37,7 @@ namespace Graphics {
 
 namespace Common {
 	class ReadStreamEndian;
+	class MemoryReadStreamEndian;
 	class SeekableReadStreamEndian;
 }
 
@@ -78,9 +79,11 @@ public:
 	bool loadFrame(int frame);
 	bool readOneFrame(bool saveOffset = false);
 	Frame *getFrameData(int frameNum);
+	void rebuildChannelData(int frameNum);
 
 	void loadLabels(Common::SeekableReadStreamEndian &stream);
 	void loadActions(Common::SeekableReadStreamEndian &stream);
+	void loadCurrentFrameAction();
 	void loadSampleSounds(uint type);
 
 	static int compareLabels(const void *a, const void *b);
@@ -163,7 +166,7 @@ public:
 
 	Common::Array<int64> _frameOffsets;
 	uint _framesStreamSize;
-	Common::SeekableReadStreamEndian *_framesStream;
+	Common::MemoryReadStreamEndian *_framesStream;
 
 	byte _currentFrameRate;
 

@@ -1395,31 +1395,47 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	_currentPaletteId = CastMemberID(0, 0);
 
 	// Setup our streams for further frames processing!
-	_framesStream = &stream;
+	int dataSize = size;
+	byte *data = (byte *)malloc(dataSize);
+	stream.read(data, dataSize);
+	_framesStream = new Common::MemoryReadStreamEndian(data, dataSize, stream.isBE(), DisposeAfterUse::YES);
 	_version = version;
 
-	_frameOffsets.push_back(stream.pos());
+	_frameOffsets.push_back(_framesStream->pos());
 
 	// In case number of frames not known, precompute them!
 	if (_numFrames == 0) {
+		debugC(1, kDebugLoading, "Score::loadFrames(): Precomputing total number of frames!");
 		// Calculate number of frames beforehand.
 		int frameCount = 1;
 		while (loadFrame(frameCount)) {
 			frameCount++;
 		}
 		_numFrames = frameCount;
+
+		memset(_channelData, 0, kChannelDataSize); // Reset channel data
 	}
 
 	loadFrame(1);
+
+	// Read over frame offset array and print each item
+	for (uint i = 0; i < _frameOffsets.size(); i++) {
+		debugC(1, kDebugLoading, "Score::loadFrames(): Frame %d, offset %ld", i, _frameOffsets[i]);
+	}
+
+	debugC(1, kDebugLoading, "Score::loadFrames(): Number of frames: %d", _numFrames);
 }
 
 bool Score::loadFrame(int frameNum) {
 	// Read existing frame (ie already visited)
-	if (frameNum < (int)_frameOffsets.size()) {
+	if (frameNum < (int)_frameOffsets.size() - 1) {
 		// TODO: How _channelData be modified.
 		// We have this frame already, seek and load
 		_framesStream->seek(_frameOffsets[frameNum]);
+		debugC(7, kDebugLoading, "****** Frame request %d, offset %ld", frameNum, _framesStream->pos());
+
 		if (readOneFrame()) {
+			loadCurrentFrameAction(); // Load actions of current frame!
 			setSpriteCasts(); // Set sprite casts for each sprite in frame!
 			_curFrameNumber = frameNum;
 			return true;
@@ -1432,22 +1448,25 @@ bool Score::loadFrame(int frameNum) {
 	// Seek to latest frame
 	_framesStream->seek(_frameOffsets[_frameOffsets.size() - 1]);
 
-	debugC(7, kDebugLoading, "****** Frame request %d, offset %ld", frameNum, _framesStream->pos());
+	debugC(7, kDebugLoading, "****** Frame request %d, last recorded frame offset %ld", frameNum, _framesStream->pos());
 
 	int currentFrameSkipped = frameNum;
 	// Else read until that specific frame
-	while (_frameOffsets.size() < (uint)frameNum) {
+	while (_frameOffsets.size() <= (uint)frameNum) {
+		debugC(7, kDebugLoading, "****** Skipping over a frame %d, offset %ld", _frameOffsets.size() - 1, _framesStream->pos());
+
 		if (!readOneFrame(true)) {
 			warning("Score::loadFrame(): Problem reading frame %d, is it outside maximum frames?", frameNum);
 			return false;
 		}
-
-		debugC(7, kDebugLoading, "****** Skipping over a frame %d, offset %ld", currentFrameSkipped, _framesStream->pos());
 		currentFrameSkipped++;
 	}
 
+	debugC(7, kDebugLoading, "****** Frame loading %d, offset %ld", frameNum, _framesStream->pos());
+
 	bool isRead = readOneFrame(true);   // Now final read the frame, this is our target frame!
 	if (isRead) {
+		loadCurrentFrameAction();
 		setSpriteCasts();
 		_curFrameNumber = frameNum;
 	} else {
@@ -1457,13 +1476,44 @@ bool Score::loadFrame(int frameNum) {
 	return isRead;
 }
 
+// TODO: Not used right now, for future if there are issues with backwards jumping
+// Why? Because director works on concept of "delta" changes between frame, to save
+// space each frame only contains changes from previous frame, so we need to rebuild
+// whole channel data if we were to make a very big jump. This is essential because
+// without it we might have leftover casts/properties which will interfere with channel
+// data after the jump!
+void Score::rebuildChannelData(int frameNum) {
+	// Builds channel data from frame 1 to frame.
+	if (frameNum > (int)_numFrames) {
+		warning("Score::rebuildChannelData(): frameNum %d is greater than total frames %d", frameNum, _numFrames);
+		return;
+	}
+
+	memset(_channelData, 0, kChannelDataSize);
+
+	// Lock variables
+	int curFrameNumber = _curFrameNumber;
+	Frame *frame = _currentFrame;
+	_currentFrame = nullptr; // To avoid later deletion of frame inside renderOneFrame()
+
+	_framesStream->seek(_frameOffsets[1]); // Seek to frame 1
+	for (int i = 1; i < frameNum; i++) {
+		readOneFrame(false);
+	}
+
+	// Unlock variables
+	delete _currentFrame; // Destroy the built frame
+	_curFrameNumber = curFrameNumber;
+	_currentFrame = frame;
+}
+
 bool Score::readOneFrame(bool saveOffset) {
 	uint16 channelSize;
 	uint16 channelOffset;
 
 	if (!_framesStream->eos()) {
 		uint16 frameSize = _framesStream->readUint16();
-		debugC(3, kDebugLoading, "++++++++++ score frame %d (frameSize %d) saveOffset %d", getFramesNum(), frameSize, saveOffset);
+		debugC(3, kDebugLoading, "++++++++++ score prev frame %d (frameSize %d) saveOffset %d", _curFrameNumber, frameSize, saveOffset);
 		if (debugChannelSet(8, kDebugLoading)) {
 			_framesStream->hexdump(frameSize);
 		}
@@ -1661,25 +1711,24 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 			break;
 	}
 
-	bool *scriptRefs = (bool *)calloc(_actions.size() + 1, sizeof(bool));
-
-	// Now let's scan which scripts are actually referenced
-	for (uint i = 0; i < getFramesNum(); i++) {
-		Frame *frame_i = getFrameData(i);
-		if ((uint)frame_i->_actionId.member <= _actions.size())
-			scriptRefs[frame_i->_actionId.member] = true;
-
-		for (uint16 j = 0; j <= frame_i->_numChannels; j++) {
-			if ((uint)frame_i->_sprites[j]->_scriptId.member <= _actions.size())
-				scriptRefs[frame_i->_sprites[j]->_scriptId.member] = true;
-		}
-	}
-
 	if (ConfMan.getBool("dump_scripts"))
 		for (auto &j : _actions) {
 			if (!j._value.empty())
 				_movie->getCast()->dumpScript(j._value.c_str(), kScoreScript, j._key);
 		}
+}
+
+void Score::loadCurrentFrameAction() {
+	bool *scriptRefs = (bool *)calloc(_actions.size() + 1, sizeof(bool));
+
+	// Now let's scan which scripts are actually referenced
+	if ((uint)_currentFrame->_actionId.member <= _actions.size())
+		scriptRefs[_currentFrame->_actionId.member] = true;
+
+	for (uint16 j = 0; j <= _currentFrame->_numChannels; j++) {
+		if ((uint)_currentFrame->_sprites[j]->_scriptId.member <= _actions.size())
+			scriptRefs[_currentFrame->_sprites[j]->_scriptId.member] = true;
+	}
 
 	for (auto &j : _actions) {
 		if (!scriptRefs[j._key]) {
