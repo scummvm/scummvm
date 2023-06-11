@@ -28,6 +28,7 @@
 
 #include "vcruise/menu.h"
 #include "vcruise/runtime.h"
+#include "vcruise/vcruise.h"
 
 namespace VCruise {
 
@@ -1109,7 +1110,7 @@ void ReahSchizmMainMenuPage::start() {
 void ReahSchizmMainMenuPage::onButtonClicked(uint button, bool &outChangedState) {
 	switch (button) {
 	case kButtonContinue: {
-			Common::Error loadError = g_engine->loadGameState(g_engine->getAutosaveSlot());
+			Common::Error loadError = static_cast<VCruise::VCruiseEngine *>(g_engine)->loadMostRecentSave();
 			outChangedState = (loadError.getCode() == Common::kNoError);
 		} break;
 

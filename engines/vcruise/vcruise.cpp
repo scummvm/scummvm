@@ -374,14 +374,75 @@ void VCruiseEngine::initializePath(const Common::FSNode &gamePath) {
 }
 
 bool VCruiseEngine::hasDefaultSave() {
-	const Common::String &autoSaveName = getSaveStateName(getMetaEngine()->getAutosaveSlot());
-	bool autoSaveExists = getSaveFileManager()->exists(autoSaveName);
-
-	return autoSaveExists;
+	return hasAnySave();
 }
 
 bool VCruiseEngine::hasAnySave() {
-	return hasDefaultSave();	// Maybe could do this better, but with how ScummVM works, if there are any saves at all, then the autosave should exist.
+	Common::StringArray saveFiles = getSaveFileManager()->listSavefiles(_targetName + ".*");
+	return saveFiles.size() > 0;
+}
+
+Common::Error VCruiseEngine::loadMostRecentSave() {
+	Common::SaveFileManager *sfm = getSaveFileManager();
+
+	Common::StringArray saveFiles = sfm->listSavefiles(_targetName + ".*");
+
+	uint64 highestDateTime = 0;
+	uint32 highestPlayTime = 0;
+	Common::String highestSaveFileName;
+
+	for (const Common::String &saveFileName : saveFiles) {
+		Common::InSaveFile *saveFile = sfm->openForLoading(saveFileName);
+
+		if (!saveFile) {
+			warning("Couldn't load save file '%s' to determine recency", saveFileName.c_str());
+			continue;
+		}
+
+		ExtendedSavegameHeader header;
+		bool loadedHeader = getMetaEngine()->readSavegameHeader(saveFile, &header, true);
+		if (!loadedHeader) {
+			warning("Couldn't parse header from '%s'", saveFileName.c_str());
+			continue;
+		}
+
+		// FIXME: Leaky abstraction, date doesn't increase in a way that later dates are always higher numbered so we must do this
+		uint day = (header.date >> 24) & 0xff;
+		uint month = (header.date >> 16) & 0xff;
+		uint year = (header.date & 0xffff);
+
+		uint hour = ((header.time >> 8) & 0xff);
+		uint minute = (header.time & 0xff);
+
+		uint64 dateTime = static_cast<uint64>(year) << 32;
+		dateTime |= month << 24;
+		dateTime |= day << 16;
+		dateTime |= hour << 8;
+		dateTime |= minute;
+
+		uint32 playTime = header.playtime;
+
+		if (dateTime > highestDateTime || (dateTime == highestDateTime && playTime > highestPlayTime)) {
+			highestSaveFileName = saveFileName;
+			highestDateTime = dateTime;
+			highestPlayTime = playTime;
+		}
+	}
+
+	if (highestSaveFileName.empty()) {
+		warning("Couldn't find any valid saves to load");
+		return Common::Error(Common::kReadingFailed);
+	}
+
+	Common::String slotStr = highestSaveFileName.substr(_targetName.size() + 1);
+
+	int slot = 0;
+	if (sscanf(slotStr.c_str(), "%i", &slot) != 1) {
+		warning("Couldn't parse save slot ID from %s", highestSaveFileName.c_str());
+		return Common::Error(Common::kReadingFailed);
+	}
+
+	return loadGameState(slot);
 }
 
 
