@@ -247,16 +247,19 @@ bool CachedMToon::decompressMToonRLE(const RleFrame &frame, const Common::Array<
 				// Vertical skip
 				uint32 skipAmount = transparentCountCode - TTransparentRowSkipMask;
 
-				if ((hackFlags & MToonHackFlags::kMTIHispaniolaMPZHack) && (transparentCountCode - TTransparentRowSkipMask) == (TTransparentRowSkipMask - 2))
-					skipAmount = 0;
-
-				y += skipAmount;
-				x = 0;
-				if (y < h) {
-					rowData = static_cast<TNumber *>(surface.getBasePtr(0, isBottomUp ? (h - 1 - y) : y));
-					continue;
-				} else {
-					break;
+				// Not sure why this special code exists, but several mToons in MTI use it, such as the pants and shoe pull-outs
+				// in the treasure chest in the first area, and the Hispaniola TV in the MPZ-1000.
+				//
+				// The pants graphic depends on avoiding the x=0 here.
+				if (skipAmount != (TTransparentRowSkipMask - 2)) {
+					y += skipAmount;
+					x = 0;
+					if (y < h) {
+						rowData = static_cast<TNumber *>(surface.getBasePtr(0, isBottomUp ? (h - 1 - y) : y));
+						continue;
+					} else {
+						break;
+					}
 				}
 			} else {
 				// Horizontal skip
