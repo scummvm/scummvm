@@ -240,7 +240,7 @@ bool Movie::loadArchive() {
 	}
 
 	_score->loadFrames(*r, _version);
-	delete r;
+	// delete r;
 
 	// Action list
 	if ((r = _movieArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'A', 'C'))) != nullptr) {
@@ -248,7 +248,7 @@ bool Movie::loadArchive() {
 		delete r;
 	}
 
-	_score->setSpriteCasts();
+	// _score->setSpriteCasts(); TODO: Dynamic loading change this
 
 	return true;
 }

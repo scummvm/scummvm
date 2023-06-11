@@ -230,7 +230,7 @@ bool Debugger::cmdInfo(int argc, const char **argv) {
 	debugPrintf("Copy protected: %d\n", cast->_isProtected);
 	debugPrintf("Remap palettes when needed flag: %d\n", movie->_remapPalettesWhenNeeded);
 	debugPrintf("Allow outdated Lingo flag: %d\n", movie->_allowOutdatedLingo);
-	debugPrintf("Frame count: %d\n", score->_frames.size());
+	debugPrintf("Frame count: %d\n", score->getTotalFrames());
 	debugPrintf("Cast member count: %d\n", cast->getCastSize());
 	debugPrintf("Search paths:\n");
 	if (g_lingo->_searchPath.isArray() && g_lingo->_searchPath.u.farr->arr.size() > 0) {
@@ -276,7 +276,7 @@ bool Debugger::cmdMovie(int argc, const char **argv) {
 bool Debugger::cmdChannels(int argc, const char **argv) {
 	Score *score = g_director->getCurrentMovie()->getScore();
 
-	int maxSize = (int)score->_frames.size();
+	int maxSize = (int)score->getTotalFrames();
 	int frameId = score->getCurrentFrame();
 	if (argc == 1) {
 		debugPrintf("Channel info for current frame %d of %d\n", frameId, maxSize);
@@ -289,7 +289,7 @@ bool Debugger::cmdChannels(int argc, const char **argv) {
 
 	if (frameId >= 1 && frameId <= maxSize) {
 		debugPrintf("Channel info for frame %d of %d\n", frameId, maxSize);
-		debugPrintf("%s\n", score->_frames[frameId-1]->formatChannelInfo().c_str());
+		debugPrintf("%s\n", score->quickSelect(frameId-1)->formatChannelInfo().c_str());
 	} else {
 		debugPrintf("Must specify a frame number between 1 and %d.\n", maxSize);
 	}
