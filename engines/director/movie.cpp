@@ -232,7 +232,7 @@ bool Movie::loadArchive() {
 	}
 
 	_score->loadFrames(*r, _version);
-	// delete r;
+	delete r;
 
 	// Action list
 	if ((r = _movieArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'A', 'C'))) != nullptr) {
