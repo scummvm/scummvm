@@ -85,6 +85,9 @@ Score::Score(Movie *movie) {
 
 	_numChannelsDisplayed = 0;
 	_skipTransition = false;
+
+	_framesStream = nullptr;
+	_frame = nullptr;
 }
 
 Score::~Score() {
@@ -99,6 +102,10 @@ Score::~Score() {
 
 	if (_framesStream) {
 		delete _framesStream;
+	}
+
+	if (_frame) {
+		delete _frame;
 	}
 }
 
@@ -1381,8 +1388,6 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	// TODO Merge it with shared cast
 	memset(_channelData, 0, kChannelDataSize);
 
-	Frame *initial = new Frame(this, _numChannelsDisplayed);
-
 	// This makes all indexing simpler
 	_frameOffsets.push_back(0);
 
@@ -1414,7 +1419,6 @@ bool Score::loadFrame(int frameNum) {
 		// TODO: How _channelData be modified.
 		// We have this frame already, seek and load
 		_framesStream->seek(_frameOffsets[frameNum]);
-		warning("Frame %d, offset %ld", frameNum, _framesStream->pos());
 		if (readOneFrame()) {
 			setSpriteCasts(); // Set sprite casts for each sprite in frame!
 			_curFrameNumber = frameNum;
@@ -1481,6 +1485,7 @@ bool Score::readOneFrame(bool saveOffset) {
 				}
 
 				if (channelOffset + channelSize >= kChannelDataSize) {
+					delete frame;
 					// Data ended, no more frames, return
 					return false;
 				}
@@ -1503,12 +1508,17 @@ bool Score::readOneFrame(bool saveOffset) {
 				_currentPaletteId = frame->_palette.paletteId;
 			frame->_scoreCachedPaletteId = _currentPaletteId;
 
-			debugC(8, kDebugLoading, "Score::readOneFrame(): Frame %d actionId: %s", getTotalFrames(), frame->_actionId.asString().c_str());
+			debugC(8, kDebugLoading, "Score::readOneFrame(): Frame %d actionId: %s", _curFrameNumber, frame->_actionId.asString().c_str());
 
+			if (_frame != nullptr) {
+				// Delete previous frame before assigning new one!
+				delete _frame;
+				_frame = nullptr;
+			}
 			_frame = frame;
 
 			if (saveOffset) {
-				// Record the starting offset for this frame!
+				// Record the starting offset for next frame!
 				_frameOffsets.push_back(_framesStream->pos());
 			}
 			return true;
