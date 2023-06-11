@@ -1351,32 +1351,39 @@ void Score::playQueuedSound() {
 void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version) {
 	debugC(1, kDebugLoading, "****** Loading frames VWSC");
 
+	// Setup our streams for frames processing!
+	int dataSize = stream.size();
+	byte *data = (byte *)malloc(dataSize);
+	stream.read(data, dataSize);
+	
+	_framesStream = new Common::MemoryReadStreamEndian(data, dataSize, stream.isBE(), DisposeAfterUse::YES);
+
 	if (debugChannelSet(8, kDebugLoading)) {
-		stream.hexdump(stream.size());
+		_framesStream->hexdump(_framesStream->size());
 	}
 
-	uint32 size = stream.readUint32();
+	uint32 size = _framesStream->readUint32();
 	size -= 4;
 
 	if (version < kFileVer400) {
 		_numChannelsDisplayed = 30;
 	} else if (version >= kFileVer400 && version < kFileVer600) {
-		uint32 frame1Offset = stream.readUint32();
-		_numFrames = stream.readUint32();
-		_framesVersion = stream.readUint16();
-		uint16 spriteRecordSize = stream.readUint16();
-		_numChannels = stream.readUint16();
+		uint32 frame1Offset = _framesStream->readUint32();
+		_numFrames = _framesStream->readUint32();
+		_framesVersion = _framesStream->readUint16();
+		uint16 spriteRecordSize = _framesStream->readUint16();
+		_numChannels = _framesStream->readUint16();
 		size -= 14;
 
 		if (_framesVersion > 13) {
-			_numChannelsDisplayed = stream.readUint16();
+			_numChannelsDisplayed = _framesStream->readUint16();
 		} else {
 			if (_framesVersion <= 7)    // Director5
 				_numChannelsDisplayed = 48;
 			else
 				_numChannelsDisplayed = 120;    // D6
 
-			stream.readUint16(); // Skip
+			_framesStream->readUint16(); // Skip
 		}
 
 		size -= 2;
@@ -1397,13 +1404,8 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	_currentTempo = 0;
 	_currentPaletteId = CastMemberID(0, 0);
 
-	// Setup our streams for further frames processing!
-	int dataSize = size;
-	byte *data = (byte *)malloc(dataSize);
-	stream.read(data, dataSize);
-	_framesStream = new Common::MemoryReadStreamEndian(data, dataSize, stream.isBE(), DisposeAfterUse::YES);
+	// Prepare frameOffsets
 	_version = version;
-
 	_frameOffsets.push_back(_framesStream->pos());
 
 	// In case number of frames not known, precompute them!
