@@ -409,13 +409,15 @@ Common::Error VCruiseEngine::loadMostRecentSave() {
 			continue;
 		}
 
-		// FIXME: Leaky abstraction, date doesn't increase in a way that later dates are always higher numbered so we must do this
-		uint day = (header.date >> 24) & 0xff;
-		uint month = (header.date >> 16) & 0xff;
-		uint year = (header.date & 0xffff);
+		uint8 day = 0;
+		uint8 month = 0;
+		uint16 year = 0;
 
-		uint hour = ((header.time >> 8) & 0xff);
-		uint minute = (header.time & 0xff);
+		uint8 hour = 0;
+		uint8 minute = 0;
+
+		MetaEngine::decodeSavegameDate(&header, year, month, day);
+		MetaEngine::decodeSavegameTime(&header, hour, minute);
 
 		uint64 dateTime = static_cast<uint64>(year) << 32;
 		dateTime |= static_cast<uint64>(month) << 24;
