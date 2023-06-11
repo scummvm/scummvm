@@ -1546,7 +1546,7 @@ void LB::b_preLoad(int nargs) {
 	// We always pretend we preloaded all frames
 	// Returning the number of the last frame successfully "loaded"
 	if (nargs == 0) {
-		g_lingo->_theResult = Datum((int)g_director->getCurrentMovie()->getScore()->_frames.size());
+		g_lingo->_theResult = Datum((int)g_director->getCurrentMovie()->getScore()->getTotalFrames());
 		return;
 	}
 
@@ -2334,7 +2334,7 @@ void LB::b_move(int nargs) {
 	b_erase(1);
 	Score *score = movie->getScore();
 	uint16 frame = score->getCurrentFrame();
-	Frame *currentFrame = score->_frames[frame];
+	Frame *currentFrame = score->_frame;
 	auto channels = score->_channels;
 
 	score->renderFrame(frame, kRenderForceUpdate);
@@ -2363,7 +2363,7 @@ void LB::b_move(int nargs) {
 void LB::b_moveableSprite(int nargs) {
 	Movie *movie = g_director->getCurrentMovie();
 	Score *score = movie->getScore();
-	Frame *frame = score->_frames[score->getCurrentFrame()];
+	Frame *frame = score->_frame;
 
 	if (g_lingo->_currentChannelId == -1) {
 		warning("b_moveableSprite: channel Id is missing");
@@ -2394,7 +2394,7 @@ void LB::b_pasteClipBoardInto(int nargs) {
 
 	Score *score = movie->getScore();
 	uint16 frame = score->getCurrentFrame();
-	Frame *currentFrame = score->_frames[frame];
+	Frame *currentFrame = score->_frame;
 	auto channels = score->_channels;
 
 	castMember->setModified(true);
@@ -2567,8 +2567,8 @@ void LB::b_immediateSprite(int nargs) {
 			if (sc->getNextFrame() && !sp->_immediate) {
 				// same as puppetSprite
 				Channel *channel = sc->getChannelById(sprite.asInt());
-
-				channel->replaceSprite(sc->_frames[sc->getNextFrame()]->_sprites[sprite.asInt()]);
+				// TODO: Fix logic here for next sprite
+				channel->replaceSprite(sc->_frame->_sprites[sprite.asInt()]);
 				channel->_dirty = true;
 			}
 
@@ -2609,7 +2609,8 @@ void LB::b_puppetSprite(int nargs) {
 				// sprite in new frame before setting puppet (Majestic).
 				Channel *channel = sc->getChannelById(sprite.asInt());
 
-				channel->replaceSprite(sc->_frames[sc->getNextFrame()]->_sprites[sprite.asInt()]);
+				// TODO: Fix this properly.
+				channel->replaceSprite(sc->_frame->_sprites[sprite.asInt()]);
 				channel->_dirty = true;
 			}
 
@@ -2766,15 +2767,18 @@ void LB::b_zoomBox(int nargs) {
 	// Looks for endSprite in the next frame
 	Common::Rect endRect = score->_channels[endSpriteId]->getBbox();
 	if (endRect.isEmpty()) {
-		if ((uint)curFrame + 1 < score->_frames.size()) {
-			Channel endChannel(nullptr, score->_frames[curFrame + 1]->_sprites[endSpriteId]);
-			endRect = endChannel.getBbox();
+		if ((uint)curFrame + 1 < score->getTotalFrames()) {
+			Frame* nextFrame = score->quickSelect(curFrame + 1);
+			if (nextFrame) {
+				Channel endChannel(nullptr, nextFrame->_sprites[endSpriteId]);
+				endRect = endChannel.getBbox();
+			}
 		}
 	}
 
 	if (endRect.isEmpty()) {
 		if ((uint)curFrame - 1 > 0) {
-			Channel endChannel(nullptr, score->_frames[curFrame - 1]->_sprites[endSpriteId]);
+			Channel endChannel(nullptr, score->quickSelect(curFrame - 1)->_sprites[endSpriteId]);
 			endRect = endChannel.getBbox();
 		}
 	}

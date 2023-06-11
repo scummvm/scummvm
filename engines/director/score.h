@@ -25,6 +25,7 @@
 //#include "graphics/macgui/macwindowmanager.h"
 
 #include "director/cursor.h"
+#include "director/frame.h"
 
 namespace Graphics {
 	struct Surface;
@@ -74,6 +75,10 @@ public:
 	Movie *getMovie() const { return _movie; }
 
 	void loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version);
+	bool loadFrame(int frame);
+	bool readOneFrame(bool saveOffset = false);
+	Frame *quickSelect(int frameNum);
+
 	void loadLabels(Common::SeekableReadStreamEndian &stream);
 	void loadActions(Common::SeekableReadStreamEndian &stream);
 	void loadSampleSounds(uint type);
@@ -91,8 +96,9 @@ public:
 	void stopPlay();
 
 	void setCurrentFrame(uint16 frameId) { _nextFrame = frameId; }
-	uint16 getCurrentFrame() { return _currentFrame; }
+	uint16 getCurrentFrame() { return _curFrameNumber; }
 	int getNextFrame() { return _nextFrame; }
+	int getTotalFrames() { return _numFrames; }
 
 	CastMemberID getCurrentPalette();
 
@@ -140,10 +146,24 @@ private:
 
 public:
 	Common::Array<Channel *> _channels;
-	Common::Array<Frame *> _frames;
 	Common::SortedArray<Label *> *_labels;
 	Common::HashMap<uint16, Common::String> _actions;
 	Common::HashMap<uint16, bool> _immediateActions;
+
+	// On demand frames loading
+	uint32 _version;
+	Frame *_frame;
+	uint32 _curFrameNumber;
+	uint32 _numFrames;
+	uint32 _framesVersion;
+	uint32 _numChannels;
+	byte _channelData[kChannelDataSize];
+	uint8 _currentTempo;
+	CastMemberID _currentPaletteId;
+
+	Common::Array<int64> _frameOffsets;
+	uint _framesStreamSize;
+	Common::SeekableReadStreamEndian *_framesStream;
 
 	byte _currentFrameRate;
 
@@ -173,7 +193,6 @@ private:
 	Movie *_movie;
 	Window *_window;
 
-	uint16 _currentFrame;
 	uint16 _nextFrame;
 	int _currentLabel;
 	DirectorSound *_soundManager;

@@ -466,7 +466,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.s = score->getFrameLabel(score->getCurrentFrame());
 		break;
 	case kTheFrameScript:
-		d = score->_frames[score->getCurrentFrame()]->_actionId.member;
+		d = score->_frame->_actionId.member;
 		break;
 	case kTheFramePalette:
 		d = score->getCurrentPalette();
@@ -523,7 +523,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = (int)(_vm->getMacTicks() - movie->_lastEventTime);
 		break;
 	case kTheLastFrame:
-		d = (int)score->_frames.size() - 1;
+		d = (int)score->getTotalFrames() - 1;
 		break;
 	case kTheLastKey:
 		d = (int)(_vm->getMacTicks() - movie->_lastKeyTime);
