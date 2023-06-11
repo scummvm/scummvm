@@ -590,29 +590,20 @@ void ScummEngine::initCycl(const byte *ptr) {
 	memset(_colorCycle, 0, sizeof(_colorCycle));
 
 	if (_game.features & GF_SMALL_HEADER) {
+		// Code verified from LOOM CD and MI1 VGA disasms, which
+		// are the only executables which contain said code at all
+
 		cycl = _colorCycle;
 		for (j = 0; j < 16; ++j, ++cycl) {
-			uint16 delay = READ_BE_UINT16(ptr);
+			cycl->delay = READ_BE_UINT16(ptr);
 			ptr += 2;
-			byte start = *ptr++;
-			byte end = *ptr++;
-
-			if (!delay || delay == 0x0aaa || start >= end)
-				continue;
 
 			cycl->counter = 0;
-			cycl->delay = 16384 / delay;
-			cycl->flags = 2;
-			// FIXME bug #10854: lava flows up instead of down in the floppy VGA version
-			// of Monkey1 if we don't do this. It's fine in the original interpreter and
-			// in the VGA CD version (which doesn't use GF_SMALL_HEADER). This is maybe
-			// meant to be always 0 for GF_SMALL_HEADER games, but until disasm confirms
-			// or disproves this, we limit this change to the lava cave (where we can see
-			// it's wrong), just in case.
-			if (_game.id == GID_MONKEY_VGA && (_roomResource == 39 || _roomResource == 65))
-				cycl->flags = 0;
-			cycl->start = start;
-			cycl->end = end;
+			cycl->start = *ptr++;
+			cycl->end = *ptr++;
+
+			if (cycl->delay && cycl->delay != 0x0AAA)
+				cycl->counter = cycl->start;
 		}
 	} else {
 		memset(_colorUsedByCycle, 0, sizeof(_colorUsedByCycle));
@@ -733,6 +724,35 @@ void ScummEngine::cyclePalette() {
 	ColorCycle *cycl;
 	int valueToAdd;
 	int i, j;
+
+	if (_game.features & GF_SMALL_HEADER) {
+		// Code verified from LOOM CD and MI1 VGA disasms, which
+		// are the only executables which contain said code at all
+
+		for (i = 0; i < 16; i++) {
+			if (_colorCycle[i].counter) {
+				_colorCycle[i].counter++;
+				if (_colorCycle[i].counter > _colorCycle[i].end)
+					_colorCycle[i].counter = _colorCycle[i].start;
+
+				byte start = _colorCycle[i].start;
+				byte end = _colorCycle[i].end;
+
+				if (start <= end) {
+					byte cycleVal = _colorCycle[i].counter;
+					for (j = start; j <= end; j++) {
+						_shadowPalette[j] = cycleVal--;
+						if (cycleVal < start)
+							cycleVal = end;
+					}
+				}
+
+				setDirtyColors(_colorCycle[i].start, _colorCycle[i].end);
+				moveMemInPalRes(_colorCycle[i].start, _colorCycle[i].end, 0);
+			}
+		}
+		return;
+	}
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_game.platform == Common::kPlatformFMTowns && !(_townsPaletteFlags & 1))
