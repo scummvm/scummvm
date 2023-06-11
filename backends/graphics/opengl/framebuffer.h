@@ -139,6 +139,11 @@ protected:
 
 public:
 	/**
+	 * Set the size of the target buffer.
+	 */
+	virtual bool setSize(uint width, uint height) = 0;
+
+	/**
 	 * Accessor to activate framebuffer for pipeline.
 	 */
 	void activate(Pipeline *pipeline);
@@ -170,9 +175,9 @@ private:
 class Backbuffer : public Framebuffer {
 public:
 	/**
-	 * Set the dimensions (a.k.a. size) of the back buffer.
+	 * Set the size of the back buffer.
 	 */
-	void setDimensions(uint width, uint height);
+	bool setSize(uint width, uint height) override;
 
 protected:
 	void activateInternal() override;
@@ -205,7 +210,7 @@ public:
 	/**
 	 * Set size of the texture target.
 	 */
-	bool setSize(uint width, uint height);
+	bool setSize(uint width, uint height) override;
 
 	/**
 	 * Query pointer to underlying GL texture.
