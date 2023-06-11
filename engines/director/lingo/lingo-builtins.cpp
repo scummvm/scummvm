@@ -2768,18 +2768,23 @@ void LB::b_zoomBox(int nargs) {
 	Common::Rect endRect = score->_channels[endSpriteId]->getBbox();
 	if (endRect.isEmpty()) {
 		if ((uint)curFrame + 1 < score->getTotalFrames()) {
-			Frame* nextFrame = score->quickSelect(curFrame + 1);
+			Frame *nextFrame = score->getFrameData(curFrame + 1);
 			if (nextFrame) {
 				Channel endChannel(nullptr, nextFrame->_sprites[endSpriteId]);
 				endRect = endChannel.getBbox();
+				delete nextFrame;
 			}
 		}
 	}
 
 	if (endRect.isEmpty()) {
 		if ((uint)curFrame - 1 > 0) {
-			Channel endChannel(nullptr, score->quickSelect(curFrame - 1)->_sprites[endSpriteId]);
-			endRect = endChannel.getBbox();
+			Frame *prevFrame = score->getFrameData(curFrame - 1);
+			if (prevFrame) {
+				Channel endChannel(nullptr, prevFrame->_sprites[endSpriteId]);
+				endRect = endChannel.getBbox();
+				delete prevFrame;
+			}
 		}
 	}
 
