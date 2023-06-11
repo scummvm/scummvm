@@ -4736,10 +4736,9 @@ Common::SharedPtr<Graphics::Surface> Runtime::loadGraphic(const Common::String &
 		return nullptr;
 	}
 
-	Common::SharedPtr<Graphics::Surface> surf(new Graphics::Surface());
+	Common::SharedPtr<Graphics::Surface> surf(new Graphics::Surface(), Graphics::SurfaceDeleter());
 	surf->copyFrom(*bmpDecoder.getSurface());
-	surf.reset(surf->convertTo(Graphics::createPixelFormat<8888>()));
-
+	surf = Common::SharedPtr<Graphics::Surface>(surf->convertTo(Graphics::createPixelFormat<8888>()), Graphics::SurfaceDeleter());
 	return surf;
 }
 
