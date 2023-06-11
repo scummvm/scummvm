@@ -1189,8 +1189,6 @@ bool Runtime::runFrame() {
 			moreActions = bootGame(true);
 			break;
 		case kGameStateQuit:
-			// Flush any settings changes made in-game
-			ConfMan.flushToDisk();
 			return false;
 		case kGameStateIdle:
 			moreActions = runIdle();

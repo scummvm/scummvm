@@ -222,6 +222,9 @@ Common::Error VCruiseEngine::run() {
 	if (_gameDescription->desc.flags & VCRUISE_GF_GENTEE_PACKAGE)
 		SearchMan.remove("VCruiseInstallerPackage");
 
+	// Flush any settings changes made in-game
+	ConfMan.flushToDisk();
+
 	return Common::kNoError;
 }
 
