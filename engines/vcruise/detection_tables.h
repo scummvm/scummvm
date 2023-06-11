@@ -172,7 +172,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 	},
 
 
-	{ // Schizm: Mysterious Journey, Dutch DVD Version
+	{ // Schizm: Mysterious Journey, English DVD Version (NL release)
 		{
 			"schizm",
 			"English DVD",
@@ -183,7 +183,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 		GID_SCHIZM,
-		Common::NL_NLD,
+		Common::EN_GRB,
 	},
 	{ // Schizm: Mysterious Journey, English DVD Version
 		{
