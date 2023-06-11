@@ -342,15 +342,32 @@ void VCruiseEngine::initializePath(const Common::FSNode &gamePath) {
 	Engine::initializePath(gamePath);
 
 	const char *gameSubPath = nullptr;
+
 	if (_gameDescription->desc.flags & VCRUISE_GF_GENTEE_PACKAGE) {
 		if (_gameDescription->gameID == GID_SCHIZM)
 			gameSubPath = "Schizm";
 	}
 
 	if (gameSubPath) {
-		Common::FSNode gameSubDir = gamePath.getChild(gameSubPath);
-		if (gameSubDir.isDirectory())
-			SearchMan.addDirectory("VCruiseGameDir", gameSubDir, 0, 3);
+		const int kNumCasePasses = 3;
+
+		for (int casePass = 0; casePass < kNumCasePasses; casePass++) {
+			Common::String subPathStr(gameSubPath);
+
+			if (casePass == 1)
+				subPathStr.toUppercase();
+			else if (casePass == 2)
+				subPathStr.toLowercase();
+
+			Common::FSNode gameSubDir = gamePath.getChild(subPathStr);
+			if (gameSubDir.isDirectory()) {
+				SearchMan.addDirectory("VCruiseGameDir", gameSubDir, 0, 3);
+				break;
+			}
+
+			if (casePass != kNumCasePasses - 1)
+				warning("Expected to find subpath '%s' in the game directory but couldn't find it", gameSubPath);
+		}
 	}
 
 	_rootFSNode = gamePath;
