@@ -415,9 +415,9 @@ Common::Error VCruiseEngine::loadMostRecentSave() {
 		uint minute = (header.time & 0xff);
 
 		uint64 dateTime = static_cast<uint64>(year) << 32;
-		dateTime |= month << 24;
-		dateTime |= day << 16;
-		dateTime |= hour << 8;
+		dateTime |= static_cast<uint64>(month) << 24;
+		dateTime |= static_cast<uint64>(day) << 16;
+		dateTime |= static_cast<uint64>(hour) << 8;
 		dateTime |= minute;
 
 		uint32 playTime = header.playtime;
