@@ -289,7 +289,7 @@ bool Debugger::cmdChannels(int argc, const char **argv) {
 
 	if (frameId >= 1 && frameId <= maxSize) {
 		debugPrintf("Channel info for frame %d of %d\n", frameId, maxSize);
-		debugPrintf("%s\n", score->quickSelect(frameId-1)->formatChannelInfo().c_str());
+		debugPrintf("%s\n", score->getFrameData(frameId-1)->formatChannelInfo().c_str());
 	} else {
 		debugPrintf("Must specify a frame number between 1 and %d.\n", maxSize);
 	}

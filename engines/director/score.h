@@ -77,7 +77,7 @@ public:
 	void loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version);
 	bool loadFrame(int frame);
 	bool readOneFrame(bool saveOffset = false);
-	Frame *quickSelect(int frameNum);
+	Frame *getFrameData(int frameNum);
 
 	void loadLabels(Common::SeekableReadStreamEndian &stream);
 	void loadActions(Common::SeekableReadStreamEndian &stream);
