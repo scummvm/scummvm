@@ -32,7 +32,7 @@ public:
 
 namespace MovUtilsXObj {
 
-extern const char *xlibName;
+extern const char *xlibNames[];
 extern const char *fileNames[];
 
 void open(int type);
@@ -40,6 +40,7 @@ void close(int type);
 
 void m_new(int nargs);
 void m_clear(int nargs);
+void m_getsystempath(int nargs);
 
 } // End of namespace MovUtilsXObj
 
