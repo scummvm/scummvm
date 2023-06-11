@@ -1430,6 +1430,8 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 }
 
 bool Score::loadFrame(int frameNum) {
+	debugC(7, kDebugLoading, "****** A call to loadFrame %d", frameNum);
+
 	// Read existing frame (ie already visited)
 	if (frameNum < (int)_frameOffsets.size() - 1) {
 		// TODO: How _channelData be modified.
@@ -1516,11 +1518,15 @@ bool Score::readOneFrame(bool saveOffset) {
 
 	if (!_framesStream->eos()) {
 		uint16 frameSize = _framesStream->readUint16();
+		if (frameSize > _framesStream->size()) {
+			warning("Score::readOneFrame(): frameSize %d is greater than stream size %ld", frameSize, _framesStream->size());
+			return false;
+		}
+
 		debugC(3, kDebugLoading, "++++++++++ score prev frame %d (frameSize %d) saveOffset %d", _curFrameNumber, frameSize, saveOffset);
 		if (debugChannelSet(8, kDebugLoading)) {
 			_framesStream->hexdump(frameSize);
 		}
-
 		if (frameSize > 0) {
 			Frame *frame = new Frame(this, _numChannelsDisplayed);
 			frameSize -= 2;
