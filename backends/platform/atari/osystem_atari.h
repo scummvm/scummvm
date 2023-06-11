@@ -53,6 +53,7 @@ private:
 
 	bool _videoInitialized = false;
 	bool _timerInitialized = false;
+	bool _useNullMixer = false;
 };
 
 #endif

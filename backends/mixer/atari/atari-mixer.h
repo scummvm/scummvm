@@ -43,6 +43,15 @@ public:
 	bool notifyEvent(const Common::Event &event) override;
 
 private:
+	enum PlaybackState {
+		kPlaybackStopped,
+		kPlayingFromPhysicalBuffer,
+		kPlayingFromLogicalBuffer
+	};
+
+	void startPlayback(PlaybackState playbackState);
+	void stopPlayback(PlaybackState playbackState);
+
 	uint32 _outputRate;
 	uint32 _samples = 0;
 	uint8 *_samplesBuf = nullptr;
@@ -52,7 +61,7 @@ private:
 	byte *_atariLogicalSampleBuffer = nullptr;
 	size_t _atariSampleBufferSize;	// one buffer (logical/physical)
 
-	bool _muted = false;
+	PlaybackState _playbackState = kPlaybackStopped;
 };
 
 #endif

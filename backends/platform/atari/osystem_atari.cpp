@@ -50,6 +50,7 @@
 #include "backends/graphics/atari/atari-graphics.h"
 #include "backends/keymapper/hardware-input.h"
 #include "backends/mixer/atari/atari-mixer.h"
+#include "backends/mixer/null/null-mixer.h"
 #include "backends/mutex/null/null-mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
@@ -253,7 +254,24 @@ void OSystem_Atari::initBackend() {
 
 	atariEventSource->setGraphicsManager(atariGraphicsManager);
 
-	_mixerManager = new AtariMixerManager();
+#ifdef DISABLE_FANCY_THEMES
+	// On the slim build force "STMIDI" as GM MIDI device, i.e. do not attempt
+	// to emulate anything by default. That prevents mixing silence and enable
+	// us to stop DMA playback which takes cycles especially on TT with STFA's
+	// emulation.
+	if (!ConfMan.hasKey("gm_device")) {
+		ConfMan.set("gm_device", "stmidi");
+	}
+#endif
+
+	long cookie;
+	if (Getcookie(C__SND, &cookie) == C_FOUND && (cookie & SND_16BIT)) {
+		_mixerManager = new AtariMixerManager();
+	} else {
+		warning("Mixer manager requires 16-bit stereo mode, disabling");
+		_mixerManager = new NullMixerManager();
+		_useNullMixer = true;
+	}
 	// Setup and start mixer
 	_mixerManager->init();
 
@@ -374,7 +392,10 @@ Common::String OSystem_Atari::getDefaultConfigFileName() {
 
 void OSystem_Atari::update() {
 	((DefaultTimerManager *)_timerManager)->checkTimers();
-	((AtariMixerManager *)_mixerManager)->update();
+	if (_useNullMixer)
+		((NullMixerManager *)_mixerManager)->update();
+	else
+		((AtariMixerManager *)_mixerManager)->update();
 }
 
 OSystem *OSystem_Atari_create() {

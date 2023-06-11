@@ -81,9 +81,6 @@ Main features
 Platform-specific features outside the GUI
 ------------------------------------------
 
-Keyboard shortcut "CONTROL+u": immediate mute on/off toggle (disables also
-sample mixing, contrary to what "Mute all" in the options does!)
-
 Keyboard shortcut "CONTROL+ALT+a": immediate aspect ratio correction on/off
 toggle.
 
@@ -265,10 +262,10 @@ or "FM_medium_quality=true" into scummvm.ini if you want to experiment with a
 better quality synthesis, otherwise the lowest quality will be used (applies
 for MAME OPL only).
 
-On the TT, in 95% of cases it makes sense to enable music only if you have a
-native MIDI synthesizer (like mt32-pi: https://github.com/dwhinham/mt32-pi);
-STFA is usually slow to mix samples, too => mute it (see below) or don't
-install STFA (same effect).
+On the TT, in 95% of cases it makes sense to use ScummVM only if you own a
+native MIDI synthesizer (like mt32-pi: https://github.com/dwhinham/mt32-pi).
+MIDI emulation is out of question and STFA is usually slow to mix samples, too
+=> stick with games with MIDI sounds or at least don't install/enable STFA.
 
 CD music slows everything down
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -283,26 +280,22 @@ rendering. Try to put "musdisk1.bun" and "musdisk2.bun" into a ramdisk (i.e.
 u:/ram in FreeMiNT), you'll be pleasantly surprised with the performance boost
 gained.
 
-"Mute" vs. "Mute all" in GUI vs. "No music" in GUI
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Mute vs. "No music"
+~~~~~~~~~~~~~~~~~~~
 
-Not the same thing. "Mute" (available only via the shortcut CONTROL+u) generates
-an event to which the sample mixer can react (i.e. stop mixing the silence...).
-
-"Mute all" doesn't generate anything, it basically just lowers the volume of the
-music to zero.
+Currently ScummVM requires each backend to mix samples, even though they may
+contain muted output (i.e. zeroes). This is because the progression of sample
+playback tells ScummVM how much time has passed in e.g. an animation.
 
 "No music" means using the null audio plugin which prevents generating any MIDI
 music (and therefore avoiding the expensive synthesis emulation) but beware, it
-doesn't affect CD (*.wav) playback at all!
+doesn't affect CD (*.wav) playback at all! Same applies for speech and sfx.
 
-So for the best performance, always choose "No music" in the GUI options when
-the game contains MIDI tracks and "Mute" when the game contains a sampled
-soundtrack.
-
-Please note that it is not that bad, you surely can play The Secret of Monkey
-Island with AdLib enabled (but the CD/talkie versions sound better and
-are cheaper to play ;)).
+The least amount of cycles is spent when:
+- "No music" (or keep it default and choose a native MIDI device) is set in the
+   GUI options; this prevents MIDI sythesis of any kind
+- all external audio files are deleted (typically *.wav); that way the mixer
+  wont have anything to mix. However beware, this is not allowed in every game!
 
 Slow GUI
 ~~~~~~~~
@@ -332,6 +325,9 @@ restricts features but also improves performance:
 - overlay during gameplay has no game backround => ever faster redraw
 
 - overlay doesn't support alternative themes => faster loading time
+
+- "STMIDI" driver is automatically enabled (i.e. MIDI emulation is never used
+  but still allows playing speech/sfx samples and/or CD audio)
 
 
 Known issues
