@@ -3514,7 +3514,7 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 				return;
 			}
 		} else {
-			warning("Animation file %i is missing", animFile);
+			error("Animation file %i is missing", animFile);
 			delete aviFile;
 		}
 
