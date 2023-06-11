@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-06-11 04:30+0000\n"
-"PO-Revision-Date: 2023-06-07 09:04+0000\n"
+"PO-Revision-Date: 2023-06-11 21:52+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -6583,14 +6583,12 @@ msgstr ""
 "anziché -10HP"
 
 #: engines/mm/metaengine.cpp:68
-#, fuzzy
-#| msgid "Enable hit point bar graphs"
 msgid "Hitpoint bars"
-msgstr "Attiva le barre di energia (Hit Points)"
+msgstr "Barre di energia (Hit Points)"
 
 #: engines/mm/metaengine.cpp:69
 msgid "Replace a colored gem with bars for hit points and spell points."
-msgstr ""
+msgstr "Mostra barre per punti vita e magia, al posto delle gemme colorate."
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
@@ -6736,6 +6734,9 @@ msgid ""
 "will automatically be available if you detect the original game and select "
 "Enhanced mode."
 msgstr ""
+"Non è possibile avviare il gioco direttamente dal Graphics Overhaul Mod. "
+"Sarà disponibile automaticamente dopo avere aggiunto il gioco e selezionato "
+"Enhanced mode."
 
 #: engines/mm/mm1/mm1.cpp:108
 msgid ""
@@ -7782,14 +7783,6 @@ msgstr ""
 "\n"
 
 #: engines/scumm/detection_internal.h:384
-#, fuzzy
-#| msgid ""
-#| "This version of Monkey Island can't be played, because Limited Run Games "
-#| "provided corrupted DISK04.LEC and 903.LFL files.\n"
-#| "\n"
-#| "Please contact their technical support for replacement files, or look "
-#| "online for some guides which can help you recover valid files from the "
-#| "KryoFlux dumps that Limited Run Games also provided."
 msgid ""
 "This version of Monkey Island can't be played, because Limited Run Games "
 "provided corrupted DISK03.LEC, DISK04.LEC and 903.LFL files.\n"
@@ -7799,7 +7792,8 @@ msgid ""
 "dumps that Limited Run Games also provided."
 msgstr ""
 "Questa versione di Monkey Island non può essere giocata, perché i file "
-"DISK04.LEC e 903.LFL distribuiti dalla Limited Run Games sono danneggiati.\n"
+"DISK03.LEC, DISK04.LEC e 903.LFL distribuiti dalla Limited Run Games sono "
+"danneggiati.\n"
 "\n"
 "Cortesemente, contatta il loro supporto tecnico per ottenere i file "
 "sostitutivi, oppure cerca qualche guida online su come estrarre i file "
