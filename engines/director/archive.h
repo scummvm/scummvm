@@ -44,6 +44,7 @@ struct Resource {
 	uint32 tag;
 	Common::String name;
 	Common::Array<Resource> children;
+	bool accessed;
 };
 
 class Archive {
@@ -78,6 +79,8 @@ public:
 	static uint32 convertTagToUppercase(uint32 tag);
 
 	virtual Common::String formatArchiveInfo();
+
+	void listUnaccessedChunks();
 
 protected:
 	void dumpChunk(Resource &res, Common::DumpFile &out);
