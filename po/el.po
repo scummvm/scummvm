@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-06-10 23:03+0000\n"
-"PO-Revision-Date: 2023-05-29 10:06+0000\n"
+"PO-Revision-Date: 2023-06-11 06:09+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -6651,14 +6651,14 @@ msgstr ""
 "μόλις στα -10HP"
 
 #: engines/mm/metaengine.cpp:68
-#, fuzzy
-#| msgid "Enable hit point bar graphs"
 msgid "Hitpoint bars"
-msgstr "Ενεργοποίηση ραβδογραμμάτων για hit points"
+msgstr "Μπάρες για hitpoints"
 
 #: engines/mm/metaengine.cpp:69
 msgid "Replace a colored gem with bars for hit points and spell points."
 msgstr ""
+"Αντικατάσταση ενός χρωματιστού διαμαντιού (gem) με μπάρες για hit points και "
+"spell points."
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
@@ -6804,6 +6804,10 @@ msgid ""
 "will automatically be available if you detect the original game and select "
 "Enhanced mode."
 msgstr ""
+"Δεν μπορείτε να εκτελέσετε το παιχνίδι απευθείας από το Graphics Overhaul "
+"Mod (Τροποποίηση Αναβάθμισης των Γραφικών). Αντ' αυτού, θα είναι αυτόματα "
+"διαθέσιμο αν κάνετε εντοπισμό του αρχικού παιχνιδιού και επιλέξετε το "
+"Enhanced mode (Βελτιωμένη λειτουργία)."
 
 #: engines/mm/mm1/mm1.cpp:108
 msgid ""
