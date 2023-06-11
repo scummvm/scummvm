@@ -1223,7 +1223,7 @@ MiniscriptInstructionOutcome ImageElement::scriptSetFlushPriority(MiniscriptThre
 
 MToonElement::MToonElement()
 	: _cacheBitmap(false), _maintainRate(false), _assetID(0), _rateTimes100000(0), _flushPriority(0), _celStartTimeMSec(0),
-	  _isPlaying(false), _renderedFrame(0), _playRange(IntRange(1, 1)), _cel(1), _hasIssuedRenderWarning(false) {
+	  _isPlaying(false), _isStopped(false), _renderedFrame(0), _playRange(IntRange(1, 1)), _cel(1), _hasIssuedRenderWarning(false) {
 }
 
 MToonElement::~MToonElement() {
@@ -1305,6 +1305,11 @@ VThreadState MToonElement::consumeCommand(Runtime *runtime, const Common::Shared
 		becomeVisibleTaskData->desiredFlag = true;
 		becomeVisibleTaskData->runtime = runtime;
 
+		if (_isStopped) {
+			_isStopped = false;
+			runtime->setSceneGraphDirty();
+		}
+
 		return kVThreadReturn;
 	}
 	if (Event(EventIDs::kStop, 0).respondsTo(msg->getEvent())) {
@@ -1320,6 +1325,7 @@ VThreadState MToonElement::consumeCommand(Runtime *runtime, const Common::Shared
 
 		StopPlayingTaskData *stopPlayingTaskData = runtime->getVThread().pushTask("MToonElement::stopPlayingTask", this, &MToonElement::stopPlayingTask);
 		stopPlayingTaskData->runtime = runtime;
+
 		return kVThreadReturn;
 	}
 
@@ -1369,6 +1375,11 @@ bool MToonElement::canAutoPlay() const {
 }
 
 void MToonElement::render(Window *window) {
+	// Stopped mToons are not supposed to render
+	// FIXME: Should this also disable mouse collision?  Should we detect ths somewhere else?
+	if (_isStopped)
+		return;
+
 	if (_cachedMToon) {
 		_cachedMToon->optimize(getRuntime());
 
@@ -1534,9 +1545,13 @@ VThreadState MToonElement::stopPlayingTask(const StopPlayingTaskData &taskData) 
 	_contentsDirty = true;
 	_isPlaying = false;
 
-	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kStop, 0), DynamicValue(), getSelfReference()));
-	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-	taskData.runtime->sendMessageOnVThread(dispatch);
+	if (!_isStopped) {
+		_isStopped = true;
+
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kStop, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+		taskData.runtime->sendMessageOnVThread(dispatch);
+	}
 
 	return kVThreadReturn;
 }

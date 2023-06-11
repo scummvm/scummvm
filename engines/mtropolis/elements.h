@@ -284,6 +284,15 @@ private:
 	uint32 _celStartTimeMSec;
 	bool _isPlaying;	// Is actually rolling media, this is only set by playMedia because it needs to start after scene transition
 
+	// Stop state works independently of pause/hidden even though it has similar effect:
+	// If an mToon is stopped, then it it is always hidden and will not play until a Play
+	// command is received.
+	//
+	// Also, MTI depends on not firing Stopped commands if the mToon is already stopped,
+	// otherwise the cannon scene in the Hispaniola will get stuck in an infinite loop due
+	// to Stopped
+	bool _isStopped;
+
 	Common::SharedPtr<Graphics::ManagedSurface> _renderSurface;
 	uint32 _renderedFrame;
 
