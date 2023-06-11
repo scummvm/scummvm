@@ -52,20 +52,17 @@ void U8AvatarMoverProcess::handleHangingMode() {
 	if (stasis)
 		return;
 
+	Mouse *mouse = Mouse::get_instance();
 	uint32 now = g_system->getMillis();
-	uint32 timeout = g_system->getDoubleClickTime();
-	timeout = timeout > 0 ? timeout : DOUBLE_CLICK_TIMEOUT;
+	uint32 timeout = mouse->getDoubleClickTime();
 
-	bool m0clicked = false;
-	//bool m1clicked = false;
-	if (!_mouseButton[0].isState(MBS_HANDLED) &&
-		!_mouseButton[0].curWithinDblClkTimeout(now, timeout)) {
-		m0clicked = true;
+	bool m0unhandled = _mouseButton[0].isUnhandledPastTimeout(now, timeout);
+	if (m0unhandled) {
 		_mouseButton[0].setState(MBS_HANDLED);
 	}
-	if (!_mouseButton[1].isState(MBS_HANDLED) &&
-		!_mouseButton[1].curWithinDblClkTimeout(now, timeout)) {
-		//m1clicked = true;
+
+	bool m1unhandled = _mouseButton[1].isUnhandledPastTimeout(now, timeout);
+	if (m1unhandled) {
 		_mouseButton[1].setState(MBS_HANDLED);
 	}
 
@@ -73,9 +70,8 @@ void U8AvatarMoverProcess::handleHangingMode() {
 		clearMovementFlag(MOVE_MOUSE_DIRECTION);
 	}
 
-	// if left mouse is down, try to climb up
-	if (_mouseButton[0].isState(MBS_DOWN) &&
-			(!_mouseButton[0].isState(MBS_HANDLED) || m0clicked)) {
+	// if left mouse was clicked or down unhandled, try to climb up
+	if (!_mouseButton[0].isState(MBS_HANDLED) || m0unhandled) {
 		_mouseButton[0].setState(MBS_HANDLED);
 		_mouseButton[0]._lastDown = 0;
 		setMovementFlag(MOVE_JUMP);
@@ -121,21 +117,15 @@ void U8AvatarMoverProcess::handleCombatMode() {
 		return;
 
 	uint32 now = g_system->getMillis();
-	uint32 timeout = g_system->getDoubleClickTime();
-	timeout = timeout > 0 ? timeout : DOUBLE_CLICK_TIMEOUT;
+	uint32 timeout = mouse->getDoubleClickTime();
 
-	bool m0clicked = false;
-	bool m1clicked = false;
-
-	if (!_mouseButton[0].isState(MBS_HANDLED) &&
-	    !_mouseButton[0].curWithinDblClkTimeout(now, timeout)) {
-		m0clicked = true;
+	bool m0unhandled = _mouseButton[0].isUnhandledPastTimeout(now, timeout);
+	if (m0unhandled) {
 		_mouseButton[0].setState(MBS_HANDLED);
 	}
 
-	if (!_mouseButton[1].isState(MBS_HANDLED) &&
-	    !_mouseButton[1].curWithinDblClkTimeout(now, timeout)) {
-		m1clicked = true;
+	bool m1unhandled = _mouseButton[1].isUnhandledPastTimeout(now, timeout);
+	if (m1unhandled) {
 		_mouseButton[1].setState(MBS_HANDLED);
 	}
 
@@ -250,7 +240,7 @@ void U8AvatarMoverProcess::handleCombatMode() {
 	}
 
 	// if clicked, turn in mouse direction
-	if (m0clicked || m1clicked)
+	if (m0unhandled || m1unhandled)
 		if (checkTurn(mousedir, false))
 			return;
 
@@ -365,22 +355,15 @@ void U8AvatarMoverProcess::handleNormalMode() {
 	}
 
 	uint32 now = g_system->getMillis();
-	uint32 timeout = g_system->getDoubleClickTime();
-	timeout = timeout > 0 ? timeout : DOUBLE_CLICK_TIMEOUT;
+	uint32 timeout = mouse->getDoubleClickTime();
 
-	bool m0clicked = false;
-	bool m1clicked = false;
-
-	// check mouse state to see what needs to be done
-	if (!_mouseButton[0].isState(MBS_HANDLED) &&
-		!_mouseButton[0].curWithinDblClkTimeout(now, timeout)) {
-		m0clicked = true;
+	bool m0unhandled = _mouseButton[0].isUnhandledPastTimeout(now, timeout);
+	if (m0unhandled) {
 		_mouseButton[0].setState(MBS_HANDLED);
 	}
 
-	if (!_mouseButton[1].isState(MBS_HANDLED) &&
-	    !_mouseButton[1].curWithinDblClkTimeout(now, timeout)) {
-		m1clicked = true;
+	bool m1unhandled = _mouseButton[1].isUnhandledPastTimeout(now, timeout);
+	if (m1unhandled) {
 		_mouseButton[1].setState(MBS_HANDLED);
 	}
 
@@ -451,7 +434,7 @@ void U8AvatarMoverProcess::handleNormalMode() {
 		}
 	}
 
-	if ((!_mouseButton[0].isState(MBS_HANDLED) || m0clicked) && hasMovementFlags(MOVE_ANY_DIRECTION | MOVE_STEP)) {
+	if ((!_mouseButton[0].isState(MBS_HANDLED) || m0unhandled) && hasMovementFlags(MOVE_ANY_DIRECTION | MOVE_STEP)) {
 		_mouseButton[0].setState(MBS_HANDLED);
 		// We got a left mouse down while already moving in any direction or holding the step button.
 		// CHECKME: check what needs to happen when keeping left pressed
@@ -552,7 +535,7 @@ void U8AvatarMoverProcess::handleNormalMode() {
 		return;
 	}
 
-	if (m1clicked)
+	if (m1unhandled)
 		if (checkTurn(mousedir, false))
 			return;
 
