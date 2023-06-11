@@ -3,6 +3,7 @@ MODULE := engines/m4
 MODULE_OBJS = \
 	m4.o \
 	console.o \
+	f_info.o \
 	metaengine.o
 
 # This module can be built as a plugin
