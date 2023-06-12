@@ -90,8 +90,21 @@ void Archive::listUnaccessedChunks() {
 			}
 		}
 
-		if (!accessed && type._key != MKTAG('f','r','e','e') && type._key != MKTAG('j','u','n','k'))
-			s += Common::String::format("%s: %d items\n", tag2str(type._key), type._value.size());
+		if (!accessed) {
+			switch (type._key) {
+			case MKTAG('f','r','e','e'):	// Freed chunk
+			case MKTAG('j','u','n','k'):	// Some unreferenced junk
+			case MKTAG('T','H','U','M'):	// Cast thumbnail - authoring only
+			case MKTAG('T','h','u','m'):	// Cast thumbnail - authoring only (D7+)
+			case MKTAG('F','C','O','L'):	// Favorite colors - authoring only
+			case MKTAG('S','C','R','F'):	// Shared Cast refs - authoring only
+			case MKTAG('V','W','t','c'):	// Score time code
+			case MKTAG('V','W','t','k'):	// Tape Key resource. Used as a lookup for labels in early Directors
+				break;
+			default:
+				s += Common::String::format("%s: %d items\n", tag2str(type._key), type._value.size());
+			}
+		}
 	}
 
 	if (!s.empty())
