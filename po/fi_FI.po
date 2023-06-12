@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-06-11 23:12+0000\n"
-"PO-Revision-Date: 2023-06-02 21:40+0000\n"
+"PO-Revision-Date: 2023-06-13 01:40+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -6487,14 +6487,12 @@ msgstr ""
 "Suojavaruste hajoaa vasta hahmon ollessa -80HP:ssä normaalin -10HP sijasta"
 
 #: engines/mm/metaengine.cpp:68
-#, fuzzy
-#| msgid "Enable hit point bar graphs"
 msgid "Hitpoint bars"
-msgstr "Käytä kestopisteissä värillisiä grafiikkapalkkeja numeroiden sijaan"
+msgstr "Elämäpistepalkit"
 
 #: engines/mm/metaengine.cpp:69
 msgid "Replace a colored gem with bars for hit points and spell points."
-msgstr ""
+msgstr "Korvaa elämäpisteiden ja loitsupisteiden värillinen jalokivi palkeilla."
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
@@ -6640,6 +6638,8 @@ msgid ""
 "will automatically be available if you detect the original game and select "
 "Enhanced mode."
 msgstr ""
+"Et voi ajaa peliä suoraan modista. Voit käyttää modia lisäämällä "
+"alkuperäisen pelin ja valitsemalla parannellun tilan."
 
 #: engines/mm/mm1/mm1.cpp:108
 msgid ""
@@ -7653,14 +7653,6 @@ msgstr ""
 "\n"
 
 #: engines/scumm/detection_internal.h:384
-#, fuzzy
-#| msgid ""
-#| "This version of Monkey Island can't be played, because Limited Run Games "
-#| "provided corrupted DISK04.LEC and 903.LFL files.\n"
-#| "\n"
-#| "Please contact their technical support for replacement files, or look "
-#| "online for some guides which can help you recover valid files from the "
-#| "KryoFlux dumps that Limited Run Games also provided."
 msgid ""
 "This version of Monkey Island can't be played, because Limited Run Games "
 "provided corrupted DISK03.LEC, DISK04.LEC and 903.LFL files.\n"
@@ -7670,7 +7662,7 @@ msgid ""
 "dumps that Limited Run Games also provided."
 msgstr ""
 "Tätä versiota Monkey Island:ista ei voi pelata, koska Limited Run Games "
-"toimitti sen mukana vialliset DISK04.LEC ja 903.LFL tiedostot.\n"
+"toimitti sen mukana vialliset DISK03.LEC, DISK04.LEC ja 903.LFL tiedostot.\n"
 "\n"
 "Ole hyvä ja ota yhteyttä heidän tekniseen tukeensa näiden tiedostojen "
 "korvaamiseksi, tai etsi netistä ohjeet joiden avulla voit palauttaa ehjät "
