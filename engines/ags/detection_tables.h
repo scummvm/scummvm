@@ -1543,6 +1543,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "interdimensionalcs", "Interdimensional Community Service" },
 	{ "intergalacticspacepancake", "Intergalactic Space Pancake!" },
 	{ "interstellarborders", "Interstellar Borders" },
+	{ "interstellarinterruption", "Interstellar Interruption" },
 	{ "intestinator", "Intestinator!" },
 	{ "intothelight", "Into The Light" },
 	{ "intraworld", "Intra-World" },
@@ -2210,6 +2211,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "odow", "One Dungeon One Week" },
 	{ "odr3", "Outrage Dreamer Roads 3" },
 	{ "odr4", "Outrage Dreamer Roads 4" },
+	{ "officereturned", "Office of the Returned" },
 	{ "officeshenanigans", "Office Shenanigans" },
 	{ "offtheclock", "Off The Clock" },
 	{ "ohdulieber", "Oh du lieber Augustin" },
@@ -2628,6 +2630,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "shamrockhg", "Shamrock High Graduation" },
 	{ "shapeshift", "Shapeshift for Cheese" },
 	{ "shapevillage", "Shape Village" },
+	{ "shardsofgod", "Shards of God" },
 	{ "sharethis", "Share This With Your Friends" },
 	{ "sharkysthree", "Sharky's 3: The Heist" },
 	{ "shawshank", "The Shawshank Redemption" },
@@ -3014,6 +3017,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "thepaparazziprince", "The Paparazzi Prince; and the Quest for Headlines" },
 	{ "thepark", "The Park" },
 	{ "theparrotsnatchers", "The Parrot Snatchers" },
+	{ "thepassenger", "The Passenger" },
 	{ "thepathpumpkin", "The Path of the Pumpkin" },
 	{ "thepenthouse", "The Penthouse" },
 	{ "theperfectmurder", "The Perfect Murder" },
@@ -4638,6 +4642,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY("shadowsoftheempire", "sote_td.exe", "b8cd640b45c5a79c33c7a8a8fe32ebe2", 63299246),  //v1.1  En-De-It
 	DEMO_ENTRY_EN("shardlight", "shardlight demo.exe", "ee801fba52d252249677a9170bd2db96", 642405010), // Steam
 	DEMO_ENTRY_EN("shardlight", "shardlight demo.exe", "ee801fba52d252249677a9170bd2db96", 642366257),
+	DEMO_ENTRY_EN("shardsofgod", "Shards of God.ags", "b181201165d078ac786fa474ef8c14fd", 36754512),
 	DEMO_ENTRY_EN("shivah", "shivahdemo.exe", "6e3d6225dee662ff6450a3bfa942773b", 20897850),
 	DEMO_ENTRY_EN("shivahkosher", "shivah-demo.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 23987292),
 	DEMO_ENTRY_EN("signalecho", "Signal & Echo - Iris is Missing (demo).exe", "f9e3e0193fbc975daa3a7c95edf04e0a", 39177267),
@@ -6111,6 +6116,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("interdimensionalcs", "ICS.exe", "8d1ff95c16500befbdc72260d461d73f", 15656530),
 	GAME_ENTRY_EN("intergalacticspacepancake", "space.exe", "97d700529f5cc826f230c27acf81adfd", 1797309),
 	GAME_ENTRY_EN("interstellarborders", "Interstellar Borders New.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 13864633),
+	GAME_ENTRY_EN("interstellarinterruption", "Interstellar Interruption.ags", "5bb241c71681dadc3be75a9795ea9be7", 6222268),
 	GAME_ENTRY_EN("intestinator", "intestinator.exe", "3421b46ff95c5885603086c39a038a20", 1722265),
 	GAME_ENTRY_EN_PLATFORM("intestinator", "ac2game.ags", "af8c785b9c462228b1c134ac79f83986", 423817, "Beta"),
 	GAME_ENTRY_EN("intothelight", "ITL.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 12145887),
@@ -6899,6 +6905,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("odow", "ODOW.exe", "6e6f33162242d74dd1fa042429f16562", 3968102),
 	GAME_ENTRY_EN("odr3", "ODR3.exe", "af11e94f91b66e11450e8daf51d09292", 7637876),
 	GAME_ENTRY_EN("odr4", "ODR4.exe", "510be04e5eec2aa92bb78b060f138d64", 24227828),
+	GAME_ENTRY_EN("officereturned", "OfficeofTheReturned.ags", "fda695d784c029b3b13a63c7ee989d9a", 3722245),
 	GAME_ENTRY_EN("officeshenanigans", "OfficeShenanigans.exe", "25976a689b0f4d73eac69b1728377ecb", 6111931),
 	DETECTION_ENTRY_GUIO("offtheclock", "Off The Clock.ags", "8918895c5c695bae90af13ea4f1a9807", 495345700, Common::EN_ANY, nullptr, GUIO2(GUIO_NOLANG, GUIO_NOLAUNCHLOAD), nullptr, ADGF_NO_FLAGS),  // Linux
 	DETECTION_ENTRY_GUIO("offtheclock", "Off The Clock.exe", "b2eb107c1f9784b7fc4f58c2a7678dea", 498392456, Common::EN_ANY, nullptr, GUIO2(GUIO_NOLANG, GUIO_NOLAUNCHLOAD), nullptr, ADGF_NO_FLAGS),  // Win
@@ -7881,6 +7888,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("thepaparazziprince", "Willy.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 3403804),
 	GAME_ENTRY_EN("thepark", "park.exe", "97d700529f5cc826f230c27acf81adfd", 709265),
 	GAME_ENTRY("theparrotsnatchers", "r.exe", "a524cbb1c51589903c4043b98917f1d9", 11945759),  // En-Pol
+	GAME_ENTRY_EN("thepassenger", "The Passenger.exe", "ae2e93ae61a612dd8cad1290bd5f7443", 4367776),
+	GAME_ENTRY_EN("thepassenger", "The Passenger.ags", "39af4e69a003d070a96bface061b819e", 1255820),
 	GAME_ENTRY("thepathpumpkin", "The path of a pumpkin(The story of Skar).exe", "2c8f16a69b659ddfad4a043a24d8aa49", 264732994),  // En-Ita
 	GAME_ENTRY_EN("thepenthouse", "Penthouse.exe", "0564de07d3fd5c16e6947a647061913c", 13596940),
 	GAME_ENTRY("thephantominheritance", "Phantom.exe", "ec04c7917c003d9e07d4514ff25bf365", 27558669),  // Eng-Esp
