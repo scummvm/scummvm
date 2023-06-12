@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	kernel.o \
 	metaengine.o \
 	param.o \
+	term.o \
 	burger/burger.o
 
 # This module can be built as a plugin
