@@ -51,7 +51,7 @@ void Roster::load() {
 
 		while (!sf->eos()) {
 			uint32 chunk = sf->readUint32BE();
-			if (chunk == MKTAG('M', 'A', 'P', 'S')) {
+			if (!sf->eos() && chunk == MKTAG('M', 'A', 'P', 'S')) {
 				sf->skip(4);	// Skip chunk size
 				g_maps->synchronize(s);
 			}
