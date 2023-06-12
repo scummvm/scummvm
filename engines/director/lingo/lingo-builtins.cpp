@@ -1546,7 +1546,7 @@ void LB::b_preLoad(int nargs) {
 	// We always pretend we preloaded all frames
 	// Returning the number of the last frame successfully "loaded"
 	if (nargs == 0) {
-		g_lingo->_theResult = Datum((int)g_director->getCurrentMovie()->getScore()->getTotalFrames());
+		g_lingo->_theResult = Datum((int)g_director->getCurrentMovie()->getScore()->getFramesNum());
 		return;
 	}
 
@@ -2333,8 +2333,8 @@ void LB::b_move(int nargs) {
 	// Room for improvement, b_erase already marks the sprites as dirty
 	b_erase(1);
 	Score *score = movie->getScore();
-	uint16 frame = score->getCurrentFrame();
-	Frame *currentFrame = score->_frame;
+	uint16 frame = score->getCurrentFrameNum();
+	Frame *currentFrame = score->_currentFrame;
 	auto channels = score->_channels;
 
 	score->renderFrame(frame, kRenderForceUpdate);
@@ -2363,7 +2363,7 @@ void LB::b_move(int nargs) {
 void LB::b_moveableSprite(int nargs) {
 	Movie *movie = g_director->getCurrentMovie();
 	Score *score = movie->getScore();
-	Frame *frame = score->_frame;
+	Frame *frame = score->_currentFrame;
 
 	if (g_lingo->_currentChannelId == -1) {
 		warning("b_moveableSprite: channel Id is missing");
@@ -2393,8 +2393,8 @@ void LB::b_pasteClipBoardInto(int nargs) {
 	}
 
 	Score *score = movie->getScore();
-	uint16 frame = score->getCurrentFrame();
-	Frame *currentFrame = score->_frame;
+	uint16 frame = score->getCurrentFrameNum();
+	Frame *currentFrame = score->_currentFrame;
 	auto channels = score->_channels;
 
 	castMember->setModified(true);
@@ -2568,7 +2568,7 @@ void LB::b_immediateSprite(int nargs) {
 				// same as puppetSprite
 				Channel *channel = sc->getChannelById(sprite.asInt());
 				// TODO: Fix logic here for next sprite
-				channel->replaceSprite(sc->_frame->_sprites[sprite.asInt()]);
+				channel->replaceSprite(sc->_currentFrame->_sprites[sprite.asInt()]);
 				channel->_dirty = true;
 			}
 
@@ -2610,7 +2610,7 @@ void LB::b_puppetSprite(int nargs) {
 				Channel *channel = sc->getChannelById(sprite.asInt());
 
 				// TODO: Fix this properly.
-				channel->replaceSprite(sc->_frame->_sprites[sprite.asInt()]);
+				channel->replaceSprite(sc->_currentFrame->_sprites[sprite.asInt()]);
 				channel->_dirty = true;
 			}
 
@@ -2755,7 +2755,7 @@ void LB::b_zoomBox(int nargs) {
 	int startSpriteId = g_lingo->pop().asInt();
 
 	Score *score = g_director->getCurrentMovie()->getScore();
-	uint16 curFrame = score->getCurrentFrame();
+	uint16 curFrame = score->getCurrentFrameNum();
 
 	Common::Rect startRect = score->_channels[startSpriteId]->getBbox();
 	if (startRect.isEmpty()) {
@@ -2767,7 +2767,7 @@ void LB::b_zoomBox(int nargs) {
 	// Looks for endSprite in the next frame
 	Common::Rect endRect = score->_channels[endSpriteId]->getBbox();
 	if (endRect.isEmpty()) {
-		if ((uint)curFrame + 1 < score->getTotalFrames()) {
+		if ((uint)curFrame + 1 < score->getFramesNum()) {
 			Frame *nextFrame = score->getFrameData(curFrame + 1);
 			if (nextFrame) {
 				Channel endChannel(nullptr, nextFrame->_sprites[endSpriteId]);
@@ -2824,7 +2824,7 @@ void LB::b_updateStage(int nargs) {
 	movie->getWindow()->render();
 
 	// play any puppet sounds that have been queued
-	score->playSoundChannel(score->getCurrentFrame(), true);
+	score->playSoundChannel(score->getCurrentFrameNum(), true);
 
 	if (score->_cursorDirty) {
 		score->renderCursor(movie->getWindow()->getMousePos());

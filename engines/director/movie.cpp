@@ -248,8 +248,6 @@ bool Movie::loadArchive() {
 		delete r;
 	}
 
-	// _score->setSpriteCasts(); TODO: Dynamic loading change this
-
 	return true;
 }
 

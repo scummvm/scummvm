@@ -96,9 +96,9 @@ public:
 	void stopPlay();
 
 	void setCurrentFrame(uint16 frameId) { _nextFrame = frameId; }
-	uint16 getCurrentFrame() { return _curFrameNumber; }
+	uint16 getCurrentFrameNum() { return _curFrameNumber; }
 	int getNextFrame() { return _nextFrame; }
-	int getTotalFrames() { return _numFrames; }
+	uint16 getFramesNum() { return _numFrames; }
 
 	CastMemberID getCurrentPalette();
 
@@ -152,7 +152,7 @@ public:
 
 	// On demand frames loading
 	uint32 _version;
-	Frame *_frame;
+	Frame *_currentFrame;
 	uint32 _curFrameNumber;
 	uint32 _numFrames;
 	uint32 _framesVersion;
