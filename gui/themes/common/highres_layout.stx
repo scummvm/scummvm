@@ -204,6 +204,9 @@
 					<widget name = 'AddGameButton'
 							type = 'Button'
 					/>
+					<widget name = 'DownloadGameButton'
+							type = 'Button'
+					/>
 					<widget name = 'EditGameButton'
 							type = 'Button'
 					/>

@@ -66,6 +66,7 @@ enum {
 	kOptionsCmd = 'OPTN',
 	kAddGameCmd = 'ADDG',
 	kMassAddGameCmd = 'MADD',
+	kDownloadGameCmd = 'DWNG',
 	kEditGameCmd = 'EDTG',
 	kRemoveGameCmd = 'REMG',
 	kLoadGameCmd = 'LOAD',
@@ -254,6 +255,8 @@ void LauncherDialog::build() {
 	new ButtonWidget(this, _title + ".AboutButton", _("A~b~out"), _("About ScummVM"), kAboutCmd);
 	// I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
 	new ButtonWidget(this, _title + ".OptionsButton", _("Global ~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd, 0, _c("Global ~O~pts...", "lowres"));
+	// I18N: Button download games button.
+	new ButtonWidget(this, _title + ".DownloadGameButton", _("Download Games"), _("Download freeware games for ScummVM"), kDownloadGameCmd);
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	DropdownButtonWidget *addButton =
@@ -726,6 +729,11 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kMassAddGameCmd:
 		massAddGame();
+		break;
+	case kDownloadGameCmd: {
+		MessageDialog downloader("Download Freeware Games");
+		downloader.runModal();
+		}
 		break;
 	case kRemoveGameCmd:
 		if (item < 0) return;
