@@ -23,7 +23,7 @@
 
 #include "m4/metaengine.h"
 #include "m4/detection.h"
-#include "m4/m4.h"
+#include "m4/burger/burger.h"
 
 namespace M4 {
 
@@ -53,7 +53,16 @@ const ADExtraGuiOptionsMap *M4MetaEngine::getAdvancedExtraGuiOptions() const {
 }
 
 Common::Error M4MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new M4::M4Engine(syst, desc);
+	const M4::M4GameDescription *gd = (const M4::M4GameDescription *)desc;
+
+	switch (gd->gameType) {
+	case M4::GType_Burger:
+		*engine = new M4::Burger::BurgerEngine(syst, desc);
+		break;
+	default:
+		return Common::kUnsupportedGameidError;
+	}
+
 	return Common::kNoError;
 }
 

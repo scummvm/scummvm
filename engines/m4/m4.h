@@ -96,6 +96,11 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
+
+	/**
+	 * Show the engine information
+	 */
+	virtual void showEngineInfo() = 0;
 };
 
 extern M4Engine *g_engine;
