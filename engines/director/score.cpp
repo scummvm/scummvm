@@ -86,6 +86,7 @@ Score::Score(Movie *movie) {
 	_numChannelsDisplayed = 0;
 	_skipTransition = false;
 
+	_curFrameNumber = -1;
 	_framesStream = nullptr;
 	_currentFrame = nullptr;
 }
@@ -392,8 +393,13 @@ void Score::update() {
 	}
 
 	if (!_vm->_playbackPaused) {
-		if (_nextFrame)
+		if (_nextFrame) {
+			// With the advent of demand loading frames and due to partial updates, we rebuild our channel data
+			// when jumping.
+			if (_nextFrame != _curFrameNumber)
+				rebuildChannelData(_nextFrame);
 			_curFrameNumber = _nextFrame;
+		}
 		else if (!_window->_newMovieStarted)
 			_curFrameNumber++;
 	}
@@ -1435,6 +1441,7 @@ bool Score::loadFrame(int frameNum) {
 	// Read existing frame (ie already visited)
 	if (frameNum < (int)_frameOffsets.size() - 1) {
 		// TODO: How _channelData be modified.
+		// As of now channelData is left unchanged, only rebuilt when there is jumps
 		// We have this frame already, seek and load
 		_framesStream->seek(_frameOffsets[frameNum]);
 		debugC(7, kDebugLoading, "****** Frame request %d, offset %ld", frameNum, _framesStream->pos());
