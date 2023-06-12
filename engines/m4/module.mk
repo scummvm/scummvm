@@ -4,8 +4,11 @@ MODULE_OBJS = \
 	m4.o \
 	console.o \
 	f_info.o \
+	game.o \
 	globals.o \
-	metaengine.o
+	kernel.o \
+	metaengine.o \
+	param.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_M4), DYNAMIC_PLUGIN)
