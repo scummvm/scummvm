@@ -232,7 +232,7 @@ void Process::run() {
 		case kExitCodeRunDialog:
 			deactivate();
 			_object->lock();
-			_engine->runDialog(getName(), getExitArg1());
+			_engine->runObject(getExitArg1());
 			_object->unlock();
 			break;
 		case kExitCodeSetNextScreen:
