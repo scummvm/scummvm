@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-06-11 23:12+0000\n"
-"PO-Revision-Date: 2023-06-11 14:40+0000\n"
+"PO-Revision-Date: 2023-06-12 13:40+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -6426,7 +6426,7 @@ msgstr "HPバー"
 
 #: engines/mm/metaengine.cpp:69
 msgid "Replace a colored gem with bars for hit points and spell points."
-msgstr ""
+msgstr "色付きの宝石を、HPやSPのバーと交換します。"
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
@@ -6572,6 +6572,8 @@ msgid ""
 "will automatically be available if you detect the original game and select "
 "Enhanced mode."
 msgstr ""
+"Graphics Overhaul "
+"Modから直接ゲームを実行する事はできません。ゲームを起動しEnhancedモードを選択すると、自動的に検出して利用可能になります。"
 
 #: engines/mm/mm1/mm1.cpp:108
 msgid ""
@@ -7559,14 +7561,6 @@ msgstr ""
 "\n"
 
 #: engines/scumm/detection_internal.h:384
-#, fuzzy
-#| msgid ""
-#| "This version of Monkey Island can't be played, because Limited Run Games "
-#| "provided corrupted DISK04.LEC and 903.LFL files.\n"
-#| "\n"
-#| "Please contact their technical support for replacement files, or look "
-#| "online for some guides which can help you recover valid files from the "
-#| "KryoFlux dumps that Limited Run Games also provided."
 msgid ""
 "This version of Monkey Island can't be played, because Limited Run Games "
 "provided corrupted DISK03.LEC, DISK04.LEC and 903.LFL files.\n"
@@ -7575,11 +7569,11 @@ msgid ""
 "for some guides which can help you recover valid files from the KryoFlux "
 "dumps that Limited Run Games also provided."
 msgstr ""
-"Limited Run Games提供のファイルDISK04.LECと903.LFLが破損しており、このバー"
-"ジョンのMonkey Islandはプレイできません。\n"
+"Limited Run Games提供のファイルDISK03.LECと903.LFLが破損しており、このバージョンのMonkey "
+"Islandはプレイできません。\n"
 "\n"
-"テクニカルサポートに連絡して修正版をもらうか、Limited Run Games提供のKryoFlux"
-"ダンプから有効なファイルを抽出するガイドをオンラインで検索してください。"
+"テクニカルサポートに連絡して修正版をもらうか、Limited Run "
+"Games提供のKryoFluxダンプから有効なファイルを抽出する方法をオンラインで検索してください。"
 
 #. I18N: Creates new online session for multiplayer
 #: engines/scumm/dialog-createsession.cpp:37
