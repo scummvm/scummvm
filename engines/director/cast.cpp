@@ -526,17 +526,6 @@ void Cast::loadCast() {
 		delete r;
 	}
 
-	// Time code
-	// TODO: Is this a score resource?
-	if (_castArchive->hasResource(MKTAG('V', 'W', 't', 'c'), -1)) {
-		debug("STUB: Unhandled VWtc resource");
-	}
-
-	// Tape Key resource. Used as a lookup for labels in early Directors, later dropped
-	if (_castArchive->hasResource(MKTAG('V', 'W', 't', 'k'), -1)) {
-		debugC(4, kDebugLoading, "VWtk resource skipped");
-	}
-
 	// External sound files
 	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('S', 'T', 'R', ' '))) != nullptr) {
 		loadExternalSound(*r);
