@@ -19,32 +19,23 @@
  *
  */
 
-#ifndef M4_GLOBALS_H
-#define M4_GLOBALS_H
-
-#include "m4/game.h"
-#include "m4/kernel.h"
+#ifndef M4_KERNEL_H
+#define M4_KERNEL_H
 
 namespace M4 {
 
-#define CACHE_NOT_OVERRIDE_BY_FLAG_PARSE 2
-
-struct Globals;
-
-extern Globals *g_globals;
-
-struct Globals {
-	Globals() { g_globals = this; }
-	~Globals() { g_globals = nullptr; }
-
-	bool _system_shutting_down = false;
-	size_t _mem_to_alloc = 0;
-
-	Game _game;
-	Kernel _kernel;
+struct Kernel {
+	bool use_log_file = false;
+	bool suppress_cache = false;
+	bool track_open_close = false;
+	bool hag_mode = false;
+	bool start_up_with_dbg_ws = false;
+	bool cheat_keys_enabled = false;
+	bool use_debug_monitor = false;
+	bool restore_game = false;
+	int last_save = -1;
+	bool teleported_in = false;
 };
-
-#define _G(X) (g_globals->_##X)
 
 } // namespace M4
 

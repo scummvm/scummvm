@@ -19,9 +19,6 @@
  *
  */
 
-#include "m4/m4.h"
-#include "m4/detection.h"
-#include "m4/console.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -29,6 +26,10 @@
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
+#include "m4/m4.h"
+#include "m4/detection.h"
+#include "m4/console.h"
+#include "m4/param.h"
 
 namespace M4 {
 
@@ -52,11 +53,19 @@ Common::String M4Engine::getGameId() const {
 }
 
 Common::Error M4Engine::run() {
+	Globals globals;
+
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(320, 200);
 
-	Globals globals;
+	param_init();
+	parse_all_flags();
 
+	if (!_G(system_shutting_down)) {
+		// TODO
+	}
+
+	param_shutdown();
 	return Common::kNoError;
 }
 

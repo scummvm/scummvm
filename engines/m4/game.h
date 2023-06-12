@@ -19,32 +19,17 @@
  *
  */
 
-#ifndef M4_GLOBALS_H
-#define M4_GLOBALS_H
+#ifndef M4_GAME_H
+#define M4_GAME_H
 
-#include "m4/game.h"
-#include "m4/kernel.h"
+#include "common/scummsys.h"
 
 namespace M4 {
 
-#define CACHE_NOT_OVERRIDE_BY_FLAG_PARSE 2
-
-struct Globals;
-
-extern Globals *g_globals;
-
-struct Globals {
-	Globals() { g_globals = this; }
-	~Globals() { g_globals = nullptr; }
-
-	bool _system_shutting_down = false;
-	size_t _mem_to_alloc = 0;
-
-	Game _game;
-	Kernel _kernel;
+struct Game {
+	int16 new_room;
+	int16 new_section;
 };
-
-#define _G(X) (g_globals->_##X)
 
 } // namespace M4
 
