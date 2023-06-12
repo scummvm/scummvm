@@ -8,7 +8,8 @@ MODULE_OBJS = \
 	globals.o \
 	kernel.o \
 	metaengine.o \
-	param.o
+	param.o \
+	burger/burger.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_M4), DYNAMIC_PLUGIN)

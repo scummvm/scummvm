@@ -22,6 +22,7 @@
 #include "common/config-manager.h"
 #include "m4/param.h"
 #include "m4/globals.h"
+#include "m4/m4.h"
 
 namespace M4 {
 
@@ -68,7 +69,7 @@ void parse_all_flags() {
 	}
 
 	if (ConfMan.hasKey("V")) {
-		warning("TODO: show_logo");
+		g_engine->showEngineInfo();
 		_G(system_shutting_down) = true;
 		return;
 	}
