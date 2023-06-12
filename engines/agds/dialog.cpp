@@ -6,13 +6,6 @@
 
 namespace AGDS {
 
-void Dialog::run(const Common::String &dialogParentProcess, const Common::String & dialogProcess) {
-	debug("runDialog: %s", dialogProcess.c_str());
-	_dialogParentProcessName = dialogParentProcess;
-	_dialogProcessName = dialogProcess;
-	_engine->runObject(dialogProcess);
-}
-
 void Dialog::parseDialogDefs(const Common::String &defs) {
 	_dialogDefs.clear();
 	Common::String name, value;
@@ -47,10 +40,11 @@ void Dialog::parseDialogDefs(const Common::String &defs) {
 	}
 }
 
-void Dialog::load(const Common::String &dialogScript, const Common::String &defs) {
+void Dialog::load(const Common::String &processName, const Common::String &dialogScript, const Common::String &defs) {
 	_currentDef.clear();
 	_sounds.clear();
 	parseDialogDefs(defs);
+	_dialogProcessName = processName;
 	_dialogScript = dialogScript;
 	_dialogScriptPos = 0;
 	_engine->getSystemVariable("dialog_var")->setInteger(-1);
@@ -87,7 +81,6 @@ bool Dialog::tick() {
 	auto dialog_var = _engine->getSystemVariable("dialog_var");
 	int dialog_var_value = dialog_var->getInteger();
 	if (dialog_var_value != 0) {
-		debug("dialog_var = %d, skipping tick", dialog_var_value);
 		return false;
 	}
 
@@ -95,9 +88,9 @@ bool Dialog::tick() {
 	if (_dialogScriptPos >= n) {
 
 		if (!_dialogProcessName.empty()) {
-			debug("end of dialog, running %s", _dialogParentProcessName.c_str());
+			debug("end of dialog, running %s", _dialogProcessName.c_str());
 			dialog_var->setInteger(-2);
-			_engine->reactivate(_dialogParentProcessName, "end of dialog");
+			_engine->reactivate(_dialogProcessName, "end of dialog");
 		}
 
 		return false;

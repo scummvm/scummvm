@@ -1255,7 +1255,7 @@ void Process::loadDialog() {
 	arg2 = _engine->loadText(arg2);
 	arg3 = _engine->loadText(arg3);
 
-	_engine->dialog().load(arg2, arg3);
+	_engine->dialog().load(getName(), arg2, arg3);
 
 	suspend(kExitCodeRunDialog, arg1);
 }

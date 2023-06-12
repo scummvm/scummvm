@@ -234,10 +234,6 @@ public:
 	void setNextScreenName(const Common::String &nextScreenName, ScreenLoadingType type);
 	void returnToPreviousScreen();
 
-	void runDialog(const Common::String &dialogParentProcess, const Common::String &dialogProcess) {
-		_dialog.run(dialogParentProcess, dialogProcess);
-	}
-
 	void tickInventory();
 
 	void playSoundSync(int syncSoundId) {

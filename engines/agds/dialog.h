@@ -52,7 +52,6 @@ private:
 	DialogDefsType				_dialogDefs;
 	Common::String				_dialogScript;
 	uint32						_dialogScriptPos;
-	Common::String				_dialogParentProcessName;
 	Common::String				_dialogProcessName;
 	Common::String				_dialogLine;
 
@@ -64,14 +63,13 @@ private:
 
 public:
 	Dialog(AGDSEngine *engine): _engine(engine), _dialogScriptPos(0), _currentSoundIndex(-1) { }
-	void run(const Common::String &dialogParent, const Common::String &dialogProcess);
 	int textDelay(const Common::String &str);
 	const Common::String &getNextDialogLine() const {
 		return _dialogLine;
 	}
 	Common::String getNextDialogSound();
 
-	void load(const Common::String &dialogScript, const Common::String & defs);
+	void load(const Common::String &processName, const Common::String &dialogScript, const Common::String & defs);
 	bool tick();
 private:
 	void processSoundDirective(const Common::String &line);
