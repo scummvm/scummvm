@@ -19,40 +19,46 @@
  *
  */
 
-#ifndef M4_GLOBALS_H
-#define M4_GLOBALS_H
+#ifndef M4_TERM_H
+#define M4_TERM_H
 
-#include "m4/game.h"
-#include "m4/kernel.h"
-#include "m4/term.h"
+#include "common/stream.h"
 
 namespace M4 {
 
-#define CACHE_NOT_OVERRIDE_BY_FLAG_PARSE 2
-
-struct Globals;
-
-extern Globals *g_globals;
-
-struct Globals {
-	Globals() { g_globals = this; }
-	~Globals() { g_globals = nullptr; }
-
-	Game _game;
-	Kernel _kernel;
-	Term _term;
-
-	bool _system_shutting_down = false;
-	size_t _mem_to_alloc = 0;
-	void *_gameInterfaceBuff = nullptr;
-	void *_custom_interface_setup = nullptr;
-	void *_custom_interface_button_handler = nullptr;
-	int _global_sound_room = 0;
-	bool _interface_visible = false;
-	bool _please_hyperwalk = false;
+enum TermMode {
+	NO_MODE = 0,
+	MESSAGE_MODE,
+	MEMORY_MODE
 };
 
-#define _G(X) (g_globals->_##X)
+class Term {
+private:
+	Common::WriteStream *_file = nullptr;
+	bool _using_mono_screen = false;
+	bool _use_log_file = false;
+	TermMode _mode = NO_MODE;
+
+public:
+	/**
+	 * Initialization
+	 */
+	void init(bool use_me, bool use_log);
+
+	~Term() {
+		delete _file;
+	}
+
+	/**
+	 * Set the terminal mode
+	 */
+	void set_mode(TermMode mode);
+
+	/**
+	 * Show a message
+	 */
+	void message(const Common::String &msg);
+};
 
 } // namespace M4
 

@@ -19,41 +19,52 @@
  *
  */
 
-#ifndef M4_GLOBALS_H
-#define M4_GLOBALS_H
-
-#include "m4/game.h"
-#include "m4/kernel.h"
+#include "common/debug.h"
+#include "common/savefile.h"
+#include "common/system.h"
 #include "m4/term.h"
 
 namespace M4 {
 
-#define CACHE_NOT_OVERRIDE_BY_FLAG_PARSE 2
+void Term::init(bool use_me, bool use_log) {
+	_using_mono_screen = use_me;
+	_use_log_file = use_log;
+	set_mode(MESSAGE_MODE);
 
-struct Globals;
+	if (use_log) {
+		_file = g_system->getSavefileManager()->openForSaving("term.log");
+		if (!_file)
+			error("Fail to create term.log file");
+	}
+}
 
-extern Globals *g_globals;
+void Term::set_mode(TermMode mode) {
+	if (_using_mono_screen && mode != _mode) {
+		_mode = mode;
 
-struct Globals {
-	Globals() { g_globals = this; }
-	~Globals() { g_globals = nullptr; }
+		switch (mode) {
+		case MESSAGE_MODE:
+			message("********Message Mode");
+			break;
+		case MEMORY_MODE:
+			message("********Memory Mode");
+			break;
+		default:
+			break;
+		}
+	}
+}
 
-	Game _game;
-	Kernel _kernel;
-	Term _term;
+void Term::message(const Common::String &msg) {
+	if (_mode != MEMORY_MODE) {
+		debug("%s\n", msg.c_str());
 
-	bool _system_shutting_down = false;
-	size_t _mem_to_alloc = 0;
-	void *_gameInterfaceBuff = nullptr;
-	void *_custom_interface_setup = nullptr;
-	void *_custom_interface_button_handler = nullptr;
-	int _global_sound_room = 0;
-	bool _interface_visible = false;
-	bool _please_hyperwalk = false;
-};
-
-#define _G(X) (g_globals->_##X)
+		if (_file) {
+			_file->writeString(msg);
+			_file->writeByte('\n');
+			_file->writeByte(0);
+		}
+	}
+}
 
 } // namespace M4
-
-#endif
