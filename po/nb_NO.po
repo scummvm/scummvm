@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-11 04:30+0000\n"
+"POT-Creation-Date: 2023-06-11 23:12+0000\n"
 "PO-Revision-Date: 2023-04-15 16:26+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -5326,7 +5326,7 @@ msgstr ""
 "gang du starter spillet.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:310
+#: engines/vcruise/vcruise.cpp:313
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Lagret spill ble opprettet med en nyere versjon av ScummVM. Kan ikke laste "
@@ -7083,14 +7083,14 @@ msgstr "Tvungen avslutning av filmsekvenser"
 msgid "Failed to read version information from save file"
 msgstr "Kunne ikke lese versjonsinformasjon fra lagringsfil."
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:305
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:308
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Kunne ikke laste inn lagringsdata. Lagringsfilen inneholdt ikke gyldig "
 "versjonsinformasjon."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:315
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:318
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -9546,16 +9546,16 @@ msgstr ""
 "kompileringen.\n"
 "Du kan fortsatt spille spillet, men du kan ikke høre noe musikk."
 
-#: engines/vcruise/vcruise.cpp:295
+#: engines/vcruise/vcruise.cpp:298
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "Kunne ikke laste inn lagringsdata. Lagringsfilen ser ut til å være skadet."
 
-#: engines/vcruise/vcruise.cpp:300
+#: engines/vcruise/vcruise.cpp:303
 msgid "Failed to read version information from save file."
 msgstr "Kunne ikke lese versjonsinformasjon fra lagringsfil."
 
-#: engines/vcruise/vcruise.cpp:320
+#: engines/vcruise/vcruise.cpp:323
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "En ukjent feil oppstod under forsøket på å laste inn lagringsdata."
 

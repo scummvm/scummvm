@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-11 04:30+0000\n"
+"POT-Creation-Date: 2023-06-11 23:12+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -5288,7 +5288,7 @@ msgstr ""
 "시 이 창이 표시됩니다.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:310
+#: engines/vcruise/vcruise.cpp:313
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "저장된 게임은 최신 버전의 ScummVM으로 생성되었습니다. 로드할 수 없습니다."
@@ -7046,12 +7046,12 @@ msgstr ""
 msgid "Failed to read version information from save file"
 msgstr "파일에서 저장된 게임을 불러오는데 실패했습니다."
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:305
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:308
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:315
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:318
 #, fuzzy
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
@@ -9440,18 +9440,18 @@ msgid ""
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:295
+#: engines/vcruise/vcruise.cpp:298
 #, fuzzy
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "저장된 게임은 최신 버전의 ScummVM으로 생성되었습니다. 로드할 수 없습니다."
 
-#: engines/vcruise/vcruise.cpp:300
+#: engines/vcruise/vcruise.cpp:303
 #, fuzzy
 msgid "Failed to read version information from save file."
 msgstr "파일에서 저장된 게임을 불러오는데 실패했습니다."
 
-#: engines/vcruise/vcruise.cpp:320
+#: engines/vcruise/vcruise.cpp:323
 #, fuzzy
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ", 공유 폴더 활성화 중 오류 발생"

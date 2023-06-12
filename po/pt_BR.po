@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-11 04:30+0000\n"
+"POT-Creation-Date: 2023-06-11 23:12+0000\n"
 "PO-Revision-Date: 2023-05-29 22:40+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -5356,7 +5356,7 @@ msgstr ""
 "novamente na próxima vez que iniciar o jogo.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:310
+#: engines/vcruise/vcruise.cpp:313
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "O jogo salvo foi criado com uma versão mais recente do ScummVM. Não é "
@@ -7104,14 +7104,14 @@ msgstr "Força qualquer vídeo que esteja sendo reproduzido a parar"
 msgid "Failed to read version information from save file"
 msgstr "Falha ao ler as informações da versão do arquivo salvo"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:305
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:308
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Falha ao carregar o salvamento, o arquivo salvo não contém informações de "
 "versão válidas."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:315
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:318
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -9556,16 +9556,16 @@ msgstr ""
 "A música para este jogo requer suporte a MP3, o que não foi compilado.\n"
 "O jogo ainda pode ser jogado, mas não terá nenhuma música."
 
-#: engines/vcruise/vcruise.cpp:295
+#: engines/vcruise/vcruise.cpp:298
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "Falha ao carregar o salvamento, os dados salvos parecem estar danificados."
 
-#: engines/vcruise/vcruise.cpp:300
+#: engines/vcruise/vcruise.cpp:303
 msgid "Failed to read version information from save file."
 msgstr "Falha ao ler as informações da versão do arquivo salvo."
 
-#: engines/vcruise/vcruise.cpp:320
+#: engines/vcruise/vcruise.cpp:323
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Ocorreu um erro desconhecido ao tentar carregar o jogo salvo."
 
