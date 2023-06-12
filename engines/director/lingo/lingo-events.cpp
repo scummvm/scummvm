@@ -119,7 +119,7 @@ void Movie::queueSpriteEvent(Common::Queue<LingoEvent> &queue, LEvent event, int
 	 * When more than one movie script [...]
 	 * [D4 docs] */
 
-	Frame *currentFrame = _score->_frame;
+	Frame *currentFrame = _score->_currentFrame;
 	assert(currentFrame != nullptr);
 	Sprite *sprite = _score->getSpriteById(spriteId);
 
@@ -157,11 +157,11 @@ void Movie::queueFrameEvent(Common::Queue<LingoEvent> &queue, LEvent event, int 
 	 */
 
 	// if (event == kEventPrepareFrame || event == kEventIdle) {
-	// 	entity = score->getCurrentFrame();
+	// 	entity = score->getCurrentFrameNum();
 	// } else {
 
-	assert(_score->_frame != nullptr);
-	CastMemberID scriptId = _score->_frame->_actionId;
+	assert(_score->_currentFrame != nullptr);
+	CastMemberID scriptId = _score->_currentFrame->_actionId;
 	if (!scriptId.member)
 		return;
 

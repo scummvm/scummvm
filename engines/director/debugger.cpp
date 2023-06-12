@@ -230,7 +230,7 @@ bool Debugger::cmdInfo(int argc, const char **argv) {
 	debugPrintf("Copy protected: %d\n", cast->_isProtected);
 	debugPrintf("Remap palettes when needed flag: %d\n", movie->_remapPalettesWhenNeeded);
 	debugPrintf("Allow outdated Lingo flag: %d\n", movie->_allowOutdatedLingo);
-	debugPrintf("Frame count: %d\n", score->getTotalFrames());
+	debugPrintf("Frame count: %d\n", score->getFramesNum());
 	debugPrintf("Cast member count: %d\n", cast->getCastSize());
 	debugPrintf("\n");
 	return true;
@@ -248,7 +248,7 @@ bool Debugger::cmdFrame(int argc, const char **argv) {
 		}
 		lingo->func_goto(frame, movie);
 	} else {
-		debugPrintf("%d\n", score->getCurrentFrame());
+		debugPrintf("%d\n", score->getCurrentFrameNum());
 	}
 	return true;
 }
@@ -268,8 +268,8 @@ bool Debugger::cmdMovie(int argc, const char **argv) {
 bool Debugger::cmdChannels(int argc, const char **argv) {
 	Score *score = g_director->getCurrentMovie()->getScore();
 
-	int maxSize = (int)score->getTotalFrames();
-	int frameId = score->getCurrentFrame();
+	int maxSize = (int)score->getFramesNum();
+	int frameId = score->getCurrentFrameNum();
 	if (argc == 1) {
 		debugPrintf("Channel info for current frame %d of %d\n", frameId, maxSize);
 		debugPrintf("%s\n", score->formatChannelInfo().c_str());
@@ -379,11 +379,11 @@ bool Debugger::cmdFuncs(int argc, const char **argv) {
 	Score *score = movie->getScore();
 	ScriptContext *csc = lingo->_state->context;
 	if (csc) {
-		debugPrintf("Functions attached to frame %d:\n", score->getCurrentFrame());
+		debugPrintf("Functions attached to frame %d:\n", score->getCurrentFrameNum());
 		debugPrintf("  %d:", csc->_id);
 		debugPrintf("%s", csc->formatFunctionList("    ").c_str());
 	} else {
-		debugPrintf("Functions attached to frame %d:\n", score->getCurrentFrame());
+		debugPrintf("Functions attached to frame %d:\n", score->getCurrentFrameNum());
 		debugPrintf("  [empty]\n");
 	}
 	debugPrintf("\n");
@@ -420,12 +420,12 @@ bool Debugger::cmdDisasm(int argc, const char **argv) {
 			Score *score = movie->getScore();
 			ScriptContext *csc = lingo->_state->context;
 			if (csc) {
-				debugPrintf("Functions attached to frame %d:\n", score->getCurrentFrame());
+				debugPrintf("Functions attached to frame %d:\n", score->getCurrentFrameNum());
 				for (auto &it : csc->_functionHandlers) {
 					debugPrintf("%s\n\n", g_lingo->formatFunctionBody(it._value).c_str());
 				}
 			} else {
-				debugPrintf("Functions attached to frame %d:\n", score->getCurrentFrame());
+				debugPrintf("Functions attached to frame %d:\n", score->getCurrentFrameNum());
 				debugPrintf("  [empty]\n");
 			}
 			debugPrintf("\n");
@@ -951,7 +951,7 @@ void Debugger::bpTest(bool forceCheck) {
 	bool stop = forceCheck;
 	uint funcOffset = g_lingo->_state->pc;
 	Score *score = g_director->getCurrentMovie()->getScore();
-	uint frameOffset = score->getCurrentFrame();
+	uint frameOffset = score->getCurrentFrameNum();
 	if (_bpCheckFunc) {
 		stop |= _bpMatchFuncOffsets.contains(funcOffset);
 	}
