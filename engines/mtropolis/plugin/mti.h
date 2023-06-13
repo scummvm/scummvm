@@ -27,6 +27,12 @@
 #include "mtropolis/plugin/mti_data.h"
 #include "mtropolis/runtime.h"
 
+namespace Common {
+
+class RandomSource;
+
+} // End of namespace Common
+
 namespace MTropolis {
 
 namespace MTI {
@@ -44,14 +50,47 @@ public:
 
 	bool load(const PlugInModifierLoaderContext &context, const Data::MTI::ShanghaiModifier &data);
 
+	void linkInternalReferences(ObjectLinkingScope *scope) override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Shanghai Modifier"; }
 	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 private:
+	static const uint kNumTiles = 28;
+	static const uint kNumFaces = 26;
+
+	typedef uint32 BoardState_t;
+
+	static const uint kBoardSizeX = 13;
+	static const uint kBoardSizeY = 7;
+	static const uint kBoardSizeZ = 3;
+
+	struct TileCoordinate {
+		uint x;
+		uint y;
+		uint z;
+	};
+
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	const char *getDefaultName() const override;
+
+	void resetTiles(Common::RandomSource &rng, uint (&tileFaces)[kNumTiles]) const;
+	static uint selectAndRemoveOne(Common::RandomSource &rng, uint *valuesList, uint &listSize);
+	bool boardStateHasValidMove(BoardState_t boardState) const;
+	bool tileIsExposed(BoardState_t boardState, uint tile) const;
+	bool tileExistsAtCoordinate(BoardState_t boardState, uint x, uint y, uint z) const;
+
+	static BoardState_t boardStateBit(uint bit);
+	static BoardState_t emptyBoardState();
+
+	Event _resetTileSetWhen;
+	VarReference _tileSetRef;
+
+	static TileCoordinate _tileCoordinates[kNumTiles];
+	int8 _tileAtCoordinate[kBoardSizeX][kBoardSizeY][kBoardSizeZ];
 };
 
 class PrintModifier : public Modifier {

@@ -34,8 +34,8 @@ namespace MTI {
 // Shanghai - ???
 
 struct ShanghaiModifier : public PlugInModifierData {
-	PlugInTypeTaggedValue unknown1Event;  // Probably "Enable When"
-	PlugInTypeTaggedValue unknown2VarRef; // VarRef (Probably tile set)
+	PlugInTypeTaggedValue resetWhen;  // Reset When
+	PlugInTypeTaggedValue tileSetVar; // VarRef
 
 protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;

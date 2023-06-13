@@ -31,7 +31,7 @@ DataReadErrorCode ShanghaiModifier::load(PlugIn &plugIn, const PlugInModifier &p
 	if (prefix.plugInRevision != 0)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!unknown1Event.load(reader) || !unknown2VarRef.load(reader))
+	if (!resetWhen.load(reader) || !tileSetVar.load(reader))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
