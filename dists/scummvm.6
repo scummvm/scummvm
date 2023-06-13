@@ -1,4 +1,4 @@
-.Dd August 29, 2022
+.Dd June 13, 2023
 .Dt SCUMMVM 6
 .Os
 .Sh NAME
@@ -47,7 +47,7 @@ Pass number
 to the boot script,
 for games supporting this feature.
 .It Fl c | -config= Ns Ar CONFIG
-Use alternate configuration file.
+Use alternate configuration file path.
 .It Fl d | -debuglevel Ns Op = Ns Ar NUM
 Enable and set debug verbosity level (default: 0).
 .It Fl e | -music-driver= Ns Ar MODE
@@ -98,6 +98,9 @@ Select graphics mode
 .Pc .
 .It Fl h | -help
 Display a brief help text, and exit.
+.It Fl i | -initial-cfg= Ns Ar CONFIG
+Load an initial configuration file if no configuration file
+has been saved yet.
 .It Fl l | -logfile= Ns Ar PATH
 Use alternate path for log file.
 .It Fl m | -music-volume= Ns Ar NUM
@@ -242,13 +245,22 @@ Enable patch mappings to emulate an MT-32 on a Roland GS device
 for MIDI playback.
 .It Fl -engine= Ns Ar ID
 In combination with
-.Fl -list-games
-or
+.Fl -list-games ,
 .Fl -list-all-games ,
+.Fl -list-targets ,
+or
+.Fl -stats ,
 only list games for this engine.
+Multiple engines can be listed separated by a coma.
 .It Fl -engine-speed= Ns Ar NUM
 Set frame per second limit (0\(en100) for 3D games,
 0 = no limit (default: 60).
+.It Fl - Ns Oo Cm no- Oc Ns Cm exit
+In combination with commands that exit after running, like
+.Fl -add
+or
+.Fl -list-engines ,
+toggle opening the launcher instead of exiting.
 .It Fl -extrapath= Ns Ar PATH
 Set the extra path to additional game and ScummVM data.
 .It Fl - Ns Oo Cm no- Oc Ns Cm filtering
@@ -317,7 +329,8 @@ Only supported by some MIDI drivers.
 .It Fl -multi-midi
 Enable combination of AdLib and native MIDI.
 .It Fl -native-mt32
-Tell ScummVM that the MIDI device is an actual Roland MT-32 or compatible device.
+Tell ScummVM that the MIDI device is an actual Roland MT-32 or
+compatible device.
 This disables any GM emulation.
 .It Fl -opl-driver= Ns Ar DRIVER
 Select AdLib (OPL) emulator
@@ -389,9 +402,11 @@ Enable additional render modes
 .Ar 2gs ,
 .Ar amiga ,
 .Ar atari ,
+.Ar c64 ,
 .Ar cga ,
 .Ar cgaBW ,
 .Ar cgaComp ,
+.Ar cpc ,
 .Ar ega ,
 .Ar fmtowns ,
 .Ar hercAmber ,
@@ -400,7 +415,8 @@ Enable additional render modes
 .Ar macintoshbw ,
 .Ar pc9801 ,
 .Ar pc9821 ,
-.Ar vga
+.Ar vga ,
+.Ar zx
 .Pc .
 .It Fl -renderer= Ns Ar RENDERER
 Select 3D renderer
@@ -436,6 +452,8 @@ Select the SoundFont for MIDI playback (only supported by some MIDI drivers).
 .It Fl -start-movie= Ns Ar NAME Ns Ar @NUM
 Start movie at frame for Director.
 Either argument can be specified without the other.
+.It Fl -stats
+Display statistics about engines and games, and exit.
 .It Fl -stretch-mode= Ns Ar MODE
 Select stretch mode
 .\" From backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp
