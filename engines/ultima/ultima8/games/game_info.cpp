@@ -154,10 +154,10 @@ Std::string GameInfo::getPrintableMD5() const {
 bool GameInfo::match(GameInfo &other, bool ignoreMD5) const {
 	if (_type != other._type) return false;
 	if (_language != other._language) return false;
-	if (version != other.version) return false;
-
 	if (ignoreMD5) return true;
 
+	// NOTE: Version and MD5 hash are not currently set
+	if (version != other.version) return false;
 	return (memcmp(_md5, other._md5, 16) == 0);
 }
 
