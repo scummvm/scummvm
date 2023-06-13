@@ -21,15 +21,42 @@
 
 #include "gui/download-games-dialog.h"
 #include "gui/widget.h"
-
+#include "gui/widgets/list.h"
 #include "common/translation.h"
 
 namespace GUI {
+
+enum {
+	kDownloadSelectedCmd = 'DWNS',
+};
 
 DownloadGamesDialog::DownloadGamesDialog()
 	: Dialog("DownloadGames") {
 
 	new StaticTextWidget(this, "DownloadGames.Headline", _("Download Freeware Games"));
+
+	// Add list with downloadable game titles
+	_gamesList = new ListWidget(this, "DownloadGames.List");
+	_gamesList->setNumberingMode(kListNumberingOff);
+	_gamesList->setEditable(false);
+
+	// Populate the ListWidget
+	Common::U32StringArray games = {
+		_("Beneath a Steel Sky - Freeware CD Version"),
+		_("Beneath a Steel Sky - Freeware Floppy Version"),
+		_("Broken Sword 2.5: The Return of the Templars - Freeware Version"),
+		_("Broken Sword 2.5: The Return of the Templars - Hebrew translation AddOn"),
+		_("Dráscula: The Vampire Strikes Back - Freeware Version (English)"),
+		_("Dráscula: The Vampire Strikes Back - Freeware Version (Music AddOn, MP3 format)"),
+		_("Dráscula: The Vampire Strikes Back - Freeware Version (Music AddOn, FLAC format)"),
+		_("Dráscula: The Vampire Strikes Back - Freeware Version (Music AddOn, OGG format)"),
+		_("Dráscula: The Vampire Strikes Back - Freeware Version (Spanish, German, French and Italian AddOn)"),
+		_("Dráscula: The Vampire Strikes Back - Freeware Version (Updated Spanish, German, French and Italian AddOn) - requires ScummVM 1.3.0 or more"),
+	};
+	_gamesList->setList(games);
+
+	new ButtonWidget(this, "DownloadGames.Back", _("Back"), Common::U32String(), kCloseCmd);
+	new ButtonWidget(this, "DownloadGames.Download", _("Download"), Common::U32String(), kDownloadSelectedCmd);
 }
 
 } // End of namespace GUI

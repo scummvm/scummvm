@@ -518,6 +518,16 @@
 			<widget name = 'Headline'
 					height = 'Globals.Line.Height'
 			/>
+			<widget name = 'List'/>
+			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
+				<widget name = 'Back'
+						type = 'Button'
+				/>
+				<space/>
+				<widget name = 'Download'
+						type = 'Button'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 
