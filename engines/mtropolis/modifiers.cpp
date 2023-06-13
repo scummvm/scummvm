@@ -2770,6 +2770,16 @@ Modifier *CompoundVariableModifier::findChildByName(Runtime *runtime, const Comm
 			if (modifier)
 				return modifier;
 		}
+
+		if (myName.size() == 1 && myName == "g") {
+			if (caseInsensitiveEqual(name, "choresdone") || caseInsensitiveEqual(name, "donechore")) {
+				Project *project = runtime->getProject();
+				Modifier *modifier = project->findGlobalVarWithName(MTropolis::toCaseInsensitive(name)).get();
+
+				if (modifier)
+					return modifier;
+			}
+		}
 	}
 
 	for (Common::Array<Common::SharedPtr<Modifier> >::const_iterator it = _children.begin(), itEnd = _children.end(); it != itEnd; ++it) {
@@ -2814,10 +2824,20 @@ CompoundVariableModifier::SaveLoad::SaveLoad(Runtime *runtime, CompoundVariableM
 				break;
 			}
 		}
+
 	}
 
 	for (const Common::SharedPtr<Modifier> &child : modifier->_children) {
-		if (isMTIHackGlobalContainer) {
+		bool loadFromGlobal = false;
+
+		if (isMTIHackGlobalContainer)
+			loadFromGlobal = true;
+		else if (isMTIHackG) {
+			// Hack to fix Hispaniola not transitioning to night
+			loadFromGlobal = caseInsensitiveEqual(child->getName(), "choresdone") || caseInsensitiveEqual(child->getName(), "donechore");
+		}
+
+		if (loadFromGlobal) {
 			Common::SharedPtr<Modifier> globalVarModifier = runtime->getProject()->findGlobalVarWithName(child->getName());
 
 			if (globalVarModifier) {

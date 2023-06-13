@@ -3010,6 +3010,10 @@ public:
 
 	virtual DynamicValueWriteProxy createWriteProxy();
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	void debugInspect(IDebugInspectionReport *report) const override;
+#endif
+
 private:
 	VariableModifier() = delete;
 

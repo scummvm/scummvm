@@ -9324,6 +9324,15 @@ DynamicValueWriteProxy VariableModifier::createWriteProxy() {
 	return proxy;
 }
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void VariableModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+
+	if (report->declareStatic("storage"))
+		report->declareStaticContents(Common::String::format("%p", _storage.get()));
+}
+#endif
+
 MiniscriptInstructionOutcome VariableModifier::WriteProxyInterface::write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset) {
 	if (!static_cast<VariableModifier *>(objectRef)->varSetValue(thread, dest))
 		return kMiniscriptInstructionOutcomeFailed;
