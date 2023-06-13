@@ -20,6 +20,7 @@
  */
 
 #include "gui/download-games-dialog.h"
+#include "gui/message.h"
 #include "gui/widget.h"
 #include "gui/widgets/list.h"
 #include "common/translation.h"
@@ -57,6 +58,19 @@ DownloadGamesDialog::DownloadGamesDialog()
 
 	new ButtonWidget(this, "DownloadGames.Back", _("Back"), Common::U32String(), kCloseCmd);
 	new ButtonWidget(this, "DownloadGames.Download", _("Download"), Common::U32String(), kDownloadSelectedCmd);
+}
+
+void DownloadGamesDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+	//Search for typed-in directory
+	case kDownloadSelectedCmd: {
+		MessageDialog dialog("Downloading: " + _gamesList->getSelectedString());
+		dialog.runModal();
+		}
+		break;
+	default:
+		Dialog::handleCommand(sender, cmd, data);
+	}
 }
 
 } // End of namespace GUI
