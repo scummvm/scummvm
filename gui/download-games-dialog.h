@@ -31,6 +31,8 @@ class DownloadGamesDialog : public Dialog {
 public:
 	DownloadGamesDialog();
 
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+
 private:
 	ListWidget		*_gamesList;
 };
