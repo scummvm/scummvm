@@ -756,7 +756,6 @@ void CapcomPC98_FM_Channel::updatePitchBend() {
 
 void CapcomPC98_FM_Channel::updateVolume() {
 	uint8 cr = _carrier;
-	uint8 dbg[4];
 	const uint8 *s = _instrument.regData;
 	for (int i = _regOffset; i < 16 + _regOffset; i += 4) {
 		uint16 vol = 0;
@@ -798,8 +797,6 @@ void CapcomPC98_FM_Channel::updateVolume() {
 		_ac->writeReg(0, 0x40 + i, vol & 0xFF);
 		s += 13;
 		cr >>= 1;
-
-		dbg[i >> 2] = vol & 0xff;
 	}
 }
 
