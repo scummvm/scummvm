@@ -204,7 +204,7 @@
 					<widget name = 'AddGameButton'
 							type = 'Button'
 					/>
-					<widget name = 'DownloadGameButton'
+					<widget name = 'DownloadGamesButton'
 							type = 'Button'
 					/>
 					<widget name = 'EditGameButton'
@@ -291,6 +291,9 @@
 				<widget name = 'AddGameButton'
 						height = 'Globals.Button.Height'
 				/>
+				<widget name = 'DownloadGamesButton'
+						height = 'Globals.Button.Height'
+				/>
 				<widget name = 'EditGameButton'
 						height = 'Globals.Button.Height'
 				/>
@@ -369,6 +372,9 @@
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
 				<widget name = 'AddGameButton'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'DownloadGamesButton'
 						height = 'Globals.Button.Height'
 				/>
 				<widget name = 'RemoveGameButton'
@@ -504,6 +510,14 @@
 					/>
 				</layout>
 			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'DownloadGames' overlays = 'screen' inset = '32' shading = 'dim'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8'>
+			<widget name = 'Headline'
+					height = 'Globals.Line.Height'
+			/>
 		</layout>
 	</dialog>
 
