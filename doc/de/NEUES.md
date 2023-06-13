@@ -62,6 +62,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Xeen:
    - Die Engine "xeen" wurde für Might & Magic zu "mm" umbenannt.
+   - Neue Engine-Option hinzugefügt, mit der die Gesundheits-Edelsteine durch
+     eine HP/SP-Leiste ersetzt werden können.
 
 
 #### 2.7.1 (2023-XX-XX)
