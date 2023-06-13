@@ -54,6 +54,7 @@ public:
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 	const char *debugGetTypeName() const override { return "Shanghai Modifier"; }
 	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
