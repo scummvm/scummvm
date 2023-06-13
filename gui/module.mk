@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	console.o \
 	debugger.o \
 	dialog.o \
+	download-games-dialog.o \
 	dump-all-dialogs.o \
 	editgamedialog.o \
 	error.o \

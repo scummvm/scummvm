@@ -32,6 +32,7 @@
 #include "gui/about.h"
 #include "gui/browser.h"
 #include "gui/chooser.h"
+#include "gui/download-games-dialog.h"
 #include "gui/editgamedialog.h"
 #include "gui/launcher.h"
 #include "gui/massadd.h"
@@ -256,7 +257,7 @@ void LauncherDialog::build() {
 	// I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
 	new ButtonWidget(this, _title + ".OptionsButton", _("Global ~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd, 0, _c("Global ~O~pts...", "lowres"));
 	// I18N: Button download games button.
-	new ButtonWidget(this, _title + ".DownloadGameButton", _("Download Games"), _("Download freeware games for ScummVM"), kDownloadGameCmd);
+	new ButtonWidget(this, _title + ".DownloadGamesButton", _("Download Games"), _("Download freeware games for ScummVM"), kDownloadGameCmd);
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	DropdownButtonWidget *addButton =
@@ -731,7 +732,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		massAddGame();
 		break;
 	case kDownloadGameCmd: {
-		MessageDialog downloader("Download Freeware Games");
+		DownloadGamesDialog downloader;
 		downloader.runModal();
 		}
 		break;
