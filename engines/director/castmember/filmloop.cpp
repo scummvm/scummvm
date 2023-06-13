@@ -362,6 +362,9 @@ void FilmLoopCastMember::loadFilmLoopDataV4(Common::SeekableReadStreamEndian &st
 
 			if (s->_key == -1) {
 				debugC(5, kDebugLoading, "loadFilmLoopDataV4: Skipping channel -1");
+				if (s->_value._castId != CastMemberID(0, 0) || s->_value._startPoint.x != 0 ||
+						 s->_value._startPoint.y != 0 || s->_value._width != 0 ||  s->_value._height != -256)
+					warning("BUILDBOT: loadFilmLoopDataV4: Malformed VWSC resource");
 				continue;
 			}
 
