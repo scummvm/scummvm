@@ -551,31 +551,31 @@
 #define sprintf(a,b,...)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
-// Use Common:scumm_stricmp in common/str.h
+// Use scumm_stricmp in common/str.h
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_stricmp
 #undef stricmp
 #define stricmp(a,b)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
-// Use Common:scumm_strnicmp in common/str.h
+// Use scumm_strnicmp in common/str.h
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_strnicmp
 #undef strnicmp
 #define strnicmp(a,b,c)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
-// Use Common:scumm_stricmp in common/str.h
+// Use scumm_stricmp in common/str.h
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_strcasecmp
 #undef strcasecmp
 #define strcasecmp(a,b)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
-// Use Common:scumm_strnicmp in common/str.h
+// Use scumm_strnicmp in common/str.h
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_strncasecmp
 #undef strncasecmp
 #define strncasecmp(a,b,c)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
-// Use Common::scumm_strdup in common/str.h
+// Use scumm_strdup in common/str.h
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_strdup
 #undef strdup
 #define strdup(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
