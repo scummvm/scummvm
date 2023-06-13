@@ -260,6 +260,8 @@ void ShanghaiModifier::resetTiles(Common::RandomSource &rng, uint (&tileFaces)[k
 		uint faceToInsert = selectAndRemoveOne(rng, facesToInsert, numFacesToInsert);
 		tileFaces[firstExposedTile] = faceToInsert;
 		tileFaces[secondExposedTile] = faceToInsert;
+
+		debug(2, "Shanghai randomizer: Move %u is %u + %u", pair, firstExposedTile, secondExposedTile);
 	}
 }
 
