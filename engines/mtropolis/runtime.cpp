@@ -9388,7 +9388,7 @@ void VariableModifier::debugInspect(IDebugInspectionReport *report) const {
 	Modifier::debugInspect(report);
 
 	if (report->declareStatic("storage"))
-		report->declareStaticContents(Common::String::format("%p", _storage.get()));
+		report->declareStaticContents(Common::String::format("%p", (void *)_storage.get()));
 }
 #endif
 
