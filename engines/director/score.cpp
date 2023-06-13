@@ -409,6 +409,7 @@ void Score::update() {
 	if (_curFrameNumber >= getFramesNum()) {
 		Window *window = _vm->getCurrentWindow();
 		if (!window->_movieStack.empty()) {
+			warning("Are we changing movie?");
 			MovieReference ref = window->_movieStack.back();
 			window->_movieStack.pop_back();
 			if (!ref.movie.empty()) {
@@ -419,6 +420,7 @@ void Score::update() {
 				return;
 			}
 
+			rebuildChannelData(ref.frameI);
 			_curFrameNumber = ref.frameI;
 		} else {
 			if (debugChannelSet(-1, kDebugNoLoop)) {
@@ -1410,20 +1412,18 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	_version = version;
 	_frameOffsets.push_back(_framesStream->pos());
 
-	// In case number of frames not known, precompute them!
-	if (_numFrames == 0) {
-		debugC(1, kDebugLoading, "Score::loadFrames(): Precomputing total number of frames!");
-		// Calculate number of frames beforehand.
-		int frameCount = 1;
-		while (loadFrame(frameCount)) {
-			debugC(1, kDebugLoading, "Score::loadFrames(): Skipped over frame %d!", frameCount);
-			frameCount++;
-		}
-		_numFrames = frameCount;
-		debugC(1, kDebugLoading, "Score::loadFrames(): Calculated, total number of frames %d!", _numFrames);
-
-		memset(_channelData, 0, kChannelDataSize); // Reset channel data
+	// Pre-computing number of frames, as sometimes the frameNumber in stream mismatches.
+	debugC(1, kDebugLoading, "Score::loadFrames(): Precomputing total number of frames!");
+	// Calculate number of frames beforehand.
+	int frameCount = 1;
+	while (loadFrame(frameCount)) {
+		debugC(1, kDebugLoading, "Score::loadFrames(): Skipped over frame %d!", frameCount);
+		frameCount++;
 	}
+	_numFrames = frameCount;
+	debugC(1, kDebugLoading, "Score::loadFrames(): Calculated, total number of frames %d!", _numFrames);
+
+	memset(_channelData, 0, kChannelDataSize); // Reset channel data
 
 	loadFrame(1);
 
