@@ -2824,7 +2824,6 @@ CompoundVariableModifier::SaveLoad::SaveLoad(Runtime *runtime, CompoundVariableM
 				break;
 			}
 		}
-
 	}
 
 	for (const Common::SharedPtr<Modifier> &child : modifier->_children) {

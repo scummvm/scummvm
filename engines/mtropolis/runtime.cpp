@@ -7046,6 +7046,9 @@ void Project::loadSceneFromStream(const Common::SharedPtr<Structural> &scene, ui
 	Common::SeekableSubReadStreamEndian stream(_segments[segmentIndex].weakStream, streamDesc.pos, streamDesc.pos + streamDesc.size, _isBigEndian);
 	Data::DataReader reader(streamDesc.pos, stream, _projectFormat);
 
+	if (getRuntime()->getHacks().mtiHispaniolaDamagedStringHack && scene->getName() == "C01b : Main Deck Helm Kidnap")
+		reader.setPermitDamagedStrings(true);
+
 	const Data::PlugInModifierRegistry &plugInDataLoaderRegistry = _plugInRegistry.getDataLoaderRegistry();
 
 	{

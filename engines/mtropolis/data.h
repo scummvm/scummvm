@@ -208,12 +208,16 @@ public:
 	ProjectFormat getProjectFormat() const;
 	bool isBigEndian() const;
 
+	void setPermitDamagedStrings(bool permit);
+
 private:
 	bool checkErrorAndReset();
 
 	Common::SeekableReadStreamEndian &_stream;
 	ProjectFormat _projectFormat;
 	int64 _globalPosition;
+
+	bool _permitDamagedStrings;
 };
 
 struct Rect {

@@ -1347,9 +1347,6 @@ void MToonElement::activate() {
 	}
 
 	uint hackFlags = 0;
-	if (getRuntime()->getHacks().mtiHispaniolaMToonHack && project->getAssetNameByID(_assetID) == "G00_HispaniolaMPZ.TUN") {
-		hackFlags |= MToonHackFlags::kMTIHispaniolaMPZHack;
-	}
 
 	_cachedMToon = static_cast<MToonAsset *>(asset.get())->loadAndCacheMToon(getRuntime(), hackFlags);
 	_metadata = _cachedMToon->getMetadata();

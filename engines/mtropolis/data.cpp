@@ -154,7 +154,7 @@ bool isAsset(DataObjectType type) {
 } // End of namespace DataObjectTypes
 
 DataReader::DataReader(int64 globalPosition, Common::SeekableReadStreamEndian &stream, ProjectFormat projectFormat)
-	: _globalPosition(globalPosition), _stream(stream), _projectFormat(projectFormat) {
+	: _globalPosition(globalPosition), _stream(stream), _projectFormat(projectFormat), _permitDamagedStrings(false) {
 }
 
 bool DataReader::readU8(uint8 &value) {
@@ -249,7 +249,10 @@ bool DataReader::readTerminatedStr(Common::String& value, size_t size) {
 			return false;
 		}
 		if (strChars[size - 1] != 0) {
-			return false;
+			if (_permitDamagedStrings)
+				strChars[size - 1] = 0;
+			else
+				return false;
 		}
 		value = Common::String(&strChars[0], size - 1);
 	} else {
@@ -298,6 +301,10 @@ ProjectFormat DataReader::getProjectFormat() const {
 
 bool DataReader::isBigEndian() const {
 	return _stream.isBE();
+}
+
+void DataReader::setPermitDamagedStrings(bool permit) {
+	_permitDamagedStrings = permit;
 }
 
 bool DataReader::checkErrorAndReset() {

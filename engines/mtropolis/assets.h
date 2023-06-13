@@ -59,14 +59,6 @@ private:
 	Common::Array<uint8> _data;
 };
 
-namespace MToonHackFlags {
-
-enum MToonHackFlag {
-	kMTIHispaniolaMPZHack = 1,
-};
-
-} // End of namespace MToonHackFlags
-
 struct MToonMetadata {
 	enum ImageFormat {
 		kImageFormatMac,

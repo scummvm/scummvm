@@ -44,7 +44,7 @@ Hacks::Hacks() {
 	allowAssetsFromOtherScenes = false;
 	mtiVariableReferencesHack = false;
 	mtiSceneReturnHack = false;
-	mtiHispaniolaMToonHack = false;
+	mtiHispaniolaDamagedStringHack = false;
 }
 
 Hacks::~Hacks() {
@@ -1056,9 +1056,9 @@ void addMTIQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
 	// This doesn't work because the modifier is gone when the scene is unloaded.
 	hacks.mtiSceneReturnHack = true;
 
-	// Weird rendering bug in the MTZ-1000 Hispaniola mToon, it has a skip code that would normally skip 127 rows but
-	// doing that causes a big hole in the image.
-	hacks.mtiHispaniolaMToonHack = true;
+	// Modifier "Scene Started => helmSteered? => Play Character, else Play Char" has a non-null-terminated name,
+	// which causes an integrity check failure when disembarking the Hispaniola.
+	hacks.mtiHispaniolaDamagedStringHack = true;
 }
 
 } // End of namespace HackSuites
