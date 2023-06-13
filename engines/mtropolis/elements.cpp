@@ -1356,6 +1356,9 @@ void MToonElement::activate() {
 
 	if (_name.empty())
 		_name = project->getAssetNameByID(_assetID);
+
+	if (_hooks)
+		_hooks->onPostActivate(this);
 }
 
 void MToonElement::deactivate() {

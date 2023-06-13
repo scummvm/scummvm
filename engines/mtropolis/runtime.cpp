@@ -853,7 +853,7 @@ bool DynamicList::setAtIndex(size_t index, const DynamicValue &value) {
 void DynamicList::deleteAtIndex(size_t index) {
 	if (_container != nullptr) {
 		size_t size = _container->getSize();
-		if (size < _container->getSize()) {
+		if (index < _container->getSize()) {
 			for (size_t i = index + 1; i < size; i++) {
 				DynamicValue valueToMove;
 				_container->getAtIndex(i, valueToMove);
@@ -2974,6 +2974,9 @@ MiniscriptInstructionOutcome AssetManagerInterface::writeRefAttribute(Miniscript
 }
 
 void StructuralHooks::onCreate(Structural *structural) {
+}
+
+void StructuralHooks::onPostActivate(Structural *structural) {
 }
 
 void StructuralHooks::onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt) {
@@ -7759,7 +7762,13 @@ void Project::loadContextualObject(size_t streamIndex, ChildLoaderStack &stack, 
 				uint32 guid = element->getStaticGUID();
 				const Common::HashMap<uint32, Common::SharedPtr<StructuralHooks> > &hooksMap = getRuntime()->getHacks().structuralHooks;
 				Common::HashMap<uint32, Common::SharedPtr<StructuralHooks> >::const_iterator hooksIt = hooksMap.find(guid);
-				if (hooksIt != hooksMap.end()) {
+				if (hooksIt == hooksMap.end()) {
+					Common::SharedPtr<StructuralHooks> defaultStructuralHooks = getRuntime()->getHacks().defaultStructuralHooks;
+					if (defaultStructuralHooks) {
+						element->setHooks(defaultStructuralHooks);
+						defaultStructuralHooks->onCreate(element.get());
+					}
+				} else {
 					element->setHooks(hooksIt->_value);
 					hooksIt->_value->onCreate(element.get());
 				}
@@ -8289,6 +8298,9 @@ bool VisualElement::readAttribute(MiniscriptThread *thread, DynamicValue &result
 	} else if (attrib == "centerposition") {
 		result.setPoint(getCenterPosition());
 		return true;
+	} else if (attrib == "size") {
+		result.setPoint(Common::Point(_rect.width(), _rect.height()));
+		return true;
 	} else if (attrib == "width") {
 		result.setInt(_rect.right - _rect.left);
 		return true;
@@ -8315,6 +8327,9 @@ MiniscriptInstructionOutcome VisualElement::writeRefAttribute(MiniscriptThread *
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "position") {
 		DynamicValueWriteOrRefAttribFuncHelper<VisualElement, &VisualElement::scriptSetPosition, &VisualElement::scriptWriteRefPositionAttribute>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "size") {
+		DynamicValueWriteOrRefAttribFuncHelper<VisualElement, &VisualElement::scriptSetSize, &VisualElement::scriptWriteRefSizeAttribute>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "centerposition") {
 		DynamicValueWriteOrRefAttribFuncHelper<VisualElement, &VisualElement::scriptSetCenterPosition, &VisualElement::scriptWriteRefCenterPositionAttribute>::create(this, writeProxy);
@@ -8636,12 +8651,37 @@ MiniscriptInstructionOutcome VisualElement::scriptSetCenterPositionY(MiniscriptT
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
+MiniscriptInstructionOutcome VisualElement::scriptSetSize(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (value.getType() == DynamicValueTypes::kPoint) {
+		Common::Point pt = value.getPoint();
+
+		if (_rect.bottom - _rect.top != asInteger || _rect.right - _rect.left != asInteger) {
+			_rect.right = _rect.left + pt.x;
+			_rect.bottom = _rect.top + pt.y;
+
+			thread->getRuntime()->setSceneGraphDirty();
+		}
+	} else {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+		if (Debugger *debugger = thread->getRuntime()->debugGetDebugger())
+			debugger->notify(kDebugSeverityError, "'size' value wasn't a point");
+#endif
+	}
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
 MiniscriptInstructionOutcome VisualElement::scriptSetWidth(MiniscriptThread *thread, const DynamicValue &value) {
 	int32 asInteger = 0;
 	if (!value.roundToInt(asInteger))
 		return kMiniscriptInstructionOutcomeFailed;
 
-	_rect.right = _rect.left + asInteger;
+	if (_rect.right - _rect.left != asInteger) {
+		_rect.right = _rect.left + asInteger;
+
+		thread->getRuntime()->setSceneGraphDirty();
+	}
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
@@ -8651,7 +8691,11 @@ MiniscriptInstructionOutcome VisualElement::scriptSetHeight(MiniscriptThread *th
 	if (!value.roundToInt(asInteger))
 		return kMiniscriptInstructionOutcomeFailed;
 
-	_rect.bottom = _rect.top + asInteger;
+	if (_rect.bottom - _rect.top != asInteger) {
+		_rect.bottom = _rect.top + asInteger;
+
+		thread->getRuntime()->setSceneGraphDirty();
+	}
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
@@ -8696,6 +8740,18 @@ MiniscriptInstructionOutcome VisualElement::scriptWriteRefCenterPositionAttribut
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "y") {
 		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetCenterPositionY, true>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+MiniscriptInstructionOutcome VisualElement::scriptWriteRefSizeAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	if (attrib == "x") {
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetWidth, true>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "y") {
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetHeight, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 

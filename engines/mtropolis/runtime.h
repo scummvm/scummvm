@@ -2126,6 +2126,7 @@ public:
 	virtual ~StructuralHooks();
 
 	virtual void onCreate(Structural *structural);
+	virtual void onPostActivate(Structural *structural);
 	virtual void onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt);
 };
 
@@ -2799,14 +2800,17 @@ protected:
 	MiniscriptInstructionOutcome scriptSetCenterPositionX(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetCenterPositionY(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetVisibility(MiniscriptThread *thread, const DynamicValue &result);
+	MiniscriptInstructionOutcome scriptSetSize(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetWidth(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetHeight(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetLayer(MiniscriptThread *thread, const DynamicValue &dest);
 
 	MiniscriptInstructionOutcome scriptWriteRefPositionAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
+	MiniscriptInstructionOutcome scriptWriteRefSizeAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
 	MiniscriptInstructionOutcome scriptWriteRefCenterPositionAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
 
 	void offsetTranslate(int32 xDelta, int32 yDelta, bool cachedOriginOnly);
+	void resize(int32 width, int32 height);
 
 	Common::Point getCenterPosition() const;
 

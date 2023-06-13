@@ -1023,6 +1023,19 @@ void addObsidianSaveMechanism(const MTropolisGameDescription &desc, Hacks &hacks
 	hacks.addSaveLoadMechanismHooks(mechanism);
 }
 
+class MTIStructuralHooks : public StructuralHooks {
+public:
+	void onPostActivate(Structural *structural) override;
+};
+
+void MTIStructuralHooks::onPostActivate(Structural *structural) {
+	if (structural->getName() == "D15_0003.tun") {
+		// Fix for intro not playing in Piggy's secret room.  D15_0003.tun is on layer 7 but treasure layers are on top of it.
+		if (structural->isElement() && static_cast<Element *>(structural)->isVisual())
+			static_cast<VisualElement *>(structural)->setLayer(20);
+	}
+}
+
 void addMTIQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
 	// MTI uses a lot of "maintain rate" mToons at 10Hz.  This means their frame timer resets on every frame advance, and
 	// is supposed to ensure that the mToon plays back at a smooth rate regardless of clock jitter.  Unfortunately, it
@@ -1059,6 +1072,8 @@ void addMTIQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
 	// Modifier "Scene Started => helmSteered? => Play Character, else Play Char" has a non-null-terminated name,
 	// which causes an integrity check failure when disembarking the Hispaniola.
 	hacks.mtiHispaniolaDamagedStringHack = true;
+
+	hacks.defaultStructuralHooks.reset(new MTIStructuralHooks());
 }
 
 } // End of namespace HackSuites
