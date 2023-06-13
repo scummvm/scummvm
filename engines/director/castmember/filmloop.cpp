@@ -117,7 +117,7 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 
 	uint32 size = stream.readUint32BE();
 	if (debugChannelSet(5, kDebugLoading)) {
-		debugC(5, kDebugLoading, "SCVW body:");
+		debugC(5, kDebugLoading, "loadFilmLoopData: SCVW body:");
 		uint32 pos = stream.pos();
 		stream.seek(0);
 		stream.hexdump(size);
@@ -129,7 +129,7 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 	while (stream.pos() < size) {
 		uint16 frameSize = stream.readUint16BE() - 2;
 		if (debugChannelSet(5, kDebugLoading)) {
-			debugC(5, kDebugLoading, "Frame entry:");
+			debugC(5, kDebugLoading, "loadFilmLoopData: Frame entry:");
 			stream.hexdump(frameSize);
 		}
 
@@ -137,7 +137,7 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 			int msgWidth = stream.readByte() * 2;
 			int order = stream.readByte() * 2 - 0x20;
 			frameSize -= 2;
-			debugC(8, kDebugLoading, "Message: msgWidth %d, order %d", msgWidth, order);
+			debugC(8, kDebugLoading, "loadFilmLoopData: Message: msgWidth %d, order %d", msgWidth, order);
 			if (debugChannelSet(8, kDebugLoading)) {
 				stream.hexdump(msgWidth);
 			}
@@ -214,7 +214,7 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 		}
 
 		for (Common::HashMap<int, Sprite>::iterator s = newFrame.sprites.begin(); s != newFrame.sprites.end(); ++s) {
-			debugC(5, kDebugLoading, "Sprite: channel %d, castId %s, bbox %d %d %d %d", s->_key,
+			debugC(5, kDebugLoading, "loadFilmLoopData: Sprite: channel %d, castId %s, bbox %d %d %d %d", s->_key,
 					s->_value._castId.asString().c_str(), s->_value._startPoint.x, s->_value._startPoint.y,
 					s->_value._width, s->_value._height);
 
@@ -235,14 +235,14 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 					_initialRect.extend(spriteBbox);
 				}
 			}
-			debugC(8, kDebugLoading, "New bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
+			debugC(8, kDebugLoading, "loadFilmLoopData: New bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
 
 		}
 
 		_frames.push_back(newFrame);
 
 	}
-	debugC(5, kDebugLoading, "Full bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
+	debugC(5, kDebugLoading, "loadFilmLoopData: Full bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
 }
 
 void FilmLoopCastMember::loadFilmLoopDataV4(Common::SeekableReadStreamEndian &stream) {
@@ -251,7 +251,7 @@ void FilmLoopCastMember::loadFilmLoopDataV4(Common::SeekableReadStreamEndian &st
 
 	uint32 size = stream.readUint32BE();
 	if (debugChannelSet(5, kDebugLoading)) {
-		debugC(5, kDebugLoading, "SCVW body:");
+		debugC(5, kDebugLoading, "loadFilmLoopDataV4: SCVW body:");
 		uint32 pos = stream.pos();
 		stream.seek(0);
 		stream.hexdump(size);
@@ -259,7 +259,7 @@ void FilmLoopCastMember::loadFilmLoopDataV4(Common::SeekableReadStreamEndian &st
 	}
 	uint32 framesOffset = stream.readUint32BE();
 	if (debugChannelSet(5, kDebugLoading)) {
-		debugC(5, kDebugLoading, "SCVW header:");
+		debugC(5, kDebugLoading, "loadFilmLoopDataV4: SCVW header:");
 		stream.hexdump(framesOffset - 8);
 	}
 	stream.skip(6);
@@ -271,7 +271,7 @@ void FilmLoopCastMember::loadFilmLoopDataV4(Common::SeekableReadStreamEndian &st
 	while (stream.pos() < size) {
 		uint16 frameSize = stream.readUint16BE() - 2;
 		if (debugChannelSet(5, kDebugLoading)) {
-			debugC(5, kDebugLoading, "Frame entry:");
+			debugC(5, kDebugLoading, "loadFilmLoopDataV4: Frame entry:");
 			stream.hexdump(frameSize);
 		}
 
@@ -288,7 +288,7 @@ void FilmLoopCastMember::loadFilmLoopDataV4(Common::SeekableReadStreamEndian &st
 			if (newFrame.sprites.contains(channel)) {
 				sprite = newFrame.sprites.getVal(channel);
 			}
-			debugC(8, kDebugLoading, "Message: msgWidth %d, channel %d, channelOffset %d", msgWidth, channel, channelOffset);
+			debugC(8, kDebugLoading, "loadFilmLoopDataV4: Message: msgWidth %d, channel %d, channelOffset %d", msgWidth, channel, channelOffset);
 			if (debugChannelSet(8, kDebugLoading)) {
 				stream.hexdump(msgWidth);
 			}
@@ -356,12 +356,12 @@ void FilmLoopCastMember::loadFilmLoopDataV4(Common::SeekableReadStreamEndian &st
 		}
 
 		for (Common::HashMap<int, Sprite>::iterator s = newFrame.sprites.begin(); s != newFrame.sprites.end(); ++s) {
-			debugC(5, kDebugLoading, "Sprite: channel %d, castId %s, bbox %d %d %d %d", s->_key,
+			debugC(5, kDebugLoading, "loadFilmLoopDataV4: Sprite: channel %d, castId %s, bbox %d %d %d %d", s->_key,
 					s->_value._castId.asString().c_str(), s->_value._startPoint.x, s->_value._startPoint.y,
 					s->_value._width, s->_value._height);
 
 			if (s->_key == -1) {
-				debugC(5, kDebugLoading, "Skipping channel -1");
+				debugC(5, kDebugLoading, "loadFilmLoopDataV4: Skipping channel -1");
 				continue;
 			}
 
@@ -382,14 +382,14 @@ void FilmLoopCastMember::loadFilmLoopDataV4(Common::SeekableReadStreamEndian &st
 					_initialRect.extend(spriteBbox);
 				}
 			}
-			debugC(8, kDebugLoading, "New bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
+			debugC(8, kDebugLoading, "loadFilmLoopDataV4: New bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
 
 		}
 
 		_frames.push_back(newFrame);
 
 	}
-	debugC(5, kDebugLoading, "Full bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
+	debugC(5, kDebugLoading, "loadFilmLoopDataV4: Full bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
 
 }
 
