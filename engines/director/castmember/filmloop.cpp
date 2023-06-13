@@ -89,7 +89,7 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 		int16 width = src._width * widgetRect.width() / _initialRect.width();
 		int16 height = src._height * widgetRect.height() / _initialRect.height();
 
-		// Film loop frames are constructed as a series of Channels, much like how a normal frame 
+		// Film loop frames are constructed as a series of Channels, much like how a normal frame
 		// is rendered by the Score. We don't include a pointer to the current Score here,
 		// that's only for querying the constraint channel which is not used.
 		Channel chan(nullptr, &src);
@@ -359,6 +359,11 @@ void FilmLoopCastMember::loadFilmLoopDataV4(Common::SeekableReadStreamEndian &st
 			debugC(5, kDebugLoading, "Sprite: channel %d, castId %s, bbox %d %d %d %d", s->_key,
 					s->_value._castId.asString().c_str(), s->_value._startPoint.x, s->_value._startPoint.y,
 					s->_value._width, s->_value._height);
+
+			if (s->_key == -1) {
+				debugC(5, kDebugLoading, "Skipping channel -1");
+				continue;
+			}
 
 			Common::Point topLeft = s->_value._startPoint;
 			if (s->_value._cast) {
