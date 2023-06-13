@@ -20,27 +20,39 @@
  */
 
 #include "ultima/ultima8/filesys/savegame.h"
+#include "common/bufferedstream.h"
+#include "common/compression/unzip.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 #define SAVEGAME_IDENT MKTAG('V', 'M', 'U', '8')
+#define PKZIP_IDENT MKTAG('P', 'K', 3, 4)
 #define SAVEGAME_VERSION 6
 #define SAVEGAME_MIN_VERSION 2
 
-SavegameReader::SavegameReader(Common::SeekableReadStream *rs, bool metadataOnly) : _file(rs), _version(0) {
-	if (!MetaEngine::readSavegameHeader(rs, &_header))
-		return;
+class FileEntryArchive : public Common::Archive {
+	struct FileEntry {
+		uint _offset;
+		uint _size;
+		FileEntry() : _offset(0), _size(0) {}
+	};
+private:
+	Common::HashMap<Common::String, FileEntry> _index;
+	Common::SeekableReadStream *_file;
 
-	// Validate the identifier for a valid savegame
-	uint32 ident = _file->readUint32LE();
-	if (ident != SAVEGAME_IDENT)
-		return;
+public:
+	FileEntryArchive(Common::SeekableReadStream *rs);
+	~FileEntryArchive() override;
 
-	_version = _file->readUint32LE();
-	if (metadataOnly)
-		return;
+	// Common::Archive API implementation
+	bool hasFile(const Common::Path &path) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
+};
 
+FileEntryArchive::FileEntryArchive(Common::SeekableReadStream *rs) : _file(rs) {
 	// Load the index
 	uint count = _file->readUint16LE();
 
@@ -58,7 +70,93 @@ SavegameReader::SavegameReader(Common::SeekableReadStream *rs, bool metadataOnly
 	}
 }
 
+FileEntryArchive::~FileEntryArchive() {
+}
+
+bool FileEntryArchive::hasFile(const Common::Path &path) const {
+	return _index.contains(path.toString());
+}
+
+int FileEntryArchive::listMembers(Common::ArchiveMemberList &list) const {
+	list.clear();
+	for (Common::HashMap<Common::String, FileEntry>::const_iterator it = _index.begin(); it != _index.end(); ++it)
+		list.push_back(Common::ArchiveMemberPtr(new Common::GenericArchiveMember(it->_key, this)));
+
+	return list.size();
+}
+
+const Common::ArchiveMemberPtr FileEntryArchive::getMember(const Common::Path &path) const {
+	if (!hasFile(path))
+		return nullptr;
+
+	Common::String name = path.toString();
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+}
+
+Common::SeekableReadStream *FileEntryArchive::createReadStreamForMember(const Common::Path &path) const {
+	assert(hasFile(path));
+
+	const FileEntry &fe = _index[path.toString()];
+	uint8 *data = (uint8 *)malloc(fe._size);
+	_file->seek(fe._offset);
+	_file->read(data, fe._size);
+
+	return new Common::MemoryReadStream(data, fe._size, DisposeAfterUse::YES);
+}
+
+SavegameReader::SavegameReader(Common::SeekableReadStream *rs, bool metadataOnly) : _archive(nullptr), _version(0) {
+	// Validate the identifier for a valid savegame
+	uint32 ident = rs->readUint32LE();
+	if (ident == SAVEGAME_IDENT) {
+		_version = rs->readUint32LE();
+
+		if (!MetaEngine::readSavegameHeader(rs, &_header))
+			return;
+
+		if (metadataOnly)
+			return;
+
+		_archive = new FileEntryArchive(rs);
+	} else if (SWAP_BYTES_32(ident) == PKZIP_IDENT) {
+		// Note: Pentagram save description is the zip global comment
+		_header.description = "Pentagram Save";
+
+		// Hack to pull the comment if length < 255
+		char data[256];
+		uint16 size = sizeof(data);
+		rs->seek(-size, SEEK_END);
+		rs->read(data, size);
+		for (uint16 i = size; i >= 2; i--) {
+			uint16 length = size - i;
+			if (data[i - 2] == length && data[i - 1] == 0) {
+				if (length > 0)
+					_header.description = Common::String(data + i, length);
+				break;
+			}
+		}
+
+		Common::SeekableReadStream *stream = wrapBufferedSeekableReadStream(rs, 4096, DisposeAfterUse::NO);
+		_archive = Common::makeZipArchive(stream);
+		if (!_archive)
+			return;
+
+		Common::ArchiveMemberPtr member = _archive->getMember("VERSION");
+		if (member) {
+			_version = member->createReadStream()->readUint32LE();
+			_header.version = _version;
+		}
+
+		if (metadataOnly) {
+			delete _archive;
+			_archive = nullptr;
+			return;
+		}
+	}
+}
+
 SavegameReader::~SavegameReader() {
+	if (_archive)
+		delete _archive;
 }
 
 SavegameReader::State SavegameReader::isValid() const {
@@ -73,14 +171,9 @@ SavegameReader::State SavegameReader::isValid() const {
 }
 
 Common::SeekableReadStream *SavegameReader::getDataSource(const Std::string &name) {
-	assert(_index.contains(name));
+	assert(_archive);
 
-	const FileEntry &fe = _index[name];
-	uint8 *data = (uint8 *)malloc(fe._size);
-	_file->seek(fe._offset);
-	_file->read(data, fe._size);
-
-	return new Common::MemoryReadStream(data, fe._size, DisposeAfterUse::YES);
+	return _archive->createReadStreamForMember(name);
 }
 
 

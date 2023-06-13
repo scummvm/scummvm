@@ -1239,7 +1239,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 		return Common::Error(Common::kReadingFailed, "Invalid or corrupt savegame: missing GameInfo");
 	}
 
-	if (!_gameInfo->match(saveinfo)) {
+	if (!_gameInfo->match(saveinfo, true)) {
 		Std::string message = "Game mismatch\n";
 		message += "Running _game: " + _gameInfo->getPrintDetails()  + "\n";
 		message += "Savegame    : " + saveinfo.getPrintDetails();

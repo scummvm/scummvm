@@ -213,6 +213,21 @@ SaveStateList UltimaMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
+SaveStateDescriptor UltimaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	SaveStateDescriptor desc = AdvancedMetaEngine::querySaveMetaInfos(target, slot);
+	if (!desc.isValid() && slot > 0) {
+		Common::String gameId = getGameId(target);
+		if (gameId == "ultima8") {
+			Common::String filename = getSavegameFile(slot, target);
+			desc = SaveStateDescriptor(this, slot, Common::U32String());
+			if (!Ultima::Ultima8::MetaEngine::querySaveMetaInfos(filename, desc))
+				return SaveStateDescriptor();
+		}
+	}
+
+	return desc;
+}
+
 Common::KeymapArray UltimaMetaEngine::initKeymaps(const char *target) const {
 	const Common::String gameId = getGameId(target);
 	if (gameId == "ultima4" || gameId == "ultima4_enh")

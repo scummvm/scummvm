@@ -22,6 +22,9 @@
 #include "ultima/ultima8/metaengine.h"
 #include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/filesys/savegame.h"
+#include "common/savefile.h"
+#include "common/system.h"
 #include "common/translation.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/standard-actions.h"
@@ -235,6 +238,18 @@ Common::String MetaEngine::getMethod(KeybindingAction keyAction, bool isPress) {
 	}
 
 	return Common::String();
+}
+
+bool MetaEngine::querySaveMetaInfos(const Common::String &filename, SaveStateDescriptor& desc) {
+	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(filename));
+
+	if (f) {
+		SavegameReader sg(f.get(), true);
+		desc.setDescription(sg.getDescription());
+		return sg.isValid();
+	}
+
+	return false;
 }
 
 } // End of namespace Ultima8
