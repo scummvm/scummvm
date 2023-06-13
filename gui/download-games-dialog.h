@@ -23,12 +23,16 @@
 #define DOWNLOAD_GAMES_DIALOG_H
 
 #include "gui/dialog.h"
+#include "gui/widgets/list.h"
 
 namespace GUI {
-	
+
 class DownloadGamesDialog : public Dialog {
 public:
 	DownloadGamesDialog();
+
+private:
+	ListWidget		*_gamesList;
 };
 
 } // End of namespace GUI
