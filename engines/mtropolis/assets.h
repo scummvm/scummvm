@@ -152,7 +152,7 @@ private:
 	void rleReformat(RleFrame &frame, const Common::Array<TSrcNumber> &srcData, const Graphics::PixelFormat &srcFormatRef, Common::Array<TDestNumber> &destData, const Graphics::PixelFormat &destFormatRef, uint hackFlags);
 
 	template<class TNumber, uint32 TLiteralMask, uint32 TTransparentRowSkipMask>
-	static bool decompressMToonRLE(const RleFrame &frame, const Common::Array<TNumber> &coefsArray, Graphics::ManagedSurface &surface, bool isBottomUp, uint hackFlags);
+	static bool decompressMToonRLE(const RleFrame &frame, const Common::Array<TNumber> &coefsArray, Graphics::ManagedSurface &surface, bool isBottomUp, bool isKeyFrame, uint hackFlags);
 
 	Common::Array<RleFrame> _rleData;
 	bool _isRLETemporalCompressed;

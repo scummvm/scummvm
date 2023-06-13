@@ -208,7 +208,7 @@ void CachedMToon::decompressFrames(const Common::Array<uint8> &data) {
 }
 
 template<class TNumber, uint32 TLiteralMask, uint32 TTransparentRowSkipMask>
-bool CachedMToon::decompressMToonRLE(const RleFrame &frame, const Common::Array<TNumber> &coefsArray, Graphics::ManagedSurface &surface, bool isBottomUp, uint hackFlags) {
+bool CachedMToon::decompressMToonRLE(const RleFrame &frame, const Common::Array<TNumber> &coefsArray, Graphics::ManagedSurface &surface, bool isBottomUp, bool isKeyFrame, uint hackFlags) {
 	assert(sizeof(TNumber) == surface.format.bytesPerPixel);
 
 	size_t size = coefsArray.size();
@@ -247,19 +247,13 @@ bool CachedMToon::decompressMToonRLE(const RleFrame &frame, const Common::Array<
 				// Vertical skip
 				uint32 skipAmount = transparentCountCode - TTransparentRowSkipMask;
 
-				// Not sure why this special code exists, but several mToons in MTI use it, such as the pants and shoe pull-outs
-				// in the treasure chest in the first area, and the Hispaniola TV in the MPZ-1000.
-				//
-				// The pants graphic depends on avoiding the x=0 here.
-				if (skipAmount != (TTransparentRowSkipMask - 2)) {
-					y += skipAmount;
-					x = 0;
-					if (y < h) {
-						rowData = static_cast<TNumber *>(surface.getBasePtr(0, isBottomUp ? (h - 1 - y) : y));
-						continue;
-					} else {
-						break;
-					}
+				y += skipAmount;
+				x = 0;
+				if (y < h) {
+					rowData = static_cast<TNumber *>(surface.getBasePtr(0, isBottomUp ? (h - 1 - y) : y));
+					continue;
+				} else {
+					break;
 				}
 			} else {
 				// Horizontal skip
@@ -278,7 +272,7 @@ bool CachedMToon::decompressMToonRLE(const RleFrame &frame, const Common::Array<
 			size -= numLiterals;
 			x += numLiterals;
 		} else {
-			// Literals
+			// Run
 			const size_t numCopies = rleCode;
 			if (numCopies > remainingInRow || size == 0)
 				return false;
@@ -288,6 +282,21 @@ bool CachedMToon::decompressMToonRLE(const RleFrame &frame, const Common::Array<
 			coefs++;
 			size--;
 			x += numCopies;
+
+			if (size >= 2) {
+				// Handle some strange cases in MTI that appear to be caused by some kind of mToon
+				// encoder RLE flush problem: Numerous mToons have a 0-length RLE run after a max-length
+				// run.  In most cases, the repeated value is 0, which has no effect, but in some cases
+				// this causes decode problems because the value is non-zero and gets decoded as a skip.
+				//
+				// In particular, it causes problems with the MPZ-1000 Hispaniola TV, the shoe and pants
+				// pull-outs in the chest in the first area, and the target animations in the Hispaniola
+				// cannon minigame.
+				if (numCopies == (TLiteralMask - 1) && coefs[0] == 0 && coefs[1] == repeatedValue) {
+					coefs += 2;
+					size -= 2;
+				}
+			}
 		}
 
 		if (x == w) {
@@ -310,13 +319,15 @@ void CachedMToon::decompressRLEFrameToImage(size_t frameIndex, Graphics::Managed
 
 	bool isBottomUp = (_metadata->imageFormat == MToonMetadata::kImageFormatWindows);
 
+	bool isKeyFrame = _metadata->frames[frameIndex].isKeyFrame;
+
 	bool decompressedOK = false;
 	if (_rleOptimizedFormat.bytesPerPixel == 4) {
-		decompressedOK = decompressMToonRLE<uint32, 0x80000000u, 0x80000000u>(_rleData[frameIndex], _rleData[frameIndex].data32, surface, isBottomUp, _hackFlags);
+		decompressedOK = decompressMToonRLE<uint32, 0x80000000u, 0x80000000u>(_rleData[frameIndex], _rleData[frameIndex].data32, surface, isBottomUp, isKeyFrame, _hackFlags);
 	} else if (_rleOptimizedFormat.bytesPerPixel == 2) {
-		decompressedOK = decompressMToonRLE<uint16, 0x8000u, 0x8000u>(_rleData[frameIndex], _rleData[frameIndex].data16, surface, isBottomUp, _hackFlags);
+		decompressedOK = decompressMToonRLE<uint16, 0x8000u, 0x8000u>(_rleData[frameIndex], _rleData[frameIndex].data16, surface, isBottomUp, isKeyFrame, _hackFlags);
 	} else if (_rleOptimizedFormat.bytesPerPixel == 1) {
-		decompressedOK = decompressMToonRLE<uint8, 0x80u, 0x80u>(_rleData[frameIndex], _rleData[frameIndex].data8, surface, isBottomUp, _hackFlags);
+		decompressedOK = decompressMToonRLE<uint8, 0x80u, 0x80u>(_rleData[frameIndex], _rleData[frameIndex].data8, surface, isBottomUp, isKeyFrame, _hackFlags);
 	} else
 		error("Unknown mToon encoding");
 
@@ -652,12 +663,14 @@ void CachedMToon::getOrRenderFrame(uint32 prevFrame, uint32 targetFrame, Common:
 		bool isBottomUp = (_metadata->imageFormat == MToonMetadata::kImageFormatWindows);
 
 		for (size_t i = firstFrameToRender; i <= targetFrame; i++) {
+			bool isKeyFrame = _metadata->frames[i].isKeyFrame;
+
 			if (_rleOptimizedFormat.bytesPerPixel == 1)
-				decompressMToonRLE<uint8, 0x80u, 0x80u>(_rleData[i], _rleData[i].data8, *surface, isBottomUp, _hackFlags);
+				decompressMToonRLE<uint8, 0x80u, 0x80u>(_rleData[i], _rleData[i].data8, *surface, isBottomUp, isKeyFrame, _hackFlags);
 			else if (_rleOptimizedFormat.bytesPerPixel == 2)
-				decompressMToonRLE<uint16, 0x8000u, 0x8000u>(_rleData[i], _rleData[i].data16, *surface, isBottomUp, _hackFlags);
+				decompressMToonRLE<uint16, 0x8000u, 0x8000u>(_rleData[i], _rleData[i].data16, *surface, isBottomUp, isKeyFrame, _hackFlags);
 			else if (_rleOptimizedFormat.bytesPerPixel == 4)
-				decompressMToonRLE<uint32, 0x80000000u, 0x80000000u>(_rleData[i], _rleData[i].data32, *surface, isBottomUp, _hackFlags);
+				decompressMToonRLE<uint32, 0x80000000u, 0x80000000u>(_rleData[i], _rleData[i].data32, *surface, isBottomUp, isKeyFrame, _hackFlags);
 		}
 	}
 }
