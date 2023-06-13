@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-06-11 23:12+0000\n"
-"PO-Revision-Date: 2023-05-31 12:40+0000\n"
+"PO-Revision-Date: 2023-06-14 05:40+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -6603,14 +6603,14 @@ msgstr ""
 "de seulement -10 HP"
 
 #: engines/mm/metaengine.cpp:68
-#, fuzzy
-#| msgid "Enable hit point bar graphs"
 msgid "Hitpoint bars"
-msgstr "Active les barres de points de vie (Hit Point)"
+msgstr "Barres de points de vie (Hit Point)"
 
 #: engines/mm/metaengine.cpp:69
 msgid "Replace a colored gem with bars for hit points and spell points."
 msgstr ""
+"Remplace une gemme de couleur par des barres de points de vie et de points "
+"de sort."
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
@@ -6756,6 +6756,9 @@ msgid ""
 "will automatically be available if you detect the original game and select "
 "Enhanced mode."
 msgstr ""
+"Vous ne pouvez pas lancer le jeu directement à partir du Graphics Overhaul "
+"Mod. En revanche, il sera automatiquement disponible si vous détectez le jeu "
+"original et sélectionnez le mode Amélioré."
 
 #: engines/mm/mm1/mm1.cpp:108
 msgid ""
@@ -7810,14 +7813,6 @@ msgstr ""
 "\n"
 
 #: engines/scumm/detection_internal.h:384
-#, fuzzy
-#| msgid ""
-#| "This version of Monkey Island can't be played, because Limited Run Games "
-#| "provided corrupted DISK04.LEC and 903.LFL files.\n"
-#| "\n"
-#| "Please contact their technical support for replacement files, or look "
-#| "online for some guides which can help you recover valid files from the "
-#| "KryoFlux dumps that Limited Run Games also provided."
 msgid ""
 "This version of Monkey Island can't be played, because Limited Run Games "
 "provided corrupted DISK03.LEC, DISK04.LEC and 903.LFL files.\n"
@@ -7827,8 +7822,8 @@ msgid ""
 "dumps that Limited Run Games also provided."
 msgstr ""
 "Il n'est pas possible de jouer à cette version de Monkey Island, car les "
-"fichiers DISK04.LEC et 903.LFL fournis par Limited Run Games sont "
-"corrompus.\n"
+"fichiers DISK03.LEC, DISK04.LEC et 903.LFL fournis par Limited Run Games "
+"sont corrompus.\n"
 "\n"
 "Veuillez contacter leur support technique afin d'obtenir des fichiers non "
 "corrompus, ou bien suivez certains guides en ligne décrivant comment "
