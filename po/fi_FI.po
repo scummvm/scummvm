@@ -6492,7 +6492,8 @@ msgstr "Elämäpistepalkit"
 
 #: engines/mm/metaengine.cpp:69
 msgid "Replace a colored gem with bars for hit points and spell points."
-msgstr "Korvaa elämäpisteiden ja loitsupisteiden värillinen jalokivi palkeilla."
+msgstr ""
+"Korvaa elämäpisteiden ja loitsupisteiden värillinen jalokivi palkeilla."
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47

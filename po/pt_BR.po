@@ -6700,8 +6700,8 @@ msgid ""
 "will automatically be available if you detect the original game and select "
 "Enhanced mode."
 msgstr ""
-"Você não pode executar o jogo diretamente pelo Mod de Melhorias Gráficas ("
-"Graphics Overhaul Mod). Em vez disso, ele estará disponível automaticamente "
+"Você não pode executar o jogo diretamente pelo Mod de Melhorias Gráficas "
+"(Graphics Overhaul Mod). Em vez disso, ele estará disponível automaticamente "
 "se você adicionar o jogo original e selecionar o modo Aprimorado."
 
 #: engines/mm/mm1/mm1.cpp:108
