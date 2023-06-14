@@ -47,7 +47,7 @@ PathfindingGrid::~PathfindingGrid(void) {
 		delete[] nodes[x];
 	}
 
-	delete nodes;
+	delete[] nodes;
 }
 
 void PathfindingGrid::SetupNodes(TMXMap map) {
