@@ -1121,9 +1121,8 @@ static void printStatistics(const Common::String &engineID) {
 		engines = tokenizer.split();
 	}
 
-	if (!summary)
-		printf("Engine ID        Number of games    Game variants    Added targets\n"
-		       "--------------- ---------------- ---------------- ----------------\n");
+	printf("Engines         Games         Variants      Added targets\n"
+	       "--------------- ------------- ------------- -------------\n");
 
 	int targetCount = 0;
 	Common::HashMap<Common::String, int> engineTargetCount;
@@ -1168,18 +1167,19 @@ static void printStatistics(const Common::String &engineID) {
 				if (engineIter != engineTargetCount.end())
 					targets = engineIter->_value;
 				if (variants != -1)
-					printf("%-15s %16d %16d %16d\n", metaEngine.getName(), list.size(), variants, targets);
+					printf("%-15s %13d %13d %13d\n", metaEngine.getName(), list.size(), variants, targets);
 				else
-					printf("%-15s %16d %16s %16d\n", metaEngine.getName(), list.size(), "?", targets);
+					printf("%-15s %13d %13s %13d\n", metaEngine.getName(), list.size(), "?", targets);
 			}
 		}
 	}
 	if (engines.size() != 1) {
-		printf("--------------- ---------------- ---------------- ----------------\n");
+		if (!summary)
+			printf("--------------- ------------- ------------- -------------\n");
 		if (approximation)
-			printf("Engines: %6d Games: %9d Variants: %5d+ Targets: %7d\n", engineCount, gameCount, variantCount, targetCount);
+			printf("%15d %13d %12d+ %13d\n", engineCount, gameCount, variantCount, targetCount);
 		else
-			printf("Engines: %6d Games: %9d Variants: %6d Targets: %7d\n", engineCount, gameCount, variantCount, targetCount);
+			printf("%15d %13d %13d %13d\n", engineCount, gameCount, variantCount, targetCount);
 	}
 }
 
