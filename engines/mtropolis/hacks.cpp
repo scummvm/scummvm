@@ -1195,6 +1195,9 @@ void MTIStructuralHooks::onPostActivate(Structural *structural) {
 	} else if (name == "B01c_newsponge.tun") {
 		structural->setHooks(Common::SharedPtr<StructuralHooks>(new MTIMolassesSpongeHooks(_molassesHandler)));
 		structural->getHooks()->onPostActivate(structural);
+	} else if (name == "E01_Beakerfly.tun") {
+		// Beaker flyby in the intro is on layer 4, but the door is on layer 11
+		static_cast<VisualElement *>(structural)->setLayer(12);
 	}
 }
 
