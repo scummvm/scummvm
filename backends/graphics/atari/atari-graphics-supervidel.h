@@ -29,7 +29,6 @@
 #include <mint/osbind.h>
 
 #include "backends/graphics/atari/atari-graphics-superblitter.h"
-#include "backends/graphics/atari/videl-resolutions.h"
 #include "common/debug.h"	// error() & warning()
 #include "common/scummsys.h"
 
@@ -46,12 +45,6 @@ public:
 			debug("SV_XBIOS has the pmmu boost enabled");
 		else
 			warning("SV_XBIOS has the pmmu boost disabled, set 'pmmu_boost = true' in C:\\SV.INF");
-
-		// patch SPSHIFT for SuperVidel's BPS8C
-		for (byte *p : {scp_320x200x8_vga, scp_320x240x8_vga, scp_640x400x8_vga, scp_640x480x8_vga}) {
-			uint16 *p16 = (uint16*)(p + 122 + 30);
-			*p16 |= 0x1000;
-		}
 
 		// using virtual methods so must be done here
 		allocateSurfaces();

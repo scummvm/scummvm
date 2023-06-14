@@ -119,7 +119,7 @@ void Surface::create(int16 width, int16 height, const PixelFormat &f) {
 
 	if (width && height) {
 #ifdef USE_SV_BLITTER
-		if (hasSuperVidel()) {
+		if (hasSuperVidel() && w >= 64 && h >= 64) {
 			pixels = (void *)ct60_vmalloc(height * pitch);
 
 			if (!pixels)

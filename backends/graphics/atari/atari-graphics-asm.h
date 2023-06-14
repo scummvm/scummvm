@@ -44,27 +44,6 @@ void asm_screen_tt_restore(void);
  */
 void asm_screen_falcon_restore(void);
 
-/**
- * Set Atari TT palette.
- * @param pPalette 256 palette entries (0000 RRRR GGGG BBBB)
- */
-void asm_screen_set_tt_palette(const uint16 pPalette[256]);
-/**
- * Set Atari Falcon palette.
- * @param pPalette 256 palette entries (RRRRRRRR GGGGGGGG BBBBBBBB)
- */
-void asm_screen_set_falcon_palette(const byte pPalette[256*3]);
-
-/**
- * Set Atari TT/Falcon video base.
- */
-void asm_screen_set_vram(const void* pScreen);
-
-/**
- * Set Atari Falcon Videl resolution (Screenspain's SCP format).
- */
-void asm_screen_set_scp_res(const void* pScp);
-
 }
 
 #endif

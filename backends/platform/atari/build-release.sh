@@ -43,7 +43,10 @@ do
 	unzip -d tmp "$f" && cd tmp && zip -0 ../$(basename "$f") * && cd .. && rm -r tmp && rm "$f"
 done
 )
+# absent gui-icons.dat massively speeds up startup time (used for the grid mode)
+rm ../data/gui-icons.dat
 cd -
 
 # readme.txt
 cp ../backends/platform/atari/readme.txt dist-generic/scummvm
+unix2dos dist-generic/scummvm/readme.txt

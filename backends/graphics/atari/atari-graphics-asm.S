@@ -19,17 +19,11 @@
  *
  */
 
-	.globl	_asm_screen_tt_save
-	.globl	_asm_screen_falcon_save
+	.global	_asm_screen_tt_save
+	.global	_asm_screen_falcon_save
 
-	.globl	_asm_screen_tt_restore
-	.globl	_asm_screen_falcon_restore
-
-	.globl	_asm_screen_set_tt_palette
-	.globl	_asm_screen_set_falcon_palette
-
-	.globl	_asm_screen_set_vram
-	.globl	_asm_screen_set_scp_res
+	.global	_asm_screen_tt_restore
+	.global	_asm_screen_falcon_restore
 
 	.text
 
@@ -97,15 +91,6 @@ falcon_save_loop:
 	move.w	0xffff8266.w,(a0)+		| f_s
 	move.w	0xffff8260.w,(a0)+		| st_s
 
-	| install custom VBL handler
-	move	sr,-(sp)
-	or	#0x700,sr
-
-	move.l	0x70.w,old_vbl
-	move.l	#vbl,0x70.w
-
-	move	(sp)+,sr
-
 	movem.l	(sp)+,d2-d7/a2
 	rts
 
@@ -131,14 +116,6 @@ _asm_screen_tt_restore:
 |
 _asm_screen_falcon_restore:
 	movem.l	d2-d7/a2,-(sp)
-
-	| uninstall custom VBL handler
-	move	sr,-(sp)
-	or	#0x700,sr
-
-	move.l	old_vbl,0x70.w
-
-	move	(sp)+,sr
 
 	bsr	wait_vbl			| avoid flickering
 
@@ -199,151 +176,15 @@ falcon_restore_loop:
 	movem.l	(sp)+,d2-d7/a2
 	rts
 
-| extern void asm_screen_set_tt_palette(const uint16 pPalette[256]);
-|
-_asm_screen_set_tt_palette:
-	move.l	(4,sp),a0
-	lea	0xffff8400.w,a1
-	moveq	#256/2-1,d0
-
-set_tt_palette_loop:
-	move.l	(a0)+,(a1)+
-	dbra	d0,set_tt_palette_loop
-	rts
-
-| extern void asm_screen_set_falcon_palette(const byte pPalette[256*3]);
-|
-_asm_screen_set_falcon_palette:
-	move.l	(4,sp),a0
-	lea	pending_palette,a1
-	move.w	#256-1,d0
-
-set_falcon_palette_loop:
-	clr.l	d1
-	move.w	(a0)+,d1
-	swap	d1
-	move.b	(a0)+,d1
-	move.l	d1,(a1)+
-	dbra	d0,set_falcon_palette_loop
-
-	addq.w	#1,has_pending_palette
-	rts
-
-| extern void asm_screen_set_vram(const void* pScreen);
-|
-_asm_screen_set_vram:
-	move.l	(4,sp),pending_vram
-
-	addq.w	#1,has_pending_vram
-	rts
-
-| void asm_screen_set_scp_res(const void* pScp);
-|
-_asm_screen_set_scp_res:
-	move.l	(4,sp),a0
-	lea	(122,a0),a0
-	lea	pending_scp,a1
-	moveq	#(158-122)/4-1,d0
-set_scp_res_loop:
-	move.l	(a0)+,(a1)+
-	dbra	d0,set_scp_res_loop
-
-	addq.w	#1,has_pending_scp
-	rts
-
 wait_vbl:
 	move.w	#0x25,-(sp)			| Vsync()
 	trap	#14				|
 	addq.l	#2,sp				|
 	rts
 
-	.ascii	"XBRA"
-	.ascii	"SCUM"
-old_vbl:
-	dc.l	0
-vbl:
-	movem.l	d0-d1/a0-a1,-(sp)
-
-	addq.l	#1,0x0462.w			| _vbclock
-	addq.l	#1,0x0466.w			| _frclock
-
-	tst.w	has_pending_scp
-	beq.b	vbl_no_pending_scp
-
-	lea	pending_scp,a0
-	move.l	(a0)+,0xffff8282.w
-	move.l	(a0)+,0xffff8286.w
-	move.l	(a0)+,0xffff828a.w
-	move.l	(a0)+,0xffff82a2.w
-	move.l	(a0)+,0xffff82a6.w
-	move.l	(a0)+,0xffff82aa.w
-	move.w	(a0)+,0xffff820a.w
-	move.w	(a0)+,0xffff82c0.w
-	clr.w	0xffff8266.w
-	tst.w	(a0)+
-	bne.b	vbl_st
-
-vbl_falcon:
-	move.w	(a0)+,0xffff8266.w
-	bra.b	vbl_skip
-
-vbl_st:	addq.l	#1,a0
-	move.b	(a0)+,0xffff8260.w
-
-vbl_skip:
-	move.w	(a0)+,0xffff82c2.w
-	move.w	(a0)+,0xffff8210.w
-
-	clr.w	has_pending_scp
-vbl_no_pending_scp:
-
-	tst.w	has_pending_vram
-	beq.b	vbl_no_pending_vram
-
-	move.l	pending_vram,d0
-	move.l	d0,d1
-	lsr.w	#8,d0
-	move.l	d0,0xffff8200.w
-	move.b	d1,0xffff820d.w
-
-	clr.w	has_pending_vram
-vbl_no_pending_vram:
-
-	tst.w	has_pending_palette
-	beq.b	vbl_no_pending_palette
-
-	lea	pending_palette,a0
-	lea	0xffff9800.w,a1
-	moveq	#256/2-1,d0
-
-vbl_falcon_palette_loop:
-	move.l	(a0)+,(a1)+
-	move.l	(a0)+,(a1)+
-	dbra	d0,vbl_falcon_palette_loop
-
-	clr.w	has_pending_palette
-
-vbl_no_pending_palette:
-	movem.l	(sp)+,d0-d1/a0-a1
-	rte
-
 
 	.bss
 	.even
-
-has_pending_scp:
-	ds.w	1
-has_pending_vram:
-	ds.w	1
-has_pending_palette:
-	ds.w	1
-
-pending_scp:
-	ds.b	158-122				| pending SCP resolution data
-pending_vram:
-	ds.l	1				| pending vram pointer
-pending_palette:
-	ds.l	256				| pending palette
 
 save_pal:
 	ds.l	256+16/2			| old colours (sized for falcon+ste palette)

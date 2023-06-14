@@ -28,7 +28,8 @@ then
 	--disable-bink \
 	--opengl-mode=none \
 	--enable-verbose-build \
-	--enable-text-console
+	--enable-text-console \
+	--disable-engine=hugo
 fi
 
 make -j 16
@@ -36,7 +37,8 @@ rm -rf dist-generic
 make dist-generic
 
 # remove themes
-rm -f dist-generic/scummvm/data/*.zip
+rm -f dist-generic/scummvm/data/*.zip dist-generic/scummvm/data/gui-icons.dat
 
 # readme.txt
 cp ../backends/platform/atari/readme.txt dist-generic/scummvm
+unix2dos dist-generic/scummvm/readme.txt

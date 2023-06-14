@@ -71,25 +71,50 @@ private:
 		// used for pixel reading; two common mistakes:
 		// 1. (subRect.left, subRect.bottom) = beginning of the next line *including the offset*
 		// 2. (subRect.right, subRect.bottom) = even worse, end of the *next* line, not current one
-		if (subRect.width() == dstSurface.w) {
-			asm_c2p1x1_8(
-				(const byte*)srcSurface.getBasePtr(subRect.left, subRect.top),
-				(const byte*)srcSurface.getBasePtr(subRect.right, subRect.bottom-1),
-				(byte*)dstSurface.getBasePtr(destX, destY));
-		} else {
+		const byte *pChunky       = (const byte *)srcSurface.getBasePtr(subRect.left, subRect.top);
+		const byte *pChunkyEnd    = (const byte *)srcSurface.getBasePtr(subRect.right, subRect.bottom-1);
+
+		const uint32 bitsPerPixel = dstSurface.format.isCLUT8() || dstSurface.format == PIXELFORMAT_RGB332 ? 8 : 4;
+		const uint32 screenPitch  = dstSurface.pitch * bitsPerPixel/8;
+
+		byte *pScreen = (byte *)dstSurface.getPixels() + destY * screenPitch + destX * bitsPerPixel/8;
+
+		if (bitsPerPixel == 8) {
+			if (srcSurface.pitch == subRect.width()) {
+				if (srcSurface.pitch == dstSurface.pitch) {
+					asm_c2p1x1_8(pChunky, pChunkyEnd, pScreen);
+					return;
+				} else if (srcSurface.pitch == dstSurface.pitch/2) {
+					asm_c2p1x1_8_tt(pChunky, pChunkyEnd, pScreen, screenPitch);
+					return;
+				}
+			}
+
 			asm_c2p1x1_8_rect(
-				(const byte*)srcSurface.getBasePtr(subRect.left, subRect.top),
-				(const byte*)srcSurface.getBasePtr(subRect.right, subRect.bottom-1),
+				pChunky, pChunkyEnd,
 				subRect.width(),
 				srcSurface.pitch,
-				(byte*)dstSurface.getBasePtr(destX, destY),
-				dstSurface.pitch);
+				pScreen,
+				screenPitch);
+		} else {
+			// compare unmodified dst pitch
+			if (srcSurface.pitch == subRect.width() && srcSurface.pitch == dstSurface.pitch) {
+				asm_c2p1x1_4(pChunky, pChunkyEnd, pScreen);
+				return;
+			}
+
+			asm_c2p1x1_4_rect(
+				pChunky, pChunkyEnd,
+				subRect.width(),
+				srcSurface.pitch,
+				pScreen,
+				screenPitch);
 		}
 	}
 
-	void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface, const Graphics::Surface &bgSurface,
-								  const Graphics::Surface &srcSurface, int destX, int destY,
-								  const Common::Rect &subRect, uint32 key, const byte srcPalette[256*3]) const override {
+	void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface, const Graphics::Surface &srcSurface,
+								  int destX, int destY, const Common::Rect &subRect, uint32 key,
+								  const Graphics::Surface &bgSurface, const byte srcPalette[256*3]) const override {
 		Common::Rect backgroundRect(destX, destY, destX + subRect.width(), destY + subRect.height());
 
 		// ensure that background's left and right lie on a 16px boundary and double the width if needed
@@ -116,48 +141,13 @@ private:
 		cachedSurface.copyRectToSurface(bgSurface, 0, 0, backgroundRect);
 
 		// copy cursor
-		if (cachedSurface.format == PIXELFORMAT_RGB332) {
-			assert(srcSurface.format == PIXELFORMAT_CLUT8);
-
-			// Convert CLUT8 to RGB332 palette and do copyRectToSurfaceWithKey() at the same time
-			const byte *src = (const byte*)srcSurface.getBasePtr(subRect.left, subRect.top);
-			byte *dst = (byte*)cachedSurface.getBasePtr(deltaX, 0);
-
-			const int16 w = subRect.width();
-			const int16 h = subRect.height();
-
-			for (int16 y = 0; y < h; ++y) {
-				for (int16 x = 0; x < w; ++x) {
-					const uint32 color = *src++;
-					if (color != key) {
-						*dst++ = (srcPalette[color*3 + 0] & 0xe0)
-							  | ((srcPalette[color*3 + 1] >> 3) & 0x1c)
-							  | ((srcPalette[color*3 + 2] >> 6) & 0x03);
-					} else {
-						dst++;
-					}
-				}
-
-				src += (srcSurface.pitch - w);
-				dst += (cachedSurface.pitch - w);
-			}
-		} else {
-			cachedSurface.copyRectToSurfaceWithKey(srcSurface, deltaX, 0, subRect, key);
-		}
+		convertRectToSurfaceWithKey(cachedSurface, srcSurface, deltaX, 0, subRect, key, srcPalette);
 
 		copyRectToSurface(
 			dstSurface,
 			cachedSurface,
 			backgroundRect.left, backgroundRect.top,
 			Common::Rect(cachedSurface.w, cachedSurface.h));
-	}
-
-	void alignRect(const Graphics::Surface &srcSurface, Common::Rect &rect) const override {
-		// align on 16px
-		rect.left &= 0xfff0;
-		rect.right = (rect.right + 15) & 0xfff0;
-		if (rect.right > srcSurface.w)
-			rect.right = srcSurface.w;
 	}
 };
 

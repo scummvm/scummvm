@@ -13,7 +13,7 @@ Yet another port?
 -----------------
 
 Yes, I am aware of the official Atari/FreeMiNT port done by KeithS over the
-years (https://docs.scummvm.org/en/v2.6.1/other_platforms/atari.html). It is
+years (https://docs.scummvm.org/en/v2.7.0/other_platforms/atari.html). It is
 even updated every release and put on the official ScummVM website. That port
 is basically just a recompiled SDL backend for our platform - that certainly
 has some advantages (works in GEM, can be easily compiled for the FireBee etc.)
@@ -41,34 +41,41 @@ his own backend), I decided to do the same and see whether I could do better.
 And I could!
 
 
+Hardware requirements
+---------------------
+
+This port requires an Atari computer with TT or Falcon compatible video modes.
+Ideally accelerated with at least 4+32 MB of RAM. It runs fine also in Hatari
+and ARAnyM but in case of ARAnyM don't forget to disable fVDI to show Videl
+output.
+
+
 Main features
 -------------
 
-- Optimized for the Atari Falcon (ideally with the CT60/CT63/CT60e but for the
-less hungry games even a CT2/DFB@50 MHz or the AfterBurner040 could be enough).
+- Optimized for the Atari TT/Falcon: ideally the CT60/CT63/CT60e but some games
+  run fine on the AfterBurner040, CT2/DFB@50 MHz, Speedy@48 MHz or even less!
 
 - Full support for the SuperVidel, incl. the SuperBlitter (!)
 
 - Removed features found too demanding for our platform; the most visible
   change is the exclusion of the 16bpp games (those are mostly hi-res anyway)
-  but games in 640x480@8bpp work nicely.
+  but games in 640x480@8bpp work nicely (Falcon only, unfortunately).
 
 - Direct rendering and single/triple buffering support.
 
 - Custom (and optimal) drawing routines (especially for the cursor).
 
-- Custom (Super)Videl resolutions for the best possible performance and visual
-  experience (320x240 in RGB, chunky modes with SuperVidel, 640x480@8bpp for
-  the overlay, ...)
+- Tailored video settings for the best possible performance and visual
+  experience (Falcon RGB overscan, chunky modes with the SuperVidel, TT 640x480
+  for the overlay, ...)
 
 - Custom (hardware based) aspect ratio correction (!)
 
 - Support for PC keys (page up, page down, pause, F11/F12, ...) and mouse wheel
   (Eiffel/Aranym only)
 
-This makes such games as The Curse of Monkey Island better playable (on
-SuperVidel nearly always also with CD (WAV) music and speech). Also, AdLib
-emulation works nicely with many games without noticeable slow downs.
+- AdLib emulation works nicely with many games without noticeable slow downs.
 
 
 Platform-specific features outside the GUI
@@ -81,8 +88,9 @@ Keyboard shortcut "CONTROL+ALT+a": immediate aspect ratio correction on/off
 toggle.
 
 "output_rate" in scummvm.ini: sample rate for mixing, can be 49170, 32780,
-24585, 19668, 16390, 12292, 9834, 8195 (the lower the value, the faster the
-mixing but also in worse quality). Default is 24585 Hz (16-bit, stereo).
+24585, 19668, 16390, 12292, 9834, 8195 on the Falcon and 50066, 25033, 12517,
+6258 on the TT (the lower the value, the faster the mixing but also worse
+quality). Default is 24585/25033 Hz (16-bit, stereo).
 
 "audio_buffer_size" in scummvm.ini: number of samples to preload. Default is
 2048 which equals to about 83ms of audio lag and seems to be about right for
@@ -118,13 +126,14 @@ Cons:
 - screen tearing in most cases
 
 - SuperVidel only: using C2P would be not only suboptimal (every rectangle
-  would be C2P'ed instead of just copy and C2P of the final screen) but poses an
-  additional problem as C2P requires data aligned on a 16px boundary and
-  ScummVM supplies arbitrarily-sized rectangles (this is solvable by custom
-  Surface allocation but it's not bullet-proof). In theory I could implement
-  direct rendering for the Falcon hicolor (320x240@16bpp) but this creates
-  another set of issues like when palette would be updated but not the whole
-  screen - so some rectangles would be rendered in old palette and some in new.
+  would be C2P'ed instead of multiple copying and just one C2P of the final
+  screen) but poses an additional problem as C2P requires data aligned on a
+  16px boundary and ScummVM supplies arbitrarily-sized rectangles (this is
+  solvable by custom Surface allocation but it's not bullet-proof). In theory I
+  could implement direct rendering for the Falcon hicolor (320x240@16bpp) but
+  this creates another set of issues like when palette would be updated but not
+  the whole screen - so some rectangles would be rendered in old palette and
+  some in new.
 
 SuperBlitter used: sometimes (when ScummVM allocates surface via its create()
 function; custom/small buffers originating in the engine code are still copied
@@ -192,8 +201,7 @@ SuperVidel and SuperBlitter
 As mentioned, this port uses SuperVidel and its SuperBlitter heavily. That
 means that if the SuperVidel is detected, it does the following:
 
-- patches all 8bpp VGA resolutions to chunky ones, rendering all C2P routines
-  useless
+- uses 8bpp chunky resolutions
 
 - patches all surface addresses with OR'ing 0xA0000000, i.e. using SV RAM
   instead of slow ST RAM (and even instead of TT RAM for allowing pure
@@ -203,6 +211,17 @@ means that if the SuperVidel is detected, it does the following:
   instead of the slower sync blitting (where one has to wait for every
   rectangle blit to finish), this sometimes leads to nearly zero-cost rendering
   and makes a *huge* difference for 640x480 fullscreen updates.
+
+
+Audio mixing
+------------
+
+ScummVM works internally with 16-bit stereo samples. This mode is not available
+on the TT so a substitute solution must be used. This solution is called STFA
+by The Removers: http://removers.free.fr/softs/stfa.php. Install, activate STFA
+BIOS in the CPX, done. Now you have 16-bit DMA available, too but beware, it is
+also quite CPU demanding so very few games can actually make use of it (see the
+chapter about audio performance considerations below).
 
 
 Performance considerations/pitfalls
@@ -233,11 +252,23 @@ is (by definition) the case of animated intros, especially those in 640x480.
 MIDI vs. AdLib vs. sampled music
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-It could seem that sample music replay must be the most demanding one but on the
-contrary! _Always_ choose a CD version of a game (with *.wav tracks) to any
+It could seem that sample music replay must be the most demanding one but on
+the contrary! Always choose a CD version of a game (with *.wav tracks) to any
 other version. With one exception: if you have a native MIDI device able to
-replay the given game's MIDI notes (using the STMIDI plugin). MIDI emulation
-(synthesis) can easily eat as much as 50% of all used CPU time.
+replay the given game's MIDI notes (using the STMIDI plugin).
+
+MIDI emulation (synthesis) can easily eat as much as 50% of all used CPU time
+(on the CT60). By default, this port uses the MAME OPL emulation (which is said
+to be fastest but also least accurate) but some engines require the DOSBOX one
+which is even more demanding. By the way, you can put "FM_high_quality=true"
+or "FM_medium_quality=true" into scummvm.ini if you want to experiment with a
+better quality synthesis, otherwise the lowest quality will be used (applies
+for MAME OPL only).
+
+On the TT, in 95% of cases it makes sense to enable music only if you have a
+native MIDI synthesizer (like mt32-pi: https://github.com/dwhinham/mt32-pi);
+STFA is usually slow to mix samples, too => mute it (see below) or don't
+install STFA (same effect).
 
 CD music slows everything down
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -283,17 +314,40 @@ loading time. To speed things up in other cases, the "fat" version is
 distributed with repackaged theme files with compression level zero.
 
 
+"Slim" vs. "Fat" version
+------------------------
+
+As a further optimisation step, a 030-only version of ScummVM is provided,
+aimed at accelerated TT and Falcon machines with the 68030 CPU. It further
+restricts features but also improves performance:
+
+- compiled with -m68030 => 68030/68882-specific optimisations enabled
+
+- disabled 040+/SuperVidel code => faster code path for blitting
+
+- doesn't support hires (640x480) games => smaller executable size
+
+- overlay is rendered in 16 colours => faster redraw
+
+- overlay during gameplay has no game backround => ever faster redraw
+
+- overlay doesn't support alternative themes => faster loading time
+
+
 Known issues
 ------------
 
 - aspect ratio correction works on RGB only (yet)
 
-- SuperVidel's DVI output is stretched when in 320x200 or 640x400; I'll  wait
-  for other people's experiences, maybe only my LCD is so lame.
-
 - adding a game in TOS and loading it in FreeMiNT (and vice versa) generates
   incompatible paths. Either use only one system or edit scummvm.ini and set
   there only relative paths (mintlib bug/limitation).
+
+- when run on TT, screen contains horizontal black lines. That is due to the
+  fact that TT offers only 320x480 in 256 colours. Possibly fixable by a Timer
+  B interrupt.
+
+- tooltips in overlay are sometimes drawn with corrupted background.
 
 - the talkie version of MI1 needs to be merged from two sources: first generate
   the DOS version and then additionally also the flac version. Then convert all
@@ -306,11 +360,11 @@ Known issues
 Future plans
 ------------
 
-- aspect ratio correction for VGA/SuperVidel
+- aspect ratio correction for TT/VGA/SuperVidel
 
 - unified file paths in scummvm.ini
 
-- DSP-based sample mixer
+- DSP-based sample mixer (WAV, FLAC, MP2)
 
 - avoid loading music/speech files (and thus slowing down everything) if muted
 
@@ -320,23 +374,9 @@ Future plans
 - using LDG or Thorsten Otto's sharedlibs: https://tho-otto.de/sharedlibs.php
   for game engine plugins to relieve the huge binary size
 
-- add support for the TT030; this would be easily possible when I rewrite the
-  renderer with a more flexible resolution switching
-
-- don't hardcode some of the buffers for cacheing purposes, determine the size
-  based on amount of free RAM
-
 - true audio CD support via MetaDOS API
 
 - OPL2LPT and Retrowave support (if I manage to purchase it somewhere)
-
-- engines based on Graphics::Screen don't have to use my chunky buffer (however
-  it may be tricky to detect this situation)
-
-- C2P could support 4- and 6-bit depth
-
-- increase file buffer size with setvbuf or by using
-  Common::wrapBufferedWriteStream and disabling stdio buffering
 
 
 Closing words

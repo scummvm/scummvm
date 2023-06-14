@@ -22,34 +22,38 @@
 #include <stdio.h>
 #include <time.h>
 
+#include <gem.h>
 #include <mint/cookie.h>
+#include <mint/falcon.h>
 #include <mint/osbind.h>
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_stdout
-#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
 #define FORBIDDEN_SYMBOL_EXCEPTION_fputs
-#define FORBIDDEN_SYMBOL_EXCEPTION_exit
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_getenv
+#define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
+#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
+#define FORBIDDEN_SYMBOL_EXCEPTION_stdout
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
 #include "backends/platform/atari/osystem_atari.h"
 
 #if defined(ATARI)
-#include "backends/graphics/atari/atari-graphics-asm.h"
-#include "backends/keymapper/hardware-input.h"
-#include "backends/mutex/null/null-mutex.h"
-#include "base/main.h"
 
-#include "backends/saves/default/default-saves.h"
-#include "backends/timer/default/default-timer.h"
+#include "backends/audiocd/default/default-audiocd.h"
+#include "common/config-manager.h"
 #include "backends/events/atari/atari-events.h"
 #include "backends/events/default/default-events.h"
-#include "backends/mixer/atari/atari-mixer.h"
-#include "backends/graphics/atari/atari-graphics.h"
+#include "backends/graphics/atari/atari-graphics-asm.h"
 #include "backends/graphics/atari/atari-graphics-superblitter.h"
 #include "backends/graphics/atari/atari-graphics-supervidel.h"
 #include "backends/graphics/atari/atari-graphics-videl.h"
+#include "backends/graphics/atari/atari-graphics.h"
+#include "backends/keymapper/hardware-input.h"
+#include "backends/mixer/atari/atari-mixer.h"
+#include "backends/mutex/null/null-mutex.h"
+#include "backends/saves/default/default-saves.h"
+#include "backends/timer/default/default-timer.h"
+#include "base/main.h"
 #include "gui/debugger.h"
 
 /*
@@ -57,8 +61,9 @@
  */
 #include "backends/fs/posix/posix-fs-factory.h"
 
-extern "C" void atari_ikbd_init();
-extern "C" void atari_ikbd_shutdown();
+extern "C" void atari_kbdvec(void *);
+extern "C" void atari_mousevec(void *);
+extern "C" void atari_vkbderr(void);
 
 extern "C" void atari_200hz_init();
 extern "C" void atari_200hz_shutdown();
@@ -67,36 +72,79 @@ extern "C" volatile uint32 counter_200hz;
 extern void nf_init(void);
 extern void nf_print(const char* msg);
 
-OSystem_Atari::OSystem_Atari() {
-	_fsFactory = new POSIXFilesystemFactory();
-}
+static int s_app_id = -1;
+static int16 s_vdi_handle;
+static int s_vdi_width, s_vdi_height;
 
-OSystem_Atari::~OSystem_Atari() {
-	debug("OSystem_Atari::~OSystem_Atari()");
+static bool s_tt = false;
+typedef void (*KBDVEC)(void *);
+static KBDVEC s_kbdvec = nullptr;
+static void (*s_vkbderr)(void) = nullptr;
+static KBDVEC s_mousevec = nullptr;
 
-	if (_video_initialized) {
-		Supexec(asm_screen_falcon_restore);
-		_video_initialized = false;
-	}
+static void (*s_old_procterm)(void) = nullptr;
 
-	if (_200hz_initialized) {
-		Supexec(atari_200hz_shutdown);
-		_200hz_initialized = false;
-	}
+static void exit_gem() {
+	if (s_app_id != -1) {
+		//wind_update(END_UPDATE);
 
-	if (_ikbd_initialized) {
-		Supexec(atari_ikbd_shutdown);
-		_ikbd_initialized = false;
+		// redraw screen
+		form_dial(FMD_FINISH, 0, 0, 0, 0, 0, 0, s_vdi_width, s_vdi_height);
+		graf_mouse(M_ON, NULL);
+
+		v_clsvwk(s_vdi_handle);
+		appl_exit();
 	}
 }
 
 static void critical_restore() {
-	Supexec(asm_screen_falcon_restore);
+	extern void AtariAudioShutdown();
+	extern void AtariGraphicsShutdown();
+
+	AtariAudioShutdown();
+	AtariGraphicsShutdown();
+
+	if (s_tt)
+		Supexec(asm_screen_tt_restore);
+	else
+		Supexec(asm_screen_falcon_restore);
 	Supexec(atari_200hz_shutdown);
-	Supexec(atari_ikbd_shutdown);
+
+	if (s_kbdvec && s_vkbderr && s_mousevec) {
+		_KBDVECS *kbdvecs = Kbdvbase();
+		((uintptr *)kbdvecs)[-1] = (uintptr)s_kbdvec;
+		kbdvecs->vkbderr = s_vkbderr;
+		kbdvecs->mousevec = s_mousevec;
+		s_kbdvec = s_mousevec = nullptr;
+	}
+
+	exit_gem();
 }
 
-void OSystem_Atari::initBackend() {
+OSystem_Atari::OSystem_Atari() {
+	_fsFactory = new POSIXFilesystemFactory();
+
+	nf_init();
+
+	enum {
+		VDO_NO_ATARI_HW = 0xffff,
+		VDO_ST = 0,
+		VDO_STE,
+		VDO_TT,
+		VDO_FALCON,
+		VDO_MILAN
+	};
+
+	long vdo = VDO_NO_ATARI_HW<<16;
+	Getcookie(C__VDO, &vdo);
+	vdo >>= 16;
+
+	if (vdo != VDO_TT && vdo != VDO_FALCON) {
+		error("ScummVM requires Atari TT/Falcon compatible video");
+	}
+
+	s_tt = (vdo == VDO_TT);
+
 	enum {
 		MCH_ST = 0,
 		MCH_STE,
@@ -110,16 +158,83 @@ void OSystem_Atari::initBackend() {
 	Getcookie(C__MCH, &mch);
 	mch >>= 16;
 
-	if (mch != MCH_FALCON && mch != MCH_ARANYM) {
-		error("ScummVM works only on Atari Falcon and ARAnyM");
-	}
-
 	if (mch == MCH_ARANYM && Getcookie(C_fVDI, NULL) == C_FOUND) {
-		error("Disable fVDI, ScummVM accesses Videl directly");
+		error("Disable fVDI, ScummVM uses XBIOS video calls");
 	}
 
-	nf_init();
+	_KBDVECS *kbdvecs = Kbdvbase();
+	s_kbdvec = (KBDVEC)(((uintptr *)kbdvecs)[-1]);
+	s_vkbderr = kbdvecs->vkbderr;
+	s_mousevec = kbdvecs->mousevec;
 
+	((uintptr *)kbdvecs)[-1] = (uintptr)atari_kbdvec;
+	kbdvecs->vkbderr = atari_vkbderr;
+	kbdvecs->mousevec = atari_mousevec;
+
+	Supexec(atari_200hz_init);
+	_timerInitialized = true;
+
+	if (s_tt)
+		Supexec(asm_screen_tt_save);
+	else
+		Supexec(asm_screen_falcon_save);
+
+	_videoInitialized = true;
+
+	s_old_procterm = Setexc(VEC_PROCTERM, -1);
+	(void)Setexc(VEC_PROCTERM, critical_restore);
+}
+
+OSystem_Atari::~OSystem_Atari() {
+	debug("OSystem_Atari::~OSystem_Atari()");
+
+	// _audiocdManager needs to be deleted before _mixerManager to avoid a crash.
+	delete _audiocdManager;
+	_audiocdManager = nullptr;
+
+	delete _mixerManager;
+	_mixerManager = nullptr;
+
+	delete _graphicsManager;
+	_graphicsManager = nullptr;
+
+	delete _eventManager;
+	_eventManager = nullptr;
+
+	delete _savefileManager;
+	_savefileManager = nullptr;
+
+	delete _timerManager;
+	_timerManager = nullptr;
+
+	delete _fsFactory;
+	_fsFactory = nullptr;
+
+	if (_videoInitialized) {
+		if (s_tt)
+			Supexec(asm_screen_tt_restore);
+		else {
+			Supexec(asm_screen_falcon_restore);
+		}
+
+		_videoInitialized = false;
+	}
+
+	if (_timerInitialized) {
+		Supexec(atari_200hz_shutdown);
+		_timerInitialized = false;
+	}
+
+	if (s_kbdvec && s_vkbderr && s_mousevec) {
+		_KBDVECS *kbdvecs = Kbdvbase();
+		((uintptr *)kbdvecs)[-1] = (uintptr)s_kbdvec;
+		kbdvecs->vkbderr = s_vkbderr;
+		kbdvecs->mousevec = s_mousevec;
+		s_kbdvec = s_mousevec = nullptr;
+	}
+}
+
+void OSystem_Atari::initBackend() {
 	_timerManager = new DefaultTimerManager();
 	_savefileManager = new DefaultSaveFileManager("saves");
 
@@ -141,17 +256,6 @@ void OSystem_Atari::initBackend() {
 	_mixerManager = new AtariMixerManager();
 	// Setup and start mixer
 	_mixerManager->init();
-
-	Supexec(atari_ikbd_init);
-	_ikbd_initialized = true;
-
-	Supexec(atari_200hz_init);
-	_200hz_initialized = true;
-
-	Supexec(asm_screen_falcon_save);
-	_video_initialized = true;
-
-	(void)Setexc(VEC_PROCTERM, critical_restore);
 
 	_startTime = counter_200hz;
 
@@ -207,7 +311,10 @@ void OSystem_Atari::quit() {
 
 	g_system->destroy();
 
-	exit(0);
+	// graceful exit
+	(void)Setexc(VEC_PROCTERM, s_old_procterm);
+
+	exit_gem();
 }
 
 void OSystem_Atari::logMessage(LogMessageType::Type type, const char *message) {
@@ -218,10 +325,13 @@ void OSystem_Atari::logMessage(LogMessageType::Type type, const char *message) {
 	else
 		output = stderr;
 
-	fputs(message, output);
+	static char str[1024+1];
+	sprintf(str, "[%08d] %s", getMillis(), message);
+
+	fputs(str, output);
 	fflush(output);
 
-	nf_print(message);
+	nf_print(str);
 }
 
 void OSystem_Atari::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
@@ -272,12 +382,47 @@ OSystem *OSystem_Atari_create() {
 }
 
 int main(int argc, char *argv[]) {
+	s_app_id = appl_init();
+	if (s_app_id != -1) {
+		// get the ID of the current physical screen workstation
+		int16 dummy;
+		s_vdi_handle = graf_handle(&dummy, &dummy, &dummy, &dummy);
+		if (s_vdi_handle < 1) {
+			appl_exit();
+			error("graf_handle() failed");
+		}
+
+		int16 work_in[16] = {};
+		int16 work_out[57] = {};
+
+		// open a virtual screen workstation
+		v_opnvwk(work_in, &s_vdi_handle, work_out);
+
+		if (s_vdi_handle == 0) {
+			appl_exit();
+			error("v_opnvwk() failed");
+		}
+
+		s_vdi_width = work_out[0] + 1;
+		s_vdi_height = work_out[1] + 1;
+
+		graf_mouse(M_OFF, NULL);
+		// see https://github.com/freemint/freemint/issues/312
+		//wind_update(BEG_UPDATE);
+	}
+
 	g_system = OSystem_Atari_create();
 	assert(g_system);
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);
 	g_system->destroy();
+
+	// graceful exit
+	(void)Setexc(VEC_PROCTERM, s_old_procterm);
+
+	exit_gem();
+
 	return res;
 }
 

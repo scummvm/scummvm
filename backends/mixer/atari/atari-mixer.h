@@ -43,12 +43,10 @@ public:
 	bool notifyEvent(const Common::Event &event) override;
 
 private:
-	int _clk;
 	uint32 _outputRate;
-	uint32 _samples;
-	uint8 *_samplesBuf;
+	uint32 _samples = 0;
+	uint8 *_samplesBuf = nullptr;
 
-	bool _atariInitialized = false;
 	byte *_atariSampleBuffer = nullptr;
 	byte *_atariPhysicalSampleBuffer = nullptr;
 	byte *_atariLogicalSampleBuffer = nullptr;

@@ -360,7 +360,6 @@ MODULE_OBJS += \
 	graphics/atari/atari_c2p-asm.o \
 	graphics/atari/atari-graphics.o \
 	graphics/atari/atari-graphics-asm.o \
-	graphics/atari/videl-resolutions.o \
 	mixer/atari/atari-mixer.o
 endif
 

@@ -3652,13 +3652,15 @@ if test -n "$_host"; then
 			if test "$_optimizations" = "yes"; then
 				# --enable-release, --enable-optimizations
 				append_var CXXFLAGS "-fomit-frame-pointer"
+				append_var CXXFLAGS "-fno-exceptions"
+				append_var CXXFLAGS "-ffast-math"
 			fi
 
 			# auto -> no
 			if test "$_release_build" = "yes"; then
 				# --enable-release
 				append_var DEFINES  "-DNDEBUG"
-				append_var DEFINES  "-DDISABLE_TEXT_CONSOLE"
+				#append_var DEFINES  "-DDISABLE_TEXT_CONSOLE"
 				append_var CXXFLAGS "-I$HOME/gnu-tools/m68000/m68k-atari-mint/sys-root/opt/mintlib-dlmalloc/include"
 				append_var LDFLAGS  "-L$HOME/gnu-tools/m68000/m68k-atari-mint/sys-root/opt/mintlib-dlmalloc/lib/m68020-60"
 			fi
@@ -3955,10 +3957,11 @@ case $_backend in
 		;;
 	atari)
 		define_in_config_if_yes yes "ATARI"
-		append_var DEFINES  "-DDISABLE_LAUNCHERDISPLAY_GRID"
-		append_var DEFINES  "-DDISABLE_SID"
-		append_var DEFINES  "-DDISABLE_NES_APU"
-		#append_var DEFINES  "-DDISABLE_DOSBOX_OPL"
+		append_var DEFINES "-DDISABLE_LAUNCHERDISPLAY_GRID"
+		append_var DEFINES "-DDISABLE_SID"
+		append_var DEFINES "-DDISABLE_NES_APU"
+		#append_var DEFINES "-DDISABLE_DOSBOX_OPL"
+		append_var LIBS "-lgem"
 		;;
 	dc)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/dc'
