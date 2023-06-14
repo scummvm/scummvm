@@ -2393,7 +2393,6 @@ void LB::b_pasteClipBoardInto(int nargs) {
 	}
 
 	Score *score = movie->getScore();
-	uint16 frame = score->getCurrentFrameNum();
 	Frame *currentFrame = score->_currentFrame;
 	auto channels = score->_channels;
 
@@ -2770,22 +2769,18 @@ void LB::b_zoomBox(int nargs) {
 	if (endRect.isEmpty()) {
 		if ((uint)curFrame + 1 < score->getFramesNum()) {
 			Frame *nextFrame = score->getFrameData(curFrame + 1);
-			if (nextFrame) {
-				Channel endChannel(nullptr, nextFrame->_sprites[endSpriteId]);
-				endRect = endChannel.getBbox();
-				delete nextFrame;
-			}
+			Channel endChannel(nullptr, nextFrame->_sprites[endSpriteId]);
+			endRect = endChannel.getBbox();
+			delete nextFrame;
 		}
 	}
 
 	if (endRect.isEmpty()) {
 		if ((uint)curFrame - 1 > 0) {
 			Frame *prevFrame = score->getFrameData(curFrame - 1);
-			if (prevFrame) {
-				Channel endChannel(nullptr, prevFrame->_sprites[endSpriteId]);
-				endRect = endChannel.getBbox();
-				delete prevFrame;
-			}
+			Channel endChannel(nullptr, prevFrame->_sprites[endSpriteId]);
+			endRect = endChannel.getBbox();
+			delete prevFrame;
 		}
 	}
 
