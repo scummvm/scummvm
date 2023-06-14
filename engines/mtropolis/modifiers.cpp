@@ -20,6 +20,7 @@
  */
 
 #include "common/memstream.h"
+#include "common/random.h"
 
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
@@ -1162,7 +1163,14 @@ const char *PathMotionModifier::getDefaultName() const {
 	return "Path Motion Modifier";
 }
 
-SimpleMotionModifier::SimpleMotionModifier() : _motionType(kMotionTypeIntoScene), _directionFlags(0), _steps(0)/*, _delayMSecTimes4800(0)*/ {
+SimpleMotionModifier::SimpleMotionModifier() : _motionType(kMotionTypeIntoScene), _directionFlags(0), _steps(0), _delayMSecTimes4800(0), _lastTickTime(0) {
+}
+
+SimpleMotionModifier::~SimpleMotionModifier() {
+	if (_scheduledEvent) {
+		_scheduledEvent->cancel();
+		_scheduledEvent.reset();
+	}
 }
 
 bool SimpleMotionModifier::load(ModifierLoaderContext &context, const Data::SimpleMotionModifier &data) {
@@ -1175,6 +1183,7 @@ bool SimpleMotionModifier::load(ModifierLoaderContext &context, const Data::Simp
 	_directionFlags = data.directionFlags;
 	_steps = data.steps;
 	_motionType = static_cast<MotionType>(data.motionType);
+	_delayMSecTimes4800 = data.delayMSecTimes4800;
 
 	return true;
 }
@@ -1185,23 +1194,109 @@ bool SimpleMotionModifier::respondsToEvent(const Event &evt) const {
 
 VThreadState SimpleMotionModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (_executeWhen.respondsTo(msg->getEvent())) {
+		if (!_scheduledEvent) {
+			if (_motionType == kMotionTypeRandomBounce)
+				startRandomBounce(runtime);
+			else {
 #ifdef MTROPOLIS_DEBUG_ENABLE
-		if (Debugger *debugger = runtime->debugGetDebugger())
-			debugger->notify(kDebugSeverityError, "Simple Motion Modifier was supposed to execute, but is not implemented");
+				if (Debugger *debugger = runtime->debugGetDebugger())
+					debugger->notifyFmt(kDebugSeverityError, "Simple motion modifier was activated with an unsupported motion type");
 #endif
+			}
+		}
 		return kVThreadReturn;
 	}
 	if (_terminateWhen.respondsTo(msg->getEvent())) {
-#ifdef MTROPOLIS_DEBUG_ENABLE
-		if (Debugger *debugger = runtime->debugGetDebugger())
-			debugger->notify(kDebugSeverityError, "Simple Motion Modifier was supposed to terminate, but is not implemented");
-#endif
+		disable(runtime);
 		return kVThreadReturn;
 	}
 	return kVThreadReturn;
 }
 
 void SimpleMotionModifier::disable(Runtime *runtime) {
+	if (_scheduledEvent) {
+		_scheduledEvent->cancel();
+		_scheduledEvent.reset();
+	}
+}
+
+void SimpleMotionModifier::startRandomBounce(Runtime *runtime) {
+	_velocity = Common::Point(24, 24);	// Seems to be static
+	_lastTickTime = runtime->getPlayTime();
+
+	_scheduledEvent = runtime->getScheduler().scheduleMethod<SimpleMotionModifier, &SimpleMotionModifier::runRandomBounce>(_lastTickTime + 1, this);
+}
+
+void SimpleMotionModifier::runRandomBounce(Runtime *runtime) {
+	uint numTicks = 100;
+
+	uint64 currentTime = runtime->getPlayTime();
+
+ 	if (_delayMSecTimes4800 > 0) {
+		uint64 ticksToExecute = (currentTime - _lastTickTime) * 4800u / _delayMSecTimes4800;
+
+		if (ticksToExecute < 100) {
+			numTicks = static_cast<uint>(ticksToExecute);
+			_lastTickTime += (static_cast<uint64>(numTicks) * _delayMSecTimes4800 / 4800u);
+		} else {
+			_lastTickTime = currentTime;
+		}
+	}
+
+	if (numTicks > 0) {
+		Structural *structural = this->findStructuralOwner();
+		if (structural && structural->isElement() && static_cast<Element *>(structural)->isVisual()) {
+			VisualElement *visual = static_cast<VisualElement *>(structural);
+
+			const Common::Point initialPosition = visual->getGlobalPosition();
+			Common::Point newPosition = initialPosition;
+
+			Common::Rect relRect = visual->getRelativeRect();
+
+			int32 w = relRect.width();
+			int32 h = relRect.height();
+
+			Window *mainWindow = runtime->getMainWindow().lock().get();
+			if (mainWindow) {
+				int32 windowWidth = mainWindow->getWidth();
+				int32 windowHeight = mainWindow->getHeight();
+
+				for (uint tick = 0; tick < numTicks; tick++) {
+					Common::Rect newRect(newPosition.x + _velocity.x, newPosition.y + _velocity.y, newPosition.x + _velocity.x + w, newPosition.y + _velocity.y + h);
+
+					if (newRect.left < 0) {
+						newRect.translate(-newRect.left, 0);
+						_velocity.x = runtime->getRandom()->getRandomNumber(31) + 1;
+					} else if (newRect.right > windowWidth) {
+						newRect.translate(windowWidth - newRect.right, 0);
+						_velocity.x = -1 - static_cast<int32>(runtime->getRandom()->getRandomNumber(31));
+					}
+
+					if (newRect.top < 0) {
+						newRect.translate(0, -newRect.top);
+						_velocity.y = runtime->getRandom()->getRandomNumber(31) + 1;
+					} else if (newRect.bottom > windowHeight) {
+						newRect.translate(windowHeight - newRect.bottom, 0);
+						_velocity.y = -1 - static_cast<int32>(runtime->getRandom()->getRandomNumber(31));
+					}
+
+					newPosition = Common::Point(newRect.left, newRect.top);
+					_velocity.y++;
+				}
+			}
+
+			if (visual->getHooks())
+				visual->getHooks()->onSetPosition(runtime, visual, initialPosition, newPosition);
+
+			if (newPosition != initialPosition) {
+				VisualElement::OffsetTranslateTaskData *taskData = runtime->getVThread().pushTask("VisualElement::offsetTranslateTask", visual, &VisualElement::offsetTranslateTask);
+				taskData->dx = newPosition.x - initialPosition.x;
+				taskData->dy = newPosition.y - initialPosition.y;
+			}
+		}
+	}
+
+	_scheduledEvent = runtime->getScheduler().scheduleMethod<SimpleMotionModifier, &SimpleMotionModifier::runRandomBounce>(currentTime + 1, this);
 }
 
 Common::SharedPtr<Modifier> SimpleMotionModifier::shallowClone() const {
