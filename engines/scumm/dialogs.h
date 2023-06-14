@@ -222,12 +222,45 @@ private:
 class ScummOptionsContainerWidget : public GUI::OptionsContainerWidget {
 public:
 	ScummOptionsContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &dialogLayout, const Common::String &domain) :
-		OptionsContainerWidget(boss, name, dialogLayout, false, domain) {
+		OptionsContainerWidget(boss, name, dialogLayout, false, domain),
+		_enhancementsPopUp(nullptr) {
 	}
 
-	GUI::CheckboxWidget *createEnhancementsCheckbox(GuiObject *boss, const Common::String &name);
+	void load() override;
+	bool save() override;
+
+	void createEnhancementsWidget(GuiObject *boss, const Common::String &name);
+	GUI::ThemeEval &addEnhancementsLayout(GUI::ThemeEval &layouts) const;
 	GUI::CheckboxWidget *createOriginalGUICheckbox(GuiObject *boss, const Common::String &name);
 	void updateAdjustmentSlider(GUI::SliderWidget *slider, GUI::StaticTextWidget *value);
+
+	GUI::PopUpWidget *_enhancementsPopUp;
+};
+
+/**
+ * Options widget for SCUMM games in general.
+ */
+class ScummGameOptionsWidget : public ScummOptionsContainerWidget {
+public:
+	ScummGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options);
+	~ScummGameOptionsWidget() override {};
+
+	void load() override;
+	bool save() override;
+
+private:
+	enum {
+		kSmoothScrollCmd = 'SMSC'
+	};
+
+	GUI::CheckboxWidget *_smoothScrollCheckbox;
+	GUI::CheckboxWidget *_semiSmoothScrollCheckbox;
+
+	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+
+	ExtraGuiOptions _options;
+	Common::Array<GUI::CheckboxWidget *> _checkboxes;
 };
 
 /**
@@ -249,7 +282,6 @@ private:
 	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	GUI::CheckboxWidget *_enableEnhancementsCheckbox;
 	GUI::CheckboxWidget *_enableOriginalGUICheckbox;
 
 	GUI::SliderWidget *_overtureTicksSlider;
@@ -277,7 +309,6 @@ private:
 	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	GUI::CheckboxWidget *_enableEnhancementsCheckbox;
 	GUI::CheckboxWidget *_enableOriginalGUICheckbox;
 
 	GUI::SliderWidget *_playbackAdjustmentSlider;
@@ -306,7 +337,6 @@ private:
 	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	GUI::CheckboxWidget *_enableEnhancementsCheckbox;
 	GUI::CheckboxWidget *_enableOriginalGUICheckbox;
 
 	GUI::SliderWidget *_introAdjustmentSlider;
