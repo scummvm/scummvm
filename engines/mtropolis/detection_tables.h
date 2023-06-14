@@ -401,6 +401,27 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			"mti",
 			"",
 			{
+				{"xn--MTI1-8b7a", 0, "57a7f8df27c736b4248e2806139c8432", 28512101},
+				//{"MTI2", 0, "02d4188353a44f120c4263128258d364", 432112070},
+				//{"MTI3", 0, "629e6399517982b95abf111cf9402756", 306671165},
+				//{"MTI4", 0, "cc666572fde4e56de3d90e2e885b6ad8", 410213632},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_TESTING,
+			GUIO0()
+		},
+		GID_MTI,
+		0,
+		MTBOOT_MTI_RETAIL_MAC,
+	},
+
+	{ // Muppet Treasure Island
+		{
+			"mti",
+			"",
+			{
 				//{ "MTPLAY32.EXE",	0, "aad51b462d0961fb02d9c1422a41937f", 840192 },
 				//{ "GROUP3.R95",		0, "3b01850e511727aa270aff1d6cb1fcf8", 89088 },
 				//{ "MTIKIT.R95",		0, "f7183d9ff845a3a607f764920fc23b18", 101376 },

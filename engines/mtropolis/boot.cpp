@@ -884,6 +884,23 @@ const ManifestSubtitlesDef obsidianRetailEnSubtitlesDef = {
 	"subtitles_modifier_mapping_obsidian_en.csv"
 };
 
+const ManifestFile mtiRetailMacFiles[] = {
+	{"mPlayer PPC", MTFT_PLAYER},
+	{"Group3.rPP", MTFT_EXTENSION},
+	{"MTIKit.rPP", MTFT_EXTENSION},
+	{"xn--MTI1-8b7a", MTFT_MAIN},
+	{"MTI2", MTFT_ADDITIONAL},
+	{"MTI3", MTFT_ADDITIONAL},
+	{"MTI4", MTFT_ADDITIONAL},
+	{nullptr, MTFT_AUTO}
+};
+
+const char *mtiRetailMacDirectories[] = {
+	"MPlayer PPC",
+	"MPlayer PPC/Resource",
+	nullptr
+};
+
 const ManifestFile mtiRetailWinFiles[] = {
 	{"MTPLAY32.EXE", MTFT_PLAYER},
 	{"GROUP3.R95", MTFT_EXTENSION},
@@ -902,7 +919,8 @@ const ManifestFile mtiRetailWinFiles[] = {
 	{"8.AVI", MTFT_VIDEO},
 	{"9.AVI", MTFT_VIDEO},
 	{"10.AVI", MTFT_VIDEO},
-	{nullptr, MTFT_AUTO}};
+	{nullptr, MTFT_AUTO}
+};
 
 const ManifestFile mtiDemoWinFiles[] = {
 	{"MTIWIN95.EXE", MTFT_PLAYER},
@@ -1118,6 +1136,14 @@ const Game games[] = {
 		nullptr,
 		nullptr,
 		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+	},
+	// Muppet Treasure Island - Retail - Macintosh - Multiple languages
+	{
+		MTBOOT_MTI_RETAIL_MAC,
+		mtiRetailMacFiles,
+		mtiRetailMacDirectories,
+		nullptr,
+		GameDataHandlerFactory<MTIGameDataHandler>::create
 	},
 	// Muppet Treasure Island - Retail - Windows - Multiple languages
 	{
