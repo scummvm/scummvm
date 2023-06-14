@@ -72,6 +72,26 @@ CrabEngine::CrabEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 }
 
 CrabEngine::~CrabEngine() {
+
+	delete _screenSettings;
+	delete gStrPool;
+	delete _tempData;
+	delete _filePath;
+
+	delete _loadMenu;
+	delete _optionMenu;
+
+	delete _helpScreen;
+	delete _loadingScreen;
+
+	delete _eventStore;
+	delete _mouse;
+
+	delete _musicManager;
+	delete _inputManager;
+	delete _textManager;
+	delete _imageManager;
+
 	delete _screen;
 }
 
