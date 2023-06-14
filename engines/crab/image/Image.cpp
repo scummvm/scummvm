@@ -313,7 +313,7 @@ void Image::FastDraw(const int &x, const int &y, Rect *clip) {
 // Purpose: Delete texture data
 //------------------------------------------------------------------------
 void Image::Delete() {
-	if (texture != nullptr) {
+	if (texture != nullptr && w > 0 && h > 0) {
 		texture->free();
 		delete texture;
 		texture = nullptr;
