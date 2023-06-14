@@ -9,6 +9,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Reah: Face the Unknown and Schizm: Mysterious Journey.
    - Added support for Might and Magic Book One.
    - Added support for Muppet Treasure Island.
+   - Added support for Primordia, Shardlight and Technobabylon.
 
  New platforms:
    - Added libretro new shiny port.
@@ -18,6 +19,9 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Added optional dependency for libvpx.
   - Added optional dependency for libmikmod.
   - Added support for PC98 font ROM.
+
+ AGS:
+   - Synced with upstream AGS 3.6.0.48.
 
  Asylum:
    - Added support for Chinese Sanitarium.
