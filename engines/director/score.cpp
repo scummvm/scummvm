@@ -101,9 +101,8 @@ Score::~Score() {
 
 	delete _labels;
 
-	if (_framesStream) {
+	if (_framesStream)
 		delete _framesStream;
-	}
 
 	if (_currentFrame) {
 		delete _currentFrame;
