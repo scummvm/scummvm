@@ -106,6 +106,9 @@ class InputManager {
 	// The current mode of keymap applied
 	KeyBindingMode _keyMode;
 
+	// The keybinds in string format for hotkeys and other places
+	Common::String _keyDescs[IT_TOTAL];
+
 public:
 	InputManager() {
 		//controller = nullptr;
@@ -124,6 +127,8 @@ public:
 		for (int i = 0; i < IT_TOTAL; i++)
 			_ivState[i] = false;
 	}
+
+	void PopulateKeyTable();
 
 	void SetKeyBindingMode(KeyBindingMode mode);
 
@@ -163,7 +168,7 @@ public:
 	// Initialize the controller if it is plugged in
 	void AddController();
 
-	Common::String GetAssociatedKey(const InputType &type) const;
+	Common::String GetAssociatedKey(const InputType &type);
 
 #if 0
 	// Handle plugging and unplugging of controllers on the fly
