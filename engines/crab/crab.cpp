@@ -72,6 +72,7 @@ CrabEngine::CrabEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 }
 
 CrabEngine::~CrabEngine() {
+	delete _app;
 
 	delete _screenSettings;
 	delete gStrPool;
