@@ -19,49 +19,40 @@
  *
  */
 
-#ifndef M4_TERM_H
-#define M4_TERM_H
+#ifndef M4_MEM_RES_H
+#define M4_MEM_RES_H
 
-#include "common/stream.h"
+#include "common/str.h"
+#include "m4/mem/memman.h"
+#include "m4/fileio/sys_file.h"
 
 namespace M4 {
 
-enum TermMode {
-	NO_MODE = 0,
-	MESSAGE_MODE,
-	MEMORY_MODE
-};
+#define	MAX_RESOURCES	(1 << 7)
 
-class Term {
+typedef void **ResHandle;
+
+class Resources {
+	struct Entry {
+		Common::String name;
+		ResHandle RHandle = nullptr;
+		size_t BufferSize = 0;
+		uint32 Size = 0;
+		byte Flags = 0;
+	};
 private:
-	Common::WriteStream *_file = nullptr;
-	bool _using_mono_screen = false;
-	bool _use_log_file = false;
-	TermMode _mode = NO_MODE;
+	Entry _resources[MAX_RESOURCES];
+	SysFile *_fp = nullptr;
+
+	Entry *findAndSetResEntry(const Common::String &resourceName);
+	int hash(const Common::String &sym) const;
+	int32 get_file(const Common::String &name);
 
 public:
-	/**
-	 * Initialization
-	 */
-	void init(bool use_me, bool use_log);
+	~Resources();
 
-	~Term() {
-		delete _file;
-	}
-
-	/**
-	 * Set the terminal mode
-	 */
-	void set_mode(TermMode mode);
-
-	/**
-	 * Show a message
-	 */
-	void message(const char *fmt, ...);
-	void vmessage(const char *fmt, va_list va);
+	Handle rget(const Common::String &resourceName, int32 *ResourceSize);
 };
-
-inline void term_message(const char *fmt, ...);
 
 } // namespace M4
 

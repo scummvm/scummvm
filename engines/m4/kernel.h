@@ -24,9 +24,11 @@
 
 namespace M4 {
 
+#define CACHE_NOT_OVERRIDE_BY_FLAG_PARSE 2
+
 struct Kernel {
 	bool use_log_file = false;
-	bool suppress_cache = false;
+	int suppress_cache = CACHE_NOT_OVERRIDE_BY_FLAG_PARSE;
 	bool track_open_close = false;
 	bool hag_mode = false;
 	bool start_up_with_dbg_ws = false;
@@ -35,6 +37,8 @@ struct Kernel {
 	bool restore_game = false;
 	int last_save = -1;
 	bool teleported_in = false;
+
+	size_t mem_avail() const { return 7999999; }
 };
 
 } // namespace M4

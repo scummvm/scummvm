@@ -19,50 +19,34 @@
  *
  */
 
-#ifndef M4_TERM_H
-#define M4_TERM_H
-
-#include "common/stream.h"
+#include "common/str.h"
+#include "common/textconsole.h"
+#include "m4/adv_r/db_env.h"
+#include "m4/adv_r/db_rmlst.h"
 
 namespace M4 {
 
-enum TermMode {
-	NO_MODE = 0,
-	MESSAGE_MODE,
-	MEMORY_MODE
-};
+char *env_find(const Common::String &descName) {
+	static char name[144];
+	static char resultPath[144];
+	int32 sceneCode;
+	Common::strcpy_s(name, descName.c_str());
 
-class Term {
-private:
-	Common::WriteStream *_file = nullptr;
-	bool _using_mono_screen = false;
-	bool _use_log_file = false;
-	TermMode _mode = NO_MODE;
+	if (descName.hasPrefixIgnoreCase(".raw") || descName.hasPrefixIgnoreCase(".hmp")) {
+		return name;
 
-public:
-	/**
-	 * Initialization
-	 */
-	void init(bool use_me, bool use_log);
+	} else {
+		db_rmlst_get_asset_room_path(name, resultPath, &sceneCode);
+		if (strlen(resultPath) == 0)
+			return nullptr;
 
-	~Term() {
-		delete _file;
+		env_get_path(name, sceneCode, resultPath);
+		return name;
 	}
+}
 
-	/**
-	 * Set the terminal mode
-	 */
-	void set_mode(TermMode mode);
+char *env_get_path(char *resultPath, int room_num, char *fileName) {
+	error("TODO: env_get_path");
+}
 
-	/**
-	 * Show a message
-	 */
-	void message(const char *fmt, ...);
-	void vmessage(const char *fmt, va_list va);
-};
-
-inline void term_message(const char *fmt, ...);
-
-} // namespace M4
-
-#endif
+} // End of namespace M4

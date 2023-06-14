@@ -19,17 +19,29 @@
  *
  */
 
-#include "m4/f_info.h"
+#include "common/file.h"
+#include "common/savefile.h"
+#include "common/system.h"
+#include "m4/fileio/fileio.h"
 
 namespace M4 {
 
-bool f_info_exists(const Common::String &filename) {
-	return Common::File::exists(filename);
+Common::Stream *f_io_open(const Common::String &filename, const Common::String &mode) {
+	if (mode.hasPrefix("r")) {
+		Common::File *f = new Common::File();
+		if (f->open(filename))
+			return f;
+
+		delete f;
+		return nullptr;
+
+	} else {
+		return g_system->getSavefileManager()->openForSaving(filename);
+	}
 }
 
-size_t f_info_get_file_size(const Common::String &filename) {
-	Common::File f;
-	return f.open(filename) ? f.size() : 0;
+void f_io_close(Common::Stream *stream) {
+	delete stream;
 }
 
 } // namespace M4

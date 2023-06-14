@@ -25,6 +25,7 @@
 #include "m4/game.h"
 #include "m4/kernel.h"
 #include "m4/term.h"
+#include "m4/fileio/sys_file.h"
 
 namespace M4 {
 
@@ -41,6 +42,7 @@ struct Globals {
 	Game _game;
 	Kernel _kernel;
 	Term _term;
+	Hag_Statics _hag;
 
 	bool _system_shutting_down = false;
 	size_t _mem_to_alloc = 0;

@@ -19,22 +19,15 @@
  *
  */
 
-#ifndef M4_INFO_H
-#define M4_INFO_H
+#ifndef M4_M4_TYPES_H
+#define M4_M4_TYPES_H
 
-#include "common/file.h"
+#include "common/scummsys.h"
 
 namespace M4 {
 
-/**
- * Returns true if a given file exists
- */
-extern bool f_info_exists(const Common::String &filename);
-
-/**
- * Returns the size of a given file
- */
-extern size_t f_info_get_file_size(const Common::String &filename);
+typedef void *Ptr;
+typedef void *Handle;
 
 } // namespace M4
 

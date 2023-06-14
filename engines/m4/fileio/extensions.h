@@ -19,49 +19,16 @@
  *
  */
 
-#ifndef M4_TERM_H
-#define M4_TERM_H
+#ifndef M4_FILEIO_EXTENSIONS_H
+#define M4_FILEIO_EXTENSIONS_H
 
-#include "common/stream.h"
+#include "common/str.h"
 
 namespace M4 {
 
-enum TermMode {
-	NO_MODE = 0,
-	MESSAGE_MODE,
-	MEMORY_MODE
-};
+Common::String f_extension_add(const Common::String &name, const Common::String &ext);
 
-class Term {
-private:
-	Common::WriteStream *_file = nullptr;
-	bool _using_mono_screen = false;
-	bool _use_log_file = false;
-	TermMode _mode = NO_MODE;
-
-public:
-	/**
-	 * Initialization
-	 */
-	void init(bool use_me, bool use_log);
-
-	~Term() {
-		delete _file;
-	}
-
-	/**
-	 * Set the terminal mode
-	 */
-	void set_mode(TermMode mode);
-
-	/**
-	 * Show a message
-	 */
-	void message(const char *fmt, ...);
-	void vmessage(const char *fmt, va_list va);
-};
-
-inline void term_message(const char *fmt, ...);
+Common::String f_extension_new(const Common::String &name, const Common::String &ext);
 
 } // namespace M4
 

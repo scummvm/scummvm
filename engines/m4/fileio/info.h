@@ -19,49 +19,22 @@
  *
  */
 
-#ifndef M4_TERM_H
-#define M4_TERM_H
+#ifndef M4_FILEIO_INFO_H
+#define M4_FILEIO_INFO_H
 
-#include "common/stream.h"
+#include "common/file.h"
 
 namespace M4 {
 
-enum TermMode {
-	NO_MODE = 0,
-	MESSAGE_MODE,
-	MEMORY_MODE
-};
+/**
+ * Returns true if a given file exists
+ */
+extern bool f_info_exists(const Common::String &filename);
 
-class Term {
-private:
-	Common::WriteStream *_file = nullptr;
-	bool _using_mono_screen = false;
-	bool _use_log_file = false;
-	TermMode _mode = NO_MODE;
-
-public:
-	/**
-	 * Initialization
-	 */
-	void init(bool use_me, bool use_log);
-
-	~Term() {
-		delete _file;
-	}
-
-	/**
-	 * Set the terminal mode
-	 */
-	void set_mode(TermMode mode);
-
-	/**
-	 * Show a message
-	 */
-	void message(const char *fmt, ...);
-	void vmessage(const char *fmt, va_list va);
-};
-
-inline void term_message(const char *fmt, ...);
+/**
+ * Returns the size of a given file
+ */
+extern size_t f_info_get_file_size(const Common::String &filename);
 
 } // namespace M4
 
