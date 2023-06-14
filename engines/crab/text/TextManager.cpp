@@ -211,6 +211,9 @@ void TextManager::Draw(const int &x, const int &y, const Common::String &text, c
 #endif
 			cache[pos].img.Draw(x - cache[pos].img.W(), y);
 		}
+
+		surf.free();
+
 	} else {
 		if (align == ALIGN_LEFT)
 			cache[pos].img.Draw(x, y);
