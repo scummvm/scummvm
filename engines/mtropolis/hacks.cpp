@@ -1035,16 +1035,20 @@ public:
 
 private:
 	Graphics::ManagedSurface _surf;
+	Graphics::ManagedSurface _mask;
 	Common::Rect _initialRect;
 };
 
 void MTIMolassesHandler::setFullScreenSurface(const Graphics::ManagedSurface &srcSurf) {
 	_surf.copyFrom(srcSurf);
+	_mask.create(srcSurf.w, srcSurf.h, Graphics::PixelFormat::createFormatCLUT8());
+	_mask.fillRect(Common::Rect(0, 0, srcSurf.w, srcSurf.h), 0xff);
+
 	wipeRect(_initialRect);
 }
 
 void MTIMolassesHandler::wipeRect(const Common::Rect &rect) {
-	_surf.fillRect(rect, 0);
+	_mask.fillRect(rect, 0);
 }
 
 void MTIMolassesHandler::setInitialRect(const Common::Rect &rect) {
@@ -1053,10 +1057,11 @@ void MTIMolassesHandler::setInitialRect(const Common::Rect &rect) {
 
 void MTIMolassesHandler::release() {
 	_surf.free();
+	_mask.free();
 }
 
 void MTIMolassesHandler::renderPostEffect(Graphics::ManagedSurface &surface) const {
-	surface.transBlitFrom(_surf, Common::Point(0, 0), 0);
+	surface.transBlitFrom(_surf, Common::Point(0, 0), _mask);
 }
 
 class MTIMolassesFullscreenHooks : public StructuralHooks {
