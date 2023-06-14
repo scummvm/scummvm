@@ -22,6 +22,7 @@
 #ifdef ENABLE_EOB
 
 #include "kyra/sound/drivers/capcom98.h"
+#include "audio/mixer.h"
 #include "audio/softsynth/fmtowns_pc98/pc98_audio.h"
 #include "common/func.h"
 #include "common/system.h"
@@ -56,7 +57,9 @@ public:
 
 	void fadeOut(uint16 speed);
 	void allNotesOff(uint16 chanFlags = 0xFFFF);
-	virtual void setMasterVolume (int vol) = 0;
+
+	void setMusicVolume (int vol);
+	void setSoundEffectVolume (int vol);
 
 	void nextTick();
 	virtual void processSounds() = 0;
@@ -64,14 +67,18 @@ public:
 protected:
 	uint16 _soundMarkers[16];
 	uint8 _fadeState;
+	uint16 _musicVolume;
+	uint16 _sfxVolume;
 	const uint16 _chanReserveFlags;
 	const uint16 _chanDisableFlags;
 
 private:
 	virtual void send(uint32 evt) = 0;
 	virtual PC98AudioCore::MutexLock lockMutex() = 0;
+	virtual void updateMasterVolume() = 0;
 	void storeEvent(uint32 evt);
 	void restorePlayer();
+	virtual void setVolControlMask() {}
 	virtual void restoreStateIntern() {}
 	uint16 playFlag() const { return _playFlags & (kStdPlay | kPrioPlay); }
 	uint16 extraFlag() const { return _playFlags & kPrioClaim; }
@@ -107,13 +114,12 @@ public:
 	void deinit() override {}
 	void reset() override;
 
-	void setMasterVolume (int vol) override;
-
 	void processSounds() override;
 
 private:
 	void send(uint32 evt) override;
 	PC98AudioCore::MutexLock lockMutex() override;
+	void updateMasterVolume() override;
 
 	MidiDriver *_midi;
 	const bool _isMT32;
@@ -228,7 +234,7 @@ class CapcomPC98_FM final : public CapcomPC98Player, PC98AudioPluginDriver {
 public:
 	typedef Common::Functor0Mem<void, CapcomPC98AudioDriverInternal> CBProc;
 
-	CapcomPC98_FM(Audio::Mixer *mixer, CBProc &cbproc, bool playerPrio, uint16 playFlags, uint8 chanReserveFlags, uint8 chanDisableFlags, bool needsTimer);
+	CapcomPC98_FM(Audio::Mixer *mixer, CBProc &cbproc, bool playerPrio, uint16 playFlags, uint8 chanReserveFlags, uint8 chanDisableFlags, uint16 volControlMask, bool needsTimer);
 	~CapcomPC98_FM() override;
 
 	bool init() override;
@@ -236,17 +242,17 @@ public:
 	void reset() override;
 	void loadInstruments(const uint8 *data, uint16 number) override;
 
-	void setMasterVolume (int vol) override;
-
 	PC98AudioCore::MutexLock lockMutex() override;
 
 private:
 	void send(uint32 evt) override;
+	void updateMasterVolume() override;
 	void timerCallbackA() override;
 	void processSounds() override;
 
 	void controlChange(uint8 ch, uint8 control, uint8 val);
 
+	void setVolControlMask() override;
 	void restoreStateIntern() override;
 
 	PC98AudioCore *_ac;
@@ -256,6 +262,7 @@ private:
 	CBProc &_cbProc;
 
 	bool _ready;
+	const uint16 _volControlMask;
 
 	static const uint8 _initData[72];
 };
@@ -311,7 +318,7 @@ private:
 uint16 CapcomPC98Player::_flags = 0;
 
 CapcomPC98Player::CapcomPC98Player(bool playerPrio, uint16 playFlags, uint16 chanReserveFlags, uint16 chanDisableFlags) : _playerPrio(playerPrio), _playFlags(playFlags), _chanReserveFlags(chanReserveFlags), _chanDisableFlags(chanDisableFlags),
-	_data(nullptr), _curPos(nullptr), _numEventsTotal(0), _numEventsLeft(0), _volume(0), _midiTicker(0), _loop(false), _fadeState(0), _fadeSpeed(1), _fadeTicker(0) {
+	_data(nullptr), _curPos(nullptr), _numEventsTotal(0), _numEventsLeft(0), _volume(0), _midiTicker(0), _loop(false), _fadeState(0), _fadeSpeed(1), _fadeTicker(0), _musicVolume(0), _sfxVolume(0) {
 	memset(_soundMarkers, 0, sizeof(_soundMarkers));
 	_flags = 0;
 }
@@ -361,6 +368,16 @@ void CapcomPC98Player::allNotesOff(uint16 chanFlags) {
 	}
 }
 
+void CapcomPC98Player::setMusicVolume (int vol) {
+	_musicVolume = vol;
+	updateMasterVolume();
+}
+
+void CapcomPC98Player::setSoundEffectVolume (int vol) {
+	_sfxVolume = vol;
+	updateMasterVolume();
+}
+
 void CapcomPC98Player::nextTick() {
 	if (_flags & playFlag()) {
 		if (_flags & kFadeOut) {
@@ -376,14 +393,17 @@ void CapcomPC98Player::nextTick() {
 			_fadeTicker = _fadeSpeed;
 		}
 
-		if (!_playerPrio) {
+		if (_playerPrio && (_flags & kPrioClaim)) {
+			_flags &= ~kPrioClaim;
+			setVolControlMask();
+		} else if (!_playerPrio) {
 			if (_flags & kPrioClaim) {
-				_flags &= ~kPrioClaim;
 				_flags |= kSavedState;
 				allNotesOff(~_chanReserveFlags);
 			} else if (((_flags & kPrioStop) || !(_flags & kPrioPlay)) && (_flags & kSavedState)) {
 				_flags &= ~kSavedState;
 				restorePlayer();
+				setVolControlMask();
 			}
 		}
 
@@ -494,9 +514,12 @@ bool CapcomPC98_MIDI::init() {
 	if (_isMT32) {
 		_midi->sendMT32Reset();
 	} else {
+		// Don't send the reset from the common code here, since that also forces a GS reset
+		// which we don't want. A GS reset will change the sound output in a quite obvious way
+		// and make it sound different from the original output.
 		static const byte gmResetSysEx[] = { 0x7E, 0x7F, 0x09, 0x01 };
 		_midi->sysEx(gmResetSysEx, sizeof(gmResetSysEx));
-		g_system->delayMillis(100);
+		g_system->delayMillis(50);
 	}
 
 	reset();
@@ -527,10 +550,6 @@ void CapcomPC98_MIDI::send(uint32 evt) {
 	_midi->send(evt);
 }
 
-void CapcomPC98_MIDI::setMasterVolume (int vol) {
-
-}
-
 void CapcomPC98_MIDI::processSounds() {
 	if (_fadeState) {
 		for (int i = 0; i < 16; ++i)
@@ -542,6 +561,26 @@ PC98AudioCore::MutexLock CapcomPC98_MIDI::lockMutex() {
 	if (!_mproc.isValid())
 		error("CapcomPC98_MIDI::lockMutex(): Invalid call");
 	return _mproc();
+}
+
+void CapcomPC98_MIDI::updateMasterVolume()  {
+	// This driver is not used for sound effects. So I don't add support for sound effects volume control.
+	if (_isMT32) {
+		byte vol = _musicVolume * 100 / Audio::Mixer::kMaxMixerVolume;
+		byte mt32VolSysEx[9] = { 0x41, 0x10, 0x16, 0x12, 0x10, 0x00, 0x16, vol, 0x00 };
+		byte chk = 0;
+		for (int i = 4; i < 8; ++i)
+			chk += mt32VolSysEx[i];
+		mt32VolSysEx[8] = 0x80 - (chk & 0x7f);
+		_midi->sysEx(mt32VolSysEx, sizeof(mt32VolSysEx));	
+	} else {
+		uint16 vol = _musicVolume * 0x3FFF / Audio::Mixer::kMaxMixerVolume;
+		byte vl = vol & 0x7F;
+		byte vh = (vol >> 7) & 0x7F;
+		byte gmVolSysEx[6] = { 0x7F, 0x7F, 0x04, 0x01, vl, vh };
+		_midi->sysEx(gmVolSysEx, sizeof(gmVolSysEx));
+	}
+	g_system->delayMillis(40);
 }
 
 // This is not identical to the one we have in our common code (not even similar).
@@ -1078,7 +1117,7 @@ const uint8 CapcomPC98_FM_Channel::_volTablePara[] = {
 	0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00
 };
 
-CapcomPC98_FM::CapcomPC98_FM(Audio::Mixer *mixer, CBProc &proc, bool playerPrio, uint16 playFlags, uint8 chanReserveFlags, uint8 chanDisableFlags, bool needsTimer) : CapcomPC98Player(playerPrio, playFlags, chanReserveFlags, chanDisableFlags), PC98AudioPluginDriver(), _cbProc(proc), _ac(nullptr), _chan(nullptr), _ready(false) {
+CapcomPC98_FM::CapcomPC98_FM(Audio::Mixer *mixer, CBProc &proc, bool playerPrio, uint16 playFlags, uint8 chanReserveFlags, uint8 chanDisableFlags, uint16 volControlMask, bool needsTimer) : CapcomPC98Player(playerPrio, playFlags, chanReserveFlags, chanDisableFlags), PC98AudioPluginDriver(), _cbProc(proc), _volControlMask(volControlMask), _ac(nullptr), _chan(nullptr), _ready(false) {
 	_ac = new PC98AudioCore(mixer, needsTimer ? this : nullptr, kType26);
 	assert(_ac);
 	_chan = new CapcomPC98_FM_Channel*[3];
@@ -1099,6 +1138,9 @@ CapcomPC98_FM::~CapcomPC98_FM() {
 bool CapcomPC98_FM::init() {
 	if (!(_chan && _ac && _ac->init()))
 		return false;
+
+	if (_volControlMask == 0xFFFF) 
+		setVolControlMask();
 
 	_ac->writeReg(0, 7, 0xBF);
 	for (int i = 0; i < 14; ++i) {
@@ -1154,10 +1196,6 @@ void CapcomPC98_FM::loadInstruments(const uint8 *data, uint16 number) {
 	}
 }
 
-void CapcomPC98_FM::setMasterVolume (int vol) {
-
-}
-
 PC98AudioCore::MutexLock CapcomPC98_FM::lockMutex() {
 	if (!_ready)
 		error("CapcomPC98_FM::lockMutex(): Invalid call");
@@ -1196,7 +1234,6 @@ void CapcomPC98_FM::send(uint32 evt) {
 	}
 }
 
-
 void CapcomPC98_FM::timerCallbackA() {
 	if (_ready && _cbProc.isValid()) {
 		PC98AudioCore::MutexLock lock = _ac->stackLockMutex();
@@ -1207,6 +1244,11 @@ void CapcomPC98_FM::timerCallbackA() {
 void CapcomPC98_FM::processSounds() {
 	for (int i = 0; i < 3; ++i)
 		_chan[i]->processSounds();
+}
+
+void CapcomPC98_FM::updateMasterVolume()  {
+	_ac->setMusicVolume(_musicVolume);
+	_ac->setSoundEffectVolume(_sfxVolume);
 }
 
 void CapcomPC98_FM::controlChange(uint8 ch, uint8 control, uint8 val) {
@@ -1251,6 +1293,10 @@ void CapcomPC98_FM::restoreStateIntern() {
 	}
 }
 
+void CapcomPC98_FM::setVolControlMask() {
+	_ac->setSoundEffectChanMask(_volControlMask);
+}
+
 const uint8 CapcomPC98_FM::_initData[72] = {
 	0x49, 0x4e, 0x49, 0x54, 0x5f, 0x56, 0x4f, 0x49, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	0x00, 0x00,
 	0x00, 0x00, 0x01, 0x7f, 0x1f, 0x00, 0x00, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x7f, 0x1f,
@@ -1270,11 +1316,11 @@ CapcomPC98AudioDriverInternal::CapcomPC98AudioDriverInternal(Audio::Mixer *mixer
 
 	if (type == MT_MT32 || type == MT_GM) {
 		_players[0] = new CapcomPC98_MIDI(dev, type == MT_MT32, *_mutexProc);
-		_players[1] = _fmDevice = new CapcomPC98_FM(mixer, *_timerProc, true, CapcomPC98Player::kPrioPlay, 4, (uint8)~4, true);
+		_players[1] = _fmDevice = new CapcomPC98_FM(mixer, *_timerProc, true, CapcomPC98Player::kPrioPlay, 4, (uint8)~4, 0xFFFF, true);
 		_marker = 1;
 	} else {
-		_players[0] = new CapcomPC98_FM(mixer, *_timerProc, false, CapcomPC98Player::kStdPlay, 3, 0, false);
-		_players[1] = _fmDevice = new CapcomPC98_FM(mixer, *_timerProc, true, CapcomPC98Player::kPrioPlay | CapcomPC98Player::kPrioClaim, 4, (uint8)~4, true);
+		_players[0] = new CapcomPC98_FM(mixer, *_timerProc, false, CapcomPC98Player::kStdPlay, 3, 0, 0, false);
+		_players[1] = _fmDevice = new CapcomPC98_FM(mixer, *_timerProc, true, CapcomPC98Player::kPrioPlay | CapcomPC98Player::kPrioClaim, 4, (uint8)~4, 4, true);
 	}
 
 	bool ready = true;
@@ -1405,8 +1451,11 @@ PC98AudioCore::MutexLock CapcomPC98AudioDriverInternal::lockMutex() {
 void CapcomPC98AudioDriverInternal::updateMasterVolume() {
 	if (!_ready)
 		return;
-	_players[0]->setMasterVolume(_musicVolume);
-	_players[1]->setMasterVolume(_sfxVolume);
+
+	for (int i = 0; i < 2; ++i) {
+		_players[i]->setMusicVolume(_musicVolume);
+		_players[i]->setSoundEffectVolume(_sfxVolume);
+	}
 }
 
 CapcomPC98AudioDriver::CapcomPC98AudioDriver(Audio::Mixer *mixer, MidiDriver::DeviceHandle dev) {
