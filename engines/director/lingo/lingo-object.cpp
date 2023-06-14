@@ -237,25 +237,23 @@ void Lingo::cleanupXLibs() {
 }
 
 Common::String Lingo::normalizeXLibName(Common::String name) {
+	// Normalize to remove machintosh path delimiters (':', '@:')
+	name = convertPath(name);
+
+	size_t pos = name.findLastOf(g_director->_dirSeparator);
+	if (pos != Common::String::npos)
+		name = name.substr(pos + 1, name.size());
+
 	Common::Platform platform = _vm->getPlatform();
 	if (platform == Common::kPlatformMacintosh || platform == Common::kPlatformMacintoshII) {
-		size_t pos = name.findLastOf(':');
-		if (pos != Common::String::npos)
-			name = name.substr(pos + 1, name.size());
 		if (name.hasSuffixIgnoreCase(".xlib"))
 			name = name.substr(0, name.size() - 5);
 	} else if (platform == Common::kPlatformWindows) {
-		size_t pos = name.findLastOf("\\");
-		if (pos != Common::String::npos)
-			name = name.substr(pos + 1, name.size());
 		if (name.hasSuffixIgnoreCase(".dll"))
 			name = name.substr(0, name.size() - 4);
 	}
 
 	name.trim();
-
-	// Normalize to remove machintosh path delimiters (':', '@:')
-	name = convertPath(name);
 
 	return name;
 }
