@@ -33,6 +33,7 @@
 #include "gui/gui-manager.h"
 #include "gui/widget.h"
 #include "gui/widgets/edittext.h"
+#include "gui/widgets/popup.h"
 #include "gui/ThemeEval.h"
 
 #include "scumm/dialogs.h"
@@ -1042,12 +1043,41 @@ void LoomTownsDifficultyDialog::handleCommand(GUI::CommandSender *sender, uint32
 
 // Game options widgets
 
-// Normally this would be added as a static game settings widget, but I see no
-// way to get both the dynamic and the static one, so we have to duplicate it
-// here.
+void ScummOptionsContainerWidget::load() {
+	if (_enhancementsPopUp)
+		_enhancementsPopUp->setSelectedTag(ConfMan.getInt("enhancements", _domain));
+}
 
-GUI::CheckboxWidget *ScummOptionsContainerWidget::createEnhancementsCheckbox(GuiObject *boss, const Common::String &name) {
-	return new GUI::CheckboxWidget(boss, name, _("Enable game-specific enhancements"), _("Allow ScummVM to make small enhancements to the game, usually based on other versions of the same game."));
+bool ScummOptionsContainerWidget::save() {
+	if (_enhancementsPopUp)
+		ConfMan.setInt("enhancements", _enhancementsPopUp->getSelectedTag(), _domain);
+	return true;
+}
+
+void ScummOptionsContainerWidget::createEnhancementsWidget(GuiObject *boss, const Common::String &name) {
+	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(boss, name + ".EnhancementsLabel", _("Enhancements:"));
+	text->setAlign(Graphics::TextAlign::kTextAlignEnd);
+
+	_enhancementsPopUp = new GUI::PopUpWidget(boss, name + ".Enhancements", _("Allow ScummVM to make small enhancements to the game, usually based on other versions of the same game."));
+
+	// At least one user has expressed an interest in having bugfixes and
+	// content fixes, but not fixes for minor glitches. I don't expect that
+	// anyone wants enhancements but no bugfixes, though.
+
+	_enhancementsPopUp->appendEntry(_("None"), 0);
+	_enhancementsPopUp->appendEntry(_("Fix bugs"), kEnhancementsBugs);
+	_enhancementsPopUp->appendEntry(_("Fix bugs and glitches"), kEnhancementsBugs | kEnhancementsGlitches);
+	_enhancementsPopUp->appendEntry(_("Fix bugs and content"), kEnhancementsBugs | kEnhancementsContent);
+	_enhancementsPopUp->appendEntry(_("Fix bugs, glitches, and content"), kEnhancementsBugs | kEnhancementsGlitches | kEnhancementsContent);
+}
+
+GUI::ThemeEval &ScummOptionsContainerWidget::addEnhancementsLayout(GUI::ThemeEval &layouts) const {
+	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
+		.addPadding(0, 0, 12, 0)
+		.addWidget("EnhancementsLabel", "OptionsLabel")
+		.addWidget("Enhancements", "PopUp")
+	.closeLayout();
+	return layouts;
 }
 
 GUI::CheckboxWidget *ScummOptionsContainerWidget::createOriginalGUICheckbox(GuiObject *boss, const Common::String &name) {
@@ -1069,6 +1099,91 @@ void ScummOptionsContainerWidget::updateAdjustmentSlider(GUI::SliderWidget *slid
 
 	value->setLabel(Common::String::format("%s%d.%02d", sign, adjustment / 100, adjustment % 100));
 
+}
+
+// SCUMM game settings
+
+ScummGameOptionsWidget::ScummGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options) :
+		ScummOptionsContainerWidget(boss, name, "ScummGameOptionsDialog", domain),
+		_options(options), _smoothScrollCheckbox(nullptr),
+		_semiSmoothScrollCheckbox(nullptr) {
+	for (uint i = 0; i < _options.size(); i++) {
+		GUI::CheckboxWidget *checkbox = nullptr;
+		if (strcmp(_options[i].configOption, "enhancements") == 0) {
+			createEnhancementsWidget(widgetsBoss(), _dialogLayout);
+		} else {
+			Common::String id = Common::String::format("%d", i + 1);
+
+			checkbox = new GUI::CheckboxWidget(widgetsBoss(),
+				_dialogLayout + ".customOption" + id + "Checkbox", _(_options[i].label), _(_options[i].tooltip));
+
+			if (strcmp(_options[i].configOption, "smooth_scroll") == 0) {
+				_smoothScrollCheckbox = checkbox;
+				_smoothScrollCheckbox->setCmd(kSmoothScrollCmd);
+			} else if (strcmp(_options[i].configOption, "semi_smooth_scroll") == 0) {
+				_semiSmoothScrollCheckbox = checkbox;
+			}
+		}
+		_checkboxes.push_back(checkbox);
+	}
+}
+
+void ScummGameOptionsWidget::load() {
+	ScummOptionsContainerWidget::load();
+
+	for (uint i = 0; i < _options.size(); i++) {
+		if (!_checkboxes[i])
+			continue;
+
+		bool isChecked = _options[i].defaultState;
+		if (ConfMan.hasKey(_options[i].configOption, _domain))
+			isChecked = ConfMan.getBool(_options[i].configOption, _domain);
+		_checkboxes[i]->setState(isChecked);
+	}
+
+	if (_smoothScrollCheckbox && _semiSmoothScrollCheckbox)
+		_semiSmoothScrollCheckbox->setEnabled(_smoothScrollCheckbox->getState());
+}
+
+bool ScummGameOptionsWidget::save() {
+	ScummOptionsContainerWidget::save();
+
+	for (uint i = 0; i < _options.size(); i++) {
+		if (_checkboxes[i])
+			ConfMan.setBool(_options[i].configOption, _checkboxes[i]->isEnabled() && _checkboxes[i]->getState(), _domain);
+	}
+
+	return true;
+}
+
+void ScummGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+	layouts.addDialog(layoutName, overlayedLayout);
+	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(0, 0, 8, 8);
+
+	for (uint i = 0; i < _options.size(); i++) {
+		if (strcmp(_options[i].configOption, "enhancements") != 0) {
+			Common::String id = Common::String::format("%d", i + 1);
+			layouts.addWidget("customOption" + id + "Checkbox", "Checkbox");
+		}
+	}
+
+	if (_enhancementsPopUp)
+		addEnhancementsLayout(layouts);
+
+	layouts.closeLayout().closeDialog();
+}
+
+void ScummGameOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+	case kSmoothScrollCmd: {
+		if (_semiSmoothScrollCheckbox)
+			_semiSmoothScrollCheckbox->setEnabled(data != 0);
+		break;
+	}
+	default:
+		GUI::OptionsContainerWidget::handleCommand(sender, cmd, data);
+		break;
+	}
 }
 
 // EGA Loom Overture settings
@@ -1097,11 +1212,13 @@ LoomEgaGameOptionsWidget::LoomEgaGameOptionsWidget(GuiObject *boss, const Common
 
 	_overtureTicksValue->setFlags(GUI::WIDGET_CLEARBG);
 
-	_enableEnhancementsCheckbox = createEnhancementsCheckbox(widgetsBoss(), "LoomEgaGameOptionsDialog.EnableEnhancements");
+	createEnhancementsWidget(widgetsBoss(), "LoomEgaGameOptionsDialog");
 	_enableOriginalGUICheckbox = createOriginalGUICheckbox(widgetsBoss(), "LoomEgaGameOptionsDialog.EnableOriginalGUI");
 }
 
 void LoomEgaGameOptionsWidget::load() {
+	ScummOptionsContainerWidget::load();
+
 	int loomOvertureTicks = 0;
 
 	if (ConfMan.hasKey("loom_overture_ticks", _domain))
@@ -1110,13 +1227,13 @@ void LoomEgaGameOptionsWidget::load() {
 	_overtureTicksSlider->setValue(loomOvertureTicks);
 	updateOvertureTicksValue();
 
-	_enableEnhancementsCheckbox->setState(ConfMan.getBool("enable_enhancements", _domain));
 	_enableOriginalGUICheckbox->setState(ConfMan.getBool("original_gui", _domain));
 }
 
 bool LoomEgaGameOptionsWidget::save() {
+	ScummOptionsContainerWidget::save();
+
 	ConfMan.setInt("loom_overture_ticks", _overtureTicksSlider->getValue(), _domain);
-	ConfMan.setBool("enable_enhancements", _enableEnhancementsCheckbox->getState(), _domain);
 	ConfMan.setBool("original_gui", _enableOriginalGUICheckbox->getState(), _domain);
 	return true;
 }
@@ -1127,9 +1244,9 @@ void LoomEgaGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Commo
 			.addPadding(0, 0, 0, 0)
 			.addLayout(GUI::ThemeLayout::kLayoutVertical, 4)
 				.addPadding(0, 0, 10, 0)
-				.addWidget("EnableOriginalGUI", "Checkbox")
-				.addWidget("EnableEnhancements", "Checkbox")
-			.closeLayout()
+				.addWidget("EnableOriginalGUI", "Checkbox");
+	addEnhancementsLayout(layouts)
+		.closeLayout()
 			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
 				.addPadding(0, 0, 10, 0)
 				.addWidget("OvertureTicksLabel", "OptionsLabel")
@@ -1180,11 +1297,13 @@ LoomVgaGameOptionsWidget::LoomVgaGameOptionsWidget(GuiObject *boss, const Common
 
 	_playbackAdjustmentValue->setFlags(GUI::WIDGET_CLEARBG);
 
-	_enableEnhancementsCheckbox = createEnhancementsCheckbox(widgetsBoss(), "LoomVgaGameOptionsDialog.EnableEnhancements");
+	createEnhancementsWidget(widgetsBoss(), "LoomVgaGameOptionsDialog");
 	_enableOriginalGUICheckbox = createOriginalGUICheckbox(widgetsBoss(), "LoomVgaGameOptionsDialog.EnableOriginalGUI");
 }
 
 void LoomVgaGameOptionsWidget::load() {
+	ScummOptionsContainerWidget::load();
+
 	int playbackAdjustment = 0;
 
 	if (ConfMan.hasKey("loom_playback_adjustment", _domain))
@@ -1193,13 +1312,12 @@ void LoomVgaGameOptionsWidget::load() {
 	_playbackAdjustmentSlider->setValue(playbackAdjustment);
 	updatePlaybackAdjustmentValue();
 
-	_enableEnhancementsCheckbox->setState(ConfMan.getBool("enable_enhancements", _domain));
 	_enableOriginalGUICheckbox->setState(ConfMan.getBool("original_gui", _domain));
 }
 
 bool LoomVgaGameOptionsWidget::save() {
+	ScummOptionsContainerWidget::save();
 	ConfMan.setInt("loom_playback_adjustment", _playbackAdjustmentSlider->getValue(), _domain);
-	ConfMan.setBool("enable_enhancements", _enableEnhancementsCheckbox->getState(), _domain);
 	ConfMan.setBool("original_gui", _enableOriginalGUICheckbox->getState(), _domain);
 	return true;
 }
@@ -1210,8 +1328,8 @@ void LoomVgaGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Commo
 			.addPadding(0, 0, 0, 0)
 			.addLayout(GUI::ThemeLayout::kLayoutVertical, 4)
 				.addPadding(0, 0, 10, 0)
-				.addWidget("EnableOriginalGUI", "Checkbox")
-				.addWidget("EnableEnhancements", "Checkbox")
+				.addWidget("EnableOriginalGUI", "Checkbox");
+	addEnhancementsLayout(layouts)
 			.closeLayout()
 			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
 				.addPadding(0, 0, 10, 0)
@@ -1271,11 +1389,13 @@ MI1CdGameOptionsWidget::MI1CdGameOptionsWidget(GuiObject *boss, const Common::St
 
 	_outlookAdjustmentValue->setFlags(GUI::WIDGET_CLEARBG);
 
-	_enableEnhancementsCheckbox = createEnhancementsCheckbox(widgetsBoss(), "MI1CdGameOptionsDialog.EnableEnhancements");
+	createEnhancementsWidget(widgetsBoss(), "MI1CdGameOptionsDialog");
 	_enableOriginalGUICheckbox = createOriginalGUICheckbox(widgetsBoss(), "MI1CdGameOptionsDialog.EnableOriginalGUI");
 }
 
 void MI1CdGameOptionsWidget::load() {
+	ScummOptionsContainerWidget::load();
+
 	int introAdjustment = 0;
 	int outlookAdjustment = 0;
 
@@ -1290,14 +1410,14 @@ void MI1CdGameOptionsWidget::load() {
 	_outlookAdjustmentSlider->setValue(outlookAdjustment);
 	updateOutlookAdjustmentValue();
 
-	_enableEnhancementsCheckbox->setState(ConfMan.getBool("enable_enhancements", _domain));
 	_enableOriginalGUICheckbox->setState(ConfMan.getBool("original_gui", _domain));
 }
 
 bool MI1CdGameOptionsWidget::save() {
+	ScummOptionsContainerWidget::save();
+
 	ConfMan.setInt("mi1_intro_adjustment", _introAdjustmentSlider->getValue(), _domain);
 	ConfMan.setInt("mi1_outlook_adjustment", _outlookAdjustmentSlider->getValue(), _domain);
-	ConfMan.setBool("enable_enhancements", _enableEnhancementsCheckbox->getState(), _domain);
 	ConfMan.setBool("original_gui", _enableOriginalGUICheckbox->getState(), _domain);
 	return true;
 }
@@ -1308,8 +1428,8 @@ void MI1CdGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common:
 			.addPadding(0, 0, 0, 0)
 			.addLayout(GUI::ThemeLayout::kLayoutVertical, 4)
 				.addPadding(0, 0, 10, 0)
-				.addWidget("EnableOriginalGUI", "Checkbox")
-				.addWidget("EnableEnhancements", "Checkbox")
+				.addWidget("EnableOriginalGUI", "Checkbox");
+	addEnhancementsLayout(layouts)
 			.closeLayout()
 			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
 				.addPadding(0, 0, 12, 0)

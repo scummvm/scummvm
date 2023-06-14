@@ -905,12 +905,12 @@ Common::Error ScummEngine::init() {
 		}
 	}
 
-
 	ConfMan.registerDefault("original_gui", true);
 	if (ConfMan.hasKey("original_gui", _targetName)) {
 		_useOriginalGUI = ConfMan.getBool("original_gui");
 	}
-	_enableEnhancements = ConfMan.getBool("enable_enhancements");
+	ConfMan.registerDefault("enhancements", kEnhancementsBugs | kEnhancementsGlitches | kEnhancementsContent);
+	_enableEnhancements = ConfMan.getInt("enhancements") != 0; // TODO
 	_enableAudioOverride = ConfMan.getBool("audio_override");
 
 	// Add default file directories.
@@ -1312,6 +1312,16 @@ Common::Error ScummEngine::init() {
 }
 
 void ScummEngine::setupScumm(const Common::String &macResourceFile) {
+	// TODO: This may be the wrong place for it
+	// Enhancements used to be on or off, but now has multiple levels.
+	if (ConfMan.hasKey("enable_enhancements")) {
+		if (!ConfMan.hasKey("enhancements")) {
+			ConfMan.setInt("enhancements", ConfMan.getBool("enable_enhancements") ? kEnhancementsBugs | kEnhancementsGlitches | kEnhancementsContent : 0);
+		}
+		ConfMan.removeKey("enable_enhancements", ConfMan.getActiveDomainName());
+		ConfMan.flushToDisk();
+	}
+
 	Common::String macInstrumentFile;
 	Common::String macFontFile;
 

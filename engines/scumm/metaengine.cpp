@@ -562,40 +562,61 @@ SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int 
 	return desc;
 }
 
+GUI::OptionsContainerWidget *ScummMetaEngine::buildLoomOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+	if (platform != Common::kPlatformUnknown && platform != Common::kPlatformDOS)
+		return nullptr;
+
+	Common::String extra = ConfMan.get("extra", target);
+
+	// The VGA Loom settings are only relevant for the DOS CD version, not
+	// the Steam version (which is assumed to be well timed already).
+
+	if (extra == "VGA")
+		return new Scumm::LoomVgaGameOptionsWidget(boss, name, target);
+
+	if (extra == "Steam")
+		return MetaEngine::buildEngineOptionsWidget(boss, name, target);
+
+	// These EGA Loom settings are only relevant for the EGA
+	// version, since that is the only one that has an overture.
+
+	return new Scumm::LoomEgaGameOptionsWidget(boss, name, target);
+}
+
+GUI::OptionsContainerWidget *ScummMetaEngine::buildMI1OptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	Common::String extra = ConfMan.get("extra", target);
+
+	if (extra != "CD" && extra != "FM-TOWNS" && extra != "SEGA")
+		return nullptr;
+
+	return new Scumm::MI1CdGameOptionsWidget(boss, name, target);
+}
+
+
 GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	Common::String gameid = ConfMan.get("gameid", target);
 	Common::String extra = ConfMan.get("extra", target);
 
 	if (gameid == "loom") {
-		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
-		if (platform != Common::kPlatformUnknown && platform != Common::kPlatformDOS)
-			return MetaEngine::buildEngineOptionsWidget(boss, name, target);
-
-		// The VGA Loom settings are only relevant for the DOS CD
-		// version, not the Steam version (which is assumed to be well
-		// timed already).
-
-		if (extra == "VGA")
-			return new Scumm::LoomVgaGameOptionsWidget(boss, name, target);
-
-		if (extra == "Steam")
-			return MetaEngine::buildEngineOptionsWidget(boss, name, target);
-
-		// These EGA Loom settings are only relevant for the EGA
-		// version, since that is the only one that has an overture.
-
-		return new Scumm::LoomEgaGameOptionsWidget(boss, name, target);
+		GUI::OptionsContainerWidget *widget = buildLoomOptionsWidget(boss, name, target);
+		if (widget)
+			return widget;
 	} else if (gameid == "monkey") {
-		if (extra != "CD" && extra != "FM-TOWNS" && extra != "SEGA")
-			return MetaEngine::buildEngineOptionsWidget(boss, name, target);
-
-		return new Scumm::MI1CdGameOptionsWidget(boss, name, target);
+		GUI::OptionsContainerWidget *widget = buildMI1OptionsWidget(boss, name, target);
+		if (widget)
+			return widget;
 	}
 #ifdef USE_ENET
 	else if (gameid == "football" || gameid == "baseball2001" || gameid == "football2002" ||
 		gameid == "moonbase")
 		return new Scumm::HENetworkGameOptionsWidget(boss, name, target, gameid);
 #endif
+
+	const ExtraGuiOptions engineOptions = getExtraGuiOptions(target);
+
+	if (!engineOptions.empty())
+		return new Scumm::ScummGameOptionsWidget(boss, name, target, engineOptions);
 
 	return MetaEngine::buildEngineOptionsWidget(boss, name, target);
 }
@@ -642,7 +663,7 @@ static const ExtraGuiOption smoothScrolling = {
 	"smooth_scroll",
 	true,
 	0,
-	1
+	0
 };
 
 static const ExtraGuiOption semiSmoothScrolling = {
@@ -650,14 +671,14 @@ static const ExtraGuiOption semiSmoothScrolling = {
 	_s("Allow scrolling to be less smooth during the fast camera movement in the intro."),
 	"semi_smooth_scroll",
 	false,
-	1,
+	0,
 	0
 };
 
 static const ExtraGuiOption enableEnhancements {
-	_s("Enable game-specific enhancements"),
-	_s("Allow ScummVM to make small enhancements to the game, usually based on other versions of the same game."),
-	"enable_enhancements",
+	"",
+	"",
+	"enhancements",
 	true,
 	0,
 	0
@@ -754,6 +775,16 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	}
 
 	return options;
+}
+
+void ScummMetaEngine::registerDefaultSettings(const Common::String &) const {
+	const ExtraGuiOptions engineOptions = getExtraGuiOptions("");
+	for (uint i = 0; i < engineOptions.size(); i++) {
+		if (strcmp(engineOptions[i].configOption, "enhancements") == 0)
+			ConfMan.registerDefault(engineOptions[i].configOption, kEnhancementsBugs | kEnhancementsGlitches | kEnhancementsContent);
+		else
+			ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
+	}
 }
 
 Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
