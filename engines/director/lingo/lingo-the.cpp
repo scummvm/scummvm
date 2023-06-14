@@ -519,7 +519,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = (int)(_vm->getMacTicks() - movie->_lastEventTime);
 		break;
 	case kTheLastFrame:
-		d = (int)score->getFramesNum() - 1;
+		d = (int)score->getFramesNum();
 		break;
 	case kTheLastKey:
 		d = (int)(_vm->getMacTicks() - movie->_lastKeyTime);

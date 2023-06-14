@@ -2520,10 +2520,11 @@ void LB::b_immediateSprite(int nargs) {
 		if ((uint)sprite.asInt() < sc->_channels.size()) {
 			if (sc->getNextFrame() && !sp->_immediate) {
 				// same as puppetSprite
-				Channel *channel = sc->getChannelById(sprite.asInt());
-				// TODO: Fix logic here for next sprite
-				channel->replaceSprite(sc->_currentFrame->_sprites[sprite.asInt()]);
-				channel->_dirty = true;
+				// Channel *channel = sc->getChannelById(sprite.asInt());
+				// channel->replaceSprite(sc->_frames[sc->getNextFrame()]->_sprites[sprite.asInt()]);
+				// channel->_dirty = true;
+				
+				warning("STUB: LB::b_immediateSprite(): Fix logic here for next sprite");
 			}
 
 			sc->getSpriteById(sprite.asInt())->_immediate = (bool)state.asInt();
@@ -2561,11 +2562,11 @@ void LB::b_puppetSprite(int nargs) {
 			if (sc->getNextFrame() && !sp->_puppet) {
 				// WORKAROUND: If a frame update is queued, update the sprite to the
 				// sprite in new frame before setting puppet (Majestic).
-				Channel *channel = sc->getChannelById(sprite.asInt());
+				// Channel *channel = sc->getChannelById(sprite.asInt());
+				// channel->replaceSprite(sc->_frames[sc->getNextFrame()]->_sprites[sprite.asInt()]);
+				// channel->_dirty = true;
 
-				// TODO: Fix this properly.
-				channel->replaceSprite(sc->_currentFrame->_sprites[sprite.asInt()]);
-				channel->_dirty = true;
+				warning("STUB: LB::b_puppetSprite(): Fix logic here for next sprite");
 			}
 
 			sc->getSpriteById(sprite.asInt())->_puppet = (bool)state.asInt();
