@@ -2982,7 +2982,7 @@ void StructuralHooks::onPostActivate(Structural *structural) {
 void StructuralHooks::onSetPosition(Runtime *runtime, Structural *structural, const Common::Point &oldPt, Common::Point &pt) {
 }
 
-void StructuralHooks::onStopPlayingMToon(Structural *structural, bool &visible, bool &stopped) {
+void StructuralHooks::onStopPlayingMToon(Structural *structural, bool &visible, bool &stopped, Graphics::ManagedSurface *lastSurf) {
 }
 
 void StructuralHooks::onHidden(Structural *structural, bool &visible) {
@@ -8447,6 +8447,9 @@ void VisualElement::handleDragMotion(Runtime *runtime, const Common::Point &init
 		if (targetPoint.y > maxY)
 			targetPoint.y = maxY;
 
+		if (_hooks)
+			_hooks->onSetPosition(runtime, this, Common::Point(_rect.left, _rect.top), targetPoint);
+
 		offsetTranslate(targetPoint.x - _rect.left, targetPoint.y - _rect.top, false);
 	}
 }
@@ -9398,7 +9401,7 @@ void VariableModifier::debugInspect(IDebugInspectionReport *report) const {
 	Modifier::debugInspect(report);
 
 	if (report->declareStatic("storage"))
-		report->declareStaticContents(Common::String::format("%p", (void *)_storage.get()));
+		report->declareStaticContents(Common::String::format("%p", static_cast<void *>(_storage.get())));
 }
 #endif
 

@@ -2128,7 +2128,7 @@ public:
 	virtual void onCreate(Structural *structural);
 	virtual void onPostActivate(Structural *structural);
 	virtual void onSetPosition(Runtime *runtime, Structural *structural, const Common::Point &oldPt, Common::Point &pt);
-	virtual void onStopPlayingMToon(Structural *structural, bool &visible, bool &stopped);
+	virtual void onStopPlayingMToon(Structural *structural, bool &visible, bool &stopped, Graphics::ManagedSurface *lastSurf);
 	virtual void onHidden(Structural *structural, bool &visible);
 };
 

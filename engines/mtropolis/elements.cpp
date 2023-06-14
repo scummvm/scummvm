@@ -1584,7 +1584,7 @@ VThreadState MToonElement::stopPlayingTask(const StopPlayingTaskData &taskData) 
 	}
 
 	if (_hooks)
-		_hooks->onStopPlayingMToon(this, _visible, _isStopped);
+		_hooks->onStopPlayingMToon(this, _visible, _isStopped, _renderSurface.get());
 
 	return kVThreadReturn;
 }
