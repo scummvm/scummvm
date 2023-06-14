@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-11 23:12+0000\n"
+"POT-Creation-Date: 2023-06-14 07:24+0000\n"
 "PO-Revision-Date: 2023-06-11 07:05+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -5141,6 +5141,8 @@ msgstr "Συνέχεια"
 
 #: engines/bladerunner/detection_tables.h:90
 #: engines/bladerunner/detection_tables.h:101
+#: engines/bladerunner/detection_tables.h:205
+#: engines/bladerunner/detection_tables.h:216
 #: engines/kyra/detection_tables.h:77
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "

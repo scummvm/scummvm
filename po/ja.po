@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-11 23:12+0000\n"
+"POT-Creation-Date: 2023-06-14 07:24+0000\n"
 "PO-Revision-Date: 2023-06-12 13:40+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4986,6 +4986,8 @@ msgstr "つづく"
 
 #: engines/bladerunner/detection_tables.h:90
 #: engines/bladerunner/detection_tables.h:101
+#: engines/bladerunner/detection_tables.h:205
+#: engines/bladerunner/detection_tables.h:216
 #: engines/kyra/detection_tables.h:77
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-11 23:12+0000\n"
+"POT-Creation-Date: 2023-06-14 07:24+0000\n"
 "PO-Revision-Date: 2023-04-15 16:26+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -5039,6 +5039,8 @@ msgstr "Fortsett"
 
 #: engines/bladerunner/detection_tables.h:90
 #: engines/bladerunner/detection_tables.h:101
+#: engines/bladerunner/detection_tables.h:205
+#: engines/bladerunner/detection_tables.h:216
 #: engines/kyra/detection_tables.h:77
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
