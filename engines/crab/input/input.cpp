@@ -191,22 +191,38 @@ void InputManager::RestoreBackup() {
 		iv[i] = backup[i];
 }
 
-Common::String InputManager::GetAssociatedKey(const InputType &type) const {
+void InputManager::PopulateKeyTable() {
+	for (unsigned int type = IG_START; type < IT_TOTAL; type++) {
+		_keyDescs[type] = '\0';
+	}
+
+	SetKeyBindingMode(KBM_GAME);
+	for (unsigned int i = IG_START; i < IG_SIZE + IG_START; i++) {
+		GetAssociatedKey((InputType)i);
+	}
+
+	SetKeyBindingMode(KBM_UI);
+	for (unsigned int i = IU_START; i < IU_SIZE + IU_START; i++) {
+		GetAssociatedKey((InputType)i);
+	}
+}
+
+Common::String InputManager::GetAssociatedKey(const InputType &type) {
+	// Return cached copy if available
+	if (_keyDescs[type].size() > 0)
+		return _keyDescs[type];
 
 	Common::Keymap *keymap = g_system->getEventManager()->getKeymapper()->getKeymap("Unrest");
-
 	const Common::Keymap::ActionArray actions = keymap->getActions();
-	Common::String res = "";
-
 	for (Common::Action *action : actions) {
 		if ((int)action->event.customType == type) {
-			res = Common::String(keymap->getActionMapping(action)[0].description);
-			res.toUppercase();
+			_keyDescs[type] = Common::String(keymap->getActionMapping(action)[0].description);
+			_keyDescs[type].toUppercase();
 			break;
 		}
 	}
 
-	return res;
+	return _keyDescs[type];
 }
 
 //------------------------------------------------------------------------
@@ -391,9 +407,9 @@ Common::Keymap* InputManager::GetDefaultKeyMapsForHUD() {
 void InputManager::SetKeyBindingMode(KeyBindingMode mode) {
 	_keyMode = mode;
 
-	Common::Keymap *gameKeymaps = Crab::pyrodactyl::input::InputManager::GetDefaultKeyMapsForGame();
-	Common::Keymap *uiKeymaps = Crab::pyrodactyl::input::InputManager::GetDefaultKeyMapsForUI();
-	Common::Keymap *hudKeymaps = Crab::pyrodactyl::input::InputManager::GetDefaultKeyMapsForHUD();
+	Common::Keymap *gameKeymaps = GetDefaultKeyMapsForGame();
+	Common::Keymap *uiKeymaps = GetDefaultKeyMapsForUI();
+	Common::Keymap *hudKeymaps = GetDefaultKeyMapsForHUD();
 
 	Common::Keymapper *const mapper = g_engine->getEventManager()->getKeymapper();
 	mapper->cleanupGameKeymaps();
