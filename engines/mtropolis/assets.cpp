@@ -802,6 +802,21 @@ void MovieAsset::addDamagedFrame(int frame) {
 	_damagedFrames.push_back(frame);
 }
 
+bool AVIMovieAsset::load(AssetLoaderContext &context, const Data::AVIMovieAsset &data) {
+	_assetID = data.assetID;
+	_extFileName = data.extFileName;
+
+	return true;
+}
+
+AssetType AVIMovieAsset::getAssetType() const {
+	return kAssetTypeAVIMovie;
+}
+
+const Common::String &AVIMovieAsset::getExtFileName() const {
+	return _extFileName;
+}
+
 const Common::Array<int> &MovieAsset::getDamagedFrames() const {
 	return _damagedFrames;
 }

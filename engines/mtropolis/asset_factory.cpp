@@ -65,6 +65,8 @@ SIAssetFactory *getAssetFactoryForDataObjectType(const Data::DataObjectTypes::Da
 		return AssetFactory<AudioAsset, Data::AudioAsset>::getInstance();
 	case Data::DataObjectTypes::kMovieAsset:
 		return AssetFactory<MovieAsset, Data::MovieAsset>::getInstance();
+	case Data::DataObjectTypes::kAVIMovieAsset:
+		return AssetFactory<AVIMovieAsset, Data::AVIMovieAsset>::getInstance();
 	case Data::DataObjectTypes::kImageAsset:
 		return AssetFactory<ImageAsset, Data::ImageAsset>::getInstance();
 	case Data::DataObjectTypes::kMToonAsset:

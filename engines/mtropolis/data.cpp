@@ -33,6 +33,7 @@ namespace DataObjectTypes {
 bool isValidSceneRootElement(DataObjectType type) {
 	switch (type) {
 	case kGraphicElement:
+	case kAVIMovieElement:
 	case kMovieElement:
 	case kMToonElement:
 	case kImageElement:
@@ -45,6 +46,7 @@ bool isValidSceneRootElement(DataObjectType type) {
 bool isVisualElement(DataObjectType type) {
 	switch (type) {
 	case kGraphicElement:
+	case kAVIMovieElement:
 	case kMovieElement:
 	case kMToonElement:
 	case kImageElement:
@@ -67,6 +69,7 @@ bool isNonVisualElement(DataObjectType type) {
 bool isElement(DataObjectType type) {
 	switch (type) {
 	case kGraphicElement:
+	case kAVIMovieElement:
 	case kMovieElement:
 	case kMToonElement:
 	case kImageElement:
@@ -140,6 +143,7 @@ bool isModifier(DataObjectType type) {
 bool isAsset(DataObjectType type) {
 	switch (type) {
 	case kMovieAsset:
+	case kAVIMovieAsset:
 	case kAudioAsset:
 	case kColorTableAsset:
 	case kImageAsset:
@@ -950,11 +954,11 @@ DataReadErrorCode SoundElement::load(DataReader& reader) {
 	return kDataReadErrorNone;
 }
 
-MovieElement::MovieElement()
+MovieElement::MovieElement(bool avi)
 	: sizeIncludingTag(0), guid(0), lengthOfName(0), elementFlags(0), layer(0),
 	  unknown3{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 	  sectionID(0), unknown5{0, 0}, assetID(0), unknown7(0), volume(0), animationFlags(0),
-	  unknown10{0, 0, 0, 0}, unknown11{0, 0, 0, 0}, streamLocator(0), unknown13{0, 0, 0, 0} {
+	  unknown10{0, 0, 0, 0}, unknown11{0, 0, 0, 0}, streamLocator(0), unknown13{0, 0, 0, 0}, isAVI(avi) {
 }
 
 DataReadErrorCode MovieElement::load(DataReader &reader) {
@@ -2078,6 +2082,25 @@ DataReadErrorCode MovieAsset::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+AVIMovieAsset::AVIMovieAsset() : unknown1{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, assetID(0), unknown2{0, 0, 0, 0},
+								 extFileNameLength(0) {
+	for (uint8 &v : unknown3)
+		v = 0;
+}
+
+DataReadErrorCode AVIMovieAsset::load(DataReader &reader) {
+	if (_revision != 0)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readBytes(unknown1) || !reader.readU32(assetID) || !reader.readBytes(unknown2) || !reader.readU16(extFileNameLength) || !reader.readBytes(unknown3))
+		return kDataReadErrorReadFailed;
+
+	if (!reader.readTerminatedStr(extFileName, extFileNameLength))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 AudioAsset::AudioAsset()
 	: persistFlags(0), assetAndDataCombinedSize(0), unknown2{0, 0, 0, 0}, assetID(0),
 	  unknown3{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, sampleRate1(0), bitsPerSample(0),
@@ -2421,7 +2444,10 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		dataObject = new GraphicElement();
 		break;
 	case DataObjectTypes::kMovieElement:
-		dataObject = new MovieElement();
+		dataObject = new MovieElement(false);
+		break;
+	case DataObjectTypes::kAVIMovieElement:
+		dataObject = new MovieElement(true);
 		break;
 	case DataObjectTypes::kMToonElement:
 		dataObject = new MToonElement();
@@ -2559,6 +2585,10 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 
 	case DataObjectTypes::kColorTableAsset:
 		dataObject = new ColorTableAsset();
+		break;
+
+	case DataObjectTypes::kAVIMovieAsset:
+		dataObject = new AVIMovieAsset();
 		break;
 
 	case DataObjectTypes::kMovieAsset:

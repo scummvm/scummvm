@@ -3040,6 +3040,7 @@ enum AssetType {
 	kAssetTypeImage,
 	kAssetTypeText,
 	kAssetTypeMToon,
+	kAssetTypeAVIMovie,
 };
 
 class AssetHooks {

@@ -230,6 +230,17 @@ private:
 	Common::Array<int> _damagedFrames;
 };
 
+class AVIMovieAsset : public Asset {
+public:
+	bool load(AssetLoaderContext &context, const Data::AVIMovieAsset &data);
+	AssetType getAssetType() const override;
+
+	const Common::String &getExtFileName() const;
+
+private:
+	Common::String _extFileName;
+};
+
 class CachedImage {
 public:
 	CachedImage();

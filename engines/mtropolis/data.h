@@ -100,6 +100,7 @@ enum DataObjectType : uint {
 	kSoundElement							= 0xa,
 	kTextLabelElement						= 0x15,
 
+	kAVIMovieElement						= 0x25,
 	kAliasModifier							= 0x27,
 	kChangeSceneModifier					= 0x136,
 	kReturnModifier							= 0x140,
@@ -148,6 +149,7 @@ enum DataObjectType : uint {
 	kImageAsset								= 0xe,
 	kMToonAsset								= 0xf,
 	kTextAsset								= 0x1f,
+	kAVIMovieAsset							= 0x24,
 
 	kAssetDataChunk							= 0xffff,
 };
@@ -752,7 +754,7 @@ protected:
 };
 
 struct MovieElement : public StructuralDef {
-	MovieElement();
+	explicit MovieElement(bool avi);
 
 	// Possible flags: NotDirectToScreen, CacheBitmap, Hidden, Loop, Loop + Alternate, Paused
 	uint32 sizeIncludingTag;
@@ -775,6 +777,8 @@ struct MovieElement : public StructuralDef {
 	uint8 unknown13[4];
 
 	Common::String name;
+
+	bool isAVI;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -1844,6 +1848,21 @@ struct MovieAsset : public DataObject {
 	bool haveMacPart;
 	bool haveWinPart;
 	PlatformPart platform;
+
+	Common::String extFileName;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct AVIMovieAsset : public DataObject {
+	AVIMovieAsset();
+
+	uint8 unknown1[12];
+	uint32 assetID;
+	uint8 unknown2[4];
+	uint16 extFileNameLength;
+	uint8 unknown3[60];
 
 	Common::String extFileName;
 
