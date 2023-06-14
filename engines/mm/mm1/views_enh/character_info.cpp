@@ -280,7 +280,6 @@ void CharacterInfo::drawStats() {
 		if (i < 10)
 			pt.x += 8 + (CURR[i] < 10 ? 8 : 0);
 
-		setTextColor(c.statColor(CURR[i], BASE[i]));
 
 		if (i == 16) {
 			// Food
@@ -291,6 +290,7 @@ void CharacterInfo::drawStats() {
 			setTextColor(15);
 			writeString(pt.x, pt.y, str);
 		} else {
+			setTextColor(c.statColor(CURR[i], BASE[i]));
 			writeNumber(pt.x, pt.y, CURR[i]);
 		}
 	}
