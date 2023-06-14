@@ -93,6 +93,7 @@ CrabEngine::~CrabEngine() {
 	delete _imageManager;
 
 	delete _screen;
+	delete _format;
 }
 
 uint32 CrabEngine::getFeatures() const {
