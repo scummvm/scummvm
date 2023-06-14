@@ -36,6 +36,13 @@ namespace Scumm {
 #define GUIO_LOWLATENCYAUDIO                           GUIO_GAMEOPTIONS5
 #define GUIO_NETWORK                                   GUIO_GAMEOPTIONS6
 
+/* Game enhancements */
+enum {
+	kEnhancementsBugs = 0x0001,
+	kEnhancementsGlitches = 0x0002,
+	kEnhancementsContent = 0x0004
+};
+
 /**
  * Descriptor of a specific SCUMM game. Used internally to store
  * information about the tons of game variants that exist.
