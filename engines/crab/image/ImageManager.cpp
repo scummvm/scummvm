@@ -189,8 +189,6 @@ void ImageManager::Quit() {
 
 		map[i].clear();
 	}
-
-	invalid_img.Delete();
 }
 
 } // End of namespace Crab
