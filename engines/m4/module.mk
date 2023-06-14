@@ -3,13 +3,20 @@ MODULE := engines/m4
 MODULE_OBJS = \
 	m4.o \
 	console.o \
-	f_info.o \
 	game.o \
 	globals.o \
 	kernel.o \
 	metaengine.o \
 	param.o \
+	res.o \
 	term.o \
+	adv_r/db_env.o \
+	adv_r/db_rmlst.o \
+	fileio/extensions.o \
+	fileio/fileio.o \
+	fileio/info.o \
+	fileio/sys_file.o \
+	mem/memman.o \
 	burger/burger.o
 
 # This module can be built as a plugin

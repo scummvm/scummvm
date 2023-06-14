@@ -19,49 +19,43 @@
  *
  */
 
-#ifndef M4_TERM_H
-#define M4_TERM_H
+#ifndef M4_FILEIO_FILEIO_H
+#define M4_FILEIO_FILEIO_H
 
 #include "common/stream.h"
 
 namespace M4 {
 
-enum TermMode {
-	NO_MODE = 0,
-	MESSAGE_MODE,
-	MEMORY_MODE
+enum AccessMode {
+	UNOPENED,
+	READ,
+	WRITE,
+	READ_OR_WRITE
 };
 
-class Term {
-private:
-	Common::WriteStream *_file = nullptr;
-	bool _using_mono_screen = false;
-	bool _use_log_file = false;
-	TermMode _mode = NO_MODE;
-
-public:
-	/**
-	 * Initialization
-	 */
-	void init(bool use_me, bool use_log);
-
-	~Term() {
-		delete _file;
-	}
-
-	/**
-	 * Set the terminal mode
-	 */
-	void set_mode(TermMode mode);
-
-	/**
-	 * Show a message
-	 */
-	void message(const char *fmt, ...);
-	void vmessage(const char *fmt, va_list va);
+enum FileMode {
+	BINARY,
+	TEXT,
+	BINARYW,
+	TEXTW
 };
 
-inline void term_message(const char *fmt, ...);
+struct Hag_Name_Record {
+	Common::String filename;
+	byte hagfile;
+	struct Hag_Name_Record *next;
+};
+
+struct Hag_Record {
+	Common::String hag_name;
+	byte  hagfile;
+	Common::Stream *hag_fp;
+	uint32  hag_pos;
+	Hag_Record *next;
+};
+
+Common::Stream *f_io_open(const Common::String &filename, const Common::String &mode);
+void f_io_close(Common::Stream *stream);
 
 } // namespace M4
 

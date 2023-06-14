@@ -23,6 +23,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "m4/term.h"
+#include "m4/globals.h"
 
 namespace M4 {
 
@@ -55,8 +56,16 @@ void Term::set_mode(TermMode mode) {
 	}
 }
 
-void Term::message(const Common::String &msg) {
+void Term::message(const char *fmt, ...) {
+	va_list va;
+	va_start(va, fmt);
+	vmessage(fmt, va);
+	va_end(va);
+}
+
+void Term::vmessage(const char *fmt, va_list va) {
 	if (_mode != MEMORY_MODE) {
+		Common::String msg = Common::String::vformat(fmt, va);
 		debug("%s\n", msg.c_str());
 
 		if (_file) {
@@ -65,6 +74,13 @@ void Term::message(const Common::String &msg) {
 			_file->writeByte(0);
 		}
 	}
+}
+
+inline void term_message(const char *fmt, ...) {
+	va_list va;
+	va_start(va, fmt);
+	_G(term).vmessage(fmt, va);
+	va_end(va);
 }
 
 } // namespace M4

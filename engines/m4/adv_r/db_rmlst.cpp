@@ -19,50 +19,21 @@
  *
  */
 
-#ifndef M4_TERM_H
-#define M4_TERM_H
-
-#include "common/stream.h"
+#include "common/textconsole.h"
+#include "m4/adv_r/db_rmlst.h"
 
 namespace M4 {
 
-enum TermMode {
-	NO_MODE = 0,
-	MESSAGE_MODE,
-	MEMORY_MODE
-};
+int32 db_rmlst_get_volume(char *filename) {
+	error("TODO: db_rmlst_get_volume");
+}
 
-class Term {
-private:
-	Common::WriteStream *_file = nullptr;
-	bool _using_mono_screen = false;
-	bool _use_log_file = false;
-	TermMode _mode = NO_MODE;
+void db_rmlst_delete_global_RoomList() {
+	error("TODO: db_rmlst_delete_global_RoomList");
+}
 
-public:
-	/**
-	 * Initialization
-	 */
-	void init(bool use_me, bool use_log);
+char *db_rmlst_get_asset_room_path(char *s, char *result, int32 *sceneCode) {
+	error("TODO: db_rmlst_get_asset_room_path");
+}
 
-	~Term() {
-		delete _file;
-	}
-
-	/**
-	 * Set the terminal mode
-	 */
-	void set_mode(TermMode mode);
-
-	/**
-	 * Show a message
-	 */
-	void message(const char *fmt, ...);
-	void vmessage(const char *fmt, va_list va);
-};
-
-inline void term_message(const char *fmt, ...);
-
-} // namespace M4
-
-#endif
+} // End of namespace M4

@@ -45,6 +45,9 @@ class M4Engine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+
+	void game_systems_initialize();
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
