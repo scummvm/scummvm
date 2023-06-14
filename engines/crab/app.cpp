@@ -296,6 +296,8 @@ void App::Run() {
 			g_system->delayMillis(delay);
 		}
 	}
+
+	delete CurrentState;
 }
 
 void App::LoadSettings(const Common::String &filename) {
@@ -319,6 +321,11 @@ void App::LoadSettings(const Common::String &filename) {
 }
 
 App::~App() {
+	g_engine->_imageManager->Quit();
+	g_engine->_musicManager->Quit();
+	g_engine->_textManager->Quit();
+	g_engine->_inputManager->Quit();
+	g_engine->_loadingScreen->Quit();
 #if 0
 	// SteamAPI_Shutdown();
 
