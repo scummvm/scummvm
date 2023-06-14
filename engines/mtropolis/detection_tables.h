@@ -412,7 +412,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO0()
 		},
 		GID_MTI,
@@ -436,7 +436,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO0()
 		},
 		GID_MTI,
@@ -460,7 +460,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::IT_ITA,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO0()
 		},
 		GID_MTI,
@@ -481,7 +481,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DEMO | ADGF_UNSTABLE,
+			ADGF_DEMO | ADGF_TESTING,
 			GUIO0()
 		},
 		GID_MTI,
