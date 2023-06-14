@@ -77,7 +77,7 @@ public:
 
 	void loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version);
 	bool loadFrame(int frame);
-	bool readOneFrame(bool saveOffset = false);
+	bool readOneFrame();
 	Frame *getFrameData(int frameNum);
 	void rebuildChannelData(int frameNum);
 

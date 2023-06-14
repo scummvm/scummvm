@@ -86,7 +86,7 @@ Score::Score(Movie *movie) {
 	_numChannelsDisplayed = 0;
 	_skipTransition = false;
 
-	_curFrameNumber = -1;
+	_curFrameNumber = 0;
 	_framesStream = nullptr;
 	_currentFrame = nullptr;
 }
@@ -1298,10 +1298,9 @@ Sprite *Score::getSpriteById(uint16 id) {
 }
 
 Sprite *Score::getOriginalSpriteById(uint16 id) {
-	Frame *frame = _currentFrame;
-	if (id < frame->_sprites.size())
-		return frame->_sprites[id];
-	warning("Score::getOriginalSpriteById(%d): out of bounds, >= %d", id, frame->_sprites.size());
+	if (id < _currentFrame->_sprites.size())
+		return _currentFrame->_sprites[id];
+	warning("Score::getOriginalSpriteById(%d): out of bounds, >= %d", id, _currentFrame->_sprites.size());
 	return nullptr;
 }
 
@@ -1315,28 +1314,26 @@ Channel *Score::getChannelById(uint16 id) {
 }
 
 void Score::playSoundChannel(uint16 frameId, bool puppetOnly) {
-	Frame *frame = _currentFrame;
-
-	debugC(5, kDebugSound, "playSoundChannel(): Sound1 %s Sound2 %s", frame->_sound1.asString().c_str(), frame->_sound2.asString().c_str());
+	debugC(5, kDebugSound, "playSoundChannel(): Sound1 %s Sound2 %s", _currentFrame->_sound1.asString().c_str(), _currentFrame->_sound2.asString().c_str());
 	DirectorSound *sound = _window->getSoundManager();
 
 	if (sound->isChannelPuppet(1)) {
 		sound->playPuppetSound(1);
 	} else if (!puppetOnly) {
-		if (frame->_soundType1 >= kMinSampledMenu && frame->_soundType1 <= kMaxSampledMenu) {
-			sound->playExternalSound(frame->_soundType1, frame->_sound1.member, 1);
+		if (_currentFrame->_soundType1 >= kMinSampledMenu && _currentFrame->_soundType1 <= kMaxSampledMenu) {
+			sound->playExternalSound(_currentFrame->_soundType1, _currentFrame->_sound1.member, 1);
 		} else {
-			sound->playCastMember(frame->_sound1, 1);
+			sound->playCastMember(_currentFrame->_sound1, 1);
 		}
 	}
 
 	if (sound->isChannelPuppet(2)) {
 		sound->playPuppetSound(2);
 	} else if (!puppetOnly) {
-		if (frame->_soundType2 >= kMinSampledMenu && frame->_soundType2 <= kMaxSampledMenu) {
-			sound->playExternalSound(frame->_soundType2, frame->_sound2.member, 2);
+		if (_currentFrame->_soundType2 >= kMinSampledMenu && _currentFrame->_soundType2 <= kMaxSampledMenu) {
+			sound->playExternalSound(_currentFrame->_soundType2, _currentFrame->_sound2.member, 2);
 		} else {
-			sound->playCastMember(frame->_sound2, 2);
+			sound->playCastMember(_currentFrame->_sound2, 2);
 		}
 	}
 
@@ -1355,8 +1352,8 @@ void Score::playQueuedSound() {
 void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version) {
 	debugC(1, kDebugLoading, "****** Loading frames VWSC");
 
-	// Setup our streams for frames processing!
-	int dataSize = stream.size();
+	// Setup our streams for frames processing
+	uint dataSize = stream.size();
 	byte *data = (byte *)malloc(dataSize);
 	stream.read(data, dataSize);
 	
@@ -1372,7 +1369,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 		_numChannelsDisplayed = 30;
 	} else if (version >= kFileVer400 && version < kFileVer600) {
 		uint32 frame1Offset = _framesStream->readUint32();
-		_numFrames = _framesStream->readUint32();
+		/* uint32 numOfFrames = */ _framesStream->readUint32();
 		_framesVersion = _framesStream->readUint16();
 		uint16 spriteRecordSize = _framesStream->readUint16();
 		_numChannels = _framesStream->readUint16();
@@ -1393,7 +1390,6 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 		// Unknown, some bytes - constant (refer to contuinity).
 	}
 
-	// TODO How to work with channelData that gets overridden
 	// partically by channels, hence we keep it and read the score from left to right
 	// TODO Merge it with shared cast
 	memset(_channelData, 0, kChannelDataSize);
@@ -1408,15 +1404,12 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	_version = version;
 	_frameOffsets.push_back(_framesStream->pos());
 
-	// Pre-computing number of frames, as sometimes the frameNumber in stream mismatches.
+	// Pre-computing number of frames, as sometimes the frameNumber in stream mismatches
 	debugC(1, kDebugLoading, "Score::loadFrames(): Precomputing total number of frames!");
-	// Calculate number of frames beforehand.
-	int frameCount = 1;
-	while (loadFrame(frameCount)) {
-		debugC(1, kDebugLoading, "Score::loadFrames(): Skipped over frame %d!", frameCount);
-		frameCount++;
-	}
-	_numFrames = frameCount;
+	
+	// Calculate number of frames beforehand
+	for (_numFrames = 1; loadFrame(_numFrames); _numFrames++) { }
+
 	debugC(1, kDebugLoading, "Score::loadFrames(): Calculated, total number of frames %d!", _numFrames);
 
 	memset(_channelData, 0, kChannelDataSize); // Reset channel data
@@ -1425,73 +1418,50 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 
 	// Read over frame offset array and print each item
 	for (uint i = 0; i < _frameOffsets.size(); i++) {
-		debugC(1, kDebugLoading, "Score::loadFrames(): Frame %d, offset %ld", i, _frameOffsets[i]);
+		debugC(8, kDebugLoading, "Score::loadFrames(): Frame %d, offset %ld", i, _frameOffsets[i]);
 	}
 
 	debugC(1, kDebugLoading, "Score::loadFrames(): Number of frames: %d, framesStreamSize: %d", _numFrames, _framesStreamSize);
 }
 
 bool Score::loadFrame(int frameNum) {
-	debugC(7, kDebugLoading, "****** A call to loadFrame %d", frameNum);
+	debugC(7, kDebugLoading, "****** Frame request %d, current pos: %ld", frameNum, _framesStream->pos());
 
 	// Read existing frame (ie already visited)
-	if (frameNum < (int)_frameOffsets.size() - 1) {
-		// TODO: How _channelData be modified.
-		// As of now channelData is left unchanged, only rebuilt when there is jumps
-		// We have this frame already, seek and load
+	if (frameNum < (int)_frameOffsets.size()) {
+		// Seek to existing frame in offsets
 		_framesStream->seek(_frameOffsets[frameNum]);
-		debugC(7, kDebugLoading, "****** Frame request %d, offset %ld", frameNum, _framesStream->pos());
-
-		if (readOneFrame()) {
-			loadCurrentFrameAction(); // Load actions of current frame!
-			setSpriteCasts(); // Set sprite casts for each sprite in frame!
-			_curFrameNumber = frameNum;
-			return true;
-		} else {
-			warning("Score::loadFrame(): Problem reading previous frame %d, current offset: %ld", frameNum, _framesStream->pos());
-			return false;
-		}
-	}
-
-	// Seek to latest frame
-	_framesStream->seek(_frameOffsets[_frameOffsets.size() - 1]);
-
-	debugC(7, kDebugLoading, "****** Frame request %d, last recorded frame offset %ld", frameNum, _framesStream->pos());
-
-	int currentFrameSkipped = frameNum;
-	// Else read until that specific frame
-	while (_frameOffsets.size() <= (uint)frameNum) {
-		debugC(7, kDebugLoading, "****** Skipping over a frame %d, offset %ld", _frameOffsets.size() - 1, _framesStream->pos());
-
-		if (!readOneFrame(true)) {
-			warning("Score::loadFrame(): Problem reading frame %d, is it outside maximum frames?", frameNum);
-			return false;
-		}
-		currentFrameSkipped++;
-	}
-
-	debugC(7, kDebugLoading, "****** Frame loading %d, offset %ld", frameNum, _framesStream->pos());
-
-	bool isRead = readOneFrame(true);   // Now final read the frame, this is our target frame!
-	if (isRead) {
-		loadCurrentFrameAction();
-		setSpriteCasts();
-		_curFrameNumber = frameNum;
 	} else {
-		warning("Score::loadFrame(): Problem reading frame %d, current offset: %ld", frameNum, _framesStream->pos());
+		// Seek to latest frame
+		_framesStream->seek(_frameOffsets[_frameOffsets.size() - 1]);
+		_curFrameNumber = _frameOffsets.size() - 1;
 	}
 
-	return isRead;
+	debugC(7, kDebugLoading, "****** Frame request %d, current offset %ld", frameNum, _framesStream->pos());
+
+	while (_frameOffsets.size() <= (uint)frameNum && readOneFrame())
+		_curFrameNumber++;
+
+	// Finally read the target frame!
+	bool isFrameRead = readOneFrame();
+	if (!isFrameRead)
+		return false;
+
+	// Load frame action, cast
+	loadCurrentFrameAction();
+	setSpriteCasts();
+
+	return true;
 }
 
-// TODO: Not used right now, for future if there are issues with backwards jumping
+// Rebuild channel data from frame 1 to frameNum, to prepare for next frame loading
 // Why? Because director works on concept of "delta" changes between frame, to save
 // space each frame only contains changes from previous frame, so we need to rebuild
 // whole channel data if we were to make a very big jump. This is essential because
 // without it we might have leftover casts/properties which will interfere with channel
-// data after the jump!
+// data after the jump
 void Score::rebuildChannelData(int frameNum) {
-	// Builds channel data from frame 1 to frame.
+	// Builds channel data from frame 1 to frame
 	if (frameNum > (int)_numFrames) {
 		warning("Score::rebuildChannelData(): frameNum %d is greater than total frames %d", frameNum, _numFrames);
 		return;
@@ -1506,7 +1476,7 @@ void Score::rebuildChannelData(int frameNum) {
 
 	_framesStream->seek(_frameOffsets[1]); // Seek to frame 1
 	for (int i = 1; i < frameNum; i++) {
-		readOneFrame(false);
+		readOneFrame();
 	}
 
 	// Unlock variables
@@ -1515,72 +1485,74 @@ void Score::rebuildChannelData(int frameNum) {
 	_currentFrame = frame;
 }
 
-bool Score::readOneFrame(bool saveOffset) {
+bool Score::readOneFrame() {
 	uint16 channelSize;
 	uint16 channelOffset;
 
-	if (_framesStream->pos() < _framesStreamSize && !_framesStream->eos()) {
-		uint16 frameSize = _framesStream->readUint16();
-		assert(frameSize < _framesStreamSize);
+	if (_framesStream->pos() >= _framesStreamSize || _framesStream->eos())
+		return false;
 
-		debugC(3, kDebugLoading, "++++++++++ score load frame (frameSize %d) saveOffset %d", frameSize, saveOffset);
-		if (debugChannelSet(8, kDebugLoading)) {
-			_framesStream->hexdump(frameSize);
-		}
-		if (frameSize > 0) {
-			Frame *frame = new Frame(this, _numChannelsDisplayed);
-			frameSize -= 2;
+	uint16 frameSize = _framesStream->readUint16();
+	assert(frameSize < _framesStreamSize);
 
-			while (frameSize != 0) {
-
-				if (_vm->getVersion() < 400) {
-					channelSize = _framesStream->readByte() * 2;
-					channelOffset = _framesStream->readByte() * 2;
-					frameSize -= channelSize + 2;
-				} else {
-					channelSize = _framesStream->readUint16();
-					channelOffset = _framesStream->readUint16();
-					frameSize -= channelSize + 4;
-				}
-
-				assert(channelOffset + channelSize < kChannelDataSize);
-				_framesStream->read(&_channelData[channelOffset], channelSize);
-			}
-
-			Common::MemoryReadStreamEndian *str = new Common::MemoryReadStreamEndian(_channelData, ARRAYSIZE(_channelData), _framesStream->isBE());
-			// str->hexdump(str->size(), 32);
-			frame->readChannels(str, _version);
-			delete str;
-			// Precache the current FPS tempo, as this carries forward to frames to the right
-			// of the instruction.
-			// Delay type tempos (e.g. wait commands, delays) apply to only a single frame, and are ignored here.
-			if (frame->_tempo && frame->_tempo <= 120)
-				_currentTempo = frame->_tempo;
-			frame->_scoreCachedTempo = frame->_tempo ? frame->_tempo : _currentTempo;
-			// Precache the current palette ID, as this carries forward to frames to the right
-			// of the instruction.
-			if (!frame->_palette.paletteId.isNull())
-				_currentPaletteId = frame->_palette.paletteId;
-			frame->_scoreCachedPaletteId = _currentPaletteId;
-
-			debugC(8, kDebugLoading, "Score::readOneFrame(): Frame %d actionId: %s", _curFrameNumber, frame->_actionId.asString().c_str());
-
-			if (_currentFrame != nullptr) {
-				// Delete previous frame before assigning new one!
-				delete _currentFrame;
-				_currentFrame = nullptr;
-			}
-			_currentFrame = frame;
-
-			if (saveOffset && _framesStream->pos() < _framesStreamSize) {
-				// Record the starting offset for next frame!
-				_frameOffsets.push_back(_framesStream->pos());
-			}
-			return true;
-		} else {
-			warning("Score::readOneFrame(): Zero sized frame!? exiting loop until we know what to do with the tags that follow.");
-		}
+	debugC(3, kDebugLoading, "++++++++++ score load frame (frameSize %d) saveOffset", frameSize);
+	if (debugChannelSet(8, kDebugLoading)) {
+		_framesStream->hexdump(frameSize);
 	}
+	if (frameSize > 0) {
+		Frame *frame = new Frame(this, _numChannelsDisplayed);
+		frameSize -= 2;
+
+		while (frameSize != 0) {
+
+			if (_vm->getVersion() < 400) {
+				channelSize = _framesStream->readByte() * 2;
+				channelOffset = _framesStream->readByte() * 2;
+				frameSize -= channelSize + 2;
+			} else {
+				channelSize = _framesStream->readUint16();
+				channelOffset = _framesStream->readUint16();
+				frameSize -= channelSize + 4;
+			}
+
+			assert(channelOffset + channelSize < kChannelDataSize);
+			_framesStream->read(&_channelData[channelOffset], channelSize);
+		}
+
+		Common::MemoryReadStreamEndian *str = new Common::MemoryReadStreamEndian(_channelData, ARRAYSIZE(_channelData), _framesStream->isBE());
+		// str->hexdump(str->size(), 32);
+		frame->readChannels(str, _version);
+		delete str;
+		// Precache the current FPS tempo, as this carries forward to frames to the right
+		// of the instruction
+		// Delay type tempos (e.g. wait commands, delays) apply to only a single frame, and are ignored here
+		if (frame->_tempo && frame->_tempo <= 120)
+			_currentTempo = frame->_tempo;
+		frame->_scoreCachedTempo = frame->_tempo ? frame->_tempo : _currentTempo;
+		// Precache the current palette ID, as this carries forward to frames to the right
+		// of the instruction
+		if (!frame->_palette.paletteId.isNull())
+			_currentPaletteId = frame->_palette.paletteId;
+		frame->_scoreCachedPaletteId = _currentPaletteId;
+
+		debugC(8, kDebugLoading, "Score::readOneFrame(): Frame %d actionId: %s", _curFrameNumber, frame->_actionId.asString().c_str());
+
+		if (_currentFrame != nullptr) {
+			// Delete previous frame before assigning new one
+			delete _currentFrame;
+			_currentFrame = nullptr;
+		}
+		_currentFrame = frame;
+
+		if (_curFrameNumber == _frameOffsets.size() - 1 && _framesStream->pos() < _framesStreamSize) {
+			// Record the starting offset for next frame
+			_frameOffsets.push_back(_framesStream->pos());
+		}
+		return true;
+	} else {
+		warning("Score::readOneFrame(): Zero sized frame!? exiting loop until we know what to do with the tags that follow.");
+	}
+
 
 	return false; // Error in loading frame
 }
@@ -1588,8 +1560,8 @@ bool Score::readOneFrame(bool saveOffset) {
 Frame *Score::getFrameData(int frameNum){
 	// This function is for previewing selected frame,
 	// It doesn't make any changes to current render state
-	// In case of any problem, it returns nullptr.
-	// Be sure to delete this frame after use!
+	// In case of any problem, it returns nullptr
+	// Be sure to delete this frame after use
 
 	// Backup variables
 	int curFrameNumber = _curFrameNumber;
