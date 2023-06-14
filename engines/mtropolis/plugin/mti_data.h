@@ -31,7 +31,7 @@ namespace Data {
 namespace MTI {
 
 // Known Muppet Treasure Island custom modifiers:
-// Shanghai - ???
+// Shanghai - Shanghai minigame tile randomizer
 
 struct ShanghaiModifier : public PlugInModifierData {
 	PlugInTypeTaggedValue resetWhen;  // Reset When
