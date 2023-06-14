@@ -129,7 +129,6 @@ private:
 public:
 	Game() { StartNewGame(); }
 	Game(const Common::String &filename) { LoadGame(filename); }
-	~Game() {}
 
 	void Init(const Common::String &filename);
 
