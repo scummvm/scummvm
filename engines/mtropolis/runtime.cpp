@@ -2979,7 +2979,13 @@ void StructuralHooks::onCreate(Structural *structural) {
 void StructuralHooks::onPostActivate(Structural *structural) {
 }
 
-void StructuralHooks::onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt) {
+void StructuralHooks::onSetPosition(Runtime *runtime, Structural *structural, const Common::Point &oldPt, Common::Point &pt) {
+}
+
+void StructuralHooks::onStopPlayingMToon(Structural *structural, bool &visible, bool &stopped) {
+}
+
+void StructuralHooks::onHidden(Structural *structural, bool &visible) {
 }
 
 ProjectPresentationSettings::ProjectPresentationSettings() : width(640), height(480), bitsPerPixel(8) {
@@ -8121,6 +8127,10 @@ VThreadState VisualElement::consumeCommand(Runtime *runtime, const Common::Share
 	if (Event(EventIDs::kElementHide, 0).respondsTo(msg->getEvent())) {
 		if (_visible) {
 			_visible = false;
+
+			if (_hooks)
+				_hooks->onHidden(this, _visible);
+
 			runtime->setSceneGraphDirty();
 		}
 
@@ -8559,7 +8569,7 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPosition(MiniscriptThread *
 		Common::Point destPoint = value.getPoint();
 
 		if (_hooks)
-			_hooks->onSetPosition(thread->getRuntime(), this, destPoint);
+			_hooks->onSetPosition(thread->getRuntime(), this, Common::Point(_rect.left, _rect.top), destPoint);
 
 		int32 xDelta = destPoint.x - _rect.left;
 		int32 yDelta = destPoint.y - _rect.top;
@@ -8582,7 +8592,7 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPositionX(MiniscriptThread 
 
 	Common::Point updatedPoint = Common::Point(asInteger, _rect.top);
 	if (_hooks)
-		_hooks->onSetPosition(thread->getRuntime(), this, updatedPoint);
+		_hooks->onSetPosition(thread->getRuntime(), this, Common::Point(_rect.left, _rect.top), updatedPoint);
 	int32 xDelta = updatedPoint.x - _rect.left;
 	int32 yDelta = updatedPoint.y - _rect.top;
 
@@ -8599,7 +8609,7 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPositionY(MiniscriptThread 
 
 	Common::Point updatedPoint = Common::Point(_rect.left, asInteger);
 	if (_hooks)
-		_hooks->onSetPosition(thread->getRuntime(), this, updatedPoint);
+		_hooks->onSetPosition(thread->getRuntime(), this, Common::Point(_rect.left, _rect.top), updatedPoint);
 
 	int32 xDelta = updatedPoint.x - _rect.left;
 	int32 yDelta = updatedPoint.y - _rect.top;

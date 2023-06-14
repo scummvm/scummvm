@@ -1583,6 +1583,9 @@ VThreadState MToonElement::stopPlayingTask(const StopPlayingTaskData &taskData) 
 		taskData.runtime->sendMessageOnVThread(dispatch);
 	}
 
+	if (_hooks)
+		_hooks->onStopPlayingMToon(this, _visible, _isStopped);
+
 	return kVThreadReturn;
 }
 

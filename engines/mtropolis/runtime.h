@@ -2127,7 +2127,9 @@ public:
 
 	virtual void onCreate(Structural *structural);
 	virtual void onPostActivate(Structural *structural);
-	virtual void onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt);
+	virtual void onSetPosition(Runtime *runtime, Structural *structural, const Common::Point &oldPt, Common::Point &pt);
+	virtual void onStopPlayingMToon(Structural *structural, bool &visible, bool &stopped);
+	virtual void onHidden(Structural *structural, bool &visible);
 };
 
 class Structural : public RuntimeObject, public IModifierContainer, public IMessageConsumer, public Debuggable {
