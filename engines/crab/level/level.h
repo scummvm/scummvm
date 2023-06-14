@@ -144,7 +144,7 @@ public:
 	pyrodactyl::image::Image img;
 
 	Level() { Reset(); }
-	~Level() {}
+	~Level() { Reset(); }
 
 	void Reset();
 
