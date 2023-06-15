@@ -518,11 +518,7 @@ void BitmapCastMember::load() {
 		if ((pic == nullptr || pic->size() == 0)
 				&& ci && !ci->fileName.empty()) {
 			// image file is linked, load from the filesystem
-			Common::String filename = ci->fileName;
-			Common::String directory = ci->directory;
-
-			Common::String imageFilename = directory + g_director->_dirSeparator + filename;
-
+			Common::String imageFilename = ci->fileName;
 			Common::Path path = Common::Path(pathMakeRelative(imageFilename), g_director->_dirSeparator);
 
 			Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(path);
