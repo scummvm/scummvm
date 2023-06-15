@@ -76,7 +76,10 @@ public:
 	void Quit() {
 		img.Delete();
 		img_s.Delete();
+		img_hover.Delete();
+		img_hover_s.Delete();
 	}
+
 	void Reset();
 
 	void Load(rapidxml::xml_node<char> *node);
