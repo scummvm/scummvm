@@ -57,6 +57,8 @@ extern const AGSGameDescription GAME_DESCRIPTIONS[];
 enum AGSSteamVersion { kAGSteam = 0, kWadjetEye = 1 };
 enum AGSSpriteFontVersion { kAGSSpriteFont = 0, kClifftopGames = 1 };
 
+#define GAMEOPTION_NO_SAVE_THUMBNAIL GUIO_GAMEOPTIONS1
+
 } // namespace AGS
 
 
