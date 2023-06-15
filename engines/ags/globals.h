@@ -1094,7 +1094,7 @@ public:
 
 	// ScummVM GUIO-controlled flag to save a screenshot
 	// when saving (used for saves thumbnails)
-	bool _SaveThumbnail = true;
+	bool _saveThumbnail = true;
 #if 0
 	//! AGS_PLATFORM_DEFINES_PSP_VARS
 	int _psp_rotation = 0;
