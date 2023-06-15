@@ -19,7 +19,19 @@
  *
  */
 
+// See https://github.com/ericoporto/agsappopenurl for original plugin source code
+
 #include "ags/plugins/ags_app_open_url/ags_app_open_url.h"
+#include "common/system.h"
+
+#define MAX_URL_SIZE 2048
+
+#define FAIL_LOG_AND_EXIT(X) \
+	do { \
+		_engine->PrintDebugConsole(X); \
+		params._result = 0; \
+		return;  \
+	} while (0)
 
 namespace AGS3 {
 namespace Plugins {
@@ -36,7 +48,58 @@ void AGSAppOpenURL::AGS_EngineStartup(IAGSEngine *engine) {
 }
 
 void AGSAppOpenURL::AppOpenURL(ScriptMethodParams &params) {
-	warning("AGSAppOpenURL::AppOpenURL() is not implemented");
+	PARAMS2(int, iags_protocol, const char *, iags_url);
+
+	enum AgsUrlProtocol {
+		eAgsUrlProt_https = 0,
+		eAgsUrlProt_http
+	};
+
+	if (!g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
+		FAIL_LOG_AND_EXIT("AppOpenURL: open URL not supported on current platform.");
+	}
+
+	if (iags_url == nullptr || iags_url[0] == 0) {
+		FAIL_LOG_AND_EXIT("AppOpenURL: empty URL received.");
+	}
+
+	const char *found = (const char *)memchr(iags_url, '\0', MAX_URL_SIZE);
+	if (!found) {
+		FAIL_LOG_AND_EXIT("AppOpenURL: URL is too big.");
+	}
+
+	Common::String url_str(iags_url);
+	for (char c : {' ' , '\n', '\r', '\t'}) {
+		size_t pos;
+		while ((pos = url_str.rfind(c)) != Common::String::npos) {
+			url_str.deleteChar(pos);
+		}
+	}
+	if (url_str.empty()) {
+		FAIL_LOG_AND_EXIT("AppOpenURL: URL is empty after clean up.");
+	}
+
+	if (url_str[0] == ':' || (url_str.rfind("://") != Common::String::npos))  {
+		FAIL_LOG_AND_EXIT("AppOpenURL: URL includes protocol specifiers.");
+	}
+
+	switch (iags_protocol) {
+	case eAgsUrlProt_http:
+		url_str = "http://" + url_str;
+		break;
+	case eAgsUrlProt_https:
+	default:
+		url_str = "https://" + url_str;
+		break;
+	}
+
+
+	if (!g_system->openUrl(url_str)) {
+		FAIL_LOG_AND_EXIT("AppOpenURL: Fail to open URL.");
+	}
+
+	_engine->PrintDebugConsole("AppOpenURL: success opening url");
+	params._result = 1;
 }
 
 } // namespace AGSAppOpenURL
