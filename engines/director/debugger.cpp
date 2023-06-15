@@ -232,6 +232,14 @@ bool Debugger::cmdInfo(int argc, const char **argv) {
 	debugPrintf("Allow outdated Lingo flag: %d\n", movie->_allowOutdatedLingo);
 	debugPrintf("Frame count: %d\n", score->_frames.size());
 	debugPrintf("Cast member count: %d\n", cast->getCastSize());
+	debugPrintf("Search paths:\n");
+	if (g_lingo->_searchPath.isArray() && g_lingo->_searchPath.u.farr->arr.size() > 0) {
+		for (auto &it : g_lingo->_searchPath.u.farr->arr) {
+			debugPrintf("    %s\n", it.asString().c_str());
+		}
+	} else {
+		debugPrintf("    [empty]\n");
+	}
 	debugPrintf("\n");
 	return true;
 }
