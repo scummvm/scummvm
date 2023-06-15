@@ -79,9 +79,6 @@ void SoundCastMember::load() {
 		if (ci) {
 			Common::String filename = ci->fileName;
 
-			if (!ci->directory.empty())
-				filename = ci->directory + g_director->_dirSeparator + ci->fileName;
-
 			debugC(2, kDebugLoading, "****** Loading file '%s', cast id: %d", filename.c_str(), sndId);
 			AudioFileDecoder *audio = new AudioFileDecoder(filename);
 			_audio = audio;
