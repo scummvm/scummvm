@@ -203,6 +203,22 @@ void CharacterInventory::itemSelected() {
 }
 
 void CharacterInventory::selectButton(SelectedButton btnMode) {
+	if (btnMode == BTN_EQUIP && _mode == ARMS_MODE) {
+		// Selecting items to equip only makes sense in BACKPACK_MODE,
+		// so we switch to it:
+		_mode = BACKPACK_MODE;
+		populateItems();
+		redraw();
+		draw();
+	}
+	else if (btnMode == BTN_REMOVE && _mode == BACKPACK_MODE) {
+		// Selecting items to unequip only makes sense in ARMS_MODE,
+		// so we switch to it:
+		_mode = ARMS_MODE;
+		populateItems();
+		redraw();
+		draw();
+	}
 	_selectedButton = btnMode;
 
 	if (_selectedItem != -1) {
