@@ -146,6 +146,7 @@ void App::Run() {
 		if (ShouldChangeState) {
 			// Delete the current state
 			delete CurrentState;
+			CurrentState = nullptr;
 
 			if (NextStateID == GAMESTATE_EXIT)
 				break;
@@ -297,7 +298,8 @@ void App::Run() {
 		}
 	}
 
-	delete CurrentState;
+	if (CurrentState)
+		delete CurrentState;
 }
 
 void App::LoadSettings(const Common::String &filename) {
