@@ -72,7 +72,7 @@ bool CharacterInventory::msgFocus(const FocusMessage &msg) {
 
 bool CharacterInventory::msgGame(const GameMessage &msg) {
 	if (msg._name == "ITEM" && msg._value >= 0 &&
-			msg._value <= (int)_items.size()) {
+			msg._value < (int)_items.size()) {
 		_selectedItem = msg._value;
 		performAction();
 		return true;
