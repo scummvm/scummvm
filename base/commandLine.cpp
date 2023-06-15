@@ -76,6 +76,7 @@ static const char HELP_STRING1[] =
 	"  -t, --list-targets       Display list of configured targets and exit\n"
 	"  --list-engines           Display list of supported engines and exit\n"
 	"  --list-all-engines       Display list of all detection engines and exit\n"
+	"  --dump-all-detection-entries Create a DAT file containing MD5s from detection entries of all engines\n"
 	"  --stats                  Display statistics about engines and games and exit\n"
 	"  --list-debugflags=engine Display list of engine specified debugflags\n"
 	"                           if engine=global or engine is not specified, then it will list global debugflags\n"
@@ -618,6 +619,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_COMMAND
 
 			DO_LONG_COMMAND("list-all-engines")
+			END_COMMAND
+
+			DO_LONG_COMMAND("dump-all-detection-entries")
 			END_COMMAND
 
 			DO_LONG_COMMAND("stats")
@@ -1419,6 +1423,16 @@ static void listAudioDevices() {
 	}
 }
 
+/** Dump MD5s from detection entries into STDOUT */
+/** WIP: Current only creates a metaengine instance for each engine */
+static void dumpAllDetectionEntries() {
+	// We need to create one file for each engine
+	const PluginList &plugins = EngineMan.getPlugins();
+	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); iter++) {
+		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
+	}
+}
+
 /** Display all games in the given directory, or current directory if empty */
 static DetectedGames getGameList(const Common::FSNode &dir) {
 	Common::FSList files;
@@ -1859,6 +1873,9 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		return cmdDoExit;
 	} else if (command == "list-all-engines") {
 		listAllEngines();
+		return cmdDoExit;
+	} else if (command == "dump-all-detection-entries") {
+		dumpAllDetectionEntries();
 		return cmdDoExit;
 	} else if (command == "stats") {
 		printStatistics(settings["engine"]);
