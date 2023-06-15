@@ -265,11 +265,8 @@ void TextManager::Draw(const int &x, int y, const Common::String &text, const in
 // Purpose: Quit
 //------------------------------------------------------------------------
 void TextManager::Quit() {
-	warning("STUB: TextManager::Quit()");
-
-#if 0
 	for (auto i = font.begin(); i != font.end(); ++i)
-		TTF_CloseFont(*i);
+		delete *i;
 
 	for (auto i = cache.begin(); i != cache.end(); ++i) {
 		if (i->empty == false) {
@@ -277,7 +274,6 @@ void TextManager::Quit() {
 			i->empty = true;
 		}
 	}
-#endif
 }
 
 } // End of namespace Crab
