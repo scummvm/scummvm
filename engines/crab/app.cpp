@@ -328,6 +328,7 @@ App::~App() {
 	g_engine->_textManager->Quit();
 	g_engine->_inputManager->Quit();
 	g_engine->_loadingScreen->Quit();
+	g_engine->_mouse->Quit();
 #if 0
 	// SteamAPI_Shutdown();
 
