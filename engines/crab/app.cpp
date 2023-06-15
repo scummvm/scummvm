@@ -118,7 +118,6 @@ bool App::Init() {
 	g_engine->_inputManager->AddController();
 #endif
 	// Initialize and load input
-	g_engine->_inputManager->Init();
 
 	LoadSettings("res/settings.xml");
 	g_engine->_screenSettings->in_game = false;
