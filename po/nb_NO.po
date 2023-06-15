@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-06-14 07:24+0000\n"
-"PO-Revision-Date: 2023-04-15 16:26+0000\n"
+"PO-Revision-Date: 2023-06-15 17:40+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -2742,14 +2742,12 @@ msgid "TB"
 msgstr "TB"
 
 #: dists/android.strings.xml.cpp:30
-#, fuzzy
-#| msgid "Quit ScummVM"
 msgid "ScummVM"
-msgstr "Avslutt ScummVM"
+msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
 msgid "Graphic adventure game engine"
-msgstr ""
+msgstr "Spillmotor for grafikkbaserte eventyr"
 
 #: dists/android.strings.xml.cpp:33
 #: backends/events/default/default-events.cpp:217
@@ -7711,14 +7709,6 @@ msgstr ""
 "\n"
 
 #: engines/scumm/detection_internal.h:384
-#, fuzzy
-#| msgid ""
-#| "This version of Monkey Island can't be played, because Limited Run Games "
-#| "provided corrupted DISK04.LEC and 903.LFL files.\n"
-#| "\n"
-#| "Please contact their technical support for replacement files, or look "
-#| "online for some guides which can help you recover valid files from the "
-#| "KryoFlux dumps that Limited Run Games also provided."
 msgid ""
 "This version of Monkey Island can't be played, because Limited Run Games "
 "provided corrupted DISK03.LEC, DISK04.LEC and 903.LFL files.\n"
@@ -7728,7 +7718,7 @@ msgid ""
 "dumps that Limited Run Games also provided."
 msgstr ""
 "Du kan ikke spille denne utgaven av Monkey Island fordi Limited Run Games "
-"har inkludert følgende skadde filer: DISK04.LEC og 903.LFL.\n"
+"har inkludert følgende skadde filer: DISK03.LEC, DISK04.LEC og 903.LFL.\n"
 "\n"
 "Kontakt deres tekniske brukerstøtte for å få tilsendt de riktige filene, "
 "eller søk på Internett etter guider som hjelper deg med å gjenopprette "
