@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE // atari-graphics.h's unordered_set
+
 #include "backends/graphics/atari/atari-graphics.h"
 
 #include <mint/cookie.h>
@@ -444,20 +446,20 @@ void AtariGraphicsManager::updateScreen() {
 
 	if (isOverlayVisible()) {
 		assert(_workScreen == _screen[OVERLAY_BUFFER]);
-		screenUpdated = updateScreenInternal(_overlaySurface, _workScreen->dirtyRects);
+		screenUpdated = updateScreenInternal(_overlaySurface);
 	} else {
 		switch (_currentState.mode) {
 		case GraphicsMode::DirectRendering:
 			assert(_workScreen == _screen[FRONT_BUFFER]);
-			screenUpdated = updateScreenInternal(Graphics::Surface(), _workScreen->dirtyRects);
+			screenUpdated = updateScreenInternal(Graphics::Surface());
 			break;
 		case GraphicsMode::SingleBuffering:
 			assert(_workScreen == _screen[FRONT_BUFFER]);
-			screenUpdated = updateScreenInternal(_chunkySurface, _workScreen->dirtyRects);
+			screenUpdated = updateScreenInternal(_chunkySurface);
 			break;
 		case GraphicsMode::TripleBuffering:
 			assert(_workScreen == _screen[BACK_BUFFER1]);
-			screenUpdated = updateScreenInternal(_chunkySurface, _workScreen->dirtyRects);
+			screenUpdated = updateScreenInternal(_chunkySurface);
 			break;
 		}
 	}
@@ -866,9 +868,10 @@ void AtariGraphicsManager::convertRectToSurfaceWithKey(Graphics::Surface &dstSur
 	}
 }
 
-bool AtariGraphicsManager::updateScreenInternal(const Graphics::Surface &srcSurface, const DirtyRects &dirtyRects) {
+bool AtariGraphicsManager::updateScreenInternal(const Graphics::Surface &srcSurface) {
 	//debug("updateScreenInternal: %d", (int)dirtyRects.size());
 
+	const DirtyRects &dirtyRects  = _workScreen->dirtyRects;
 	Graphics::Surface *dstSurface = _workScreen->offsettedSurf;
 	bool &cursorPositionChanged   = _workScreen->cursorPositionChanged;
 	bool &cursorSurfaceChanged    = _workScreen->cursorSurfaceChanged;
@@ -1081,17 +1084,17 @@ void AtariGraphicsManager::Screen::addDirtyRect(const Graphics::Surface &srcSurf
 	rect.right = (rect.right + 15) & 0xfff0;
 
 	if ((rect.width() == srcSurface.w && rect.height() == srcSurface.h)
-		|| dirtyRects.size() == dirtyRects.capacity()) {
+		|| dirtyRects.size() == 128) {	// 320x200 can hold at most 250 16x16 rectangles
 		//debug("addDirtyRect[%d]: purge %d x %d", (int)dirtyRects.size(), srcSurface.w, srcSurface.h);
 
 		dirtyRects.clear();
-		dirtyRects.push_back(Common::Rect(srcSurface.w, srcSurface.h));
+		dirtyRects.emplace(srcSurface.w, srcSurface.h);
 
 		fullRedraw = true;
 		return;
 	}
 
-	dirtyRects.push_back(rect);
+	dirtyRects.emplace(std::move(rect));
 }
 
 void AtariGraphicsManager::Cursor::update(const Graphics::Surface &screen, bool isModified) {

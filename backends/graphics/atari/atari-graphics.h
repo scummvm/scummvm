@@ -23,14 +23,25 @@
 #define BACKENDS_GRAPHICS_ATARI_H
 
 #include "backends/graphics/graphics.h"
+#include "common/events.h"
 
 #include <mint/osbind.h>
 #include <mint/ostruct.h>
-#include <vector>
+#include <unordered_set>
 
-#include "common/events.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
+
+template<>
+struct std::hash<Common::Rect>
+{
+	std::size_t operator()(Common::Rect const& rect) const noexcept
+	{
+		return 31 * (31 * (31 * rect.left + rect.top) + rect.right) + rect.bottom;
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
 
 class AtariGraphicsManager : public GraphicsManager, Common::EventObserver {
 public:
@@ -128,8 +139,7 @@ protected:
 	GraphicsState _pendingState{ (GraphicsMode)getDefaultGraphicsMode() };
 
 private:
-	// use std::vector as its clear() doesn't reset capacity
-	using DirtyRects = std::vector<Common::Rect>;
+	using DirtyRects = std::unordered_set<Common::Rect>;
 
 	enum CustomEventAction {
 		kActionToggleAspectRatioCorrection = 100,
@@ -147,7 +157,7 @@ private:
 	int16 getMaximumScreenHeight() const { return 480; }
 	int16 getMaximumScreenWidth() const { return _tt ? 320 : (_vgaMonitor ? 640 : 640*1.2); }
 
-	bool updateScreenInternal(const Graphics::Surface &srcSurface, const DirtyRects &dirtyRects);
+	bool updateScreenInternal(const Graphics::Surface &srcSurface);
 
 	virtual AtariMemAlloc getStRamAllocFunc() const {
 		return [](size_t bytes) { return (void*)Mxalloc(bytes, MX_STRAM); };
@@ -261,7 +271,7 @@ private:
 		bool cursorPositionChanged = true;
 		bool cursorSurfaceChanged = false;
 		bool cursorVisibilityChanged = false;
-		DirtyRects dirtyRects = DirtyRects(512);	// reserve 512 rects
+		DirtyRects dirtyRects;
 		bool fullRedraw = false;
 		Common::Rect oldCursorRect;
 		int rez = -1;
