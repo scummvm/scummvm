@@ -54,6 +54,18 @@ DownloadGamesDialog::DownloadGamesDialog()
 		_("Dráscula: The Vampire Strikes Back - Freeware Version (Spanish, German, French and Italian AddOn)"),
 		_("Dráscula: The Vampire Strikes Back - Freeware Version (Updated Spanish, German, French and Italian AddOn) - requires ScummVM 1.3.0 or more"),
 	};
+
+	// Gray out already downloaded packages
+	for (Common::ConfigManager::DomainMap::iterator domain = ConfMan.beginGameDomains(); domain != ConfMan.endGameDomains(); ++domain) {
+		if (domain->_value.contains("download")) {
+			Common::String val(domain->_value.getVal("download"));
+			uint64 id = val.asUint64();
+			if (id < games.size()) {
+				games[id] = "\001C{alternate}" + games[id];
+			}
+		}
+	}
+
 	_gamesList->setList(games);
 
 	new ButtonWidget(this, "DownloadGames.Back", _("Back"), Common::U32String(), kCloseCmd);
