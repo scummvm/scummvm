@@ -113,7 +113,10 @@ public:
 		cur = 0;
 		overlay = true;
 	}
-	~Map() {}
+	~Map() {
+		img_bg.Delete();
+		img_overlay.Delete();
+	}
 
 	void Load(const Common::String &filename, pyrodactyl::event::Info &info);
 
