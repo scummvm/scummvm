@@ -33,6 +33,7 @@ struct Surface;
 
 namespace Common {
 class ReadStreamEndian;
+class MemoryReadStreamEndian;
 }
 
 namespace Director {
@@ -92,7 +93,7 @@ public:
 	Score *getScore() const { return _score; }
 
 	void readChannels(Common::SeekableReadStreamEndian *stream, uint16 version);
-	void readChannel(Common::SeekableReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readChannel(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size, uint16 version);
 
 	void executeImmediateScripts();
 
@@ -101,8 +102,22 @@ public:
 private:
 
 	void readPaletteInfo(Common::SeekableReadStreamEndian &stream);
-	void readSprite(Common::SeekableReadStreamEndian &stream, uint16 offset, uint16 size);
-	void readMainChannels(Common::SeekableReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readChannelD2(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readSpriteD2(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readMainChannelsD2(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
+
+	void readChannelD4(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
+
+	void readChannelD5(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readSpriteD5(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
+
+	void readChannelD6(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readSpriteD6(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readMainChannelsD6(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
+
 	Image::ImageDecoder *getImageFrom(uint16 spriteId);
 	Common::String readTextStream(Common::SeekableReadStreamEndian *textStream, TextCastMember *textCast);
 

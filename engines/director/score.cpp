@@ -1356,7 +1356,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	uint dataSize = stream.size();
 	byte *data = (byte *)malloc(dataSize);
 	stream.read(data, dataSize);
-	
+
 	_framesStream = new Common::MemoryReadStreamEndian(data, dataSize, stream.isBE(), DisposeAfterUse::YES);
 
 	if (debugChannelSet(8, kDebugLoading)) {
@@ -1394,6 +1394,8 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	// TODO Merge it with shared cast
 	memset(_channelData, 0, kChannelDataSize);
 
+	_currentFrame = new Frame(this, _numChannelsDisplayed);
+
 	// This makes all indexing simpler
 	_frameOffsets.push_back(0);
 
@@ -1406,7 +1408,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 
 	// Pre-computing number of frames, as sometimes the frameNumber in stream mismatches
 	debugC(1, kDebugLoading, "Score::loadFrames(): Precomputing total number of frames!");
-	
+
 	// Calculate number of frames beforehand
 	for (_numFrames = 1; loadFrame(_numFrames); _numFrames++) { }
 
@@ -1471,8 +1473,8 @@ void Score::rebuildChannelData(int frameNum) {
 
 	// Lock variables
 	int curFrameNumber = _curFrameNumber;
-	Frame *frame = _currentFrame;
-	_currentFrame = nullptr; // To avoid later deletion of frame inside renderOneFrame()
+	delete _currentFrame; // Destroy the built frame
+	_currentFrame = new Frame(this, _numChannelsDisplayed);
 
 	_framesStream->seek(_frameOffsets[1]); // Seek to frame 1
 	for (int i = 1; i < frameNum; i++) {
@@ -1480,9 +1482,7 @@ void Score::rebuildChannelData(int frameNum) {
 	}
 
 	// Unlock variables
-	delete _currentFrame; // Destroy the built frame
 	_curFrameNumber = curFrameNumber;
-	_currentFrame = frame;
 }
 
 bool Score::readOneFrame() {
@@ -1500,7 +1500,6 @@ bool Score::readOneFrame() {
 		_framesStream->hexdump(frameSize);
 	}
 	if (frameSize > 0) {
-		Frame *frame = new Frame(this, _numChannelsDisplayed);
 		frameSize -= 2;
 
 		while (frameSize != 0) {
@@ -1515,34 +1514,30 @@ bool Score::readOneFrame() {
 				frameSize -= channelSize + 4;
 			}
 
-			assert(channelOffset + channelSize < kChannelDataSize);
-			_framesStream->read(&_channelData[channelOffset], channelSize);
+			_currentFrame->readChannel(*_framesStream, channelOffset, channelSize, _version);
 		}
 
-		Common::MemoryReadStreamEndian *str = new Common::MemoryReadStreamEndian(_channelData, ARRAYSIZE(_channelData), _framesStream->isBE());
+		if (debugChannelSet(4, kDebugLoading)) {
+			debugC(4, kDebugLoading, "%s", _currentFrame->formatChannelInfo().c_str());
+		}
+
+		//Common::MemoryReadStreamEndian *str = new Common::MemoryReadStreamEndian(_channelData, ARRAYSIZE(_channelData), _framesStream->isBE());
 		// str->hexdump(str->size(), 32);
-		frame->readChannels(str, _version);
-		delete str;
+		//frame->readChannels(str, _version);
+		//delete str;
 		// Precache the current FPS tempo, as this carries forward to frames to the right
 		// of the instruction
 		// Delay type tempos (e.g. wait commands, delays) apply to only a single frame, and are ignored here
-		if (frame->_tempo && frame->_tempo <= 120)
-			_currentTempo = frame->_tempo;
-		frame->_scoreCachedTempo = frame->_tempo ? frame->_tempo : _currentTempo;
+		if (_currentFrame->_tempo && _currentFrame->_tempo <= 120)
+			_currentTempo = _currentFrame->_tempo;
+		_currentFrame->_scoreCachedTempo = _currentFrame->_tempo ? _currentFrame->_tempo : _currentTempo;
 		// Precache the current palette ID, as this carries forward to frames to the right
 		// of the instruction
-		if (!frame->_palette.paletteId.isNull())
-			_currentPaletteId = frame->_palette.paletteId;
-		frame->_scoreCachedPaletteId = _currentPaletteId;
+		if (!_currentFrame->_palette.paletteId.isNull())
+			_currentPaletteId = _currentFrame->_palette.paletteId;
+		_currentFrame->_scoreCachedPaletteId = _currentPaletteId;
 
-		debugC(8, kDebugLoading, "Score::readOneFrame(): Frame %d actionId: %s", _curFrameNumber, frame->_actionId.asString().c_str());
-
-		if (_currentFrame != nullptr) {
-			// Delete previous frame before assigning new one
-			delete _currentFrame;
-			_currentFrame = nullptr;
-		}
-		_currentFrame = frame;
+		debugC(8, kDebugLoading, "Score::readOneFrame(): Frame %d actionId: %s", _curFrameNumber, _currentFrame->_actionId.asString().c_str());
 
 		if (_curFrameNumber == _frameOffsets.size() - 1 && _framesStream->pos() < _framesStreamSize) {
 			// Record the starting offset for next frame
@@ -1552,7 +1547,6 @@ bool Score::readOneFrame() {
 	} else {
 		warning("Score::readOneFrame(): Zero sized frame!? exiting loop until we know what to do with the tags that follow.");
 	}
-
 
 	return false; // Error in loading frame
 }
