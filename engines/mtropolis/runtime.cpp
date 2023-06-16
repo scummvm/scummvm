@@ -705,15 +705,15 @@ bool DynamicListContainer<void>::compareEqual(const DynamicListContainerBase &ot
 DynamicListContainerBase *DynamicListContainer<void>::clone() const {
 	return new DynamicListContainer<void>(*this);
 }
-DynamicList::DynamicList() : _type(DynamicValueTypes::kEmpty), _container(nullptr) {
+DynamicList::DynamicList() : _type(DynamicValueTypes::kUnspecified), _container(nullptr) {
 }
 
-DynamicList::DynamicList(const DynamicList &other) : _type(DynamicValueTypes::kEmpty), _container(nullptr) {
+DynamicList::DynamicList(const DynamicList &other) : _type(DynamicValueTypes::kUnspecified), _container(nullptr) {
 	initFromOther(other);
 }
 
 DynamicList::~DynamicList() {
-	clear();
+	destroyContainer();
 }
 
 DynamicValueTypes::DynamicValueType DynamicList::getType() const {
@@ -832,17 +832,13 @@ Common::Array<ObjectReference> &DynamicList::getObjectReference() {
 
 bool DynamicList::setAtIndex(size_t index, const DynamicValue &value) {
 	if (_type != value.getType()) {
-		if (_container != nullptr && _container->getSize() != 0) {
+		if (_container) {
 			DynamicValue converted;
 			if (!value.convertToType(_type, converted))
 				return false;
 			return setAtIndex(index, converted);
 		} else {
-			clear();
-			changeToType(value.getType());
-
-			assert(_container);
-
+			createContainerAndSetType(value.getType());
 			return _container->setAtIndex(index, value);
 		}
 	} else {
@@ -866,9 +862,7 @@ void DynamicList::deleteAtIndex(size_t index) {
 }
 
 void DynamicList::truncateToSize(size_t sz) {
-	if (sz == 0)
-		clear();
-	else if (_container)
+	if (_container)
 		_container->truncateToSize(sz);
 }
 
@@ -891,6 +885,13 @@ size_t DynamicList::getSize() const {
 		return _container->getSize();
 }
 
+void DynamicList::forceType(DynamicValueTypes::DynamicValueType type) {
+	if (_type != type) {
+		destroyContainer();
+		createContainerAndSetType(type);
+	}
+}
+
 bool DynamicList::dynamicValueToIndex(size_t &outIndex, const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kFloat) {
 		double rounded = floor(value.getFloat() + 0.5);
@@ -909,7 +910,7 @@ bool DynamicList::dynamicValueToIndex(size_t &outIndex, const DynamicValue &valu
 
 DynamicList &DynamicList::operator=(const DynamicList &other) {
 	if (this != &other) {
-		clear();
+		destroyContainer();
 		initFromOther(other);
 	}
 
@@ -961,7 +962,7 @@ void DynamicList::createWriteProxyForIndex(size_t index, DynamicValueWriteProxy 
 	proxy.pod.ptrOrOffset = index;
 }
 
-bool DynamicList::changeToType(DynamicValueTypes::DynamicValueType type) {
+bool DynamicList::createContainerAndSetType(DynamicValueTypes::DynamicValueType type) {
 	switch (type) {
 	case DynamicValueTypes::kInvalid:
 		// FIXME: Set _container as per kNull case?
@@ -1005,9 +1006,11 @@ bool DynamicList::changeToType(DynamicValueTypes::DynamicValueType type) {
 	case DynamicValueTypes::kWriteProxy:
 		// FIXME
 		break;
-	case DynamicValueTypes::kEmpty:
+	case DynamicValueTypes::kUnspecified:
 		// FIXME: Set _container as per kNull case?
 		break;
+	default:
+		error("List was set to an invalid type");
 	}
 
 	_type = type;
@@ -1015,19 +1018,19 @@ bool DynamicList::changeToType(DynamicValueTypes::DynamicValueType type) {
 	return true;
 }
 
-void DynamicList::clear() {
-	_type = DynamicValueTypes::kEmpty;
+void DynamicList::destroyContainer() {
 	if (_container)
 		delete _container;
 	_container = nullptr;
+	_type = DynamicValueTypes::kUnspecified;
 }
 
 void DynamicList::initFromOther(const DynamicList &other) {
 	assert(_container == nullptr);
-	assert(_type == DynamicValueTypes::kEmpty);
+	assert(_type == DynamicValueTypes::kUnspecified);
 
-	if (other._type != DynamicValueTypes::kEmpty) {
-		changeToType(other._type);
+	if (other._type != DynamicValueTypes::kUnspecified) {
+		createContainerAndSetType(other._type);
 		_container->setFrom(*other._container);
 	}
 }
@@ -1530,7 +1533,7 @@ bool DynamicValue::operator==(const DynamicValue &other) const {
 void DynamicValue::clear() {
 	switch (_type) {
 	case DynamicValueTypes::kNull:
-	case DynamicValueTypes::kEmpty:
+	case DynamicValueTypes::kUnspecified:
 		_value.destruct<uint64, &ValueUnion::asUnset>();
 		break;
 	case DynamicValueTypes::kInteger:
@@ -1674,7 +1677,7 @@ void DynamicValue::setFromOther(const DynamicValue &other) {
 
 	switch (other._type) {
 	case DynamicValueTypes::kNull:
-	case DynamicValueTypes::kEmpty:
+	case DynamicValueTypes::kUnspecified:
 		clear();
 		_type = other._type;
 		break;

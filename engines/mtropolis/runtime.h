@@ -210,7 +210,7 @@ enum DynamicValueType {
 	kObject = 14,
 	kWriteProxy = 15,
 
-	kEmpty = 16,
+	kUnspecified = 16,
 };
 
 } // End of namespace DynamicValuesTypes
@@ -792,6 +792,8 @@ struct DynamicList {
 	void expandToMinimumSize(size_t sz);
 	size_t getSize() const;
 
+	void forceType(DynamicValueTypes::DynamicValueType type);
+
 	static bool dynamicValueToIndex(size_t &outIndex, const DynamicValue &value);
 
 	DynamicList &operator=(const DynamicList &other);
@@ -814,9 +816,9 @@ private:
 		static MiniscriptInstructionOutcome refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index);
 	};
 
-	void clear();
 	void initFromOther(const DynamicList &other);
-	bool changeToType(DynamicValueTypes::DynamicValueType type);
+	void destroyContainer();
+	bool createContainerAndSetType(DynamicValueTypes::DynamicValueType type);
 
 	DynamicValueTypes::DynamicValueType _type;
 	DynamicListContainerBase *_container;

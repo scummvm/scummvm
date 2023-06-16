@@ -2757,6 +2757,8 @@ ListVariableModifier::ListVariableModifier() : VariableModifier(Common::SharedPt
 bool ListVariableModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::ListVariableModifier &data) {
 	ListVariableStorage *storage = static_cast<ListVariableStorage *>(_storage.get());
 
+	bool loadData = true;
+
 	storage->_preferredContentType = DynamicValueTypes::kInvalid;
 	switch (data.contentsType) {
 	case Data::Standard::ListVariableModifier::kContentsTypeInteger:
@@ -2778,11 +2780,10 @@ bool ListVariableModifier::load(const PlugInModifierLoaderContext &context, cons
 		storage->_preferredContentType = DynamicValueTypes::kObject;
 		if (data.persistentValuesGarbled) {
 			// Ignore and let the game fix it
-			return true;
 		} else {
 			warning("Loading object reference lists from data is not implemented");
-			return true;
 		}
+		loadData = false;
 		break;
 	case Data::Standard::ListVariableModifier::kContentsTypeVector:
 		storage->_preferredContentType = DynamicValueTypes::kVector;
@@ -2795,22 +2796,26 @@ bool ListVariableModifier::load(const PlugInModifierLoaderContext &context, cons
 		return false;
 	}
 
-	if (!data.havePersistentData || data.numValues == 0)
-		return true;
+	storage->_list->forceType(storage->_preferredContentType);
 
-	for (size_t i = 0; i < data.numValues; i++) {
-		DynamicValue dynValue;
-		if (!dynValue.loadConstant(data.values[i]))
-			return false;
+	if (loadData) {
+		if (!data.havePersistentData || data.numValues == 0)
+			return true;
 
-		if (dynValue.getType() != storage->_preferredContentType) {
-			warning("List mod initialization element had the wrong type");
-			return false;
-		}
+		for (size_t i = 0; i < data.numValues; i++) {
+			DynamicValue dynValue;
+			if (!dynValue.loadConstant(data.values[i]))
+				return false;
 
-		if (!storage->_list->setAtIndex(i, dynValue)) {
-			warning("Failed to initialize list modifier, value was rejected");
-			return false;
+			if (dynValue.getType() != storage->_preferredContentType) {
+				warning("List mod initialization element had the wrong type");
+				return false;
+			}
+
+			if (!storage->_list->setAtIndex(i, dynValue)) {
+				warning("Failed to initialize list modifier, value was rejected");
+				return false;
+			}
 		}
 	}
 
@@ -3163,6 +3168,8 @@ Common::SharedPtr<DynamicList> ListVariableStorage::SaveLoad::recursiveReadList(
 
 	if (stream->err())
 		return nullptr;
+
+	list->forceType(static_cast<DynamicValueTypes::DynamicValueType>(typeCode));
 
 	for (size_t i = 0; i < size; i++) {
 		DynamicValue val;
