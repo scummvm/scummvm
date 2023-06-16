@@ -40,7 +40,6 @@ using namespace pyrodactyl::image;
 using namespace pyrodactyl::people;
 using namespace pyrodactyl::input;
 
-
 // Purpose: Pre render the terrain layer
 void Level::PreDraw() {
 	Graphics::ManagedSurface *surf = new Graphics::ManagedSurface(terrain.W(), terrain.H(), *g_engine->_format);
@@ -58,6 +57,7 @@ void Level::PreDraw() {
 		PreDrawObjects(surf);
 
 	img.Load(surf);
+	delete surf;
 }
 
 //------------------------------------------------------------------------
@@ -76,7 +76,7 @@ void Level::Draw(pyrodactyl::event::Info &info) {
 	g_engine->_imageManager->tileset.Draw(terrain.layer[0], camera, terrain.tile_size, objects[player_index].PosRect(), img);
 
 	Vector2i pos = objects[player_index].ai_data.dest;
-	Rect newpos(pos.x - (dest_marker.size.x/2), pos.y - (dest_marker.size.y/2), dest_marker.size.x, dest_marker.size.y);
+	Rect newpos(pos.x - (dest_marker.size.x / 2), pos.y - (dest_marker.size.y / 2), dest_marker.size.x, dest_marker.size.y);
 
 	for (auto l = terrain.layer.begin(); l != terrain.layer.end(); ++l, ++layer_count) {
 
@@ -144,7 +144,7 @@ void Level::DrawObjects(pyrodactyl::event::Info &info) {
 		dest_marker.Draw(objects[player_index].ai_data.dest, camera);
 
 	Vector2i pos = objects[player_index].ai_data.dest;
-	Rect newpos(pos.x - (dest_marker.size.x/2), pos.y - (dest_marker.size.y/2), dest_marker.size.x, dest_marker.size.y);
+	Rect newpos(pos.x - (dest_marker.size.x / 2), pos.y - (dest_marker.size.y / 2), dest_marker.size.x, dest_marker.size.y);
 
 	if (terrain.prop.empty()) {
 		for (auto &entry : obj_seq) {
