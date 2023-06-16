@@ -24,6 +24,7 @@
 
 #include "common/file.h"
 #include "m4/fileio/fileio.h"
+#include "m4/mem/reloc.h"
 
 namespace M4 {
 
@@ -46,7 +47,6 @@ struct Hag_Statics {
 class SysFile {
 private:
 	Common::Stream *_fp = nullptr;
-	Common::String filename;
 	FileMode fmode;
 	AccessMode mode = UNOPENED;
 	int hag_success = 0;
@@ -84,6 +84,11 @@ private:
 
 	bool get_local_name_from_hagfile(Common::String &local_name, byte hagfile);
 
+	Common::SeekableReadStream *rs() const;
+
+public:
+	Common::String filename;
+
 public:
 	SysFile(const Common::String &fname, FileMode myfmode = BINARY);
 
@@ -96,6 +101,22 @@ public:
 	 * Returns the file size
 	 */
 	uint32 size();
+
+	/**
+	 * Gets the current position
+	 */
+	uint32 get_pos();
+
+	/**
+	 * Seek to a given position
+	 */
+	bool seek(uint32 pos);
+
+	/**
+	 * Read data
+	 */
+	uint32 read(MemHandle bufferHandle);
+	int32 read(MemHandle bufferHandle, int32 n);
 };
 
 } // namespace M4

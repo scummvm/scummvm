@@ -34,7 +34,7 @@ namespace M4 {
 #define  HASH_RECORD_LENGTH 47
 
 SysFile::SysFile(const Common::String &fname, FileMode myfmode) :
-		filename(fname), fmode(myfmode) {
+	filename(fname), fmode(myfmode) {
 }
 
 bool SysFile::exists() {
@@ -61,9 +61,7 @@ uint32 SysFile::size() {
 	open_read();
 
 	if (!_G(hag).hag_flag) {
-		Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_fp);
-		assert(rs);
-		fsize = rs->size();
+		fsize = rs()->size();
 
 	} else {
 		if (hag_success)
@@ -73,6 +71,21 @@ uint32 SysFile::size() {
 	}
 
 	return fsize;
+}
+
+uint32 SysFile::get_pos() {
+	if (!_G(hag).hag_flag) {
+		if (!_fp)
+			return 0;
+
+		return rs()->pos();
+
+	} else {
+		if (hag_success)
+			return (uint32)(curr_hag_record->hag_pos - curr_hash_record.offset);
+		else
+			return  0;
+	}
 }
 
 void SysFile::open_read_low_level() {
@@ -268,8 +281,7 @@ bool SysFile::open_hash_file() {
 		temp_ptr = _G(hag).hag_file_list;
 
 		// Search local open files for hag file...
-		while (temp_ptr)
-		{
+		while (temp_ptr) {
 			if (hag_name.equalsIgnoreCase(temp_ptr->hag_name)) {
 				found = true;
 				break;
@@ -278,7 +290,7 @@ bool SysFile::open_hash_file() {
 		}
 
 		// Search resource directory open files for hag file
-		if (!found)   {
+		if (!found) {
 			temp_ptr = _G(hag).hag_file_list;
 			found = false;
 			while (temp_ptr) {
@@ -389,7 +401,7 @@ uint32 SysFile::key_to_hash_address(const Common::String &src, uint32 hash_table
 }
 
 int SysFile::hash_search(const Common::String &fname, Hash_Record *current_hash_record_ptr, Hag_Record *current_hag_record, uint32 hash_address,
-		Common::SeekableReadStream *hashfp, uint32 hash_table_size, bool show_errors) {
+	Common::SeekableReadStream *hashfp, uint32 hash_table_size, bool show_errors) {
 	uint32 offset;
 	bool finded = false;
 	char myfilename[33];
@@ -432,7 +444,7 @@ int SysFile::hash_search(const Common::String &fname, Hash_Record *current_hash_
 			get_local_name_from_hagfile(local_name, current_hash_record_ptr->hagfile);
 			local_hag_name = f_extension_new(local_name, "HAG");
 			local_name = local_hag_name;
-//			sprintf(local_name, "%s%s", exec_path, local_hag_name);
+			//			sprintf(local_name, "%s%s", exec_path, local_hag_name);
 
 			if (Common::File::exists(local_name)) {
 				finded = 1;
@@ -516,6 +528,80 @@ bool SysFile::get_local_name_from_hagfile(Common::String &local_name, byte hagfi
 	}
 
 	return found;
+}
+
+bool SysFile::seek(uint32 pos) {
+	if (!_G(hag).hag_flag) {
+		return rs()->seek(pos);
+
+	} else {
+		if (hag_success) {
+			Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(curr_hag_record->hag_fp);
+			assert(rs);
+
+			if (rs->seek(curr_hash_record.offset + pos - curr_hag_record->hag_pos, SEEK_CUR))
+				term_message("fail to fseek");
+			last_head_pos = rs->pos();
+
+			curr_hag_record->hag_pos = curr_hash_record.offset + pos;   // change file position
+			return true;
+
+		} else {
+			return false;
+		}
+	}
+}
+
+uint32 SysFile::read(MemHandle bufferHandle) {
+	int32 bytesToRead;
+
+	bytesToRead = size() - get_pos();
+	if (bytesToRead < 0)
+		error("SysFile::read - %s", filename.c_str());
+
+	return read(bufferHandle, (int32)bytesToRead);
+}
+
+int32 SysFile::read(MemHandle bufferHandle, int32 n) {
+	uint32  temp_size;
+
+	if (!bufferHandle)
+		error("reading %s", filename.c_str());
+
+	open_read();
+
+	if (!*bufferHandle)
+		mem_ReallocateHandle(bufferHandle, n);
+	if (!*bufferHandle)
+		error("Needed %d to read info", n);
+
+	if (!_G(hag).hag_flag) {
+		return (uint32)rs()->read(*bufferHandle, n);
+
+	} else {
+		// Hag mode
+		if (hag_success) {
+			Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(curr_hag_record->hag_fp);
+			assert(rs);
+			rs->seek(last_head_pos);
+			uint32 temp_myfpos = rs->pos();
+
+			temp_size = (uint32)rs->read(*bufferHandle, n);
+			curr_hag_record->hag_pos = temp_myfpos + temp_size;   // Change file position
+
+			last_head_pos = rs->pos();
+			return temp_size;
+
+		} else {
+			return 0;
+		}
+	}
+}
+
+Common::SeekableReadStream *SysFile::rs() const {
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_fp);
+	assert(rs);
+	return rs;
 }
 
 } // namespace M4

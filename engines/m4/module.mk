@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	fileio/info.o \
 	fileio/sys_file.o \
 	mem/memman.o \
+	mem/reloc.o \
 	burger/burger.o
 
 # This module can be built as a plugin

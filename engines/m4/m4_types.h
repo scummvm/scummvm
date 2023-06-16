@@ -26,6 +26,8 @@
 
 namespace M4 {
 
+#define MAX_FILENAME_SIZE 144
+
 typedef void *Ptr;
 typedef void *Handle;
 

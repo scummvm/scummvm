@@ -22,13 +22,20 @@
 #ifndef M4_RELOC_H
 #define M4_RELOC_H
 
-#include "common/str.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
 
+typedef void **MemHandle;
+
 inline void HNoPurge(Handle h) {
 }
+inline bool MakeMem(size_t FreeBlockNeeded, const char *) {
+	return true;
+}
+
+MemHandle MakeNewHandle(size_t size, const char *name = nullptr);
+bool mem_ReallocateHandle(MemHandle h, size_t size, const char *name = nullptr);
 
 } // namespace M4
 
