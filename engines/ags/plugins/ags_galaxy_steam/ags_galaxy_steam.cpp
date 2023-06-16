@@ -161,8 +161,8 @@ void AGS2Client::get_LeaderboardCount(ScriptMethodParams &params) {
 }
 
 void AGS2Client::GetUserName(ScriptMethodParams &params) {
-	warning("AGS2Client::GetUserName() is not implemented");
-	params._result = 0;
+	warning("AGS2Client::GetUserName() is not implemented - Returning \'Player\'");
+	params._result = _engine->CreateScriptString("Player");
 }
 
 void AGS2Client::GetCurrentGameLanguage(ScriptMethodParams &params) {
