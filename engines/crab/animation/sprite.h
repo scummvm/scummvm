@@ -121,7 +121,7 @@ public:
 	Common::List<CollisionData> collide_data;
 
 	Sprite();
-	~Sprite() {}
+	~Sprite() { pathing.reset(); }
 
 	void Visible(bool val) { visible.Result(val); }
 	bool Visible() { return visible.Result(); }
