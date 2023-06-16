@@ -1039,8 +1039,6 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 		height = MAX(height, _textLines[line].chunks[i].getFont()->getFontHeight());
 	}
 
-	if (!hastext && _textLines.size() > 1)
-		height = height > 3 ? height - 3 : 0;
 
 	_textLines[line].width = width;
 	_textLines[line].height = height;
