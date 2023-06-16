@@ -396,7 +396,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_OBSIDIAN_DEMO_WIN_EN_7,
 	},
 
-	{ // Muppet Treasure Island
+	{ // Muppet Treasure Island English Macintosh Retail
 		{
 			"mti",
 			"",
@@ -417,7 +417,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_MTI_RETAIL_MAC,
 	},
 
-	{ // Muppet Treasure Island
+	{ // Muppet Treasure Island English Windows Retail
 		{
 			"mti",
 			"",
@@ -434,6 +434,23 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_TESTING,
+			GUIO0()
+		},
+		GID_MTI,
+		0,
+		MTBOOT_MTI_RETAIL_WIN,
+	},
+	{ // Muppet Treasure Island English Windows Retail DVD (OEM pack-in)
+		{
+			"mti",
+			"",
+			{
+				{"MTI1.MPL", 0, "caff9457a120dd08a9a089071f3f8645", 28316059},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_TESTING | ADGF_DVD,
 			GUIO0()
 		},
 		GID_MTI,
