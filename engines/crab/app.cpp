@@ -297,8 +297,7 @@ void App::Run() {
 		}
 	}
 
-	if (CurrentState)
-		delete CurrentState;
+	delete CurrentState;
 }
 
 void App::LoadSettings(const Common::String &filename) {
