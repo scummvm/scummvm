@@ -64,6 +64,8 @@ void Level::Reset() {
 	first_hit = true;
 	music.id = -1;
 	preview_path.clear();
+
+	img.Delete();
 }
 
 //------------------------------------------------------------------------
