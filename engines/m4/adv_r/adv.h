@@ -1,0 +1,82 @@
+
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef M4_ADV_R_ADV_H
+#define M4_ADV_R_ADV_H
+
+#include "m4/m4_types.h"
+
+namespace M4 {
+
+struct HotSpotRec {
+	int32 ul_x = 0, ul_y = 0, lr_x = 0, lr_y = 0;	// Hotspot screen coordinates
+	int32 feet_x = 0, feet_y = 0;			// Walk-to target for player
+	int8 facing = 0;						// Direction player should face
+	bool active = false;					// Flag if hotspot is active
+	char cursor_number = 0;					// Mouse cursor number
+	char syntax = 0;						// Word syntax
+	int32 vocabID = 0, verbID = 0;			// ids of name and verb
+	char *vocab = nullptr;					// Vocabulary name of hotspot
+	char *verb = nullptr;					// Vocabulary default verb name
+	char *prep = nullptr;					// Preposition
+	char *sprite = nullptr;					// Sprite name
+	int16 hash = 0;							// woodscript sprite hash (runtime only)
+	HotSpotRec *next = nullptr;
+};
+
+struct pathNode {
+	pathNode *next = nullptr;
+	byte nodeID = 0;
+};
+
+struct noWalkRect {
+	noWalkRect *next = nullptr;
+	noWalkRect *prev = nullptr;
+	int32 x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+	int32 alternateWalkToNode = 0;
+	int32 walkAroundNode1 = 0;
+	int32 walkAroundNode2 = 0;
+	int32 walkAroundNode3 = 0;
+	int32 walkAroundNode4 = 0;
+};
+
+struct SceneDef {
+	char art_base[MAX_FILENAME_SIZE] = { 0 };
+	char picture_base[MAX_FILENAME_SIZE] = { 0 };
+
+	int32 num_hotspots = 0;								// # of hotspots
+	HotSpotRec *hotspots = nullptr;
+	int32 num_parallax = 0;
+	HotSpotRec *parallax = nullptr;
+	int32 num_props = 0;
+	HotSpotRec *props = nullptr;
+
+	int32 front_y = 100, back_y = 100;				// Player scaling baselines
+	int32 front_scale = 100, back_scale = 100;		// Player scaling factors
+
+	int16 depth_table[16] = { 0 };					// Player sprite depth table
+	int32 numRailNodes = 0;							// # of rails
+};
+
+} // namespace M4
+
+#endif

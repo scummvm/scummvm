@@ -76,7 +76,6 @@ Common::Error M4Engine::run() {
 void M4Engine::game_systems_initialize() {
 	_G(term).init(_G(kernel).use_debug_monitor, _G(kernel).use_log_file);
 
-
 	size_t totalMem = _G(kernel).mem_avail();
 	if (_G(kernel).suppress_cache == CACHE_NOT_OVERRIDE_BY_FLAG_PARSE)
 		_G(kernel).suppress_cache = totalMem < 8000000;

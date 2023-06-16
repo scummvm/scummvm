@@ -19,42 +19,27 @@
  *
  */
 
-#ifndef M4_MEM_RES_H
-#define M4_MEM_RES_H
-
-#include "common/str.h"
-#include "m4/mem/memman.h"
-#include "m4/fileio/sys_file.h"
+#include "m4/mem/reloc.h"
 
 namespace M4 {
 
-#define	MAX_RESOURCES	(1 << 7)
-
-typedef void **ResHandle;
-
-class Resources {
-	struct Entry {
-		Common::String name;
-		ResHandle RHandle = nullptr;
-		size_t BufferSize = 0;
-		uint32 Size = 0;
-		byte Flags = 0;
-	};
-private:
-	Entry _resources[MAX_RESOURCES];
-	SysFile *_fp = nullptr;
-
-	Entry *findAndSetResEntry(const Common::String &resourceName);
-	int hash(const Common::String &sym) const;
-	int32 get_file(const Common::String &name);
-	bool do_file(MemHandle buffer);
-
-public:
-	~Resources();
-
-	Handle rget(const Common::String &resourceName, int32 *ResourceSize);
+struct HR {
+	void *_data;
 };
 
-} // namespace M4
+MemHandle NewHandle(size_t size, const char *) {
+	HR *result = (HR *)malloc(sizeof(HR));
+	result->_data = malloc(size);
 
-#endif
+	return (MemHandle)result;
+}
+
+bool mem_ReallocateHandle(MemHandle h, size_t size, const char *) {
+	HR *hr = (HR *)h;
+	assert(!hr->_data);
+	hr->_data = malloc(size);
+
+	return true;
+}
+
+} // namespace M4

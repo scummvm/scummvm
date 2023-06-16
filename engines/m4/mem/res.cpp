@@ -116,7 +116,6 @@ Handle Resources::rget(const Common::String &resourceName, int32 *resourceSize) 
 
 	// If there's a handle with some memory in it
 	// Resource is cached; unmark purge flag and return handle
-// TODO: Review whether Handle is a pointer or a pointer pointer
 	if (resEntry->RHandle && *resEntry->RHandle) {
 		if (resourceSize)
 			*resourceSize = resEntry->Size;
@@ -134,65 +133,32 @@ Handle Resources::rget(const Common::String &resourceName, int32 *resourceSize) 
 	// Check if buffer size	is set
 	if (resEntry->BufferSize != resEntry->Size)
 		resEntry->BufferSize = resEntry->Size;
-/*
+
 	// Check if resource handle allocated
 	if (!resEntry->RHandle)
-		if (!(resEntry->RHandle = MakeNewHandle(resEntry->BufferSize, resEntry->Name))) {
-			res_err = MEMORY;
-#ifdef MEM_DEBUG_FILE
-			{
-				FILE *f = f_io_open("mem.dbg", "a");
-
-				fprintf(f, "Fail to find %u bytes for %s...\n", resEntry->BufferSize, ResourceName);
-				f_io_close(f);
-				DumpMem("After MakeNewHandle() fail in rget...");
-			}
-#endif
-			term_message("rgetting:%s  -> failed!", ResourceName);
-			error_show(FL, 'OOM!', "rget %s", resEntry->Name);
-			return nullptr;
-		}
+		if (!(resEntry->RHandle = MakeNewHandle(resEntry->BufferSize, resEntry->name.c_str())))
+			error("rgetting: %s  -> failed", resEntry->name.c_str());
 
 	// Check if resource handle has valid memory block allocated to	it
-
 	if (!*resEntry->RHandle)
-		if (!mem_ReallocateHandle(resEntry->RHandle, resEntry->BufferSize, resEntry->Name)) {
-			if (MakeMem(resEntry->BufferSize, resEntry->Name)) {
-				if (!mem_ReallocateHandle(resEntry->RHandle, resEntry->BufferSize, resEntry->Name)) {
-					term_message("rgetting:%s  -> failed!", ResourceName);
+		if (!mem_ReallocateHandle(resEntry->RHandle, resEntry->BufferSize, resEntry->name.c_str())) {
+			if (MakeMem(resEntry->BufferSize, resEntry->name.c_str())) {
+				if (!mem_ReallocateHandle(resEntry->RHandle, resEntry->BufferSize, resEntry->name.c_str())) {
+					term_message("rgetting:%s  -> failed!", resourceName.c_str());
 					return nullptr;
 				}
 			} else {
-				res_err = MEMORY;
-#ifdef MEM_DEBUG_FILE
-				{
-					FILE *f = f_io_open("mem.dbg", "a");
-
-					fprintf(f, "Fail to find %u bytes for %s...\n", resEntry->BufferSize, ResourceName);
-					f_io_close(f);
-					DumpMem("After mem_ReallocateHandle() fail in rget...");
-				}
-#endif
-				term_message("rgetting:%s  -> failed!", ResourceName);
+				term_message("rgetting:%s  -> failed!", resourceName.c_str());
 				return nullptr;
 			}
 		}
 
-	if (!do_file(resEntry->RHandle, ResourceName))
-		error_show(FL, 'RIOD', "%s", ResourceName);
+	if (!do_file(resEntry->RHandle))
+		error("rget: do_file -> %s", resourceName.c_str());
 
 	if (resourceSize)		    // xi change
 		*resourceSize = resEntry->Size;
 
-#ifdef MEM_DEBUG_FILE
-	{
-		FILE *f = f_io_open("rio.dbg", "a");
-
-		fprintf(f, "Load (%7u) %s '%s'\n", resEntry->Size, Tim(), ResourceName);
-		f_io_close(f);
-	}
-#endif
-*/
 	term_message("rgetting:%s  -> from disk", resourceName.c_str());
 	return resEntry->RHandle;
 }
@@ -207,6 +173,23 @@ int32 Resources::get_file(const Common::String &name) {
 		error("get_file - getting %s", name.c_str());
 
 	return _fp->size();
+}
+
+bool Resources::do_file(MemHandle buffer) {
+	_fp->seek(0);
+
+	bool result = true;
+
+	// read in resource from file
+	if (!_fp->read(buffer)) {
+		term_message("unable to read: %s", _fp->filename.c_str());
+		result = false;
+	}
+
+	delete _fp;
+	_fp = nullptr;
+
+	return result;
 }
 
 } // namespace M4
