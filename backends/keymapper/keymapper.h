@@ -83,6 +83,18 @@ public:
 	void cleanupGameKeymaps();
 
 	/**
+	 * This allows to specify which Game Keymaps are enabled or disabled.
+	 * @param id		ID of the game keymap to enable/disable.
+	 * @param enable	Whether the keymap is enabled(True means enabled)
+	 */
+	void setGameKeymapState(const String &id, bool enable);
+
+	/**
+	 * Disables all game keymaps that are loaded.
+	 */
+	void disableAllGameKeymaps();
+
+	/**
 	 * Obtain a keymap of the given name from the keymapper.
 	 * Game keymaps have priority over global keymaps
 	 * @param id		name of the keymap to return
