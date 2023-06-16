@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-06-15 21:37+0000\n"
-"PO-Revision-Date: 2023-05-25 20:16+0000\n"
+"PO-Revision-Date: 2023-06-16 18:53+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -6460,10 +6460,8 @@ msgstr ""
 "slechts -10HP"
 
 #: engines/mm/metaengine.cpp:68
-#, fuzzy
-#| msgid "Enable hit point bar graphs"
 msgid "Hitpoint bars"
-msgstr "Hitpoints balkgrafieken inschakelen"
+msgstr "Hitpoints balken"
 
 #: engines/mm/metaengine.cpp:69
 msgid "Replace a colored gem with bars for hit points and spell points."
@@ -6521,10 +6519,8 @@ msgstr "Vecht"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:75 engines/mm/mm1/metaengine.cpp:116
-#, fuzzy
-#| msgid "Preferences"
 msgid "Quick Reference"
-msgstr "Voorkeuren"
+msgstr "Snelle Referentie"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:77
@@ -6549,23 +6545,17 @@ msgstr ""
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:94
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forwards"
-msgstr "Beweeg Vooruit"
+msgstr "Vooruit"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:96
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backwards"
-msgstr "Beweeg Achteruit"
+msgstr "Achteruit"
 
 #: engines/mm/mm1/metaengine.cpp:104
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Minimap"
-msgstr "Schakel Vechtmodus in/uit"
+msgstr "Minikaart aan-/uitzetten"
 
 #: engines/mm/mm1/metaengine.cpp:105
 msgid "Reorder Party"
@@ -6587,10 +6577,8 @@ msgid "Unlock"
 msgstr "Maak open"
 
 #: engines/mm/mm1/metaengine.cpp:122
-#, fuzzy
-#| msgid "Next location"
 msgid "Goto location"
-msgstr "Volgende lokatie"
+msgstr "Ga naar lokatie"
 
 #: engines/mm/mm1/metaengine.cpp:133 engines/mm/mm1/metaengine.cpp:143
 msgid "Might and Magic 1 - Menus"
@@ -7642,14 +7630,6 @@ msgstr ""
 "\n"
 
 #: engines/scumm/detection_internal.h:384
-#, fuzzy
-#| msgid ""
-#| "This version of Monkey Island can't be played, because Limited Run Games "
-#| "provided corrupted DISK04.LEC and 903.LFL files.\n"
-#| "\n"
-#| "Please contact their technical support for replacement files, or look "
-#| "online for some guides which can help you recover valid files from the "
-#| "KryoFlux dumps that Limited Run Games also provided."
 msgid ""
 "This version of Monkey Island can't be played, because Limited Run Games "
 "provided corrupted DISK03.LEC, DISK04.LEC and 903.LFL files.\n"
@@ -7659,7 +7639,7 @@ msgid ""
 "dumps that Limited Run Games also provided."
 msgstr ""
 "Deze versie van Monkey Island kan niet worden gespeeld omdat Limited Run "
-"Games gecorrumpeerde DISK04.LEC en 903.LFL bestanden leverde.\n"
+"Games gecorrumpeerde DISK03.LEC, DISK04.LEC en 903.LFL bestanden leverde.\n"
 "\n"
 "Neem a.u.b. contact op met hun technische ondersteuning voor vervangende "
 "bestanden, of zoek online naar instructie die helpen de bestanden uit "
@@ -7667,10 +7647,8 @@ msgstr ""
 
 #. I18N: Creates new online session for multiplayer
 #: engines/scumm/dialog-createsession.cpp:37
-#, fuzzy
-#| msgid "Create a new saved game"
 msgid "Create a new game session"
-msgstr "Nieuw spel opslaan"
+msgstr "Creëer een nieuw spel"
 
 #. I18N: Name of the online game session
 #: engines/scumm/dialog-createsession.cpp:40
@@ -7680,10 +7658,8 @@ msgstr "Spelnaam:"
 #. I18N: The user's name for online
 #: engines/scumm/dialog-createsession.cpp:44
 #: engines/scumm/dialog-sessionselector.cpp:60
-#, fuzzy
-#| msgid "Name:"
 msgid "Your Name:"
-msgstr "Naam:"
+msgstr "Uw naam:"
 
 #. I18N: Button, start hosting online multiplayer game
 #: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3828
@@ -7692,10 +7668,8 @@ msgstr ""
 
 #. I18N: Retrieving list of online multiplayer games
 #: engines/scumm/dialog-sessionselector.cpp:51
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Querying games..."
-msgstr "Spel opslaan..."
+msgstr "Opvragen spellen..."
 
 #. I18N: Join online multiplayer game
 #: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3828
@@ -7844,9 +7818,8 @@ msgid "Multiplayer Server:"
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1373
-#, fuzzy
 msgid "Online Server:"
-msgstr "Server:"
+msgstr "Online Server:"
 
 #: engines/scumm/dialogs.cpp:1374
 msgid ""
@@ -8509,29 +8482,24 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:770
-#, fuzzy
 msgid "Down Left"
-msgstr "Draai Linksom"
+msgstr "Linksbeneden"
 
 #: engines/scumm/metaengine.cpp:783
-#, fuzzy
 msgid "Down Right"
-msgstr "Draai Rechtsom"
+msgstr "Rechtsbeneden"
 
 #: engines/scumm/metaengine.cpp:803
-#, fuzzy
 msgid "Up Left"
-msgstr "Links"
+msgstr "Linksboven"
 
 #: engines/scumm/metaengine.cpp:816
-#, fuzzy
 msgid "Up Right"
-msgstr "Rechts"
+msgstr "Rechtsboven"
 
 #: engines/scumm/metaengine.cpp:828
-#, fuzzy
 msgid "Switch weapon"
-msgstr "Wissel scherm"
+msgstr "Wissel wapen"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/metaengine.cpp:842
@@ -8612,9 +8580,8 @@ msgstr ""
 "staan, en het spel moet worden toegevoegd aan ScummVM."
 
 #: engines/scumm/scumm.cpp:3828
-#, fuzzy
 msgid "Would you like to host or join a network play session?"
-msgstr "Wilt u een spel laden of opslaan?"
+msgstr "Wilt u een netwerk spel hosten of aan meedoen?"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
@@ -8918,10 +8885,8 @@ msgstr ""
 "deze versie van ScummVM. Decomprimeer a.u.b. het bestand"
 
 #: engines/tetraedge/metaengine.cpp:33
-#, fuzzy
-#| msgid "Correct aspect ratio for games"
 msgid "Correct movie aspect ratio"
-msgstr "Corrigeer beeld ratio voor spellen"
+msgstr "Corrigeer film aspectratio"
 
 #: engines/tetraedge/metaengine.cpp:34
 msgid "Play Syberia cutscenes in 16:9, rather than stretching to full screen"
@@ -9202,11 +9167,9 @@ msgid "Wall collision off"
 msgstr "Muur botsen uit"
 
 #: engines/twine/parser/text.cpp:38
-#, fuzzy
-#| msgid "Language not detected"
 msgctxt "Options menu"
 msgid "Language selection"
-msgstr "Taal niet gedetecteerd"
+msgstr "Taal selectie"
 
 #: engines/twine/parser/text.cpp:39
 msgctxt "Options menu"
@@ -9365,82 +9328,61 @@ msgid "Speeds up animations."
 msgstr "Versnelt animaties."
 
 #: engines/vcruise/metaengine.cpp:75
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Skip main menu"
-msgstr "Open hoofd menu"
+msgstr "Hoofdmenu overslaan"
 
 #: engines/vcruise/metaengine.cpp:76
 msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr ""
 
 #: engines/vcruise/metaengine.cpp:124
-#, fuzzy
-#| msgid "Display/Hide Info Screen"
 msgid "Display help screen"
-msgstr "Toon/Verberg Infoscherm"
+msgstr "Toon helpscherm"
 
 #: engines/vcruise/metaengine.cpp:129 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Spel opslaan"
 
 #: engines/vcruise/metaengine.cpp:139
-#, fuzzy
-#| msgid "Open 3DS Settings"
 msgid "Open sound settings"
-msgstr "3DS Instellingen Openen"
+msgstr "Open geluidsinstellingen"
 
 #: engines/vcruise/metaengine.cpp:144
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit game"
-msgstr "Spel Verlaten"
+msgstr "Spel verlaten"
 
 #: engines/vcruise/metaengine.cpp:155
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle music on/off"
-msgstr "Volledig scherm aan-/uitzetten"
+msgstr "Muziek aan-/uitzetten"
 
 #: engines/vcruise/metaengine.cpp:160
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Toggle sound effects on/off"
-msgstr "Volume voor speciale geluidseffecten"
+msgstr "Geluidseffecten aan-/uitzetten"
 
 #: engines/vcruise/metaengine.cpp:165
-#, fuzzy
-#| msgid "Music volume up / down"
 msgid "Music volume down"
-msgstr "Muziek volume omhoog / omlaag"
+msgstr "Muziek zachter"
 
 #: engines/vcruise/metaengine.cpp:170
 msgid "Music volume up"
 msgstr "Muziek harder"
 
 #: engines/vcruise/metaengine.cpp:175
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume down"
-msgstr "Volume voor speciale geluidseffecten"
+msgstr "Geluidseffecten zachter"
 
 #: engines/vcruise/metaengine.cpp:180
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume up"
-msgstr "Volume voor speciale geluidseffecten"
+msgstr "Geluidseffecten harder"
 
 #: engines/vcruise/metaengine.cpp:185
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Skip current animation"
-msgstr "Spraak Opties"
+msgstr "Huidige animatie overslaan"
 
 #: engines/vcruise/vcruise.cpp:82
-#, fuzzy
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr ""
-"Dit spel vereist de HeroCraft subengine, welke niet is meegecompileerd."
+"Dit spel vereist ondersteuning voor JPEG, welke niet is meegecompileerd."
 
 #: engines/vcruise/vcruise.cpp:89
 msgid ""
@@ -9455,11 +9397,8 @@ msgid ""
 msgstr ""
 
 #: engines/vcruise/vcruise.cpp:298
-#, fuzzy
 msgid "Failed to load save, the save data appears to be damaged."
-msgstr ""
-"Opgeslagen spel is gemaakt met een nieuwere versie van ScummVM. Laden is "
-"niet mogelijk."
+msgstr "Spel kon niet geladen worden, de data lijkt beschadigd."
 
 #: engines/vcruise/vcruise.cpp:303
 msgid "Failed to read version information from save file."
