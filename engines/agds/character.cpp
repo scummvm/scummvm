@@ -177,6 +177,7 @@ void Character::animate(int direction, int speed, bool jokes) {
 	if (direction == -1)
 		return;
 
+	_description = nullptr;
 	_visible = true;
 	_stopped = false;
 	auto character = jokes? _engine->jokes(): this;
@@ -251,6 +252,15 @@ void Character::paint(Graphics::Surface &backbuffer, Common::Point pos) const {
 
 	pos.y -= _animation->visibleHeight();
 	pos.x -= _animation->visibleCenter();
+
+	if (_description) {
+		auto &frames = _description->frames;
+		if (_phase < frames.size()) {
+			auto &frame = frames[_phase];
+			pos.x += frame.x * _animation->scale();
+			pos.y += frame.y * _animation->scale();
+		}
+	}
 
 	int fogAlpha = 0;
 	if (_fog) {
