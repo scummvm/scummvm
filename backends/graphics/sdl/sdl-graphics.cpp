@@ -464,17 +464,17 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 		keymap->addAction(act);
 	}
 
-		act = new Action("SCL+", _("Increase the scale factor"));
-		act->addDefaultInputMapping("C+A+PLUS");
-		act->addDefaultInputMapping("C+A+KP_PLUS");
-		act->setCustomBackendActionEvent(kActionIncreaseScaleFactor);
-		keymap->addAction(act);
+	act = new Action("SCL+", _("Increase the scale factor"));
+	act->addDefaultInputMapping("C+A+PLUS");
+	act->addDefaultInputMapping("C+A+KP_PLUS");
+	act->setCustomBackendActionEvent(kActionIncreaseScaleFactor);
+	keymap->addAction(act);
 
-		act = new Action("SCL-", _("Decrease the scale factor"));
-		act->addDefaultInputMapping("C+A+MINUS");
-		act->addDefaultInputMapping("C+A+KP_MINUS");
-		act->setCustomBackendActionEvent(kActionDecreaseScaleFactor);
-		keymap->addAction(act);
+	act = new Action("SCL-", _("Decrease the scale factor"));
+	act->addDefaultInputMapping("C+A+MINUS");
+	act->addDefaultInputMapping("C+A+KP_MINUS");
+	act->setCustomBackendActionEvent(kActionDecreaseScaleFactor);
+	keymap->addAction(act);
 
 	if (hasFeature(OSystem::kFeatureScalers)) {
 		act = new Action("FLTN", _("Switch to the next scaler"));
