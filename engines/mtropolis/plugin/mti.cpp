@@ -446,13 +446,63 @@ const char *PrintModifier::getDefaultName() const {
 	return "Print Modifier";
 }
 
+SampleModifier::SampleModifier() : _videoNumber(0) {
+}
+
+SampleModifier::~SampleModifier() {
+}
+
+bool SampleModifier::respondsToEvent(const Event &evt) const {
+	return _executeWhen.respondsTo(evt);
+}
+
+VThreadState SampleModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_executeWhen.respondsTo(msg->getEvent())) {
+		warning("Sample modifier (MPEG video playback) is not implemented.  This would normally play video %i.", static_cast<int>(_videoNumber));
+		return kVThreadReturn;
+	}
+	return kVThreadReturn;
+}
+
+void SampleModifier::disable(Runtime *runtime) {
+}
+
+bool SampleModifier::load(const PlugInModifierLoaderContext &context, const Data::MTI::SampleModifier &data) {
+	if (data.executeWhen.type != Data::PlugInTypeTaggedValue::kEvent)
+		return false;
+
+	if (data.videoNumber.type != Data::PlugInTypeTaggedValue::kInteger)
+		return false;
+
+	_videoNumber = data.videoNumber.value.asInt;
+
+	if (!_executeWhen.load(data.executeWhen.value.asEvent))
+		return false;
+
+	return true;
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void SampleModifier::debugInspect(IDebugInspectionReport *report) const {
+}
+#endif
+
+Common::SharedPtr<Modifier> SampleModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new SampleModifier(*this));
+}
+
+const char *SampleModifier::getDefaultName() const {
+	return "Sample Modifier";
+}
+
 MTIPlugIn::MTIPlugIn()
-	: _shanghaiModifierFactory(this), _printModifierFactory(this) {
+	: _shanghaiModifierFactory(this), _printModifierFactory(this), _sampleModifierFactory(this) {
 }
 
 void MTIPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
 	registrar->registerPlugInModifier("Shanghai", &_shanghaiModifierFactory);
 	registrar->registerPlugInModifier("Print", &_printModifierFactory);
+	registrar->registerPlugInModifier("Sample", &_sampleModifierFactory);
 }
 
 

@@ -37,13 +37,22 @@ DataReadErrorCode ShanghaiModifier::load(PlugIn &plugIn, const PlugInModifier &p
 	return kDataReadErrorNone;
 }
 
-
 DataReadErrorCode PrintModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
 	if (prefix.plugInRevision != 0)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!executeWhen.load(reader) || !unknown1Bool.load(reader) || !unknown2Bool.load(reader) ||
 		!unknown3Bool.load(reader) || !filePath.load(reader) || !unknown4Bool.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode SampleModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 0)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!executeWhen.load(reader) || !videoNumber.load(reader))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;

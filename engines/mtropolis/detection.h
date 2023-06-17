@@ -70,6 +70,11 @@ enum MTropolisGameBootID {
 	MTBOOT_STTGS_DEMO_WIN,
 };
 
+enum MTGameFlag {
+	MTGF_WANT_MPEG_VIDEO = (1 << 0),
+	MTGF_WANT_MPEG_AUDIO = (1 << 1),
+};
+
 struct MTropolisGameDescription {
 	ADGameDescription desc;
 

@@ -118,6 +118,30 @@ private:
 	Common::String _filePath;
 };
 
+class SampleModifier : public Modifier {
+public:
+	SampleModifier();
+	~SampleModifier();
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
+
+	bool load(const PlugInModifierLoaderContext &context, const Data::MTI::SampleModifier &data);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Sample Modifier"; }
+	void debugInspect(IDebugInspectionReport *report) const override;
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+
+	Event _executeWhen;
+	int32 _videoNumber;
+};
+
 
 class MTIPlugIn : public MTropolis::PlugIn {
 public:
@@ -128,6 +152,7 @@ public:
 private:
 	PlugInModifierFactory<ShanghaiModifier, Data::MTI::ShanghaiModifier> _shanghaiModifierFactory;
 	PlugInModifierFactory<PrintModifier, Data::MTI::PrintModifier> _printModifierFactory;
+	PlugInModifierFactory<SampleModifier, Data::MTI::SampleModifier> _sampleModifierFactory;
 };
 
 } // End of namespace MTI

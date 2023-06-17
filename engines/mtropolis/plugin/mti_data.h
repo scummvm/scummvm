@@ -53,6 +53,14 @@ protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
 };
 
+struct SampleModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue executeWhen;
+	PlugInTypeTaggedValue videoNumber;
+
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
 } // End of namespace MTI
 
 } // End of namespace Data

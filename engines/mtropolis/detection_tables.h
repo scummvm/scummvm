@@ -450,7 +450,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_DVD,
+			ADGF_TESTING | ADGF_DVD | MTGF_WANT_MPEG_VIDEO | MTGF_WANT_MPEG_AUDIO,
 			GUIO0()
 		},
 		GID_MTI,
