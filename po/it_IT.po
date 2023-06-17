@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-17 18:21+0000\n"
+"POT-Creation-Date: 2023-06-17 21:49+0000\n"
 "PO-Revision-Date: 2023-06-11 21:52+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -3243,11 +3243,11 @@ msgstr "Finestra input predittivo"
 msgid "Confirm"
 msgstr "Conferma"
 
-#: engines/metaengine.cpp:390
+#: engines/metaengine.cpp:393
 msgid "Autosave on"
 msgstr "Salvataggi automatici attivi"
 
-#: engines/metaengine.cpp:390
+#: engines/metaengine.cpp:393
 msgid "Autosave off"
 msgstr "Salvataggi automatici disattivati"
 

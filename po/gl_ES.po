@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-17 18:21+0000\n"
+"POT-Creation-Date: 2023-06-17 21:49+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -3227,12 +3227,12 @@ msgstr ""
 msgid "Confirm"
 msgstr ""
 
-#: engines/metaengine.cpp:390
+#: engines/metaengine.cpp:393
 #, fuzzy
 msgid "Autosave on"
 msgstr "Autogardado:"
 
-#: engines/metaengine.cpp:390
+#: engines/metaengine.cpp:393
 #, fuzzy
 msgid "Autosave off"
 msgstr "Autogardado:"

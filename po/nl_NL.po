@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-17 18:21+0000\n"
+"POT-Creation-Date: 2023-06-17 21:49+0000\n"
 "PO-Revision-Date: 2023-06-16 18:53+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -3183,11 +3183,11 @@ msgstr "Voorspellende invoer dialoogvenster"
 msgid "Confirm"
 msgstr "Bevestig"
 
-#: engines/metaengine.cpp:390
+#: engines/metaengine.cpp:393
 msgid "Autosave on"
 msgstr "Automatisch opslaan aan"
 
-#: engines/metaengine.cpp:390
+#: engines/metaengine.cpp:393
 msgid "Autosave off"
 msgstr "Automatisch opslaan uit"
 

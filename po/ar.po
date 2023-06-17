@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-17 18:21+0000\n"
+"POT-Creation-Date: 2023-06-17 21:49+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -3211,11 +3211,11 @@ msgstr "حوار الإدخال التنبئي"
 msgid "Confirm"
 msgstr "تأكد"
 
-#: engines/metaengine.cpp:390
+#: engines/metaengine.cpp:393
 msgid "Autosave on"
 msgstr "تم تشغيل الحفظ التلقائي"
 
-#: engines/metaengine.cpp:390
+#: engines/metaengine.cpp:393
 msgid "Autosave off"
 msgstr "إيقاف الحفظ التلقائي"
 

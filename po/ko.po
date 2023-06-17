@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-17 18:21+0000\n"
+"POT-Creation-Date: 2023-06-17 21:49+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -3203,12 +3203,12 @@ msgstr "예측 입력 창"
 msgid "Confirm"
 msgstr "확인"
 
-#: engines/metaengine.cpp:390
+#: engines/metaengine.cpp:393
 #, fuzzy
 msgid "Autosave on"
 msgstr "자동 저장"
 
-#: engines/metaengine.cpp:390
+#: engines/metaengine.cpp:393
 #, fuzzy
 msgid "Autosave off"
 msgstr "자동 저장"
