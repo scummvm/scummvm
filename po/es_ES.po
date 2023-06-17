@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-15 21:37+0000\n"
+"POT-Creation-Date: 2023-06-17 01:22+0000\n"
 "PO-Revision-Date: 2023-06-11 15:45+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -301,7 +301,8 @@ msgstr "Los contenidos del código JSON no son válidos."
 #: engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1836
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
-#: engines/groovie/script.cpp:660 engines/parallaction/saveload.cpp:270
+#: engines/groovie/script.cpp:660 engines/mtropolis/mtropolis.cpp:115
+#: engines/mtropolis/mtropolis.cpp:125 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1152
 #: engines/scumm/scumm.cpp:1178 engines/scumm/scumm.cpp:1200
@@ -7170,6 +7171,34 @@ msgstr "Error interno al intentar escribir los datos de la partida guardada"
 #: engines/mtropolis/saveload.cpp:242
 msgid "An error occurred while writing the save game"
 msgstr "Error interno al escribir la partida guardada"
+
+#: engines/mtropolis/mtropolis.cpp:112
+#, fuzzy
+#| msgid ""
+#| "Music for this game requires MP3 support, which was not compiled in.\n"
+#| "The game will still play, but will not have any music."
+msgid ""
+"This game requires MPEG video support for some\n"
+"content but MPEG video support was not compiled in.\n"
+"The game will still play, but MPEG videos will not work."
+msgstr ""
+"La música de este juego requiere soporte para MP3, el cual no está presente "
+"en la compilación.\n"
+"El juego se ejecutará, pero sin música."
+
+#: engines/mtropolis/mtropolis.cpp:122
+#, fuzzy
+#| msgid ""
+#| "Music for this game requires MP3 support, which was not compiled in.\n"
+#| "The game will still play, but will not have any music."
+msgid ""
+"This game requires MPEG audio support for some\n"
+"content but MPEG audio support was not compiled in.\n"
+"The game will still play, but some audio will not work."
+msgstr ""
+"La música de este juego requiere soporte para MP3, el cual no está presente "
+"en la compilación.\n"
+"El juego se ejecutará, pero sin música."
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format

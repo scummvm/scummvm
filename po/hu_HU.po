@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-15 21:37+0000\n"
+"POT-Creation-Date: 2023-06-17 01:22+0000\n"
 "PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -312,7 +312,8 @@ msgstr "A JSON kód tartalma hibás."
 #: engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1836
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
-#: engines/groovie/script.cpp:660 engines/parallaction/saveload.cpp:270
+#: engines/groovie/script.cpp:660 engines/mtropolis/mtropolis.cpp:115
+#: engines/mtropolis/mtropolis.cpp:125 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1152
 #: engines/scumm/scumm.cpp:1178 engines/scumm/scumm.cpp:1200
@@ -7115,6 +7116,32 @@ msgstr "Belső hiba történt a mentett játékadatok írása közben"
 #: engines/mtropolis/saveload.cpp:242
 msgid "An error occurred while writing the save game"
 msgstr "Hiba történt a játék mentés írása közben"
+
+#: engines/mtropolis/mtropolis.cpp:112
+#, fuzzy
+#| msgid ""
+#| "Music for this game requires MP3 support, which was not compiled in.\n"
+#| "The game will still play, but will not have any music."
+msgid ""
+"This game requires MPEG video support for some\n"
+"content but MPEG video support was not compiled in.\n"
+"The game will still play, but MPEG videos will not work."
+msgstr ""
+"A játék zenéjéhez MP3-támogatás szükséges, ami nem lett lefordítva.\n"
+"A játék továbbra is játszható, de nem lesz benne zene."
+
+#: engines/mtropolis/mtropolis.cpp:122
+#, fuzzy
+#| msgid ""
+#| "Music for this game requires MP3 support, which was not compiled in.\n"
+#| "The game will still play, but will not have any music."
+msgid ""
+"This game requires MPEG audio support for some\n"
+"content but MPEG audio support was not compiled in.\n"
+"The game will still play, but some audio will not work."
+msgstr ""
+"A játék zenéjéhez MP3-támogatás szükséges, ami nem lett lefordítva.\n"
+"A játék továbbra is játszható, de nem lesz benne zene."
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
