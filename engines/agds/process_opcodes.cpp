@@ -592,6 +592,7 @@ void Process::returnCurrentInventoryObject() {
 		_object->unlock();
 	}
 	_engine->inventory().add(object);
+	suspend();
 }
 
 void Process::attachInventoryObjectToMouse0() {
