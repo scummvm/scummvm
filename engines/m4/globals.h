@@ -38,8 +38,8 @@ struct Globals;
 extern Globals *g_globals;
 
 struct Globals {
-	Globals() { g_globals = this; }
-	~Globals() { g_globals = nullptr; }
+	Globals();
+	~Globals();
 
 	Game _game;
 	Kernel _kernel;

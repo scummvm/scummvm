@@ -119,6 +119,9 @@ public:
 	int32 read(MemHandle bufferHandle, int32 n);
 };
 
+extern void sysfile_init(bool in_hag_mode);
+extern void sysfile_shutdown();
+
 } // namespace M4
 
 #endif
