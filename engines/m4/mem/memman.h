@@ -27,12 +27,16 @@
 
 namespace M4 {
 
-inline Handle mem_alloc(size_t size, const char *type) {
+inline Handle mem_alloc(size_t size, const char *) {
 	return (Handle)malloc(size);
 }
 
 inline void mem_free(Handle ptr) {
 	free(ptr);
+}
+
+inline Handle mem_realloc(Handle src, size_t new_size, const char *) {
+	return (Handle)realloc(src, new_size);
 }
 
 } // namespace M4
