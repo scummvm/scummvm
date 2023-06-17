@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-06-17 01:22+0000\n"
-"PO-Revision-Date: 2023-06-11 06:59+0000\n"
+"PO-Revision-Date: 2023-06-17 09:06+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -6574,14 +6574,13 @@ msgstr ""
 "bei -10HP"
 
 #: engines/mm/metaengine.cpp:68
-#, fuzzy
-#| msgid "Enable hit point bar graphs"
 msgid "Hitpoint bars"
-msgstr "Aktiviert grafische Trefferpunkte-Balken"
+msgstr "Trefferpunkte-Balken"
 
 #: engines/mm/metaengine.cpp:69
 msgid "Replace a colored gem with bars for hit points and spell points."
 msgstr ""
+"Ersetzt den farbigen Edelstein mit Balken für Treffer- und Magie-Punkte."
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
@@ -6727,6 +6726,9 @@ msgid ""
 "will automatically be available if you detect the original game and select "
 "Enhanced mode."
 msgstr ""
+"Du kannst das Spiel nicht direkt von dem Graphics Overhaul Mod starten. "
+"Dieser Modus wird stattdessen verfügbar, wenn Du das originale Spiel "
+"hinzufügst und den \"Enhanced\"-Modus auswählst."
 
 #: engines/mm/mm1/mm1.cpp:108
 msgid ""
@@ -7170,32 +7172,26 @@ msgid "An error occurred while writing the save game"
 msgstr "Fehler beim Schreiben der Spielstand-Daten"
 
 #: engines/mtropolis/mtropolis.cpp:112
-#, fuzzy
-#| msgid ""
-#| "Music for this game requires MP3 support, which was not compiled in.\n"
-#| "The game will still play, but will not have any music."
 msgid ""
 "This game requires MPEG video support for some\n"
 "content but MPEG video support was not compiled in.\n"
 "The game will still play, but MPEG videos will not work."
 msgstr ""
-"Die Musikwiedergabe in diesem Spiel benötigt Unterstützung für MP3, die "
-"nicht vorhanden ist.\n"
-"Das Spiel wird spielbar sein, jedoch ohne Musik wiedergegeben."
+"Dieses Spiel benötigt Unterstützung für MPEG-Videos für\n"
+"einige Videos. Die MPEG-Unterstützung ist in dieser Version\n"
+"nicht enthalten. Das Spiel wird dennoch funktionieren,\n"
+"aber MPEG-Videos werden nicht abgespielt."
 
 #: engines/mtropolis/mtropolis.cpp:122
-#, fuzzy
-#| msgid ""
-#| "Music for this game requires MP3 support, which was not compiled in.\n"
-#| "The game will still play, but will not have any music."
 msgid ""
 "This game requires MPEG audio support for some\n"
 "content but MPEG audio support was not compiled in.\n"
 "The game will still play, but some audio will not work."
 msgstr ""
-"Die Musikwiedergabe in diesem Spiel benötigt Unterstützung für MP3, die "
-"nicht vorhanden ist.\n"
-"Das Spiel wird spielbar sein, jedoch ohne Musik wiedergegeben."
+"Dieses Spiel benötigt Unterstützung für MPEG-Audio für\n"
+"einige Titel. Die MPEG-Unterstützung ist in dieser Version\n"
+"nicht enthalten. Das Spiel wird dennoch funktionieren,\n"
+"aber einige Audio-Titel werden nicht abgespielt."
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
