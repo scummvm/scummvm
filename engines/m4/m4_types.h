@@ -60,6 +60,14 @@ struct RGB8 {
 } PACKED_STRUCT;
 #include "common/pack-end.h"	// END STRUCT PACKING
 
+typedef void (*FuncPtr)();
+typedef bool (*FuncPtr_b_l)(int32);
+typedef void (*FuncPtr_v_vv)(void *, void *);
+
+typedef FuncPtr_b_l ExceptionPtr;
+
+typedef FuncPtr_v_vv M4CALLBACK;
+
 } // namespace M4
 
 #endif

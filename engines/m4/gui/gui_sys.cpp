@@ -19,23 +19,28 @@
  *
  */
 
-#include "m4/globals.h"
 #include "m4/gui/gui_sys.h"
+#include "m4/mem/memman.h"
+#include "m4/globals.h"
 
 namespace M4 {
 
-Globals *g_globals;
-
-Globals::Globals() {
-	g_globals = this;
+bool gui_system_init() {
+	_G(systemHotkeys) = NULL;
+	return true;
 }
 
-Globals::~Globals() {
-	sysfile_shutdown();
-	player_been_shutdown();
-	gui_system_shutdown();
+void gui_system_shutdown() {
+	Hotkey *myHotkeys, *tempHotkey;
 
-	g_globals = nullptr;
+	myHotkeys = _G(systemHotkeys);
+	tempHotkey = myHotkeys;
+
+	while (tempHotkey) {
+		myHotkeys = myHotkeys->next;
+		mem_free(tempHotkey);
+		tempHotkey = myHotkeys;
+	}
 }
 
-} // namespace M4
+} // End of namespace M4

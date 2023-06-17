@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,23 +20,38 @@
  *
  */
 
-#include "m4/globals.h"
-#include "m4/gui/gui_sys.h"
+#ifndef M4_GUI_GUI_H
+#define M4_GUI_GUI_H
+
+#include "m4/m4_types.h"
 
 namespace M4 {
 
-Globals *g_globals;
+struct M4sprite {
+	struct M4sprite *next;
+	struct M4sprite *prev;
+	int32			 x;
+	int32			 y;
+	int32			 w;
+	int32			 h;
+	int32			 xOffset;	// the "hotspot" of the sprite, ie: the registration point
+	int32			 yOffset;
+	uint8			 encoding;
+	uint8 *data;
+	Handle			 sourceHandle;
+	int32			 sourceOffset;
+};
 
-Globals::Globals() {
-	g_globals = this;
-}
+struct M4Rect {
+	int32 x1, y1, x2, y2;
+};
 
-Globals::~Globals() {
-	sysfile_shutdown();
-	player_been_shutdown();
-	gui_system_shutdown();
+struct RectList {
+	RectList *next;
+	RectList *prev;
+	int32 x1, y1, x2, y2;
+};
 
-	g_globals = nullptr;
-}
+} // End of namespace M4
 
-} // namespace M4
+#endif
