@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-06-17 18:21+0000\n"
-"PO-Revision-Date: 2023-06-11 07:05+0000\n"
+"PO-Revision-Date: 2023-06-17 19:47+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -7258,32 +7258,24 @@ msgid "An error occurred while writing the save game"
 msgstr "Παρουσιάστηκε σφάλμα κατά την εγγραφή του αποθηκευμένου παιχνιδιού"
 
 #: engines/mtropolis/mtropolis.cpp:112
-#, fuzzy
-#| msgid ""
-#| "Music for this game requires MP3 support, which was not compiled in.\n"
-#| "The game will still play, but will not have any music."
 msgid ""
 "This game requires MPEG video support for some\n"
 "content but MPEG video support was not compiled in.\n"
 "The game will still play, but MPEG videos will not work."
 msgstr ""
-"Η μουσική για αυτό το παιχνίδι απαιτεί υποστήριξη MP3, που δεν έχει γίνει "
-"compiled.\n"
-"Μπορείτε να παίξετε το παιχνίδι, αλλά χωρίς μουσική."
+"Το παιχνίδι απαιτεί υποστήριξη για βίντεο μορφής MPEG για ένα\n"
+"μέρος από το περιεχόμενο του, η οποία δεν έχει γίνει compiled.\n"
+"Μπορείτε να παίξετε το παιχνίδι, αλλά χωρίς τα βίντεο MPEG."
 
 #: engines/mtropolis/mtropolis.cpp:122
-#, fuzzy
-#| msgid ""
-#| "Music for this game requires MP3 support, which was not compiled in.\n"
-#| "The game will still play, but will not have any music."
 msgid ""
 "This game requires MPEG audio support for some\n"
 "content but MPEG audio support was not compiled in.\n"
 "The game will still play, but some audio will not work."
 msgstr ""
-"Η μουσική για αυτό το παιχνίδι απαιτεί υποστήριξη MP3, που δεν έχει γίνει "
-"compiled.\n"
-"Μπορείτε να παίξετε το παιχνίδι, αλλά χωρίς μουσική."
+"Το παιχνίδι απαιτεί υποστήριξη για ήχο μορφής MPEG για ένα\n"
+"μέρος από το περιεχόμενο του, η οποία δεν έχει γίνει compiled.\n"
+"Μπορείτε να παίξετε το παιχνίδι, αλλά κάποιο ήχοι δεν θα παίζουν."
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
