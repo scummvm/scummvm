@@ -1383,8 +1383,8 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 #ifdef USE_ASPECT
 				if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayInGUI)
 					r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering, 	convertSDLPixelFormat(_hwScreen->format));
-			}
 #endif
+			}
 		}
 		SDL_UnlockSurface(srcSurf);
 		SDL_UnlockSurface(_hwScreen);

@@ -366,12 +366,14 @@ void OptionsDialog::build() {
 		}
 
 		// Aspect ratio setting
-		if (_guioptions.contains(GUIO_NOASPECT)) {
-			_aspectCheckbox->setState(false);
-			_aspectCheckbox->setEnabled(false);
-		} else {
-			_aspectCheckbox->setEnabled(true);
-			_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
+		if (g_system->hasFeature(OSystem::kFeatureAspectRatioCorrection)) {
+			if (_guioptions.contains(GUIO_NOASPECT)) {
+				_aspectCheckbox->setState(false);
+				_aspectCheckbox->setEnabled(false);
+			} else {
+				_aspectCheckbox->setEnabled(true);
+				_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
+			}
 		}
 
 		if (g_system->hasFeature(OSystem::kFeatureVSync)) {
@@ -612,8 +614,10 @@ void OptionsDialog::apply() {
 				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
 				_fullscreenCheckbox->setOverride(false);
 			}
-			if (ConfMan.getBool("aspect_ratio", _domain) != _aspectCheckbox->getState())
-				graphicsModeChanged = true;
+			if (g_system->hasFeature(OSystem::kFeatureAspectRatioCorrection)) {
+				if (ConfMan.getBool("aspect_ratio", _domain) != _aspectCheckbox->getState())
+					graphicsModeChanged = true;
+			}
 			if (g_system->hasFeature(OSystem::kFeatureVSync)) {
 				if (ConfMan.getBool("vsync", _domain) != _vsyncCheckbox->getState()) {
 					graphicsModeChanged = true;
@@ -622,7 +626,9 @@ void OptionsDialog::apply() {
 				}
 			}
 
-			ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
+			if (g_system->hasFeature(OSystem::kFeatureAspectRatioCorrection)) {
+				ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
+			}
 
 			bool isSet = false;
 
@@ -1285,10 +1291,12 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	else
 		_fullscreenCheckbox->setEnabled(false);
 
-	if (_guioptions.contains(GUIO_NOASPECT))
-		_aspectCheckbox->setEnabled(false);
-	else
-		_aspectCheckbox->setEnabled(enabled);
+	if (g_system->hasFeature(OSystem::kFeatureAspectRatioCorrection)) {
+		if (_guioptions.contains(GUIO_NOASPECT))
+			_aspectCheckbox->setEnabled(false);
+		else
+			_aspectCheckbox->setEnabled(enabled);
+	}
 
 	if (g_system->hasFeature(OSystem::kFeatureVSync))
 		_vsyncCheckbox->setEnabled(enabled);
@@ -1693,7 +1701,8 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 		_filteringCheckbox = new CheckboxWidget(boss, prefix + "grFilteringCheckbox", _("Filter graphics"), _("Use linear filtering when scaling graphics"));
 
 	// Aspect ratio checkbox
-	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), _("Correct aspect ratio for games"));
+	if (g_system->hasFeature(OSystem::kFeatureAspectRatioCorrection))
+		_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), _("Correct aspect ratio for games"));
 
 	_enableGraphicSettings = true;
 }
@@ -2041,7 +2050,9 @@ void OptionsDialog::setupGraphicsTab() {
 	if (g_system->hasFeature(OSystem::kFeatureFilteringMode))
 		_filteringCheckbox->setVisible(true);
 
-	_aspectCheckbox->setVisible(true);
+	if (g_system->hasFeature(OSystem::kFeatureAspectRatioCorrection))
+		_aspectCheckbox->setVisible(true);
+
 	_renderModePopUpDesc->setVisible(true);
 	_renderModePopUp->setVisible(true);
 
