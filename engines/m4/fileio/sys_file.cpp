@@ -218,6 +218,10 @@ void SysFile::open_read() {
 	}
 }
 
+void SysFile::open_write() {
+	error("TODO: open_write");
+}
+
 Common::String SysFile::get_last_string(const Common::String &src) {
 	int len, j, k, l;
 
@@ -602,6 +606,28 @@ Common::SeekableReadStream *SysFile::rs() const {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_fp);
 	assert(rs);
 	return rs;
+}
+
+void sysfile_init(bool in_hag_mode) {
+	_G(hag).hag_flag = in_hag_mode;
+
+	if (in_hag_mode) {
+		term_message("Initialized in hag mode");
+	} else {
+		term_message("Initialized in file mode");
+	}
+}
+
+void sysfile_shutdown() {
+	Hag_Record *temp_ptr;
+
+	temp_ptr = _G(hag).hag_file_list;
+	while (temp_ptr) {
+		_G(hag).hag_file_list = _G(hag).hag_file_list->next;
+		f_io_close(temp_ptr->hag_fp);
+		mem_free(temp_ptr);
+		temp_ptr = _G(hag).hag_file_list;
+	}
 }
 
 } // namespace M4

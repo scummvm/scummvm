@@ -25,4 +25,14 @@ namespace M4 {
 
 Globals *g_globals;
 
+Globals::Globals() {
+	g_globals = this;
+}
+
+Globals::~Globals() {
+	sysfile_shutdown();
+
+	g_globals = nullptr;
+}
+
 } // namespace M4

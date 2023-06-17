@@ -61,7 +61,7 @@ public:
 	void vmessage(const char *fmt, va_list va);
 };
 
-inline void term_message(const char *fmt, ...);
+void term_message(const char *fmt, ...);
 
 } // namespace M4
 
