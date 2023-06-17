@@ -19,46 +19,36 @@
  *
  */
 
-#ifndef M4_M4_TYPES_H
-#define M4_M4_TYPES_H
+#ifndef M4_GRAPHICS_GR_FONT_H
+#define M4_GRAPHICS_GR_FONT_H
 
-#include "common/scummsys.h"
+#include "m4/m4_types.h"
 
 namespace M4 {
 
-#define MAX_FILENAME_SIZE 144
+struct Font {
+	byte max_y_size;
+	byte max_x_size;
+	uint32 dataSize;
 
-typedef void *Ptr;
-typedef void *Handle;
-
-typedef uint32 frac16;
-typedef uint32 ulong;
-typedef uint32 quadchar;
-typedef uint32 trigraph;
-
-typedef byte Bit;
-typedef byte Bool;
-typedef byte boolean;
-typedef byte Boolean;
-typedef byte byte;
-typedef byte Byte;
-typedef uint16 word;
-typedef uint16 Word;
-typedef uint32 DWord;
-
-struct Buffer {
-	int32 W;
-	int32 h;
-	uint8 *data;
-	uint8 encoding;
-	int32 stride;
+	byte *width;
+	int16 *offset;
+	byte *pixData;
 };
 
-#include "common/pack-start.h"  // START STRUCT PACKING
-struct RGB8 {
-	byte r, g, b;
-} PACKED_STRUCT;
-#include "common/pack-end.h"	// END STRUCT PACKING
+void  gr_font_system_shutdown();
+void  gr_font_dealloc(Font *killMe);
+Font *gr_font_create_system_font();
+void  gr_font_set_color(uint8 foreground);
+Font *gr_font_get();
+void  gr_font_set(Font *font);
+int32 gr_font_get_height();
+int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y,
+	int32 w, int32 auto_spacing = 1);
+int32 gr_font_string_width(char *out_string, int32 auto_spacing = 1);
+//Font *gr_font_file_read(const char *fontName);
+Font *gr_font_load(const char *fontName);
+
 
 } // namespace M4
 

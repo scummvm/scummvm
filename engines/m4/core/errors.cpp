@@ -19,47 +19,23 @@
  *
  */
 
-#ifndef M4_M4_TYPES_H
-#define M4_M4_TYPES_H
-
-#include "common/scummsys.h"
+#include "common/str.h"
+#include "common/textconsole.h"
+#include "m4/core/errors.h"
 
 namespace M4 {
 
-#define MAX_FILENAME_SIZE 144
+void error_show(const char *filename, uint32 line, quadchar errorcode, const char *fmt, ...) {
+	va_list va;
+	va_start(va, fmt);
+	Common::String msg = Common::String::vformat(fmt, va);
+	va_end(va);
 
-typedef void *Ptr;
-typedef void *Handle;
+	error("%s", msg.c_str());
+}
 
-typedef uint32 frac16;
-typedef uint32 ulong;
-typedef uint32 quadchar;
-typedef uint32 trigraph;
-
-typedef byte Bit;
-typedef byte Bool;
-typedef byte boolean;
-typedef byte Boolean;
-typedef byte byte;
-typedef byte Byte;
-typedef uint16 word;
-typedef uint16 Word;
-typedef uint32 DWord;
-
-struct Buffer {
-	int32 W;
-	int32 h;
-	uint8 *data;
-	uint8 encoding;
-	int32 stride;
-};
-
-#include "common/pack-start.h"  // START STRUCT PACKING
-struct RGB8 {
-	byte r, g, b;
-} PACKED_STRUCT;
-#include "common/pack-end.h"	// END STRUCT PACKING
+void error_show(const char *filename, uint32 line, quadchar errorcode) {
+	error_show(filename, line, errorcode, "No extra description");
+}
 
 } // namespace M4
-
-#endif
