@@ -412,6 +412,7 @@ void AGDSEngine::newGame() {
 	runObject(done);
 
 	_patches.clear();
+	_objectPatches.clear();
 	_inventory.clear();
 	_globals.clear();
 	Console *console = getConsole();
