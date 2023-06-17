@@ -26,7 +26,9 @@
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
+#include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_been.h"
+#include "m4/core/errors.h"
 #include "m4/m4.h"
 #include "m4/detection.h"
 #include "m4/console.h"
@@ -85,8 +87,11 @@ void M4Engine::game_systems_initialize(byte flags) {
 		"Cache System Disabled" : "Cache System Enabled");
 	debugC(kDebugCore, "Available memory: %ld", totalMem);
 
-	if (flags & INSTALL_PLAYER_BEEN_INIT)
-		player_been_init(180);
+	if (flags & INSTALL_PLAYER_BEEN_INIT) {
+		if (!player_been_init(MAX_SCENES))
+			error_show(FL, 'PBIF');
+	}
+
 }
 
 Common::Error M4Engine::syncGame(Common::Serializer &s) {

@@ -27,6 +27,9 @@
 
 namespace M4 {
 
+#define MAX_SCENES 180
+#define GLB_SHARED_VARS 512
+
 enum {
 	INSTALL_SOUND_DRIVERS    =    1,
 	INSTALL_PLAYER_BEEN_INIT =    2,
