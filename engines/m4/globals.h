@@ -29,6 +29,7 @@
 #include "m4/adv_r/adv_been.h"
 #include "m4/fileio/sys_file.h"
 #include "m4/graphics/gr_font.h"
+#include "m4/gui/gui_univ.h"
 
 namespace M4 {
 
@@ -69,7 +70,13 @@ struct Globals {
 	int _global_sound_room = 0;
 	bool _interface_visible = false;
 	bool _please_hyperwalk = false;
-	void (*_custom_ascii_converter)(char *string);
+	void (*_custom_ascii_converter)(char *string) = nullptr;
+	int32 _mouseX = 0, _mouseY = 0, _oldX = 0, _oldY = 0;
+	bool _vmng_Initted = false;
+	ScreenContext *_frontScreen = nullptr;
+	// A list of "hot keys" which are activated by their keyboard event, if the event
+	// has been passed right through the complete list of active windows.
+	Hotkey *_systemHotkeys = nullptr;
 };
 
 #define _G(X) (g_globals->_##X)

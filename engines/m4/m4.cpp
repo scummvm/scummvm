@@ -29,6 +29,7 @@
 #include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_been.h"
 #include "m4/core/errors.h"
+#include "m4/gui/gui_sys.h"
 #include "m4/m4.h"
 #include "m4/detection.h"
 #include "m4/console.h"
@@ -92,6 +93,25 @@ void M4Engine::game_systems_initialize(byte flags) {
 			error_show(FL, 'PBIF');
 	}
 
+	term_message("Firing up GUI");
+	fire_up_gui();
+}
+
+void M4Engine::fire_up_gui() {
+	if (!gui_system_init())
+		error_show(FL, 'GUI0');
+/*
+	if (!vmng_init())
+		error_show(FL, 'GUI1');
+	if (!gui_mouse_init())
+		error_show(FL, 'GUI2');
+	if (!InitDialogs())
+		error_show(FL, 'GUI3');
+	if (!InitItems())
+		error_show(FL, 'GUI4');
+	if (!gui_buffer_system_init())
+		error_show(FL, 'GUI5');
+		*/
 }
 
 Common::Error M4Engine::syncGame(Common::Serializer &s) {

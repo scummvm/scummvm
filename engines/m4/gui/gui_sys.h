@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,23 +20,21 @@
  *
  */
 
-#include "m4/globals.h"
-#include "m4/gui/gui_sys.h"
+#ifndef M4_ADV_R_DB_ENV_H
+#define M4_ADV_R_DB_ENV_H
+
+#include "m4/m4_types.h"
+#include "m4/gui/gui_univ.h"
 
 namespace M4 {
 
-Globals *g_globals;
+extern bool gui_system_init();
+extern void gui_system_shutdown();
+extern void gui_system_event_handler(void); // was ScreenEventHandle
+extern void AddSystemHotkey(int32 myKey, HotkeyCB callback);
+extern void RemoveSystemHotkey(int32 myKey);
+extern HotkeyCB GetSystemHotkey(int32 myKey);
 
-Globals::Globals() {
-	g_globals = this;
-}
+} // End of namespace M4
 
-Globals::~Globals() {
-	sysfile_shutdown();
-	player_been_shutdown();
-	gui_system_shutdown();
-
-	g_globals = nullptr;
-}
-
-} // namespace M4
+#endif
