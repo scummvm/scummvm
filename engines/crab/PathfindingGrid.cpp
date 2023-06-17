@@ -40,17 +40,37 @@ PathfindingGrid::PathfindingGrid(void) {
 	openCost = OPEN;
 	stairsCost = STAIRS;
 	nodes = nullptr;
+
+	dimensions.x = 0;
+	dimensions.y = 0;
+
+	cellSize.x = 0.0;
+	cellSize.y = 0.0;
 }
 
 PathfindingGrid::~PathfindingGrid(void) {
+	Reset();
+}
+
+void PathfindingGrid::Reset() {
 	for (int x = 0; x < dimensions.x; ++x) {
 		delete[] nodes[x];
 	}
 
 	delete[] nodes;
+	nodes = nullptr;
+
+	dimensions.x = 0;
+	dimensions.y = 0;
+
+	cellSize.x = 0.0;
+	cellSize.y = 0.0;
 }
 
 void PathfindingGrid::SetupNodes(TMXMap map) {
+	// delete nodes if they exist
+	Reset();
+
 	dimensions.x = map.path_rows; // Logically, this is incorrect but it matches the format of cols and rows used elsewhere (SZ)
 	dimensions.y = map.path_cols;
 

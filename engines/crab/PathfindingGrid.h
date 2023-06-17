@@ -67,6 +67,8 @@ public:
 	PathfindingGrid(void);
 	~PathfindingGrid(void);
 
+	void Reset();
+
 	void SetupNodes(TMX::TMXMap map);
 
 	// Return the node at the given point (SZ)
