@@ -12,10 +12,16 @@ MODULE_OBJS = \
 	term.o \
 	adv_r/db_env.o \
 	adv_r/db_rmlst.o \
+	core/errors.o \
+	core/imath.o \
 	fileio/extensions.o \
 	fileio/fileio.o \
 	fileio/info.o \
 	fileio/sys_file.o \
+	graphics/gr_buff.o \
+	graphics/gr_font.o \
+	graphics/gr_pal.o \
+	graphics/graphics.o \
 	mem/memman.o \
 	mem/reloc.o \
 	burger/burger.o

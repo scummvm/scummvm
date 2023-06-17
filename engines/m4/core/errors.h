@@ -19,46 +19,17 @@
  *
  */
 
-#ifndef M4_M4_TYPES_H
-#define M4_M4_TYPES_H
+#ifndef M4_CORE_ERRORS_H
+#define M4_CORE_ERRORS_H
 
-#include "common/scummsys.h"
+#include "m4/m4_types.h"
 
 namespace M4 {
 
-#define MAX_FILENAME_SIZE 144
+#define FL __FILE__,__LINE__
 
-typedef void *Ptr;
-typedef void *Handle;
-
-typedef uint32 frac16;
-typedef uint32 ulong;
-typedef uint32 quadchar;
-typedef uint32 trigraph;
-
-typedef byte Bit;
-typedef byte Bool;
-typedef byte boolean;
-typedef byte Boolean;
-typedef byte byte;
-typedef byte Byte;
-typedef uint16 word;
-typedef uint16 Word;
-typedef uint32 DWord;
-
-struct Buffer {
-	int32 W;
-	int32 h;
-	uint8 *data;
-	uint8 encoding;
-	int32 stride;
-};
-
-#include "common/pack-start.h"  // START STRUCT PACKING
-struct RGB8 {
-	byte r, g, b;
-} PACKED_STRUCT;
-#include "common/pack-end.h"	// END STRUCT PACKING
+extern void error_show(const char *filename, uint32 line, quadchar errorcode, const char *fmt, ...);
+extern void error_show(const char *filename, uint32 line, quadchar errorcode);
 
 } // namespace M4
 

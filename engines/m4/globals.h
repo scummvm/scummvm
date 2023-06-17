@@ -25,8 +25,9 @@
 #include "m4/game.h"
 #include "m4/kernel.h"
 #include "m4/term.h"
-#include "m4/fileio/sys_file.h"
 #include "m4/adv_r/adv.h"
+#include "m4/fileio/sys_file.h"
+#include "m4/graphics/gr_font.h"
 
 namespace M4 {
 
@@ -44,7 +45,18 @@ struct Globals {
 	Kernel _kernel;
 	Term _term;
 	Hag_Statics _hag;
-	SceneDef currentSceneDef;
+	SceneDef _currentSceneDef;
+
+	Font *_system_font = nullptr;
+	Font *_font_line = nullptr;
+	Font *_font_tiny_prop = nullptr;
+	Font *_font_tiny = nullptr;
+	Font *_font_inter = nullptr;
+	Font *_font_conv = nullptr;
+	Font *_font_menu = nullptr;
+	Font *_font_misc = nullptr;
+	Font *_interfaceFont = nullptr;
+	Font *_font = nullptr;
 
 	bool _system_shutting_down = false;
 	size_t _mem_to_alloc = 0;
@@ -54,6 +66,7 @@ struct Globals {
 	int _global_sound_room = 0;
 	bool _interface_visible = false;
 	bool _please_hyperwalk = false;
+	void (*_custom_ascii_converter)(char *string);
 };
 
 #define _G(X) (g_globals->_##X)

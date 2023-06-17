@@ -19,47 +19,33 @@
  *
  */
 
-#ifndef M4_M4_TYPES_H
-#define M4_M4_TYPES_H
-
-#include "common/scummsys.h"
+#include "common/textconsole.h"
+#include "m4/graphics/gr_pal.h"
 
 namespace M4 {
 
-#define MAX_FILENAME_SIZE 144
+uint8 gr_pal_get_ega_color(uint8 myColor) {
+	error("TODO");
+}
 
-typedef void *Ptr;
-typedef void *Handle;
+uint8 *gr_color_createInverseTable(RGB8 *pal, uint8 bitDepth, int begin_color, int end_color) {
+	error("TODO: gr_color_createInverseTable");
+}
 
-typedef uint32 frac16;
-typedef uint32 ulong;
-typedef uint32 quadchar;
-typedef uint32 trigraph;
+void gr_color_create_ipl5(uint8 *inverseColorTable, char *fname, int room_num) {
+	error("TODO: gr_color_create_ipl5");
+}
 
-typedef byte Bit;
-typedef byte Bool;
-typedef byte boolean;
-typedef byte Boolean;
-typedef byte byte;
-typedef byte Byte;
-typedef uint16 word;
-typedef uint16 Word;
-typedef uint32 DWord;
+uint8 *gr_color_load_ipl5(const char *filename, uint8 *inverseColors) {
+	error("TODO: gr_color_load_ipl5");
+}
 
-struct Buffer {
-	int32 W;
-	int32 h;
-	uint8 *data;
-	uint8 encoding;
-	int32 stride;
-};
+void gr_color_set(int32 c) {
+	error("TODO: gr_color_set");
+}
 
-#include "common/pack-start.h"  // START STRUCT PACKING
-struct RGB8 {
-	byte r, g, b;
-} PACKED_STRUCT;
-#include "common/pack-end.h"	// END STRUCT PACKING
+byte gr_color_get_current() {
+	error("TODO: gr_color_get_current");
+}
 
 } // namespace M4
-
-#endif

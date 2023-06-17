@@ -19,47 +19,8 @@
  *
  */
 
-#ifndef M4_M4_TYPES_H
-#define M4_M4_TYPES_H
-
-#include "common/scummsys.h"
+#include "m4/graphics/graphics.h"
 
 namespace M4 {
 
-#define MAX_FILENAME_SIZE 144
-
-typedef void *Ptr;
-typedef void *Handle;
-
-typedef uint32 frac16;
-typedef uint32 ulong;
-typedef uint32 quadchar;
-typedef uint32 trigraph;
-
-typedef byte Bit;
-typedef byte Bool;
-typedef byte boolean;
-typedef byte Boolean;
-typedef byte byte;
-typedef byte Byte;
-typedef uint16 word;
-typedef uint16 Word;
-typedef uint32 DWord;
-
-struct Buffer {
-	int32 W;
-	int32 h;
-	uint8 *data;
-	uint8 encoding;
-	int32 stride;
-};
-
-#include "common/pack-start.h"  // START STRUCT PACKING
-struct RGB8 {
-	byte r, g, b;
-} PACKED_STRUCT;
-#include "common/pack-end.h"	// END STRUCT PACKING
-
 } // namespace M4
-
-#endif
