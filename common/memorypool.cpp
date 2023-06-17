@@ -139,7 +139,6 @@ void MemoryPool::freeUnusedPages() {
 	}
 
 	// Free all pages which are not in use.
-	size_t freedPagesCount = 0;
 	for (size_t i = 0; i < _pages.size(); ++i)  {
 		if (numberOfFreeChunksPerPage[i] == _pages[i].numChunks) {
 			// Remove all chunks of this page from the list of free chunks
@@ -152,12 +151,9 @@ void MemoryPool::freeUnusedPages() {
 			}
 
 			::free(_pages[i].start);
-			++freedPagesCount;
 			_pages[i].start = nullptr;
 		}
 	}
-
-//	debug("freed %d pages out of %d", (int)freedPagesCount, (int)_pages.size());
 
 	// Remove all now unused pages
 	size_t newSize = 0;
