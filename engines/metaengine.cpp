@@ -217,6 +217,9 @@ void MetaEngine::appendExtendedSaveToStream(Common::WriteStream *saveFile, uint3
 	saveFile->writeUint16LE(header.time);
 	saveFile->writeUint32LE(playtime);
 
+	if (desc.size() > 0xFF)
+		desc = desc.substr(0, 0xFF);
+
 	saveFile->writeByte(desc.size());
 	saveFile->writeString(desc);
 	saveFile->writeByte(isAutosave);
