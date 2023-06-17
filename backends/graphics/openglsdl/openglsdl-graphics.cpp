@@ -24,6 +24,9 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/platform/sdl/sdl.h"
 #include "graphics/scaler/aspect.h"
+#ifdef USE_SCALERS
+#include "graphics/scalerplugin.h"
+#endif
 
 #include "common/textconsole.h"
 #include "common/config-manager.h"
@@ -716,6 +719,56 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 		return true;
 	}
+
+#ifdef USE_SCALERS
+	case kActionNextScaleFilter:
+	case kActionPreviousScaleFilter: {
+		if (_scalerPlugins.size() > 0) {
+			const int direction = event.customType == kActionNextScaleFilter ? 1 : -1;
+
+			uint scalerIndex = getScaler();
+			switch (direction) {
+			case 1:
+				if (scalerIndex >= _scalerPlugins.size() - 1) {
+					scalerIndex = 0;
+				} else {
+					++scalerIndex;
+				}
+				break;
+
+			case -1:
+			default:
+				if (scalerIndex == 0) {
+					scalerIndex = _scalerPlugins.size() - 1;
+				} else {
+					--scalerIndex;
+				}
+				break;
+			}
+
+			beginGFXTransaction();
+			setScaler(scalerIndex, getScaleFactor());
+			endGFXTransaction();
+
+#ifdef USE_OSD
+			int windowWidth = 0, windowHeight = 0;
+			getWindowSizeFromSdl(&windowWidth, &windowHeight);
+			const char *newScalerName = _scalerPlugins[scalerIndex]->get<ScalerPluginObject>().getPrettyName();
+			if (newScalerName) {
+				const Common::U32String message = Common::U32String::format(
+					"%S %s%d\n%d x %d",
+					_("Active graphics filter:").c_str(),
+					newScalerName,
+					getScaleFactor(),
+					windowWidth, windowHeight);
+				displayMessageOnOSD(message);
+			}
+#endif
+		}
+
+		return true;
+	}
+#endif // USE_SCALERS
 
 	case kActionToggleAspectRatioCorrection:
 		// Toggles the aspect ratio correction state.
