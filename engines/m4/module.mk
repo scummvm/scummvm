@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	param.o \
 	res.o \
 	term.o \
+	adv_r/adv_been.o \
 	adv_r/db_env.o \
 	adv_r/db_rmlst.o \
 	core/errors.o \

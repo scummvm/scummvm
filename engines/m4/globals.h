@@ -26,6 +26,7 @@
 #include "m4/kernel.h"
 #include "m4/term.h"
 #include "m4/adv_r/adv.h"
+#include "m4/adv_r/adv_been.h"
 #include "m4/fileio/sys_file.h"
 #include "m4/graphics/gr_font.h"
 
@@ -46,6 +47,8 @@ struct Globals {
 	Term _term;
 	Hag_Statics _hag;
 	SceneDef _currentSceneDef;
+	Scene_list _scene_list;
+	byte _globals[0x400];
 
 	Font *_system_font = nullptr;
 	Font *_font_line = nullptr;

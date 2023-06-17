@@ -26,6 +26,7 @@
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
+#include "m4/adv_r/adv_been.h"
 #include "m4/m4.h"
 #include "m4/detection.h"
 #include "m4/console.h"
@@ -62,7 +63,7 @@ Common::Error M4Engine::run() {
 	parse_all_flags();
 
 	if (!_G(system_shutting_down)) {
-		game_systems_initialize();
+		game_systems_initialize(INSTALL_ALL);
 
 
 
@@ -73,7 +74,7 @@ Common::Error M4Engine::run() {
 	return Common::kNoError;
 }
 
-void M4Engine::game_systems_initialize() {
+void M4Engine::game_systems_initialize(byte flags) {
 	_G(term).init(_G(kernel).use_debug_monitor, _G(kernel).use_log_file);
 
 	size_t totalMem = _G(kernel).mem_avail();
@@ -84,6 +85,8 @@ void M4Engine::game_systems_initialize() {
 		"Cache System Disabled" : "Cache System Enabled");
 	debugC(kDebugCore, "Available memory: %ld", totalMem);
 
+	if (flags & INSTALL_PLAYER_BEEN_INIT)
+		player_been_init(180);
 }
 
 Common::Error M4Engine::syncGame(Common::Serializer &s) {

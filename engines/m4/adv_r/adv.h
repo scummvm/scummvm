@@ -27,6 +27,16 @@
 
 namespace M4 {
 
+enum {
+	INSTALL_SOUND_DRIVERS    =    1,
+	INSTALL_PLAYER_BEEN_INIT =    2,
+	INSTALL_RAIL_SYSTEM      =    4,
+	INSTALL_INVENTORY_SYSTEM =    8,
+	INSTALL_INVERSE_PALETTE  = 0x10,
+	INSTALL_MININUM          =    0,
+	INSTALL_ALL              = 0x1f
+};
+
 struct HotSpotRec {
 	int32 ul_x = 0, ul_y = 0, lr_x = 0, lr_y = 0;	// Hotspot screen coordinates
 	int32 feet_x = 0, feet_y = 0;			// Walk-to target for player

@@ -31,6 +31,7 @@ Globals::Globals() {
 
 Globals::~Globals() {
 	sysfile_shutdown();
+	player_been_shutdown();
 
 	g_globals = nullptr;
 }
