@@ -263,6 +263,15 @@ void AGDSEngine::runProcess(const ObjectPtr &object, uint ip) {
 	error("process table exhausted");
 }
 
+bool AGDSEngine::hasActiveProcesses(const Common::String &name) const {
+	for(auto & process : _processes) {
+		if (process && process->getName() == name && !process->finished())
+			return true;
+	}
+	return false;
+}
+
+
 ObjectPtr AGDSEngine::getCurrentScreenObject(const Common::String &name) {
 	return _currentScreen? _currentScreen->find(name): ObjectPtr();
 }

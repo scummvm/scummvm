@@ -219,6 +219,11 @@ void Process::run() {
 		case kExitCodeDestroy:
 			debug("process %s returned destroy exit code", getName().c_str());
 			done();
+			if (!getObject()->alive() && !_engine->hasActiveProcesses(getName())) {
+				auto * screen = _engine->getCurrentScreen();
+				if (screen)
+					screen->remove(getName());
+			}
 			break;
 		case kExitCodeLoadScreenObjectAs:
 		case kExitCodeLoadScreenObject:

@@ -126,6 +126,7 @@ public:
 	void stopProcess(const Common::String & name);
 	void stopProcessForObject(const Common::String & name);
 	void reactivate(const Common::String &name, const char *where, bool runNow = false);
+	bool hasActiveProcesses(const Common::String &name) const;
 
 	void resetCurrentScreen();
 	void loadScreen(const Common::String & name, ScreenLoadingType type, bool savePatch = true);
