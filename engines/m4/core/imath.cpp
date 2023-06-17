@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/endian.h"
 #include "m4/core/imath.h"
 
 namespace M4 {
@@ -114,6 +115,41 @@ frac16 SqrtF16(frac16 n) {
 	STEP(1);
 	STEP(0);
 	return (frac16)r;
+}
+
+uint16 HighWord(uint32 n) {
+	return (uint16)(n >> 16);
+}
+
+uint16 LowWord(uint32 n) {
+	return (uint16)(n & 0xffff);
+}
+
+uint32 convert_intel32(uint32 a) {
+	return FROM_LE_32(a);
+}
+
+uint16 convert_intel16(uint16 a) {
+	return FROM_LE_16(a);
+}
+
+frac16 FixedMul(frac16 a, frac16 b) {
+	float ta = a;
+	float tb = b;
+	return (frac16)((ta * tb) / 65536.0);
+}
+
+frac16 FixedDiv(frac16 a, frac16 b) {
+	float ta = a;
+	float tb = b;
+	return (frac16)((ta / tb) * 65536.0);
+}
+
+frac16 FixedMulDiv(frac16 a, frac16 b, frac16 c) {
+	float ta = a;
+	float tb = b;
+	float tc = c;
+	return (frac16)((ta * tb) / tc);
 }
 
 } // namespace M4
