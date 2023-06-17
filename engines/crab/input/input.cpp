@@ -111,6 +111,21 @@ void InputManager::Init() {
 	const Common::String DEFAULT_FILENAME = "res/controls.xml";
 	Load(DEFAULT_FILENAME);
 
+	//g_engine->getEventManager()->getKeymapper()->cleanupGameKeymaps();
+
+	/*
+	Common::Keymap *keymap = gameKeymaps;
+	for (Common::Action *a: hudKeymaps->getActions()) {
+		keymap->addAction(a);
+	}
+
+	keymap = uiKeymaps;
+	for (Common::Action *a: hudKeymaps->getActions()) {
+		keymap->addAction(a);
+	}
+	*/
+
+
 #if 0
 	const Common::String DEFAULT_FILENAME = "res/controls.xml";
 
@@ -212,13 +227,18 @@ Common::String InputManager::GetAssociatedKey(const InputType &type) {
 	if (_keyDescs[type].size() > 0)
 		return _keyDescs[type];
 
-	Common::Keymap *keymap = g_system->getEventManager()->getKeymapper()->getKeymap("Unrest");
-	const Common::Keymap::ActionArray actions = keymap->getActions();
-	for (Common::Action *action : actions) {
-		if ((int)action->event.customType == type) {
-			_keyDescs[type] = Common::String(keymap->getActionMapping(action)[0].description);
-			_keyDescs[type].toUppercase();
-			break;
+	Common::KeymapArray keymaparr = g_system->getEventManager()->getKeymapper()->getKeymaps();
+	for(Common::Keymap *keymap : keymaparr) {
+		if (keymap->getType() != Common::Keymap::kKeymapTypeGame)
+			continue;
+
+		const Common::Keymap::ActionArray actions = keymap->getActions();
+		for (Common::Action *action : actions) {
+			if ((int)action->event.customType == type) {
+				_keyDescs[type] = Common::String(keymap->getActionMapping(action)[0].description);
+				_keyDescs[type].toUppercase();
+				break;
+			}
 		}
 	}
 
@@ -267,7 +287,7 @@ void InputManager::Save() {
 Common::Keymap* InputManager::GetDefaultKeyMapsForGame() {
 	using namespace Common;
 
-	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGame, "Unrest", "Keymappings for Game");
+	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGame, "Unrest-Game", "Keymappings for Game");
 
 	Action *act;
 
@@ -307,7 +327,7 @@ Common::Keymap* InputManager::GetDefaultKeyMapsForGame() {
 Common::Keymap* InputManager::GetDefaultKeyMapsForUI() {
 	using namespace Common;
 
-	Keymap *uiKeymap = new Keymap(Keymap::kKeymapTypeGame, "Unrest", "Keymappings for UI");
+	Keymap *uiKeymap = new Keymap(Keymap::kKeymapTypeGame, "Unrest-UI", "Keymappings for UI");
 
 	Action *act;
 
@@ -377,7 +397,7 @@ Common::Keymap* InputManager::GetDefaultKeyMapsForUI() {
 Common::Keymap* InputManager::GetDefaultKeyMapsForHUD() {
 	using namespace Common;
 
-	Keymap *hudKeymap = new Keymap(Keymap::kKeymapTypeGame, "Unrest", "Keymappings for HUD");
+	Keymap *hudKeymap = new Keymap(Keymap::kKeymapTypeGame, "Unrest-HUD", "Keymappings for HUD");
 
 	Action *act;
 
@@ -407,30 +427,21 @@ Common::Keymap* InputManager::GetDefaultKeyMapsForHUD() {
 void InputManager::SetKeyBindingMode(KeyBindingMode mode) {
 	_keyMode = mode;
 
-	Common::Keymap *gameKeymaps = GetDefaultKeyMapsForGame();
-	Common::Keymap *uiKeymaps = GetDefaultKeyMapsForUI();
-	Common::Keymap *hudKeymaps = GetDefaultKeyMapsForHUD();
-
 	Common::Keymapper *const mapper = g_engine->getEventManager()->getKeymapper();
-	mapper->cleanupGameKeymaps();
+	mapper->disableAllGameKeymaps();
 
-	Common::Keymap *keymap;
+	mapper->setGameKeymapState("Unrest-HUD", true);
 
 	switch (mode) {
 
 		case KBM_GAME:
-			keymap = gameKeymaps;
+			mapper->setGameKeymapState("Unrest-Game", true);
 			break;
 
 		case KBM_UI:
-			keymap = uiKeymaps;
+			mapper->setGameKeymapState("Unrest-UI", true);
 			break;
 	}
-	for (Common::Action *a: hudKeymaps->getActions()) {
-		keymap->addAction(a);
-	}
-
-	mapper->addGameKeymap(keymap);
 
 	// Clear All inputs
 	ClearInputs();
