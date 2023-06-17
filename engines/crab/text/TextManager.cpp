@@ -147,6 +147,8 @@ void TextManager::Draw(const int &x, const int &y, const Common::String &text, c
 					   const FontKey &fontk, const Align &align, const bool &background) {
 	//warning("STUB: TextManager::Draw()");
 
+	if (text == " ") return;
+
 	int pos = Search(text, color, fontk);
 	if (pos == -1) {
 		pos = FindFreeSlot();
