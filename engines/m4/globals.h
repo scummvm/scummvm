@@ -48,7 +48,7 @@ struct Globals {
 	Hag_Statics _hag;
 	SceneDef _currentSceneDef;
 	Scene_list _scene_list;
-	byte _globals[0x400];
+	frac16 _globals[GLB_SHARED_VARS];
 
 	Font *_system_font = nullptr;
 	Font *_font_line = nullptr;
