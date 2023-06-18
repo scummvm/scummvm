@@ -27,19 +27,23 @@ struct HR {
 	void *_data;
 };
 
-MemHandle NewHandle(size_t size, const char *) {
+MemHandle NewHandle(size_t size, const Common::String &) {
 	HR *result = (HR *)malloc(sizeof(HR));
 	result->_data = malloc(size);
 
 	return (MemHandle)result;
 }
 
-bool mem_ReallocateHandle(MemHandle h, size_t size, const char *) {
+bool mem_ReallocateHandle(MemHandle h, size_t size, const Common::String &) {
 	HR *hr = (HR *)h;
 	assert(!hr->_data);
 	hr->_data = malloc(size);
 
 	return true;
+}
+
+MemHandle MakeNewHandle(size_t size, const Common::String &name) {
+	return NewHandle(size, name);
 }
 
 } // namespace M4

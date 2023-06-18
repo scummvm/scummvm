@@ -52,8 +52,12 @@ private:
 public:
 	~Resources();
 
-	Handle rget(const Common::String &resourceName, int32 *ResourceSize);
+	Handle rget(const Common::String &resourceName, int32 *resourceSize);
+	void rtoss(const Common::String &resourceName);
 };
+
+extern Handle rget(const Common::String &resourceName, int32 *ResourceSize);
+extern void rtoss(const Common::String &resourceName);
 
 } // namespace M4
 

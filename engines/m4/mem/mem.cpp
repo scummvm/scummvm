@@ -47,7 +47,7 @@ void mem_stash_shutdown(void) {
 	}
 }
 
-bool mem_register_stash_type(int32 *memType, int32 blockSize, int32 maxNumRequests, const char *name) {
+bool mem_register_stash_type(int32 *memType, int32 blockSize, int32 maxNumRequests, const Common::String &name) {
 	int32 i = 0;
 	bool found = false;
 
@@ -58,7 +58,7 @@ bool mem_register_stash_type(int32 *memType, int32 blockSize, int32 maxNumReques
 			i++;
 	}
 	if (i == _MEMTYPE_LIMIT)
-		error_show(FL, 'MSIF', "stash: %s", name);
+		error_show(FL, 'MSIF', "stash: %s", name.c_str());
 
 	// Found a slot
 	if (found || (i < _MEMTYPE_LIMIT)) {
@@ -70,13 +70,13 @@ bool mem_register_stash_type(int32 *memType, int32 blockSize, int32 maxNumReques
 
 		_G(requests)[i] = maxNumRequests;
 
-		_G(memBlock)[i] = mem_alloc((blockSize + 1) * maxNumRequests, name);
+		_G(memBlock)[i] = mem_alloc((blockSize + 1) * maxNumRequests, name.c_str());
 		memset(_G(memBlock)[i], 0, (blockSize + 1) * maxNumRequests);
 
 		return true;
 	}
 
-	error_show(FL, 'MSIF', "stash: %s", name);
+	error_show(FL, 'MSIF', "stash: %s", name.c_str());
 	return false;
 }
 
@@ -95,7 +95,7 @@ void mem_free_to_stash(void *mem, int32 memType) {
 /**
  * Deliver a memory block whose size has been previously registered.
  */
-void *mem_get_from_stash(int32 memType, char *name) {
+void *mem_get_from_stash(int32 memType, const Common::String &name) {
 	int i;
 	int8 *b_ptr = (int8 *)_G(memBlock)[memType];
 
@@ -108,7 +108,7 @@ void *mem_get_from_stash(int32 memType, char *name) {
 		}
 	}
 
-	error_show(FL, 'OOS!', "stash full %s", name);
+	error_show(FL, 'OOS!', "stash full %s", name.c_str());
 	return 0;
 }
 

@@ -29,8 +29,10 @@
 #include "m4/adv_r/adv_been.h"
 #include "m4/fileio/sys_file.h"
 #include "m4/graphics/gr_font.h"
+#include "m4/gui/gui_mouse.h"
 #include "m4/gui/gui_univ.h"
 #include "m4/mem/memman.h"
+#include "m4/mem/res.h"
 
 namespace M4 {
 
@@ -40,7 +42,7 @@ struct Globals;
 
 extern Globals *g_globals;
 
-struct Globals {
+struct Globals : public Mouse_Statics {
 	Globals();
 	~Globals();
 
@@ -51,6 +53,7 @@ struct Globals {
 	SceneDef _currentSceneDef;
 	Scene_list _scene_list;
 	frac16 _globals[GLB_SHARED_VARS];
+	Resources _resources;
 
 	Font *_system_font = nullptr;
 	Font *_font_line = nullptr;
@@ -72,7 +75,6 @@ struct Globals {
 	bool _interface_visible = false;
 	bool _please_hyperwalk = false;
 	void (*_custom_ascii_converter)(char *string) = nullptr;
-	int32 _mouseX = 0, _mouseY = 0, _oldX = 0, _oldY = 0;
 	bool _vmng_Initted = false;
 	ScreenContext *_frontScreen = nullptr;
 	ScreenContext *_backScreen = nullptr;

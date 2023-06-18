@@ -19,6 +19,41 @@
  *
  */
 
+/**
+ * THE GUI:
+ * gui_vmng.cpp controls the windowing system. The gui is comprised of layered independent
+ * windows.  The view manager controls which pieces of each window are visible, and which
+ * window receives events.  The contents of of the windows, whether they be dialog boxes,
+ * buffers, or some new addition has no bearing on the performance of the view manager.
+ * Therefore, each window is created with a layer, an event handler, and a redraw function.
+ * When the view manager determines that an area of a window needs to be redrawn, it
+ * simply calls that window's redraw function.  It is up to the redraw function to ensure
+ * that the rectangle is properly redrawn.  If an event occurs, the view manager will
+ * determine which window should handle the event.
+ *
+ * To recap then, it manages the visual display of each window's current position
+ * and relative layer, and when either a keyboard event, or mouse event is registered, which
+ * window's evtHandler will be given the event to process. In addition to requesting a
+ * window to redraw a portion of itself, or handle an event which has occurred, vmng.cpp
+ * also displays the mouse in its current location.  Through the use of an off screen bitmap
+ * which is an exact duplicate of what is visible on the monitor, the view manager creates
+ * a flicker-free graphical display of the mouse and all visible windows.
+ *
+ * NOTE: FOR MANY OF THE FOLLOWING PROCEDURES, A "void *scrnContent" IS LISTED AMONG THE
+ * PARAMETERS.  THIS PARAMETER REFERS TO THE STRUCTURE FOR WHICH THE WINDOW WAS CREATED, BE
+ * IT A (Buffer*), (Dialog*), (TextScrn*), OR WHATEVER.  SINCE THE VIEW MANAGER ONLY
+ * REQUESTS WINDOW REFRESHES AND PASSES EVENTS, THE CONTENTS OF THE WINDOW ARE UNKNOWN,
+ * AND THEREFORE, ALL ARE STORED AS (void*). FROM NOW ON, THIS WILL BE KNOWN AS THE "WINDOW
+ * IDENTIFIER".
+ *
+ * NOTE: THE TERM "WINDOW" AND THE TERM "SCREEN" ARE COMPLETELY INTERCHANGEABLE DURING
+ * THE DOCUMENTATION OF ANY GUI SOURCE CODE.
+ *
+ * NOTE: ANY PROCEDURE IN THIS FILE WHICH, WHEN EXECUTED, RESULTS IN A VISUAL CHANGE TO 
+ *          THE MONITOR (SUCH AS vmng_screen_show(), or MoveScreen())
+ *			WILL ALSO RESTORE THE MONITOR'S IMAGE, TAKING CARE OF A VIDEO REFRESH REQUIREMENTS.
+ */
+
 #include "m4/gui/gui_vmng.h"
 #include "m4/gui/gui_dialog.h"
 #include "m4/mem/memman.h"
@@ -102,5 +137,34 @@ void vmng_shutdown() {
 	}
 }
 
+ScreenContext *vmng_screen_create(int32 x1, int32 y1, int32 x2, int32 y2, int32 scrnType, uint32 scrnFlags,
+	void *scrnContent, RefreshFunc redraw, EventHandler evtHandler) {
+	ScreenContext *myScreen;
+
+	if (!_G(vmng_Initted))
+		return nullptr;
+
+	if ((myScreen = (ScreenContext *)mem_get_from_stash(_G(memtypeSCRN), "+SCRN")) == nullptr)
+		return nullptr;
+
+	myScreen->x1 = x1;
+	myScreen->y1 = y1;
+	myScreen->x2 = x2;
+	myScreen->y2 = y2;
+	myScreen->scrnType = scrnType;
+	myScreen->scrnFlags = scrnFlags;
+	myScreen->scrnContent = scrnContent;
+	myScreen->redraw = redraw;
+	myScreen->evtHandler = evtHandler;
+	myScreen->scrnHotkeys = nullptr;
+
+	if (_G(inactiveScreens))
+		_G(inactiveScreens)->infront = myScreen;
+
+	myScreen->behind = _G(inactiveScreens);
+	myScreen->infront = nullptr;
+	_G(inactiveScreens) = myScreen;
+	return myScreen;
+}
 
 } // End of namespace M4
