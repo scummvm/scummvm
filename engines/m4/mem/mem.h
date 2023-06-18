@@ -22,7 +22,7 @@
 #ifndef M4_MEM_MEM_H
 #define M4_MEM_MEM_H
 
-#include "common/scummsys.h"
+#include "common/str.h"
 
 namespace M4 {
 
@@ -36,7 +36,7 @@ extern void mem_stash_init(int16 num_types);
  */
 extern void mem_stash_shutdown();
 
-extern bool mem_register_stash_type(int32 *memType, int32 size, int32 numRequests, const char *name);
+extern bool mem_register_stash_type(int32 *memType, int32 size, int32 numRequests, const Common::String &name);
 
 /**
  * To free a memory block whose size has been previously registered.
@@ -44,7 +44,7 @@ extern bool mem_register_stash_type(int32 *memType, int32 size, int32 numRequest
  */
 extern void mem_free_to_stash(void *myMem, int32 memType);
 
-extern void *mem_get_from_stash(int32 memType, const char *name);
+extern void *mem_get_from_stash(int32 memType, const Common::String &name);
 
 } // namespace M4
 

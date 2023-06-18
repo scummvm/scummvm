@@ -27,6 +27,12 @@
 namespace M4 {
 
 #define MAX_FILENAME_SIZE 144
+#define MIN_VIDEO_X 0
+#define MIN_VIDEO_Y 0
+#define MAX_VIDEO_X 639
+#define MAX_VIDEO_Y 479
+#define VIDEO_W 640
+#define VIDEO_H 480
 
 typedef void *Ptr;
 typedef void *Handle;

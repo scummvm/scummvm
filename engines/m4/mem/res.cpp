@@ -24,6 +24,7 @@
 #include "m4/mem/res.h"
 #include "m4/mem/memman.h"
 #include "m4/mem/reloc.h"
+#include "m4/core/errors.h"
 #include "m4/globals.h"
 
 namespace M4 {
@@ -163,6 +164,41 @@ Handle Resources::rget(const Common::String &resourceName, int32 *resourceSize) 
 	return resEntry->RHandle;
 }
 
+void Resources::rtoss(const Common::String &resourceName) {
+	int hash_val;
+	Entry *resEntry = NULL;
+	Common::String lowerName;
+
+	lowerName = resourceName;
+	lowerName.toLowercase();
+	hash_val = hash(lowerName);
+
+	/* check if resource is in resource table */
+	if (_resources[hash_val].Flags) {
+		while (_resources[hash_val].Flags && !lowerName.equals(_resources[hash_val].name))
+			hash_val = ++hash_val & (HASHSIZE - 1);
+		resEntry = &_resources[hash_val];
+	}
+
+	if (!resEntry)
+		error_show(FL, 'RIOU', "rtoss: %s", resourceName.c_str());
+	else if (!(resEntry->Flags & FULLY_BUFFERED))
+		return;
+
+	if (!resEntry || !*resEntry->RHandle) {
+		term_message("bad rtoss no memory %s", resourceName.c_str());
+		return;
+	}
+
+	if (resEntry->Flags & MARKED_PURGE)
+		term_message("multiple rtoss: %s", resourceName.c_str());
+	else
+		term_message("rtossing: %s", resourceName.c_str());
+
+	HUnLock(resEntry->RHandle);
+	HPurge(resEntry->RHandle);
+	resEntry->Flags |= MARKED_PURGE;
+}
 
 int32 Resources::get_file(const Common::String &name) {
 	assert(!_fp);
@@ -190,6 +226,14 @@ bool Resources::do_file(MemHandle buffer) {
 	_fp = nullptr;
 
 	return result;
+}
+
+Handle rget(const Common::String &resourceName, int32 *resourceSize) {
+	return _G(resources).rget(resourceName, resourceSize);
+}
+
+void rtoss(const Common::String &resourceName) {
+	_G(resources).rtoss(resourceName);
 }
 
 } // namespace M4

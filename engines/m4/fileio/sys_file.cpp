@@ -575,7 +575,7 @@ int32 SysFile::read(MemHandle bufferHandle, int32 n) {
 	open_read();
 
 	if (!*bufferHandle)
-		mem_ReallocateHandle(bufferHandle, n);
+		mem_ReallocateHandle(bufferHandle, n, "SysFile");
 	if (!*bufferHandle)
 		error("Needed %d to read info", n);
 

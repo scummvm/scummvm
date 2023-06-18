@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -20,58 +19,17 @@
  *
  */
 
-#ifndef M4_GUI_GUI_H
-#define M4_GUI_GUI_H
+#ifndef M4_CORE_MOUSE_H
+#define M4_CORE_MOUSE_H
 
 #include "m4/m4_types.h"
-#include "m4/graphics/gr_buff.h"
 
 namespace M4 {
 
-struct M4sprite {
-	struct M4sprite *next;
-	struct M4sprite *prev;
-	int32 x;
-	int32 y;
-	int32 w;
-	int32 h;
-	int32 xOffset;	// the "hotspot" of the sprite, ie: the registration point
-	int32 yOffset;
-	uint8 encoding;
-	uint8 *data;
-	Handle sourceHandle;
-	int32 sourceOffset;
-};
+extern int   mouse_init();
+extern void  mouse_uninstall();
+extern byte *GetMousePicture();
 
-struct transSprite {
-	M4sprite *srcSprite;
-	Buffer *scrnBuffer;
-};
-
-
-struct M4Rect {
-	int32 x1, y1, x2, y2;
-};
-
-struct RectList {
-	RectList *next;
-	RectList *prev;
-	int32 x1, y1, x2, y2;
-};
-
-struct matte {
-	struct matte *nextMatte;
-	void *myScreen;
-	int32 x1;
-	int32 y1;
-	int32 x2;
-	int32 y2;
-	int32 w;
-	int32 h;
-	uint8 *SrcBuffer;
-	uint32 SrcPitch;
-};
-
-} // End of namespace M4
+} // namespace M4
 
 #endif

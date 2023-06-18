@@ -63,7 +63,7 @@ Common::Error M4Engine::run() {
 	Globals globals;
 
 	// Initialize 320x200 paletted graphics mode
-	initGraphics(320, 200);
+	initGraphics(640, 480);
 
 	param_init();
 	parse_all_flags();
@@ -107,8 +107,8 @@ void M4Engine::fire_up_gui() {
 		error_show(FL, 'GUI0');
 	if (!vmng_init())
 		error_show(FL, 'GUI1');
-//	if (!gui_mouse_init())
-//		error_show(FL, 'GUI2');
+	if (!gui_mouse_init())
+		error_show(FL, 'GUI2');
 	if (!gui_dialog_init())
 		error_show(FL, 'GUI3');
 /*

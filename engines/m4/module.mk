@@ -15,6 +15,7 @@ MODULE_OBJS = \
 	adv_r/db_rmlst.o \
 	core/errors.o \
 	core/imath.o \
+	core/mouse.o \
 	fileio/extensions.o \
 	fileio/fileio.o \
 	fileio/info.o \
@@ -24,6 +25,7 @@ MODULE_OBJS = \
 	graphics/gr_pal.o \
 	graphics/graphics.o \
 	gui/gui_dialog.o \
+	gui/gui_mouse.o \
 	gui/gui_sys.o \
 	gui/gui_vmng.o \
 	mem/mem.o \
