@@ -1160,14 +1160,17 @@ void ScummGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common:
 	layouts.addDialog(layoutName, overlayedLayout);
 	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(0, 0, 8, 8);
 
+	bool hasEnhancements = false;
+
 	for (uint i = 0; i < _options.size(); i++) {
 		if (strcmp(_options[i].configOption, "enhancements") != 0) {
 			Common::String id = Common::String::format("%d", i + 1);
 			layouts.addWidget("customOption" + id + "Checkbox", "Checkbox");
-		}
+		} else
+			hasEnhancements = true;
 	}
 
-	if (_enhancementsPopUp)
+	if (hasEnhancements)
 		addEnhancementsLayout(layouts);
 
 	layouts.closeLayout().closeDialog();
