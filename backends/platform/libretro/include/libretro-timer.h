@@ -18,8 +18,6 @@
 #ifndef LIBRETRO_TIMER_H
 #define LIBRETRO_TIMER_H
 
-#define EMU_THREAD_MIN_TIME 10
-
 #include "backends/timer/default/default-timer.h"
 #include "backends/platform/libretro/include/libretro-defs.h"
 

@@ -33,11 +33,7 @@ void LibretroTimerManager::switchThread(void) {
 	_nextSwitchTime =  g_system->getMillis() + _interval;
 	retro_switch_to_main_thread();
 	_spentOnMainThread = g_system->getMillis() - _nextSwitchTime + _interval;
-
-	if (_interval - _spentOnMainThread < EMU_THREAD_MIN_TIME) {
-		_nextSwitchTime = _nextSwitchTime + _spentOnMainThread + EMU_THREAD_MIN_TIME;
-		_spentOnMainThread = _interval - EMU_THREAD_MIN_TIME;
-	}
+	_nextSwitchTime += _interval <= _spentOnMainThread ? _spentOnMainThread + _interval : 0;
 }
 
 void LibretroTimerManager::checkThread(void) {
