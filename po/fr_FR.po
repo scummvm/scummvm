@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-06-17 21:49+0000\n"
-"PO-Revision-Date: 2023-06-14 05:40+0000\n"
+"PO-Revision-Date: 2023-06-18 07:22+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -7203,32 +7203,24 @@ msgstr ""
 "Une erreur s'est produite lors de l'écriture de la sauvegarde de la partie"
 
 #: engines/mtropolis/mtropolis.cpp:112
-#, fuzzy
-#| msgid ""
-#| "Music for this game requires MP3 support, which was not compiled in.\n"
-#| "The game will still play, but will not have any music."
 msgid ""
 "This game requires MPEG video support for some\n"
 "content but MPEG video support was not compiled in.\n"
 "The game will still play, but MPEG videos will not work."
 msgstr ""
-"Ce jeu nécessite la prise en charge de MP3 qui n'est pas inclus dans la "
-"compilation.\n"
-"Le jeu continuera de tourner, mais sans aucune musique."
+"Ce jeu nécessite la prise en charge des vidéos MPEG pour\n"
+"certains contenus qui n'est pas incluse dans la compilation.\n"
+"Le jeu continuera de tourner, mais sans les vidéos MPEG."
 
 #: engines/mtropolis/mtropolis.cpp:122
-#, fuzzy
-#| msgid ""
-#| "Music for this game requires MP3 support, which was not compiled in.\n"
-#| "The game will still play, but will not have any music."
 msgid ""
 "This game requires MPEG audio support for some\n"
 "content but MPEG audio support was not compiled in.\n"
 "The game will still play, but some audio will not work."
 msgstr ""
-"Ce jeu nécessite la prise en charge de MP3 qui n'est pas inclus dans la "
-"compilation.\n"
-"Le jeu continuera de tourner, mais sans aucune musique."
+"Ce jeu nécessite la prise en charge de l'audio MPEG pour\n"
+"certains contenus qui n'est pas incluse dans la compilation.\n"
+"Le jeu continuera de tourner, mais sans quelques plages audio."
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -9066,8 +9058,8 @@ msgstr ""
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
-"Scènes cinématiques MPEG-2 détectées mais ScummVM a été compilé sans le "
-"support du MPEG-2"
+"Cinématiques MPEG-2 détectées mais ScummVM a été compilé sans le support du "
+"MPEG-2"
 
 #: engines/sword1/animation.cpp:567 engines/sword2/animation.cpp:465
 #, c-format
@@ -10379,7 +10371,7 @@ msgstr "Utiliser les vidéos MPEG haute résolution"
 #: engines/zvision/metaengine.cpp:95
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr ""
-"Utiliser les vidéos MPEG du DVD à la place des vidéos AVI de plus basse "
+"Utilise les vidéos MPEG du DVD à la place des vidéos AVI de plus basse "
 "résolution"
 
 #: engines/zvision/metaengine.cpp:197
