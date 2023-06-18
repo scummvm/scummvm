@@ -365,7 +365,7 @@ void Channel::setCast(CastMemberID memberID) {
 	_height = _sprite->_height;
 	replaceWidget();
 
-	if (!_sprite->_puppet && g_director->getVersion() >= 600) {
+	if (!_sprite->_puppet) {
 		// Based on Director in a Nutshell, page 15
 		_sprite->_autoPuppet = true;
 	}
@@ -547,7 +547,7 @@ void Channel::setWidth(int w) {
 		return;
 	_width = MAX<int>(w, 0);
 
-	if (!_sprite->_puppet && g_director->getVersion() >= 600) {
+	if (!_sprite->_puppet) {
 		// Based on Director in a Nutshell, page 15
 		_sprite->_autoPuppet = true;
 	}
@@ -558,7 +558,7 @@ void Channel::setHeight(int h) {
 		return;
 	_height = MAX<int>(h, 0);
 
-	if (!_sprite->_puppet && g_director->getVersion() >= 600) {
+	if (!_sprite->_puppet) {
 		// Based on Director in a Nutshell, page 15
 		_sprite->_autoPuppet = true;
 	}
@@ -580,7 +580,7 @@ void Channel::setBbox(int l, int t, int r, int b) {
 	if (_width <= 0 || _height <= 0)
 		_width = _height = 0;
 
-	if (!_sprite->_puppet && g_director->getVersion() >= 600) {
+	if (!_sprite->_puppet) {
 		// Based on Director in a Nutshell, page 15
 		_sprite->_autoPuppet = true;
 	}
@@ -595,7 +595,7 @@ void Channel::setPosition(int x, int y, bool force) {
 	}
 	_currentPoint = newPos;
 
-	if (!_sprite->_puppet && g_director->getVersion() >= 600) {
+	if (!_sprite->_puppet) {
 		// Based on Director in a Nutshell, page 15
 		_sprite->_autoPuppet = true;
 	}
