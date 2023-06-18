@@ -252,7 +252,7 @@ enum Opcode {
 	kStub232						= 232,
 	kObjectFreePictureAndAnimation	= 233,
 	kGetSampleVolume				= 234,
-	kStub235						= 235,
+	kFadeScreen						= 235,
 	kUserEnabled					= 236,
 	kAnimationNextFrame				= 237,
 	kInventoryHasObjectByName		= 238,
@@ -470,7 +470,7 @@ enum Opcode {
 	OP(kGetSampleVolume, getSampleVolume) \
 	OP(kStub231, stub231) \
 	OP(kObjectFreePictureAndAnimation, objectFreePictureAndAnimation) \
-	OP(kStub235, stub235) \
+	OP(kFadeScreen, fadeScreen) \
 	OP(kUserEnabled, userEnabled) \
 	OP(kSetCharacterNotifyVars, setCharacterNotifyVars) \
 	OP(kInventoryFindObjectByName, inventoryFindObjectByName) \
