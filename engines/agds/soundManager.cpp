@@ -112,7 +112,7 @@ void SoundManager::stopAllFrom(const Common::String &process) {
 }
 
 
-int SoundManager::play(const Common::String &process, const Common::String &resource, const Common::String &filename, const Common::String &phaseVar, bool startPlaying, int volume, int pan, int id, bool ambient) {
+int SoundManager::play(Common::String process, const Common::String &resource, const Common::String &filename, const Common::String &phaseVar, bool startPlaying, int volume, int pan, int id, bool ambient) {
 	debug("SoundMan::play(process: '%s', resource: '%s', filename: '%s', phaseVar: '%s', start: %d, volume: %d, pan: %d, id: %d, ambient: %d", process.c_str(), resource.c_str(), filename.c_str(), phaseVar.c_str(), startPlaying, volume, pan, id, ambient);
 	if (filename.empty())
 		return -1;
@@ -131,6 +131,8 @@ int SoundManager::play(const Common::String &process, const Common::String &reso
 		warning("no sound %s", filename.c_str());
 		return -1;
 	}
+	if (ambient)
+		process.clear();
 
 	Common::String lname(filename);
 	lname.toLowercase();
