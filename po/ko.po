@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-17 21:49+0000\n"
+"POT-Creation-Date: 2023-06-18 14:21+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -2862,7 +2862,7 @@ msgstr ""
 "을 비롯해, 잘 알려지지 않은 어드벤처 게임과 진정한 숨겨진 보석을 찾아볼 수 있"
 "습니다."
 
-#: engines/achievements.cpp:231
+#: engines/achievements.cpp:242
 msgid "Achievement unlocked!"
 msgstr "업적 달성!"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-17 21:49+0000\n"
+"POT-Creation-Date: 2023-06-18 14:21+0000\n"
 "PO-Revision-Date: 2023-06-14 05:40+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -2851,7 +2851,7 @@ msgstr ""
 "Myst, Blade Runner i molts altres jocs trobareu algunes aventures realment "
 "fosques i altres gemmes realment ocultes per explorar."
 
-#: engines/achievements.cpp:231
+#: engines/achievements.cpp:242
 msgid "Achievement unlocked!"
 msgstr "Assoliment desbloquejat!"
 

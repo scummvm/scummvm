@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-17 21:49+0000\n"
+"POT-Creation-Date: 2023-06-18 14:21+0000\n"
 "PO-Revision-Date: 2023-04-23 06:53+0000\n"
 "Last-Translator: barryspacezero <barryspace01@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -2750,7 +2750,7 @@ msgid ""
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
 
-#: engines/achievements.cpp:231
+#: engines/achievements.cpp:242
 msgid "Achievement unlocked!"
 msgstr ""
 

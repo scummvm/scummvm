@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-17 21:49+0000\n"
+"POT-Creation-Date: 2023-06-18 14:21+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -2867,7 +2867,7 @@ msgstr ""
 "Runner وعدد لا يحصى من الألعاب الأخرى ، ستجد بعض المغامرات الغامضة حقًا "
 "والأحجار الكريمة المخفية حقًا لاستكشافها."
 
-#: engines/achievements.cpp:231
+#: engines/achievements.cpp:242
 msgid "Achievement unlocked!"
 msgstr "تم الحصول على الإنجاز!"
 

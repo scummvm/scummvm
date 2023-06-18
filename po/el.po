@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-17 21:49+0000\n"
+"POT-Creation-Date: 2023-06-18 14:21+0000\n"
 "PO-Revision-Date: 2023-06-17 19:47+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -2946,7 +2946,7 @@ msgstr ""
 "βρείτε και μερικούς σχετικά άγνωστους τίτλους περιπέτειας και πραγματικά "
 "κρυμμένα διαμαντάκια για να εξερευνήσετε."
 
-#: engines/achievements.cpp:231
+#: engines/achievements.cpp:242
 msgid "Achievement unlocked!"
 msgstr "Νέο επίτευγμα!"
 
