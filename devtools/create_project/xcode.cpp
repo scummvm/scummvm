@@ -1057,7 +1057,7 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 		files.push_back("dists/tvos/LaunchScreen_tvos.storyboard");
 		files.push_back("dists/pred.dic");
 		files.push_back("dists/networking/wwwroot.zip");
-		if (CONTAINS_DEFINE(setup.defines, "ENABLE_GRIME")) {
+		if (CONTAINS_DEFINE(setup.defines, "ENABLE_GRIM")) {
 			files.push_back("engines/grim/shaders/grim_dim.fragment");
 			files.push_back("engines/grim/shaders/grim_dim.vertex");
 			files.push_back("engines/grim/shaders/grim_emerg.fragment");
@@ -1141,7 +1141,7 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 			files.push_back("engines/freescape/shaders/freescape_bitmap.fragment");
 			files.push_back("engines/freescape/shaders/freescape_bitmap.vertex");
 			files.push_back("engines/freescape/shaders/freescape_triangle.fragment");
-			files.push_back("engines/freescape/shaders/freescape_triange.vertex");
+			files.push_back("engines/freescape/shaders/freescape_triangle.vertex");
 		}
 		files.push_back("icons/scummvm.icns");
 		files.push_back("AUTHORS");
