@@ -1666,7 +1666,6 @@ void Process::stopCharacter() {
 	if (character) {
 		if (direction != -1) {
 			character->direction(direction);
-			debug("no suspend here, stub");
 			character->stop(getName());
 			suspend();
 		}
