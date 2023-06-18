@@ -19,27 +19,33 @@
  *
  */
 
-#include "m4/globals.h"
-#include "m4/gui/gui_sys.h"
-#include "m4/gui/gui_dialog.h"
-#include "m4/mem/mem.h"
+#ifndef M4_MEM_MEM_H
+#define M4_MEM_MEM_H
+
+#include "common/scummsys.h"
 
 namespace M4 {
 
-Globals *g_globals;
+/**
+ * Initialize the memory manager.
+ */
+extern void mem_stash_init(int16 num_types);
 
-Globals::Globals() {
-	g_globals = this;
-}
+/**
+ * Purges the memory manager
+ */
+extern void mem_stash_shutdown();
 
-Globals::~Globals() {
-	sysfile_shutdown();
-	player_been_shutdown();
-	gui_system_shutdown();
-	gui_dialog_shutdown();
-	mem_stash_shutdown();
+extern bool mem_register_stash_type(int32 *memType, int32 size, int32 numRequests, const char *name);
 
-	g_globals = nullptr;
-}
+/**
+ * To free a memory block whose size has been previously registered.
+ * @param myMem		The pointer to be freed
+ */
+extern void mem_free_to_stash(void *myMem, int32 memType);
+
+extern void *mem_get_from_stash(int32 memType, const char *name);
 
 } // namespace M4
+
+#endif

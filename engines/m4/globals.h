@@ -30,6 +30,7 @@
 #include "m4/fileio/sys_file.h"
 #include "m4/graphics/gr_font.h"
 #include "m4/gui/gui_univ.h"
+#include "m4/mem/memman.h"
 
 namespace M4 {
 
@@ -74,9 +75,22 @@ struct Globals {
 	int32 _mouseX = 0, _mouseY = 0, _oldX = 0, _oldY = 0;
 	bool _vmng_Initted = false;
 	ScreenContext *_frontScreen = nullptr;
+	ScreenContext *_backScreen = nullptr;
+	ScreenContext *_inactiveScreens = nullptr;
 	// A list of "hot keys" which are activated by their keyboard event, if the event
 	// has been passed right through the complete list of active windows.
 	Hotkey *_systemHotkeys = nullptr;
+	int32 _memtypeSCRN = 0;		// Memory slots used by the memory manager
+	int32 _memtypeMATTE = 0;
+	int32 _memtypeRECT = 0;
+	int32 _sizeMem[_MEMTYPE_LIMIT] = { 0 };
+	int32 _requests[_MEMTYPE_LIMIT] = { 0 };
+	void *_memBlock[_MEMTYPE_LIMIT] = { nullptr };
+	bool _okButton = false;
+	bool _movingScreen = false;
+	Item *_clickItem = nullptr;
+	Item *_doubleClickItem = nullptr;
+	char _listboxSearchStr[80] = { 0 };
 };
 
 #define _G(X) (g_globals->_##X)

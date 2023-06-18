@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,27 +20,32 @@
  *
  */
 
-#include "m4/globals.h"
-#include "m4/gui/gui_sys.h"
-#include "m4/gui/gui_dialog.h"
-#include "m4/mem/mem.h"
+#ifndef M4_GUI_GUI_VMNG_H
+#define M4_GUI_GUI_VMNG_H
+
+#include "m4/m4_types.h"
 
 namespace M4 {
 
-Globals *g_globals;
+/**
+ * To initialize the GUI view manager.
+ * @returns		The success of the call
+ * @remarks		Should be called once during program initialization,
+ *				after dpmi_init_mem() has been called. 
+ */
+extern bool vmng_init();
 
-Globals::Globals() {
-	g_globals = this;
-}
+/**
+ * Shutdown the GUI view manager, and release all resources.
+ *
+ * Since applications can be written in which Dialogs are designed, created, and
+ * Their callback procedures are executed by the view manager, it is not always
+ * necessary for the application to retain the (Dialog*)s which it created.
+ * Therefore, Any windows which contain a (Dialog*) and still exist also destroy
+ * The Dialog for which they were created.  The same goes for (TextScrn*)s.
+ */
+void vmng_shutdown();
 
-Globals::~Globals() {
-	sysfile_shutdown();
-	player_been_shutdown();
-	gui_system_shutdown();
-	gui_dialog_shutdown();
-	mem_stash_shutdown();
+} // End of namespace M4
 
-	g_globals = nullptr;
-}
-
-} // namespace M4
+#endif

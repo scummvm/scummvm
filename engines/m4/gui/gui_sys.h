@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef M4_ADV_R_DB_ENV_H
-#define M4_ADV_R_DB_ENV_H
+#ifndef M4_GUI_GUI_SYS_H
+#define M4_GUI_GUI_SYS_H
 
 #include "m4/m4_types.h"
 #include "m4/gui/gui_univ.h"
