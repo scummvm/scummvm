@@ -1313,7 +1313,8 @@ Common::Error ScummEngine::init() {
 
 void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 	// TODO: This may be the wrong place for it
-	// Enhancements used to be on or off, but now has multiple levels.
+	// Enhancements used to be all or nothing, but now there are different
+	// types of them.
 	if (ConfMan.hasKey("enable_enhancements")) {
 		if (!ConfMan.hasKey("enhancements")) {
 			ConfMan.setInt("enhancements", ConfMan.getBool("enable_enhancements") ? kEnhancementsBugs | kEnhancementsGlitches | kEnhancementsContent : 0);
