@@ -226,8 +226,7 @@ void Character::tick(bool reactivate) {
 		_animation->scale(scale);
 
 		if (_phase >= 0 && _phase < _frames) {
-			if (_jokes)
-				_animation->tick();
+			_animation->tick();
 			_phase = _animation->phase();
 			if (_phase >= _frames) {
 				bool wasJokes = _jokes;
@@ -236,11 +235,11 @@ void Character::tick(bool reactivate) {
 				_frames = 0;
 				if (wasJokes)
 					direction(_direction);
+				if (reactivate && !_processName.empty())
+					_engine->reactivate(_processName, "Character::tick");
 			}
 		}
 	}
-	if (reactivate && !_processName.empty())
-		_engine->reactivate(_processName, "Character::tick");
 }
 
 
