@@ -771,7 +771,7 @@ void Frame::readSpriteD2(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 	int x1 = 0;
 	int x2 = 0;
 
-	if (sprite._puppet) {
+	if (sprite._puppet || sprite._autoPuppet) {
 		stream.skip(size);
 		return;
 	}
@@ -848,7 +848,7 @@ void Frame::readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 
 	Sprite &sprite = *_sprites[spritePosition + 1];
 
-	if (sprite._puppet) {
+	if (sprite._puppet || sprite._autoPuppet) {
 		stream.skip(size);
 		return;
 	}
