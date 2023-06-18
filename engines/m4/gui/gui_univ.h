@@ -99,15 +99,6 @@ struct Item {
 	int32          tag;
 };
 
-struct Dialog {
-	int32   w, h;
-	int32   num_items;
-	Item *itemList;
-	Item *listBottom;
-	Item *cancel_item, *return_item, *default_item;
-	GrBuff *dlgBuffer;
-};
-
 struct TextItem {
 	struct TextItem *next;
 	int32			justification;
@@ -119,21 +110,6 @@ struct TextItem {
 	int32			type;
 	char *prompt;
 	M4CALLBACK	callback;
-};
-
-struct TextScrn {
-	int32		w, h;
-	int32		textColor;
-	int32		textColor_alt1;
-	int32		textColor_alt2;
-	int32		hiliteColor;
-	int32		hiliteColor_alt1;
-	int32		hiliteColor_alt2;
-	int32		luminance;
-	Font *myFont;
-	TextItem *myTextItems;
-	TextItem *hiliteItem;
-	GrBuff *textScrnBuffer;
 };
 
 } // End of namespace M4

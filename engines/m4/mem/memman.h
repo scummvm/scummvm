@@ -27,6 +27,8 @@
 
 namespace M4 {
 
+#define _MEMTYPE_LIMIT 33
+
 inline Handle mem_alloc(size_t size, const char *) {
 	return (Handle)malloc(size);
 }

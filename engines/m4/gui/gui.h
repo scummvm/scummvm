@@ -27,6 +27,13 @@
 
 namespace M4 {
 
+enum {
+	SCRN_DLG = 0, SCRN_BUF, SCRN_TEXT, SCRN_TRANS
+};
+enum {
+	SCRN_ANY = 0, SCRN_ACTIVE, SCRN_INACTIVE, SCRN_UNDEFN
+};
+
 struct M4sprite {
 	struct M4sprite *next;
 	struct M4sprite *prev;
@@ -50,6 +57,19 @@ struct RectList {
 	RectList *next;
 	RectList *prev;
 	int32 x1, y1, x2, y2;
+};
+
+struct matte {
+	struct matte *nextMatte;
+	void *myScreen;
+	int32 x1;
+	int32 y1;
+	int32 x2;
+	int32 y2;
+	int32 w;
+	int32 h;
+	uint8 *SrcBuffer;
+	uint32 SrcPitch;
 };
 
 } // End of namespace M4

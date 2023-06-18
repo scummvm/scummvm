@@ -23,7 +23,10 @@ MODULE_OBJS = \
 	graphics/gr_font.o \
 	graphics/gr_pal.o \
 	graphics/graphics.o \
+	gui/gui_dialog.o \
 	gui/gui_sys.o \
+	gui/gui_vmng.o \
+	mem/mem.o \
 	mem/memman.o \
 	mem/reloc.o \
 	burger/burger.o

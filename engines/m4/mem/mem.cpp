@@ -1,0 +1,115 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+#include "m4/mem/mem.h"
+#include "m4/mem/memman.h"
+#include "m4/core/errors.h"
+#include "m4/globals.h"
+
+namespace M4 {
+
+#define MAX_REQUESTS 255
+
+void mem_stash_init(int16 num_types) {
+	if (num_types > _MEMTYPE_LIMIT)
+		error_show(FL, 'MSIF', "num_types (%d) _MEMTYPE_LIMIT (%d)", num_types, _MEMTYPE_LIMIT);
+
+	for (int i = 0; i < _MEMTYPE_LIMIT; i++) {
+		_G(memBlock)[i] = NULL;
+		_G(sizeMem)[i] = 0;
+		_G(requests)[i] = 0;
+	}
+}
+
+void mem_stash_shutdown(void) {
+	for (int i = 0; i < _MEMTYPE_LIMIT; i++) {
+		if (_G(memBlock)[i]) {
+			mem_free(_G(memBlock)[i]);
+			_G(memBlock)[i] = NULL;
+		}
+	}
+}
+
+bool mem_register_stash_type(int32 *memType, int32 blockSize, int32 maxNumRequests, const char *name) {
+	int32 i = 0;
+	bool found = false;
+
+	while ((i < _MEMTYPE_LIMIT) && (_G(sizeMem)[i] > 0) && (!found)) {
+		if (blockSize == _G(sizeMem)[i])
+			break;
+		else
+			i++;
+	}
+	if (i == _MEMTYPE_LIMIT)
+		error_show(FL, 'MSIF', "stash: %s", name);
+
+	// Found a slot
+	if (found || (i < _MEMTYPE_LIMIT)) {
+		_G(sizeMem)[i] = blockSize;
+		*memType = i;
+
+		if (maxNumRequests > MAX_REQUESTS)
+			maxNumRequests = MAX_REQUESTS;
+
+		_G(requests)[i] = maxNumRequests;
+
+		_G(memBlock)[i] = mem_alloc((blockSize + 1) * maxNumRequests, name);
+		memset(_G(memBlock)[i], 0, (blockSize + 1) * maxNumRequests);
+
+		return true;
+	}
+
+	error_show(FL, 'MSIF', "stash: %s", name);
+	return false;
+}
+
+void mem_free_to_stash(void *mem, int32 memType) {
+	// _G(memBlock)[memType] is block associated with memType
+	int8 *b_ptr = (int8 *)_G(memBlock)[memType];
+	int32 index = ((long)mem - (long)_G(memBlock)[memType]) / (_G(sizeMem)[memType] + 1);
+
+	if (index < 0 || index > _G(requests)[memType])
+		error_show(FL, 'MSGF', NULL);
+
+	b_ptr += index * (_G(sizeMem)[memType] + 1);
+	*b_ptr = 0;
+}
+
+/**
+ * Deliver a memory block whose size has been previously registered.
+ */
+void *mem_get_from_stash(int32 memType, char *name) {
+	int i;
+	int8 *b_ptr = (int8 *)_G(memBlock)[memType];
+
+	for (i = 0; i < _G(requests)[memType]; i++) {
+		if (!*b_ptr) {
+			*b_ptr = 1;
+			return (void *)(b_ptr + 1);
+		} else {
+			b_ptr += _G(sizeMem)[memType] + 1;
+		}
+	}
+
+	error_show(FL, 'OOS!', "stash full %s", name);
+	return 0;
+}
+
+} // namespace M4
