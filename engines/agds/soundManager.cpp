@@ -112,8 +112,8 @@ void SoundManager::stopAllFrom(const Common::String &process) {
 }
 
 
-int SoundManager::play(const Common::String &process, const Common::String &resource, const Common::String &filename, const Common::String &phaseVar, bool startPlaying, int volume, int pan, int id) {
-	debug("SoundMan::play(process: '%s', resource: '%s', filename: '%s', phaseVar: '%s', start: %d, volume: %d, pan: %d, id: %d", process.c_str(), resource.c_str(), filename.c_str(), phaseVar.c_str(), startPlaying, volume, pan, id);
+int SoundManager::play(const Common::String &process, const Common::String &resource, const Common::String &filename, const Common::String &phaseVar, bool startPlaying, int volume, int pan, int id, bool ambient) {
+	debug("SoundMan::play(process: '%s', resource: '%s', filename: '%s', phaseVar: '%s', start: %d, volume: %d, pan: %d, id: %d, ambient: %d", process.c_str(), resource.c_str(), filename.c_str(), phaseVar.c_str(), startPlaying, volume, pan, id, ambient);
 	if (filename.empty())
 		return -1;
 
@@ -150,13 +150,18 @@ int SoundManager::play(const Common::String &process, const Common::String &reso
 			_engine->reactivate(process, "no sound");
 		return -1;
 	}
-	Audio::SoundHandle handle;
 	if (id == -1)
 		id = _nextId++;
 
 	_sounds.push_back(Sound(id, process, resource, filename, phaseVar, volume, pan));
+	auto handle = &_sounds.back().handle;
 	if (startPlaying)
-		_mixer->playStream(Audio::Mixer::kPlainSoundType, &_sounds.back().handle, stream, id, volume * Audio::Mixer::kMaxChannelVolume / 100, pan * 127 / 100);
+		_mixer->playStream(
+			ambient? Audio::Mixer::kMusicSoundType: Audio::Mixer::kPlainSoundType,
+			&_sounds.back().handle, stream, id,
+			volume * Audio::Mixer::kMaxChannelVolume / 100, pan * 127 / 100);
+	if (ambient)
+		_mixer->loopChannel(*handle);
 	//if (sound_off)
 	//	setPhaseVar(_sounds.back(), 1);
 	return id;

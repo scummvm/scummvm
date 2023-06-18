@@ -1210,7 +1210,8 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 		uint type = agds_a->readUint32LE();
 		debug("saved audio state: sample: '%s:%s', var: '%s' %u %u", resource.c_str(), filename.c_str(), phaseVar.c_str(), volume, type);
 		debug("phase var for sample -> %d", getGlobal(phaseVar));
-		_ambientSoundId = _soundManager.play(Common::String(), resource, filename, phaseVar, true, volume, 0); //fixme: double check
+		_ambientSoundId = _soundManager.play(Common::String(), resource, filename, phaseVar, true,
+			volume, /*pan=*/0, /*id=*/-1, /*ambient=*/true);
 		debug("ambient sound id = %d", _ambientSoundId);
 	}
 	{
