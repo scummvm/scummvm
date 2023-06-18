@@ -134,45 +134,15 @@ Increase the scale factor
 Decrease the scale factor
 	*keymap_sdl-graphics_SCL-*
 
-.. _FLT1:
+.. _FLTN:
 
-Switch to nearest neighbour scaling
-	*keymap_sdl-graphics_FLT1*
+Switch to next graphical scale filter
+	*keymap_sdl-graphics_FLTN*
 
-.. _FLT2:
+.. _FLTP:
 
-Switch to AdvMame 2x/3x scaling
-	*keymap_sdl-graphics_FLT2*
-
-.. _FLT3:
-
-Switch to HQ 2x/3x scaling
-	*keymap_sdl-graphics_FLT3*
-
-.. _FLT4:
-
-Switch to 2XSai scaling
-	*keymap_sdl-graphics_FLT4*
-
-.. _FLT5:
-
-Switch to Super2xSai scaling
-	*keymap_sdl-graphics_FLT5*
-
-.. _FLT6:
-
-Switch to SuperEagle scaling
-	*keymap_sdl-graphics_FLT6*
-
-.. _FLT7:
-
-Switch to TV 2x scaling
-	*keymap_sdl-graphics_FLT7*
-
-.. _FLT8:
-
-Switch to DotMatrix scaling
-	*keymap_sdl-graphics_FLT8*
+Switch to previous graphical scale filter
+	*keymap_sdl-graphics_FLTP*
 
 GUI
 *****
