@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-06-17 21:49+0000\n"
-"PO-Revision-Date: 2023-06-11 21:52+0000\n"
+"PO-Revision-Date: 2023-06-18 09:54+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -7180,32 +7180,24 @@ msgid "An error occurred while writing the save game"
 msgstr "Errore durante il salvataggio della partita"
 
 #: engines/mtropolis/mtropolis.cpp:112
-#, fuzzy
-#| msgid ""
-#| "Music for this game requires MP3 support, which was not compiled in.\n"
-#| "The game will still play, but will not have any music."
 msgid ""
 "This game requires MPEG video support for some\n"
 "content but MPEG video support was not compiled in.\n"
 "The game will still play, but MPEG videos will not work."
 msgstr ""
-"La musica di questo gioco richiede il supporto MP3, che non è stato incluso "
+"Questo gioco richiede il supporto per i video MPEG, che non è stato incluso "
 "durante la compilazione.\n"
-"Il gioco funzionerà, ma non verrà riprodotta alcuna musica."
+"Il gioco funzionerà, ma i video MPEG non verranno riprodotti."
 
 #: engines/mtropolis/mtropolis.cpp:122
-#, fuzzy
-#| msgid ""
-#| "Music for this game requires MP3 support, which was not compiled in.\n"
-#| "The game will still play, but will not have any music."
 msgid ""
 "This game requires MPEG audio support for some\n"
 "content but MPEG audio support was not compiled in.\n"
 "The game will still play, but some audio will not work."
 msgstr ""
-"La musica di questo gioco richiede il supporto MP3, che non è stato incluso "
+"Questo gioco richiede il supporto per l'audio MPEG, che non è stato incluso "
 "durante la compilazione.\n"
-"Il gioco funzionerà, ma non verrà riprodotta alcuna musica."
+"Il gioco funzionerà, ma alcuni suoni/musiche non verranno riprodotti."
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
