@@ -77,6 +77,8 @@
 		<def var = 'Grid.YSpacing' value = '15' scalable = 'no' resolution = 'x<641' />
 		<def var = 'Grid.ShowTitles' value = '1' scalable = 'no' resolution = 'x<641' />
 
+		<def var = 'Grid.ThumbnailMargin' value = '5' scalable = 'yes' />
+
 		<widget name = 'OptionsLabel'
 				size = '115, Globals.Line.Height'
 				textalign = 'end'
