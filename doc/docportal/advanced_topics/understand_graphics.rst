@@ -20,8 +20,6 @@ Graphics modes
 
 Most platforms have either one or two available graphics modes. The most common ones are OpenGL and SDL Surface.
 
-To switch between graphics modes, press :kbd:`Ctrl + Alt` and :kbd:`1` to :kbd:`8`.
-
 OpenGL graphics mode
 *************************************
 
