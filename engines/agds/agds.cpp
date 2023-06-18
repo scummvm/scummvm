@@ -67,6 +67,7 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 	_tellTextTimer(0),
 	_syncSoundId(-1),
 	_ambientSoundId(-1),
+	_curtainTimer(-1),
 	_fastMode(true),
 	_hintMode(false) {
 }
@@ -425,7 +426,26 @@ void AGDSEngine::newGame() {
 	runObject(init);
 }
 
+void AGDSEngine::curtain(const Common::String &process, int screen, int sound, int music) {
+	assert(!process.empty());
+	_curtainProcess = process;
+	_curtainTimer = 100;
+	enableSystemUser(false);
+	getSystemVariable("screen_curtain")->setInteger(screen);
+	getSystemVariable("sound_curtain")->setInteger(sound);
+	getSystemVariable("music_curtain")->setInteger(music);
+}
+
 void AGDSEngine::tick() {
+	if (_curtainTimer >= 0 && !_curtainProcess.empty()) {
+		_curtainTimer -= 5;
+		if (_curtainTimer < 0) {
+			_curtainTimer = -1;
+			enableSystemUser(true);
+			reactivate(_curtainProcess, "curtainTimer");
+			_curtainProcess.clear();
+		}
+	}
 	loadNextScreen();
 	bool dialogActive = _dialog.tick();
 	if (_currentScreen)

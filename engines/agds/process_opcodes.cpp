@@ -1753,15 +1753,15 @@ void Process::objectFreePictureAndAnimation() {
 	}
 }
 
-void Process::stub235() {
+void Process::fadeScreen() {
 	int fadeMusic = pop();
 	int fadeSound = pop();
 	int fadeScreen = pop();
-	debug("stub235 (fadeScreen) screen: %d, sound: %d music: %d", fadeScreen, fadeSound, fadeMusic);
-	_engine->getSystemVariable("screen_curtain")->setInteger(fadeScreen);
-	_engine->getSystemVariable("sound_curtain")->setInteger(fadeSound);
-	_engine->getSystemVariable("music_curtain")->setInteger(fadeMusic);
-	_engine->enableSystemUser(true);
+	debug("fadeScreen screen: %d, sound: %d music: %d", fadeScreen, fadeSound, fadeMusic);
+	_engine->curtain(getName(), fadeScreen, fadeSound, fadeMusic);
+	deactivate();
+	if (passive())
+		suspend();
 }
 
 void Process::setCharacterNotifyVars() {

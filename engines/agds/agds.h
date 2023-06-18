@@ -217,11 +217,7 @@ public:
 		_userEnabled = enabled;
 	}
 	void enableSystemUser(bool enabled) {
-		if (enabled) {
-			if (_systemUserEnabled)
-				_userEnabled = true;
-		} else
-			_systemUserEnabled = enabled;
+		_systemUserEnabled = enabled;
 	}
 
 	bool userEnabled() const {
@@ -276,6 +272,8 @@ public:
 		_shadowIntensity = intensity;
 	}
 	int getRandomNumber(int max);
+
+	void curtain(const Common::String &process, int screen, int sound, int music);
 
 private:
 	void stopAmbientSound();
@@ -345,6 +343,9 @@ private:
 
 	int							_syncSoundId;
 	int							_ambientSoundId;
+
+	Common::String				_curtainProcess;
+	int							_curtainTimer;
 
 	bool						_fastMode;
 	bool						_hintMode;
