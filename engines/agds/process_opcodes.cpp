@@ -1521,6 +1521,7 @@ void Process::moveCharacter(bool usermove) {
 		auto region = _engine->loadRegion(regionName);
 		if (region) {
 			character->moveTo(_object->getName(), region->center, direction);
+			deactivate();
 			suspend();
 		}
 	} else
