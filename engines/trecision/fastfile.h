@@ -35,7 +35,7 @@ struct FileEntry {
 	uint32 offset;
 };
 
-class FastFile : public Common::Archive {
+class FastFile : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	FastFile();
 	~FastFile() override;

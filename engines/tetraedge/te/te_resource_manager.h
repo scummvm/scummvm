@@ -59,7 +59,7 @@ public:
 		return TeIntrusivePtr<T>();
 	}
 
-	template<class T> TeIntrusivePtr<T> getResource(const Common::FSNode &node) {
+	template<class T> TeIntrusivePtr<T> getResource(const TetraedgeFSNode &node) {
 		Common::String path = node.getPath();
 		for (TeIntrusivePtr<TeResource> &resource : this->_resources) {
 			if (resource->getAccessName() == path) {
@@ -79,7 +79,7 @@ public:
 		return retval;
 	}
 
-	template<class T> TeIntrusivePtr<T> getResourceOrMakeInstance(const Common::FSNode &node) {
+	template<class T> TeIntrusivePtr<T> getResourceOrMakeInstance(const TetraedgeFSNode &node) {
 		Common::String path = node.getPath();
 		for (TeIntrusivePtr<TeResource> &resource : this->_resources) {
 			if (resource->getAccessName() == path) {

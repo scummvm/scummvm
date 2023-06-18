@@ -25,6 +25,7 @@
 #include "common/str.h"
 #include "common/path.h"
 #include "tetraedge/te/te_variant.h"
+#include "tetraedge/tetraedge.h"
 
 namespace Tetraedge {
 
@@ -42,13 +43,13 @@ public:
 	void execute(const Common::String &fname, const TeVariant &p1, const TeVariant &p2);
 	void execute(const Common::String &fname, const TeVariant &p1, const TeVariant &p2, const TeVariant &p3);
 
-	void load(const Common::FSNode &node);
+	void load(const TeLuaFileDesc &node);
 	void unload();
 
 private:
 	TeLuaContext *_luaContext;
 
-	Common::FSNode _scriptNode;
+	TeLuaFileDesc _scriptNode;
 	bool _started;
 };
 

@@ -48,7 +48,7 @@ struct CCEntry {
 /**
  * Base Xeen CC file implementation
  */
-class BaseCCArchive : public Common::Archive {
+class BaseCCArchive : public Common::DefaultListableCaseInsensitiveArchive {
 protected:
 	Common::Array<CCEntry> _index;
 

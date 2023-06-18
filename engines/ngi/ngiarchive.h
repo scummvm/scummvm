@@ -41,7 +41,7 @@ struct NgiHeader {
 
 typedef Common::HashMap<Common::String, Common::ScopedPtr<NgiHeader>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> NgiHeadersMap;
 
-class NGIArchive : public Common::Archive {
+class NGIArchive : public Common::DefaultListableCaseInsensitiveArchive {
 	NgiHeadersMap _headers;
 	Common::String _ngiFilename;
 

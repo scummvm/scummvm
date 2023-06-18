@@ -31,7 +31,7 @@ namespace Hugo {
  * ScummVM archive that provides virtual access to the Hugo
  * resource files
  */
-class ResourceArchive : public Common::Archive {
+class ResourceArchive : public Common::DefaultListableCaseInsensitiveArchive {
 private:
 	/**
 	 * Splits a resource file and entry pair into individual names

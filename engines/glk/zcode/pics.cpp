@@ -35,7 +35,7 @@ enum {
 	PIC_FILE_HEADER_VERSION    = 14
 };
 
-Pics::Pics() : Common::Archive(), _filename(getFilename()) {
+Pics::Pics() : Common::DefaultListableCaseInsensitiveArchive(), _filename(getFilename()) {
 	Common::File f;
 	if (!f.open(_filename))
 		error("Error reading Pics file");

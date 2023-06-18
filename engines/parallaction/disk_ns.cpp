@@ -59,7 +59,7 @@ namespace Parallaction {
 
 #define MAX_ARCHIVE_ENTRIES			384
 
-class NSArchive : public Common::Archive {
+class NSArchive : public Common::DefaultListableCaseInsensitiveArchive {
 
 	Common::SeekableReadStream	*_stream;
 

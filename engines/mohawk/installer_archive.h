@@ -32,7 +32,7 @@
 
 namespace Mohawk {
 
-class InstallerArchive : public Common::Archive {
+class InstallerArchive : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	InstallerArchive();
 	~InstallerArchive() override;

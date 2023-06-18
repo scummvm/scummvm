@@ -44,7 +44,7 @@ public:
 	BasePackage();
 };
 
-class PackageSet : public Common::Archive {
+class PackageSet : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	~PackageSet() override;
 

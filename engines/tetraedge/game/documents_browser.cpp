@@ -123,16 +123,15 @@ void DocumentsBrowser::loadZoomed() {
 }
 
 void DocumentsBrowser::loadXMLFile(const Common::String &path) {
-	Common::FSNode node = g_engine->getCore()->findFile(path);
-	Common::File xmlfile;
-	xmlfile.open(node);
-	int64 fileLen = xmlfile.size();
+	TetraedgeFSNode node = g_engine->getCore()->findFile(path);
+	Common::ScopedPtr<Common::SeekableReadStream> xmlfile(node.createReadStream());
+	int64 fileLen = xmlfile->size();
 	char *buf = new char[fileLen + 1];
 	buf[fileLen] = '\0';
-	xmlfile.read(buf, fileLen);
+	xmlfile->read(buf, fileLen);
 	const Common::String xmlContents = Common::String::format("<?xml version=\"1.0\" encoding=\"UTF-8\"?><document>%s</document>", buf);
 	delete [] buf;
-	xmlfile.close();
+	xmlfile.reset();
 
 	DocumentsBrowserXmlParser parser;
 	if (!parser.loadBuffer((const byte *)xmlContents.c_str(), xmlContents.size()))
@@ -307,7 +306,7 @@ void DocumentsBrowser::showDocument(const Common::String &docName, int startPage
 	const char *pathPattern = g_engine->gameIsAmerzone() ? "DocumentsBrowser/Documents/%s_zoomed_%d" : "DocumentsBrowser/Documents/Documents/%s_zoomed_%d";
 	const Common::Path docPathBase(Common::String::format(pathPattern, docName.c_str(), (int)startPage));
 	Common::Path docPath = docPathBase.append(".png");
-	Common::FSNode docNode = core->findFile(docPath);
+	TetraedgeFSNode docNode = core->findFile(docPath);
 	if (!docNode.exists()) {
 		docPath = docPathBase.append(".jpg");
 		docNode = core->findFile(docPath);
@@ -325,7 +324,7 @@ void DocumentsBrowser::showDocument(const Common::String &docName, int startPage
 	sprite->load(docNode);
 	TeVector2s32 spriteSize = sprite->_tiledSurfacePtr->tiledTexture()->totalSize();
 
-	Common::FSNode luaNode = core->findFile(docPathBase.append(".lua"));
+	TeLuaFileDesc luaNode = core->findScript(docPathBase.append(".lua"));
 	if (luaNode.exists()) {
 		_zoomedDocGui.load(luaNode);
 		sprite->addChild(_zoomedDocGui.layoutChecked("root"));

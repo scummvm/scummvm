@@ -310,7 +310,9 @@ class FSDirectory : public Archive {
 	// Caches are case insensitive, clashes are dealt with when creating
 	// Key is stored in lowercase.
 	typedef HashMap<Path, FSNode, Path::IgnoreCaseAndMac_Hash, Path::IgnoreCaseAndMac_EqualsTo> NodeCache;
+	typedef HashMap<Path, Array<String>, Path::IgnoreCaseAndMac_Hash, Path::IgnoreCaseAndMac_EqualsTo> NodeMapCache;
 	mutable NodeCache	_fileCache, _subDirCache;
+	mutable NodeMapCache	_fileMapCache, _dirMapCache;
 	mutable bool _cached;
 
 	// look for a match
@@ -396,6 +398,9 @@ public:
 	 * for success.
 	 */
 	SeekableReadStream *createReadStreamForMember(const Path &path) const override;
+
+	bool hasDirectory(const Common::Path &path) const override;
+	bool getChildren(const Common::Path &path, Common::Array<Common::String> &list, ListMode mode = kListDirectoriesOnly, bool hidden = true) const override;
 };
 
 /** @} */

@@ -71,7 +71,7 @@ public:
 	virtual ~TeFont2();
 
 	bool load(const Common::String &path);
-	bool load(const Common::FSNode &node);
+	bool load(const TetraedgeFSNode &node);
 	void unload();
 
 	Graphics::Font *getAtSize(uint size) override;

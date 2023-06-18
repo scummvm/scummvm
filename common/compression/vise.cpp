@@ -38,7 +38,7 @@
 
 namespace Common {
 
-class MacVISEArchive : public Common::Archive {
+class MacVISEArchive : public Common::DefaultListableCaseInsensitiveArchive {
 private:
 	struct FileDesc {
 		FileDesc();
@@ -209,7 +209,7 @@ Common::String MacVISEArchive::ArchiveMember::getName() const {
 MacVISEArchive::FileDesc::FileDesc() : type{0, 0, 0, 0}, creator{0, 0, 0, 0}, compressedDataSize(0), uncompressedDataSize(0), compressedResSize(0), uncompressedResSize(0), positionInArchive(0) {
 }
 
-MacVISEArchive::MacVISEArchive(Common::SeekableReadStream *archiveStream) : _archiveStream(archiveStream) {
+MacVISEArchive::MacVISEArchive(Common::SeekableReadStream *archiveStream) : Common::DefaultListableCaseInsensitiveArchive(':'), _archiveStream(archiveStream) {
 }
 
 bool MacVISEArchive::loadCatalog() {

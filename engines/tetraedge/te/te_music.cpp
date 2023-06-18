@@ -63,8 +63,8 @@ bool TeMusic::play() {
 	if (!_fileNode.exists())
 		return false;
 
-	Common::File *streamfile = new Common::File();
-	if (!streamfile->open(_fileNode)) {
+	Common::SeekableReadStream *streamfile = _fileNode.createReadStream();
+	if (!streamfile) {
 		delete streamfile;
 		return false;
 	}

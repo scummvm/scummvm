@@ -24,6 +24,7 @@
 #include "common/debug.h"
 #include "common/config-manager.h"
 #include "common/language.h"
+#include "common/tokenizer.h"
 
 #include "tetraedge/te/te_core.h"
 
@@ -131,134 +132,110 @@ bool TeCore::onActivityTrackingAlarm() {
 	error("TODO: Implement TeCore::onActivityTrackingAlarm");
 }
 
-static Common::FSNode _findSubPath(const Common::FSNode &parent, const Common::Path &childPath) {
-	if (childPath.empty())
-		return parent;
-	Common::FSNode childNode = parent;
-	const Common::StringArray comps = childPath.splitComponents();
-	unsigned int i;
-	for (i = 0; i < comps.size(); i++) {
-		childNode = childNode.getChild(comps[i]);
-		if (!childNode.exists())
-			break;
-	}
-	if (i == comps.size())
-		return childNode;
-	return Common::FSNode();
+void TeCore::warnUnfoundFile(const Common::Path &path) {
+	debug("TeCore::findFile Searched but didn't find %s", path.toString().c_str());
 }
 
-Common::FSNode TeCore::findFile(const Common::Path &path) const {
-	Common::FSNode node(path);
-	if (node.exists())
-		return node;
+static bool _checkFileFlag(const Common::String &fname, const Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> &activeTags) {
+	Common::StringTokenizer tokenizer(fname, "-");
+	while(!tokenizer.empty())
+		if (activeTags.getValOrDefault(tokenizer.nextToken(), false))
+			return true;
+	return false;
+}
 
-	const Common::FSNode gameRoot(ConfMan.get("path"));
-	if (!gameRoot.isDirectory())
-		error("Game directory should be a directory");
-	const Common::FSNode resNode = (g_engine->getGamePlatform() == Common::kPlatformMacintosh
-			? gameRoot.getChild("Resources") : gameRoot);
-	if (!resNode.isDirectory())
-		error("Resources directory should exist in game");
+static void _findFileRecursively(const TetraedgeFSNode &parent,
+				 const Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> &activeTags,
+				 const Common::String &fname,
+				 Common::Array<TetraedgeFSNode> &foundFiles,
+				 int maxDepth) {
+	if (parent.getChild(fname).exists()) {
+		foundFiles.push_back(parent.getChild(fname));
+	}
+
+	if (maxDepth <= 0)
+		return;
+
+	TetraedgeFSList list;
+	if (!parent.getChildren(list))
+		return;
+
+	for (TetraedgeFSList::const_iterator it = list.begin(); it != list.end(); it++)
+		if (_checkFileFlag(it->getName(), activeTags))
+			_findFileRecursively(*it, activeTags, fname, foundFiles, maxDepth - 1);
+}
+
+TetraedgeFSNode TeCore::findFile(const Common::Path &path, bool quiet) const {
+	Common::Array<TetraedgeFSNode> dirNodes;
+	const Common::Path dir = path.getParent();
+
+	TetraedgeFSNode node;
+
+	const Common::Array<Common::Archive *> &roots = g_engine->getRootArchives();
+	for (Common::Archive *const archive : roots) {
+		TetraedgeFSNode archiveNode(archive);
+		node = archiveNode.getChild(path);
+		if (node.exists())
+			return node;
+		dirNodes.push_back(archiveNode.getChild(dir));
+	}
 
 	Common::String fname = path.getLastComponent().toString();
 
 	// Slight HACK: Remove 'comments' used to specify animated pngs
 	if (fname.contains('#'))
 		fname = fname.substr(0, fname.find('#'));
-	const Common::Path dir = path.getParent();
 
-	static const char *pathSuffixes[] = {
-		nullptr, // no suffix
-		"PC-MacOSX",
-		"PC-PS3-Android-MacOSX",
-		"PC-MacOSX-Android-iPhone-iPad",
-		"PC-Android-MacOSX-iPhone-iPad",
-		"PC-MacOSX-Xbox360-PS3",
-		"PC-MacOSX-PS3-Xbox360",
-		"PC-MacOSX-Xbox360-PS3/PC-MacOSX",
-		"PC-MacOSX-MacOSXAppStore-Android-iPhone-iPad",
-		"PC-MacOSX-MacOSXAppStore-Xbox360-Android-iPad-iPhone",
-		"Android-iPhone-iPad-PC-MacOSX",
-		"Full",
-		"Part1-Full",
-		"Part2-Full-Part1",
-		"Part3-Full-Part1",
-		"HD",
-		"HD/PC-MacOSX-Xbox360-PS3",
-		"PC-PS3-Android-MacOSX-iPhone-iPad",	// iOS Syb 1
-		"Android-iPhone-iPad",					// iOS Syb 1
-		"Android-iPhone-iPad/HD",				// iOS Syb 1
-		"HD/Android-iPhone-iPad",				// iOS Syb 1
-		"iPhone-iPad",							// iOS Syb 1
-		"iPhone-iPad/HD",						// iOS Syb 1
-		"iPhone-iPad/HD/Freemium",				// iOS Syb 1
-		"Android-MacOSX-iPhone-iPad",			// iOS Syb 1
-		"Freemium-BUKAFree/HD",					// iOS Syb 1
-		"Part3-Full",							// iOS Syb 1 paid
-		"DefaultDistributor-Freemium",			// iOS Syb 1 paid
-		"iPhone-iPad/DefaultDistributor",		// iOS Syb 1 paid
-		"Android-iPhone-iPad/iPhone-iPad",		// iOS Syb 2
-		"PC-MacOSX-Android-iPhone-iPad",		// iOS Syb 2
-		"Part2-Full",							// Amerzone
-		"Part3-Full",							// Amerzone
-		"Full/HD",								// Amerzone
-		"Part1-Full/PC-MacOSX/DefaultDistributor", // Amerzone
-		"Part2-Full/PC-MacOSX/DefaultDistributor", // Amerzone
-		"Part3-Full/PC-MacOSX/DefaultDistributor", // Amerzone
-		"Part1-Full/iPhone-iPad-Android", // Amerzone
-		"Part2-Full/iPhone-iPad-Android", // Amerzone
-		"Part3-Full/iPhone-iPad-Android", // Amerzone
-		"Part1-Part2-Part3-Full/HD",			// Amerzone
-		"Part1-Part2-Part3-Full",				// Amerzone
-		"Part1-Full/HD",						// Amerzone
-		"Part2-Full/HD",						// Amerzone
-		"Part3-Full/HD",						// Amerzone
-	};
+	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> activeFlags;
 
-	const Common::Path langs[] = {
-		"",
-		language(),
-		"en",
-		"de-es-fr-it-en",
-		"en-es-fr-de-it",
-		"es-en-fr-de-it",
-		"de-en-es-fr-it"
-	};
+	for (Common::HashMap<Common::String, Common::String, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo>::const_iterator it = _fileSystemFlags.begin();
+	     it != _fileSystemFlags.end(); it++)
+		activeFlags[it->_value] = true;
 
-	// Note: the audio files for a few videos have a weird path
-	// structure where the language is first, followed by some other
-	// part names, followed by the file.
-	// Dialogs have part stuff followed by lang, so we have to try
-	// adding language before *and* after the suffix.
+	// This is to keep behivour changes small when we migrated from old system.
+	// I'm not sure if it's needed
+	// TODO: Figure out what to do with this. Right now we set flag
+	// to "SD" but use assets from "HD". This seems to give the best
+	// results but is fundamentally wrong.
+	activeFlags.erase("SD");
+	activeFlags["HD"] = true;
 
-	for (int langtype = 0; langtype < ARRAYSIZE(langs); langtype++) {
-		const Common::Path &lang = langs[langtype];
-		for (int i = 0; i < ARRAYSIZE(pathSuffixes); i++) {
-			const char *suffix = pathSuffixes[i];
-
-			Common::Path testPath = dir;
-			if (suffix)
-				testPath.joinInPlace(suffix);
-			if (!lang.empty())
-				testPath.joinInPlace(lang);
-			testPath.joinInPlace(fname);
-			node = _findSubPath(resNode, testPath);
-			if (node.exists())
-				return node;
-
-			// also try the other way around
-			if (!lang.empty() && suffix) {
-				testPath = dir.join(lang).joinInPlace(suffix).join(fname);
-				node = _findSubPath(resNode, testPath);
-				if (node.exists())
-					return node;
+	for (uint dirNode = 0; dirNode < dirNodes.size(); dirNode++) {
+		Common::Array<TetraedgeFSNode> foundFiles;
+		_findFileRecursively(dirNodes[dirNode], activeFlags, fname, foundFiles, 5);
+		if (foundFiles.empty())
+			continue;
+		TetraedgeFSNode best = foundFiles[0];
+		int bestDepth = best.getDepth();
+		for (uint i = 1; i < foundFiles.size(); i++) {
+			int depth = foundFiles[i].getDepth();
+			if (depth > bestDepth) {
+				bestDepth = depth;
+				best = foundFiles[i];
 			}
 		}
+
+		return best;
 	}
 
 	// Didn't find it at all..
-	debug("TeCore::findFile Searched but didn't find %s", path.toString().c_str());
-	return Common::FSNode(path);
+	if (!quiet)
+		warnUnfoundFile(path);
+	return TetraedgeFSNode(nullptr, path);
+}
+
+TeLuaFileDesc TeCore::findScript(const Common::Path &path) const {
+	TetraedgeFSNode cand(findFile(path, true));
+	if (cand.exists())
+		return TeLuaFileDesc(cand, false);
+	Common::String fname = path.getLastComponent().toString();
+	if (fname.hasSuffixIgnoreCase(".lua"))
+		fname = fname.substr(0, fname.size() - 4);
+	TetraedgeFSNode cand2(findFile(path.getParent().join(fname + ".data"), true));
+	if (cand2.exists())
+		return TeLuaFileDesc(cand2, true);
+	warnUnfoundFile(path);
+	return TeLuaFileDesc(cand, false);
 }
 
 } // end namespace Tetraedge

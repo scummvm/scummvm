@@ -35,7 +35,7 @@ namespace ZCode {
  * Sherlock. Any file which ends with a number and '.snd' will be accessible as
  * 'sound<num>.snd' in the outer Glk layer
  */
-class SoundSubfolder : public Common::Archive {
+class SoundSubfolder : public Common::DefaultListableCaseInsensitiveArchive {
 private:
 	Common::FSNode _folder;
 	Common::StringMap _filenames;
@@ -83,7 +83,7 @@ public:
  * Sherlock. Any file which ends with a number and '.snd' will be accessible as
  * 'sound<num>.snd' in the outer Glk layer
  */
-class SoundZip : public Common::Archive {
+class SoundZip : public Common::DefaultListableCaseInsensitiveArchive {
 private:
 	Common::Archive *_zip;
 	Common::StringMap _filenames;

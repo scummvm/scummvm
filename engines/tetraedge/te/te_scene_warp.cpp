@@ -77,8 +77,8 @@ bool TeSceneWarp::load(const Common::String &name, TeWarp *warp, bool flag) {
 
 	TeSceneWarpXmlParser parser(this, flag);
 	TeCore *core = g_engine->getCore();
-	Common::FSNode node = core->findFile(name);
-	if (!parser.loadFile(node))
+	TetraedgeFSNode node = core->findFile(name);
+	if (!node.loadXML(parser))
 		error("TeSceneWarp::load: failed to load data from %s", name.c_str());
 	if (!parser.parse())
 		error("TeSceneWarp::load: failed to parse data from %s", name.c_str());

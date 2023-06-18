@@ -41,7 +41,7 @@ enum PicturesMode {
 /**
  * Infocom graphics file manager
  */
-class Pics : public Common::Archive {
+class Pics : public Common::DefaultListableCaseInsensitiveArchive {
 	/**
 	 * Describes a single index entry
 	 */

@@ -27,13 +27,13 @@ namespace Glk {
 /*--------------------------------------------------------------------------*/
 
 Blorb::Blorb(const Common::String &filename, InterpreterType interpType) :
-		Common::Archive(), _filename(filename), _interpType(interpType) {
+		Common::DefaultListableCaseInsensitiveArchive(), _filename(filename), _interpType(interpType) {
 	if (load() != Common::kNoError)
 		error("Could not parse blorb file");
 }
 
 Blorb::Blorb(const Common::FSNode &fileNode, InterpreterType interpType) :
-		Common::Archive(), _fileNode(fileNode), _interpType(interpType) {
+		Common::DefaultListableCaseInsensitiveArchive(), _fileNode(fileNode), _interpType(interpType) {
 	if (load() != Common::kNoError)
 		error("Could not parse blorb file");
 }

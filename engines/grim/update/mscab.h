@@ -31,7 +31,7 @@
 
 namespace Grim {
 
-class MsCabinet : public Common::Archive {
+class MsCabinet : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	MsCabinet(Common::SeekableReadStream *data);
 	~MsCabinet();

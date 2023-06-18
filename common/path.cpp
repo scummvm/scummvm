@@ -313,10 +313,11 @@ static String getIdentifierComponent(const String& in) {
 // For a path creates a string with following property:
 // if 2 files have the same case-insensitive
 // identifier string then and only then we treat them as
-// effectively the same file. For this there are 2
+// effectively the same file. For this there are 3
 // transformations we need to do:
 // * decode punycode
 // * Replace / with : in path components so a path from
+// * Strip empty components
 // HFS(+) image will end up with : independently of how
 // it was dumped or copied from
 String Path::getIdentifierString() const {
@@ -324,9 +325,11 @@ String Path::getIdentifierString() const {
 	String res;
 
 	for (uint i = 0; i < c.size(); i++) {
-		res += getIdentifierComponent(c[i]);
-		if (i + 1 < c.size())
+		if (c[i].empty())
+			continue;
+		if (i != 0)
 			res += DIR_SEPARATOR;
+		res += getIdentifierComponent(c[i]);
 	}
 
 	return res;

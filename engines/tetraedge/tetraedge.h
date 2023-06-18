@@ -26,11 +26,13 @@
 #include "common/system.h"
 #include "common/error.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
 #include "common/random.h"
 #include "common/serializer.h"
 #include "common/util.h"
+#include "common/formats/xmlparser.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
@@ -49,6 +51,44 @@ class TeSoundManager;
 class TeRenderer;
 class TeResourceManager;
 class TeInputMgr;
+
+class TetraedgeFSNode;
+
+class TetraedgeFSList : public Common::Array<TetraedgeFSNode> {};
+class TetraedgeFSNode {
+public:
+	TetraedgeFSNode() : _archive(nullptr) {}
+	explicit TetraedgeFSNode(Common::Archive *archive) : _archive(archive) {}
+	TetraedgeFSNode(Common::Archive *archive, const Common::Path &archivePath) : _archive(archive), _archivePath(archivePath) {}
+
+	Common::SeekableReadStream *createReadStream() const;
+	bool isReadable() const;
+	bool isDirectory() const;
+	Common::String getPath() const;
+	int getDepth() const;
+	bool exists() const;
+	bool loadXML(Common::XMLParser &parser) const;
+	Common::String getName() const;
+	TetraedgeFSNode getChild(const Common::Path &path) const;
+	bool getChildren(TetraedgeFSList &fslist, Common::FSNode::ListMode mode = Common::FSNode::kListDirectoriesOnly, bool hidden = true) const;
+	bool operator<(const TetraedgeFSNode& node) const;
+	void maybeAddToSearchMan() const;
+private:
+	Common::Archive *_archive;
+	Common::Path _archivePath;
+};
+
+struct TeLuaFileDesc {
+	TetraedgeFSNode _node;
+	bool _isObfuscated;
+
+	TeLuaFileDesc() : _node(), _isObfuscated(false) {}
+	TeLuaFileDesc(TetraedgeFSNode node, bool isObfuscated) : _node(node), _isObfuscated(isObfuscated) {}
+
+	bool exists() const { return _node.exists(); }
+	Common::String getName() const { return _node.getName(); }
+	Common::String getPath() const { return _node.getPath(); }
+};
 
 class TetraedgeEngine : public Engine {
 public:
@@ -70,6 +110,7 @@ private:
 	TeResourceManager *_resourceManager;
 	TeInputMgr *_inputMgr;
 	enum TetraedgeGameType _gameType;
+	Common::Array<Common::Archive *> _rootArchives;
 
 protected:
 	// Engine APIs
@@ -78,6 +119,8 @@ protected:
 public:
 	TetraedgeEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~TetraedgeEngine() override;
+
+	const Common::Array<Common::Archive *>& getRootArchives() const { return _rootArchives; }
 
 	uint32 getFeatures() const;
 

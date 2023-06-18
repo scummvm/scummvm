@@ -33,7 +33,7 @@
 
 #include <android/asset_manager.h>
 
-class AndroidAssetArchive : public Common::Archive {
+class AndroidAssetArchive : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	AndroidAssetArchive(jobject am);
 	virtual ~AndroidAssetArchive();

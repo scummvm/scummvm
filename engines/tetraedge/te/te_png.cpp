@@ -44,7 +44,7 @@ bool TePng::matchExtension(const Common::String &extn) {
 	return extn == "png" || extn == "png#anim";
 }
 
-bool TePng::load(const Common::FSNode &node) {
+bool TePng::load(const TetraedgeFSNode &node) {
 	if (!TeScummvmCodec::load(node))
 		return false;
 

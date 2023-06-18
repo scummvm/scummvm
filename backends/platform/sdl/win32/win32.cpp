@@ -412,7 +412,7 @@ bool OSystem_Win32::detectPortableConfigFile() {
 
 namespace {
 
-class Win32ResourceArchive final : public Common::Archive {
+class Win32ResourceArchive final : public Common::DefaultListableCaseInsensitiveArchive {
 	friend BOOL CALLBACK EnumResNameProc(HMODULE hModule, LPCTSTR lpszType, LPTSTR lpszName, LONG_PTR lParam);
 public:
 	Win32ResourceArchive();

@@ -36,7 +36,7 @@ typedef struct FileEntry {
 	uint32 size;
 } FileEntry;
 
-class LibFile : public Common::Archive {
+class LibFile : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	LibFile();
 	~LibFile() override;

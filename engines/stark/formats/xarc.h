@@ -30,7 +30,7 @@ namespace Formats {
 
 class XARCMember;
 
-class XARCArchive : public Common::Archive {
+class XARCArchive : public Common::DefaultListableCaseInsensitiveArchive {
 public:
 	bool open(const Common::String &filename);
 	Common::String getFilename() const;

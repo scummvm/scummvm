@@ -1006,7 +1006,7 @@ public:
 };
 */
 
-ZipArchive::ZipArchive(unzFile zipFile, bool flattenTree) : _zipFile(zipFile), _crc(), _flattenTree(flattenTree) {
+ZipArchive::ZipArchive(unzFile zipFile, bool flattenTree) : Common::MemcachingCaseInsensitiveArchive('/'), _zipFile(zipFile), _crc(), _flattenTree(flattenTree) {
 	assert(_zipFile);
 }
 

@@ -40,31 +40,30 @@ TeImagesSequence::~TeImagesSequence() {
 
 /*static*/
 bool TeImagesSequence::matchExtension(const Common::String &extn) {
-	return extn == "anim";
+	return extn == "anim" || extn == "animcached";
 }
 
-static bool compareNodes(const Common::FSNode &left, const Common::FSNode &right) {
+static bool compareNodes(const TetraedgeFSNode &left, const TetraedgeFSNode &right) {
 	return left.getPath() < right.getPath();
 }
 
-bool TeImagesSequence::load(const Common::FSNode &directory) {
+bool TeImagesSequence::load(const TetraedgeFSNode &directory) {
 	const Common::String path = directory.getPath();
 	if (!directory.isDirectory()) {
 		warning("TeImagesSequence::load:: not a directory %s", path.c_str());
 		return false;
 	}
 
-	Common::FSList children;
+	TetraedgeFSList children;
 	if (!directory.getChildren(children, Common::FSNode::kListFilesOnly) || children.empty()) {
 		warning("TeImagesSequence::load:: couldn't get children of %s", path.c_str());
 		return false;
 	}
 
 	Common::sort(children.begin(), children.end(), compareNodes);
-	if (!SearchMan.hasArchive(path))
-		SearchMan.addDirectory(path, directory);
+	directory.maybeAddToSearchMan();
 
-	for (Common::FSNode &child : children) {
+	for (TetraedgeFSNode &child : children) {
 		const Common::String fileName = child.getName();
 
 		if (fileName.size() <= 10 || fileName.substr(fileName.size() - 7) != "fps.png")

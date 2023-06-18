@@ -225,7 +225,7 @@ bool SyberiaGame::changeWarp2(const Common::String &zone, const Common::String &
 	luapath.appendInPlace(scene);
 	luapath.appendInPlace(".lua");
 
-	if (g_engine->getCore()->findFile(luapath).exists()) {
+	if (g_engine->getCore()->findScript(luapath).exists()) {
 		_luaScript.execute("OnLeave");
 		_luaContext.removeGlobal("On");
 		_luaContext.removeGlobal("OnEnter");
@@ -463,11 +463,11 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 
 	TeCore *core = g_engine->getCore();
 
-	const Common::FSNode intLuaNode = core->findFile(scenePath.join(Common::String::format("Int%s.lua", scene.c_str())));
-	const Common::FSNode logicLuaNode = core->findFile(scenePath.join(Common::String::format("Logic%s.lua", scene.c_str())));
-	const Common::FSNode setLuaNode = core->findFile(scenePath.join(Common::String::format("Set%s.lua", scene.c_str())));
-	Common::FSNode forLuaNode = core->findFile(scenePath.join(Common::String::format("For%s.lua", scene.c_str())));
-	const Common::FSNode markerLuaNode = core->findFile(scenePath.join(Common::String::format("Marker%s.lua", scene.c_str())));
+	const TeLuaFileDesc intLuaNode = core->findScript(scenePath.join(Common::String::format("Int%s.lua", scene.c_str())));
+	const TeLuaFileDesc logicLuaNode = core->findScript(scenePath.join(Common::String::format("Logic%s.lua", scene.c_str())));
+	const TeLuaFileDesc setLuaNode = core->findScript(scenePath.join(Common::String::format("Set%s.lua", scene.c_str())));
+	TeLuaFileDesc forLuaNode = core->findScript(scenePath.join(Common::String::format("For%s.lua", scene.c_str())));
+	const TeLuaFileDesc markerLuaNode = core->findScript(scenePath.join(Common::String::format("Marker%s.lua", scene.c_str())));
 
 	bool intLuaExists = intLuaNode.exists();
 	bool logicLuaExists = logicLuaNode.exists();
@@ -475,7 +475,7 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 	bool forLuaExists = forLuaNode.exists();
 	if (!forLuaExists) {
 		// slight hack.. try an alternate For lua path.
-		forLuaNode = core->findFile(scenePath.join("Android-MacOSX").join(Common::String::format("For%s.lua", scene.c_str())));
+		forLuaNode = core->findScript(scenePath.join("Android-MacOSX").join(Common::String::format("For%s.lua", scene.c_str())));
 		forLuaExists = forLuaNode.exists();
 		debug("searched for %s", forLuaNode.getName().c_str());
 	}
@@ -493,7 +493,7 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 	if (logicLuaExists) {
 		_luaContext.addBindings(LuaBinds::LuaOpenBinds);
 		_luaScript.attachToContext(&_luaContext);
-		_luaScript.load(core->findFile("menus/help/help.lua"));
+		_luaScript.load(core->findScript("menus/help/help.lua"));
 		_luaScript.execute();
 		_luaScript.load(logicLuaNode);
 	}
@@ -507,7 +507,7 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 	_scene.hitObjectGui().unload();
 	Common::Path geomPath(Common::String::format("scenes/%s/Geometry%s.bin",
 												 zone.c_str(), zone.c_str()));
-	Common::FSNode geomFile = core->findFile(geomPath);
+	TetraedgeFSNode geomFile = core->findFile(geomPath);
 	if (geomFile.isReadable()) {
 		// Syberia 1, load geom bin
 		_scene.load(geomFile);
@@ -802,7 +802,7 @@ bool SyberiaGame::loadPlayerCharacter(const Common::String &name) {
 
 bool SyberiaGame::loadScene(const Common::String &name) {
 	TeCore *core = g_engine->getCore();
-	_gameEnterScript.load(core->findFile("scenes/OnGameEnter.lua"));
+	_gameEnterScript.load(core->findScript("scenes/OnGameEnter.lua"));
 	_gameEnterScript.execute();
 	Character *character = _scene._character;
 	if (character && character->_model->visible()) {

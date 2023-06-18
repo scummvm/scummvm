@@ -79,7 +79,7 @@ enum {
 /**
  * Blorb file manager
  */
-class Blorb : public Common::Archive {
+class Blorb : public Common::DefaultListableCaseInsensitiveArchive {
 private:
 	Common::String _filename;
 	Common::FSNode _fileNode;

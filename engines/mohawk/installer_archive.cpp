@@ -26,7 +26,7 @@
 
 namespace Mohawk {
 
-InstallerArchive::InstallerArchive() : Common::Archive() {
+InstallerArchive::InstallerArchive() : Common::DefaultListableCaseInsensitiveArchive() {
 	_stream = nullptr;
 }
 

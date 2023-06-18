@@ -727,7 +727,7 @@ ArjArchive::~ArjArchive() {
        }
 }
 
-ArjArchive::ArjArchive(const Array<String> &filenames, bool flattenTree) : _arjFilenames(filenames), _flattenTree(flattenTree) {
+ArjArchive::ArjArchive(const Array<String> &filenames, bool flattenTree) : Common::MemcachingCaseInsensitiveArchive('/'), _arjFilenames(filenames), _flattenTree(flattenTree) {
 	for (uint i = 0; i < _arjFilenames.size(); i++) {
 		File arjFile;
 

@@ -38,7 +38,7 @@ bool TeTheora::matchExtension(const Common::String &extn) {
 	return extn == "ogv";
 }
 
-bool TeTheora::load(const Common::FSNode &node) {
+bool TeTheora::load(const TetraedgeFSNode &node) {
 	_loadedNode = node;
 	return _decoder->loadStream(node.createReadStream());
 }

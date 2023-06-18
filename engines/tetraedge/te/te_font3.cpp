@@ -43,14 +43,14 @@ Graphics::Font *TeFont3::getAtSize(uint size) {
 	if (_fonts.contains(size))
 		return _fonts.getVal(size);
 
-	if (!_fontFile.isOpen())
+	if (!_fontFile)
 		load(getAccessName());
 
-	if (!_fontFile.isOpen())
+	if (!_fontFile)
 		error("TeFont3::: Couldn't open font file %s.", getAccessName().c_str());
 
-	_fontFile.seek(0);
-	Graphics::Font *newFont = Graphics::loadTTFFont(_fontFile, size, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeNormal);
+	_fontFile->seek(0);
+	Graphics::Font *newFont = Graphics::loadTTFFont(*_fontFile, size, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeNormal);
 	if (!newFont) {
 		error("TeFont3::: Couldn't load font %s at size %d.", _loadedPath.c_str(), size);
 	}
@@ -59,17 +59,17 @@ Graphics::Font *TeFont3::getAtSize(uint size) {
 }
 
 bool TeFont3::load(const Common::String &path) {
-	if (_loadedPath == path && _fontFile.isOpen())
+	if (_loadedPath == path && _fontFile)
 		return true; // already open
 
 	TeCore *core = g_engine->getCore();
-	Common::FSNode node = core->findFile(path);
+	TetraedgeFSNode node = core->findFile(path);
 	return load(node);
 }
 
-bool TeFont3::load(const Common::FSNode &node) {
+bool TeFont3::load(const TetraedgeFSNode &node) {
 	const Common::String path = node.getPath();
-	if (_loadedPath == path && _fontFile.isOpen())
+	if (_loadedPath == path && _fontFile)
 		return true; // already open
 
 	setAccessName(path);
@@ -80,10 +80,8 @@ bool TeFont3::load(const Common::FSNode &node) {
 		return false;
 	}
 
-	if (_fontFile.isOpen())
-		_fontFile.close();
-
-	if (!_fontFile.open(node)) {
+	_fontFile.reset(node.createReadStream());
+	if (!_fontFile) {
 		warning("TeFont3::load: can't open %s", path.c_str());
 		return false;
 	}
@@ -95,7 +93,7 @@ void TeFont3::unload() {
 		delete entry._value;
 	}
 	_fonts.clear();
-	_fontFile.close();
+	_fontFile.reset();
 }
 
 } // end namespace Tetraedge

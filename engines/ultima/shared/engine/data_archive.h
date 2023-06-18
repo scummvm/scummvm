@@ -35,7 +35,7 @@ namespace Shared {
  * be accessed in each game as a generic "data" subfolder. This allows the
  * individual games to simplify their data loading code.
  */
-class UltimaDataArchive : public Common::Archive {
+class UltimaDataArchive : public Common::DefaultListableCaseInsensitiveArchive {
 private:
 	Common::Archive *_zip;
 	Common::String _publicFolder;
@@ -114,7 +114,7 @@ public:
  * recreate the ultima.dat file every time a change is made. ultima.dat then just has
  * to be recreated prior to a release or when the changes are completed and stable
  */
-class UltimaDataArchiveProxy : public Common::Archive {
+class UltimaDataArchiveProxy : public Common::DefaultListableCaseInsensitiveArchive {
 	friend class UltimaDataArchive;
 private:
 	Common::FSNode _folder;

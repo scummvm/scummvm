@@ -19,52 +19,46 @@
  *
  */
 
-#ifndef GRIM_LAB_H
-#define GRIM_LAB_H
+#ifndef TETRAEDGE_OBB_ARCHIVE_H
+#define TETRAEDGE_OBB_ARCHIVE_H
 
 #include "common/archive.h"
+#include "common/ptr.h"
+#include "common/stream.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 
-namespace Common {
-	class File;
-}
+namespace Tetraedge {
 
-namespace Grim {
-
-class Lab;
-
-class LabEntry : public Common::ArchiveMember {
-	Lab *_parent;
-	Common::String _name;
-	uint32 _offset, _len;
+class ObbArchive : public Common::DefaultListableCaseInsensitiveArchive {
 public:
-	LabEntry(const Common::String &name, uint32 offset, uint32 len, Lab *parent);
-	Common::String getName() const override { return _name; }
-	Common::SeekableReadStream *createReadStream() const override;
-	friend class Lab;
-};
-
-class Lab : public Common::DefaultListableCaseInsensitiveArchive {
-public:
-	bool open(const Common::String &filename, bool keepStream = false);
-	Lab();
-	~Lab();
-	// Common::Archive implementation
 	bool hasFile(const Common::Path &path) const override;
-	int listMembers(Common::ArchiveMemberList &list) const override;
+	int listMembers(Common::ArchiveMemberList&) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 
+	// Similar to FileDescriptionBin but in native-endian and native strings.
+	struct FileDescriptor {
+		FileDescriptor() : _fileOffset(0), _fileSize(0) {}
+		FileDescriptor(uint32 offset,
+			       uint32 size) : _fileOffset(offset), _fileSize(size) {}
+		
+		uint32 _fileOffset;
+		uint32 _fileSize;
+	};
+
+    	typedef Common::HashMap<Common::String, FileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+
+	static bool readFileMap(Common::SeekableReadStream &indexFile, FileMap &files);
+	static ObbArchive* open(const Common::Path& obbName);
+
 private:
-	void parseGrimFileTable(Common::File *_f);
-	void parseMonkey4FileTable(Common::File *_f);
+	ObbArchive(const FileMap& files,
+		   const Common::Path& obbName) : Common::DefaultListableCaseInsensitiveArchive('/'), _files(files), _obbName(obbName) {}
 
-	Common::String _labFileName;
-	typedef Common::SharedPtr<LabEntry> LabEntryPtr;
-	typedef Common::HashMap<Common::String, LabEntryPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> LabMap;
-	LabMap _entries;
-	Common::SeekableReadStream *_stream;
+	FileMap _files;
+	Common::Path _obbName;
 };
-
-} // end of namespace Grim
+}
 
 #endif

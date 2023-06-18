@@ -40,7 +40,7 @@ void SplashScreens::enter()	{
 		_entered = true;
 		_splashNo = 0;
 		const char *scriptStr = g_engine->gameIsAmerzone() ? "GUI/PC-MacOSX/Splash0.lua" : "menus/splashes/splash0.lua";
-		Common::FSNode node = g_engine->getCore()->findFile(scriptStr);
+		TeLuaFileDesc node = g_engine->getCore()->findScript(scriptStr);
 		if (node.exists()) {
 			load(node);
 			Application *app = g_engine->getApplication();
@@ -72,7 +72,7 @@ bool SplashScreens::onAlarm() {
 		return true;
 	}
 
-	Common::FSNode node = g_engine->getCore()->findFile(scriptName);
+	TeLuaFileDesc node = g_engine->getCore()->findScript(scriptName);
 	if (!node.exists()) {
 		onQuitSplash();
 	} else {

@@ -30,7 +30,7 @@
 
 namespace Trecision {
 
-FastFile::FastFile() : Common::Archive(), _stream(nullptr), _compStream(nullptr), _compBuffer(nullptr) {
+FastFile::FastFile() : Common::DefaultListableCaseInsensitiveArchive(), _stream(nullptr), _compStream(nullptr), _compBuffer(nullptr) {
 }
 
 FastFile::~FastFile() {
