@@ -229,11 +229,13 @@ public:
 	void load() override;
 	bool save() override;
 
+protected:
 	void createEnhancementsWidget(GuiObject *boss, const Common::String &name);
 	GUI::ThemeEval &addEnhancementsLayout(GUI::ThemeEval &layouts) const;
 	GUI::CheckboxWidget *createOriginalGUICheckbox(GuiObject *boss, const Common::String &name);
 	void updateAdjustmentSlider(GUI::SliderWidget *slider, GUI::StaticTextWidget *value);
 
+private:
 	GUI::PopUpWidget *_enhancementsPopUp;
 };
 
