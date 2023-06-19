@@ -161,6 +161,12 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 			break;
 
+		case kInputScreenChanged:
+			rebuildSurface();
+			dynamic_cast<iOSCommonGraphics *>(_graphicsManager)->notifyResize(getScreenWidth(), getScreenHeight());
+			event.type = Common::EVENT_SCREEN_CHANGED;
+			break;
+
 		default:
 			break;
 		}

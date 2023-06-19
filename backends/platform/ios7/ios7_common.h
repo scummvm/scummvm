@@ -50,7 +50,8 @@ enum InputEvent {
 	kInputJoystickAxisMotion,
 	kInputJoystickButtonDown,
 	kInputJoystickButtonUp,
-	kInputChanged
+	kInputChanged,
+	kInputScreenChanged
 };
 
 enum ScreenOrientation {
