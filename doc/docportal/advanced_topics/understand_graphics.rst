@@ -39,6 +39,8 @@ If the game originally ran at a resolution of 320x200—which is typical for mos
 
 There is always a speed penalty when using a scaler other than Normal 1x.
 
+To cycle forwards or backwards between graphical filters, press :kbd:`Ctrl + Alt` and :kbd:`0` or :kbd:`9` (respectively).
+
 .. figure:: ../images/graphics/graphics_mode/1x.png
 
     **Normal 1x**: No filtering, no scaling (original resolution). Fastest.
