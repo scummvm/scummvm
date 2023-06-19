@@ -1424,12 +1424,11 @@ static void listAudioDevices() {
 }
 
 /** Dump MD5s from detection entries into STDOUT */
-/** WIP: Current only creates a metaengine instance for each engine */
 static void dumpAllDetectionEntries() {
-	// We need to create one file for each engine
 	const PluginList &plugins = EngineMan.getPlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); iter++) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
+		metaEngine.dumpDetectionEntries();
 	}
 }
 

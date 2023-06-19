@@ -170,6 +170,9 @@ public:
 		return -1;
 	}
 
+	/** Returns formatted data from game descriptor for dumping into a file */
+	virtual void dumpDetectionEntries() const = 0;
+
 	/**
 	 * The default version of this method will just parse the options string from
 	 * the config manager. However it also allows the meta engine to post process
