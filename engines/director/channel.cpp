@@ -218,7 +218,8 @@ bool Channel::isDirty(Sprite *nextSprite) {
 		// When puppet is set, the overall dirty flag should be set when sprite is
 		// modified.
 		isDirtyFlag |= _sprite->_castId != nextSprite->_castId ||
-			_sprite->_ink != nextSprite->_ink;
+			_sprite->_ink != nextSprite->_ink || _sprite->_backColor != nextSprite->_backColor ||
+			_sprite->_foreColor != nextSprite->_foreColor;
 		if (!_sprite->_moveable)
 			isDirtyFlag |= _currentPoint != nextSprite->_startPoint;
 		if (!_sprite->_stretch && !hasTextCastMember(_sprite))
