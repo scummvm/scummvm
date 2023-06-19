@@ -55,6 +55,8 @@ public:
 	Image() : texture(nullptr), w(0), h(0) {}
 	~Image() {}
 
+	Graphics::Surface* rotate(const Graphics::ManagedSurface &src, byte rotation);
+
 	// Set color modulation
 	void Color(const uint8 &r, const uint8 &g, const uint8 &b) {
 #if 0
