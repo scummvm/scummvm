@@ -49,13 +49,18 @@ class Image {
 	// The actual hardware texture
 	//SDL_Texture *texture;
 
+	enum ImageRotateDegrees {
+		kImageRotateBy90,
+		kImageRotateBy270
+	};
+
 public:
 	Graphics::ManagedSurface *texture;
 
 	Image() : texture(nullptr), w(0), h(0) {}
 	~Image() {}
 
-	Graphics::Surface* rotate(const Graphics::ManagedSurface &src, byte rotation);
+	Graphics::Surface* rotate(const Graphics::ManagedSurface &src, ImageRotateDegrees rotation);
 
 	// Set color modulation
 	void Color(const uint8 &r, const uint8 &g, const uint8 &b) {
