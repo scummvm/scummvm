@@ -244,7 +244,6 @@ void Image::Draw(const int &x, const int &y, Common::Rect *clip, const TextureFl
 Graphics::Surface* Image::rotate(const Graphics::ManagedSurface &src, ImageRotateDegrees rotation) {
 	assert(!src.empty());
 	assert(src.w == src.h);
-	assert(rotation >= 1 && rotation <= 2);
 	assert(src.format.bytesPerPixel == 4);
 
 	Graphics::Surface *dest = new Graphics::Surface();
@@ -262,6 +261,20 @@ Graphics::Surface* Image::rotate(const Graphics::ManagedSurface &src, ImageRotat
 		}
 
 		break;
+
+	case kImageRotateBy180: {
+		// 180 degrees
+		uint32 *d;
+		for (uint y = 0; y < size; ++y) {
+			const uint32 *e = (const uint32 *)src.getBasePtr(size - 1, y);
+			d = (uint32 *)dest->getBasePtr(size - 1, size - y - 1);
+			for (; s < e; ++s, --d) {
+				*d = *s;
+			}
+		}
+
+		break;
+	}
 
 	case kImageRotateBy270:
 		for (uint y = 0; y < size; ++y) {
@@ -307,8 +320,8 @@ void Image::Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &
 		break;
 
 	case FLIP_XY:
-		s.surfacePtr()->flipHorizontal(Common::Rect(s.w, s.h));
-		s.surfacePtr()->flipVertical(Common::Rect(s.w, s.h));
+		rotated_surf = rotate(s, kImageRotateBy180);
+		s.copyFrom(rotated_surf);
 		break;
 
 	case FLIP_D:
