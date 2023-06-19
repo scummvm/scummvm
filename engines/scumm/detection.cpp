@@ -96,6 +96,8 @@ public:
 	}
 
 	Common::String parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const override;
+
+	void dumpDetectionEntries() const override final {}
 };
 
 PlainGameList ScummMetaEngineDetection::getSupportedGames() const {

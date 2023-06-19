@@ -545,6 +545,32 @@ static MD5Properties gameFileToMD5Props(const ADGameFileDescription *fileEntry, 
 	return ret;
 }
 
+const char *md5PropToGameFile(MD5Properties flags) {
+	switch (flags & kMD5MacMask) {
+	case kMD5MacDataFork: {
+		if (flags & kMD5Tail)
+			return "dt";
+		return "d";
+	}
+
+	case kMD5MacResOrDataFork: {
+		if (flags & kMD5Tail)
+			return "mt";
+		return "m";
+	}
+
+	case kMD5MacResFork: {
+		if (flags & kMD5Tail)
+			return "rt";
+		return "r";
+	}
+
+	default: {
+		return "";
+	}
+	}
+}
+
 static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::FileMap &allFiles, MD5Properties md5prop, const Common::String &fname, FileProperties &fileProps);
 
 bool AdvancedMetaEngineDetection::getFileProperties(const FileMap &allFiles, MD5Properties md5prop, const Common::String &fname, FileProperties &fileProps) const {
@@ -624,6 +650,38 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 	fileProps.md5 = Common::computeStreamMD5AsString(testFile, md5Bytes);
 	fileProps.md5prop = (MD5Properties) (md5prop & kMD5Tail);
 	return true;
+}
+
+void AdvancedMetaEngineDetection::dumpDetectionEntries() const {
+	const byte *descPtr;
+
+	debug("scummvm (");
+	// debug("version %s", commitHash);
+	// debug("date %s", date);
+	debug("\tauthor scummvm");
+	debug(")\n");
+	for (descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != nullptr; descPtr += _descItemSize) {
+		auto g = ((const ADGameDescription *)descPtr);
+		auto gameid = g->gameId;
+
+		debug("game (");
+		debug("\tname %s", gameid);
+		// debug("\tsourcefile %s"); // Not necessary for now
+		// debug("\tromof %s"); // Not sure where i get this from
+		for (auto fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
+			Common::String fname = fileDesc->fileName;
+			int64 fsize = fileDesc->fileSize;
+			Common::String md5 = fileDesc->md5;
+			MD5Properties md5prop = gameFileToMD5Props(fileDesc, g->flags);
+			auto md5Prefix = Common::String(md5PropToGameFile(md5prop));
+			Common::String key = fname.c_str();
+			if (md5Prefix != "")
+				key = Common::String::format("%s:%s", md5Prefix.c_str(), fname.c_str());
+
+			debug("\trom ( name %s size %ld md5-%d %s )", fname.c_str(), fsize, _md5Bytes, key.c_str());
+		}
+		debug(")\n");
+	}
 }
 
 ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra, uint32 skipADFlags, bool skipIncomplete) {

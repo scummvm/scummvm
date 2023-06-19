@@ -73,6 +73,8 @@ public:
 		return 0;
 	}
 
+	void dumpDetectionEntries() const override final {}
+
 	int getGameVariantCount() const override {
 		int entries = 0;
 		for (const SkyVersion *sv = skyVersions; sv->dinnerTableEntries; ++sv)

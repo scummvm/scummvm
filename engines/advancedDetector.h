@@ -403,6 +403,8 @@ public:
 		return count;
 	}
 
+	void dumpDetectionEntries() const override final;
+
 protected:
 	/**
 	 * A hashmap of files and their MD5 checksums.
