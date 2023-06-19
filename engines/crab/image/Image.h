@@ -51,6 +51,7 @@ class Image {
 
 	enum ImageRotateDegrees {
 		kImageRotateBy90,
+		kImageRotateBy180,
 		kImageRotateBy270
 	};
 
