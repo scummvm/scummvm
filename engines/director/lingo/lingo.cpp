@@ -784,6 +784,8 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly) {
 		opType = INT;
 	} else if ((d1Type == STRING && d2Type == INT) || (d1Type == INT && d2Type == STRING)) {
 		opType = STRING;
+	} else if ((d1Type == STRING && d2Type == SYMBOL) || (d1Type == SYMBOL && d2Type == STRING)) {
+		opType = STRING;
 	}
 
 	return opType;
