@@ -4258,7 +4258,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	  _cachedMousePosition(Common::Point(0, 0)), _realMousePosition(Common::Point(0, 0)), _trackedMouseOutside(false),
 	  _forceCursorRefreshOnce(true), _autoResetCursor(false), _haveModifierOverrideCursor(false), _haveCursorElement(false), _sceneGraphChanged(false), _isQuitting(false),
 	  _collisionCheckTime(0), /*_elementCursorUpdateTime(0), */_defaultVolumeState(true), _activeSceneTransitionEffect(nullptr), _sceneTransitionStartTime(0), _sceneTransitionEndTime(0),
-	  _sharedSceneWasSetExplicitly(false), _modifierOverrideCursorID(0), _subtitleRenderer(subRenderer), _multiClickStartTime(0), _multiClickInterval(500), _multiClickCount(0)
+	  _sharedSceneWasSetExplicitly(false), _modifierOverrideCursorID(0), _subtitleRenderer(subRenderer), _multiClickStartTime(0), _multiClickInterval(500), _multiClickCount(0), _numMouseBlockers(0)
 {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
@@ -4356,6 +4356,8 @@ bool Runtime::runFrame() {
 						DispatchKeyTaskData *taskData = _vthread->pushTask("Runtime::dispatchKeyTask", this, &Runtime::dispatchKeyTask);
 						taskData->dispatch = dispatch;
 					}
+
+					_project->onKeyboardEvent(this, *static_cast<KeyboardInputEvent *>(evt.get()));
 				}
 				break;
 			case kOSEventTypeMouseDown:
@@ -5697,9 +5699,11 @@ VThreadState Runtime::updateMousePositionTask(const UpdateMousePositionTaskData 
 	int32 bestLayer = INT32_MIN;
 	bool bestDirect = false;
 
-	for (size_t ri = 0; ri < _sceneStack.size(); ri++) {
-		const SceneStackEntry &sceneStackEntry = _sceneStack[_sceneStack.size() - 1 - ri];
-		recursiveFindMouseCollision(collisionItem, bestSceneStack, bestLayer, bestDirect, sceneStackEntry.scene.get(), _sceneStack.size() - 1 - ri, data.x, data.y, kMouseInteractivityTestAnything);
+	if (_numMouseBlockers == 0) {
+		for (size_t ri = 0; ri < _sceneStack.size(); ri++) {
+			const SceneStackEntry &sceneStackEntry = _sceneStack[_sceneStack.size() - 1 - ri];
+			recursiveFindMouseCollision(collisionItem, bestSceneStack, bestLayer, bestDirect, sceneStackEntry.scene.get(), _sceneStack.size() - 1 - ri, data.x, data.y, kMouseInteractivityTestAnything);
+		}
 	}
 
 	Common::SharedPtr<Structural> newMouseOver;
@@ -6311,6 +6315,15 @@ void Runtime::setGlobalPalette(const Palette &palette) {
 	_globalPalette = palette;
 }
 
+void Runtime::addMouseBlocker() {
+	_numMouseBlockers++;
+}
+
+void Runtime::removeMouseBlocker() {
+	assert(_numMouseBlockers > 0);
+	_numMouseBlockers--;
+}
+
 void Runtime::checkBoundaries() {
 	// Boundary Detection Messenger behavior is very quirky in mTropolis 1.1.  Basically, if an object moves in the direction of
 	// the boundary, then it may trigger collision checks with the boundary.  If it moves but does not move in the direction of
@@ -6839,10 +6852,10 @@ KeyboardEventSignaller::KeyboardEventSignaller() {
 KeyboardEventSignaller::~KeyboardEventSignaller() {
 }
 
-void KeyboardEventSignaller::onKeyboardEvent(Runtime *runtime, Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {
+void KeyboardEventSignaller::onKeyboardEvent(Runtime *runtime, const KeyboardInputEvent &keyEvt) {
 	const size_t numReceivers = _receivers.size();
 	for (size_t i = 0; i < numReceivers; i++) {
-		_receivers[i]->onKeyboardEvent(runtime, evtType, repeat, keyEvt);
+		_receivers[i]->onKeyboardEvent(runtime, keyEvt);
 	}
 }
 
@@ -7305,8 +7318,8 @@ Common::SharedPtr<PlayMediaSignaller> Project::notifyOnPlayMedia(IPlayMediaSigna
 	return _playMediaSignaller;
 }
 
-void Project::onKeyboardEvent(Runtime *runtime, const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {
-	_keyboardEventSignaller->onKeyboardEvent(runtime, evtType, repeat, keyEvt);
+void Project::onKeyboardEvent(Runtime *runtime, const KeyboardInputEvent &keyEvt) {
+	_keyboardEventSignaller->onKeyboardEvent(runtime, keyEvt);
 }
 
 Common::SharedPtr<KeyboardEventSignaller> Project::notifyOnKeyboardEvent(IKeyboardEventReceiver *receiver) {

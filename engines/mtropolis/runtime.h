@@ -1704,6 +1704,9 @@ public:
 	const Palette &getGlobalPalette() const;
 	void setGlobalPalette(const Palette &palette);
 
+	void addMouseBlocker();
+	void removeMouseBlocker();
+
 	const Common::String *resolveAttributeIDName(uint32 attribID) const;
 
 	const Common::WeakPtr<Window> &getMainWindow() const;
@@ -1960,6 +1963,8 @@ private:
 	uint32 _multiClickStartTime;
 	uint32 _multiClickInterval;
 	uint _multiClickCount;
+
+	uint _numMouseBlockers;
 
 	bool _defaultVolumeState;
 
@@ -2325,7 +2330,7 @@ private:
 };
 
 struct IKeyboardEventReceiver : public IInterfaceBase {
-	virtual void onKeyboardEvent(Runtime *runtime, Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) = 0;
+	virtual void onKeyboardEvent(Runtime *runtime, const KeyboardInputEvent &keyEvt) = 0;
 };
 
 class KeyboardEventSignaller {
@@ -2333,7 +2338,7 @@ public:
 	KeyboardEventSignaller();
 	~KeyboardEventSignaller();
 
-	void onKeyboardEvent(Runtime *runtime, Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt);
+	void onKeyboardEvent(Runtime *runtime, const KeyboardInputEvent &keyEvt);
 	void addReceiver(IKeyboardEventReceiver *receiver);
 	void removeReceiver(IKeyboardEventReceiver *receiver);
 
@@ -2420,7 +2425,7 @@ public:
 	const Common::String *findNameOfLabel(const Label &label) const;
 
 	void onPostRender();
-	void onKeyboardEvent(Runtime *runtime, const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt);
+	void onKeyboardEvent(Runtime *runtime, const KeyboardInputEvent &keyEvt);
 
 	Common::SharedPtr<SegmentUnloadSignaller> notifyOnSegmentUnload(int segmentIndex, ISegmentUnloadSignalReceiver *receiver);
 	Common::SharedPtr<KeyboardEventSignaller> notifyOnKeyboardEvent(IKeyboardEventReceiver *receiver);

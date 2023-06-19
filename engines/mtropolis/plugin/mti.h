@@ -118,7 +118,14 @@ private:
 	Common::String _filePath;
 };
 
-class SampleModifier : public Modifier {
+class MPEGVideoPlayer;
+
+class IMPEGVideoCompletionNotifier : IInterfaceBase {
+public:
+	virtual void onVideoCompleted() = 0;
+};
+
+class SampleModifier : public Modifier, public IMPEGVideoCompletionNotifier, public IKeyboardEventReceiver {
 public:
 	SampleModifier();
 	~SampleModifier();
@@ -129,6 +136,9 @@ public:
 
 	bool load(const PlugInModifierLoaderContext &context, const Data::MTI::SampleModifier &data);
 
+	void onVideoCompleted() override;
+	void onKeyboardEvent(Runtime *runtime, const KeyboardInputEvent &keyEvt) override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Sample Modifier"; }
 	void debugInspect(IDebugInspectionReport *report) const override;
@@ -138,8 +148,15 @@ private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	const char *getDefaultName() const override;
 
+	void stopPlaying();
+
 	Event _executeWhen;
 	int32 _videoNumber;
+
+	Common::SharedPtr<MPEGVideoPlayer> _vidPlayer;
+	Common::SharedPtr<KeyboardEventSignaller> _keySignaller;
+	Runtime *_runtime;
+	bool _isPlaying;
 };
 
 

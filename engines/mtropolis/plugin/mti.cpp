@@ -19,13 +19,16 @@
  *
  */
 
-#include "graphics/managed_surface.h"
-
 #include "mtropolis/plugin/mti.h"
 #include "mtropolis/plugins.h"
 
 #include "mtropolis/miniscript.h"
 
+#include "video/mpegps_decoder.h"
+
+#include "graphics/managed_surface.h"
+
+#include "common/file.h"
 #include "common/random.h"
 
 namespace MTropolis {
@@ -446,10 +449,102 @@ const char *PrintModifier::getDefaultName() const {
 	return "Print Modifier";
 }
 
-SampleModifier::SampleModifier() : _videoNumber(0) {
+class MPEGVideoPlayer : public IPostEffect, public IPlayMediaSignalReceiver {
+public:
+	explicit MPEGVideoPlayer(Runtime *runtime, const Common::SharedPtr<Video::VideoDecoder> &videoDecoder, IMPEGVideoCompletionNotifier *completionNotifier);
+	~MPEGVideoPlayer();
+
+	static Common::SharedPtr<MPEGVideoPlayer> createForVideoID(Runtime *runtime, int videoID, IMPEGVideoCompletionNotifier *completionNotifier);
+
+	void playMedia(Runtime *runtime, Project *project) override;
+	void renderPostEffect(Graphics::ManagedSurface &surface) const override;
+
+private:
+	Runtime *_runtime;
+	Project *_project;
+	IMPEGVideoCompletionNotifier *_completionNotifier;
+
+	const Graphics::Surface *_displayingSurface;
+	Common::SharedPtr<Video::VideoDecoder> _decoder;
+	Common::SharedPtr<PlayMediaSignaller> _playMediaReceiver;
+	bool _finished;
+};
+
+
+MPEGVideoPlayer::MPEGVideoPlayer(Runtime *runtime, const Common::SharedPtr<Video::VideoDecoder> &videoDecoder, IMPEGVideoCompletionNotifier *completionNotifier)
+	: _runtime(runtime), _project(nullptr), _decoder(videoDecoder), _finished(false), _displayingSurface(nullptr), _completionNotifier(completionNotifier) {
+	_project = runtime->getProject();
+
+	runtime->addPostEffect(this);
+	_playMediaReceiver = _project->notifyOnPlayMedia(this);
+}
+
+MPEGVideoPlayer::~MPEGVideoPlayer() {
+	_playMediaReceiver->removeReceiver(this);
+	_runtime->removePostEffect(this);
+}
+
+Common::SharedPtr<MPEGVideoPlayer> MPEGVideoPlayer::createForVideoID(Runtime *runtime, int videoID, IMPEGVideoCompletionNotifier *completionNotifier) {
+#ifdef USE_MPEG2
+	Common::String videoPath = Common::String::format("video/%i.vob", videoID);
+
+	Common::SharedPtr<Video::VideoDecoder> decoder(new Video::MPEGPSDecoder());
+	if (!decoder->loadFile(Common::Path(videoPath)))
+		return nullptr;
+
+	decoder->start();
+
+	return Common::SharedPtr<MPEGVideoPlayer>(new MPEGVideoPlayer(runtime, decoder, completionNotifier));
+#else
+	return nullptr;
+#endif
+}
+
+void MPEGVideoPlayer::playMedia(Runtime *runtime, Project *project) {
+	if (_finished)
+		return;
+	
+	while (_decoder->getTimeToNextFrame() == 0) {
+		const Graphics::Surface *newFrame = _decoder->decodeNextFrame();
+		if (newFrame) {
+			_displayingSurface = newFrame;
+			_runtime->setSceneGraphDirty();
+		} else {
+			_finished = true;
+			_displayingSurface = nullptr;
+			_completionNotifier->onVideoCompleted();
+			break;
+		}
+	}
+}
+
+void MPEGVideoPlayer::renderPostEffect(Graphics::ManagedSurface &surface) const {
+	if (_displayingSurface) {
+		const Graphics::Surface *surf = _displayingSurface;
+
+		Graphics::ManagedSurface *mainWindowSurf = _runtime->getMainWindow().lock()->getSurface().get();
+
+		int32 topLeftX = (mainWindowSurf->w - surf->w) / 2;
+		int32 topLeftY = (mainWindowSurf->h - surf->h) / 2;
+
+		Common::Rect fullVideoRect(topLeftX, topLeftY, topLeftX + surf->w, topLeftY + surf->h);
+		Common::Rect clippedVideoRect = fullVideoRect;
+		clippedVideoRect.clip(Common::Rect(0, 0, mainWindowSurf->w, mainWindowSurf->h));
+
+		Common::Rect videoSrcRect(0, 0, surf->w, surf->h);
+		videoSrcRect.left += clippedVideoRect.left - fullVideoRect.left;
+		videoSrcRect.right += clippedVideoRect.right - fullVideoRect.right;
+		videoSrcRect.top += clippedVideoRect.top - fullVideoRect.top;
+		videoSrcRect.bottom += clippedVideoRect.bottom - fullVideoRect.bottom;
+
+		mainWindowSurf->blitFrom(*surf, videoSrcRect, clippedVideoRect);
+	}
+}
+SampleModifier::SampleModifier() : _videoNumber(0), _runtime(nullptr), _isPlaying(false) {
 }
 
 SampleModifier::~SampleModifier() {
+	stopPlaying();
 }
 
 bool SampleModifier::respondsToEvent(const Event &evt) const {
@@ -458,13 +553,30 @@ bool SampleModifier::respondsToEvent(const Event &evt) const {
 
 VThreadState SampleModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (_executeWhen.respondsTo(msg->getEvent())) {
-		warning("Sample modifier (MPEG video playback) is not implemented.  This would normally play video %i.", static_cast<int>(_videoNumber));
+		_runtime = runtime;
+
+		stopPlaying();
+		_vidPlayer.reset();
+
+		_vidPlayer = MPEGVideoPlayer::createForVideoID(runtime, _videoNumber, this);
+		if (_vidPlayer) {
+			runtime->addMouseBlocker();
+			runtime->getMainWindow().lock()->setMouseVisible(false);
+			runtime->setSceneGraphDirty();
+			_keySignaller = _runtime->getProject()->notifyOnKeyboardEvent(this);
+			_isPlaying = true;
+		} else {
+			warning("Attempted to play MPEG video %i but player setup failed", static_cast<int>(_videoNumber));
+		}
+
 		return kVThreadReturn;
 	}
 	return kVThreadReturn;
 }
 
 void SampleModifier::disable(Runtime *runtime) {
+	stopPlaying();
+	_vidPlayer.reset();
 }
 
 bool SampleModifier::load(const PlugInModifierLoaderContext &context, const Data::MTI::SampleModifier &data) {
@@ -482,6 +594,17 @@ bool SampleModifier::load(const PlugInModifierLoaderContext &context, const Data
 	return true;
 }
 
+void SampleModifier::onVideoCompleted() {
+	stopPlaying();
+}
+
+void SampleModifier::onKeyboardEvent(Runtime *runtime, const KeyboardInputEvent &keyEvt) {
+	if (keyEvt.getKeyEventType() == Common::EVENT_KEYDOWN && keyEvt.getKeyState().keycode == Common::KEYCODE_SPACE) {
+		_vidPlayer.reset();
+		stopPlaying();
+	}
+}
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 void SampleModifier::debugInspect(IDebugInspectionReport *report) const {
 }
@@ -493,6 +616,15 @@ Common::SharedPtr<Modifier> SampleModifier::shallowClone() const {
 
 const char *SampleModifier::getDefaultName() const {
 	return "Sample Modifier";
+}
+
+void SampleModifier::stopPlaying() {
+	if (_isPlaying) {
+		_runtime->removeMouseBlocker();
+		_runtime->getMainWindow().lock()->setMouseVisible(true);
+		_keySignaller->removeReceiver(this);
+		_isPlaying = false;
+	}
 }
 
 MTIPlugIn::MTIPlugIn()
