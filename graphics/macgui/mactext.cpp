@@ -76,9 +76,9 @@ Common::CodePage MacFontRun::getEncoding() {
 
 bool MacFontRun::plainByteMode() {
 	Common::CodePage encoding = getEncoding();
-	// This return statement accounts for utf8, invalid, and Mac Roman.
+	// This return statement accounts for utf8, invalid.
 	// For future Unicode font compatibility, it should account for all codepages instead.
-	return encoding != Common::kUtf8 && encoding != Common::kCodePageInvalid && encoding != Common::kMacRoman;
+	return encoding != Common::kUtf8 && encoding != Common::kCodePageInvalid;
 }
 
 Common::String MacFontRun::getEncodedText() {
