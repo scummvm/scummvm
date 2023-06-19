@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-18 14:21+0000\n"
+"POT-Creation-Date: 2023-06-19 05:32+0000\n"
 "PO-Revision-Date: 2023-06-13 01:40+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -3205,11 +3205,11 @@ msgstr "Ennustava tekstinsyöttö"
 msgid "Confirm"
 msgstr "Vahvista"
 
-#: engines/metaengine.cpp:393
+#: engines/metaengine.cpp:408
 msgid "Autosave on"
 msgstr "Automaattinen tallennus"
 
-#: engines/metaengine.cpp:393
+#: engines/metaengine.cpp:408
 msgid "Autosave off"
 msgstr "Ei automaattista tallennusta"
 

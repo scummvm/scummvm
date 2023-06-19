@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-18 14:21+0000\n"
+"POT-Creation-Date: 2023-06-19 05:32+0000\n"
 "PO-Revision-Date: 2022-10-02 04:37+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -3198,12 +3198,12 @@ msgstr ""
 msgid "Confirm"
 msgstr ""
 
-#: engines/metaengine.cpp:393
+#: engines/metaengine.cpp:408
 #, fuzzy
 msgid "Autosave on"
 msgstr "Autolagre:"
 
-#: engines/metaengine.cpp:393
+#: engines/metaengine.cpp:408
 #, fuzzy
 msgid "Autosave off"
 msgstr "Autolagre:"

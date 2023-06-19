@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-18 14:21+0000\n"
+"POT-Creation-Date: 2023-06-19 05:32+0000\n"
 "PO-Revision-Date: 2023-03-20 15:33+0000\n"
 "Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -3240,12 +3240,12 @@ msgstr "Okienko klawiatury predyktywnej"
 msgid "Confirm"
 msgstr "Potwierdź"
 
-#: engines/metaengine.cpp:393
+#: engines/metaengine.cpp:408
 #, fuzzy
 msgid "Autosave on"
 msgstr "Autozapis"
 
-#: engines/metaengine.cpp:393
+#: engines/metaengine.cpp:408
 #, fuzzy
 msgid "Autosave off"
 msgstr "Autozapis"

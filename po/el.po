@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-18 14:21+0000\n"
+"POT-Creation-Date: 2023-06-19 05:32+0000\n"
 "PO-Revision-Date: 2023-06-17 19:47+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -3296,11 +3296,11 @@ msgstr "Παράθυρο διαλόγου με πρόβλεψη κειμένου
 msgid "Confirm"
 msgstr "Επιβεβαίωση"
 
-#: engines/metaengine.cpp:393
+#: engines/metaengine.cpp:408
 msgid "Autosave on"
 msgstr "Με αυτόματη αποθήκευση"
 
-#: engines/metaengine.cpp:393
+#: engines/metaengine.cpp:408
 msgid "Autosave off"
 msgstr "Χωρίς αυτόματη αποθήκευση"
 
