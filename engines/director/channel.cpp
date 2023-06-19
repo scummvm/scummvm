@@ -214,7 +214,7 @@ bool Channel::isDirty(Sprite *nextSprite) {
 	bool isDirtyFlag = _dirty ||
 		(_sprite->_cast && _sprite->_cast->isModified());
 
-	if (_sprite && !_sprite->_puppet) {
+	if (_sprite && !_sprite->_puppet && !_sprite->_autoPuppet) {
 		// When puppet is set, the overall dirty flag should be set when sprite is
 		// modified.
 		isDirtyFlag |= _sprite->_castId != nextSprite->_castId ||
