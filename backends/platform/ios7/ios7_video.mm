@@ -112,6 +112,18 @@ uint getSizeNextPOT(uint size) {
 	return &_videoContext;
 }
 
+// According to Apple doc layoutSublayersOfLayer: is supported from iOS 10.0.
+// This doesn't seem to be correct since the instance method layoutSublayers,
+// supported from iOS 2.0, default calls the layoutSublayersOfLayer: method
+// of the layer’s delegate object. It's been verified that this function is
+// called in at least iOS 9.3.5.
+- (void)layoutSublayersOfLayer:(CAEAGLLayer *)layer {
+	if (layer == self.layer) {
+		[self addEvent:InternalEvent(kInputScreenChanged, 0, 0)];
+	}
+	[super layoutSublayersOfLayer:layer];
+}
+
 - (void)createContext {
 	CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
 
@@ -1172,6 +1184,9 @@ uint getSizeNextPOT(uint size) {
 
 - (void)applicationResume {
 	[self addEvent:InternalEvent(kInputApplicationResumed, 0, 0)];
+	// The device may have changed orientation. Make sure to update
+	// the screen size to the graphic manager.
+	[self addEvent:InternalEvent(kInputScreenChanged, 0, 0)];
 }
 
 - (void)saveApplicationState {
