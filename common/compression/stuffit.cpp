@@ -202,7 +202,9 @@ bool StuffItArchive::open(Common::SeekableReadStream *stream, bool flattenTree) 
 		if (dirCheckMethod == 33) {
 			// End of folder
 			if (!flattenTree && dirPrefix.size() > 0) {
-				size_t secondLastDelimiter = dirPrefix.rfind(':', dirPrefix.size() - 1);
+				size_t secondLastDelimiter = Common::String::npos;
+				if (dirPrefix.size() > 1)
+					secondLastDelimiter = dirPrefix.rfind(':', dirPrefix.size() - 2);
 
 				if (secondLastDelimiter == Common::String::npos) {
 					// Only one level deep
