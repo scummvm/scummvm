@@ -140,10 +140,10 @@ bool Image::Load(rapidxml::xml_node<char> *node, const char *name) {
 bool Image::Load(const Image &image, Rect *clip, const TextureFlipType &flip) {
 	Delete();
 
-	Common::Rect srcRect {0, 0, static_cast<int16>(w + 0), static_cast<int16>(h + 0)};
+	Common::Rect srcRect (0, 0, w, h);
 
 	if (clip)
-		srcRect = {static_cast<int16>(clip->x), static_cast<int16>(clip->y), static_cast<int16>(clip->x + clip->w), static_cast<int16>(clip->y + clip->h)};
+		srcRect = Common::Rect(clip->x, clip->y, clip->x + clip->w, clip->y + clip->h);
 
 	texture = new Graphics::ManagedSurface();
 	texture->copyFrom(image.texture->getSubArea(srcRect));
@@ -175,10 +175,10 @@ void Image::Draw(const int &x, const int &y, Common::Rect *clip, const TextureFl
 	if (clip != NULL) {
 		srcRect = *clip;
 	} else {
-		srcRect = Common::Rect{static_cast<int16>(x), static_cast<int16>(y), static_cast<int16>(w + x), static_cast<int16>(h + y)};
+		srcRect = Common::Rect(x, y, w + x, h + y);
 	}
 
-	Common::Rect destRect {static_cast<int16>(x), static_cast<int16>(y), static_cast<int16>(w + x), static_cast<int16>(h + y)};
+	Common::Rect destRect(x, y, w + x, h + y);
 	if (clip != NULL) {
 		destRect.right = clip->right;
 		destRect.bottom = clip->bottom;
@@ -293,11 +293,11 @@ void Image::Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &
 	if (surf == NULL)
 		surf = g_engine->_screen;
 
-	Common::Rect srcRect{0, 0, static_cast<int16>(w + 0), static_cast<int16>(h + 0)};
-	Common::Rect destRect{static_cast<int16>(x), static_cast<int16>(y), static_cast<int16>(w + x), static_cast<int16>(h + y)};
+	Common::Rect srcRect(0, 0, w, h);
+	Common::Rect destRect(x, y, w + x, h + y);
 
 	if (clip) {
-		srcRect = {static_cast<int16>(clip->x), static_cast<int16>(clip->y), static_cast<int16>(clip->x + clip->w), static_cast<int16>(clip->y + clip->h)};
+		srcRect = Common::Rect(clip->x, clip->y, clip->x + clip->w, clip->y + clip->h);
 		destRect.right = static_cast<int16>(clip->w + x);
 		destRect.bottom = static_cast<int16>(clip->h + y);
 	}
@@ -355,7 +355,7 @@ void Image::Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &
 }
 
 void Image::FastDraw(const int &x, const int &y, Rect *clip) {
-	Common::Rect destRect {static_cast<int16>(x), static_cast<int16>(y), static_cast<int16>(w + x), static_cast<int16>(h + y)};
+	Common::Rect destRect(x, y, w + x, h + y);
 	int in_y = 0, in_x = 0;
 
 	if (clip) {
