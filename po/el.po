@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-19 05:32+0000\n"
+"POT-Creation-Date: 2023-06-19 18:59+0000\n"
 "PO-Revision-Date: 2023-06-17 19:47+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -315,7 +315,7 @@ msgstr "Τα περιεχόμενα του κώδικα JSON δεν έχουν �
 #: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:888
 #: engines/sword1/logic.cpp:1634 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
-#: engines/vcruise/vcruise.cpp:91 engines/vcruise/vcruise.cpp:101
+#: engines/vcruise/vcruise.cpp:92 engines/vcruise/vcruise.cpp:102
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "OK"
@@ -5438,7 +5438,7 @@ msgstr ""
 "την επόμενη φορά που θα ξεκινήσετε το παιχνίδι.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:313
+#: engines/vcruise/vcruise.cpp:314
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Το αποθηκευμένο παιχνίδι δημιουργήθηκε με νεότερη έκδοση του ScummVM. "
@@ -7226,14 +7226,14 @@ msgstr "Άμεσος τερματισμός ταινιών σε αναπαραγ
 msgid "Failed to read version information from save file"
 msgstr "Η ανάγνωση της έκδοσης από το αρχείο αποθηκευμένου παιχνιδιού απέτυχε"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:308
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:309
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Αποτυχία φόρτωσης αποθηκευμένου παιχνιδιού. Το αρχείο αποθηκευσης δεν "
 "περιέχει έγκυρση πληροφορία έκδοσης."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:318
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:319
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -9733,12 +9733,12 @@ msgstr "Ένταση ηχητικών εφέ πάνω"
 msgid "Skip current animation"
 msgstr "Παράκαμψη τρέχουσας κίνησης"
 
-#: engines/vcruise/vcruise.cpp:82
+#: engines/vcruise/vcruise.cpp:83
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr ""
 "Το παιχνίδι αυτό απαιτεί υποστήριξη JPEG, η οποία δεν έχει γίνει compiled."
 
-#: engines/vcruise/vcruise.cpp:89
+#: engines/vcruise/vcruise.cpp:90
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
@@ -9747,7 +9747,7 @@ msgstr ""
 "γίνει compiled.\n"
 "Μπορείτε να παίξετε το παιχνίδι, αλλά χωρίς μουσική."
 
-#: engines/vcruise/vcruise.cpp:99
+#: engines/vcruise/vcruise.cpp:100
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
@@ -9756,17 +9756,17 @@ msgstr ""
 "compiled.\n"
 "Μπορείτε να παίξετε το παιχνίδι, αλλά χωρίς μουσική."
 
-#: engines/vcruise/vcruise.cpp:298
+#: engines/vcruise/vcruise.cpp:299
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "Αποτυχία φόρτωσης αποθηκευμένου παιχνιδιού. Το αρχείο αποθηκευσης δείχνει να "
 "είναι κατεστραμμένο."
 
-#: engines/vcruise/vcruise.cpp:303
+#: engines/vcruise/vcruise.cpp:304
 msgid "Failed to read version information from save file."
 msgstr "Η ανάγνωση της έκδοσης από το αρχείο αποθηκευμένου παιχνιδιού απέτυχε."
 
-#: engines/vcruise/vcruise.cpp:323
+#: engines/vcruise/vcruise.cpp:324
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ""
 "Παρουσιάστηκε άγνωστο σφάλμα κατά την απόπειρα φόρτωσης του αποθηκευμένου "

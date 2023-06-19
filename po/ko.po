@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-19 05:32+0000\n"
+"POT-Creation-Date: 2023-06-19 18:59+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -323,7 +323,7 @@ msgstr ""
 #: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:888
 #: engines/sword1/logic.cpp:1634 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
-#: engines/vcruise/vcruise.cpp:91 engines/vcruise/vcruise.cpp:101
+#: engines/vcruise/vcruise.cpp:92 engines/vcruise/vcruise.cpp:102
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "확인"
@@ -5292,7 +5292,7 @@ msgstr ""
 "시 이 창이 표시됩니다.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:313
+#: engines/vcruise/vcruise.cpp:314
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "저장된 게임은 최신 버전의 ScummVM으로 생성되었습니다. 로드할 수 없습니다."
@@ -7050,12 +7050,12 @@ msgstr ""
 msgid "Failed to read version information from save file"
 msgstr "파일에서 저장된 게임을 불러오는데 실패했습니다."
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:308
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:309
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:318
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:319
 #, fuzzy
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
@@ -9441,35 +9441,35 @@ msgstr "효과음 볼륨"
 msgid "Skip current animation"
 msgstr "음성 옵션"
 
-#: engines/vcruise/vcruise.cpp:82
+#: engines/vcruise/vcruise.cpp:83
 #, fuzzy
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr "이 게임은 현재 빌드에 포함되지 않은 HeroCraft 서브엔진이 필요합니다."
 
-#: engines/vcruise/vcruise.cpp:89
+#: engines/vcruise/vcruise.cpp:90
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:99
+#: engines/vcruise/vcruise.cpp:100
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:298
+#: engines/vcruise/vcruise.cpp:299
 #, fuzzy
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "저장된 게임은 최신 버전의 ScummVM으로 생성되었습니다. 로드할 수 없습니다."
 
-#: engines/vcruise/vcruise.cpp:303
+#: engines/vcruise/vcruise.cpp:304
 #, fuzzy
 msgid "Failed to read version information from save file."
 msgstr "파일에서 저장된 게임을 불러오는데 실패했습니다."
 
-#: engines/vcruise/vcruise.cpp:323
+#: engines/vcruise/vcruise.cpp:324
 #, fuzzy
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ", 공유 폴더 활성화 중 오류 발생"
