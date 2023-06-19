@@ -28,10 +28,8 @@
  *
  */
 
-#include "graphics/blit.h"
 #include "crab/crab.h"
 #include "crab/image/Image.h"
-#include "image/png.h"
 
 using ImageDecoder = Image::PNGDecoder;
 
@@ -150,15 +148,15 @@ bool Image::Load(const Image &image, Rect *clip, const TextureFlipType &flip) {
 	texture = new Graphics::ManagedSurface();
 	texture->copyFrom(image.texture->getSubArea(srcRect));
 
-	switch(flip) {
-		case FLIP_NONE:
+	switch (flip) {
+	case FLIP_NONE:
 		break;
 
-		case FLIP_X:
+	case FLIP_X:
 		texture->surfacePtr()->flipHorizontal(Common::Rect(texture->w, texture->h));
 		break;
 
-		default:
+	default:
 		warning("Flipped texture: %d", flip);
 	}
 
@@ -241,15 +239,51 @@ void Image::Draw(const int &x, const int &y, Common::Rect *clip, const TextureFl
 		break;
 	}
 #endif
+}
 
+Graphics::Surface* Image::rotate(const Graphics::ManagedSurface &src, byte rotation) {
+	assert(!src.empty());
+	assert(src.w == src.h);
+	assert(rotation >= 1 && rotation <= 2);
+	assert(src.format.bytesPerPixel == 4);
+
+	Graphics::Surface *dest = new Graphics::Surface();
+	dest->create(src.w, src.h, src.format);
+
+	const uint size = src.w;
+	const uint32 *s = (const uint32 *)src.getBasePtr(0, 0);
+
+	switch (rotation) {
+	case 1 :
+		// 90 degrees
+		for (uint y = 0; y < size; ++y) {
+			for (uint x = 0; x < size; ++x, ++s) {
+				*((uint32 *)dest->getBasePtr(size - y - 1, x)) = *s;
+			}
+		}
+
+		break;
+
+	case 2 :
+		// 270 degrees
+		for (uint y = 0; y < size; ++y) {
+			for (uint x = 0; x < size; ++x, ++s) {
+				*((uint32 *)dest->getBasePtr(y, size - x - 1)) = *s;
+			}
+		}
+
+		break;
+	}
+
+	return dest;
 }
 
 void Image::Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &flip, Graphics::ManagedSurface *surf) {
 	if (surf == NULL)
 		surf = g_engine->_screen;
 
-	Common::Rect srcRect {0, 0, static_cast<int16>(w + 0), static_cast<int16>(h + 0)};
-	Common::Rect destRect {static_cast<int16>(x), static_cast<int16>(y), static_cast<int16>(w + x), static_cast<int16>(h + y)};
+	Common::Rect srcRect{0, 0, static_cast<int16>(w + 0), static_cast<int16>(h + 0)};
+	Common::Rect destRect{static_cast<int16>(x), static_cast<int16>(y), static_cast<int16>(w + x), static_cast<int16>(h + y)};
 
 	if (clip) {
 		srcRect = {static_cast<int16>(clip->x), static_cast<int16>(clip->y), static_cast<int16>(clip->x + clip->w), static_cast<int16>(clip->y + clip->h)};
@@ -260,19 +294,48 @@ void Image::Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &
 	Graphics::ManagedSurface s;
 	s.copyFrom(texture->getSubArea(srcRect));
 
+	Graphics::Surface *rotated_surf = nullptr;
+
 	switch(flip) {
-		case FLIP_NONE:
+	case FLIP_NONE:
 		break;
 
-		case FLIP_X:
+	case FLIP_X:
 		s.surfacePtr()->flipHorizontal(Common::Rect(s.w, s.h));
 		break;
 
-		case FLIP_Y:
+	case FLIP_Y:
 		s.surfacePtr()->flipVertical(Common::Rect(s.w, s.h));
 		break;
 
-		default:
+	case FLIP_XY:
+		s.surfacePtr()->flipHorizontal(Common::Rect(s.w, s.h));
+		s.surfacePtr()->flipVertical(Common::Rect(s.w, s.h));
+		break;
+
+	case FLIP_D:
+		s.surfacePtr()->flipHorizontal(Common::Rect(s.w, s.h));
+		rotated_surf = rotate(s, 2);
+		s.copyFrom(rotated_surf);
+		break;
+
+	case FLIP_DX:
+		rotated_surf = rotate(s, 1);
+		s.copyFrom(rotated_surf);
+		break;
+
+	case FLIP_DY:
+		rotated_surf = rotate(s, 2);
+		s.copyFrom(rotated_surf);
+		break;
+
+	case FLIP_XYD:
+		s.surfacePtr()->flipVertical(Common::Rect(s.w, s.h));
+		rotated_surf = rotate(s, 2);
+		s.copyFrom(rotated_surf);
+		break;
+
+	default:
 		warning("Flipped texture: %d", flip);
 	}
 
