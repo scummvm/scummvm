@@ -1375,7 +1375,7 @@ void Lingo::runTests() {
 
 			if (!debugChannelSet(-1, kDebugCompileOnly)) {
 				if (!_compiler->_hadError)
-					executeScript(kTestScript, CastMemberID(counter, 0));
+					executeScript(kTestScript, CastMemberID(counter, DEFAULT_CAST_LIB));
 				else
 					debug(">> Skipping execution");
 			}
