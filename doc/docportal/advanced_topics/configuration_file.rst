@@ -306,14 +306,8 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`keymap_sdl-graphics_ASPT <ASPT>`",string,C+A+a,
 		":ref:`keymap_sdl-graphics_CAPT <CAPT>`",string,C+m,
 		":ref:`keymap_sdl-graphics_FILT <FILT>`",string,C+A+f
-		":ref:`keymap_sdl-graphics_FLT1 <FLT1>`",string,C+A+1
-		":ref:`keymap_sdl-graphics_FLT2 <FLT2>`",string,C+A+2
-		":ref:`keymap_sdl-graphics_FLT3 <FLT3>`",string,C+A+3
-		":ref:`keymap_sdl-graphics_FLT4 <FLT4>`",string,C+A+4
-		":ref:`keymap_sdl-graphics_FLT5 <FLT5>`",string,C+A+5
-		":ref:`keymap_sdl-graphics_FLT6 <FLT6>`",string, C+A+6
-		":ref:`keymap_sdl-graphics_FLT7 <FLT7>`",string,C+A+7
-		":ref:`keymap_sdl-graphics_FLT8 <FLT8>`",string,C+A+8
+		":ref:`keymap_sdl-graphics_FLTN <FLTN>`",string,C+A+0
+		":ref:`keymap_sdl-graphics_FLTP <FLTP>`",string,C+A+9
 		":ref:`keymap_sdl-graphics_FULS <FULS>`",string,A+RETURN
 		":ref:`keymap_sdl-graphics_SCL- <SCL>`",string,C+A+MINUS
 		":ref:`keymap_sdl-graphics_SCL+ <SCL>`",string,C+A+PLUS
