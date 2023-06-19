@@ -100,6 +100,9 @@ void TileSet::PreDraw(const Vector2i &pos, const TileInfo &tile, Graphics::Manag
 }
 
 void TileSetGroup::PreDraw(MapLayer &layer, const Vector2i &tile_size, Graphics::ManagedSurface *surf) {
+	if (layer.type == LAYER_IMAGE)
+		return;
+
 	start.x = 0;
 	start.y = 0;
 
@@ -141,6 +144,10 @@ void TileSetGroup::PreDraw(MapLayer &layer, const Vector2i &tile_size, Graphics:
 }
 
 void TileSetGroup::ForceDraw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos) {
+
+	if (layer.type == LAYER_IMAGE)
+		return;
+
 	layer.collide = layer.pos.Collide(player_pos);
 
 	// Normal and prop layers are drawn this way
