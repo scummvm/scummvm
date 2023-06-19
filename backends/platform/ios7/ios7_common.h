@@ -73,37 +73,6 @@ enum UIViewTapDescription {
 	kUIViewTapDouble = 2
 };
 
-struct VideoContext {
-	VideoContext() : asprectRatioCorrection(), screenWidth(), screenHeight(), overlayVisible(false),
-	                 overlayInGUI(false), overlayWidth(), overlayHeight(), mouseX(), mouseY(),
-	                 mouseHotspotX(), mouseHotspotY(), mouseWidth(), mouseHeight(),
-	                 mouseIsVisible(), filtering(false), shakeXOffset(), shakeYOffset() {
-	}
-
-	// Game screen state
-	bool asprectRatioCorrection;
-	uint screenWidth, screenHeight;
-	Graphics::Surface screenTexture;
-
-	// Overlay state
-	bool overlayVisible;
-	bool overlayInGUI;
-	uint overlayWidth, overlayHeight;
-	Graphics::Surface overlayTexture;
-
-	// Mouse cursor state
-	uint mouseX, mouseY;
-	int mouseHotspotX, mouseHotspotY;
-	uint mouseWidth, mouseHeight;
-	bool mouseIsVisible;
-	Graphics::Surface mouseTexture;
-
-	// Misc state
-	bool filtering;
-	int shakeXOffset;
-	int shakeYOffset;
-};
-
 struct InternalEvent {
 	InternalEvent() : type(), value1(), value2() {}
 	InternalEvent(InputEvent t, int v1, int v2) : type(t), value1(v1), value2(v2) {}
@@ -117,7 +86,6 @@ struct InternalEvent {
 extern int iOS7_argc;
 extern char **iOS7_argv;
 
-void iOS7_updateScreen();
 bool iOS7_fetchEvent(InternalEvent *event);
 bool iOS7_isBigDevice();
 
@@ -126,7 +94,5 @@ void iOS7_main(int argc, char **argv);
 Common::String iOS7_getDocumentsDir();
 Common::String iOS7_getAppBundleDir();
 bool iOS7_touchpadModeEnabled();
-
-uint getSizeNextPOT(uint size);
 
 #endif

@@ -25,7 +25,6 @@
 #include "backends/platform/ios7/ios7_osys_main.h"
 #include "backends/platform/ios7/ios7_video.h"
 
-#include "graphics/blit.h"
 #include "backends/platform/ios7/ios7_app_delegate.h"
 
 #define UIViewParentController(__view) ({ \
@@ -96,10 +95,6 @@ void OSystem_iOS7::engineDone() {
 	[[iOS7AppDelegate iPhoneView] setIsInGame:NO];
 }
 
-void OSystem_iOS7::initVideoContext() {
-	_videoContext = [[iOS7AppDelegate iPhoneView] getVideoContext];
-}
-
 static inline void execute_on_main_thread(void (^block)(void)) {
 	if ([NSThread currentThread] == [NSThread mainThread]) {
 		block();
@@ -115,130 +110,9 @@ void OSystem_iOS7::updateOutputSurface() {
 	});
 }
 
-void OSystem_iOS7::internUpdateScreen() {
-	if (_mouseNeedTextureUpdate) {
-		updateMouseTexture();
-		_mouseNeedTextureUpdate = false;
-	}
-
-	while (_dirtyRects.size()) {
-		Common::Rect dirtyRect = _dirtyRects.remove_at(_dirtyRects.size() - 1);
-
-		//printf("Drawing: (%i, %i) -> (%i, %i)\n", dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom);
-		drawDirtyRect(dirtyRect);
-		// TODO: Implement dirty rect code
-		//updateHardwareSurfaceForRect(dirtyRect);
-	}
-
-	if (_videoContext->overlayVisible) {
-		// TODO: Implement dirty rect code
-		_dirtyOverlayRects.clear();
-		/*while (_dirtyOverlayRects.size()) {
-			Common::Rect dirtyRect = _dirtyOverlayRects.remove_at(_dirtyOverlayRects.size() - 1);
-
-			//printf("Drawing: (%i, %i) -> (%i, %i)\n", dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom);
-			drawDirtyOverlayRect(dirtyRect);
-		}*/
-	}
-}
-
-void OSystem_iOS7::drawDirtyRect(const Common::Rect &dirtyRect) {
-	// We only need to do a color look up for CLUT8
-	if (_framebuffer.format.bytesPerPixel != 1)
-		return;
-
-	int h = dirtyRect.bottom - dirtyRect.top;
-	int w = dirtyRect.right - dirtyRect.left;
-
-	const byte *src = (const byte *)_framebuffer.getBasePtr(dirtyRect.left, dirtyRect.top);
-	byte *dstRaw = (byte *)_videoContext->screenTexture.getBasePtr(dirtyRect.left, dirtyRect.top);
-
-	// When we use CLUT8 do a color look up
-	for (int y = h; y > 0; y--) {
-		uint16 *dst = (uint16 *)dstRaw;
-		for (int x = w; x > 0; x--)
-			*dst++ = _gamePalette[*src++];
-
-		dstRaw += _videoContext->screenTexture.pitch;
-		src += _framebuffer.pitch - w;
-	}
-}
-
 void OSystem_iOS7::virtualController(bool connect) {
 	execute_on_main_thread(^ {
 		[[iOS7AppDelegate iPhoneView] virtualController:connect];
-	});
-}
-
-void OSystem_iOS7::dirtyFullScreen() {
-	if (!_fullScreenIsDirty) {
-		_dirtyRects.clear();
-		_dirtyRects.push_back(Common::Rect(0, 0, _videoContext->screenWidth, _videoContext->screenHeight));
-		_fullScreenIsDirty = true;
-	}
-}
-
-void OSystem_iOS7::dirtyFullOverlayScreen() {
-	if (!_fullScreenOverlayIsDirty) {
-		_dirtyOverlayRects.clear();
-		_dirtyOverlayRects.push_back(Common::Rect(0, 0, _videoContext->overlayWidth, _videoContext->overlayHeight));
-		_fullScreenOverlayIsDirty = true;
-	}
-}
-
-void OSystem_iOS7::updateMouseTexture() {
-	int texWidth = getSizeNextPOT(_videoContext->mouseWidth);
-	int texHeight = getSizeNextPOT(_videoContext->mouseHeight);
-
-	Graphics::Surface &mouseTexture = _videoContext->mouseTexture;
-	if (mouseTexture.w != texWidth || mouseTexture.h != texHeight)
-		mouseTexture.create(texWidth, texHeight, Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
-
-	if (_mouseBuffer.format.bytesPerPixel == 1) {
-		const uint16 *palette;
-		if (_mouseCursorPaletteEnabled)
-			palette = _mouseCursorPalette;
-		else
-			palette = _gamePaletteRGBA5551;
-
-		uint16 *mouseBuf = (uint16 *)mouseTexture.getPixels();
-		for (uint x = 0; x < _videoContext->mouseWidth; ++x) {
-			for (uint y = 0; y < _videoContext->mouseHeight; ++y) {
-				const byte color = *(const byte *)_mouseBuffer.getBasePtr(x, y);
-				if (color != _mouseKeyColor)
-					mouseBuf[y * texWidth + x] = palette[color] | 0x1;
-				else
-					mouseBuf[y * texWidth + x] = 0x0;
-			}
-		}
-	} else {
-		if (crossBlit((byte *)mouseTexture.getPixels(), (const byte *)_mouseBuffer.getPixels(), mouseTexture.pitch,
-			          _mouseBuffer.pitch, _mouseBuffer.w, _mouseBuffer.h, mouseTexture.format, _mouseBuffer.format)) {
-			// Apply color keying
-			const uint8 * src = (const uint8 *)_mouseBuffer.getPixels();
-			int srcBpp = _mouseBuffer.format.bytesPerPixel;
-
-			uint8 *dstRaw = (uint8 *)mouseTexture.getPixels();
-
-			for (int y = 0; y < _mouseBuffer.h; ++y, dstRaw += mouseTexture.pitch) {
-				uint16 *dst = (uint16 *)dstRaw;
-				for (int x = 0; x < _mouseBuffer.w; ++x, ++dst, src += srcBpp) {
-					if (
-						(srcBpp == 2 && *((const uint16*)src) == _mouseKeyColor) ||
-						(srcBpp == 4 && *((const uint32*)src) == _mouseKeyColor)
-					)
-						*dst &= ~1;
-				}
-			}
-		} else {
-			// TODO: Log this!
-			// Make the cursor all transparent... we really need a better fallback ;-).
-			memset(mouseTexture.getPixels(), 0, mouseTexture.h * mouseTexture.pitch);
-		}
-	}
-
-	execute_on_main_thread(^ {
-		[[iOS7AppDelegate iPhoneView] updateMouseCursor];
 	});
 }
 
