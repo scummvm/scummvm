@@ -247,7 +247,7 @@ bool OSystem_iOS7::handleEvent_touchSecondUp(Common::Event &event, int x, int y)
 
 	if (curTime - _lastSecondaryDown < 400) {
 		//printf("Right tap!\n");
-		if (curTime - _lastSecondaryTap < 400 && !_videoContext->overlayInGUI) {
+		if (curTime - _lastSecondaryTap < 400) {
 			//printf("Right escape!\n");
 			event.type = Common::EVENT_KEYDOWN;
 			_queuedInputEvent.type = Common::EVENT_KEYUP;
@@ -372,12 +372,6 @@ void  OSystem_iOS7::handleEvent_orientationChanged(int orientation) {
 
 void OSystem_iOS7::rebuildSurface() {
 	updateOutputSurface();
-
-	dirtyFullScreen();
-	if (_videoContext->overlayVisible) {
-			dirtyFullOverlayScreen();
-		}
-	updateScreen();
 }
 
 void OSystem_iOS7::handleEvent_applicationSuspended() {

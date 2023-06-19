@@ -87,11 +87,9 @@ public:
 
 OSystem_iOS7::OSystem_iOS7() :
 	_mixer(NULL), _lastMouseTap(0), _queuedEventTime(0),
-	_mouseNeedTextureUpdate(false), _secondaryTapped(false), _lastSecondaryTap(0),
+	_secondaryTapped(false), _lastSecondaryTap(0),
 	_screenOrientation(kScreenOrientationFlippedLandscape),
-	_fullScreenIsDirty(false), _fullScreenOverlayIsDirty(false),
-	_mouseDirty(false), _timeSuspended(0),  _screenChangeCount(0),
-	_mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess) {
+	_timeSuspended(0) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = ConfMan.getBool("touchpad_mode");
 	_mouseClickAndDragEnabled = ConfMan.getBool("clickanddrag_mode");
@@ -103,24 +101,12 @@ OSystem_iOS7::OSystem_iOS7() :
 	Common::String appBubdlePath = iOS7_getAppBundleDir();
 	if (!appBubdlePath.empty())
 		chFsFactory->addVirtualDrive("appbundle:", appBubdlePath);
-
-	initVideoContext();
-
-	memset(_gamePalette, 0, sizeof(_gamePalette));
-	memset(_gamePaletteRGBA5551, 0, sizeof(_gamePaletteRGBA5551));
-	memset(_mouseCursorPalette, 0, sizeof(_mouseCursorPalette));
 }
 
 OSystem_iOS7::~OSystem_iOS7() {
 	AudioQueueDispose(s_AudioQueue.queue, true);
 
 	delete _mixer;
-	// Prevent accidental freeing of the screen texture here. This needs to be
-	// checked since we might use the screen texture as framebuffer in the case
-	// of hi-color games for example. Otherwise this can lead to a double free.
-	if (_framebuffer.getPixels() != _videoContext->screenTexture.getPixels())
-		_framebuffer.free();
-	_mouseBuffer.free();
 	delete _graphicsManager;
 }
 
@@ -176,19 +162,6 @@ bool OSystem_iOS7::hasFeature(Feature f) {
 
 void OSystem_iOS7::setFeatureState(Feature f, bool enable) {
 	switch (f) {
-	case kFeatureCursorPalette:
-		if (_mouseCursorPaletteEnabled != enable) {
-			_mouseNeedTextureUpdate = true;
-			_mouseDirty = true;
-			_mouseCursorPaletteEnabled = enable;
-		}
-		break;
-	case kFeatureFilteringMode:
-		_videoContext->filtering = enable;
-		break;
-	case kFeatureAspectRatioCorrection:
-		_videoContext->asprectRatioCorrection = enable;
-		break;
 	case kFeatureVirtualKeyboard:
 		setShowKeyboard(enable);
 		break;
@@ -201,12 +174,6 @@ void OSystem_iOS7::setFeatureState(Feature f, bool enable) {
 
 bool OSystem_iOS7::getFeatureState(Feature f) {
 	switch (f) {
-	case kFeatureCursorPalette:
-		return _mouseCursorPaletteEnabled;
-	case kFeatureFilteringMode:
-		return _videoContext->filtering;
-	case kFeatureAspectRatioCorrection:
-		return _videoContext->asprectRatioCorrection;
 	case kFeatureVirtualKeyboard:
 		return isKeyboardShown();
 

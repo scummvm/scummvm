@@ -58,10 +58,8 @@
 	_mouse = (GCMouse*)notification.object;
 
 	_mouse.mouseInput.mouseMovedHandler = ^(GCMouseInput * _Nonnull mouse, float deltaX, float deltaY) {
-		CGFloat scaleX, scaleY;
-		[[self view] getMouseScaleFactorX:&scaleX andY:&scaleY];
-		CGFloat scaledDeltaX = deltaX * scaleX + _dxReminder;
-		CGFloat scaledDeltaY = deltaY * scaleY + _dyReminder;
+		CGFloat scaledDeltaX = deltaX * [[self view] contentScaleFactor] + _dxReminder;
+		CGFloat scaledDeltaY = deltaY * [[self view] contentScaleFactor] + _dyReminder;
 		// Add any reminding delta values to be summed up and get the integer part of the delta
 		int dx = (int)(scaledDeltaX);
 		int dy = (int)(scaledDeltaY);

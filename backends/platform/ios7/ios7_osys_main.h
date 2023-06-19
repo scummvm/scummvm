@@ -58,27 +58,8 @@ protected:
 
 	Audio::MixerImpl *_mixer;
 
-	VideoContext *_videoContext;
-
-	Graphics::Surface _framebuffer;
-
-	// For signaling that screen format set up might have failed.
-	TransactionError _gfxTransactionError;
-
-	// For use with the game texture
-	uint16  _gamePalette[256];
-	// For use with the mouse texture
-	uint16  _gamePaletteRGBA5551[256];
-
 	CFTimeInterval _startTime;
 	uint32 _timeSuspended;
-
-	bool _mouseCursorPaletteEnabled;
-	uint16 _mouseCursorPalette[256];
-	Graphics::Surface _mouseBuffer;
-	uint16 _mouseKeyColor;
-	bool _mouseDirty;
-	bool _mouseNeedTextureUpdate;
 
 	long _lastMouseDown;
 	long _lastMouseTap;
@@ -92,12 +73,7 @@ protected:
 	int _lastPadX;
 	int _lastPadY;
 
-	Common::Array<Common::Rect> _dirtyRects;
-	Common::Array<Common::Rect> _dirtyOverlayRects;
 	ScreenOrientation _screenOrientation;
-	bool _fullScreenIsDirty;
-	bool _fullScreenOverlayIsDirty;
-	int _screenChangeCount;
 
 	Common::String _lastErrorMessage;
 
@@ -178,20 +154,14 @@ public:
 	virtual void registerDefaultSettings(const Common::String &target) const override;
 
 protected:
-	void initVideoContext();
 	void updateOutputSurface();
 	void setShowKeyboard(bool);
 	bool isKeyboardShown() const;
 
-	void internUpdateScreen();
-	void dirtyFullScreen();
-	void dirtyFullOverlayScreen();
 	void suspendLoop();
 	void saveState();
 	void restoreState();
 	void clearState();
-	void drawDirtyRect(const Common::Rect &dirtyRect);
-	void updateMouseTexture();
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
 	static int timerHandler(int t);
 
