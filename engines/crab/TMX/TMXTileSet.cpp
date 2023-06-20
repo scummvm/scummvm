@@ -106,8 +106,8 @@ void TileSetGroup::PreDraw(MapLayer &layer, const Vector2i &tile_size, Graphics:
 	start.x = 0;
 	start.y = 0;
 
-	finish.x = layer.tile.size() - 1;
-	finish.y = layer.tile[0].size() - 1;
+	finish.x = layer.tile.size();
+	finish.y = layer.tile[0].size();
 
 	v.x = start.y * tile_size.x;
 	v.y = start.x * tile_size.y;
