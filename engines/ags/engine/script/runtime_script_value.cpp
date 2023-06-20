@@ -158,43 +158,6 @@ bool RuntimeScriptValue::WriteInt32(int32_t val) {
 	return true;
 }
 
-// Notice, that there are only two valid cases when a pointer may be written:
-// when the destination is a stack entry or global variable of free type
-// (not kScValData type).
-// In any other case, only the numeric value (integer/float) will be written.
-bool RuntimeScriptValue::WriteValue(const RuntimeScriptValue &rval) {
-	if (this->Type == kScValStackPtr) {
-		if (RValue->Type == kScValData) {
-			*(int32_t *)(RValue->GetPtrWithOffset() + this->IValue) = rval.IValue;
-		} else {
-			// NOTE: we cannot just WriteValue here because when an integer
-			// is pushed to the stack, script assumes that it is always 4
-			// bytes and uses that size when calculating offsets to local
-			// variables;
-			// Therefore if pushed value is of integer type, we should rather
-			// act as WriteInt32 (for int8, int16 and int32).
-			if (rval.Type == kScValInteger) {
-				RValue->SetInt32(rval.IValue);
-			} else {
-				*RValue = rval;
-			}
-		}
-	} else if (this->Type == kScValGlobalVar) {
-		if (RValue->Type == kScValData) {
-			Memory::WriteInt32LE(RValue->GetPtrWithOffset() + this->IValue, rval.IValue);
-		} else {
-			*RValue = rval;
-		}
-	} else if (this->Type == kScValStaticObject || this->Type == kScValStaticArray) {
-		this->StcMgr->WriteInt32(this->Ptr, this->IValue, rval.IValue);
-	} else if (this->Type == kScValDynamicObject) {
-		this->DynMgr->WriteInt32(this->Ptr, this->IValue, rval.IValue);
-	} else {
-		*((int32_t *)this->GetPtrWithOffset()) = rval.IValue;
-	}
-	return true;
-}
-
 RuntimeScriptValue &RuntimeScriptValue::DirectPtr() {
 	if (Type == kScValGlobalVar || Type == kScValStackPtr) {
 		int ival = IValue;
