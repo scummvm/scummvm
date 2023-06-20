@@ -101,7 +101,6 @@ public:
 
 private:
 
-	void readPaletteInfo(Common::SeekableReadStreamEndian &stream);
 	void readChannelD2(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readSpriteD2(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readMainChannelsD2(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);

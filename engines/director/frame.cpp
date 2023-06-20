@@ -123,15 +123,20 @@ void Frame::readChannel(Common::MemoryReadStreamEndian &stream, uint16 offset, u
 	}
 }
 
+enum {
+	kMainChannelSizeD2 = 32,
+	kSprChannelSizeD2 = 16
+};
+
 void Frame::readChannelD2(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
-	if (offset >= 32) {
-		if (size <= 16)
+	if (offset >= kMainChannelSizeD2) {
+		if (size <= kSprChannelSizeD2)
 			readSpriteD2(stream, offset, size);
 		else {
 			// read > 1 sprites channel
-			while (size > 16) {
-				byte spritePosition = (offset - 32) / 16;
-				uint16 nextStart = (spritePosition + 1) * 16 + 32;
+			while (size > kSprChannelSizeD2) {
+				byte spritePosition = (offset - kMainChannelSizeD2) / kSprChannelSizeD2;
+				uint16 nextStart = (spritePosition + 1) * kSprChannelSizeD2 + kMainChannelSizeD2;
 				uint16 needSize = nextStart - offset;
 				readSpriteD2(stream, offset, needSize);
 				offset += needSize;
@@ -522,18 +527,21 @@ Common::String Frame::formatChannelInfo() {
 
 void Frame::readMainChannelsD2(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
 	uint16 finishPosition = offset + size;
+	byte unk[6];
 
 	while (offset < finishPosition) {
-		switch(offset) {
-		case kScriptIdPosition:
+		switch (offset) {
+		case 0: // Sound/Tempo/Transition
 			_actionId = CastMemberID(stream.readByte(), DEFAULT_CAST_LIB);
 			offset++;
 			break;
-		case kSoundType1Position:
+		case 1:
+			// type: 0x17 for sounds (sound is cast id), 0x16 for MIDI (sound is cmd id)
 			_soundType1 = stream.readByte();
 			offset++;
 			break;
-		case kTransFlagsPosition: {
+		case 2: {
+				// 0x80 is whole stage (vs changed area), rest is duration in 1/4ths of a second
 				uint8 transFlags = stream.readByte();
 				if (transFlags & 0x80)
 					_transArea = 1;
@@ -543,61 +551,90 @@ void Frame::readMainChannelsD2(Common::MemoryReadStreamEndian &stream, uint16 of
 				offset++;
 			}
 			break;
-		case kTransChunkSizePosition:
+		case 3:
 			_transChunkSize = stream.readByte();
 			offset++;
 			break;
-		case kTempoPosition:
+		case 4:
 			_tempo = stream.readByte();
 			offset++;
 			break;
-		case kTransTypePosition:
+		case 5:
 			_transType = static_cast<TransitionType>(stream.readByte());
 			offset++;
 			break;
-		case kSound1Position:
+		case 6:
 			_sound1 = CastMemberID(stream.readUint16(), DEFAULT_CAST_LIB);
-			offset+=2;
+			offset += 2;
 			break;
-		case kSkipFrameFlagsPosition:
-			_skipFrameFlag = stream.readByte();
-			offset++;
-			break;
-		case kBlendPosition:
-			_blend = stream.readByte();
-			offset++;
-			break;
-		case kSound2Position:
+		case 8:
 			_sound2 = CastMemberID(stream.readUint16(), DEFAULT_CAST_LIB);
 			offset += 2;
 			break;
-		case kSound2TypePosition:
+		case 10:
 			_soundType2 = stream.readByte();
-			offset += 1;
+			offset++;
 			break;
-		case kPalettePosition:
-			if (stream.readUint16())
-				readPaletteInfo(stream);
+		case 11:
+			_skipFrameFlag = stream.readByte();
+			offset++;
+			break;
+		case 12:
+			_blend = stream.readByte();
+			offset++;
+			break;
+		case 13:
+			if (_vm->getPlatform() == Common::kPlatformWindows) {
+				_sound2 = CastMemberID(stream.readUint16(), DEFAULT_CAST_LIB);
+				_soundType2 = stream.readByte();
+			} else {
+				stream.read(unk, 3);
+				debugC(8, kDebugLoading, "Frame::readChannels(): STUB: unk1: %02x %02x %02x", unk[0], unk[1], unk[2]);
+			}
+			offset += 3;
+			break;
+		case 16: {
+				// palette
+				int16 paletteId = stream.readSint16();
+				if (paletteId == 0) {
+					_palette.paletteId = CastMemberID(0, 0);
+				} else if (paletteId < 0) {
+					_palette.paletteId = CastMemberID(paletteId, -1);
+				} else {
+					_palette.paletteId = CastMemberID(paletteId, DEFAULT_CAST_LIB);
+				}
+
+				// loop points for color cycling
+				_palette.firstColor = g_director->transformColor(stream.readByte() ^ 0x80);
+				_palette.lastColor = g_director->transformColor(stream.readByte() ^ 0x80);
+				_palette.flags = stream.readByte();
+				_palette.colorCycling = (_palette.flags & 0x80) != 0;
+				_palette.normal = (_palette.flags & 0x60) == 0x00;
+				_palette.fadeToBlack = (_palette.flags & 0x60) == 0x60;
+				_palette.fadeToWhite = (_palette.flags & 0x60) == 0x40;
+				_palette.autoReverse = (_palette.flags & 0x10) != 0;
+				_palette.overTime = (_palette.flags & 0x04) != 0;
+				_palette.speed = stream.readByte();
+				_palette.frameCount = stream.readUint16();
+				_palette.cycleCount = stream.readUint16();
+
+				stream.read(unk, 6);
+
+				debugC(8, kDebugLoading, "Frame::readChannels(): STUB: unk1: %02x %02x %02x %02x %02x %02x", unk[0],
+					unk[1], unk[2], unk[3], unk[4], unk[5]);
+			}
 			offset += 16;
 			break;
+		case 32:
+			break;
 		default:
-			offset++;
-			stream.readByte();
-			debugC(1, kDebugLoading, "Frame::readMainChannels: Field Position %d, Finish Position %d", offset, finishPosition);
+			error("Frame::readMainChannelsD2(): Miscomputed field position: %d", offset);
 			break;
 		}
 	}
 
-	debugC(1, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId.member, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1.member, _skipFrameFlag, _blend, _sound2.member, _soundType2);
-}
-
-void Frame::readPaletteInfo(Common::SeekableReadStreamEndian &stream) {
-	_palette.firstColor = stream.readByte();
-	_palette.lastColor = stream.readByte();
-	_palette.flags = stream.readByte();
-	_palette.speed = stream.readByte();
-	_palette.frameCount = stream.readUint16();
-	stream.skip(8); // unknown
+	_transChunkSize = CLIP<byte>(_transChunkSize, 0, 128);
+	_transDuration = CLIP<uint16>(_transDuration, 0, 32000);  // restrict to 32 secs
 }
 
 void Frame::readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
@@ -703,7 +740,6 @@ void Frame::readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 of
 				// loop points for color cycling
 				_palette.firstColor = g_director->transformColor(stream.readByte() + 0x80); // 22
 				_palette.lastColor = g_director->transformColor(stream.readByte() + 0x80); // 23
-				warning("first: %d last: %d", _palette.firstColor, _palette.lastColor);
 				_palette.flags = stream.readByte(); // 24
 				_palette.colorCycling = (_palette.flags & 0x80) != 0;
 				_palette.normal = (_palette.flags & 0x60) == 0x00;
@@ -761,15 +797,20 @@ void Frame::readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 of
 }
 
 void Frame::readSpriteD2(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
-	uint16 spritePosition = (offset - 32) / 16;
-	uint16 spriteStart = spritePosition * 16 + 32;
+	uint16 spritePosition = (offset - kMainChannelSizeD2) / kSprChannelSizeD2;
+	uint16 spriteStart = spritePosition * kSprChannelSizeD2 + kMainChannelSizeD2;
 
 	uint16 fieldPosition = offset - spriteStart;
 	uint16 finishPosition = fieldPosition + size;
 
-	Sprite &sprite = *_sprites[spritePosition];
-	int x1 = 0;
-	int x2 = 0;
+	if (debugChannelSet(8, kDebugLoading)) {
+		debugC(8, kDebugLoading, "Frame::readSpriteD2(): channel %d, 16 bytes", spritePosition);
+		stream.hexdump(kSprChannelSizeD2);
+	}
+
+	debugC(3, kDebugLoading, "Frame::readSpriteD2(): sprite: %d offset: %d size: %d, field: %d", spritePosition, offset, size, fieldPosition);
+
+	Sprite &sprite = *_sprites[spritePosition + 1];
 
 	if (sprite._puppet || sprite._autoPuppet) {
 		stream.skip(size);
@@ -778,58 +819,79 @@ void Frame::readSpriteD2(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 
 	while (fieldPosition < finishPosition) {
 		switch (fieldPosition) {
-		case kSpritePositionUnk1:
-			x1 = stream.readByte();
+		case 0:
+			sprite._scriptId = CastMemberID(stream.readByte(), DEFAULT_CAST_LIB);
 			fieldPosition++;
 			break;
-		case kSpritePositionEnabled:
-			sprite._enabled = (stream.readByte() != 0);
+		case 1:
+			sprite._spriteType = (SpriteType)stream.readByte();
 			fieldPosition++;
-			break;
-		case kSpritePositionUnk2:
-			x2 = stream.readUint16();
-			fieldPosition += 2;
-			break;
-		case kSpritePositionFlags:
-			sprite._thickness = stream.readByte();
-			sprite._inkData = stream.readByte();
-			sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
 
+			sprite._enabled = sprite._spriteType != kInactiveSprite;
+			break;
+		case 2:
+			// Normalize D2 and D3 colors from -128 ... 127 to 0 ... 255.
+			sprite._foreColor = _vm->transformColor((128 + stream.readByte()) & 0xff);
+			fieldPosition++;
+			break;
+		case 3:
+			// Normalize D2 and D3 colors from -128 ... 127 to 0 ... 255.
+			sprite._backColor = _vm->transformColor((128 + stream.readByte()) & 0xff);
+			fieldPosition++;
+			break;
+		case 4:
+			sprite._thickness = stream.readByte();
+			fieldPosition++;
+			break;
+		case 5:
+			sprite._inkData = stream.readByte();
+			fieldPosition++;
+
+			sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
 			if (sprite._inkData & 0x40)
 				sprite._trails = 1;
 			else
 				sprite._trails = 0;
 
+			break;
+		case 6:
+			if (sprite.isQDShape()) {
+				sprite._pattern = stream.readUint16();
+			} else {
+				sprite._castId = CastMemberID(stream.readUint16(), DEFAULT_CAST_LIB);
+			}
 			fieldPosition += 2;
 			break;
-		case kSpritePositionCastId:
-			sprite._castId = CastMemberID(stream.readUint16(), DEFAULT_CAST_LIB);
+		case 8:
+			sprite._startPoint.y = (int16)stream.readUint16();
 			fieldPosition += 2;
 			break;
-		case kSpritePositionY:
-			sprite._startPoint.y = stream.readUint16();
+		case 10:
+			sprite._startPoint.x = (int16)stream.readUint16();
 			fieldPosition += 2;
 			break;
-		case kSpritePositionX:
-			sprite._startPoint.x = stream.readUint16();
+		case 12:
+			sprite._height = (int16)stream.readUint16();
 			fieldPosition += 2;
 			break;
-		case kSpritePositionWidth:
-			sprite._width = stream.readUint16();
+		case 14:
+			sprite._width = (int16)stream.readUint16();
 			fieldPosition += 2;
 			break;
-		case kSpritePositionHeight:
-			sprite._height = stream.readUint16();
-			fieldPosition += 2;
-			break;
-		default:
+		case 16:
 			// end of channel, go to next sprite channel
-			readSpriteD2(stream, spriteStart + 16, finishPosition - fieldPosition);
+			readSpriteD2(stream, spriteStart + kSprChannelSizeD2, finishPosition - fieldPosition);
 			fieldPosition = finishPosition;
 			break;
+		default:
+			error("Frame::readSpriteD2(): Miscomputed field position: %d", fieldPosition);
 		}
 	}
-	warning("Frame::readSpriteD2(): %s(%d)[%x,%x,%02x %02x,%d/%d/%d/%d]", sprite._castId.asString().c_str(), sprite._enabled, x1, x2, sprite._thickness, sprite._inkData, sprite._startPoint.x, sprite._startPoint.y, sprite._width, sprite._height);
+
+	// Sometimes removed sprites leave garbage in the channel
+	// We set it to zero, so then could skip
+	if (sprite._width <= 0 || sprite._height <= 0)
+		sprite._width = sprite._height = 0;
 }
 
 void Frame::readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
