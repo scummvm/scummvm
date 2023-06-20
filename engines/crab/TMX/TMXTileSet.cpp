@@ -155,6 +155,9 @@ void TileSetGroup::ForceDraw(MapLayer &layer, const Rect &camera, const Vector2i
 	start.x = player_pos.y / tile_size.y;
 	start.y = player_pos.x / tile_size.x;
 
+	if(start.x < 0 || start.y < 0)
+		return;
+
 	// The row and column we end drawing at
 	finish.x = (player_pos.y + player_pos.h) / tile_size.y + 1;
 	finish.y = (player_pos.x + player_pos.w) / tile_size.x + 1;
