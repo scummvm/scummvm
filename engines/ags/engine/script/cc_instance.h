@@ -38,9 +38,11 @@ using namespace AGS;
 #define INSTF_ABORTED       2
 #define INSTF_FREE          4
 #define INSTF_RUNNING       8   // set by main code to confirm script isn't stuck
-#define CC_STACK_SIZE       250
-#define CC_STACK_DATA_SIZE  (1000 * sizeof(int32_t))
-#define MAX_CALL_STACK      100
+
+#define CC_STACK_SIZE		256
+#define CC_STACK_DATA_SIZE	(1024 * sizeof(int32_t))
+#define MAX_CALL_STACK		128
+#define MAX_FUNCTION_PARAMS	20
 
 // 256 because we use 8 bits to hold instance number
 #define MAX_LOADED_INSTANCES 256

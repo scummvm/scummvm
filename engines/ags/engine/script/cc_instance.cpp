@@ -307,7 +307,7 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 		return -1; // TODO: correct error value
 	}
 
-	if ((numargs >= 20) || (numargs < 0)) {
+	if ((numargs >= MAX_FUNCTION_PARAMS) || (numargs < 0)) {
 		cc_error("too many arguments to function");
 		return -3;
 	}
