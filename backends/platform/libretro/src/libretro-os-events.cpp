@@ -78,7 +78,7 @@ void OSystem_libretro::delayMillis(uint msecs) {
 			/* When remaining delay would take us past the next thread switch time, we switch immediately
 			in order to burn as much as possible delay time in the main RetroArch thread as soon as possible. */
 			if (msecs - elapsed_time >= ((LibretroTimerManager *)_timerManager)->timeToNextSwitch())
-				((LibretroTimerManager *)_timerManager)->switchThread();
+				((LibretroTimerManager *)_timerManager)->checkThread();
 			else
 				usleep(1000);
 
@@ -91,7 +91,7 @@ void OSystem_libretro::delayMillis(uint msecs) {
 			/* if remaining delay is lower than last amount of time spent on main thread, burn it in emu thread
 			to avoid exceeding requested delay */
 			if (msecs - elapsed_time >= ((LibretroTimerManager *)_timerManager)->spentOnMainThread() && !((LibretroTimerManager *)_timerManager)->timeToNextSwitch())
-				((LibretroTimerManager *)_timerManager)->switchThread();
+				((LibretroTimerManager *)_timerManager)->checkThread();
 			else
 				usleep(1000);
 			elapsed_time = getMillis() - start_time;
