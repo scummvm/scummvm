@@ -128,12 +128,7 @@ public:
 	}
 
 	inline RuntimeScriptValue &Invalidate() {
-		Type = kScValUndefined;
-		methodName.clear();
-		IValue = 0;
-		Ptr = nullptr;
-		MgrPtr = nullptr;
-		Size = 0;
+		*this = RuntimeScriptValue();
 		return *this;
 	}
 	inline RuntimeScriptValue &SetUInt8(uint8_t val) {
