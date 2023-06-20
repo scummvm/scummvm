@@ -67,6 +67,7 @@ MODULE_OBJS = \
 	lingo/xlibs/dpwqtw.o \
 	lingo/xlibs/draw.o \
 	lingo/xlibs/ednox.o \
+	lingo/xlibs/eventq.o \
 	lingo/xlibs/fedracul.o \
 	lingo/xlibs/feimasks.o \
 	lingo/xlibs/feiprefs.o \
