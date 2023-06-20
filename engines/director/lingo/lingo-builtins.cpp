@@ -23,6 +23,7 @@
 #include "common/tokenizer.h"
 #include "common/translation.h"
 
+#include "director/types.h"
 #include "gui/message.h"
 
 #include "graphics/macgui/macwindowmanager.h"
@@ -1660,9 +1661,17 @@ void LB::b_HMStoFrames(int nargs) {
 }
 
 void LB::b_param(int nargs) {
-	g_lingo->printSTUBWithArglist("b_param", nargs);
-
-	g_lingo->dropStack(nargs);
+	int pos = g_lingo->pop().asInt();
+	Datum result;
+	CFrame *cf = g_lingo->_state->callstack[g_lingo->_state->callstack.size() - 1];
+	if (pos > 0 && cf->sp.argNames && (int)cf->sp.argNames->size() <= pos) {
+		Datum func((*cf->sp.argNames)[pos - 1]);
+		func.type = LOCALREF;
+		result = g_lingo->varFetch(func);
+	} else {
+		warning("Invalid argument position %d", pos);
+	}
+	g_lingo->push(result);
 }
 
 void LB::b_printFrom(int nargs) {
