@@ -53,7 +53,9 @@ using namespace AGS;
 
 // Script executor debugging flag:
 // enables mistake checks, but slows things down!
+#ifndef DEBUG_CC_EXEC
 #define DEBUG_CC_EXEC (AGS_PLATFORM_DEBUG)
+#endif
 
 struct ScriptInstruction {
 	ScriptInstruction() = default;
