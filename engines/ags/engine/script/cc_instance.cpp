@@ -447,10 +447,12 @@ int ccInstance::Run(int32_t curpc) {
 	thisbase[0] = 0;
 	funcstart[0] = pc;
 	ccInstance *codeInst = runningInst;
-	bool write_debug_dump = ccGetOption(SCOPT_DEBUGRUN) ||
-		(gDebugLevel > 0 && DebugMan.isDebugChannelEnabled(::AGS::kDebugScript));
 	ScriptOperation codeOp;
 	FunctionCallStack func_callstack;
+#if DEBUG_CC_EXEC
+	const bool dump_opcodes = ccGetOption(SCOPT_DEBUGRUN) ||
+							  (gDebugLevel > 0 && DebugMan.isDebugChannelEnabled(::AGS::kDebugScript));
+#endif
 	int loopIterationCheckDisabled = 0;
 	unsigned loopIterations = 0u;      // any loop iterations (needed for timeout test)
 	unsigned loopCheckIterations = 0u; // loop iterations accumulated only if check is enabled
@@ -546,9 +548,11 @@ int ccInstance::Run(int32_t curpc) {
 		const char *direct_ptr1;
 		const char *direct_ptr2;
 
-		if (write_debug_dump) {
+#if (DEBUG_CC_EXEC)
+		if (dump_opcodes) {
 			DumpInstruction(codeOp);
 		}
+#endif
 
 		switch (codeOp.Instruction.Code) {
 		case SCMD_LINENUM:
