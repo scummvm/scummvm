@@ -288,24 +288,24 @@ void ccInstance::AbortAndDestroy() {
 // returns failure on error
 #if (DEBUG_CC_EXEC)
 
-#define CC_ERROR_IF(COND, ERROR) \
+#define CC_ERROR_IF(COND, ERROR, ...) \
 	if (COND) \
 	{ \
-		cc_error(ERROR); \
+		cc_error(ERROR, ##__VA_ARGS__); \
 		return; \
 	}
 
-#define CC_ERROR_IF_RETCODE(COND, ERROR) \
+#define CC_ERROR_IF_RETCODE(COND, ERROR, ...) \
 	if (COND) \
 	{ \
-		cc_error(ERROR); \
+		cc_error(ERROR, ##__VA_ARGS__); \
 		return -1; \
 	}
 
-#define CC_ERROR_IF_RETVAL(COND, ERROR, T) \
+#define CC_ERROR_IF_RETVAL(COND, T, ERROR, ...) \
 	if (COND) \
 	{ \
-		cc_error(ERROR); \
+		cc_error(ERROR, ##__VA_ARGS__); \
 		return T(); \
 	}
 
@@ -317,9 +317,9 @@ void ccInstance::AbortAndDestroy() {
 
 #else
 
-#define CC_ERROR_IF(COND, ERROR)
-#define CC_ERROR_IF_RETCODE(COND, ERROR)
-#define CC_ERROR_IF_RETVAL(COND, ERROR, T)
+#define CC_ERROR_IF(COND, ERROR, ...)
+#define CC_ERROR_IF_RETCODE(COND, ERROR, ...)
+#define CC_ERROR_IF_RETVAL(COND, T, ERROR, ...)
 #define ASSERT_CC_ERROR()
 
 #endif // DEBUG_CC_EXEC
@@ -503,7 +503,7 @@ int ccInstance::Run(int32_t curpc) {
 	ScriptOperation codeOp;
 	FunctionCallStack func_callstack;
 #if DEBUG_CC_EXEC
-	const bool dump_opcodes = ccGetOption(SCOPT_DEBUGRUN) ||
+	const bool dump_opcodes = (ccGetOption(SCOPT_DEBUGRUN) != 0) ||
 							  (gDebugLevel > 0 && DebugMan.isDebugChannelEnabled(::AGS::kDebugScript));
 #endif
 	int loopIterationCheckDisabled = 0;
@@ -529,16 +529,13 @@ int ccInstance::Run(int32_t curpc) {
 		codeOp.Instruction.InstanceId   = (codeOp.Instruction.Code >> INSTANCE_ID_SHIFT) & INSTANCE_ID_MASK;
 		codeOp.Instruction.Code        &= INSTANCE_ID_REMOVEMASK; // now this is pure instruction code
 
-		if (codeOp.Instruction.Code < 0 || codeOp.Instruction.Code >= CC_NUM_SCCMDS) {
-			cc_error("invalid instruction %d found in code stream", codeOp.Instruction.Code);
-			return -1;
-		}
+		CC_ERROR_IF_RETCODE((codeOp.Instruction.Code < 0 || codeOp.Instruction.Code >= CC_NUM_SCCMDS),
+							"invalid instruction %d found in code stream", codeOp.Instruction.Code);
 
-		codeOp.ArgCount = (*g_commands)[codeOp.Instruction.Code].ArgCount;
-		if (pc + codeOp.ArgCount >= codeInst->codesize) {
-			cc_error("unexpected end of code data (%d; %d)", pc + codeOp.ArgCount, codeInst->codesize);
-			return -1;
-		}
+		codeOp.ArgCount = (*g_commands)[codeOp.Instruction.Code].ArgCount & 0x3;
+
+		CC_ERROR_IF_RETCODE(pc + codeOp.ArgCount >= codeInst->codesize,
+							"unexpected end of code data (%d; %d)", pc + codeOp.ArgCount, codeInst->codesize);
 
 		int pc_at = pc + 1;
 		for (int i = 0; i < codeOp.ArgCount; ++i, ++pc_at) {
@@ -1984,8 +1981,8 @@ RuntimeScriptValue ccInstance::GetStackPtrOffsetFw(int32_t fw_offset) {
 		stack_entry++;
 		total_off += stack_entry->Size;
 	}
-	CC_ERROR_IF_RETVAL(total_off < fw_offset, "accessing address beyond stack's tail", RuntimeScriptValue);
-	CC_ERROR_IF_RETVAL(total_off > fw_offset, "stack offset forward: trying to access stack data inside stack entry, stack corrupted?", RuntimeScriptValue);
+	CC_ERROR_IF_RETVAL(total_off < fw_offset, RuntimeScriptValue, "accessing address beyond stack's tail");
+	CC_ERROR_IF_RETVAL(total_off > fw_offset, RuntimeScriptValue, "stack offset forward: trying to access stack data inside stack entry, stack corrupted?");
 	RuntimeScriptValue stack_ptr;
 	stack_ptr.SetStackPtr(stack_entry);
 	return stack_ptr;
@@ -1998,12 +1995,12 @@ RuntimeScriptValue ccInstance::GetStackPtrOffsetRw(int32_t rw_offset) {
 		stack_entry--;
 		total_off += stack_entry->Size;
 	}
-	CC_ERROR_IF_RETVAL(total_off < rw_offset, "accessing address before stack's head", RuntimeScriptValue);
+	CC_ERROR_IF_RETVAL(total_off < rw_offset, RuntimeScriptValue, "accessing address before stack's head");
 	RuntimeScriptValue stack_ptr;
 	stack_ptr.SetStackPtr(stack_entry);
 	stack_ptr.IValue += total_off - rw_offset; // possibly offset to the mid-array
 	// Could be accessing array element, so state error only if stack entry does not refer to data array
-	CC_ERROR_IF_RETVAL((total_off > rw_offset) && (stack_entry->Type != kScValData), "stack offset backward: trying to access stack data inside stack entry, stack corrupted?", RuntimeScriptValue)
+	CC_ERROR_IF_RETVAL((total_off > rw_offset) && (stack_entry->Type != kScValData), RuntimeScriptValue, "stack offset backward: trying to access stack data inside stack entry, stack corrupted?")
 	return stack_ptr;
 }
 
