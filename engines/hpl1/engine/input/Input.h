@@ -33,7 +33,7 @@
 #include "hpl1/engine/input/InputTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/std/map.h"
-#include "hpl1/std/multimap.h"
+#include "common/multimap.h"
 
 namespace hpl {
 
@@ -46,7 +46,7 @@ class iAction;
 typedef Hpl1::Std::map<tString, iAction *> tActionMap;
 typedef tActionMap::iterator tActionMapIt;
 
-typedef Hpl1::Std::multimap<tString, iAction *> tActionMultiMap;
+typedef Common::MultiMap<tString, iAction *> tActionMultiMap;
 typedef tActionMultiMap::iterator tActionMultiMapIt;
 
 typedef Common::List<iInputDevice *> tInputDeviceList;

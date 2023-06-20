@@ -31,7 +31,7 @@
 #include "hpl1/engine/system/SerializeClass.h"
 #include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/std/map.h"
-#include "hpl1/std/multimap.h"
+#include "common/multimap.h"
 
 class TiXmlElement;
 
@@ -172,7 +172,7 @@ private:
 
 //---------------------------------------------------------
 
-typedef Hpl1::Std::multimap<int, iSaveObject *> tSaveObjectMap;
+typedef Common::MultiMap<int, iSaveObject *> tSaveObjectMap;
 typedef tSaveObjectMap::iterator tSaveObjectMapIt;
 
 typedef cSTLMapIterator<iSaveObject *, tSaveObjectMap, tSaveObjectMapIt> cSaveObjectIterator;
@@ -203,7 +203,7 @@ private:
 
 //---------------------------------------------------------
 
-typedef Hpl1::Std::multimap<int, iSaveData *> tSaveDataMap;
+typedef Common::MultiMap<int, iSaveData *> tSaveDataMap;
 typedef tSaveDataMap::iterator tSaveDataMapIt;
 
 typedef cSTLMapIterator<iSaveData *, tSaveDataMap, tSaveDataMapIt> cSaveDataIterator;

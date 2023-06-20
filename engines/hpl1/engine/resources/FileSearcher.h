@@ -31,13 +31,13 @@
 #include "hpl1/engine/resources/ResourcesTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/std/map.h"
-#include "hpl1/std/multimap.h"
+#include "common/multimap.h"
 
 namespace hpl {
 
 class LowLevelResources;
 
-typedef Hpl1::Std::multimap<tString, tString> tFilePathMap;
+typedef Common::MultiMap<tString, tString> tFilePathMap;
 typedef tFilePathMap::iterator tFilePathMapIt;
 
 class cFileSearcher {

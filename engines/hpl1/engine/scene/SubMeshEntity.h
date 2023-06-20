@@ -37,7 +37,7 @@
 #include "hpl1/engine/scene/SectorVisibility.h"
 #include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/std/map.h"
-#include "hpl1/std/multimap.h"
+#include "common/multimap.h"
 
 namespace hpl {
 
@@ -177,7 +177,7 @@ private:
 typedef Common::Array<cSubMeshEntity *> tSubMeshEntityVec;
 typedef Common::Array<cSubMeshEntity *>::iterator tSubMeshEntityVecIt;
 
-typedef Hpl1::Std::multimap<tString, cSubMeshEntity *> tSubMeshEntityMap;
+typedef Common::MultiMap<tString, cSubMeshEntity *> tSubMeshEntityMap;
 typedef tSubMeshEntityMap::iterator tSubMeshEntityMapIt;
 
 } // namespace hpl

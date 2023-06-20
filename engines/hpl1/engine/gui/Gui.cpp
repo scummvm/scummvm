@@ -42,7 +42,7 @@
 #include "hpl1/engine/resources/TextureManager.h"
 
 #include "hpl1/engine/gui/GuiMaterialBasicTypes.h"
-#include "hpl1/std/multimap.h"
+#include "common/multimap.h"
 
 namespace hpl {
 
@@ -164,7 +164,7 @@ void cGui::OnPostSceneDraw() {
 //-----------------------------------------------------------------------
 
 void cGui::OnPostGUIDraw() {
-	typedef Hpl1::Std::multimap<int, cGuiSet *> tPrioMap;
+	typedef Common::MultiMap<int, cGuiSet *> tPrioMap;
 	tPrioMap mapSortedSets;
 
 	tGuiSetMapIt it = m_mapSets.begin();

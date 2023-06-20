@@ -34,7 +34,7 @@
 #define kCopyFromVar(aVar, aVal) (aVal = aVar->aVal)
 
 #include "hpl1/engine/engine.h"
-#include "hpl1/std/multimap.h"
+#include "common/multimap.h"
 
 using namespace hpl;
 
@@ -243,7 +243,7 @@ class cInventoryUseCallback : public iSerializable {
 	tString msFunction;
 };
 
-typedef Hpl1::Std::multimap<tString, cInventoryUseCallback *> tInventoryUseCallbackMap;
+typedef Common::MultiMap<tString, cInventoryUseCallback *> tInventoryUseCallbackMap;
 typedef tInventoryUseCallbackMap::iterator tInventoryUseCallbackMapIt;
 
 //-----------------------------------------
@@ -253,7 +253,7 @@ class cInventoryPickupCallback : public iSerializable {
 	tString msFunction;
 };
 
-typedef Hpl1::Std::multimap<tString, cInventoryPickupCallback *> tInventoryPickupCallbackMap;
+typedef Common::MultiMap<tString, cInventoryPickupCallback *> tInventoryPickupCallbackMap;
 typedef tInventoryPickupCallbackMap::iterator tInventoryPickupCallbackMapIt;
 
 //-----------------------------------------
