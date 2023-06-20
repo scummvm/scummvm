@@ -1937,10 +1937,12 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		if (!member) {
 			if (propName.equalsIgnoreCase("loaded")) {
 				d = 0;
-			} else  if (propName.equalsIgnoreCase("filename")) {
+			} else if (propName.equalsIgnoreCase("filename")) {
 				d = Datum(Common::String());
+			} else if (id.member <= getMembersNum()) {
+				warning("Lingo::getObjectProp(): %s not found", id.asString().c_str());
 			} else {
-				g_lingo->lingoError("Lingo::getObjectProp(): %s not found", id.asString().c_str());
+				g_lingo->lingoError("Lingo::getObjectProp(): %s not found and out of range", id.asString().c_str());
 			}
 			g_lingo->push(d);
 			return;
