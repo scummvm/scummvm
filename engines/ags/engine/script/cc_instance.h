@@ -51,6 +51,10 @@ using namespace AGS;
 #define INSTANCE_ID_MASK  0x00000000000000ffLL
 #define INSTANCE_ID_REMOVEMASK 0x0000000000ffffffLL
 
+// Script executor debugging flag:
+// enables mistake checks, but slows things down!
+#define DEBUG_CC_EXEC (AGS_PLATFORM_DEBUG)
+
 struct ScriptInstruction {
 	ScriptInstruction() {
 		Code = 0;
