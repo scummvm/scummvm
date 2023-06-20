@@ -415,7 +415,7 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 
 		// for the non-puppet QDShape, since we won't use isDirty to check whether the QDShape is changed.
 		// so we may always keep the sprite info because we need it to draw QDShape.
-		if (_sprite->_puppet || (!nextSprite->isQDShape() && partial)) {
+		if (_sprite->_puppet || _sprite->_autoPuppet || (!nextSprite->isQDShape() && partial)) {
 			// Updating scripts, etc. does not require a full re-render
 			_sprite->_scriptId = nextSprite->_scriptId;
 		} else {
