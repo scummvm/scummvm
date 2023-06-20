@@ -56,23 +56,27 @@ using namespace AGS;
 #define DEBUG_CC_EXEC (AGS_PLATFORM_DEBUG)
 
 struct ScriptInstruction {
-	ScriptInstruction() {
-		Code = 0;
-		InstanceId = 0;
-	}
+	ScriptInstruction() = default;
+	ScriptInstruction(int code, int instid) : Code(code), InstanceId(instid) {}
 
-	int32_t Code;
-	int32_t InstanceId;
+	int32_t Code = 0;
+	int32_t InstanceId = 0;
 };
 
 struct ScriptOperation {
-	ScriptOperation() {
-		ArgCount = 0;
-	}
-
 	ScriptInstruction   Instruction;
 	RuntimeScriptValue  Args[MAX_SCMD_ARGS];
-	int                 ArgCount;
+	int                 ArgCount = 0;
+
+	// Helper functions for clarity of intent:
+	// returns argN, 1-based
+	inline const RuntimeScriptValue &Arg1() const { return Args[0]; }
+	inline const RuntimeScriptValue &Arg2() const { return Args[1]; }
+	inline const RuntimeScriptValue &Arg3() const { return Args[2]; }
+	// returns argN as a integer literal
+	inline int Arg1i() const { return Args[0].IValue; }
+	inline int Arg2i() const { return Args[1].IValue; }
+	inline int Arg3i() const { return Args[2].IValue; }
 };
 
 struct ScriptVariable {
