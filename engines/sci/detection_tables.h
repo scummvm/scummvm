@@ -4007,6 +4007,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_PHANTASMAGORIA },
 
+	// Phantasmagoria - Hebrew fan translation - by https://github.com/adventurebrew/HebrewAdventure
+	{"phantasmagoria", "", {
+		{"ressci.000", 0, "cd5967f9b9586e3380645961c0765be3", 116822037},
+		{"resmap.000", 0, "3cafc1c6a53945c1f3babbfd6380c64c", 16468},
+		{"PATCHES/0.fon", 0, "968b7450e2994ff48b276fdf8fbd68fe", 3828},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_PHANTASMAGORIA },
+
 	// Phantasmagoria - German Patch V3 externally applied to GOG English DOS/Windows version
 	{"phantasmagoria", "", {
 		{"ressci.000", 0, "cd5967f9b9586e3380645961c0765be3", 116817874},
