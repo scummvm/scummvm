@@ -4,7 +4,7 @@
 #endif
 
 #include "common/str.h"
-#include "hpl1/std/map.h"
+#include "common/stablemap.h"
 #include "hpl1/debug.h"
 
 // This macro is used to avoid warnings about unused variables.
@@ -12,12 +12,12 @@
 #define UNUSED_VAR(x) (void)(x)
 
 struct StrComp {
-	bool operator()(const Common::String *a, const Common::String *b) {
+	bool operator()(const Common::String *a, const Common::String *b) const {
 		return *a < *b;
 	}
 };
 
-using map_t = Hpl1::Std::map<const Common::String *, int, StrComp>;
+using map_t = Common::StableMap<const Common::String *, int, StrComp>;
 
 BEGIN_AS_NAMESPACE
 class CStdStringFactory : public asIStringFactory {

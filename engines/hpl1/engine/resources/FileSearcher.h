@@ -30,7 +30,7 @@
 
 #include "hpl1/engine/resources/ResourcesTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include "hpl1/std/map.h"
+#include "common/stablemap.h"
 #include "common/multimap.h"
 
 namespace hpl {

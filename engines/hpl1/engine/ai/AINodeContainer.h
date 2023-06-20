@@ -92,7 +92,7 @@ typedef tAINodeVec::iterator tAINodeVecIt;
 typedef Common::List<cAINode *> tAINodeList;
 typedef tAINodeList::iterator tAINodeListIt;
 
-typedef Hpl1::Std::map<tString, cAINode *> tAINodeMap;
+typedef Common::StableMap<tString, cAINode *> tAINodeMap;
 typedef tAINodeMap::iterator tAINodeMapIt;
 
 //--------------------------------

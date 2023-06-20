@@ -39,8 +39,8 @@ class iTexture;
 
 //------------------------------------------------------
 
-typedef Hpl1::Std::map<tString, iTexture *> tTextureAttenuationMap;
-typedef Hpl1::Std::map<tString, iTexture *>::iterator tTextureAttenuationMapIt;
+typedef Common::StableMap<tString, iTexture *> tTextureAttenuationMap;
+typedef Common::StableMap<tString, iTexture *>::iterator tTextureAttenuationMapIt;
 
 //------------------------------------------------------
 

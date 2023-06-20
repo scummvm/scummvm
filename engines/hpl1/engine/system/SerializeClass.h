@@ -31,7 +31,7 @@
 #include "hpl1/engine/system/MemoryManager.h"
 #include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/static_string.h"
-#include "hpl1/std/map.h"
+#include "common/stablemap.h"
 
 class TiXmlElement;
 
@@ -275,7 +275,7 @@ private:
 
 //-------------------------------------------------
 
-typedef Hpl1::Std::map<Hpl1::StaticString, cSerializeSavedClass> tSerializeSavedClassMap;
+typedef Common::StableMap<Hpl1::StaticString, cSerializeSavedClass> tSerializeSavedClassMap;
 typedef tSerializeSavedClassMap::iterator tSerializeSavedClassMapIt;
 
 typedef Common::List<cSerializeSavedClass *> tSerializeSavedClassList;

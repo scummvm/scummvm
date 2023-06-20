@@ -31,7 +31,7 @@
 #include "hpl1/engine/game/GameTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
 
-#include "hpl1/std/map.h"
+#include "common/stablemap.h"
 
 namespace hpl {
 
@@ -69,7 +69,7 @@ private:
 	float mfTimeCount;
 };
 
-typedef Hpl1::Std::map<int, iAIState *> tAIStateMap;
+typedef Common::StableMap<int, iAIState *> tAIStateMap;
 typedef tAIStateMap::iterator tAIStateMapIt;
 
 //-----------------------------------------

@@ -32,7 +32,7 @@
 #include "hpl1/engine/game/Updateable.h"
 #include "hpl1/engine/input/InputTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include "hpl1/std/map.h"
+#include "common/stablemap.h"
 #include "common/multimap.h"
 
 namespace hpl {
@@ -43,7 +43,7 @@ class LowLevelInput;
 class iInputDevice;
 class iAction;
 
-typedef Hpl1::Std::map<tString, iAction *> tActionMap;
+typedef Common::StableMap<tString, iAction *> tActionMap;
 typedef tActionMap::iterator tActionMapIt;
 
 typedef Common::MultiMap<tString, iAction *> tActionMultiMap;

@@ -38,7 +38,7 @@
 
 #include "common/array.h"
 #include "hpl1/engine/scene/Light3D.h"
-#include "hpl1/std/map.h"
+#include "common/stablemap.h"
 #include "common/multimap.h"
 
 namespace hpl {
@@ -65,7 +65,7 @@ class cWorld3D;
 typedef Common::Array<cAnimation *> tAnimationVec;
 typedef tAnimationVec::iterator tAnimationVecIt;
 
-typedef Hpl1::Std::map<tString, int> tAnimationIndexMap;
+typedef Common::StableMap<tString, int> tAnimationIndexMap;
 typedef tAnimationIndexMap::iterator tAnimationIndexMapIt;
 
 typedef Common::Array<cSubMesh *> tSubMeshVec;

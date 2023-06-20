@@ -32,7 +32,7 @@
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/resources/ResourceBase.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include "hpl1/std/map.h"
+#include "common/stablemap.h"
 
 class TiXmlElement;
 
@@ -64,7 +64,7 @@ public:
 	tString msSound;
 };
 
-typedef Hpl1::Std::map<tString, cImageAnimation> tImageAnimationMap;
+typedef Common::StableMap<tString, cImageAnimation> tImageAnimationMap;
 typedef tImageAnimationMap::iterator tImageAnimationMapIt;
 
 class cImageEntityData : public iResourceBase {

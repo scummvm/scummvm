@@ -30,7 +30,7 @@
 
 #include "common/list.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include "hpl1/std/map.h"
+#include "common/stablemap.h"
 
 namespace hpl {
 
@@ -40,7 +40,7 @@ class LowLevelSystem;
 typedef Common::List<iUpdateable *> tUpdateableList;
 typedef tUpdateableList::iterator tUpdateableListIt;
 
-typedef Hpl1::Std::map<tString, tUpdateableList> tUpdateContainerMap;
+typedef Common::StableMap<tString, tUpdateableList> tUpdateContainerMap;
 typedef tUpdateContainerMap::iterator tUpdateContainerMapIt;
 
 class cUpdater {
