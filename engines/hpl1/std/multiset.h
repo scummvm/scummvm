@@ -22,14 +22,14 @@
 #ifndef HPL1_STD_MULTISET_H
 #define HPL1_STD_MULTISET_H
 
-#include "hpl1/std/tree.h"
+#include "common/rb_tree.h"
 
 namespace Hpl1 {
 namespace Std {
 
 template<class T, class CompFn = Common::Less<T> >
 class multiset {
-	using TreeT = Tree<T, T, Identity<T>, CompFn>;
+	using TreeT = Common::RBTree<T, T, Common::Identity<T>, CompFn>;
 
 public:
 	using iterator = typename TreeT::BasicIterator;

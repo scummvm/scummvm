@@ -22,14 +22,14 @@
 #ifndef HPL1_STD_SET_H
 #define HPL1_STD_SET_H
 
-#include "tree.h"
+#include "common/rb_tree.h"
 
 namespace Hpl1 {
 namespace Std {
 
 template<class T, class CompFn = Common::Less<T> >
 class set {
-	using TreeT = Tree<T, T, Identity<T>, CompFn>;
+	using TreeT = Common::RBTree<T, T, Common::Identity<T>, CompFn>;
 
 public:
 	using iterator = typename TreeT::BasicIterator;
@@ -77,7 +77,7 @@ public:
 	/**
 	 * Insert an element at the sorted position.
 	 */
-	pair<iterator, bool> insert(const T &item) {
+	Common::Pair<iterator, bool> insert(const T &item) {
 		const auto it = _items.lowerBound(item);
 		if (it == _items.end() || !CompareEq(*it, item)) {
 			const auto position = _items.insert(it, item);
