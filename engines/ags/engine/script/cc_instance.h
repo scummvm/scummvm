@@ -193,12 +193,9 @@ private:
 	bool    AddGlobalVar(const ScriptVariable &glvar);
 	ScriptVariable *FindGlobalVar(int32_t var_addr);
 	bool    CreateRuntimeCodeFixups(const ccScript *scri);
-	//bool    ReadOperation(ScriptOperation &op, int32_t at_pc);
 
 	// Begin executing script starting from the given bytecode index
 	int     Run(int32_t curpc);
-	// Runtime fixups
-	//bool    FixupArgument(intptr_t code_value, char fixup_type, RuntimeScriptValue &argument);
 
 	// Stack processing
 	// Push writes new value and increments stack ptr;

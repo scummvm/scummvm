@@ -460,16 +460,14 @@ int ccInstance::Run(int32_t curpc) {
 	//const auto timeout_abort = std::chrono::milliseconds(_G(timeoutAbortMs));
 	_lastAliveTs = AGS_Clock::now();
 
+	/* Main bytecode execution loop */
+	//=====================================================================
 	while ((flags & INSTF_ABORTED) == 0) {
-		if (_G(abort_engine))
-			return -1;
-
-		/*
-		if (!codeInst->ReadOperation(codeOp, pc))
-		{
-		    return -1;
-		}
-		*/
+		// WARNING: a time-critical code ahead;
+		// trying to pick some of the code out to separate function(s)
+		// may lead to a performance loss in script-heavy games.
+		// always compare execution speed before applying any major changes!
+		//
 		/* ReadOperation */
 		//=====================================================================
 		codeOp.Instruction.Code         = codeInst->code[pc];
@@ -491,15 +489,9 @@ int ccInstance::Run(int32_t curpc) {
 		for (int i = 0; i < codeOp.ArgCount; ++i, ++pc_at) {
 			char fixup = codeInst->code_fixups[pc_at];
 			if (fixup > 0) {
-				// could be relative pointer or import address
-				/*
-				if (!FixupArgument(code[pc], fixup, codeOp.Args[i]))
-				{
-				    return -1;
-				}
-				*/
 				/* FixupArgument */
 				//=====================================================================
+				// could be relative pointer or import address
 				switch (fixup) {
 				case FIXUP_GLOBALDATA: {
 					ScriptVariable *gl_var = (ScriptVariable *)codeInst->code[pc_at];
@@ -1728,89 +1720,6 @@ bool ccInstance::ResolveImportFixups(const ccScript *scri) {
 	}
 	return true;
 }
-
-/*
-bool ccInstance::ReadOperation(ScriptOperation &op, int32_t at_pc)
-{
-    op.Instruction.Code         = code[at_pc];
-    op.Instruction.InstanceId   = (op.Instruction.Code >> INSTANCE_ID_SHIFT) & INSTANCE_ID_MASK;
-    op.Instruction.Code        &= INSTANCE_ID_REMOVEMASK; // now this is pure instruction code
-
-    int want_args = (*g_commands)[op.Instruction.Code].ArgCount;
-    if (at_pc + want_args >= codesize)
-    {
-        cc_error("unexpected end of code data at %d", at_pc + want_args);
-        return false;
-    }
-    op.ArgCount = want_args;
-
-    at_pc++;
-    for (int i = 0; i < op.ArgCount; ++i, ++at_pc)
-    {
-        char fixup = code_fixups[at_pc];
-        if (fixup > 0)
-        {
-            // could be relative pointer or import address
-            if (!FixupArgument(code[at_pc], fixup, op.Args[i]))
-            {
-                return false;
-            }
-        }
-        else
-        {
-            // should be a numeric literal (int32 or float)
-            op.Args[i].SetInt32( (int32_t)code[at_pc] );
-        }
-    }
-
-    return true;
-}
-*/
-/*
-bool ccInstance::FixupArgument(intptr_t code_value, char fixup_type, RuntimeScriptValue &argument)
-{
-    switch (fixup_type)
-    {
-    case FIXUP_GLOBALDATA:
-        {
-            ScriptVariable *gl_var = (ScriptVariable*)code_value;
-            argument.SetGlobalVar(&gl_var->RValue);
-        }
-        break;
-    case FIXUP_FUNCTION:
-        // originally commented -- CHECKME: could this be used in very old versions of AGS?
-        //      code[fixup] += (long)&code[0];
-        // This is a program counter value, presumably will be used as SCMD_CALL argument
-        argument.SetInt32((int32_t)code_value);
-        break;
-    case FIXUP_STRING:
-        argument.SetStringLiteral(&strings[0] + code_value);
-        break;
-    case FIXUP_IMPORT:
-        {
-            const ScriptImport *import = _GP(simp).getByIndex((int32_t)code_value);
-            if (import)
-            {
-                argument = import->Value;
-            }
-            else
-            {
-                cc_error("cannot resolve import, key = %ld", code_value);
-                return false;
-            }
-        }
-        break;
-    case FIXUP_STACK:
-        argument = GetStackPtrOffsetFw((int32_t)code_value);
-        break;
-    default:
-        cc_error("internal fixup type error: %d", fixup_type);
-        return false;
-    }
-    return true;
-}
-*/
-//-----------------------------------------------------------------------------
 
 void ccInstance::PushValueToStack(const RuntimeScriptValue &rval) {
 	// Write value to the stack tail and advance stack ptr
