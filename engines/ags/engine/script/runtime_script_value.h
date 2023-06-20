@@ -255,6 +255,14 @@ public:
 		Size = 4;
 		return *this;
 	}
+	inline RuntimeScriptValue &SetDynamicObject(ScriptValueType type, void *object, ICCDynamicObject *manager) {
+		Type = type;
+		IValue = 0;
+		Ptr = (char *)object;
+		DynMgr = manager;
+		Size = 4;
+		return *this;
+	}
 	inline RuntimeScriptValue &SetStaticFunction(ScriptAPIFunction *pfn) {
 		Type = kScValStaticFunction;
 		methodName.clear();

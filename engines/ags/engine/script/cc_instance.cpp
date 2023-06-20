@@ -295,7 +295,14 @@ void ccInstance::AbortAndDestroy() {
 		return; \
 	}
 
-#define CC_ERROR_IF_RET(COND, ERROR, T) \
+#define CC_ERROR_IF_RETCODE(COND, ERROR) \
+	if (COND) \
+	{ \
+		cc_error(ERROR); \
+		return -1; \
+	}
+
+#define CC_ERROR_IF_RETVAL(COND, ERROR, T) \
 	if (COND) \
 	{ \
 		cc_error(ERROR); \
@@ -311,7 +318,8 @@ void ccInstance::AbortAndDestroy() {
 #else
 
 #define CC_ERROR_IF(COND, ERROR)
-#define CC_ERROR_IF_RET(COND, ERROR, T)
+#define CC_ERROR_IF_RETCODE(COND, ERROR)
+#define CC_ERROR_IF_RETVAL(COND, ERROR, T)
 #define ASSERT_CC_ERROR()
 
 #endif // DEBUG_CC_EXEC
@@ -883,35 +891,37 @@ int ccInstance::Run(int32_t curpc) {
 
 		case SCMD_MEMREADPTR: {
 			int32_t handle = registers[SREG_MAR].ReadInt32();
+			// FIXME: make pool return a ready RuntimeScriptValue with these set?
+			// or another struct, which may be assigned to RSV
 			void *object;
 			ICCDynamicObject *manager;
 			ScriptValueType obj_type = ccGetObjectAddressAndManagerFromHandle(handle, object, manager);
-			if (obj_type == kScValPluginObject) {
-				reg1.SetPluginObject(object, manager);
-			} else {
-				reg1.SetDynamicObject(object, manager);
-			}
+			reg1.SetDynamicObject(obj_type, object, manager);
 			ASSERT_CC_ERROR();
 			break;
 		}
 		case SCMD_MEMWRITEPTR: {
 
 			int32_t handle = registers[SREG_MAR].ReadInt32();
-			const char *address = nullptr;
-
-			if (reg1.Type == kScValStaticArray && reg1.StcArr->GetDynamicManager()) {
-				address = (const char *)reg1.StcArr->GetElementPtr(reg1.Ptr, reg1.IValue);
-			} else if (reg1.Type == kScValDynamicObject ||
-			           reg1.Type == kScValPluginObject) {
+			const char *address;
+			switch (reg1.Type) {
+			case kScValStaticArray:
+				CC_ERROR_IF_RETCODE(!reg1.StcArr->GetDynamicManager(), "internal error: MEMWRITEPTR argument is not a dynamic object");
+				address = reg1.StcArr->GetElementPtr(reg1.Ptr, reg1.IValue);
+				break;
+			case kScValDynamicObject:
+			case kScValPluginObject:
 				address = reg1.Ptr;
-			} else if (reg1.Type == kScValPluginArg) {
-				// TODO: plugin API is currently strictly 32-bit, so this may break on 64-bit systems
+				break;
+			case kScValPluginArg:
+				// FIXME: plugin API is currently strictly 32-bit, so this may break on 64-bit systems
 				address = Int32ToPtr<char>(reg1.IValue);
-			}
-			// There's one possible case when the reg1 is 0, which means writing nullptr
-			else if (!reg1.IsNull()) {
-				cc_error("internal error: MEMWRITEPTR argument is not dynamic object");
-				return -1;
+				break;
+			default:
+				// There's one possible case when the reg1 is 0, which means writing nullptr
+				CC_ERROR_IF_RETCODE(!reg1.IsNull(), "internal error: MEMWRITEPTR argument is not a dynamic object");
+				address = nullptr;
+				break;
 			}
 
 			int32_t newHandle = ccGetObjectHandleFromAddress(address);
@@ -926,22 +936,28 @@ int ccInstance::Run(int32_t curpc) {
 			break;
 		}
 		case SCMD_MEMINITPTR: {
-			const char *address = nullptr;
+			const char *address;
 
-			if (reg1.Type == kScValStaticArray && reg1.StcArr->GetDynamicManager()) {
+			switch (reg1.Type) {
+			case kScValStaticArray:
+				CC_ERROR_IF_RETCODE(!reg1.StcArr->GetDynamicManager(), "internal error: SCMD_MEMINITPTR argument is not a dynamic object");
 				address = (const char *)reg1.StcArr->GetElementPtr(reg1.Ptr, reg1.IValue);
-			} else if (reg1.Type == kScValDynamicObject ||
-			           reg1.Type == kScValPluginObject) {
+				break;
+			case kScValDynamicObject:
+			case kScValPluginObject:
 				address = reg1.Ptr;
-			} else if (reg1.Type == kScValPluginArg) {
-				// TODO: plugin API is currently strictly 32-bit, so this may break on 64-bit systems
+				break;
+			case kScValPluginArg:
+				// FIXME: plugin API is currently strictly 32-bit, so this may break on 64-bit systems
 				address = Int32ToPtr<char>(reg1.IValue);
+				break;
+			default:
+				// There's one possible case when the reg1 is 0, which means writing nullptr
+				CC_ERROR_IF_RETCODE(!reg1.IsNull(), "internal error: SCMD_MEMINITPTR argument is not a dynamic object");
+				address = nullptr;
+				break;
 			}
-			// There's one possible case when the reg1 is 0, which means writing nullptr
-			else if (!reg1.IsNull()) {
-				cc_error("internal error: SCMD_MEMINITPTR argument is not dynamic object");
-				return -1;
-			}
+
 			// like memwriteptr, but doesn't attempt to free the old one
 			int32_t newHandle = ccGetObjectHandleFromAddress(address);
 			if (newHandle == -1)
@@ -1810,8 +1826,8 @@ RuntimeScriptValue ccInstance::GetStackPtrOffsetFw(int32_t fw_offset) {
 		stack_entry++;
 		total_off += stack_entry->Size;
 	}
-	CC_ERROR_IF_RET(total_off < fw_offset, "accessing address beyond stack's tail", RuntimeScriptValue);
-	CC_ERROR_IF_RET(total_off > fw_offset, "stack offset forward: trying to access stack data inside stack entry, stack corrupted?", RuntimeScriptValue);
+	CC_ERROR_IF_RETVAL(total_off < fw_offset, "accessing address beyond stack's tail", RuntimeScriptValue);
+	CC_ERROR_IF_RETVAL(total_off > fw_offset, "stack offset forward: trying to access stack data inside stack entry, stack corrupted?", RuntimeScriptValue);
 	RuntimeScriptValue stack_ptr;
 	stack_ptr.SetStackPtr(stack_entry);
 	return stack_ptr;
@@ -1824,12 +1840,12 @@ RuntimeScriptValue ccInstance::GetStackPtrOffsetRw(int32_t rw_offset) {
 		stack_entry--;
 		total_off += stack_entry->Size;
 	}
-	CC_ERROR_IF_RET(total_off < rw_offset, "accessing address before stack's head", RuntimeScriptValue);
+	CC_ERROR_IF_RETVAL(total_off < rw_offset, "accessing address before stack's head", RuntimeScriptValue);
 	RuntimeScriptValue stack_ptr;
 	stack_ptr.SetStackPtr(stack_entry);
 	stack_ptr.IValue += total_off - rw_offset; // possibly offset to the mid-array
 	// Could be accessing array element, so state error only if stack entry does not refer to data array
-	CC_ERROR_IF_RET((total_off > rw_offset) && (stack_entry->Type != kScValData), "stack offset backward: trying to access stack data inside stack entry, stack corrupted?", RuntimeScriptValue)
+	CC_ERROR_IF_RETVAL((total_off > rw_offset) && (stack_entry->Type != kScValData), "stack offset backward: trying to access stack data inside stack entry, stack corrupted?", RuntimeScriptValue)
 	return stack_ptr;
 }
 
