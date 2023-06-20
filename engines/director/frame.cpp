@@ -920,11 +920,151 @@ void Frame::readSpriteD5(Common::MemoryReadStreamEndian &stream, uint16 offset, 
  **************************/
 
 enum {
-	kMainChannelSizeD6 = 40,
-	kSprChannelSizeD6 = 20
+	kMainChannelSizeD6 = 48,
+	kSprChannelSizeD6 = 24
 };
 
 void Frame::readChannelD6(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
+	// 48 bytes header
+	if (offset >= kMainChannelSizeD6) {
+		if (size <= kSprChannelSizeD6)
+			readSpriteD6(stream, offset, size);
+		else {
+			// read > 1 sprites channel
+			while (size > kSprChannelSizeD6) {
+				byte spritePosition = (offset - kMainChannelSizeD6) / kSprChannelSizeD6;
+				uint16 nextStart = (spritePosition + 1) * kSprChannelSizeD6 + kMainChannelSizeD6;
+				uint16 needSize = nextStart - offset;
+				readSpriteD6(stream, offset, needSize);
+				offset += needSize;
+				size -= needSize;
+			}
+			readSpriteD6(stream, offset, size);
+		}
+	} else {
+		readMainChannelsD6(stream, offset, size);
+	}
+}
+
+void Frame::readMainChannelsD6(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
+	error("Frame::readMainChannelsD6(): Miscomputed field position: %d", offset);
+}
+
+void Frame::readSpriteD6(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
+	uint16 spritePosition = (offset - kMainChannelSizeD6) / kSprChannelSizeD6;
+	uint16 spriteStart = spritePosition * kSprChannelSizeD6 + kMainChannelSizeD6;
+
+	uint16 fieldPosition = offset - spriteStart;
+	uint16 finishPosition = fieldPosition + size;
+
+	if (debugChannelSet(8, kDebugLoading)) {
+		debugC(8, kDebugLoading, "Frame::readSpriteD6(): channel %d, 20 bytes", spritePosition);
+		stream.hexdump(kSprChannelSizeD6);
+	}
+
+	debugC(3, kDebugLoading, "Frame::readSpriteD6(): sprite: %d offset: %d size: %d, field: %d", spritePosition, offset, size, fieldPosition);
+
+	Sprite &sprite = *_sprites[spritePosition + 1];
+
+	if (sprite._puppet || sprite._autoPuppet) {
+		stream.skip(size);
+		return;
+	}
+
+	while (fieldPosition < finishPosition) {
+		switch (fieldPosition) {
+		case 0:
+			sprite._spriteType = (SpriteType)stream.readByte();
+			fieldPosition++;
+			break;
+		case 1:
+			sprite._inkData = stream.readByte();
+			fieldPosition++;
+
+			sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
+			if (sprite._inkData & 0x40)
+				sprite._trails = 1;
+			else
+				sprite._trails = 0;
+
+			break;
+		case 2:
+			sprite._foreColor = _vm->transformColor((uint8)stream.readByte());
+			fieldPosition++;
+			break;
+		case 3:
+			sprite._backColor = _vm->transformColor((uint8)stream.readByte());
+			fieldPosition++;
+			break;
+		case 4: {
+				uint16 castLib = stream.readUint16();
+				uint16 memberID = stream.readUint16();
+				sprite._castId = CastMemberID(memberID, castLib);
+			}
+			fieldPosition += 4;
+			break;
+		case 8: {
+				uint16 scriptCastLib = stream.readUint16();
+				uint16 scriptMemberID = stream.readUint16();
+				sprite._scriptId = CastMemberID(scriptMemberID, scriptCastLib);
+			}
+			fieldPosition += 4;
+			break;
+		case 12:
+			sprite._startPoint.y = (int16)stream.readUint16();
+			fieldPosition += 2;
+			break;
+		case 14:
+			sprite._startPoint.x = (int16)stream.readUint16();
+			fieldPosition += 2;
+			break;
+		case 16:
+			sprite._height = (int16)stream.readUint16();
+			fieldPosition += 2;
+			break;
+		case 18:
+			sprite._width = (int16)stream.readUint16();
+			fieldPosition += 2;
+			break;
+		case 20:
+			// & 0x0f scorecolor
+			// 0x10 forecolor is rgb
+			// 0x20 bgcolor is rgb
+			// 0x40 editable
+			// 0x80 moveable
+			sprite._colorcode = stream.readByte();
+			fieldPosition++;
+
+			sprite._editable = ((sprite._colorcode & 0x40) == 0x40);
+			sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
+			sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
+			break;
+		case 21:
+			sprite._blendAmount = stream.readByte();
+			fieldPosition++;
+			break;
+		case 22:
+			sprite._thickness = stream.readByte();
+			fieldPosition++;
+			break;
+		case 23:
+			(void)stream.readByte(); // unused
+			fieldPosition++;
+			break;
+		case 24:
+			// end of channel, go to next sprite channel
+			readSpriteD4(stream, spriteStart + kSprChannelSizeD5, finishPosition - fieldPosition);
+			fieldPosition = finishPosition;
+			break;
+		default:
+			error("Frame::readSpriteD6(): Miscomputed field position: %d", fieldPosition);
+		}
+	}
+
+	// Sometimes removed sprites leave garbage in the channel
+	// We set it to zero, so then could skip
+	if (sprite._width <= 0 || sprite._height <= 0)
+		sprite._width = sprite._height = 0;
 }
 
 void Frame::readChannels(Common::SeekableReadStreamEndian *stream, uint16 version) {
