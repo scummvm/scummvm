@@ -19,66 +19,44 @@
  *
  */
 
-#include "m4/wscript/ws_machine.h"
-#include "m4/wscript/ws_cruncher.h"
-#include "m4/wscript/wscript.h"
+#include "m4/wscript/ws_hal.h"
 #include "m4/core/errors.h"
 #include "m4/globals.h"
 
 namespace M4 {
 
-bool ws_Initialize(frac16 *theGlobals) {
-	int32 i;
-
-	_G(machineIDCount) = 0;
-
-	_G(dataFormats) = ws_GetDataFormats();
-
-	if (!theGlobals) {
-		ws_LogErrorMsg(FL, "ws_Initialize() called without a valid global register array.");
-		return false;
-	}
-
-	_G(ws_globals) = theGlobals;
-
-	for (i = 0; i < GLB_SHARED_VARS; i++) {
-		_G(ws_globals)[i] = 0;
-	}
-
-	_G(firstMachine) = NULL;
-	_G(nextXM) = NULL;
-	_G(myGlobalMessages) = NULL;
-
-	if (!ws_InitWSTimer()) {
-		return false;
-	}
-	if (!ws_InitCruncher()) {
-		return false;
-	}
+void KillCCB(CCB *myCCB, bool restoreFlag) {
+	error("TODO: KillCCB");
 #ifdef TODO
-	if (!ws_InitHAL()) {
-		return false;
+	if (!myCCB) {
+		error_show(FL, 'WSIC');
 	}
-
-	_G(oldTime) = timer_read_60();
+	if (restoreFlag && (!(myCCB->flags & CCB_SKIP)) && (!(myCCB->flags & CCB_HIDE))) {
+		if ((myCCB->flags & CCB_STREAM) && myCCB->maxArea) {
+			vmng_AddRectToRectList(&deadRectList, myCCB->maxArea->x1, myCCB->maxArea->y1,
+				myCCB->maxArea->x2, myCCB->maxArea->y2);
+		} else {
+			vmng_AddRectToRectList(&deadRectList, myCCB->currLocation->x1, myCCB->currLocation->y1,
+				myCCB->currLocation->x2, myCCB->currLocation->y2);
+		}
+	}
+	if (myCCB->flags & CCB_DISC_STREAM) {
+		ws_CloseSSstream(myCCB);
+	}
+	if (myCCB->currLocation) {
+		mem_free((void *)myCCB->currLocation);
+	}
+	if (myCCB->newLocation) {
+		mem_free((void *)myCCB->newLocation);
+	}
+	if (myCCB->maxArea) {
+		mem_free((void *)myCCB->maxArea);
+	}
+	if (myCCB->source) {
+		mem_free((char *)myCCB->source);
+	}
+	mem_free((void *)myCCB);
 #endif
-	_G(pauseTime) = 0;
-	_G(enginesPaused) = false;
-
-	return true;
-}
-
-void ws_Shutdown() {
-	ws_KillTime();
-	ws_KillCruncher();
-#ifdef TODO
-	ws_KillMachines();
-	ws_KillHAL();
-#endif
-}
-
-void TerminateMachinesByHash(int32 machHash) {
-	warning("TODO: TerminateMachinesByHash");
 }
 
 } // End of namespace M4

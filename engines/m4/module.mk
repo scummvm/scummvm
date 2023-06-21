@@ -32,9 +32,11 @@ MODULE_OBJS = \
 	mem/mem.o \
 	mem/memman.o \
 	mem/reloc.o \
-	wscript/ws_crnch.o \
+	wscript/ws_cruncher.o \
+	wscript/ws_hal.o \
 	wscript/ws_load.o \
 	wscript/ws_machine.o \
+	wscript/ws_timer.o \
 	wscript/wscript.o \
 	burger/burger.o
 

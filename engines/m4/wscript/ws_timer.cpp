@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -20,16 +19,33 @@
  *
  */
 
-#ifndef M4_WSCRIPT_WS_CRNCH_H
-#define M4_WSCRIPT_WS_CRNCH_H
-
-#include "m4/m4_types.h"
-//#include "m4/wscript/ws_univ.h"
+#include "m4/wscript/ws_timer.h"
+#include "m4/globals.h"
 
 namespace M4 {
 
-extern int32 *ws_GetDataFormats();
+static void dispose_timeRequest(onTimeReq *timeReq);
+
+bool ws_InitWSTimer(void) {
+	_G(firstTimeReq) = nullptr;
+	return true;
+}
+
+void ws_KillTime() {
+	onTimeReq *tempTime;
+
+	tempTime = _G(firstTimeReq);
+	while (tempTime) {
+		_G(firstTimeReq) = _G(firstTimeReq)->next;
+		dispose_timeRequest(tempTime);
+		tempTime = _G(firstTimeReq);
+	}
+}
+
+static void dispose_timeRequest(onTimeReq *timeReq) {
+	if (timeReq) {
+		mem_free(timeReq);
+	}
+}
 
 } // End of namespace M4
-
-#endif
