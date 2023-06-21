@@ -92,6 +92,9 @@ void Globals::game_systems_initialize(byte flags) {
 	} else {
 		term_message("Sound driver installation skipped");
 	}
+
+	if (!woodscript_init())
+		error_show(FL, 'WSIF');
 }
 
 void Globals::fire_up_gui() {
@@ -109,7 +112,23 @@ void Globals::fire_up_gui() {
 #endif
 	if (!gui_buffer_system_init())
 		error_show(FL, 'GUI5');
+}
 
+bool Globals::woodscript_init() {
+	if (!InitWSAssets())
+		return false;
+#ifdef TODO
+	if (!ws_Initialize(globals))
+		return false;
+#endif
+	return true;
+}
+
+void Globals::woodscript_shutdown() {
+	ShutdownWSAssets();
+#ifdef TODO
+	ws_Shutdown();
+#endif
 }
 
 } // namespace M4
