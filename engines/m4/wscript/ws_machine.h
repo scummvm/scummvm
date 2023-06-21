@@ -42,7 +42,7 @@ typedef void (*MessageCB)(frac16 myMessage, struct machine *sender);
 
 //timebase request structure.
 struct onTimeReq {
-	struct onTimeReq *next = nullptr;
+	onTimeReq *next = nullptr;
 	int32 myTime = 0;
 	struct machine *myXM = nullptr;
 	int32 pcOffset = 0;

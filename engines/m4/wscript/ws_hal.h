@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,14 +20,15 @@
  *
  */
 
-#include "m4/wscript/ws_crnch.h"
+#ifndef M4_WSCRIPT_WS_HAL_H
+#define M4_WSCRIPT_WS_HAL_H
+
+#include "m4/wscript/ws_machine.h"
 
 namespace M4 {
 
-static int32 dataFormats[] = { 0, 5, 8, 12, 16 };
-
-int32 *ws_GetDataFormats() {
-	return &dataFormats[0];
-}
+extern void KillCCB(CCB *myCCB, bool restoreFlag);
 
 } // End of namespace M4
+
+#endif

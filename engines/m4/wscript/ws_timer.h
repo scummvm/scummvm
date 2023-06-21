@@ -20,21 +20,23 @@
  *
  */
 
-#ifndef M4_WSCRIPT_WS_SCRIPT_H
-#define M4_WSCRIPT_WS_SCRIPT_H
+#ifndef M4_WSCRIPT_WS_TIMER_H
+#define M4_WSCRIPT_WS_TIMER_H
 
-#include "m4/wscript/ws_cruncher.h"
-#include "m4/wscript/ws_load.h"
+#include "m4/m4_types.h"
 #include "m4/wscript/ws_machine.h"
-#include "m4/wscript/ws_timer.h"
 
 namespace M4 {
 
-struct WS_Globals : public WSCruncher_Globals, public WSLoad_Globals,
-		public WSMachine_Globals, public WSTimer_Globals {
+struct WSTimer_Globals {
+	onTimeReq *_firstTimeReq = nullptr;
 };
 
-extern void ws_LogErrorMsg(const char *filename, uint32 line, const char *msg);
+extern bool ws_InitWSTimer(void);
+extern void ws_KillTime(void);
+extern void ws_MakeOnTimeReq(int32 wakeUpTime, machine *myXM, int32 pcOffset, int32 pcCount);
+extern void ws_CancelOnTimeReqs(machine *m);
+extern void ws_CheckTimeReqs(int32 curTime);
 
 } // End of namespace M4
 
