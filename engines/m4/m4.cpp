@@ -29,6 +29,7 @@
 #include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_been.h"
 #include "m4/core/errors.h"
+#include "m4/gui/gui_buffer.h"
 #include "m4/gui/gui_dialog.h"
 #include "m4/gui/gui_sys.h"
 #include "m4/gui/gui_vmng.h"
@@ -114,9 +115,9 @@ void M4Engine::fire_up_gui() {
 /*
 	if (!InitItems())
 		error_show(FL, 'GUI4');
+*/
 	if (!gui_buffer_system_init())
 		error_show(FL, 'GUI5');
-		*/
 }
 
 Common::Error M4Engine::syncGame(Common::Serializer &s) {
