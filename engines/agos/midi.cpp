@@ -196,8 +196,12 @@ int MidiPlayer::open() {
 
 	// OPL3 is used for Windows and Acorn versions, all Simon 2 versions and
 	// if the user has set the OPL3 mode option. Otherwise OPL2 is used.
-	OPL::Config::OplType oplType = (_vm->getPlatform() != Common::kPlatformDOS ||
-		_vm->getGameType() == GType_SIMON2 || ConfMan.getBool("opl3_mode")) ? OPL::Config::kOpl3 : OPL::Config::kOpl2;
+	OPL::Config::OplType oplType =
+		MidiDriver_ADLIB_Multisource::detectOplType(OPL::Config::kOpl3) ? OPL::Config::kOpl3 : OPL::Config::kOpl2;
+	if (oplType == OPL::Config::kOpl3) {
+		oplType = (_vm->getPlatform() != Common::kPlatformDOS ||
+			_vm->getGameType() == GType_SIMON2 || ConfMan.getBool("opl3_mode")) ? OPL::Config::kOpl3 : OPL::Config::kOpl2;
+	}
 
 	// Create drivers and parsers for the different versions of the games.
 	if ((_vm->getGameType() == GType_ELVIRA1 && _vm->getPlatform() == Common::kPlatformDOS) ||
@@ -397,7 +401,7 @@ int MidiPlayer::open() {
 					// if there is a file called MIDPAK.AD, use it directly
 					warning("MidiPlayer::open - SIMON 2: using MIDPAK.AD");
 					_driverMsMusic = Audio::MidiDriver_Miles_AdLib_create("MIDPAK.AD", "");
-				} else {
+				} else if (Common::File::exists("SETUP.SHR")) {
 					// if there is no file called MIDPAK.AD, try to extract it from the file SETUP.SHR
 					// if we didn't do this, the user would be forced to "install" the game instead of simply
 					// copying all files from CD-ROM.
@@ -409,10 +413,22 @@ int MidiPlayer::open() {
 					warning("MidiPlayer::open - SIMON 2: using MIDPAK.AD extracted from SETUP.SHR");
 					_driverMsMusic = Audio::MidiDriver_Miles_AdLib_create("", "", midpakAdLibStream);
 					delete midpakAdLibStream;
+				} else {
+					// Fallback in case AdLib instrument definitions are missing.
+					GUI::MessageDialog dialog(
+						Common::U32String::format(
+							_("Could not find AdLib instrument definition file\n"
+							  "%s or %s. Without one of these files,\n"
+							  "the music will not sound the same as the original game."),
+							"MIDPAK.AD", "SETUP.SHR"),
+						_("OK"));
+					dialog.runModal();
+
+					_driverMsMusic = new MidiDriver_ADLIB_Multisource(oplType);
 				}
 			} else {
 				// Windows
-				_driverMsMusic = new MidiDriver_ADLIB_Multisource(OPL::Config::kOpl3);
+				_driverMsMusic = new MidiDriver_ADLIB_Multisource(oplType);
 			}
 			break;
 		case MT_MT32:
