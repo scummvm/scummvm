@@ -38,12 +38,10 @@ using namespace pyrodactyl::text;
 using namespace pyrodactyl::image;
 
 void SectionHeader::Load(rapidxml::xml_node<char> *node) {
-	warning("STUB: SectionHeader::Load()");
 
-#if 0
 	if (TextData::Load(node, NULL, false)) {
 		LoadStr(text, "text", node);
-		text.insert(0, " ");
+		text.insertChar(' ', 0);
 		text += " ";
 
 		LoadImgKey(img, "img", node);
@@ -51,7 +49,7 @@ void SectionHeader::Load(rapidxml::xml_node<char> *node) {
 		LoadBool(draw_l, "left", node);
 		LoadBool(draw_r, "right", node);
 
-		SDL_Surface *surf = g_engine->_textManager->RenderTextBlended(font, text, col);
+		Graphics::ManagedSurface *surf = g_engine->_textManager->RenderTextBlended(font, text, col);
 
 		if (align == ALIGN_CENTER) {
 			left.x = x - surf->w / 2 - g_engine->_imageManager->GetTexture(img).W();
@@ -73,9 +71,8 @@ void SectionHeader::Load(rapidxml::xml_node<char> *node) {
 			right.y = y + surf->h / 2 - g_engine->_imageManager->GetTexture(img).H() / 2;
 		}
 
-		SDL_FreeSurface(surf);
+		delete surf;
 	}
-#endif
 
 }
 
