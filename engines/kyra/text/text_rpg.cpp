@@ -343,8 +343,8 @@ void TextDisplayer_rpg::printLine(char *str) {
 	int sjisOffs = (sjisTextMode || _vm->game() != GI_LOL) ? 8 : 9;
 
 	int fh;
-	if (_screen->_currentFont == Screen::FID_CHINESE_FNT && _vm->_flags.lang == Common::Language::ZH_TWN && _vm->_flags.gameID == GI_EOB2)
-		fh = 14;
+	if (_screen->_currentFont == Screen::FID_CHINESE_FNT && _vm->_flags.lang == Common::Language::ZH_TWN)
+		fh = _vm->_flags.gameID == GI_EOB2 ? 14 : 15;
 	else if (_screen->_currentFont == Screen::FID_SJIS_TEXTMODE_FNT)
 		fh = 9;
 	else
@@ -381,7 +381,6 @@ void TextDisplayer_rpg::printLine(char *str) {
 	char c = 0;
 	uint8 twoByteCharOffs = 0;
 
-
 	if (sjisTextMode) {
 		bool ct = true;
 
@@ -412,6 +411,13 @@ void TextDisplayer_rpg::printLine(char *str) {
 			}
 			s = n2;
 		}
+	} else if (_isChinese) {
+		s = strlen(str);
+		twoByteCharOffs = 16;
+		if ((lw + _textDimData[sdx].column) >= w) {
+			s -= ((lw + _textDimData[sdx].column) - w) >> 3;
+			w -= _textDimData[sdx].column;	
+		}
 	} else {
 		if (_vm->gameFlags().lang == Common::JA_JPN) {
 			for (int i = 0; i < s; ++i) {
@@ -421,12 +427,12 @@ void TextDisplayer_rpg::printLine(char *str) {
 			}
 		}
 
-		if (_isChinese) {
+		/*if (_isChinese) {
 			for (int i = 0; i < s; ++i) {
 				if (str[i] & 0x80)
 					twoByteCharOffs = 16;
 			}
-		}
+		}*/
 
 		if ((lw + _textDimData[sdx].column) >= w) {
 			if ((lines - 1) <= _lineCount && _allowPageBreak)
@@ -445,10 +451,10 @@ void TextDisplayer_rpg::printLine(char *str) {
 
 				for (strPos = 0; strPos < s; ++strPos) {
 					uint8 cu = (uint8) str[strPos];
-					if (_isChinese && (cu & 0x80)) {
+					/*if (_isChinese && (cu & 0x80)) {
 						lw += twoByteCharOffs;
 						strPos++;
-					} else if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0)) {
+					} else */if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0)) {
 						lw += sjisOffs;
 						strPos++;
 					} else {
@@ -504,7 +510,6 @@ void TextDisplayer_rpg::printLine(char *str) {
 					s = lineLastCharPos;
 				}
 			}
-
 		}
 	}
 
@@ -567,7 +572,8 @@ void TextDisplayer_rpg::printLine(char *str) {
 	_textDimData[sdx].line++;
 	_lineCount++;
 
-	printLine(str);
+	if (_numCharsLeft || !_isChinese)
+		printLine(str);
 }
 
 void TextDisplayer_rpg::printDialogueText(int stringId, const char *pageBreakString, const char*) {
