@@ -20,18 +20,15 @@
  *
  */
 
-#ifndef M4_WSCRIPT_WS_SCRIPT_H
-#define M4_WSCRIPT_WS_SCRIPT_H
+#ifndef M4_WSCRIPT_WS_CRNCH_H
+#define M4_WSCRIPT_WS_CRNCH_H
 
-#include "m4/wscript/ws_load.h"
-#include "m4/wscript/ws_machine.h"
+#include "m4/m4_types.h"
+//#include "m4/wscript/ws_univ.h"
 
 namespace M4 {
 
-struct WS_Globals : public WSLoad_Globals, public WSMachine_Globals {
-};
-
-extern void ws_LogErrorMsg(const char *filename, uint32 line, const char *msg);
+extern int32 *ws_GetDataFormats();
 
 } // End of namespace M4
 
