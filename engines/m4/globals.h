@@ -38,13 +38,19 @@ namespace M4 {
 
 #define CACHE_NOT_OVERRIDE_BY_FLAG_PARSE 2
 
-struct Globals;
+class Globals;
 
 extern Globals *g_globals;
 
-struct Globals : public Mouse_Statics {
+class Globals : public Mouse_Statics {
+private:
+	void game_systems_initialize(byte flags);
+	void fire_up_gui();
+
+public:
 	Globals();
 	~Globals();
+	bool init();
 
 	Game _game;
 	Kernel _kernel;

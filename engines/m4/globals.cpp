@@ -19,11 +19,18 @@
  *
  */
 
+#include "common/debug.h"
 #include "m4/globals.h"
-#include "m4/gui/gui_sys.h"
+#include "m4/adv_r/adv.h"
+#include "m4/adv_r/adv_been.h"
+#include "m4/core/errors.h"
 #include "m4/gui/gui_buffer.h"
 #include "m4/gui/gui_dialog.h"
+#include "m4/gui/gui_sys.h"
+#include "m4/gui/gui_vmng.h"
 #include "m4/mem/mem.h"
+#include "m4/detection.h"
+#include "m4/param.h"
 
 namespace M4 {
 
@@ -40,8 +47,69 @@ Globals::~Globals() {
 	gui_buffer_system_shutdown();
 	gui_dialog_shutdown();
 	mem_stash_shutdown();
+	param_shutdown();
 
 	g_globals = nullptr;
+}
+
+bool Globals::init() {
+	param_init();
+	parse_all_flags();
+
+	if (_G(system_shutting_down))
+		return false;
+
+	game_systems_initialize(INSTALL_ALL);
+
+	// TODO
+	return true;
+}
+
+
+void Globals::game_systems_initialize(byte flags) {
+	_G(term).init(_G(kernel).use_debug_monitor, _G(kernel).use_log_file);
+
+	size_t totalMem = _G(kernel).mem_avail();
+	if (_G(kernel).suppress_cache == CACHE_NOT_OVERRIDE_BY_FLAG_PARSE)
+		_G(kernel).suppress_cache = totalMem < 8000000;
+
+	debugC(kDebugCore, _G(kernel).suppress_cache ?
+		"Cache System Disabled" : "Cache System Enabled");
+	debugC(kDebugCore, "Available memory: %ld", totalMem);
+
+	mem_stash_init(32);
+
+	if (flags & INSTALL_PLAYER_BEEN_INIT) {
+		if (!player_been_init(MAX_SCENES))
+			error_show(FL, 'PBIF');
+	}
+
+	term_message("Firing up GUI");
+	fire_up_gui();
+
+	if (flags & INSTALL_SOUND_DRIVERS) {
+		warning("TODO: sound init");
+	} else {
+		term_message("Sound driver installation skipped");
+	}
+}
+
+void Globals::fire_up_gui() {
+	if (!gui_system_init())
+		error_show(FL, 'GUI0');
+	if (!vmng_init())
+		error_show(FL, 'GUI1');
+	if (!gui_mouse_init())
+		error_show(FL, 'GUI2');
+	if (!gui_dialog_init())
+		error_show(FL, 'GUI3');
+#ifdef TODO
+	if (!InitItems())
+		error_show(FL, 'GUI4');
+#endif
+	if (!gui_buffer_system_init())
+		error_show(FL, 'GUI5');
+
 }
 
 } // namespace M4
