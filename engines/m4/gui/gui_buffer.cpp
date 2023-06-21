@@ -19,29 +19,16 @@
  *
  */
 
-#include "m4/globals.h"
-#include "m4/gui/gui_sys.h"
 #include "m4/gui/gui_buffer.h"
-#include "m4/gui/gui_dialog.h"
-#include "m4/mem/mem.h"
+#include "m4/globals.h"
 
 namespace M4 {
 
-Globals *g_globals;
-
-Globals::Globals() {
-	g_globals = this;
+bool gui_buffer_system_init() {
+	return true;
 }
 
-Globals::~Globals() {
-	sysfile_shutdown();
-	player_been_shutdown();
-	gui_system_shutdown();
-	gui_buffer_system_shutdown();
-	gui_dialog_shutdown();
-	mem_stash_shutdown();
-
-	g_globals = nullptr;
+void gui_buffer_system_shutdown() {
 }
 
-} // namespace M4
+} // End of namespace M4

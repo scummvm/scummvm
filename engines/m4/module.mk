@@ -24,6 +24,7 @@ MODULE_OBJS = \
 	graphics/gr_font.o \
 	graphics/gr_pal.o \
 	graphics/graphics.o \
+	gui/gui_buffer.o \
 	gui/gui_dialog.o \
 	gui/gui_mouse.o \
 	gui/gui_sys.o \
