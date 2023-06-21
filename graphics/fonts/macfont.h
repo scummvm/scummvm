@@ -168,7 +168,7 @@ public:
 	MacFONTFont(const MacFONTdata &data);
 	virtual ~MacFONTFont();
 
-	virtual int getFontHeight() const { return _data._fRectHeight; }
+	virtual int getFontHeight() const { return _data._fRectHeight + getFontLeading(); }
 	virtual int getFontAscent() const { return _data._ascent; }
 	virtual int getFontDescent() const { return _data._descent; }
 	virtual int getFontLeading() const { return _data._leading; }
