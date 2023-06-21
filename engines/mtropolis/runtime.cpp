@@ -2772,8 +2772,9 @@ MiniscriptInstructionOutcome WorldManagerInterface::setCurrentScene(MiniscriptTh
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	bool addToReturnList = (_opInt & 0x01) != 0;
-	thread->getRuntime()->addSceneStateTransition(HighLevelSceneTransition(scene->getSelfReference().lock().staticCast<Structural>(), HighLevelSceneTransition::kTypeChangeToScene, false, addToReturnList));
+	bool addToReturnList = (_opInt & 0x02) != 0;
+	bool addToDest = (_opInt & 0x01) != 0;
+	thread->getRuntime()->addSceneStateTransition(HighLevelSceneTransition(scene->getSelfReference().lock().staticCast<Structural>(), HighLevelSceneTransition::kTypeChangeToScene, addToDest, addToReturnList));
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
@@ -4954,6 +4955,13 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 					_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeMainScene, LowLevelSceneStateTransitionAction::kUnload));
 
 					queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneReactivated, 0), sceneReturn.scene.get(), true, true);
+
+					for (uint i = 1; i < _sceneStack.size(); i++) {
+						if (_sceneStack[i].scene == _activeMainScene) {
+							_sceneStack.remove_at(i);
+							break;
+						}
+					}
 
 					_activeMainScene = sceneReturn.scene;
 
