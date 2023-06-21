@@ -121,9 +121,6 @@ void Button::Draw(const int &XOffset, const int &YOffset, Rect *clip) {
 }
 
 void Button::ImageCaptionOnlyDraw(const int &XOffset, const int &YOffset, Rect *clip) {
-	warning("STUB: Button::ImageCaptionOnly()");
-
-#if 0
 	if (visible) {
 		if (mousepressed) {
 			g_engine->_imageManager->Draw(x + XOffset, y + YOffset, img.select, clip);
@@ -136,7 +133,6 @@ void Button::ImageCaptionOnlyDraw(const int &XOffset, const int &YOffset, Rect *
 			caption.Draw(false, XOffset, YOffset);
 		}
 	}
-#endif
 }
 
 void Button::HoverInfoOnlyDraw(const int &XOffset, const int &YOffset, Rect *clip) {
