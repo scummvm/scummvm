@@ -21,9 +21,11 @@
 
 #ifdef ENABLE_EOB
 
+#include "kyra/kyra_v1.h"
 #include "kyra/sound/drivers/capcom98.h"
 #include "audio/mixer.h"
 #include "audio/softsynth/fmtowns_pc98/pc98_audio.h"
+#include "common/debug.h"
 #include "common/func.h"
 #include "common/system.h"
 
@@ -103,12 +105,12 @@ private:
 	const uint16 _playFlags;
 };
 
-class CapcomPC98_MIDI final : public CapcomPC98Player {
+class CapcomPC98Player_MIDI final : public CapcomPC98Player {
 public:
 	typedef Common::Functor0Mem<PC98AudioCore::MutexLock, CapcomPC98AudioDriverInternal> MutexProc;
 
-	CapcomPC98_MIDI(MidiDriver::DeviceHandle dev, bool isMT32, MutexProc &mutexProc);
-	~CapcomPC98_MIDI();
+	CapcomPC98Player_MIDI(MidiDriver::DeviceHandle dev, bool isMT32, MutexProc &mutexProc);
+	~CapcomPC98Player_MIDI();
 
 	bool init() override;
 	void deinit() override {}
@@ -132,10 +134,10 @@ private:
 	MutexProc &_mproc;
 };
 
-class CapcomPC98_FM_Channel {
+class CapcomPC98_FMChannel {
 public:
-	CapcomPC98_FM_Channel(uint8 id, PC98AudioCore *&ac, const Common::Array<const uint8*>&instruments, const uint8 &fadeState);
-	~CapcomPC98_FM_Channel();
+	CapcomPC98_FMChannel(uint8 id, PC98AudioCore *&ac, const Common::Array<const uint8*>&instruments, const uint8 &fadeState);
+	~CapcomPC98_FMChannel();
 
 	void reset();
 
@@ -157,7 +159,7 @@ public:
 	void processSounds();
 
 private:
-	typedef Common::Functor0Mem<void, CapcomPC98_FM_Channel> VbrHandlerProc;
+	typedef Common::Functor0Mem<void, CapcomPC98_FMChannel> VbrHandlerProc;
 
 	const uint8 _regOffset;
 	uint8 _program;
@@ -230,12 +232,12 @@ private:
 	static const uint8 _volTablePara[128];
 };
 
-class CapcomPC98_FM final : public CapcomPC98Player, PC98AudioPluginDriver {
+class CapcomPC98Player_FM final : public CapcomPC98Player, PC98AudioPluginDriver {
 public:
 	typedef Common::Functor0Mem<void, CapcomPC98AudioDriverInternal> CBProc;
 
-	CapcomPC98_FM(Audio::Mixer *mixer, CBProc &cbproc, bool playerPrio, uint16 playFlags, uint8 chanReserveFlags, uint8 chanDisableFlags, uint16 volControlMask, bool needsTimer);
-	~CapcomPC98_FM() override;
+	CapcomPC98Player_FM(Audio::Mixer *mixer, CBProc &cbproc, bool playerPrio, uint16 playFlags, uint8 chanReserveFlags, uint8 chanDisableFlags, uint16 volControlMask, bool needsTimer);
+	~CapcomPC98Player_FM() override;
 
 	bool init() override;
 	void deinit() override;
@@ -256,7 +258,7 @@ private:
 	void restoreStateIntern() override;
 
 	PC98AudioCore *_ac;
-	CapcomPC98_FM_Channel **_chan;
+	CapcomPC98_FMChannel **_chan;
 	Common::Array<const uint8*>_instruments;
 
 	CBProc &_cbProc;
@@ -301,9 +303,9 @@ private:
 	void updateMasterVolume();
 
 	CapcomPC98Player *_players[2];
-	CapcomPC98_FM *_fmDevice;
-	CapcomPC98_FM::CBProc *_timerProc;
-	CapcomPC98_MIDI::MutexProc *_mutexProc;
+	CapcomPC98Player_FM *_fmDevice;
+	CapcomPC98Player_FM::CBProc *_timerProc;
+	CapcomPC98Player_MIDI::MutexProc *_mutexProc;
 
 	static CapcomPC98AudioDriverInternal *_refInstance;
 	static int _refCount;
@@ -355,6 +357,7 @@ void CapcomPC98Player::fadeOut(uint16 speed) {
 	if (speed) {
 		_fadeTicker =_fadeSpeed = speed;
 		_fadeState = 0;
+		PC98AudioCore::MutexLock lock = lockMutex();
 		_flags |= kFadeOut;
 	} else {
 		stopSound();
@@ -362,6 +365,7 @@ void CapcomPC98Player::fadeOut(uint16 speed) {
 }
 
 void CapcomPC98Player::allNotesOff(uint16 chanFlags) {
+	PC98AudioCore::MutexLock lock = lockMutex();
 	for (int i = 0; i < 16; ++i) {
 		if ((1 << i) & chanFlags)
 			send(0x007BB0 | i);
@@ -369,11 +373,13 @@ void CapcomPC98Player::allNotesOff(uint16 chanFlags) {
 }
 
 void CapcomPC98Player::setMusicVolume (int vol) {
+	PC98AudioCore::MutexLock lock = lockMutex();
 	_musicVolume = vol;
 	updateMasterVolume();
 }
 
 void CapcomPC98Player::setSoundEffectVolume (int vol) {
+	PC98AudioCore::MutexLock lock = lockMutex();
 	_sfxVolume = vol;
 	updateMasterVolume();
 }
@@ -482,7 +488,7 @@ void CapcomPC98Player::restorePlayer() {
 	_storedEvents.clear();
 }
 
-CapcomPC98_MIDI::CapcomPC98_MIDI(MidiDriver::DeviceHandle dev, bool isMT32, MutexProc &mutexProc) : CapcomPC98Player(true, kStdPlay, 0xFFFF, 0), _isMT32(isMT32), _mproc(mutexProc), _midi(nullptr), _programMapping(nullptr) {
+CapcomPC98Player_MIDI::CapcomPC98Player_MIDI(MidiDriver::DeviceHandle dev, bool isMT32, MutexProc &mutexProc) : CapcomPC98Player(true, kStdPlay, 0xFFFF, 0), _isMT32(isMT32), _mproc(mutexProc), _midi(nullptr), _programMapping(nullptr) {
 	_midi = MidiDriver::createMidi(dev);
 	uint8 *map = new uint8[128];
 	assert(map);
@@ -498,13 +504,13 @@ CapcomPC98_MIDI::CapcomPC98_MIDI(MidiDriver::DeviceHandle dev, bool isMT32, Mute
 	memset(_chanVolume, 0, sizeof(_chanVolume));
 }
 
-CapcomPC98_MIDI::~CapcomPC98_MIDI() {
+CapcomPC98Player_MIDI::~CapcomPC98Player_MIDI() {
 	_midi->close();
 	delete _midi;
 	delete[] _programMapping;
 }
 
-bool CapcomPC98_MIDI::init() {
+bool CapcomPC98Player_MIDI::init() {
 	if (!_midi || !_programMapping)
 		return false;
 
@@ -527,15 +533,17 @@ bool CapcomPC98_MIDI::init() {
 	return true;
 }
 
-void CapcomPC98_MIDI::reset() {
+void CapcomPC98Player_MIDI::reset() {
 	memset(_chanVolume, 0x7F, sizeof(_chanVolume));
 }
 
-void CapcomPC98_MIDI::send(uint32 evt) {
+void CapcomPC98Player_MIDI::send(uint32 evt) {
 	uint8 cmd = evt & 0xF0;
 	uint8 ch = evt & 0x0F;
 	uint8 p1 = (evt >> 8) & 0xFF;
 	uint8 p2 = (evt >> 16) & 0xFF;
+
+	debugC(5, kDebugLevelSound, "CapcomPC98Player_MIDI::send(): [0x%02x] [0x%02x] [0x%02x]", evt & 0xff, p1, p2);
 
 	if (cmd == 0xC0) {
 		evt = (evt & 0xFF) | (_programMapping[p1] << 8);
@@ -546,25 +554,29 @@ void CapcomPC98_MIDI::send(uint32 evt) {
 		} else if (((evt >> 8) & 0xFF) == 7) {
 			_chanVolume[ch] = p2;
 		}
+	} else if (evt == 0xF0) {
+		// This doesn't seem to be used at all. So I haven't implemented it (yet).
+		warning("CapcomPC98Player_MIDI::send(): Unhandled sysex message encountered");
 	}
+
 	_midi->send(evt);
 }
 
-void CapcomPC98_MIDI::processSounds() {
+void CapcomPC98Player_MIDI::processSounds() {
 	if (_fadeState) {
 		for (int i = 0; i < 16; ++i)
 			_midi->send(0x0007B0 | i | (CLIP<int>(_chanVolume[i] - _fadeState, 0, 127) << 16));
 	}
 }
 
-PC98AudioCore::MutexLock CapcomPC98_MIDI::lockMutex() {
+PC98AudioCore::MutexLock CapcomPC98Player_MIDI::lockMutex() {
 	if (!_mproc.isValid())
 		error("CapcomPC98_MIDI::lockMutex(): Invalid call");
 	return _mproc();
 }
 
-void CapcomPC98_MIDI::updateMasterVolume()  {
-	// This driver is not used for sound effects. So I don't add support for sound effects volume control.
+void CapcomPC98Player_MIDI::updateMasterVolume()  {
+	// This player is not used for sound effects. So I don't add support for sound effects volume control here.
 	if (_isMT32) {
 		byte vol = _musicVolume * 100 / Audio::Mixer::kMaxMixerVolume;
 		byte mt32VolSysEx[9] = { 0x41, 0x10, 0x16, 0x12, 0x10, 0x00, 0x16, vol, 0x00 };
@@ -584,7 +596,7 @@ void CapcomPC98_MIDI::updateMasterVolume()  {
 }
 
 // This is not identical to the one we have in our common code (not even similar).
-const uint8 CapcomPC98_MIDI::_programMapping_mt32ToGM[128] = {
+const uint8 CapcomPC98Player_MIDI::_programMapping_mt32ToGM[128] = {
 	0x00, 0x02, 0x01, 0x03, 0x04, 0x05, 0x10, 0x13, 0x16, 0x65, 0x0a, 0x00, 0x68, 0x67, 0x2e, 0x25,
 	0x08, 0x09, 0x0a, 0x0c, 0x0d, 0x0e, 0x57, 0x38, 0x3b, 0x3c, 0x3d, 0x3e, 0x3b, 0x3b, 0x3b, 0x1f,
 	0x3d, 0x1c, 0x1c, 0x1c, 0x1c, 0x1e, 0x1f, 0x1f, 0x35, 0x38, 0x37, 0x38, 0x36, 0x33, 0x39, 0x70,
@@ -595,17 +607,17 @@ const uint8 CapcomPC98_MIDI::_programMapping_mt32ToGM[128] = {
 	0x70, 0x71, 0x72, 0x76, 0x75, 0x74, 0x73, 0x77, 0x78, 0x79, 0x7a, 0x7c, 0x7b, 0x7d, 0x7e, 0x7f
 };
 
-CapcomPC98_FM_Channel::CapcomPC98_FM_Channel(uint8 id, PC98AudioCore *&ac, const Common::Array<const uint8*>&instruments, const uint8 &fadeState) : _regOffset(id), _ac(ac), _instruments(instruments),
+CapcomPC98_FMChannel::CapcomPC98_FMChannel(uint8 id, PC98AudioCore *&ac, const Common::Array<const uint8*>&instruments, const uint8 &fadeState) : _regOffset(id), _ac(ac), _instruments(instruments),
 	_isPlaying(false), _note(0), _carrier(0), _volume(0), _velocity(0), _noteEffCur(0), _program(0), _noteEffPrev(0), _breathControl(0), _frequency(0), _modWheel(0), _pitchBendSensitivity(0),
 	_pitchBendPara(0), _pitchBendEff(0), _vbrState(0), _vbrStep(0), _vbrCycleTicker(0), _vbrDelayTicker(0), _vbrHandler(nullptr), _prtEnable(false),
 	_prtTime(0), _prtState(0), _prtStep(0), _prtCycleLength(0), _fadeState(fadeState) {
-	typedef void (CapcomPC98_FM_Channel::*Proc)();
+	typedef void (CapcomPC98_FMChannel::*Proc)();
 	static const Proc procs[] = {
-		&CapcomPC98_FM_Channel::vbrHandler0,
-		&CapcomPC98_FM_Channel::vbrHandler1,
-		&CapcomPC98_FM_Channel::vbrHandler2,
-		&CapcomPC98_FM_Channel::vbrHandler3,
-		&CapcomPC98_FM_Channel::dummyProc
+		&CapcomPC98_FMChannel::vbrHandler0,
+		&CapcomPC98_FMChannel::vbrHandler1,
+		&CapcomPC98_FMChannel::vbrHandler2,
+		&CapcomPC98_FMChannel::vbrHandler3,
+		&CapcomPC98_FMChannel::dummyProc
 	};
 
 	assert(ARRAYSIZE(_vbrHandlers) == ARRAYSIZE(procs));
@@ -621,14 +633,14 @@ CapcomPC98_FM_Channel::CapcomPC98_FM_Channel(uint8 id, PC98AudioCore *&ac, const
 	reset();
 }
 
-CapcomPC98_FM_Channel::~CapcomPC98_FM_Channel() {
+CapcomPC98_FMChannel::~CapcomPC98_FMChannel() {
 	for (int i = 0; i < ARRAYSIZE(_vbrHandlers); ++i)
 		delete _vbrHandlers[i];
 
 	delete[] _instrument.regData;
 }
 
-void CapcomPC98_FM_Channel::reset() {
+void CapcomPC98_FMChannel::reset() {
 	_vbrHandler = _vbrHandlers[4];
 	_frequency = 0xFFFF;
 	_vbrState = 0;
@@ -646,18 +658,18 @@ void CapcomPC98_FM_Channel::reset() {
 	_modWheel = 0;
 }
 
-void CapcomPC98_FM_Channel::keyOff() {
+void CapcomPC98_FMChannel::keyOff() {
 	_ac->writeReg(0, 0x28, _regOffset);
 }
 
-void CapcomPC98_FM_Channel::noteOff(uint8 note) {
+void CapcomPC98_FMChannel::noteOff(uint8 note) {
 	if (!_isPlaying || _note != note)
 		return;
 	keyOff();
 	_isPlaying = false;
 }
 
-void CapcomPC98_FM_Channel::noteOn(uint8 note, uint8 velo) {
+void CapcomPC98_FMChannel::noteOn(uint8 note, uint8 velo) {
 	_noteEffPrev = _noteEffCur;
 	_note = note;
 	_velocity = velo;
@@ -683,7 +695,7 @@ void CapcomPC98_FM_Channel::noteOn(uint8 note, uint8 velo) {
 	_isPlaying = true;
 }
 
-void CapcomPC98_FM_Channel::programChange(uint8 prg) {
+void CapcomPC98_FMChannel::programChange(uint8 prg) {
 	if (prg >= _instruments.size())
 		return;
 
@@ -709,45 +721,45 @@ void CapcomPC98_FM_Channel::programChange(uint8 prg) {
 	setupVibrato();
 }
 
-void CapcomPC98_FM_Channel::pitchBend(uint16 pb) {
+void CapcomPC98_FMChannel::pitchBend(uint16 pb) {
 	_pitchBendPara = (pb - 0x2000) << 2;
 	updatePitchBend();
 }
 
-void CapcomPC98_FM_Channel::restore() {
+void CapcomPC98_FMChannel::restore() {
 	programChange(_program);
 	_frequency = 0xFFFF;
 }
 
-void CapcomPC98_FM_Channel::modWheel(uint8 mw) {
+void CapcomPC98_FMChannel::modWheel(uint8 mw) {
 	_modWheel = mw;
 }
 
-void CapcomPC98_FM_Channel::breathControl(uint8 bc) {
+void CapcomPC98_FMChannel::breathControl(uint8 bc) {
 	_breathControl = bc;
 	updateVolume();
 }
 
-void CapcomPC98_FM_Channel::pitchBendSensitivity(uint8 pbs) {
+void CapcomPC98_FMChannel::pitchBendSensitivity(uint8 pbs) {
 	_pitchBendSensitivity = pbs;
 	pitchBend(_pitchBendPara);
 }
 
-void CapcomPC98_FM_Channel::portamentoTime(uint8 pt) {
+void CapcomPC98_FMChannel::portamentoTime(uint8 pt) {
 	_prtTime = pt;
 }
 
-void CapcomPC98_FM_Channel::volume(uint8 vol) {
+void CapcomPC98_FMChannel::volume(uint8 vol) {
 	_volume = vol;
 	if (_isPlaying)
 		updateVolume();
 }
 
-void CapcomPC98_FM_Channel::togglePortamento(uint8 enable) {
+void CapcomPC98_FMChannel::togglePortamento(uint8 enable) {
 	_prtEnable = (enable >= 0x40);
 }
 
-void CapcomPC98_FM_Channel::allNotesOff() {
+void CapcomPC98_FMChannel::allNotesOff() {
 	_isPlaying = false;
 	for (int i = _regOffset; i < 16 + _regOffset; i += 4) {
 		_ac->writeReg(0, 0x40 + i, 0x7F);
@@ -756,7 +768,7 @@ void CapcomPC98_FM_Channel::allNotesOff() {
 	_ac->writeReg(0, 0x28, _regOffset);
 }
 
-void CapcomPC98_FM_Channel::processSounds() {
+void CapcomPC98_FMChannel::processSounds() {
 	if (!_isPlaying)
 		return;
 
@@ -769,7 +781,7 @@ void CapcomPC98_FM_Channel::processSounds() {
 		updateVolume();
 }
 
-void CapcomPC98_FM_Channel::loadInstrument(const uint8 *in) {
+void CapcomPC98_FMChannel::loadInstrument(const uint8 *in) {
 	memcpy(_instrument.name, in, 8);
 	in += 8;
 	_instrument.fbl_alg = *in++;
@@ -788,12 +800,12 @@ void CapcomPC98_FM_Channel::loadInstrument(const uint8 *in) {
 	memcpy(_instrument.regData, in, 52);
 }
 
-void CapcomPC98_FM_Channel::updatePitchBend() {
+void CapcomPC98_FMChannel::updatePitchBend() {
 	_pitchBendEff = (_pitchBendPara * (_pitchBendSensitivity << 1)) >> 16;
 	updateFrequency();
 }
 
-void CapcomPC98_FM_Channel::updateVolume() {
+void CapcomPC98_FMChannel::updateVolume() {
 	uint8 cr = _carrier;
 	const uint8 *s = _instrument.regData;
 	for (int i = _regOffset; i < 16 + _regOffset; i += 4) {
@@ -839,7 +851,7 @@ void CapcomPC98_FM_Channel::updateVolume() {
 	}
 }
 
-void CapcomPC98_FM_Channel::updatePortamento() {
+void CapcomPC98_FMChannel::updatePortamento() {
 	if (_prtCycleLength) {
 		_prtCycleLength--;
 		_prtState += _prtStep;
@@ -848,7 +860,7 @@ void CapcomPC98_FM_Channel::updatePortamento() {
 	}
 }
 
-void CapcomPC98_FM_Channel::updateFrequency() {
+void CapcomPC98_FMChannel::updateFrequency() {
 	int16 tone = (MIN<int16>(_modWheel + _instrument.vbrSensitivity, 255) * (_vbrState >> 16)) >> 8;
 	tone = CLIP<int16>(tone + (_noteEffCur << 8), 0, 0x5FFF);
 	tone = CLIP<int16>(tone + _pitchBendEff, 0, 0x5FFF);
@@ -867,7 +879,7 @@ void CapcomPC98_FM_Channel::updateFrequency() {
 	_ac->writeReg(0, 0xA0 + _regOffset, freq & 0xFF);
 }
 
-void CapcomPC98_FM_Channel::setupPortamento() {
+void CapcomPC98_FMChannel::setupPortamento() {
 	if (!_prtTime || !_prtEnable) {
 		_prtCycleLength = 0;
 		_prtState = 0;
@@ -880,7 +892,7 @@ void CapcomPC98_FM_Channel::setupPortamento() {
 	_prtState = (-diff << 16);
 }
 
-void CapcomPC98_FM_Channel::setupVibrato() {
+void CapcomPC98_FMChannel::setupVibrato() {
 	_vbrHandler = _vbrHandlers[4];
 
 	if (_instrument.vbrCycleLength == 0 || _instrument.vbrType > 4)
@@ -898,7 +910,7 @@ void CapcomPC98_FM_Channel::setupVibrato() {
 		break;
 
 	case 1:
-		_vbrState = _vbrDelayTicker ? 0 : 3072 << 16;
+		_vbrState = _vbrDelayTicker ? 0 : (3072 << 16);
 		_vbrCycleTicker = 0;
 		_vbrHandler = _vbrHandlers[1];
 		break;
@@ -906,7 +918,7 @@ void CapcomPC98_FM_Channel::setupVibrato() {
 	case 2:
 	case 3:
 		_vbrStep = (6144 << 16) / _instrument.vbrCycleLength;
-		_vbrState = _vbrDelayTicker ? 0 : (_instrument.vbrType == 2 ? -3072 : 3072) << 16;
+		_vbrState = _vbrDelayTicker ? 0 : ((_instrument.vbrType == 2 ? -3072 : 3072) << 16);
 		_vbrCycleTicker = _instrument.vbrCycleLength - 1;
 		_vbrHandler = _vbrHandlers[_instrument.vbrType];
 		
@@ -917,7 +929,7 @@ void CapcomPC98_FM_Channel::setupVibrato() {
 	}
 }
 
-void CapcomPC98_FM_Channel::vbrHandler0() {
+void CapcomPC98_FMChannel::vbrHandler0() {
 	if (_vbrDelayTicker) {
 		_vbrDelayTicker--;
 		return;
@@ -934,7 +946,7 @@ void CapcomPC98_FM_Channel::vbrHandler0() {
 	}
 }
 
-void CapcomPC98_FM_Channel::vbrHandler1() {
+void CapcomPC98_FMChannel::vbrHandler1() {
 	if (_vbrDelayTicker) {
 		_vbrDelayTicker--;
 		return;
@@ -946,7 +958,7 @@ void CapcomPC98_FM_Channel::vbrHandler1() {
 		_vbrCycleTicker = 0;
 }
 
-void CapcomPC98_FM_Channel::vbrHandler2() {
+void CapcomPC98_FMChannel::vbrHandler2() {
 	if (_vbrDelayTicker) {
 		_vbrDelayTicker--;
 		return;
@@ -960,7 +972,7 @@ void CapcomPC98_FM_Channel::vbrHandler2() {
 	}
 }
 
-void CapcomPC98_FM_Channel::vbrHandler3() {
+void CapcomPC98_FMChannel::vbrHandler3() {
 	if (_vbrDelayTicker) {
 		_vbrDelayTicker--;
 		return;
@@ -974,11 +986,11 @@ void CapcomPC98_FM_Channel::vbrHandler3() {
 	}
 }
 
-const uint16 CapcomPC98_FM_Channel::_freqMSBTable[] = {
+const uint16 CapcomPC98_FMChannel::_freqMSBTable[] = {
 	0x026a, 0x028f, 0x02b6, 0x02df, 0x030b, 0x0339, 0x036a, 0x039e, 0x03d5, 0x0410, 0x044e, 0x048f
 };
 
-const uint8 CapcomPC98_FM_Channel::_freqLSBTables[12][64] = {
+const uint8 CapcomPC98_FMChannel::_freqLSBTables[12][64] = {
 	{
 		0x00, 0x01, 0x01, 0x02, 0x02, 0x03, 0x04, 0x04, 0x05, 0x05, 0x06, 0x06, 0x07, 0x08, 0x08, 0x09,
 		0x09, 0x0a, 0x0a, 0x0b, 0x0c, 0x0c, 0x0d, 0x0d, 0x0e, 0x0e, 0x0f, 0x0f, 0x10, 0x11, 0x11, 0x12,
@@ -1053,7 +1065,7 @@ const uint8 CapcomPC98_FM_Channel::_freqLSBTables[12][64] = {
 	}
 };
 
-const uint8 CapcomPC98_FM_Channel::_volTablesInst[4][128] = {
+const uint8 CapcomPC98_FMChannel::_volTablesInst[4][128] = {
 	{
 		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
 		0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
@@ -1095,7 +1107,7 @@ const uint8 CapcomPC98_FM_Channel::_volTablesInst[4][128] = {
 	}
 };
 
-const uint8 CapcomPC98_FM_Channel::_volTableCarrier[] = {
+const uint8 CapcomPC98_FMChannel::_volTableCarrier[] = {
 	0x2a, 0x2a, 0x29, 0x29, 0x29, 0x28, 0x28, 0x28, 0x27, 0x27, 0x27, 0x26, 0x26, 0x26, 0x25, 0x25,
 	0x25, 0x24, 0x24, 0x24, 0x23, 0x23, 0x23, 0x22, 0x22, 0x22, 0x21, 0x21, 0x21, 0x20, 0x20, 0x20,
 	0x1f, 0x1f, 0x1f, 0x1e, 0x1e, 0x1e, 0x1d, 0x1d, 0x1d, 0x1c, 0x1c, 0x1c, 0x1b, 0x1b, 0x1b, 0x1a,
@@ -1106,7 +1118,7 @@ const uint8 CapcomPC98_FM_Channel::_volTableCarrier[] = {
 	0x05, 0x04, 0x04, 0x04, 0x03, 0x03, 0x03, 0x02, 0x02, 0x02, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00
 };
 
-const uint8 CapcomPC98_FM_Channel::_volTablePara[] = {
+const uint8 CapcomPC98_FMChannel::_volTablePara[] = {
 	0x7f, 0x7e, 0x7d, 0x7c, 0x7b, 0x7a, 0x79, 0x78, 0x77, 0x76, 0x75, 0x74, 0x73, 0x72, 0x71, 0x70,
 	0x6f, 0x6e, 0x6d, 0x6c, 0x6b, 0x6a, 0x69, 0x68, 0x67, 0x66, 0x65, 0x64, 0x63, 0x62, 0x61, 0x60,
 	0x5f, 0x5e, 0x5d, 0x5c, 0x5b, 0x5a, 0x59, 0x58, 0x57, 0x56, 0x55, 0x54, 0x53, 0x52, 0x51, 0x50,
@@ -1117,16 +1129,16 @@ const uint8 CapcomPC98_FM_Channel::_volTablePara[] = {
 	0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00
 };
 
-CapcomPC98_FM::CapcomPC98_FM(Audio::Mixer *mixer, CBProc &proc, bool playerPrio, uint16 playFlags, uint8 chanReserveFlags, uint8 chanDisableFlags, uint16 volControlMask, bool needsTimer) : CapcomPC98Player(playerPrio, playFlags, chanReserveFlags, chanDisableFlags), PC98AudioPluginDriver(), _cbProc(proc), _volControlMask(volControlMask), _ac(nullptr), _chan(nullptr), _ready(false) {
+CapcomPC98Player_FM::CapcomPC98Player_FM(Audio::Mixer *mixer, CBProc &proc, bool playerPrio, uint16 playFlags, uint8 chanReserveFlags, uint8 chanDisableFlags, uint16 volControlMask, bool needsTimer) : CapcomPC98Player(playerPrio, playFlags, chanReserveFlags, chanDisableFlags), PC98AudioPluginDriver(), _cbProc(proc), _volControlMask(volControlMask), _ac(nullptr), _chan(nullptr), _ready(false) {
 	_ac = new PC98AudioCore(mixer, needsTimer ? this : nullptr, kType26);
 	assert(_ac);
-	_chan = new CapcomPC98_FM_Channel*[3];
+	_chan = new CapcomPC98_FMChannel*[3];
 	assert(_chan);
 	for (int i = 0; i < 3; ++i)
-		_chan[i] = new CapcomPC98_FM_Channel(i, _ac, _instruments, _fadeState);
+		_chan[i] = new CapcomPC98_FMChannel(i, _ac, _instruments, _fadeState);
 }
 
-CapcomPC98_FM::~CapcomPC98_FM() {
+CapcomPC98Player_FM::~CapcomPC98Player_FM() {
 	delete _ac;
 	if (_chan) {
 		for (int i = 0; i < 3; ++i)
@@ -1135,7 +1147,7 @@ CapcomPC98_FM::~CapcomPC98_FM() {
 	}
 }
 
-bool CapcomPC98_FM::init() {
+bool CapcomPC98Player_FM::init() {
 	if (!(_chan && _ac && _ac->init()))
 		return false;
 
@@ -1172,12 +1184,12 @@ bool CapcomPC98_FM::init() {
 	return true;
 }
 
-void CapcomPC98_FM::deinit() {
+void CapcomPC98Player_FM::deinit() {
 	PC98AudioCore::MutexLock lock = _ac->stackLockMutex();
 	_ready = false;
 }
 
-void CapcomPC98_FM::reset() {
+void CapcomPC98Player_FM::reset() {
 	for (int i = 0; i < 3; ++i)
 		_chan[i]->reset();
 
@@ -1188,7 +1200,7 @@ void CapcomPC98_FM::reset() {
 		_chan[i]->programChange(0);
 }
 
-void CapcomPC98_FM::loadInstruments(const uint8 *data, uint16 number) {
+void CapcomPC98Player_FM::loadInstruments(const uint8 *data, uint16 number) {
 	_instruments.clear();
 	while (number--) {
 		_instruments.push_back(data);
@@ -1196,16 +1208,18 @@ void CapcomPC98_FM::loadInstruments(const uint8 *data, uint16 number) {
 	}
 }
 
-PC98AudioCore::MutexLock CapcomPC98_FM::lockMutex() {
+PC98AudioCore::MutexLock CapcomPC98Player_FM::lockMutex() {
 	if (!_ready)
 		error("CapcomPC98_FM::lockMutex(): Invalid call");
 	return _ac->stackLockMutex();
 }
 
-void CapcomPC98_FM::send(uint32 evt) {
+void CapcomPC98Player_FM::send(uint32 evt) {
 	uint8 ch = evt & 0x0F;
 	uint8 p1 = (evt >> 8) & 0xFF;
 	uint8 p2 = (evt >> 16) & 0xFF;
+
+	debugC(5, kDebugLevelSound, "CapcomPC98Player_FM::send(): [0x%02x] [0x%02x] [0x%02x]", evt & 0xff, p1, p2);
 
 	if (ch > 2)
 		return;
@@ -1234,24 +1248,24 @@ void CapcomPC98_FM::send(uint32 evt) {
 	}
 }
 
-void CapcomPC98_FM::timerCallbackA() {
+void CapcomPC98Player_FM::timerCallbackA() {
 	if (_ready && _cbProc.isValid()) {
 		PC98AudioCore::MutexLock lock = _ac->stackLockMutex();
 		_cbProc();
 	}
 }
 
-void CapcomPC98_FM::processSounds() {
+void CapcomPC98Player_FM::processSounds() {
 	for (int i = 0; i < 3; ++i)
 		_chan[i]->processSounds();
 }
 
-void CapcomPC98_FM::updateMasterVolume()  {
+void CapcomPC98Player_FM::updateMasterVolume()  {
 	_ac->setMusicVolume(_musicVolume);
 	_ac->setSoundEffectVolume(_sfxVolume);
 }
 
-void CapcomPC98_FM::controlChange(uint8 ch, uint8 control, uint8 val) {
+void CapcomPC98Player_FM::controlChange(uint8 ch, uint8 control, uint8 val) {
 	if (ch > 2)
 		return;
 
@@ -1285,7 +1299,7 @@ void CapcomPC98_FM::controlChange(uint8 ch, uint8 control, uint8 val) {
 	}
 }
 
-void CapcomPC98_FM::restoreStateIntern() {
+void CapcomPC98Player_FM::restoreStateIntern() {
 	for (int i = 0; i < 3; ++i) {
 		if ((1 << i) & _chanReserveFlags)
 			continue;
@@ -1293,11 +1307,11 @@ void CapcomPC98_FM::restoreStateIntern() {
 	}
 }
 
-void CapcomPC98_FM::setVolControlMask() {
+void CapcomPC98Player_FM::setVolControlMask() {
 	_ac->setSoundEffectChanMask(_volControlMask);
 }
 
-const uint8 CapcomPC98_FM::_initData[72] = {
+const uint8 CapcomPC98Player_FM::_initData[72] = {
 	0x49, 0x4e, 0x49, 0x54, 0x5f, 0x56, 0x4f, 0x49, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	0x00, 0x00,
 	0x00, 0x00, 0x01, 0x7f, 0x1f, 0x00, 0x00, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x7f, 0x1f,
 	0x00, 0x00, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x7f, 0x1f, 0x00, 0x00, 0x0f, 0x00, 0x00,
@@ -1309,18 +1323,18 @@ int CapcomPC98AudioDriverInternal::_refCount = 0;
 
 CapcomPC98AudioDriverInternal::CapcomPC98AudioDriverInternal(Audio::Mixer *mixer, MidiDriver::DeviceHandle dev) : _ready(false), _fmDevice(nullptr), _timerProc(nullptr), _mutexProc(nullptr), _marker(0), _musicVolume(0), _sfxVolume(0) {
 	MusicType type = MidiDriver::getMusicType(dev);
-	_timerProc = new CapcomPC98_FM::CBProc(this, &CapcomPC98AudioDriverInternal::timerCallback);
+	_timerProc = new CapcomPC98Player_FM::CBProc(this, &CapcomPC98AudioDriverInternal::timerCallback);
 	assert(_timerProc);
-	_mutexProc = new CapcomPC98_MIDI::MutexProc(this, &CapcomPC98AudioDriverInternal::lockMutex);
+	_mutexProc = new CapcomPC98Player_MIDI::MutexProc(this, &CapcomPC98AudioDriverInternal::lockMutex);
 	assert(_mutexProc);
 
 	if (type == MT_MT32 || type == MT_GM) {
-		_players[0] = new CapcomPC98_MIDI(dev, type == MT_MT32, *_mutexProc);
-		_players[1] = _fmDevice = new CapcomPC98_FM(mixer, *_timerProc, true, CapcomPC98Player::kPrioPlay, 4, (uint8)~4, 0xFFFF, true);
+		_players[0] = new CapcomPC98Player_MIDI(dev, type == MT_MT32, *_mutexProc);
+		_players[1] = _fmDevice = new CapcomPC98Player_FM(mixer, *_timerProc, true, CapcomPC98Player::kPrioPlay, 4, (uint8)~4, 0xFFFF, true);
 		_marker = 1;
 	} else {
-		_players[0] = new CapcomPC98_FM(mixer, *_timerProc, false, CapcomPC98Player::kStdPlay, 3, 0, 0, false);
-		_players[1] = _fmDevice = new CapcomPC98_FM(mixer, *_timerProc, true, CapcomPC98Player::kPrioPlay | CapcomPC98Player::kPrioClaim, 4, (uint8)~4, 4, true);
+		_players[0] = new CapcomPC98Player_FM(mixer, *_timerProc, false, CapcomPC98Player::kStdPlay, 3, 0, 0, false);
+		_players[1] = _fmDevice = new CapcomPC98Player_FM(mixer, *_timerProc, true, CapcomPC98Player::kPrioPlay | CapcomPC98Player::kPrioClaim, 4, (uint8)~4, 4, true);
 	}
 
 	bool ready = true;
