@@ -3281,6 +3281,9 @@ bool SysInfoModifier::readAttribute(MiniscriptThread *thread, DynamicValue &resu
 
 		result.setPoint(Common::Point(width, height));
 		return true;
+	} else if (attrib == "currentram") {
+		result.setInt(256 * 1024 * 1024);
+		return true;
 	}
 
 	return false;
