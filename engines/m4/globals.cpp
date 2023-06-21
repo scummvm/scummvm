@@ -117,18 +117,15 @@ void Globals::fire_up_gui() {
 bool Globals::woodscript_init() {
 	if (!InitWSAssets())
 		return false;
-#ifdef TODO
-	if (!ws_Initialize(globals))
+	if (!ws_Initialize(_G(globals)))
 		return false;
-#endif
+
 	return true;
 }
 
 void Globals::woodscript_shutdown() {
 	ShutdownWSAssets();
-#ifdef TODO
 	ws_Shutdown();
-#endif
 }
 
 } // namespace M4

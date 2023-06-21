@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -20,19 +19,13 @@
  *
  */
 
-#ifndef M4_WSCRIPT_WS_SCRIPT_H
-#define M4_WSCRIPT_WS_SCRIPT_H
-
-#include "m4/wscript/ws_load.h"
-#include "m4/wscript/ws_machine.h"
+#include "common/textconsole.h"
+#include "m4/wscript/wscript.h"
 
 namespace M4 {
 
-struct WS_Globals : public WSLoad_Globals, public WSMachine_Globals {
-};
-
-extern void ws_LogErrorMsg(const char *filename, uint32 line, const char *msg);
+void ws_LogErrorMsg(const char *filename, uint32 line, const char *msg) {
+	error("%s", msg);
+}
 
 } // End of namespace M4
-
-#endif

@@ -20,10 +20,61 @@
  */
 
 #include "m4/wscript/ws_machine.h"
+#include "m4/wscript/ws_crnch.h"
+#include "m4/wscript/wscript.h"
 #include "m4/core/errors.h"
 #include "m4/globals.h"
 
 namespace M4 {
+
+bool ws_Initialize(frac16 *theGlobals) {
+	int32 i;
+
+	_G(machineIDCount) = 0;
+
+	_G(dataFormats) = ws_GetDataFormats();
+
+	if (!theGlobals) {
+		ws_LogErrorMsg(FL, "ws_Initialize() called without a valid global register array.");
+		return false;
+	}
+
+	_G(ws_globals) = theGlobals;
+
+	for (i = 0; i < GLB_SHARED_VARS; i++) {
+		_G(ws_globals)[i] = 0;
+	}
+
+	_G(firstMachine) = NULL;
+	_G(nextXM) = NULL;
+	_G(myGlobalMessages) = NULL;
+#ifdef TODO
+	if (!ws_InitWSTimer()) {
+		return false;
+	}
+	if (!ws_InitCruncher()) {
+		return false;
+	}
+	if (!ws_InitHAL()) {
+		return false;
+	}
+
+	_G(oldTime) = timer_read_60();
+#endif
+	_G(pauseTime) = 0;
+	_G(enginesPaused) = false;
+
+	return true;
+}
+
+void ws_Shutdown() {
+#ifdef TODO
+	ws_KillTime();
+	ws_KillCruncher();
+	ws_KillMachines();
+	ws_KillHAL();
+#endif
+}
 
 void TerminateMachinesByHash(int32 machHash) {
 	warning("TODO: TerminateMachinesByHash");
