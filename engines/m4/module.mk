@@ -32,6 +32,8 @@ MODULE_OBJS = \
 	mem/mem.o \
 	mem/memman.o \
 	mem/reloc.o \
+	wscript/ws_load.o \
+	wscript/ws_machine.o \
 	burger/burger.o
 
 # This module can be built as a plugin
