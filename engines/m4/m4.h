@@ -46,9 +46,6 @@ private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 
-	void game_systems_initialize(byte flags);
-	void fire_up_gui();
-
 protected:
 	// Engine APIs
 	Common::Error run() override;
