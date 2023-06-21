@@ -25,7 +25,7 @@
 LibretroTimerManager::LibretroTimerManager(uint32 refresh_rate) {
 	if (! refresh_rate > 0)
 		refresh_rate = REFRESH_RATE;
-	_interval = 1000 / refresh_rate;
+	_interval = 1000 / refresh_rate / 2;
 	_nextSwitchTime = _interval + g_system->getMillis();
 }
 
