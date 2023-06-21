@@ -327,6 +327,7 @@ public:
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Sound Effect Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
 private:
@@ -673,7 +674,7 @@ public:
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Shared Scene Modifier"; }
-	SupportStatus debugGetSupportStatus() const override { return kSupportStatusNone; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
 private:
