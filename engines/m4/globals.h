@@ -33,6 +33,7 @@
 #include "m4/gui/gui_univ.h"
 #include "m4/mem/memman.h"
 #include "m4/mem/res.h"
+#include "m4/platform/timer.h"
 #include "m4/wscript/wscript.h"
 
 namespace M4 {
@@ -43,7 +44,7 @@ class Globals;
 
 extern Globals *g_globals;
 
-class Globals : public Mouse_Statics, public WS_Globals {
+class Globals : public Mouse_Statics, public WS_Globals, public Timer_Globals {
 private:
 	void game_systems_initialize(byte flags);
 	void fire_up_gui();
