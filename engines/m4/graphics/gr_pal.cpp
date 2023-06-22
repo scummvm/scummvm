@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/system.h"
+#include "graphics/palette.h"
 #include "common/textconsole.h"
 #include "m4/graphics/gr_pal.h"
 
@@ -46,6 +48,31 @@ void gr_color_set(int32 c) {
 
 byte gr_color_get_current() {
 	error("TODO: gr_color_get_current");
+}
+
+void gr_pal_clear(RGB8 *palette) {
+	int i;
+	RGB8 x = { 0, 0, 0 };
+
+	for (i = 0; i < 256; i++) {
+		palette[i].r = 0;
+		palette[i].g = 0;
+		palette[i].b = 0;
+	}
+
+	gr_pal_set(palette);
+}
+
+void gr_pal_set(RGB8 *pal) {
+	gr_pal_set_range(pal, 0, 256);
+}
+
+void gr_pal_set_range(RGB8 *pal, int first_color, int num_colors) {
+	g_system->getPaletteManager()->setPalette((const byte *)pal, first_color, num_colors);
+}
+
+void  gr_pal_set_entry(int32 index, RGB8 *entry) {
+	g_system->getPaletteManager()->setPalette((const byte *)entry, index, 1);
 }
 
 } // namespace M4

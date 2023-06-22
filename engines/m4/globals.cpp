@@ -24,6 +24,7 @@
 #include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_been.h"
 #include "m4/core/errors.h"
+#include "m4/graphics/gr_pal.h"
 #include "m4/gui/gui_buffer.h"
 #include "m4/gui/gui_dialog.h"
 #include "m4/gui/gui_sys.h"
@@ -96,6 +97,8 @@ void Globals::game_systems_initialize(byte flags) {
 
 	if (!woodscript_init())
 		error_show(FL, 'WSIF');
+
+	gr_pal_clear(_master_palette);
 }
 
 void Globals::fire_up_gui() {
