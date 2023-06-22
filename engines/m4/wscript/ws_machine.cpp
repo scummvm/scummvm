@@ -23,6 +23,7 @@
 #include "m4/wscript/ws_cruncher.h"
 #include "m4/wscript/wscript.h"
 #include "m4/core/errors.h"
+#include "m4/platform/timer.h"
 #include "m4/globals.h"
 
 namespace M4 {
@@ -63,9 +64,8 @@ bool ws_Initialize(frac16 *theGlobals) {
 	if (!ws_InitHAL()) {
 		return false;
 	}
-#ifdef TODO
+
 	_G(oldTime) = timer_read_60();
-#endif
 	_G(pauseTime) = 0;
 	_G(enginesPaused) = false;
 
@@ -101,8 +101,7 @@ static int32 ws_KillMachines() {
 		myMachine = _G(firstMachine);
 	}
 
-	// deallocate global messages
-	//
+	// Deallocate global messages
 	tempGlobalMsg = _G(myGlobalMessages);
 	while (tempGlobalMsg) {
 		_G(myGlobalMessages) = _G(myGlobalMessages)->next;
@@ -133,7 +132,6 @@ static void clear_msg_list(machine *m) {
 }
 
 static void clear_persistent_msg_list(machine *m) {
-
 	msgRequest *freeMsg, *nextMsg;
 
 	// Clear the active persistent msgs

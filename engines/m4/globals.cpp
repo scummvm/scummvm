@@ -48,6 +48,7 @@ Globals::~Globals() {
 	gui_dialog_shutdown();
 	mem_stash_shutdown();
 	param_shutdown();
+	woodscript_shutdown();
 
 	g_globals = nullptr;
 }
