@@ -590,6 +590,11 @@ void Lingo::execute() {
 		// process events every so often
 		if (localCounter > 0 && localCounter % 100 == 0) {
 			_vm->processEvents();
+			// Also process update widgets!
+			Movie *movie = g_director->getCurrentMovie();
+			Score *score = movie->getScore();
+			score->updateWidgets(true);
+
 			g_system->updateScreen();
 			if (_vm->getCurrentMovie()->getScore()->_playState == kPlayStopped) {
 				_freezeState = true;
