@@ -28,6 +28,7 @@
 #include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_been.h"
 #include "m4/adv_r/adv_rails.h"
+#include "m4/fileio/fstream.h"
 #include "m4/fileio/sys_file.h"
 #include "m4/graphics/gr_font.h"
 #include "m4/gui/gui_mouse.h"
@@ -106,6 +107,8 @@ public:
 	Item *_doubleClickItem = nullptr;
 	char _listboxSearchStr[80] = { 0 };
 	RGB8 _master_palette[256];
+	strmRequest *_firstStream;
+	strmRequest *_lastStream;
 };
 
 #define _G(X) (g_globals->_##X)
