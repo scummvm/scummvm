@@ -29,6 +29,13 @@ namespace M4 {
 
 #define MAX_SCENES 180
 #define GLB_SHARED_VARS 512
+#define MAXRAILNODES 32
+#define PATH_END     0xffff
+
+#define STR_FADEPAL "fade palette"
+#define STR_RAILNODE "rail node"
+#define STR_HOT_SPOT "hot spot"
+#define STR_PATH_NODE "path node"
 
 enum {
 	INSTALL_SOUND_DRIVERS    =    1,
