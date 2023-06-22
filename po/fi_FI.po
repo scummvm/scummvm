@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-19 18:59+0000\n"
+"POT-Creation-Date: 2023-06-21 20:05+0000\n"
 "PO-Revision-Date: 2023-06-13 01:40+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -298,7 +298,7 @@ msgstr "JSON-koodin sisältö on epämuodostunutta."
 #: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:32
 #: engines/engine.cpp:544 engines/engine.cpp:567
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
-#: engines/buried/saveload.cpp:69
+#: engines/agos/midi.cpp:424 engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1836
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
 #: engines/groovie/script.cpp:660 engines/mtropolis/mtropolis.cpp:115
@@ -4907,6 +4907,21 @@ msgstr ""
 "yhdistää Roland MT32 instrumentit sopiviin\n"
 "General MIDI instrumentteihin. Jotkut ääniraidat\n"
 "eivät ehkä kuulosta siltä miltä niiden pitäisi."
+
+#: engines/agos/midi.cpp:420
+#, fuzzy, c-format
+#| msgid ""
+#| "Could not find AdLib instrument definition files\n"
+#| "%s and %s. Without these files,\n"
+#| "the music will not sound the same as the original game."
+msgid ""
+"Could not find AdLib instrument definition file\n"
+"%s or %s. Without one of these files,\n"
+"the music will not sound the same as the original game."
+msgstr ""
+"AdLib instrumenttitiedostoja %s ja %s ei löydetty.\n"
+"Musiikki ei tule kuulostamaan samalta kuin\n"
+"alkuperäisessä pelissä ilman niitä."
 
 #: engines/ags/dialogs.cpp:59
 msgid "Game language:"
