@@ -40,5 +40,19 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
+{
+	{ // -- Fan Translation by BJNFNE --
+		"crousti", 
+		"",
+		AD_ENTRY1s("intro.stk", "df96be976e53cc7de9e2741c45c18a1f", 864746),
+		DE_DEU,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeCrousti,
+	kFeaturesAdLib,
+	0, 0, 0
+},
 
 #endif // GOB_DETECTION_TABLES_CROUSTI_H
