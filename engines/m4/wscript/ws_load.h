@@ -24,6 +24,9 @@
 #define M4_WSCRIPT_WS_LOAD_H
 
 #include "m4/m4_types.h"
+#include "m4/fileio/fstream.h"
+#include "m4/mem/reloc.h"
+#include "m4/wscript/ws_machine.h"
 #include "m4/wscript/ws_univ.h"
 
 namespace M4 {
@@ -77,6 +80,34 @@ struct WSLoad_Globals {
 extern bool InitWSAssets();
 extern bool ClearWSAssets(uint32 assetType, int32 minHash, int32 maxHash);
 extern void ShutdownWSAssets();
+
+extern bool ws_CELSIntegrity(int32 minHash, int32 maxHash);
+extern bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette);
+extern int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette);
+extern uint32 *FindSpriteSource(uint32 *celsPtr, int32 index);
+extern M4sprite *GetWSAssetSprite(char *spriteName, uint32 hash, uint32 index, M4sprite *mySprite, bool *streamSeries);
+extern CCB *GetWSAssetCEL(uint32 hash, uint32 index, CCB *myCCB);
+extern int32 GetWSAssetCELCount(uint32 hash);
+extern int32 GetWSAssetCELFrameRate(uint32 hash);
+extern int32 GetWSAssetCELPixSpeed(uint32 hash);
+extern int32 ws_get_sprite_width(uint32 hash, int32 index);
+extern int32 ws_get_sprite_height(uint32 hash, int32 index);
+extern Handle ws_GetSEQU(uint32 hash, int32 *numLocalVars, int32 *offset);
+extern Handle ws_GetMACH(uint32 hash, int32 *numStates, int32 *stateTableOffset, int32 *machInstrOffset);
+extern Handle ws_GetDATA(uint32 hash, uint32 index, int32 *rowOffset);
+extern int32 ws_GetDATACount(uint32 hash);
+extern int32 GetSSHeaderInfo(Common::SeekableReadStream *stream, uint32 **data, RGB8 *myPalette);
+extern bool ws_GetSSMaxWH(Handle ssHandle, int32 ssOffset, int32 *maxW, int32 *maxH);
+
+// USING SPRITES WITHOUT GOING THROUGH THE WOODSCRIPT TREE
+extern int32 LoadSpriteSeries(const char *assetName, Handle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette);
+extern int32 LoadSpriteSeriesDirect(const char *assetName, Handle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette);
+extern M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index, M4sprite *mySprite, bool *streamSeries);
+
+// WOODSCRIPT STREAMING API
+extern bool ws_OpenSSstream(StreamFile *streamFile, Anim8 *anim8);
+extern bool ws_GetNextSSstreamCel(Anim8 *anim8);
+extern void ws_CloseSSstream(CCB *myCCB);
 
 } // End of namespace M4
 

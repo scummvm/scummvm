@@ -27,6 +27,7 @@
 #include "m4/graphics/gr_pal.h"
 #include "m4/gui/gui_buffer.h"
 #include "m4/gui/gui_dialog.h"
+#include "m4/gui/gui_mouse.h"
 #include "m4/gui/gui_sys.h"
 #include "m4/gui/gui_vmng.h"
 #include "m4/mem/mem.h"
@@ -107,7 +108,7 @@ void Globals::game_systems_initialize(byte flags) {
 	if (!f_stream_Init())
 		error_show(FL, 'FSIF');
 
-
+	mouse_set_sprite(kArrowCursor);
 }
 
 void Globals::fire_up_gui() {

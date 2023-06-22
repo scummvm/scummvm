@@ -24,8 +24,14 @@
 
 namespace M4 {
 
-void ws_LogErrorMsg(const char *filename, uint32 line, const char *msg) {
-	error("%s", msg);
+void ws_LogErrorMsg(const char *filename, uint32 line, const char *fmt, ...) {
+	va_list	argPtr;
+	va_start(argPtr, fmt);
+
+	Common::String msg = Common::String::vformat(fmt, argPtr);
+	va_end(argPtr);
+
+	error("%s", msg.c_str());
 }
 
 } // End of namespace M4
