@@ -77,7 +77,7 @@ public:
 
 	void addChild(ThemeLayout *child) { _children.push_back(child); }
 
-	void setPadding(int8 left, int8 right, int8 top, int8 bottom) {
+	void setPadding(int16 left, int16 right, int16 top, int16 bottom) {
 		_padding.left = left;
 		_padding.right = right;
 		_padding.top = top;
