@@ -84,7 +84,6 @@ public:
 
 	void loadLabels(Common::SeekableReadStreamEndian &stream);
 	void loadActions(Common::SeekableReadStreamEndian &stream);
-	void loadCurrentFrameAction();
 	void loadSampleSounds(uint type);
 
 	static int compareLabels(const void *a, const void *b);
