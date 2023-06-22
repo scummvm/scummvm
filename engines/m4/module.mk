@@ -19,6 +19,7 @@ MODULE_OBJS = \
 	core/mouse.o \
 	fileio/extensions.o \
 	fileio/fileio.o \
+	fileio/fstream.o \
 	fileio/info.o \
 	fileio/sys_file.o \
 	graphics/gr_buff.o \

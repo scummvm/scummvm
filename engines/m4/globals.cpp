@@ -103,6 +103,9 @@ void Globals::game_systems_initialize(byte flags) {
 	// Start up rail system
 	if (flags & INSTALL_RAIL_SYSTEM)
 		InitRails();
+
+	if (!f_stream_Init())
+		error_show(FL, 'FSIF');
 }
 
 void Globals::fire_up_gui() {
