@@ -103,6 +103,7 @@ public:
 	Item *_clickItem = nullptr;
 	Item *_doubleClickItem = nullptr;
 	char _listboxSearchStr[80] = { 0 };
+	RGB8 _master_palette[256];
 };
 
 #define _G(X) (g_globals->_##X)
