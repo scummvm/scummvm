@@ -142,6 +142,16 @@ extern void vmng_screen_dispose(void *scrnContent);  // was DestroyScreen
 
 extern void vmng_refresh_video(int32 scrnX, int32 scrnY, int32 x1, int32 y1, int32 x2, int32 y2, Buffer *srcBuffer);
 
+// Rectangle routines
+extern RectList *vmng_CreateNewRect(int32 x1, int32 y1, int32 x2, int32 y2);
+extern void vmng_AddRectToRectList(RectList **scrnRectList, int32 x1, int32 y1, int32 x2, int32 y2);
+extern RectList *vmng_DuplicateRectList(RectList *myRectList);
+extern bool vmng_RectIntersectsRectList(RectList *myRectList, int32 x1, int32 y1, int32 x2, int32 y2);
+extern bool vmng_RectListValid(RectList *myRectList);
+extern bool vmng_ClipRectList(RectList **myRectList, int32 clipX1, int32 clipY1, int32 clipX2, int32 clipY2);
+extern void vmng_DisposeRectList(RectList **rectList);
+extern void vmng_RemoveRectFromRectList(RectList **scrnRectList, int32 x1, int32 y1, int32 x2, int32 y2);
+
 } // End of namespace M4
 
 #endif

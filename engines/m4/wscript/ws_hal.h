@@ -27,6 +27,13 @@
 
 namespace M4 {
 
+struct WSHal_Globals {
+	RectList *_deadRectList;
+	int32 _pcOffsetOld;
+};
+
+extern bool ws_InitHAL();
+extern void ws_KillHAL();
 extern void KillCCB(CCB *myCCB, bool restoreFlag);
 
 } // End of namespace M4

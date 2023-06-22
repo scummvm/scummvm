@@ -21,9 +21,19 @@
 
 #include "m4/wscript/ws_hal.h"
 #include "m4/core/errors.h"
+#include "m4/gui/gui_vmng.h"
 #include "m4/globals.h"
 
 namespace M4 {
+
+bool ws_InitHAL() {
+	_G(deadRectList) = NULL;
+	return true;
+}
+
+void ws_KillHAL() {
+	vmng_DisposeRectList(&_G(deadRectList));
+}
 
 void KillCCB(CCB *myCCB, bool restoreFlag) {
 	error("TODO: KillCCB");
@@ -33,10 +43,10 @@ void KillCCB(CCB *myCCB, bool restoreFlag) {
 	}
 	if (restoreFlag && (!(myCCB->flags & CCB_SKIP)) && (!(myCCB->flags & CCB_HIDE))) {
 		if ((myCCB->flags & CCB_STREAM) && myCCB->maxArea) {
-			vmng_AddRectToRectList(&deadRectList, myCCB->maxArea->x1, myCCB->maxArea->y1,
+			vmng_AddRectToRectList(&_G(deadRectList), myCCB->maxArea->x1, myCCB->maxArea->y1,
 				myCCB->maxArea->x2, myCCB->maxArea->y2);
 		} else {
-			vmng_AddRectToRectList(&deadRectList, myCCB->currLocation->x1, myCCB->currLocation->y1,
+			vmng_AddRectToRectList(&_G(deadRectList), myCCB->currLocation->x1, myCCB->currLocation->y1,
 				myCCB->currLocation->x2, myCCB->currLocation->y2);
 		}
 	}
