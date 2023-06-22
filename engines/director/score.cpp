@@ -1452,8 +1452,7 @@ bool Score::loadFrame(int frameNum) {
 	if (!isFrameRead)
 		return false;
 
-	// Load frame action, cast
-	loadCurrentFrameAction();
+	// Load frame cast
 	setSpriteCasts();
 
 	return true;
@@ -1685,49 +1684,16 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 			break;
 	}
 
-	if (ConfMan.getBool("dump_scripts"))
-		for (auto &j : _actions) {
-			if (!j._value.empty())
-				_movie->getCast()->dumpScript(j._value.c_str(), kScoreScript, j._key);
-		}
-}
-
-void Score::loadCurrentFrameAction() {
-	bool *scriptRefs = (bool *)calloc(_actions.size() + 1, sizeof(bool));
-
-	// Now let's scan which scripts are actually referenced
-	if ((uint)_currentFrame->_actionId.member <= _actions.size())
-		scriptRefs[_currentFrame->_actionId.member] = true;
-
-	for (uint16 j = 0; j <= _currentFrame->_numChannels; j++) {
-		if ((uint)_currentFrame->_sprites[j]->_scriptId.member <= _actions.size())
-			scriptRefs[_currentFrame->_sprites[j]->_scriptId.member] = true;
-	}
-
 	for (auto &j : _actions) {
-		if (!scriptRefs[j._key]) {
-			// Check if it is empty
-			bool empty = true;
-			Common::U32String u32Script(j._value);
-			for (const Common::u32char_type_t *ptr = u32Script.c_str(); *ptr; ptr++)
-				if (!(*ptr == ' ' || *ptr == '-' || *ptr == '\n' || *ptr == '\r' || *ptr == '\t' || *ptr == CONTINUATION)) {
-					empty = false;
-					break;
-				}
-
-			if (!empty)
-				warning("Action id %d is not referenced, the code is:\n-----\n%s\n------", j._key, j._value.c_str());
-
-			continue;
-		}
 		if (!j._value.empty()) {
+			if (ConfMan.getBool("dump_scripts"))
+				_movie->getCast()->dumpScript(j._value.c_str(), kScoreScript, j._key);
+
 			_movie->getMainLingoArch()->addCode(j._value, kScoreScript, j._key);
 
 			processImmediateFrameScript(j._value, j._key);
 		}
 	}
-
-	free(scriptRefs);
 }
 
 Common::String Score::formatChannelInfo() {
