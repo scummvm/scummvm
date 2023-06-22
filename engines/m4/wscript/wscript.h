@@ -24,14 +24,15 @@
 #define M4_WSCRIPT_WS_SCRIPT_H
 
 #include "m4/wscript/ws_cruncher.h"
+#include "m4/wscript/ws_hal.h"
 #include "m4/wscript/ws_load.h"
 #include "m4/wscript/ws_machine.h"
 #include "m4/wscript/ws_timer.h"
 
 namespace M4 {
 
-struct WS_Globals : public WSCruncher_Globals, public WSLoad_Globals,
-		public WSMachine_Globals, public WSTimer_Globals {
+struct WS_Globals : public WSCruncher_Globals, public WSHal_Globals,
+		public WSLoad_Globals, public WSMachine_Globals, public WSTimer_Globals {
 };
 
 extern void ws_LogErrorMsg(const char *filename, uint32 line, const char *msg);

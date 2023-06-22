@@ -55,11 +55,11 @@ bool ws_Initialize(frac16 *theGlobals) {
 	if (!ws_InitCruncher()) {
 		return false;
 	}
-#ifdef TODO
+
 	if (!ws_InitHAL()) {
 		return false;
 	}
-
+#ifdef TODO
 	_G(oldTime) = timer_read_60();
 #endif
 	_G(pauseTime) = 0;
@@ -73,8 +73,8 @@ void ws_Shutdown() {
 	ws_KillCruncher();
 #ifdef TODO
 	ws_KillMachines();
-	ws_KillHAL();
 #endif
+	ws_KillHAL();
 }
 
 void TerminateMachinesByHash(int32 machHash) {

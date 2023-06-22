@@ -83,10 +83,11 @@ void ws_KillCruncher(void) {
 		mem_free((void *)myAnim8->myRegs);
 		myAnim8 = _G(myCruncher)->firstAnim8ToCrunch;
 	}
-	mem_free((void *)_G(myCruncher));
-	if (_G(stackBase)) {
+
+	mem_free(_G(myCruncher));
+
+	if (_G(stackBase))
 		mem_free(_G(stackBase));
-	}
 
 	_G(cruncherInitialized) = false;
 }
