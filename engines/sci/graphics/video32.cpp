@@ -130,6 +130,18 @@ VideoPlayer::EventFlags VideoPlayer::playUntilEvent(const EventFlags flags, cons
 	_decoder->start();
 
 	EventFlags stopFlag = kEventFlagNone;
+
+	if (_subtitles.isLoaded()) {
+		const int16 h = g_system->getOverlayHeight(),
+			        w = g_system->getOverlayWidth();
+		_subtitles.setBBox(Common::Rect(20, h - 120, w - 20, h - 20));
+		_subtitles.setColor(0xff, 0xff, 0xff);
+		_subtitles.setFont("FreeSans.ttf");
+
+		g_system->clearOverlay();
+		g_system->showOverlay(false);
+	}
+
 	for (;;) {
 		if (!_needsUpdate) {
 			g_sci->sleep(MIN(_decoder->getTimeToNextFrame(), maxSleepMs));
@@ -177,6 +189,11 @@ VideoPlayer::EventFlags VideoPlayer::playUntilEvent(const EventFlags flags, cons
 		// them will not make it into the hardware buffer until the next tick
 		g_sci->_gfxFrameout->updateScreen();
 	}
+
+	if (_subtitles.isLoaded()) {
+		g_system->hideOverlay();
+	}
+	_subtitles.close();
 
 	return stopFlag;
 }
@@ -268,6 +285,8 @@ void VideoPlayer::renderFrame(const Graphics::Surface &nextFrame) const {
 
 	g_system->copyRectToScreen(convertedFrame->getPixels(), convertedFrame->pitch, _drawRect.left, _drawRect.top, _drawRect.width(), _drawRect.height());
 	g_sci->_gfxFrameout->updateScreen();
+
+	_subtitles.drawSubtitle(_decoder->getTime(), true);
 
 	if (freeConvertedFrame) {
 		convertedFrame->free();
@@ -613,6 +632,9 @@ VMDPlayer::IOStatus VMDPlayer::open(const Common::String &fileName, const OpenFl
 		if (flags & kOpenFlagMute) {
 			_decoder->setVolume(0);
 		}
+		Common::String subtitlesName = Common::String::format("%s.srt", fileName.c_str());
+		_subtitles.loadSRTFile(subtitlesName.c_str());
+
 		return kIOSuccess;
 	}
 
@@ -1178,6 +1200,9 @@ void DuckPlayer::open(const GuiResourceId resourceId, const int displayMode, con
 	if (!startHQVideo() && _decoder->getPixelFormat().bytesPerPixel != 1) {
 		g_sci->_gfxFrameout->setPixelFormat(_decoder->getPixelFormat());
 	}
+
+	Common::String subtitlesName = Common::String::format("%s.srt", fileName.c_str());
+	_subtitles.loadSRTFile(subtitlesName.c_str());
 
 	_status = kDuckOpen;
 }

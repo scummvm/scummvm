@@ -33,6 +33,7 @@
 #include "sci/video/robot_decoder.h" // for RobotDecoder
 #include "sci/sound/audio32.h"    // for Audio32::kMaxVolume
 #include "video/avi_decoder.h"    // for AVIDecoder::setVolume
+#include "video/subtitles.h"      // for Video::Subtitles
 
 namespace Video {
 class AdvancedVMDDecoder;
@@ -183,6 +184,9 @@ protected:
 	 * Current frame rendered by playUntilEvent()
 	 */
 	const Graphics::Surface* _currentFrame;
+
+
+	Video::Subtitles _subtitles;
 
 #ifdef USE_RGB_COLOR
 	/**
