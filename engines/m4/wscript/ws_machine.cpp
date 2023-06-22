@@ -27,6 +27,10 @@
 
 namespace M4 {
 
+static int32 ws_KillMachines();
+static void clear_msg_list(machine *m);
+static void clear_persistent_msg_list(machine *m);
+
 bool ws_Initialize(frac16 *theGlobals) {
 	int32 i;
 
@@ -71,14 +75,84 @@ bool ws_Initialize(frac16 *theGlobals) {
 void ws_Shutdown() {
 	ws_KillTime();
 	ws_KillCruncher();
-#ifdef TODO
 	ws_KillMachines();
-#endif
 	ws_KillHAL();
 }
 
 void TerminateMachinesByHash(int32 machHash) {
 	warning("TODO: TerminateMachinesByHash");
+}
+
+static int32 ws_KillMachines() {
+	machine *myMachine;
+	globalMsgReq *tempGlobalMsg;
+	int32 myBytes = 0;
+
+	// Deallocate all machines
+	myMachine = _G(firstMachine);
+	while (myMachine) {
+		_G(firstMachine) = _G(firstMachine)->next;
+
+		clear_msg_list(myMachine);
+		clear_persistent_msg_list(myMachine);
+
+		mem_free(myMachine);
+		myBytes += sizeof(machine);
+		myMachine = _G(firstMachine);
+	}
+
+	// deallocate global messages
+	//
+	tempGlobalMsg = _G(myGlobalMessages);
+	while (tempGlobalMsg) {
+		_G(myGlobalMessages) = _G(myGlobalMessages)->next;
+		mem_free((void *)tempGlobalMsg);
+		tempGlobalMsg = _G(myGlobalMessages);
+	}
+
+	return myBytes;
+}
+
+static void dispose_msgRequest(msgRequest *msg) {
+	if (msg) {
+		mem_free(msg);
+	}
+}
+
+static void clear_msg_list(machine *m) {
+	msgRequest *freeMsg, *nextMsg;
+
+	nextMsg = m->myMsgs;
+	while (nextMsg) {
+		freeMsg = nextMsg;
+		nextMsg = nextMsg->nextMsg;
+		dispose_msgRequest(freeMsg);
+	}
+
+	m->myMsgs = nullptr;
+}
+
+static void clear_persistent_msg_list(machine *m) {
+
+	msgRequest *freeMsg, *nextMsg;
+
+	// Clear the active persistent msgs
+	nextMsg = m->myPersistentMsgs;
+	while (nextMsg) {
+		freeMsg = nextMsg;
+		nextMsg = nextMsg->nextMsg;
+		dispose_msgRequest(freeMsg);
+	}
+	m->myPersistentMsgs = NULL;
+
+	// Clear the used persistent msgs
+	nextMsg = m->usedPersistentMsgs;
+	while (nextMsg) {
+		freeMsg = nextMsg;
+		nextMsg = nextMsg->nextMsg;
+		dispose_msgRequest(freeMsg);
+	}
+	m->usedPersistentMsgs = NULL;
 }
 
 } // End of namespace M4
