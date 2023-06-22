@@ -106,6 +106,8 @@ void Globals::game_systems_initialize(byte flags) {
 
 	if (!f_stream_Init())
 		error_show(FL, 'FSIF');
+
+
 }
 
 void Globals::fire_up_gui() {
