@@ -304,7 +304,22 @@ int MidiPlayer::open() {
 		case MT_ADLIB:
 			if (_vm->getPlatform() == Common::kPlatformDOS) {
 				// The DOS version AdLib driver uses an instrument bank file.
-				_driverMsMusic = createMidiDriverSimon1AdLib("MT_FM.IBK", oplType);
+				if (Common::File::exists("MT_FM.IBK")) {
+					_driverMsMusic = createMidiDriverSimon1AdLib("MT_FM.IBK", oplType);
+				} else {
+					// Fallback in case AdLib instrument definitions are missing.
+					GUI::MessageDialog dialog(
+						Common::U32String::format(
+							_("Could not find AdLib instrument definition file\n"
+							  "%s. Without this file,\n"
+							  "the music will not sound the same as the original game."),
+							"MT_FM.IBK"),
+						_("OK"));
+					dialog.runModal();
+
+					_driverMsMusic = new MidiDriver_ADLIB_Multisource(oplType);
+					_driverMsMusic->setInstrumentRemapping(MidiDriver::_mt32ToGm);
+				}
 				if (!(_vm->getFeatures() & GF_TALKIE)) {
 					// The DOS floppy version has AdLib MIDI SFX.
 					_driverMsSfx = _driverMsMusic;
