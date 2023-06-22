@@ -25,16 +25,19 @@
 
 #include "m4/m4_types.h"
 #include "m4/gui/gui_univ.h"
+#include "m4/mem/reloc.h"
 
 namespace M4 {
 
-struct Mouse_Statics {
+constexpr uint32 kArrowCursor = 0;
+
+struct Mouse_Globals {
 	ScreenContext *_mouseScreen = nullptr;
 	transSprite *_mouseScreenSource = nullptr;
 
 	Buffer _mouseBuffer;							// A scratch buffer used by RedrawMouse()
 	char *_mouseSeriesResource = nullptr;
-	Handle _mouseSeriesHandle = nullptr;
+	MemHandle _mouseSeriesHandle = nullptr;
 	int32 _mouseSeriesOffset = 0;
 	int32 _mouseSeriesPalOffset = 0;
 	M4sprite *_mouseSprite = nullptr;			// The specific sprite which is drawn to indicate the current mouse position.
@@ -56,8 +59,8 @@ struct Mouse_Statics {
 	int32 _showMouseX2 = MAX_VIDEO_X;
 	int32 _showMouseY2 = MAX_VIDEO_Y;
 
-	int32 _mouseX = MAX_VIDEO_X >> 1;			// The current mouse "x" position (global coords).
-	int32 _mouseY = MAX_VIDEO_Y >> 1;			// The current mouse "y" position (global coords).
+	int32 _mousex = MAX_VIDEO_X >> 1;			// The current mouse "x" position (global coords).
+	int32 _mousey = MAX_VIDEO_Y >> 1;			// The current mouse "y" position (global coords).
 
 	int32 _oldX = MAX_VIDEO_X >> 1;				// The previous mouse "x" and "y" position.  When the mouse has moved, the
 	int32 _oldY = MAX_VIDEO_Y >> 1;				// position where the mouse sprite was last drawn is here.
@@ -65,6 +68,8 @@ struct Mouse_Statics {
 
 extern bool gui_mouse_init();
 extern void gui_mouse_shutdown();
+extern bool mouse_set_sprite(int32 spriteNum);
+extern void gui_mouse_refresh();
 
 } // End of namespace M4
 

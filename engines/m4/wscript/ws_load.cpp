@@ -22,21 +22,20 @@
 #include "m4/wscript/ws_load.h"
 #include "m4/wscript/ws_machine.h"
 #include "m4/core/errors.h"
+#include "m4/graphics/graphics.h"
 #include "m4/globals.h"
 
 namespace M4 {
 
 bool InitWSAssets(void) {
-	int32			i;
+	int32 i;
 
-	//make sure this is only called once.
+	// Make sure this is only called once.
 	if (_G(wsloaderInitialized)) {
 		error_show(FL, 'WSSN');
 	}
 
-	//allocate space for the tables used by the loader and the resource io
-
-	//MACHine tables
+	// Allocate space for the tables used by the loader and the resource io MACHine tables
 	if ((_G(globalMACHnames) = (char **)mem_alloc(sizeof(char *) * 256, "MACH resource table")) == nullptr) {
 		return false;
 	}
@@ -185,31 +184,100 @@ bool ClearWSAssets(uint32 assetType, int32 minHash, int32 maxHash) {
 }
 
 void ShutdownWSAssets(void) {
-	if (!_G(wsloaderInitialized)) return;
+	if (!_G(wsloaderInitialized))
+		return;
 
-	//for each asset type, clear the entire table
+	// For each asset type, clear the entire table
 	ClearWSAssets(_WS_ASSET_MACH, 0, MAX_ASSET_HASH);
 	ClearWSAssets(_WS_ASSET_SEQU, 0, MAX_ASSET_HASH);
 	ClearWSAssets(_WS_ASSET_CELS, 0, MAX_ASSET_HASH);
 	ClearWSAssets(_WS_ASSET_DATA, 0, MAX_ASSET_HASH);
 
-	//deallocate all tables
-	if (_G(globalMACHnames)) mem_free((void *)_G(globalMACHnames));
-	if (_G(globalSEQUnames)) mem_free((void *)_G(globalSEQUnames));
-	if (_G(globalDATAnames)) mem_free((void *)_G(globalDATAnames));
-	if (_G(globalCELSnames)) mem_free((void *)_G(globalCELSnames));
+	// Deallocate all tables
+	if (_G(globalMACHnames)) mem_free(_G(globalMACHnames));
+	if (_G(globalSEQUnames)) mem_free(_G(globalSEQUnames));
+	if (_G(globalDATAnames)) mem_free(_G(globalDATAnames));
+	if (_G(globalCELSnames)) mem_free(_G(globalCELSnames));
 
-	if (_G(globalMACHHandles)) mem_free((void *)_G(globalMACHHandles));
-	if (_G(globalMACHoffsets)) mem_free((void *)_G(globalMACHoffsets));
-	if (_G(globalSEQUHandles)) mem_free((void *)_G(globalSEQUHandles));
-	if (_G(globalSEQUoffsets)) mem_free((void *)_G(globalSEQUoffsets));
-	if (_G(globalDATAHandles)) mem_free((void *)_G(globalDATAHandles));
-	if (_G(globalDATAoffsets)) mem_free((void *)_G(globalDATAoffsets));
-	if (_G(globalCELSHandles)) mem_free((void *)_G(globalCELSHandles));
-	if (_G(globalCELSoffsets)) mem_free((void *)_G(globalCELSoffsets));
-	if (_G(globalCELSPaloffsets)) mem_free((void *)_G(globalCELSPaloffsets));
+	if (_G(globalMACHHandles)) mem_free(_G(globalMACHHandles));
+	if (_G(globalMACHoffsets)) mem_free(_G(globalMACHoffsets));
+	if (_G(globalSEQUHandles)) mem_free(_G(globalSEQUHandles));
+	if (_G(globalSEQUoffsets)) mem_free(_G(globalSEQUoffsets));
+	if (_G(globalDATAHandles)) mem_free(_G(globalDATAHandles));
+	if (_G(globalDATAoffsets)) mem_free(_G(globalDATAoffsets));
+	if (_G(globalCELSHandles)) mem_free(_G(globalCELSHandles));
+	if (_G(globalCELSoffsets)) mem_free(_G(globalCELSoffsets));
+	if (_G(globalCELSPaloffsets)) mem_free(_G(globalCELSPaloffsets));
 
 	_G(wsloaderInitialized) = false;
+}
+
+M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index, M4sprite *mySprite, bool *streamSeries) {
+	uint32 *myCelSource, *data, *offsets, numCels;
+	uint32 *celsPtr;
+
+	// Parameter verification
+	if ((!resourceHandle) || (!*resourceHandle)) {
+		ws_LogErrorMsg(FL, "No sprite source in memory.");
+		return NULL;
+	}
+
+	if (!mySprite) {
+		mySprite = (M4sprite *)mem_alloc(sizeof(M4sprite), "Sprite");
+		if (!mySprite) {
+			ws_LogErrorMsg(FL, "Out of memory - mem requested: %ld.", sizeof(M4sprite));
+			return NULL;
+		}
+	}
+
+	// Find the cels source  from the asset block
+	HLock(resourceHandle);
+	celsPtr = (uint32 *)((int32)*resourceHandle + handleOffset);
+
+	// Check that the index into the series requested is within a valid range
+	numCels = celsPtr[CELS_COUNT];
+	if (index >= (int)numCels) {
+		ws_LogErrorMsg(FL, "Sprite index out of range - max index: %ld, requested index: %ld", numCels - 1, index);
+		return NULL;
+	}
+
+	// Find the offset table, and the beginning of the data for all sprites
+	offsets = &celsPtr[CELS_OFFSETS];
+	data = &celsPtr[CELS_OFFSETS + numCels];
+
+	// Find the sprite data for the specific sprite in the series
+	myCelSource = (uint32 *)((uint32)data + offsets[index]);
+
+	// Set the stream boolean
+	if (streamSeries) {
+		if (myCelSource[CELS_STREAM])
+			*streamSeries = true;
+		else
+			*streamSeries = false;
+	}
+
+	// Initialize the sprite struct and return it
+	mySprite->sourceHandle = resourceHandle;
+	mySprite->xOffset = (int32)myCelSource[CELS_X];
+	mySprite->yOffset = (int32)myCelSource[CELS_Y];
+	mySprite->w = (int32)myCelSource[CELS_W];
+	mySprite->h = (int32)myCelSource[CELS_H];
+	mySprite->encoding = (uint8)myCelSource[CELS_COMP];
+	mySprite->data = (uint8 *)&myCelSource[CELS_DATA];
+
+	if ((mySprite->w > 0) && (mySprite->h > 0)) {
+		mySprite->sourceOffset = (int32)((int32)(mySprite->data) - (int32)*resourceHandle);
+	} else {
+		mySprite->sourceOffset = 0;
+	}
+
+	// This value MUST be set before sprite draws are called after the block has been locked
+	mySprite->data = NULL;
+
+	// Unlock the handle
+	HUnLock(resourceHandle);
+
+	return mySprite;
 }
 
 } // End of namespace M4

@@ -46,7 +46,7 @@ class Globals;
 
 extern Globals *g_globals;
 
-class Globals : public Mouse_Statics, public WS_Globals, public Timer_Globals {
+class Globals : public Mouse_Globals, public WS_Globals, public Timer_Globals {
 private:
 	void game_systems_initialize(byte flags);
 	void fire_up_gui();
