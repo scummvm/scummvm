@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-22 09:26+0000\n"
+"POT-Creation-Date: 2023-06-22 19:52+0000\n"
 "PO-Revision-Date: 2023-06-17 19:47+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -301,7 +301,8 @@ msgstr "Τα περιεχόμενα του κώδικα JSON δεν έχουν �
 #: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:32
 #: engines/engine.cpp:544 engines/engine.cpp:567
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
-#: engines/agos/midi.cpp:424 engines/buried/saveload.cpp:69
+#: engines/agos/midi.cpp:317 engines/agos/midi.cpp:439
+#: engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1836
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
 #: engines/groovie/script.cpp:660 engines/mtropolis/mtropolis.cpp:115
@@ -5018,7 +5019,22 @@ msgstr ""
 "Roland MT32 σε αυτά του General MIDI. Είναι πιθανό ότι\n"
 "ορισμένα κομμάτια θα ακούγονται εσφαλμένα."
 
-#: engines/agos/midi.cpp:420
+#: engines/agos/midi.cpp:313
+#, fuzzy, c-format
+#| msgid ""
+#| "Could not find AdLib instrument definition files\n"
+#| "%s and %s. Without these files,\n"
+#| "the music will not sound the same as the original game."
+msgid ""
+"Could not find AdLib instrument definition file\n"
+"%s. Without this file,\n"
+"the music will not sound the same as the original game."
+msgstr ""
+"Δεν βρέθηκαν τα αρχεία ορισμού μουσικών οργάνων AdLib\n"
+"%s και %s. Χωρίς αυτά τα αρχεία,\n"
+"η μουσική δεν θα ακούγεται ακριβώς το ίδιο όπως στο πρωτότυπο παιχνίδι."
+
+#: engines/agos/midi.cpp:435
 #, fuzzy, c-format
 #| msgid ""
 #| "Could not find AdLib instrument definition files\n"

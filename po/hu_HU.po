@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-22 09:26+0000\n"
+"POT-Creation-Date: 2023-06-22 19:52+0000\n"
 "PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -309,7 +309,8 @@ msgstr "A JSON kód tartalma hibás."
 #: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:32
 #: engines/engine.cpp:544 engines/engine.cpp:567
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
-#: engines/agos/midi.cpp:424 engines/buried/saveload.cpp:69
+#: engines/agos/midi.cpp:317 engines/agos/midi.cpp:439
+#: engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1836
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
 #: engines/groovie/script.cpp:660 engines/mtropolis/mtropolis.cpp:115
@@ -4947,7 +4948,22 @@ msgstr ""
 "General MIDIre. Továbbra is lehetséges hogy\n"
 "néhány hangsáv helytelenül hangzik."
 
-#: engines/agos/midi.cpp:420
+#: engines/agos/midi.cpp:313
+#, fuzzy, c-format
+#| msgid ""
+#| "Could not find AdLib instrument definition files\n"
+#| "%s and %s. Without these files,\n"
+#| "the music will not sound the same as the original game."
+msgid ""
+"Could not find AdLib instrument definition file\n"
+"%s. Without this file,\n"
+"the music will not sound the same as the original game."
+msgstr ""
+"Nem található AdLib hangszerdefiníciós fájl\n"
+"%s és %s. Ezen fájlok nélkül,\n"
+"a zene nem ugyanaz, mint az eredeti játékban."
+
+#: engines/agos/midi.cpp:435
 #, fuzzy, c-format
 #| msgid ""
 #| "Could not find AdLib instrument definition files\n"
