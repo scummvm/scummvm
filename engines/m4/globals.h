@@ -27,6 +27,7 @@
 #include "m4/term.h"
 #include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_been.h"
+#include "m4/adv_r/adv_rails.h"
 #include "m4/fileio/sys_file.h"
 #include "m4/graphics/gr_font.h"
 #include "m4/gui/gui_mouse.h"
@@ -64,6 +65,7 @@ public:
 	Scene_list _scene_list;
 	frac16 _globals[GLB_SHARED_VARS];
 	Resources _resources;
+	Rails_Globals _rails;
 
 	Font *_system_font = nullptr;
 	Font *_font_line = nullptr;

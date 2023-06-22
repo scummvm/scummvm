@@ -99,6 +99,10 @@ void Globals::game_systems_initialize(byte flags) {
 		error_show(FL, 'WSIF');
 
 	gr_pal_clear(_master_palette);
+
+	// Start up rail system
+	if (flags & INSTALL_RAIL_SYSTEM)
+		InitRails();
 }
 
 void Globals::fire_up_gui() {
