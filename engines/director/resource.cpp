@@ -403,7 +403,6 @@ Archive *DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 		warning("DirectorEngine::loadEXEv3(): Failed to load RIFF from EXE");
 		delete result;
 		result = nullptr;
-		delete stream;
 	}
 
 	result = createArchive();
