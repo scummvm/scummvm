@@ -187,6 +187,8 @@ void reset_performance_tuner() {
 		performance_switch = PERF_SWITCH_ON;
 		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: reset.\n");
 	}
+	min_auto_frameskip = 0;
+	min_auto_frameskip_count = 0;
 }
 
 void retro_osd_notification(const char* msg) {
@@ -308,6 +310,8 @@ static void update_variables(void) {
 	}
 
 	if (old_frameskip_type != frameskip_type) {
+		min_auto_frameskip = 0;
+		min_auto_frameskip_count = 0;
 		audio_status |= AUDIO_STATUS_UPDATE_LATENCY;
 	}
 }
