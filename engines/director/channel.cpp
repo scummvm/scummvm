@@ -393,7 +393,7 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 				Common::String path = nextSprite->_cast->getCast()->getVideoPath(nextSprite->_castId.member);
 
 				if (!path.empty()) {
-					((DigitalVideoCastMember *)nextSprite->_cast)->loadVideo(pathMakeRelative(path, true, false));
+					((DigitalVideoCastMember *)nextSprite->_cast)->loadVideo(path);
 					_movieTime = 0;
 					((DigitalVideoCastMember *)nextSprite->_cast)->startVideo(this);
 				}

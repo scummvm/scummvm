@@ -244,8 +244,8 @@ void FileIO::m_new(int nargs) {
 		if (!me->_inStream) {
 			// Maybe we're trying to read one of the game files
 			Common::File *f = new Common::File;
-
-			if (!f->open(Common::Path(pathMakeRelative(origpath), g_director->_dirSeparator))) {
+			Common::Path location = findPath(origpath);
+			if (location.empty() || !f->open(location)) {
 				delete f;
 				saveFileError();
 				me->dispose();

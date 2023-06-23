@@ -36,6 +36,7 @@
 #include "director/archive.h"
 #include "director/movie.h"
 #include "director/picture.h"
+#include "director/util.h"
 #include "director/window.h"
 #include "director/lingo/lingo.h"
 
@@ -110,7 +111,8 @@ void Window::testFontScaling() {
 		x += tile->_surface.w + 10;
 	}
 
-	Common::String path = pathMakeRelative("blend2.pic");
+	Common::String filename("blend2.pic");
+	Common::Path path = findPath(filename);
 	Common::File in;
 	in.open(path);
 
@@ -123,7 +125,7 @@ void Window::testFontScaling() {
 		surface.blitFrom(res, Common::Point(400, 280));
 		in.close();
 	} else {
-		warning("b_importFileInto(): Cannot open file %s", path.c_str());
+		warning("b_importFileInto(): Cannot open file %s", path.toString().c_str());
 	}
 
 	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, w, h); // testing fonts

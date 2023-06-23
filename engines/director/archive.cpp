@@ -46,19 +46,19 @@ Archive::~Archive() {
 
 Common::String Archive::getFileName() const { return Director::getFileName(_pathName); }
 
-bool Archive::openFile(const Common::String &fileName) {
+bool Archive::openFile(const Common::Path &path) {
 	Common::File *file = new Common::File();
 
-	if (!file->open(Common::Path(fileName, g_director->_dirSeparator))) {
-		warning("Archive::openFile(): Error opening file %s", fileName.c_str());
+	if (path.empty() || !file->open(path)) {
+		warning("Archive::openFile(): Error opening file %s", path.toString().c_str());
 		delete file;
 		return false;
 	}
 
-	_pathName = fileName;
+	_pathName = path.toString(g_director->_dirSeparator);
 
 	if (!openStream(file)) {
-		warning("Archive::openFile(): Error loading stream from file %s", fileName.c_str());
+		warning("Archive::openFile(): Error loading stream from file %s", path.toString().c_str());
 		close();
 		return false;
 	}
@@ -309,14 +309,12 @@ void MacArchive::close() {
 	_resFork = nullptr;
 }
 
-bool MacArchive::openFile(const Common::String &fileName) {
+bool MacArchive::openFile(const Common::Path &path) {
 	close();
 
 	_resFork = new Common::MacResManager();
 
-	Common::String fName = fileName;
-
-	if (!_resFork->open(Common::Path(fName, g_director->_dirSeparator)) || !_resFork->hasResFork()) {
+	if (path.empty() || !_resFork->open(path) || !_resFork->hasResFork()) {
 		close();
 		return false;
 	}

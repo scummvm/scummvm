@@ -24,6 +24,8 @@
 
 namespace Common {
 class String;
+class FSNode;
+class Path;
 }
 
 namespace Director {
@@ -39,15 +41,16 @@ Common::String unixToMacPath(const Common::String &path);
 
 Common::String getPath(Common::String path, Common::String cwd);
 
-bool testPath(Common::String &path, bool directory = false);
+Common::FSNode resolvePath(Common::String &path, Common::FSNode &base, bool directory);
+Common::FSNode resolvePartialPath(Common::String &path, Common::FSNode &base, bool directory);
+Common::FSNode resolvePathWithFuzz(Common::String &path, Common::FSNode &base, bool directory);
+Common::FSNode resolvePartialPathWithFuzz(Common::String &path, Common::FSNode &base, bool directory);
+Common::Path nodeToPath(Common::FSNode &node);
+Common::Path findPath(Common::String &path, bool currentFolder = true, bool searchPaths = true, bool directory = false);
+Common::Path findMoviePath(Common::String &path, bool currentFolder = true, bool searchPaths = true);
 
-Common::String pathMakeRelative(Common::String path, bool recursive = true, bool addexts = true, bool directory = false);
-
-Common::String wrappedPathMakeRelative(Common::String path, bool recursive = true, bool addexts = true, bool directory = false, bool absolute = false);
 
 bool hasExtension(Common::String filename);
-
-Common::String testExtensions(Common::String component, Common::String initialPath, Common::String convPath);
 
 Common::String getFileName(Common::String path);
 
