@@ -999,7 +999,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Lasse Holm: The Quest for Revenge (v1.0)", "f9fbcc8a4ef510bfbb92423296ff4abb"),
 	FANMADE("Lawman for Hire", "c78b28bfd3767dd455b992cd8b7854fa"),
 	FANMADE("Lefty Goes on Vacation (Not in The Right Place)", "ccdc49a33870310b01f2c48b8a1f3c34"),
-	FANMADE("Les Ins\xe3parables (v1.0)", "4b780887cab0ecabc5eca319acb3acf2"),
+	FANMADE("Les Inseparables (v1.0)", "4b780887cab0ecabc5eca319acb3acf2"),
 	FANMADE("Little Pirate (Demo 2 v0.6)", "437068efe4ec32d436da09d6f2ea56e1"),
 	FANMADE("Lost Eternity (v1.0)", "95f15c5632feb8a39e9ca3d9af35fcc9"),
 	FANMADE("MD Quest - The Search for Michiel (v0.10)", "2a6fcb21d2b5e4144c38ed817fabe8ee"),
