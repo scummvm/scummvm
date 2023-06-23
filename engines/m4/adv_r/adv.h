@@ -23,6 +23,7 @@
 #ifndef M4_ADV_R_ADV_H
 #define M4_ADV_R_ADV_H
 
+#include "common/textconsole.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
@@ -32,6 +33,7 @@ namespace M4 {
 #define MAXRAILNODES 32
 #define PATH_END     0xffff
 #define MAX_PLYR_STRING_LEN     40
+#define KERNEL_SCRATCH_SIZE 256 // Size of game scratch area
 
 #define STR_FADEPAL "fade palette"
 #define STR_RAILNODE "rail node"
@@ -47,6 +49,18 @@ enum {
 	INSTALL_MININUM          =    0,
 	INSTALL_ALL              = 0x1f
 };
+
+enum {
+	UNKNOWN_OBJECT = 997,
+	BACKPACK = 998,
+	NOWHERE = 999
+};
+
+enum KernelTriggerType {
+	KT_PARSE = 1,
+	KT_DAEMON, KT_PREPARSE, KT_EXPIRE, KT_LOOP
+};
+
 
 struct HotSpotRec {
 	int32 ul_x = 0, ul_y = 0, lr_x = 0, lr_y = 0;	// Hotspot screen coordinates
@@ -153,6 +167,32 @@ struct Player {
 
 	int32 click_x = 0, click_y = 0;
 };
+
+struct GameControl {
+	uint32	scratch[KERNEL_SCRATCH_SIZE];  // Scratch variables for room
+
+	int32 digi_overall_volume_percent;
+	int32 midi_overall_volume_percent;
+	bool camera_pan_instant;
+
+	int16		room_id;
+	int16		new_room;
+	int16		previous_section;
+	int16		section_id;
+	int16		new_section;
+	int16		previous_room;
+};
+
+
+inline void inventory_add(char *name, char *verb, int32 sprite, int32 cursor) {
+	error("TODO: inventory_add");
+}
+inline void inventory_set_scroll(int32 scroll) {
+	error("TODO: inventory_set_scroll");
+}
+inline void inventory_remove(char *name) {
+	error("TODO: inventory_remove");
+}
 
 } // namespace M4
 

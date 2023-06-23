@@ -3,7 +3,6 @@ MODULE := engines/m4
 MODULE_OBJS = \
 	m4.o \
 	console.o \
-	game.o \
 	globals.o \
 	kernel.o \
 	metaengine.o \
@@ -11,9 +10,11 @@ MODULE_OBJS = \
 	res.o \
 	term.o \
 	adv_r/adv_been.o \
+	adv_r/adv_inv.o \
 	adv_r/adv_rails.o \
 	adv_r/db_env.o \
 	adv_r/db_rmlst.o \
+	core/cstring.o \
 	core/errors.o \
 	core/imath.o \
 	core/mouse.o \
@@ -23,6 +24,7 @@ MODULE_OBJS = \
 	fileio/info.o \
 	fileio/sys_file.o \
 	graphics/gr_buff.o \
+	graphics/gr_color.o \
 	graphics/gr_font.o \
 	graphics/gr_pal.o \
 	graphics/graphics.o \

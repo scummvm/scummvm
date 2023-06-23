@@ -19,8 +19,51 @@
  *
  */
 
-#include "m4/game.h"
+#include "m4/graphics/gr_color.h"
+#include "m4/core/errors.h"
+#include "m4/fileio/sys_file.h"
+#include "m4/mem/reloc.h"
 
 namespace M4 {
+
+InvPal::InvPal(const char *filename) {
+	handle = NULL;
+	SysFile ipl5(filename, BINARY);
+
+	if (!ipl5.exists())
+		return;
+
+	handle = NewHandle(32768, "5 bit ict");
+
+	if (!handle) {
+		MakeMem(32768, "5 bit ict");
+		handle = NewHandle(32768, "5 bit ict");
+		if (!handle) {
+			ipl5.close();
+			error_show(FL, 'OOM!', "5 bit ict");
+			return;
+		}
+	}
+
+	ipl5.read(handle, 32768);
+}
+
+InvPal::~InvPal() {
+	if (handle)
+		DisposeHandle(handle);
+}
+
+uint8 *InvPal::get_ptr() {
+	if (!handle)
+		return NULL;
+
+	HLock(handle);
+	return (uint8 *)*handle;
+}
+
+void InvPal::release() {
+	if (handle)
+		HUnLock(handle);
+}
 
 } // namespace M4

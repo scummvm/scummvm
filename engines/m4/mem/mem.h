@@ -44,7 +44,12 @@ extern bool mem_register_stash_type(int32 *memType, int32 size, int32 numRequest
  */
 extern void mem_free_to_stash(void *myMem, int32 memType);
 
+/**
+ * Deliver a memory block whose size has been previously registered.
+ */
 extern void *mem_get_from_stash(int32 memType, const Common::String &name);
+
+extern char *mem_strdup(const char *str);
 
 } // namespace M4
 

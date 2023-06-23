@@ -46,4 +46,9 @@ MemHandle MakeNewHandle(size_t size, const Common::String &name) {
 	return NewHandle(size, name);
 }
 
+void DisposeHandle(MemHandle handle) {
+	free(*handle);
+	free(handle);
+}
+
 } // namespace M4

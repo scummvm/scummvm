@@ -19,16 +19,24 @@
  *
  */
 
-#ifndef M4_GAME_H
-#define M4_GAME_H
+#ifndef M4_GRAPHICS_GR_COLOR_H
+#define M4_GRAPHICS_GR_COLOR_H
 
-#include "common/scummsys.h"
+#include "m4/m4_types.h"
+#include "m4/mem/reloc.h"
 
 namespace M4 {
 
-struct Game {
-	int16 new_room;
-	int16 new_section;
+class InvPal {
+private:
+	MemHandle handle;
+
+public:
+	InvPal(const char *filename);
+	virtual ~InvPal();
+
+	uint8 *get_ptr();
+	void release();
 };
 
 } // namespace M4

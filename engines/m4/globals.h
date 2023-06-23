@@ -22,14 +22,15 @@
 #ifndef M4_GLOBALS_H
 #define M4_GLOBALS_H
 
-#include "m4/game.h"
 #include "m4/kernel.h"
 #include "m4/term.h"
 #include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_been.h"
+#include "m4/adv_r/adv_inv.h"
 #include "m4/adv_r/adv_rails.h"
 #include "m4/fileio/fstream.h"
 #include "m4/fileio/sys_file.h"
+#include "m4/graphics/gr_color.h"
 #include "m4/graphics/gr_font.h"
 #include "m4/gui/gui_mouse.h"
 #include "m4/gui/gui_univ.h"
@@ -49,6 +50,7 @@ extern Globals *g_globals;
 class Globals : public Mouse_Globals, public WS_Globals, public Timer_Globals {
 private:
 	void game_systems_initialize(byte flags);
+	void game_systems_shutdown();
 	void fire_up_gui();
 	bool woodscript_init();	
 	void woodscript_shutdown();
@@ -58,7 +60,7 @@ public:
 	~Globals();
 	bool init();
 
-	Game _game;
+	GameControl _game;
 	Kernel _kernel;
 	Term _term;
 	Hag_Statics _hag;
@@ -107,8 +109,11 @@ public:
 	Item *_doubleClickItem = nullptr;
 	char _listboxSearchStr[80] = { 0 };
 	RGB8 _master_palette[256];
-	strmRequest *_firstStream;
-	strmRequest *_lastStream;
+	strmRequest *_firstStream = nullptr;
+	strmRequest *_lastStream = nullptr;
+	InvPal *_inverse_pal = nullptr;
+	InventoryRec _inventory;
+	int32 _inv_obj_mem_type = 0;
 };
 
 #define _G(X) (g_globals->_##X)
