@@ -27,7 +27,7 @@ extern "C" {
 #ifdef _STANDALONE_
 #include "ftimage.h"
 #else
-#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include FT_IMAGE_H
 #endif
 

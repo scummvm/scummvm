@@ -20,7 +20,7 @@
 #define __FTSTREAM_H__
 
 
-#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include FT_SYSTEM_H
 #include FT_INTERNAL_OBJECTS_H
 

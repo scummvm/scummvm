@@ -20,7 +20,7 @@
 #define __PFRDRIVR_H__
 
 
-#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include FT_INTERNAL_DRIVER_H
 
 

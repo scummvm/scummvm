@@ -18,7 +18,7 @@
 
 #define FT_MAKE_OPTION_SINGLE_OBJECT
 
-#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "ttload.c"
 #include "ttcmap.c"
 #include "ttcmap0.c"

@@ -24,7 +24,7 @@
 /*************************************************************************/
 
 
-// Maintained by Detlef Würkner <TetiSoft@apg.lahn.de>
+// Maintained by Detlef Wï¿½rkner <TetiSoft@apg.lahn.de>
 
 // TetiSoft: Modified to avoid fopen() fclose() fread() fseek() ftell()
 // malloc() realloc() and free() which can't be used in an amiga
@@ -105,7 +105,7 @@ FreeVecPooled( APTR  poolHeader,
 }
 
 
-#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include FT_CONFIG_CONFIG_H
 #include FT_INTERNAL_DEBUG_H
 #include FT_SYSTEM_H

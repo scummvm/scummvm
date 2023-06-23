@@ -16,7 +16,7 @@
 /***************************************************************************/
 
 
-#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "t1afm.h"
 #include FT_INTERNAL_STREAM_H
 #include FT_INTERNAL_TYPE1_TYPES_H

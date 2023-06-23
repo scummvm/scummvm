@@ -52,7 +52,7 @@
 #define __FT2_BUILD_UNIX_H__
 
 /* "/usr/local/include/freetype2" must be in your current inclusion path */
-#include <freetype/config/ftheader.h>
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftheader.h"
 
 #endif /* __FT2_BUILD_UNIX_H__ */
 

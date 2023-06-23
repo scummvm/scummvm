@@ -16,7 +16,7 @@
 /***************************************************************************/
 
 
-#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "cidload.h"
 #include "cidgload.h"
 #include FT_INTERNAL_DEBUG_H

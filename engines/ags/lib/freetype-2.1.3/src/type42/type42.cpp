@@ -17,7 +17,7 @@
 
 #define FT_MAKE_OPTION_SINGLE_OBJECT
 
-#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "t42objs.c"
 #include "t42parse.c"
 #include "t42drivr.c"

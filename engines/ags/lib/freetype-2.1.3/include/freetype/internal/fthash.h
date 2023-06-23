@@ -30,7 +30,7 @@
 #ifndef __FT_HASH_H__
 #define __FT_HASH_H__
 
-#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include FT_TYPES_H
 
 FT_BEGIN_HEADER

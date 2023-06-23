@@ -21,7 +21,7 @@
 #define __TTPOST_H__
 
 
-#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include FT_CONFIG_CONFIG_H
 #include FT_INTERNAL_TRUETYPE_TYPES_H
 

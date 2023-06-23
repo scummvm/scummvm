@@ -20,7 +20,7 @@
 #define __FTOPTION_H__
 
 
-#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 
 
 FT_BEGIN_HEADER

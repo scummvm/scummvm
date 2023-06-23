@@ -16,7 +16,7 @@
 /***************************************************************************/
 
 
-#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include FT_CACHE_H
 #include FT_CACHE_MANAGER_H
 #include FT_CACHE_INTERNAL_LRU_H

@@ -30,7 +30,7 @@
 
 /* _STANDALONE_ is from ftgrays.c */
 #ifndef _STANDALONE_
-#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #endif
 
 

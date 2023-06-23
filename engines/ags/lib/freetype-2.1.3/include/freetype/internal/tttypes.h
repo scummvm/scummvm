@@ -21,7 +21,7 @@
 #define __TTTYPES_H__
 
 
-#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include FT_TRUETYPE_TABLES_H
 #include FT_INTERNAL_OBJECTS_H
 

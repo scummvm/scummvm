@@ -19,7 +19,7 @@
 #ifndef __FTXF86_H__
 #define __FTXF86_H__
 
-#include <ft2build.h>
+#include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include FT_FREETYPE_H
 
 FT_BEGIN_HEADER
