@@ -21,106 +21,100 @@
 #include FT_INTERNAL_OBJECTS_H
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
-  /* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
-  /* messages during execution.                                            */
-  /*                                                                       */
+/*************************************************************************/
+/*                                                                       */
+/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
+/* messages during execution.                                            */
+/*                                                                       */
 #undef  FT_COMPONENT
 #define FT_COMPONENT  trace_mm
 
 
-  /* documentation is in ftmm.h */
+/* documentation is in ftmm.h */
 
-  FT_EXPORT_DEF( FT_Error )
-  FT_Get_Multi_Master( FT_Face           face,
-                       FT_Multi_Master  *amaster )
-  {
-    FT_Error  error;
-
-
-    if ( !face )
-      return FT_Err_Invalid_Face_Handle;
-
-    error = FT_Err_Invalid_Argument;
-
-    if ( FT_HAS_MULTIPLE_MASTERS( face ) )
-    {
-      FT_Driver       driver = face->driver;
-      FT_Get_MM_Func  func;
+FT_EXPORT_DEF( FT_Error )
+FT_Get_Multi_Master( FT_Face           face,
+                     FT_Multi_Master  *amaster ) {
+	FT_Error  error;
 
 
-      func = (FT_Get_MM_Func)driver->root.clazz->get_interface(
-                               FT_MODULE( driver ), "get_mm" );
-      if ( func )
-        error = func( face, amaster );
-    }
+	if ( !face )
+		return FT_Err_Invalid_Face_Handle;
 
-    return error;
-  }
+	error = FT_Err_Invalid_Argument;
 
-
-  /* documentation is in ftmm.h */
-
-  FT_EXPORT_DEF( FT_Error )
-  FT_Set_MM_Design_Coordinates( FT_Face   face,
-                                FT_UInt   num_coords,
-                                FT_Long*  coords )
-  {
-    FT_Error  error;
+	if ( FT_HAS_MULTIPLE_MASTERS( face ) ) {
+		FT_Driver       driver = face->driver;
+		FT_Get_MM_Func  func;
 
 
-    if ( !face )
-      return FT_Err_Invalid_Face_Handle;
+		func = (FT_Get_MM_Func)driver->root.clazz->get_interface(
+		           FT_MODULE( driver ), "get_mm" );
+		if ( func )
+			error = func( face, amaster );
+	}
 
-    error = FT_Err_Invalid_Argument;
-
-    if ( FT_HAS_MULTIPLE_MASTERS( face ) )
-    {
-      FT_Driver              driver = face->driver;
-      FT_Set_MM_Design_Func  func;
-
-
-      func = (FT_Set_MM_Design_Func)driver->root.clazz->get_interface(
-                                      FT_MODULE( driver ), "set_mm_design" );
-      if ( func )
-        error = func( face, num_coords, coords );
-    }
-
-    return error;
-  }
+	return error;
+}
 
 
-  /* documentation is in ftmm.h */
+/* documentation is in ftmm.h */
 
-  FT_EXPORT_DEF( FT_Error )
-  FT_Set_MM_Blend_Coordinates( FT_Face    face,
-                               FT_UInt    num_coords,
-                               FT_Fixed*  coords )
-  {
-    FT_Error  error;
-
-
-    if ( !face )
-      return FT_Err_Invalid_Face_Handle;
-
-    error = FT_Err_Invalid_Argument;
-
-    if ( FT_HAS_MULTIPLE_MASTERS( face ) )
-    {
-      FT_Driver             driver = face->driver;
-      FT_Set_MM_Blend_Func  func;
+FT_EXPORT_DEF( FT_Error )
+FT_Set_MM_Design_Coordinates( FT_Face   face,
+                              FT_UInt   num_coords,
+                              FT_Long*  coords ) {
+	FT_Error  error;
 
 
-      func = (FT_Set_MM_Blend_Func)driver->root.clazz->get_interface(
-                                     FT_MODULE( driver ), "set_mm_blend" );
-      if ( func )
-        error = func( face, num_coords, coords );
-    }
+	if ( !face )
+		return FT_Err_Invalid_Face_Handle;
 
-    return error;
-  }
+	error = FT_Err_Invalid_Argument;
+
+	if ( FT_HAS_MULTIPLE_MASTERS( face ) ) {
+		FT_Driver              driver = face->driver;
+		FT_Set_MM_Design_Func  func;
+
+
+		func = (FT_Set_MM_Design_Func)driver->root.clazz->get_interface(
+		           FT_MODULE( driver ), "set_mm_design" );
+		if ( func )
+			error = func( face, num_coords, coords );
+	}
+
+	return error;
+}
+
+
+/* documentation is in ftmm.h */
+
+FT_EXPORT_DEF( FT_Error )
+FT_Set_MM_Blend_Coordinates( FT_Face    face,
+                             FT_UInt    num_coords,
+                             FT_Fixed*  coords ) {
+	FT_Error  error;
+
+
+	if ( !face )
+		return FT_Err_Invalid_Face_Handle;
+
+	error = FT_Err_Invalid_Argument;
+
+	if ( FT_HAS_MULTIPLE_MASTERS( face ) ) {
+		FT_Driver             driver = face->driver;
+		FT_Set_MM_Blend_Func  func;
+
+
+		func = (FT_Set_MM_Blend_Func)driver->root.clazz->get_interface(
+		           FT_MODULE( driver ), "set_mm_blend" );
+		if ( func )
+			error = func( face, num_coords, coords );
+	}
+
+	return error;
+}
 
 
 /* END */

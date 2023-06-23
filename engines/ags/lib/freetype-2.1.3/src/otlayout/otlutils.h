@@ -5,20 +5,20 @@
 
 OTL_BEGIN_HEADER
 
-  OTL_LOCAL( OTL_Error )
-  otl_mem_alloc( OTL_Pointer*  pblock,
-                 OTL_ULong     size,
+OTL_LOCAL( OTL_Error )
+otl_mem_alloc( OTL_Pointer*  pblock,
+               OTL_ULong     size,
+               OTL_Memory    memory );
+
+OTL_LOCAL( void )
+otl_mem_free( OTL_Pointer*  pblock,
+              OTL_Memory    memory );
+
+OTL_LOCAL( OTL_Error )
+otl_mem_realloc( OTL_Pointer  *pblock,
+                 OTL_ULong     cur_size,
+                 OTL_ULong     new_size,
                  OTL_Memory    memory );
-
-  OTL_LOCAL( void )
-  otl_mem_free( OTL_Pointer*  pblock,
-                OTL_Memory    memory );
-
-  OTL_LOCAL( OTL_Error )
-  otl_mem_realloc( OTL_Pointer  *pblock,
-                   OTL_ULong     cur_size,
-                   OTL_ULong     new_size,
-                   OTL_Memory    memory );
 
 #define  OTL_MEM_ALLOC(p,s)       otl_mem_alloc( (void**)&(p), (s), memory )
 #define  OTL_MEM_FREE(p)          otl_mem_free( (void**)&(p), memory )

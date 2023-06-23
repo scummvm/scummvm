@@ -128,7 +128,7 @@
  for small objects.
 */
 
-                        /* Type declarations */
+/* Type declarations */
 
 #ifndef OF /* function prototypes */
 #  ifdef STDC
@@ -145,7 +145,7 @@
  * just define FAR to be empty.
  */
 #if (defined(M_I86SM) || defined(M_I86MM)) && !defined(__32BIT__)
-   /* MSC small or medium model */
+/* MSC small or medium model */
 #  define SMALL_MEDIUM
 #  ifdef _MSC_VER
 #    define FAR _far
@@ -213,10 +213,10 @@ typedef unsigned int   uInt;  /* 16 bits or more */
 typedef unsigned long  uLong; /* 32 bits or more */
 
 #ifdef SMALL_MEDIUM
-   /* Borland C/C++ and some old MSC versions ignore FAR inside typedef */
+/* Borland C/C++ and some old MSC versions ignore FAR inside typedef */
 #  define Bytef Byte FAR
 #else
-   typedef Byte  FAR Bytef;
+typedef Byte  FAR Bytef;
 #endif
 typedef char  FAR charf;
 typedef int   FAR intf;
@@ -224,11 +224,11 @@ typedef uInt  FAR uIntf;
 typedef uLong FAR uLongf;
 
 #ifdef STDC
-   typedef void FAR *voidpf;
-   typedef void     *voidp;
+typedef void FAR *voidpf;
+typedef void     *voidp;
 #else
-   typedef Byte FAR *voidpf;
-   typedef Byte     *voidp;
+typedef Byte FAR *voidpf;
+typedef Byte     *voidp;
 #endif
 
 #ifdef HAVE_UNISTD_H

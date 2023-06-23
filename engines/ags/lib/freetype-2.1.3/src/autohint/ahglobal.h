@@ -36,9 +36,9 @@ FT_BEGIN_HEADER
                                (b) == AH_BLUE_SMALL_TOP   )
 
 
-  /* compute global metrics automatically */
-  FT_LOCAL( FT_Error )
-  ah_hinter_compute_globals( AH_Hinter  hinter );
+/* compute global metrics automatically */
+FT_LOCAL( FT_Error )
+ah_hinter_compute_globals( AH_Hinter  hinter );
 
 
 FT_END_HEADER

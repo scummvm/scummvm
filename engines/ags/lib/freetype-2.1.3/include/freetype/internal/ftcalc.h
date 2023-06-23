@@ -27,36 +27,36 @@
 FT_BEGIN_HEADER
 
 
-  FT_EXPORT( FT_Int32 )  FT_SqrtFixed( FT_Int32  x );
+FT_EXPORT( FT_Int32 )  FT_SqrtFixed( FT_Int32  x );
 
 
 #define SQRT_32( x )  FT_Sqrt32( x )
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    FT_Sqrt32                                                          */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Computes the square root of an Int32 integer (which will be        */
-  /*    handled as an unsigned long value).                                */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    x :: The value to compute the root for.                            */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    The result of `sqrt(x)'.                                           */
-  /*                                                                       */
-  FT_EXPORT( FT_Int32 )
-  FT_Sqrt32( FT_Int32  x );
+/*************************************************************************/
+/*                                                                       */
+/* <Function>                                                            */
+/*    FT_Sqrt32                                                          */
+/*                                                                       */
+/* <Description>                                                         */
+/*    Computes the square root of an Int32 integer (which will be        */
+/*    handled as an unsigned long value).                                */
+/*                                                                       */
+/* <Input>                                                               */
+/*    x :: The value to compute the root for.                            */
+/*                                                                       */
+/* <Return>                                                              */
+/*    The result of `sqrt(x)'.                                           */
+/*                                                                       */
+FT_EXPORT( FT_Int32 )
+FT_Sqrt32( FT_Int32  x );
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* FT_MulDiv() and FT_MulFix() are declared in freetype.h.               */
-  /*                                                                       */
-  /*************************************************************************/
+/*************************************************************************/
+/*                                                                       */
+/* FT_MulDiv() and FT_MulFix() are declared in freetype.h.               */
+/*                                                                       */
+/*************************************************************************/
 
 
 #define INT_TO_F26DOT6( x )    ( (FT_Long)(x) << 6  )

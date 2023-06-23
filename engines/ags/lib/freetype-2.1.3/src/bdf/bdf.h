@@ -50,11 +50,11 @@ FT_BEGIN_HEADER
 /* end of bdfP.h */
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* BDF font options macros and types.                                    */
-  /*                                                                       */
-  /*************************************************************************/
+/*************************************************************************/
+/*                                                                       */
+/* BDF font options macros and types.                                    */
+/*                                                                       */
+/*************************************************************************/
 
 
 #define BDF_CORRECT_METRICS  0x01 /* Correct invalid metrics when loading. */
@@ -74,29 +74,28 @@ FT_BEGIN_HEADER
                                     BDF_PROPORTIONAL    )
 
 
-  typedef struct  bdf_options_t_
-  {
-    int            correct_metrics;
-    int            keep_unencoded;
-    int            keep_comments;
-    int            font_spacing;
+typedef struct  bdf_options_t_ {
+	int            correct_metrics;
+	int            keep_unencoded;
+	int            keep_comments;
+	int            font_spacing;
 
-  } bdf_options_t;
-
-
-  /* Callback function type for unknown configuration options. */
-  typedef int
-  (*bdf_options_callback_t)( bdf_options_t*  opts,
-                             char**          params,
-                             unsigned long   nparams,
-                             void*           client_data );
+} bdf_options_t;
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* BDF font property macros and types.                                   */
-  /*                                                                       */
-  /*************************************************************************/
+/* Callback function type for unknown configuration options. */
+typedef int
+(*bdf_options_callback_t)( bdf_options_t*  opts,
+                           char**          params,
+                           unsigned long   nparams,
+                           void*           client_data );
+
+
+/*************************************************************************/
+/*                                                                       */
+/* BDF font property macros and types.                                   */
+/*                                                                       */
+/*************************************************************************/
 
 
 #define BDF_ATOM      1
@@ -104,151 +103,143 @@ FT_BEGIN_HEADER
 #define BDF_CARDINAL  3
 
 
-  /* This structure represents a particular property of a font. */
-  /* There are a set of defaults and each font has their own.   */
-  typedef struct  bdf_property_t_
-  {
-    char*  name;         /* Name of the property.   */
-    int    format;       /* Format of the property. */
-    int    builtin;      /* A builtin property.     */
-    union
-    {
-      char*          atom;
-      long           int32;
-      unsigned long  card32;
+/* This structure represents a particular property of a font. */
+/* There are a set of defaults and each font has their own.   */
+typedef struct  bdf_property_t_ {
+	char*  name;         /* Name of the property.   */
+	int    format;       /* Format of the property. */
+	int    builtin;      /* A builtin property.     */
+	union {
+		char*          atom;
+		long           int32;
+		unsigned long  card32;
 
-    } value;             /* Value of the property.  */
+	} value;             /* Value of the property.  */
 
-  } bdf_property_t;
+} bdf_property_t;
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* BDF font metric and glyph types.                                      */
-  /*                                                                       */
-  /*************************************************************************/
+/*************************************************************************/
+/*                                                                       */
+/* BDF font metric and glyph types.                                      */
+/*                                                                       */
+/*************************************************************************/
 
 
-  typedef struct  bdf_bbx_t_
-  {
-    unsigned short  width;
-    unsigned short  height;
+typedef struct  bdf_bbx_t_ {
+	unsigned short  width;
+	unsigned short  height;
 
-    short           x_offset;
-    short           y_offset;
+	short           x_offset;
+	short           y_offset;
 
-    short           ascent;
-    short           descent;
+	short           ascent;
+	short           descent;
 
-  } bdf_bbx_t;
-
-
-  typedef struct  bdf_glyph_t_
-  {
-    char*           name;        /* Glyph name.                          */
-    long            encoding;    /* Glyph encoding.                      */
-    unsigned short  swidth;      /* Scalable width.                      */
-    unsigned short  dwidth;      /* Device width.                        */
-    bdf_bbx_t       bbx;         /* Glyph bounding box.                  */
-    unsigned char*  bitmap;      /* Glyph bitmap.                        */
-    unsigned long   bpr;         /* Number of bytes used per row.        */
-    unsigned short  bytes;       /* Number of bytes used for the bitmap. */
-
-  } bdf_glyph_t;
+} bdf_bbx_t;
 
 
-  typedef struct  _hashnode_
-  {
-    char*  key;
-    void*  data;
-  
-  } _hashnode, *hashnode;
+typedef struct  bdf_glyph_t_ {
+	char*           name;        /* Glyph name.                          */
+	long            encoding;    /* Glyph encoding.                      */
+	unsigned short  swidth;      /* Scalable width.                      */
+	unsigned short  dwidth;      /* Device width.                        */
+	bdf_bbx_t       bbx;         /* Glyph bounding box.                  */
+	unsigned char*  bitmap;      /* Glyph bitmap.                        */
+	unsigned long   bpr;         /* Number of bytes used per row.        */
+	unsigned short  bytes;       /* Number of bytes used for the bitmap. */
+
+} bdf_glyph_t;
 
 
-  typedef struct  hashtable_
-  {
-    int        limit;
-    int        size;
-    int        used;
-    hashnode*  table;
+typedef struct  _hashnode_ {
+	char*  key;
+	void*  data;
 
-  } hashtable;
+} _hashnode, *hashnode;
 
 
-  typedef struct  bdf_glyphlist_t_
-  {
-    unsigned short  pad;          /* Pad to 4-byte boundary.              */
-    unsigned short  bpp;          /* Bits per pixel.                      */
-    long            start;        /* Beginning encoding value of glyphs.  */
-    long            end;          /* Ending encoding value of glyphs.     */
-    bdf_glyph_t*    glyphs;       /* Glyphs themselves.                   */
-    unsigned long   glyphs_size;  /* Glyph structures allocated.          */
-    unsigned long   glyphs_used;  /* Glyph structures used.               */
-    bdf_bbx_t       bbx;          /* Overall bounding box of glyphs.      */
+typedef struct  hashtable_ {
+	int        limit;
+	int        size;
+	int        used;
+	hashnode*  table;
 
-  } bdf_glyphlist_t;
+} hashtable;
 
 
-  typedef struct  bdf_font_t_
-  {
-    char*            name;           /* Name of the font.                   */
-    bdf_bbx_t        bbx;            /* Font bounding box.                  */
+typedef struct  bdf_glyphlist_t_ {
+	unsigned short  pad;          /* Pad to 4-byte boundary.              */
+	unsigned short  bpp;          /* Bits per pixel.                      */
+	long            start;        /* Beginning encoding value of glyphs.  */
+	long            end;          /* Ending encoding value of glyphs.     */
+	bdf_glyph_t*    glyphs;       /* Glyphs themselves.                   */
+	unsigned long   glyphs_size;  /* Glyph structures allocated.          */
+	unsigned long   glyphs_used;  /* Glyph structures used.               */
+	bdf_bbx_t       bbx;          /* Overall bounding box of glyphs.      */
 
-    long             point_size;     /* Point size of the font.             */
-    unsigned long    resolution_x;   /* Font horizontal resolution.         */
-    unsigned long    resolution_y;   /* Font vertical resolution.           */
-
-    int              spacing;        /* Font spacing value.                 */
-
-    unsigned short   monowidth;      /* Logical width for monowidth font.   */
-
-    long             default_glyph;  /* Encoding of the default glyph.      */
-
-    long             font_ascent;    /* Font ascent.                        */
-    long             font_descent;   /* Font descent.                       */
-
-    unsigned long    glyphs_size;    /* Glyph structures allocated.         */
-    unsigned long    glyphs_used;    /* Glyph structures used.              */
-    bdf_glyph_t*     glyphs;         /* Glyphs themselves.                  */
-
-    unsigned long    unencoded_size; /* Unencoded glyph struct. allocated.  */
-    unsigned long    unencoded_used; /* Unencoded glyph struct. used.       */
-    bdf_glyph_t*     unencoded;      /* Unencoded glyphs themselves.        */
-
-    unsigned long    props_size;     /* Font properties allocated.          */
-    unsigned long    props_used;     /* Font properties used.               */
-    bdf_property_t*  props;          /* Font properties themselves.         */
-
-    char*            comments;       /* Font comments.                      */
-    unsigned long    comments_len;   /* Length of comment string.           */
-
-    bdf_glyphlist_t  overflow;       /* Storage used for glyph insertion.   */
-
-    void*            internal;       /* Internal data for the font.         */
-
-    unsigned long    nmod[2048];     /* Bitmap indicating modified glyphs.  */
-    unsigned long    umod[2048];     /* Bitmap indicating modified          */
-                                     /* unencoded glyphs.                   */
-    unsigned short   modified;       /* Boolean indicating font modified.   */
-    unsigned short   bpp;            /* Bits per pixel.                     */
-
-    FT_Memory        memory;
-
-    bdf_property_t*  user_props;
-    unsigned long    nuser_props;
-    hashtable        proptbl;
-
-  } bdf_font_t;
+} bdf_glyphlist_t;
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* Types for load/save callbacks.                                        */
-  /*                                                                       */
-  /*************************************************************************/
+typedef struct  bdf_font_t_ {
+	char*            name;           /* Name of the font.                   */
+	bdf_bbx_t        bbx;            /* Font bounding box.                  */
+
+	long             point_size;     /* Point size of the font.             */
+	unsigned long    resolution_x;   /* Font horizontal resolution.         */
+	unsigned long    resolution_y;   /* Font vertical resolution.           */
+
+	int              spacing;        /* Font spacing value.                 */
+
+	unsigned short   monowidth;      /* Logical width for monowidth font.   */
+
+	long             default_glyph;  /* Encoding of the default glyph.      */
+
+	long             font_ascent;    /* Font ascent.                        */
+	long             font_descent;   /* Font descent.                       */
+
+	unsigned long    glyphs_size;    /* Glyph structures allocated.         */
+	unsigned long    glyphs_used;    /* Glyph structures used.              */
+	bdf_glyph_t*     glyphs;         /* Glyphs themselves.                  */
+
+	unsigned long    unencoded_size; /* Unencoded glyph struct. allocated.  */
+	unsigned long    unencoded_used; /* Unencoded glyph struct. used.       */
+	bdf_glyph_t*     unencoded;      /* Unencoded glyphs themselves.        */
+
+	unsigned long    props_size;     /* Font properties allocated.          */
+	unsigned long    props_used;     /* Font properties used.               */
+	bdf_property_t*  props;          /* Font properties themselves.         */
+
+	char*            comments;       /* Font comments.                      */
+	unsigned long    comments_len;   /* Length of comment string.           */
+
+	bdf_glyphlist_t  overflow;       /* Storage used for glyph insertion.   */
+
+	void*            internal;       /* Internal data for the font.         */
+
+	unsigned long    nmod[2048];     /* Bitmap indicating modified glyphs.  */
+	unsigned long    umod[2048];     /* Bitmap indicating modified          */
+	/* unencoded glyphs.                   */
+	unsigned short   modified;       /* Boolean indicating font modified.   */
+	unsigned short   bpp;            /* Bits per pixel.                     */
+
+	FT_Memory        memory;
+
+	bdf_property_t*  user_props;
+	unsigned long    nuser_props;
+	hashtable        proptbl;
+
+} bdf_font_t;
 
 
-  /* Error codes. */
+/*************************************************************************/
+/*                                                                       */
+/* Types for load/save callbacks.                                        */
+/*                                                                       */
+/*************************************************************************/
+
+
+/* Error codes. */
 #define BDF_MISSING_START       -1
 #define BDF_MISSING_FONTNAME    -2
 #define BDF_MISSING_SIZE        -3
@@ -262,28 +253,28 @@ FT_BEGIN_HEADER
 #define BDF_INVALID_LINE      -100
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* BDF font API.                                                         */
-  /*                                                                       */
-  /*************************************************************************/
+/*************************************************************************/
+/*                                                                       */
+/* BDF font API.                                                         */
+/*                                                                       */
+/*************************************************************************/
 
-  FT_LOCAL( FT_Error )
-  bdf_load_font( FT_Stream       stream,
-                 FT_Memory       memory,
-                 bdf_options_t*  opts,
-                 bdf_font_t*    *font );
+FT_LOCAL( FT_Error )
+bdf_load_font( FT_Stream       stream,
+               FT_Memory       memory,
+               bdf_options_t*  opts,
+               bdf_font_t*    *font );
 
-  FT_LOCAL( void )
-  bdf_free_font( bdf_font_t*  font );
+FT_LOCAL( void )
+bdf_free_font( bdf_font_t*  font );
 
-  FT_LOCAL( bdf_property_t * )
-  bdf_get_property( char*        name,
-                    bdf_font_t*  font );
+FT_LOCAL( bdf_property_t * )
+bdf_get_property( char*        name,
+                  bdf_font_t*  font );
 
-  FT_LOCAL( bdf_property_t * )
-  bdf_get_font_property( bdf_font_t*  font,
-                         char*        name );
+FT_LOCAL( bdf_property_t * )
+bdf_get_font_property( bdf_font_t*  font,
+                       char*        name );
 
 
 FT_END_HEADER

@@ -29,18 +29,18 @@ FT_BEGIN_HEADER
 
 #if 0
 
-  /* Compute the maximum advance width of a font through quick parsing */
-  FT_LOCAL( FT_Error )
-  cid_face_compute_max_advance( CID_Face  face,
-                                FT_Int*   max_advance );
+/* Compute the maximum advance width of a font through quick parsing */
+FT_LOCAL( FT_Error )
+cid_face_compute_max_advance( CID_Face  face,
+                              FT_Int*   max_advance );
 
 #endif /* 0 */
 
-  FT_LOCAL( FT_Error )
-  cid_slot_load_glyph( CID_GlyphSlot  glyph,
-                       CID_Size       size,
-                       FT_Int         glyph_index,
-                       FT_Int32       load_flags );
+FT_LOCAL( FT_Error )
+cid_slot_load_glyph( CID_GlyphSlot  glyph,
+                     CID_Size       size,
+                     FT_Int         glyph_index,
+                     FT_Int32       load_flags );
 
 
 FT_END_HEADER

@@ -20,11 +20,11 @@
  * THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* This file is used to define the BDF error enumeration constants.      */
-  /*                                                                       */
-  /*************************************************************************/
+/*************************************************************************/
+/*                                                                       */
+/* This file is used to define the BDF error enumeration constants.      */
+/*                                                                       */
+/*************************************************************************/
 
 #ifndef __BDFERROR_H__
 #define __BDFERROR_H__

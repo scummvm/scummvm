@@ -12,7 +12,7 @@
 #include "FT:include/freetype/config/ftconfig.h"
 #else
 // We must define that, it seems that
-// lib/gcc-lib/ppc-morphos/2.95.3/include/syslimits.h is missing in 
+// lib/gcc-lib/ppc-morphos/2.95.3/include/syslimits.h is missing in
 // ppc-morphos-gcc-2.95.3-bin.tgz (gcc for 68k producing MorphOS PPC elf
 // binaries from http://www.morphos.de)
 #define _LIBC_LIMITS_H_

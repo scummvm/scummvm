@@ -27,43 +27,40 @@
 
 FT_BEGIN_HEADER
 
-  typedef struct  TT_CMapRec_
-  {
-    FT_CMapRec  cmap;
-    FT_Byte*    data;           /* pointer to in-memory cmap table */
+typedef struct  TT_CMapRec_ {
+	FT_CMapRec  cmap;
+	FT_Byte*    data;           /* pointer to in-memory cmap table */
 
-  } TT_CMapRec, *TT_CMap;
+} TT_CMapRec, *TT_CMap;
 
-  typedef const struct TT_CMap_ClassRec_*  TT_CMap_Class;
-
-
-  typedef FT_Error
-  (*TT_CMap_ValidateFunc)( FT_Byte*      data,
-                           FT_Validator  valid );
-
-  typedef struct  TT_CMap_ClassRec_
-  {
-    FT_CMap_ClassRec      clazz;
-    FT_UInt               format;
-    TT_CMap_ValidateFunc  validate;
-
-  } TT_CMap_ClassRec;
+typedef const struct TT_CMap_ClassRec_*  TT_CMap_Class;
 
 
-  typedef struct  TT_ValidatorRec_
-  {
-    FT_ValidatorRec  validator;
-    FT_UInt          num_glyphs;
+typedef FT_Error
+(*TT_CMap_ValidateFunc)( FT_Byte*      data,
+                         FT_Validator  valid );
 
-  } TT_ValidatorRec, *TT_Validator;
+typedef struct  TT_CMap_ClassRec_ {
+	FT_CMap_ClassRec      clazz;
+	FT_UInt               format;
+	TT_CMap_ValidateFunc  validate;
+
+} TT_CMap_ClassRec;
+
+
+typedef struct  TT_ValidatorRec_ {
+	FT_ValidatorRec  validator;
+	FT_UInt          num_glyphs;
+
+} TT_ValidatorRec, *TT_Validator;
 
 
 #define TT_VALIDATOR( x )          ((TT_Validator)( x ))
 #define TT_VALID_GLYPH_COUNT( x )  TT_VALIDATOR( x )->num_glyphs
 
 
-  FT_LOCAL( FT_Error )
-  tt_face_build_cmaps( TT_Face  face );
+FT_LOCAL( FT_Error )
+tt_face_build_cmaps( TT_Face  face );
 
 
 FT_END_HEADER

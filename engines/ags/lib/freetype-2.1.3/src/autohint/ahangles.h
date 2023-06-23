@@ -32,28 +32,28 @@
 FT_BEGIN_HEADER
 
 
-  /* PI expressed in ah_angles -- we don't really need an important */
-  /* precision, so 256 should be enough                             */
+/* PI expressed in ah_angles -- we don't really need an important */
+/* precision, so 256 should be enough                             */
 #define AH_PI       256
 #define AH_2PI      ( AH_PI * 2 )
 #define AH_HALF_PI  ( AH_PI / 2 )
 #define AH_2PIMASK  ( AH_2PI - 1 )
 
-  /* the number of bits used to express an arc tangent; */
-  /* see the structure of the lookup table              */
+/* the number of bits used to express an arc tangent; */
+/* see the structure of the lookup table              */
 #define AH_ATAN_BITS  8
 
-  extern
-  const AH_Angle  ah_arctan[1L << AH_ATAN_BITS];
+extern
+const AH_Angle  ah_arctan[1L << AH_ATAN_BITS];
 
 
-  FT_LOCAL( AH_Angle )
-  ah_angle( FT_Vector*  v );
+FT_LOCAL( AH_Angle )
+ah_angle( FT_Vector*  v );
 
 
-  FT_LOCAL( AH_Angle )
-  ah_angle_diff( AH_Angle  angle1,
-                 AH_Angle  angle2 );
+FT_LOCAL( AH_Angle )
+ah_angle_diff( AH_Angle  angle1,
+               AH_Angle  angle2 );
 
 
 FT_END_HEADER

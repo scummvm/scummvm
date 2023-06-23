@@ -24,29 +24,29 @@
 
 FT_BEGIN_HEADER
 
-  /* this comment is intentionally disabled for now, to prevent this       */
-  /* function from appearing in the API Reference.                         */
+/* this comment is intentionally disabled for now, to prevent this       */
+/* function from appearing in the API Reference.                         */
 
-  /*@***********************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    FT_Get_X11_Font_Format                                             */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Return a string describing the format of a given face as an X11    */
-  /*    FONT_PROPERTY.  It should only be used by the FreeType 2 font      */
-  /*    backend of the XFree86 font server.                                */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    face :: Input face handle.                                         */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    Font format string.  NULL in case of error.                        */
-  /*                                                                       */
-  FT_EXPORT_DEF( const char* )
-  FT_Get_X11_Font_Format( FT_Face  face );
+/*@***********************************************************************/
+/*                                                                       */
+/* <Function>                                                            */
+/*    FT_Get_X11_Font_Format                                             */
+/*                                                                       */
+/* <Description>                                                         */
+/*    Return a string describing the format of a given face as an X11    */
+/*    FONT_PROPERTY.  It should only be used by the FreeType 2 font      */
+/*    backend of the XFree86 font server.                                */
+/*                                                                       */
+/* <Input>                                                               */
+/*    face :: Input face handle.                                         */
+/*                                                                       */
+/* <Return>                                                              */
+/*    Font format string.  NULL in case of error.                        */
+/*                                                                       */
+FT_EXPORT_DEF( const char* )
+FT_Get_X11_Font_Format( FT_Face  face );
 
- /* */
+/* */
 
 FT_END_HEADER
 

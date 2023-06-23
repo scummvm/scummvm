@@ -30,8 +30,8 @@
 FT_BEGIN_HEADER
 
 
-  FT_CALLBACK_TABLE
-  const FT_Module_Class  autohint_module_class;
+FT_CALLBACK_TABLE
+const FT_Module_Class  autohint_module_class;
 
 
 FT_END_HEADER

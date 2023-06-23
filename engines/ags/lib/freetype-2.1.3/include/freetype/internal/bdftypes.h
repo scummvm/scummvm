@@ -34,14 +34,13 @@ THE SOFTWARE.
 FT_BEGIN_HEADER
 
 
-  typedef struct  BDF_Public_FaceRec_
-  {
-    FT_FaceRec  root;
+typedef struct  BDF_Public_FaceRec_ {
+	FT_FaceRec  root;
 
-    char*       charset_encoding;
-    char*       charset_registry;
+	char*       charset_encoding;
+	char*       charset_registry;
 
-  } BDF_Public_FaceRec, *BDF_Public_Face;
+} BDF_Public_FaceRec, *BDF_Public_Face;
 
 
 FT_END_HEADER

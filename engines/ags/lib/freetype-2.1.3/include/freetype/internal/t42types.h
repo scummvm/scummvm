@@ -30,21 +30,20 @@
 FT_BEGIN_HEADER
 
 
-  typedef struct  T42_FaceRec_
-  {
-    FT_FaceRec     root;
-    T1_FontRec     type1;
-    const void*    psnames;
-    const void*    psaux;
-    const void*    afm_data;
-    FT_Byte*       ttf_data;
-    FT_ULong       ttf_size;
-    FT_Face        ttf_face;
-    FT_CharMapRec  charmaprecs[2];
-    FT_CharMap     charmaps[2];
-    PS_Unicodes    unicode_map;
+typedef struct  T42_FaceRec_ {
+	FT_FaceRec     root;
+	T1_FontRec     type1;
+	const void*    psnames;
+	const void*    psaux;
+	const void*    afm_data;
+	FT_Byte*       ttf_data;
+	FT_ULong       ttf_size;
+	FT_Face        ttf_face;
+	FT_CharMapRec  charmaprecs[2];
+	FT_CharMap     charmaps[2];
+	PS_Unicodes    unicode_map;
 
-  } T42_FaceRec, *T42_Face;
+} T42_FaceRec, *T42_Face;
 
 
 FT_END_HEADER

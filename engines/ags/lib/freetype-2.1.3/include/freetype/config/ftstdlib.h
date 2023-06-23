@@ -17,16 +17,16 @@
 /***************************************************************************/
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* This file is used to group all #includes to the ANSI C library that   */
-  /* FreeType normally requires.  It also defines macros to rename the     */
-  /* standard functions within the FreeType source code.                   */
-  /*                                                                       */
-  /* Load a file which defines __FTSTDLIB_H__ before this one to override  */
-  /* it.                                                                   */
-  /*                                                                       */
-  /*************************************************************************/
+/*************************************************************************/
+/*                                                                       */
+/* This file is used to group all #includes to the ANSI C library that   */
+/* FreeType normally requires.  It also defines macros to rename the     */
+/* standard functions within the FreeType source code.                   */
+/*                                                                       */
+/* Load a file which defines __FTSTDLIB_H__ before this one to override  */
+/* it.                                                                   */
+/*                                                                       */
+/*************************************************************************/
 
 
 #ifndef __FTSTDLIB_H__
@@ -34,29 +34,29 @@
 
 #include <stdint.h>
 
-  /**********************************************************************/
-  /*                                                                    */
-  /*                           integer limits                           */
-  /*                                                                    */
-  /* UINT_MAX and ULONG_MAX are used to automatically compute the size  */
-  /* of `int' and `long' in bytes at compile-time.  So far, this works  */
-  /* for all platforms the library has been tested on.                  */
-  /*                                                                    */
-  /* Note that on the extremely rare platforms that do not provide      */
-  /* integer types that are _exactly_ 16 and 32 bits wide (e.g. some    */
-  /* old Crays where `int' is 36 bits), we do not make any guarantee    */
-  /* about the correct behaviour of FT2 with all fonts.                 */
-  /*                                                                    */
-  /* In these case, "ftconfig.h" will refuse to compile anyway with a   */
-  /* message like "couldn't find 32-bit type" or something similar.     */
-  /*                                                                    */
-  /* IMPORTANT NOTE: We do not define aliases for heap management and   */
-  /*                 i/o routines (i.e. malloc/free/fopen/fread/...)    */
-  /*                 since these functions should all be encapsulated   */
-  /*                 by platform-specific implementations of            */
-  /*                 "ftsystem.c".                                      */
-  /*                                                                    */
-  /**********************************************************************/
+/**********************************************************************/
+/*                                                                    */
+/*                           integer limits                           */
+/*                                                                    */
+/* UINT_MAX and ULONG_MAX are used to automatically compute the size  */
+/* of `int' and `long' in bytes at compile-time.  So far, this works  */
+/* for all platforms the library has been tested on.                  */
+/*                                                                    */
+/* Note that on the extremely rare platforms that do not provide      */
+/* integer types that are _exactly_ 16 and 32 bits wide (e.g. some    */
+/* old Crays where `int' is 36 bits), we do not make any guarantee    */
+/* about the correct behaviour of FT2 with all fonts.                 */
+/*                                                                    */
+/* In these case, "ftconfig.h" will refuse to compile anyway with a   */
+/* message like "couldn't find 32-bit type" or something similar.     */
+/*                                                                    */
+/* IMPORTANT NOTE: We do not define aliases for heap management and   */
+/*                 i/o routines (i.e. malloc/free/fopen/fread/...)    */
+/*                 since these functions should all be encapsulated   */
+/*                 by platform-specific implementations of            */
+/*                 "ftsystem.c".                                      */
+/*                                                                    */
+/**********************************************************************/
 
 
 #include <limits.h>
@@ -65,11 +65,11 @@
 #define FT_ULONG_MAX  ULONG_MAX
 
 
-  /**********************************************************************/
-  /*                                                                    */
-  /*                 character and string processing                    */
-  /*                                                                    */
-  /**********************************************************************/
+/**********************************************************************/
+/*                                                                    */
+/*                 character and string processing                    */
+/*                                                                    */
+/**********************************************************************/
 
 
 #include <ctype.h>
@@ -97,11 +97,11 @@
 #define ft_sprintf  sprintf
 
 
-  /**********************************************************************/
-  /*                                                                    */
-  /*                             sorting                                */
-  /*                                                                    */
-  /**********************************************************************/
+/**********************************************************************/
+/*                                                                    */
+/*                             sorting                                */
+/*                                                                    */
+/**********************************************************************/
 
 
 #include <stdlib.h>
@@ -112,26 +112,26 @@
 #define ft_atoi   atoi
 
 
-  /**********************************************************************/
-  /*                                                                    */
-  /*                         execution control                          */
-  /*                                                                    */
-  /**********************************************************************/
+/**********************************************************************/
+/*                                                                    */
+/*                         execution control                          */
+/*                                                                    */
+/**********************************************************************/
 
 
 #include <setjmp.h>
 
 #define ft_jmp_buf  jmp_buf   /* note: this cannot be a typedef since */
-                              /*       jmp_buf is defined as a macro  */
-                              /*       on certain platforms           */
+/*       jmp_buf is defined as a macro  */
+/*       on certain platforms           */
 
 #define ft_setjmp   setjmp    /* same thing here */
 #define ft_longjmp  longjmp   /* "               */
 
 
-  /* the following is only used for debugging purposes, i.e. when */
-  /* FT_DEBUG_LEVEL_ERROR or FT_DEBUG_LEVEL_TRACE are defined     */
-  /*                                                              */
+/* the following is only used for debugging purposes, i.e. when */
+/* FT_DEBUG_LEVEL_ERROR or FT_DEBUG_LEVEL_TRACE are defined     */
+/*                                                              */
 #include <stdarg.h>
 
 

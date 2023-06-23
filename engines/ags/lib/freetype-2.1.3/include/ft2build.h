@@ -17,15 +17,15 @@
 /***************************************************************************/
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* This file corresponds to the default "ft2build.h" file for            */
-  /* FreeType 2.  It uses the "freetype" include root.                     */
-  /*                                                                       */
-  /* Note that specific platforms might use a different configuration.     */
-  /* See builds/unix/ft2unix.h for an example.                             */
-  /*                                                                       */
-  /*************************************************************************/
+/*************************************************************************/
+/*                                                                       */
+/* This file corresponds to the default "ft2build.h" file for            */
+/* FreeType 2.  It uses the "freetype" include root.                     */
+/*                                                                       */
+/* Note that specific platforms might use a different configuration.     */
+/* See builds/unix/ft2unix.h for an example.                             */
+/*                                                                       */
+/*************************************************************************/
 
 
 #ifndef __FT2_BUILD_GENERIC_H__

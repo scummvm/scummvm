@@ -15,37 +15,37 @@ extern void exit OF((int));
 #ifndef HAVE_MEMCPY
 
 void zmemcpy(dest, source, len)
-    Bytef* dest;
-    const Bytef* source;
-    uInt  len;
+Bytef* dest;
+const Bytef* source;
+uInt  len;
 {
-    if (len == 0) return;
-    do {
-        *dest++ = *source++; /* ??? to be unrolled */
-    } while (--len != 0);
+	if (len == 0) return;
+	do {
+		*dest++ = *source++; /* ??? to be unrolled */
+	} while (--len != 0);
 }
 
 int zmemcmp(s1, s2, len)
-    const Bytef* s1;
-    const Bytef* s2;
-    uInt  len;
+const Bytef* s1;
+const Bytef* s2;
+uInt  len;
 {
-    uInt j;
+	uInt j;
 
-    for (j = 0; j < len; j++) {
-        if (s1[j] != s2[j]) return 2*(s1[j] > s2[j])-1;
-    }
-    return 0;
+	for (j = 0; j < len; j++) {
+		if (s1[j] != s2[j]) return 2*(s1[j] > s2[j])-1;
+	}
+	return 0;
 }
 
 void zmemzero(dest, len)
-    Bytef* dest;
-    uInt  len;
+Bytef* dest;
+uInt  len;
 {
-    if (len == 0) return;
-    do {
-        *dest++ = 0;  /* ??? to be unrolled */
-    } while (--len != 0);
+	if (len == 0) return;
+	do {
+		*dest++ = 0;  /* ??? to be unrolled */
+	} while (--len != 0);
 }
 #endif
 
@@ -68,8 +68,8 @@ void zmemzero(dest, len)
 local int next_ptr = 0;
 
 typedef struct ptr_table_s {
-    voidpf org_ptr;
-    voidpf new_ptr;
+	voidpf org_ptr;
+	voidpf new_ptr;
 } ptr_table;
 
 local ptr_table table[MAX_PTR];
@@ -80,50 +80,48 @@ local ptr_table table[MAX_PTR];
  * a protected system like OS/2. Use Microsoft C instead.
  */
 
-voidpf zcalloc (voidpf opaque, unsigned items, unsigned size)
-{
-    voidpf buf = opaque; /* just to make some compilers happy */
-    ulg bsize = (ulg)items*size;
+voidpf zcalloc (voidpf opaque, unsigned items, unsigned size) {
+	voidpf buf = opaque; /* just to make some compilers happy */
+	ulg bsize = (ulg)items*size;
 
-    /* If we allocate less than 65520 bytes, we assume that farmalloc
-     * will return a usable pointer which doesn't have to be normalized.
-     */
-    if (bsize < 65520L) {
-        buf = farmalloc(bsize);
-        if (*(ush*)&buf != 0) return buf;
-    } else {
-        buf = farmalloc(bsize + 16L);
-    }
-    if (buf == NULL || next_ptr >= MAX_PTR) return NULL;
-    table[next_ptr].org_ptr = buf;
+	/* If we allocate less than 65520 bytes, we assume that farmalloc
+	 * will return a usable pointer which doesn't have to be normalized.
+	 */
+	if (bsize < 65520L) {
+		buf = farmalloc(bsize);
+		if (*(ush*)&buf != 0) return buf;
+	} else {
+		buf = farmalloc(bsize + 16L);
+	}
+	if (buf == NULL || next_ptr >= MAX_PTR) return NULL;
+	table[next_ptr].org_ptr = buf;
 
-    /* Normalize the pointer to seg:0 */
-    *((ush*)&buf+1) += ((ush)((uch*)buf-0) + 15) >> 4;
-    *(ush*)&buf = 0;
-    table[next_ptr++].new_ptr = buf;
-    return buf;
+	/* Normalize the pointer to seg:0 */
+	*((ush*)&buf+1) += ((ush)((uch*)buf-0) + 15) >> 4;
+	*(ush*)&buf = 0;
+	table[next_ptr++].new_ptr = buf;
+	return buf;
 }
 
-void  zcfree (voidpf opaque, voidpf ptr)
-{
-    int n;
-    if (*(ush*)&ptr != 0) { /* object < 64K */
-        farfree(ptr);
-        return;
-    }
-    /* Find the original pointer */
-    for (n = 0; n < next_ptr; n++) {
-        if (ptr != table[n].new_ptr) continue;
+void  zcfree (voidpf opaque, voidpf ptr) {
+	int n;
+	if (*(ush*)&ptr != 0) { /* object < 64K */
+		farfree(ptr);
+		return;
+	}
+	/* Find the original pointer */
+	for (n = 0; n < next_ptr; n++) {
+		if (ptr != table[n].new_ptr) continue;
 
-        farfree(table[n].org_ptr);
-        while (++n < next_ptr) {
-            table[n-1] = table[n];
-        }
-        next_ptr--;
-        return;
-    }
-    ptr = opaque; /* just to make some compilers happy */
-    Assert(0, "zcfree: ptr not found");
+		farfree(table[n].org_ptr);
+		while (++n < next_ptr) {
+			table[n-1] = table[n];
+		}
+		next_ptr--;
+		return;
+	}
+	ptr = opaque; /* just to make some compilers happy */
+	Assert(0, "zcfree: ptr not found");
 }
 #endif
 #endif /* __TURBOC__ */
@@ -139,16 +137,14 @@ void  zcfree (voidpf opaque, voidpf ptr)
 #  define _hfree   hfree
 #endif
 
-voidpf zcalloc (voidpf opaque, unsigned items, unsigned size)
-{
-    if (opaque) opaque = 0; /* to make compiler happy */
-    return _halloc((long)items, size);
+voidpf zcalloc (voidpf opaque, unsigned items, unsigned size) {
+	if (opaque) opaque = 0; /* to make compiler happy */
+	return _halloc((long)items, size);
 }
 
-void  zcfree (voidpf opaque, voidpf ptr)
-{
-    if (opaque) opaque = 0; /* to make compiler happy */
-    _hfree(ptr);
+void  zcfree (voidpf opaque, voidpf ptr) {
+	if (opaque) opaque = 0; /* to make compiler happy */
+	_hfree(ptr);
 }
 
 #endif /* MSC */
@@ -162,20 +158,20 @@ extern void   free   OF((voidpf ptr));
 #endif
 
 voidpf zcalloc (opaque, items, size)
-    voidpf opaque;
-    unsigned items;
-    unsigned size;
+voidpf opaque;
+unsigned items;
+unsigned size;
 {
-    if (opaque) items += size - size; /* make compiler happy */
-    return (voidpf)calloc(items, size);
+	if (opaque) items += size - size; /* make compiler happy */
+	return (voidpf)calloc(items, size);
 }
 
 void  zcfree (opaque, ptr)
-    voidpf opaque;
-    voidpf ptr;
+voidpf opaque;
+voidpf ptr;
 {
-    free(ptr);
-    if (opaque) return; /* make compiler happy */
+	free(ptr);
+	if (opaque) return; /* make compiler happy */
 }
 
 #endif /* MY_ZCALLOC */

@@ -21,7 +21,7 @@
 #  include <stdlib.h>
 #endif
 #ifdef NO_ERRNO_H
-    extern int errno;
+extern int errno;
 #else
 #   include <errno.h>
 #endif
@@ -42,7 +42,7 @@ typedef unsigned long  ulg;
   return (strm->msg = (char*)ERR_MSG(err), (err))
 /* To be used only when the state is known to be valid */
 
-        /* common constants */
+/* common constants */
 
 #ifndef DEF_WBITS
 #  define DEF_WBITS MAX_WBITS
@@ -67,15 +67,15 @@ typedef unsigned long  ulg;
 
 #define PRESET_DICT 0x20 /* preset dictionary flag in zlib header */
 
-        /* target dependencies */
+/* target dependencies */
 
 #ifdef MSDOS
 #  define OS_CODE  0x00
 #  if defined(__TURBOC__) || defined(__BORLANDC__)
 #    if(__STDC__ == 1) && (defined(__LARGE__) || defined(__COMPACT__))
-       /* Allow compilation with ANSI keywords only enabled */
-       void _Cdecl farfree( void *block );
-       void *_Cdecl farmalloc( unsigned long nbytes );
+/* Allow compilation with ANSI keywords only enabled */
+void _Cdecl farfree( void *block );
+void *_Cdecl farmalloc( unsigned long nbytes );
 #    else
 #     include <alloc.h>
 #    endif
@@ -134,7 +134,7 @@ typedef unsigned long  ulg;
 #endif
 
 
-        /* Common defaults */
+/* Common defaults */
 
 #ifndef OS_CODE
 #  define OS_CODE  0x03  /* assume Unix */
@@ -144,10 +144,10 @@ typedef unsigned long  ulg;
 #  define F_OPEN(name, mode) fopen((name), (mode))
 #endif
 
-         /* functions */
+/* functions */
 
 #ifdef HAVE_STRERROR
-   extern char *strerror OF((int));
+extern char *strerror OF((int));
 #  define zstrerror(errnum) strerror(errnum)
 #else
 #  define zstrerror(errnum) ""
@@ -157,10 +157,10 @@ typedef unsigned long  ulg;
 #  define NO_MEMCPY
 #endif
 #if defined(SMALL_MEDIUM) && !defined(_MSC_VER) && !defined(__SC__)
- /* Use our own functions for small and medium model with MSC <= 5.0.
-  * You may have to use the same strategy for Borland C (untested).
-  * The __SC__ check is for Symantec.
-  */
+/* Use our own functions for small and medium model with MSC <= 5.0.
+ * You may have to use the same strategy for Borland C (untested).
+ * The __SC__ check is for Symantec.
+ */
 #  define NO_MEMCPY
 #endif
 #if defined(STDC) && !defined(HAVE_MEMCPY) && !defined(NO_MEMCPY)
@@ -177,16 +177,16 @@ typedef unsigned long  ulg;
 #    define zmemzero(dest, len) memset(dest, 0, len)
 #  endif
 #else
-   extern void zmemcpy  OF((Bytef* dest, const Bytef* source, uInt len));
-   extern int  zmemcmp  OF((const Bytef* s1, const Bytef* s2, uInt len));
-   extern void zmemzero OF((Bytef* dest, uInt len));
+extern void zmemcpy  OF((Bytef* dest, const Bytef* source, uInt len));
+extern int  zmemcmp  OF((const Bytef* s1, const Bytef* s2, uInt len));
+extern void zmemzero OF((Bytef* dest, uInt len));
 #endif
 
 /* Diagnostic functions */
 #ifdef DEBUG
 #  include <stdio.h>
-   extern int z_verbose;
-   extern void z_error    OF((char *m));
+extern int z_verbose;
+extern void z_error    OF((char *m));
 #  define Assert(cond,msg) {if(!(cond)) z_error(msg);}
 #  define Trace(x) {if (z_verbose>=0) fprintf x ;}
 #  define Tracev(x) {if (z_verbose>0) fprintf x ;}
@@ -204,7 +204,7 @@ typedef unsigned long  ulg;
 
 
 typedef uLong (ZEXPORT *check_func) OF((uLong check, const Bytef *buf,
-				       uInt len));
+                                        uInt len));
 local voidpf zcalloc OF((voidpf opaque, unsigned items, unsigned size));
 local void   zcfree  OF((voidpf opaque, voidpf ptr));
 

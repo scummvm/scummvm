@@ -36,134 +36,124 @@ THE SOFTWARE.
 
 FT_BEGIN_HEADER
 
-  typedef struct  PCF_TableRec_
-  {
-    FT_ULong  type;
-    FT_ULong  format;
-    FT_ULong  size;
-    FT_ULong  offset;
+typedef struct  PCF_TableRec_ {
+	FT_ULong  type;
+	FT_ULong  format;
+	FT_ULong  size;
+	FT_ULong  offset;
 
-  } PCF_TableRec, *PCF_Table;
-
-
-  typedef struct  PCF_TocRec_
-  {
-    FT_ULong   version;
-    FT_ULong   count;
-    PCF_Table  tables;
-
-  } PCF_TocRec, *PCF_Toc;
+} PCF_TableRec, *PCF_Table;
 
 
-  typedef struct  PCF_ParsePropertyRec_
-  {
-    FT_Long  name;
-    FT_Byte  isString;
-    FT_Long  value;
+typedef struct  PCF_TocRec_ {
+	FT_ULong   version;
+	FT_ULong   count;
+	PCF_Table  tables;
 
-  } PCF_ParsePropertyRec, *PCF_ParseProperty;
-
-
-  typedef struct  PCF_PropertyRec_
-  {
-    FT_String*  name;
-    FT_Byte     isString;
-
-    union
-    {
-      FT_String*  atom;
-      FT_Long     integer;
-      FT_ULong    cardinal;
-
-    } value;
-
-  } PCF_PropertyRec, *PCF_Property;
+} PCF_TocRec, *PCF_Toc;
 
 
-  typedef struct  PCF_Compressed_MetricRec_
-  {
-    FT_Byte  leftSideBearing;
-    FT_Byte  rightSideBearing;
-    FT_Byte  characterWidth;
-    FT_Byte  ascent;
-    FT_Byte  descent;
+typedef struct  PCF_ParsePropertyRec_ {
+	FT_Long  name;
+	FT_Byte  isString;
+	FT_Long  value;
 
-  } PCF_Compressed_MetricRec, *PCF_Compressed_Metric;
+} PCF_ParsePropertyRec, *PCF_ParseProperty;
 
 
-  typedef struct  PCF_MetricRec_
-  {
-    FT_Short  leftSideBearing;
-    FT_Short  rightSideBearing;
-    FT_Short  characterWidth;
-    FT_Short  ascent;
-    FT_Short  descent;
-    FT_Short  attributes;
-    FT_ULong  bits;
+typedef struct  PCF_PropertyRec_ {
+	FT_String*  name;
+	FT_Byte     isString;
 
-  } PCF_MetricRec, *PCF_Metric;
+	union {
+		FT_String*  atom;
+		FT_Long     integer;
+		FT_ULong    cardinal;
 
+	} value;
 
-  typedef struct  PCF_AccelRec_
-  {
-    FT_Byte        noOverlap;
-    FT_Byte        constantMetrics;
-    FT_Byte        terminalFont;
-    FT_Byte        constantWidth;
-    FT_Byte        inkInside;
-    FT_Byte        inkMetrics;
-    FT_Byte        drawDirection;
-    FT_Long        fontAscent;
-    FT_Long        fontDescent;
-    FT_Long        maxOverlap;
-    PCF_MetricRec  minbounds;
-    PCF_MetricRec  maxbounds;
-    PCF_MetricRec  ink_minbounds;
-    PCF_MetricRec  ink_maxbounds;
-
-  } PCF_AccelRec, *PCF_Accel;
+} PCF_PropertyRec, *PCF_Property;
 
 
-  typedef struct  PCD_EncodingRec_
-  {
-    FT_Long   enc;
-    FT_Short  glyph;
+typedef struct  PCF_Compressed_MetricRec_ {
+	FT_Byte  leftSideBearing;
+	FT_Byte  rightSideBearing;
+	FT_Byte  characterWidth;
+	FT_Byte  ascent;
+	FT_Byte  descent;
 
-  } PCF_EncodingRec, *PCF_Encoding;
-
-
-  typedef struct  PCF_FaceRec_
-  {
-    FT_FaceRec     root;
-
-    FT_StreamRec   gzip_stream;
-    FT_Stream      gzip_source;
-
-    char*          charset_encoding;
-    char*          charset_registry;
-
-    PCF_TocRec     toc;
-    PCF_AccelRec   accel;
-
-    int            nprops;
-    PCF_Property   properties;
-
-    FT_Long        nmetrics;
-    PCF_Metric     metrics;
-    FT_Long        nencodings;
-    PCF_Encoding   encodings;
-
-    FT_Short       defaultChar;
-
-    FT_ULong       bitmapsFormat;
-
-    FT_CharMap     charmap_handle;
-    FT_CharMapRec  charmap;  /* a single charmap per face */
-
-  } PCF_FaceRec, *PCF_Face;
+} PCF_Compressed_MetricRec, *PCF_Compressed_Metric;
 
 
-  /* macros for pcf font format */
+typedef struct  PCF_MetricRec_ {
+	FT_Short  leftSideBearing;
+	FT_Short  rightSideBearing;
+	FT_Short  characterWidth;
+	FT_Short  ascent;
+	FT_Short  descent;
+	FT_Short  attributes;
+	FT_ULong  bits;
+
+} PCF_MetricRec, *PCF_Metric;
+
+
+typedef struct  PCF_AccelRec_ {
+	FT_Byte        noOverlap;
+	FT_Byte        constantMetrics;
+	FT_Byte        terminalFont;
+	FT_Byte        constantWidth;
+	FT_Byte        inkInside;
+	FT_Byte        inkMetrics;
+	FT_Byte        drawDirection;
+	FT_Long        fontAscent;
+	FT_Long        fontDescent;
+	FT_Long        maxOverlap;
+	PCF_MetricRec  minbounds;
+	PCF_MetricRec  maxbounds;
+	PCF_MetricRec  ink_minbounds;
+	PCF_MetricRec  ink_maxbounds;
+
+} PCF_AccelRec, *PCF_Accel;
+
+
+typedef struct  PCD_EncodingRec_ {
+	FT_Long   enc;
+	FT_Short  glyph;
+
+} PCF_EncodingRec, *PCF_Encoding;
+
+
+typedef struct  PCF_FaceRec_ {
+	FT_FaceRec     root;
+
+	FT_StreamRec   gzip_stream;
+	FT_Stream      gzip_source;
+
+	char*          charset_encoding;
+	char*          charset_registry;
+
+	PCF_TocRec     toc;
+	PCF_AccelRec   accel;
+
+	int            nprops;
+	PCF_Property   properties;
+
+	FT_Long        nmetrics;
+	PCF_Metric     metrics;
+	FT_Long        nencodings;
+	PCF_Encoding   encodings;
+
+	FT_Short       defaultChar;
+
+	FT_ULong       bitmapsFormat;
+
+	FT_CharMap     charmap_handle;
+	FT_CharMapRec  charmap;  /* a single charmap per face */
+
+} PCF_FaceRec, *PCF_Face;
+
+
+/* macros for pcf font format */
 
 #define LSBFirst  0
 #define MSBFirst  1
@@ -225,9 +215,9 @@ FT_BEGIN_HEADER
 
 #define GLYPHPADOPTIONS  4 /* I'm not sure about this */
 
-  FT_LOCAL( FT_Error )
-  pcf_load_font( FT_Stream,
-                 PCF_Face );
+FT_LOCAL( FT_Error )
+pcf_load_font( FT_Stream,
+               PCF_Face );
 
 
 FT_END_HEADER

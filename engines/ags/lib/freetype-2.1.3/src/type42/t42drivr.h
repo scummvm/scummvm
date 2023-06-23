@@ -26,7 +26,7 @@
 FT_BEGIN_HEADER
 
 
-  FT_EXPORT_VAR( const FT_Driver_ClassRec )  t42_driver_class;
+FT_EXPORT_VAR( const FT_Driver_ClassRec )  t42_driver_class;
 
 
 FT_END_HEADER

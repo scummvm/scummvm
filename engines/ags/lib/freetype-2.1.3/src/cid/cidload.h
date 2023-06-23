@@ -28,25 +28,24 @@
 FT_BEGIN_HEADER
 
 
-  typedef struct  CID_Loader_
-  {
-    CID_Parser  parser;          /* parser used to read the stream */
-    FT_Int      num_chars;       /* number of characters in encoding */
+typedef struct  CID_Loader_ {
+	CID_Parser  parser;          /* parser used to read the stream */
+	FT_Int      num_chars;       /* number of characters in encoding */
 
-  } CID_Loader;
+} CID_Loader;
 
 
-  FT_LOCAL( FT_Long )
-  cid_get_offset( FT_Byte**  start,
-                  FT_Byte    offsize );
+FT_LOCAL( FT_Long )
+cid_get_offset( FT_Byte**  start,
+                FT_Byte    offsize );
 
-  FT_LOCAL( void )
-  cid_decrypt( FT_Byte*   buffer,
-               FT_Offset  length,
-               FT_UShort  seed );
+FT_LOCAL( void )
+cid_decrypt( FT_Byte*   buffer,
+             FT_Offset  length,
+             FT_UShort  seed );
 
-  FT_LOCAL( FT_Error )
-  cid_face_open( CID_Face  face );
+FT_LOCAL( FT_Error )
+cid_face_open( CID_Face  face );
 
 
 FT_END_HEADER

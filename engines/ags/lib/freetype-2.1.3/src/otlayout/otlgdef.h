@@ -5,9 +5,9 @@
 
 OTL_BEGIN_HEADER
 
-  OTL_API( void )
-  otl_gdef_validate( OTL_Bytes  table,
-                     OTL_Valid  valid );
+OTL_API( void )
+otl_gdef_validate( OTL_Bytes  table,
+                   OTL_Valid  valid );
 
 OTL_END_HEADER
 

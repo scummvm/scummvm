@@ -19,16 +19,16 @@
 FT_BEGIN_HEADER
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /*               PLATFORM-SPECIFIC CONFIGURATION MACROS                  */
-  /*                                                                       */
-  /* These macros can be toggled to suit a specific system.  The current   */
-  /* ones are defaults used to compile FreeType in an ANSI C environment   */
-  /* (16bit compilers are also supported).  Copy this file to your own     */
-  /* `freetype/builds/<system>' directory, and edit it to port the engine. */
-  /*                                                                       */
-  /*************************************************************************/
+/*************************************************************************/
+/*                                                                       */
+/*               PLATFORM-SPECIFIC CONFIGURATION MACROS                  */
+/*                                                                       */
+/* These macros can be toggled to suit a specific system.  The current   */
+/* ones are defaults used to compile FreeType in an ANSI C environment   */
+/* (16bit compilers are also supported).  Copy this file to your own     */
+/* `freetype/builds/<system>' directory, and edit it to port the engine. */
+/*                                                                       */
+/*************************************************************************/
 
 
 #define HAVE_UNISTD_H 1
@@ -51,46 +51,46 @@ FT_BEGIN_HEADER
 #define FT_SIZEOF_LONG  SIZEOF_LONG
 
 
-  /* Preferred alignment of data */
+/* Preferred alignment of data */
 #define FT_ALIGNMENT  8
 
 
-  /* FT_UNUSED is a macro used to indicate that a given parameter is not  */
-  /* used -- this is only used to get rid of unpleasant compiler warnings */
+/* FT_UNUSED is a macro used to indicate that a given parameter is not  */
+/* used -- this is only used to get rid of unpleasant compiler warnings */
 #ifndef FT_UNUSED
 #define FT_UNUSED( arg )  ( (arg) = (arg) )
 #endif
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /*                     AUTOMATIC CONFIGURATION MACROS                    */
-  /*                                                                       */
-  /* These macros are computed from the ones defined above.  Don't touch   */
-  /* their definition, unless you know precisely what you are doing.  No   */
-  /* porter should need to mess with them.                                 */
-  /*                                                                       */
-  /*************************************************************************/
+/*************************************************************************/
+/*                                                                       */
+/*                     AUTOMATIC CONFIGURATION MACROS                    */
+/*                                                                       */
+/* These macros are computed from the ones defined above.  Don't touch   */
+/* their definition, unless you know precisely what you are doing.  No   */
+/* porter should need to mess with them.                                 */
+/*                                                                       */
+/*************************************************************************/
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* IntN types                                                            */
-  /*                                                                       */
-  /*   Used to guarantee the size of some specific integers.               */
-  /*                                                                       */
-  typedef signed short    FT_Int16;
-  typedef unsigned short  FT_UInt16;
+/*************************************************************************/
+/*                                                                       */
+/* IntN types                                                            */
+/*                                                                       */
+/*   Used to guarantee the size of some specific integers.               */
+/*                                                                       */
+typedef signed short    FT_Int16;
+typedef unsigned short  FT_UInt16;
 
 #if FT_SIZEOF_INT == 4
 
-  typedef signed int      FT_Int32;
-  typedef unsigned int    FT_UInt32;
+typedef signed int      FT_Int32;
+typedef unsigned int    FT_UInt32;
 
 #elif FT_SIZEOF_LONG == 4
 
-  typedef signed long     FT_Int32;
-  typedef unsigned long   FT_UInt32;
+typedef signed long     FT_Int32;
+typedef unsigned long   FT_UInt32;
 
 #else
 #error "no 32bit type found -- please check your configuration files"
@@ -98,22 +98,22 @@ FT_BEGIN_HEADER
 
 #if FT_SIZEOF_LONG == 8
 
-  /* FT_LONG64 must be defined if a 64-bit type is available */
+/* FT_LONG64 must be defined if a 64-bit type is available */
 #define FT_LONG64
 #define FT_INT64   long
 
 #else
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* Many compilers provide the non-ANSI `long long' 64-bit type.  You can */
-  /* activate it by defining the FTCALC_USE_LONG_LONG macro in             */
-  /* `ftoption.h'.                                                         */
-  /*                                                                       */
-  /* Note that this will produce many -ansi warnings during library        */
-  /* compilation, and that in many cases,  the generated code will be      */
-  /* neither smaller nor faster!                                           */
-  /*                                                                       */
+/*************************************************************************/
+/*                                                                       */
+/* Many compilers provide the non-ANSI `long long' 64-bit type.  You can */
+/* activate it by defining the FTCALC_USE_LONG_LONG macro in             */
+/* `ftoption.h'.                                                         */
+/*                                                                       */
+/* Note that this will produce many -ansi warnings during library        */
+/* compilation, and that in many cases,  the generated code will be      */
+/* neither smaller nor faster!                                           */
+/*                                                                       */
 #ifdef FTCALC_USE_LONG_LONG
 
 #define FT_LONG64
@@ -195,29 +195,29 @@ FT_BEGIN_HEADER
 
 #endif /* !FT_EXPORT_VAR */
 
-  /* The following macros are needed to compile the library with a   */
-  /* C++ compiler and with 16bit compilers.                          */
-  /*                                                                 */
+/* The following macros are needed to compile the library with a   */
+/* C++ compiler and with 16bit compilers.                          */
+/*                                                                 */
 
-  /* This is special.  Within C++, you must specify `extern "C"' for */
-  /* functions which are used via function pointers, and you also    */
-  /* must do that for structures which contain function pointers to  */
-  /* assure C linkage -- it's not possible to have (local) anonymous */
-  /* functions which are accessed by (global) function pointers.     */
-  /*                                                                 */
-  /*                                                                 */
-  /* FT_CALLBACK_DEF is used to _define_ a callback function.        */
-  /*                                                                 */
-  /* FT_CALLBACK_TABLE is used to _declare_ a constant variable that */
-  /* contains pointers to callback functions.                        */
-  /*                                                                 */
-  /* FT_CALLBACK_TABLE_DEF is used to _define_ a constant variable   */
-  /* that contains pointers to callback functions.                   */
-  /*                                                                 */
-  /*                                                                 */
-  /* Some 16bit compilers have to redefine these macros to insert    */
-  /* the infamous `_cdecl' or `__fastcall' declarations.             */
-  /*                                                                 */
+/* This is special.  Within C++, you must specify `extern "C"' for */
+/* functions which are used via function pointers, and you also    */
+/* must do that for structures which contain function pointers to  */
+/* assure C linkage -- it's not possible to have (local) anonymous */
+/* functions which are accessed by (global) function pointers.     */
+/*                                                                 */
+/*                                                                 */
+/* FT_CALLBACK_DEF is used to _define_ a callback function.        */
+/*                                                                 */
+/* FT_CALLBACK_TABLE is used to _declare_ a constant variable that */
+/* contains pointers to callback functions.                        */
+/*                                                                 */
+/* FT_CALLBACK_TABLE_DEF is used to _define_ a constant variable   */
+/* that contains pointers to callback functions.                   */
+/*                                                                 */
+/*                                                                 */
+/* Some 16bit compilers have to redefine these macros to insert    */
+/* the infamous `_cdecl' or `__fastcall' declarations.             */
+/*                                                                 */
 #ifndef FT_CALLBACK_DEF
 #ifdef __cplusplus
 #define FT_CALLBACK_DEF( x )  extern "C"  x

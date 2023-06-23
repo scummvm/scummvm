@@ -15,12 +15,12 @@
 /*                                                                         */
 /***************************************************************************/
 
-  /*************************************************************************/
-  /*                                                                       */
-  /*  This file implements functions relative to list processing.  Its     */
-  /*  data structures are defined in `freetype/internal/ftlist.h'.         */
-  /*                                                                       */
-  /*************************************************************************/
+/*************************************************************************/
+/*                                                                       */
+/*  This file implements functions relative to list processing.  Its     */
+/*  data structures are defined in `freetype/internal/ftlist.h'.         */
+/*                                                                       */
+/*************************************************************************/
 
 
 #include <ft2build.h>
@@ -29,189 +29,179 @@
 #include FT_INTERNAL_OBJECTS_H
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
-  /* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
-  /* messages during execution.                                            */
-  /*                                                                       */
+/*************************************************************************/
+/*                                                                       */
+/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
+/* messages during execution.                                            */
+/*                                                                       */
 #undef  FT_COMPONENT
 #define FT_COMPONENT  trace_list
 
 
-  /* documentation is in ftlist.h */
+/* documentation is in ftlist.h */
 
-  FT_EXPORT_DEF( FT_ListNode )
-  FT_List_Find( FT_List  list,
-                void*    data )
-  {
-    FT_ListNode  cur;
-
-
-    cur = list->head;
-    while ( cur )
-    {
-      if ( cur->data == data )
-        return cur;
-
-      cur = cur->next;
-    }
-
-    return (FT_ListNode)0;
-  }
+FT_EXPORT_DEF( FT_ListNode )
+FT_List_Find( FT_List  list,
+              void*    data ) {
+	FT_ListNode  cur;
 
 
-  /* documentation is in ftlist.h */
+	cur = list->head;
+	while ( cur ) {
+		if ( cur->data == data )
+			return cur;
 
-  FT_EXPORT_DEF( void )
-  FT_List_Add( FT_List      list,
-               FT_ListNode  node )
-  {
-    FT_ListNode  before = list->tail;
+		cur = cur->next;
+	}
 
-
-    node->next = 0;
-    node->prev = before;
-
-    if ( before )
-      before->next = node;
-    else
-      list->head = node;
-
-    list->tail = node;
-  }
+	return (FT_ListNode)0;
+}
 
 
-  /* documentation is in ftlist.h */
+/* documentation is in ftlist.h */
 
-  FT_EXPORT_DEF( void )
-  FT_List_Insert( FT_List      list,
-                  FT_ListNode  node )
-  {
-    FT_ListNode  after = list->head;
-
-
-    node->next = after;
-    node->prev = 0;
-
-    if ( !after )
-      list->tail = node;
-    else
-      after->prev = node;
-
-    list->head = node;
-  }
+FT_EXPORT_DEF( void )
+FT_List_Add( FT_List      list,
+             FT_ListNode  node ) {
+	FT_ListNode  before = list->tail;
 
 
-  /* documentation is in ftlist.h */
+	node->next = 0;
+	node->prev = before;
 
-  FT_EXPORT_DEF( void )
-  FT_List_Remove( FT_List      list,
-                  FT_ListNode  node )
-  {
-    FT_ListNode  before, after;
+	if ( before )
+		before->next = node;
+	else
+		list->head = node;
 
-
-    before = node->prev;
-    after  = node->next;
-
-    if ( before )
-      before->next = after;
-    else
-      list->head = after;
-
-    if ( after )
-      after->prev = before;
-    else
-      list->tail = before;
-  }
+	list->tail = node;
+}
 
 
-  /* documentation is in ftlist.h */
+/* documentation is in ftlist.h */
 
-  FT_EXPORT_DEF( void )
-  FT_List_Up( FT_List      list,
-              FT_ListNode  node )
-  {
-    FT_ListNode  before, after;
-
-
-    before = node->prev;
-    after  = node->next;
-
-    /* check whether we are already on top of the list */
-    if ( !before )
-      return;
-
-    before->next = after;
-
-    if ( after )
-      after->prev = before;
-    else
-      list->tail = before;
-
-    node->prev       = 0;
-    node->next       = list->head;
-    list->head->prev = node;
-    list->head       = node;
-  }
+FT_EXPORT_DEF( void )
+FT_List_Insert( FT_List      list,
+                FT_ListNode  node ) {
+	FT_ListNode  after = list->head;
 
 
-  /* documentation is in ftlist.h */
+	node->next = after;
+	node->prev = 0;
 
-  FT_EXPORT_DEF( FT_Error )
-  FT_List_Iterate( FT_List            list,
-                   FT_List_Iterator   iterator,
-                   void*              user )
-  {
-    FT_ListNode  cur   = list->head;
-    FT_Error     error = FT_Err_Ok;
+	if ( !after )
+		list->tail = node;
+	else
+		after->prev = node;
 
-
-    while ( cur )
-    {
-      FT_ListNode  next = cur->next;
+	list->head = node;
+}
 
 
-      error = iterator( cur, user );
-      if ( error )
-        break;
+/* documentation is in ftlist.h */
 
-      cur = next;
-    }
-
-    return error;
-  }
+FT_EXPORT_DEF( void )
+FT_List_Remove( FT_List      list,
+                FT_ListNode  node ) {
+	FT_ListNode  before, after;
 
 
-  /* documentation is in ftlist.h */
+	before = node->prev;
+	after  = node->next;
 
-  FT_EXPORT_DEF( void )
-  FT_List_Finalize( FT_List             list,
-                    FT_List_Destructor  destroy,
-                    FT_Memory           memory,
-                    void*               user )
-  {
-    FT_ListNode  cur;
+	if ( before )
+		before->next = after;
+	else
+		list->head = after;
 
-
-    cur = list->head;
-    while ( cur )
-    {
-      FT_ListNode  next = cur->next;
-      void*        data = cur->data;
+	if ( after )
+		after->prev = before;
+	else
+		list->tail = before;
+}
 
 
-      if ( destroy )
-        destroy( memory, data, user );
+/* documentation is in ftlist.h */
 
-      FT_FREE( cur );
-      cur = next;
-    }
+FT_EXPORT_DEF( void )
+FT_List_Up( FT_List      list,
+            FT_ListNode  node ) {
+	FT_ListNode  before, after;
 
-    list->head = 0;
-    list->tail = 0;
-  }
+
+	before = node->prev;
+	after  = node->next;
+
+	/* check whether we are already on top of the list */
+	if ( !before )
+		return;
+
+	before->next = after;
+
+	if ( after )
+		after->prev = before;
+	else
+		list->tail = before;
+
+	node->prev       = 0;
+	node->next       = list->head;
+	list->head->prev = node;
+	list->head       = node;
+}
+
+
+/* documentation is in ftlist.h */
+
+FT_EXPORT_DEF( FT_Error )
+FT_List_Iterate( FT_List            list,
+                 FT_List_Iterator   iterator,
+                 void*              user ) {
+	FT_ListNode  cur   = list->head;
+	FT_Error     error = FT_Err_Ok;
+
+
+	while ( cur ) {
+		FT_ListNode  next = cur->next;
+
+
+		error = iterator( cur, user );
+		if ( error )
+			break;
+
+		cur = next;
+	}
+
+	return error;
+}
+
+
+/* documentation is in ftlist.h */
+
+FT_EXPORT_DEF( void )
+FT_List_Finalize( FT_List             list,
+                  FT_List_Destructor  destroy,
+                  FT_Memory           memory,
+                  void*               user ) {
+	FT_ListNode  cur;
+
+
+	cur = list->head;
+	while ( cur ) {
+		FT_ListNode  next = cur->next;
+		void*        data = cur->data;
+
+
+		if ( destroy )
+			destroy( memory, data, user );
+
+		FT_FREE( cur );
+		cur = next;
+	}
+
+	list->head = 0;
+	list->tail = 0;
+}
 
 
 /* END */

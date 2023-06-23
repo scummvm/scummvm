@@ -29,63 +29,62 @@
 FT_BEGIN_HEADER
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Struct>                                                              */
-  /*    CID_Parser                                                         */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    A CID_Parser is an object used to parse a Type 1 fonts very        */
-  /*    quickly.                                                           */
-  /*                                                                       */
-  /* <Fields>                                                              */
-  /*    root           :: The root PS_ParserRec fields.                    */
-  /*                                                                       */
-  /*    stream         :: The current input stream.                        */
-  /*                                                                       */
-  /*    postscript     :: A pointer to the data to be parsed.              */
-  /*                                                                       */
-  /*    postscript_len :: The length of the data to be parsed.             */
-  /*                                                                       */
-  /*    data_offset    :: The start position of the binary data (i.e., the */
-  /*                      end of the data to be parsed.                    */
-  /*                                                                       */
-  /*    cid            :: A structure which holds the information about    */
-  /*                      the current font.                                */
-  /*                                                                       */
-  /*    num_dict       :: The number of font dictionaries.                 */
-  /*                                                                       */
-  typedef struct  CID_Parser_
-  {
-    PS_ParserRec  root;
-    FT_Stream     stream;
+/*************************************************************************/
+/*                                                                       */
+/* <Struct>                                                              */
+/*    CID_Parser                                                         */
+/*                                                                       */
+/* <Description>                                                         */
+/*    A CID_Parser is an object used to parse a Type 1 fonts very        */
+/*    quickly.                                                           */
+/*                                                                       */
+/* <Fields>                                                              */
+/*    root           :: The root PS_ParserRec fields.                    */
+/*                                                                       */
+/*    stream         :: The current input stream.                        */
+/*                                                                       */
+/*    postscript     :: A pointer to the data to be parsed.              */
+/*                                                                       */
+/*    postscript_len :: The length of the data to be parsed.             */
+/*                                                                       */
+/*    data_offset    :: The start position of the binary data (i.e., the */
+/*                      end of the data to be parsed.                    */
+/*                                                                       */
+/*    cid            :: A structure which holds the information about    */
+/*                      the current font.                                */
+/*                                                                       */
+/*    num_dict       :: The number of font dictionaries.                 */
+/*                                                                       */
+typedef struct  CID_Parser_ {
+	PS_ParserRec  root;
+	FT_Stream     stream;
 
-    FT_Byte*      postscript;
-    FT_Long       postscript_len;
+	FT_Byte*      postscript;
+	FT_Long       postscript_len;
 
-    FT_ULong      data_offset;
+	FT_ULong      data_offset;
 
-    CID_FaceInfo  cid;
-    FT_Int        num_dict;
+	CID_FaceInfo  cid;
+	FT_Int        num_dict;
 
-  } CID_Parser;
-
-
-  FT_LOCAL( FT_Error )
-  cid_parser_new( CID_Parser*    parser,
-                  FT_Stream      stream,
-                  FT_Memory      memory,
-                  PSAux_Service  psaux );
-
-  FT_LOCAL( void )
-  cid_parser_done( CID_Parser*  parser );
+} CID_Parser;
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /*                            PARSING ROUTINES                           */
-  /*                                                                       */
-  /*************************************************************************/
+FT_LOCAL( FT_Error )
+cid_parser_new( CID_Parser*    parser,
+                FT_Stream      stream,
+                FT_Memory      memory,
+                PSAux_Service  psaux );
+
+FT_LOCAL( void )
+cid_parser_done( CID_Parser*  parser );
+
+
+/*************************************************************************/
+/*                                                                       */
+/*                            PARSING ROUTINES                           */
+/*                                                                       */
+/*************************************************************************/
 
 #define cid_parser_skip_spaces( p )  (p)->root.funcs.skip_spaces( &(p)->root )
 #define cid_parser_skip_alpha( p )   (p)->root.funcs.skip_alpha ( &(p)->root )

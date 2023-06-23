@@ -28,148 +28,148 @@
 FT_BEGIN_HEADER
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Macro>                                                               */
-  /*    FT_SET_ERROR                                                       */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    This macro is used to set an implicit `error' variable to a given  */
-  /*    expression's value (usually a function call), and convert it to a  */
-  /*    boolean which is set whenever the value is != 0.                   */
-  /*                                                                       */
+/*************************************************************************/
+/*                                                                       */
+/* <Macro>                                                               */
+/*    FT_SET_ERROR                                                       */
+/*                                                                       */
+/* <Description>                                                         */
+/*    This macro is used to set an implicit `error' variable to a given  */
+/*    expression's value (usually a function call), and convert it to a  */
+/*    boolean which is set whenever the value is != 0.                   */
+/*                                                                       */
 #undef  FT_SET_ERROR
 #define FT_SET_ERROR( expression ) \
           ( ( error = (expression) ) != 0 )
 
 
-  /*************************************************************************/
-  /*************************************************************************/
-  /*************************************************************************/
-  /****                                                                 ****/
-  /****                                                                 ****/
-  /****                           M E M O R Y                           ****/
-  /****                                                                 ****/
-  /****                                                                 ****/
-  /*************************************************************************/
-  /*************************************************************************/
-  /*************************************************************************/
+/*************************************************************************/
+/*************************************************************************/
+/*************************************************************************/
+/****                                                                 ****/
+/****                                                                 ****/
+/****                           M E M O R Y                           ****/
+/****                                                                 ****/
+/****                                                                 ****/
+/*************************************************************************/
+/*************************************************************************/
+/*************************************************************************/
 
 #ifdef FT_DEBUG_MEMORY
 
-  FT_BASE( FT_Error )
-  FT_Alloc_Debug( FT_Memory    memory,
+FT_BASE( FT_Error )
+FT_Alloc_Debug( FT_Memory    memory,
+                FT_Long      size,
+                void*       *P,
+                const char*  file_name,
+                FT_Long      line_no );
+
+FT_BASE( FT_Error )
+FT_Realloc_Debug( FT_Memory    memory,
+                  FT_Long      current,
                   FT_Long      size,
                   void*       *P,
                   const char*  file_name,
                   FT_Long      line_no );
 
-  FT_BASE( FT_Error )
-  FT_Realloc_Debug( FT_Memory    memory,
-                    FT_Long      current,
-                    FT_Long      size,
-                    void*       *P,
-                    const char*  file_name,
-                    FT_Long      line_no );
-
-  FT_BASE( void )
-  FT_Free_Debug( FT_Memory    memory,
-                 FT_Pointer   block,
-                 const char*  file_name,
-                 FT_Long      line_no );
+FT_BASE( void )
+FT_Free_Debug( FT_Memory    memory,
+               FT_Pointer   block,
+               const char*  file_name,
+               FT_Long      line_no );
 
 #endif
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    FT_Alloc                                                           */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Allocates a new block of memory.  The returned area is always      */
-  /*    zero-filled; this is a strong convention in many FreeType parts.   */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    memory :: A handle to a given `memory object' which handles        */
-  /*              allocation.                                              */
-  /*                                                                       */
-  /*    size   :: The size in bytes of the block to allocate.              */
-  /*                                                                       */
-  /* <Output>                                                              */
-  /*    P      :: A pointer to the fresh new block.  It should be set to   */
-  /*              NULL if `size' is 0, or in case of error.                */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    FreeType error code.  0 means success.                             */
-  /*                                                                       */
-  FT_BASE( FT_Error )
-  FT_Alloc( FT_Memory  memory,
+/*************************************************************************/
+/*                                                                       */
+/* <Function>                                                            */
+/*    FT_Alloc                                                           */
+/*                                                                       */
+/* <Description>                                                         */
+/*    Allocates a new block of memory.  The returned area is always      */
+/*    zero-filled; this is a strong convention in many FreeType parts.   */
+/*                                                                       */
+/* <Input>                                                               */
+/*    memory :: A handle to a given `memory object' which handles        */
+/*              allocation.                                              */
+/*                                                                       */
+/*    size   :: The size in bytes of the block to allocate.              */
+/*                                                                       */
+/* <Output>                                                              */
+/*    P      :: A pointer to the fresh new block.  It should be set to   */
+/*              NULL if `size' is 0, or in case of error.                */
+/*                                                                       */
+/* <Return>                                                              */
+/*    FreeType error code.  0 means success.                             */
+/*                                                                       */
+FT_BASE( FT_Error )
+FT_Alloc( FT_Memory  memory,
+          FT_Long    size,
+          void*     *P );
+
+
+/*************************************************************************/
+/*                                                                       */
+/* <Function>                                                            */
+/*    FT_Realloc                                                         */
+/*                                                                       */
+/* <Description>                                                         */
+/*    Reallocates a block of memory pointed to by `*P' to `Size' bytes   */
+/*    from the heap, possibly changing `*P'.                             */
+/*                                                                       */
+/* <Input>                                                               */
+/*    memory  :: A handle to a given `memory object' which handles       */
+/*               reallocation.                                           */
+/*                                                                       */
+/*    current :: The current block size in bytes.                        */
+/*                                                                       */
+/*    size    :: The new block size in bytes.                            */
+/*                                                                       */
+/* <InOut>                                                               */
+/*    P       :: A pointer to the fresh new block.  It should be set to  */
+/*               NULL if `size' is 0, or in case of error.               */
+/*                                                                       */
+/* <Return>                                                              */
+/*    FreeType error code.  0 means success.                             */
+/*                                                                       */
+/* <Note>                                                                */
+/*    All callers of FT_Realloc() _must_ provide the current block size  */
+/*    as well as the new one.                                            */
+/*                                                                       */
+FT_BASE( FT_Error )
+FT_Realloc( FT_Memory  memory,
+            FT_Long    current,
             FT_Long    size,
-            void*     *P );
+            void**     P );
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    FT_Realloc                                                         */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Reallocates a block of memory pointed to by `*P' to `Size' bytes   */
-  /*    from the heap, possibly changing `*P'.                             */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    memory  :: A handle to a given `memory object' which handles       */
-  /*               reallocation.                                           */
-  /*                                                                       */
-  /*    current :: The current block size in bytes.                        */
-  /*                                                                       */
-  /*    size    :: The new block size in bytes.                            */
-  /*                                                                       */
-  /* <InOut>                                                               */
-  /*    P       :: A pointer to the fresh new block.  It should be set to  */
-  /*               NULL if `size' is 0, or in case of error.               */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    FreeType error code.  0 means success.                             */
-  /*                                                                       */
-  /* <Note>                                                                */
-  /*    All callers of FT_Realloc() _must_ provide the current block size  */
-  /*    as well as the new one.                                            */
-  /*                                                                       */
-  FT_BASE( FT_Error )
-  FT_Realloc( FT_Memory  memory,
-              FT_Long    current,
-              FT_Long    size,
-              void**     P );
-
-
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Function>                                                            */
-  /*    FT_Free                                                            */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    Releases a given block of memory allocated through FT_Alloc().     */
-  /*                                                                       */
-  /* <Input>                                                               */
-  /*    memory :: A handle to a given `memory object' which handles        */
-  /*              memory deallocation                                      */
-  /*                                                                       */
-  /*    P      :: This is the _address_ of a _pointer_ which points to the */
-  /*              allocated block.  It is always set to NULL on exit.      */
-  /*                                                                       */
-  /* <Return>                                                              */
-  /*    FreeType error code.  0 means success.                             */
-  /*                                                                       */
-  /* <Note>                                                                */
-  /*    If P or *P are NULL, this function should return successfully.     */
-  /*    This is a strong convention within all of FreeType and its         */
-  /*    drivers.                                                           */
-  /*                                                                       */
-  FT_BASE( void )
-  FT_Free( FT_Memory  memory,
-           void**     P );
+/*************************************************************************/
+/*                                                                       */
+/* <Function>                                                            */
+/*    FT_Free                                                            */
+/*                                                                       */
+/* <Description>                                                         */
+/*    Releases a given block of memory allocated through FT_Alloc().     */
+/*                                                                       */
+/* <Input>                                                               */
+/*    memory :: A handle to a given `memory object' which handles        */
+/*              memory deallocation                                      */
+/*                                                                       */
+/*    P      :: This is the _address_ of a _pointer_ which points to the */
+/*              allocated block.  It is always set to NULL on exit.      */
+/*                                                                       */
+/* <Return>                                                              */
+/*    FreeType error code.  0 means success.                             */
+/*                                                                       */
+/* <Note>                                                                */
+/*    If P or *P are NULL, this function should return successfully.     */
+/*    This is a strong convention within all of FreeType and its         */
+/*    drivers.                                                           */
+/*                                                                       */
+FT_BASE( void )
+FT_Free( FT_Memory  memory,
+         void**     P );
 
 
 #define FT_MEM_SET( dest, byte, count )     ft_memset( dest, byte, count )
@@ -184,12 +184,12 @@ FT_BEGIN_HEADER
 #define FT_ZERO( p )                FT_MEM_ZERO( p, sizeof ( *(p) ) )
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* We first define FT_MEM_ALLOC, FT_MEM_REALLOC, and FT_MEM_FREE.  All   */
-  /* macros use an _implicit_ `memory' parameter to access the current     */
-  /* memory allocator.                                                     */
-  /*                                                                       */
+/*************************************************************************/
+/*                                                                       */
+/* We first define FT_MEM_ALLOC, FT_MEM_REALLOC, and FT_MEM_FREE.  All   */
+/* macros use an _implicit_ `memory' parameter to access the current     */
+/* memory allocator.                                                     */
+/*                                                                       */
 
 #ifdef FT_DEBUG_MEMORY
 
@@ -221,11 +221,11 @@ FT_BEGIN_HEADER
 #endif /* !FT_DEBUG_MEMORY */
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* The following functions macros expect that their pointer argument is  */
-  /* _typed_ in order to automatically compute array element sizes.        */
-  /*                                                                       */
+/*************************************************************************/
+/*                                                                       */
+/* The following functions macros expect that their pointer argument is  */
+/* _typed_ in order to automatically compute array element sizes.        */
+/*                                                                       */
 
 #define FT_MEM_NEW( _pointer_ )                               \
           FT_MEM_ALLOC( _pointer_, sizeof ( *(_pointer_) ) )
@@ -238,10 +238,10 @@ FT_BEGIN_HEADER
                                      (_new_) * sizeof ( *(_pointer_) ) )
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* the following macros are obsolete but kept for compatibility reasons  */
-  /*                                                                       */
+/*************************************************************************/
+/*                                                                       */
+/* the following macros are obsolete but kept for compatibility reasons  */
+/*                                                                       */
 
 #define FT_MEM_ALLOC_ARRAY( _pointer_, _count_, _type_ )           \
           FT_MEM_ALLOC( _pointer_, (_count_) * sizeof ( _type_ ) )
@@ -251,12 +251,12 @@ FT_BEGIN_HEADER
                                      (_new_) * sizeof ( _type_ ) )
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* The following macros are variants of their FT_MEM_XXXX equivalents;   */
-  /* they are used to set an _implicit_ `error' variable and return TRUE   */
-  /* if an error occured (i.e. if 'error != 0').                           */
-  /*                                                                       */
+/*************************************************************************/
+/*                                                                       */
+/* The following macros are variants of their FT_MEM_XXXX equivalents;   */
+/* they are used to set an _implicit_ `error' variable and return TRUE   */
+/* if an error occured (i.e. if 'error != 0').                           */
+/*                                                                       */
 
 #define FT_ALLOC( _pointer_, _size_ )                       \
           FT_SET_ERROR( FT_MEM_ALLOC( _pointer_, _size_ ) )
@@ -285,7 +285,7 @@ FT_BEGIN_HEADER
                                         (_old_) * sizeof ( _type_ ),    \
                                         (_new_) * sizeof ( _type_ ) ) )
 
- /* */
+/* */
 
 
 FT_END_HEADER

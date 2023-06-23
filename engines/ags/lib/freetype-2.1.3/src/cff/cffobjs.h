@@ -30,126 +30,122 @@
 FT_BEGIN_HEADER
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Type>                                                                */
-  /*    CFF_Driver                                                         */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    A handle to an OpenType driver object.                             */
-  /*                                                                       */
-  typedef struct CFF_DriverRec_*  CFF_Driver;
+/*************************************************************************/
+/*                                                                       */
+/* <Type>                                                                */
+/*    CFF_Driver                                                         */
+/*                                                                       */
+/* <Description>                                                         */
+/*    A handle to an OpenType driver object.                             */
+/*                                                                       */
+typedef struct CFF_DriverRec_*  CFF_Driver;
 
-  typedef TT_Face  CFF_Face;
-
-
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Type>                                                                */
-  /*    CFF_Size                                                           */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    A handle to an OpenType size object.                               */
-  /*                                                                       */
-  typedef FT_Size  CFF_Size;
+typedef TT_Face  CFF_Face;
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Type>                                                                */
-  /*    CFF_GlyphSlot                                                      */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    A handle to an OpenType glyph slot object.                         */
-  /*                                                                       */
-  typedef struct  CFF_GlyphSlotRec_
-  {
-    FT_GlyphSlotRec  root;
-
-    FT_Bool          hint;
-    FT_Bool          scaled;
-
-    FT_Fixed         x_scale;
-    FT_Fixed         y_scale;
-
-  } CFF_GlyphSlotRec, *CFF_GlyphSlot;
+/*************************************************************************/
+/*                                                                       */
+/* <Type>                                                                */
+/*    CFF_Size                                                           */
+/*                                                                       */
+/* <Description>                                                         */
+/*    A handle to an OpenType size object.                               */
+/*                                                                       */
+typedef FT_Size  CFF_Size;
 
 
+/*************************************************************************/
+/*                                                                       */
+/* <Type>                                                                */
+/*    CFF_GlyphSlot                                                      */
+/*                                                                       */
+/* <Description>                                                         */
+/*    A handle to an OpenType glyph slot object.                         */
+/*                                                                       */
+typedef struct  CFF_GlyphSlotRec_ {
+	FT_GlyphSlotRec  root;
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* Subglyph transformation record.                                       */
-  /*                                                                       */
-  typedef struct  CFF_Transform_
-  {
-    FT_Fixed    xx, xy;     /* transformation matrix coefficients */
-    FT_Fixed    yx, yy;
-    FT_F26Dot6  ox, oy;     /* offsets        */
+	FT_Bool          hint;
+	FT_Bool          scaled;
 
-  } CFF_Transform;
+	FT_Fixed         x_scale;
+	FT_Fixed         y_scale;
 
-
-  /* this is only used in the case of a pure CFF font with no charmap */
-  typedef struct  CFF_CharMapRec_
-  {
-    TT_CharMapRec  root;
-    PS_Unicodes    unicodes;
-
-  } CFF_CharMapRec, *CFF_CharMap;
+} CFF_GlyphSlotRec, *CFF_GlyphSlot;
 
 
-  /***********************************************************************/
-  /*                                                                     */
-  /* TrueType driver class.                                              */
-  /*                                                                     */
-  typedef struct  CFF_DriverRec_
-  {
-    FT_DriverRec  root;
-    void*         extension_component;
 
-  } CFF_DriverRec;
+/*************************************************************************/
+/*                                                                       */
+/* Subglyph transformation record.                                       */
+/*                                                                       */
+typedef struct  CFF_Transform_ {
+	FT_Fixed    xx, xy;     /* transformation matrix coefficients */
+	FT_Fixed    yx, yy;
+	FT_F26Dot6  ox, oy;     /* offsets        */
 
-
-  FT_LOCAL( FT_Error )
-  cff_size_init( CFF_Size  size );
-
-  FT_LOCAL( void )
-  cff_size_done( CFF_Size  size );
-
-  FT_LOCAL( FT_Error )
-  cff_size_reset( CFF_Size  size );
-
-  FT_LOCAL( void )
-  cff_slot_done( CFF_GlyphSlot  slot );
-
-  FT_LOCAL( FT_Error )
-  cff_slot_init( CFF_GlyphSlot   slot );
+} CFF_Transform;
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* Face functions                                                        */
-  /*                                                                       */
-  FT_LOCAL( FT_Error )
-  cff_face_init( FT_Stream      stream,
-                 CFF_Face       face,
-                 FT_Int         face_index,
-                 FT_Int         num_params,
-                 FT_Parameter*  params );
+/* this is only used in the case of a pure CFF font with no charmap */
+typedef struct  CFF_CharMapRec_ {
+	TT_CharMapRec  root;
+	PS_Unicodes    unicodes;
 
-  FT_LOCAL( void )
-  cff_face_done( CFF_Face  face );
+} CFF_CharMapRec, *CFF_CharMap;
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* Driver functions                                                      */
-  /*                                                                       */
-  FT_LOCAL( FT_Error )
-  cff_driver_init( CFF_Driver  driver );
+/***********************************************************************/
+/*                                                                     */
+/* TrueType driver class.                                              */
+/*                                                                     */
+typedef struct  CFF_DriverRec_ {
+	FT_DriverRec  root;
+	void*         extension_component;
 
-  FT_LOCAL( void )
-  cff_driver_done( CFF_Driver  driver );
+} CFF_DriverRec;
+
+
+FT_LOCAL( FT_Error )
+cff_size_init( CFF_Size  size );
+
+FT_LOCAL( void )
+cff_size_done( CFF_Size  size );
+
+FT_LOCAL( FT_Error )
+cff_size_reset( CFF_Size  size );
+
+FT_LOCAL( void )
+cff_slot_done( CFF_GlyphSlot  slot );
+
+FT_LOCAL( FT_Error )
+cff_slot_init( CFF_GlyphSlot   slot );
+
+
+/*************************************************************************/
+/*                                                                       */
+/* Face functions                                                        */
+/*                                                                       */
+FT_LOCAL( FT_Error )
+cff_face_init( FT_Stream      stream,
+               CFF_Face       face,
+               FT_Int         face_index,
+               FT_Int         num_params,
+               FT_Parameter*  params );
+
+FT_LOCAL( void )
+cff_face_done( CFF_Face  face );
+
+
+/*************************************************************************/
+/*                                                                       */
+/* Driver functions                                                      */
+/*                                                                       */
+FT_LOCAL( FT_Error )
+cff_driver_init( CFF_Driver  driver );
+
+FT_LOCAL( void )
+cff_driver_done( CFF_Driver  driver );
 
 
 FT_END_HEADER

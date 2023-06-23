@@ -5,9 +5,9 @@
 
 OTL_BEGIN_HEADER
 
-  OTL_LOCAL( void )
-  otl_jstf_validate( OTL_Bytes      table,
-                     OTL_Validator  valid );
+OTL_LOCAL( void )
+otl_jstf_validate( OTL_Bytes      table,
+                   OTL_Validator  valid );
 
 OTL_END_HEADER
 

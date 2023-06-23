@@ -66,24 +66,24 @@ typedef void   (*free_func)  OF((voidpf opaque, voidpf address));
 struct internal_state;
 
 typedef struct z_stream_s {
-    Bytef    *next_in;  /* next input byte */
-    uInt     avail_in;  /* number of bytes available at next_in */
-    uLong    total_in;  /* total nb of input bytes read so far */
+	Bytef    *next_in;  /* next input byte */
+	uInt     avail_in;  /* number of bytes available at next_in */
+	uLong    total_in;  /* total nb of input bytes read so far */
 
-    Bytef    *next_out; /* next output byte should be put there */
-    uInt     avail_out; /* remaining free space at next_out */
-    uLong    total_out; /* total nb of bytes output so far */
+	Bytef    *next_out; /* next output byte should be put there */
+	uInt     avail_out; /* remaining free space at next_out */
+	uLong    total_out; /* total nb of bytes output so far */
 
-    char     *msg;      /* last error message, NULL if no error */
-    struct internal_state FAR *state; /* not visible by applications */
+	char     *msg;      /* last error message, NULL if no error */
+	struct internal_state FAR *state; /* not visible by applications */
 
-    alloc_func zalloc;  /* used to allocate the internal state */
-    free_func  zfree;   /* used to free the internal state */
-    voidpf     opaque;  /* private data object passed to zalloc and zfree */
+	alloc_func zalloc;  /* used to allocate the internal state */
+	free_func  zfree;   /* used to free the internal state */
+	voidpf     opaque;  /* private data object passed to zalloc and zfree */
 
-    int     data_type;  /* best guess about the data type: ascii or binary */
-    uLong   adler;      /* adler32 value of the uncompressed data */
-    uLong   reserved;   /* reserved for future use */
+	int     data_type;  /* best guess about the data type: ascii or binary */
+	uLong   adler;      /* adler32 value of the uncompressed data */
+	uLong   reserved;   /* reserved for future use */
 } z_stream;
 
 typedef z_stream FAR *z_streamp;
@@ -120,7 +120,7 @@ typedef z_stream FAR *z_streamp;
    a single step).
 */
 
-                        /* constants */
+/* constants */
 
 #define Z_NO_FLUSH      0
 #define Z_PARTIAL_FLUSH 1 /* will be removed, use Z_SYNC_FLUSH instead */
@@ -164,7 +164,7 @@ typedef z_stream FAR *z_streamp;
 #define Z_NULL  0  /* for initializing zalloc, zfree, opaque */
 
 
-                        /* basic functions */
+/* basic functions */
 
 /* The application can compare zlibVersion and ZLIB_VERSION for consistency.
    If the first character differs, the library code actually used is
@@ -386,7 +386,7 @@ ZEXTERN int ZEXPORT inflateEnd OF((z_streamp strm));
    static string (which must not be deallocated).
 */
 
-                        /* Advanced functions */
+/* Advanced functions */
 
 /*
     The following functions are needed only in some special applications.
@@ -577,7 +577,7 @@ ZEXTERN int ZEXPORT inflateReset OF((z_streamp strm));
 */
 
 
-                        /* utility functions */
+/* utility functions */
 
 /*
      The following utility functions are implemented on top of the
@@ -764,7 +764,7 @@ ZEXTERN int ZEXPORT inflateReset OF((z_streamp strm));
    to get the exact error code.
 */
 
-                        /* checksum functions */
+/* checksum functions */
 
 /*
      These functions are not related to compression but are exported
@@ -805,7 +805,7 @@ ZEXTERN uLong ZEXPORT adler32 OF((uLong adler, const Bytef *buf, uInt len));
 */
 
 
-                        /* various hacks, don't look :) */
+/* various hacks, don't look :) */
 
 /* deflateInit and inflateInit are macros to allow checking the zlib version
  * and the compiler's view of z_stream:

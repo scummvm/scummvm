@@ -29,125 +29,123 @@
 FT_BEGIN_HEADER
 
 
-  /* The following structures must be defined by the hinter */
-  typedef struct CID_Size_Hints_   CID_Size_Hints;
-  typedef struct CID_Glyph_Hints_  CID_Glyph_Hints;
+/* The following structures must be defined by the hinter */
+typedef struct CID_Size_Hints_   CID_Size_Hints;
+typedef struct CID_Glyph_Hints_  CID_Glyph_Hints;
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Type>                                                                */
-  /*    CID_Driver                                                         */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    A handle to a Type 1 driver object.                                */
-  /*                                                                       */
-  typedef struct CID_DriverRec_*  CID_Driver;
+/*************************************************************************/
+/*                                                                       */
+/* <Type>                                                                */
+/*    CID_Driver                                                         */
+/*                                                                       */
+/* <Description>                                                         */
+/*    A handle to a Type 1 driver object.                                */
+/*                                                                       */
+typedef struct CID_DriverRec_*  CID_Driver;
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Type>                                                                */
-  /*    CID_Size                                                           */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    A handle to a Type 1 size object.                                  */
-  /*                                                                       */
-  typedef struct CID_SizeRec_*  CID_Size;
+/*************************************************************************/
+/*                                                                       */
+/* <Type>                                                                */
+/*    CID_Size                                                           */
+/*                                                                       */
+/* <Description>                                                         */
+/*    A handle to a Type 1 size object.                                  */
+/*                                                                       */
+typedef struct CID_SizeRec_*  CID_Size;
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Type>                                                                */
-  /*    CID_GlyphSlot                                                      */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    A handle to a Type 1 glyph slot object.                            */
-  /*                                                                       */
-  typedef struct CID_GlyphSlotRec_*  CID_GlyphSlot;
+/*************************************************************************/
+/*                                                                       */
+/* <Type>                                                                */
+/*    CID_GlyphSlot                                                      */
+/*                                                                       */
+/* <Description>                                                         */
+/*    A handle to a Type 1 glyph slot object.                            */
+/*                                                                       */
+typedef struct CID_GlyphSlotRec_*  CID_GlyphSlot;
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Type>                                                                */
-  /*    CID_CharMap                                                        */
-  /*                                                                       */
-  /* <Description>                                                         */
-  /*    A handle to a Type 1 character mapping object.                     */
-  /*                                                                       */
-  /* <Note>                                                                */
-  /*    The Type 1 format doesn't use a charmap but an encoding table.     */
-  /*    The driver is responsible for making up charmap objects            */
-  /*    corresponding to these tables.                                     */
-  /*                                                                       */
-  typedef struct CID_CharMapRec_*  CID_CharMap;
+/*************************************************************************/
+/*                                                                       */
+/* <Type>                                                                */
+/*    CID_CharMap                                                        */
+/*                                                                       */
+/* <Description>                                                         */
+/*    A handle to a Type 1 character mapping object.                     */
+/*                                                                       */
+/* <Note>                                                                */
+/*    The Type 1 format doesn't use a charmap but an encoding table.     */
+/*    The driver is responsible for making up charmap objects            */
+/*    corresponding to these tables.                                     */
+/*                                                                       */
+typedef struct CID_CharMapRec_*  CID_CharMap;
 
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* HERE BEGINS THE TYPE 1 SPECIFIC STUFF                                 */
-  /*                                                                       */
-  /*************************************************************************/
+/*************************************************************************/
+/*                                                                       */
+/* HERE BEGINS THE TYPE 1 SPECIFIC STUFF                                 */
+/*                                                                       */
+/*************************************************************************/
 
 
-  typedef struct  CID_SizeRec_
-  {
-    FT_SizeRec  root;
-    FT_Bool     valid;
+typedef struct  CID_SizeRec_ {
+	FT_SizeRec  root;
+	FT_Bool     valid;
 
-  } CID_SizeRec;
-
-
-  typedef struct  CID_GlyphSlotRec_
-  {
-    FT_GlyphSlotRec  root;
-
-    FT_Bool          hint;
-    FT_Bool          scaled;
-
-    FT_Fixed         x_scale;
-    FT_Fixed         y_scale;
-
-  } CID_GlyphSlotRec;
+} CID_SizeRec;
 
 
-  FT_LOCAL( void )
-  cid_slot_done( CID_GlyphSlot  slot );
+typedef struct  CID_GlyphSlotRec_ {
+	FT_GlyphSlotRec  root;
 
-  FT_LOCAL( FT_Error )
-  cid_slot_init( CID_GlyphSlot   slot );
+	FT_Bool          hint;
+	FT_Bool          scaled;
 
+	FT_Fixed         x_scale;
+	FT_Fixed         y_scale;
 
-  FT_LOCAL( void )
-  cid_size_done( CID_Size  size );
-
-
-  FT_LOCAL( FT_Error )
-  cid_size_init( CID_Size  size );
+} CID_GlyphSlotRec;
 
 
-  FT_LOCAL( FT_Error )
-  cid_size_reset( CID_Size  size );
+FT_LOCAL( void )
+cid_slot_done( CID_GlyphSlot  slot );
+
+FT_LOCAL( FT_Error )
+cid_slot_init( CID_GlyphSlot   slot );
 
 
-  FT_LOCAL( FT_Error )
-  cid_face_init( FT_Stream      stream,
-                 CID_Face       face,
-                 FT_Int         face_index,
-                 FT_Int         num_params,
-                 FT_Parameter*  params );
+FT_LOCAL( void )
+cid_size_done( CID_Size  size );
 
 
-  FT_LOCAL( void )
-  cid_face_done( CID_Face  face );
+FT_LOCAL( FT_Error )
+cid_size_init( CID_Size  size );
 
 
-  FT_LOCAL( FT_Error )
-  cid_driver_init( CID_Driver  driver );
+FT_LOCAL( FT_Error )
+cid_size_reset( CID_Size  size );
 
 
-  FT_LOCAL( void )
-  cid_driver_done( CID_Driver  driver );
+FT_LOCAL( FT_Error )
+cid_face_init( FT_Stream      stream,
+               CID_Face       face,
+               FT_Int         face_index,
+               FT_Int         num_params,
+               FT_Parameter*  params );
+
+
+FT_LOCAL( void )
+cid_face_done( CID_Face  face );
+
+
+FT_LOCAL( FT_Error )
+cid_driver_init( CID_Driver  driver );
+
+
+FT_LOCAL( void )
+cid_driver_done( CID_Driver  driver );
 
 
 FT_END_HEADER
