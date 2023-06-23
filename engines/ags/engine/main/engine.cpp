@@ -811,7 +811,13 @@ void allegro_bitmap_test_init() {
 	// Switched the test off for now
 	//test_allegro_bitmap = AllegroBitmap::CreateBitmap(320,200,32);
 
-	return;
+	//Bitmap *testgfx = BitmapHelper::CreateRawBitmapOwner(load_bmp("benchgfx32.bmp", nullptr));
+	//Bitmap *destgfx = BitmapHelper::CreateBitmap(testgfx->GetWidth(), testgfx->GetHeight(), testgfx->GetBPP()*8);
+	//set_blender_mode(kTintBlenderMode, 0, 0, 255, 255);
+	//destgfx->LitBlendBlt(testgfx, 0, 0, 100);
+	//destgfx->SaveToFile("tint_result.bmp", nullptr);
+
+	return; // Normal benchmark below
 
 	PALETTE gfx8pal;
 	Bitmap *benchgfx32 = BitmapHelper::CreateRawBitmapOwner(load_bmp("benchgfx32.bmp", nullptr));

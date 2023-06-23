@@ -27,7 +27,7 @@
 #include "common/textconsole.h"
 #include "graphics/screen.h"
 
-//#define WYATTOPT
+#define WYATTOPT
 
 namespace AGS3 {
 
@@ -585,7 +585,7 @@ uint32x4_t BITMAP::blendTintSpriteSIMD(uint32x4_t srcCols, uint32x4_t destCols, 
 	// ddr = { R[0], R[1], R[2], R[3] }
 	// ddg = { G[0], G[1], G[2], G[3] }
 	// ddb = { B[0], B[1], B[2], B[3] }
-	
+
 	float32x4_t ddr, ddg, ddb;
 	ddr = vmulq_n_f32(vcvtq_f32_u32(vandq_u32(vshrq_n_u32(destCols, 16), vmovq_n_u32(0xff))), 1.0 / 255.0);
 	ddg = vmulq_n_f32(vcvtq_f32_u32(vandq_u32(vshrq_n_u32(destCols, 8), vmovq_n_u32(0xff))), 1.0 / 255.0);
@@ -599,23 +599,19 @@ uint32x4_t BITMAP::blendTintSpriteSIMD(uint32x4_t srcCols, uint32x4_t destCols, 
 	//float32x4_t dmins = vminq_f32(ddr, vminq_f32(ddg, ddb));
 	float32x4_t smins = vminq_f32(ssr, vminq_f32(ssg, ssb));
 	//float32x4_t ddelta = vsubq_f32(dmaxes, dmins);
-	float32x4_t sdelta = vsubq_f32(smaxes, smins);
+	float32x4_t chroma = vsubq_f32(smaxes, smins);
 
-	float32x4_t quotient, product, hr, hg, hb, hue, sat;
-	hr = vdivq_f32(vsubq_f32(ssg, ssb), sdelta);
-	quotient = vdivq_f32(hr, vmovq_n_f32(6.0));
-	product = vmulq_n_f32(quotient, 6.0);
-	hr = vmulq_n_f32(vsubq_f32(hr, product), 60.0);
-	hg = vaddq_f32(vdivq_f32(vsubq_f32(ssb, ssr), sdelta), vmovq_n_f32(2.0));
-	hb = vaddq_f32(vdivq_f32(vsubq_f32(ssr, ssg), sdelta), vmovq_n_f32(4.0));
-	float32x4_t hrfactors = vcvtnq_u32_f32(vandq_u32(vceqq_u32(vreinterpretq_u32_f32(ssr), vreinterpretq_u32_f32(smaxes)), vmovq_n_u32(1)));
-	float32x4_t hgfactors = vcvtnq_u32_f32(vandq_u32(vceqq_u32(vreinterpretq_u32_f32(ssg), vreinterpretq_u32_f32(smaxes)), vmovq_n_u32(1)));
-	float32x4_t hbfactors = vcvtnq_u32_f32(vandq_u32(vceqq_u32(vreinterpretq_u32_f32(ssb), vreinterpretq_u32_f32(smaxes)), vmovq_n_u32(1)));
+	float32x4_t hr, hg, hb, hue;
+	hr = vdivq_f32(vsubq_f32(ssg, ssb), chroma);
+	hr = vsubq_f32(hr, vmulq_n_f32(vrndmq_f32(vmulq_n_f32(hr, 1.0 / 6.0)), 6.0));
+	hg = vaddq_f32(vdivq_f32(vsubq_f32(ssb, ssr), chroma), vmovq_n_f32(2.0));
+	hb = vaddq_f32(vdivq_f32(vsubq_f32(ssr, ssg), chroma), vmovq_n_f32(4.0));
+	float32x4_t hrfactors = vcvtq_f32_u32(vandq_u32(vceqq_f32(ssr, smaxes), vmovq_n_u32(1)));
+	float32x4_t hgfactors = vcvtq_f32_u32(vandq_u32(vceqq_f32(ssg, smaxes), vmovq_n_u32(1)));
+	float32x4_t hbfactors = vcvtq_f32_u32(vandq_u32(vceqq_f32(ssb, smaxes), vmovq_n_u32(1)));
 	hue = vmulq_f32(hr, hrfactors);
 	hue = vaddq_f32(hue, vmulq_f32(hg, hgfactors));
 	hue = vaddq_f32(hue, vmulq_f32(hb, hbfactors));
-	float32x4_t satfactors = vcvtnq_u32_f32(vandq_u32(vceqq_u32(vreinterpretq_u32_f32(smaxes), vmovq_n_f32(0.0)), vmovq_n_u32(1)));
-	sat = vmulq_f32(satfactors, vdivq_f32(sdelta, smaxes));
 
 	// Mess with the light
 	float32x4_t val = dmaxes;
@@ -625,35 +621,32 @@ uint32x4_t BITMAP::blendTintSpriteSIMD(uint32x4_t srcCols, uint32x4_t destCols, 
 	}
 		
 	// then it stiches them back together
-	float32x4_t hp = vmulq_n_f32(hue, 1.0 / 60.0);
-	uint32x4_t hpi = vcvtq_u32_f32(hp);
-	val = vmulq_n_f32(val, 255.0);
-	uint32x4_t x = vcvtq_u32_f32(vmulq_f32(val, sat));
-	uint32x4_t y = vcvtq_u32_f32(vmulq_f32(x, vsubq_f32(hue, vrndq_f32(hue))));
-	val = vaddq_f32(val, vmovq_n_f32(0.5));
-	uint32x4_t z = vcvtq_u32_f32(vsubq_f32(val, x));
-	uint32x4_t v = vcvtq_u32_f32(val);
-	
-	uint32x4_t c0 = vorrq_u32(z, vorrq_u32(vshlq_n_u32(v, 16), vshlq_n_u32(vaddq_u32(z, y), 8)));
-	uint32x4_t m0 = vceqq_u32(hpi, vmovq_n_u32(0));
-	uint32x4_t c1 = vorrq_u32(z, vorrq_u32(vshlq_n_u32(v, 8), vshlq_n_u32(vsubq_u32(v, y), 16)));
-	uint32x4_t m1 = vceqq_u32(hpi, vmovq_n_u32(1));
-	uint32x4_t c2 = vorrq_u32(vshlq_n_u32(z, 16), vorrq_u32(vshlq_n_u32(v, 8), vaddq_u32(z, y)));
-	uint32x4_t m2 = vceqq_u32(hpi, vmovq_n_u32(2));
-	uint32x4_t c3 = vorrq_u32(v, vorrq_u32(vshlq_n_u32(z, 16), vshlq_n_u32(vsubq_u32(v, y), 8)));
-	uint32x4_t m3 = vceqq_u32(hpi, vmovq_n_u32(3));
-	uint32x4_t c4 = vorrq_u32(v, vorrq_u32(vshlq_n_u32(z, 8), vshlq_n_u32(vaddq_u32(z, y), 16)));
-	uint32x4_t m4 = vceqq_u32(hpi, vmovq_n_u32(4));
-	uint32x4_t c5 = vorrq_u32(vshlq_n_u32(v, 16), vorrq_u32(vshlq_n_u32(z, 8), vsubq_u32(v, y)));
-	uint32x4_t m5 = vceqq_u32(hpi, vmovq_n_u32(5));
+	//AGS3::Shared::Debug::Printf(AGS3::Shared::kDbgMsg_Info, "hues: %f", vgetq_lane_f32(hue, 0));
+	chroma = vsubq_f32(val, smins);
+	float32x4_t hprime_mod2 = vmulq_n_f32(hue, 1.0 / 2.0);
+	hprime_mod2 = vmulq_n_f32(vsubq_f32(hprime_mod2, vrndmq_f32(hprime_mod2)), 2.0);
+	float32x4_t x = vmulq_f32(chroma, vsubq_f32(vmovq_n_f32(1.0), vabsq_f32(vsubq_f32(hprime_mod2, vmovq_n_f32(1.0)))));
+	uint32x4_t hprime_rounded = vcvtq_u32_f32(hue);
+	uint32x4_t x_int = vcvtq_u32_f32(vmulq_n_f32(x, 255.0));
+	uint32x4_t c_int = vcvtq_u32_f32(vmulq_n_f32(chroma, 255.0));
 
-	uint32x4_t final = vandq_u32(c0, m0);
-	final = vorrq_u32(final, vandq_u32(c1, m1));
-	final = vorrq_u32(final, vandq_u32(c2, m2));
-	final = vorrq_u32(final, vandq_u32(c3, m3));
-	final = vorrq_u32(final, vandq_u32(c4, m4));
-	final = vorrq_u32(final, vandq_u32(c5, m5));
-	final = vorrq_u32(final, vandq_u32(destCols, vmovq_n_u32(0xff000000)));
+	uint32x4_t val0 = vorrq_u32(vshlq_n_u32(x_int, 8), vshlq_n_u32(c_int, 16));
+	val0 = vandq_u32(val0, vceqq_u32(hprime_rounded, vmovq_n_u32(0)));
+	uint32x4_t val1 = vorrq_u32(vshlq_n_u32(c_int, 8), vshlq_n_u32(x_int, 16));
+	val1 = vandq_u32(val1, vceqq_u32(hprime_rounded, vmovq_n_u32(1)));
+	uint32x4_t val2 = vorrq_u32(vshlq_n_u32(c_int, 8), x_int);
+	val2 = vandq_u32(val2, vceqq_u32(hprime_rounded, vmovq_n_u32(2)));
+	uint32x4_t val3 = vorrq_u32(vshlq_n_u32(x_int, 8), c_int);
+	val3 = vandq_u32(val3, vceqq_u32(hprime_rounded, vmovq_n_u32(3)));
+	uint32x4_t val4 = vorrq_u32(vshlq_n_u32(x_int, 16), c_int);
+	val4 = vandq_u32(val4, vceqq_u32(hprime_rounded, vmovq_n_u32(4)));
+	uint32x4_t val5 = vorrq_u32(vshlq_n_u32(c_int, 16), x_int);
+	val5 = vandq_u32(val5, vceqq_u32(hprime_rounded, vmovq_n_u32(5)));
+
+	uint32x4_t final = vorrq_u32(val0, vorrq_u32(val1, vorrq_u32(val2, vorrq_u32(val3, vorrq_u32(val4, val5)))));
+	uint32x4_t val_add = vcvtq_u32_f32(vmulq_n_f32(vsubq_f32(val, chroma), 255.0));
+	val_add = vorrq_u32(val_add, vorrq_u32(vshlq_n_u32(val_add, 8), vorrq_u32(vshlq_n_u32(val_add, 16), vandq_u32(destCols, vmovq_n_u32(0xff000000)))));
+	final = vaddq_u32(final, val_add);
 	return final;
 }
 
