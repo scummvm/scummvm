@@ -108,7 +108,7 @@ void Archive::listUnaccessedChunks() {
 	}
 
 	if (!s.empty())
-		debug("Unaccessed Chunks in '%s':\n%s", _pathName.c_str(), s.c_str());
+		debugC(5, kDebugLoading, "Unaccessed Chunks in '%s':\n%s", _pathName.c_str(), s.c_str());
 }
 
 int Archive::getFileSize() {
