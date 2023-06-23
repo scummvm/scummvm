@@ -608,6 +608,12 @@ Common::SeekableReadStream *SysFile::rs() const {
 	return rs;
 }
 
+void SysFile::close() {
+	delete _fp;
+	_fp = nullptr;
+}
+
+
 void sysfile_init(bool in_hag_mode) {
 	_G(hag).hag_flag = in_hag_mode;
 

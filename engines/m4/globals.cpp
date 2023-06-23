@@ -43,6 +43,8 @@ Globals::Globals() {
 }
 
 Globals::~Globals() {
+	game_systems_shutdown();
+
 	sysfile_shutdown();
 	player_been_shutdown();
 	gui_system_shutdown();
@@ -109,6 +111,18 @@ void Globals::game_systems_initialize(byte flags) {
 		error_show(FL, 'FSIF');
 
 	mouse_set_sprite(kArrowCursor);
+
+	if (flags & INSTALL_INVENTORY_SYSTEM)
+		inv_init(128);	// Initialize with 128 objects
+
+	if (flags & INSTALL_INVERSE_PALETTE)
+		_inverse_pal = new InvPal("");	// Ceate an empty color table.
+	else
+		_inverse_pal = nullptr;
+}
+
+void Globals::game_systems_shutdown() {
+	// TODO
 }
 
 void Globals::fire_up_gui() {

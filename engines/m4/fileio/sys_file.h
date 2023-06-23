@@ -117,6 +117,11 @@ public:
 	 */
 	uint32 read(MemHandle bufferHandle);
 	int32 read(MemHandle bufferHandle, int32 n);
+
+	/**
+	 * Close the file
+	 */
+	void close();
 };
 
 extern void sysfile_init(bool in_hag_mode);
