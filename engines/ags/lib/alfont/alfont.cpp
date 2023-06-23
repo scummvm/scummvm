@@ -178,10 +178,30 @@ unsigned long __preservedalpha_blender_trans24(unsigned long x, unsigned long y,
 
 /* replaces set_trans_blender() */
 void set_preservedalpha_trans_blender(int r, int g, int b, int a) {
+	// TODO: The current putpixel() implementation does not support blending in DRAW_MODE_TRANS mode (which is not implemented),
+	// so we can't just call set_blender_mode() here.
+	// The actual blending is done by the apply_trans_blender() function, just before the putpixel() calls
+
 	//set_blender_mode(__skiptranspixels_blender_trans15, __skiptranspixels_blender_trans16, __preservedalpha_blender_trans24, r, g, b, a);
-	set_blender_mode(kAlphaPreservedBlenderMode, r, g, b, a);
+	//set_blender_mode(kAlphaPreservedBlenderMode, r, g, b, a);
 }
 
+/* blends a pixel using the alternative blenders, this is a replacement
+ * for the previous function using set_blender_mode
+ */
+int apply_trans_blender(BITMAP *bmp, int color1, int color2, int alpha) {
+	switch (bitmap_color_depth(bmp)) {
+	case 15:
+		return __skiptranspixels_blender_trans15(color1, color2, alpha);
+	case 16:
+		return __skiptranspixels_blender_trans16(color1, color2, alpha);
+	case 24:
+	case 32:
+		return __preservedalpha_blender_trans24(color1, color2, alpha);
+	default:
+		return color1;
+	}
+}
 
 /* helpers */
 
@@ -1529,13 +1549,15 @@ void alfont_textout_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int
 					for (bmp_y = real_y; bmp_y < max_bmp_y; bmp_y++) {
 						for (bmp_x = real_x; bmp_x < max_bmp_x; bmp_x++) {
 							const int alpha = *bmp_p++;
-
+							const int orig_color = color;
 							if (alpha) {
 								if (alpha >= 255)
 									solid_mode();
 								else {
 									drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
 									set_preservedalpha_trans_blender(0, 0, 0, alpha);
+									// apply blending
+									color = apply_trans_blender(bmp, color, getpixel(bmp, bmp_x, bmp_y), alpha);
 								}
 								if (first_x > bmp_x) first_x = bmp_x;
 								if (final_x < bmp_x) final_x = bmp_x;
@@ -1574,6 +1596,8 @@ void alfont_textout_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int
 									putpixel(bmp, bmp_x, bmp_y, color);
 								}
 							}
+							if (color != orig_color) // restore original color
+								color = orig_color;
 						}
 					}
 				} else { //restore original pic
