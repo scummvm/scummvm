@@ -651,17 +651,38 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 	return true;
 }
 
+// Add backslash before double quotes (") and backslashes themselves (\)
+Common::String escapeString(const char *string) {
+	if (string == nullptr || Common::String(string) == "")
+		return "NULL";
+
+	Common::String res = "";
+
+	for (int i = 0; string[i] != '\0'; i++) {
+		if (string[i] == '"' || string[i] == '\\')
+			res += "\\";
+
+		res += string[i];
+	}
+
+	return res;
+}
+
 void AdvancedMetaEngineDetection::dumpDetectionEntries() const {
 	const byte *descPtr;
 
 	for (descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != nullptr; descPtr += _descItemSize) {
 		auto g = ((const ADGameDescription *)descPtr);
-		auto gameid = g->gameId;
-		auto variant = g->extra;
+		const char *title = ((const PlainGameDescriptor *)_gameIds)->description;
 
 		debug("game (");
-		debug("\tname %s %s", gameid, variant);
-		debug("\tsourcefile %s", getName());
+		debug("\tname %s", escapeString(g->gameId).c_str());
+		debug("\ttitle %s", escapeString(title).c_str());
+		debug("\textra %s", escapeString(g->extra).c_str());
+		debug("\tlanguage %s", escapeString(getLanguageLocale(g->language)).c_str());
+		debug("\tplatform %s", escapeString(getPlatformCode(g->platform)).c_str());
+		debug("\tsourcefile %s", escapeString(getName()).c_str());
+
 		for (auto fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String fname = fileDesc->fileName;
 			int64 fsize = fileDesc->fileSize;
@@ -669,12 +690,12 @@ void AdvancedMetaEngineDetection::dumpDetectionEntries() const {
 			MD5Properties md5prop = gameFileToMD5Props(fileDesc, g->flags);
 			auto md5Prefix = Common::String(md5PropToGameFile(md5prop));
 			Common::String key = md5.c_str();
-			if (md5Prefix != "")
-				key = Common::String::format("%s:%s", md5Prefix.c_str(), fname.c_str());
+			if (md5Prefix != "" && md5.find(':') == Common::String::npos)
+				key = Common::String::format("%s:%s", md5Prefix.c_str(), md5.c_str());
 
-			debug("\trom ( name \"%s\" size %ld md5-%d %s )", fname.c_str(), fsize, _md5Bytes, key.c_str());
+			debug("\trom ( name \"%s\" size %ld md5-%d %s )", escapeString(fname.c_str()).c_str(), fsize, _md5Bytes, key.c_str());
 		}
-		debug(")\n");
+		debug(")\n"); // Closing for 'game ('
 	}
 }
 
