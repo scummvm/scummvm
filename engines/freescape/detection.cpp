@@ -183,7 +183,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{ // Virtual Worlds release
 		"driller",
-		"This relese requieres unpacking, check the wiki for instructions: https://wiki.scummvm.org/index.php?title=Driller#AtariST_releases",
+		"This release requires unpacking, check the wiki for instructions: https://wiki.scummvm.org/index.php?title=Driller#AtariST_releases",
 		{
 			{"d.pak", 0, "607b44b9d31e0da5668b653e03d25efe", 706},
 			{"dril.all", 0, "65277222effa1eb4d73b234245001d75", 158158},
