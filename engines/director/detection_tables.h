@@ -463,6 +463,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "wallobeetemple",		"The temple of Monakumba: Starring Wallobee Jack" },
 	{ "warlock",			"Spaceship Warlock" },
 	{ "wiggles1",			"A Day with the Wiggles" },
+	{ "willywabbit",		"Willy Wabbit & His Magical Books" },
 	{ "winniewitch",		"Winnie the Witch" },
 	{ "wishbone", 			"Wishbone and the Amazing Odyssey" },
 	{ "wrath",				"Wrath of the Gods" },
@@ -3041,6 +3042,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Produced by Microsoft; designed by AdWare Inc, Los Gatos, California (1992)
 	WINDEMO1("wfw31", "Demo", "WFWDEMO.EXE", "d98c3f5c1b7ea3039c47cc63d238a60d", 253540, 300),
 
+	// Mac version is D4
+	WINGAME1t("willywabbit", "North American release", "WILLY.EXE", "d5a5389a2c9fcae112f1d5772d2d6fd3", 375280, 310),
+
 	// Designed and produced by AdWare Inc, Los Gatos, California (1992)
 	WINDEMO2t("windows31", "Demo", "WINDEMO.EXE", "7d007410fece051b819735a282da7601", 255447,
 								   "WINDEMO.MMM", "0c13c2c5768cd54b01e5b9b1ef093f28", 2824822, 300),
@@ -5487,6 +5491,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1t("williamsbts", "", "BEHIND.EXE", "0a432cb988c9865c478bdc195429d3fd", 693077, 404),
 	MACGAME1("williamsbts", "", "Behind the Scenes", "5442b05b2d320eb2e2ec3c74fa41f953", 483490, 404),
+
+	// Windows version is D3
+	MACGAME1t("willywabbit", "North American release", "Willy Wabbit(Click me)", "04e5a9a6c98f48aaef7fe7115b3606ca", 304029, 400),
 
 	WINDEMO1("windows95", "Demo", "W95DEMO.EXE", "508a025373f0e8f6ae514578cf97c281", 24814094, 404),
 
