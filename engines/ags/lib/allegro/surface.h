@@ -31,7 +31,7 @@
 // M1/M2 SIMD intrensics
 #include "arm_neon.h"
 #endif
-//#define WYATTOPT
+#define WYATTOPT
 
 namespace AGS3 {
 
