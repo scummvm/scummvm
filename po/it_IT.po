@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-06-22 19:52+0000\n"
-"PO-Revision-Date: 2023-06-22 20:29+0000\n"
+"PO-Revision-Date: 2023-06-23 12:36+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -4976,18 +4976,14 @@ msgstr ""
 "potrebbero avere un suono non corretto."
 
 #: engines/agos/midi.cpp:313
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition files\n"
-#| "%s and %s. Without these files,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s. Without this file,\n"
 "the music will not sound the same as the original game."
 msgstr ""
-"Non è stato possibile trovare i file %s e %s, contenenti\n"
-"le definizioni degli strumenti AdLib. In assenza di tali files,\n"
+"Non è stato possibile trovare il file %s, contenente\n"
+"le definizioni degli strumenti AdLib. In assenza di tale file,\n"
 "la musica non corrisponderà a quella del gioco originale."
 
 #: engines/agos/midi.cpp:435
