@@ -104,8 +104,8 @@ public:
 	Score *getScore() const { return _score; }
 
 	void clearSharedCast();
-	void loadSharedCastsFrom(Common::String filename);
-	Archive *loadExternalCastFrom(Common::String filename);
+	void loadSharedCastsFrom(Common::Path &filename);
+	Archive *loadExternalCastFrom(Common::Path &filename);
 
 	CastMember *getCastMember(CastMemberID memberID);
 	CastMember *createOrReplaceCastMember(CastMemberID memberID, CastMember *cast);

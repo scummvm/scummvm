@@ -1178,14 +1178,23 @@ void LB::b_closeXlib(int nargs) {
 
 void LB::b_getNthFileNameInFolder(int nargs) {
 	int fileNum = g_lingo->pop().asInt() - 1;
-	Common::String path = pathMakeRelative(g_lingo->pop().asString(), true, false, true);
+	Common::String pathRaw = g_lingo->pop().asString();
+	if (pathRaw.empty()) {
+		// If we receive a blank string as a path, it shouldn't match anything.
+		g_lingo->push(Datum(""));
+		return;
+	}
+
+	Common::Path path = findPath(pathRaw, true, true, true);
 	// for directory, we either return the correct path, which we can access recursively.
 	// or we get a wrong path, which will lead us to a non-exist file node
 
-	Common::StringTokenizer directory_list(path, Common::String(g_director->_dirSeparator));
+	Common::StringArray directory_list = path.splitComponents();
 	Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
-	while (d.exists() && !directory_list.empty()) {
-		d = d.getChild(directory_list.nextToken());
+	for (auto &it : directory_list) {
+		d = d.getChild(it);
+		if (!d.exists())
+			break;
 	}
 
 	Datum r;
@@ -1196,7 +1205,7 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 	if (cache) {
 		Common::ArchiveMemberList files;
 
-		cache->listMatchingMembers(files, path + (path.empty() ? "*" : "/*"), true);
+		cache->listMatchingMembers(files, path.toString() + (path.empty() ? "*" : "/*"), true);
 
 		for (auto &fi : files) {
 			fileNameList.push_back(Common::lastPathComponent(fi->getName(), '/'));
@@ -1207,7 +1216,7 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 	if (d.exists()) {
 		Common::FSList f;
 		if (!d.getChildren(f, Common::FSNode::kListAll)) {
-			warning("Cannot access directory %s", path.c_str());
+			warning("Cannot access directory %s", path.toString().c_str());
 		} else {
 			for (uint i = 0; i < f.size(); i++)
 				fileNameList.push_back(f[i].getName());
@@ -1254,7 +1263,7 @@ void LB::b_openResFile(int nargs) {
 
 	if (!g_director->_allSeenResFiles.contains(resPath)) {
 		MacArchive *arch = new MacArchive();
-		if (arch->openFile(pathMakeRelative(resPath))) {
+		if (arch->openFile(findPath(resPath).toString())) {
 			g_director->_openResFiles.setVal(resPath, arch);
 			g_director->_allSeenResFiles.setVal(resPath, arch);
 			g_director->addArchiveToOpenList(resPath);
@@ -1323,7 +1332,7 @@ void LB::b_showResFile(int nargs) {
 		g_lingo->pop();
 	Common::String out;
 	for (auto &it : g_director->_allOpenResFiles)
-		out += it + "\n";
+		out += it.toString(g_director->_dirSeparator) + "\n";
 	g_debugger->debugLogFile(out, false);
 }
 
@@ -2048,7 +2057,7 @@ void LB::b_findEmpty(int nargs) {
 
 void LB::b_importFileInto(int nargs) {
 
-	Datum file = g_lingo->pop();
+	Common::String file = g_lingo->pop().asString();
 	Datum dst = g_lingo->pop();
 
 	if (!dst.isCastRef()) {
@@ -2058,17 +2067,17 @@ void LB::b_importFileInto(int nargs) {
 
 	CastMemberID memberID = *dst.u.cast;
 
-	if (!(file.asString().matchString("*.pic") || file.asString().matchString("*.pict"))) {
-		warning("LB::b_importFileInto : %s is not a valid PICT file", file.asString().c_str());
+	if (!(file.matchString("*.pic") || file.matchString("*.pict"))) {
+		warning("LB::b_importFileInto : %s is not a valid PICT file", file.c_str());
 		return;
 	}
 
-	Common::String path = pathMakeRelative(file.asString());
+	Common::Path path = findPath(file);
 	Common::File in;
 	in.open(path);
 
 	if (!in.isOpen()) {
-		warning("b_importFileInto(): Cannot open file %s", path.c_str());
+		warning("b_importFileInto(): Cannot open file %s", path.toString().c_str());
 		return;
 	}
 
@@ -3075,7 +3084,7 @@ void LB::b_sound(int nargs) {
 		TYPECHECK(firstArg, INT);
 		TYPECHECK(secondArg, STRING);
 
-		soundManager->playFile(pathMakeRelative(*secondArg.u.s), firstArg.u.i);
+		soundManager->playFile(*secondArg.u.s, firstArg.u.i);
 	} else {
 		warning("b_sound: unknown verb %s", verb.u.s->c_str());
 	}

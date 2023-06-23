@@ -151,7 +151,7 @@ public:
 	bool loadNextMovie();
 	void loadNewSharedCast(Cast *previousSharedCast);
 
-	Common::String getSharedCastPath();
+	Common::Path getSharedCastPath();
 
 	LingoState *getLingoState() { return _lingoState; };
 	uint32 frozenLingoStateCount() { return _frozenLingoStates.size(); };

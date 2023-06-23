@@ -99,7 +99,7 @@ void AiffXObj::m_duration(int nargs) {
 	// Mac-ify any mac-paths to make them at least consistent:
 	Common::replace(filePath, "\\", ":");
 
-	auto aiffStream = Common::MacResManager::openFileOrDataFork(Common::Path(pathMakeRelative(filePath), g_director->_dirSeparator));
+	auto aiffStream = Common::MacResManager::openFileOrDataFork(findPath(filePath));
 	if (!aiffStream) {
 		error("Failed to open %s", filePath.c_str());
 	}

@@ -71,8 +71,8 @@ void FileExists::m_fileexists(int nargs) {
 	Common::String filename = lastPathComponent(path, g_director->_dirSeparator);
 	if (!(saves->exists(filename))) {
 		Common::File *f = new Common::File;
-
-		if (!f->open(Common::Path(pathMakeRelative(origpath), g_director->_dirSeparator))) {
+		Common::Path location = findPath(origpath);
+		if (location.empty() || !f->open(location)) {
 			g_lingo->push(Datum(false));
 			return;
 		}

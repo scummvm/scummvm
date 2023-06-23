@@ -77,7 +77,7 @@ void SoundCastMember::load() {
 		// audio file is linked, load from the filesystem
 		CastMemberInfo *ci = _cast->getCastMemberInfo(_castId);
 		if (ci) {
-			Common::String filename = ci->fileName;
+			Common::String filename = ci->directory + g_director->_dirSeparator + ci->fileName;
 
 			debugC(2, kDebugLoading, "****** Loading file '%s', cast id: %d", filename.c_str(), sndId);
 			AudioFileDecoder *audio = new AudioFileDecoder(filename);

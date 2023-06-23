@@ -518,10 +518,9 @@ void BitmapCastMember::load() {
 		if ((pic == nullptr || pic->size() == 0)
 				&& ci && !ci->fileName.empty()) {
 			// image file is linked, load from the filesystem
-			Common::String imageFilename = ci->fileName;
-			Common::Path path = Common::Path(pathMakeRelative(imageFilename), g_director->_dirSeparator);
-
-			Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(path);
+			Common::String imageFilename = ci->directory + g_director->_dirSeparator + ci->fileName;
+			Common::Path location = findPath(imageFilename);
+			Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(location);
 			if (file) {
 				debugC(2, kDebugLoading, "****** Loading file '%s', cast id: %d", imageFilename.c_str(), imgId);
 				// Detect the filetype. Director will ignore file extensions, as do we.
@@ -561,10 +560,10 @@ void BitmapCastMember::load() {
 					return;
 				} else {
 					delete decoder;
-					warning("BUILDBOT: BitmapCastMember::load(): wrong format for external picture '%s'", path.toString().c_str());
+					warning("BUILDBOT: BitmapCastMember::load(): wrong format for external picture '%s'", location.toString().c_str());
 				}
 			} else {
-				warning("BitmapCastMember::load(): cannot open external picture '%s'", path.toString().c_str());
+				warning("BitmapCastMember::load(): cannot open external picture '%s'", location.toString().c_str());
 			}
 		}
 	} else {

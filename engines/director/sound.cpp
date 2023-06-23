@@ -852,11 +852,9 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppe
 	if (_path.empty())
 		return nullptr;
 
-	Common::Path filePath = Common::Path(pathMakeRelative(_path), g_director->_dirSeparator);
-
-	Common::SeekableReadStream *copiedStream = Common::MacResManager::openFileOrDataFork(filePath);
-
-	if (copiedStream == nullptr) {
+	Common::Path newPath = findPath(_path);
+	Common::SeekableReadStream *copiedStream = Common::MacResManager::openFileOrDataFork(newPath);
+	if (!copiedStream) {
 		warning("Failed to open %s", _path.c_str());
 		return nullptr;
 	}

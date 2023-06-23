@@ -211,15 +211,15 @@ public:
 	Common::CodePage getPlatformEncoding();
 
 	Archive *createArchive();
-	Archive *openArchive(const Common::String movie);
-	void addArchiveToOpenList(const Common::String path);
-	Archive *loadEXE(const Common::String movie);
+	Archive *openArchive(const Common::Path &movie);
+	void addArchiveToOpenList(const Common::Path &path);
+	Archive *loadEXE(const Common::Path &movie);
 	Archive *loadEXEv3(Common::SeekableReadStream *stream);
 	Archive *loadEXEv4(Common::SeekableReadStream *stream);
 	Archive *loadEXEv5(Common::SeekableReadStream *stream);
 	Archive *loadEXEv7(Common::SeekableReadStream *stream);
 	Archive *loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
-	Archive *loadMac(const Common::String movie);
+	Archive *loadMac(const Common::Path &movie);
 
 	bool desktopEnabled();
 
@@ -254,11 +254,11 @@ public:
 	Common::List<Common::String> _extraSearchPath;
 
 	// Owner of all Archive objects.
-	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _allSeenResFiles;
+	Common::HashMap<Common::Path, Archive *, Common::Path::IgnoreCaseAndMac_Hash, Common::Path::IgnoreCaseAndMac_EqualsTo> _allSeenResFiles;
 	// Handles to resource files that were opened by OpenResFile.
-	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;
+	Common::HashMap<Common::Path, Archive *, Common::Path::IgnoreCaseAndMac_Hash, Common::Path::IgnoreCaseAndMac_EqualsTo> _openResFiles;
 	// List of all currently open resource files
-	Common::List<Common::String> _allOpenResFiles;
+	Common::List<Common::Path> _allOpenResFiles;
 
 	Common::Array<Graphics::WinCursorGroup *> _winCursor;
 

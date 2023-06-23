@@ -160,7 +160,8 @@ void Movie::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
 		Archive *castArchive = _movieArchive;
 		bool isExternal = !path.empty();
 		if (isExternal) {
-			castArchive = loadExternalCastFrom(pathMakeRelative(path));
+			Common::Path archivePath = findMoviePath(path);
+			castArchive = loadExternalCastFrom(archivePath);
 			if (!castArchive) {
 				continue;	// couldn't load external cast
 			}
@@ -355,20 +356,20 @@ void Movie::clearSharedCast() {
 	_sharedCast = nullptr;
 }
 
-void Movie::loadSharedCastsFrom(Common::String filename) {
+void Movie::loadSharedCastsFrom(Common::Path &filename) {
 	clearSharedCast();
 
 	Archive *sharedCast = _vm->openArchive(filename);
 
 	if (!sharedCast) {
-		warning("loadSharedCastsFrom(): No shared cast %s", filename.c_str());
+		warning("loadSharedCastsFrom(): No shared cast %s", filename.toString().c_str());
 
 		return;
 	}
-	sharedCast->setPathName(filename);
+	sharedCast->setPathName(filename.toString(g_director->_dirSeparator));
 
 	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-	debug(0, "@@@@   Loading shared cast '%s'", filename.c_str());
+	debug(0, "@@@@   Loading shared cast '%s'", sharedCast->getFileName().c_str());
 	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 	_sharedCast = new Cast(this, DEFAULT_CAST_LIB, true, false);
@@ -376,17 +377,18 @@ void Movie::loadSharedCastsFrom(Common::String filename) {
 	_sharedCast->loadArchive();
 }
 
-Archive *Movie::loadExternalCastFrom(Common::String filename) {
-	Archive *externalCast = _vm->openArchive(filename);
+Archive *Movie::loadExternalCastFrom(Common::Path &filename) {
+	Archive *externalCast = nullptr;
+	externalCast = _vm->openArchive(filename);
 
 	if (!externalCast) {
-		warning("Movie::loadExternalCastFrom(): Cast file %s not found", filename.c_str());
+		warning("Movie::loadExternalCastFrom(): Cast file %s not found", filename.toString().c_str());
 
 		return nullptr;
 	}
 
 	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-	debug(0, "@@@@   Loading external cast '%s'", filename.c_str());
+	debug(0, "@@@@   Loading external cast '%s'", externalCast->getFileName().c_str());
 	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 	return externalCast;
