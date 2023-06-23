@@ -808,7 +808,7 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 			int grayLevel = box.height * box.width / 3;
 			int dstPitch = (box.width + 7) / 8 ;
 			const int bytes = dstPitch * box.height;
-			bitmaps[i] = new byte[bytes];
+			bitmaps[i] = new byte[bytes + 1];
 
 			int srcBoxWidth = 0;
 			if (src->_data.boxes) {
