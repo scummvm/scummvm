@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-06-22 19:52+0000\n"
-"PO-Revision-Date: 2023-06-13 01:40+0000\n"
+"PO-Revision-Date: 2023-06-24 02:40+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -4910,26 +4910,18 @@ msgstr ""
 "eivät ehkä kuulosta siltä miltä niiden pitäisi."
 
 #: engines/agos/midi.cpp:313
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition files\n"
-#| "%s and %s. Without these files,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s. Without this file,\n"
 "the music will not sound the same as the original game."
 msgstr ""
-"AdLib instrumenttitiedostoja %s ja %s ei löydetty.\n"
+"AdLib instrumenttitiedostoa %s ei löydetty.\n"
 "Musiikki ei tule kuulostamaan samalta kuin\n"
-"alkuperäisessä pelissä ilman niitä."
+"alkuperäisessä pelissä ilman sitä."
 
 #: engines/agos/midi.cpp:435
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition files\n"
-#| "%s and %s. Without these files,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s or %s. Without one of these files,\n"
@@ -4937,7 +4929,7 @@ msgid ""
 msgstr ""
 "AdLib instrumenttitiedostoja %s ja %s ei löydetty.\n"
 "Musiikki ei tule kuulostamaan samalta kuin\n"
-"alkuperäisessä pelissä ilman niitä."
+"alkuperäisessä pelissä ilman jompaa kumpaa niistä."
 
 #: engines/ags/dialogs.cpp:59
 msgid "Game language:"
@@ -7099,32 +7091,24 @@ msgid "An error occurred while writing the save game"
 msgstr "Pelitallennetta kirjoittaessa tapahtui virhe"
 
 #: engines/mtropolis/mtropolis.cpp:112
-#, fuzzy
-#| msgid ""
-#| "Music for this game requires MP3 support, which was not compiled in.\n"
-#| "The game will still play, but will not have any music."
 msgid ""
 "This game requires MPEG video support for some\n"
 "content but MPEG video support was not compiled in.\n"
 "The game will still play, but MPEG videos will not work."
 msgstr ""
-"Tämän pelin musiikki vaatii toimiakseen MP3-tuen, jota ei ole käännetty "
-"tähän ScummVM:ään.\n"
-"Peli toimii silti, mutta ilman musiikkia."
+"Tämä peli tarvitsee MPEG video-tuen joidenkin sisältöjen toistamiseen,\n"
+"mutta MPEG video-tukea ei ole käännetty tähän ScummVM:ään.\n"
+"Peli toimii silti, mutta ilman kyseisiä MPEG-videoita."
 
 #: engines/mtropolis/mtropolis.cpp:122
-#, fuzzy
-#| msgid ""
-#| "Music for this game requires MP3 support, which was not compiled in.\n"
-#| "The game will still play, but will not have any music."
 msgid ""
 "This game requires MPEG audio support for some\n"
 "content but MPEG audio support was not compiled in.\n"
 "The game will still play, but some audio will not work."
 msgstr ""
-"Tämän pelin musiikki vaatii toimiakseen MP3-tuen, jota ei ole käännetty "
-"tähän ScummVM:ään.\n"
-"Peli toimii silti, mutta ilman musiikkia."
+"Tämä peli tarvitsee MPEG audio-tuen joidenkin sisältöjen toistamiseen,\n"
+"mutta MPEG audio-tukea ei ole käännetty tähän ScummVM:ään.\n"
+"Peli toimii silti, mutta ilman kyseisiä MPEG-audioita."
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
