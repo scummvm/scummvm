@@ -1777,8 +1777,11 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, cons
 #ifdef USE_TRANSLATION
 	allowNonScalable = TransMan.currentIsBuiltinLanguage();
 #endif
-	if (!font && allowNonScalable)
+	if (!font && allowNonScalable) {
 		font = loadFont(filename, fontName);
+
+		//font = Graphics::BdfFont::scaleFont((const Graphics::BdfFont *)font, pointsize);
+	}
 
 	// If the font is successfully loaded store it in the font manager.
 	if (font) {
