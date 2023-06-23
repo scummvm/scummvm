@@ -120,9 +120,6 @@ public:
 	 * would play the video normally. Passing 2 to this function would
 	 * play the video at twice the normal speed.
 	 *
-	 * @note This function does not work for non-0/1 rates on videos that
-	 * have audio tracks.
-	 *
 	 * @todo This currently does not implement backwards playback, but will
 	 * be implemented soon.
 	 */
@@ -721,6 +718,22 @@ protected:
 		void setVolume(byte volume);
 
 		/**
+		 * Get audio rate for this track (in Hz)
+		 */
+		uint32 getRate() const { return _rate; }
+
+		/**
+		 * Set audio rate for this track
+		 */
+		void setRate(uint32 rate);
+
+		/**
+		 * Set audio rate using relative playback rate wrt original rate
+		 * ie a rate of 2.0 will play the audio at twice the original rate
+		 */
+		void setRate(Common::Rational rate);
+
+		/**
 		 * Get the balance for this track
 		 */
 		int8 getBalance() const { return _balance; }
@@ -763,6 +776,7 @@ protected:
 		Audio::SoundHandle _handle;
 		Audio::Mixer::SoundType _soundType;
 		byte _volume;
+		uint32 _rate;
 		int8 _balance;
 		bool _muted;
 	};
@@ -968,6 +982,7 @@ private:
 protected:
 	// Internal helper functions
 	void stopAudio();
+	void setAudioRate(Common::Rational rate);
 	void startAudio();
 	void startAudioLimit(const Audio::Timestamp &limit);
 	bool hasFramesLeft() const;
