@@ -3043,7 +3043,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("wfw31", "Demo", "WFWDEMO.EXE", "d98c3f5c1b7ea3039c47cc63d238a60d", 253540, 300),
 
 	// Mac version is D4
-	WINGAME1t("willywabbit", "North American release", "WILLY.EXE", "d5a5389a2c9fcae112f1d5772d2d6fd3", 375280, 310),
+	WINGAME2t("willywabbit", "North American release",
+			  "WILLY.EXE", "d5a5389a2c9fcae112f1d5772d2d6fd3", 375280,
+			  "LANDMRKS.MMM", "4ad136593e943df6e05021616eae990a", 8830134, 310),
 
 	// Designed and produced by AdWare Inc, Los Gatos, California (1992)
 	WINDEMO2t("windows31", "Demo", "WINDEMO.EXE", "7d007410fece051b819735a282da7601", 255447,
