@@ -67,6 +67,8 @@ bool Globals::init() {
 	game_systems_initialize(INSTALL_ALL);
 
 	// TODO
+	read_catalog();
+
 	return true;
 }
 
