@@ -17,20 +17,20 @@
 
 #include "t42parse.h"
 #include "t42error.h"
-#include FT_INTERNAL_DEBUG_H
-#include FT_INTERNAL_STREAM_H
-#include FT_LIST_H
-#include FT_INTERNAL_POSTSCRIPT_AUX_H
+#include FT2_1_3_INTERNAL_DEBUG_H
+#include FT2_1_3_INTERNAL_STREAM_H
+#include FT2_1_3_LIST_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_AUX_H
 
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
+/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT_COMPONENT
-#define FT_COMPONENT  trace_t42
+#undef  FT2_1_3_COMPONENT
+#define FT2_1_3_COMPONENT  trace_t42
 
 
 static void
@@ -60,8 +60,8 @@ t42_parse_sfnts( T42_Face    face,
 static const
 T1_FieldRec  t42_keywords[] = {
 
-#undef  FT_STRUCTURE
-#define FT_STRUCTURE  T1_FontInfo
+#undef  FT2_1_3_STRUCTURE
+#define FT2_1_3_STRUCTURE  T1_FontInfo
 #undef  T1CODE
 #define T1CODE        T1_FIELD_LOCATION_FONT_INFO
 
@@ -75,8 +75,8 @@ T1_FieldRec  t42_keywords[] = {
 	T1_FIELD_NUM      ( "UnderlinePosition",  underline_position )
 	T1_FIELD_NUM      ( "UnderlineThickness", underline_thickness )
 
-#undef  FT_STRUCTURE
-#define FT_STRUCTURE  T1_FontRec
+#undef  FT2_1_3_STRUCTURE
+#define FT2_1_3_STRUCTURE  T1_FontRec
 #undef  T1CODE
 #define T1CODE        T1_FIELD_LOCATION_FONT_DICT
 
@@ -134,13 +134,13 @@ T1_FieldRec  t42_keywords[] = {
 
 /********************* Parsing Functions ******************/
 
-FT_LOCAL_DEF( FT_Error )
+FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 t42_parser_init( T42_Parser     parser,
-                 FT_Stream      stream,
-                 FT_Memory      memory,
+                 FT2_1_3_Stream      stream,
+                 FT2_1_3_Memory      memory,
                  PSAux_Service  psaux ) {
-	FT_Error  error = T42_Err_Ok;
-	FT_Long   size;
+	FT2_1_3_Error  error = T42_Err_Ok;
+	FT2_1_3_Long   size;
 
 
 	psaux->ps_parser_funcs->init( &parser->root, 0, 0, memory );
@@ -164,7 +164,7 @@ t42_parser_init( T42_Parser     parser,
 	/*   parser->in_memory is set if we have a memory stream.          */
 	/*                                                                 */
 
-	if ( FT_STREAM_SEEK( 0L ) )
+	if ( FT2_1_3_STREAM_SEEK( 0L ) )
 		goto Exit;
 
 	size = stream->size;
@@ -174,17 +174,17 @@ t42_parser_init( T42_Parser     parser,
 
 	/* if it is a memory-based resource, set up pointers */
 	if ( !stream->read ) {
-		parser->base_dict = (FT_Byte*)stream->base + stream->pos;
+		parser->base_dict = (FT2_1_3_Byte*)stream->base + stream->pos;
 		parser->base_len  = size;
 		parser->in_memory = 1;
 
 		/* check that the `size' field is valid */
-		if ( FT_STREAM_SKIP( size ) )
+		if ( FT2_1_3_STREAM_SKIP( size ) )
 			goto Exit;
 	} else {
 		/* read segment in memory */
-		if ( FT_ALLOC( parser->base_dict, size )       ||
-		        FT_STREAM_READ( parser->base_dict, size ) )
+		if ( FT2_1_3_ALLOC( parser->base_dict, size )       ||
+		        FT2_1_3_STREAM_READ( parser->base_dict, size ) )
 			goto Exit;
 
 		parser->base_len = size;
@@ -203,27 +203,27 @@ t42_parser_init( T42_Parser     parser,
 
 Exit:
 	if ( error && !parser->in_memory )
-		FT_FREE( parser->base_dict );
+		FT2_1_3_FREE( parser->base_dict );
 
 	return error;
 }
 
 
-FT_LOCAL_DEF( void )
+FT2_1_3_LOCAL_DEF( void )
 t42_parser_done( T42_Parser  parser ) {
-	FT_Memory  memory = parser->root.memory;
+	FT2_1_3_Memory  memory = parser->root.memory;
 
 
 	/* free the base dictionary only when we have a disk stream */
 	if ( !parser->in_memory )
-		FT_FREE( parser->base_dict );
+		FT2_1_3_FREE( parser->base_dict );
 
 	parser->root.funcs.done( &parser->root );
 }
 
 
 static int
-t42_is_alpha( FT_Byte  c ) {
+t42_is_alpha( FT2_1_3_Byte  c ) {
 	/* Note: we must accept "+" as a valid character, as it is used in */
 	/*       embedded type1 fonts in PDF documents.                    */
 	/*                                                                 */
@@ -236,7 +236,7 @@ t42_is_alpha( FT_Byte  c ) {
 
 
 static int
-t42_is_space( FT_Byte  c ) {
+t42_is_space( FT2_1_3_Byte  c ) {
 	return ( c == ' ' || c == '\t' || c == '\r' || c == '\n' );
 }
 
@@ -245,12 +245,12 @@ static void
 t42_parse_font_name( T42_Face    face,
                      T42_Loader  loader ) {
 	T42_Parser  parser = &loader->parser;
-	FT_Error    error;
-	FT_Memory   memory = parser->root.memory;
-	FT_Int      len;
-	FT_Byte*    cur;
-	FT_Byte*    cur2;
-	FT_Byte*    limit;
+	FT2_1_3_Error    error;
+	FT2_1_3_Memory   memory = parser->root.memory;
+	FT2_1_3_Int      len;
+	FT2_1_3_Byte*    cur;
+	FT2_1_3_Byte*    cur2;
+	FT2_1_3_Byte*    limit;
 
 
 	T1_Skip_Spaces( parser );
@@ -267,14 +267,14 @@ t42_parse_font_name( T42_Face    face,
 	while ( cur2 < limit && t42_is_alpha( *cur2 ) )
 		cur2++;
 
-	len = (FT_Int)( cur2 - cur );
+	len = (FT2_1_3_Int)( cur2 - cur );
 	if ( len > 0 ) {
-		if ( FT_ALLOC( face->type1.font_name, len + 1 ) ) {
+		if ( FT2_1_3_ALLOC( face->type1.font_name, len + 1 ) ) {
 			parser->root.error = error;
 			return;
 		}
 
-		FT_MEM_COPY( face->type1.font_name, cur, len );
+		FT2_1_3_MEM_COPY( face->type1.font_name, cur, len );
 		face->type1.font_name[len] = '\0';
 	}
 	parser->root.cursor = cur2;
@@ -285,7 +285,7 @@ static void
 t42_parse_font_bbox( T42_Face   face,
                      T42_Loader  loader ) {
 	T42_Parser  parser = &loader->parser;
-	FT_BBox*    bbox   = &face->type1.font_bbox;
+	FT2_1_3_BBox*    bbox   = &face->type1.font_bbox;
 
 	bbox->xMin = T1_ToInt( parser );
 	bbox->yMin = T1_ToInt( parser );
@@ -298,11 +298,11 @@ static void
 t42_parse_font_matrix( T42_Face    face,
                        T42_Loader  loader ) {
 	T42_Parser  parser = &loader->parser;
-	FT_Matrix*  matrix = &face->type1.font_matrix;
-	FT_Vector*  offset = &face->type1.font_offset;
-	FT_Face     root   = (FT_Face)&face->root;
-	FT_Fixed    temp[6];
-	FT_Fixed    temp_scale;
+	FT2_1_3_Matrix*  matrix = &face->type1.font_matrix;
+	FT2_1_3_Vector*  offset = &face->type1.font_offset;
+	FT2_1_3_Face     root   = (FT2_1_3_Face)&face->root;
+	FT2_1_3_Fixed    temp[6];
+	FT2_1_3_Fixed    temp_scale;
 
 
 	(void)T1_ToFixedArray( parser, 6, temp, 3 );
@@ -313,16 +313,16 @@ t42_parse_font_matrix( T42_Face    face,
 	/* 1000 / temp_scale, because temp_scale was already multiplied by   */
 	/* 1000 (in t1_tofixed, from psobjs.c).                              */
 
-	root->units_per_EM = (FT_UShort)( FT_DivFix( 1000 * 0x10000L,
+	root->units_per_EM = (FT2_1_3_UShort)( FT2_1_3_DivFix( 1000 * 0x10000L,
 	                                  temp_scale ) >> 16 );
 
 	/* we need to scale the values by 1.0/temp_scale */
 	if ( temp_scale != 0x10000L ) {
-		temp[0] = FT_DivFix( temp[0], temp_scale );
-		temp[1] = FT_DivFix( temp[1], temp_scale );
-		temp[2] = FT_DivFix( temp[2], temp_scale );
-		temp[4] = FT_DivFix( temp[4], temp_scale );
-		temp[5] = FT_DivFix( temp[5], temp_scale );
+		temp[0] = FT2_1_3_DivFix( temp[0], temp_scale );
+		temp[1] = FT2_1_3_DivFix( temp[1], temp_scale );
+		temp[2] = FT2_1_3_DivFix( temp[2], temp_scale );
+		temp[4] = FT2_1_3_DivFix( temp[4], temp_scale );
+		temp[5] = FT2_1_3_DivFix( temp[5], temp_scale );
 		temp[3] = 0x10000L;
 	}
 
@@ -341,8 +341,8 @@ static void
 t42_parse_encoding( T42_Face    face,
                     T42_Loader  loader ) {
 	T42_Parser     parser = &loader->parser;
-	FT_Byte*       cur    = parser->root.cursor;
-	FT_Byte*       limit  = parser->root.limit;
+	FT2_1_3_Byte*       cur    = parser->root.cursor;
+	FT2_1_3_Byte*       limit  = parser->root.limit;
 
 	PSAux_Service  psaux  = (PSAux_Service)face->psaux;
 
@@ -351,7 +351,7 @@ t42_parse_encoding( T42_Face    face,
 	while ( t42_is_space( *cur ) ) {
 		cur++;
 		if ( cur >= limit ) {
-			FT_ERROR(( "t42_parse_encoding: out of bounds!\n" ));
+			FT2_1_3_ERROR(( "t42_parse_encoding: out of bounds!\n" ));
 			parser->root.error = T42_Err_Invalid_File_Format;
 			return;
 		}
@@ -359,12 +359,12 @@ t42_parse_encoding( T42_Face    face,
 
 	/* if we have a number, then the encoding is an array, */
 	/* and we must load it now                             */
-	if ( (FT_Byte)( *cur - '0' ) < 10 ) {
+	if ( (FT2_1_3_Byte)( *cur - '0' ) < 10 ) {
 		T1_Encoding  encode     = &face->type1.encoding;
-		FT_Int       count, n;
+		FT2_1_3_Int       count, n;
 		PS_Table     char_table = &loader->encoding_table;
-		FT_Memory    memory     = parser->root.memory;
-		FT_Error     error;
+		FT2_1_3_Memory    memory     = parser->root.memory;
+		FT2_1_3_Error     error;
 
 
 		/* read the number of entries in the encoding, should be 256 */
@@ -374,9 +374,9 @@ t42_parse_encoding( T42_Face    face,
 
 		/* we use a T1_Table to store our charnames */
 		loader->num_chars = encode->num_chars = count;
-		if ( FT_NEW_ARRAY( encode->char_index, count ) ||
-		        FT_NEW_ARRAY( encode->char_name,  count ) ||
-		        FT_SET_ERROR( psaux->ps_table_funcs->init(
+		if ( FT2_1_3_NEW_ARRAY( encode->char_index, count ) ||
+		        FT2_1_3_NEW_ARRAY( encode->char_name,  count ) ||
+		        FT2_1_3_SET_ERROR( psaux->ps_table_funcs->init(
 		                          char_table, count, memory ) ) ) {
 			parser->root.error = error;
 			return;
@@ -408,7 +408,7 @@ t42_parse_encoding( T42_Face    face,
 		n     = 0;
 
 		for ( ; cur < limit; ) {
-			FT_Byte  c;
+			FT2_1_3_Byte  c;
 
 
 			c = *cur;
@@ -419,14 +419,14 @@ t42_parse_encoding( T42_Face    face,
 				        cur[2] == 'f'       &&
 				        t42_is_space( cur[-1] ) &&
 				        t42_is_space( cur[3] )  ) {
-					FT_TRACE6(( "encoding end\n" ));
+					FT2_1_3_TRACE6(( "encoding end\n" ));
 					break;
 				}
 			}
 
 			/* otherwise, we must find a number before anything else */
-			if ( (FT_Byte)( c - '0' ) < 10 ) {
-				FT_Int  charcode;
+			if ( (FT2_1_3_Byte)( c - '0' ) < 10 ) {
+				FT2_1_3_Int  charcode;
 
 
 				parser->root.cursor = cur;
@@ -440,14 +440,14 @@ t42_parse_encoding( T42_Face    face,
 				if ( cur < limit && *cur == '/' ) {
 					/* bingo, we have an immediate name -- it must be a */
 					/* character name                                   */
-					FT_Byte*  cur2 = cur + 1;
-					FT_Int    len;
+					FT2_1_3_Byte*  cur2 = cur + 1;
+					FT2_1_3_Int    len;
 
 
 					while ( cur2 < limit && t42_is_alpha( *cur2 ) )
 						cur2++;
 
-					len = (FT_Int)( cur2 - cur - 1 );
+					len = (FT2_1_3_Int)( cur2 - cur - 1 );
 
 					parser->root.error = T1_Add_Table( char_table, charcode,
 					                                   cur + 1, len + 1 );
@@ -480,30 +480,30 @@ t42_parse_encoding( T42_Face    face,
 			face->type1.encoding_type = T1_ENCODING_TYPE_ISOLATIN1;
 
 		else {
-			FT_ERROR(( "t42_parse_encoding: invalid token!\n" ));
+			FT2_1_3_ERROR(( "t42_parse_encoding: invalid token!\n" ));
 			parser->root.error = T42_Err_Invalid_File_Format;
 		}
 	}
 }
 
 
-static FT_UInt
-t42_hexval( FT_Byte  v ) {
-	FT_UInt  d;
+static FT2_1_3_UInt
+t42_hexval( FT2_1_3_Byte  v ) {
+	FT2_1_3_UInt  d;
 
-	d = (FT_UInt)( v - 'A' );
+	d = (FT2_1_3_UInt)( v - 'A' );
 	if ( d < 6 ) {
 		d += 10;
 		goto Exit;
 	}
 
-	d = (FT_UInt)( v - 'a' );
+	d = (FT2_1_3_UInt)( v - 'a' );
 	if ( d < 6 ) {
 		d += 10;
 		goto Exit;
 	}
 
-	d = (FT_UInt)( v - '0' );
+	d = (FT2_1_3_UInt)( v - '0' );
 	if ( d < 10 )
 		goto Exit;
 
@@ -518,14 +518,14 @@ static void
 t42_parse_sfnts( T42_Face    face,
                  T42_Loader  loader ) {
 	T42_Parser  parser = &loader->parser;
-	FT_Memory   memory = parser->root.memory;
-	FT_Byte*    cur    = parser->root.cursor;
-	FT_Byte*    limit  = parser->root.limit;
-	FT_Error    error;
-	FT_Int      num_tables = 0, status;
-	FT_ULong    count, ttf_size = 0, string_size = 0;
-	FT_Bool     in_string  = 0;
-	FT_Byte     v = 0;
+	FT2_1_3_Memory   memory = parser->root.memory;
+	FT2_1_3_Byte*    cur    = parser->root.cursor;
+	FT2_1_3_Byte*    limit  = parser->root.limit;
+	FT2_1_3_Error    error;
+	FT2_1_3_Int      num_tables = 0, status;
+	FT2_1_3_ULong    count, ttf_size = 0, string_size = 0;
+	FT2_1_3_Bool     in_string  = 0;
+	FT2_1_3_Byte     v = 0;
 
 
 	/* The format is `/sfnts [ <...> <...> ... ] def' */
@@ -537,7 +537,7 @@ t42_parse_sfnts( T42_Face    face,
 		status = 0;
 		count = 0;
 	} else {
-		FT_ERROR(( "t42_parse_sfnts: can't find begin of sfnts vector!\n" ));
+		FT2_1_3_ERROR(( "t42_parse_sfnts: can't find begin of sfnts vector!\n" ));
 		error = T42_Err_Invalid_File_Format;
 		goto Fail;
 	}
@@ -559,7 +559,7 @@ t42_parse_sfnts( T42_Face    face,
 
 		case '>':
 			if ( !in_string ) {
-				FT_ERROR(( "t42_parse_sfnts: found unpaired `>'!\n" ));
+				FT2_1_3_ERROR(( "t42_parse_sfnts: found unpaired `>'!\n" ));
 				error = T42_Err_Invalid_File_Format;
 				goto Fail;
 			}
@@ -579,19 +579,19 @@ t42_parse_sfnts( T42_Face    face,
 					cur++;
 				continue;
 			} else {
-				FT_ERROR(( "t42_parse_sfnts: found `%' in string!\n" ));
+				FT2_1_3_ERROR(( "t42_parse_sfnts: found `%' in string!\n" ));
 				error = T42_Err_Invalid_File_Format;
 				goto Fail;
 			}
 
 		default:
 			if ( !ft_xdigit( *cur ) || !ft_xdigit( *(cur + 1) ) ) {
-				FT_ERROR(( "t42_parse_sfnts: found non-hex characters in string" ));
+				FT2_1_3_ERROR(( "t42_parse_sfnts: found non-hex characters in string" ));
 				error = T42_Err_Invalid_File_Format;
 				goto Fail;
 			}
 
-			v = (FT_Byte)( 16 * t42_hexval( cur[0] ) + t42_hexval( cur[1] ) );
+			v = (FT2_1_3_Byte)( 16 * t42_hexval( cur[0] ) + t42_hexval( cur[1] ) );
 			cur += 2;
 			string_size++;
 		}
@@ -606,7 +606,7 @@ t42_parse_sfnts( T42_Face    face,
 				status     = 1;
 				ttf_size   = 12 + 16 * num_tables;
 
-				if ( FT_REALLOC( face->ttf_data, 12, ttf_size ) )
+				if ( FT2_1_3_REALLOC( face->ttf_data, 12, ttf_size ) )
 					goto Fail;
 			}
 		/* No break, fall-through */
@@ -617,13 +617,13 @@ t42_parse_sfnts( T42_Face    face,
 				continue;
 			} else {
 				int      i;
-				FT_ULong len;
+				FT2_1_3_ULong len;
 
 
 				for ( i = 0; i < num_tables; i++ ) {
-					FT_Byte*  p = face->ttf_data + 12 + 16*i + 12;
+					FT2_1_3_Byte*  p = face->ttf_data + 12 + 16*i + 12;
 
-					len = FT_PEEK_ULONG( p );
+					len = FT2_1_3_PEEK_ULONG( p );
 
 					/* Pad to a 4-byte boundary length */
 					ttf_size += ( len + 3 ) & ~3;
@@ -632,7 +632,7 @@ t42_parse_sfnts( T42_Face    face,
 				status         = 2;
 				face->ttf_size = ttf_size;
 
-				if ( FT_REALLOC( face->ttf_data, 12 + 16 * num_tables,
+				if ( FT2_1_3_REALLOC( face->ttf_data, 12 + 16 * num_tables,
 				                 ttf_size + 1 ) )
 					goto Fail;
 			}
@@ -658,14 +658,14 @@ t42_parse_charstrings( T42_Face    face,
 	T42_Parser     parser     = &loader->parser;
 	PS_Table       code_table = &loader->charstrings;
 	PS_Table       name_table = &loader->glyph_names;
-	FT_Memory      memory     = parser->root.memory;
-	FT_Error       error;
+	FT2_1_3_Memory      memory     = parser->root.memory;
+	FT2_1_3_Error       error;
 
 	PSAux_Service  psaux      = (PSAux_Service)face->psaux;
 
-	FT_Byte*       cur;
-	FT_Byte*       limit      = parser->root.limit;
-	FT_Int         n;
+	FT2_1_3_Byte*       cur;
+	FT2_1_3_Byte*       limit      = parser->root.limit;
+	FT2_1_3_Int         n;
 
 
 	loader->num_glyphs = T1_ToInt( parser );
@@ -710,13 +710,13 @@ t42_parse_charstrings( T42_Face    face,
 		if ( *cur != '/' )
 			T1_Skip_Alpha( parser );
 		else {
-			FT_Byte*  cur2 = cur + 1;
-			FT_Int    len;
+			FT2_1_3_Byte*  cur2 = cur + 1;
+			FT2_1_3_Int    len;
 
 
 			while ( cur2 < limit && t42_is_alpha( *cur2 ) )
 				cur2++;
-			len = (FT_Int)( cur2 - cur - 1 );
+			len = (FT2_1_3_Int)( cur2 - cur - 1 );
 
 			error = T1_Add_Table( name_table, n, cur + 1, len + 1 );
 			if ( error )
@@ -734,7 +734,7 @@ t42_parse_charstrings( T42_Face    face,
 
 			while ( cur2 < limit && t42_is_alpha( *cur2 ) )
 				cur2++;
-			len = (FT_Int)( cur2 - cur );
+			len = (FT2_1_3_Int)( cur2 - cur );
 
 			error = T1_Add_Table( code_table, n, cur, len + 1 );
 			if ( error )
@@ -750,7 +750,7 @@ t42_parse_charstrings( T42_Face    face,
 
 	/* Index 0 must be a .notdef element */
 	if ( ft_strcmp( (char *)name_table->elements[0], ".notdef" ) ) {
-		FT_ERROR(( "t42_parse_charstrings: Index 0 is not `.notdef'!\n" ));
+		FT2_1_3_ERROR(( "t42_parse_charstrings: Index 0 is not `.notdef'!\n" ));
 		error = T42_Err_Invalid_File_Format;
 		goto Fail;
 	}
@@ -763,19 +763,19 @@ Fail:
 }
 
 
-static FT_Error
+static FT2_1_3_Error
 t42_load_keyword( T42_Face    face,
                   T42_Loader  loader,
                   T1_Field    field ) {
-	FT_Error  error;
+	FT2_1_3_Error  error;
 	void*     dummy_object;
 	void**    objects;
-	FT_UInt   max_objects = 0;
+	FT2_1_3_UInt   max_objects = 0;
 
 
 	/* if the keyword has a dedicated callback, call it */
 	if ( field->type == T1_FIELD_TYPE_CALLBACK ) {
-		field->reader( (FT_Face)face, loader );
+		field->reader( (FT2_1_3_Face)face, loader );
 		error = loader->parser.root.error;
 		goto Exit;
 	}
@@ -806,15 +806,15 @@ Exit:
 }
 
 
-FT_LOCAL_DEF( FT_Error )
+FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 t42_parse_dict( T42_Face    face,
                 T42_Loader  loader,
-                FT_Byte*    base,
-                FT_Long     size ) {
+                FT2_1_3_Byte*    base,
+                FT2_1_3_Long     size ) {
 	T42_Parser  parser = &loader->parser;
-	FT_Byte*    cur    = base;
-	FT_Byte*    limit  = cur + size;
-	FT_UInt     n_keywords = sizeof ( t42_keywords ) /
+	FT2_1_3_Byte*    cur    = base;
+	FT2_1_3_Byte*    limit  = cur + size;
+	FT2_1_3_UInt     n_keywords = sizeof ( t42_keywords ) /
 	                         sizeof ( t42_keywords[0] );
 
 
@@ -826,7 +826,7 @@ t42_parse_dict( T42_Face    face,
 		/* look for `FontDirectory', which causes problems on some fonts */
 		if ( *cur == 'F' && cur + 25 < limit                    &&
 		        ft_strncmp( (char*)cur, "FontDirectory", 13 ) == 0 ) {
-			FT_Byte*  cur2;
+			FT2_1_3_Byte*  cur2;
 
 
 			/* skip the `FontDirectory' keyword */
@@ -855,8 +855,8 @@ t42_parse_dict( T42_Face    face,
 		}
 		/* look for immediates */
 		else if ( *cur == '/' && cur + 2 < limit ) {
-			FT_Byte*  cur2;
-			FT_UInt    i, len;
+			FT2_1_3_Byte*  cur2;
+			FT2_1_3_UInt    i, len;
 
 
 			cur++;
@@ -864,14 +864,14 @@ t42_parse_dict( T42_Face    face,
 			while ( cur2 < limit && t42_is_alpha( *cur2 ) )
 				cur2++;
 
-			len  = (FT_UInt)( cur2 - cur );
+			len  = (FT2_1_3_UInt)( cur2 - cur );
 			if ( len > 0 && len < 22 ) { /* XXX What shall it this 22? */
 				/* now, compare the immediate name to the keyword table */
 
 				/* Loop through all known keywords */
 				for ( i = 0; i < n_keywords; i++ ) {
 					T1_Field  keyword = (T1_Field)&t42_keywords[i];
-					FT_Byte   *name   = (FT_Byte*)keyword->ident;
+					FT2_1_3_Byte   *name   = (FT2_1_3_Byte*)keyword->ident;
 
 
 					if ( !name )
@@ -898,12 +898,12 @@ t42_parse_dict( T42_Face    face,
 }
 
 
-FT_LOCAL_DEF( void )
+FT2_1_3_LOCAL_DEF( void )
 t42_loader_init( T42_Loader  loader,
                  T42_Face    face ) {
-	FT_UNUSED( face );
+	FT2_1_3_UNUSED( face );
 
-	FT_MEM_ZERO( loader, sizeof ( *loader ) );
+	FT2_1_3_MEM_ZERO( loader, sizeof ( *loader ) );
 	loader->num_glyphs = 0;
 	loader->num_chars  = 0;
 
@@ -914,7 +914,7 @@ t42_loader_init( T42_Loader  loader,
 }
 
 
-FT_LOCAL_DEF( void )
+FT2_1_3_LOCAL_DEF( void )
 t42_loader_done( T42_Loader  loader ) {
 	T42_Parser  parser = &loader->parser;
 

@@ -20,19 +20,19 @@
 
 
 #include "t42objs.h"
-#include FT_INTERNAL_POSTSCRIPT_AUX_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_AUX_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 typedef struct  T42_ParserRec_ {
 	PS_ParserRec  root;
-	FT_Stream     stream;
+	FT2_1_3_Stream     stream;
 
-	FT_Byte*      base_dict;
-	FT_Int        base_len;
+	FT2_1_3_Byte*      base_dict;
+	FT2_1_3_Int        base_len;
 
-	FT_Byte       in_memory;
+	FT2_1_3_Byte       in_memory;
 
 } T42_ParserRec, *T42_Parser;
 
@@ -40,45 +40,45 @@ typedef struct  T42_ParserRec_ {
 typedef struct  T42_Loader_ {
 	T42_ParserRec  parser;          /* parser used to read the stream */
 
-	FT_Int         num_chars;       /* number of characters in encoding */
+	FT2_1_3_Int         num_chars;       /* number of characters in encoding */
 	PS_TableRec    encoding_table;  /* PS_Table used to store the       */
 	/* encoding character names         */
 
-	FT_Int         num_glyphs;
+	FT2_1_3_Int         num_glyphs;
 	PS_TableRec    glyph_names;
 	PS_TableRec    charstrings;
 
 } T42_LoaderRec, *T42_Loader;
 
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 t42_parser_init( T42_Parser     parser,
-                 FT_Stream      stream,
-                 FT_Memory      memory,
+                 FT2_1_3_Stream      stream,
+                 FT2_1_3_Memory      memory,
                  PSAux_Service  psaux );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 t42_parser_done( T42_Parser  parser );
 
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 t42_parse_dict( T42_Face    face,
                 T42_Loader  loader,
-                FT_Byte*    base,
-                FT_Long     size );
+                FT2_1_3_Byte*    base,
+                FT2_1_3_Long     size );
 
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 t42_loader_init( T42_Loader  loader,
                  T42_Face    face );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 t42_loader_done( T42_Loader  loader );
 
 
 /* */
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 
 #endif /* __T42PARSE_H__ */
