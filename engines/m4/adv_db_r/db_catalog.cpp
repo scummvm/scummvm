@@ -91,8 +91,7 @@ char *db_rmlst_get_asset_room_path(char *asset_name, char *result, int32 *sceneC
 
 	char *search_result = catalog_search(asset_name);
 
-	//apr10
-	if (search_result != NULL) {
+	if (search_result != nullptr) {
 		db_get_catalog_entry(search_result, &tag, &room, name, path, &c_size);
 		*sceneCode = room;
 	}
@@ -119,7 +118,7 @@ static int32 count_catalog_items() {
 	int32 my_catalog_size = 0;
 
 	while (pCatIter) {
-		pCatIter = db_get_catalog_entry(pCatIter, NULL, NULL, NULL, NULL, NULL);
+		pCatIter = db_get_catalog_entry(pCatIter, nullptr, nullptr, nullptr, nullptr, nullptr);
 		if (pCatIter)
 			++my_catalog_size;
 	}
@@ -157,7 +156,7 @@ static void sort_catalog() {
 		_G(catalog)._catalog[index] = pCatalogIter;
 
 		short room_number;
-		char *nextItem = db_get_catalog_entry(pCatalogIter, &tag, &room_number, name, path, NULL);
+		char *nextItem = db_get_catalog_entry(pCatalogIter, &tag, &room_number, name, path, nullptr);
 
 		switch (tag) {
 		case _T_ROOM:
@@ -196,7 +195,7 @@ static char *catalog_search(char *name) {
 
 	char **result = (char **)bsearch((void *)myString, (void *)_G(catalog)._catalog, _G(catalog)._size, sizeof(char *), compare_catalog_entries_for_search);
 	if (!result)
-		return NULL;
+		return nullptr;
 
 	return *result;
 }
@@ -219,7 +218,7 @@ static char *db_get_catalog_entry(char *c, short *tag, short *room, char *name, 
 	short size = convert_intel16(*(short *)&c[0]);
 
 	if (!size)
-		return NULL;
+		return nullptr;
 
 	if (c_size)
 		*c_size = size;
@@ -230,7 +229,7 @@ static char *db_get_catalog_entry(char *c, short *tag, short *room, char *name, 
 	if (tag)
 		*tag = theTag;
 
-	x += sizeof(short); //tag
+	x += sizeof(short); // tag
 
 	if ((theTag == _T_ROOM) && room) {
 		*room = convert_intel16(*(short *)&c[x]);
@@ -248,13 +247,6 @@ static char *db_get_catalog_entry(char *c, short *tag, short *room, char *name, 
 	if (name)
 		snprintf(name, MAX_FILENAME_SIZE, "%s", s);
 
-	//feb5
-	//skip over trailing '\0' or NULL string.
-	//for( i=0; i<2; i++ ) {
-	//	if( c[x] )
-	//		break;
-	//	x++;
-	//}
 	for (;; ) {
 		if (c[x])
 			break;

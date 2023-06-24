@@ -28,6 +28,9 @@ namespace M4 {
 
 Common::Stream *f_io_open(const Common::String &filename, const Common::String &mode) {
 	if (mode.hasPrefix("r")) {
+		if (filename.empty())
+			return nullptr;
+
 		Common::File *f = new Common::File();
 		if (f->open(filename))
 			return f;
