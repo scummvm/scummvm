@@ -20,15 +20,15 @@
 /*                                                                       */
 /* A cache manager is in charge of the following:                        */
 /*                                                                       */
-/*  - Maintain a mapping between generic FTC_FaceIDs and live FT_Face    */
+/*  - Maintain a mapping between generic FTC_FaceIDs and live FT2_1_3_Face    */
 /*    objects.  The mapping itself is performed through a user-provided  */
-/*    callback.  However, the manager maintains a small cache of FT_Face */
-/*    and FT_Size objects in order to speed up things considerably.      */
+/*    callback.  However, the manager maintains a small cache of FT2_1_3_Face */
+/*    and FT2_1_3_Size objects in order to speed up things considerably.      */
 /*                                                                       */
 /*  - Manage one or more cache objects.  Each cache is in charge of      */
 /*    holding a varying number of `cache nodes'.  Each cache node        */
 /*    represents a minimal amount of individually accessible cached      */
-/*    data.  For example, a cache node can be an FT_Glyph image          */
+/*    data.  For example, a cache node can be an FT2_1_3_Glyph image          */
 /*    containing a vector outline, or some glyph metrics, or anything    */
 /*    else.                                                              */
 /*                                                                       */
@@ -64,12 +64,12 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_CACHE_H
-#include FT_CACHE_INTERNAL_LRU_H
-#include FT_CACHE_INTERNAL_CACHE_H
+#include FT2_1_3_CACHE_H
+#include FT2_1_3_CACHE_INTERNAL_LRU_H
+#include FT2_1_3_CACHE_INTERNAL_CACHE_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -91,32 +91,32 @@ FT_BEGIN_HEADER
 typedef struct  FTC_FamilyEntryRec_ {
 	FTC_Family  family;
 	FTC_Cache   cache;
-	FT_UInt     index;
-	FT_UInt     link;
+	FT2_1_3_UInt     index;
+	FT2_1_3_UInt     link;
 
 } FTC_FamilyEntryRec, *FTC_FamilyEntry;
 
 
-#define FTC_FAMILY_ENTRY_NONE  ( (FT_UInt)-1 )
+#define FTC_FAMILY_ENTRY_NONE  ( (FT2_1_3_UInt)-1 )
 
 
 typedef struct  FTC_FamilyTableRec_ {
-	FT_UInt          count;
-	FT_UInt          size;
+	FT2_1_3_UInt          count;
+	FT2_1_3_UInt          size;
 	FTC_FamilyEntry  entries;
-	FT_UInt          free;
+	FT2_1_3_UInt          free;
 
 } FTC_FamilyTableRec, *FTC_FamilyTable;
 
 
-FT_EXPORT( FT_Error )
+FT2_1_3_EXPORT( FT2_1_3_Error )
 ftc_family_table_alloc( FTC_FamilyTable   table,
-                        FT_Memory         memory,
+                        FT2_1_3_Memory         memory,
                         FTC_FamilyEntry  *aentry );
 
-FT_EXPORT( void )
+FT2_1_3_EXPORT( void )
 ftc_family_table_free( FTC_FamilyTable  table,
-                       FT_UInt          idx );
+                       FT2_1_3_UInt          idx );
 
 
 /*************************************************************************/
@@ -130,9 +130,9 @@ ftc_family_table_free( FTC_FamilyTable  table,
 /* <Fields>                                                              */
 /*    library      :: A handle to a FreeType library instance.           */
 /*                                                                       */
-/*    faces_list   :: The lru list of @FT_Face objects in the cache.     */
+/*    faces_list   :: The lru list of @FT2_1_3_Face objects in the cache.     */
 /*                                                                       */
-/*    sizes_list   :: The lru list of @FT_Size objects in the cache.     */
+/*    sizes_list   :: The lru list of @FT2_1_3_Size objects in the cache.     */
 /*                                                                       */
 /*    max_weight   :: The maximum cache pool weight.                     */
 /*                                                                       */
@@ -148,24 +148,24 @@ ftc_family_table_free( FTC_FamilyTable  table,
 /*                                                                       */
 /*    request_face :: User-provided function used to implement a mapping */
 /*                    between abstract @FTC_FaceID values and real       */
-/*                    @FT_Face objects.                                  */
+/*                    @FT2_1_3_Face objects.                                  */
 /*                                                                       */
 /*    families     :: Global table of families.                          */
 /*                                                                       */
 typedef struct  FTC_ManagerRec_ {
-	FT_Library          library;
-	FT_LruList          faces_list;
-	FT_LruList          sizes_list;
+	FT2_1_3_Library          library;
+	FT2_1_3_LruList          faces_list;
+	FT2_1_3_LruList          sizes_list;
 
-	FT_ULong            max_weight;
-	FT_ULong            cur_weight;
+	FT2_1_3_ULong            max_weight;
+	FT2_1_3_ULong            cur_weight;
 
-	FT_UInt             num_nodes;
+	FT2_1_3_UInt             num_nodes;
 	FTC_Node            nodes_list;
 
 	FTC_Cache           caches[FTC_MAX_CACHES];
 
-	FT_Pointer          request_data;
+	FT2_1_3_Pointer          request_data;
 	FTC_Face_Requester  request_face;
 
 	FTC_FamilyTableRec  families;
@@ -194,19 +194,19 @@ typedef struct  FTC_ManagerRec_ {
 /*    The reason this function is exported is to allow client-specific   */
 /*    cache classes.                                                     */
 /*                                                                       */
-FT_EXPORT( void )
+FT2_1_3_EXPORT( void )
 FTC_Manager_Compress( FTC_Manager  manager );
 
 
 /* this must be used internally for the moment */
-FT_EXPORT( FT_Error )
+FT2_1_3_EXPORT( FT2_1_3_Error )
 FTC_Manager_Register_Cache( FTC_Manager      manager,
                             FTC_Cache_Class  clazz,
                             FTC_Cache       *acache );
 
 
 /* can be called to increment a node's reference count */
-FT_EXPORT( void )
+FT2_1_3_EXPORT( void )
 FTC_Node_Ref( FTC_Node     node,
               FTC_Manager  manager );
 
@@ -226,13 +226,13 @@ FTC_Node_Ref( FTC_Node     node,
 /*                                                                       */
 /*    manager :: The cache manager handle.                               */
 /*                                                                       */
-FT_EXPORT( void )
+FT2_1_3_EXPORT( void )
 FTC_Node_Unref( FTC_Node     node,
                 FTC_Manager  manager );
 
 /* */
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 
 #endif /* __FTCMANAG_H__ */

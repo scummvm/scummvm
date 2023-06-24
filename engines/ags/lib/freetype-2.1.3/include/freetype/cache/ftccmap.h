@@ -20,10 +20,10 @@
 #define __FTCCMAP_H__
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_CACHE_H
+#include FT2_1_3_CACHE_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -71,13 +71,13 @@ typedef struct FTC_CMapDescRec_*  FTC_CMapDesc;
 /*                                                                       */
 /* @values:                                                              */
 /*    FTC_CMAP_BY_INDEX ::                                               */
-/*      Address a charmap by its index in the corresponding @FT_Face.    */
+/*      Address a charmap by its index in the corresponding @FT2_1_3_Face.    */
 /*                                                                       */
 /*    FTC_CMAP_BY_ENCODING ::                                            */
-/*      Use a @FT_Face charmap that corresponds to a given encoding.     */
+/*      Use a @FT2_1_3_Face charmap that corresponds to a given encoding.     */
 /*                                                                       */
 /*    FTC_CMAP_BY_ID ::                                                  */
-/*      Use an @FT_Face charmap that corresponds to a given              */
+/*      Use an @FT2_1_3_Face charmap that corresponds to a given              */
 /*      (platform,encoding) ID.  See @FTC_CMapIdRec.                     */
 /*                                                                       */
 typedef enum  FTC_CMapType_ {
@@ -103,8 +103,8 @@ typedef enum  FTC_CMapType_ {
 /*    encoding :: The encoding ID.                                       */
 /*                                                                       */
 typedef struct  FTC_CMapIdRec_ {
-	FT_UInt  platform;
-	FT_UInt  encoding;
+	FT2_1_3_UInt  platform;
+	FT2_1_3_UInt  encoding;
 
 } FTC_CMapIdRec;
 
@@ -123,22 +123,22 @@ typedef struct  FTC_CMapIdRec_ {
 /*    type       :: The type of charmap, see @FTC_CMapType.              */
 /*                                                                       */
 /*    u.index    :: For @FTC_CMAP_BY_INDEX types, this is the charmap    */
-/*                  index (within a @FT_Face) we want to use.            */
+/*                  index (within a @FT2_1_3_Face) we want to use.            */
 /*                                                                       */
 /*    u.encoding :: For @FTC_CMAP_BY_ENCODING types, this is the charmap */
-/*                  encoding we want to use. see @FT_Encoding.           */
+/*                  encoding we want to use. see @FT2_1_3_Encoding.           */
 /*                                                                       */
 /*    u.id       :: For @FTC_CMAP_BY_ID types, this is the               */
 /*                  (platform,encoding) pair we want to use. see         */
-/*                  @FTC_CMapIdRec and @FT_CharMapRec.                   */
+/*                  @FTC_CMapIdRec and @FT2_1_3_CharMapRec.                   */
 /*                                                                       */
 typedef struct  FTC_CMapDescRec_ {
 	FTC_FaceID    face_id;
 	FTC_CMapType  type;
 
 	union {
-		FT_UInt        index;
-		FT_Encoding    encoding;
+		FT2_1_3_UInt        index;
+		FT2_1_3_Encoding    encoding;
 		FTC_CMapIdRec  id;
 
 	} u;
@@ -167,7 +167,7 @@ typedef struct  FTC_CMapDescRec_ {
 /*    Like all other caches, this one will be destroyed with the cache   */
 /*    manager.                                                           */
 /*                                                                       */
-FT_EXPORT( FT_Error )
+FT2_1_3_EXPORT( FT2_1_3_Error )
 FTC_CMapCache_New( FTC_Manager     manager,
                    FTC_CMapCache  *acache );
 
@@ -195,15 +195,15 @@ FTC_CMapCache_New( FTC_Manager     manager,
 /*    This function doesn't return @FTC_Node handles, since there is no  */
 /*    real use for them with typical uses of charmaps.                   */
 /*                                                                       */
-FT_EXPORT( FT_UInt )
+FT2_1_3_EXPORT( FT2_1_3_UInt )
 FTC_CMapCache_Lookup( FTC_CMapCache  cache,
                       FTC_CMapDesc   cmap_desc,
-                      FT_UInt32      char_code );
+                      FT2_1_3_UInt32      char_code );
 
 /* */
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 
 #endif /* __FTCCMAP_H__ */
