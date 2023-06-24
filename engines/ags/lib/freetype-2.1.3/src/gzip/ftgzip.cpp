@@ -20,14 +20,14 @@
 /***************************************************************************/
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_MEMORY_H
-#include FT_INTERNAL_STREAM_H
-#include FT_INTERNAL_DEBUG_H
+#include FT2_1_3_INTERNAL_MEMORY_H
+#include FT2_1_3_INTERNAL_STREAM_H
+#include FT2_1_3_INTERNAL_DEBUG_H
 #include <string.h>
 
-#ifdef FT_CONFIG_OPTION_USE_ZLIB
+#ifdef FT2_1_3_CONFIG_OPTION_USE_ZLIB
 
-#ifdef FT_CONFIG_OPTION_SYSTEM_ZLIB
+#ifdef FT2_1_3_CONFIG_OPTION_SYSTEM_ZLIB
 
 #  include "zlib.h"
 
@@ -79,26 +79,26 @@ void z_error(/* should be const */char* message) {
 
 
 static voidpf
-ft_gzip_alloc( FT_Memory  memory,
+ft_gzip_alloc( FT2_1_3_Memory  memory,
                uInt       items,
                uInt       size ) {
-	FT_ULong    sz = (FT_ULong)size * items;
-	FT_Pointer  p;
+	FT2_1_3_ULong    sz = (FT2_1_3_ULong)size * items;
+	FT2_1_3_Pointer  p;
 
-	FT_MEM_ALLOC( p, sz );
+	FT2_1_3_MEM_ALLOC( p, sz );
 
 	return (voidpf) p;
 }
 
 
 static void
-ft_gzip_free( FT_Memory  memory,
+ft_gzip_free( FT2_1_3_Memory  memory,
               voidpf     address ) {
-	FT_MEM_FREE( address );
+	FT2_1_3_MEM_FREE( address );
 }
 
 
-#ifndef FT_CONFIG_OPTION_SYSTEM_ZLIB
+#ifndef FT2_1_3_CONFIG_OPTION_SYSTEM_ZLIB
 
 local voidpf
 zcalloc (opaque, items, size)
@@ -126,42 +126,42 @@ zcfree( voidpf  opaque,
 /***************************************************************************/
 /***************************************************************************/
 
-#define  FT_GZIP_BUFFER_SIZE          4096
+#define  FT2_1_3_GZIP_BUFFER_SIZE          4096
 
-typedef struct FT_GZipFileRec_ {
-	FT_Stream    source;         /* parent/source stream        */
-	FT_Stream    stream;         /* embedding stream            */
-	FT_Memory    memory;         /* memory allocator            */
+typedef struct FT2_1_3_GZipFileRec_ {
+	FT2_1_3_Stream    source;         /* parent/source stream        */
+	FT2_1_3_Stream    stream;         /* embedding stream            */
+	FT2_1_3_Memory    memory;         /* memory allocator            */
 	z_stream     zstream;        /* zlib input stream           */
 
-	FT_ULong     start;          /* starting position, after .gz header */
-	FT_Byte      input[ FT_GZIP_BUFFER_SIZE ];  /* input read buffer */
+	FT2_1_3_ULong     start;          /* starting position, after .gz header */
+	FT2_1_3_Byte      input[ FT2_1_3_GZIP_BUFFER_SIZE ];  /* input read buffer */
 
-	FT_Byte      buffer[ FT_GZIP_BUFFER_SIZE ];  /* output buffer      */
-	FT_ULong     pos;                            /* position in output */
-	FT_Byte*     cursor;
-	FT_Byte*     limit;
+	FT2_1_3_Byte      buffer[ FT2_1_3_GZIP_BUFFER_SIZE ];  /* output buffer      */
+	FT2_1_3_ULong     pos;                            /* position in output */
+	FT2_1_3_Byte*     cursor;
+	FT2_1_3_Byte*     limit;
 
-} FT_GZipFileRec, *FT_GZipFile;
+} FT2_1_3_GZipFileRec, *FT2_1_3_GZipFile;
 
 
 /* gzip flag byte */
-#define FT_GZIP_ASCII_FLAG   0x01 /* bit 0 set: file probably ascii text */
-#define FT_GZIP_HEAD_CRC     0x02 /* bit 1 set: header CRC present */
-#define FT_GZIP_EXTRA_FIELD  0x04 /* bit 2 set: extra field present */
-#define FT_GZIP_ORIG_NAME    0x08 /* bit 3 set: original file name present */
-#define FT_GZIP_COMMENT      0x10 /* bit 4 set: file comment present */
-#define FT_GZIP_RESERVED     0xE0 /* bits 5..7: reserved */
+#define FT2_1_3_GZIP_ASCII_FLAG   0x01 /* bit 0 set: file probably ascii text */
+#define FT2_1_3_GZIP_HEAD_CRC     0x02 /* bit 1 set: header CRC present */
+#define FT2_1_3_GZIP_EXTRA_FIELD  0x04 /* bit 2 set: extra field present */
+#define FT2_1_3_GZIP_ORIG_NAME    0x08 /* bit 3 set: original file name present */
+#define FT2_1_3_GZIP_COMMENT      0x10 /* bit 4 set: file comment present */
+#define FT2_1_3_GZIP_RESERVED     0xE0 /* bits 5..7: reserved */
 
 
 /* check and skip .gz header - we don't support "transparent" compression */
-static FT_Error
-ft_gzip_check_header( FT_Stream  stream ) {
-	FT_Error  error;
-	FT_Byte   head[4];
+static FT2_1_3_Error
+ft_gzip_check_header( FT2_1_3_Stream  stream ) {
+	FT2_1_3_Error  error;
+	FT2_1_3_Byte   head[4];
 
-	if ( FT_STREAM_SEEK( 0 )       ||
-	        FT_STREAM_READ( head, 4 ) )
+	if ( FT2_1_3_STREAM_SEEK( 0 )       ||
+	        FT2_1_3_STREAM_READ( head, 4 ) )
 		goto Exit;
 
 	/* head[0] && head[1] are the magic numbers     */
@@ -169,29 +169,29 @@ ft_gzip_check_header( FT_Stream  stream ) {
 	if ( head[0] != 0x1f              ||
 	        head[1] != 0x8b              ||
 	        head[2] != Z_DEFLATED        ||
-	        (head[3] & FT_GZIP_RESERVED)  ) {
-		error = FT_Err_Invalid_File_Format;
+	        (head[3] & FT2_1_3_GZIP_RESERVED)  ) {
+		error = FT2_1_3_Err_Invalid_File_Format;
 		goto Exit;
 	}
 
 	/* skip time, xflags and os code */
-	(void)FT_STREAM_SKIP( 6 );
+	(void)FT2_1_3_STREAM_SKIP( 6 );
 
 	/* skip the extra field */
-	if ( head[3] & FT_GZIP_EXTRA_FIELD ) {
-		FT_UInt  len;
+	if ( head[3] & FT2_1_3_GZIP_EXTRA_FIELD ) {
+		FT2_1_3_UInt  len;
 
-		if ( FT_READ_USHORT_LE( len ) ||
-		        FT_STREAM_SKIP( len )    )
+		if ( FT2_1_3_READ_USHORT_LE( len ) ||
+		        FT2_1_3_STREAM_SKIP( len )    )
 			goto Exit;
 	}
 
 	/* skip original file name */
-	if ( head[3] & FT_GZIP_ORIG_NAME )
+	if ( head[3] & FT2_1_3_GZIP_ORIG_NAME )
 		for (;;) {
-			FT_UInt  c;
+			FT2_1_3_UInt  c;
 
-			if ( FT_READ_BYTE( c) )
+			if ( FT2_1_3_READ_BYTE( c) )
 				goto Exit;
 
 			if ( c == 0 )
@@ -199,11 +199,11 @@ ft_gzip_check_header( FT_Stream  stream ) {
 		}
 
 	/* skip .gz comment */
-	if ( head[3] & FT_GZIP_COMMENT )
+	if ( head[3] & FT2_1_3_GZIP_COMMENT )
 		for (;;) {
-			FT_UInt  c;
+			FT2_1_3_UInt  c;
 
-			if ( FT_READ_BYTE( c) )
+			if ( FT2_1_3_READ_BYTE( c) )
 				goto Exit;
 
 			if ( c == 0 )
@@ -211,8 +211,8 @@ ft_gzip_check_header( FT_Stream  stream ) {
 		}
 
 	/* skip CRC */
-	if ( head[3] & FT_GZIP_HEAD_CRC )
-		if ( FT_STREAM_SKIP( 2 ) )
+	if ( head[3] & FT2_1_3_GZIP_HEAD_CRC )
+		if ( FT2_1_3_STREAM_SKIP( 2 ) )
 			goto Exit;
 
 Exit:
@@ -221,18 +221,18 @@ Exit:
 
 
 
-static FT_Error
-ft_gzip_file_init( FT_GZipFile   zip,
-                   FT_Stream     stream,
-                   FT_Stream     source ) {
+static FT2_1_3_Error
+ft_gzip_file_init( FT2_1_3_GZipFile   zip,
+                   FT2_1_3_Stream     stream,
+                   FT2_1_3_Stream     source ) {
 	z_stream*  zstream = &zip->zstream;
-	FT_Error   error   = 0;
+	FT2_1_3_Error   error   = 0;
 
 	zip->stream = stream;
 	zip->source = source;
 	zip->memory = stream->memory;
 
-	zip->limit  = zip->buffer + FT_GZIP_BUFFER_SIZE;
+	zip->limit  = zip->buffer + FT2_1_3_GZIP_BUFFER_SIZE;
 	zip->cursor = zip->limit;
 	zip->pos    = 0;
 
@@ -244,7 +244,7 @@ ft_gzip_file_init( FT_GZipFile   zip,
 		if (error)
 			goto Exit;
 
-		zip->start = FT_STREAM_POS();
+		zip->start = FT2_1_3_STREAM_POS();
 	}
 
 	/* initialize zlib - there is no zlib header in the compressed stream */
@@ -257,7 +257,7 @@ ft_gzip_file_init( FT_GZipFile   zip,
 
 	if ( inflateInit2( zstream, -MAX_WBITS ) != Z_OK ||
 	        zstream->next_in == NULL                     ) {
-		error = FT_Err_Invalid_File_Format;
+		error = FT2_1_3_Err_Invalid_File_Format;
 		goto Exit;
 	}
 
@@ -268,7 +268,7 @@ Exit:
 
 
 static void
-ft_gzip_file_done( FT_GZipFile  zip ) {
+ft_gzip_file_done( FT2_1_3_GZipFile  zip ) {
 	z_stream*  zstream = &zip->zstream;
 
 	/* clear the rest */
@@ -286,12 +286,12 @@ ft_gzip_file_done( FT_GZipFile  zip ) {
 }
 
 
-static FT_Error
-ft_gzip_file_reset( FT_GZipFile  zip ) {
-	FT_Stream  stream = zip->source;
-	FT_Error   error;
+static FT2_1_3_Error
+ft_gzip_file_reset( FT2_1_3_GZipFile  zip ) {
+	FT2_1_3_Stream  stream = zip->source;
+	FT2_1_3_Error   error;
 
-	if ( !FT_STREAM_SEEK( zip->start ) ) {
+	if ( !FT2_1_3_STREAM_SEEK( zip->start ) ) {
 		z_stream*  zstream = &zip->zstream;
 
 		inflateReset( zstream );
@@ -301,7 +301,7 @@ ft_gzip_file_reset( FT_GZipFile  zip ) {
 		zstream->avail_out = 0;
 		zstream->next_out  = zip->buffer;
 
-		zip->limit  = zip->buffer + FT_GZIP_BUFFER_SIZE;
+		zip->limit  = zip->buffer + FT2_1_3_GZIP_BUFFER_SIZE;
 		zip->cursor = zip->limit;
 		zip->pos    = 0;
 	}
@@ -309,25 +309,25 @@ ft_gzip_file_reset( FT_GZipFile  zip ) {
 }
 
 
-static FT_Error
-ft_gzip_file_fill_input( FT_GZipFile  zip ) {
+static FT2_1_3_Error
+ft_gzip_file_fill_input( FT2_1_3_GZipFile  zip ) {
 	z_stream*  zstream = &zip->zstream;
-	FT_Stream  stream  = zip->source;
-	FT_ULong   size;
+	FT2_1_3_Stream  stream  = zip->source;
+	FT2_1_3_ULong   size;
 
 	if ( stream->read ) {
-		size = stream->read( stream, stream->pos, zip->input, FT_GZIP_BUFFER_SIZE );
+		size = stream->read( stream, stream->pos, zip->input, FT2_1_3_GZIP_BUFFER_SIZE );
 		if ( size == 0 )
-			return FT_Err_Invalid_Stream_Operation;
+			return FT2_1_3_Err_Invalid_Stream_Operation;
 	} else {
 		size = stream->size - stream->pos;
-		if ( size > FT_GZIP_BUFFER_SIZE )
-			size = FT_GZIP_BUFFER_SIZE;
+		if ( size > FT2_1_3_GZIP_BUFFER_SIZE )
+			size = FT2_1_3_GZIP_BUFFER_SIZE;
 
 		if ( size == 0 )
-			return FT_Err_Invalid_Stream_Operation;
+			return FT2_1_3_Err_Invalid_Stream_Operation;
 
-		FT_MEM_COPY( zip->input, stream->base + stream->pos, size );
+		FT2_1_3_MEM_COPY( zip->input, stream->base + stream->pos, size );
 	}
 	stream->pos += size;
 
@@ -339,14 +339,14 @@ ft_gzip_file_fill_input( FT_GZipFile  zip ) {
 
 
 
-static FT_Error
-ft_gzip_file_fill_output( FT_GZipFile  zip ) {
+static FT2_1_3_Error
+ft_gzip_file_fill_output( FT2_1_3_GZipFile  zip ) {
 	z_stream*  zstream = &zip->zstream;
-	FT_Error   error   = 0;
+	FT2_1_3_Error   error   = 0;
 
 	zip->cursor        = zip->buffer;
 	zstream->next_out  = zip->cursor;
-	zstream->avail_out = FT_GZIP_BUFFER_SIZE;
+	zstream->avail_out = FT2_1_3_GZIP_BUFFER_SIZE;
 
 	while ( zstream->avail_out > 0 ) {
 		int  err;
@@ -363,7 +363,7 @@ ft_gzip_file_fill_output( FT_GZipFile  zip ) {
 			zip->limit = zstream->next_out;
 			break;
 		} else if ( err != Z_OK ) {
-			error = FT_Err_Invalid_Stream_Operation;
+			error = FT2_1_3_Err_Invalid_Stream_Operation;
 			break;
 		}
 	}
@@ -371,15 +371,15 @@ ft_gzip_file_fill_output( FT_GZipFile  zip ) {
 }
 
 
-/* fill output buffer, 'count' must be <= FT_GZIP_BUFFER_SIZE */
-static FT_Error
-ft_gzip_file_skip_output( FT_GZipFile  zip,
-                          FT_ULong     count ) {
-	FT_Error   error   = 0;
-	FT_ULong   delta;
+/* fill output buffer, 'count' must be <= FT2_1_3_GZIP_BUFFER_SIZE */
+static FT2_1_3_Error
+ft_gzip_file_skip_output( FT2_1_3_GZipFile  zip,
+                          FT2_1_3_ULong     count ) {
+	FT2_1_3_Error   error   = 0;
+	FT2_1_3_ULong   delta;
 
 	for (;;) {
-		delta = (FT_ULong)( zip->limit - zip->cursor );
+		delta = (FT2_1_3_ULong)( zip->limit - zip->cursor );
 		if ( delta >= count )
 			delta = count;
 
@@ -399,13 +399,13 @@ ft_gzip_file_skip_output( FT_GZipFile  zip,
 }
 
 
-static FT_ULong
-ft_gzip_file_io( FT_GZipFile   zip,
-                 FT_ULong      pos,
-                 FT_Byte*      buffer,
-                 FT_ULong      count ) {
-	FT_ULong   result = 0;
-	FT_Error   error;
+static FT2_1_3_ULong
+ft_gzip_file_io( FT2_1_3_GZipFile   zip,
+                 FT2_1_3_ULong      pos,
+                 FT2_1_3_Byte*      buffer,
+                 FT2_1_3_ULong      count ) {
+	FT2_1_3_ULong   result = 0;
+	FT2_1_3_Error   error;
 
 	/* reset inflate stream if we're seeking backwards        */
 	/* yes, that's not too efficient, but it saves memory :-) */
@@ -416,7 +416,7 @@ ft_gzip_file_io( FT_GZipFile   zip,
 
 	/* skip unwanted bytes */
 	if ( pos > zip->pos ) {
-		error = ft_gzip_file_skip_output( zip, (FT_ULong)( pos - zip->pos ) );
+		error = ft_gzip_file_skip_output( zip, (FT2_1_3_ULong)( pos - zip->pos ) );
 		if (error)
 			goto Exit;
 	}
@@ -426,13 +426,13 @@ ft_gzip_file_io( FT_GZipFile   zip,
 
 	/* now read the data */
 	for (;;) {
-		FT_ULong   delta;
+		FT2_1_3_ULong   delta;
 
-		delta = (FT_ULong)( zip->limit - zip->cursor );
+		delta = (FT2_1_3_ULong)( zip->limit - zip->cursor );
 		if ( delta >= count )
 			delta = count;
 
-		FT_MEM_COPY( buffer, zip->cursor, delta );
+		FT2_1_3_MEM_COPY( buffer, zip->cursor, delta );
 		buffer      += delta;
 		result      += delta;
 		zip->cursor += delta;
@@ -461,46 +461,46 @@ Exit:
 /***************************************************************************/
 
 static void
-ft_gzip_stream_close( FT_Stream  stream ) {
-	FT_GZipFile  zip    = stream->descriptor.pointer;
-	FT_Memory    memory = stream->memory;
+ft_gzip_stream_close( FT2_1_3_Stream  stream ) {
+	FT2_1_3_GZipFile  zip    = stream->descriptor.pointer;
+	FT2_1_3_Memory    memory = stream->memory;
 
 	if ( zip ) {
 		/* finalize gzip file descriptor */
 		ft_gzip_file_done( zip );
 
-		FT_FREE( zip );
+		FT2_1_3_FREE( zip );
 
 		stream->descriptor.pointer = NULL;
 	}
 }
 
 
-static FT_ULong
-ft_gzip_stream_io( FT_Stream   stream,
-                   FT_ULong    pos,
-                   FT_Byte*    buffer,
-                   FT_ULong    count ) {
-	FT_GZipFile  zip = stream->descriptor.pointer;
+static FT2_1_3_ULong
+ft_gzip_stream_io( FT2_1_3_Stream   stream,
+                   FT2_1_3_ULong    pos,
+                   FT2_1_3_Byte*    buffer,
+                   FT2_1_3_ULong    count ) {
+	FT2_1_3_GZipFile  zip = stream->descriptor.pointer;
 
 	return ft_gzip_file_io( zip, pos, buffer, count );
 }
 
 
-FT_EXPORT_DEF( FT_Error )
-FT_Stream_OpenGzip( FT_Stream    stream,
-                    FT_Stream    source ) {
-	FT_Error     error;
-	FT_Memory    memory = source->memory;
-	FT_GZipFile  zip;
+FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_Stream_OpenGzip( FT2_1_3_Stream    stream,
+                    FT2_1_3_Stream    source ) {
+	FT2_1_3_Error     error;
+	FT2_1_3_Memory    memory = source->memory;
+	FT2_1_3_GZipFile  zip;
 
-	FT_ZERO( stream );
+	FT2_1_3_ZERO( stream );
 	stream->memory = memory;
 
-	if ( !FT_NEW( zip ) ) {
+	if ( !FT2_1_3_NEW( zip ) ) {
 		error = ft_gzip_file_init( zip, stream, source );
 		if ( error ) {
-			FT_FREE( zip );
+			FT2_1_3_FREE( zip );
 			goto Exit;
 		}
 
@@ -517,15 +517,15 @@ Exit:
 	return error;
 }
 
-#else  /* !FT_CONFIG_OPTION_USE_ZLIB */
+#else  /* !FT2_1_3_CONFIG_OPTION_USE_ZLIB */
 
-FT_EXPORT_DEF( FT_Error )
-FT_Stream_OpenGzip( FT_Stream    stream,
-                    FT_Stream    source ) {
-	FT_UNUSED( stream );
-	FT_UNUSED( source );
+FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_Stream_OpenGzip( FT2_1_3_Stream    stream,
+                    FT2_1_3_Stream    source ) {
+	FT2_1_3_UNUSED( stream );
+	FT2_1_3_UNUSED( source );
 
-	return FT_Err_Unimplemented_Feature;
+	return FT2_1_3_Err_Unimplemented_Feature;
 }
 
-#endif /* !FT_CONFIG_OPTION_USE_ZLIB */
+#endif /* !FT2_1_3_CONFIG_OPTION_USE_ZLIB */
