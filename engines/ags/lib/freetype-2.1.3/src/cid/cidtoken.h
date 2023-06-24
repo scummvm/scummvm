@@ -16,8 +16,8 @@
 /***************************************************************************/
 
 
-#undef  FT_STRUCTURE
-#define FT_STRUCTURE  CID_FaceInfoRec
+#undef  FT2_1_3_STRUCTURE
+#define FT2_1_3_STRUCTURE  CID_FaceInfoRec
 #undef  T1CODE
 #define T1CODE        T1_FIELD_LOCATION_CID_INFO
 
@@ -34,8 +34,8 @@ T1_FIELD_NUM   ( "GDBytes", gd_bytes )
 T1_FIELD_NUM   ( "CIDCount", cid_count )
 
 
-#undef  FT_STRUCTURE
-#define FT_STRUCTURE  PS_FontInfoRec
+#undef  FT2_1_3_STRUCTURE
+#define FT2_1_3_STRUCTURE  PS_FontInfoRec
 #undef  T1CODE
 #define T1CODE        T1_FIELD_LOCATION_FONT_INFO
 
@@ -50,8 +50,8 @@ T1_FIELD_NUM      ( "UnderlinePosition", underline_position )
 T1_FIELD_NUM      ( "UnderlineThickness", underline_thickness )
 
 
-#undef  FT_STRUCTURE
-#define FT_STRUCTURE  CID_FaceDictRec
+#undef  FT2_1_3_STRUCTURE
+#define FT2_1_3_STRUCTURE  CID_FaceDictRec
 #undef  T1CODE
 #define T1CODE        T1_FIELD_LOCATION_FONT_DICT
 
@@ -66,8 +66,8 @@ T1_FIELD_FIXED( "ExpansionFactor", expansion_factor )
 T1_FIELD_NUM  ( "StrokeWidth", stroke_width )
 
 
-#undef  FT_STRUCTURE
-#define FT_STRUCTURE  PS_PrivateRec
+#undef  FT2_1_3_STRUCTURE
+#define FT2_1_3_STRUCTURE  PS_PrivateRec
 #undef  T1CODE
 #define T1CODE        T1_FIELD_LOCATION_PRIVATE
 

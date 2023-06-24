@@ -17,10 +17,10 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_DEBUG_H
-#include FT_CONFIG_CONFIG_H
-#include FT_MULTIPLE_MASTERS_H
-#include FT_INTERNAL_TYPE1_TYPES_H
+#include FT2_1_3_INTERNAL_DEBUG_H
+#include FT2_1_3_CONFIG_CONFIG_H
+#include FT2_1_3_MULTIPLE_MASTERS_H
+#include FT2_1_3_INTERNAL_TYPE1_TYPES_H
 
 #include "cidload.h"
 
@@ -29,20 +29,20 @@
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
+/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT_COMPONENT
-#define FT_COMPONENT  trace_cidload
+#undef  FT2_1_3_COMPONENT
+#define FT2_1_3_COMPONENT  trace_cidload
 
 
 /* read a single offset */
-FT_LOCAL_DEF( FT_Long )
-cid_get_offset( FT_Byte**  start,
-                FT_Byte    offsize ) {
-	FT_Long   result;
-	FT_Byte*  p = *start;
+FT2_1_3_LOCAL_DEF( FT2_1_3_Long )
+cid_get_offset( FT2_1_3_Byte**  start,
+                FT2_1_3_Byte    offsize ) {
+	FT2_1_3_Long   result;
+	FT2_1_3_Byte*  p = *start;
 
 
 	for ( result = 0; offsize > 0; offsize-- ) {
@@ -55,16 +55,16 @@ cid_get_offset( FT_Byte**  start,
 }
 
 
-FT_LOCAL_DEF( void )
-cid_decrypt( FT_Byte*   buffer,
-             FT_Offset  length,
-             FT_UShort  seed ) {
+FT2_1_3_LOCAL_DEF( void )
+cid_decrypt( FT2_1_3_Byte*   buffer,
+             FT2_1_3_Offset  length,
+             FT2_1_3_UShort  seed ) {
 	while ( length > 0 ) {
-		FT_Byte  plain;
+		FT2_1_3_Byte  plain;
 
 
-		plain     = (FT_Byte)( *buffer ^ ( seed >> 8 ) );
-		seed      = (FT_UShort)( ( *buffer + seed ) * 52845U + 22719 );
+		plain     = (FT2_1_3_Byte)( *buffer ^ ( seed >> 8 ) );
+		seed      = (FT2_1_3_UShort)( ( *buffer + seed ) * 52845U + 22719 );
 		*buffer++ = plain;
 		length--;
 	}
@@ -80,20 +80,20 @@ cid_decrypt( FT_Byte*   buffer,
 /*************************************************************************/
 
 
-static FT_Error
+static FT2_1_3_Error
 cid_load_keyword( CID_Face        face,
                   CID_Loader*     loader,
                   const T1_Field  keyword ) {
-	FT_Error      error;
+	FT2_1_3_Error      error;
 	CID_Parser*   parser = &loader->parser;
-	FT_Byte*      object;
+	FT2_1_3_Byte*      object;
 	void*         dummy_object;
 	CID_FaceInfo  cid = &face->cid;
 
 
 	/* if the keyword has a dedicated callback, call it */
 	if ( keyword->type == T1_FIELD_TYPE_CALLBACK ) {
-		keyword->reader( (FT_Face)face, parser );
+		keyword->reader( (FT2_1_3_Face)face, parser );
 		error = parser->root.error;
 		goto Exit;
 	}
@@ -101,11 +101,11 @@ cid_load_keyword( CID_Face        face,
 	/* we must now compute the address of our target object */
 	switch ( keyword->location ) {
 	case T1_FIELD_LOCATION_CID_INFO:
-		object = (FT_Byte*)cid;
+		object = (FT2_1_3_Byte*)cid;
 		break;
 
 	case T1_FIELD_LOCATION_FONT_INFO:
-		object = (FT_Byte*)&cid->font_info;
+		object = (FT2_1_3_Byte*)&cid->font_info;
 		break;
 
 	default: {
@@ -113,7 +113,7 @@ cid_load_keyword( CID_Face        face,
 
 
 		if ( parser->num_dict < 0 ) {
-			FT_ERROR(( "cid_load_keyword: invalid use of `%s'!\n",
+			FT2_1_3_ERROR(( "cid_load_keyword: invalid use of `%s'!\n",
 			           keyword->ident ));
 			error = CID_Err_Syntax_Error;
 			goto Exit;
@@ -122,11 +122,11 @@ cid_load_keyword( CID_Face        face,
 		dict = cid->font_dicts + parser->num_dict;
 		switch ( keyword->location ) {
 		case T1_FIELD_LOCATION_PRIVATE:
-			object = (FT_Byte*)&dict->private_dict;
+			object = (FT2_1_3_Byte*)&dict->private_dict;
 			break;
 
 		default:
-			object = (FT_Byte*)dict;
+			object = (FT2_1_3_Byte*)dict;
 		}
 	}
 	}
@@ -145,33 +145,33 @@ Exit:
 }
 
 
-FT_CALLBACK_DEF( FT_Error )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 parse_font_bbox( CID_Face     face,
                  CID_Parser*  parser ) {
-	FT_Fixed  temp[4];
-	FT_BBox*  bbox = &face->cid.font_bbox;
+	FT2_1_3_Fixed  temp[4];
+	FT2_1_3_BBox*  bbox = &face->cid.font_bbox;
 
 
 	(void)cid_parser_to_fixed_array( parser, 4, temp, 0 );
-	bbox->xMin = FT_RoundFix( temp[0] );
-	bbox->yMin = FT_RoundFix( temp[1] );
-	bbox->xMax = FT_RoundFix( temp[2] );
-	bbox->yMax = FT_RoundFix( temp[3] );
+	bbox->xMin = FT2_1_3_RoundFix( temp[0] );
+	bbox->yMin = FT2_1_3_RoundFix( temp[1] );
+	bbox->xMax = FT2_1_3_RoundFix( temp[2] );
+	bbox->yMax = FT2_1_3_RoundFix( temp[3] );
 
 	return CID_Err_Ok;       /* this is a callback function; */
 	/* we must return an error code */
 }
 
 
-FT_CALLBACK_DEF( FT_Error )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 parse_font_matrix( CID_Face     face,
                    CID_Parser*  parser ) {
-	FT_Matrix*    matrix;
-	FT_Vector*    offset;
+	FT2_1_3_Matrix*    matrix;
+	FT2_1_3_Vector*    offset;
 	CID_FaceDict  dict;
-	FT_Face       root = (FT_Face)&face->root;
-	FT_Fixed      temp[6];
-	FT_Fixed      temp_scale;
+	FT2_1_3_Face       root = (FT2_1_3_Face)&face->root;
+	FT2_1_3_Fixed      temp[6];
+	FT2_1_3_Fixed      temp_scale;
 
 
 	if ( parser->num_dict >= 0 ) {
@@ -186,16 +186,16 @@ parse_font_matrix( CID_Face     face,
 		/* Set Units per EM based on FontMatrix values.  We set the value to */
 		/* `1000/temp_scale', because temp_scale was already multiplied by   */
 		/* 1000 (in t1_tofixed(), from psobjs.c).                            */
-		root->units_per_EM = (FT_UShort)( FT_DivFix( 0x10000L,
-		                                  FT_DivFix( temp_scale, 1000 ) ) );
+		root->units_per_EM = (FT2_1_3_UShort)( FT2_1_3_DivFix( 0x10000L,
+		                                  FT2_1_3_DivFix( temp_scale, 1000 ) ) );
 
 		/* we need to scale the values by 1.0/temp[3] */
 		if ( temp_scale != 0x10000L ) {
-			temp[0] = FT_DivFix( temp[0], temp_scale );
-			temp[1] = FT_DivFix( temp[1], temp_scale );
-			temp[2] = FT_DivFix( temp[2], temp_scale );
-			temp[4] = FT_DivFix( temp[4], temp_scale );
-			temp[5] = FT_DivFix( temp[5], temp_scale );
+			temp[0] = FT2_1_3_DivFix( temp[0], temp_scale );
+			temp[1] = FT2_1_3_DivFix( temp[1], temp_scale );
+			temp[2] = FT2_1_3_DivFix( temp[2], temp_scale );
+			temp[4] = FT2_1_3_DivFix( temp[4], temp_scale );
+			temp[5] = FT2_1_3_DivFix( temp[5], temp_scale );
 			temp[3] = 0x10000L;
 		}
 
@@ -214,25 +214,25 @@ parse_font_matrix( CID_Face     face,
 }
 
 
-FT_CALLBACK_DEF( FT_Error )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 parse_fd_array( CID_Face     face,
                 CID_Parser*  parser ) {
 	CID_FaceInfo  cid    = &face->cid;
-	FT_Memory     memory = face->root.memory;
-	FT_Error      error  = CID_Err_Ok;
-	FT_Long       num_dicts;
+	FT2_1_3_Memory     memory = face->root.memory;
+	FT2_1_3_Error      error  = CID_Err_Ok;
+	FT2_1_3_Long       num_dicts;
 
 
 	num_dicts = cid_parser_to_int( parser );
 
 	if ( !cid->font_dicts ) {
-		FT_Int  n;
+		FT2_1_3_Int  n;
 
 
-		if ( FT_NEW_ARRAY( cid->font_dicts, num_dicts ) )
+		if ( FT2_1_3_NEW_ARRAY( cid->font_dicts, num_dicts ) )
 			goto Exit;
 
-		cid->num_dicts = (FT_UInt)num_dicts;
+		cid->num_dicts = (FT2_1_3_UInt)num_dicts;
 
 		/* don't forget to set a few defaults */
 		for ( n = 0; n < cid->num_dicts; n++ ) {
@@ -270,11 +270,11 @@ is_alpha( char  c ) {
 }
 
 
-static FT_Error
+static FT2_1_3_Error
 cid_parse_dict( CID_Face     face,
                 CID_Loader*  loader,
-                FT_Byte*     base,
-                FT_Long      size ) {
+                FT2_1_3_Byte*     base,
+                FT2_1_3_Long      size ) {
 	CID_Parser*  parser = &loader->parser;
 
 
@@ -283,8 +283,8 @@ cid_parse_dict( CID_Face     face,
 	parser->root.error  = 0;
 
 	{
-		FT_Byte*  cur   = base;
-		FT_Byte*  limit = cur + size;
+		FT2_1_3_Byte*  cur   = base;
+		FT2_1_3_Byte*  limit = cur + size;
 
 
 		for ( ; cur < limit; cur++ ) {
@@ -300,8 +300,8 @@ cid_parse_dict( CID_Face     face,
 			}
 			/* look for immediates */
 			else if ( *cur == '/' && cur + 2 < limit ) {
-				FT_Byte*  cur2;
-				FT_Int    len;
+				FT2_1_3_Byte*  cur2;
+				FT2_1_3_Int    len;
 
 
 				cur++;
@@ -310,23 +310,23 @@ cid_parse_dict( CID_Face     face,
 				while ( cur2 < limit && is_alpha( *cur2 ) )
 					cur2++;
 
-				len = (FT_Int)( cur2 - cur );
+				len = (FT2_1_3_Int)( cur2 - cur );
 				if ( len > 0 && len < 22 ) {
 					/* now compare the immediate name to the keyword table */
 					T1_Field  keyword = (T1_Field) cid_field_records;
 
 
 					for (;;) {
-						FT_Byte*  name;
+						FT2_1_3_Byte*  name;
 
 
-						name = (FT_Byte*)keyword->ident;
+						name = (FT2_1_3_Byte*)keyword->ident;
 						if ( !name )
 							break;
 
 						if ( cur[0] == name[0]                          &&
-						        len == (FT_Int)ft_strlen( (const char*)name ) ) {
-							FT_Int  n;
+						        len == (FT2_1_3_Int)ft_strlen( (const char*)name ) ) {
+							FT2_1_3_Int  n;
 
 
 							for ( n = 1; n < len; n++ )
@@ -358,67 +358,67 @@ cid_parse_dict( CID_Face     face,
 
 
 /* read the subrmap and the subrs of each font dict */
-static FT_Error
+static FT2_1_3_Error
 cid_read_subrs( CID_Face  face ) {
 	CID_FaceInfo  cid    = &face->cid;
-	FT_Memory     memory = face->root.memory;
-	FT_Stream     stream = face->root.stream;
-	FT_Error      error;
-	FT_Int        n;
+	FT2_1_3_Memory     memory = face->root.memory;
+	FT2_1_3_Stream     stream = face->root.stream;
+	FT2_1_3_Error      error;
+	FT2_1_3_Int        n;
 	CID_Subrs     subr;
-	FT_UInt       max_offsets = 0;
-	FT_ULong*     offsets = 0;
+	FT2_1_3_UInt       max_offsets = 0;
+	FT2_1_3_ULong*     offsets = 0;
 
 
-	if ( FT_NEW_ARRAY( face->subrs, cid->num_dicts ) )
+	if ( FT2_1_3_NEW_ARRAY( face->subrs, cid->num_dicts ) )
 		goto Exit;
 
 	subr = face->subrs;
 	for ( n = 0; n < cid->num_dicts; n++, subr++ ) {
 		CID_FaceDict  dict  = cid->font_dicts + n;
-		FT_Int        lenIV = dict->private_dict.lenIV;
-		FT_UInt       count, num_subrs = dict->num_subrs;
-		FT_ULong      data_len;
-		FT_Byte*      p;
+		FT2_1_3_Int        lenIV = dict->private_dict.lenIV;
+		FT2_1_3_UInt       count, num_subrs = dict->num_subrs;
+		FT2_1_3_ULong      data_len;
+		FT2_1_3_Byte*      p;
 
 
 		/* reallocate offsets array if needed */
 		if ( num_subrs + 1 > max_offsets ) {
-			FT_UInt  new_max = ( num_subrs + 1 + 3 ) & -4;
+			FT2_1_3_UInt  new_max = ( num_subrs + 1 + 3 ) & -4;
 
 
-			if ( FT_RENEW_ARRAY( offsets, max_offsets, new_max ) )
+			if ( FT2_1_3_RENEW_ARRAY( offsets, max_offsets, new_max ) )
 				goto Fail;
 
 			max_offsets = new_max;
 		}
 
 		/* read the subrmap's offsets */
-		if ( FT_STREAM_SEEK( cid->data_offset + dict->subrmap_offset ) ||
-		        FT_FRAME_ENTER( ( num_subrs + 1 ) * dict->sd_bytes )   )
+		if ( FT2_1_3_STREAM_SEEK( cid->data_offset + dict->subrmap_offset ) ||
+		        FT2_1_3_FRAME_ENTER( ( num_subrs + 1 ) * dict->sd_bytes )   )
 			goto Fail;
 
-		p = (FT_Byte*)stream->cursor;
+		p = (FT2_1_3_Byte*)stream->cursor;
 		for ( count = 0; count <= num_subrs; count++ )
-			offsets[count] = cid_get_offset( &p, (FT_Byte)dict->sd_bytes );
+			offsets[count] = cid_get_offset( &p, (FT2_1_3_Byte)dict->sd_bytes );
 
-		FT_FRAME_EXIT();
+		FT2_1_3_FRAME_EXIT();
 
 		/* now, compute the size of subrs charstrings, */
 		/* allocate, and read them                     */
 		data_len = offsets[num_subrs] - offsets[0];
 
-		if ( FT_NEW_ARRAY( subr->code, num_subrs + 1 ) ||
-		        FT_ALLOC( subr->code[0], data_len )   )
+		if ( FT2_1_3_NEW_ARRAY( subr->code, num_subrs + 1 ) ||
+		        FT2_1_3_ALLOC( subr->code[0], data_len )   )
 			goto Fail;
 
-		if ( FT_STREAM_SEEK( cid->data_offset + offsets[0] ) ||
-		        FT_STREAM_READ( subr->code[0], data_len )  )
+		if ( FT2_1_3_STREAM_SEEK( cid->data_offset + offsets[0] ) ||
+		        FT2_1_3_STREAM_READ( subr->code[0], data_len )  )
 			goto Fail;
 
 		/* set up pointers */
 		for ( count = 1; count <= num_subrs; count++ ) {
-			FT_ULong  len;
+			FT2_1_3_ULong  len;
 
 
 			len               = offsets[count] - offsets[count - 1];
@@ -428,7 +428,7 @@ cid_read_subrs( CID_Face  face ) {
 		/* decrypt subroutines, but only if lenIV >= 0 */
 		if ( lenIV >= 0 ) {
 			for ( count = 0; count < num_subrs; count++ ) {
-				FT_ULong  len;
+				FT2_1_3_ULong  len;
 
 
 				len = offsets[count + 1] - offsets[count];
@@ -440,18 +440,18 @@ cid_read_subrs( CID_Face  face ) {
 	}
 
 Exit:
-	FT_FREE( offsets );
+	FT2_1_3_FREE( offsets );
 	return error;
 
 Fail:
 	if ( face->subrs ) {
 		for ( n = 0; n < cid->num_dicts; n++ ) {
 			if ( face->subrs[n].code )
-				FT_FREE( face->subrs[n].code[0] );
+				FT2_1_3_FREE( face->subrs[n].code[0] );
 
-			FT_FREE( face->subrs[n].code );
+			FT2_1_3_FREE( face->subrs[n].code );
 		}
-		FT_FREE( face->subrs );
+		FT2_1_3_FREE( face->subrs );
 	}
 	goto Exit;
 }
@@ -460,9 +460,9 @@ Fail:
 static void
 t1_init_loader( CID_Loader*  loader,
                 CID_Face     face ) {
-	FT_UNUSED( face );
+	FT2_1_3_UNUSED( face );
 
-	FT_MEM_ZERO( loader, sizeof ( *loader ) );
+	FT2_1_3_MEM_ZERO( loader, sizeof ( *loader ) );
 }
 
 
@@ -476,11 +476,11 @@ t1_done_loader( CID_Loader*  loader ) {
 }
 
 
-FT_LOCAL_DEF( FT_Error )
+FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 cid_face_open( CID_Face  face ) {
 	CID_Loader   loader;
 	CID_Parser*  parser;
-	FT_Error     error;
+	FT2_1_3_Error     error;
 
 
 	t1_init_loader( &loader, face );

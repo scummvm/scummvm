@@ -17,25 +17,25 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_DEBUG_H
-#include FT_INTERNAL_STREAM_H
+#include FT2_1_3_INTERNAL_DEBUG_H
+#include FT2_1_3_INTERNAL_STREAM_H
 #include "cidgload.h"
 #include "cidload.h"
-#include FT_INTERNAL_POSTSCRIPT_NAMES_H
-#include FT_INTERNAL_POSTSCRIPT_AUX_H
-#include FT_INTERNAL_POSTSCRIPT_HINTS_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_NAMES_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_AUX_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_HINTS_H
 
 #include "ciderrs.h"
 
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
+/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT_COMPONENT
-#define FT_COMPONENT  trace_cidobjs
+#undef  FT2_1_3_COMPONENT
+#define FT2_1_3_COMPONENT  trace_cidobjs
 
 
 /*************************************************************************/
@@ -44,13 +44,13 @@
 /*                                                                       */
 /*************************************************************************/
 
-FT_LOCAL_DEF( void )
+FT2_1_3_LOCAL_DEF( void )
 cid_slot_done( CID_GlyphSlot  slot ) {
 	slot->root.internal->glyph_hints = 0;
 }
 
 
-FT_LOCAL_DEF( FT_Error )
+FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 cid_slot_init( CID_GlyphSlot  slot ) {
 	CID_Face          face;
 	PSHinter_Service  pshinter;
@@ -60,10 +60,10 @@ cid_slot_init( CID_GlyphSlot  slot ) {
 	pshinter = (PSHinter_Service)face->pshinter;
 
 	if ( pshinter ) {
-		FT_Module  module;
+		FT2_1_3_Module  module;
 
 
-		module = FT_Get_Module( slot->root.face->driver->root.library,
+		module = FT2_1_3_Get_Module( slot->root.face->driver->root.library,
 		                        "pshinter" );
 		if ( module ) {
 			T1_Hints_Funcs  funcs;
@@ -89,10 +89,10 @@ static PSH_Globals_Funcs
 cid_size_get_globals_funcs( CID_Size  size ) {
 	CID_Face          face     = (CID_Face)size->root.face;
 	PSHinter_Service  pshinter = (PSHinter_Service)face->pshinter;
-	FT_Module         module;
+	FT2_1_3_Module         module;
 
 
-	module = FT_Get_Module( size->root.face->driver->root.library,
+	module = FT2_1_3_Get_Module( size->root.face->driver->root.library,
 	                        "pshinter" );
 	return ( module && pshinter && pshinter->get_globals_funcs )
 	       ? pshinter->get_globals_funcs( module )
@@ -100,7 +100,7 @@ cid_size_get_globals_funcs( CID_Size  size ) {
 }
 
 
-FT_LOCAL_DEF( void )
+FT2_1_3_LOCAL_DEF( void )
 cid_size_done( CID_Size  size ) {
 	if ( size->root.internal ) {
 		PSH_Globals_Funcs  funcs;
@@ -115,9 +115,9 @@ cid_size_done( CID_Size  size ) {
 }
 
 
-FT_LOCAL_DEF( FT_Error )
+FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 cid_size_init( CID_Size  size ) {
-	FT_Error           error = 0;
+	FT2_1_3_Error           error = 0;
 	PSH_Globals_Funcs  funcs = cid_size_get_globals_funcs( size );
 
 
@@ -130,17 +130,17 @@ cid_size_init( CID_Size  size ) {
 
 		error = funcs->create( size->root.face->memory, priv, &globals );
 		if ( !error )
-			size->root.internal = (FT_Size_Internal)(void*)globals;
+			size->root.internal = (FT2_1_3_Size_Internal)(void*)globals;
 	}
 
 	return error;
 }
 
 
-FT_LOCAL_DEF( FT_Error )
+FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 cid_size_reset( CID_Size  size ) {
 	PSH_Globals_Funcs  funcs = cid_size_get_globals_funcs( size );
-	FT_Error           error = 0;
+	FT2_1_3_Error           error = 0;
 
 
 	if ( funcs )
@@ -169,9 +169,9 @@ cid_size_reset( CID_Size  size ) {
 /* <Input>                                                               */
 /*    face :: A pointer to the face object to destroy.                   */
 /*                                                                       */
-FT_LOCAL_DEF( void )
+FT2_1_3_LOCAL_DEF( void )
 cid_face_done( CID_Face  face ) {
-	FT_Memory  memory;
+	FT2_1_3_Memory  memory;
 
 
 	if ( face ) {
@@ -183,7 +183,7 @@ cid_face_done( CID_Face  face ) {
 
 		/* release subrs */
 		if ( face->subrs ) {
-			FT_Int  n;
+			FT2_1_3_Int  n;
 
 
 			for ( n = 0; n < cid->num_dicts; n++ ) {
@@ -191,29 +191,29 @@ cid_face_done( CID_Face  face ) {
 
 
 				if ( subr->code ) {
-					FT_FREE( subr->code[0] );
-					FT_FREE( subr->code );
+					FT2_1_3_FREE( subr->code[0] );
+					FT2_1_3_FREE( subr->code );
 				}
 			}
 
-			FT_FREE( face->subrs );
+			FT2_1_3_FREE( face->subrs );
 		}
 
 		/* release FontInfo strings */
-		FT_FREE( info->version );
-		FT_FREE( info->notice );
-		FT_FREE( info->full_name );
-		FT_FREE( info->family_name );
-		FT_FREE( info->weight );
+		FT2_1_3_FREE( info->version );
+		FT2_1_3_FREE( info->notice );
+		FT2_1_3_FREE( info->full_name );
+		FT2_1_3_FREE( info->family_name );
+		FT2_1_3_FREE( info->weight );
 
 		/* release font dictionaries */
-		FT_FREE( cid->font_dicts );
+		FT2_1_3_FREE( cid->font_dicts );
 		cid->num_dicts = 0;
 
 		/* release other strings */
-		FT_FREE( cid->cid_font_name );
-		FT_FREE( cid->registry );
-		FT_FREE( cid->ordering );
+		FT2_1_3_FREE( cid->cid_font_name );
+		FT2_1_3_FREE( cid->registry );
+		FT2_1_3_FREE( cid->ordering );
 
 		face->root.family_name = 0;
 		face->root.style_name  = 0;
@@ -244,51 +244,51 @@ cid_face_done( CID_Face  face ) {
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT_LOCAL_DEF( FT_Error )
-cid_face_init( FT_Stream      stream,
+FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+cid_face_init( FT2_1_3_Stream      stream,
                CID_Face       face,
-               FT_Int         face_index,
-               FT_Int         num_params,
-               FT_Parameter*  params ) {
-	FT_Error          error;
+               FT2_1_3_Int         face_index,
+               FT2_1_3_Int         num_params,
+               FT2_1_3_Parameter*  params ) {
+	FT2_1_3_Error          error;
 	PSNames_Service   psnames;
 	PSAux_Service     psaux;
 	PSHinter_Service  pshinter;
 
-	FT_UNUSED( num_params );
-	FT_UNUSED( params );
-	FT_UNUSED( face_index );
-	FT_UNUSED( stream );
+	FT2_1_3_UNUSED( num_params );
+	FT2_1_3_UNUSED( params );
+	FT2_1_3_UNUSED( face_index );
+	FT2_1_3_UNUSED( stream );
 
 
 	face->root.num_faces = 1;
 
 	psnames = (PSNames_Service)face->psnames;
 	if ( !psnames ) {
-		psnames = (PSNames_Service)FT_Get_Module_Interface(
-		              FT_FACE_LIBRARY( face ), "psnames" );
+		psnames = (PSNames_Service)FT2_1_3_Get_Module_Interface(
+		              FT2_1_3_FACE_LIBRARY( face ), "psnames" );
 
 		face->psnames = psnames;
 	}
 
 	psaux = (PSAux_Service)face->psaux;
 	if ( !psaux ) {
-		psaux = (PSAux_Service)FT_Get_Module_Interface(
-		            FT_FACE_LIBRARY( face ), "psaux" );
+		psaux = (PSAux_Service)FT2_1_3_Get_Module_Interface(
+		            FT2_1_3_FACE_LIBRARY( face ), "psaux" );
 
 		face->psaux = psaux;
 	}
 
 	pshinter = (PSHinter_Service)face->pshinter;
 	if ( !pshinter ) {
-		pshinter = (PSHinter_Service)FT_Get_Module_Interface(
-		               FT_FACE_LIBRARY( face ), "pshinter" );
+		pshinter = (PSHinter_Service)FT2_1_3_Get_Module_Interface(
+		               FT2_1_3_FACE_LIBRARY( face ), "pshinter" );
 
 		face->pshinter = pshinter;
 	}
 
 	/* open the tokenizer; this will also check the font format */
-	if ( FT_STREAM_SEEK( 0 ) )
+	if ( FT2_1_3_STREAM_SEEK( 0 ) )
 		goto Exit;
 
 	error = cid_face_open( face );
@@ -301,7 +301,7 @@ cid_face_init( FT_Stream      stream,
 
 	/* check the face index */
 	if ( face_index != 0 ) {
-		FT_ERROR(( "cid_face_init: invalid face index\n" ));
+		FT2_1_3_ERROR(( "cid_face_init: invalid face index\n" ));
 		error = CID_Err_Invalid_Argument;
 		goto Exit;
 	}
@@ -311,19 +311,19 @@ cid_face_init( FT_Stream      stream,
 		/* Init the face object fields */
 		/* Now set up root face fields */
 		{
-			FT_Face  root = (FT_Face)&face->root;
+			FT2_1_3_Face  root = (FT2_1_3_Face)&face->root;
 
 
 			root->num_glyphs   = face->cid.cid_count;
 			root->num_charmaps = 0;
 
 			root->face_index = face_index;
-			root->face_flags = FT_FACE_FLAG_SCALABLE;
+			root->face_flags = FT2_1_3_FACE_FLAG_SCALABLE;
 
-			root->face_flags |= FT_FACE_FLAG_HORIZONTAL;
+			root->face_flags |= FT2_1_3_FACE_FLAG_HORIZONTAL;
 
 			if ( face->cid.font_info.is_fixed_pitch )
-				root->face_flags |= FT_FACE_FLAG_FIXED_WIDTH;
+				root->face_flags |= FT2_1_3_FACE_FLAG_FIXED_WIDTH;
 
 			/* XXX: TODO: add kerning with .afm support */
 
@@ -361,9 +361,9 @@ cid_face_init( FT_Stream      stream,
 			if ( !root->units_per_EM )
 				root->units_per_EM  = 1000;
 
-			root->ascender  = (FT_Short)( root->bbox.yMax );
-			root->descender = (FT_Short)( root->bbox.yMin );
-			root->height    = (FT_Short)(
+			root->ascender  = (FT2_1_3_Short)( root->bbox.yMax );
+			root->descender = (FT2_1_3_Short)( root->bbox.yMin );
+			root->height    = (FT2_1_3_Short)(
 			                      ( ( root->ascender + root->descender ) * 12 ) / 10 );
 
 			root->underline_position  = face->cid.font_info.underline_position;
@@ -393,9 +393,9 @@ Exit:
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT_LOCAL_DEF( FT_Error )
+FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 cid_driver_init( CID_Driver  driver ) {
-	FT_UNUSED( driver );
+	FT2_1_3_UNUSED( driver );
 
 	return CID_Err_Ok;
 }
@@ -412,9 +412,9 @@ cid_driver_init( CID_Driver  driver ) {
 /* <Input>                                                               */
 /*    driver :: A handle to the target CID driver.                       */
 /*                                                                       */
-FT_LOCAL_DEF( void )
+FT2_1_3_LOCAL_DEF( void )
 cid_driver_done( CID_Driver  driver ) {
-	FT_UNUSED( driver );
+	FT2_1_3_UNUSED( driver );
 }
 
 

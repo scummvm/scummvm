@@ -21,12 +21,12 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_TYPE1_TYPES_H
-#include FT_INTERNAL_STREAM_H
-#include FT_INTERNAL_POSTSCRIPT_AUX_H
+#include FT2_1_3_INTERNAL_TYPE1_TYPES_H
+#include FT2_1_3_INTERNAL_STREAM_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_AUX_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -57,26 +57,26 @@ FT_BEGIN_HEADER
 /*                                                                       */
 typedef struct  CID_Parser_ {
 	PS_ParserRec  root;
-	FT_Stream     stream;
+	FT2_1_3_Stream     stream;
 
-	FT_Byte*      postscript;
-	FT_Long       postscript_len;
+	FT2_1_3_Byte*      postscript;
+	FT2_1_3_Long       postscript_len;
 
-	FT_ULong      data_offset;
+	FT2_1_3_ULong      data_offset;
 
 	CID_FaceInfo  cid;
-	FT_Int        num_dict;
+	FT2_1_3_Int        num_dict;
 
 } CID_Parser;
 
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 cid_parser_new( CID_Parser*    parser,
-                FT_Stream      stream,
-                FT_Memory      memory,
+                FT2_1_3_Stream      stream,
+                FT2_1_3_Memory      memory,
                 PSAux_Service  psaux );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 cid_parser_done( CID_Parser*  parser );
 
 
@@ -107,7 +107,7 @@ cid_parser_done( CID_Parser*  parser );
           (p)->root.funcs.load_field_table( &(p)->root, f, o, 0, 0 )
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __CIDPARSE_H__ */
 

@@ -19,21 +19,21 @@
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "cidriver.h"
 #include "cidgload.h"
-#include FT_INTERNAL_DEBUG_H
-#include FT_INTERNAL_STREAM_H
-#include FT_INTERNAL_POSTSCRIPT_NAMES_H
+#include FT2_1_3_INTERNAL_DEBUG_H
+#include FT2_1_3_INTERNAL_STREAM_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_NAMES_H
 
 #include "ciderrs.h"
 
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
+/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT_COMPONENT
-#define FT_COMPONENT  trace_ciddriver
+#undef  FT2_1_3_COMPONENT
+#define FT2_1_3_COMPONENT  trace_ciddriver
 
 
 static const char*
@@ -48,38 +48,38 @@ cid_get_postscript_name( CID_Face  face ) {
 }
 
 
-static FT_Module_Interface
-cid_get_interface( FT_Driver         driver,
-                   const FT_String*  cid_interface ) {
-	FT_UNUSED( driver );
-	FT_UNUSED( cid_interface );
+static FT2_1_3_Module_Interface
+cid_get_interface( FT2_1_3_Driver         driver,
+                   const FT2_1_3_String*  cid_interface ) {
+	FT2_1_3_UNUSED( driver );
+	FT2_1_3_UNUSED( cid_interface );
 
 	if ( ft_strcmp( (const char*)cid_interface, "postscript_name" ) == 0 )
-		return (FT_Module_Interface)cid_get_postscript_name;
+		return (FT2_1_3_Module_Interface)cid_get_postscript_name;
 
 	return 0;
 }
 
 
 
-FT_CALLBACK_TABLE_DEF
-const FT_Driver_ClassRec  t1cid_driver_class = {
-	/* first of all, the FT_Module_Class fields */
+FT2_1_3_CALLBACK_TABLE_DEF
+const FT2_1_3_Driver_ClassRec  t1cid_driver_class = {
+	/* first of all, the FT2_1_3_Module_Class fields */
 	{
 		ft_module_font_driver       |
 		ft_module_driver_scalable   |
 		ft_module_driver_has_hinter,
 
-		sizeof( FT_DriverRec ),
+		sizeof( FT2_1_3_DriverRec ),
 		"t1cid",   /* module name           */
 		0x10000L,  /* version 1.0 of driver */
 		0x20000L,  /* requires FreeType 2.0 */
 
 		0,
 
-		(FT_Module_Constructor)cid_driver_init,
-		(FT_Module_Destructor) cid_driver_done,
-		(FT_Module_Requester)  cid_get_interface
+		(FT2_1_3_Module_Constructor)cid_driver_init,
+		(FT2_1_3_Module_Destructor) cid_driver_done,
+		(FT2_1_3_Module_Requester)  cid_get_interface
 	},
 
 	/* then the other font drivers fields */
@@ -87,23 +87,23 @@ const FT_Driver_ClassRec  t1cid_driver_class = {
 	sizeof( CID_SizeRec ),
 	sizeof( CID_GlyphSlotRec ),
 
-	(FT_Face_InitFunc)       cid_face_init,
-	(FT_Face_DoneFunc)       cid_face_done,
+	(FT2_1_3_Face_InitFunc)       cid_face_init,
+	(FT2_1_3_Face_DoneFunc)       cid_face_done,
 
-	(FT_Size_InitFunc)       cid_size_init,
-	(FT_Size_DoneFunc)       cid_size_done,
-	(FT_Slot_InitFunc)       cid_slot_init,
-	(FT_Slot_DoneFunc)       cid_slot_done,
+	(FT2_1_3_Size_InitFunc)       cid_size_init,
+	(FT2_1_3_Size_DoneFunc)       cid_size_done,
+	(FT2_1_3_Slot_InitFunc)       cid_slot_init,
+	(FT2_1_3_Slot_DoneFunc)       cid_slot_done,
 
-	(FT_Size_ResetPointsFunc)cid_size_reset,
-	(FT_Size_ResetPixelsFunc)cid_size_reset,
+	(FT2_1_3_Size_ResetPointsFunc)cid_size_reset,
+	(FT2_1_3_Size_ResetPixelsFunc)cid_size_reset,
 
-	(FT_Slot_LoadFunc)       cid_slot_load_glyph,
+	(FT2_1_3_Slot_LoadFunc)       cid_slot_load_glyph,
 
-	(FT_Face_GetKerningFunc) 0,
-	(FT_Face_AttachFunc)     0,
+	(FT2_1_3_Face_GetKerningFunc) 0,
+	(FT2_1_3_Face_AttachFunc)     0,
 
-	(FT_Face_GetAdvancesFunc)0,
+	(FT2_1_3_Face_GetAdvancesFunc)0,
 };
 
 
