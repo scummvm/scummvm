@@ -21,8 +21,8 @@
 
 #include "common/str.h"
 #include "common/textconsole.h"
+#include "m4/adv_db_r/db_catalog.h"
 #include "m4/adv_r/db_env.h"
-#include "m4/adv_r/db_rmlst.h"
 
 namespace M4 {
 

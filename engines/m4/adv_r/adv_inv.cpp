@@ -277,7 +277,7 @@ void inv_save_game(Common::WriteStream *fp_save) {
 
 void inv_restore_game(Common::SeekableReadStream *fp_restore) {
 	char *inv_restore_buff = nullptr;
-	long    inv_size = 0, index = 0;
+	uint32 inv_size = 0, index = 0;
 	char *name;
 	int32   scene;
 

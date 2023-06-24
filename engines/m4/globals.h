@@ -24,6 +24,7 @@
 
 #include "m4/kernel.h"
 #include "m4/term.h"
+#include "m4/adv_db_r/db_catalog.h"
 #include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_been.h"
 #include "m4/adv_r/adv_inv.h"
@@ -69,6 +70,7 @@ public:
 	frac16 _globals[GLB_SHARED_VARS];
 	Resources _resources;
 	Rails_Globals _rails;
+	Catalog _catalog;
 
 	Font *_system_font = nullptr;
 	Font *_font_line = nullptr;
