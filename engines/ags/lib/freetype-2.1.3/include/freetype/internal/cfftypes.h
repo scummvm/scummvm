@@ -22,10 +22,10 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_FREETYPE_H
+#include FT2_1_3_FREETYPE_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -51,130 +51,130 @@ FT_BEGIN_HEADER
 /*    bytes       :: If the index is loaded in memory, its bytes.        */
 /*                                                                       */
 typedef struct  CFF_IndexRec_ {
-	FT_Stream  stream;
-	FT_UInt    count;
-	FT_Byte    off_size;
-	FT_ULong   data_offset;
+	FT2_1_3_Stream  stream;
+	FT2_1_3_UInt    count;
+	FT2_1_3_Byte    off_size;
+	FT2_1_3_ULong   data_offset;
 
-	FT_ULong*  offsets;
-	FT_Byte*   bytes;
+	FT2_1_3_ULong*  offsets;
+	FT2_1_3_Byte*   bytes;
 
 } CFF_IndexRec, *CFF_Index;
 
 
 typedef struct  CFF_EncodingRec_ {
-	FT_UInt     format;
-	FT_ULong    offset;
+	FT2_1_3_UInt     format;
+	FT2_1_3_ULong    offset;
 
-	FT_UInt     count;
-	FT_UShort   sids [256];  /* avoid dynamic allocations */
-	FT_UShort   codes[256];
+	FT2_1_3_UInt     count;
+	FT2_1_3_UShort   sids [256];  /* avoid dynamic allocations */
+	FT2_1_3_UShort   codes[256];
 
 } CFF_EncodingRec, *CFF_Encoding;
 
 
 typedef struct  CFF_CharsetRec_ {
 
-	FT_UInt     format;
-	FT_ULong    offset;
+	FT2_1_3_UInt     format;
+	FT2_1_3_ULong    offset;
 
-	FT_UShort*  sids;
+	FT2_1_3_UShort*  sids;
 
 } CFF_CharsetRec, *CFF_Charset;
 
 
 typedef struct  CFF_FontRecDictRec_ {
-	FT_UInt    version;
-	FT_UInt    notice;
-	FT_UInt    copyright;
-	FT_UInt    full_name;
-	FT_UInt    family_name;
-	FT_UInt    weight;
-	FT_Bool    is_fixed_pitch;
-	FT_Fixed   italic_angle;
-	FT_Pos     underline_position;
-	FT_Pos     underline_thickness;
-	FT_Int     paint_type;
-	FT_Int     charstring_type;
-	FT_Matrix  font_matrix;
-	FT_UShort  units_per_em;
-	FT_Vector  font_offset;
-	FT_ULong   unique_id;
-	FT_BBox    font_bbox;
-	FT_Pos     stroke_width;
-	FT_ULong   charset_offset;
-	FT_ULong   encoding_offset;
-	FT_ULong   charstrings_offset;
-	FT_ULong   private_offset;
-	FT_ULong   private_size;
-	FT_Long    synthetic_base;
-	FT_UInt    embedded_postscript;
-	FT_UInt    base_font_name;
-	FT_UInt    postscript;
+	FT2_1_3_UInt    version;
+	FT2_1_3_UInt    notice;
+	FT2_1_3_UInt    copyright;
+	FT2_1_3_UInt    full_name;
+	FT2_1_3_UInt    family_name;
+	FT2_1_3_UInt    weight;
+	FT2_1_3_Bool    is_fixed_pitch;
+	FT2_1_3_Fixed   italic_angle;
+	FT2_1_3_Pos     underline_position;
+	FT2_1_3_Pos     underline_thickness;
+	FT2_1_3_Int     paint_type;
+	FT2_1_3_Int     charstring_type;
+	FT2_1_3_Matrix  font_matrix;
+	FT2_1_3_UShort  units_per_em;
+	FT2_1_3_Vector  font_offset;
+	FT2_1_3_ULong   unique_id;
+	FT2_1_3_BBox    font_bbox;
+	FT2_1_3_Pos     stroke_width;
+	FT2_1_3_ULong   charset_offset;
+	FT2_1_3_ULong   encoding_offset;
+	FT2_1_3_ULong   charstrings_offset;
+	FT2_1_3_ULong   private_offset;
+	FT2_1_3_ULong   private_size;
+	FT2_1_3_Long    synthetic_base;
+	FT2_1_3_UInt    embedded_postscript;
+	FT2_1_3_UInt    base_font_name;
+	FT2_1_3_UInt    postscript;
 
 	/* these should only be used for the top-level font dictionary */
-	FT_UInt    cid_registry;
-	FT_UInt    cid_ordering;
-	FT_ULong   cid_supplement;
+	FT2_1_3_UInt    cid_registry;
+	FT2_1_3_UInt    cid_ordering;
+	FT2_1_3_ULong   cid_supplement;
 
-	FT_Long    cid_font_version;
-	FT_Long    cid_font_revision;
-	FT_Long    cid_font_type;
-	FT_Long    cid_count;
-	FT_ULong   cid_uid_base;
-	FT_ULong   cid_fd_array_offset;
-	FT_ULong   cid_fd_select_offset;
-	FT_UInt    cid_font_name;
+	FT2_1_3_Long    cid_font_version;
+	FT2_1_3_Long    cid_font_revision;
+	FT2_1_3_Long    cid_font_type;
+	FT2_1_3_Long    cid_count;
+	FT2_1_3_ULong   cid_uid_base;
+	FT2_1_3_ULong   cid_fd_array_offset;
+	FT2_1_3_ULong   cid_fd_select_offset;
+	FT2_1_3_UInt    cid_font_name;
 
 } CFF_FontRecDictRec, *CFF_FontRecDict;
 
 
 typedef struct  CFF_PrivateRec_ {
-	FT_Byte   num_blue_values;
-	FT_Byte   num_other_blues;
-	FT_Byte   num_family_blues;
-	FT_Byte   num_family_other_blues;
+	FT2_1_3_Byte   num_blue_values;
+	FT2_1_3_Byte   num_other_blues;
+	FT2_1_3_Byte   num_family_blues;
+	FT2_1_3_Byte   num_family_other_blues;
 
-	FT_Pos    blue_values[14];
-	FT_Pos    other_blues[10];
-	FT_Pos    family_blues[14];
-	FT_Pos    family_other_blues[10];
+	FT2_1_3_Pos    blue_values[14];
+	FT2_1_3_Pos    other_blues[10];
+	FT2_1_3_Pos    family_blues[14];
+	FT2_1_3_Pos    family_other_blues[10];
 
-	FT_Fixed  blue_scale;
-	FT_Pos    blue_shift;
-	FT_Pos    blue_fuzz;
-	FT_Pos    standard_width;
-	FT_Pos    standard_height;
+	FT2_1_3_Fixed  blue_scale;
+	FT2_1_3_Pos    blue_shift;
+	FT2_1_3_Pos    blue_fuzz;
+	FT2_1_3_Pos    standard_width;
+	FT2_1_3_Pos    standard_height;
 
-	FT_Byte   num_snap_widths;
-	FT_Byte   num_snap_heights;
-	FT_Pos    snap_widths[13];
-	FT_Pos    snap_heights[13];
-	FT_Bool   force_bold;
-	FT_Fixed  force_bold_threshold;
-	FT_Int    lenIV;
-	FT_Int    language_group;
-	FT_Fixed  expansion_factor;
-	FT_Long   initial_random_seed;
-	FT_ULong  local_subrs_offset;
-	FT_Pos    default_width;
-	FT_Pos    nominal_width;
+	FT2_1_3_Byte   num_snap_widths;
+	FT2_1_3_Byte   num_snap_heights;
+	FT2_1_3_Pos    snap_widths[13];
+	FT2_1_3_Pos    snap_heights[13];
+	FT2_1_3_Bool   force_bold;
+	FT2_1_3_Fixed  force_bold_threshold;
+	FT2_1_3_Int    lenIV;
+	FT2_1_3_Int    language_group;
+	FT2_1_3_Fixed  expansion_factor;
+	FT2_1_3_Long   initial_random_seed;
+	FT2_1_3_ULong  local_subrs_offset;
+	FT2_1_3_Pos    default_width;
+	FT2_1_3_Pos    nominal_width;
 
 } CFF_PrivateRec, *CFF_Private;
 
 
 typedef struct  CFF_FDSelectRec_ {
-	FT_Byte   format;
-	FT_UInt   range_count;
+	FT2_1_3_Byte   format;
+	FT2_1_3_UInt   range_count;
 
 	/* that's the table, taken from the file `as is' */
-	FT_Byte*  data;
-	FT_UInt   data_size;
+	FT2_1_3_Byte*  data;
+	FT2_1_3_UInt   data_size;
 
 	/* small cache for format 3 only */
-	FT_UInt   cache_first;
-	FT_UInt   cache_count;
-	FT_Byte   cache_fd;
+	FT2_1_3_UInt   cache_first;
+	FT2_1_3_UInt   cache_count;
+	FT2_1_3_Byte   cache_fd;
 
 } CFF_FDSelectRec, *CFF_FDSelect;
 
@@ -186,8 +186,8 @@ typedef struct  CFF_SubFontRec_ {
 	CFF_PrivateRec      private_dict;
 
 	CFF_IndexRec        local_subrs_index;
-	FT_UInt             num_local_subrs;
-	FT_Byte**           local_subrs;
+	FT2_1_3_UInt             num_local_subrs;
+	FT2_1_3_Byte**           local_subrs;
 
 } CFF_SubFontRec, *CFF_SubFont;
 
@@ -197,15 +197,15 @@ typedef struct  CFF_SubFontRec_ {
 
 
 typedef struct  CFF_FontRec_ {
-	FT_Stream        stream;
-	FT_Memory        memory;
-	FT_UInt          num_faces;
-	FT_UInt          num_glyphs;
+	FT2_1_3_Stream        stream;
+	FT2_1_3_Memory        memory;
+	FT2_1_3_UInt          num_faces;
+	FT2_1_3_UInt          num_glyphs;
 
-	FT_Byte          version_major;
-	FT_Byte          version_minor;
-	FT_Byte          header_size;
-	FT_Byte          absolute_offsize;
+	FT2_1_3_Byte          version_major;
+	FT2_1_3_Byte          version_minor;
+	FT2_1_3_Byte          header_size;
+	FT2_1_3_Byte          absolute_offsize;
 
 
 	CFF_IndexRec     name_index;
@@ -221,12 +221,12 @@ typedef struct  CFF_FontRec_ {
 	CFF_IndexRec     private_index;
 	CFF_IndexRec     local_subrs_index;
 
-	FT_String*       font_name;
-	FT_UInt          num_global_subrs;
-	FT_Byte**        global_subrs;
+	FT2_1_3_String*       font_name;
+	FT2_1_3_UInt          num_global_subrs;
+	FT2_1_3_Byte**        global_subrs;
 
 	CFF_SubFontRec   top_font;
-	FT_UInt          num_subfonts;
+	FT2_1_3_UInt          num_subfonts;
 	CFF_SubFont      subfonts[CFF_MAX_CID_FONTS];
 
 	CFF_FDSelectRec  fd_select;
@@ -240,7 +240,7 @@ typedef struct  CFF_FontRec_ {
 } CFF_FontRec, *CFF_Font;
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __CFFTYPES_H__ */
 

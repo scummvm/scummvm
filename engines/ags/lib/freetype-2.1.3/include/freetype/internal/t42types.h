@@ -20,33 +20,33 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_FREETYPE_H
-#include FT_TYPE1_TABLES_H
-#include FT_INTERNAL_TYPE1_TYPES_H
-#include FT_INTERNAL_POSTSCRIPT_NAMES_H
-#include FT_INTERNAL_POSTSCRIPT_HINTS_H
+#include FT2_1_3_FREETYPE_H
+#include FT2_1_3_TYPE1_TABLES_H
+#include FT2_1_3_INTERNAL_TYPE1_TYPES_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_NAMES_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_HINTS_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 typedef struct  T42_FaceRec_ {
-	FT_FaceRec     root;
+	FT2_1_3_FaceRec     root;
 	T1_FontRec     type1;
 	const void*    psnames;
 	const void*    psaux;
 	const void*    afm_data;
-	FT_Byte*       ttf_data;
-	FT_ULong       ttf_size;
-	FT_Face        ttf_face;
-	FT_CharMapRec  charmaprecs[2];
-	FT_CharMap     charmaps[2];
+	FT2_1_3_Byte*       ttf_data;
+	FT2_1_3_ULong       ttf_size;
+	FT2_1_3_Face        ttf_face;
+	FT2_1_3_CharMapRec  charmaprecs[2];
+	FT2_1_3_CharMap     charmaps[2];
 	PS_Unicodes    unicode_map;
 
 } T42_FaceRec, *T42_Face;
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __T1TYPES_H__ */
 

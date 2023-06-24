@@ -1,136 +1,136 @@
-#ifndef __FT_OBJECT_H__
-#define __FT_OBJECT_H__
+#ifndef __FT2_1_3_OBJECT_H__
+#define __FT2_1_3_OBJECT_H__
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_FREETYPE_H
+#include FT2_1_3_FREETYPE_H
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 /**************************************************************
  *
- * @type: FT_Object
+ * @type: FT2_1_3_Object
  *
  * @description:
- *   handle to a FreeType Object. See @FT_ObjectRec
+ *   handle to a FreeType Object. See @FT2_1_3_ObjectRec
  */
-typedef struct FT_ObjectRec_*        FT_Object;
+typedef struct FT2_1_3_ObjectRec_*        FT2_1_3_Object;
 
 
 /**************************************************************
  *
- * @type: FT_Class
+ * @type: FT2_1_3_Class
  *
  * @description:
  *   handle to a constant class handle to a FreeType Object.
  *
- *   Note that a class is itself a @FT_Object and are dynamically
+ *   Note that a class is itself a @FT2_1_3_Object and are dynamically
  *   allocated on the heap.
  *
  * @also:
- *  @FT_ClassRec, @FT_Object, @FT_ObjectRec, @FT_Type, @FT_TypeRec
+ *  @FT2_1_3_ClassRec, @FT2_1_3_Object, @FT2_1_3_ObjectRec, @FT2_1_3_Type, @FT2_1_3_TypeRec
  */
-typedef const struct FT_ClassRec_*   FT_Class;
+typedef const struct FT2_1_3_ClassRec_*   FT2_1_3_Class;
 
 
 /**************************************************************
  *
- * @type: FT_Type
+ * @type: FT2_1_3_Type
  *
  * @description:
- *   handle to a constant structure (of type @FT_TypeRec) used
- *   to describe a given @FT_Class type to the FreeType object
+ *   handle to a constant structure (of type @FT2_1_3_TypeRec) used
+ *   to describe a given @FT2_1_3_Class type to the FreeType object
  *   sub-system.
  */
-typedef const struct FT_TypeRec_*    FT_Type;
+typedef const struct FT2_1_3_TypeRec_*    FT2_1_3_Type;
 
 
 
 /**************************************************************
  *
- * @struct: FT_ObjectRec
+ * @struct: FT2_1_3_ObjectRec
  *
  * @description:
- *   a structure describing the root fields of all @FT_Object
+ *   a structure describing the root fields of all @FT2_1_3_Object
  *   class instances in FreeType
  *
  * @fields:
  *   clazz     :: handle to the object's class
  *   ref_count :: object's reference count. Starts at 1
  */
-typedef struct FT_ObjectRec_ {
-	FT_Class  clazz;
-	FT_Int    ref_count;
+typedef struct FT2_1_3_ObjectRec_ {
+	FT2_1_3_Class  clazz;
+	FT2_1_3_Int    ref_count;
 
-} FT_ObjectRec;
+} FT2_1_3_ObjectRec;
 
 
 /**************************************************************
  *
- * @macro: FT_OBJECT (x)
+ * @macro: FT2_1_3_OBJECT (x)
  *
  * @description:
- *   a useful macro to type-cast anything to a @FT_Object
+ *   a useful macro to type-cast anything to a @FT2_1_3_Object
  *   handle. No check performed..
  */
-#define  FT_OBJECT(x)    ((FT_Object)(x))
+#define  FT2_1_3_OBJECT(x)    ((FT2_1_3_Object)(x))
 
 
 /**************************************************************
  *
- * @macro: FT_OBJECT_P (x)
+ * @macro: FT2_1_3_OBJECT_P (x)
  *
  * @description:
  *   a useful macro to type-cast anything to a pointer to
- *   @FT_Object handle.
+ *   @FT2_1_3_Object handle.
  */
-#define  FT_OBJECT_P(x)  ((FT_Object*)(x))
+#define  FT2_1_3_OBJECT_P(x)  ((FT2_1_3_Object*)(x))
 
 
 /**************************************************************
  *
- * @macro: FT_OBJECT__CLASS (obj)
+ * @macro: FT2_1_3_OBJECT__CLASS (obj)
  *
  * @description:
  *   a useful macro to return the class of any object
  */
-#define  FT_OBJECT__CLASS(x)      FT_OBJECT(x)->clazz
+#define  FT2_1_3_OBJECT__CLASS(x)      FT2_1_3_OBJECT(x)->clazz
 
 
 /**************************************************************
  *
- * @macro: FT_OBJECT__REF_COUNT (obj)
+ * @macro: FT2_1_3_OBJECT__REF_COUNT (obj)
  *
  * @description:
  *   a useful macro to return the reference count of any object
  */
-#define  FT_OBJECT__REF_COUNT(x)  FT_OBJECT(x)->ref_count
+#define  FT2_1_3_OBJECT__REF_COUNT(x)  FT2_1_3_OBJECT(x)->ref_count
 
 
 /**************************************************************
  *
- * @macro: FT_OBJECT__MEMORY (obj)
+ * @macro: FT2_1_3_OBJECT__MEMORY (obj)
  *
  * @description:
  *   a useful macro to return a handle to the memory manager
  *   used to allocate a given object
  */
-#define  FT_OBJECT__MEMORY(x)     FT_CLASS__MEMORY(FT_OBJECT(x)->clazz)
+#define  FT2_1_3_OBJECT__MEMORY(x)     FT2_1_3_CLASS__MEMORY(FT2_1_3_OBJECT(x)->clazz)
 
 
 /**************************************************************
  *
- * @macro: FT_OBJECT__LIBRARY (obj)
+ * @macro: FT2_1_3_OBJECT__LIBRARY (obj)
  *
  * @description:
  *   a useful macro to return a handle to the library handle
  *   that owns the object
  */
-#define  FT_OBJECT__LIBRARY(x)    FT_CLASS__LIBRARY(FT_OBJECT(x)->clazz)
+#define  FT2_1_3_OBJECT__LIBRARY(x)    FT2_1_3_CLASS__LIBRARY(FT2_1_3_OBJECT(x)->clazz)
 
 
 /**************************************************************
  *
- * @functype: FT_Object_InitFunc
+ * @functype: FT2_1_3_Object_InitFunc
  *
  * @description:
  *   a function used to initialize a new object
@@ -142,12 +142,12 @@ typedef struct FT_ObjectRec_ {
  * @return:
  *   error code. 0 means success
  */
-typedef FT_Error  (*FT_Object_InitFunc)( FT_Object   object,
-        FT_Pointer  init_data );
+typedef FT2_1_3_Error  (*FT2_1_3_Object_InitFunc)( FT2_1_3_Object   object,
+        FT2_1_3_Pointer  init_data );
 
 /**************************************************************
  *
- * @functype: FT_Object_DoneFunc
+ * @functype: FT2_1_3_Object_DoneFunc
  *
  * @description:
  *   a function used to finalize a given object
@@ -155,26 +155,26 @@ typedef FT_Error  (*FT_Object_InitFunc)( FT_Object   object,
  * @input:
  *   object    :: handle to target object
  */
-typedef void  (*FT_Object_DoneFunc)( FT_Object   object );
+typedef void  (*FT2_1_3_Object_DoneFunc)( FT2_1_3_Object   object );
 
 
 /**************************************************************
  *
- * @struct: FT_ClassRec
+ * @struct: FT2_1_3_ClassRec
  *
  * @description:
  *   a structure used to describe a given object class within
  *   FreeType
  *
  * @fields:
- *   object   :: root @FT_ObjectRec fields, since each class is
+ *   object   :: root @FT2_1_3_ObjectRec fields, since each class is
  *               itself an object. (it's an instance of the
  *               "metaclass", a special object of the FreeType
  *               object sub-system.)
  *
  *   magic    :: a 32-bit magic number used for decoding
  *   super    :: pointer to super class
- *   type     :: the @FT_Type descriptor of this class
+ *   type     :: the @FT2_1_3_Type descriptor of this class
  *   memory   :: the current memory manager handle
  *   library  :: the current library handle
  *   info     :: an opaque pointer to class-specific information
@@ -186,87 +186,87 @@ typedef void  (*FT_Object_DoneFunc)( FT_Object   object );
  *   obj_init :: class instance constructor
  *   obj_done :: class instance destructor
  */
-typedef struct FT_ClassRec_ {
-	FT_ObjectRec        object;
-	FT_UInt32           magic;
-	FT_Class            super;
-	FT_Type             type;
-	FT_Memory           memory;
-	FT_Library          library;
-	FT_Pointer          info;
+typedef struct FT2_1_3_ClassRec_ {
+	FT2_1_3_ObjectRec        object;
+	FT2_1_3_UInt32           magic;
+	FT2_1_3_Class            super;
+	FT2_1_3_Type             type;
+	FT2_1_3_Memory           memory;
+	FT2_1_3_Library          library;
+	FT2_1_3_Pointer          info;
 
-	FT_Object_DoneFunc  class_done;
+	FT2_1_3_Object_DoneFunc  class_done;
 
-	FT_UInt             obj_size;
-	FT_Object_InitFunc  obj_init;
-	FT_Object_DoneFunc  obj_done;
+	FT2_1_3_UInt             obj_size;
+	FT2_1_3_Object_InitFunc  obj_init;
+	FT2_1_3_Object_DoneFunc  obj_done;
 
-} FT_ClassRec;
+} FT2_1_3_ClassRec;
 
 
 /**************************************************************
  *
- * @macro: FT_CLASS (x)
+ * @macro: FT2_1_3_CLASS (x)
  *
  * @description:
  *   a useful macro to convert anything to a class handle
  *   without checks
  */
-#define  FT_CLASS(x)    ((FT_Class)(x))
+#define  FT2_1_3_CLASS(x)    ((FT2_1_3_Class)(x))
 
 
 /**************************************************************
  *
- * @macro: FT_CLASS_P (x)
+ * @macro: FT2_1_3_CLASS_P (x)
  *
  * @description:
  *   a useful macro to convert anything to a pointer to a class
  *   handle without checks
  */
-#define  FT_CLASS_P(x)  ((FT_Class*)(x))
+#define  FT2_1_3_CLASS_P(x)  ((FT2_1_3_Class*)(x))
 
 
 /**************************************************************
  *
- * @macro: FT_CLASS__MEMORY (clazz)
+ * @macro: FT2_1_3_CLASS__MEMORY (clazz)
  *
  * @description:
  *   a useful macro to return the memory manager handle of a
  *   given class
  */
-#define  FT_CLASS__MEMORY(x)   FT_CLASS(x)->memory
+#define  FT2_1_3_CLASS__MEMORY(x)   FT2_1_3_CLASS(x)->memory
 
 
 /**************************************************************
  *
- * @macro: FT_CLASS__LIBRARY (clazz)
+ * @macro: FT2_1_3_CLASS__LIBRARY (clazz)
  *
  * @description:
  *   a useful macro to return the library handle of a
  *   given class
  */
-#define  FT_CLASS__LIBRARY(x)  FT_CLASS(x)->library
+#define  FT2_1_3_CLASS__LIBRARY(x)  FT2_1_3_CLASS(x)->library
 
 
 
 /**************************************************************
  *
- * @macro: FT_CLASS__TYPE (clazz)
+ * @macro: FT2_1_3_CLASS__TYPE (clazz)
  *
  * @description:
  *   a useful macro to return the type of a given class
  *   given class
  */
-#define  FT_CLASS__TYPE(x)     FT_CLASS(x)->type
+#define  FT2_1_3_CLASS__TYPE(x)     FT2_1_3_CLASS(x)->type
 
 /* */
-#define  FT_CLASS__INFO(x)     FT_CLASS(x)->info
-#define  FT_CLASS__MAGIC(x)    FT_CLASS(x)->magic
+#define  FT2_1_3_CLASS__INFO(x)     FT2_1_3_CLASS(x)->info
+#define  FT2_1_3_CLASS__MAGIC(x)    FT2_1_3_CLASS(x)->magic
 
 
 /**************************************************************
  *
- * @struct: FT_TypeRec
+ * @struct: FT2_1_3_TypeRec
  *
  * @description:
  *   a structure used to describe a given class to the FreeType
@@ -298,30 +298,30 @@ typedef struct FT_ClassRec_ {
  *   'class_init' and 'class_done' can be NULL, in which case
  *   the parent's class constructor and destructor wil be used
  */
-typedef struct FT_TypeRec_ {
+typedef struct FT2_1_3_TypeRec_ {
 	const char*         name;
-	FT_Type             super;
+	FT2_1_3_Type             super;
 
-	FT_UInt             class_size;
-	FT_Object_InitFunc  class_init;
-	FT_Object_DoneFunc  class_done;
+	FT2_1_3_UInt             class_size;
+	FT2_1_3_Object_InitFunc  class_init;
+	FT2_1_3_Object_DoneFunc  class_done;
 
-	FT_UInt             obj_size;
-	FT_Object_InitFunc  obj_init;
-	FT_Object_DoneFunc  obj_done;
+	FT2_1_3_UInt             obj_size;
+	FT2_1_3_Object_InitFunc  obj_init;
+	FT2_1_3_Object_DoneFunc  obj_done;
 
-} FT_TypeRec;
+} FT2_1_3_TypeRec;
 
 
 /**************************************************************
  *
- * @macro: FT_TYPE (x)
+ * @macro: FT2_1_3_TYPE (x)
  *
  * @description:
  *   a useful macro to convert anything to a class type handle
  *   without checks
  */
-#define  FT_TYPE(x)  ((FT_Type)(x))
+#define  FT2_1_3_TYPE(x)  ((FT2_1_3_Type)(x))
 
 
 /**************************************************************
@@ -329,7 +329,7 @@ typedef struct FT_TypeRec_ {
  * @function: ft_object_check
  *
  * @description:
- *   checks that a handle points to a valid @FT_Object
+ *   checks that a handle points to a valid @FT2_1_3_Object
  *
  * @input:
  *   obj :: handle/pointer
@@ -337,8 +337,8 @@ typedef struct FT_TypeRec_ {
  * @return:
  *   1 iff the handle points to a valid object. 0 otherwise
  */
-FT_BASE( FT_Int )
-ft_object_check( FT_Pointer  obj );
+FT2_1_3_BASE( FT2_1_3_Int )
+ft_object_check( FT2_1_3_Pointer  obj );
 
 
 /**************************************************************
@@ -346,7 +346,7 @@ ft_object_check( FT_Pointer  obj );
  * @function: ft_object_is_a
  *
  * @description:
- *   checks that a handle points to a valid @FT_Object that
+ *   checks that a handle points to a valid @FT2_1_3_Object that
  *   is an instance of a given class (or of any of its sub-classes)
  *
  * @input:
@@ -357,9 +357,9 @@ ft_object_check( FT_Pointer  obj );
  *   1 iff the handle points to a valid 'clazz' instance. 0
  *   otherwise.
  */
-FT_BASE( FT_Int )
-ft_object_is_a( FT_Pointer  obj,
-                FT_Class    clazz );
+FT2_1_3_BASE( FT2_1_3_Int )
+ft_object_is_a( FT2_1_3_Pointer  obj,
+                FT2_1_3_Class    clazz );
 
 
 /**************************************************************
@@ -379,10 +379,10 @@ ft_object_is_a( FT_Pointer  obj,
  * @return:
  *   error code. 0 means success
  */
-FT_BASE( FT_Error )
-ft_object_create( FT_Object  *aobject,
-                  FT_Class    clazz,
-                  FT_Pointer  init_data );
+FT2_1_3_BASE( FT2_1_3_Error )
+ft_object_create( FT2_1_3_Object  *aobject,
+                  FT2_1_3_Class    clazz,
+                  FT2_1_3_Pointer  init_data );
 
 
 /**************************************************************
@@ -390,7 +390,7 @@ ft_object_create( FT_Object  *aobject,
  * @function: ft_object_create_from_type
  *
  * @description:
- *   create a new object (class instance) from a @FT_Type
+ *   create a new object (class instance) from a @FT2_1_3_Type
  *
  * @output:
  *   aobject   :: new object handle. NULL in case of error
@@ -408,61 +408,61 @@ ft_object_create( FT_Object  *aobject,
  *   this is equivalent to calling @ft_class_from_type followed by
  *   @ft_object_create
  */
-FT_BASE( FT_Error )
-ft_object_create_from_type( FT_Object  *aobject,
-                            FT_Type     type,
-                            FT_Pointer  init_data,
-                            FT_Library  library );
+FT2_1_3_BASE( FT2_1_3_Error )
+ft_object_create_from_type( FT2_1_3_Object  *aobject,
+                            FT2_1_3_Type     type,
+                            FT2_1_3_Pointer  init_data,
+                            FT2_1_3_Library  library );
 
 
 
 /**************************************************************
  *
- * @macro FT_OBJ_CREATE (object,class,init)
+ * @macro FT2_1_3_OBJ_CREATE (object,class,init)
  *
  * @description:
  *   a convenient macro used to create new objects. see
  *   @ft_object_create for details
  */
-#define  FT_OBJ_CREATE( _obj, _clazz, _init )   \
-               ft_object_create( FT_OBJECT_P(&(_obj)), _clazz, _init )
+#define  FT2_1_3_OBJ_CREATE( _obj, _clazz, _init )   \
+               ft_object_create( FT2_1_3_OBJECT_P(&(_obj)), _clazz, _init )
 
 
 /**************************************************************
  *
- * @macro FT_CREATE (object,class,init)
+ * @macro FT2_1_3_CREATE (object,class,init)
  *
  * @description:
  *   a convenient macro used to create new objects. It also
  *   sets an _implicit_ local variable named "error" to the error
  *   code returned by the object constructor.
  */
-#define  FT_CREATE( _obj, _clazz, _init )  \
-             FT_SET_ERROR( FT_OBJ_CREATE( _obj, _clazz, _init ) )
+#define  FT2_1_3_CREATE( _obj, _clazz, _init )  \
+             FT2_1_3_SET_ERROR( FT2_1_3_OBJ_CREATE( _obj, _clazz, _init ) )
 
 /**************************************************************
  *
- * @macro FT_OBJ_CREATE_FROM_TYPE (object,type,init)
+ * @macro FT2_1_3_OBJ_CREATE_FROM_TYPE (object,type,init)
  *
  * @description:
  *   a convenient macro used to create new objects. see
  *   @ft_object_create_from_type for details
  */
-#define  FT_OBJ_CREATE_FROM_TYPE( _obj, _type, _init, _lib )   \
-               ft_object_create_from_type( FT_OBJECT_P(&(_obj)), _type, _init, _lib )
+#define  FT2_1_3_OBJ_CREATE_FROM_TYPE( _obj, _type, _init, _lib )   \
+               ft_object_create_from_type( FT2_1_3_OBJECT_P(&(_obj)), _type, _init, _lib )
 
 
 /**************************************************************
  *
- * @macro FT_CREATE_FROM_TYPE (object,type,init)
+ * @macro FT2_1_3_CREATE_FROM_TYPE (object,type,init)
  *
  * @description:
  *   a convenient macro used to create new objects. It also
  *   sets an _implicit_ local variable named "error" to the error
  *   code returned by the object constructor.
  */
-#define  FT_CREATE_FROM_TYPE( _obj, _type, _init, _lib )  \
-             FT_SET_ERROR( FT_OBJ_CREATE_FROM_TYPE( _obj, _type, _init, _lib ) )
+#define  FT2_1_3_CREATE_FROM_TYPE( _obj, _type, _init, _lib )  \
+             FT2_1_3_SET_ERROR( FT2_1_3_OBJ_CREATE_FROM_TYPE( _obj, _type, _init, _lib ) )
 
 
 /* */
@@ -486,43 +486,43 @@ ft_object_create_from_type( FT_Object  *aobject,
  * @return:
  *   error code. 0 means success
  */
-FT_BASE( FT_Error )
-ft_class_from_type( FT_Class   *aclass,
-                    FT_Type     type,
-                    FT_Library  library );
+FT2_1_3_BASE( FT2_1_3_Error )
+ft_class_from_type( FT2_1_3_Class   *aclass,
+                    FT2_1_3_Type     type,
+                    FT2_1_3_Library  library );
 
 
 /* */
 
-#include FT_INTERNAL_HASH_H
+#include FT2_1_3_INTERNAL_HASH_H
 
-typedef struct FT_ClassHNodeRec_*  FT_ClassHNode;
+typedef struct FT2_1_3_ClassHNodeRec_*  FT2_1_3_ClassHNode;
 
-typedef struct FT_ClassHNodeRec_ {
-	FT_HashNodeRec  hnode;
-	FT_Type         type;
-	FT_Class        clazz;
+typedef struct FT2_1_3_ClassHNodeRec_ {
+	FT2_1_3_HashNodeRec  hnode;
+	FT2_1_3_Type         type;
+	FT2_1_3_Class        clazz;
 
-} FT_ClassHNodeRec;
+} FT2_1_3_ClassHNodeRec;
 
-typedef struct FT_MetaClassRec_ {
-	FT_ClassRec   clazz;         /* the meta-class is a class itself */
-	FT_HashRec    type_to_class; /* the type => class hash table */
+typedef struct FT2_1_3_MetaClassRec_ {
+	FT2_1_3_ClassRec   clazz;         /* the meta-class is a class itself */
+	FT2_1_3_HashRec    type_to_class; /* the type => class hash table */
 
-} FT_MetaClassRec, *FT_MetaClass;
+} FT2_1_3_MetaClassRec, *FT2_1_3_MetaClass;
 
 
 /* initialize meta class */
-FT_BASE( FT_Error )
-ft_metaclass_init( FT_MetaClass  meta,
-                   FT_Library    library );
+FT2_1_3_BASE( FT2_1_3_Error )
+ft_metaclass_init( FT2_1_3_MetaClass  meta,
+                   FT2_1_3_Library    library );
 
 /* finalize meta class - destroy all registered class objects */
-FT_BASE( void )
-ft_metaclass_done( FT_MetaClass  meta );
+FT2_1_3_BASE( void )
+ft_metaclass_done( FT2_1_3_MetaClass  meta );
 
 /* */
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
-#endif /* __FT_OBJECT_H__ */
+#endif /* __FT2_1_3_OBJECT_H__ */

@@ -26,18 +26,18 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_CONFIG_CONFIG_H
+#include FT2_1_3_CONFIG_CONFIG_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
-/* force the definition of FT_DEBUG_LEVEL_ERROR if FT_DEBUG_LEVEL_TRACE */
+/* force the definition of FT2_1_3_DEBUG_LEVEL_ERROR if FT2_1_3_DEBUG_LEVEL_TRACE */
 /* is already defined; this simplifies the following #ifdefs            */
 /*                                                                      */
-#ifdef FT_DEBUG_LEVEL_TRACE
-#undef  FT_DEBUG_LEVEL_ERROR
-#define FT_DEBUG_LEVEL_ERROR
+#ifdef FT2_1_3_DEBUG_LEVEL_TRACE
+#undef  FT2_1_3_DEBUG_LEVEL_ERROR
+#define FT2_1_3_DEBUG_LEVEL_ERROR
 #endif
 
 
@@ -48,134 +48,134 @@ FT_BEGIN_HEADER
 /*                                                                       */
 /*************************************************************************/
 
-#ifdef FT_DEBUG_LEVEL_TRACE
+#ifdef FT2_1_3_DEBUG_LEVEL_TRACE
 
-#define FT_TRACE_DEF( x )  trace_ ## x ,
+#define FT2_1_3_TRACE_DEF( x )  trace_ ## x ,
 
 /* defining the enumeration */
 typedef enum {
-#include FT_INTERNAL_TRACE_H
+#include FT2_1_3_INTERNAL_TRACE_H
 	trace_count
 
-} FT_Trace;
+} FT2_1_3_Trace;
 
 
 /* defining the array of trace levels, provided by `src/base/ftdebug.c' */
-extern int  ft_trace_levels[trace_count];
+extern int  FT2_1_3_trace_levels[trace_count];
 
-#undef FT_TRACE_DEF
+#undef FT2_1_3_TRACE_DEF
 
-#endif /* FT_DEBUG_LEVEL_TRACE */
+#endif /* FT2_1_3_DEBUG_LEVEL_TRACE */
 
 
 /*************************************************************************/
 /*                                                                       */
-/* Define the FT_TRACE macro                                             */
+/* Define the FT2_1_3_TRACE macro                                             */
 /*                                                                       */
 /* IMPORTANT!                                                            */
 /*                                                                       */
-/* Each component must define the macro FT_COMPONENT to a valid FT_Trace */
+/* Each component must define the macro FT2_1_3_COMPONENT to a valid FT2_1_3_Trace */
 /* value before using any TRACE macro.                                   */
 /*                                                                       */
 /*************************************************************************/
 
-#ifdef FT_DEBUG_LEVEL_TRACE
+#ifdef FT2_1_3_DEBUG_LEVEL_TRACE
 
-#define FT_TRACE( level, varformat )                      \
+#define FT2_1_3_TRACE( level, varformat )                      \
           do                                              \
           {                                               \
-            if ( ft_trace_levels[FT_COMPONENT] >= level ) \
-              FT_Message varformat;                       \
+            if ( FT2_1_3_trace_levels[FT2_1_3_COMPONENT] >= level ) \
+              FT2_1_3_Message varformat;                       \
           } while ( 0 )
 
-#else /* !FT_DEBUG_LEVEL_TRACE */
+#else /* !FT2_1_3_DEBUG_LEVEL_TRACE */
 
-#define FT_TRACE( level, varformat )  do ; while ( 0 )      /* nothing */
+#define FT2_1_3_TRACE( level, varformat )  do ; while ( 0 )      /* nothing */
 
-#endif /* !FT_DEBUG_LEVEL_TRACE */
+#endif /* !FT2_1_3_DEBUG_LEVEL_TRACE */
 
 
 /*************************************************************************/
 /*                                                                       */
 /* You need two opening resp. closing parentheses!                       */
 /*                                                                       */
-/* Example: FT_TRACE0(( "Value is %i", foo ))                            */
+/* Example: FT2_1_3_TRACE0(( "Value is %i", foo ))                            */
 /*                                                                       */
 /*************************************************************************/
 
-#define FT_TRACE0( varformat )  FT_TRACE( 0, varformat )
-#define FT_TRACE1( varformat )  FT_TRACE( 1, varformat )
-#define FT_TRACE2( varformat )  FT_TRACE( 2, varformat )
-#define FT_TRACE3( varformat )  FT_TRACE( 3, varformat )
-#define FT_TRACE4( varformat )  FT_TRACE( 4, varformat )
-#define FT_TRACE5( varformat )  FT_TRACE( 5, varformat )
-#define FT_TRACE6( varformat )  FT_TRACE( 6, varformat )
-#define FT_TRACE7( varformat )  FT_TRACE( 7, varformat )
-
-
-/*************************************************************************/
-/*                                                                       */
-/*  Define the FT_ERROR macro                                            */
-/*                                                                       */
-/*************************************************************************/
-
-#ifdef FT_DEBUG_LEVEL_ERROR
-
-#define FT_ERROR( varformat )  FT_Message  varformat
-
-#else  /* !FT_DEBUG_LEVEL_ERROR */
-
-#define FT_ERROR( varformat )  do ; while ( 0 )      /* nothing */
-
-#endif /* !FT_DEBUG_LEVEL_ERROR */
+#define FT2_1_3_TRACE0( varformat )  FT2_1_3_TRACE( 0, varformat )
+#define FT2_1_3_TRACE1( varformat )  FT2_1_3_TRACE( 1, varformat )
+#define FT2_1_3_TRACE2( varformat )  FT2_1_3_TRACE( 2, varformat )
+#define FT2_1_3_TRACE3( varformat )  FT2_1_3_TRACE( 3, varformat )
+#define FT2_1_3_TRACE4( varformat )  FT2_1_3_TRACE( 4, varformat )
+#define FT2_1_3_TRACE5( varformat )  FT2_1_3_TRACE( 5, varformat )
+#define FT2_1_3_TRACE6( varformat )  FT2_1_3_TRACE( 6, varformat )
+#define FT2_1_3_TRACE7( varformat )  FT2_1_3_TRACE( 7, varformat )
 
 
 /*************************************************************************/
 /*                                                                       */
-/* Define the FT_ASSERT macro                                            */
+/*  Define the FT2_1_3_ERROR macro                                            */
 /*                                                                       */
 /*************************************************************************/
 
-#ifdef FT_DEBUG_LEVEL_ERROR
+#ifdef FT2_1_3_DEBUG_LEVEL_ERROR
 
-#define FT_ASSERT( condition )                                      \
+#define FT2_1_3_ERROR( varformat )  FT2_1_3_Message  varformat
+
+#else  /* !FT2_1_3_DEBUG_LEVEL_ERROR */
+
+#define FT2_1_3_ERROR( varformat )  do ; while ( 0 )      /* nothing */
+
+#endif /* !FT2_1_3_DEBUG_LEVEL_ERROR */
+
+
+/*************************************************************************/
+/*                                                                       */
+/* Define the FT2_1_3_ASSERT macro                                            */
+/*                                                                       */
+/*************************************************************************/
+
+#ifdef FT2_1_3_DEBUG_LEVEL_ERROR
+
+#define FT2_1_3_ASSERT( condition )                                      \
           do                                                        \
           {                                                         \
             if ( !( condition ) )                                   \
-              FT_Panic( "assertion failed on line %d of file %s\n", \
+              FT2_1_3_Panic( "assertion failed on line %d of file %s\n", \
                         __LINE__, __FILE__ );                       \
           } while ( 0 )
 
-#else /* !FT_DEBUG_LEVEL_ERROR */
+#else /* !FT2_1_3_DEBUG_LEVEL_ERROR */
 
-#define FT_ASSERT( condition )  do ; while ( 0 )
+#define FT2_1_3_ASSERT( condition )  do ; while ( 0 )
 
-#endif /* !FT_DEBUG_LEVEL_ERROR */
+#endif /* !FT2_1_3_DEBUG_LEVEL_ERROR */
 
 
 /*************************************************************************/
 /*                                                                       */
-/*  Define 'FT_Message' and 'FT_Panic' when needed                       */
+/*  Define 'FT2_1_3_Message' and 'FT2_1_3_Panic' when needed                       */
 /*                                                                       */
 /*************************************************************************/
 
-#ifdef FT_DEBUG_LEVEL_ERROR
+#ifdef FT2_1_3_DEBUG_LEVEL_ERROR
 
 #include "stdio.h"  /* for vprintf() */
 
 /* print a message */
-FT_EXPORT( void )
-FT_Message( const char*  fmt, ... );
+FT2_1_3_EXPORT( void )
+FT2_1_3_Message( const char*  fmt, ... );
 
 /* print a message and exit */
-FT_EXPORT( void )
-FT_Panic( const char*  fmt, ... );
+FT2_1_3_EXPORT( void )
+FT2_1_3_Panic( const char*  fmt, ... );
 
-#endif /* FT_DEBUG_LEVEL_ERROR */
+#endif /* FT2_1_3_DEBUG_LEVEL_ERROR */
 
 
-FT_BASE( void )
-ft_debug_init( void );
+FT2_1_3_BASE( void )
+FT2_1_3_debug_init( void );
 
 
 #if defined( _MSC_VER )      /* Visual C++ (and Intel C++) */
@@ -187,7 +187,7 @@ ft_debug_init( void );
 #endif /* _MSC_VER */
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __FTDEBUG_H__ */
 

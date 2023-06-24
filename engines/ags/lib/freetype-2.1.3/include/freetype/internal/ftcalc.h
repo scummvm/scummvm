@@ -21,22 +21,22 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_FREETYPE_H
+#include FT2_1_3_FREETYPE_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
-FT_EXPORT( FT_Int32 )  FT_SqrtFixed( FT_Int32  x );
+FT2_1_3_EXPORT( FT2_1_3_Int32 )  FT2_1_3_SqrtFixed( FT2_1_3_Int32  x );
 
 
-#define SQRT_32( x )  FT_Sqrt32( x )
+#define SQRT_32( x )  FT2_1_3_Sqrt32( x )
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Sqrt32                                                          */
+/*    FT2_1_3_Sqrt32                                                          */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Computes the square root of an Int32 integer (which will be        */
@@ -48,28 +48,28 @@ FT_EXPORT( FT_Int32 )  FT_SqrtFixed( FT_Int32  x );
 /* <Return>                                                              */
 /*    The result of `sqrt(x)'.                                           */
 /*                                                                       */
-FT_EXPORT( FT_Int32 )
-FT_Sqrt32( FT_Int32  x );
+FT2_1_3_EXPORT( FT2_1_3_Int32 )
+FT2_1_3_Sqrt32( FT2_1_3_Int32  x );
 
 
 /*************************************************************************/
 /*                                                                       */
-/* FT_MulDiv() and FT_MulFix() are declared in freetype.h.               */
+/* FT2_1_3_MulDiv() and FT2_1_3_MulFix() are declared in freetype.h.               */
 /*                                                                       */
 /*************************************************************************/
 
 
-#define INT_TO_F26DOT6( x )    ( (FT_Long)(x) << 6  )
-#define INT_TO_F2DOT14( x )    ( (FT_Long)(x) << 14 )
-#define INT_TO_FIXED( x )      ( (FT_Long)(x) << 16 )
-#define F2DOT14_TO_FIXED( x )  ( (FT_Long)(x) << 2  )
-#define FLOAT_TO_FIXED( x )    ( (FT_Long)( x * 65536.0 ) )
+#define INT_TO_F26DOT6( x )    ( (FT2_1_3_Long)(x) << 6  )
+#define INT_TO_F2DOT14( x )    ( (FT2_1_3_Long)(x) << 14 )
+#define INT_TO_FIXED( x )      ( (FT2_1_3_Long)(x) << 16 )
+#define F2DOT14_TO_FIXED( x )  ( (FT2_1_3_Long)(x) << 2  )
+#define FLOAT_TO_FIXED( x )    ( (FT2_1_3_Long)( x * 65536.0 ) )
 
 #define ROUND_F26DOT6( x )     ( x >= 0 ? (    ( (x) + 32 ) & -64 )     \
                                         : ( -( ( 32 - (x) ) & -64 ) ) )
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __FTCALC_H__ */
 

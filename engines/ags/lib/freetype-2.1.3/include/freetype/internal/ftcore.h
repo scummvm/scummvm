@@ -1,11 +1,11 @@
-#ifndef __FT_CORE_H__
-#define __FT_CORE_H__
+#ifndef __FT2_1_3_CORE_H__
+#define __FT2_1_3_CORE_H__
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_TYPES_H
-#include FT_SYSTEM_MEMORY_H
+#include FT2_1_3_TYPES_H
+#include FT2_1_3_SYSTEM_MEMORY_H
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 /**************************************************************************/
 /**************************************************************************/
@@ -18,7 +18,7 @@ FT_BEGIN_HEADER
 
 /************************************************************************
  *
- * @functype: FT_CleanupFunc
+ * @functype: FT2_1_3_CleanupFunc
  *
  * @description:
  *   a function used to cleanup a given item on the cleanup stack
@@ -27,14 +27,14 @@ FT_BEGIN_HEADER
  *   item      :: target item pointer
  *   item_data :: optional argument to cleanup routine
  */
-typedef void  (*FT_CleanupFunc)( FT_Pointer  item,
-                                 FT_Pointer  item_data );
+typedef void  (*FT2_1_3_CleanupFunc)( FT2_1_3_Pointer  item,
+                                 FT2_1_3_Pointer  item_data );
 
 
 
 /************************************************************************
  *
- * @type: FT_XHandler
+ * @type: FT2_1_3_XHandler
  *
  * @description:
  *   handle to an exception-handler structure for the FreeType
@@ -42,63 +42,63 @@ typedef void  (*FT_CleanupFunc)( FT_Pointer  item,
  *
  * @note:
  *   exception handlers are allocated on the stack within a
- *   @FT_XTRY macro. Do not try to access them directly.
+ *   @FT2_1_3_XTRY macro. Do not try to access them directly.
  */
-typedef struct FT_XHandlerRec_*  FT_XHandler;
+typedef struct FT2_1_3_XHandlerRec_*  FT2_1_3_XHandler;
 
 
-/* the size of a cleanup chunk in bytes is FT_CLEANUP_CHUNK_SIZE*12 + 4 */
+/* the size of a cleanup chunk in bytes is FT2_1_3_CLEANUP_CHUNK_SIZE*12 + 4 */
 /* this must be a small power of 2 whenever possible..                  */
 /*                                                                      */
 /* with a value of 5, we have a byte size of 64 bytes per chunk..       */
 /*                                                                      */
-#define  FT_CLEANUP_CHUNK_SIZE   5
+#define  FT2_1_3_CLEANUP_CHUNK_SIZE   5
 
 
 
-typedef struct FT_CleanupItemRec_ {
-	FT_Pointer      item;
-	FT_CleanupFunc  item_func;
-	FT_Pointer      item_data;
+typedef struct FT2_1_3_CleanupItemRec_ {
+	FT2_1_3_Pointer      item;
+	FT2_1_3_CleanupFunc  item_func;
+	FT2_1_3_Pointer      item_data;
 
-} FT_CleanupItemRec;
-
-
-typedef struct FT_CleanupChunkRec_*   FT_CleanupChunk;
-
-typedef struct FT_CleanupChunkRec_ {
-	FT_CleanupChunk    link;
-	FT_CleanupItemRec  items[ FT_CLEANUP_CHUNK_SIZE ];
-
-} FT_CleanupChunkRec;
+} FT2_1_3_CleanupItemRec;
 
 
-typedef struct FT_CleanupStackRec_ {
-	FT_CleanupItem     top;
-	FT_CleanupItem     limit;
-	FT_CleanupChunk    chunk;
-	FT_CleanupChunkRec chunk_0;  /* avoids stupid dynamic allocation */
-	FT_Memory          memory;
+typedef struct FT2_1_3_CleanupChunkRec_*   FT2_1_3_CleanupChunk;
 
-} FT_CleanupStackRec, *FT_CleanupStack;
+typedef struct FT2_1_3_CleanupChunkRec_ {
+	FT2_1_3_CleanupChunk    link;
+	FT2_1_3_CleanupItemRec  items[ FT2_1_3_CLEANUP_CHUNK_SIZE ];
+
+} FT2_1_3_CleanupChunkRec;
 
 
-FT_BASE( void )
-ft_cleanup_stack_push( FT_CleanupStack  stack,
-                       FT_Pointer       item,
-                       FT_CleanupFunc   item_func,
-                       FT_Pointer       item_data );
+typedef struct FT2_1_3_CleanupStackRec_ {
+	FT2_1_3_CleanupItem     top;
+	FT2_1_3_CleanupItem     limit;
+	FT2_1_3_CleanupChunk    chunk;
+	FT2_1_3_CleanupChunkRec chunk_0;  /* avoids stupid dynamic allocation */
+	FT2_1_3_Memory          memory;
 
-FT_BASE( void )
-ft_cleanup_stack_pop( FT_CleanupStack   stack,
-                      FT_Int            destroy );
+} FT2_1_3_CleanupStackRec, *FT2_1_3_CleanupStack;
 
-FT_BASE( FT_CleanupItem )
-ft_cleanup_stack_peek( FT_CleanupStack  stack );
 
-FT_BASE( void )
-ft_cleanup_throw( FT_CleanupStack  stack,
-                  FT_Error         error );
+FT2_1_3_BASE( void )
+FT2_1_3_cleanup_stack_push( FT2_1_3_CleanupStack  stack,
+                       FT2_1_3_Pointer       item,
+                       FT2_1_3_CleanupFunc   item_func,
+                       FT2_1_3_Pointer       item_data );
+
+FT2_1_3_BASE( void )
+FT2_1_3_cleanup_stack_pop( FT2_1_3_CleanupStack   stack,
+                      FT2_1_3_Int            destroy );
+
+FT2_1_3_BASE( FT2_1_3_CleanupItem )
+FT2_1_3_cleanup_stack_peek( FT2_1_3_CleanupStack  stack );
+
+FT2_1_3_BASE( void )
+FT2_1_3_cleanup_throw( FT2_1_3_CleanupStack  stack,
+                  FT2_1_3_Error         error );
 
 
 
@@ -110,24 +110,24 @@ ft_cleanup_throw( FT_CleanupStack  stack,
 /**************************************************************************/
 /**************************************************************************/
 
-typedef struct FT_MemoryRec_ {
-	FT_Memory_AllocFunc     mem_alloc;   /* shortcut to funcs->mem_alloc */
-	FT_Memory_FreeFunc      mem_free;    /* shortcut to funcs->mem_free  */
-	FT_Pointer              mem_data;
-	const FT_Memory_Funcs   mem_funcs;
+typedef struct FT2_1_3_MemoryRec_ {
+	FT2_1_3_Memory_AllocFunc     mem_alloc;   /* shortcut to funcs->mem_alloc */
+	FT2_1_3_Memory_FreeFunc      mem_free;    /* shortcut to funcs->mem_free  */
+	FT2_1_3_Pointer              mem_data;
+	const FT2_1_3_Memory_Funcs   mem_funcs;
 
-	FT_CleanupStackRec      cleanup_stack;
-	FT_Pointer              meta_class;
+	FT2_1_3_CleanupStackRec      cleanup_stack;
+	FT2_1_3_Pointer              meta_class;
 
-} FT_MemoryRec;
+} FT2_1_3_MemoryRec;
 
 
-#define  FT_MEMORY(x)  ((FT_Memory)(x))
-#define  FT_MEMORY__ALLOC(x)       FT_MEMORY(x)->mem_alloc
-#define  FT_MEMORY__FREE(x)        FT_MEMORY(x)->mem_free
-#define  FT_MEMORY__REALLOC(x)     FT_MEMORY(x)->mem_funcs->mem_realloc
-#define  FT_MEMORY__CLEANUP(x)     (&FT_MEMORY(x)->cleanup_stack)
-#define  FT_MEMORY__META_CLASS(x)  ((FT_MetaClass)(FT_MEMORY(x)->meta_class))
+#define  FT2_1_3_MEMORY(x)  ((FT2_1_3_Memory)(x))
+#define  FT2_1_3_MEMORY__ALLOC(x)       FT2_1_3_MEMORY(x)->mem_alloc
+#define  FT2_1_3_MEMORY__FREE(x)        FT2_1_3_MEMORY(x)->mem_free
+#define  FT2_1_3_MEMORY__REALLOC(x)     FT2_1_3_MEMORY(x)->mem_funcs->mem_realloc
+#define  FT2_1_3_MEMORY__CLEANUP(x)     (&FT2_1_3_MEMORY(x)->cleanup_stack)
+#define  FT2_1_3_MEMORY__META_CLASS(x)  ((FT2_1_3_MetaClass)(FT2_1_3_MEMORY(x)->meta_class))
 
 
 /**************************************************************************/
@@ -141,7 +141,7 @@ typedef struct FT_MemoryRec_ {
 
 /************************************************************************
  *
- * @struct: FT_XHandlerRec
+ * @struct: FT2_1_3_XHandlerRec
  *
  * @description:
  *   exception handler structure
@@ -151,30 +151,30 @@ typedef struct FT_MemoryRec_ {
  *   jum_buffer :: processor state used by setjmp/longjmp to implement
  *                 exception control transfer
  *   error      :: exception error code
- *   mark       :: top of cleanup stack when @FT_XTRY is used
+ *   mark       :: top of cleanup stack when @FT2_1_3_XTRY is used
  */
-typedef struct FT_XHandlerRec_ {
-	FT_XHandler        previous;
-	ft_jmp_buf         jump_buffer;
-	volatile FT_Error  error;
-	FT_Pointer         mark;
+typedef struct FT2_1_3_XHandlerRec_ {
+	FT2_1_3_XHandler        previous;
+	FT2_1_3_jmp_buf         jump_buffer;
+	volatile FT2_1_3_Error  error;
+	FT2_1_3_Pointer         mark;
 
-} FT_XHandlerRec;
+} FT2_1_3_XHandlerRec;
 
-FT_BASE( void )
-ft_xhandler_enter( FT_XHandler  xhandler,
-                   FT_Memory    memory );
+FT2_1_3_BASE( void )
+FT2_1_3_xhandler_enter( FT2_1_3_XHandler  xhandler,
+                   FT2_1_3_Memory    memory );
 
-FT_BASE( void )
-ft_xhandler_exit( FT_XHandler  xhandler );
-
-
+FT2_1_3_BASE( void )
+FT2_1_3_xhandler_exit( FT2_1_3_XHandler  xhandler );
 
 
 
 
 
 
-FT_END_HEADER
 
-#endif /* __FT_CORE_H__ */
+
+FT2_1_3_END_HEADER
+
+#endif /* __FT2_1_3_CORE_H__ */

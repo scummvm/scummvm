@@ -1,79 +1,76 @@
-#ifndef __FT_EXCEPT_H__
-#define __FT_EXCEPT_H__
+#ifndef __FT2_1_3_EXCEPT_H__
+#define __FT2_1_3_EXCEPT_H__
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 
 /* I can't find a better place for this for now */
 
-<<<<<<< ftexcept.h
-=======
 
-    /* the size of a cleanup chunk in bytes is FT_CLEANUP_CHUNK_SIZE*12 + 4 */
+    /* the size of a cleanup chunk in bytes is FT2_1_3_CLEANUP_CHUNK_SIZE*12 + 4 */
     /* this must be a small power of 2 whenever possible..                  */
     /*                                                                      */
     /* with a value of 5, we have a byte size of 64 bytes per chunk..       */
     /*                                                                      */
-#define  FT_CLEANUP_CHUNK_SIZE   5
+#define  FT2_1_3_CLEANUP_CHUNK_SIZE   5
 
 
 
-typedef struct FT_CleanupItemRec_ {
-	FT_Pointer      item;
-	FT_CleanupFunc  item_func;
-	FT_Pointer      item_data;
+typedef struct FT2_1_3_CleanupItemRec_ {
+	FT2_1_3_Pointer      item;
+	FT2_1_3_CleanupFunc  item_func;
+	FT2_1_3_Pointer      item_data;
 
-} FT_CleanupItemRec;
+} FT2_1_3_CleanupItemRec;
 
-typedef struct FT_CleanupChunkRec_*   FT_CleanupChunk;
+typedef struct FT2_1_3_CleanupChunkRec_*   FT2_1_3_CleanupChunk;
 
-typedef struct FT_CleanupChunkRec_ {
-	FT_CleanupChunk    link;
-	FT_CleanupItemRec  items[ FT_CLEANUP_CHUNK_SIZE ];
+typedef struct FT2_1_3_CleanupChunkRec_ {
+	FT2_1_3_CleanupChunk    link;
+	FT2_1_3_CleanupItemRec  items[ FT2_1_3_CLEANUP_CHUNK_SIZE ];
 
-} FT_CleanupChunkRec;
-
-
-typedef struct FT_CleanupStackRec_ {
-	FT_CleanupItem     top;
-	FT_CleanupItem     limit;
-	FT_CleanupChunk    chunk;
-	FT_CleanupChunkRec chunk_0;  /* avoids stupid dynamic allocation */
-	FT_Memory          memory;
-
-} FT_CleanupStackRec, *FT_CleanupStack;
+} FT2_1_3_CleanupChunkRec;
 
 
-FT_BASE( void )
-ft_cleanup_stack_push( FT_CleanupStack  stack,
-                       FT_Pointer       item,
-                       FT_CleanupFunc   item_func,
-                       FT_Pointer       item_data );
+typedef struct FT2_1_3_CleanupStackRec_ {
+	FT2_1_3_CleanupItem     top;
+	FT2_1_3_CleanupItem     limit;
+	FT2_1_3_CleanupChunk    chunk;
+	FT2_1_3_CleanupChunkRec chunk_0;  /* avoids stupid dynamic allocation */
+	FT2_1_3_Memory          memory;
 
-FT_BASE( void )
-ft_cleanup_stack_pop( FT_CleanupStack   stack,
-                      FT_Int            destroy );
-
-FT_BASE( FT_CleanupItem )
-ft_cleanup_stack_peek( FT_CleanupStack  stack );
-
-FT_BASE( void )
-ft_xhandler_enter( FT_XHandler  xhandler,
-                   FT_Memory    memory );
-
-FT_BASE( void )
-ft_xhandler_exit( FT_XHandler  xhandler );
+} FT2_1_3_CleanupStackRec, *FT2_1_3_CleanupStack;
 
 
-FT_BASE( void )
-ft_cleanup_throw( FT_CleanupStack  stack,
-                  FT_Error         error );
+FT2_1_3_BASE( void )
+FT2_1_3_cleanup_stack_push( FT2_1_3_CleanupStack  stack,
+                       FT2_1_3_Pointer       item,
+                       FT2_1_3_CleanupFunc   item_func,
+                       FT2_1_3_Pointer       item_data );
 
->>>>>>> 1.2
-FT_END_HEADER
+FT2_1_3_BASE( void )
+FT2_1_3_cleanup_stack_pop( FT2_1_3_CleanupStack   stack,
+                      FT2_1_3_Int            destroy );
 
-#endif /* __FT_EXCEPT_H__ */
+FT2_1_3_BASE( FT2_1_3_CleanupItem )
+FT2_1_3_cleanup_stack_peek( FT2_1_3_CleanupStack  stack );
+
+FT2_1_3_BASE( void )
+FT2_1_3_xhandler_enter( FT2_1_3_XHandler  xhandler,
+                   FT2_1_3_Memory    memory );
+
+FT2_1_3_BASE( void )
+FT2_1_3_xhandler_exit( FT2_1_3_XHandler  xhandler );
+
+
+FT2_1_3_BASE( void )
+FT2_1_3_cleanup_throw( FT2_1_3_CleanupStack  stack,
+                  FT2_1_3_Error         error );
+
+FT2_1_3_END_HEADER
+
+#endif /* __FT2_1_3_EXCEPT_H__ */

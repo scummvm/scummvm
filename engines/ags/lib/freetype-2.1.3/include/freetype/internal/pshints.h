@@ -23,11 +23,11 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_FREETYPE_H
-#include FT_TYPE1_TABLES_H
+#include FT2_1_3_FREETYPE_H
+#include FT2_1_3_TYPE1_TABLES_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -40,17 +40,17 @@ FT_BEGIN_HEADER
 
 typedef struct PSH_GlobalsRec_*  PSH_Globals;
 
-typedef FT_Error
-(*PSH_Globals_NewFunc)( FT_Memory     memory,
+typedef FT2_1_3_Error
+(*PSH_Globals_NewFunc)( FT2_1_3_Memory     memory,
                         T1_Private*   private_dict,
                         PSH_Globals*  aglobals );
 
-typedef FT_Error
+typedef FT2_1_3_Error
 (*PSH_Globals_SetScaleFunc)( PSH_Globals  globals,
-                             FT_Fixed     x_scale,
-                             FT_Fixed     y_scale,
-                             FT_Fixed     x_delta,
-                             FT_Fixed     y_delta );
+                             FT2_1_3_Fixed     x_scale,
+                             FT2_1_3_Fixed     y_scale,
+                             FT2_1_3_Fixed     x_delta,
+                             FT2_1_3_Fixed     y_delta );
 
 typedef void
 (*PSH_Globals_DestroyFunc)( PSH_Globals  globals );
@@ -169,8 +169,8 @@ typedef void
 /*                                                                       */
 typedef void
 (*T1_Hints_SetStemFunc)( T1_Hints  hints,
-                         FT_UInt   dimension,
-                         FT_Long*  coords );
+                         FT2_1_3_UInt   dimension,
+                         FT2_1_3_Long*  coords );
 
 
 /*************************************************************************/
@@ -199,8 +199,8 @@ typedef void
 /*                                                                       */
 typedef void
 (*T1_Hints_SetStem3Func)( T1_Hints  hints,
-                          FT_UInt   dimension,
-                          FT_Long*  coords );
+                          FT2_1_3_UInt   dimension,
+                          FT2_1_3_Long*  coords );
 
 
 /*************************************************************************/
@@ -220,7 +220,7 @@ typedef void
 /*                                                                       */
 typedef void
 (*T1_Hints_ResetFunc)( T1_Hints  hints,
-                       FT_UInt   end_point );
+                       FT2_1_3_UInt   end_point );
 
 
 /*************************************************************************/
@@ -244,9 +244,9 @@ typedef void
 /*    The error code will be set to indicate that an error occured       */
 /*    during the recording session.                                      */
 /*                                                                       */
-typedef FT_Error
+typedef FT2_1_3_Error
 (*T1_Hints_CloseFunc)( T1_Hints  hints,
-                       FT_UInt   end_point );
+                       FT2_1_3_UInt   end_point );
 
 
 /*************************************************************************/
@@ -278,11 +278,11 @@ typedef FT_Error
 /*    The scaling transformation is taken from the "globals" object      */
 /*    which must correspond to the same font as the glyph.               */
 /*                                                                       */
-typedef FT_Error
+typedef FT2_1_3_Error
 (*T1_Hints_ApplyFunc)( T1_Hints        hints,
-                       FT_Outline*     outline,
+                       FT2_1_3_Outline*     outline,
                        PSH_Globals     globals,
-                       FT_Render_Mode  hint_mode );
+                       FT2_1_3_Render_Mode  hint_mode );
 
 
 /*************************************************************************/
@@ -425,9 +425,9 @@ typedef void
 /*                                                                       */
 typedef void
 (*T2_Hints_StemsFunc)( T2_Hints   hints,
-                       FT_UInt    dimension,
-                       FT_UInt    count,
-                       FT_Fixed*  coordinates );
+                       FT2_1_3_UInt    dimension,
+                       FT2_1_3_UInt    count,
+                       FT2_1_3_Fixed*  coordinates );
 
 
 /*************************************************************************/
@@ -462,9 +462,9 @@ typedef void
 /*                                                                       */
 typedef void
 (*T2_Hints_MaskFunc)( T2_Hints        hints,
-                      FT_UInt         end_point,
-                      FT_UInt         bit_count,
-                      const FT_Byte*  bytes );
+                      FT2_1_3_UInt         end_point,
+                      FT2_1_3_UInt         bit_count,
+                      const FT2_1_3_Byte*  bytes );
 
 
 /*************************************************************************/
@@ -499,8 +499,8 @@ typedef void
 /*                                                                       */
 typedef void
 (*T2_Hints_CounterFunc)( T2_Hints        hints,
-                         FT_UInt         bit_count,
-                         const FT_Byte*  bytes );
+                         FT2_1_3_UInt         bit_count,
+                         const FT2_1_3_Byte*  bytes );
 
 
 /*************************************************************************/
@@ -524,9 +524,9 @@ typedef void
 /*    The error code will be set to indicate that an error occured       */
 /*    during the recording session.                                      */
 /*                                                                       */
-typedef FT_Error
+typedef FT2_1_3_Error
 (*T2_Hints_CloseFunc)( T2_Hints  hints,
-                       FT_UInt   end_point );
+                       FT2_1_3_UInt   end_point );
 
 
 /*************************************************************************/
@@ -558,11 +558,11 @@ typedef FT_Error
 /*    The scaling transformation is taken from the "globals" object      */
 /*    which must correspond to the same font than the glyph.             */
 /*                                                                       */
-typedef FT_Error
+typedef FT2_1_3_Error
 (*T2_Hints_ApplyFunc)( T2_Hints        hints,
-                       FT_Outline*     outline,
+                       FT2_1_3_Outline*     outline,
                        PSH_Globals     globals,
-                       FT_Render_Mode  hint_mode );
+                       FT2_1_3_Render_Mode  hint_mode );
 
 
 /*************************************************************************/
@@ -605,16 +605,16 @@ typedef struct  T2_Hints_FuncsRec_ {
 
 
 typedef struct  PSHinter_Interface_ {
-	PSH_Globals_Funcs  (*get_globals_funcs)( FT_Module  module );
-	T1_Hints_Funcs     (*get_t1_funcs)     ( FT_Module  module );
-	T2_Hints_Funcs     (*get_t2_funcs)     ( FT_Module  module );
+	PSH_Globals_Funcs  (*get_globals_funcs)( FT2_1_3_Module  module );
+	T1_Hints_Funcs     (*get_t1_funcs)     ( FT2_1_3_Module  module );
+	T2_Hints_Funcs     (*get_t2_funcs)     ( FT2_1_3_Module  module );
 
 } PSHinter_Interface;
 
 typedef PSHinter_Interface*  PSHinter_Service;
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __PSHINTS_H__ */
 

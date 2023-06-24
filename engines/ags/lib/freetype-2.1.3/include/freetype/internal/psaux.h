@@ -22,11 +22,11 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_OBJECTS_H
-#include FT_INTERNAL_TYPE1_TYPES_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_TYPE1_TYPES_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -60,19 +60,19 @@ typedef const struct PS_Table_FuncsRec_*  PS_Table_Funcs;
 /*    table_release :: Releases table data, then finalizes it.           */
 /*                                                                       */
 typedef struct  PS_Table_FuncsRec_ {
-	FT_Error
+	FT2_1_3_Error
 	(*init)( PS_Table   table,
-	         FT_Int     count,
-	         FT_Memory  memory );
+	         FT2_1_3_Int     count,
+	         FT2_1_3_Memory  memory );
 
 	void
 	(*done)( PS_Table  table );
 
-	FT_Error
+	FT2_1_3_Error
 	(*add)( PS_Table   table,
-	        FT_Int     index,
+	        FT2_1_3_Int     index,
 	        void*      object,
-	        FT_Int     length );
+	        FT2_1_3_Int     length );
 
 	void
 	(*release)( PS_Table  table );
@@ -113,17 +113,17 @@ typedef struct  PS_Table_FuncsRec_ {
 /*    funcs     :: A table of method pointers for this object.           */
 /*                                                                       */
 typedef struct  PS_TableRec_ {
-	FT_Byte*           block;          /* current memory block           */
-	FT_Offset          cursor;         /* current cursor in memory block */
-	FT_Offset          capacity;       /* current size of memory block   */
-	FT_Long            init;
+	FT2_1_3_Byte*           block;          /* current memory block           */
+	FT2_1_3_Offset          cursor;         /* current cursor in memory block */
+	FT2_1_3_Offset          capacity;       /* current size of memory block   */
+	FT2_1_3_Long            init;
 
-	FT_Int             max_elems;
-	FT_Int             num_elems;
-	FT_Byte**          elements;       /* addresses of table elements */
-	FT_Int*            lengths;        /* lengths of table elements   */
+	FT2_1_3_Int             max_elems;
+	FT2_1_3_Int             num_elems;
+	FT2_1_3_Byte**          elements;       /* addresses of table elements */
+	FT2_1_3_Int*            lengths;        /* lengths of table elements   */
 
-	FT_Memory          memory;
+	FT2_1_3_Memory          memory;
 	PS_Table_FuncsRec  funcs;
 
 } PS_TableRec;
@@ -159,8 +159,8 @@ typedef enum  T1_TokenType_ {
 
 /* a simple structure used to identify tokens */
 typedef struct  T1_TokenRec_ {
-	FT_Byte*      start;   /* first character of token in input stream */
-	FT_Byte*      limit;   /* first character after the token          */
+	FT2_1_3_Byte*      start;   /* first character of token in input stream */
+	FT2_1_3_Byte*      limit;   /* first character after the token          */
 	T1_TokenType  type;    /* type of token                            */
 
 } T1_TokenRec;
@@ -198,8 +198,8 @@ typedef enum  T1_FieldLocation_ {
 
 
 typedef void
-(*T1_Field_ParseFunc)( FT_Face     face,
-                       FT_Pointer  parser );
+(*T1_Field_ParseFunc)( FT2_1_3_Face     face,
+                       FT2_1_3_Pointer  parser );
 
 
 /* structure type used to model object fields */
@@ -208,11 +208,11 @@ typedef struct  T1_FieldRec_ {
 	T1_FieldLocation    location;
 	T1_FieldType        type;         /* type of field                  */
 	T1_Field_ParseFunc  reader;
-	FT_UInt             offset;       /* offset of field in object      */
-	FT_Byte             size;         /* size of field in bytes         */
-	FT_UInt             array_max;    /* maximal number of elements for */
+	FT2_1_3_UInt             offset;       /* offset of field in object      */
+	FT2_1_3_Byte             size;         /* size of field in bytes         */
+	FT2_1_3_UInt             array_max;    /* maximal number of elements for */
 	/* array                          */
-	FT_UInt             count_offset; /* offset of element count for    */
+	FT2_1_3_UInt             count_offset; /* offset of element count for    */
 	/* arrays                         */
 } T1_FieldRec;
 
@@ -221,8 +221,8 @@ typedef struct  T1_FieldRec_ {
           {                                          \
             _ident, T1CODE, _type,                   \
             0,                                       \
-            FT_FIELD_OFFSET( _fname ),               \
-            FT_FIELD_SIZE( _fname ),                 \
+            FT2_1_3_FIELD_OFFSET( _fname ),               \
+            FT2_1_3_FIELD_SIZE( _fname ),                 \
             0, 0                                     \
           },
 
@@ -238,18 +238,18 @@ typedef struct  T1_FieldRec_ {
           {                                               \
             _ident, T1CODE, _type,                        \
             0,                                            \
-            FT_FIELD_OFFSET( _fname ),                    \
-            FT_FIELD_SIZE_DELTA( _fname ),                \
+            FT2_1_3_FIELD_OFFSET( _fname ),                    \
+            FT2_1_3_FIELD_SIZE_DELTA( _fname ),                \
             _max,                                         \
-            FT_FIELD_OFFSET( num_ ## _fname )             \
+            FT2_1_3_FIELD_OFFSET( num_ ## _fname )             \
           },
 
 #define T1_NEW_TABLE_FIELD2( _ident, _type, _fname, _max ) \
           {                                                \
             _ident, T1CODE, _type,                         \
             0,                                             \
-            FT_FIELD_OFFSET( _fname ),                     \
-            FT_FIELD_SIZE_DELTA( _fname ),                 \
+            FT2_1_3_FIELD_OFFSET( _fname ),                     \
+            FT2_1_3_FIELD_SIZE_DELTA( _fname ),                 \
             _max, 0                                        \
           },
 
@@ -303,9 +303,9 @@ typedef const struct PS_Parser_FuncsRec_*  PS_Parser_Funcs;
 typedef struct  PS_Parser_FuncsRec_ {
 	void
 	(*init)( PS_Parser  parser,
-	         FT_Byte*   base,
-	         FT_Byte*   limit,
-	         FT_Memory  memory );
+	         FT2_1_3_Byte*   base,
+	         FT2_1_3_Byte*   limit,
+	         FT2_1_3_Memory  memory );
 
 	void
 	(*done)( PS_Parser  parser );
@@ -315,20 +315,20 @@ typedef struct  PS_Parser_FuncsRec_ {
 	void
 	(*skip_alpha)( PS_Parser  parser );
 
-	FT_Long
+	FT2_1_3_Long
 	(*to_int)( PS_Parser  parser );
-	FT_Fixed
+	FT2_1_3_Fixed
 	(*to_fixed)( PS_Parser  parser,
-	             FT_Int     power_ten );
-	FT_Int
+	             FT2_1_3_Int     power_ten );
+	FT2_1_3_Int
 	(*to_coord_array)( PS_Parser  parser,
-	                   FT_Int     max_coords,
-	                   FT_Short*  coords );
-	FT_Int
+	                   FT2_1_3_Int     max_coords,
+	                   FT2_1_3_Short*  coords );
+	FT2_1_3_Int
 	(*to_fixed_array)( PS_Parser  parser,
-	                   FT_Int     max_values,
-	                   FT_Fixed*  values,
-	                   FT_Int     power_ten );
+	                   FT2_1_3_Int     max_values,
+	                   FT2_1_3_Fixed*  values,
+	                   FT2_1_3_Int     power_ten );
 
 	void
 	(*to_token)( PS_Parser  parser,
@@ -336,22 +336,22 @@ typedef struct  PS_Parser_FuncsRec_ {
 	void
 	(*to_token_array)( PS_Parser  parser,
 	                   T1_Token   tokens,
-	                   FT_UInt    max_tokens,
-	                   FT_Int*    pnum_tokens );
+	                   FT2_1_3_UInt    max_tokens,
+	                   FT2_1_3_Int*    pnum_tokens );
 
-	FT_Error
+	FT2_1_3_Error
 	(*load_field)( PS_Parser       parser,
 	               const T1_Field  field,
 	               void**          objects,
-	               FT_UInt         max_objects,
-	               FT_ULong*       pflags );
+	               FT2_1_3_UInt         max_objects,
+	               FT2_1_3_ULong*       pflags );
 
-	FT_Error
+	FT2_1_3_Error
 	(*load_field_table)( PS_Parser       parser,
 	                     const T1_Field  field,
 	                     void**          objects,
-	                     FT_UInt         max_objects,
-	                     FT_ULong*       pflags );
+	                     FT2_1_3_UInt         max_objects,
+	                     FT2_1_3_ULong*       pflags );
 
 } PS_Parser_FuncsRec;
 
@@ -378,11 +378,11 @@ typedef struct  PS_Parser_FuncsRec_ {
 /*    funcs  :: A table of functions for the parser.                     */
 /*                                                                       */
 typedef struct  PS_ParserRec_ {
-	FT_Byte*   cursor;
-	FT_Byte*   base;
-	FT_Byte*   limit;
-	FT_Error   error;
-	FT_Memory  memory;
+	FT2_1_3_Byte*   cursor;
+	FT2_1_3_Byte*   base;
+	FT2_1_3_Byte*   limit;
+	FT2_1_3_Error   error;
+	FT2_1_3_Memory  memory;
 
 	PS_Parser_FuncsRec  funcs;
 
@@ -401,28 +401,28 @@ typedef struct  PS_ParserRec_ {
 typedef struct T1_BuilderRec_*  T1_Builder;
 
 
-typedef FT_Error
+typedef FT2_1_3_Error
 (*T1_Builder_Check_Points_Func)( T1_Builder  builder,
-                                 FT_Int      count );
+                                 FT2_1_3_Int      count );
 
 typedef void
 (*T1_Builder_Add_Point_Func)( T1_Builder  builder,
-                              FT_Pos      x,
-                              FT_Pos      y,
-                              FT_Byte     flag );
+                              FT2_1_3_Pos      x,
+                              FT2_1_3_Pos      y,
+                              FT2_1_3_Byte     flag );
 
-typedef FT_Error
+typedef FT2_1_3_Error
 (*T1_Builder_Add_Point1_Func)( T1_Builder  builder,
-                               FT_Pos      x,
-                               FT_Pos      y );
+                               FT2_1_3_Pos      x,
+                               FT2_1_3_Pos      y );
 
-typedef FT_Error
+typedef FT2_1_3_Error
 (*T1_Builder_Add_Contour_Func)( T1_Builder  builder );
 
-typedef FT_Error
+typedef FT2_1_3_Error
 (*T1_Builder_Start_Point_Func)( T1_Builder  builder,
-                                FT_Pos      x,
-                                FT_Pos      y );
+                                FT2_1_3_Pos      x,
+                                FT2_1_3_Pos      y );
 
 typedef void
 (*T1_Builder_Close_Contour_Func)( T1_Builder  builder );
@@ -433,10 +433,10 @@ typedef const struct T1_Builder_FuncsRec_*  T1_Builder_Funcs;
 typedef struct  T1_Builder_FuncsRec_ {
 	void
 	(*init)( T1_Builder    builder,
-	         FT_Face       face,
-	         FT_Size       size,
-	         FT_GlyphSlot  slot,
-	         FT_Bool       hinting );
+	         FT2_1_3_Face       face,
+	         FT2_1_3_Size       size,
+	         FT2_1_3_GlyphSlot  slot,
+	         FT2_1_3_Bool       hinting );
 
 	void
 	(*done)( T1_Builder   builder );
@@ -508,32 +508,32 @@ typedef struct  T1_Builder_FuncsRec_ {
 /*    funcs        :: An array of function pointers for the builder.     */
 /*                                                                       */
 typedef struct  T1_BuilderRec_ {
-	FT_Memory       memory;
-	FT_Face         face;
-	FT_GlyphSlot    glyph;
-	FT_GlyphLoader  loader;
-	FT_Outline*     base;
-	FT_Outline*     current;
+	FT2_1_3_Memory       memory;
+	FT2_1_3_Face         face;
+	FT2_1_3_GlyphSlot    glyph;
+	FT2_1_3_GlyphLoader  loader;
+	FT2_1_3_Outline*     base;
+	FT2_1_3_Outline*     current;
 
-	FT_Vector       last;
+	FT2_1_3_Vector       last;
 
-	FT_Fixed        scale_x;
-	FT_Fixed        scale_y;
+	FT2_1_3_Fixed        scale_x;
+	FT2_1_3_Fixed        scale_y;
 
-	FT_Pos          pos_x;
-	FT_Pos          pos_y;
+	FT2_1_3_Pos          pos_x;
+	FT2_1_3_Pos          pos_y;
 
-	FT_Vector       left_bearing;
-	FT_Vector       advance;
+	FT2_1_3_Vector       left_bearing;
+	FT2_1_3_Vector       advance;
 
-	FT_BBox         bbox;          /* bounding box */
-	FT_Bool         path_begun;
-	FT_Bool         load_points;
-	FT_Bool         no_recurse;
-	FT_Bool         shift;
+	FT2_1_3_BBox         bbox;          /* bounding box */
+	FT2_1_3_Bool         path_begun;
+	FT2_1_3_Bool         load_points;
+	FT2_1_3_Bool         no_recurse;
+	FT2_1_3_Bool         shift;
 
-	FT_Error        error;         /* only used for memory errors */
-	FT_Bool         metrics_only;
+	FT2_1_3_Error        error;         /* only used for memory errors */
+	FT2_1_3_Bool         metrics_only;
 
 	void*           hints_funcs;    /* hinter-specific */
 	void*           hints_globals;  /* hinter-specific */
@@ -572,9 +572,9 @@ typedef struct  T1_BuilderRec_ {
 
 
 typedef struct  T1_Decoder_ZoneRec_ {
-	FT_Byte*  cursor;
-	FT_Byte*  base;
-	FT_Byte*  limit;
+	FT2_1_3_Byte*  cursor;
+	FT2_1_3_Byte*  base;
+	FT2_1_3_Byte*  limit;
 
 } T1_Decoder_ZoneRec, *T1_Decoder_Zone;
 
@@ -583,30 +583,30 @@ typedef struct T1_DecoderRec_*              T1_Decoder;
 typedef const struct T1_Decoder_FuncsRec_*  T1_Decoder_Funcs;
 
 
-typedef FT_Error
+typedef FT2_1_3_Error
 (*T1_Decoder_Callback)( T1_Decoder  decoder,
-                        FT_UInt     glyph_index );
+                        FT2_1_3_UInt     glyph_index );
 
 
 typedef struct  T1_Decoder_FuncsRec_ {
-	FT_Error
+	FT2_1_3_Error
 	(*init)( T1_Decoder           decoder,
-	         FT_Face              face,
-	         FT_Size              size,
-	         FT_GlyphSlot         slot,
-	         FT_Byte**            glyph_names,
+	         FT2_1_3_Face              face,
+	         FT2_1_3_Size              size,
+	         FT2_1_3_GlyphSlot         slot,
+	         FT2_1_3_Byte**            glyph_names,
 	         PS_Blend             blend,
-	         FT_Bool              hinting,
-	         FT_Render_Mode       hint_mode,
+	         FT2_1_3_Bool              hinting,
+	         FT2_1_3_Render_Mode       hint_mode,
 	         T1_Decoder_Callback  callback );
 
 	void
 	(*done)( T1_Decoder  decoder );
 
-	FT_Error
+	FT2_1_3_Error
 	(*parse_charstrings)( T1_Decoder  decoder,
-	                      FT_Byte*    base,
-	                      FT_UInt     len );
+	                      FT2_1_3_Byte*    base,
+	                      FT2_1_3_UInt     len );
 
 } T1_Decoder_FuncsRec;
 
@@ -614,32 +614,32 @@ typedef struct  T1_Decoder_FuncsRec_ {
 typedef struct  T1_DecoderRec_ {
 	T1_BuilderRec        builder;
 
-	FT_Long              stack[T1_MAX_CHARSTRINGS_OPERANDS];
-	FT_Long*             top;
+	FT2_1_3_Long              stack[T1_MAX_CHARSTRINGS_OPERANDS];
+	FT2_1_3_Long*             top;
 
 	T1_Decoder_ZoneRec   zones[T1_MAX_SUBRS_CALLS + 1];
 	T1_Decoder_Zone      zone;
 
 	PSNames_Service      psnames;      /* for seac */
-	FT_UInt              num_glyphs;
-	FT_Byte**            glyph_names;
+	FT2_1_3_UInt              num_glyphs;
+	FT2_1_3_Byte**            glyph_names;
 
-	FT_Int               lenIV;        /* internal for sub routine calls */
-	FT_UInt              num_subrs;
-	FT_Byte**            subrs;
-	FT_Int*              subrs_len;    /* array of subrs length (optional) */
+	FT2_1_3_Int               lenIV;        /* internal for sub routine calls */
+	FT2_1_3_UInt              num_subrs;
+	FT2_1_3_Byte**            subrs;
+	FT2_1_3_Int*              subrs_len;    /* array of subrs length (optional) */
 
-	FT_Matrix            font_matrix;
-	FT_Vector            font_offset;
+	FT2_1_3_Matrix            font_matrix;
+	FT2_1_3_Vector            font_offset;
 
-	FT_Int               flex_state;
-	FT_Int               num_flex_vectors;
-	FT_Vector            flex_vectors[7];
+	FT2_1_3_Int               flex_state;
+	FT2_1_3_Int               num_flex_vectors;
+	FT2_1_3_Vector            flex_vectors[7];
 
 	PS_Blend             blend;       /* for multiple master support */
 
-	FT_UInt32            hint_flags;
-	FT_Render_Mode       hint_mode;
+	FT2_1_3_UInt32            hint_flags;
+	FT2_1_3_Render_Mode       hint_mode;
 
 	T1_Decoder_Callback  parse_callback;
 	T1_Decoder_FuncsRec  funcs;
@@ -658,10 +658,10 @@ typedef struct  T1_DecoderRec_ {
 typedef const struct T1_CMap_ClassesRec_*  T1_CMap_Classes;
 
 typedef struct T1_CMap_ClassesRec_ {
-	FT_CMap_Class  standard;
-	FT_CMap_Class  expert;
-	FT_CMap_Class  custom;
-	FT_CMap_Class  unicode;
+	FT2_1_3_CMap_Class  standard;
+	FT2_1_3_CMap_Class  expert;
+	FT2_1_3_CMap_Class  custom;
+	FT2_1_3_CMap_Class  unicode;
 
 } T1_CMap_ClassesRec;
 
@@ -682,9 +682,9 @@ typedef struct  PSAux_ServiceRec_ {
 	const T1_Decoder_FuncsRec*  t1_decoder_funcs;
 
 	void
-	(*t1_decrypt)( FT_Byte*   buffer,
-	               FT_Offset  length,
-	               FT_UShort  seed );
+	(*t1_decrypt)( FT2_1_3_Byte*   buffer,
+	               FT2_1_3_Offset  length,
+	               FT2_1_3_UShort  seed );
 
 	T1_CMap_Classes  t1_cmap_classes;
 
@@ -693,7 +693,7 @@ typedef struct  PSAux_ServiceRec_ {
 /* backwards-compatible type definition */
 typedef PSAux_ServiceRec   PSAux_Interface;
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __PSAUX_H__ */
 

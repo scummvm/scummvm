@@ -22,12 +22,12 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_TYPE1_TABLES_H
-#include FT_INTERNAL_POSTSCRIPT_NAMES_H
-#include FT_INTERNAL_POSTSCRIPT_HINTS_H
+#include FT2_1_3_TYPE1_TABLES_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_NAMES_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_HINTS_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -64,12 +64,12 @@ FT_BEGIN_HEADER
 /*    char_name  :: An array of corresponding glyph names.               */
 /*                                                                       */
 typedef struct  T1_EncodingRecRec_ {
-	FT_Int       num_chars;
-	FT_Int       code_first;
-	FT_Int       code_last;
+	FT2_1_3_Int       num_chars;
+	FT2_1_3_Int       code_first;
+	FT2_1_3_Int       code_last;
 
-	FT_UShort*   char_index;
-	FT_String**  char_name;
+	FT2_1_3_UShort*   char_index;
+	FT2_1_3_String**  char_name;
 
 } T1_EncodingRec, *T1_Encoding;
 
@@ -87,39 +87,39 @@ typedef enum  T1_EncodingType_ {
 typedef struct  T1_FontRec_ {
 	PS_FontInfoRec   font_info;         /* font info dictionary */
 	PS_PrivateRec    private_dict;      /* private dictionary   */
-	FT_String*       font_name;         /* top-level dictionary */
+	FT2_1_3_String*       font_name;         /* top-level dictionary */
 
 	T1_EncodingType  encoding_type;
 	T1_EncodingRec   encoding;
 
-	FT_Byte*         subrs_block;
-	FT_Byte*         charstrings_block;
-	FT_Byte*         glyph_names_block;
+	FT2_1_3_Byte*         subrs_block;
+	FT2_1_3_Byte*         charstrings_block;
+	FT2_1_3_Byte*         glyph_names_block;
 
-	FT_Int           num_subrs;
-	FT_Byte**        subrs;
-	FT_Int*          subrs_len;
+	FT2_1_3_Int           num_subrs;
+	FT2_1_3_Byte**        subrs;
+	FT2_1_3_Int*          subrs_len;
 
-	FT_Int           num_glyphs;
-	FT_String**      glyph_names;       /* array of glyph names       */
-	FT_Byte**        charstrings;       /* array of glyph charstrings */
-	FT_Int*          charstrings_len;
+	FT2_1_3_Int           num_glyphs;
+	FT2_1_3_String**      glyph_names;       /* array of glyph names       */
+	FT2_1_3_Byte**        charstrings;       /* array of glyph charstrings */
+	FT2_1_3_Int*          charstrings_len;
 
-	FT_Byte          paint_type;
-	FT_Byte          font_type;
-	FT_Matrix        font_matrix;
-	FT_Vector        font_offset;
-	FT_BBox          font_bbox;
-	FT_Long          font_id;
+	FT2_1_3_Byte          paint_type;
+	FT2_1_3_Byte          font_type;
+	FT2_1_3_Matrix        font_matrix;
+	FT2_1_3_Vector        font_offset;
+	FT2_1_3_BBox          font_bbox;
+	FT2_1_3_Long          font_id;
 
-	FT_Int           stroke_width;
+	FT2_1_3_Int           stroke_width;
 
 } T1_FontRec, *T1_Font;
 
 
 typedef struct  CID_SubrsRec_ {
-	FT_UInt    num_subrs;
-	FT_Byte**  code;
+	FT2_1_3_UInt    num_subrs;
+	FT2_1_3_Byte**  code;
 
 } CID_SubrsRec, *CID_Subrs;
 
@@ -153,13 +153,13 @@ typedef struct CID_FaceRec_*  CID_Face;
 
 
 typedef struct  T1_FaceRec_ {
-	FT_FaceRec     root;
+	FT2_1_3_FaceRec     root;
 	T1_FontRec     type1;
 	const void*    psnames;
 	const void*    psaux;
 	const void*    afm_data;
-	FT_CharMapRec  charmaprecs[2];
-	FT_CharMap     charmaps[2];
+	FT2_1_3_CharMapRec  charmaprecs[2];
+	FT2_1_3_CharMap     charmaps[2];
 	PS_Unicodes    unicode_map;
 
 	/* support for Multiple Masters fonts */
@@ -172,7 +172,7 @@ typedef struct  T1_FaceRec_ {
 
 
 typedef struct  CID_FaceRec_ {
-	FT_FaceRec       root;
+	FT2_1_3_FaceRec       root;
 	void*            psnames;
 	void*            psaux;
 	CID_FaceInfoRec  cid;
@@ -185,7 +185,7 @@ typedef struct  CID_FaceRec_ {
 } CID_FaceRec;
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __T1TYPES_H__ */
 

@@ -22,10 +22,10 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_FREETYPE_H
+#include FT2_1_3_FREETYPE_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -50,9 +50,9 @@ FT_BEGIN_HEADER
 /*    Glyph List table.                                                  */
 /*                                                                       */
 /*    This function will not be compiled if the configuration macro      */
-/*    FT_CONFIG_OPTION_ADOBE_GLYPH_LIST is undefined.                    */
+/*    FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST is undefined.                    */
 /*                                                                       */
-typedef FT_UInt32
+typedef FT2_1_3_UInt32
 (*PS_Unicode_Value_Func)( const char*  glyph_name );
 
 
@@ -81,12 +81,12 @@ typedef FT_UInt32
 /*    value, according to the Adobe Glyph List.                          */
 /*                                                                       */
 /*    This function will not be compiled if the configuration macro      */
-/*    FT_CONFIG_OPTION_ADOBE_GLYPH_LIST is undefined.                    */
+/*    FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST is undefined.                    */
 /*                                                                       */
-typedef FT_UInt
-(*PS_Unicode_Index_Func)( FT_UInt       num_glyphs,
+typedef FT2_1_3_UInt
+(*PS_Unicode_Index_Func)( FT2_1_3_UInt       num_glyphs,
                           const char**  glyph_names,
-                          FT_ULong      unicode );
+                          FT2_1_3_ULong      unicode );
 
 
 /*************************************************************************/
@@ -106,19 +106,19 @@ typedef FT_UInt
 /*                                                                       */
 /* <Note>                                                                */
 /*    This function will not be compiled if the configuration macro      */
-/*    FT_CONFIG_OPTION_POSTSCRIPT_NAMES is undefined.                    */
+/*    FT2_1_3_CONFIG_OPTION_POSTSCRIPT_NAMES is undefined.                    */
 /*                                                                       */
 typedef const char*
-(*PS_Macintosh_Name_Func)( FT_UInt  name_index );
+(*PS_Macintosh_Name_Func)( FT2_1_3_UInt  name_index );
 
 
 typedef const char*
-(*PS_Adobe_Std_Strings_Func)( FT_UInt  string_index );
+(*PS_Adobe_Std_Strings_Func)( FT2_1_3_UInt  string_index );
 
 
 typedef struct  PS_UniMap_ {
-	FT_UInt  unicode;
-	FT_UInt  glyph_index;
+	FT2_1_3_UInt  unicode;
+	FT2_1_3_UInt  glyph_index;
 
 } PS_UniMap;
 
@@ -148,25 +148,25 @@ typedef struct  PS_UniMap_ {
 /*    corresponding to a given Unicode character code.                   */
 /*                                                                       */
 typedef struct  PS_Unicodes_ {
-	FT_UInt     num_maps;
+	FT2_1_3_UInt     num_maps;
 	PS_UniMap*  maps;
 
 } PS_Unicodes;
 
 
-typedef FT_Error
-(*PS_Build_Unicodes_Func)( FT_Memory     memory,
-                           FT_UInt       num_glyphs,
+typedef FT2_1_3_Error
+(*PS_Build_Unicodes_Func)( FT2_1_3_Memory     memory,
+                           FT2_1_3_UInt       num_glyphs,
                            const char**  glyph_names,
                            PS_Unicodes*  unicodes );
 
-typedef FT_UInt
+typedef FT2_1_3_UInt
 (*PS_Lookup_Unicode_Func)( PS_Unicodes*  unicodes,
-                           FT_UInt       unicode );
+                           FT2_1_3_UInt       unicode );
 
-typedef FT_ULong
+typedef FT2_1_3_ULong
 (*PS_Next_Unicode_Func)( PS_Unicodes*  unicodes,
-                         FT_ULong      unicode );
+                         FT2_1_3_ULong      unicode );
 
 
 /*************************************************************************/
@@ -206,11 +206,11 @@ typedef FT_ULong
 /*                                                                       */
 /* <Note>                                                                */
 /*    `unicode_value' and `unicode_index' will be set to 0 if the        */
-/*    configuration macro FT_CONFIG_OPTION_ADOBE_GLYPH_LIST is           */
+/*    configuration macro FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST is           */
 /*    undefined.                                                         */
 /*                                                                       */
 /*    `macintosh_name' will be set to 0 if the configuration macro       */
-/*    FT_CONFIG_OPTION_POSTSCRIPT_NAMES is undefined.                    */
+/*    FT2_1_3_CONFIG_OPTION_POSTSCRIPT_NAMES is undefined.                    */
 /*                                                                       */
 typedef struct  PSNames_Interface_ {
 	PS_Unicode_Value_Func      unicode_value;
@@ -230,7 +230,7 @@ typedef struct  PSNames_Interface_ {
 typedef PSNames_Interface*  PSNames_Service;
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __PSNAMES_H__ */
 
