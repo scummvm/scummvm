@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-06-22 19:52+0000\n"
-"PO-Revision-Date: 2023-06-17 19:47+0000\n"
+"PO-Revision-Date: 2023-06-24 14:14+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -5020,33 +5020,25 @@ msgstr ""
 "ορισμένα κομμάτια θα ακούγονται εσφαλμένα."
 
 #: engines/agos/midi.cpp:313
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition files\n"
-#| "%s and %s. Without these files,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s. Without this file,\n"
 "the music will not sound the same as the original game."
 msgstr ""
-"Δεν βρέθηκαν τα αρχεία ορισμού μουσικών οργάνων AdLib\n"
-"%s και %s. Χωρίς αυτά τα αρχεία,\n"
-"η μουσική δεν θα ακούγεται ακριβώς το ίδιο όπως στο πρωτότυπο παιχνίδι."
+"Δεν βρέθηκε το αρχείο ορισμού μουσικών οργάνων AdLib\n"
+"%s. Χωρίς αυτό το αρχείο, η μουσική δεν θα ακούγεται ακριβώς το ίδιο\n"
+"όπως στο πρωτότυπο παιχνίδι."
 
 #: engines/agos/midi.cpp:435
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition files\n"
-#| "%s and %s. Without these files,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s or %s. Without one of these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
-"Δεν βρέθηκαν τα αρχεία ορισμού μουσικών οργάνων AdLib\n"
-"%s και %s. Χωρίς αυτά τα αρχεία,\n"
+"Δεν βρέθηκε το αρχείο ορισμού μουσικών οργάνων AdLib\n"
+"%s ή %s. Χωρίς ένα από αυτά τα αρχεία,\n"
 "η μουσική δεν θα ακούγεται ακριβώς το ίδιο όπως στο πρωτότυπο παιχνίδι."
 
 #: engines/ags/dialogs.cpp:59
