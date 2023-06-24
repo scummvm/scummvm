@@ -90,9 +90,9 @@ uint32 SysFile::get_pos() {
 
 void SysFile::open_read_low_level() {
 	Common::File temp_fp;
-	uint32  hash_table_size;
-	char    hag_name[33];
-	byte    hagfile;
+	uint32 hash_table_size;
+	char hag_name[33];
+	byte hagfile;
 	Hag_Name_Record *temp_ptr;
 	char *temp_name;
 	Common::String last_string;
