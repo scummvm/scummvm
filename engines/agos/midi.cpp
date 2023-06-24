@@ -178,7 +178,10 @@ int MidiPlayer::open() {
 		_dataType = MT_MT32;
 	}
 
-	if (_dataType == MT_MT32 && _deviceType == MT_GM) {
+	// Check for MT-32 playback on a GM device and show a warning.
+	// Elvira 1 PC-98xx driver remaps MT-32 instruments to GM like the
+	// original driver does, so no warning needed in that case.
+	if (_dataType == MT_MT32 && _deviceType == MT_GM && !_pc98) {
 		// Not a real MT32 / no MUNT
 		::GUI::MessageDialog dialog(_(
 			"You appear to be using a General MIDI device,\n"
