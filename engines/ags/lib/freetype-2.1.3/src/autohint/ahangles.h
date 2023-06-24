@@ -25,11 +25,11 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
 #include "ahtypes.h"
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /* PI expressed in ah_angles -- we don't really need an important */
@@ -47,16 +47,16 @@ extern
 const AH_Angle  ah_arctan[1L << AH_ATAN_BITS];
 
 
-FT_LOCAL( AH_Angle )
-ah_angle( FT_Vector*  v );
+FT2_1_3_LOCAL( AH_Angle )
+ah_angle( FT2_1_3_Vector*  v );
 
 
-FT_LOCAL( AH_Angle )
+FT2_1_3_LOCAL( AH_Angle )
 ah_angle_diff( AH_Angle  angle1,
                AH_Angle  angle2 );
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __AHANGLES_H__ */
 

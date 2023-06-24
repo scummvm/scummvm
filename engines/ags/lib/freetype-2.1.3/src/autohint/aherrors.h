@@ -26,14 +26,14 @@
 #ifndef __AHERRORS_H__
 #define __AHERRORS_H__
 
-#include FT_MODULE_ERRORS_H
+#include FT2_1_3_MODULE_ERRORS_H
 
 #undef __FTERRORS_H__
 
-#define FT_ERR_PREFIX  AH_Err_
-#define FT_ERR_BASE    FT_Mod_Err_Autohint
+#define FT2_1_3_ERR_PREFIX  AH_Err_
+#define FT2_1_3_ERR_BASE    FT2_1_3_Mod_Err_Autohint
 
-#include FT_ERRORS_H
+#include FT2_1_3_ERRORS_H
 
 #endif /* __AHERRORS_H__ */
 

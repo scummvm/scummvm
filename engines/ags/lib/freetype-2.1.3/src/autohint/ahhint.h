@@ -27,7 +27,7 @@
 #include "ahglobal.h"
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 #define AH_HINT_DEFAULT        0
@@ -37,37 +37,37 @@ FT_BEGIN_HEADER
 
 
 /* create a new empty hinter object */
-FT_LOCAL( FT_Error )
-ah_hinter_new( FT_Library  library,
+FT2_1_3_LOCAL( FT2_1_3_Error )
+ah_hinter_new( FT2_1_3_Library  library,
                AH_Hinter*  ahinter );
 
 /* Load a hinted glyph in the hinter */
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 ah_hinter_load_glyph( AH_Hinter     hinter,
-                      FT_GlyphSlot  slot,
-                      FT_Size       size,
-                      FT_UInt       glyph_index,
-                      FT_Int32      load_flags );
+                      FT2_1_3_GlyphSlot  slot,
+                      FT2_1_3_Size       size,
+                      FT2_1_3_UInt       glyph_index,
+                      FT2_1_3_Int32      load_flags );
 
 /* finalize a hinter object */
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 ah_hinter_done( AH_Hinter  hinter );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 ah_hinter_done_face_globals( AH_Face_Globals  globals );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 ah_hinter_get_global_hints( AH_Hinter  hinter,
-                            FT_Face    face,
+                            FT2_1_3_Face    face,
                             void**     global_hints,
                             long*      global_len );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 ah_hinter_done_global_hints( AH_Hinter  hinter,
                              void*      global_hints );
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __AHHINT_H__ */
 

@@ -32,7 +32,7 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_OBJECTS_H       /* for FT_ALLOC_ARRAY() and FT_FREE() */
+#include FT2_1_3_INTERNAL_OBJECTS_H       /* for FT2_1_3_ALLOC_ARRAY() and FT2_1_3_FREE() */
 #include "ahoptim.h"
 
 
@@ -165,14 +165,14 @@ valid_stem_segments( AH_Segment  seg1,
 static int
 optim_compute_stems( AH_Optimizer*  optimizer ) {
 	AH_Outline  outline = optimizer->outline;
-	FT_Fixed    scale;
-	FT_Memory   memory  = optimizer->memory;
-	FT_Error    error   = 0;
-	FT_Int      dimension;
+	FT2_1_3_Fixed    scale;
+	FT2_1_3_Memory   memory  = optimizer->memory;
+	FT2_1_3_Error    error   = 0;
+	FT2_1_3_Int      dimension;
 	AH_Edge     edges;
 	AH_Edge     edge_limit;
 	AH_Stem**   p_stems;
-	FT_Int*     p_num_stems;
+	FT2_1_3_Int*     p_num_stems;
 
 
 	edges      = outline->horz_edges;
@@ -184,7 +184,7 @@ optim_compute_stems( AH_Optimizer*  optimizer ) {
 
 	for ( dimension = 1; dimension >= 0; dimension-- ) {
 		AH_Stem*  stems     = 0;
-		FT_Int    num_stems = 0;
+		FT2_1_3_Int    num_stems = 0;
 		AH_Edge   edge;
 
 
@@ -207,7 +207,7 @@ optim_compute_stems( AH_Optimizer*  optimizer ) {
 			AH_Stem*  stem;
 
 
-			if ( FT_NEW_ARRAY( stems, num_stems ) )
+			if ( FT2_1_3_NEW_ARRAY( stems, num_stems ) )
 				goto Exit;
 
 			stem = stems;
@@ -232,8 +232,8 @@ optim_compute_stems( AH_Optimizer*  optimizer ) {
 
 						/* compute min_coord and max_coord */
 						{
-							FT_Pos  min_coord = seg->min_coord;
-							FT_Pos  max_coord = seg->max_coord;
+							FT2_1_3_Pos  min_coord = seg->min_coord;
+							FT2_1_3_Pos  max_coord = seg->max_coord;
 
 
 							if ( seg2->min_coord > min_coord )
@@ -255,10 +255,10 @@ optim_compute_stems( AH_Optimizer*  optimizer ) {
 							stem->max_pos = stem->pos;
 						} else {
 							/* this edge can move; compute its min and max positions */
-							FT_Pos  pos1 = stem->opos;
-							FT_Pos  pos2 = pos1 + stem->owidth - stem->width;
-							FT_Pos  min1 = pos1 & -64;
-							FT_Pos  min2 = pos2 & -64;
+							FT2_1_3_Pos  pos1 = stem->opos;
+							FT2_1_3_Pos  pos2 = pos1 + stem->owidth - stem->width;
+							FT2_1_3_Pos  min1 = pos1 & -64;
+							FT2_1_3_Pos  min2 = pos2 & -64;
 
 
 							stem->min_pos = min1;
@@ -313,14 +313,14 @@ Exit:
 
 
 /* returns the spring area between two stems, 0 if none */
-static FT_Pos
+static FT2_1_3_Pos
 stem_spring_area( AH_Stem*  stem1,
                   AH_Stem*  stem2 ) {
-	FT_Pos  area1 = stem1->max_coord - stem1->min_coord;
-	FT_Pos  area2 = stem2->max_coord - stem2->min_coord;
-	FT_Pos  min   = stem1->min_coord;
-	FT_Pos  max   = stem1->max_coord;
-	FT_Pos  area;
+	FT2_1_3_Pos  area1 = stem1->max_coord - stem1->min_coord;
+	FT2_1_3_Pos  area2 = stem2->max_coord - stem2->min_coord;
+	FT2_1_3_Pos  min   = stem1->min_coord;
+	FT2_1_3_Pos  max   = stem1->max_coord;
+	FT2_1_3_Pos  area;
 
 
 	/* order stems */
@@ -346,7 +346,7 @@ static int
 optim_compute_springs( AH_Optimizer*  optimizer ) {
 	/* basically, a spring exists between two stems if most of their */
 	/* surface is aligned                                            */
-	FT_Memory    memory  = optimizer->memory;
+	FT2_1_3_Memory    memory  = optimizer->memory;
 
 	AH_Stem*     stems;
 	AH_Stem*     stem_limit;
@@ -354,7 +354,7 @@ optim_compute_springs( AH_Optimizer*  optimizer ) {
 	int          dimension;
 	int          error = 0;
 
-	FT_Int*      p_num_springs;
+	FT2_1_3_Int*      p_num_springs;
 	AH_Spring**  p_springs;
 
 
@@ -365,7 +365,7 @@ optim_compute_springs( AH_Optimizer*  optimizer ) {
 	p_num_springs = &optimizer->num_hsprings;
 
 	for ( dimension = 1; dimension >= 0; dimension-- ) {
-		FT_Int      num_springs = 0;
+		FT2_1_3_Int      num_springs = 0;
 		AH_Spring*  springs     = 0;
 
 
@@ -385,14 +385,14 @@ optim_compute_springs( AH_Optimizer*  optimizer ) {
 
 
 			/* allocate table of springs */
-			if ( FT_NEW_ARRAY( springs, num_springs ) )
+			if ( FT2_1_3_NEW_ARRAY( springs, num_springs ) )
 				goto Exit;
 
 			/* fill the springs table */
 			spring = springs;
 			for ( stem = stems; stem+1 < stem_limit; stem++ ) {
 				AH_Stem*  stem2;
-				FT_Pos    area;
+				FT2_1_3_Pos    area;
 
 
 				for ( stem2 = stem + 1; stem2 < stem_limit; stem2++ ) {
@@ -451,11 +451,11 @@ optim_compute_tensions( AH_Optimizer*  optimizer ) {
 	for ( ; spring < limit; spring++ ) {
 		AH_Stem*  stem1 = spring->stem1;
 		AH_Stem*  stem2 = spring->stem2;
-		FT_Int    status;
+		FT2_1_3_Int    status;
 
-		FT_Pos  width;
-		FT_Pos  tension;
-		FT_Pos  sign;
+		FT2_1_3_Pos  width;
+		FT2_1_3_Pos  tension;
+		FT2_1_3_Pos  sign;
 
 
 		/* compute the tension; it simply is -K*(new_width-old_width) */
@@ -473,7 +473,7 @@ optim_compute_tensions( AH_Optimizer*  optimizer ) {
 		else
 			tension = ( tension << 10 ) / width;
 
-		tension = -sign * FT_MulFix( tension, optimizer->tension_scale );
+		tension = -sign * FT2_1_3_MulFix( tension, optimizer->tension_scale );
 		spring->tension = tension;
 
 		/* now, distribute tension among the englobing stems, if they */
@@ -548,17 +548,17 @@ optim_compute_stem_movements( AH_Optimizer*  optimizer ) {
 
 
 /* compute current global distortion from springs */
-static FT_Pos
+static FT2_1_3_Pos
 optim_compute_distortion( AH_Optimizer*  optimizer ) {
 	AH_Spring*  spring = optimizer->springs;
 	AH_Spring*  limit  = spring + optimizer->num_springs;
-	FT_Pos      distortion = 0;
+	FT2_1_3_Pos      distortion = 0;
 
 
 	for ( ; spring < limit; spring++ ) {
 		AH_Stem*  stem1 = spring->stem1;
 		AH_Stem*  stem2 = spring->stem2;
-		FT_Pos  width;
+		FT2_1_3_Pos  width;
 
 		width  = stem2->pos - ( stem1->pos + stem1->width );
 		width -= spring->owidth;
@@ -575,7 +575,7 @@ optim_compute_distortion( AH_Optimizer*  optimizer ) {
 /* record stems configuration in `best of' history */
 static void
 optim_record_configuration( AH_Optimizer*  optimizer ) {
-	FT_Pos             distortion;
+	FT2_1_3_Pos             distortion;
 	AH_Configuration*  configs = optimizer->configs;
 	AH_Configuration*  limit   = configs + optimizer->num_configs;
 	AH_Configuration*  config;
@@ -629,7 +629,7 @@ optim_record_configuration( AH_Optimizer*  optimizer ) {
 static void
 optim_compute( AH_Optimizer*  optimizer ) {
 	int       n;
-	FT_Bool   moved;
+	FT2_1_3_Bool   moved;
 
 	AH_Stem*  stem  = optimizer->stems;
 	AH_Stem*  limit = stem + optimizer->num_stems;
@@ -665,7 +665,7 @@ optim_compute( AH_Optimizer*  optimizer ) {
 	/* now, set the best stem positions */
 	for ( n = 0; n < optimizer->num_stems; n++ ) {
 		AH_Stem*  stem = optimizer->stems + n;
-		FT_Pos    pos  = optimizer->configs[0].positions[n];
+		FT2_1_3_Pos    pos  = optimizer->configs[0].positions[n];
 
 
 		stem->edge1->pos = pos;
@@ -709,7 +709,7 @@ optim_compute( AH_Optimizer*  optimizer ) {
 	/* now, set the best stem positions */
 	for ( n = 0; n < optimizer->num_stems; n++ ) {
 		AH_Stem*  stem = optimizer->stems + n;
-		FT_Pos    pos  = optimizer->configs[0].positions[n];
+		FT2_1_3_Pos    pos  = optimizer->configs[0].positions[n];
 
 
 		stem->edge1->pos = pos;
@@ -738,14 +738,14 @@ optim_compute( AH_Optimizer*  optimizer ) {
 void
 AH_Optimizer_Done( AH_Optimizer*  optimizer ) {
 	if ( optimizer ) {
-		FT_Memory  memory = optimizer->memory;
+		FT2_1_3_Memory  memory = optimizer->memory;
 
 
-		FT_FREE( optimizer->horz_stems );
-		FT_FREE( optimizer->vert_stems );
-		FT_FREE( optimizer->horz_springs );
-		FT_FREE( optimizer->vert_springs );
-		FT_FREE( optimizer->positions );
+		FT2_1_3_FREE( optimizer->horz_stems );
+		FT2_1_3_FREE( optimizer->vert_stems );
+		FT2_1_3_FREE( optimizer->horz_springs );
+		FT2_1_3_FREE( optimizer->vert_springs );
+		FT2_1_3_FREE( optimizer->positions );
 	}
 }
 
@@ -754,11 +754,11 @@ AH_Optimizer_Done( AH_Optimizer*  optimizer ) {
 int
 AH_Optimizer_Init( AH_Optimizer*  optimizer,
                    AH_Outline     outline,
-                   FT_Memory      memory ) {
-	FT_Error  error;
+                   FT2_1_3_Memory      memory ) {
+	FT2_1_3_Error  error;
 
 
-	FT_MEM_ZERO( optimizer, sizeof ( *optimizer ) );
+	FT2_1_3_MEM_ZERO( optimizer, sizeof ( *optimizer ) );
 	optimizer->outline = outline;
 	optimizer->memory  = memory;
 
@@ -778,7 +778,7 @@ AH_Optimizer_Init( AH_Optimizer*  optimizer,
 		if ( max_stems < optimizer->num_vstems )
 			max_stems = optimizer->num_vstems;
 
-		if ( FT_NEW_ARRAY( optimizer->positions, max_stems * AH_MAX_CONFIGS ) )
+		if ( FT2_1_3_NEW_ARRAY( optimizer->positions, max_stems * AH_MAX_CONFIGS ) )
 			goto Fail;
 
 		optimizer->num_configs = 0;

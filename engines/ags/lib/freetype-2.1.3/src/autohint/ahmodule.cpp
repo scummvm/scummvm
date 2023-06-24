@@ -20,26 +20,26 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_MODULE_H
+#include FT2_1_3_MODULE_H
 #include "ahhint.h"
 
 
 #ifdef  DEBUG_HINTER
 AH_Hinter  ah_debug_hinter       = NULL;
-FT_Bool    ah_debug_disable_horz = 0;
-FT_Bool    ah_debug_disable_vert = 0;
+FT2_1_3_Bool    ah_debug_disable_horz = 0;
+FT2_1_3_Bool    ah_debug_disable_vert = 0;
 #endif
 
-typedef struct  FT_AutoHinterRec_ {
-	FT_ModuleRec  root;
+typedef struct  FT2_1_3_AutoHinterRec_ {
+	FT2_1_3_ModuleRec  root;
 	AH_Hinter     hinter;
 
-} FT_AutoHinterRec;
+} FT2_1_3_AutoHinterRec;
 
 
-FT_CALLBACK_DEF( FT_Error )
-ft_autohinter_init( FT_AutoHinter  module ) {
-	FT_Error  error;
+FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+ft_autohinter_init( FT2_1_3_AutoHinter  module ) {
+	FT2_1_3_Error  error;
 
 
 	error = ah_hinter_new( module->root.library, &module->hinter );
@@ -51,8 +51,8 @@ ft_autohinter_init( FT_AutoHinter  module ) {
 }
 
 
-FT_CALLBACK_DEF( void )
-ft_autohinter_done( FT_AutoHinter  module ) {
+FT2_1_3_CALLBACK_DEF( void )
+ft_autohinter_done( FT2_1_3_AutoHinter  module ) {
 	ah_hinter_done( module->hinter );
 
 #ifdef DEBUG_HINTER
@@ -61,30 +61,30 @@ ft_autohinter_done( FT_AutoHinter  module ) {
 }
 
 
-FT_CALLBACK_DEF( FT_Error )
-ft_autohinter_load_glyph( FT_AutoHinter  module,
-                          FT_GlyphSlot   slot,
-                          FT_Size        size,
-                          FT_UInt        glyph_index,
-                          FT_Int32       load_flags ) {
+FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+ft_autohinter_load_glyph( FT2_1_3_AutoHinter  module,
+                          FT2_1_3_GlyphSlot   slot,
+                          FT2_1_3_Size        size,
+                          FT2_1_3_UInt        glyph_index,
+                          FT2_1_3_Int32       load_flags ) {
 	return ah_hinter_load_glyph( module->hinter,
 	                             slot, size, glyph_index, load_flags );
 }
 
 
-FT_CALLBACK_DEF( void )
-ft_autohinter_reset_globals( FT_AutoHinter  module,
-                             FT_Face        face ) {
-	FT_UNUSED( module );
+FT2_1_3_CALLBACK_DEF( void )
+ft_autohinter_reset_globals( FT2_1_3_AutoHinter  module,
+                             FT2_1_3_Face        face ) {
+	FT2_1_3_UNUSED( module );
 
 	if ( face->autohint.data )
 		ah_hinter_done_face_globals( (AH_Face_Globals)(face->autohint.data) );
 }
 
 
-FT_CALLBACK_DEF( void )
-ft_autohinter_get_globals( FT_AutoHinter  module,
-                           FT_Face        face,
+FT2_1_3_CALLBACK_DEF( void )
+ft_autohinter_get_globals( FT2_1_3_AutoHinter  module,
+                           FT2_1_3_Face        face,
                            void**         global_hints,
                            long*          global_len ) {
 	ah_hinter_get_global_hints( module->hinter, face,
@@ -92,15 +92,15 @@ ft_autohinter_get_globals( FT_AutoHinter  module,
 }
 
 
-FT_CALLBACK_DEF( void )
-ft_autohinter_done_globals( FT_AutoHinter  module,
+FT2_1_3_CALLBACK_DEF( void )
+ft_autohinter_done_globals( FT2_1_3_AutoHinter  module,
                             void*          global_hints ) {
 	ah_hinter_done_global_hints( module->hinter, global_hints );
 }
 
 
-FT_CALLBACK_TABLE_DEF
-const FT_AutoHinter_ServiceRec  ft_autohinter_service = {
+FT2_1_3_CALLBACK_TABLE_DEF
+const FT2_1_3_AutoHinter_ServiceRec  ft_autohinter_service = {
 	ft_autohinter_reset_globals,
 	ft_autohinter_get_globals,
 	ft_autohinter_done_globals,
@@ -108,10 +108,10 @@ const FT_AutoHinter_ServiceRec  ft_autohinter_service = {
 };
 
 
-FT_CALLBACK_TABLE_DEF
-const FT_Module_Class  autohint_module_class = {
+FT2_1_3_CALLBACK_TABLE_DEF
+const FT2_1_3_Module_Class  autohint_module_class = {
 	ft_module_hinter,
-	sizeof ( FT_AutoHinterRec ),
+	sizeof ( FT2_1_3_AutoHinterRec ),
 
 	"autohinter",
 	0x10000L,   /* version 1.0 of the autohinter  */
@@ -119,9 +119,9 @@ const FT_Module_Class  autohint_module_class = {
 
 	(const void*) &ft_autohinter_service,
 
-	(FT_Module_Constructor)ft_autohinter_init,
-	(FT_Module_Destructor) ft_autohinter_done,
-	(FT_Module_Requester)  0
+	(FT2_1_3_Module_Constructor)ft_autohinter_init,
+	(FT2_1_3_Module_Destructor) ft_autohinter_done,
+	(FT2_1_3_Module_Requester)  0
 };
 
 

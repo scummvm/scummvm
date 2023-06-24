@@ -26,10 +26,10 @@
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "ahtypes.h"
-#include FT_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 #define AH_IS_TOP_BLUE( b )  ( (b) == AH_BLUE_CAPITAL_TOP || \
@@ -37,11 +37,11 @@ FT_BEGIN_HEADER
 
 
 /* compute global metrics automatically */
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 ah_hinter_compute_globals( AH_Hinter  hinter );
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __AHGLOBAL_H__ */
 

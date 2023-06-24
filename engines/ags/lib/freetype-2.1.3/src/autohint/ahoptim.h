@@ -27,7 +27,7 @@
 #include "ahtypes.h"
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /* the maximal number of stem configurations to record */
@@ -36,22 +36,22 @@ FT_BEGIN_HEADER
 
 
 typedef struct  AH_Stem_ {
-	FT_Pos   pos;       /* current position        */
-	FT_Pos   velocity;  /* current velocity        */
-	FT_Pos   force;     /* sum of current forces   */
-	FT_Pos   width;     /* normalized width        */
+	FT2_1_3_Pos   pos;       /* current position        */
+	FT2_1_3_Pos   velocity;  /* current velocity        */
+	FT2_1_3_Pos   force;     /* sum of current forces   */
+	FT2_1_3_Pos   width;     /* normalized width        */
 
-	FT_Pos   min_pos;   /* minimum grid position */
-	FT_Pos   max_pos;   /* maximum grid position */
+	FT2_1_3_Pos   min_pos;   /* minimum grid position */
+	FT2_1_3_Pos   max_pos;   /* maximum grid position */
 
 	AH_Edge  edge1;     /* left/bottom edge */
 	AH_Edge  edge2;     /* right/top edge   */
 
-	FT_Pos   opos;      /* original position */
-	FT_Pos   owidth;    /* original width    */
+	FT2_1_3_Pos   opos;      /* original position */
+	FT2_1_3_Pos   owidth;    /* original width    */
 
-	FT_Pos   min_coord; /* minimum coordinate */
-	FT_Pos   max_coord; /* maximum coordinate */
+	FT2_1_3_Pos   min_coord; /* minimum coordinate */
+	FT2_1_3_Pos   max_coord; /* maximum coordinate */
 
 } AH_Stem;
 
@@ -60,8 +60,8 @@ typedef struct  AH_Stem_ {
 typedef struct  AH_Spring_ {
 	AH_Stem*  stem1;
 	AH_Stem*  stem2;
-	FT_Pos    owidth;   /* original width  */
-	FT_Pos    tension;  /* current tension */
+	FT2_1_3_Pos    owidth;   /* original width  */
+	FT2_1_3_Pos    tension;  /* current tension */
 
 } AH_Spring;
 
@@ -69,41 +69,41 @@ typedef struct  AH_Spring_ {
 /* A configuration records the position of each stem at a given time  */
 /* as well as the associated distortion                               */
 typedef struct AH_Configuration_ {
-	FT_Pos*  positions;
-	FT_Long  distortion;
+	FT2_1_3_Pos*  positions;
+	FT2_1_3_Long  distortion;
 
 } AH_Configuration;
 
 
 typedef struct  AH_Optimizer_ {
-	FT_Memory         memory;
+	FT2_1_3_Memory         memory;
 	AH_Outline        outline;
 
-	FT_Int            num_hstems;
+	FT2_1_3_Int            num_hstems;
 	AH_Stem*          horz_stems;
 
-	FT_Int            num_vstems;
+	FT2_1_3_Int            num_vstems;
 	AH_Stem*          vert_stems;
 
-	FT_Int            num_hsprings;
-	FT_Int            num_vsprings;
+	FT2_1_3_Int            num_hsprings;
+	FT2_1_3_Int            num_vsprings;
 	AH_Spring*        horz_springs;
 	AH_Spring*        vert_springs;
 
-	FT_Int            num_configs;
+	FT2_1_3_Int            num_configs;
 	AH_Configuration  configs[AH_MAX_CONFIGS];
-	FT_Pos*           positions;
+	FT2_1_3_Pos*           positions;
 
 	/* during each pass, use these instead */
-	FT_Int            num_stems;
+	FT2_1_3_Int            num_stems;
 	AH_Stem*          stems;
 
-	FT_Int            num_springs;
+	FT2_1_3_Int            num_springs;
 	AH_Spring*        springs;
-	FT_Bool           vertical;
+	FT2_1_3_Bool           vertical;
 
-	FT_Fixed          tension_scale;
-	FT_Pos            tension_threshold;
+	FT2_1_3_Fixed          tension_scale;
+	FT2_1_3_Pos            tension_threshold;
 
 } AH_Optimizer;
 
@@ -112,7 +112,7 @@ typedef struct  AH_Optimizer_ {
 int
 AH_Optimizer_Init( AH_Optimizer*  optimizer,
                    AH_Outline     outline,
-                   FT_Memory      memory );
+                   FT2_1_3_Memory      memory );
 
 
 /* compute optimal outline */
@@ -125,7 +125,7 @@ void
 AH_Optimizer_Done( AH_Optimizer*  optimizer );
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __AHOPTIM_H__ */
 
