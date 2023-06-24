@@ -21,10 +21,10 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_TYPE1_TABLES_H
+#include FT2_1_3_TYPE1_TABLES_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -49,7 +49,7 @@ FT_BEGIN_HEADER
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT_MM_Axis                                                         */
+/*    FT2_1_3_MM_Axis                                                         */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A simple structure used to model a given axis in design space for  */
@@ -62,18 +62,18 @@ FT_BEGIN_HEADER
 /*                                                                       */
 /*    maximum :: The axis's maximum design coordinate.                   */
 /*                                                                       */
-typedef struct  FT_MM_Axis_ {
-	FT_String*  name;
-	FT_Long     minimum;
-	FT_Long     maximum;
+typedef struct  FT2_1_3_MM_Axis_ {
+	FT2_1_3_String*  name;
+	FT2_1_3_Long     minimum;
+	FT2_1_3_Long     maximum;
 
-} FT_MM_Axis;
+} FT2_1_3_MM_Axis;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT_Multi_Master                                                    */
+/*    FT2_1_3_Multi_Master                                                    */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A structure used to model the axes and space of a Multiple Masters */
@@ -89,34 +89,34 @@ typedef struct  FT_MM_Axis_ {
 /*                                                                       */
 /*    axis        :: A table of axis descriptors.                        */
 /*                                                                       */
-typedef struct  FT_Multi_Master_ {
-	FT_UInt     num_axis;
-	FT_UInt     num_designs;
-	FT_MM_Axis  axis[T1_MAX_MM_AXIS];
+typedef struct  FT2_1_3_Multi_Master_ {
+	FT2_1_3_UInt     num_axis;
+	FT2_1_3_UInt     num_designs;
+	FT2_1_3_MM_Axis  axis[T1_MAX_MM_AXIS];
 
-} FT_Multi_Master;
+} FT2_1_3_Multi_Master;
 
 /* */
 
-typedef FT_Error
-(*FT_Get_MM_Func)( FT_Face           face,
-                   FT_Multi_Master*  master );
+typedef FT2_1_3_Error
+(*FT2_1_3_Get_MM_Func)( FT2_1_3_Face           face,
+                   FT2_1_3_Multi_Master*  master );
 
-typedef FT_Error
-(*FT_Set_MM_Design_Func)( FT_Face   face,
-                          FT_UInt   num_coords,
-                          FT_Long*  coords );
+typedef FT2_1_3_Error
+(*FT2_1_3_Set_MM_Design_Func)( FT2_1_3_Face   face,
+                          FT2_1_3_UInt   num_coords,
+                          FT2_1_3_Long*  coords );
 
-typedef FT_Error
-(*FT_Set_MM_Blend_Func)( FT_Face   face,
-                         FT_UInt   num_coords,
-                         FT_Long*  coords );
+typedef FT2_1_3_Error
+(*FT2_1_3_Set_MM_Blend_Func)( FT2_1_3_Face   face,
+                         FT2_1_3_UInt   num_coords,
+                         FT2_1_3_Long*  coords );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Get_Multi_Master                                                */
+/*    FT2_1_3_Get_Multi_Master                                                */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Retrieves the Multiple Master descriptor of a given font.          */
@@ -130,15 +130,15 @@ typedef FT_Error
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT_EXPORT( FT_Error )
-FT_Get_Multi_Master( FT_Face           face,
-                     FT_Multi_Master  *amaster );
+FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_Get_Multi_Master( FT2_1_3_Face           face,
+                     FT2_1_3_Multi_Master  *amaster );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Set_MM_Design_Coordinates                                       */
+/*    FT2_1_3_Set_MM_Design_Coordinates                                       */
 /*                                                                       */
 /* <Description>                                                         */
 /*    For Multiple Masters fonts, choose an interpolated font design     */
@@ -156,16 +156,16 @@ FT_Get_Multi_Master( FT_Face           face,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT_EXPORT( FT_Error )
-FT_Set_MM_Design_Coordinates( FT_Face   face,
-                              FT_UInt   num_coords,
-                              FT_Long*  coords );
+FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_Set_MM_Design_Coordinates( FT2_1_3_Face   face,
+                              FT2_1_3_UInt   num_coords,
+                              FT2_1_3_Long*  coords );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Set_MM_Blend_Coordinates                                        */
+/*    FT2_1_3_Set_MM_Blend_Coordinates                                        */
 /*                                                                       */
 /* <Description>                                                         */
 /*    For Multiple Masters fonts, choose an interpolated font design     */
@@ -184,16 +184,16 @@ FT_Set_MM_Design_Coordinates( FT_Face   face,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT_EXPORT( FT_Error )
-FT_Set_MM_Blend_Coordinates( FT_Face    face,
-                             FT_UInt    num_coords,
-                             FT_Fixed*  coords );
+FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_Set_MM_Blend_Coordinates( FT2_1_3_Face    face,
+                             FT2_1_3_UInt    num_coords,
+                             FT2_1_3_Fixed*  coords );
 
 
 /* */
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __FTMM_H__ */
 

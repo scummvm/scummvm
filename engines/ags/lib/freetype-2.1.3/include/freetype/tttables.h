@@ -22,10 +22,10 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_FREETYPE_H
+#include FT2_1_3_FREETYPE_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 /*************************************************************************/
 /*                                                                       */
@@ -55,29 +55,29 @@ FT_BEGIN_HEADER
 /*    fields follow the TrueType specification.                          */
 /*                                                                       */
 typedef struct  TT_Header_ {
-	FT_Fixed   Table_Version;
-	FT_Fixed   Font_Revision;
+	FT2_1_3_Fixed   Table_Version;
+	FT2_1_3_Fixed   Font_Revision;
 
-	FT_Long    CheckSum_Adjust;
-	FT_Long    Magic_Number;
+	FT2_1_3_Long    CheckSum_Adjust;
+	FT2_1_3_Long    Magic_Number;
 
-	FT_UShort  Flags;
-	FT_UShort  Units_Per_EM;
+	FT2_1_3_UShort  Flags;
+	FT2_1_3_UShort  Units_Per_EM;
 
-	FT_Long    Created [2];
-	FT_Long    Modified[2];
+	FT2_1_3_Long    Created [2];
+	FT2_1_3_Long    Modified[2];
 
-	FT_Short   xMin;
-	FT_Short   yMin;
-	FT_Short   xMax;
-	FT_Short   yMax;
+	FT2_1_3_Short   xMin;
+	FT2_1_3_Short   yMin;
+	FT2_1_3_Short   xMax;
+	FT2_1_3_Short   yMax;
 
-	FT_UShort  Mac_Style;
-	FT_UShort  Lowest_Rec_PPEM;
+	FT2_1_3_UShort  Mac_Style;
+	FT2_1_3_UShort  Lowest_Rec_PPEM;
 
-	FT_Short   Font_Direction;
-	FT_Short   Index_To_Loc_Format;
-	FT_Short   Glyph_Data_Format;
+	FT2_1_3_Short   Font_Direction;
+	FT2_1_3_Short   Index_To_Loc_Format;
+	FT2_1_3_Short   Glyph_Data_Format;
 
 } TT_Header;
 
@@ -171,24 +171,24 @@ typedef struct  TT_Header_ {
 /*               headers.                                                */
 /*                                                                       */
 typedef struct  TT_HoriHeader_ {
-	FT_Fixed   Version;
-	FT_Short   Ascender;
-	FT_Short   Descender;
-	FT_Short   Line_Gap;
+	FT2_1_3_Fixed   Version;
+	FT2_1_3_Short   Ascender;
+	FT2_1_3_Short   Descender;
+	FT2_1_3_Short   Line_Gap;
 
-	FT_UShort  advance_Width_Max;      /* advance width maximum */
+	FT2_1_3_UShort  advance_Width_Max;      /* advance width maximum */
 
-	FT_Short   min_Left_Side_Bearing;  /* minimum left-sb       */
-	FT_Short   min_Right_Side_Bearing; /* minimum right-sb      */
-	FT_Short   xMax_Extent;            /* xmax extents          */
-	FT_Short   caret_Slope_Rise;
-	FT_Short   caret_Slope_Run;
-	FT_Short   caret_Offset;
+	FT2_1_3_Short   min_Left_Side_Bearing;  /* minimum left-sb       */
+	FT2_1_3_Short   min_Right_Side_Bearing; /* minimum right-sb      */
+	FT2_1_3_Short   xMax_Extent;            /* xmax extents          */
+	FT2_1_3_Short   caret_Slope_Rise;
+	FT2_1_3_Short   caret_Slope_Run;
+	FT2_1_3_Short   caret_Offset;
 
-	FT_Short   Reserved[4];
+	FT2_1_3_Short   Reserved[4];
 
-	FT_Short   metric_Data_Format;
-	FT_UShort  number_Of_HMetrics;
+	FT2_1_3_Short   metric_Data_Format;
+	FT2_1_3_UShort  number_Of_HMetrics;
 
 	/* The following fields are not defined by the TrueType specification */
 	/* but they are used to connect the metrics header to the relevant    */
@@ -296,24 +296,24 @@ typedef struct  TT_HoriHeader_ {
 /*               headers.                                                */
 /*                                                                       */
 typedef struct  TT_VertHeader_ {
-	FT_Fixed   Version;
-	FT_Short   Ascender;
-	FT_Short   Descender;
-	FT_Short   Line_Gap;
+	FT2_1_3_Fixed   Version;
+	FT2_1_3_Short   Ascender;
+	FT2_1_3_Short   Descender;
+	FT2_1_3_Short   Line_Gap;
 
-	FT_UShort  advance_Height_Max;      /* advance height maximum */
+	FT2_1_3_UShort  advance_Height_Max;      /* advance height maximum */
 
-	FT_Short   min_Top_Side_Bearing;    /* minimum left-sb or top-sb       */
-	FT_Short   min_Bottom_Side_Bearing; /* minimum right-sb or bottom-sb   */
-	FT_Short   yMax_Extent;             /* xmax or ymax extents            */
-	FT_Short   caret_Slope_Rise;
-	FT_Short   caret_Slope_Run;
-	FT_Short   caret_Offset;
+	FT2_1_3_Short   min_Top_Side_Bearing;    /* minimum left-sb or top-sb       */
+	FT2_1_3_Short   min_Bottom_Side_Bearing; /* minimum right-sb or bottom-sb   */
+	FT2_1_3_Short   yMax_Extent;             /* xmax or ymax extents            */
+	FT2_1_3_Short   caret_Slope_Rise;
+	FT2_1_3_Short   caret_Slope_Run;
+	FT2_1_3_Short   caret_Offset;
 
-	FT_Short   Reserved[4];
+	FT2_1_3_Short   Reserved[4];
 
-	FT_Short   metric_Data_Format;
-	FT_UShort  number_Of_VMetrics;
+	FT2_1_3_Short   metric_Data_Format;
+	FT2_1_3_UShort  number_Of_VMetrics;
 
 	/* The following fields are not defined by the TrueType specification */
 	/* but they're used to connect the metrics header to the relevant     */
@@ -339,53 +339,53 @@ typedef struct  TT_VertHeader_ {
 /*    0xFFFF.                                                            */
 /*                                                                       */
 typedef struct  TT_OS2_ {
-	FT_UShort  version;                /* 0x0001 - more or 0xFFFF */
-	FT_Short   xAvgCharWidth;
-	FT_UShort  usWeightClass;
-	FT_UShort  usWidthClass;
-	FT_Short   fsType;
-	FT_Short   ySubscriptXSize;
-	FT_Short   ySubscriptYSize;
-	FT_Short   ySubscriptXOffset;
-	FT_Short   ySubscriptYOffset;
-	FT_Short   ySuperscriptXSize;
-	FT_Short   ySuperscriptYSize;
-	FT_Short   ySuperscriptXOffset;
-	FT_Short   ySuperscriptYOffset;
-	FT_Short   yStrikeoutSize;
-	FT_Short   yStrikeoutPosition;
-	FT_Short   sFamilyClass;
+	FT2_1_3_UShort  version;                /* 0x0001 - more or 0xFFFF */
+	FT2_1_3_Short   xAvgCharWidth;
+	FT2_1_3_UShort  usWeightClass;
+	FT2_1_3_UShort  usWidthClass;
+	FT2_1_3_Short   fsType;
+	FT2_1_3_Short   ySubscriptXSize;
+	FT2_1_3_Short   ySubscriptYSize;
+	FT2_1_3_Short   ySubscriptXOffset;
+	FT2_1_3_Short   ySubscriptYOffset;
+	FT2_1_3_Short   ySuperscriptXSize;
+	FT2_1_3_Short   ySuperscriptYSize;
+	FT2_1_3_Short   ySuperscriptXOffset;
+	FT2_1_3_Short   ySuperscriptYOffset;
+	FT2_1_3_Short   yStrikeoutSize;
+	FT2_1_3_Short   yStrikeoutPosition;
+	FT2_1_3_Short   sFamilyClass;
 
-	FT_Byte    panose[10];
+	FT2_1_3_Byte    panose[10];
 
-	FT_ULong   ulUnicodeRange1;        /* Bits 0-31   */
-	FT_ULong   ulUnicodeRange2;        /* Bits 32-63  */
-	FT_ULong   ulUnicodeRange3;        /* Bits 64-95  */
-	FT_ULong   ulUnicodeRange4;        /* Bits 96-127 */
+	FT2_1_3_ULong   ulUnicodeRange1;        /* Bits 0-31   */
+	FT2_1_3_ULong   ulUnicodeRange2;        /* Bits 32-63  */
+	FT2_1_3_ULong   ulUnicodeRange3;        /* Bits 64-95  */
+	FT2_1_3_ULong   ulUnicodeRange4;        /* Bits 96-127 */
 
-	FT_Char    achVendID[4];
+	FT2_1_3_Char    achVendID[4];
 
-	FT_UShort  fsSelection;
-	FT_UShort  usFirstCharIndex;
-	FT_UShort  usLastCharIndex;
-	FT_Short   sTypoAscender;
-	FT_Short   sTypoDescender;
-	FT_Short   sTypoLineGap;
-	FT_UShort  usWinAscent;
-	FT_UShort  usWinDescent;
+	FT2_1_3_UShort  fsSelection;
+	FT2_1_3_UShort  usFirstCharIndex;
+	FT2_1_3_UShort  usLastCharIndex;
+	FT2_1_3_Short   sTypoAscender;
+	FT2_1_3_Short   sTypoDescender;
+	FT2_1_3_Short   sTypoLineGap;
+	FT2_1_3_UShort  usWinAscent;
+	FT2_1_3_UShort  usWinDescent;
 
 	/* only version 1 tables: */
 
-	FT_ULong   ulCodePageRange1;       /* Bits 0-31   */
-	FT_ULong   ulCodePageRange2;       /* Bits 32-63  */
+	FT2_1_3_ULong   ulCodePageRange1;       /* Bits 0-31   */
+	FT2_1_3_ULong   ulCodePageRange2;       /* Bits 32-63  */
 
 	/* only version 2 tables: */
 
-	FT_Short   sxHeight;
-	FT_Short   sCapHeight;
-	FT_UShort  usDefaultChar;
-	FT_UShort  usBreakChar;
-	FT_UShort  usMaxContext;
+	FT2_1_3_Short   sxHeight;
+	FT2_1_3_Short   sCapHeight;
+	FT2_1_3_UShort  usDefaultChar;
+	FT2_1_3_UShort  usBreakChar;
+	FT2_1_3_UShort  usMaxContext;
 
 } TT_OS2;
 
@@ -402,15 +402,15 @@ typedef struct  TT_OS2_ {
 /*    with the `ttpost' module.                                          */
 /*                                                                       */
 typedef struct  TT_Postscript_ {
-	FT_Fixed  FormatType;
-	FT_Fixed  italicAngle;
-	FT_Short  underlinePosition;
-	FT_Short  underlineThickness;
-	FT_ULong  isFixedPitch;
-	FT_ULong  minMemType42;
-	FT_ULong  maxMemType42;
-	FT_ULong  minMemType1;
-	FT_ULong  maxMemType1;
+	FT2_1_3_Fixed  FormatType;
+	FT2_1_3_Fixed  italicAngle;
+	FT2_1_3_Short  underlinePosition;
+	FT2_1_3_Short  underlineThickness;
+	FT2_1_3_ULong  isFixedPitch;
+	FT2_1_3_ULong  minMemType42;
+	FT2_1_3_ULong  maxMemType42;
+	FT2_1_3_ULong  minMemType1;
+	FT2_1_3_ULong  maxMemType1;
 
 	/* Glyph names follow in the file, but we don't   */
 	/* load them by default.  See the ttpost.c file.  */
@@ -428,21 +428,21 @@ typedef struct  TT_Postscript_ {
 /*    comply to the TrueType table.                                      */
 /*                                                                       */
 typedef struct  TT_PCLT_ {
-	FT_Fixed   Version;
-	FT_ULong   FontNumber;
-	FT_UShort  Pitch;
-	FT_UShort  xHeight;
-	FT_UShort  Style;
-	FT_UShort  TypeFamily;
-	FT_UShort  CapHeight;
-	FT_UShort  SymbolSet;
-	FT_Char    TypeFace[16];
-	FT_Char    CharacterComplement[8];
-	FT_Char    FileName[6];
-	FT_Char    StrokeWeight;
-	FT_Char    WidthType;
-	FT_Byte    SerifStyle;
-	FT_Byte    Reserved;
+	FT2_1_3_Fixed   Version;
+	FT2_1_3_ULong   FontNumber;
+	FT2_1_3_UShort  Pitch;
+	FT2_1_3_UShort  xHeight;
+	FT2_1_3_UShort  Style;
+	FT2_1_3_UShort  TypeFamily;
+	FT2_1_3_UShort  CapHeight;
+	FT2_1_3_UShort  SymbolSet;
+	FT2_1_3_Char    TypeFace[16];
+	FT2_1_3_Char    CharacterComplement[8];
+	FT2_1_3_Char    FileName[6];
+	FT2_1_3_Char    StrokeWeight;
+	FT2_1_3_Char    WidthType;
+	FT2_1_3_Byte    SerifStyle;
+	FT2_1_3_Byte    Reserved;
 
 } TT_PCLT;
 
@@ -515,21 +515,21 @@ typedef struct  TT_PCLT_ {
 /*    This structure is only used during font loading.                   */
 /*                                                                       */
 typedef struct  TT_MaxProfile_ {
-	FT_Fixed   version;
-	FT_UShort  numGlyphs;
-	FT_UShort  maxPoints;
-	FT_UShort  maxContours;
-	FT_UShort  maxCompositePoints;
-	FT_UShort  maxCompositeContours;
-	FT_UShort  maxZones;
-	FT_UShort  maxTwilightPoints;
-	FT_UShort  maxStorage;
-	FT_UShort  maxFunctionDefs;
-	FT_UShort  maxInstructionDefs;
-	FT_UShort  maxStackElements;
-	FT_UShort  maxSizeOfInstructions;
-	FT_UShort  maxComponentElements;
-	FT_UShort  maxComponentDepth;
+	FT2_1_3_Fixed   version;
+	FT2_1_3_UShort  numGlyphs;
+	FT2_1_3_UShort  maxPoints;
+	FT2_1_3_UShort  maxContours;
+	FT2_1_3_UShort  maxCompositePoints;
+	FT2_1_3_UShort  maxCompositeContours;
+	FT2_1_3_UShort  maxZones;
+	FT2_1_3_UShort  maxTwilightPoints;
+	FT2_1_3_UShort  maxStorage;
+	FT2_1_3_UShort  maxFunctionDefs;
+	FT2_1_3_UShort  maxInstructionDefs;
+	FT2_1_3_UShort  maxStackElements;
+	FT2_1_3_UShort  maxSizeOfInstructions;
+	FT2_1_3_UShort  maxComponentElements;
+	FT2_1_3_UShort  maxComponentDepth;
 
 } TT_MaxProfile;
 
@@ -547,19 +547,19 @@ typedef enum {
 
 	sfnt_max   /* don't remove */
 
-} FT_Sfnt_Tag;
+} FT2_1_3_Sfnt_Tag;
 
 
 /* internal use only */
 typedef void*
-(*FT_Get_Sfnt_Table_Func)( FT_Face      face,
-                           FT_Sfnt_Tag  tag );
+(*FT2_1_3_Get_Sfnt_Table_Func)( FT2_1_3_Face      face,
+                           FT2_1_3_Sfnt_Tag  tag );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Get_Sfnt_Table                                                  */
+/*    FT2_1_3_Get_Sfnt_Table                                                  */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Returns a pointer to a given SFNT table within a face.             */
@@ -578,18 +578,18 @@ typedef void*
 /*    The table is owned by the face object and disappears with it.      */
 /*                                                                       */
 /*    This function is only useful to access SFNT tables that are loaded */
-/*    by the sfnt/truetype/opentype drivers.  See FT_Sfnt_Tag for a      */
+/*    by the sfnt/truetype/opentype drivers.  See FT2_1_3_Sfnt_Tag for a      */
 /*    list.                                                              */
 /*                                                                       */
-FT_EXPORT( void* )
-FT_Get_Sfnt_Table( FT_Face      face,
-                   FT_Sfnt_Tag  tag );
+FT2_1_3_EXPORT( void* )
+FT2_1_3_Get_Sfnt_Table( FT2_1_3_Face      face,
+                   FT2_1_3_Sfnt_Tag  tag );
 
 
 /* */
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __TTTABLES_H__ */
 

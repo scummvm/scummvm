@@ -32,10 +32,10 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_FREETYPE_H
+#include FT2_1_3_FREETYPE_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -49,7 +49,7 @@ FT_BEGIN_HEADER
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Outline_Get_BBox                                                */
+/*    FT2_1_3_Outline_Get_BBox                                                */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Computes the exact bounding box of an outline.  This is slower     */
@@ -67,15 +67,15 @@ FT_BEGIN_HEADER
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT_EXPORT( FT_Error )
-FT_Outline_Get_BBox( FT_Outline*  outline,
-                     FT_BBox     *abbox );
+FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_Outline_Get_BBox( FT2_1_3_Outline*  outline,
+                     FT2_1_3_BBox     *abbox );
 
 
 /* */
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __FTBBOX_H__ */
 

@@ -20,9 +20,9 @@
 #define __FTXF86_H__
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_FREETYPE_H
+#include FT2_1_3_FREETYPE_H
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 /* this comment is intentionally disabled for now, to prevent this       */
 /* function from appearing in the API Reference.                         */
@@ -30,7 +30,7 @@ FT_BEGIN_HEADER
 /*@***********************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Get_X11_Font_Format                                             */
+/*    FT2_1_3_Get_X11_Font_Format                                             */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Return a string describing the format of a given face as an X11    */
@@ -43,11 +43,11 @@ FT_BEGIN_HEADER
 /* <Return>                                                              */
 /*    Font format string.  NULL in case of error.                        */
 /*                                                                       */
-FT_EXPORT_DEF( const char* )
-FT_Get_X11_Font_Format( FT_Face  face );
+FT2_1_3_EXPORT_DEF( const char* )
+FT2_1_3_Get_X11_Font_Format( FT2_1_3_Face  face );
 
 /* */
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __FTXF86_H__ */

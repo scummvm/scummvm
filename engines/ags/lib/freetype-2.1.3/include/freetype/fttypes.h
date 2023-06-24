@@ -21,14 +21,14 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_CONFIG_CONFIG_H
-#include FT_SYSTEM_H
-#include FT_IMAGE_H
+#include FT2_1_3_CONFIG_CONFIG_H
+#include FT2_1_3_SYSTEM_H
+#include FT2_1_3_IMAGE_H
 
 #include <stddef.h>
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -48,40 +48,40 @@ FT_BEGIN_HEADER
 /*    font-specific structures are defined in a different section.       */
 /*                                                                       */
 /* <Order>                                                               */
-/*    FT_Byte                                                            */
-/*    FT_Char                                                            */
-/*    FT_Int                                                             */
-/*    FT_UInt                                                            */
-/*    FT_Short                                                           */
-/*    FT_UShort                                                          */
-/*    FT_Long                                                            */
-/*    FT_ULong                                                           */
-/*    FT_Bool                                                            */
-/*    FT_Offset                                                          */
-/*    FT_PtrDist                                                         */
-/*    FT_String                                                          */
-/*    FT_Error                                                           */
-/*    FT_Fixed                                                           */
-/*    FT_Pointer                                                         */
-/*    FT_Pos                                                             */
-/*    FT_Vector                                                          */
-/*    FT_BBox                                                            */
-/*    FT_Matrix                                                          */
-/*    FT_FWord                                                           */
-/*    FT_UFWord                                                          */
-/*    FT_F2Dot14                                                         */
-/*    FT_UnitVector                                                      */
-/*    FT_F26Dot6                                                         */
+/*    FT2_1_3_Byte                                                            */
+/*    FT2_1_3_Char                                                            */
+/*    FT2_1_3_Int                                                             */
+/*    FT2_1_3_UInt                                                            */
+/*    FT2_1_3_Short                                                           */
+/*    FT2_1_3_UShort                                                          */
+/*    FT2_1_3_Long                                                            */
+/*    FT2_1_3_ULong                                                           */
+/*    FT2_1_3_Bool                                                            */
+/*    FT2_1_3_Offset                                                          */
+/*    FT2_1_3_PtrDist                                                         */
+/*    FT2_1_3_String                                                          */
+/*    FT2_1_3_Error                                                           */
+/*    FT2_1_3_Fixed                                                           */
+/*    FT2_1_3_Pointer                                                         */
+/*    FT2_1_3_Pos                                                             */
+/*    FT2_1_3_Vector                                                          */
+/*    FT2_1_3_BBox                                                            */
+/*    FT2_1_3_Matrix                                                          */
+/*    FT2_1_3_FWord                                                           */
+/*    FT2_1_3_UFWord                                                          */
+/*    FT2_1_3_F2Dot14                                                         */
+/*    FT2_1_3_UnitVector                                                      */
+/*    FT2_1_3_F26Dot6                                                         */
 /*                                                                       */
 /*                                                                       */
-/*    FT_Generic                                                         */
-/*    FT_Generic_Finalizer                                               */
+/*    FT2_1_3_Generic                                                         */
+/*    FT2_1_3_Generic_Finalizer                                               */
 /*                                                                       */
-/*    FT_Bitmap                                                          */
-/*    FT_Pixel_Mode                                                      */
-/*    FT_Palette_Mode                                                    */
-/*    FT_Glyph_Format                                                    */
-/*    FT_IMAGE_TAG                                                       */
+/*    FT2_1_3_Bitmap                                                          */
+/*    FT2_1_3_Pixel_Mode                                                      */
+/*    FT2_1_3_Palette_Mode                                                    */
+/*    FT2_1_3_Glyph_Format                                                    */
+/*    FT2_1_3_IMAGE_TAG                                                       */
 /*                                                                       */
 /*************************************************************************/
 
@@ -89,246 +89,246 @@ FT_BEGIN_HEADER
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_Bool                                                            */
+/*    FT2_1_3_Bool                                                            */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A typedef of unsigned char, used for simple booleans.              */
 /*                                                                       */
-typedef unsigned char  FT_Bool;
+typedef unsigned char  FT2_1_3_Bool;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_FWord                                                           */
+/*    FT2_1_3_FWord                                                           */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A signed 16-bit integer used to store a distance in original font  */
 /*    units.                                                             */
 /*                                                                       */
-typedef signed short  FT_FWord;   /* distance in FUnits */
+typedef signed short  FT2_1_3_FWord;   /* distance in FUnits */
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_UFWord                                                          */
+/*    FT2_1_3_UFWord                                                          */
 /*                                                                       */
 /* <Description>                                                         */
 /*    An unsigned 16-bit integer used to store a distance in original    */
 /*    font units.                                                        */
 /*                                                                       */
-typedef unsigned short  FT_UFWord;  /* unsigned distance */
+typedef unsigned short  FT2_1_3_UFWord;  /* unsigned distance */
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_Char                                                            */
+/*    FT2_1_3_Char                                                            */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A simple typedef for the _signed_ char type.                       */
 /*                                                                       */
-typedef signed char  FT_Char;
+typedef signed char  FT2_1_3_Char;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_Byte                                                            */
+/*    FT2_1_3_Byte                                                            */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A simple typedef for the _unsigned_ char type.                     */
 /*                                                                       */
-typedef unsigned char  FT_Byte;
+typedef unsigned char  FT2_1_3_Byte;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_String                                                          */
+/*    FT2_1_3_String                                                          */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A simple typedef for the char type, usually used for strings.      */
 /*                                                                       */
-typedef char  FT_String;
+typedef char  FT2_1_3_String;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_Short                                                           */
+/*    FT2_1_3_Short                                                           */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A typedef for signed short.                                        */
 /*                                                                       */
-typedef signed short  FT_Short;
+typedef signed short  FT2_1_3_Short;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_UShort                                                          */
+/*    FT2_1_3_UShort                                                          */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A typedef for unsigned short.                                      */
 /*                                                                       */
-typedef unsigned short  FT_UShort;
+typedef unsigned short  FT2_1_3_UShort;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_Int                                                             */
+/*    FT2_1_3_Int                                                             */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A typedef for the int type.                                        */
 /*                                                                       */
-typedef int  FT_Int;
+typedef int  FT2_1_3_Int;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_UInt                                                            */
+/*    FT2_1_3_UInt                                                            */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A typedef for the unsigned int type.                               */
 /*                                                                       */
-typedef unsigned int  FT_UInt;
+typedef unsigned int  FT2_1_3_UInt;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_Long                                                            */
+/*    FT2_1_3_Long                                                            */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A typedef for signed long.                                         */
 /*                                                                       */
-typedef signed long  FT_Long;
+typedef signed long  FT2_1_3_Long;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_ULong                                                           */
+/*    FT2_1_3_ULong                                                           */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A typedef for unsigned long.                                       */
 /*                                                                       */
-typedef unsigned long  FT_ULong;
+typedef unsigned long  FT2_1_3_ULong;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_F2Dot14                                                         */
+/*    FT2_1_3_F2Dot14                                                         */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A signed 2.14 fixed float type used for unit vectors.              */
 /*                                                                       */
-typedef signed short  FT_F2Dot14;
+typedef signed short  FT2_1_3_F2Dot14;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_F26Dot6                                                         */
+/*    FT2_1_3_F26Dot6                                                         */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A signed 26.6 fixed float type used for vectorial pixel            */
 /*    coordinates.                                                       */
 /*                                                                       */
-typedef signed long  FT_F26Dot6;
+typedef signed long  FT2_1_3_F26Dot6;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_Fixed                                                           */
+/*    FT2_1_3_Fixed                                                           */
 /*                                                                       */
 /* <Description>                                                         */
 /*    This type is used to store 16.16 fixed float values, like scales   */
 /*    or matrix coefficients.                                            */
 /*                                                                       */
-typedef signed long  FT_Fixed;
+typedef signed long  FT2_1_3_Fixed;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_Error                                                           */
+/*    FT2_1_3_Error                                                           */
 /*                                                                       */
 /* <Description>                                                         */
 /*    The FreeType error code type.  A value of 0 is always interpreted  */
 /*    as a successful operation.                                         */
 /*                                                                       */
-typedef int  FT_Error;
+typedef int  FT2_1_3_Error;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_Pointer                                                         */
+/*    FT2_1_3_Pointer                                                         */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A simple typedef for a typeless pointer.                           */
 /*                                                                       */
-typedef void*  FT_Pointer;
+typedef void*  FT2_1_3_Pointer;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_Offset                                                          */
+/*    FT2_1_3_Offset                                                          */
 /*                                                                       */
 /* <Description>                                                         */
 /*    This is equivalent to the ANSI C `size_t' type, i.e. the largest   */
 /*    _unsigned_ integer type used to express a file size or position,   */
 /*    or a memory block size.                                            */
 /*                                                                       */
-typedef size_t  FT_Offset;
+typedef size_t  FT2_1_3_Offset;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_PtrDist                                                         */
+/*    FT2_1_3_PtrDist                                                         */
 /*                                                                       */
 /* <Description>                                                         */
 /*    This is equivalent to the ANSI C `ptrdiff_t' type, i.e. the        */
 /*    largest _signed_ integer type used to express the distance         */
 /*    between two pointers.                                              */
 /*                                                                       */
-typedef size_t  FT_PtrDist;
+typedef size_t  FT2_1_3_PtrDist;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT_UnitVector                                                      */
+/*    FT2_1_3_UnitVector                                                      */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A simple structure used to store a 2D vector unit vector.  Uses    */
-/*    FT_F2Dot14 types.                                                  */
+/*    FT2_1_3_F2Dot14 types.                                                  */
 /*                                                                       */
 /* <Fields>                                                              */
 /*    x :: Horizontal coordinate.                                        */
 /*                                                                       */
 /*    y :: Vertical coordinate.                                          */
 /*                                                                       */
-typedef struct  FT_UnitVector_ {
-	FT_F2Dot14  x;
-	FT_F2Dot14  y;
+typedef struct  FT2_1_3_UnitVector_ {
+	FT2_1_3_F2Dot14  x;
+	FT2_1_3_F2Dot14  y;
 
-} FT_UnitVector;
+} FT2_1_3_UnitVector;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT_Matrix                                                          */
+/*    FT2_1_3_Matrix                                                          */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A simple structure used to store a 2x2 matrix.  Coefficients are   */
@@ -348,17 +348,17 @@ typedef struct  FT_UnitVector_ {
 /*                                                                       */
 /*    yy :: Matrix coefficient.                                          */
 /*                                                                       */
-typedef struct  FT_Matrix_ {
-	FT_Fixed  xx, xy;
-	FT_Fixed  yx, yy;
+typedef struct  FT2_1_3_Matrix_ {
+	FT2_1_3_Fixed  xx, xy;
+	FT2_1_3_Fixed  yx, yy;
 
-} FT_Matrix;
+} FT2_1_3_Matrix;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT_Data	                                                           */
+/*    FT2_1_3_Data	                                                           */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Read-only binary data represented as a pointer and a length.       */
@@ -368,34 +368,34 @@ typedef struct  FT_Matrix_ {
 /*                                                                       */
 /*    length  :: The length of the data in bytes.                        */
 /*                                                                       */
-typedef struct  FT_Data_ {
-	const FT_Byte*  pointer;
-	FT_Int          length;
+typedef struct  FT2_1_3_Data_ {
+	const FT2_1_3_Byte*  pointer;
+	FT2_1_3_Int          length;
 
-} FT_Data;
+} FT2_1_3_Data;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <FuncType>                                                            */
-/*    FT_Generic_Finalizer                                               */
+/*    FT2_1_3_Generic_Finalizer                                               */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Describes a function used to destroy the `client' data of any      */
-/*    FreeType object.  See the description of the FT_Generic type for   */
+/*    FreeType object.  See the description of the FT2_1_3_Generic type for   */
 /*    details of usage.                                                  */
 /*                                                                       */
 /* <Input>                                                               */
 /*    The address of the FreeType object which is under finalization.    */
 /*    Its client data is accessed through its `generic' field.           */
 /*                                                                       */
-typedef void  (*FT_Generic_Finalizer)(void*  object);
+typedef void  (*FT2_1_3_Generic_Finalizer)(void*  object);
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT_Generic                                                         */
+/*    FT2_1_3_Generic                                                         */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Client applications often need to associate their own data to a    */
@@ -403,7 +403,7 @@ typedef void  (*FT_Generic_Finalizer)(void*  object);
 /*    might want to associate a glyph cache to a given size object.      */
 /*                                                                       */
 /*    Most FreeType object contains a `generic' field, of type           */
-/*    FT_Generic, which usage is left to client applications and font    */
+/*    FT2_1_3_Generic, which usage is left to client applications and font    */
 /*    servers.                                                           */
 /*                                                                       */
 /*    It can be used to store a pointer to client-specific data, as well */
@@ -420,17 +420,17 @@ typedef void  (*FT_Generic_Finalizer)(void*  object);
 /*                 will be called when the object is destroyed.  If this */
 /*                 field is set to NULL, no code will be called.         */
 /*                                                                       */
-typedef struct  FT_Generic_ {
+typedef struct  FT2_1_3_Generic_ {
 	void*                 data;
-	FT_Generic_Finalizer  finalizer;
+	FT2_1_3_Generic_Finalizer  finalizer;
 
-} FT_Generic;
+} FT2_1_3_Generic;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Macro>                                                               */
-/*    FT_MAKE_TAG                                                        */
+/*    FT2_1_3_MAKE_TAG                                                        */
 /*                                                                       */
 /* <Description>                                                         */
 /*    This macro converts four letter tags which are used to label       */
@@ -440,11 +440,11 @@ typedef struct  FT_Generic_ {
 /*    The produced values *must* be 32bit integers.  Don't redefine this */
 /*    macro.                                                             */
 /*                                                                       */
-#define FT_MAKE_TAG( _x1, _x2, _x3, _x4 ) \
-          ( ( (FT_ULong)_x1 << 24 ) |     \
-            ( (FT_ULong)_x2 << 16 ) |     \
-            ( (FT_ULong)_x3 <<  8 ) |     \
-              (FT_ULong)_x4         )
+#define FT2_1_3_MAKE_TAG( _x1, _x2, _x3, _x4 ) \
+          ( ( (FT2_1_3_ULong)_x1 << 24 ) |     \
+            ( (FT2_1_3_ULong)_x2 << 16 ) |     \
+            ( (FT2_1_3_ULong)_x3 <<  8 ) |     \
+              (FT2_1_3_ULong)_x4         )
 
 
 /*************************************************************************/
@@ -467,31 +467,31 @@ typedef struct  FT_Generic_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_ListNode                                                        */
+/*    FT2_1_3_ListNode                                                        */
 /*                                                                       */
 /* <Description>                                                         */
 /*     Many elements and objects in FreeType are listed through a        */
-/*     FT_List record (see FT_ListRec).  As its name suggests, a         */
-/*     FT_ListNode is a handle to a single list element.                 */
+/*     FT2_1_3_List record (see FT2_1_3_ListRec).  As its name suggests, a         */
+/*     FT2_1_3_ListNode is a handle to a single list element.                 */
 /*                                                                       */
-typedef struct FT_ListNodeRec_*  FT_ListNode;
+typedef struct FT2_1_3_ListNodeRec_*  FT2_1_3_ListNode;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_List                                                            */
+/*    FT2_1_3_List                                                            */
 /*                                                                       */
 /* <Description>                                                         */
-/*    A handle to a list record (see FT_ListRec).                        */
+/*    A handle to a list record (see FT2_1_3_ListRec).                        */
 /*                                                                       */
-typedef struct FT_ListRec_*  FT_List;
+typedef struct FT2_1_3_ListRec_*  FT2_1_3_List;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT_ListNodeRec                                                     */
+/*    FT2_1_3_ListNodeRec                                                     */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A structure used to hold a single list element.                    */
@@ -503,18 +503,18 @@ typedef struct FT_ListRec_*  FT_List;
 /*                                                                       */
 /*    data :: A typeless pointer to the listed object.                   */
 /*                                                                       */
-typedef struct  FT_ListNodeRec_ {
-	FT_ListNode  prev;
-	FT_ListNode  next;
+typedef struct  FT2_1_3_ListNodeRec_ {
+	FT2_1_3_ListNode  prev;
+	FT2_1_3_ListNode  next;
 	void*        data;
 
-} FT_ListNodeRec;
+} FT2_1_3_ListNodeRec;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT_ListRec                                                         */
+/*    FT2_1_3_ListRec                                                         */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A structure used to hold a simple doubly-linked list.  These are   */
@@ -525,26 +525,26 @@ typedef struct  FT_ListNodeRec_ {
 /*                                                                       */
 /*    tail :: The tail (last element) of doubly-linked list.             */
 /*                                                                       */
-typedef struct  FT_ListRec_ {
-	FT_ListNode  head;
-	FT_ListNode  tail;
+typedef struct  FT2_1_3_ListRec_ {
+	FT2_1_3_ListNode  head;
+	FT2_1_3_ListNode  tail;
 
-} FT_ListRec;
+} FT2_1_3_ListRec;
 
 
 /* */
 
-#define FT_IS_EMPTY( list )  ( (list).head == 0 )
+#define FT2_1_3_IS_EMPTY( list )  ( (list).head == 0 )
 
 /* return base error code (without module-specific prefix) */
-#define FT_ERROR_BASE( x )    ( (x) & 0xFF )
+#define FT2_1_3_ERROR_BASE( x )    ( (x) & 0xFF )
 
 /* return module error code */
-#define FT_ERROR_MODULE( x )  ( (x) & 0xFF00U )
+#define FT2_1_3_ERROR_MODULE( x )  ( (x) & 0xFF00U )
 
-#define FT_BOOL( x )  ( (FT_Bool)( x ) )
+#define FT2_1_3_BOOL( x )  ( (FT2_1_3_Bool)( x ) )
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __FTTYPES_H__ */
 

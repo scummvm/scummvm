@@ -22,10 +22,10 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_FREETYPE_H
+#include FT2_1_3_FREETYPE_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -61,15 +61,15 @@ FT_BEGIN_HEADER
 /*    FontInfo.                                                          */
 /*                                                                       */
 typedef struct  PS_FontInfoRec {
-	FT_String*  version;
-	FT_String*  notice;
-	FT_String*  full_name;
-	FT_String*  family_name;
-	FT_String*  weight;
-	FT_Long     italic_angle;
-	FT_Bool     is_fixed_pitch;
-	FT_Short    underline_position;
-	FT_UShort   underline_thickness;
+	FT2_1_3_String*  version;
+	FT2_1_3_String*  notice;
+	FT2_1_3_String*  full_name;
+	FT2_1_3_String*  family_name;
+	FT2_1_3_String*  weight;
+	FT2_1_3_Long     italic_angle;
+	FT2_1_3_Bool     is_fixed_pitch;
+	FT2_1_3_Short    underline_position;
+	FT2_1_3_UShort   underline_thickness;
 
 } PS_FontInfoRec, *PS_FontInfo;
 
@@ -98,39 +98,39 @@ typedef PS_FontInfoRec  T1_FontInfo;
 /*    dictionary.                                                        */
 /*                                                                       */
 typedef struct  PS_PrivateRec_ {
-	FT_Int     unique_id;
-	FT_Int     lenIV;
+	FT2_1_3_Int     unique_id;
+	FT2_1_3_Int     lenIV;
 
-	FT_Byte    num_blue_values;
-	FT_Byte    num_other_blues;
-	FT_Byte    num_family_blues;
-	FT_Byte    num_family_other_blues;
+	FT2_1_3_Byte    num_blue_values;
+	FT2_1_3_Byte    num_other_blues;
+	FT2_1_3_Byte    num_family_blues;
+	FT2_1_3_Byte    num_family_other_blues;
 
-	FT_Short   blue_values[14];
-	FT_Short   other_blues[10];
+	FT2_1_3_Short   blue_values[14];
+	FT2_1_3_Short   other_blues[10];
 
-	FT_Short   family_blues      [14];
-	FT_Short   family_other_blues[10];
+	FT2_1_3_Short   family_blues      [14];
+	FT2_1_3_Short   family_other_blues[10];
 
-	FT_Fixed   blue_scale;
-	FT_Int     blue_shift;
-	FT_Int     blue_fuzz;
+	FT2_1_3_Fixed   blue_scale;
+	FT2_1_3_Int     blue_shift;
+	FT2_1_3_Int     blue_fuzz;
 
-	FT_UShort  standard_width[1];
-	FT_UShort  standard_height[1];
+	FT2_1_3_UShort  standard_width[1];
+	FT2_1_3_UShort  standard_height[1];
 
-	FT_Byte    num_snap_widths;
-	FT_Byte    num_snap_heights;
-	FT_Bool    force_bold;
-	FT_Bool    round_stem_up;
+	FT2_1_3_Byte    num_snap_widths;
+	FT2_1_3_Byte    num_snap_heights;
+	FT2_1_3_Bool    force_bold;
+	FT2_1_3_Bool    round_stem_up;
 
-	FT_Short   snap_widths [13];  /* including std width  */
-	FT_Short   snap_heights[13];  /* including std height */
+	FT2_1_3_Short   snap_widths [13];  /* including std width  */
+	FT2_1_3_Short   snap_heights[13];  /* including std height */
 
-	FT_Long    language_group;
-	FT_Long    password;
+	FT2_1_3_Long    language_group;
+	FT2_1_3_Long    password;
 
-	FT_Short   min_feature[2];
+	FT2_1_3_Short   min_feature[2];
 
 } PS_PrivateRec, *PS_Private;
 
@@ -213,9 +213,9 @@ typedef enum {
 
 /* this structure is used to store the BlendDesignMap entry for an axis */
 typedef struct  PS_DesignMap_ {
-	FT_Byte    num_points;
-	FT_Fixed*  design_points;
-	FT_Fixed*  blend_points;
+	FT2_1_3_Byte    num_points;
+	FT2_1_3_Fixed*  design_points;
+	FT2_1_3_Fixed*  blend_points;
 
 } PS_DesignMapRec, *PS_DesignMap;
 
@@ -224,22 +224,22 @@ typedef PS_DesignMapRec  T1_DesignMap;
 
 
 typedef struct  PS_BlendRec_ {
-	FT_UInt          num_designs;
-	FT_UInt          num_axis;
+	FT2_1_3_UInt          num_designs;
+	FT2_1_3_UInt          num_axis;
 
-	FT_String*       axis_names[T1_MAX_MM_AXIS];
-	FT_Fixed*        design_pos[T1_MAX_MM_DESIGNS];
+	FT2_1_3_String*       axis_names[T1_MAX_MM_AXIS];
+	FT2_1_3_Fixed*        design_pos[T1_MAX_MM_DESIGNS];
 	PS_DesignMapRec  design_map[T1_MAX_MM_AXIS];
 
-	FT_Fixed*        weight_vector;
-	FT_Fixed*        default_weight_vector;
+	FT2_1_3_Fixed*        weight_vector;
+	FT2_1_3_Fixed*        default_weight_vector;
 
 	PS_FontInfo      font_infos[T1_MAX_MM_DESIGNS + 1];
 	PS_Private       privates  [T1_MAX_MM_DESIGNS + 1];
 
-	FT_ULong         blend_bitflags;
+	FT2_1_3_ULong         blend_bitflags;
 
-	FT_BBox*         bboxes    [T1_MAX_MM_DESIGNS + 1];
+	FT2_1_3_BBox*         bboxes    [T1_MAX_MM_DESIGNS + 1];
 
 } PS_BlendRec, *PS_Blend;
 
@@ -251,19 +251,19 @@ typedef PS_BlendRec  T1_Blend;
 typedef struct  CID_FaceDictRec_ {
 	PS_PrivateRec  private_dict;
 
-	FT_UInt        len_buildchar;
-	FT_Fixed       forcebold_threshold;
-	FT_Pos         stroke_width;
-	FT_Fixed       expansion_factor;
+	FT2_1_3_UInt        len_buildchar;
+	FT2_1_3_Fixed       forcebold_threshold;
+	FT2_1_3_Pos         stroke_width;
+	FT2_1_3_Fixed       expansion_factor;
 
-	FT_Byte        paint_type;
-	FT_Byte        font_type;
-	FT_Matrix      font_matrix;
-	FT_Vector      font_offset;
+	FT2_1_3_Byte        paint_type;
+	FT2_1_3_Byte        font_type;
+	FT2_1_3_Matrix      font_matrix;
+	FT2_1_3_Vector      font_offset;
 
-	FT_UInt        num_subrs;
-	FT_ULong       subrmap_offset;
-	FT_Int         sd_bytes;
+	FT2_1_3_UInt        num_subrs;
+	FT2_1_3_ULong       subrmap_offset;
+	FT2_1_3_Int         sd_bytes;
 
 } CID_FaceDictRec, *CID_FaceDict;
 
@@ -273,30 +273,30 @@ typedef CID_FaceDictRec  CID_FontDict;
 
 
 typedef struct  CID_FaceInfoRec_ {
-	FT_String*      cid_font_name;
-	FT_Fixed        cid_version;
-	FT_Int          cid_font_type;
+	FT2_1_3_String*      cid_font_name;
+	FT2_1_3_Fixed        cid_version;
+	FT2_1_3_Int          cid_font_type;
 
-	FT_String*      registry;
-	FT_String*      ordering;
-	FT_Int          supplement;
+	FT2_1_3_String*      registry;
+	FT2_1_3_String*      ordering;
+	FT2_1_3_Int          supplement;
 
 	PS_FontInfoRec  font_info;
-	FT_BBox         font_bbox;
-	FT_ULong        uid_base;
+	FT2_1_3_BBox         font_bbox;
+	FT2_1_3_ULong        uid_base;
 
-	FT_Int          num_xuid;
-	FT_ULong        xuid[16];
+	FT2_1_3_Int          num_xuid;
+	FT2_1_3_ULong        xuid[16];
 
-	FT_ULong        cidmap_offset;
-	FT_Int          fd_bytes;
-	FT_Int          gd_bytes;
-	FT_ULong        cid_count;
+	FT2_1_3_ULong        cidmap_offset;
+	FT2_1_3_Int          fd_bytes;
+	FT2_1_3_Int          gd_bytes;
+	FT2_1_3_ULong        cid_count;
 
-	FT_Int          num_dicts;
+	FT2_1_3_Int          num_dicts;
 	CID_FaceDict    font_dicts;
 
-	FT_ULong        data_offset;
+	FT2_1_3_ULong        data_offset;
 
 } CID_FaceInfoRec, *CID_FaceInfo;
 
@@ -319,16 +319,16 @@ typedef CID_FaceInfoRec  CID_Info;
 /************************************************************************
  *
  * @function:
- *    FT_Has_PS_Glyph_Names
+ *    FT2_1_3_Has_PS_Glyph_Names
  *
  * @description:
  *    Return true if a given face provides reliable Postscript glyph
- *    names.  This is similar to using the @FT_HAS_GLYPH_NAMES macro,
+ *    names.  This is similar to using the @FT2_1_3_HAS_GLYPH_NAMES macro,
  *    except that certain fonts (mostly TrueType) contain incorrect
  *    glyph name tables.
  *
  *    When this function returns true, the caller is sure that the glyph
- *    names returned by @FT_Get_Glyph_Name are reliable.
+ *    names returned by @FT2_1_3_Get_Glyph_Name are reliable.
  *
  * @input:
  *    face ::
@@ -337,14 +337,14 @@ typedef CID_FaceInfoRec  CID_Info;
  * @return:
  *    Boolean.  True if glyph names are reliable.
  */
-FT_EXPORT( FT_Int )
-FT_Has_PS_Glyph_Names( FT_Face  face );
+FT2_1_3_EXPORT( FT2_1_3_Int )
+FT2_1_3_Has_PS_Glyph_Names( FT2_1_3_Face  face );
 
 
 /************************************************************************
  *
  * @function:
- *    FT_Get_PS_Font_Info
+ *    FT2_1_3_Get_PS_Font_Info
  *
  * @description:
  *    Retrieve the @PS_FontInfoRec structure corresponding to a given
@@ -366,17 +366,17 @@ FT_Has_PS_Glyph_Names( FT_Face  face );
  *    the face and don't need to be freed by the caller.
  *
  *    If the font's format is not Postscript-based, this function will
- *    return the @FT_Err_Invalid_Argument error code.
+ *    return the @FT2_1_3_Err_Invalid_Argument error code.
  */
-FT_EXPORT( FT_Error )
-FT_Get_PS_Font_Info( FT_Face          face,
+FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_Get_PS_Font_Info( FT2_1_3_Face          face,
                      PS_FontInfoRec  *afont_info );
 
 /* */
 
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __T1TABLES_H__ */
 

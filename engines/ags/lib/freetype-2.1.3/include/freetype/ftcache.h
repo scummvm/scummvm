@@ -36,10 +36,10 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_GLYPH_H
+#include FT2_1_3_GLYPH_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -112,7 +112,7 @@ FT_BEGIN_HEADER
 /*    A generic pointer type that is used to identity face objects.  The */
 /*    contents of such objects is application-dependent.                 */
 /*                                                                       */
-typedef FT_Pointer  FTC_FaceID;
+typedef FT2_1_3_Pointer  FTC_FaceID;
 
 
 /*************************************************************************/
@@ -122,7 +122,7 @@ typedef FT_Pointer  FTC_FaceID;
 /*                                                                       */
 /* <Description>                                                         */
 /*    A callback function provided by client applications.  It is used   */
-/*    to translate a given @FTC_FaceID into a new valid @FT_Face object. */
+/*    to translate a given @FTC_FaceID into a new valid @FT2_1_3_Face object. */
 /*                                                                       */
 /* <Input>                                                               */
 /*    face_id :: The face ID to resolve.                                 */
@@ -132,21 +132,21 @@ typedef FT_Pointer  FTC_FaceID;
 /*    data    :: Application-provided request data.                      */
 /*                                                                       */
 /* <Output>                                                              */
-/*    aface   :: A new @FT_Face handle.                                  */
+/*    aface   :: A new @FT2_1_3_Face handle.                                  */
 /*                                                                       */
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 /* <Note>                                                                */
 /*    The face requester should not perform funny things on the returned */
-/*    face object, like creating a new @FT_Size for it, or setting a     */
-/*    transformation through @FT_Set_Transform!                          */
+/*    face object, like creating a new @FT2_1_3_Size for it, or setting a     */
+/*    transformation through @FT2_1_3_Set_Transform!                          */
 /*                                                                       */
-typedef FT_Error
+typedef FT2_1_3_Error
 (*FTC_Face_Requester)( FTC_FaceID  face_id,
-                       FT_Library  library,
-                       FT_Pointer  request_data,
-                       FT_Face*    aface );
+                       FT2_1_3_Library  library,
+                       FT2_1_3_Pointer  request_data,
+                       FT2_1_3_Face*    aface );
 
 
 /*************************************************************************/
@@ -168,8 +168,8 @@ typedef FT_Error
 /*                                                                       */
 typedef struct  FTC_FontRec_ {
 	FTC_FaceID  face_id;
-	FT_UShort   pix_width;
-	FT_UShort   pix_height;
+	FT2_1_3_UShort   pix_width;
+	FT2_1_3_UShort   pix_height;
 
 } FTC_FontRec;
 
@@ -186,14 +186,14 @@ typedef struct  FTC_FontRec_ {
           the cast intent is unclear;
           this version of FreeType seem to be implying 16/32-bit addresses.
 */
-#define FT_POINTER_TO_ULONG( p )  ((FT_ULong)(uintptr_t)(FT_Pointer)(p))
+#define FT2_1_3_POINTER_TO_ULONG( p )  ((FT2_1_3_ULong)(uintptr_t)(FT2_1_3_Pointer)(p))
 
 #define FTC_FACE_ID_HASH( i )                              \
-          ((FT_UInt32)(( FT_POINTER_TO_ULONG( i ) >> 3 ) ^ \
-                       ( FT_POINTER_TO_ULONG( i ) << 7 ) ) )
+          ((FT2_1_3_UInt32)(( FT2_1_3_POINTER_TO_ULONG( i ) >> 3 ) ^ \
+                       ( FT2_1_3_POINTER_TO_ULONG( i ) << 7 ) ) )
 
 #define FTC_FONT_HASH( f )                              \
-          (FT_UInt32)( FTC_FACE_ID_HASH((f)->face_id) ^ \
+          (FT2_1_3_UInt32)( FTC_FACE_ID_HASH((f)->face_id) ^ \
                        ((f)->pix_width << 8)          ^ \
                        ((f)->pix_height)              )
 
@@ -226,8 +226,8 @@ typedef FTC_FontRec*  FTC_Font;
 /*    FTC_Manager                                                        */
 /*                                                                       */
 /* <Description>                                                         */
-/*    This object is used to cache one or more @FT_Face objects, along   */
-/*    with corresponding @FT_Size objects.                               */
+/*    This object is used to cache one or more @FT2_1_3_Face objects, along   */
+/*    with corresponding @FT2_1_3_Size objects.                               */
 /*                                                                       */
 typedef struct FTC_ManagerRec_*  FTC_Manager;
 
@@ -273,7 +273,7 @@ typedef struct FTC_NodeRec_*  FTC_Node;
 /*                 Use 0 for defaults.                                   */
 /*                                                                       */
 /*    requester :: An application-provided callback used to translate    */
-/*                 face IDs into real @FT_Face objects.                  */
+/*                 face IDs into real @FT2_1_3_Face objects.                  */
 /*                                                                       */
 /*    req_data  :: A generic pointer that is passed to the requester     */
 /*                 each time it is called (see @FTC_Face_Requester).     */
@@ -285,13 +285,13 @@ typedef struct FTC_NodeRec_*  FTC_Node;
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT_EXPORT( FT_Error )
-FTC_Manager_New( FT_Library          library,
-                 FT_UInt             max_faces,
-                 FT_UInt             max_sizes,
-                 FT_ULong            max_bytes,
+FT2_1_3_EXPORT( FT2_1_3_Error )
+FTC_Manager_New( FT2_1_3_Library          library,
+                 FT2_1_3_UInt             max_faces,
+                 FT2_1_3_UInt             max_sizes,
+                 FT2_1_3_ULong            max_bytes,
                  FTC_Face_Requester  requester,
-                 FT_Pointer          req_data,
+                 FT2_1_3_Pointer          req_data,
                  FTC_Manager        *amanager );
 
 
@@ -302,12 +302,12 @@ FTC_Manager_New( FT_Library          library,
 /*                                                                       */
 /* <Description>                                                         */
 /*    Empties a given cache manager.  This simply gets rid of all the    */
-/*    currently cached @FT_Face and @FT_Size objects within the manager. */
+/*    currently cached @FT2_1_3_Face and @FT2_1_3_Size objects within the manager. */
 /*                                                                       */
 /* <InOut>                                                               */
 /*    manager :: A handle to the manager.                                */
 /*                                                                       */
-FT_EXPORT( void )
+FT2_1_3_EXPORT( void )
 FTC_Manager_Reset( FTC_Manager  manager );
 
 
@@ -322,7 +322,7 @@ FTC_Manager_Reset( FTC_Manager  manager );
 /* <Input>                                                               */
 /*    manager :: A handle to the target cache manager object.            */
 /*                                                                       */
-FT_EXPORT( void )
+FT2_1_3_EXPORT( void )
 FTC_Manager_Done( FTC_Manager  manager );
 
 
@@ -332,7 +332,7 @@ FTC_Manager_Done( FTC_Manager  manager );
 /*    FTC_Manager_Lookup_Face                                            */
 /*                                                                       */
 /* <Description>                                                         */
-/*    Retrieves the @FT_Face object that corresponds to a given face ID  */
+/*    Retrieves the @FT2_1_3_Face object that corresponds to a given face ID  */
 /*    through a cache manager.                                           */
 /*                                                                       */
 /* <Input>                                                               */
@@ -347,21 +347,21 @@ FTC_Manager_Done( FTC_Manager  manager );
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 /* <Note>                                                                */
-/*    The returned @FT_Face object is always owned by the manager.  You  */
+/*    The returned @FT2_1_3_Face object is always owned by the manager.  You  */
 /*    should never try to discard it yourself.                           */
 /*                                                                       */
-/*    The @FT_Face object doesn't necessarily have a current size object */
+/*    The @FT2_1_3_Face object doesn't necessarily have a current size object */
 /*    (i.e., face->size can be 0).  If you need a specific `font size',  */
 /*    use @FTC_Manager_Lookup_Size instead.                              */
 /*                                                                       */
 /*    Never change the face's transformation matrix (i.e., never call    */
-/*    the @FT_Set_Transform function) on a returned face!  If you need   */
+/*    the @FT2_1_3_Set_Transform function) on a returned face!  If you need   */
 /*    to transform glyphs, do it yourself after glyph loading.           */
 /*                                                                       */
-FT_EXPORT( FT_Error )
+FT2_1_3_EXPORT( FT2_1_3_Error )
 FTC_Manager_Lookup_Face( FTC_Manager  manager,
                          FTC_FaceID   face_id,
-                         FT_Face     *aface );
+                         FT2_1_3_Face     *aface );
 
 
 /*************************************************************************/
@@ -370,7 +370,7 @@ FTC_Manager_Lookup_Face( FTC_Manager  manager,
 /*    FTC_Manager_Lookup_Size                                            */
 /*                                                                       */
 /* <Description>                                                         */
-/*    Retrieves the @FT_Face and @FT_Size objects that correspond to a   */
+/*    Retrieves the @FT2_1_3_Face and @FT2_1_3_Size objects that correspond to a   */
 /*    given @FTC_SizeID.                                                 */
 /*                                                                       */
 /* <Input>                                                               */
@@ -389,28 +389,28 @@ FTC_Manager_Lookup_Face( FTC_Manager  manager,
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 /* <Note>                                                                */
-/*    The returned @FT_Face object is always owned by the manager.  You  */
+/*    The returned @FT2_1_3_Face object is always owned by the manager.  You  */
 /*    should never try to discard it yourself.                           */
 /*                                                                       */
 /*    Never change the face's transformation matrix (i.e., never call    */
-/*    the @FT_Set_Transform function) on a returned face!  If you need   */
+/*    the @FT2_1_3_Set_Transform function) on a returned face!  If you need   */
 /*    to transform glyphs, do it yourself after glyph loading.           */
 /*                                                                       */
-/*    Similarly, the returned @FT_Size object is always owned by the     */
+/*    Similarly, the returned @FT2_1_3_Size object is always owned by the     */
 /*    manager.  You should never try to discard it, and never change its */
-/*    settings with @FT_Set_Pixel_Sizes or @FT_Set_Char_Size!            */
+/*    settings with @FT2_1_3_Set_Pixel_Sizes or @FT2_1_3_Set_Char_Size!            */
 /*                                                                       */
 /*    The returned size object is the face's current size, which means   */
-/*    that you can call @FT_Load_Glyph with the face if you need to.     */
+/*    that you can call @FT2_1_3_Load_Glyph with the face if you need to.     */
 /*                                                                       */
-FT_EXPORT( FT_Error )
+FT2_1_3_EXPORT( FT2_1_3_Error )
 FTC_Manager_Lookup_Size( FTC_Manager  manager,
                          FTC_Font     font,
-                         FT_Face     *aface,
-                         FT_Size     *asize );
+                         FT2_1_3_Face     *aface,
+                         FT2_1_3_Size     *asize );
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __FTCACHE_H__ */
 

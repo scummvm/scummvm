@@ -21,11 +21,11 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_MODULE_H
-#include FT_GLYPH_H
+#include FT2_1_3_MODULE_H
+#include FT2_1_3_GLYPH_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -37,93 +37,93 @@ FT_BEGIN_HEADER
 
 
 /* create a new glyph object */
-typedef FT_Error
-(*FT_Glyph_InitFunc)( FT_Glyph      glyph,
-                      FT_GlyphSlot  slot );
+typedef FT2_1_3_Error
+(*FT2_1_3_Glyph_InitFunc)( FT2_1_3_Glyph      glyph,
+                      FT2_1_3_GlyphSlot  slot );
 
 /* destroys a given glyph object */
 typedef void
-(*FT_Glyph_DoneFunc)( FT_Glyph  glyph );
+(*FT2_1_3_Glyph_DoneFunc)( FT2_1_3_Glyph  glyph );
 
 typedef void
-(*FT_Glyph_TransformFunc)( FT_Glyph    glyph,
-                           FT_Matrix*  matrix,
-                           FT_Vector*  delta );
+(*FT2_1_3_Glyph_TransformFunc)( FT2_1_3_Glyph    glyph,
+                           FT2_1_3_Matrix*  matrix,
+                           FT2_1_3_Vector*  delta );
 
 typedef void
-(*FT_Glyph_GetBBoxFunc)( FT_Glyph  glyph,
-                         FT_BBox*  abbox );
+(*FT2_1_3_Glyph_GetBBoxFunc)( FT2_1_3_Glyph  glyph,
+                         FT2_1_3_BBox*  abbox );
 
-typedef FT_Error
-(*FT_Glyph_CopyFunc)( FT_Glyph   source,
-                      FT_Glyph   target );
+typedef FT2_1_3_Error
+(*FT2_1_3_Glyph_CopyFunc)( FT2_1_3_Glyph   source,
+                      FT2_1_3_Glyph   target );
 
-typedef FT_Error
-(*FT_Glyph_PrepareFunc)( FT_Glyph      glyph,
-                         FT_GlyphSlot  slot );
+typedef FT2_1_3_Error
+(*FT2_1_3_Glyph_PrepareFunc)( FT2_1_3_Glyph      glyph,
+                         FT2_1_3_GlyphSlot  slot );
 
 /* deprecated */
-#define FT_Glyph_Init_Func       FT_Glyph_InitFunc
-#define FT_Glyph_Done_Func       FT_Glyph_DoneFunc
-#define FT_Glyph_Transform_Func  FT_Glyph_TransformFunc
-#define FT_Glyph_BBox_Func       FT_Glyph_GetBBoxFunc
-#define FT_Glyph_Copy_Func       FT_Glyph_CopyFunc
-#define FT_Glyph_Prepare_Func    FT_Glyph_PrepareFunc
+#define FT2_1_3_Glyph_Init_Func       FT2_1_3_Glyph_InitFunc
+#define FT2_1_3_Glyph_Done_Func       FT2_1_3_Glyph_DoneFunc
+#define FT2_1_3_Glyph_Transform_Func  FT2_1_3_Glyph_TransformFunc
+#define FT2_1_3_Glyph_BBox_Func       FT2_1_3_Glyph_GetBBoxFunc
+#define FT2_1_3_Glyph_Copy_Func       FT2_1_3_Glyph_CopyFunc
+#define FT2_1_3_Glyph_Prepare_Func    FT2_1_3_Glyph_PrepareFunc
 
 
-struct  FT_Glyph_Class_ {
-	FT_Long                 glyph_size;
-	FT_Glyph_Format         glyph_format;
-	FT_Glyph_InitFunc       glyph_init;
-	FT_Glyph_DoneFunc       glyph_done;
-	FT_Glyph_CopyFunc       glyph_copy;
-	FT_Glyph_TransformFunc  glyph_transform;
-	FT_Glyph_GetBBoxFunc    glyph_bbox;
-	FT_Glyph_PrepareFunc    glyph_prepare;
+struct  FT2_1_3_Glyph_Class_ {
+	FT2_1_3_Long                 glyph_size;
+	FT2_1_3_Glyph_Format         glyph_format;
+	FT2_1_3_Glyph_InitFunc       glyph_init;
+	FT2_1_3_Glyph_DoneFunc       glyph_done;
+	FT2_1_3_Glyph_CopyFunc       glyph_copy;
+	FT2_1_3_Glyph_TransformFunc  glyph_transform;
+	FT2_1_3_Glyph_GetBBoxFunc    glyph_bbox;
+	FT2_1_3_Glyph_PrepareFunc    glyph_prepare;
 };
 
 
-typedef FT_Error
-(*FT_Renderer_RenderFunc)( FT_Renderer   renderer,
-                           FT_GlyphSlot  slot,
-                           FT_UInt       mode,
-                           FT_Vector*    origin );
+typedef FT2_1_3_Error
+(*FT2_1_3_Renderer_RenderFunc)( FT2_1_3_Renderer   renderer,
+                           FT2_1_3_GlyphSlot  slot,
+                           FT2_1_3_UInt       mode,
+                           FT2_1_3_Vector*    origin );
 
-typedef FT_Error
-(*FT_Renderer_TransformFunc)( FT_Renderer   renderer,
-                              FT_GlyphSlot  slot,
-                              FT_Matrix*    matrix,
-                              FT_Vector*    delta );
+typedef FT2_1_3_Error
+(*FT2_1_3_Renderer_TransformFunc)( FT2_1_3_Renderer   renderer,
+                              FT2_1_3_GlyphSlot  slot,
+                              FT2_1_3_Matrix*    matrix,
+                              FT2_1_3_Vector*    delta );
 
 
 typedef void
-(*FT_Renderer_GetCBoxFunc)( FT_Renderer   renderer,
-                            FT_GlyphSlot  slot,
-                            FT_BBox*      cbox );
+(*FT2_1_3_Renderer_GetCBoxFunc)( FT2_1_3_Renderer   renderer,
+                            FT2_1_3_GlyphSlot  slot,
+                            FT2_1_3_BBox*      cbox );
 
 
-typedef FT_Error
-(*FT_Renderer_SetModeFunc)( FT_Renderer  renderer,
-                            FT_ULong     mode_tag,
-                            FT_Pointer   mode_ptr );
+typedef FT2_1_3_Error
+(*FT2_1_3_Renderer_SetModeFunc)( FT2_1_3_Renderer  renderer,
+                            FT2_1_3_ULong     mode_tag,
+                            FT2_1_3_Pointer   mode_ptr );
 
 /* deprecated identifiers */
-#define FTRenderer_render  FT_Renderer_RenderFunc
-#define FTRenderer_transform  FT_Renderer_TransformFunc
-#define FTRenderer_getCBox  FT_Renderer_GetCBoxFunc
-#define FTRenderer_setMode  FT_Renderer_SetModeFunc
+#define FTRenderer_render  FT2_1_3_Renderer_RenderFunc
+#define FTRenderer_transform  FT2_1_3_Renderer_TransformFunc
+#define FTRenderer_getCBox  FT2_1_3_Renderer_GetCBoxFunc
+#define FTRenderer_setMode  FT2_1_3_Renderer_SetModeFunc
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT_Renderer_Class                                                  */
+/*    FT2_1_3_Renderer_Class                                                  */
 /*                                                                       */
 /* <Description>                                                         */
 /*    The renderer module class descriptor.                              */
 /*                                                                       */
 /* <Fields>                                                              */
-/*    root         :: The root FT_Module_Class fields.                   */
+/*    root         :: The root FT2_1_3_Module_Class fields.                   */
 /*                                                                       */
 /*    glyph_format :: The glyph image format this renderer handles.      */
 /*                                                                       */
@@ -132,32 +132,32 @@ typedef FT_Error
 /*                                                                       */
 /*    set_mode     :: A method used to pass additional parameters.       */
 /*                                                                       */
-/*    raster_class :: For `FT_GLYPH_FORMAT_OUTLINE' renderers only, this */
+/*    raster_class :: For `FT2_1_3_GLYPH_FORMAT_OUTLINE' renderers only, this */
 /*                    is a pointer to its raster's class.                */
 /*                                                                       */
-/*    raster       :: For `FT_GLYPH_FORMAT_OUTLINE' renderers only. this */
+/*    raster       :: For `FT2_1_3_GLYPH_FORMAT_OUTLINE' renderers only. this */
 /*                    is a pointer to the corresponding raster object,   */
 /*                    if any.                                            */
 /*                                                                       */
-typedef struct  FT_Renderer_Class_ {
-	FT_Module_Class       root;
+typedef struct  FT2_1_3_Renderer_Class_ {
+	FT2_1_3_Module_Class       root;
 
-	FT_Glyph_Format       glyph_format;
+	FT2_1_3_Glyph_Format       glyph_format;
 
-	FT_Renderer_RenderFunc     render_glyph;
-	FT_Renderer_TransformFunc  transform_glyph;
-	FT_Renderer_GetCBoxFunc    get_glyph_cbox;
-	FT_Renderer_SetModeFunc    set_mode;
+	FT2_1_3_Renderer_RenderFunc     render_glyph;
+	FT2_1_3_Renderer_TransformFunc  transform_glyph;
+	FT2_1_3_Renderer_GetCBoxFunc    get_glyph_cbox;
+	FT2_1_3_Renderer_SetModeFunc    set_mode;
 
-	FT_Raster_Funcs*           raster_class;
+	FT2_1_3_Raster_Funcs*           raster_class;
 
-} FT_Renderer_Class;
+} FT2_1_3_Renderer_Class;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Get_Renderer                                                    */
+/*    FT2_1_3_Get_Renderer                                                    */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Retrieves the current renderer for a given glyph format.           */
@@ -174,18 +174,18 @@ typedef struct  FT_Renderer_Class_ {
 /*    An error will be returned if a module already exists by that name, */
 /*    or if the module requires a version of FreeType that is too great. */
 /*                                                                       */
-/*    To add a new renderer, simply use FT_Add_Module().  To retrieve a  */
-/*    renderer by its name, use FT_Get_Module().                         */
+/*    To add a new renderer, simply use FT2_1_3_Add_Module().  To retrieve a  */
+/*    renderer by its name, use FT2_1_3_Get_Module().                         */
 /*                                                                       */
-FT_EXPORT( FT_Renderer )
-FT_Get_Renderer( FT_Library       library,
-                 FT_Glyph_Format  format );
+FT2_1_3_EXPORT( FT2_1_3_Renderer )
+FT2_1_3_Get_Renderer( FT2_1_3_Library       library,
+                 FT2_1_3_Glyph_Format  format );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Set_Renderer                                                    */
+/*    FT2_1_3_Set_Renderer                                                    */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Sets the current renderer to use, and set additional mode.         */
@@ -209,17 +209,17 @@ FT_Get_Renderer( FT_Library       library,
 /*                                                                       */
 /*    This doesn't change the current renderer for other formats.        */
 /*                                                                       */
-FT_EXPORT( FT_Error )
-FT_Set_Renderer( FT_Library     library,
-                 FT_Renderer    renderer,
-                 FT_UInt        num_params,
-                 FT_Parameter*  parameters );
+FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_Set_Renderer( FT2_1_3_Library     library,
+                 FT2_1_3_Renderer    renderer,
+                 FT2_1_3_UInt        num_params,
+                 FT2_1_3_Parameter*  parameters );
 
 
 /* */
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __FTRENDER_H__ */
 

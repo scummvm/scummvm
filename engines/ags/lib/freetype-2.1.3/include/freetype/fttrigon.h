@@ -19,10 +19,10 @@
 #ifndef __FTTRIGON_H__
 #define __FTTRIGON_H__
 
-#include FT_FREETYPE_H
+#include FT2_1_3_FREETYPE_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -36,63 +36,63 @@ FT_BEGIN_HEADER
 /*************************************************************************/
 /*                                                                       */
 /* @type:                                                                */
-/*    FT_Angle                                                           */
+/*    FT2_1_3_Angle                                                           */
 /*                                                                       */
 /* @description:                                                         */
 /*    This type is used to model angle values in FreeType.  Note that    */
 /*    the angle is a 16.16 fixed float value expressed in degrees.       */
 /*                                                                       */
-typedef FT_Fixed  FT_Angle;
+typedef FT2_1_3_Fixed  FT2_1_3_Angle;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @macro:                                                               */
-/*    FT_ANGLE_PI                                                        */
+/*    FT2_1_3_ANGLE_PI                                                        */
 /*                                                                       */
 /* @description:                                                         */
-/*   The angle pi expressed in @FT_Angle units.                          */
+/*   The angle pi expressed in @FT2_1_3_Angle units.                          */
 /*                                                                       */
-#define FT_ANGLE_PI  ( 180L << 16 )
+#define FT2_1_3_ANGLE_PI  ( 180L << 16 )
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @macro:                                                               */
-/*    FT_ANGLE_2PI                                                       */
+/*    FT2_1_3_ANGLE_2PI                                                       */
 /*                                                                       */
 /* @description:                                                         */
-/*    The angle 2*pi expressed in @FT_Angle units.                       */
+/*    The angle 2*pi expressed in @FT2_1_3_Angle units.                       */
 /*                                                                       */
-#define FT_ANGLE_2PI  ( FT_ANGLE_PI * 2 )
+#define FT2_1_3_ANGLE_2PI  ( FT2_1_3_ANGLE_PI * 2 )
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @macro:                                                               */
-/*    FT_ANGLE_PI2                                                       */
+/*    FT2_1_3_ANGLE_PI2                                                       */
 /*                                                                       */
 /* @description:                                                         */
-/*    The angle pi/2 expressed in @FT_Angle units.                       */
+/*    The angle pi/2 expressed in @FT2_1_3_Angle units.                       */
 /*                                                                       */
-#define FT_ANGLE_PI2  ( FT_ANGLE_PI / 2 )
+#define FT2_1_3_ANGLE_PI2  ( FT2_1_3_ANGLE_PI / 2 )
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @macro:                                                               */
-/*    FT_ANGLE_PI4                                                       */
+/*    FT2_1_3_ANGLE_PI4                                                       */
 /*                                                                       */
 /* @description:                                                         */
-/*    The angle pi/4 expressed in @FT_Angle units.                       */
+/*    The angle pi/4 expressed in @FT2_1_3_Angle units.                       */
 /*                                                                       */
-#define FT_ANGLE_PI4  ( FT_ANGLE_PI / 4 )
+#define FT2_1_3_ANGLE_PI4  ( FT2_1_3_ANGLE_PI / 4 )
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @function:                                                            */
-/*    FT_Sin                                                             */
+/*    FT2_1_3_Sin                                                             */
 /*                                                                       */
 /* @description:                                                         */
 /*    Return the sinus of a given angle in fixed point format.           */
@@ -105,16 +105,16 @@ typedef FT_Fixed  FT_Angle;
 /*                                                                       */
 /* @note:                                                                */
 /*    If you need both the sinus and cosinus for a given angle, use the  */
-/*    function @FT_Vector_Unit.                                          */
+/*    function @FT2_1_3_Vector_Unit.                                          */
 /*                                                                       */
-FT_EXPORT( FT_Fixed )
-FT_Sin( FT_Angle  angle );
+FT2_1_3_EXPORT( FT2_1_3_Fixed )
+FT2_1_3_Sin( FT2_1_3_Angle  angle );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @function:                                                            */
-/*    FT_Cos                                                             */
+/*    FT2_1_3_Cos                                                             */
 /*                                                                       */
 /* @description:                                                         */
 /*    Return the cosinus of a given angle in fixed point format.         */
@@ -127,16 +127,16 @@ FT_Sin( FT_Angle  angle );
 /*                                                                       */
 /* @note:                                                                */
 /*    If you need both the sinus and cosinus for a given angle, use the  */
-/*    function @FT_Vector_Unit.                                          */
+/*    function @FT2_1_3_Vector_Unit.                                          */
 /*                                                                       */
-FT_EXPORT( FT_Fixed )
-FT_Cos( FT_Angle  angle );
+FT2_1_3_EXPORT( FT2_1_3_Fixed )
+FT2_1_3_Cos( FT2_1_3_Angle  angle );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @function:                                                            */
-/*    FT_Tan                                                             */
+/*    FT2_1_3_Tan                                                             */
 /*                                                                       */
 /* @description:                                                         */
 /*    Return the tangent of a given angle in fixed point format.         */
@@ -147,14 +147,14 @@ FT_Cos( FT_Angle  angle );
 /* @return:                                                              */
 /*    The tangent value.                                                 */
 /*                                                                       */
-FT_EXPORT( FT_Fixed )
-FT_Tan( FT_Angle  angle );
+FT2_1_3_EXPORT( FT2_1_3_Fixed )
+FT2_1_3_Tan( FT2_1_3_Angle  angle );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @function:                                                            */
-/*    FT_Atan2                                                           */
+/*    FT2_1_3_Atan2                                                           */
 /*                                                                       */
 /* @description:                                                         */
 /*    Return the arc-tangent corresponding to a given vector (x,y) in    */
@@ -168,15 +168,15 @@ FT_Tan( FT_Angle  angle );
 /* @return:                                                              */
 /*    The arc-tangent value (i.e. angle).                                */
 /*                                                                       */
-FT_EXPORT( FT_Angle )
-FT_Atan2( FT_Fixed  x,
-          FT_Fixed  y );
+FT2_1_3_EXPORT( FT2_1_3_Angle )
+FT2_1_3_Atan2( FT2_1_3_Fixed  x,
+          FT2_1_3_Fixed  y );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @function:                                                            */
-/*    FT_Angle_Diff                                                      */
+/*    FT2_1_3_Angle_Diff                                                      */
 /*                                                                       */
 /* @description:                                                         */
 /*    Return the difference between two angles.  The result is always    */
@@ -190,15 +190,15 @@ FT_Atan2( FT_Fixed  x,
 /* @return:                                                              */
 /*    Contrainted value of `value2-value1'.                              */
 /*                                                                       */
-FT_EXPORT( FT_Angle )
-FT_Angle_Diff( FT_Angle  angle1,
-               FT_Angle  angle2 );
+FT2_1_3_EXPORT( FT2_1_3_Angle )
+FT2_1_3_Angle_Diff( FT2_1_3_Angle  angle1,
+               FT2_1_3_Angle  angle2 );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @function:                                                            */
-/*    FT_Vector_Unit                                                     */
+/*    FT2_1_3_Vector_Unit                                                     */
 /*                                                                       */
 /* @description:                                                         */
 /*    Return the unit vector corresponding to a given angle.  After the  */
@@ -214,15 +214,15 @@ FT_Angle_Diff( FT_Angle  angle1,
 /* @input:                                                               */
 /*    angle :: The address of angle.                                     */
 /*                                                                       */
-FT_EXPORT( void )
-FT_Vector_Unit( FT_Vector*  vec,
-                FT_Angle    angle );
+FT2_1_3_EXPORT( void )
+FT2_1_3_Vector_Unit( FT2_1_3_Vector*  vec,
+                FT2_1_3_Angle    angle );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @function:                                                            */
-/*    FT_Vector_Rotate                                                   */
+/*    FT2_1_3_Vector_Rotate                                                   */
 /*                                                                       */
 /* @description:                                                         */
 /*    Rotate a vector by a given angle.                                  */
@@ -233,15 +233,15 @@ FT_Vector_Unit( FT_Vector*  vec,
 /* @input:                                                               */
 /*    angle :: The address of angle.                                     */
 /*                                                                       */
-FT_EXPORT( void )
-FT_Vector_Rotate( FT_Vector*  vec,
-                  FT_Angle    angle );
+FT2_1_3_EXPORT( void )
+FT2_1_3_Vector_Rotate( FT2_1_3_Vector*  vec,
+                  FT2_1_3_Angle    angle );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @function:                                                            */
-/*   FT_Vector_Length                                                    */
+/*   FT2_1_3_Vector_Length                                                    */
 /*                                                                       */
 /* @description:                                                         */
 /*   Return the length of a given vector.                                */
@@ -253,14 +253,14 @@ FT_Vector_Rotate( FT_Vector*  vec,
 /*   The vector length, expressed in the same units that the original    */
 /*   vector coordinates.                                                 */
 /*                                                                       */
-FT_EXPORT( FT_Fixed )
-FT_Vector_Length( FT_Vector*  vec );
+FT2_1_3_EXPORT( FT2_1_3_Fixed )
+FT2_1_3_Vector_Length( FT2_1_3_Vector*  vec );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @function:                                                            */
-/*    FT_Vector_Normalize                                                */
+/*    FT2_1_3_Vector_Normalize                                                */
 /*                                                                       */
 /* @description:                                                         */
 /*    Normalize a given vector (i.e. compute the equivalent unit         */
@@ -269,14 +269,14 @@ FT_Vector_Length( FT_Vector*  vec );
 /* @inout:                                                               */
 /*    vec :: The address of target vector.                               */
 /*                                                                       */
-FT_EXPORT( void )
-FT_Vector_Normalize( FT_Vector*  vec );
+FT2_1_3_EXPORT( void )
+FT2_1_3_Vector_Normalize( FT2_1_3_Vector*  vec );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @function:                                                            */
-/*    FT_Vector_Polarize                                                 */
+/*    FT2_1_3_Vector_Polarize                                                 */
 /*                                                                       */
 /* @description:                                                         */
 /*    Compute both the length and angle of a given vector.               */
@@ -288,16 +288,16 @@ FT_Vector_Normalize( FT_Vector*  vec );
 /*    length :: The vector length.                                       */
 /*    angle  :: The vector angle.                                        */
 /*                                                                       */
-FT_EXPORT( void )
-FT_Vector_Polarize( FT_Vector*  vec,
-                    FT_Fixed   *length,
-                    FT_Angle   *angle );
+FT2_1_3_EXPORT( void )
+FT2_1_3_Vector_Polarize( FT2_1_3_Vector*  vec,
+                    FT2_1_3_Fixed   *length,
+                    FT2_1_3_Angle   *angle );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @function:                                                            */
-/*    FT_Vector_From_Polar                                               */
+/*    FT2_1_3_Vector_From_Polar                                               */
 /*                                                                       */
 /* @description:                                                         */
 /*    Compute vector coordinates from a length and angle.                */
@@ -309,15 +309,15 @@ FT_Vector_Polarize( FT_Vector*  vec,
 /*    length :: The vector length.                                       */
 /*    angle  :: The vector angle.                                        */
 /*                                                                       */
-FT_EXPORT( void )
-FT_Vector_From_Polar( FT_Vector*  vec,
-                      FT_Fixed    length,
-                      FT_Angle    angle );
+FT2_1_3_EXPORT( void )
+FT2_1_3_Vector_From_Polar( FT2_1_3_Vector*  vec,
+                      FT2_1_3_Fixed    length,
+                      FT2_1_3_Angle    angle );
 
 /* */
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __FTTRIGON_H__ */
 

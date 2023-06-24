@@ -32,7 +32,7 @@
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -56,7 +56,7 @@ FT_BEGIN_HEADER
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_New_Face_From_FOND                                              */
+/*    FT2_1_3_New_Face_From_FOND                                              */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Creates a new face object from an FOND resource.                   */
@@ -77,25 +77,25 @@ FT_BEGIN_HEADER
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 /* <Notes>                                                               */
-/*    This function can be used to create FT_Face abjects from fonts     */
+/*    This function can be used to create FT2_1_3_Face abjects from fonts     */
 /*    that are installed in the system like so:                          */
 /*                                                                       */
 /*    {                                                                  */
 /*      fond = GetResource( 'FOND', fontName );                          */
-/*      error = FT_New_Face_From_FOND( library, fond, 0, &face );        */
+/*      error = FT2_1_3_New_Face_From_FOND( library, fond, 0, &face );        */
 /*    }                                                                  */
 /*                                                                       */
-FT_EXPORT( FT_Error )
-FT_New_Face_From_FOND( FT_Library  library,
+FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_New_Face_From_FOND( FT2_1_3_Library  library,
                        Handle      fond,
-                       FT_Long     face_index,
-                       FT_Face    *aface );
+                       FT2_1_3_Long     face_index,
+                       FT2_1_3_Face    *aface );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_GetFile_From_Mac_Name                                           */
+/*    FT2_1_3_GetFile_From_Mac_Name                                           */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Returns an FSSpec for the disk file containing the named font.     */
@@ -104,22 +104,22 @@ FT_New_Face_From_FOND( FT_Library  library,
 /*    fontName   :: Mac OS name of the font (eg. Times New Roman Bold).  */
 /*                                                                       */
 /* <Output>                                                              */
-/*    pathSpec   :: FSSpec to the file.  For passing to @FT_New_Face.    */
+/*    pathSpec   :: FSSpec to the file.  For passing to @FT2_1_3_New_Face.    */
 /*                                                                       */
-/*    face_index :: Index of the face.  For passing to @FT_New_Face.     */
+/*    face_index :: Index of the face.  For passing to @FT2_1_3_New_Face.     */
 /*                                                                       */
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT_EXPORT_DEF( FT_Error )
-FT_GetFile_From_Mac_Name( char*     fontName,
+FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_GetFile_From_Mac_Name( char*     fontName,
                           FSSpec*   pathSpec,
-                          FT_Long*  face_index );
+                          FT2_1_3_Long*  face_index );
 
 /* */
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 
 #endif /* __FTMAC_H__ */

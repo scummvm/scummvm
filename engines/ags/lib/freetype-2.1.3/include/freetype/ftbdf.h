@@ -20,10 +20,10 @@
 #define __FTBDF_H__
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_FREETYPE_H
+#include FT2_1_3_FREETYPE_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -46,7 +46,7 @@ FT_BEGIN_HEADER
 /**********************************************************************
  *
  * @function:
- *    FT_Get_BDF_Charset_ID
+ *    FT2_1_3_Get_BDF_Charset_ID
  *
  * @description:
  *    Retrieves a BDF font character set identity, according to
@@ -69,14 +69,14 @@ FT_BEGIN_HEADER
  * @note:
  *   This function only works with BDF faces, returning an error otherwise.
  */
-FT_EXPORT( FT_Error )
-FT_Get_BDF_Charset_ID( FT_Face       face,
+FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_Get_BDF_Charset_ID( FT2_1_3_Face       face,
                        const char*  *acharset_encoding,
                        const char*  *acharset_registry );
 
 /* */
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __FTBDF_H__ */
 

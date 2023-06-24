@@ -34,10 +34,10 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_FREETYPE_H
+#include FT2_1_3_FREETYPE_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -53,38 +53,38 @@ FT_BEGIN_HEADER
 /*                                                                       */
 /* <Description>                                                         */
 /*    This section contains definitions used to manage glyph data        */
-/*    through generic FT_Glyph objects.  Each of them can contain a      */
+/*    through generic FT2_1_3_Glyph objects.  Each of them can contain a      */
 /*    bitmap, a vector outline, or even images in other formats.         */
 /*                                                                       */
 /*************************************************************************/
 
 
 /* forward declaration to a private type */
-typedef struct FT_Glyph_Class_  FT_Glyph_Class;
+typedef struct FT2_1_3_Glyph_Class_  FT2_1_3_Glyph_Class;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_Glyph                                                           */
+/*    FT2_1_3_Glyph                                                           */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Handle to an object used to model generic glyph images.  It is a   */
-/*    pointer to the @FT_GlyphRec structure and can contain a glyph      */
+/*    pointer to the @FT2_1_3_GlyphRec structure and can contain a glyph      */
 /*    bitmap or pointer.                                                 */
 /*                                                                       */
 /* <Note>                                                                */
 /*    Glyph objects are not owned by the library.  You must thus release */
-/*    them manually (through @FT_Done_Glyph) _before_ calling            */
-/*    @FT_Done_FreeType.                                                 */
+/*    them manually (through @FT2_1_3_Done_Glyph) _before_ calling            */
+/*    @FT2_1_3_Done_FreeType.                                                 */
 /*                                                                       */
-typedef struct FT_GlyphRec_*  FT_Glyph;
+typedef struct FT2_1_3_GlyphRec_*  FT2_1_3_Glyph;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT_GlyphRec                                                        */
+/*    FT2_1_3_GlyphRec                                                        */
 /*                                                                       */
 /* <Description>                                                         */
 /*    The root glyph structure contains a given glyph image plus its     */
@@ -99,38 +99,38 @@ typedef struct FT_GlyphRec_*  FT_Glyph;
 /*                                                                       */
 /*    advance :: A 16.16 vector that gives the glyph's advance width.    */
 /*                                                                       */
-typedef struct  FT_GlyphRec_ {
-	FT_Library             library;
-	const FT_Glyph_Class*  clazz;
-	FT_Glyph_Format        format;
-	FT_Vector              advance;
+typedef struct  FT2_1_3_GlyphRec_ {
+	FT2_1_3_Library             library;
+	const FT2_1_3_Glyph_Class*  clazz;
+	FT2_1_3_Glyph_Format        format;
+	FT2_1_3_Vector              advance;
 
-} FT_GlyphRec;
+} FT2_1_3_GlyphRec;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_BitmapGlyph                                                     */
+/*    FT2_1_3_BitmapGlyph                                                     */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A handle to an object used to model a bitmap glyph image.  This is */
-/*    a sub-class of @FT_Glyph, and a pointer to @FT_BitmapGlyphRec.     */
+/*    a sub-class of @FT2_1_3_Glyph, and a pointer to @FT2_1_3_BitmapGlyphRec.     */
 /*                                                                       */
-typedef struct FT_BitmapGlyphRec_*  FT_BitmapGlyph;
+typedef struct FT2_1_3_BitmapGlyphRec_*  FT2_1_3_BitmapGlyph;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT_BitmapGlyphRec                                                  */
+/*    FT2_1_3_BitmapGlyphRec                                                  */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A structure used for bitmap glyph images.  This really is a        */
-/*    `sub-class' of `FT_GlyphRec'.                                      */
+/*    `sub-class' of `FT2_1_3_GlyphRec'.                                      */
 /*                                                                       */
 /* <Fields>                                                              */
-/*    root   :: The root FT_Glyph fields.                                */
+/*    root   :: The root FT2_1_3_Glyph fields.                                */
 /*                                                                       */
 /*    left   :: The left-side bearing, i.e., the horizontal distance     */
 /*              from the current pen position to the left border of the  */
@@ -143,71 +143,71 @@ typedef struct FT_BitmapGlyphRec_*  FT_BitmapGlyph;
 /*    bitmap :: A descriptor for the bitmap.                             */
 /*                                                                       */
 /* <Note>                                                                */
-/*    You can typecast FT_Glyph to FT_BitmapGlyph if you have            */
-/*    glyph->format == FT_GLYPH_FORMAT_BITMAP.  This lets you access     */
+/*    You can typecast FT2_1_3_Glyph to FT2_1_3_BitmapGlyph if you have            */
+/*    glyph->format == FT2_1_3_GLYPH_FORMAT_BITMAP.  This lets you access     */
 /*    the bitmap's contents easily.                                      */
 /*                                                                       */
 /*    The corresponding pixel buffer is always owned by the BitmapGlyph  */
 /*    and is thus created and destroyed with it.                         */
 /*                                                                       */
-typedef struct  FT_BitmapGlyphRec_ {
-	FT_GlyphRec  root;
-	FT_Int       left;
-	FT_Int       top;
-	FT_Bitmap    bitmap;
+typedef struct  FT2_1_3_BitmapGlyphRec_ {
+	FT2_1_3_GlyphRec  root;
+	FT2_1_3_Int       left;
+	FT2_1_3_Int       top;
+	FT2_1_3_Bitmap    bitmap;
 
-} FT_BitmapGlyphRec;
+} FT2_1_3_BitmapGlyphRec;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT_OutlineGlyph                                                    */
+/*    FT2_1_3_OutlineGlyph                                                    */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A handle to an object used to model an outline glyph image.  This  */
-/*    is a sub-class of @FT_Glyph, and a pointer to @FT_OutlineGlyphRec. */
+/*    is a sub-class of @FT2_1_3_Glyph, and a pointer to @FT2_1_3_OutlineGlyphRec. */
 /*                                                                       */
-typedef struct FT_OutlineGlyphRec_*  FT_OutlineGlyph;
+typedef struct FT2_1_3_OutlineGlyphRec_*  FT2_1_3_OutlineGlyph;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT_OutlineGlyphRec                                                 */
+/*    FT2_1_3_OutlineGlyphRec                                                 */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A structure used for outline (vectorial) glyph images.  This       */
-/*    really is a `sub-class' of `FT_GlyphRec'.                          */
+/*    really is a `sub-class' of `FT2_1_3_GlyphRec'.                          */
 /*                                                                       */
 /* <Fields>                                                              */
-/*    root    :: The root FT_Glyph fields.                               */
+/*    root    :: The root FT2_1_3_Glyph fields.                               */
 /*                                                                       */
 /*    outline :: A descriptor for the outline.                           */
 /*                                                                       */
 /* <Note>                                                                */
-/*    You can typecast FT_Glyph to FT_OutlineGlyph if you have           */
-/*    glyph->format == FT_GLYPH_FORMAT_OUTLINE.  This lets you access    */
+/*    You can typecast FT2_1_3_Glyph to FT2_1_3_OutlineGlyph if you have           */
+/*    glyph->format == FT2_1_3_GLYPH_FORMAT_OUTLINE.  This lets you access    */
 /*    the outline's content easily.                                      */
 /*                                                                       */
 /*    As the outline is extracted from a glyph slot, its coordinates are */
 /*    expressed normally in 26.6 pixels, unless the flag                 */
-/*    FT_LOAD_NO_SCALE was used in FT_Load_Glyph() or FT_Load_Char().    */
+/*    FT2_1_3_LOAD_NO_SCALE was used in FT2_1_3_Load_Glyph() or FT2_1_3_Load_Char().    */
 /*                                                                       */
 /*    The outline's tables are always owned by the object and are        */
 /*    destroyed with it.                                                 */
 /*                                                                       */
-typedef struct  FT_OutlineGlyphRec_ {
-	FT_GlyphRec  root;
-	FT_Outline   outline;
+typedef struct  FT2_1_3_OutlineGlyphRec_ {
+	FT2_1_3_GlyphRec  root;
+	FT2_1_3_Outline   outline;
 
-} FT_OutlineGlyphRec;
+} FT2_1_3_OutlineGlyphRec;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Get_Glyph                                                       */
+/*    FT2_1_3_Get_Glyph                                                       */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A function used to extract a glyph image from a slot.              */
@@ -221,15 +221,15 @@ typedef struct  FT_OutlineGlyphRec_ {
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT_EXPORT( FT_Error )
-FT_Get_Glyph( FT_GlyphSlot  slot,
-              FT_Glyph     *aglyph );
+FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_Get_Glyph( FT2_1_3_GlyphSlot  slot,
+              FT2_1_3_Glyph     *aglyph );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Glyph_Copy                                                      */
+/*    FT2_1_3_Glyph_Copy                                                      */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A function used to copy a glyph image.                             */
@@ -244,15 +244,15 @@ FT_Get_Glyph( FT_GlyphSlot  slot,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT_EXPORT( FT_Error )
-FT_Glyph_Copy( FT_Glyph   source,
-               FT_Glyph  *target );
+FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_Glyph_Copy( FT2_1_3_Glyph   source,
+               FT2_1_3_Glyph  *target );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Glyph_Transform                                                 */
+/*    FT2_1_3_Glyph_Transform                                                 */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Transforms a glyph image if its format is scalable.                */
@@ -274,17 +274,17 @@ FT_Glyph_Copy( FT_Glyph   source,
 /*    The 2x2 transformation matrix is also applied to the glyph's       */
 /*    advance vector.                                                    */
 /*                                                                       */
-FT_EXPORT( FT_Error )
-FT_Glyph_Transform( FT_Glyph    glyph,
-                    FT_Matrix*  matrix,
-                    FT_Vector*  delta );
+FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_Glyph_Transform( FT2_1_3_Glyph    glyph,
+                    FT2_1_3_Matrix*  matrix,
+                    FT2_1_3_Vector*  delta );
 
 /* */
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Glyph_Get_CBox                                                  */
+/*    FT2_1_3_Glyph_Get_CBox                                                  */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Returns a glyph's `control box'.  The control box encloses all the */
@@ -312,7 +312,7 @@ FT_Glyph_Transform( FT_Glyph    glyph,
 /*    Coordinates are relative to the glyph origin, using the Y-upwards  */
 /*    convention.                                                        */
 /*                                                                       */
-/*    If the glyph has been loaded with FT_LOAD_NO_SCALE, `bbox_mode'    */
+/*    If the glyph has been loaded with FT2_1_3_LOAD_NO_SCALE, `bbox_mode'    */
 /*    must be set to `ft_glyph_bbox_unscaled' to get unscaled font       */
 /*    units.                                                             */
 /*                                                                       */
@@ -352,16 +352,16 @@ enum {
 };
 
 
-FT_EXPORT( void )
-FT_Glyph_Get_CBox( FT_Glyph  glyph,
-                   FT_UInt   bbox_mode,
-                   FT_BBox  *acbox );
+FT2_1_3_EXPORT( void )
+FT2_1_3_Glyph_Get_CBox( FT2_1_3_Glyph  glyph,
+                   FT2_1_3_UInt   bbox_mode,
+                   FT2_1_3_BBox  *acbox );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Glyph_To_Bitmap                                                 */
+/*    FT2_1_3_Glyph_To_Bitmap                                                 */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Converts a given glyph object to a bitmap glyph object.            */
@@ -390,56 +390,56 @@ FT_Glyph_Get_CBox( FT_Glyph  glyph,
 /*    rendering.  In case of error, it it translated back to its         */
 /*    original position and the glyph is left untouched.                 */
 /*                                                                       */
-/*    The first parameter is a pointer to a FT_Glyph handle, that will   */
+/*    The first parameter is a pointer to a FT2_1_3_Glyph handle, that will   */
 /*    be replaced by this function.  Typically, you would use (omitting  */
 /*    error handling):                                                   */
 /*                                                                       */
 /*                                                                       */
 /*      {                                                                */
-/*        FT_Glyph        glyph;                                         */
-/*        FT_BitmapGlyph  glyph_bitmap;                                  */
+/*        FT2_1_3_Glyph        glyph;                                         */
+/*        FT2_1_3_BitmapGlyph  glyph_bitmap;                                  */
 /*                                                                       */
 /*                                                                       */
 /*        // load glyph                                                  */
-/*        error = FT_Load_Char( face, glyph_index, FT_LOAD_DEFAUT );     */
+/*        error = FT2_1_3_Load_Char( face, glyph_index, FT2_1_3_LOAD_DEFAUT );     */
 /*                                                                       */
 /*        // extract glyph image                                         */
-/*        error = FT_Get_Glyph( face->glyph, &glyph );                   */
+/*        error = FT2_1_3_Get_Glyph( face->glyph, &glyph );                   */
 /*                                                                       */
 /*        // convert to a bitmap (default render mode + destroy old)     */
-/*        if ( glyph->format != FT_GLYPH_FORMAT_BITMAP )                 */
+/*        if ( glyph->format != FT2_1_3_GLYPH_FORMAT_BITMAP )                 */
 /*        {                                                              */
-/*          error = FT_Glyph_To_Bitmap( &glyph, ft_render_mode_default,  */
+/*          error = FT2_1_3_Glyph_To_Bitmap( &glyph, ft_render_mode_default,  */
 /*                                      0, 1 );                          */
 /*          if ( error ) // glyph unchanged                              */
 /*            ...                                                        */
 /*        }                                                              */
 /*                                                                       */
 /*        // access bitmap content by typecasting                        */
-/*        glyph_bitmap = (FT_BitmapGlyph)glyph;                          */
+/*        glyph_bitmap = (FT2_1_3_BitmapGlyph)glyph;                          */
 /*                                                                       */
 /*        // do funny stuff with it, like blitting/drawing               */
 /*        ...                                                            */
 /*                                                                       */
 /*        // discard glyph image (bitmap or not)                         */
-/*        FT_Done_Glyph( glyph );                                        */
+/*        FT2_1_3_Done_Glyph( glyph );                                        */
 /*      }                                                                */
 /*                                                                       */
 /*                                                                       */
 /*    This function will always fail if the glyph's format isn't         */
 /*    scalable.                                                          */
 /*                                                                       */
-FT_EXPORT( FT_Error )
-FT_Glyph_To_Bitmap( FT_Glyph*       the_glyph,
-                    FT_Render_Mode  render_mode,
-                    FT_Vector*      origin,
-                    FT_Bool         destroy );
+FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_Glyph_To_Bitmap( FT2_1_3_Glyph*       the_glyph,
+                    FT2_1_3_Render_Mode  render_mode,
+                    FT2_1_3_Vector*      origin,
+                    FT2_1_3_Bool         destroy );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Done_Glyph                                                      */
+/*    FT2_1_3_Done_Glyph                                                      */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Destroys a given glyph.                                            */
@@ -447,8 +447,8 @@ FT_Glyph_To_Bitmap( FT_Glyph*       the_glyph,
 /* <Input>                                                               */
 /*    glyph :: A handle to the target glyph object.                      */
 /*                                                                       */
-FT_EXPORT( void )
-FT_Done_Glyph( FT_Glyph  glyph );
+FT2_1_3_EXPORT( void )
+FT2_1_3_Done_Glyph( FT2_1_3_Glyph  glyph );
 
 
 /* other helpful functions */
@@ -464,7 +464,7 @@ FT_Done_Glyph( FT_Glyph  glyph );
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Matrix_Multiply                                                 */
+/*    FT2_1_3_Matrix_Multiply                                                 */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Performs the matrix operation `b = a*b'.                           */
@@ -478,15 +478,15 @@ FT_Done_Glyph( FT_Glyph  glyph );
 /* <Note>                                                                */
 /*    The result is undefined if either `a' or `b' is zero.              */
 /*                                                                       */
-FT_EXPORT( void )
-FT_Matrix_Multiply( FT_Matrix*  a,
-                    FT_Matrix*  b );
+FT2_1_3_EXPORT( void )
+FT2_1_3_Matrix_Multiply( FT2_1_3_Matrix*  a,
+                    FT2_1_3_Matrix*  b );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Matrix_Invert                                                   */
+/*    FT2_1_3_Matrix_Invert                                                   */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Inverts a 2x2 matrix.  Returns an error if it can't be inverted.   */
@@ -498,14 +498,14 @@ FT_Matrix_Multiply( FT_Matrix*  a,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT_EXPORT( FT_Error )
-FT_Matrix_Invert( FT_Matrix*  matrix );
+FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_Matrix_Invert( FT2_1_3_Matrix*  matrix );
 
 
 /* */
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __FTGLYPH_H__ */
 

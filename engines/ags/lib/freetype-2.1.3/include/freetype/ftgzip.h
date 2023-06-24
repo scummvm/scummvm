@@ -20,9 +20,9 @@
 #define __FTXF86_H__
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_FREETYPE_H
+#include FT2_1_3_FREETYPE_H
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 /*************************************************************************/
 /*                                                                       */
@@ -42,7 +42,7 @@ FT_BEGIN_HEADER
 
 /************************************************************************
  *
- * @type: FT_Stream_OpenGzip
+ * @type: FT2_1_3_Stream_OpenGzip
  *
  * @description:
  *   open a new stream to parse gzip-compressed font files. This is
@@ -59,28 +59,28 @@ FT_BEGIN_HEADER
  * @note:
  *   the source stream must be opened _before_ calling this function.
  *
- *   calling @FT_Stream_Close on the new stream will *not* call
- *   @FT_Stream_Close on the source stream. None of the stream objects
+ *   calling @FT2_1_3_Stream_Close on the new stream will *not* call
+ *   @FT2_1_3_Stream_Close on the source stream. None of the stream objects
  *   will be released to the heap.
  *
  *   the stream implementation is very basic, and resets the decompression
  *   process each time seeking backwards is needed within the stream
  *
  *   in certain builds of the library, gzip compression recognition is
- *   automatic when calling @FT_New_Face or @FT_Open_Face. This means that
+ *   automatic when calling @FT2_1_3_New_Face or @FT2_1_3_Open_Face. This means that
  *   if no font driver is capable of handling the raw compressed file,
  *   the library will try to open a gzip stream from it and re-open
  *   the face with it.
  *
- *   this function may return "FT_Err_Unimplemented" if your build of
+ *   this function may return "FT2_1_3_Err_Unimplemented" if your build of
  *   FreeType was not compiled with zlib support.
  */
-FT_EXPORT( FT_Error )
-FT_Stream_OpenGzip( FT_Stream    stream,
-                    FT_Stream    source );
+FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_Stream_OpenGzip( FT2_1_3_Stream    stream,
+                    FT2_1_3_Stream    source );
 
 /* */
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __FTXF86_H__ */

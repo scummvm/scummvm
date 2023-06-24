@@ -19,15 +19,15 @@
 /***************************************************************************/
 
 
-#ifndef __FT_SFNT_NAMES_H__
-#define __FT_SFNT_NAMES_H__
+#ifndef __FT2_1_3_SFNT_NAMES_H__
+#define __FT2_1_3_SFNT_NAMES_H__
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_FREETYPE_H
+#include FT2_1_3_FREETYPE_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -57,7 +57,7 @@ FT_BEGIN_HEADER
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT_SfntName                                                        */
+/*    FT2_1_3_SfntName                                                        */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A structure used to model an SFNT `name' table entry.              */
@@ -86,22 +86,22 @@ FT_BEGIN_HEADER
 /*    and `name_id' are given in the file `ttnameid.h'.  For details     */
 /*    please refer to the TrueType or OpenType specification.            */
 /*                                                                       */
-typedef struct  FT_SfntName_ {
-	FT_UShort  platform_id;
-	FT_UShort  encoding_id;
-	FT_UShort  language_id;
-	FT_UShort  name_id;
+typedef struct  FT2_1_3_SfntName_ {
+	FT2_1_3_UShort  platform_id;
+	FT2_1_3_UShort  encoding_id;
+	FT2_1_3_UShort  language_id;
+	FT2_1_3_UShort  name_id;
 
-	FT_Byte*   string;      /* this string is *not* null-terminated! */
-	FT_UInt    string_len;  /* in bytes */
+	FT2_1_3_Byte*   string;      /* this string is *not* null-terminated! */
+	FT2_1_3_UInt    string_len;  /* in bytes */
 
-} FT_SfntName;
+} FT2_1_3_SfntName;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Get_Sfnt_Name_Count                                             */
+/*    FT2_1_3_Get_Sfnt_Name_Count                                             */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Retrieves the number of name strings in the SFNT `name' table.     */
@@ -112,14 +112,14 @@ typedef struct  FT_SfntName_ {
 /* <Return>                                                              */
 /*    The number of strings in the `name' table.                         */
 /*                                                                       */
-FT_EXPORT( FT_UInt )
-FT_Get_Sfnt_Name_Count( FT_Face  face );
+FT2_1_3_EXPORT( FT2_1_3_UInt )
+FT2_1_3_Get_Sfnt_Name_Count( FT2_1_3_Face  face );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Get_Sfnt_Name                                                   */
+/*    FT2_1_3_Get_Sfnt_Name                                                   */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Retrieves a string of the SFNT `name' table for a given index.     */
@@ -130,7 +130,7 @@ FT_Get_Sfnt_Name_Count( FT_Face  face );
 /*    idx   :: The index of the `name' string.                           */
 /*                                                                       */
 /* <Output>                                                              */
-/*    aname :: The indexed FT_SfntName structure.                        */
+/*    aname :: The indexed FT2_1_3_SfntName structure.                        */
 /*                                                                       */
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
@@ -139,22 +139,22 @@ FT_Get_Sfnt_Name_Count( FT_Face  face );
 /*    The `string' array returned in the `aname' structure is not        */
 /*    null-terminated.                                                   */
 /*                                                                       */
-/*    Use FT_Get_Sfnt_Name_Count() to get the total number of available  */
+/*    Use FT2_1_3_Get_Sfnt_Name_Count() to get the total number of available  */
 /*    `name' table entries, then do a loop until you get the right       */
 /*    platform, encoding, and name ID.                                   */
 /*                                                                       */
-FT_EXPORT( FT_Error )
-FT_Get_Sfnt_Name( FT_Face       face,
-                  FT_UInt       idx,
-                  FT_SfntName  *aname );
+FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_Get_Sfnt_Name( FT2_1_3_Face       face,
+                  FT2_1_3_UInt       idx,
+                  FT2_1_3_SfntName  *aname );
 
 
 /* */
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
-#endif /* __FT_SFNT_NAMES_H__ */
+#endif /* __FT2_1_3_SFNT_NAMES_H__ */
 
 
 /* END */

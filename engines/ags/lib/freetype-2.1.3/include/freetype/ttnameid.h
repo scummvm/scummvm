@@ -23,7 +23,7 @@
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -41,7 +41,7 @@ FT_BEGIN_HEADER
  *
  * @description:
  *   A list of valid values for the `platform_id' identifier code in
- *   @FT_CharmapRec and @FT_SfntName structures.
+ *   @FT2_1_3_CharmapRec and @FT2_1_3_SfntName structures.
  *
  * @values:
  *   TT_PLATFORM_APPLE_UNICODE ::
@@ -72,7 +72,7 @@ FT_BEGIN_HEADER
  *
  *   TT_PLATFORM_ADOBE ::
  *     This value isn't part of any font format specification, but is used
- *     by FreeType to report Adobe-specific charmaps in an @FT_CharMapRec
+ *     by FreeType to report Adobe-specific charmaps in an @FT2_1_3_CharMapRec
  *     structure.  See @TT_ADOBE_ID_XXX.
  */
 
@@ -231,30 +231,30 @@ FT_BEGIN_HEADER
  *
  * @values:
  *   TT_MS_ID_SYMBOL_CS ::
- *     Corresponds to symbol encodings. see @FT_ENCODING_MS_SYMBOL.
+ *     Corresponds to symbol encodings. see @FT2_1_3_ENCODING_MS_SYMBOL.
  *
  *   TT_MS_ID_UNICODE_CS ::
  *     Corresponds to a Microsoft WGL4 charmap, matching Unicode.  See
- *     @FT_ENCODING_UNICODE.
+ *     @FT2_1_3_ENCODING_UNICODE.
  *
  *   TT_MS_ID_SJIS ::
  *     Corresponds to Microsoft SJIS Japanese encoding.
- *     See @FT_ENCODING_MS_SJIS.
+ *     See @FT2_1_3_ENCODING_MS_SJIS.
  *
  *   TT_MS_ID_GB2312 ::
  *     Corresponds to Microsoft Simplified Chinese as used in Mainland
- *     China.  See @FT_ENCODING_MS_GB2312.
+ *     China.  See @FT2_1_3_ENCODING_MS_GB2312.
  *
  *   TT_MS_ID_BIG_5 ::
  *     Corresponds to Microsoft Traditional Chinese as used in Taiwan and
- *     Hong Kong.  See @FT_ENCODING_MS_BIG5.
+ *     Hong Kong.  See @FT2_1_3_ENCODING_MS_BIG5.
  *
  *   TT_MS_ID_WANSUNG ::
  *     Corresponds to Microsoft Korean Wansung encoding.  See
- *     @FT_ENCODING_MS_WANSUNG.
+ *     @FT2_1_3_ENCODING_MS_WANSUNG.
  *
  *   TT_MS_ID_JOHAB ::
- *     Corresponds to Microsoft Johab encoding.  See @FT_ENCODING_MS_JOHAB.
+ *     Corresponds to Microsoft Johab encoding.  See @FT2_1_3_ENCODING_MS_JOHAB.
  *
  *   TT_MS_ID_UCS_4 ::
  *     Corresponds to UCS-4 or UTF-32 charmaps.  This is a recent Adobe
@@ -1014,7 +1014,7 @@ FT_BEGIN_HEADER
 #endif /* !HAVE_LIMIT_ON_IDENTS */
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __TTNAMEID_H__ */
 
