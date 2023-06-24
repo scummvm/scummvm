@@ -20,11 +20,11 @@
 #define __T1CMAP_H__
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_OBJECTS_H
-#include FT_INTERNAL_TYPE1_TYPES_H
-#include FT_INTERNAL_POSTSCRIPT_NAMES_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_TYPE1_TYPES_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_NAMES_H
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -39,21 +39,21 @@ FT_BEGIN_HEADER
 typedef struct T1_CMapStdRec_*  T1_CMapStd;
 
 typedef struct  T1_CMapStdRec_ {
-	FT_CMapRec                 cmap;
+	FT2_1_3_CMapRec                 cmap;
 
-	const FT_UShort*           code_to_sid;
+	const FT2_1_3_UShort*           code_to_sid;
 	PS_Adobe_Std_Strings_Func  sid_to_string;
 
-	FT_UInt                    num_glyphs;
+	FT2_1_3_UInt                    num_glyphs;
 	const char* const*         glyph_names;
 
 } T1_CMapStdRec;
 
 
-FT_CALLBACK_TABLE const FT_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE const FT2_1_3_CMap_ClassRec
 t1_cmap_standard_class_rec;
 
-FT_CALLBACK_TABLE const FT_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE const FT2_1_3_CMap_ClassRec
 t1_cmap_expert_class_rec;
 
 
@@ -68,15 +68,15 @@ t1_cmap_expert_class_rec;
 typedef struct T1_CMapCustomRec_*  T1_CMapCustom;
 
 typedef struct  T1_CMapCustomRec_ {
-	FT_CMapRec  cmap;
-	FT_UInt     first;
-	FT_UInt     count;
-	FT_UShort*  indices;
+	FT2_1_3_CMapRec  cmap;
+	FT2_1_3_UInt     first;
+	FT2_1_3_UInt     count;
+	FT2_1_3_UShort*  indices;
 
 } T1_CMapCustomRec;
 
 
-FT_CALLBACK_TABLE const FT_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE const FT2_1_3_CMap_ClassRec
 t1_cmap_custom_class_rec;
 
 
@@ -92,27 +92,27 @@ t1_cmap_custom_class_rec;
 typedef struct T1_CMapUnicodeRec_*  T1_CMapUnicode;
 
 typedef struct  T1_CMapUniPairRec_ {
-	FT_UInt32  unicode;
-	FT_UInt    gindex;
+	FT2_1_3_UInt32  unicode;
+	FT2_1_3_UInt    gindex;
 
 } T1_CMapUniPairRec, *T1_CMapUniPair;
 
 
 typedef struct  T1_CMapUnicodeRec_ {
-	FT_CMapRec      cmap;
-	FT_UInt         num_pairs;
+	FT2_1_3_CMapRec      cmap;
+	FT2_1_3_UInt         num_pairs;
 	T1_CMapUniPair  pairs;
 
 } T1_CMapUnicodeRec;
 
 
-FT_CALLBACK_TABLE const FT_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE const FT2_1_3_CMap_ClassRec
 t1_cmap_unicode_class_rec;
 
 /* */
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __T1CMAP_H__ */
 

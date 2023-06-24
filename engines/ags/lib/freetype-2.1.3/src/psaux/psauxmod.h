@@ -21,16 +21,16 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_MODULE_H
+#include FT2_1_3_MODULE_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
-FT_EXPORT_VAR( const FT_Module_Class )  psaux_driver_class;
+FT2_1_3_EXPORT_VAR( const FT2_1_3_Module_Class )  psaux_driver_class;
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __PSAUXMOD_H__ */
 

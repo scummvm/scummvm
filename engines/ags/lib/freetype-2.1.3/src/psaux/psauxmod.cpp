@@ -23,7 +23,7 @@
 #include "t1cmap.h"
 
 
-FT_CALLBACK_TABLE_DEF
+FT2_1_3_CALLBACK_TABLE_DEF
 const PS_Table_FuncsRec  ps_table_funcs = {
 	ps_table_new,
 	ps_table_done,
@@ -32,7 +32,7 @@ const PS_Table_FuncsRec  ps_table_funcs = {
 };
 
 
-FT_CALLBACK_TABLE_DEF
+FT2_1_3_CALLBACK_TABLE_DEF
 const PS_Parser_FuncsRec  ps_parser_funcs = {
 	ps_parser_init,
 	ps_parser_done,
@@ -49,7 +49,7 @@ const PS_Parser_FuncsRec  ps_parser_funcs = {
 };
 
 
-FT_CALLBACK_TABLE_DEF
+FT2_1_3_CALLBACK_TABLE_DEF
 const T1_Builder_FuncsRec  t1_builder_funcs = {
 	t1_builder_init,
 	t1_builder_done,
@@ -62,7 +62,7 @@ const T1_Builder_FuncsRec  t1_builder_funcs = {
 };
 
 
-FT_CALLBACK_TABLE_DEF
+FT2_1_3_CALLBACK_TABLE_DEF
 const T1_Decoder_FuncsRec  t1_decoder_funcs = {
 	t1_decoder_init,
 	t1_decoder_done,
@@ -70,7 +70,7 @@ const T1_Decoder_FuncsRec  t1_decoder_funcs = {
 };
 
 
-FT_CALLBACK_TABLE_DEF
+FT2_1_3_CALLBACK_TABLE_DEF
 const T1_CMap_ClassesRec  t1_cmap_classes = {
 	&t1_cmap_standard_class_rec,
 	&t1_cmap_expert_class_rec,
@@ -92,19 +92,19 @@ const PSAux_Interface  psaux_interface = {
 };
 
 
-FT_CALLBACK_TABLE_DEF
-const FT_Module_Class  psaux_module_class = {
+FT2_1_3_CALLBACK_TABLE_DEF
+const FT2_1_3_Module_Class  psaux_module_class = {
 	0,
-	sizeof( FT_ModuleRec ),
+	sizeof( FT2_1_3_ModuleRec ),
 	"psaux",
 	0x10000L,
 	0x20000L,
 
 	&psaux_interface,  /* module-specific interface */
 
-	(FT_Module_Constructor)0,
-	(FT_Module_Destructor) 0,
-	(FT_Module_Requester)  0
+	(FT2_1_3_Module_Constructor)0,
+	(FT2_1_3_Module_Destructor) 0,
+	(FT2_1_3_Module_Requester)  0
 };
 
 

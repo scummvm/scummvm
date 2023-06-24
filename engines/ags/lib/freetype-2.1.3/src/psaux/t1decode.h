@@ -21,43 +21,43 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_POSTSCRIPT_AUX_H
-#include FT_INTERNAL_POSTSCRIPT_NAMES_H
-#include FT_INTERNAL_TYPE1_TYPES_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_AUX_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_NAMES_H
+#include FT2_1_3_INTERNAL_TYPE1_TYPES_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
-FT_CALLBACK_TABLE
+FT2_1_3_CALLBACK_TABLE
 const T1_Decoder_FuncsRec  t1_decoder_funcs;
 
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 t1_decoder_parse_glyph( T1_Decoder  decoder,
-                        FT_UInt     glyph_index );
+                        FT2_1_3_UInt     glyph_index );
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 t1_decoder_parse_charstrings( T1_Decoder  decoder,
-                              FT_Byte*    base,
-                              FT_UInt     len );
+                              FT2_1_3_Byte*    base,
+                              FT2_1_3_UInt     len );
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 t1_decoder_init( T1_Decoder           decoder,
-                 FT_Face              face,
-                 FT_Size              size,
-                 FT_GlyphSlot         slot,
-                 FT_Byte**            glyph_names,
+                 FT2_1_3_Face              face,
+                 FT2_1_3_Size              size,
+                 FT2_1_3_GlyphSlot         slot,
+                 FT2_1_3_Byte**            glyph_names,
                  PS_Blend             blend,
-                 FT_Bool              hinting,
-                 FT_Render_Mode       hint_mode,
+                 FT2_1_3_Bool              hinting,
+                 FT2_1_3_Render_Mode       hint_mode,
                  T1_Decoder_Callback  parse_glyph );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 t1_decoder_done( T1_Decoder  decoder );
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __T1DECODE_H__ */
 
