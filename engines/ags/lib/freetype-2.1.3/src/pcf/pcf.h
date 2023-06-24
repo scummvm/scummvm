@@ -30,45 +30,45 @@ THE SOFTWARE.
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_DRIVER_H
-#include FT_INTERNAL_STREAM_H
+#include FT2_1_3_INTERNAL_DRIVER_H
+#include FT2_1_3_INTERNAL_STREAM_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 typedef struct  PCF_TableRec_ {
-	FT_ULong  type;
-	FT_ULong  format;
-	FT_ULong  size;
-	FT_ULong  offset;
+	FT2_1_3_ULong  type;
+	FT2_1_3_ULong  format;
+	FT2_1_3_ULong  size;
+	FT2_1_3_ULong  offset;
 
 } PCF_TableRec, *PCF_Table;
 
 
 typedef struct  PCF_TocRec_ {
-	FT_ULong   version;
-	FT_ULong   count;
+	FT2_1_3_ULong   version;
+	FT2_1_3_ULong   count;
 	PCF_Table  tables;
 
 } PCF_TocRec, *PCF_Toc;
 
 
 typedef struct  PCF_ParsePropertyRec_ {
-	FT_Long  name;
-	FT_Byte  isString;
-	FT_Long  value;
+	FT2_1_3_Long  name;
+	FT2_1_3_Byte  isString;
+	FT2_1_3_Long  value;
 
 } PCF_ParsePropertyRec, *PCF_ParseProperty;
 
 
 typedef struct  PCF_PropertyRec_ {
-	FT_String*  name;
-	FT_Byte     isString;
+	FT2_1_3_String*  name;
+	FT2_1_3_Byte     isString;
 
 	union {
-		FT_String*  atom;
-		FT_Long     integer;
-		FT_ULong    cardinal;
+		FT2_1_3_String*  atom;
+		FT2_1_3_Long     integer;
+		FT2_1_3_ULong    cardinal;
 
 	} value;
 
@@ -76,38 +76,38 @@ typedef struct  PCF_PropertyRec_ {
 
 
 typedef struct  PCF_Compressed_MetricRec_ {
-	FT_Byte  leftSideBearing;
-	FT_Byte  rightSideBearing;
-	FT_Byte  characterWidth;
-	FT_Byte  ascent;
-	FT_Byte  descent;
+	FT2_1_3_Byte  leftSideBearing;
+	FT2_1_3_Byte  rightSideBearing;
+	FT2_1_3_Byte  characterWidth;
+	FT2_1_3_Byte  ascent;
+	FT2_1_3_Byte  descent;
 
 } PCF_Compressed_MetricRec, *PCF_Compressed_Metric;
 
 
 typedef struct  PCF_MetricRec_ {
-	FT_Short  leftSideBearing;
-	FT_Short  rightSideBearing;
-	FT_Short  characterWidth;
-	FT_Short  ascent;
-	FT_Short  descent;
-	FT_Short  attributes;
-	FT_ULong  bits;
+	FT2_1_3_Short  leftSideBearing;
+	FT2_1_3_Short  rightSideBearing;
+	FT2_1_3_Short  characterWidth;
+	FT2_1_3_Short  ascent;
+	FT2_1_3_Short  descent;
+	FT2_1_3_Short  attributes;
+	FT2_1_3_ULong  bits;
 
 } PCF_MetricRec, *PCF_Metric;
 
 
 typedef struct  PCF_AccelRec_ {
-	FT_Byte        noOverlap;
-	FT_Byte        constantMetrics;
-	FT_Byte        terminalFont;
-	FT_Byte        constantWidth;
-	FT_Byte        inkInside;
-	FT_Byte        inkMetrics;
-	FT_Byte        drawDirection;
-	FT_Long        fontAscent;
-	FT_Long        fontDescent;
-	FT_Long        maxOverlap;
+	FT2_1_3_Byte        noOverlap;
+	FT2_1_3_Byte        constantMetrics;
+	FT2_1_3_Byte        terminalFont;
+	FT2_1_3_Byte        constantWidth;
+	FT2_1_3_Byte        inkInside;
+	FT2_1_3_Byte        inkMetrics;
+	FT2_1_3_Byte        drawDirection;
+	FT2_1_3_Long        fontAscent;
+	FT2_1_3_Long        fontDescent;
+	FT2_1_3_Long        maxOverlap;
 	PCF_MetricRec  minbounds;
 	PCF_MetricRec  maxbounds;
 	PCF_MetricRec  ink_minbounds;
@@ -117,17 +117,17 @@ typedef struct  PCF_AccelRec_ {
 
 
 typedef struct  PCD_EncodingRec_ {
-	FT_Long   enc;
-	FT_Short  glyph;
+	FT2_1_3_Long   enc;
+	FT2_1_3_Short  glyph;
 
 } PCF_EncodingRec, *PCF_Encoding;
 
 
 typedef struct  PCF_FaceRec_ {
-	FT_FaceRec     root;
+	FT2_1_3_FaceRec     root;
 
-	FT_StreamRec   gzip_stream;
-	FT_Stream      gzip_source;
+	FT2_1_3_StreamRec   gzip_stream;
+	FT2_1_3_Stream      gzip_source;
 
 	char*          charset_encoding;
 	char*          charset_registry;
@@ -138,17 +138,17 @@ typedef struct  PCF_FaceRec_ {
 	int            nprops;
 	PCF_Property   properties;
 
-	FT_Long        nmetrics;
+	FT2_1_3_Long        nmetrics;
 	PCF_Metric     metrics;
-	FT_Long        nencodings;
+	FT2_1_3_Long        nencodings;
 	PCF_Encoding   encodings;
 
-	FT_Short       defaultChar;
+	FT2_1_3_Short       defaultChar;
 
-	FT_ULong       bitmapsFormat;
+	FT2_1_3_ULong       bitmapsFormat;
 
-	FT_CharMap     charmap_handle;
-	FT_CharMapRec  charmap;  /* a single charmap per face */
+	FT2_1_3_CharMap     charmap_handle;
+	FT2_1_3_CharMapRec  charmap;  /* a single charmap per face */
 
 } PCF_FaceRec, *PCF_Face;
 
@@ -215,12 +215,12 @@ typedef struct  PCF_FaceRec_ {
 
 #define GLYPHPADOPTIONS  4 /* I'm not sure about this */
 
-FT_LOCAL( FT_Error )
-pcf_load_font( FT_Stream,
+FT2_1_3_LOCAL( FT2_1_3_Error )
+pcf_load_font( FT2_1_3_Stream,
                PCF_Face );
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __PCF_H__ */
 
