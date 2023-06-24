@@ -25,14 +25,14 @@
 #endif
 
 
-  static FT_Error
+  static FT2_1_3_Error
   GEN_CACHE_LOOKUP( FTC_Cache   cache,
                     FTC_Query   query,
                     FTC_Node   *anode )
   {
-    FT_LruNode  lru;
+    FT2_1_3_LruNode  lru;
     FTC_Family  family;
-    FT_UFast    hash;
+    FT2_1_3_UFast    hash;
 
 
     query->hash   = 0;
@@ -41,8 +41,8 @@
     /* XXX: we break encapsulation for the sake of speed! */
     {
       /* first of all, find the relevant family */
-      FT_LruList  list  = cache->families;
-      FT_LruNode  fam, *pfam;
+      FT2_1_3_LruList  list  = cache->families;
+      FT2_1_3_LruNode  fam, *pfam;
 
 
       pfam = &list->nodes;
@@ -58,7 +58,7 @@
         pfam = &fam->next;
       }
 
-      FT_ASSERT( fam != NULL );
+      FT2_1_3_ASSERT( fam != NULL );
 
       /* move to top of list when needed */
       if ( fam != list->nodes )
@@ -79,7 +79,7 @@
       hash   = query->hash;
 
       {
-        FT_UInt  idx;
+        FT2_1_3_UInt  idx;
 
 
         idx = hash & cache->mask;
@@ -98,7 +98,7 @@
           goto Normal;
 
         if ( node->hash == hash                            &&
-             (FT_UInt)node->fam_index == family->fam_index &&
+             (FT2_1_3_UInt)node->fam_index == family->fam_index &&
              GEN_CACHE_NODE_COMPARE( node, query, cache )  )
         {
           /* we place the following out of the loop to make it */

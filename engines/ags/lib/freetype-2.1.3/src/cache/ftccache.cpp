@@ -17,9 +17,9 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_CACHE_MANAGER_H
-#include FT_INTERNAL_OBJECTS_H
-#include FT_INTERNAL_DEBUG_H
+#include FT2_1_3_CACHE_MANAGER_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_DEBUG_H
 
 #include "ftcerror.h"
 
@@ -40,7 +40,7 @@
 /*************************************************************************/
 /*************************************************************************/
 
-FT_EXPORT_DEF( void )
+FT2_1_3_EXPORT_DEF( void )
 ftc_node_done( FTC_Node   node,
                FTC_Cache  cache ) {
 	FTC_Family       family;
@@ -52,7 +52,7 @@ ftc_node_done( FTC_Node   node,
 
 	/* remove from parent set table - eventually destroy the set */
 	if ( --family->num_nodes == 0 )
-		FT_LruList_Remove( cache->families, (FT_LruNode) family );
+		FT2_1_3_LruList_Remove( cache->families, (FT2_1_3_LruNode) family );
 }
 
 
@@ -67,7 +67,7 @@ ftc_node_mru_link( FTC_Node     node,
 		FTC_Node  last = first->mru_prev;
 
 
-		FT_ASSERT( last->mru_next == first );
+		FT2_1_3_ASSERT( last->mru_next == first );
 
 		node->mru_prev = last;
 		node->mru_next = first;
@@ -75,7 +75,7 @@ ftc_node_mru_link( FTC_Node     node,
 		last->mru_next  = node;
 		first->mru_prev = node;
 	} else {
-		FT_ASSERT( manager->num_nodes == 0 );
+		FT2_1_3_ASSERT( manager->num_nodes == 0 );
 
 		node->mru_next = node;
 		node->mru_prev = node;
@@ -95,9 +95,9 @@ ftc_node_mru_unlink( FTC_Node     node,
 	FTC_Node  next  = node->mru_next;
 
 
-	FT_ASSERT( first != NULL && manager->num_nodes > 0 );
-	FT_ASSERT( next->mru_prev == node );
-	FT_ASSERT( prev->mru_next == node );
+	FT2_1_3_ASSERT( first != NULL && manager->num_nodes > 0 );
+	FT2_1_3_ASSERT( next->mru_prev == node );
+	FT2_1_3_ASSERT( prev->mru_next == node );
 
 	next->mru_prev = prev;
 	prev->mru_next = next;
@@ -144,24 +144,24 @@ ftc_node_mru_up( FTC_Node     node,
 
 
 /* remove a node from its cache's hash table */
-static FT_Error
+static FT2_1_3_Error
 ftc_node_hash_unlink( FTC_Node   node,
                       FTC_Cache  cache ) {
-	FT_Error   error = 0;
+	FT2_1_3_Error   error = 0;
 	FTC_Node  *pnode;
-	FT_UInt    idx, num_buckets;
+	FT2_1_3_UInt    idx, num_buckets;
 
 
-	idx = (FT_UInt)( node->hash & cache->mask );
+	idx = (FT2_1_3_UInt)( node->hash & cache->mask );
 	if ( idx < cache->p )
-		idx = (FT_UInt)( node->hash & ( 2 * cache->mask + 1 ) );
+		idx = (FT2_1_3_UInt)( node->hash & ( 2 * cache->mask + 1 ) );
 
 	pnode = cache->buckets + idx;
 
 	for (;;) {
 		if ( *pnode == NULL ) {
-			FT_ERROR(( "ftc_node_hash_unlink: unknown node!\n" ));
-			return FT_Err_Ok;
+			FT2_1_3_ERROR(( "ftc_node_hash_unlink: unknown node!\n" ));
+			return FT2_1_3_Err_Ok;
 		}
 
 		if ( *pnode == node ) {
@@ -175,24 +175,24 @@ ftc_node_hash_unlink( FTC_Node   node,
 
 	num_buckets = ( cache->p + cache->mask + 1 );
 
-	if ( ++cache->slack > (FT_Long)num_buckets * FTC_HASH_SUB_LOAD ) {
-		FT_UInt    p         = cache->p;
-		FT_UInt    mask      = cache->mask;
-		FT_UInt    old_index = p + mask;
+	if ( ++cache->slack > (FT2_1_3_Long)num_buckets * FTC_HASH_SUB_LOAD ) {
+		FT2_1_3_UInt    p         = cache->p;
+		FT2_1_3_UInt    mask      = cache->mask;
+		FT2_1_3_UInt    old_index = p + mask;
 		FTC_Node*  pold;
 
 
-		FT_ASSERT( old_index >= FTC_HASH_INITIAL_SIZE );
+		FT2_1_3_ASSERT( old_index >= FTC_HASH_INITIAL_SIZE );
 
 		if ( p == 0 ) {
-			FT_Memory  memory = cache->memory;
+			FT2_1_3_Memory  memory = cache->memory;
 
 
 			cache->mask >>= 1;
 			p             = cache->mask;
 
-			if ( FT_RENEW_ARRAY( cache->buckets, ( mask + 1 ) * 2, (mask+1) ) ) {
-				FT_ERROR(( "ftc_node_hash_unlink: couldn't shunk buckets!\n" ));
+			if ( FT2_1_3_RENEW_ARRAY( cache->buckets, ( mask + 1 ) * 2, (mask+1) ) ) {
+				FT2_1_3_ERROR(( "ftc_node_hash_unlink: couldn't shunk buckets!\n" ));
 				goto Exit;
 			}
 		} else
@@ -217,17 +217,17 @@ Exit:
 
 
 /* add a node to the "top" of its cache's hash table */
-static FT_Error
+static FT2_1_3_Error
 ftc_node_hash_link( FTC_Node   node,
                     FTC_Cache  cache ) {
 	FTC_Node  *pnode;
-	FT_UInt    idx;
-	FT_Error   error = 0;
+	FT2_1_3_UInt    idx;
+	FT2_1_3_Error   error = 0;
 
 
-	idx = (FT_UInt)( node->hash & cache->mask );
+	idx = (FT2_1_3_UInt)( node->hash & cache->mask );
 	if ( idx < cache->p )
-		idx = (FT_UInt)( node->hash & (2 * cache->mask + 1 ) );
+		idx = (FT2_1_3_UInt)( node->hash & (2 * cache->mask + 1 ) );
 
 	pnode = cache->buckets + idx;
 
@@ -235,8 +235,8 @@ ftc_node_hash_link( FTC_Node   node,
 	*pnode     = node;
 
 	if ( --cache->slack < 0 ) {
-		FT_UInt    p     = cache->p;
-		FT_UInt    mask  = cache->mask;
+		FT2_1_3_UInt    p     = cache->p;
+		FT2_1_3_UInt    mask  = cache->mask;
 		FTC_Node   new_list;
 
 
@@ -262,12 +262,12 @@ ftc_node_hash_link( FTC_Node   node,
 		cache->slack += FTC_HASH_MAX_LOAD;
 
 		if ( p >= mask ) {
-			FT_Memory  memory = cache->memory;
+			FT2_1_3_Memory  memory = cache->memory;
 
 
-			if ( FT_RENEW_ARRAY( cache->buckets,
+			if ( FT2_1_3_RENEW_ARRAY( cache->buckets,
 			                     ( mask + 1 ) * 2, ( mask + 1 ) * 4 ) ) {
-				FT_ERROR(( "ftc_node_hash_link: couldn't expand buckets!\n" ));
+				FT2_1_3_ERROR(( "ftc_node_hash_link: couldn't expand buckets!\n" ));
 				goto Exit;
 			}
 
@@ -285,19 +285,19 @@ Exit:
 
 
 /* remove a node from the cache manager */
-FT_EXPORT_DEF( void )
+FT2_1_3_EXPORT_DEF( void )
 ftc_node_destroy( FTC_Node     node,
                   FTC_Manager  manager ) {
-	FT_Memory        memory  = manager->library->memory;
+	FT2_1_3_Memory        memory  = manager->library->memory;
 	FTC_Cache        cache;
 	FTC_FamilyEntry  entry;
 	FTC_Cache_Class  clazz;
 
 
-#ifdef FT_DEBUG_ERROR
+#ifdef FT2_1_3_DEBUG_ERROR
 	/* find node's cache */
 	if ( node->fam_index >= manager->families.count ) {
-		FT_ERROR(( "ftc_node_destroy: invalid node handle\n" ));
+		FT2_1_3_ERROR(( "ftc_node_destroy: invalid node handle\n" ));
 		return;
 	}
 #endif
@@ -305,9 +305,9 @@ ftc_node_destroy( FTC_Node     node,
 	entry = manager->families.entries + node->fam_index;
 	cache = entry->cache;
 
-#ifdef FT_DEBUG_ERROR
+#ifdef FT2_1_3_DEBUG_ERROR
 	if ( cache == NULL ) {
-		FT_ERROR(( "ftc_node_destroy: invalid node handle\n" ));
+		FT2_1_3_ERROR(( "ftc_node_destroy: invalid node handle\n" ));
 		return;
 	}
 #endif
@@ -326,11 +326,11 @@ ftc_node_destroy( FTC_Node     node,
 	if ( clazz->node_done )
 		clazz->node_done( node, cache );
 
-	FT_FREE( node );
+	FT2_1_3_FREE( node );
 
 	/* check, just in case of general corruption :-) */
 	if ( manager->num_nodes == 0 )
-		FT_ERROR(( "ftc_node_destroy: invalid cache node count! = %d\n",
+		FT2_1_3_ERROR(( "ftc_node_destroy: invalid cache node count! = %d\n",
 		           manager->num_nodes ));
 }
 
@@ -344,13 +344,13 @@ ftc_node_destroy( FTC_Node     node,
 /*************************************************************************/
 
 
-FT_EXPORT_DEF( FT_Error )
+FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 ftc_family_init( FTC_Family  family,
                  FTC_Query   query,
                  FTC_Cache   cache ) {
-	FT_Error         error;
+	FT2_1_3_Error         error;
 	FTC_Manager      manager = cache->manager;
-	FT_Memory        memory  = manager->library->memory;
+	FT2_1_3_Memory        memory  = manager->library->memory;
 	FTC_FamilyEntry  entry;
 
 
@@ -371,7 +371,7 @@ ftc_family_init( FTC_Family  family,
 }
 
 
-FT_EXPORT_DEF( void )
+FT2_1_3_EXPORT_DEF( void )
 ftc_family_done( FTC_Family  family ) {
 	FTC_Manager  manager = family->cache->manager;
 
@@ -391,42 +391,42 @@ ftc_family_done( FTC_Family  family ) {
 
 
 
-FT_EXPORT_DEF( FT_Error )
+FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 ftc_cache_init( FTC_Cache  cache ) {
-	FT_Memory        memory = cache->memory;
+	FT2_1_3_Memory        memory = cache->memory;
 	FTC_Cache_Class  clazz  = cache->clazz;
-	FT_Error         error;
+	FT2_1_3_Error         error;
 
 
 	cache->p     = 0;
 	cache->mask  = FTC_HASH_INITIAL_SIZE - 1;
 	cache->slack = FTC_HASH_INITIAL_SIZE * FTC_HASH_MAX_LOAD;
 
-	if ( FT_NEW_ARRAY( cache->buckets, FTC_HASH_INITIAL_SIZE * 2 ) )
+	if ( FT2_1_3_NEW_ARRAY( cache->buckets, FTC_HASH_INITIAL_SIZE * 2 ) )
 		goto Exit;
 
 	/* now, initialize the lru list of families for this cache */
 	if ( clazz->family_size > 0 ) {
-		FT_LruList_ClassRec*  lru_class = &cache->family_class;
+		FT2_1_3_LruList_ClassRec*  lru_class = &cache->family_class;
 
 
-		lru_class->list_size = sizeof( FT_LruListRec );
+		lru_class->list_size = sizeof( FT2_1_3_LruListRec );
 		lru_class->list_init = NULL;
 		lru_class->list_done = NULL;
 
 		lru_class->node_size    = clazz->family_size;
-		lru_class->node_init    = (FT_LruNode_InitFunc)   clazz->family_init;
-		lru_class->node_done    = (FT_LruNode_DoneFunc)   clazz->family_done;
-		lru_class->node_flush   = (FT_LruNode_FlushFunc)  NULL;
-		lru_class->node_compare = (FT_LruNode_CompareFunc)clazz->family_compare;
+		lru_class->node_init    = (FT2_1_3_LruNode_InitFunc)   clazz->family_init;
+		lru_class->node_done    = (FT2_1_3_LruNode_DoneFunc)   clazz->family_done;
+		lru_class->node_flush   = (FT2_1_3_LruNode_FlushFunc)  NULL;
+		lru_class->node_compare = (FT2_1_3_LruNode_CompareFunc)clazz->family_compare;
 
-		error = FT_LruList_New( (FT_LruList_Class) lru_class,
+		error = FT2_1_3_LruList_New( (FT2_1_3_LruList_Class) lru_class,
 		                        0,    /* max items == 0 => unbounded list */
 		                        cache,
 		                        memory,
 		                        &cache->families );
 		if ( error )
-			FT_FREE( cache->buckets );
+			FT2_1_3_FREE( cache->buckets );
 	}
 
 Exit:
@@ -434,14 +434,14 @@ Exit:
 }
 
 
-FT_EXPORT_DEF( void )
+FT2_1_3_EXPORT_DEF( void )
 ftc_cache_clear( FTC_Cache  cache ) {
 	if ( cache ) {
-		FT_Memory        memory  = cache->memory;
+		FT2_1_3_Memory        memory  = cache->memory;
 		FTC_Cache_Class  clazz   = cache->clazz;
 		FTC_Manager      manager = cache->manager;
-		FT_UFast         i;
-		FT_UInt          count;
+		FT2_1_3_UFast         i;
+		FT2_1_3_UInt          count;
 
 		count = cache->p + cache->mask + 1;
 
@@ -462,7 +462,7 @@ ftc_cache_clear( FTC_Cache  cache ) {
 				if ( clazz->node_done )
 					clazz->node_done( node, cache );
 
-				FT_FREE( node );
+				FT2_1_3_FREE( node );
 				node = next;
 			}
 			cache->buckets[i] = NULL;
@@ -472,25 +472,25 @@ ftc_cache_clear( FTC_Cache  cache ) {
 
 		/* destroy the families */
 		if ( cache->families )
-			FT_LruList_Reset( cache->families );
+			FT2_1_3_LruList_Reset( cache->families );
 	}
 }
 
 
-FT_EXPORT_DEF( void )
+FT2_1_3_EXPORT_DEF( void )
 ftc_cache_done( FTC_Cache  cache ) {
 	if ( cache ) {
-		FT_Memory  memory = cache->memory;
+		FT2_1_3_Memory  memory = cache->memory;
 
 
 		ftc_cache_clear( cache );
 
-		FT_FREE( cache->buckets );
+		FT2_1_3_FREE( cache->buckets );
 		cache->mask  = 0;
 		cache->slack = 0;
 
 		if ( cache->families ) {
-			FT_LruList_Destroy( cache->families );
+			FT2_1_3_LruList_Destroy( cache->families );
 			cache->families = NULL;
 		}
 	}
@@ -500,12 +500,12 @@ ftc_cache_done( FTC_Cache  cache ) {
 /* Look up a node in "top" of its cache's hash table. */
 /* If not found, create a new node.                   */
 /*                                                    */
-FT_EXPORT_DEF( FT_Error )
+FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 ftc_cache_lookup( FTC_Cache   cache,
                   FTC_Query   query,
                   FTC_Node   *anode ) {
-	FT_Error    error = FT_Err_Ok;
-	FT_LruNode  lru;
+	FT2_1_3_Error    error = FT2_1_3_Err_Ok;
+	FT2_1_3_LruNode  lru;
 
 
 	if ( !cache || !query || !anode )
@@ -519,15 +519,15 @@ ftc_cache_lookup( FTC_Cache   cache,
 	/* XXX: we break encapsulation for the sake of speed! */
 	{
 		/* first of all, find the relevant family */
-		FT_LruList              list    = cache->families;
-		FT_LruNode              fam, *pfam;
-		FT_LruNode_CompareFunc  compare = list->clazz->node_compare;
+		FT2_1_3_LruList              list    = cache->families;
+		FT2_1_3_LruNode              fam, *pfam;
+		FT2_1_3_LruNode_CompareFunc  compare = list->clazz->node_compare;
 
 		pfam = &list->nodes;
 		for (;;) {
 			fam = *pfam;
 			if ( fam == NULL ) {
-				error = FT_LruList_Lookup( list, query, &lru );
+				error = FT2_1_3_LruList_Lookup( list, query, &lru );
 				if ( error )
 					goto Exit;
 
@@ -540,7 +540,7 @@ ftc_cache_lookup( FTC_Cache   cache,
 			pfam = &fam->next;
 		}
 
-		FT_ASSERT( fam != NULL );
+		FT2_1_3_ASSERT( fam != NULL );
 
 		/* move to top of list when needed */
 		if ( fam != list->nodes ) {
@@ -557,9 +557,9 @@ Skip:
 
 	{
 		FTC_Family  family = (FTC_Family) lru;
-		FT_UFast    hash    = query->hash;
+		FT2_1_3_UFast    hash    = query->hash;
 		FTC_Node*   bucket;
-		FT_UInt     idx;
+		FT2_1_3_UInt     idx;
 
 
 		idx = hash & cache->mask;
@@ -571,7 +571,7 @@ Skip:
 
 		if ( query->family     != family                        ||
 		        family->fam_index >= cache->manager->families.size ) {
-			FT_ERROR((
+			FT2_1_3_ERROR((
 			             "ftc_cache_lookup: invalid query (bad 'family' field)\n" ));
 			return FTC_Err_Invalid_Argument;
 		}
@@ -590,7 +590,7 @@ Skip:
 					break;
 
 				if ( node->hash == hash                            &&
-				        (FT_UInt)node->fam_index == family->fam_index &&
+				        (FT2_1_3_UInt)node->fam_index == family->fam_index &&
 				        compare( node, query, cache ) ) {
 					/* move to head of bucket list */
 					if ( pnode != bucket ) {
@@ -615,27 +615,27 @@ Skip:
 		{
 			FTC_Cache_Class  clazz   = cache->clazz;
 			FTC_Manager      manager = cache->manager;
-			FT_Memory        memory  = cache->memory;
+			FT2_1_3_Memory        memory  = cache->memory;
 			FTC_Node         node;
 
 
-			if ( FT_ALLOC( node, clazz->node_size ) )
+			if ( FT2_1_3_ALLOC( node, clazz->node_size ) )
 				goto Exit;
 
-			node->fam_index = (FT_UShort) family->fam_index;
+			node->fam_index = (FT2_1_3_UShort) family->fam_index;
 			node->hash      = query->hash;
 			node->ref_count = 0;
 
 			error = clazz->node_init( node, query, cache );
 			if ( error ) {
-				FT_FREE( node );
+				FT2_1_3_FREE( node );
 				goto Exit;
 			}
 
 			error = ftc_node_hash_link( node, cache );
 			if ( error ) {
 				clazz->node_done( node, cache );
-				FT_FREE( node );
+				FT2_1_3_FREE( node );
 				goto Exit;
 			}
 
