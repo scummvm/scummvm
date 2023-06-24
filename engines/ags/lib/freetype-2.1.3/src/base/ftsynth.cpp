@@ -17,14 +17,14 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_OBJECTS_H
-#include FT_INTERNAL_CALC_H
-#include FT_OUTLINE_H
-#include FT_TRIGONOMETRY_H
-#include FT_SYNTHESIS_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_CALC_H
+#include FT2_1_3_OUTLINE_H
+#include FT2_1_3_TRIGONOMETRY_H
+#include FT2_1_3_SYNTHESIS_H
 
 
-#define FT_BOLD_THRESHOLD  0x0100
+#define FT2_1_3_BOLD_THRESHOLD  0x0100
 
 
 /*************************************************************************/
@@ -35,14 +35,14 @@
 /*************************************************************************/
 /*************************************************************************/
 
-FT_EXPORT_DEF( void )
-FT_GlyphSlot_Oblique( FT_GlyphSlot  slot ) {
-	FT_Matrix    transform;
-	FT_Outline*  outline = &slot->outline;
+FT2_1_3_EXPORT_DEF( void )
+FT2_1_3_GlyphSlot_Oblique( FT2_1_3_GlyphSlot  slot ) {
+	FT2_1_3_Matrix    transform;
+	FT2_1_3_Outline*  outline = &slot->outline;
 
 
 	/* only oblique outline glyphs */
-	if ( slot->format != FT_GLYPH_FORMAT_OUTLINE )
+	if ( slot->format != FT2_1_3_GLYPH_FORMAT_OUTLINE )
 		return;
 
 	/* we don't touch the advance width */
@@ -56,7 +56,7 @@ FT_GlyphSlot_Oblique( FT_GlyphSlot  slot ) {
 	transform.xy = 0x06000L;
 	transform.yy = 0x10000L;
 
-	FT_Outline_Transform( outline, &transform );
+	FT2_1_3_Outline_Transform( outline, &transform );
 }
 
 
@@ -71,11 +71,11 @@ FT_GlyphSlot_Oblique( FT_GlyphSlot  slot ) {
 
 
 static int
-ft_test_extrema( FT_Outline*  outline,
+ft_test_extrema( FT2_1_3_Outline*  outline,
                  int          n ) {
-	FT_Vector  *prev, *cur, *next;
-	FT_Pos      product;
-	FT_Int      c, first, last;
+	FT2_1_3_Vector  *prev, *cur, *next;
+	FT2_1_3_Pos      product;
+	FT2_1_3_Int      c, first, last;
 
 
 	/* we need to compute the `previous' and `next' point */
@@ -97,11 +97,11 @@ ft_test_extrema( FT_Outline*  outline,
 		first = last + 1;
 	}
 
-	product = FT_MulDiv( cur->x - prev->x,   /* in.x  */
+	product = FT2_1_3_MulDiv( cur->x - prev->x,   /* in.x  */
 	                     next->y - cur->y,   /* out.y */
 	                     0x40 )
 	          -
-	          FT_MulDiv( cur->y - prev->y,   /* in.y  */
+	          FT2_1_3_MulDiv( cur->y - prev->y,   /* in.y  */
 	                     next->x - cur->x,   /* out.x */
 	                     0x40 );
 
@@ -113,7 +113,7 @@ ft_test_extrema( FT_Outline*  outline,
 
 
 /* Compute the orientation of path filling.  It differs between TrueType */
-/* and Type1 formats.  We could use the `FT_OUTLINE_REVERSE_FILL' flag,  */
+/* and Type1 formats.  We could use the `FT2_1_3_OUTLINE_REVERSE_FILL' flag,  */
 /* but it is better to re-compute it directly (it seems that this flag   */
 /* isn't correctly set for some weird composite glyphs currently).       */
 /*                                                                       */
@@ -123,9 +123,9 @@ ft_test_extrema( FT_Outline*  outline,
 /* The function returns either 1 or -1.                                  */
 /*                                                                       */
 static int
-ft_get_orientation( FT_Outline*  outline ) {
-	FT_BBox  box;
-	FT_BBox  indices;
+ft_get_orientation( FT2_1_3_Outline*  outline ) {
+	FT2_1_3_BBox  box;
+	FT2_1_3_BBox  indices;
 	int      n, last;
 
 
@@ -144,7 +144,7 @@ ft_get_orientation( FT_Outline*  outline ) {
 	last = outline->contours[outline->n_contours - 1];
 
 	for ( n = 0; n <= last; n++ ) {
-		FT_Pos  x, y;
+		FT2_1_3_Pos  x, y;
 
 
 		x = outline->points[n].x;
@@ -190,27 +190,27 @@ Exit:
 }
 
 
-FT_EXPORT_DEF( void )
-FT_GlyphSlot_Embolden( FT_GlyphSlot  slot ) {
-	FT_Vector*   points;
-	FT_Vector    v_prev, v_first, v_next, v_cur;
-	FT_Pos       distance;
-	FT_Outline*  outline = &slot->outline;
-	FT_Face      face = FT_SLOT_FACE( slot );
-	FT_Angle     rotate, angle_in, angle_out;
-	FT_Int       c, n, first, orientation;
+FT2_1_3_EXPORT_DEF( void )
+FT2_1_3_GlyphSlot_Embolden( FT2_1_3_GlyphSlot  slot ) {
+	FT2_1_3_Vector*   points;
+	FT2_1_3_Vector    v_prev, v_first, v_next, v_cur;
+	FT2_1_3_Pos       distance;
+	FT2_1_3_Outline*  outline = &slot->outline;
+	FT2_1_3_Face      face = FT2_1_3_SLOT_FACE( slot );
+	FT2_1_3_Angle     rotate, angle_in, angle_out;
+	FT2_1_3_Int       c, n, first, orientation;
 
 
 	/* only embolden outline glyph images */
-	if ( slot->format != FT_GLYPH_FORMAT_OUTLINE )
+	if ( slot->format != FT2_1_3_GLYPH_FORMAT_OUTLINE )
 		return;
 
 	/* compute control distance */
-	distance = FT_MulFix( face->units_per_EM / 60,
+	distance = FT2_1_3_MulFix( face->units_per_EM / 60,
 	                      face->size->metrics.y_scale );
 
 	orientation = ft_get_orientation( outline );
-	rotate      = FT_ANGLE_PI2*orientation;
+	rotate      = FT2_1_3_ANGLE_PI2*orientation;
 
 	points = outline->points;
 
@@ -224,10 +224,10 @@ FT_GlyphSlot_Embolden( FT_GlyphSlot  slot ) {
 		v_cur   = v_first;
 
 		for ( n = first; n <= last; n++ ) {
-			FT_Pos     d;
-			FT_Vector  in, out;
-			FT_Fixed   scale;
-			FT_Angle   angle_diff;
+			FT2_1_3_Pos     d;
+			FT2_1_3_Vector  in, out;
+			FT2_1_3_Fixed   scale;
+			FT2_1_3_Angle   angle_diff;
 
 
 			if ( n < last ) v_next = points[n + 1];
@@ -240,10 +240,10 @@ FT_GlyphSlot_Embolden( FT_GlyphSlot  slot ) {
 			out.x = v_next.x - v_cur.x;
 			out.y = v_next.y - v_cur.y;
 
-			angle_in   = FT_Atan2( in.x, in.y );
-			angle_out  = FT_Atan2( out.x, out.y );
-			angle_diff = FT_Angle_Diff( angle_in, angle_out );
-			scale      = FT_Cos( angle_diff/2 );
+			angle_in   = FT2_1_3_Atan2( in.x, in.y );
+			angle_out  = FT2_1_3_Atan2( out.x, out.y );
+			angle_diff = FT2_1_3_Angle_Diff( angle_in, angle_out );
+			scale      = FT2_1_3_Cos( angle_diff/2 );
 
 			if ( scale < 0x400L && scale > -0x400L ) {
 				if ( scale >= 0 )
@@ -252,9 +252,9 @@ FT_GlyphSlot_Embolden( FT_GlyphSlot  slot ) {
 					scale = -0x400L;
 			}
 
-			d = FT_DivFix( distance, scale );
+			d = FT2_1_3_DivFix( distance, scale );
 
-			FT_Vector_From_Polar( &in, d, angle_in + angle_diff/2 - rotate );
+			FT2_1_3_Vector_From_Polar( &in, d, angle_in + angle_diff/2 - rotate );
 
 			outline->points[n].x = v_cur.x + distance + in.x;
 			outline->points[n].y = v_cur.y + distance + in.y;

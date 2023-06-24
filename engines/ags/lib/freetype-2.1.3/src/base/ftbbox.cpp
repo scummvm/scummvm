@@ -25,15 +25,15 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_BBOX_H
-#include FT_IMAGE_H
-#include FT_OUTLINE_H
-#include FT_INTERNAL_CALC_H
+#include FT2_1_3_BBOX_H
+#include FT2_1_3_IMAGE_H
+#include FT2_1_3_OUTLINE_H
+#include FT2_1_3_INTERNAL_CALC_H
 
 
 typedef struct  TBBox_Rec_ {
-	FT_Vector  last;
-	FT_BBox    bbox;
+	FT2_1_3_Vector  last;
+	FT2_1_3_BBox    bbox;
 
 } TBBox_Rec;
 
@@ -45,7 +45,7 @@ typedef struct  TBBox_Rec_ {
 /*                                                                       */
 /* <Description>                                                         */
 /*    This function is used as a `move_to' and `line_to' emitter during  */
-/*    FT_Outline_Decompose().  It simply records the destination point   */
+/*    FT2_1_3_Outline_Decompose().  It simply records the destination point   */
 /*    in `user->last'; no further computations are necessary since we    */
 /*    the cbox as the starting bbox which must be refined.               */
 /*                                                                       */
@@ -59,7 +59,7 @@ typedef struct  TBBox_Rec_ {
 /*    Always 0.  Needed for the interface only.                          */
 /*                                                                       */
 static int
-BBox_Move_To( FT_Vector*  to,
+BBox_Move_To( FT2_1_3_Vector*  to,
               TBBox_Rec*  user ) {
 	user->last = *to;
 
@@ -94,11 +94,11 @@ BBox_Move_To( FT_Vector*  to,
 /*    max :: The address of the current maximum.                         */
 /*                                                                       */
 static void
-BBox_Conic_Check( FT_Pos   y1,
-                  FT_Pos   y2,
-                  FT_Pos   y3,
-                  FT_Pos*  min,
-                  FT_Pos*  max ) {
+BBox_Conic_Check( FT2_1_3_Pos   y1,
+                  FT2_1_3_Pos   y2,
+                  FT2_1_3_Pos   y3,
+                  FT2_1_3_Pos*  min,
+                  FT2_1_3_Pos*  max ) {
 	if ( y1 <= y3 ) {
 		if ( y2 == y1 )               /* Flat arc */
 			goto Suite;
@@ -114,7 +114,7 @@ BBox_Conic_Check( FT_Pos   y1,
 		}
 	}
 
-	y1 = y3 = y1 - FT_MulDiv( y2 - y1, y2 - y1, y1 - 2*y2 + y3 );
+	y1 = y3 = y1 - FT2_1_3_MulDiv( y2 - y1, y2 - y1, y1 - 2*y2 + y3 );
 
 Suite:
 	if ( y1 < *min ) *min = y1;
@@ -129,7 +129,7 @@ Suite:
 /*                                                                       */
 /* <Description>                                                         */
 /*    This function is used as a `conic_to' emitter during               */
-/*    FT_Raster_Decompose().  It checks a conic Bezier curve with the    */
+/*    FT2_1_3_Raster_Decompose().  It checks a conic Bezier curve with the    */
 /*    current bounding box, and computes its extrema if necessary to     */
 /*    update it.                                                         */
 /*                                                                       */
@@ -148,8 +148,8 @@ Suite:
 /*    extremum coordinates, as it is sufficiently fast.                  */
 /*                                                                       */
 static int
-BBox_Conic_To( FT_Vector*  control,
-               FT_Vector*  to,
+BBox_Conic_To( FT2_1_3_Vector*  control,
+               FT2_1_3_Vector*  to,
                TBBox_Rec*  user ) {
 	/* we don't need to check `to' since it is always an `on' point, thus */
 	/* within the bbox                                                    */
@@ -198,13 +198,13 @@ BBox_Conic_To( FT_Vector*  control,
 /*                                                                       */
 #if 0
 static void
-BBox_Cubic_Check( FT_Pos   p1,
-                  FT_Pos   p2,
-                  FT_Pos   p3,
-                  FT_Pos   p4,
-                  FT_Pos*  min,
-                  FT_Pos*  max ) {
-	FT_Pos  stack[32*3 + 1], *arc;
+BBox_Cubic_Check( FT2_1_3_Pos   p1,
+                  FT2_1_3_Pos   p2,
+                  FT2_1_3_Pos   p3,
+                  FT2_1_3_Pos   p4,
+                  FT2_1_3_Pos*  min,
+                  FT2_1_3_Pos*  max ) {
+	FT2_1_3_Pos  stack[32*3 + 1], *arc;
 
 
 	arc = stack;
@@ -215,10 +215,10 @@ BBox_Cubic_Check( FT_Pos   p1,
 	arc[3] = p4;
 
 	do {
-		FT_Pos  y1 = arc[0];
-		FT_Pos  y2 = arc[1];
-		FT_Pos  y3 = arc[2];
-		FT_Pos  y4 = arc[3];
+		FT2_1_3_Pos  y1 = arc[0];
+		FT2_1_3_Pos  y2 = arc[1];
+		FT2_1_3_Pos  y3 = arc[2];
+		FT2_1_3_Pos  y4 = arc[3];
 
 
 		if ( y1 == y4 ) {
@@ -260,21 +260,21 @@ Suite:
 #else
 
 static void
-test_cubic_extrema( FT_Pos    y1,
-                    FT_Pos    y2,
-                    FT_Pos    y3,
-                    FT_Pos    y4,
-                    FT_Fixed  u,
-                    FT_Pos*   min,
-                    FT_Pos*   max ) {
-	/* FT_Pos    a = y4 - 3*y3 + 3*y2 - y1; */
-	FT_Pos    b = y3 - 2*y2 + y1;
-	FT_Pos    c = y2 - y1;
-	FT_Pos    d = y1;
-	FT_Pos    y;
-	FT_Fixed  uu;
+test_cubic_extrema( FT2_1_3_Pos    y1,
+                    FT2_1_3_Pos    y2,
+                    FT2_1_3_Pos    y3,
+                    FT2_1_3_Pos    y4,
+                    FT2_1_3_Fixed  u,
+                    FT2_1_3_Pos*   min,
+                    FT2_1_3_Pos*   max ) {
+	/* FT2_1_3_Pos    a = y4 - 3*y3 + 3*y2 - y1; */
+	FT2_1_3_Pos    b = y3 - 2*y2 + y1;
+	FT2_1_3_Pos    c = y2 - y1;
+	FT2_1_3_Pos    d = y1;
+	FT2_1_3_Pos    y;
+	FT2_1_3_Fixed  uu;
 
-	FT_UNUSED ( y4 );
+	FT2_1_3_UNUSED ( y4 );
 
 
 	/* The polynom is                       */
@@ -290,8 +290,8 @@ test_cubic_extrema( FT_Pos    y1,
 	/*   P(u) = b*u^2 + 2c*u + d            */
 
 	if ( u > 0 && u < 0x10000L ) {
-		uu = FT_MulFix( u, u );
-		y  = d + FT_MulFix( c, 2*u ) + FT_MulFix( b, uu );
+		uu = FT2_1_3_MulFix( u, u );
+		y  = d + FT2_1_3_MulFix( c, 2*u ) + FT2_1_3_MulFix( b, uu );
 
 		if ( y < *min ) *min = y;
 		if ( y > *max ) *max = y;
@@ -300,12 +300,12 @@ test_cubic_extrema( FT_Pos    y1,
 
 
 static void
-BBox_Cubic_Check( FT_Pos   y1,
-                  FT_Pos   y2,
-                  FT_Pos   y3,
-                  FT_Pos   y4,
-                  FT_Pos*  min,
-                  FT_Pos*  max ) {
+BBox_Cubic_Check( FT2_1_3_Pos   y1,
+                  FT2_1_3_Pos   y2,
+                  FT2_1_3_Pos   y3,
+                  FT2_1_3_Pos   y4,
+                  FT2_1_3_Pos*  min,
+                  FT2_1_3_Pos*  max ) {
 	/* always compare first and last points */
 	if      ( y1 < *min )  *min = y1;
 	else if ( y1 > *max )  *max = y1;
@@ -326,18 +326,18 @@ BBox_Cubic_Check( FT_Pos   y1,
 
 	/* There are some split points.  Find them. */
 	{
-		FT_Pos    a = y4 - 3*y3 + 3*y2 - y1;
-		FT_Pos    b = y3 - 2*y2 + y1;
-		FT_Pos    c = y2 - y1;
-		FT_Pos    d;
-		FT_Fixed  t;
+		FT2_1_3_Pos    a = y4 - 3*y3 + 3*y2 - y1;
+		FT2_1_3_Pos    b = y3 - 2*y2 + y1;
+		FT2_1_3_Pos    c = y2 - y1;
+		FT2_1_3_Pos    d;
+		FT2_1_3_Fixed  t;
 
 
 		/* We need to solve "ax^2+2bx+c" here, without floating points!      */
 		/* The trick is to normalize to a different representation in order  */
 		/* to use our 16.16 fixed point routines.                            */
 		/*                                                                   */
-		/* We compute FT_MulFix(b,b) and FT_MulFix(a,c) after the            */
+		/* We compute FT2_1_3_MulFix(b,b) and FT2_1_3_MulFix(a,c) after the            */
 		/* the normalization.  These values must fit into a single 16.16     */
 		/* value.                                                            */
 		/*                                                                   */
@@ -345,7 +345,7 @@ BBox_Cubic_Check( FT_Pos   y1,
 		/* that their product is held in a "16.16" value.                    */
 		/*                                                                   */
 		{
-			FT_ULong  t1, t2;
+			FT2_1_3_ULong  t1, t2;
 			int       shift = 0;
 
 
@@ -369,10 +369,10 @@ BBox_Cubic_Check( FT_Pos   y1,
 			/*   We begin by computing "t1" as the bitwise "or" of the     */
 			/*   absolute values of "a", "b", "c".                         */
 			/*                                                             */
-			t1  = (FT_ULong)((a >= 0) ? a : -a );
-			t2  = (FT_ULong)((b >= 0) ? b : -b );
+			t1  = (FT2_1_3_ULong)((a >= 0) ? a : -a );
+			t2  = (FT2_1_3_ULong)((b >= 0) ? b : -b );
 			t1 |= t2;
-			t2  = (FT_ULong)((c >= 0) ? c : -c );
+			t2  = (FT2_1_3_ULong)((c >= 0) ? c : -c );
 			t1 |= t2;
 
 			/*   Now, the most significant bit of "t1" is sure to be the   */
@@ -428,26 +428,26 @@ BBox_Cubic_Check( FT_Pos   y1,
 		/* handle a == 0 */
 		if ( a == 0 ) {
 			if ( b != 0 ) {
-				t = - FT_DivFix( c, b ) / 2;
+				t = - FT2_1_3_DivFix( c, b ) / 2;
 				test_cubic_extrema( y1, y2, y3, y4, t, min, max );
 			}
 		} else {
 			/* solve the equation now */
-			d = FT_MulFix( b, b ) - FT_MulFix( a, c );
+			d = FT2_1_3_MulFix( b, b ) - FT2_1_3_MulFix( a, c );
 			if ( d < 0 )
 				return;
 
 			if ( d == 0 ) {
 				/* there is a single split point at -b/a */
-				t = - FT_DivFix( b, a );
+				t = - FT2_1_3_DivFix( b, a );
 				test_cubic_extrema( y1, y2, y3, y4, t, min, max );
 			} else {
 				/* there are two solutions; we need to filter them though */
-				d = FT_SqrtFixed( (FT_Int32)d );
-				t = - FT_DivFix( b - d, a );
+				d = FT2_1_3_SqrtFixed( (FT2_1_3_Int32)d );
+				t = - FT2_1_3_DivFix( b - d, a );
 				test_cubic_extrema( y1, y2, y3, y4, t, min, max );
 
-				t = - FT_DivFix( b + d, a );
+				t = - FT2_1_3_DivFix( b + d, a );
 				test_cubic_extrema( y1, y2, y3, y4, t, min, max );
 			}
 		}
@@ -464,7 +464,7 @@ BBox_Cubic_Check( FT_Pos   y1,
 /*                                                                       */
 /* <Description>                                                         */
 /*    This function is used as a `cubic_to' emitter during               */
-/*    FT_Raster_Decompose().  It checks a cubic Bezier curve with the    */
+/*    FT2_1_3_Raster_Decompose().  It checks a cubic Bezier curve with the    */
 /*    current bounding box, and computes its extrema if necessary to     */
 /*    update it.                                                         */
 /*                                                                       */
@@ -484,9 +484,9 @@ BBox_Cubic_Check( FT_Pos   y1,
 /*    extremum coordinates, we subdivise instead.                        */
 /*                                                                       */
 static int
-BBox_Cubic_To( FT_Vector*  control1,
-               FT_Vector*  control2,
-               FT_Vector*  to,
+BBox_Cubic_To( FT2_1_3_Vector*  control1,
+               FT2_1_3_Vector*  control2,
+               FT2_1_3_Vector*  to,
                TBBox_Rec*  user ) {
 	/* we don't need to check `to' since it is always an `on' point, thus */
 	/* within the bbox                                                    */
@@ -519,20 +519,20 @@ BBox_Cubic_To( FT_Vector*  control1,
 
 /* documentation is in ftbbox.h */
 
-FT_EXPORT_DEF( FT_Error )
-FT_Outline_Get_BBox( FT_Outline*  outline,
-                     FT_BBox     *abbox ) {
-	FT_BBox     cbox;
-	FT_BBox     bbox;
-	FT_Vector*  vec;
-	FT_UShort   n;
+FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_Outline_Get_BBox( FT2_1_3_Outline*  outline,
+                     FT2_1_3_BBox     *abbox ) {
+	FT2_1_3_BBox     cbox;
+	FT2_1_3_BBox     bbox;
+	FT2_1_3_Vector*  vec;
+	FT2_1_3_UShort   n;
 
 
 	if ( !abbox )
-		return FT_Err_Invalid_Argument;
+		return FT2_1_3_Err_Invalid_Argument;
 
 	if ( !outline )
-		return FT_Err_Invalid_Outline;
+		return FT2_1_3_Err_Invalid_Outline;
 
 	/* if outline is empty, return (0,0,0,0) */
 	if ( outline->n_points == 0 || outline->n_contours <= 0 ) {
@@ -551,8 +551,8 @@ FT_Outline_Get_BBox( FT_Outline*  outline,
 	vec++;
 
 	for ( n = 1; n < outline->n_points; n++ ) {
-		FT_Pos  x = vec->x;
-		FT_Pos  y = vec->y;
+		FT2_1_3_Pos  x = vec->x;
+		FT2_1_3_Pos  y = vec->y;
 
 
 		/* update control box */
@@ -562,7 +562,7 @@ FT_Outline_Get_BBox( FT_Outline*  outline,
 		if ( y < cbox.yMin ) cbox.yMin = y;
 		if ( y > cbox.yMax ) cbox.yMax = y;
 
-		if ( FT_CURVE_TAG( outline->tags[n] ) == FT_CURVE_TAG_ON ) {
+		if ( FT2_1_3_CURVE_TAG( outline->tags[n] ) == FT2_1_3_CURVE_TAG_ON ) {
 			/* update bbox for `on' points only */
 			if ( x < bbox.xMin ) bbox.xMin = x;
 			if ( x > bbox.xMax ) bbox.xMax = x;
@@ -580,21 +580,21 @@ FT_Outline_Get_BBox( FT_Outline*  outline,
 		/* the two boxes are different, now walk over the outline to */
 		/* get the Bezier arc extrema.                               */
 
-		static const FT_Outline_Funcs  bbox_interface = {
-			(FT_Outline_MoveTo_Func) BBox_Move_To,
-			(FT_Outline_LineTo_Func) BBox_Move_To,
-			(FT_Outline_ConicTo_Func)BBox_Conic_To,
-			(FT_Outline_CubicTo_Func)BBox_Cubic_To,
+		static const FT2_1_3_Outline_Funcs  bbox_interface = {
+			(FT2_1_3_Outline_MoveTo_Func) BBox_Move_To,
+			(FT2_1_3_Outline_LineTo_Func) BBox_Move_To,
+			(FT2_1_3_Outline_ConicTo_Func)BBox_Conic_To,
+			(FT2_1_3_Outline_CubicTo_Func)BBox_Cubic_To,
 			0, 0
 		};
 
-		FT_Error   error;
+		FT2_1_3_Error   error;
 		TBBox_Rec  user;
 
 
 		user.bbox = bbox;
 
-		error = FT_Outline_Decompose( outline, &bbox_interface, &user );
+		error = FT2_1_3_Outline_Decompose( outline, &bbox_interface, &user );
 		if ( error )
 			return error;
 
@@ -602,7 +602,7 @@ FT_Outline_Get_BBox( FT_Outline*  outline,
 	} else
 		*abbox = bbox;
 
-	return FT_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 

@@ -42,14 +42,14 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_FREETYPE_H
-#include FT_INTERNAL_DEBUG_H
+#include FT2_1_3_FREETYPE_H
+#include FT2_1_3_INTERNAL_DEBUG_H
 
 
-#if defined( FT_DEBUG_LEVEL_ERROR )
+#if defined( FT2_1_3_DEBUG_LEVEL_ERROR )
 
-FT_EXPORT_DEF( void )
-FT_Message( const char*  fmt, ... ) {
+FT2_1_3_EXPORT_DEF( void )
+FT2_1_3_Message( const char*  fmt, ... ) {
 	va_list  ap;
 
 
@@ -59,8 +59,8 @@ FT_Message( const char*  fmt, ... ) {
 }
 
 
-FT_EXPORT_DEF( void )
-FT_Panic( const char*  fmt, ... ) {
+FT2_1_3_EXPORT_DEF( void )
+FT2_1_3_Panic( const char*  fmt, ... ) {
 	va_list  ap;
 
 
@@ -71,24 +71,24 @@ FT_Panic( const char*  fmt, ... ) {
 	exit( EXIT_FAILURE );
 }
 
-#endif /* FT_DEBUG_LEVEL_ERROR */
+#endif /* FT2_1_3_DEBUG_LEVEL_ERROR */
 
 
 
-#ifdef FT_DEBUG_LEVEL_TRACE
+#ifdef FT2_1_3_DEBUG_LEVEL_TRACE
 
 /* array of trace levels, initialized to 0 */
 int  ft_trace_levels[trace_count];
 
 /* define array of trace toggle names */
-#define FT_TRACE_DEF(x)  #x ,
+#define FT2_1_3_TRACE_DEF(x)  #x ,
 
 static const char*  ft_trace_toggles[trace_count + 1] = {
-#include FT_INTERNAL_TRACE_H
+#include FT2_1_3_INTERNAL_TRACE_H
 	NULL
 };
 
-#undef FT_TRACE_DEF
+#undef FT2_1_3_TRACE_DEF
 
 
 /*************************************************************************/
@@ -109,7 +109,7 @@ static const char*  ft_trace_toggles[trace_count + 1] = {
 /* The level must be between 0 and 6; 0 means quiet (except for serious  */
 /* runtime errors), and 6 means _very_ verbose.                          */
 /*                                                                       */
-FT_BASE_DEF( void )
+FT2_1_3_BASE_DEF( void )
 ft_debug_init( void ) {
 	const char*  ft2_debug = getenv( "FT2_DEBUG" );
 
@@ -129,8 +129,8 @@ ft_debug_init( void ) {
 				p++;
 
 			if ( *p == ':' && p > q ) {
-				FT_Int  n, i, len = (FT_Int)(p - q);
-				FT_Int  level = -1, found = -1;
+				FT2_1_3_Int  n, i, len = (FT2_1_3_Int)(p - q);
+				FT2_1_3_Int  level = -1, found = -1;
 
 
 				for ( n = 0; n < trace_count; n++ ) {
@@ -169,14 +169,14 @@ ft_debug_init( void ) {
 	}
 }
 
-#else  /* !FT_DEBUG_LEVEL_TRACE */
+#else  /* !FT2_1_3_DEBUG_LEVEL_TRACE */
 
-FT_BASE_DEF( void )
+FT2_1_3_BASE_DEF( void )
 ft_debug_init( void ) {
 	/* nothing */
 }
 
-#endif /* !FT_DEBUG_LEVEL_TRACE */
+#endif /* !FT2_1_3_DEBUG_LEVEL_TRACE */
 
 
 /* END */

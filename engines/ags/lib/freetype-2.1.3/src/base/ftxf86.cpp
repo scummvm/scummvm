@@ -17,23 +17,23 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_XFREE86_H
-#include FT_INTERNAL_OBJECTS_H
+#include FT2_1_3_XFREE86_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
 
 /* XXX: This really is a sad hack, but I didn't want to change every     */
 /*      driver just to support this at the moment, since other important */
 /*      changes are coming anyway.                                       */
 
-typedef struct  FT_FontFormatRec_ {
+typedef struct  FT2_1_3_FontFormatRec_ {
 	const char*  driver_name;
 	const char*  format_name;
 
-} FT_FontFormatRec;
+} FT2_1_3_FontFormatRec;
 
 
-FT_EXPORT_DEF( const char* )
-FT_Get_X11_Font_Format( FT_Face  face ) {
-	static const FT_FontFormatRec  font_formats[] = {
+FT2_1_3_EXPORT_DEF( const char* )
+FT2_1_3_Get_X11_Font_Format( FT2_1_3_Face  face ) {
+	static const FT2_1_3_FontFormatRec  font_formats[] = {
 		{ "type1",    "Type 1" },
 		{ "truetype", "TrueType" },
 		{ "bdf",      "BDF" },
@@ -49,12 +49,12 @@ FT_Get_X11_Font_Format( FT_Face  face ) {
 
 
 	if ( face && face->driver ) {
-		FT_Module  driver = (FT_Module)face->driver;
+		FT2_1_3_Module  driver = (FT2_1_3_Module)face->driver;
 
 
 		if ( driver->clazz && driver->clazz->module_name ) {
-			FT_Int  n;
-			FT_Int  count = sizeof( font_formats ) / sizeof ( font_formats[0] );
+			FT2_1_3_Int  n;
+			FT2_1_3_Int  count = sizeof( font_formats ) / sizeof ( font_formats[0] );
 
 
 			result = driver->clazz->module_name;

@@ -20,9 +20,9 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_SFNT_NAMES_H
-#include FT_INTERNAL_TRUETYPE_TYPES_H
-#include FT_INTERNAL_STREAM_H
+#include FT2_1_3_SFNT_NAMES_H
+#include FT2_1_3_INTERNAL_TRUETYPE_TYPES_H
+#include FT2_1_3_INTERNAL_STREAM_H
 
 
 #ifdef TT_CONFIG_OPTION_SFNT_NAMES
@@ -30,39 +30,39 @@
 
 /* documentation is in ftnames.h */
 
-FT_EXPORT_DEF( FT_UInt )
-FT_Get_Sfnt_Name_Count( FT_Face  face ) {
-	return (face && FT_IS_SFNT( face )) ? ((TT_Face)face)->num_names : 0;
+FT2_1_3_EXPORT_DEF( FT2_1_3_UInt )
+FT2_1_3_Get_Sfnt_Name_Count( FT2_1_3_Face  face ) {
+	return (face && FT2_1_3_IS_SFNT( face )) ? ((TT_Face)face)->num_names : 0;
 }
 
 
 /* documentation is in ftnames.h */
 
-FT_EXPORT_DEF( FT_Error )
-FT_Get_Sfnt_Name( FT_Face       face,
-                  FT_UInt       idx,
-                  FT_SfntName  *aname ) {
-	FT_Error  error = FT_Err_Invalid_Argument;
+FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_Get_Sfnt_Name( FT2_1_3_Face       face,
+                  FT2_1_3_UInt       idx,
+                  FT2_1_3_SfntName  *aname ) {
+	FT2_1_3_Error  error = FT2_1_3_Err_Invalid_Argument;
 
 
-	if ( aname && face && FT_IS_SFNT( face ) ) {
+	if ( aname && face && FT2_1_3_IS_SFNT( face ) ) {
 		TT_Face  ttface = (TT_Face)face;
 
 
-		if ( idx < (FT_UInt)ttface->num_names ) {
+		if ( idx < (FT2_1_3_UInt)ttface->num_names ) {
 			TT_NameEntryRec*  entry = ttface->name_table.names + idx;
 
 
 			/* load name on demand */
 			if ( entry->stringLength > 0 && entry->string == NULL ) {
-				FT_Memory  memory = face->memory;
-				FT_Stream  stream = face->stream;
+				FT2_1_3_Memory  memory = face->memory;
+				FT2_1_3_Stream  stream = face->stream;
 
 
-				if ( FT_NEW_ARRAY  ( entry->string, entry->stringLength ) ||
-				        FT_STREAM_SEEK( entry->stringOffset )                ||
-				        FT_STREAM_READ( entry->string, entry->stringLength ) ) {
-					FT_FREE( entry->string );
+				if ( FT2_1_3_NEW_ARRAY  ( entry->string, entry->stringLength ) ||
+				        FT2_1_3_STREAM_SEEK( entry->stringOffset )                ||
+				        FT2_1_3_STREAM_READ( entry->string, entry->stringLength ) ) {
+					FT2_1_3_FREE( entry->string );
 					entry->stringLength = 0;
 				}
 			}
@@ -71,10 +71,10 @@ FT_Get_Sfnt_Name( FT_Face       face,
 			aname->encoding_id = entry->encodingID;
 			aname->language_id = entry->languageID;
 			aname->name_id     = entry->nameID;
-			aname->string      = (FT_Byte*)entry->string;
+			aname->string      = (FT2_1_3_Byte*)entry->string;
 			aname->string_len  = entry->stringLength;
 
-			error = FT_Err_Ok;
+			error = FT2_1_3_Err_Ok;
 		}
 	}
 

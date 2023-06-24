@@ -26,11 +26,11 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_CONFIG_CONFIG_H
-#include FT_INTERNAL_DEBUG_H
-#include FT_SYSTEM_H
-#include FT_ERRORS_H
-#include FT_TYPES_H
+#include FT2_1_3_CONFIG_CONFIG_H
+#include FT2_1_3_INTERNAL_DEBUG_H
+#include FT2_1_3_SYSTEM_H
+#include FT2_1_3_ERRORS_H
+#include FT2_1_3_TYPES_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -46,7 +46,7 @@
 /*                                                                       */
 /* It is not necessary to do any error checking for the                  */
 /* allocation-related functions.  This will be done by the higher level  */
-/* routines like FT_Alloc() or FT_Realloc().                             */
+/* routines like FT2_1_3_Alloc() or FT2_1_3_Realloc().                             */
 /*                                                                       */
 /*************************************************************************/
 
@@ -67,10 +67,10 @@
 /* <Return>                                                              */
 /*    The address of newly allocated block.                              */
 /*                                                                       */
-FT_CALLBACK_DEF( void* )
-ft_alloc( FT_Memory  memory,
+FT2_1_3_CALLBACK_DEF( void* )
+ft_alloc( FT2_1_3_Memory  memory,
           long       size ) {
-	FT_UNUSED( memory );
+	FT2_1_3_UNUSED( memory );
 
 	return malloc( size );
 }
@@ -96,13 +96,13 @@ ft_alloc( FT_Memory  memory,
 /* <Return>                                                              */
 /*    The address of the reallocated memory block.                       */
 /*                                                                       */
-FT_CALLBACK_DEF( void* )
-ft_realloc( FT_Memory  memory,
+FT2_1_3_CALLBACK_DEF( void* )
+ft_realloc( FT2_1_3_Memory  memory,
             long       cur_size,
             long       new_size,
             void*      block ) {
-	FT_UNUSED( memory );
-	FT_UNUSED( cur_size );
+	FT2_1_3_UNUSED( memory );
+	FT2_1_3_UNUSED( cur_size );
 
 	return realloc( block, new_size );
 }
@@ -121,10 +121,10 @@ ft_realloc( FT_Memory  memory,
 /*                                                                       */
 /*    block   :: The address of block in memory to be freed.             */
 /*                                                                       */
-FT_CALLBACK_DEF( void )
-ft_free( FT_Memory  memory,
+FT2_1_3_CALLBACK_DEF( void )
+ft_free( FT2_1_3_Memory  memory,
          void*      block ) {
-	FT_UNUSED( memory );
+	FT2_1_3_UNUSED( memory );
 
 	free( block );
 }
@@ -139,12 +139,12 @@ ft_free( FT_Memory  memory,
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
+/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT_COMPONENT
-#define FT_COMPONENT  trace_io
+#undef  FT2_1_3_COMPONENT
+#define FT2_1_3_COMPONENT  trace_io
 
 /* We use the macro STREAM_FILE for convenience to extract the       */
 /* system-specific stream handle from a given FreeType stream object */
@@ -162,8 +162,8 @@ ft_free( FT_Memory  memory,
 /* <Input>                                                               */
 /*    stream :: A pointer to the stream object.                          */
 /*                                                                       */
-FT_CALLBACK_DEF( void )
-ft_ansi_stream_close( FT_Stream  stream ) {
+FT2_1_3_CALLBACK_DEF( void )
+ft_ansi_stream_close( FT2_1_3_Stream  stream ) {
 	fclose( STREAM_FILE( stream ) );
 
 	stream->descriptor.pointer = NULL;
@@ -192,8 +192,8 @@ ft_ansi_stream_close( FT_Stream  stream ) {
 /* <Return>                                                              */
 /*    The number of bytes actually read.                                 */
 /*                                                                       */
-FT_CALLBACK_DEF( unsigned long )
-ft_ansi_stream_io( FT_Stream       stream,
+FT2_1_3_CALLBACK_DEF( unsigned long )
+ft_ansi_stream_io( FT2_1_3_Stream       stream,
                    unsigned long   offset,
                    unsigned char*  buffer,
                    unsigned long   count ) {
@@ -210,21 +210,21 @@ ft_ansi_stream_io( FT_Stream       stream,
 
 /* documentation is in ftobjs.h */
 
-FT_EXPORT_DEF( FT_Error )
-FT_Stream_Open( FT_Stream    stream,
+FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_Stream_Open( FT2_1_3_Stream    stream,
                 const char*  filepathname ) {
 	FILE*  file;
 
 
 	if ( !stream )
-		return FT_Err_Invalid_Stream_Handle;
+		return FT2_1_3_Err_Invalid_Stream_Handle;
 
 	file = fopen( filepathname, "rb" );
 	if ( !file ) {
-		FT_ERROR(( "FT_Stream_Open:" ));
-		FT_ERROR(( " could not open `%s'\n", filepathname ));
+		FT2_1_3_ERROR(( "FT2_1_3_Stream_Open:" ));
+		FT2_1_3_ERROR(( " could not open `%s'\n", filepathname ));
 
-		return FT_Err_Cannot_Open_Resource;
+		return FT2_1_3_Err_Cannot_Open_Resource;
 	}
 
 	fseek( file, 0, SEEK_END );
@@ -238,39 +238,39 @@ FT_Stream_Open( FT_Stream    stream,
 	stream->read  = ft_ansi_stream_io;
 	stream->close = ft_ansi_stream_close;
 
-	FT_TRACE1(( "FT_Stream_Open:" ));
-	FT_TRACE1(( " opened `%s' (%d bytes) successfully\n",
+	FT2_1_3_TRACE1(( "FT2_1_3_Stream_Open:" ));
+	FT2_1_3_TRACE1(( " opened `%s' (%d bytes) successfully\n",
 	            filepathname, stream->size ));
 
-	return FT_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 
-#ifdef FT_DEBUG_MEMORY
+#ifdef FT2_1_3_DEBUG_MEMORY
 
-extern FT_Int
-ft_mem_debug_init( FT_Memory  memory );
+extern FT2_1_3_Int
+ft_mem_debug_init( FT2_1_3_Memory  memory );
 
 extern void
-ft_mem_debug_done( FT_Memory  memory );
+ft_mem_debug_done( FT2_1_3_Memory  memory );
 
 #endif
 
 
 /* documentation is in ftobjs.h */
 
-FT_EXPORT_DEF( FT_Memory )
-FT_New_Memory( void ) {
-	FT_Memory  memory;
+FT2_1_3_EXPORT_DEF( FT2_1_3_Memory )
+FT2_1_3_New_Memory( void ) {
+	FT2_1_3_Memory  memory;
 
 
-	memory = (FT_Memory)malloc( sizeof ( *memory ) );
+	memory = (FT2_1_3_Memory)malloc( sizeof ( *memory ) );
 	if ( memory ) {
 		memory->user    = 0;
 		memory->alloc   = ft_alloc;
 		memory->realloc = ft_realloc;
 		memory->free    = ft_free;
-#ifdef FT_DEBUG_MEMORY
+#ifdef FT2_1_3_DEBUG_MEMORY
 		ft_mem_debug_init( memory );
 #endif
 	}
@@ -281,9 +281,9 @@ FT_New_Memory( void ) {
 
 /* documentation is in ftobjs.h */
 
-FT_EXPORT_DEF( void )
-FT_Done_Memory( FT_Memory  memory ) {
-#ifdef FT_DEBUG_MEMORY
+FT2_1_3_EXPORT_DEF( void )
+FT2_1_3_Done_Memory( FT2_1_3_Memory  memory ) {
+#ifdef FT2_1_3_DEBUG_MEMORY
 	ft_mem_debug_done( memory );
 #endif
 	memory->free( memory, memory );

@@ -16,25 +16,25 @@
 /***************************************************************************/
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_PFR_H
-#include FT_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_PFR_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
 
 
 /* check the format */
-static FT_Error
-ft_pfr_check( FT_Face           face,
-              FT_PFR_Service   *aservice ) {
-	FT_Error  error = FT_Err_Bad_Argument;
+static FT2_1_3_Error
+ft_pfr_check( FT2_1_3_Face           face,
+              FT2_1_3_PFR_Service   *aservice ) {
+	FT2_1_3_Error  error = FT2_1_3_Err_Bad_Argument;
 
 	if ( face && face->driver ) {
-		FT_Module    module = (FT_Module) face->driver;
+		FT2_1_3_Module    module = (FT2_1_3_Module) face->driver;
 		const char*  name   = module->clazz->module_name;
 
 		if ( name[0] == 'p' &&
 		        name[1] == 'f' &&
 		        name[2] == 'r' &&
 		        name[4] == 0   ) {
-			*aservice = (FT_PFR_Service) module->clazz->module_interface;
+			*aservice = (FT2_1_3_PFR_Service) module->clazz->module_interface;
 			error = 0;
 		}
 	}
@@ -43,14 +43,14 @@ ft_pfr_check( FT_Face           face,
 
 
 
-FT_EXPORT_DEF( FT_Error )
-FT_Get_PFR_Metrics( FT_Face     face,
-                    FT_UInt    *aoutline_resolution,
-                    FT_UInt    *ametrics_resolution,
-                    FT_Fixed   *ametrics_x_scale,
-                    FT_Fixed   *ametrics_y_scale ) {
-	FT_Error        error;
-	FT_PFR_Service  service;
+FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_Get_PFR_Metrics( FT2_1_3_Face     face,
+                    FT2_1_3_UInt    *aoutline_resolution,
+                    FT2_1_3_UInt    *ametrics_resolution,
+                    FT2_1_3_Fixed   *ametrics_x_scale,
+                    FT2_1_3_Fixed   *ametrics_y_scale ) {
+	FT2_1_3_Error        error;
+	FT2_1_3_PFR_Service  service;
 
 	error = ft_pfr_check( face, &service );
 	if ( !error ) {
@@ -63,13 +63,13 @@ FT_Get_PFR_Metrics( FT_Face     face,
 	return error;
 }
 
-FT_EXPORT_DEF( FT_Error )
-FT_Get_PFR_Kerning( FT_Face     face,
-                    FT_UInt     left,
-                    FT_UInt     right,
-                    FT_Vector  *avector ) {
-	FT_Error        error;
-	FT_PFR_Service  service;
+FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_Get_PFR_Kerning( FT2_1_3_Face     face,
+                    FT2_1_3_UInt     left,
+                    FT2_1_3_UInt     right,
+                    FT2_1_3_Vector  *avector ) {
+	FT2_1_3_Error        error;
+	FT2_1_3_PFR_Service  service;
 
 	error = ft_pfr_check( face, &service );
 	if ( !error ) {
@@ -79,12 +79,12 @@ FT_Get_PFR_Kerning( FT_Face     face,
 }
 
 
-FT_EXPORT_DEF( FT_Error )
-FT_Get_PFR_Advance( FT_Face    face,
-                    FT_UInt    gindex,
-                    FT_Pos    *aadvance ) {
-	FT_Error        error;
-	FT_PFR_Service  service;
+FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_Get_PFR_Advance( FT2_1_3_Face    face,
+                    FT2_1_3_UInt    gindex,
+                    FT2_1_3_Pos    *aadvance ) {
+	FT2_1_3_Error        error;
+	FT2_1_3_PFR_Service  service;
 
 	error = ft_pfr_check( face, &service );
 	if ( !error ) {

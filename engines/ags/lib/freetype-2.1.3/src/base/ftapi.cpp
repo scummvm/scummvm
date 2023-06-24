@@ -17,13 +17,13 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_LIST_H
-#include FT_OUTLINE_H
-#include FT_INTERNAL_OBJECTS_H
-#include FT_INTERNAL_DEBUG_H
-#include FT_INTERNAL_STREAM_H
-#include FT_TRUETYPE_TABLES_H
-#include FT_OUTLINE_H
+#include FT2_1_3_LIST_H
+#include FT2_1_3_OUTLINE_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_DEBUG_H
+#include FT2_1_3_INTERNAL_STREAM_H
+#include FT2_1_3_TRUETYPE_TABLES_H
+#include FT2_1_3_OUTLINE_H
 
 
 /*************************************************************************/
@@ -40,72 +40,72 @@
 
 /* backwards compatibility API */
 
-FT_BASE_DEF( void )
-FT_New_Memory_Stream( FT_Library  library,
-                      FT_Byte*    base,
-                      FT_ULong    size,
-                      FT_Stream   stream ) {
-	FT_UNUSED( library );
+FT2_1_3_BASE_DEF( void )
+FT2_1_3_New_Memory_Stream( FT2_1_3_Library  library,
+                      FT2_1_3_Byte*    base,
+                      FT2_1_3_ULong    size,
+                      FT2_1_3_Stream   stream ) {
+	FT2_1_3_UNUSED( library );
 
-	FT_Stream_OpenMemory( stream, base, size );
+	FT2_1_3_Stream_OpenMemory( stream, base, size );
 }
 
 
-FT_BASE_DEF( FT_Error )
-FT_Seek_Stream( FT_Stream  stream,
-                FT_ULong   pos ) {
-	return FT_Stream_Seek( stream, pos );
+FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_Seek_Stream( FT2_1_3_Stream  stream,
+                FT2_1_3_ULong   pos ) {
+	return FT2_1_3_Stream_Seek( stream, pos );
 }
 
 
-FT_BASE_DEF( FT_Error )
-FT_Skip_Stream( FT_Stream  stream,
-                FT_Long    distance ) {
-	return FT_Stream_Skip( stream, distance );
+FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_Skip_Stream( FT2_1_3_Stream  stream,
+                FT2_1_3_Long    distance ) {
+	return FT2_1_3_Stream_Skip( stream, distance );
 }
 
 
-FT_BASE_DEF( FT_Error )
-FT_Read_Stream( FT_Stream  stream,
-                FT_Byte*   buffer,
-                FT_ULong   count ) {
-	return FT_Stream_Read( stream, buffer, count );
+FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_Read_Stream( FT2_1_3_Stream  stream,
+                FT2_1_3_Byte*   buffer,
+                FT2_1_3_ULong   count ) {
+	return FT2_1_3_Stream_Read( stream, buffer, count );
 }
 
 
-FT_BASE_DEF( FT_Error )
-FT_Read_Stream_At( FT_Stream  stream,
-                   FT_ULong   pos,
-                   FT_Byte*   buffer,
-                   FT_ULong   count ) {
-	return FT_Stream_ReadAt( stream, pos, buffer, count );
+FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_Read_Stream_At( FT2_1_3_Stream  stream,
+                   FT2_1_3_ULong   pos,
+                   FT2_1_3_Byte*   buffer,
+                   FT2_1_3_ULong   count ) {
+	return FT2_1_3_Stream_ReadAt( stream, pos, buffer, count );
 }
 
 
-FT_BASE_DEF( FT_Error )
-FT_Extract_Frame( FT_Stream  stream,
-                  FT_ULong   count,
-                  FT_Byte**  pbytes ) {
-	return FT_Stream_ExtractFrame( stream, count, pbytes );
+FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_Extract_Frame( FT2_1_3_Stream  stream,
+                  FT2_1_3_ULong   count,
+                  FT2_1_3_Byte**  pbytes ) {
+	return FT2_1_3_Stream_ExtractFrame( stream, count, pbytes );
 }
 
 
-FT_BASE_DEF( void )
-FT_Release_Frame( FT_Stream  stream,
-                  FT_Byte**  pbytes ) {
-	FT_Stream_ReleaseFrame( stream, pbytes );
+FT2_1_3_BASE_DEF( void )
+FT2_1_3_Release_Frame( FT2_1_3_Stream  stream,
+                  FT2_1_3_Byte**  pbytes ) {
+	FT2_1_3_Stream_ReleaseFrame( stream, pbytes );
 }
 
-FT_BASE_DEF( FT_Error )
-FT_Access_Frame( FT_Stream  stream,
-                 FT_ULong   count ) {
-	return FT_Stream_EnterFrame( stream, count );
+FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_Access_Frame( FT2_1_3_Stream  stream,
+                 FT2_1_3_ULong   count ) {
+	return FT2_1_3_Stream_EnterFrame( stream, count );
 }
 
 
-FT_BASE_DEF( void )
-FT_Forget_Frame( FT_Stream  stream ) {
-	FT_Stream_ExitFrame( stream );
+FT2_1_3_BASE_DEF( void )
+FT2_1_3_Forget_Frame( FT2_1_3_Stream  stream ) {
+	FT2_1_3_Stream_ExitFrame( stream );
 }
 
 

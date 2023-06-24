@@ -17,18 +17,18 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_TYPE1_TYPES_H
-#include FT_INTERNAL_TYPE42_TYPES_H
-#include FT_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_TYPE1_TYPES_H
+#include FT2_1_3_INTERNAL_TYPE42_TYPES_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
 
 
 /* documentation is in t1tables.h */
 
-FT_EXPORT_DEF( FT_Error )
-FT_Get_PS_Font_Info( FT_Face          face,
+FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_Get_PS_Font_Info( FT2_1_3_Face          face,
                      PS_FontInfoRec*  afont_info ) {
 	PS_FontInfo  font_info = NULL;
-	FT_Error     error     = FT_Err_Invalid_Argument;
+	FT2_1_3_Error     error     = FT2_1_3_Err_Invalid_Argument;
 	const char*  driver_name;
 
 
@@ -43,7 +43,7 @@ FT_Get_PS_Font_Info( FT_Face          face,
 	}
 	if ( font_info != NULL ) {
 		*afont_info = *font_info;
-		error = FT_Err_Ok;
+		error = FT2_1_3_Err_Ok;
 	}
 
 	return error;
@@ -54,9 +54,9 @@ FT_Get_PS_Font_Info( FT_Face          face,
 
 /* documentation is in t1tables.h */
 
-FT_EXPORT_DEF( FT_Int )
-FT_Has_PS_Glyph_Names( FT_Face  face ) {
-	FT_Int       result = 0;
+FT2_1_3_EXPORT_DEF( FT2_1_3_Int )
+FT2_1_3_Has_PS_Glyph_Names( FT2_1_3_Face  face ) {
+	FT2_1_3_Int       result = 0;
 	const char*  driver_name;
 
 

@@ -17,23 +17,23 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_BDF_TYPES_H
-#include FT_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_BDF_TYPES_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
 
 
-FT_EXPORT_DEF( FT_Error )
-FT_Get_BDF_Charset_ID( FT_Face       face,
+FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_Get_BDF_Charset_ID( FT2_1_3_Face       face,
                        const char*  *acharset_encoding,
                        const char*  *acharset_registry ) {
-	FT_Error     error;
+	FT2_1_3_Error     error;
 	const char*  encoding = NULL;
 	const char*  registry = NULL;
 
 
-	error = FT_Err_Invalid_Argument;
+	error = FT2_1_3_Err_Invalid_Argument;
 
 	if ( face != NULL && face->driver != NULL ) {
-		FT_Module  driver = (FT_Module) face->driver;
+		FT2_1_3_Module  driver = (FT2_1_3_Module) face->driver;
 
 
 		if ( driver->clazz && driver->clazz->module_name         &&
