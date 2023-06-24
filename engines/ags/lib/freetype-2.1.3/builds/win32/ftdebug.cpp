@@ -42,10 +42,10 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_DEBUG_H
+#include FT2_1_3_INTERNAL_DEBUG_H
 
 
-#ifdef FT_DEBUG_LEVEL_ERROR
+#ifdef FT2_1_3_DEBUG_LEVEL_ERROR
 
 
 #  include <stdarg.h>
@@ -55,8 +55,8 @@
 #  include <windows.h>
 
 
-FT_EXPORT_DEF( void )
-FT_Message( const char*  fmt, ... ) {
+FT2_1_3_EXPORT_DEF( void )
+FT2_1_3_Message( const char*  fmt, ... ) {
 	static char buf[8192];
 	va_list     ap;
 
@@ -68,8 +68,8 @@ FT_Message( const char*  fmt, ... ) {
 }
 
 
-FT_EXPORT_DEF( void )
-FT_Panic( const char*  fmt, ... ) {
+FT2_1_3_EXPORT_DEF( void )
+FT2_1_3_Panic( const char*  fmt, ... ) {
 	static char buf[8192];
 	va_list     ap;
 
@@ -83,21 +83,21 @@ FT_Panic( const char*  fmt, ... ) {
 }
 
 
-#  ifdef FT_DEBUG_LEVEL_TRACE
+#  ifdef FT2_1_3_DEBUG_LEVEL_TRACE
 
 
 /* array of trace levels, initialized to 0 */
-int  ft_trace_levels[trace_count];
+int  FT2_1_3_trace_levels[trace_count];
 
 /* define array of trace toggle names */
-#    define FT_TRACE_DEF( x )  #x ,
+#    define FT2_1_3_TRACE_DEF( x )  #x ,
 
-static const char*  ft_trace_toggles[trace_count + 1] = {
-#    include FT_INTERNAL_TRACE_H
+static const char*  FT2_1_3_trace_toggles[trace_count + 1] = {
+#    include FT2_1_3_INTERNAL_TRACE_H
 	NULL
 };
 
-#    undef FT_TRACE_DEF
+#    undef FT2_1_3_TRACE_DEF
 
 
 /*************************************************************************/
@@ -118,8 +118,8 @@ static const char*  ft_trace_toggles[trace_count + 1] = {
 /* The level must be between 0 and 6; 0 means quiet (except for serious  */
 /* runtime errors), and 6 means _very_ verbose.                          */
 /*                                                                       */
-FT_BASE_DEF( void )
-ft_debug_init( void ) {
+FT2_1_3_BASE_DEF( void )
+FT2_1_3_debug_init( void ) {
 	const char*  ft2_debug = getenv( "FT2_DEBUG" );
 
 
@@ -144,7 +144,7 @@ ft_debug_init( void ) {
 
 
 				for ( n = 0; n < trace_count; n++ ) {
-					const char*  toggle = ft_trace_toggles[n];
+					const char*  toggle = FT2_1_3_trace_toggles[n];
 
 
 					for ( i = 0; i < len; i++ ) {
@@ -170,9 +170,9 @@ ft_debug_init( void ) {
 					if ( found == trace_any ) {
 						/* special case for "any" */
 						for ( n = 0; n < trace_count; n++ )
-							ft_trace_levels[n] = level;
+							FT2_1_3_trace_levels[n] = level;
 					} else
-						ft_trace_levels[found] = level;
+						FT2_1_3_trace_levels[found] = level;
 				}
 			}
 		}
@@ -180,17 +180,17 @@ ft_debug_init( void ) {
 }
 
 
-#  else  /* !FT_DEBUG_LEVEL_TRACE */
+#  else  /* !FT2_1_3_DEBUG_LEVEL_TRACE */
 
 
-FT_BASE_DEF( void )
-ft_debug_init( void ) {
+FT2_1_3_BASE_DEF( void )
+FT2_1_3_debug_init( void ) {
 	/* nothing */
 }
 
 
-#  endif /* !FT_DEBUG_LEVEL_TRACE */
+#  endif /* !FT2_1_3_DEBUG_LEVEL_TRACE */
 
-#endif /* FT_DEBUG_LEVEL_ERROR */
+#endif /* FT2_1_3_DEBUG_LEVEL_ERROR */
 
 /* END */
