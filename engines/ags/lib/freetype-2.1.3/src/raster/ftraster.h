@@ -21,11 +21,11 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_CONFIG_CONFIG_H
-#include FT_IMAGE_H
+#include FT2_1_3_CONFIG_CONFIG_H
+#include FT2_1_3_IMAGE_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -35,10 +35,10 @@ FT_BEGIN_HEADER
 /*                                                                       */
 /* #define _STANDALONE_ */
 
-FT_EXPORT_VAR( const FT_Raster_Funcs )  ft_standard_raster;
+FT2_1_3_EXPORT_VAR( const FT2_1_3_Raster_Funcs )  ft_standard_raster;
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __FTRASTER_H__ */
 

@@ -21,22 +21,22 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_RENDER_H
+#include FT2_1_3_RENDER_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
-FT_EXPORT_VAR( const FT_Renderer_Class )  ft_raster1_renderer_class;
+FT2_1_3_EXPORT_VAR( const FT2_1_3_Renderer_Class )  ft_raster1_renderer_class;
 
 /* this renderer is _NOT_ part of the default modules, you'll need */
 /* to register it by hand in your application.  It should only be  */
 /* used for backwards-compatibility with FT 1.x anyway.            */
 /*                                                                 */
-FT_EXPORT_VAR( const FT_Renderer_Class )  ft_raster5_renderer_class;
+FT2_1_3_EXPORT_VAR( const FT2_1_3_Renderer_Class )  ft_raster5_renderer_class;
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __FTREND1_H__ */
 

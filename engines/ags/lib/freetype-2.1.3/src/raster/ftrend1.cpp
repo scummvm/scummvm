@@ -17,8 +17,8 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_OBJECTS_H
-#include FT_OUTLINE_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
+#include FT2_1_3_OUTLINE_H
 #include "ftrend1.h"
 #include "ftraster.h"
 
@@ -26,9 +26,9 @@
 
 
 /* initialize renderer -- init its raster */
-static FT_Error
-ft_raster1_init( FT_Renderer  render ) {
-	FT_Library  library = FT_MODULE_LIBRARY( render );
+static FT2_1_3_Error
+ft_raster1_init( FT2_1_3_Renderer  render ) {
+	FT2_1_3_Library  library = FT2_1_3_MODULE_LIBRARY( render );
 
 
 	render->clazz->raster_class->raster_reset( render->raster,
@@ -40,10 +40,10 @@ ft_raster1_init( FT_Renderer  render ) {
 
 
 /* set render-specific mode */
-static FT_Error
-ft_raster1_set_mode( FT_Renderer  render,
-                     FT_ULong     mode_tag,
-                     FT_Pointer   data ) {
+static FT2_1_3_Error
+ft_raster1_set_mode( FT2_1_3_Renderer  render,
+                     FT2_1_3_ULong     mode_tag,
+                     FT2_1_3_Pointer   data ) {
 	/* we simply pass it to the raster */
 	return render->clazz->raster_class->raster_set_mode( render->raster,
 	        mode_tag,
@@ -52,12 +52,12 @@ ft_raster1_set_mode( FT_Renderer  render,
 
 
 /* transform a given glyph image */
-static FT_Error
-ft_raster1_transform( FT_Renderer   render,
-                      FT_GlyphSlot  slot,
-                      FT_Matrix*    matrix,
-                      FT_Vector*    delta ) {
-	FT_Error error = Raster_Err_Ok;
+static FT2_1_3_Error
+ft_raster1_transform( FT2_1_3_Renderer   render,
+                      FT2_1_3_GlyphSlot  slot,
+                      FT2_1_3_Matrix*    matrix,
+                      FT2_1_3_Vector*    delta ) {
+	FT2_1_3_Error error = Raster_Err_Ok;
 
 
 	if ( slot->format != render->glyph_format ) {
@@ -66,10 +66,10 @@ ft_raster1_transform( FT_Renderer   render,
 	}
 
 	if ( matrix )
-		FT_Outline_Transform( &slot->outline, matrix );
+		FT2_1_3_Outline_Transform( &slot->outline, matrix );
 
 	if ( delta )
-		FT_Outline_Translate( &slot->outline, delta->x, delta->y );
+		FT2_1_3_Outline_Translate( &slot->outline, delta->x, delta->y );
 
 Exit:
 	return error;
@@ -78,30 +78,30 @@ Exit:
 
 /* return the glyph's control box */
 static void
-ft_raster1_get_cbox( FT_Renderer   render,
-                     FT_GlyphSlot  slot,
-                     FT_BBox*      cbox ) {
-	FT_MEM_ZERO( cbox, sizeof ( *cbox ) );
+ft_raster1_get_cbox( FT2_1_3_Renderer   render,
+                     FT2_1_3_GlyphSlot  slot,
+                     FT2_1_3_BBox*      cbox ) {
+	FT2_1_3_MEM_ZERO( cbox, sizeof ( *cbox ) );
 
 	if ( slot->format == render->glyph_format )
-		FT_Outline_Get_CBox( &slot->outline, cbox );
+		FT2_1_3_Outline_Get_CBox( &slot->outline, cbox );
 }
 
 
 /* convert a slot's glyph image into a bitmap */
-static FT_Error
-ft_raster1_render( FT_Renderer     render,
-                   FT_GlyphSlot    slot,
-                   FT_Render_Mode  mode,
-                   FT_Vector*      origin ) {
-	FT_Error     error;
-	FT_Outline*  outline;
-	FT_BBox      cbox;
-	FT_UInt      width, height, pitch;
-	FT_Bitmap*   bitmap;
-	FT_Memory    memory;
+static FT2_1_3_Error
+ft_raster1_render( FT2_1_3_Renderer     render,
+                   FT2_1_3_GlyphSlot    slot,
+                   FT2_1_3_Render_Mode  mode,
+                   FT2_1_3_Vector*      origin ) {
+	FT2_1_3_Error     error;
+	FT2_1_3_Outline*  outline;
+	FT2_1_3_BBox      cbox;
+	FT2_1_3_UInt      width, height, pitch;
+	FT2_1_3_Bitmap*   bitmap;
+	FT2_1_3_Memory    memory;
 
-	FT_Raster_Params  params;
+	FT2_1_3_Raster_Params  params;
 
 
 	/* check glyph image format */
@@ -111,7 +111,7 @@ ft_raster1_render( FT_Renderer     render,
 	}
 
 	/* check rendering mode */
-	if ( mode != FT_RENDER_MODE_MONO ) {
+	if ( mode != FT2_1_3_RENDER_MODE_MONO ) {
 		/* raster1 is only capable of producing monochrome bitmaps */
 		if ( render->clazz == &ft_raster1_renderer_class )
 			return Raster_Err_Cannot_Render_Glyph;
@@ -125,80 +125,80 @@ ft_raster1_render( FT_Renderer     render,
 
 	/* translate the outline to the new origin if needed */
 	if ( origin )
-		FT_Outline_Translate( outline, origin->x, origin->y );
+		FT2_1_3_Outline_Translate( outline, origin->x, origin->y );
 
 	/* compute the control box, and grid fit it */
-	FT_Outline_Get_CBox( outline, &cbox );
+	FT2_1_3_Outline_Get_CBox( outline, &cbox );
 
 	cbox.xMin &= -64;
 	cbox.yMin &= -64;
 	cbox.xMax  = ( cbox.xMax + 63 ) & -64;
 	cbox.yMax  = ( cbox.yMax + 63 ) & -64;
 
-	width  = (FT_UInt)( ( cbox.xMax - cbox.xMin ) >> 6 );
-	height = (FT_UInt)( ( cbox.yMax - cbox.yMin ) >> 6 );
+	width  = (FT2_1_3_UInt)( ( cbox.xMax - cbox.xMin ) >> 6 );
+	height = (FT2_1_3_UInt)( ( cbox.yMax - cbox.yMin ) >> 6 );
 	bitmap = &slot->bitmap;
 	memory = render->root.memory;
 
 	/* release old bitmap buffer */
-	if ( slot->flags & FT_GLYPH_OWN_BITMAP ) {
-		FT_FREE( bitmap->buffer );
-		slot->flags &= ~FT_GLYPH_OWN_BITMAP;
+	if ( slot->flags & FT2_1_3_GLYPH_OWN_BITMAP ) {
+		FT2_1_3_FREE( bitmap->buffer );
+		slot->flags &= ~FT2_1_3_GLYPH_OWN_BITMAP;
 	}
 
 	/* allocate new one, depends on pixel format */
-	if ( !( mode & FT_RENDER_MODE_MONO ) ) {
+	if ( !( mode & FT2_1_3_RENDER_MODE_MONO ) ) {
 		/* we pad to 32 bits, only for backwards compatibility with FT 1.x */
 		pitch = ( width + 3 ) & -4;
-		bitmap->pixel_mode = FT_PIXEL_MODE_GRAY;
+		bitmap->pixel_mode = FT2_1_3_PIXEL_MODE_GRAY;
 		bitmap->num_grays  = 256;
 	} else {
 		pitch = ( ( width + 15 ) >> 4 ) << 1;
-		bitmap->pixel_mode = FT_PIXEL_MODE_MONO;
+		bitmap->pixel_mode = FT2_1_3_PIXEL_MODE_MONO;
 	}
 
 	bitmap->width = width;
 	bitmap->rows  = height;
 	bitmap->pitch = pitch;
 
-	if ( FT_ALLOC( bitmap->buffer, (FT_ULong)pitch * height ) )
+	if ( FT2_1_3_ALLOC( bitmap->buffer, (FT2_1_3_ULong)pitch * height ) )
 		goto Exit;
 
-	slot->flags |= FT_GLYPH_OWN_BITMAP;
+	slot->flags |= FT2_1_3_GLYPH_OWN_BITMAP;
 
 	/* translate outline to render it into the bitmap */
-	FT_Outline_Translate( outline, -cbox.xMin, -cbox.yMin );
+	FT2_1_3_Outline_Translate( outline, -cbox.xMin, -cbox.yMin );
 
 	/* set up parameters */
 	params.target = bitmap;
 	params.source = outline;
 	params.flags  = 0;
 
-	if ( bitmap->pixel_mode == FT_PIXEL_MODE_GRAY )
-		params.flags |= FT_RASTER_FLAG_AA;
+	if ( bitmap->pixel_mode == FT2_1_3_PIXEL_MODE_GRAY )
+		params.flags |= FT2_1_3_RASTER_FLAG_AA;
 
 	/* render outline into the bitmap */
 	error = render->raster_render( render->raster, &params );
 
-	FT_Outline_Translate( outline, cbox.xMin, cbox.yMin );
+	FT2_1_3_Outline_Translate( outline, cbox.xMin, cbox.yMin );
 
 	if ( error )
 		goto Exit;
 
-	slot->format      = FT_GLYPH_FORMAT_BITMAP;
-	slot->bitmap_left = (FT_Int)( cbox.xMin >> 6 );
-	slot->bitmap_top  = (FT_Int)( cbox.yMax >> 6 );
+	slot->format      = FT2_1_3_GLYPH_FORMAT_BITMAP;
+	slot->bitmap_left = (FT2_1_3_Int)( cbox.xMin >> 6 );
+	slot->bitmap_top  = (FT2_1_3_Int)( cbox.yMax >> 6 );
 
 Exit:
 	return error;
 }
 
 
-FT_CALLBACK_TABLE_DEF
-const FT_Renderer_Class  ft_raster1_renderer_class = {
+FT2_1_3_CALLBACK_TABLE_DEF
+const FT2_1_3_Renderer_Class  ft_raster1_renderer_class = {
 	{
 		ft_module_renderer,
-		sizeof( FT_RendererRec ),
+		sizeof( FT2_1_3_RendererRec ),
 
 		"raster1",
 		0x10000L,
@@ -206,19 +206,19 @@ const FT_Renderer_Class  ft_raster1_renderer_class = {
 
 		0,    /* module specific interface */
 
-		(FT_Module_Constructor)ft_raster1_init,
-		(FT_Module_Destructor) 0,
-		(FT_Module_Requester)  0
+		(FT2_1_3_Module_Constructor)ft_raster1_init,
+		(FT2_1_3_Module_Destructor) 0,
+		(FT2_1_3_Module_Requester)  0
 	},
 
-	FT_GLYPH_FORMAT_OUTLINE,
+	FT2_1_3_GLYPH_FORMAT_OUTLINE,
 
-	(FT_Renderer_RenderFunc)   ft_raster1_render,
-	(FT_Renderer_TransformFunc)ft_raster1_transform,
-	(FT_Renderer_GetCBoxFunc)  ft_raster1_get_cbox,
-	(FT_Renderer_SetModeFunc)  ft_raster1_set_mode,
+	(FT2_1_3_Renderer_RenderFunc)   ft_raster1_render,
+	(FT2_1_3_Renderer_TransformFunc)ft_raster1_transform,
+	(FT2_1_3_Renderer_GetCBoxFunc)  ft_raster1_get_cbox,
+	(FT2_1_3_Renderer_SetModeFunc)  ft_raster1_set_mode,
 
-	(FT_Raster_Funcs*)    &ft_standard_raster
+	(FT2_1_3_Raster_Funcs*)    &ft_standard_raster
 };
 
 
@@ -226,11 +226,11 @@ const FT_Renderer_Class  ft_raster1_renderer_class = {
 /* to register it by hand in your application.  It should only be    */
 /* used for backwards-compatibility with FT 1.x anyway.              */
 /*                                                                   */
-FT_CALLBACK_TABLE_DEF
-const FT_Renderer_Class  ft_raster5_renderer_class = {
+FT2_1_3_CALLBACK_TABLE_DEF
+const FT2_1_3_Renderer_Class  ft_raster5_renderer_class = {
 	{
 		ft_module_renderer,
-		sizeof( FT_RendererRec ),
+		sizeof( FT2_1_3_RendererRec ),
 
 		"raster5",
 		0x10000L,
@@ -238,19 +238,19 @@ const FT_Renderer_Class  ft_raster5_renderer_class = {
 
 		0,    /* module specific interface */
 
-		(FT_Module_Constructor)ft_raster1_init,
-		(FT_Module_Destructor) 0,
-		(FT_Module_Requester)  0
+		(FT2_1_3_Module_Constructor)ft_raster1_init,
+		(FT2_1_3_Module_Destructor) 0,
+		(FT2_1_3_Module_Requester)  0
 	},
 
-	FT_GLYPH_FORMAT_OUTLINE,
+	FT2_1_3_GLYPH_FORMAT_OUTLINE,
 
-	(FT_Renderer_RenderFunc)   ft_raster1_render,
-	(FT_Renderer_TransformFunc)ft_raster1_transform,
-	(FT_Renderer_GetCBoxFunc)  ft_raster1_get_cbox,
-	(FT_Renderer_SetModeFunc)  ft_raster1_set_mode,
+	(FT2_1_3_Renderer_RenderFunc)   ft_raster1_render,
+	(FT2_1_3_Renderer_TransformFunc)ft_raster1_transform,
+	(FT2_1_3_Renderer_GetCBoxFunc)  ft_raster1_get_cbox,
+	(FT2_1_3_Renderer_SetModeFunc)  ft_raster1_set_mode,
 
-	(FT_Raster_Funcs*)    &ft_standard_raster
+	(FT2_1_3_Raster_Funcs*)    &ft_standard_raster
 };
 
 
