@@ -22,6 +22,7 @@
 #ifndef M4_CORE_IMATH_H
 #define M4_CORE_IMATH_H
 
+#include "common/endian.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
@@ -62,12 +63,16 @@ uint16 convert_intel16(uint16 a);
 //	I N L I N E S
 //
 
-inline static short abs(short a) {
+inline short abs(short a) {
 	return (a >= 0) ? a : -a;
 }
 
-inline static long abs(long a) {
+inline long abs(long a) {
 	return (a >= 0) ? a : -a;
+}
+
+inline int16 convert_intel16(void *src) {
+	return READ_LE_INT16(src);
 }
 
 } // namespace M4

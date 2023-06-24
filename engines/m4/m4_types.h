@@ -60,6 +60,11 @@ struct Buffer {
 	int32 stride;
 };
 
+struct token {
+	char *sym_name;
+	int32 tag;
+};
+
 #include "common/pack-start.h"  // START STRUCT PACKING
 struct RGB8 {
 	byte r, g, b;
