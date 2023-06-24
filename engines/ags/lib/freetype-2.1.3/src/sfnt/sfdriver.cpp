@@ -17,8 +17,8 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_SFNT_H
-#include FT_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_SFNT_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
 
 #include "sfdriver.h"
 #include "ttload.h"
@@ -36,7 +36,7 @@
 
 static void*
 get_sfnt_table( TT_Face      face,
-                FT_Sfnt_Tag  tag ) {
+                FT2_1_3_Sfnt_Tag  tag ) {
 	void*  table;
 
 
@@ -80,25 +80,25 @@ get_sfnt_table( TT_Face      face,
 #ifdef TT_CONFIG_OPTION_POSTSCRIPT_NAMES
 
 
-static FT_Error
+static FT2_1_3_Error
 get_sfnt_glyph_name( TT_Face     face,
-                     FT_UInt     glyph_index,
-                     FT_Pointer  buffer,
-                     FT_UInt     buffer_max ) {
-	FT_String*  gname;
-	FT_Error    error;
+                     FT2_1_3_UInt     glyph_index,
+                     FT2_1_3_Pointer  buffer,
+                     FT2_1_3_UInt     buffer_max ) {
+	FT2_1_3_String*  gname;
+	FT2_1_3_Error    error;
 
 
 	error = tt_face_get_ps_name( face, glyph_index, &gname );
 	if ( !error && buffer_max > 0 ) {
-		FT_UInt  len = (FT_UInt)( ft_strlen( gname ) );
+		FT2_1_3_UInt  len = (FT2_1_3_UInt)( ft_strlen( gname ) );
 
 
 		if ( len >= buffer_max )
 			len = buffer_max - 1;
 
-		FT_MEM_COPY( buffer, gname, len );
-		((FT_Byte*)buffer)[len] = 0;
+		FT2_1_3_MEM_COPY( buffer, gname, len );
+		((FT2_1_3_Byte*)buffer)[len] = 0;
 	}
 
 	return error;
@@ -107,7 +107,7 @@ get_sfnt_glyph_name( TT_Face     face,
 
 static const char*
 get_sfnt_postscript_name( TT_Face  face ) {
-	FT_Int       n, found_win, found_apple;
+	FT2_1_3_Int       n, found_win, found_apple;
 	const char*  result = NULL;
 
 
@@ -138,29 +138,29 @@ get_sfnt_postscript_name( TT_Face  face ) {
 	}
 
 	if ( found_win != -1 ) {
-		FT_Memory         memory = face->root.memory;
+		FT2_1_3_Memory         memory = face->root.memory;
 		TT_NameEntryRec*  name   = face->name_table.names + found_win;
-		FT_UInt           len    = name->stringLength / 2;
-		FT_Error          error;
+		FT2_1_3_UInt           len    = name->stringLength / 2;
+		FT2_1_3_Error          error;
 
 
-		if ( !FT_ALLOC( result, name->stringLength + 1 ) ) {
-			FT_Stream   stream = face->name_table.stream;
-			FT_String*  r      = (FT_String*)result;
-			FT_Byte*    p      = (FT_Byte*)name->string;
+		if ( !FT2_1_3_ALLOC( result, name->stringLength + 1 ) ) {
+			FT2_1_3_Stream   stream = face->name_table.stream;
+			FT2_1_3_String*  r      = (FT2_1_3_String*)result;
+			FT2_1_3_Byte*    p      = (FT2_1_3_Byte*)name->string;
 
 
-			if ( FT_STREAM_SEEK( name->stringOffset ) ||
-			        FT_FRAME_ENTER( name->stringLength ) ) {
-				FT_FREE( result );
+			if ( FT2_1_3_STREAM_SEEK( name->stringOffset ) ||
+			        FT2_1_3_FRAME_ENTER( name->stringLength ) ) {
+				FT2_1_3_FREE( result );
 				name->stringLength = 0;
 				name->stringOffset = 0;
-				FT_FREE( name->string );
+				FT2_1_3_FREE( name->string );
 
 				goto Exit;
 			}
 
-			p = (FT_Byte*)stream->cursor;
+			p = (FT2_1_3_Byte*)stream->cursor;
 
 			for ( ; len > 0; len--, p += 2 ) {
 				if ( p[0] == 0 && p[1] >= 32 && p[1] < 128 )
@@ -168,28 +168,28 @@ get_sfnt_postscript_name( TT_Face  face ) {
 			}
 			*r = '\0';
 
-			FT_FRAME_EXIT();
+			FT2_1_3_FRAME_EXIT();
 		}
 		goto Exit;
 	}
 
 	if ( found_apple != -1 ) {
-		FT_Memory         memory = face->root.memory;
+		FT2_1_3_Memory         memory = face->root.memory;
 		TT_NameEntryRec*  name   = face->name_table.names + found_apple;
-		FT_UInt           len    = name->stringLength;
-		FT_Error          error;
+		FT2_1_3_UInt           len    = name->stringLength;
+		FT2_1_3_Error          error;
 
 
-		if ( !FT_ALLOC( result, len + 1 ) ) {
-			FT_Stream  stream = face->name_table.stream;
+		if ( !FT2_1_3_ALLOC( result, len + 1 ) ) {
+			FT2_1_3_Stream  stream = face->name_table.stream;
 
 
-			if ( FT_STREAM_SEEK( name->stringOffset ) ||
-			        FT_STREAM_READ( result, len )        ) {
+			if ( FT2_1_3_STREAM_SEEK( name->stringOffset ) ||
+			        FT2_1_3_STREAM_READ( result, len )        ) {
 				name->stringOffset = 0;
 				name->stringLength = 0;
-				FT_FREE( name->string );
-				FT_FREE( result );
+				FT2_1_3_FREE( name->string );
+				FT2_1_3_FREE( result );
 				goto Exit;
 			}
 			((char*)result)[len] = '\0';
@@ -205,21 +205,21 @@ Exit:
 #endif /* TT_CONFIG_OPTION_POSTSCRIPT_NAMES */
 
 
-FT_CALLBACK_DEF( FT_Module_Interface )
-sfnt_get_interface( FT_Module    module,
+FT2_1_3_CALLBACK_DEF( FT2_1_3_Module_Interface )
+sfnt_get_interface( FT2_1_3_Module    module,
                     const char*  module_interface ) {
-	FT_UNUSED( module );
+	FT2_1_3_UNUSED( module );
 
 	if ( ft_strcmp( module_interface, "get_sfnt" ) == 0 )
-		return (FT_Module_Interface)get_sfnt_table;
+		return (FT2_1_3_Module_Interface)get_sfnt_table;
 
 #ifdef TT_CONFIG_OPTION_POSTSCRIPT_NAMES
 	if ( ft_strcmp( module_interface, "glyph_name" ) == 0 )
-		return (FT_Module_Interface)get_sfnt_glyph_name;
+		return (FT2_1_3_Module_Interface)get_sfnt_glyph_name;
 #endif
 
 	if ( ft_strcmp( module_interface, "postscript_name" ) == 0 )
-		return (FT_Module_Interface)get_sfnt_postscript_name;
+		return (FT2_1_3_Module_Interface)get_sfnt_postscript_name;
 
 	return 0;
 }
@@ -295,10 +295,10 @@ const SFNT_Interface  sfnt_interface = {
 };
 
 
-FT_CALLBACK_TABLE_DEF
-const FT_Module_Class  sfnt_module_class = {
+FT2_1_3_CALLBACK_TABLE_DEF
+const FT2_1_3_Module_Class  sfnt_module_class = {
 	0,  /* not a font driver or renderer */
-	sizeof( FT_ModuleRec ),
+	sizeof( FT2_1_3_ModuleRec ),
 
 	"sfnt",     /* driver name                            */
 	0x10000L,   /* driver version 1.0                     */
@@ -306,9 +306,9 @@ const FT_Module_Class  sfnt_module_class = {
 
 	(const void*)&sfnt_interface,  /* module specific interface */
 
-	(FT_Module_Constructor)0,
-	(FT_Module_Destructor) 0,
-	(FT_Module_Requester)  sfnt_get_interface
+	(FT2_1_3_Module_Constructor)0,
+	(FT2_1_3_Module_Destructor) 0,
+	(FT2_1_3_Module_Requester)  sfnt_get_interface
 };
 
 

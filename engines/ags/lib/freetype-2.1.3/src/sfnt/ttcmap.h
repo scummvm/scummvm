@@ -21,23 +21,23 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_TRUETYPE_TYPES_H
+#include FT2_1_3_INTERNAL_TRUETYPE_TYPES_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_charmap( TT_Face       face,
                       TT_CMapTable  cmap,
-                      FT_Stream     input );
+                      FT2_1_3_Stream     input );
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_free_charmap( TT_Face       face,
                       TT_CMapTable  cmap );
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __TTCMAP_H__ */
 

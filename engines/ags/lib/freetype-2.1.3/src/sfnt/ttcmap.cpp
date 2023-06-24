@@ -17,7 +17,7 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_DEBUG_H
+#include FT2_1_3_INTERNAL_DEBUG_H
 #include "ttload.h"
 #include "ttcmap.h"
 
@@ -26,61 +26,61 @@
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
+/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT_COMPONENT
-#define FT_COMPONENT  trace_ttcmap
+#undef  FT2_1_3_COMPONENT
+#define FT2_1_3_COMPONENT  trace_ttcmap
 
 
-FT_CALLBACK_DEF( FT_UInt )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 code_to_index0( TT_CMapTable  charmap,
-                FT_ULong      char_code );
+                FT2_1_3_ULong      char_code );
 
-FT_CALLBACK_DEF( FT_ULong )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_ULong )
 code_to_next0( TT_CMapTable  charmap,
-               FT_ULong      char_code );
+               FT2_1_3_ULong      char_code );
 
-FT_CALLBACK_DEF( FT_UInt )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 code_to_index2( TT_CMapTable  charmap,
-                FT_ULong      char_code );
+                FT2_1_3_ULong      char_code );
 
-FT_CALLBACK_DEF( FT_ULong )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_ULong )
 code_to_next2( TT_CMapTable  charmap,
-               FT_ULong      char_code );
+               FT2_1_3_ULong      char_code );
 
-FT_CALLBACK_DEF( FT_UInt )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 code_to_index4( TT_CMapTable  charmap,
-                FT_ULong      char_code );
+                FT2_1_3_ULong      char_code );
 
-FT_CALLBACK_DEF( FT_ULong )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_ULong )
 code_to_next4( TT_CMapTable  charmap,
-               FT_ULong      char_code );
+               FT2_1_3_ULong      char_code );
 
-FT_CALLBACK_DEF( FT_UInt )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 code_to_index6( TT_CMapTable  charmap,
-                FT_ULong      char_code );
+                FT2_1_3_ULong      char_code );
 
-FT_CALLBACK_DEF( FT_ULong )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_ULong )
 code_to_next6( TT_CMapTable  charmap,
-               FT_ULong      char_code );
+               FT2_1_3_ULong      char_code );
 
-FT_CALLBACK_DEF( FT_UInt )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 code_to_index8_12( TT_CMapTable  charmap,
-                   FT_ULong      char_code );
+                   FT2_1_3_ULong      char_code );
 
-FT_CALLBACK_DEF( FT_ULong )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_ULong )
 code_to_next8_12( TT_CMapTable  charmap,
-                  FT_ULong      char_code );
+                  FT2_1_3_ULong      char_code );
 
-FT_CALLBACK_DEF( FT_UInt )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 code_to_index10( TT_CMapTable  charmap,
-                 FT_ULong      char_code );
+                 FT2_1_3_ULong      char_code );
 
-FT_CALLBACK_DEF( FT_ULong )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_ULong )
 code_to_next10( TT_CMapTable  charmap,
-                FT_ULong      char_code );
+                FT2_1_3_ULong      char_code );
 
 
 /*************************************************************************/
@@ -107,16 +107,16 @@ code_to_next10( TT_CMapTable  charmap,
 /*    opened).  In case of error, all partially allocated tables are     */
 /*    released.                                                          */
 /*                                                                       */
-FT_LOCAL_DEF( FT_Error )
+FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_charmap( TT_Face       face,
                       TT_CMapTable  cmap,
-                      FT_Stream     stream ) {
-	FT_Error     error;
-	FT_Memory    memory;
-	FT_UShort    num_SH, num_Seg, i;
-	FT_ULong     j, n;
+                      FT2_1_3_Stream     stream ) {
+	FT2_1_3_Error     error;
+	FT2_1_3_Memory    memory;
+	FT2_1_3_UShort    num_SH, num_Seg, i;
+	FT2_1_3_ULong     j, n;
 
-	FT_UShort    u, l;
+	FT2_1_3_UShort    u, l;
 
 	TT_CMap0     cmap0;
 	TT_CMap2     cmap2;
@@ -135,16 +135,16 @@ tt_face_load_charmap( TT_Face       face,
 
 	memory = stream->memory;
 
-	if ( FT_STREAM_SEEK( cmap->offset ) )
+	if ( FT2_1_3_STREAM_SEEK( cmap->offset ) )
 		return error;
 
 	switch ( cmap->format ) {
 	case 0:
 		cmap0 = &cmap->c.cmap0;
 
-		if ( FT_READ_USHORT( cmap0->language )           ||
-		        FT_ALLOC( cmap0->glyphIdArray, 256L )       ||
-		        FT_STREAM_READ( cmap0->glyphIdArray, 256L ) )
+		if ( FT2_1_3_READ_USHORT( cmap0->language )           ||
+		        FT2_1_3_ALLOC( cmap0->glyphIdArray, 256L )       ||
+		        FT2_1_3_STREAM_READ( cmap0->glyphIdArray, 256L ) )
 			goto Fail;
 
 		cmap->get_index     = code_to_index0;
@@ -157,61 +157,61 @@ tt_face_load_charmap( TT_Face       face,
 
 		/* allocate subheader keys */
 
-		if ( FT_NEW_ARRAY( cmap2->subHeaderKeys, 256 ) ||
-		        FT_FRAME_ENTER( 2L + 512L )               )
+		if ( FT2_1_3_NEW_ARRAY( cmap2->subHeaderKeys, 256 ) ||
+		        FT2_1_3_FRAME_ENTER( 2L + 512L )               )
 			goto Fail;
 
-		cmap2->language = FT_GET_USHORT();
+		cmap2->language = FT2_1_3_GET_USHORT();
 
 		for ( i = 0; i < 256; i++ ) {
-			u = (FT_UShort)( FT_GET_USHORT() / 8 );
+			u = (FT2_1_3_UShort)( FT2_1_3_GET_USHORT() / 8 );
 			cmap2->subHeaderKeys[i] = u;
 
 			if ( num_SH < u )
 				num_SH = u;
 		}
 
-		FT_FRAME_EXIT();
+		FT2_1_3_FRAME_EXIT();
 
 		/* load subheaders */
 
-		cmap2->numGlyphId = l = (FT_UShort)(
+		cmap2->numGlyphId = l = (FT2_1_3_UShort)(
 		                            ( ( cmap->length - 2L * ( 256 + 3 ) - num_SH * 8L ) & 0xFFFFU ) / 2 );
 
-		if ( FT_NEW_ARRAY( cmap2->subHeaders, num_SH + 1 ) ||
-		        FT_FRAME_ENTER( ( num_SH + 1 ) * 8L )         ) {
-			FT_FREE( cmap2->subHeaderKeys );
+		if ( FT2_1_3_NEW_ARRAY( cmap2->subHeaders, num_SH + 1 ) ||
+		        FT2_1_3_FRAME_ENTER( ( num_SH + 1 ) * 8L )         ) {
+			FT2_1_3_FREE( cmap2->subHeaderKeys );
 			goto Fail;
 		}
 
 		cmap2sub = cmap2->subHeaders;
 
 		for ( i = 0; i <= num_SH; i++ ) {
-			cmap2sub->firstCode     = FT_GET_USHORT();
-			cmap2sub->entryCount    = FT_GET_USHORT();
-			cmap2sub->idDelta       = FT_GET_SHORT();
+			cmap2sub->firstCode     = FT2_1_3_GET_USHORT();
+			cmap2sub->entryCount    = FT2_1_3_GET_USHORT();
+			cmap2sub->idDelta       = FT2_1_3_GET_SHORT();
 			/* we apply the location offset immediately */
-			cmap2sub->idRangeOffset = (FT_UShort)(
-			                              FT_GET_USHORT() - ( num_SH - i ) * 8 - 2 );
+			cmap2sub->idRangeOffset = (FT2_1_3_UShort)(
+			                              FT2_1_3_GET_USHORT() - ( num_SH - i ) * 8 - 2 );
 
 			cmap2sub++;
 		}
 
-		FT_FRAME_EXIT();
+		FT2_1_3_FRAME_EXIT();
 
 		/* load glyph IDs */
 
-		if ( FT_NEW_ARRAY( cmap2->glyphIdArray, l ) ||
-		        FT_FRAME_ENTER( l * 2L )               ) {
-			FT_FREE( cmap2->subHeaders );
-			FT_FREE( cmap2->subHeaderKeys );
+		if ( FT2_1_3_NEW_ARRAY( cmap2->glyphIdArray, l ) ||
+		        FT2_1_3_FRAME_ENTER( l * 2L )               ) {
+			FT2_1_3_FREE( cmap2->subHeaders );
+			FT2_1_3_FREE( cmap2->subHeaderKeys );
 			goto Fail;
 		}
 
 		for ( i = 0; i < l; i++ )
-			cmap2->glyphIdArray[i] = FT_GET_USHORT();
+			cmap2->glyphIdArray[i] = FT2_1_3_GET_USHORT();
 
-		FT_FRAME_EXIT();
+		FT2_1_3_FRAME_EXIT();
 
 		cmap->get_index = code_to_index2;
 		cmap->get_next_char = code_to_next2;
@@ -222,58 +222,58 @@ tt_face_load_charmap( TT_Face       face,
 
 		/* load header */
 
-		if ( FT_FRAME_ENTER( 10L ) )
+		if ( FT2_1_3_FRAME_ENTER( 10L ) )
 			goto Fail;
 
-		cmap4->language      = FT_GET_USHORT();
-		cmap4->segCountX2    = FT_GET_USHORT();
-		cmap4->searchRange   = FT_GET_USHORT();
-		cmap4->entrySelector = FT_GET_USHORT();
-		cmap4->rangeShift    = FT_GET_USHORT();
+		cmap4->language      = FT2_1_3_GET_USHORT();
+		cmap4->segCountX2    = FT2_1_3_GET_USHORT();
+		cmap4->searchRange   = FT2_1_3_GET_USHORT();
+		cmap4->entrySelector = FT2_1_3_GET_USHORT();
+		cmap4->rangeShift    = FT2_1_3_GET_USHORT();
 
-		num_Seg = (FT_UShort)( cmap4->segCountX2 / 2 );
+		num_Seg = (FT2_1_3_UShort)( cmap4->segCountX2 / 2 );
 
-		FT_FRAME_EXIT();
+		FT2_1_3_FRAME_EXIT();
 
 		/* load segments */
 
-		if ( FT_NEW_ARRAY( cmap4->segments, num_Seg )   ||
-		        FT_FRAME_ENTER( ( num_Seg * 4 + 1 ) * 2L ) )
+		if ( FT2_1_3_NEW_ARRAY( cmap4->segments, num_Seg )   ||
+		        FT2_1_3_FRAME_ENTER( ( num_Seg * 4 + 1 ) * 2L ) )
 			goto Fail;
 
 		segments = cmap4->segments;
 
 		for ( i = 0; i < num_Seg; i++ )
-			segments[i].endCount = FT_GET_USHORT();
+			segments[i].endCount = FT2_1_3_GET_USHORT();
 
-		(void)FT_GET_USHORT();
-
-		for ( i = 0; i < num_Seg; i++ )
-			segments[i].startCount = FT_GET_USHORT();
+		(void)FT2_1_3_GET_USHORT();
 
 		for ( i = 0; i < num_Seg; i++ )
-			segments[i].idDelta = FT_GET_SHORT();
+			segments[i].startCount = FT2_1_3_GET_USHORT();
 
 		for ( i = 0; i < num_Seg; i++ )
-			segments[i].idRangeOffset = FT_GET_USHORT();
+			segments[i].idDelta = FT2_1_3_GET_SHORT();
 
-		FT_FRAME_EXIT();
+		for ( i = 0; i < num_Seg; i++ )
+			segments[i].idRangeOffset = FT2_1_3_GET_USHORT();
 
-		cmap4->numGlyphId = l = (FT_UShort)(
+		FT2_1_3_FRAME_EXIT();
+
+		cmap4->numGlyphId = l = (FT2_1_3_UShort)(
 		                            ( ( cmap->length - ( 16L + 8L * num_Seg ) ) & 0xFFFFU ) / 2 );
 
 		/* load IDs */
 
-		if ( FT_NEW_ARRAY( cmap4->glyphIdArray, l ) ||
-		        FT_FRAME_ENTER( l * 2L )               ) {
-			FT_FREE( cmap4->segments );
+		if ( FT2_1_3_NEW_ARRAY( cmap4->glyphIdArray, l ) ||
+		        FT2_1_3_FRAME_ENTER( l * 2L )               ) {
+			FT2_1_3_FREE( cmap4->segments );
 			goto Fail;
 		}
 
 		for ( i = 0; i < l; i++ )
-			cmap4->glyphIdArray[i] = FT_GET_USHORT();
+			cmap4->glyphIdArray[i] = FT2_1_3_GET_USHORT();
 
-		FT_FRAME_EXIT();
+		FT2_1_3_FRAME_EXIT();
 
 		cmap4->last_segment = cmap4->segments;
 
@@ -284,25 +284,25 @@ tt_face_load_charmap( TT_Face       face,
 	case 6:
 		cmap6 = &cmap->c.cmap6;
 
-		if ( FT_FRAME_ENTER( 6L ) )
+		if ( FT2_1_3_FRAME_ENTER( 6L ) )
 			goto Fail;
 
-		cmap6->language   = FT_GET_USHORT();
-		cmap6->firstCode  = FT_GET_USHORT();
-		cmap6->entryCount = FT_GET_USHORT();
+		cmap6->language   = FT2_1_3_GET_USHORT();
+		cmap6->firstCode  = FT2_1_3_GET_USHORT();
+		cmap6->entryCount = FT2_1_3_GET_USHORT();
 
-		FT_FRAME_EXIT();
+		FT2_1_3_FRAME_EXIT();
 
 		l = cmap6->entryCount;
 
-		if ( FT_NEW_ARRAY( cmap6->glyphIdArray, l ) ||
-		        FT_FRAME_ENTER( l * 2L )               )
+		if ( FT2_1_3_NEW_ARRAY( cmap6->glyphIdArray, l ) ||
+		        FT2_1_3_FRAME_ENTER( l * 2L )               )
 			goto Fail;
 
 		for ( i = 0; i < l; i++ )
-			cmap6->glyphIdArray[i] = FT_GET_USHORT();
+			cmap6->glyphIdArray[i] = FT2_1_3_GET_USHORT();
 
-		FT_FRAME_EXIT();
+		FT2_1_3_FRAME_EXIT();
 		cmap->get_index     = code_to_index6;
 		cmap->get_next_char = code_to_next6;
 		break;
@@ -311,36 +311,36 @@ tt_face_load_charmap( TT_Face       face,
 	case 12:
 		cmap8_12 = &cmap->c.cmap8_12;
 
-		if ( FT_FRAME_ENTER( 8L ) )
+		if ( FT2_1_3_FRAME_ENTER( 8L ) )
 			goto Fail;
 
-		cmap->length       = FT_GET_ULONG();
-		cmap8_12->language = FT_GET_ULONG();
+		cmap->length       = FT2_1_3_GET_ULONG();
+		cmap8_12->language = FT2_1_3_GET_ULONG();
 
-		FT_FRAME_EXIT();
+		FT2_1_3_FRAME_EXIT();
 
 		if ( cmap->format == 8 )
-			if ( FT_STREAM_SKIP( 8192L ) )
+			if ( FT2_1_3_STREAM_SKIP( 8192L ) )
 				goto Fail;
 
-		if ( FT_READ_ULONG( cmap8_12->nGroups ) )
+		if ( FT2_1_3_READ_ULONG( cmap8_12->nGroups ) )
 			goto Fail;
 
 		n = cmap8_12->nGroups;
 
-		if ( FT_NEW_ARRAY( cmap8_12->groups, n ) ||
-		        FT_FRAME_ENTER( n * 3 * 4L )        )
+		if ( FT2_1_3_NEW_ARRAY( cmap8_12->groups, n ) ||
+		        FT2_1_3_FRAME_ENTER( n * 3 * 4L )        )
 			goto Fail;
 
 		groups = cmap8_12->groups;
 
 		for ( j = 0; j < n; j++ ) {
-			groups[j].startCharCode = FT_GET_ULONG();
-			groups[j].endCharCode   = FT_GET_ULONG();
-			groups[j].startGlyphID  = FT_GET_ULONG();
+			groups[j].startCharCode = FT2_1_3_GET_ULONG();
+			groups[j].endCharCode   = FT2_1_3_GET_ULONG();
+			groups[j].startGlyphID  = FT2_1_3_GET_ULONG();
 		}
 
-		FT_FRAME_EXIT();
+		FT2_1_3_FRAME_EXIT();
 
 		cmap8_12->last_group = cmap8_12->groups;
 
@@ -351,26 +351,26 @@ tt_face_load_charmap( TT_Face       face,
 	case 10:
 		cmap10 = &cmap->c.cmap10;
 
-		if ( FT_FRAME_ENTER( 16L ) )
+		if ( FT2_1_3_FRAME_ENTER( 16L ) )
 			goto Fail;
 
-		cmap->length          = FT_GET_ULONG();
-		cmap10->language      = FT_GET_ULONG();
-		cmap10->startCharCode = FT_GET_ULONG();
-		cmap10->numChars      = FT_GET_ULONG();
+		cmap->length          = FT2_1_3_GET_ULONG();
+		cmap10->language      = FT2_1_3_GET_ULONG();
+		cmap10->startCharCode = FT2_1_3_GET_ULONG();
+		cmap10->numChars      = FT2_1_3_GET_ULONG();
 
-		FT_FRAME_EXIT();
+		FT2_1_3_FRAME_EXIT();
 
 		n = cmap10->numChars;
 
-		if ( FT_NEW_ARRAY( cmap10->glyphs, n ) ||
-		        FT_FRAME_ENTER( n * 2L )          )
+		if ( FT2_1_3_NEW_ARRAY( cmap10->glyphs, n ) ||
+		        FT2_1_3_FRAME_ENTER( n * 2L )          )
 			goto Fail;
 
 		for ( j = 0; j < n; j++ )
-			cmap10->glyphs[j] = FT_GET_USHORT();
+			cmap10->glyphs[j] = FT2_1_3_GET_USHORT();
 
-		FT_FRAME_EXIT();
+		FT2_1_3_FRAME_EXIT();
 		cmap->get_index     = code_to_index10;
 		cmap->get_next_char = code_to_next10;
 		break;
@@ -404,10 +404,10 @@ Fail:
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT_LOCAL_DEF( FT_Error )
+FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_free_charmap( TT_Face       face,
                       TT_CMapTable  cmap ) {
-	FT_Memory  memory;
+	FT2_1_3_Memory  memory;
 
 
 	if ( !cmap )
@@ -417,34 +417,34 @@ tt_face_free_charmap( TT_Face       face,
 
 	switch ( cmap->format ) {
 	case 0:
-		FT_FREE( cmap->c.cmap0.glyphIdArray );
+		FT2_1_3_FREE( cmap->c.cmap0.glyphIdArray );
 		break;
 
 	case 2:
-		FT_FREE( cmap->c.cmap2.subHeaderKeys );
-		FT_FREE( cmap->c.cmap2.subHeaders );
-		FT_FREE( cmap->c.cmap2.glyphIdArray );
+		FT2_1_3_FREE( cmap->c.cmap2.subHeaderKeys );
+		FT2_1_3_FREE( cmap->c.cmap2.subHeaders );
+		FT2_1_3_FREE( cmap->c.cmap2.glyphIdArray );
 		break;
 
 	case 4:
-		FT_FREE( cmap->c.cmap4.segments );
-		FT_FREE( cmap->c.cmap4.glyphIdArray );
+		FT2_1_3_FREE( cmap->c.cmap4.segments );
+		FT2_1_3_FREE( cmap->c.cmap4.glyphIdArray );
 		cmap->c.cmap4.segCountX2 = 0;
 		break;
 
 	case 6:
-		FT_FREE( cmap->c.cmap6.glyphIdArray );
+		FT2_1_3_FREE( cmap->c.cmap6.glyphIdArray );
 		cmap->c.cmap6.entryCount = 0;
 		break;
 
 	case 8:
 	case 12:
-		FT_FREE( cmap->c.cmap8_12.groups );
+		FT2_1_3_FREE( cmap->c.cmap8_12.groups );
 		cmap->c.cmap8_12.nGroups = 0;
 		break;
 
 	case 10:
-		FT_FREE( cmap->c.cmap10.glyphs );
+		FT2_1_3_FREE( cmap->c.cmap10.glyphs );
 		cmap->c.cmap10.numChars = 0;
 		break;
 
@@ -476,9 +476,9 @@ tt_face_free_charmap( TT_Face       face,
 /* <Return>                                                              */
 /*    Glyph index into the glyphs array.  0 if the glyph does not exist. */
 /*                                                                       */
-FT_CALLBACK_DEF( FT_UInt )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 code_to_index0( TT_CMapTable  cmap,
-                FT_ULong      charCode ) {
+                FT2_1_3_ULong      charCode ) {
 	TT_CMap0  cmap0 = &cmap->c.cmap0;
 
 
@@ -504,9 +504,9 @@ code_to_index0( TT_CMapTable  cmap,
 /* <Return>                                                              */
 /*    Next char code.  0 if no higher one is encoded.                    */
 /*                                                                       */
-FT_CALLBACK_DEF( FT_ULong )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_ULong )
 code_to_next0( TT_CMapTable  cmap,
-               FT_ULong      charCode ) {
+               FT2_1_3_ULong      charCode ) {
 	TT_CMap0  cmap0 = &cmap->c.cmap0;
 
 
@@ -533,19 +533,19 @@ code_to_next0( TT_CMapTable  cmap,
 /* <Return>                                                              */
 /*    Glyph index into the glyphs array.  0 if the glyph does not exist. */
 /*                                                                       */
-FT_CALLBACK_DEF( FT_UInt )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 code_to_index2( TT_CMapTable  cmap,
-                FT_ULong      charCode ) {
-	FT_UInt            result, index1, offset;
-	FT_UInt            char_lo;
-	FT_ULong           char_hi;
+                FT2_1_3_ULong      charCode ) {
+	FT2_1_3_UInt            result, index1, offset;
+	FT2_1_3_UInt            char_lo;
+	FT2_1_3_ULong           char_hi;
 	TT_CMap2SubHeader  sh2;
 	TT_CMap2           cmap2;
 
 
 	cmap2   = &cmap->c.cmap2;
 	result  = 0;
-	char_lo = (FT_UInt)( charCode & 0xFF );
+	char_lo = (FT2_1_3_UInt)( charCode & 0xFF );
 	char_hi = charCode >> 8;
 
 	if ( char_hi == 0 ) {
@@ -564,9 +564,9 @@ code_to_index2( TT_CMapTable  cmap,
 	sh2      = cmap2->subHeaders + index1;
 	char_lo -= sh2->firstCode;
 
-	if ( char_lo < (FT_UInt)sh2->entryCount ) {
+	if ( char_lo < (FT2_1_3_UInt)sh2->entryCount ) {
 		offset = sh2->idRangeOffset / 2 + char_lo;
-		if ( offset < (FT_UInt)cmap2->numGlyphId ) {
+		if ( offset < (FT2_1_3_UInt)cmap2->numGlyphId ) {
 			result = cmap2->glyphIdArray[offset];
 			if ( result )
 				result = ( result + sh2->idDelta ) & 0xFFFFU;
@@ -593,12 +593,12 @@ code_to_index2( TT_CMapTable  cmap,
 /* <Return>                                                              */
 /*    Next encoded character.  0 if none exists.                         */
 /*                                                                       */
-FT_CALLBACK_DEF( FT_ULong )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_ULong )
 code_to_next2( TT_CMapTable  cmap,
-               FT_ULong      charCode ) {
-	FT_UInt            index1, offset;
-	FT_UInt            char_lo;
-	FT_ULong           char_hi;
+               FT2_1_3_ULong      charCode ) {
+	FT2_1_3_UInt            index1, offset;
+	FT2_1_3_UInt            char_lo;
+	FT2_1_3_ULong           char_hi;
 	TT_CMap2SubHeader  sh2;
 	TT_CMap2           cmap2;
 
@@ -611,7 +611,7 @@ code_to_next2( TT_CMapTable  cmap,
 	 * glyphs and then walk to the first glyph in that subHeader.
 	 */
 	while ( charCode < 0x10000L ) {
-		char_lo = (FT_UInt)( charCode & 0xFF );
+		char_lo = (FT2_1_3_UInt)( charCode & 0xFF );
 		char_hi = charCode >> 8;
 
 		if ( char_hi == 0 ) {
@@ -634,13 +634,13 @@ code_to_next2( TT_CMapTable  cmap,
 		sh2      = cmap2->subHeaders + index1;
 		char_lo -= sh2->firstCode;
 
-		if ( char_lo > (FT_UInt)sh2->entryCount ) {
+		if ( char_lo > (FT2_1_3_UInt)sh2->entryCount ) {
 			charCode = ( char_hi + 1 ) << 8;
 			continue;
 		}
 
 		offset = sh2->idRangeOffset / 2 + char_lo;
-		if ( offset >= (FT_UInt)cmap2->numGlyphId ||
+		if ( offset >= (FT2_1_3_UInt)cmap2->numGlyphId ||
 		        cmap2->glyphIdArray[offset] == 0     ) {
 			charCode++;
 			continue;
@@ -668,10 +668,10 @@ code_to_next2( TT_CMapTable  cmap,
 /* <Return>                                                              */
 /*    Glyph index into the glyphs array.  0 if the glyph does not exist. */
 /*                                                                       */
-FT_CALLBACK_DEF( FT_UInt )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 code_to_index4( TT_CMapTable  cmap,
-                FT_ULong      charCode ) {
-	FT_UInt             result, index1, segCount;
+                FT2_1_3_ULong      charCode ) {
+	FT2_1_3_UInt             result, index1, segCount;
 	TT_CMap4            cmap4;
 	TT_CMap4SegmentRec  *seg4, *limit;
 
@@ -693,18 +693,18 @@ code_to_index4( TT_CMapTable  cmap,
 	/* cache is to significantly speed up charcode to glyph index         */
 	/* conversion.                                                        */
 
-	if ( (FT_ULong)( charCode       - seg4->startCount ) <
-	        (FT_ULong)( seg4->endCount - seg4->startCount ) )
+	if ( (FT2_1_3_ULong)( charCode       - seg4->startCount ) <
+	        (FT2_1_3_ULong)( seg4->endCount - seg4->startCount ) )
 		goto Found1;
 
 	for ( seg4 = cmap4->segments; seg4 < limit; seg4++ ) {
 		/* the ranges are sorted in increasing order.  If we are out of */
 		/* the range here, the char code isn't in the charmap, so exit. */
 
-		if ( charCode > (FT_UInt)seg4->endCount )
+		if ( charCode > (FT2_1_3_UInt)seg4->endCount )
 			continue;
 
-		if ( charCode >= (FT_UInt)seg4->startCount )
+		if ( charCode >= (FT2_1_3_UInt)seg4->startCount )
 			goto Found;
 	}
 	return 0;
@@ -717,15 +717,15 @@ Found1:
 	/* directly                                                  */
 
 	if ( seg4->idRangeOffset == 0 )
-		result = (FT_UInt)( charCode + seg4->idDelta ) & 0xFFFFU;
+		result = (FT2_1_3_UInt)( charCode + seg4->idDelta ) & 0xFFFFU;
 	else {
 		/* otherwise, we must use the glyphIdArray to do it */
-		index1 = (FT_UInt)( seg4->idRangeOffset / 2
+		index1 = (FT2_1_3_UInt)( seg4->idRangeOffset / 2
 		                    + ( charCode - seg4->startCount )
 		                    + ( seg4 - cmap4->segments )
 		                    - segCount );
 
-		if ( index1 < (FT_UInt)cmap4->numGlyphId &&
+		if ( index1 < (FT2_1_3_UInt)cmap4->numGlyphId &&
 		        cmap4->glyphIdArray[index1] != 0    )
 			result = ( cmap4->glyphIdArray[index1] + seg4->idDelta ) & 0xFFFFU;
 	}
@@ -750,10 +750,10 @@ Found1:
 /* <Return>                                                              */
 /*    Next encoded character.  0 if none exists.                         */
 /*                                                                       */
-FT_CALLBACK_DEF( FT_ULong )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_ULong )
 code_to_next4( TT_CMapTable  cmap,
-               FT_ULong      charCode ) {
-	FT_UInt             index1, segCount;
+               FT2_1_3_ULong      charCode ) {
+	FT2_1_3_UInt             index1, segCount;
 	TT_CMap4            cmap4;
 	TT_CMap4SegmentRec  *seg4, *limit;
 
@@ -768,13 +768,13 @@ code_to_next4( TT_CMapTable  cmap,
 		/* The ranges are sorted in increasing order.  If we are out of */
 		/* the range here, the char code isn't in the charmap, so exit. */
 
-		if ( charCode <= (FT_UInt)seg4->endCount )
+		if ( charCode <= (FT2_1_3_UInt)seg4->endCount )
 			goto Found;
 	}
 	return 0;
 
 Found:
-	if ( charCode < (FT_ULong) seg4->startCount )
+	if ( charCode < (FT2_1_3_ULong) seg4->startCount )
 		charCode = seg4->startCount;
 
 	/* if the idRangeOffset is 0, all chars in the map exist */
@@ -782,14 +782,14 @@ Found:
 	if ( seg4->idRangeOffset == 0 )
 		return ( charCode );
 
-	while ( charCode <= (FT_UInt) seg4->endCount ) {
+	while ( charCode <= (FT2_1_3_UInt) seg4->endCount ) {
 		/* otherwise, we must use the glyphIdArray to do it */
-		index1 = (FT_UInt)( seg4->idRangeOffset / 2
+		index1 = (FT2_1_3_UInt)( seg4->idRangeOffset / 2
 		                    + ( charCode - seg4->startCount )
 		                    + ( seg4 - cmap4->segments )
 		                    - segCount );
 
-		if ( index1 < (FT_UInt)cmap4->numGlyphId &&
+		if ( index1 < (FT2_1_3_UInt)cmap4->numGlyphId &&
 		        cmap4->glyphIdArray[index1] != 0    )
 			return ( charCode );
 		charCode++;
@@ -815,17 +815,17 @@ Found:
 /* <Return>                                                              */
 /*    Glyph index into the glyphs array.  0 if the glyph does not exist. */
 /*                                                                       */
-FT_CALLBACK_DEF( FT_UInt )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 code_to_index6( TT_CMapTable  cmap,
-                FT_ULong      charCode ) {
+                FT2_1_3_ULong      charCode ) {
 	TT_CMap6  cmap6;
-	FT_UInt   result = 0;
+	FT2_1_3_UInt   result = 0;
 
 
 	cmap6     = &cmap->c.cmap6;
 	charCode -= cmap6->firstCode;
 
-	if ( charCode < (FT_UInt)cmap6->entryCount )
+	if ( charCode < (FT2_1_3_UInt)cmap6->entryCount )
 		result = cmap6->glyphIdArray[charCode];
 
 	return result;
@@ -848,9 +848,9 @@ code_to_index6( TT_CMapTable  cmap,
 /* <Return>                                                              */
 /*    Next encoded character.  0 if none exists.                         */
 /*                                                                       */
-FT_CALLBACK_DEF( FT_ULong )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_ULong )
 code_to_next6( TT_CMapTable  cmap,
-               FT_ULong      charCode ) {
+               FT2_1_3_ULong      charCode ) {
 	TT_CMap6  cmap6;
 
 
@@ -858,12 +858,12 @@ code_to_next6( TT_CMapTable  cmap,
 
 	cmap6 = &cmap->c.cmap6;
 
-	if ( charCode < (FT_ULong) cmap6->firstCode )
+	if ( charCode < (FT2_1_3_ULong) cmap6->firstCode )
 		charCode = cmap6->firstCode;
 
 	charCode -= cmap6->firstCode;
 
-	while ( charCode < (FT_UInt)cmap6->entryCount ) {
+	while ( charCode < (FT2_1_3_UInt)cmap6->entryCount ) {
 		if ( cmap6->glyphIdArray[charCode] != 0 )
 			return charCode + cmap6->firstCode;
 		charCode++;
@@ -890,9 +890,9 @@ code_to_next6( TT_CMapTable  cmap,
 /* <Return>                                                              */
 /*    Glyph index into the glyphs array.  0 if the glyph does not exist. */
 /*                                                                       */
-FT_CALLBACK_DEF( FT_UInt )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 code_to_index8_12( TT_CMapTable  cmap,
-                   FT_ULong      charCode ) {
+                   FT2_1_3_ULong      charCode ) {
 	TT_CMap8_12      cmap8_12;
 	TT_CMapGroupRec  *group, *limit;
 
@@ -913,8 +913,8 @@ code_to_index8_12( TT_CMapTable  cmap,
 	/* cache is to significantly speed up charcode to glyph index       */
 	/* conversion.                                                      */
 
-	if ( (FT_ULong)( charCode           - group->startCharCode ) <
-	        (FT_ULong)( group->endCharCode - group->startCharCode ) )
+	if ( (FT2_1_3_ULong)( charCode           - group->startCharCode ) <
+	        (FT2_1_3_ULong)( group->endCharCode - group->startCharCode ) )
 		goto Found1;
 
 	for ( group = cmap8_12->groups; group < limit; group++ ) {
@@ -933,7 +933,7 @@ Found:
 	cmap8_12->last_group = group;
 
 Found1:
-	return (FT_UInt)( group->startGlyphID +
+	return (FT2_1_3_UInt)( group->startGlyphID +
 	                  ( charCode - group->startCharCode ) );
 }
 
@@ -954,9 +954,9 @@ Found1:
 /* <Return>                                                              */
 /*    Next encoded character.  0 if none exists.                         */
 /*                                                                       */
-FT_CALLBACK_DEF( FT_ULong )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_ULong )
 code_to_next8_12( TT_CMapTable  cmap,
-                  FT_ULong      charCode ) {
+                  FT2_1_3_ULong      charCode ) {
 	TT_CMap8_12      cmap8_12;
 	TT_CMapGroupRec  *group, *limit;
 
@@ -999,11 +999,11 @@ Found:
 /* <Return>                                                              */
 /*    Glyph index into the glyphs array.  0 if the glyph does not exist. */
 /*                                                                       */
-FT_CALLBACK_DEF( FT_UInt )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 code_to_index10( TT_CMapTable  cmap,
-                 FT_ULong      charCode ) {
+                 FT2_1_3_ULong      charCode ) {
 	TT_CMap10  cmap10;
-	FT_UInt    result = 0;
+	FT2_1_3_UInt    result = 0;
 
 
 	cmap10    = &cmap->c.cmap10;
@@ -1036,9 +1036,9 @@ code_to_index10( TT_CMapTable  cmap,
 /* <Return>                                                              */
 /*    Next encoded character.  0 if none exists.                         */
 /*                                                                       */
-FT_CALLBACK_DEF( FT_ULong )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_ULong )
 code_to_next10( TT_CMapTable  cmap,
-                FT_ULong      charCode ) {
+                FT2_1_3_ULong      charCode ) {
 	TT_CMap10  cmap10;
 
 

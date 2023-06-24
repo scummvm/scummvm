@@ -21,32 +21,32 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_SFNT_H
-#include FT_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_SFNT_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
-FT_LOCAL( FT_Error )
-sfnt_init_face( FT_Stream      stream,
+FT2_1_3_LOCAL( FT2_1_3_Error )
+sfnt_init_face( FT2_1_3_Stream      stream,
                 TT_Face        face,
-                FT_Int         face_index,
-                FT_Int         num_params,
-                FT_Parameter*  params );
+                FT2_1_3_Int         face_index,
+                FT2_1_3_Int         num_params,
+                FT2_1_3_Parameter*  params );
 
-FT_LOCAL( FT_Error )
-sfnt_load_face( FT_Stream      stream,
+FT2_1_3_LOCAL( FT2_1_3_Error )
+sfnt_load_face( FT2_1_3_Stream      stream,
                 TT_Face        face,
-                FT_Int         face_index,
-                FT_Int         num_params,
-                FT_Parameter*  params );
+                FT2_1_3_Int         face_index,
+                FT2_1_3_Int         num_params,
+                FT2_1_3_Parameter*  params );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 sfnt_done_face( TT_Face  face );
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __SFDRIVER_H__ */
 

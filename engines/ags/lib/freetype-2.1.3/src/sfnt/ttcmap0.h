@@ -21,36 +21,36 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_TRUETYPE_TYPES_H
-#include FT_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_TRUETYPE_TYPES_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 typedef struct  TT_CMapRec_ {
-	FT_CMapRec  cmap;
-	FT_Byte*    data;           /* pointer to in-memory cmap table */
+	FT2_1_3_CMapRec  cmap;
+	FT2_1_3_Byte*    data;           /* pointer to in-memory cmap table */
 
 } TT_CMapRec, *TT_CMap;
 
 typedef const struct TT_CMap_ClassRec_*  TT_CMap_Class;
 
 
-typedef FT_Error
-(*TT_CMap_ValidateFunc)( FT_Byte*      data,
-                         FT_Validator  valid );
+typedef FT2_1_3_Error
+(*TT_CMap_ValidateFunc)( FT2_1_3_Byte*      data,
+                         FT2_1_3_Validator  valid );
 
 typedef struct  TT_CMap_ClassRec_ {
-	FT_CMap_ClassRec      clazz;
-	FT_UInt               format;
+	FT2_1_3_CMap_ClassRec      clazz;
+	FT2_1_3_UInt               format;
 	TT_CMap_ValidateFunc  validate;
 
 } TT_CMap_ClassRec;
 
 
 typedef struct  TT_ValidatorRec_ {
-	FT_ValidatorRec  validator;
-	FT_UInt          num_glyphs;
+	FT2_1_3_ValidatorRec  validator;
+	FT2_1_3_UInt          num_glyphs;
 
 } TT_ValidatorRec, *TT_Validator;
 
@@ -59,11 +59,11 @@ typedef struct  TT_ValidatorRec_ {
 #define TT_VALID_GLYPH_COUNT( x )  TT_VALIDATOR( x )->num_glyphs
 
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_build_cmaps( TT_Face  face );
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __TTCMAP0_H__ */
 
