@@ -108,8 +108,9 @@ FT2_1_3_BEGIN_HEADER
 /*   this will however force you to link the zlib to any program that    */
 /*   also uses FreeType.                                                 */
 /*                                                                       */
-#define FT2_1_3_CONFIG_OPTION_USE_ZLIB
-
+#ifdef USE_ZLIB
+	#define FT2_1_3_CONFIG_OPTION_USE_ZLIB
+#endif
 
 /*************************************************************************/
 /*                                                                       */
@@ -129,8 +130,9 @@ FT2_1_3_BEGIN_HEADER
 /*   do not #undef this macro here, since the build system might         */
 /*   define for certain configurations                                   */
 /*                                                                       */
-/* #define  FT2_1_3_CONFIG_OPTION_SYSTEM_ZLIB */
-
+#ifdef USE_ZLIB
+	#define  FT2_1_3_CONFIG_OPTION_SYSTEM_ZLIB
+#endif
 
 /*************************************************************************/
 /*                                                                       */
