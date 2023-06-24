@@ -605,6 +605,8 @@ Datum Window::getField(int field) {
 		return getStageRect();
 	case kTheModal:
 		return getModal();
+	case kTheFileName:
+		return getFileName();
 	default:
 		warning("Window::getField: unhandled field '%s'", g_lingo->field2str(field));
 		return Datum();
@@ -629,6 +631,9 @@ bool Window::setField(int field, const Datum &value) {
 		return setStageRect(value);
 	case kTheModal:
 		setModal((bool)value.asInt());
+		return true;
+	case kTheFileName:
+		setFileName(value.asString());
 		return true;
 	default:
 		warning("Window::setField: unhandled field '%s'", g_lingo->field2str(field));

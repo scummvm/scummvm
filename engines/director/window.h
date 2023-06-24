@@ -144,6 +144,8 @@ public:
 	bool setStageRect(Datum datum);
 	void setModal(bool modal);
 	bool getModal() { return _isModal; };
+	void setFileName(Common::String filename);
+	Common::String getFileName() { return getName(); }
 
 	void updateBorderType();
 
