@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-22 19:52+0000\n"
+"POT-Creation-Date: 2023-06-24 19:50+0000\n"
 "PO-Revision-Date: 2023-04-23 06:53+0000\n"
 "Last-Translator: barryspacezero <barryspace01@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -293,7 +293,7 @@ msgstr ""
 #: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:32
 #: engines/engine.cpp:544 engines/engine.cpp:567
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
-#: engines/agos/midi.cpp:317 engines/agos/midi.cpp:439
+#: engines/agos/midi.cpp:320 engines/agos/midi.cpp:442
 #: engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1836
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
@@ -4671,7 +4671,7 @@ msgstr ""
 msgid "AGOS 2 support is not compiled in"
 msgstr "AGOS 2 सपोर्ट कम्पाइल नहीं है"
 
-#: engines/agos/midi.cpp:184 engines/kyra/sound/sound_pc_midi.cpp:76
+#: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
@@ -4680,7 +4680,7 @@ msgid ""
 "some tracks sound incorrect."
 msgstr ""
 
-#: engines/agos/midi.cpp:313
+#: engines/agos/midi.cpp:316
 #, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
@@ -4688,7 +4688,7 @@ msgid ""
 "the music will not sound the same as the original game."
 msgstr ""
 
-#: engines/agos/midi.cpp:435
+#: engines/agos/midi.cpp:438
 #, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"

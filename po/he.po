@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-22 19:52+0000\n"
+"POT-Creation-Date: 2023-06-24 19:50+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -310,7 +310,7 @@ msgstr ""
 #: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:32
 #: engines/engine.cpp:544 engines/engine.cpp:567
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
-#: engines/agos/midi.cpp:317 engines/agos/midi.cpp:439
+#: engines/agos/midi.cpp:320 engines/agos/midi.cpp:442
 #: engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1836
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
@@ -4849,7 +4849,7 @@ msgstr "אין להשחיר את כל המסכים בעת יציאה מחדר."
 msgid "AGOS 2 support is not compiled in"
 msgstr "תמיכה במשחקי AGOS 2 לא נבנתה"
 
-#: engines/agos/midi.cpp:184 engines/kyra/sound/sound_pc_midi.cpp:76
+#: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
@@ -4863,7 +4863,7 @@ msgstr ""
 "MIDI כללי. אולם אפשר שכמה\n"
 "רצועות ישמעו לא נכונות."
 
-#: engines/agos/midi.cpp:313
+#: engines/agos/midi.cpp:316
 #, fuzzy, c-format
 #| msgid ""
 #| "Could not find AdLib instrument definition files\n"
@@ -4878,7 +4878,7 @@ msgstr ""
 "%s וגם %s. ללא קבצים אלה,\n"
 "המוזיקה לא תהיה זהה לזו שמשחק המקורי."
 
-#: engines/agos/midi.cpp:435
+#: engines/agos/midi.cpp:438
 #, fuzzy, c-format
 #| msgid ""
 #| "Could not find AdLib instrument definition files\n"

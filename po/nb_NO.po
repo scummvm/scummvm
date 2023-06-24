@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-22 19:52+0000\n"
+"POT-Creation-Date: 2023-06-24 19:50+0000\n"
 "PO-Revision-Date: 2023-06-15 17:40+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -312,7 +312,7 @@ msgstr "Innholdet i JSON-koden er feilaktig."
 #: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:32
 #: engines/engine.cpp:544 engines/engine.cpp:567
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
-#: engines/agos/midi.cpp:317 engines/agos/midi.cpp:439
+#: engines/agos/midi.cpp:320 engines/agos/midi.cpp:442
 #: engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1836
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
@@ -4904,7 +4904,7 @@ msgstr "Ikke bruk en overgang til sort hver gang du forlater et rom."
 msgid "AGOS 2 support is not compiled in"
 msgstr "AGOS 2-støtte er ikke innkompilert"
 
-#: engines/agos/midi.cpp:184 engines/kyra/sound/sound_pc_midi.cpp:76
+#: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
@@ -4918,7 +4918,7 @@ msgstr ""
 "General MIDI-instrumentene. Allikevel, kan det\n"
 "skje at enkelte spor ikke vil spilles riktig."
 
-#: engines/agos/midi.cpp:313
+#: engines/agos/midi.cpp:316
 #, fuzzy, c-format
 #| msgid ""
 #| "Could not find AdLib instrument definition files\n"
@@ -4933,7 +4933,7 @@ msgstr ""
 "Uten disse filene vil ikke musikken kunne høres ut som den gjorde i "
 "originalspillet."
 
-#: engines/agos/midi.cpp:435
+#: engines/agos/midi.cpp:438
 #, fuzzy, c-format
 #| msgid ""
 #| "Could not find AdLib instrument definition files\n"
