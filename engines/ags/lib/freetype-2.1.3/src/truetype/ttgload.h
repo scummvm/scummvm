@@ -28,26 +28,26 @@
 #endif
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 TT_Get_Metrics( TT_HoriHeader*  header,
-                FT_UInt         index,
-                FT_Short*       bearing,
-                FT_UShort*      advance );
+                FT2_1_3_UInt         index,
+                FT2_1_3_Short*       bearing,
+                FT2_1_3_UShort*      advance );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 TT_Init_Glyph_Loading( TT_Face  face );
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 TT_Load_Glyph( TT_Size       size,
                TT_GlyphSlot  glyph,
-               FT_UShort     glyph_index,
-               FT_Int32      load_flags );
+               FT2_1_3_UShort     glyph_index,
+               FT2_1_3_Int32      load_flags );
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __TTGLOAD_H__ */
 

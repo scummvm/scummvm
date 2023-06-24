@@ -17,10 +17,10 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_DEBUG_H
-#include FT_INTERNAL_STREAM_H
-#include FT_INTERNAL_SFNT_H
-#include FT_TRUETYPE_IDS_H
+#include FT2_1_3_INTERNAL_DEBUG_H
+#include FT2_1_3_INTERNAL_STREAM_H
+#include FT2_1_3_INTERNAL_SFNT_H
+#include FT2_1_3_TRUETYPE_IDS_H
 
 #include "ttdriver.h"
 #include "ttgload.h"
@@ -30,12 +30,12 @@
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
+/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT_COMPONENT
-#define FT_COMPONENT  trace_ttdriver
+#undef  FT2_1_3_COMPONENT
+#define FT2_1_3_COMPONENT  trace_ttdriver
 
 
 /*************************************************************************/
@@ -52,8 +52,8 @@
 
 
 #undef  PAIR_TAG
-#define PAIR_TAG( left, right )  ( ( (FT_ULong)left << 16 ) | \
-                                     (FT_ULong)right        )
+#define PAIR_TAG( left, right )  ( ( (FT2_1_3_ULong)left << 16 ) | \
+                                     (FT2_1_3_ULong)right        )
 
 
 /*************************************************************************/
@@ -88,11 +88,11 @@
 /*                                                                       */
 /*    They can be implemented by format-specific interfaces.             */
 /*                                                                       */
-static FT_Error
+static FT2_1_3_Error
 Get_Kerning( TT_Face     face,
-             FT_UInt     left_glyph,
-             FT_UInt     right_glyph,
-             FT_Vector*  kerning ) {
+             FT2_1_3_UInt     left_glyph,
+             FT2_1_3_UInt     right_glyph,
+             FT2_1_3_Vector*  kerning ) {
 	TT_Kern0_Pair  pair;
 
 
@@ -104,16 +104,16 @@ Get_Kerning( TT_Face     face,
 
 	if ( face->kern_pairs ) {
 		/* there are some kerning pairs in this font file! */
-		FT_ULong  search_tag = PAIR_TAG( left_glyph, right_glyph );
-		FT_Long   left, right;
+		FT2_1_3_ULong  search_tag = PAIR_TAG( left_glyph, right_glyph );
+		FT2_1_3_Long   left, right;
 
 
 		left  = 0;
 		right = face->num_kern_pairs - 1;
 
 		while ( left <= right ) {
-			FT_Int    middle = left + ( ( right - left ) >> 1 );
-			FT_ULong  cur_pair;
+			FT2_1_3_Int    middle = left + ( ( right - left ) >> 1 );
+			FT2_1_3_ULong  cur_pair;
 
 
 			pair     = face->kern_pairs + middle;
@@ -180,15 +180,15 @@ Found:
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-static FT_Error
+static FT2_1_3_Error
 Set_Char_Sizes( TT_Size     size,
-                FT_F26Dot6  char_width,
-                FT_F26Dot6  char_height,
-                FT_UInt     horz_resolution,
-                FT_UInt     vert_resolution ) {
-	FT_Size_Metrics*  metrics = &size->root.metrics;
+                FT2_1_3_F26Dot6  char_width,
+                FT2_1_3_F26Dot6  char_height,
+                FT2_1_3_UInt     horz_resolution,
+                FT2_1_3_UInt     vert_resolution ) {
+	FT2_1_3_Size_Metrics*  metrics = &size->root.metrics;
 	TT_Face           face    = (TT_Face)size->root.face;
-	FT_Long           dim_x, dim_y;
+	FT2_1_3_Long           dim_x, dim_y;
 
 
 	/* This bit flag, when set, indicates that the pixel size must be */
@@ -205,11 +205,11 @@ Set_Char_Sizes( TT_Size     size,
 		dim_x = ( char_width  * horz_resolution + 36 ) / 72;
 		dim_y = ( char_height * vert_resolution + 36 ) / 72;
 
-		metrics->x_scale = FT_DivFix( dim_x, face->root.units_per_EM );
-		metrics->y_scale = FT_DivFix( dim_y, face->root.units_per_EM );
+		metrics->x_scale = FT2_1_3_DivFix( dim_x, face->root.units_per_EM );
+		metrics->y_scale = FT2_1_3_DivFix( dim_y, face->root.units_per_EM );
 
-		metrics->x_ppem  = (FT_UShort)( dim_x >> 6 );
-		metrics->y_ppem  = (FT_UShort)( dim_y >> 6 );
+		metrics->x_ppem  = (FT2_1_3_UShort)( dim_x >> 6 );
+		metrics->y_ppem  = (FT2_1_3_UShort)( dim_y >> 6 );
 	}
 
 	size->ttmetrics.valid = FALSE;
@@ -241,12 +241,12 @@ Set_Char_Sizes( TT_Size     size,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-static FT_Error
+static FT2_1_3_Error
 Set_Pixel_Sizes( TT_Size  size,
-                 FT_UInt  pixel_width,
-                 FT_UInt  pixel_height ) {
-	FT_UNUSED( pixel_width );
-	FT_UNUSED( pixel_height );
+                 FT2_1_3_UInt  pixel_width,
+                 FT2_1_3_UInt  pixel_height ) {
+	FT2_1_3_UNUSED( pixel_width );
+	FT2_1_3_UNUSED( pixel_height );
 
 	/* many things have been pre-computed by the base layer */
 
@@ -285,12 +285,12 @@ Set_Pixel_Sizes( TT_Size  size,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-static FT_Error
+static FT2_1_3_Error
 Load_Glyph( TT_GlyphSlot  slot,
             TT_Size       size,
-            FT_UShort     glyph_index,
-            FT_Int32      load_flags ) {
-	FT_Error  error;
+            FT2_1_3_UShort     glyph_index,
+            FT2_1_3_Int32      load_flags ) {
+	FT2_1_3_Error  error;
 
 
 	if ( !slot )
@@ -298,9 +298,9 @@ Load_Glyph( TT_GlyphSlot  slot,
 
 	/* check whether we want a scaled outline or bitmap */
 	if ( !size )
-		load_flags |= FT_LOAD_NO_SCALE | FT_LOAD_NO_HINTING;
+		load_flags |= FT2_1_3_LOAD_NO_SCALE | FT2_1_3_LOAD_NO_HINTING;
 
-	if ( load_flags & FT_LOAD_NO_SCALE )
+	if ( load_flags & FT2_1_3_LOAD_NO_SCALE )
 		size = NULL;
 
 	/* reset the size object if necessary */
@@ -310,7 +310,7 @@ Load_Glyph( TT_GlyphSlot  slot,
 			return TT_Err_Invalid_Face_Handle;
 
 		if ( !size->ttmetrics.valid ) {
-			if ( FT_SET_ERROR( tt_size_reset( size ) ) )
+			if ( FT2_1_3_SET_ERROR( tt_size_reset( size ) ) )
 				return error;
 		}
 	}
@@ -338,10 +338,10 @@ Load_Glyph( TT_GlyphSlot  slot,
 /*************************************************************************/
 
 
-static FT_Module_Interface
+static FT2_1_3_Module_Interface
 tt_get_interface( TT_Driver    driver,
                   const char*  tt_interface ) {
-	FT_Module     sfntd = FT_Get_Module( driver->root.root.library,
+	FT2_1_3_Module     sfntd = FT2_1_3_Get_Module( driver->root.root.library,
 	                                     "sfnt" );
 	SFNT_Service  sfnt;
 
@@ -350,17 +350,17 @@ tt_get_interface( TT_Driver    driver,
 	if ( sfntd ) {
 		sfnt = (SFNT_Service)( sfntd->clazz->module_interface );
 		if ( sfnt )
-			return sfnt->get_interface( FT_MODULE( driver ), tt_interface );
+			return sfnt->get_interface( FT2_1_3_MODULE( driver ), tt_interface );
 	}
 
 	return 0;
 }
 
 
-/* The FT_DriverInterface structure is defined in ftdriver.h. */
+/* The FT2_1_3_DriverInterface structure is defined in ftdriver.h. */
 
-FT_CALLBACK_TABLE_DEF
-const FT_Driver_ClassRec  tt_driver_class = {
+FT2_1_3_CALLBACK_TABLE_DEF
+const FT2_1_3_Driver_ClassRec  tt_driver_class = {
 	{
 		ft_module_font_driver     |
 		ft_module_driver_scalable |
@@ -378,30 +378,30 @@ const FT_Driver_ClassRec  tt_driver_class = {
 
 		(void*)0,        /* driver specific interface */
 
-		(FT_Module_Constructor)tt_driver_init,
-		(FT_Module_Destructor) tt_driver_done,
-		(FT_Module_Requester)  tt_get_interface,
+		(FT2_1_3_Module_Constructor)tt_driver_init,
+		(FT2_1_3_Module_Destructor) tt_driver_done,
+		(FT2_1_3_Module_Requester)  tt_get_interface,
 	},
 
 	sizeof ( TT_FaceRec ),
 	sizeof ( TT_SizeRec ),
-	sizeof ( FT_GlyphSlotRec ),
+	sizeof ( FT2_1_3_GlyphSlotRec ),
 
 
-	(FT_Face_InitFunc)        tt_face_init,
-	(FT_Face_DoneFunc)        tt_face_done,
-	(FT_Size_InitFunc)        tt_size_init,
-	(FT_Size_DoneFunc)        tt_size_done,
-	(FT_Slot_InitFunc)        0,
-	(FT_Slot_DoneFunc)        0,
+	(FT2_1_3_Face_InitFunc)        tt_face_init,
+	(FT2_1_3_Face_DoneFunc)        tt_face_done,
+	(FT2_1_3_Size_InitFunc)        tt_size_init,
+	(FT2_1_3_Size_DoneFunc)        tt_size_done,
+	(FT2_1_3_Slot_InitFunc)        0,
+	(FT2_1_3_Slot_DoneFunc)        0,
 
-	(FT_Size_ResetPointsFunc) Set_Char_Sizes,
-	(FT_Size_ResetPixelsFunc) Set_Pixel_Sizes,
-	(FT_Slot_LoadFunc)        Load_Glyph,
+	(FT2_1_3_Size_ResetPointsFunc) Set_Char_Sizes,
+	(FT2_1_3_Size_ResetPixelsFunc) Set_Pixel_Sizes,
+	(FT2_1_3_Slot_LoadFunc)        Load_Glyph,
 
-	(FT_Face_GetKerningFunc)  Get_Kerning,
-	(FT_Face_AttachFunc)      0,
-	(FT_Face_GetAdvancesFunc) 0
+	(FT2_1_3_Face_GetKerningFunc)  Get_Kerning,
+	(FT2_1_3_Face_AttachFunc)      0,
+	(FT2_1_3_Face_GetAdvancesFunc) 0
 };
 
 
