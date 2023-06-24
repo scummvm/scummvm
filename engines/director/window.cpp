@@ -263,6 +263,12 @@ void Window::setModal(bool modal) {
 	setVisible(true); // Activate this window on top
 }
 
+void Window::setFileName(Common::String filename) {
+	setNextMovie(filename);
+
+	setVisible(true); // Activate this window on top
+}
+
 void Window::reset() {
 	resizeInner(_composeSurface->w, _composeSurface->h);
 	_contentIsDirty = true;
