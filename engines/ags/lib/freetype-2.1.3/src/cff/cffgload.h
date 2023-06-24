@@ -21,11 +21,11 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_FREETYPE_H
+#include FT2_1_3_FREETYPE_H
 #include "cffobjs.h"
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 #define CFF_MAX_OPERANDS     48
@@ -87,33 +87,33 @@ FT_BEGIN_HEADER
 /*    hints_globals :: Auxiliary pointer for hinting.                    */
 /*                                                                       */
 typedef struct  CFF_Builder_ {
-	FT_Memory       memory;
+	FT2_1_3_Memory       memory;
 	TT_Face         face;
 	CFF_GlyphSlot   glyph;
-	FT_GlyphLoader  loader;
-	FT_Outline*     base;
-	FT_Outline*     current;
+	FT2_1_3_GlyphLoader  loader;
+	FT2_1_3_Outline*     base;
+	FT2_1_3_Outline*     current;
 
-	FT_Vector       last;
+	FT2_1_3_Vector       last;
 
-	FT_Fixed        scale_x;
-	FT_Fixed        scale_y;
+	FT2_1_3_Fixed        scale_x;
+	FT2_1_3_Fixed        scale_y;
 
-	FT_Pos          pos_x;
-	FT_Pos          pos_y;
+	FT2_1_3_Pos          pos_x;
+	FT2_1_3_Pos          pos_y;
 
-	FT_Vector       left_bearing;
-	FT_Vector       advance;
+	FT2_1_3_Vector       left_bearing;
+	FT2_1_3_Vector       advance;
 
-	FT_BBox         bbox;          /* bounding box */
-	FT_Bool         path_begun;
-	FT_Bool         load_points;
-	FT_Bool         no_recurse;
+	FT2_1_3_BBox         bbox;          /* bounding box */
+	FT2_1_3_Bool         path_begun;
+	FT2_1_3_Bool         load_points;
+	FT2_1_3_Bool         no_recurse;
 
-	FT_Error        error;         /* only used for memory errors */
-	FT_Bool         metrics_only;
+	FT2_1_3_Error        error;         /* only used for memory errors */
+	FT2_1_3_Bool         metrics_only;
 
-	FT_UInt32       hint_flags;
+	FT2_1_3_UInt32       hint_flags;
 
 	void*           hints_funcs;    /* hinter-specific */
 	void*           hints_globals;  /* hinter-specific */
@@ -124,9 +124,9 @@ typedef struct  CFF_Builder_ {
 /* execution context charstring zone */
 
 typedef struct  CFF_Decoder_Zone_ {
-	FT_Byte*  base;
-	FT_Byte*  limit;
-	FT_Byte*  cursor;
+	FT2_1_3_Byte*  base;
+	FT2_1_3_Byte*  limit;
+	FT2_1_3_Byte*  cursor;
 
 } CFF_Decoder_Zone;
 
@@ -135,75 +135,75 @@ typedef struct  CFF_Decoder_ {
 	CFF_Builder        builder;
 	CFF_Font           cff;
 
-	FT_Fixed           stack[CFF_MAX_OPERANDS + 1];
-	FT_Fixed*          top;
+	FT2_1_3_Fixed           stack[CFF_MAX_OPERANDS + 1];
+	FT2_1_3_Fixed*          top;
 
 	CFF_Decoder_Zone   zones[CFF_MAX_SUBRS_CALLS + 1];
 	CFF_Decoder_Zone*  zone;
 
-	FT_Int             flex_state;
-	FT_Int             num_flex_vectors;
-	FT_Vector          flex_vectors[7];
+	FT2_1_3_Int             flex_state;
+	FT2_1_3_Int             num_flex_vectors;
+	FT2_1_3_Vector          flex_vectors[7];
 
-	FT_Pos             glyph_width;
-	FT_Pos             nominal_width;
+	FT2_1_3_Pos             glyph_width;
+	FT2_1_3_Pos             nominal_width;
 
-	FT_Bool            read_width;
-	FT_Int             num_hints;
-	FT_Fixed*          buildchar;
-	FT_Int             len_buildchar;
+	FT2_1_3_Bool            read_width;
+	FT2_1_3_Int             num_hints;
+	FT2_1_3_Fixed*          buildchar;
+	FT2_1_3_Int             len_buildchar;
 
-	FT_UInt            num_locals;
-	FT_UInt            num_globals;
+	FT2_1_3_UInt            num_locals;
+	FT2_1_3_UInt            num_globals;
 
-	FT_Int             locals_bias;
-	FT_Int             globals_bias;
+	FT2_1_3_Int             locals_bias;
+	FT2_1_3_Int             globals_bias;
 
-	FT_Byte**          locals;
-	FT_Byte**          globals;
+	FT2_1_3_Byte**          locals;
+	FT2_1_3_Byte**          globals;
 
-	FT_Byte**          glyph_names;   /* for pure CFF fonts only  */
-	FT_UInt            num_glyphs;    /* number of glyphs in font */
+	FT2_1_3_Byte**          glyph_names;   /* for pure CFF fonts only  */
+	FT2_1_3_UInt            num_glyphs;    /* number of glyphs in font */
 
-	FT_Render_Mode     hint_mode;
+	FT2_1_3_Render_Mode     hint_mode;
 
 } CFF_Decoder;
 
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 cff_decoder_init( CFF_Decoder*    decoder,
                   TT_Face         face,
                   CFF_Size        size,
                   CFF_GlyphSlot   slot,
-                  FT_Bool         hinting,
-                  FT_Render_Mode  hint_mode );
+                  FT2_1_3_Bool         hinting,
+                  FT2_1_3_Render_Mode  hint_mode );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 cff_decoder_prepare( CFF_Decoder*  decoder,
-                     FT_UInt       glyph_index );
+                     FT2_1_3_UInt       glyph_index );
 
 #if 0  /* unused until we support pure CFF fonts */
 
 /* Compute the maximum advance width of a font through quick parsing */
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 cff_compute_max_advance( TT_Face  face,
-                         FT_Int*  max_advance );
+                         FT2_1_3_Int*  max_advance );
 
 #endif /* 0 */
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 cff_decoder_parse_charstrings( CFF_Decoder*  decoder,
-                               FT_Byte*      charstring_base,
-                               FT_ULong      charstring_len );
+                               FT2_1_3_Byte*      charstring_base,
+                               FT2_1_3_ULong      charstring_len );
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 cff_slot_load( CFF_GlyphSlot  glyph,
                CFF_Size       size,
-               FT_Int         glyph_index,
-               FT_Int32       load_flags );
+               FT2_1_3_Int         glyph_index,
+               FT2_1_3_Int32       load_flags );
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __CFFGLOAD_H__ */
 

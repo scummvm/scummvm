@@ -21,7 +21,7 @@
 
 #include "cffobjs.h"
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -36,14 +36,14 @@ FT_BEGIN_HEADER
 typedef struct CFF_CMapStdRec_*  CFF_CMapStd;
 
 typedef struct  CFF_CMapStdRec_ {
-	FT_CMapRec  cmap;
-	FT_UInt     count;
-	FT_UShort*  gids;   /* up to 256 elements */
+	FT2_1_3_CMapRec  cmap;
+	FT2_1_3_UInt     count;
+	FT2_1_3_UShort*  gids;   /* up to 256 elements */
 
 } CFF_CMapStdRec;
 
 
-FT_CALLBACK_TABLE const FT_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE const FT2_1_3_CMap_ClassRec
 cff_cmap_encoding_class_rec;
 
 
@@ -59,25 +59,25 @@ cff_cmap_encoding_class_rec;
 typedef struct CFF_CMapUnicodeRec_*  CFF_CMapUnicode;
 
 typedef struct  CFF_CMapUniPairRec_ {
-	FT_UInt32  unicode;
-	FT_UInt    gindex;
+	FT2_1_3_UInt32  unicode;
+	FT2_1_3_UInt    gindex;
 
 } CFF_CMapUniPairRec, *CFF_CMapUniPair;
 
 
 typedef struct  CFF_CMapUnicodeRec_ {
-	FT_CMapRec       cmap;
-	FT_UInt          num_pairs;
+	FT2_1_3_CMapRec       cmap;
+	FT2_1_3_UInt          num_pairs;
 	CFF_CMapUniPair  pairs;
 
 } CFF_CMapUnicodeRec;
 
 
-FT_CALLBACK_TABLE const FT_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE const FT2_1_3_CMap_ClassRec
 cff_cmap_unicode_class_rec;
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __CFFCMAP_H__ */
 

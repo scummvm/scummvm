@@ -21,13 +21,13 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_OBJECTS_H
-#include FT_INTERNAL_CFF_TYPES_H
-#include FT_INTERNAL_TRUETYPE_TYPES_H
-#include FT_INTERNAL_POSTSCRIPT_NAMES_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_CFF_TYPES_H
+#include FT2_1_3_INTERNAL_TRUETYPE_TYPES_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_NAMES_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -51,7 +51,7 @@ typedef TT_Face  CFF_Face;
 /* <Description>                                                         */
 /*    A handle to an OpenType size object.                               */
 /*                                                                       */
-typedef FT_Size  CFF_Size;
+typedef FT2_1_3_Size  CFF_Size;
 
 
 /*************************************************************************/
@@ -63,13 +63,13 @@ typedef FT_Size  CFF_Size;
 /*    A handle to an OpenType glyph slot object.                         */
 /*                                                                       */
 typedef struct  CFF_GlyphSlotRec_ {
-	FT_GlyphSlotRec  root;
+	FT2_1_3_GlyphSlotRec  root;
 
-	FT_Bool          hint;
-	FT_Bool          scaled;
+	FT2_1_3_Bool          hint;
+	FT2_1_3_Bool          scaled;
 
-	FT_Fixed         x_scale;
-	FT_Fixed         y_scale;
+	FT2_1_3_Fixed         x_scale;
+	FT2_1_3_Fixed         y_scale;
 
 } CFF_GlyphSlotRec, *CFF_GlyphSlot;
 
@@ -80,9 +80,9 @@ typedef struct  CFF_GlyphSlotRec_ {
 /* Subglyph transformation record.                                       */
 /*                                                                       */
 typedef struct  CFF_Transform_ {
-	FT_Fixed    xx, xy;     /* transformation matrix coefficients */
-	FT_Fixed    yx, yy;
-	FT_F26Dot6  ox, oy;     /* offsets        */
+	FT2_1_3_Fixed    xx, xy;     /* transformation matrix coefficients */
+	FT2_1_3_Fixed    yx, yy;
+	FT2_1_3_F26Dot6  ox, oy;     /* offsets        */
 
 } CFF_Transform;
 
@@ -100,25 +100,25 @@ typedef struct  CFF_CharMapRec_ {
 /* TrueType driver class.                                              */
 /*                                                                     */
 typedef struct  CFF_DriverRec_ {
-	FT_DriverRec  root;
+	FT2_1_3_DriverRec  root;
 	void*         extension_component;
 
 } CFF_DriverRec;
 
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 cff_size_init( CFF_Size  size );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 cff_size_done( CFF_Size  size );
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 cff_size_reset( CFF_Size  size );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 cff_slot_done( CFF_GlyphSlot  slot );
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 cff_slot_init( CFF_GlyphSlot   slot );
 
 
@@ -126,14 +126,14 @@ cff_slot_init( CFF_GlyphSlot   slot );
 /*                                                                       */
 /* Face functions                                                        */
 /*                                                                       */
-FT_LOCAL( FT_Error )
-cff_face_init( FT_Stream      stream,
+FT2_1_3_LOCAL( FT2_1_3_Error )
+cff_face_init( FT2_1_3_Stream      stream,
                CFF_Face       face,
-               FT_Int         face_index,
-               FT_Int         num_params,
-               FT_Parameter*  params );
+               FT2_1_3_Int         face_index,
+               FT2_1_3_Int         num_params,
+               FT2_1_3_Parameter*  params );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 cff_face_done( CFF_Face  face );
 
 
@@ -141,14 +141,14 @@ cff_face_done( CFF_Face  face );
 /*                                                                       */
 /* Driver functions                                                      */
 /*                                                                       */
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 cff_driver_init( CFF_Driver  driver );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 cff_driver_done( CFF_Driver  driver );
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __CFFOBJS_H__ */
 

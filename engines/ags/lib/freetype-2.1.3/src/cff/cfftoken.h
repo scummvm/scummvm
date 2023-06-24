@@ -16,8 +16,8 @@
 /***************************************************************************/
 
 
-#undef  FT_STRUCTURE
-#define FT_STRUCTURE  CFF_FontRecDictRec
+#undef  FT2_1_3_STRUCTURE
+#define FT2_1_3_STRUCTURE  CFF_FontRecDictRec
 
 #undef  CFFCODE
 #define CFFCODE       CFFCODE_TOPDICT
@@ -67,8 +67,8 @@ CFF_FIELD_NUM     ( 0x127, chameleon )
 #endif
 
 
-#undef  FT_STRUCTURE
-#define FT_STRUCTURE  CFF_PrivateRec
+#undef  FT2_1_3_STRUCTURE
+#define FT2_1_3_STRUCTURE  CFF_PrivateRec
 #undef  CFFCODE
 #define CFFCODE       CFFCODE_PRIVATE
 

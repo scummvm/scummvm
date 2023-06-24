@@ -21,52 +21,52 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_CFF_TYPES_H
-#include FT_INTERNAL_POSTSCRIPT_NAMES_H
+#include FT2_1_3_INTERNAL_CFF_TYPES_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_NAMES_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
-FT_LOCAL( FT_UShort )
-cff_get_standard_encoding( FT_UInt  charcode );
+FT2_1_3_LOCAL( FT2_1_3_UShort )
+cff_get_standard_encoding( FT2_1_3_UInt  charcode );
 
 
-FT_LOCAL( FT_String* )
+FT2_1_3_LOCAL( FT2_1_3_String* )
 cff_index_get_name( CFF_Index  idx,
-                    FT_UInt    element );
+                    FT2_1_3_UInt    element );
 
-FT_LOCAL( FT_String* )
+FT2_1_3_LOCAL( FT2_1_3_String* )
 cff_index_get_sid_string( CFF_Index        idx,
-                          FT_UInt          sid,
+                          FT2_1_3_UInt          sid,
                           PSNames_Service  psnames_interface );
 
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 cff_index_access_element( CFF_Index  idx,
-                          FT_UInt    element,
-                          FT_Byte**  pbytes,
-                          FT_ULong*  pbyte_len );
+                          FT2_1_3_UInt    element,
+                          FT2_1_3_Byte**  pbytes,
+                          FT2_1_3_ULong*  pbyte_len );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 cff_index_forget_element( CFF_Index  idx,
-                          FT_Byte**  pbytes );
+                          FT2_1_3_Byte**  pbytes );
 
 
-FT_LOCAL( FT_Error )
-cff_font_load( FT_Stream  stream,
-               FT_Int     face_index,
+FT2_1_3_LOCAL( FT2_1_3_Error )
+cff_font_load( FT2_1_3_Stream  stream,
+               FT2_1_3_Int     face_index,
                CFF_Font   font );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 cff_font_done( CFF_Font  font );
 
 
-FT_LOCAL( FT_Byte )
+FT2_1_3_LOCAL( FT2_1_3_Byte )
 cff_fd_select_get( CFF_FDSelect  select,
-                   FT_UInt       glyph_index );
+                   FT2_1_3_UInt       glyph_index );
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __CFFLOAD_H__ */
 

@@ -28,9 +28,9 @@
 /*************************************************************************/
 /*************************************************************************/
 
-FT_CALLBACK_DEF( FT_Error )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 cff_cmap_encoding_init( CFF_CMapStd  cmap ) {
-	TT_Face       face     = (TT_Face)FT_CMAP_FACE( cmap );
+	TT_Face       face     = (TT_Face)FT2_1_3_CMAP_FACE( cmap );
 	CFF_Font      cff      = (CFF_Font)face->extra.data;
 	CFF_Encoding  encoding = &cff->encoding;
 
@@ -42,17 +42,17 @@ cff_cmap_encoding_init( CFF_CMapStd  cmap ) {
 }
 
 
-FT_CALLBACK_DEF( void )
+FT2_1_3_CALLBACK_DEF( void )
 cff_cmap_encoding_done( CFF_CMapStd  cmap ) {
 	cmap->count = 0;
 	cmap->gids  = NULL;
 }
 
 
-FT_CALLBACK_DEF( FT_UInt )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 cff_cmap_encoding_char_index( CFF_CMapStd  cmap,
-                              FT_UInt32    char_code ) {
-	FT_UInt  result = 0;
+                              FT2_1_3_UInt32    char_code ) {
+	FT2_1_3_UInt  result = 0;
 
 
 	if ( char_code < cmap->count )
@@ -62,17 +62,17 @@ cff_cmap_encoding_char_index( CFF_CMapStd  cmap,
 }
 
 
-FT_CALLBACK_DEF( FT_UInt )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 cff_cmap_encoding_char_next( CFF_CMapStd   cmap,
-                             FT_UInt32    *pchar_code ) {
-	FT_UInt    result    = 0;
-	FT_UInt32  char_code = *pchar_code;
+                             FT2_1_3_UInt32    *pchar_code ) {
+	FT2_1_3_UInt    result    = 0;
+	FT2_1_3_UInt32  char_code = *pchar_code;
 
 
 	*pchar_code = 0;
 
 	if ( char_code < cmap->count ) {
-		FT_UInt  code = (FT_UInt)(char_code + 1);
+		FT2_1_3_UInt  code = (FT2_1_3_UInt)(char_code + 1);
 
 
 		for (;;) {
@@ -92,14 +92,14 @@ cff_cmap_encoding_char_next( CFF_CMapStd   cmap,
 }
 
 
-FT_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE_DEF const FT2_1_3_CMap_ClassRec
 cff_cmap_encoding_class_rec = {
 	sizeof ( CFF_CMapStdRec ),
 
-	(FT_CMap_InitFunc)     cff_cmap_encoding_init,
-	(FT_CMap_DoneFunc)     cff_cmap_encoding_done,
-	(FT_CMap_CharIndexFunc)cff_cmap_encoding_char_index,
-	(FT_CMap_CharNextFunc) cff_cmap_encoding_char_next
+	(FT2_1_3_CMap_InitFunc)     cff_cmap_encoding_init,
+	(FT2_1_3_CMap_DoneFunc)     cff_cmap_encoding_done,
+	(FT2_1_3_CMap_CharIndexFunc)cff_cmap_encoding_char_index,
+	(FT2_1_3_CMap_CharNextFunc) cff_cmap_encoding_char_next
 };
 
 
@@ -111,11 +111,11 @@ cff_cmap_encoding_class_rec = {
 /*************************************************************************/
 /*************************************************************************/
 
-FT_CALLBACK_DEF( FT_Int )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_Int )
 cff_cmap_uni_pair_compare( const void*  pair1,
                            const void*  pair2 ) {
-	FT_UInt32  u1 = ((CFF_CMapUniPair)pair1)->unicode;
-	FT_UInt32  u2 = ((CFF_CMapUniPair)pair2)->unicode;
+	FT2_1_3_UInt32  u1 = ((CFF_CMapUniPair)pair1)->unicode;
+	FT2_1_3_UInt32  u2 = ((CFF_CMapUniPair)pair2)->unicode;
 
 
 	if ( u1 < u2 )
@@ -128,12 +128,12 @@ cff_cmap_uni_pair_compare( const void*  pair1,
 }
 
 
-FT_CALLBACK_DEF( FT_Error )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 cff_cmap_unicode_init( CFF_CMapUnicode  cmap ) {
-	FT_Error         error;
-	FT_UInt          count;
-	TT_Face          face    = (TT_Face)FT_CMAP_FACE( cmap );
-	FT_Memory        memory  = FT_FACE_MEMORY( face );
+	FT2_1_3_Error         error;
+	FT2_1_3_UInt          count;
+	TT_Face          face    = (TT_Face)FT2_1_3_CMAP_FACE( cmap );
+	FT2_1_3_Memory        memory  = FT2_1_3_FACE_MEMORY( face );
 	CFF_Font         cff     = (CFF_Font)face->extra.data;
 	CFF_Charset      charset = &cff->charset;
 	PSNames_Service  psnames = (PSNames_Service)cff->psnames;
@@ -142,17 +142,17 @@ cff_cmap_unicode_init( CFF_CMapUnicode  cmap ) {
 	cmap->num_pairs = 0;
 	cmap->pairs     = NULL;
 
-	count = (FT_UInt)face->root.num_glyphs;
+	count = (FT2_1_3_UInt)face->root.num_glyphs;
 
-	if ( !FT_NEW_ARRAY( cmap->pairs, count ) ) {
-		FT_UInt          n, new_count;
+	if ( !FT2_1_3_NEW_ARRAY( cmap->pairs, count ) ) {
+		FT2_1_3_UInt          n, new_count;
 		CFF_CMapUniPair  pair;
-		FT_UInt32        uni_code;
+		FT2_1_3_UInt32        uni_code;
 
 
 		pair = cmap->pairs;
 		for ( n = 0; n < count; n++ ) {
-			FT_UInt      sid   = charset->sids[n];
+			FT2_1_3_UInt      sid   = charset->sids[n];
 			const char*  gname;
 
 
@@ -168,20 +168,20 @@ cff_cmap_unicode_init( CFF_CMapUnicode  cmap ) {
 					pair++;
 				}
 
-				FT_FREE( gname );
+				FT2_1_3_FREE( gname );
 			}
 		}
 
-		new_count = (FT_UInt)( pair - cmap->pairs );
+		new_count = (FT2_1_3_UInt)( pair - cmap->pairs );
 		if ( new_count == 0 ) {
 			/* there are no unicode characters in here! */
-			FT_FREE( cmap->pairs );
-			error = FT_Err_Invalid_Argument;
+			FT2_1_3_FREE( cmap->pairs );
+			error = FT2_1_3_Err_Invalid_Argument;
 		} else {
 			/* re-allocate if the new array is much smaller than the original */
 			/* one                                                            */
 			if ( new_count != count && new_count < count / 2 ) {
-				(void)FT_RENEW_ARRAY( cmap->pairs, count, new_count );
+				(void)FT2_1_3_RENEW_ARRAY( cmap->pairs, count, new_count );
 				error = 0;
 			}
 
@@ -199,23 +199,23 @@ cff_cmap_unicode_init( CFF_CMapUnicode  cmap ) {
 }
 
 
-FT_CALLBACK_DEF( void )
+FT2_1_3_CALLBACK_DEF( void )
 cff_cmap_unicode_done( CFF_CMapUnicode  cmap ) {
-	FT_Face    face   = FT_CMAP_FACE( cmap );
-	FT_Memory  memory = FT_FACE_MEMORY( face );
+	FT2_1_3_Face    face   = FT2_1_3_CMAP_FACE( cmap );
+	FT2_1_3_Memory  memory = FT2_1_3_FACE_MEMORY( face );
 
 
-	FT_FREE( cmap->pairs );
+	FT2_1_3_FREE( cmap->pairs );
 	cmap->num_pairs = 0;
 }
 
 
-FT_CALLBACK_DEF( FT_UInt )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 cff_cmap_unicode_char_index( CFF_CMapUnicode  cmap,
-                             FT_UInt32        char_code ) {
-	FT_UInt          min = 0;
-	FT_UInt          max = cmap->num_pairs;
-	FT_UInt          mid;
+                             FT2_1_3_UInt32        char_code ) {
+	FT2_1_3_UInt          min = 0;
+	FT2_1_3_UInt          max = cmap->num_pairs;
+	FT2_1_3_UInt          mid;
 	CFF_CMapUniPair  pair;
 
 
@@ -235,17 +235,17 @@ cff_cmap_unicode_char_index( CFF_CMapUnicode  cmap,
 }
 
 
-FT_CALLBACK_DEF( FT_UInt )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 cff_cmap_unicode_char_next( CFF_CMapUnicode  cmap,
-                            FT_UInt32       *pchar_code ) {
-	FT_UInt    result    = 0;
-	FT_UInt32  char_code = *pchar_code + 1;
+                            FT2_1_3_UInt32       *pchar_code ) {
+	FT2_1_3_UInt    result    = 0;
+	FT2_1_3_UInt32  char_code = *pchar_code + 1;
 
 
 Restart: {
-		FT_UInt          min = 0;
-		FT_UInt          max = cmap->num_pairs;
-		FT_UInt          mid;
+		FT2_1_3_UInt          min = 0;
+		FT2_1_3_UInt          max = cmap->num_pairs;
+		FT2_1_3_UInt          mid;
 		CFF_CMapUniPair  pair;
 
 
@@ -285,14 +285,14 @@ Exit:
 }
 
 
-FT_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE_DEF const FT2_1_3_CMap_ClassRec
 cff_cmap_unicode_class_rec = {
 	sizeof ( CFF_CMapUnicodeRec ),
 
-	(FT_CMap_InitFunc)     cff_cmap_unicode_init,
-	(FT_CMap_DoneFunc)     cff_cmap_unicode_done,
-	(FT_CMap_CharIndexFunc)cff_cmap_unicode_char_index,
-	(FT_CMap_CharNextFunc) cff_cmap_unicode_char_next
+	(FT2_1_3_CMap_InitFunc)     cff_cmap_unicode_init,
+	(FT2_1_3_CMap_DoneFunc)     cff_cmap_unicode_done,
+	(FT2_1_3_CMap_CharIndexFunc)cff_cmap_unicode_char_index,
+	(FT2_1_3_CMap_CharNextFunc) cff_cmap_unicode_char_next
 };
 
 

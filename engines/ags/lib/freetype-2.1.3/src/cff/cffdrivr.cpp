@@ -17,12 +17,12 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_FREETYPE_H
-#include FT_INTERNAL_DEBUG_H
-#include FT_INTERNAL_STREAM_H
-#include FT_INTERNAL_SFNT_H
-#include FT_TRUETYPE_IDS_H
-#include FT_INTERNAL_POSTSCRIPT_NAMES_H
+#include FT2_1_3_FREETYPE_H
+#include FT2_1_3_INTERNAL_DEBUG_H
+#include FT2_1_3_INTERNAL_STREAM_H
+#include FT2_1_3_INTERNAL_SFNT_H
+#include FT2_1_3_TRUETYPE_IDS_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_NAMES_H
 
 #include "cffdrivr.h"
 #include "cffgload.h"
@@ -33,12 +33,12 @@
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
+/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT_COMPONENT
-#define FT_COMPONENT  trace_cffdriver
+#undef  FT2_1_3_COMPONENT
+#define FT2_1_3_COMPONENT  trace_cffdriver
 
 
 /*************************************************************************/
@@ -55,8 +55,8 @@
 
 
 #undef  PAIR_TAG
-#define PAIR_TAG( left, right )  ( ( (FT_ULong)left << 16 ) | \
-                                     (FT_ULong)right        )
+#define PAIR_TAG( left, right )  ( ( (FT2_1_3_ULong)left << 16 ) | \
+                                     (FT2_1_3_ULong)right        )
 
 
 /*************************************************************************/
@@ -91,11 +91,11 @@
 /*                                                                       */
 /*    They can be implemented by format-specific interfaces.             */
 /*                                                                       */
-static FT_Error
+static FT2_1_3_Error
 Get_Kerning( TT_Face     face,
-             FT_UInt     left_glyph,
-             FT_UInt     right_glyph,
-             FT_Vector*  kerning ) {
+             FT2_1_3_UInt     left_glyph,
+             FT2_1_3_UInt     right_glyph,
+             FT2_1_3_Vector*  kerning ) {
 	TT_Kern0_Pair  pair;
 
 
@@ -107,16 +107,16 @@ Get_Kerning( TT_Face     face,
 
 	if ( face->kern_pairs ) {
 		/* there are some kerning pairs in this font file! */
-		FT_ULong  search_tag = PAIR_TAG( left_glyph, right_glyph );
-		FT_Long   left, right;
+		FT2_1_3_ULong  search_tag = PAIR_TAG( left_glyph, right_glyph );
+		FT2_1_3_Long   left, right;
 
 
 		left  = 0;
 		right = face->num_kern_pairs - 1;
 
 		while ( left <= right ) {
-			FT_Long   middle = left + ( ( right - left ) >> 1 );
-			FT_ULong  cur_pair;
+			FT2_1_3_Long   middle = left + ( ( right - left ) >> 1 );
+			FT2_1_3_ULong  cur_pair;
 
 
 			pair     = face->kern_pairs + middle;
@@ -170,12 +170,12 @@ Found:
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-static FT_Error
+static FT2_1_3_Error
 Load_Glyph( CFF_GlyphSlot  slot,
             CFF_Size       size,
-            FT_UShort      glyph_index,
-            FT_Int32       load_flags ) {
-	FT_Error  error;
+            FT2_1_3_UShort      glyph_index,
+            FT2_1_3_Int32       load_flags ) {
+	FT2_1_3_Error  error;
 
 
 	if ( !slot )
@@ -183,9 +183,9 @@ Load_Glyph( CFF_GlyphSlot  slot,
 
 	/* check whether we want a scaled outline or bitmap */
 	if ( !size )
-		load_flags |= FT_LOAD_NO_SCALE | FT_LOAD_NO_HINTING;
+		load_flags |= FT2_1_3_LOAD_NO_SCALE | FT2_1_3_LOAD_NO_HINTING;
 
-	if ( load_flags & FT_LOAD_NO_SCALE )
+	if ( load_flags & FT2_1_3_LOAD_NO_SCALE )
 		size = NULL;
 
 	/* reset the size object if necessary */
@@ -217,27 +217,27 @@ Load_Glyph( CFF_GlyphSlot  slot,
 /*************************************************************************/
 /*************************************************************************/
 
-static FT_Error
+static FT2_1_3_Error
 cff_get_glyph_name( CFF_Face    face,
-                    FT_UInt     glyph_index,
-                    FT_Pointer  buffer,
-                    FT_UInt     buffer_max ) {
+                    FT2_1_3_UInt     glyph_index,
+                    FT2_1_3_Pointer  buffer,
+                    FT2_1_3_UInt     buffer_max ) {
 	CFF_Font         font   = (CFF_Font)face->extra.data;
-	FT_Memory        memory = FT_FACE_MEMORY( face );
-	FT_String*       gname;
-	FT_UShort        sid;
+	FT2_1_3_Memory        memory = FT2_1_3_FACE_MEMORY( face );
+	FT2_1_3_String*       gname;
+	FT2_1_3_UShort        sid;
 	PSNames_Service  psnames;
-	FT_Error         error;
+	FT2_1_3_Error         error;
 
 
-	psnames = (PSNames_Service)FT_Get_Module_Interface(
+	psnames = (PSNames_Service)FT2_1_3_Get_Module_Interface(
 	              face->root.driver->root.library, "psnames" );
 
 	if ( !psnames ) {
-		FT_ERROR(( "cff_get_glyph_name:" ));
-		FT_ERROR(( " cannot open CFF & CEF fonts\n" ));
-		FT_ERROR(( "                   " ));
-		FT_ERROR(( " without the `PSNames' module\n" ));
+		FT2_1_3_ERROR(( "cff_get_glyph_name:" ));
+		FT2_1_3_ERROR(( " cannot open CFF & CEF fonts\n" ));
+		FT2_1_3_ERROR(( "                   " ));
+		FT2_1_3_ERROR(( " without the `PSNames' module\n" ));
 		error = CFF_Err_Unknown_File_Format;
 		goto Exit;
 	}
@@ -249,17 +249,17 @@ cff_get_glyph_name( CFF_Face    face,
 	gname = cff_index_get_sid_string( &font->string_index, sid, psnames );
 
 	if ( buffer_max > 0 ) {
-		FT_UInt  len = (FT_UInt)ft_strlen( gname );
+		FT2_1_3_UInt  len = (FT2_1_3_UInt)ft_strlen( gname );
 
 
 		if ( len >= buffer_max )
 			len = buffer_max - 1;
 
-		FT_MEM_COPY( buffer, gname, len );
-		((FT_Byte*)buffer)[len] = 0;
+		FT2_1_3_MEM_COPY( buffer, gname, len );
+		((FT2_1_3_Byte*)buffer)[len] = 0;
 	}
 
-	FT_FREE ( gname );
+	FT2_1_3_FREE ( gname );
 	error = CFF_Err_Ok;
 
 Exit:
@@ -285,23 +285,23 @@ Exit:
 /* <Return>                                                              */
 /*    Glyph index.  0 means `undefined character code'.                  */
 /*                                                                       */
-static FT_UInt
+static FT2_1_3_UInt
 cff_get_name_index( CFF_Face    face,
-                    FT_String*  glyph_name ) {
+                    FT2_1_3_String*  glyph_name ) {
 	CFF_Font         cff;
 	CFF_Charset      charset;
 	PSNames_Service  psnames;
-	FT_Memory        memory = FT_FACE_MEMORY( face );
-	FT_String*       name;
-	FT_UShort        sid;
-	FT_UInt          i;
-	FT_Int           result;
+	FT2_1_3_Memory        memory = FT2_1_3_FACE_MEMORY( face );
+	FT2_1_3_String*       name;
+	FT2_1_3_UShort        sid;
+	FT2_1_3_UInt          i;
+	FT2_1_3_Int           result;
 
 
 	cff     = (CFF_FontRec *)face->extra.data;
 	charset = &cff->charset;
 
-	psnames = (PSNames_Service)FT_Get_Module_Interface(
+	psnames = (PSNames_Service)FT2_1_3_Get_Module_Interface(
 	              face->root.driver->root.library, "psnames" );
 
 	for ( i = 0; i < cff->num_glyphs; i++ ) {
@@ -310,12 +310,12 @@ cff_get_name_index( CFF_Face    face,
 		if ( sid > 390 )
 			name = cff_index_get_name( &cff->string_index, sid - 391 );
 		else
-			name = (FT_String *)psnames->adobe_std_strings( sid );
+			name = (FT2_1_3_String *)psnames->adobe_std_strings( sid );
 
 		result = ft_strcmp( glyph_name, name );
 
 		if ( sid > 390 )
-			FT_FREE( name );
+			FT2_1_3_FREE( name );
 
 		if ( !result )
 			return i;
@@ -337,34 +337,34 @@ cff_get_name_index( CFF_Face    face,
 /*************************************************************************/
 /*************************************************************************/
 
-static FT_Module_Interface
+static FT2_1_3_Module_Interface
 cff_get_interface( CFF_Driver   driver,
                    const char*  module_interface ) {
-	FT_Module  sfnt;
+	FT2_1_3_Module  sfnt;
 
 
-#ifndef FT_CONFIG_OPTION_NO_GLYPH_NAMES
+#ifndef FT2_1_3_CONFIG_OPTION_NO_GLYPH_NAMES
 
 	if ( ft_strcmp( (const char*)module_interface, "glyph_name" ) == 0 )
-		return (FT_Module_Interface)cff_get_glyph_name;
+		return (FT2_1_3_Module_Interface)cff_get_glyph_name;
 
 	if ( ft_strcmp( (const char*)module_interface, "name_index" ) == 0 )
-		return (FT_Module_Interface)cff_get_name_index;
+		return (FT2_1_3_Module_Interface)cff_get_name_index;
 
 #endif
 
 	/* we simply pass our request to the `sfnt' module */
-	sfnt = FT_Get_Module( driver->root.root.library, "sfnt" );
+	sfnt = FT2_1_3_Get_Module( driver->root.root.library, "sfnt" );
 
 	return sfnt ? sfnt->clazz->get_interface( sfnt, module_interface ) : 0;
 }
 
 
-/* The FT_DriverInterface structure is defined in ftdriver.h. */
+/* The FT2_1_3_DriverInterface structure is defined in ftdriver.h. */
 
-FT_CALLBACK_TABLE_DEF
-const FT_Driver_ClassRec  cff_driver_class = {
-	/* begin with the FT_Module_Class fields */
+FT2_1_3_CALLBACK_TABLE_DEF
+const FT2_1_3_Driver_ClassRec  cff_driver_class = {
+	/* begin with the FT2_1_3_Module_Class fields */
 	{
 		ft_module_font_driver       |
 		ft_module_driver_scalable   |
@@ -377,31 +377,31 @@ const FT_Driver_ClassRec  cff_driver_class = {
 
 		0,   /* module-specific interface */
 
-		(FT_Module_Constructor)cff_driver_init,
-		(FT_Module_Destructor) cff_driver_done,
-		(FT_Module_Requester)  cff_get_interface,
+		(FT2_1_3_Module_Constructor)cff_driver_init,
+		(FT2_1_3_Module_Destructor) cff_driver_done,
+		(FT2_1_3_Module_Requester)  cff_get_interface,
 	},
 
 	/* now the specific driver fields */
 	sizeof( TT_FaceRec ),
-	sizeof( FT_SizeRec ),
+	sizeof( FT2_1_3_SizeRec ),
 	sizeof( CFF_GlyphSlotRec ),
 
-	(FT_Face_InitFunc)       cff_face_init,
-	(FT_Face_DoneFunc)       cff_face_done,
-	(FT_Size_InitFunc)       cff_size_init,
-	(FT_Size_DoneFunc)       cff_size_done,
-	(FT_Slot_InitFunc)       cff_slot_init,
-	(FT_Slot_DoneFunc)       cff_slot_done,
+	(FT2_1_3_Face_InitFunc)       cff_face_init,
+	(FT2_1_3_Face_DoneFunc)       cff_face_done,
+	(FT2_1_3_Size_InitFunc)       cff_size_init,
+	(FT2_1_3_Size_DoneFunc)       cff_size_done,
+	(FT2_1_3_Slot_InitFunc)       cff_slot_init,
+	(FT2_1_3_Slot_DoneFunc)       cff_slot_done,
 
-	(FT_Size_ResetPointsFunc)cff_size_reset,
-	(FT_Size_ResetPixelsFunc)cff_size_reset,
+	(FT2_1_3_Size_ResetPointsFunc)cff_size_reset,
+	(FT2_1_3_Size_ResetPixelsFunc)cff_size_reset,
 
-	(FT_Slot_LoadFunc)       Load_Glyph,
+	(FT2_1_3_Slot_LoadFunc)       Load_Glyph,
 
-	(FT_Face_GetKerningFunc) Get_Kerning,
-	(FT_Face_AttachFunc)     0,
-	(FT_Face_GetAdvancesFunc)0,
+	(FT2_1_3_Face_GetKerningFunc) Get_Kerning,
+	(FT2_1_3_Face_AttachFunc)     0,
+	(FT2_1_3_Face_GetAdvancesFunc)0,
 };
 
 
