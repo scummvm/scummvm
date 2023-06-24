@@ -17,12 +17,12 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_OBJECTS_H
-#include FT_INTERNAL_DEBUG_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_DEBUG_H
 #include "pshalgo1.h"
 
-#undef  FT_COMPONENT
-#define FT_COMPONENT  trace_pshalgo1
+#undef  FT2_1_3_COMPONENT
+#define FT2_1_3_COMPONENT  trace_pshalgo1
 
 #ifdef DEBUG_HINTER
 PSH1_Hint_Table  ps1_debug_hint_table = 0;
@@ -39,7 +39,7 @@ PSH1_HintFunc    ps1_debug_hint_func  = 0;
 /************************************************************************/
 
 /* return true iff two stem hints overlap */
-static FT_Int
+static FT2_1_3_Int
 psh1_hint_overlap( PSH1_Hint  hint1,
                    PSH1_Hint  hint2 ) {
 	return ( hint1->org_pos + hint1->org_len >= hint2->org_pos &&
@@ -50,13 +50,13 @@ psh1_hint_overlap( PSH1_Hint  hint1,
 /* destroy hints table */
 static void
 psh1_hint_table_done( PSH1_Hint_Table  table,
-                      FT_Memory        memory ) {
-	FT_FREE( table->zones );
+                      FT2_1_3_Memory        memory ) {
+	FT2_1_3_FREE( table->zones );
 	table->num_zones = 0;
 	table->zone      = 0;
 
-	FT_FREE( table->sort );
-	FT_FREE( table->hints );
+	FT2_1_3_FREE( table->sort );
+	FT2_1_3_FREE( table->hints );
 	table->num_hints   = 0;
 	table->max_hints   = 0;
 	table->sort_global = 0;
@@ -66,7 +66,7 @@ psh1_hint_table_done( PSH1_Hint_Table  table,
 /* deactivate all hints in a table */
 static void
 psh1_hint_table_deactivate( PSH1_Hint_Table  table ) {
-	FT_UInt    count = table->max_hints;
+	FT2_1_3_UInt    count = table->max_hints;
 	PSH1_Hint  hint  = table->hints;
 
 
@@ -80,12 +80,12 @@ psh1_hint_table_deactivate( PSH1_Hint_Table  table ) {
 /* internal function used to record a new hint */
 static void
 psh1_hint_table_record( PSH1_Hint_Table  table,
-                        FT_UInt          idx ) {
+                        FT2_1_3_UInt          idx ) {
 	PSH1_Hint  hint = table->hints + idx;
 
 
 	if ( idx >= table->max_hints ) {
-		FT_ERROR(( "%s.activate: invalid hint index %d\n", idx ));
+		FT2_1_3_ERROR(( "%s.activate: invalid hint index %d\n", idx ));
 		return;
 	}
 
@@ -99,7 +99,7 @@ psh1_hint_table_record( PSH1_Hint_Table  table,
 	/* if we are overlapping with another segment                 */
 	{
 		PSH1_Hint*  sorted = table->sort_global;
-		FT_UInt     count  = table->num_hints;
+		FT2_1_3_UInt     count  = table->num_hints;
 		PSH1_Hint   hint2;
 
 
@@ -117,7 +117,7 @@ psh1_hint_table_record( PSH1_Hint_Table  table,
 	if ( table->num_hints < table->max_hints )
 		table->sort_global[table->num_hints++] = hint;
 	else
-		FT_ERROR(( "%s.activate: too many sorted hints!  BUG!\n",
+		FT2_1_3_ERROR(( "%s.activate: too many sorted hints!  BUG!\n",
 		           "ps.fitter" ));
 }
 
@@ -125,15 +125,15 @@ psh1_hint_table_record( PSH1_Hint_Table  table,
 static void
 psh1_hint_table_record_mask( PSH1_Hint_Table  table,
                              PS_Mask          hint_mask ) {
-	FT_Int    mask = 0, val = 0;
-	FT_Byte*  cursor = hint_mask->bytes;
-	FT_UInt   idx, limit;
+	FT2_1_3_Int    mask = 0, val = 0;
+	FT2_1_3_Byte*  cursor = hint_mask->bytes;
+	FT2_1_3_UInt   idx, limit;
 
 
 	limit = hint_mask->num_bits;
 
 	if ( limit != table->max_hints )
-		FT_ERROR(( "%s.activate_mask: invalid bit count (%d instead of %d)\n",
+		FT2_1_3_ERROR(( "%s.activate_mask: invalid bit count (%d instead of %d)\n",
 		           "ps.fitter", hint_mask->num_bits, table->max_hints ));
 
 	for ( idx = 0; idx < limit; idx++ ) {
@@ -151,22 +151,22 @@ psh1_hint_table_record_mask( PSH1_Hint_Table  table,
 
 
 /* create hints table */
-static FT_Error
+static FT2_1_3_Error
 psh1_hint_table_init( PSH1_Hint_Table  table,
                       PS_Hint_Table    hints,
                       PS_Mask_Table    hint_masks,
                       PS_Mask_Table    counter_masks,
-                      FT_Memory        memory ) {
-	FT_UInt   count = hints->num_hints;
-	FT_Error  error;
+                      FT2_1_3_Memory        memory ) {
+	FT2_1_3_UInt   count = hints->num_hints;
+	FT2_1_3_Error  error;
 
-	FT_UNUSED( counter_masks );
+	FT2_1_3_UNUSED( counter_masks );
 
 
 	/* allocate our tables */
-	if ( FT_NEW_ARRAY( table->sort,  2 * count     ) ||
-	        FT_NEW_ARRAY( table->hints,     count     ) ||
-	        FT_NEW_ARRAY( table->zones, 2 * count + 1 ) )
+	if ( FT2_1_3_NEW_ARRAY( table->sort,  2 * count     ) ||
+	        FT2_1_3_NEW_ARRAY( table->hints,     count     ) ||
+	        FT2_1_3_NEW_ARRAY( table->zones, 2 * count + 1 ) )
 		goto Exit;
 
 	table->max_hints   = count;
@@ -191,7 +191,7 @@ psh1_hint_table_init( PSH1_Hint_Table  table,
 	/* we now need to determine the initial "parent" stems; first  */
 	/* activate the hints that are given by the initial hint masks */
 	if ( hint_masks ) {
-		FT_UInt  Count = hint_masks->num_masks;
+		FT2_1_3_UInt  Count = hint_masks->num_masks;
 		PS_Mask  Mask  = hint_masks->masks;
 
 
@@ -203,10 +203,10 @@ psh1_hint_table_init( PSH1_Hint_Table  table,
 
 	/* now, do a linear parse in case some hints were left alone */
 	if ( table->num_hints != table->max_hints ) {
-		FT_UInt   Index, Count;
+		FT2_1_3_UInt   Index, Count;
 
 
-		FT_ERROR(( "%s.init: missing/incorrect hint masks!\n" ));
+		FT2_1_3_ERROR(( "%s.init: missing/incorrect hint masks!\n" ));
 		Count = table->max_hints;
 		for ( Index = 0; Index < Count; Index++ )
 			psh1_hint_table_record( table, Index );
@@ -220,9 +220,9 @@ Exit:
 static void
 psh1_hint_table_activate_mask( PSH1_Hint_Table  table,
                                PS_Mask          hint_mask ) {
-	FT_Int    mask = 0, val = 0;
-	FT_Byte*  cursor = hint_mask->bytes;
-	FT_UInt   idx, limit, count;
+	FT2_1_3_Int    mask = 0, val = 0;
+	FT2_1_3_Byte*  cursor = hint_mask->bytes;
+	FT2_1_3_UInt   idx, limit, count;
 
 
 	limit = hint_mask->num_bits;
@@ -242,14 +242,14 @@ psh1_hint_table_activate_mask( PSH1_Hint_Table  table,
 
 			if ( !psh1_hint_is_active( hint ) ) {
 				PSH1_Hint*  sort = table->sort;
-				FT_UInt     count2;
+				FT2_1_3_UInt     count2;
 				PSH1_Hint   hint2;
 
 
 				for ( count2 = count; count2 > 0; count2--, sort++ ) {
 					hint2 = sort[0];
 					if ( psh1_hint_overlap( hint, hint2 ) ) {
-						FT_ERROR(( "%s.activate_mask: found overlapping hints\n",
+						FT2_1_3_ERROR(( "%s.activate_mask: found overlapping hints\n",
 						           "psf.hint" ));
 						break;
 					}
@@ -260,7 +260,7 @@ psh1_hint_table_activate_mask( PSH1_Hint_Table  table,
 					if ( count < table->max_hints )
 						table->sort[count++] = hint;
 					else
-						FT_ERROR(( "%s.activate_mask: too many active hints\n",
+						FT2_1_3_ERROR(( "%s.activate_mask: too many active hints\n",
 						           "psf.hint" ));
 				}
 			}
@@ -273,14 +273,14 @@ psh1_hint_table_activate_mask( PSH1_Hint_Table  table,
 	/* now, sort the hints; they are guaranteed to not overlap */
 	/* so we can compare their "org_pos" field directly        */
 	{
-		FT_Int      i1, i2;
+		FT2_1_3_Int      i1, i2;
 		PSH1_Hint   hint1, hint2;
 		PSH1_Hint*  sort = table->sort;
 
 
 		/* a simple bubble sort will do, since in 99% of cases, the hints */
 		/* will be already sorted; and the sort will be linear            */
-		for ( i1 = 1; i1 < (FT_Int)count; i1++ ) {
+		for ( i1 = 1; i1 < (FT2_1_3_Int)count; i1++ ) {
 			hint1 = sort[i1];
 
 			for ( i2 = i1 - 1; i2 >= 0; i2-- ) {
@@ -307,18 +307,18 @@ psh1_hint_table_activate_mask( PSH1_Hint_Table  table,
 #ifdef DEBUG_HINTER
 void
 ps_simple_scale( PSH1_Hint_Table  table,
-                 FT_Fixed         scale,
-                 FT_Fixed         delta,
-                 FT_Int           vertical ) {
+                 FT2_1_3_Fixed         scale,
+                 FT2_1_3_Fixed         delta,
+                 FT2_1_3_Int           vertical ) {
 	PSH1_Hint  hint;
-	FT_UInt    count;
+	FT2_1_3_UInt    count;
 
 
 	for ( count = 0; count < table->num_hints; count++ ) {
 		hint = table->sort[count];
 		if ( psh1_hint_is_active( hint ) ) {
-			hint->cur_pos = FT_MulFix( hint->org_pos, scale ) + delta;
-			hint->cur_len = FT_MulFix( hint->org_len, scale );
+			hint->cur_pos = FT2_1_3_MulFix( hint->org_pos, scale ) + delta;
+			hint->cur_len = FT2_1_3_MulFix( hint->org_len, scale );
 
 			if ( ps1_debug_hint_func )
 				ps1_debug_hint_func( hint, vertical );
@@ -328,16 +328,16 @@ ps_simple_scale( PSH1_Hint_Table  table,
 #endif
 
 
-FT_LOCAL_DEF( FT_Error )
+FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 psh1_hint_table_optimize( PSH1_Hint_Table  table,
                           PSH_Globals      globals,
-                          FT_Outline*      outline,
-                          FT_Int           vertical ) {
+                          FT2_1_3_Outline*      outline,
+                          FT2_1_3_Int           vertical ) {
 	PSH_Dimension  dim   = &globals->dimension[vertical];
-	FT_Fixed       scale = dim->scale_mult;
-	FT_Fixed       delta = dim->scale_delta;
+	FT2_1_3_Fixed       scale = dim->scale_mult;
+	FT2_1_3_Fixed       delta = dim->scale_delta;
 
-	FT_UNUSED( outline );
+	FT2_1_3_UNUSED( outline );
 
 
 #ifdef DEBUG_HINTER
@@ -356,18 +356,18 @@ psh1_hint_table_optimize( PSH1_Hint_Table  table,
 	/*       of the PostScript hinter                                   */
 	{
 		PSH1_Hint  hint;
-		FT_UInt   count;
+		FT2_1_3_UInt   count;
 
 
 		for ( count = 0; count < table->num_hints; count++ ) {
 			hint = table->sort[count];
 			if ( psh1_hint_is_active( hint ) ) {
 #if 1
-				FT_Pos  pos = FT_MulFix( hint->org_pos, scale ) + delta;
-				FT_Pos  len = FT_MulFix( hint->org_len, scale );
+				FT2_1_3_Pos  pos = FT2_1_3_MulFix( hint->org_pos, scale ) + delta;
+				FT2_1_3_Pos  len = FT2_1_3_MulFix( hint->org_len, scale );
 
-				FT_Pos  fit_center;
-				FT_Pos  fit_len;
+				FT2_1_3_Pos  fit_center;
+				FT2_1_3_Pos  fit_len;
 
 				PSH_AlignmentRec  align;
 
@@ -423,9 +423,9 @@ psh1_hint_table_optimize( PSH1_Hint_Table  table,
 
 # else
 
-				hint->cur_pos = ( FT_MulFix( hint->org_pos, scale ) + delta + 32 )
+				hint->cur_pos = ( FT2_1_3_MulFix( hint->org_pos, scale ) + delta + 32 )
 				                & -64;
-				hint->cur_len = FT_MulFix( hint->org_len, scale );
+				hint->cur_len = FT2_1_3_MulFix( hint->org_len, scale );
 
 # endif
 
@@ -476,9 +476,9 @@ psh1_print_zone( PSH1_Zone  zone ) {
 /* by the optimizer                                               */
 static void
 psh1_hint_table_setup_zones( PSH1_Hint_Table  table,
-                             FT_Fixed         scale,
-                             FT_Fixed         delta ) {
-	FT_UInt     count;
+                             FT2_1_3_Fixed         scale,
+                             FT2_1_3_Fixed         delta ) {
+	FT2_1_3_UInt     count;
 	PSH1_Zone   zone;
 	PSH1_Hint  *sort, hint, hint2;
 
@@ -504,7 +504,7 @@ psh1_hint_table_setup_zones( PSH1_Hint_Table  table,
 	hint = sort[0];
 
 	zone->scale = scale;
-	zone->delta = hint->cur_pos - FT_MulFix( hint->org_pos, scale );
+	zone->delta = hint->cur_pos - FT2_1_3_MulFix( hint->org_pos, scale );
 	zone->min   = PSH1_ZONE_MIN;
 	zone->max   = hint->org_pos;
 
@@ -513,7 +513,7 @@ psh1_hint_table_setup_zones( PSH1_Hint_Table  table,
 	zone++;
 
 	for ( count = table->num_hints; count > 0; count-- ) {
-		FT_Fixed  scale2;
+		FT2_1_3_Fixed  scale2;
 
 
 		if ( hint->org_len > 0 ) {
@@ -521,11 +521,11 @@ psh1_hint_table_setup_zones( PSH1_Hint_Table  table,
 			/* (x' - x0') = (x - x0)*(x1'-x0')/(x1-x0)   */
 			/* x' = x*s2 + x0' - x0*s2                   */
 
-			scale2      = FT_DivFix( hint->cur_len, hint->org_len );
+			scale2      = FT2_1_3_DivFix( hint->cur_len, hint->org_len );
 			zone->scale = scale2;
 			zone->min   = hint->org_pos;
 			zone->max   = hint->org_pos + hint->org_len;
-			zone->delta = hint->cur_pos - FT_MulFix( zone->min, scale2 );
+			zone->delta = hint->cur_pos - FT2_1_3_MulFix( zone->min, scale2 );
 
 			psh1_print_zone( zone );
 
@@ -542,13 +542,13 @@ psh1_hint_table_setup_zones( PSH1_Hint_Table  table,
 		/* (x'-x1') = (x-x1)*(x2'-x1')/(x2-x1)     */
 		/* x' = x*s3 + x1' - x1*s3                 */
 
-		scale2 = FT_DivFix( hint2->cur_pos - (hint->cur_pos + hint->cur_len),
+		scale2 = FT2_1_3_DivFix( hint2->cur_pos - (hint->cur_pos + hint->cur_len),
 		                    hint2->org_pos - (hint->org_pos + hint->org_len) );
 		zone->scale = scale2;
 		zone->min   = hint->org_pos + hint->org_len;
 		zone->max   = hint2->org_pos;
 		zone->delta = hint->cur_pos + hint->cur_len -
-		              FT_MulFix( zone->min, scale2 );
+		              FT2_1_3_MulFix( zone->min, scale2 );
 
 		psh1_print_zone( zone );
 
@@ -562,7 +562,7 @@ psh1_hint_table_setup_zones( PSH1_Hint_Table  table,
 	zone->min   = hint->org_pos + hint->org_len;
 	zone->max   = PSH1_ZONE_MAX;
 	zone->delta = hint->cur_pos + hint->cur_len -
-	              FT_MulFix( zone->min, scale );
+	              FT2_1_3_MulFix( zone->min, scale );
 
 	psh1_print_zone( zone );
 
@@ -574,9 +574,9 @@ psh1_hint_table_setup_zones( PSH1_Hint_Table  table,
 
 
 /* tune a single coordinate with the current interpolation zones */
-static FT_Pos
+static FT2_1_3_Pos
 psh1_hint_table_tune_coord( PSH1_Hint_Table  table,
-                            FT_Int           coord ) {
+                            FT2_1_3_Int           coord ) {
 	PSH1_Zone   zone;
 
 
@@ -602,7 +602,7 @@ psh1_hint_table_tune_coord( PSH1_Hint_Table  table,
 		table->zone = zone;
 	}
 
-	return FT_MulFix( coord, zone->scale ) + zone->delta;
+	return FT2_1_3_MulFix( coord, zone->scale ) + zone->delta;
 }
 
 
@@ -610,17 +610,17 @@ psh1_hint_table_tune_coord( PSH1_Hint_Table  table,
 /* The function only works in a single dimension.         */
 static void
 psh1_hint_table_tune_outline( PSH1_Hint_Table  table,
-                              FT_Outline*      outline,
+                              FT2_1_3_Outline*      outline,
                               PSH_Globals      globals,
-                              FT_Int           vertical )
+                              FT2_1_3_Int           vertical )
 
 {
-	FT_UInt         count, first, last;
+	FT2_1_3_UInt         count, first, last;
 	PS_Mask_Table   hint_masks = table->hint_masks;
 	PS_Mask         mask;
 	PSH_Dimension   dim        = &globals->dimension[vertical];
-	FT_Fixed        scale      = dim->scale_mult;
-	FT_Fixed        delta      = dim->scale_delta;
+	FT2_1_3_Fixed        scale      = dim->scale_mult;
+	FT2_1_3_Fixed        delta      = dim->scale_delta;
 
 
 	if ( hint_masks && hint_masks->num_masks > 0 ) {
@@ -632,8 +632,8 @@ psh1_hint_table_tune_outline( PSH1_Hint_Table  table,
 			last = mask->end_point;
 
 			if ( last > first ) {
-				FT_Vector*   vec;
-				FT_Int       count2;
+				FT2_1_3_Vector*   vec;
+				FT2_1_3_Int       count2;
 
 
 				psh1_hint_table_activate_mask( table, mask );
@@ -645,20 +645,20 @@ psh1_hint_table_tune_outline( PSH1_Hint_Table  table,
 				count2 = last - first;
 
 				for ( ; count2 > 0; count2--, vec++ ) {
-					FT_Pos  x, *px;
+					FT2_1_3_Pos  x, *px;
 
 
 					px  = vertical ? &vec->x : &vec->y;
 					x   = *px;
 
-					*px = psh1_hint_table_tune_coord( table, (FT_Int)x );
+					*px = psh1_hint_table_tune_coord( table, (FT2_1_3_Int)x );
 				}
 			}
 
 			first = last;
 		}
 	} else { /* no hints in this glyph, simply scale the outline */
-		FT_Vector*  vec;
+		FT2_1_3_Vector*  vec;
 
 
 		vec   = outline->points;
@@ -666,10 +666,10 @@ psh1_hint_table_tune_outline( PSH1_Hint_Table  table,
 
 		if ( vertical ) {
 			for ( ; count > 0; count--, vec++ )
-				vec->x = FT_MulFix( vec->x, scale ) + delta;
+				vec->x = FT2_1_3_MulFix( vec->x, scale ) + delta;
 		} else {
 			for ( ; count > 0; count--, vec++ )
-				vec->y = FT_MulFix( vec->y, scale ) + delta;
+				vec->y = FT2_1_3_MulFix( vec->y, scale ) + delta;
 		}
 	}
 }
@@ -683,24 +683,24 @@ psh1_hint_table_tune_outline( PSH1_Hint_Table  table,
 /*************************************************************************/
 /*************************************************************************/
 
-FT_Error
+FT2_1_3_Error
 ps1_hints_apply( PS_Hints        ps_hints,
-                 FT_Outline*     outline,
+                 FT2_1_3_Outline*     outline,
                  PSH_Globals     globals,
-                 FT_Render_Mode  hint_mode ) {
+                 FT2_1_3_Render_Mode  hint_mode ) {
 	PSH1_Hint_TableRec  hints;
-	FT_Error            error = 0;
-	FT_Int              dimension;
+	FT2_1_3_Error            error = 0;
+	FT2_1_3_Int              dimension;
 
 
-	FT_UNUSED( hint_mode );
+	FT2_1_3_UNUSED( hint_mode );
 
 	for ( dimension = 1; dimension >= 0; dimension-- ) {
 		PS_Dimension  dim = &ps_hints->dimension[dimension];
 
 
 		/* initialize hints table */
-		FT_MEM_ZERO( &hints, sizeof ( hints ) );
+		FT2_1_3_MEM_ZERO( &hints, sizeof ( hints ) );
 		error = psh1_hint_table_init( &hints,
 		                              &dim->hints,
 		                              &dim->masks,

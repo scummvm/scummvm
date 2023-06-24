@@ -33,11 +33,11 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_POSTSCRIPT_HINTS_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_HINTS_H
 #include "pshglob.h"
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -69,9 +69,9 @@ typedef enum {
 
 /* hint descriptor */
 typedef struct  PS_HintRec_ {
-	FT_Int   pos;
-	FT_Int   len;
-	FT_UInt  flags;
+	FT2_1_3_Int   pos;
+	FT2_1_3_Int   len;
+	FT2_1_3_UInt  flags;
 
 } PS_HintRec;
 
@@ -83,8 +83,8 @@ typedef struct  PS_HintRec_ {
 
 /* hints table descriptor */
 typedef struct  PS_Hint_TableRec_ {
-	FT_UInt  num_hints;
-	FT_UInt  max_hints;
+	FT2_1_3_UInt  num_hints;
+	FT2_1_3_UInt  max_hints;
 	PS_Hint  hints;
 
 } PS_Hint_TableRec, *PS_Hint_Table;
@@ -92,18 +92,18 @@ typedef struct  PS_Hint_TableRec_ {
 
 /* hint and counter mask descriptor */
 typedef struct  PS_MaskRec_ {
-	FT_UInt   num_bits;
-	FT_UInt   max_bits;
-	FT_Byte*  bytes;
-	FT_UInt   end_point;
+	FT2_1_3_UInt   num_bits;
+	FT2_1_3_UInt   max_bits;
+	FT2_1_3_Byte*  bytes;
+	FT2_1_3_UInt   end_point;
 
 } PS_MaskRec, *PS_Mask;
 
 
 /* masks and counters table descriptor */
 typedef struct  PS_Mask_TableRec_ {
-	FT_UInt  num_masks;
-	FT_UInt  max_masks;
+	FT2_1_3_UInt  num_masks;
+	FT2_1_3_UInt  max_masks;
 	PS_Mask  masks;
 
 } PS_Mask_TableRec, *PS_Mask_Table;
@@ -126,9 +126,9 @@ typedef struct  PS_DimensionRec_ {
 /* dimension 0 => X coordinates + vertical hints/stems   */
 /* dimension 1 => Y coordinates + horizontal hints/stems */
 typedef struct  PS_HintsRec_ {
-	FT_Memory        memory;
-	FT_Error         error;
-	FT_UInt32        magic;
+	FT2_1_3_Memory        memory;
+	FT2_1_3_Error         error;
+	FT2_1_3_UInt32        magic;
 	PS_Hint_Type     hint_type;
 	PS_DimensionRec  dimension[2];
 
@@ -137,20 +137,20 @@ typedef struct  PS_HintsRec_ {
 /* */
 
 /* initialize hints recorder */
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 ps_hints_init( PS_Hints   hints,
-               FT_Memory  memory );
+               FT2_1_3_Memory  memory );
 
 /* finalize hints recorder */
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 ps_hints_done( PS_Hints  hints );
 
 /* initialize Type1 hints recorder interface */
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 t1_hints_funcs_init( T1_Hints_FuncsRec*  funcs );
 
 /* initialize Type2 hints recorder interface */
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 t2_hints_funcs_init( T2_Hints_FuncsRec*  funcs );
 
 
@@ -163,7 +163,7 @@ extern  int      ps_debug_no_vert_hints;
 /* */
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 
 #endif /* __PS_HINTER_RECORD_H__ */

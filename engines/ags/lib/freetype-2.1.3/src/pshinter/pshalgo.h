@@ -19,7 +19,7 @@
 #ifndef __PSHALGO_H__
 #define __PSHALGO_H__
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 /* define to choose hinting algorithm */
 #define PSH_ALGORITHM_3
@@ -45,7 +45,7 @@ FT_BEGIN_HEADER
 
 #endif
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __PSHALGO_H__ */
 

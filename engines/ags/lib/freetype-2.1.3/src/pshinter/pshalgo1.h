@@ -21,7 +21,7 @@
 
 #include "pshrec.h"
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 typedef struct PSH1_HintRec_*  PSH1_Hint;
 
@@ -41,15 +41,15 @@ typedef enum {
 #define psh1_hint_deactivate( x )  (x)->flags &= ~PSH1_HINT_FLAG_ACTIVE
 
 typedef struct  PSH1_HintRec_ {
-	FT_Int     org_pos;
-	FT_Int     org_len;
-	FT_Pos     cur_pos;
-	FT_Pos     cur_len;
+	FT2_1_3_Int     org_pos;
+	FT2_1_3_Int     org_len;
+	FT2_1_3_Pos     cur_pos;
+	FT2_1_3_Pos     cur_len;
 
-	FT_UInt    flags;
+	FT2_1_3_UInt    flags;
 
 	PSH1_Hint  parent;
-	FT_Int     order;
+	FT2_1_3_Int     order;
 
 } PSH1_HintRec;
 
@@ -58,21 +58,21 @@ typedef struct  PSH1_HintRec_ {
 /* weak points are interpolated according to their strong */
 /* neighbours                                             */
 typedef struct  PSH1_ZoneRec_ {
-	FT_Fixed  scale;
-	FT_Fixed  delta;
-	FT_Pos    min;
-	FT_Pos    max;
+	FT2_1_3_Fixed  scale;
+	FT2_1_3_Fixed  delta;
+	FT2_1_3_Pos    min;
+	FT2_1_3_Pos    max;
 
 } PSH1_ZoneRec, *PSH1_Zone;
 
 
 typedef struct  PSH1_Hint_TableRec_ {
-	FT_UInt        max_hints;
-	FT_UInt        num_hints;
+	FT2_1_3_UInt        max_hints;
+	FT2_1_3_UInt        num_hints;
 	PSH1_Hint      hints;
 	PSH1_Hint*     sort;
 	PSH1_Hint*     sort_global;
-	FT_UInt        num_zones;
+	FT2_1_3_UInt        num_zones;
 	PSH1_Zone      zones;
 	PSH1_Zone      zone;
 	PS_Mask_Table  hint_masks;
@@ -81,11 +81,11 @@ typedef struct  PSH1_Hint_TableRec_ {
 } PSH1_Hint_TableRec, *PSH1_Hint_Table;
 
 
-extern FT_Error
+extern FT2_1_3_Error
 ps1_hints_apply( PS_Hints        ps_hints,
-                 FT_Outline*     outline,
+                 FT2_1_3_Outline*     outline,
                  PSH_Globals     globals,
-                 FT_Render_Mode  hint_mode );
+                 FT2_1_3_Render_Mode  hint_mode );
 
 
 #ifdef DEBUG_HINTER
@@ -93,12 +93,12 @@ extern  PSH1_Hint_Table  ps1_debug_hint_table;
 
 typedef void
 (*PSH1_HintFunc)( PSH1_Hint  hint,
-                  FT_Bool    vertical );
+                  FT2_1_3_Bool    vertical );
 
 extern PSH1_HintFunc  ps1_debug_hint_func;
 #endif
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __PSHALGO1_H__ */
 
