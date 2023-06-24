@@ -19,8 +19,8 @@
 #define FT2_1_3_MAKE_OPTION_SINGLE_OBJECT
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include "ftraster.c"
-#include "ftrend1.c"
+#include "ftraster.cpp"
+#include "ftrend1.cpp"
 
 
 /* END */

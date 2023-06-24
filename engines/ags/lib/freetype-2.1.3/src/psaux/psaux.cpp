@@ -19,10 +19,10 @@
 #define FT2_1_3_MAKE_OPTION_SINGLE_OBJECT
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include "psobjs.c"
-#include "psauxmod.c"
-#include "t1decode.c"
-#include "t1cmap.c"
+#include "psobjs.cpp"
+#include "psauxmod.cpp"
+#include "t1decode.cpp"
+#include "t1cmap.cpp"
 
 
 /* END */

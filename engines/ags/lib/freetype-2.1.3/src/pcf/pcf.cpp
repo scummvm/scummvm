@@ -29,8 +29,8 @@ THE SOFTWARE.
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include "pcfutil.c"
-#include "pcfread.c"
-#include "pcfdriver.c"
+#include "pcfutil.cpp"
+#include "pcfread.cpp"
+#include "pcfdriver.cpp"
 
 /* END */

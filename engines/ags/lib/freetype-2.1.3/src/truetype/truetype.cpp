@@ -19,13 +19,13 @@
 #define FT2_1_3_MAKE_OPTION_SINGLE_OBJECT
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include "ttdriver.c"   /* driver interface */
-#include "ttpload.c"    /* tables loader    */
-#include "ttgload.c"    /* glyph loader     */
-#include "ttobjs.c"     /* object manager   */
+#include "ttdriver.cpp"   /* driver interface */
+#include "ttpload.cpp"    /* tables loader    */
+#include "ttgload.cpp"    /* glyph loader     */
+#include "ttobjs.cpp"     /* object manager   */
 
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
-#include "ttinterp.c"
+#include "ttinterp.cpp"
 #endif
 
 

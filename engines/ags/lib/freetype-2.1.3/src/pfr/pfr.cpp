@@ -19,11 +19,11 @@
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 
-#include "pfrload.c"
-#include "pfrgload.c"
-#include "pfrcmap.c"
-#include "pfrobjs.c"
-#include "pfrdrivr.c"
-#include "pfrsbit.c"
+#include "pfrload.cpp"
+#include "pfrgload.cpp"
+#include "pfrcmap.cpp"
+#include "pfrobjs.cpp"
+#include "pfrdrivr.cpp"
+#include "pfrsbit.cpp"
 
 /* END */

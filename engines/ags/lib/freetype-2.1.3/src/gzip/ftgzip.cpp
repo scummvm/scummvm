@@ -49,13 +49,13 @@
 #    undef   SLOW
 #    define  SLOW  1  /* we can't use asm-optimized sources here !! */
 
-#    include "zutil.c"
-#    include "inftrees.c"
-#    include "infcodes.c"
-#    include "infutil.c"
-#    include "infblock.c"
-#    include "inflate.c"
-#    include "adler32.c"
+#    include "zutil.cpp"
+#    include "inftrees.cpp"
+#    include "infcodes.cpp"
+#    include "infutil.cpp"
+#    include "infblock.cpp"
+#    include "inflate.cpp"
+#    include "adler32.cpp"
 
 #endif /* !SYSTEM_ZLIB */
 

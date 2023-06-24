@@ -19,11 +19,11 @@
 #define FT2_1_3_MAKE_OPTION_SINGLE_OBJECT
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include "cidparse.c"
-#include "cidload.c"
-#include "cidobjs.c"
-#include "cidriver.c"
-#include "cidgload.c"
+#include "cidparse.cpp"
+#include "cidload.cpp"
+#include "cidobjs.cpp"
+#include "cidriver.cpp"
+#include "cidgload.cpp"
 
 
 /* END */

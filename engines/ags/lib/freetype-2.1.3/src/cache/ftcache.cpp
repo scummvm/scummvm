@@ -19,13 +19,13 @@
 #define FT2_1_3_MAKE_OPTION_SINGLE_OBJECT
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include "ftlru.c"
-#include "ftcmanag.c"
-#include "ftccache.c"
-#include "ftcglyph.c"
-#include "ftcimage.c"
-#include "ftcsbits.c"
-#include "ftccmap.c"
+#include "ftlru.cpp"
+#include "ftcmanag.cpp"
+#include "ftccache.cpp"
+#include "ftcglyph.cpp"
+#include "ftcimage.cpp"
+#include "ftcsbits.cpp"
+#include "ftccmap.cpp"
 
 
 /* END */

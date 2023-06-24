@@ -19,18 +19,18 @@
 #define FT2_1_3_MAKE_OPTION_SINGLE_OBJECT
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include "ttload.c"
-#include "ttcmap.c"
-#include "ttcmap0.c"
-#include "sfobjs.c"
-#include "sfdriver.c"
+#include "ttload.cpp"
+#include "ttcmap.cpp"
+#include "ttcmap0.cpp"
+#include "sfobjs.cpp"
+#include "sfdriver.cpp"
 
 #ifdef TT_CONFIG_OPTION_EMBEDDED_BITMAPS
-#include "ttsbit.c"
+#include "ttsbit.cpp"
 #endif
 
 #ifdef TT_CONFIG_OPTION_POSTSCRIPT_NAMES
-#include "ttpost.c"
+#include "ttpost.cpp"
 #endif
 
 

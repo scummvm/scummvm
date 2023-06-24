@@ -19,14 +19,14 @@
 #define FT2_1_3_MAKE_OPTION_SINGLE_OBJECT
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include "t1parse.c"
-#include "t1load.c"
-#include "t1objs.c"
-#include "t1driver.c"
-#include "t1gload.c"
+#include "t1parse.cpp"
+#include "t1load.cpp"
+#include "t1objs.cpp"
+#include "t1driver.cpp"
+#include "t1gload.cpp"
 
 #ifndef T1_CONFIG_OPTION_NO_AFM
-#include "t1afm.c"
+#include "t1afm.cpp"
 #endif
 
 

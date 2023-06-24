@@ -19,12 +19,12 @@
 #define FT2_1_3_MAKE_OPTION_SINGLE_OBJECT
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include "pshrec.c"
-#include "pshglob.c"
-#include "pshalgo1.c"
-#include "pshalgo2.c"
-#include "pshalgo3.c"
-#include "pshmod.c"
+#include "pshrec.cpp"
+#include "pshglob.cpp"
+#include "pshalgo1.cpp"
+#include "pshalgo2.cpp"
+#include "pshalgo3.cpp"
+#include "pshmod.cpp"
 
 
 /* END */
