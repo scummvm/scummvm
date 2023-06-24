@@ -29,23 +29,23 @@ THE SOFTWARE.
 #define __BDFDRIVR_H__
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_DRIVER_H
+#include FT2_1_3_INTERNAL_DRIVER_H
 
 #include "bdf.h"
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 typedef struct  BDF_encoding_el_ {
-	FT_ULong  enc;
-	FT_Short  glyph;
+	FT2_1_3_ULong  enc;
+	FT2_1_3_Short  glyph;
 
 } BDF_encoding_el;
 
 
 typedef struct  BDF_FaceRec_ {
-	FT_FaceRec        root;
+	FT2_1_3_FaceRec        root;
 
 	char*             charset_encoding;
 	char*             charset_registry;
@@ -54,16 +54,16 @@ typedef struct  BDF_FaceRec_ {
 
 	BDF_encoding_el*  en_table;
 
-	FT_CharMap        charmap_handle;
-	FT_CharMapRec     charmap;  /* a single charmap per face */
+	FT2_1_3_CharMap        charmap_handle;
+	FT2_1_3_CharMapRec     charmap;  /* a single charmap per face */
 
 } BDF_FaceRec, *BDF_Face;
 
 
-FT_EXPORT_VAR( const FT_Driver_ClassRec )  bdf_driver_class;
+FT2_1_3_EXPORT_VAR( const FT2_1_3_Driver_ClassRec )  bdf_driver_class;
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 
 #endif /* __BDFDRIVR_H__ */

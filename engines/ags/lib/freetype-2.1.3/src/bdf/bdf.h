@@ -31,11 +31,11 @@
  */
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_OBJECTS_H
-#include FT_INTERNAL_STREAM_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_STREAM_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /* Imported from bdfP.h */
@@ -223,7 +223,7 @@ typedef struct  bdf_font_t_ {
 	unsigned short   modified;       /* Boolean indicating font modified.   */
 	unsigned short   bpp;            /* Bits per pixel.                     */
 
-	FT_Memory        memory;
+	FT2_1_3_Memory        memory;
 
 	bdf_property_t*  user_props;
 	unsigned long    nuser_props;
@@ -259,25 +259,25 @@ typedef struct  bdf_font_t_ {
 /*                                                                       */
 /*************************************************************************/
 
-FT_LOCAL( FT_Error )
-bdf_load_font( FT_Stream       stream,
-               FT_Memory       memory,
+FT2_1_3_LOCAL( FT2_1_3_Error )
+bdf_load_font( FT2_1_3_Stream       stream,
+               FT2_1_3_Memory       memory,
                bdf_options_t*  opts,
                bdf_font_t*    *font );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 bdf_free_font( bdf_font_t*  font );
 
-FT_LOCAL( bdf_property_t * )
+FT2_1_3_LOCAL( bdf_property_t * )
 bdf_get_property( char*        name,
                   bdf_font_t*  font );
 
-FT_LOCAL( bdf_property_t * )
+FT2_1_3_LOCAL( bdf_property_t * )
 bdf_get_font_property( bdf_font_t*  font,
                        char*        name );
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 
 #endif /* __BDF_H__ */
