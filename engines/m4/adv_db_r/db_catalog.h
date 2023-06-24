@@ -35,7 +35,15 @@ struct Catalog {
 	int32 _size = 0;
 };
 
-extern void db_rmlst_delete_global_RoomList();
+/**
+ * Read in the catalog
+ */
+int read_catalog();
+
+/**
+ * Return the catalog data
+ */
+extern char *db_get_catalog();
 
 /**
  * Given an asset name, name, return "path" from the database in result.
