@@ -17,8 +17,8 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_OBJECTS_H
-#include FT_OUTLINE_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
+#include FT2_1_3_OUTLINE_H
 #include "ftsmooth.h"
 #include "ftgrays.h"
 
@@ -26,9 +26,9 @@
 
 
 /* initialize renderer -- init its raster */
-static FT_Error
-ft_smooth_init( FT_Renderer  render ) {
-	FT_Library  library = FT_MODULE_LIBRARY( render );
+static FT2_1_3_Error
+ft_smooth_init( FT2_1_3_Renderer  render ) {
+	FT2_1_3_Library  library = FT2_1_3_MODULE_LIBRARY( render );
 
 
 	render->clazz->raster_class->raster_reset( render->raster,
@@ -40,10 +40,10 @@ ft_smooth_init( FT_Renderer  render ) {
 
 
 /* sets render-specific mode */
-static FT_Error
-ft_smooth_set_mode( FT_Renderer  render,
-                    FT_ULong     mode_tag,
-                    FT_Pointer   data ) {
+static FT2_1_3_Error
+ft_smooth_set_mode( FT2_1_3_Renderer  render,
+                    FT2_1_3_ULong     mode_tag,
+                    FT2_1_3_Pointer   data ) {
 	/* we simply pass it to the raster */
 	return render->clazz->raster_class->raster_set_mode( render->raster,
 	        mode_tag,
@@ -51,12 +51,12 @@ ft_smooth_set_mode( FT_Renderer  render,
 }
 
 /* transform a given glyph image */
-static FT_Error
-ft_smooth_transform( FT_Renderer   render,
-                     FT_GlyphSlot  slot,
-                     FT_Matrix*    matrix,
-                     FT_Vector*    delta ) {
-	FT_Error  error = Smooth_Err_Ok;
+static FT2_1_3_Error
+ft_smooth_transform( FT2_1_3_Renderer   render,
+                     FT2_1_3_GlyphSlot  slot,
+                     FT2_1_3_Matrix*    matrix,
+                     FT2_1_3_Vector*    delta ) {
+	FT2_1_3_Error  error = Smooth_Err_Ok;
 
 
 	if ( slot->format != render->glyph_format ) {
@@ -65,10 +65,10 @@ ft_smooth_transform( FT_Renderer   render,
 	}
 
 	if ( matrix )
-		FT_Outline_Transform( &slot->outline, matrix );
+		FT2_1_3_Outline_Transform( &slot->outline, matrix );
 
 	if ( delta )
-		FT_Outline_Translate( &slot->outline, delta->x, delta->y );
+		FT2_1_3_Outline_Translate( &slot->outline, delta->x, delta->y );
 
 Exit:
 	return error;
@@ -77,33 +77,33 @@ Exit:
 
 /* return the glyph's control box */
 static void
-ft_smooth_get_cbox( FT_Renderer   render,
-                    FT_GlyphSlot  slot,
-                    FT_BBox*      cbox ) {
-	FT_MEM_ZERO( cbox, sizeof ( *cbox ) );
+ft_smooth_get_cbox( FT2_1_3_Renderer   render,
+                    FT2_1_3_GlyphSlot  slot,
+                    FT2_1_3_BBox*      cbox ) {
+	FT2_1_3_MEM_ZERO( cbox, sizeof ( *cbox ) );
 
 	if ( slot->format == render->glyph_format )
-		FT_Outline_Get_CBox( &slot->outline, cbox );
+		FT2_1_3_Outline_Get_CBox( &slot->outline, cbox );
 }
 
 
 /* convert a slot's glyph image into a bitmap */
-static FT_Error
-ft_smooth_render_generic( FT_Renderer     render,
-                          FT_GlyphSlot    slot,
-                          FT_Render_Mode  mode,
-                          FT_Vector*      origin,
-                          FT_Render_Mode  required_mode,
-                          FT_Int          hmul,
-                          FT_Int          vmul ) {
-	FT_Error     error;
-	FT_Outline*  outline = NULL;
-	FT_BBox      cbox;
-	FT_UInt      width, height, pitch;
-	FT_Bitmap*   bitmap;
-	FT_Memory    memory;
+static FT2_1_3_Error
+ft_smooth_render_generic( FT2_1_3_Renderer     render,
+                          FT2_1_3_GlyphSlot    slot,
+                          FT2_1_3_Render_Mode  mode,
+                          FT2_1_3_Vector*      origin,
+                          FT2_1_3_Render_Mode  required_mode,
+                          FT2_1_3_Int          hmul,
+                          FT2_1_3_Int          vmul ) {
+	FT2_1_3_Error     error;
+	FT2_1_3_Outline*  outline = NULL;
+	FT2_1_3_BBox      cbox;
+	FT2_1_3_UInt      width, height, pitch;
+	FT2_1_3_Bitmap*   bitmap;
+	FT2_1_3_Memory    memory;
 
-	FT_Raster_Params  params;
+	FT2_1_3_Raster_Params  params;
 
 
 	/* check glyph image format */
@@ -120,10 +120,10 @@ ft_smooth_render_generic( FT_Renderer     render,
 
 	/* translate the outline to the new origin if needed */
 	if ( origin )
-		FT_Outline_Translate( outline, origin->x, origin->y );
+		FT2_1_3_Outline_Translate( outline, origin->x, origin->y );
 
 	/* compute the control box, and grid fit it */
-	FT_Outline_Get_CBox( outline, &cbox );
+	FT2_1_3_Outline_Get_CBox( outline, &cbox );
 
 	cbox.xMin &= -64;
 	cbox.yMin &= -64;
@@ -136,9 +136,9 @@ ft_smooth_render_generic( FT_Renderer     render,
 	memory = render->root.memory;
 
 	/* release old bitmap buffer */
-	if ( slot->flags & FT_GLYPH_OWN_BITMAP ) {
-		FT_FREE( bitmap->buffer );
-		slot->flags &= ~FT_GLYPH_OWN_BITMAP;
+	if ( slot->flags & FT2_1_3_GLYPH_OWN_BITMAP ) {
+		FT2_1_3_FREE( bitmap->buffer );
+		slot->flags &= ~FT2_1_3_GLYPH_OWN_BITMAP;
 	}
 
 	/* allocate new one, depends on pixel format */
@@ -151,29 +151,29 @@ ft_smooth_render_generic( FT_Renderer     render,
 	if ( vmul )
 		height *= vmul;
 
-	bitmap->pixel_mode = FT_PIXEL_MODE_GRAY;
+	bitmap->pixel_mode = FT2_1_3_PIXEL_MODE_GRAY;
 	bitmap->num_grays  = 256;
 	bitmap->width      = width;
 	bitmap->rows       = height;
 	bitmap->pitch      = pitch;
 
-	if ( FT_ALLOC( bitmap->buffer, (FT_ULong)pitch * height ) )
+	if ( FT2_1_3_ALLOC( bitmap->buffer, (FT2_1_3_ULong)pitch * height ) )
 		goto Exit;
 
-	slot->flags |= FT_GLYPH_OWN_BITMAP;
+	slot->flags |= FT2_1_3_GLYPH_OWN_BITMAP;
 
 	/* translate outline to render it into the bitmap */
-	FT_Outline_Translate( outline, -cbox.xMin, -cbox.yMin );
+	FT2_1_3_Outline_Translate( outline, -cbox.xMin, -cbox.yMin );
 
 	/* set up parameters */
 	params.target = bitmap;
 	params.source = outline;
-	params.flags  = FT_RASTER_FLAG_AA;
+	params.flags  = FT2_1_3_RASTER_FLAG_AA;
 
 	/* implode outline if needed */
 	{
-		FT_Int      n;
-		FT_Vector*  vec;
+		FT2_1_3_Int      n;
+		FT2_1_3_Vector*  vec;
 
 
 		if ( hmul )
@@ -190,8 +190,8 @@ ft_smooth_render_generic( FT_Renderer     render,
 
 	/* deflate outline if needed */
 	{
-		FT_Int      n;
-		FT_Vector*  vec;
+		FT2_1_3_Int      n;
+		FT2_1_3_Vector*  vec;
 
 
 		if ( hmul )
@@ -203,76 +203,76 @@ ft_smooth_render_generic( FT_Renderer     render,
 				vec->y /= vmul;
 	}
 
-	FT_Outline_Translate( outline, cbox.xMin, cbox.yMin );
+	FT2_1_3_Outline_Translate( outline, cbox.xMin, cbox.yMin );
 
 	if ( error )
 		goto Exit;
 
-	slot->format      = FT_GLYPH_FORMAT_BITMAP;
-	slot->bitmap_left = (FT_Int)( cbox.xMin >> 6 );
-	slot->bitmap_top  = (FT_Int)( cbox.yMax >> 6 );
+	slot->format      = FT2_1_3_GLYPH_FORMAT_BITMAP;
+	slot->bitmap_left = (FT2_1_3_Int)( cbox.xMin >> 6 );
+	slot->bitmap_top  = (FT2_1_3_Int)( cbox.yMax >> 6 );
 
 Exit:
 	if ( outline && origin )
-		FT_Outline_Translate( outline, -origin->x, -origin->y );
+		FT2_1_3_Outline_Translate( outline, -origin->x, -origin->y );
 
 	return error;
 }
 
 
 /* convert a slot's glyph image into a bitmap */
-static FT_Error
-ft_smooth_render( FT_Renderer     render,
-                  FT_GlyphSlot    slot,
-                  FT_Render_Mode  mode,
-                  FT_Vector*      origin ) {
+static FT2_1_3_Error
+ft_smooth_render( FT2_1_3_Renderer     render,
+                  FT2_1_3_GlyphSlot    slot,
+                  FT2_1_3_Render_Mode  mode,
+                  FT2_1_3_Vector*      origin ) {
 	return ft_smooth_render_generic( render, slot, mode, origin,
-	                                 FT_RENDER_MODE_NORMAL,
+	                                 FT2_1_3_RENDER_MODE_NORMAL,
 	                                 0, 0 );
 }
 
 
 /* convert a slot's glyph image into a horizontal LCD bitmap */
-static FT_Error
-ft_smooth_render_lcd( FT_Renderer     render,
-                      FT_GlyphSlot    slot,
-                      FT_Render_Mode  mode,
-                      FT_Vector*      origin ) {
-	FT_Error  error;
+static FT2_1_3_Error
+ft_smooth_render_lcd( FT2_1_3_Renderer     render,
+                      FT2_1_3_GlyphSlot    slot,
+                      FT2_1_3_Render_Mode  mode,
+                      FT2_1_3_Vector*      origin ) {
+	FT2_1_3_Error  error;
 
 	error = ft_smooth_render_generic( render, slot, mode, origin,
-	                                  FT_RENDER_MODE_LCD,
+	                                  FT2_1_3_RENDER_MODE_LCD,
 	                                  3, 0 );
 	if ( !error )
-		slot->bitmap.pixel_mode = FT_PIXEL_MODE_LCD;
+		slot->bitmap.pixel_mode = FT2_1_3_PIXEL_MODE_LCD;
 
 	return error;
 }
 
 
 /* convert a slot's glyph image into a vertical LCD bitmap */
-static FT_Error
-ft_smooth_render_lcd_v( FT_Renderer     render,
-                        FT_GlyphSlot    slot,
-                        FT_Render_Mode  mode,
-                        FT_Vector*      origin ) {
-	FT_Error  error;
+static FT2_1_3_Error
+ft_smooth_render_lcd_v( FT2_1_3_Renderer     render,
+                        FT2_1_3_GlyphSlot    slot,
+                        FT2_1_3_Render_Mode  mode,
+                        FT2_1_3_Vector*      origin ) {
+	FT2_1_3_Error  error;
 
 	error = ft_smooth_render_generic( render, slot, mode, origin,
-	                                  FT_RENDER_MODE_LCD_V,
+	                                  FT2_1_3_RENDER_MODE_LCD_V,
 	                                  0, 3 );
 	if ( !error )
-		slot->bitmap.pixel_mode = FT_PIXEL_MODE_LCD_V;
+		slot->bitmap.pixel_mode = FT2_1_3_PIXEL_MODE_LCD_V;
 
 	return error;
 }
 
 
-FT_CALLBACK_TABLE_DEF
-const FT_Renderer_Class  ft_smooth_renderer_class = {
+FT2_1_3_CALLBACK_TABLE_DEF
+const FT2_1_3_Renderer_Class  ft_smooth_renderer_class = {
 	{
 		ft_module_renderer,
-		sizeof( FT_RendererRec ),
+		sizeof( FT2_1_3_RendererRec ),
 
 		"smooth",
 		0x10000L,
@@ -280,27 +280,27 @@ const FT_Renderer_Class  ft_smooth_renderer_class = {
 
 		0,    /* module specific interface */
 
-		(FT_Module_Constructor)ft_smooth_init,
-		(FT_Module_Destructor) 0,
-		(FT_Module_Requester)  0
+		(FT2_1_3_Module_Constructor)ft_smooth_init,
+		(FT2_1_3_Module_Destructor) 0,
+		(FT2_1_3_Module_Requester)  0
 	},
 
-	FT_GLYPH_FORMAT_OUTLINE,
+	FT2_1_3_GLYPH_FORMAT_OUTLINE,
 
-	(FT_Renderer_RenderFunc)   ft_smooth_render,
-	(FT_Renderer_TransformFunc)ft_smooth_transform,
-	(FT_Renderer_GetCBoxFunc)  ft_smooth_get_cbox,
-	(FT_Renderer_SetModeFunc)  ft_smooth_set_mode,
+	(FT2_1_3_Renderer_RenderFunc)   ft_smooth_render,
+	(FT2_1_3_Renderer_TransformFunc)ft_smooth_transform,
+	(FT2_1_3_Renderer_GetCBoxFunc)  ft_smooth_get_cbox,
+	(FT2_1_3_Renderer_SetModeFunc)  ft_smooth_set_mode,
 
-	(FT_Raster_Funcs*)    &ft_grays_raster
+	(FT2_1_3_Raster_Funcs*)    &ft_grays_raster
 };
 
 
-FT_CALLBACK_TABLE_DEF
-const FT_Renderer_Class  ft_smooth_lcd_renderer_class = {
+FT2_1_3_CALLBACK_TABLE_DEF
+const FT2_1_3_Renderer_Class  ft_smooth_lcd_renderer_class = {
 	{
 		ft_module_renderer,
-		sizeof( FT_RendererRec ),
+		sizeof( FT2_1_3_RendererRec ),
 
 		"smooth-lcd",
 		0x10000L,
@@ -308,28 +308,28 @@ const FT_Renderer_Class  ft_smooth_lcd_renderer_class = {
 
 		0,    /* module specific interface */
 
-		(FT_Module_Constructor)ft_smooth_init,
-		(FT_Module_Destructor) 0,
-		(FT_Module_Requester)  0
+		(FT2_1_3_Module_Constructor)ft_smooth_init,
+		(FT2_1_3_Module_Destructor) 0,
+		(FT2_1_3_Module_Requester)  0
 	},
 
-	FT_GLYPH_FORMAT_OUTLINE,
+	FT2_1_3_GLYPH_FORMAT_OUTLINE,
 
-	(FT_Renderer_RenderFunc)   ft_smooth_render_lcd,
-	(FT_Renderer_TransformFunc)ft_smooth_transform,
-	(FT_Renderer_GetCBoxFunc)  ft_smooth_get_cbox,
-	(FT_Renderer_SetModeFunc)  ft_smooth_set_mode,
+	(FT2_1_3_Renderer_RenderFunc)   ft_smooth_render_lcd,
+	(FT2_1_3_Renderer_TransformFunc)ft_smooth_transform,
+	(FT2_1_3_Renderer_GetCBoxFunc)  ft_smooth_get_cbox,
+	(FT2_1_3_Renderer_SetModeFunc)  ft_smooth_set_mode,
 
-	(FT_Raster_Funcs*)    &ft_grays_raster
+	(FT2_1_3_Raster_Funcs*)    &ft_grays_raster
 };
 
 
 
-FT_CALLBACK_TABLE_DEF
-const FT_Renderer_Class  ft_smooth_lcdv_renderer_class = {
+FT2_1_3_CALLBACK_TABLE_DEF
+const FT2_1_3_Renderer_Class  ft_smooth_lcdv_renderer_class = {
 	{
 		ft_module_renderer,
-		sizeof( FT_RendererRec ),
+		sizeof( FT2_1_3_RendererRec ),
 
 		"smooth-lcdv",
 		0x10000L,
@@ -337,19 +337,19 @@ const FT_Renderer_Class  ft_smooth_lcdv_renderer_class = {
 
 		0,    /* module specific interface */
 
-		(FT_Module_Constructor)ft_smooth_init,
-		(FT_Module_Destructor) 0,
-		(FT_Module_Requester)  0
+		(FT2_1_3_Module_Constructor)ft_smooth_init,
+		(FT2_1_3_Module_Destructor) 0,
+		(FT2_1_3_Module_Requester)  0
 	},
 
-	FT_GLYPH_FORMAT_OUTLINE,
+	FT2_1_3_GLYPH_FORMAT_OUTLINE,
 
-	(FT_Renderer_RenderFunc)   ft_smooth_render_lcd_v,
-	(FT_Renderer_TransformFunc)ft_smooth_transform,
-	(FT_Renderer_GetCBoxFunc)  ft_smooth_get_cbox,
-	(FT_Renderer_SetModeFunc)  ft_smooth_set_mode,
+	(FT2_1_3_Renderer_RenderFunc)   ft_smooth_render_lcd_v,
+	(FT2_1_3_Renderer_TransformFunc)ft_smooth_transform,
+	(FT2_1_3_Renderer_GetCBoxFunc)  ft_smooth_get_cbox,
+	(FT2_1_3_Renderer_SetModeFunc)  ft_smooth_set_mode,
 
-	(FT_Raster_Funcs*)    &ft_grays_raster
+	(FT2_1_3_Raster_Funcs*)    &ft_grays_raster
 };
 
 

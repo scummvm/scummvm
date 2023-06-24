@@ -88,12 +88,12 @@
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
+/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT_COMPONENT
-#define FT_COMPONENT  trace_smooth
+#undef  FT2_1_3_COMPONENT
+#define FT2_1_3_COMPONENT  trace_smooth
 
 
 #define ErrRaster_MemoryOverflow   -4
@@ -104,7 +104,7 @@
 #include <string.h>             /* for ft_memcpy() */
 #include <setjmp.h>
 #include <limits.h>
-#define FT_UINT_MAX  UINT_MAX
+#define FT2_1_3_UINT_MAX  UINT_MAX
 
 #define ft_memset   memset
 
@@ -116,8 +116,8 @@
 #define ErrRaster_Invalid_Mode     -2
 #define ErrRaster_Invalid_Outline  -1
 
-#define FT_BEGIN_HEADER
-#define FT_END_HEADER
+#define FT2_1_3_BEGIN_HEADER
+#define FT2_1_3_END_HEADER
 
 #include "ftimage.h"
 #include "ftgrays.h"
@@ -126,16 +126,16 @@
 /* Its purpose is simply to reduce compiler warnings.  Note also that  */
 /* simply defining it as `(void)x' doesn't avoid warnings with certain */
 /* ANSI compilers (e.g. LCC).                                          */
-#define FT_UNUSED( x )  (x) = (x)
+#define FT2_1_3_UNUSED( x )  (x) = (x)
 
 /* Disable the tracing mechanism for simplicity -- developers can      */
 /* activate it easily by redefining these two macros.                  */
-#ifndef FT_ERROR
-#define FT_ERROR( x )  do ; while ( 0 )     /* nothing */
+#ifndef FT2_1_3_ERROR
+#define FT2_1_3_ERROR( x )  do ; while ( 0 )     /* nothing */
 #endif
 
-#ifndef FT_TRACE
-#define FT_TRACE( x )  do ; while ( 0 )     /* nothing */
+#ifndef FT2_1_3_TRACE
+#define FT2_1_3_TRACE( x )  do ; while ( 0 )     /* nothing */
 #endif
 
 
@@ -144,9 +144,9 @@
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "ftgrays.h"
-#include FT_INTERNAL_OBJECTS_H
-#include FT_INTERNAL_DEBUG_H
-#include FT_OUTLINE_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_DEBUG_H
+#include FT2_1_3_OUTLINE_H
 
 #include "ftsmerrs.h"
 
@@ -157,12 +157,12 @@
 #endif /* _STANDALONE_ */
 
 
-#ifndef FT_MEM_SET
-#define FT_MEM_SET( d, s, c )  ft_memset( d, s, c )
+#ifndef FT2_1_3_MEM_SET
+#define FT2_1_3_MEM_SET( d, s, c )  ft_memset( d, s, c )
 #endif
 
-#ifndef FT_MEM_ZERO
-#define FT_MEM_ZERO( dest, count )  FT_MEM_SET( dest, 0, count )
+#ifndef FT2_1_3_MEM_ZERO
+#define FT2_1_3_MEM_ZERO( dest, count )  FT2_1_3_MEM_SET( dest, 0, count )
 #endif
 
 /* define this to dump debugging information */
@@ -170,7 +170,7 @@
 
 /* as usual, for the speed hungry :-) */
 
-#ifndef FT_STATIC_RASTER
+#ifndef FT2_1_3_STATIC_RASTER
 
 
 #define RAS_ARG   PRaster  raster
@@ -182,7 +182,7 @@
 #define ras       (*raster)
 
 
-#else /* FT_STATIC_RASTER */
+#else /* FT2_1_3_STATIC_RASTER */
 
 
 #define RAS_ARG   /* empty */
@@ -193,7 +193,7 @@
 static TRaster  ras;
 
 
-#endif /* FT_STATIC_RASTER */
+#endif /* FT2_1_3_STATIC_RASTER */
 
 
 /* must be at least 6 bits! */
@@ -227,7 +227,7 @@ static TRaster  ras;
 /*   TYPE DEFINITIONS                                                    */
 /*                                                                       */
 
-/* don't change the following types to FT_Int or FT_Pos, since we might */
+/* don't change the following types to FT2_1_3_Int or FT2_1_3_Pos, since we might */
 /* need to define them to "float" or "double" when experimenting with   */
 /* new algorithms                                                       */
 
@@ -245,7 +245,7 @@ typedef int   TArea;
 #else /* PIXEL_BITS >= 8 */
 
 /* approximately determine the size of integers using an ANSI-C header */
-#if FT_UINT_MAX == 0xFFFFU
+#if FT2_1_3_UINT_MAX == 0xFFFFU
 typedef long  TArea;
 #else
 typedef int  TArea;
@@ -255,7 +255,7 @@ typedef int  TArea;
 
 
 /* maximal number of gray spans in a call to the span callback */
-#define FT_MAX_GRAY_SPANS  32
+#define FT2_1_3_MAX_GRAY_SPANS  32
 
 
 #ifdef GRAYS_COMPACT
@@ -299,17 +299,17 @@ typedef struct  TRaster_ {
 
 	TPos    last_ey;
 
-	FT_Vector   bez_stack[32 * 3 + 1];
+	FT2_1_3_Vector   bez_stack[32 * 3 + 1];
 	int         lev_stack[32];
 
-	FT_Outline  outline;
-	FT_Bitmap   target;
-	FT_BBox     clip_box;
+	FT2_1_3_Outline  outline;
+	FT2_1_3_Bitmap   target;
+	FT2_1_3_BBox     clip_box;
 
-	FT_Span     gray_spans[FT_MAX_GRAY_SPANS];
+	FT2_1_3_Span     gray_spans[FT2_1_3_MAX_GRAY_SPANS];
 	int         num_gray_spans;
 
-	FT_Raster_Span_Func  render_span;
+	FT2_1_3_Raster_Span_Func  render_span;
 	void*                render_span_data;
 	int                  span_y;
 
@@ -350,9 +350,9 @@ gray_init_cells( RAS_ARG_ void*  buffer,
 /*                                                                       */
 static void
 gray_compute_cbox( RAS_ARG ) {
-	FT_Outline*  outline = &ras.outline;
-	FT_Vector*   vec     = outline->points;
-	FT_Vector*   limit   = vec + outline->n_points;
+	FT2_1_3_Outline*  outline = &ras.outline;
+	FT2_1_3_Vector*   vec     = outline->points;
+	FT2_1_3_Vector*   limit   = vec + outline->n_points;
 
 
 	if ( outline->n_points <= 0 ) {
@@ -728,7 +728,7 @@ End:
 
 
 static void
-gray_split_conic( FT_Vector*  base ) {
+gray_split_conic( FT2_1_3_Vector*  base ) {
 	TPos  a, b;
 
 
@@ -747,12 +747,12 @@ gray_split_conic( FT_Vector*  base ) {
 
 
 static void
-gray_render_conic( RAS_ARG_ FT_Vector*  control,
-                   FT_Vector*  to ) {
+gray_render_conic( RAS_ARG_ FT2_1_3_Vector*  control,
+                   FT2_1_3_Vector*  to ) {
 	TPos        dx, dy;
 	int         top, level;
 	int*        levels;
-	FT_Vector*  arc;
+	FT2_1_3_Vector*  arc;
 
 
 	dx = DOWNSCALE( ras.x ) + to->x - ( control->x << 1 );
@@ -848,7 +848,7 @@ Draw: {
 
 
 static void
-gray_split_cubic( FT_Vector*  base ) {
+gray_split_cubic( FT2_1_3_Vector*  base ) {
 	TPos  a, b, c, d;
 
 
@@ -875,13 +875,13 @@ gray_split_cubic( FT_Vector*  base ) {
 
 
 static void
-gray_render_cubic( RAS_ARG_ FT_Vector*  control1,
-                   FT_Vector*  control2,
-                   FT_Vector*  to ) {
+gray_render_cubic( RAS_ARG_ FT2_1_3_Vector*  control1,
+                   FT2_1_3_Vector*  control2,
+                   FT2_1_3_Vector*  to ) {
 	TPos        dx, dy, da, db;
 	int         top, level;
 	int*        levels;
-	FT_Vector*  arc;
+	FT2_1_3_Vector*  arc;
 
 
 	dx = DOWNSCALE( ras.x ) + to->x - ( control1->x << 1 );
@@ -1164,8 +1164,8 @@ gray_check_sort( PCell  cells,
 
 
 static int
-gray_move_to( FT_Vector*  to,
-              FT_Raster   raster ) {
+gray_move_to( FT2_1_3_Vector*  to,
+              FT2_1_3_Raster   raster ) {
 	TPos  x, y;
 
 
@@ -1185,8 +1185,8 @@ gray_move_to( FT_Vector*  to,
 
 
 static int
-gray_line_to( FT_Vector*  to,
-              FT_Raster   raster ) {
+gray_line_to( FT2_1_3_Vector*  to,
+              FT2_1_3_Raster   raster ) {
 	gray_render_line( (PRaster)raster,
 	                  UPSCALE( to->x ), UPSCALE( to->y ) );
 	return 0;
@@ -1194,19 +1194,19 @@ gray_line_to( FT_Vector*  to,
 
 
 static int
-gray_conic_to( FT_Vector*  control,
-               FT_Vector*  to,
-               FT_Raster   raster ) {
+gray_conic_to( FT2_1_3_Vector*  control,
+               FT2_1_3_Vector*  to,
+               FT2_1_3_Raster   raster ) {
 	gray_render_conic( (PRaster)raster, control, to );
 	return 0;
 }
 
 
 static int
-gray_cubic_to( FT_Vector*  control1,
-               FT_Vector*  control2,
-               FT_Vector*  to,
-               FT_Raster   raster ) {
+gray_cubic_to( FT2_1_3_Vector*  control1,
+               FT2_1_3_Vector*  control2,
+               FT2_1_3_Vector*  to,
+               FT2_1_3_Raster   raster ) {
 	gray_render_cubic( (PRaster)raster, control1, control2, to );
 	return 0;
 }
@@ -1215,10 +1215,10 @@ gray_cubic_to( FT_Vector*  control1,
 static void
 gray_render_span( int       y,
                   int       count,
-                  FT_Span*  spans,
+                  FT2_1_3_Span*  spans,
                   PRaster   raster ) {
 	unsigned char*  p;
-	FT_Bitmap*      map = &raster->target;
+	FT2_1_3_Bitmap*      map = &raster->target;
 
 
 	/* first of all, compute the scanline offset */
@@ -1236,7 +1236,7 @@ gray_render_span( int       y,
 
 		if ( coverage )
 #if 1
-			FT_MEM_SET( p + spans->x, (unsigned char)coverage, spans->len );
+			FT2_1_3_MEM_SET( p + spans->x, (unsigned char)coverage, spans->len );
 #else /* 1 */
 		{
 			q     = p + spans->x;
@@ -1281,7 +1281,7 @@ gray_hline( RAS_ARG_ TCoord  x,
             TCoord  y,
             TPos    area,
             int     acount ) {
-	FT_Span*   span;
+	FT2_1_3_Span*   span;
 	int        count;
 	int        coverage;
 
@@ -1296,7 +1296,7 @@ gray_hline( RAS_ARG_ TCoord  x,
 	if ( coverage < 0 )
 		coverage = -coverage;
 
-	if ( ras.outline.flags & FT_OUTLINE_EVEN_ODD_FILL ) {
+	if ( ras.outline.flags & FT2_1_3_OUTLINE_EVEN_ODD_FILL ) {
 		coverage &= 511;
 
 		if ( coverage > 256 )
@@ -1324,7 +1324,7 @@ gray_hline( RAS_ARG_ TCoord  x,
 			return;
 		}
 
-		if ( ras.span_y != y || count >= FT_MAX_GRAY_SPANS ) {
+		if ( ras.span_y != y || count >= FT2_1_3_MAX_GRAY_SPANS ) {
 			if ( ras.render_span && count > 0 )
 				ras.render_span( ras.span_y, count, ras.gray_spans,
 				                 ras.render_span_data );
@@ -1364,12 +1364,12 @@ gray_hline( RAS_ARG_ TCoord  x,
 
 
 static void
-gray_sweep( RAS_ARG_ FT_Bitmap*  target ) {
+gray_sweep( RAS_ARG_ FT2_1_3_Bitmap*  target ) {
 	TCoord  x, y, cover;
 	TArea   area;
 	PCell   start, cur, limit;
 
-	FT_UNUSED( target );
+	FT2_1_3_UNUSED( target );
 
 
 	if ( ras.num_cells == 0 )
@@ -1436,7 +1436,7 @@ gray_sweep( RAS_ARG_ FT_Bitmap*  target ) {
 
 	{
 		int       n;
-		FT_Span*  span;
+		FT2_1_3_Span*  span;
 
 
 		fprintf( stderr, "y=%3d ", ras.span_y );
@@ -1464,7 +1464,7 @@ gray_sweep( RAS_ARG_ FT_Bitmap*  target ) {
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Outline_Decompose                                               */
+/*    FT2_1_3_Outline_Decompose                                               */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Walks over an outline's structure to decompose it into individual  */
@@ -1488,8 +1488,8 @@ gray_sweep( RAS_ARG_ FT_Bitmap*  target ) {
 /*    Error code.  0 means sucess.                                       */
 /*                                                                       */
 static
-int  FT_Outline_Decompose( FT_Outline*              outline,
-                           const FT_Outline_Funcs*  func_interface,
+int  FT2_1_3_Outline_Decompose( FT2_1_3_Outline*              outline,
+                           const FT2_1_3_Outline_Funcs*  func_interface,
                            void*                    user ) {
 #undef SCALED
 #if 0
@@ -1498,12 +1498,12 @@ int  FT_Outline_Decompose( FT_Outline*              outline,
 #define SCALED( x )  (x)
 #endif
 
-	FT_Vector   v_last;
-	FT_Vector   v_control;
-	FT_Vector   v_start;
+	FT2_1_3_Vector   v_last;
+	FT2_1_3_Vector   v_control;
+	FT2_1_3_Vector   v_start;
 
-	FT_Vector*  point;
-	FT_Vector*  limit;
+	FT2_1_3_Vector*  point;
+	FT2_1_3_Vector*  limit;
 	char*       tags;
 
 	int   n;         /* index of contour in outline     */
@@ -1538,16 +1538,16 @@ int  FT_Outline_Decompose( FT_Outline*              outline,
 
 		point = outline->points + first;
 		tags  = outline->tags  + first;
-		tag   = FT_CURVE_TAG( tags[0] );
+		tag   = FT2_1_3_CURVE_TAG( tags[0] );
 
 		/* A contour cannot start with a cubic control point! */
-		if ( tag == FT_CURVE_TAG_CUBIC )
+		if ( tag == FT2_1_3_CURVE_TAG_CUBIC )
 			goto Invalid_Outline;
 
 		/* check first point to determine origin */
-		if ( tag == FT_CURVE_TAG_CONIC ) {
+		if ( tag == FT2_1_3_CURVE_TAG_CONIC ) {
 			/* first point is conic control.  Yes, this happens. */
-			if ( FT_CURVE_TAG( outline->tags[last] ) == FT_CURVE_TAG_ON ) {
+			if ( FT2_1_3_CURVE_TAG( outline->tags[last] ) == FT2_1_3_CURVE_TAG_ON ) {
 				/* start at last point if it is on the curve */
 				v_start = v_last;
 				limit--;
@@ -1572,10 +1572,10 @@ int  FT_Outline_Decompose( FT_Outline*              outline,
 			point++;
 			tags++;
 
-			tag = FT_CURVE_TAG( tags[0] );
+			tag = FT2_1_3_CURVE_TAG( tags[0] );
 			switch ( tag ) {
-			case FT_CURVE_TAG_ON: { /* emit a single line_to */
-				FT_Vector  vec;
+			case FT2_1_3_CURVE_TAG_ON: { /* emit a single line_to */
+				FT2_1_3_Vector  vec;
 
 
 				vec.x = SCALED( point->x );
@@ -1587,31 +1587,31 @@ int  FT_Outline_Decompose( FT_Outline*              outline,
 				continue;
 			}
 
-			case FT_CURVE_TAG_CONIC: { /* consume conic arcs */
+			case FT2_1_3_CURVE_TAG_CONIC: { /* consume conic arcs */
 				v_control.x = SCALED( point->x );
 				v_control.y = SCALED( point->y );
 
 Do_Conic:
 				if ( point < limit ) {
-					FT_Vector  vec;
-					FT_Vector  v_middle;
+					FT2_1_3_Vector  vec;
+					FT2_1_3_Vector  v_middle;
 
 
 					point++;
 					tags++;
-					tag = FT_CURVE_TAG( tags[0] );
+					tag = FT2_1_3_CURVE_TAG( tags[0] );
 
 					vec.x = SCALED( point->x );
 					vec.y = SCALED( point->y );
 
-					if ( tag == FT_CURVE_TAG_ON ) {
+					if ( tag == FT2_1_3_CURVE_TAG_ON ) {
 						error = func_interface->conic_to( &v_control, &vec, user );
 						if ( error )
 							goto Exit;
 						continue;
 					}
 
-					if ( tag != FT_CURVE_TAG_CONIC )
+					if ( tag != FT2_1_3_CURVE_TAG_CONIC )
 						goto Invalid_Outline;
 
 					v_middle.x = ( v_control.x + vec.x ) / 2;
@@ -1629,12 +1629,12 @@ Do_Conic:
 				goto Close;
 			}
 
-			default: { /* FT_CURVE_TAG_CUBIC */
-				FT_Vector  vec1, vec2;
+			default: { /* FT2_1_3_CURVE_TAG_CUBIC */
+				FT2_1_3_Vector  vec1, vec2;
 
 
 				if ( point + 1 > limit                             ||
-				        FT_CURVE_TAG( tags[1] ) != FT_CURVE_TAG_CUBIC )
+				        FT2_1_3_CURVE_TAG( tags[1] ) != FT2_1_3_CURVE_TAG_CUBIC )
 					goto Invalid_Outline;
 
 				point += 2;
@@ -1646,7 +1646,7 @@ Do_Conic:
 				vec2.y = SCALED( point[-1].y );
 
 				if ( point <= limit ) {
-					FT_Vector  vec;
+					FT2_1_3_Vector  vec;
 
 
 					vec.x = SCALED( point->x );
@@ -1695,11 +1695,11 @@ typedef struct  TBand_ {
 static int
 gray_convert_glyph_inner( RAS_ARG ) {
 	static
-	const FT_Outline_Funcs  func_interface = {
-		(FT_Outline_MoveTo_Func) gray_move_to,
-		(FT_Outline_LineTo_Func) gray_line_to,
-		(FT_Outline_ConicTo_Func)gray_conic_to,
-		(FT_Outline_CubicTo_Func)gray_cubic_to,
+	const FT2_1_3_Outline_Funcs  func_interface = {
+		(FT2_1_3_Outline_MoveTo_Func) gray_move_to,
+		(FT2_1_3_Outline_LineTo_Func) gray_line_to,
+		(FT2_1_3_Outline_ConicTo_Func)gray_conic_to,
+		(FT2_1_3_Outline_CubicTo_Func)gray_cubic_to,
 		0,
 		0
 	};
@@ -1707,7 +1707,7 @@ gray_convert_glyph_inner( RAS_ARG ) {
 	volatile int  error = 0;
 
 	if ( ft_setjmp( ras.jump_buffer ) == 0 ) {
-		error = FT_Outline_Decompose( &ras.outline, &func_interface, &ras );
+		error = FT2_1_3_Outline_Decompose( &ras.outline, &func_interface, &ras );
 		gray_record_cell( RAS_VAR );
 	} else {
 		error = ErrRaster_MemoryOverflow;
@@ -1723,7 +1723,7 @@ gray_convert_glyph( RAS_ARG ) {
 	volatile TBand*  band;
 	volatile int     n, num_bands;
 	volatile TPos    min, max, max_y;
-	FT_BBox*         clip;
+	FT2_1_3_BBox*         clip;
 
 
 	/* Set up state in the raster object */
@@ -1793,7 +1793,7 @@ gray_convert_glyph( RAS_ARG ) {
 #if 1
 			error = gray_convert_glyph_inner( RAS_VAR );
 #else
-			error = FT_Outline_Decompose( outline, &func_interface, &ras ) ||
+			error = FT2_1_3_Outline_Decompose( outline, &func_interface, &ras ) ||
 			        gray_record_cell( RAS_VAR );
 #endif
 
@@ -1849,9 +1849,9 @@ gray_convert_glyph( RAS_ARG ) {
 
 extern int
 gray_raster_render( PRaster            raster,
-                    FT_Raster_Params*  params ) {
-	FT_Outline*  outline = (FT_Outline*)params->source;
-	FT_Bitmap*   target_map = params->target;
+                    FT2_1_3_Raster_Params*  params ) {
+	FT2_1_3_Outline*  outline = (FT2_1_3_Outline*)params->source;
+	FT2_1_3_Bitmap*   target_map = params->target;
 
 
 	if ( !raster || !raster->cells || !raster->max_cells )
@@ -1869,22 +1869,22 @@ gray_raster_render( PRaster            raster,
 		return ErrRaster_Invalid_Outline;
 
 	/* if direct mode is not set, we must have a target bitmap */
-	if ( ( params->flags & FT_RASTER_FLAG_DIRECT ) == 0 &&
+	if ( ( params->flags & FT2_1_3_RASTER_FLAG_DIRECT ) == 0 &&
 	        ( !target_map || !target_map->buffer )         )
 		return -1;
 
 	/* this version does not support monochrome rendering */
-	if ( !( params->flags & FT_RASTER_FLAG_AA ) )
+	if ( !( params->flags & FT2_1_3_RASTER_FLAG_AA ) )
 		return ErrRaster_Invalid_Mode;
 
 	/* compute clipping box */
-	if ( ( params->flags & FT_RASTER_FLAG_DIRECT ) == 0 ) {
+	if ( ( params->flags & FT2_1_3_RASTER_FLAG_DIRECT ) == 0 ) {
 		/* compute clip box from target pixmap */
 		ras.clip_box.xMin = 0;
 		ras.clip_box.yMin = 0;
 		ras.clip_box.xMax = target_map->width;
 		ras.clip_box.yMax = target_map->rows;
-	} else if ( params->flags & FT_RASTER_FLAG_CLIP ) {
+	} else if ( params->flags & FT2_1_3_RASTER_FLAG_CLIP ) {
 		ras.clip_box = params->clip_box;
 	} else {
 		ras.clip_box.xMin = -32768L;
@@ -1900,11 +1900,11 @@ gray_raster_render( PRaster            raster,
 	if ( target_map )
 		ras.target = *target_map;
 
-	ras.render_span      = (FT_Raster_Span_Func)gray_render_span;
+	ras.render_span      = (FT2_1_3_Raster_Span_Func)gray_render_span;
 	ras.render_span_data = &ras;
 
-	if ( params->flags & FT_RASTER_FLAG_DIRECT ) {
-		ras.render_span      = (FT_Raster_Span_Func)params->gray_spans;
+	if ( params->flags & FT2_1_3_RASTER_FLAG_DIRECT ) {
+		ras.render_span      = (FT2_1_3_Raster_Span_Func)params->gray_spans;
 		ras.render_span_data = params->user;
 	}
 
@@ -1946,14 +1946,14 @@ grays_init_gamma( PRaster  raster ) {
 
 static int
 gray_raster_new( void*       memory,
-                 FT_Raster*  araster ) {
+                 FT2_1_3_Raster*  araster ) {
 	static TRaster  the_raster;
 
-	FT_UNUSED( memory );
+	FT2_1_3_UNUSED( memory );
 
 
-	*araster = (FT_Raster)&the_raster;
-	FT_MEM_ZERO( &the_raster, sizeof ( the_raster ) );
+	*araster = (FT2_1_3_Raster)&the_raster;
+	FT2_1_3_MEM_ZERO( &the_raster, sizeof ( the_raster ) );
 
 #ifdef GRAYS_USE_GAMMA
 	grays_init_gamma( (PRaster)*araster );
@@ -1964,24 +1964,24 @@ gray_raster_new( void*       memory,
 
 
 static void
-gray_raster_done( FT_Raster  raster ) {
+gray_raster_done( FT2_1_3_Raster  raster ) {
 	/* nothing */
-	FT_UNUSED( raster );
+	FT2_1_3_UNUSED( raster );
 }
 
 #else /* _STANDALONE_ */
 
 static int
-gray_raster_new( FT_Memory   memory,
-                 FT_Raster*  araster ) {
-	FT_Error  error;
+gray_raster_new( FT2_1_3_Memory   memory,
+                 FT2_1_3_Raster*  araster ) {
+	FT2_1_3_Error  error;
 	PRaster   raster;
 
 
 	*araster = 0;
-	if ( !FT_ALLOC( raster, sizeof ( TRaster ) ) ) {
+	if ( !FT2_1_3_ALLOC( raster, sizeof ( TRaster ) ) ) {
 		raster->memory = memory;
-		*araster = (FT_Raster)raster;
+		*araster = (FT2_1_3_Raster)raster;
 
 #ifdef GRAYS_USE_GAMMA
 		grays_init_gamma( raster );
@@ -1993,18 +1993,18 @@ gray_raster_new( FT_Memory   memory,
 
 
 static void
-gray_raster_done( FT_Raster  raster ) {
-	FT_Memory  memory = (FT_Memory)((PRaster)raster)->memory;
+gray_raster_done( FT2_1_3_Raster  raster ) {
+	FT2_1_3_Memory  memory = (FT2_1_3_Memory)((PRaster)raster)->memory;
 
 
-	FT_FREE( raster );
+	FT2_1_3_FREE( raster );
 }
 
 #endif /* _STANDALONE_ */
 
 
 static void
-gray_raster_reset( FT_Raster    raster,
+gray_raster_reset( FT2_1_3_Raster    raster,
                    const char*  pool_base,
                    long         pool_size ) {
 	PRaster  rast = (PRaster)raster;
@@ -2017,14 +2017,14 @@ gray_raster_reset( FT_Raster    raster,
 }
 
 
-const FT_Raster_Funcs  ft_grays_raster = {
-	FT_GLYPH_FORMAT_OUTLINE,
+const FT2_1_3_Raster_Funcs  ft_grays_raster = {
+	FT2_1_3_GLYPH_FORMAT_OUTLINE,
 
-	(FT_Raster_New_Func)     gray_raster_new,
-	(FT_Raster_Reset_Func)   gray_raster_reset,
-	(FT_Raster_Set_Mode_Func)0,
-	(FT_Raster_Render_Func)  gray_raster_render,
-	(FT_Raster_Done_Func)    gray_raster_done
+	(FT2_1_3_Raster_New_Func)     gray_raster_new,
+	(FT2_1_3_Raster_Reset_Func)   gray_raster_reset,
+	(FT2_1_3_Raster_Set_Mode_Func)0,
+	(FT2_1_3_Raster_Render_Func)  gray_raster_render,
+	(FT2_1_3_Raster_Done_Func)    gray_raster_done
 };
 
 

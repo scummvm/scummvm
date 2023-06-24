@@ -21,27 +21,27 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_RENDER_H
+#include FT2_1_3_RENDER_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
-#ifndef FT_CONFIG_OPTION_NO_STD_RASTER
-FT_EXPORT_VAR( const FT_Renderer_Class )  ft_std_renderer_class;
+#ifndef FT2_1_3_CONFIG_OPTION_NO_STD_RASTER
+FT2_1_3_EXPORT_VAR( const FT2_1_3_Renderer_Class )  ft_std_renderer_class;
 #endif
 
-#ifndef FT_CONFIG_OPTION_NO_SMOOTH_RASTER
-FT_EXPORT_VAR( const FT_Renderer_Class )  ft_smooth_renderer_class;
+#ifndef FT2_1_3_CONFIG_OPTION_NO_SMOOTH_RASTER
+FT2_1_3_EXPORT_VAR( const FT2_1_3_Renderer_Class )  ft_smooth_renderer_class;
 
-FT_EXPORT_VAR( const FT_Renderer_Class )  ft_smooth_lcd_renderer_class;
+FT2_1_3_EXPORT_VAR( const FT2_1_3_Renderer_Class )  ft_smooth_lcd_renderer_class;
 
-FT_EXPORT_VAR( const FT_Renderer_Class )  ft_smooth_lcd_v_renderer_class;
+FT2_1_3_EXPORT_VAR( const FT2_1_3_Renderer_Class )  ft_smooth_lcd_v_renderer_class;
 #endif
 
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __FTSMOOTH_H__ */
 
