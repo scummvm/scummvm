@@ -21,14 +21,14 @@
 
 #include "pfrobjs.h"
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 pfr_slot_load_bitmap( PFR_Slot  glyph,
                       PFR_Size  size,
-                      FT_UInt   glyph_index );
+                      FT2_1_3_UInt   glyph_index );
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __PFR_SBIT_H__ */
 

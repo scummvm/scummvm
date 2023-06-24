@@ -18,12 +18,12 @@
 
 #include "pfrcmap.h"
 #include "pfrobjs.h"
-#include FT_INTERNAL_DEBUG_H
+#include FT2_1_3_INTERNAL_DEBUG_H
 
 
-FT_CALLBACK_DEF( FT_Error )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 pfr_cmap_init( PFR_CMap  cmap ) {
-	PFR_Face  face = (PFR_Face)FT_CMAP_FACE( cmap );
+	PFR_Face  face = (PFR_Face)FT2_1_3_CMAP_FACE( cmap );
 
 
 	cmap->num_chars = face->phy_font.num_chars;
@@ -32,12 +32,12 @@ pfr_cmap_init( PFR_CMap  cmap ) {
 	/* just for safety, check that the character entries are correctly */
 	/* sorted in increasing character code order                       */
 	{
-		FT_UInt  n;
+		FT2_1_3_UInt  n;
 
 
 		for ( n = 1; n < cmap->num_chars; n++ ) {
 			if ( cmap->chars[n - 1].char_code >= cmap->chars[n].char_code )
-				FT_ASSERT( 0 );
+				FT2_1_3_ASSERT( 0 );
 		}
 	}
 
@@ -45,19 +45,19 @@ pfr_cmap_init( PFR_CMap  cmap ) {
 }
 
 
-FT_CALLBACK_DEF( void )
+FT2_1_3_CALLBACK_DEF( void )
 pfr_cmap_done( PFR_CMap  cmap ) {
 	cmap->chars     = NULL;
 	cmap->num_chars = 0;
 }
 
 
-FT_CALLBACK_DEF( FT_UInt )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 pfr_cmap_char_index( PFR_CMap   cmap,
-                     FT_UInt32  char_code ) {
-	FT_UInt   min = 0;
-	FT_UInt   max = cmap->num_chars;
-	FT_UInt   mid;
+                     FT2_1_3_UInt32  char_code ) {
+	FT2_1_3_UInt   min = 0;
+	FT2_1_3_UInt   max = cmap->num_chars;
+	FT2_1_3_UInt   mid;
 	PFR_Char  gchar;
 
 
@@ -77,17 +77,17 @@ pfr_cmap_char_index( PFR_CMap   cmap,
 }
 
 
-FT_CALLBACK_DEF( FT_UInt )
+FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 pfr_cmap_char_next( PFR_CMap    cmap,
-                    FT_UInt32  *pchar_code ) {
-	FT_UInt    result    = 0;
-	FT_UInt32  char_code = *pchar_code + 1;
+                    FT2_1_3_UInt32  *pchar_code ) {
+	FT2_1_3_UInt    result    = 0;
+	FT2_1_3_UInt32  char_code = *pchar_code + 1;
 
 
 Restart: {
-		FT_UInt   min = 0;
-		FT_UInt   max = cmap->num_chars;
-		FT_UInt   mid;
+		FT2_1_3_UInt   min = 0;
+		FT2_1_3_UInt   max = cmap->num_chars;
+		FT2_1_3_UInt   mid;
 		PFR_Char  gchar;
 
 
@@ -131,14 +131,14 @@ Exit:
 }
 
 
-FT_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE_DEF const FT2_1_3_CMap_ClassRec
 pfr_cmap_class_rec = {
 	sizeof ( PFR_CMapRec ),
 
-	(FT_CMap_InitFunc)     pfr_cmap_init,
-	(FT_CMap_DoneFunc)     pfr_cmap_done,
-	(FT_CMap_CharIndexFunc)pfr_cmap_char_index,
-	(FT_CMap_CharNextFunc) pfr_cmap_char_next
+	(FT2_1_3_CMap_InitFunc)     pfr_cmap_init,
+	(FT2_1_3_CMap_DoneFunc)     pfr_cmap_done,
+	(FT2_1_3_CMap_CharIndexFunc)pfr_cmap_char_index,
+	(FT2_1_3_CMap_CharNextFunc) pfr_cmap_char_next
 };
 
 

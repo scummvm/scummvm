@@ -21,26 +21,26 @@
 
 #include "pfrtypes.h"
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 pfr_glyph_init( PFR_Glyph       glyph,
-                FT_GlyphLoader  loader );
+                FT2_1_3_GlyphLoader  loader );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 pfr_glyph_done( PFR_Glyph  glyph );
 
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 pfr_glyph_load( PFR_Glyph  glyph,
-                FT_Stream  stream,
-                FT_ULong   gps_offset,
-                FT_ULong   offset,
-                FT_ULong   size );
+                FT2_1_3_Stream  stream,
+                FT2_1_3_ULong   gps_offset,
+                FT2_1_3_ULong   offset,
+                FT2_1_3_ULong   size );
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 
 #endif /* __PFRGLOAD_H__ */

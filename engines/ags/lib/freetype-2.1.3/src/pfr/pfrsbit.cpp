@@ -18,13 +18,13 @@
 
 #include "pfrsbit.h"
 #include "pfrload.h"
-#include FT_INTERNAL_DEBUG_H
-#include FT_INTERNAL_STREAM_H
+#include FT2_1_3_INTERNAL_DEBUG_H
+#include FT2_1_3_INTERNAL_STREAM_H
 
 #include "pfrerror.h"
 
-#undef  FT_COMPONENT
-#define FT_COMPONENT  trace_pfr
+#undef  FT2_1_3_COMPONENT
+#define FT2_1_3_COMPONENT  trace_pfr
 
 
 /*************************************************************************/
@@ -36,19 +36,19 @@
 /*************************************************************************/
 
 typedef struct  PFR_BitWriter_ {
-	FT_Byte*  line;      /* current line start                    */
-	FT_Int    pitch;     /* line size in bytes                    */
-	FT_Int    width;     /* width in pixels/bits                  */
-	FT_Int    rows;      /* number of remaining rows to scan      */
-	FT_Int    total;     /* total number of bits to draw          */
+	FT2_1_3_Byte*  line;      /* current line start                    */
+	FT2_1_3_Int    pitch;     /* line size in bytes                    */
+	FT2_1_3_Int    width;     /* width in pixels/bits                  */
+	FT2_1_3_Int    rows;      /* number of remaining rows to scan      */
+	FT2_1_3_Int    total;     /* total number of bits to draw          */
 
 } PFR_BitWriterRec, *PFR_BitWriter;
 
 
 static void
 pfr_bitwriter_init( PFR_BitWriter  writer,
-                    FT_Bitmap*     target,
-                    FT_Bool        decreasing ) {
+                    FT2_1_3_Bitmap*     target,
+                    FT2_1_3_Bool        decreasing ) {
 	writer->line   = target->buffer;
 	writer->pitch  = target->pitch;
 	writer->width  = target->width;
@@ -64,17 +64,17 @@ pfr_bitwriter_init( PFR_BitWriter  writer,
 
 static void
 pfr_bitwriter_decode_bytes( PFR_BitWriter  writer,
-                            FT_Byte*       p,
-                            FT_Byte*       limit ) {
-	FT_Int    n, reload;
-	FT_Int    left = writer->width;
-	FT_Byte*  cur  = writer->line;
-	FT_UInt   mask = 0x80;
-	FT_UInt   val  = 0;
-	FT_UInt   c    = 0;
+                            FT2_1_3_Byte*       p,
+                            FT2_1_3_Byte*       limit ) {
+	FT2_1_3_Int    n, reload;
+	FT2_1_3_Int    left = writer->width;
+	FT2_1_3_Byte*  cur  = writer->line;
+	FT2_1_3_UInt   mask = 0x80;
+	FT2_1_3_UInt   val  = 0;
+	FT2_1_3_UInt   c    = 0;
 
 
-	n = (FT_Int)( limit - p ) * 8;
+	n = (FT2_1_3_Int)( limit - p ) * 8;
 	if ( n > writer->total )
 		n = writer->total;
 
@@ -91,7 +91,7 @@ pfr_bitwriter_decode_bytes( PFR_BitWriter  writer,
 		mask >>= 1;
 
 		if ( --left <= 0 ) {
-			cur[0] = (FT_Byte)c;
+			cur[0] = (FT2_1_3_Byte)c;
 			left   = writer->width;
 			mask   = 0x80;
 
@@ -113,13 +113,13 @@ pfr_bitwriter_decode_bytes( PFR_BitWriter  writer,
 
 static void
 pfr_bitwriter_decode_rle1( PFR_BitWriter  writer,
-                           FT_Byte*       p,
-                           FT_Byte*       limit ) {
-	FT_Int    n, phase, count, counts[2], reload;
-	FT_Int    left = writer->width;
-	FT_Byte*  cur  = writer->line;
-	FT_UInt   mask = 0x80;
-	FT_UInt   c    = 0;
+                           FT2_1_3_Byte*       p,
+                           FT2_1_3_Byte*       limit ) {
+	FT2_1_3_Int    n, phase, count, counts[2], reload;
+	FT2_1_3_Int    left = writer->width;
+	FT2_1_3_Byte*  cur  = writer->line;
+	FT2_1_3_UInt   mask = 0x80;
+	FT2_1_3_UInt   c    = 0;
 
 
 	n = writer->total;
@@ -134,7 +134,7 @@ pfr_bitwriter_decode_rle1( PFR_BitWriter  writer,
 		if ( reload ) {
 			do {
 				if ( phase ) {
-					FT_Int  v;
+					FT2_1_3_Int  v;
 
 
 					if ( p >= limit )
@@ -159,7 +159,7 @@ pfr_bitwriter_decode_rle1( PFR_BitWriter  writer,
 		mask >>= 1;
 
 		if ( --left <= 0 ) {
-			cur[0] = (FT_Byte) c;
+			cur[0] = (FT2_1_3_Byte) c;
 			left   = writer->width;
 			mask   = 0x80;
 
@@ -177,19 +177,19 @@ pfr_bitwriter_decode_rle1( PFR_BitWriter  writer,
 	}
 
 	if ( mask != 0x80 )
-		cur[0] = (FT_Byte) c;
+		cur[0] = (FT2_1_3_Byte) c;
 }
 
 
 static void
 pfr_bitwriter_decode_rle2( PFR_BitWriter  writer,
-                           FT_Byte*       p,
-                           FT_Byte*       limit ) {
-	FT_Int    n, phase, count, reload;
-	FT_Int    left = writer->width;
-	FT_Byte*  cur  = writer->line;
-	FT_UInt   mask = 0x80;
-	FT_UInt   c    = 0;
+                           FT2_1_3_Byte*       p,
+                           FT2_1_3_Byte*       limit ) {
+	FT2_1_3_Int    n, phase, count, reload;
+	FT2_1_3_Int    left = writer->width;
+	FT2_1_3_Byte*  cur  = writer->line;
+	FT2_1_3_UInt   mask = 0x80;
+	FT2_1_3_UInt   c    = 0;
 
 
 	n = writer->total;
@@ -216,7 +216,7 @@ pfr_bitwriter_decode_rle2( PFR_BitWriter  writer,
 		mask >>= 1;
 
 		if ( --left <= 0 ) {
-			cur[0] = (FT_Byte) c;
+			cur[0] = (FT2_1_3_Byte) c;
 			c      = 0;
 			mask   = 0x80;
 			left   = writer->width;
@@ -234,7 +234,7 @@ pfr_bitwriter_decode_rle2( PFR_BitWriter  writer,
 	}
 
 	if ( mask != 0x80 )
-		cur[0] = (FT_Byte) c;
+		cur[0] = (FT2_1_3_Byte) c;
 }
 
 
@@ -247,16 +247,16 @@ pfr_bitwriter_decode_rle2( PFR_BitWriter  writer,
 /*************************************************************************/
 
 static void
-pfr_lookup_bitmap_data( FT_Byte*   base,
-                        FT_Byte*   limit,
-                        FT_Int     count,
-                        FT_Byte    flags,
-                        FT_UInt    char_code,
-                        FT_ULong*  found_offset,
-                        FT_ULong*  found_size ) {
-	FT_UInt   left, right, char_len;
-	FT_Bool   two = flags & 1;
-	FT_Byte*  buff;
+pfr_lookup_bitmap_data( FT2_1_3_Byte*   base,
+                        FT2_1_3_Byte*   limit,
+                        FT2_1_3_Int     count,
+                        FT2_1_3_Byte    flags,
+                        FT2_1_3_UInt    char_code,
+                        FT2_1_3_ULong*  found_offset,
+                        FT2_1_3_ULong*  found_size ) {
+	FT2_1_3_UInt   left, right, char_len;
+	FT2_1_3_Bool   two = flags & 1;
+	FT2_1_3_Byte*  buff;
 
 
 	char_len = 4;
@@ -268,7 +268,7 @@ pfr_lookup_bitmap_data( FT_Byte*   base,
 	right = count;
 
 	while ( left < right ) {
-		FT_UInt  middle, code;
+		FT2_1_3_UInt  middle, code;
 
 
 		middle = ( left + right ) >> 1;
@@ -315,22 +315,22 @@ Found_It:
 /* load bitmap metrics.  "*padvance" must be set to the default value */
 /* before calling this function...                                    */
 /*                                                                    */
-static FT_Error
-pfr_load_bitmap_metrics( FT_Byte**  pdata,
-                         FT_Byte*   limit,
-                         FT_Long    scaled_advance,
-                         FT_Long   *axpos,
-                         FT_Long   *aypos,
-                         FT_UInt   *axsize,
-                         FT_UInt   *aysize,
-                         FT_Long   *aadvance,
-                         FT_UInt   *aformat ) {
-	FT_Error  error = 0;
-	FT_Byte   flags;
-	FT_Char   b;
-	FT_Byte*  p = *pdata;
-	FT_Long   xpos, ypos, advance;
-	FT_UInt   xsize, ysize;
+static FT2_1_3_Error
+pfr_load_bitmap_metrics( FT2_1_3_Byte**  pdata,
+                         FT2_1_3_Byte*   limit,
+                         FT2_1_3_Long    scaled_advance,
+                         FT2_1_3_Long   *axpos,
+                         FT2_1_3_Long   *aypos,
+                         FT2_1_3_UInt   *axsize,
+                         FT2_1_3_UInt   *aysize,
+                         FT2_1_3_Long   *aadvance,
+                         FT2_1_3_UInt   *aformat ) {
+	FT2_1_3_Error  error = 0;
+	FT2_1_3_Byte   flags;
+	FT2_1_3_Char   b;
+	FT2_1_3_Byte*  p = *pdata;
+	FT2_1_3_Long   xpos, ypos, advance;
+	FT2_1_3_UInt   xsize, ysize;
 
 
 	PFR_CHECK( 1 );
@@ -347,7 +347,7 @@ pfr_load_bitmap_metrics( FT_Byte**  pdata,
 		PFR_CHECK( 1 );
 		b    = PFR_NEXT_INT8( p );
 		xpos = b >> 4;
-		ypos = ( (FT_Char)( b << 4 ) ) >> 4;
+		ypos = ( (FT2_1_3_Char)( b << 4 ) ) >> 4;
 		break;
 
 	case 1:
@@ -441,18 +441,18 @@ Exit:
 
 Too_Short:
 	error = PFR_Err_Invalid_Table;
-	FT_ERROR(( "pfr_load_bitmap_metrics: invalid glyph data\n" ));
+	FT2_1_3_ERROR(( "pfr_load_bitmap_metrics: invalid glyph data\n" ));
 	goto Exit;
 }
 
 
-static FT_Error
-pfr_load_bitmap_bits( FT_Byte*    p,
-                      FT_Byte*    limit,
-                      FT_UInt     format,
-                      FT_UInt     decreasing,
-                      FT_Bitmap*  target ) {
-	FT_Error          error = 0;
+static FT2_1_3_Error
+pfr_load_bitmap_bits( FT2_1_3_Byte*    p,
+                      FT2_1_3_Byte*    limit,
+                      FT2_1_3_UInt     format,
+                      FT2_1_3_UInt     decreasing,
+                      FT2_1_3_Bitmap*  target ) {
+	FT2_1_3_Error          error = 0;
 	PFR_BitWriterRec  writer;
 
 
@@ -473,8 +473,8 @@ pfr_load_bitmap_bits( FT_Byte*    p,
 			break;
 
 		default:
-			FT_ERROR(( "pfr_read_bitmap_data: invalid image type\n" ));
-			error = FT_Err_Invalid_File_Format;
+			FT2_1_3_ERROR(( "pfr_read_bitmap_data: invalid image type\n" ));
+			error = FT2_1_3_Err_Invalid_File_Format;
 		}
 	}
 
@@ -490,16 +490,16 @@ pfr_load_bitmap_bits( FT_Byte*    p,
 /*************************************************************************/
 /*************************************************************************/
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 pfr_slot_load_bitmap( PFR_Slot  glyph,
                       PFR_Size  size,
-                      FT_UInt   glyph_index ) {
-	FT_Error     error;
+                      FT2_1_3_UInt   glyph_index ) {
+	FT2_1_3_Error     error;
 	PFR_Face     face   = (PFR_Face) glyph->root.face;
-	FT_Stream    stream = face->root.stream;
+	FT2_1_3_Stream    stream = face->root.stream;
 	PFR_PhyFont  phys   = &face->phy_font;
-	FT_ULong     gps_offset;
-	FT_ULong     gps_size;
+	FT2_1_3_ULong     gps_offset;
+	FT2_1_3_ULong     gps_size;
 	PFR_Char     character;
 	PFR_Strike   strike;
 
@@ -509,13 +509,13 @@ pfr_slot_load_bitmap( PFR_Slot  glyph,
 	/* Look-up a bitmap strike corresponding to the current */
 	/* character dimensions                                 */
 	{
-		FT_UInt  n;
+		FT2_1_3_UInt  n;
 
 
 		strike = phys->strikes;
 		for ( n = 0; n < phys->num_strikes; n++ ) {
-			if ( strike->x_ppm == (FT_UInt)size->root.metrics.x_ppem &&
-			        strike->y_ppm == (FT_UInt)size->root.metrics.y_ppem ) {
+			if ( strike->x_ppm == (FT2_1_3_UInt)size->root.metrics.x_ppem &&
+			        strike->y_ppm == (FT2_1_3_UInt)size->root.metrics.y_ppem ) {
 				goto Found_Strike;
 			}
 
@@ -523,14 +523,14 @@ pfr_slot_load_bitmap( PFR_Slot  glyph,
 		}
 
 		/* couldn't find it */
-		return FT_Err_Invalid_Argument;
+		return FT2_1_3_Err_Invalid_Argument;
 	}
 
 Found_Strike:
 
 	/* Now lookup the glyph's position within the file */
 	{
-		FT_UInt  char_len;
+		FT2_1_3_UInt  char_len;
 
 
 		char_len = 4;
@@ -539,8 +539,8 @@ Found_Strike:
 		if ( strike->flags & 4 ) char_len += 1;
 
 		/* Access data directly in the frame to speed lookups */
-		if ( FT_STREAM_SEEK( phys->bct_offset + strike->bct_offset ) ||
-		        FT_FRAME_ENTER( char_len * strike->num_bitmaps )        )
+		if ( FT2_1_3_STREAM_SEEK( phys->bct_offset + strike->bct_offset ) ||
+		        FT2_1_3_FRAME_ENTER( char_len * strike->num_bitmaps )        )
 			goto Exit;
 
 		pfr_lookup_bitmap_data( stream->cursor,
@@ -551,30 +551,30 @@ Found_Strike:
 		                        &gps_offset,
 		                        &gps_size );
 
-		FT_FRAME_EXIT();
+		FT2_1_3_FRAME_EXIT();
 
 		if ( gps_size == 0 ) {
 			/* Could not find a bitmap program string for this glyph */
-			error = FT_Err_Invalid_Argument;
+			error = FT2_1_3_Err_Invalid_Argument;
 			goto Exit;
 		}
 	}
 
 	/* get the bitmap metrics */
 	{
-		FT_Long   xpos, ypos, advance;
-		FT_UInt   xsize, ysize, format;
-		FT_Byte*  p;
+		FT2_1_3_Long   xpos, ypos, advance;
+		FT2_1_3_UInt   xsize, ysize, format;
+		FT2_1_3_Byte*  p;
 
 
-		advance = FT_MulDiv( size->root.metrics.x_ppem << 8,
+		advance = FT2_1_3_MulDiv( size->root.metrics.x_ppem << 8,
 		                     character->advance,
 		                     phys->metrics_resolution );
 
 		/* XXX: handle linearHoriAdvance correctly! */
 
-		if ( FT_STREAM_SEEK( face->header.gps_section_offset + gps_offset ) ||
-		        FT_FRAME_ENTER( gps_size )                                     )
+		if ( FT2_1_3_STREAM_SEEK( face->header.gps_section_offset + gps_offset ) ||
+		        FT2_1_3_FRAME_ENTER( gps_size )                                     )
 			goto Exit;
 
 		p     = stream->cursor;
@@ -584,16 +584,16 @@ Found_Strike:
 		                                 &xsize, &ysize,
 		                                 &advance, &format );
 		if ( !error ) {
-			glyph->root.format = FT_GLYPH_FORMAT_BITMAP;
+			glyph->root.format = FT2_1_3_GLYPH_FORMAT_BITMAP;
 
 			/* Set up glyph bitmap and metrics */
-			glyph->root.bitmap.width      = (FT_Int)xsize;
-			glyph->root.bitmap.rows       = (FT_Int)ysize;
-			glyph->root.bitmap.pitch      = (FT_Long)( xsize + 7 ) >> 3;
-			glyph->root.bitmap.pixel_mode = FT_PIXEL_MODE_MONO;
+			glyph->root.bitmap.width      = (FT2_1_3_Int)xsize;
+			glyph->root.bitmap.rows       = (FT2_1_3_Int)ysize;
+			glyph->root.bitmap.pitch      = (FT2_1_3_Long)( xsize + 7 ) >> 3;
+			glyph->root.bitmap.pixel_mode = FT2_1_3_PIXEL_MODE_MONO;
 
-			glyph->root.metrics.width        = (FT_Long)xsize << 6;
-			glyph->root.metrics.height       = (FT_Long)ysize << 6;
+			glyph->root.metrics.width        = (FT2_1_3_Long)xsize << 6;
+			glyph->root.metrics.height       = (FT2_1_3_Long)ysize << 6;
 			glyph->root.metrics.horiBearingX = xpos << 6;
 			glyph->root.metrics.horiBearingY = ypos << 6;
 			glyph->root.metrics.horiAdvance  = ( ( advance >> 2 ) + 32 ) & -64;
@@ -606,11 +606,11 @@ Found_Strike:
 
 			/* Allocate and read bitmap data */
 			{
-				FT_Memory  memory = face->root.memory;
-				FT_Long    len    = glyph->root.bitmap.pitch * ysize;
+				FT2_1_3_Memory  memory = face->root.memory;
+				FT2_1_3_Long    len    = glyph->root.bitmap.pitch * ysize;
 
 
-				if ( !FT_ALLOC( glyph->root.bitmap.buffer, len ) ) {
+				if ( !FT2_1_3_ALLOC( glyph->root.bitmap.buffer, len ) ) {
 					error = pfr_load_bitmap_bits( p,
 					                              stream->limit,
 					                              format,
@@ -620,7 +620,7 @@ Found_Strike:
 			}
 		}
 
-		FT_FRAME_EXIT();
+		FT2_1_3_FRAME_EXIT();
 	}
 
 Exit:
