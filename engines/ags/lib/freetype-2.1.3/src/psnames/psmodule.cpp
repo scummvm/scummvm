@@ -17,8 +17,8 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_POSTSCRIPT_NAMES_H
-#include FT_INTERNAL_OBJECTS_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_NAMES_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
 
 #include "psmodule.h"
 #include "pstables.h"
@@ -26,19 +26,19 @@
 #include "psnamerr.h"
 
 
-#ifndef FT_CONFIG_OPTION_NO_POSTSCRIPT_NAMES
+#ifndef FT2_1_3_CONFIG_OPTION_NO_POSTSCRIPT_NAMES
 
 
-#ifdef FT_CONFIG_OPTION_ADOBE_GLYPH_LIST
+#ifdef FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST
 
 
 /* return the Unicode value corresponding to a given glyph.  Note that */
 /* we do deal with glyph variants by detecting a non-initial dot in    */
 /* the name, as in `A.swash' or `e.final', etc.                        */
 /*                                                                     */
-static FT_UInt32
+static FT2_1_3_UInt32
 ps_unicode_value( const char*  glyph_name ) {
-	FT_Int  n;
+	FT2_1_3_Int  n;
 	char    first = glyph_name[0];
 	char    temp[64];
 
@@ -54,8 +54,8 @@ ps_unicode_value( const char*  glyph_name ) {
 		/* XXX: Add code to deal with ligatures, i.e. glyph names like */
 		/*      `uniXXXXYYYYZZZZ'...                                   */
 
-		FT_Int       count;
-		FT_ULong     value = 0;
+		FT2_1_3_Int       count;
+		FT2_1_3_ULong     value = 0;
 		const char*  p     = glyph_name + 3;
 
 
@@ -119,7 +119,7 @@ ps_unicode_value( const char*  glyph_name ) {
 
 
 /* ft_qsort callback to sort the unicode map */
-FT_CALLBACK_DEF( int )
+FT2_1_3_CALLBACK_DEF( int )
 compare_uni_maps( const void*  a,
                   const void*  b ) {
 	PS_UniMap*  map1 = (PS_UniMap*)a;
@@ -131,23 +131,23 @@ compare_uni_maps( const void*  a,
 
 
 /* Builds a table that maps Unicode values to glyph indices */
-static FT_Error
-ps_build_unicode_table( FT_Memory     memory,
-                        FT_UInt       num_glyphs,
+static FT2_1_3_Error
+ps_build_unicode_table( FT2_1_3_Memory     memory,
+                        FT2_1_3_UInt       num_glyphs,
                         const char**  glyph_names,
                         PS_Unicodes*  table ) {
-	FT_Error  error;
+	FT2_1_3_Error  error;
 
 
 	/* we first allocate the table */
 	table->num_maps = 0;
 	table->maps     = 0;
 
-	if ( !FT_NEW_ARRAY( table->maps, num_glyphs ) ) {
-		FT_UInt     n;
-		FT_UInt     count;
+	if ( !FT2_1_3_NEW_ARRAY( table->maps, num_glyphs ) ) {
+		FT2_1_3_UInt     n;
+		FT2_1_3_UInt     count;
 		PS_UniMap*  map;
-		FT_UInt32   uni_char;
+		FT2_1_3_UInt32   uni_char;
 
 
 		map = table->maps;
@@ -168,15 +168,15 @@ ps_build_unicode_table( FT_Memory     memory,
 		}
 
 		/* now, compress the table a bit */
-		count = (FT_UInt)( map - table->maps );
+		count = (FT2_1_3_UInt)( map - table->maps );
 
-		if ( count > 0 && FT_REALLOC( table->maps,
+		if ( count > 0 && FT2_1_3_REALLOC( table->maps,
 		                              num_glyphs * sizeof ( PS_UniMap ),
 		                              count * sizeof ( PS_UniMap ) ) )
 			count = 0;
 
 		if ( count == 0 ) {
-			FT_FREE( table->maps );
+			FT2_1_3_FREE( table->maps );
 			if ( !error )
 				error = PSnames_Err_Invalid_Argument;  /* no unicode chars here! */
 		} else
@@ -190,9 +190,9 @@ ps_build_unicode_table( FT_Memory     memory,
 }
 
 
-static FT_UInt
+static FT2_1_3_UInt
 ps_lookup_unicode( PS_Unicodes*  table,
-                   FT_ULong      unicode ) {
+                   FT2_1_3_ULong      unicode ) {
 	PS_UniMap  *min, *max, *mid;
 
 
@@ -219,9 +219,9 @@ ps_lookup_unicode( PS_Unicodes*  table,
 }
 
 
-static FT_ULong
+static FT2_1_3_ULong
 ps_next_unicode( PS_Unicodes*  table,
-                 FT_ULong      unicode ) {
+                 FT2_1_3_ULong      unicode ) {
 	PS_UniMap  *min, *max, *mid;
 
 
@@ -258,11 +258,11 @@ ps_next_unicode( PS_Unicodes*  table,
 }
 
 
-#endif /* FT_CONFIG_OPTION_ADOBE_GLYPH_LIST */
+#endif /* FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST */
 
 
 static const char*
-ps_get_macintosh_name( FT_UInt  name_index ) {
+ps_get_macintosh_name( FT2_1_3_UInt  name_index ) {
 	if ( name_index >= 258 )
 		name_index = 0;
 
@@ -271,14 +271,14 @@ ps_get_macintosh_name( FT_UInt  name_index ) {
 
 
 static const char*
-ps_get_standard_strings( FT_UInt  sid ) {
+ps_get_standard_strings( FT2_1_3_UInt  sid ) {
 	return ( sid < NUM_SID_GLYPHS ? sid_standard_names[sid] : 0 );
 }
 
 
 static
 const PSNames_Interface  psnames_interface = {
-#ifdef FT_CONFIG_OPTION_ADOBE_GLYPH_LIST
+#ifdef FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST
 
 	(PS_Unicode_Value_Func)    ps_unicode_value,
 	(PS_Build_Unicodes_Func)   ps_build_unicode_table,
@@ -290,7 +290,7 @@ const PSNames_Interface  psnames_interface = {
 	0,
 	0,
 
-#endif /* FT_CONFIG_OPTION_ADOBE_GLYPH_LIST */
+#endif /* FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST */
 
 	(PS_Macintosh_Name_Func)    ps_get_macintosh_name,
 	(PS_Adobe_Std_Strings_Func) ps_get_standard_strings,
@@ -298,36 +298,36 @@ const PSNames_Interface  psnames_interface = {
 	t1_standard_encoding,
 	t1_expert_encoding,
 
-#ifdef FT_CONFIG_OPTION_ADOBE_GLYPH_LIST
+#ifdef FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST
 	(PS_Next_Unicode_Func)     ps_next_unicode
 #else
 	0
-#endif /* FT_CONFIG_OPTION_ADOBE_GLYPH_LIST */
+#endif /* FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST */
 
 };
 
 
-#endif /* !FT_CONFIG_OPTION_NO_POSTSCRIPT_NAMES */
+#endif /* !FT2_1_3_CONFIG_OPTION_NO_POSTSCRIPT_NAMES */
 
 
-FT_CALLBACK_TABLE_DEF
-const FT_Module_Class  psnames_module_class = {
+FT2_1_3_CALLBACK_TABLE_DEF
+const FT2_1_3_Module_Class  psnames_module_class = {
 	0,  /* this is not a font driver, nor a renderer */
-	sizeof ( FT_ModuleRec ),
+	sizeof ( FT2_1_3_ModuleRec ),
 
 	"psnames",  /* driver name                         */
 	0x10000L,   /* driver version                      */
 	0x20000L,   /* driver requires FreeType 2 or above */
 
-#ifdef FT_CONFIG_OPTION_NO_POSTSCRIPT_NAMES
+#ifdef FT2_1_3_CONFIG_OPTION_NO_POSTSCRIPT_NAMES
 	0,
 #else
 	(void*)&psnames_interface,   /* module specific interface */
 #endif
 
-	(FT_Module_Constructor)0,
-	(FT_Module_Destructor) 0,
-	(FT_Module_Requester)  0
+	(FT2_1_3_Module_Constructor)0,
+	(FT2_1_3_Module_Destructor) 0,
+	(FT2_1_3_Module_Requester)  0
 };
 
 
