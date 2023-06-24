@@ -21,11 +21,11 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_TYPE1_TYPES_H
-#include FT_INTERNAL_STREAM_H
+#include FT2_1_3_INTERNAL_TYPE1_TYPES_H
+#include FT2_1_3_INTERNAL_STREAM_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /*************************************************************************/
@@ -60,17 +60,17 @@ FT_BEGIN_HEADER
 /*                                                                       */
 typedef struct  T1_ParserRec_ {
 	PS_ParserRec  root;
-	FT_Stream     stream;
+	FT2_1_3_Stream     stream;
 
-	FT_Byte*      base_dict;
-	FT_Long       base_len;
+	FT2_1_3_Byte*      base_dict;
+	FT2_1_3_Long       base_len;
 
-	FT_Byte*      private_dict;
-	FT_Long       private_len;
+	FT2_1_3_Byte*      private_dict;
+	FT2_1_3_Long       private_len;
 
-	FT_Byte       in_pfb;
-	FT_Byte       in_memory;
-	FT_Byte       single_block;
+	FT2_1_3_Byte       in_pfb;
+	FT2_1_3_Byte       in_memory;
+	FT2_1_3_Byte       single_block;
 
 } T1_ParserRec, *T1_Parser;
 
@@ -112,21 +112,21 @@ typedef struct  T1_ParserRec_ {
           (p)->root.funcs.load_field_table( &(p)->root, f, o, m, pf )
 
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 T1_New_Parser( T1_Parser      parser,
-               FT_Stream      stream,
-               FT_Memory      memory,
+               FT2_1_3_Stream      stream,
+               FT2_1_3_Memory      memory,
                PSAux_Service  psaux );
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 T1_Get_Private_Dict( T1_Parser      parser,
                      PSAux_Service  psaux );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 T1_Finalize_Parser( T1_Parser  parser );
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __T1PARSE_H__ */
 

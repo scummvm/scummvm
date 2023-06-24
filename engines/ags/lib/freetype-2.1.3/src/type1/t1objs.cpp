@@ -17,8 +17,8 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_DEBUG_H
-#include FT_INTERNAL_STREAM_H
+#include FT2_1_3_INTERNAL_DEBUG_H
+#include FT2_1_3_INTERNAL_STREAM_H
 
 #include "t1gload.h"
 #include "t1load.h"
@@ -29,18 +29,18 @@
 #include "t1afm.h"
 #endif
 
-#include FT_INTERNAL_POSTSCRIPT_NAMES_H
-#include FT_INTERNAL_POSTSCRIPT_AUX_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_NAMES_H
+#include FT2_1_3_INTERNAL_POSTSCRIPT_AUX_H
 
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
+/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT_COMPONENT
-#define FT_COMPONENT  trace_t1objs
+#undef  FT2_1_3_COMPONENT
+#define FT2_1_3_COMPONENT  trace_t1objs
 
 
 /*************************************************************************/
@@ -57,10 +57,10 @@ static PSH_Globals_Funcs
 T1_Size_Get_Globals_Funcs( T1_Size  size ) {
 	T1_Face           face     = (T1_Face)size->root.face;
 	PSHinter_Service  pshinter = (PSHinter_Service)face->pshinter;
-	FT_Module         module;
+	FT2_1_3_Module         module;
 
 
-	module = FT_Get_Module( size->root.face->driver->root.library,
+	module = FT2_1_3_Get_Module( size->root.face->driver->root.library,
 	                        "pshinter" );
 	return ( module && pshinter && pshinter->get_globals_funcs )
 	       ? pshinter->get_globals_funcs( module )
@@ -68,7 +68,7 @@ T1_Size_Get_Globals_Funcs( T1_Size  size ) {
 }
 
 
-FT_LOCAL_DEF( void )
+FT2_1_3_LOCAL_DEF( void )
 T1_Size_Done( T1_Size  size ) {
 	if ( size->root.internal ) {
 		PSH_Globals_Funcs  funcs;
@@ -83,9 +83,9 @@ T1_Size_Done( T1_Size  size ) {
 }
 
 
-FT_LOCAL_DEF( FT_Error )
+FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 T1_Size_Init( T1_Size  size ) {
-	FT_Error           error = 0;
+	FT2_1_3_Error           error = 0;
 	PSH_Globals_Funcs  funcs = T1_Size_Get_Globals_Funcs( size );
 
 
@@ -97,17 +97,17 @@ T1_Size_Init( T1_Size  size ) {
 		error = funcs->create( size->root.face->memory,
 		                       &face->type1.private_dict, &globals );
 		if ( !error )
-			size->root.internal = (FT_Size_Internal)(void*)globals;
+			size->root.internal = (FT2_1_3_Size_Internal)(void*)globals;
 	}
 
 	return error;
 }
 
 
-FT_LOCAL_DEF( FT_Error )
+FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 T1_Size_Reset( T1_Size  size ) {
 	PSH_Globals_Funcs  funcs = T1_Size_Get_Globals_Funcs( size );
-	FT_Error           error = 0;
+	FT2_1_3_Error           error = 0;
 
 
 	if ( funcs )
@@ -125,13 +125,13 @@ T1_Size_Reset( T1_Size  size ) {
 /*                                                                       */
 /*************************************************************************/
 
-FT_LOCAL_DEF( void )
+FT2_1_3_LOCAL_DEF( void )
 T1_GlyphSlot_Done( T1_GlyphSlot  slot ) {
 	slot->root.internal->glyph_hints = 0;
 }
 
 
-FT_LOCAL_DEF( FT_Error )
+FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 T1_GlyphSlot_Init( T1_GlyphSlot  slot ) {
 	T1_Face           face;
 	PSHinter_Service  pshinter;
@@ -141,10 +141,10 @@ T1_GlyphSlot_Init( T1_GlyphSlot  slot ) {
 	pshinter = (PSHinter_Service)face->pshinter;
 
 	if ( pshinter ) {
-		FT_Module  module;
+		FT2_1_3_Module  module;
 
 
-		module = FT_Get_Module( slot->root.face->driver->root.library, "pshinter" );
+		module = FT2_1_3_Get_Module( slot->root.face->driver->root.library, "pshinter" );
 		if (module) {
 			T1_Hints_Funcs  funcs;
 
@@ -174,9 +174,9 @@ T1_GlyphSlot_Init( T1_GlyphSlot  slot ) {
 /* <Input>                                                               */
 /*    face :: A typeless pointer to the face object to destroy.          */
 /*                                                                       */
-FT_LOCAL_DEF( void )
+FT2_1_3_LOCAL_DEF( void )
 T1_Face_Done( T1_Face  face ) {
-	FT_Memory  memory;
+	FT2_1_3_Memory  memory;
 	T1_Font    type1 = &face->type1;
 
 
@@ -194,28 +194,28 @@ T1_Face_Done( T1_Face  face ) {
 			PS_FontInfo  info = &type1->font_info;
 
 
-			FT_FREE( info->version );
-			FT_FREE( info->notice );
-			FT_FREE( info->full_name );
-			FT_FREE( info->family_name );
-			FT_FREE( info->weight );
+			FT2_1_3_FREE( info->version );
+			FT2_1_3_FREE( info->notice );
+			FT2_1_3_FREE( info->full_name );
+			FT2_1_3_FREE( info->family_name );
+			FT2_1_3_FREE( info->weight );
 		}
 
 		/* release top dictionary */
-		FT_FREE( type1->charstrings_len );
-		FT_FREE( type1->charstrings );
-		FT_FREE( type1->glyph_names );
+		FT2_1_3_FREE( type1->charstrings_len );
+		FT2_1_3_FREE( type1->charstrings );
+		FT2_1_3_FREE( type1->glyph_names );
 
-		FT_FREE( type1->subrs );
-		FT_FREE( type1->subrs_len );
+		FT2_1_3_FREE( type1->subrs );
+		FT2_1_3_FREE( type1->subrs_len );
 
-		FT_FREE( type1->subrs_block );
-		FT_FREE( type1->charstrings_block );
-		FT_FREE( type1->glyph_names_block );
+		FT2_1_3_FREE( type1->subrs_block );
+		FT2_1_3_FREE( type1->charstrings_block );
+		FT2_1_3_FREE( type1->glyph_names_block );
 
-		FT_FREE( type1->encoding.char_index );
-		FT_FREE( type1->encoding.char_name );
-		FT_FREE( type1->font_name );
+		FT2_1_3_FREE( type1->encoding.char_index );
+		FT2_1_3_FREE( type1->encoding.char_name );
+		FT2_1_3_FREE( type1->font_name );
 
 #ifndef T1_CONFIG_OPTION_NO_AFM
 		/* release afm data if present */
@@ -224,7 +224,7 @@ T1_Face_Done( T1_Face  face ) {
 #endif
 
 		/* release unicode map, if any */
-		FT_FREE( face->unicode_map.maps );
+		FT2_1_3_FREE( face->unicode_map.maps );
 		face->unicode_map.num_maps = 0;
 
 		face->root.family_name = 0;
@@ -256,34 +256,34 @@ T1_Face_Done( T1_Face  face ) {
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT_LOCAL_DEF( FT_Error )
-T1_Face_Init( FT_Stream      stream,
+FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+T1_Face_Init( FT2_1_3_Stream      stream,
               T1_Face        face,
-              FT_Int         face_index,
-              FT_Int         num_params,
-              FT_Parameter*  params ) {
-	FT_Error          error;
+              FT2_1_3_Int         face_index,
+              FT2_1_3_Int         num_params,
+              FT2_1_3_Parameter*  params ) {
+	FT2_1_3_Error          error;
 	PSNames_Service   psnames;
 	PSAux_Service     psaux;
 	PSHinter_Service  pshinter;
 
-	FT_UNUSED( num_params );
-	FT_UNUSED( params );
-	FT_UNUSED( face_index );
-	FT_UNUSED( stream );
+	FT2_1_3_UNUSED( num_params );
+	FT2_1_3_UNUSED( params );
+	FT2_1_3_UNUSED( face_index );
+	FT2_1_3_UNUSED( stream );
 
 
 	face->root.num_faces = 1;
 
-	face->psnames = FT_Get_Module_Interface( FT_FACE_LIBRARY( face ),
+	face->psnames = FT2_1_3_Get_Module_Interface( FT2_1_3_FACE_LIBRARY( face ),
 	                "psnames" );
 	psnames = (PSNames_Service)face->psnames;
 
-	face->psaux = FT_Get_Module_Interface( FT_FACE_LIBRARY( face ),
+	face->psaux = FT2_1_3_Get_Module_Interface( FT2_1_3_FACE_LIBRARY( face ),
 	                                       "psaux" );
 	psaux = (PSAux_Service)face->psaux;
 
-	face->pshinter = FT_Get_Module_Interface( FT_FACE_LIBRARY( face ),
+	face->pshinter = FT2_1_3_Get_Module_Interface( FT2_1_3_FACE_LIBRARY( face ),
 	                 "pshinter" );
 	pshinter = (PSHinter_Service)face->pshinter;
 
@@ -298,7 +298,7 @@ T1_Face_Init( FT_Stream      stream,
 
 	/* check the face index */
 	if ( face_index != 0 ) {
-		FT_ERROR(( "T1_Face_Init: invalid face index\n" ));
+		FT2_1_3_ERROR(( "T1_Face_Init: invalid face index\n" ));
 		error = T1_Err_Invalid_Argument;
 		goto Exit;
 	}
@@ -308,21 +308,21 @@ T1_Face_Init( FT_Stream      stream,
 	/* Init the face object fields */
 	/* Now set up root face fields */
 	{
-		FT_Face  root = (FT_Face)&face->root;
+		FT2_1_3_Face  root = (FT2_1_3_Face)&face->root;
 
 
 		root->num_glyphs = face->type1.num_glyphs;
 		root->face_index = face_index;
 
-		root->face_flags = FT_FACE_FLAG_SCALABLE;
-		root->face_flags |= FT_FACE_FLAG_HORIZONTAL;
-		root->face_flags |= FT_FACE_FLAG_GLYPH_NAMES;
+		root->face_flags = FT2_1_3_FACE_FLAG_SCALABLE;
+		root->face_flags |= FT2_1_3_FACE_FLAG_HORIZONTAL;
+		root->face_flags |= FT2_1_3_FACE_FLAG_GLYPH_NAMES;
 
 		if ( face->type1.font_info.is_fixed_pitch )
-			root->face_flags |= FT_FACE_FLAG_FIXED_WIDTH;
+			root->face_flags |= FT2_1_3_FACE_FLAG_FIXED_WIDTH;
 
 		if ( face->blend )
-			root->face_flags |= FT_FACE_FLAG_MULTIPLE_MASTERS;
+			root->face_flags |= FT2_1_3_FACE_FLAG_MULTIPLE_MASTERS;
 
 		/* XXX: TODO -- add kerning with .afm support */
 
@@ -355,11 +355,11 @@ T1_Face_Init( FT_Stream      stream,
 		/* compute style flags */
 		root->style_flags = 0;
 		if ( face->type1.font_info.italic_angle )
-			root->style_flags |= FT_STYLE_FLAG_ITALIC;
+			root->style_flags |= FT2_1_3_STYLE_FLAG_ITALIC;
 		if ( face->type1.font_info.weight ) {
 			if ( !ft_strcmp( face->type1.font_info.weight, "Bold"  ) ||
 			        !ft_strcmp( face->type1.font_info.weight, "Black" ) )
-				root->style_flags |= FT_STYLE_FLAG_BOLD;
+				root->style_flags |= FT2_1_3_STYLE_FLAG_BOLD;
 		}
 
 		/* no embedded bitmap support */
@@ -375,23 +375,23 @@ T1_Face_Init( FT_Stream      stream,
 		if ( !root->units_per_EM )
 			root->units_per_EM = 1000;
 
-		root->ascender  = (FT_Short)( root->bbox.yMax );
-		root->descender = (FT_Short)( root->bbox.yMin );
-		root->height    = (FT_Short)(
+		root->ascender  = (FT2_1_3_Short)( root->bbox.yMax );
+		root->descender = (FT2_1_3_Short)( root->bbox.yMin );
+		root->height    = (FT2_1_3_Short)(
 		                      ( ( root->ascender - root->descender ) * 12 ) / 10 );
 
 		/* now compute the maximum advance width */
 		root->max_advance_width =
-		    (FT_Short)( root->bbox.xMax );
+		    (FT2_1_3_Short)( root->bbox.xMax );
 		{
-			FT_Int  max_advance;
+			FT2_1_3_Int  max_advance;
 
 
 			error = T1_Compute_Max_Advance( face, &max_advance );
 
 			/* in case of error, keep the standard width */
 			if ( !error )
-				root->max_advance_width = (FT_Short)max_advance;
+				root->max_advance_width = (FT2_1_3_Short)max_advance;
 			else
 				error = 0;   /* clear error */
 		}
@@ -406,13 +406,13 @@ T1_Face_Init( FT_Stream      stream,
 	}
 
 	{
-		FT_Face  root = &face->root;
+		FT2_1_3_Face  root = &face->root;
 
 
 		if ( psnames && psaux ) {
-			FT_CharMapRec    charmap;
+			FT2_1_3_CharMapRec    charmap;
 			T1_CMap_Classes  cmap_classes = psaux->t1_cmap_classes;
-			FT_CMap_Class    clazz;
+			FT2_1_3_CMap_Class    clazz;
 
 
 			charmap.face = root;
@@ -420,9 +420,9 @@ T1_Face_Init( FT_Stream      stream,
 			/* first of all, try to synthetize a Unicode charmap */
 			charmap.platform_id = 3;
 			charmap.encoding_id = 1;
-			charmap.encoding    = FT_ENCODING_UNICODE;
+			charmap.encoding    = FT2_1_3_ENCODING_UNICODE;
 
-			FT_CMap_New( cmap_classes->unicode, NULL, &charmap, NULL );
+			FT2_1_3_CMap_New( cmap_classes->unicode, NULL, &charmap, NULL );
 
 			/* now, generate an Adobe Standard encoding when appropriate */
 			charmap.platform_id = 7;
@@ -430,25 +430,25 @@ T1_Face_Init( FT_Stream      stream,
 
 			switch ( face->type1.encoding_type ) {
 			case T1_ENCODING_TYPE_STANDARD:
-				charmap.encoding    = FT_ENCODING_ADOBE_STANDARD;
+				charmap.encoding    = FT2_1_3_ENCODING_ADOBE_STANDARD;
 				charmap.encoding_id = 0;
 				clazz               = cmap_classes->standard;
 				break;
 
 			case T1_ENCODING_TYPE_EXPERT:
-				charmap.encoding    = FT_ENCODING_ADOBE_EXPERT;
+				charmap.encoding    = FT2_1_3_ENCODING_ADOBE_EXPERT;
 				charmap.encoding_id = 1;
 				clazz               = cmap_classes->expert;
 				break;
 
 			case T1_ENCODING_TYPE_ARRAY:
-				charmap.encoding    = FT_ENCODING_ADOBE_CUSTOM;
+				charmap.encoding    = FT2_1_3_ENCODING_ADOBE_CUSTOM;
 				charmap.encoding_id = 2;
 				clazz               = cmap_classes->custom;
 				break;
 
 			case T1_ENCODING_TYPE_ISOLATIN1:
-				charmap.encoding    = FT_ENCODING_ADOBE_LATIN_1;
+				charmap.encoding    = FT2_1_3_ENCODING_ADOBE_LATIN_1;
 				charmap.encoding_id = 3;
 				clazz               = cmap_classes->unicode;
 				break;
@@ -458,7 +458,7 @@ T1_Face_Init( FT_Stream      stream,
 			}
 
 			if ( clazz )
-				FT_CMap_New( clazz, NULL, &charmap, NULL );
+				FT2_1_3_CMap_New( clazz, NULL, &charmap, NULL );
 
 #if 0
 			/* Select default charmap */
@@ -487,9 +487,9 @@ Exit:
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT_LOCAL_DEF( FT_Error )
+FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 T1_Driver_Init( T1_Driver  driver ) {
-	FT_UNUSED( driver );
+	FT2_1_3_UNUSED( driver );
 
 	return T1_Err_Ok;
 }
@@ -506,9 +506,9 @@ T1_Driver_Init( T1_Driver  driver ) {
 /* <Input>                                                               */
 /*    driver :: A handle to the target Type 1 driver.                    */
 /*                                                                       */
-FT_LOCAL_DEF( void )
+FT2_1_3_LOCAL_DEF( void )
 T1_Driver_Done( T1_Driver  driver ) {
-	FT_UNUSED( driver );
+	FT2_1_3_UNUSED( driver );
 }
 
 

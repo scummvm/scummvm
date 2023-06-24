@@ -21,12 +21,12 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT_INTERNAL_OBJECTS_H
-#include FT_CONFIG_CONFIG_H
-#include FT_INTERNAL_TYPE1_TYPES_H
+#include FT2_1_3_INTERNAL_OBJECTS_H
+#include FT2_1_3_CONFIG_CONFIG_H
+#include FT2_1_3_INTERNAL_TYPE1_TYPES_H
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 
 /* The following structures must be defined by the hinter */
@@ -99,18 +99,18 @@ typedef struct T1_CharMapRec_*   T1_CharMap;
 /*    Type 1 size record.                                                */
 /*                                                                       */
 typedef struct  T1_SizeRec_ {
-	FT_SizeRec  root;
+	FT2_1_3_SizeRec  root;
 
 } T1_SizeRec;
 
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 T1_Size_Done( T1_Size  size );
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 T1_Size_Reset( T1_Size  size );
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 T1_Size_Init( T1_Size  size );
 
 
@@ -123,44 +123,44 @@ T1_Size_Init( T1_Size  size );
 /*    Type 1 glyph slot record.                                          */
 /*                                                                       */
 typedef struct  T1_GlyphSlotRec_ {
-	FT_GlyphSlotRec  root;
+	FT2_1_3_GlyphSlotRec  root;
 
-	FT_Bool          hint;
-	FT_Bool          scaled;
+	FT2_1_3_Bool          hint;
+	FT2_1_3_Bool          scaled;
 
-	FT_Int           max_points;
-	FT_Int           max_contours;
+	FT2_1_3_Int           max_points;
+	FT2_1_3_Int           max_contours;
 
-	FT_Fixed         x_scale;
-	FT_Fixed         y_scale;
+	FT2_1_3_Fixed         x_scale;
+	FT2_1_3_Fixed         y_scale;
 
 } T1_GlyphSlotRec;
 
 
-FT_LOCAL( FT_Error )
-T1_Face_Init( FT_Stream      stream,
+FT2_1_3_LOCAL( FT2_1_3_Error )
+T1_Face_Init( FT2_1_3_Stream      stream,
               T1_Face        face,
-              FT_Int         face_index,
-              FT_Int         num_params,
-              FT_Parameter*  params );
+              FT2_1_3_Int         face_index,
+              FT2_1_3_Int         num_params,
+              FT2_1_3_Parameter*  params );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 T1_Face_Done( T1_Face  face );
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 T1_GlyphSlot_Init( T1_GlyphSlot  slot );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 T1_GlyphSlot_Done( T1_GlyphSlot  slot );
 
-FT_LOCAL( FT_Error )
+FT2_1_3_LOCAL( FT2_1_3_Error )
 T1_Driver_Init( T1_Driver  driver );
 
-FT_LOCAL( void )
+FT2_1_3_LOCAL( void )
 T1_Driver_Done( T1_Driver  driver );
 
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 #endif /* __T1OBJS_H__ */
 

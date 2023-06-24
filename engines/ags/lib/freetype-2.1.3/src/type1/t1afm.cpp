@@ -18,26 +18,26 @@
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "t1afm.h"
-#include FT_INTERNAL_STREAM_H
-#include FT_INTERNAL_TYPE1_TYPES_H
+#include FT2_1_3_INTERNAL_STREAM_H
+#include FT2_1_3_INTERNAL_TYPE1_TYPES_H
 
 
 /*************************************************************************/
 /*                                                                       */
-/* The macro FT_COMPONENT is used in trace mode.  It is an implicit      */
-/* parameter of the FT_TRACE() and FT_ERROR() macros, used to print/log  */
+/* The macro FT2_1_3_COMPONENT is used in trace mode.  It is an implicit      */
+/* parameter of the FT2_1_3_TRACE() and FT2_1_3_ERROR() macros, used to print/log  */
 /* messages during execution.                                            */
 /*                                                                       */
-#undef  FT_COMPONENT
-#define FT_COMPONENT  trace_t1afm
+#undef  FT2_1_3_COMPONENT
+#define FT2_1_3_COMPONENT  trace_t1afm
 
 
-FT_LOCAL_DEF( void )
-T1_Done_AFM( FT_Memory  memory,
+FT2_1_3_LOCAL_DEF( void )
+T1_Done_AFM( FT2_1_3_Memory  memory,
              T1_AFM*    afm ) {
-	FT_FREE( afm->kern_pairs );
+	FT2_1_3_FREE( afm->kern_pairs );
 	afm->num_pairs = 0;
-	FT_FREE( afm );
+	FT2_1_3_FREE( afm );
 }
 
 
@@ -50,13 +50,13 @@ T1_Done_AFM( FT_Memory  memory,
 
 
 /* read a glyph name and return the equivalent glyph index */
-static FT_UInt
-afm_atoindex( FT_Byte**  start,
-              FT_Byte*   limit,
+static FT2_1_3_UInt
+afm_atoindex( FT2_1_3_Byte**  start,
+              FT2_1_3_Byte*   limit,
               T1_Font    type1 ) {
-	FT_Byte*    p = *start;
-	FT_PtrDist  len;
-	FT_UInt     result = 0;
+	FT2_1_3_Byte*    p = *start;
+	FT2_1_3_PtrDist  len;
+	FT2_1_3_UInt     result = 0;
 	char        temp[64];
 
 
@@ -73,11 +73,11 @@ afm_atoindex( FT_Byte**  start,
 	len = p - *start;
 
 	if ( len > 0 && len < 64 ) {
-		FT_Int  n;
+		FT2_1_3_Int  n;
 
 
 		/* copy glyph name to intermediate array */
-		FT_MEM_COPY( temp, *start, len );
+		FT2_1_3_MEM_COPY( temp, *start, len );
 		temp[len] = 0;
 
 		/* lookup glyph name in face array */
@@ -98,9 +98,9 @@ afm_atoindex( FT_Byte**  start,
 
 /* read an integer */
 static int
-afm_atoi( FT_Byte**  start,
-          FT_Byte*   limit ) {
-	FT_Byte*  p    = *start;
+afm_atoi( FT2_1_3_Byte**  start,
+          FT2_1_3_Byte*   limit ) {
+	FT2_1_3_Byte*  p    = *start;
 	int       sum  = 0;
 	int       sign = 1;
 
@@ -125,18 +125,18 @@ afm_atoi( FT_Byte**  start,
 
 
 #undef  KERN_INDEX
-#define KERN_INDEX( g1, g2 )  ( ( (FT_ULong)g1 << 16 ) | g2 )
+#define KERN_INDEX( g1, g2 )  ( ( (FT2_1_3_ULong)g1 << 16 ) | g2 )
 
 
 /* compare two kerning pairs */
-FT_CALLBACK_DEF( int )
+FT2_1_3_CALLBACK_DEF( int )
 compare_kern_pairs( const void*  a,
                     const void*  b ) {
 	T1_Kern_Pair*  pair1 = (T1_Kern_Pair*)a;
 	T1_Kern_Pair*  pair2 = (T1_Kern_Pair*)b;
 
-	FT_ULong  index1 = KERN_INDEX( pair1->glyph1, pair1->glyph2 );
-	FT_ULong  index2 = KERN_INDEX( pair2->glyph1, pair2->glyph2 );
+	FT2_1_3_ULong  index1 = KERN_INDEX( pair1->glyph1, pair1->glyph2 );
+	FT2_1_3_ULong  index2 = KERN_INDEX( pair2->glyph1, pair2->glyph2 );
 
 
 	return ( index1 - index2 );
@@ -144,25 +144,25 @@ compare_kern_pairs( const void*  a,
 
 
 /* parse an AFM file -- for now, only read the kerning pairs */
-FT_LOCAL_DEF( FT_Error )
-T1_Read_AFM( FT_Face    t1_face,
-             FT_Stream  stream ) {
-	FT_Error       error;
-	FT_Memory      memory = stream->memory;
-	FT_Byte*       start;
-	FT_Byte*       limit;
-	FT_Byte*       p;
-	FT_Int         count = 0;
+FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+T1_Read_AFM( FT2_1_3_Face    t1_face,
+             FT2_1_3_Stream  stream ) {
+	FT2_1_3_Error       error;
+	FT2_1_3_Memory      memory = stream->memory;
+	FT2_1_3_Byte*       start;
+	FT2_1_3_Byte*       limit;
+	FT2_1_3_Byte*       p;
+	FT2_1_3_Int         count = 0;
 	T1_Kern_Pair*  pair;
 	T1_Font        type1 = &((T1_Face)t1_face)->type1;
 	T1_AFM*        afm   = 0;
 
 
-	if ( FT_FRAME_ENTER( stream->size ) )
+	if ( FT2_1_3_FRAME_ENTER( stream->size ) )
 		return error;
 
-	start = (FT_Byte*)stream->cursor;
-	limit = (FT_Byte*)stream->limit;
+	start = (FT2_1_3_Byte*)stream->cursor;
+	limit = (FT2_1_3_Byte*)stream->limit;
 	p     = start;
 
 	/* we are now going to count the occurences of `KP' or `KPX' in */
@@ -178,7 +178,7 @@ T1_Read_AFM( FT_Face    t1_face,
 		goto Exit;
 
 	/* allocate the pairs */
-	if ( FT_NEW( afm ) || FT_NEW_ARRAY( afm->kern_pairs, count ) )
+	if ( FT2_1_3_NEW( afm ) || FT2_1_3_NEW_ARRAY( afm->kern_pairs, count ) )
 		goto Exit;
 
 	/* now, read each kern pair */
@@ -188,11 +188,11 @@ T1_Read_AFM( FT_Face    t1_face,
 	/* save in face object */
 	((T1_Face)t1_face)->afm_data = afm;
 
-	t1_face->face_flags |= FT_FACE_FLAG_KERNING;
+	t1_face->face_flags |= FT2_1_3_FACE_FLAG_KERNING;
 
 	for ( p = start; p < limit - 3; p++ ) {
 		if ( IS_KERN_PAIR( p ) ) {
-			FT_Byte*  q;
+			FT2_1_3_Byte*  q;
 
 
 			/* skip keyword (KP or KPX) */
@@ -218,22 +218,22 @@ T1_Read_AFM( FT_Face    t1_face,
 
 Exit:
 	if ( error )
-		FT_FREE( afm );
+		FT2_1_3_FREE( afm );
 
-	FT_FRAME_EXIT();
+	FT2_1_3_FRAME_EXIT();
 
 	return error;
 }
 
 
 /* find the kerning for a given glyph pair */
-FT_LOCAL_DEF( void )
+FT2_1_3_LOCAL_DEF( void )
 T1_Get_Kerning( T1_AFM*     afm,
-                FT_UInt     glyph1,
-                FT_UInt     glyph2,
-                FT_Vector*  kerning ) {
+                FT2_1_3_UInt     glyph1,
+                FT2_1_3_UInt     glyph2,
+                FT2_1_3_Vector*  kerning ) {
 	T1_Kern_Pair  *min, *mid, *max;
-	FT_ULong      idx = KERN_INDEX( glyph1, glyph2 );
+	FT2_1_3_ULong      idx = KERN_INDEX( glyph1, glyph2 );
 
 
 	/* simple binary search */
@@ -241,7 +241,7 @@ T1_Get_Kerning( T1_AFM*     afm,
 	max = min + afm->num_pairs - 1;
 
 	while ( min <= max ) {
-		FT_ULong  midi;
+		FT2_1_3_ULong  midi;
 
 
 		mid  = min + ( max - min ) / 2;
