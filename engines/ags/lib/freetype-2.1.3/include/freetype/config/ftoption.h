@@ -16,14 +16,14 @@
 /***************************************************************************/
 
 
-#ifndef __FTOPTION_H__
-#define __FTOPTION_H__
+#ifndef __FT2_1_3_OPTION_H__
+#define __FT2_1_3_OPTION_H__
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 
 
-FT_BEGIN_HEADER
+FT2_1_3_BEGIN_HEADER
 
 /*************************************************************************/
 /*                                                                       */
@@ -47,17 +47,17 @@ FT_BEGIN_HEADER
 /*    that for your own projects.                                        */
 /*                                                                       */
 /*  - Copy the file <ft2build.h> to "$BUILD/ft2build.h" and modify it    */
-/*    slightly to pre-define the macro FT_CONFIG_OPTIONS_H used to       */
+/*    slightly to pre-define the macro FT2_1_3_CONFIG_OPTIONS_H used to       */
 /*    locate this file during the build.  For example,                   */
 /*                                                                       */
-/*      #define FT_CONFIG_OPTIONS_H  <myftoptions.h>                     */
+/*      #define FT2_1_3_CONFIG_OPTIONS_H  <myftoptions.h>                     */
 /*      #include <freetype/config/ftheader.h>                            */
 /*                                                                       */
 /*    will use "$BUILD/myftoptions.h" instead of this file for macro     */
 /*    definitions.                                                       */
 /*                                                                       */
 /*    Note also that you can similarly pre-define the macro              */
-/*    FT_CONFIG_MODULES_H used to locate the file listing of the modules */
+/*    FT2_1_3_CONFIG_MODULES_H used to locate the file listing of the modules */
 /*    that are statically linked to the library at compile time.  By     */
 /*    default, this file is <freetype/config/ftmodule.h>.                */
 /*                                                                       */
@@ -83,7 +83,7 @@ FT_BEGIN_HEADER
 /*                                                                       */
 /* For this reason, the use of 64-bit ints is normally disabled when     */
 /* the __STDC__ macro is defined.  You can however disable this by       */
-/* defining here the macro FT_CONFIG_OPTION_FORCE_INT64.                 */
+/* defining here the macro FT2_1_3_CONFIG_OPTION_FORCE_INT64.                 */
 /*                                                                       */
 /* For most compilers, this will only create compilation warnings        */
 /* when building the library.                                            */
@@ -92,7 +92,7 @@ FT_BEGIN_HEADER
 /*         file "ftconfig.h" either statically, or through Autoconf      */
 /*         on platforms that support it.                                 */
 /*                                                                       */
-#undef  FT_CONFIG_OPTION_FORCE_INT64
+#undef  FT2_1_3_CONFIG_OPTION_FORCE_INT64
 
 
 /*************************************************************************/
@@ -108,14 +108,14 @@ FT_BEGIN_HEADER
 /*   this will however force you to link the zlib to any program that    */
 /*   also uses FreeType.                                                 */
 /*                                                                       */
-#define FT_CONFIG_OPTION_USE_ZLIB
+#define FT2_1_3_CONFIG_OPTION_USE_ZLIB
 
 
 /*************************************************************************/
 /*                                                                       */
 /* ZLib library selection                                                */
 /*                                                                       */
-/*   This macro is only used when FT_CONFIG_OPTION_USE_ZLIB is defined.  */
+/*   This macro is only used when FT2_1_3_CONFIG_OPTION_USE_ZLIB is defined.  */
 /*   It allows FreeType's "ftgzip" component to link to the system's     */
 /*   installation of the ZLib library. This is useful on systems like    */
 /*   Unix or VMS where it generally is already available.                */
@@ -129,7 +129,7 @@ FT_BEGIN_HEADER
 /*   do not #undef this macro here, since the build system might         */
 /*   define for certain configurations                                   */
 /*                                                                       */
-/* #define  FT_CONFIG_OPTION_SYSTEM_ZLIB */
+/* #define  FT2_1_3_CONFIG_OPTION_SYSTEM_ZLIB */
 
 
 /*************************************************************************/
@@ -141,34 +141,34 @@ FT_BEGIN_HEADER
 /*   declarations.                                                       */
 /*                                                                       */
 /*   Two macros are used within the FreeType source code to define       */
-/*   exported library functions: FT_EXPORT and FT_EXPORT_DEF.            */
+/*   exported library functions: FT2_1_3_EXPORT and FT2_1_3_EXPORT_DEF.            */
 /*                                                                       */
-/*     FT_EXPORT( return_type )                                          */
+/*     FT2_1_3_EXPORT( return_type )                                          */
 /*                                                                       */
 /*       is used in a function declaration, as in                        */
 /*                                                                       */
-/*         FT_EXPORT( FT_Error )                                         */
-/*         FT_Init_FreeType( FT_Library*  alibrary );                    */
+/*         FT2_1_3_EXPORT( FT2_1_3_Error )                                         */
+/*         FT2_1_3_Init_FreeType( FT2_1_3_Library*  alibrary );                    */
 /*                                                                       */
 /*                                                                       */
-/*     FT_EXPORT_DEF( return_type )                                      */
+/*     FT2_1_3_EXPORT_DEF( return_type )                                      */
 /*                                                                       */
 /*       is used in a function definition, as in                         */
 /*                                                                       */
-/*         FT_EXPORT_DEF( FT_Error )                                     */
-/*         FT_Init_FreeType( FT_Library*  alibrary )                     */
+/*         FT2_1_3_EXPORT_DEF( FT2_1_3_Error )                                     */
+/*         FT2_1_3_Init_FreeType( FT2_1_3_Library*  alibrary )                     */
 /*         {                                                             */
 /*           ... some code ...                                           */
-/*           return FT_Err_Ok;                                           */
+/*           return FT2_1_3_Err_Ok;                                           */
 /*         }                                                             */
 /*                                                                       */
-/*   You can provide your own implementation of FT_EXPORT and            */
-/*   FT_EXPORT_DEF here if you want.  If you leave them undefined, they  */
+/*   You can provide your own implementation of FT2_1_3_EXPORT and            */
+/*   FT2_1_3_EXPORT_DEF here if you want.  If you leave them undefined, they  */
 /*   will be later automatically defined as `extern return_type' to      */
 /*   allow normal compilation.                                           */
 /*                                                                       */
-/* #define  FT_EXPORT(x)       extern x */
-/* #define  FT_EXPORT_DEF(x)   x */
+/* #define  FT2_1_3_EXPORT(x)       extern x */
+/* #define  FT2_1_3_EXPORT_DEF(x)   x */
 
 
 /*************************************************************************/
@@ -193,7 +193,7 @@ FT_BEGIN_HEADER
 /*   You would normally undefine this configuration macro when building  */
 /*   a version of FreeType that doesn't contain a Type 1 or CFF driver.  */
 /*                                                                       */
-#define FT_CONFIG_OPTION_POSTSCRIPT_NAMES
+#define FT2_1_3_CONFIG_OPTION_POSTSCRIPT_NAMES
 
 
 /*************************************************************************/
@@ -211,17 +211,17 @@ FT_BEGIN_HEADER
 /*   able to synthetize a Unicode charmap out of the glyphs found in the */
 /*   fonts.                                                              */
 /*                                                                       */
-#define FT_CONFIG_OPTION_ADOBE_GLYPH_LIST
+#define FT2_1_3_CONFIG_OPTION_ADOBE_GLYPH_LIST
 
 
 /*************************************************************************/
 /*                                                                       */
-/* Allow the use of FT_Incremental_Interface to load typefaces that      */
+/* Allow the use of FT2_1_3_Incremental_Interface to load typefaces that      */
 /* contain no glyph data, but supply it via a callback function.         */
 /* This allows FreeType to be used with the PostScript language, using   */
 /* the GhostScript interpreter.                                          */
 /*                                                                       */
-/* #define  FT_CONFIG_OPTION_INCREMENTAL */
+/* #define  FT2_1_3_CONFIG_OPTION_INCREMENTAL */
 
 
 /*************************************************************************/
@@ -231,17 +231,17 @@ FT_BEGIN_HEADER
 /*                                                                       */
 /* This must be greater than 4kByte.                                     */
 /*                                                                       */
-#define FT_RENDER_POOL_SIZE  16384L
+#define FT2_1_3_RENDER_POOL_SIZE  16384L
 
 
 /*************************************************************************/
 /*                                                                       */
-/* FT_MAX_MODULES                                                        */
+/* FT2_1_3_MAX_MODULES                                                        */
 /*                                                                       */
 /*   The maximum number of modules that can be registered in a single    */
 /*   FreeType library object.  32 is the default.                        */
 /*                                                                       */
-#define FT_MAX_MODULES  32
+#define FT2_1_3_MAX_MODULES  32
 
 
 /*************************************************************************/
@@ -253,13 +253,13 @@ FT_BEGIN_HEADER
 /*   mode, additional messages are sent to the standard output during    */
 /*   execution.                                                          */
 /*                                                                       */
-/*   Define FT_DEBUG_LEVEL_ERROR to build the library in debug mode.     */
-/*   Define FT_DEBUG_LEVEL_TRACE to build it in trace mode.              */
+/*   Define FT2_1_3_DEBUG_LEVEL_ERROR to build the library in debug mode.     */
+/*   Define FT2_1_3_DEBUG_LEVEL_TRACE to build it in trace mode.              */
 /*                                                                       */
 /*   Don't define any of these macros to compile in `release' mode!      */
 /*                                                                       */
-/* #define  FT_DEBUG_LEVEL_ERROR */
-/* #define  FT_DEBUG_LEVEL_TRACE */
+/* #define  FT2_1_3_DEBUG_LEVEL_ERROR */
+/* #define  FT2_1_3_DEBUG_LEVEL_TRACE */
 
 
 /*************************************************************************/
@@ -269,12 +269,12 @@ FT_BEGIN_HEADER
 /*   FreeType now comes with an integrated memory debugger that is       */
 /*   capable of detecting simple errors like memory leaks or double      */
 /*   deletes.  To compile it within your build of the library, you       */
-/*   should define FT_DEBUG_MEMORY here.                                 */
+/*   should define FT2_1_3_DEBUG_MEMORY here.                                 */
 /*                                                                       */
 /*   Note that the memory debugger is only activated at runtime when     */
-/*   when the _environment_ variable "FT_DEBUG_MEMORY" is also defined!  */
+/*   when the _environment_ variable "FT2_1_3_DEBUG_MEMORY" is also defined!  */
 /*                                                                       */
-/* #define  FT_DEBUG_MEMORY */
+/* #define  FT2_1_3_DEBUG_MEMORY */
 
 
 
@@ -292,7 +292,7 @@ FT_BEGIN_HEADER
 /*                                                                       */
 /*   More details can be found in the files ftmoderr.h and fterrors.h.   */
 /*                                                                       */
-#undef FT_CONFIG_OPTION_USE_MODULE_ERRORS
+#undef FT2_1_3_CONFIG_OPTION_USE_MODULE_ERRORS
 
 
 
@@ -321,7 +321,7 @@ FT_BEGIN_HEADER
 /* OpenType file.                                                        */
 /*                                                                       */
 /* Note that when you do not compile the `PSNames' module by undefining  */
-/* the above FT_CONFIG_OPTION_POSTSCRIPT_NAMES, the `sfnt' module will   */
+/* the above FT2_1_3_CONFIG_OPTION_POSTSCRIPT_NAMES, the `sfnt' module will   */
 /* contain additional code used to read the PS Names table from a font.  */
 /*                                                                       */
 /* (By default, the module uses `PSNames' to extract glyph names.)       */
@@ -469,10 +469,10 @@ FT_BEGIN_HEADER
 
 /* */
 
-FT_END_HEADER
+FT2_1_3_END_HEADER
 
 
-#endif /* __FTOPTION_H__ */
+#endif /* FT2_1_3_OPTION_H */
 
 
 /* END */
