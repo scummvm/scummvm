@@ -462,7 +462,7 @@ Exit:
 
 static void
 ft_gzip_stream_close( FT2_1_3_Stream  stream ) {
-	FT2_1_3_GZipFile  zip    = stream->descriptor.pointer;
+	FT2_1_3_GZipFile  zip    = (FT2_1_3_GZipFile) stream->descriptor.pointer;
 	FT2_1_3_Memory    memory = stream->memory;
 
 	if ( zip ) {
@@ -481,7 +481,7 @@ ft_gzip_stream_io( FT2_1_3_Stream   stream,
                    FT2_1_3_ULong    pos,
                    FT2_1_3_Byte*    buffer,
                    FT2_1_3_ULong    count ) {
-	FT2_1_3_GZipFile  zip = stream->descriptor.pointer;
+	FT2_1_3_GZipFile  zip = (FT2_1_3_GZipFile) stream->descriptor.pointer;
 
 	return ft_gzip_file_io( zip, pos, buffer, count );
 }

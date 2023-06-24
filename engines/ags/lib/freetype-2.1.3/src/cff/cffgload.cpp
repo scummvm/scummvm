@@ -1681,7 +1681,7 @@ cff_decoder_parse_charstrings( CFF_Decoder*  decoder,
 					hinter->apply( hinter->hints,
 					               builder->current,
 					               (PSH_Globals)builder->hints_globals,
-					               builder->hint_flags );
+					               (FT2_1_3_Render_Mode)builder->hint_flags );
 				}
 
 				/* add current outline to the glyph slot */
