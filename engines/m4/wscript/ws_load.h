@@ -97,7 +97,7 @@ extern Handle ws_GetMACH(uint32 hash, int32 *numStates, int32 *stateTableOffset,
 extern Handle ws_GetDATA(uint32 hash, uint32 index, int32 *rowOffset);
 extern int32 ws_GetDATACount(uint32 hash);
 extern int32 GetSSHeaderInfo(Common::SeekableReadStream *stream, uint32 **data, RGB8 *myPalette);
-extern bool ws_GetSSMaxWH(Handle ssHandle, int32 ssOffset, int32 *maxW, int32 *maxH);
+extern bool ws_GetSSMaxWH(MemHandle ssHandle, int32 ssOffset, int32 *maxW, int32 *maxH);
 
 // USING SPRITES WITHOUT GOING THROUGH THE WOODSCRIPT TREE
 extern int32 LoadSpriteSeries(const char *assetName, Handle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette);

@@ -73,8 +73,7 @@ bool gui_mouse_init() {
 		return false;
 	}
 
-	_G(mouseSeriesResource) = NULL;
-	_G(mouseSeriesHandle) = NULL;
+	_G(mouseSeriesHandle) = nullptr;
 	_G(mouseSeriesOffset) = 0;
 	_G(mouseSeriesPalOffset) = 0;
 
@@ -86,13 +85,7 @@ void gui_mouse_shutdown() {
 	gr_buffer_free(&_G(mouseBuffer));
 	mem_free((void *)_G(mouseScreenSource));
 
-	if (_G(mouseSeriesResource)) {
-		rtoss(_G(mouseSeriesResource));
-		mem_free(_G(mouseSeriesResource));
-	}
-
-	_G(mouseSeriesResource) = NULL;
-	_G(mouseSeriesHandle) = NULL;
+	_G(mouseSeriesHandle) = nullptr;
 	_G(mouseSeriesOffset) = 0;
 	_G(mouseSeriesPalOffset) = 0;
 }

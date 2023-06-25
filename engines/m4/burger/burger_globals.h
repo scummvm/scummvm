@@ -27,7 +27,17 @@
 namespace M4 {
 namespace Burger {
 
+enum GameMode {
+	WHOLE_GAME0 = 0, INTERACTIVE_DEMO = 1, MAGAZINE_DEMO = 2, WHOLE_GAME3 = 3
+};
+
 class BurgerGlobals : public Globals {
+private:
+	GameMode _gameMode = WHOLE_GAME3;
+
+	void initMouseSeries(const Common::String &assetName, RGB8 *myPalette);
+	void custom_ascii_converter_proc(char *string);
+
 protected:
 	void main_cold_data_init() override;
 
