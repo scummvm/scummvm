@@ -71,6 +71,14 @@ bool Globals::init() {
 			error_show(FL, 'PARS', "game_main");
 	}
 
+	term_message("Load walker engines");
+	if (!LoadWSAssets("walker script", &_master_palette[0]))
+		error_show(FL, 'FNF!', "walker script");
+	if (!LoadWSAssets("show script", &_master_palette[0]))
+		error_show(FL, 'FNF!', "show script");
+	if (!LoadWSAssets("stream script", &_master_palette[0]))
+		error_show(FL, 'FNF!', "stream script");
+
 	return true;
 }
 
