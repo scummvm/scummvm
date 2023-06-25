@@ -41,7 +41,7 @@ enum FileMode {
 };
 
 struct Hag_Name_Record {
-	Common::String filename;
+	char filename[33];
 	byte hagfile;
 	struct Hag_Name_Record *next;
 };
