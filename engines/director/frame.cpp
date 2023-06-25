@@ -224,14 +224,14 @@ void Frame::readMainChannelsD2(Common::MemoryReadStreamEndian &stream, uint16 of
 			offset++;
 			break;
 		case 13:
-			if (_vm->getPlatform() == Common::kPlatformWindows) {
-				_sound2 = CastMemberID(stream.readUint16(), DEFAULT_CAST_LIB);
-				_soundType2 = stream.readByte();
-			} else {
-				stream.read(unk, 3);
-				debugC(8, kDebugLoading, "Frame::readChannels(): STUB: unk1: %02x %02x %02x", unk[0], unk[1], unk[2]);
-			}
-			offset += 3;
+			stream.read(unk, 1);
+			debugC(8, kDebugLoading, "Frame::readChannels(): STUB: unk1: 0x%02x", unk[0]);
+			offset++;
+			break;
+		case 14:
+			stream.read(unk, 2);
+			debugC(8, kDebugLoading, "Frame::readChannels(): STUB: unk2: 0x%02x 0x%02x", unk[0], unk[1]);
+			offset += 2;
 			break;
 		case 16: {
 				// palette
