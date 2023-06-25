@@ -1490,7 +1490,7 @@ bool Score::readOneFrame() {
 	uint16 frameSize = _framesStream->readUint16();
 	assert(frameSize < _framesStreamSize);
 
-	debugC(3, kDebugLoading, "++++++++++ score load frame (frameSize %d) saveOffset", frameSize);
+	debugC(3, kDebugLoading, "++++++++++ score load frame %d (frameSize %d) saveOffset", _curFrameNumber, frameSize);
 	if (debugChannelSet(8, kDebugLoading)) {
 		_framesStream->hexdump(frameSize);
 	}
