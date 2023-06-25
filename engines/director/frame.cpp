@@ -521,24 +521,33 @@ void Frame::readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 of
 				} else {
 					_palette.paletteId = CastMemberID(paletteId, DEFAULT_CAST_LIB);
 				}
-				// loop points for color cycling
-				_palette.firstColor = g_director->transformColor(stream.readByte() + 0x80); // 22
-				_palette.lastColor = g_director->transformColor(stream.readByte() + 0x80); // 23
-				_palette.flags = stream.readByte(); // 24
-				_palette.colorCycling = (_palette.flags & 0x80) != 0;
-				_palette.normal = (_palette.flags & 0x60) == 0x00;
-				_palette.fadeToBlack = (_palette.flags & 0x60) == 0x60;
-				_palette.fadeToWhite = (_palette.flags & 0x60) == 0x40;
-				_palette.autoReverse = (_palette.flags & 0x10) != 0;
-				_palette.overTime = (_palette.flags & 0x04) != 0;
-				_palette.speed = stream.readByte(); // 25
-				_palette.frameCount = stream.readUint16(); // 26
-				_palette.cycleCount = stream.readUint16(); // 28
-				_palette.fade = stream.readByte(); // 30
-				_palette.delay = stream.readByte(); // 31
-				_palette.style = stream.readByte(); // 32
 			}
-			offset += 13;
+			offset += 2;
+			break;
+		case 22:
+			// loop points for color cycling
+			_palette.firstColor = g_director->transformColor(stream.readByte() + 0x80); // 22
+			_palette.lastColor = g_director->transformColor(stream.readByte() + 0x80); // 23
+			offset += 2;
+			break;
+		case 24:
+			_palette.flags = stream.readByte(); // 24
+			_palette.colorCycling = (_palette.flags & 0x80) != 0;
+			_palette.normal = (_palette.flags & 0x60) == 0x00;
+			_palette.fadeToBlack = (_palette.flags & 0x60) == 0x60;
+			_palette.fadeToWhite = (_palette.flags & 0x60) == 0x40;
+			_palette.autoReverse = (_palette.flags & 0x10) != 0;
+			_palette.overTime = (_palette.flags & 0x04) != 0;
+			_palette.speed = stream.readByte(); // 25
+			_palette.frameCount = stream.readUint16(); // 26
+			_palette.cycleCount = stream.readUint16(); // 28
+			offset += 6;
+			break;
+		case 30:
+			_palette.fade = stream.readByte(); // 30
+			_palette.delay = stream.readByte(); // 31
+			_palette.style = stream.readByte(); // 32
+			offset += 3;
 			break;
 		case 33:
 			unk1 = stream.readByte();
