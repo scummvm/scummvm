@@ -256,7 +256,6 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 
 	// Process each chunk according to type 
 	while (!finished) {
-
 		// Read in the chunk size and hash number
 		if (!GetNextint32(&parseAssetPtr, endOfAssetBlock, &chunkSize)) {
 			error_show(FL, 'WSLE', "Asset Name: %s", wsAssetName);
@@ -381,7 +380,6 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 
 			// Update the assetPtr to the beginning of the next chunk
 			parseAssetPtr += *chunkSize - 12;
-
 			break;
 
 		case CHUNK_SLEC:

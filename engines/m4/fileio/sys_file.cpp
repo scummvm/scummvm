@@ -444,10 +444,11 @@ int SysFile::hash_search(const Common::String &fname, Hash_Record *current_hash_
 			r.hagfile = hashfp->readByte();
 			r.disks = hashfp->readByte();
 			r.offset = hashfp->readUint32LE();
+			r.size = hashfp->readUint32LE();
 			next_record = hashfp->readUint32LE();
 			r.filename = myfilename;
 
-			// As long as find a hag file in current directory , use it immedeiately
+			// As long as we find a hag file, use it immedeiately
 			get_local_name_from_hagfile(local_name, current_hash_record_ptr->hagfile);
 			local_hag_name = f_extension_new(local_name, "HAG");
 			local_name = local_hag_name;
