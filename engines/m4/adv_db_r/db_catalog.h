@@ -38,7 +38,7 @@ struct Catalog {
 /**
  * Read in the catalog
  */
-int read_catalog();
+bool read_catalog();
 
 /**
  * Return the catalog data
