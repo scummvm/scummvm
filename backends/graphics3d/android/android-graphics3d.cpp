@@ -250,6 +250,31 @@ void AndroidGraphics3dManager::deinitSurface() {
 	JNI::deinitSurface();
 }
 
+void AndroidGraphics3dManager::resizeSurface() {
+	LOGD("resizing 3D surface");
+
+	if (!JNI::haveSurface()) {
+		initSurface();
+		return;
+	}
+
+	JNI::deinitSurface();
+	JNI::initSurface();
+
+	_screenChangeID = JNI::surface_changeid;
+
+	if (_overlay_texture) {
+		initOverlay();
+	}
+
+	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
+	    this, JNI::egl_surface_width, JNI::egl_surface_height);
+
+	updateScreenRect();
+	// double buffered, flip twice
+	clearScreen(kClearUpdate, 2);
+}
+
 void AndroidGraphics3dManager::updateScreen() {
 	//ENTER();
 

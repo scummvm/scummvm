@@ -33,6 +33,7 @@ public:
 
 	virtual void initSurface() = 0;
 	virtual void deinitSurface() = 0;
+	virtual void resizeSurface() = 0;
 
 	virtual Common::Point getMousePosition() = 0;
 	virtual bool notifyMousePosition(Common::Point &mouse) = 0;
@@ -71,6 +72,7 @@ public:
 
 	virtual void initSurface() override;
 	virtual void deinitSurface() override;
+	virtual void resizeSurface() override;
 
 	virtual AndroidCommonGraphics::State getState() const override;
 	virtual bool setState(const AndroidCommonGraphics::State &state) override;
