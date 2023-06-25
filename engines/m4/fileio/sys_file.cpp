@@ -25,6 +25,7 @@
 #include "m4/adv_r/db_env.h"
 #include "m4/mem/memman.h"
 #include "m4/globals.h"
+#include "m4/m4.h"
 
 namespace M4 {
 
@@ -103,8 +104,6 @@ void SysFile::open_read_low_level() {
 		// First time to read
 		if (_G(hag).hag_flag) {
 			// Use hag file
-			_G(hag).hag_flag = true;
-
 			// Get hagfile table list here
 			if (!temp_fp.open(_G(hag).hash_file))
 				error("Hash file not found: %s", _G(hag).hash_file.c_str());
@@ -618,6 +617,8 @@ void sysfile_init(bool in_hag_mode) {
 	_G(hag).hag_flag = in_hag_mode;
 
 	if (in_hag_mode) {
+		_G(hag).hash_file = Common::String::format("%s.has",
+			g_engine->getGameId().c_str());
 		term_message("Initialized in hag mode");
 	} else {
 		term_message("Initialized in file mode");
