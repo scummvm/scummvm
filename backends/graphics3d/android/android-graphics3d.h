@@ -39,6 +39,7 @@ public:
 
 	virtual void initSurface() override;
 	virtual void deinitSurface() override;
+	virtual void resizeSurface() override;
 
 	virtual AndroidCommonGraphics::State getState() const override;
 	virtual bool setState(const AndroidCommonGraphics::State &state) override;

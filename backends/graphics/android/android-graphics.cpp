@@ -138,6 +138,25 @@ void AndroidGraphicsManager::deinitSurface() {
 	JNI::deinitSurface();
 }
 
+void AndroidGraphicsManager::resizeSurface() {
+
+	// If we had lost surface just init it again
+	if (!JNI::haveSurface()) {
+		initSurface();
+		return;
+	}
+
+	// Recreate the EGL surface, context is preserved
+	JNI::deinitSurface();
+	JNI::initSurface();
+
+	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
+	    this, JNI::egl_surface_width, JNI::egl_surface_height);
+
+	handleResize(JNI::egl_surface_width, JNI::egl_surface_height);
+}
+
+
 void AndroidGraphicsManager::updateScreen() {
 	//ENTER();
 
