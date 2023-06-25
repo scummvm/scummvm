@@ -86,7 +86,7 @@ got_one:
 }
 
 int Resources::hash(const Common::String &sym) const {
-	int	ret_val = 0;
+	uint ret_val = 0;
 
 	const char *s = sym.c_str();
 	while (*s) {
