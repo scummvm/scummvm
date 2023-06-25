@@ -90,6 +90,8 @@ public:
 	Frame(const Frame &frame);
 	~Frame();
 
+	void reset();
+
 	Score *getScore() const { return _score; }
 
 	void readChannels(Common::SeekableReadStreamEndian *stream, uint16 version);

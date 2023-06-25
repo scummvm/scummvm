@@ -510,9 +510,6 @@ void Score::update() {
 		// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
 	}
 
-	for (uint ch = 0; ch < _channels.size(); ch++)
-		*_currentFrame->_sprites[ch] = *_channels[ch]->_sprite;
-
 	loadFrame(_curFrameNumber);
 	// Window is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell, p.100)
 	renderFrame(_curFrameNumber);
@@ -1419,6 +1416,8 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 
 	memset(_channelData, 0, kChannelDataSize); // Reset channel data
 
+	_currentFrame->reset();
+
 	loadFrame(1);
 
 	// Read over frame offset array and print each item
@@ -1475,8 +1474,8 @@ void Score::rebuildChannelData(int frameNum) {
 
 	// Lock variables
 	int curFrameNumber = _curFrameNumber;
-	delete _currentFrame; // Destroy the built frame
-	_currentFrame = new Frame(this, _numChannelsDisplayed);
+
+	_currentFrame->reset();
 
 	_framesStream->seek(_frameOffsets[1]); // Seek to frame 1
 	for (int i = 1; i < frameNum; i++) {
