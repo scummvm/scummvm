@@ -34,6 +34,13 @@ namespace Director {
 Frame::Frame(Score *score, int numChannels) {
 	_score = score;
 	_vm = score->getMovie()->getVM();
+	_numChannels = numChannels;
+
+
+	reset();
+}
+
+void Frame::reset() {
 	_transDuration = 0;
 	_transType = kTransNone;
 	_transArea = 0;
@@ -42,8 +49,6 @@ Frame::Frame(Score *score, int numChannels) {
 
 	_scoreCachedTempo = 0;
 	_scoreCachedPaletteId = CastMemberID(0, 0);
-
-	_numChannels = numChannels;
 
 	_sound1 = CastMemberID(0, 0);
 	_sound2 = CastMemberID(0, 0);
@@ -63,6 +68,9 @@ Frame::Frame(Score *score, int numChannels) {
 	_sprites.resize(_numChannels + 1);
 
 	for (uint16 i = 0; i < _sprites.size(); i++) {
+		if (_sprites[i])
+			delete _sprites[i];
+
 		Sprite *sp = new Sprite(this);
 		_sprites[i] = sp;
 	}
