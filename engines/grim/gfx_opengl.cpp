@@ -1060,11 +1060,11 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 		byte *texOut = nullptr;
 
 		GLint format = GL_RGBA;
-		GLint type = GL_UNSIGNED_BYTE;
+		GLint btype = GL_UNSIGNED_BYTE;
 		int bytes = 4;
 		if (bitmap->_format != 1) {
 			format = GL_DEPTH_COMPONENT;
-			type = GL_UNSIGNED_SHORT;
+			btype = GL_UNSIGNED_SHORT;
 			bytes = 2;
 		}
 
@@ -1107,7 +1107,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-				glTexImage2D(GL_TEXTURE_2D, 0, format, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, format, type, nullptr);
+				glTexImage2D(GL_TEXTURE_2D, 0, format, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, format, btype, nullptr);
 			}
 
 			int cur_tex_idx = bitmap->_numTex * pic;
@@ -1117,7 +1117,7 @@ void GfxOpenGL::createBitmap(BitmapData *bitmap) {
 					int width  = (x + BITMAP_TEXTURE_SIZE >= bitmap->_width) ? (bitmap->_width - x) : BITMAP_TEXTURE_SIZE;
 					int height = (y + BITMAP_TEXTURE_SIZE >= bitmap->_height) ? (bitmap->_height - y) : BITMAP_TEXTURE_SIZE;
 					glBindTexture(GL_TEXTURE_2D, textures[cur_tex_idx]);
-					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, type,
+					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, btype,
 					                texOut + (y * bytes * bitmap->_width) + (bytes * x));
 					cur_tex_idx++;
 				}

@@ -261,7 +261,7 @@ GfxOpenGLS::~GfxOpenGLS() {
 
 void GfxOpenGLS::setupZBuffer() {
 	GLint format = GL_LUMINANCE_ALPHA;
-	GLenum type = GL_UNSIGNED_BYTE;
+	GLenum ztype = GL_UNSIGNED_BYTE;
 	float width = _gameWidth;
 	float height = _gameHeight;
 
@@ -272,7 +272,7 @@ void GfxOpenGLS::setupZBuffer() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, format, nextHigher2((int)width), nextHigher2((int)height), 0, format, type, nullptr);
+	glTexImage2D(GL_TEXTURE_2D, 0, format, nextHigher2((int)width), nextHigher2((int)height), 0, format, ztype, nullptr);
 	glActiveTexture(GL_TEXTURE0);
 
 	_zBufTexCrop = Math::Vector2d(width / nextHigher2((int)width), height / nextHigher2((int)height));
@@ -1339,7 +1339,7 @@ void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
 		const byte *texOut = nullptr;
 
 		GLint format = GL_RGBA;
-		GLint type = GL_UNSIGNED_BYTE;
+		GLint btype = GL_UNSIGNED_BYTE;
 		int bytes = 4;
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, bytes);
@@ -1382,9 +1382,9 @@ void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTexImage2D(GL_TEXTURE_2D, 0, format, actualWidth, actualHeight, 0, format, type, nullptr);
+			glTexImage2D(GL_TEXTURE_2D, 0, format, actualWidth, actualHeight, 0, format, btype, nullptr);
 
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, bitmap->_width, bitmap->_height, format, type, texOut);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, bitmap->_width, bitmap->_height, format, btype, texOut);
 		}
 
 		if (texData)
