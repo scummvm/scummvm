@@ -547,7 +547,9 @@ void AndroidGraphics3dManager::showOverlay(bool inGUI) {
 		}
 	}
 
-	warpMouse(_overlay_texture->width() / 2, _overlay_texture->height() / 2);
+	if (inGUI) {
+		warpMouse(_overlay_texture->width() / 2, _overlay_texture->height() / 2);
+	}
 }
 
 void AndroidGraphics3dManager::hideOverlay() {
