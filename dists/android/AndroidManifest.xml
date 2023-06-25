@@ -46,7 +46,8 @@
 			android:name=".SplashActivity"
 			android:exported="true"
 			android:banner="@drawable/leanback_icon"
-			android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+			android:configChanges="orientation|keyboard|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
+			android:resizeableActivity="true"
 			android:theme="@style/SplashTheme"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
@@ -61,7 +62,8 @@
 			android:name=".ScummVMActivity"
 			android:exported="false"
 			android:banner="@drawable/leanback_icon"
-			android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+			android:configChanges="orientation|keyboard|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
+			android:resizeableActivity="true"
 			android:launchMode="singleInstance"
 			android:theme="@style/AppTheme"
 			android:windowSoftInputMode="adjustResize">
