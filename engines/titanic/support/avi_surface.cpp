@@ -317,8 +317,8 @@ void AVISurface::copyMovieFrame(const Graphics::Surface &src, Graphics::ManagedS
 			s->free();
 			delete s;
 		}
-	} else if (src.format.bytesPerPixel == 2) {
-		// Source is already 16-bit, with no alpha, so do a straight copy
+	} else if ((src.format.bytesPerPixel == 2) || (src.format.bytesPerPixel == 3)) {
+		// Source is 16-bit or 24-bit, with no alpha, so do a straight copy
 		dest.blitFrom(src, copyRect, Common::Point(0, 0));
 	} else {
 		// Source is 32-bit which may have transparent pixels. Copy over each
