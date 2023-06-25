@@ -268,9 +268,15 @@ void Frame::readMainChannelsD2(Common::MemoryReadStreamEndian &stream, uint16 of
 		case 32:
 			break;
 		default:
+			// This means that a `case` label has to be split at this position
 			error("Frame::readMainChannelsD2(): Miscomputed field position: %d", offset);
 			break;
 		}
+	}
+
+	if (offset > finishPosition) {
+		// This means that the relevant `case` label reads too many bytes and must be split
+		error("Frame::readMainChannelsD2(): Read %d extra bytes", offset - finishPosition);
 	}
 
 	_transChunkSize = CLIP<byte>(_transChunkSize, 0, 128);
@@ -365,8 +371,14 @@ void Frame::readSpriteD2(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 			fieldPosition = finishPosition;
 			break;
 		default:
+			// This means that a `case` label has to be split at this position
 			error("Frame::readSpriteD2(): Miscomputed field position: %d", fieldPosition);
 		}
+	}
+
+	if (fieldPosition > finishPosition) {
+		// This means that the relevant `case` label reads too many bytes and must be split
+		error("Frame::readSpriteD2(): Read %d extra bytes", fieldPosition - finishPosition);
 	}
 
 	// Sometimes removed sprites leave garbage in the channel
@@ -559,9 +571,15 @@ void Frame::readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 of
 		case 40:
 			break;
 		default:
+			// This means that a `case` label has to be split at this position
 			error("Frame::readMainChannelsD4(): Miscomputed field position: %d", offset);
 			break;
 		}
+	}
+
+	if (offset > finishPosition) {
+		// This means that the relevant `case` label reads too many bytes and must be split
+		error("Frame::readMainChannelsD4(): Read %d extra bytes", offset - finishPosition);
 	}
 
 	_transChunkSize = CLIP<byte>(_transChunkSize, 0, 128);
@@ -675,8 +693,14 @@ void Frame::readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 			fieldPosition = finishPosition;
 			break;
 		default:
+			// This means that a `case` label has to be split at this position
 			error("Frame::readSpriteD4(): Miscomputed field position: %d", fieldPosition);
 		}
+	}
+
+	if (fieldPosition > finishPosition) {
+		// This means that the relevant `case` label reads too many bytes and must be split
+		error("Frame::readSpriteD4(): Read %d extra bytes", fieldPosition - finishPosition);
 	}
 
 	// Sometimes removed sprites leave garbage in the channel
@@ -818,9 +842,15 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 		case 48:
 			break;
 		default:
+			// This means that a `case` label has to be split at this position
 			error("Frame::readMainChannelsD5(): Miscomputed field position: %d", offset);
 			break;
 		}
+	}
+
+	if (offset > finishPosition) {
+		// This means that the relevant `case` label reads too many bytes and must be split
+		error("Frame::readMainChannelsD5(): Read %d extra bytes", offset - finishPosition);
 	}
 
 	_transChunkSize = CLIP<byte>(_transChunkSize, 0, 128);
@@ -940,8 +970,14 @@ void Frame::readSpriteD5(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 			fieldPosition = finishPosition;
 			break;
 		default:
+			// This means that a `case` label has to be split at this position
 			error("Frame::readSpriteD5(): Miscomputed field position: %d", fieldPosition);
 		}
+	}
+
+	if (fieldPosition > finishPosition) {
+		// This means that the relevant `case` label reads too many bytes and must be split
+		error("Frame::readSpriteD5(): Read %d extra bytes", fieldPosition - finishPosition);
 	}
 
 	// Sometimes removed sprites leave garbage in the channel
@@ -1094,8 +1130,14 @@ void Frame::readSpriteD6(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 			fieldPosition = finishPosition;
 			break;
 		default:
+			// This means that a `case` label has to be split at this position
 			error("Frame::readSpriteD6(): Miscomputed field position: %d", fieldPosition);
 		}
+	}
+
+	if (fieldPosition > finishPosition) {
+		// This means that the relevant `case` label reads too many bytes and must be split
+		error("Frame::readSpriteD6(): Read %d extra bytes", fieldPosition - finishPosition);
 	}
 
 	// Sometimes removed sprites leave garbage in the channel
