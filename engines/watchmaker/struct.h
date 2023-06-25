@@ -440,8 +440,22 @@ struct SD3DBitmap {
 	int32 rtype = 0;
 };
 struct SDDBitmap {
-	int32 tnum = 0;
-	int32 px = 0, py = 0, ox = 0, oy = 0, dx = 0, dy = 0;
+	int32 tnum;
+	int32 px, py, ox, oy, dx, dy;
+
+	SDDBitmap() {
+		reset();
+	}
+
+	void reset() {
+		tnum =0;
+		px = 0;
+		py = 0;
+		ox = 0;
+		oy = 0;
+		dx = 0;
+		dy = 0;
+	}
 };
 
 enum class FontKind;
