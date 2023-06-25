@@ -48,7 +48,6 @@ void parse_all_flags() {
 		_G(kernel).suppress_cache = false;
 
 	_G(kernel).track_open_close = ConfMan.hasKey("FILECOUNT");
-	_G(kernel).hag_mode = ConfMan.hasKey("C");
 	_G(kernel).start_up_with_dbg_ws = ConfMan.hasKey("W");
 	_G(kernel).cheat_keys_enabled = ConfMan.hasKey("!");
 	_G(kernel).use_debug_monitor = ConfMan.hasKey("H");

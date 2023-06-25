@@ -27,10 +27,11 @@ namespace M4 {
 #define CACHE_NOT_OVERRIDE_BY_FLAG_PARSE 2
 
 struct Kernel {
-	bool use_log_file = false;
+	bool hag_mode = true;
 	int suppress_cache = CACHE_NOT_OVERRIDE_BY_FLAG_PARSE;
+
+	bool use_log_file = false;
 	bool track_open_close = false;
-	bool hag_mode = false;
 	bool start_up_with_dbg_ws = false;
 	bool cheat_keys_enabled = false;
 	bool use_debug_monitor = false;

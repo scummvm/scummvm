@@ -86,6 +86,8 @@ void Globals::game_systems_initialize(byte flags) {
 
 	mem_stash_init(32);
 
+	sysfile_init(_kernel.hag_mode);
+
 	if (flags & INSTALL_PLAYER_BEEN_INIT) {
 		if (!player_been_init(MAX_SCENES))
 			error_show(FL, 'PBIF');
