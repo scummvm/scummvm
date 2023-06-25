@@ -1392,8 +1392,6 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 
 	// partically by channels, hence we keep it and read the score from left to right
 	// TODO Merge it with shared cast
-	memset(_channelData, 0, kChannelDataSize);
-
 	_currentFrame = new Frame(this, _numChannelsDisplayed);
 
 	// This makes all indexing simpler
@@ -1413,8 +1411,6 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	for (_numFrames = 1; loadFrame(_numFrames); _numFrames++) { }
 
 	debugC(1, kDebugLoading, "Score::loadFrames(): Calculated, total number of frames %d!", _numFrames);
-
-	memset(_channelData, 0, kChannelDataSize); // Reset channel data
 
 	_currentFrame->reset();
 
@@ -1470,8 +1466,6 @@ void Score::rebuildChannelData(int frameNum) {
 		return;
 	}
 
-	memset(_channelData, 0, kChannelDataSize);
-
 	// Lock variables
 	int curFrameNumber = _curFrameNumber;
 
@@ -1522,10 +1516,6 @@ bool Score::readOneFrame() {
 			debugC(4, kDebugLoading, "%s", _currentFrame->formatChannelInfo().c_str());
 		}
 
-		//Common::MemoryReadStreamEndian *str = new Common::MemoryReadStreamEndian(_channelData, ARRAYSIZE(_channelData), _framesStream->isBE());
-		// str->hexdump(str->size(), 32);
-		//frame->readChannels(str, _version);
-		//delete str;
 		// Precache the current FPS tempo, as this carries forward to frames to the right
 		// of the instruction
 		// Delay type tempos (e.g. wait commands, delays) apply to only a single frame, and are ignored here
@@ -1562,15 +1552,12 @@ Frame *Score::getFrameData(int frameNum){
 	int curFrameNumber = _curFrameNumber;
 	Frame *frame = _currentFrame;
 	_currentFrame = nullptr; // To avoid later deletion of frame inside renderOneFrame()
-	byte channelData[kChannelDataSize];
-	memcpy(channelData, _channelData, kChannelDataSize);
 
 	bool isFrameRead = loadFrame(frameNum);
 
 	// Start restoring all states
 	_curFrameNumber = curFrameNumber;
 	_currentFrame = frame;
-	memcpy(_channelData, channelData, kChannelDataSize);
 
 	if (isFrameRead) {
 		return _currentFrame;
