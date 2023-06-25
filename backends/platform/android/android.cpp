@@ -246,8 +246,9 @@ OSystem_Android::~OSystem_Android() {
 	delete _savefileManager;
 	_savefileManager = 0;
 
-	// Uninitialize surface now to avoid it to be done later when touch controls are destroyed
-	dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->deinitSurface();
+	// Uninitialize graphics manager now to avoid it to be done later when touch controls are destroyed
+	delete _graphicsManager;
+	_graphicsManager = 0;
 
 	delete _logger;
 	_logger = nullptr;
