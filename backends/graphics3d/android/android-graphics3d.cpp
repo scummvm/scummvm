@@ -127,9 +127,14 @@ AndroidGraphics3dManager::~AndroidGraphics3dManager() {
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glUseProgram(0);
 
+	// Cleanup framebuffer before destroying context
+	delete _frame_buffer;
+	_frame_buffer = nullptr;
+
 	deinitSurface();
 
-	delete _frame_buffer;
+	// These textures have been cleaned in deinitSurface
+	// Deleting them now without a context is harmless
 	delete _game_texture;
 	delete _overlay_texture;
 	delete _overlay_background;
