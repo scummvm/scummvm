@@ -202,6 +202,10 @@ void AndroidGraphics3dManager::initSurface() {
 		_mouse_texture->reinit();
 	}
 
+	if (_mouse_texture_palette && _mouse_texture != _mouse_texture_palette) {
+		_mouse_texture_palette->reinit();
+	}
+
 	if (_touchcontrols_texture) {
 		_touchcontrols_texture->reinit();
 	}
@@ -237,6 +241,10 @@ void AndroidGraphics3dManager::deinitSurface() {
 
 	if (_mouse_texture) {
 		_mouse_texture->release();
+	}
+
+	if (_mouse_texture_palette && _mouse_texture != _mouse_texture_palette) {
+		_mouse_texture_palette->release();
 	}
 
 	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
@@ -823,6 +831,7 @@ void AndroidGraphics3dManager::setMouseCursor(const void *buf, uint w, uint h,
 				_mouse_texture_rgb = new GLES8888Texture();
 			}
 			_mouse_texture_rgb->setLinearFilter(_graphicsMode == 1);
+			_mouse_texture_rgb->reinit();
 		}
 
 		_mouse_texture = _mouse_texture_rgb;
