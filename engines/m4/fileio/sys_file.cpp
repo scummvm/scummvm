@@ -109,7 +109,7 @@ void SysFile::open_read_low_level() {
 				error("Hash file not found: %s", _G(hag).hash_file.c_str());
 
 			hash_table_size = temp_fp.readUint32LE();
-			if (temp_fp.seek(hash_table_size * HASH_RECORD_LENGTH, SEEK_CUR))
+			if (!temp_fp.seek(hash_table_size * HASH_RECORD_LENGTH, SEEK_CUR))
 				error("fail to seek");
 
 			_G(hag).hag_name_list = NULL;
@@ -122,13 +122,13 @@ void SysFile::open_read_low_level() {
 				assert(temp_ptr);
 
 				// Check hag file exists or not
-				local_name = f_extension_new(hag_name, "hag");
+				local_name = f_extension_new(hag_name, "HAG");
 
 				if (!Common::File::exists(local_name))
 					error("couldn't find hag file: %s", local_name.c_str());
 
 				// put into hag_name_list //
-				temp_ptr->filename = hag_name;
+				Common::strcpy_s(temp_ptr->filename, hag_name);
 				temp_ptr->hagfile = hagfile;
 				temp_ptr->next = _G(hag).hag_name_list;
 				_G(hag).hag_name_list = temp_ptr;
@@ -244,7 +244,7 @@ Common::String SysFile::get_last_string(const Common::String &src) {
 }
 
 bool SysFile::open_hash_file() {
-	Common::File hashfp;
+	Common::SeekableReadStream *hashfp;
 	Common::Stream *temp_fp;
 	uint32 hash_address;
 	Common::String hag_name, temp_name;
@@ -254,16 +254,17 @@ bool SysFile::open_hash_file() {
 	bool found;
 	Common::String ext_name;
 
-	if (!hashfp.open(_G(hag).hash_file)) {
+	hashfp = dynamic_cast<Common::SeekableReadStream *>(f_io_open(_G(hag).hash_file, "rb"));
+	if (!hashfp) {
 		warning("open_hash_file: %s %s", _G(hag).hash_file.c_str());
 		hag_success = false;
 		return false;
 	}
 
-	hash_table_size = hashfp.readUint32LE();
+	hash_table_size = hashfp->readUint32LE();
 	hash_address = key_to_hash_address(filename, hash_table_size);
 
-	if (!hash_search(filename, &curr_hash_record, curr_hag_record, hash_address, &hashfp, hash_table_size, show_error_flag)) {
+	if (!hash_search(filename, &curr_hash_record, curr_hag_record, hash_address, hashfp, hash_table_size, show_error_flag)) {
 		hag_success = 0;
 		return false;
 
@@ -395,6 +396,9 @@ uint32 SysFile::key_to_hash_address(const Common::String &src, uint32 hash_table
 	Common::String key = src;
 	key.toUppercase();
 
+	if (key.empty())
+		return 0;
+
 	h = key[0];
 	len = key.size();
 	for (i = 1; i < len; i++)
@@ -421,7 +425,7 @@ int SysFile::hash_search(const Common::String &fname, Hash_Record *current_hash_
 	myfilename[0] = '\0';
 
 	while (!finded) {
-		if (hashfp->seek(offset))
+		if (!hashfp->seek(offset))
 			term_message("fail to fseek");
 		hashfp->read(myfilename, 33);
 
