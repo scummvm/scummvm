@@ -106,7 +106,7 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 		// If not 16, this must be 24 or 32 bpp so make use of them
 		_game_texture = new GLES888Texture();
 		_overlay_texture = new GLES8888Texture();
-		_overlay_background = new GLES888Texture();
+		_overlay_background = new GLES8888Texture();
 		_mouse_texture_palette = new GLESFakePalette8888Texture();
 	}
 	_mouse_texture = _mouse_texture_palette;
@@ -526,10 +526,12 @@ void AndroidGraphics3dManager::showOverlay(bool inGUI) {
 			}
 
 			GLCALL(glViewport(0, 0, JNI::egl_surface_width, JNI::egl_surface_height));
+			_overlay_background->reinit();
 			_overlay_background->allocBuffer(_overlay_texture->width(), _overlay_texture->height());
 			_overlay_background->setDrawRect(0, 0,
 			                                 JNI::egl_surface_width, JNI::egl_surface_height);
 			_overlay_background->readPixels();
+			_overlay_background->setGameTexture();
 
 			// Restore game viewport
 			GLCALL(glViewport(savedViewport[0], savedViewport[1], savedViewport[2], savedViewport[3]));
