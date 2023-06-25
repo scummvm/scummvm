@@ -118,6 +118,8 @@ Frame::~Frame() {
 }
 
 void Frame::readChannel(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size, uint16 version) {
+	debugC(6, kDebugLoading, "Frame::readChannel(..., offset=%d, size=%d, version=%x)", offset, size, version);
+
 	if (version < kFileVer400) {
 		readChannelD2(stream, offset, size);
 	} else if (version >= kFileVer400 && version < kFileVer500) {
@@ -723,7 +725,7 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 	}
 
 	uint16 finishPosition = offset + size;
-	byte unk[5];
+	byte unk[12];
 
 	while (offset < finishPosition) {
 		switch (offset) {
@@ -734,6 +736,12 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 				_actionId = CastMemberID(actionId, actionCastLib);
 			}
 			offset += 4;
+			break;
+		case 2: {
+				uint16 actionId = stream.readUint16();
+				_actionId = CastMemberID(actionId, _actionId.castLib);  // Read castLinb from previous frame
+			}
+			offset += 2;
 			break;
 		case 4: {
 				uint16 sound1CastLib = stream.readUint16();
@@ -757,9 +765,14 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 			offset += 4;
 			break;
 		case 16:
-			stream.read(unk, 5);
-			warning("Frame::readMainChannelsD5(): STUB: unk1: 0x%x 0x%x 0x%x 0x%x 0x%x", unk[0], unk[1], unk[2], unk[3], unk[4]);
-			offset += 5;
+			stream.read(unk, 4);
+			warning("Frame::readMainChannelsD5(): STUB: unk1: 0x%02x 0x%02x 0x%02x 0x%02x", unk[0], unk[1], unk[2], unk[3]);
+			offset += 4;
+			break;
+		case 20:
+			stream.read(unk, 1);
+			warning("Frame::readMainChannelsD5(): STUB: unk2: 0x%02x", unk[0]);
+			offset++;
 			break;
 		case 21:
 			_tempo = stream.readByte();
@@ -767,11 +780,11 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 22:
 			stream.read(unk, 2);
-			warning("Frame::readMainChannelsD5(): STUB: unk2: 0x%x 0x%x", unk[0], unk[1]);
+			warning("Frame::readMainChannelsD5(): STUB: unk3: 0x%02x 0x%02x", unk[0], unk[1]);
 			offset += 2;
 			break;
 		case 24: {
-				// palette, 14 (26?) bytes
+				// palette, 12 (24?) bytes
 				int16 paletteCastLib = stream.readSint16();
 				int16 paletteId = stream.readSint16(); // 26
 				_palette.paletteId = CastMemberID(paletteId, paletteCastLib);
@@ -788,9 +801,19 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 				_palette.lastColor = g_director->transformColor(stream.readByte() + 0x80); // 31
 				_palette.frameCount = stream.readUint16(); // 32
 				_palette.cycleCount = stream.readUint16(); // 34
-				stream.read(unk, 12);
 			}
-			offset += 14 + 12;
+			offset += 12;
+			break;
+		case 36: {
+				stream.read(unk, 12);
+
+				Common::String s;
+				for (int i = 0; i < 12; i++)
+					s += Common::String::format("0x%02x ", unk[i]);
+
+				warning("Frame::readMainChannelsD5(): STUB: unk4: %s", s.c_str());
+			}
+			offset += 12;
 			break;
 		case 48:
 			break;
@@ -848,6 +871,12 @@ void Frame::readSpriteD5(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 				sprite._castId = CastMemberID(memberID, castLib);
 			}
 			fieldPosition += 4;
+			break;
+		case 4: {
+				uint16 memberID = stream.readUint16();
+				sprite._castId = CastMemberID(memberID, sprite._castId.castLib);  // Read castLinb from previous frame
+			}
+			fieldPosition += 2;
 			break;
 		case 6: {
 				uint16 scriptCastLib = stream.readUint16();
