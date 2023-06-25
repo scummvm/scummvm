@@ -49,6 +49,12 @@ private:
 protected:
 	// Engine APIs
 	Common::Error run() override;
+
+	/**
+	 * Creates globals
+	 */
+	virtual Globals *createGlobals() = 0;
+
 public:
 	Graphics::Screen *_screen = nullptr;
 public:

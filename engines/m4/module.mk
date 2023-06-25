@@ -43,7 +43,8 @@ MODULE_OBJS = \
 	wscript/ws_machine.o \
 	wscript/ws_timer.o \
 	wscript/wscript.o \
-	burger/burger.o
+	burger/burger.o \
+	burger/burger_globals.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_M4), DYNAMIC_PLUGIN)

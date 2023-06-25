@@ -28,13 +28,15 @@ namespace M4 {
 namespace Burger {
 
 class BurgerEngine : public M4Engine {
+	/**
+	 * Creates globals
+	 */
+	Globals *createGlobals() override;
+
 public:
 	BurgerEngine(OSystem *syst, const ADGameDescription *gameDesc) :
-
-		M4Engine(syst, gameDesc) {
-	}
-	~BurgerEngine() override {
-	}
+		M4Engine(syst, gameDesc) {}
+	~BurgerEngine() override {}
 
 	/**
 	 * Show the engine information

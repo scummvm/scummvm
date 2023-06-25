@@ -57,9 +57,12 @@ private:
 	void grab_fonts();
 	void woodscript_shutdown();
 
+protected:
+	virtual void main_cold_data_init() = 0;
+
 public:
 	Globals();
-	~Globals();
+	virtual ~Globals();
 	bool init();
 
 	GameControl _game;
@@ -73,6 +76,7 @@ public:
 	Rails_Globals _rails;
 	Catalog _catalog;
 
+	bool _cheat_keys_enabled = false;
 	Font *_system_font = nullptr;
 	Font *_font_line = nullptr;
 	Font *_font_tiny_prop = nullptr;
