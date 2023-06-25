@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-25 13:14+0000\n"
+"POT-Creation-Date: 2023-06-25 20:50+0000\n"
 "PO-Revision-Date: 2022-11-29 23:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -459,7 +459,7 @@ msgstr "Nedladdning klar, laddade ner %d paket, %s %S"
 #: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:384
 #: gui/gui-manager.cpp:162 gui/textviewer.cpp:53 gui/unknown-game-dialog.cpp:53
 #: backends/platform/android/options.cpp:359
-#: backends/platform/ios7/ios7_options.mm:128 engines/scumm/help.cpp:123
+#: backends/platform/ios7/ios7_options.mm:131 engines/scumm/help.cpp:123
 #: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
 #: engines/scumm/help.cpp:189 engines/scumm/help.cpp:207
 msgid "Close"
@@ -1371,7 +1371,7 @@ msgstr "fullskärmsinställningen kunde inte ändras"
 msgid "the shader could not be changed"
 msgstr "skalningsläget kunde inte ändras"
 
-#: gui/options.cpp:1417 backends/platform/ios7/ios7_options.mm:68
+#: gui/options.cpp:1417 backends/platform/ios7/ios7_options.mm:69
 msgid "Touchpad mouse mode"
 msgstr "Touchpad-musläge"
 
@@ -4310,24 +4310,28 @@ msgstr "Hårdvaruskalning (snabbt, men låg kvalitet)"
 msgid "Software scale (good quality, but slower)"
 msgstr "Mjukvaruskalning (bra kvalitet, men långsamt)"
 
-#: backends/platform/ios7/ios7_options.mm:67
+#: backends/platform/ios7/ios7_options.mm:68
 #, fuzzy
 #| msgid "Show On-screen control"
 msgid "Show On-screen control (iOS 15 and later)"
 msgstr "Visa kontroller på skärmen"
 
-#: backends/platform/ios7/ios7_options.mm:69
+#: backends/platform/ios7/ios7_options.mm:70
 #, fuzzy
 #| msgid "Mouse-click-and-drag mode enabled."
 msgid "Mouse-click-and-drag mode"
 msgstr "Dra-och-släpp-läge med mus aktiverat."
 
 #: backends/platform/ios7/ios7_options.mm:71
+msgid "Show keyboard function bar"
+msgstr ""
+
+#: backends/platform/ios7/ios7_options.mm:73
 #, fuzzy
 msgid "Controls Help"
 msgstr "Kontroll"
 
-#: backends/platform/ios7/ios7_options.mm:102
+#: backends/platform/ios7/ios7_options.mm:105
 msgid ""
 "Gestures and controls:\n"
 "\n"
@@ -4344,7 +4348,7 @@ msgid ""
 "Keyboard spacebar: Pause"
 msgstr ""
 
-#: backends/platform/ios7/ios7_options.mm:115
+#: backends/platform/ios7/ios7_options.mm:118
 msgid ""
 "Using the Apple TV remote control:\n"
 "\n"

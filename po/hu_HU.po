@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-25 13:14+0000\n"
+"POT-Creation-Date: 2023-06-25 20:50+0000\n"
 "PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -457,7 +457,7 @@ msgstr "Letöltés kész, %d csomag letöltve, %s %S"
 #: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:384
 #: gui/gui-manager.cpp:162 gui/textviewer.cpp:53 gui/unknown-game-dialog.cpp:53
 #: backends/platform/android/options.cpp:359
-#: backends/platform/ios7/ios7_options.mm:128 engines/scumm/help.cpp:123
+#: backends/platform/ios7/ios7_options.mm:131 engines/scumm/help.cpp:123
 #: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
 #: engines/scumm/help.cpp:189 engines/scumm/help.cpp:207
 msgid "Close"
@@ -1353,7 +1353,7 @@ msgstr "a vsync beállítás nem módosítható"
 msgid "the shader could not be changed"
 msgstr "a shader nem változtatható"
 
-#: gui/options.cpp:1417 backends/platform/ios7/ios7_options.mm:68
+#: gui/options.cpp:1417 backends/platform/ios7/ios7_options.mm:69
 msgid "Touchpad mouse mode"
 msgstr "Touchpad egér mód"
 
@@ -4296,19 +4296,23 @@ msgstr "Hardveres átméretezés (gyors, alacsony minõség)"
 msgid "Software scale (good quality, but slower)"
 msgstr "Szoftveres átméretezés (jó minõség, lassú)"
 
-#: backends/platform/ios7/ios7_options.mm:67
+#: backends/platform/ios7/ios7_options.mm:68
 msgid "Show On-screen control (iOS 15 and later)"
 msgstr "A képernyőn megjelenő vezérlés megjelenítése (iOS 15 és újabb)"
 
-#: backends/platform/ios7/ios7_options.mm:69
+#: backends/platform/ios7/ios7_options.mm:70
 msgid "Mouse-click-and-drag mode"
 msgstr "Egér kattint-és-húz mód"
 
 #: backends/platform/ios7/ios7_options.mm:71
+msgid "Show keyboard function bar"
+msgstr ""
+
+#: backends/platform/ios7/ios7_options.mm:73
 msgid "Controls Help"
 msgstr "Vezérlők Súgó"
 
-#: backends/platform/ios7/ios7_options.mm:102
+#: backends/platform/ios7/ios7_options.mm:105
 msgid ""
 "Gestures and controls:\n"
 "\n"
@@ -4339,7 +4343,7 @@ msgstr ""
 "Összehúzó kézmozdulat: Engedélyezi/letiltja a billentyűzetet\n"
 "Billentyűzet szóköz: Szünet"
 
-#: backends/platform/ios7/ios7_options.mm:115
+#: backends/platform/ios7/ios7_options.mm:118
 msgid ""
 "Using the Apple TV remote control:\n"
 "\n"
