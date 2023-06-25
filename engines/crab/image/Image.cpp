@@ -217,8 +217,8 @@ void Image::Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &
 		break;
 
 	case FLIP_XY:
-		rotated_surf = rotate(s, kImageRotateBy180);
-		s.copyFrom(rotated_surf);
+		s.surfacePtr()->flipHorizontal(Common::Rect(s.w, s.h));
+		s.surfacePtr()->flipVertical(Common::Rect(s.w, s.h));
 		break;
 
 	case FLIP_D:
