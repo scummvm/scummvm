@@ -136,7 +136,57 @@ void Globals::game_systems_initialize(byte flags) {
 }
 
 void Globals::game_systems_shutdown() {
-	// TODO
+	_system_shutting_down = true;
+#ifdef TODO
+	term_message("asset list be gone!");
+	db_destroy_cat();
+#endif
+	rail_system_shutdown();
+
+	term_message("fonts be gone!");
+	gr_font_dealloc(_font_tiny_prop);
+	gr_font_dealloc(_font_tiny);
+	gr_font_dealloc(_font_line);
+	gr_font_dealloc(_font_inter);
+	gr_font_dealloc(_font_conv);
+	gr_font_dealloc(_font_menu);
+	gr_font_dealloc(_font_misc);
+	gr_font_system_shutdown();
+#ifdef TODO
+	conv_reset_all(); //mar4 from mattp
+
+	term_message("tin streams be gone!");
+	f_stream_Shutdown();
+
+	term_message("mouse dialog be gone!");
+	DialogDestroy(mousePosDialog, NULL);
+
+	term_message("sounds stop");
+	midi_stop();
+	digi_stop(1);
+	digi_stop(2);
+	digi_stop(3);
+
+	if (_globals)
+		mem_free(_globals);
+	if (_globalCtrls)
+		mem_free(_globalCtrls);
+	if (_inverse_pal)
+		delete (inverse_pal);
+
+	term_message("big buffers be gone");
+	if (_gameDrawBuff)
+		delete _gameDrawBuff;
+
+	term_message("SOS be gone");
+	digi_uninstall();
+	midi_uninstall();
+
+	f_io_report(NULL, NULL);
+	term_message("calling registry shutdown");
+	registry_shutdown_all();
+	term_shutdown();
+#endif
 }
 
 void Globals::fire_up_gui() {
@@ -163,6 +213,18 @@ bool Globals::woodscript_init() {
 		return false;
 
 	return true;
+}
+
+void Globals::grab_fonts() {
+	term_message("Grabbing fonts");
+
+	_font_tiny_prop = gr_font_load("4X6PP.FNT");
+	_font_tiny = gr_font_load("FONTTINY.FNT");
+	_font_line = gr_font_load("FONTLINE.FNT");
+	_font_inter = gr_font_load("FONTINTR.FNT");
+	_font_conv = gr_font_load("FONTCONV.FNT");
+	_font_menu = gr_font_load("FONTMENU.FNT");
+	_font_misc = gr_font_load("FONTMISC.FNT");
 }
 
 void Globals::woodscript_shutdown() {
