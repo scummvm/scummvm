@@ -243,27 +243,41 @@ void Frame::readMainChannelsD2(Common::MemoryReadStreamEndian &stream, uint16 of
 				} else {
 					_palette.paletteId = CastMemberID(paletteId, DEFAULT_CAST_LIB);
 				}
-
-				// loop points for color cycling
-				_palette.firstColor = g_director->transformColor(stream.readByte() ^ 0x80);
-				_palette.lastColor = g_director->transformColor(stream.readByte() ^ 0x80);
-				_palette.flags = stream.readByte();
-				_palette.colorCycling = (_palette.flags & 0x80) != 0;
-				_palette.normal = (_palette.flags & 0x60) == 0x00;
-				_palette.fadeToBlack = (_palette.flags & 0x60) == 0x60;
-				_palette.fadeToWhite = (_palette.flags & 0x60) == 0x40;
-				_palette.autoReverse = (_palette.flags & 0x10) != 0;
-				_palette.overTime = (_palette.flags & 0x04) != 0;
-				_palette.speed = stream.readByte();
-				_palette.frameCount = stream.readUint16();
-				_palette.cycleCount = stream.readUint16();
-
-				stream.read(unk, 6);
-
-				debugC(8, kDebugLoading, "Frame::readChannels(): STUB: unk1: %02x %02x %02x %02x %02x %02x", unk[0],
-					unk[1], unk[2], unk[3], unk[4], unk[5]);
 			}
-			offset += 16;
+			offset += 2;
+			break;
+		case 18:
+			// loop points for color cycling
+			_palette.firstColor = g_director->transformColor(stream.readByte() ^ 0x80);
+			_palette.lastColor = g_director->transformColor(stream.readByte() ^ 0x80);
+			offset += 2;
+			break;
+		case 20:
+			_palette.flags = stream.readByte();
+			_palette.colorCycling = (_palette.flags & 0x80) != 0;
+			_palette.normal = (_palette.flags & 0x60) == 0x00;
+			_palette.fadeToBlack = (_palette.flags & 0x60) == 0x60;
+			_palette.fadeToWhite = (_palette.flags & 0x60) == 0x40;
+			_palette.autoReverse = (_palette.flags & 0x10) != 0;
+			_palette.overTime = (_palette.flags & 0x04) != 0;
+			_palette.speed = stream.readByte();
+			offset += 2;
+			break;
+		case 22:
+			_palette.frameCount = stream.readUint16();
+			offset += 2;
+			break;
+		case 24:
+			_palette.cycleCount = stream.readUint16();
+			offset += 2;
+			break;
+		case 26:
+			stream.read(unk, 6);
+
+			debugC(8, kDebugLoading, "Frame::readChannels(): STUB: unk1: %02x %02x %02x %02x %02x %02x", unk[0],
+				unk[1], unk[2], unk[3], unk[4], unk[5]);
+
+			offset += 6;
 			break;
 		case 32:
 			break;
@@ -539,9 +553,15 @@ void Frame::readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 of
 			_palette.autoReverse = (_palette.flags & 0x10) != 0;
 			_palette.overTime = (_palette.flags & 0x04) != 0;
 			_palette.speed = stream.readByte(); // 25
+			offset += 2;
+			break;
+		case 26:
 			_palette.frameCount = stream.readUint16(); // 26
+			offset += 2;
+			break;
+		case 28:
 			_palette.cycleCount = stream.readUint16(); // 28
-			offset += 6;
+			offset += 2;
 			break;
 		case 30:
 			_palette.fade = stream.readByte(); // 30
@@ -572,10 +592,10 @@ void Frame::readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 of
 			offset++;
 			break;
 		case 39:
-			unk1 = stream.readUint16();
+			unk1 = stream.readByte();
 			if (unk1)
-				warning("Frame::readMainChannelsD4(): STUB: unk5: %d 0x%x", unk1, unk1);
-			offset += 2;
+				warning("Frame::readMainChannelsD4(): STUB: unk5: 0x%02x", unk1);
+			offset++;
 			break;
 		case 40:
 			break;
