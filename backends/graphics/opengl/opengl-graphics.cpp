@@ -109,9 +109,7 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 
 bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) const {
 	switch (f) {
-#ifdef USE_ASPECT
 	case OSystem::kFeatureAspectRatioCorrection:
-#endif
 	case OSystem::kFeatureCursorPalette:
 	case OSystem::kFeatureFilteringMode:
 	case OSystem::kFeatureStretchMode:
