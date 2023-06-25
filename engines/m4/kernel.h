@@ -22,22 +22,50 @@
 #ifndef M4_KERNEL_H
 #define M4_KERNEL_H
 
+#include "m4/adv_r/adv.h"
+#include "m4/wscript/ws_machine.h"
+
 namespace M4 {
 
 #define CACHE_NOT_OVERRIDE_BY_FLAG_PARSE 2
 
 struct Kernel {
-	bool hag_mode = true;
-	int suppress_cache = CACHE_NOT_OVERRIDE_BY_FLAG_PARSE;
+	uint32 	clock = 0;						// Current game timing clock
+	int32 trigger = 0;						// Game trigger code, if any
+	int32 letter_box_x = 0;
+	int32 letter_box_y = 0;
+	int32 restore_slot = -1;
+	int16 first_non_walker_cel_hash = 0;
+	int16 last_save = 0;					// Most recent save slot #
 
-	bool use_log_file = false;
-	bool track_open_close = false;
+	char save_file_name[8] = { 0 };
+	bool restore_game = false;				// TRUE if we wanna restore
+	bool force_restart = false;				// Forces restart of room if true
+	bool teleported_in = false;				// Flag if player teleported to room
+
+	int32 fade_up_time = 0;
+	int16 first_fade = 0;
+	bool fading_to_grey = false;
+	bool supress_fadeup = false;
+
+	int32 minPalEntry = 0;
+	int32 maxPalEntry = 0;
+
+	bool going = false;						// Game is running OK
+	bool pause = false;
+
+	machine* myWalker = nullptr;
+
+	KernelTriggerType trigger_mode = KT_DAEMON;	// trigger was/is invoked in this mode
+	bool call_daemon_every_loop = false;
+	bool continue_handling_trigger = true;	// set to True in apps code when trigger is to 
+											// be handled by the next layer (scene/section/global daemon code)
+	int suppress_cache = CACHE_NOT_OVERRIDE_BY_FLAG_PARSE;
 	bool start_up_with_dbg_ws = false;
-	bool cheat_keys_enabled = false;
 	bool use_debug_monitor = false;
-	bool restore_game = false;
-	int last_save = -1;
-	bool teleported_in = false;
+	bool use_log_file = false;
+	bool hag_mode = false;
+	bool track_open_close = false;
 
 	size_t mem_avail() const { return 7999999; }
 };

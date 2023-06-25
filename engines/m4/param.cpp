@@ -49,8 +49,8 @@ void parse_all_flags() {
 
 	_G(kernel).track_open_close = ConfMan.hasKey("FILECOUNT");
 	_G(kernel).start_up_with_dbg_ws = ConfMan.hasKey("W");
-	_G(kernel).cheat_keys_enabled = ConfMan.hasKey("!");
 	_G(kernel).use_debug_monitor = ConfMan.hasKey("H");
+	_G(cheat_keys_enabled) = ConfMan.hasKey("!");
 
 	if (ConfMan.hasKey("M"))
 		_G(mem_to_alloc) = ConfMan.getInt("M");
