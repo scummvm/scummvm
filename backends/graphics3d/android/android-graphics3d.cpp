@@ -315,17 +315,22 @@ void AndroidGraphics3dManager::updateScreen() {
 	CONTEXT_SET_DISABLE(GL_SCISSOR_TEST);
 	CONTEXT_SET_DISABLE(GL_STENCIL_TEST);
 
-	glViewport(0, 0, JNI::egl_surface_width, JNI::egl_surface_height);
+	GLCALL(glViewport(0, 0, JNI::egl_surface_width, JNI::egl_surface_height));
 
-	// clear pointer leftovers in dead areas
-	clearScreen(kClear);
+	if (_frame_buffer) {
+		// clear pointer leftovers in dead areas
+		clearScreen(kClear);
 
-	_game_texture->drawTextureRect();
+		_game_texture->drawTextureRect();
+	}
 
 	if (_show_overlay) {
 		// If the overlay is in game we expect the game to continue drawing
-		if (_overlay_in_gui && _overlay_background && _overlay_background->getTextureName() != 0) {
-			GLCALL(_overlay_background->drawTextureRect());
+		if (_overlay_in_gui) {
+			clearScreen(kClear);
+			if (_overlay_background && _overlay_background->getTextureName() != 0) {
+				GLCALL(_overlay_background->drawTextureRect());
+			}
 		}
 		GLCALL(_overlay_texture->drawTextureRect());
 
@@ -616,11 +621,17 @@ Graphics::PixelFormat AndroidGraphics3dManager::getOverlayFormat() const {
 }
 
 int16 AndroidGraphics3dManager::getHeight() const {
-	return _game_texture->height();
+	if (_frame_buffer)
+		return _frame_buffer->getHeight();
+	else
+		return _overlay_texture->height();
 }
 
 int16 AndroidGraphics3dManager::getWidth() const {
-	return _game_texture->width();
+	if (_frame_buffer)
+		return _frame_buffer->getWidth();
+	else
+		return _overlay_texture->width();
 }
 
 void AndroidGraphics3dManager::setPalette(const byte *colors, uint start, uint num) {
@@ -674,12 +685,16 @@ void AndroidGraphics3dManager::initSize(uint width, uint height,
 	GLTHREADCHECK;
 
 	_game_texture->allocBuffer(width, height);
+	_game_texture->setGameTexture();
 
 	delete _frame_buffer;
-	_frame_buffer = new OpenGL::FrameBuffer(_game_texture->getTextureName(),
-	                                        _game_texture->width(), _game_texture->height(),
-	                                        _game_texture->texWidth(), _game_texture->texHeight());
-	_frame_buffer->attach();
+
+	if (!engineSupportsArbitraryResolutions) {
+		_frame_buffer = new OpenGL::FrameBuffer(_game_texture->getTextureName(),
+		                                        _game_texture->width(), _game_texture->height(),
+		                                        _game_texture->texWidth(), _game_texture->texHeight());
+		_frame_buffer->attach();
+	}
 
 	// Don't know mouse size yet - it gets reallocated in
 	// setMouseCursor.  We need the palette allocated before
@@ -690,8 +705,6 @@ void AndroidGraphics3dManager::initSize(uint width, uint height,
 	updateScreenRect();
 
 	clearScreen(kClear);
-
-	_game_texture->setGameTexture();
 }
 
 int AndroidGraphics3dManager::getScreenChangeID() const {
@@ -743,8 +756,8 @@ void AndroidGraphics3dManager::updateCursorScaling() {
 
 	// In case scaling is actually enabled we will scale the cursor according
 	// to the game screen.
-	uint16 w = _game_texture->width();
-	uint16 h = _game_texture->height();
+	uint16 w = getWidth();
+	uint16 h = getHeight();
 
 	if (!_mouse_dont_scale && w && h) {
 		const frac_t screen_scale_factor_x = intToFrac(_game_texture->getDrawRect().width()) / w;
@@ -906,8 +919,8 @@ void AndroidGraphics3dManager::updateScreenRect() {
 	// Clear the overlay background so it is not displayed distorted while resizing
 	_overlay_background->release();
 
-	uint16 w = _game_texture->width();
-	uint16 h = _game_texture->height();
+	uint16 w = getWidth();
+	uint16 h = getHeight();
 
 	if (w && h && _ar_correction) {
 
@@ -930,7 +943,7 @@ void AndroidGraphics3dManager::updateScreenRect() {
 			rect.moveTo((JNI::egl_surface_width - rect.width()) / 2, 0);
 		} else {
 			rect.setHeight(round(JNI::egl_surface_width / game_ar));
-			rect.moveTo((JNI::egl_surface_height - rect.height()) / 2, 0);
+			rect.moveTo(0, (JNI::egl_surface_height - rect.height()) / 2);
 		}
 	}
 
@@ -940,7 +953,7 @@ void AndroidGraphics3dManager::updateScreenRect() {
 }
 
 const GLESBaseTexture *AndroidGraphics3dManager::getActiveTexture() const {
-	if (_show_overlay) {
+	if (!_frame_buffer || _show_overlay) {
 		return _overlay_texture;
 	} else {
 		return _game_texture;

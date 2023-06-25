@@ -438,8 +438,9 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 			score += weightBits(EGL10.EGL_GREEN_SIZE, 6);
 			score += weightBits(EGL10.EGL_BLUE_SIZE, 5);
 			score += weightBits(EGL10.EGL_ALPHA_SIZE, 0);
-			score += weightBits(EGL10.EGL_DEPTH_SIZE, 0);
-			score += weightBits(EGL10.EGL_STENCIL_SIZE, 0);
+			// Prefer 24 bits depth
+			score += weightBits(EGL10.EGL_DEPTH_SIZE, 24);
+			score += weightBits(EGL10.EGL_STENCIL_SIZE, 8);
 
 			return score;
 		}
@@ -535,6 +536,10 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 						good = false;
 				}
 				if (attr.get(EGL10.EGL_BUFFER_SIZE) < bitsPerPixel)
+					good = false;
+
+				// Force a config with a depth buffer and a stencil buffer when rendering directly on backbuffer
+				if ((attr.get(EGL10.EGL_DEPTH_SIZE) == 0) || (attr.get(EGL10.EGL_STENCIL_SIZE) == 0))
 					good = false;
 
 				int score = attr.weight();
