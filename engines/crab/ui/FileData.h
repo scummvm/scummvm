@@ -42,7 +42,6 @@ namespace ui {
 class FileData {
 public:
 	Common::String name, path, last_modified;
-	//FileData(const boost::filesystem::path &filepath);
 };
 
 class SaveFileData : public FileData {
@@ -52,14 +51,14 @@ public:
 	// This is to account for the first save slot, called "New Save", which doesn't actually have a file
 	bool blank;
 
-	//SaveFileData(const boost::filesystem::path &filepath);
+	SaveFileData(const Common::String &filepath);
 	SaveFileData(const bool empty);
 };
 
 class ModFileData : public FileData {
 public:
 	Common::String author, version, info, website, preview;
-	//ModFileData(boost::filesystem::path filepath);
+	ModFileData(const Common::String &filepath);
 };
 
 // The types of data shown about the save file
@@ -76,6 +75,7 @@ enum { DATA_AUTHOR,
 	   DATA_VERSION,
 	   DATA_INFO,
 	   DATA_WEBSITE };
+
 const int DATA_HOVER_TOTAL = 4;
 } // End of namespace ui
 } // End of namespace pyrodactyl
