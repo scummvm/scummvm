@@ -763,7 +763,7 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 2: {
 				uint16 actionId = stream.readUint16();
-				_actionId = CastMemberID(actionId, _actionId.castLib);  // Read castLinb from previous frame
+				_actionId = CastMemberID(actionId, _actionId.castLib);  // Inherit castLinb from previous frame
 			}
 			offset += 2;
 			break;
@@ -774,12 +774,24 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 			}
 			offset += 4;
 			break;
+		case 6: {
+				uint16 sound1Id = stream.readUint16();
+				_sound1 = CastMemberID(sound1Id, _sound1.castLib);	// Inherit castLinb from previous frame
+			}
+			offset += 2;
+			break;
 		case 8: {
 				uint16 sound2CastLib = stream.readUint16();
 				uint16 sound2Id = stream.readUint16();
 				_sound2 = CastMemberID(sound2Id, sound2CastLib);
 			}
 			offset += 4;
+			break;
+		case 10: {
+				uint16 sound2Id = stream.readUint16();
+				_sound2 = CastMemberID(sound2Id, _sound2.castLib);	// Inherit castLinb from previous frame
+			}
+			offset += 2;
 			break;
 		case 12: {
 				uint16 transCastLib = stream.readUint16();
@@ -808,25 +820,35 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 			offset += 2;
 			break;
 		case 24: {
-				// palette, 12 (24?) bytes
 				int16 paletteCastLib = stream.readSint16();
 				int16 paletteId = stream.readSint16(); // 26
 				_palette.paletteId = CastMemberID(paletteId, paletteCastLib);
-
-				_palette.speed = stream.readByte(); // 28
-				_palette.flags = stream.readByte(); // 29
-				_palette.colorCycling = (_palette.flags & 0x80) != 0;
-				_palette.normal = (_palette.flags & 0x60) == 0x00;
-				_palette.fadeToBlack = (_palette.flags & 0x60) == 0x60;
-				_palette.fadeToWhite = (_palette.flags & 0x60) == 0x40;
-				_palette.autoReverse = (_palette.flags & 0x10) != 0;
-				_palette.overTime = (_palette.flags & 0x04) != 0;
-				_palette.firstColor = g_director->transformColor(stream.readByte() + 0x80); // 30
-				_palette.lastColor = g_director->transformColor(stream.readByte() + 0x80); // 31
-				_palette.frameCount = stream.readUint16(); // 32
-				_palette.cycleCount = stream.readUint16(); // 34
 			}
-			offset += 12;
+			offset += 4;
+			break;
+		case 28:
+			_palette.speed = stream.readByte(); // 28
+			_palette.flags = stream.readByte(); // 29
+			_palette.colorCycling = (_palette.flags & 0x80) != 0;
+			_palette.normal = (_palette.flags & 0x60) == 0x00;
+			_palette.fadeToBlack = (_palette.flags & 0x60) == 0x60;
+			_palette.fadeToWhite = (_palette.flags & 0x60) == 0x40;
+			_palette.autoReverse = (_palette.flags & 0x10) != 0;
+			_palette.overTime = (_palette.flags & 0x04) != 0;
+			offset += 2;
+			break;
+		case 30:
+			_palette.firstColor = g_director->transformColor(stream.readByte() + 0x80); // 30
+			_palette.lastColor = g_director->transformColor(stream.readByte() + 0x80); // 31
+			offset += 2;
+			break;
+		case 32:
+			_palette.frameCount = stream.readUint16(); // 32
+			offset += 2;
+			break;
+		case 34:
+			_palette.cycleCount = stream.readUint16(); // 34
+			offset += 2;
 			break;
 		case 36: {
 				stream.read(unk, 12);
@@ -904,7 +926,7 @@ void Frame::readSpriteD5(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 			break;
 		case 4: {
 				uint16 memberID = stream.readUint16();
-				sprite._castId = CastMemberID(memberID, sprite._castId.castLib);  // Read castLinb from previous frame
+				sprite._castId = CastMemberID(memberID, sprite._castId.castLib);  // Inherit castLinb from previous frame
 			}
 			fieldPosition += 2;
 			break;
@@ -914,6 +936,12 @@ void Frame::readSpriteD5(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 				sprite._scriptId = CastMemberID(scriptMemberID, scriptCastLib);
 			}
 			fieldPosition += 4;
+			break;
+		case 8: {
+				uint16 scriptMemberID = stream.readUint16();
+				sprite._scriptId = CastMemberID(scriptMemberID, sprite._scriptId.castLib);  // Inherit castLinb from previous frame
+			}
+			fieldPosition += 2;
 			break;
 		case 10:
 			sprite._foreColor = _vm->transformColor((uint8)stream.readByte());
