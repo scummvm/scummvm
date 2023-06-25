@@ -160,7 +160,6 @@ public:
 	uint32 _numFrames;
 	uint32 _framesVersion;
 	uint32 _numChannels;
-	byte _channelData[kChannelDataSize];
 	uint8 _currentTempo;
 	CastMemberID _currentPaletteId;
 
