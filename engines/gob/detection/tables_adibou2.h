@@ -309,5 +309,20 @@
 	kFeatures640x480 | kFeaturesSCNDemo,
 	0, 0, 11
 },
-
+{ // Shipped as an Demo / Preview for Nature et Sciences on Adibou presente Dessin CD
+  // ToDo: adding unimplemented opcodes is required.
+  // Also support needs added for static images (.TGA files), The Banner for Nature et Sciences can't be loaded because of the missing opcode.
+	{
+		"adibou2",
+		"Nature et Sciences Preview",
+		AD_ENTRY1s("intro.stk", "22b997d97eef71c867b49092bd89c2b8", 38128),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kGameTypeAdibou2,
+	kFeatures640x480,
+	0, 0, 0
+},
 #endif // GOB_DETECTION_TABLES_ADIBOU2_H
