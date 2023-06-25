@@ -760,7 +760,7 @@ railNode *CreateCustomPath(int32 coord, ...) {
 	int32			 x, y;
 
 	// Initialize firstNode
-	firstNode = false;
+	firstNode = nullptr;
 
 	// Set argPtr to point to the beginning of the variable arg list
 	va_start(argPtr, coord);
