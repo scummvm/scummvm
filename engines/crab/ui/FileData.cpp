@@ -28,37 +28,32 @@
  *
  */
 
+#include "crab/crab.h"
+#include "crab/common_header.h"
 #include "crab/ui/FileData.h"
 
 namespace Crab {
 
-include <iomanip>
-
 using namespace pyrodactyl::ui;
 
-FileData::FileData(const boost::filesystem::path &filepath) {
-	if (boost::filesystem::exists(filepath)) {
-		name = boost::filesystem::basename(filepath);
-		path = filepath.string();
+SaveFileData::SaveFileData(const Common::String &file) {
+	path = file;
 
-#if defined(__WIN32__) || defined(__APPLE__)
-		std::time_t temp = boost::filesystem::last_write_time(filepath);
-		last_modified = NumberToString(std::put_time(std::localtime(&temp), "%d %b %Y %H:%M:%S"));
-#else
-		// Workaround for GNU C++ not having implemented std::put_time
-		std::time_t temp = boost::filesystem::last_write_time(filepath);
-		char timestr[100];
+	// Extract String between _ and . For eg., CRAB_Autosave 1.unr -> Autosave 1
+	// 4 => .unr
+	size_t pos = file.findFirstOf('_');
+	name = file.substr(pos + 1, file.size() - (pos + 1) - 4);
 
-		std::strftime(timestr, sizeof(timestr), "%d %b %Y %H:%M:%S", std::localtime(&temp));
-		last_modified = timestr;
-#endif
-	} else
-		name = "New Save";
-}
+	if (g_engine->getSaveFileManager()->exists(file)) {
+		Common::InSaveFile *savefile = g_engine->getSaveFileManager()->openForLoading(file);
 
-SaveFileData::SaveFileData(const boost::filesystem::path &filepath) : FileData(filepath) {
-	if (boost::filesystem::exists(filepath)) {
-		XMLDoc conf(filepath.string());
+		uint64 len = savefile->size();
+		uint8 *data = new uint8[len + 1];
+		data[len] = '\0';
+
+		savefile->read(data, len);
+
+		XMLDoc conf(data);
 		if (conf.ready()) {
 			rapidxml::xml_node<char> *node = conf.Doc()->first_node("save");
 			if (NodeValid(node)) {
@@ -74,7 +69,9 @@ SaveFileData::SaveFileData(const boost::filesystem::path &filepath) : FileData(f
 	}
 }
 
-ModFileData::ModFileData(boost::filesystem::path filepath) : FileData(filepath) {
+ModFileData::ModFileData(const Common::String &file) {
+
+#if 0
 	if (boost::filesystem::exists(filepath)) {
 		XMLDoc conf(filepath.string());
 		if (conf.ready()) {
@@ -88,6 +85,7 @@ ModFileData::ModFileData(boost::filesystem::path filepath) : FileData(filepath) 
 			}
 		}
 	}
+#endif
 }
 
 } // End of namespace Crab

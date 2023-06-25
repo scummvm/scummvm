@@ -82,6 +82,7 @@ MODULE_OBJS = \
 	ui/dialogbox.o \
 	ui/element.o \
 	ui/emotion.o \
+	ui/FileData.o \
 	ui/FileMenu.o \
 	ui/GameOverMenu.o \
 	ui/GeneralSettingMenu.o \
