@@ -47,7 +47,7 @@ struct Hag_Name_Record {
 };
 
 struct Hag_Record {
-	Common::String hag_name;
+	char hag_name[33];
 	byte  hagfile;
 	Common::Stream *hag_fp;
 	uint32  hag_pos;

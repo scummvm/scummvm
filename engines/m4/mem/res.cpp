@@ -97,7 +97,7 @@ int Resources::hash(const Common::String &sym) const {
 	return ret_val & (HASHSIZE - 1);
 }
 
-Handle Resources::rget(const Common::String &resourceName, int32 *resourceSize) {
+MemHandle Resources::rget(const Common::String &resourceName, int32 *resourceSize) {
 	Entry *resEntry;
 
 	if (resourceSize)
@@ -228,7 +228,7 @@ bool Resources::do_file(MemHandle buffer) {
 	return result;
 }
 
-Handle rget(const Common::String &resourceName, int32 *resourceSize) {
+MemHandle rget(const Common::String &resourceName, int32 *resourceSize) {
 	return _G(resources).rget(resourceName, resourceSize);
 }
 

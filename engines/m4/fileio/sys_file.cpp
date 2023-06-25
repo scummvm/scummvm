@@ -325,7 +325,7 @@ bool SysFile::open_hash_file() {
 						return 0;
 					}
 
-					temp_ptr->hag_name = temp_name;
+					Common::strcpy_s(temp_ptr->hag_name, temp_name.c_str());
 					temp_ptr->hag_fp = temp_fp;
 
 					Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(temp_fp);
@@ -353,7 +353,7 @@ bool SysFile::open_hash_file() {
 						return 0;
 					}
 
-					temp_ptr->hag_name = hag_name;
+					Common::strcpy_s(temp_ptr->hag_name, hag_name.c_str());
 					temp_ptr->hag_fp = temp_fp;
 
 					Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(temp_fp);

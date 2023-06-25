@@ -30,12 +30,10 @@ namespace M4 {
 
 #define	MAX_RESOURCES	(1 << 7)
 
-typedef void **ResHandle;
-
 class Resources {
 	struct Entry {
 		Common::String name;
-		ResHandle RHandle = nullptr;
+		MemHandle RHandle = nullptr;
 		size_t BufferSize = 0;
 		uint32 Size = 0;
 		byte Flags = 0;
@@ -52,11 +50,11 @@ private:
 public:
 	~Resources();
 
-	Handle rget(const Common::String &resourceName, int32 *resourceSize);
+	MemHandle rget(const Common::String &resourceName, int32 *resourceSize);
 	void rtoss(const Common::String &resourceName);
 };
 
-extern Handle rget(const Common::String &resourceName, int32 *ResourceSize);
+extern MemHandle rget(const Common::String &resourceName, int32 *ResourceSize);
 extern void rtoss(const Common::String &resourceName);
 
 } // namespace M4

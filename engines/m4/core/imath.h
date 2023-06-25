@@ -35,6 +35,11 @@ namespace M4 {
 #define RecipUF16(x) FixedDiv(1, x)
 #define SquareSF16(x) FixedMul(x, x)
 
+#define SWAP_INT16(x)	((((x)>>8)&0x00ff) + (((x)&0x00ff)<<8))
+#define SWAP_INT32(x)	((((int32)(x)&0x000000ff)<<24) + (((int32)(x)&0x0000ff00)<<8) + \
+		(((int32)(x)&0x00ff0000)>>8) + (((int32)(x)>>24)&0x000000ff))
+
+
 frac16 FixedMul(frac16 Multiplicand, frac16 Multiplier);
 frac16 FixedDiv(frac16 Dividend, frac16 Divisor);
 
