@@ -223,7 +223,7 @@ public:
 	void *getOpenGLProcAddress(const char *name) const override;
 #endif
 
-#ifdef ANDROID_DEBUG_GL_CALLS
+#ifdef ANDROID_DEBUG_GL
 	bool isRunningInMainThread() { return pthread_self() == _main_thread; }
 #endif
 
