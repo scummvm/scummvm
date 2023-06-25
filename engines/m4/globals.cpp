@@ -66,8 +66,10 @@ bool Globals::init() {
 
 	game_systems_initialize(INSTALL_ALL);
 
-	// TODO
-	read_catalog();
+	if (!_kernel.hag_mode) {
+		if (!read_catalog())
+			error_show(FL, 'PARS', "game_main");
+	}
 
 	return true;
 }

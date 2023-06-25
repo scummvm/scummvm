@@ -35,37 +35,20 @@ static char *catalog_search(char *name);
 static char *db_get_catalog_entry(char *c, short *tag, short *room, char *name, char *path, short *c_size);
 static int compare_catalog_entries_for_search(const void *n1, const void *n2);
 
-int read_catalog() {
+bool read_catalog() {
 	Common::File f;
 	size_t size = 0;
 	Common::String myFilename;
 
 	myFilename = "roomsdb.chk";
-#if 0
-	if (f_info_exists(myFileName))
-		goto plarg_o_rama;
 
-	f_info_cd_name(myFileName);
-	strcat(myFileName, PATHNAME_SEPARATOR_STRING);
-	strcat(myFileName, "roomsdb.chk");
-
-	if (f_info_exists(myFileName))
-		goto plarg_o_rama;
-
-	env_get_path(myFileName, 0, "roomsdb.chk");
-	term_message("using network ROOMSDB.CHK %s", myFileName);
-	if (!f_info_exists(myFileName))
-		return 0;
-
-plarg_o_rama:
-#endif
 	if (!f.open(myFilename))
-		error_show(FL, 'FNF!', "Can't open %s", myFilename.c_str());
-	size = f.size();
+		return false;
 
 	if (_G(catalog)._data)
 		mem_free(_G(catalog)._data);
 
+	size = f.size();
 	_G(catalog)._data = (char *)mem_alloc(size + 4, "catalog");
 
 	if (f.read(_G(catalog)._data, size) != size)
@@ -74,7 +57,7 @@ plarg_o_rama:
 	f.close();
 
 	sort_catalog();
-	return 1;
+	return true;
 }
 
 char *db_get_catalog() {
