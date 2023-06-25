@@ -21,6 +21,7 @@
 
 #include "backends/platform/ios7/ios7_keyboard.h"
 #include "common/keyboard.h"
+#include "common/config-manager.h"
 
 @interface UITextInputTraits
 - (void)setAutocorrectionType:(int)type;
@@ -252,7 +253,7 @@
 //	self.inputAccessoryView = scrollView;
 //	[self reloadInputViews];
 	// We need at least a width of 1024 pt for the toolbar. If we add more buttons this may need to be increased.
-	toolbar.frame = CGRectMake(0, 0, MAX(1024, [[UIScreen mainScreen] bounds].size.width), toolbar.frame.size.height);
+	toolbar.frame = CGRectMake(0, 0, MAX(CGFloat(1024), [[UIScreen mainScreen] bounds].size.width), toolbar.frame.size.height);
 	toolbar.bounds = toolbar.frame;
 	toolbar.selectedItem = nil;
 #if TARGET_OS_IOS
@@ -422,7 +423,8 @@
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
-	[inputView attachAccessoryView];
+	if (ConfMan.getBool("keyboard_fn_bar"))
+		[inputView attachAccessoryView];
 }
 - (void)textFieldDidEndEditing:(UITextField *)textField {
 	[inputView detachAccessoryView];

@@ -54,7 +54,8 @@ private:
 
 	GUI::CheckboxWidget *_onscreenCheckbox;
 	GUI::CheckboxWidget *_touchpadCheckbox;
-	GUI::CheckboxWidget *_clickAndDragdCheckbox;
+	GUI::CheckboxWidget *_clickAndDragCheckbox;
+	GUI::CheckboxWidget *_keyboardFnBarCheckbox;
 
 	bool _enabled;
 };
@@ -66,7 +67,8 @@ IOS7OptionsWidget::IOS7OptionsWidget(GuiObject *boss, const Common::String &name
 
 	_onscreenCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.OnScreenControl", _("Show On-screen control (iOS 15 and later)"));
 	_touchpadCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.TouchpadMouseMode", _("Touchpad mouse mode"));
-	_clickAndDragdCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.ClickAndDragMode", _("Mouse-click-and-drag mode"));
+	_clickAndDragCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.ClickAndDragMode", _("Mouse-click-and-drag mode"));
+	_keyboardFnBarCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.KeyboardFunctionBar", _("Show keyboard function bar"));
 
 	new GUI::ButtonWidget(widgetsBoss(), "IOS7OptionsDialog.ControlsHelp", _("Controls Help"), Common::U32String(), kHelpCmd);
 
@@ -79,7 +81,7 @@ IOS7OptionsWidget::~IOS7OptionsWidget() {
 }
 
 void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
-	const bool inAppDomain = _domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);;
+	const bool inAppDomain = _domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
 
 	layouts.addDialog(layoutName, overlayedLayout)
 	        .addLayout(GUI::ThemeLayout::kLayoutVertical)
@@ -87,6 +89,7 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 	            .addWidget("OnScreenControl", "Checkbox")
 	            .addWidget("TouchpadMouseMode", "Checkbox")
 	            .addWidget("ClickAndDragMode", "Checkbox")
+	            .addWidget("KeyboardFunctionBar", "Checkbox")
 	            .addPadding(0, 0, 0, 0)
 	            .addWidget("ControlsHelp", "WideButton");
 
@@ -138,18 +141,21 @@ void IOS7OptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 void IOS7OptionsWidget::load() {
 	_onscreenCheckbox->setState(ConfMan.getBool("onscreen_control", _domain));
 	_touchpadCheckbox->setState(ConfMan.getBool("touchpad_mode", _domain));
-	_clickAndDragdCheckbox->setState(ConfMan.getBool("clickanddrag_mode", _domain));
+	_clickAndDragCheckbox->setState(ConfMan.getBool("clickanddrag_mode", _domain));
+	_keyboardFnBarCheckbox->setState(ConfMan.getBool("keyboard_fn_bar", _domain));
 }
 
 bool IOS7OptionsWidget::save() {
 	if (_enabled) {
 		ConfMan.setBool("onscreen_control", _onscreenCheckbox->getState(), _domain);
 		ConfMan.setBool("touchpad_mode", _touchpadCheckbox->getState(), _domain);
-		ConfMan.setBool("clickanddrag_mode", _clickAndDragdCheckbox->getState(), _domain);
+		ConfMan.setBool("clickanddrag_mode", _clickAndDragCheckbox->getState(), _domain);
+		ConfMan.setBool("keyboard_fn_bar", _keyboardFnBarCheckbox->getState(), _domain);
 	} else {
 		ConfMan.removeKey("onscreen_control", _domain);
 		ConfMan.removeKey("touchpad_mode", _domain);
 		ConfMan.removeKey("clickanddrag_mode", _domain);
+		ConfMan.removeKey("keyboard_fn_bar", _domain);
 	}
 
 	return true;
@@ -175,7 +181,8 @@ void IOS7OptionsWidget::setEnabled(bool e) {
 	_onscreenCheckbox->setEnabled(false);
 #endif
 	_touchpadCheckbox->setEnabled(e);
-	_clickAndDragdCheckbox->setEnabled(e);
+	_clickAndDragCheckbox->setEnabled(e);
+	_keyboardFnBarCheckbox->setEnabled(e);
 }
 
 GUI::OptionsContainerWidget *OSystem_iOS7::buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
@@ -186,6 +193,7 @@ void OSystem_iOS7::registerDefaultSettings(const Common::String &target) const {
 	ConfMan.registerDefault("onscreen_control", false);
 	ConfMan.registerDefault("touchpad_mode", !iOS7_isBigDevice());
 	ConfMan.registerDefault("clickanddrag_mode", false);
+	ConfMan.registerDefault("keyboard_fn_bar", true);
 }
 
 void OSystem_iOS7::applyBackendSettings() {
