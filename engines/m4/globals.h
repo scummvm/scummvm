@@ -53,7 +53,8 @@ private:
 	void game_systems_initialize(byte flags);
 	void game_systems_shutdown();
 	void fire_up_gui();
-	bool woodscript_init();	
+	bool woodscript_init();
+	void grab_fonts();
 	void woodscript_shutdown();
 
 public:

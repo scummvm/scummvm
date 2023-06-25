@@ -26,9 +26,12 @@
 
 namespace M4 {
 
-uint8 gr_pal_get_ega_color(uint8 myColor) {
-	error("TODO");
+static const uint8 EGAcolors[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+
+constexpr uint8 gr_pal_get_ega_color(uint8 myColor) {
+	return EGAcolors[myColor];
 }
+
 
 uint8 *gr_color_createInverseTable(RGB8 *pal, uint8 bitDepth, int begin_color, int end_color) {
 	error("TODO: gr_color_createInverseTable");

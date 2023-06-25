@@ -43,7 +43,7 @@ namespace M4 {
 #define __YELLOW	(gr_pal_get_ega_color(14))
 #define __WHITE	    (gr_pal_get_ega_color(15))
 
-extern uint8 gr_pal_get_ega_color(uint8 myColor);
+extern constexpr uint8 gr_pal_get_ega_color(uint8 myColor);
 
 uint8 *gr_color_createInverseTable(RGB8 *pal, uint8 bitDepth, int begin_color, int end_color);
 void   gr_color_create_ipl5(uint8 *inverseColorTable, char *fname, int room_num);
