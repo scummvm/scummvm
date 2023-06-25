@@ -1022,6 +1022,9 @@ Common::String dumpScriptName(const char *prefix, int type, int id, const char *
 	case kScoreScript:
 		typeName = "score";
 		break;
+	case kParentScript:
+		typeName = "parent";
+		break;
 	default:
 		error("dumpScriptName(): Incorrect call (type %d)", type);
 		break;
