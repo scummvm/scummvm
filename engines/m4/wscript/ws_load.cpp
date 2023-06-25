@@ -33,7 +33,7 @@ static bool GetNextint32(char **assetPtr, char *endOfAssetBlock, uint32 **return
 static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char * /*mainAssetPtr*/, char *endOfAssetBlock,
 	int32 **dataOffset, int32 **palDataOffset, RGB8 *myPalette);
 
-bool InitWSAssets(void) {
+bool InitWSAssets() {
 	int32 i;
 
 	// Make sure this is only called once.
@@ -502,6 +502,88 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	HUnLock(resourceHandle);
 
 	return mySprite;
+}
+
+int32 LoadSpriteSeries(const char *assetName, Handle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette) {
+	MemHandle workHandle;
+	int32 celsSize, *celsPtr, *palPtr;
+	char *mainAssetPtr, *endOfAssetBlock, *parseAssetPtr;
+	int32 assetSize;
+
+	// This loads a sprite series into the provided vars, rather than the WS tables.
+	// The WS loader is not involved with this procedure.
+
+	// Load in the sprite series
+	if ((workHandle = rget(assetName, &assetSize)) == NULL)
+		error_show(FL, 'FNF!', "Sprite series: %s", assetName);
+
+	HLock(workHandle);
+
+	mainAssetPtr = (char *)*workHandle;
+	endOfAssetBlock = (char *)((uint32)mainAssetPtr + (uint32)assetSize);
+	parseAssetPtr = mainAssetPtr;
+
+	// Process the SS from the stream file
+	if ((celsSize = ProcessCELS(assetName, &parseAssetPtr, mainAssetPtr, endOfAssetBlock, &celsPtr, &palPtr, myPalette)) < 0) {
+		error_show(FL, 'WSLP', "series: %s", assetName);
+	}
+
+	//store the handle and offsets
+	*seriesHandle = workHandle;
+	*celsOffset = (int32)celsPtr - (int32)mainAssetPtr;
+	*palOffset = (int32)palPtr - (int32)mainAssetPtr;
+
+	HUnLock(workHandle);
+
+	return celsSize;
+}
+
+int32 LoadSpriteSeriesDirect(const char *assetName, Handle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette) {
+	MemHandle workHandle;
+	Common::File f;
+	int32 celsSize, *celsPtr, *palPtr;
+	char *mainAssetPtr, *endOfAssetBlock, *parseAssetPtr;
+	uint32 assetSize;
+
+	// This loads a sprite series into the provided vars, rather than the WS tables.
+	// The WS loader is not involved with this procedure.
+
+	// First open the file
+	if (!f.open(assetName))
+		return -1;
+
+	// Get the file size
+	assetSize = f.size();
+
+	// Create a handle big enough to hold the contents of the file
+	if ((workHandle = NewHandle(assetSize, "ss file")) == nullptr)
+		return -1;
+
+	// Lock the handle and read the contents of the file intoit
+	HLock(workHandle);
+	mainAssetPtr = (char *)*workHandle;
+	if (f.read(mainAssetPtr, assetSize) < assetSize)
+		return -1;
+
+	// Close the file
+	f.close();
+
+	// Set up some pointers
+	endOfAssetBlock = (char *)((uint32)mainAssetPtr + (uint32)assetSize);
+	parseAssetPtr = mainAssetPtr;
+
+	// Process the SS from the stream file
+	if ((celsSize = ProcessCELS(assetName, &parseAssetPtr, mainAssetPtr, endOfAssetBlock, &celsPtr, &palPtr, myPalette)) < 0) {
+		error_show(FL, 'WSLP', "series: %s", assetName);
+	}
+
+	// Store the handle and offsets
+	*seriesHandle = workHandle;
+	*celsOffset = (int32)celsPtr - (int32)mainAssetPtr;
+	*palOffset = (int32)palPtr - (int32)mainAssetPtr;
+	HUnLock(workHandle);
+
+	return celsSize;
 }
 
 static bool GetNextint32(char **assetPtr, char *endOfAssetBlock, uint32 **returnVal) {

@@ -36,7 +36,7 @@ struct Mouse_Globals {
 	transSprite *_mouseScreenSource = nullptr;
 
 	Buffer _mouseBuffer;							// A scratch buffer used by RedrawMouse()
-	char *_mouseSeriesResource = nullptr;
+	Common::String _mouseSeriesResource;
 	MemHandle _mouseSeriesHandle = nullptr;
 	int32 _mouseSeriesOffset = 0;
 	int32 _mouseSeriesPalOffset = 0;

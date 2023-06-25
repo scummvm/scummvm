@@ -142,6 +142,18 @@ extern void vmng_screen_dispose(void *scrnContent);  // was DestroyScreen
 
 extern void vmng_refresh_video(int32 scrnX, int32 scrnY, int32 x1, int32 y1, int32 x2, int32 y2, Buffer *srcBuffer);
 
+// Limbo
+extern bool GetScreenCoords(void *scrnContent, int32 *x1, int32 *y1, int32 *x2, int32 *y2);
+extern bool vmng_SetScreenRefresh(void *scrnContent, RefreshFunc redraw);
+extern bool AddScreenHotkey(void *scrnContent, int32 myKey, HotkeyCB callback);
+extern bool RemoveScreenHotkey(void *scrnContent, int32 myKey);
+extern bool MoveScreenAbs(ScreenContext *myScreen, int32 parmX, int32 parmY);
+extern bool MoveScreenDelta(ScreenContext *myScreen, int32 parmX, int32 parmY);
+extern bool ResizeScreen(void *scrnContent, int32 newW, int32 newH);
+extern void RestoreScreens(int32 updateX1, int32 updateY1, int32 updateX2, int32 updateY2);
+extern void RestoreScreensInContext(int32 x1, int32 y1, int32 x2, int32 y2, ScreenContext *myScreen);
+extern void Screen2BuffC(int8 *Buff);
+
 // Rectangle routines
 extern RectList *vmng_CreateNewRect(int32 x1, int32 y1, int32 x2, int32 y2);
 extern void vmng_AddRectToRectList(RectList **scrnRectList, int32 x1, int32 y1, int32 x2, int32 y2);
