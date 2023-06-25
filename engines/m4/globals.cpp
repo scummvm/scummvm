@@ -96,6 +96,9 @@ void Globals::game_systems_initialize(byte flags) {
 
 	mem_stash_init(32);
 
+	_system_font = gr_font_create_system_font();
+	gr_font_set(_system_font);
+
 	sysfile_init(_kernel.hag_mode);
 
 	if (flags & INSTALL_PLAYER_BEEN_INIT) {
