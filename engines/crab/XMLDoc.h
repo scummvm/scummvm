@@ -47,6 +47,11 @@ public:
 		Load(filename);
 	}
 
+	XMLDoc(uint8 *data) {
+		text = (char*)data;
+		doc.parse<0>(text);
+	}
+
 	~XMLDoc() { delete[] text; }
 
 	// Load the text from the specified file into the rapidxml format
