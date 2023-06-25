@@ -413,7 +413,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 				score += 10;
 
 			// penalize for wasted bits
-			score -= value - size;
+			if (value > size)
+				score -= value - size;
 
 			return score;
 		}
