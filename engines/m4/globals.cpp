@@ -79,6 +79,8 @@ bool Globals::init() {
 	if (!LoadWSAssets("stream script", &_master_palette[0]))
 		error_show(FL, 'FNF!', "stream script");
 
+	main_cold_data_init();
+
 	return true;
 }
 

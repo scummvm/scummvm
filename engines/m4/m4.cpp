@@ -57,15 +57,15 @@ Common::Error M4Engine::run() {
 	initGraphics(640, 480);
 
 	// Instantiate globals and setup
-	Globals globals;
+	Globals *globals = createGlobals();
 
-	if (globals.init()) {
+	if (globals->init()) {
 		// Run game here
 		warning("TODO: game loop");
 	}
 
 
-
+	delete globals;
 	return Common::kNoError;
 }
 

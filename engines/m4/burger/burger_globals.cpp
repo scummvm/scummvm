@@ -19,24 +19,13 @@
  *
  */
 
-#include "common/debug.h"
-#include "m4/burger/burger.h"
 #include "m4/burger/burger_globals.h"
 
 namespace M4 {
 namespace Burger {
 
-Globals *BurgerEngine::createGlobals() {
-	return new BurgerGlobals();
-}
-
-void BurgerEngine::showEngineInfo() {
-	debug("Orion Burger\n");
-	debug("Game Version %s -- %s\n", "Giraffe", "September 27, 1996");
-	debug("%s\n", "M4 Runtime Engine by NickP, MikeE, AndrasK, Tinman, XiH, PaulL, MattP");
-	debug("M4 Library Version %s -- %s\n", "v1.400 OB", "January 21, 1996");
-	debug("%s.\n\n", "Copyright (c) 1996 by Sanctuary Woods Multimedia Corporation");
-	debug("Orion Burger tastes great!\n");
+void BurgerGlobals::main_cold_data_init() {
+	// TODO
 }
 
 } // namespace Burger
