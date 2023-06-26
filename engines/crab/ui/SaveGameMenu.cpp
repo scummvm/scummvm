@@ -42,47 +42,32 @@ void GameSaveMenu::Load(rapidxml::xml_node<char> *node) {
 	FileMenu<SaveFileData>::Load(node);
 }
 
-#if 0
-void GameSaveMenu::AddButton(boost::filesystem::path p, unsigned int &slot_index, unsigned int &menu_index) {
+void GameSaveMenu::AddButton(const Common::String &p, unsigned int &slot_index, unsigned int &menu_index) {
 	slot_info.push_back(SaveFileData(p));
 	menu.Add(slot_index, menu_index);
 }
 
 void GameSaveMenu::ScanDir() {
-	using namespace boost::filesystem;
+	Common::String res = "CRAB_*";
+	res += g_engine->_filePath->save_ext;
+	Common::StringArray saves = g_engine->getSaveFileManager()->listSavefiles(res);
 
 	slot_info.clear();
 	menu.Clear();
 
-	path savedir(directory);
+	unsigned int count_slot = 0, count_menu = 0;
 
-	if (!exists(savedir))
-		create_directories(savedir);
+	// For the save menu, the first slot is a "blank" slot - to create a new save file
+	AddButton("CRAB_New Save" + g_engine->_filePath->save_ext, count_menu, count_slot);
 
-	if (exists(savedir) && is_directory(savedir)) {
-		directory_iterator dir_it(savedir);
-		Common::Array<boost::filesystem::path> file_in_dir;
-		file_in_dir.clear();
-
-		// Find all files in the save directory, sort them according to last modified
-		std::copy(directory_iterator(savedir), directory_iterator(), std::back_inserter(file_in_dir));
-		std::sort(file_in_dir.begin(), file_in_dir.end(), PathCompare);
-
-		unsigned int count_slot = 0, count_menu = 0;
-
-		// For the save menu, the first slot is a "blank" slot - to create a new save file
-		AddButton(g_engine->_filePath->save_dir + "New Save" + g_engine->_filePath->save_ext, count_menu, count_slot);
-
-		// Next, we must load all the files with the same extension as our save file
-		for (auto i = file_in_dir.begin(); i != file_in_dir.end(); ++i)
-			if (is_regular_file(*i) && i->extension().string() == g_engine->_filePath->save_ext)
-				AddButton(*i, count_menu, count_slot);
+	for (const Common::String& save : saves) {
+		AddButton(save, count_menu, count_slot);
 	}
 
 	menu.AssignPaths();
 }
 
-bool GameSaveMenu::HandleEvents(const SDL_Event &Event) {
+bool GameSaveMenu::HandleEvents(const Common::Event &Event) {
 	int choice = -1;
 	switch (state) {
 	case STATE_NORMAL:
@@ -97,20 +82,26 @@ bool GameSaveMenu::HandleEvents(const SDL_Event &Event) {
 				ta_name.text = slot_info[index].name;
 			else
 				ta_name.text = "";
+
 			state = STATE_NAME;
 		}
 		break;
 	case STATE_NAME:
+		if (g_engine->_inputManager->GetKeyBindingMode() != input::KBM_UI)
+			g_engine->_inputManager->SetKeyBindingMode(KBM_UI);
+
 		if (ta_name.HandleEvents(Event)) {
-			if (index <= slot_info.size() && index != 0)
-				boost::filesystem::remove(slot_info[index].path);
+			if (index <= (int)slot_info.size() && index != 0)
+				g_engine->getSaveFileManager()->removeSavefile(slot_info[index].path);
+
 			selected = ta_name.text;
 			state = STATE_NORMAL;
 			Reset();
+			g_engine->_inputManager->SetKeyBindingMode(KBM_GAME);
 			return true;
 		}
 
-		if (g_engine->_inputManager->Equals(IU_BACK, Event) == SDL_RELEASED) {
+		if (g_engine->_inputManager->State(IU_BACK)) {
 			ta_name.text = "New Save";
 			state = STATE_NORMAL;
 		}
@@ -118,12 +109,6 @@ bool GameSaveMenu::HandleEvents(const SDL_Event &Event) {
 		break;
 	}
 
-	return false;
-}
-#endif
-
-bool GameSaveMenu::HandleEvents(const Common::Event &Event) {
-	warning("STUB: GameSaveMenu::HandleEvents()");
 	return false;
 }
 
