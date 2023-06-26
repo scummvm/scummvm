@@ -65,53 +65,6 @@ struct ButtonDrawRec {
 	bool fillMe, pressed;
 };
 
-enum ItemType {
-	MESSAGE, PICTURE, BUTTON, LISTBOX, TEXTFIELD, REPEAT_BUTTON, DIALOGBOX
-};
-
-struct ListItem {
-	char   prompt[80];
-	int32  tag;
-	struct ListItem *next;
-	struct ListItem *prev;
-};
-
-struct Item {
-	struct Item *next;
-	struct Item *prev;
-	M4CALLBACK     callback;
-	enum ItemType  type;
-	int32          status;
-	Font *myFont;
-	char *prompt;
-	char *aux;
-	char *aux2;
-	int32          promptMax;
-	int32          myListCount;
-	int32          viewIndex;
-	int32          thumbY;
-	ListItem *myList;
-	ListItem *currItem;
-	ListItem *viewTop;
-	ListItem *viewBottom;
-	int32          listView;
-	int32          x, y, w, h;
-	int32          tag;
-};
-
-struct TextItem {
-	struct TextItem *next;
-	int32			justification;
-	int32			x;
-	int32			y;
-	int32			w;
-	int32			h;
-	int32			tag;
-	int32			type;
-	char *prompt;
-	M4CALLBACK	callback;
-};
-
 } // End of namespace M4
 
 #endif
