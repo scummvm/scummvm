@@ -21,6 +21,7 @@
 
 #include "common/debug.h"
 #include "m4/burger/burger_globals.h"
+#include "m4/adv_r/adv_file.h"
 #include "m4/gui/gui_vmng.h"
 #include "m4/mem/mem.h"
 #include "m4/detection.h"
@@ -71,8 +72,27 @@ void BurgerGlobals::main_cold_data_init() {
 	_kernel.first_fade = 32;
 	debugC(1, kDebugCore, "executing - %s", GAME_MODES[_gameMode]);
 
+	// Set up game mode and starting room
+	_gameMode = WHOLE_GAME;
 
+	switch (_gameMode) {
+	case JUST_OVERVIEW:
+		_game.new_room = 971;		// Burger overview starts right in at 971
+		break;
+	case INTERACTIVE_DEMO:
+	case MAGAZINE_DEMO:
+		_game.new_room = 901;		// Burger Demo starts at the demo menu screen
+		break;
+	case WHOLE_GAME:
+		_game.new_room = kernel_save_game_exists(0) ? 903 : 951;
+		break;
+	}
+	_game.new_section = _game.new_room / 100;	// ... in this section!
 
+	font_set_colors(2, 1, 3);
+}
+
+void BurgerGlobals::global_menu_system_init() {
 	// TODO
 }
 

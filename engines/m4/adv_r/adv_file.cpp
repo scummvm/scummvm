@@ -19,39 +19,20 @@
  *
  */
 
-#ifndef M4_GRAPHICS_GR_FONT_H
-#define M4_GRAPHICS_GR_FONT_H
-
-#include "m4/m4_types.h"
+#include "common/system.h"
+#include "common/savefile.h"
+#include "m4/adv_r/adv_file.h"
+#include "m4/m4.h"
 
 namespace M4 {
 
-struct Font {
-	byte max_y_size;
-	byte max_x_size;
-	uint32 dataSize;
+bool kernel_save_game_exists(int32 slot) {
+	Common::String slotName = g_engine->getSaveStateName(slot);
+	Common::InSaveFile *save = g_system->getSavefileManager()->openForLoading(slotName);
+	bool result = save != nullptr;
+	delete save;
 
-	byte *width;
-	int16 *offset;
-	byte *pixData;
-};
+	return result;
+}
 
-void  gr_font_system_shutdown();
-void  gr_font_dealloc(Font *killMe);
-Font *gr_font_create_system_font();
-void  gr_font_set_color(uint8 foreground);
-Font *gr_font_get();
-void  gr_font_set(Font *font);
-int32 gr_font_get_height();
-int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y,
-	int32 w, int32 auto_spacing = 1);
-int32 gr_font_string_width(char *out_string, int32 auto_spacing = 1);
-//Font *gr_font_file_read(const char *fontName);
-Font *gr_font_load(const char *fontName);
-
-extern void font_set_colors(uint8 alt1, uint8 alt2, uint8 foreground);
-extern void gr_font_set_color(uint8 foreground);
-
-} // namespace M4
-
-#endif
+} // End of namespace M4

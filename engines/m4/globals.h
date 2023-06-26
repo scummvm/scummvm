@@ -59,6 +59,7 @@ private:
 
 protected:
 	virtual void main_cold_data_init() = 0;
+	virtual void global_menu_system_init() = 0;
 
 public:
 	Globals();
