@@ -289,14 +289,14 @@ bool mouse_set_sprite(int32 spriteNum) {
 	_G(mouseY1offset) = _G(mouseSprite)->yOffset;
 	_G(mouseX2offset) = _G(mouseSprite)->w - _G(mouseX1offset) - 1;
 	_G(mouseY2offset) = _G(mouseSprite)->h - _G(mouseY1offset) - 1;
-	if (_G(mousex) - _G(mouseX1offset) < minX)
-		minX = _G(mousex) - _G(mouseX1offset);
-	if (_G(mousey) - _G(mouseY1offset) < minY)
-		minY = _G(mousey) - _G(mouseY1offset);
-	if (_G(mousex) + _G(mouseX2offset) > maxX)
-		maxX = _G(mousex) + _G(mouseX2offset);
-	if (_G(mousey) + _G(mouseY2offset) > maxY)
-		maxY = _G(mousey) + _G(mouseY2offset);
+	if (_G(mouseX) - _G(mouseX1offset) < minX)
+		minX = _G(mouseX) - _G(mouseX1offset);
+	if (_G(mouseY) - _G(mouseY1offset) < minY)
+		minY = _G(mouseY) - _G(mouseY1offset);
+	if (_G(mouseX) + _G(mouseX2offset) > maxX)
+		maxX = _G(mouseX) + _G(mouseX2offset);
+	if (_G(mouseY) + _G(mouseY2offset) > maxY)
+		maxY = _G(mouseY) + _G(mouseY2offset);
 
 	gui_mouse_refresh();
 	_G(currMouseNum) = spriteNum;

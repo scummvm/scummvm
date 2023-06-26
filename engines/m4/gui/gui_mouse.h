@@ -59,8 +59,8 @@ struct Mouse_Globals {
 	int32 _showMouseX2 = MAX_VIDEO_X;
 	int32 _showMouseY2 = MAX_VIDEO_Y;
 
-	int32 _mousex = MAX_VIDEO_X >> 1;			// The current mouse "x" position (global coords).
-	int32 _mousey = MAX_VIDEO_Y >> 1;			// The current mouse "y" position (global coords).
+	int32 _mouseX = MAX_VIDEO_X >> 1;			// The current mouse "x" position (global coords).
+	int32 _mouseY = MAX_VIDEO_Y >> 1;			// The current mouse "y" position (global coords).
 
 	int32 _oldX = MAX_VIDEO_X >> 1;				// The previous mouse "x" and "y" position.  When the mouse has moved, the
 	int32 _oldY = MAX_VIDEO_Y >> 1;				// position where the mouse sprite was last drawn is here.

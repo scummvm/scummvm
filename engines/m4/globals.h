@@ -29,6 +29,7 @@
 #include "m4/adv_r/adv_been.h"
 #include "m4/adv_r/adv_inv.h"
 #include "m4/adv_r/adv_rails.h"
+#include "m4/core/mouse.h"
 #include "m4/fileio/fstream.h"
 #include "m4/fileio/sys_file.h"
 #include "m4/graphics/gr_color.h"
@@ -76,6 +77,7 @@ public:
 	Resources _resources;
 	Rails_Globals _rails;
 	Catalog _catalog;
+	MouseInfo _MouseState;
 
 	bool _cheat_keys_enabled = false;
 	Font *_system_font = nullptr;
@@ -122,6 +124,9 @@ public:
 	InvPal *_inverse_pal = nullptr;
 	InventoryRec _inventory;
 	int32 _inv_obj_mem_type = 0;
+	int _main_interface_sprite = 22;
+	bool _currScreen = false;
+	ScreenContext *_eventToScreen = nullptr;
 };
 
 #define _G(X) (g_globals->_##X)

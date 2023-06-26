@@ -19,42 +19,23 @@
  *
  */
 
-#include "m4/gui/gui_dialog.h"
-#include "m4/mem/memman.h"
-#include "m4/globals.h"
+#include "m4/graphics/gr_series.h"
+#include "m4/core/errors.h"
+#include "m4/wscript/ws_load.h"
 
 namespace M4 {
 
-bool gui_dialog_init() {
-	_G(listboxSearchStr)[0] = '\0';
-	return true;
+int32 series_load(const char *seriesName, int32 assetIndex, RGB8 *myPal) {
+	int32 myAssetIndex = AddWSAssetCELS(seriesName, assetIndex, myPal);
+
+	if ((myAssetIndex < 0) || (myAssetIndex >= 256))
+		error_show(FL, 'SPNF', seriesName);
+
+	return myAssetIndex;
 }
 
-void gui_dialog_shutdown() {
-}
-
-void vmng_TextScrn_Destroy(TextScrn *myTextScrn) {
-	TextItem *myTextItems;
-	TextItem *tempTextItem;
-	tempTextItem = myTextItems = myTextScrn->myTextItems;
-
-	while (tempTextItem) {
-		myTextItems = myTextItems->next;
-		mem_free(tempTextItem->prompt);
-		mem_free((void *)tempTextItem);
-		tempTextItem = myTextItems;
-	}
-
-	delete myTextScrn->textScrnBuffer;
-	mem_free((void *)myTextScrn);
-}
-
-void vmng_Dialog_Destroy(Dialog *d) {
-	error("TODO: vmng_Dialog_Destroy");
-}
-
-void Dialog_KeyMouseCollision(void) {
-	error("TODO: Dialog_KeyMouseCollision");
+void series_unload(int32 assetIndex) {
+	ClearWSAssets(_WS_ASSET_CELS, assetIndex, assetIndex);
 }
 
 } // namespace M4
