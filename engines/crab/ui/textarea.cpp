@@ -32,6 +32,7 @@
 // Author:   Arvind
 // Purpose:  TextArea functions
 //=============================================================================
+#include "crab/crab.h"
 #include "crab/ui/textarea.h"
 
 namespace Crab {
@@ -56,6 +57,36 @@ void TextArea::Load(rapidxml::xml_node<char> *node) {
 
 bool TextArea::HandleEvents(const Common::Event &Event, bool numbers_only) {
 	warning("STUB: TextArea::HandleEvents()");
+	if (Event.type == Common::EVENT_KEYDOWN && Event.kbd.ascii == Common::ASCII_BACKSPACE && text.size() != 0) {
+		// Now play the text erase sound
+		g_engine->_musicManager->PlayEffect(se_erase, 0);
+
+		// If backspace was pressed and the string isn't blank, remove a character from the end
+		text.erase(text.size() - 1);
+	} else if (Event.type == Common::EVENT_KEYDOWN) {
+		// If the string less than maximum size and does not contain invalid characters \ / : * ? " < > |
+		if (text.size() < size && Event.kbd.ascii != '\\' \
+			&& Event.kbd.ascii != '/' && Event.kbd.ascii != ':' \
+			&& Event.kbd.ascii != '*' && Event.kbd.ascii != '?' \
+			&& Event.kbd.ascii != '\"' && Event.kbd.ascii != '<' \
+			&& Event.kbd.ascii != '>' && Event.kbd.ascii != '|') {
+			// Should we only accept numbers?
+			if (numbers_only && (Event.kbd.ascii < '0' || Event.kbd.ascii > '9'))
+				return false;
+
+			// Now play the text input sound
+			g_engine->_musicManager->PlayEffect(se_entry, 0);
+
+			// Append the character to string
+			text += Event.kbd.ascii;
+		}
+	} else if (g_engine->_inputManager->State(IU_ACCEPT) && text.size() != 0) {
+		// Now play the accept sound
+		g_engine->_musicManager->PlayEffect(se_accept, 0);
+
+		return true;
+	}
+
 	return false;
 }
 
@@ -65,9 +96,9 @@ bool TextArea::HandleEvents(const SDL_Event &Event, bool numbers_only) {
 	// If a key was pressed
 	if (Event.type == SDL_TEXTINPUT) {
 		// If the string less than maximum size and does not contain invalid characters \ / : * ? " < > |
-		if (text.length() < size && Event.text.text[0] != '\\' && Event.text.text[0] != '/' && Event.text.text[0] != ':' && Event.text.text[0] != '*' && Event.text.text[0] != '?' && Event.text.text[0] != '\"' && Event.text.text[0] != '<' && Event.text.text[0] != '>' && Event.text.text[0] != '|') {
+		if (text.length() < size && Event.kbd.ascii != '\\' && Event.kbd.ascii != '/' && Event.kbd.ascii != ':' && Event.kbd.ascii != '*' && Event.kbd.ascii != '?' && Event.kbd.ascii != '\"' && Event.kbd.ascii != '<' && Event.kbd.ascii != '>' && Event.kbd.ascii != '|') {
 			// Should we only accept numbers?
-			if (numbers_only && !isdigit(Event.text.text[0]))
+			if (numbers_only && !isdigit(Event.kbd.ascii))
 				return false;
 
 			// Now play the text input sound
