@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-06-25 20:50+0000\n"
-"PO-Revision-Date: 2023-06-23 06:40+0000\n"
+"PO-Revision-Date: 2023-06-26 13:55+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4235,7 +4235,7 @@ msgstr "クリック&ドラッグモード"
 
 #: backends/platform/ios7/ios7_options.mm:71
 msgid "Show keyboard function bar"
-msgstr ""
+msgstr "キーボード機能バーを表示"
 
 #: backends/platform/ios7/ios7_options.mm:73
 msgid "Controls Help"
