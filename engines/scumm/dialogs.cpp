@@ -1064,6 +1064,8 @@ void ScummOptionsContainerWidget::createEnhancementsWidget(GuiObject *boss, cons
 	// content fixes, but not fixes for minor glitches. I don't expect that
 	// anyone wants enhancements but no bugfixes, though.
 
+	// I18N: Game enhancements pop-up list
+
 	_enhancementsPopUp->appendEntry(_("None"), 0);
 	_enhancementsPopUp->appendEntry(_("Fix bugs"), kEnhancementsBugs);
 	_enhancementsPopUp->appendEntry(_("Fix bugs and glitches"), kEnhancementsBugs | kEnhancementsGlitches);
