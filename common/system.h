@@ -570,6 +570,11 @@ public:
 		kFeatureShaders,
 
 		/**
+		* Support for downloading DLC packages.
+		*/
+		kFeatureDLC,
+
+		/**
 		* Support for using the native system file browser dialog
 		* through the DialogManager.
 		*/
