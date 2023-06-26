@@ -30,11 +30,48 @@ namespace Burger {
 
 const char *GAME_MODES[4] = { "WHOLE_GAME", "INTERACTIVE_DEMO", "MAGAZINE_DEMO", "WHOLE_GAME" };
 
+/**
+ * Structure for accented character replacement
+ */
+struct ConverterEntry {
+	const char *_find;
+	byte _replace;
+};
+static const ConverterEntry ASCII_CONVERTERS[] = {
+	{ "\xc4", 1 },
+	{ "\xc9", 2 },
+	{ "\xd6", 3 },
+	{ "\xdc", 4 },
+	{ "\xe1", 5 },
+	{ "\xe4", 6 },
+	{ "\xe9", 0x0B },
+	{ "\xf6", 0x0C },
+	{ "\xfc", 0x0E },
+	{ "\xdf", 0x0F },
+	{ "\xe2", 0x10 },
+	{ "\xe0", 0x11 },
+	{ "\xef", 0x12 },
+	{ "\xee", 0x13 },
+	{ "\xea", 0x14 },
+	{ "\xe8", 0x15 },
+	{ "\xeb", 0x16 },
+	{ "\xf9", 0x17 },
+	{ "\xfb", 0x18 },
+	{ "\xe7", 0x19 },
+	{ "\xc7", 0x1C },
+	{ "\xf4", 0x1D },
+	{ nullptr, 0 }
+};
+
+
 void BurgerGlobals::main_cold_data_init() {
 	// TODO
 	initMouseSeries("cursor", nullptr);
 
+	_kernel.first_fade = 32;
 	debugC(1, kDebugCore, "executing - %s", GAME_MODES[_gameMode]);
+
+
 
 	// TODO
 }
@@ -73,10 +110,13 @@ void BurgerGlobals::initMouseSeries(const Common::String &assetName, RGB8 *myPal
 }
 
 void BurgerGlobals::custom_ascii_converter_proc(char *string) {
+	char *str;
 
+	for (const auto &entry : ASCII_CONVERTERS) {
+		while ((str = strstr(string, entry._find)) != nullptr)
+			*str = entry._replace;
+	}
 }
-
-
 
 } // namespace Burger
 } // namespace M4
