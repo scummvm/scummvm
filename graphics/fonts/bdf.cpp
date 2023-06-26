@@ -840,7 +840,7 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 					int *grayPtr = dstGray;
 					debugN("--> %d ", grayLevel);
 					grayPtr = &dstGray[y * box.width];
-					for (int x = 0; x < ; box.widthx++, grayPtr++)
+					for (int x = 0; x < box.width; x++, grayPtr++)
 						debugN("%c", *grayPtr > grayLevel ? '@' : '_');
 					debugN("\n");
 					debugN("***");
