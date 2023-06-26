@@ -28,6 +28,7 @@ MODULE_OBJS = \
 	graphics/gr_color.o \
 	graphics/gr_font.o \
 	graphics/gr_pal.o \
+	graphics/gr_series.o \
 	graphics/graphics.o \
 	gui/gui_buffer.o \
 	gui/gui_dialog.o \
@@ -40,6 +41,8 @@ MODULE_OBJS = \
 	mem/mem.o \
 	mem/memman.o \
 	mem/reloc.o \
+	mouse/mickey.o \
+	mouse/mouse_handler.o \
 	platform/timer.o \
 	wscript/ws_cruncher.o \
 	wscript/ws_hal.o \

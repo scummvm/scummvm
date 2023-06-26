@@ -20,8 +20,12 @@
  */
 
 #include "common/debug.h"
+#include "common/events.h"
 #include "m4/burger/burger_globals.h"
 #include "m4/adv_r/adv_file.h"
+#include "m4/core/errors.h"
+#include "m4/graphics/gr_series.h"
+#include "m4/gui/gui_sys.h"
 #include "m4/gui/gui_vmng.h"
 #include "m4/mem/mem.h"
 #include "m4/detection.h"
@@ -93,6 +97,14 @@ void BurgerGlobals::main_cold_data_init() {
 }
 
 void BurgerGlobals::global_menu_system_init() {
+	_main_interface_sprite = series_load("999intr", 22, nullptr);
+	if (_main_interface_sprite != 22)
+		error_show(FL, 'SLF!');
+
+	AddSystemHotkey(Common::KEYCODE_ESCAPE, escape_key_pressed);
+	AddSystemHotkey(Common::KEYCODE_F2, cb_F2);
+	AddSystemHotkey(Common::KEYCODE_F3, cb_F3);
+
 	// TODO
 }
 
@@ -136,6 +148,18 @@ void BurgerGlobals::custom_ascii_converter_proc(char *string) {
 		while ((str = strstr(string, entry._find)) != nullptr)
 			*str = entry._replace;
 	}
+}
+
+void BurgerGlobals::escape_key_pressed(void *, void *) {
+
+}
+
+void BurgerGlobals::cb_F2(void *, void *) {
+
+}
+
+void BurgerGlobals::cb_F3(void *, void *) {
+
 }
 
 } // namespace Burger

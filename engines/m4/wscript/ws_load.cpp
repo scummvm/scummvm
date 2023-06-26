@@ -32,6 +32,7 @@ namespace M4 {
 static bool GetNextint32(char **assetPtr, char *endOfAssetBlock, uint32 **returnVal);
 static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char * /*mainAssetPtr*/, char *endOfAssetBlock,
 	int32 **dataOffset, int32 **palDataOffset, RGB8 *myPalette);
+static void RestoreSSPaletteInfo(RGB8 *myPalette, int32 *palPtr);
 
 bool InitWSAssets() {
 	int32 i;
@@ -586,6 +587,161 @@ int32 LoadSpriteSeriesDirect(const char *assetName, MemHandle *seriesHandle, int
 	return celsSize;
 }
 
+bool ws_GetSSMaxWH(MemHandle ssHandle, int32 ssOffset, int32 *maxW, int32 *maxH) {
+	int32 *celsPtr;
+
+	// Parameter verification
+	if ((!ssHandle) || (!*ssHandle)) {
+		ws_LogErrorMsg(FL, "nullptr Handle given.");
+		return false;
+	}
+
+	// Lock the handle, and get the cels source
+	HLock(ssHandle);
+	celsPtr = (int32 *)((int32)*ssHandle + ssOffset);
+
+	// Return the values
+	if (maxW) {
+		*maxW = celsPtr[CELS_SS_MAX_W];
+	}
+
+	if (maxH) {
+		*maxH = celsPtr[CELS_SS_MAX_H];
+	}
+
+	// unlock the handle
+	HUnLock(ssHandle);
+
+	return true;
+}
+
+int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette) {
+	MemHandle workHandle;
+	char *parseAssetPtr, *mainAssetPtr, *endOfAssetBlock;
+	int32 emptySlot, i, assetSize, *celsPtr, *palPtr;
+
+	// Check that the loader has been initialized
+	if (!_G(wsloaderInitialized)) {
+		error_show(FL, 'WSLI', "Asset Name: %s", wsAssetName);
+	}
+
+	emptySlot = -1;
+
+	// If hash is < 0, find the first available slot
+	if (hash < 0) {
+		// Search through the SS names table
+		for (i = 0; i <= MAX_ASSET_HASH; i++) {
+			// See if there is something loaded in this slot
+			if (_G(globalCELSnames)[i]) {
+				if (!strcmp(_G(globalCELSnames)[i], wsAssetName)) {
+					break;
+				}
+			} else if (emptySlot < 0) {
+				// Else we found an empty slot
+				emptySlot = i;
+			}
+		}
+	} else {
+		// Else the SS must be stored in the given hash, replacing any previous contents.
+		// Index checking
+		if (hash > MAX_ASSET_HASH) {
+			error_show(FL, 'WSLA', "Asset Name: %s, hash given was %ld", wsAssetName, hash);
+		}
+
+		// Check to see if the SS is already loaded in the given hash slot
+		if (_G(globalCELSnames)[hash] && (!strcmp(_G(globalCELSnames)[hash], wsAssetName))) {
+			if (_G(globalCELSPaloffsets)[hash] >= 0) {
+				// Get the pointer to the pal data
+#ifdef TODO
+				workHandle = _G(globalCELSHandles)[hash];
+				palPtr = (int32 *)((int32)*workHandle + _G(globalCELSPaloffsets)[hash]);
+#else
+				error("TODO: Figure out dereferencing");
+#endif
+
+				// Restore the palette and unlock the handle
+				RestoreSSPaletteInfo(myPalette, palPtr);
+				HUnLock(workHandle);
+			}
+
+			// Since the SS is already loaded, return the slot
+			return hash;
+		} else {
+			// The series is not already loaded, set up values for the next if statement
+			i = MAX_ASSET_HASH + 1;
+			emptySlot = hash;
+		}
+	}
+
+	// If we've searched the entire table and not found the series, but
+	// we found an empty slot to load the SS into
+	if ((i > MAX_ASSET_HASH) && (emptySlot >= 0)) {
+
+		if ((workHandle = rget(wsAssetName, &assetSize)) == NULL) {
+			error_show(FL, 'FNF!', (char *)wsAssetName);
+		}
+
+		// Lock the handle so we can step through the chunk
+		HLock(workHandle);
+		mainAssetPtr = (char *)(*workHandle);
+
+		parseAssetPtr = mainAssetPtr;
+		endOfAssetBlock = (char *)((uint32)mainAssetPtr + (uint32)assetSize);
+
+		ClearWSAssets(_WS_ASSET_CELS, emptySlot, emptySlot);
+
+		// Store the resource name
+		_G(globalCELSnames)[emptySlot] = mem_strdup(wsAssetName);
+
+		// Process the SS from the stream file
+		if (ProcessCELS(wsAssetName, &parseAssetPtr, mainAssetPtr, endOfAssetBlock, &celsPtr, &palPtr, myPalette) < 0) {
+			error_show(FL, 'WSLP', "Asset Name: %s", wsAssetName);
+		}
+
+		// At this point, celsPtr points to the beginning of the cels data, palPtr to the pal data
+		// Store the Handle, and calculate the offsets
+		_G(globalCELSHandles)[emptySlot] = workHandle;
+		if (celsPtr) {
+			_G(globalCELSoffsets)[emptySlot] = (int32)celsPtr - (int32)mainAssetPtr;
+		} else {
+			_G(globalCELSoffsets)[emptySlot] = -1;
+		}
+		if (palPtr) {
+			_G(globalCELSPaloffsets)[emptySlot] = (int32)palPtr - (int32)mainAssetPtr;
+		} else {
+			_G(globalCELSPaloffsets)[emptySlot] = -1;
+		}
+
+		// Unlock the handle
+		HUnLock(workHandle);
+
+		return emptySlot;
+	} else if (i < MAX_ASSET_HASH) {
+		// Else if we found the SS already loaded
+		if (_G(globalCELSPaloffsets)[i] >= 0) {
+			// Get the pointer to the pal data
+#ifdef TODO
+			workHandle = _G(globalCELSHandles)[i];
+			HLock(workHandle);
+			palPtr = (int32 *)((int32)*workHandle + _G(globalCELSPaloffsets)[i]);
+#else
+			error("TODO: Figure out dereferencing");
+#endif
+			// Restore the palette and unlock the handle
+			RestoreSSPaletteInfo(myPalette, palPtr);
+			HUnLock(workHandle);
+		}
+
+		// Return the hash number for the series
+		return i;
+	} else {
+		// Else we searched the entire table, it was not already loaded, and there are no empty slots
+		error_show(FL, 'WSLF', "Asset Name: %s", wsAssetName);
+	}
+
+	return -1;
+}
+
 static bool GetNextint32(char **assetPtr, char *endOfAssetBlock, uint32 **returnVal) {
 	// Check to see if we still have an int32 available
 	if ((endOfAssetBlock - *assetPtr) < 4) {
@@ -600,7 +756,7 @@ static bool GetNextint32(char **assetPtr, char *endOfAssetBlock, uint32 **return
 }
 
 static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char * /*mainAssetPtr*/, char *endOfAssetBlock,
-		int32 **dataOffset, int32 **palDataOffset, RGB8 *myPalette) {
+	int32 **dataOffset, int32 **palDataOffset, RGB8 *myPalette) {
 	uint32 *celsType, *numColors, *palData;
 	uint32 *tempPtr, *celsSize, *data, *dataPtr, *offsetPtr, i, j, *header, *format;
 	bool	byteSwap;
@@ -787,32 +943,24 @@ static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char 
 	return *celsSize;
 }
 
-bool ws_GetSSMaxWH(MemHandle ssHandle, int32 ssOffset, int32 *maxW, int32 *maxH) {
-	int32 *celsPtr;
+static void RestoreSSPaletteInfo(RGB8 *myPalette, int32 *palPtr) {
+	uint32 *tempPtr, i, j;
 
 	// Parameter verification
-	if ((!ssHandle) || (!*ssHandle)) {
-		ws_LogErrorMsg(FL, "nullptr Handle given.");
-		return false;
+	if ((!myPalette) || (!palPtr))
+		return;
+
+	// Set up a pointer that can step through the pal info for the SS, and restore each color
+	if (myPalette) {
+		tempPtr = (uint32 *)(&palPtr[1]);
+		for (i = 0; i < (uint32)palPtr[0]; i++) {
+			j = (*tempPtr & 0xff000000) >> 24;
+			myPalette[j].r = (*tempPtr & 0x00ff0000) >> 14;
+			myPalette[j].g = (*tempPtr & 0x0000ff00) >> 6;
+			myPalette[j].b = (*tempPtr & 0x000000ff) << 2;
+			tempPtr++;
+		}
 	}
-
-	// Lock the handle, and get the cels source
-	HLock(ssHandle);
-	celsPtr = (int32 *)((int32)*ssHandle + ssOffset);
-
-	// Return the values
-	if (maxW) {
-		*maxW = celsPtr[CELS_SS_MAX_W];
-	}
-
-	if (maxH) {
-		*maxH = celsPtr[CELS_SS_MAX_H];
-	}
-
-	// unlock the handle
-	HUnLock(ssHandle);
-
-	return true;
 }
 
 } // End of namespace M4

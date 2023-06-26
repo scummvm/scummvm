@@ -19,42 +19,16 @@
  *
  */
 
-#include "m4/gui/gui_dialog.h"
-#include "m4/mem/memman.h"
-#include "m4/globals.h"
+#ifndef M4_MOUSE_MOUSE_HANDLER_H
+#define M4_MOUSE_MOUSE_HANDLER_H
+
+#include "m4/m4_types.h"
+#include "m4/core/mouse.h"
 
 namespace M4 {
 
-bool gui_dialog_init() {
-	_G(listboxSearchStr)[0] = '\0';
-	return true;
-}
-
-void gui_dialog_shutdown() {
-}
-
-void vmng_TextScrn_Destroy(TextScrn *myTextScrn) {
-	TextItem *myTextItems;
-	TextItem *tempTextItem;
-	tempTextItem = myTextItems = myTextScrn->myTextItems;
-
-	while (tempTextItem) {
-		myTextItems = myTextItems->next;
-		mem_free(tempTextItem->prompt);
-		mem_free((void *)tempTextItem);
-		tempTextItem = myTextItems;
-	}
-
-	delete myTextScrn->textScrnBuffer;
-	mem_free((void *)myTextScrn);
-}
-
-void vmng_Dialog_Destroy(Dialog *d) {
-	error("TODO: vmng_Dialog_Destroy");
-}
-
-void Dialog_KeyMouseCollision(void) {
-	error("TODO: Dialog_KeyMouseCollision");
-}
+mausEvent mouse_get_event();
 
 } // namespace M4
+
+#endif

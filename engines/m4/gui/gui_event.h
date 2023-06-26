@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,42 +20,17 @@
  *
  */
 
-#include "m4/gui/gui_dialog.h"
-#include "m4/mem/memman.h"
-#include "m4/globals.h"
+#ifndef M4_GUI_GUI_EVENT_H
+#define M4_GUI_GUI_EVENT_H
+
+#include "m4/m4_types.h"
 
 namespace M4 {
 
-bool gui_dialog_init() {
-	_G(listboxSearchStr)[0] = '\0';
-	return true;
-}
+enum {
+	EVENT_MOUSE = 0, EVENT_KEY
+};
 
-void gui_dialog_shutdown() {
-}
+} // End of namespace M4
 
-void vmng_TextScrn_Destroy(TextScrn *myTextScrn) {
-	TextItem *myTextItems;
-	TextItem *tempTextItem;
-	tempTextItem = myTextItems = myTextScrn->myTextItems;
-
-	while (tempTextItem) {
-		myTextItems = myTextItems->next;
-		mem_free(tempTextItem->prompt);
-		mem_free((void *)tempTextItem);
-		tempTextItem = myTextItems;
-	}
-
-	delete myTextScrn->textScrnBuffer;
-	mem_free((void *)myTextScrn);
-}
-
-void vmng_Dialog_Destroy(Dialog *d) {
-	error("TODO: vmng_Dialog_Destroy");
-}
-
-void Dialog_KeyMouseCollision(void) {
-	error("TODO: Dialog_KeyMouseCollision");
-}
-
-} // namespace M4
+#endif

@@ -30,9 +30,31 @@ namespace M4 {
 
 extern bool gui_system_init();
 extern void gui_system_shutdown();
-extern void gui_system_event_handler(void); // was ScreenEventHandle
+
+/**
+ * Determine if an event happens, and if so, which window should process the event
+ * This is the main "engine call" of the GUI.  It should be called once each time in the
+ * applications main loop.  All "hot key" call backs, and evtHandlers are executed from here.
+ */
+extern void gui_system_event_handler();
+
+/**
+ * Add a "hot key" to the system (as opposed to a specific window).
+ * @param myKey		The "key" which, when pressed, will cause the callback function to be executed.
+ * @param callback	The function to be executed when "myKey" is pressed.
+ * @remarks		If the view manager has not been initialized, or sizeof(Hotkey) memory is not available,
+ * the procedure will be aborted.
+ */
 extern void AddSystemHotkey(int32 myKey, HotkeyCB callback);
+
+/**
+ * Remove a "hot key" from the system
+ */
 extern void RemoveSystemHotkey(int32 myKey);
+
+/**
+ * To find the callback associated with a "hot key" in the system
+ */
 extern HotkeyCB GetSystemHotkey(int32 myKey);
 
 } // End of namespace M4
