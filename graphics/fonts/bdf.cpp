@@ -774,10 +774,10 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 	if (src->_data.boxes) {
 		BdfBoundingBox *boxes = new BdfBoundingBox[data.numCharacters];
 		for (int i = 0; i < data.numCharacters; ++i) {
-			boxes[i].width = (int)(((float)src->_data.boxes[i].width * scale));
-			boxes[i].height = (int)(((float)src->_data.height * scale));
-			boxes[i].xOffset = (int)(((float)src->_data.boxes[i].xOffset * scale));
-			boxes[i].yOffset = (int)(((float)src->_data.boxes[i].yOffset * scale));
+			boxes[i].width = (int)(roundf((float)src->_data.boxes[i].width * scale));
+			boxes[i].height = (int)(roundf((float)src->_data.height * scale));
+			boxes[i].xOffset = (int)(roundf((float)src->_data.boxes[i].xOffset * scale));
+			boxes[i].yOffset = (int)(roundf((float)src->_data.boxes[i].yOffset * scale));
 		}
 		data.boxes = boxes;
 	} else {
@@ -824,7 +824,7 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 				byte *srcd = (byte *)srcSurf.getBasePtr(0, y);
 				byte *dst = ptr;
 				byte b = 0;
-				for (int x = 0; x < box.width; x++, srcd++) {
+				for (int x = 0; x < dstPitch * 8; x++, srcd++) {
 					b <<= 1;
 					if (*srcd == 1) {
 						b |= 1;
@@ -833,10 +833,6 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 						*dst++ = b;
 						b = 0;
 					}
-				}
-				if (((box.width - 1) % 8)) {
-					b <<= 7 - ((box.width - 1) % 8);
-					*dst = b;
 				}
 				ptr += dstPitch;
 #if DRAWDEBUG
