@@ -816,7 +816,7 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 			} else {
 				srcBoxWidth = src->_data.defaultBox.width;
 			}
-			src->scaleSingleGlyph(&srcSurf, dstGray, dstGraySize, box.width, box.height, 0, 0, grayLevel, i + src->_data.firstCharacter,
+			src->scaleSingleGlyph(&srcSurf, dstGray, dstGraySize, box.width, box.height, srcBox.xOffset,  srcBox.yOffset, grayLevel, i + src->_data.firstCharacter,
 								src->_data.height, srcBoxWidth, scale);
 
 			byte *ptr = bitmaps[i];
