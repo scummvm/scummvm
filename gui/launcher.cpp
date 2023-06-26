@@ -256,8 +256,11 @@ void LauncherDialog::build() {
 	new ButtonWidget(this, _title + ".AboutButton", _("A~b~out"), _("About ScummVM"), kAboutCmd);
 	// I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
 	new ButtonWidget(this, _title + ".OptionsButton", _("Global ~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd, 0, _c("Global ~O~pts...", "lowres"));
-	// I18N: Button download games button.
-	new ButtonWidget(this, _title + ".DownloadGamesButton", _("Download Games"), _("Download freeware games for ScummVM"), kDownloadGameCmd);
+
+	if (g_system->hasFeature(OSystem::kFeatureDLC)) {
+	// I18N: Button browse downloadable games (DLC)
+		new ButtonWidget(this, _title + ".DownloadGamesButton", _("Download Games"), _("Download freeware games for ScummVM"), kDownloadGameCmd);
+	}
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	DropdownButtonWidget *addButton =

@@ -71,6 +71,7 @@
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/keymapper.h"
+#include "backends/dlc/dlcmanager.h"
 
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
@@ -699,6 +700,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	CloudMan.syncSaves();
 #endif
 
+	DLCMan.init();
+
 	// Unless a game was specified, show the launcher dialog
 	if (nullptr == ConfMan.getActiveDomain())
 		launcherDialog();
@@ -848,6 +851,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	Cloud::CloudManager::destroy();
 #endif
 #endif
+	DLC::DLCManager::destroy();
 	PluginManager::instance().unloadDetectionPlugin();
 	PluginManager::instance().unloadAllPlugins();
 	PluginManager::destroy();
