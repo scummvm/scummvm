@@ -33,6 +33,9 @@
 namespace Crab {
 
 bool FileOpen(const Common::Path &path, char *&data) {
+	if (path.empty())
+		return false;
+
 	if (data != NULL)
 		delete[] data;
 
@@ -56,6 +59,9 @@ bool FileOpen(const Common::Path &path, char *&data) {
 }
 
 bool FileOpen(const Common::Path &path, Common::File *file) {
+	if (path.empty())
+		return false;
+
 	if (file->isOpen())
 		file->close();
 
