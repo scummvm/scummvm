@@ -1407,8 +1407,14 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	// Pre-computing number of frames, as sometimes the frameNumber in stream mismatches
 	debugC(1, kDebugLoading, "Score::loadFrames(): Precomputing total number of frames!");
 
-	// Calculate number of frames beforehand
-	for (_numFrames = 1; loadFrame(_numFrames); _numFrames++) { }
+	// Calculate number of frames and their positions
+	// numOfFrames in the header is often incorrect
+	for (_numFrames = 1; loadFrame(_numFrames); _numFrames++) {
+		if (_framesStream->pos() < _framesStreamSize) {
+			// Record the starting offset for next frame
+			_frameOffsets.push_back(_framesStream->pos());
+		}
+	}
 
 	debugC(1, kDebugLoading, "Score::loadFrames(): Calculated, total number of frames %d!", _numFrames);
 
@@ -1529,11 +1535,6 @@ bool Score::readOneFrame() {
 		_currentFrame->_scoreCachedPaletteId = _currentPaletteId;
 
 		debugC(8, kDebugLoading, "Score::readOneFrame(): Frame %d actionId: %s", _curFrameNumber, _currentFrame->_actionId.asString().c_str());
-
-		if (_curFrameNumber == _frameOffsets.size() - 1 && _framesStream->pos() < _framesStreamSize) {
-			// Record the starting offset for next frame
-			_frameOffsets.push_back(_framesStream->pos());
-		}
 		return true;
 	} else {
 		warning("Score::readOneFrame(): Zero sized frame!? exiting loop until we know what to do with the tags that follow.");
