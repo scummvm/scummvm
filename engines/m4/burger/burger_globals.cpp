@@ -51,7 +51,7 @@ void BurgerGlobals::initMouseSeries(const Common::String &assetName, RGB8 *myPal
 	if (_mouseBuffer.data)
 		mem_free(_mouseBuffer.data);
 
-	if (LoadSpriteSeries(assetName.c_str(), _mouseSeriesHandle, &_mouseSeriesOffset, &_mouseSeriesPalOffset, myPalette) > 0) {
+	if (LoadSpriteSeries(assetName.c_str(), &_mouseSeriesHandle, &_mouseSeriesOffset, &_mouseSeriesPalOffset, myPalette) > 0) {
 		_mouseSeriesResource = assetName;
 
 		if (ws_GetSSMaxWH(_mouseSeriesHandle, _mouseSeriesOffset, &maxW, &maxH)) {
