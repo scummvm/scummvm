@@ -172,6 +172,7 @@ void font_set_colors(uint8 alt1, uint8 alt2, uint8 foreground) {
 		font_colors[3] = foreground;
 	}
 }
+
 void gr_font_set_color(uint8 foreground) {
 	if (_G(font) == _G(interfaceFont))
 		font_colors[1] = foreground;

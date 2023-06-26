@@ -80,6 +80,7 @@ bool Globals::init() {
 		error_show(FL, 'FNF!', "stream script");
 
 	main_cold_data_init();
+	global_menu_system_init();
 
 	return true;
 }
