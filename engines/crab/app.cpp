@@ -175,15 +175,9 @@ void App::Run() {
 				break;
 
 			case GAMESTATE_LOAD_GAME:
-#if 0
-				if (boost::filesystem::exists(g_engine->_loadMenu->SelectedPath()))
-					CurrentState = new Game(pyrodactyl::ui::.SelectedPath());
-				else
-					CurrentState = new Game();
-
+				CurrentState = new Game(g_engine->_loadMenu->SelectedPath());
 				g_engine->_screenSettings->in_game = true;
 				break;
-#endif
 
 			default:
 				// Encountering an undefined state, exit with an error code
