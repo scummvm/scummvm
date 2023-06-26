@@ -38,9 +38,9 @@ namespace Scumm {
 
 /* Game enhancements */
 enum {
-	kEnhancementsBugs = 0x0001,
-	kEnhancementsGlitches = 0x0002,
-	kEnhancementsContent = 0x0004
+	kEnhancementsBugs = 1 << 0,
+	kEnhancementsGlitches = 1 << 1,
+	kEnhancementsContent = 1 << 2
 };
 
 /**
