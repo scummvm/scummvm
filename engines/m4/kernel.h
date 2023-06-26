@@ -30,6 +30,8 @@ namespace M4 {
 #define CACHE_NOT_OVERRIDE_BY_FLAG_PARSE 2
 
 struct Kernel {
+	bool hag_mode = true;
+
 	uint32 	clock = 0;						// Current game timing clock
 	int32 trigger = 0;						// Game trigger code, if any
 	int32 letter_box_x = 0;
@@ -64,7 +66,6 @@ struct Kernel {
 	bool start_up_with_dbg_ws = false;
 	bool use_debug_monitor = false;
 	bool use_log_file = false;
-	bool hag_mode = false;
 	bool track_open_close = false;
 
 	size_t mem_avail() const { return 7999999; }

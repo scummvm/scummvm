@@ -504,7 +504,7 @@ M4sprite *CreateSprite(MemHandle resourceHandle, int32 handleOffset, int32 index
 	return mySprite;
 }
 
-int32 LoadSpriteSeries(const char *assetName, Handle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette) {
+int32 LoadSpriteSeries(const char *assetName, MemHandle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette) {
 	MemHandle workHandle;
 	int32 celsSize, *celsPtr, *palPtr;
 	char *mainAssetPtr, *endOfAssetBlock, *parseAssetPtr;
@@ -514,7 +514,7 @@ int32 LoadSpriteSeries(const char *assetName, Handle *seriesHandle, int32 *celsO
 	// The WS loader is not involved with this procedure.
 
 	// Load in the sprite series
-	if ((workHandle = rget(assetName, &assetSize)) == NULL)
+	if ((workHandle = rget(assetName, &assetSize)) == nullptr)
 		error_show(FL, 'FNF!', "Sprite series: %s", assetName);
 
 	HLock(workHandle);
@@ -528,7 +528,7 @@ int32 LoadSpriteSeries(const char *assetName, Handle *seriesHandle, int32 *celsO
 		error_show(FL, 'WSLP', "series: %s", assetName);
 	}
 
-	//store the handle and offsets
+	// Store the handle and offsets
 	*seriesHandle = workHandle;
 	*celsOffset = (int32)celsPtr - (int32)mainAssetPtr;
 	*palOffset = (int32)palPtr - (int32)mainAssetPtr;
@@ -538,7 +538,7 @@ int32 LoadSpriteSeries(const char *assetName, Handle *seriesHandle, int32 *celsO
 	return celsSize;
 }
 
-int32 LoadSpriteSeriesDirect(const char *assetName, Handle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette) {
+int32 LoadSpriteSeriesDirect(const char *assetName, MemHandle *seriesHandle, int32 *celsOffset, int32 *palOffset, RGB8 *myPalette) {
 	MemHandle workHandle;
 	Common::File f;
 	int32 celsSize, *celsPtr, *palPtr;
@@ -792,7 +792,7 @@ bool ws_GetSSMaxWH(MemHandle ssHandle, int32 ssOffset, int32 *maxW, int32 *maxH)
 
 	// Parameter verification
 	if ((!ssHandle) || (!*ssHandle)) {
-		ws_LogErrorMsg(FL, "NULL Handle given.");
+		ws_LogErrorMsg(FL, "nullptr Handle given.");
 		return false;
 	}
 
