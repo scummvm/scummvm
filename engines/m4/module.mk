@@ -33,6 +33,9 @@ MODULE_OBJS = \
 	gui/gui_mouse.o \
 	gui/gui_sys.o \
 	gui/gui_vmng.o \
+	gui/gui_vmng_core.o \
+	gui/gui_vmng_rectangles.o \
+	gui/gui_vmng_screen.o \
 	mem/mem.o \
 	mem/memman.o \
 	mem/reloc.o \

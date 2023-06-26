@@ -787,4 +787,32 @@ static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char 
 	return *celsSize;
 }
 
+bool ws_GetSSMaxWH(MemHandle ssHandle, int32 ssOffset, int32 *maxW, int32 *maxH) {
+	int32 *celsPtr;
+
+	// Parameter verification
+	if ((!ssHandle) || (!*ssHandle)) {
+		ws_LogErrorMsg(FL, "NULL Handle given.");
+		return false;
+	}
+
+	// Lock the handle, and get the cels source
+	HLock(ssHandle);
+	celsPtr = (int32 *)((int32)*ssHandle + ssOffset);
+
+	// Return the values
+	if (maxW) {
+		*maxW = celsPtr[CELS_SS_MAX_W];
+	}
+
+	if (maxH) {
+		*maxH = celsPtr[CELS_SS_MAX_H];
+	}
+
+	// unlock the handle
+	HUnLock(ssHandle);
+
+	return true;
+}
+
 } // End of namespace M4
