@@ -2048,6 +2048,131 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
+	// Simon the Sorcerer 1 - 25th Anniversary Edition - English CD
+	{
+		{
+			"simon1",
+			"25th Anniversary Edition",
+
+			{
+				{ "gamepc",			GAME_BASEFILE,	"a21272b3c51ebd18bcbfe88715340924", 36191},
+				{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+				{ "simon.gme",		GAME_GMEFILE,	"b1b18d0731b64c0738c5cc4a2ee792fc", 7030377},
+				{ "stripped.txt",	GAME_STRFILE,	"a27e87a9ba21212d769804b3df47bfb2", 252},
+				{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_CD,
+			GUIO3(GUIO_NOSUBTITLES, GAMEOPTION_WINDOWS_TEMPOS, GAMEOPTION_DISABLE_FADE_EFFECTS)
+		},
+
+		GType_SIMON1,
+		GID_SIMON1,
+		GF_TALKIE
+	},
+
+	// Simon the Sorcerer 1 - 25th Anniversary Edition - Spanish CD
+	{
+		{
+			"simon1",
+			"25th Anniversary Edition",
+
+			{
+				{ "gamepc",			GAME_BASEFILE,	"71adc00b0ee14a59ef4f969f2f52829d", 37877},
+				{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+				{ "simon.gme",		GAME_GMEFILE,	"eff2774a73890b9eac533db90cd1afa1", 7030485},
+				{ "stripped.txt",	GAME_STRFILE,	"9d31bef42db1a8abe4e9f368014df1d5", 252},
+				{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
+				AD_LISTEND
+			},
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO3(GAMEOPTION_OPL3_MODE, GAMEOPTION_DOS_TEMPOS, GAMEOPTION_DISABLE_FADE_EFFECTS)
+		},
+
+		GType_SIMON1,
+		GID_SIMON1,
+		GF_TALKIE
+	},
+
+	// Simon the Sorcerer 1 - 25th Anniversary Edition - French CD
+	{
+		{
+			"simon1",
+			"25th Anniversary Edition",
+
+			{
+				{ "gamepc",			GAME_BASEFILE,	"226e152e0d2333d46c091a0b71de84f0", 39354},
+				{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+				{ "simon.gme",		GAME_GMEFILE,	"638049fa5d41b81fb6fb11671721b871", 7041803},
+				{ "stripped.txt",	GAME_STRFILE,	"ef51ac74c946881ae4d7ca66cc7a0d1e", 252},
+				{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO3(GAMEOPTION_OPL3_MODE, GAMEOPTION_DOS_TEMPOS, GAMEOPTION_DISABLE_FADE_EFFECTS)
+		},
+
+		GType_SIMON1,
+		GID_SIMON1,
+		GF_TALKIE
+	},
+
+	// Simon the Sorcerer 1 - 25th Anniversary Edition - Hebrew CD Subtitled
+	{
+		{
+			"simon1",
+			"25th Anniversary Edition",
+
+			{
+				{ "gamepc",			GAME_BASEFILE,	"c5a1fe539d96e22e12b7b6e2576090ad", 34376},
+				{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+				{ "simon.gme",		GAME_GMEFILE,	"a34b2c8642f2e3676d7088b5c8b3e884", 6976948},
+				{ "stripped.txt",	GAME_STRFILE,	"9d31bef42db1a8abe4e9f368014df1d5", 252},
+				{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
+				AD_LISTEND
+			},
+			Common::HE_ISR,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO3(GAMEOPTION_OPL3_MODE, GAMEOPTION_DOS_TEMPOS, GAMEOPTION_DISABLE_FADE_EFFECTS)
+		},
+
+		GType_SIMON1,
+		GID_SIMON1,
+		GF_TALKIE
+	},
+
+	// Simon the Sorcerer 1 - 25th Anniversary Edition - Italian CD
+	{
+		{
+			"simon1",
+			"25th Anniversary Edition",
+
+			{
+				{ "gamepc",			GAME_BASEFILE,	"6fd37fefa04315fdd5889e52e4c01731", 37840},
+				{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+				{ "simon.gme",		GAME_GMEFILE,	"52e315e0e02feca86d15cc82e3306b6c", 7035767},
+				{ "stripped.txt",	GAME_STRFILE,	"9d31bef42db1a8abe4e9f368014df1d5", 252},
+				{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
+				AD_LISTEND
+			},
+			Common::IT_ITA,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO3(GAMEOPTION_OPL3_MODE, GAMEOPTION_DOS_TEMPOS, GAMEOPTION_DISABLE_FADE_EFFECTS)
+		},
+
+		GType_SIMON1,
+		GID_SIMON1,
+		GF_TALKIE
+	},
+
 	// Simon the Sorcerer 2 - English DOS Floppy
 	{
 		{
