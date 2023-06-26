@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-06-25 20:50+0000\n"
-"PO-Revision-Date: 2023-06-24 14:14+0000\n"
+"PO-Revision-Date: 2023-06-26 13:56+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -4367,7 +4367,7 @@ msgstr "Λειτουργία click-and-drag με το ποντίκι"
 
 #: backends/platform/ios7/ios7_options.mm:71
 msgid "Show keyboard function bar"
-msgstr ""
+msgstr "Εμφάνιση μπάρας λειτουργίας πληκτρολογίου"
 
 #: backends/platform/ios7/ios7_options.mm:73
 msgid "Controls Help"
