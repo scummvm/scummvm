@@ -202,6 +202,9 @@ void Image::Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &
 	Graphics::ManagedSurface s;
 	s.copyFrom(texture->getSubArea(srcRect));
 
+	if (s.w < 1 || s.h < 1)
+		return;
+
 	Graphics::Surface *rotated_surf = nullptr;
 
 	switch(flip) {
