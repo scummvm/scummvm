@@ -79,6 +79,7 @@ public:
 	Rails_Globals _rails;
 	Catalog _catalog;
 	MouseInfo _MouseState;
+	Item_Globals _items;
 
 	bool _cheat_keys_enabled = false;
 	Font *_system_font = nullptr;
