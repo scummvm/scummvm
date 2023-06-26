@@ -29,6 +29,7 @@
  */
 
 #include "crab/game.h"
+#include "crab/backInserter.h"
 
 namespace Crab {
 
@@ -157,8 +158,8 @@ bool Game::LoadLevel(const Common::String &id, int player_x, int player_y) {
 void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {
 	g_engine->_mouse->HandleEvents(Event);
 
-//	if (GameDebug)
-//		debug_console.HandleEvents(Event);
+	//	if (GameDebug)
+	//		debug_console.HandleEvents(Event);
 
 	if (!debug_console.RestrictInput()) {
 		if (state == STATE_LOSE_MENU) {
@@ -661,7 +662,16 @@ void Game::ApplyResult(LevelResult result) {
 // Purpose: Save/load game
 //------------------------------------------------------------------------
 void Game::LoadState(const Common::String &filename) {
-	XMLDoc conf(filename);
+	Common::InSaveFile *file = g_engine->getSaveFileManager()->openForLoading(filename);
+
+	uint64 len = file->size();
+	uint8 *data = new uint8[len + 1];
+	data[len] = '\0';
+
+	file->read(data, len);
+
+	XMLDoc conf(data);
+
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("save");
 		if (NodeValid(node)) {
@@ -699,9 +709,6 @@ void Game::LoadState(const Common::String &filename) {
 // Purpose: Write game state to file
 //------------------------------------------------------------------------
 void Game::SaveState(const Common::String &filename, const bool &overwrite) {
-	warning("STUB: Game::SaveState()");
-
-#if 0
 	rapidxml::xml_document<char> doc;
 
 	// xml declaration
@@ -761,8 +768,16 @@ void Game::SaveState(const Common::String &filename, const bool &overwrite) {
 	root->append_node(child_level);
 
 	Common::String xml_as_string;
-	rapidxml::print(std::back_inserter(xml_as_string), doc);
+	rapidxml::print(Crab::backInserter(xml_as_string), doc);
 
+	Common::String full = FullPath(filename);
+
+	Common::OutSaveFile *outSaveFile = g_engine->getSaveFileManager()->openForSaving(full);
+	outSaveFile->writeString(xml_as_string);
+
+	delete outSaveFile;
+
+#if 0
 	Common::String fullpath = FullPath(filename);
 
 	// We don't check for duplicates for auto-saves and iron man saves
