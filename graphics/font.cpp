@@ -511,8 +511,8 @@ TextAlign convertTextAlignH(TextAlign alignH, bool rtl) {
 #define wholedivide(x, y)	(((x)+((y)-1))/(y))
 
 static void countupScore(int *dstGray, int x, int y, int bbw, int bbh, float scale) {
-	int newbbw = bbw * scale;
-	int newbbh = bbh * scale;
+	int newbbw = (int)(roundf((float)bbw * scale));
+	int newbbh = (int)(roundf((float)bbh * scale));
 	int x_ = x * newbbw;
 	int y_ = y * newbbh;
 	int x1 = x_ + newbbw;

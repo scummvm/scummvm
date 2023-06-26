@@ -774,10 +774,10 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 	if (src->_data.boxes) {
 		BdfBoundingBox *boxes = new BdfBoundingBox[data.numCharacters];
 		for (int i = 0; i < data.numCharacters; ++i) {
-			boxes[i].width = (int)(((float)src->_data.boxes[i].width * scale));
-			boxes[i].height = (int)(((float)src->_data.height * scale));
-			boxes[i].xOffset = (int)(((float)src->_data.boxes[i].xOffset * scale));
-			boxes[i].yOffset = (int)(((float)src->_data.boxes[i].yOffset * scale));
+			boxes[i].width = (int)(roundf((float)src->_data.boxes[i].width * scale));
+			boxes[i].height = (int)(roundf((float)src->_data.height * scale));
+			boxes[i].xOffset = (int)(roundf((float)src->_data.boxes[i].xOffset * scale));
+			boxes[i].yOffset = (int)(roundf((float)src->_data.boxes[i].yOffset * scale));
 		}
 		data.boxes = boxes;
 	} else {
@@ -808,7 +808,7 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 			int grayLevel = box.height * box.width / 3;
 			int dstPitch = (box.width + 7) / 8 ;
 			const int bytes = dstPitch * box.height;
-			bitmaps[i] = new byte[bytes];
+			bitmaps[i] = new byte[bytes + 1];
 
 			int srcBoxWidth = 0;
 			if (src->_data.boxes) {
@@ -816,7 +816,7 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 			} else {
 				srcBoxWidth = src->_data.defaultBox.width;
 			}
-			src->scaleSingleGlyph(&srcSurf, dstGray, dstGraySize, box.width, box.height, 0, box.yOffset, grayLevel, i + src->_data.firstCharacter,
+			src->scaleSingleGlyph(&srcSurf, dstGray, dstGraySize, box.width, box.height, srcBox.xOffset,  srcBox.yOffset, grayLevel, i + src->_data.firstCharacter,
 								src->_data.height, srcBoxWidth, scale);
 
 			byte *ptr = bitmaps[i];
@@ -824,7 +824,7 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 				byte *srcd = (byte *)srcSurf.getBasePtr(0, y);
 				byte *dst = ptr;
 				byte b = 0;
-				for (int x = 0; x < box.width; x++, srcd++) {
+				for (int x = 0; x < dstPitch * 8; x++, srcd++) {
 					b <<= 1;
 					if (*srcd == 1) {
 						b |= 1;
@@ -834,17 +834,13 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 						b = 0;
 					}
 				}
-				if (((box.width - 1) % 8)) {
-					b <<= 7 - ((box.width - 1) % 8);
-					*dst = b;
-				}
 				ptr += dstPitch;
 #if DRAWDEBUG
 				if (i == ccc) {
 					int *grayPtr = dstGray;
 					debugN("--> %d ", grayLevel);
 					grayPtr = &dstGray[y * box.width];
-					for (int x = 0; x < ; box.widthx++, grayPtr++)
+					for (int x = 0; x < box.width; x++, grayPtr++)
 						debugN("%c", *grayPtr > grayLevel ? '@' : '_');
 					debugN("\n");
 					debugN("***");
