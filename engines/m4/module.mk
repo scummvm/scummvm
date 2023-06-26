@@ -32,6 +32,7 @@ MODULE_OBJS = \
 	graphics/graphics.o \
 	gui/gui_buffer.o \
 	gui/gui_dialog.o \
+	gui/gui_item.o \
 	gui/gui_mouse.o \
 	gui/gui_sys.o \
 	gui/gui_vmng.o \

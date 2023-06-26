@@ -34,6 +34,7 @@
 #include "m4/fileio/sys_file.h"
 #include "m4/graphics/gr_color.h"
 #include "m4/graphics/gr_font.h"
+#include "m4/gui/gui_item.h"
 #include "m4/gui/gui_mouse.h"
 #include "m4/gui/gui_univ.h"
 #include "m4/mem/memman.h"
