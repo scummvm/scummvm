@@ -75,6 +75,19 @@ struct Item {
 	int32 tag;
 };
 
+struct Item_Globals {
+	char *_origPrompt;
+	char *_undoPrompt;
+	char *_undoAux;
+	char *_undoAux2;
+	Item *_currTextField;
+
+	int32 _buttonWidth;
+	int32 _buttonHeight;
+
+	char _clipBoard[100];
+};
+
 extern bool InitItems(void);
 extern Item *Item_create(Item *parent, enum ItemType type, int32 tag, M4CALLBACK cb);
 extern void Item_destroy(Item *myItem);
