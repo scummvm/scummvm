@@ -54,5 +54,6 @@
 
 #define RAPIDXML_NO_EXCEPTIONS
 #include "crab/rapidxml/rapidxml.hpp"
+#include "crab/rapidxml/rapidxml_print.hpp"
 
 #endif // CRAB_COMMON_HEADER_H
