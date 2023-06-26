@@ -51,9 +51,7 @@ class GameSaveMenu : public FileMenu<SaveFileData> {
 	// The index of the selected button
 	int index;
 
-#if 0
-	void AddButton(boost::filesystem::path p, unsigned int &slot_index, unsigned int &menu_index);
-#endif
+	void AddButton(const Common::String &p, unsigned int &slot_index, unsigned int &menu_index);
 
 public:
 	GameSaveMenu() {
