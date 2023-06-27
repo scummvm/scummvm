@@ -48,6 +48,7 @@ Common::FSNode resolvePartialPathWithFuzz(Common::String &path, Common::FSNode &
 Common::Path nodeToPath(Common::FSNode &node);
 Common::Path findPath(Common::String &path, bool currentFolder = true, bool searchPaths = true, bool directory = false);
 Common::Path findMoviePath(Common::String &path, bool currentFolder = true, bool searchPaths = true);
+Common::Path findAudioPath(Common::String &path, bool currentFolder = true, bool searchPaths = true);
 
 
 bool hasExtension(Common::String filename);
