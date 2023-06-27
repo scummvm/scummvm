@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-06-25 20:50+0000\n"
-"PO-Revision-Date: 2023-06-23 12:36+0000\n"
+"PO-Revision-Date: 2023-06-27 09:26+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -4322,7 +4322,7 @@ msgstr "Modalità mouse-clicca-e-trascina"
 
 #: backends/platform/ios7/ios7_options.mm:71
 msgid "Show keyboard function bar"
-msgstr ""
+msgstr "Mostra barra funzioni della tastiera"
 
 #: backends/platform/ios7/ios7_options.mm:73
 msgid "Controls Help"
