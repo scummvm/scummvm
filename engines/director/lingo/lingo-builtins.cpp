@@ -2561,17 +2561,7 @@ void LB::b_immediateSprite(int nargs) {
 		Datum state = g_lingo->pop();
 		Datum sprite = g_lingo->pop();
 
-		Sprite *sp = sc->getSpriteById(sprite.asInt());
 		if ((uint)sprite.asInt() < sc->_channels.size()) {
-			if (sc->getNextFrame() && !sp->_immediate) {
-				// same as puppetSprite
-				// Channel *channel = sc->getChannelById(sprite.asInt());
-				// channel->replaceSprite(sc->_frames[sc->getNextFrame()]->_sprites[sprite.asInt()]);
-				// channel->_dirty = true;
-				
-				warning("STUB: LB::b_immediateSprite(): Fix logic here for next sprite");
-			}
-
 			sc->getSpriteById(sprite.asInt())->_immediate = (bool)state.asInt();
 		} else {
 			warning("b_immediateSprite: sprite index out of bounds");
@@ -2602,19 +2592,8 @@ void LB::b_puppetSprite(int nargs) {
 		Datum state = g_lingo->pop();
 		Datum sprite = g_lingo->pop();
 
-		Sprite *sp = sc->getSpriteById(sprite.asInt());
 		if ((uint)sprite.asInt() < sc->_channels.size()) {
-			if (sc->getNextFrame() && !sp->_puppet) {
-				// WORKAROUND: If a frame update is queued, update the sprite to the
-				// sprite in new frame before setting puppet (Majestic).
-				// Channel *channel = sc->getChannelById(sprite.asInt());
-				// channel->replaceSprite(sc->_frames[sc->getNextFrame()]->_sprites[sprite.asInt()]);
-				// channel->_dirty = true;
-
-				warning("STUB: LB::b_puppetSprite(): Fix logic here for next sprite");
-			}
-
-			sc->getSpriteById(sprite.asInt())->_puppet = (bool)state.asInt();
+			 sc->getSpriteById(sprite.asInt())->_puppet = (bool)state.asInt();
 		} else {
 			warning("b_puppetSprite: sprite index out of bounds");
 		}
