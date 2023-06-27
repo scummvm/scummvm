@@ -50,6 +50,7 @@
 	softKeyboard = keyboard;
 
 	[self setAutocorrectionType:UITextAutocorrectionTypeNo];
+	[self setSpellCheckingType:UITextSpellCheckingTypeNo];
 	[self setAutocapitalizationType:UITextAutocapitalizationTypeNone];
 	[self setEnablesReturnKeyAutomatically:NO];
 #if TARGET_OS_IOS
