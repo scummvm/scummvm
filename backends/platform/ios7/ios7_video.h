@@ -48,7 +48,9 @@ uint getSizeNextPOT(uint size);
 	NSLock *_eventLock;
 	SoftKeyboard *_keyboardView;
 	Common::List<GameController*> _controllers;
-
+#if TARGET_OS_IOS
+	UIInterfaceOrientation _currentOrientation;
+#endif
 	UIBackgroundTaskIdentifier _backgroundSaveStateTask;
 
 	EAGLContext *_mainContext;
