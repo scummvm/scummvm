@@ -89,6 +89,8 @@ struct ScriptPatch {
 	// Garbage at end of script
 	{"warlock", nullptr, kPlatformMacintosh, "DATA:BELSHAZZAR:STELLA:ORIGIN", kScoreScript, 12, DEFAULT_CAST_LIB,
 			2, "Frames 1 to 1", ""},
+	{"warlock", nullptr, kPlatformMacintosh, "DATA:BELSHAZZAR:STELLA:ORIGIN", kScoreScript, 13, DEFAULT_CAST_LIB,
+			2, "Frames 1 to 1", ""},
 
 	// Garbage at end of script
 	{"warlock", nullptr, kPlatformMacintosh, "DATA:WARLOCKSHIP:HangHallAft", kScoreScript, 7, DEFAULT_CAST_LIB,
