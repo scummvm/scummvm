@@ -337,4 +337,77 @@ int WinFont::getStyle() {
 	return style;
 }
 
+WinFont *WinFont::scaleFont(const WinFont *src, int newSize) {
+	if (!src) {
+		warning("WinFont::scaleFont(): Empty font reference in scale font");
+		return nullptr;
+	}
+
+	if (src->getFontHeight() == 0) {
+		warning("WinFont::scaleFont(): Requested to scale 0 size font");
+		return nullptr;
+	}
+
+	WinFont *scaledFont = new WinFont();
+
+	Graphics::Surface srcSurf;
+	srcSurf.create(MAX(src->getFontHeight() * 2, newSize * 2), MAX(src->getFontHeight() * 2, newSize * 2), PixelFormat::createFormatCLUT8());
+	int dstGraySize = newSize * 20 * newSize;
+	int *dstGray = (int *)malloc(dstGraySize * sizeof(int));
+
+	float scale = (float)newSize / (float)src->getFontHeight();
+
+	scaledFont->_pixHeight = (int)(roundf((float)src->_pixHeight * scale));
+	scaledFont->_maxWidth = (int)(roundf((float)src->_maxWidth * scale));
+	scaledFont->_ascent = src->_ascent;
+	scaledFont->_firstChar = src->_firstChar;
+	scaledFont->_lastChar = src->_lastChar;
+	scaledFont->_defaultChar = src->_defaultChar;
+	scaledFont->_italic = src->_italic;
+	scaledFont->_strikethrough = src->_strikethrough;
+	scaledFont->_underline = src->_underline;
+	scaledFont->_weight = src->_weight;
+	scaledFont->_name = Common::String(src->_name);
+
+	scaledFont->_glyphCount = src->_glyphCount;
+
+	GlyphEntry *glyphs = new GlyphEntry[src->_glyphCount];
+	for (int i = 0; i < src->_glyphCount; i++) {
+		glyphs[i].charWidth = (int)(roundf((float)src->_glyphs[i].charWidth * scale));
+		glyphs[i].offset = src->_glyphs[i].offset;
+
+		int boxWidth = glyphs[i].charWidth;
+		int boxHeight = scaledFont->_pixHeight;
+		int grayLevel = (boxWidth * boxHeight) / 3;
+
+		byte *bitmap = new byte[boxWidth * boxHeight];
+		memset(bitmap, 0, boxWidth * boxHeight);
+
+		// Scale single character
+		src->scaleSingleGlyph(&srcSurf, dstGray, dstGraySize, boxWidth, boxHeight, 0, 0, grayLevel, i + src->_firstChar,
+		                      src->_pixHeight, src->_glyphs[i].charWidth, scale);
+
+		// Convert back to bytes representation
+		byte *ptr = bitmap;
+		for (int y = 0; y < boxHeight; y++) {
+			byte *srcd = (byte *)srcSurf.getBasePtr(0, y);
+			byte *dst = ptr;
+
+			for (int x = 0; x < boxWidth; x++, srcd++) {
+				*dst++ = *srcd;
+			}
+
+			ptr += boxWidth;
+		}
+
+		glyphs[i].bitmap = bitmap;
+	}
+	scaledFont->_glyphs = glyphs;
+
+	free(dstGray);
+	srcSurf.free();
+
+	return (WinFont *)scaledFont;
+}
+
 } // End of namespace Graphics

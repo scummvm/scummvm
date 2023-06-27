@@ -70,6 +70,7 @@ public:
 	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 	int getStyle();
 
+	static WinFont *scaleFont(const WinFont *src, int newSize);
 private:
 	bool loadFromEXE(Common::WinResources *exe, const Common::String &fileName, const WinFontDirEntry &dirEntry);
 
