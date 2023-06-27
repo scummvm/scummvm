@@ -28,8 +28,12 @@ jobs:
     env:
       CONFIGURATION: Debug
       PLATFORM: ${{ matrix.platform }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      VCPKG_FEATURE_FLAGS: dependencygraph
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
       VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
+    permissions:
+      contents: write # For dependencygraph
     steps:
       - name: Checkout
         uses: actions/checkout@v3
