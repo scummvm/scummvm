@@ -23,23 +23,31 @@
 #define M4_GRAPHICS_GR_BUFF_H
 
 #include "m4/m4_types.h"
+#include "m4/mem/reloc.h"
 
 namespace M4 {
 
 class GrBuff {
+protected:
+	void alloc_pixmap();
+
+	Buffer dummy;
+	MemHandle pixmap;
+public:
+	int32 w, h, x_off, y_off, pitch, height;
+
 public:
 	GrBuff(int32 _w, int32 _h);
 	GrBuff(int32 _w, int32 _h, int32 _x_off, int32 _y_off, int32 _pitch, int32 _height);
 	virtual ~GrBuff();
 
-	void *operator new(size_t sz);
-	void operator delete(void *ptr, size_t);
-
-	// note: get_buffer will return the whole pixmap, not the
-	// subrectangle specified via x_off, y_off, w, h, and pitch.
-	// get_buffer will lock the pixmap, unlock it after use, SVP.
-	// DO NOT FREE THE RETURNED BUFFER!
-
+	/**
+	 * Get buffer pointer
+	 * @remarks		Get_buffer will return the whole pixmap, not the
+	 * subrectangle specified via x_off, y_off, w, h, and pitch.
+	 * get_buffer will lock the pixmap, unlock it after use, SVP.
+	 * DO NOT FREE THE RETURNED BUFFER!
+	 */
 	Buffer *get_buffer();
 
 	uint8 *get_pixmap();
@@ -48,16 +56,6 @@ public:
 	void lock();
 	void release();
 	void refresh_video(int32 scrnX, int32 scrnY, int32 x1, int32 y1, int32 x2, int32 y2);
-
-	int32 width, Height, x_off, y_off, stride, buffer_lines;
-
-	int32 lock_count;
-
-protected:
-	void alloc_pixmap();
-
-	Buffer dummy;
-	Handle pixmap;
 };
 
 extern int32 gr_buffer_free(Buffer *buf);

@@ -31,6 +31,10 @@
 
 namespace M4 {
 
+enum {
+	TS_GIVEN = 0, TS_JUST_LEFT, TS_JUST_RIGHT, TS_CENTRE
+};
+
 struct Dialog {
 	int32   w, h;
 	int32   num_items;
@@ -55,6 +59,15 @@ struct TextScrn {
 	GrBuff *textScrnBuffer;
 };
 
+struct Dialog_Globals {
+	bool okButton = false;
+	//event handler vars
+	bool movingScreen = false;
+	Item *clickItem = nullptr;
+	Item *doubleClickItem = nullptr;
+	char listboxSearchStr[80] = { 0 };
+};
+
 extern bool gui_dialog_init();
 extern void gui_dialog_shutdown();
 
@@ -72,14 +85,14 @@ extern void Dialog_SetDefault(Dialog *d, int32 tag);
 extern bool Dialog_SetPressed(Dialog *d, int32 tag);
 
 //MESSAGE TYPE SUPPORT
-extern bool Dialog_Add_Message(Dialog *d, int32 x, int32 y, char *prompt, int32 tag);
+extern bool Dialog_Add_Message(Dialog *d, int32 x, int32 y, const char *prompt, int32 tag);
 
 //PICTURE TYPE SUPPORT
 extern bool Dialog_Add_Picture(Dialog *d, int32 x, int32 y, Buffer *myBuff, int32 tag);
 
 //BUTTON TYPE SUPPORT
-extern bool Dialog_Add_Button(Dialog *d, int32 x, int32 y, char *prompt, M4CALLBACK cb, int32 tag);
-extern bool Dialog_Add_RepeatButton(Dialog *d, int32 x, int32 y, char *prompt, M4CALLBACK cb, int32 tag);
+extern bool Dialog_Add_Button(Dialog *d, int32 x, int32 y, const char *prompt, M4CALLBACK cb, int32 tag);
+extern bool Dialog_Add_RepeatButton(Dialog *d, int32 x, int32 y, const char *prompt, M4CALLBACK cb, int32 tag);
 
 //LIST TYPE SUPPORT
 extern bool Dialog_Add_List(Dialog *d, int32 x1, int32 y1, int32 x2, int32 y2, M4CALLBACK cb, int32 tag);

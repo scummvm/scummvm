@@ -29,6 +29,7 @@
 namespace M4 {
 
 static void vmng_black_out_video(int32 x1, int32 y1, int32 x2, int32 y2);
+static bool MoveScreen(ScreenContext *myScreen, int32 parmX, int32 parmY, bool deltaMove);
 
 bool GetScreenCoords(void *scrnContent, int32 *x1, int32 *y1, int32 *x2, int32 *y2) {
 	ScreenContext *myScreen;
@@ -189,6 +190,107 @@ static void vmng_black_out_video(int32 x1, int32 y1, int32 x2, int32 y2) {
 	Common::Rect r(x1, y1, x2, y2);
 	screen->fillRect(r, 0);
 	g_system->unlockScreen();
+}
+
+bool AddScreenHotkey(void *scrnContent, int32 myKey, HotkeyCB callback) {
+	ScreenContext *myScreen;
+	Hotkey *myHotkey;
+
+	if ((myScreen = vmng_screen_find(scrnContent, nullptr)) == nullptr)
+		return false;
+
+	if ((myHotkey = (Hotkey *)mem_alloc(sizeof(Hotkey), "hotkey")) == nullptr)
+		return false;
+
+	myHotkey->myKey = myKey;
+	myHotkey->callback = callback;
+	myHotkey->next = myScreen->scrnHotkeys;
+	myScreen->scrnHotkeys = myHotkey;
+	return true;
+}
+
+bool RemoveScreenHotkey(void *scrnContent, int32 myKey) {
+	ScreenContext *myScreen;
+	Hotkey *myHotkey, *tempHotkey;
+	if ((myScreen = vmng_screen_find(scrnContent, nullptr)) == nullptr)
+		return false;
+
+	myHotkey = myScreen->scrnHotkeys;
+
+	if (myHotkey->myKey == myKey) {
+		myScreen->scrnHotkeys = myHotkey->next;
+		mem_free(myHotkey);
+
+	} else {
+		while (myHotkey->next && (myHotkey->next->myKey != myKey)) {
+			myHotkey = myHotkey->next;
+		}
+		if (myHotkey->next) {
+			tempHotkey = myHotkey->next;
+			myHotkey->next = tempHotkey->next;
+			mem_free(tempHotkey);
+		} else {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool MoveScreenAbs(ScreenContext *myScreen, int32 parmX, int32 parmY) {
+	return MoveScreen(myScreen, parmX, parmY, false);
+}
+
+bool MoveScreenDelta(ScreenContext *myScreen, int32 parmX, int32 parmY) {
+	return MoveScreen(myScreen, parmX, parmY, true);
+}
+
+static bool MoveScreen(ScreenContext *myScreen, int32 parmX, int32 parmY, bool deltaMove) {
+	int32 origX1, origY1, origX2, origY2;
+	if (!_G(vmng_Initted))
+		return false;
+
+	origX1 = myScreen->x1;
+	origY1 = myScreen->y1;
+	origX2 = myScreen->x2;
+	origY2 = myScreen->y2;
+	if (!deltaMove) {
+		parmX -= origX1;
+		parmY -= origY1;
+	}
+	if (!(myScreen->scrnFlags & SF_OFFSCRN)) {
+		if ((myScreen->x2 + parmX) > MAX_VIDEO_X) parmX = MAX_VIDEO_X - myScreen->x2;
+		else if ((myScreen->x1 + parmX) < 0) parmX = -myScreen->x1;
+		if ((myScreen->y2 + parmY) > MAX_VIDEO_Y) parmY = MAX_VIDEO_Y - myScreen->y2;
+		else if ((myScreen->y1 + parmY) < 0) parmY = -myScreen->y1;
+	}
+	if (!(parmX || parmY)) return false;
+	myScreen->x1 += parmX;
+	myScreen->y1 += parmY;
+	myScreen->x2 += parmX;
+	myScreen->y2 += parmY;
+	if (parmY > 0) {
+		RestoreScreens(origX1, origY1, origX2, myScreen->y1 - 1);
+		if (parmX > 0) {
+			RestoreScreens(origX1, myScreen->y1, myScreen->x1 - 1, origY2);
+		} else if (parmX < 0) {
+			RestoreScreens(myScreen->x2 + 1, myScreen->y1, origX2, origY2);
+		}
+	} else if (parmY < 0) {
+		RestoreScreens(origX1, myScreen->y2 + 1, origX2, origY2);
+		if (parmX > 0) {
+			RestoreScreens(origX1, origY1, myScreen->x1 - 1, myScreen->y2);
+		} else if (parmX < 0) {
+			RestoreScreens(myScreen->x2 + 1, origY1, origX2, myScreen->y2);
+		}
+	} else if (parmX > 0) {
+		RestoreScreens(origX1, origY1, myScreen->x1 - 1, origY2);
+	} else {
+		RestoreScreens(myScreen->x2 + 1, origY1, origX2, origY2);
+	}
+
+	RestoreScreens(myScreen->x1, myScreen->y1, myScreen->x2, myScreen->y2);
+	return true;
 }
 
 } // End of namespace M4

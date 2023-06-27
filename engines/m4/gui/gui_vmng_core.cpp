@@ -54,6 +54,8 @@
  *			WILL ALSO RESTORE THE MONITOR'S IMAGE, TAKING CARE OF A VIDEO REFRESH REQUIREMENTS.
  */
 
+#include "common/system.h"
+#include "graphics/surface.h"
 #include "m4/gui/gui_vmng.h"
 #include "m4/gui/gui_dialog.h"
 #include "m4/core/errors.h"
@@ -171,6 +173,32 @@ ScreenContext *vmng_screen_create(int32 x1, int32 y1, int32 x2, int32 y2, int32 
 	return myScreen;
 }
 
+void vmng_screen_dispose(void *scrnContent) {
+	ScreenContext *myScreen;
+	Hotkey *myHotkeys, *tempHotkey;
+	if ((myScreen = ExtractScreen(scrnContent, SCRN_ANY)) == NULL) return;
+	RestoreScreens(myScreen->x1, myScreen->y1, myScreen->x2, myScreen->y2);
+	myHotkeys = myScreen->scrnHotkeys;
+	tempHotkey = myHotkeys;
+	while (tempHotkey) {
+		myHotkeys = myHotkeys->next;
+		mem_free(tempHotkey);
+		tempHotkey = myHotkeys;
+	}
+	mem_free_to_stash((void *)myScreen, _G(memtypeSCRN));
+}
+
+void vmng_screen_hide(void *scrnContent) {
+	ScreenContext *myScreen;
+	if ((myScreen = ExtractScreen(scrnContent, SCRN_ACTIVE)) == NULL) return;
+	RestoreScreens(myScreen->x1, myScreen->y1, myScreen->x2, myScreen->y2);
+	myScreen->behind = _G(inactiveScreens);
+	myScreen->infront = nullptr;
+	if (_G(inactiveScreens))
+		_G(inactiveScreens)->infront = myScreen;
+	_G(inactiveScreens) = myScreen;
+}
+
 void vmng_screen_show(void *scrnContent) {
 	ScreenContext *myScreen, *tempScreen;
 	if ((myScreen = ExtractScreen(scrnContent, SCRN_ANY)) == nullptr)
@@ -236,6 +264,11 @@ ScreenContext *vmng_screen_find(void *scrnContent, int32 *status) {
 	}
 
 	return myScreen;
+}
+
+void vmng_refresh_video(int32 scrnX, int32 scrnY, int32 x1, int32 y1, int32 x2, int32 y2, Buffer *srcBuffer) {
+	g_system->copyRectToScreen(srcBuffer->data, srcBuffer->stride, x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+	g_system->updateScreen();
 }
 
 /**

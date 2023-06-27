@@ -51,7 +51,7 @@ void gui_system_shutdown() {
 	}
 }
 
-void gui_system_event_handler(void) {
+void gui_system_event_handler() {
 	mausEvent newMouseEvent;
 
 	ScreenContext *myScreen;

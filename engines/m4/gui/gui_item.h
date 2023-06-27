@@ -53,6 +53,12 @@ enum ItemType {
 	MESSAGE, PICTURE, BUTTON, LISTBOX, TEXTFIELD, REPEAT_BUTTON, DIALOGBOX
 };
 
+enum {
+	LIST_BY_TAG = 0,
+	LIST_ALPH,
+	LIST_SEQUN
+};
+
 struct ListItem {
 	char   prompt[80];
 	int32  tag;
@@ -113,7 +119,7 @@ extern bool InitItems(void);
 extern Item *Item_create(Item *parent, enum ItemType type, int32 tag, M4CALLBACK cb);
 extern void Item_destroy(Item *myItem);
 extern void Item_empty_list(Item *myItem);
-extern Item *ItemAdd(Item *itemList, int32 x, int32 y, int32 w, int32 h, char *prompt, int32 tag,
+extern Item *ItemAdd(Item *itemList, int32 x, int32 y, int32 w, int32 h, const char *prompt, int32 tag,
 	ItemType type, M4CALLBACK cb, int32 promptMax);
 extern Item *ItemFind(Item *itemList, int32 tag);
 extern bool Item_SetViewBottom(Item *i);

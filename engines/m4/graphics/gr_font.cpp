@@ -29,8 +29,8 @@
 
 namespace M4 {
 
-#define font_width 2			 /* offset to width array */
-#define font_data 130		 /* offset to data array	*/
+#define font_width 2		/* offset to width array */
+#define font_data 130		/* offset to data array	*/
 #define STR_FONTSTRUCT "font struct"
 #define STR_FONTWIDTH "font widths"
 #define STR_FONTOFF "font offsets"
@@ -241,6 +241,100 @@ int32 gr_font_get_height() {
 		return -1;
 
 	return (int32)_G(font)->max_y_size;
+}
+
+
+int32 gr_font_write(Buffer *target, char *out_string, int32 x, int32 y, int32 w, int32 auto_spacing) {
+	if (!target || !out_string)
+		return x;
+
+	if (_G(custom_ascii_converter)) {			 // if there is a function to convert the extended ASCII characters
+		_G(custom_ascii_converter)(out_string);	 // call it with the string
+	}
+
+	int32 i, j;
+	int32 target_w;
+	if (w)
+		target_w = imath_min(target->W, x + w);
+	else
+		target_w = target->W;
+
+	x += 1; y += 1;
+	int32 skipTop = 0;
+	if (y < 0) {
+		skipTop = -y;
+		y = 0;
+	}
+
+	int32 height = imath_max(0, (int32)_G(font)->max_y_size - skipTop);
+	if (!height)
+		return x;
+
+	int32 bottom = y + height - 1;
+	if (bottom > (target->h - 1)) {
+		height -= imath_min((int32)height, (bottom - (target->h - 1)));
+	}
+
+	if (height <= 0)
+		return x;
+
+	byte *target_ptr = gr_buffer_pointer(target, x, y);
+	byte *prev_target_ptr = target_ptr;
+
+	int32 cursX = x;
+	Byte *widthArray = _G(font)->width;
+	Byte *fontPixData = _G(font)->pixData;
+	short *offsetArray = _G(font)->offset;
+
+	while (*out_string)
+	{
+		char c = (*out_string++) & (char)0x7f;
+		int32 wdth = widthArray[c];
+
+		// if width is zero, nothing to draw
+
+		if (wdth) {
+			if ((cursX + wdth) >= target_w) 			// if character doesn't fit in buffer, abort
+				return cursX;
+
+			int32 offset = offsetArray[c];
+			Byte *charData = &fontPixData[offset];
+
+			int32 bytesInChar = (_G(font)->width[c] >> 2) + 1; //bytesPer[wdth];	// 2 bits per pixel
+			if (skipTop)
+				charData += bytesInChar * skipTop;
+
+			for (i = 0; i < height; i++) {
+				for (j = 0; j < bytesInChar; j++) {
+					Byte workByte = *charData++;
+					if (workByte & 0xc0)
+						*target_ptr = font_colors[(workByte & 0xc0) >> 6];
+					target_ptr++;
+					if (workByte & 0x30)
+						*target_ptr = font_colors[(workByte & 0x30) >> 4];
+					target_ptr++;
+					if (workByte & 0xc)
+						*target_ptr = font_colors[(workByte & 0xc) >> 2];
+					target_ptr++;
+					if (workByte & 0x3)
+						*target_ptr = font_colors[workByte & 0x3];
+					target_ptr++;
+
+				} // end bytes per character line loop
+
+				target_ptr += target->stride - (bytesInChar << 2);
+
+			} // end for height loop
+
+			target_ptr = prev_target_ptr + wdth + auto_spacing; // one pixel space
+			prev_target_ptr = target_ptr;
+
+		} // end if there was a drawable character
+
+		cursX += w;
+	} // end while there is a character to draw loop
+
+	return(cursX);
 }
 
 Font *gr_font_load(const char *fontName) {
