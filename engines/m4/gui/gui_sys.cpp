@@ -24,8 +24,8 @@
 #include "m4/gui/gui_event.h"
 #include "m4/gui/gui_vmng.h"
 #include "m4/core/mouse.h"
-#include "m4/mouse/mickey.h"
-#include "m4/mouse/mouse_handler.h"
+#include "m4/events/mickey.h"
+#include "m4/events/mouse_handler.h"
 #include "m4/mem/memman.h"
 #include "m4/globals.h"
 

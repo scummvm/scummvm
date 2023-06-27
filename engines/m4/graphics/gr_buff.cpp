@@ -39,12 +39,22 @@ int32 gr_buffer_free(Buffer *buf) {
 	return false;
 }
 
-char *gr_buffer_pointer(Buffer *buf, int32 x, int32 y) {
+byte *gr_buffer_pointer(Buffer *buf, int32 x, int32 y) {
 	if (!buf || !buf->data || y < 0 || x < 0) {
 		error_show(FL, 'BUF!', "buffer_pointer x,y = %ld,%ld", x, y);
 		return 0;
 	}
-	return (char *)(buf->data + x + (y * buf->stride));
+
+	return (byte *)(buf->data + x + (y * buf->stride));
+}
+
+const byte *gr_buffer_pointer(const Buffer *buf, int32 x, int32 y) {
+	if (!buf || !buf->data || y < 0 || x < 0) {
+		error_show(FL, 'BUF!', "buffer_pointer x,y = %ld,%ld", x, y);
+		return 0;
+	}
+
+	return (byte *)(buf->data + x + (y * buf->stride));
 }
 
 int32 gr_buffer_init(Buffer *buf, char *name, int32 w, int32 h) {
@@ -64,7 +74,7 @@ int32 gr_buffer_init(Buffer *buf, char *name, int32 w, int32 h) {
 	return(true);
 }
 
-bool gr_buffer_rect_copy_2(Buffer *from, Buffer *to, int32 sx, int32 sy,
+bool gr_buffer_rect_copy_2(const Buffer *from, Buffer *to, int32 sx, int32 sy,
 	int32 dx, int32 dy, int32 w, int32 h) {
 	// stupid check for no data
 	if (!from || !to || !from->data || !to->data)
@@ -89,8 +99,8 @@ bool gr_buffer_rect_copy_2(Buffer *from, Buffer *to, int32 sx, int32 sy,
 		return true;
 
 	// initialize pointers
-	char *src = gr_buffer_pointer(from, sx, sy);
-	char *dest = gr_buffer_pointer(to, dx, dy);
+	const byte *src = gr_buffer_pointer(from, sx, sy);
+	byte *dest = gr_buffer_pointer(to, dx, dy);
 
 	// get stride
 	int32 sIncr = from->stride;
