@@ -44,6 +44,7 @@
 #include "director/lingo/xlibs/darkenscreen.h"
 #include "director/lingo/xlibs/developerStack.h"
 #include "director/lingo/xlibs/dialogsxobj.h"
+#include "director/lingo/xlibs/dirutil.h"
 #include "director/lingo/xlibs/dpwavi.h"
 #include "director/lingo/xlibs/dpwqtw.h"
 #include "director/lingo/xlibs/draw.h"
@@ -173,6 +174,7 @@ static struct XLibProto {
 	{ DarkenScreen::fileNames,			DarkenScreen::open,			DarkenScreen::close,		kXObj,					300 },	// D3
 	{ DeveloperStack::fileNames,		DeveloperStack::open,		DeveloperStack::close,		kXObj,					300 },	// D3
 	{ DialogsXObj::fileNames,			DialogsXObj::open,			DialogsXObj::close,			kXObj,					400 },	// D4
+	{ DirUtilXObj::fileNames,			DirUtilXObj::open,			DirUtilXObj::close,			kXObj,					400 },	// D4
 	{ DPwAVI::fileNames,				DPwAVI::open,				DPwAVI::close,				kXObj,					400 },	// D4
 	{ DPwQTw::fileNames,				DPwQTw::open,				DPwQTw::close,				kXObj,					400 },	// D4
 	{ DrawXObj::fileNames,				DrawXObj::open,				DrawXObj::close,			kXObj,					400 },	// D4
