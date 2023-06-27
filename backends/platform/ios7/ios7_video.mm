@@ -290,6 +290,9 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	self = [super initWithFrame: frame];
 
 	_backgroundSaveStateTask = UIBackgroundTaskInvalid;
+#if TARGET_OS_IOS
+	_currentOrientation = UIInterfaceOrientationUnknown;
+#endif
 
 	[self setupGestureRecognizers];
 
@@ -325,7 +328,12 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 		[_keyboardView setInputDelegate:self];
 		[self addSubview:[_keyboardView inputView]];
 		[self addSubview: _keyboardView];
-		[self showKeyboard];
+		if ([self getScreenHeight] > [self getScreenWidth]) {
+			// This will make sure the keyboard is shown in portrait
+			// mode on start of the application since the orientation
+			// handling is performed before the view finish its setup
+			[self showKeyboard];
+		}
 	}
 
 	[self adjustViewFrameForSafeArea];
@@ -344,7 +352,7 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 #ifdef __IPHONE_11_0
 	if ( @available(iOS 11, tvOS 11, *) ) {
 		CGRect screenSize = [[UIScreen mainScreen] bounds];
-		CGRect newFrame = screenSize;
+		CGRect newFrame = self.frame;
 #if TARGET_OS_IOS
 		UIEdgeInsets inset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets];
 		UIInterfaceOrientation orientation = UIInterfaceOrientationUnknown;
@@ -353,14 +361,32 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 		} else {
 			orientation = [[UIApplication sharedApplication] statusBarOrientation];
 		}
+
+		// The code below adjust the screen size according to what Apple calls
+		// the "safe area". It also cover the cases when the software keyboard
+		// is visible and has changed the frame height so the keyboard doesn't
+		// cover any part of the game screen.
+		if (orientation != _currentOrientation) {
+			// If the orientation is changed the keyboard will hide or show
+			// depending on the current orientation. The frame size must be
+			// "reset" again to "full" screen size dimension. The keyboard
+			// will then calculate the approriate height when becoming visible.
+			newFrame = screenSize;
+			_currentOrientation = orientation;
+		}
+		// Make sure the frame height (either full screen or resized due to
+		// visible keyboard) is within the safe area.
+		CGFloat safeAreaHeight = screenSize.size.height - inset.top;
+		CGFloat height = newFrame.size.height < safeAreaHeight ? newFrame.size.height : safeAreaHeight;
+
 		if ( orientation == UIInterfaceOrientationPortrait ) {
-			newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y + inset.top, screenSize.size.width, screenSize.size.height - inset.top);
+			newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y + inset.top, screenSize.size.width, height);
 		} else if ( orientation == UIInterfaceOrientationPortraitUpsideDown ) {
-			newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y, screenSize.size.width, screenSize.size.height - inset.top);
+			newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y, screenSize.size.width, height);
 		} else if ( orientation == UIInterfaceOrientationLandscapeLeft ) {
-			newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y, screenSize.size.width - inset.right, screenSize.size.height);
+			newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y, screenSize.size.width - inset.right, height);
 		} else if ( orientation == UIInterfaceOrientationLandscapeRight ) {
-			newFrame = CGRectMake(screenSize.origin.x + inset.left, screenSize.origin.y, screenSize.size.width - inset.left, screenSize.size.height);
+			newFrame = CGRectMake(screenSize.origin.x + inset.left, screenSize.origin.y, screenSize.size.width - inset.left, height);
 		}
 #endif
 		self.frame = newFrame;
@@ -371,6 +397,8 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 #ifdef __IPHONE_11_0
 // This delegate method is called when the safe area of the view changes
 -(void)safeAreaInsetsDidChange {
+	[super safeAreaInsetsDidChange];
+
 	[self adjustViewFrameForSafeArea];
 }
 #endif
@@ -606,6 +634,10 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 }
 
 - (void)applicationSuspend {
+	// Make sure to hide the keyboard when suspended. Else the frame
+	// sizing might become incorrect because the NotificationCenter
+	// sends keyboard notifications on resume.
+	[self hideKeyboard];
 	[self addEvent:InternalEvent(kInputApplicationSuspended, 0, 0)];
 }
 
