@@ -43,12 +43,6 @@ namespace M4 {
 #define STR_LIST "gui list item"
 #define STR_PROMPT "prompt"
 
-enum {
-	LIST_BY_TAG = 0,
-	LIST_ALPH,
-	LIST_SEQUN
-};
-
 // Interface sprites
 #define scrollUpWidth		11
 #define scrollUpHeight		12
@@ -444,7 +438,7 @@ static void CorrectItemWidthHeight(Item *item, int32 fontHeight) {
 	}
 }
 
-Item *ItemAdd(Item *itemList, int32 x, int32 y, int32 w, int32 h, char *prompt, int32 tag, enum ItemType type, M4CALLBACK cb, int32 promptMax) {
+Item *ItemAdd(Item *itemList, int32 x, int32 y, int32 w, int32 h, const char *prompt, int32 tag, enum ItemType type, M4CALLBACK cb, int32 promptMax) {
 	Item *item;
 	int32				fontHeight, listboxWidth, listboxHeight;
 	Font *myFont;
@@ -474,7 +468,8 @@ Item *ItemAdd(Item *itemList, int32 x, int32 y, int32 w, int32 h, char *prompt, 
 	case PICTURE:
 		item->myFont = nullptr;
 		item->prompt = nullptr;
-		item->aux = prompt;
+		// FIXME: Refactor out const_cast
+		item->aux = const_cast<char *>(prompt);
 		break;
 	case TEXTFIELD:
 		if ((int)strlen(prompt) > (promptMax + 1))
@@ -1221,8 +1216,8 @@ void SetTextBlockEnd(Item *myItem, int32 relXPos) {
 }
 
 static int32 CopyTextBlock(Item *myItem) {
-	int32		numOfCopiedChars = 0;
-	char *beginBlock, *endBlock;
+	int32 numOfCopiedChars = 0;
+	const char *beginBlock, *endBlock;
 
 	if (myItem->aux != myItem->aux2) {
 		if (myItem->aux < myItem->aux2) {
@@ -1243,7 +1238,8 @@ static int32 CopyTextBlock(Item *myItem) {
 
 static int32 DeleteTextBlock(Item *myItem) {
 	int32 numOfDeletedChars = 0;
-	char	tempBuf[80], *beginBlock, *endBlock;
+	char tempBuf[80];
+	char *beginBlock, *endBlock;
 
 	if (myItem->aux != myItem->aux2) {
 		Item_SaveTextFieldChange(myItem, true);

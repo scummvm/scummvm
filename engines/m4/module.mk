@@ -34,6 +34,7 @@ MODULE_OBJS = \
 	graphics/gr_pal.o \
 	graphics/gr_series.o \
 	graphics/graphics.o \
+	graphics/krn_pal.o \
 	gui/gui_buffer.o \
 	gui/gui_dialog.o \
 	gui/gui_item.o \

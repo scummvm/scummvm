@@ -21,10 +21,94 @@
 
 #include "m4/graphics/gr_buff.h"
 #include "m4/graphics/gr_pal.h"
+#include "m4/gui/gui_vmng_core.h"
 #include "m4/core/errors.h"
 #include "m4/mem/memman.h"
+#include "m4/term.h"
 
 namespace M4 {
+
+GrBuff::GrBuff(int32 _w, int32 _h) {
+	w = _w;
+	h = _h;
+	x_off = y_off = 0;
+	pitch = _w;
+	height = _h;
+	alloc_pixmap();
+}
+
+GrBuff::GrBuff(int32 _w, int32 _h, int32 _x_off, int32 _y_off, int32 _pitch, int32 _height) {
+	w = _w;
+	h = _h;
+	x_off = _x_off;
+	y_off = _y_off;
+	pitch = _pitch;
+	height = _height;
+	alloc_pixmap();
+}
+
+GrBuff::~GrBuff() {
+	if (pixmap)
+		DisposeHandle(pixmap);
+}
+
+void GrBuff::lock() {
+	if (!pixmap)
+		return;
+
+	HLock(pixmap);
+}
+
+void GrBuff::release() {
+	if (pixmap)
+		HUnLock(pixmap);
+}
+
+void GrBuff::alloc_pixmap() {
+	pixmap = NewHandle(pitch * height, "pixmap");
+	if (!pixmap) {
+		term_message("GrBuff::alloc_pixmap(): Trying to free up %ld bytes", pitch * height);
+		if (MakeMem(pitch * height, "pixmap"))
+		{
+			pixmap = NewHandle(pitch * height, "pixmap");
+			if (!pixmap)
+				error_show(FL, 15, "pixmap h:%ld w:%ld bytes:%ld", height, pitch, pitch * height);
+		} else
+			error_show(FL, 1, "GrBuff::alloc_pixmap() x, y: %ld %ld", pitch, height);
+	}
+	HLock(pixmap);
+	memset(*pixmap, __BLACK, pitch * height);
+	HUnLock(pixmap);
+}
+
+uint8 *GrBuff::get_pixmap() {
+	if (pixmap)
+	{
+		lock();
+		return (uint8 *)*pixmap;
+	}
+	return NULL;
+}
+
+Buffer *GrBuff::get_buffer() {
+	if (pixmap)
+	{
+		lock();
+		dummy.data = (uint8 *)*pixmap;
+		dummy.W = w;
+		dummy.h = h;
+		dummy.encoding = 0;
+		dummy.stride = pitch;
+
+		return &dummy;
+	}
+	return NULL;
+}
+
+void GrBuff::refresh_video(int32 scrnX, int32 scrnY, int32 x1, int32 y1, int32 x2, int32 y2) {
+	vmng_refresh_video(scrnX, scrnY, x1, y1, x2, y2, get_buffer());
+}
+
 
 int32 gr_buffer_free(Buffer *buf) {
 	buf->W = buf->h = buf->stride = 0;

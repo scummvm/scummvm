@@ -80,6 +80,7 @@ bool Globals::init() {
 		error_show(FL, 'FNF!', "stream script");
 
 	main_cold_data_init();
+	create_mouse_watch_dialog();
 	global_menu_system_init();
 
 	return true;
@@ -165,7 +166,7 @@ void Globals::game_systems_shutdown() {
 	f_stream_Shutdown();
 
 	term_message("mouse dialog be gone!");
-	DialogDestroy(mousePosDialog, NULL);
+	DialogDestroy(_mousePosDialog, NULL);
 
 	term_message("sounds stop");
 	midi_stop();
@@ -221,6 +222,11 @@ bool Globals::woodscript_init() {
 	return true;
 }
 
+void Globals::woodscript_shutdown() {
+	ShutdownWSAssets();
+	ws_Shutdown();
+}
+
 void Globals::grab_fonts() {
 	term_message("Grabbing fonts");
 
@@ -233,9 +239,41 @@ void Globals::grab_fonts() {
 	_font_misc = gr_font_load("FONTMISC.FNT");
 }
 
-void Globals::woodscript_shutdown() {
-	ShutdownWSAssets();
-	ws_Shutdown();
+void Globals::create_mouse_watch_dialog() {
+	int x_offset;
+
+	gr_font_set(_font_tiny);
+	_mousePosDialog = DialogCreateAbsolute(0, 380, 200, 480, 3 | SF_GET_MOUSE);
+	_showMousePos = false;
+	x_offset = 64;
+
+	Dialog_Add_Message(_mousePosDialog, 4, 4, "Scene:", 0);
+	Dialog_Add_Message(_mousePosDialog, x_offset, 4, "0", 1);
+
+	Dialog_Add_Message(_mousePosDialog, 4, 14, "Mouse:", 0);
+	Dialog_Add_Message(_mousePosDialog, x_offset, 14, "0", 2);
+	Dialog_Add_Message(_mousePosDialog, x_offset, 22, "0", 3);
+
+	Dialog_Add_Message(_mousePosDialog, 4, 32, "Player:", 0);
+	Dialog_Add_Message(_mousePosDialog, x_offset, 32, "0", 4);
+	Dialog_Add_Message(_mousePosDialog, x_offset, 40, "0", 5);
+
+	Dialog_Add_Message(_mousePosDialog, 4, 50, "Scale:", 0);
+	Dialog_Add_Message(_mousePosDialog, 43, 50, "0", 6);
+
+	Dialog_Add_Message(_mousePosDialog, 4, 60, "Depth:", 0);
+	Dialog_Add_Message(_mousePosDialog, x_offset, 60, "0", 7);
+
+	Dialog_Add_Message(_mousePosDialog, 4, 70, "Camera:", 0);
+	Dialog_Add_Message(_mousePosDialog, x_offset, 70, "0", 8);
+
+	Dialog_Add_Message(_mousePosDialog, 4, 80, "D:W:", 0);
+	Dialog_Add_Message(_mousePosDialog, 35, 80, "0", 9);
+
+	Dialog_Add_Message(_mousePosDialog, x_offset, 50, "Facing:", 0);
+	Dialog_Add_Message(_mousePosDialog, 115, 50, "0", 10);
+
+	Dialog_Configure(_mousePosDialog, 0, 0, 0);
 }
 
 } // namespace M4

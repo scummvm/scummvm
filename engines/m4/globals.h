@@ -34,6 +34,7 @@
 #include "m4/fileio/sys_file.h"
 #include "m4/graphics/gr_color.h"
 #include "m4/graphics/gr_font.h"
+#include "m4/gui/gui_dialog.h"
 #include "m4/gui/gui_item.h"
 #include "m4/gui/gui_mouse.h"
 #include "m4/gui/gui_univ.h"
@@ -56,8 +57,10 @@ private:
 	void game_systems_shutdown();
 	void fire_up_gui();
 	bool woodscript_init();
-	void grab_fonts();
 	void woodscript_shutdown();
+	void grab_fonts();
+	void create_mouse_watch_dialog();
+
 
 protected:
 	virtual void main_cold_data_init() = 0;
@@ -79,6 +82,7 @@ public:
 	Rails_Globals _rails;
 	Catalog _catalog;
 	MouseInfo _MouseState;
+	Dialog_Globals _dialog;
 	Item_Globals _items;
 
 	bool _cheat_keys_enabled = false;
@@ -115,11 +119,6 @@ public:
 	int32 _sizeMem[_MEMTYPE_LIMIT] = { 0 };
 	int32 _requests[_MEMTYPE_LIMIT] = { 0 };
 	void *_memBlock[_MEMTYPE_LIMIT] = { nullptr };
-	bool _okButton = false;
-	bool _movingScreen = false;
-	Item *_clickItem = nullptr;
-	Item *_doubleClickItem = nullptr;
-	char _listboxSearchStr[80] = { 0 };
 	RGB8 _master_palette[256];
 	strmRequest *_firstStream = nullptr;
 	strmRequest *_lastStream = nullptr;
@@ -130,6 +129,8 @@ public:
 	bool _currScreen = false;
 	ScreenContext *_eventToScreen = nullptr;
 	byte _color = 0;
+	Dialog *_mousePosDialog = nullptr;
+	bool _showMousePos = false;
 };
 
 #define _G(X) (g_globals->_##X)
