@@ -365,7 +365,22 @@ int MidiPlayer::open() {
 					ConfMan.getBool("multi_midi")) {
 				// The DOS floppy version can use AdLib MIDI SFX with MT-32
 				// music.
-				_driverMsSfx = createMidiDriverSimon1AdLib("MT_FM.IBK", oplType);
+				if (Common::File::exists("MT_FM.IBK")) {
+					_driverMsSfx = createMidiDriverSimon1AdLib("MT_FM.IBK", oplType);
+				} else {
+					// Fallback in case AdLib instrument definitions are missing.
+					GUI::MessageDialog dialog(
+						Common::U32String::format(
+							_("Could not find AdLib instrument definition file\n"
+							  "%s. Without this file,\n"
+							  "the sound effects will not sound the same as the original game."),
+							"MT_FM.IBK"),
+						_("OK"));
+					dialog.runModal();
+
+					_driverMsSfx = new MidiDriver_ADLIB_Multisource(oplType);
+					_driverMsSfx->setInstrumentRemapping(MidiDriver::_mt32ToGm);
+				}
 			}
 
 			break;
