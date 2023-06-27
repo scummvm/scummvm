@@ -19,14 +19,15 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "m4/mouse/mouse_handler.h"
+#ifndef M4_EVENTS_MICKEY_H
+#define M4_EVENTS_MICKEY_H
+
+#include "m4/m4_types.h"
 
 namespace M4 {
 
-mausEvent mouse_get_event() {
-	warning("TODO: mouse_get_event");
-	return _ME_no_event;
-}
+extern bool util_kbd_check(int32 *parm1);
 
 } // namespace M4
+
+#endif

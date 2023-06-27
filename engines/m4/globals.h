@@ -129,6 +129,7 @@ public:
 	int _main_interface_sprite = 22;
 	bool _currScreen = false;
 	ScreenContext *_eventToScreen = nullptr;
+	byte _color = 0;
 };
 
 #define _G(X) (g_globals->_##X)

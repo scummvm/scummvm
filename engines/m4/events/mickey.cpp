@@ -19,16 +19,20 @@
  *
  */
 
-#ifndef M4_MOUSE_MOUSE_HANDLER_H
-#define M4_MOUSE_MOUSE_HANDLER_H
-
-#include "m4/m4_types.h"
-#include "m4/core/mouse.h"
+#include "common/textconsole.h"
+#include "m4/events/mickey.h"
 
 namespace M4 {
 
-mausEvent mouse_get_event();
+bool util_kbd_check(int32 *parm1) {
+	if (!parm1)
+		return false;
+
+	*parm1 = 0;
+	warning("TODO: util_kbd_check");
+
+	return false;
+}
+
 
 } // namespace M4
-
-#endif

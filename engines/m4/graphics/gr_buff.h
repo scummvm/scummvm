@@ -61,7 +61,8 @@ protected:
 };
 
 extern int32 gr_buffer_free(Buffer *buf);
-extern char *gr_buffer_pointer(Buffer *buf, int32 x, int32 y);
+extern byte *gr_buffer_pointer(Buffer *buf, int32 x, int32 y);
+extern const byte *gr_buffer_pointer(const Buffer *buf, int32 x, int32 y);
 extern int32 gr_buffer_init(Buffer *buf, char *name, int32 w, int32 h);
 
 /**
@@ -73,7 +74,7 @@ extern int32 gr_buffer_init(Buffer *buf, char *name, int32 w, int32 h);
  * buffers, buf_rect_copy() can be used instead).
  * @returns		Returns true if successful.
  */
-extern bool gr_buffer_rect_copy_2(Buffer *from, Buffer *to, int32 sx, int32 sy,
+extern bool gr_buffer_rect_copy_2(const Buffer *from, Buffer *to, int32 sx, int32 sy,
 	int32 dx, int32 dy, int32 w, int32 h);
 
 /**

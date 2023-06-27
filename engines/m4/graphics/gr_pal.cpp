@@ -23,6 +23,7 @@
 #include "graphics/palette.h"
 #include "common/textconsole.h"
 #include "m4/graphics/gr_pal.h"
+#include "m4/globals.h"
 
 namespace M4 {
 
@@ -46,11 +47,11 @@ uint8 *gr_color_load_ipl5(const char *filename, uint8 *inverseColors) {
 }
 
 void gr_color_set(int32 c) {
-	error("TODO: gr_color_set");
+	_G(color) = c;
 }
 
 byte gr_color_get_current() {
-	error("TODO: gr_color_get_current");
+	return _G(color);
 }
 
 void gr_pal_clear(RGB8 *palette) {

@@ -19,14 +19,18 @@ MODULE_OBJS = \
 	core/errors.o \
 	core/imath.o \
 	core/mouse.o \
+	events/mickey.o \
+	events/mouse_handler.o \
 	fileio/extensions.o \
 	fileio/fileio.o \
 	fileio/fstream.o \
 	fileio/info.o \
 	fileio/sys_file.o \
 	graphics/gr_buff.o \
+	graphics/gr_draw.o \
 	graphics/gr_color.o \
 	graphics/gr_font.o \
+	graphics/gr_line.o \
 	graphics/gr_pal.o \
 	graphics/gr_series.o \
 	graphics/graphics.o \
@@ -42,8 +46,6 @@ MODULE_OBJS = \
 	mem/mem.o \
 	mem/memman.o \
 	mem/reloc.o \
-	mouse/mickey.o \
-	mouse/mouse_handler.o \
 	platform/timer.o \
 	wscript/ws_cruncher.o \
 	wscript/ws_hal.o \
