@@ -799,6 +799,26 @@ Common::Path findMoviePath(Common::String &path, bool currentFolder, bool search
 	return result;
 }
 
+Common::Path findAudioPath(Common::String &path, bool currentFolder, bool searchPaths) {
+	Common::Path result = findPath(path, currentFolder, searchPaths, false);
+	if (!result.empty())
+		return result;
+
+	const char *exts[] = { ".AIF", ".WAV", nullptr };
+
+	Common::String fileBase = path;
+	if (hasExtension(fileBase))
+		fileBase = fileBase.substr(0, fileBase.size() - 4);
+
+	for (int i = 0; exts[i]; i++) {
+		Common::String newPath = fileBase + exts[i];
+
+		result = findPath(newPath, currentFolder, searchPaths, false);
+		if (!result.empty())
+			break;
+	}
+	return result;
+}
 
 bool hasExtension(Common::String filename) {
 	uint len = filename.size();
