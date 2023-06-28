@@ -103,8 +103,7 @@ Common::KeymapArray CrabMetaEngine::initKeymaps(const char *target) const {
 }
 
 bool CrabMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return checkExtendedSaves(f) ||
-		   (f == kSupportsLoadingDuringStartup);
+	return checkExtendedSaves(f);
 }
 
 int CrabMetaEngine::getMaximumSaveSlot() const {
