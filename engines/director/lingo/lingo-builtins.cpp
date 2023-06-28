@@ -383,7 +383,22 @@ void LB::b_exp(int nargs) {
 
 void LB::b_float(int nargs) {
 	Datum d = g_lingo->pop();
-	Datum res(d.asFloat());
+	Datum res;
+
+	if (d.type == STRING) {
+		Common::String src = d.asString();
+		char *endPtr = nullptr;
+		double result = strtod(src.c_str(), &endPtr);
+		if (*endPtr == 0) {
+			res = result;
+		} else {
+			// for some reason, float(str) will return str if it doesn't work
+			res = d;
+		}
+	} else {
+		res = d.asFloat();
+	}
+
 	g_lingo->push(res);
 }
 
@@ -396,6 +411,13 @@ void LB::b_integer(int nargs) {
 			res = (int)(d.u.f + 0.5);		// Yes, +0.5 even for negative numbers
 		} else {
 			res = (int)round(d.u.f);
+		}
+	} else if (d.type == STRING) {
+		Common::String src = d.asString();
+		char *endPtr = nullptr;
+		int result = (int)strtol(src.c_str(), &endPtr, 10);
+		if (endPtr && endPtr != src.c_str() && (*endPtr == '\0' || *endPtr == ' ')) {
+			res = result;
 		}
 	} else {
 		res = d.asInt();

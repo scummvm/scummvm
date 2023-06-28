@@ -36,6 +36,88 @@ scummvmAssertEqual(test, return & "foo" & return)
 put return into test
 scummvmAssertEqual(test, return)
 
+-- coercing strings to numbers
+-- str(int) + int
+scummvmAssertEqual("2" + 5, 7.0)
+scummvmAssertEqual(5 + "2", 7.0)
+-- str(int) + float
+scummvmAssertEqual("2" + 5.5, 7.5)
+scummvmAssertEqual(5.5 + "2", 7.5)
+-- str(float) + int
+scummvmAssertEqual("2.5" + 5, 7.5)
+scummvmAssertEqual(5 + "2.5", 7.5)
+-- str(float) + float
+scummvmAssertEqual("2.25" + 5.5, 7.75)
+scummvmAssertEqual(5.5 + "2.25", 7.75)
+
+-- str(int) + str(int)
+scummvmAssertEqual("2" + "5", 7.0)
+scummvmAssertEqual("5" + "2", 7.0)
+-- str(int) + str(float)
+scummvmAssertEqual("2" + "5.5", 7.5)
+scummvmAssertEqual("5.5" + "2", 7.5)
+-- str(float) + str(int)
+scummvmAssertEqual("2.5" + "5", 7.5)
+scummvmAssertEqual("5" + "2.5", 7.5)
+-- str(float) + str(float)
+scummvmAssertEqual("2.25" + "5.5", 7.75)
+scummvmAssertEqual("5.5" + "2.25", 7.75)
+
+
+
+-- float syntax
+scummvmAssertEqual("-2" + 5, 3.0)
+scummvmAssertEqual("-2.5" + 5, 2.5)
+scummvmAssertEqual("+2" + 5, 7.0)
+scummvmAssertEqual("+2.5" + 5, 7.5)
+scummvmAssertEqual("2e3" + 5, 2005.0)
+scummvmAssertEqual("2.5e3" + 5, 2505.0)
+scummvmAssertEqual("    2" + 5, 7.0)
+scummvmAssertEqual("    2.5" + 5, 7.5)
+
+-- non number strings should coerce to a pointer
+scummvmAssert("incorrect" + 5 > 10000)
+scummvmAssert("    2.5     " + 5 > 10000)
+scummvmAssert("2 uhhh" + 5 > 10000)
+scummvmAssert("2.5 uhhh" + 5 > 10000)
+
+-- casting to integer
+scummvmAssertEqual(integer("2"), 2)
+scummvmAssertEqual(integer("-2"), -2)
+scummvmAssertEqual(integer("     2"), 2)
+scummvmAssertEqual(integer("2.5"), VOID)
+scummvmAssertEqual(integer("     2.5"), VOID)
+scummvmAssertEqual(integer("incorrect"), VOID)
+scummvmAssertEqual(integer("2 extra"), 2)
+scummvmAssertEqual(integer("2.5 extra"), VOID)
+scummvmAssertEqual(integer("     2 extra"), 2)
+scummvmAssertEqual(integer("     2.5 extra"), VOID)
+scummvmAssertEqual(integer("2extra"), VOID)
+scummvmAssertEqual(integer("     2extra"), VOID)
+
+-- casting to float
+scummvmAssertEqual(float("2"), 2.0)
+scummvmAssertEqual(float("-2"), -2.0)
+scummvmAssertEqual(float("     2"), 2.0)
+scummvmAssertEqual(float("2.5"), 2.5)
+scummvmAssertEqual(float("     2.5"), 2.5)
+scummvmAssertEqual(float("incorrect"), "incorrect")
+scummvmAssertEqual(float("2 extra"), "2 extra")
+scummvmAssertEqual(float("2.5 extra"), "2.5 extra")
+scummvmAssertEqual(float("     2 extra"), "     2 extra")
+scummvmAssertEqual(float("     2.5 extra"), "     2.5 extra")
+scummvmAssertEqual(float("2extra"), "2extra")
+scummvmAssertEqual(float("     2extra"), "     2extra")
+
+put "sausages" into testString
+put (testString + 0) into testPointer
+scummvmAssertEqual(testPointer > 10000, TRUE)
+scummvmAssertEqual(testString + 4, testPointer + 4)
+scummvmAssertEqual(testString - 4, testPointer - 4)
+scummvmAssertEqual(testString * 4, testPointer * 4)
+scummvmAssertEqual(testString / 4, testPointer / 4)
+
+
 -- LC::charOF
 set string to "Macromedia"
 set res to char 6 of string

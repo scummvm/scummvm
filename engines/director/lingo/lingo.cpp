@@ -743,14 +743,16 @@ void Lingo::resetLingo() {
 	resetLingoGo();
 }
 
-int Lingo::getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly) {
+int Lingo::getAlignedType(const Datum &d1, const Datum &d2, bool equality) {
 	int opType = VOID;
 
 	int d1Type = d1.type;
 	int d2Type = d2.type;
 
-	if (d1Type == d2Type && (!numsOnly || d1Type == INT || d1Type == FLOAT))
-		return d1Type;
+	if (equality) {
+		if (d1Type == STRING && d2Type == STRING)
+			return STRING;
+	}
 
 	if (d1Type == STRING) {
 		Common::String src = d1.asString();
@@ -759,7 +761,11 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly) {
 			strtod(src.c_str(), &endPtr);
 			if (*endPtr == 0) {
 				d1Type = FLOAT;
+			} else if (!equality) {
+				d1Type = INT;
 			}
+		} else {
+			d1Type = VOID;
 		}
 	}
 	if (d2Type == STRING) {
@@ -769,7 +775,11 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly) {
 			strtod(src.c_str(), &endPtr);
 			if (*endPtr == 0) {
 				d2Type = FLOAT;
+			} else if (!equality) {
+				d2Type = INT;
 			}
+		} else {
+			d2Type = VOID;
 		}
 	}
 
@@ -783,14 +793,12 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly) {
 	if (d2Type == OBJECT)
 		d2Type = STRING;
 
-	if (d1Type == FLOAT || d2Type == FLOAT) {
+	if ((d1Type == FLOAT && d2Type == INT) || (d1Type == INT && d2Type == FLOAT)) {
 		opType = FLOAT;
-	} else if (d1Type == INT && d2Type == INT) {
-		opType = INT;
 	} else if ((d1Type == STRING && d2Type == INT) || (d1Type == INT && d2Type == STRING)) {
 		opType = STRING;
-	} else if ((d1Type == STRING && d2Type == SYMBOL) || (d1Type == SYMBOL && d2Type == STRING)) {
-		opType = STRING;
+	} else if (d1Type == d2Type) {
+		opType = d1Type;
 	}
 
 	return opType;
@@ -963,11 +971,12 @@ int Datum::asInt() const {
 		{
 			Common::String src = asString();
 			char *endPtr = nullptr;
-			int result = strtol(src.c_str(), &endPtr, 10);
+			float result = strtof(src.c_str(), &endPtr);
 			if (*endPtr == 0) {
-				res = result;
+				res = (int)result;
 			} else {
-				warning("Invalid int '%s'", src.c_str());
+				warning("Invalid number '%s'", src.c_str());
+				res = (int)((uint64)u.s & 0xffffffffL);
 			}
 		}
 		break;
@@ -1002,7 +1011,8 @@ double Datum::asFloat() const {
 			if (*endPtr == 0) {
 				res = result;
 			} else {
-				warning("Invalid float '%s'", src.c_str());
+				warning("Invalid number '%s'", src.c_str());
+				res = (int)((uint64)u.s & 0xffffffffL);
 			}
 		}
 		break;
@@ -1261,7 +1271,7 @@ const char *Datum::type2str(bool ilk) const {
 }
 
 int Datum::equalTo(Datum &d, bool ignoreCase) const {
-	int alignType = g_lingo->getAlignedType(*this, d, false);
+	int alignType = g_lingo->getAlignedType(*this, d, true);
 
 	switch (alignType) {
 	case FLOAT:
@@ -1310,7 +1320,7 @@ bool Datum::operator<=(Datum &d) const {
 }
 
 CompareResult Datum::compareTo(Datum &d) const {
-	int alignType = g_lingo->getAlignedType(*this, d, false);
+	int alignType = g_lingo->getAlignedType(*this, d, true);
 
 	if (alignType == FLOAT) {
 		double f1 = asFloat();
