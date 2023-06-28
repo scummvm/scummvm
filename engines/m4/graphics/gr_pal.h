@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef M4_GRAPHICS_GRAPHICS_H
-#define M4_GRAPHICS_GRAPHICS_H
+#ifndef M4_GRAPHICS_GR_PAL_H
+#define M4_GRAPHICS_GR_PAL_H
 
 #include "m4/m4_types.h"
 
