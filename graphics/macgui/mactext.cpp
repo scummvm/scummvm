@@ -71,6 +71,8 @@ bool MacFontRun::equals(MacFontRun &to) {
 }
 
 Common::CodePage MacFontRun::getEncoding() {
+	if (wm->_mode & kWMModeWin95)
+		return Common::kUtf8;
 	return wm->_fontMan->getFontEncoding(fontId);
 }
 
