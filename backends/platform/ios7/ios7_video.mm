@@ -56,7 +56,7 @@ bool iOS7_isBigDevice() {
 #if TARGET_OS_IOS
 	return UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad;
 #elif TARGET_OS_TV
-	return true;
+	return false;
 #endif
 }
 
