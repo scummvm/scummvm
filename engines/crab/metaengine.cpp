@@ -107,6 +107,10 @@ bool CrabMetaEngine::hasFeature(MetaEngineFeature f) const {
 		   (f == kSupportsLoadingDuringStartup);
 }
 
+int CrabMetaEngine::getMaximumSaveSlot() const {
+	return 999;
+}
+
 #if PLUGIN_ENABLED_DYNAMIC(CRAB)
 REGISTER_PLUGIN_DYNAMIC(CRAB, PLUGIN_TYPE_ENGINE, CrabMetaEngine);
 #else

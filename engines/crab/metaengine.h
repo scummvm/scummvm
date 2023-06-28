@@ -71,6 +71,8 @@ public:
 	Common::KeymapArray initKeymaps(const char *target) const override;
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
+
+	virtual int getMaximumSaveSlot() const override;
 };
 
 #endif // CRAB_METAENGINE_H
