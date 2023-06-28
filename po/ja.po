@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-06-27 19:33+0000\n"
-"PO-Revision-Date: 2023-06-26 13:55+0000\n"
+"PO-Revision-Date: 2023-06-28 08:26+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4886,11 +4886,7 @@ msgstr ""
 "同様の音にならないかもしれません。"
 
 #: engines/agos/midi.cpp:374
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition file\n"
-#| "%s. Without this file,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s. Without this file,\n"
@@ -4898,7 +4894,7 @@ msgid ""
 msgstr ""
 "AdLibの機器定義ファイル%sが\n"
 "見つかりません。この場合、オリジナルと\n"
-"同様の音にならないかもしれません。"
+"同様のSEに聞こえないかもしれません。"
 
 #: engines/agos/midi.cpp:453
 #, c-format
