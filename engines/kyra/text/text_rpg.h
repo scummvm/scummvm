@@ -53,6 +53,8 @@ public:
 
 	void allowPageBreak(bool mode) { _allowPageBreak = mode; }
 	void setWaitButtonMode(int mode) { _waitButtonMode = mode; }
+	int setShadowColor(int col) { SWAP(col, _shadowColor); return col; }
+	int setLineSpacing(int spacing) { SWAP(spacing, _lineSpacing); return spacing; }
 	int lineCount() const { return _lineCount; }
 	const uint8 *colorMap() const { return _colorMap; }
 
@@ -107,6 +109,9 @@ protected:
 
 private:
 	Screen *_screen;
+	int _lineSpacing;
+	int _shadowColor;
+	bool _preventHalfWidthLineEnd;
 
 	char *_table1;
 	char *_table2;

@@ -730,6 +730,10 @@ void EoBCoreEngine::runLoop() {
 	_drawSceneTimer = _system->getMillis();
 	_screen->setFont(_conFont);
 	_screen->setScreenDim(7);
+	if (_flags.lang == Common::ZH_TWN) {
+		_txt->setShadowColor(guiSettings()->colors.fill);
+		_txt->setLineSpacing(-1);
+	}
 
 	_runFlag = true;
 
@@ -1612,6 +1616,11 @@ void EoBCoreEngine::initDialogueSequence() {
 	delete s;
 
 	_txt->setupField(9, 0);
+
+	if (_flags.lang == Common::ZH_TWN) {
+		_txt->setShadowColor(guiSettings()->colors.guiColorBlack);
+		_txt->setLineSpacing(0);
+	}
 }
 
 void EoBCoreEngine::restoreAfterDialogueSequence() {
@@ -1623,6 +1632,11 @@ void EoBCoreEngine::restoreAfterDialogueSequence() {
 	gui_restorePlayField();
 	//_allowSkip = false;
 	_screen->setScreenDim(7);
+
+	if (_flags.lang == Common::ZH_TWN) {
+		_txt->setShadowColor(guiSettings()->colors.fill);
+		_txt->setLineSpacing(-1);
+	}
 
 	if (_flags.gameID == GI_EOB2)
 		snd_playSoundEffect(2);
@@ -1712,6 +1726,9 @@ int EoBCoreEngine::runDialogue(int dialogueTextId, int numStr, int loopButtonId,
 void EoBCoreEngine::restParty_displayWarning(const char *str) {
 	int od = _screen->curDimIndex();
 	_screen->setScreenDim(7);
+	int osh = (_flags.lang == Common::ZH_TWN) ? _txt->setShadowColor(guiSettings()->colors.fill) : 0xFFFF;
+	int ols = (_flags.lang == Common::ZH_TWN) ? _txt->setLineSpacing(-1) : 0xFFFF;
+
 	Screen::FontId of = _screen->setFont(_conFont);
 	_screen->setCurPage(0);
 
@@ -1719,6 +1736,11 @@ void EoBCoreEngine::restParty_displayWarning(const char *str) {
 
 	_screen->setFont(of);
 	_screen->setScreenDim(od);
+
+	if (osh != 0xFFFF)
+		_txt->setShadowColor(osh);
+	if (ols != 0xFFFF)
+		_txt->setLineSpacing(ols);
 }
 
 bool EoBCoreEngine::restParty_updateMonsters() {
@@ -1737,10 +1759,18 @@ bool EoBCoreEngine::restParty_updateMonsters() {
 		Screen::FontId of = _screen->setFont(_conFont);
 		int od = _screen->curDimIndex();
 		_screen->setScreenDim(7);
+		int osh = (_flags.lang == Common::ZH_TWN) ? _txt->setShadowColor(guiSettings()->colors.fill) : 0xFFFF;
+		int ols = (_flags.lang == Common::ZH_TWN) ? _txt->setLineSpacing(-1) : 0xFFFF;
+
 		updateMonsters(0);
 		updateMonsters(1);
 		timerProcessFlyingObjects(0);
+
 		_screen->setScreenDim(od);
+		if (osh != 0xFFFF)
+			_txt->setShadowColor(osh);
+		if (ols != 0xFFFF)
+			_txt->setLineSpacing(ols);
 		_screen->setFont(of);
 
 		_partyResting = false;

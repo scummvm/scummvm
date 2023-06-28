@@ -2272,7 +2272,10 @@ void OldDOSFont::unload() {
 }
 
 uint16 ChineseTwoByteFontEoB::translateBig5(uint16 in) const {
-	if (in < 0x80)
+	// The original explicitly turns the braces '<' and '>' into '"'.
+	if (in == '<' || in == '>')
+		return '\"';
+	else if (in < 0x80)
 		return in;
 	in = ((in & 0xff00) >> 8) | ((in & 0xff) << 8);
 	if (_big5->hasGlyphForBig5Char(in))
@@ -2287,7 +2290,7 @@ int ChineseTwoByteFontEoB::getCharWidth(uint16 c) const {
 
 int ChineseTwoByteFontEoB::getCharHeight(uint16 c) const {
 	uint16 t = translateBig5(c);
-	return (t < 0x80) ? _singleByte->getCharHeight(t) : _big5->getFontHeight() + 1;
+	return (t < 0x80) ? _singleByte->getCharHeight(t) : _big5->getFontHeight();
 }
 
 void ChineseTwoByteFontEoB::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {

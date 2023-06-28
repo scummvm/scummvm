@@ -33,9 +33,9 @@ enum {
 };
 
 TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(engine), _screen(scr),
-	_lineCount(0), _printFlag(false), _lineWidth(0), _numCharsTotal(0), _allowPageBreak(true),
+_lineCount(0), _printFlag(false), _lineWidth(0), _numCharsTotal(0), _allowPageBreak(true),
 	_numCharsLeft(0), _numCharsPrinted(0), _sjisTextModeLineBreak(false), _waitButtonMode(1),
-	_pc98TextMode(engine->gameFlags().use16ColorMode && engine->game() == GI_LOL),
+	_pc98TextMode(engine->gameFlags().use16ColorMode && engine->game() == GI_LOL), _shadowColor(0), _lineSpacing(0), _preventHalfWidthLineEnd(false),
 	_waitButtonFont(Screen::FID_6_FNT), _isChinese(_vm->gameFlags().lang == Common::Language::ZH_TWN || _vm->gameFlags().lang == Common::Language::ZH_CHN) {
 
 	static const uint8 amigaColorMap[16] = {
@@ -54,6 +54,8 @@ TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(e
 		_waitButtonFont = Screen::FID_SJIS_FNT;
 	else if ((_vm->game() == GI_LOL && _vm->gameFlags().lang == Common::Language::ZH_TWN))
 		_waitButtonFont = Screen::FID_CHINESE_FNT;
+
+	_preventHalfWidthLineEnd = ((_vm->gameFlags().lang == Common::JA_JPN && _vm->game() == GI_EOB1) || (_vm->gameFlags().lang == Common::Language::ZH_TWN && _vm->game() == GI_EOB2));
 
 	_textDimData = new TextDimData[_screen->screenDimTableCount()];
 
@@ -77,7 +79,7 @@ TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(e
 	_table2 = new char[16]();
 
 	_tempString1 = _tempString2 = 0;
-
+	_ctrl[0] = _ctrl[1] = _ctrl[2] = '\0';
 	_waitButtonSpace = 0;
 }
 
@@ -183,7 +185,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 				_currentLine[_numCharsLeft] = '\0';
 
 				_lineWidth += sjisOffs;
-				if (_vm->game() == GI_EOB1 && ((sd->w << 3) - sjisOffs) <= (_textDimData[sdx].column + _lineWidth))
+				if (_preventHalfWidthLineEnd && ((sd->w << 3) - sjisOffs) <= (_textDimData[sdx].column + _lineWidth))
 					printLine(_currentLine);
 				c = parseCommand();
 				continue;
@@ -201,6 +203,8 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 				_currentLine[_numCharsLeft] = '\0';
 
 				_lineWidth += Graphics::Big5Font::kChineseTraditionalWidth;
+				if (_preventHalfWidthLineEnd && (_textDimData[sdx].column + _lineWidth + Graphics::Big5Font::kChineseTraditionalWidth) > (sd->w << 3))
+					printLine(_currentLine);
 				c = parseCommand();
 				continue;
 			}
@@ -263,6 +267,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 		default:
 			if (_vm->game() == GI_EOB1 || _vm->game() == GI_LOL || (unsigned char)c > 30) {
 				_lineWidth += (sjisTextMode ? 4 : (_screen->_currentFont == Screen::FID_SJIS_TEXTMODE_FNT ? 9 : _screen->getCharWidth((uint8)c)));
+
 				_currentLine[_numCharsLeft++] = c;
 				_currentLine[_numCharsLeft] = 0;
 
@@ -342,13 +347,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 	bool sjisTextMode = _pc98TextMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15) ? true : false;
 	int sjisOffs = (sjisTextMode || _vm->game() != GI_LOL) ? 8 : 9;
 
-	int fh;
-	if (_screen->_currentFont == Screen::FID_CHINESE_FNT && _vm->_flags.lang == Common::Language::ZH_TWN)
-		fh = _vm->_flags.gameID == GI_EOB2 ? 14 : 15;
-	else if (_screen->_currentFont == Screen::FID_SJIS_TEXTMODE_FNT)
-		fh = 9;
-	else
-		fh = _screen->getFontHeight() + _screen->_lineSpacing;
+	int fh = _screen->getFontHeight() + _screen->_lineSpacing + _lineSpacing;
 	int lines = (sd->h - _screen->_lineSpacing) / fh;
 
 	while (_textDimData[sdx].line >= lines) {
@@ -364,6 +363,11 @@ void TextDisplayer_rpg::printLine(char *str) {
 
 		if (h2)
 			_screen->copyRegion(sd->sx << 3, sd->sy + fh, sd->sx << 3, sd->sy, sd->w << 3, h2, _screen->_curPage, _screen->_curPage, Screen::CR_NO_P_CHECK);
+
+		// In Chinese EOBII some characters overdraw the valid boundaries by one pixel
+		// (at least the ',' does). So, the original redraws the border here. We do the same...
+		if (_isChinese && _vm->_flags.gameID == GI_EOB2 && sdx == 7)
+			_screen->drawBox(3, 170, 290, 199, 0xb7);
 
 		_screen->set16bitShadingLevel(4);
 		_screen->fillRect(sd->sx << 3, sd->sy + h1, ((sd->sx + sd->w) << 3) - 1, sd->sy + sd->h - 1, _textDimData[sdx].color2);
@@ -427,13 +431,6 @@ void TextDisplayer_rpg::printLine(char *str) {
 			}
 		}
 
-		/*if (_isChinese) {
-			for (int i = 0; i < s; ++i) {
-				if (str[i] & 0x80)
-					twoByteCharOffs = 16;
-			}
-		}*/
-
 		if ((lw + _textDimData[sdx].column) >= w) {
 			if ((lines - 1) <= _lineCount && _allowPageBreak)
 				// cut off line to leave space for "MORE" button
@@ -451,10 +448,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 
 				for (strPos = 0; strPos < s; ++strPos) {
 					uint8 cu = (uint8) str[strPos];
-					/*if (_isChinese && (cu & 0x80)) {
-						lw += twoByteCharOffs;
-						strPos++;
-					} else */if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0)) {
+					if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0)) {
 						lw += sjisOffs;
 						strPos++;
 					} else {
@@ -543,7 +537,18 @@ void TextDisplayer_rpg::printLine(char *str) {
 		}
 		_screen->printText(str, x1 & ~3, (y + 8) & ~7, col, 0);
 	} else {
-		_screen->printText(str, x1, y, col, _textDimData[sdx].color2);
+		uint8 col2 = _textDimData[sdx].color2;
+		if (_shadowColor) {
+			_screen->printText(str, x1 - 1, y, _shadowColor, col2);
+			_screen->printText(str, x1, y + 1, _shadowColor, 0);
+			_screen->printText(str, x1 - 1, y + 1, _shadowColor, 0);
+			// Another hack for Chinese EOBII. Due to the reduced line spacing - while still drawing a shadow for the font - the
+			// lines will overdraw by one pixel if we don't clear the bottom line. This will otherwise cause glitches when doing line feeds.
+			for (int i = 0; i < -_lineSpacing && y + fh + i < sd->sy + sd->h; ++i)
+				_screen->drawClippedLine(x1 - 1, y + fh + i, x1 + lw, y + fh + i, _textDimData[sdx].color2);
+			col2 = 0;
+		}
+		_screen->printText(str, x1, y, col, col2);
 	}
 
 	_textDimData[sdx].column += lw;
@@ -643,10 +648,24 @@ int TextDisplayer_rpg::clearDim(int dim) {
 void TextDisplayer_rpg::clearCurDim() {
 	int d = _screen->curDimIndex();
 	const ScreenDim *tmp = _screen->getScreenDim(d);
+
+	int xOffs = 0;
+	int wOffs = 0;
+	int hOffs = 0;
+
+	if (_shadowColor) {
+		if (tmp->sx > 0)
+			xOffs = wOffs = 1;
+		if (tmp->sy + tmp->h < Screen::SCREEN_H)
+			hOffs = 1;
+	}
+
 	if (_pc98TextMode) {
-		_screen->fillRect(tmp->sx << 3, tmp->sy, ((tmp->sx + tmp->w) << 3) - 2, (tmp->sy + tmp->h) - 2, _textDimData[d].color2);
-	} else
-		_screen->fillRect(tmp->sx << 3, tmp->sy, ((tmp->sx + tmp->w) << 3) - 1, (tmp->sy + tmp->h) - 1, _textDimData[d].color2);
+		--wOffs;
+		--hOffs;
+	}
+
+	_screen->fillRect((tmp->sx << 3) - xOffs, tmp->sy, ((tmp->sx + tmp->w) << 3) - 1 + wOffs, (tmp->sy + tmp->h) - 1 + hOffs, _textDimData[d].color2);
 
 	_lineCount = 0;
 	_textDimData[d].column = _textDimData[d].line = 0;

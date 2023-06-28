@@ -393,6 +393,7 @@ Common::Error LoLEngine::init() {
 	}
 
 	_txt = new TextDisplayer_LoL(this, _screen);
+	_txt->setLineSpacing(_flags.lang == Common::JA_JPN && _flags.use16ColorMode ? 1 : (_flags.lang == Common::ZH_TWN ? -1 : 0));
 
 	_screen->setAnimBlockPtr(10000);
 	_screen->setScreenDim(0);

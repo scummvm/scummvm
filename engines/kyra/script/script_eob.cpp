@@ -1326,6 +1326,10 @@ int EoBInfProcessor::oeob_loadNewLevelOrMonsters(int8 *data) {
 		_vm->generateTempData();
 		_vm->txt()->removePageBreakFlag();
 		_screen->setScreenDim(7);
+		if (_vm->gameFlags().lang == Common::ZH_TWN) {
+			_vm->txt()->setShadowColor(_vm->guiSettings()->colors.fill);
+			_vm->txt()->setLineSpacing(-1);
+		}
 
 		_vm->loadLevel(index, cmd);
 		debugC(5, kDebugLevelScript, "         - entering level '%d', sub level '%d', start block '0x%.04X', start direction '%d'", index, cmd, _vm->_currentBlock, _vm->_currentDirection);
@@ -1542,7 +1546,13 @@ int EoBInfProcessor::oeob_sequence(int8 *data) {
 		_vm->npcSequence(cmd);
 		break;
 	}
+
 	_vm->screen()->setScreenDim(7);
+	if (_vm->gameFlags().lang == Common::ZH_TWN) {
+		_vm->txt()->setShadowColor(_vm->guiSettings()->colors.fill);
+		_vm->txt()->setLineSpacing(-1);
+	}
+
 	return pos - data;
 }
 
