@@ -51,9 +51,8 @@ void Game::StartNewGame() {
 	CreateSaveGame(SAVEGAME_EVENT);
 }
 
-void Game::LoadGame(const Common::String &filename) {
+void Game::LoadGame() {
 	Init(g_engine->_filePath->mod_cur);
-	LoadState(filename);
 }
 
 void Game::Init(const Common::String &filename) {
@@ -110,6 +109,8 @@ void Game::Init(const Common::String &filename) {
 			debug_console.Load(path);
 		}
 	}
+
+	_isInited = true;
 }
 
 bool Game::LoadLevel(const Common::String &id, int player_x, int player_y) {
@@ -251,8 +252,8 @@ void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 					hud.SetTooltip();
 					break;
 				case PS_LOAD:
-					ShouldChangeState = true;
-					NewStateID = GAMESTATE_LOAD_GAME;
+					//ShouldChangeState = true;
+					//NewStateID = GAMESTATE_LOAD_GAME;
 					return;
 
 				case PS_HELP:
@@ -661,16 +662,21 @@ void Game::ApplyResult(LevelResult result) {
 //------------------------------------------------------------------------
 // Purpose: Save/load game
 //------------------------------------------------------------------------
-void Game::LoadState(const Common::String &filename) {
-	Common::InSaveFile *file = g_engine->getSaveFileManager()->openForLoading(filename);
+void Game::LoadState(Common::SeekableReadStream *stream) {
+	if (!_isInited)
+		LoadGame();
 
-	uint64 len = file->size();
-	uint8 *data = new uint8[len + 1];
-	data[len] = '\0';
+	Common::String data = stream->readString();
+	// +1 to include > as well
+	size_t end = data.findLastOf(">") + 1;
 
-	file->read(data, len);
+	uint8 *dataC = new uint8[end + 1];
+	dataC[end] = '\0';
+	memcpy(dataC, data.c_str(), end);
 
-	XMLDoc conf(data);
+	warning("Output: %s", dataC);
+
+	XMLDoc conf(dataC);
 
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("save");
@@ -708,7 +714,7 @@ void Game::LoadState(const Common::String &filename) {
 //------------------------------------------------------------------------
 // Purpose: Write game state to file
 //------------------------------------------------------------------------
-void Game::SaveState(const Common::String &filename, const bool &overwrite) {
+void Game::SaveState(Common::SeekableWriteStream *stream) {
 	rapidxml::xml_document<char> doc;
 
 	// xml declaration
@@ -770,12 +776,7 @@ void Game::SaveState(const Common::String &filename, const bool &overwrite) {
 	Common::String xml_as_string;
 	rapidxml::print(Crab::backInserter(xml_as_string), doc);
 
-	Common::String full = FullPath(filename);
-
-	Common::OutSaveFile *outSaveFile = g_engine->getSaveFileManager()->openForSaving(full);
-	outSaveFile->writeString(xml_as_string);
-
-	delete outSaveFile;
+	stream->writeString(xml_as_string);
 
 #if 0
 	Common::String fullpath = FullPath(filename);
@@ -842,6 +843,7 @@ void Game::ToggleState(const State &s) {
 // Purpose: Use this function to actually save your games
 //------------------------------------------------------------------------
 void Game::CreateSaveGame(const SaveGameType &savetype) {
+#if 0
 	// Disregard type in iron man mode, we only save to one file
 	if (info.IronMan())
 		SaveState(savefile.ironman, true);
@@ -870,6 +872,7 @@ void Game::CreateSaveGame(const SaveGameType &savetype) {
 			break;
 		}
 	}
+#endif
 }
 
 void Game::SetUI() {

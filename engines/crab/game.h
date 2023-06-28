@@ -69,6 +69,7 @@ private:
 	};
 
 	// These things don't need to be saved
+	bool _isInited;
 	pyrodactyl::ui::HUD hud;
 	Common::Array<pyrodactyl::event::EventResult> event_res;
 	pyrodactyl::ui::ParagraphData pop_default;
@@ -99,8 +100,6 @@ private:
 		}
 	} savefile;
 
-	void StartNewGame();
-	void LoadGame(const Common::String &filename);
 	static void Quit(bool &ShouldChangeState, GameStateID &NewStateID, const GameStateID &NewStateVal);
 
 	bool ApplyResult();
@@ -124,10 +123,15 @@ private:
 	void PlayerImg() { hud.PlayerImg(g_engine->_eventStore->img[info.PlayerImg()]); }
 
 public:
-	Game() { StartNewGame(); }
-	Game(const Common::String &filename) { LoadGame(filename); }
+	Game() : _isInited(false) {}
+	~Game() {
+		warning("Game destructor called");
+	}
 
 	void Init(const Common::String &filename);
+
+	void StartNewGame();
+	void LoadGame();
 
 	void HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID);
 #if 0
@@ -136,10 +140,10 @@ public:
 	void InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID);
 	void Draw();
 
-	void LoadState(const Common::String &filename);
+	void LoadState(Common::SeekableReadStream *stream);
 
 	// Raw function to save game to file - generally, using the CreateSaveGame function is recommended
-	void SaveState(const Common::String &filename, const bool &overwrite);
+	void SaveState(Common::SeekableWriteStream *stream);
 
 	void AutoSave() { CreateSaveGame(SAVEGAME_EXIT); }
 
