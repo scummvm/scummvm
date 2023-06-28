@@ -180,7 +180,11 @@ void IOS7OptionsWidget::setEnabled(bool e) {
 #else
 	_onscreenCheckbox->setEnabled(false);
 #endif
+#if TARGET_OS_IOS
 	_touchpadCheckbox->setEnabled(e);
+#else
+	_touchpadCheckbox->setEnabled(false);
+#endif
 	_clickAndDragCheckbox->setEnabled(e);
 	_keyboardFnBarCheckbox->setEnabled(e);
 }
