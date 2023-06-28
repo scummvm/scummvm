@@ -26,6 +26,9 @@
 
 namespace M4 {
 
+constexpr int SCREEN_WIDTH = 640;
+constexpr int SCREEN_HEIGHT = 480;
+
 #define FILL_INTERIOR 1	// a flag for use by DrawTile
 #define BORDER 0
 
