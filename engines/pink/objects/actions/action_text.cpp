@@ -122,7 +122,7 @@ void ActionText::start() {
 		break;
 
 	case Common::HE_ISR:
-		_text = Common::String(str).decode(Common::kWindows1255);
+		_text = Common::String(str).decode(Common::kWindows1251);
 		if (!_centered) {
 			align = Graphics::kTextAlignRight;
 		}
