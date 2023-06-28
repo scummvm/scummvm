@@ -14,6 +14,7 @@ MODULE_OBJS = \
 	adv_r/adv_file.o \
 	adv_r/adv_inv.o \
 	adv_r/adv_rails.o \
+	adv_r/adv_trigger.o \
 	adv_r/db_env.o \
 	core/cstring.o \
 	core/errors.o \
@@ -36,6 +37,7 @@ MODULE_OBJS = \
 	graphics/graphics.o \
 	graphics/krn_pal.o \
 	gui/gui_buffer.o \
+	gui/gui_cheapo.o \
 	gui/gui_dialog.o \
 	gui/gui_item.o \
 	gui/gui_mouse.o \

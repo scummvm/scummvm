@@ -105,7 +105,6 @@ public:
 	void *_custom_interface_setup = nullptr;
 	void *_custom_interface_button_handler = nullptr;
 	int _global_sound_room = 0;
-	bool _interface_visible = false;
 	bool _please_hyperwalk = false;
 	void (*_custom_ascii_converter)(char *string) = nullptr;
 	bool _vmng_Initted = false;
@@ -133,6 +132,7 @@ public:
 	byte _color = 0;
 	Dialog *_mousePosDialog = nullptr;
 	bool _showMousePos = false;
+	bool _inv_suppress_click_sound = false;
 };
 
 #define _G(X) (g_globals->_##X)
