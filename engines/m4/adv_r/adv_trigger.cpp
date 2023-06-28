@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -20,33 +19,9 @@
  *
  */
 
-#ifndef M4_GUI_INTERFACE_H
-#define M4_GUI_INTERFACE_H
-
-#include "m4/m4_types.h"
-#include "m4/graphics/graphics.h"
-#include "m4/graphics/gr_buff.h"
+#include "m4/adv_r/adv_trigger.h"
 
 namespace M4 {
 
-struct Interface_Globals {
-	int arrow = 0;
-	int wait = 0;
-	int look = 0;
-	int grab = 0;
-	int use = 0;
-	bool visible = false;
-	bool shown = false;
-	int x1 = 0;
-	int y1 = 374;
-	int x2 = SCREEN_WIDTH;
-	int y2 = SCREEN_HEIGHT;
-	GrBuff *gameInterfaceBuff = nullptr;
-};
-
-extern void interface_init(int arrow, int wait, int look, int grab, int use);
-extern void interface_shutdown();
 
 } // End of namespace M4
-
-#endif

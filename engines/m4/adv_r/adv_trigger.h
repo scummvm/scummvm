@@ -20,32 +20,23 @@
  *
  */
 
-#ifndef M4_GUI_INTERFACE_H
-#define M4_GUI_INTERFACE_H
+#ifndef M4_ADV_R_ADV_TRIGGER_H
+#define M4_ADV_R_ADV_TRIGGER_H
 
 #include "m4/m4_types.h"
-#include "m4/graphics/graphics.h"
-#include "m4/graphics/gr_buff.h"
 
 namespace M4 {
 
-struct Interface_Globals {
-	int arrow = 0;
-	int wait = 0;
-	int look = 0;
-	int grab = 0;
-	int use = 0;
-	bool visible = false;
-	bool shown = false;
-	int x1 = 0;
-	int y1 = 374;
-	int x2 = SCREEN_WIDTH;
-	int y2 = SCREEN_HEIGHT;
-	GrBuff *gameInterfaceBuff = nullptr;
-};
+extern int32 kernel_trigger_create(int32 trigger_num);
+extern int32 kernel_trigger_create_mode(int32 trigger_num, int32 desired_mode);
+extern bool kernel_trigger_dispatch(int32 trigger_num);
+extern bool kernel_trigger_dispatch_now(int32 trigger_num);
 
-extern void interface_init(int arrow, int wait, int look, int grab, int use);
-extern void interface_shutdown();
+extern void kernel_timing_trigger(int32 ticks, int16 trigger, char *name = NULL);
+
+extern void cisco_dispatch_triggers();
+extern void cisco_clear_triggers();
+extern void kernel_service_timing_trigger_q();
 
 } // End of namespace M4
 

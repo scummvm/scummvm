@@ -52,6 +52,11 @@ typedef uint16 word;
 typedef uint16 Word;
 typedef uint32 DWord;
 
+enum {
+	TRIG_INV_CLICK = 32000,
+	TRIG_RESTORE_GAME
+};
+
 struct Buffer {
 	int32 W;
 	int32 h;

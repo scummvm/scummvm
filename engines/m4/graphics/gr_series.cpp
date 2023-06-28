@@ -38,4 +38,9 @@ void series_unload(int32 assetIndex) {
 	ClearWSAssets(_WS_ASSET_CELS, assetIndex, assetIndex);
 }
 
+bool series_draw_sprite(int32 spriteHash, int32 index, Buffer *destBuff, int32 x, int32 y) {
+	error("TODO: series_draw_sprite");
+	return false;
+}
+
 } // namespace M4
