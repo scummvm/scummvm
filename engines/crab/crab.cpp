@@ -155,6 +155,38 @@ void CrabEngine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addDirectory("res", gamePath, 0, 5);
 }
 
+Common::Error CrabEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(getSaveStateName(slot));
+
+	if (!saveFile)
+		return Common::kWritingFailed;
+
+	_app->GetGame()->SaveState(saveFile);
+	getMetaEngine()->appendExtendedSave(saveFile, getTotalPlayTime(), desc, isAutosave);
+
+	saveFile->finalize();
+
+	delete saveFile;
+	return Common::kNoError;
+}
+
+Common::Error CrabEngine::loadGameState(int slot) {
+	saveAutosaveIfEnabled();
+
+	Common::InSaveFile *saveFile = _saveFileMan->openForLoading(getSaveStateName(slot));
+
+	if (!saveFile)
+		return Common::kReadingFailed;
+
+	_app->GetGame()->LoadState(saveFile);
+	ExtendedSavegameHeader header;
+	if (MetaEngine::readSavegameHeader(saveFile, &header))
+		setTotalPlayTime(header.playtime);
+
+	delete saveFile;
+	return Common::kNoError;
+}
+
 Common::Error CrabEngine::syncGame(Common::Serializer &s) {
 	// The Serializer has methods isLoading() and isSaving()
 	// if you need to specific steps; for example setting
