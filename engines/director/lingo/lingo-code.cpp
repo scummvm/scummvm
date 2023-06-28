@@ -709,7 +709,7 @@ Datum LC::addData(Datum &d1, Datum &d2) {
 		return LC::mapBinaryOp(LC::addData, d1, d2);
 	}
 
-	int alignedType = g_lingo->getAlignedType(d1, d2, true);
+	int alignedType = g_lingo->getAlignedType(d1, d2, false);
 
 	Datum res;
 	if (alignedType == FLOAT) {
@@ -733,7 +733,7 @@ Datum LC::subData(Datum &d1, Datum &d2) {
 		return LC::mapBinaryOp(LC::subData, d1, d2);
 	}
 
-	int alignedType = g_lingo->getAlignedType(d1, d2, true);
+	int alignedType = g_lingo->getAlignedType(d1, d2, false);
 
 	Datum res;
 	if (alignedType == FLOAT) {
@@ -757,7 +757,7 @@ Datum LC::mulData(Datum &d1, Datum &d2) {
 		return LC::mapBinaryOp(LC::mulData, d1, d2);
 	}
 
-	int alignedType = g_lingo->getAlignedType(d1, d2, true);
+	int alignedType = g_lingo->getAlignedType(d1, d2, false);
 
 	Datum res;
 	if (alignedType == FLOAT) {
@@ -787,7 +787,7 @@ Datum LC::divData(Datum &d1, Datum &d2) {
 		d2 = Datum(1);
 	}
 
-	int alignedType = g_lingo->getAlignedType(d1, d2, true);
+	int alignedType = g_lingo->getAlignedType(d1, d2, false);
 
 	if (g_director->getVersion() < 400)	// pre-D4 is INT-only
 		alignedType = INT;
