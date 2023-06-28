@@ -49,14 +49,6 @@ bool PauseMenu::Draw(Button &back) {
 		bg.Draw();
 		menu.Draw();
 		break;
-	case STATE_SAVE:
-		save.Draw();
-		back.Draw();
-		break;
-	case STATE_LOAD:
-		g_engine->_loadMenu->Draw();
-		back.Draw();
-		break;
 	case STATE_OPTION:
 		g_engine->_optionMenu->Draw(back);
 		return true;
@@ -80,12 +72,18 @@ PauseSignal PauseMenu::HandleEvents(const Common::Event &Event, Button &back) {
 				state = STATE_NORMAL;
 				return PS_RESUME;
 			case 1:
-				state = STATE_SAVE;
-				save.ScanDir();
+				if (g_engine->saveGameDialog()) {
+					state = STATE_NORMAL;
+					return PS_SAVE;
+				} else
+					state = STATE_NORMAL;
 				break;
 			case 2:
-				state = STATE_LOAD;
-				g_engine->_loadMenu->ScanDir();
+				if (g_engine->loadGameDialog()) {
+					state = STATE_NORMAL;
+					return PS_LOAD;
+				} else
+					state = STATE_NORMAL;
 				break;
 			case 3:
 				state = STATE_OPTION;
@@ -101,13 +99,6 @@ PauseSignal PauseMenu::HandleEvents(const Common::Event &Event, Button &back) {
 			}
 		}
 		break;
-	case STATE_SAVE:
-		if (save.HandleEvents(Event)) {
-			state = STATE_NORMAL;
-			return PS_SAVE;
-		} else if (back.HandleEvents(Event) == BUAC_LCLICK && !save.DisableHotkeys())
-			state = STATE_NORMAL;
-		break;
 	case STATE_OPTION:
 		if (g_engine->_optionMenu->HandleEvents(back, Event)) {
 			g_engine->_optionMenu->Reset();
@@ -115,9 +106,9 @@ PauseSignal PauseMenu::HandleEvents(const Common::Event &Event, Button &back) {
 		}
 		break;
 	case STATE_LOAD:
-		if (g_engine->_loadMenu->HandleEvents(Event))
+		if (g_engine->loadGameDialog())
 			return PS_LOAD;
-		else if (back.HandleEvents(Event) == BUAC_LCLICK)
+		else
 			state = STATE_NORMAL;
 		break;
 	default:
