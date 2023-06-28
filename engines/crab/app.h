@@ -46,8 +46,10 @@
 namespace Crab {
 
 class App {
-	void LoadSettings(const Common::String &filename);
+private:
+	Game *_game;
 
+	void LoadSettings(const Common::String &filename);
 public:
 	App(void) {
 #if 0
@@ -61,6 +63,9 @@ public:
 
 	bool Init();
 	void Run();
+	Game *GetGame() const {
+		return _game;
+	}
 };
 
 } // End of namespace Crab

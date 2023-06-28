@@ -136,6 +136,8 @@ void App::Run() {
 	Common::Event e;
 	int fpscount = 0, fpsval = 1, lasts = 0;
 
+	_game = new Game();
+
 	// While the user hasn't quit - This is the main game loop
 	while (CurrentStateID != GAMESTATE_EXIT && !SHOULD_QUIT) {
 		// Start the frame timer
@@ -144,8 +146,10 @@ void App::Run() {
 		// Change state if needed
 		if (ShouldChangeState) {
 			// Delete the current state
-			delete CurrentState;
-			CurrentState = nullptr;
+			if (CurrentState != _game) {
+				delete CurrentState;
+				CurrentState = nullptr;
+			}
 
 			if (NextStateID == GAMESTATE_EXIT)
 				break;
@@ -170,12 +174,13 @@ void App::Run() {
 				break;
 
 			case GAMESTATE_NEW_GAME:
-				CurrentState = new Game();
+				_game->StartNewGame();
+				CurrentState = _game;
 				g_engine->_screenSettings->in_game = true;
 				break;
 
 			case GAMESTATE_LOAD_GAME:
-				CurrentState = new Game(g_engine->_loadMenu->SelectedPath());
+				CurrentState = _game;
 				g_engine->_screenSettings->in_game = true;
 				break;
 
@@ -291,7 +296,9 @@ void App::Run() {
 		}
 	}
 
-	delete CurrentState;
+	if (CurrentState != _game)
+		delete CurrentState;
+	delete _game;
 }
 
 void App::LoadSettings(const Common::String &filename) {
