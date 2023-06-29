@@ -33,6 +33,8 @@
 namespace M4 {
 namespace Burger {
 
+BurgerGlobals *g_globals;
+
 const char *GAME_MODES[4] = { "WHOLE_GAME", "INTERACTIVE_DEMO", "MAGAZINE_DEMO", "WHOLE_GAME" };
 
 /**
@@ -68,6 +70,13 @@ static const ConverterEntry ASCII_CONVERTERS[] = {
 	{ nullptr, 0 }
 };
 
+BurgerGlobals::BurgerGlobals() {
+	g_globals = this;
+}
+
+BurgerGlobals::~BurgerGlobals() {
+	g_globals = nullptr;
+}
 
 void BurgerGlobals::main_cold_data_init() {
 	// TODO

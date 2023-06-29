@@ -70,7 +70,7 @@ public:
 	virtual ~RectClass();
 	virtual int16 inside(int16 x, int16 y) const;
 
-	void copyInto(RectClass *);
+	void copyInto(RectClass *r) const;
 
 	void set(int16 x1, int16 y1, int16 x2, int16 y2);
 	void set(const RectClass *r);
@@ -134,6 +134,7 @@ public:
 	void set_sprite_relaxed(int16 r);
 	void set_sprite_picked(int16 p);
 	void set_sprite_over(int16 o);
+	void set_sprite_unknown(int16 val);
 };
 
 class Toggler : public ButtonClass {
@@ -155,7 +156,7 @@ public:
 	bool _must_redraw_all = false;
 
 public:
-	InterfaceBox(RectClass *r);
+	InterfaceBox(const RectClass &r);
 	~InterfaceBox();
 
 	void draw(GrBuff *interface_buffer);

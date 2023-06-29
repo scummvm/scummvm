@@ -26,31 +26,36 @@
 #include "m4/m4_types.h"
 #include "m4/graphics/graphics.h"
 #include "m4/graphics/gr_buff.h"
+#include "m4/burger/gui_cheapo.h"
 
 namespace M4 {
+namespace Burger {
 
-struct Interface_Globals {
-	int arrow = 0;
-	int wait = 0;
-	int look = 0;
-	int grab = 0;
-	int use = 0;
-	bool visible = false;
-	bool shown = false;
-	int x1 = 0;
-	int y1 = 374;
-	int x2 = SCREEN_WIDTH;
-	int y2 = SCREEN_HEIGHT;
-	GrBuff *gameInterfaceBuff = nullptr;
+struct Interface {
+private:
+	void setup();
+public:
+	int _arrow = 0;
+	int _wait = 0;
+	int _look = 0;
+	int _grab = 0;
+	int _use = 0;
+	bool _visible = false;
+	bool _shown = false;
+	int _x1 = 0;
+	int _y1 = 374;
+	int _x2 = SCREEN_WIDTH;
+	int _y2 = SCREEN_HEIGHT;
+	GrBuff *_gameInterfaceBuff = nullptr;
+	InterfaceBox *_interfaceBox = nullptr;
 
-	void show() {
-		assert(0);
-	}
+	~Interface();
+	void init(int arrow, int wait, int look, int grab, int use);
+
+	void show();
 };
 
-extern void interface_init(int arrow, int wait, int look, int grab, int use);
-extern void interface_shutdown();
-
-} // End of namespace M4
+} // namespace Burger
+} // namespace M4
 
 #endif

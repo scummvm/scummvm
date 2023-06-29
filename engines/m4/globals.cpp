@@ -44,7 +44,6 @@ Globals::Globals() {
 
 Globals::~Globals() {
 	game_systems_shutdown();
-	interface_shutdown();
 
 	sysfile_shutdown();
 	player_been_shutdown();
@@ -83,7 +82,6 @@ bool Globals::init() {
 	main_cold_data_init();
 	create_mouse_watch_dialog();
 	global_menu_system_init();
-	interface_init(0, 5, 6, 8, 9);
 
 	return true;
 }

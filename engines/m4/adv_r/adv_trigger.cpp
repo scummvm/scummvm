@@ -20,8 +20,30 @@
  */
 
 #include "m4/adv_r/adv_trigger.h"
+#include "m4/core/errors.h"
+#include "m4/globals.h"
 
 namespace M4 {
+
+int32 kernel_trigger_create(int32 trigger_num) {
+	int32 new_trigger;
+
+	if (trigger_num < 0)
+		return (trigger_num);
+
+	if (trigger_num > 0xffff) {		// if room changed, this is an invalid trigger 
+		error_show(FL, 'BADT', "bad trigger. %ld > 0xffff", trigger_num);
+	}
+
+	new_trigger = trigger_num + (_G(game).room_id << 16) + (_G(kernel).trigger_mode << 28);
+
+	return new_trigger;
+}
+
+bool kernel_trigger_dispatch(int32 trigger) {
+	error("TODO: kernel_trigger_dispatch");
+	return true;
+}
 
 
 } // End of namespace M4

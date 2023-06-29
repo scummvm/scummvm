@@ -43,4 +43,8 @@ bool series_draw_sprite(int32 spriteHash, int32 index, Buffer *destBuff, int32 x
 	return false;
 }
 
+bool series_show_frame(int32 spriteHash, int32 index, Buffer *destBuff, int32 x, int32 y) {
+	return series_draw_sprite(spriteHash, index, destBuff, x, y);
+}
+
 } // namespace M4

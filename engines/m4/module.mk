@@ -45,7 +45,6 @@ MODULE_OBJS = \
 	gui/gui_vmng_core.o \
 	gui/gui_vmng_rectangles.o \
 	gui/gui_vmng_screen.o \
-	gui/interface.o \
 	mem/mem.o \
 	mem/memman.o \
 	mem/reloc.o \
@@ -58,7 +57,8 @@ MODULE_OBJS = \
 	wscript/wscript.o \
 	burger/burger.o \
 	burger/burger_globals.o \
-	burger/gui_cheapo.o
+	burger/gui_cheapo.o \
+	burger/interface.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_M4), DYNAMIC_PLUGIN)

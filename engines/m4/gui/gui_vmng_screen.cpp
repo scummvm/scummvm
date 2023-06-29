@@ -159,6 +159,33 @@ void RestoreScreens(int32 updateX1, int32 updateY1, int32 updateX2, int32 update
 	}
 }
 
+void RestoreScreensInContext(int32 x1, int32 y1, int32 x2, int32 y2, ScreenContext *myScreen) {
+	ScreenContext *tempScreen;
+
+	//verify the gui has been initted
+	if (!_G(vmng_Initted)) {
+		return;
+	}
+
+	//verify parameters
+	tempScreen = _G(frontScreen);
+	while (tempScreen && (tempScreen != myScreen)) {
+		tempScreen = tempScreen->behind;
+	}
+	if (!tempScreen) {
+		return;
+	}
+
+	//now restore screens
+	x1 += myScreen->x1;
+	y1 += myScreen->y1;
+	x2 += myScreen->x1;
+	y2 += myScreen->y1;
+
+	//restore video
+	RestoreScreens(x1, y1, x2, y2);
+}
+
 bool ResizeScreen(void *scrnContent, int32 newW, int32 newH) {
 	ScreenContext *myScreen;
 	int32 status, oldX2, oldY2;
