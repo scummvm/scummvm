@@ -19,36 +19,38 @@
  *
  */
 
-#include "m4/gui/interface.h"
+#include "m4/burger/interface.h"
 #include "m4/globals.h"
 
 namespace M4 {
+namespace Burger {
 
-#define _GI(X) _G(interface).X
-
-static void sub1();
-
-void interface_init(int arrow, int wait, int look, int grab, int use) {
-	_GI(arrow) = arrow;
-	_GI(wait) = wait;
-	_GI(look) = look;
-	_GI(grab) = grab;
-	_GI(use) = use;
+void Interface::init(int arrow, int wait, int look, int grab, int use) {
+	_arrow = arrow;
+	_wait = wait;
+	_look = look;
+	_grab = grab;
+	_use = use;
 
 	mouse_set_sprite(wait);
 
-	_GI(gameInterfaceBuff) = new GrBuff(_GI(x2) - _GI(x1), _GI(y2) - _GI(y1));
-	sub1();
+	_gameInterfaceBuff = new GrBuff(_x2 - _x1, _y2 - _y1);
+	setup();
 
 	mouse_set_sprite(arrow);
 }
 
-void interface_shutdown() {
+Interface::~Interface() {
 	// TODO
 }
 
-static void sub1() {
-
+void Interface::show() {
+	error("TODO: Interface::show");
 }
 
-} // End of namespace M4
+void Interface::setup() {
+	_interfaceBox = new InterfaceBox(RectClass(0, 0, SCREEN_WIDTH - 1, 105));
+}
+
+} // namespace Burger
+} // namespace M4

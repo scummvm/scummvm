@@ -23,6 +23,7 @@
 #define M4_BURGER_BURGER_GLOBALS_H
 
 #include "m4/globals.h"
+#include "m4/burger/interface.h"
 
 namespace M4 {
 namespace Burger {
@@ -33,8 +34,6 @@ enum GameMode {
 
 class BurgerGlobals : public Globals {
 private:
-	GameMode _gameMode = WHOLE_GAME;
-
 	void initMouseSeries(const Common::String &assetName, RGB8 *myPalette);
 	void custom_ascii_converter_proc(char *string);
 	static void escape_key_pressed(void *, void *);
@@ -46,9 +45,18 @@ protected:
 	void global_menu_system_init() override;
 
 public:
-	BurgerGlobals() {}
-	virtual ~BurgerGlobals() {}
+	GameMode _gameMode = WHOLE_GAME;
+	Interface _interface;
+
+public:
+	BurgerGlobals();
+	virtual ~BurgerGlobals();
 };
+
+extern BurgerGlobals *g_globals;
+
+#undef _G
+#define _G(X) (::M4::Burger::g_globals->_##X)
 
 } // namespace Burger
 } // namespace M4

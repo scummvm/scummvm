@@ -38,7 +38,6 @@
 #include "m4/gui/gui_item.h"
 #include "m4/gui/gui_mouse.h"
 #include "m4/gui/gui_univ.h"
-#include "m4/gui/interface.h"
 #include "m4/mem/memman.h"
 #include "m4/mem/res.h"
 #include "m4/platform/timer.h"
@@ -85,7 +84,6 @@ public:
 	MouseInfo _MouseState;
 	Dialog_Globals _dialog;
 	Item_Globals _items;
-	Interface_Globals _interface;
 
 	bool _cheat_keys_enabled = false;
 	Font *_system_font = nullptr;

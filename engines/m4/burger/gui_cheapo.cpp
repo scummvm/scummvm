@@ -31,12 +31,12 @@
 #include "m4/core/errors.h"
 #include "m4/mem/mem.h"
 #include "m4/mem/memman.h"
-#include "m4/globals.h"
+#include "m4/burger/burger_globals.h"
 
 namespace M4 {
 namespace Burger {
 
-#define _GL(X) _G(interface).X
+#define _GI(X) _G(interface)._##X
 
 static void refresh_right_arrow() {
 	error("TODO: refresh_right_arrow");
@@ -67,7 +67,7 @@ RectClass::RectClass(int16 x1, int16 y1, int16 x2, int16 y2) :
 RectClass::~RectClass() {
 }
 
-void RectClass::copyInto(RectClass *r) {
+void RectClass::copyInto(RectClass *r) const {
 	if (!r) {
 		error_show(FL, 'CGNR');
 	} else {
@@ -142,7 +142,7 @@ void TextField::set_string(const char *string) {
 }
 
 void TextField::draw(GrBuff *myBuffer) {
-	if (!_GL(visible))
+	if (!_GI(visible))
 		return;
 
 	Buffer *myBuff = myBuffer->get_buffer();
@@ -153,7 +153,7 @@ void TextField::draw(GrBuff *myBuffer) {
 	gr_font_write(myBuff, _string, _x1, _y1, 0, 1);
 	myBuffer->release();
 
-	ScreenContext *iC = vmng_screen_find(_G(interface).gameInterfaceBuff, nullptr);
+	ScreenContext *iC = vmng_screen_find(_GI(gameInterfaceBuff), nullptr);
 	RestoreScreensInContext(_x1, _y1, _x2, _y2, iC);
 	_must_redraw = false;
 }
@@ -203,6 +203,10 @@ void ButtonClass::set_sprite_picked(int16 p) {
 
 void ButtonClass::set_sprite_over(int16 o) {
 	_over = o;
+}
+
+void ButtonClass::set_sprite_unknown(int16 val) {
+	_unknown = val;
 }
 
 int16 ButtonClass::get_tag() const {
@@ -262,7 +266,7 @@ int16 ButtonClass::inside(int16 x, int16 y) const {
 }
 
 ControlStatus ButtonClass::track(int32 eventType, int16 x, int16 y) {
-	if (!_GL(visible))
+	if (!_GI(visible))
 		return NOTHING;
 
 	ButtonState old_state = _state;
@@ -309,7 +313,7 @@ ControlStatus ButtonClass::track(int32 eventType, int16 x, int16 y) {
 }
 
 void ButtonClass::draw(GrBuff *myBuffer) {
-	if (!_GL(visible))
+	if (!_GI(visible))
 		return;
 
 	if (!_must_redraw)
@@ -343,7 +347,7 @@ void ButtonClass::draw(GrBuff *myBuffer) {
 	myBuffer->release();
 
 	_must_redraw = false;
-	ScreenContext *iC = vmng_screen_find(_G(interface).gameInterfaceBuff, nullptr);
+	ScreenContext *iC = vmng_screen_find(_GI(gameInterfaceBuff), nullptr);
 	RestoreScreensInContext(_x1, _y1 - 2, _x2, _y2, iC);
 }
 
@@ -365,7 +369,7 @@ Toggler::Toggler() : ButtonClass() {
 }
 
 ControlStatus Toggler::track(int32 eventType, int16 x, int16 y) {
-	if (!_GL(visible))
+	if (!_GI(visible))
 		return NOTHING;
 
 	ButtonState old_state = _state;
@@ -410,9 +414,8 @@ ControlStatus Toggler::track(int32 eventType, int16 x, int16 y) {
 
 //-------------------------------------------------------------------------------------------
 
-InterfaceBox::InterfaceBox(RectClass *r) {
-	if (!r) error_show(FL, 'CGNR');
-	r->copyInto(this);
+InterfaceBox::InterfaceBox(const RectClass &r) {
+	r.copyInto(this);
 	_highlight_index = -1;
 	_must_redraw_all = true;
 	_selected = false;
@@ -501,7 +504,7 @@ ControlStatus InterfaceBox::track(int32 eventType, int16 x, int16 y) {
 }
 
 void InterfaceBox::draw(GrBuff *myBuffer) {
-	if (!_GL(visible))
+	if (!_GI(visible))
 		return;
 
 	for (int iter = 0; iter < _index; iter++) {
@@ -510,7 +513,7 @@ void InterfaceBox::draw(GrBuff *myBuffer) {
 	}
 
 	if (_must_redraw_all) {
-		ScreenContext *iC = vmng_screen_find(_G(interface).gameInterfaceBuff, nullptr);
+		ScreenContext *iC = vmng_screen_find(_GI(gameInterfaceBuff), nullptr);
 		RestoreScreensInContext(_x1, _y1, _x2, _y2, iC);
 		kernel_trigger_dispatch(kernel_trigger_create(TRIG_INV_CLICK));
 	}
@@ -579,7 +582,7 @@ bool Inventory::add(const char *name, const char *verb, int32 invSprite, int32 c
 
 	_must_redraw_all = true;
 
-	if (_G(interface).visible)
+	if (_GI(visible))
 		_G(interface).show();
 
 	return true;
@@ -615,7 +618,7 @@ bool Inventory::remove(const char *name) {
 			_must_redraw_all = true;
 			_scroll = 0;
 
-			if (_G(interface).visible)
+			if (_GI(visible))
 				_G(interface).show();
 
 			return true;
@@ -662,7 +665,7 @@ void Inventory::highlight_part(int16 index) {
 }
 
 void Inventory::draw(GrBuff *myBuffer) {
-	if (!_GL(visible))
+	if (!_GI(visible))
 		return;
 
 	if (!_must_redraw1 && !_must_redraw2 && !_must_redraw_all)
@@ -710,7 +713,7 @@ void Inventory::draw(GrBuff *myBuffer) {
 		series_show_frame(_sprite, 68, myBuff, cell_iter * 39 + 188, 92);
 	}
 
-	ScreenContext *iC = vmng_screen_find(_G(interface).gameInterfaceBuff, nullptr);
+	ScreenContext *iC = vmng_screen_find(_GI(gameInterfaceBuff), nullptr);
 	RestoreScreensInContext(_x1, _y1, _x2, _y2, iC);
 	_must_redraw1 = _must_redraw2 = -1;
 	_must_redraw_all = false;
@@ -719,7 +722,7 @@ void Inventory::draw(GrBuff *myBuffer) {
 }
 
 ControlStatus Inventory::track(int32 eventType, int16 x, int16 y) {
-	if (!_GL(visible))
+	if (!_GI(visible))
 		return NOTHING;
 
 	static int16 interface_tracking = -1;
