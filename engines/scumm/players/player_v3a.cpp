@@ -27,7 +27,7 @@
 namespace Scumm {
 
 Player_V3A::Player_V3A(ScummEngine *scumm, Audio::Mixer *mixer)
-	: Paula(true, mixer->getOutputRate(), mixer->getOutputRate() / (scumm->getTimerFrequency() / 4)),
+	: Paula(true, mixer->getOutputRate(), mixer->getOutputRate() / (scumm->getAmigaMusicTimerFrequency() / 4)),
 	  _vm(scumm),
 	  _mixer(mixer),
 	  _soundHandle(),

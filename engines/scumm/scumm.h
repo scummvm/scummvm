@@ -347,11 +347,11 @@ class ResourceManager;
  * at a time.
  *
  * The base rate is 50Hz for PAL systems and 60Hz for NTSC systems.
- * We're going to target the latter in here, converting it in a quarter
- * frame frequency.
+ * We're converting it in a quarter frame frequency.
  */
 
 #define AMIGA_NTSC_VBLANK_RATE 240.0
+#define AMIGA_PAL_VBLANK_RATE  200.0
 
 /**
  * Game saving/loading outcome codes
@@ -550,6 +550,7 @@ public:
 	bool _useOriginalGUI = true;
 	bool _enableAudioOverride = false;
 	bool _enableCOMISong = false;
+	bool _isAmigaPALSystem = false;
 
 	Common::Keymap *_insaneKeymap;
 
@@ -1412,6 +1413,7 @@ protected:
 
 public:
 	double getTimerFrequency();
+	double getAmigaMusicTimerFrequency(); // For setting up Players v2 and v3
 
 protected:
 	bool _shakeEnabled = false;

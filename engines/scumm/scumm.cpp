@@ -182,6 +182,14 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_virtscr[i].clear();
 	}
 
+
+	if (_game.platform == Common::kPlatformAmiga) {
+		ConfMan.registerDefault("amiga_pal_system", false);
+		if (ConfMan.hasKey("amiga_pal_system", _targetName)) {
+			_isAmigaPALSystem = ConfMan.getBool("amiga_pal_system");
+		}
+	}
+
 	setTimerAndShakeFrequency();
 
 	camera.reset();
@@ -2513,13 +2521,20 @@ void ScummEngine::setTimerAndShakeFrequency() {
 		default:
 			_shakeTimerRate = _timerFrequency = 240.0;
 		}
-	} else if (_game.platform == Common::kPlatformAmiga) {
-		_shakeTimerRate = _timerFrequency = AMIGA_NTSC_VBLANK_RATE;
+	} else if (_game.platform == Common::kPlatformAmiga && _game.id != GID_MONKEY_VGA) {
+		_shakeTimerRate = _timerFrequency = _isAmigaPALSystem ? AMIGA_PAL_VBLANK_RATE : AMIGA_NTSC_VBLANK_RATE;
 	}
 }
 
 double ScummEngine::getTimerFrequency() {
 	return _timerFrequency;
+}
+
+double ScummEngine::getAmigaMusicTimerFrequency() {
+	// Similarly to MI1, LOOM in PAL mode operates at 50Hz but the audio engine
+	// compensates the speed factor to play music at the correct speed.
+	// We simply feed the NTSC speed to the Paula audio engine to account for that.
+	return _game.id == GID_LOOM ? AMIGA_NTSC_VBLANK_RATE : _timerFrequency;
 }
 
 void ScummEngine_v0::scummLoop(int delta) {
