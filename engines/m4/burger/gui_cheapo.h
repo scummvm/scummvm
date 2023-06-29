@@ -63,29 +63,29 @@ public:
 	int16 _x1 = 0, _x2 = 0, _y1 = 0, _y2 = 0;
 public:
 	RectClass();
-	RectClass(int16 _x1, int16 _y1, int16 _x2, int16 _y2);
-	RectClass(RectClass *);
+	RectClass(int16 x1, int16 y1, int16 x2, int16 y2);
+	RectClass(const RectClass *);
 	virtual ~RectClass();
 	virtual int16 inside(int16 x, int16 y) const;
 
 	void copyInto(RectClass *);
 
-	void set(int16 _x1, int16 _y1, int16 _x2, int16 _y2);
-	void set(RectClass *);
+	void set(int16 x1, int16 y1, int16 x2, int16 y2);
+	void set(const RectClass *r);
 };
 
 class TextField : public RectClass {
 private:
-	char *string = nullptr;
-	int16 string_len = 0;
+	char *_string = nullptr;
+	int16 _string_len = 0;
 public:
-	bool must_redraw = false;
+	bool _must_redraw = false;
 
 public:
-	TextField(int16 _x1, int16 _y1, int16 _x2, int16 _y2);
+	TextField(int16 x1, int16 y1, int16 x2, int16 y2);
 	~TextField();
 
-	void set_string(char *_string);
+	void set_string(const char *string);
 	void draw(GrBuff *interface_buffer);
 };
 
@@ -110,7 +110,7 @@ public:
 
 public:
 	ButtonClass();
-	ButtonClass(RectClass *r, const char *btnName, int16 tag);
+	ButtonClass(const RectClass *r, const char *btnName, int16 tag);
 	~ButtonClass();
 
 	void draw(GrBuff *interface_buffer);
@@ -119,8 +119,8 @@ public:
 
 	void set(ButtonClass *b);
 	void set(int16 x1, int16 y1, int16 x2, int16 y2, int16 tag);
-	void set(int16 x1, int16 y1, int16 x2, int16 y2, int16 tag, int16 _relaxed,
-		int16 _over, int16 _picked, int32 _sprite);
+	void set(int16 x1, int16 y1, int16 x2, int16 y2, int16 tag, int16 relaxed,
+		int16 over, int16 picked, int32 sprite);
 	void set_name(const char *btnName);
 
 	int16 get_tag() const;
@@ -161,7 +161,7 @@ public:
 
 	void add(ButtonClass *b);
 	int16 check_inventory(int16 x, int16 y);
-	void highlight_button(int16 _index);
+	void highlight_button(int16 index);
 	void set_selected(bool);
 
 };
@@ -202,7 +202,7 @@ public:
 	bool add(char *name, char *verb, int32 cel, int32 cursor);
 	bool remove(char *name);
 	void hide(bool);
-	void highlight_part(int16 _index);
+	void highlight_part(int16 index);
 
 	bool need_left() const;
 	bool need_right() const;
