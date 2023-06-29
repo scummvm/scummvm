@@ -235,6 +235,17 @@ def extract_xmethtable_win16(file: BinaryIO, ne_offset: int) -> tuple[str, list[
 	return library_name, xmethtable
 
 
+def extract_xmethtable_win32(file: BinaryIO, pe_offset: int) -> tuple[str, list[str]]:
+	# get the .data section
+	# find a string b"msgTable\x00", get the offset
+	# get the .text section
+	# find assembly:
+	# 68 [ addr ] 6a 00 6a [ addr 2 ]
+	# lookup addr2 in .data
+	# get c string, split by \x0a
+
+	return ("", [])
+
 def extract_xmethtable(path: str):
 	with open(path, 'rb') as file:
 		magic = file.read(0x2)
