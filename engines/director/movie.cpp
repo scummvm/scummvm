@@ -95,9 +95,11 @@ Movie::Movie(Window *window) {
 }
 
 Movie::~Movie() {
-	if (_sharedCast)
+	if (_sharedCast && _sharedCast->getArchive())
 		g_director->_allOpenResFiles.remove(_sharedCast->getArchive()->getPathName());
-	g_director->_allOpenResFiles.remove(_cast->getArchive()->getPathName());
+
+	if (_cast && _cast->getArchive())
+		g_director->_allOpenResFiles.remove(_cast->getArchive()->getPathName());
 
 	delete _cast;
 	delete _sharedCast;
