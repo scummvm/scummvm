@@ -322,6 +322,10 @@ void ButtonClass::draw(GrBuff *myBuffer) {
 
 	if (_hidden == false) {
 		switch (_state) {
+		case BUTTON_0:
+			series_show_frame(_sprite, _unknown, myBuff, _x1, _y1);
+			break;
+
 		case BUTTON_RELAXED:
 			series_show_frame(_sprite, _relaxed, myBuff, _x1, _y1);
 			break;
@@ -333,7 +337,6 @@ void ButtonClass::draw(GrBuff *myBuffer) {
 		case BUTTON_PICKED:
 			series_show_frame(_sprite, _picked, myBuff, _x1, _y1);
 			break;
-
 		}
 	}
 

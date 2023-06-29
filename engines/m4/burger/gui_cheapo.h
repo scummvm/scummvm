@@ -51,7 +51,7 @@ enum ControlStatus {
 };
 
 enum ButtonState {
-	BUTTON_RELAXED, BUTTON_OVER, BUTTON_PICKED
+	BUTTON_0, BUTTON_RELAXED, BUTTON_OVER, BUTTON_PICKED
 };
 
 class RectClass;
