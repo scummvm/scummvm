@@ -49,21 +49,19 @@ static void refresh_left_arrow() {
 RectClass::RectClass() {
 }
 
-RectClass::RectClass(RectClass *r) {
-	if (!r)
+RectClass::RectClass(const RectClass *r) {
+	if (!r) {
 		error_show(FL, 'CGNR');
-
-	_x1 = r->_x1;
-	_y1 = r->_y1;
-	_x2 = r->_x2;
-	_y2 = r->_y2;
+	} else {
+		_x1 = r->_x1;
+		_y1 = r->_y1;
+		_x2 = r->_x2;
+		_y2 = r->_y2;
+	}
 }
 
-RectClass::RectClass(int16 x1, int16 y1, int16 x2, int16 y2) {
-	_x1 = x1;
-	_y1 = y1;
-	_x2 = x2;
-	_y2 = y2;
+RectClass::RectClass(int16 x1, int16 y1, int16 x2, int16 y2) :
+		_x1(x1), _y1(y1), _x2(x2), _y2(y2) {
 }
 
 RectClass::~RectClass() {
@@ -87,7 +85,7 @@ void RectClass::set(int16 x1, int16 y1, int16 x2, int16 y2) {
 	_y2 = y2;
 }
 
-void RectClass::set(RectClass *r) {
+void RectClass::set(const RectClass *r) {
 	if (!r) {
 		error_show(FL, 'CGNR');
 	} else {
@@ -101,51 +99,49 @@ void RectClass::set(RectClass *r) {
 int16 RectClass::inside(int16 x, int16 y) const {
 	if ((x >= _x1) && (x <= _x2) && (y >= _y1) && (y <= _y2))
 		return 1;
+
 	return 0;
 }
 
 //-------------------------------------------------------------------------------------------
 
-TextField::TextField(int16 _x1, int16 _y1, int16 _x2, int16 _y2) : RectClass(_x1, _y1, _x2, _y2) {
-	string = nullptr;
-	string_len = 0;
-	must_redraw = true;
+TextField::TextField(int16 x1, int16 y1, int16 x2, int16 y2) :
+		RectClass(x1, y1, x2, y2) {
+	_string = nullptr;
+	_string_len = 0;
+	_must_redraw = true;
 }
 
 TextField::~TextField() {
-	if (string != nullptr)
-		mem_free(string);
+	if (_string != nullptr)
+		mem_free(_string);
 }
 
-void TextField::set_string(char *_string) {
+void TextField::set_string(const char *string) {
+	_must_redraw = true;
 
-	must_redraw = true;
-
-	if (_string == nullptr && string != nullptr) {
-		string[0] = '\0';
+	if (string == nullptr && string != nullptr) {
+		_string[0] = '\0';
 		return;
 	}
-	int16 _string_len = (int16)(cstrlen(_string) + 1);
-	if (string == nullptr) {
-		string = (char *)mem_alloc(_string_len, "string");
+
+	int16 string_len = (int16)(cstrlen(string) + 1);
+	if (_string == nullptr) {
+		_string = (char *)mem_alloc(_string_len, "string");
 	} else {
-		if (string_len < _string_len) {
-			string = (char *)mem_realloc(string, _string_len, "string");
+		if (_string_len < string_len) {
+			_string = (char *)mem_realloc(_string, string_len, "string");
 		}
 	}
-	if (!string)
+
+	if (!_string)
 		error_show(FL, 'OOM!', "TextField set_string:%s", _string);
 
-	string_len = _string_len;
-	cstrcpy(string, _string);
+	_string_len = string_len;
+	cstrcpy(_string, string);
 }
 
-#if defined (__WIN)
-void TextField::draw(CDIBSectionBuffer *myBuffer)
-#else
-void TextField::draw(GrBuff *myBuffer)
-#endif
-{
+void TextField::draw(GrBuff *myBuffer) {
 	if (!_GL(visible))
 		return;
 
@@ -154,24 +150,25 @@ void TextField::draw(GrBuff *myBuffer)
 	gr_buffer_rect_fill(myBuff, _x1, _y1, _x2 - _x1, _y2 - _y1);
 	gr_font_set_color(__WHITE);
 	gr_font_set(_G(font_inter));
-	gr_font_write(myBuff, string, _x1, _y1, 0, 1);
+	gr_font_write(myBuff, _string, _x1, _y1, 0, 1);
 	myBuffer->release();
 
 	ScreenContext *iC = vmng_screen_find(_G(interface).gameInterfaceBuff, nullptr);
 	RestoreScreensInContext(_x1, _y1, _x2, _y2, iC);
-	must_redraw = false;
+	_must_redraw = false;
 }
 
 //-------------------------------------------------------------------------------------------
 
 void ButtonClass::init() {
-	_relaxed = _over = _picked = 0; _tag = 0;
+	_relaxed = _over = _picked = 0;
+	_tag = 0;
 	_must_redraw = true;
 	_state = BUTTON_RELAXED;
 	_tracking = -1;
 }
 
-ButtonClass::ButtonClass(RectClass *r, const char *btnName, int16 tag) : RectClass(r) {
+ButtonClass::ButtonClass(const RectClass *r, const char *btnName, int16 tag) : RectClass(r) {
 	init();
 	cstrncpy(_name, btnName, 19);
 	_tag = tag;
@@ -204,7 +201,6 @@ void ButtonClass::set_sprite_picked(int16 p) {
 	_picked = p;
 }
 
-//aug23
 void ButtonClass::set_sprite_over(int16 o) {
 	_over = o;
 }
@@ -212,6 +208,7 @@ void ButtonClass::set_sprite_over(int16 o) {
 int16 ButtonClass::get_tag() const {
 	return _tag;
 }
+
 void ButtonClass::zap_resources() {
 	if (_relaxed)
 		ClearWSAssets(_WS_ASSET_CELS, _relaxed, _relaxed);
@@ -454,7 +451,6 @@ int16 InterfaceBox::inside(int16 x, int16 y) const {
 }
 
 void InterfaceBox::highlight_button(int16 index) {
-
 	if (_highlight_index == index) {
 		return;
 	}
@@ -488,7 +484,7 @@ void InterfaceBox::add(ButtonClass *b) {
 	} else if (_index >= MAX_BUTTONS) {
 		error_show(FL, 'CGIA');
 	} else {
-		// convert to global coordinates
+		// Convert to global coordinates
 		b->_x1 += _x1;
 		b->_x2 += _x1;
 		b->_y1 += _y1;
@@ -550,6 +546,7 @@ Inventory::Inventory(RectClass *r, int32 sprite, int16 cells_h, int16 cells_v, i
 		_cursors[iter] = -1;
 		_names[iter] = nullptr;
 	}
+
 	_num_cells = 0;
 	_tag = tag;
 	_cells_h = cells_h;
@@ -557,7 +554,7 @@ Inventory::Inventory(RectClass *r, int32 sprite, int16 cells_h, int16 cells_v, i
 	_cell_w = cell_w;
 	_cell_h = cell_h;
 
-	// if requested cell configuration doesn't fit, blow up.
+	// If requested cell configuration doesn't fit, blow up.
 	if ((cells_h * cell_w > (_x2 - _x1)) || (cells_v * cell_h > (_y2 - _y1))) {
 		error_show(FL, 'CGIC');
 	}
