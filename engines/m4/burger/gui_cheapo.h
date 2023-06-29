@@ -32,6 +32,7 @@ namespace Burger {
 constexpr int16 INVENTORY_CELLS_COUNT = 128;
 constexpr int16 ARROW_WIDTH = 8;
 constexpr int16 MAX_BUTTONS = 20;
+constexpr int16 MAX_INVENTORY = 9;
 
 constexpr int16 LEFT_ARROW_TAG = 128;
 constexpr int16 RIGHT_ARROW_TAG = 129;
@@ -92,6 +93,7 @@ public:
 class ButtonClass : public RectClass {
 protected:
 	int16 _tag = 0;
+	int16 _unknown = 0;
 	int16 _relaxed = 0;
 	int16 _over = 0;
 	int16 _picked = 0;
@@ -117,10 +119,10 @@ public:
 	int16 inside(int16 x, int16 y) const override;
 	virtual ControlStatus track(int32 eventType, int16 x, int16 y);
 
-	void set(ButtonClass *b);
+	void set(const ButtonClass *b);
 	void set(int16 x1, int16 y1, int16 x2, int16 y2, int16 tag);
-	void set(int16 x1, int16 y1, int16 x2, int16 y2, int16 tag, int16 relaxed,
-		int16 over, int16 picked, int32 sprite);
+	void set(int16 x1, int16 y1, int16 x2, int16 y2, int16 tag, int16 unknown,
+		int16 relaxed, int16 over, int16 picked, int32 sprite);
 	void set_name(const char *btnName);
 
 	int16 get_tag() const;
@@ -167,6 +169,12 @@ public:
 };
 
 class Inventory : public RectClass {
+	struct Entry {
+		const char *_name = nullptr;
+		const char *_verb = nullptr;
+		int16 _cell = -1;
+		int16 _cursor = -1;
+	};
 private:
 	int32 _sprite = 0;
 	int16 _tag = 0;
@@ -183,15 +191,11 @@ public:
 	int16 _must_redraw1 = 0, _must_redraw2 = 0;
 	int16 _highlight = 0, _dehighlight = 0;
 	bool _must_redraw_all = false;
-	bool _hidden = false;
 
-	int16 _cells[INVENTORY_CELLS_COUNT] = { 0 };
-	int16 _cursors[INVENTORY_CELLS_COUNT] = { 0 };
-	char *_names[INVENTORY_CELLS_COUNT] = { nullptr };
-	char *_verbs[INVENTORY_CELLS_COUNT] = { nullptr };
+	Entry _items[INVENTORY_CELLS_COUNT];
 
 public:
-	Inventory(RectClass *r, int32 sprite, int16 cells_h, int16 cells_v, int16 cell_w, int16 cell_h, int16 tag);
+	Inventory(const RectClass *r, int32 sprite, int16 cells_h, int16 cells_v, int16 cell_w, int16 cell_h, int16 tag);
 	~Inventory();
 
 	void draw(GrBuff *interface_buffer);
@@ -199,15 +203,12 @@ public:
 	int16 inside(int16 x, int16 y);
 	ControlStatus track(int32 eventType, int16 x, int16 y);
 
-	bool add(char *name, char *verb, int32 cel, int32 cursor);
-	bool remove(char *name);
-	void hide(bool);
+	bool add(const char *name, const char *verb, int32 cel, int32 cursor);
+	bool remove(const char *name);
 	void highlight_part(int16 index);
 
 	bool need_left() const;
 	bool need_right() const;
-	void scroll_left();
-	void scroll_right();
 	void set_scroll(int32 new_scroll);
 };
 
