@@ -60,13 +60,13 @@ class Inventory;
 
 class RectClass {
 public:
-	int16 x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+	int16 _x1 = 0, _x2 = 0, _y1 = 0, _y2 = 0;
 public:
 	RectClass();
 	RectClass(int16 _x1, int16 _y1, int16 _x2, int16 _y2);
 	RectClass(RectClass *);
 	virtual ~RectClass();
-	virtual int16 inside(int16 x, int16 y);
+	virtual int16 inside(int16 x, int16 y) const;
 
 	void copyInto(RectClass *);
 
@@ -91,22 +91,22 @@ public:
 
 class ButtonClass : public RectClass {
 protected:
-	int16 tag = 0;
-	int16 relaxed = 0;
-	int16 over = 0;
-	int16 picked = 0;
-	int16 tracking = 0;
-	int32 sprite = 0;
-	bool highlighted = false;
-	bool hidden = false;
+	int16 _tag = 0;
+	int16 _relaxed = 0;
+	int16 _over = 0;
+	int16 _picked = 0;
+	int16 _tracking = 0;
+	int32 _sprite = 0;
+	bool _highlighted = false;
+	bool _hidden = false;
 
 	void init();
 	void zap_resources();
 
 public:
-	ButtonState	state = BUTTON_RELAXED;
-	char name[20] = { 0 }; // fixme? inventory objects get 40 char strings. use MAX_PLYR_STRING_LEN?
-	bool must_redraw = false;
+	ButtonState	_state = BUTTON_RELAXED;
+	char _name[20] = { 0 }; // fixme? inventory objects get 40 char strings. use MAX_PLYR_STRING_LEN?
+	bool _must_redraw = false;
 
 public:
 	ButtonClass();
@@ -114,7 +114,7 @@ public:
 	~ButtonClass();
 
 	void draw(GrBuff *interface_buffer);
-	int16 inside(int16 x, int16 y);
+	int16 inside(int16 x, int16 y) const override;
 	virtual ControlStatus track(int32 eventType, int16 x, int16 y);
 
 	void set(ButtonClass *b);
@@ -123,11 +123,11 @@ public:
 		int16 _over, int16 _picked, int32 _sprite);
 	void set_name(const char *btnName);
 
-	int16 get_tag();
+	int16 get_tag() const;
 
 	void hide();
 	void unhide();
-	bool is_hidden();
+	bool is_hidden() const;
 	void set_sprite_relaxed(int16 r);
 	void set_sprite_picked(int16 p);
 	void set_sprite_over(int16 o);
@@ -135,23 +135,28 @@ public:
 
 class Toggler : public ButtonClass {
 public:
+	ControlStatus _toggle_state;
+public:
 	Toggler();
 	ControlStatus track(int32 eventType, int16 x, int16 y);
-	ControlStatus toggle_state;
 };
 
 class InterfaceBox : public RectClass {
 private:
-	bool selected = false;
-	int16 index = 0;
-	ButtonClass *button[MAX_BUTTONS] = { nullptr };
+	bool _selected = false;
+	int16 _index = 0;
+	ButtonClass *_button[MAX_BUTTONS] = { nullptr };
+
+public:
+	int16 _highlight_index = 0;
+	bool _must_redraw_all = false;
 
 public:
 	InterfaceBox(RectClass *r);
 	~InterfaceBox();
 
 	void draw(GrBuff *interface_buffer);
-	int16 inside(int16 x, int16 y);
+	int16 inside(int16 x, int16 y) const override;
 	ControlStatus track(int32 eventType, int16 x, int16 y);
 
 	void add(ButtonClass *b);
@@ -159,36 +164,34 @@ public:
 	void highlight_button(int16 _index);
 	void set_selected(bool);
 
-	int16 highlight_index;
-	bool must_redraw_all;
 };
 
 class Inventory : public RectClass {
 private:
-	int32 sprite = 0;
-	int16 tag = 0;
-	int16 num_cells = 0;
-	bool right_arrow_visible = false;
+	int32 _sprite = 0;
+	int16 _tag = 0;
+	int16 _num_cells = 0;
+	bool _right_arrow_visible = false;
 
 	int16 cell_pos_x(int16 index);
 	int16 cell_pos_y(int16 index);
 
 public:
-	int16 scroll = 0;
-	int16 cells_h = 0, cells_v = 0;
-	int16 cell_w = 0, cell_h = 0;
-	int16 must_redraw1 = 0, must_redraw2 = 0;
-	int16 highlight = 0, dehighlight = 0;
-	bool must_redraw_all = false;
-	bool hidden = false;
+	int16 _scroll = 0;
+	int16 _cells_h = 0, _cells_v = 0;
+	int16 _cell_w = 0, _cell_h = 0;
+	int16 _must_redraw1 = 0, _must_redraw2 = 0;
+	int16 _highlight = 0, _dehighlight = 0;
+	bool _must_redraw_all = false;
+	bool _hidden = false;
 
-	int16 cells[INVENTORY_CELLS_COUNT] = { 0 };
-	int16 cursors[INVENTORY_CELLS_COUNT] = { 0 };
-	char *names[INVENTORY_CELLS_COUNT] = { nullptr };
-	char *verbs[INVENTORY_CELLS_COUNT] = { nullptr };
+	int16 _cells[INVENTORY_CELLS_COUNT] = { 0 };
+	int16 _cursors[INVENTORY_CELLS_COUNT] = { 0 };
+	char *_names[INVENTORY_CELLS_COUNT] = { nullptr };
+	char *_verbs[INVENTORY_CELLS_COUNT] = { nullptr };
 
 public:
-	Inventory(RectClass *, int32 _sprite, int16 _cells_h, int16 _cells_v, int16 _cell_w, int16 _cell_h, int16 _tag);
+	Inventory(RectClass *r, int32 sprite, int16 cells_h, int16 cells_v, int16 cell_w, int16 cell_h, int16 tag);
 	~Inventory();
 
 	void draw(GrBuff *interface_buffer);
@@ -201,8 +204,8 @@ public:
 	void hide(bool);
 	void highlight_part(int16 _index);
 
-	bool need_left();
-	bool need_right();
+	bool need_left() const;
+	bool need_right() const;
 	void scroll_left();
 	void scroll_right();
 	void set_scroll(int32 new_scroll);
