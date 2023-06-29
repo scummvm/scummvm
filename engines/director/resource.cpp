@@ -203,6 +203,14 @@ void Window::probeResources(Archive *archive) {
 	}
 }
 
+void DirectorEngine::addArchiveToOpenList(const Common::String path) {
+	// First, remove it if it is present
+	_allOpenResFiles.remove(path);
+
+	// And add it to the list front
+	_allOpenResFiles.push_front(path);
+}
+
 Archive *DirectorEngine::openArchive(const Common::String path) {
 	debug(1, "DirectorEngine::openArchive(\"%s\")", path.c_str());
 
@@ -210,6 +218,7 @@ Archive *DirectorEngine::openArchive(const Common::String path) {
 	// just init from the existing archive. This prevents errors that
 	// can happen when trying to load the same archive more than once.
 	if (_allSeenResFiles.contains(path)) {
+		addArchiveToOpenList(path);
 		return _allSeenResFiles.getVal(path);
 	}
 
@@ -228,6 +237,8 @@ Archive *DirectorEngine::openArchive(const Common::String path) {
 	}
 	result->setPathName(path);
 	_allSeenResFiles.setVal(path, result);
+
+	addArchiveToOpenList(path);
 
 	return result;
 }

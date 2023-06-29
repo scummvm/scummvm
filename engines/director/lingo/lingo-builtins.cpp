@@ -1147,6 +1147,9 @@ void LB::b_closeResFile(int nargs) {
 	// closeResFile closes only resource files that were opened with openResFile.
 
 	if (nargs == 0) { // Close all open resource files
+		for (auto &it : g_director->_openResFiles)
+			g_director->_allOpenResFiles.remove(it._key);
+
 		g_director->_openResFiles.clear();
 		return;
 	}
@@ -1156,6 +1159,8 @@ void LB::b_closeResFile(int nargs) {
 
 	if (g_director->_openResFiles.contains(resFileName)) {
 		g_director->_openResFiles.erase(resFileName);
+
+		g_director->_allOpenResFiles.remove(resFileName);
 	}
 }
 
@@ -1251,6 +1256,7 @@ void LB::b_openResFile(int nargs) {
 		if (arch->openFile(pathMakeRelative(resPath))) {
 			g_director->_openResFiles.setVal(resPath, arch);
 			g_director->_allSeenResFiles.setVal(resPath, arch);
+			g_director->addArchiveToOpenList(resPath);
 		} else {
 			delete arch;
 		}
@@ -1315,8 +1321,8 @@ void LB::b_showResFile(int nargs) {
 	if (nargs)
 		g_lingo->pop();
 	Common::String out;
-	for (auto &it : g_director->_allSeenResFiles)
-		out += it._key + "\n";
+	for (auto &it : g_director->_allOpenResFiles)
+		out += it + "\n";
 	g_debugger->debugLogFile(out, false);
 }
 

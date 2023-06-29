@@ -95,6 +95,10 @@ Movie::Movie(Window *window) {
 }
 
 Movie::~Movie() {
+	if (_sharedCast)
+		g_director->_allOpenResFiles.remove(_sharedCast->getArchive()->getPathName());
+	g_director->_allOpenResFiles.remove(_cast->getArchive()->getPathName());
+
 	delete _cast;
 	delete _sharedCast;
 	delete _score;
@@ -342,6 +346,8 @@ void Movie::loadFileInfo(Common::SeekableReadStreamEndian &stream) {
 void Movie::clearSharedCast() {
 	if (!_sharedCast)
 		return;
+
+	g_director->_allOpenResFiles.remove(_sharedCast->getArchive()->getPathName());
 
 	delete _sharedCast;
 	_sharedCast = nullptr;

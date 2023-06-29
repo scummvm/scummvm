@@ -212,6 +212,7 @@ public:
 
 	Archive *createArchive();
 	Archive *openArchive(const Common::String movie);
+	void addArchiveToOpenList(const Common::String path);
 	Archive *loadEXE(const Common::String movie);
 	Archive *loadEXEv3(Common::SeekableReadStream *stream);
 	Archive *loadEXEv4(Common::SeekableReadStream *stream);
@@ -256,6 +257,8 @@ public:
 	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _allSeenResFiles;
 	// Handles to resource files that were opened by OpenResFile.
 	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;
+	// List of all currently open resource files
+	Common::List<Common::String> _allOpenResFiles;
 
 	Common::Array<Graphics::WinCursorGroup *> _winCursor;
 

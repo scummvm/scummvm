@@ -184,8 +184,8 @@ void Cursor::readFromResource(Datum resourceId) {
 				break;
 		}
 
-		for (auto &it : g_director->_allSeenResFiles) {
-			readSuccessful = readFromArchive(it._value, resourceId.asInt());
+		for (auto &it : g_director->_allOpenResFiles) {
+			readSuccessful = readFromArchive(g_director->_allSeenResFiles[it], resourceId.asInt());
 			if (readSuccessful)
 				break;
 		}
