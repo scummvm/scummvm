@@ -294,16 +294,16 @@ void Lingo::closeXLib(Common::String name) {
 }
 
 void Lingo::closeOpenXLibs() {
-	for (OpenXLibsHash::iterator it = _openXLibs.begin(); it != _openXLibs.end(); ++it) {
-		closeXLib(it->_key);
+	for (auto &it : _openXLibs) {
+		closeXLib(it._key);
 	}
 }
 
 void Lingo::reloadOpenXLibs() {
 	OpenXLibsHash openXLibsCopy = _openXLibs;
-	for (OpenXLibsHash::iterator it = openXLibsCopy.begin(); it != openXLibsCopy.end(); ++it) {
-		closeXLib(it->_key);
-		openXLib(it->_key, it->_value);
+	for (auto &it : openXLibsCopy) {
+		closeXLib(it._key);
+		openXLib(it._key, it._value);
 	}
 }
 
@@ -329,13 +329,13 @@ ScriptContext::ScriptContext(Common::String name, ScriptType type, int id)
 ScriptContext::ScriptContext(const ScriptContext &sc) : Object<ScriptContext>(sc) {
 	_scriptType = sc._scriptType;
 	_functionNames = sc._functionNames;
-	for (SymbolHash::iterator it = sc._functionHandlers.begin(); it != sc._functionHandlers.end(); ++it) {
-		_functionHandlers[it->_key] = it->_value;
-		_functionHandlers[it->_key].ctx = this;
+	for (auto &it : sc._functionHandlers) {
+		_functionHandlers[it._key] = it._value;
+		_functionHandlers[it._key].ctx = this;
 	}
-	for (Common::HashMap<uint32, Symbol>::iterator it = sc._eventHandlers.begin(); it != sc._eventHandlers.end(); ++it) {
-		_eventHandlers[it->_key] = it->_value;
-		_eventHandlers[it->_key].ctx = this;
+	for (auto &it : sc._eventHandlers) {
+		_eventHandlers[it._key] = it._value;
+		_eventHandlers[it._key].ctx = this;
 	}
 	_constants = sc._constants;
 	_properties = sc._properties;
@@ -655,13 +655,13 @@ void LM::m_forget(int nargs) {
 		windowList->arr.remove_at(i);
 
 	// remove me from global vars
-	for (DatumHash::iterator it = g_lingo->_globalvars.begin(); it != g_lingo->_globalvars.end(); ++it) {
-		if (it->_value.type != OBJECT || it->_value.u.obj->getObjType() != kWindowObj)
+	for (auto &it : g_lingo->_globalvars) {
+		if (it._value.type != OBJECT || it._value.u.obj->getObjType() != kWindowObj)
 			continue;
 
 		Window *window = static_cast<Window *>(windowList->arr[i].u.obj);
 		if (window == me)
-			g_lingo->_globalvars[it->_key] = 0;
+			g_lingo->_globalvars[it._key] = 0;
 	}
 }
 

@@ -97,8 +97,8 @@ Score::~Score() {
 		delete _channels[i];
 
 	if (_labels)
-		for (Common::SortedArray<Label *>::iterator it = _labels->begin(); it != _labels->end(); ++it)
-			delete *it;
+		for (auto &it : *_labels)
+			delete it;
 
 	delete _labels;
 }
@@ -139,9 +139,9 @@ uint16 Score::getLabel(Common::String &label) {
 		return 0;
 	}
 
-	for (Common::SortedArray<Label *>::iterator i = _labels->begin(); i != _labels->end(); ++i) {
-		if ((*i)->name.equalsIgnoreCase(label)) {
-			return (*i)->number;
+	for (auto &i : *_labels) {
+		if (i->name.equalsIgnoreCase(label)) {
+			return i->number;
 		}
 	}
 
@@ -151,8 +151,8 @@ uint16 Score::getLabel(Common::String &label) {
 Common::String *Score::getLabelList() {
 	Common::String *res = new Common::String;
 
-	for (Common::SortedArray<Label *>::iterator i = _labels->begin(); i != _labels->end(); ++i) {
-		*res += (*i)->name;
+	for (auto &i : *_labels) {
+		*res += i->name;
 		*res += '\n';
 	}
 
@@ -160,9 +160,9 @@ Common::String *Score::getLabelList() {
 }
 
 Common::String *Score::getFrameLabel(uint id) {
-	for (Common::SortedArray<Label *>::iterator i = _labels->begin(); i != _labels->end(); ++i) {
-		if ((*i)->number == id) {
-			return new Common::String((*i)->name);
+	for (auto &i : *_labels) {
+		if (i->number == id) {
+			return new Common::String(i->name);
 			break;
 		}
 	}
@@ -193,16 +193,14 @@ void Score::gotoLoop() {
 }
 
 int Score::getCurrentLabelNumber() {
-	Common::SortedArray<Label *>::iterator i;
-
 	if (!_labels)
 		return 0;
 
 	int frame = 0;
 
-	for (i = _labels->begin(); i != _labels->end(); ++i) {
-		if ((*i)->number <= _currentFrame)
-			frame = (*i)->number;
+	for (auto &i : *_labels) {
+		if (i->number <= _currentFrame)
+			frame = i->number;
 	}
 
 	return frame;
@@ -419,10 +417,9 @@ void Score::update() {
 		}
 	}
 
-	Common::SortedArray<Label *>::iterator i;
 	if (_labels != nullptr) {
-		for (i = _labels->begin(); i != _labels->end(); ++i) {
-			if ((*i)->number == _currentFrame) {
+		for (auto &i : *_labels) {
+			if (i->number == _currentFrame) {
 				_currentLabel = _currentFrame;
 			}
 		}
@@ -1514,11 +1511,9 @@ void Score::loadLabels(Common::SeekableReadStreamEndian &stream) {
 		stringPos = nextStringPos;
 	}
 
-	Common::SortedArray<Label *>::iterator j;
-
 	debugC(2, kDebugLoading, "****** Loading labels");
-	for (j = _labels->begin(); j != _labels->end(); ++j) {
-		debugC(2, kDebugLoading, "Frame %d, Label '%s', Comment '%s'", (*j)->number, utf8ToPrintable((*j)->name).c_str(), (*j)->comment.c_str());
+	for (auto &j : *_labels) {
+		debugC(2, kDebugLoading, "Frame %d, Label '%s', Comment '%s'", j->number, utf8ToPrintable(j->name).c_str(), j->comment.c_str());
 	}
 }
 
@@ -1573,19 +1568,17 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 		}
 	}
 
-	Common::HashMap<uint16, Common::String>::iterator j;
-
 	if (ConfMan.getBool("dump_scripts"))
-		for (j = _actions.begin(); j != _actions.end(); ++j) {
-			if (!j->_value.empty())
-				_movie->getCast()->dumpScript(j->_value.c_str(), kScoreScript, j->_key);
+		for (auto &j : _actions) {
+			if (!j._value.empty())
+				_movie->getCast()->dumpScript(j._value.c_str(), kScoreScript, j._key);
 		}
 
-	for (j = _actions.begin(); j != _actions.end(); ++j) {
-		if (!scriptRefs[j->_key]) {
+	for (auto &j : _actions) {
+		if (!scriptRefs[j._key]) {
 			// Check if it is empty
 			bool empty = true;
-			Common::U32String u32Script(j->_value);
+			Common::U32String u32Script(j._value);
 			for (const Common::u32char_type_t *ptr = u32Script.c_str(); *ptr; ptr++)
 				if (!(*ptr == ' ' || *ptr == '-' || *ptr == '\n' || *ptr == '\r' || *ptr == '\t' || *ptr == CONTINUATION)) {
 					empty = false;
@@ -1593,14 +1586,14 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 				}
 
 			if (!empty)
-				warning("Action id %d is not referenced, the code is:\n-----\n%s\n------", j->_key, j->_value.c_str());
+				warning("Action id %d is not referenced, the code is:\n-----\n%s\n------", j._key, j._value.c_str());
 
 			continue;
 		}
-		if (!j->_value.empty()) {
-			_movie->getMainLingoArch()->addCode(j->_value, kScoreScript, j->_key);
+		if (!j._value.empty()) {
+			_movie->getMainLingoArch()->addCode(j._value, kScoreScript, j._key);
 
-			processImmediateFrameScript(j->_value, j->_key);
+			processImmediateFrameScript(j._value, j._key);
 		}
 	}
 

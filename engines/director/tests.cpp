@@ -149,9 +149,9 @@ void Window::testFonts() {
 
 	Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F','O','N','D'));
 	if (fonds.size() > 0) {
-		for (Common::Array<uint16>::iterator iterator = fonds.begin(); iterator != fonds.end(); ++iterator) {
-			Common::SeekableReadStream *stream = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), *iterator);
-			Common::String name = fontFile->getResName(MKTAG('F', 'O', 'N', 'D'), *iterator);
+		for (auto &iterator : fonds) {
+			Common::SeekableReadStream *stream = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), iterator);
+			Common::String name = fontFile->getResName(MKTAG('F', 'O', 'N', 'D'), iterator);
 
 			debug("Font: %s", name.c_str());
 

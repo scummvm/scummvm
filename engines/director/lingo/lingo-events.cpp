@@ -184,19 +184,17 @@ void Movie::queueMovieEvent(Common::Queue<LingoEvent> &queue, LEvent event, int 
 
 	// FIXME: shared cast movie scripts could come before main movie ones
 	LingoArchive *mainArchive = getMainLingoArch();
-	for (ScriptContextHash::iterator it = mainArchive->scriptContexts[kMovieScript].begin();
-			it != mainArchive->scriptContexts[kMovieScript].end(); ++it) {
-		if (it->_value->_eventHandlers.contains(event)) {
-			queue.push(LingoEvent(event, eventId, kMovieScript, CastMemberID(it->_key, DEFAULT_CAST_LIB), false));
+	for (auto &it : mainArchive->scriptContexts[kMovieScript]) {
+		if (it._value->_eventHandlers.contains(event)) {
+			queue.push(LingoEvent(event, eventId, kMovieScript, CastMemberID(it._key, DEFAULT_CAST_LIB), false));
 			return;
 		}
 	}
 	LingoArchive *sharedArchive = getSharedLingoArch();
 	if (sharedArchive) {
-		for (ScriptContextHash::iterator it = sharedArchive->scriptContexts[kMovieScript].begin();
-				it != sharedArchive->scriptContexts[kMovieScript].end(); ++it) {
-			if (it->_value->_eventHandlers.contains(event)) {
-				queue.push(LingoEvent(event, eventId, kMovieScript, CastMemberID(it->_key, DEFAULT_CAST_LIB), false));
+		for (auto &it : sharedArchive->scriptContexts[kMovieScript]) {
+			if (it._value->_eventHandlers.contains(event)) {
+				queue.push(LingoEvent(event, eventId, kMovieScript, CastMemberID(it._key, DEFAULT_CAST_LIB), false));
 				return;
 			}
 		}

@@ -244,16 +244,16 @@ void Lingo::reloadBuiltIns() {
 LingoArchive::~LingoArchive() {
 	// First cleanup the ScriptContexts that are only in LctxContexts.
 	// LctxContexts has a huge overlap with scriptContexts.
-	for (ScriptContextHash::iterator it = lctxContexts.begin(); it != lctxContexts.end(); ++it){
-		ScriptContext *script = it->_value;
+	for (auto &it : lctxContexts){
+		ScriptContext *script = it._value;
 		if (script->getOnlyInLctxContexts()) {
 			script->decRefCount();
 		}
 	}
 
 	for (int i = 0; i <= kMaxScriptType; i++) {
-		for (ScriptContextHash::iterator it = scriptContexts[i].begin(); it != scriptContexts[i].end(); ++it) {
-			it->_value->decRefCount();
+		for (auto &it : scriptContexts[i]) {
+			it._value->decRefCount();
 		}
 	}
 
@@ -297,14 +297,14 @@ Common::String LingoArchive::formatFunctionList(const char *prefix) {
 		result += Common::String::format("%s%s:\n", prefix, scriptType2str((ScriptType)i));
 		if (scriptContexts[i].size() == 0)
 			result += Common::String::format("%s  [empty]\n", prefix);
-		for (ScriptContextHash::iterator it = scriptContexts[i].begin(); it != scriptContexts[i].end(); ++it) {
-			result += Common::String::format("%s  %d", prefix, it->_key);
-			CastMemberInfo *cmi = cast->getCastMemberInfo(it->_key);
+		for (auto &it : scriptContexts[i]) {
+			result += Common::String::format("%s  %d", prefix, it._key);
+			CastMemberInfo *cmi = cast->getCastMemberInfo(it._key);
 			if (cmi && !cmi->name.empty()) {
 				result += Common::String::format(" \"%s\"", cmi->name.c_str());
 			}
 			result += ":\n";
-			result += (*it->_value).formatFunctionList(Common::String::format("%s    ", prefix).c_str());
+			result += it._value->formatFunctionList(Common::String::format("%s    ", prefix).c_str());
 		}
 	}
 	result += Common::String::format("%sFactories:\n", prefix);
@@ -1359,8 +1359,8 @@ void Lingo::runTests() {
 	if (startMovie.size() > 0) {
 		fileList.push_back(startMovie);
 	} else {
-		for (Common::ArchiveMemberList::iterator it = fsList.begin(); it != fsList.end(); ++it)
-			fileList.push_back((*it)->getName());
+		for (auto &it : fsList)
+			fileList.push_back(it->getName());
 	}
 
 	Common::sort(fileList.begin(), fileList.end());
@@ -1454,8 +1454,8 @@ Common::String Lingo::formatAllVars() {
 
 	result += Common::String("  Local vars:\n");
 	if (_state->localVars) {
-		for (DatumHash::iterator i = _state->localVars->begin(); i != _state->localVars->end(); ++i) {
-			result += Common::String::format("    %s - [%s] %s\n", (*i)._key.c_str(), (*i)._value.type2str(), (*i)._value.asString(true).c_str());
+		for (auto &i : *_state->localVars) {
+			result += Common::String::format("    %s - [%s] %s\n", i._key.c_str(), i._value.type2str(), i._value.asString(true).c_str());
 		}
 	} else {
 		result += Common::String("    (no local vars)\n");
@@ -1465,15 +1465,15 @@ Common::String Lingo::formatAllVars() {
 	if (_state->me.type == OBJECT && _state->me.u.obj->getObjType() & (kFactoryObj | kScriptObj)) {
 		ScriptContext *script = static_cast<ScriptContext *>(_state->me.u.obj);
 		result += Common::String("  Instance/property vars: \n");
-		for (DatumHash::iterator i = script->_properties.begin(); i != script->_properties.end(); ++i) {
-			result += Common::String::format("    %s - [%s] %s\n", (*i)._key.c_str(), (*i)._value.type2str(), (*i)._value.asString(true).c_str());
+		for (auto &i : script->_properties) {
+			result += Common::String::format("    %s - [%s] %s\n", i._key.c_str(), i._value.type2str(), i._value.asString(true).c_str());
 		}
 		result += Common::String("\n");
 	}
 
 	result += Common::String("  Global vars:\n");
-	for (DatumHash::iterator i = _globalvars.begin(); i != _globalvars.end(); ++i) {
-		result += Common::String::format("    %s - [%s] %s\n", (*i)._key.c_str(), (*i)._value.type2str(), (*i)._value.asString(true).c_str());
+	for (auto &i : _globalvars) {
+		result += Common::String::format("    %s - [%s] %s\n", i._key.c_str(), i._value.type2str(), i._value.asString(true).c_str());
 	}
 	result += Common::String("\n");
 	return result;

@@ -556,18 +556,18 @@ bool testPath(Common::String &path, bool directory) {
 			continue;
 
 		bool exists = false;
-		for (Common::FSList::iterator i = fslist.begin(); i != fslist.end(); ++i) {
+		for (auto &i : fslist) {
 			// for each element in the path, choose the first FSNode
 			// with a case-insensitive matching name
-			if (i->getName().equalsIgnoreCase(token)) {
+			if (i.getName().equalsIgnoreCase(token)) {
 				// If this the final path component, check if we're allowed to match with a directory
-				node = Common::FSNode(*i);
+				node = Common::FSNode(i);
 				if (directory_list.empty() && !directory && node.isDirectory()) {
 					continue;
 				}
 
 				exists = true;
-				newPath += i->getName();
+				newPath += i.getName();
 				if (!directory_list.empty())
 					newPath += (g_director->_dirSeparator);
 

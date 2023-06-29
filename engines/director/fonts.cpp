@@ -430,8 +430,8 @@ bool Cast::readFXmpLine(Common::SeekableReadStreamEndian &stream) {
 				_fontXPlatformMap[fromFont] = info;
 				debugC(3, kDebugLoading, "Cast::readFXmpLine: Mapping Win font '%s' to Mac font '%s'", fromFont.c_str(), info->toFont.c_str());
 				debugC(4, kDebugLoading, "  Remap characters: %d", info->remapChars);
-				for (FontSizeMap::iterator it = info->sizeMap.begin(); it != info->sizeMap.end(); ++it) {
-					debugC(4, kDebugLoading, "  Mapping size %d to %d", it->_key, it->_value);
+				for (auto &it : info->sizeMap) {
+					debugC(4, kDebugLoading, "  Mapping size %d to %d", it._key, it._value);
 				}
 			}
 		} else {

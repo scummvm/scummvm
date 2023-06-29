@@ -1839,9 +1839,9 @@ void LB::b_alert(int nargs) {
 }
 
 void LB::b_clearGlobals(int nargs) {
-	for (DatumHash::iterator it = g_lingo->_globalvars.begin(); it != g_lingo->_globalvars.end(); it++) {
-		if (!it->_value.ignoreGlobal) {
-			g_lingo->_globalvars.erase(it);
+	for (auto &it : g_lingo->_globalvars) {
+		if (!it._value.ignoreGlobal) {
+			g_lingo->_globalvars.erase(it._key);
 		}
 	}
 }

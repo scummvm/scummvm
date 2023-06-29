@@ -200,8 +200,8 @@ void Window::playTransition(uint frame, uint16 transDuration, uint8 transArea, u
 
 		clipRect = *_dirtyRects.begin();
 
-		for (Common::List<Common::Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i)
-			clipRect.extend(*i);
+		for (auto &i : _dirtyRects)
+			clipRect.extend(i);
 
 		// Ensure we redraw any other sprites intersecting the non-clip area.
 		_dirtyRects.clear();

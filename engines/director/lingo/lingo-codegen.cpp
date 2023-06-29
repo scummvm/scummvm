@@ -447,12 +447,12 @@ bool LingoCompiler::visitHandlerNode(HandlerNode *node) {
 	for (uint i = 0; i < node->args->size(); i++) {
 		registerMethodVar(*(*node->args)[i], kVarArgument);
 	}
-	for (VarTypeHash::iterator i = mainMethodVars->begin(); i != mainMethodVars->end(); ++i) {
-		if (i->_value == kVarGlobal)
-			registerMethodVar(i->_key, kVarGlobal);
+	for (auto &i : *mainMethodVars) {
+		if (i._value == kVarGlobal)
+			registerMethodVar(i._key, kVarGlobal);
 	}
-	for (DatumHash::iterator i = _assemblyContext->_properties.begin(); i != _assemblyContext->_properties.end(); ++i) {
-		registerMethodVar(i->_key, _inFactory ? kVarInstance : kVarProperty);
+	for (auto &i : _assemblyContext->_properties) {
+		registerMethodVar(i._key, _inFactory ? kVarInstance : kVarProperty);
 	}
 
 	COMPILE_LIST(node->stmts);

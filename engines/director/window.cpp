@@ -131,13 +131,13 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 		blitTo = _composeSurface;
 	Channel *hiliteChannel = _currentMovie->getScore()->getChannelById(_currentMovie->_currentHiliteChannelId);
 
-	for (Common::List<Common::Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); i++) {
-		const Common::Rect &r = *i;
+	for (auto &i : _dirtyRects) {
+		const Common::Rect &r = i;
 		_dirtyChannels = _currentMovie->getScore()->getSpriteIntersections(r);
 
 		bool shouldClear = true;
-		for (Common::List<Channel *>::iterator j = _dirtyChannels.begin(); j != _dirtyChannels.end(); j++) {
-			if ((*j)->_visible && r == (*j)->getBbox() && (*j)->isTrail()) {
+		for (auto &j : _dirtyChannels) {
+			if (j->_visible && r == j->getBbox() && j->isTrail()) {
 				shouldClear = false;
 				break;
 			}
@@ -147,8 +147,8 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 			blitTo->fillRect(r, _stageColor);
 
 		for (int pass = 0; pass < 2; pass++) {
-			for (Common::List<Channel *>::iterator j = _dirtyChannels.begin(); j != _dirtyChannels.end(); j++) {
-				if ((*j)->isActiveVideo() && (*j)->isVideoDirectToStage()) {
+			for (auto &j : _dirtyChannels) {
+				if (j->isActiveVideo() && j->isVideoDirectToStage()) {
 					if (pass == 0)
 						continue;
 				} else {
@@ -156,15 +156,15 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 						continue;
 				}
 
-				if ((*j)->_visible) {
-					if ((*j)->hasSubChannels()) {
-						Common::Array<Channel> *list = (*j)->getSubChannels();
-						for (Common::Array<Channel>::iterator k = list->begin(); k != list->end(); k++) {
-							inkBlitFrom(&(*k), r, blitTo);
+				if (j->_visible) {
+					if (j->hasSubChannels()) {
+						Common::Array<Channel> *list = j->getSubChannels();
+						for (auto &k : *list) {
+							inkBlitFrom(&k, r, blitTo);
 						}
 					} else {
-						inkBlitFrom(*j, r, blitTo);
-						if ((*j) == hiliteChannel)
+						inkBlitFrom(j, r, blitTo);
+						if (j == hiliteChannel)
 							invertChannel(hiliteChannel, r);
 					}
 				}

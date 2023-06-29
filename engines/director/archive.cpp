@@ -569,8 +569,8 @@ RIFXArchive::RIFXArchive() : Archive() {
 }
 
 RIFXArchive::~RIFXArchive() {
-	for (Common::HashMap<uint32, byte *>::iterator it = _ilsData.begin(); it != _ilsData.end(); it++)
-		free(it->_value);
+	for (auto &it : _ilsData)
+		free(it._value);
 }
 
 bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOffset) {
