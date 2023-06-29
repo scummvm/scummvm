@@ -4201,6 +4201,11 @@ void ScummEngine::transitionEffect(int a) {
 	int delay, numOfIterations;
 	const int height = MIN((int)_virtscr[kMainVirtScreen].h, _screenHeight);
 
+	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformAmiga) {
+		// No transitions in the Amiga version of Maniac Mansion, verified on WinUAE.
+		return;
+	}
+
 	if (VAR_FADE_DELAY == 0xFF) {
 		if (_game.platform == Common::kPlatformC64) {
 			delay = kC64Delay;
@@ -4213,17 +4218,21 @@ void ScummEngine::transitionEffect(int a) {
 		delay = VAR(VAR_FADE_DELAY);
 	}
 
-	// Amiga handles timing a whole frame at a time
-	// instead of using quarter frames; the following
+	// Older Amiga games handle transition timing a whole frame
+	// at a time instead of using quarter frames; the following
 	// code gives my best approximation of that behavior
-	// and the resulting timing
+	// and the resulting timing.
 	if (_game.platform == Common::kPlatformAmiga) {
-		int amigaRest = (delay % 4);
-		delay = (delay / 4);
-		if (amigaRest > 0) {
-			delay += 1;
+		if (_game.id == GID_ZAK) {
+			delay = kPictureDelay;
+		} else {
+			int amigaRest = (delay % 4);
+			delay = (delay / 4);
+			if (amigaRest > 0) {
+				delay += 1;
+			}
+			delay *= 10;
 		}
-		delay *= 10;
 	}
 
 	// V3+ games have the number of iterations hardcoded; we also
