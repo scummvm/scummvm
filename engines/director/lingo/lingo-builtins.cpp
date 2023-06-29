@@ -1246,11 +1246,11 @@ void LB::b_openResFile(int nargs) {
  		return;
  	}
 
-	if (!g_director->_allOpenResFiles.contains(resPath)) {
+	if (!g_director->_allSeenResFiles.contains(resPath)) {
 		MacArchive *arch = new MacArchive();
 		if (arch->openFile(pathMakeRelative(resPath))) {
 			g_director->_openResFiles.setVal(resPath, arch);
-			g_director->_allOpenResFiles.setVal(resPath, arch);
+			g_director->_allSeenResFiles.setVal(resPath, arch);
 		} else {
 			delete arch;
 		}
@@ -1315,7 +1315,7 @@ void LB::b_showResFile(int nargs) {
 	if (nargs)
 		g_lingo->pop();
 	Common::String out;
-	for (auto &it : g_director->_allOpenResFiles)
+	for (auto &it : g_director->_allSeenResFiles)
 		out += it._key + "\n";
 	g_debugger->debugLogFile(out, false);
 }

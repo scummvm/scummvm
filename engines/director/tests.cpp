@@ -304,7 +304,7 @@ void Window::runTests() {
 	initGraphics(640, 480);
 
 	_mainArchive = new RIFXArchive();
-	g_director->_allOpenResFiles.setVal("test.dir", _mainArchive);
+	g_director->_allSeenResFiles.setVal("test.dir", _mainArchive);
 	if (!_mainArchive->openStream(stream, 0)) {
 		error("DirectorEngine::runTests(): Bad movie data");
 	}

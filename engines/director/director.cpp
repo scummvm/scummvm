@@ -150,7 +150,7 @@ DirectorEngine::~DirectorEngine() {
 	delete _wm;
 	delete _surface;
 
-	for (auto &it : _allOpenResFiles) {
+	for (auto &it : _allSeenResFiles) {
 		delete it._value;
 	}
 

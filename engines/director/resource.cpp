@@ -209,8 +209,8 @@ Archive *DirectorEngine::openArchive(const Common::String path) {
 	// If the archive is already open, don't reopen it;
 	// just init from the existing archive. This prevents errors that
 	// can happen when trying to load the same archive more than once.
-	if (_allOpenResFiles.contains(path)) {
-		return _allOpenResFiles.getVal(path);
+	if (_allSeenResFiles.contains(path)) {
+		return _allSeenResFiles.getVal(path);
 	}
 
 	Archive *result = nullptr;
@@ -227,7 +227,7 @@ Archive *DirectorEngine::openArchive(const Common::String path) {
 		}
 	}
 	result->setPathName(path);
-	_allOpenResFiles.setVal(path, result);
+	_allSeenResFiles.setVal(path, result);
 
 	return result;
 }

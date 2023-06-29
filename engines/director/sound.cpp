@@ -367,7 +367,7 @@ void DirectorSound::loadSampleSounds(uint type) {
 	uint id = 0xFF;
 	Archive *archive = nullptr;
 
-	for (auto &it : g_director->_allOpenResFiles) {
+	for (auto &it : g_director->_allSeenResFiles) {
 		Common::Array<uint16> idList = it._value->getResourceIDList(tag);
 		for (uint j = 0; j < idList.size(); j++) {
 			if ((idList[j] & 0xFF) == type) {
@@ -573,7 +573,7 @@ void DirectorSound::playFPlaySound() {
 	Archive *archive = nullptr;
 
 	// iterate opened ResFiles
-	for (auto &it : g_director->_allOpenResFiles) {
+	for (auto &it : g_director->_allSeenResFiles) {
 		id = it._value->findResourceID(tag, sndName, true);
 		if (id != 0xFFFF) {
 			archive = it._value;
