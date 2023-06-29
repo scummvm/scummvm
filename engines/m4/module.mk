@@ -37,7 +37,6 @@ MODULE_OBJS = \
 	graphics/graphics.o \
 	graphics/krn_pal.o \
 	gui/gui_buffer.o \
-	gui/gui_cheapo.o \
 	gui/gui_dialog.o \
 	gui/gui_item.o \
 	gui/gui_mouse.o \
@@ -58,7 +57,8 @@ MODULE_OBJS = \
 	wscript/ws_timer.o \
 	wscript/wscript.o \
 	burger/burger.o \
-	burger/burger_globals.o
+	burger/burger_globals.o \
+	burger/gui_cheapo.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_M4), DYNAMIC_PLUGIN)

@@ -19,7 +19,7 @@
  *
  */
 
-#include "m4/gui/gui_cheapo.h"
+#include "m4/burger/gui_cheapo.h"
 #include "m4/gui/gui_vmng_core.h"
 #include "m4/gui/gui_vmng_screen.h"
 #include "m4/graphics/gr_font.h"
@@ -34,6 +34,7 @@
 #include "m4/globals.h"
 
 namespace M4 {
+namespace Burger {
 
 #define _GL(X) _G(interface).X
 
@@ -809,4 +810,5 @@ ControlStatus Inventory::track(int32 eventType, int16 x, int16 y) {
 	return result;
 }
 
+} // End of namespace Burger
 } // End of namespace M4

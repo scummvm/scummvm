@@ -20,13 +20,14 @@
  *
  */
 
-#ifndef M4_GUI_GUI_CHEAPO_H
-#define M4_GUI_GUI_CHEAPO_H
+#ifndef M4_BURGER_GUI_CHEAPO_H
+#define M4_BURGER_GUI_CHEAPO_H
 
 #include "m4/graphics/gr_buff.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
+namespace Burger {
 
 constexpr int16 INVENTORY_CELLS_COUNT = 128;
 constexpr int16 ARROW_WIDTH = 8;
@@ -207,6 +208,7 @@ public:
 	void set_scroll(int32 new_scroll);
 };
 
+} // End of namespace Burger
 } // End of namespace M4
 
 #endif
