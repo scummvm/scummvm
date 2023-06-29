@@ -183,8 +183,8 @@ void Lingo::initFuncs() {
 }
 
 void Lingo::cleanupFuncs() {
-	for (FuncHash::iterator it = _functions.begin(); it != _functions.end(); ++it)
-		delete it->_value;
+	for (auto &it : _functions)
+		delete it._value;
 }
 
 void Lingo::push(Datum d) {
@@ -286,8 +286,8 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 		}
 	}
 	if (funcSym.varNames) {
-		for (Common::Array<Common::String>::iterator it = funcSym.varNames->begin(); it != funcSym.varNames->end(); ++it) {
-			Common::String name = *it;
+		for (auto &it : *funcSym.varNames) {
+			Common::String name = it;
 			if (!localvars->contains(name)) {
 				(*localvars)[name] = Datum();
 			} else {

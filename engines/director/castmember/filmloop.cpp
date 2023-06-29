@@ -71,14 +71,14 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 
 	// get the list of sprite IDs for this frame
 	Common::Array<int> spriteIds;
-	for (Common::HashMap<int, Director::Sprite>::iterator iter = _frames[channel->_filmLoopFrame].sprites.begin(); iter != _frames[channel->_filmLoopFrame].sprites.end(); ++iter) {
-		spriteIds.push_back(iter->_key);
+	for (auto &iter : _frames[channel->_filmLoopFrame].sprites) {
+		spriteIds.push_back(iter._key);
 	}
 	Common::sort(spriteIds.begin(), spriteIds.end());
 
 	// copy the sprites in order to the list
-	for (Common::Array<int>::iterator iter = spriteIds.begin(); iter != spriteIds.end(); ++iter) {
-		Sprite src = _frames[channel->_filmLoopFrame].sprites[*iter];
+	for (auto &iter : spriteIds) {
+		Sprite src = _frames[channel->_filmLoopFrame].sprites[iter];
 		if (!src._cast)
 			continue;
 		// translate sprite relative to the global bounding box
@@ -213,20 +213,20 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 			frameSize -= msgWidth;
 		}
 
-		for (Common::HashMap<int, Sprite>::iterator s = newFrame.sprites.begin(); s != newFrame.sprites.end(); ++s) {
-			debugC(5, kDebugLoading, "loadFilmLoopData: Sprite: channel %d, castId %s, bbox %d %d %d %d", s->_key,
-					s->_value._castId.asString().c_str(), s->_value._startPoint.x, s->_value._startPoint.y,
-					s->_value._width, s->_value._height);
+		for (auto &s : newFrame.sprites) {
+			debugC(5, kDebugLoading, "loadFilmLoopData: Sprite: channel %d, castId %s, bbox %d %d %d %d", s._key,
+					s._value._castId.asString().c_str(), s._value._startPoint.x, s._value._startPoint.y,
+					s._value._width, s._value._height);
 
-			Common::Point topLeft = s->_value._startPoint;
-			if (s->_value._cast) {
-				topLeft -= s->_value._cast->getRegistrationOffset(s->_value._width, s->_value._height);
+			Common::Point topLeft = s._value._startPoint;
+			if (s._value._cast) {
+				topLeft -= s._value._cast->getRegistrationOffset(s._value._width, s._value._height);
 			}
 			Common::Rect spriteBbox(
 				topLeft.x,
 				topLeft.y,
-				topLeft.x + s->_value._width,
-				topLeft.y + s->_value._height
+				topLeft.x + s._value._width,
+				topLeft.y + s._value._height
 			);
 			if (!((spriteBbox.width() == 0) && (spriteBbox.height() == 0))) {
 				if ((_initialRect.width() == 0) && (_initialRect.height() == 0)) {
@@ -355,30 +355,30 @@ void FilmLoopCastMember::loadFilmLoopDataV4(Common::SeekableReadStreamEndian &st
 			newFrame.sprites.setVal(channel, sprite);
 		}
 
-		for (Common::HashMap<int, Sprite>::iterator s = newFrame.sprites.begin(); s != newFrame.sprites.end(); ++s) {
-			debugC(5, kDebugLoading, "loadFilmLoopDataV4: Sprite: channel %d, castId %s, bbox %d %d %d %d", s->_key,
-					s->_value._castId.asString().c_str(), s->_value._startPoint.x, s->_value._startPoint.y,
-					s->_value._width, s->_value._height);
+		for (auto &s : newFrame.sprites) {
+			debugC(5, kDebugLoading, "loadFilmLoopDataV4: Sprite: channel %d, castId %s, bbox %d %d %d %d", s._key,
+					s._value._castId.asString().c_str(), s._value._startPoint.x, s._value._startPoint.y,
+					s._value._width, s._value._height);
 
-			if (s->_key == -1) {
+			if (s._key == -1) {
 				debugC(5, kDebugLoading, "loadFilmLoopDataV4: Skipping channel -1");
-				if (s->_value._startPoint.x != 0 || s->_value._startPoint.y != 0 || s->_value._width != 0 ||
-						 (s->_value._height != -256 && s->_value._height != 0))
-					warning("BUILDBOT: loadFilmLoopDataV4: Malformed VWSC resource: Sprite: channel %d, castId %s, bbox %d %d %d %d", s->_key,
-						s->_value._castId.asString().c_str(), s->_value._startPoint.x, s->_value._startPoint.y,
-						s->_value._width, s->_value._height);
+				if (s._value._startPoint.x != 0 || s._value._startPoint.y != 0 || s._value._width != 0 ||
+						 (s._value._height != -256 && s._value._height != 0))
+					warning("BUILDBOT: loadFilmLoopDataV4: Malformed VWSC resource: Sprite: channel %d, castId %s, bbox %d %d %d %d", s._key,
+						s._value._castId.asString().c_str(), s._value._startPoint.x, s._value._startPoint.y,
+						s._value._width, s._value._height);
 				continue;
 			}
 
-			Common::Point topLeft = s->_value._startPoint;
-			if (s->_value._cast) {
-				topLeft -= s->_value._cast->getRegistrationOffset(s->_value._width, s->_value._height);
+			Common::Point topLeft = s._value._startPoint;
+			if (s._value._cast) {
+				topLeft -= s._value._cast->getRegistrationOffset(s._value._width, s._value._height);
 			}
 			Common::Rect spriteBbox(
 				topLeft.x,
 				topLeft.y,
-				topLeft.x + s->_value._width,
-				topLeft.y + s->_value._height
+				topLeft.x + s._value._width,
+				topLeft.y + s._value._height
 			);
 			if (!((spriteBbox.width() == 0) && (spriteBbox.height() == 0))) {
 				if ((_initialRect.width() == 0) && (_initialRect.height() == 0)) {

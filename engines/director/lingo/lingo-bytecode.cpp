@@ -314,8 +314,8 @@ void Lingo::initBytecode() {
 	bool bailout = false;
 
 	// Build reverse hashmap
-	for (FuncHash::iterator it = _functions.begin(); it != _functions.end(); ++it)
-		list[(inst)it->_key] = true;
+	for (auto &it : _functions)
+		list[(inst)it._key] = true;
 
 	for (LingoV4Bytecode *op = lingoV4; op->opcode; op++) {
 		_lingoV4[op->opcode] = op;
@@ -1615,9 +1615,9 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 
 	if (!_assemblyContext->isFactory()) {
 		// Register this context's functions with the containing archive.
-		for (SymbolHash::iterator it = _assemblyContext->_functionHandlers.begin(); it != _assemblyContext->_functionHandlers.end(); ++it) {
-			if (!_assemblyArchive->functionHandlers.contains(it->_key)) {
-				_assemblyArchive->functionHandlers[it->_key] = it->_value;
+		for (auto &it : _assemblyContext->_functionHandlers) {
+			if (!_assemblyArchive->functionHandlers.contains(it._key)) {
+				_assemblyArchive->functionHandlers[it._key] = it._value;
 			}
 		}
 	}

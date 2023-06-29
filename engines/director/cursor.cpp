@@ -184,8 +184,8 @@ void Cursor::readFromResource(Datum resourceId) {
 				break;
 		}
 
-		for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_allOpenResFiles.begin(); it != g_director->_allOpenResFiles.end(); ++it) {
-			readSuccessful = readFromArchive(it->_value, resourceId.asInt());
+		for (auto &it : g_director->_allOpenResFiles) {
+			readSuccessful = readFromArchive(it._value, resourceId.asInt());
 			if (readSuccessful)
 				break;
 		}

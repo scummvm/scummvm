@@ -187,9 +187,9 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 		currentFunc.anonymous = anonymous;
 		Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
 		Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
-		for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars->begin(); it != _methodVars->end(); ++it) {
-			if (it->_value == kVarLocal)
-				varNames->push_back(Common::String(it->_key));
+		for (auto &it : *_methodVars) {
+			if (it._value == kVarLocal)
+				varNames->push_back(Common::String(it._key));
 		}
 
 		if (debugChannelSet(1, kDebugCompile)) {
@@ -216,9 +216,9 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 
 	// Register this context's functions with the containing archive.
 	if (_assemblyArchive) {
-		for (SymbolHash::iterator it = _assemblyContext->_functionHandlers.begin(); it != _assemblyContext->_functionHandlers.end(); ++it) {
-			if (!_assemblyArchive->functionHandlers.contains(it->_key)) {
-				_assemblyArchive->functionHandlers[it->_key] = it->_value;
+		for (auto &it : _assemblyContext->_functionHandlers) {
+			if (!_assemblyArchive->functionHandlers.contains(it._key)) {
+				_assemblyArchive->functionHandlers[it._key] = it._value;
 			}
 		}
 	}
@@ -469,9 +469,9 @@ bool LingoCompiler::visitHandlerNode(HandlerNode *node) {
 		argNames->push_back(Common::String((*node->args)[i]->c_str()));
 	}
 	Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
-	for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars->begin(); it != _methodVars->end(); ++it) {
-		if (it->_value == kVarLocal)
-			varNames->push_back(Common::String(it->_key));
+	for (auto &it : *_methodVars) {
+		if (it._value == kVarLocal)
+			varNames->push_back(Common::String(it._key));
 	}
 
 	if (debugChannelSet(1, kDebugCompile)) {

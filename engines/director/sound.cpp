@@ -367,12 +367,12 @@ void DirectorSound::loadSampleSounds(uint type) {
 	uint id = 0xFF;
 	Archive *archive = nullptr;
 
-	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_allOpenResFiles.begin(); it != g_director->_allOpenResFiles.end(); ++it) {
-		Common::Array<uint16> idList = it->_value->getResourceIDList(tag);
+	for (auto &it : g_director->_allOpenResFiles) {
+		Common::Array<uint16> idList = it._value->getResourceIDList(tag);
 		for (uint j = 0; j < idList.size(); j++) {
 			if ((idList[j] & 0xFF) == type) {
 				id = idList[j];
-				archive = it->_value;
+				archive = it._value;
 				break;
 			}
 		}
@@ -573,10 +573,10 @@ void DirectorSound::playFPlaySound() {
 	Archive *archive = nullptr;
 
 	// iterate opened ResFiles
-	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_allOpenResFiles.begin(); it != g_director->_allOpenResFiles.end(); ++it) {
-		id = it->_value->findResourceID(tag, sndName, true);
+	for (auto &it : g_director->_allOpenResFiles) {
+		id = it._value->findResourceID(tag, sndName, true);
 		if (id != 0xFFFF) {
-			archive = it->_value;
+			archive = it._value;
 			break;
 		}
 	}

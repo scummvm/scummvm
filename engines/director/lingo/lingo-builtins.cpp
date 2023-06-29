@@ -1315,8 +1315,8 @@ void LB::b_showResFile(int nargs) {
 	if (nargs)
 		g_lingo->pop();
 	Common::String out;
-	for (auto it = g_director->_allOpenResFiles.begin(); it != g_director->_allOpenResFiles.end(); it++)
-		out += it->_key + "\n";
+	for (auto &it : g_director->_allOpenResFiles)
+		out += it._key + "\n";
 	g_debugger->debugLogFile(out, false);
 }
 
@@ -1324,8 +1324,8 @@ void LB::b_showXlib(int nargs) {
 	if (nargs)
 		g_lingo->pop();
 	Common::String out;
-	for (auto it = g_lingo->_openXLibs.begin(); it != g_lingo->_openXLibs.end(); it++)
-		out += it->_key + "\n";
+	for (auto &it : g_lingo->_openXLibs)
+		out += it._key + "\n";
 	g_debugger->debugLogFile(out, false);
 }
 
@@ -1333,8 +1333,8 @@ void LB::b_xFactoryList(int nargs) {
 	g_lingo->pop();
 	Datum d("");
 
-	for (auto it = g_lingo->_openXLibs.begin(); it != g_lingo->_openXLibs.end(); it++)
-		*d.u.s += it->_key + "\n";
+	for (auto &it : g_lingo->_openXLibs)
+		*d.u.s += it._key + "\n";
 	g_lingo->push(d);
 }
 
