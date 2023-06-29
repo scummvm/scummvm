@@ -638,7 +638,7 @@ const Common::String MacFontManager::getFontName(uint16 id, int size, int slant,
 	return Common::String::format("%s-%d-%d", n.c_str(), slant | extraSlant, size);
 }
 
-const Common::String MacFontManager::getFontName(MacFont &font) {
+const Common::String MacFontManager::getFontName(const MacFont &font) {
 	return getFontName(font.getId(), font.getSize(), font.getSlant());
 }
 
