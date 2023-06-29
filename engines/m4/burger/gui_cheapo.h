@@ -23,6 +23,7 @@
 #ifndef M4_BURGER_GUI_CHEAPO_H
 #define M4_BURGER_GUI_CHEAPO_H
 
+#include "common/str.h"
 #include "m4/graphics/gr_buff.h"
 #include "m4/m4_types.h"
 
@@ -107,12 +108,12 @@ protected:
 
 public:
 	ButtonState	_state = BUTTON_RELAXED;
-	char _name[20] = { 0 }; // fixme? inventory objects get 40 char strings. use MAX_PLYR_STRING_LEN?
+	Common::String _name;
 	bool _must_redraw = false;
 
 public:
 	ButtonClass();
-	ButtonClass(const RectClass *r, const char *btnName, int16 tag);
+	ButtonClass(const RectClass *r, const Common::String &btnName, int16 tag);
 	~ButtonClass();
 
 	void draw(GrBuff *interface_buffer);
@@ -123,7 +124,7 @@ public:
 	void set(int16 x1, int16 y1, int16 x2, int16 y2, int16 tag);
 	void set(int16 x1, int16 y1, int16 x2, int16 y2, int16 tag, int16 unknown,
 		int16 relaxed, int16 over, int16 picked, int32 sprite);
-	void set_name(const char *btnName);
+	void set_name(const Common::String &btnName);
 
 	int16 get_tag() const;
 

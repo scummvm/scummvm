@@ -168,16 +168,16 @@ void ButtonClass::init() {
 	_tracking = -1;
 }
 
-ButtonClass::ButtonClass(const RectClass *r, const char *btnName, int16 tag) : RectClass(r) {
+ButtonClass::ButtonClass(const RectClass *r, const Common::String &btnName, int16 tag) : RectClass(r) {
 	init();
-	cstrncpy(_name, btnName, 19);
+	_name = btnName;
 	_tag = tag;
 	_hidden = false;
 }
 
 ButtonClass::ButtonClass() : RectClass() {
 	init();
-	cstrcpy(_name, "?");
+	_name = "?";
 	_hidden = false;
 }
 
@@ -185,8 +185,8 @@ ButtonClass::~ButtonClass() {
 	zap_resources();
 }
 
-void ButtonClass::set_name(const char *btnName) {
-	cstrncpy(_name, btnName, 19);
+void ButtonClass::set_name(const Common::String &btnName) {
+	_name = btnName;
 }
 
 bool ButtonClass::is_hidden() const {
@@ -220,7 +220,7 @@ void ButtonClass::zap_resources() {
 
 void ButtonClass::set(const ButtonClass *b) {
 	zap_resources();
-	cstrncpy(_name, b->_name, 19);
+	_name = b->_name;
 	_x1 = b->_x1;
 	_y1 = b->_y1;
 	_x2 = b->_x2;
