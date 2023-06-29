@@ -42,6 +42,10 @@ struct Interface_Globals {
 	int x2 = SCREEN_WIDTH;
 	int y2 = SCREEN_HEIGHT;
 	GrBuff *gameInterfaceBuff = nullptr;
+
+	void show() {
+		assert(0);
+	}
 };
 
 extern void interface_init(int arrow, int wait, int look, int grab, int use);

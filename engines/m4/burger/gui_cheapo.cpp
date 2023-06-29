@@ -218,7 +218,7 @@ void ButtonClass::zap_resources() {
 		ClearWSAssets(_WS_ASSET_CELS, _picked, _picked);
 }
 
-void ButtonClass::set(ButtonClass *b) {
+void ButtonClass::set(const ButtonClass *b) {
 	zap_resources();
 	cstrncpy(_name, b->_name, 19);
 	_x1 = b->_x1;
@@ -240,13 +240,14 @@ void ButtonClass::set(int16 x1, int16 y1, int16 x2, int16 y2, int16 tag) {
 }
 
 void ButtonClass::set(int16 x1, int16 y1, int16 x2, int16 y2, int16 tag,
-	int16 relaxed, int16 over, int16 picked, int32 sprite) {
+	int16 unknown, int16 relaxed, int16 over, int16 picked, int32 sprite) {
 	zap_resources();
 	_x1 = x1;
 	_y1 = y1;
 	_x2 = x2;
 	_y2 = y2;
 	_tag = tag;
+	_unknown = unknown;
 	_relaxed = relaxed;
 	_over = over;
 	_picked = picked;
@@ -269,36 +270,28 @@ ControlStatus ButtonClass::track(int32 eventType, int16 x, int16 y) {
 
 	bool button_clicked = (eventType == _ME_L_click) || (eventType == _ME_L_hold) || (eventType == _ME_L_drag);
 
-	int16 overVal = inside(x, y);
+	int16 overTag = inside(x, y);
 
-	if (overVal == _tag) {
+	if (overTag == _tag) {
 		// if Button is pressed
 		if (button_clicked) {
 			if (_tracking == 1) {
-				//term_message( "BUTTON CLICKED and TRACKING" );
-				//state = BUTTON_OVER; //aug23
-
 				result = TRACKING;
 			} else {
 				_tracking = 1;
 				result = IN_CONTROL;
 				_state = BUTTON_PICKED;
-				//aug28 //sep8 here.
-				//if( !between_rooms && !_G(inv_suppress_click_sound) && !hidden) {
-				//    digi_play( inv_click_snd, 2, 255, -1, inv_click_snd_room_lock ); //aug26: single click
-					//term_message( "hidden %d", hidden ); //sep8
-				//}
 			}
+
 			_G(inv_suppress_click_sound) = false;
 
 		} else {
 			// if Button isn't pressed
-
 			if (_tracking == 1) {
 				result = SELECTED;
-				//term_message( "BUTTON RELEASED" );
-			} else
+			} else {
 				result = OVER_CONTROL;
+			}
 
 			_state = BUTTON_OVER;
 			_tracking = -1;
@@ -333,13 +326,14 @@ void ButtonClass::draw(GrBuff *myBuffer) {
 			series_show_frame(_sprite, _relaxed, myBuff, _x1, _y1);
 			break;
 
+		case BUTTON_OVER:
+			series_show_frame(_sprite, _over, myBuff, _x1, _y1);
+			break;
+
 		case BUTTON_PICKED:
 			series_show_frame(_sprite, _picked, myBuff, _x1, _y1);
 			break;
 
-		case BUTTON_OVER:
-			series_show_frame(_sprite, _over, myBuff, _x1, _y1);
-			break;
 		}
 	}
 
@@ -376,22 +370,16 @@ ControlStatus Toggler::track(int32 eventType, int16 x, int16 y) {
 
 	bool button_clicked = (eventType == _ME_L_click) || (eventType == _ME_L_hold) || (eventType == _ME_L_drag);
 
-	int16 overVal = inside(x, y);
+	int16 overTag = inside(x, y);
 
-	if (overVal == _tag) {
+	if (overTag == _tag) {
 		// if Button is pressed
 		if (button_clicked) {
-			if (eventType == _ME_L_click) {
-				//aug28
-					//if( !_G(inv_suppress_click_sound) && !between_rooms && !hidden ) {
-					//	digi_play( inv_click_snd, 2, 255, -1, inv_click_snd_room_lock ); //aug27: single click
-						//term_message( "hidden %d", hidden ); //sep8
-					//}
-			}
-
 			_tracking = 1;
 			result = IN_CONTROL;
-		} else { // if Button isn't pressed
+
+		} else {
+			// Button isn't pressed
 			if (_tracking == 1) {
 				result = SELECTED;
 				_toggle_state = (_toggle_state == SELECTED) ? NOTHING : SELECTED;
@@ -468,7 +456,6 @@ void InterfaceBox::highlight_button(int16 index) {
 }
 
 void InterfaceBox::set_selected(bool s) {
-
 	if (s == _selected)
 		return;
 
@@ -514,14 +501,7 @@ void InterfaceBox::draw(GrBuff *myBuffer) {
 	if (!_GL(visible))
 		return;
 
-	if (_must_redraw_all) {
-		gr_color_set(__BLACK);
-		//gr_buffer_rect_fill(myBuff, x1, y1+10, x2-x1, y2-y1);
-	}
-	myBuffer->release();
-
-	int16 iter;
-	for (iter = 0; iter < _index; iter++) {
+	for (int iter = 0; iter < _index; iter++) {
 		_button[iter]->_must_redraw |= _must_redraw_all;
 		_button[iter]->draw(myBuffer);
 	}
@@ -537,14 +517,14 @@ void InterfaceBox::draw(GrBuff *myBuffer) {
 
 //-------------------------------------------------------------------------------------------
 
-Inventory::Inventory(RectClass *r, int32 sprite, int16 cells_h, int16 cells_v, int16 cell_w, int16 cell_h, int16 tag)
+Inventory::Inventory(const RectClass *r, int32 sprite, int16 cells_h, int16 cells_v, int16 cell_w, int16 cell_h, int16 tag)
 		: RectClass(r) {
 	_sprite = sprite;
 
 	for (int16 iter = 0; iter < INVENTORY_CELLS_COUNT; iter++) {
-		_cells[iter] = -1;
-		_cursors[iter] = -1;
-		_names[iter] = nullptr;
+		_items[iter]._cell = -1;
+		_items[iter]._cursor = -1;
+		_items[iter]._name = nullptr;
 	}
 
 	_num_cells = 0;
@@ -559,7 +539,6 @@ Inventory::Inventory(RectClass *r, int32 sprite, int16 cells_h, int16 cells_v, i
 		error_show(FL, 'CGIC');
 	}
 
-	_hidden = false;
 	_highlight = _dehighlight = -1;
 	_must_redraw_all = true;
 	_must_redraw1 = -1;
@@ -571,11 +550,11 @@ Inventory::Inventory(RectClass *r, int32 sprite, int16 cells_h, int16 cells_v, i
 Inventory::~Inventory() {
 }
 
-bool Inventory::add(char *name, char *verb, int32 invSprite, int32 cursor) {
+bool Inventory::add(const char *name, const char *verb, int32 invSprite, int32 cursor) {
 	// Don't add something twice
 	int iter;
 	for (iter = 0; iter < _num_cells; iter++) {
-		if (!strcmp(name, _names[iter]))
+		if (!strcmp(name, _items[iter]._name))
 			return true;
 	}
 
@@ -583,13 +562,22 @@ bool Inventory::add(char *name, char *verb, int32 invSprite, int32 cursor) {
 		error_show(FL, 'CGIA');
 		return false;
 	}
-	_names[_num_cells] = name;
-	_verbs[_num_cells] = verb;
 
-	_cells[_num_cells] = (int16)invSprite;
-	_cursors[_num_cells] = (int16)cursor;
+	// Shift existing items up by one
+	for (int i = _num_cells; i > 0; --i)
+		_items[i] = _items[i - 1];
+
+	auto &item = _items[0];
+	item._name = name;
+	item._verb = verb;
+	item._cell = invSprite;
+	item._cursor = cursor;
 	++_num_cells;
+
 	_must_redraw_all = true;
+
+	if (_G(interface).visible)
+		_G(interface).show();
 
 	return true;
 }
@@ -610,39 +598,29 @@ void Inventory::set_scroll(int32 new_scroll) {
 	_must_redraw_all = true;
 }
 
-bool Inventory::remove(char *name) {
+bool Inventory::remove(const char *name) {
 	int iter;
 	for (iter = 0; iter < _num_cells; iter++) {
 		// Found the thing?
-		if (!strcmp(name, _names[iter])) {
+		if (!strcmp(name, _items[iter]._name)) {
 
 			// Eat up its slot by moving everything down
-			do {
-
-				_names[iter] = _names[iter + 1];
-				_verbs[iter] = _verbs[iter + 1];	// DT oct 18
-				_cells[iter] = _cells[iter + 1];
-				_cursors[iter] = _cursors[iter + 1];
-
-				++iter;
-
-			} while (iter < _num_cells);
+			for (; iter < _num_cells; ++iter)
+				_items[iter] = _items[iter + 1];
 
 			--_num_cells;
 			_must_redraw_all = true;
 			_scroll = 0;
+
+			if (_G(interface).visible)
+				_G(interface).show();
+
 			return true;
 		}
 	}
 
 	// Didn't find that thing.
 	return false;
-}
-
-
-void Inventory::hide(bool hidden) {
-	_hidden = hidden;
-	_must_redraw_all = true;
 }
 
 int16 Inventory::inside(int16 x, int16 y) {
@@ -671,13 +649,12 @@ int16 Inventory::cell_pos_y(int16 index) {
 	}
 }
 
-void Inventory::highlight_part(int16 _index) {
-	if (_highlight == _index) {
+void Inventory::highlight_part(int16 index) {
+	if (_highlight == index)
 		return;
-	}
 
 	_must_redraw1 = _highlight;
-	_highlight = _index;
+	_highlight = index;
 	_must_redraw2 = _highlight;
 }
 
@@ -693,23 +670,14 @@ void Inventory::draw(GrBuff *myBuffer) {
 
 	Buffer *myBuff = myBuffer->get_buffer();
 
-	if (_hidden) {
-		gr_color_set(__BLACK);
-		gr_buffer_rect_fill(myBuff, _x1, _y1, _x2 - _x1, _y2 - _y1);
-		goto done;
-	}
-
 	if (_must_redraw_all) {
-		kernel_trigger_dispatch(kernel_trigger_create(TRIG_INV_CLICK));
 		gr_color_set(__BLACK);
 		gr_buffer_rect_fill(myBuff, _x1, _y1, _x2 - _x1, _y2 - _y1);
 	}
 
-	offy += 2;
-	offx += 2;
 	_right_arrow_visible = false;
 
-	for (cell_iter = 0; (cell_iter + _scroll < _num_cells) && (cell_iter < MAX_BUTTONS); cell_iter++) {
+	for (cell_iter = 0; (cell_iter + _scroll < _num_cells) && (cell_iter < MAX_INVENTORY); cell_iter++) {
 		int16 left = (int16)(_x1 + offx + cell_pos_x(cell_iter));
 		int16 top = (int16)(_y1 + offy + cell_pos_y(cell_iter));
 
@@ -718,12 +686,12 @@ void Inventory::draw(GrBuff *myBuffer) {
 			refresh_right_arrow();
 			refresh_left_arrow();
 
-			// Draw_icon_here
+			// Draw icon here
 			gr_color_set(__BLACK);
 			gr_buffer_rect_fill(myBuff, left, top, _cell_w + 1, _cell_h + 1);
-			series_show_frame(_sprite, _cells[cell_iter + _scroll], myBuff, left - 3, top - 3);
+			series_show_frame(_sprite, _items[cell_iter + _scroll]._cell, myBuff, left - 3, top - 3);
 
-			// Draw_box around icon
+			// Draw box around icon
 			if (_highlight == cell_iter) {
 				gr_line(left, top, left + _cell_w - 2, top + 1, __LTGRAY, myBuff);
 				gr_line(left, top + _cell_h - 2, left + _cell_w - 2, top + _cell_h - 2, __LTGRAY, myBuff);
@@ -732,13 +700,19 @@ void Inventory::draw(GrBuff *myBuffer) {
 			}
 		}
 	}
-done:
-	myBuffer->release();
+
+	// Draw inventory slot frames
+	for (cell_iter = 0; cell_iter < 9; ++cell_iter) {
+		series_show_frame(_sprite, 67, myBuff, cell_iter * 39 + 188, 22);
+		series_show_frame(_sprite, 68, myBuff, cell_iter * 39 + 188, 92);
+	}
 
 	ScreenContext *iC = vmng_screen_find(_G(interface).gameInterfaceBuff, nullptr);
 	RestoreScreensInContext(_x1, _y1, _x2, _y2, iC);
 	_must_redraw1 = _must_redraw2 = -1;
 	_must_redraw_all = false;
+
+	myBuffer->release();
 }
 
 ControlStatus Inventory::track(int32 eventType, int16 x, int16 y) {
@@ -789,22 +763,7 @@ ControlStatus Inventory::track(int32 eventType, int16 x, int16 y) {
 		highlight_part(over);
 		interface_tracking = -1;
 	}
-#if 0
-	switch (result) {
-	case OVER_CONTROL:
-		term_message("inv:over %ld", over);
-		break;
-	case SELECTED:
-		term_message("inv:selected %ld", over);
-		break;
-	case IN_CONTROL:
-		term_message("inv:in %ld", over);
-		break;
-	case NOTHING:
-		term_message("inv:nothing %ld", over);
-		break;
-	}
-#endif
+
 	if (result == NOTHING && button_clicked)
 		return TRACKING;
 
