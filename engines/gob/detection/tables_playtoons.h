@@ -44,7 +44,7 @@
 {
 	{
 		"playtoons1",
-		"Pack mes histoires anim\xE9""es",
+		"Pack mes histoires animées",
 		AD_ENTRY2s("playtoon.stk",	"55f0293202963854192e39474e214f5f", 30448474,
 				   "archi.stk",		"8d44b2a0d4e3139471213f9f0ed21e81", 5524674),
 		FR_FRA,
@@ -296,7 +296,7 @@
 {
 	{
 		"playtoons3",
-		"Pack mes histoires anim\xE9""es",
+		"Pack mes histoires animées",
 		AD_ENTRY2s("playtoon.stk",	"55f0293202963854192e39474e214f5f", 30448474,
 				   "chato.stk",		"4fa4ed96a427c344e9f916f9f236598d", 6033793),
 		FR_FRA,
