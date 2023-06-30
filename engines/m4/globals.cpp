@@ -82,6 +82,7 @@ bool Globals::init() {
 	main_cold_data_init();
 	create_mouse_watch_dialog();
 	global_menu_system_init();
+	initialize_game();
 
 	return true;
 }

@@ -119,6 +119,10 @@ void BurgerGlobals::global_menu_system_init() {
 	static_cast<Inventory *>(_inventory)->init();
 }
 
+void BurgerGlobals::initialize_game() {
+	// TODO
+}
+
 void BurgerGlobals::initMouseSeries(const Common::String &assetName, RGB8 *myPalette) {
 	int32 maxW, maxH;
 
