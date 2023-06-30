@@ -3287,9 +3287,11 @@ void LB::b_scummvmassert(int nargs) {
 	Datum d = g_lingo->pop();
 
 	if (d.asInt() == 0) {
-		warning("LB::b_scummvmassert: is false at line %d", line.asInt());
+		warning("BUILDBOT: LB::b_scummvmassert: is false at line %d", line.asInt());
 	}
-	assert(d.asInt() != 0);
+	if (debugChannelSet(-1, kDebugLingoStrict)) {
+		assert(d.asInt() != 0);
+	}
 }
 
 void LB::b_scummvmassertequal(int nargs) {
@@ -3299,9 +3301,11 @@ void LB::b_scummvmassertequal(int nargs) {
 
 	int result = (d1 == d2);
 	if (!result) {
-		warning("LB::b_scummvmassertequals: %s is not equal %s at line %d", d1.asString().c_str(), d2.asString().c_str(), line.asInt());
+		warning("BUILDBOT: LB::b_scummvmassertequals: %s is not equal %s at line %d", d1.asString().c_str(), d2.asString().c_str(), line.asInt());
 	}
-	assert(result == 1);
+	if (debugChannelSet(-1, kDebugLingoStrict)) {
+		assert(result == 1);
+	}
 }
 
 void LB::b_getVolumes(int nargs) {
