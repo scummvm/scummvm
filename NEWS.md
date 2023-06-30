@@ -80,6 +80,18 @@ For a more comprehensive changelog of the latest experimental code, see:
  AGI:
    - Restored possibility to pick arbitrary render mode in Game Options.
 
+ AGS:
+   - Multiple additions to game detection tables.
+   - Fixed crashes in various games (commercial and freeware)
+   - Fixed graphical priority errors when using computers in Resonance, Kathy Rain and Blackwell Convergence.
+   - Fix for some sounds not playing in "The Cat Lady" and other games.
+   - Reintroduced thumbnail creation for all savegames.
+   - Fixed regression for translation setting not being saved.
+   - Fixed translation bug in Zniw Adventure (linux version).
+   - Fixed wrong walkspeed in old games (e.g. Apprentice)
+   - Added small workaround for purple texts appearing transparent.
+   - Minor changes to debug/error messages and code style.
+
  HDB:
    - Fixed bug with inability to pick up red envelope with keyboard.
 
