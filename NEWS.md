@@ -86,6 +86,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  SAGA2:
    - Fixed crash when hovering over certain spells.
 
+ SCUMM:
+   - Fixed music volume regression in Loom.
+
  Sword1:
    - Added detection for Czech and Polish versions with DXA cutscenes.
 
