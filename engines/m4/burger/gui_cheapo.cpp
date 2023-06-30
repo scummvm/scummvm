@@ -168,17 +168,20 @@ void ButtonClass::init() {
 	_tracking = -1;
 }
 
-ButtonClass::ButtonClass(const RectClass *r, const Common::String &btnName, int16 tag) : RectClass(r) {
+ButtonClass::ButtonClass(const RectClass &r, const Common::String &btnName, int16 tag) : RectClass(r) {
 	init();
 	_name = btnName;
 	_tag = tag;
-	_hidden = false;
+}
+
+ButtonClass::ButtonClass(const RectClass &r, const Common::String &btnName, int16 tag,
+		int16 unknown, int16 relaxed, int16 over, int16 picked) : RectClass(r),
+		_unknown(unknown), _relaxed(relaxed), _over(over), _picked(picked) {
 }
 
 ButtonClass::ButtonClass() : RectClass() {
 	init();
 	_name = "?";
-	_hidden = false;
 }
 
 ButtonClass::~ButtonClass() {
@@ -523,7 +526,7 @@ void InterfaceBox::draw(GrBuff *myBuffer) {
 
 //-------------------------------------------------------------------------------------------
 
-Inventory::Inventory(const RectClass *r, int32 sprite, int16 cells_h, int16 cells_v, int16 cell_w, int16 cell_h, int16 tag)
+Inventory::Inventory(const RectClass &r, int32 sprite, int16 cells_h, int16 cells_v, int16 cell_w, int16 cell_h, int16 tag)
 		: RectClass(r) {
 	_sprite = sprite;
 
