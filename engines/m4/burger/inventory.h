@@ -45,7 +45,7 @@ public:
 public:
 	void init();
 
-	void add(const Common::String &name, const Common::String &verb, int32 sprite, int32 cursor) override;
+	void add(const Common::String &name, const Common::String &verbs, int32 sprite, int32 cursor) override;
 	void set_scroll(int32 scroll) override;
 	void remove(const Common::String &name) override;
 };
