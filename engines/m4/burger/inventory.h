@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "m4/m4_types.h"
+#include "m4/adv_r/adv_inv.h"
 
 namespace M4 {
 namespace Burger {
@@ -38,11 +39,15 @@ struct InventoryItem {
 	InventoryItem(const char *name, int scene) : _asset(name), _name(name), _scene(scene) {}
 };
 
-struct BurgerInventory {
+struct Inventory : public InventoryBase {
 public:
 	Common::Array<InventoryItem> _items;
 public:
 	void init();
+
+	void add(const Common::String &name, const Common::String &verb, int32 sprite, int32 cursor) override;
+	void set_scroll(int32 scroll) override;
+	void remove(const Common::String &name) override;
 };
 
 } // namespace Burger

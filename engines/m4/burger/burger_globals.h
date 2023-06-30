@@ -48,7 +48,6 @@ protected:
 public:
 	GameMode _gameMode = WHOLE_GAME;
 	Interface _interface;
-	BurgerInventory _inventory;
 
 public:
 	BurgerGlobals();

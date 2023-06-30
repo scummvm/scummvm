@@ -72,10 +72,14 @@ static const ConverterEntry ASCII_CONVERTERS[] = {
 
 BurgerGlobals::BurgerGlobals() {
 	g_globals = this;
+
+	Inventory *inv = new Inventory();
+	_inventory = inv;
 }
 
 BurgerGlobals::~BurgerGlobals() {
 	g_globals = nullptr;
+	delete _inventory;
 }
 
 void BurgerGlobals::main_cold_data_init() {
@@ -111,7 +115,8 @@ void BurgerGlobals::global_menu_system_init() {
 	AddSystemHotkey(Common::KEYCODE_F3, cb_F3);
 
 	_interface.init(0, 5, 6, 8, 9);
-	_inventory.init();
+
+	static_cast<Inventory *>(_inventory)->init();
 }
 
 void BurgerGlobals::initMouseSeries(const Common::String &assetName, RGB8 *myPalette) {

@@ -23,6 +23,7 @@
 #ifndef M4_ADV_R_ADV_INV_H
 #define M4_ADV_R_ADV_INV_H
 
+#include "common/array.h"
 #include "common/stream.h"
 
 namespace M4 {
@@ -33,10 +34,16 @@ struct InvObj {
 	int32 scene = 0, cel = 0, cursor = 0;
 };
 
-struct InventoryRec {
-	InvObj **objects = nullptr;
-	int32 num_objects = 0;
-	int32 tail = 0;
+struct InventoryBase {
+	Common::Array<InvObj *> _objects;
+	int32 _tail = 0;
+
+	InventoryBase() {}
+	virtual ~InventoryBase() {}
+
+	virtual void add(const Common::String &name, const Common::String &verb, int32 sprite, int32 cursor) = 0;
+	virtual void set_scroll(int32 scroll) = 0;
+	virtual void remove(const Common::String &name) = 0;
 };
 
 /**

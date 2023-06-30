@@ -35,6 +35,7 @@
 
 namespace M4 {
 namespace Burger {
+namespace GUI {
 
 #define _GI(X) _G(interface)._##X
 
@@ -61,7 +62,7 @@ RectClass::RectClass(const RectClass *r) {
 }
 
 RectClass::RectClass(int16 x1, int16 y1, int16 x2, int16 y2) :
-		_x1(x1), _y1(y1), _x2(x2), _y2(y2) {
+	_x1(x1), _y1(y1), _x2(x2), _y2(y2) {
 }
 
 RectClass::~RectClass() {
@@ -106,7 +107,7 @@ int16 RectClass::inside(int16 x, int16 y) const {
 //-------------------------------------------------------------------------------------------
 
 TextField::TextField(int16 x1, int16 y1, int16 x2, int16 y2) :
-		RectClass(x1, y1, x2, y2) {
+	RectClass(x1, y1, x2, y2) {
 	_string = nullptr;
 	_string_len = 0;
 	_must_redraw = true;
@@ -175,8 +176,8 @@ ButtonClass::ButtonClass(const RectClass &r, const Common::String &btnName, int1
 }
 
 ButtonClass::ButtonClass(const RectClass &r, const Common::String &btnName, int16 tag,
-		int16 unknown, int16 relaxed, int16 over, int16 picked) : RectClass(r),
-		_unknown(unknown), _relaxed(relaxed), _over(over), _picked(picked) {
+	int16 unknown, int16 relaxed, int16 over, int16 picked) : RectClass(r),
+	_unknown(unknown), _relaxed(relaxed), _over(over), _picked(picked) {
 }
 
 ButtonClass::ButtonClass() : RectClass() {
@@ -527,7 +528,7 @@ void InterfaceBox::draw(GrBuff *myBuffer) {
 //-------------------------------------------------------------------------------------------
 
 Inventory::Inventory(const RectClass &r, int32 sprite, int16 cells_h, int16 cells_v, int16 cell_w, int16 cell_h, int16 tag)
-		: RectClass(r) {
+	: RectClass(r) {
 	_sprite = sprite;
 
 	for (int16 iter = 0; iter < INVENTORY_CELLS_COUNT; iter++) {
@@ -779,5 +780,6 @@ ControlStatus Inventory::track(int32 eventType, int16 x, int16 y) {
 	return result;
 }
 
-} // End of namespace Burger
-} // End of namespace M4
+} // namespace GUI
+} // namespace Burger
+} // namespace M4
