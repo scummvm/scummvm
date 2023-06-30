@@ -113,7 +113,9 @@ public:
 
 public:
 	ButtonClass();
-	ButtonClass(const RectClass *r, const Common::String &btnName, int16 tag);
+	ButtonClass(const RectClass &r, const Common::String &btnName, int16 tag);
+	ButtonClass(const RectClass &r, const Common::String &btnName, int16 tag,
+		int16 unknown, int16 relaxed, int16 over, int16 picked);
 	~ButtonClass();
 
 	void draw(GrBuff *interface_buffer);
@@ -197,7 +199,7 @@ public:
 	Entry _items[INVENTORY_CELLS_COUNT];
 
 public:
-	Inventory(const RectClass *r, int32 sprite, int16 cells_h, int16 cells_v, int16 cell_w, int16 cell_h, int16 tag);
+	Inventory(const RectClass &r, int32 sprite, int16 cells_h, int16 cells_v, int16 cell_w, int16 cell_h, int16 tag);
 	~Inventory();
 
 	void draw(GrBuff *interface_buffer);

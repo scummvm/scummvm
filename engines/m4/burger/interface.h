@@ -35,6 +35,7 @@ struct Interface {
 private:
 	void setup();
 public:
+	int _sprite = 22; // main_interface_sprite;
 	int _arrow = 0;
 	int _wait = 0;
 	int _look = 0;
@@ -48,6 +49,15 @@ public:
 	int _y2 = SCREEN_HEIGHT;
 	GrBuff *_gameInterfaceBuff = nullptr;
 	InterfaceBox *_interfaceBox = nullptr;
+	Inventory *_inventory = nullptr;
+	TextField *_textField = nullptr;
+	ButtonClass *_btnTake = nullptr;
+	ButtonClass *_btnManipulate = nullptr;
+	ButtonClass *_btnHandle = nullptr;
+	ButtonClass *_btnAbductFail = nullptr;
+	ButtonClass *_btnMenu = nullptr;
+	ButtonClass *_btnScrollLeft = nullptr;
+	ButtonClass *_btnScrollRight = nullptr;
 
 	~Interface();
 	void init(int arrow, int wait, int look, int grab, int use);

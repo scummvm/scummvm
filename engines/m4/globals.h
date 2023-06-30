@@ -124,7 +124,6 @@ public:
 	InvPal *_inverse_pal = nullptr;
 	InventoryRec _inventory;
 	int32 _inv_obj_mem_type = 0;
-	int _main_interface_sprite = 22;
 	bool _currScreen = false;
 	ScreenContext *_eventToScreen = nullptr;
 	byte _color = 0;

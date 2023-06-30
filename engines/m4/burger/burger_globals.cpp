@@ -106,15 +106,11 @@ void BurgerGlobals::main_cold_data_init() {
 }
 
 void BurgerGlobals::global_menu_system_init() {
-	_main_interface_sprite = series_load("999intr", 22, nullptr);
-	if (_main_interface_sprite != 22)
-		error_show(FL, 'SLF!');
-
 	AddSystemHotkey(Common::KEYCODE_ESCAPE, escape_key_pressed);
 	AddSystemHotkey(Common::KEYCODE_F2, cb_F2);
 	AddSystemHotkey(Common::KEYCODE_F3, cb_F3);
 
-	// TODO
+	_interface.init(0, 5, 6, 8, 9);
 }
 
 void BurgerGlobals::initMouseSeries(const Common::String &assetName, RGB8 *myPalette) {
