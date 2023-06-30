@@ -60,18 +60,23 @@ void inv_shutdown(void) {
 	mem_free((char *)_G(inventory).objects);
 }
 
-bool inv_register_thing(char *name, char *verbs, int32 scene, int32 cel, int32 cursor) {
-	cstrupr(name);
-	cstrupr(verbs);
+bool inv_register_thing(const char *name, const char *verbs, int32 scene, int32 cel, int32 cursor) {
+	assert(name && verbs);
+
+	char *s_name = mem_strdup(name);
+	char *s_verbs = mem_strdup(verbs);
+
+	cstrupr(s_name);
+	cstrupr(s_verbs);
 
 	_G(inventory).objects[_G(inventory).tail]->name = nullptr;
 	_G(inventory).objects[_G(inventory).tail]->verbs = nullptr;
 
-	if (name)
-		_G(inventory).objects[_G(inventory).tail]->name = mem_strdup(name);
+	if (s_name)
+		_G(inventory).objects[_G(inventory).tail]->name = s_name;
 
-	if (verbs)
-		_G(inventory).objects[_G(inventory).tail]->verbs = mem_strdup(verbs);
+	if (s_verbs)
+		_G(inventory).objects[_G(inventory).tail]->verbs = s_verbs;
 
 	_G(inventory).objects[_G(inventory).tail]->scene = scene;
 	_G(inventory).objects[_G(inventory).tail]->cel = cel;
@@ -80,7 +85,7 @@ bool inv_register_thing(char *name, char *verbs, int32 scene, int32 cel, int32 c
 	_G(inventory).tail++;
 
 	if (scene == BACKPACK) {
-		inventory_add(name, verbs, cel, cursor);
+		inventory_add(s_name, s_verbs, cel, cursor);
 	}
 
 	return true;

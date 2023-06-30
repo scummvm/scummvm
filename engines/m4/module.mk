@@ -58,7 +58,8 @@ MODULE_OBJS = \
 	burger/burger.o \
 	burger/burger_globals.o \
 	burger/gui_cheapo.o \
-	burger/interface.o
+	burger/interface.o \
+	burger/inventory.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_M4), DYNAMIC_PLUGIN)
