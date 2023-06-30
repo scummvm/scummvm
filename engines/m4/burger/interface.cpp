@@ -27,6 +27,8 @@
 namespace M4 {
 namespace Burger {
 
+using namespace Burger::GUI;
+
 void Interface::init(int arrow, int wait, int look, int grab, int use) {
 	_arrow = arrow;
 	_wait = wait;
@@ -67,7 +69,7 @@ void Interface::show() {
 
 void Interface::setup() {
 	_interfaceBox = new InterfaceBox(RectClass(0, 0, SCREEN_WIDTH - 1, 105));
-	_inventory = new Inventory(RectClass(188, 22, 539, 97), _sprite, 9, 1, 39, 75, 3);
+	_inventory = new GUI::Inventory(RectClass(188, 22, 539, 97), _sprite, 9, 1, 39, 75, 3);
 	_textField = new TextField(200, 1, 450, 21);
 	_btnTake = new ButtonClass(RectClass(60, 35, 92, 66), "take", 4, 3, 3, 4, 5);
 	_btnManipulate = new ButtonClass(RectClass(105, 35, 137, 66), "manipulate", 7, 6, 6, 7, 8);

@@ -32,32 +32,27 @@ bool inv_init(int32 num_objects) {
 	term_message("Fluffing up the backpack", nullptr);
 	int i;
 
-	_G(inventory).num_objects = num_objects;
-	_G(inventory).objects = (InvObj **)mem_alloc(sizeof(InvObj *) * num_objects, "inventory store");
-	if (!_G(inventory).objects)
-		error_show(FL, 'OOM!', "%ld bytes", (int32)sizeof(InvObj *) * num_objects);
+	_G(inventory)->_objects.resize(num_objects);
 
 	if (!mem_register_stash_type(&_G(inv_obj_mem_type), sizeof(InvObj), num_objects, "obj"))
 		error_show(FL, 'OOM!', "fail to mem_register_stash_type for inv_obj");
 
 	for (i = 0; i < num_objects; i++) {
-		_G(inventory).objects[i] = (InvObj *)mem_get_from_stash(_G(inv_obj_mem_type), "obj");
-		if (!_G(inventory).objects[i])
+		_G(inventory)->_objects[i] = (InvObj *)mem_get_from_stash(_G(inv_obj_mem_type), "obj");
+		if (!_G(inventory)->_objects[i])
 			error_show(FL, 'OOM!', "%ld bytes", (int32)sizeof(InvObj));
 	}
 
-	_G(inventory).tail = 0;
+	_G(inventory)->_tail = 0;
 	return true;
 }
 
 void inv_shutdown(void) {
 	int i;
 
-	for (i = 0; i < _G(inventory).tail; i++) {
-		mem_free_to_stash((void *)_G(inventory).objects[i], _G(inv_obj_mem_type));
+	for (i = 0; i < _G(inventory)->_tail; i++) {
+		mem_free_to_stash((void *)_G(inventory)->_objects[i], _G(inv_obj_mem_type));
 	}
-
-	mem_free((char *)_G(inventory).objects);
 }
 
 bool inv_register_thing(const char *name, const char *verbs, int32 scene, int32 cel, int32 cursor) {
@@ -66,26 +61,27 @@ bool inv_register_thing(const char *name, const char *verbs, int32 scene, int32 
 	char *s_name = mem_strdup(name);
 	char *s_verbs = mem_strdup(verbs);
 
-	cstrupr(s_name);
-	cstrupr(s_verbs);
+	_G(inventory)->_objects[_G(inventory)->_tail]->name = nullptr;
+	_G(inventory)->_objects[_G(inventory)->_tail]->verbs = nullptr;
 
-	_G(inventory).objects[_G(inventory).tail]->name = nullptr;
-	_G(inventory).objects[_G(inventory).tail]->verbs = nullptr;
+	if (s_name) {
+		cstrupr(s_name);
+		_G(inventory)->_objects[_G(inventory)->_tail]->name = s_name;
+	}
 
-	if (s_name)
-		_G(inventory).objects[_G(inventory).tail]->name = s_name;
+	if (s_verbs) {
+		cstrupr(s_verbs);
+		_G(inventory)->_objects[_G(inventory)->_tail]->verbs = s_verbs;
+	}
 
-	if (s_verbs)
-		_G(inventory).objects[_G(inventory).tail]->verbs = s_verbs;
+	_G(inventory)->_objects[_G(inventory)->_tail]->scene = scene;
+	_G(inventory)->_objects[_G(inventory)->_tail]->cel = cel;
+	_G(inventory)->_objects[_G(inventory)->_tail]->cursor = cursor;
 
-	_G(inventory).objects[_G(inventory).tail]->scene = scene;
-	_G(inventory).objects[_G(inventory).tail]->cel = cel;
-	_G(inventory).objects[_G(inventory).tail]->cursor = cursor;
-
-	_G(inventory).tail++;
+	_G(inventory)->_tail++;
 
 	if (scene == BACKPACK) {
-		inventory_add(s_name, s_verbs, cel, cursor);
+		_G(inventory)->add(s_name, s_verbs, cel, cursor);
 	}
 
 	return true;
@@ -97,10 +93,10 @@ int32 inv_where_is(char *name) {
 	int i;
 	cstrupr(name);
 
-	for (i = 0; i < _G(inventory).tail; i++) {
-		if (_G(inventory).objects[i]->name) {
-			if (!strcmp(_G(inventory).objects[i]->name, name)) {
-				return _G(inventory).objects[i]->scene;
+	for (i = 0; i < _G(inventory)->_tail; i++) {
+		if (_G(inventory)->_objects[i]->name) {
+			if (!strcmp(_G(inventory)->_objects[i]->name, name)) {
+				return _G(inventory)->_objects[i]->scene;
 			}
 		}
 	}
@@ -116,19 +112,19 @@ bool inv_put_thing_in(char *name, int32 scene) {
 	int i;
 	cstrupr(name);
 
-	for (i = 0; i < _G(inventory).tail; i++) {
-		if (_G(inventory).objects[i]->name) {
-			if (!strcmp(_G(inventory).objects[i]->name, name)) {
+	for (i = 0; i < _G(inventory)->_tail; i++) {
+		if (_G(inventory)->_objects[i]->name) {
+			if (!strcmp(_G(inventory)->_objects[i]->name, name)) {
 
 				// Remove object from backpack?
-				if (_G(inventory).objects[i]->scene == BACKPACK && scene != BACKPACK) {
-					inventory_remove(name);
+				if (_G(inventory)->_objects[i]->scene == BACKPACK && scene != BACKPACK) {
+					_G(inventory)->remove(name);
 				}
-				_G(inventory).objects[i]->scene = scene;
+				_G(inventory)->_objects[i]->scene = scene;
 
 				// Put object in backpack?
 				if (scene == BACKPACK) {
-					inventory_add(name, _G(inventory).objects[i]->verbs, _G(inventory).objects[i]->cel, _G(inventory).objects[i]->cursor);
+					_G(inventory)->add(name, _G(inventory)->_objects[i]->verbs, _G(inventory)->_objects[i]->cel, _G(inventory)->_objects[i]->cursor);
 				}
 				return true;
 			}
@@ -141,10 +137,10 @@ bool inv_put_thing_in(char *name, int32 scene) {
 int32 inv_get_cursor(char *name) {
 	int i;
 	cstrupr(name);
-	for (i = 0; i < _G(inventory).tail; i++) {
-		if (_G(inventory).objects[i]->name) {
-			if (!strcmp(_G(inventory).objects[i]->name, name)) {
-				return _G(inventory).objects[i]->cursor;
+	for (i = 0; i < _G(inventory)->_tail; i++) {
+		if (_G(inventory)->_objects[i]->name) {
+			if (!strcmp(_G(inventory)->_objects[i]->name, name)) {
+				return _G(inventory)->_objects[i]->cursor;
 			}
 		}
 	}
@@ -154,10 +150,10 @@ int32 inv_get_cursor(char *name) {
 int32 inv_get_cel(char *name) {
 	int i;
 	cstrupr(name);
-	for (i = 0; i < _G(inventory).tail; i++) {
-		if (_G(inventory).objects[i]->name) {
-			if (!strcmp(_G(inventory).objects[i]->name, name)) {
-				return _G(inventory).objects[i]->cel;
+	for (i = 0; i < _G(inventory)->_tail; i++) {
+		if (_G(inventory)->_objects[i]->name) {
+			if (!strcmp(_G(inventory)->_objects[i]->name, name)) {
+				return _G(inventory)->_objects[i]->cel;
 			}
 		}
 	}
@@ -167,10 +163,10 @@ int32 inv_get_cel(char *name) {
 char *inv_get_verbs(char *name) {
 	int i;
 	cstrupr(name);
-	for (i = 0; i < _G(inventory).tail; i++) {
-		if (_G(inventory).objects[i]->name) {
-			if (!strcmp(_G(inventory).objects[i]->name, name)) {
-				return _G(inventory).objects[i]->verbs;
+	for (i = 0; i < _G(inventory)->_tail; i++) {
+		if (_G(inventory)->_objects[i]->name) {
+			if (!strcmp(_G(inventory)->_objects[i]->name, name)) {
+				return _G(inventory)->_objects[i]->verbs;
 			}
 		}
 	}
@@ -184,10 +180,10 @@ char *inv_get_verbs(char *name) {
 static char *inv_get_name(char *name) {
 	int i;
 	cstrupr(name);
-	for (i = 0; i < _G(inventory).tail; i++) {
-		if (_G(inventory).objects[i]->name) {
-			if (!strcmp(_G(inventory).objects[i]->name, name)) {
-				return _G(inventory).objects[i]->name;
+	for (i = 0; i < _G(inventory)->_tail; i++) {
+		if (_G(inventory)->_objects[i]->name) {
+			if (!strcmp(_G(inventory)->_objects[i]->name, name)) {
+				return _G(inventory)->_objects[i]->name;
 			}
 		}
 	}
@@ -256,20 +252,20 @@ void inv_save_game(Common::WriteStream *fp_save) {
 	if (!fp_save)
 		error_show(FL, 'ISGF');
 
-	inv_size = _G(inventory).tail * (40 * sizeof(char) + sizeof(long));
+	inv_size = _G(inventory)->_tail * (40 * sizeof(char) + sizeof(long));
 	fp_save->writeUint32LE(inv_size);
 
 	inv_save_buff = (char *)mem_alloc(inv_size, "inv save buff");
 
 	cstrcpy(inv_save_buff, "\0");
-	for (i = 0; i < _G(inventory).tail; i++) {
-		if (cstrlen(_G(inventory).objects[i]->name) > 39)
-			error_show(FL, 'ISGF', "inventory name '%s' > 39 chars:", _G(inventory).objects[i]->name);
+	for (i = 0; i < _G(inventory)->_tail; i++) {
+		if (cstrlen(_G(inventory)->_objects[i]->name) > 39)
+			error_show(FL, 'ISGF', "inventory name '%s' > 39 chars:", _G(inventory)->_objects[i]->name);
 
-		Common::strcpy_s(&inv_save_buff[index], 256, _G(inventory).objects[i]->name);
+		Common::strcpy_s(&inv_save_buff[index], 256, _G(inventory)->_objects[i]->name);
 		index += 40;
 
-		memcpy(&inv_save_buff[index], &(_G(inventory).objects[i]->scene), sizeof(int32));
+		memcpy(&inv_save_buff[index], &(_G(inventory)->_objects[i]->scene), sizeof(int32));
 		index += sizeof(long);
 	}
 
@@ -316,8 +312,7 @@ void inv_restore_game(Common::SeekableReadStream *fp_restore) {
 	if (inv_restore_buff)
 		mem_free(inv_restore_buff);
 
-	inventory_set_scroll(0);	 // MattP
-	//myInventory->set_scroll(0);	in above function
+	_G(inventory)->set_scroll(0);
 }
 
 } // End of namespace M4

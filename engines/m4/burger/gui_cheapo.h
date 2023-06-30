@@ -29,6 +29,7 @@
 
 namespace M4 {
 namespace Burger {
+namespace GUI {
 
 constexpr int16 INVENTORY_CELLS_COUNT = 128;
 constexpr int16 ARROW_WIDTH = 8;
@@ -216,7 +217,8 @@ public:
 	void set_scroll(int32 new_scroll);
 };
 
-} // End of namespace Burger
-} // End of namespace M4
+} // namespace GUI
+} // namespace Burger
+} // namespace M4
 
 #endif

@@ -48,16 +48,16 @@ public:
 	int _x2 = SCREEN_WIDTH;
 	int _y2 = SCREEN_HEIGHT;
 	GrBuff *_gameInterfaceBuff = nullptr;
-	InterfaceBox *_interfaceBox = nullptr;
-	Inventory *_inventory = nullptr;
-	TextField *_textField = nullptr;
-	ButtonClass *_btnTake = nullptr;
-	ButtonClass *_btnManipulate = nullptr;
-	ButtonClass *_btnHandle = nullptr;
-	ButtonClass *_btnAbductFail = nullptr;
-	ButtonClass *_btnMenu = nullptr;
-	ButtonClass *_btnScrollLeft = nullptr;
-	ButtonClass *_btnScrollRight = nullptr;
+	GUI::InterfaceBox *_interfaceBox = nullptr;
+	GUI::Inventory *_inventory = nullptr;
+	GUI::TextField *_textField = nullptr;
+	GUI::ButtonClass *_btnTake = nullptr;
+	GUI::ButtonClass *_btnManipulate = nullptr;
+	GUI::ButtonClass *_btnHandle = nullptr;
+	GUI::ButtonClass *_btnAbductFail = nullptr;
+	GUI::ButtonClass *_btnMenu = nullptr;
+	GUI::ButtonClass *_btnScrollLeft = nullptr;
+	GUI::ButtonClass *_btnScrollRight = nullptr;
 
 	~Interface();
 	void init(int arrow, int wait, int look, int grab, int use);

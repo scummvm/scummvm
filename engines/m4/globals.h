@@ -98,6 +98,7 @@ public:
 	Font *_font = nullptr;
 
 	bool _system_shutting_down = false;
+	InventoryBase *_inventory = nullptr;
 	size_t _mem_to_alloc = 0;
 	void *_gameInterfaceBuff = nullptr;
 	void *_custom_interface_setup = nullptr;
@@ -122,7 +123,6 @@ public:
 	strmRequest *_firstStream = nullptr;
 	strmRequest *_lastStream = nullptr;
 	InvPal *_inverse_pal = nullptr;
-	InventoryRec _inventory;
 	int32 _inv_obj_mem_type = 0;
 	bool _currScreen = false;
 	ScreenContext *_eventToScreen = nullptr;

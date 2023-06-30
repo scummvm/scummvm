@@ -73,12 +73,24 @@ static const InvObject INVENTORY_ITEMS[] = {
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void BurgerInventory::init() {
+void Inventory::init() {
 	for (const InvObject *item = INVENTORY_ITEMS; item->_name; ++item) {
 		inv_register_thing(item->_name, item->_verbs, item->_scene, item->_cel, item->_cursor);
 
 		_items.push_back(InventoryItem(item->_name, item->_scene));
 	}
+}
+
+void Inventory::add(const Common::String &name, const Common::String &verb, int32 sprite, int32 cursor) {
+
+}
+
+void Inventory::set_scroll(int32 scroll) {
+
+}
+
+void Inventory::remove(const Common::String &name) {
+
 }
 
 } // namespace Burger

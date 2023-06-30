@@ -183,17 +183,6 @@ struct GameControl {
 	int16		previous_room;
 };
 
-
-inline void inventory_add(char *name, char *verb, int32 sprite, int32 cursor) {
-	error("TODO: inventory_add");
-}
-inline void inventory_set_scroll(int32 scroll) {
-	error("TODO: inventory_set_scroll");
-}
-inline void inventory_remove(char *name) {
-	error("TODO: inventory_remove");
-}
-
 } // namespace M4
 
 #endif
