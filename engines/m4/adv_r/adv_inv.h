@@ -58,7 +58,7 @@ extern void  inv_shutdown();
  * @param cel		Index into the inventory sprite series for use when displaying inventory
  * @param cursor	Cel index into the cursor sprite series when the player is "holding" a thing
  */
-extern bool  inv_register_thing(char *name, char *verbs, int32 scene, int32 cel, int32 cursor);
+extern bool  inv_register_thing(const char *name, const char *verbs, int32 scene, int32 cel, int32 cursor);
 
 extern int32 inv_where_is(const char *name);
 extern bool  inv_player_has(const char *name);

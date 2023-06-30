@@ -111,6 +111,7 @@ void BurgerGlobals::global_menu_system_init() {
 	AddSystemHotkey(Common::KEYCODE_F3, cb_F3);
 
 	_interface.init(0, 5, 6, 8, 9);
+	_inventory.init();
 }
 
 void BurgerGlobals::initMouseSeries(const Common::String &assetName, RGB8 *myPalette) {

@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,46 +20,30 @@
  *
  */
 
-#ifndef M4_BURGER_BURGER_GLOBALS_H
-#define M4_BURGER_BURGER_GLOBALS_H
+#ifndef M4_BURGER_INVENTORY_H
+#define M4_BURGER_INVENTORY_H
 
-#include "m4/globals.h"
-#include "m4/burger/interface.h"
-#include "m4/burger/inventory.h"
+#include "common/array.h"
+#include "m4/m4_types.h"
 
 namespace M4 {
 namespace Burger {
 
-enum GameMode {
-	JUST_OVERVIEW = 0, INTERACTIVE_DEMO = 1, MAGAZINE_DEMO = 2, WHOLE_GAME = 3
+struct InventoryItem {
+	const char *_asset = nullptr;
+	const char *_name = nullptr;
+	int _scene = 0;
+
+	InventoryItem() {}
+	InventoryItem(const char *name, int scene) : _asset(name), _name(name), _scene(scene) {}
 };
 
-class BurgerGlobals : public Globals {
-private:
-	void initMouseSeries(const Common::String &assetName, RGB8 *myPalette);
-	void custom_ascii_converter_proc(char *string);
-	static void escape_key_pressed(void *, void *);
-	static void cb_F2(void *, void *);
-	static void cb_F3(void *, void *);
-
-protected:
-	void main_cold_data_init() override;
-	void global_menu_system_init() override;
-
+struct BurgerInventory {
 public:
-	GameMode _gameMode = WHOLE_GAME;
-	Interface _interface;
-	BurgerInventory _inventory;
-
+	Common::Array<InventoryItem> _items;
 public:
-	BurgerGlobals();
-	virtual ~BurgerGlobals();
+	void init();
 };
-
-extern BurgerGlobals *g_globals;
-
-#undef _G
-#define _G(X) (::M4::Burger::g_globals->_##X)
 
 } // namespace Burger
 } // namespace M4

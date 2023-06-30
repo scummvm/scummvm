@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef M4_GUI_INTERFACE_H
-#define M4_GUI_INTERFACE_H
+#ifndef M4_BURGER_INTERFACE_H
+#define M4_BURGER_INTERFACE_H
 
 #include "m4/m4_types.h"
 #include "m4/graphics/graphics.h"
