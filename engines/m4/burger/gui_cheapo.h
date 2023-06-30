@@ -175,8 +175,8 @@ public:
 
 class Inventory : public RectClass {
 	struct Entry {
-		const char *_name = nullptr;
-		const char *_verb = nullptr;
+		Common::String _name;
+		Common::String _verb;
 		int16 _cell = -1;
 		int16 _cursor = -1;
 	};
@@ -208,8 +208,8 @@ public:
 	int16 inside(int16 x, int16 y);
 	ControlStatus track(int32 eventType, int16 x, int16 y);
 
-	bool add(const char *name, const char *verb, int32 cel, int32 cursor);
-	bool remove(const char *name);
+	bool add(const Common::String &name, const Common::String &verb, int32 cel, int32 cursor);
+	bool remove(const Common::String &name);
 	void highlight_part(int16 index);
 
 	bool need_left() const;

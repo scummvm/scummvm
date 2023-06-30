@@ -21,6 +21,7 @@
 
 #include "m4/adv_r/adv_inv.h"
 #include "m4/burger/inventory.h"
+#include "m4/burger/burger_globals.h"
 
 namespace M4 {
 namespace Burger {
@@ -82,15 +83,17 @@ void Inventory::init() {
 }
 
 void Inventory::add(const Common::String &name, const Common::String &verb, int32 sprite, int32 cursor) {
-
+	_GI(inventory)->add(name, verb, sprite, cursor);
+	_GI(inventory)->_must_redraw_all = true;
 }
 
 void Inventory::set_scroll(int32 scroll) {
-
+	_GI(inventory)->set_scroll(scroll);
 }
 
 void Inventory::remove(const Common::String &name) {
-
+	_GI(inventory)->remove(name);
+	_GI(inventory)->_must_redraw_all = true;
 }
 
 } // namespace Burger

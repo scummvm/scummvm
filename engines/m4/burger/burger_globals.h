@@ -58,6 +58,7 @@ extern BurgerGlobals *g_globals;
 
 #undef _G
 #define _G(X) (::M4::Burger::g_globals->_##X)
+#define _GI(X) _G(interface)._##X
 
 } // namespace Burger
 } // namespace M4

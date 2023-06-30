@@ -37,8 +37,6 @@ namespace M4 {
 namespace Burger {
 namespace GUI {
 
-#define _GI(X) _G(interface)._##X
-
 static void refresh_right_arrow() {
 	error("TODO: refresh_right_arrow");
 }
@@ -534,7 +532,6 @@ Inventory::Inventory(const RectClass &r, int32 sprite, int16 cells_h, int16 cell
 	for (int16 iter = 0; iter < INVENTORY_CELLS_COUNT; iter++) {
 		_items[iter]._cell = -1;
 		_items[iter]._cursor = -1;
-		_items[iter]._name = nullptr;
 	}
 
 	_num_cells = 0;
@@ -560,11 +557,11 @@ Inventory::Inventory(const RectClass &r, int32 sprite, int16 cells_h, int16 cell
 Inventory::~Inventory() {
 }
 
-bool Inventory::add(const char *name, const char *verb, int32 invSprite, int32 cursor) {
+bool Inventory::add(const Common::String &name, const Common::String &verb, int32 invSprite, int32 cursor) {
 	// Don't add something twice
 	int iter;
 	for (iter = 0; iter < _num_cells; iter++) {
-		if (!strcmp(name, _items[iter]._name))
+		if (name.equals(_items[iter]._name))
 			return true;
 	}
 
@@ -608,12 +605,11 @@ void Inventory::set_scroll(int32 new_scroll) {
 	_must_redraw_all = true;
 }
 
-bool Inventory::remove(const char *name) {
+bool Inventory::remove(const Common::String &name) {
 	int iter;
 	for (iter = 0; iter < _num_cells; iter++) {
 		// Found the thing?
-		if (!strcmp(name, _items[iter]._name)) {
-
+		if (name.equals(_items[iter]._name)) {
 			// Eat up its slot by moving everything down
 			for (; iter < _num_cells; ++iter)
 				_items[iter] = _items[iter + 1];
