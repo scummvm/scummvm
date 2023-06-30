@@ -87,6 +87,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  SAGA2:
    - Fehler behoben, der zu einem Absturz bei der Nutzung einiger Zaubersprüche führt.
 
+ SCUMM:
+   - Die Steuerung der Musiklautstärke in Loom funktioniert nun wieder korrekt.
+
  Sword1:
    - Die tschechischen und polnischen Versionen mit DXA-Zwischensequenzen werden nun korrekt erkannt.
 
