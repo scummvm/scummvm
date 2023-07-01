@@ -335,7 +335,7 @@ static const ADGameDescription gameDescriptions[] = {
 
 	{
 		"sword1",
-		"",
+		"TecToy",
 		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088468,
 				   "clusters/swordres.rif", "34c111f224e75050a523dc758c71d54e", 60612,
 				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3164478,
