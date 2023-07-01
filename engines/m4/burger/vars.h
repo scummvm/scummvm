@@ -559,6 +559,10 @@ public:
 	void reset();
 
 	void reset1();
+	void reset2();
+	void reset3();
+	void reset4();
+	void reset5();
 
 	void conv_reset_all() {
 		_convSave.clear();

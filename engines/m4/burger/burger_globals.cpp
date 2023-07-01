@@ -128,6 +128,10 @@ void BurgerGlobals::initialize_game() {
 	// Reset the global variables
 	_vars.reset();
 	_vars.reset1();
+	_vars.reset2();
+	_vars.reset3();
+	_vars.reset4();
+	_vars.reset5();
 
 	// TODO
 }
