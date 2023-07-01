@@ -113,22 +113,40 @@ void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
 	}
 }
 
+void Window::drawFrameCounter(Graphics::ManagedSurface *blitTo) {
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+	Common::String msg = Common::String::format("Frame: %d", g_director->getCurrentMovie()->getScore()->getCurrentFrame());
+	uint32 width = font->getStringWidth(msg);
+
+	blitTo->fillRect(Common::Rect(blitTo->w - 3 - width, 1, blitTo->w - 1, font->getFontHeight() + 1), _wm->_colorBlack);
+	font->drawString(blitTo, msg, blitTo->w - 1 - width, 3, width, _wm->_colorBlack);
+	font->drawString(blitTo, msg, blitTo->w - 2 - width, 2, width, _wm->_colorWhite);
+}
+
 bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 	if (!_currentMovie)
 		return false;
+
+	if (!blitTo)
+		blitTo = _composeSurface;
 
 	if (forceRedraw) {
 		blitTo->clear(_stageColor);
 		markAllDirty();
 	} else {
-		if (_dirtyRects.size() == 0 && _currentMovie->_videoPlayback == false)
+		if (_dirtyRects.size() == 0 && _currentMovie->_videoPlayback == false) {
+			if (g_director->_debugDraw & kDebugDrawFrame) {
+				drawFrameCounter(blitTo);
+
+				_contentIsDirty = true;
+			}
+
 			return false;
+		}
 
 		mergeDirtyRects();
 	}
 
-	if (!blitTo)
-		blitTo = _composeSurface;
 	Channel *hiliteChannel = _currentMovie->getScore()->getChannelById(_currentMovie->_currentHiliteChannelId);
 
 	for (auto &i : _dirtyRects) {
@@ -187,15 +205,8 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 		}
 	}
 
-	if (g_director->_debugDraw & kDebugDrawFrame) {
-		const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
-		Common::String msg = Common::String::format("Frame: %d", g_director->getCurrentMovie()->getScore()->getCurrentFrame());
-		uint32 width = font->getStringWidth(msg);
-
-		blitTo->fillRect(Common::Rect(blitTo->w - 3 - width, 1, blitTo->w - 1, font->getFontHeight() + 1), _wm->_colorBlack);
-		font->drawString(blitTo, msg, blitTo->w - 1 - width, 3, width, _wm->_colorBlack);
-		font->drawString(blitTo, msg, blitTo->w - 2 - width, 2, width, _wm->_colorWhite);
-	}
+	if (g_director->_debugDraw & kDebugDrawFrame)
+		drawFrameCounter(blitTo);
 
 	_dirtyRects.clear();
 	_contentIsDirty = true;

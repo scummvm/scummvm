@@ -210,8 +210,9 @@ private:
 	bool _isModal;
 
 private:
-
 	void inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo = nullptr);
+	void drawFrameCounter(Graphics::ManagedSurface *blitTo);
+
 
 };
 
