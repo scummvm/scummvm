@@ -316,6 +316,7 @@ ScummVM Team
     MM (Xeen):
        Paul Gilbert
        Benoit Pierre
+       TheDrakeRaider                 - (M&M1 Gfx Mod)
        David Goldsmith                - (Xeen analysis)
        Matt Taylor                    - (Xeen analysis)
 
@@ -567,6 +568,9 @@ ScummVM Team
     WAGE:
        Eugene Sandulenko
 
+    Watchmaker:
+       Einar Johan Troan Somaen;
+
     Wintermute:
        Gunnar Birke                   - Wintermute 3D
        Einar Johan T. Somaaen
@@ -665,6 +669,9 @@ ScummVM Team
 
     Raspberry Pi:
        Manuel Alfayate
+
+    Libretro:
+       Giovanni Cascione
 
   Other subsystems
   ----------------

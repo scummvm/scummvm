@@ -792,6 +792,8 @@ MM (Xeen)
      -
    * - Benoit Pierre
      -
+   * - TheDrakeRaider
+     - (M&M1 Gfx Mod)
    * - David Goldsmith
      - (Xeen analysis)
    * - Matt Taylor
@@ -1427,6 +1429,15 @@ WAGE
    * - Eugene Sandulenko
      -
 
+Watchmaker
+^^^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Einar Johan Troan Somaen;
+     -
+
 Wintermute
 ^^^^^^^^^^
 
@@ -1697,6 +1708,15 @@ Raspberry Pi
    :widths: 35 65
 
    * - Manuel Alfayate
+     -
+
+Libretro
+^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Giovanni Cascione
      -
 
 Other subsystems
