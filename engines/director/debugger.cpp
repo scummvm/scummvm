@@ -856,12 +856,14 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 		for (int i = 1; i < argc; i++) {
 			if (!scumm_stricmp(argv[i], "off")) {
 				g_director->_debugDraw = 0;
-			} else if (!scumm_stricmp(argv[i], "cast")) {
+			} else if (!strncmp(argv[i], "cast", 4)) { // allow "castS"
 				g_director->_debugDraw |= kDebugDrawCast;
-			} else if (!scumm_stricmp(argv[i], "frame")) {
+			} else if (!strncmp(argv[i], "frame", 5)) { // allow "frameS"
 				g_director->_debugDraw |= kDebugDrawFrame;
+			} else if (!scumm_stricmp(argv[i], "all")) {
+				g_director->_debugDraw |= kDebugDrawCast | kDebugDrawFrame;
 			} else {
-				debugPrintf("Valid parameters are 'cast', 'frame' or 'off'.\n");
+				debugPrintf("Valid parameters are 'cast', 'frame', 'all' or 'off'.\n");
 				return true;
 			}
 		}
