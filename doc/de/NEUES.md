@@ -37,6 +37,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Sword1:
    - Die tschechischen und polnischen Versionen mit DXA-Zwischensequenzen werden nun korrekt erkannt.
+   - Unterstützung für alternative französische und italienische Versionen hinzugefügt.
+   - Unterstützung für die brasilianische Version von TecToy hinzugefügt.
 
  Sword2:
    - Unterstützung für die GOG.com-Version hinzugefügt.
