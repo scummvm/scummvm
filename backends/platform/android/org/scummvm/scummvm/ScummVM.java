@@ -62,6 +62,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	final public native void setupTouchMode(int oldValue, int newValue);
 	final public native void updateTouch(int action, int ptr, int x, int y);
 
+	final public native void syncVirtkeyboardState(boolean newState);
+
 	final public native String getNativeVersionInfo();
 
 	// Callbacks from C++ peer instance

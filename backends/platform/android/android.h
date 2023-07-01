@@ -188,6 +188,8 @@ public:
 	void applyTouchSettings(bool _3dMode, bool overlayShown);
 	void setupTouchMode(int oldValue, int newValue);
 
+	void syncVirtkeyboardState(bool virtkeybd_on);
+
 	void applyOrientationSettings();
 
 	bool pollEvent(Common::Event &event) override;
