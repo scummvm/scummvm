@@ -19,15 +19,14 @@
  *
  */
 
-#include "m4/burger/interface.h"
+#include "m4/burger/gui/interface.h"
 #include "m4/core/errors.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/burger/burger_globals.h"
 
 namespace M4 {
 namespace Burger {
-
-using namespace Burger::GUI;
+namespace GUI {
 
 void Interface::init(int arrow, int wait, int look, int grab, int use) {
 	_arrow = arrow;
@@ -97,5 +96,6 @@ void Interface::setup() {
 	_interfaceBox->add(_btnScrollRight);
 }
 
+} // namespace GUI
 } // namespace Burger
 } // namespace M4

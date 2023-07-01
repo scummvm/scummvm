@@ -23,7 +23,7 @@
 #define M4_BURGER_BURGER_GLOBALS_H
 
 #include "m4/globals.h"
-#include "m4/burger/interface.h"
+#include "m4/burger/gui/interface.h"
 #include "m4/burger/inventory.h"
 #include "m4/burger/vars.h"
 
@@ -51,7 +51,7 @@ public:
 	Burger::Vars _vars;
 	GameMode _executing = WHOLE_GAME;
 	int _wilburTerm = 2;
-	Interface _interface;
+	GUI::Interface _interface;
 	Common::String _wilbur = "WILBUR";
 
 public:
