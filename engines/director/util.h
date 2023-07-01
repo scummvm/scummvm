@@ -41,11 +41,10 @@ Common::String unixToMacPath(const Common::String &path);
 
 Common::String getPath(Common::String path, Common::String cwd);
 
-Common::FSNode resolvePath(Common::String &path, Common::FSNode &base, bool directory);
-Common::FSNode resolvePartialPath(Common::String &path, Common::FSNode &base, bool directory);
-Common::FSNode resolvePathWithFuzz(Common::String &path, Common::FSNode &base, bool directory);
-Common::FSNode resolvePartialPathWithFuzz(Common::String &path, Common::FSNode &base, bool directory);
-Common::Path nodeToPath(Common::FSNode &node);
+Common::Path resolvePath(Common::String &path, Common::Path &base, bool directory);
+Common::Path resolvePartialPath(Common::String &path, Common::Path &base, bool directory);
+Common::Path resolvePathWithFuzz(Common::String &path, Common::Path &base, bool directory);
+Common::Path resolvePartialPathWithFuzz(Common::String &path, Common::Path &base, bool directory);
 Common::Path findPath(Common::String &path, bool currentFolder = true, bool searchPaths = true, bool directory = false);
 Common::Path findMoviePath(Common::String &path, bool currentFolder = true, bool searchPaths = true);
 Common::Path findAudioPath(Common::String &path, bool currentFolder = true, bool searchPaths = true);
