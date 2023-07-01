@@ -13,18 +13,18 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  AGS:
    - Multiple additions to game detection tables.
-   - Fixed crashes in various games (commercial and freeware)
+   - Fixed crashes in various games (commercial and freeware).
    - Fixed graphical priority errors when using computers in Resonance, Kathy Rain and Blackwell Convergence.
    - Fix for some sounds not playing in "The Cat Lady" and other games.
    - Reintroduced thumbnail creation for all savegames.
    - Fixed regression for translation setting not being saved.
    - Fixed translation bug in Zniw Adventure (linux version).
-   - Fixed wrong walkspeed in old games (e.g. Apprentice)
+   - Fixed wrong walkspeed in old games (e.g. Apprentice).
    - Added small workaround for purple texts appearing transparent.
    - Minor changes to debug/error messages and code style.
  
  CRYOMNI3D:
-   - Fixed files access preventing to finish Versailles
+   - Fixed files access preventing to finish Versailles.
 
  HDB:
    - Fixed bug with inability to pick up red envelope with keyboard.
