@@ -161,6 +161,12 @@ extern bool ws_Initialize(frac16 *theGlobals);
 extern void ws_Shutdown();
 extern void TerminateMachinesByHash(int32 machHash);
 
+/**
+ * This proc is what allows a machine to send a message to another machine(s)
+ */
+extern void SendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
+	uint32 machHash, machine *sendM, int32 msgCount);
+
 } // End of namespace M4
 
 #endif

@@ -49,7 +49,7 @@ protected:
 
 public:
 	Burger::Vars _vars;
-	GameMode _gameMode = WHOLE_GAME;
+	GameMode _executing = WHOLE_GAME;
 	int _wilburTerm = 2;
 	Interface _interface;
 	Common::String _wilbur = "WILBUR";

@@ -31,7 +31,7 @@
 namespace M4 {
 
 static void sort_catalog();
-static char *catalog_search(char *name);
+static char *catalog_search(const char *name);
 static char *db_get_catalog_entry(char *c, short *tag, short *room, char *name, char *path, short *c_size);
 static int compare_catalog_entries_for_search(const void *n1, const void *n2);
 
@@ -64,7 +64,7 @@ char *db_get_catalog() {
 	return _G(catalog)._data;
 }
 
-char *db_rmlst_get_asset_room_path(char *asset_name, char *result, int32 *sceneCode) {
+char *db_rmlst_get_asset_room_path(const char *asset_name, char *result, int32 *sceneCode) {
 	char name[MAX_FILENAME_SIZE], path[MAX_FILENAME_SIZE];
 	short tag = 0, room = 0;
 	short c_size = 0;
@@ -171,7 +171,7 @@ static void sort_catalog() {
 	qsort(_G(catalog)._catalog, _G(catalog)._size, sizeof(char *), compare_catalog_entries_for_sort);
 }
 
-static char *catalog_search(char *name) {
+static char *catalog_search(const char *name) {
 	char myString[80];
 	cstrcpy(myString, name);
 	cstrupr(myString);

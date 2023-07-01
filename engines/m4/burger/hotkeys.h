@@ -20,38 +20,22 @@
  *
  */
 
-#ifndef M4_ADV_DB_R_DB_CATALOG_H
-#define M4_ADV_DB_R_DB_CATALOG_H
+#ifndef M4_BURGER_HOTKEYS_H
+#define M4_BURGER_HOTKEYS_H
 
 #include "m4/m4_types.h"
 
 namespace M4 {
+namespace Burger {
 
-typedef char *StrngPtr;
-
-struct Catalog {
-	char *_data = nullptr;
-	char **_catalog = nullptr;
-	int32 _size = 0;
+struct Hotkeys {
+	/**
+	 * Called when the Escape key is pressed
+	 */
+	static void escape_key_pressed(void *, void *);
 };
 
-/**
- * Read in the catalog
- */
-bool read_catalog();
-
-/**
- * Return the catalog data
- */
-extern char *db_get_catalog();
-
-/**
- * Given an asset name, name, return "path" from the database in result.
- * if path starts or ends with a '\', the '\' characters at those places
- * are deleted.
- */
-extern char *db_rmlst_get_asset_room_path(const char *s, char *result, int32 *sceneCode);
-
-} // End of namespace M4
+} // namespace Burger
+} // namespace M4
 
 #endif

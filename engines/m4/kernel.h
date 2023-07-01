@@ -42,7 +42,6 @@ struct Kernel {
 
 	char save_file_name[8] = { 0 };
 	bool restore_game = false;				// TRUE if we wanna restore
-	bool force_restart = false;				// Forces restart of room if true
 	bool teleported_in = false;				// Flag if player teleported to room
 
 	int32 fade_up_time = 0;
