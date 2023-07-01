@@ -19,36 +19,37 @@
  *
  */
 
+#if defined(__ANDROID__)
 
 #include "backends/dlc/android/playstore.h"
-#include "backends/dlc/dlcmanager.h"
-
-namespace Common {
-
-DECLARE_SINGLETON(DLC::DLCManager);
-
-}
 
 namespace DLC {
+namespace PlayStore {
 
-DLCManager::DLCManager() {
-	// TODO: Implement Factory Design Pattern
-	#if defined(__ANDROID__)
-	_store = new DLC::PlayStore::PlayStore();
-	#endif
+PlayStore::PlayStore() {
+	_playStoreObject = JNI::getPlayStoreDLCManager();
 }
 
-void DLCManager::init() {
+void PlayStore::init() {
 
 }
 
-void DLCManager::initDownload() {
-	// _store->requestDownload();
-	// handle errors
+void PlayStore::requestInfo() {
+	JNIEnv *env = JNI::getEnv();
+	jclass playStoreClass = env->GetObjectClass(_playStoreObject);
+
+	jmethodID getPackLocationMethod = env->GetMethodID(playStoreClass, "getPackLocation", "(Ljava/lang/String;)Lcom/google/android/play/core/assetpacks/AssetPackLocation;");
+
+	jstring packName = env->NewStringUTF("beneath_a_steel_sky");
+	jobject packLocationObject = env->CallObjectMethod(_playStoreObject, getPackLocationMethod, packName);
+	
+	env->DeleteLocalRef(packName);
+	env->DeleteLocalRef(packLocationObject);
+
+	// TODO: return a string/struct for the location and add a function parameter i.e. packName
 }
 
-bool DLCManager::getFeatureState(DLC::Feature f) {
-	return false;
-}
-
+} // End of namespace PlayStore
 } // End of namespace DLC
+
+#endif

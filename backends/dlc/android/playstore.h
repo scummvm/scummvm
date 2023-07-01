@@ -19,11 +19,13 @@
  *
  */
 
+#if defined(__ANDROID__)
+
 #ifndef BACKENDS_DLC_PLAYSTORE_PLAYSTORE_H
 #define BACKENDS_DLC_PLAYSTORE_PLAYSTORE_H
 
 #include "backends/dlc/store.h"
-#include "common/callback.h"
+#include "backends/platform/android/jni-android.h"
 
 namespace DLC {
 namespace PlayStore {
@@ -31,12 +33,12 @@ namespace PlayStore {
 class PlayStore: public DLC::Store {
 	
 public:	
-	PlayStore() {}
+	PlayStore();
 	virtual ~PlayStore() {}
 	
-	virtual void init() override {}
+	virtual void init() override;
 
-	virtual void requestInfo() override {}
+	virtual void requestInfo() override;
 
 	virtual void getDownloadState() override {}
 
@@ -45,9 +47,14 @@ public:
 	virtual void getBytesDownloaded() override {}
 
 	virtual void cancelDownload() override {}
+
+private:
+	jobject _playStoreObject;
+
 };
 
 } // End of namespace PlayStore
 } // End of namespace DLC
 
+#endif
 #endif

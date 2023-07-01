@@ -289,6 +289,7 @@ endif
 
 ifeq ($(BACKEND),android)
 MODULE_OBJS += \
+	dlc/android/playstore.o \
 	fs/android/android-fs-factory.o \
 	fs/android/android-posix-fs.o \
 	fs/android/android-saf-fs.o \
