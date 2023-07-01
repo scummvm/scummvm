@@ -58,25 +58,25 @@ extern void  inv_shutdown();
 
 /**
  * Register things during init of the game
- * @param name		Name of the object as it should appear as a sentence is built
- * @param verbs		Verbs should have this format: verbs = "slit,peel,fricasee,examine"
+ * @param itemName	Name of the object as it should appear as a sentence is built
+ * @param itemVerbs	Verbs should have this format: verbs = "slit,peel,fricasee,examine"
  *					There can be any number of verbs in the string.
  * @param scene		The place for the thing to appear initially (BACKPACK is one place)
  * @param cel		Index into the inventory sprite series for use when displaying inventory
  * @param cursor	Cel index into the cursor sprite series when the player is "holding" a thing
  */
-extern bool  inv_register_thing(const char *name, const char *verbs, int32 scene, int32 cel, int32 cursor);
+extern bool  inv_register_thing(const Common::String &itemName, const Common::String &itemVerbs, int32 scene, int32 cel, int32 cursor);
 
-extern int32 inv_where_is(const char *name);
-extern bool  inv_player_has(const char *name);
-extern bool  inv_put_thing_in(const char *name, int32 scene);
-extern int32 inv_get_cursor(const char *name);
-extern int32 inv_get_cel(const char *name);
-extern char *inv_get_verbs(const char *name);
-extern void  inv_give_to_player(const char *name);
-extern void  inv_move_object(const char *name, int32 scene);
-extern bool  inv_object_is_here(const char *name);
-extern bool  inv_object_in_scene(const char *name, int32 scene);
+extern int32 inv_where_is(const Common::String &itemName);
+extern bool  inv_player_has(const Common::String &itemName);
+extern bool  inv_put_thing_in(const Common::String &itemName, int32 scene);
+extern int32 inv_get_cursor(const Common::String &itemName);
+extern int32 inv_get_cel(const Common::String &itemName);
+extern const char *inv_get_verbs(const Common::String &itemName);
+extern void  inv_give_to_player(const Common::String &itemName);
+extern void  inv_move_object(const Common::String &itemName, int32 scene);
+extern bool  inv_object_is_here(const Common::String &itemName);
+extern bool  inv_object_in_scene(const Common::String &itemName, int32 scene);
 
 // private
 
