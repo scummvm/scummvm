@@ -235,6 +235,17 @@ void AndroidGraphicsManager::refreshScreen() {
 	JNI::swapBuffers();
 }
 
+void AndroidGraphicsManager::syncVirtkeyboardState(bool virtkeybd_on) {
+	_screenAlign = SCREEN_ALIGN_CENTER;
+	if (virtkeybd_on) {
+		_screenAlign |= SCREEN_ALIGN_TOP;
+	} else {
+		_screenAlign |= SCREEN_ALIGN_MIDDLE;
+	}
+	recalculateDisplayAreas();
+	_forceRedraw = true;
+}
+
 void AndroidGraphicsManager::touchControlDraw(int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) {
 	_targetBuffer->enableBlend(OpenGL::Framebuffer::kBlendModeTraditionalTransparency);
 	OpenGL::Pipeline *pipeline = getPipeline();
