@@ -93,6 +93,7 @@ jmethodID JNI::_MID_showKeyboardControl = 0;
 jmethodID JNI::_MID_getBitmapResource = 0;
 jmethodID JNI::_MID_setTouchMode = 0;
 jmethodID JNI::_MID_getTouchMode = 0;
+jmethodID JNI::_MID_setOrientation = 0;
 jmethodID JNI::_MID_getScummVMBasePath;
 jmethodID JNI::_MID_getScummVMConfigPath;
 jmethodID JNI::_MID_getScummVMLogPath;
@@ -508,6 +509,19 @@ int JNI::getTouchMode() {
 	return mode;
 }
 
+void JNI::setOrientation(int orientation) {
+	JNIEnv *env = JNI::getEnv();
+
+	env->CallVoidMethod(_jobj, _MID_setOrientation, orientation);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Error trying to set orientation");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+}
+
 Common::String JNI::getScummVMBasePath() {
 	JNIEnv *env = JNI::getEnv();
 
@@ -769,6 +783,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, getBitmapResource, "(I)Landroid/graphics/Bitmap;");
 	FIND_METHOD(, setTouchMode, "(I)V");
 	FIND_METHOD(, getTouchMode, "()I");
+	FIND_METHOD(, setOrientation, "(I)V");
 	FIND_METHOD(, getScummVMBasePath, "()Ljava/lang/String;");
 	FIND_METHOD(, getScummVMConfigPath, "()Ljava/lang/String;");
 	FIND_METHOD(, getScummVMLogPath, "()Ljava/lang/String;");

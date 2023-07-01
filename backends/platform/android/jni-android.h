@@ -87,6 +87,7 @@ public:
 	static Graphics::Surface *getBitmapResource(BitmapResources resource);
 	static void setTouchMode(int touchMode);
 	static int getTouchMode();
+	static void setOrientation(int touchMode);
 	static void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 	static Common::String getScummVMBasePath();
 	static Common::String getScummVMConfigPath();
@@ -148,6 +149,7 @@ private:
 	static jmethodID _MID_getBitmapResource;
 	static jmethodID _MID_setTouchMode;
 	static jmethodID _MID_getTouchMode;
+	static jmethodID _MID_setOrientation;
 	static jmethodID _MID_getScummVMBasePath;
 	static jmethodID _MID_getScummVMConfigPath;
 	static jmethodID _MID_getScummVMLogPath;

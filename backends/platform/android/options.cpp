@@ -77,12 +77,18 @@ private:
 	GUI::PopUpWidget *_preferredTM2DGamesPopUp;
 	GUI::StaticTextWidget *_preferredTM3DGamesDesc;
 	GUI::PopUpWidget *_preferredTM3DGamesPopUp;
+	GUI::StaticTextWidget *_orientationDesc;
+	GUI::StaticTextWidget *_orientationMenusDesc;
+	GUI::PopUpWidget *_orientationMenusPopUp;
+	GUI::StaticTextWidget *_orientationGamesDesc;
+	GUI::PopUpWidget *_orientationGamesPopUp;
 
 	bool _enabled;
 
-
 	uint32 loadTouchMode(const Common::String &setting, bool acceptDefault, uint32 defaultValue);
 	void saveTouchMode(const Common::String &setting, uint32 touchMode);
+	uint32 loadOrientation(const Common::String &setting, bool acceptDefault, uint32 defaultValue);
+	void saveOrientation(const Common::String &setting, uint32 orientation);
 };
 
 class SAFRemoveDialog : public GUI::Dialog {
@@ -108,6 +114,13 @@ enum {
 	kTouchModeTouchpad = 0,
 	kTouchModeMouse,
 	kTouchModeGamepad,
+};
+
+enum {
+	kOrientationDefault = -1,
+	kOrientationAuto = 0,
+	kOrientationPortrait,
+	kOrientationLandscape,
 };
 
 AndroidOptionsWidget::AndroidOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
@@ -147,6 +160,29 @@ AndroidOptionsWidget::AndroidOptionsWidget(GuiObject *boss, const Common::String
 	_preferredTM2DGamesPopUp->appendEntry(_("Gamepad emulation"), kTouchModeGamepad);
 	_preferredTM3DGamesPopUp->appendEntry(_("Gamepad emulation"), kTouchModeGamepad);
 
+	_orientationDesc = new GUI::StaticTextWidget(widgetsBoss(), "AndroidOptionsDialog.OrientationText", _("Select the orientation:"));
+	if (inAppDomain) {
+		_orientationMenusDesc = new GUI::StaticTextWidget(widgetsBoss(), "AndroidOptionsDialog.OMenusText", _("In menus"));
+		_orientationMenusPopUp = new GUI::PopUpWidget(widgetsBoss(), "AndroidOptionsDialog.OMenus");
+		_orientationMenusPopUp->appendEntry(_("Automatic"), kOrientationAuto);
+		_orientationMenusPopUp->appendEntry(_("Portrait"), kOrientationPortrait);
+		_orientationMenusPopUp->appendEntry(_("Landscape"), kOrientationLandscape);
+	} else {
+		_orientationMenusDesc = nullptr;
+		_orientationMenusPopUp = nullptr;
+	}
+
+	_orientationGamesDesc = new GUI::StaticTextWidget(widgetsBoss(), "AndroidOptionsDialog.OGamesText", _("In games"));
+	_orientationGamesPopUp = new GUI::PopUpWidget(widgetsBoss(), "AndroidOptionsDialog.OGames");
+
+	if (!inAppDomain) {
+		_orientationGamesPopUp->appendEntry(_("<default>"), kOrientationDefault);
+	}
+
+	_orientationGamesPopUp->appendEntry(_("Automatic"), kOrientationAuto);
+	_orientationGamesPopUp->appendEntry(_("Portrait"), kOrientationPortrait);
+	_orientationGamesPopUp->appendEntry(_("Landscape"), kOrientationLandscape);
+
 	if (inAppDomain && AndroidFilesystemFactory::instance().hasSAF()) {
 		// Only show this checkbox in Options (via Options... in the launcher), and not at game domain level (via Edit Game...)
 		// I18N: This button opens a list of all folders added for Android Storage Attached Framework
@@ -183,6 +219,21 @@ void AndroidOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::S
 			.addWidget("TM3DGamesText", "OptionsLabel")
 			.addWidget("TM3DGames", "PopUp")
 		.closeLayout();
+
+	layouts.addWidget("OrientationText", "", -1, layouts.getVar("Globals.Line.Height"));
+	if (inAppDomain) {
+		layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+			.addPadding(0, 0, 0, 0)
+			.addWidget("OMenusText", "OptionsLabel")
+			.addWidget("OMenus", "PopUp")
+		.closeLayout();
+	}
+	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+			.addPadding(0, 0, 0, 0)
+			.addWidget("OGamesText", "OptionsLabel")
+			.addWidget("OGames", "PopUp")
+		.closeLayout();
+
 	if (inAppDomain && AndroidFilesystemFactory::instance().hasSAF()) {
 		layouts.addWidget("ForgetSAFButton", "WideButton");
 	}
@@ -222,6 +273,23 @@ uint32 AndroidOptionsWidget::loadTouchMode(const Common::String &setting, bool a
 	}
 }
 
+uint32 AndroidOptionsWidget::loadOrientation(const Common::String &setting, bool acceptDefault, uint32 defaultValue) {
+	if (!acceptDefault || ConfMan.hasKey(setting, _domain)) {
+		Common::String orientation = ConfMan.get(setting, _domain);
+		if (orientation == "auto") {
+			return kOrientationAuto;
+		} else if (orientation == "portrait") {
+			return kOrientationPortrait;
+		} else if (orientation == "landscape") {
+			return kOrientationLandscape;
+		} else {
+			return defaultValue;
+		}
+	} else {
+		return kOrientationDefault;
+	}
+}
+
 void AndroidOptionsWidget::load() {
 	const bool inAppDomain = _domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
 
@@ -233,6 +301,11 @@ void AndroidOptionsWidget::load() {
 	}
 	_preferredTM2DGamesPopUp->setSelectedTag(loadTouchMode("touch_mode_2d_games", !inAppDomain, kTouchModeTouchpad));
 	_preferredTM3DGamesPopUp->setSelectedTag(loadTouchMode("touch_mode_3d_games", !inAppDomain, kTouchModeGamepad));
+
+	if (inAppDomain) {
+		_orientationMenusPopUp->setSelectedTag(loadOrientation("orientation_menus", !inAppDomain, kOrientationAuto));
+	}
+	_orientationGamesPopUp->setSelectedTag(loadOrientation("orientation_games", !inAppDomain, kOrientationAuto));
 }
 
 void AndroidOptionsWidget::saveTouchMode(const Common::String &setting, uint32 touchMode) {
@@ -253,6 +326,24 @@ void AndroidOptionsWidget::saveTouchMode(const Common::String &setting, uint32 t
 	}
 }
 
+void AndroidOptionsWidget::saveOrientation(const Common::String &setting, uint32 orientation) {
+	switch (orientation) {
+	case kOrientationAuto:
+		ConfMan.set(setting, "auto", _domain);
+		break;
+	case kOrientationPortrait:
+		ConfMan.set(setting, "portrait", _domain);
+		break;
+	case kOrientationLandscape:
+		ConfMan.set(setting, "landscape", _domain);
+		break;
+	default:
+		// default
+		ConfMan.removeKey(setting, _domain);
+		break;
+	}
+}
+
 bool AndroidOptionsWidget::save() {
 	const bool inAppDomain = _domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
 
@@ -264,6 +355,11 @@ bool AndroidOptionsWidget::save() {
 		}
 		saveTouchMode("touch_mode_2d_games", _preferredTM2DGamesPopUp->getSelectedTag());
 		saveTouchMode("touch_mode_3d_games", _preferredTM3DGamesPopUp->getSelectedTag());
+
+		if (inAppDomain) {
+			saveOrientation("orientation_menus", _orientationMenusPopUp->getSelectedTag());
+		}
+		saveOrientation("orientation_games", _orientationGamesPopUp->getSelectedTag());
 	} else {
 		ConfMan.removeKey("onscreen_control", _domain);
 
@@ -272,6 +368,11 @@ bool AndroidOptionsWidget::save() {
 		}
 		ConfMan.removeKey("touch_mode_2d_games", _domain);
 		ConfMan.removeKey("touch_mode_3d_games", _domain);
+
+		if (inAppDomain) {
+			ConfMan.removeKey("orientation_menus", _domain);
+		}
+		ConfMan.removeKey("orientation_games", _domain);
 	}
 
 	return true;
@@ -281,7 +382,9 @@ bool AndroidOptionsWidget::hasKeys() {
 	return ConfMan.hasKey("onscreen_control", _domain) ||
 	       (_domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("touch_mode_menus", _domain)) ||
 	       ConfMan.hasKey("touch_mode_2d_games", _domain) ||
-	       ConfMan.hasKey("touch_mode_3d_games", _domain);
+	       ConfMan.hasKey("touch_mode_3d_games", _domain) ||
+	       (_domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("orientation_menus", _domain)) ||
+	       ConfMan.hasKey("orientation_games", _domain);
 }
 
 void AndroidOptionsWidget::setEnabled(bool e) {
@@ -299,6 +402,12 @@ void AndroidOptionsWidget::setEnabled(bool e) {
 	_preferredTM2DGamesPopUp->setEnabled(e);
 	_preferredTM3DGamesDesc->setEnabled(e);
 	_preferredTM3DGamesPopUp->setEnabled(e);
+	if (inAppDomain) {
+		_orientationMenusDesc->setEnabled(e);
+		_orientationMenusPopUp->setEnabled(e);
+	}
+	_orientationGamesDesc->setEnabled(e);
+	_orientationGamesPopUp->setEnabled(e);
 }
 
 
@@ -311,6 +420,8 @@ void OSystem_Android::registerDefaultSettings(const Common::String &target) cons
 	ConfMan.registerDefault("touch_mode_menus", "mouse");
 	ConfMan.registerDefault("touch_mode_2d_games", "touchpad");
 	ConfMan.registerDefault("touch_mode_3d_games", "gamepad");
+	ConfMan.registerDefault("orientation_menus", "auto");
+	ConfMan.registerDefault("orientation_games", "auto");
 }
 
 void OSystem_Android::applyTouchSettings(bool _3dMode, bool overlayShown) {
@@ -337,6 +448,30 @@ void OSystem_Android::applyTouchSettings(bool _3dMode, bool overlayShown) {
 		JNI::setTouchMode(TOUCH_MODE_TOUCHPAD);
 	} else {
 		JNI::setTouchMode(defaultMode);
+	}
+}
+
+void OSystem_Android::applyOrientationSettings() {
+	const Common::String activeDomain = ConfMan.getActiveDomainName();
+	const bool inAppDomain = activeDomain.empty() ||
+		activeDomain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
+
+	Common::String setting;
+
+	if (inAppDomain) {
+		setting = "orientation_menus";
+	} else {
+		setting = "orientation_games";
+	}
+
+	Common::String orientation = ConfMan.get(setting);
+	if (orientation == "portrait") {
+		JNI::setOrientation(SCREEN_ORIENTATION_PORTRAIT);
+	} else if (orientation == "landscape") {
+		JNI::setOrientation(SCREEN_ORIENTATION_LANDSCAPE);
+	// auto and everything else
+	} else {
+		JNI::setOrientation(SCREEN_ORIENTATION_UNSPECIFIED);
 	}
 }
 

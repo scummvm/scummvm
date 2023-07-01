@@ -785,6 +785,15 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
+		protected void setOrientation(final int orientation) {
+			runOnUiThread(new Runnable() {
+				public void run() {
+					setRequestedOrientation(orientation);
+				}
+			});
+		}
+
+		@Override
 		protected String getScummVMBasePath() {
 			return _actualScummVMDataDir.getPath();
 		}

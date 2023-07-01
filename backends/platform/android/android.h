@@ -165,6 +165,12 @@ public:
 		TOUCH_MODE_MAX = 3
 	};
 
+	enum {
+		SCREEN_ORIENTATION_UNSPECIFIED = 0xffffffff,
+		SCREEN_ORIENTATION_LANDSCAPE = 0,
+		SCREEN_ORIENTATION_PORTRAIT = 1
+	};
+
 	OSystem_Android(int audio_sample_rate, int audio_buffer_size);
 	virtual ~OSystem_Android();
 
@@ -181,6 +187,8 @@ public:
 	TouchControls &getTouchControls() { return _touchControls; }
 	void applyTouchSettings(bool _3dMode, bool overlayShown);
 	void setupTouchMode(int oldValue, int newValue);
+
+	void applyOrientationSettings();
 
 	bool pollEvent(Common::Event &event) override;
 	Common::HardwareInputSet *getHardwareInputSet() override;

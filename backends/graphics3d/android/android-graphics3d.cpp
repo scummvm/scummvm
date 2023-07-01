@@ -117,6 +117,7 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 
 	// in 3D, not in GUI
 	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(true, false);
+	dynamic_cast<OSystem_Android *>(g_system)->applyOrientationSettings();
 }
 
 AndroidGraphics3dManager::~AndroidGraphics3dManager() {
@@ -547,6 +548,7 @@ void AndroidGraphics3dManager::showOverlay(bool inGUI) {
 		_old_touch_mode = JNI::getTouchMode();
 		// in 3D, in overlay
 		dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(true, true);
+		dynamic_cast<OSystem_Android *>(g_system)->applyOrientationSettings();
 	} else if (_overlay_in_gui) {
 		// Restore touch mode active before overlay was shown
 		JNI::setTouchMode(_old_touch_mode);
@@ -606,6 +608,8 @@ void AndroidGraphics3dManager::hideOverlay() {
 		JNI::setTouchMode(_old_touch_mode);
 
 		warpMouse(_game_texture->width() / 2, _game_texture->height() / 2);
+
+		dynamic_cast<OSystem_Android *>(g_system)->applyOrientationSettings();
 	}
 
 	_overlay_in_gui = false;
