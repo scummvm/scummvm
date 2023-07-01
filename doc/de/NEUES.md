@@ -11,6 +11,21 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  AGI:
    - In den Spiel-Optionen kann jetzt wieder ein beliebiger Render-Modus ausgewählt werden.
 
+ AGS:
+   - Mehrere Spiele und Varianten wurden zur Spiele-Datenbank hinzugefügt.
+   - Diverse Abstürze in einigen Spielen behoben.
+   - Mehrere Grafikfehler in Resonance, Kathy Rain und Blackwell Convergence behoben.
+   - Fehler behoben, der dafür sorgt, dass in "The Cat Lady" und anderen Spielen kein Sound abgespielt wird.
+   - Die Thumbnails für Spielstände werden jetzt wieder korrekt erzeugt.
+   - Die eingestellte Übersetzung wird jetzt wieder korrekt abgespeichert und wiederhergstellt.
+   - Fehlerhafte Übersetzung in der Linux-Version von Zniw Adventure korrigiert.
+   - Fehlerhafte Gehgeschwindigkeit in alten Spielen (z.B. Apprentice) korrigiert.
+   - Fehler behoben, der dazu führt, dass violetter Text transparent dargestellt wird.
+   - Kleine Änderungen an Debug- und Fehlermeldungen sowie am Code-Styling vorgenommen.
+
+ CRYOMNI3D:
+   - Fehler beim Dateizugriff behoben, der verhindert hat, dass Versailles vollständig durchgespielt werden kann.
+
  HDB:
    - Fehler behoben, der verhindert, dass der rote Umschlag mit der Tastatur aufgehoben werden kann.
    
