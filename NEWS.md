@@ -106,6 +106,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Sword1:
    - Added detection for Czech and Polish versions with DXA cutscenes.
+   - Added detection for alternative French and Italian versions.
+   - Added detection for Brazilian version published by TecToy.
 
  Sword2:
    - Added support for GOG.com version.
