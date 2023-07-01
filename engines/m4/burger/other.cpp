@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -20,38 +19,20 @@
  *
  */
 
-#ifndef M4_ADV_DB_R_DB_CATALOG_H
-#define M4_ADV_DB_R_DB_CATALOG_H
-
-#include "m4/m4_types.h"
+#include "m4/burger/other.h"
+#include "m4/burger/burger_globals.h"
+#include "m4/adv_r/adv_file.h"
+#include "m4/core/errors.h"
 
 namespace M4 {
+namespace Burger {
 
-typedef char *StrngPtr;
 
-struct Catalog {
-	char *_data = nullptr;
-	char **_catalog = nullptr;
-	int32 _size = 0;
-};
+void other_save_game_for_resurrection(void) {
+	if (kernel_save_game(0, NULL, 0, NULL, 0)) {
+		error_show(FL, 0, "couldn't other_save_game_for_res");
+	}
+}
 
-/**
- * Read in the catalog
- */
-bool read_catalog();
-
-/**
- * Return the catalog data
- */
-extern char *db_get_catalog();
-
-/**
- * Given an asset name, name, return "path" from the database in result.
- * if path starts or ends with a '\', the '\' characters at those places
- * are deleted.
- */
-extern char *db_rmlst_get_asset_room_path(const char *s, char *result, int32 *sceneCode);
-
-} // End of namespace M4
-
-#endif
+} // namespace Burger
+} // namespace M4

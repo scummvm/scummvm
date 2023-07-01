@@ -80,7 +80,7 @@ void Interface::setup() {
 	_interfaceBox->add(_btnHandle);
 
 
-	if (_G(gameMode) == WHOLE_GAME) {
+	if (_G(executing) == WHOLE_GAME) {
 		_btnAbductFail = new ButtonClass(RectClass(580, 10, 620, 69), "abductfail", 10, 69, 69, 70, 71);
 		_btnMenu = new ButtonClass(RectClass(582, 70, 619, 105), "menu", 11, 76, 76, 77, 78);
 		_interfaceBox->add(_btnAbductFail);

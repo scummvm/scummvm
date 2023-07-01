@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	adv_r/adv_control.o \
 	adv_r/adv_file.o \
 	adv_r/adv_inv.o \
+	adv_r/adv_player.o \
 	adv_r/adv_rails.o \
 	adv_r/adv_trigger.o \
 	adv_r/db_env.o \
@@ -56,11 +57,14 @@ MODULE_OBJS = \
 	wscript/ws_machine.o \
 	wscript/ws_timer.o \
 	wscript/wscript.o \
+	burger/gui/game_menu.o \
 	burger/burger.o \
 	burger/burger_globals.o \
 	burger/gui_cheapo.o \
+	burger/hotkeys.o \
 	burger/interface.o \
 	burger/inventory.o \
+	burger/other.o \
 	burger/vars.o
 
 # This module can be built as a plugin

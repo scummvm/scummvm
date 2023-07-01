@@ -150,7 +150,13 @@ static void clear_persistent_msg_list(machine *m) {
 		nextMsg = nextMsg->nextMsg;
 		dispose_msgRequest(freeMsg);
 	}
+
 	m->usedPersistentMsgs = NULL;
+}
+
+void SendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
+		uint32 machHash, machine *sendM, int32 msgCount) {
+	error("TODO: SendWSMessage");
 }
 
 } // End of namespace M4

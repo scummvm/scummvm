@@ -87,12 +87,12 @@ void BurgerGlobals::main_cold_data_init() {
 	initMouseSeries("cursor", nullptr);
 
 	_kernel.first_fade = 32;
-	debugC(1, kDebugCore, "executing - %s", GAME_MODES[_gameMode]);
+	debugC(1, kDebugCore, "executing - %s", GAME_MODES[_executing]);
 
 	// Set up game mode and starting room
-	_gameMode = WHOLE_GAME;
+	_executing = WHOLE_GAME;
 
-	switch (_gameMode) {
+	switch (_executing) {
 	case JUST_OVERVIEW:
 		_game.new_room = 971;		// Burger overview starts right in at 971
 		break;

@@ -151,7 +151,7 @@ void Vars::reset2() {
 	(*this)[V277] = 6000;
 	(*this)[V278] = 0;
 
-	if (_G(gameMode) != WHOLE_GAME) {
+	if (_G(executing) != WHOLE_GAME) {
 		inv_give_to_player("BLOCK OF ICE");
 		inv_give_to_player("PANTYHOSE");
 	}
