@@ -111,6 +111,13 @@ void Logic::newScreen(uint32 screen) {
 	if ((screen == 71) && (SwordEngine::isPsx()))
 		_scriptVars[TOP_MENU_DISABLED] = 0;
 
+	// work around bug #14521
+	// In the hospital, after pulling the plug from the socket, it is possible to save the game before Sam the janitor
+	// returns to his position. On loading this save, he will be reset, but _scriptVars[SAM_RETURNING] will still be set to 1.
+	// This causes a softlock when the plug is pulled again.
+	if (screen == 33)
+		_scriptVars[SAM_RETURNING] = 0;
+
 	if (SwordEngine::_systemVars.justRestoredGame) { // if we've just restored a game - we want George to be exactly as saved
 		fnAddHuman(NULL, 0, 0, 0, 0, 0, 0, 0);
 		if (_scriptVars[GEORGE_WALKING]) { // except that if George was walking when we saveed the game
