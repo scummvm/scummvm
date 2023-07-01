@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-29 22:36+0000\n"
+"POT-Creation-Date: 2023-07-01 14:26+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -455,7 +455,7 @@ msgstr "ההורדה הושלמה. ירדו %d חבילות, %s %S"
 #. I18N: Close dialog button
 #: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:384
 #: gui/gui-manager.cpp:162 gui/textviewer.cpp:53 gui/unknown-game-dialog.cpp:53
-#: backends/platform/android/options.cpp:359
+#: backends/platform/android/options.cpp:492
 #: backends/platform/ios7/ios7_options.mm:131 engines/scumm/help.cpp:123
 #: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
 #: engines/scumm/help.cpp:189 engines/scumm/help.cpp:207
@@ -534,8 +534,9 @@ msgstr "שפת המשחק. אפשרות זו לא תהפוך משחק בטורק
 #: gui/options.cpp:1675 gui/options.cpp:1691 gui/options.cpp:2091
 #: gui/options.cpp:2513 gui/options.cpp:2566 gui/options.cpp:2784
 #: gui/options.cpp:3250 audio/null.cpp:45
-#: backends/platform/android/options.cpp:137
-#: backends/platform/android/options.cpp:138 engines/ags/dialogs.cpp:63
+#: backends/platform/android/options.cpp:150
+#: backends/platform/android/options.cpp:151
+#: backends/platform/android/options.cpp:179 engines/ags/dialogs.cpp:63
 msgid "<default>"
 msgstr "<ברירת מחדל>"
 
@@ -4185,50 +4186,80 @@ msgstr "מצב זכוכית מגדלת כבוי. מפעיל מחדש מצב גר
 msgid "Magnify Mode Off"
 msgstr "מצב זכוכית מגדלת כבוי"
 
-#: backends/platform/android/options.cpp:118
+#: backends/platform/android/options.cpp:131
 msgid "Show On-screen control"
 msgstr "הצגת בקרים על המסך"
 
-#: backends/platform/android/options.cpp:119
+#: backends/platform/android/options.cpp:132
 msgid "Choose the preferred touch mode:"
 msgstr "בחירת מצב מגע מועדף:"
 
-#: backends/platform/android/options.cpp:121
+#: backends/platform/android/options.cpp:134
+#: backends/platform/android/options.cpp:165
 msgid "In menus"
 msgstr "בתפריטים"
 
-#: backends/platform/android/options.cpp:123
-#: backends/platform/android/options.cpp:141
-#: backends/platform/android/options.cpp:142
+#: backends/platform/android/options.cpp:136
+#: backends/platform/android/options.cpp:154
+#: backends/platform/android/options.cpp:155
 msgid "Touchpad emulation"
 msgstr "דמוי משטח מגע"
 
-#: backends/platform/android/options.cpp:124
-#: backends/platform/android/options.cpp:144
-#: backends/platform/android/options.cpp:145
+#: backends/platform/android/options.cpp:137
+#: backends/platform/android/options.cpp:157
+#: backends/platform/android/options.cpp:158
 msgid "Direct mouse"
 msgstr "עכבר ישיר"
 
-#: backends/platform/android/options.cpp:125
-#: backends/platform/android/options.cpp:147
-#: backends/platform/android/options.cpp:148
+#: backends/platform/android/options.cpp:138
+#: backends/platform/android/options.cpp:160
+#: backends/platform/android/options.cpp:161
 msgid "Gamepad emulation"
 msgstr "דמוי בקר משחק"
 
-#: backends/platform/android/options.cpp:131
+#: backends/platform/android/options.cpp:144
 msgid "In 2D games"
 msgstr "במשחקי דו-ממד"
 
-#: backends/platform/android/options.cpp:133
+#: backends/platform/android/options.cpp:146
 msgid "In 3D games"
 msgstr "במשחקי תלת-ממד"
 
+#: backends/platform/android/options.cpp:163
+msgid "Select the orientation:"
+msgstr ""
+
+#: backends/platform/android/options.cpp:167
+#: backends/platform/android/options.cpp:182
+#, fuzzy
+#| msgid "Automatic drilling"
+msgid "Automatic"
+msgstr "קדיחה אוטומטית"
+
+#: backends/platform/android/options.cpp:168
+#: backends/platform/android/options.cpp:183
+msgid "Portrait"
+msgstr ""
+
+#: backends/platform/android/options.cpp:169
+#: backends/platform/android/options.cpp:184
+#, fuzzy
+#| msgid "Escape"
+msgid "Landscape"
+msgstr "בריחה"
+
+#: backends/platform/android/options.cpp:175
+#, fuzzy
+#| msgid "In 2D games"
+msgid "In games"
+msgstr "במשחקי דו-ממד"
+
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
-#: backends/platform/android/options.cpp:153
+#: backends/platform/android/options.cpp:189
 msgid "Remove folder authorizations..."
 msgstr "הסרת הזדהויות תיקיה..."
 
-#: backends/platform/android/options.cpp:360
+#: backends/platform/android/options.cpp:493
 msgid "Remove"
 msgstr "הסרה"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-06-29 22:36+0000\n"
+"POT-Creation-Date: 2023-07-01 14:26+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -459,7 +459,7 @@ msgstr ""
 #. I18N: Close dialog button
 #: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:384
 #: gui/gui-manager.cpp:162 gui/textviewer.cpp:53 gui/unknown-game-dialog.cpp:53
-#: backends/platform/android/options.cpp:359
+#: backends/platform/android/options.cpp:492
 #: backends/platform/ios7/ios7_options.mm:131 engines/scumm/help.cpp:123
 #: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
 #: engines/scumm/help.cpp:189 engines/scumm/help.cpp:207
@@ -537,8 +537,9 @@ msgstr "게임의 언어. 선택한 언어로 게임이 번역되지는 않음"
 #: gui/options.cpp:1675 gui/options.cpp:1691 gui/options.cpp:2091
 #: gui/options.cpp:2513 gui/options.cpp:2566 gui/options.cpp:2784
 #: gui/options.cpp:3250 audio/null.cpp:45
-#: backends/platform/android/options.cpp:137
-#: backends/platform/android/options.cpp:138 engines/ags/dialogs.cpp:63
+#: backends/platform/android/options.cpp:150
+#: backends/platform/android/options.cpp:151
+#: backends/platform/android/options.cpp:179 engines/ags/dialogs.cpp:63
 msgid "<default>"
 msgstr "<기본값>"
 
@@ -4201,56 +4202,85 @@ msgstr "돋보기 모드 끔. 드래그 모드를 재활성화합니다..."
 msgid "Magnify Mode Off"
 msgstr "돋보기 모드 끔"
 
-#: backends/platform/android/options.cpp:118
+#: backends/platform/android/options.cpp:131
 msgid "Show On-screen control"
 msgstr "화면상 컨트롤을 표시"
 
-#: backends/platform/android/options.cpp:119
+#: backends/platform/android/options.cpp:132
 msgid "Choose the preferred touch mode:"
 msgstr ""
 
-#: backends/platform/android/options.cpp:121
+#: backends/platform/android/options.cpp:134
+#: backends/platform/android/options.cpp:165
 #, fuzzy
 msgid "In menus"
 msgstr "비너스 활성화"
 
-#: backends/platform/android/options.cpp:123
-#: backends/platform/android/options.cpp:141
-#: backends/platform/android/options.cpp:142
+#: backends/platform/android/options.cpp:136
+#: backends/platform/android/options.cpp:154
+#: backends/platform/android/options.cpp:155
 #, fuzzy
 msgid "Touchpad emulation"
 msgstr "TV 에뮬레이션"
 
-#: backends/platform/android/options.cpp:124
-#: backends/platform/android/options.cpp:144
-#: backends/platform/android/options.cpp:145
+#: backends/platform/android/options.cpp:137
+#: backends/platform/android/options.cpp:157
+#: backends/platform/android/options.cpp:158
 #, fuzzy
 msgid "Direct mouse"
 msgstr "가상 마우스 위"
 
-#: backends/platform/android/options.cpp:125
-#: backends/platform/android/options.cpp:147
-#: backends/platform/android/options.cpp:148
+#: backends/platform/android/options.cpp:138
+#: backends/platform/android/options.cpp:160
+#: backends/platform/android/options.cpp:161
 #, fuzzy
 msgid "Gamepad emulation"
 msgstr "TV 에뮬레이션"
 
-#: backends/platform/android/options.cpp:131
+#: backends/platform/android/options.cpp:144
 #, fuzzy
 msgid "In 2D games"
 msgstr "3D 게임에서 수직 동기화 사용"
 
-#: backends/platform/android/options.cpp:133
+#: backends/platform/android/options.cpp:146
 #, fuzzy
 msgid "In 3D games"
 msgstr "3D 게임에서 수직 동기화 사용"
 
+#: backends/platform/android/options.cpp:163
+msgid "Select the orientation:"
+msgstr ""
+
+#: backends/platform/android/options.cpp:167
+#: backends/platform/android/options.cpp:182
+#, fuzzy
+#| msgid "Auto"
+msgid "Automatic"
+msgstr "자동"
+
+#: backends/platform/android/options.cpp:168
+#: backends/platform/android/options.cpp:183
+msgid "Portrait"
+msgstr ""
+
+#: backends/platform/android/options.cpp:169
+#: backends/platform/android/options.cpp:184
+#, fuzzy
+#| msgid "Escape"
+msgid "Landscape"
+msgstr "탈출"
+
+#: backends/platform/android/options.cpp:175
+#, fuzzy
+msgid "In games"
+msgstr "3D 게임에서 수직 동기화 사용"
+
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
-#: backends/platform/android/options.cpp:153
+#: backends/platform/android/options.cpp:189
 msgid "Remove folder authorizations..."
 msgstr ""
 
-#: backends/platform/android/options.cpp:360
+#: backends/platform/android/options.cpp:493
 #, fuzzy
 msgid "Remove"
 msgstr "게임 제거(~R~)"
@@ -10678,9 +10708,6 @@ msgstr ""
 
 #~ msgid "Enable cross fading of images and scenes"
 #~ msgstr "이미지와 씬의 크로스페이드를 활성화합니다"
-
-#~ msgid "Auto"
-#~ msgstr "자동"
 
 #~ msgid "~F~uzzy Logic in SpaceShip Active"
 #~ msgstr "SpaceShip 퍼즐에 퍼지 로직을 사용 (~F~)"
