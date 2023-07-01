@@ -30,12 +30,12 @@ Group::Group(uint16 objectID_, uint16 flags_, const Common::Array<byte> data_) {
 	_scale = 0;
 
 	int i;
-	for (i = 0; i < 9; i++) {
+	for (i = 0; i < 5; i++) {
 		debugC(1, kFreescapeDebugParser, "group data[%d] = %d", i, data_[i]);
 		if (data_[i] > 0)
 			_objectIds.push_back(data_[i]);
 	}
-	i = 9;
+	i = 5;
 	while (i < int(data_.size() - 4)) {
 		debugC(1, kFreescapeDebugParser, "group data[%d] = %d (index)	", i, data_[i]);
 		_objectIndices.push_back(data_[i]);
@@ -68,20 +68,21 @@ void Group::linkObject(Object *obj) {
 	if (objectIndex == -1)
 		return;
 
+	_origins.push_back(obj->getOrigin());
 	obj->makeInitiallyVisible();
 	obj->makeVisible();
 	_objects.push_back(obj);
 }
 
 void Group::assemble(int frame, int index) {
-	Object *obj = _objects[index];
+	GeometricObject *gobj = (GeometricObject *)_objects[index];
 	Math::Vector3d position = _objectPositions[frame];
 
-	if (!GeometricObject::isPolygon(obj->getType()))
+	if (!GeometricObject::isPolygon(gobj->getType()))
 		position = 32 * position / _scale;
 	else
 		position = position / _scale;
 
-	obj->setOrigin(position);
+	gobj->offsetOrigin(position);
 }
 } // End of namespace Freescape
