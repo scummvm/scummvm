@@ -25,6 +25,7 @@
 #include "director/debugger.h"
 #include "director/archive.h"
 #include "director/cast.h"
+#include "director/channel.h"
 #include "director/frame.h"
 #include "director/movie.h"
 #include "director/score.h"
@@ -103,6 +104,7 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("bplist", WRAP_METHOD(Debugger, cmdBpList));
 
 	registerCmd("draw", WRAP_METHOD(Debugger, cmdDraw));
+	registerCmd("forceredraw", WRAP_METHOD(Debugger, cmdForceRedraw));
 
 	_nextFrame = false;
 	_nextFrameCounter = 0;
@@ -896,6 +898,36 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 	return true;
 }
 
+static void forceWindowRedraw(Window *window) {
+	if (!window->getCurrentMovie())
+		return;
+
+	Score *score = window->getCurrentMovie()->getScore();
+
+	if (!score)
+		return;
+
+	for (uint16 c = 0; c < score->_channels.size(); c++)
+		score->_channels[c]->_dirty = true;
+}
+
+bool Debugger::cmdForceRedraw(int argc, const char **argv) {
+	forceWindowRedraw(g_director->getStage());
+
+	FArray *windowList = g_lingo->_windowList.u.farr;
+	for (uint i = 0; i < windowList->arr.size(); i++) {
+		if (windowList->arr[i].type != OBJECT || windowList->arr[i].u.obj->getObjType() != kWindowObj)
+			continue;
+
+		Window *window = static_cast<Window *>(windowList->arr[i].u.obj);
+
+		forceWindowRedraw(window);
+	}
+
+	debugPrintf("Requested full refresh\n");
+
+	return true;
+}
 
 void Debugger::bpUpdateState() {
 	_bpCheckFunc = false;
