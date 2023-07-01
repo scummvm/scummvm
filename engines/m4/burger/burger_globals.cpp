@@ -132,8 +132,7 @@ void BurgerGlobals::initialize_game() {
 	_vars.reset3();
 	_vars.reset4();
 	_vars.reset5();
-
-	// TODO
+	_vars.conv_reset_all();
 }
 
 void BurgerGlobals::initMouseSeries(const Common::String &assetName, RGB8 *myPalette) {
