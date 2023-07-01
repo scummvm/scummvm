@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "common/debug.h"
 #include "common/util.h"
 #include "common/file.h"
@@ -675,27 +677,27 @@ void AdvancedMetaEngineDetection::dumpDetectionEntries() const {
 		auto g = ((const ADGameDescription *)descPtr);
 		const char *title = ((const PlainGameDescriptor *)_gameIds)->description;
 
-		debug("game (");
-		debug("\tname %s", escapeString(g->gameId).c_str());
-		debug("\ttitle %s", escapeString(title).c_str());
-		debug("\textra %s", escapeString(g->extra).c_str());
-		debug("\tlanguage %s", escapeString(getLanguageLocale(g->language)).c_str());
-		debug("\tplatform %s", escapeString(getPlatformCode(g->platform)).c_str());
-		debug("\tsourcefile %s", escapeString(getName()).c_str());
+		printf("game (\n");
+		printf("\tname %s\n", escapeString(g->gameId).c_str());
+		printf("\ttitle %s\n", escapeString(title).c_str());
+		printf("\textra %s\n", escapeString(g->extra).c_str());
+		printf("\tlanguage %s\n", escapeString(getLanguageLocale(g->language)).c_str());
+		printf("\tplatform %s\n", escapeString(getPlatformCode(g->platform)).c_str());
+		printf("\tsourcefile %s\n", escapeString(getName()).c_str());
 
 		for (auto fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
-			Common::String fname = fileDesc->fileName;
+			const char *fname = fileDesc->fileName;
 			int64 fsize = fileDesc->fileSize;
 			Common::String md5 = fileDesc->md5;
 			MD5Properties md5prop = gameFileToMD5Props(fileDesc, g->flags);
-			auto md5Prefix = Common::String(md5PropToGameFile(md5prop));
-			Common::String key = md5.c_str();
+			Common::String md5Prefix = md5PropToGameFile(md5prop);
+			Common::String key = md5;
 			if (md5Prefix != "" && md5.find(':') == Common::String::npos)
-				key = Common::String::format("%s:%s", md5Prefix.c_str(), md5.c_str());
+				key = md5Prefix + md5;
 
-			debug("\trom ( name \"%s\" size %ld md5-%d %s )", escapeString(fname.c_str()).c_str(), fsize, _md5Bytes, key.c_str());
+			printf("\trom ( name \"%s\" size %ld md5-%d %s )\n", escapeString(fname).c_str(), fsize, _md5Bytes, key.c_str());
 		}
-		debug(")\n"); // Closing for 'game ('
+		printf(")\n\n"); // Closing for 'game ('
 	}
 }
 
