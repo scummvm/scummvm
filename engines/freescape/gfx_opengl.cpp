@@ -202,6 +202,7 @@ void OpenGLRenderer::renderPlayerShoot(byte color, const Common::Point position,
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderZX) {
 		r = g = b = 255;
 	} else {
+		r = g = b = 0;
 		glEnable(GL_COLOR_LOGIC_OP);
 		glLogicOp(GL_INVERT);
 	}
