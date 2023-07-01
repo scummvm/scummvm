@@ -42,9 +42,24 @@ namespace M4 {
 struct M4GameDescription;
 
 class M4Engine : public Engine {
+	enum GamePhase {
+		FirstRun,
+		SectionStartup,
+		SceneLoad,
+		SceneRun,
+		EndScene,
+		LastRun,
+		GameFinished
+	};
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+	GamePhase _gamePhase = FirstRun;
+
+	/**
+	 * Main game loop
+	 */
+	void m4_inflight();
 
 protected:
 	// Engine APIs
