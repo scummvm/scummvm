@@ -19,7 +19,7 @@
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
-#include FT2_1_3_INTERNAL_OBJECTS_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
 #include "pshglob.h"
 
 #ifdef DEBUG_HINTER

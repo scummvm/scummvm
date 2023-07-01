@@ -17,13 +17,13 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_INTERNAL_DEBUG_H
-#include FT2_1_3_INTERNAL_STREAM_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftstream.h"
 #include "cidgload.h"
 #include "cidload.h"
-#include FT2_1_3_INTERNAL_POSTSCRIPT_NAMES_H
-#include FT2_1_3_INTERNAL_POSTSCRIPT_AUX_H
-#include FT2_1_3_INTERNAL_POSTSCRIPT_HINTS_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psaux.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/pshints.h"
 
 #include "ciderrs.h"
 

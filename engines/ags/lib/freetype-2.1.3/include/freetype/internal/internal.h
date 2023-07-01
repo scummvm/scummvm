@@ -23,6 +23,7 @@
 /*                                                                       */
 /*************************************************************************/
 
+#if 0
 
 #define FT2_1_3_INTERNAL_OBJECTS_H             "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
 #define FT2_1_3_INTERNAL_STREAM_H              "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftstream.h"
@@ -53,5 +54,5 @@
 
 #define FT2_1_3_INTERNAL_AUTOHINT_H            "engines/ags/lib/freetype-2.1.3/include/freetype/internal/autohint.h"
 
-
+#endif
 /* END */

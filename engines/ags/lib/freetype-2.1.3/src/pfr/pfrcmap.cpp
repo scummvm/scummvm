@@ -18,7 +18,7 @@
 
 #include "pfrcmap.h"
 #include "pfrobjs.h"
-#include FT2_1_3_INTERNAL_DEBUG_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
 
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )

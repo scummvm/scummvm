@@ -20,8 +20,8 @@
 #include "sfobjs.h"
 #include "ttload.h"
 #include "ttcmap0.h"
-#include FT2_1_3_INTERNAL_SFNT_H
-#include FT2_1_3_INTERNAL_POSTSCRIPT_NAMES_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/sfnt.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ttnameid.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/tttags.h"
 

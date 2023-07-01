@@ -17,8 +17,8 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_INTERNAL_DEBUG_H
-#include FT2_1_3_INTERNAL_POSTSCRIPT_HINTS_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/pshints.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftoutln.h"
 
 #include "t1decode.h"

@@ -36,7 +36,7 @@
 
 FT2_1_3_BEGIN_HEADER
 
-#include FT2_1_3_INTERNAL_GLYPH_LOADER_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftgloadr.h"
 
 #define AH_Load    FT2_1_3_GlyphLoad
 #define AH_Loader  FT2_1_3_GlyphLoader

@@ -32,7 +32,7 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_INTERNAL_OBJECTS_H       /* for FT2_1_3_ALLOC_ARRAY() and FT2_1_3_FREE() */
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"       /* for FT2_1_3_ALLOC_ARRAY() and FT2_1_3_FREE() */
 #include "ahoptim.h"
 
 

@@ -28,7 +28,7 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftbbox.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftimage.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftoutln.h"
-#include FT2_1_3_INTERNAL_CALC_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftcalc.h"
 
 
 typedef struct  TBBox_Rec_ {

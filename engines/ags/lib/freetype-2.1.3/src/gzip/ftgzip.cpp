@@ -20,9 +20,9 @@
 /***************************************************************************/
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_INTERNAL_MEMORY_H
-#include FT2_1_3_INTERNAL_STREAM_H
-#include FT2_1_3_INTERNAL_DEBUG_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftmemory.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftstream.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
 #include <string.h>
 
 #ifdef FT2_1_3_CONFIG_OPTION_USE_ZLIB

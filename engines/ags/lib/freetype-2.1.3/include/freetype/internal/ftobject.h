@@ -494,7 +494,7 @@ ft_class_from_type( FT2_1_3_Class   *aclass,
 
 /* */
 
-#include FT2_1_3_INTERNAL_HASH_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/fthash.h"
 
 typedef struct FT2_1_3_ClassHNodeRec_*  FT2_1_3_ClassHNode;
 

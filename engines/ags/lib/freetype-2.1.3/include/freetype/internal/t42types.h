@@ -22,9 +22,9 @@
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/t1tables.h"
-#include FT2_1_3_INTERNAL_TYPE1_TYPES_H
-#include FT2_1_3_INTERNAL_POSTSCRIPT_NAMES_H
-#include FT2_1_3_INTERNAL_POSTSCRIPT_HINTS_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/t1types.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/pshints.h"
 
 
 FT2_1_3_BEGIN_HEADER

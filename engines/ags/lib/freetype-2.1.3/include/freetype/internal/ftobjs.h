@@ -30,11 +30,11 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftstdlib.h"   /* for ft_setjmp and ft_longjmp */
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftrender.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftsizes.h"
-#include FT2_1_3_INTERNAL_MEMORY_H
-#include FT2_1_3_INTERNAL_GLYPH_LOADER_H
-#include FT2_1_3_INTERNAL_DRIVER_H
-#include FT2_1_3_INTERNAL_AUTOHINT_H
-#include FT2_1_3_INTERNAL_OBJECT_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftmemory.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftgloadr.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdriver.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/autohint.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobject.h"
 
 #ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftincrem.h"

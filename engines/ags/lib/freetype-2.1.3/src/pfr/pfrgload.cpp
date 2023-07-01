@@ -19,7 +19,7 @@
 #include "pfrgload.h"
 #include "pfrsbit.h"
 #include "pfrload.h"            /* for macro definitions */
-#include FT2_1_3_INTERNAL_DEBUG_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
 
 #include "pfrerror.h"
 

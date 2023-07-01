@@ -1,7 +1,7 @@
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_INTERNAL_OBJECT_H
-#include FT2_1_3_INTERNAL_DEBUG_H
-#include FT2_1_3_INTERNAL_OBJECTS_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobject.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
 
 #define  FT2_1_3_MAGIC_DEATH   0xDEADdead
 #define  FT2_1_3_MAGIC_CLASS   0x12345678

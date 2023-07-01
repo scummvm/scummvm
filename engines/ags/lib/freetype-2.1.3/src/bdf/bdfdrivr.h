@@ -29,7 +29,7 @@ THE SOFTWARE.
 #define __BDFDRIVR_H__
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_INTERNAL_DRIVER_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdriver.h"
 
 #include "bdf.h"
 

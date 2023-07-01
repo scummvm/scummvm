@@ -1,8 +1,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/fttypes.h"
-#include FT2_1_3_INTERNAL_HASH_H
-#include FT2_1_3_INTERNAL_MEMORY_H
-#include FT2_1_3_INTERNAL_DEBUG_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/fthash.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftmemory.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
 
 #define  FT2_1_3_HASH_MAX_LOAD  2
 #define  FT2_1_3_HASH_MIN_LOAD  1

@@ -21,8 +21,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftcglyph.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/fterrors.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftlist.h"
-#include FT2_1_3_INTERNAL_OBJECTS_H
-#include FT2_1_3_INTERNAL_DEBUG_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
 
 #include "ftcerror.h"
 

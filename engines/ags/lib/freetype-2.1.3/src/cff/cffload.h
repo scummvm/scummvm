@@ -21,8 +21,8 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_INTERNAL_CFF_TYPES_H
-#include FT2_1_3_INTERNAL_POSTSCRIPT_NAMES_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/cfftypes.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"
 
 
 FT2_1_3_BEGIN_HEADER

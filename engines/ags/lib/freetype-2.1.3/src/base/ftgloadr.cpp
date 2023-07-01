@@ -17,8 +17,8 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_INTERNAL_GLYPH_LOADER_H
-#include FT2_1_3_INTERNAL_MEMORY_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftgloadr.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftmemory.h"
 
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_gloader
