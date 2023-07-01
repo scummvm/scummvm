@@ -27,6 +27,7 @@
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "m4/m4.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/detection.h"
 #include "m4/console.h"
 #include "m4/param.h"
@@ -61,12 +62,15 @@ Common::Error M4Engine::run() {
 
 	if (globals->init()) {
 		// Run game here
-		warning("TODO: game loop");
+		m4_inflight();
 	}
-
 
 	delete globals;
 	return Common::kNoError;
+}
+
+void M4Engine::m4_inflight() {
+	// TODO
 }
 
 Common::Error M4Engine::syncGame(Common::Serializer &s) {
