@@ -46,6 +46,10 @@ class GuiObject;
 class OptionsContainerWidget;
 }
 
+namespace DLC {
+class Store;
+}
+
 namespace Common {
 class EventManager;
 class MutexInternal;
@@ -262,6 +266,11 @@ protected:
 	 * @note _fsFactory is deleted by the OSystem destructor.
 	 */
 	FilesystemFactory *_fsFactory;
+
+	/**
+	 * Used by the DLC Manager implementation
+	 */
+	DLC::Store *_dlcStore;
 
 	/**
 	 * Used by the default clipboard implementation, for backends that don't
@@ -1729,6 +1738,15 @@ public:
 		return _dialogManager;
 	}
 #endif
+
+	/**
+	 * Return the DLC Store, used to implement DLC manager functions.
+	 *
+	 * @return The Store for the current distribution platform.
+	 */
+	virtual DLC::Store *getDLCStore() {
+		return _dlcStore;
+	}
 
 	/**
 	 * Return the FilesystemFactory object, depending on the current architecture.

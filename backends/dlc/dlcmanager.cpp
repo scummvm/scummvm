@@ -22,6 +22,7 @@
 
 #include "backends/dlc/android/playstore.h"
 #include "backends/dlc/dlcmanager.h"
+#include "common/system.h"
 
 namespace Common {
 
@@ -32,10 +33,7 @@ DECLARE_SINGLETON(DLC::DLCManager);
 namespace DLC {
 
 DLCManager::DLCManager() {
-	// TODO: Implement Factory Design Pattern
-	#if defined(__ANDROID__)
-	_store = new DLC::PlayStore::PlayStore();
-	#endif
+	_store = g_system->getDLCStore();
 }
 
 void DLCManager::init() {
