@@ -8,7 +8,6 @@ MODULE_OBJS = \
 	metaengine.o \
 	param.o \
 	res.o \
-	term.o \
 	adv_db_r/db_catalog.o \
 	adv_r/adv_been.o \
 	adv_r/adv_file.o \
@@ -20,6 +19,7 @@ MODULE_OBJS = \
 	core/errors.o \
 	core/imath.o \
 	core/mouse.o \
+	core/term.o \
 	events/mickey.o \
 	events/mouse_handler.o \
 	fileio/extensions.o \

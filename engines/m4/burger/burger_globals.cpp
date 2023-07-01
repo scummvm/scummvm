@@ -125,8 +125,9 @@ void BurgerGlobals::initialize_game() {
 		inv_put_thing_in(item->name, item->scene);
 	inv_give_to_player("MONEY");
 
-	// Clear the global variables
-	//_vars.reset();
+	// Reset the global variables
+	_vars.reset();
+	_vars.reset1();
 
 	// TODO
 }
