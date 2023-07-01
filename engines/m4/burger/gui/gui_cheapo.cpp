@@ -19,7 +19,7 @@
  *
  */
 
-#include "m4/burger/gui_cheapo.h"
+#include "m4/burger/gui/gui_cheapo.h"
 #include "m4/gui/gui_vmng_core.h"
 #include "m4/gui/gui_vmng_screen.h"
 #include "m4/graphics/gr_font.h"

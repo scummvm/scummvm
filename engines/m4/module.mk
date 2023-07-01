@@ -58,11 +58,11 @@ MODULE_OBJS = \
 	wscript/ws_timer.o \
 	wscript/wscript.o \
 	burger/gui/game_menu.o \
+	burger/gui/gui_cheapo.o \
+	burger/gui/interface.o \
 	burger/burger.o \
 	burger/burger_globals.o \
-	burger/gui_cheapo.o \
 	burger/hotkeys.o \
-	burger/interface.o \
 	burger/inventory.o \
 	burger/other.o \
 	burger/vars.o

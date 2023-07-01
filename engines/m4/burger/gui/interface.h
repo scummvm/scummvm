@@ -26,10 +26,11 @@
 #include "m4/m4_types.h"
 #include "m4/graphics/graphics.h"
 #include "m4/graphics/gr_buff.h"
-#include "m4/burger/gui_cheapo.h"
+#include "m4/burger/gui/gui_cheapo.h"
 
 namespace M4 {
 namespace Burger {
+namespace GUI {
 
 struct Interface {
 private:
@@ -65,6 +66,7 @@ public:
 	void show();
 };
 
+} // namespace Interface
 } // namespace Burger
 } // namespace M4
 
