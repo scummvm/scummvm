@@ -33,6 +33,7 @@ public:
 	void assemble(int frame, int index);
 
 	Common::Array<Object *> _objects;
+	Common::Array<Math::Vector3d> _origins;
 	Common::Array<Math::Vector3d> _objectPositions;
 	Common::Array<int16> _objectIndices;
 	Common::Array<int16> _objectIds;

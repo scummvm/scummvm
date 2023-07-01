@@ -49,6 +49,7 @@ public:
 		Common::String conditionSource = "");
 	virtual ~GeometricObject();
 	void setOrigin(Math::Vector3d origin) override;
+	void offsetOrigin(Math::Vector3d origin_);
 
 	Object *duplicate() override;
 	void scale(int factor) override;
