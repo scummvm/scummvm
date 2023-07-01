@@ -91,6 +91,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed wrong walkspeed in old games (e.g. Apprentice)
    - Added small workaround for purple texts appearing transparent.
    - Minor changes to debug/error messages and code style.
+ 
+ CRYOMNI3D:
+   - Fixed files access preventing to finish Versailles
 
  HDB:
    - Fixed bug with inability to pick up red envelope with keyboard.
