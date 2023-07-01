@@ -172,35 +172,29 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 		}
 	}
 
-	if (g_director->_debugDraw & kDebugDrawFrame) {
-		const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
-		Common::String msg = Common::String::format("Frame: %d", g_director->getCurrentMovie()->getScore()->getCurrentFrame());
-		uint32 width = font->getStringWidth(msg);
-
-		blitTo->fillRect(Common::Rect(blitTo->w - 3 - width, 1, blitTo->w - 1, font->getFontHeight() + 1), _wm->_colorBlack);
-		font->drawString(blitTo, msg, blitTo->w - 1 - width, 3, width , _wm->_colorBlack);
-		font->drawString(blitTo, msg, blitTo->w - 2 - width, 2, width , _wm->_colorWhite);
-	}
-
 	if (g_director->_debugDraw & kDebugDrawCast) {
+		const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+
 		for (uint i = 0; i < _currentMovie->getScore()->_channels.size(); i++) {
 			Channel *channel = _currentMovie->getScore()->_channels[i];
 			if (!channel->isEmpty()) {
 				Common::Rect bbox = channel->getBbox();
 				blitTo->frameRect(bbox, g_director->_wm->_colorWhite);
 
-				const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 				font->drawString(blitTo, Common::String::format("m: %d, ch: %d", channel->_sprite->_castId.member, i), bbox.left + 3, bbox.top + 3, 128, g_director->_wm->_colorBlack);
 				font->drawString(blitTo, Common::String::format("m: %d, ch: %d", channel->_sprite->_castId.member, i), bbox.left + 2, bbox.top + 2, 128, g_director->_wm->_colorWhite);
 			}
 		}
+	}
 
+	if (g_director->_debugDraw & kDebugDrawFrame) {
 		const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 		Common::String msg = Common::String::format("Frame: %d", g_director->getCurrentMovie()->getScore()->getCurrentFrame());
 		uint32 width = font->getStringWidth(msg);
 
 		blitTo->fillRect(Common::Rect(blitTo->w - 3 - width, 1, blitTo->w - 1, font->getFontHeight() + 1), _wm->_colorBlack);
-		font->drawString(blitTo, msg, blitTo->w - 2 - width, 2, width , _wm->_colorWhite);
+		font->drawString(blitTo, msg, blitTo->w - 1 - width, 3, width, _wm->_colorBlack);
+		font->drawString(blitTo, msg, blitTo->w - 2 - width, 2, width, _wm->_colorWhite);
 	}
 
 	_dirtyRects.clear();
