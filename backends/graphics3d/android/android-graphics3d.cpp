@@ -115,7 +115,7 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 
 	initSurface();
 
-	// in 3D, not in overlay
+	// in 3D, not in GUI
 	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(true, false);
 }
 

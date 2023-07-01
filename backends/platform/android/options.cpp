@@ -164,7 +164,7 @@ void AndroidOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::S
 	        .addLayout(GUI::ThemeLayout::kLayoutVertical)
 	            .addPadding(0, 0, 0, 0)
 	            .addWidget("OnScreenControl", "Checkbox")
-				.addWidget("PreferredTouchModeText", "", -1, layouts.getVar("Globals.Line.Height"));
+	            .addWidget("PreferredTouchModeText", "", -1, layouts.getVar("Globals.Line.Height"));
 
 	if (inAppDomain) {
 		layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
@@ -281,8 +281,7 @@ bool AndroidOptionsWidget::hasKeys() {
 	return ConfMan.hasKey("onscreen_control", _domain) ||
 	       (_domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("touch_mode_menus", _domain)) ||
 	       ConfMan.hasKey("touch_mode_2d_games", _domain) ||
-	       ConfMan.hasKey("touch_mode_3d_games", _domain) ||
-	       (_domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("onscreen_saf_revoke_btn", _domain));
+	       ConfMan.hasKey("touch_mode_3d_games", _domain);
 }
 
 void AndroidOptionsWidget::setEnabled(bool e) {
@@ -312,7 +311,6 @@ void OSystem_Android::registerDefaultSettings(const Common::String &target) cons
 	ConfMan.registerDefault("touch_mode_menus", "mouse");
 	ConfMan.registerDefault("touch_mode_2d_games", "touchpad");
 	ConfMan.registerDefault("touch_mode_3d_games", "gamepad");
-	ConfMan.registerDefault("onscreen_saf_revoke_btn", false);
 }
 
 void OSystem_Android::applyTouchSettings(bool _3dMode, bool overlayShown) {

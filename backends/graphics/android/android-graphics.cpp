@@ -76,7 +76,7 @@ AndroidGraphicsManager::AndroidGraphicsManager() :
 	loadBuiltinTexture(JNI::BitmapResources::TOUCH_ARROWS_BITMAP, _touchcontrols);
 	_touchcontrols->updateGLTexture();
 
-	// not in 3D, not in overlay
+	// not in 3D, not in GUI
 	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, false);
 }
 
