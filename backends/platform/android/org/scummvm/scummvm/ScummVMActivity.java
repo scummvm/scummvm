@@ -48,6 +48,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
+import com.google.android.play.core.assetpacks.AssetPackManager;
+import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -876,6 +879,11 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		@RequiresApi(api = Build.VERSION_CODES.N)
 		protected SAFFSTree findSAFTree(String name) {
 			return SAFFSTree.findTree(ScummVMActivity.this, name);
+		}
+
+		@Override
+		protected AssetPackManager getPlayStoreDLCManager() {
+			return AssetPackManagerFactory.getInstance(getApplicationContext());
 		}
 	}
 
