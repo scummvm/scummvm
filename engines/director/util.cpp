@@ -552,28 +552,37 @@ Common::String convert83Path(Common::String &path) {
 	return convPath;
 }
 
-Common::FSNode resolvePath(Common::String &path, Common::FSNode &base, bool directory) {
-	Common::FSNode d;
-	if (base.exists() && base.isDirectory()) {
-		d = base;
-	} else {
-		d = Common::FSNode(*g_director->getGameDataDir());
+Common::Path resolvePath(Common::String &path, Common::Path &base, bool directory) {
+	// Absolute path to the game directory
+	Common::Path gamePath = Common::Path(g_director->getGameDataDir()->getPath());
+	// Absolute path to the game directory + the base search path
+	Common::Path testPath = gamePath;
+	if (!base.empty()) {
+		testPath.appendInPlace(Common::String(g_director->_dirSeparator), g_director->_dirSeparator);
+		testPath.appendInPlace(base);
 	}
-	Common::FSNode node;
-	path = convertPath(path);
+	// FSNode for the current walk location in the filesystem
+	Common::FSNode filesystem(testPath);
 
+	// Path is the raw input from Director. Scrub it to be a clean relative path.
+	path = convertPath(path);
+	// Split this into a component list for iteration.
 	Common::StringTokenizer directory_list(path, Common::String(g_director->_dirSeparator));
-	Common::String newPath;
+	// newPath is our final result; construct this based on successful filesystem tests
+	Common::Path newPath = Common::Path(base);
+	if (!base.empty())
+		newPath.appendInPlace(Common::String(g_director->_dirSeparator), g_director->_dirSeparator);
 
 	Common::FSList fslist;
 	while (!directory_list.empty()) {
-		Common::String token = punycode_decodefilename(directory_list.nextToken());
+		Common::String token = directory_list.nextToken();
+		Common::String decodedToken = punycode_decodefilename(token);
 		fslist.clear();
 		Common::FSNode::ListMode mode = Common::FSNode::kListDirectoriesOnly;
 		if (directory_list.empty() && !directory) {
 			mode = Common::FSNode::kListAll;
 		}
-		bool hasChildren = d.getChildren(fslist, mode);
+		bool hasChildren = filesystem.getChildren(fslist, mode);
 		if (!hasChildren)
 			continue;
 
@@ -581,38 +590,37 @@ Common::FSNode resolvePath(Common::String &path, Common::FSNode &base, bool dire
 		for (auto &i : fslist) {
 			// for each element in the path, choose the first FSNode
 			// with a case-insensitive matching name
-			if (i.getName().equalsIgnoreCase(token)) {
-				node = Common::FSNode(i);
+			if (i.getName().equalsIgnoreCase(decodedToken)) {
 				// If this the final path component, check if we're allowed to match with a directory
-				if (directory_list.empty() && (directory != node.isDirectory())) {
+				if (directory_list.empty() && (directory != i.isDirectory())) {
 					continue;
 				}
 
 				exists = true;
-				newPath += i.getName();
-				if (!directory_list.empty())
-					newPath += (g_director->_dirSeparator);
+				newPath.appendInPlace(i.getName());
+				if (!directory_list.empty() && !newPath.empty())
+					newPath.appendInPlace(Common::String(g_director->_dirSeparator), g_director->_dirSeparator);
 
-				d = node;
+				filesystem = i;
 				break;
 			}
 		}
 		if (!exists) {
 			debugN(9, "%s", recIndent());
 			debug(9, "resolvePath(): No match found for %s", path.c_str());
-			return Common::FSNode();
+			return Common::Path();
 		}
 	}
 	debugN(9, "%s", recIndent());
-	debug(9, "resolvePath(): Found match for %s -> %s", path.c_str(), d.getPath().c_str());
-	return d;
+	debug(9, "resolvePath(): Found filesystem match for %s -> %s", path.c_str(), newPath.toString().c_str());
+	return newPath;
 }
 
-Common::FSNode resolvePartialPath(Common::String &path, Common::FSNode &base, bool directory) {
+Common::Path resolvePartialPath(Common::String &path, Common::Path &base, bool directory) {
 	path = convertPath(path);
 	Common::StringArray tokens = Common::StringTokenizer(path, Common::String(g_director->_dirSeparator)).split();
 
-	Common::FSNode result;
+	Common::Path result;
 	while (tokens.size()) {
 		Common::String subpath;
 		for (uint i = 0; i < tokens.size(); i++) {
@@ -622,7 +630,7 @@ Common::FSNode resolvePartialPath(Common::String &path, Common::FSNode &base, bo
 			}
 		}
 		result = resolvePath(subpath, base, directory);
-		if (result.exists()) {
+		if (!result.empty()) {
 			break;
 		}
 		tokens.remove_at(0);
@@ -630,15 +638,15 @@ Common::FSNode resolvePartialPath(Common::String &path, Common::FSNode &base, bo
 	return result;
 }
 
-Common::FSNode resolvePathWithFuzz(Common::String &path, Common::FSNode &base, bool directory) {
-	Common::FSNode result = resolvePath(path, base, directory);
-	if (!result.exists()) {
+Common::Path resolvePathWithFuzz(Common::String &path, Common::Path &base, bool directory) {
+	Common::Path result = resolvePath(path, base, directory);
+	if (result.empty()) {
 		// Try again with all non-FAT compatible characters stripped
 		Common::String newPath = stripMacPath(path.c_str());
 		if (newPath != path)
 			result = resolvePath(newPath, base, directory);
 	}
-	if (!result.exists()) {
+	if (result.empty()) {
 		// Try again with the path horribly disfigured to fit into 8.3 DOS filenames
 		Common::String newPath = convert83Path(path);
 		if (newPath != path)
@@ -647,43 +655,25 @@ Common::FSNode resolvePathWithFuzz(Common::String &path, Common::FSNode &base, b
 	return result;
 }
 
-Common::FSNode resolvePartialPathWithFuzz(Common::String &path, Common::FSNode &base, bool directory) {
-	Common::FSNode result = resolvePartialPath(path, base, directory);
-	if (!result.exists()) {
+Common::Path resolvePartialPathWithFuzz(Common::String &path, Common::Path &base, bool directory) {
+	Common::Path result = resolvePartialPath(path, base, directory);
+	if (result.empty()) {
 		// Try again with all non-FAT compatible characters stripped
 		Common::String newPath = stripMacPath(path.c_str());
-		result = resolvePartialPath(newPath, base, directory);
+		if (newPath != path)
+			result = resolvePartialPath(newPath, base, directory);
 	}
-	if (!result.exists()) {
+	if (result.empty()) {
 		// Try again with the path horribly disfigured to fit into 8.3 DOS filenames
 		Common::String newPath = convert83Path(path);
-		result = resolvePartialPath(newPath, base, directory);
+		if (newPath != path)
+			result = resolvePartialPath(newPath, base, directory);
 	}
-	return result;
-}
-
-Common::Path nodeToPath(Common::FSNode &node) {
-	Common::StringArray base = Common::Path(g_director->getGameDataDir()->getPath()).splitComponents();
-	Common::StringArray target = Common::Path(node.getPath()).splitComponents();
-
-	if (target.size() < base.size()) {
-		warning("nodeToPath(): target not a subset");
-		return Common::Path();
-	}
-	for (auto &it : base) {
-		if (it != target[0]) {
-			warning("nodeToPath(): expected component %s, found %s", it.c_str(), target[0].c_str());
-			return Common::Path();
-		}
-		target.remove_at(0);
-	}
-	Common::Path result = Common::Path::joinComponents(target);
-	debug(9, "nodeToPath(): %s -> %s", node.getPath().c_str(), result.toString().c_str());
 	return result;
 }
 
 Common::Path findPath(Common::String &path, bool currentFolder, bool searchPaths, bool directory) {
-	Common::FSNode result, base;
+	Common::Path result, base;
 	debugN(9, "%s", recIndent());
 	debug(9, "findPath(): beginning search for \"%s\"", path.c_str());
 	// For an absolute path, first check it relative to the filesystem
@@ -691,36 +681,36 @@ Common::Path findPath(Common::String &path, bool currentFolder, bool searchPaths
 		debugN(9, "%s", recIndent());
 		debug(9, "findPath(): searching absolute path");
 		result = resolvePathWithFuzz(path, base, directory);
-		if (result.exists()) {
+		if (!result.empty()) {
 			debugN(9, "%s", recIndent());
-			debug(9, "findPath(): resolved \"%s\" -> \"%s\"", path.c_str(), nodeToPath(result).toString().c_str());
-			return nodeToPath(result);
+			debug(9, "findPath(): resolved \"%s\" -> \"%s\"", path.c_str(), result.toString().c_str());
+			return result;
 		}
 	}
 
 	if (currentFolder) {
 		Common::String currentPath = g_director->getCurrentPath();
-		Common::FSNode current = resolvePath(currentPath, base, true);
+		Common::Path current = resolvePath(currentPath, base, true);
 		debugN(9, "%s", recIndent());
-		debug(9, "findPath(): searching current folder %s", current.getPath().c_str());
+		debug(9, "findPath(): searching current folder %s", current.toString().c_str());
 		base = current;
 		result = resolvePartialPathWithFuzz(path, base, directory);
-		if (result.exists()) {
+		if (!result.empty()) {
 			debugN(9, "%s", recIndent());
-			debug(9, "findPath(): resolved \"%s\" -> \"%s\"", path.c_str(), nodeToPath(result).toString().c_str());
-			return nodeToPath(result);
+			debug(9, "findPath(): resolved \"%s\" -> \"%s\"", path.c_str(), result.toString().c_str());
+			return result;
 		}
 	}
 
 	// Fall back to checking the game root path
 	debugN(9, "%s", recIndent());
 	debug(9, "findPath(): searching game root path");
-	base = Common::FSNode();
+	base = Common::Path();
 	result = resolvePartialPathWithFuzz(path, base, directory);
-	if (result.exists()) {
+	if (!result.empty()) {
 		debugN(9, "%s", recIndent());
-		debug(9, "findPath(): resolved \"%s\" -> \"%s\"", path.c_str(), nodeToPath(result).toString().c_str());
-		return nodeToPath(result);
+		debug(9, "findPath(): resolved \"%s\" -> \"%s\"", path.c_str(), result.toString().c_str());
+		return result;
 	}
 
 	// Check each of the search paths in sequence
@@ -736,14 +726,9 @@ Common::Path findPath(Common::String &path, bool currentFolder, bool searchPaths
 			searchPathList.push_back(it);
 		}
 		for (auto &searchIn : searchPathList) {
-			// Ensure there's a trailing directory separator
-			Common::String separator = Common::String::format("%c", g_director->_dirSeparator);
-			if (!searchIn.hasSuffix(separator)) {
-				searchIn += separator;
-			}
-			base = Common::FSNode();
+			base = Common::Path();
 			base = resolvePathWithFuzz(searchIn, base, true);
-			if (!base.exists()) {
+			if (base.empty()) {
 				debugN(9, "%s", recIndent());
 				debug(9, "findPath(): couldn't resolve search path folder %s, skipping", searchIn.c_str());
 				continue;
@@ -751,10 +736,10 @@ Common::Path findPath(Common::String &path, bool currentFolder, bool searchPaths
 			debugN(9, "%s", recIndent());
 			debug(9, "findPath(): searching search path folder %s", searchIn.c_str());
 			result = resolvePartialPathWithFuzz(path, base, directory);
-			if (result.exists()) {
+			if (!result.empty()) {
 				debugN(9, "%s", recIndent());
-				debug(9, "findPath(): resolved \"%s\" -> \"%s\"", path.c_str(), nodeToPath(result).toString().c_str());
-				return nodeToPath(result);
+				debug(9, "findPath(): resolved \"%s\" -> \"%s\"", path.c_str(), result.toString().c_str());
+				return result;
 			}
 		}
 	}
