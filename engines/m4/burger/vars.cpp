@@ -23,6 +23,7 @@
 #include "m4/core/term.h"
 #include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_inv.h"
+#include "m4/burger/burger_globals.h"
 
 namespace M4 {
 namespace Burger {
@@ -124,6 +125,150 @@ void Vars::reset1() {
 	inv_move_object("puz dispenser", NOWHERE);
 
 	conv_reset_all();
+}
+
+void Vars::reset2() {
+	if ((*this)[V245] != 10027)
+		inv_give_to_player("BLOCK OF ICE");
+	if ((*this)[V277] == 6003)
+		inv_give_to_player("PANTYHOSE");
+
+	(*this)[V243] = 6000;
+	(*this)[V244] = 6000;
+	(*this)[V245] = 10027;
+	(*this)[V246] = 0;
+	(*this)[V255] = 0;
+	(*this)[V256] = 0;
+	(*this)[V257] = 0;
+	(*this)[V258] = 0;
+	(*this)[V263] = 0;
+	(*this)[V265] = 0;
+	(*this)[V266] = 0;
+	(*this)[V269] = 1;
+	(*this)[V270] = 6000;
+	(*this)[V273] = 0;
+	(*this)[V274] = 0;
+	(*this)[V277] = 6000;
+	(*this)[V278] = 0;
+
+	if (_G(gameMode) != WHOLE_GAME) {
+		inv_give_to_player("BLOCK OF ICE");
+		inv_give_to_player("PANTYHOSE");
+	}
+}
+
+void Vars::reset3() {
+	if (inv_player_has("BOTTLE")) {
+		inv_give_to_player("CARROT JUICE");
+		inv_move_object("BOTTLE", NOWHERE);
+	}
+
+	(*this)[V107] = 0;
+	(*this)[V111] = 0;
+	inv_move_object("BURGER MORSEL", NOWHERE);
+
+	(*this)[V117] = 0;
+	(*this)[V124] = 0;
+	(*this)[V118] = 3001;
+	(*this)[V119] = 0;
+	(*this)[V120] = 0;
+	(*this)[V121] = 3001;
+	(*this)[V122] = 0;
+	(*this)[V124] = 0;
+
+	inv_move_object("JUG", 303);
+	inv_move_object("DISTILLED CARROT JUICE", NOWHERE);
+
+	(*this)[V130] = 0;
+	inv_move_object("MATCHES", 304);
+
+	(*this)[V134] = 0;
+	(*this)[V140] = 0;
+	(*this)[V144] = 0;
+	(*this)[V145] = 0;
+}
+
+void Vars::reset4() {
+	(*this)[V186] = 0;
+	(*this)[V234] = 0;
+	(*this)[V196] = 0;
+	(*this)[V197] = 0;
+	(*this)[V198] = 0;
+	(*this)[V199] = 0;
+	(*this)[V200] = 5000;
+
+	inv_move_object("KINDLING", 502);
+	inv_move_object("BURNING KINDLING", 502);
+	inv_move_object("GIZMO", 502);
+
+	(*this)[V203] = 0;
+	(*this)[V204] = 5000;
+	(*this)[V205] = 0;
+	(*this)[V207] = 0;
+
+	inv_move_object("ROLLING PIN", 503);
+	inv_move_object("RUBBER GLOVES", 503);
+
+	(*this)[V210] = 5000;
+	(*this)[V211] = 5000;
+	(*this)[V212] = 5001;
+	(*this)[V213] = 2;
+	(*this)[V214] = 0;
+
+	inv_move_object("DIRTY SOCK", 504);
+
+	(*this)[V218] = 5000;
+	(*this)[V219] = 0;
+	(*this)[V223] = 0;
+	(*this)[V224] = 0;
+
+	inv_move_object("RUBBER DUCKY", 507);
+
+	if (inv_player_has("SOAPY WATER")) {
+		inv_move_object("SOAPY WATER", 507);
+		inv_give_to_player("BOTTLE");
+	}
+
+	(*this)[V227] = 0;
+	(*this)[V228] = 0;
+	(*this)[V229] = 1;
+
+	inv_move_object("CHRISTMAS LIGHTS", 508);
+	inv_move_object("CHRISTMAS LIGHTS ", 508);
+
+	(*this)[V237] = 0;
+}
+
+void Vars::reset5() {
+	if ((*this)[V159])
+		inv_give_to_player("DEED");
+
+	(*this)[V157] = 0;
+	(*this)[V158] = 0;
+	(*this)[V159] = 0;
+	(*this)[V162] = 0;
+
+	inv_move_object("FISH", 402);
+	inv_move_object("QUARTER", 404);
+
+	(*this)[V175] = 0;
+	(*this)[V171] = 4000;
+	(*this)[V172] = 10023;
+	(*this)[V173] = 0;
+	(*this)[V174] = 4000;
+	(*this)[V176] = 0;
+
+	inv_move_object("COLLAR", 406);
+	inv_move_object("HOOK", 406);
+
+	(*this)[V166] = 0;
+	(*this)[V168] = 0;
+	(*this)[V167] = 0;
+
+	inv_move_object("RECORDS", 405);
+
+	(*this)[V180] = 0;
+	(*this)[V181] = 0;
 }
 
 } // namespace Burger
