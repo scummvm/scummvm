@@ -25,6 +25,7 @@
 #include "m4/globals.h"
 #include "m4/burger/interface.h"
 #include "m4/burger/inventory.h"
+#include "m4/burger/vars.h"
 
 namespace M4 {
 namespace Burger {
@@ -47,8 +48,11 @@ protected:
 	void initialize_game() override;
 
 public:
+	//GlobalVars _globalVars;
 	GameMode _gameMode = WHOLE_GAME;
+	int _wilburTerm = 2;
 	Interface _interface;
+	Common::String _wilbur = "WILBUR";
 
 public:
 	BurgerGlobals();
@@ -60,6 +64,7 @@ extern BurgerGlobals *g_globals;
 #undef _G
 #define _G(X) (::M4::Burger::g_globals->_##X)
 #define _GI(X) _G(interface)._##X
+#define VAL(X) _G(_globalVars)[X]
 
 } // namespace Burger
 } // namespace M4

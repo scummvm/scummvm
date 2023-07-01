@@ -47,7 +47,7 @@ bool inv_init(int32 num_objects) {
 	return true;
 }
 
-void inv_shutdown(void) {
+void inv_shutdown() {
 	int i;
 
 	for (i = 0; i < _G(inventory)->_tail; i++) {
@@ -55,11 +55,10 @@ void inv_shutdown(void) {
 	}
 }
 
-bool inv_register_thing(const char *name, const char *verbs, int32 scene, int32 cel, int32 cursor) {
-	assert(name && verbs);
-
-	char *s_name = mem_strdup(name);
-	char *s_verbs = mem_strdup(verbs);
+bool inv_register_thing(const Common::String &itemName, const Common::String &itemVerbs,
+		int32 scene, int32 cel, int32 cursor) {
+	char *s_name = mem_strdup(itemName.c_str());
+	char *s_verbs = mem_strdup(itemVerbs.c_str());
 
 	_G(inventory)->_objects[_G(inventory)->_tail]->name = nullptr;
 	_G(inventory)->_objects[_G(inventory)->_tail]->verbs = nullptr;
@@ -89,13 +88,14 @@ bool inv_register_thing(const char *name, const char *verbs, int32 scene, int32 
 
 //-------------------------------------------------------------------
 
-int32 inv_where_is(char *name) {
+int32 inv_where_is(const Common::String &itemName) {
 	int i;
-	cstrupr(name);
+	Common::String name = itemName;
+	name.toUppercase();
 
 	for (i = 0; i < _G(inventory)->_tail; i++) {
 		if (_G(inventory)->_objects[i]->name) {
-			if (!strcmp(_G(inventory)->_objects[i]->name, name)) {
+			if (name.equals(_G(inventory)->_objects[i]->name)) {
 				return _G(inventory)->_objects[i]->scene;
 			}
 		}
@@ -104,18 +104,18 @@ int32 inv_where_is(char *name) {
 	return UNKNOWN_OBJECT;
 }
 
-bool inv_player_has(char *name) {
-	return (inv_where_is(name) == BACKPACK);
+bool inv_player_has(const Common::String &itemName) {
+	return (inv_where_is(itemName) == BACKPACK);
 }
 
-bool inv_put_thing_in(char *name, int32 scene) {
+bool inv_put_thing_in(const Common::String &itemName, int32 scene) {
 	int i;
-	cstrupr(name);
+	Common::String name = itemName;
+	name.toUppercase();
 
 	for (i = 0; i < _G(inventory)->_tail; i++) {
 		if (_G(inventory)->_objects[i]->name) {
-			if (!strcmp(_G(inventory)->_objects[i]->name, name)) {
-
+			if (name.equals(_G(inventory)->_objects[i]->name)) {
 				// Remove object from backpack?
 				if (_G(inventory)->_objects[i]->scene == BACKPACK && scene != BACKPACK) {
 					_G(inventory)->remove(name);
@@ -134,25 +134,30 @@ bool inv_put_thing_in(char *name, int32 scene) {
 	return false;
 }
 
-int32 inv_get_cursor(char *name) {
+int32 inv_get_cursor(const Common::String &itemName) {
 	int i;
-	cstrupr(name);
+	Common::String name = itemName;
+	name.toUppercase();
+
 	for (i = 0; i < _G(inventory)->_tail; i++) {
 		if (_G(inventory)->_objects[i]->name) {
-			if (!strcmp(_G(inventory)->_objects[i]->name, name)) {
+			if (name.equals(_G(inventory)->_objects[i]->name)) {
 				return _G(inventory)->_objects[i]->cursor;
 			}
 		}
 	}
+
 	return UNKNOWN_OBJECT;
 }
 
-int32 inv_get_cel(char *name) {
+int32 inv_get_cel(const Common::String &itemName) {
 	int i;
-	cstrupr(name);
+	Common::String name = itemName;
+	name.toUppercase();
+
 	for (i = 0; i < _G(inventory)->_tail; i++) {
 		if (_G(inventory)->_objects[i]->name) {
-			if (!strcmp(_G(inventory)->_objects[i]->name, name)) {
+			if (name.equals(_G(inventory)->_objects[i]->name)) {
 				return _G(inventory)->_objects[i]->cel;
 			}
 		}
@@ -160,16 +165,19 @@ int32 inv_get_cel(char *name) {
 	return UNKNOWN_OBJECT;
 }
 
-char *inv_get_verbs(char *name) {
+const char *inv_get_verbs(const Common::String &itemName) {
 	int i;
-	cstrupr(name);
+	Common::String name = itemName;
+	name.toUppercase();
+
 	for (i = 0; i < _G(inventory)->_tail; i++) {
 		if (_G(inventory)->_objects[i]->name) {
-			if (!strcmp(_G(inventory)->_objects[i]->name, name)) {
+			if (name.equals(_G(inventory)->_objects[i]->name)) {
 				return _G(inventory)->_objects[i]->verbs;
 			}
 		}
 	}
+
 	return nullptr;
 }
 
@@ -177,33 +185,36 @@ char *inv_get_verbs(char *name) {
 // we store a pointer to the registered name, not to an unmanaged
 // memory pointer.
 
-static char *inv_get_name(char *name) {
+static char *inv_get_name(const Common::String &itemName) {
 	int i;
-	cstrupr(name);
+	Common::String name = itemName;
+	name.toUppercase();
+
 	for (i = 0; i < _G(inventory)->_tail; i++) {
 		if (_G(inventory)->_objects[i]->name) {
-			if (!strcmp(_G(inventory)->_objects[i]->name, name)) {
+			if (name.equals(_G(inventory)->_objects[i]->name)) {
 				return _G(inventory)->_objects[i]->name;
 			}
 		}
 	}
+
 	return nullptr;
 }
 
-void inv_give_to_player(char *name) {
-	inv_put_thing_in(name, BACKPACK);
+void inv_give_to_player(const Common::String &itemName) {
+	inv_put_thing_in(itemName, BACKPACK);
 }
 
-void inv_move_object(char *name, int32 scene) {
-	inv_put_thing_in(name, scene);
+void inv_move_object(const Common::String &itemName, int32 scene) {
+	inv_put_thing_in(itemName, scene);
 }
 
-bool inv_object_is_here(char *name) {
-	return (inv_where_is(name) == _G(game).room_id);
+bool inv_object_is_here(const Common::String &itemName) {
+	return (inv_where_is(itemName) == _G(game).room_id);
 }
 
-bool inv_object_in_scene(char *name, int32 scene) {
-	return (inv_where_is(name) == scene);
+bool inv_object_in_scene(const Common::String &itemName, int32 scene) {
+	return (inv_where_is(itemName) == scene);
 }
 
 void MoveBP(char *s, int32 from, int32 to) {

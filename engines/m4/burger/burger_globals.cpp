@@ -120,6 +120,14 @@ void BurgerGlobals::global_menu_system_init() {
 }
 
 void BurgerGlobals::initialize_game() {
+	// Put all the inventory items back in their original scenes
+	for (const auto &item : _inventory->_objects)
+		inv_put_thing_in(item->name, item->scene);
+	inv_give_to_player("MONEY");
+
+	// Clear the global variables
+	//_vars.reset();
+
 	// TODO
 }
 
