@@ -135,8 +135,6 @@ protected:
 
 	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format);
 
-	void refreshScreen();
-
 private:
 	void initOverlay();
 
