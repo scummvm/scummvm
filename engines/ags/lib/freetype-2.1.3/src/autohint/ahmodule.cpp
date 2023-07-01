@@ -20,7 +20,7 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_MODULE_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftmodule.h"
 #include "ahhint.h"
 
 

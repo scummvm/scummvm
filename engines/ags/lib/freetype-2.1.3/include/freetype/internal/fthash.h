@@ -31,7 +31,7 @@
 #define __FT2_1_3_HASH_H__
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_TYPES_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/fttypes.h"
 
 FT2_1_3_BEGIN_HEADER
 

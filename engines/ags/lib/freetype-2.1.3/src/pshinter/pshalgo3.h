@@ -22,7 +22,7 @@
 
 #include "pshrec.h"
 #include "pshglob.h"
-#include FT2_1_3_TRIGONOMETRY_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/fttrigon.h"
 
 
 FT2_1_3_BEGIN_HEADER

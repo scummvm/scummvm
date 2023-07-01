@@ -20,7 +20,7 @@
 #define __PSHGLOB_H__
 
 
-#include FT2_1_3_FREETYPE_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 #include FT2_1_3_INTERNAL_POSTSCRIPT_HINTS_H
 
 

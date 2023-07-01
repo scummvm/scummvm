@@ -17,10 +17,10 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_FREETYPE_H
-#include FT2_1_3_CACHE_H
-#include FT2_1_3_CACHE_CHARMAP_H
-#include FT2_1_3_CACHE_MANAGER_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftcache.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftccmap.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftcmanag.h"
 #include FT2_1_3_INTERNAL_MEMORY_H
 #include FT2_1_3_INTERNAL_DEBUG_H
 

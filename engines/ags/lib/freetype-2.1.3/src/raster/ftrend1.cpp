@@ -18,7 +18,7 @@
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include FT2_1_3_INTERNAL_OBJECTS_H
-#include FT2_1_3_OUTLINE_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftoutln.h"
 #include "ftrend1.h"
 #include "ftraster.h"
 

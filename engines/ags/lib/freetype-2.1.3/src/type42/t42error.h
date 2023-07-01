@@ -25,14 +25,14 @@
 #ifndef __T42ERROR_H__
 #define __T42ERROR_H__
 
-#include FT2_1_3_MODULE_ERRORS_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftmoderr.h"
 
 #undef __FTERRORS_H__
 
 #define FT2_1_3_ERR_PREFIX  T42_Err_
 #define FT2_1_3_ERR_BASE    FT2_1_3_Mod_Err_T42
 
-#include FT2_1_3_ERRORS_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/fterrors.h"
 
 #endif /* __T42ERROR_H__ */
 

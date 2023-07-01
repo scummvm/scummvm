@@ -25,14 +25,14 @@
 #ifndef __PFRERROR_H__
 #define __PFRERROR_H__
 
-#include FT2_1_3_MODULE_ERRORS_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftmoderr.h"
 
 #undef __FTERRORS_H__
 
 #define FT2_1_3_ERR_PREFIX  PFR_Err_
 #define FT2_1_3_ERR_BASE    FT2_1_3_Mod_Err_PFR
 
-#include FT2_1_3_ERRORS_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/fterrors.h"
 
 #endif /* __PFRERROR_H__ */
 

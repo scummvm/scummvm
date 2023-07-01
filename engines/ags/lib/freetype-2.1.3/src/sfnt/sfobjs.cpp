@@ -22,8 +22,8 @@
 #include "ttcmap0.h"
 #include FT2_1_3_INTERNAL_SFNT_H
 #include FT2_1_3_INTERNAL_POSTSCRIPT_NAMES_H
-#include FT2_1_3_TRUETYPE_IDS_H
-#include FT2_1_3_TRUETYPE_TAGS_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/ttnameid.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/tttags.h"
 
 #include "sferrors.h"
 

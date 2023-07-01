@@ -81,7 +81,7 @@
 /*         const char*  err_msg                                          */
 /*       } ft_errors[] =                                                 */
 /*                                                                       */
-/*       #include FT2_1_3_ERRORS_H                                            */
+/*       #include "engines/ags/lib/freetype-2.1.3/include/freetype/fterrors.h"                                            */
 /*     }                                                                 */
 /*                                                                       */
 /*************************************************************************/
@@ -92,7 +92,7 @@
 
 
 /* include module base error codes */
-#include FT2_1_3_MODULE_ERRORS_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftmoderr.h"
 
 
 /*******************************************************************/
@@ -169,7 +169,7 @@ FT2_1_3_ERROR_START_LIST
 
 
 /* no include the error codes */
-#include FT2_1_3_ERROR_DEFINITIONS_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/fterrdef.h"
 
 
 #ifdef FT2_1_3_ERROR_END_LIST

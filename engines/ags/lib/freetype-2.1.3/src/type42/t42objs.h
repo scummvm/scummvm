@@ -19,8 +19,8 @@
 #define __T42OBJS_H__
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_FREETYPE_H
-#include FT2_1_3_TYPE1_TABLES_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/t1tables.h"
 #include FT2_1_3_INTERNAL_TYPE1_TYPES_H
 #include FT2_1_3_INTERNAL_TYPE42_TYPES_H
 #include FT2_1_3_INTERNAL_OBJECTS_H

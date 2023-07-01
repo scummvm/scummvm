@@ -40,8 +40,8 @@
 #define __FT2_1_3_CONFIG_H__
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_CONFIG_OPTIONS_H
-#include FT2_1_3_CONFIG_STANDARD_LIBRARY_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftoption.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftstdlib.h"
 
 FT2_1_3_BEGIN_HEADER
 

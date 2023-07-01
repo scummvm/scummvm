@@ -60,7 +60,7 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_FREETYPE_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 #include FT2_1_3_INTERNAL_STREAM_H
 #include "truetype/ttobjs.h"
 #include "type1/t1objs.h"
@@ -72,7 +72,7 @@
 #include <TextUtils.h>
 
 
-#include FT2_1_3_MAC_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftmac.h"
 
 
 /* Set PREFER_LWFN to 1 if LWFN (Type 1) is preferred over

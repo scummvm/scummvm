@@ -1,6 +1,6 @@
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_STROKER_H
-#include FT2_1_3_TRIGONOMETRY_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftstroker.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/fttrigon.h"
 #include FT2_1_3_INTERNAL_MEMORY_H
 #include FT2_1_3_INTERNAL_DEBUG_H
 

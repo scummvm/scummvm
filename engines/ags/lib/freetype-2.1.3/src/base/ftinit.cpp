@@ -38,10 +38,10 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_CONFIG_CONFIG_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftconfig.h"
 #include FT2_1_3_INTERNAL_OBJECTS_H
 #include FT2_1_3_INTERNAL_DEBUG_H
-#include FT2_1_3_MODULE_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftmodule.h"
 
 
 /*************************************************************************/
@@ -61,7 +61,7 @@
 #endif
 
 
-#include FT2_1_3_CONFIG_MODULES_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftmodule.h"
 
 
 #undef  FT2_1_3_USE_MODULE
@@ -69,7 +69,7 @@
 
 static
 const FT2_1_3_Module_Class*  const ft_default_modules[] = {
-#include FT2_1_3_CONFIG_MODULES_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftmodule.h"
 	0
 };
 

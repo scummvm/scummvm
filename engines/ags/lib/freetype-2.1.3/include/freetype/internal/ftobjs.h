@@ -27,9 +27,9 @@
 #define __FTOBJS_H__
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_CONFIG_STANDARD_LIBRARY_H   /* for ft_setjmp and ft_longjmp */
-#include FT2_1_3_RENDER_H
-#include FT2_1_3_SIZES_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftstdlib.h"   /* for ft_setjmp and ft_longjmp */
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftrender.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftsizes.h"
 #include FT2_1_3_INTERNAL_MEMORY_H
 #include FT2_1_3_INTERNAL_GLYPH_LOADER_H
 #include FT2_1_3_INTERNAL_DRIVER_H
@@ -37,7 +37,7 @@
 #include FT2_1_3_INTERNAL_OBJECT_H
 
 #ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
-#include FT2_1_3_INCREMENTAL_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftincrem.h"
 #endif
 
 

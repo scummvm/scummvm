@@ -32,7 +32,7 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_FREETYPE_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 
 
 FT2_1_3_BEGIN_HEADER
@@ -68,9 +68,8 @@ FT2_1_3_BEGIN_HEADER
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Outline_Get_BBox( FT2_1_3_Outline*  outline,
-                     FT2_1_3_BBox     *abbox );
-
+FT2_1_3_Outline_Get_BBox(FT2_1_3_Outline *outline,
+						 FT2_1_3_BBox *abbox);
 
 /* */
 

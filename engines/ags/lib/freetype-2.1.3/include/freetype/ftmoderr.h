@@ -45,7 +45,7 @@
 /*       const char*  mod_err_msg                                        */
 /*     } ft_mod_errors[] =                                               */
 /*                                                                       */
-/*     #include FT2_1_3_MODULE_ERRORS_H                                       */
+/*     #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftmoderr.h"                                       */
 /*   }                                                                   */
 /*                                                                       */
 /* To use such a table, all errors must be ANDed with 0xFF00 to remove   */

@@ -17,12 +17,12 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_CACHE_H
-#include FT2_1_3_CACHE_SMALL_BITMAPS_H
-#include FT2_1_3_CACHE_INTERNAL_GLYPH_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftcache.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftcsbits.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftcglyph.h"
 #include FT2_1_3_INTERNAL_OBJECTS_H
 #include FT2_1_3_INTERNAL_DEBUG_H
-#include FT2_1_3_ERRORS_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/fterrors.h"
 
 #include "ftcerror.h"
 

@@ -19,7 +19,7 @@
 #include "t42error.h"
 #include FT2_1_3_INTERNAL_DEBUG_H
 #include FT2_1_3_INTERNAL_STREAM_H
-#include FT2_1_3_LIST_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftlist.h"
 #include FT2_1_3_INTERNAL_POSTSCRIPT_AUX_H
 
 

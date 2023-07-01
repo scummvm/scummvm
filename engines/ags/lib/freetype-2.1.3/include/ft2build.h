@@ -32,6 +32,15 @@
 #define __FT2_BUILD_GENERIC_H__
 
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftheader.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/internal.h"
+
+#ifdef __cplusplus
+#define FT2_1_3_BEGIN_HEADER  extern "C" {
+#define FT2_1_3_END_HEADER  }
+#else
+#define FT2_1_3_BEGIN_HEADER  /* nothing */
+#define FT2_1_3_END_HEADER
+#endif
 
 #endif /* __FT2_BUILD_GENERIC_H__ */
 

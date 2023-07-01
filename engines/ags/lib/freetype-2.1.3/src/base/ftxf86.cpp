@@ -17,7 +17,7 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_XFREE86_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftxf86.h"
 #include FT2_1_3_INTERNAL_OBJECTS_H
 
 /* XXX: This really is a sad hack, but I didn't want to change every     */

@@ -17,9 +17,9 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_CACHE_H
-#include FT2_1_3_CACHE_IMAGE_H
-#include FT2_1_3_CACHE_INTERNAL_GLYPH_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftcache.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftcimage.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftcglyph.h"
 #include FT2_1_3_INTERNAL_MEMORY_H
 
 #include "ftcerror.h"

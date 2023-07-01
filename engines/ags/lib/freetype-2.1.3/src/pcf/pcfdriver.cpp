@@ -30,8 +30,8 @@ THE SOFTWARE.
 #include FT2_1_3_INTERNAL_DEBUG_H
 #include FT2_1_3_INTERNAL_STREAM_H
 #include FT2_1_3_INTERNAL_OBJECTS_H
-#include FT2_1_3_GZIP_H
-#include FT2_1_3_ERRORS_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/ftgzip.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/fterrors.h"
 
 #include "pcf.h"
 #include "pcfdriver.h"

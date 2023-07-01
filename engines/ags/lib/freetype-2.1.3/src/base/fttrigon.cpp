@@ -17,7 +17,7 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
-#include FT2_1_3_TRIGONOMETRY_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/fttrigon.h"
 
 
 /* the following is 0.2715717684432231 * 2^30 */

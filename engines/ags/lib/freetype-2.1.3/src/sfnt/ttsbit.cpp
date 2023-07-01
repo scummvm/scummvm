@@ -19,7 +19,7 @@
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include FT2_1_3_INTERNAL_DEBUG_H
 #include FT2_1_3_INTERNAL_STREAM_H
-#include FT2_1_3_TRUETYPE_TAGS_H
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/tttags.h"
 #include "ttsbit.h"
 
 #include "sferrors.h"
