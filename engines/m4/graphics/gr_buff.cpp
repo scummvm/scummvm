@@ -24,7 +24,7 @@
 #include "m4/gui/gui_vmng_core.h"
 #include "m4/core/errors.h"
 #include "m4/mem/memman.h"
-#include "m4/term.h"
+#include "m4/core/term.h"
 
 namespace M4 {
 

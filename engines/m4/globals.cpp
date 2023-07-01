@@ -161,7 +161,6 @@ void Globals::game_systems_shutdown() {
 	gr_font_dealloc(_font_misc);
 	gr_font_system_shutdown();
 #ifdef TODO
-	conv_reset_all(); //mar4 from mattp
 
 	term_message("tin streams be gone!");
 	f_stream_Shutdown();

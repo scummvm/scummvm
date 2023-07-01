@@ -48,7 +48,7 @@ protected:
 	void initialize_game() override;
 
 public:
-	//GlobalVars _globalVars;
+	Burger::Vars _vars;
 	GameMode _gameMode = WHOLE_GAME;
 	int _wilburTerm = 2;
 	Interface _interface;
@@ -64,7 +64,7 @@ extern BurgerGlobals *g_globals;
 #undef _G
 #define _G(X) (::M4::Burger::g_globals->_##X)
 #define _GI(X) _G(interface)._##X
-#define VAL(X) _G(_globalVars)[X]
+#define VAL(X) _G(_vars)[X]
 
 } // namespace Burger
 } // namespace M4

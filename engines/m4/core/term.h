@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef M4_TERM_H
-#define M4_TERM_H
+#ifndef M4_CORE_TERM_H
+#define M4_CORE_TERM_H
 
 #include "common/stream.h"
 
