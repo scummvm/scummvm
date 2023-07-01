@@ -189,6 +189,7 @@ private:
 							int arg2, int arg3, int arg4, int arg5, int arg6);
 	static void updateTouch(JNIEnv *env, jobject self, int action, int ptr, int x, int y);
 	static void setupTouchMode(JNIEnv *env, jobject self, jint oldValue, jint newValue);
+	static void syncVirtkeyboardState(JNIEnv *env, jobject self, jboolean newState);
 	static void setPause(JNIEnv *env, jobject self, jboolean value);
 
 	static jstring getNativeVersionInfo(JNIEnv *env, jobject self);

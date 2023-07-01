@@ -134,6 +134,8 @@ const JNINativeMethod JNI::_natives[] = {
 		(void *)JNI::updateTouch },
 	{ "setupTouchMode", "(II)V",
 		(void *)JNI::setupTouchMode },
+	{ "syncVirtkeyboardState", "(Z)V",
+		(void *)JNI::syncVirtkeyboardState },
 	{ "setPause", "(Z)V",
 		(void *)JNI::setPause },
 	{ "getNativeVersionInfo", "()Ljava/lang/String;",
@@ -961,6 +963,13 @@ void JNI::setupTouchMode(JNIEnv *env, jobject self, jint oldValue, jint newValue
 		return;
 
 	_system->setupTouchMode(oldValue, newValue);
+}
+
+void JNI::syncVirtkeyboardState(JNIEnv *env, jobject self, jboolean newState) {
+	if (!_system)
+		return;
+
+	_system->syncVirtkeyboardState(newState);
 }
 
 void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {

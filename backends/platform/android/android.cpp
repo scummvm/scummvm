@@ -646,7 +646,6 @@ void OSystem_Android::setFeatureState(Feature f, bool enable) {
 
 	switch (f) {
 	case kFeatureVirtualKeyboard:
-		_virtkeybd_on = enable;
 		JNI::showVirtualKeyboard(enable);
 		break;
 	default:
@@ -948,6 +947,10 @@ bool OSystem_Android::setGraphicsMode(int mode, uint flags) {
 int OSystem_Android::getGraphicsMode() const {
 	// We only support one mode
 	return 0;
+}
+
+void OSystem_Android::syncVirtkeyboardState(bool virtkeybd_on) {
+	_virtkeybd_on = virtkeybd_on;
 }
 
 #if defined(USE_OPENGL) && defined(USE_GLAD)

@@ -490,6 +490,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 							_videoLayout.addView(_screenKeyboard, sKeyboardLayout);
 							_videoLayout.bringChildToFront(_screenKeyboard);
 						}
+						_scummvm.syncVirtkeyboardState(true);
 					}
 				});
 			} else {
@@ -510,10 +511,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 						//Log.d(ScummVM.LOG_TAG, "showScreenKeyboardWithoutTextInputField - captureMouse(true)");
 						_main_surface.captureMouse(true);
 						//_main_surface.showSystemMouseCursor(false);
+						_scummvm.syncVirtkeyboardState(false);
 					}
 				});
 			}
-			// TODO Do we need to inform native ScummVM code of keyboard shown state?
 //			_main_surface.nativeScreenKeyboardShown( keyboardWithoutTextInputShown ? 1 : 0 );
 		}
 	}
