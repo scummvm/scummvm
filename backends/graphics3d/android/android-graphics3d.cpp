@@ -80,6 +80,7 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_fullscreen(true),
 	_ar_correction(true),
 	_force_redraw(false),
+	_virtkeybd_on(false),
 	_game_texture(0),
 	_frame_buffer(0),
 	_cursorX(0),
@@ -988,7 +989,11 @@ void AndroidGraphics3dManager::updateScreenRect() {
 			rect.moveTo((JNI::egl_surface_width - rect.width()) / 2, 0);
 		} else {
 			rect.setHeight(round(JNI::egl_surface_width / game_ar));
-			rect.moveTo(0, (JNI::egl_surface_height - rect.height()) / 2);
+			if (_virtkeybd_on) {
+				rect.moveTo(0, (JNI::egl_surface_height - rect.height()));
+			} else {
+				rect.moveTo(0, (JNI::egl_surface_height - rect.height()) / 2);
+			}
 		}
 	}
 
@@ -1098,4 +1103,10 @@ void AndroidGraphics3dManager::touchControlNotifyChanged() {
 
 void AndroidGraphics3dManager::touchControlDraw(int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) {
 	_touchcontrols_texture->drawTexture(x, y, w, h, clip);
+}
+
+void AndroidGraphics3dManager::syncVirtkeyboardState(bool virtkeybd_on) {
+	_virtkeybd_on = virtkeybd_on;
+	updateScreenRect();
+	_force_redraw = true;
 }
