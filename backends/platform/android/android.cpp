@@ -76,6 +76,8 @@
 #include "backends/keymapper/keymapper-defaults.h"
 #include "backends/keymapper/standard-actions.h"
 
+#include "backends/dlc/android/playstore.h"
+
 #include "common/util.h"
 #include "common/textconsole.h"
 #include "common/rect.h"
@@ -221,6 +223,10 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 		fsFactory.initSAF();
 	}
 	_fsFactory = &fsFactory;
+
+	// TODO: Create a new factory for Android, to assign it according to the Android's distribution store
+	// E.g. to handle the cases for: playstore, no store (apk on ScummVM website), amazon app store, etc. 
+	_dlcStore = new DLC::PlayStore::PlayStore();
 }
 
 OSystem_Android::~OSystem_Android() {
@@ -255,6 +261,9 @@ OSystem_Android::~OSystem_Android() {
 
 	delete _logger;
 	_logger = nullptr;
+
+	delete _dlcStore;
+	_dlcStore = nullptr;
 }
 
 void *OSystem_Android::timerThreadFunc(void *arg) {

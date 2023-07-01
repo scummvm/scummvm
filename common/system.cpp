@@ -56,6 +56,7 @@ OSystem::OSystem() {
 	_dialogManager = nullptr;
 #endif
 	_fsFactory = nullptr;
+	_dlcStore = nullptr;
 	_backendInitialized = false;
 }
 
@@ -92,6 +93,9 @@ OSystem::~OSystem() {
 
 	delete _fsFactory;
 	_fsFactory = nullptr;
+
+	delete _dlcStore;
+	_dlcStore = nullptr;
 }
 
 void OSystem::initBackend() {
