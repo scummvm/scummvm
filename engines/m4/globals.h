@@ -22,7 +22,7 @@
 #ifndef M4_GLOBALS_H
 #define M4_GLOBALS_H
 
-#include "m4/kernel.h"
+#include "m4/adv_r/kernel.h"
 #include "m4/core/term.h"
 #include "m4/adv_db_r/db_catalog.h"
 #include "m4/adv_r/adv.h"

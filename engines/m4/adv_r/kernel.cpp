@@ -19,7 +19,7 @@
  *
  */
 
-#include "m4/kernel.h"
+#include "m4/adv_r/kernel.h"
 
 namespace M4 {
 
