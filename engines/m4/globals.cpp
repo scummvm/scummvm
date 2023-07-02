@@ -40,6 +40,7 @@ Globals *g_globals;
 
 Globals::Globals() {
 	g_globals = this;
+	_cheating_enabled = gDebugLevel > 0;
 }
 
 Globals::~Globals() {

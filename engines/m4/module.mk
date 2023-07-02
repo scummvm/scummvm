@@ -47,6 +47,7 @@ MODULE_OBJS = \
 	gui/gui_vmng_core.o \
 	gui/gui_vmng_rectangles.o \
 	gui/gui_vmng_screen.o \
+	gui/hotkeys.o \
 	mem/mem.o \
 	mem/memman.o \
 	mem/reloc.o \
