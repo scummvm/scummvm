@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-07-01 14:26+0000\n"
-"PO-Revision-Date: 2023-06-27 09:26+0000\n"
+"PO-Revision-Date: 2023-07-02 18:52+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -4295,32 +4295,26 @@ msgstr "Nei giochi 3D"
 
 #: backends/platform/android/options.cpp:163
 msgid "Select the orientation:"
-msgstr ""
+msgstr "Orientamento schermo:"
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
-#, fuzzy
-#| msgid "Automatic drilling"
 msgid "Automatic"
-msgstr "Perforazione automatica"
+msgstr "Automatico"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
 msgid "Portrait"
-msgstr ""
+msgstr "Verticale"
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
-#, fuzzy
-#| msgid "Escape"
 msgid "Landscape"
-msgstr "Escape"
+msgstr "Orizzontale"
 
 #: backends/platform/android/options.cpp:175
-#, fuzzy
-#| msgid "In 2D games"
 msgid "In games"
-msgstr "Nei giochi 2D"
+msgstr "Nei giochi"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:189
@@ -5022,19 +5016,16 @@ msgstr ""
 "la musica non corrisponderà a quella del gioco originale."
 
 #: engines/agos/midi.cpp:374
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition file\n"
-#| "%s. Without this file,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s. Without this file,\n"
 "the sound effects will not sound the same as the original game."
 msgstr ""
-"Non è stato possibile trovare il file %s, contenente\n"
-"le definizioni degli strumenti AdLib. In assenza di tale file,\n"
-"la musica non corrisponderà a quella del gioco originale."
+"Non è stato possibile trovare il file %s,\n"
+"contenente le definizioni degli strumenti AdLib.\n"
+"In assenza di tale file, la musica non corrisponderà\n"
+"a quella del gioco originale."
 
 #: engines/agos/midi.cpp:453
 #, c-format
