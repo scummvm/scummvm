@@ -1567,12 +1567,12 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 
 uint16 Screen::fetchChar(const char *&s) const {
 	const int fontType = _fonts[_currentFont]->getType();
-	if (fontType == Font::kASCII || fontType == Font::kJIS_X0201)
+	if (fontType == Font::kASCII)
 		return (uint8)*s++;
 
 	uint16 ch = (uint8)*s++;
 
-	if ((fontType == Font::kSJIS && (ch <= 0x7F || (ch >= 0xA1 && ch <= 0xDF))) ||
+	if (((fontType == Font::kSJIS || fontType == Font::kJIS_X0201) && (ch <= 0x7F || (ch >= 0xA1 && ch <= 0xDF))) ||
 		((fontType == Font::kBIG5 || fontType == Font::kJohab) && ch < 0x80))
 			return ch;
 
