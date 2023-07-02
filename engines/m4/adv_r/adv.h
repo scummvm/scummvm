@@ -33,7 +33,6 @@ namespace M4 {
 #define MAXRAILNODES 32
 #define PATH_END     0xffff
 #define MAX_PLYR_STRING_LEN     40
-#define KERNEL_SCRATCH_SIZE 256 // Size of game scratch area
 
 #define STR_FADEPAL "fade palette"
 #define STR_RAILNODE "rail node"
@@ -110,22 +109,6 @@ struct SceneDef {
 
 	int16 depth_table[16] = { 0 };					// Player sprite depth table
 	int32 numRailNodes = 0;							// # of rails
-};
-
-struct GameControl {
-	uint32	scratch[KERNEL_SCRATCH_SIZE];  // Scratch variables for room
-
-	int32 digi_overall_volume_percent;
-	int32 midi_overall_volume_percent;
-	bool camera_pan_instant = false;
-	bool going = false;
-
-	int16 room_id = 0;
-	int16 new_room = 0;
-	int16 previous_section = 0;
-	int16 section_id = 0;
-	int16 new_section = 0;
-	int16 previous_room = 0;
 };
 
 } // namespace M4

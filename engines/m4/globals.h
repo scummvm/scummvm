@@ -27,6 +27,7 @@
 #include "m4/adv_db_r/db_catalog.h"
 #include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_been.h"
+#include "m4/adv_r/adv_game.h"
 #include "m4/adv_r/adv_inv.h"
 #include "m4/adv_r/adv_player.h"
 #include "m4/adv_r/adv_rails.h"
@@ -183,6 +184,7 @@ public:
 	Dialog *_mousePosDialog = nullptr;
 	bool _showMousePos = false;
 	bool _inv_suppress_click_sound = false;
+	bool _between_rooms = false;
 };
 
 #define _G(X) (g_globals->_##X)

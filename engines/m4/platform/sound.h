@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,29 +20,15 @@
  *
  */
 
-#include "common/system.h"
-#include "common/savefile.h"
-#include "m4/adv_r/adv_file.h"
-#include "m4/m4.h"
+#ifndef M4_PLATFORM_SOUND_H
+#define M4_PLATFORM_SOUND_H
+
+#include "m4/m4_types.h"
 
 namespace M4 {
 
-static Common::SeekableReadStream *openForLoading(int slot) {
-	Common::String slotName = g_engine->getSaveStateName(slot);
-	return g_system->getSavefileManager()->openForLoading(slotName);
-}
-
-bool kernel_save_game_exists(int32 slot) {
-	Common::SeekableReadStream *save = openForLoading(slot);
-	bool result = save != nullptr;
-	delete save;
-
-	return result;
-}
-
-bool kernel_load_game(int slot) {
-	return g_engine->loadGameState(slot).getCode() == Common::kNoError;
-}
-
+extern void midi_stop();
 
 } // End of namespace M4
+
+#endif

@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	adv_r/adv_been.o \
 	adv_r/adv_control.o \
 	adv_r/adv_file.o \
+	adv_r/adv_game.o \
 	adv_r/adv_inv.o \
 	adv_r/adv_player.o \
 	adv_r/adv_rails.o \
@@ -51,6 +52,7 @@ MODULE_OBJS = \
 	mem/mem.o \
 	mem/memman.o \
 	mem/reloc.o \
+	platform/sound.o \
 	platform/timer.o \
 	wscript/ws_cruncher.o \
 	wscript/ws_hal.o \

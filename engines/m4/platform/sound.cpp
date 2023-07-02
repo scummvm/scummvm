@@ -19,29 +19,13 @@
  *
  */
 
-#include "common/system.h"
-#include "common/savefile.h"
-#include "m4/adv_r/adv_file.h"
-#include "m4/m4.h"
+#include "m4/platform/sound.h"
+#include "m4/globals.h"
 
 namespace M4 {
 
-static Common::SeekableReadStream *openForLoading(int slot) {
-	Common::String slotName = g_engine->getSaveStateName(slot);
-	return g_system->getSavefileManager()->openForLoading(slotName);
+void midi_stop() {
+	warning("TODO: midi_stop");
 }
-
-bool kernel_save_game_exists(int32 slot) {
-	Common::SeekableReadStream *save = openForLoading(slot);
-	bool result = save != nullptr;
-	delete save;
-
-	return result;
-}
-
-bool kernel_load_game(int slot) {
-	return g_engine->loadGameState(slot).getCode() == Common::kNoError;
-}
-
 
 } // End of namespace M4
