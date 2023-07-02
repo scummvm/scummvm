@@ -53,6 +53,21 @@
 
 namespace AGS3 {
 
+
+using FreeType213::FT2_1_3_Byte;
+using FreeType213::FT2_1_3_Face;
+using FreeType213::FT2_1_3_Library;
+using FreeType213::FT2_1_3_FaceRec;
+using FreeType213::FT2_1_3_Glyph;
+using FreeType213::FT2_1_3_Bitmap;
+using FreeType213::FT2_1_3_BitmapGlyph;
+
+using FreeType213::FT2_1_3_GLYPH_FORMAT_BITMAP;
+using FreeType213::FT2_1_3_RENDER_MODE_MONO;
+using FreeType213::FT2_1_3_RENDER_MODE_NORMAL;
+using FreeType213::FT2_1_3_PIXEL_MODE_MONO;
+using FreeType213::FT2_1_3_PIXEL_MODE_GRAY;
+
 using FreeType213::Init_FreeType;
 using FreeType213::Done_FreeType;
 using FreeType213::Load_Glyph;
