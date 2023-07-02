@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,29 +20,34 @@
  *
  */
 
-#include "common/system.h"
-#include "common/savefile.h"
-#include "m4/adv_r/adv_file.h"
-#include "m4/m4.h"
+#ifndef M4_ADV_R_ADV_GAME_H
+#define M4_ADV_R_ADV_GAME_H
+
+#include "common/serializer.h"
+#include "m4/adv_r/adv.h"
+#include "m4/m4_types.h"
 
 namespace M4 {
 
-static Common::SeekableReadStream *openForLoading(int slot) {
-	Common::String slotName = g_engine->getSaveStateName(slot);
-	return g_system->getSavefileManager()->openForLoading(slotName);
-}
+#define KERNEL_SCRATCH_SIZE 256 // Size of game scratch area
 
-bool kernel_save_game_exists(int32 slot) {
-	Common::SeekableReadStream *save = openForLoading(slot);
-	bool result = save != nullptr;
-	delete save;
+struct GameControl {
+	uint32	scratch[KERNEL_SCRATCH_SIZE];  // Scratch variables for room
+	int16 room_id = 0;
+	int16 new_room = 0;
+	int16 previous_section = 0;
+	int16 section_id = 0;
+	int16 new_section = 0;
+	int16 previous_room = 0;
 
-	return result;
-}
+	int32 digi_overall_volume_percent = 100;
+	int32 midi_overall_volume_percent = 100;
+	bool camera_pan_instant = false;
+	bool going = false;
 
-bool kernel_load_game(int slot) {
-	return g_engine->loadGameState(slot).getCode() == Common::kNoError;
-}
-
+	void syncGame(Common::Serializer &s);
+};
 
 } // End of namespace M4
+
+#endif

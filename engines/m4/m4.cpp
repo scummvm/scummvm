@@ -28,7 +28,9 @@
 #include "graphics/palette.h"
 #include "m4/m4.h"
 #include "m4/adv_r/adv_control.h"
+#include "m4/adv_r/adv_file.h"
 #include "m4/gui/hotkeys.h"
+#include "m4/platform/sound.h"
 #include "m4/detection.h"
 #include "m4/console.h"
 #include "m4/param.h"
@@ -73,15 +75,58 @@ Common::Error M4Engine::run() {
 void M4Engine::m4_inflight() {
 	Hotkeys::add_hot_keys();
 
+	while (_G(game).going) {
+		if (_G(game).previous_room == -2) {
+			midi_stop();
+			kernel_load_game(_G(kernel).restore_slot);
+		}
+#ifdef TODO
+		// Start up next section
+		_G(between_rooms) = true;
+		global_section_constructor();
+		util_exec_function(section_preload_code_pointer);
+		kernel.going = kernel_section_startup();
+		util_exec_function(section_init_code_pointer);
+#endif
+		// TODO
+	}
 }
 
 Common::Error M4Engine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
-	int dummy = 0;
-	s.syncAsUint32LE(dummy);
+	_G(game).syncGame(s);
+
+#ifdef TODO
+
+	if (!fread(&game, sizeof(GameControl), 1, handle))
+		goto done;
+
+	//	kernel.myWalker = walker_ptr;	// restore walker engine pointer
+
+	if (!fread(&player, sizeof(Player), 1, handle)) goto done;
+	if (!fread(&player_info, sizeof(PlayerInfo), 1, handle)) goto done;
+	if (!fread(&global[0], sizeof(int32) * MAX_APPS_GLOBAL_VARS, 1, handle)) goto done;
+	if (!player_been_restore(handle)) goto done;
+
+	conv_restore_game(handle);
+	inv_restore_game(handle);
+
+	if (extra_restore_code_pointer)
+		extra_restore_code_pointer(handle);
+
+	error_flag = TRUE;					// some bytes restored, so OK!
+
+	// set up variables so everyone knows we've teleported.
+	kernel.restore_game = TRUE;
+	game.previous_room = KERNEL_RESTORING_GAME;
+
+	if (!game.digi_overall_volume_percent)
+		game.digi_overall_volume_percent = 100;
+	digi_set_overall_volume(game.digi_overall_volume_percent);
+
+	if (!game.midi_overall_volume_percent)
+		game.midi_overall_volume_percent = 100;
+	midi_set_overall_volume(game.midi_overall_volume_percent);
+#endif
 
 	return Common::kNoError;
 }
