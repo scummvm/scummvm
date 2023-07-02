@@ -943,6 +943,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "erikotamuraoz",		"Eriko Tamura: Oz" },
 	{ "fantazion",			"World Engine Fantazion" },
 	{ "ffa",				"ファンキー ファニー エイリアンズ" },					// Funky Funny Aliens
+	{ "firstpc",			"First PC" },
 	{ "garyukeiba",			"我流競馬" },										// "My style horse racing"
 	{ "ganbareinuchan",		"がんばれ! いぬちゃん ロケンロール編" },				// Ganbare! Inu-chan: Rock'n Roll Edition
 	{ "ganbareinuchan2",	"がんばれ! いぬちゃん 世界の旅へん" },				// Ganbare! Inu-chan: Tour Around the World
@@ -5986,6 +5987,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 								  "PROGRAM/459MAIN.Dxr", "3868e98be38c2fbff814e2b8f1663fc9", 376868, 501),
 	WINGAME2("explorespace5", "", "WIN95.EXE",			 "1a7acbba10a7246ba58c1d53fc7203f5", 1411387,
 								  "PROGRAM/459MAIN.DXR", "3868e98be38c2fbff814e2b8f1663fc9", 376868, 501),
+
+	// Original filename is "ファースト ＰＣ"
+	MACGAME1t_l("firstpc", "", "xn-- -ceu6cuc2c5my703k7ca",	  "ea9e1c1489dee20fe0a949facbf62c0e", 719664, Common::JA_JPN, 501),
+	WINGAME1t_l("firstpc", "", "FIRSTPC.EXE", "969770de110b5dcea469d4153780578b", 1411736, Common::JA_JPN, 501),
 
 	// Developed by Brilliant Interactive Ideas, published by Brainstorm
 	MACGAME1("flipper", "", "Flipper!",	  "6e7e31d05709e1d38d63f4df6a59eec0", 718381, 501),
