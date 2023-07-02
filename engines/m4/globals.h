@@ -135,6 +135,7 @@ public:
 	Dialog_Globals _dialog;
 	Item_Globals _items;
 
+	bool _cheating_enabled = false;
 	bool _cheat_keys_enabled = false;
 	Font *_system_font = nullptr;
 	Font *_font_line = nullptr;
@@ -171,6 +172,7 @@ public:
 	int32 _requests[_MEMTYPE_LIMIT] = { 0 };
 	void *_memBlock[_MEMTYPE_LIMIT] = { nullptr };
 	RGB8 _master_palette[256];
+	bool _pal_fade_in_progress = false;
 	strmRequest *_firstStream = nullptr;
 	strmRequest *_lastStream = nullptr;
 	InvPal *_inverse_pal = nullptr;

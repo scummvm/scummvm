@@ -31,6 +31,7 @@ namespace GUI {
 
 extern void CreateGameMenu(RGB8 *myPalette);
 extern void CreateGameMenuFromMain(RGB8 *myPalette);
+extern void CreateGameMenuMain(RGB8 *myPalette);
 
 } // namespace GUI
 } // namespace Burger

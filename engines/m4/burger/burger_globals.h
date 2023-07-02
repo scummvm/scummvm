@@ -52,7 +52,9 @@ public:
 	GameMode _executing = WHOLE_GAME;
 	int _wilburTerm = 2;
 	GUI::Interface _interface;
-	Common::String _wilbur = "WILBUR";
+	const Common::String _wilbur = "WILBUR";
+	bool _menuSystemInitialized = false;
+	bool _gameMenuFromMain = false;
 
 public:
 	BurgerGlobals();

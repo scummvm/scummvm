@@ -27,29 +27,23 @@
 namespace M4 {
 namespace Burger {
 
+void CreateGameMenuMain(RGB8 *myPalette) {
+	error("TODO: CreateGameMenuMain");
+}
+
 void CreateGameMenu(RGB8 *myPalette) {
-#ifdef TODO
-	if ((!player_commands_allowed()) || (!interface_visible) ||
-		pal_fade_in_progress || menuSystemInitialized) {
-		return;
+	if (player_commands_allowed() && _GI(visible) && !_G(pal_fade_in_progress)
+			&& !_G(menuSystemInitialized)) {
+		_G(gameMenuFromMain) = false;
+		CreateGameMenuMain(myPalette);
 	}
-	gameMenuFromMain = FALSE;
-	CreateGameMenuMain(myPalette);
-#else
-	error("TODO: CreateGameMenu");
-#endif
 }
 
 void CreateGameMenuFromMain(RGB8 *myPalette) {
-#ifdef TODO
-	if (pal_fade_in_progress || menuSystemInitialized) {
-		return;
+	if (!_G(pal_fade_in_progress) && _G(menuSystemInitialized)) {
+		_G(gameMenuFromMain) = true;
+		CreateGameMenuMain(myPalette);
 	}
-	gameMenuFromMain = TRUE;
-	CreateGameMenuMain(myPalette);
-#else
-	error("TODO: CreateGameMenuFromMain");
-#endif
 }
 
 } // namespace Burger

@@ -28,6 +28,7 @@
 #include "graphics/palette.h"
 #include "m4/m4.h"
 #include "m4/adv_r/adv_control.h"
+#include "m4/gui/hotkeys.h"
 #include "m4/detection.h"
 #include "m4/console.h"
 #include "m4/param.h"
@@ -70,7 +71,8 @@ Common::Error M4Engine::run() {
 }
 
 void M4Engine::m4_inflight() {
-	// TODO
+	Hotkeys::add_hot_keys();
+
 }
 
 Common::Error M4Engine::syncGame(Common::Serializer &s) {
