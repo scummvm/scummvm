@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-07-01 14:26+0000\n"
-"PO-Revision-Date: 2023-06-28 05:23+0000\n"
+"PO-Revision-Date: 2023-07-02 06:32+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -4302,32 +4302,26 @@ msgstr "Dans les jeux 3D"
 
 #: backends/platform/android/options.cpp:163
 msgid "Select the orientation:"
-msgstr ""
+msgstr "Choix de l'orientation :"
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
-#, fuzzy
-#| msgid "Automatic drilling"
 msgid "Automatic"
-msgstr "Forage automatique"
+msgstr "Automatique"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
 msgid "Portrait"
-msgstr ""
+msgstr "Portrait"
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
-#, fuzzy
-#| msgid "Escape"
 msgid "Landscape"
-msgstr "S'échapper"
+msgstr "Paysage"
 
 #: backends/platform/android/options.cpp:175
-#, fuzzy
-#| msgid "In 2D games"
 msgid "In games"
-msgstr "Dans les jeux 2D"
+msgstr "Dans les jeux"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:189
