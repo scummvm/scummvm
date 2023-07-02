@@ -19,7 +19,7 @@
  *
  */
 
-#include "m4/kernel.h"
+#include "m4/mem/memman.h"
 
 namespace M4 {
 

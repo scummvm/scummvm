@@ -33,7 +33,7 @@
 #include "m4/platform/sound.h"
 #include "m4/detection.h"
 #include "m4/console.h"
-#include "m4/param.h"
+#include "m4/core/param.h"
 
 namespace M4 {
 

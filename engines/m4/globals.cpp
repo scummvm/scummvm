@@ -32,7 +32,7 @@
 #include "m4/gui/gui_vmng.h"
 #include "m4/mem/mem.h"
 #include "m4/detection.h"
-#include "m4/param.h"
+#include "m4/core/param.h"
 
 namespace M4 {
 

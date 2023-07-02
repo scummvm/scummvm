@@ -4,9 +4,7 @@ MODULE_OBJS = \
 	m4.o \
 	console.o \
 	globals.o \
-	kernel.o \
 	metaengine.o \
-	param.o \
 	adv_db_r/db_catalog.o \
 	adv_r/adv_been.o \
 	adv_r/adv_control.o \
@@ -17,10 +15,12 @@ MODULE_OBJS = \
 	adv_r/adv_rails.o \
 	adv_r/adv_trigger.o \
 	adv_r/db_env.o \
+	adv_r/kernel.o \
 	core/cstring.o \
 	core/errors.o \
 	core/imath.o \
 	core/mouse.o \
+	core/param.o \
 	core/term.o \
 	events/mickey.o \
 	events/mouse_handler.o \

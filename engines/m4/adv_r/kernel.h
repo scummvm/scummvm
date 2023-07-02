@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef M4_KERNEL_H
-#define M4_KERNEL_H
+#ifndef M4_ADV_R_KERNEL_H
+#define M4_ADV_R_KERNEL_H
 
 #include "m4/adv_r/adv.h"
 #include "m4/wscript/ws_machine.h"

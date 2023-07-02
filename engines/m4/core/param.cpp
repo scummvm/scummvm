@@ -20,7 +20,7 @@
  */
 
 #include "common/config-manager.h"
-#include "m4/param.h"
+#include "m4/core/param.h"
 #include "m4/globals.h"
 #include "m4/m4.h"
 
