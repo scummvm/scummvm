@@ -7,7 +7,6 @@ MODULE_OBJS = \
 	kernel.o \
 	metaengine.o \
 	param.o \
-	res.o \
 	adv_db_r/db_catalog.o \
 	adv_r/adv_been.o \
 	adv_r/adv_control.o \
@@ -44,7 +43,6 @@ MODULE_OBJS = \
 	gui/gui_item.o \
 	gui/gui_mouse.o \
 	gui/gui_sys.o \
-	gui/gui_vmng.o \
 	gui/gui_vmng_core.o \
 	gui/gui_vmng_rectangles.o \
 	gui/gui_vmng_screen.o \
@@ -52,6 +50,7 @@ MODULE_OBJS = \
 	mem/mem.o \
 	mem/memman.o \
 	mem/reloc.o \
+	mem/res.o \
 	platform/sound.o \
 	platform/timer.o \
 	wscript/ws_cruncher.o \

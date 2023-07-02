@@ -256,7 +256,7 @@ bool SysFile::open_hash_file() {
 
 	hashfp = dynamic_cast<Common::SeekableReadStream *>(f_io_open(_G(hag).hash_file, "rb"));
 	if (!hashfp) {
-		warning("open_hash_file: %s %s", _G(hag).hash_file.c_str());
+		warning("open_hash_file: %s", _G(hag).hash_file.c_str());
 		hag_success = false;
 		return false;
 	}
