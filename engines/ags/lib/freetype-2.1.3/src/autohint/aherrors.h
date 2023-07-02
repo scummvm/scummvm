@@ -23,8 +23,8 @@
 /*                                                                       */
 /*************************************************************************/
 
-#ifndef __AHERRORS_H__
-#define __AHERRORS_H__
+#ifndef AGS_LIB_FREETYPE_AHERRORS_H
+#define AGS_LIB_FREETYPE_AHERRORS_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftmoderr.h"
 
@@ -35,6 +35,6 @@
 
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/fterrors.h"
 
-#endif /* __AHERRORS_H__ */
+#endif /* AGS_LIB_FREETYPE_AHERRORS_H */
 
 /* END */

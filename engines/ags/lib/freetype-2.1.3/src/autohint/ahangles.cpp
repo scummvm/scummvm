@@ -111,7 +111,7 @@ ah_angle( FT2_1_3_Vector*  v ) {
 		angle += ah_arctan[FT2_1_3_DivFix( dy, dx ) >> ( 16 - AH_ATAN_BITS )];
 	else
 		angle += AH_HALF_PI -
-		         ah_arctan[FT2_1_3_DivFix( dx, dy ) >> ( 16 - AH_ATAN_BITS )];
+				 ah_arctan[FT2_1_3_DivFix( dx, dy ) >> ( 16 - AH_ATAN_BITS )];
 
 	if ( angle > AH_PI )
 		angle -= AH_2PI;
@@ -122,7 +122,7 @@ ah_angle( FT2_1_3_Vector*  v ) {
 
 FT2_1_3_LOCAL_DEF( AH_Angle )
 ah_angle_diff( AH_Angle  angle1,
-               AH_Angle  angle2 ) {
+			   AH_Angle  angle2 ) {
 	AH_Angle  delta;
 
 

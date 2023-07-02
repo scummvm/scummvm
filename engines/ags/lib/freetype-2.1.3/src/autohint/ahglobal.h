@@ -20,8 +20,8 @@
 /***************************************************************************/
 
 
-#ifndef __AHGLOBAL_H__
-#define __AHGLOBAL_H__
+#ifndef AGS_LIB_FREETYPE_AHGLOBAL_H
+#define AGS_LIB_FREETYPE_AHGLOBAL_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
@@ -33,7 +33,7 @@ FT2_1_3_BEGIN_HEADER
 
 
 #define AH_IS_TOP_BLUE( b )  ( (b) == AH_BLUE_CAPITAL_TOP || \
-                               (b) == AH_BLUE_SMALL_TOP   )
+							   (b) == AH_BLUE_SMALL_TOP   )
 
 
 /* compute global metrics automatically */
@@ -43,7 +43,7 @@ ah_hinter_compute_globals( AH_Hinter  hinter );
 
 FT2_1_3_END_HEADER
 
-#endif /* __AHGLOBAL_H__ */
+#endif /* AGS_LIB_FREETYPE_AHGLOBAL_H */
 
 
 /* END */

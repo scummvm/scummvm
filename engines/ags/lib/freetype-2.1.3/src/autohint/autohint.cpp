@@ -22,11 +22,17 @@
 #define FT2_1_3_MAKE_OPTION_SINGLE_OBJECT
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
+
+namespace AGS3 {
+namespace FreeType213 {
+
 #include "ahangles.cpp"
 #include "ahglyph.cpp"
 #include "ahglobal.cpp"
 #include "ahhint.cpp"
 #include "ahmodule.cpp"
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

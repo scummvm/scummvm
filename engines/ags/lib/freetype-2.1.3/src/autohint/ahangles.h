@@ -20,8 +20,8 @@
 /***************************************************************************/
 
 
-#ifndef __AHANGLES_H__
-#define __AHANGLES_H__
+#ifndef AGS_LIB_FREETYPE_AHANGLES_H
+#define AGS_LIB_FREETYPE_AHANGLES_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
@@ -53,12 +53,12 @@ ah_angle( FT2_1_3_Vector*  v );
 
 FT2_1_3_LOCAL( AH_Angle )
 ah_angle_diff( AH_Angle  angle1,
-               AH_Angle  angle2 );
+			   AH_Angle  angle2 );
 
 
 FT2_1_3_END_HEADER
 
-#endif /* __AHANGLES_H__ */
+#endif /* AGS_LIB_FREETYPE_AHANGLES_H */
 
 
 /* END */

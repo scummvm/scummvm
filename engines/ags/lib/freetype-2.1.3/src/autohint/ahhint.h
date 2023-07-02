@@ -19,8 +19,8 @@
 /***************************************************************************/
 
 
-#ifndef __AHHINT_H__
-#define __AHHINT_H__
+#ifndef AGS_LIB_FREETYPE_AHHINT_H
+#define AGS_LIB_FREETYPE_AHHINT_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
@@ -39,15 +39,15 @@ FT2_1_3_BEGIN_HEADER
 /* create a new empty hinter object */
 FT2_1_3_LOCAL( FT2_1_3_Error )
 ah_hinter_new( FT2_1_3_Library  library,
-               AH_Hinter*  ahinter );
+			   AH_Hinter*  ahinter );
 
 /* Load a hinted glyph in the hinter */
 FT2_1_3_LOCAL( FT2_1_3_Error )
 ah_hinter_load_glyph( AH_Hinter     hinter,
-                      FT2_1_3_GlyphSlot  slot,
-                      FT2_1_3_Size       size,
-                      FT2_1_3_UInt       glyph_index,
-                      FT2_1_3_Int32      load_flags );
+					  FT2_1_3_GlyphSlot  slot,
+					  FT2_1_3_Size       size,
+					  FT2_1_3_UInt       glyph_index,
+					  FT2_1_3_Int32      load_flags );
 
 /* finalize a hinter object */
 FT2_1_3_LOCAL( void )
@@ -58,18 +58,18 @@ ah_hinter_done_face_globals( AH_Face_Globals  globals );
 
 FT2_1_3_LOCAL( void )
 ah_hinter_get_global_hints( AH_Hinter  hinter,
-                            FT2_1_3_Face    face,
-                            void**     global_hints,
-                            long*      global_len );
+							FT2_1_3_Face    face,
+							void**     global_hints,
+							long*      global_len );
 
 FT2_1_3_LOCAL( void )
 ah_hinter_done_global_hints( AH_Hinter  hinter,
-                             void*      global_hints );
+							 void*      global_hints );
 
 
 FT2_1_3_END_HEADER
 
-#endif /* __AHHINT_H__ */
+#endif /* AGS_LIB_FREETYPE_AHHINT_H */
 
 
 /* END */

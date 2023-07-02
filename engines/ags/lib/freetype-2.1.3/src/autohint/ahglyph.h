@@ -20,8 +20,8 @@
 /***************************************************************************/
 
 
-#ifndef __AHGLYPH_H__
-#define __AHGLYPH_H__
+#ifndef AGS_LIB_FREETYPE_AHGLYPH_H
+#define AGS_LIB_FREETYPE_AHGLYPH_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
@@ -46,18 +46,18 @@ typedef enum  AH_UV_ {
 
 FT2_1_3_LOCAL( void )
 ah_setup_uv( AH_Outline  outline,
-             AH_UV       source );
+			 AH_UV       source );
 
 
 /* AH_OutlineRec functions - they should be typically called in this order */
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 ah_outline_new( FT2_1_3_Memory    memory,
-                AH_Outline*  aoutline );
+				AH_Outline*  aoutline );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 ah_outline_load( AH_Outline  outline,
-                 FT2_1_3_Face     face );
+				 FT2_1_3_Face     face );
 
 FT2_1_3_LOCAL( void )
 ah_outline_compute_segments( AH_Outline  outline );
@@ -70,15 +70,15 @@ ah_outline_detect_features( AH_Outline  outline );
 
 FT2_1_3_LOCAL( void )
 ah_outline_compute_blue_edges( AH_Outline       outline,
-                               AH_Face_Globals  globals );
+							   AH_Face_Globals  globals );
 
 FT2_1_3_LOCAL( void )
 ah_outline_scale_blue_edges( AH_Outline       outline,
-                             AH_Face_Globals  globals );
+							 AH_Face_Globals  globals );
 
 FT2_1_3_LOCAL( void )
 ah_outline_save( AH_Outline  outline,
-                 AH_Loader   loader );
+				 AH_Loader   loader );
 
 FT2_1_3_LOCAL( void )
 ah_outline_done( AH_Outline  outline );
@@ -86,7 +86,7 @@ ah_outline_done( AH_Outline  outline );
 
 FT2_1_3_END_HEADER
 
-#endif /* __AHGLYPH_H__ */
+#endif /* AGS_LIB_FREETYPE_AHGLYPH_H */
 
 
 /* END */

@@ -48,28 +48,28 @@ ah_dump_edges( AH_Outline  outline ) {
 
 
 		printf ( "Table of %s edges:\n",
-		         !dimension ? "vertical" : "horizontal" );
+				 !dimension ? "vertical" : "horizontal" );
 		printf ( "  [ index |  pos |  dir  | link |"
-		         " serif | blue | opos  |  pos  ]\n" );
+				 " serif | blue | opos  |  pos  ]\n" );
 
 		for ( edge = edges; edge < edge_limit; edge++ ) {
 			printf ( "  [ %5d | %4d | %5s | %4d | %5d |  %c  | %5.2f | %5.2f ]\n",
-			         edge - edges,
-			         (int)edge->fpos,
-			         edge->dir == AH_DIR_UP
-			         ? "up"
-			         : ( edge->dir == AH_DIR_DOWN
-			             ? "down"
-			             : ( edge->dir == AH_DIR_LEFT
-			                 ? "left"
-			                 : ( edge->dir == AH_DIR_RIGHT
-			                     ? "right"
-			                     : "none" ) ) ),
-			         edge->link ? ( edge->link - edges ) : -1,
-			         edge->serif ? ( edge->serif - edges ) : -1,
-			         edge->blue_edge ? 'y' : 'n',
-			         edge->opos / 64.0,
-			         edge->pos / 64.0 );
+					 edge - edges,
+					 (int)edge->fpos,
+					 edge->dir == AH_DIR_UP
+					 ? "up"
+					 : ( edge->dir == AH_DIR_DOWN
+						 ? "down"
+						 : ( edge->dir == AH_DIR_LEFT
+							 ? "left"
+							 : ( edge->dir == AH_DIR_RIGHT
+								 ? "right"
+								 : "none" ) ) ),
+					 edge->link ? ( edge->link - edges ) : -1,
+					 edge->serif ? ( edge->serif - edges ) : -1,
+					 edge->blue_edge ? 'y' : 'n',
+					 edge->opos / 64.0,
+					 edge->pos / 64.0 );
 		}
 
 		edges      = outline->vert_edges;
@@ -97,28 +97,28 @@ ah_dump_segments( AH_Outline  outline ) {
 
 
 		printf ( "Table of %s segments:\n",
-		         !dimension ? "vertical" : "horizontal" );
+				 !dimension ? "vertical" : "horizontal" );
 		printf ( "  [ index |  pos |  dir  | link | serif |"
-		         " numl | first | start ]\n" );
+				 " numl | first | start ]\n" );
 
 		for ( seg = segments; seg < segment_limit; seg++ ) {
 			printf ( "  [ %5d | %4d | %5s | %4d | %5d | %4d | %5d | %5d ]\n",
-			         seg - segments,
-			         (int)seg->pos,
-			         seg->dir == AH_DIR_UP
-			         ? "up"
-			         : ( seg->dir == AH_DIR_DOWN
-			             ? "down"
-			             : ( seg->dir == AH_DIR_LEFT
-			                 ? "left"
-			                 : ( seg->dir == AH_DIR_RIGHT
-			                     ? "right"
-			                     : "none" ) ) ),
-			         seg->link ? (seg->link-segments) : -1,
-			         seg->serif ? (seg->serif-segments) : -1,
-			         (int)seg->num_linked,
-			         seg->first - points,
-			         seg->last - points );
+					 seg - segments,
+					 (int)seg->pos,
+					 seg->dir == AH_DIR_UP
+					 ? "up"
+					 : ( seg->dir == AH_DIR_DOWN
+						 ? "down"
+						 : ( seg->dir == AH_DIR_LEFT
+							 ? "left"
+							 : ( seg->dir == AH_DIR_RIGHT
+								 ? "right"
+								 : "none" ) ) ),
+					 seg->link ? (seg->link-segments) : -1,
+					 seg->serif ? (seg->serif-segments) : -1,
+					 (int)seg->num_linked,
+					 seg->first - points,
+					 seg->last - points );
 		}
 
 		segments      = outline->vert_segments;
@@ -132,7 +132,7 @@ ah_dump_segments( AH_Outline  outline ) {
 /* compute the direction value of a given vector.. */
 static AH_Direction
 ah_compute_direction( FT2_1_3_Pos  dx,
-                      FT2_1_3_Pos  dy ) {
+					  FT2_1_3_Pos  dy ) {
 	AH_Direction  dir;
 	FT2_1_3_Pos        ax = ABS( dx );
 	FT2_1_3_Pos        ay = ABS( dy );
@@ -157,7 +157,7 @@ ah_compute_direction( FT2_1_3_Pos  dx,
 /* the fill direction of a given bbox extrema                      */
 static FT2_1_3_Int
 ah_test_extrema( FT2_1_3_Outline*  outline,
-                 FT2_1_3_Int       n ) {
+				 FT2_1_3_Int       n ) {
 	FT2_1_3_Vector  *prev, *cur, *next;
 	FT2_1_3_Pos      product;
 	FT2_1_3_Int      first, last, c;
@@ -184,12 +184,12 @@ ah_test_extrema( FT2_1_3_Outline*  outline,
 	}
 
 	product = FT2_1_3_MulDiv( cur->x  - prev->x,  /* in.x  */
-	                     next->y - cur->y,   /* out.y */
-	                     0x40 )
-	          -
-	          FT2_1_3_MulDiv( cur->y  - prev->y,  /* in.y  */
-	                     next->x - cur->x,   /* out.x */
-	                     0x40 );
+						 next->y - cur->y,   /* out.y */
+						 0x40 )
+			  -
+			  FT2_1_3_MulDiv( cur->y  - prev->y,  /* in.y  */
+						 next->x - cur->x,   /* out.x */
+						 0x40 );
 
 	retval = 0;
 	if ( product )
@@ -287,7 +287,7 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 ah_outline_new( FT2_1_3_Memory    memory,
-                AH_Outline*  aoutline ) {
+				AH_Outline*  aoutline ) {
 	FT2_1_3_Error     error;
 	AH_Outline   outline;
 
@@ -334,7 +334,7 @@ ah_outline_done( AH_Outline  outline ) {
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( void )
 ah_outline_save( AH_Outline  outline,
-                 AH_Loader   gloader ) {
+				 AH_Loader   gloader ) {
 	AH_Point    point       = outline->points;
 	AH_Point    point_limit = point + outline->num_points;
 	FT2_1_3_Vector*  vec         = gloader->current.outline.points;
@@ -367,7 +367,7 @@ ah_outline_save( AH_Outline  outline,
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 ah_outline_load( AH_Outline  outline,
-                 FT2_1_3_Face     face ) {
+				 FT2_1_3_Face     face ) {
 	FT2_1_3_Memory    memory       = outline->memory;
 	FT2_1_3_Error     error        = AH_Err_Ok;
 	FT2_1_3_Outline*  source       = &face->glyph->outline;
@@ -378,8 +378,8 @@ ah_outline_load( AH_Outline  outline,
 
 	/* check arguments */
 	if ( !face                                          ||
-	        !face->size                                    ||
-	        face->glyph->format != FT2_1_3_GLYPH_FORMAT_OUTLINE )
+			!face->size                                    ||
+			face->glyph->format != FT2_1_3_GLYPH_FORMAT_OUTLINE )
 		return AH_Err_Invalid_Argument;
 
 	/* first of all, reallocate the contours array if necessary */
@@ -388,8 +388,8 @@ ah_outline_load( AH_Outline  outline,
 
 
 		if ( FT2_1_3_RENEW_ARRAY( outline->contours,
-		                     outline->max_contours,
-		                     new_contours ) )
+							 outline->max_contours,
+							 new_contours ) )
 			goto Exit;
 
 		outline->max_contours = new_contours;
@@ -405,8 +405,8 @@ ah_outline_load( AH_Outline  outline,
 
 
 		if ( FT2_1_3_RENEW_ARRAY( outline->points,        max,     news     ) ||
-		        FT2_1_3_RENEW_ARRAY( outline->horz_edges,    max * 2, news * 2 ) ||
-		        FT2_1_3_RENEW_ARRAY( outline->horz_segments, max * 2, news * 2 ) )
+				FT2_1_3_RENEW_ARRAY( outline->horz_edges,    max * 2, news * 2 ) ||
+				FT2_1_3_RENEW_ARRAY( outline->horz_segments, max * 2, news * 2 ) )
 			goto Exit;
 
 		/* readjust some pointers */
@@ -587,7 +587,7 @@ Exit:
 
 FT2_1_3_LOCAL_DEF( void )
 ah_setup_uv( AH_Outline  outline,
-             AH_UV       source ) {
+			 AH_UV       source ) {
 	AH_Point  point       = outline->points;
 	AH_Point  point_limit = point + outline->num_points;
 
@@ -798,7 +798,7 @@ ah_outline_compute_segments( AH_Outline  outline ) {
 				continue;
 
 			if ( ABS( last->out_dir )  == major_dir &&
-			        ABS( point->out_dir ) == major_dir ) {
+					ABS( point->out_dir ) == major_dir ) {
 				/* we are already on an edge, try to locate its start */
 				last = point;
 
@@ -835,7 +835,7 @@ ah_outline_compute_segments( AH_Outline  outline ) {
 						/* a segment is round if either its first or last point */
 						/* is a control point                                   */
 						if ( ( segment->first->flags | point->flags ) &
-						        AH_FLAG_CONTROL                        )
+								AH_FLAG_CONTROL                        )
 							segment->flags |= AH_EDGE_ROUND;
 
 						/* compute segment size */
@@ -1011,7 +1011,7 @@ ah_outline_link_segments( AH_Outline  outline ) {
 					/* positioned to form a black distance                */
 
 					is_dir = (FT2_1_3_Bool)( seg1->dir == outline->horz_major_dir ||
-					                    seg1->dir == outline->vert_major_dir );
+										seg1->dir == outline->vert_major_dir );
 					is_pos = (FT2_1_3_Bool)( pos1 > pos2 );
 
 					if ( pos1 == pos2 || !(is_dir ^ is_pos) )
@@ -1114,7 +1114,7 @@ ah_outline_compute_edges( AH_Outline  outline ) {
 		/*********************************************************************/
 
 		edge_distance_threshold = FT2_1_3_MulFix( outline->edge_distance_threshold,
-		                                     scale );
+											 scale );
 		if ( edge_distance_threshold > 64 / 4 )
 			edge_distance_threshold = 64 / 4;
 
@@ -1327,7 +1327,7 @@ ah_outline_detect_features( AH_Outline  outline ) {
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( void )
 ah_outline_compute_blue_edges( AH_Outline       outline,
-                               AH_Face_Globals  face_globals ) {
+							   AH_Face_Globals  face_globals ) {
 	AH_Edge     edge       = outline->horz_edges;
 	AH_Edge     edge_limit = edge + outline->num_hedges;
 	AH_Globals  globals    = &face_globals->design;
@@ -1384,9 +1384,9 @@ ah_outline_compute_blue_edges( AH_Outline       outline,
 			/*                                                                 */
 			/* of course, that's for TrueType XXX                              */
 			FT2_1_3_Bool  is_top_blue  =
-			    FT2_1_3_BOOL( AH_IS_TOP_BLUE( blue ) );
+				FT2_1_3_BOOL( AH_IS_TOP_BLUE( blue ) );
 			FT2_1_3_Bool  is_major_dir =
-			    FT2_1_3_BOOL( edge->dir == outline->horz_major_dir );
+				FT2_1_3_BOOL( edge->dir == outline->horz_major_dir );
 
 			if ( !blue_active[blue] )
 				continue;
@@ -1451,7 +1451,7 @@ ah_outline_compute_blue_edges( AH_Outline       outline,
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( void )
 ah_outline_scale_blue_edges( AH_Outline       outline,
-                             AH_Face_Globals  globals ) {
+							 AH_Face_Globals  globals ) {
 	AH_Edge  edge       = outline->horz_edges;
 	AH_Edge  edge_limit = edge + outline->num_hedges;
 	FT2_1_3_Pos   delta;

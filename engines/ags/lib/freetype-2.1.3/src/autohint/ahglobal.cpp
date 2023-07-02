@@ -40,7 +40,7 @@ const char*  blue_chars[AH_BLUE_MAX] = {
 /* simple insertion sort */
 static void
 sort_values( FT2_1_3_Int   count,
-             FT2_1_3_Pos*  table ) {
+			 FT2_1_3_Pos*  table ) {
 	FT2_1_3_Int  i, j;
 	FT2_1_3_Pos  swap;
 
@@ -203,8 +203,8 @@ ah_hinter_compute_blues( AH_Hinter  hinter ) {
 
 				/* now, set the `round' flag depending on the segment's kind */
 				round = FT2_1_3_BOOL(
-				            FT2_1_3_CURVE_TAG( glyph->outline.tags[prev] ) != FT2_1_3_CURVE_TAG_ON ||
-				            FT2_1_3_CURVE_TAG( glyph->outline.tags[next] ) != FT2_1_3_CURVE_TAG_ON );
+							FT2_1_3_CURVE_TAG( glyph->outline.tags[prev] ) != FT2_1_3_CURVE_TAG_ON ||
+							FT2_1_3_CURVE_TAG( glyph->outline.tags[next] ) != FT2_1_3_CURVE_TAG_ON );
 
 				AH_LOG(( "%c ", round ? 'r' : 'f' ));
 			}
@@ -230,10 +230,10 @@ ah_hinter_compute_blues( AH_Hinter  hinter ) {
 			*blue_shoot = -10000;
 		} else if ( num_flats == 0 ) {
 			*blue_ref   =
-			    *blue_shoot = rounds[num_rounds / 2];
+				*blue_shoot = rounds[num_rounds / 2];
 		} else if ( num_rounds == 0 ) {
 			*blue_ref   =
-			    *blue_shoot = flats[num_flats / 2];
+				*blue_shoot = flats[num_flats / 2];
 		} else {
 			*blue_ref   = flats[num_flats / 2];
 			*blue_shoot = rounds[num_rounds / 2];
@@ -361,7 +361,7 @@ Exit:
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 ah_hinter_compute_globals( AH_Hinter  hinter ) {
 	return ah_hinter_compute_widths( hinter ) ||
-	       ah_hinter_compute_blues ( hinter );
+		   ah_hinter_compute_blues ( hinter );
 }
 
 

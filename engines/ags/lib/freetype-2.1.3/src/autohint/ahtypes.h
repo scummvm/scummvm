@@ -20,8 +20,8 @@
 /***************************************************************************/
 
 
-#ifndef __AHTYPES_H__
-#define __AHTYPES_H__
+#ifndef AGS_LIB_FREETYPE_AHTYPES_H
+#define AGS_LIB_FREETYPE_AHTYPES_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
@@ -505,7 +505,7 @@ extern FT2_1_3_Bool     ah_debug_disable_vert;
 
 FT2_1_3_END_HEADER
 
-#endif /* __AHTYPES_H__ */
+#endif /* AGS_LIB_FREETYPE_AHTYPES_H */
 
 
 /* END */
