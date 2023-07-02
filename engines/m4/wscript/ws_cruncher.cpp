@@ -61,7 +61,7 @@ bool ws_InitCruncher(void) {
 		error_show(FL, 'OOM!', "%ld bytes.", _G(stackSize));
 	}
 	_G(stackTop) = _G(stackBase);
-	_G(stackLimit) = (uint32 *)((uint32)_G(stackBase) + (uint32)_G(stackSize));
+	_G(stackLimit) = (uint32 *)((byte *)_G(stackBase) + (uint32)_G(stackSize));
 
 	_G(cruncherInitialized) = true;
 

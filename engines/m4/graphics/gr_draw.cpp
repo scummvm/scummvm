@@ -30,7 +30,7 @@ void buffer_put_pixel(Buffer *buf, int32 x, int32 y, byte c) {
 }
 
 byte buffer_get_pixel(Buffer *buf, int32 x, int32 y) {
-	return(*(byte *)((int32)(buf->data) + x + (y * buf->stride)));
+	return *(buf->data + x + (y * buf->stride));
 }
 
 void buffer_draw_box(Buffer *buf, int32 x1, int32 y1, int32 x2, int32 y2, byte color) {

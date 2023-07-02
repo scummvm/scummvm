@@ -243,7 +243,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 	HLock(workHandle);
 	mainAssetPtr = (char *)(*workHandle);
 
-	endOfAssetBlock = (char *)((uint32)mainAssetPtr + (uint32)assetSize);
+	endOfAssetBlock = (char *)((byte *)mainAssetPtr + (uint32)assetSize);
 
 	parseAssetPtr = mainAssetPtr;
 
@@ -286,7 +286,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 			// Store the resource name, and the offset into the resource block
 			_G(globalMACHnames)[*chunkHash] = mem_strdup(wsAssetName);
 			_G(globalMACHHandles)[*chunkHash] = workHandle;
-			_G(globalMACHoffsets)[*chunkHash] = (int32)parseAssetPtr - (int32)mainAssetPtr;
+			_G(globalMACHoffsets)[*chunkHash] = parseAssetPtr - mainAssetPtr;
 
 			// Check that the assetblocksize is big enough that the chunk body was read in...
 			if ((endOfAssetBlock - parseAssetPtr) < (int)(*chunkSize - 12)) {
