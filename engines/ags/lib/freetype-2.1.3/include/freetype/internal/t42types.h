@@ -15,8 +15,8 @@
 /***************************************************************************/
 
 
-#ifndef __T42TYPES_H__
-#define __T42TYPES_H__
+#ifndef AGS_LIB_FREETYPE_T42TYPES_H
+#define AGS_LIB_FREETYPE_T42TYPES_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
@@ -26,6 +26,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/pshints.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -48,7 +50,10 @@ typedef struct  T42_FaceRec_ {
 
 FT2_1_3_END_HEADER
 
-#endif /* __T1TYPES_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_T42TYPES_H */
 
 
 /* END */

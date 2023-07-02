@@ -1,7 +1,10 @@
-#ifndef __FT2_1_3_SYSTEM_MEMORY_H__
-#define __FT2_1_3_SYSTEM_MEMORY_H__
+#ifndef AGS_LIB_FREETYPE_FTSYSMEM_H
+#define AGS_LIB_FREETYPE_FTSYSMEM_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
+
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -46,7 +49,7 @@ typedef struct FT2_1_3_MemoryRec_*   FT2_1_3_Memory;
  *   address of new block. NULL in case of memory exhaustion
  */
 typedef FT2_1_3_Pointer  (*FT2_1_3_Memory_AllocFunc)( FT2_1_3_ULong   size,
-        FT2_1_3_Pointer mem_data );
+		FT2_1_3_Pointer mem_data );
 
 
 /*@**********************************************************************
@@ -63,7 +66,7 @@ typedef FT2_1_3_Pointer  (*FT2_1_3_Memory_AllocFunc)( FT2_1_3_ULong   size,
  *               (see @ft_memory_new)
  */
 typedef void        (*FT2_1_3_Memory_FreeFunc) ( FT2_1_3_Pointer  block,
-        FT2_1_3_Pointer  mem_data );
+		FT2_1_3_Pointer  mem_data );
 
 
 /*@**********************************************************************
@@ -81,9 +84,9 @@ typedef void        (*FT2_1_3_Memory_FreeFunc) ( FT2_1_3_Pointer  block,
  *               (see @ft_memory_new)
  */
 typedef FT2_1_3_Pointer  (*FT2_1_3_Memory_ReallocFunc)( FT2_1_3_Pointer   block,
-        FT2_1_3_ULong     new_size,
-        FT2_1_3_ULong     cur_size,
-        FT2_1_3_Pointer   mem_data );
+		FT2_1_3_ULong     new_size,
+		FT2_1_3_ULong     cur_size,
+		FT2_1_3_Pointer   mem_data );
 
 
 /*@**********************************************************************
@@ -106,8 +109,8 @@ typedef FT2_1_3_Pointer  (*FT2_1_3_Memory_ReallocFunc)( FT2_1_3_Pointer   block,
  *   handle to new memory manager object. NULL in case of failure
  */
 typedef FT2_1_3_Pointer  (*FT2_1_3_Memory_CreateFunc)( FT2_1_3_UInt     size,
-        FT2_1_3_Pointer  init_data,
-        FT2_1_3_Pointer *amem_data );
+		FT2_1_3_Pointer  init_data,
+		FT2_1_3_Pointer *amem_data );
 
 
 /*@**********************************************************************
@@ -122,7 +125,7 @@ typedef FT2_1_3_Pointer  (*FT2_1_3_Memory_CreateFunc)( FT2_1_3_UInt     size,
  *   mem_data :: option manager-specific argument
  */
 typedef void        (*FT2_1_3_Memory_DestroyFunc)( FT2_1_3_Memory  memory,
-        FT2_1_3_Pointer mem_data );
+		FT2_1_3_Pointer mem_data );
 
 
 /*@**********************************************************************
@@ -178,7 +181,7 @@ typedef const FT2_1_3_Memory_FuncsRec*  FT2_1_3_Memory_Funcs;
  */
 FT2_1_3_BASE( FT2_1_3_Memory )
 ft_memory_new( FT2_1_3_Memory_Funcs  mem_funcs,
-               FT2_1_3_Pointer       mem_init_data );
+			   FT2_1_3_Pointer       mem_init_data );
 
 
 /*@**********************************************************************
@@ -198,4 +201,7 @@ ft_memory_destroy( FT2_1_3_Memory  memory );
 
 FT2_1_3_END_HEADER
 
-#endif /* __FT2_1_3_SYSTEM_MEMORY_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTSYSMEM_H */

@@ -1,9 +1,9 @@
 /*  bdftypes.h
 
-  FreeType font driver for bdf fonts
+	FreeType font driver for bdf fonts
 
-  Copyright (C) 2001, 2002 by
-  Francesco Zappa Nardelli
+	Copyright (C) 2001, 2002 by
+	Francesco Zappa Nardelli
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef __BDFTYPES_H__
-#define __BDFTYPES_H__
+#ifndef AGS_LIB_FREETYPE_BDFTYPES_H
+#define AGS_LIB_FREETYPE_BDFTYPES_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -45,8 +47,10 @@ typedef struct  BDF_Public_FaceRec_ {
 
 FT2_1_3_END_HEADER
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
-#endif  /* __BDFTYPES_H__ */
+#endif  /* AGS_LIB_FREETYPE_BDFTYPES_H */
 
 
 /* END */

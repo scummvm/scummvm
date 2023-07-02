@@ -16,11 +16,13 @@
 /***************************************************************************/
 
 
-#ifndef __FTTRIGON_H__
-#define __FTTRIGON_H__
+#ifndef AGS_LIB_FREETYPE_FTTRIGON_H
+#define AGS_LIB_FREETYPE_FTTRIGON_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -170,7 +172,7 @@ FT2_1_3_Tan( FT2_1_3_Angle  angle );
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Angle )
 FT2_1_3_Atan2( FT2_1_3_Fixed  x,
-          FT2_1_3_Fixed  y );
+		  FT2_1_3_Fixed  y );
 
 
 /*************************************************************************/
@@ -192,7 +194,7 @@ FT2_1_3_Atan2( FT2_1_3_Fixed  x,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Angle )
 FT2_1_3_Angle_Diff( FT2_1_3_Angle  angle1,
-               FT2_1_3_Angle  angle2 );
+			   FT2_1_3_Angle  angle2 );
 
 
 /*************************************************************************/
@@ -216,7 +218,7 @@ FT2_1_3_Angle_Diff( FT2_1_3_Angle  angle1,
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_Vector_Unit( FT2_1_3_Vector*  vec,
-                FT2_1_3_Angle    angle );
+				FT2_1_3_Angle    angle );
 
 
 /*************************************************************************/
@@ -235,7 +237,7 @@ FT2_1_3_Vector_Unit( FT2_1_3_Vector*  vec,
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_Vector_Rotate( FT2_1_3_Vector*  vec,
-                  FT2_1_3_Angle    angle );
+				  FT2_1_3_Angle    angle );
 
 
 /*************************************************************************/
@@ -290,8 +292,8 @@ FT2_1_3_Vector_Normalize( FT2_1_3_Vector*  vec );
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_Vector_Polarize( FT2_1_3_Vector*  vec,
-                    FT2_1_3_Fixed   *length,
-                    FT2_1_3_Angle   *angle );
+					FT2_1_3_Fixed   *length,
+					FT2_1_3_Angle   *angle );
 
 
 /*************************************************************************/
@@ -311,15 +313,18 @@ FT2_1_3_Vector_Polarize( FT2_1_3_Vector*  vec,
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_Vector_From_Polar( FT2_1_3_Vector*  vec,
-                      FT2_1_3_Fixed    length,
-                      FT2_1_3_Angle    angle );
+					  FT2_1_3_Fixed    length,
+					  FT2_1_3_Angle    angle );
 
 /* */
 
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTTRIGON_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTTRIGON_H */
 
 
 /* END */

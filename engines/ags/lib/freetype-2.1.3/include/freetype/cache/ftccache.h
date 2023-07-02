@@ -16,13 +16,15 @@
 /***************************************************************************/
 
 
-#ifndef __FTCCACHE_H__
-#define __FTCCACHE_H__
+#ifndef AGS_LIB_FREETYPE_FTCCACHE_H
+#define AGS_LIB_FREETYPE_FTCCACHE_H
 
 
 /* define to allow cache lookup inlining */
 #define  FTC_CACHE_USE_INLINE
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -85,12 +87,12 @@ typedef struct  FTC_NodeRec_ {
 /* can be used as a FTC_Node_DoneFunc */
 FT2_1_3_EXPORT( void )
 ftc_node_done( FTC_Node   node,
-               FTC_Cache  cache );
+			   FTC_Cache  cache );
 
 /* reserved for manager's use */
 FT2_1_3_EXPORT( void )
 ftc_node_destroy( FTC_Node     node,
-                  FTC_Manager  manager );
+				  FTC_Manager  manager );
 
 
 /*************************************************************************/
@@ -147,8 +149,8 @@ typedef struct  FTC_FamilyRec_ {
 /* must be called by any FTC_Node_InitFunc routine */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 ftc_family_init( FTC_Family  family,
-                 FTC_Query   query,
-                 FTC_Cache   cache );
+				 FTC_Query   query,
+				 FTC_Cache   cache );
 
 
 /* can be used as a FTC_Family_DoneFunc; otherwise, must be called */
@@ -204,38 +206,38 @@ typedef void
 
 typedef FT2_1_3_Error
 (*FTC_Family_InitFunc)( FTC_Family  family,
-                        FTC_Query   query,
-                        FTC_Cache   cache );
+						FTC_Query   query,
+						FTC_Cache   cache );
 
 typedef FT2_1_3_Int
 (*FTC_Family_CompareFunc)( FTC_Family  family,
-                           FTC_Query   query );
+						   FTC_Query   query );
 
 typedef void
 (*FTC_Family_DoneFunc)( FTC_Family  family,
-                        FTC_Cache   cache );
+						FTC_Cache   cache );
 
 /* initialize a new cache node */
 typedef FT2_1_3_Error
 (*FTC_Node_InitFunc)( FTC_Node    node,
-                      FT2_1_3_Pointer  type,
-                      FTC_Cache   cache );
+					  FT2_1_3_Pointer  type,
+					  FTC_Cache   cache );
 
 /* compute the weight of a given cache node */
 typedef FT2_1_3_ULong
 (*FTC_Node_WeightFunc)( FTC_Node   node,
-                        FTC_Cache  cache );
+						FTC_Cache  cache );
 
 /* compare a node to a given key pair */
 typedef FT2_1_3_Bool
 (*FTC_Node_CompareFunc)( FTC_Node    node,
-                         FT2_1_3_Pointer  key,
-                         FTC_Cache   cache );
+						 FT2_1_3_Pointer  key,
+						 FTC_Cache   cache );
 
 /* finalize a given cache node */
 typedef void
 (*FTC_Node_DoneFunc)( FTC_Node   node,
-                      FTC_Cache  cache );
+					  FTC_Cache  cache );
 
 
 typedef struct  FTC_Cache_ClassRec_ {
@@ -285,15 +287,17 @@ ftc_cache_init( FTC_Cache  cache );
 /* can be called when the key's hash value has been computed */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 ftc_cache_lookup( FTC_Cache  cache,
-                  FTC_Query  query,
-                  FTC_Node  *anode );
+				  FTC_Query  query,
+				  FTC_Node  *anode );
 
 /* */
 
 FT2_1_3_END_HEADER
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
-#endif /* __FTCCACHE_H__ */
+#endif /* AGS_LIB_FREETYPE_FTCCACHE_H */
 
 
 /* END */

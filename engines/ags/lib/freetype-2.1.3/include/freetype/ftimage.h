@@ -24,8 +24,8 @@
 /*************************************************************************/
 
 
-#ifndef __FTIMAGE_H__
-#define __FTIMAGE_H__
+#ifndef AGS_LIB_FREETYPE_FTIMAGE_H
+#define AGS_LIB_FREETYPE_FTIMAGE_H
 
 
 /* _STANDALONE_ is from ftgrays.c */
@@ -33,6 +33,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #endif
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -458,7 +460,7 @@ typedef enum  FT2_1_3_Outline_Flags_ {
 #define FT2_1_3_CURVE_TAG_TOUCH_Y     16  /* reserved for the TrueType hinter */
 
 #define FT2_1_3_CURVE_TAG_TOUCH_BOTH  ( FT2_1_3_CURVE_TAG_TOUCH_X | \
-                                   FT2_1_3_CURVE_TAG_TOUCH_Y )
+								   FT2_1_3_CURVE_TAG_TOUCH_Y )
 
 #define  FT2_1_3_Curve_Tag_On       FT2_1_3_CURVE_TAG_ON
 #define  FT2_1_3_Curve_Tag_Conic    FT2_1_3_CURVE_TAG_CONIC
@@ -488,7 +490,7 @@ typedef enum  FT2_1_3_Outline_Flags_ {
 /*                                                                       */
 typedef int
 (*FT2_1_3_Outline_MoveToFunc)( FT2_1_3_Vector*  to,
-                          void*       user );
+						  void*       user );
 
 #define FT2_1_3_Outline_MoveTo_Func  FT2_1_3_Outline_MoveToFunc
 
@@ -514,7 +516,7 @@ typedef int
 /*                                                                       */
 typedef int
 (*FT2_1_3_Outline_LineToFunc)( FT2_1_3_Vector*  to,
-                          void*       user );
+						  void*       user );
 
 #define  FT2_1_3_Outline_LineTo_Func  FT2_1_3_Outline_LineToFunc
 
@@ -544,8 +546,8 @@ typedef int
 /*                                                                       */
 typedef int
 (*FT2_1_3_Outline_ConicToFunc)( FT2_1_3_Vector*  control,
-                           FT2_1_3_Vector*  to,
-                           void*       user );
+						   FT2_1_3_Vector*  to,
+						   void*       user );
 
 #define  FT2_1_3_Outline_ConicTo_Func  FT2_1_3_Outline_ConicToFunc
 
@@ -575,9 +577,9 @@ typedef int
 /*                                                                       */
 typedef int
 (*FT2_1_3_Outline_CubicToFunc)( FT2_1_3_Vector*  control1,
-                           FT2_1_3_Vector*  control2,
-                           FT2_1_3_Vector*  to,
-                           void*       user );
+						   FT2_1_3_Vector*  control2,
+						   FT2_1_3_Vector*  to,
+						   void*       user );
 
 #define  FT2_1_3_Outline_CubicTo_Func  FT2_1_3_Outline_CubicToFunc
 
@@ -657,10 +659,10 @@ typedef struct  FT2_1_3_Outline_Funcs_ {
 /*                                                                       */
 #ifndef FT2_1_3_IMAGE_TAG
 #define FT2_1_3_IMAGE_TAG( value, _x1, _x2, _x3, _x4 )  \
-          value = ( ( (unsigned long)_x1 << 24 ) | \
-                    ( (unsigned long)_x2 << 16 ) | \
-                    ( (unsigned long)_x3 << 8  ) | \
-                      (unsigned long)_x4         )
+		  value = ( ( (unsigned long)_x1 << 24 ) | \
+					( (unsigned long)_x2 << 16 ) | \
+					( (unsigned long)_x3 << 8  ) | \
+					  (unsigned long)_x4         )
 #endif /* FT2_1_3_IMAGE_TAG */
 
 
@@ -860,9 +862,9 @@ typedef struct  FT2_1_3_Span_ {
 /*                                                                       */
 typedef void
 (*FT2_1_3_SpanFunc)( int       y,
-                int       count,
-                FT2_1_3_Span*  spans,
-                void*     user );
+				int       count,
+				FT2_1_3_Span*  spans,
+				void*     user );
 
 #define FT2_1_3_Raster_Span_Func   FT2_1_3_SpanFunc
 
@@ -892,8 +894,8 @@ typedef void
 /*                                                                       */
 typedef int
 (*FT2_1_3_Raster_BitTest_Func)( int    y,
-                           int    x,
-                           void*  user );
+						   int    x,
+						   void*  user );
 
 
 /*************************************************************************/
@@ -920,8 +922,8 @@ typedef int
 /*                                                                       */
 typedef void
 (*FT2_1_3_Raster_BitSet_Func)( int    y,
-                          int    x,
-                          void*  user );
+						  int    x,
+						  void*  user );
 
 
 /*************************************************************************/
@@ -1068,7 +1070,7 @@ typedef struct  FT2_1_3_Raster_Params_ {
 /*                                                                       */
 typedef int
 (*FT2_1_3_Raster_NewFunc)( void*       memory,
-                      FT2_1_3_Raster*  raster );
+					  FT2_1_3_Raster*  raster );
 
 #define  FT2_1_3_Raster_New_Func    FT2_1_3_Raster_NewFunc
 
@@ -1117,8 +1119,8 @@ typedef void
 /*                                                                       */
 typedef void
 (*FT2_1_3_Raster_ResetFunc)( FT2_1_3_Raster       raster,
-                        unsigned char*  pool_base,
-                        unsigned long   pool_size );
+						unsigned char*  pool_base,
+						unsigned long   pool_size );
 
 #define  FT2_1_3_Raster_Reset_Func   FT2_1_3_Raster_ResetFunc
 
@@ -1142,8 +1144,8 @@ typedef void
 /*                                                                       */
 typedef int
 (*FT2_1_3_Raster_SetModeFunc)( FT2_1_3_Raster      raster,
-                          unsigned long  mode,
-                          void*          args );
+						  unsigned long  mode,
+						  void*          args );
 
 #define  FT2_1_3_Raster_Set_Mode_Func  FT2_1_3_Raster_SetModeFunc
 
@@ -1183,7 +1185,7 @@ typedef int
 /*                                                                       */
 typedef int
 (*FT2_1_3_Raster_RenderFunc)( FT2_1_3_Raster          raster,
-                         FT2_1_3_Raster_Params*  params );
+						 FT2_1_3_Raster_Params*  params );
 
 #define  FT2_1_3_Raster_Render_Func    FT2_1_3_Raster_RenderFunc
 
@@ -1222,7 +1224,10 @@ typedef struct  FT2_1_3_Raster_Funcs_ {
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTIMAGE_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTIMAGE_H */
 
 
 /* END */

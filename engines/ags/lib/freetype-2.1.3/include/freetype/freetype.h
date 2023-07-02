@@ -16,8 +16,8 @@
 /***************************************************************************/
 
 
-#ifndef __FREETYPE_H__
-#define __FREETYPE_H__
+#ifndef AGS_LIB_FREETYPE_FREETYPE_H
+#define AGS_LIB_FREETYPE_FREETYPE_H
 
 
 /*************************************************************************/
@@ -43,6 +43,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/fterrors.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/fttypes.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -408,10 +410,10 @@ typedef struct FT2_1_3_CharMapRec_*  FT2_1_3_CharMap;
 
 #ifndef FT2_1_3_ENC_TAG
 #define FT2_1_3_ENC_TAG( value, a, b, c, d )         \
-          value = ( ( (FT2_1_3_UInt32)(a) << 24 ) |  \
-                    ( (FT2_1_3_UInt32)(b) << 16 ) |  \
-                    ( (FT2_1_3_UInt32)(c) <<  8 ) |  \
-                      (FT2_1_3_UInt32)(d)         )
+		  value = ( ( (FT2_1_3_UInt32)(a) << 24 ) |  \
+					( (FT2_1_3_UInt32)(b) << 16 ) |  \
+					( (FT2_1_3_UInt32)(c) <<  8 ) |  \
+					  (FT2_1_3_UInt32)(d)         )
 
 #endif /* FT2_1_3_ENC_TAG */
 
@@ -933,7 +935,7 @@ typedef struct  FT2_1_3_FaceRec_ {
 /*    @FT2_1_3_HAS_VERTICAL can be used to check for vertical metrics.        */
 /*                                                                       */
 #define FT2_1_3_HAS_HORIZONTAL( face ) \
-          ( face->face_flags & FT2_1_3_FACE_FLAG_HORIZONTAL )
+		  ( face->face_flags & FT2_1_3_FACE_FLAG_HORIZONTAL )
 
 
 /*************************************************************************/
@@ -946,7 +948,7 @@ typedef struct  FT2_1_3_FaceRec_ {
 /*    metrics.                                                           */
 /*                                                                       */
 #define FT2_1_3_HAS_VERTICAL( face ) \
-          ( face->face_flags & FT2_1_3_FACE_FLAG_VERTICAL )
+		  ( face->face_flags & FT2_1_3_FACE_FLAG_VERTICAL )
 
 
 /*************************************************************************/
@@ -959,7 +961,7 @@ typedef struct  FT2_1_3_FaceRec_ {
 /*    data that can be accessed with @FT2_1_3_Get_Kerning.                    */
 /*                                                                       */
 #define FT2_1_3_HAS_KERNING( face ) \
-          ( face->face_flags & FT2_1_3_FACE_FLAG_KERNING )
+		  ( face->face_flags & FT2_1_3_FACE_FLAG_KERNING )
 
 
 /*************************************************************************/
@@ -973,7 +975,7 @@ typedef struct  FT2_1_3_FaceRec_ {
 /*    OpenType/CFF font formats.                                         */
 /*                                                                       */
 #define FT2_1_3_IS_SCALABLE( face ) \
-          ( face->face_flags & FT2_1_3_FACE_FLAG_SCALABLE )
+		  ( face->face_flags & FT2_1_3_FACE_FLAG_SCALABLE )
 
 
 /*************************************************************************/
@@ -991,7 +993,7 @@ typedef struct  FT2_1_3_FaceRec_ {
 /*    and @"engines/ags/lib/freetype-2.1.3/include/freetype/tttables.h" are available.                           */
 /*                                                                       */
 #define FT2_1_3_IS_SFNT( face ) \
-          ( face->face_flags & FT2_1_3_FACE_FLAG_SFNT )
+		  ( face->face_flags & FT2_1_3_FACE_FLAG_SFNT )
 
 
 /*************************************************************************/
@@ -1005,7 +1007,7 @@ typedef struct  FT2_1_3_FaceRec_ {
 /*    etc.) glyphs.                                                      */
 /*                                                                       */
 #define FT2_1_3_IS_FIXED_WIDTH( face ) \
-          ( face->face_flags & FT2_1_3_FACE_FLAG_FIXED_WIDTH )
+		  ( face->face_flags & FT2_1_3_FACE_FLAG_FIXED_WIDTH )
 
 
 /*************************************************************************/
@@ -1019,7 +1021,7 @@ typedef struct  FT2_1_3_FaceRec_ {
 /*    structure.                                                         */
 /*                                                                       */
 #define FT2_1_3_HAS_FIXED_SIZES( face ) \
-          ( face->face_flags & FT2_1_3_FACE_FLAG_FIXED_SIZES )
+		  ( face->face_flags & FT2_1_3_FACE_FLAG_FIXED_SIZES )
 
 
 /* */
@@ -1035,7 +1037,7 @@ typedef struct  FT2_1_3_FaceRec_ {
 /*    glyph bitmaps.                                                     */
 /*                                                                       */
 #define FT2_1_3_HAS_FAST_GLYPHS( face ) \
-          ( face->face_flags & FT2_1_3_FACE_FLAG_FAST_GLYPHS )
+		  ( face->face_flags & FT2_1_3_FACE_FLAG_FAST_GLYPHS )
 
 
 /*************************************************************************/
@@ -1048,7 +1050,7 @@ typedef struct  FT2_1_3_FaceRec_ {
 /*    glyph names that can be accessed through @FT2_1_3_Get_Glyph_Names.      */
 /*                                                                       */
 #define FT2_1_3_HAS_GLYPH_NAMES( face ) \
-          ( face->face_flags & FT2_1_3_FACE_FLAG_GLYPH_NAMES )
+		  ( face->face_flags & FT2_1_3_FACE_FLAG_GLYPH_NAMES )
 
 
 /*************************************************************************/
@@ -1063,7 +1065,7 @@ typedef struct  FT2_1_3_FaceRec_ {
 /*    design you want.                                                   */
 /*                                                                       */
 #define FT2_1_3_HAS_MULTIPLE_MASTERS( face ) \
-          ( face->face_flags & FT2_1_3_FACE_FLAG_MULTIPLE_MASTERS )
+		  ( face->face_flags & FT2_1_3_FACE_FLAG_MULTIPLE_MASTERS )
 
 
 /*************************************************************************/
@@ -1441,9 +1443,9 @@ FT2_1_3_Init_FreeType( FT2_1_3_Library  *alibrary );
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_Library_Version( FT2_1_3_Library   library,
-                    FT2_1_3_Int      *amajor,
-                    FT2_1_3_Int      *aminor,
-                    FT2_1_3_Int      *apatch );
+					FT2_1_3_Int      *amajor,
+					FT2_1_3_Int      *aminor,
+					FT2_1_3_Int      *apatch );
 
 
 /*************************************************************************/
@@ -1634,9 +1636,9 @@ typedef struct  FT2_1_3_Open_Args_ {
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_New_Face( FT2_1_3_Library   library,
-             const char*  filepathname,
-             FT2_1_3_Long      face_index,
-             FT2_1_3_Face     *aface );
+			 const char*  filepathname,
+			 FT2_1_3_Long      face_index,
+			 FT2_1_3_Face     *aface );
 
 
 /*************************************************************************/
@@ -1682,10 +1684,10 @@ FT2_1_3_New_Face( FT2_1_3_Library   library,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_New_Memory_Face( FT2_1_3_Library      library,
-                    const FT2_1_3_Byte*  file_base,
-                    FT2_1_3_Long         file_size,
-                    FT2_1_3_Long         face_index,
-                    FT2_1_3_Face        *aface );
+					const FT2_1_3_Byte*  file_base,
+					FT2_1_3_Long         file_size,
+					FT2_1_3_Long         face_index,
+					FT2_1_3_Face        *aface );
 
 
 /*************************************************************************/
@@ -1726,9 +1728,9 @@ FT2_1_3_New_Memory_Face( FT2_1_3_Library      library,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Open_Face( FT2_1_3_Library           library,
-              const FT2_1_3_Open_Args*  args,
-              FT2_1_3_Long              face_index,
-              FT2_1_3_Face             *aface );
+			  const FT2_1_3_Open_Args*  args,
+			  FT2_1_3_Long              face_index,
+			  FT2_1_3_Face             *aface );
 
 
 /*************************************************************************/
@@ -1765,7 +1767,7 @@ FT2_1_3_Open_Face( FT2_1_3_Library           library,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Attach_File( FT2_1_3_Face      face,
-                const char*  filepathname );
+				const char*  filepathname );
 
 
 /*************************************************************************/
@@ -1797,7 +1799,7 @@ FT2_1_3_Attach_File( FT2_1_3_Face      face,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Attach_Stream( FT2_1_3_Face        face,
-                  FT2_1_3_Open_Args*  parameters );
+				  FT2_1_3_Open_Args*  parameters );
 
 
 /*************************************************************************/
@@ -1855,10 +1857,10 @@ FT2_1_3_Done_Face( FT2_1_3_Face  face );
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Set_Char_Size( FT2_1_3_Face     face,
-                  FT2_1_3_F26Dot6  char_width,
-                  FT2_1_3_F26Dot6  char_height,
-                  FT2_1_3_UInt     horz_resolution,
-                  FT2_1_3_UInt     vert_resolution );
+				  FT2_1_3_F26Dot6  char_width,
+				  FT2_1_3_F26Dot6  char_height,
+				  FT2_1_3_UInt     horz_resolution,
+				  FT2_1_3_UInt     vert_resolution );
 
 
 /*************************************************************************/
@@ -1902,8 +1904,8 @@ FT2_1_3_Set_Char_Size( FT2_1_3_Face     face,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Set_Pixel_Sizes( FT2_1_3_Face  face,
-                    FT2_1_3_UInt  pixel_width,
-                    FT2_1_3_UInt  pixel_height );
+					FT2_1_3_UInt  pixel_width,
+					FT2_1_3_UInt  pixel_height );
 
 
 /*************************************************************************/
@@ -1942,8 +1944,8 @@ FT2_1_3_Set_Pixel_Sizes( FT2_1_3_Face  face,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Load_Glyph( FT2_1_3_Face   face,
-               FT2_1_3_UInt   glyph_index,
-               FT2_1_3_Int32  load_flags );
+			   FT2_1_3_UInt   glyph_index,
+			   FT2_1_3_Int32  load_flags );
 
 
 /*************************************************************************/
@@ -1987,8 +1989,8 @@ FT2_1_3_Load_Glyph( FT2_1_3_Face   face,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Load_Char( FT2_1_3_Face   face,
-              FT2_1_3_ULong  char_code,
-              FT2_1_3_Int32  load_flags );
+			  FT2_1_3_ULong  char_code,
+			  FT2_1_3_Int32  load_flags );
 
 
 /****************************************************************************
@@ -2171,8 +2173,8 @@ FT2_1_3_Load_Char( FT2_1_3_Face   face,
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_Set_Transform( FT2_1_3_Face     face,
-                  FT2_1_3_Matrix*  matrix,
-                  FT2_1_3_Vector*  delta );
+				  FT2_1_3_Matrix*  matrix,
+				  FT2_1_3_Vector*  delta );
 
 
 /*************************************************************************/
@@ -2274,7 +2276,7 @@ typedef enum  FT2_1_3_Render_Mode_ {
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Render_Glyph( FT2_1_3_GlyphSlot    slot,
-                 FT2_1_3_Render_Mode  render_mode );
+				 FT2_1_3_Render_Mode  render_mode );
 
 
 /*************************************************************************/
@@ -2375,10 +2377,10 @@ typedef enum  FT2_1_3_Kerning_Mode_ {
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Get_Kerning( FT2_1_3_Face     face,
-                FT2_1_3_UInt     left_glyph,
-                FT2_1_3_UInt     right_glyph,
-                FT2_1_3_UInt     kern_mode,
-                FT2_1_3_Vector  *akerning );
+				FT2_1_3_UInt     left_glyph,
+				FT2_1_3_UInt     right_glyph,
+				FT2_1_3_UInt     kern_mode,
+				FT2_1_3_Vector  *akerning );
 
 
 /*************************************************************************/
@@ -2419,9 +2421,9 @@ FT2_1_3_Get_Kerning( FT2_1_3_Face     face,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Get_Glyph_Name( FT2_1_3_Face     face,
-                   FT2_1_3_UInt     glyph_index,
-                   FT2_1_3_Pointer  buffer,
-                   FT2_1_3_UInt     buffer_max );
+				   FT2_1_3_UInt     glyph_index,
+				   FT2_1_3_Pointer  buffer,
+				   FT2_1_3_UInt     buffer_max );
 
 
 /*************************************************************************/
@@ -2471,7 +2473,7 @@ FT2_1_3_Get_Postscript_Name( FT2_1_3_Face  face );
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Select_Charmap( FT2_1_3_Face      face,
-                   FT2_1_3_Encoding  encoding );
+				   FT2_1_3_Encoding  encoding );
 
 
 /*************************************************************************/
@@ -2499,7 +2501,7 @@ FT2_1_3_Select_Charmap( FT2_1_3_Face      face,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Set_Charmap( FT2_1_3_Face     face,
-                FT2_1_3_CharMap  charmap );
+				FT2_1_3_CharMap  charmap );
 
 
 /*************************************************************************/
@@ -2527,7 +2529,7 @@ FT2_1_3_Set_Charmap( FT2_1_3_Face     face,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_UInt )
 FT2_1_3_Get_Char_Index( FT2_1_3_Face   face,
-                   FT2_1_3_ULong  charcode );
+				   FT2_1_3_ULong  charcode );
 
 
 /*************************************************************************/
@@ -2575,7 +2577,7 @@ FT2_1_3_Get_Char_Index( FT2_1_3_Face   face,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_ULong )
 FT2_1_3_Get_First_Char( FT2_1_3_Face   face,
-                   FT2_1_3_UInt  *agindex );
+				   FT2_1_3_UInt  *agindex );
 
 
 /*************************************************************************/
@@ -2609,8 +2611,8 @@ FT2_1_3_Get_First_Char( FT2_1_3_Face   face,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_ULong )
 FT2_1_3_Get_Next_Char( FT2_1_3_Face    face,
-                  FT2_1_3_ULong   char_code,
-                  FT2_1_3_UInt   *agindex );
+				  FT2_1_3_ULong   char_code,
+				  FT2_1_3_UInt   *agindex );
 
 
 /*************************************************************************/
@@ -2632,7 +2634,7 @@ FT2_1_3_Get_Next_Char( FT2_1_3_Face    face,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_UInt )
 FT2_1_3_Get_Name_Index( FT2_1_3_Face     face,
-                   FT2_1_3_String*  glyph_name );
+				   FT2_1_3_String*  glyph_name );
 
 
 
@@ -2690,8 +2692,8 @@ FT2_1_3_Get_Name_Index( FT2_1_3_Face     face,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Long )
 FT2_1_3_MulDiv( FT2_1_3_Long  a,
-           FT2_1_3_Long  b,
-           FT2_1_3_Long  c );
+		   FT2_1_3_Long  b,
+		   FT2_1_3_Long  c );
 
 
 /*************************************************************************/
@@ -2725,7 +2727,7 @@ FT2_1_3_MulDiv( FT2_1_3_Long  a,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Long )
 FT2_1_3_MulFix( FT2_1_3_Long  a,
-           FT2_1_3_Long  b );
+		   FT2_1_3_Long  b );
 
 
 /*************************************************************************/
@@ -2753,7 +2755,7 @@ FT2_1_3_MulFix( FT2_1_3_Long  a,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Long )
 FT2_1_3_DivFix( FT2_1_3_Long  a,
-           FT2_1_3_Long  b );
+		   FT2_1_3_Long  b );
 
 
 /*************************************************************************/
@@ -2831,7 +2833,7 @@ FT2_1_3_FloorFix( FT2_1_3_Fixed  a );
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_Vector_Transform( FT2_1_3_Vector*  vec,
-                     FT2_1_3_Matrix*  matrix );
+					 FT2_1_3_Matrix*  matrix );
 
 
 /* */
@@ -2839,7 +2841,10 @@ FT2_1_3_Vector_Transform( FT2_1_3_Vector*  vec,
 
 FT2_1_3_END_HEADER
 
-#endif /* __FREETYPE_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FREETYPE_H */
 
 
 /* END */

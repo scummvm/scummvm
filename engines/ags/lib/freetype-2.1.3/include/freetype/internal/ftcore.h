@@ -1,9 +1,12 @@
-#ifndef __FT2_1_3_CORE_H__
-#define __FT2_1_3_CORE_H__
+#ifndef AGS_LIB_FREETYPE_FTCORE_H
+#define AGS_LIB_FREETYPE_FTCORE_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/fttypes.h"
 #include FT2_1_3_SYSTEM_MEMORY_H
+
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -28,7 +31,7 @@ FT2_1_3_BEGIN_HEADER
  *   item_data :: optional argument to cleanup routine
  */
 typedef void  (*FT2_1_3_CleanupFunc)( FT2_1_3_Pointer  item,
-                                 FT2_1_3_Pointer  item_data );
+								 FT2_1_3_Pointer  item_data );
 
 
 
@@ -85,20 +88,20 @@ typedef struct FT2_1_3_CleanupStackRec_ {
 
 FT2_1_3_BASE( void )
 FT2_1_3_cleanup_stack_push( FT2_1_3_CleanupStack  stack,
-                       FT2_1_3_Pointer       item,
-                       FT2_1_3_CleanupFunc   item_func,
-                       FT2_1_3_Pointer       item_data );
+					   FT2_1_3_Pointer       item,
+					   FT2_1_3_CleanupFunc   item_func,
+					   FT2_1_3_Pointer       item_data );
 
 FT2_1_3_BASE( void )
 FT2_1_3_cleanup_stack_pop( FT2_1_3_CleanupStack   stack,
-                      FT2_1_3_Int            destroy );
+					  FT2_1_3_Int            destroy );
 
 FT2_1_3_BASE( FT2_1_3_CleanupItem )
 FT2_1_3_cleanup_stack_peek( FT2_1_3_CleanupStack  stack );
 
 FT2_1_3_BASE( void )
 FT2_1_3_cleanup_throw( FT2_1_3_CleanupStack  stack,
-                  FT2_1_3_Error         error );
+				  FT2_1_3_Error         error );
 
 
 
@@ -163,18 +166,14 @@ typedef struct FT2_1_3_XHandlerRec_ {
 
 FT2_1_3_BASE( void )
 FT2_1_3_xhandler_enter( FT2_1_3_XHandler  xhandler,
-                   FT2_1_3_Memory    memory );
+				   FT2_1_3_Memory    memory );
 
 FT2_1_3_BASE( void )
 FT2_1_3_xhandler_exit( FT2_1_3_XHandler  xhandler );
 
-
-
-
-
-
-
-
 FT2_1_3_END_HEADER
 
-#endif /* __FT2_1_3_CORE_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTCORE_H */

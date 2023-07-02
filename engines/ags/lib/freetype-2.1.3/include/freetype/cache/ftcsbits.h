@@ -16,14 +16,16 @@
 /***************************************************************************/
 
 
-#ifndef __FTCSBITS_H__
-#define __FTCSBITS_H__
+#ifndef AGS_LIB_FREETYPE_FTCSBITS_H
+#define AGS_LIB_FREETYPE_FTCSBITS_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftcache.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftcimage.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -144,7 +146,7 @@ typedef FTC_SBitCache  FTC_SBit_Cache;
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FTC_SBitCache_New( FTC_Manager     manager,
-                   FTC_SBitCache  *acache );
+				   FTC_SBitCache  *acache );
 
 
 /*************************************************************************/
@@ -194,10 +196,10 @@ FTC_SBitCache_New( FTC_Manager     manager,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FTC_SBitCache_Lookup( FTC_SBitCache    cache,
-                      FTC_ImageType    type,
-                      FT2_1_3_UInt          gindex,
-                      FTC_SBit        *sbit,
-                      FTC_Node        *anode );
+					  FTC_ImageType    type,
+					  FT2_1_3_UInt          gindex,
+					  FTC_SBit        *sbit,
+					  FTC_Node        *anode );
 
 
 /* */
@@ -224,7 +226,7 @@ FTC_SBitCache_Lookup( FTC_SBitCache    cache,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FTC_SBit_Cache_New( FTC_Manager      manager,
-                    FTC_SBit_Cache  *acache );
+					FTC_SBit_Cache  *acache );
 
 
 /*************************************************************************/
@@ -261,14 +263,17 @@ FTC_SBit_Cache_New( FTC_Manager      manager,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FTC_SBit_Cache_Lookup( FTC_SBit_Cache   cache,
-                       FTC_Image_Desc*  desc,
-                       FT2_1_3_UInt          gindex,
-                       FTC_SBit        *sbit );
+					   FTC_Image_Desc*  desc,
+					   FT2_1_3_UInt          gindex,
+					   FTC_SBit        *sbit );
 
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTCSBITS_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTCSBITS_H */
 
 
 /* END */

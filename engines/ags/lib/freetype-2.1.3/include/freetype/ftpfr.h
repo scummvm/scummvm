@@ -16,12 +16,14 @@
 /***************************************************************************/
 
 
-#ifndef __FTPFR_H__
-#define __FTPFR_H__
+#ifndef AGS_LIB_FREETYPE_FTPFR_H
+#define AGS_LIB_FREETYPE_FTPFR_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -81,10 +83,10 @@ FT2_1_3_BEGIN_HEADER
  */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Get_PFR_Metrics( FT2_1_3_Face     face,
-                    FT2_1_3_UInt    *aoutline_resolution,
-                    FT2_1_3_UInt    *ametrics_resolution,
-                    FT2_1_3_Fixed   *ametrics_x_scale,
-                    FT2_1_3_Fixed   *ametrics_y_scale );
+					FT2_1_3_UInt    *aoutline_resolution,
+					FT2_1_3_UInt    *ametrics_resolution,
+					FT2_1_3_Fixed   *ametrics_x_scale,
+					FT2_1_3_Fixed   *ametrics_y_scale );
 
 /**********************************************************************
  *
@@ -114,9 +116,9 @@ FT2_1_3_Get_PFR_Metrics( FT2_1_3_Face     face,
  */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Get_PFR_Kerning( FT2_1_3_Face     face,
-                    FT2_1_3_UInt     left,
-                    FT2_1_3_UInt     right,
-                    FT2_1_3_Vector  *avector );
+					FT2_1_3_UInt     left,
+					FT2_1_3_UInt     right,
+					FT2_1_3_Vector  *avector );
 
 /**********************************************************************
  *
@@ -143,14 +145,17 @@ FT2_1_3_Get_PFR_Kerning( FT2_1_3_Face     face,
  */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Get_PFR_Advance( FT2_1_3_Face    face,
-                    FT2_1_3_UInt    gindex,
-                    FT2_1_3_Pos    *aadvance );
+					FT2_1_3_UInt    gindex,
+					FT2_1_3_Pos    *aadvance );
 
 /* */
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTBDF_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTPFR_H */
 
 
 /* END */

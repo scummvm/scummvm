@@ -16,12 +16,14 @@
 /***************************************************************************/
 
 
-#ifndef __FTCCMAP_H__
-#define __FTCCMAP_H__
+#ifndef AGS_LIB_FREETYPE_FTCCMAP_H
+#define AGS_LIB_FREETYPE_FTCCMAP_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftcache.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -169,7 +171,7 @@ typedef struct  FTC_CMapDescRec_ {
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FTC_CMapCache_New( FTC_Manager     manager,
-                   FTC_CMapCache  *acache );
+				   FTC_CMapCache  *acache );
 
 
 /*************************************************************************/
@@ -197,16 +199,18 @@ FTC_CMapCache_New( FTC_Manager     manager,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_UInt )
 FTC_CMapCache_Lookup( FTC_CMapCache  cache,
-                      FTC_CMapDesc   cmap_desc,
-                      FT2_1_3_UInt32      char_code );
+					  FTC_CMapDesc   cmap_desc,
+					  FT2_1_3_UInt32      char_code );
 
 /* */
 
 
 FT2_1_3_END_HEADER
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
-#endif /* __FTCCMAP_H__ */
+#endif /* AGS_LIB_FREETYPE_FTCCMAP_H */
 
 
 /* END */

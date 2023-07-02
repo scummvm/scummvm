@@ -29,13 +29,15 @@
 /*************************************************************************/
 
 
-#ifndef __FTGLYPH_H__
-#define __FTGLYPH_H__
+#ifndef AGS_LIB_FREETYPE_FTGLYPH_H
+#define AGS_LIB_FREETYPE_FTGLYPH_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -223,7 +225,7 @@ typedef struct  FT2_1_3_OutlineGlyphRec_ {
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Get_Glyph( FT2_1_3_GlyphSlot  slot,
-              FT2_1_3_Glyph     *aglyph );
+			  FT2_1_3_Glyph     *aglyph );
 
 
 /*************************************************************************/
@@ -246,7 +248,7 @@ FT2_1_3_Get_Glyph( FT2_1_3_GlyphSlot  slot,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Glyph_Copy( FT2_1_3_Glyph   source,
-               FT2_1_3_Glyph  *target );
+			   FT2_1_3_Glyph  *target );
 
 
 /*************************************************************************/
@@ -276,8 +278,8 @@ FT2_1_3_Glyph_Copy( FT2_1_3_Glyph   source,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Glyph_Transform( FT2_1_3_Glyph    glyph,
-                    FT2_1_3_Matrix*  matrix,
-                    FT2_1_3_Vector*  delta );
+					FT2_1_3_Matrix*  matrix,
+					FT2_1_3_Vector*  delta );
 
 /* */
 
@@ -354,8 +356,8 @@ enum {
 
 FT2_1_3_EXPORT( void )
 FT2_1_3_Glyph_Get_CBox( FT2_1_3_Glyph  glyph,
-                   FT2_1_3_UInt   bbox_mode,
-                   FT2_1_3_BBox  *acbox );
+				   FT2_1_3_UInt   bbox_mode,
+				   FT2_1_3_BBox  *acbox );
 
 
 /*************************************************************************/
@@ -431,9 +433,9 @@ FT2_1_3_Glyph_Get_CBox( FT2_1_3_Glyph  glyph,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Glyph_To_Bitmap( FT2_1_3_Glyph*       the_glyph,
-                    FT2_1_3_Render_Mode  render_mode,
-                    FT2_1_3_Vector*      origin,
-                    FT2_1_3_Bool         destroy );
+					FT2_1_3_Render_Mode  render_mode,
+					FT2_1_3_Vector*      origin,
+					FT2_1_3_Bool         destroy );
 
 
 /*************************************************************************/
@@ -480,7 +482,7 @@ FT2_1_3_Done_Glyph( FT2_1_3_Glyph  glyph );
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_Matrix_Multiply( FT2_1_3_Matrix*  a,
-                    FT2_1_3_Matrix*  b );
+					FT2_1_3_Matrix*  b );
 
 
 /*************************************************************************/
@@ -507,7 +509,10 @@ FT2_1_3_Matrix_Invert( FT2_1_3_Matrix*  matrix );
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTGLYPH_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTGLYPH_H */
 
 
 /* END */

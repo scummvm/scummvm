@@ -1,8 +1,11 @@
-#ifndef __FT2_1_3_OBJECT_H__
-#define __FT2_1_3_OBJECT_H__
+#ifndef AGS_LIB_FREETYPE_FTOBJECT_H
+#define AGS_LIB_FREETYPE_FTOBJECT_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
+
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -143,7 +146,7 @@ typedef struct FT2_1_3_ObjectRec_ {
  *   error code. 0 means success
  */
 typedef FT2_1_3_Error  (*FT2_1_3_Object_InitFunc)( FT2_1_3_Object   object,
-        FT2_1_3_Pointer  init_data );
+		FT2_1_3_Pointer  init_data );
 
 /**************************************************************
  *
@@ -359,7 +362,7 @@ ft_object_check( FT2_1_3_Pointer  obj );
  */
 FT2_1_3_BASE( FT2_1_3_Int )
 ft_object_is_a( FT2_1_3_Pointer  obj,
-                FT2_1_3_Class    clazz );
+				FT2_1_3_Class    clazz );
 
 
 /**************************************************************
@@ -381,8 +384,8 @@ ft_object_is_a( FT2_1_3_Pointer  obj,
  */
 FT2_1_3_BASE( FT2_1_3_Error )
 ft_object_create( FT2_1_3_Object  *aobject,
-                  FT2_1_3_Class    clazz,
-                  FT2_1_3_Pointer  init_data );
+				  FT2_1_3_Class    clazz,
+				  FT2_1_3_Pointer  init_data );
 
 
 /**************************************************************
@@ -410,9 +413,9 @@ ft_object_create( FT2_1_3_Object  *aobject,
  */
 FT2_1_3_BASE( FT2_1_3_Error )
 ft_object_create_from_type( FT2_1_3_Object  *aobject,
-                            FT2_1_3_Type     type,
-                            FT2_1_3_Pointer  init_data,
-                            FT2_1_3_Library  library );
+							FT2_1_3_Type     type,
+							FT2_1_3_Pointer  init_data,
+							FT2_1_3_Library  library );
 
 
 
@@ -425,7 +428,7 @@ ft_object_create_from_type( FT2_1_3_Object  *aobject,
  *   @ft_object_create for details
  */
 #define  FT2_1_3_OBJ_CREATE( _obj, _clazz, _init )   \
-               ft_object_create( FT2_1_3_OBJECT_P(&(_obj)), _clazz, _init )
+			   ft_object_create( FT2_1_3_OBJECT_P(&(_obj)), _clazz, _init )
 
 
 /**************************************************************
@@ -438,7 +441,7 @@ ft_object_create_from_type( FT2_1_3_Object  *aobject,
  *   code returned by the object constructor.
  */
 #define  FT2_1_3_CREATE( _obj, _clazz, _init )  \
-             FT2_1_3_SET_ERROR( FT2_1_3_OBJ_CREATE( _obj, _clazz, _init ) )
+			 FT2_1_3_SET_ERROR( FT2_1_3_OBJ_CREATE( _obj, _clazz, _init ) )
 
 /**************************************************************
  *
@@ -449,7 +452,7 @@ ft_object_create_from_type( FT2_1_3_Object  *aobject,
  *   @ft_object_create_from_type for details
  */
 #define  FT2_1_3_OBJ_CREATE_FROM_TYPE( _obj, _type, _init, _lib )   \
-               ft_object_create_from_type( FT2_1_3_OBJECT_P(&(_obj)), _type, _init, _lib )
+			   ft_object_create_from_type( FT2_1_3_OBJECT_P(&(_obj)), _type, _init, _lib )
 
 
 /**************************************************************
@@ -462,7 +465,7 @@ ft_object_create_from_type( FT2_1_3_Object  *aobject,
  *   code returned by the object constructor.
  */
 #define  FT2_1_3_CREATE_FROM_TYPE( _obj, _type, _init, _lib )  \
-             FT2_1_3_SET_ERROR( FT2_1_3_OBJ_CREATE_FROM_TYPE( _obj, _type, _init, _lib ) )
+			 FT2_1_3_SET_ERROR( FT2_1_3_OBJ_CREATE_FROM_TYPE( _obj, _type, _init, _lib ) )
 
 
 /* */
@@ -488,8 +491,8 @@ ft_object_create_from_type( FT2_1_3_Object  *aobject,
  */
 FT2_1_3_BASE( FT2_1_3_Error )
 ft_class_from_type( FT2_1_3_Class   *aclass,
-                    FT2_1_3_Type     type,
-                    FT2_1_3_Library  library );
+					FT2_1_3_Type     type,
+					FT2_1_3_Library  library );
 
 
 /* */
@@ -515,7 +518,7 @@ typedef struct FT2_1_3_MetaClassRec_ {
 /* initialize meta class */
 FT2_1_3_BASE( FT2_1_3_Error )
 ft_metaclass_init( FT2_1_3_MetaClass  meta,
-                   FT2_1_3_Library    library );
+				   FT2_1_3_Library    library );
 
 /* finalize meta class - destroy all registered class objects */
 FT2_1_3_BASE( void )
@@ -525,4 +528,7 @@ ft_metaclass_done( FT2_1_3_MetaClass  meta );
 
 FT2_1_3_END_HEADER
 
-#endif /* __FT2_1_3_OBJECT_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTOBJECT_H */

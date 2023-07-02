@@ -16,12 +16,14 @@
 /***************************************************************************/
 
 
-#ifndef __FTINCREM_H__
-#define __FTINCREM_H__
+#ifndef AGS_LIB_FREETYPE_FTINCREM_H
+#define AGS_LIB_FREETYPE_FTINCREM_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -124,8 +126,8 @@ typedef struct  FT2_1_3_Incremental_MetricsRec_ {
  */
 typedef FT2_1_3_Error
 (*FT2_1_3_Incremental_GetGlyphDataFunc)( FT2_1_3_Incremental  incremental,
-                                    FT2_1_3_UInt         glyph_index,
-                                    FT2_1_3_Data*        adata );
+									FT2_1_3_UInt         glyph_index,
+									FT2_1_3_Data*        adata );
 
 
 /***************************************************************************
@@ -148,7 +150,7 @@ typedef FT2_1_3_Error
  */
 typedef void
 (*FT2_1_3_Incremental_FreeGlyphDataFunc)( FT2_1_3_Incremental  incremental,
-                                     FT2_1_3_Data*        data );
+									 FT2_1_3_Data*        data );
 
 
 /***************************************************************************
@@ -277,7 +279,10 @@ typedef struct  FT2_1_3_Incremental_InterfaceRec_ {
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTINCREM_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTINCREM_H */
 
 
 /* END */

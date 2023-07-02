@@ -34,13 +34,15 @@
 /*************************************************************************/
 
 
-#ifndef __FTSYNTH_H__
-#define __FTSYNTH_H__
+#ifndef AGS_LIB_FREETYPE_FTSYNTH_H
+#define AGS_LIB_FREETYPE_FTSYNTH_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -59,7 +61,10 @@ FT2_1_3_GlyphSlot_Oblique( FT2_1_3_GlyphSlot  slot );
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTSYNTH_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTSYNTH_H */
 
 
 /* END */

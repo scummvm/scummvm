@@ -17,13 +17,15 @@
 /***************************************************************************/
 
 
-#ifndef __TTTABLES_H__
-#define __TTTABLES_H__
+#ifndef AGS_LIB_FREETYPE_TTTABLES_H
+#define AGS_LIB_FREETYPE_TTTABLES_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -553,7 +555,7 @@ typedef enum {
 /* internal use only */
 typedef void*
 (*FT2_1_3_Get_Sfnt_Table_Func)( FT2_1_3_Face      face,
-                           FT2_1_3_Sfnt_Tag  tag );
+						   FT2_1_3_Sfnt_Tag  tag );
 
 
 /*************************************************************************/
@@ -583,7 +585,7 @@ typedef void*
 /*                                                                       */
 FT2_1_3_EXPORT( void* )
 FT2_1_3_Get_Sfnt_Table( FT2_1_3_Face      face,
-                   FT2_1_3_Sfnt_Tag  tag );
+				   FT2_1_3_Sfnt_Tag  tag );
 
 
 /* */
@@ -591,7 +593,10 @@ FT2_1_3_Get_Sfnt_Table( FT2_1_3_Face      face,
 
 FT2_1_3_END_HEADER
 
-#endif /* __TTTABLES_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_TTTABLES_H */
 
 
 /* END */

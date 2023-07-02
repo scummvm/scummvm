@@ -17,13 +17,15 @@
 /***************************************************************************/
 
 
-#ifndef __FNTTYPES_H__
-#define __FNTTYPES_H__
+#ifndef AGS_LIB_FREETYPE_FNTTYPES_H
+#define AGS_LIB_FREETYPE_FNTTYPES_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -141,7 +143,10 @@ typedef struct  FNT_FaceRec_ {
 
 FT2_1_3_END_HEADER
 
-#endif /* __FNTTYPES_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FNTTYPES_H */
 
 
 /* END */

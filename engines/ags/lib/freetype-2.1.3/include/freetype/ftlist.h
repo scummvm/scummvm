@@ -24,13 +24,15 @@
 /*************************************************************************/
 
 
-#ifndef __FTLIST_H__
-#define __FTLIST_H__
+#ifndef AGS_LIB_FREETYPE_FTLIST_H
+#define AGS_LIB_FREETYPE_FTLIST_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -86,7 +88,7 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_ListNode )
 FT2_1_3_List_Find( FT2_1_3_List  list,
-              void*    data );
+			  void*    data );
 
 
 /*************************************************************************/
@@ -103,7 +105,7 @@ FT2_1_3_List_Find( FT2_1_3_List  list,
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_List_Add( FT2_1_3_List      list,
-             FT2_1_3_ListNode  node );
+			 FT2_1_3_ListNode  node );
 
 
 /*************************************************************************/
@@ -120,7 +122,7 @@ FT2_1_3_List_Add( FT2_1_3_List      list,
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_List_Insert( FT2_1_3_List      list,
-                FT2_1_3_ListNode  node );
+				FT2_1_3_ListNode  node );
 
 
 /*************************************************************************/
@@ -140,7 +142,7 @@ FT2_1_3_List_Insert( FT2_1_3_List      list,
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_List_Remove( FT2_1_3_List      list,
-                FT2_1_3_ListNode  node );
+				FT2_1_3_ListNode  node );
 
 
 /*************************************************************************/
@@ -158,7 +160,7 @@ FT2_1_3_List_Remove( FT2_1_3_List      list,
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_List_Up( FT2_1_3_List      list,
-            FT2_1_3_ListNode  node );
+			FT2_1_3_ListNode  node );
 
 
 /*************************************************************************/
@@ -178,7 +180,7 @@ FT2_1_3_List_Up( FT2_1_3_List      list,
 /*                                                                       */
 typedef FT2_1_3_Error
 (*FT2_1_3_List_Iterator)( FT2_1_3_ListNode  node,
-                     void*        user );
+					 void*        user );
 
 
 /*************************************************************************/
@@ -203,8 +205,8 @@ typedef FT2_1_3_Error
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_List_Iterate( FT2_1_3_List           list,
-                 FT2_1_3_List_Iterator  iterator,
-                 void*             user );
+				 FT2_1_3_List_Iterator  iterator,
+				 void*             user );
 
 
 /*************************************************************************/
@@ -227,8 +229,8 @@ FT2_1_3_List_Iterate( FT2_1_3_List           list,
 /*                                                                       */
 typedef void
 (*FT2_1_3_List_Destructor)( FT2_1_3_Memory  memory,
-                       void*      data,
-                       void*      user );
+					   void*      data,
+					   void*      user );
 
 
 /*************************************************************************/
@@ -252,9 +254,9 @@ typedef void
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_List_Finalize( FT2_1_3_List             list,
-                  FT2_1_3_List_Destructor  destroy,
-                  FT2_1_3_Memory           memory,
-                  void*               user );
+				  FT2_1_3_List_Destructor  destroy,
+				  FT2_1_3_Memory           memory,
+				  void*               user );
 
 
 /* */
@@ -262,7 +264,10 @@ FT2_1_3_List_Finalize( FT2_1_3_List             list,
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTLIST_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTLIST_H */
 
 
 /* END */

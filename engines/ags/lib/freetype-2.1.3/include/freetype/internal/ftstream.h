@@ -16,14 +16,16 @@
 /***************************************************************************/
 
 
-#ifndef __FTSTREAM_H__
-#define __FTSTREAM_H__
+#ifndef AGS_LIB_FREETYPE_FTSTREAM_H
+#define AGS_LIB_FREETYPE_FTSTREAM_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftsystem.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -43,7 +45,7 @@ FT2_1_3_BEGIN_HEADER
 #define FT2_1_3_FRAME_OP_COMMAND( x )  ( x >> FT2_1_3_FRAME_OP_SHIFT )
 
 #define FT2_1_3_MAKE_FRAME_OP( command, little, sign ) \
-          ( ( command << FT2_1_3_FRAME_OP_SHIFT ) | ( little << 1 ) | sign )
+		  ( ( command << FT2_1_3_FRAME_OP_SHIFT ) | ( little << 1 ) | sign )
 
 #define FT2_1_3_FRAME_OP_END    0
 #define FT2_1_3_FRAME_OP_START  1  /* start a new frame     */
@@ -95,20 +97,20 @@ typedef struct  FT2_1_3_Frame_Field_ {
 /* calling the FT2_1_3_FRAME_START() macro.                                   */
 /*                                                                       */
 #define FT2_1_3_FIELD_SIZE( f ) \
-          (FT2_1_3_Byte)sizeof ( ((FT2_1_3_STRUCTURE*)0)->f )
+		  (FT2_1_3_Byte)sizeof ( ((FT2_1_3_STRUCTURE*)0)->f )
 
 #define FT2_1_3_FIELD_SIZE_DELTA( f ) \
-          (FT2_1_3_Byte)sizeof ( ((FT2_1_3_STRUCTURE*)0)->f[0] )
+		  (FT2_1_3_Byte)sizeof ( ((FT2_1_3_STRUCTURE*)0)->f[0] )
 
 #define FT2_1_3_FIELD_OFFSET( f ) \
-          (FT2_1_3_UShort)( offsetof( FT2_1_3_STRUCTURE, f ) )
+		  (FT2_1_3_UShort)( offsetof( FT2_1_3_STRUCTURE, f ) )
 
 #define FT2_1_3_FRAME_FIELD( frame_op, field ) \
-          {                               \
-            frame_op,                     \
-            FT2_1_3_FIELD_SIZE( field ),       \
-            FT2_1_3_FIELD_OFFSET( field )      \
-          }
+		  {                               \
+			frame_op,                     \
+			FT2_1_3_FIELD_SIZE( field ),       \
+			FT2_1_3_FIELD_OFFSET( field )      \
+		  }
 
 #define FT2_1_3_MAKE_EMPTY_FIELD( frame_op )  { frame_op, 0, 0 }
 
@@ -136,11 +138,11 @@ typedef struct  FT2_1_3_Frame_Field_ {
 #define FT2_1_3_FRAME_SKIP_BYTE       { ft_frame_byte, 0, 0 }
 
 #define FT2_1_3_FRAME_BYTES( field, count ) \
-          {                            \
-            ft_frame_bytes,            \
-            count,                     \
-            FT2_1_3_FIELD_OFFSET( field )   \
-          }
+		  {                            \
+			ft_frame_bytes,            \
+			count,                     \
+			FT2_1_3_FIELD_OFFSET( field )   \
+		  }
 
 #define FT2_1_3_FRAME_SKIP_BYTES( count )  { ft_frame_skip, count, 0 }
 
@@ -171,96 +173,96 @@ typedef struct  FT2_1_3_Frame_Field_ {
 
 
 #define FT2_1_3_PEEK_SHORT( p )  FT2_1_3_INT16( FT2_1_3_INT8_I16( p, 0, 8) | \
-                                      FT2_1_3_BYTE_I16( p, 1, 0) )
+									  FT2_1_3_BYTE_I16( p, 1, 0) )
 
 #define FT2_1_3_PEEK_USHORT( p )  FT2_1_3_UINT16( FT2_1_3_BYTE_U16( p, 0, 8 ) | \
-                                        FT2_1_3_BYTE_U16( p, 1, 0 ) )
+										FT2_1_3_BYTE_U16( p, 1, 0 ) )
 
 #define FT2_1_3_PEEK_LONG( p )  FT2_1_3_INT32( FT2_1_3_INT8_I32( p, 0, 24 ) | \
-                                     FT2_1_3_BYTE_I32( p, 1, 16 ) | \
-                                     FT2_1_3_BYTE_I32( p, 2,  8 ) | \
-                                     FT2_1_3_BYTE_I32( p, 3,  0 ) )
+									 FT2_1_3_BYTE_I32( p, 1, 16 ) | \
+									 FT2_1_3_BYTE_I32( p, 2,  8 ) | \
+									 FT2_1_3_BYTE_I32( p, 3,  0 ) )
 
 #define FT2_1_3_PEEK_ULONG( p )  FT2_1_3_UINT32( FT2_1_3_BYTE_U32( p, 0, 24 ) | \
-                                       FT2_1_3_BYTE_U32( p, 1, 16 ) | \
-                                       FT2_1_3_BYTE_U32( p, 2,  8 ) | \
-                                       FT2_1_3_BYTE_U32( p, 3,  0 ) )
+									   FT2_1_3_BYTE_U32( p, 1, 16 ) | \
+									   FT2_1_3_BYTE_U32( p, 2,  8 ) | \
+									   FT2_1_3_BYTE_U32( p, 3,  0 ) )
 
 #define FT2_1_3_PEEK_OFF3( p )  FT2_1_3_INT32( FT2_1_3_INT8_I32( p, 0, 16 ) | \
-                                     FT2_1_3_BYTE_I32( p, 1,  8 ) | \
-                                     FT2_1_3_BYTE_I32( p, 2,  0 ) )
+									 FT2_1_3_BYTE_I32( p, 1,  8 ) | \
+									 FT2_1_3_BYTE_I32( p, 2,  0 ) )
 
 #define FT2_1_3_PEEK_UOFF3( p )  FT2_1_3_UINT32( FT2_1_3_BYTE_U32( p, 0, 16 ) | \
-                                       FT2_1_3_BYTE_U32( p, 1,  8 ) | \
-                                       FT2_1_3_BYTE_U32( p, 2,  0 ) )
+									   FT2_1_3_BYTE_U32( p, 1,  8 ) | \
+									   FT2_1_3_BYTE_U32( p, 2,  0 ) )
 
 #define FT2_1_3_PEEK_SHORT_LE( p )  FT2_1_3_INT16( FT2_1_3_INT8_I16( p, 1, 8 ) | \
-                                         FT2_1_3_BYTE_I16( p, 0, 0 ) )
+										 FT2_1_3_BYTE_I16( p, 0, 0 ) )
 
 #define FT2_1_3_PEEK_USHORT_LE( p )  FT2_1_3_UINT16( FT2_1_3_BYTE_U16( p, 1, 8 ) |  \
-                                           FT2_1_3_BYTE_U16( p, 0, 0 ) )
+										   FT2_1_3_BYTE_U16( p, 0, 0 ) )
 
 #define FT2_1_3_PEEK_LONG_LE( p )  FT2_1_3_INT32( FT2_1_3_INT8_I32( p, 3, 24 ) | \
-                                        FT2_1_3_BYTE_I32( p, 2, 16 ) | \
-                                        FT2_1_3_BYTE_I32( p, 1,  8 ) | \
-                                        FT2_1_3_BYTE_I32( p, 0,  0 ) )
+										FT2_1_3_BYTE_I32( p, 2, 16 ) | \
+										FT2_1_3_BYTE_I32( p, 1,  8 ) | \
+										FT2_1_3_BYTE_I32( p, 0,  0 ) )
 
 #define FT2_1_3_PEEK_ULONG_LE( p )  FT2_1_3_UINT32( FT2_1_3_BYTE_U32( p, 3, 24 ) | \
-                                          FT2_1_3_BYTE_U32( p, 2, 16 ) | \
-                                          FT2_1_3_BYTE_U32( p, 1,  8 ) | \
-                                          FT2_1_3_BYTE_U32( p, 0,  0 ) )
+										  FT2_1_3_BYTE_U32( p, 2, 16 ) | \
+										  FT2_1_3_BYTE_U32( p, 1,  8 ) | \
+										  FT2_1_3_BYTE_U32( p, 0,  0 ) )
 
 #define FT2_1_3_PEEK_OFF3_LE( p )  FT2_1_3_INT32( FT2_1_3_INT8_I32( p, 2, 16 ) | \
-                                        FT2_1_3_BYTE_I32( p, 1,  8 ) | \
-                                        FT2_1_3_BYTE_I32( p, 0,  0 ) )
+										FT2_1_3_BYTE_I32( p, 1,  8 ) | \
+										FT2_1_3_BYTE_I32( p, 0,  0 ) )
 
 #define FT2_1_3_PEEK_UOFF3_LE( p )  FT2_1_3_UINT32( FT2_1_3_BYTE_U32( p, 2, 16 ) | \
-                                          FT2_1_3_BYTE_U32( p, 1,  8 ) | \
-                                          FT2_1_3_BYTE_U32( p, 0,  0 ) )
+										  FT2_1_3_BYTE_U32( p, 1,  8 ) | \
+										  FT2_1_3_BYTE_U32( p, 0,  0 ) )
 
 
 #define FT2_1_3_NEXT_CHAR( buffer )       \
-          ( (signed char)*buffer++ )
+		  ( (signed char)*buffer++ )
 
 #define FT2_1_3_NEXT_BYTE( buffer )         \
-          ( (unsigned char)*buffer++ )
+		  ( (unsigned char)*buffer++ )
 
 #define FT2_1_3_NEXT_SHORT( buffer )                                   \
-          ( (short)( buffer += 2, FT2_1_3_PEEK_SHORT( buffer - 2 ) ) )
+		  ( (short)( buffer += 2, FT2_1_3_PEEK_SHORT( buffer - 2 ) ) )
 
 #define FT2_1_3_NEXT_USHORT( buffer )                                            \
-          ( (unsigned short)( buffer += 2, FT2_1_3_PEEK_USHORT( buffer - 2 ) ) )
+		  ( (unsigned short)( buffer += 2, FT2_1_3_PEEK_USHORT( buffer - 2 ) ) )
 
 #define FT2_1_3_NEXT_OFF3( buffer )                                  \
-          ( (long)( buffer += 3, FT2_1_3_PEEK_OFF3( buffer - 3 ) ) )
+		  ( (long)( buffer += 3, FT2_1_3_PEEK_OFF3( buffer - 3 ) ) )
 
 #define FT2_1_3_NEXT_UOFF3( buffer )                                           \
-          ( (unsigned long)( buffer += 3, FT2_1_3_PEEK_UOFF3( buffer - 3 ) ) )
+		  ( (unsigned long)( buffer += 3, FT2_1_3_PEEK_UOFF3( buffer - 3 ) ) )
 
 #define FT2_1_3_NEXT_LONG( buffer )                                  \
-          ( (long)( buffer += 4, FT2_1_3_PEEK_LONG( buffer - 4 ) ) )
+		  ( (long)( buffer += 4, FT2_1_3_PEEK_LONG( buffer - 4 ) ) )
 
 #define FT2_1_3_NEXT_ULONG( buffer )                                           \
-          ( (unsigned long)( buffer += 4, FT2_1_3_PEEK_ULONG( buffer - 4 ) ) )
+		  ( (unsigned long)( buffer += 4, FT2_1_3_PEEK_ULONG( buffer - 4 ) ) )
 
 
 #define FT2_1_3_NEXT_SHORT_LE( buffer )                                   \
-          ( (short)( buffer += 2, FT2_1_3_PEEK_SHORT_LE( buffer - 2 ) ) )
+		  ( (short)( buffer += 2, FT2_1_3_PEEK_SHORT_LE( buffer - 2 ) ) )
 
 #define FT2_1_3_NEXT_USHORT_LE( buffer )                                            \
-          ( (unsigned short)( buffer += 2, FT2_1_3_PEEK_USHORT_LE( buffer - 2 ) ) )
+		  ( (unsigned short)( buffer += 2, FT2_1_3_PEEK_USHORT_LE( buffer - 2 ) ) )
 
 #define FT2_1_3_NEXT_OFF3_LE( buffer )                                  \
-          ( (long)( buffer += 3, FT2_1_3_PEEK_OFF3_LE( buffer - 3 ) ) )
+		  ( (long)( buffer += 3, FT2_1_3_PEEK_OFF3_LE( buffer - 3 ) ) )
 
 #define FT2_1_3_NEXT_UOFF3_LE( buffer )                                           \
-          ( (unsigned long)( buffer += 3, FT2_1_3_PEEK_UOFF3_LE( buffer - 3 ) ) )
+		  ( (unsigned long)( buffer += 3, FT2_1_3_PEEK_UOFF3_LE( buffer - 3 ) ) )
 
 #define FT2_1_3_NEXT_LONG_LE( buffer )                                  \
-          ( (long)( buffer += 4, FT2_1_3_PEEK_LONG_LE( buffer - 4 ) ) )
+		  ( (long)( buffer += 4, FT2_1_3_PEEK_LONG_LE( buffer - 4 ) ) )
 
 #define FT2_1_3_NEXT_ULONG_LE( buffer )                                           \
-          ( (unsigned long)( buffer += 4, FT2_1_3_PEEK_ULONG_LE( buffer - 4 ) ) )
+		  ( (unsigned long)( buffer += 4, FT2_1_3_PEEK_ULONG_LE( buffer - 4 ) ) )
 
 
 /*************************************************************************/
@@ -285,8 +287,8 @@ typedef struct  FT2_1_3_Frame_Field_ {
 #define FT2_1_3_GET_ULONG_LE()   FT2_1_3_GET_MACRO( FT2_1_3_Stream_GetLongLE, FT2_1_3_ULong )
 
 #define FT2_1_3_READ_MACRO( func, type, var )        \
-          ( var = (type)func( stream, &error ), \
-            error != FT2_1_3_Err_Ok )
+		  ( var = (type)func( stream, &error ), \
+			error != FT2_1_3_Err_Ok )
 
 #define FT2_1_3_READ_BYTE( var )       FT2_1_3_READ_MACRO( FT2_1_3_Stream_ReadChar, FT2_1_3_Byte, var )
 #define FT2_1_3_READ_CHAR( var )       FT2_1_3_READ_MACRO( FT2_1_3_Stream_ReadChar, FT2_1_3_Char, var )
@@ -308,7 +310,7 @@ typedef struct  FT2_1_3_Frame_Field_ {
 /* initialize a stream for reading a regular system stream */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Stream_Open( FT2_1_3_Stream    stream,
-                const char*  filepathname );
+				const char*  filepathname );
 
 #endif /* FT2_1_3_CONFIG_OPTION_NO_DEFAULT_SYSTEM */
 
@@ -316,8 +318,8 @@ FT2_1_3_Stream_Open( FT2_1_3_Stream    stream,
 /* initialize a stream for reading in-memory data */
 FT2_1_3_BASE( void )
 FT2_1_3_Stream_OpenMemory( FT2_1_3_Stream       stream,
-                      const FT2_1_3_Byte*  base,
-                      FT2_1_3_ULong        size );
+					  const FT2_1_3_Byte*  base,
+					  FT2_1_3_ULong        size );
 
 /* close a stream (does not destroy the stream structure) */
 FT2_1_3_BASE( void )
@@ -327,12 +329,12 @@ FT2_1_3_Stream_Close( FT2_1_3_Stream  stream );
 /* seek within a stream. position is relative to start of stream */
 FT2_1_3_BASE( FT2_1_3_Error )
 FT2_1_3_Stream_Seek( FT2_1_3_Stream  stream,
-                FT2_1_3_ULong   pos );
+				FT2_1_3_ULong   pos );
 
 /* skip bytes in a stream */
 FT2_1_3_BASE( FT2_1_3_Error )
 FT2_1_3_Stream_Skip( FT2_1_3_Stream  stream,
-                FT2_1_3_Long    distance );
+				FT2_1_3_Long    distance );
 
 /* return current stream position */
 FT2_1_3_BASE( FT2_1_3_Long )
@@ -342,15 +344,15 @@ FT2_1_3_Stream_Pos( FT2_1_3_Stream  stream );
 /* error if not all bytes could be read.                             */
 FT2_1_3_BASE( FT2_1_3_Error )
 FT2_1_3_Stream_Read( FT2_1_3_Stream  stream,
-                FT2_1_3_Byte*   buffer,
-                FT2_1_3_ULong   count );
+				FT2_1_3_Byte*   buffer,
+				FT2_1_3_ULong   count );
 
 /* read bytes from a stream at a given position */
 FT2_1_3_BASE( FT2_1_3_Error )
 FT2_1_3_Stream_ReadAt( FT2_1_3_Stream  stream,
-                  FT2_1_3_ULong   pos,
-                  FT2_1_3_Byte*   buffer,
-                  FT2_1_3_ULong   count );
+				  FT2_1_3_ULong   pos,
+				  FT2_1_3_Byte*   buffer,
+				  FT2_1_3_ULong   count );
 
 /* Enter a frame of `count' consecutive bytes in a stream.  Returns an */
 /* error if the frame could not be read/accessed.  The caller can use  */
@@ -362,7 +364,7 @@ FT2_1_3_Stream_ReadAt( FT2_1_3_Stream  stream,
 /*                                                                     */
 FT2_1_3_BASE( FT2_1_3_Error )
 FT2_1_3_Stream_EnterFrame( FT2_1_3_Stream  stream,
-                      FT2_1_3_ULong   count );
+					  FT2_1_3_ULong   count );
 
 /* exit a stream frame */
 FT2_1_3_BASE( void )
@@ -379,13 +381,13 @@ FT2_1_3_Stream_ExitFrame( FT2_1_3_Stream  stream );
 /*                                                                    */
 FT2_1_3_BASE( FT2_1_3_Error )
 FT2_1_3_Stream_ExtractFrame( FT2_1_3_Stream  stream,
-                        FT2_1_3_ULong   count,
-                        FT2_1_3_Byte**  pbytes );
+						FT2_1_3_ULong   count,
+						FT2_1_3_Byte**  pbytes );
 
 /* release an extract frame (see FT2_1_3_Stream_ExtractFrame) */
 FT2_1_3_BASE( void )
 FT2_1_3_Stream_ReleaseFrame( FT2_1_3_Stream  stream,
-                        FT2_1_3_Byte**  pbytes );
+						FT2_1_3_Byte**  pbytes );
 
 /* read a byte from an entered frame */
 FT2_1_3_BASE( FT2_1_3_Char )
@@ -415,82 +417,85 @@ FT2_1_3_Stream_GetLongLE( FT2_1_3_Stream  stream );
 /* read a byte from a stream */
 FT2_1_3_BASE( FT2_1_3_Char )
 FT2_1_3_Stream_ReadChar( FT2_1_3_Stream  stream,
-                    FT2_1_3_Error*  error );
+					FT2_1_3_Error*  error );
 
 /* read a 16-bit big-endian integer from a stream */
 FT2_1_3_BASE( FT2_1_3_Short )
 FT2_1_3_Stream_ReadShort( FT2_1_3_Stream  stream,
-                     FT2_1_3_Error*  error );
+					 FT2_1_3_Error*  error );
 
 /* read a 24-bit big-endian integer from a stream */
 FT2_1_3_BASE( FT2_1_3_Long )
 FT2_1_3_Stream_ReadOffset( FT2_1_3_Stream  stream,
-                      FT2_1_3_Error*  error );
+					  FT2_1_3_Error*  error );
 
 /* read a 32-bit big-endian integer from a stream */
 FT2_1_3_BASE( FT2_1_3_Long )
 FT2_1_3_Stream_ReadLong( FT2_1_3_Stream  stream,
-                    FT2_1_3_Error*  error );
+					FT2_1_3_Error*  error );
 
 /* read a 16-bit little-endian integer from a stream */
 FT2_1_3_BASE( FT2_1_3_Short )
 FT2_1_3_Stream_ReadShortLE( FT2_1_3_Stream  stream,
-                       FT2_1_3_Error*  error );
+					   FT2_1_3_Error*  error );
 
 /* read a 32-bit little-endian integer from a stream */
 FT2_1_3_BASE( FT2_1_3_Long )
 FT2_1_3_Stream_ReadLongLE( FT2_1_3_Stream  stream,
-                      FT2_1_3_Error*  error );
+					  FT2_1_3_Error*  error );
 
 /* Read a structure from a stream.  The structure must be described */
 /* by an array of FT2_1_3_Frame_Field records.                           */
 FT2_1_3_BASE( FT2_1_3_Error )
 FT2_1_3_Stream_ReadFields( FT2_1_3_Stream              stream,
-                      const FT2_1_3_Frame_Field*  fields,
-                      void*                  structure );
+					  const FT2_1_3_Frame_Field*  fields,
+					  void*                  structure );
 
 
 #define FT2_1_3_STREAM_POS()           \
-          FT2_1_3_Stream_Pos( stream )
+		  FT2_1_3_Stream_Pos( stream )
 
 #define FT2_1_3_STREAM_SEEK( position )                           \
-          FT2_1_3_SET_ERROR( FT2_1_3_Stream_Seek( stream, position ) )
+		  FT2_1_3_SET_ERROR( FT2_1_3_Stream_Seek( stream, position ) )
 
 #define FT2_1_3_STREAM_SKIP( distance )                           \
-          FT2_1_3_SET_ERROR( FT2_1_3_Stream_Skip( stream, distance ) )
+		  FT2_1_3_SET_ERROR( FT2_1_3_Stream_Skip( stream, distance ) )
 
 #define FT2_1_3_STREAM_READ( buffer, count )                   \
-          FT2_1_3_SET_ERROR( FT2_1_3_Stream_Read( stream,           \
-                                        (FT2_1_3_Byte*)buffer, \
-                                        count ) )
+		  FT2_1_3_SET_ERROR( FT2_1_3_Stream_Read( stream,           \
+										(FT2_1_3_Byte*)buffer, \
+										count ) )
 
 #define FT2_1_3_STREAM_READ_AT( position, buffer, count )         \
-          FT2_1_3_SET_ERROR( FT2_1_3_Stream_ReadAt( stream,            \
-                                           position,         \
-                                           (FT2_1_3_Byte*)buffer, \
-                                           count ) )
+		  FT2_1_3_SET_ERROR( FT2_1_3_Stream_ReadAt( stream,            \
+										   position,         \
+										   (FT2_1_3_Byte*)buffer, \
+										   count ) )
 
 #define FT2_1_3_STREAM_READ_FIELDS( fields, object )                          \
-          FT2_1_3_SET_ERROR( FT2_1_3_Stream_ReadFields( stream, fields, object ) )
+		  FT2_1_3_SET_ERROR( FT2_1_3_Stream_ReadFields( stream, fields, object ) )
 
 
 #define FT2_1_3_FRAME_ENTER( size )                                 \
-          FT2_1_3_SET_ERROR( FT2_1_3_Stream_EnterFrame( stream, size ) )
+		  FT2_1_3_SET_ERROR( FT2_1_3_Stream_EnterFrame( stream, size ) )
 
 #define FT2_1_3_FRAME_EXIT()                 \
-          FT2_1_3_Stream_ExitFrame( stream )
+		  FT2_1_3_Stream_ExitFrame( stream )
 
 #define FT2_1_3_FRAME_EXTRACT( size, bytes )                                 \
-          FT2_1_3_SET_ERROR( FT2_1_3_Stream_ExtractFrame( stream, size,           \
-                                                (FT2_1_3_Byte**)&(bytes) ) )
+		  FT2_1_3_SET_ERROR( FT2_1_3_Stream_ExtractFrame( stream, size,           \
+												(FT2_1_3_Byte**)&(bytes) ) )
 
 #define FT2_1_3_FRAME_RELEASE( bytes )                               \
-          FT2_1_3_Stream_ReleaseFrame( stream, (FT2_1_3_Byte**)&(bytes) )
+		  FT2_1_3_Stream_ReleaseFrame( stream, (FT2_1_3_Byte**)&(bytes) )
 
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTSTREAM_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTSTREAM_H */
 
 
 /* END */

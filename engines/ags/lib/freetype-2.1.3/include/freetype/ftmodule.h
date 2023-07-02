@@ -16,13 +16,15 @@
 /***************************************************************************/
 
 
-#ifndef __FTMODULE_H__
-#define __FTMODULE_H__
+#ifndef AGS_LIB_FREETYPE_FTMODULE_H
+#define AGS_LIB_FREETYPE_FTMODULE_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -57,7 +59,7 @@ typedef enum  FT2_1_3_Module_Flags_ {
 	ft_module_driver_no_outlines  = 0x200, /* the driver does not support   */
 	/* vector outlines               */
 	ft_module_driver_has_hinter   = 0x400  /* the driver provides its own   */
-	                                /* hinter                        */
+									/* hinter                        */
 
 } FT2_1_3_Module_Flags;
 
@@ -73,7 +75,7 @@ typedef void
 
 typedef FT2_1_3_Module_Interface
 (*FT2_1_3_Module_Requester)( FT2_1_3_Module    module,
-                        const char*  name );
+						const char*  name );
 
 
 /*************************************************************************/
@@ -146,7 +148,7 @@ typedef struct  FT2_1_3_Module_Class_ {
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Add_Module( FT2_1_3_Library              library,
-               const FT2_1_3_Module_Class*  clazz );
+			   const FT2_1_3_Module_Class*  clazz );
 
 
 /*************************************************************************/
@@ -171,7 +173,7 @@ FT2_1_3_Add_Module( FT2_1_3_Library              library,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Module )
 FT2_1_3_Get_Module( FT2_1_3_Library   library,
-               const char*  module_name );
+			   const char*  module_name );
 
 
 /*************************************************************************/
@@ -196,7 +198,7 @@ FT2_1_3_Get_Module( FT2_1_3_Library   library,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Remove_Module( FT2_1_3_Library  library,
-                  FT2_1_3_Module   module );
+				  FT2_1_3_Module   module );
 
 
 /*************************************************************************/
@@ -220,7 +222,7 @@ FT2_1_3_Remove_Module( FT2_1_3_Library  library,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_New_Library( FT2_1_3_Memory    memory,
-                FT2_1_3_Library  *alibrary );
+				FT2_1_3_Library  *alibrary );
 
 
 /*************************************************************************/
@@ -272,8 +274,8 @@ typedef void
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_Set_Debug_Hook( FT2_1_3_Library         library,
-                   FT2_1_3_UInt            hook_index,
-                   FT2_1_3_DebugHook_Func  debug_hook );
+				   FT2_1_3_UInt            hook_index,
+				   FT2_1_3_DebugHook_Func  debug_hook );
 
 
 
@@ -299,7 +301,10 @@ FT2_1_3_Add_Default_Modules( FT2_1_3_Library  library );
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTMODULE_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTMODULE_H */
 
 
 /* END */

@@ -16,13 +16,15 @@
 /***************************************************************************/
 
 
-#ifndef __FTMM_H__
-#define __FTMM_H__
+#ifndef AGS_LIB_FREETYPE_FTMM_H
+#define AGS_LIB_FREETYPE_FTMM_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/t1tables.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -100,17 +102,17 @@ typedef struct  FT2_1_3_Multi_Master_ {
 
 typedef FT2_1_3_Error
 (*FT2_1_3_Get_MM_Func)( FT2_1_3_Face           face,
-                   FT2_1_3_Multi_Master*  master );
+				   FT2_1_3_Multi_Master*  master );
 
 typedef FT2_1_3_Error
 (*FT2_1_3_Set_MM_Design_Func)( FT2_1_3_Face   face,
-                          FT2_1_3_UInt   num_coords,
-                          FT2_1_3_Long*  coords );
+						  FT2_1_3_UInt   num_coords,
+						  FT2_1_3_Long*  coords );
 
 typedef FT2_1_3_Error
 (*FT2_1_3_Set_MM_Blend_Func)( FT2_1_3_Face   face,
-                         FT2_1_3_UInt   num_coords,
-                         FT2_1_3_Long*  coords );
+						 FT2_1_3_UInt   num_coords,
+						 FT2_1_3_Long*  coords );
 
 
 /*************************************************************************/
@@ -132,7 +134,7 @@ typedef FT2_1_3_Error
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Get_Multi_Master( FT2_1_3_Face           face,
-                     FT2_1_3_Multi_Master  *amaster );
+					 FT2_1_3_Multi_Master  *amaster );
 
 
 /*************************************************************************/
@@ -158,8 +160,8 @@ FT2_1_3_Get_Multi_Master( FT2_1_3_Face           face,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Set_MM_Design_Coordinates( FT2_1_3_Face   face,
-                              FT2_1_3_UInt   num_coords,
-                              FT2_1_3_Long*  coords );
+							  FT2_1_3_UInt   num_coords,
+							  FT2_1_3_Long*  coords );
 
 
 /*************************************************************************/
@@ -186,8 +188,8 @@ FT2_1_3_Set_MM_Design_Coordinates( FT2_1_3_Face   face,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Set_MM_Blend_Coordinates( FT2_1_3_Face    face,
-                             FT2_1_3_UInt    num_coords,
-                             FT2_1_3_Fixed*  coords );
+							 FT2_1_3_UInt    num_coords,
+							 FT2_1_3_Fixed*  coords );
 
 
 /* */
@@ -195,7 +197,10 @@ FT2_1_3_Set_MM_Blend_Coordinates( FT2_1_3_Face    face,
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTMM_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTMM_H */
 
 
 /* END */

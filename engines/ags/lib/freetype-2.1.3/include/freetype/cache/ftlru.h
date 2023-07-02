@@ -55,13 +55,15 @@
 /*************************************************************************/
 
 
-#ifndef __FTLRU_H__
-#define __FTLRU_H__
+#ifndef AGS_LIB_FREETYPE_FTLRU_H
+#define AGS_LIB_FREETYPE_FTLRU_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -109,13 +111,13 @@ typedef void
 /* this method is used to initialize a new list element node */
 typedef FT2_1_3_Error
 (*FT2_1_3_LruNode_InitFunc)( FT2_1_3_LruNode  node,
-                        FT2_1_3_LruKey   key,
-                        FT2_1_3_Pointer  data );
+						FT2_1_3_LruKey   key,
+						FT2_1_3_Pointer  data );
 
 /* this method is used to finalize a given list element node */
 typedef void
 (*FT2_1_3_LruNode_DoneFunc)( FT2_1_3_LruNode  node,
-                        FT2_1_3_Pointer  data );
+						FT2_1_3_Pointer  data );
 
 /* If defined, this method is called when the list if full        */
 /* during the lookup process -- it is used to change the contents */
@@ -123,16 +125,16 @@ typedef void
 /* then `init_element()'.  Set it to 0 for default behaviour.     */
 typedef FT2_1_3_Error
 (*FT2_1_3_LruNode_FlushFunc)( FT2_1_3_LruNode  node,
-                         FT2_1_3_LruKey   new_key,
-                         FT2_1_3_Pointer  data );
+						 FT2_1_3_LruKey   new_key,
+						 FT2_1_3_Pointer  data );
 
 /* If defined, this method is used to compare a list element node */
 /* with a given key during a lookup.  If set to 0, the `key'      */
 /* fields will be directly compared instead.                      */
 typedef FT2_1_3_Bool
 (*FT2_1_3_LruNode_CompareFunc)( FT2_1_3_LruNode  node,
-                           FT2_1_3_LruKey   key,
-                           FT2_1_3_Pointer  data );
+						   FT2_1_3_LruKey   key,
+						   FT2_1_3_Pointer  data );
 
 /* A selector is used to indicate whether a given list element node */
 /* is part of a selection for FT2_1_3_LruList_Remove_Selection().  The   */
@@ -140,8 +142,8 @@ typedef FT2_1_3_Bool
 /* node is part of it.                                              */
 typedef FT2_1_3_Bool
 (*FT2_1_3_LruNode_SelectFunc)( FT2_1_3_LruNode  node,
-                          FT2_1_3_Pointer  data,
-                          FT2_1_3_Pointer  list_data );
+						  FT2_1_3_Pointer  data,
+						  FT2_1_3_Pointer  list_data );
 
 /* LRU class */
 typedef struct  FT2_1_3_LruList_ClassRec_ {
@@ -163,10 +165,10 @@ typedef struct  FT2_1_3_LruList_ClassRec_ {
 
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_LruList_New( FT2_1_3_LruList_Class  clazz,
-                FT2_1_3_UInt           max_elements,
-                FT2_1_3_Pointer        user_data,
-                FT2_1_3_Memory         memory,
-                FT2_1_3_LruList       *alist );
+				FT2_1_3_UInt           max_elements,
+				FT2_1_3_Pointer        user_data,
+				FT2_1_3_Memory         memory,
+				FT2_1_3_LruList       *alist );
 
 FT2_1_3_EXPORT( void )
 FT2_1_3_LruList_Reset( FT2_1_3_LruList  list );
@@ -176,24 +178,26 @@ FT2_1_3_LruList_Destroy ( FT2_1_3_LruList  list );
 
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_LruList_Lookup( FT2_1_3_LruList  list,
-                   FT2_1_3_LruKey   key,
-                   FT2_1_3_LruNode *anode );
+				   FT2_1_3_LruKey   key,
+				   FT2_1_3_LruNode *anode );
 
 FT2_1_3_EXPORT( void )
 FT2_1_3_LruList_Remove( FT2_1_3_LruList  list,
-                   FT2_1_3_LruNode  node );
+				   FT2_1_3_LruNode  node );
 
 FT2_1_3_EXPORT( void )
 FT2_1_3_LruList_Remove_Selection( FT2_1_3_LruList             list,
-                             FT2_1_3_LruNode_SelectFunc  select_func,
-                             FT2_1_3_Pointer             select_data );
+							 FT2_1_3_LruNode_SelectFunc  select_func,
+							 FT2_1_3_Pointer             select_data );
 
 /* */
 
 FT2_1_3_END_HEADER
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
-#endif /* __FTLRU_H__ */
+#endif /* AGS_LIB_FREETYPE_FTLRU_H */
 
 
 /* END */

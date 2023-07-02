@@ -59,8 +59,8 @@
 /*************************************************************************/
 
 
-#ifndef __FTCMANAG_H__
-#define __FTCMANAG_H__
+#ifndef AGS_LIB_FREETYPE_FTCMANAG_H
+#define AGS_LIB_FREETYPE_FTCMANAG_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
@@ -68,6 +68,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftlru.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftccache.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -111,12 +113,12 @@ typedef struct  FTC_FamilyTableRec_ {
 
 FT2_1_3_EXPORT( FT2_1_3_Error )
 ftc_family_table_alloc( FTC_FamilyTable   table,
-                        FT2_1_3_Memory         memory,
-                        FTC_FamilyEntry  *aentry );
+						FT2_1_3_Memory         memory,
+						FTC_FamilyEntry  *aentry );
 
 FT2_1_3_EXPORT( void )
 ftc_family_table_free( FTC_FamilyTable  table,
-                       FT2_1_3_UInt          idx );
+					   FT2_1_3_UInt          idx );
 
 
 /*************************************************************************/
@@ -201,14 +203,14 @@ FTC_Manager_Compress( FTC_Manager  manager );
 /* this must be used internally for the moment */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FTC_Manager_Register_Cache( FTC_Manager      manager,
-                            FTC_Cache_Class  clazz,
-                            FTC_Cache       *acache );
+							FTC_Cache_Class  clazz,
+							FTC_Cache       *acache );
 
 
 /* can be called to increment a node's reference count */
 FT2_1_3_EXPORT( void )
 FTC_Node_Ref( FTC_Node     node,
-              FTC_Manager  manager );
+			  FTC_Manager  manager );
 
 
 /*************************************************************************/
@@ -228,14 +230,16 @@ FTC_Node_Ref( FTC_Node     node,
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FTC_Node_Unref( FTC_Node     node,
-                FTC_Manager  manager );
+				FTC_Manager  manager );
 
 /* */
 
 FT2_1_3_END_HEADER
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
-#endif /* __FTCMANAG_H__ */
+#endif /* AGS_LIB_FREETYPE_FTCMANAG_H */
 
 
 /* END */

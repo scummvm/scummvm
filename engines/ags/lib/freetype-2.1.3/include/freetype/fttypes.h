@@ -16,8 +16,8 @@
 /***************************************************************************/
 
 
-#ifndef __FTTYPES_H__
-#define __FTTYPES_H__
+#ifndef AGS_LIB_FREETYPE_FTTYPES_H
+#define AGS_LIB_FREETYPE_FTTYPES_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
@@ -27,6 +27,8 @@
 
 #include <stddef.h>
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -441,10 +443,10 @@ typedef struct  FT2_1_3_Generic_ {
 /*    macro.                                                             */
 /*                                                                       */
 #define FT2_1_3_MAKE_TAG( _x1, _x2, _x3, _x4 ) \
-          ( ( (FT2_1_3_ULong)_x1 << 24 ) |     \
-            ( (FT2_1_3_ULong)_x2 << 16 ) |     \
-            ( (FT2_1_3_ULong)_x3 <<  8 ) |     \
-              (FT2_1_3_ULong)_x4         )
+		  ( ( (FT2_1_3_ULong)_x1 << 24 ) |     \
+			( (FT2_1_3_ULong)_x2 << 16 ) |     \
+			( (FT2_1_3_ULong)_x3 <<  8 ) |     \
+			  (FT2_1_3_ULong)_x4         )
 
 
 /*************************************************************************/
@@ -546,7 +548,10 @@ typedef struct  FT2_1_3_ListRec_ {
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTTYPES_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTTYPES_H */
 
 
 /* END */

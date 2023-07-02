@@ -16,14 +16,16 @@
 /***************************************************************************/
 
 
-#ifndef __FTRENDER_H__
-#define __FTRENDER_H__
+#ifndef AGS_LIB_FREETYPE_FTRENDER_H
+#define AGS_LIB_FREETYPE_FTRENDER_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftmodule.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftglyph.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -39,7 +41,7 @@ FT2_1_3_BEGIN_HEADER
 /* create a new glyph object */
 typedef FT2_1_3_Error
 (*FT2_1_3_Glyph_InitFunc)( FT2_1_3_Glyph      glyph,
-                      FT2_1_3_GlyphSlot  slot );
+					  FT2_1_3_GlyphSlot  slot );
 
 /* destroys a given glyph object */
 typedef void
@@ -47,20 +49,20 @@ typedef void
 
 typedef void
 (*FT2_1_3_Glyph_TransformFunc)( FT2_1_3_Glyph    glyph,
-                           FT2_1_3_Matrix*  matrix,
-                           FT2_1_3_Vector*  delta );
+						   FT2_1_3_Matrix*  matrix,
+						   FT2_1_3_Vector*  delta );
 
 typedef void
 (*FT2_1_3_Glyph_GetBBoxFunc)( FT2_1_3_Glyph  glyph,
-                         FT2_1_3_BBox*  abbox );
+						 FT2_1_3_BBox*  abbox );
 
 typedef FT2_1_3_Error
 (*FT2_1_3_Glyph_CopyFunc)( FT2_1_3_Glyph   source,
-                      FT2_1_3_Glyph   target );
+					  FT2_1_3_Glyph   target );
 
 typedef FT2_1_3_Error
 (*FT2_1_3_Glyph_PrepareFunc)( FT2_1_3_Glyph      glyph,
-                         FT2_1_3_GlyphSlot  slot );
+						 FT2_1_3_GlyphSlot  slot );
 
 /* deprecated */
 #define FT2_1_3_Glyph_Init_Func       FT2_1_3_Glyph_InitFunc
@@ -85,27 +87,27 @@ struct  FT2_1_3_Glyph_Class_ {
 
 typedef FT2_1_3_Error
 (*FT2_1_3_Renderer_RenderFunc)( FT2_1_3_Renderer   renderer,
-                           FT2_1_3_GlyphSlot  slot,
-                           FT2_1_3_UInt       mode,
-                           FT2_1_3_Vector*    origin );
+						   FT2_1_3_GlyphSlot  slot,
+						   FT2_1_3_UInt       mode,
+						   FT2_1_3_Vector*    origin );
 
 typedef FT2_1_3_Error
 (*FT2_1_3_Renderer_TransformFunc)( FT2_1_3_Renderer   renderer,
-                              FT2_1_3_GlyphSlot  slot,
-                              FT2_1_3_Matrix*    matrix,
-                              FT2_1_3_Vector*    delta );
+							  FT2_1_3_GlyphSlot  slot,
+							  FT2_1_3_Matrix*    matrix,
+							  FT2_1_3_Vector*    delta );
 
 
 typedef void
 (*FT2_1_3_Renderer_GetCBoxFunc)( FT2_1_3_Renderer   renderer,
-                            FT2_1_3_GlyphSlot  slot,
-                            FT2_1_3_BBox*      cbox );
+							FT2_1_3_GlyphSlot  slot,
+							FT2_1_3_BBox*      cbox );
 
 
 typedef FT2_1_3_Error
 (*FT2_1_3_Renderer_SetModeFunc)( FT2_1_3_Renderer  renderer,
-                            FT2_1_3_ULong     mode_tag,
-                            FT2_1_3_Pointer   mode_ptr );
+							FT2_1_3_ULong     mode_tag,
+							FT2_1_3_Pointer   mode_ptr );
 
 /* deprecated identifiers */
 #define FTRenderer_render  FT2_1_3_Renderer_RenderFunc
@@ -179,7 +181,7 @@ typedef struct  FT2_1_3_Renderer_Class_ {
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Renderer )
 FT2_1_3_Get_Renderer( FT2_1_3_Library       library,
-                 FT2_1_3_Glyph_Format  format );
+				 FT2_1_3_Glyph_Format  format );
 
 
 /*************************************************************************/
@@ -211,9 +213,9 @@ FT2_1_3_Get_Renderer( FT2_1_3_Library       library,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Set_Renderer( FT2_1_3_Library     library,
-                 FT2_1_3_Renderer    renderer,
-                 FT2_1_3_UInt        num_params,
-                 FT2_1_3_Parameter*  parameters );
+				 FT2_1_3_Renderer    renderer,
+				 FT2_1_3_UInt        num_params,
+				 FT2_1_3_Parameter*  parameters );
 
 
 /* */
@@ -221,7 +223,10 @@ FT2_1_3_Set_Renderer( FT2_1_3_Library     library,
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTRENDER_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTRENDER_H */
 
 
 /* END */

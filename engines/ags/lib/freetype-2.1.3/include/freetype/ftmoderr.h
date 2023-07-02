@@ -54,8 +54,8 @@
 /*************************************************************************/
 
 
-#ifndef __FTMODERR_H__
-#define __FTMODERR_H__
+#ifndef AGS_LIB_FREETYPE_FTMODERR_H
+#define AGS_LIB_FREETYPE_FTMODERR_H
 
 
 /*******************************************************************/
@@ -143,7 +143,7 @@ FT2_1_3_MODERR_END_LIST
 #undef FT2_1_3_NEED_EXTERN_C
 
 
-#endif /* __FTMODERR_H__ */
+#endif /* AGS_LIB_FREETYPE_FTMODERR_H */
 
 
 /* END */

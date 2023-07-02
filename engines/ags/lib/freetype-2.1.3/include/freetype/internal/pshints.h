@@ -18,14 +18,16 @@
 /***************************************************************************/
 
 
-#ifndef __PSHINTS_H__
-#define __PSHINTS_H__
+#ifndef AGS_LIB_FREETYPE_PSHINTS_H
+#define AGS_LIB_FREETYPE_PSHINTS_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/t1tables.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -42,15 +44,15 @@ typedef struct PSH_GlobalsRec_*  PSH_Globals;
 
 typedef FT2_1_3_Error
 (*PSH_Globals_NewFunc)( FT2_1_3_Memory     memory,
-                        T1_Private*   private_dict,
-                        PSH_Globals*  aglobals );
+						T1_Private*   private_dict,
+						PSH_Globals*  aglobals );
 
 typedef FT2_1_3_Error
 (*PSH_Globals_SetScaleFunc)( PSH_Globals  globals,
-                             FT2_1_3_Fixed     x_scale,
-                             FT2_1_3_Fixed     y_scale,
-                             FT2_1_3_Fixed     x_delta,
-                             FT2_1_3_Fixed     y_delta );
+							 FT2_1_3_Fixed     x_scale,
+							 FT2_1_3_Fixed     y_scale,
+							 FT2_1_3_Fixed     x_delta,
+							 FT2_1_3_Fixed     y_delta );
 
 typedef void
 (*PSH_Globals_DestroyFunc)( PSH_Globals  globals );
@@ -169,8 +171,8 @@ typedef void
 /*                                                                       */
 typedef void
 (*T1_Hints_SetStemFunc)( T1_Hints  hints,
-                         FT2_1_3_UInt   dimension,
-                         FT2_1_3_Long*  coords );
+						 FT2_1_3_UInt   dimension,
+						 FT2_1_3_Long*  coords );
 
 
 /*************************************************************************/
@@ -199,8 +201,8 @@ typedef void
 /*                                                                       */
 typedef void
 (*T1_Hints_SetStem3Func)( T1_Hints  hints,
-                          FT2_1_3_UInt   dimension,
-                          FT2_1_3_Long*  coords );
+						  FT2_1_3_UInt   dimension,
+						  FT2_1_3_Long*  coords );
 
 
 /*************************************************************************/
@@ -220,7 +222,7 @@ typedef void
 /*                                                                       */
 typedef void
 (*T1_Hints_ResetFunc)( T1_Hints  hints,
-                       FT2_1_3_UInt   end_point );
+					   FT2_1_3_UInt   end_point );
 
 
 /*************************************************************************/
@@ -246,7 +248,7 @@ typedef void
 /*                                                                       */
 typedef FT2_1_3_Error
 (*T1_Hints_CloseFunc)( T1_Hints  hints,
-                       FT2_1_3_UInt   end_point );
+					   FT2_1_3_UInt   end_point );
 
 
 /*************************************************************************/
@@ -280,9 +282,9 @@ typedef FT2_1_3_Error
 /*                                                                       */
 typedef FT2_1_3_Error
 (*T1_Hints_ApplyFunc)( T1_Hints        hints,
-                       FT2_1_3_Outline*     outline,
-                       PSH_Globals     globals,
-                       FT2_1_3_Render_Mode  hint_mode );
+					   FT2_1_3_Outline*     outline,
+					   PSH_Globals     globals,
+					   FT2_1_3_Render_Mode  hint_mode );
 
 
 /*************************************************************************/
@@ -425,9 +427,9 @@ typedef void
 /*                                                                       */
 typedef void
 (*T2_Hints_StemsFunc)( T2_Hints   hints,
-                       FT2_1_3_UInt    dimension,
-                       FT2_1_3_UInt    count,
-                       FT2_1_3_Fixed*  coordinates );
+					   FT2_1_3_UInt    dimension,
+					   FT2_1_3_UInt    count,
+					   FT2_1_3_Fixed*  coordinates );
 
 
 /*************************************************************************/
@@ -462,9 +464,9 @@ typedef void
 /*                                                                       */
 typedef void
 (*T2_Hints_MaskFunc)( T2_Hints        hints,
-                      FT2_1_3_UInt         end_point,
-                      FT2_1_3_UInt         bit_count,
-                      const FT2_1_3_Byte*  bytes );
+					  FT2_1_3_UInt         end_point,
+					  FT2_1_3_UInt         bit_count,
+					  const FT2_1_3_Byte*  bytes );
 
 
 /*************************************************************************/
@@ -499,8 +501,8 @@ typedef void
 /*                                                                       */
 typedef void
 (*T2_Hints_CounterFunc)( T2_Hints        hints,
-                         FT2_1_3_UInt         bit_count,
-                         const FT2_1_3_Byte*  bytes );
+						 FT2_1_3_UInt         bit_count,
+						 const FT2_1_3_Byte*  bytes );
 
 
 /*************************************************************************/
@@ -526,7 +528,7 @@ typedef void
 /*                                                                       */
 typedef FT2_1_3_Error
 (*T2_Hints_CloseFunc)( T2_Hints  hints,
-                       FT2_1_3_UInt   end_point );
+					   FT2_1_3_UInt   end_point );
 
 
 /*************************************************************************/
@@ -560,9 +562,9 @@ typedef FT2_1_3_Error
 /*                                                                       */
 typedef FT2_1_3_Error
 (*T2_Hints_ApplyFunc)( T2_Hints        hints,
-                       FT2_1_3_Outline*     outline,
-                       PSH_Globals     globals,
-                       FT2_1_3_Render_Mode  hint_mode );
+					   FT2_1_3_Outline*     outline,
+					   PSH_Globals     globals,
+					   FT2_1_3_Render_Mode  hint_mode );
 
 
 /*************************************************************************/
@@ -616,7 +618,10 @@ typedef PSHinter_Interface*  PSHinter_Service;
 
 FT2_1_3_END_HEADER
 
-#endif /* __PSHINTS_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_PSHINTS_H */
 
 
 /* END */

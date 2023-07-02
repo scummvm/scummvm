@@ -42,8 +42,8 @@
 /*************************************************************************/
 
 
-#ifndef __FTCGLYPH_H__
-#define __FTCGLYPH_H__
+#ifndef AGS_LIB_FREETYPE_FTCGLYPH_H
+#define AGS_LIB_FREETYPE_FTCGLYPH_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
@@ -52,6 +52,8 @@
 
 #include <stddef.h>
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -109,34 +111,32 @@ typedef struct  FTC_GlyphFamilyRec_ {
 /* each glyph node contains a 'chunk' of glyph items; */
 /* translate a glyph index into a chunk index         */
 #define FTC_GLYPH_FAMILY_CHUNK( gfam, gindex )                  \
-          ( ( gindex ) / FTC_GLYPH_FAMILY( gfam )->item_count )
+					( ( gindex ) / FTC_GLYPH_FAMILY( gfam )->item_count )
 
 /* find a glyph index's chunk, and return its start index */
 #define FTC_GLYPH_FAMILY_START( gfam, gindex )       \
-          ( FTC_GLYPH_FAMILY_CHUNK( gfam, gindex ) * \
-            FTC_GLYPH_FAMILY( gfam )->item_count )
+					( FTC_GLYPH_FAMILY_CHUNK( gfam, gindex ) * \
+						FTC_GLYPH_FAMILY( gfam )->item_count )
 
 /* compute a glyph request's hash value */
-#define FTC_GLYPH_FAMILY_HASH( gfam, gindex )                         \
-          ( (FT2_1_3_UFast)(                                               \
-              ( FTC_GLYPH_FAMILY( gfam )->hash << 16 ) |              \
-              ( FTC_GLYPH_FAMILY_CHUNK( gfam, gindex ) & 0xFFFF ) ) )
+#define FTC_GLYPH_FAMILY_HASH(gfam, gindex)                 \
+	((FT2_1_3_UFast)((FTC_GLYPH_FAMILY(gfam)->hash << 16) | \
+					 (FTC_GLYPH_FAMILY_CHUNK(gfam, gindex) & 0xFFFF)))
 
 /* must be called in an FTC_Family_CompareFunc to update the query */
 /* whenever a glyph set is matched in the lookup, or when it       */
 /* is created                                                      */
-#define FTC_GLYPH_FAMILY_FOUND( gfam, gquery )                            \
-          do                                                              \
-          {                                                               \
-            FTC_QUERY( gquery )->family = FTC_FAMILY( gfam );             \
-            FTC_QUERY( gquery )->hash =                                   \
-              FTC_GLYPH_FAMILY_HASH( gfam,                                \
-                                     FTC_GLYPH_QUERY( gquery )->gindex ); \
-          } while ( 0 )
+#define FTC_GLYPH_FAMILY_FOUND(gfam, gquery)                        \
+	do {                                                            \
+		FTC_QUERY(gquery)->family = FTC_FAMILY(gfam);               \
+		FTC_QUERY(gquery)->hash =                                   \
+			FTC_GLYPH_FAMILY_HASH(gfam,                             \
+								  FTC_GLYPH_QUERY(gquery)->gindex); \
+	} while (0)
 
 /* retrieve glyph index of glyph node */
 #define FTC_GLYPH_NODE_GINDEX( x )                                 \
-          ( (FT2_1_3_UInt)( FTC_GLYPH_NODE( x )->node.hash & 0xFFFF ) )
+					( (FT2_1_3_UInt)( FTC_GLYPH_NODE( x )->node.hash & 0xFFFF ) )
 
 
 /*************************************************************************/
@@ -149,31 +149,31 @@ typedef struct  FTC_GlyphFamilyRec_ {
 /* must be called by derived FTC_Node_InitFunc routines */
 FT2_1_3_EXPORT( void )
 ftc_glyph_node_init( FTC_GlyphNode    node,
-                     FT2_1_3_UInt          gindex,  /* glyph index for node */
-                     FTC_GlyphFamily  gfam );
+										 FT2_1_3_UInt          gindex,  /* glyph index for node */
+										 FTC_GlyphFamily  gfam );
 
 /* returns TRUE iff the query's glyph index correspond to the node;  */
 /* this assumes that the "family" and "hash" fields of the query are */
 /* already correctly set                                             */
 FT2_1_3_EXPORT( FT2_1_3_Bool )
 ftc_glyph_node_compare( FTC_GlyphNode   gnode,
-                        FTC_GlyphQuery  gquery );
+												FTC_GlyphQuery  gquery );
 
 /* must be called by derived FTC_Node_DoneFunc routines */
 FT2_1_3_EXPORT( void )
 ftc_glyph_node_done( FTC_GlyphNode  node,
-                     FTC_Cache      cache );
+										 FTC_Cache      cache );
 
 
 /* must be called by derived FTC_Family_InitFunc; */
 /* calls "ftc_family_init"                        */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 ftc_glyph_family_init( FTC_GlyphFamily  gfam,
-                       FT2_1_3_UInt32        hash,
-                       FT2_1_3_UInt          item_count,
-                       FT2_1_3_UInt          item_total,
-                       FTC_GlyphQuery   gquery,
-                       FTC_Cache        cache );
+											 FT2_1_3_UInt32        hash,
+											 FT2_1_3_UInt          item_count,
+											 FT2_1_3_UInt          item_total,
+											 FTC_GlyphQuery   gquery,
+											 FTC_Cache        cache );
 
 FT2_1_3_EXPORT( void )
 ftc_glyph_family_done( FTC_GlyphFamily  gfam );
@@ -183,8 +183,10 @@ ftc_glyph_family_done( FTC_GlyphFamily  gfam );
 
 FT2_1_3_END_HEADER
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
-#endif /* __FTCGLYPH_H__ */
+#endif /* AGS_LIB_FREETYPE_FTCGLYPH_H */
 
 
 /* END */

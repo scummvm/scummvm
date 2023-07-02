@@ -16,8 +16,8 @@
 /***************************************************************************/
 
 
-#ifndef __FTCALC_H__
-#define __FTCALC_H__
+#ifndef AGS_LIB_FREETYPE_FTCALC_H
+#define AGS_LIB_FREETYPE_FTCALC_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
@@ -32,6 +32,8 @@ FT2_1_3_EXPORT( FT2_1_3_Int32 )  FT2_1_3_SqrtFixed( FT2_1_3_Int32  x );
 
 #define SQRT_32( x )  FT2_1_3_Sqrt32( x )
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*                                                                       */
@@ -51,6 +53,8 @@ FT2_1_3_EXPORT( FT2_1_3_Int32 )  FT2_1_3_SqrtFixed( FT2_1_3_Int32  x );
 FT2_1_3_EXPORT( FT2_1_3_Int32 )
 FT2_1_3_Sqrt32( FT2_1_3_Int32  x );
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /*************************************************************************/
 /*                                                                       */
@@ -66,12 +70,12 @@ FT2_1_3_Sqrt32( FT2_1_3_Int32  x );
 #define FLOAT_TO_FIXED( x )    ( (FT2_1_3_Long)( x * 65536.0 ) )
 
 #define ROUND_F26DOT6( x )     ( x >= 0 ? (    ( (x) + 32 ) & -64 )     \
-                                        : ( -( ( 32 - (x) ) & -64 ) ) )
+										: ( -( ( 32 - (x) ) & -64 ) ) )
 
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTCALC_H__ */
+#endif /* AGS_LIB_FREETYPE_FTCALC_H */
 
 
 /* END */

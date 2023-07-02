@@ -25,13 +25,15 @@
 /*************************************************************************/
 
 
-#ifndef __FTSIZES_H__
-#define __FTSIZES_H__
+#ifndef AGS_LIB_FREETYPE_FTSIZES_H
+#define AGS_LIB_FREETYPE_FTSIZES_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -92,7 +94,7 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_New_Size( FT2_1_3_Face   face,
-             FT2_1_3_Size*  size );
+			 FT2_1_3_Size*  size );
 
 
 /*************************************************************************/
@@ -145,7 +147,10 @@ FT2_1_3_Activate_Size( FT2_1_3_Size  size );
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTSIZES_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTSIZES_H */
 
 
 /* END */

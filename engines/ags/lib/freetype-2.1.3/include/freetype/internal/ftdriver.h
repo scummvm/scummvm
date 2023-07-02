@@ -16,23 +16,25 @@
 /***************************************************************************/
 
 
-#ifndef __FTDRIVER_H__
-#define __FTDRIVER_H__
+#ifndef AGS_LIB_FREETYPE_FTDRIVER_H
+#define AGS_LIB_FREETYPE_FTDRIVER_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftmodule.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
 
 typedef FT2_1_3_Error
 (*FT2_1_3_Face_InitFunc)( FT2_1_3_Stream      stream,
-                     FT2_1_3_Face        face,
-                     FT2_1_3_Int         typeface_index,
-                     FT2_1_3_Int         num_params,
-                     FT2_1_3_Parameter*  parameters );
+					 FT2_1_3_Face        face,
+					 FT2_1_3_Int         typeface_index,
+					 FT2_1_3_Int         num_params,
+					 FT2_1_3_Parameter*  parameters );
 
 typedef void
 (*FT2_1_3_Face_DoneFunc)( FT2_1_3_Face  face );
@@ -54,49 +56,49 @@ typedef void
 
 typedef FT2_1_3_Error
 (*FT2_1_3_Size_ResetPointsFunc)( FT2_1_3_Size     size,
-                            FT2_1_3_F26Dot6  char_width,
-                            FT2_1_3_F26Dot6  char_height,
-                            FT2_1_3_UInt     horz_resolution,
-                            FT2_1_3_UInt     vert_resolution );
+							FT2_1_3_F26Dot6  char_width,
+							FT2_1_3_F26Dot6  char_height,
+							FT2_1_3_UInt     horz_resolution,
+							FT2_1_3_UInt     vert_resolution );
 
 typedef FT2_1_3_Error
 (*FT2_1_3_Size_ResetPixelsFunc)( FT2_1_3_Size  size,
-                            FT2_1_3_UInt  pixel_width,
-                            FT2_1_3_UInt  pixel_height );
+							FT2_1_3_UInt  pixel_width,
+							FT2_1_3_UInt  pixel_height );
 
 typedef FT2_1_3_Error
 (*FT2_1_3_Slot_LoadFunc)( FT2_1_3_GlyphSlot  slot,
-                     FT2_1_3_Size       size,
-                     FT2_1_3_UInt       glyph_index,
-                     FT2_1_3_Int32      load_flags );
+					 FT2_1_3_Size       size,
+					 FT2_1_3_UInt       glyph_index,
+					 FT2_1_3_Int32      load_flags );
 
 
 typedef FT2_1_3_UInt
 (*FT2_1_3_CharMap_CharIndexFunc)( FT2_1_3_CharMap  charmap,
-                             FT2_1_3_Long     charcode );
+							 FT2_1_3_Long     charcode );
 
 typedef FT2_1_3_Long
 (*FT2_1_3_CharMap_CharNextFunc)( FT2_1_3_CharMap  charmap,
-                            FT2_1_3_Long     charcode );
+							FT2_1_3_Long     charcode );
 
 typedef FT2_1_3_Error
 (*FT2_1_3_Face_GetKerningFunc)( FT2_1_3_Face     face,
-                           FT2_1_3_UInt     leFT2_1_3_glyph,
-                           FT2_1_3_UInt     right_glyph,
-                           FT2_1_3_Vector*  kerning );
+						   FT2_1_3_UInt     leFT2_1_3_glyph,
+						   FT2_1_3_UInt     right_glyph,
+						   FT2_1_3_Vector*  kerning );
 
 
 typedef FT2_1_3_Error
 (*FT2_1_3_Face_AttachFunc)( FT2_1_3_Face    face,
-                       FT2_1_3_Stream  stream );
+					   FT2_1_3_Stream  stream );
 
 
 typedef FT2_1_3_Error
 (*FT2_1_3_Face_GetAdvancesFunc)( FT2_1_3_Face     face,
-                            FT2_1_3_UInt     first,
-                            FT2_1_3_UInt     count,
-                            FT2_1_3_Bool     vertical,
-                            FT2_1_3_UShort*  advances );
+							FT2_1_3_UInt     first,
+							FT2_1_3_UInt     count,
+							FT2_1_3_Bool     vertical,
+							FT2_1_3_UShort*  advances );
 
 
 /*************************************************************************/
@@ -195,7 +197,10 @@ typedef struct  FT2_1_3_Driver_ClassRec_ {
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTDRIVER_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTDRIVER_H */
 
 
 /* END */

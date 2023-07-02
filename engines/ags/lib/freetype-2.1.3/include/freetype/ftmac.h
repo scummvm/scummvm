@@ -25,12 +25,14 @@
 /***************************************************************************/
 
 
-#ifndef __FTMAC_H__
-#define __FTMAC_H__
+#ifndef AGS_LIB_FREETYPE_FTMAC_H
+#define AGS_LIB_FREETYPE_FTMAC_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -87,9 +89,9 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_New_Face_From_FOND( FT2_1_3_Library  library,
-                       Handle      fond,
-                       FT2_1_3_Long     face_index,
-                       FT2_1_3_Face    *aface );
+					   Handle      fond,
+					   FT2_1_3_Long     face_index,
+					   FT2_1_3_Face    *aface );
 
 
 /*************************************************************************/
@@ -113,16 +115,18 @@ FT2_1_3_New_Face_From_FOND( FT2_1_3_Library  library,
 /*                                                                       */
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_GetFile_From_Mac_Name( char*     fontName,
-                          FSSpec*   pathSpec,
-                          FT2_1_3_Long*  face_index );
+						  FSSpec*   pathSpec,
+						  FT2_1_3_Long*  face_index );
 
 /* */
 
 
 FT2_1_3_END_HEADER
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
-#endif /* __FTMAC_H__ */
+#endif /* AGS_LIB_FREETYPE_FTMAC_H */
 
 
 /* END */

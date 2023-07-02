@@ -17,13 +17,15 @@
 /***************************************************************************/
 
 
-#ifndef __PSNAMES_H__
-#define __PSNAMES_H__
+#ifndef AGS_LIB_FREETYPE_PSNAMES_H
+#define AGS_LIB_FREETYPE_PSNAMES_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -85,8 +87,8 @@ typedef FT2_1_3_UInt32
 /*                                                                       */
 typedef FT2_1_3_UInt
 (*PS_Unicode_Index_Func)( FT2_1_3_UInt       num_glyphs,
-                          const char**  glyph_names,
-                          FT2_1_3_ULong      unicode );
+						  const char**  glyph_names,
+						  FT2_1_3_ULong      unicode );
 
 
 /*************************************************************************/
@@ -156,17 +158,17 @@ typedef struct  PS_Unicodes_ {
 
 typedef FT2_1_3_Error
 (*PS_Build_Unicodes_Func)( FT2_1_3_Memory     memory,
-                           FT2_1_3_UInt       num_glyphs,
-                           const char**  glyph_names,
-                           PS_Unicodes*  unicodes );
+						   FT2_1_3_UInt       num_glyphs,
+						   const char**  glyph_names,
+						   PS_Unicodes*  unicodes );
 
 typedef FT2_1_3_UInt
 (*PS_Lookup_Unicode_Func)( PS_Unicodes*  unicodes,
-                           FT2_1_3_UInt       unicode );
+						   FT2_1_3_UInt       unicode );
 
 typedef FT2_1_3_ULong
 (*PS_Next_Unicode_Func)( PS_Unicodes*  unicodes,
-                         FT2_1_3_ULong      unicode );
+						 FT2_1_3_ULong      unicode );
 
 
 /*************************************************************************/
@@ -232,7 +234,10 @@ typedef PSNames_Interface*  PSNames_Service;
 
 FT2_1_3_END_HEADER
 
-#endif /* __PSNAMES_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_PSNAMES_H */
 
 
 /* END */

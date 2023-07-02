@@ -16,8 +16,8 @@
 /***************************************************************************/
 
 
-#ifndef __TTAGS_H__
-#define __TTAGS_H__
+#ifndef AGS_LIB_FREETYPE_TTAGS_H
+#define AGS_LIB_FREETYPE_TTAGS_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
@@ -68,7 +68,7 @@ FT2_1_3_BEGIN_HEADER
 
 FT2_1_3_END_HEADER
 
-#endif /* __TTAGS_H__ */
+#endif /* AGS_LIB_FREETYPE_TTAGS_H */
 
 
 /* END */

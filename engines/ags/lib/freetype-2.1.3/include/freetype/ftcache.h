@@ -31,13 +31,15 @@
 /*************************************************************************/
 
 
-#ifndef __FTCACHE_H__
-#define __FTCACHE_H__
+#ifndef AGS_LIB_FREETYPE_FTCACHE_H
+#define AGS_LIB_FREETYPE_FTCACHE_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftglyph.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -144,9 +146,9 @@ typedef FT2_1_3_Pointer  FTC_FaceID;
 /*                                                                       */
 typedef FT2_1_3_Error
 (*FTC_Face_Requester)( FTC_FaceID  face_id,
-                       FT2_1_3_Library  library,
-                       FT2_1_3_Pointer  request_data,
-                       FT2_1_3_Face*    aface );
+											 FT2_1_3_Library  library,
+											 FT2_1_3_Pointer  request_data,
+											 FT2_1_3_Face*    aface );
 
 
 /*************************************************************************/
@@ -178,24 +180,24 @@ typedef struct  FTC_FontRec_ {
 
 
 #define FTC_FONT_COMPARE( f1, f2 )                  \
-          ( (f1)->face_id    == (f2)->face_id    && \
-            (f1)->pix_width  == (f2)->pix_width  && \
-            (f1)->pix_height == (f2)->pix_height )
+					( (f1)->face_id    == (f2)->face_id    && \
+						(f1)->pix_width  == (f2)->pix_width  && \
+						(f1)->pix_height == (f2)->pix_height )
 
 /* FIXME: [ikm] had to cast to uintptr_t first, supress warnings on Winx64
-          the cast intent is unclear;
-          this version of FreeType seem to be implying 16/32-bit addresses.
+					the cast intent is unclear;
+					this version of FreeType seem to be implying 16/32-bit addresses.
 */
 #define FT2_1_3_POINTER_TO_ULONG( p )  ((FT2_1_3_ULong)(uintptr_t)(FT2_1_3_Pointer)(p))
 
 #define FTC_FACE_ID_HASH( i )                              \
-          ((FT2_1_3_UInt32)(( FT2_1_3_POINTER_TO_ULONG( i ) >> 3 ) ^ \
-                       ( FT2_1_3_POINTER_TO_ULONG( i ) << 7 ) ) )
+					((FT2_1_3_UInt32)(( FT2_1_3_POINTER_TO_ULONG( i ) >> 3 ) ^ \
+											 ( FT2_1_3_POINTER_TO_ULONG( i ) << 7 ) ) )
 
 #define FTC_FONT_HASH( f )                              \
-          (FT2_1_3_UInt32)( FTC_FACE_ID_HASH((f)->face_id) ^ \
-                       ((f)->pix_width << 8)          ^ \
-                       ((f)->pix_height)              )
+					(FT2_1_3_UInt32)( FTC_FACE_ID_HASH((f)->face_id) ^ \
+											 ((f)->pix_width << 8)          ^ \
+											 ((f)->pix_height)              )
 
 
 /*************************************************************************/
@@ -287,12 +289,12 @@ typedef struct FTC_NodeRec_*  FTC_Node;
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FTC_Manager_New( FT2_1_3_Library          library,
-                 FT2_1_3_UInt             max_faces,
-                 FT2_1_3_UInt             max_sizes,
-                 FT2_1_3_ULong            max_bytes,
-                 FTC_Face_Requester  requester,
-                 FT2_1_3_Pointer          req_data,
-                 FTC_Manager        *amanager );
+								 FT2_1_3_UInt             max_faces,
+								 FT2_1_3_UInt             max_sizes,
+								 FT2_1_3_ULong            max_bytes,
+								 FTC_Face_Requester  requester,
+								 FT2_1_3_Pointer          req_data,
+								 FTC_Manager        *amanager );
 
 
 /*************************************************************************/
@@ -360,8 +362,8 @@ FTC_Manager_Done( FTC_Manager  manager );
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FTC_Manager_Lookup_Face( FTC_Manager  manager,
-                         FTC_FaceID   face_id,
-                         FT2_1_3_Face     *aface );
+												 FTC_FaceID   face_id,
+												 FT2_1_3_Face     *aface );
 
 
 /*************************************************************************/
@@ -405,14 +407,17 @@ FTC_Manager_Lookup_Face( FTC_Manager  manager,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FTC_Manager_Lookup_Size( FTC_Manager  manager,
-                         FTC_Font     font,
-                         FT2_1_3_Face     *aface,
-                         FT2_1_3_Size     *asize );
+												 FTC_Font     font,
+												 FT2_1_3_Face     *aface,
+												 FT2_1_3_Size     *asize );
 
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTCACHE_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTCACHE_H */
 
 
 /* END */

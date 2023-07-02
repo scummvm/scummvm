@@ -87,8 +87,8 @@
 /*************************************************************************/
 
 
-#ifndef __FTERRORS_H__
-#define __FTERRORS_H__
+#ifndef AGS_LIB_FREETYPE_FTERRORS_H
+#define AGS_LIB_FREETYPE_FTERRORS_H
 
 
 /* include module base error codes */
@@ -156,11 +156,11 @@ extern "C" {
 
 /* this macro is used to define an error */
 #define FT2_1_3_ERRORDEF_( e, v, s )   \
-          FT2_1_3_ERRORDEF( FT2_1_3_ERR_CAT( FT2_1_3_ERR_PREFIX, e ), v + FT2_1_3_ERR_BASE, s )
+		  FT2_1_3_ERRORDEF( FT2_1_3_ERR_CAT( FT2_1_3_ERR_PREFIX, e ), v + FT2_1_3_ERR_BASE, s )
 
 /* this is only used for FT2_1_3_Err_Ok, which must be 0! */
 #define FT2_1_3_NOERRORDEF_( e, v, s ) \
-          FT2_1_3_ERRORDEF( FT2_1_3_ERR_CAT( FT2_1_3_ERR_PREFIX, e ), v, s )
+		  FT2_1_3_ERRORDEF( FT2_1_3_ERR_CAT( FT2_1_3_ERR_PREFIX, e ), v, s )
 
 
 #ifdef FT2_1_3_ERROR_START_LIST
@@ -201,7 +201,7 @@ FT2_1_3_ERROR_END_LIST
 #undef FT2_1_3_ERR_BASE
 #undef FT2_1_3_ERR_CONCAT
 
-#endif /* __FTERRORS_H__ */
+#endif /* AGS_LIB_FREETYPE_FTERRORS_H */
 
 
 /* END */

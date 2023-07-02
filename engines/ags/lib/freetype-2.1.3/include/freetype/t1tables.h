@@ -17,13 +17,15 @@
 /***************************************************************************/
 
 
-#ifndef __T1TABLES_H__
-#define __T1TABLES_H__
+#ifndef AGS_LIB_FREETYPE_T1TABLES_H
+#define AGS_LIB_FREETYPE_T1TABLES_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -370,7 +372,7 @@ FT2_1_3_Has_PS_Glyph_Names( FT2_1_3_Face  face );
  */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Get_PS_Font_Info( FT2_1_3_Face          face,
-                     PS_FontInfoRec  *afont_info );
+					 PS_FontInfoRec  *afont_info );
 
 /* */
 
@@ -378,7 +380,10 @@ FT2_1_3_Get_PS_Font_Info( FT2_1_3_Face          face,
 
 FT2_1_3_END_HEADER
 
-#endif /* __T1TABLES_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_T1TABLES_H */
 
 
 /* END */

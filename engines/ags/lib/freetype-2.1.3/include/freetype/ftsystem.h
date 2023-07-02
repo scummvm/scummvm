@@ -16,12 +16,14 @@
 /***************************************************************************/
 
 
-#ifndef __FTSYSTEM_H__
-#define __FTSYSTEM_H__
+#ifndef AGS_LIB_FREETYPE_FTSYSTEM_H
+#define AGS_LIB_FREETYPE_FTSYSTEM_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -83,7 +85,7 @@ typedef struct FT2_1_3_MemoryRec_*  FT2_1_3_Memory;
 /*                                                                       */
 typedef void*
 (*FT2_1_3_Alloc_Func)( FT2_1_3_Memory  memory,
-                  long       size );
+				  long       size );
 
 
 /*************************************************************************/
@@ -101,7 +103,7 @@ typedef void*
 /*                                                                       */
 typedef void
 (*FT2_1_3_Free_Func)( FT2_1_3_Memory  memory,
-                 void*      block );
+				 void*      block );
 
 
 /*************************************************************************/
@@ -129,9 +131,9 @@ typedef void
 /*                                                                       */
 typedef void*
 (*FT2_1_3_Realloc_Func)( FT2_1_3_Memory  memory,
-                    long       cur_size,
-                    long       new_size,
-                    void*      block );
+					long       cur_size,
+					long       new_size,
+					void*      block );
 
 
 /*************************************************************************/
@@ -219,9 +221,9 @@ typedef union  FT2_1_3_StreamDesc_ {
 /*                                                                       */
 typedef unsigned long
 (*FT2_1_3_Stream_IoFunc)( FT2_1_3_Stream       stream,
-                     unsigned long   offset,
-                     unsigned char*  buffer,
-                     unsigned long   count );
+					 unsigned long   offset,
+					 unsigned char*  buffer,
+					 unsigned long   count );
 
 
 /*************************************************************************/
@@ -300,7 +302,10 @@ typedef struct  FT2_1_3_StreamRec_ {
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTSYSTEM_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTSYSTEM_H */
 
 
 /* END */

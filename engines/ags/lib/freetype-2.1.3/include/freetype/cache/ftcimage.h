@@ -23,13 +23,15 @@
 /*************************************************************************/
 
 
-#ifndef __FTCIMAGE_H__
-#define __FTCIMAGE_H__
+#ifndef AGS_LIB_FREETYPE_FTCIMAGE_H
+#define AGS_LIB_FREETYPE_FTCIMAGE_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftcache.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -83,12 +85,12 @@ typedef struct FTC_ImageTypeRec_*   FTC_ImageType;
 /* */
 
 #define FTC_IMAGE_TYPE_COMPARE( d1, d2 )                    \
-          ( FTC_FONT_COMPARE( &(d1)->font, &(d2)->font ) && \
-            (d1)->flags == (d2)->flags                   )
+		  ( FTC_FONT_COMPARE( &(d1)->font, &(d2)->font ) && \
+			(d1)->flags == (d2)->flags                   )
 
 #define FTC_IMAGE_TYPE_HASH( d )                    \
-          (FT2_1_3_UFast)( FTC_FONT_HASH( &(d)->font ) ^ \
-                      ( (d)->flags << 4 )         )
+		  (FT2_1_3_UFast)( FTC_FONT_HASH( &(d)->font ) ^ \
+					  ( (d)->flags << 4 )         )
 
 
 /*************************************************************************/
@@ -123,7 +125,7 @@ typedef struct FTC_ImageCacheRec_*  FTC_ImageCache;
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FTC_ImageCache_New( FTC_Manager      manager,
-                    FTC_ImageCache  *acache );
+					FTC_ImageCache  *acache );
 
 
 /*************************************************************************/
@@ -170,10 +172,10 @@ FTC_ImageCache_New( FTC_Manager      manager,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FTC_ImageCache_Lookup( FTC_ImageCache  cache,
-                       FTC_ImageType   type,
-                       FT2_1_3_UInt         gindex,
-                       FT2_1_3_Glyph       *aglyph,
-                       FTC_Node       *anode );
+					   FTC_ImageType   type,
+					   FT2_1_3_UInt         gindex,
+					   FT2_1_3_Glyph       *aglyph,
+					   FTC_Node       *anode );
 
 /* */
 
@@ -193,7 +195,7 @@ FTC_ImageCache_Lookup( FTC_ImageCache  cache,
 
 /* monochrome bitmap */
 #define ftc_image_mono             ftc_image_format_bitmap | \
-                                   ftc_image_flag_monochrome
+								   ftc_image_flag_monochrome
 
 /* anti-aliased bitmap */
 #define ftc_image_grays            ftc_image_format_bitmap
@@ -256,7 +258,7 @@ typedef FTC_ImageCache  FTC_Image_Cache;
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FTC_Image_Cache_New( FTC_Manager       manager,
-                     FTC_Image_Cache  *acache );
+					 FTC_Image_Cache  *acache );
 
 
 /*************************************************************************/
@@ -295,16 +297,18 @@ FTC_Image_Cache_New( FTC_Manager       manager,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FTC_Image_Cache_Lookup( FTC_Image_Cache  cache,
-                        FTC_Image_Desc*  desc,
-                        FT2_1_3_UInt          gindex,
-                        FT2_1_3_Glyph        *aglyph );
+						FTC_Image_Desc*  desc,
+						FT2_1_3_UInt          gindex,
+						FT2_1_3_Glyph        *aglyph );
 
 /* */
 
 FT2_1_3_END_HEADER
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
-#endif /* __FTCIMAGE_H__ */
+#endif /* AGS_LIB_FREETYPE_FTCIMAGE_H */
 
 
 /* END */

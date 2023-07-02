@@ -16,14 +16,16 @@
 /***************************************************************************/
 
 
-#ifndef __FTMEMORY_H__
-#define __FTMEMORY_H__
+#ifndef AGS_LIB_FREETYPE_FTMEMORY_H
+#define AGS_LIB_FREETYPE_FTMEMORY_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftconfig.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/fttypes.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -40,7 +42,7 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 #undef  FT2_1_3_SET_ERROR
 #define FT2_1_3_SET_ERROR( expression ) \
-          ( ( error = (expression) ) != 0 )
+		  ( ( error = (expression) ) != 0 )
 
 
 /*************************************************************************/
@@ -59,24 +61,24 @@ FT2_1_3_BEGIN_HEADER
 
 FT2_1_3_BASE( FT2_1_3_Error )
 FT2_1_3_Alloc_Debug( FT2_1_3_Memory    memory,
-                FT2_1_3_Long      size,
-                void*       *P,
-                const char*  file_name,
-                FT2_1_3_Long      line_no );
+				FT2_1_3_Long      size,
+				void*       *P,
+				const char*  file_name,
+				FT2_1_3_Long      line_no );
 
 FT2_1_3_BASE( FT2_1_3_Error )
 FT2_1_3_Realloc_Debug( FT2_1_3_Memory    memory,
-                  FT2_1_3_Long      current,
-                  FT2_1_3_Long      size,
-                  void*       *P,
-                  const char*  file_name,
-                  FT2_1_3_Long      line_no );
+				  FT2_1_3_Long      current,
+				  FT2_1_3_Long      size,
+				  void*       *P,
+				  const char*  file_name,
+				  FT2_1_3_Long      line_no );
 
 FT2_1_3_BASE( void )
 FT2_1_3_Free_Debug( FT2_1_3_Memory    memory,
-               FT2_1_3_Pointer   block,
-               const char*  file_name,
-               FT2_1_3_Long      line_no );
+			   FT2_1_3_Pointer   block,
+			   const char*  file_name,
+			   FT2_1_3_Long      line_no );
 
 #endif
 
@@ -105,8 +107,8 @@ FT2_1_3_Free_Debug( FT2_1_3_Memory    memory,
 /*                                                                       */
 FT2_1_3_BASE( FT2_1_3_Error )
 FT2_1_3_Alloc( FT2_1_3_Memory  memory,
-          FT2_1_3_Long    size,
-          void*     *P );
+		  FT2_1_3_Long    size,
+		  void*     *P );
 
 
 /*************************************************************************/
@@ -139,9 +141,9 @@ FT2_1_3_Alloc( FT2_1_3_Memory  memory,
 /*                                                                       */
 FT2_1_3_BASE( FT2_1_3_Error )
 FT2_1_3_Realloc( FT2_1_3_Memory  memory,
-            FT2_1_3_Long    current,
-            FT2_1_3_Long    size,
-            void**     P );
+			FT2_1_3_Long    current,
+			FT2_1_3_Long    size,
+			void**     P );
 
 
 /*************************************************************************/
@@ -169,7 +171,7 @@ FT2_1_3_Realloc( FT2_1_3_Memory  memory,
 /*                                                                       */
 FT2_1_3_BASE( void )
 FT2_1_3_Free( FT2_1_3_Memory  memory,
-         void**     P );
+		 void**     P );
 
 
 #define FT2_1_3_MEM_SET( dest, byte, count )     ft_memset( dest, byte, count )
@@ -194,28 +196,28 @@ FT2_1_3_Free( FT2_1_3_Memory  memory,
 #ifdef FT2_1_3_DEBUG_MEMORY
 
 #define FT2_1_3_MEM_ALLOC( _pointer_, _size_ )                            \
-          FT2_1_3_Alloc_Debug( memory, _size_,                            \
-                          (void**)&(_pointer_), __FILE__, __LINE__ )
+		  FT2_1_3_Alloc_Debug( memory, _size_,                            \
+						  (void**)&(_pointer_), __FILE__, __LINE__ )
 
 #define FT2_1_3_MEM_REALLOC( _pointer_, _current_, _size_ )                 \
-          FT2_1_3_Realloc_Debug( memory, _current_, _size_,                 \
-                            (void**)&(_pointer_), __FILE__, __LINE__ )
+		  FT2_1_3_Realloc_Debug( memory, _current_, _size_,                 \
+							(void**)&(_pointer_), __FILE__, __LINE__ )
 
 #define FT2_1_3_MEM_FREE( _pointer_ )                                            \
-          FT2_1_3_Free_Debug( memory, (void**)&(_pointer_), __FILE__, __LINE__ )
+		  FT2_1_3_Free_Debug( memory, (void**)&(_pointer_), __FILE__, __LINE__ )
 
 
 #else  /* !FT2_1_3_DEBUG_MEMORY */
 
 
 #define FT2_1_3_MEM_ALLOC( _pointer_, _size_ )                  \
-          FT2_1_3_Alloc( memory, _size_, (void**)&(_pointer_) )
+		  FT2_1_3_Alloc( memory, _size_, (void**)&(_pointer_) )
 
 #define FT2_1_3_MEM_FREE( _pointer_ )                  \
-          FT2_1_3_Free( memory, (void**)&(_pointer_) )
+		  FT2_1_3_Free( memory, (void**)&(_pointer_) )
 
 #define FT2_1_3_MEM_REALLOC( _pointer_, _current_, _size_ )                  \
-          FT2_1_3_Realloc( memory, _current_, _size_, (void**)&(_pointer_) )
+		  FT2_1_3_Realloc( memory, _current_, _size_, (void**)&(_pointer_) )
 
 
 #endif /* !FT2_1_3_DEBUG_MEMORY */
@@ -228,14 +230,14 @@ FT2_1_3_Free( FT2_1_3_Memory  memory,
 /*                                                                       */
 
 #define FT2_1_3_MEM_NEW( _pointer_ )                               \
-          FT2_1_3_MEM_ALLOC( _pointer_, sizeof ( *(_pointer_) ) )
+		  FT2_1_3_MEM_ALLOC( _pointer_, sizeof ( *(_pointer_) ) )
 
 #define FT2_1_3_MEM_NEW_ARRAY( _pointer_, _count_ )                           \
-          FT2_1_3_MEM_ALLOC( _pointer_, (_count_) * sizeof ( *(_pointer_) ) )
+		  FT2_1_3_MEM_ALLOC( _pointer_, (_count_) * sizeof ( *(_pointer_) ) )
 
 #define FT2_1_3_MEM_RENEW_ARRAY( _pointer_, _old_, _new_ )                    \
-          FT2_1_3_MEM_REALLOC( _pointer_, (_old_) * sizeof ( *(_pointer_) ),  \
-                                     (_new_) * sizeof ( *(_pointer_) ) )
+		  FT2_1_3_MEM_REALLOC( _pointer_, (_old_) * sizeof ( *(_pointer_) ),  \
+									 (_new_) * sizeof ( *(_pointer_) ) )
 
 
 /*************************************************************************/
@@ -244,11 +246,11 @@ FT2_1_3_Free( FT2_1_3_Memory  memory,
 /*                                                                       */
 
 #define FT2_1_3_MEM_ALLOC_ARRAY( _pointer_, _count_, _type_ )           \
-          FT2_1_3_MEM_ALLOC( _pointer_, (_count_) * sizeof ( _type_ ) )
+		  FT2_1_3_MEM_ALLOC( _pointer_, (_count_) * sizeof ( _type_ ) )
 
 #define FT2_1_3_MEM_REALLOC_ARRAY( _pointer_, _old_, _new_, _type_ )    \
-          FT2_1_3_MEM_REALLOC( _pointer_, (_old_) * sizeof ( _type ),   \
-                                     (_new_) * sizeof ( _type_ ) )
+		  FT2_1_3_MEM_REALLOC( _pointer_, (_old_) * sizeof ( _type ),   \
+									 (_new_) * sizeof ( _type_ ) )
 
 
 /*************************************************************************/
@@ -259,36 +261,39 @@ FT2_1_3_Free( FT2_1_3_Memory  memory,
 /*                                                                       */
 
 #define FT2_1_3_ALLOC( _pointer_, _size_ )                       \
-          FT2_1_3_SET_ERROR( FT2_1_3_MEM_ALLOC( _pointer_, _size_ ) )
+		  FT2_1_3_SET_ERROR( FT2_1_3_MEM_ALLOC( _pointer_, _size_ ) )
 
 #define FT2_1_3_REALLOC( _pointer_, _current_, _size_ )                       \
-          FT2_1_3_SET_ERROR( FT2_1_3_MEM_REALLOC( _pointer_, _current_, _size_ ) )
+		  FT2_1_3_SET_ERROR( FT2_1_3_MEM_REALLOC( _pointer_, _current_, _size_ ) )
 
 #define FT2_1_3_FREE( _pointer_ )       \
-          FT2_1_3_MEM_FREE( _pointer_ )
+		  FT2_1_3_MEM_FREE( _pointer_ )
 
 #define FT2_1_3_NEW( _pointer_ )  \
-          FT2_1_3_SET_ERROR( FT2_1_3_MEM_NEW( _pointer_ ) )
+		  FT2_1_3_SET_ERROR( FT2_1_3_MEM_NEW( _pointer_ ) )
 
 #define FT2_1_3_NEW_ARRAY( _pointer_, _count_ )  \
-          FT2_1_3_SET_ERROR( FT2_1_3_MEM_NEW_ARRAY( _pointer_, _count_ ) )
+		  FT2_1_3_SET_ERROR( FT2_1_3_MEM_NEW_ARRAY( _pointer_, _count_ ) )
 
 #define FT2_1_3_RENEW_ARRAY( _pointer_, _old_, _new_ )   \
-          FT2_1_3_SET_ERROR( FT2_1_3_MEM_RENEW_ARRAY( _pointer_, _old_, _new_ ) )
+		  FT2_1_3_SET_ERROR( FT2_1_3_MEM_RENEW_ARRAY( _pointer_, _old_, _new_ ) )
 
 #define FT2_1_3_ALLOC_ARRAY( _pointer_, _count_, _type_ )                    \
-          FT2_1_3_SET_ERROR( FT2_1_3_MEM_ALLOC( _pointer_,                        \
-                                      (_count_) * sizeof ( _type_ ) ) )
+		  FT2_1_3_SET_ERROR( FT2_1_3_MEM_ALLOC( _pointer_,                        \
+									  (_count_) * sizeof ( _type_ ) ) )
 
 #define FT2_1_3_REALLOC_ARRAY( _pointer_, _old_, _new_, _type_ )             \
-          FT2_1_3_SET_ERROR( FT2_1_3_MEM_REALLOC( _pointer_,                      \
-                                        (_old_) * sizeof ( _type_ ),    \
-                                        (_new_) * sizeof ( _type_ ) ) )
+		  FT2_1_3_SET_ERROR( FT2_1_3_MEM_REALLOC( _pointer_,                      \
+										(_old_) * sizeof ( _type_ ),    \
+										(_new_) * sizeof ( _type_ ) ) )
 
 /* */
 
 
 FT2_1_3_END_HEADER
+
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 #endif /* __FTMEMORY_H__ */
 

@@ -16,14 +16,16 @@
 /***************************************************************************/
 
 
-#ifndef __SFNT_H__
-#define __SFNT_H__
+#ifndef AGS_LIB_FREETYPE_SFNT_H
+#define AGS_LIB_FREETYPE_SFNT_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdriver.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/tttypes.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -65,10 +67,10 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 typedef FT2_1_3_Error
 (*TT_Init_Face_Func)( FT2_1_3_Stream      stream,
-                      TT_Face        face,
-                      FT2_1_3_Int         face_index,
-                      FT2_1_3_Int         num_params,
-                      FT2_1_3_Parameter*  params );
+					  TT_Face        face,
+					  FT2_1_3_Int         face_index,
+					  FT2_1_3_Int         num_params,
+					  FT2_1_3_Parameter*  params );
 
 
 /*************************************************************************/
@@ -101,10 +103,10 @@ typedef FT2_1_3_Error
 /*                                                                       */
 typedef FT2_1_3_Error
 (*TT_Load_Face_Func)( FT2_1_3_Stream      stream,
-                      TT_Face        face,
-                      FT2_1_3_Int         face_index,
-                      FT2_1_3_Int         num_params,
-                      FT2_1_3_Parameter*  params );
+					  TT_Face        face,
+					  FT2_1_3_Int         face_index,
+					  FT2_1_3_Int         num_params,
+					  FT2_1_3_Parameter*  params );
 
 
 /*************************************************************************/
@@ -127,7 +129,7 @@ typedef void
 
 typedef FT2_1_3_Module_Interface
 (*SFNT_Get_Interface_Func)( FT2_1_3_Module    module,
-                            const char*  func_interface );
+							const char*  func_interface );
 
 
 /*************************************************************************/
@@ -163,9 +165,9 @@ typedef FT2_1_3_Module_Interface
 /*                                                                       */
 typedef FT2_1_3_Error
 (*TT_Load_SFNT_HeaderRec_Func)( TT_Face      face,
-                                FT2_1_3_Stream    stream,
-                                FT2_1_3_Long      face_index,
-                                SFNT_Header  sfnt );
+								FT2_1_3_Stream    stream,
+								FT2_1_3_Long      face_index,
+								SFNT_Header  sfnt );
 
 
 /*************************************************************************/
@@ -193,8 +195,8 @@ typedef FT2_1_3_Error
 /*                                                                       */
 typedef FT2_1_3_Error
 (*TT_Load_Directory_Func)( TT_Face      face,
-                           FT2_1_3_Stream    stream,
-                           SFNT_Header  sfnt );
+						   FT2_1_3_Stream    stream,
+						   SFNT_Header  sfnt );
 
 
 /*************************************************************************/
@@ -239,10 +241,10 @@ typedef FT2_1_3_Error
 /*                                                                       */
 typedef FT2_1_3_Error
 (*TT_Load_Any_Func)( TT_Face    face,
-                     FT2_1_3_ULong   tag,
-                     FT2_1_3_Long    offset,
-                     FT2_1_3_Byte   *buffer,
-                     FT2_1_3_ULong*  length );
+					 FT2_1_3_ULong   tag,
+					 FT2_1_3_Long    offset,
+					 FT2_1_3_Byte   *buffer,
+					 FT2_1_3_ULong*  length );
 
 
 /*************************************************************************/
@@ -279,12 +281,12 @@ typedef FT2_1_3_Error
 /*                                                                       */
 typedef FT2_1_3_Error
 (*TT_Load_SBit_Image_Func)( TT_Face              face,
-                            FT2_1_3_ULong             strike_index,
-                            FT2_1_3_UInt              glyph_index,
-                            FT2_1_3_UInt              load_flags,
-                            FT2_1_3_Stream            stream,
-                            FT2_1_3_Bitmap           *amap,
-                            TT_SBit_MetricsRec  *ametrics );
+							FT2_1_3_ULong             strike_index,
+							FT2_1_3_UInt              glyph_index,
+							FT2_1_3_UInt              load_flags,
+							FT2_1_3_Stream            stream,
+							FT2_1_3_Bitmap           *amap,
+							TT_SBit_MetricsRec  *ametrics );
 
 
 /*************************************************************************/
@@ -312,9 +314,9 @@ typedef FT2_1_3_Error
 /*                                                                       */
 typedef FT2_1_3_Error
 (*TT_Set_SBit_Strike_Func)( TT_Face    face,
-                            FT2_1_3_Int     x_ppem,
-                            FT2_1_3_Int     y_ppem,
-                            FT2_1_3_ULong  *astrike_index );
+							FT2_1_3_Int     x_ppem,
+							FT2_1_3_Int     y_ppem,
+							FT2_1_3_ULong  *astrike_index );
 
 
 /*************************************************************************/
@@ -338,8 +340,8 @@ typedef FT2_1_3_Error
 /*                                                                       */
 typedef FT2_1_3_Error
 (*TT_Get_PS_Name_Func)( TT_Face      face,
-                        FT2_1_3_UInt      idx,
-                        FT2_1_3_String**  PSname );
+						FT2_1_3_UInt      idx,
+						FT2_1_3_String**  PSname );
 
 
 /*************************************************************************/
@@ -362,8 +364,8 @@ typedef FT2_1_3_Error
 /*                                                                       */
 typedef FT2_1_3_Error
 (*TT_Load_Metrics_Func)( TT_Face    face,
-                         FT2_1_3_Stream  stream,
-                         FT2_1_3_Bool    vertical );
+						 FT2_1_3_Stream  stream,
+						 FT2_1_3_Bool    vertical );
 
 
 /*************************************************************************/
@@ -392,8 +394,8 @@ typedef FT2_1_3_Error
 /*                                                                       */
 typedef FT2_1_3_Error
 (*TT_CharMap_Load_Func)( TT_Face       face,
-                         TT_CMapTable  cmap,
-                         FT2_1_3_Stream     input );
+						 TT_CMapTable  cmap,
+						 FT2_1_3_Stream     input );
 
 
 /*************************************************************************/
@@ -414,7 +416,7 @@ typedef FT2_1_3_Error
 /*                                                                       */
 typedef FT2_1_3_Error
 (*TT_CharMap_Free_Func)( TT_Face       face,
-                         TT_CMapTable  cmap );
+						 TT_CMapTable  cmap );
 
 
 /*************************************************************************/
@@ -439,7 +441,7 @@ typedef FT2_1_3_Error
 /*                                                                       */
 typedef FT2_1_3_Error
 (*TT_Load_Table_Func)( TT_Face    face,
-                       FT2_1_3_Stream  stream );
+					   FT2_1_3_Stream  stream );
 
 
 /*************************************************************************/
@@ -527,7 +529,10 @@ typedef SFNT_Interface*   SFNT_Service;
 
 FT2_1_3_END_HEADER
 
-#endif /* __SFNT_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_SFNT_H */
 
 
 /* END */

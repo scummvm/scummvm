@@ -17,13 +17,15 @@
 /***************************************************************************/
 
 
-#ifndef __FTOUTLN_H__
-#define __FTOUTLN_H__
+#ifndef AGS_LIB_FREETYPE_FTOUTLN_H
+#define AGS_LIB_FREETYPE_FTOUTLN_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -100,8 +102,8 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Outline_Decompose( FT2_1_3_Outline*              outline,
-                      const FT2_1_3_Outline_Funcs*  func_interface,
-                      void*                    user );
+					  const FT2_1_3_Outline_Funcs*  func_interface,
+					  void*                    user );
 
 
 /*************************************************************************/
@@ -135,16 +137,16 @@ FT2_1_3_Outline_Decompose( FT2_1_3_Outline*              outline,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Outline_New( FT2_1_3_Library   library,
-                FT2_1_3_UInt      numPoints,
-                FT2_1_3_Int       numContours,
-                FT2_1_3_Outline  *anoutline );
+				FT2_1_3_UInt      numPoints,
+				FT2_1_3_Int       numContours,
+				FT2_1_3_Outline  *anoutline );
 
 
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Outline_New_Internal( FT2_1_3_Memory    memory,
-                         FT2_1_3_UInt      numPoints,
-                         FT2_1_3_Int       numContours,
-                         FT2_1_3_Outline  *anoutline );
+						 FT2_1_3_UInt      numPoints,
+						 FT2_1_3_Int       numContours,
+						 FT2_1_3_Outline  *anoutline );
 
 
 /*************************************************************************/
@@ -173,12 +175,12 @@ FT2_1_3_Outline_New_Internal( FT2_1_3_Memory    memory,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Outline_Done( FT2_1_3_Library   library,
-                 FT2_1_3_Outline*  outline );
+				 FT2_1_3_Outline*  outline );
 
 
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Outline_Done_Internal( FT2_1_3_Memory    memory,
-                          FT2_1_3_Outline*  outline );
+						  FT2_1_3_Outline*  outline );
 
 
 /*************************************************************************/
@@ -224,7 +226,7 @@ FT2_1_3_Outline_Check( FT2_1_3_Outline*  outline );
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_Outline_Get_CBox( FT2_1_3_Outline*  outline,
-                     FT2_1_3_BBox     *acbox );
+					 FT2_1_3_BBox     *acbox );
 
 
 /*************************************************************************/
@@ -245,8 +247,8 @@ FT2_1_3_Outline_Get_CBox( FT2_1_3_Outline*  outline,
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_Outline_Translate( FT2_1_3_Outline*  outline,
-                      FT2_1_3_Pos       xOffset,
-                      FT2_1_3_Pos       yOffset );
+					  FT2_1_3_Pos       xOffset,
+					  FT2_1_3_Pos       yOffset );
 
 
 /*************************************************************************/
@@ -270,7 +272,7 @@ FT2_1_3_Outline_Translate( FT2_1_3_Outline*  outline,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Outline_Copy( FT2_1_3_Outline*  source,
-                 FT2_1_3_Outline  *target );
+				 FT2_1_3_Outline  *target );
 
 
 /*************************************************************************/
@@ -294,7 +296,7 @@ FT2_1_3_Outline_Copy( FT2_1_3_Outline*  source,
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_Outline_Transform( FT2_1_3_Outline*  outline,
-                      FT2_1_3_Matrix*   matrix );
+					  FT2_1_3_Matrix*   matrix );
 
 
 /*************************************************************************/
@@ -348,8 +350,8 @@ FT2_1_3_Outline_Reverse( FT2_1_3_Outline*  outline );
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Outline_Get_Bitmap( FT2_1_3_Library   library,
-                       FT2_1_3_Outline*  outline,
-                       FT2_1_3_Bitmap   *abitmap );
+					   FT2_1_3_Outline*  outline,
+					   FT2_1_3_Bitmap   *abitmap );
 
 
 /*************************************************************************/
@@ -385,8 +387,8 @@ FT2_1_3_Outline_Get_Bitmap( FT2_1_3_Library   library,
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Error )
 FT2_1_3_Outline_Render( FT2_1_3_Library         library,
-                   FT2_1_3_Outline*        outline,
-                   FT2_1_3_Raster_Params*  params );
+				   FT2_1_3_Outline*        outline,
+				   FT2_1_3_Raster_Params*  params );
 
 
 /* */
@@ -394,7 +396,10 @@ FT2_1_3_Outline_Render( FT2_1_3_Library         library,
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTOUTLN_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTOUTLN_H */
 
 
 /* END */

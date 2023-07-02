@@ -24,8 +24,8 @@
 /*************************************************************************/
 
 
-#ifndef __AUTOHINT_H__
-#define __AUTOHINT_H__
+#ifndef AGS_LIB_FREETYPE_AUTOHINT_H
+#define AGS_LIB_FREETYPE_AUTOHINT_H
 
 
 /*************************************************************************/
@@ -73,6 +73,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -103,9 +105,9 @@ typedef struct FT2_1_3_AutoHinterRec_  *FT2_1_3_AutoHinter;
 /*                                                                       */
 typedef void
 (*FT2_1_3_AutoHinter_GlobalGetFunc)( FT2_1_3_AutoHinter  hinter,
-                                FT2_1_3_Face        face,
-                                void**         global_hints,
-                                long*          global_len );
+								FT2_1_3_Face        face,
+								void**         global_hints,
+								long*          global_len );
 
 
 /*************************************************************************/
@@ -125,7 +127,7 @@ typedef void
 /*                                                                       */
 typedef void
 (*FT2_1_3_AutoHinter_GlobalDoneFunc)( FT2_1_3_AutoHinter  hinter,
-                                 void*          global );
+								 void*          global );
 
 
 /*************************************************************************/
@@ -145,7 +147,7 @@ typedef void
 /*                                                                       */
 typedef void
 (*FT2_1_3_AutoHinter_GlobalResetFunc)( FT2_1_3_AutoHinter  hinter,
-                                  FT2_1_3_Face        face );
+								  FT2_1_3_Face        face );
 
 
 /*************************************************************************/
@@ -173,10 +175,10 @@ typedef void
 /*                                                                       */
 typedef FT2_1_3_Error
 (*FT2_1_3_AutoHinter_GlyphLoadFunc)( FT2_1_3_AutoHinter  hinter,
-                                FT2_1_3_GlyphSlot   slot,
-                                FT2_1_3_Size        size,
-                                FT2_1_3_UInt        glyph_index,
-                                FT2_1_3_Int32       load_flags );
+								FT2_1_3_GlyphSlot   slot,
+								FT2_1_3_Size        size,
+								FT2_1_3_UInt        glyph_index,
+								FT2_1_3_Int32       load_flags );
 
 
 /*************************************************************************/
@@ -198,7 +200,10 @@ typedef struct  FT2_1_3_AutoHinter_ServiceRec_ {
 
 FT2_1_3_END_HEADER
 
-#endif /* __AUTOHINT_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_AUTOHINT_H */
 
 
 /* END */

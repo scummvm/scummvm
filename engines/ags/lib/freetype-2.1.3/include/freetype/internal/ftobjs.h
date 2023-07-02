@@ -23,8 +23,8 @@
 /*************************************************************************/
 
 
-#ifndef __FTOBJS_H__
-#define __FTOBJS_H__
+#ifndef AGS_LIB_FREETYPE_FTOBJS_H
+#define AGS_LIB_FREETYPE_FTOBJS_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftstdlib.h"   /* for ft_setjmp and ft_longjmp */
@@ -40,6 +40,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftincrem.h"
 #endif
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -145,9 +147,9 @@ typedef struct  FT2_1_3_ValidatorRec_ {
 
 FT2_1_3_BASE( void )
 ft_validator_init( FT2_1_3_Validator        valid,
-                   const FT2_1_3_Byte*      base,
-                   const FT2_1_3_Byte*      limit,
-                   FT2_1_3_ValidationLevel  level );
+				   const FT2_1_3_Byte*      base,
+				   const FT2_1_3_Byte*      limit,
+				   FT2_1_3_ValidationLevel  level );
 
 FT2_1_3_BASE( FT2_1_3_Int )
 ft_validator_run( FT2_1_3_Validator  valid );
@@ -158,7 +160,7 @@ ft_validator_run( FT2_1_3_Validator  valid );
 /*                                                                     */
 FT2_1_3_BASE( void )
 ft_validator_error( FT2_1_3_Validator  valid,
-                    FT2_1_3_Error      error );
+					FT2_1_3_Error      error );
 
 
 /* Calls ft_validate_error.  Assumes that the `valid' local variable */
@@ -220,18 +222,18 @@ typedef struct  FT2_1_3_CMapRec_ {
 /* class method definitions */
 typedef FT2_1_3_Error
 (*FT2_1_3_CMap_InitFunc)( FT2_1_3_CMap     cmap,
-                     FT2_1_3_Pointer  init_data );
+					 FT2_1_3_Pointer  init_data );
 
 typedef void
 (*FT2_1_3_CMap_DoneFunc)( FT2_1_3_CMap  cmap );
 
 typedef FT2_1_3_UInt
 (*FT2_1_3_CMap_CharIndexFunc)( FT2_1_3_CMap    cmap,
-                          FT2_1_3_UInt32  char_code );
+						  FT2_1_3_UInt32  char_code );
 
 typedef FT2_1_3_UInt
 (*FT2_1_3_CMap_CharNextFunc)( FT2_1_3_CMap     cmap,
-                         FT2_1_3_UInt32  *achar_code );
+						 FT2_1_3_UInt32  *achar_code );
 
 
 typedef struct  FT2_1_3_CMap_ClassRec_ {
@@ -247,9 +249,9 @@ typedef struct  FT2_1_3_CMap_ClassRec_ {
 /* create a new charmap and add it to charmap->face */
 FT2_1_3_BASE( FT2_1_3_Error )
 FT2_1_3_CMap_New( FT2_1_3_CMap_Class  clazz,
-             FT2_1_3_Pointer     init_data,
-             FT2_1_3_CharMap     charmap,
-             FT2_1_3_CMap       *acmap );
+			 FT2_1_3_Pointer     init_data,
+			 FT2_1_3_CharMap     charmap,
+			 FT2_1_3_CMap       *acmap );
 
 /* destroy a charmap (don't remove it from face's list though) */
 FT2_1_3_BASE( void )
@@ -409,25 +411,25 @@ typedef struct  FT2_1_3_ModuleRec_ {
 
 
 #define FT2_1_3_MODULE_IS_DRIVER( x )  ( FT2_1_3_MODULE_CLASS( x )->module_flags & \
-                                    ft_module_font_driver )
+									ft_module_font_driver )
 
 #define FT2_1_3_MODULE_IS_RENDERER( x )  ( FT2_1_3_MODULE_CLASS( x )->module_flags & \
-                                      ft_module_renderer )
+									  ft_module_renderer )
 
 #define FT2_1_3_MODULE_IS_HINTER( x )  ( FT2_1_3_MODULE_CLASS( x )->module_flags & \
-                                    ft_module_hinter )
+									ft_module_hinter )
 
 #define FT2_1_3_MODULE_IS_STYLER( x )  ( FT2_1_3_MODULE_CLASS( x )->module_flags & \
-                                    ft_module_styler )
+									ft_module_styler )
 
 #define FT2_1_3_DRIVER_IS_SCALABLE( x )  ( FT2_1_3_MODULE_CLASS( x )->module_flags & \
-                                      ft_module_driver_scalable )
+									  ft_module_driver_scalable )
 
 #define FT2_1_3_DRIVER_USES_OUTLINES( x )  !( FT2_1_3_MODULE_CLASS( x )->module_flags & \
-                                         ft_module_driver_no_outlines )
+										 ft_module_driver_no_outlines )
 
 #define FT2_1_3_DRIVER_HAS_HINTER( x )  ( FT2_1_3_MODULE_CLASS( x )->module_flags & \
-                                     ft_module_driver_has_hinter )
+									 ft_module_driver_has_hinter )
 
 
 /*************************************************************************/
@@ -453,7 +455,7 @@ typedef struct  FT2_1_3_ModuleRec_ {
 /*                                                                       */
 FT2_1_3_BASE( const void* )
 FT2_1_3_Get_Module_Interface( FT2_1_3_Library   library,
-                         const char*  mod_name );
+						 const char*  mod_name );
 
 
 /*************************************************************************/
@@ -508,7 +510,7 @@ FT2_1_3_Get_Module_Interface( FT2_1_3_Library   library,
 /*                                                                       */
 FT2_1_3_BASE( FT2_1_3_Error )
 FT2_1_3_New_GlyphSlot( FT2_1_3_Face        face,
-                  FT2_1_3_GlyphSlot  *aslot );
+				  FT2_1_3_GlyphSlot  *aslot );
 
 
 /*************************************************************************/
@@ -709,26 +711,26 @@ typedef struct  FT2_1_3_LibraryRec_ {
 
 FT2_1_3_BASE( FT2_1_3_Renderer )
 FT2_1_3_Lookup_Renderer( FT2_1_3_Library       library,
-                    FT2_1_3_Glyph_Format  format,
-                    FT2_1_3_ListNode*     node );
+					FT2_1_3_Glyph_Format  format,
+					FT2_1_3_ListNode*     node );
 
 FT2_1_3_BASE( FT2_1_3_Error )
 FT2_1_3_Render_Glyph_Internal( FT2_1_3_Library      library,
-                          FT2_1_3_GlyphSlot    slot,
-                          FT2_1_3_Render_Mode  render_mode );
+						  FT2_1_3_GlyphSlot    slot,
+						  FT2_1_3_Render_Mode  render_mode );
 
 typedef const char*
 (*FT2_1_3_Face_GetPostscriptNameFunc)( FT2_1_3_Face  face );
 
 typedef FT2_1_3_Error
 (*FT2_1_3_Face_GetGlyphNameFunc)( FT2_1_3_Face     face,
-                             FT2_1_3_UInt     glyph_index,
-                             FT2_1_3_Pointer  buffer,
-                             FT2_1_3_UInt     buffer_max );
+							 FT2_1_3_UInt     glyph_index,
+							 FT2_1_3_Pointer  buffer,
+							 FT2_1_3_UInt     buffer_max );
 
 typedef FT2_1_3_UInt
 (*FT2_1_3_Face_GetGlyphNameIndexFunc)( FT2_1_3_Face     face,
-                                  FT2_1_3_String*  glyph_name );
+								  FT2_1_3_String*  glyph_name );
 
 
 #ifndef FT2_1_3_CONFIG_OPTION_NO_DEFAULT_SYSTEM
@@ -778,7 +780,10 @@ FT2_1_3_EXPORT_VAR( FT2_1_3_Raster_Funcs )  ft_default_raster;
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTOBJS_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTOBJS_H */
 
 
 /* END */

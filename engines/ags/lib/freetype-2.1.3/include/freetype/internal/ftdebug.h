@@ -21,8 +21,8 @@
 /***************************************************************************/
 
 
-#ifndef __FTDEBUG_H__
-#define __FTDEBUG_H__
+#ifndef AGS_LIB_FREETYPE_FTDEBUG_H
+#define AGS_LIB_FREETYPE_FTDEBUG_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
@@ -81,12 +81,11 @@ extern int  FT2_1_3_trace_levels[trace_count];
 
 #ifdef FT2_1_3_DEBUG_LEVEL_TRACE
 
-#define FT2_1_3_TRACE( level, varformat )                      \
-          do                                              \
-          {                                               \
-            if ( FT2_1_3_trace_levels[FT2_1_3_COMPONENT] >= level ) \
-              FT2_1_3_Message varformat;                       \
-          } while ( 0 )
+#define FT2_1_3_TRACE(level, varformat)                       \
+	do {                                                      \
+		if (FT2_1_3_trace_levels[FT2_1_3_COMPONENT] >= level) \
+			FT2_1_3_Message varformat;                        \
+	} while (0)
 
 #else /* !FT2_1_3_DEBUG_LEVEL_TRACE */
 
@@ -138,13 +137,12 @@ extern int  FT2_1_3_trace_levels[trace_count];
 
 #ifdef FT2_1_3_DEBUG_LEVEL_ERROR
 
-#define FT2_1_3_ASSERT( condition )                                      \
-          do                                                        \
-          {                                                         \
-            if ( !( condition ) )                                   \
-              FT2_1_3_Panic( "assertion failed on line %d of file %s\n", \
-                        __LINE__, __FILE__ );                       \
-          } while ( 0 )
+#define FT2_1_3_ASSERT(condition)                                     \
+	do {                                                              \
+		if (!(condition))                                             \
+			FT2_1_3_Panic("assertion failed on line %d of file %s\n", \
+						  __LINE__, __FILE__);                        \
+	} while (0)
 
 #else /* !FT2_1_3_DEBUG_LEVEL_ERROR */
 
@@ -189,7 +187,7 @@ FT2_1_3_debug_init( void );
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTDEBUG_H__ */
+#endif /* AGS_LIB_FREETYPE_FTDEBUG_H */
 
 
 /* END */

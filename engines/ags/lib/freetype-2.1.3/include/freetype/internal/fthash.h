@@ -27,11 +27,14 @@
  *  following definitions for more details.
  */
 
-#ifndef __FT2_1_3_HASH_H__
-#define __FT2_1_3_HASH_H__
+#ifndef AGS_LIB_FREETYPE_FTHASH_H
+#define AGS_LIB_FREETYPE_FTHASH_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/fttypes.h"
+
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -85,7 +88,7 @@ typedef FT2_1_3_HashNode*     FT2_1_3_HashLookup;
  *   0 otherwise.
  */
 typedef FT2_1_3_Int  (*FT2_1_3_Hash_EqualFunc)( FT2_1_3_HashNode  node1,
-                                      FT2_1_3_HashNode  node2 );
+																			FT2_1_3_HashNode  node2 );
 
 
 /***********************************************************
@@ -206,8 +209,8 @@ typedef struct FT2_1_3_HashNodeRec_ {
  */
 FT2_1_3_BASE( FT2_1_3_Error )
 ft_hash_init( FT2_1_3_Hash              table,
-              FT2_1_3_Hash_EqualFunc  compare,
-              FT2_1_3_Memory            memory );
+							FT2_1_3_Hash_EqualFunc  compare,
+							FT2_1_3_Memory            memory );
 
 
 /****************************************************************
@@ -268,7 +271,7 @@ ft_hash_init( FT2_1_3_Hash              table,
  */
 FT2_1_3_BASE_DEF( FT2_1_3_HashLookup )
 ft_hash_lookup( FT2_1_3_Hash      table,
-                FT2_1_3_HashNode  keynode );
+								FT2_1_3_HashNode  keynode );
 
 
 /****************************************************************
@@ -333,8 +336,8 @@ ft_hash_lookup( FT2_1_3_Hash      table,
  */
 FT2_1_3_BASE( FT2_1_3_Error )
 ft_hash_add( FT2_1_3_Hash        table,
-             FT2_1_3_HashLookup  lookup,
-             FT2_1_3_HashNode    new_node );
+						 FT2_1_3_HashLookup  lookup,
+						 FT2_1_3_HashNode    new_node );
 
 
 /****************************************************************
@@ -378,7 +381,7 @@ ft_hash_add( FT2_1_3_Hash        table,
  */
 FT2_1_3_BASE( FT2_1_3_Error )
 ft_hash_remove( FT2_1_3_Hash        table,
-                FT2_1_3_HashLookup  lookup );
+								FT2_1_3_HashLookup  lookup );
 
 
 
@@ -415,7 +418,7 @@ ft_hash_get_size( FT2_1_3_Hash  table );
  * @also:  @ft_hash_foreach
  */
 typedef void  (*FT2_1_3_Hash_ForeachFunc)( const FT2_1_3_HashNode  node,
-                                      const FT2_1_3_Pointer   data );
+																			const FT2_1_3_Pointer   data );
 
 
 /****************************************************************
@@ -436,8 +439,8 @@ typedef void  (*FT2_1_3_Hash_ForeachFunc)( const FT2_1_3_HashNode  node,
  */
 FT2_1_3_BASE( void )
 ft_hash_foreach( FT2_1_3_Hash              table,
-                 FT2_1_3_Hash_ForeachFunc  foreach_func,
-                 const FT2_1_3_Pointer     foreach_data );
+								 FT2_1_3_Hash_ForeachFunc  foreach_func,
+								 const FT2_1_3_Pointer     foreach_data );
 
 
 
@@ -474,8 +477,8 @@ ft_hash_foreach( FT2_1_3_Hash              table,
  */
 FT2_1_3_BASE( void )
 ft_hash_done( FT2_1_3_Hash              table,
-              FT2_1_3_Hash_ForeachFunc  item_func,
-              const FT2_1_3_Pointer     item_data );
+							FT2_1_3_Hash_ForeachFunc  item_func,
+							const FT2_1_3_Pointer     item_data );
 
 /* */
 
@@ -485,16 +488,19 @@ ft_hash_done( FT2_1_3_Hash              table,
 /*                                                              */
 
 #define  FT2_1_3_HASH_COMPUTE_INDEX(_table,_hash,_index)                  \
-             {                                                       \
-               FT2_1_3_UInt  _mask  = (_table)->mask;                     \
-               FT2_1_3_UInt  _hash0 = (_hash);                            \
-                                                                     \
-               (_index) = (FT2_1_3_UInt)( (_hash0) & _mask ) );           \
-               if ( (_index) < (_table)->p )                         \
-                 (_index) = (FT2_1_3_uInt)( (_hash0) & ( 2*_mask+1 ) );   \
-             }
+						 {                                                       \
+							 FT2_1_3_UInt  _mask  = (_table)->mask;                     \
+							 FT2_1_3_UInt  _hash0 = (_hash);                            \
+																																		 \
+							 (_index) = (FT2_1_3_UInt)( (_hash0) & _mask ) );           \
+							 if ( (_index) < (_table)->p )                         \
+								 (_index) = (FT2_1_3_uInt)( (_hash0) & ( 2*_mask+1 ) );   \
+						 }
 
 
 FT2_1_3_END_HEADER
 
-#endif /* __FT2_1_3_HASH_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTHASH_H */

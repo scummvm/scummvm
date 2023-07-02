@@ -16,8 +16,8 @@
 /***************************************************************************/
 
 
-#ifndef __TTNAMEID_H__
-#define __TTNAMEID_H__
+#ifndef AGS_LIB_FREETYPE_TTNAMEID_H
+#define AGS_LIB_FREETYPE_TTNAMEID_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
@@ -473,7 +473,7 @@ FT2_1_3_BEGIN_HEADER
 #if 1  /* this used to be this value (and it still is in many places) */
 #define TT_MS_LANGID_CHINESE_MACAU                     0x1404
 #else  /* but beware, Microsoft may change its mind...
-          the most recent Word reference has the following: */
+			 the most recent Word reference has the following: */
 #define TT_MS_LANGID_CHINESE_MACAU  TT_MS_LANGID_CHINESE_HONG_KONG
 #endif
 
@@ -638,13 +638,13 @@ FT2_1_3_BEGIN_HEADER
 #define TT_MS_LANGID_KIRGHIZ_KIRGHIZSTAN               0x0440
 /* alias declared in Windows 2000 */
 #define TT_MS_LANGID_KIRGHIZ_KIRGHIZ_REPUBLIC \
-          TT_MS_LANGID_KIRGHIZ_KIRGHIZSTAN
+			 TT_MS_LANGID_KIRGHIZ_KIRGHIZSTAN
 
 #define TT_MS_LANGID_TURKMEN_TURKMENISTAN              0x0442
 #define TT_MS_LANGID_MONGOLIAN_MONGOLIA /* Cyrillic */ 0x0450
 
 /* the following seems to be inconsistent;
-   here is the current "official" way: */
+	here is the current "official" way: */
 #define TT_MS_LANGID_TIBETAN_BHUTAN                    0x0451
 /* and here is what is used by Passport SDK */
 #define TT_MS_LANGID_TIBETAN_CHINA                     0x0451
@@ -1001,14 +1001,14 @@ FT2_1_3_BEGIN_HEADER
 /* If you get a warning with such a compiler, use the -i40 switch.       */
 /*                                                                       */
 #define TT_UCR_ARABIC_PRESENTATION_FORMS_A      \
-         TT_UCR_ARABIC_PRESENTATIONS_A
+			TT_UCR_ARABIC_PRESENTATIONS_A
 #define TT_UCR_ARABIC_PRESENTATION_FORMS_B      \
-         TT_UCR_ARABIC_PRESENTATIONS_B
+			TT_UCR_ARABIC_PRESENTATIONS_B
 
 #define TT_UCR_COMBINING_DIACRITICAL_MARKS      \
-         TT_UCR_COMBINING_DIACRITICS
+			TT_UCR_COMBINING_DIACRITICS
 #define TT_UCR_COMBINING_DIACRITICAL_MARKS_SYMB \
-         TT_UCR_COMBINING_DIACRITICS_SYMB
+			TT_UCR_COMBINING_DIACRITICS_SYMB
 
 
 #endif /* !HAVE_LIMIT_ON_IDENTS */
@@ -1016,7 +1016,7 @@ FT2_1_3_BEGIN_HEADER
 
 FT2_1_3_END_HEADER
 
-#endif /* __TTNAMEID_H__ */
+#endif /* AGS_LIB_FREETYPE_TTNAMEID_H */
 
 
 /* END */
