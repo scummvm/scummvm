@@ -605,10 +605,6 @@ bool Debugger_EoB::cmdSetPosition(int argc, const char **argv) {
 			_vm->generateTempData();
 			_vm->txt()->removePageBreakFlag();
 			_vm->screen()->setScreenDim(7);
-			if (_vm->gameFlags().lang == Common::ZH_TWN) {
-				_vm->txt()->setShadowColor(_vm->guiSettings()->colors.fill);
-				_vm->txt()->setLineSpacing(0);
-			}
 
 			_vm->loadLevel(level, sub);
 

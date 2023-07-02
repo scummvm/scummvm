@@ -53,10 +53,17 @@ public:
 
 	void allowPageBreak(bool mode) { _allowPageBreak = mode; }
 	void setWaitButtonMode(int mode) { _waitButtonMode = mode; }
-	int setShadowColor(int col) { SWAP(col, _shadowColor); return col; }
-	int setLineSpacing(int spacing) { SWAP(spacing, _lineSpacing); return spacing; }
 	int lineCount() const { return _lineCount; }
-	const uint8 *colorMap() const { return _colorMap; }
+	//const uint8 *colorMap() const { return _colorMap; }
+
+	// These methods are ScummVM specific. They are supposed to make necessary modifications
+	// to the text displayer for the various Japanese and Chinese versions without too much
+	// hackery...
+	void setColorMapping(int sd, uint8 from, uint8 to);
+	void setShadowColor(int sd, int col) { applySetting(sd, kShadowColor, col); }
+	void setLineSpacing(int sd, int spacing) { applySetting(sd, kLineSpacing, spacing); }
+	void setVisualLineSpacingAdjust(int sd, int adj) { applySetting(sd, kVisualLineSpacingAdjust, adj); }
+	void setCharSpacing(int sd, int spacing) { applySetting(sd, kCharSpacing, spacing); }
 
 protected:
 	virtual KyraRpgEngine *vm() { return _vm; }
@@ -84,7 +91,7 @@ protected:
 	uint32 _numCharsPrinted;
 
 	bool _printFlag;
-	bool _sjisTextModeLineBreak;
+	bool _twoByteLineBreakFlag;
 	const bool _pc98TextMode;
 
 	Common::String _pageBreakString;
@@ -102,17 +109,36 @@ protected:
 		uint8 color2;
 		uint16 column;
 		uint8 line;
+		// These properties don't appear in the original code. The various Japanese and Chinese versions
+		// just had their modifications hacked in in whatever way the devs felt like. These properties
+		// help making the necessary adjustments without too much hackery...
+		int lineSpacing;
+		int visualLineSpacingAdjust; // LOL PC-98 has the worst hack here. The visual line spacing is different than the one that is used to measure the text field space.
+		int charSpacing;
+		int shadowColor;
+		int noHalfWidthLineEnd;
+		uint8 *colorMap;
 	};
 
 	TextDimData *_textDimData;
+	const int _dimCount;
 	KyraRpgEngine *_vm;
 
 private:
-	Screen *_screen;
-	int _lineSpacing;
-	int _shadowColor;
-	bool _preventHalfWidthLineEnd;
+	bool isTwoByteChar(uint8 c) const;
+	void applySetting(int sd, int ix, int val);
+	uint8 remapColor(int sd, uint8 color) const;
 
+	enum TextFieldVar {
+		kLineSpacing = 0,
+		kVisualLineSpacingAdjust,
+		kCharSpacing,
+		kShadowColor,
+		kNoHalfWidthLineEnd,
+		kOutOfRange
+	};
+
+	Screen *_screen;
 	char *_table1;
 	char *_table2;
 

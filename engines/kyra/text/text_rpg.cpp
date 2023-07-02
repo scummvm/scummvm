@@ -33,17 +33,12 @@ enum {
 };
 
 TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(engine), _screen(scr),
-_lineCount(0), _printFlag(false), _lineWidth(0), _numCharsTotal(0), _allowPageBreak(true),
-	_numCharsLeft(0), _numCharsPrinted(0), _sjisTextModeLineBreak(false), _waitButtonMode(1),
-	_pc98TextMode(engine->gameFlags().use16ColorMode && engine->game() == GI_LOL), _shadowColor(0), _lineSpacing(0), _preventHalfWidthLineEnd(false),
+	_lineCount(0), _printFlag(false), _lineWidth(0), _numCharsTotal(0), _allowPageBreak(true), _dimCount(scr ? scr->screenDimTableCount() : 0),
+	_numCharsLeft(0), _numCharsPrinted(0), _twoByteLineBreakFlag(false), _waitButtonMode(1),
+	_pc98TextMode(engine->gameFlags().use16ColorMode && engine->game() == GI_LOL),
 	_waitButtonFont(Screen::FID_6_FNT), _isChinese(_vm->gameFlags().lang == Common::Language::ZH_TWN || _vm->gameFlags().lang == Common::Language::ZH_CHN) {
 
-	static const uint8 amigaColorMap[16] = {
-		0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f
-	};
-
 	_dialogueBuffer = new char[kEoBTextBufferSize]();
-
 	_currentLine = new char[85]();
 
 	if (_pc98TextMode)
@@ -55,22 +50,18 @@ _lineCount(0), _printFlag(false), _lineWidth(0), _numCharsTotal(0), _allowPageBr
 	else if ((_vm->game() == GI_LOL && _vm->gameFlags().lang == Common::Language::ZH_TWN))
 		_waitButtonFont = Screen::FID_CHINESE_FNT;
 
-	_preventHalfWidthLineEnd = ((_vm->gameFlags().lang == Common::JA_JPN && _vm->game() == GI_EOB1) || (_vm->gameFlags().lang == Common::Language::ZH_TWN && _vm->game() == GI_EOB2));
+	_textDimData = new TextDimData[_dimCount];
+	memset(_textDimData, 0, sizeof(TextDimData) * _dimCount);
 
-	_textDimData = new TextDimData[_screen->screenDimTableCount()];
+	applySetting(-1, kNoHalfWidthLineEnd, ((_vm->gameFlags().lang == Common::JA_JPN && _vm->game() == GI_EOB1) || (_vm->gameFlags().lang == Common::Language::ZH_TWN && _vm->game() == GI_EOB2)) ? 1 : 0);
 
 	for (int i = 0; i < 256; ++i)
 		_colorMap[i] = i;
 
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-		memcpy(_colorMap, amigaColorMap, 16);
-	else if (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98)
-		_colorMap[12] = 0;
-
-	for (int i = 0; i < _screen->screenDimTableCount(); i++) {
+	for (int i = 0; i < _dimCount; ++i) {
 		const ScreenDim *d = _screen->getScreenDim(i);
-		_textDimData[i].color1 = _colorMap[d->col1];
-		_textDimData[i].color2 = _colorMap[d->col2];
+		_textDimData[i].color1= d->col1;
+		_textDimData[i].color2 = d->col2;
 		_textDimData[i].line = d->line;
 		_textDimData[i].column = d->column;
 	}
@@ -84,6 +75,7 @@ _lineCount(0), _printFlag(false), _lineWidth(0), _numCharsTotal(0), _allowPageBr
 }
 
 TextDisplayer_rpg::~TextDisplayer_rpg() {
+	setColorMapping(-1, 0 ,0);
 	delete[] _dialogueBuffer;
 	delete[] _currentLine;
 	delete[] _textDimData;
@@ -127,6 +119,23 @@ void TextDisplayer_rpg::removePageBreakFlag() {
 	_allowPageBreak = false;
 }
 
+void TextDisplayer_rpg::setColorMapping(int sd, uint8 from, uint8 to) {
+	if (sd < -1 || sd >= _dimCount)
+		error("TextDisplayer_rpg::mapColor(): arg out of range");
+
+	if (sd == -1) {
+		for (int i = 0; i < _dimCount; ++i) {
+			delete[] _textDimData[i].colorMap;
+			_textDimData[i].colorMap = 0;
+		}
+		_colorMap[from] = to;
+	} else {
+		if (_textDimData[sd].colorMap == nullptr)
+			_textDimData[sd].colorMap = new uint8[256];
+		_textDimData[sd].colorMap[from] = to;
+	}
+}
+
 void TextDisplayer_rpg::displayText(char *str, ...) {
 	convertString(str);
 	_printFlag = false;
@@ -151,7 +160,6 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 	int sdx = _screen->curDimIndex();
 
 	bool sjisTextMode = (_pc98TextMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
-	int sjisOffs = (sjisTextMode || _vm->game() != GI_LOL) ? 8 : 9;
 	Screen::FontId of = (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns) ? _screen->setFont(Screen::FID_8_FNT) : _screen->_currentFont;
 
 	uint16 charsPerLine = (sd->w << 3) / (_screen->getFontWidth() + _screen->_charSpacing);
@@ -174,40 +182,22 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 			c = parseCommand();
 		}
 
-		if (_vm->gameFlags().lang == Common::JA_JPN) {
-			uint8 cu = (uint8) c;
-			if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0)) {
-				if ((_textDimData[sdx].column + _lineWidth + sjisOffs) > (sd->w << 3))
-					printLine(_currentLine);
+		if (isTwoByteChar(c)) {
+			char next = parseCommand();
+			int cw = _screen->getCharWidth((uint8)c | (uint8)next << 8) + _textDimData[sdx].charSpacing;
+			if (_textDimData[sdx].column + _lineWidth + cw > (sd->w << 3))
+				printLine(_currentLine);
 
-				_currentLine[_numCharsLeft++] = c;
-				_currentLine[_numCharsLeft++] = parseCommand();
-				_currentLine[_numCharsLeft] = '\0';
+			_currentLine[_numCharsLeft++] = c;
+			_currentLine[_numCharsLeft++] = next;
+			_currentLine[_numCharsLeft] = '\0';
 
-				_lineWidth += sjisOffs;
-				if (_preventHalfWidthLineEnd && ((sd->w << 3) - sjisOffs) <= (_textDimData[sdx].column + _lineWidth))
-					printLine(_currentLine);
-				c = parseCommand();
-				continue;
-			}
-		}
+			_lineWidth += cw;
+			if (_textDimData[sdx].noHalfWidthLineEnd && (_textDimData[sdx].column + _lineWidth + cw >= (sd->w << 3)))
+				printLine(_currentLine);
 
-		if (_isChinese) {
-			uint8 cu = (uint8) c;
-			if (cu & 0x80) {
-				if ((_textDimData[sdx].column + _lineWidth + Graphics::Big5Font::kChineseTraditionalWidth) > (sd->w << 3))
-					printLine(_currentLine);
-
-				_currentLine[_numCharsLeft++] = c;
-				_currentLine[_numCharsLeft++] = parseCommand();
-				_currentLine[_numCharsLeft] = '\0';
-
-				_lineWidth += Graphics::Big5Font::kChineseTraditionalWidth;
-				if (_preventHalfWidthLineEnd && (_textDimData[sdx].column + _lineWidth + Graphics::Big5Font::kChineseTraditionalWidth) > (sd->w << 3))
-					printLine(_currentLine);
-				c = parseCommand();
-				continue;
-			}
+			c = parseCommand();
+			continue;
 		}
 
 		uint16 dv = _textDimData[sdx].column / (_screen->getFontWidth() + _screen->_charSpacing);
@@ -223,17 +213,11 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 		case 1:
 			printLine(_currentLine);
 			_textDimData[sdx].color2 = parseCommand();
-			// EOB II Amiga does not use a color table here. EOB I doesn't do any color mapping here.
-			/*if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-				_textDimData[sdx].color2 = _colorMap[_textDimData[sdx].color2];*/
 			break;
 
 		case 5:
 			printLine(_currentLine);
-			_textDimData[sdx].color1 = parseCommand();
-			// EOB I doesn't do any color mapping here.
-			if (_vm->gameFlags().platform == Common::kPlatformAmiga && _vm->game() == GI_EOB2)
-				_textDimData[sdx].color1 = _colorMap[_textDimData[sdx].color1];
+			_textDimData[sdx].color1= parseCommand();
 			break;
 
 		case 8:
@@ -247,9 +231,9 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 
 		case 12:
 			if (sjisTextMode)
-				_sjisTextModeLineBreak = true;
+				_twoByteLineBreakFlag = true;
 			printLine(_currentLine);
-			_sjisTextModeLineBreak = false;
+			_twoByteLineBreakFlag = false;
 			//_lineWidth = 0;
 			_lineCount++;
 			_textDimData[sdx].column = 0;
@@ -266,7 +250,8 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 
 		default:
 			if (_vm->game() == GI_EOB1 || _vm->game() == GI_LOL || (unsigned char)c > 30) {
-				_lineWidth += (sjisTextMode ? 4 : (_screen->_currentFont == Screen::FID_SJIS_TEXTMODE_FNT ? 9 : _screen->getCharWidth((uint8)c)));
+				int cw = _screen->getCharWidth((uint8)c) + _textDimData[sdx].charSpacing;
+				_lineWidth += cw;
 
 				_currentLine[_numCharsLeft++] = c;
 				_currentLine[_numCharsLeft] = 0;
@@ -345,9 +330,8 @@ void TextDisplayer_rpg::printLine(char *str) {
 	const ScreenDim *sd = _screen->_curDim;
 	int sdx = _screen->curDimIndex();
 	bool sjisTextMode = _pc98TextMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15) ? true : false;
-	int sjisOffs = (sjisTextMode || _vm->game() != GI_LOL) ? 8 : 9;
 
-	int fh = _screen->getFontHeight() + _screen->_lineSpacing + _lineSpacing;
+	int fh = _screen->getFontHeight() + _screen->_lineSpacing + _textDimData[sdx].lineSpacing;
 	int lines = (sd->h - _screen->_lineSpacing) / fh;
 
 	while (_textDimData[sdx].line >= lines) {
@@ -364,13 +348,14 @@ void TextDisplayer_rpg::printLine(char *str) {
 		if (h2)
 			_screen->copyRegion(sd->sx << 3, sd->sy + fh, sd->sx << 3, sd->sy, sd->w << 3, h2, _screen->_curPage, _screen->_curPage, Screen::CR_NO_P_CHECK);
 
-		// In Chinese EOBII some characters overdraw the valid boundaries by one pixel
-		// (at least the ',' does). So, the original redraws the border here. We do the same...
+		// HACK: In Chinese EOBII some characters overdraw the valid boundaries by one pixel
+		// (at least the ',' does). So, the original redraws the border here. We do the same
+		// since for now I don't have any good idea how to do this less ugly... 
 		if (_isChinese && _vm->_flags.gameID == GI_EOB2 && sdx == 7)
-			_screen->drawBox(3, 170, 290, 199, 0xb7);
+			_screen->drawBox(3, 170, 290, 199, _vm->guiSettings()->colors.fill);
 
 		_screen->set16bitShadingLevel(4);
-		_screen->fillRect(sd->sx << 3, sd->sy + h1, ((sd->sx + sd->w) << 3) - 1, sd->sy + sd->h - 1, _textDimData[sdx].color2);
+		_screen->fillRect(sd->sx << 3, sd->sy + h1, ((sd->sx + sd->w) << 3) - 1, sd->sy + sd->h - 1, remapColor(sdx, _textDimData[sdx].color2));
 		_screen->set16bitShadingLevel(0);
 
 		if (_textDimData[sdx].line)
@@ -378,11 +363,10 @@ void TextDisplayer_rpg::printLine(char *str) {
 	}
 
 	int x1 = (sd->sx << 3) + _textDimData[sdx].column;
-	int y = sd->sy + (sjisTextMode ? (_textDimData[sdx].line << 3) : (fh * _textDimData[sdx].line));
+	int y = sd->sy + (fh + _textDimData[sdx].visualLineSpacingAdjust) * _textDimData[sdx].line;
 	int w = sd->w << 3;
 	int lw = _lineWidth;
 	int s = _numCharsLeft;
-	char c = 0;
 	uint8 twoByteCharOffs = 0;
 
 	if (sjisTextMode) {
@@ -393,7 +377,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 				// cut off line to leave space for "MORE" button
 				w -= _vm->guiSettings()->buttons.waitReserve;
 		} else {
-			if (!_sjisTextModeLineBreak || (_lineCount + 1 < lines - 1))
+			if (!_twoByteLineBreakFlag || (_lineCount + 1 < lines - 1))
 				ct = false;
 			else
 				// cut off line to leave space for "MORE" button
@@ -407,31 +391,26 @@ void TextDisplayer_rpg::printLine(char *str) {
 			int n1 = (w / 4) - 1;
 
 			while (n2 < n1 && n2 < s) {
-				c = str[n2];
-				uint8 cu = (uint8) c;
-				if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0))
+				if (isTwoByteChar(str[n2]))
 					n2++;
 				n2++;
 			}
 			s = n2;
 		}
-	} else if (_isChinese) {
-		s = strlen(str);
-		twoByteCharOffs = 16;
-		if ((lw + _textDimData[sdx].column) >= w) {
-			s -= ((lw + _textDimData[sdx].column) - w) >> 3;
-			w -= _textDimData[sdx].column;	
-		}
 	} else {
-		if (_vm->gameFlags().lang == Common::JA_JPN) {
-			for (int i = 0; i < s; ++i) {
-				uint8 cu = (uint8) str[i];
-				if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0))
-					twoByteCharOffs = (_vm->game() == GI_EOB1) ? 16 : 8;
-			}
+		for (int i = 0; i < s; ++i) {
+			if (isTwoByteChar(str[i]))
+				twoByteCharOffs = (_vm->game() == GI_EOB1 || _isChinese) ? 16 : 8;
 		}
 
-		if ((lw + _textDimData[sdx].column) >= w) {
+		if (_isChinese) {
+			s = strlen(str);
+			if ((lw + _textDimData[sdx].column) >= w) {
+				s -= ((lw + _textDimData[sdx].column - w) >> 3);
+				w -= _textDimData[sdx].column;	
+			}
+
+		} else if ((lw + _textDimData[sdx].column) >= w) {
 			if ((lines - 1) <= _lineCount && _allowPageBreak)
 				// cut off line to leave space for "MORE" button
 				w -= _vm->guiSettings()->buttons.waitReserve;
@@ -444,16 +423,13 @@ void TextDisplayer_rpg::printLine(char *str) {
 			if (twoByteCharOffs) {
 				lw = 0;
 				int prevStrPos = 0;
-				c = str[0];
 
 				for (strPos = 0; strPos < s; ++strPos) {
-					uint8 cu = (uint8) str[strPos];
-					if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0)) {
-						lw += sjisOffs;
-						strPos++;
-					} else {
-						lw += _screen->getCharWidth((uint8)c);
-					}
+					uint8 c = str[strPos];
+					if (isTwoByteChar(c))
+						lw += (_screen->getCharWidth(c | (uint8)str[++strPos] << 8) + _textDimData[sdx].charSpacing);						
+					else
+						lw += _screen->getCharWidth(c);
 
 					if (!lineLastCharPos && w < lw + twoByteCharOffs)
 						lineLastCharPos = prevStrPos;
@@ -464,7 +440,6 @@ void TextDisplayer_rpg::printLine(char *str) {
 						break;
 					}
 					prevStrPos = strPos;
-					c = (char) cu;
 				}
 
 				if (!lineLastCharPos) {
@@ -480,9 +455,8 @@ void TextDisplayer_rpg::printLine(char *str) {
 			} else {
 				while (strPos > 0) {
 					//cut off line after last space
-					c = str[strPos];
-
-					lw -= _screen->getCharWidth((uint8)c);
+					uint8 c = str[strPos];
+					lw -= _screen->getCharWidth(c);
 
 					if (!lineLastCharPos && lw <= w)
 						lineLastCharPos = strPos;
@@ -507,58 +481,35 @@ void TextDisplayer_rpg::printLine(char *str) {
 		}
 	}
 
-	c = str[s];
+	char lastChr = str[s];
 	str[s] = 0;
 
-	uint8 col = _textDimData[sdx].color1;
+	uint8 col1 = remapColor(sdx, _textDimData[sdx].color1);
+	uint8 col2 = remapColor(sdx, _textDimData[sdx].color2);
 	if (sjisTextMode && (sdx == 2 || sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) {
-		switch (_textDimData[sdx].color1) {
-		case 0x88:
-			col = 0x41;
-			break;
-		case 0x55:
-			col = 0x81;
-			break;
-		case 0xAA:
-			col = 0x21;
-			break;
-		case 0x99:
-			col = 0xA1;
-			break;
-		case 0x33:
-			col = 0xE1;
-			break;
-		case 0x18:
-			col = 0x61;
-			break;
-		default:
-			col = 1;
-			break;
-		}
-		_screen->printText(str, x1 & ~3, (y + 8) & ~7, col, 0);
-	} else {
-		uint8 col2 = _textDimData[sdx].color2;
-		if (_shadowColor) {
-			_screen->printText(str, x1 - 1, y, _shadowColor, col2);
-			_screen->printText(str, x1, y + 1, _shadowColor, 0);
-			_screen->printText(str, x1 - 1, y + 1, _shadowColor, 0);
-			// Another hack for Chinese EOBII. Due to the reduced line spacing - while still drawing a shadow for the font - the
-			// lines will overdraw by one pixel if we don't clear the bottom line. This will otherwise cause glitches when doing line feeds.
-			for (int i = 0; i < -_lineSpacing && y + fh + i < sd->sy + sd->h; ++i)
-				_screen->drawClippedLine(x1 - 1, y + fh + i, x1 + lw, y + fh + i, _textDimData[sdx].color2);
-			col2 = 0;
-		}
-		_screen->printText(str, x1, y, col, col2);
+		x1 &= ~3;
+		y = (y + 8) & ~7;
+		col2 = 0;
 	}
+
+	if (_textDimData[sdx].shadowColor) {
+		_screen->printText(str, x1 - 1, y, _textDimData[sdx].shadowColor, col2);
+		_screen->printText(str, x1, y + 1, _textDimData[sdx].shadowColor, 0);
+		_screen->printText(str, x1 - 1, y + 1, _textDimData[sdx].shadowColor, 0);
+		// Another hack for Chinese EOBII. Due to the reduced line spacing - while still drawing a shadow for the font - the
+		// lines will overdraw by one pixel if we don't clear the bottom line. This will otherwise cause glitches when doing line feeds.
+		for (int i = 0; i < -_textDimData[sdx].lineSpacing && y + fh + i < sd->sy + sd->h; ++i)
+			_screen->drawClippedLine(x1 - 1, y + fh + i, x1 + lw, y + fh + i, col2);
+		col2 = 0;
+	}
+	_screen->printText(str, x1, y, col1, col2);
 
 	_textDimData[sdx].column += lw;
 	_numCharsPrinted += strlen(str);
 
-	str[s] = c;
-
-	if (c == ' ')
+	str[s] = lastChr;
+	if (lastChr == ' ')
 		s++;
-
 	if (str[s] == ' ')
 		s++;
 
@@ -568,7 +519,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 	str[len] = 0;
 
 	_numCharsLeft = strlen(str);
-	_lineWidth = sjisTextMode ? (_numCharsLeft << 2) : (_screen->_currentFont == Screen::FID_SJIS_TEXTMODE_FNT ? _numCharsLeft * 9 : _screen->getTextWidth(str));
+	_lineWidth = _screen->getTextWidth(str) + _textDimData[sdx].charSpacing * _numCharsLeft;
 
 	if (!_numCharsLeft && (_textDimData[sdx].column + twoByteCharOffs) <= (sd->w << 3))
 		return;
@@ -620,7 +571,7 @@ void TextDisplayer_rpg::printMessage(const char *str, int textColor, ...) {
 	int tc = _textDimData[_screen->curDimIndex()].color1;
 
 	if (textColor != -1)
-		_textDimData[_screen->curDimIndex()].color1 = textColor;
+		_textDimData[_screen->curDimIndex()].color1= textColor;
 
 	va_list args;
 	va_start(args, textColor);
@@ -630,7 +581,7 @@ void TextDisplayer_rpg::printMessage(const char *str, int textColor, ...) {
 	displayText(_dialogueBuffer, textColor);
 
 	if (_vm->game() != GI_EOB1)
-		_textDimData[_screen->curDimIndex()].color1 = tc;
+		_textDimData[_screen->curDimIndex()].color1= tc;
 
 	if (!_screen->_curPage)
 		_screen->updateScreen();
@@ -639,8 +590,9 @@ void TextDisplayer_rpg::printMessage(const char *str, int textColor, ...) {
 int TextDisplayer_rpg::clearDim(int dim) {
 	int res = _screen->curDimIndex();
 	_screen->setScreenDim(dim);
-	_textDimData[dim].color1 = _colorMap[_screen->_curDim->col1];
-	_textDimData[dim].color2 = (_vm->game() == GI_LOL || _vm->gameFlags().platform == Common::kPlatformAmiga) ? _colorMap[_screen->_curDim->col2] : _vm->guiSettings()->colors.fill;
+	_textDimData[dim].color1= _screen->_curDim->col1;
+	_textDimData[dim].color2 = (_vm->game() == GI_LOL || _vm->gameFlags().platform == Common::kPlatformAmiga) ? _screen->_curDim->col2 : _vm->guiSettings()->colors.fill;
+
 	clearCurDim();
 	return res;
 }
@@ -653,11 +605,9 @@ void TextDisplayer_rpg::clearCurDim() {
 	int wOffs = 0;
 	int hOffs = 0;
 
-	if (_shadowColor) {
+	if (_textDimData[d].shadowColor) {
 		if (tmp->sx > 0)
 			xOffs = wOffs = 1;
-		if (tmp->sy + tmp->h < Screen::SCREEN_H)
-			hOffs = 1;
 	}
 
 	if (_pc98TextMode) {
@@ -665,7 +615,7 @@ void TextDisplayer_rpg::clearCurDim() {
 		--hOffs;
 	}
 
-	_screen->fillRect((tmp->sx << 3) - xOffs, tmp->sy, ((tmp->sx + tmp->w) << 3) - 1 + wOffs, (tmp->sy + tmp->h) - 1 + hOffs, _textDimData[d].color2);
+	_screen->fillRect((tmp->sx << 3) - xOffs, tmp->sy, ((tmp->sx + tmp->w) << 3) - 1 + wOffs, (tmp->sy + tmp->h) - 1 + hOffs, remapColor(d, _textDimData[d].color2));
 
 	_lineCount = 0;
 	_textDimData[d].column = _textDimData[d].line = 0;
@@ -698,7 +648,8 @@ void TextDisplayer_rpg::textPageBreak() {
 	if (_vm->speechEnabled() && _vm->_activeVoiceFileTotalTime && _numCharsTotal)
 		speechPartTime = _vm->_system->getMillis() + ((_numCharsPrinted * _vm->_activeVoiceFileTotalTime) / _numCharsTotal);
 
-	const ScreenDim *dim = _screen->getScreenDim(_screen->curDimIndex());
+	int sdx = _screen->curDimIndex();
+	const ScreenDim *dim = _screen->getScreenDim(sdx);
 
 	int x = ((dim->sx + dim->w) << 3) - (_vm->_dialogueButtonWidth + 3);
 	int y = 0;
@@ -776,9 +727,9 @@ void TextDisplayer_rpg::textPageBreak() {
 
 	_screen->set16bitShadingLevel(4);
 	if (_vm->game() == GI_LOL && _vm->gameFlags().use16ColorMode)
-		_screen->fillRect(x + 8, y, x + 57, y + _vm->guiSettings()->buttons.height, _textDimData[_screen->curDimIndex()].color2);
+		_screen->fillRect(x + 8, y, x + 57, y + _vm->guiSettings()->buttons.height, remapColor(sdx, _textDimData[sdx].color2));
 	else
-		_screen->fillRect(x, y, x + w - 1, y + _vm->guiSettings()->buttons.height - 1, _textDimData[_screen->curDimIndex()].color2);
+		_screen->fillRect(x, y, x + w - 1, y + _vm->guiSettings()->buttons.height - 1, remapColor(sdx, _textDimData[sdx].color2));
 
 	clearCurDim();
 	_screen->set16bitShadingLevel(0);
@@ -856,6 +807,46 @@ void TextDisplayer_rpg::convertString(char *str) {
 				*str = c[1];
 		}
 	}
+}
+
+bool TextDisplayer_rpg::isTwoByteChar(uint8 c) const {
+	if (_vm->gameFlags().lang == Common::JA_JPN)
+		return (c >= 0xE0 || (c > 0x80 && c < 0xA0));
+	else if (_vm->gameFlags().lang == Common::ZH_TWN)
+		return (c & 0x80);
+	return false;
+}
+
+void TextDisplayer_rpg::applySetting(int sd, int ix, int val) {
+	if (sd < -1 || sd >= _dimCount || ix >= kOutOfRange)
+		error("TextDisplayer_rpg::applySetting(): arg out of range");
+
+	const int *memberAddr[] = {
+		&_textDimData[0].lineSpacing,
+		&_textDimData[0].visualLineSpacingAdjust,
+		&_textDimData[0].charSpacing,
+		&_textDimData[0].shadowColor,
+		&_textDimData[0].noHalfWidthLineEnd
+	};
+
+	int offset = (const byte*)memberAddr[ix] - (const byte*)&_textDimData[0];
+
+	if (sd == -1) {
+		for (int i = 0; i < _dimCount; ++i)
+			*(int*)((byte*)&_textDimData[i] + offset) = val;
+	} else {
+		*(int*)((byte*)&_textDimData[sd] + offset) = val;
+	}
+}
+
+uint8 TextDisplayer_rpg::remapColor(int sd, uint8 color) const {
+	if (sd < -1 || sd >= _dimCount)
+		error("TextDisplayer_rpg::applySetting(): arg out of range");
+
+	if (sd != -1 && _textDimData[sd].colorMap != nullptr)
+		return _textDimData[sd].colorMap[color];
+
+	return _colorMap[color];
 }
 
 } // End of namespace Kyra

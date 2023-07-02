@@ -540,18 +540,11 @@ int EoBInfProcessor::oeob_printMessage_v1(int8 *data) {
 		col[3] = *pos++;
 	}
 
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-		assert((uint8)col[1] < 16);
-		assert((uint8)col[3] < 16);
-		col[1] = _amigaColorMap[(uint8)col[1]];
-		col[3] = _amigaColorMap[(uint8)col[3]];
-	}
-
 	_vm->txt()->printMessage(col);
 	_vm->txt()->printMessage(str);
 
-	col[1] = _vm->gameFlags().platform == Common::kPlatformSegaCD ? 0xFF : _vm->txt()->colorMap()[_screen->_curDim->col1];
-	col[3] = _vm->txt()->colorMap()[_screen->_curDim->col2];
+	col[1] = _vm->gameFlags().platform == Common::kPlatformSegaCD ? 0xFF : _screen->_curDim->col1;
+	col[3] = _screen->_curDim->col2;
 	_vm->txt()->printMessage(col);
 
 	if (lineBreak)
@@ -570,10 +563,6 @@ int EoBInfProcessor::oeob_printMessage_v2(int8 *data) {
 
 	int c = 0;
 	_vm->_dialogueFieldAmiga = true;
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-		assert(col < 16);
-		col = _amigaColorMap[col];
-	}
 
 	if (_activeCharacter == -1) {
 		c = _vm->rollDice(1, 6, -1);
@@ -1326,10 +1315,6 @@ int EoBInfProcessor::oeob_loadNewLevelOrMonsters(int8 *data) {
 		_vm->generateTempData();
 		_vm->txt()->removePageBreakFlag();
 		_screen->setScreenDim(7);
-		if (_vm->gameFlags().lang == Common::ZH_TWN) {
-			_vm->txt()->setShadowColor(_vm->guiSettings()->colors.fill);
-			_vm->txt()->setLineSpacing(-1);
-		}
 
 		_vm->loadLevel(index, cmd);
 		debugC(5, kDebugLevelScript, "         - entering level '%d', sub level '%d', start block '0x%.04X', start direction '%d'", index, cmd, _vm->_currentBlock, _vm->_currentDirection);
@@ -1548,10 +1533,6 @@ int EoBInfProcessor::oeob_sequence(int8 *data) {
 	}
 
 	_vm->screen()->setScreenDim(7);
-	if (_vm->gameFlags().lang == Common::ZH_TWN) {
-		_vm->txt()->setShadowColor(_vm->guiSettings()->colors.fill);
-		_vm->txt()->setLineSpacing(-1);
-	}
 
 	return pos - data;
 }
@@ -1667,10 +1648,6 @@ int EoBInfProcessor::oeob_specialEvent(int8 *data) {
 
 	return pos - data;
 }
-
-const uint8 EoBInfProcessor::_amigaColorMap[16] = {
-	0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f
-};
 
 const uint8 EoBInfProcessor::_segaCDColorMap[16] = {
 	0x00, 0xFF, 0x99, 0x55, 0xFF, 0x99, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF

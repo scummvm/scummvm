@@ -306,8 +306,6 @@ void EoBCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
 		int od = _screen->curDimIndex();
 		Screen::FontId of = _screen->setFont(_conFont);
 		_screen->setScreenDim(7);
-		int osh = (_flags.lang == Common::ZH_TWN) ? _txt->setShadowColor(guiSettings()->colors.fill) : 0xFFFF;
-		int ols = (_flags.lang == Common::ZH_TWN) ? _txt->setLineSpacing(-1) : 0xFFFF;
 
 		switch (evt) {
 		case 2:
@@ -371,10 +369,6 @@ void EoBCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
 		}
 
 		_screen->setScreenDim(od);
-		if (osh != 0xFFFF)
-			_txt->setShadowColor(osh);
-		if (ols != 0xFFFF)
-			_txt->setLineSpacing(ols);
 		_screen->setFont(of);
 	}
 

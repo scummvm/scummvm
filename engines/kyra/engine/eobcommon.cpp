@@ -472,6 +472,12 @@ Common::Error EoBCoreEngine::init() {
 		assert(_gui);
 		_txt = new TextDisplayer_rpg(this, _screen);
 		assert(_txt);
+
+		if (_flags.platform == Common::kPlatformAmiga) {
+			static const uint8 cmap[16] = { 0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f };
+			for (int i = 0; i < ARRAYSIZE(cmap); ++i)
+				_txt->setColorMapping(-1, i, cmap[i]);
+		}
 	}
 
 	_inf = new EoBInfProcessor(this, _screen);
@@ -730,11 +736,6 @@ void EoBCoreEngine::runLoop() {
 	_drawSceneTimer = _system->getMillis();
 	_screen->setFont(_conFont);
 	_screen->setScreenDim(7);
-	if (_flags.lang == Common::ZH_TWN) {
-		_txt->setShadowColor(guiSettings()->colors.fill);
-		_txt->setLineSpacing(-1);
-	}
-
 	_runFlag = true;
 
 	while (!shouldQuit() && _runFlag) {
@@ -1616,11 +1617,6 @@ void EoBCoreEngine::initDialogueSequence() {
 	delete s;
 
 	_txt->setupField(9, 0);
-
-	if (_flags.lang == Common::ZH_TWN) {
-		_txt->setShadowColor(guiSettings()->colors.guiColorBlack);
-		_txt->setLineSpacing(0);
-	}
 }
 
 void EoBCoreEngine::restoreAfterDialogueSequence() {
@@ -1632,11 +1628,6 @@ void EoBCoreEngine::restoreAfterDialogueSequence() {
 	gui_restorePlayField();
 	//_allowSkip = false;
 	_screen->setScreenDim(7);
-
-	if (_flags.lang == Common::ZH_TWN) {
-		_txt->setShadowColor(guiSettings()->colors.fill);
-		_txt->setLineSpacing(-1);
-	}
 
 	if (_flags.gameID == GI_EOB2)
 		snd_playSoundEffect(2);
@@ -1726,8 +1717,6 @@ int EoBCoreEngine::runDialogue(int dialogueTextId, int numStr, int loopButtonId,
 void EoBCoreEngine::restParty_displayWarning(const char *str) {
 	int od = _screen->curDimIndex();
 	_screen->setScreenDim(7);
-	int osh = (_flags.lang == Common::ZH_TWN) ? _txt->setShadowColor(guiSettings()->colors.fill) : 0xFFFF;
-	int ols = (_flags.lang == Common::ZH_TWN) ? _txt->setLineSpacing(-1) : 0xFFFF;
 
 	Screen::FontId of = _screen->setFont(_conFont);
 	_screen->setCurPage(0);
@@ -1736,11 +1725,6 @@ void EoBCoreEngine::restParty_displayWarning(const char *str) {
 
 	_screen->setFont(of);
 	_screen->setScreenDim(od);
-
-	if (osh != 0xFFFF)
-		_txt->setShadowColor(osh);
-	if (ols != 0xFFFF)
-		_txt->setLineSpacing(ols);
 }
 
 bool EoBCoreEngine::restParty_updateMonsters() {
@@ -1759,18 +1743,12 @@ bool EoBCoreEngine::restParty_updateMonsters() {
 		Screen::FontId of = _screen->setFont(_conFont);
 		int od = _screen->curDimIndex();
 		_screen->setScreenDim(7);
-		int osh = (_flags.lang == Common::ZH_TWN) ? _txt->setShadowColor(guiSettings()->colors.fill) : 0xFFFF;
-		int ols = (_flags.lang == Common::ZH_TWN) ? _txt->setLineSpacing(-1) : 0xFFFF;
 
 		updateMonsters(0);
 		updateMonsters(1);
 		timerProcessFlyingObjects(0);
 
 		_screen->setScreenDim(od);
-		if (osh != 0xFFFF)
-			_txt->setShadowColor(osh);
-		if (ols != 0xFFFF)
-			_txt->setLineSpacing(ols);
 		_screen->setFont(of);
 
 		_partyResting = false;

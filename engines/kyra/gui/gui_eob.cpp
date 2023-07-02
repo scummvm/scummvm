@@ -3967,10 +3967,8 @@ bool GUI_EoB::restParty() {
 		_screen->sega_clearTextBuffer(0);
 
 	if (_vm->gameFlags().lang == Common::ZH_TWN)
-		_screen->drawBox(3, 170, 290, 199, 0xb7);
+		_screen->drawBox(3, 170, 290, 199, _vm->guiSettings()->colors.fill);
 
-	int osh = (_vm->gameFlags().lang == Common::ZH_TWN) ? _vm->txt()->setShadowColor(_vm->guiSettings()->colors.fill) : 0xFFFF;
-	int ols = (_vm->gameFlags().lang == Common::ZH_TWN) ? _vm->txt()->setLineSpacing(-1) : 0xFFFF;
 	Screen::FontId of = _screen->setFont(_vm->_conFont);
 
 	restParty_updateRestTime(hours, true);
@@ -4191,10 +4189,6 @@ bool GUI_EoB::restParty() {
 	_vm->removeInputTop();
 	_screen->setScreenDim(4);
 	_screen->setFont(of);
-	if (osh != 0xFFFF)
-		_vm->txt()->setShadowColor(osh);
-	if (ols != 0xFFFF)
-		_vm->txt()->setLineSpacing(ols);
 
 	if (!res) {
 		if (!injured)
@@ -4216,8 +4210,6 @@ void GUI_EoB::printScribeScrollSpellString(const int16 *menuItems, int id, bool 
 
 bool GUI_EoB::confirmDialogue(int id) {
 	int od = _screen->curDimIndex();
-	int osh = (_vm->gameFlags().lang == Common::ZH_TWN) ? _vm->txt()->setShadowColor(_vm->guiSettings()->colors.guiColorBlack) : 0xFFFF;
-	int ols = (_vm->gameFlags().lang == Common::ZH_TWN) ? _vm->txt()->setLineSpacing(0) : 0xFFFF;
 	Screen::FontId of = _screen->setFont(_menuFont);
 
 	Button *buttonList = initMenu(5);
@@ -4274,10 +4266,6 @@ bool GUI_EoB::confirmDialogue(int id) {
 
 	_screen->setFont(of);
 	_screen->setScreenDim(od);
-	if (osh != 0xFFFF)
-		_vm->txt()->setShadowColor(osh);
-	if (ols != 0xFFFF)
-		_vm->txt()->setLineSpacing(ols);
 
 	return result;
 }
@@ -4593,9 +4581,6 @@ void GUI_EoB::drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool n
 void GUI_EoB::drawTextBox(int dim, int id) {
 	int od = _screen->curDimIndex();
 	_screen->setScreenDim(dim);
-	int osh = (_vm->gameFlags().lang == Common::ZH_TWN) ? _vm->txt()->setShadowColor(_vm->guiSettings()->colors.guiColorBlack) : 0xFFFF;
-	int ols = (_vm->gameFlags().lang == Common::ZH_TWN) ? _vm->txt()->setLineSpacing(0) : 0xFFFF;
-
 	Screen::FontId of = _screen->setFont(_menuFont);
 	int cs = (_vm->gameFlags().platform == Common::kPlatformPC98 && !_vm->gameFlags().use16ColorMode) ? _screen->setFontStyles(_menuFont, Font::kStyleFat) : -1;
 
@@ -4612,10 +4597,6 @@ void GUI_EoB::drawTextBox(int dim, int id) {
 	_screen->copyRegion(0, 0, dm->sx << 3, dm->sy, dm->w << 3, dm->h, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 
-	if (osh != 0xFFFF)
-		_vm->txt()->setShadowColor(osh);
-	if (ols != 0xFFFF)
-		_vm->txt()->setLineSpacing(ols);
 	_screen->setScreenDim(od);
 
 	if (cs != -1)
@@ -4848,8 +4829,6 @@ void GUI_EoB::restParty_updateRestTime(int hours, bool init) {
 	Screen::FontId of = _screen->setFont(_menuFont);
 	int od = _screen->curDimIndex();
 	_screen->setScreenDim(10);
-	int osh = (_vm->gameFlags().lang == Common::ZH_TWN) ? _vm->txt()->setShadowColor(_vm->guiSettings()->colors.guiColorBlack) : 0xFFFF;
-	int ols = (_vm->gameFlags().lang == Common::ZH_TWN) ? _vm->txt()->setLineSpacing(0) : 0xFFFF;
 
 	if (init) {
 		_screen->setCurPage(0);
@@ -4866,10 +4845,6 @@ void GUI_EoB::restParty_updateRestTime(int hours, bool init) {
 	_screen->set16bitShadingLevel(0);
 	_screen->updateScreen();
 	_vm->delay(160);
-	if (osh != 0xFFFF)
-		_vm->txt()->setShadowColor(osh);
-	if (ols != 0xFFFF)
-		_vm->txt()->setLineSpacing(ols);
 	_screen->setScreenDim(od);
 	_screen->setFont(of);
 }

@@ -127,6 +127,7 @@ Common::Error EoBEngine::init() {
 	if (_flags.platform == Common::kPlatformPC98) {
 		_screen->modifyScreenDim(28, 0x0A, 0xA4, 0x15, 0x18);
 		_screen->modifyScreenDim(12, 0x01, 0x04, 0x14, 0x9A);
+		_txt->setColorMapping(-1, 12, 0);
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
 		_screen->modifyScreenDim(27, 0x00, 0x02, 0x11, 0x03);
 		_screen->modifyScreenDim(28, 0x07, 0xA0, 0x17, 0x24);

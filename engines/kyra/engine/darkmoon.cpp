@@ -76,6 +76,10 @@ Common::Error DarkMoonEngine::init() {
 		_screen->modifyScreenDim(27, 0, 0, 21, 5);
 	} else if (_flags.lang == Common::Language::ZH_TWN) {
 		_screen->modifyScreenDim(6, 10, 72, 21, 40);
+		_txt->setShadowColor(-1, guiSettings()->colors.guiColorBlack);
+		_txt->setLineSpacing(7, -1);
+		_txt->setColorMapping(7, 12, 0);
+		_txt->setShadowColor(7, guiSettings()->colors.fill);
 	}
 
 	return Common::kNoError;

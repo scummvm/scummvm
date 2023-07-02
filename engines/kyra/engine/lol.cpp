@@ -48,6 +48,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(sy
 	_screen = 0;
 	_gui = 0;
 	_tim = 0;
+	_txt = 0;
 
 	_lang = 0;
 	_langIntern = 0;
@@ -393,7 +394,29 @@ Common::Error LoLEngine::init() {
 	}
 
 	_txt = new TextDisplayer_LoL(this, _screen);
-	_txt->setLineSpacing(_flags.lang == Common::JA_JPN && _flags.use16ColorMode ? 1 : (_flags.lang == Common::ZH_TWN ? -1 : 0));
+	if (_flags.lang == Common::JA_JPN && _flags.use16ColorMode) {
+		for (int i = 0; i < _screen->screenDimTableCount(); ++i) {
+			_txt->setLineSpacing(i, 1);
+			if ((i >= 3 && i <= 5) || i == 15) {
+				for (int ii = 0; ii < 256; ++ii)
+					_txt->setColorMapping(i, ii, 1);
+				_txt->setColorMapping(i, 0, 0);
+				_txt->setColorMapping(i, 0x11, 0x11);
+				_txt->setColorMapping(i, 0x18, 0x61);
+				_txt->setColorMapping(i, 0x33, 0xE1);
+				_txt->setColorMapping(i, 0x44, 0x44);
+				_txt->setColorMapping(i, 0x55, 0x81);
+				_txt->setColorMapping(i, 0x88, 0x41);
+				_txt->setColorMapping(i, 0x99, 0xA1);
+				_txt->setColorMapping(i, 0xAA, 0x21);
+				_txt->setVisualLineSpacingAdjust(i, -1);
+			} else {
+				_txt->setCharSpacing(i, 1);
+			}
+		}
+	} else if (_flags.lang == Common::ZH_TWN) {
+		_txt->setLineSpacing(-1, -1);
+	}
 
 	_screen->setAnimBlockPtr(10000);
 	_screen->setScreenDim(0);
@@ -625,7 +648,7 @@ void LoLEngine::checkFloatingPointerRegions() {
 
 	Common::Point p = getMousePos();
 
-	if (!(_updateFlags & 4) & !_floatingCursorControl) {
+	if (!(_updateFlags & 4) && !_floatingCursorControl) {
 		if (posWithinRect(p.x, p.y, 96, 0, 303, 136)) {
 			if (!posWithinRect(p.x, p.y, 128, 16, 271, 119)) {
 				if (posWithinRect(p.x, p.y, 112, 0, 287, 15))
@@ -2267,6 +2290,8 @@ int LoLEngine::processMagicHeal(int charNum, int spellLevel) {
 	uint16 pY = 138;
 	uint16 diff[4];
 	uint16 pts[4];
+	memset(pX, 0, sizeof(pX));
+	memset(diff, 0, sizeof(diff));
 	memset(pts, 0, sizeof(pts));
 
 	while (charNum < n) {
