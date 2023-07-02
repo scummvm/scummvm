@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-07-01 14:26+0000\n"
-"PO-Revision-Date: 2023-06-24 02:40+0000\n"
+"PO-Revision-Date: 2023-07-02 16:40+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -4241,32 +4241,26 @@ msgstr "3D-peleissä"
 
 #: backends/platform/android/options.cpp:163
 msgid "Select the orientation:"
-msgstr ""
+msgstr "Valitse orientaatio:"
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
-#, fuzzy
-#| msgid "Automatic drilling"
 msgid "Automatic"
-msgstr "Automaattinen poraus"
+msgstr "Automaattinen"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
 msgid "Portrait"
-msgstr ""
+msgstr "Pysty"
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
-#, fuzzy
-#| msgid "Escape"
 msgid "Landscape"
-msgstr "Esc"
+msgstr "Vaaka"
 
 #: backends/platform/android/options.cpp:175
-#, fuzzy
-#| msgid "In 2D games"
 msgid "In games"
-msgstr "2D-peleissä"
+msgstr "Peleissä"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:189
@@ -4299,7 +4293,7 @@ msgstr "Hiiren vedä-ja-pudota tila"
 
 #: backends/platform/ios7/ios7_options.mm:71
 msgid "Show keyboard function bar"
-msgstr ""
+msgstr "Näytä näppäimistön funktiorivi"
 
 #: backends/platform/ios7/ios7_options.mm:73
 msgid "Controls Help"
@@ -4956,19 +4950,15 @@ msgstr ""
 "alkuperäisessä pelissä ilman sitä."
 
 #: engines/agos/midi.cpp:374
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition file\n"
-#| "%s. Without this file,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s. Without this file,\n"
 "the sound effects will not sound the same as the original game."
 msgstr ""
 "AdLib instrumenttitiedostoa %s ei löydetty.\n"
-"Musiikki ei tule kuulostamaan samalta kuin\n"
-"alkuperäisessä pelissä ilman sitä."
+"Ääniefektit eivät tule kuulostamaan samalta\n"
+"kuin alkuperäisessä pelissä ilman sitä."
 
 #: engines/agos/midi.cpp:453
 #, c-format
