@@ -205,7 +205,7 @@ PCF_Face_Done( PCF_Face  face ) {
 		face->root.stream = face->gzip_source;
 	}
 
-	return PCF_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 
@@ -215,7 +215,7 @@ PCF_Face_Init( FT2_1_3_Stream      stream,
 			   FT2_1_3_Int         face_index,
 			   FT2_1_3_Int         num_params,
 			   FT2_1_3_Parameter*  params ) {
-	FT2_1_3_Error  error = PCF_Err_Ok;
+	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
 
 	FT2_1_3_UNUSED( num_params );
 	FT2_1_3_UNUSED( params );
@@ -292,7 +292,7 @@ Exit:
 
 Fail:
 	FT2_1_3_TRACE2(( "[not a valid PCF file]\n" ));
-	error = PCF_Err_Unknown_File_Format;  /* error */
+	error = FT2_1_3_Err_Unknown_File_Format;  /* error */
 	goto Exit;
 }
 
@@ -316,10 +316,10 @@ PCF_Set_Pixel_Size( FT2_1_3_Size  size ) {
 
 		size->metrics.max_advance = face->accel.maxbounds.characterWidth << 6;
 
-		return PCF_Err_Ok;
+		return FT2_1_3_Err_Ok;
 	} else {
 		FT2_1_3_TRACE4(( "size WRONG\n" ));
-		return PCF_Err_Invalid_Pixel_Size;
+		return FT2_1_3_Err_Invalid_Pixel_Size;
 	}
 }
 
@@ -331,7 +331,7 @@ PCF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
 				FT2_1_3_Int32      load_flags ) {
 	PCF_Face    face   = (PCF_Face)FT2_1_3_SIZE_FACE( size );
 	FT2_1_3_Stream   stream = face->root.stream;
-	FT2_1_3_Error    error  = PCF_Err_Ok;
+	FT2_1_3_Error    error  = FT2_1_3_Err_Ok;
 	FT2_1_3_Memory   memory = FT2_1_3_FACE( face )->memory;
 	FT2_1_3_Bitmap*  bitmap = &slot->bitmap;
 	PCF_Metric  metric;
@@ -343,7 +343,7 @@ PCF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
 	FT2_1_3_TRACE4(( "load_glyph %d ---", glyph_index ));
 
 	if ( !face ) {
-		error = PCF_Err_Invalid_Argument;
+		error = FT2_1_3_Err_Invalid_Argument;
 		goto Exit;
 	}
 
@@ -380,7 +380,7 @@ PCF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
 		break;
 
 	default:
-		return PCF_Err_Invalid_File_Format;
+		return FT2_1_3_Err_Invalid_File_Format;
 	}
 
 	/* XXX: to do: are there cases that need repadding the bitmap? */
