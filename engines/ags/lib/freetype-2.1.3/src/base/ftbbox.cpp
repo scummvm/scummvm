@@ -30,6 +30,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftoutln.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftcalc.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 typedef struct  TBBox_Rec_ {
 	FT2_1_3_Vector  last;
@@ -60,7 +62,7 @@ typedef struct  TBBox_Rec_ {
 /*                                                                       */
 static int
 BBox_Move_To( FT2_1_3_Vector*  to,
-              TBBox_Rec*  user ) {
+			  TBBox_Rec*  user ) {
 	user->last = *to;
 
 	return 0;
@@ -68,10 +70,10 @@ BBox_Move_To( FT2_1_3_Vector*  to,
 
 
 #define CHECK_X( p, bbox )  \
-          ( p->x < bbox.xMin || p->x > bbox.xMax )
+		  ( p->x < bbox.xMin || p->x > bbox.xMax )
 
 #define CHECK_Y( p, bbox )  \
-          ( p->y < bbox.yMin || p->y > bbox.yMax )
+		  ( p->y < bbox.yMin || p->y > bbox.yMax )
 
 
 /*************************************************************************/
@@ -95,10 +97,10 @@ BBox_Move_To( FT2_1_3_Vector*  to,
 /*                                                                       */
 static void
 BBox_Conic_Check( FT2_1_3_Pos   y1,
-                  FT2_1_3_Pos   y2,
-                  FT2_1_3_Pos   y3,
-                  FT2_1_3_Pos*  min,
-                  FT2_1_3_Pos*  max ) {
+				  FT2_1_3_Pos   y2,
+				  FT2_1_3_Pos   y3,
+				  FT2_1_3_Pos*  min,
+				  FT2_1_3_Pos*  max ) {
 	if ( y1 <= y3 ) {
 		if ( y2 == y1 )               /* Flat arc */
 			goto Suite;
@@ -149,26 +151,26 @@ Suite:
 /*                                                                       */
 static int
 BBox_Conic_To( FT2_1_3_Vector*  control,
-               FT2_1_3_Vector*  to,
-               TBBox_Rec*  user ) {
+			   FT2_1_3_Vector*  to,
+			   TBBox_Rec*  user ) {
 	/* we don't need to check `to' since it is always an `on' point, thus */
 	/* within the bbox                                                    */
 
 	if ( CHECK_X( control, user->bbox ) )
 
 		BBox_Conic_Check( user->last.x,
-		                  control->x,
-		                  to->x,
-		                  &user->bbox.xMin,
-		                  &user->bbox.xMax );
+						  control->x,
+						  to->x,
+						  &user->bbox.xMin,
+						  &user->bbox.xMax );
 
 	if ( CHECK_Y( control, user->bbox ) )
 
 		BBox_Conic_Check( user->last.y,
-		                  control->y,
-		                  to->y,
-		                  &user->bbox.yMin,
-		                  &user->bbox.yMax );
+						  control->y,
+						  to->y,
+						  &user->bbox.yMin,
+						  &user->bbox.yMax );
 
 	user->last = *to;
 
@@ -199,11 +201,11 @@ BBox_Conic_To( FT2_1_3_Vector*  control,
 #if 0
 static void
 BBox_Cubic_Check( FT2_1_3_Pos   p1,
-                  FT2_1_3_Pos   p2,
-                  FT2_1_3_Pos   p3,
-                  FT2_1_3_Pos   p4,
-                  FT2_1_3_Pos*  min,
-                  FT2_1_3_Pos*  max ) {
+				  FT2_1_3_Pos   p2,
+				  FT2_1_3_Pos   p3,
+				  FT2_1_3_Pos   p4,
+				  FT2_1_3_Pos*  min,
+				  FT2_1_3_Pos*  max ) {
 	FT2_1_3_Pos  stack[32*3 + 1], *arc;
 
 
@@ -261,12 +263,12 @@ Suite:
 
 static void
 test_cubic_extrema( FT2_1_3_Pos    y1,
-                    FT2_1_3_Pos    y2,
-                    FT2_1_3_Pos    y3,
-                    FT2_1_3_Pos    y4,
-                    FT2_1_3_Fixed  u,
-                    FT2_1_3_Pos*   min,
-                    FT2_1_3_Pos*   max ) {
+					FT2_1_3_Pos    y2,
+					FT2_1_3_Pos    y3,
+					FT2_1_3_Pos    y4,
+					FT2_1_3_Fixed  u,
+					FT2_1_3_Pos*   min,
+					FT2_1_3_Pos*   max ) {
 	/* FT2_1_3_Pos    a = y4 - 3*y3 + 3*y2 - y1; */
 	FT2_1_3_Pos    b = y3 - 2*y2 + y1;
 	FT2_1_3_Pos    c = y2 - y1;
@@ -301,11 +303,11 @@ test_cubic_extrema( FT2_1_3_Pos    y1,
 
 static void
 BBox_Cubic_Check( FT2_1_3_Pos   y1,
-                  FT2_1_3_Pos   y2,
-                  FT2_1_3_Pos   y3,
-                  FT2_1_3_Pos   y4,
-                  FT2_1_3_Pos*  min,
-                  FT2_1_3_Pos*  max ) {
+				  FT2_1_3_Pos   y2,
+				  FT2_1_3_Pos   y3,
+				  FT2_1_3_Pos   y4,
+				  FT2_1_3_Pos*  min,
+				  FT2_1_3_Pos*  max ) {
 	/* always compare first and last points */
 	if      ( y1 < *min )  *min = y1;
 	else if ( y1 > *max )  *max = y1;
@@ -485,31 +487,31 @@ BBox_Cubic_Check( FT2_1_3_Pos   y1,
 /*                                                                       */
 static int
 BBox_Cubic_To( FT2_1_3_Vector*  control1,
-               FT2_1_3_Vector*  control2,
-               FT2_1_3_Vector*  to,
-               TBBox_Rec*  user ) {
+			   FT2_1_3_Vector*  control2,
+			   FT2_1_3_Vector*  to,
+			   TBBox_Rec*  user ) {
 	/* we don't need to check `to' since it is always an `on' point, thus */
 	/* within the bbox                                                    */
 
 	if ( CHECK_X( control1, user->bbox ) ||
-	        CHECK_X( control2, user->bbox ) )
+			CHECK_X( control2, user->bbox ) )
 
 		BBox_Cubic_Check( user->last.x,
-		                  control1->x,
-		                  control2->x,
-		                  to->x,
-		                  &user->bbox.xMin,
-		                  &user->bbox.xMax );
+						  control1->x,
+						  control2->x,
+						  to->x,
+						  &user->bbox.xMin,
+						  &user->bbox.xMax );
 
 	if ( CHECK_Y( control1, user->bbox ) ||
-	        CHECK_Y( control2, user->bbox ) )
+			CHECK_Y( control2, user->bbox ) )
 
 		BBox_Cubic_Check( user->last.y,
-		                  control1->y,
-		                  control2->y,
-		                  to->y,
-		                  &user->bbox.yMin,
-		                  &user->bbox.yMax );
+						  control1->y,
+						  control2->y,
+						  to->y,
+						  &user->bbox.yMin,
+						  &user->bbox.yMax );
 
 	user->last = *to;
 
@@ -521,7 +523,7 @@ BBox_Cubic_To( FT2_1_3_Vector*  control1,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Outline_Get_BBox( FT2_1_3_Outline*  outline,
-                     FT2_1_3_BBox     *abbox ) {
+					 FT2_1_3_BBox     *abbox ) {
 	FT2_1_3_BBox     cbox;
 	FT2_1_3_BBox     bbox;
 	FT2_1_3_Vector*  vec;
@@ -576,7 +578,7 @@ FT2_1_3_Outline_Get_BBox( FT2_1_3_Outline*  outline,
 
 	/* test two boxes for equality */
 	if ( cbox.xMin < bbox.xMin || cbox.xMax > bbox.xMax ||
-	        cbox.yMin < bbox.yMin || cbox.yMax > bbox.yMax ) {
+			cbox.yMin < bbox.yMin || cbox.yMax > bbox.yMax ) {
 		/* the two boxes are different, now walk over the outline to */
 		/* get the Bezier arc extrema.                               */
 
@@ -605,5 +607,7 @@ FT2_1_3_Outline_Get_BBox( FT2_1_3_Outline*  outline,
 	return FT2_1_3_Err_Ok;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

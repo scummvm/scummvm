@@ -21,12 +21,14 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/t42types.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /* documentation is in t1tables.h */
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Get_PS_Font_Info( FT2_1_3_Face          face,
-                     PS_FontInfoRec*  afont_info ) {
+					 PS_FontInfoRec*  afont_info ) {
 	PS_FontInfo  font_info = NULL;
 	FT2_1_3_Error     error     = FT2_1_3_Err_Invalid_Argument;
 	const char*  driver_name;
@@ -71,12 +73,14 @@ FT2_1_3_Has_PS_Glyph_Names( FT2_1_3_Face  face ) {
 
 		driver_name = face->driver->root.clazz->module_name;
 		result      = ( ft_strcmp( driver_name, "type1"  ) == 0 ||
-		                ft_strcmp( driver_name, "type42" ) == 0 ||
-		                ft_strcmp( driver_name, "cff"    ) == 0 );
+						ft_strcmp( driver_name, "type42" ) == 0 ||
+						ft_strcmp( driver_name, "cff"    ) == 0 );
 	}
 
 	return result;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

@@ -30,12 +30,14 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_mm
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /* documentation is in ftmm.h */
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Get_Multi_Master( FT2_1_3_Face           face,
-                     FT2_1_3_Multi_Master  *amaster ) {
+					 FT2_1_3_Multi_Master  *amaster ) {
 	FT2_1_3_Error  error;
 
 
@@ -50,7 +52,7 @@ FT2_1_3_Get_Multi_Master( FT2_1_3_Face           face,
 
 
 		func = (FT2_1_3_Get_MM_Func)driver->root.clazz->get_interface(
-		           FT2_1_3_MODULE( driver ), "get_mm" );
+				   FT2_1_3_MODULE( driver ), "get_mm" );
 		if ( func )
 			error = func( face, amaster );
 	}
@@ -63,8 +65,8 @@ FT2_1_3_Get_Multi_Master( FT2_1_3_Face           face,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Set_MM_Design_Coordinates( FT2_1_3_Face   face,
-                              FT2_1_3_UInt   num_coords,
-                              FT2_1_3_Long*  coords ) {
+							  FT2_1_3_UInt   num_coords,
+							  FT2_1_3_Long*  coords ) {
 	FT2_1_3_Error  error;
 
 
@@ -79,7 +81,7 @@ FT2_1_3_Set_MM_Design_Coordinates( FT2_1_3_Face   face,
 
 
 		func = (FT2_1_3_Set_MM_Design_Func)driver->root.clazz->get_interface(
-		           FT2_1_3_MODULE( driver ), "set_mm_design" );
+				   FT2_1_3_MODULE( driver ), "set_mm_design" );
 		if ( func )
 			error = func( face, num_coords, coords );
 	}
@@ -92,8 +94,8 @@ FT2_1_3_Set_MM_Design_Coordinates( FT2_1_3_Face   face,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Set_MM_Blend_Coordinates( FT2_1_3_Face    face,
-                             FT2_1_3_UInt    num_coords,
-                             FT2_1_3_Fixed*  coords ) {
+							 FT2_1_3_UInt    num_coords,
+							 FT2_1_3_Fixed*  coords ) {
 	FT2_1_3_Error  error;
 
 
@@ -108,7 +110,7 @@ FT2_1_3_Set_MM_Blend_Coordinates( FT2_1_3_Face    face,
 
 
 		func = (FT2_1_3_Set_MM_Blend_Func)driver->root.clazz->get_interface(
-		           FT2_1_3_MODULE( driver ), "set_mm_blend" );
+				   FT2_1_3_MODULE( driver ), "set_mm_blend" );
 		if ( func )
 			error = func( face, num_coords, coords );
 	}
@@ -116,5 +118,7 @@ FT2_1_3_Set_MM_Blend_Coordinates( FT2_1_3_Face    face,
 	return error;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

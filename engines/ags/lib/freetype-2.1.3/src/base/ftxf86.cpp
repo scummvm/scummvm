@@ -20,6 +20,9 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftxf86.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
 
+namespace AGS3 {
+namespace FreeType213 {
+
 /* XXX: This really is a sad hack, but I didn't want to change every     */
 /*      driver just to support this at the moment, since other important */
 /*      changes are coming anyway.                                       */
@@ -70,5 +73,7 @@ FT2_1_3_Get_X11_Font_Format( FT2_1_3_Face  face ) {
 	return result;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

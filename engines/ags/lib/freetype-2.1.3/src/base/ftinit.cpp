@@ -43,6 +43,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftmodule.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*                                                                       */
@@ -90,7 +92,7 @@ FT2_1_3_Add_Default_Modules( FT2_1_3_Library  library ) {
 		/* notify errors, but don't stop */
 		if ( error ) {
 			FT2_1_3_ERROR(( "FT2_1_3_Add_Default_Module: Cannot install `%s', error = 0x%x\n",
-			           (*cur)->module_name, error ));
+					   (*cur)->module_name, error ));
 		}
 		cur++;
 	}
@@ -148,5 +150,7 @@ FT2_1_3_Done_FreeType( FT2_1_3_Library  library ) {
 	return FT2_1_3_Err_Ok;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

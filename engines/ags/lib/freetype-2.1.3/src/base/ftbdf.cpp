@@ -20,11 +20,13 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/bdftypes.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Get_BDF_Charset_ID( FT2_1_3_Face       face,
-                       const char*  *acharset_encoding,
-                       const char*  *acharset_registry ) {
+					   const char*  *acharset_encoding,
+					   const char*  *acharset_registry ) {
 	FT2_1_3_Error     error;
 	const char*  encoding = NULL;
 	const char*  registry = NULL;
@@ -37,7 +39,7 @@ FT2_1_3_Get_BDF_Charset_ID( FT2_1_3_Face       face,
 
 
 		if ( driver->clazz && driver->clazz->module_name         &&
-		        ft_strcmp( driver->clazz->module_name, "bdf" ) == 0 ) {
+				ft_strcmp( driver->clazz->module_name, "bdf" ) == 0 ) {
 			BDF_Public_Face  bdf_face = (BDF_Public_Face)face;
 
 
@@ -56,5 +58,7 @@ FT2_1_3_Get_BDF_Charset_ID( FT2_1_3_Face       face,
 	return error;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

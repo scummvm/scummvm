@@ -35,6 +35,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*                                                                       */
@@ -69,7 +71,7 @@
 /*                                                                       */
 FT2_1_3_CALLBACK_DEF( void* )
 ft_alloc( FT2_1_3_Memory  memory,
-          long       size ) {
+		  long       size ) {
 	FT2_1_3_UNUSED( memory );
 
 	return malloc( size );
@@ -98,9 +100,9 @@ ft_alloc( FT2_1_3_Memory  memory,
 /*                                                                       */
 FT2_1_3_CALLBACK_DEF( void* )
 ft_realloc( FT2_1_3_Memory  memory,
-            long       cur_size,
-            long       new_size,
-            void*      block ) {
+			long       cur_size,
+			long       new_size,
+			void*      block ) {
 	FT2_1_3_UNUSED( memory );
 	FT2_1_3_UNUSED( cur_size );
 
@@ -123,7 +125,7 @@ ft_realloc( FT2_1_3_Memory  memory,
 /*                                                                       */
 FT2_1_3_CALLBACK_DEF( void )
 ft_free( FT2_1_3_Memory  memory,
-         void*      block ) {
+		 void*      block ) {
 	FT2_1_3_UNUSED( memory );
 
 	free( block );
@@ -194,9 +196,9 @@ ft_ansi_stream_close( FT2_1_3_Stream  stream ) {
 /*                                                                       */
 FT2_1_3_CALLBACK_DEF( unsigned long )
 ft_ansi_stream_io( FT2_1_3_Stream       stream,
-                   unsigned long   offset,
-                   unsigned char*  buffer,
-                   unsigned long   count ) {
+				   unsigned long   offset,
+				   unsigned char*  buffer,
+				   unsigned long   count ) {
 	FILE*  file;
 
 
@@ -212,7 +214,7 @@ ft_ansi_stream_io( FT2_1_3_Stream       stream,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Stream_Open( FT2_1_3_Stream    stream,
-                const char*  filepathname ) {
+				const char*  filepathname ) {
 	FILE*  file;
 
 
@@ -240,7 +242,7 @@ FT2_1_3_Stream_Open( FT2_1_3_Stream    stream,
 
 	FT2_1_3_TRACE1(( "FT2_1_3_Stream_Open:" ));
 	FT2_1_3_TRACE1(( " opened `%s' (%d bytes) successfully\n",
-	            filepathname, stream->size ));
+				filepathname, stream->size ));
 
 	return FT2_1_3_Err_Ok;
 }
@@ -289,5 +291,7 @@ FT2_1_3_Done_Memory( FT2_1_3_Memory  memory ) {
 	memory->free( memory, memory );
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */
