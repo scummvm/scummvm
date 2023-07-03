@@ -655,8 +655,8 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 
 // Add backslash before double quotes (") and backslashes themselves (\)
 Common::String escapeString(const char *string) {
-	if (string == nullptr || Common::String(string) == "")
-		return "NULL";
+	if (string == nullptr)
+		return "";
 
 	Common::String res = "";
 
@@ -678,12 +678,12 @@ void AdvancedMetaEngineDetection::dumpDetectionEntries() const {
 		const char *title = ((const PlainGameDescriptor *)_gameIds)->description;
 
 		printf("game (\n");
-		printf("\tname %s\n", escapeString(g->gameId).c_str());
-		printf("\ttitle %s\n", escapeString(title).c_str());
-		printf("\textra %s\n", escapeString(g->extra).c_str());
-		printf("\tlanguage %s\n", escapeString(getLanguageLocale(g->language)).c_str());
-		printf("\tplatform %s\n", escapeString(getPlatformCode(g->platform)).c_str());
-		printf("\tsourcefile %s\n", escapeString(getName()).c_str());
+		printf("\tname \"%s\"\n", escapeString(g->gameId).c_str());
+		printf("\ttitle \"%s\"\n", escapeString(title).c_str());
+		printf("\textra \"%s\"\n", escapeString(g->extra).c_str());
+		printf("\tlanguage \"%s\"\n", escapeString(getLanguageLocale(g->language)).c_str());
+		printf("\tplatform \"%s\"\n", escapeString(getPlatformCode(g->platform)).c_str());
+		printf("\tsourcefile \"%s\"\n", escapeString(getName()).c_str());
 
 		for (auto fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			const char *fname = fileDesc->fileName;
@@ -693,7 +693,7 @@ void AdvancedMetaEngineDetection::dumpDetectionEntries() const {
 			Common::String md5Prefix = md5PropToGameFile(md5prop);
 			Common::String key = md5;
 			if (md5Prefix != "" && md5.find(':') == Common::String::npos)
-				key = md5Prefix + md5;
+				key = md5Prefix + ':' + md5;
 
 			printf("\trom ( name \"%s\" size %lld md5-%d %s )\n", escapeString(fname).c_str(), static_cast<long long int>(fsize), _md5Bytes, key.c_str());
 		}
