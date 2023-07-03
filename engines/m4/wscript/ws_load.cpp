@@ -841,7 +841,8 @@ static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char 
 		if (byteSwap) {
 			tempPtr = (uint32 *)&numColors[1];
 			for (i = 0; i < *numColors; i++) {
-				*tempPtr++ = SWAP_INT32(*tempPtr);
+				*tempPtr = SWAP_INT32(*tempPtr);
+				tempPtr++;
 			}
 		}
 
@@ -908,7 +909,8 @@ static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char 
 		// byte-swap the entire chunk header
 		tempPtr = &(data[2]);
 		for (i = 0; i < SS_HEAD_SIZE - 2; i++) {
-			*tempPtr++ = SWAP_INT32(*tempPtr);
+			*tempPtr = SWAP_INT32(*tempPtr);
+			tempPtr++;
 		}
 
 		if ((int32)(data[CELS_COUNT]) <= 0) {
@@ -921,7 +923,8 @@ static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char 
 		offsetPtr = &(data[CELS_OFFSETS]);
 		tempPtr = offsetPtr;
 		for (i = 0; i < data[CELS_COUNT]; i++) {
-			*tempPtr++ = SWAP_INT32(*tempPtr);
+			*tempPtr = SWAP_INT32(*tempPtr);
+			tempPtr++;
 		}
 
 		// dataPtr points to the beginning of the block which is a concatenation of
@@ -934,7 +937,8 @@ static int32 ProcessCELS(const char * /*assetName*/, char **parseAssetPtr, char 
 
 			// Byteswap the individual sprite's header
 			for (j = 0; j < SS_INDV_HEAD; j++) {
-				*tempPtr++ = SWAP_INT32(*tempPtr);
+				*tempPtr = SWAP_INT32(*tempPtr);
+				tempPtr++;
 			}
 		}
 	}
