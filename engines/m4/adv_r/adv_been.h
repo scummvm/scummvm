@@ -23,6 +23,8 @@
 #ifndef M4_ADV_R_ADV_BEEN_H
 #define M4_ADV_R_ADV_BEEN_H
 
+#include "common/error.h"
+#include "common/serializer.h"
 #include "common/stream.h"
 #include "m4/m4_types.h"
 
@@ -53,21 +55,9 @@ extern void player_been_shutdown();
 extern void player_reset_been(void);
 
 /**
- * Restores player_been information
- *
- * A file must already been open for reading and seeked to the right place
- * returns the number of bytes read. player_been_init must have been called
- * previously with a sufficient number of scenes to hold the record being read.
+ * Saves/loads player_been information
  */
-extern int32 player_been_restore(Common::SeekableReadStream *handle);
-
-/**
- * Saves player_been information
- *
- * A file must already been open for writing and seeked to the right place
- * @returns The number of bytes written
- */
-extern int32 player_been_save(Common::WriteStream *handle);
+extern Common::Error player_been_sync(Common::Serializer &s);
 
 /**
  * Called whenever player enters a scene

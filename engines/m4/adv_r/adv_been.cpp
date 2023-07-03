@@ -47,56 +47,41 @@ void player_reset_been() {
 	_G(scene_list).tail = 0;
 }
 
-int32 player_been_restore(Common::SeekableReadStream *file_ptr) {
-	// Read chunk type marker
-	int32 size;
+Common::Error player_been_sync(Common::Serializer &s) {
+	uint32 val;
 
-	if (file_ptr->readUint32BE() != 'BEEN')
-		error_show(FL, 'PBR1');
+	// Handle chunk identity
+	val = 'BEEN';
+	s.syncAsUint32BE(val);
+	if (s.isLoading() && val != 'BEEN')
+		return Common::kReadingFailed;
 
-	// Skip chunk size and read number of scenes
-	file_ptr->skip(4);
-	size = file_ptr->readUint32LE();
+	// Handle chunk size
+	val = 4 * sizeof(int32) + sizeof(int16) * _G(scene_list).total_scenes;
+	s.syncAsUint32LE(val);
 
-	// Do we need to reallocate the scene table?
-	if (size != _G(scene_list).total_scenes) {
-		_G(scene_list).table = (int16 *)mem_realloc(_G(scene_list).table, size * sizeof(int16), "been_scenes");
+	// Handle number of scenes
+	val = _G(scene_list).total_scenes;
+	s.syncAsUint32LE(val);
+
+	if ((int)val != _G(scene_list).total_scenes) {
+		// Need to reallocate the scene table
+		_G(scene_list).table = (int16 *)mem_realloc(_G(scene_list).table, val * sizeof(int16), "been_scenes");
 		if (!_G(scene_list).table)
-			error_show(FL, 'OOM!');
+			return Common::kUnknownError;
 	}
-	_G(scene_list).total_scenes = size;
 
-	// Read the tail
-	_G(scene_list).tail = file_ptr->readUint32LE();
+	if (s.isLoading())
+		_G(scene_list).total_scenes = val;
 
-	// Read in the scene list
+	// Handle current tail
+	s.syncAsUint32LE(_G(scene_list).tail);
+
+	// Handle scene list
 	for (int i = 0; i < _G(scene_list).total_scenes; ++i)
-		_G(scene_list).table[i] = file_ptr->readUint16LE();
+		s.syncAsUint16LE(_G(scene_list).table[i]);
 
-	return (4 * sizeof(int32) + sizeof(int16) * _G(scene_list).total_scenes);
-}
-
-int32 player_been_save(Common::WriteStream *handle) {
-	int32 size;
-
-	// write chunk identity
-	handle->writeUint32BE('BEEN');
-
-	// Write chunk size
-	size = 4 * sizeof(int32) + sizeof(int16) * _G(scene_list).total_scenes;
-	handle->writeUint32LE(size);
-
-	// write number of scenes
-	handle->writeUint32LE(_G(scene_list).total_scenes);
-
-	// write current tail
-	handle->writeUint32LE(_G(scene_list).tail);
-
-	// Write scene list
-	for (int i = 0; i < _G(scene_list).total_scenes; ++i)
-		handle->writeUint16LE(_G(scene_list).table[i]);
-
-	return (sizeof(int32) + (sizeof(int16) * _G(scene_list).total_scenes));
+	return Common::kNoError;
 }
 
 /**
