@@ -135,6 +135,7 @@ protected:
 
 class ScummEngine_v70he : public ScummEngine_v60he {
 	friend class ResExtractor;
+	friend class SoundHE;
 
 protected:
 	enum HESndFlags {
@@ -192,7 +193,8 @@ protected:
 	byte *_heV7RoomOffsets;
 	uint32 *_heV7RoomIntOffsets;
 
-	int32 _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndSoundFreq, _heSndPan, _heSndVol;
+	int32 _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndFrequencyShift, _heSndPan, _heSndVol;
+	bool _heSndStartNewSoundFlag;
 
 	int _numStoredFlObjects;
 	ObjectData *_storedFlObjects;

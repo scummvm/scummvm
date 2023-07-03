@@ -66,7 +66,7 @@ void SoundHE::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlag
 	if (_vm->VAR_LAST_SOUND != 0xFF)
 		_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
 
-	if (heFlags & 8) {
+	if (heFlags & ScummEngine_v70he::HESndFlags::HE_SND_QUICK_START) {
 		playHESound(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 	} else {
 		Sound::addSoundToQueue(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
@@ -76,11 +76,33 @@ void SoundHE::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlag
 void SoundHE::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
 	int i = _soundQue2Pos;
 	while (i--) {
-		if (_soundQue2[i].sound == sound && !(heFlags & 2))
+		if (_soundQue2[i].sound == sound && !(heFlags & ScummEngine_v70he::HESndFlags::HE_SND_APPEND))
+			// Sound is already queued
 			return;
 	}
 
 	Sound::addSoundToQueue2(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
+}
+
+void SoundHE::modifySound(int sound, int offset, int frequencyShift, int pan, int volume, int flags) {
+	int chan = findSoundChannel(sound);
+	if (chan >= 0 && _heChannel[chan].sound) {
+		// Modify the current playing sound
+		if (flags & ScummEngine_v70he::HESndFlags::HE_SND_VOL)
+			_mixer->setChannelVolume(_heSoundChannels[chan], volume);
+
+		// Convert the pan range from (0, 127) to (-127, 127)
+		int scaledPan = (pan != 64) ? 2 * pan - 127 : 0;
+		if (flags & ScummEngine_v70he::HESndFlags::HE_SND_PAN)
+			_mixer->setChannelBalance(_heSoundChannels[chan], scaledPan);
+
+		if (flags & ScummEngine_v70he::HESndFlags::HE_SND_FREQUENCY) {
+			int newFrequency = (_heChannel[chan].frequency * frequencyShift) / HSND_BASE_FREQ_FACTOR;
+			if (newFrequency)
+				_mixer->setChannelRate(_heSoundChannels[chan], newFrequency);
+		}
+	}
+	// TODO: Implement spooled sound case
 }
 
 void SoundHE::processSoundQueues() {
@@ -413,10 +435,7 @@ void SoundHE::unqueueSoundCallbackScripts() {
 }
 
 void SoundHE::checkSoundTimeouts() {
-	byte *soundPtr;
-	int chan, soundPos, len, freq;
-
-	for (chan = 0; chan < ARRAYSIZE(_heChannel); chan++) {
+	for (int chan = 0; chan < ARRAYSIZE(_heChannel); chan++) {
 		if (_heChannel[chan].sound == 0 || _heChannel[chan].timer == 0)
 			continue;
 
@@ -565,18 +584,20 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 	while (READ_LE_UINT16(codePtr) != 0) {
 		codePtr += 2;
 		opcode = READ_LE_UINT16(codePtr); codePtr += 2;
-		opcode = (opcode & 0xFFF) >> 4;
-		arg = opcode & 3;
-		opcode &= ~3;
+		opcode = (opcode & ~HSND_SBNG_MAGIC_MASK) >> 4;
+		arg = opcode & HSND_SBNG_VARORVAL;
+		opcode &= ~HSND_SBNG_VARORVAL;
+
 		debug(5, "processSoundOpcodes: sound %d opcode %d", sound, opcode);
+
 		switch (opcode) {
-		case 0: // Continue
+		case HSND_SBNG_END: // Continue
 			break;
-		case 16: // Set talk state
+		case HSND_SBNG_FACE: // Set talk state
 			val = READ_LE_UINT16(codePtr); codePtr += 2;
 			setSoundVar(sound, 19, val);
 			break;
-		case 32: // Set var
+		case HSND_SBNG_SET_SET: // Set var
 			var = READ_LE_UINT16(codePtr); codePtr += 2;
 			val = READ_LE_UINT16(codePtr); codePtr += 2;
 			if (arg == 2) {
@@ -584,7 +605,7 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			}
 			setSoundVar(sound, var, val);
 			break;
-		case 48: // Add
+		case HSND_SBNG_SET_ADD: // Add
 			var = READ_LE_UINT16(codePtr); codePtr += 2;
 			val = READ_LE_UINT16(codePtr); codePtr += 2;
 			if (arg == 2) {
@@ -593,7 +614,7 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			val = getSoundVar(sound, var) + val;
 			setSoundVar(sound, var, val);
 			break;
-		case 56: // Subtract
+		case HSND_SBNG_SET_SUB: // Subtract
 			var = READ_LE_UINT16(codePtr); codePtr += 2;
 			val = READ_LE_UINT16(codePtr); codePtr += 2;
 			if (arg == 2) {
@@ -602,7 +623,7 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			val = getSoundVar(sound, var) - val;
 			setSoundVar(sound, var, val);
 			break;
-		case 64: // Multiple
+		case HSND_SBNG_SET_MUL: // Multiple
 			var = READ_LE_UINT16(codePtr); codePtr += 2;
 			val = READ_LE_UINT16(codePtr); codePtr += 2;
 			if (arg == 2) {
@@ -611,7 +632,7 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			val = getSoundVar(sound, var) * val;
 			setSoundVar(sound, var, val);
 			break;
-		case 80: // Divide
+		case HSND_SBNG_SET_DIV: // Divide
 			var = READ_LE_UINT16(codePtr); codePtr += 2;
 			val = READ_LE_UINT16(codePtr); codePtr += 2;
 			if (arg == 2) {
@@ -624,12 +645,12 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			val = getSoundVar(sound, var) / val;
 			setSoundVar(sound, var, val);
 			break;
-		case 96: // Increment
+		case HSND_SBNG_SET_INC: // Increment
 			var = READ_LE_UINT16(codePtr); codePtr += 2;
 			val = getSoundVar(sound, var) + 1;
 			setSoundVar(sound, var, val);
 			break;
-		case 104: // Decrement
+		case HSND_SBNG_SET_DEC: // Decrement
 			var = READ_LE_UINT16(codePtr); codePtr += 2;
 			val = getSoundVar(sound, var) - 1;
 			setSoundVar(sound, var, val);
