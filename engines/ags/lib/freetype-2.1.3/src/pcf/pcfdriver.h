@@ -1,9 +1,9 @@
 /*  pcfdriver.h
 
-    FreeType font driver for pcf fonts
+		FreeType font driver for pcf fonts
 
-  Copyright 2000-2001, 2002 by
-  Francesco Zappa Nardelli
+	Copyright 2000-2001, 2002 by
+	Francesco Zappa Nardelli
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,11 +25,14 @@ THE SOFTWARE.
 */
 
 
-#ifndef __PCFDRIVER_H__
-#define __PCFDRIVER_H__
+#ifndef AGS_LIB_FREETYPE_PCFDRIVER_H
+#define AGS_LIB_FREETYPE_PCFDRIVER_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdriver.h"
+
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -37,8 +40,10 @@ FT2_1_3_EXPORT_VAR( const FT2_1_3_Driver_ClassRec )  pcf_driver_class;
 
 FT2_1_3_END_HEADER
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
-#endif /* __PCFDRIVER_H__ */
+#endif /* AGS_LIB_FREETYPE_PCFDRIVER_H */
 
 
 /* END */

@@ -25,14 +25,16 @@ THE SOFTWARE.
 */
 
 
-#ifndef __PCF_H__
-#define __PCF_H__
+#ifndef AGS_LIB_FREETYPE__PCF_H
+#define AGS_LIB_FREETYPE__PCF_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdriver.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftstream.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -159,8 +161,8 @@ typedef struct  PCF_FaceRec_ {
 #define MSBFirst  1
 
 #define PCF_FILE_VERSION        ( ( 'p' << 24 ) | \
-                                  ( 'c' << 16 ) | \
-                                  ( 'f' <<  8 ) | 1 )
+								  ( 'c' << 16 ) | \
+								  ( 'f' <<  8 ) | 1 )
 #define PCF_FORMAT_MASK         0xFFFFFF00L
 
 #define PCF_DEFAULT_FORMAT      0x00000000L
@@ -169,7 +171,7 @@ typedef struct  PCF_FaceRec_ {
 #define PCF_COMPRESSED_METRICS  0x00000100L
 
 #define PCF_FORMAT_MATCH( a, b ) \
-          ( ( (a) & PCF_FORMAT_MASK ) == ( (b) & PCF_FORMAT_MASK ) )
+		  ( ( (a) & PCF_FORMAT_MASK ) == ( (b) & PCF_FORMAT_MASK ) )
 
 #define PCF_GLYPH_PAD_MASK  ( 3 << 0 )
 #define PCF_BYTE_MASK       ( 1 << 2 )
@@ -177,31 +179,31 @@ typedef struct  PCF_FaceRec_ {
 #define PCF_SCAN_UNIT_MASK  ( 3 << 4 )
 
 #define PCF_BYTE_ORDER( f ) \
-          ( ( (f) & PCF_BYTE_MASK ) ? MSBFirst : LSBFirst )
+		  ( ( (f) & PCF_BYTE_MASK ) ? MSBFirst : LSBFirst )
 #define PCF_BIT_ORDER( f ) \
-          ( ( (f) & PCF_BIT_MASK ) ? MSBFirst : LSBFirst )
+		  ( ( (f) & PCF_BIT_MASK ) ? MSBFirst : LSBFirst )
 #define PCF_GLYPH_PAD_INDEX( f ) \
-          ( (f) & PCF_GLYPH_PAD_MASK )
+		  ( (f) & PCF_GLYPH_PAD_MASK )
 #define PCF_GLYPH_PAD( f ) \
-          ( 1 << PCF_GLYPH_PAD_INDEX( f ) )
+		  ( 1 << PCF_GLYPH_PAD_INDEX( f ) )
 #define PCF_SCAN_UNIT_INDEX( f ) \
-          ( ( (f) & PCF_SCAN_UNIT_MASK ) >> 4 )
+		  ( ( (f) & PCF_SCAN_UNIT_MASK ) >> 4 )
 #define PCF_SCAN_UNIT( f ) \
-          ( 1 << PCF_SCAN_UNIT_INDEX( f ) )
+		  ( 1 << PCF_SCAN_UNIT_INDEX( f ) )
 #define PCF_FORMAT_BITS( f )             \
-          ( (f) & ( PCF_GLYPH_PAD_MASK | \
-                    PCF_BYTE_MASK      | \
-                    PCF_BIT_MASK       | \
-                    PCF_SCAN_UNIT_MASK ) )
+		  ( (f) & ( PCF_GLYPH_PAD_MASK | \
+					PCF_BYTE_MASK      | \
+					PCF_BIT_MASK       | \
+					PCF_SCAN_UNIT_MASK ) )
 
 #define PCF_SIZE_TO_INDEX( s )  ( (s) == 4 ? 2 : (s) == 2 ? 1 : 0 )
 #define PCF_INDEX_TO_SIZE( b )  ( 1 << b )
 
 #define PCF_FORMAT( bit, byte, glyph, scan )          \
-          ( ( PCF_SIZE_TO_INDEX( scan )      << 4 ) | \
-            ( ( (bit)  == MSBFirst ? 1 : 0 ) << 3 ) | \
-            ( ( (byte) == MSBFirst ? 1 : 0 ) << 2 ) | \
-            ( PCF_SIZE_TO_INDEX( glyph )     << 0 ) )
+		  ( ( PCF_SIZE_TO_INDEX( scan )      << 4 ) | \
+			( ( (bit)  == MSBFirst ? 1 : 0 ) << 3 ) | \
+			( ( (byte) == MSBFirst ? 1 : 0 ) << 2 ) | \
+			( PCF_SIZE_TO_INDEX( glyph )     << 0 ) )
 
 #define PCF_PROPERTIES        ( 1 << 0 )
 #define PCF_ACCELERATORS      ( 1 << 1 )
@@ -217,12 +219,15 @@ typedef struct  PCF_FaceRec_ {
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 pcf_load_font( FT2_1_3_Stream,
-               PCF_Face );
+			   PCF_Face );
 
 
 FT2_1_3_END_HEADER
 
-#endif /* __PCF_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE__PCF_H */
 
 
 /* END */

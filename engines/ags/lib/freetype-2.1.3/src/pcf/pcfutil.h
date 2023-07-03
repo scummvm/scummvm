@@ -1,9 +1,9 @@
 /*  pcfutil.h
 
-    FreeType font driver for pcf fonts
+		FreeType font driver for pcf fonts
 
-  Copyright 2000-2001 by
-  Francesco Zappa Nardelli
+	Copyright 2000-2001 by
+	Francesco Zappa Nardelli
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,35 +24,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-
-#ifndef __PCFUTIL_H__
-#define __PCFUTIL_H__
-
+#ifndef AGS_LIB_FREETYPE_PCFUTIL_H
+#define AGS_LIB_FREETYPE_PCFUTIL_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
-void
-BitOrderInvert( unsigned char*  buf,
-                int             nbytes);
+void BitOrderInvert(unsigned char *buf, int nbytes);
 
-void
-TwoByteSwap( unsigned char*  buf,
-             int             nbytes);
+void TwoByteSwap(unsigned char *buf, int nbytes);
 
-void
-FourByteSwap( unsigned char*  buf,
-              int             nbytes);
+void FourByteSwap(unsigned char *buf, int nbytes);
 
-int
-RepadBitmap( char*           pSrc,
-             char*           pDst,
-             unsigned int    srcPad,
-             unsigned int    dstPad,
-             int             width,
-             int             height);
+int RepadBitmap(char *pSrc, char *pDst, unsigned int srcPad, unsigned int dstPad, int width, int height);
 
-#endif /* __PCFUTIL_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
+#endif /* AGS_LIB_FREETYPE_PCFUTIL_H */
 
 /* END */

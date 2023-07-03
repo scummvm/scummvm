@@ -1,9 +1,9 @@
 /*  pcfdriver.c
 
-    FreeType font driver for pcf files
+	FreeType font driver for pcf files
 
-    Copyright (C) 2000-2001, 2002 by
-    Francesco Zappa Nardelli
+	Copyright (C) 2000-2001, 2002 by
+	Francesco Zappa Nardelli
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -42,6 +42,8 @@ THE SOFTWARE.
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_pcfread
 
+namespace AGS3 {
+namespace FreeType213 {
 
 typedef struct  PCF_CMapRec_ {
 	FT2_1_3_CMapRec    cmap;
@@ -72,7 +74,7 @@ pcf_cmap_done( PCF_CMap  cmap ) {
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 pcf_cmap_char_index( PCF_CMap   cmap,
-                     FT2_1_3_UInt32  charcode ) {
+					 FT2_1_3_UInt32  charcode ) {
 	PCF_Encoding  encodings = cmap->encodings;
 	FT2_1_3_UInt       min, max, mid;
 	FT2_1_3_UInt       result = 0;
@@ -105,7 +107,7 @@ pcf_cmap_char_index( PCF_CMap   cmap,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 pcf_cmap_char_next( PCF_CMap    cmap,
-                    FT2_1_3_UInt32  *acharcode ) {
+					FT2_1_3_UInt32  *acharcode ) {
 	PCF_Encoding  encodings = cmap->encodings;
 	FT2_1_3_UInt       min, max, mid;
 	FT2_1_3_UInt32     charcode = *acharcode + 1;
@@ -209,10 +211,10 @@ PCF_Face_Done( PCF_Face  face ) {
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 PCF_Face_Init( FT2_1_3_Stream      stream,
-               PCF_Face       face,
-               FT2_1_3_Int         face_index,
-               FT2_1_3_Int         num_params,
-               FT2_1_3_Parameter*  params ) {
+			   PCF_Face       face,
+			   FT2_1_3_Int         face_index,
+			   FT2_1_3_Int         num_params,
+			   FT2_1_3_Parameter*  params ) {
 	FT2_1_3_Error  error = PCF_Err_Ok;
 
 	FT2_1_3_UNUSED( num_params );
@@ -253,10 +255,10 @@ PCF_Face_Init( FT2_1_3_Stream      stream,
 		charset_encoding = face->charset_encoding;
 
 		if ( ( charset_registry != NULL ) &&
-		        ( charset_encoding != NULL ) ) {
+				( charset_encoding != NULL ) ) {
 			if ( !ft_strcmp( face->charset_registry, "ISO10646" )     ||
-			        ( !ft_strcmp( face->charset_registry, "ISO8859" ) &&
-			          !ft_strcmp( face->charset_encoding, "1" )       )  )
+					( !ft_strcmp( face->charset_registry, "ISO8859" ) &&
+					  !ft_strcmp( face->charset_encoding, "1" )       )  )
 				unicode_charmap = 1;
 		}
 
@@ -301,7 +303,7 @@ PCF_Set_Pixel_Size( FT2_1_3_Size  size ) {
 
 
 	FT2_1_3_TRACE4(( "rec %d - pres %d\n", size->metrics.y_ppem,
-	            face->root.available_sizes->height ));
+				face->root.available_sizes->height ));
 
 	if ( size->metrics.y_ppem == face->root.available_sizes->height ) {
 		size->metrics.ascender    = face->accel.fontAscent << 6;
@@ -310,7 +312,7 @@ PCF_Set_Pixel_Size( FT2_1_3_Size  size ) {
 		size->metrics.height      = face->accel.maxbounds.ascent << 6;
 #endif
 		size->metrics.height      = size->metrics.ascender -
-		                            size->metrics.descender;
+									size->metrics.descender;
 
 		size->metrics.max_advance = face->accel.maxbounds.characterWidth << 6;
 
@@ -324,9 +326,9 @@ PCF_Set_Pixel_Size( FT2_1_3_Size  size ) {
 
 static FT2_1_3_Error
 PCF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
-                FT2_1_3_Size       size,
-                FT2_1_3_UInt       glyph_index,
-                FT2_1_3_Int32      load_flags ) {
+				FT2_1_3_Size       size,
+				FT2_1_3_UInt       glyph_index,
+				FT2_1_3_Int32      load_flags ) {
 	PCF_Face    face   = (PCF_Face)FT2_1_3_SIZE_FACE( size );
 	FT2_1_3_Stream   stream = face->root.stream;
 	FT2_1_3_Error    error  = PCF_Err_Ok;
@@ -356,9 +358,9 @@ PCF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
 	bitmap->pixel_mode = FT2_1_3_PIXEL_MODE_MONO;
 
 	FT2_1_3_TRACE6(( "BIT_ORDER %d ; BYTE_ORDER %d ; GLYPH_PAD %d\n",
-	            PCF_BIT_ORDER( face->bitmapsFormat ),
-	            PCF_BYTE_ORDER( face->bitmapsFormat ),
-	            PCF_GLYPH_PAD( face->bitmapsFormat ) ));
+				PCF_BIT_ORDER( face->bitmapsFormat ),
+				PCF_BYTE_ORDER( face->bitmapsFormat ),
+				PCF_GLYPH_PAD( face->bitmapsFormat ) ));
 
 	switch ( PCF_GLYPH_PAD( face->bitmapsFormat ) ) {
 	case 1:
@@ -388,14 +390,14 @@ PCF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
 		goto Exit;
 
 	if ( FT2_1_3_STREAM_SEEK( metric->bits )          ||
-	        FT2_1_3_STREAM_READ( bitmap->buffer, bytes ) )
+			FT2_1_3_STREAM_READ( bitmap->buffer, bytes ) )
 		goto Exit;
 
 	if ( PCF_BIT_ORDER( face->bitmapsFormat ) != MSBFirst )
 		BitOrderInvert( bitmap->buffer, bytes );
 
 	if ( ( PCF_BYTE_ORDER( face->bitmapsFormat ) !=
-	        PCF_BIT_ORDER( face->bitmapsFormat )  ) ) {
+			PCF_BIT_ORDER( face->bitmapsFormat )  ) ) {
 		switch ( PCF_SCAN_UNIT( face->bitmapsFormat ) ) {
 		case 1:
 			break;
@@ -417,7 +419,7 @@ PCF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
 	slot->metrics.horiBearingX = metric->leftSideBearing << 6 ;
 	slot->metrics.horiBearingY = metric->ascent << 6 ;
 	slot->metrics.width        = ( metric->rightSideBearing -
-	                               metric->leftSideBearing ) << 6;
+								   metric->leftSideBearing ) << 6;
 	slot->metrics.height       = bitmap->rows << 6;
 
 	slot->linearHoriAdvance = (FT2_1_3_Fixed)bitmap->width << 16;
@@ -469,5 +471,7 @@ const FT2_1_3_Driver_ClassRec  pcf_driver_class = {
 	(FT2_1_3_Face_GetAdvancesFunc) 0
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

@@ -29,6 +29,8 @@ in this Software without prior written authorization from The Open Group.
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "pcfutil.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /* Utility functions for reformatting font bitmaps */
 
@@ -71,13 +73,10 @@ static const unsigned char  _reverse_byte[0x100] = {
  *  Invert bit order within each BYTE of an array.
  */
 
-void
-BitOrderInvert( unsigned char*  buf,
-                int             nbytes ) {
-	const unsigned char*  rev = _reverse_byte;
+void BitOrderInvert(unsigned char *buf, int nbytes) {
+	const unsigned char *rev = _reverse_byte;
 
-
-	for ( ; --nbytes >= 0; buf++ )
+	for (; --nbytes >= 0; buf++)
 		*buf = rev[*buf];
 }
 
@@ -86,14 +85,11 @@ BitOrderInvert( unsigned char*  buf,
  *  Invert byte order within each 16-bits of an array.
  */
 
-void
-TwoByteSwap( unsigned char*  buf,
-             int             nbytes ) {
-	unsigned char  c;
+void TwoByteSwap(unsigned char *buf, int nbytes) {
+	unsigned char c;
 
-
-	for ( ; nbytes > 0; nbytes -= 2, buf += 2 ) {
-		c      = buf[0];
+	for (; nbytes > 0; nbytes -= 2, buf += 2) {
+		c = buf[0];
 		buf[0] = buf[1];
 		buf[1] = c;
 	}
@@ -103,76 +99,65 @@ TwoByteSwap( unsigned char*  buf,
  *  Invert byte order within each 32-bits of an array.
  */
 
-void
-FourByteSwap( unsigned char*  buf,
-              int             nbytes ) {
-	unsigned char  c;
+void FourByteSwap(unsigned char *buf, int nbytes) {
+	unsigned char c;
 
-
-	for ( ; nbytes > 0; nbytes -= 4, buf += 4 ) {
-		c      = buf[0];
+	for (; nbytes > 0; nbytes -= 4, buf += 4) {
+		c = buf[0];
 		buf[0] = buf[3];
 		buf[3] = c;
 
-		c      = buf[1];
+		c = buf[1];
 		buf[1] = buf[2];
 		buf[2] = c;
 	}
 }
 
-
 /*
  *  Repad a bitmap.
  */
 
-int
-RepadBitmap( char*         pSrc,
-             char*         pDst,
-             unsigned int  srcPad,
-             unsigned int  dstPad,
-             int           width,
-             int           height ) {
-	int   srcWidthBytes, dstWidthBytes;
-	int   row, col;
-	char  *pTmpSrc, *pTmpDst;
+int RepadBitmap(char *pSrc, char *pDst, unsigned int srcPad, unsigned int dstPad, int width, int height) {
+	int srcWidthBytes, dstWidthBytes;
+	int row, col;
+	char *pTmpSrc, *pTmpDst;
 
-
-	switch ( srcPad ) {
+	switch (srcPad) {
 	case 1:
-		srcWidthBytes = ( width + 7 ) >> 3;
+		srcWidthBytes = (width + 7) >> 3;
 		break;
 
 	case 2:
-		srcWidthBytes = ( ( width + 15 ) >> 4 ) << 1;
+		srcWidthBytes = ((width + 15) >> 4) << 1;
 		break;
 
 	case 4:
-		srcWidthBytes = ( ( width + 31 ) >> 5 ) << 2;
+		srcWidthBytes = ((width + 31) >> 5) << 2;
 		break;
 
 	case 8:
-		srcWidthBytes = ( ( width + 63 ) >> 6 ) << 3;
+		srcWidthBytes = ((width + 63) >> 6) << 3;
 		break;
 
 	default:
 		return 0;
 	}
 
-	switch ( dstPad ) {
+	switch (dstPad) {
 	case 1:
-		dstWidthBytes = ( width + 7 ) >> 3;
+		dstWidthBytes = (width + 7) >> 3;
 		break;
 
 	case 2:
-		dstWidthBytes = ( ( width + 15 ) >> 4 ) << 1;
+		dstWidthBytes = ((width + 15) >> 4) << 1;
 		break;
 
 	case 4:
-		dstWidthBytes = ( ( width + 31 ) >> 5 ) << 2;
+		dstWidthBytes = ((width + 31) >> 5) << 2;
 		break;
 
 	case 8:
-		dstWidthBytes = ( ( width + 63 ) >> 6 ) << 3;
+		dstWidthBytes = ((width + 63) >> 6) << 3;
 		break;
 
 	default:
@@ -180,17 +165,17 @@ RepadBitmap( char*         pSrc,
 	}
 
 	width = srcWidthBytes;
-	if ( width > dstWidthBytes )
+	if (width > dstWidthBytes)
 		width = dstWidthBytes;
 
-	pTmpSrc= pSrc;
-	pTmpDst= pDst;
+	pTmpSrc = pSrc;
+	pTmpDst = pDst;
 
-	for ( row = 0; row < height; row++ ) {
-		for ( col = 0; col < width; col++ )
+	for (row = 0; row < height; row++) {
+		for (col = 0; col < width; col++)
 			*pTmpDst++ = *pTmpSrc++;
 
-		while ( col < dstWidthBytes ) {
+		while (col < dstWidthBytes) {
 			*pTmpDst++ = '\0';
 			col++;
 		}
@@ -200,5 +185,7 @@ RepadBitmap( char*         pSrc,
 	return dstWidthBytes * height;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

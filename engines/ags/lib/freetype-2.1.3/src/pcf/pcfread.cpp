@@ -1,6 +1,6 @@
 /*  pcfread.c
 
-    FreeType font driver for pcf fonts
+	FreeType font driver for pcf fonts
 
   Copyright 2000-2001, 2002 by
   Francesco Zappa Nardelli
@@ -54,6 +54,8 @@ static const char*  tableNames[] = {
 };
 #endif
 
+namespace AGS3 {
+namespace FreeType213 {
 
 static
 const FT2_1_3_Frame_Field  pcf_toc_header[] = {
@@ -83,7 +85,7 @@ const FT2_1_3_Frame_Field  pcf_table_header[] = {
 
 static FT2_1_3_Error
 pcf_read_TOC( FT2_1_3_Stream  stream,
-              PCF_Face   face ) {
+			  PCF_Face   face ) {
 	FT2_1_3_Error   error;
 	PCF_Toc    toc = &face->toc;
 	PCF_Table  tables;
@@ -93,7 +95,7 @@ pcf_read_TOC( FT2_1_3_Stream  stream,
 
 
 	if ( FT2_1_3_STREAM_SEEK ( 0 )                          ||
-	        FT2_1_3_STREAM_READ_FIELDS ( pcf_toc_header, toc ) )
+			FT2_1_3_STREAM_READ_FIELDS ( pcf_toc_header, toc ) )
 		return PCF_Err_Cannot_Open_Resource;
 
 	if ( toc->version != PCF_FILE_VERSION )
@@ -124,11 +126,11 @@ pcf_read_TOC( FT2_1_3_Stream  stream,
 					name = tableNames[j];
 
 			FT2_1_3_TRACE4(( "Table %d: type=%-6s format=0x%04lX "
-			            "size=0x%06lX (%8ld) offset=0x%04lX\n",
-			            i, name,
-			            tables[i].format,
-			            tables[i].size, tables[i].size,
-			            tables[i].offset ));
+						"size=0x%06lX (%8ld) offset=0x%04lX\n",
+						i, name,
+						tables[i].format,
+						tables[i].size, tables[i].size,
+						tables[i].offset ));
 		}
 	}
 
@@ -191,8 +193,8 @@ const FT2_1_3_Frame_Field  pcf_compressed_metric_header[] = {
 
 static FT2_1_3_Error
 pcf_get_metric( FT2_1_3_Stream   stream,
-                FT2_1_3_ULong    format,
-                PCF_Metric  metric ) {
+				FT2_1_3_ULong    format,
+				PCF_Metric  metric ) {
 	FT2_1_3_Error  error = PCF_Err_Ok;
 
 
@@ -202,8 +204,8 @@ pcf_get_metric( FT2_1_3_Stream   stream,
 
 		/* parsing normal metrics */
 		fields = PCF_BYTE_ORDER( format ) == MSBFirst
-		         ? pcf_metric_msb_header
-		         : pcf_metric_header;
+				 ? pcf_metric_msb_header
+				 : pcf_metric_header;
 
 		/* the following sets 'error' but doesn't return in case of failure */
 		(void)FT2_1_3_STREAM_READ_FIELDS( fields, metric );
@@ -230,11 +232,11 @@ Exit:
 
 static FT2_1_3_Error
 pcf_seek_to_table_type( FT2_1_3_Stream  stream,
-                        PCF_Table  tables,
-                        FT2_1_3_Int     ntables,
-                        FT2_1_3_ULong   type,
-                        FT2_1_3_ULong  *aformat,
-                        FT2_1_3_ULong  *asize ) {
+						PCF_Table  tables,
+						FT2_1_3_Int     ntables,
+						FT2_1_3_ULong   type,
+						FT2_1_3_ULong  *aformat,
+						FT2_1_3_ULong  *asize ) {
 	FT2_1_3_Error  error = 0;
 	FT2_1_3_Int    i;
 
@@ -259,8 +261,8 @@ pcf_seek_to_table_type( FT2_1_3_Stream  stream,
 
 static FT2_1_3_Bool
 pcf_has_table_type( PCF_Table  tables,
-                    FT2_1_3_Int     ntables,
-                    FT2_1_3_ULong   type ) {
+					FT2_1_3_Int     ntables,
+					FT2_1_3_ULong   type ) {
 	FT2_1_3_Int  i;
 
 
@@ -300,7 +302,7 @@ const FT2_1_3_Frame_Field  pcf_property_msb_header[] = {
 
 static PCF_Property
 pcf_find_property( PCF_Face          face,
-                   const FT2_1_3_String*  prop ) {
+				   const FT2_1_3_String*  prop ) {
 	PCF_Property  properties = face->properties;
 	FT2_1_3_Bool       found      = 0;
 	int           i;
@@ -320,7 +322,7 @@ pcf_find_property( PCF_Face          face,
 
 static FT2_1_3_Error
 pcf_get_properties( FT2_1_3_Stream  stream,
-                    PCF_Face   face ) {
+					PCF_Face   face ) {
 	PCF_ParseProperty  props      = 0;
 	PCF_Property       properties = 0;
 	FT2_1_3_Int             nprops, i;
@@ -332,11 +334,11 @@ pcf_get_properties( FT2_1_3_Stream  stream,
 
 
 	error = pcf_seek_to_table_type( stream,
-	                                face->toc.tables,
-	                                face->toc.count,
-	                                PCF_PROPERTIES,
-	                                &format,
-	                                &size );
+									face->toc.tables,
+									face->toc.count,
+									PCF_PROPERTIES,
+									&format,
+									&size );
 	if ( error )
 		goto Bail;
 
@@ -402,7 +404,7 @@ pcf_get_properties( FT2_1_3_Stream  stream,
 	for ( i = 0; i < nprops; i++ ) {
 		/* XXX: make atom */
 		if ( FT2_1_3_NEW_ARRAY( properties[i].name,
-		                   ft_strlen( strings + props[i].name ) + 1 ) )
+						   ft_strlen( strings + props[i].name ) + 1 ) )
 			goto Bail;
 		ft_strcpy( properties[i].name,strings + props[i].name );
 
@@ -410,7 +412,7 @@ pcf_get_properties( FT2_1_3_Stream  stream,
 
 		if ( props[i].isString ) {
 			if ( FT2_1_3_NEW_ARRAY( properties[i].value.atom,
-			                   ft_strlen( strings + props[i].value ) + 1 ) )
+							   ft_strlen( strings + props[i].value ) + 1 ) )
 				goto Bail;
 			ft_strcpy( properties[i].value.atom, strings + props[i].value );
 		} else
@@ -435,7 +437,7 @@ Bail:
 
 static FT2_1_3_Error
 pcf_get_metrics( FT2_1_3_Stream  stream,
-                 PCF_Face   face ) {
+				 PCF_Face   face ) {
 	FT2_1_3_Error    error    = PCF_Err_Ok;
 	FT2_1_3_Memory   memory   = FT2_1_3_FACE(face)->memory;
 	FT2_1_3_ULong    format   = 0;
@@ -446,18 +448,18 @@ pcf_get_metrics( FT2_1_3_Stream  stream,
 
 
 	error = pcf_seek_to_table_type( stream,
-	                                face->toc.tables,
-	                                face->toc.count,
-	                                PCF_METRICS,
-	                                &format,
-	                                &size );
+									face->toc.tables,
+									face->toc.count,
+									PCF_METRICS,
+									&format,
+									&size );
 	if ( error )
 		return error;
 
 	error = FT2_1_3_READ_ULONG_LE( format );
 
 	if ( !PCF_FORMAT_MATCH( format, PCF_DEFAULT_FORMAT )     &&
-	        !PCF_FORMAT_MATCH( format, PCF_COMPRESSED_METRICS ) )
+			!PCF_FORMAT_MATCH( format, PCF_COMPRESSED_METRICS ) )
 		return PCF_Err_Invalid_File_Format;
 
 	if ( PCF_FORMAT_MATCH( format, PCF_DEFAULT_FORMAT ) ) {
@@ -486,14 +488,14 @@ pcf_get_metrics( FT2_1_3_Stream  stream,
 		metrics[i].bits = 0;
 
 		FT2_1_3_TRACE4(( "%d : width=%d, "
-		            "lsb=%d, rsb=%d, ascent=%d, descent=%d, swidth=%d\n",
-		            i,
-		            ( metrics + i )->characterWidth,
-		            ( metrics + i )->leftSideBearing,
-		            ( metrics + i )->rightSideBearing,
-		            ( metrics + i )->ascent,
-		            ( metrics + i )->descent,
-		            ( metrics + i )->attributes ));
+					"lsb=%d, rsb=%d, ascent=%d, descent=%d, swidth=%d\n",
+					i,
+					( metrics + i )->characterWidth,
+					( metrics + i )->leftSideBearing,
+					( metrics + i )->rightSideBearing,
+					( metrics + i )->ascent,
+					( metrics + i )->descent,
+					( metrics + i )->attributes ));
 
 		if ( error )
 			break;
@@ -507,7 +509,7 @@ pcf_get_metrics( FT2_1_3_Stream  stream,
 
 static FT2_1_3_Error
 pcf_get_bitmaps( FT2_1_3_Stream  stream,
-                 PCF_Face   face ) {
+				 PCF_Face   face ) {
 	FT2_1_3_Error   error  = PCF_Err_Ok;
 	FT2_1_3_Memory  memory = FT2_1_3_FACE(face)->memory;
 	FT2_1_3_Long*   offsets;
@@ -518,11 +520,11 @@ pcf_get_bitmaps( FT2_1_3_Stream  stream,
 
 
 	error = pcf_seek_to_table_type( stream,
-	                                face->toc.tables,
-	                                face->toc.count,
-	                                PCF_BITMAPS,
-	                                &format,
-	                                &size );
+									face->toc.tables,
+									face->toc.count,
+									PCF_BITMAPS,
+									&format,
+									&size );
 	if ( error )
 		return error;
 
@@ -572,8 +574,8 @@ pcf_get_bitmaps( FT2_1_3_Stream  stream,
 	}
 
 	FT2_1_3_TRACE4(( "  %d bitmaps, padding index %ld\n",
-	            nbitmaps,
-	            PCF_GLYPH_PAD_INDEX( format ) ));
+				nbitmaps,
+				PCF_GLYPH_PAD_INDEX( format ) ));
 	FT2_1_3_TRACE4(( "bitmap size = %d\n", sizebitmaps ));
 
 	FT2_1_3_UNUSED( sizebitmaps );       /* only used for debugging */
@@ -595,7 +597,7 @@ Bail:
 
 static FT2_1_3_Error
 pcf_get_encodings( FT2_1_3_Stream  stream,
-                   PCF_Face   face ) {
+				   PCF_Face   face ) {
 	FT2_1_3_Error      error   = PCF_Err_Ok;
 	FT2_1_3_Memory     memory  = FT2_1_3_FACE(face)->memory;
 	FT2_1_3_ULong      format, size;
@@ -607,11 +609,11 @@ pcf_get_encodings( FT2_1_3_Stream  stream,
 
 
 	error = pcf_seek_to_table_type( stream,
-	                                face->toc.tables,
-	                                face->toc.count,
-	                                PCF_BDF_ENCODINGS,
-	                                &format,
-	                                &size );
+									face->toc.tables,
+									face->toc.count,
+									PCF_BDF_ENCODINGS,
+									&format,
+									&size );
 	if ( error )
 		return error;
 
@@ -641,7 +643,7 @@ pcf_get_encodings( FT2_1_3_Stream  stream,
 		return PCF_Err_Invalid_File_Format;
 
 	FT2_1_3_TRACE4(( "enc: firstCol %d, lastCol %d, firstRow %d, lastRow %d\n",
-	            firstCol, lastCol, firstRow, lastRow ));
+				firstCol, lastCol, firstRow, lastRow ));
 
 	nencoding = ( lastCol - firstCol + 1 ) * ( lastRow - firstRow + 1 );
 
@@ -660,16 +662,16 @@ pcf_get_encodings( FT2_1_3_Stream  stream,
 
 		if ( encodingOffset != -1 ) {
 			tmpEncoding[j].enc = ( ( ( i / ( lastCol - firstCol + 1 ) ) +
-			                         firstRow ) * 256 ) +
-			                     ( ( i % ( lastCol - firstCol + 1 ) ) +
-			                       firstCol );
+									 firstRow ) * 256 ) +
+								 ( ( i % ( lastCol - firstCol + 1 ) ) +
+								   firstCol );
 
 			tmpEncoding[j].glyph = (FT2_1_3_Short)encodingOffset;
 			j++;
 		}
 
 		FT2_1_3_TRACE4(( "enc n. %d ; Uni %ld ; Glyph %d\n",
-		            i, tmpEncoding[j - 1].enc, encodingOffset ));
+					i, tmpEncoding[j - 1].enc, encodingOffset ));
 	}
 	FT2_1_3_Stream_ExitFrame( stream );
 
@@ -738,26 +740,26 @@ const FT2_1_3_Frame_Field  pcf_accel_msb_header[] = {
 
 static FT2_1_3_Error
 pcf_get_accel( FT2_1_3_Stream  stream,
-               PCF_Face   face,
-               FT2_1_3_ULong   type ) {
+			   PCF_Face   face,
+			   FT2_1_3_ULong   type ) {
 	FT2_1_3_ULong   format, size;
 	FT2_1_3_Error   error = PCF_Err_Ok;
 	PCF_Accel  accel = &face->accel;
 
 
 	error = pcf_seek_to_table_type( stream,
-	                                face->toc.tables,
-	                                face->toc.count,
-	                                type,
-	                                &format,
-	                                &size );
+									face->toc.tables,
+									face->toc.count,
+									type,
+									&format,
+									&size );
 	if ( error )
 		goto Bail;
 
 	error = FT2_1_3_READ_ULONG_LE( format );
 
 	if ( !PCF_FORMAT_MATCH( format, PCF_DEFAULT_FORMAT )    &&
-	        !PCF_FORMAT_MATCH( format, PCF_ACCEL_W_INKBOUNDS ) )
+			!PCF_FORMAT_MATCH( format, PCF_ACCEL_W_INKBOUNDS ) )
 		goto Bail;
 
 	if ( PCF_BYTE_ORDER( format ) == MSBFirst ) {
@@ -769,27 +771,27 @@ pcf_get_accel( FT2_1_3_Stream  stream,
 	}
 
 	error = pcf_get_metric( stream,
-	                        format & ( ~PCF_FORMAT_MASK ),
-	                        &(accel->minbounds) );
+							format & ( ~PCF_FORMAT_MASK ),
+							&(accel->minbounds) );
 	if ( error )
 		goto Bail;
 
 	error = pcf_get_metric( stream,
-	                        format & ( ~PCF_FORMAT_MASK ),
-	                        &(accel->maxbounds) );
+							format & ( ~PCF_FORMAT_MASK ),
+							&(accel->maxbounds) );
 	if ( error )
 		goto Bail;
 
 	if ( PCF_FORMAT_MATCH( format, PCF_ACCEL_W_INKBOUNDS ) ) {
 		error = pcf_get_metric( stream,
-		                        format & ( ~PCF_FORMAT_MASK ),
-		                        &(accel->ink_minbounds) );
+								format & ( ~PCF_FORMAT_MASK ),
+								&(accel->ink_minbounds) );
 		if ( error )
 			goto Bail;
 
 		error = pcf_get_metric( stream,
-		                        format & ( ~PCF_FORMAT_MASK ),
-		                        &(accel->ink_maxbounds) );
+								format & ( ~PCF_FORMAT_MASK ),
+								&(accel->ink_maxbounds) );
 		if ( error )
 			goto Bail;
 	} else {
@@ -805,7 +807,7 @@ Bail:
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 pcf_load_font( FT2_1_3_Stream  stream,
-               PCF_Face   face ) {
+			   PCF_Face   face ) {
 	FT2_1_3_Error   error  = PCF_Err_Ok;
 	FT2_1_3_Memory  memory = FT2_1_3_FACE(face)->memory;
 	FT2_1_3_Bool    hasBDFAccelerators;
@@ -821,8 +823,8 @@ pcf_load_font( FT2_1_3_Stream  stream,
 
 	/* Use the old accelerators if no BDF accelerators are in the file. */
 	hasBDFAccelerators = pcf_has_table_type( face->toc.tables,
-	                     face->toc.count,
-	                     PCF_BDF_ACCELERATORS );
+						 face->toc.count,
+						 PCF_BDF_ACCELERATORS );
 	if ( !hasBDFAccelerators ) {
 		error = pcf_get_accel( stream, face, PCF_ACCELERATORS );
 		if ( error )
@@ -863,8 +865,8 @@ pcf_load_font( FT2_1_3_Stream  stream,
 		root->num_faces = 1;
 		root->face_index = 0;
 		root->face_flags = FT2_1_3_FACE_FLAG_FIXED_SIZES |
-		                   FT2_1_3_FACE_FLAG_HORIZONTAL  |
-		                   FT2_1_3_FACE_FLAG_FAST_GLYPHS;
+						   FT2_1_3_FACE_FLAG_HORIZONTAL  |
+						   FT2_1_3_FACE_FLAG_FAST_GLYPHS;
 
 		if ( face->accel.constantWidth )
 			root->face_flags |= FT2_1_3_FACE_FLAG_FIXED_WIDTH;
@@ -874,7 +876,7 @@ pcf_load_font( FT2_1_3_Stream  stream,
 		if ( prop != NULL )
 			if ( prop->isString )
 				if ( ( *(prop->value.atom) == 'O' ) ||
-				        ( *(prop->value.atom) == 'I' ) )
+						( *(prop->value.atom) == 'I' ) )
 					root->style_flags |= FT2_1_3_STYLE_FLAG_ITALIC;
 
 		prop = pcf_find_property( face, "WEIGHT_NAME" );
@@ -915,7 +917,7 @@ pcf_load_font( FT2_1_3_Stream  stream,
 		prop = pcf_find_property( face, "PIXEL_SIZE" );
 		if ( prop != NULL ) {
 			root->available_sizes->height =
-			    root->available_sizes->width  = (FT2_1_3_Short)( prop->value.integer );
+				root->available_sizes->width  = (FT2_1_3_Short)( prop->value.integer );
 
 			size_set = 1;
 		} else {
@@ -930,12 +932,12 @@ pcf_load_font( FT2_1_3_Stream  stream,
 
 				if ( ( yres != NULL ) && ( xres != NULL ) ) {
 					root->available_sizes->height =
-					    (FT2_1_3_Short)( prop->value.integer *
-					                yres->value.integer / 720 );
+						(FT2_1_3_Short)( prop->value.integer *
+									yres->value.integer / 720 );
 
 					root->available_sizes->width =
-					    (FT2_1_3_Short)( prop->value.integer *
-					                xres->value.integer / 720 );
+						(FT2_1_3_Short)( prop->value.integer *
+									xres->value.integer / 720 );
 
 					size_set = 1;
 				}
@@ -956,15 +958,15 @@ pcf_load_font( FT2_1_3_Stream  stream,
 			charset_encoding = pcf_find_property( face, "CHARSET_ENCODING" );
 
 			if ( ( charset_registry != NULL ) &&
-			        ( charset_encoding != NULL ) ) {
+					( charset_encoding != NULL ) ) {
 				if ( ( charset_registry->isString ) &&
-				        ( charset_encoding->isString ) ) {
+						( charset_encoding->isString ) ) {
 					if ( FT2_1_3_NEW_ARRAY( face->charset_encoding,
-					                   ft_strlen( charset_encoding->value.atom ) + 1 ) )
+									   ft_strlen( charset_encoding->value.atom ) + 1 ) )
 						goto Exit;
 
 					if ( FT2_1_3_NEW_ARRAY( face->charset_registry,
-					                   ft_strlen( charset_registry->value.atom ) + 1 ) )
+									   ft_strlen( charset_registry->value.atom ) + 1 ) )
 						goto Exit;
 
 					ft_strcpy( face->charset_registry, charset_registry->value.atom );
@@ -984,5 +986,7 @@ Exit:
 	return error;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */
