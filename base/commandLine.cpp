@@ -1426,6 +1426,12 @@ static void listAudioDevices() {
 /** Dump MD5s from detection entries into STDOUT */
 static void dumpAllDetectionEntries() {
 	const PluginList &plugins = EngineMan.getPlugins();
+
+	printf("scummvm (\n");
+	printf("\tauthor scummvm\n");
+	printf("\tversion %s\n", gScummVMVersion);
+	printf(")\n\n");
+
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); iter++) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 		metaEngine.dumpDetectionEntries();
