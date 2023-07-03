@@ -40,6 +40,9 @@
 
 /* we need to define a 64-bits data type here */
 
+namespace AGS3 {
+namespace FreeType213 {
+
 #ifdef FT2_1_3_LONG64
 
 typedef FT2_1_3_INT64  FT2_1_3_Int64;
@@ -73,7 +76,7 @@ typedef struct  FT2_1_3_Int64_ {
 FT2_1_3_EXPORT_DEF( FT2_1_3_Fixed )
 FT2_1_3_RoundFix( FT2_1_3_Fixed  a ) {
 	return ( a >= 0 ) ?   ( a + 0x8000L ) & -0x10000L
-	       : -((-a + 0x8000L ) & -0x10000L );
+		   : -((-a + 0x8000L ) & -0x10000L );
 }
 
 
@@ -82,7 +85,7 @@ FT2_1_3_RoundFix( FT2_1_3_Fixed  a ) {
 FT2_1_3_EXPORT_DEF( FT2_1_3_Fixed )
 FT2_1_3_CeilFix( FT2_1_3_Fixed  a ) {
 	return ( a >= 0 ) ?   ( a + 0xFFFFL ) & -0x10000L
-	       : -((-a + 0xFFFFL ) & -0x10000L );
+		   : -((-a + 0xFFFFL ) & -0x10000L );
 }
 
 
@@ -91,7 +94,7 @@ FT2_1_3_CeilFix( FT2_1_3_Fixed  a ) {
 FT2_1_3_EXPORT_DEF( FT2_1_3_Fixed )
 FT2_1_3_FloorFix( FT2_1_3_Fixed  a ) {
 	return ( a >= 0 ) ?   a & -0x10000L
-	       : -((-a) & -0x10000L );
+		   : -((-a) & -0x10000L );
 }
 
 
@@ -129,8 +132,8 @@ FT2_1_3_Sqrt32( FT2_1_3_Int32  x ) {
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Long )
 FT2_1_3_MulDiv( FT2_1_3_Long  a,
-           FT2_1_3_Long  b,
-           FT2_1_3_Long  c ) {
+		   FT2_1_3_Long  b,
+		   FT2_1_3_Long  c ) {
 	FT2_1_3_Int   s;
 	FT2_1_3_Long  d;
 
@@ -150,7 +153,7 @@ FT2_1_3_MulDiv( FT2_1_3_Long  a,
 	}
 
 	d = (FT2_1_3_Long)( c > 0 ? ( (FT2_1_3_Int64)a * b + ( c >> 1 ) ) / c
-	               : 0x7FFFFFFFL );
+				   : 0x7FFFFFFFL );
 
 	return ( s > 0 ) ? d : -d;
 }
@@ -160,7 +163,7 @@ FT2_1_3_MulDiv( FT2_1_3_Long  a,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Long )
 FT2_1_3_MulFix( FT2_1_3_Long  a,
-           FT2_1_3_Long  b ) {
+		   FT2_1_3_Long  b ) {
 	FT2_1_3_Int   s = 1;
 	FT2_1_3_Long  c;
 
@@ -183,7 +186,7 @@ FT2_1_3_MulFix( FT2_1_3_Long  a,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Long )
 FT2_1_3_DivFix( FT2_1_3_Long  a,
-           FT2_1_3_Long  b ) {
+		   FT2_1_3_Long  b ) {
 	FT2_1_3_Int32   s;
 	FT2_1_3_UInt32  q;
 
@@ -213,8 +216,8 @@ FT2_1_3_DivFix( FT2_1_3_Long  a,
 
 static void
 ft_multo64( FT2_1_3_UInt32  x,
-            FT2_1_3_UInt32  y,
-            FT2_1_3_Int64  *z ) {
+			FT2_1_3_UInt32  y,
+			FT2_1_3_Int64  *z ) {
 	FT2_1_3_UInt32  lo1, hi1, lo2, hi2, lo, hi, i1, i2;
 
 
@@ -246,8 +249,8 @@ ft_multo64( FT2_1_3_UInt32  x,
 
 static FT2_1_3_UInt32
 ft_div64by32( FT2_1_3_UInt32  hi,
-              FT2_1_3_UInt32  lo,
-              FT2_1_3_UInt32  y ) {
+			  FT2_1_3_UInt32  lo,
+			  FT2_1_3_UInt32  y ) {
 	FT2_1_3_UInt32  r, q;
 	FT2_1_3_Int     i;
 
@@ -279,8 +282,8 @@ ft_div64by32( FT2_1_3_UInt32  hi,
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_Add64( FT2_1_3_Int64*  x,
-          FT2_1_3_Int64*  y,
-          FT2_1_3_Int64  *z ) {
+		  FT2_1_3_Int64*  y,
+		  FT2_1_3_Int64  *z ) {
 	register FT2_1_3_UInt32  lo, hi, max;
 
 
@@ -297,8 +300,8 @@ FT2_1_3_Add64( FT2_1_3_Int64*  x,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Long )
 FT2_1_3_MulDiv( FT2_1_3_Long  a,
-           FT2_1_3_Long  b,
-           FT2_1_3_Long  c ) {
+		   FT2_1_3_Long  b,
+		   FT2_1_3_Long  c ) {
 	long  s;
 
 
@@ -335,7 +338,7 @@ FT2_1_3_MulDiv( FT2_1_3_Long  a,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Long )
 FT2_1_3_MulFix( FT2_1_3_Long  a,
-           FT2_1_3_Long  b ) {
+		   FT2_1_3_Long  b ) {
 	FT2_1_3_Long   s;
 	FT2_1_3_ULong  ua, ub;
 
@@ -358,7 +361,7 @@ FT2_1_3_MulFix( FT2_1_3_Long  a,
 
 
 		ua = ( ua >> 16 ) * ub +  al * ( ub >> 16 ) +
-		     ( ( al * ( ub & 0xFFFF ) + 0x8000 ) >> 16 );
+			 ( ( al * ( ub & 0xFFFF ) + 0x8000 ) >> 16 );
 	}
 
 	return ( s < 0 ? -(FT2_1_3_Long)ua : (FT2_1_3_Long)ua );
@@ -369,7 +372,7 @@ FT2_1_3_MulFix( FT2_1_3_Long  a,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Long )
 FT2_1_3_DivFix( FT2_1_3_Long  a,
-           FT2_1_3_Long  b ) {
+		   FT2_1_3_Long  b ) {
 	FT2_1_3_Int32   s;
 	FT2_1_3_UInt32  q;
 
@@ -405,8 +408,8 @@ FT2_1_3_DivFix( FT2_1_3_Long  a,
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_MulTo64( FT2_1_3_Int32   x,
-            FT2_1_3_Int32   y,
-            FT2_1_3_Int64  *z ) {
+			FT2_1_3_Int32   y,
+			FT2_1_3_Int64  *z ) {
 	FT2_1_3_Int32  s;
 
 
@@ -433,7 +436,7 @@ FT2_1_3_MulTo64( FT2_1_3_Int32   x,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Int32 )
 FT2_1_3_Div64by32( FT2_1_3_Int64*  x,
-              FT2_1_3_Int32   y ) {
+			  FT2_1_3_Int32   y ) {
 	FT2_1_3_Int32   s;
 	FT2_1_3_UInt32  q, r, i, lo;
 
@@ -483,7 +486,7 @@ FT2_1_3_Div64by32( FT2_1_3_Int64*  x,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Int32 )
 FT2_1_3_Div64by32( FT2_1_3_Int64*  x,
-              FT2_1_3_Int32   y ) {
+			  FT2_1_3_Int32   y ) {
 	FT2_1_3_Int32   s;
 	FT2_1_3_UInt32  q;
 
@@ -547,5 +550,7 @@ FT2_1_3_SqrtFixed( FT2_1_3_Int32  x ) {
 	return (FT2_1_3_Int32)root;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

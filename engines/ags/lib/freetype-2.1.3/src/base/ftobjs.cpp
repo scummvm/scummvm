@@ -25,12 +25,14 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/tttables.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftoutln.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BASE_DEF( void )
 ft_validator_init( FT2_1_3_Validator        valid,
-                   const FT2_1_3_Byte*      base,
-                   const FT2_1_3_Byte*      limit,
-                   FT2_1_3_ValidationLevel  level ) {
+				   const FT2_1_3_Byte*      base,
+				   const FT2_1_3_Byte*      limit,
+				   FT2_1_3_ValidationLevel  level ) {
 	valid->base  = base;
 	valid->limit = limit;
 	valid->level = level;
@@ -50,7 +52,7 @@ ft_validator_run( FT2_1_3_Validator  valid ) {
 
 FT2_1_3_BASE_DEF( void )
 ft_validator_error( FT2_1_3_Validator  valid,
-                    FT2_1_3_Error      error ) {
+					FT2_1_3_Error      error ) {
 	valid->error = error;
 	ft_longjmp( valid->jump_buffer, 1 );
 }
@@ -73,8 +75,8 @@ ft_validator_error( FT2_1_3_Validator  valid,
 /*                                                         */
 static FT2_1_3_Error
 ft_input_stream_new( FT2_1_3_Library           library,
-                     const FT2_1_3_Open_Args*  args,
-                     FT2_1_3_Stream*           astream ) {
+					 const FT2_1_3_Open_Args*  args,
+					 FT2_1_3_Stream*           astream ) {
 	FT2_1_3_Error   error;
 	FT2_1_3_Memory  memory;
 	FT2_1_3_Stream  stream;
@@ -97,8 +99,8 @@ ft_input_stream_new( FT2_1_3_Library           library,
 	if ( args->flags & FT2_1_3_OPEN_MEMORY ) {
 		/* create a memory-based stream */
 		FT2_1_3_Stream_OpenMemory( stream,
-		                      (const FT2_1_3_Byte*)args->memory_base,
-		                      args->memory_size );
+							  (const FT2_1_3_Byte*)args->memory_base,
+							  args->memory_size );
 	} else if ( args->flags & FT2_1_3_OPEN_PATHNAME ) {
 		/* create a normal system stream */
 		error = FT2_1_3_Stream_Open( stream, args->pathname );
@@ -127,7 +129,7 @@ Exit:
 
 static void
 ft_input_stream_free( FT2_1_3_Stream  stream,
-                      FT2_1_3_Int     external ) {
+					  FT2_1_3_Int     external ) {
 	if ( stream ) {
 		FT2_1_3_Memory  memory = stream->memory;
 
@@ -247,7 +249,7 @@ ft_glyphslot_done( FT2_1_3_GlyphSlot  slot ) {
 
 FT2_1_3_BASE_DEF( FT2_1_3_Error )
 FT2_1_3_New_GlyphSlot( FT2_1_3_Face        face,
-                  FT2_1_3_GlyphSlot  *aslot ) {
+				  FT2_1_3_GlyphSlot  *aslot ) {
 	FT2_1_3_Error          error;
 	FT2_1_3_Driver         driver;
 	FT2_1_3_Driver_Class   clazz;
@@ -316,8 +318,8 @@ FT2_1_3_Done_GlyphSlot( FT2_1_3_GlyphSlot  slot ) {
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_Set_Transform( FT2_1_3_Face     face,
-                  FT2_1_3_Matrix*  matrix,
-                  FT2_1_3_Vector*  delta ) {
+				  FT2_1_3_Matrix*  matrix,
+				  FT2_1_3_Vector*  delta ) {
 	FT2_1_3_Face_Internal  internal;
 
 
@@ -339,8 +341,8 @@ FT2_1_3_Set_Transform( FT2_1_3_Face     face,
 
 	/* set transform_flags bit flag 0 if `matrix' isn't the identity */
 	if ( ( matrix->xy | matrix->yx ) ||
-	        matrix->xx != 0x10000L      ||
-	        matrix->yy != 0x10000L      )
+			matrix->xx != 0x10000L      ||
+			matrix->yy != 0x10000L      )
 		internal->transform_flags |= 1;
 
 	if ( !delta ) {
@@ -360,7 +362,7 @@ FT2_1_3_Set_Transform( FT2_1_3_Face     face,
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_Set_Hint_Flags( FT2_1_3_Face     face,
-                   FT2_1_3_ULong    flags ) {
+				   FT2_1_3_ULong    flags ) {
 	FT2_1_3_Face_Internal  internal;
 
 	if ( !face )
@@ -380,8 +382,8 @@ ft_lookup_glyph_renderer( FT2_1_3_GlyphSlot  slot );
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Load_Glyph( FT2_1_3_Face   face,
-               FT2_1_3_UInt   glyph_index,
-               FT2_1_3_Int32  load_flags ) {
+			   FT2_1_3_UInt   glyph_index,
+			   FT2_1_3_Int32  load_flags ) {
 	FT2_1_3_Error      error;
 	FT2_1_3_Driver     driver;
 	FT2_1_3_GlyphSlot  slot;
@@ -405,9 +407,9 @@ FT2_1_3_Load_Glyph( FT2_1_3_Face   face,
 	if ( load_flags & FT2_1_3_LOAD_NO_RECURSE ) {
 		/* disable scaling, hinting, and transformation */
 		load_flags |= FT2_1_3_LOAD_NO_SCALE         |
-		              FT2_1_3_LOAD_NO_HINTING       |
-		              FT2_1_3_LOAD_NO_BITMAP        |
-		              FT2_1_3_LOAD_IGNORE_TRANSFORM;
+					  FT2_1_3_LOAD_NO_HINTING       |
+					  FT2_1_3_LOAD_NO_BITMAP        |
+					  FT2_1_3_LOAD_IGNORE_TRANSFORM;
 
 		/* disable bitmap rendering */
 		load_flags &= ~FT2_1_3_LOAD_RENDER;
@@ -417,15 +419,15 @@ FT2_1_3_Load_Glyph( FT2_1_3_Face   face,
 	library  = driver->root.library;
 	hinter   = library->auto_hinter;
 	autohint =
-	    FT2_1_3_BOOL( hinter                                      &&
-	             !( load_flags & ( FT2_1_3_LOAD_NO_SCALE    |
-	                               FT2_1_3_LOAD_NO_HINTING  |
-	                               FT2_1_3_LOAD_NO_AUTOHINT ) )   &&
-	             FT2_1_3_DRIVER_IS_SCALABLE( driver )             &&
-	             FT2_1_3_DRIVER_USES_OUTLINES( driver )           );
+		FT2_1_3_BOOL( hinter                                      &&
+				 !( load_flags & ( FT2_1_3_LOAD_NO_SCALE    |
+								   FT2_1_3_LOAD_NO_HINTING  |
+								   FT2_1_3_LOAD_NO_AUTOHINT ) )   &&
+				 FT2_1_3_DRIVER_IS_SCALABLE( driver )             &&
+				 FT2_1_3_DRIVER_USES_OUTLINES( driver )           );
 	if ( autohint ) {
 		if ( FT2_1_3_DRIVER_HAS_HINTER( driver ) &&
-		        !( load_flags & FT2_1_3_LOAD_FORCE_AUTOHINT ) )
+				!( load_flags & FT2_1_3_LOAD_FORCE_AUTOHINT ) )
 			autohint = 0;
 	}
 
@@ -439,10 +441,10 @@ FT2_1_3_Load_Glyph( FT2_1_3_Face   face,
 		/*      promptly with FreeType 2.1!                           */
 		/*                                                            */
 		if ( FT2_1_3_HAS_FIXED_SIZES( face )             &&
-		        ( load_flags & FT2_1_3_LOAD_NO_BITMAP ) == 0 ) {
+				( load_flags & FT2_1_3_LOAD_NO_BITMAP ) == 0 ) {
 			error = driver->clazz->load_glyph( slot, face->size,
-			                                   glyph_index,
-			                                   load_flags | FT2_1_3_LOAD_SBITS_ONLY );
+											   glyph_index,
+											   load_flags | FT2_1_3_LOAD_SBITS_ONLY );
 
 			if ( !error && slot->format == FT2_1_3_GLYPH_FORMAT_BITMAP )
 				goto Load_Ok;
@@ -452,13 +454,13 @@ FT2_1_3_Load_Glyph( FT2_1_3_Face   face,
 		hinting = (FT2_1_3_AutoHinter_Service)hinter->clazz->module_interface;
 
 		error   = hinting->load_glyph( (FT2_1_3_AutoHinter)hinter,
-		                               slot, face->size,
-		                               glyph_index, load_flags );
+									   slot, face->size,
+									   glyph_index, load_flags );
 	} else {
 		error = driver->clazz->load_glyph( slot,
-		                                   face->size,
-		                                   glyph_index,
-		                                   load_flags );
+										   face->size,
+										   glyph_index,
+										   load_flags );
 		if ( error )
 			goto Exit;
 
@@ -485,10 +487,10 @@ Load_Ok:
 
 
 		slot->linearHoriAdvance = FT2_1_3_MulDiv( slot->linearHoriAdvance,
-		                                     (FT2_1_3_Long)metrics->x_ppem << 16, EM );
+											 (FT2_1_3_Long)metrics->x_ppem << 16, EM );
 
 		slot->linearVertAdvance = FT2_1_3_MulDiv( slot->linearVertAdvance,
-		                                     (FT2_1_3_Long)metrics->y_ppem << 16, EM );
+											 (FT2_1_3_Long)metrics->y_ppem << 16, EM );
 	}
 
 	if ( ( load_flags & FT2_1_3_LOAD_IGNORE_TRANSFORM ) == 0 ) {
@@ -503,9 +505,9 @@ Load_Ok:
 
 			if ( renderer )
 				error = renderer->clazz->transform_glyph(
-				            renderer, slot,
-				            &internal->transform_matrix,
-				            &internal->transform_delta );
+							renderer, slot,
+							&internal->transform_matrix,
+							&internal->transform_delta );
 			/* transform advance */
 			FT2_1_3_Vector_Transform( &slot->advance, &internal->transform_matrix );
 		}
@@ -513,14 +515,14 @@ Load_Ok:
 
 	/* do we need to render the image now? */
 	if ( !error                                    &&
-	        slot->format != FT2_1_3_GLYPH_FORMAT_BITMAP    &&
-	        slot->format != FT2_1_3_GLYPH_FORMAT_COMPOSITE &&
-	        load_flags & FT2_1_3_LOAD_RENDER ) {
+			slot->format != FT2_1_3_GLYPH_FORMAT_BITMAP    &&
+			slot->format != FT2_1_3_GLYPH_FORMAT_COMPOSITE &&
+			load_flags & FT2_1_3_LOAD_RENDER ) {
 		FT2_1_3_Render_Mode  mode = FT2_1_3_LOAD_TARGET_MODE( load_flags );
 
 
 		if ( mode == FT2_1_3_RENDER_MODE_NORMAL      &&
-		        (load_flags & FT2_1_3_LOAD_MONOCHROME ) )
+				(load_flags & FT2_1_3_LOAD_MONOCHROME ) )
 			mode = FT2_1_3_RENDER_MODE_MONO;
 
 		error = FT2_1_3_Render_Glyph( slot, mode );
@@ -535,8 +537,8 @@ Exit:
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Load_Char( FT2_1_3_Face   face,
-              FT2_1_3_ULong  char_code,
-              FT2_1_3_Int32  load_flags ) {
+			  FT2_1_3_ULong  char_code,
+			  FT2_1_3_Int32  load_flags ) {
 	FT2_1_3_UInt  glyph_index;
 
 
@@ -554,8 +556,8 @@ FT2_1_3_Load_Char( FT2_1_3_Face   face,
 /* destructor for sizes list */
 static void
 destroy_size( FT2_1_3_Memory  memory,
-              FT2_1_3_Size    size,
-              FT2_1_3_Driver  driver ) {
+			  FT2_1_3_Size    size,
+			  FT2_1_3_Driver  driver ) {
 	/* finalize client-specific data */
 	if ( size->generic.finalizer )
 		size->generic.finalizer( size );
@@ -572,8 +574,8 @@ destroy_size( FT2_1_3_Memory  memory,
 /* destructor for faces list */
 static void
 destroy_face( FT2_1_3_Memory  memory,
-              FT2_1_3_Face    face,
-              FT2_1_3_Driver  driver ) {
+			  FT2_1_3_Face    face,
+			  FT2_1_3_Driver  driver ) {
 	FT2_1_3_Driver_Class  clazz = driver->clazz;
 
 
@@ -588,9 +590,9 @@ destroy_face( FT2_1_3_Memory  memory,
 
 	/* discard all sizes for this face */
 	FT2_1_3_List_Finalize( &face->sizes_list,
-	                  (FT2_1_3_List_Destructor)destroy_size,
-	                  memory,
-	                  driver );
+					  (FT2_1_3_List_Destructor)destroy_size,
+					  memory,
+					  driver );
 	face->size = 0;
 
 	/* now discard client data */
@@ -622,8 +624,8 @@ destroy_face( FT2_1_3_Memory  memory,
 
 	/* close the stream for this face if needed */
 	ft_input_stream_free(
-	    face->stream,
-	    ( face->face_flags & FT2_1_3_FACE_FLAG_EXTERNAL_STREAM ) != 0 );
+		face->stream,
+		( face->face_flags & FT2_1_3_FACE_FLAG_EXTERNAL_STREAM ) != 0 );
 
 	face->stream = 0;
 
@@ -639,9 +641,9 @@ destroy_face( FT2_1_3_Memory  memory,
 static void
 Destroy_Driver( FT2_1_3_Driver  driver ) {
 	FT2_1_3_List_Finalize( &driver->faces_list,
-	                  (FT2_1_3_List_Destructor)destroy_face,
-	                  driver->root.memory,
-	                  driver );
+					  (FT2_1_3_List_Destructor)destroy_face,
+					  driver->root.memory,
+					  driver );
 
 	/* check whether we need to drop the driver's glyph loader */
 	if ( FT2_1_3_DRIVER_USES_OUTLINES( driver ) )
@@ -659,11 +661,11 @@ Destroy_Driver( FT2_1_3_Driver  driver ) {
 /*                                                                       */
 static FT2_1_3_Error
 open_face( FT2_1_3_Driver      driver,
-           FT2_1_3_Stream      stream,
-           FT2_1_3_Long        face_index,
-           FT2_1_3_Int         num_params,
-           FT2_1_3_Parameter*  params,
-           FT2_1_3_Face*       aface ) {
+		   FT2_1_3_Stream      stream,
+		   FT2_1_3_Long        face_index,
+		   FT2_1_3_Int         num_params,
+		   FT2_1_3_Parameter*  params,
+		   FT2_1_3_Face*       aface ) {
 	FT2_1_3_Memory         memory;
 	FT2_1_3_Driver_Class  clazz;
 	FT2_1_3_Face           face = 0;
@@ -694,17 +696,17 @@ open_face( FT2_1_3_Driver      driver,
 
 		face->internal->incremental_interface = 0;
 		for ( i = 0; i < num_params && !face->internal->incremental_interface;
-		        i++ )
+				i++ )
 			if ( params[i].tag == FT2_1_3_PARAM_TAG_INCREMENTAL )
 				face->internal->incremental_interface = params[i].data;
 	}
 #endif
 
 	error = clazz->init_face( stream,
-	                          face,
-	                          (FT2_1_3_Int)face_index,
-	                          num_params,
-	                          params );
+							  face,
+							  (FT2_1_3_Int)face_index,
+							  num_params,
+							  params );
 	if ( error )
 		goto Fail;
 
@@ -750,9 +752,9 @@ Fail:
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_New_Face( FT2_1_3_Library   library,
-             const char*  pathname,
-             FT2_1_3_Long      face_index,
-             FT2_1_3_Face     *aface ) {
+			 const char*  pathname,
+			 FT2_1_3_Long      face_index,
+			 FT2_1_3_Face     *aface ) {
 	FT2_1_3_Open_Args  args;
 
 
@@ -773,10 +775,10 @@ FT2_1_3_New_Face( FT2_1_3_Library   library,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_New_Memory_Face( FT2_1_3_Library      library,
-                    const FT2_1_3_Byte*  file_base,
-                    FT2_1_3_Long         file_size,
-                    FT2_1_3_Long         face_index,
-                    FT2_1_3_Face        *aface ) {
+					const FT2_1_3_Byte*  file_base,
+					FT2_1_3_Long         file_size,
+					FT2_1_3_Long         face_index,
+					FT2_1_3_Face        *aface ) {
 	FT2_1_3_Open_Args  args;
 
 
@@ -796,9 +798,9 @@ FT2_1_3_New_Memory_Face( FT2_1_3_Library      library,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Open_Face( FT2_1_3_Library           library,
-              const FT2_1_3_Open_Args*  args,
-              FT2_1_3_Long              face_index,
-              FT2_1_3_Face             *aface ) {
+			  const FT2_1_3_Open_Args*  args,
+			  FT2_1_3_Long              face_index,
+			  FT2_1_3_Face             *aface ) {
 	FT2_1_3_Error     error;
 	FT2_1_3_Driver    driver;
 	FT2_1_3_Memory    memory;
@@ -817,7 +819,7 @@ FT2_1_3_Open_Face( FT2_1_3_Library           library,
 	*aface = 0;
 
 	external_stream = FT2_1_3_BOOL( ( args->flags & FT2_1_3_OPEN_STREAM ) &&
-	                           args->stream                     );
+							   args->stream                     );
 
 	/* create input stream */
 	error = ft_input_stream_new( library, args, &stream );
@@ -843,7 +845,7 @@ FT2_1_3_Open_Face( FT2_1_3_Library           library,
 			}
 
 			error = open_face( driver, stream, face_index,
-			                   num_params, params, &face );
+							   num_params, params, &face );
 			if ( !error )
 				goto Success;
 		} else
@@ -872,7 +874,7 @@ FT2_1_3_Open_Face( FT2_1_3_Library           library,
 				}
 
 				error = open_face( driver, stream, face_index,
-				                   num_params, params, &face );
+								   num_params, params, &face );
 				if ( !error )
 					goto Success;
 
@@ -964,7 +966,7 @@ Exit:
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Attach_File( FT2_1_3_Face      face,
-                const char*  filepathname ) {
+				const char*  filepathname ) {
 	FT2_1_3_Open_Args  open;
 
 
@@ -984,7 +986,7 @@ FT2_1_3_Attach_File( FT2_1_3_Face      face,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Attach_Stream( FT2_1_3_Face        face,
-                  FT2_1_3_Open_Args*  parameters ) {
+				  FT2_1_3_Open_Args*  parameters ) {
 	FT2_1_3_Stream  stream;
 	FT2_1_3_Error   error;
 	FT2_1_3_Driver  driver;
@@ -1015,8 +1017,8 @@ FT2_1_3_Attach_Stream( FT2_1_3_Face        face,
 
 	/* close the attached stream */
 	ft_input_stream_free( stream,
-	                      (FT2_1_3_Bool)( parameters->stream &&
-	                                 ( parameters->flags & FT2_1_3_OPEN_STREAM ) ) );
+						  (FT2_1_3_Bool)( parameters->stream &&
+									 ( parameters->flags & FT2_1_3_OPEN_STREAM ) ) );
 
 Exit:
 	return error;
@@ -1058,7 +1060,7 @@ FT2_1_3_Done_Face( FT2_1_3_Face  face ) {
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_New_Size( FT2_1_3_Face   face,
-             FT2_1_3_Size  *asize ) {
+			 FT2_1_3_Size  *asize ) {
 	FT2_1_3_Error         error;
 	FT2_1_3_Memory        memory;
 	FT2_1_3_Driver        driver;
@@ -1158,20 +1160,20 @@ FT2_1_3_Done_Size( FT2_1_3_Size  size ) {
 
 static void
 ft_recompute_scaled_metrics( FT2_1_3_Face           face,
-                             FT2_1_3_Size_Metrics*  metrics ) {
+							 FT2_1_3_Size_Metrics*  metrics ) {
 	/* Compute root ascender, descender, test height, and max_advance */
 
 	metrics->ascender    = ( FT2_1_3_MulFix( face->ascender,
-	                                    metrics->y_scale ) + 32 ) & -64;
+										metrics->y_scale ) + 32 ) & -64;
 
 	metrics->descender   = ( FT2_1_3_MulFix( face->descender,
-	                                    metrics->y_scale ) + 32 ) & -64;
+										metrics->y_scale ) + 32 ) & -64;
 
 	metrics->height      = ( FT2_1_3_MulFix( face->height,
-	                                    metrics->y_scale ) + 32 ) & -64;
+										metrics->y_scale ) + 32 ) & -64;
 
 	metrics->max_advance = ( FT2_1_3_MulFix( face->max_advance_width,
-	                                    metrics->x_scale ) + 32 ) & -64;
+										metrics->x_scale ) + 32 ) & -64;
 }
 
 
@@ -1179,10 +1181,10 @@ ft_recompute_scaled_metrics( FT2_1_3_Face           face,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Set_Char_Size( FT2_1_3_Face     face,
-                  FT2_1_3_F26Dot6  char_width,
-                  FT2_1_3_F26Dot6  char_height,
-                  FT2_1_3_UInt     horz_resolution,
-                  FT2_1_3_UInt     vert_resolution ) {
+				  FT2_1_3_F26Dot6  char_width,
+				  FT2_1_3_F26Dot6  char_height,
+				  FT2_1_3_UInt     horz_resolution,
+				  FT2_1_3_UInt     vert_resolution ) {
 	FT2_1_3_Error          error = FT2_1_3_Err_Ok;
 	FT2_1_3_Driver         driver;
 	FT2_1_3_Driver_Class   clazz;
@@ -1236,10 +1238,10 @@ FT2_1_3_Set_Char_Size( FT2_1_3_Face     face,
 
 	if ( clazz->set_char_sizes )
 		error = clazz->set_char_sizes( face->size,
-		                               char_width,
-		                               char_height,
-		                               horz_resolution,
-		                               vert_resolution );
+									   char_width,
+									   char_height,
+									   horz_resolution,
+									   vert_resolution );
 	return error;
 }
 
@@ -1248,8 +1250,8 @@ FT2_1_3_Set_Char_Size( FT2_1_3_Face     face,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Set_Pixel_Sizes( FT2_1_3_Face  face,
-                    FT2_1_3_UInt  pixel_width,
-                    FT2_1_3_UInt  pixel_height ) {
+					FT2_1_3_UInt  pixel_width,
+					FT2_1_3_UInt  pixel_height ) {
 	FT2_1_3_Error          error = FT2_1_3_Err_Ok;
 	FT2_1_3_Driver         driver;
 	FT2_1_3_Driver_Class   clazz;
@@ -1279,18 +1281,18 @@ FT2_1_3_Set_Pixel_Sizes( FT2_1_3_Face  face,
 
 	if ( face->face_flags & FT2_1_3_FACE_FLAG_SCALABLE ) {
 		metrics->x_scale = FT2_1_3_DivFix( metrics->x_ppem << 6,
-		                              face->units_per_EM );
+									  face->units_per_EM );
 
 		metrics->y_scale = FT2_1_3_DivFix( metrics->y_ppem << 6,
-		                              face->units_per_EM );
+									  face->units_per_EM );
 
 		ft_recompute_scaled_metrics( face, metrics );
 	}
 
 	if ( clazz->set_pixel_sizes )
 		error = clazz->set_pixel_sizes( face->size,
-		                                pixel_width,
-		                                pixel_height );
+										pixel_width,
+										pixel_height );
 	return error;
 }
 
@@ -1299,10 +1301,10 @@ FT2_1_3_Set_Pixel_Sizes( FT2_1_3_Face  face,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Get_Kerning( FT2_1_3_Face     face,
-                FT2_1_3_UInt     left_glyph,
-                FT2_1_3_UInt     right_glyph,
-                FT2_1_3_UInt     kern_mode,
-                FT2_1_3_Vector  *akerning ) {
+				FT2_1_3_UInt     left_glyph,
+				FT2_1_3_UInt     right_glyph,
+				FT2_1_3_UInt     kern_mode,
+				FT2_1_3_Vector  *akerning ) {
 	FT2_1_3_Error   error = FT2_1_3_Err_Ok;
 	FT2_1_3_Driver  driver;
 
@@ -1320,9 +1322,9 @@ FT2_1_3_Get_Kerning( FT2_1_3_Face     face,
 
 	if ( driver->clazz->get_kerning ) {
 		error = driver->clazz->get_kerning( face,
-		                                    left_glyph,
-		                                    right_glyph,
-		                                    akerning );
+											left_glyph,
+											right_glyph,
+											akerning );
 		if ( !error ) {
 			if ( kern_mode != FT2_1_3_KERNING_UNSCALED ) {
 				akerning->x = FT2_1_3_MulFix( akerning->x, face->size->metrics.x_scale );
@@ -1344,7 +1346,7 @@ FT2_1_3_Get_Kerning( FT2_1_3_Face     face,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Select_Charmap( FT2_1_3_Face      face,
-                   FT2_1_3_Encoding  encoding ) {
+				   FT2_1_3_Encoding  encoding ) {
 	FT2_1_3_CharMap*  cur;
 	FT2_1_3_CharMap*  limit;
 
@@ -1373,7 +1375,7 @@ FT2_1_3_Select_Charmap( FT2_1_3_Face      face,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Set_Charmap( FT2_1_3_Face     face,
-                FT2_1_3_CharMap  charmap ) {
+				FT2_1_3_CharMap  charmap ) {
 	FT2_1_3_CharMap*  cur;
 	FT2_1_3_CharMap*  limit;
 
@@ -1415,9 +1417,9 @@ FT2_1_3_CMap_Done( FT2_1_3_CMap  cmap ) {
 
 FT2_1_3_BASE_DEF( FT2_1_3_Error )
 FT2_1_3_CMap_New( FT2_1_3_CMap_Class   clazz,
-             FT2_1_3_Pointer      init_data,
-             FT2_1_3_CharMap      charmap,
-             FT2_1_3_CMap        *acmap ) {
+			 FT2_1_3_Pointer      init_data,
+			 FT2_1_3_CharMap      charmap,
+			 FT2_1_3_CMap        *acmap ) {
 	FT2_1_3_Error   error = 0;
 	FT2_1_3_Face    face;
 	FT2_1_3_Memory  memory;
@@ -1442,8 +1444,8 @@ FT2_1_3_CMap_New( FT2_1_3_CMap_Class   clazz,
 
 		/* add it to our list of charmaps */
 		if ( FT2_1_3_RENEW_ARRAY( face->charmaps,
-		                     face->num_charmaps,
-		                     face->num_charmaps+1 ) )
+							 face->num_charmaps,
+							 face->num_charmaps+1 ) )
 			goto Fail;
 
 		face->charmaps[face->num_charmaps++] = (FT2_1_3_CharMap)cmap;
@@ -1466,7 +1468,7 @@ Fail:
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_UInt )
 FT2_1_3_Get_Char_Index( FT2_1_3_Face   face,
-                   FT2_1_3_ULong  charcode ) {
+				   FT2_1_3_ULong  charcode ) {
 	FT2_1_3_UInt  result = 0;
 
 
@@ -1485,7 +1487,7 @@ FT2_1_3_Get_Char_Index( FT2_1_3_Face   face,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_ULong )
 FT2_1_3_Get_First_Char( FT2_1_3_Face   face,
-                   FT2_1_3_UInt  *agindex ) {
+				   FT2_1_3_UInt  *agindex ) {
 	FT2_1_3_ULong  result = 0;
 	FT2_1_3_UInt   gindex = 0;
 
@@ -1507,8 +1509,8 @@ FT2_1_3_Get_First_Char( FT2_1_3_Face   face,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_ULong )
 FT2_1_3_Get_Next_Char( FT2_1_3_Face   face,
-                  FT2_1_3_ULong  charcode,
-                  FT2_1_3_UInt  *agindex ) {
+				  FT2_1_3_ULong  charcode,
+				  FT2_1_3_UInt  *agindex ) {
 	FT2_1_3_ULong  result = 0;
 	FT2_1_3_UInt   gindex = 0;
 
@@ -1534,7 +1536,7 @@ FT2_1_3_Get_Next_Char( FT2_1_3_Face   face,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_UInt )
 FT2_1_3_Get_Name_Index( FT2_1_3_Face     face,
-                   FT2_1_3_String*  glyph_name ) {
+				   FT2_1_3_String*  glyph_name ) {
 	FT2_1_3_UInt  result = 0;
 
 
@@ -1549,7 +1551,7 @@ FT2_1_3_Get_Name_Index( FT2_1_3_Face     face,
 
 
 			requester = (FT2_1_3_Face_GetGlyphNameIndexFunc)clazz->get_interface(
-			                FT2_1_3_MODULE( driver ), "name_index" );
+							FT2_1_3_MODULE( driver ), "name_index" );
 			if ( requester )
 				result = requester( face, glyph_name );
 		}
@@ -1563,9 +1565,9 @@ FT2_1_3_Get_Name_Index( FT2_1_3_Face     face,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Get_Glyph_Name( FT2_1_3_Face     face,
-                   FT2_1_3_UInt     glyph_index,
-                   FT2_1_3_Pointer  buffer,
-                   FT2_1_3_UInt     buffer_max ) {
+				   FT2_1_3_UInt     glyph_index,
+				   FT2_1_3_Pointer  buffer,
+				   FT2_1_3_UInt     buffer_max ) {
 	FT2_1_3_Error  error = FT2_1_3_Err_Invalid_Argument;
 
 
@@ -1574,8 +1576,8 @@ FT2_1_3_Get_Glyph_Name( FT2_1_3_Face     face,
 		((FT2_1_3_Byte*)buffer)[0] = 0;
 
 	if ( face                                     &&
-	        glyph_index <= (FT2_1_3_UInt)face->num_glyphs &&
-	        FT2_1_3_HAS_GLYPH_NAMES( face )               ) {
+			glyph_index <= (FT2_1_3_UInt)face->num_glyphs &&
+			FT2_1_3_HAS_GLYPH_NAMES( face )               ) {
 		/* now, lookup for glyph name */
 		FT2_1_3_Driver         driver = face->driver;
 		FT2_1_3_Module_Class*  clazz  = FT2_1_3_MODULE_CLASS( driver );
@@ -1586,7 +1588,7 @@ FT2_1_3_Get_Glyph_Name( FT2_1_3_Face     face,
 
 
 			requester = (FT2_1_3_Face_GetGlyphNameFunc)clazz->get_interface(
-			                FT2_1_3_MODULE( driver ), "glyph_name" );
+							FT2_1_3_MODULE( driver ), "glyph_name" );
 			if ( requester )
 				error = requester( face, glyph_index, buffer, buffer_max );
 		}
@@ -1618,7 +1620,7 @@ FT2_1_3_Get_Postscript_Name( FT2_1_3_Face  face ) {
 
 
 			requester = (FT2_1_3_Face_GetPostscriptNameFunc)clazz->get_interface(
-			                FT2_1_3_MODULE( driver ), "postscript_name" );
+							FT2_1_3_MODULE( driver ), "postscript_name" );
 			if ( requester )
 				result = requester( face );
 		}
@@ -1632,7 +1634,7 @@ Exit:
 
 FT2_1_3_EXPORT_DEF( void* )
 FT2_1_3_Get_Sfnt_Table( FT2_1_3_Face      face,
-                   FT2_1_3_Sfnt_Tag  tag ) {
+				   FT2_1_3_Sfnt_Tag  tag ) {
 	void*                   table = 0;
 	FT2_1_3_Get_Sfnt_Table_Func  func;
 	FT2_1_3_Driver               driver;
@@ -1643,7 +1645,7 @@ FT2_1_3_Get_Sfnt_Table( FT2_1_3_Face      face,
 
 	driver = face->driver;
 	func = (FT2_1_3_Get_Sfnt_Table_Func)driver->root.clazz->get_interface(
-	           FT2_1_3_MODULE( driver ), "get_sfnt" );
+			   FT2_1_3_MODULE( driver ), "get_sfnt" );
 	if ( func )
 		table = func( face, tag );
 
@@ -1687,8 +1689,8 @@ FT2_1_3_Activate_Size( FT2_1_3_Size  size ) {
 /* lookup a renderer by glyph format in the library's list */
 FT2_1_3_BASE_DEF( FT2_1_3_Renderer )
 FT2_1_3_Lookup_Renderer( FT2_1_3_Library       library,
-                    FT2_1_3_Glyph_Format  format,
-                    FT2_1_3_ListNode*     node ) {
+					FT2_1_3_Glyph_Format  format,
+					FT2_1_3_ListNode*     node ) {
 	FT2_1_3_ListNode  cur;
 	FT2_1_3_Renderer  result = 0;
 
@@ -1768,7 +1770,7 @@ ft_add_renderer( FT2_1_3_Module  module ) {
 
 		/* allocate raster object if needed */
 		if ( clazz->glyph_format == FT2_1_3_GLYPH_FORMAT_OUTLINE &&
-		        clazz->raster_class->raster_new ) {
+				clazz->raster_class->raster_new ) {
 			error = clazz->raster_class->raster_new( memory, &render->raster );
 			if ( error )
 				goto Fail;
@@ -1822,7 +1824,7 @@ ft_remove_renderer( FT2_1_3_Module  module ) {
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Renderer )
 FT2_1_3_Get_Renderer( FT2_1_3_Library       library,
-                 FT2_1_3_Glyph_Format  format ) {
+				 FT2_1_3_Glyph_Format  format ) {
 	/* test for valid `library' delayed to FT2_1_3_Lookup_Renderer() */
 
 	return FT2_1_3_Lookup_Renderer( library, format, 0 );
@@ -1833,9 +1835,9 @@ FT2_1_3_Get_Renderer( FT2_1_3_Library       library,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Set_Renderer( FT2_1_3_Library     library,
-                 FT2_1_3_Renderer    renderer,
-                 FT2_1_3_UInt        num_params,
-                 FT2_1_3_Parameter*  parameters ) {
+				 FT2_1_3_Renderer    renderer,
+				 FT2_1_3_UInt        num_params,
+				 FT2_1_3_Parameter*  parameters ) {
 	FT2_1_3_ListNode  node;
 	FT2_1_3_Error     error = FT2_1_3_Err_Ok;
 
@@ -1875,8 +1877,8 @@ Exit:
 
 FT2_1_3_BASE_DEF( FT2_1_3_Error )
 FT2_1_3_Render_Glyph_Internal( FT2_1_3_Library      library,
-                          FT2_1_3_GlyphSlot    slot,
-                          FT2_1_3_Render_Mode  render_mode ) {
+						  FT2_1_3_GlyphSlot    slot,
+						  FT2_1_3_Render_Mode  render_mode ) {
 	FT2_1_3_Error     error = FT2_1_3_Err_Ok;
 	FT2_1_3_Renderer  renderer;
 
@@ -1902,7 +1904,7 @@ FT2_1_3_Render_Glyph_Internal( FT2_1_3_Library      library,
 		while ( renderer ) {
 			error = renderer->render( renderer, slot, render_mode, NULL );
 			if ( !error ||
-			        FT2_1_3_ERROR_BASE( error ) != FT2_1_3_Err_Cannot_Render_Glyph )
+					FT2_1_3_ERROR_BASE( error ) != FT2_1_3_Err_Cannot_Render_Glyph )
 				break;
 
 			/* FT2_1_3_Err_Cannot_Render_Glyph is returned if the render mode   */
@@ -1930,7 +1932,7 @@ FT2_1_3_Render_Glyph_Internal( FT2_1_3_Library      library,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Render_Glyph( FT2_1_3_GlyphSlot    slot,
-                 FT2_1_3_Render_Mode  render_mode ) {
+				 FT2_1_3_Render_Mode  render_mode ) {
 	FT2_1_3_Library  library;
 
 
@@ -2006,7 +2008,7 @@ Destroy_Module( FT2_1_3_Module  module ) {
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Add_Module( FT2_1_3_Library              library,
-               const FT2_1_3_Module_Class*  clazz ) {
+			   const FT2_1_3_Module_Class*  clazz ) {
 	FT2_1_3_Error   error;
 	FT2_1_3_Memory  memory;
 	FT2_1_3_Module  module;
@@ -2014,7 +2016,7 @@ FT2_1_3_Add_Module( FT2_1_3_Library              library,
 
 
 #define FREETYPE_VER_FIXED  ( ( (FT2_1_3_Long)FREETYPE_MAJOR << 16 ) | \
-                                FREETYPE_MINOR                  )
+								FREETYPE_MINOR                  )
 
 	if ( !library )
 		return FT2_1_3_Err_Invalid_Library_Handle;
@@ -2123,7 +2125,7 @@ Fail:
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Module )
 FT2_1_3_Get_Module( FT2_1_3_Library   library,
-               const char*  module_name ) {
+			   const char*  module_name ) {
 	FT2_1_3_Module   result = 0;
 	FT2_1_3_Module*  cur;
 	FT2_1_3_Module*  limit;
@@ -2149,7 +2151,7 @@ FT2_1_3_Get_Module( FT2_1_3_Library   library,
 
 FT2_1_3_BASE_DEF( const void* )
 FT2_1_3_Get_Module_Interface( FT2_1_3_Library   library,
-                         const char*  mod_name ) {
+						 const char*  mod_name ) {
 	FT2_1_3_Module  module;
 
 
@@ -2165,7 +2167,7 @@ FT2_1_3_Get_Module_Interface( FT2_1_3_Library   library,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Remove_Module( FT2_1_3_Library  library,
-                  FT2_1_3_Module   module ) {
+				  FT2_1_3_Module   module ) {
 	/* try to find the module from the table, then remove it from there */
 
 	if ( !library )
@@ -2215,7 +2217,7 @@ FT2_1_3_Remove_Module( FT2_1_3_Library  library,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_New_Library( FT2_1_3_Memory    memory,
-                FT2_1_3_Library  *alibrary ) {
+				FT2_1_3_Library  *alibrary ) {
 	FT2_1_3_Library  library = 0;
 	FT2_1_3_Error    error;
 
@@ -2254,9 +2256,9 @@ Fail:
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_Library_Version( FT2_1_3_Library   library,
-                    FT2_1_3_Int      *amajor,
-                    FT2_1_3_Int      *aminor,
-                    FT2_1_3_Int      *apatch ) {
+					FT2_1_3_Int      *amajor,
+					FT2_1_3_Int      *aminor,
+					FT2_1_3_Int      *apatch ) {
 	FT2_1_3_Int  major = 0;
 	FT2_1_3_Int  minor = 0;
 	FT2_1_3_Int  patch = 0;
@@ -2329,13 +2331,15 @@ FT2_1_3_Done_Library( FT2_1_3_Library  library ) {
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_Set_Debug_Hook( FT2_1_3_Library         library,
-                   FT2_1_3_UInt            hook_index,
-                   FT2_1_3_DebugHook_Func  debug_hook ) {
+				   FT2_1_3_UInt            hook_index,
+				   FT2_1_3_DebugHook_Func  debug_hook ) {
 	if ( library && debug_hook &&
-	        hook_index <
-	        ( sizeof ( library->debug_hooks ) / sizeof ( void* ) ) )
+			hook_index <
+			( sizeof ( library->debug_hooks ) / sizeof ( void* ) ) )
 		library->debug_hooks[hook_index] = debug_hook;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

@@ -27,6 +27,8 @@
 
 #ifdef TT_CONFIG_OPTION_SFNT_NAMES
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /* documentation is in ftnames.h */
 
@@ -40,8 +42,8 @@ FT2_1_3_Get_Sfnt_Name_Count( FT2_1_3_Face  face ) {
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_Get_Sfnt_Name( FT2_1_3_Face       face,
-                  FT2_1_3_UInt       idx,
-                  FT2_1_3_SfntName  *aname ) {
+				  FT2_1_3_UInt       idx,
+				  FT2_1_3_SfntName  *aname ) {
 	FT2_1_3_Error  error = FT2_1_3_Err_Invalid_Argument;
 
 
@@ -60,8 +62,8 @@ FT2_1_3_Get_Sfnt_Name( FT2_1_3_Face       face,
 
 
 				if ( FT2_1_3_NEW_ARRAY  ( entry->string, entry->stringLength ) ||
-				        FT2_1_3_STREAM_SEEK( entry->stringOffset )                ||
-				        FT2_1_3_STREAM_READ( entry->string, entry->stringLength ) ) {
+						FT2_1_3_STREAM_SEEK( entry->stringOffset )                ||
+						FT2_1_3_STREAM_READ( entry->string, entry->stringLength ) ) {
 					FT2_1_3_FREE( entry->string );
 					entry->stringLength = 0;
 				}
@@ -81,6 +83,8 @@ FT2_1_3_Get_Sfnt_Name( FT2_1_3_Face       face,
 	return error;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 #endif /* TT_CONFIG_OPTION_SFNT_NAMES */
 

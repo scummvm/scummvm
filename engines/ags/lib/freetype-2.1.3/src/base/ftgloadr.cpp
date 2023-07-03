@@ -62,11 +62,13 @@
 /*                                                                       */
 /*************************************************************************/
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /* create a new glyph loader */
 FT2_1_3_BASE_DEF( FT2_1_3_Error )
 FT2_1_3_GlyphLoader_New( FT2_1_3_Memory        memory,
-                    FT2_1_3_GlyphLoader  *aloader ) {
+					FT2_1_3_GlyphLoader  *aloader ) {
 	FT2_1_3_GlyphLoader  loader;
 	FT2_1_3_Error        error;
 
@@ -142,7 +144,7 @@ FT2_1_3_GlyphLoader_Adjust_Points( FT2_1_3_GlyphLoader  loader ) {
 	/* handle extra points table - if any */
 	if ( loader->use_extra )
 		loader->current.extra_points =
-		    loader->base.extra_points + base->n_points;
+			loader->base.extra_points + base->n_points;
 }
 
 
@@ -177,8 +179,8 @@ FT2_1_3_GlyphLoader_Adjust_Subglyphs( FT2_1_3_GlyphLoader  loader ) {
 /*                                                                       */
 FT2_1_3_BASE_DEF( FT2_1_3_Error )
 FT2_1_3_GlyphLoader_CheckPoints( FT2_1_3_GlyphLoader  loader,
-                            FT2_1_3_UInt        n_points,
-                            FT2_1_3_UInt        n_contours ) {
+							FT2_1_3_UInt        n_points,
+							FT2_1_3_UInt        n_contours ) {
 	FT2_1_3_Memory    memory  = loader->memory;
 	FT2_1_3_Error     error   = FT2_1_3_Err_Ok;
 	FT2_1_3_Outline*  base    = &loader->base.outline;
@@ -196,11 +198,11 @@ FT2_1_3_GlyphLoader_CheckPoints( FT2_1_3_GlyphLoader  loader,
 		new_max = ( new_max + 7 ) & -8;
 
 		if ( FT2_1_3_RENEW_ARRAY( base->points, old_max, new_max ) ||
-		        FT2_1_3_RENEW_ARRAY( base->tags,   old_max, new_max ) )
+				FT2_1_3_RENEW_ARRAY( base->tags,   old_max, new_max ) )
 			goto Exit;
 
 		if ( loader->use_extra &&
-		        FT2_1_3_RENEW_ARRAY( loader->base.extra_points, old_max, new_max ) )
+				FT2_1_3_RENEW_ARRAY( loader->base.extra_points, old_max, new_max ) )
 			goto Exit;
 
 		adjust = 1;
@@ -210,7 +212,7 @@ FT2_1_3_GlyphLoader_CheckPoints( FT2_1_3_GlyphLoader  loader,
 	/* check contours */
 	old_max = loader->max_contours;
 	new_max = base->n_contours + current->n_contours +
-	          n_contours;
+			  n_contours;
 	if ( new_max > old_max ) {
 		new_max = ( new_max + 3 ) & -4;
 		if ( FT2_1_3_RENEW_ARRAY( base->contours, old_max, new_max ) )
@@ -234,7 +236,7 @@ Exit:
 /*                                                                  */
 FT2_1_3_BASE_DEF( FT2_1_3_Error )
 FT2_1_3_GlyphLoader_CheckSubGlyphs( FT2_1_3_GlyphLoader  loader,
-                               FT2_1_3_UInt         n_subs ) {
+							   FT2_1_3_UInt         n_subs ) {
 	FT2_1_3_Memory     memory = loader->memory;
 	FT2_1_3_Error      error  = FT2_1_3_Err_Ok;
 	FT2_1_3_UInt       new_max, old_max;
@@ -287,16 +289,16 @@ FT2_1_3_GlyphLoader_Add( FT2_1_3_GlyphLoader  loader ) {
 
 
 	base->outline.n_points =
-	    (short)( base->outline.n_points + current->outline.n_points );
+		(short)( base->outline.n_points + current->outline.n_points );
 	base->outline.n_contours =
-	    (short)( base->outline.n_contours + current->outline.n_contours );
+		(short)( base->outline.n_contours + current->outline.n_contours );
 
 	base->num_subglyphs += current->num_subglyphs;
 
 	/* adjust contours count in newest outline */
 	for ( n = 0; n < n_curr_contours; n++ )
 		current->outline.contours[n] =
-		    (short)( current->outline.contours[n] + n_base_points );
+			(short)( current->outline.contours[n] + n_base_points );
 
 	/* prepare for another new glyph image */
 	FT2_1_3_GlyphLoader_Prepare( loader );
@@ -305,7 +307,7 @@ FT2_1_3_GlyphLoader_Add( FT2_1_3_GlyphLoader  loader ) {
 
 FT2_1_3_BASE_DEF( FT2_1_3_Error )
 FT2_1_3_GlyphLoader_CopyPoints( FT2_1_3_GlyphLoader  target,
-                           FT2_1_3_GlyphLoader  source ) {
+						   FT2_1_3_GlyphLoader  source ) {
 	FT2_1_3_Error  error;
 	FT2_1_3_UInt   num_points   = source->base.outline.n_points;
 	FT2_1_3_UInt   num_contours = source->base.outline.n_contours;
@@ -318,16 +320,16 @@ FT2_1_3_GlyphLoader_CopyPoints( FT2_1_3_GlyphLoader  target,
 
 
 		FT2_1_3_MEM_COPY( out->points, in->points,
-		             num_points * sizeof ( FT2_1_3_Vector ) );
+					 num_points * sizeof ( FT2_1_3_Vector ) );
 		FT2_1_3_MEM_COPY( out->tags, in->tags,
-		             num_points * sizeof ( char ) );
+					 num_points * sizeof ( char ) );
 		FT2_1_3_MEM_COPY( out->contours, in->contours,
-		             num_contours * sizeof ( short ) );
+					 num_contours * sizeof ( short ) );
 
 		/* do we need to copy the extra points? */
 		if ( target->use_extra && source->use_extra )
 			FT2_1_3_MEM_COPY( target->base.extra_points, source->base.extra_points,
-			             num_points * sizeof ( FT2_1_3_Vector ) );
+						 num_points * sizeof ( FT2_1_3_Vector ) );
 
 		out->n_points   = (short)num_points;
 		out->n_contours = (short)num_contours;
@@ -338,5 +340,7 @@ FT2_1_3_GlyphLoader_CopyPoints( FT2_1_3_GlyphLoader  target,
 	return error;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

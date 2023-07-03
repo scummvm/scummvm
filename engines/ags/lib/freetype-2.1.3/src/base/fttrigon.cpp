@@ -19,6 +19,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/fttrigon.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /* the following is 0.2715717684432231 * 2^30 */
 #define FT2_1_3_TRIG_COSCALE  0x11616E8EUL
@@ -128,7 +130,7 @@ ft_trig_prenorm( FT2_1_3_Vector*  vec ) {
 
 static void
 ft_trig_pseudo_rotate( FT2_1_3_Vector*  vec,
-                       FT2_1_3_Angle    theta ) {
+					   FT2_1_3_Angle    theta ) {
 	FT2_1_3_Int           i;
 	FT2_1_3_Fixed         x, y, xtemp;
 	const FT2_1_3_Fixed  *arctanptr;
@@ -294,7 +296,7 @@ FT2_1_3_Tan( FT2_1_3_Angle  angle ) {
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Angle )
 FT2_1_3_Atan2( FT2_1_3_Fixed  dx,
-          FT2_1_3_Fixed  dy ) {
+		  FT2_1_3_Fixed  dy ) {
 	FT2_1_3_Vector  v;
 
 
@@ -314,7 +316,7 @@ FT2_1_3_Atan2( FT2_1_3_Fixed  dx,
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_Vector_Unit( FT2_1_3_Vector*  vec,
-                FT2_1_3_Angle    angle ) {
+				FT2_1_3_Angle    angle ) {
 	vec->x = FT2_1_3_TRIG_COSCALE >> 2;
 	vec->y = 0;
 	ft_trig_pseudo_rotate( vec, angle );
@@ -327,7 +329,7 @@ FT2_1_3_Vector_Unit( FT2_1_3_Vector*  vec,
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_Vector_Rotate( FT2_1_3_Vector*  vec,
-                  FT2_1_3_Angle    angle ) {
+				  FT2_1_3_Angle    angle ) {
 	FT2_1_3_Int     shift;
 	FT2_1_3_Vector  v;
 
@@ -387,8 +389,8 @@ FT2_1_3_Vector_Length( FT2_1_3_Vector*  vec ) {
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_Vector_Polarize( FT2_1_3_Vector*  vec,
-                    FT2_1_3_Fixed   *length,
-                    FT2_1_3_Angle   *angle ) {
+					FT2_1_3_Fixed   *length,
+					FT2_1_3_Angle   *angle ) {
 	FT2_1_3_Int     shift;
 	FT2_1_3_Vector  v;
 
@@ -412,8 +414,8 @@ FT2_1_3_Vector_Polarize( FT2_1_3_Vector*  vec,
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_Vector_From_Polar( FT2_1_3_Vector*  vec,
-                      FT2_1_3_Fixed    length,
-                      FT2_1_3_Angle    angle ) {
+					  FT2_1_3_Fixed    length,
+					  FT2_1_3_Angle    angle ) {
 	vec->x = length;
 	vec->y = 0;
 
@@ -425,7 +427,7 @@ FT2_1_3_Vector_From_Polar( FT2_1_3_Vector*  vec,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Angle )
 FT2_1_3_Angle_Diff( FT2_1_3_Angle  angle1,
-               FT2_1_3_Angle  angle2 ) {
+			   FT2_1_3_Angle  angle2 ) {
 	FT2_1_3_Angle  delta = angle2 - angle1;
 
 	delta %= FT2_1_3_ANGLE_2PI;
@@ -436,5 +438,7 @@ FT2_1_3_Angle_Diff( FT2_1_3_Angle  angle1,
 	return delta;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

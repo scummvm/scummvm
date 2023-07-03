@@ -31,6 +31,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+namespace AGS3 {
+namespace FreeType213 {
 
 typedef struct FT2_1_3_MemNodeRec_*   FT2_1_3_MemNode;
 typedef struct FT2_1_3_MemTableRec_*  FT2_1_3_MemTable;
@@ -141,7 +143,7 @@ ft_mem_closest_prime( FT2_1_3_ULong  num ) {
 
 
 	for ( i = 0;
-	        i < sizeof ( ft_mem_primes ) / sizeof ( ft_mem_primes[0] ); i++ )
+			i < sizeof ( ft_mem_primes ) / sizeof ( ft_mem_primes[0] ); i++ )
 		if ( ft_mem_primes[i] > num )
 			return ft_mem_primes[i];
 
@@ -151,7 +153,7 @@ ft_mem_closest_prime( FT2_1_3_ULong  num ) {
 
 static FT2_1_3_Pointer
 ft_mem_table_alloc( FT2_1_3_MemTable  table,
-                    FT2_1_3_Long      size ) {
+					FT2_1_3_Long      size ) {
 	FT2_1_3_Memory   memory = table->memory;
 	FT2_1_3_Pointer  block;
 
@@ -166,7 +168,7 @@ ft_mem_table_alloc( FT2_1_3_MemTable  table,
 
 static void
 ft_mem_table_free( FT2_1_3_MemTable  table,
-                   FT2_1_3_Pointer   block ) {
+				   FT2_1_3_Pointer   block ) {
 	FT2_1_3_Memory  memory = table->memory;
 
 
@@ -188,8 +190,8 @@ ft_mem_table_resize( FT2_1_3_MemTable  table ) {
 
 
 		new_buckets = (FT2_1_3_MemNode *)
-		              ft_mem_table_alloc( table,
-		                                  new_size * sizeof ( FT2_1_3_MemNode ) );
+					  ft_mem_table_alloc( table,
+										  new_size * sizeof ( FT2_1_3_MemNode ) );
 		if ( new_buckets == NULL )
 			return;
 
@@ -245,8 +247,8 @@ ft_mem_table_new( FT2_1_3_Memory  memory ) {
 	table->free    = memory->free;
 
 	table->buckets = (FT2_1_3_MemNode *)
-	                 memory->alloc( memory,
-	                                table->size * sizeof ( FT2_1_3_MemNode ) );
+					 memory->alloc( memory,
+									table->size * sizeof ( FT2_1_3_MemNode ) );
 	if ( table->buckets )
 		FT2_1_3_MEM_ZERO( table->buckets, sizeof ( FT2_1_3_MemNode ) * table->size );
 	else {
@@ -279,10 +281,10 @@ ft_mem_table_destroy( FT2_1_3_MemTable  table ) {
 
 				if ( node->size > 0 ) {
 					printf(
-					    "leaked memory block at address %p, size %8ld in (%s:%ld)\n",
-					    node->address, node->size,
-					    FT2_1_3_FILENAME( node->alloc_file_name ),
-					    node->alloc_line_no );
+						"leaked memory block at address %p, size %8ld in (%s:%ld)\n",
+						node->address, node->size,
+						FT2_1_3_FILENAME( node->alloc_file_name ),
+						node->alloc_line_no );
 
 					leak_count++;
 					leaks += node->size;
@@ -305,16 +307,16 @@ ft_mem_table_destroy( FT2_1_3_MemTable  table ) {
 		table->nodes  = 0;
 
 		printf(
-		    "FreeType: total memory allocations = %ld\n", table->alloc_total );
+			"FreeType: total memory allocations = %ld\n", table->alloc_total );
 		printf(
-		    "FreeType: maximum memory footprint = %ld\n", table->alloc_max );
+			"FreeType: maximum memory footprint = %ld\n", table->alloc_max );
 
 		free( table );
 
 		if ( leak_count > 0 )
 			ft_mem_debug_panic(
-			    "FreeType: %ld bytes of memory leaked in %ld blocks\n",
-			    leaks, leak_count );
+				"FreeType: %ld bytes of memory leaked in %ld blocks\n",
+				leaks, leak_count );
 		printf( "FreeType: No memory leaks detected!\n" );
 	}
 }
@@ -322,7 +324,7 @@ ft_mem_table_destroy( FT2_1_3_MemTable  table ) {
 
 static FT2_1_3_MemNode*
 ft_mem_table_get_nodep( FT2_1_3_MemTable  table,
-                        FT2_1_3_Byte*     address ) {
+						FT2_1_3_Byte*     address ) {
 	FT2_1_3_ULong     hash;
 	FT2_1_3_MemNode  *pnode, node;
 
@@ -346,8 +348,8 @@ ft_mem_table_get_nodep( FT2_1_3_MemTable  table,
 
 static void
 ft_mem_table_set( FT2_1_3_MemTable  table,
-                  FT2_1_3_Byte*     address,
-                  FT2_1_3_ULong     size ) {
+				  FT2_1_3_Byte*     address,
+				  FT2_1_3_ULong     size ) {
 	FT2_1_3_MemNode  *pnode, node;
 
 
@@ -359,12 +361,12 @@ ft_mem_table_set( FT2_1_3_MemTable  table,
 				/* this block was already freed.  This means that our memory is */
 				/* now completely corrupted!                                    */
 				ft_mem_debug_panic(
-				    "memory heap corrupted (allocating freed block)" );
+					"memory heap corrupted (allocating freed block)" );
 			} else {
 				/* this block was already allocated.  This means that our memory */
 				/* is also corrupted!                                            */
 				ft_mem_debug_panic(
-				    "memory heap corrupted (re-allocating allocated block)" );
+					"memory heap corrupted (re-allocating allocated block)" );
 			}
 		}
 
@@ -393,7 +395,7 @@ ft_mem_table_set( FT2_1_3_MemTable  table,
 			table->alloc_max = table->alloc_current;
 
 		if ( table->nodes * 3 < table->size  ||
-		        table->size  * 3 < table->nodes )
+				table->size  * 3 < table->nodes )
 			ft_mem_table_resize( table );
 	}
 }
@@ -401,7 +403,7 @@ ft_mem_table_set( FT2_1_3_MemTable  table,
 
 static void
 ft_mem_table_remove( FT2_1_3_MemTable  table,
-                     FT2_1_3_Byte*     address ) {
+					 FT2_1_3_Byte*     address ) {
 	if ( table ) {
 		FT2_1_3_MemNode  *pnode, node;
 
@@ -411,12 +413,12 @@ ft_mem_table_remove( FT2_1_3_MemTable  table,
 		if ( node ) {
 			if ( node->size < 0 )
 				ft_mem_debug_panic(
-				    "freeing memory block at %p more than once at (%s:%ld)\n"
-				    "block allocated at (%s:%ld) and released at (%s:%ld)",
-				    address,
-				    FT2_1_3_FILENAME( table->file_name ), table->line_no,
-				    FT2_1_3_FILENAME( node->alloc_file_name ), node->alloc_line_no,
-				    FT2_1_3_FILENAME( node->free_file_name ), node->free_line_no );
+					"freeing memory block at %p more than once at (%s:%ld)\n"
+					"block allocated at (%s:%ld) and released at (%s:%ld)",
+					address,
+					FT2_1_3_FILENAME( table->file_name ), table->line_no,
+					FT2_1_3_FILENAME( node->alloc_file_name ), node->alloc_line_no,
+					FT2_1_3_FILENAME( node->free_file_name ), node->free_line_no );
 
 			/* we simply invert the node's size to indicate that the node */
 			/* was freed.  We also change its contents.                   */
@@ -428,16 +430,16 @@ ft_mem_table_remove( FT2_1_3_MemTable  table,
 			node->free_line_no    = table->line_no;
 		} else
 			ft_mem_debug_panic(
-			    "trying to free unknown block at %p in (%s:%ld)\n",
-			    address,
-			    FT2_1_3_FILENAME( table->file_name ), table->line_no );
+				"trying to free unknown block at %p in (%s:%ld)\n",
+				address,
+				FT2_1_3_FILENAME( table->file_name ), table->line_no );
 	}
 }
 
 
 extern FT2_1_3_Pointer
 ft_mem_debug_alloc( FT2_1_3_Memory  memory,
-                    FT2_1_3_Long    size ) {
+					FT2_1_3_Long    size ) {
 	FT2_1_3_MemTable  table = (FT2_1_3_MemTable)memory->user;
 	FT2_1_3_Byte*     block;
 
@@ -458,14 +460,14 @@ ft_mem_debug_alloc( FT2_1_3_Memory  memory,
 
 extern void
 ft_mem_debug_free( FT2_1_3_Memory   memory,
-                   FT2_1_3_Pointer  block ) {
+				   FT2_1_3_Pointer  block ) {
 	FT2_1_3_MemTable  table = (FT2_1_3_MemTable)memory->user;
 
 
 	if ( block == NULL )
 		ft_mem_debug_panic( "trying to free NULL in (%s:%ld)",
-		                    FT2_1_3_FILENAME( table->file_name ),
-		                    table->line_no );
+							FT2_1_3_FILENAME( table->file_name ),
+							table->line_no );
 
 	ft_mem_table_remove( table, (FT2_1_3_Byte*)block );
 
@@ -477,9 +479,9 @@ ft_mem_debug_free( FT2_1_3_Memory   memory,
 
 extern FT2_1_3_Pointer
 ft_mem_debug_realloc( FT2_1_3_Memory   memory,
-                      FT2_1_3_Long     cur_size,
-                      FT2_1_3_Long     new_size,
-                      FT2_1_3_Pointer  block ) {
+					  FT2_1_3_Long     cur_size,
+					  FT2_1_3_Long     new_size,
+					  FT2_1_3_Pointer  block ) {
 	FT2_1_3_MemTable  table = (FT2_1_3_MemTable)memory->user;
 	FT2_1_3_MemNode   node, *pnode;
 	FT2_1_3_Pointer   new_block;
@@ -490,30 +492,30 @@ ft_mem_debug_realloc( FT2_1_3_Memory   memory,
 
 	if ( block == NULL || cur_size == 0 )
 		ft_mem_debug_panic( "trying to reallocate NULL in (%s:%ld)",
-		                    file_name, line_no );
+							file_name, line_no );
 
 	if ( new_size <= 0 )
 		ft_mem_debug_panic(
-		    "trying to reallocate %p to size 0 (current is %ld) in (%s:%ld)",
-		    block, cur_size, file_name, line_no );
+			"trying to reallocate %p to size 0 (current is %ld) in (%s:%ld)",
+			block, cur_size, file_name, line_no );
 
 	/* check 'cur_size' value */
 	pnode = ft_mem_table_get_nodep( table, (FT2_1_3_Byte*)block );
 	node  = *pnode;
 	if ( !node )
 		ft_mem_debug_panic(
-		    "trying to reallocate unknown block at %p in (%s:%ld)",
-		    block, file_name, line_no );
+			"trying to reallocate unknown block at %p in (%s:%ld)",
+			block, file_name, line_no );
 
 	if ( node->size <= 0 )
 		ft_mem_debug_panic(
-		    "trying to reallocate freed block at %p in (%s:%ld)",
-		    block, file_name, line_no );
+			"trying to reallocate freed block at %p in (%s:%ld)",
+			block, file_name, line_no );
 
 	if ( node->size != cur_size )
 		ft_mem_debug_panic( "invalid ft_realloc request for %p. cur_size is "
-		                    "%ld instead of %ld in (%s:%ld)",
-		                    block, cur_size, node->size, file_name, line_no );
+							"%ld instead of %ld in (%s:%ld)",
+							block, cur_size, node->size, file_name, line_no );
 
 	new_block = ft_mem_debug_alloc( memory, new_size );
 	if ( new_block == NULL )
@@ -568,10 +570,10 @@ ft_mem_debug_done( FT2_1_3_Memory  memory ) {
 
 FT2_1_3_BASE_DEF( FT2_1_3_Error )
 FT2_1_3_Alloc_Debug( FT2_1_3_Memory    memory,
-                FT2_1_3_Long      size,
-                void*       *P,
-                const char*  file_name,
-                FT2_1_3_Long      line_no ) {
+				FT2_1_3_Long      size,
+				void*       *P,
+				const char*  file_name,
+				FT2_1_3_Long      line_no ) {
 	FT2_1_3_MemTable  table = (FT2_1_3_MemTable)memory->user;
 
 
@@ -585,11 +587,11 @@ FT2_1_3_Alloc_Debug( FT2_1_3_Memory    memory,
 
 FT2_1_3_BASE_DEF( FT2_1_3_Error )
 FT2_1_3_Realloc_Debug( FT2_1_3_Memory    memory,
-                  FT2_1_3_Long      current,
-                  FT2_1_3_Long      size,
-                  void*       *P,
-                  const char*  file_name,
-                  FT2_1_3_Long      line_no ) {
+				  FT2_1_3_Long      current,
+				  FT2_1_3_Long      size,
+				  void*       *P,
+				  const char*  file_name,
+				  FT2_1_3_Long      line_no ) {
 	FT2_1_3_MemTable  table = (FT2_1_3_MemTable)memory->user;
 
 
@@ -603,9 +605,9 @@ FT2_1_3_Realloc_Debug( FT2_1_3_Memory    memory,
 
 FT2_1_3_BASE_DEF( void )
 FT2_1_3_Free_Debug( FT2_1_3_Memory    memory,
-               FT2_1_3_Pointer   block,
-               const char*  file_name,
-               FT2_1_3_Long      line_no ) {
+			   FT2_1_3_Pointer   block,
+			   const char*  file_name,
+			   FT2_1_3_Long      line_no ) {
 	FT2_1_3_MemTable  table = (FT2_1_3_MemTable)memory->user;
 
 
@@ -616,11 +618,13 @@ FT2_1_3_Free_Debug( FT2_1_3_Memory    memory,
 	FT2_1_3_Free( memory, (void **)block );
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 #else  /* !FT2_1_3_DEBUG_MEMORY */
 
 /* ANSI C doesn't like empty source files */
-const FT2_1_3_Byte  _debug_mem_dummy = 0;
+const AGS3::FreeType213::FT2_1_3_Byte  _debug_mem_dummy = 0;
 
 #endif /* !FT2_1_3_DEBUG_MEMORY */
 

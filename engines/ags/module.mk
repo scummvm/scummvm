@@ -33,7 +33,15 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/src/autohint/ahglobal.o \
 	lib/freetype-2.1.3/src/autohint/ahhint.o \
 	lib/freetype-2.1.3/src/autohint/ahmodule.o \
-	lib/freetype-2.1.3/src/base/ftbase.o \
+	lib/freetype-2.1.3/src/base/ftutil.o \
+	lib/freetype-2.1.3/src/base/ftdbgmem.o \
+	lib/freetype-2.1.3/src/base/ftstream.o \
+	lib/freetype-2.1.3/src/base/ftcalc.o \
+	lib/freetype-2.1.3/src/base/fttrigon.o \
+	lib/freetype-2.1.3/src/base/ftoutln.o \
+	lib/freetype-2.1.3/src/base/ftgloadr.o \
+	lib/freetype-2.1.3/src/base/ftobjs.o \
+	lib/freetype-2.1.3/src/base/ftnames.o \
 	lib/freetype-2.1.3/src/base/ftbbox.o \
 	lib/freetype-2.1.3/src/base/ftbdf.o \
 	lib/freetype-2.1.3/src/base/ftglyph.o \

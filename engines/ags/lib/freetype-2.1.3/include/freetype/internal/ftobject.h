@@ -3,6 +3,7 @@
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/fthash.h"
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -497,7 +498,6 @@ ft_class_from_type( FT2_1_3_Class   *aclass,
 
 /* */
 
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/fthash.h"
 
 typedef struct FT2_1_3_ClassHNodeRec_*  FT2_1_3_ClassHNode;
 

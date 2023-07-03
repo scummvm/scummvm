@@ -31,6 +31,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_memory
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*************************************************************************/
@@ -48,8 +50,8 @@
 
 FT2_1_3_BASE_DEF( FT2_1_3_Error )
 FT2_1_3_Alloc( FT2_1_3_Memory  memory,
-          FT2_1_3_Long    size,
-          void*     *P ) {
+		  FT2_1_3_Long    size,
+		  void*     *P ) {
 	FT2_1_3_ASSERT( P != 0 );
 
 	if ( size > 0 ) {
@@ -57,7 +59,7 @@ FT2_1_3_Alloc( FT2_1_3_Memory  memory,
 		if ( !*P ) {
 			FT2_1_3_ERROR(( "FT2_1_3_Alloc:" ));
 			FT2_1_3_ERROR(( " Out of memory? (%ld requested)\n",
-			           size ));
+					   size ));
 
 			return FT2_1_3_Err_Out_Of_Memory;
 		}
@@ -67,7 +69,7 @@ FT2_1_3_Alloc( FT2_1_3_Memory  memory,
 
 	FT2_1_3_TRACE7(( "FT2_1_3_Alloc:" ));
 	FT2_1_3_TRACE7(( " size = %ld, block = 0x%08p, ref = 0x%08p\n",
-	            size, *P, P ));
+				size, *P, P ));
 
 	return FT2_1_3_Err_Ok;
 }
@@ -77,9 +79,9 @@ FT2_1_3_Alloc( FT2_1_3_Memory  memory,
 
 FT2_1_3_BASE_DEF( FT2_1_3_Error )
 FT2_1_3_Realloc( FT2_1_3_Memory  memory,
-            FT2_1_3_Long    current,
-            FT2_1_3_Long    size,
-            void**     P ) {
+			FT2_1_3_Long    current,
+			FT2_1_3_Long    size,
+			void**     P ) {
 	void*  Q;
 
 
@@ -108,7 +110,7 @@ FT2_1_3_Realloc( FT2_1_3_Memory  memory,
 Fail:
 	FT2_1_3_ERROR(( "FT2_1_3_Realloc:" ));
 	FT2_1_3_ERROR(( " Failed (current %ld, requested %ld)\n",
-	           current, size ));
+			   current, size ));
 	return FT2_1_3_Err_Out_Of_Memory;
 }
 
@@ -117,10 +119,10 @@ Fail:
 
 FT2_1_3_BASE_DEF( void )
 FT2_1_3_Free( FT2_1_3_Memory  memory,
-         void**     P ) {
+		 void**     P ) {
 	FT2_1_3_TRACE7(( "FT2_1_3_Free:" ));
 	FT2_1_3_TRACE7(( " Freeing block 0x%08p, ref 0x%08p\n",
-	            P, P ? *P : (void*)0 ));
+				P, P ? *P : (void*)0 ));
 
 	if ( P && *P ) {
 		memory->free( memory, *P );
@@ -148,7 +150,7 @@ FT2_1_3_Free( FT2_1_3_Memory  memory,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_ListNode )
 FT2_1_3_List_Find( FT2_1_3_List  list,
-              void*    data ) {
+			  void*    data ) {
 	FT2_1_3_ListNode  cur;
 
 
@@ -168,7 +170,7 @@ FT2_1_3_List_Find( FT2_1_3_List  list,
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_List_Add( FT2_1_3_List      list,
-             FT2_1_3_ListNode  node ) {
+			 FT2_1_3_ListNode  node ) {
 	FT2_1_3_ListNode  before = list->tail;
 
 
@@ -188,7 +190,7 @@ FT2_1_3_List_Add( FT2_1_3_List      list,
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_List_Insert( FT2_1_3_List      list,
-                FT2_1_3_ListNode  node ) {
+				FT2_1_3_ListNode  node ) {
 	FT2_1_3_ListNode  after = list->head;
 
 
@@ -208,7 +210,7 @@ FT2_1_3_List_Insert( FT2_1_3_List      list,
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_List_Remove( FT2_1_3_List      list,
-                FT2_1_3_ListNode  node ) {
+				FT2_1_3_ListNode  node ) {
 	FT2_1_3_ListNode  before, after;
 
 
@@ -231,7 +233,7 @@ FT2_1_3_List_Remove( FT2_1_3_List      list,
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_List_Up( FT2_1_3_List      list,
-            FT2_1_3_ListNode  node ) {
+			FT2_1_3_ListNode  node ) {
 	FT2_1_3_ListNode  before, after;
 
 
@@ -260,8 +262,8 @@ FT2_1_3_List_Up( FT2_1_3_List      list,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FT2_1_3_List_Iterate( FT2_1_3_List            list,
-                 FT2_1_3_List_Iterator   iterator,
-                 void*              user ) {
+				 FT2_1_3_List_Iterator   iterator,
+				 void*              user ) {
 	FT2_1_3_ListNode  cur   = list->head;
 	FT2_1_3_Error     error = FT2_1_3_Err_Ok;
 
@@ -285,9 +287,9 @@ FT2_1_3_List_Iterate( FT2_1_3_List            list,
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_List_Finalize( FT2_1_3_List             list,
-                  FT2_1_3_List_Destructor  destroy,
-                  FT2_1_3_Memory           memory,
-                  void*               user ) {
+				  FT2_1_3_List_Destructor  destroy,
+				  FT2_1_3_Memory           memory,
+				  void*               user ) {
 	FT2_1_3_ListNode  cur;
 
 
@@ -308,5 +310,7 @@ FT2_1_3_List_Finalize( FT2_1_3_List             list,
 	list->tail = 0;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */
