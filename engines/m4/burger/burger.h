@@ -29,9 +29,9 @@ namespace Burger {
 
 class BurgerEngine : public M4Engine {
 	/**
-	 * Creates globals
+	 * Creates the structure that holds all the global variables
 	 */
-	Globals *createGlobals() override;
+	M4::Vars *createVars() override;
 
 public:
 	BurgerEngine(OSystem *syst, const ADGameDescription *gameDesc) :

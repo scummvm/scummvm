@@ -3,8 +3,8 @@ MODULE := engines/m4
 MODULE_OBJS = \
 	m4.o \
 	console.o \
-	globals.o \
 	metaengine.o \
+	vars.o \
 	adv_db_r/db_catalog.o \
 	adv_r/adv_been.o \
 	adv_r/adv_control.o \
@@ -65,11 +65,11 @@ MODULE_OBJS = \
 	burger/gui/gui_cheapo.o \
 	burger/gui/interface.o \
 	burger/burger.o \
-	burger/burger_globals.o \
 	burger/globals.o \
 	burger/hotkeys.o \
 	burger/inventory.o \
-	burger/other.o
+	burger/other.o \
+	burger/vars.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_M4), DYNAMIC_PLUGIN)

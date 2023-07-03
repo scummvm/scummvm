@@ -21,13 +21,13 @@
 
 #include "common/debug.h"
 #include "m4/burger/burger.h"
-#include "m4/burger/burger_globals.h"
+#include "m4/burger/vars.h"
 
 namespace M4 {
 namespace Burger {
 
-Globals *BurgerEngine::createGlobals() {
-	return new BurgerGlobals();
+M4::Vars *BurgerEngine::createVars() {
+	return new Burger::Vars();
 }
 
 void BurgerEngine::showEngineInfo() {

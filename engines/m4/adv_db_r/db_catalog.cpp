@@ -26,7 +26,7 @@
 #include "m4/core/cstring.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
-#include "m4/globals.h"
+#include "m4/vars.h"
 
 namespace M4 {
 

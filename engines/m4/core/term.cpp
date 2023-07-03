@@ -23,7 +23,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "m4/core/term.h"
-#include "m4/globals.h"
+#include "m4/vars.h"
 
 namespace M4 {
 

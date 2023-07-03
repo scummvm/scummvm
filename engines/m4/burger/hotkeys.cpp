@@ -20,7 +20,7 @@
  */
 
 #include "m4/burger/hotkeys.h"
-#include "m4/burger/burger_globals.h"
+#include "m4/burger/vars.h"
 #include "m4/burger/gui/game_menu.h"
 #include "m4/burger/other.h"
 

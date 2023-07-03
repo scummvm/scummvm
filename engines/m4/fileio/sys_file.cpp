@@ -24,7 +24,7 @@
 #include "m4/fileio/fileio.h"
 #include "m4/adv_r/db_env.h"
 #include "m4/mem/memman.h"
-#include "m4/globals.h"
+#include "m4/vars.h"
 #include "m4/m4.h"
 
 namespace M4 {

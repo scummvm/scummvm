@@ -21,7 +21,7 @@
 
 #include "common/debug.h"
 #include "common/events.h"
-#include "m4/burger/burger_globals.h"
+#include "m4/burger/vars.h"
 #include "m4/adv_r/adv_file.h"
 #include "m4/core/errors.h"
 #include "m4/graphics/gr_series.h"
@@ -33,7 +33,7 @@
 namespace M4 {
 namespace Burger {
 
-BurgerGlobals *g_globals;
+Vars *g_globals;
 
 const char *GAME_MODES[4] = { "WHOLE_GAME", "INTERACTIVE_DEMO", "MAGAZINE_DEMO", "WHOLE_GAME" };
 
@@ -70,19 +70,19 @@ static const ConverterEntry ASCII_CONVERTERS[] = {
 	{ nullptr, 0 }
 };
 
-BurgerGlobals::BurgerGlobals() {
+Vars::Vars() {
 	g_globals = this;
 
 	Inventory *inv = new Inventory();
 	_inventory = inv;
 }
 
-BurgerGlobals::~BurgerGlobals() {
+Vars::~Vars() {
 	g_globals = nullptr;
 	delete _inventory;
 }
 
-void BurgerGlobals::main_cold_data_init() {
+void Vars::main_cold_data_init() {
 	// TODO
 	initMouseSeries("cursor", nullptr);
 
@@ -109,7 +109,7 @@ void BurgerGlobals::main_cold_data_init() {
 	font_set_colors(2, 1, 3);
 }
 
-void BurgerGlobals::global_menu_system_init() {
+void Vars::global_menu_system_init() {
 	AddSystemHotkey(Common::KEYCODE_ESCAPE, escape_key_pressed);
 	AddSystemHotkey(Common::KEYCODE_F2, cb_F2);
 	AddSystemHotkey(Common::KEYCODE_F3, cb_F3);
@@ -119,7 +119,7 @@ void BurgerGlobals::global_menu_system_init() {
 	static_cast<Inventory *>(_inventory)->init();
 }
 
-void BurgerGlobals::initialize_game() {
+void Vars::initialize_game() {
 	// Put all the inventory items back in their original scenes
 	for (const auto &item : _inventory->_objects)
 		inv_put_thing_in(item->name, item->scene);
@@ -135,7 +135,7 @@ void BurgerGlobals::initialize_game() {
 	_globals.conv_reset_all();
 }
 
-void BurgerGlobals::initMouseSeries(const Common::String &assetName, RGB8 *myPalette) {
+void Vars::initMouseSeries(const Common::String &assetName, RGB8 *myPalette) {
 	int32 maxW, maxH;
 
 	_mouseSeriesHandle = nullptr;
@@ -168,7 +168,7 @@ void BurgerGlobals::initMouseSeries(const Common::String &assetName, RGB8 *myPal
 	}
 }
 
-void BurgerGlobals::custom_ascii_converter_proc(char *string) {
+void Vars::custom_ascii_converter_proc(char *string) {
 	char *str;
 
 	for (const auto &entry : ASCII_CONVERTERS) {
@@ -177,15 +177,15 @@ void BurgerGlobals::custom_ascii_converter_proc(char *string) {
 	}
 }
 
-void BurgerGlobals::escape_key_pressed(void *, void *) {
+void Vars::escape_key_pressed(void *, void *) {
 
 }
 
-void BurgerGlobals::cb_F2(void *, void *) {
+void Vars::cb_F2(void *, void *) {
 
 }
 
-void BurgerGlobals::cb_F3(void *, void *) {
+void Vars::cb_F3(void *, void *) {
 
 }
 

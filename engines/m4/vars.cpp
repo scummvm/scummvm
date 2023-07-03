@@ -20,7 +20,7 @@
  */
 
 #include "common/debug.h"
-#include "m4/globals.h"
+#include "m4/vars.h"
 #include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_been.h"
 #include "m4/core/errors.h"
@@ -36,14 +36,14 @@
 
 namespace M4 {
 
-Globals *g_globals;
+Vars *g_vars;
 
-Globals::Globals() {
-	g_globals = this;
+Vars::Vars() {
+	g_vars = this;
 	_cheating_enabled = gDebugLevel > 0;
 }
 
-Globals::~Globals() {
+Vars::~Vars() {
 	game_systems_shutdown();
 
 	sysfile_shutdown();
@@ -55,10 +55,10 @@ Globals::~Globals() {
 	param_shutdown();
 	woodscript_shutdown();
 
-	g_globals = nullptr;
+	g_vars = nullptr;
 }
 
-bool Globals::init() {
+bool Vars::init() {
 	param_init();
 	parse_all_flags();
 
@@ -89,7 +89,7 @@ bool Globals::init() {
 }
 
 
-void Globals::game_systems_initialize(byte flags) {
+void Vars::game_systems_initialize(byte flags) {
 	_G(term).init(_G(kernel).use_debug_monitor, _G(kernel).use_log_file);
 
 	size_t totalMem = _G(kernel).mem_avail();
@@ -144,7 +144,7 @@ void Globals::game_systems_initialize(byte flags) {
 		_inverse_pal = nullptr;
 }
 
-void Globals::game_systems_shutdown() {
+void Vars::game_systems_shutdown() {
 	_system_shutting_down = true;
 #ifdef TODO
 	term_message("asset list be gone!");
@@ -197,7 +197,7 @@ void Globals::game_systems_shutdown() {
 #endif
 }
 
-void Globals::fire_up_gui() {
+void Vars::fire_up_gui() {
 	if (!gui_system_init())
 		error_show(FL, 'GUI0');
 	if (!vmng_init())
@@ -214,7 +214,7 @@ void Globals::fire_up_gui() {
 		error_show(FL, 'GUI5');
 }
 
-bool Globals::woodscript_init() {
+bool Vars::woodscript_init() {
 	if (!InitWSAssets())
 		return false;
 	if (!ws_Initialize(_G(globals)))
@@ -223,12 +223,12 @@ bool Globals::woodscript_init() {
 	return true;
 }
 
-void Globals::woodscript_shutdown() {
+void Vars::woodscript_shutdown() {
 	ShutdownWSAssets();
 	ws_Shutdown();
 }
 
-void Globals::grab_fonts() {
+void Vars::grab_fonts() {
 	term_message("Grabbing fonts");
 
 	_font_tiny_prop = gr_font_load("4X6PP.FNT");
@@ -240,7 +240,7 @@ void Globals::grab_fonts() {
 	_font_misc = gr_font_load("FONTMISC.FNT");
 }
 
-void Globals::create_mouse_watch_dialog() {
+void Vars::create_mouse_watch_dialog() {
 	int x_offset;
 
 	gr_font_set(_font_tiny);

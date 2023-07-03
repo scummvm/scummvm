@@ -35,7 +35,7 @@
 #include "graphics/screen.h"
 
 #include "m4/detection.h"
-#include "m4/globals.h"
+#include "m4/vars.h"
 
 namespace M4 {
 
@@ -68,7 +68,7 @@ protected:
 	/**
 	 * Creates globals
 	 */
-	virtual Globals *createGlobals() = 0;
+	virtual Vars *createVars() = 0;
 
 public:
 	Graphics::Screen *_screen = nullptr;

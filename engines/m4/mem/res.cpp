@@ -25,7 +25,7 @@
 #include "m4/mem/memman.h"
 #include "m4/mem/reloc.h"
 #include "m4/core/errors.h"
-#include "m4/globals.h"
+#include "m4/vars.h"
 
 namespace M4 {
 

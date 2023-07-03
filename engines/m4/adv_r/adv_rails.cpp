@@ -23,7 +23,7 @@
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
 #include "m4/mem/mem.h"
-#include "m4/globals.h"
+#include "m4/vars.h"
 
 namespace M4 {
 

@@ -24,7 +24,7 @@
 #include "m4/wscript/wscript.h"
 #include "m4/core/errors.h"
 #include "m4/platform/timer.h"
-#include "m4/globals.h"
+#include "m4/vars.h"
 
 namespace M4 {
 
