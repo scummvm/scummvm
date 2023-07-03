@@ -1167,7 +1167,7 @@ ah_hinter_load( AH_Hinter  hinter,
 
 				if ( start_point + k >= num_base_points          ||
 						l >= (FT2_1_3_UInt)num_new_points  ) {
-					error = AH_Err_Invalid_Composite;
+					error = FT2_1_3_Err_Invalid_Composite;
 					goto Exit;
 				}
 

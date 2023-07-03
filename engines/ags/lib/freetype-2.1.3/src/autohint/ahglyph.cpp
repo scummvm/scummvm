@@ -371,7 +371,7 @@ FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 ah_outline_load( AH_Outline  outline,
 				 FT2_1_3_Face     face ) {
 	FT2_1_3_Memory    memory       = outline->memory;
-	FT2_1_3_Error     error        = AH_Err_Ok;
+	FT2_1_3_Error     error        = FT2_1_3_Err_Ok;
 	FT2_1_3_Outline*  source       = &face->glyph->outline;
 	FT2_1_3_Int       num_points   = source->n_points;
 	FT2_1_3_Int       num_contours = source->n_contours;
@@ -382,7 +382,7 @@ ah_outline_load( AH_Outline  outline,
 	if ( !face                                          ||
 			!face->size                                    ||
 			face->glyph->format != FT2_1_3_GLYPH_FORMAT_OUTLINE )
-		return AH_Err_Invalid_Argument;
+		return FT2_1_3_Err_Invalid_Argument;
 
 	/* first of all, reallocate the contours array if necessary */
 	if ( num_contours > outline->max_contours ) {
