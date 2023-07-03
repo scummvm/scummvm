@@ -27,6 +27,9 @@
 
 #define MAX_TEST_CHARACTERS  12
 
+namespace AGS3 {
+namespace FreeType213 {
+
 static
 const char*  blue_chars[AH_BLUE_MAX] = {
 	"THEZOCQS",
@@ -364,5 +367,7 @@ ah_hinter_compute_globals( AH_Hinter  hinter ) {
 		   ah_hinter_compute_blues ( hinter );
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

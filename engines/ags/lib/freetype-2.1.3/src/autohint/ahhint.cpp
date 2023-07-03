@@ -32,6 +32,9 @@
 #define AH_USE_IUP
 #define OPTIM_STEM_SNAP
 
+namespace AGS3 {
+namespace FreeType213 {
+
 /*************************************************************************/
 /*************************************************************************/
 /****                                                                 ****/
@@ -1200,7 +1203,7 @@ ah_hinter_load( AH_Hinter  hinter,
 
 	default:
 		/* we don't support other formats (yet?) */
-		error = AH_Err_Unimplemented_Feature;
+		error = FT2_1_3_Err_Unimplemented_Feature;
 	}
 
 Hint_Metrics:
@@ -1373,5 +1376,7 @@ ah_hinter_done_global_hints( AH_Hinter  hinter,
 	FT2_1_3_FREE( global_hints );
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

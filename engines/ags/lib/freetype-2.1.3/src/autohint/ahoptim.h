@@ -26,6 +26,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "ahtypes.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -126,6 +128,9 @@ AH_Optimizer_Done( AH_Optimizer*  optimizer );
 
 
 FT2_1_3_END_HEADER
+
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 #endif /* __AHOPTIM_H__ */
 

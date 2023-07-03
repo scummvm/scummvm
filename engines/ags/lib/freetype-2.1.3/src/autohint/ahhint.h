@@ -26,6 +26,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "ahglobal.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -68,6 +70,9 @@ ah_hinter_done_global_hints( AH_Hinter  hinter,
 
 
 FT2_1_3_END_HEADER
+
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 #endif /* AGS_LIB_FREETYPE_AHHINT_H */
 

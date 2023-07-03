@@ -56,6 +56,8 @@
 
 #endif /* AH_DEBUG_OPTIM */
 
+namespace AGS3 {
+namespace FreeType213 {
 
 #ifdef AH_DEBUG_OPTIM
 
@@ -819,5 +821,7 @@ AH_Optimizer_Compute( AH_Optimizer*  optimizer ) {
 	}
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

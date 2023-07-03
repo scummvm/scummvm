@@ -26,6 +26,8 @@
 #include "ahglobal.h"
 #include "aherrors.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 #ifdef AH_DEBUG
 
@@ -1465,5 +1467,7 @@ ah_outline_scale_blue_edges( AH_Outline       outline,
 	}
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

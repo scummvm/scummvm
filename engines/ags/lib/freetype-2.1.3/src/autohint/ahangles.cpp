@@ -23,6 +23,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "ahangles.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /* the following table has been automatically generated with */
 /* the `mather.py' Python script                             */
@@ -135,5 +137,8 @@ ah_angle_diff( AH_Angle  angle1,
 
 	return delta;
 }
+
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

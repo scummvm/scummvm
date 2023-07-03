@@ -23,6 +23,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftmodule.h"
 #include "ahhint.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 #ifdef  DEBUG_HINTER
 AH_Hinter  ah_debug_hinter       = NULL;
@@ -124,5 +126,7 @@ const FT2_1_3_Module_Class  autohint_module_class = {
 	(FT2_1_3_Module_Requester)  0
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */
