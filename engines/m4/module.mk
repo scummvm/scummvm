@@ -14,10 +14,12 @@ MODULE_OBJS = \
 	adv_r/adv_player.o \
 	adv_r/adv_rails.o \
 	adv_r/adv_trigger.o \
+	adv_r/adv_walk.o \
 	adv_r/db_env.o \
 	adv_r/kernel.o \
 	core/cstring.o \
 	core/errors.o \
+	core/globals.o \
 	core/imath.o \
 	core/mouse.o \
 	core/param.o \
@@ -64,10 +66,10 @@ MODULE_OBJS = \
 	burger/gui/interface.o \
 	burger/burger.o \
 	burger/burger_globals.o \
+	burger/globals.o \
 	burger/hotkeys.o \
 	burger/inventory.o \
-	burger/other.o \
-	burger/vars.o
+	burger/other.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_M4), DYNAMIC_PLUGIN)

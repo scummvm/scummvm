@@ -94,17 +94,12 @@ void M4Engine::m4_inflight() {
 
 Common::Error M4Engine::syncGame(Common::Serializer &s) {
 	_G(game).syncGame(s);
+	_G(player).syncGame(s);
+	_G(player_info).syncGame(s);
+	g_globals->getGlobals()->syncGame(s);
+
 
 #ifdef TODO
-
-	if (!fread(&game, sizeof(GameControl), 1, handle))
-		goto done;
-
-	//	kernel.myWalker = walker_ptr;	// restore walker engine pointer
-
-	if (!fread(&player, sizeof(Player), 1, handle)) goto done;
-	if (!fread(&player_info, sizeof(PlayerInfo), 1, handle)) goto done;
-	if (!fread(&global[0], sizeof(int32) * MAX_APPS_GLOBAL_VARS, 1, handle)) goto done;
 	if (!player_been_restore(handle)) goto done;
 
 	conv_restore_game(handle);

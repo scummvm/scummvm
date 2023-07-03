@@ -126,13 +126,13 @@ void BurgerGlobals::initialize_game() {
 	inv_give_to_player("MONEY");
 
 	// Reset the global variables
-	_vars.reset();
-	_vars.reset1();
-	_vars.reset2();
-	_vars.reset3();
-	_vars.reset4();
-	_vars.reset5();
-	_vars.conv_reset_all();
+	_globals.reset();
+	_globals.reset1();
+	_globals.reset2();
+	_globals.reset3();
+	_globals.reset4();
+	_globals.reset5();
+	_globals.conv_reset_all();
 }
 
 void BurgerGlobals::initMouseSeries(const Common::String &assetName, RGB8 *myPalette) {

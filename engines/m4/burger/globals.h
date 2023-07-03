@@ -19,10 +19,10 @@
  *
  */
 
-#ifndef M4_BURGER_VARS_H
-#define M4_BURGER_VARS_H
+#ifndef M4_BURGER_GLOBALS_H
+#define M4_BURGER_GLOBALS_H
 
-#include "common/array.h"
+#include "m4/core/globals.h"
 
 namespace M4 {
 namespace Burger {
@@ -547,11 +547,11 @@ enum {
 	V511 = 511
 };
 
-class Vars : public Common::Array<int32> {
+class GlobalVars : public M4::GlobalVars {
 private:
 	Common::Array<byte> _convSave;
 public:
-	Vars();
+	GlobalVars();
 
 	/**
 	 * Reset the variables back to initial game state

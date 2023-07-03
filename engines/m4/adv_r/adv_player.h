@@ -23,6 +23,7 @@
 #ifndef M4_ADV_R_ADV_PLAYER_H
 #define M4_ADV_R_ADV_PLAYER_H
 
+#include "common/serializer.h"
 #include "m4/m4_types.h"
 #include "m4/wscript/ws_machine.h"
 
@@ -84,11 +85,15 @@ struct Player {
 	int32 walk_facing = 0;
 
 	int32 click_x = 0, click_y = 0;
+
+	void syncGame(Common::Serializer &s);
 };
 
 struct PlayerInfo {
 	int32 x = 0, y = 0, facing = 0, scale = 0, depth = 0;
 	int32 camera_x = 0, camera_y = 0;
+
+	void syncGame(Common::Serializer &s);
 };
 
 extern bool player_said(const char *w0, const char *w1 = NULL, const char *w2 = NULL);

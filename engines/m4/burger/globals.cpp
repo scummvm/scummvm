@@ -19,7 +19,7 @@
  *
  */
 
-#include "m4/burger/vars.h"
+#include "m4/burger/globals.h"
 #include "m4/core/term.h"
 #include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_inv.h"
@@ -28,17 +28,17 @@
 namespace M4 {
 namespace Burger {
 
-#define GLOBAL_VARS_COUNT 512
+#define MAX_APPS_GLOBAL_VARS 512
 
-Vars::Vars() {
-	resize(GLOBAL_VARS_COUNT);
+GlobalVars::GlobalVars() {
+	resize(MAX_APPS_GLOBAL_VARS);
 }
 
-void Vars::reset() {
-	Common::fill(&(*this)[0], &(*this)[0] + GLOBAL_VARS_COUNT, 0);
+void GlobalVars::reset() {
+	Common::fill(&(*this)[0], &(*this)[0] + MAX_APPS_GLOBAL_VARS, 0);
 }
 
-int32 Vars::get_boonsville_time_and_display(bool showTime) {
+int32 GlobalVars::get_boonsville_time_and_display(bool showTime) {
 	if (showTime) {
 		int time = (*this)[BOONSVILLE_TIME];
 		int seconds = time % 60;
@@ -52,12 +52,12 @@ int32 Vars::get_boonsville_time_and_display(bool showTime) {
 	return (*this)[BOONSVILLE_TIME];
 }
 
-void Vars::set_boonsville_time(int32 time) {
+void GlobalVars::set_boonsville_time(int32 time) {
 	(*this)[BOONSVILLE_TIME] = time;
 	(*this)[BOONSVILLE_TIME2] = time - 1;
 }
 
-void Vars::reset1() {
+void GlobalVars::reset1() {
 	set_boonsville_time(0);
 	(*this)[V000] = 1000;
 	inv_give_to_player("money");
@@ -127,7 +127,7 @@ void Vars::reset1() {
 	conv_reset_all();
 }
 
-void Vars::reset2() {
+void GlobalVars::reset2() {
 	if ((*this)[V245] != 10027)
 		inv_give_to_player("BLOCK OF ICE");
 	if ((*this)[V277] == 6003)
@@ -157,7 +157,7 @@ void Vars::reset2() {
 	}
 }
 
-void Vars::reset3() {
+void GlobalVars::reset3() {
 	if (inv_player_has("BOTTLE")) {
 		inv_give_to_player("CARROT JUICE");
 		inv_move_object("BOTTLE", NOWHERE);
@@ -188,7 +188,7 @@ void Vars::reset3() {
 	(*this)[V145] = 0;
 }
 
-void Vars::reset4() {
+void GlobalVars::reset4() {
 	(*this)[V186] = 0;
 	(*this)[V234] = 0;
 	(*this)[V196] = 0;
@@ -239,7 +239,7 @@ void Vars::reset4() {
 	(*this)[V237] = 0;
 }
 
-void Vars::reset5() {
+void GlobalVars::reset5() {
 	if ((*this)[V159])
 		inv_give_to_player("DEED");
 
