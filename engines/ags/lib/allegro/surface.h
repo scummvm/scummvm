@@ -28,10 +28,13 @@
 #include "common/array.h"
 
 #if defined(__aarch64__)
-// M1/M2 SIMD intrensics
+// All 64 bit arm v8 or whatevers come with neon extensions, no need to check
 #include "arm_neon.h"
+#elif defined(__x86_64__) || defined(__i686__)
+// Most x86 based processors come with sse2, (which is what intels header has here), but it can use sse4
+// SSE2 support is still checked for at runtime
+#include "ags/lib/NEON_2_SSE.h"
 #endif
-#define WYATTOPT
 
 namespace AGS3 {
 
@@ -140,9 +143,6 @@ public:
 	void blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha, bool useTint, byte *destVal) const;
 	uint32x4_t blendPixelSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint32x4_t alphas) const;
 	uint16x8_t blendPixelSIMD2Bpp(uint16x8_t srcCols, uint16x8_t destCols, uint16x8_t alphas) const;
-#ifndef WYATTOPT
-	void blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const;
-#endif
 
 	inline void rgbBlend(uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
 		// Note: the original's handling varies slightly for R & B vs G.
@@ -175,6 +175,13 @@ public:
 			vandq_u16(vshrq_n_u16(destCols, 5), vmovq_n_u16(0x3f)),
 			vshrq_n_u16(destCols, 11),
 		};
+		//srcComps[0] = vorrq_u16(vshlq_n_u16(srcComps[0], 3), vshrq_n_u16(srcComps[0], 2));
+		//srcComps[1] = vorrq_u16(vshlq_n_u16(srcComps[1], 2), vshrq_n_u16(srcComps[1], 4));
+		//srcComps[2] = vorrq_u16(vshlq_n_u16(srcComps[2], 3), vshrq_n_u16(srcComps[2], 2));
+		//destComps[0] = vorrq_u16(vshlq_n_u16(destComps[0], 3), vshrq_n_u16(destComps[0], 2));
+		//destComps[1] = vorrq_u16(vshlq_n_u16(destComps[1], 2), vshrq_n_u16(destComps[1], 4));
+		//destComps[2] = vorrq_u16(vshlq_n_u16(destComps[2], 3), vshrq_n_u16(destComps[2], 2));
+
 		uint16x8_t diffs[] = {
 			vsubq_u16(srcComps[0], destComps[0]), // B
 			vsubq_u16(srcComps[1], destComps[1]), // G
@@ -185,13 +192,20 @@ public:
 		alphas = vshrq_n_u16(alphas, 1);
 		diffs[0] = vshrq_n_u16(vmulq_u16(diffs[0], alphas), 5);
 		diffs[2] = vshrq_n_u16(vmulq_u16(diffs[2], alphas), 5);
+
+		//diffs[0] = vandq_u16(vshrq_n_u16(vaddq_u16(diffs[0], destComps[0]), 3), vmovq_n_u16(0x1f));
+		//diffs[1] = vandq_u16(vshrq_n_u16(vaddq_u16(diffs[1], destComps[1]), 2), vmovq_n_u16(0x3f));
+		//diffs[2] = vandq_u16(vshrq_n_u16(vaddq_u16(diffs[2], destComps[2]), 3), vmovq_n_u16(0x1f));
+
+		diffs[0] = vandq_u16(vaddq_u16(diffs[0], destComps[0]), vmovq_n_u16(0x1f));
+		diffs[1] = vandq_u16(vaddq_u16(diffs[1], destComps[1]), vmovq_n_u16(0x3f));
+		diffs[2] = vandq_u16(vaddq_u16(diffs[2], destComps[2]), vmovq_n_u16(0x1f));
 		diffs[0] = vorrq_u16(diffs[0], vshlq_n_u16(diffs[1], 5));
-		diffs[0] = vorrq_u16(diffs[0], vshlq_n_u16(diffs[2], 11));
-		return vaddq_u16(diffs[0], destCols);
+		return vorrq_u16(diffs[0], vshlq_n_u16(diffs[2], 11));
 	}
 
 	inline uint32x4_t rgbBlendSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint32x4_t alphas, bool preserveAlpha) const {
-		alphas = vaddq_u32(alphas, vandq_u32(vceqq_u32(alphas, vmovq_n_u32(0)), vmovq_n_u32(1)));
+		alphas = vaddq_u32(alphas, vandq_u32(vcgtq_u32(alphas, vmovq_n_u32(0)), vmovq_n_u32(1)));
 		uint32x4_t alpha = vandq_u32(destCols, vmovq_n_u32(0xff000000));
 		uint32x4_t srcColsCopy = srcCols;
 		srcColsCopy = vandq_u32(srcColsCopy, vmovq_n_u32(0xff00ff));
@@ -267,11 +281,12 @@ public:
 		alphasRec = vrecpeq_f16(vaddq_f16(sAlphas2, dAlphas2));
 		srcRgb2 = vmulq_f16(srcRgb2, alphasRec);
 		uint16x4_t alphas = vcvta_u16_f16(vmul_n_f16(vadd_f16(sAlphas, dAlphas), 255.0));
-		srcRgb1 = vcopyq_lane_u16(srcRgb1, 3, alphas, 0);
-		srcRgb1 = vcopyq_lane_u16(srcRgb1, 7, alphas, 1);
-		srcRgb2 = vcopyq_lane_u16(srcRgb2, 3, alphas, 2);
-		srcRgb2 = vcopyq_lane_u16(srcRgb2, 7, alphas, 3);
-		return vcombine_u32(vreinterpret_u32_u8(vmovn_u16(vcvtq_u16_f16(srcRgb1))), vreinterpret_u32_u8(vmovn_u16(vcvtq_u16_f16(srcRgb2))));
+		uint16x8_t uintSrcRgb1 = vcvtq_u16_f16(srcRgb1), uintSrcRgb2 = vcvtq_u16_f16(srcRgb2);
+		uintSrcRgb1 = vcopyq_lane_u16(uintSrcRgb1, 3, alphas, 0);
+		uintSrcRgb1 = vcopyq_lane_u16(uintSrcRgb1, 7, alphas, 1);
+		uintSrcRgb2 = vcopyq_lane_u16(uintSrcRgb2, 3, alphas, 2);
+		uintSrcRgb2 = vcopyq_lane_u16(uintSrcRgb2, 7, alphas, 3);
+		return vcombine_u32(vreinterpret_u32_u8(vmovn_u16(uintSrcRgb1)), vreinterpret_u32_u8(vmovn_u16(uintSrcRgb2)));
 	}
 
 	// kRgbToRgbBlender
@@ -367,7 +382,7 @@ public:
 
 	inline uint32x4_t simd2BppTo4Bpp(uint16x4_t pixels) const {
 		uint32x4_t x = vmovl_u16(pixels);
-		uint32x4_t c = vshrq_n_u32(vandq_u32(x, vmovq_n_u32(0xf800)), 11);
+		uint32x4_t c = vshrq_n_u32(x, 11);
 		uint32x4_t r = vshlq_n_u32(vorrq_u32(vshlq_n_u32(c, 3), vshrq_n_u32(c, 2)), 16);
 		c = vshrq_n_u32(vandq_u32(x, vmovq_n_u32(0x07e0)), 5);
 		uint32x4_t g = vshlq_n_u32(vorrq_u32(vshlq_n_u32(c, 2), vshrq_n_u32(c, 4)), 8);
@@ -378,7 +393,7 @@ public:
 
 	inline uint16x4_t simd4BppTo2Bpp(uint32x4_t pixels) const {
 		uint32x4_t x = vshrq_n_u32(vandq_u32(pixels, vmovq_n_u32(0x000000ff)), 3);
-		x = vorrq_u32(x, vshlq_n_u32(vshrq_n_u32(vandq_u32(pixels, vmovq_n_u32(0x0000ff00)), 8+3), 5));
+		x = vorrq_u32(x, vshlq_n_u32(vshrq_n_u32(vandq_u32(pixels, vmovq_n_u32(0x0000ff00)), 8+2), 5));
 		x = vorrq_u32(x, vshlq_n_u32(vshrq_n_u32(vandq_u32(pixels, vmovq_n_u32(0x00ff0000)), 16+3), 11));
 		return vmovn_u32(x);
 	}
@@ -512,12 +527,12 @@ public:
 #else
 #error Change code to allow different scale threshold!
 #endif
-					memcpy(&srcBuffer[0*SrcBytesPerPixel], srcP + vgetq_lane_u32(indexes, 0), SrcBytesPerPixel);
-					memcpy(&srcBuffer[1*SrcBytesPerPixel], srcP + vgetq_lane_u32(indexes, 1), SrcBytesPerPixel);
-					memcpy(&srcBuffer[2*SrcBytesPerPixel], srcP + vgetq_lane_u32(indexes, 2), SrcBytesPerPixel);
-					memcpy(&srcBuffer[3*SrcBytesPerPixel], srcP + vgetq_lane_u32(indexes, 3), SrcBytesPerPixel);
+					memcpy(&srcBuffer[0*(uintptr_t)SrcBytesPerPixel], srcP + vgetq_lane_u32(indexes, 0), SrcBytesPerPixel);
+					memcpy(&srcBuffer[1*(uintptr_t)SrcBytesPerPixel], srcP + vgetq_lane_u32(indexes, 1), SrcBytesPerPixel);
+					memcpy(&srcBuffer[2*(uintptr_t)SrcBytesPerPixel], srcP + vgetq_lane_u32(indexes, 2), SrcBytesPerPixel);
+					memcpy(&srcBuffer[3*(uintptr_t)SrcBytesPerPixel], srcP + vgetq_lane_u32(indexes, 3), SrcBytesPerPixel);
 					scaleXCtr += scaleX*4;
-					byte *destPtr = &destP[destX * DestBytesPerPixel];
+					byte *destPtr = &destP[destX * (uintptr_t)DestBytesPerPixel];
 					uint32x4_t skipMask = vcgeq_u32(vaddq_u32(vdupq_n_u32(xCtr), addIndexes), xCtrWidthSIMD);
 					drawPixelSIMD<DestBytesPerPixel, SrcBytesPerPixel>(destPtr, (const byte *)srcBuffer, tint, alphas, maskedAlphas, transColors, 1, 0, srcAlpha, skipTrans, horizFlip, useTint, skipMask);
 				}
@@ -562,9 +577,9 @@ public:
 					gSrc = tintGreen;
 					bSrc = tintBlue;
 					aSrc = srcAlpha;
-				} else {
+				}/* else {
 					format.colorToARGB(getColor(destVal, DestBytesPerPixel), aDest, rDest, gDest, bDest);
-				}
+				}*/
 				blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha, useTint, destVal);
 				srcCol = format.ARGBToColor(aDest, rDest, gDest, bDest);
 			} else {
@@ -698,9 +713,9 @@ public:
 					gSrc = tintGreen;
 					bSrc = tintBlue;
 					aSrc = srcAlpha;
-				} else {
+				}/* else {
 					format.colorToARGB((uint32)(*(uint16 *)destVal), aDest, rDest, gDest, bDest);
-				}
+				}*/
 				blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha, useTint, destVal);
 				srcCol = format.ARGBToColor(aDest, rDest, gDest, bDest);
 			} else {
@@ -940,6 +955,9 @@ public:
 			error("Unsupported format in BITMAP::getColor");
 		}
 	}
+
+	// This is for testing the blending modes int Test_Gfx
+	friend void Test_BlenderModes();
 };
 
 /**
