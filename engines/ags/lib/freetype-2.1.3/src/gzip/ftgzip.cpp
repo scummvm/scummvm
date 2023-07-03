@@ -29,7 +29,7 @@
 
 #ifdef FT2_1_3_CONFIG_OPTION_SYSTEM_ZLIB
 
-#  include "zlib.h"
+#include "zlib.h"
 
 #else /* !SYSTEM_ZLIB */
 
@@ -40,22 +40,22 @@
 /* conflicts when a program is linked with both FreeType and the   */
 /* original ZLib                                                   */
 
-#  define  NO_DUMMY_DECL
-#  define  BUILDFIXED    /* save code size */
-#  define  MY_ZCALLOC
+#define NO_DUMMY_DECL
+#define BUILDFIXED /* save code size */
+#define MY_ZCALLOC
 
-#  include "zlib.h"
+#include "zlib.h"
 
-#    undef   SLOW
-#    define  SLOW  1  /* we can't use asm-optimized sources here !! */
+#undef SLOW
+#define SLOW 1 /* we can't use asm-optimized sources here !! */
 
-#    include "zutil.cpp"
-#    include "inftrees.cpp"
-#    include "infcodes.cpp"
-#    include "infutil.cpp"
-#    include "infblock.cpp"
-#    include "inflate.cpp"
-#    include "adler32.cpp"
+#include "adler32.cpp"
+#include "infblock.cpp"
+#include "infcodes.cpp"
+#include "inflate.cpp"
+#include "inftrees.cpp"
+#include "infutil.cpp"
+#include "zutil.cpp"
 
 #endif /* !SYSTEM_ZLIB */
 
@@ -66,6 +66,9 @@ void z_error(/* should be const */char* message) {
 	// do nothing
 }
 #endif
+
+namespace AGS3 {
+namespace FreeType213 {
 
 /***************************************************************************/
 /***************************************************************************/
@@ -517,11 +520,14 @@ Exit:
 	return error;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
 #else  /* !FT2_1_3_CONFIG_OPTION_USE_ZLIB */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
-FT2_1_3_Stream_OpenGzip( FT2_1_3_Stream    stream,
-                    FT2_1_3_Stream    source ) {
+FT2_1_3_EXPORT_DEF( AGS3::FreeType213::FT2_1_3_Error )
+FT2_1_3_Stream_OpenGzip( AGS3::FreeType213::FT2_1_3_Stream    stream,
+                    AGS3::FreeType213::FT2_1_3_Stream    source ) {
 	FT2_1_3_UNUSED( stream );
 	FT2_1_3_UNUSED( source );
 
