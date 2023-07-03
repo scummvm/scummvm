@@ -26,6 +26,9 @@
 
 #include "ftcerror.h"
 
+namespace AGS3 {
+namespace FreeType213 {
+
 /*************************************************************************/
 /*                                                                       */
 /* Each FTC_CMapNode contains a simple array to map a range of character */
@@ -57,7 +60,7 @@ typedef struct  FTC_CMapNodeRec_ {
 
 /* compute node hash value from cmap family and "requested" glyph index */
 #define FTC_CMAP_HASH( cfam, cquery )                                       \
-          ( (cfam)->hash + ( (cquery)->char_code / FTC_CMAP_INDICES_MAX ) )
+		  ( (cfam)->hash + ( (cquery)->char_code / FTC_CMAP_INDICES_MAX ) )
 
 /* if (indices[n] == FTC_CMAP_UNKNOWN), we assume that the corresponding */
 /* glyph indices haven't been queried through FT2_1_3_Get_Glyph_Index() yet   */
@@ -104,15 +107,15 @@ typedef struct FTC_CMapFamilyRec_ {
 /* initialize a new cmap node */
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 ftc_cmap_node_init( FTC_CMapNode   cnode,
-                    FTC_CMapQuery  cquery,
-                    FTC_Cache      cache ) {
+					FTC_CMapQuery  cquery,
+					FTC_Cache      cache ) {
 	FT2_1_3_UInt32  first;
 	FT2_1_3_UInt    n;
 	FT2_1_3_UNUSED( cache );
 
 
 	first = ( cquery->char_code / FTC_CMAP_INDICES_MAX ) *
-	        FTC_CMAP_INDICES_MAX;
+			FTC_CMAP_INDICES_MAX;
 
 	cnode->first = first;
 	for ( n = 0; n < FTC_CMAP_INDICES_MAX; n++ )
@@ -134,7 +137,7 @@ ftc_cmap_node_weight( FTC_CMapNode  cnode ) {
 /* compare a cmap node to a given query */
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Bool )
 ftc_cmap_node_compare( FTC_CMapNode   cnode,
-                       FTC_CMapQuery  cquery ) {
+					   FTC_CMapQuery  cquery ) {
 	FT2_1_3_UInt32  offset = (FT2_1_3_UInt32)( cquery->char_code - cnode->first );
 
 
@@ -153,8 +156,8 @@ ftc_cmap_node_compare( FTC_CMapNode   cnode,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 ftc_cmap_family_init( FTC_CMapFamily  cfam,
-                      FTC_CMapQuery   cquery,
-                      FTC_Cache       cache ) {
+					  FTC_CMapQuery   cquery,
+					  FTC_Cache       cache ) {
 	FTC_Manager   manager = cache->manager;
 	FTC_CMapDesc  desc = cquery->desc;
 	FT2_1_3_UInt32     hash = 0;
@@ -190,7 +193,7 @@ ftc_cmap_family_init( FTC_CMapFamily  cfam,
 		case FTC_CMAP_BY_ID:
 			for ( idx = 0; idx < count; idx++, cur++ ) {
 				if ( (FT2_1_3_UInt)cur[0]->platform_id == desc->u.id.platform &&
-				        (FT2_1_3_UInt)cur[0]->encoding_id == desc->u.id.encoding ) {
+						(FT2_1_3_UInt)cur[0]->encoding_id == desc->u.id.encoding ) {
 					hash = ( ( desc->u.id.platform << 8 ) | desc->u.id.encoding ) * 7;
 					break;
 				}
@@ -210,7 +213,7 @@ ftc_cmap_family_init( FTC_CMapFamily  cfam,
 		FTC_QUERY( cquery )->hash = FTC_CMAP_HASH( cfam, cquery );
 
 		error = ftc_family_init( FTC_FAMILY( cfam ),
-		                         FTC_QUERY( cquery ), cache );
+								 FTC_QUERY( cquery ), cache );
 	}
 
 	return error;
@@ -223,13 +226,13 @@ Bad_Descriptor:
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Bool )
 ftc_cmap_family_compare( FTC_CMapFamily  cfam,
-                         FTC_CMapQuery   cquery ) {
+						 FTC_CMapQuery   cquery ) {
 	FT2_1_3_Int  result = 0;
 
 
 	/* first, compare face id and type */
 	if ( cfam->desc.face_id != cquery->desc->face_id ||
-	        cfam->desc.type    != cquery->desc->type    )
+			cfam->desc.type    != cquery->desc->type    )
 		goto Exit;
 
 	switch ( cfam->desc.type ) {
@@ -243,7 +246,7 @@ ftc_cmap_family_compare( FTC_CMapFamily  cfam,
 
 	case FTC_CMAP_BY_ID:
 		result = ( cfam->desc.u.id.platform == cquery->desc->u.id.platform &&
-		           cfam->desc.u.id.encoding == cquery->desc->u.id.encoding );
+				   cfam->desc.u.id.encoding == cquery->desc->u.id.encoding );
 		break;
 
 	default:
@@ -294,21 +297,21 @@ const FTC_Cache_ClassRec  ftc_cmap_cache_class = {
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FTC_CMapCache_New( FTC_Manager     manager,
-                   FTC_CMapCache  *acache ) {
+				   FTC_CMapCache  *acache ) {
 	return FTC_Manager_Register_Cache(
-	           manager,
-	           (FTC_Cache_Class)&ftc_cmap_cache_class,
-	           FTC_CACHE_P( acache ) );
+			   manager,
+			   (FTC_Cache_Class)&ftc_cmap_cache_class,
+			   FTC_CACHE_P( acache ) );
 }
 
 
 #ifdef FTC_CACHE_USE_INLINE
 
 #define GEN_CACHE_FAMILY_COMPARE( f, q, c ) \
-          ftc_cmap_family_compare( (FTC_CMapFamily)(f), (FTC_CMapQuery)(q) )
+		  ftc_cmap_family_compare( (FTC_CMapFamily)(f), (FTC_CMapQuery)(q) )
 
 #define GEN_CACHE_NODE_COMPARE( n, q, c ) \
-          ftc_cmap_node_compare( (FTC_CMapNode)(n), (FTC_CMapQuery)(q) )
+		  ftc_cmap_node_compare( (FTC_CMapNode)(n), (FTC_CMapQuery)(q) )
 
 #define GEN_CACHE_LOOKUP  ftc_cmap_cache_lookup
 
@@ -325,8 +328,8 @@ FTC_CMapCache_New( FTC_Manager     manager,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_UInt )
 FTC_CMapCache_Lookup( FTC_CMapCache  cache,
-                      FTC_CMapDesc   desc,
-                      FT2_1_3_UInt32      char_code ) {
+					  FTC_CMapDesc   desc,
+					  FT2_1_3_UInt32      char_code ) {
 	FTC_CMapQueryRec  cquery;
 	FTC_CMapNode      node;
 	FT2_1_3_Error          error;
@@ -342,8 +345,8 @@ FTC_CMapCache_Lookup( FTC_CMapCache  cache,
 	cquery.char_code = char_code;
 
 	error = ftc_cmap_cache_lookup( FTC_CACHE( cache ),
-	                               FTC_QUERY( &cquery ),
-	                               (FTC_Node*)&node );
+								   FTC_QUERY( &cquery ),
+								   (FTC_Node*)&node );
 	if ( !error ) {
 		FT2_1_3_UInt  offset = (FT2_1_3_UInt)( char_code - node->first );
 
@@ -359,8 +362,8 @@ FTC_CMapCache_Lookup( FTC_CMapCache  cache,
 			gindex = 0;
 
 			error = FTC_Manager_Lookup_Face( FTC_CACHE(cache)->manager,
-			                                 desc->face_id,
-			                                 &face );
+											 desc->face_id,
+											 &face );
 			if ( !error ) {
 				FT2_1_3_CharMap  old, cmap  = NULL;
 				FT2_1_3_UInt     cmap_index;
@@ -386,5 +389,7 @@ FTC_CMapCache_Lookup( FTC_CMapCache  cache,
 	return gindex;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

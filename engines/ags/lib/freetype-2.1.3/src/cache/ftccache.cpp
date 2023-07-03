@@ -23,6 +23,8 @@
 
 #include "ftcerror.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 #define FTC_HASH_MAX_LOAD  2
 #define FTC_HASH_MIN_LOAD  1
@@ -42,7 +44,7 @@
 
 FT2_1_3_EXPORT_DEF( void )
 ftc_node_done( FTC_Node   node,
-               FTC_Cache  cache ) {
+			   FTC_Cache  cache ) {
 	FTC_Family       family;
 	FTC_FamilyEntry  entry;
 
@@ -59,7 +61,7 @@ ftc_node_done( FTC_Node   node,
 /* add a new node to the head of the manager's circular MRU list */
 static void
 ftc_node_mru_link( FTC_Node     node,
-                   FTC_Manager  manager ) {
+				   FTC_Manager  manager ) {
 	FTC_Node  first = manager->nodes_list;
 
 
@@ -89,7 +91,7 @@ ftc_node_mru_link( FTC_Node     node,
 /* remove a node from the manager's MRU list */
 static void
 ftc_node_mru_unlink( FTC_Node     node,
-                     FTC_Manager  manager ) {
+					 FTC_Manager  manager ) {
 	FTC_Node  first = manager->nodes_list;
 	FTC_Node  prev  = node->mru_prev;
 	FTC_Node  next  = node->mru_next;
@@ -119,7 +121,7 @@ ftc_node_mru_unlink( FTC_Node     node,
 /* move a node to the head of the manager's MRU list */
 static void
 ftc_node_mru_up( FTC_Node     node,
-                 FTC_Manager  manager ) {
+				 FTC_Manager  manager ) {
 	FTC_Node  first = manager->nodes_list;
 
 
@@ -146,7 +148,7 @@ ftc_node_mru_up( FTC_Node     node,
 /* remove a node from its cache's hash table */
 static FT2_1_3_Error
 ftc_node_hash_unlink( FTC_Node   node,
-                      FTC_Cache  cache ) {
+					  FTC_Cache  cache ) {
 	FT2_1_3_Error   error = 0;
 	FTC_Node  *pnode;
 	FT2_1_3_UInt    idx, num_buckets;
@@ -219,7 +221,7 @@ Exit:
 /* add a node to the "top" of its cache's hash table */
 static FT2_1_3_Error
 ftc_node_hash_link( FTC_Node   node,
-                    FTC_Cache  cache ) {
+					FTC_Cache  cache ) {
 	FTC_Node  *pnode;
 	FT2_1_3_UInt    idx;
 	FT2_1_3_Error   error = 0;
@@ -266,7 +268,7 @@ ftc_node_hash_link( FTC_Node   node,
 
 
 			if ( FT2_1_3_RENEW_ARRAY( cache->buckets,
-			                     ( mask + 1 ) * 2, ( mask + 1 ) * 4 ) ) {
+								 ( mask + 1 ) * 2, ( mask + 1 ) * 4 ) ) {
 				FT2_1_3_ERROR(( "ftc_node_hash_link: couldn't expand buckets!\n" ));
 				goto Exit;
 			}
@@ -287,7 +289,7 @@ Exit:
 /* remove a node from the cache manager */
 FT2_1_3_EXPORT_DEF( void )
 ftc_node_destroy( FTC_Node     node,
-                  FTC_Manager  manager ) {
+				  FTC_Manager  manager ) {
 	FT2_1_3_Memory        memory  = manager->library->memory;
 	FTC_Cache        cache;
 	FTC_FamilyEntry  entry;
@@ -331,7 +333,7 @@ ftc_node_destroy( FTC_Node     node,
 	/* check, just in case of general corruption :-) */
 	if ( manager->num_nodes == 0 )
 		FT2_1_3_ERROR(( "ftc_node_destroy: invalid cache node count! = %d\n",
-		           manager->num_nodes ));
+				   manager->num_nodes ));
 }
 
 
@@ -346,8 +348,8 @@ ftc_node_destroy( FTC_Node     node,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 ftc_family_init( FTC_Family  family,
-                 FTC_Query   query,
-                 FTC_Cache   cache ) {
+				 FTC_Query   query,
+				 FTC_Cache   cache ) {
 	FT2_1_3_Error         error;
 	FTC_Manager      manager = cache->manager;
 	FT2_1_3_Memory        memory  = manager->library->memory;
@@ -421,10 +423,10 @@ ftc_cache_init( FTC_Cache  cache ) {
 		lru_class->node_compare = (FT2_1_3_LruNode_CompareFunc)clazz->family_compare;
 
 		error = FT2_1_3_LruList_New( (FT2_1_3_LruList_Class) lru_class,
-		                        0,    /* max items == 0 => unbounded list */
-		                        cache,
-		                        memory,
-		                        &cache->families );
+								0,    /* max items == 0 => unbounded list */
+								cache,
+								memory,
+								&cache->families );
 		if ( error )
 			FT2_1_3_FREE( cache->buckets );
 	}
@@ -502,8 +504,8 @@ ftc_cache_done( FTC_Cache  cache ) {
 /*                                                    */
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 ftc_cache_lookup( FTC_Cache   cache,
-                  FTC_Query   query,
-                  FTC_Node   *anode ) {
+				  FTC_Query   query,
+				  FTC_Node   *anode ) {
 	FT2_1_3_Error    error = FT2_1_3_Err_Ok;
 	FT2_1_3_LruNode  lru;
 
@@ -570,9 +572,9 @@ Skip:
 
 
 		if ( query->family     != family                        ||
-		        family->fam_index >= cache->manager->families.size ) {
+				family->fam_index >= cache->manager->families.size ) {
 			FT2_1_3_ERROR((
-			             "ftc_cache_lookup: invalid query (bad 'family' field)\n" ));
+						 "ftc_cache_lookup: invalid query (bad 'family' field)\n" ));
 			return FTC_Err_Invalid_Argument;
 		}
 
@@ -590,8 +592,8 @@ Skip:
 					break;
 
 				if ( node->hash == hash                            &&
-				        (FT2_1_3_UInt)node->fam_index == family->fam_index &&
-				        compare( node, query, cache ) ) {
+						(FT2_1_3_UInt)node->fam_index == family->fam_index &&
+						compare( node, query, cache ) ) {
 					/* move to head of bucket list */
 					if ( pnode != bucket ) {
 						*pnode     = node->link;
@@ -658,5 +660,7 @@ Exit:
 	return error;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

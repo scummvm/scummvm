@@ -32,6 +32,8 @@
 
 #define FTC_LRU_GET_MANAGER( lru )  ( (FTC_Manager)(lru)->user_data )
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*************************************************************************/
@@ -61,15 +63,15 @@ typedef struct  FTC_SizeNodeRec_ {
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 ftc_face_node_init( FTC_FaceNode  node,
-                    FTC_FaceID    face_id,
-                    FTC_Manager   manager ) {
+					FTC_FaceID    face_id,
+					FTC_Manager   manager ) {
 	FT2_1_3_Error  error;
 
 
 	error = manager->request_face( face_id,
-	                               manager->library,
-	                               manager->request_data,
-	                               &node->face );
+								   manager->library,
+								   manager->request_data,
+								   &node->face );
 	if ( !error ) {
 		/* destroy initial size object; it will be re-created later */
 		if ( node->face->size )
@@ -83,22 +85,22 @@ ftc_face_node_init( FTC_FaceNode  node,
 /* helper function for ftc_face_node_done() */
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Bool )
 ftc_size_node_select( FTC_SizeNode  node,
-                      FT2_1_3_Face       face ) {
+					  FT2_1_3_Face       face ) {
 	return FT2_1_3_BOOL( node->size->face == face );
 }
 
 
 FT2_1_3_CALLBACK_DEF( void )
 ftc_face_node_done( FTC_FaceNode  node,
-                    FTC_Manager   manager ) {
+					FTC_Manager   manager ) {
 	FT2_1_3_Face  face    = node->face;
 
 
 	/* we must begin by removing all sizes for the target face */
 	/* from the manager's list                                 */
 	FT2_1_3_LruList_Remove_Selection( manager->sizes_list,
-	                             (FT2_1_3_LruNode_SelectFunc)ftc_size_node_select,
-	                             face );
+								 (FT2_1_3_LruNode_SelectFunc)ftc_size_node_select,
+								 face );
 
 	/* all right, we can discard the face now */
 	FT2_1_3_Done_Face( face );
@@ -124,8 +126,8 @@ const FT2_1_3_LruList_ClassRec  ftc_face_list_class = {
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FTC_Manager_Lookup_Face( FTC_Manager  manager,
-                         FTC_FaceID   face_id,
-                         FT2_1_3_Face     *aface ) {
+						 FTC_FaceID   face_id,
+						 FT2_1_3_Face     *aface ) {
 	FT2_1_3_Error      error;
 	FTC_FaceNode  node;
 
@@ -139,8 +141,8 @@ FTC_Manager_Lookup_Face( FTC_Manager  manager,
 		return FTC_Err_Invalid_Cache_Handle;
 
 	error = FT2_1_3_LruList_Lookup( manager->faces_list,
-	                           (FT2_1_3_LruKey)face_id,
-	                           (FT2_1_3_LruNode*)&node );
+							   (FT2_1_3_LruKey)face_id,
+							   (FT2_1_3_LruNode*)&node );
 	if ( !error )
 		*aface = node->face;
 
@@ -167,7 +169,7 @@ typedef struct  FTC_SizeQueryRec_ {
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 ftc_size_node_init( FTC_SizeNode   node,
-                    FTC_SizeQuery  query ) {
+					FTC_SizeQuery  query ) {
 	FT2_1_3_Face   face = query->face;
 	FT2_1_3_Size   size;
 	FT2_1_3_Error  error;
@@ -178,8 +180,8 @@ ftc_size_node_init( FTC_SizeNode   node,
 	if ( !error ) {
 		FT2_1_3_Activate_Size( size );
 		error = FT2_1_3_Set_Pixel_Sizes( query->face,
-		                            query->width,
-		                            query->height );
+									query->width,
+									query->height );
 		if ( error )
 			FT2_1_3_Done_Size( size );
 		else
@@ -200,7 +202,7 @@ ftc_size_node_done( FTC_SizeNode  node ) {
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 ftc_size_node_flush( FTC_SizeNode   node,
-                     FTC_SizeQuery  query ) {
+					 FTC_SizeQuery  query ) {
 	FT2_1_3_Size   size = node->size;
 	FT2_1_3_Error  error;
 
@@ -224,13 +226,13 @@ ftc_size_node_flush( FTC_SizeNode   node,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Bool )
 ftc_size_node_compare( FTC_SizeNode   node,
-                       FTC_SizeQuery  query ) {
+					   FTC_SizeQuery  query ) {
 	FT2_1_3_Size  size = node->size;
 
 
 	return FT2_1_3_BOOL( size->face                    == query->face   &&
-	                (FT2_1_3_UInt)size->metrics.x_ppem == query->width  &&
-	                (FT2_1_3_UInt)size->metrics.y_ppem == query->height );
+					(FT2_1_3_UInt)size->metrics.x_ppem == query->width  &&
+					(FT2_1_3_UInt)size->metrics.y_ppem == query->height );
 }
 
 
@@ -252,9 +254,9 @@ const FT2_1_3_LruList_ClassRec  ftc_size_list_class = {
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FTC_Manager_Lookup_Size( FTC_Manager  manager,
-                         FTC_Font     font,
-                         FT2_1_3_Face     *aface,
-                         FT2_1_3_Size     *asize ) {
+						 FTC_Font     font,
+						 FT2_1_3_Face     *aface,
+						 FT2_1_3_Size     *asize ) {
 	FT2_1_3_Error  error;
 
 
@@ -276,8 +278,8 @@ FTC_Manager_Lookup_Size( FTC_Manager  manager,
 		query.height = font->pix_height;
 
 		error = FT2_1_3_LruList_Lookup( manager->sizes_list,
-		                           (FT2_1_3_LruKey)&query,
-		                           (FT2_1_3_LruNode*)&node );
+								   (FT2_1_3_LruKey)&query,
+								   (FT2_1_3_LruNode*)&node );
 		if ( !error ) {
 			/* select the size as the current one for this face */
 			FT2_1_3_Activate_Size( node->size );
@@ -310,7 +312,7 @@ ftc_family_table_init( FTC_FamilyTable  table ) {
 
 static void
 ftc_family_table_done( FTC_FamilyTable  table,
-                       FT2_1_3_Memory        memory ) {
+					   FT2_1_3_Memory        memory ) {
 	FT2_1_3_FREE( table->entries );
 	table->free  = 0;
 	table->count = 0;
@@ -320,8 +322,8 @@ ftc_family_table_done( FTC_FamilyTable  table,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 ftc_family_table_alloc( FTC_FamilyTable   table,
-                        FT2_1_3_Memory         memory,
-                        FTC_FamilyEntry  *aentry ) {
+						FT2_1_3_Memory         memory,
+						FTC_FamilyEntry  *aentry ) {
 	FTC_FamilyEntry  entry;
 	FT2_1_3_Error         error = 0;
 
@@ -379,7 +381,7 @@ ftc_family_table_alloc( FTC_FamilyTable   table,
 
 FT2_1_3_EXPORT_DEF( void )
 ftc_family_table_free( FTC_FamilyTable  table,
-                       FT2_1_3_UInt          idx ) {
+					   FT2_1_3_UInt          idx ) {
 	/* simply add it to the linked list of free entries */
 	if ( idx < table->count ) {
 		FTC_FamilyEntry  entry = table->entries + idx;
@@ -409,12 +411,12 @@ ftc_family_table_free( FTC_FamilyTable  table,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FTC_Manager_New( FT2_1_3_Library          library,
-                 FT2_1_3_UInt             max_faces,
-                 FT2_1_3_UInt             max_sizes,
-                 FT2_1_3_ULong            max_bytes,
-                 FTC_Face_Requester  requester,
-                 FT2_1_3_Pointer          req_data,
-                 FTC_Manager        *amanager ) {
+				 FT2_1_3_UInt             max_faces,
+				 FT2_1_3_UInt             max_sizes,
+				 FT2_1_3_ULong            max_bytes,
+				 FTC_Face_Requester  requester,
+				 FT2_1_3_Pointer          req_data,
+				 FTC_Manager        *amanager ) {
 	FT2_1_3_Error     error;
 	FT2_1_3_Memory    memory;
 	FTC_Manager  manager = 0;
@@ -438,18 +440,18 @@ FTC_Manager_New( FT2_1_3_Library          library,
 		max_bytes = FTC_MAX_BYTES_DEFAULT;
 
 	error = FT2_1_3_LruList_New( &ftc_face_list_class,
-	                        max_faces,
-	                        manager,
-	                        memory,
-	                        &manager->faces_list );
+							max_faces,
+							manager,
+							memory,
+							&manager->faces_list );
 	if ( error )
 		goto Exit;
 
 	error = FT2_1_3_LruList_New( &ftc_size_list_class,
-	                        max_sizes,
-	                        manager,
-	                        memory,
-	                        &manager->sizes_list );
+							max_sizes,
+							manager,
+							memory,
+							&manager->sizes_list );
 	if ( error )
 		goto Exit;
 
@@ -547,9 +549,9 @@ FTC_Manager_Check( FTC_Manager  manager ) {
 			FTC_Cache     cache;
 
 			if ( (FT2_1_3_UInt)node->fam_index >= manager->families.count ||
-			        entry->link              != FTC_FAMILY_ENTRY_NONE  )
+					entry->link              != FTC_FAMILY_ENTRY_NONE  )
 				FT2_1_3_ERROR(( "FTC_Manager_Check: invalid node (family index = %ld\n",
-				           node->fam_index ));
+						   node->fam_index ));
 			else {
 				cache   = entry->cache;
 				weight += cache->clazz->node_weight( node, cache );
@@ -561,7 +563,7 @@ FTC_Manager_Check( FTC_Manager  manager ) {
 
 		if ( weight != manager->cur_weight )
 			FT2_1_3_ERROR(( "FTC_Manager_Check: invalid weight %ld instead of %ld\n",
-			           manager->cur_weight, weight ));
+					   manager->cur_weight, weight ));
 	}
 
 	/* check circular list */
@@ -578,8 +580,8 @@ FTC_Manager_Check( FTC_Manager  manager ) {
 
 		if ( count != manager->num_nodes )
 			FT2_1_3_ERROR((
-			             "FTC_Manager_Check: invalid cache node count %d instead of %d\n",
-			             manager->num_nodes, count ));
+						 "FTC_Manager_Check: invalid cache node count %d instead of %d\n",
+						 manager->num_nodes, count ));
 	}
 }
 
@@ -606,8 +608,8 @@ FTC_Manager_Compress( FTC_Manager  manager ) {
 	FTC_Manager_Check( manager );
 
 	FT2_1_3_ERROR(( "compressing, weight = %ld, max = %ld, nodes = %d\n",
-	           manager->cur_weight, manager->max_weight,
-	           manager->num_nodes ));
+			   manager->cur_weight, manager->max_weight,
+			   manager->num_nodes ));
 #endif
 
 	if ( manager->cur_weight < manager->max_weight || first == NULL )
@@ -634,8 +636,8 @@ FTC_Manager_Compress( FTC_Manager  manager ) {
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FTC_Manager_Register_Cache( FTC_Manager      manager,
-                            FTC_Cache_Class  clazz,
-                            FTC_Cache       *acache ) {
+							FTC_Cache_Class  clazz,
+							FTC_Cache       *acache ) {
 	FT2_1_3_Error   error = FTC_Err_Invalid_Argument;
 	FTC_Cache  cache = NULL;
 
@@ -693,12 +695,14 @@ Exit:
 
 FT2_1_3_EXPORT_DEF( void )
 FTC_Node_Unref( FTC_Node     node,
-                FTC_Manager  manager ) {
+				FTC_Manager  manager ) {
 	if ( node && (FT2_1_3_UInt)node->fam_index < manager->families.count &&
-	        manager->families.entries[node->fam_index].cache ) {
+			manager->families.entries[node->fam_index].cache ) {
 		node->ref_count--;
 	}
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

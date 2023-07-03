@@ -26,12 +26,14 @@
 
 #include "ftcerror.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /* create a new chunk node, setting its cache index and ref count */
 FT2_1_3_EXPORT_DEF( void )
 ftc_glyph_node_init( FTC_GlyphNode     gnode,
-                     FT2_1_3_UInt           gindex,
-                     FTC_GlyphFamily   gfam ) {
+					 FT2_1_3_UInt           gindex,
+					 FTC_GlyphFamily   gfam ) {
 	FT2_1_3_UInt  len;
 	FT2_1_3_UInt  start = FTC_GLYPH_FAMILY_START( gfam, gindex );
 
@@ -49,7 +51,7 @@ ftc_glyph_node_init( FTC_GlyphNode     gnode,
 
 FT2_1_3_EXPORT_DEF( void )
 ftc_glyph_node_done( FTC_GlyphNode  gnode,
-                     FTC_Cache      cache ) {
+					 FTC_Cache      cache ) {
 	/* finalize the node */
 	gnode->item_count = 0;
 	gnode->item_start = 0;
@@ -60,7 +62,7 @@ ftc_glyph_node_done( FTC_GlyphNode  gnode,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Bool )
 ftc_glyph_node_compare( FTC_GlyphNode   gnode,
-                        FTC_GlyphQuery  gquery ) {
+						FTC_GlyphQuery  gquery ) {
 	FT2_1_3_UInt  start = (FT2_1_3_UInt)gnode->item_start;
 	FT2_1_3_UInt  count = (FT2_1_3_UInt)gnode->item_count;
 
@@ -79,11 +81,11 @@ ftc_glyph_node_compare( FTC_GlyphNode   gnode,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 ftc_glyph_family_init( FTC_GlyphFamily  gfam,
-                       FT2_1_3_UInt32        hash,
-                       FT2_1_3_UInt          item_count,
-                       FT2_1_3_UInt          item_total,
-                       FTC_GlyphQuery   gquery,
-                       FTC_Cache        cache ) {
+					   FT2_1_3_UInt32        hash,
+					   FT2_1_3_UInt          item_count,
+					   FT2_1_3_UInt          item_total,
+					   FTC_GlyphQuery   gquery,
+					   FTC_Cache        cache ) {
 	FT2_1_3_Error  error;
 
 
@@ -105,5 +107,7 @@ ftc_glyph_family_done( FTC_GlyphFamily  gfam ) {
 	ftc_family_done( FTC_FAMILY( gfam ) );
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

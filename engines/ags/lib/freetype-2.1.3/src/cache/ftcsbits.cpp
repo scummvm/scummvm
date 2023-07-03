@@ -26,6 +26,8 @@
 
 #include "ftcerror.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 #define FTC_SBIT_ITEMS_PER_NODE  16
 
@@ -77,8 +79,8 @@ typedef struct  FTC_SBitFamilyRec_ {
 
 static FT2_1_3_Error
 ftc_sbit_copy_bitmap( FTC_SBit    sbit,
-                      FT2_1_3_Bitmap*  bitmap,
-                      FT2_1_3_Memory   memory ) {
+					  FT2_1_3_Bitmap*  bitmap,
+					  FT2_1_3_Memory   memory ) {
 	FT2_1_3_Error  error;
 	FT2_1_3_Int    pitch = bitmap->pitch;
 	FT2_1_3_ULong  size;
@@ -98,7 +100,7 @@ ftc_sbit_copy_bitmap( FTC_SBit    sbit,
 
 FT2_1_3_CALLBACK_DEF( void )
 ftc_sbit_node_done( FTC_SBitNode  snode,
-                    FTC_Cache     cache ) {
+					FTC_Cache     cache ) {
 	FTC_SBit   sbit   = snode->sbits;
 	FT2_1_3_UInt    count  = FTC_GLYPH_NODE( snode )->item_count;
 	FT2_1_3_Memory  memory = cache->memory;
@@ -113,10 +115,10 @@ ftc_sbit_node_done( FTC_SBitNode  snode,
 
 static FT2_1_3_Error
 ftc_sbit_node_load( FTC_SBitNode    snode,
-                    FTC_Manager     manager,
-                    FTC_SBitFamily  sfam,
-                    FT2_1_3_UInt         gindex,
-                    FT2_1_3_ULong       *asize ) {
+					FTC_Manager     manager,
+					FTC_SBitFamily  sfam,
+					FT2_1_3_UInt         gindex,
+					FT2_1_3_ULong       *asize ) {
 	FT2_1_3_Error       error;
 	FTC_GlyphNode  gnode = FTC_GLYPH_NODE( snode );
 	FT2_1_3_Memory      memory;
@@ -126,7 +128,7 @@ ftc_sbit_node_load( FTC_SBitNode    snode,
 
 
 	if ( gindex <  (FT2_1_3_UInt)gnode->item_start                     ||
-	        gindex >= (FT2_1_3_UInt)gnode->item_start + gnode->item_count ) {
+			gindex >= (FT2_1_3_UInt)gnode->item_start + gnode->item_count ) {
 		FT2_1_3_ERROR(( "ftc_sbit_node_load: invalid glyph index" ));
 		return FTC_Err_Invalid_Argument;
 	}
@@ -136,7 +138,7 @@ ftc_sbit_node_load( FTC_SBitNode    snode,
 	sbit = snode->sbits + ( gindex - gnode->item_start );
 
 	error = FTC_Manager_Lookup_Size( manager, &sfam->type.font,
-	                                 &face, &size );
+									 &face, &size );
 	if ( !error ) {
 		/* by default, indicates a `missing' glyph */
 		sbit->buffer = 0;
@@ -163,12 +165,12 @@ ftc_sbit_node_load( FTC_SBitNode    snode,
 			yadvance = ( slot->metrics.vertAdvance + 32 ) >> 6;
 
 			if ( CHECK_BYTE( bitmap->rows  )     &&
-			        CHECK_BYTE( bitmap->width )     &&
-			        CHECK_CHAR( bitmap->pitch )     &&
-			        CHECK_CHAR( slot->bitmap_left ) &&
-			        CHECK_CHAR( slot->bitmap_top  ) &&
-			        CHECK_CHAR( xadvance )          &&
-			        CHECK_CHAR( yadvance )          ) {
+					CHECK_BYTE( bitmap->width )     &&
+					CHECK_CHAR( bitmap->pitch )     &&
+					CHECK_CHAR( slot->bitmap_left ) &&
+					CHECK_CHAR( slot->bitmap_top  ) &&
+					CHECK_CHAR( xadvance )          &&
+					CHECK_CHAR( yadvance )          ) {
 				sbit->width     = (FT2_1_3_Byte)bitmap->width;
 				sbit->height    = (FT2_1_3_Byte)bitmap->rows;
 				sbit->pitch     = (FT2_1_3_Char)bitmap->pitch;
@@ -217,20 +219,20 @@ ftc_sbit_node_load( FTC_SBitNode    snode,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 ftc_sbit_node_init( FTC_SBitNode    snode,
-                    FTC_GlyphQuery  gquery,
-                    FTC_Cache       cache ) {
+					FTC_GlyphQuery  gquery,
+					FTC_Cache       cache ) {
 	FT2_1_3_Error  error;
 
 
 	ftc_glyph_node_init( FTC_GLYPH_NODE( snode ),
-	                     gquery->gindex,
-	                     FTC_GLYPH_FAMILY( gquery->query.family ) );
+						 gquery->gindex,
+						 FTC_GLYPH_FAMILY( gquery->query.family ) );
 
 	error = ftc_sbit_node_load( snode,
-	                            cache->manager,
-	                            FTC_SBIT_FAMILY( FTC_QUERY( gquery )->family ),
-	                            gquery->gindex,
-	                            NULL );
+								cache->manager,
+								FTC_SBIT_FAMILY( FTC_QUERY( gquery )->family ),
+								gquery->gindex,
+								NULL );
 	if ( error )
 		ftc_glyph_node_done( FTC_GLYPH_NODE( snode ), cache );
 
@@ -270,8 +272,8 @@ ftc_sbit_node_weight( FTC_SBitNode  snode ) {
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Bool )
 ftc_sbit_node_compare( FTC_SBitNode   snode,
-                       FTC_SBitQuery  squery,
-                       FTC_Cache      cache ) {
+					   FTC_SBitQuery  squery,
+					   FTC_Cache      cache ) {
 	FTC_GlyphQuery  gquery = FTC_GLYPH_QUERY( squery );
 	FTC_GlyphNode   gnode  = FTC_GLYPH_NODE( snode );
 	FT2_1_3_Bool         result;
@@ -290,10 +292,10 @@ ftc_sbit_node_compare( FTC_SBitNode   snode,
 
 			/* yes, it's safe to ignore errors here */
 			ftc_sbit_node_load( snode,
-			                    cache->manager,
-			                    FTC_SBIT_FAMILY( FTC_QUERY( squery )->family ),
-			                    gindex,
-			                    &size );
+								cache->manager,
+								FTC_SBIT_FAMILY( FTC_QUERY( squery )->family ),
+								gindex,
+								&size );
 
 			cache->manager->cur_weight += size;
 		}
@@ -314,8 +316,8 @@ ftc_sbit_node_compare( FTC_SBitNode   snode,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 ftc_sbit_family_init( FTC_SBitFamily  sfam,
-                      FTC_SBitQuery   squery,
-                      FTC_Cache       cache ) {
+					  FTC_SBitQuery   squery,
+					  FTC_Cache       cache ) {
 	FTC_Manager  manager = cache->manager;
 	FT2_1_3_Error     error;
 	FT2_1_3_Face      face;
@@ -325,15 +327,15 @@ ftc_sbit_family_init( FTC_SBitFamily  sfam,
 
 	/* we need to compute "cquery.item_total" now */
 	error = FTC_Manager_Lookup_Face( manager,
-	                                 squery->type.font.face_id,
-	                                 &face );
+									 squery->type.font.face_id,
+									 &face );
 	if ( !error ) {
 		error = ftc_glyph_family_init( FTC_GLYPH_FAMILY( sfam ),
-		                               FTC_IMAGE_TYPE_HASH( &sfam->type ),
-		                               FTC_SBIT_ITEMS_PER_NODE,
-		                               face->num_glyphs,
-		                               FTC_GLYPH_QUERY( squery ),
-		                               cache );
+									   FTC_IMAGE_TYPE_HASH( &sfam->type ),
+									   FTC_SBIT_ITEMS_PER_NODE,
+									   face->num_glyphs,
+									   FTC_GLYPH_QUERY( squery ),
+									   cache );
 	}
 
 	return error;
@@ -342,7 +344,7 @@ ftc_sbit_family_init( FTC_SBitFamily  sfam,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Bool )
 ftc_sbit_family_compare( FTC_SBitFamily  sfam,
-                         FTC_SBitQuery   squery ) {
+						 FTC_SBitQuery   squery ) {
 	FT2_1_3_Bool  result;
 
 
@@ -390,10 +392,10 @@ const FTC_Cache_ClassRec  ftc_sbit_cache_class = {
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FTC_SBitCache_New( FTC_Manager     manager,
-                   FTC_SBitCache  *acache ) {
+				   FTC_SBitCache  *acache ) {
 	return FTC_Manager_Register_Cache( manager,
-	                                   &ftc_sbit_cache_class,
-	                                   (FTC_Cache*)acache );
+									   &ftc_sbit_cache_class,
+									   (FTC_Cache*)acache );
 }
 
 
@@ -402,10 +404,10 @@ FTC_SBitCache_New( FTC_Manager     manager,
 #ifdef FTC_CACHE_USE_INLINE
 
 #define GEN_CACHE_FAMILY_COMPARE( f, q, c ) \
-          ftc_sbit_family_compare( (FTC_SBitFamily)(f), (FTC_SBitQuery)(q) )
+		  ftc_sbit_family_compare( (FTC_SBitFamily)(f), (FTC_SBitQuery)(q) )
 
 #define GEN_CACHE_NODE_COMPARE( n, q, c ) \
-          ftc_sbit_node_compare( (FTC_SBitNode)(n), (FTC_SBitQuery)(q), c )
+		  ftc_sbit_node_compare( (FTC_SBitNode)(n), (FTC_SBitQuery)(q), c )
 
 #define GEN_CACHE_LOOKUP  ftc_sbit_cache_lookup
 #include "ftccache.i"
@@ -418,10 +420,10 @@ FTC_SBitCache_New( FTC_Manager     manager,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FTC_SBitCache_Lookup( FTC_SBitCache   cache,
-                      FTC_ImageType   type,
-                      FT2_1_3_UInt         gindex,
-                      FTC_SBit       *ansbit,
-                      FTC_Node       *anode ) {
+					  FTC_ImageType   type,
+					  FT2_1_3_UInt         gindex,
+					  FTC_SBit       *ansbit,
+					  FTC_Node       *anode ) {
 	FT2_1_3_Error          error;
 	FTC_SBitQueryRec  squery;
 	FTC_SBitNode      node;
@@ -440,8 +442,8 @@ FTC_SBitCache_Lookup( FTC_SBitCache   cache,
 	squery.type          = *type;
 
 	error = ftc_sbit_cache_lookup( FTC_CACHE( cache ),
-	                               FTC_QUERY( &squery ),
-	                               (FTC_Node*)&node );
+								   FTC_QUERY( &squery ),
+								   (FTC_Node*)&node );
 	if ( !error ) {
 		*ansbit = node->sbits + ( gindex - FTC_GLYPH_NODE( node )->item_start );
 
@@ -458,16 +460,16 @@ FTC_SBitCache_Lookup( FTC_SBitCache   cache,
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FTC_SBit_Cache_New( FTC_Manager      manager,
-                    FTC_SBit_Cache  *acache ) {
+					FTC_SBit_Cache  *acache ) {
 	return FTC_SBitCache_New( manager, (FTC_SBitCache*)acache );
 }
 
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FTC_SBit_Cache_Lookup( FTC_SBit_Cache   cache,
-                       FTC_Image_Desc*  desc,
-                       FT2_1_3_UInt          gindex,
-                       FTC_SBit        *ansbit ) {
+					   FTC_Image_Desc*  desc,
+					   FT2_1_3_UInt          gindex,
+					   FTC_SBit        *ansbit ) {
 	FTC_ImageTypeRec  type0;
 
 
@@ -514,11 +516,13 @@ FTC_SBit_Cache_Lookup( FTC_SBit_Cache   cache,
 	}
 
 	return FTC_SBitCache_Lookup( (FTC_SBitCache)cache,
-	                             &type0,
-	                             gindex,
-	                             ansbit,
-	                             NULL );
+								 &type0,
+								 gindex,
+								 ansbit,
+								 NULL );
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */
