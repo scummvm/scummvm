@@ -24,7 +24,21 @@
 namespace M4 {
 
 void GameControl::syncGame(Common::Serializer &s) {
+	// TODO: Ensure this matches the original structure
+	for (uint i = 0; i < KERNEL_SCRATCH_SIZE; ++i)
+		s.syncAsUint32LE(scratch[i]);
 
+	s.syncAsSint16LE(room_id);
+	s.syncAsSint16LE(new_room);
+	s.syncAsSint16LE(previous_section);
+	s.syncAsSint16LE(section_id);
+	s.syncAsSint16LE(new_section);
+	s.syncAsSint16LE(previous_room);
+
+	s.syncAsUint32LE(digi_overall_volume_percent);
+	s.syncAsUint32LE(midi_overall_volume_percent);
+	s.syncAsByte(camera_pan_instant);
+	s.syncAsByte(going);
 }
 
 } // End of namespace M4

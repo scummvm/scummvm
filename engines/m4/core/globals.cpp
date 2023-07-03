@@ -19,18 +19,14 @@
  *
  */
 
-#include "m4/adv_r/adv_walk.h"
-#include "m4/core/errors.h"
-#include "m4/globals.h"
+#include "m4/core/globals.h"
 
 namespace M4 {
 
-void ws_demand_location(machine *myWalker, int32 x, int32 y) {
-	error("TODO: ws_demand_location");
+void GlobalVars::syncGame(Common::Serializer &s) {
+	size_t count = size();
+	for (uint i = 0; i < count; ++i)
+		s.syncAsSint32LE((*this)[i]);
 }
 
-void ws_get_walker_info(machine *myWalker, int32 *x, int32 *y, int32 *s, int32 *layer, int32 *facing) {
-	error("TODO: ws_get_walker_info");
-}
-
-} // End of namespace M4
+} // namespace M4

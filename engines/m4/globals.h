@@ -23,6 +23,7 @@
 #define M4_GLOBALS_H
 
 #include "m4/adv_r/kernel.h"
+#include "m4/core/globals.h"
 #include "m4/core/term.h"
 #include "m4/adv_db_r/db_catalog.h"
 #include "m4/adv_r/adv.h"
@@ -121,6 +122,8 @@ public:
 	virtual ~Globals();
 	bool init();
 
+	virtual GlobalVars *getGlobals() = 0;
+
 	GameControl _game;
 	Kernel _kernel;
 	Term _term;
@@ -129,6 +132,7 @@ public:
 	Scene_list _scene_list;
 	frac16 _globals[GLB_SHARED_VARS];
 	Player _player;
+	PlayerInfo _player_info;
 	Resources _resources;
 	Rails_Globals _rails;
 	Catalog _catalog;
@@ -185,9 +189,11 @@ public:
 	bool _showMousePos = false;
 	bool _inv_suppress_click_sound = false;
 	bool _between_rooms = false;
+	bool _completeWalk = false;
 };
 
 #define _G(X) (g_globals->_##X)
+#define _GV() g_globals->getGlobals()
 
 } // namespace M4
 
