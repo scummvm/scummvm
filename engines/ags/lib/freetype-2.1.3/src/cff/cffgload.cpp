@@ -448,7 +448,7 @@ cff_builder_add_contour( CFF_Builder*  builder ) {
 
 	if ( !builder->load_points ) {
 		outline->n_contours++;
-		return CFF_Err_Ok;
+		return FT2_1_3_Err_Ok;
 	}
 
 	error = FT2_1_3_GlyphLoader_CheckPoints( builder->loader, 0, 1 );
@@ -639,7 +639,7 @@ cff_operator_seac( CFF_Decoder*  decoder,
 	if ( bchar_index < 0 || achar_index < 0 ) {
 		FT2_1_3_ERROR(( "cff_operator_seac:" ));
 		FT2_1_3_ERROR(( " invalid seac character code arguments\n" ));
-		return CFF_Err_Syntax_Error;
+		return FT2_1_3_Err_Syntax_Error;
 	}
 
 	/* If we are trying to load a composite glyph, do not load the */
@@ -799,7 +799,7 @@ cff_decoder_parse_charstrings( CFF_Decoder*  decoder,
 	limit = zone->limit  = charstring_base + charstring_len;
 	ip    = zone->cursor = zone->base;
 
-	error = CFF_Err_Ok;
+	error = FT2_1_3_Err_Ok;
 
 	x = builder->pos_x;
 	y = builder->pos_y;
@@ -1670,7 +1670,7 @@ cff_decoder_parse_charstrings( CFF_Decoder*  decoder,
 				}
 
 				if ( !error )
-					error = CFF_Err_Ok;
+					error = FT2_1_3_Err_Ok;
 
 				cff_builder_close_contour( builder );
 
@@ -2043,7 +2043,7 @@ Unimplemented:
 					FT2_1_3_ERROR(( " %d", ip[0] ));
 				FT2_1_3_ERROR(( "\n" ));
 
-				return CFF_Err_Unimplemented_Feature;
+				return FT2_1_3_Err_Unimplemented_Feature;
 			}
 
 			decoder->top = args;
@@ -2058,15 +2058,15 @@ Unimplemented:
 
 Syntax_Error:
 	FT2_1_3_TRACE4(( "cff_decoder_parse_charstrings: syntax error!" ));
-	return CFF_Err_Invalid_File_Format;
+	return FT2_1_3_Err_Invalid_File_Format;
 
 Stack_Underflow:
 	FT2_1_3_TRACE4(( "cff_decoder_parse_charstrings: stack underflow!" ));
-	return CFF_Err_Too_Few_Arguments;
+	return FT2_1_3_Err_Too_Few_Arguments;
 
 Stack_Overflow:
 	FT2_1_3_TRACE4(( "cff_decoder_parse_charstrings: stack overflow!" ));
-	return CFF_Err_Stack_Overflow;
+	return FT2_1_3_Err_Stack_Overflow;
 
 Memory_Error:
 	return builder->error;
@@ -2136,7 +2136,7 @@ cff_compute_max_advance( TT_Face  face,
 
 	*max_advance = decoder.builder.advance.x;
 
-	return CFF_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 

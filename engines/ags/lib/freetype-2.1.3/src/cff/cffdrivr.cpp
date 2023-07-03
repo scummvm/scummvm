@@ -102,7 +102,7 @@ Get_Kerning( TT_Face     face,
 
 
 	if ( !face )
-		return CFF_Err_Invalid_Face_Handle;
+		return FT2_1_3_Err_Invalid_Face_Handle;
 
 	kerning->x = 0;
 	kerning->y = 0;
@@ -135,7 +135,7 @@ Get_Kerning( TT_Face     face,
 	}
 
 Exit:
-	return CFF_Err_Ok;
+	return FT2_1_3_Err_Ok;
 
 Found:
 	kerning->x = pair->value;
@@ -181,7 +181,7 @@ Load_Glyph( CFF_GlyphSlot  slot,
 
 
 	if ( !slot )
-		return CFF_Err_Invalid_Slot_Handle;
+		return FT2_1_3_Err_Invalid_Slot_Handle;
 
 	/* check whether we want a scaled outline or bitmap */
 	if ( !size )
@@ -194,7 +194,7 @@ Load_Glyph( CFF_GlyphSlot  slot,
 	if ( size ) {
 		/* these two object must have the same parent */
 		if ( size->face != slot->root.face )
-			return CFF_Err_Invalid_Face_Handle;
+			return FT2_1_3_Err_Invalid_Face_Handle;
 	}
 
 	/* now load the glyph outline if necessary */
@@ -240,7 +240,7 @@ cff_get_glyph_name( CFF_Face    face,
 		FT2_1_3_ERROR(( " cannot open CFF & CEF fonts\n" ));
 		FT2_1_3_ERROR(( "                   " ));
 		FT2_1_3_ERROR(( " without the `PSNames' module\n" ));
-		error = CFF_Err_Unknown_File_Format;
+		error = FT2_1_3_Err_Unknown_File_Format;
 		goto Exit;
 	}
 
@@ -262,7 +262,7 @@ cff_get_glyph_name( CFF_Face    face,
 	}
 
 	FT2_1_3_FREE ( gname );
-	error = CFF_Err_Ok;
+	error = FT2_1_3_Err_Ok;
 
 Exit:
 	return error;

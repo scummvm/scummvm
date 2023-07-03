@@ -275,7 +275,7 @@ cff_face_init( FT2_1_3_Stream      stream,
 
 		/* if we are performing a simple font format check, exit immediately */
 		if ( face_index < 0 )
-			return CFF_Err_Ok;
+			return FT2_1_3_Err_Ok;
 
 		sfnt_format = 1;
 
@@ -309,7 +309,7 @@ cff_face_init( FT2_1_3_Stream      stream,
 		/* rewind to start of file; we are going to load a pure-CFF font */
 		if ( FT2_1_3_STREAM_SEEK( 0 ) )
 			goto Exit;
-		error = CFF_Err_Ok;
+		error = FT2_1_3_Err_Ok;
 	}
 
 	/* now load and parse the CFF table in the file */
@@ -501,7 +501,7 @@ Exit:
 	return error;
 
 Bad_Format:
-	error = CFF_Err_Unknown_File_Format;
+	error = FT2_1_3_Err_Unknown_File_Format;
 	goto Exit;
 }
 
@@ -531,7 +531,7 @@ FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 cff_driver_init( CFF_Driver  driver ) {
 	FT2_1_3_UNUSED( driver );
 
-	return CFF_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 

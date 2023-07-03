@@ -295,7 +295,7 @@ cff_parse_font_matrix( CFF_Parser  parser ) {
 	FT2_1_3_Fixed         temp;
 
 
-	error = CFF_Err_Stack_Underflow;
+	error = FT2_1_3_Err_Stack_Underflow;
 
 	if ( parser->top >= parser->stack + 6 ) {
 		matrix->xx = cff_parse_fixed_thousand( data++ );
@@ -322,7 +322,7 @@ cff_parse_font_matrix( CFF_Parser  parser ) {
 		offset->x >>= 16;
 		offset->y >>= 16;
 
-		error = CFF_Err_Ok;
+		error = FT2_1_3_Err_Ok;
 	}
 
 	return error;
@@ -337,14 +337,14 @@ cff_parse_font_bbox( CFF_Parser  parser ) {
 	FT2_1_3_Error         error;
 
 
-	error = CFF_Err_Stack_Underflow;
+	error = FT2_1_3_Err_Stack_Underflow;
 
 	if ( parser->top >= parser->stack + 4 ) {
 		bbox->xMin = FT2_1_3_RoundFix( cff_parse_fixed( data++ ) );
 		bbox->yMin = FT2_1_3_RoundFix( cff_parse_fixed( data++ ) );
 		bbox->xMax = FT2_1_3_RoundFix( cff_parse_fixed( data++ ) );
 		bbox->yMax = FT2_1_3_RoundFix( cff_parse_fixed( data   ) );
-		error = CFF_Err_Ok;
+		error = FT2_1_3_Err_Ok;
 	}
 
 	return error;
@@ -358,12 +358,12 @@ cff_parse_private_dict( CFF_Parser  parser ) {
 	FT2_1_3_Error         error;
 
 
-	error = CFF_Err_Stack_Underflow;
+	error = FT2_1_3_Err_Stack_Underflow;
 
 	if ( parser->top >= parser->stack + 2 ) {
 		dict->private_size   = cff_parse_num( data++ );
 		dict->private_offset = cff_parse_num( data   );
-		error = CFF_Err_Ok;
+		error = FT2_1_3_Err_Ok;
 	}
 
 	return error;
@@ -377,13 +377,13 @@ cff_parse_cid_ros( CFF_Parser  parser ) {
 	FT2_1_3_Error         error;
 
 
-	error = CFF_Err_Stack_Underflow;
+	error = FT2_1_3_Err_Stack_Underflow;
 
 	if ( parser->top >= parser->stack + 3 ) {
 		dict->cid_registry   = (FT2_1_3_UInt)cff_parse_num ( data++ );
 		dict->cid_ordering   = (FT2_1_3_UInt)cff_parse_num ( data++ );
 		dict->cid_supplement = (FT2_1_3_ULong)cff_parse_num( data );
-		error = CFF_Err_Ok;
+		error = FT2_1_3_Err_Ok;
 	}
 
 	return error;
@@ -448,7 +448,7 @@ cff_parser_run( CFF_Parser  parser,
 				FT2_1_3_Byte*    start,
 				FT2_1_3_Byte*    limit ) {
 	FT2_1_3_Byte*  p     = start;
-	FT2_1_3_Error  error = CFF_Err_Ok;
+	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
 
 
 	parser->top    = parser->stack;
@@ -613,15 +613,15 @@ Exit:
 	return error;
 
 Stack_Overflow:
-	error = CFF_Err_Invalid_Argument;
+	error = FT2_1_3_Err_Invalid_Argument;
 	goto Exit;
 
 Stack_Underflow:
-	error = CFF_Err_Invalid_Argument;
+	error = FT2_1_3_Err_Invalid_Argument;
 	goto Exit;
 
 Syntax_Error:
-	error = CFF_Err_Invalid_Argument;
+	error = FT2_1_3_Err_Invalid_Argument;
 	goto Exit;
 }
 
