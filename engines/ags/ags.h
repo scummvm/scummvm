@@ -37,6 +37,9 @@
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/lib/allegro/system.h"
 
+// DEBUG: @eklipsed TAKE OUT!!!
+//#define ENABLE_AGS_TESTS 1
+
 namespace AGS3 {
 class Globals;
 }

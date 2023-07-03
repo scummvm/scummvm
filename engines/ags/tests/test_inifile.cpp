@@ -21,10 +21,12 @@
 
 #include "ags/shared/core/platform.h"
 #include "ags/lib/std/algorithm.h"
-#include "ags/shared/debugging/assert.h"
+//#include "ags/shared/debugging/assert.h"
+// File not present??
+#include "common/scummsys.h"
 #include "ags/shared/util/file.h"
 #include "ags/shared/util/ini_util.h"
-#include "ags/shared/util/inifile.h"
+#include "ags/shared/util/ini_file.h"
 #include "ags/shared/util/stream.h"
 
 namespace AGS3 {

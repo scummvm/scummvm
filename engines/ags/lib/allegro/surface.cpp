@@ -26,8 +26,7 @@
 #include "ags/globals.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
-
-#define WYATTOPT
+#include <arm_neon.h>
 
 namespace AGS3 {
 
@@ -164,102 +163,25 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	int xStart = (dstRect.left < destRect.left) ? dstRect.left - destRect.left : 0;
 	int yStart = (dstRect.top < destRect.top) ? dstRect.top - destRect.top : 0;
 
-#ifdef WYATTOPT
 #define DRAWINNER(func) func(yStart, xStart, transColor, alphaMask, palette, useTint, sameFormat, src, destArea, horizFlip, vertFlip, skipTrans, srcAlpha, tintRed, tintGreen, tintBlue, dstRect, srcArea, _G(_blender_mode), 0, 0)
-	if (sameFormat) {
-		switch (format.bytesPerPixel) {
-		case 1: DRAWINNER(drawInner1Bpp<0>); break;
-		case 2: DRAWINNER(drawInner2Bpp<0>); break;
-		case 4: DRAWINNER((drawInner4BppWithConv<4, 4, 0>)); break;
-		}
-	} else if (format.bytesPerPixel == 4 && src.format.bytesPerPixel == 2) { 
-		DRAWINNER((drawInner4BppWithConv<4, 2, 0>));
-	} else if (format.bytesPerPixel == 2 && src.format.bytesPerPixel == 4) {
-		DRAWINNER((drawInner4BppWithConv<2, 4, 0>));
-	} else {
+	if (!_G(_bitmap_simd_optimizations)) {
 		DRAWINNER(drawInnerGeneric<0>);
+	} else {
+		if (sameFormat) {
+			switch (format.bytesPerPixel) {
+			case 1: DRAWINNER(drawInner1Bpp<0>); break;
+			case 2: DRAWINNER(drawInner2Bpp<0>); break;
+			case 4: DRAWINNER((drawInner4BppWithConv<4, 4, 0>)); break;
+		}
+		} else if (format.bytesPerPixel == 4 && src.format.bytesPerPixel == 2) { 
+			DRAWINNER((drawInner4BppWithConv<4, 2, 0>));
+		} else if (format.bytesPerPixel == 2 && src.format.bytesPerPixel == 4) {
+			DRAWINNER((drawInner4BppWithConv<2, 4, 0>));
+		} else {
+			DRAWINNER(drawInnerGeneric<0>);
+		}
 	}
 #undef DRAWINNER
-#else
-	byte rSrc, gSrc, bSrc, aSrc;
-	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
-	const int xDir = horizFlip ? -1 : 1;
-	for (int destY = yStart, yCtr = 0; yCtr < dstRect.height(); ++destY, ++yCtr) {
-		if (destY < 0 || destY >= destArea.h)
-			continue;
-		byte *destP = (byte *)destArea.getBasePtr(0, destY);
-		const byte *srcP = (const byte *)src.getBasePtr(
-		                       horizFlip ? srcArea.right - 1 : srcArea.left,
-		                       vertFlip ? srcArea.bottom - 1 - yCtr :
-		                       srcArea.top + yCtr);
-
-		// Loop through the pixels of the row
-		for (int destX = xStart, xCtr = 0, xCtrBpp = 0; xCtr < dstRect.width(); ++destX, ++xCtr, xCtrBpp += src.format.bytesPerPixel) {
-			if (destX < 0 || destX >= destArea.w)
-				continue;
-
-			const byte *srcVal = srcP + xDir * xCtrBpp;
-			uint32 srcCol = getColor(srcVal, src.format.bytesPerPixel);
-
-			// Check if this is a transparent color we should skip
-			if (skipTrans && ((srcCol & alphaMask) == transColor))
-				continue;
-
-			byte *destVal = (byte *)&destP[destX * format.bytesPerPixel];
-
-			// When blitting to the same format we can just copy the color
-			if (format.bytesPerPixel == 1) {
-				*destVal = srcCol;
-				continue;
-			} else if (sameFormat && srcAlpha == -1) {
-				if (format.bytesPerPixel == 4)
-					*(uint32 *)destVal = srcCol;
-				else
-					*(uint16 *)destVal = srcCol;
-				continue;
-			}
-
-			// We need the rgb values to do blending and/or convert between formats
-			if (src.format.bytesPerPixel == 1) {
-				const RGB &rgb = palette[srcCol];
-				aSrc = 0xff;
-				rSrc = rgb.r;
-				gSrc = rgb.g;
-				bSrc = rgb.b;
-			} else
-				src.format.colorToARGB(srcCol, aSrc, rSrc, gSrc, bSrc);
-
-			if (srcAlpha == -1) {
-				// This means we don't use blending.
-				aDest = aSrc;
-				rDest = rSrc;
-				gDest = gSrc;
-				bDest = bSrc;
-			} else {
-				if (useTint) {
-					rDest = rSrc;
-					gDest = gSrc;
-					bDest = bSrc;
-					aDest = aSrc;
-					rSrc = tintRed;
-					gSrc = tintGreen;
-					bSrc = tintBlue;
-					aSrc = srcAlpha;
-				} else {
-					// TODO: move this to blendPixel to only do it when needed?
-					format.colorToARGB(getColor(destVal, format.bytesPerPixel), aDest, rDest, gDest, bDest);
-				}
-				blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha);
-			}
-
-			uint32 pixel = format.ARGBToColor(aDest, rDest, gDest, bDest);
-			if (format.bytesPerPixel == 4)
-				*(uint32 *)destVal = pixel;
-			else
-				*(uint16 *)destVal = pixel;
-		}
-	}
-#endif
 }
 
 void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
@@ -309,92 +231,26 @@ void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	int xStart = (dstRect.left < destRect.left) ? dstRect.left - destRect.left : 0;
 	int yStart = (dstRect.top < destRect.top) ? dstRect.top - destRect.top : 0;
 
-#ifdef WYATTOPT
 #define DRAWINNER(func) func(yStart, xStart, transColor, alphaMask, palette, 0, sameFormat, src, destArea, false, false, skipTrans, srcAlpha, 0, 0, 0, dstRect, srcRect, _G(_blender_mode), scaleX, scaleY)
-	if (sameFormat) {
-		switch (format.bytesPerPixel) {
-		case 1: DRAWINNER(drawInner1Bpp<SCALE_THRESHOLD>); break;
-		case 2: DRAWINNER(drawInner2Bpp<SCALE_THRESHOLD>); break;
-		case 4: DRAWINNER((drawInner4BppWithConv<4, 4, SCALE_THRESHOLD>)); break;
-		}
-	} else if (format.bytesPerPixel == 4 && src.format.bytesPerPixel == 2) { 
-		DRAWINNER((drawInner4BppWithConv<4, 2, SCALE_THRESHOLD>));
-	} else if (format.bytesPerPixel == 2 && src.format.bytesPerPixel == 4) {
-		DRAWINNER((drawInner4BppWithConv<2, 4, SCALE_THRESHOLD>));
-	} else {
+	if (!_G(_bitmap_simd_optimizations)) {
 		DRAWINNER(drawInnerGeneric<SCALE_THRESHOLD>);
+	} else {
+		if (sameFormat) {
+			switch (format.bytesPerPixel) {
+			case 1: DRAWINNER(drawInner1Bpp<SCALE_THRESHOLD>); break;
+			case 2: DRAWINNER(drawInner2Bpp<SCALE_THRESHOLD>); break;
+			case 4: DRAWINNER((drawInner4BppWithConv<4, 4, SCALE_THRESHOLD>)); break;
+			}
+		} else if (format.bytesPerPixel == 4 && src.format.bytesPerPixel == 2) { 
+			DRAWINNER((drawInner4BppWithConv<4, 2, SCALE_THRESHOLD>));
+		} else if (format.bytesPerPixel == 2 && src.format.bytesPerPixel == 4) {
+			DRAWINNER((drawInner4BppWithConv<2, 4, SCALE_THRESHOLD>));
+		} else {
+			DRAWINNER(drawInnerGeneric<SCALE_THRESHOLD>);
+		}
 	}
 #undef DRAWINNER
-#else
-	byte rSrc, gSrc, bSrc, aSrc;
-	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
-	for (int destY = yStart, yCtr = 0, scaleYCtr = 0; yCtr < dstRect.height();
-	        ++destY, ++yCtr, scaleYCtr += scaleY) {
-		if (destY < 0 || destY >= destArea.h)
-			continue;
-		byte *destP = (byte *)destArea.getBasePtr(0, destY);
-		const byte *srcP = (const byte *)src.getBasePtr(
-		                       srcRect.left, srcRect.top + scaleYCtr / SCALE_THRESHOLD);
-
-		// Loop through the pixels of the row
-		for (int destX = xStart, xCtr = 0, scaleXCtr = 0; xCtr < dstRect.width();
-		        ++destX, ++xCtr, scaleXCtr += scaleX) {
-			if (destX < 0 || destX >= destArea.w)
-				continue;
-
-			const byte *srcVal = srcP + scaleXCtr / SCALE_THRESHOLD * src.format.bytesPerPixel;
-			uint32 srcCol = getColor(srcVal, src.format.bytesPerPixel);
-
-			// Check if this is a transparent color we should skip
-			if (skipTrans && ((srcCol & alphaMask) == transColor))
-				continue;
-
-			byte *destVal = (byte *)&destP[destX * format.bytesPerPixel];
-
-			// When blitting to the same format we can just copy the color
-			if (format.bytesPerPixel == 1) {
-				*destVal = srcCol;
-				continue;
-			} else if (sameFormat && srcAlpha == -1) {
-				if (format.bytesPerPixel == 4)
-					*(uint32 *)destVal = srcCol;
-				else
-					*(uint16 *)destVal = srcCol;
-				continue;
-			}
-
-			// We need the rgb values to do blending and/or convert between formats
-			if (src.format.bytesPerPixel == 1) {
-				const RGB &rgb = palette[srcCol];
-				aSrc = 0xff;
-				rSrc = rgb.r;
-				gSrc = rgb.g;
-				bSrc = rgb.b;
-			} else
-				src.format.colorToARGB(srcCol, aSrc, rSrc, gSrc, bSrc);
-
-			if (srcAlpha == -1) {
-				// This means we don't use blending.
-				aDest = aSrc;
-				rDest = rSrc;
-				gDest = gSrc;
-				bDest = bSrc;
-			} else {
-				// TODO: move this to blendPixel to only do it when needed?
-				format.colorToARGB(getColor(destVal, format.bytesPerPixel), aDest, rDest, gDest, bDest);
-				blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha);
-			}
-
-			uint32 pixel = format.ARGBToColor(aDest, rDest, gDest, bDest);
-			if (format.bytesPerPixel == 4)
-				*(uint32 *)destVal = pixel;
-			else
-				*(uint16 *)destVal = pixel;
-		}
-	}
-#endif
 }
-
 void BITMAP::blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha, bool useTint, byte *destVal) const {
 	switch (_G(_blender_mode)) {
 	case kSourceAlphaBlender:
@@ -436,42 +292,6 @@ void BITMAP::blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &a
 		break;
 	}
 }
-#ifndef WYATTOPT
-void BITMAP::blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
-	switch (_G(_blender_mode)) {
-	case kSourceAlphaBlender:
-		blendSourceAlpha(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
-		break;
-	case kArgbToArgbBlender:
-		blendArgbToArgb(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
-		break;
-	case kArgbToRgbBlender:
-		blendArgbToRgb(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
-		break;
-	case kRgbToArgbBlender:
-		blendRgbToArgb(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
-		break;
-	case kRgbToRgbBlender:
-		blendRgbToRgb(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
-		break;
-	case kAlphaPreservedBlenderMode:
-		blendPreserveAlpha(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
-		break;
-	case kOpaqueBlenderMode:
-		blendOpaque(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
-		break;
-	case kAdditiveBlenderMode:
-		blendAdditiveAlpha(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
-		break;
-	case kTintBlenderMode:
-		blendTintSprite(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha, false);
-		break;
-	case kTintLightBlenderMode:
-		blendTintSprite(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha, true);
-		break;
-	}
-}
-#endif
 
 uint32x4_t BITMAP::blendPixelSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint32x4_t alphas) const {
 	uint32x4_t srcAlphas, difAlphas, mask, ch1, ch2;
@@ -483,7 +303,8 @@ uint32x4_t BITMAP::blendPixelSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint3
 		srcAlphas = vshlq_n_u32(srcAlphas, 24);
 		mask = vceqq_u32(alphas, vmovq_n_u32(0));
 		srcAlphas = vandq_u32(srcAlphas, mask);
-		difAlphas = vandq_u32(srcAlphas, vmvnq_u32(mask));
+		difAlphas = vandq_u32(difAlphas, vmvnq_u32(mask));
+		srcCols = vandq_u32(srcCols, vmovq_n_u32(0x00ffffff));
 		srcCols = vorrq_u32(srcCols, vorrq_u32(srcAlphas, difAlphas));
 	};
 	switch (_G(_blender_mode)) {
@@ -492,11 +313,17 @@ uint32x4_t BITMAP::blendPixelSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint3
 		return rgbBlendSIMD(srcCols, destCols, alphas, false);
 	case kArgbToArgbBlender:
 		setupArgbAlphas();
-		return argbBlendSIMD(srcCols, destCols);
+		mask = vcgtq_u32(vshrq_n_u32(srcCols, 24), vmovq_n_u32(0));
+		ch1 = vandq_u32(argbBlendSIMD(srcCols, destCols), mask);
+		ch2 = vandq_u32(destCols, vmvnq_u32(mask));
+		return vorrq_u32(ch1, ch2);
 	case kArgbToRgbBlender:
 		setupArgbAlphas();
-		srcCols = argbBlendSIMD(srcCols, destCols);
-		return vandq_u32(srcCols, vmovq_n_u32(0x00ffffff));
+		return rgbBlendSIMD(srcCols, destCols, vshrq_n_u32(srcCols, 24), false);
+		//mask = vcgtq_u32(vshrq_n_u32(srcCols, 24), vmovq_n_u32(0));
+		//ch1 = vandq_u32(argbBlendSIMD(srcCols, destCols), mask);
+		//ch2 = vandq_u32(destCols, vmvnq_u32(mask));
+		//return vandq_u32(vorrq_u32(ch1, ch2), vmovq_n_u32(0x00ffffff));
 	case kRgbToArgbBlender:
 		ch2 = vandq_u32(srcCols, vmovq_n_u32(0x00ffffff));
 		ch2 = vorrq_u32(ch2, vshlq_n_u32(alphas, 24));
@@ -516,7 +343,7 @@ uint32x4_t BITMAP::blendPixelSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint3
 		srcAlphas = vaddq_u32(vshrq_n_u32(srcCols, 24), vshrq_n_u32(destCols, 24));
 		srcAlphas = vminq_u32(srcAlphas, vmovq_n_u32(0xff));
 		srcCols = vandq_u32(srcCols, vmovq_n_u32(0x00ffffff));
-		return vorrq_u32(srcCols, srcAlphas);
+		return vorrq_u32(srcCols, vshlq_n_u32(srcAlphas, 24));
 	case kTintBlenderMode:
 		return blendTintSpriteSIMD(srcCols, destCols, alphas, false);
 	case kTintLightBlenderMode:
@@ -525,25 +352,33 @@ uint32x4_t BITMAP::blendPixelSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint3
 }
 
 uint16x8_t BITMAP::blendPixelSIMD2Bpp(uint16x8_t srcCols, uint16x8_t destCols, uint16x8_t alphas) const {
+	uint16x8_t mask, ch1, ch2;
 	switch (_G(_blender_mode)) {
 	case kSourceAlphaBlender:
-	case kAdditiveBlenderMode:
 	case kOpaqueBlenderMode:
-		return rgbBlendSIMD2Bpp(srcCols, destCols, vmovq_n_u16(0xff));
+	case kAdditiveBlenderMode:
+		return srcCols;
 	case kArgbToArgbBlender:
 	case kArgbToRgbBlender:
-	case kRgbToArgbBlender:
+		ch1 = vandq_u16(vmovq_n_u16(0xff), vceqq_u16(alphas, vmovq_n_u16(0)));
+		ch2 = vandq_u16(alphas, vcgtq_u16(alphas, vmovq_n_u16(0)));
+		alphas = vorrq_u16(ch1, ch2);
 	case kRgbToRgbBlender:
 	case kAlphaPreservedBlenderMode:
 		return rgbBlendSIMD2Bpp(srcCols, destCols, alphas);
+	case kRgbToArgbBlender:
+		mask = vorrq_u32(vceqq_u32(alphas, vmovq_n_u32(0)), vceqq_u32(alphas, vmovq_n_u32(255)));
+		ch1 = vandq_u32(srcCols, mask);
+		ch2 = vandq_u32(rgbBlendSIMD2Bpp(srcCols, destCols, alphas), vmvnq_u32(mask));
+		return vorrq_u32(ch1, ch2);
 	case kTintBlenderMode:
 	case kTintLightBlenderMode:
 		uint32x4_t srcColsLo = simd2BppTo4Bpp(vget_low_u16(srcCols));
 		uint32x4_t srcColsHi = simd2BppTo4Bpp(vget_high_u16(srcCols));
 		uint32x4_t destColsLo = simd2BppTo4Bpp(vget_low_u16(destCols));
 		uint32x4_t destColsHi = simd2BppTo4Bpp(vget_high_u16(destCols));
-		uint32x4_t alphasLo = simd2BppTo4Bpp(vget_low_u16(alphas));
-		uint32x4_t alphasHi = simd2BppTo4Bpp(vget_high_u16(alphas));
+		uint32x4_t alphasLo = vmovl_u16(vget_low_u16(alphas));
+		uint32x4_t alphasHi = vmovl_u16(vget_high_u16(alphas));
 		uint16x4_t lo = simd4BppTo2Bpp(blendTintSpriteSIMD(srcColsLo, destColsLo, alphasLo, _G(_blender_mode) == kTintLightBlenderMode));
 		uint16x4_t hi = simd4BppTo2Bpp(blendTintSpriteSIMD(srcColsHi, destColsHi, alphasHi, _G(_blender_mode) == kTintLightBlenderMode));
 		return vcombine_u16(lo, hi);
@@ -560,6 +395,7 @@ void BITMAP::blendTintSprite(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uin
 	rgb_to_hsv(rDest, gDest, bDest, &yh, &ys, &yv);
 	if (light) {
 		// adjust luminance
+		// (I think the writer meant value, since they are using hsV)
 		yv -= (1.0 - ((float)alpha / 250.0));
 		if (yv < 0.0)
 			yv = 0.0;
@@ -599,19 +435,22 @@ uint32x4_t BITMAP::blendTintSpriteSIMD(uint32x4_t srcCols, uint32x4_t destCols, 
 	//float32x4_t dmins = vminq_f32(ddr, vminq_f32(ddg, ddb));
 	float32x4_t smins = vminq_f32(ssr, vminq_f32(ssg, ssb));
 	//float32x4_t ddelta = vsubq_f32(dmaxes, dmins);
-	float32x4_t chroma = vsubq_f32(smaxes, smins);
-
+	
+	const float32x4_t eplison0 = vmovq_n_f32(0.0000001);
+	float32x4_t chroma = vmaxq_f32(vsubq_f32(smaxes, smins), eplison0);
 	float32x4_t hr, hg, hb, hue;
 	hr = vdivq_f32(vsubq_f32(ssg, ssb), chroma);
 	hr = vsubq_f32(hr, vmulq_n_f32(vrndmq_f32(vmulq_n_f32(hr, 1.0 / 6.0)), 6.0));
 	hg = vaddq_f32(vdivq_f32(vsubq_f32(ssb, ssr), chroma), vmovq_n_f32(2.0));
 	hb = vaddq_f32(vdivq_f32(vsubq_f32(ssr, ssg), chroma), vmovq_n_f32(4.0));
-	float32x4_t hrfactors = vcvtq_f32_u32(vandq_u32(vceqq_f32(ssr, smaxes), vmovq_n_u32(1)));
-	float32x4_t hgfactors = vcvtq_f32_u32(vandq_u32(vceqq_f32(ssg, smaxes), vmovq_n_u32(1)));
-	float32x4_t hbfactors = vcvtq_f32_u32(vandq_u32(vceqq_f32(ssb, smaxes), vmovq_n_u32(1)));
+	float32x4_t hrfactors = vcvtq_f32_u32(vandq_u32(vandq_u32(vceqq_f32(ssr, smaxes), vmvnq_u32(vceqq_u32(ssr, ssb))), vmovq_n_u32(1)));
+	float32x4_t hgfactors = vcvtq_f32_u32(vandq_u32(vandq_u32(vceqq_f32(ssg, smaxes), vmvnq_u32(vceqq_u32(ssg, ssr))), vmovq_n_u32(1)));
+	float32x4_t hbfactors = vcvtq_f32_u32(vandq_u32(vandq_u32(vceqq_f32(ssb, smaxes), vmvnq_u32(vceqq_u32(ssb, ssg))), vmovq_n_u32(1)));
 	hue = vmulq_f32(hr, hrfactors);
 	hue = vaddq_f32(hue, vmulq_f32(hg, hgfactors));
 	hue = vaddq_f32(hue, vmulq_f32(hb, hbfactors));
+	//float32x4_t hchromaZeroMask = vcvtq_f32_u32(vandq_u32(vcleq_f32(chroma, eplison0), vmovq_n_u32(1)));
+	//hue = vmulq_f32(hue, hchromaZeroMask);
 
 	// Mess with the light
 	float32x4_t val = dmaxes;
@@ -622,7 +461,7 @@ uint32x4_t BITMAP::blendTintSpriteSIMD(uint32x4_t srcCols, uint32x4_t destCols, 
 		
 	// then it stiches them back together
 	//AGS3::Shared::Debug::Printf(AGS3::Shared::kDbgMsg_Info, "hues: %f", vgetq_lane_f32(hue, 0));
-	chroma = vsubq_f32(val, smins);
+	chroma = vmulq_f32(val, vdivq_f32(vsubq_f32(smaxes, smins), vaddq_f32(smaxes, eplison0)));
 	float32x4_t hprime_mod2 = vmulq_n_f32(hue, 1.0 / 2.0);
 	hprime_mod2 = vmulq_n_f32(vsubq_f32(hprime_mod2, vrndmq_f32(hprime_mod2)), 2.0);
 	float32x4_t x = vmulq_f32(chroma, vsubq_f32(vmovq_n_f32(1.0), vabsq_f32(vsubq_f32(hprime_mod2, vmovq_n_f32(1.0)))));
@@ -631,7 +470,7 @@ uint32x4_t BITMAP::blendTintSpriteSIMD(uint32x4_t srcCols, uint32x4_t destCols, 
 	uint32x4_t c_int = vcvtq_u32_f32(vmulq_n_f32(chroma, 255.0));
 
 	uint32x4_t val0 = vorrq_u32(vshlq_n_u32(x_int, 8), vshlq_n_u32(c_int, 16));
-	val0 = vandq_u32(val0, vceqq_u32(hprime_rounded, vmovq_n_u32(0)));
+	val0 = vandq_u32(val0, vorrq_u32(vceqq_u32(hprime_rounded, vmovq_n_u32(0)), vceqq_u32(hprime_rounded, vmovq_n_u32(6))));
 	uint32x4_t val1 = vorrq_u32(vshlq_n_u32(c_int, 8), vshlq_n_u32(x_int, 16));
 	val1 = vandq_u32(val1, vceqq_u32(hprime_rounded, vmovq_n_u32(1)));
 	uint32x4_t val2 = vorrq_u32(vshlq_n_u32(c_int, 8), x_int);
