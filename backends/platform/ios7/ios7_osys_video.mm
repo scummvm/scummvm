@@ -77,6 +77,15 @@ void OSystem_iOS7::logMessage(LogMessageType::Type type, const char *message) {
 	fflush(output);
 }
 
+static inline void execute_on_main_thread(void (^block)(void)) {
+	if ([NSThread currentThread] == [NSThread mainThread]) {
+		block();
+	}
+	else {
+		dispatch_sync(dispatch_get_main_queue(), block);
+	}
+}
+
 void OSystem_iOS7::engineInit() {
 	EventsBaseBackend::engineInit();
 	// Prevent the device going to sleep during game play (and in particular cut scenes)
@@ -84,6 +93,18 @@ void OSystem_iOS7::engineInit() {
 		[[UIApplication sharedApplication] setIdleTimerDisabled:YES];
 	});
 	[[iOS7AppDelegate iPhoneView] setIsInGame:YES];
+
+#if TARGET_OS_IOS
+	// Automatically open the keyboard when starting a game and in portrait mode.
+	// This is preferred for text input games and there's a lot of screen space to
+	// utilize for the keyboard anyway.
+	if (_screenOrientation == kScreenOrientationPortrait ||
+		_screenOrientation == kScreenOrientationFlippedPortrait) {
+		execute_on_main_thread(^ {
+			[[iOS7AppDelegate iPhoneView] showKeyboard];
+		});
+	}
+#endif
 }
 
 void OSystem_iOS7::engineDone() {
@@ -93,15 +114,13 @@ void OSystem_iOS7::engineDone() {
 		[[UIApplication sharedApplication] setIdleTimerDisabled:NO];
 	});
 	[[iOS7AppDelegate iPhoneView] setIsInGame:NO];
-}
 
-static inline void execute_on_main_thread(void (^block)(void)) {
-	if ([NSThread currentThread] == [NSThread mainThread]) {
-		block();
-	}
-	else {
-		dispatch_sync(dispatch_get_main_queue(), block);
-	}
+#if TARGET_OS_IOS
+	// Hide keyboard when going back to launcher
+	execute_on_main_thread(^ {
+		[[iOS7AppDelegate iPhoneView] hideKeyboard];
+	});
+#endif
 }
 
 void OSystem_iOS7::updateOutputSurface() {

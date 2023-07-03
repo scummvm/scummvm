@@ -328,12 +328,6 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 		[_keyboardView setInputDelegate:self];
 		[self addSubview:[_keyboardView inputView]];
 		[self addSubview: _keyboardView];
-		if ([self getScreenHeight] > [self getScreenWidth]) {
-			// This will make sure the keyboard is shown in portrait
-			// mode on start of the application since the orientation
-			// handling is performed before the view finish its setup
-			[self showKeyboard];
-		}
 	}
 
 	[self adjustViewFrameForSafeArea];
@@ -471,7 +465,9 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	if (UIInterfaceOrientationIsLandscape(orientation)) {
 		[self hideKeyboard];
 	} else {
-		[self showKeyboard];
+		// Automatically open the keyboard if changing orientation in a game
+		if ([self isInGame])
+			[self showKeyboard];
 	}
 }
 #endif
