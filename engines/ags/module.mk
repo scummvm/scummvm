@@ -60,7 +60,12 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/src/cache/ftcimage.o \
 	lib/freetype-2.1.3/src/cache/ftcsbits.o \
 	lib/freetype-2.1.3/src/cache/ftccmap.o \
-	lib/freetype-2.1.3/src/cff/cff.o \
+	lib/freetype-2.1.3/src/cff/cffdrivr.o \
+	lib/freetype-2.1.3/src/cff/cffparse.o \
+	lib/freetype-2.1.3/src/cff/cffload.o \
+	lib/freetype-2.1.3/src/cff/cffobjs.o \
+	lib/freetype-2.1.3/src/cff/cffgload.o \
+	lib/freetype-2.1.3/src/cff/cffcmap.o \
 	lib/freetype-2.1.3/src/cid/type1cid.o \
 	lib/freetype-2.1.3/src/gzip/ftgzip.o \
 	lib/freetype-2.1.3/src/pcf/pcf.o \

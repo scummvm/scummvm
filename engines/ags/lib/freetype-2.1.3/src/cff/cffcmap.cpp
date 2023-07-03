@@ -19,6 +19,8 @@
 #include "cffcmap.h"
 #include "cffload.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*************************************************************************/
@@ -51,7 +53,7 @@ cff_cmap_encoding_done( CFF_CMapStd  cmap ) {
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 cff_cmap_encoding_char_index( CFF_CMapStd  cmap,
-                              FT2_1_3_UInt32    char_code ) {
+							  FT2_1_3_UInt32    char_code ) {
 	FT2_1_3_UInt  result = 0;
 
 
@@ -64,7 +66,7 @@ cff_cmap_encoding_char_index( CFF_CMapStd  cmap,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 cff_cmap_encoding_char_next( CFF_CMapStd   cmap,
-                             FT2_1_3_UInt32    *pchar_code ) {
+							 FT2_1_3_UInt32    *pchar_code ) {
 	FT2_1_3_UInt    result    = 0;
 	FT2_1_3_UInt32  char_code = *pchar_code;
 
@@ -113,7 +115,7 @@ cff_cmap_encoding_class_rec = {
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Int )
 cff_cmap_uni_pair_compare( const void*  pair1,
-                           const void*  pair2 ) {
+						   const void*  pair2 ) {
 	FT2_1_3_UInt32  u1 = ((CFF_CMapUniPair)pair1)->unicode;
 	FT2_1_3_UInt32  u2 = ((CFF_CMapUniPair)pair2)->unicode;
 
@@ -187,9 +189,9 @@ cff_cmap_unicode_init( CFF_CMapUnicode  cmap ) {
 
 			/* sort the pairs table to allow efficient binary searches */
 			ft_qsort( cmap->pairs,
-			          new_count,
-			          sizeof ( CFF_CMapUniPairRec ),
-			          cff_cmap_uni_pair_compare );
+					  new_count,
+					  sizeof ( CFF_CMapUniPairRec ),
+					  cff_cmap_uni_pair_compare );
 
 			cmap->num_pairs = new_count;
 		}
@@ -212,7 +214,7 @@ cff_cmap_unicode_done( CFF_CMapUnicode  cmap ) {
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 cff_cmap_unicode_char_index( CFF_CMapUnicode  cmap,
-                             FT2_1_3_UInt32        char_code ) {
+							 FT2_1_3_UInt32        char_code ) {
 	FT2_1_3_UInt          min = 0;
 	FT2_1_3_UInt          max = cmap->num_pairs;
 	FT2_1_3_UInt          mid;
@@ -237,7 +239,7 @@ cff_cmap_unicode_char_index( CFF_CMapUnicode  cmap,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 cff_cmap_unicode_char_next( CFF_CMapUnicode  cmap,
-                            FT2_1_3_UInt32       *pchar_code ) {
+							FT2_1_3_UInt32       *pchar_code ) {
 	FT2_1_3_UInt    result    = 0;
 	FT2_1_3_UInt32  char_code = *pchar_code + 1;
 
@@ -295,5 +297,7 @@ cff_cmap_unicode_class_rec = {
 	(FT2_1_3_CMap_CharNextFunc) cff_cmap_unicode_char_next
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

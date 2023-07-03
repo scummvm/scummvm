@@ -16,8 +16,8 @@
 /***************************************************************************/
 
 
-#ifndef __CFFOBJS_H__
-#define __CFFOBJS_H__
+#ifndef AGS_LIB_FREETYPE_CFFOBJS_H
+#define AGS_LIB_FREETYPE_CFFOBJS_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
@@ -26,6 +26,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/tttypes.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -128,10 +130,10 @@ cff_slot_init( CFF_GlyphSlot   slot );
 /*                                                                       */
 FT2_1_3_LOCAL( FT2_1_3_Error )
 cff_face_init( FT2_1_3_Stream      stream,
-               CFF_Face       face,
-               FT2_1_3_Int         face_index,
-               FT2_1_3_Int         num_params,
-               FT2_1_3_Parameter*  params );
+			   CFF_Face       face,
+			   FT2_1_3_Int         face_index,
+			   FT2_1_3_Int         num_params,
+			   FT2_1_3_Parameter*  params );
 
 FT2_1_3_LOCAL( void )
 cff_face_done( CFF_Face  face );
@@ -150,7 +152,10 @@ cff_driver_done( CFF_Driver  driver );
 
 FT2_1_3_END_HEADER
 
-#endif /* __CFFOBJS_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_CFFOBJS_H */
 
 
 /* END */

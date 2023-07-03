@@ -40,6 +40,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_cffdriver
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*************************************************************************/
@@ -56,7 +58,7 @@
 
 #undef  PAIR_TAG
 #define PAIR_TAG( left, right )  ( ( (FT2_1_3_ULong)left << 16 ) | \
-                                     (FT2_1_3_ULong)right        )
+									 (FT2_1_3_ULong)right        )
 
 
 /*************************************************************************/
@@ -93,9 +95,9 @@
 /*                                                                       */
 static FT2_1_3_Error
 Get_Kerning( TT_Face     face,
-             FT2_1_3_UInt     left_glyph,
-             FT2_1_3_UInt     right_glyph,
-             FT2_1_3_Vector*  kerning ) {
+			 FT2_1_3_UInt     left_glyph,
+			 FT2_1_3_UInt     right_glyph,
+			 FT2_1_3_Vector*  kerning ) {
 	TT_Kern0_Pair  pair;
 
 
@@ -172,9 +174,9 @@ Found:
 /*                                                                       */
 static FT2_1_3_Error
 Load_Glyph( CFF_GlyphSlot  slot,
-            CFF_Size       size,
-            FT2_1_3_UShort      glyph_index,
-            FT2_1_3_Int32       load_flags ) {
+			CFF_Size       size,
+			FT2_1_3_UShort      glyph_index,
+			FT2_1_3_Int32       load_flags ) {
 	FT2_1_3_Error  error;
 
 
@@ -219,9 +221,9 @@ Load_Glyph( CFF_GlyphSlot  slot,
 
 static FT2_1_3_Error
 cff_get_glyph_name( CFF_Face    face,
-                    FT2_1_3_UInt     glyph_index,
-                    FT2_1_3_Pointer  buffer,
-                    FT2_1_3_UInt     buffer_max ) {
+					FT2_1_3_UInt     glyph_index,
+					FT2_1_3_Pointer  buffer,
+					FT2_1_3_UInt     buffer_max ) {
 	CFF_Font         font   = (CFF_Font)face->extra.data;
 	FT2_1_3_Memory        memory = FT2_1_3_FACE_MEMORY( face );
 	FT2_1_3_String*       gname;
@@ -231,7 +233,7 @@ cff_get_glyph_name( CFF_Face    face,
 
 
 	psnames = (PSNames_Service)FT2_1_3_Get_Module_Interface(
-	              face->root.driver->root.library, "psnames" );
+				  face->root.driver->root.library, "psnames" );
 
 	if ( !psnames ) {
 		FT2_1_3_ERROR(( "cff_get_glyph_name:" ));
@@ -287,7 +289,7 @@ Exit:
 /*                                                                       */
 static FT2_1_3_UInt
 cff_get_name_index( CFF_Face    face,
-                    FT2_1_3_String*  glyph_name ) {
+					FT2_1_3_String*  glyph_name ) {
 	CFF_Font         cff;
 	CFF_Charset      charset;
 	PSNames_Service  psnames;
@@ -302,7 +304,7 @@ cff_get_name_index( CFF_Face    face,
 	charset = &cff->charset;
 
 	psnames = (PSNames_Service)FT2_1_3_Get_Module_Interface(
-	              face->root.driver->root.library, "psnames" );
+				  face->root.driver->root.library, "psnames" );
 
 	for ( i = 0; i < cff->num_glyphs; i++ ) {
 		sid = charset->sids[i];
@@ -339,7 +341,7 @@ cff_get_name_index( CFF_Face    face,
 
 static FT2_1_3_Module_Interface
 cff_get_interface( CFF_Driver   driver,
-                   const char*  module_interface ) {
+				   const char*  module_interface ) {
 	FT2_1_3_Module  sfnt;
 
 
@@ -404,5 +406,7 @@ const FT2_1_3_Driver_ClassRec  cff_driver_class = {
 	(FT2_1_3_Face_GetAdvancesFunc)0,
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

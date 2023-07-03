@@ -16,10 +16,13 @@
 /***************************************************************************/
 
 
-#ifndef __CFFCMAP_H__
-#define __CFFCMAP_H__
+#ifndef AGS_LIB_FREETYPE_CFFCMAP_H
+#define AGS_LIB_FREETYPE_CFFCMAP_H
 
 #include "cffobjs.h"
+
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -79,7 +82,10 @@ cff_cmap_unicode_class_rec;
 
 FT2_1_3_END_HEADER
 
-#endif /* __CFFCMAP_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_CFFCMAP_H */
 
 
 /* END */

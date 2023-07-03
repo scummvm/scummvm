@@ -32,6 +32,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_cffparse
 
+namespace AGS3 {
+namespace FreeType213 {
 
 enum {
 	cff_kind_none = 0,
@@ -63,8 +65,8 @@ typedef struct  CFF_Field_Handler_ {
 
 FT2_1_3_LOCAL_DEF( void )
 cff_parser_init( CFF_Parser  parser,
-                 FT2_1_3_UInt     code,
-                 void*       object ) {
+				 FT2_1_3_UInt     code,
+				 void*       object ) {
 	FT2_1_3_MEM_ZERO( parser, sizeof ( *parser ) );
 
 	parser->top         = parser->stack;
@@ -76,7 +78,7 @@ cff_parser_init( CFF_Parser  parser,
 /* read an integer */
 static FT2_1_3_Long
 cff_parse_integer( FT2_1_3_Byte*  start,
-                   FT2_1_3_Byte*  limit ) {
+				   FT2_1_3_Byte*  limit ) {
 	FT2_1_3_Byte*  p   = start;
 	FT2_1_3_Int    v   = *p++;
 	FT2_1_3_Long   val = 0;
@@ -93,9 +95,9 @@ cff_parse_integer( FT2_1_3_Byte*  start,
 			goto Bad;
 
 		val = ( (FT2_1_3_Long)p[0] << 24 ) |
-		      ( (FT2_1_3_Long)p[1] << 16 ) |
-		      ( (FT2_1_3_Long)p[2] <<  8 ) |
-		      p[3];
+			  ( (FT2_1_3_Long)p[1] << 16 ) |
+			  ( (FT2_1_3_Long)p[2] <<  8 ) |
+			  p[3];
 		p += 4;
 	} else if ( v < 247 ) {
 		val = v - 139;
@@ -125,8 +127,8 @@ Bad:
 /* read a real */
 static FT2_1_3_Fixed
 cff_parse_real( FT2_1_3_Byte*  start,
-                FT2_1_3_Byte*  limit,
-                FT2_1_3_Int    power_ten ) {
+				FT2_1_3_Byte*  limit,
+				FT2_1_3_Int    power_ten ) {
 	FT2_1_3_Byte*  p    = start;
 	FT2_1_3_Long   num, divider, result, exp;
 	FT2_1_3_Int    sign = 0, exp_sign = 0;
@@ -262,7 +264,7 @@ Bad:
 static FT2_1_3_Long
 cff_parse_num( FT2_1_3_Byte**  d ) {
 	return ( **d == 30 ? ( cff_parse_real   ( d[0], d[1], 0 ) >> 16 )
-	         :   cff_parse_integer( d[0], d[1] ) );
+			 :   cff_parse_integer( d[0], d[1] ) );
 }
 
 
@@ -270,7 +272,7 @@ cff_parse_num( FT2_1_3_Byte**  d ) {
 static FT2_1_3_Fixed
 cff_parse_fixed( FT2_1_3_Byte**  d ) {
 	return ( **d == 30 ? cff_parse_real   ( d[0], d[1], 0 )
-	         : cff_parse_integer( d[0], d[1] ) << 16 );
+			 : cff_parse_integer( d[0], d[1] ) << 16 );
 }
 
 /* read a floating point number, either integer or real, */
@@ -278,8 +280,8 @@ cff_parse_fixed( FT2_1_3_Byte**  d ) {
 static FT2_1_3_Fixed
 cff_parse_fixed_thousand( FT2_1_3_Byte**  d ) {
 	return **d ==
-	       30 ? cff_parse_real     ( d[0], d[1], 3 )
-	       : (FT2_1_3_Fixed)FT2_1_3_MulFix( cff_parse_integer( d[0], d[1] ) << 16, 1000 );
+		   30 ? cff_parse_real     ( d[0], d[1], 3 )
+		   : (FT2_1_3_Fixed)FT2_1_3_MulFix( cff_parse_integer( d[0], d[1] ) << 16, 1000 );
 }
 
 static FT2_1_3_Error
@@ -389,46 +391,46 @@ cff_parse_cid_ros( CFF_Parser  parser ) {
 
 
 #define CFF_FIELD_NUM( code, name ) \
-          CFF_FIELD( code, name, cff_kind_num )
+		  CFF_FIELD( code, name, cff_kind_num )
 #define CFF_FIELD_FIXED( code, name ) \
-          CFF_FIELD( code, name, cff_kind_fixed )
+		  CFF_FIELD( code, name, cff_kind_fixed )
 #define CFF_FIELD_STRING( code, name ) \
-          CFF_FIELD( code, name, cff_kind_string )
+		  CFF_FIELD( code, name, cff_kind_string )
 #define CFF_FIELD_BOOL( code, name ) \
-          CFF_FIELD( code, name, cff_kind_bool )
+		  CFF_FIELD( code, name, cff_kind_bool )
 #define CFF_FIELD_DELTA( code, name, max ) \
-          CFF_FIELD( code, name, cff_kind_delta )
+		  CFF_FIELD( code, name, cff_kind_delta )
 
 #define CFF_FIELD_CALLBACK( code, name ) \
-          {                              \
-            cff_kind_callback,           \
-            code | CFFCODE,              \
-            0, 0,                        \
-            cff_parse_ ## name,          \
-            0, 0                         \
-          },
+		  {                              \
+			cff_kind_callback,           \
+			code | CFFCODE,              \
+			0, 0,                        \
+			cff_parse_ ## name,          \
+			0, 0                         \
+		  },
 
 #undef  CFF_FIELD
 #define CFF_FIELD( code, name, kind ) \
-          {                          \
-            kind,                    \
-            code | CFFCODE,          \
-            FT2_1_3_FIELD_OFFSET( name ), \
-            FT2_1_3_FIELD_SIZE( name ),   \
-            0, 0, 0                  \
-          },
+		  {                          \
+			kind,                    \
+			code | CFFCODE,          \
+			FT2_1_3_FIELD_OFFSET( name ), \
+			FT2_1_3_FIELD_SIZE( name ),   \
+			0, 0, 0                  \
+		  },
 
 #undef  CFF_FIELD_DELTA
 #define CFF_FIELD_DELTA( code, name, max ) \
-        {                                  \
-          cff_kind_delta,                  \
-          code | CFFCODE,                  \
-          FT2_1_3_FIELD_OFFSET( name ),         \
-          FT2_1_3_FIELD_SIZE_DELTA( name ),     \
-          0,                               \
-          max,                             \
-          FT2_1_3_FIELD_OFFSET( num_ ## name )  \
-        },
+		{                                  \
+		  cff_kind_delta,                  \
+		  code | CFFCODE,                  \
+		  FT2_1_3_FIELD_OFFSET( name ),         \
+		  FT2_1_3_FIELD_SIZE_DELTA( name ),     \
+		  0,                               \
+		  max,                             \
+		  FT2_1_3_FIELD_OFFSET( num_ ## name )  \
+		},
 
 #define CFFCODE_TOPDICT  0x1000
 #define CFFCODE_PRIVATE  0x2000
@@ -443,8 +445,8 @@ static const CFF_Field_Handler  cff_field_handlers[] = {
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 cff_parser_run( CFF_Parser  parser,
-                FT2_1_3_Byte*    start,
-                FT2_1_3_Byte*    limit ) {
+				FT2_1_3_Byte*    start,
+				FT2_1_3_Byte*    limit ) {
 	FT2_1_3_Byte*  p     = start;
 	FT2_1_3_Error  error = CFF_Err_Ok;
 
@@ -492,7 +494,7 @@ cff_parser_run( CFF_Parser  parser,
 
 			FT2_1_3_UInt                   code;
 			FT2_1_3_UInt                   num_args = (FT2_1_3_UInt)
-			                                     ( parser->top - parser->stack );
+												 ( parser->top - parser->stack );
 			const CFF_Field_Handler*  field;
 
 
@@ -551,7 +553,7 @@ Store_Number:
 
 					case cff_kind_delta: {
 						FT2_1_3_Byte*   qcount = (FT2_1_3_Byte*)parser->object +
-						                    field->count_offset;
+											field->count_offset;
 
 						FT2_1_3_Byte**  data = parser->stack;
 
@@ -623,5 +625,7 @@ Syntax_Error:
 	goto Exit;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

@@ -16,14 +16,16 @@
 /***************************************************************************/
 
 
-#ifndef __CFF_PARSE_H__
-#define __CFF_PARSE_H__
+#ifndef AGS_LIB_FREETYPE_CFF_PARSE_H
+#define AGS_LIB_FREETYPE_CFF_PARSE_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/cfftypes.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -50,19 +52,21 @@ typedef struct  CFF_ParserRec_ {
 
 FT2_1_3_LOCAL( void )
 cff_parser_init( CFF_Parser  parser,
-                 FT2_1_3_UInt     code,
-                 void*       object );
+				 FT2_1_3_UInt     code,
+				 void*       object );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 cff_parser_run( CFF_Parser  parser,
-                FT2_1_3_Byte*    start,
-                FT2_1_3_Byte*    limit );
+				FT2_1_3_Byte*    start,
+				FT2_1_3_Byte*    limit );
 
 
 FT2_1_3_END_HEADER
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
-#endif /* __CFF_PARSE_H__ */
+#endif /* AGS_LIB_FREETYPE_CFF_PARSE_H */
 
 
 /* END */

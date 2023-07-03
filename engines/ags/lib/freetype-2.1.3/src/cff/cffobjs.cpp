@@ -41,6 +41,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_cffobjs
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*                                                                       */
@@ -61,10 +63,10 @@ cff_size_get_globals_funcs( CFF_Size  size ) {
 
 
 	module = FT2_1_3_Get_Module( size->face->driver->root.library,
-	                        "pshinter" );
+							"pshinter" );
 	return ( module && pshinter && pshinter->get_globals_funcs )
-	       ? pshinter->get_globals_funcs( module )
-	       : 0;
+		   ? pshinter->get_globals_funcs( module )
+		   : 0;
 }
 
 
@@ -162,9 +164,9 @@ cff_size_reset( CFF_Size  size ) {
 
 	if ( funcs )
 		error = funcs->set_scale( (PSH_Globals)size->internal,
-		                          size->metrics.x_scale,
-		                          size->metrics.y_scale,
-		                          0, 0 );
+								  size->metrics.x_scale,
+								  size->metrics.y_scale,
+								  0, 0 );
 	return error;
 }
 
@@ -193,7 +195,7 @@ cff_slot_init( CFF_GlyphSlot  slot ) {
 
 
 		module = FT2_1_3_Get_Module( slot->root.face->driver->root.library,
-		                        "pshinter" );
+								"pshinter" );
 		if ( module ) {
 			T2_Hints_Funcs  funcs;
 
@@ -215,7 +217,7 @@ cff_slot_init( CFF_GlyphSlot  slot ) {
 
 static FT2_1_3_String*
 cff_strcpy( FT2_1_3_Memory         memory,
-            const FT2_1_3_String*  source ) {
+			const FT2_1_3_String*  source ) {
 	FT2_1_3_Error    error;
 	FT2_1_3_String*  result = 0;
 	FT2_1_3_Int      len = (FT2_1_3_Int)ft_strlen( source );
@@ -236,10 +238,10 @@ cff_strcpy( FT2_1_3_Memory         memory,
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 cff_face_init( FT2_1_3_Stream      stream,
-               CFF_Face       face,
-               FT2_1_3_Int         face_index,
-               FT2_1_3_Int         num_params,
-               FT2_1_3_Parameter*  params ) {
+			   CFF_Face       face,
+			   FT2_1_3_Int         face_index,
+			   FT2_1_3_Int         num_params,
+			   FT2_1_3_Parameter*  params ) {
 	FT2_1_3_Error          error;
 	SFNT_Service      sfnt;
 	PSNames_Service   psnames;
@@ -249,15 +251,15 @@ cff_face_init( FT2_1_3_Stream      stream,
 
 
 	sfnt = (SFNT_Service)FT2_1_3_Get_Module_Interface(
-	           face->root.driver->root.library, "sfnt" );
+			   face->root.driver->root.library, "sfnt" );
 	if ( !sfnt )
 		goto Bad_Format;
 
 	psnames = (PSNames_Service)FT2_1_3_Get_Module_Interface(
-	              face->root.driver->root.library, "psnames" );
+				  face->root.driver->root.library, "psnames" );
 
 	pshinter = (PSHinter_Service)FT2_1_3_Get_Module_Interface(
-	               face->root.driver->root.library, "pshinter" );
+				   face->root.driver->root.library, "pshinter" );
 
 	/* create input stream from resource */
 	if ( FT2_1_3_STREAM_SEEK( 0 ) )
@@ -285,7 +287,7 @@ cff_face_init( FT2_1_3_Stream      stream,
 
 			/* load font directory */
 			error = sfnt->load_face( stream, face,
-			                         face_index, num_params, params );
+									 face_index, num_params, params );
 			if ( error )
 				goto Exit;
 		} else {
@@ -367,7 +369,7 @@ cff_face_init( FT2_1_3_Stream      stream,
 			root->ascender  = (FT2_1_3_Short)( root->bbox.yMax );
 			root->descender = (FT2_1_3_Short)( root->bbox.yMin );
 			root->height    = (FT2_1_3_Short)(
-			                      ( ( root->ascender - root->descender ) * 12 ) / 10 );
+								  ( ( root->ascender - root->descender ) * 12 ) / 10 );
 
 			if ( dict->units_per_em )
 				root->units_per_EM = dict->units_per_em;
@@ -380,15 +382,15 @@ cff_face_init( FT2_1_3_Stream      stream,
 				root->style_name = cff_strcpy( memory, "Regular" );  /* XXXX */
 			else
 				root->style_name = cff_index_get_sid_string( &cff->string_index,
-				                   dict->weight,
-				                   psnames );
+								   dict->weight,
+								   psnames );
 
 			/*******************************************************************/
 			/*                                                                 */
 			/* Compute face flags.                                             */
 			/*                                                                 */
 			flags = FT2_1_3_FACE_FLAG_SCALABLE  |    /* scalable outlines */
-			        FT2_1_3_FACE_FLAG_HORIZONTAL;    /* horizontal data   */
+					FT2_1_3_FACE_FLAG_HORIZONTAL;    /* horizontal data   */
 
 			if ( sfnt_format )
 				flags |= FT2_1_3_FACE_FLAG_SFNT;
@@ -538,5 +540,7 @@ cff_driver_done( CFF_Driver  driver ) {
 	FT2_1_3_UNUSED( driver );
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */
