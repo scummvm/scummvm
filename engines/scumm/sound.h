@@ -120,6 +120,7 @@ public:
 	virtual void addSoundToQueue(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0);
 	virtual void addSoundToQueue2(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0);
 	void processSound();
+	virtual void modifySound(int sound, int offset, int frequencyShift, int pan, int volume, int flags) {};
 
 	void playSound(int soundID);
 	void startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle *handle = NULL);

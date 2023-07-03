@@ -81,7 +81,7 @@ void ScummEngine_v70he::o70_soundOps() {
 		// WORKAROUND: For errors in room script 240 (room 4) of maze
 		break;
 	case SO_SOUND_FREQUENCY:
-		_heSndSoundFreq = pop();
+		_heSndFrequencyShift = pop();
 		break;
 	case SO_SOUND_CHANNEL:
 		_heSndChannel = pop();
@@ -92,14 +92,14 @@ void ScummEngine_v70he::o70_soundOps() {
 	case SO_SOUND_START:
 		_heSndSoundId = pop();
 		_heSndOffset = 0;
-		_heSndSoundFreq = 11025;
+		_heSndFrequencyShift = 11025;
 		_heSndChannel = VAR(VAR_SOUND_CHANNEL);
 		break;
 	case SO_SOUND_LOOPING:
 		_heSndFlags |= HE_SND_LOOP;
 		break;
 	case SO_END:
-		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndSoundFreq);
+		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndFrequencyShift);
 		_heSndFlags = 0;
 		break;
 
