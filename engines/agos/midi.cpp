@@ -481,7 +481,7 @@ int MidiPlayer::open() {
 		_driver = _driverMsMusic;
 
 		// Create the MIDI parser(s) for the format used by the platform.
-		if (_vm->getPlatform() == Common::kPlatformDOS) {
+		if (_vm->getPlatform() == Common::kPlatformDOS || (usesMT32Data() && (_vm->getFeatures() & GF_MT32_XMIDI))) {
 			// DOS uses Miles XMIDI.
 			_parserMusic = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, 0, 0);
 		} else {

@@ -2766,17 +2766,68 @@ static const AGOSGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::EN_ANY,
-			Common::kPlatformDOS,
+			Common::kPlatformWindows,
 			ADGF_CD,
 			GUIO1(GAMEOPTION_DISABLE_FADE_EFFECTS)
 		},
 
 		GType_SIMON2,
 		GID_SIMON2,
-		GF_TALKIE
+		GF_TALKIE | GF_MT32_XMIDI | GF_MT32_TRACK10_FIX
+	},
+
+	// Simon the Sorcerer 2 - German with MT-32 hack (25th Anniversary Edition)
+	{
+		{
+			"simon2",
+			"25th Anniversary Edition",
+
+			{
+				{ "gsptr30",		GAME_BASEFILE, "a76ea940076b5d9316796dea225a9b69", 62346 },
+				{ "icon.dat",		GAME_ICONFILE, "72096a62d36e6034ea9fecc13b2dbdab", 18089 },
+				{ "simon2.gme",		GAME_GMEFILE, "8aab32f1ed8567b6b9fa46139a1e492c", 20065511 },
+				{ "stripped.txt",	GAME_STRFILE, "6de6292c9ac11bfb2e70fdb0f773ba85", 171 },
+				{ "tbllist",		GAME_TBLFILE, "2082f8d02075e590300478853a91ffd9", 513 },
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_CD,
+			GUIO1(GAMEOPTION_DISABLE_FADE_EFFECTS)
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE | GF_MT32_XMIDI | GF_MT32_TRACK10_FIX
+	},
+
+	// Simon the Sorcerer 2 - French with MT-32 hack (25th Anniversary Edition)
+	{
+		{
+			"simon2",
+			"25th Anniversary Edition",
+
+			{
+				{ "gsptr30",		GAME_BASEFILE, "43b3a04d2f0a0cbd1b024c814856561a", 60857 },
+				{ "icon.dat",		GAME_ICONFILE, "72096a62d36e6034ea9fecc13b2dbdab", 18089 },
+				{ "simon2.gme",		GAME_GMEFILE, "d71807365d4e13063009ea0b9a849190", 20072692 },
+				{ "stripped.txt",	GAME_STRFILE, "5ea27977b4d7dcfd50eb5074e162ebbf", 171 },
+				{ "tbllist",		GAME_TBLFILE, "2082f8d02075e590300478853a91ffd9", 513 },
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_CD,
+			GUIO1(GAMEOPTION_DISABLE_FADE_EFFECTS)
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE | GF_MT32_XMIDI | GF_MT32_TRACK10_FIX
 	},
 
 	// Simon the Sorcerer 2 - Russian Fan with MT-32 hack (25th Anniversary Edition)
+	// Note: unlike the other 25th Anniversary versions, this uses VOC and XMIDI data.
 	{
 		{
 			"simon2",
@@ -2798,7 +2849,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_SIMON2,
 		GID_SIMON2,
-		GF_TALKIE
+		GF_TALKIE | GF_MT32_TRACK10_FIX
 	},
 
 	// Simon the Sorcerer 2 - Polish with MT-32 hack (25th Anniversary Edition)
@@ -2816,14 +2867,14 @@ static const AGOSGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::PL_POL,
-			Common::kPlatformDOS,
+			Common::kPlatformWindows,
 			ADGF_CD,
 			GUIO1(GAMEOPTION_DISABLE_FADE_EFFECTS)
 		},
 
 		GType_SIMON2,
 		GID_SIMON2,
-		GF_TALKIE | GF_WAVSFX
+		GF_TALKIE | GF_MT32_XMIDI | GF_MT32_TRACK10_FIX
 	},
 
 	// Simon the Sorcerer 2 - Hebrew with MT-32 hack (25th Anniversary Edition)
@@ -2841,14 +2892,14 @@ static const AGOSGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::HE_ISR,
-			Common::kPlatformDOS,
+			Common::kPlatformWindows,
 			ADGF_CD,
 			GUIO1(GAMEOPTION_DISABLE_FADE_EFFECTS)
 		},
 
 		GType_SIMON2,
 		GID_SIMON2,
-		GF_TALKIE | GF_WAVSFX
+		GF_TALKIE | GF_MT32_XMIDI | GF_MT32_TRACK10_FIX
 	},
 
 	// Simon the Sorcerer 2 - Italian with MT-32 hack (25th Anniversary Edition)
@@ -2866,14 +2917,14 @@ static const AGOSGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::IT_ITA,
-			Common::kPlatformDOS,
+			Common::kPlatformWindows,
 			ADGF_CD,
 			GUIO1(GAMEOPTION_DISABLE_FADE_EFFECTS)
 		},
 
 		GType_SIMON2,
 		GID_SIMON2,
-		GF_TALKIE | GF_WAVSFX
+		GF_TALKIE | GF_MT32_XMIDI | GF_MT32_TRACK10_FIX
 	},
 
 	// Simon the Sorcerer 2 - Czech with MT-32 hack (25th Anniversary Edition)
@@ -2891,14 +2942,14 @@ static const AGOSGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::CS_CZE,
-			Common::kPlatformDOS,
+			Common::kPlatformWindows,
 			ADGF_CD,
 			GUIO1(GAMEOPTION_DISABLE_FADE_EFFECTS)
 		},
 
 		GType_SIMON2,
 		GID_SIMON2,
-		GF_TALKIE | GF_WAVSFX
+		GF_TALKIE | GF_MT32_XMIDI | GF_MT32_TRACK10_FIX
 	},
 
 	// Simon the Sorcerer 2 - Spanish with MT-32 hack (25th Anniversary Edition)
@@ -2916,14 +2967,14 @@ static const AGOSGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::ES_ESP,
-			Common::kPlatformDOS,
+			Common::kPlatformWindows,
 			ADGF_CD,
 			GUIO1(GAMEOPTION_DISABLE_FADE_EFFECTS)
 		},
 
 		GType_SIMON2,
 		GID_SIMON2,
-		GF_TALKIE | GF_WAVSFX
+		GF_TALKIE | GF_MT32_XMIDI | GF_MT32_TRACK10_FIX
 	},
 
 	// The Feeble Files - English DOS Demo

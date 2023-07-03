@@ -1298,11 +1298,12 @@ protected:
 	void windowScroll(WindowBlock *window);
 	virtual void windowDrawChar(WindowBlock *window, uint x, uint y, byte chr);
 
-	// Loads the MIDI data for the specified track. The forceSimon2Gm parameter
-	// forces loading the MIDI data from the GM data set and activates GM to
-	// MT-32 instrument remapping. This is useful only for a specific
+	// Loads the MIDI data for the specified track. The forceSimon2GmData
+	// parameter forces loading the MIDI data from the GM data set.
+	// The useSimon2Remapping parameter activates GM to MT-32 instrument
+	// remapping. These parameters are useful only for a specific
 	// workaround (see AGOSEngine_Simon2::playMusic for more details).
-	void loadMusic(uint16 track, bool forceSimon2Gm = false);
+	void loadMusic(uint16 track, bool forceSimon2GmData = false, bool useSimon2Remapping = false);
 	void playModule(uint16 music);
 	virtual void playMusic(uint16 music, uint16 track);
 	void stopMusic();
