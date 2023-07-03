@@ -23,7 +23,7 @@
 #include "m4/gui/gui_vmng.h"
 #include "m4/core/mouse.h"
 #include "m4/mem/res.h"
-#include "m4/globals.h"
+#include "m4/vars.h"
 
 namespace M4 {
 

@@ -31,7 +31,7 @@
 #include "m4/core/errors.h"
 #include "m4/mem/mem.h"
 #include "m4/mem/memman.h"
-#include "m4/burger/burger_globals.h"
+#include "m4/burger/vars.h"
 
 namespace M4 {
 namespace Burger {

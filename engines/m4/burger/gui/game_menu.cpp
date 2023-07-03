@@ -22,7 +22,7 @@
 #include "m4/burger/gui/game_menu.h"
 #include "m4/burger/gui/interface.h"
 #include "m4/adv_r/adv_player.h"
-#include "m4/burger/burger_globals.h"
+#include "m4/burger/vars.h"
 
 namespace M4 {
 namespace Burger {

@@ -24,7 +24,7 @@
 #include "graphics/surface.h"
 #include "m4/gui/gui_vmng_screen.h"
 #include "m4/gui/gui_vmng.h"
-#include "m4/globals.h"
+#include "m4/vars.h"
 
 namespace M4 {
 

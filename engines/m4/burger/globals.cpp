@@ -23,7 +23,7 @@
 #include "m4/core/term.h"
 #include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_inv.h"
-#include "m4/burger/burger_globals.h"
+#include "m4/burger/vars.h"
 
 namespace M4 {
 namespace Burger {

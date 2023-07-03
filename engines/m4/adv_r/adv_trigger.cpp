@@ -21,7 +21,7 @@
 
 #include "m4/adv_r/adv_trigger.h"
 #include "m4/core/errors.h"
-#include "m4/globals.h"
+#include "m4/vars.h"
 
 namespace M4 {
 

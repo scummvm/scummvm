@@ -61,14 +61,14 @@ Common::Error M4Engine::run() {
 	initGraphics(640, 480);
 
 	// Instantiate globals and setup
-	Globals *globals = createGlobals();
+	Vars *vars = createVars();
 
-	if (globals->init()) {
+	if (vars->init()) {
 		// Run game here
 		m4_inflight();
 	}
 
-	delete globals;
+	delete vars;
 	return Common::kNoError;
 }
 
@@ -96,7 +96,7 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 	_G(game).syncGame(s);
 	_G(player).syncGame(s);
 	_G(player_info).syncGame(s);
-	g_globals->getGlobals()->syncGame(s);
+	g_vars->getGlobals()->syncGame(s);
 
 
 #ifdef TODO

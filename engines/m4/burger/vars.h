@@ -19,10 +19,10 @@
  *
  */
 
-#ifndef M4_BURGER_BURGER_GLOBALS_H
-#define M4_BURGER_BURGER_GLOBALS_H
+#ifndef M4_BURGER_BURGER_VARS_H
+#define M4_BURGER_BURGER_VARS_H
 
-#include "m4/globals.h"
+#include "m4/vars.h"
 #include "m4/burger/gui/interface.h"
 #include "m4/burger/inventory.h"
 #include "m4/burger/globals.h"
@@ -34,7 +34,7 @@ enum GameMode {
 	JUST_OVERVIEW = 0, INTERACTIVE_DEMO = 1, MAGAZINE_DEMO = 2, WHOLE_GAME = 3
 };
 
-class BurgerGlobals : public Globals {
+class Vars : public M4::Vars {
 private:
 	void initMouseSeries(const Common::String &assetName, RGB8 *myPalette);
 	void custom_ascii_converter_proc(char *string);
@@ -57,15 +57,15 @@ public:
 	bool _gameMenuFromMain = false;
 
 public:
-	BurgerGlobals();
-	virtual ~BurgerGlobals();
+	Vars();
+	virtual ~Vars();
 
 	GlobalVars *getGlobals() override {
 		return &_globals;
 	}
 };
 
-extern BurgerGlobals *g_globals;
+extern Vars *g_globals;
 
 #undef _G
 #define _G(X) (::M4::Burger::g_globals->_##X)

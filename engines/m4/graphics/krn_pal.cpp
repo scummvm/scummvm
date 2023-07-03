@@ -21,7 +21,7 @@
 
 #include "m4/graphics/krn_pal.h"
 #include "m4/graphics/gr_pal.h"
-#include "m4/globals.h"
+#include "m4/vars.h"
 
 namespace M4 {
 

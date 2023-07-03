@@ -20,7 +20,7 @@
  */
 
 #include "m4/burger/other.h"
-#include "m4/burger/burger_globals.h"
+#include "m4/burger/vars.h"
 #include "m4/adv_r/adv_file.h"
 #include "m4/core/errors.h"
 

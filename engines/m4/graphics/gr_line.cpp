@@ -20,7 +20,7 @@
  */
 
 #include "m4/graphics/gr_line.h"
-#include "m4/globals.h"
+#include "m4/vars.h"
 
 namespace M4 {
 

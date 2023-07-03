@@ -27,7 +27,7 @@
 #include "m4/events/mickey.h"
 #include "m4/events/mouse_handler.h"
 #include "m4/mem/memman.h"
-#include "m4/globals.h"
+#include "m4/vars.h"
 
 namespace M4 {
 

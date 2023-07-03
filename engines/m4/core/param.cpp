@@ -21,7 +21,7 @@
 
 #include "common/config-manager.h"
 #include "m4/core/param.h"
-#include "m4/globals.h"
+#include "m4/vars.h"
 #include "m4/m4.h"
 
 namespace M4 {
