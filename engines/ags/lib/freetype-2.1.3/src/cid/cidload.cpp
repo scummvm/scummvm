@@ -36,11 +36,13 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_cidload
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /* read a single offset */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Long )
 cid_get_offset( FT2_1_3_Byte**  start,
-                FT2_1_3_Byte    offsize ) {
+				FT2_1_3_Byte    offsize ) {
 	FT2_1_3_Long   result;
 	FT2_1_3_Byte*  p = *start;
 
@@ -57,8 +59,8 @@ cid_get_offset( FT2_1_3_Byte**  start,
 
 FT2_1_3_LOCAL_DEF( void )
 cid_decrypt( FT2_1_3_Byte*   buffer,
-             FT2_1_3_Offset  length,
-             FT2_1_3_UShort  seed ) {
+			 FT2_1_3_Offset  length,
+			 FT2_1_3_UShort  seed ) {
 	while ( length > 0 ) {
 		FT2_1_3_Byte  plain;
 
@@ -82,8 +84,8 @@ cid_decrypt( FT2_1_3_Byte*   buffer,
 
 static FT2_1_3_Error
 cid_load_keyword( CID_Face        face,
-                  CID_Loader*     loader,
-                  const T1_Field  keyword ) {
+				  CID_Loader*     loader,
+				  const T1_Field  keyword ) {
 	FT2_1_3_Error      error;
 	CID_Parser*   parser = &loader->parser;
 	FT2_1_3_Byte*      object;
@@ -114,7 +116,7 @@ cid_load_keyword( CID_Face        face,
 
 		if ( parser->num_dict < 0 ) {
 			FT2_1_3_ERROR(( "cid_load_keyword: invalid use of `%s'!\n",
-			           keyword->ident ));
+					   keyword->ident ));
 			error = CID_Err_Syntax_Error;
 			goto Exit;
 		}
@@ -135,9 +137,9 @@ cid_load_keyword( CID_Face        face,
 
 	/* now, load the keyword data in the object's field(s) */
 	if ( keyword->type == T1_FIELD_TYPE_INTEGER_ARRAY ||
-	        keyword->type == T1_FIELD_TYPE_FIXED_ARRAY   )
+			keyword->type == T1_FIELD_TYPE_FIXED_ARRAY   )
 		error = cid_parser_load_field_table( &loader->parser, keyword,
-		                                     &dummy_object );
+											 &dummy_object );
 	else
 		error = cid_parser_load_field( &loader->parser, keyword, &dummy_object );
 Exit:
@@ -147,7 +149,7 @@ Exit:
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 parse_font_bbox( CID_Face     face,
-                 CID_Parser*  parser ) {
+				 CID_Parser*  parser ) {
 	FT2_1_3_Fixed  temp[4];
 	FT2_1_3_BBox*  bbox = &face->cid.font_bbox;
 
@@ -165,7 +167,7 @@ parse_font_bbox( CID_Face     face,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 parse_font_matrix( CID_Face     face,
-                   CID_Parser*  parser ) {
+				   CID_Parser*  parser ) {
 	FT2_1_3_Matrix*    matrix;
 	FT2_1_3_Vector*    offset;
 	CID_FaceDict  dict;
@@ -187,7 +189,7 @@ parse_font_matrix( CID_Face     face,
 		/* `1000/temp_scale', because temp_scale was already multiplied by   */
 		/* 1000 (in t1_tofixed(), from psobjs.c).                            */
 		root->units_per_EM = (FT2_1_3_UShort)( FT2_1_3_DivFix( 0x10000L,
-		                                  FT2_1_3_DivFix( temp_scale, 1000 ) ) );
+										  FT2_1_3_DivFix( temp_scale, 1000 ) ) );
 
 		/* we need to scale the values by 1.0/temp[3] */
 		if ( temp_scale != 0x10000L ) {
@@ -216,7 +218,7 @@ parse_font_matrix( CID_Face     face,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 parse_fd_array( CID_Face     face,
-                CID_Parser*  parser ) {
+				CID_Parser*  parser ) {
 	CID_FaceInfo  cid    = &face->cid;
 	FT2_1_3_Memory     memory = face->root.memory;
 	FT2_1_3_Error      error  = CID_Err_Ok;
@@ -265,16 +267,16 @@ const T1_FieldRec  cid_field_records[] = {
 static int
 is_alpha( char  c ) {
 	return ( ft_isalnum( (int)c ) ||
-	         c == '.'             ||
-	         c == '_'             );
+			 c == '.'             ||
+			 c == '_'             );
 }
 
 
 static FT2_1_3_Error
 cid_parse_dict( CID_Face     face,
-                CID_Loader*  loader,
-                FT2_1_3_Byte*     base,
-                FT2_1_3_Long      size ) {
+				CID_Loader*  loader,
+				FT2_1_3_Byte*     base,
+				FT2_1_3_Long      size ) {
 	CID_Parser*  parser = &loader->parser;
 
 
@@ -290,7 +292,7 @@ cid_parse_dict( CID_Face     face,
 		for ( ; cur < limit; cur++ ) {
 			/* look for `%ADOBeginFontDict' */
 			if ( *cur == '%' && cur + 20 < limit &&
-			        ft_strncmp( (char*)cur, "%ADOBeginFontDict", 17 ) == 0 ) {
+					ft_strncmp( (char*)cur, "%ADOBeginFontDict", 17 ) == 0 ) {
 				cur += 17;
 
 				/* if /FDArray was found, then cid->num_dicts is > 0, and */
@@ -325,7 +327,7 @@ cid_parse_dict( CID_Face     face,
 							break;
 
 						if ( cur[0] == name[0]                          &&
-						        len == (FT2_1_3_Int)ft_strlen( (const char*)name ) ) {
+								len == (FT2_1_3_Int)ft_strlen( (const char*)name ) ) {
 							FT2_1_3_Int  n;
 
 
@@ -338,8 +340,8 @@ cid_parse_dict( CID_Face     face,
 								parser->root.cursor = cur2;
 								cid_parser_skip_spaces( parser );
 								parser->root.error = cid_load_keyword( face,
-								                                       loader,
-								                                       keyword );
+																	   loader,
+																	   keyword );
 								if ( parser->root.error )
 									return parser->root.error;
 
@@ -395,7 +397,7 @@ cid_read_subrs( CID_Face  face ) {
 
 		/* read the subrmap's offsets */
 		if ( FT2_1_3_STREAM_SEEK( cid->data_offset + dict->subrmap_offset ) ||
-		        FT2_1_3_FRAME_ENTER( ( num_subrs + 1 ) * dict->sd_bytes )   )
+				FT2_1_3_FRAME_ENTER( ( num_subrs + 1 ) * dict->sd_bytes )   )
 			goto Fail;
 
 		p = (FT2_1_3_Byte*)stream->cursor;
@@ -409,11 +411,11 @@ cid_read_subrs( CID_Face  face ) {
 		data_len = offsets[num_subrs] - offsets[0];
 
 		if ( FT2_1_3_NEW_ARRAY( subr->code, num_subrs + 1 ) ||
-		        FT2_1_3_ALLOC( subr->code[0], data_len )   )
+				FT2_1_3_ALLOC( subr->code[0], data_len )   )
 			goto Fail;
 
 		if ( FT2_1_3_STREAM_SEEK( cid->data_offset + offsets[0] ) ||
-		        FT2_1_3_STREAM_READ( subr->code[0], data_len )  )
+				FT2_1_3_STREAM_READ( subr->code[0], data_len )  )
 			goto Fail;
 
 		/* set up pointers */
@@ -459,7 +461,7 @@ Fail:
 
 static void
 t1_init_loader( CID_Loader*  loader,
-                CID_Face     face ) {
+				CID_Face     face ) {
 	FT2_1_3_UNUSED( face );
 
 	FT2_1_3_MEM_ZERO( loader, sizeof ( *loader ) );
@@ -487,13 +489,13 @@ cid_face_open( CID_Face  face ) {
 
 	parser = &loader.parser;
 	error = cid_parser_new( parser, face->root.stream, face->root.memory,
-	                        (PSAux_Service)face->psaux );
+							(PSAux_Service)face->psaux );
 	if ( error )
 		goto Exit;
 
 	error = cid_parse_dict( face, &loader,
-	                        parser->postscript,
-	                        parser->postscript_len );
+							parser->postscript,
+							parser->postscript_len );
 	if ( error )
 		goto Exit;
 
@@ -505,5 +507,7 @@ Exit:
 	return error;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

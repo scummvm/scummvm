@@ -38,6 +38,9 @@
 #define FT2_1_3_COMPONENT  trace_cidobjs
 
 
+namespace AGS3 {
+namespace FreeType213 {
+
 /*************************************************************************/
 /*                                                                       */
 /*                            SLOT  FUNCTIONS                            */
@@ -64,7 +67,7 @@ cid_slot_init( CID_GlyphSlot  slot ) {
 
 
 		module = FT2_1_3_Get_Module( slot->root.face->driver->root.library,
-		                        "pshinter" );
+								"pshinter" );
 		if ( module ) {
 			T1_Hints_Funcs  funcs;
 
@@ -93,10 +96,10 @@ cid_size_get_globals_funcs( CID_Size  size ) {
 
 
 	module = FT2_1_3_Get_Module( size->root.face->driver->root.library,
-	                        "pshinter" );
+							"pshinter" );
 	return ( module && pshinter && pshinter->get_globals_funcs )
-	       ? pshinter->get_globals_funcs( module )
-	       : 0;
+		   ? pshinter->get_globals_funcs( module )
+		   : 0;
 }
 
 
@@ -145,9 +148,9 @@ cid_size_reset( CID_Size  size ) {
 
 	if ( funcs )
 		error = funcs->set_scale( (PSH_Globals)size->root.internal,
-		                          size->root.metrics.x_scale,
-		                          size->root.metrics.y_scale,
-		                          0, 0 );
+								  size->root.metrics.x_scale,
+								  size->root.metrics.y_scale,
+								  0, 0 );
 	return error;
 }
 
@@ -246,10 +249,10 @@ cid_face_done( CID_Face  face ) {
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 cid_face_init( FT2_1_3_Stream      stream,
-               CID_Face       face,
-               FT2_1_3_Int         face_index,
-               FT2_1_3_Int         num_params,
-               FT2_1_3_Parameter*  params ) {
+			   CID_Face       face,
+			   FT2_1_3_Int         face_index,
+			   FT2_1_3_Int         num_params,
+			   FT2_1_3_Parameter*  params ) {
 	FT2_1_3_Error          error;
 	PSNames_Service   psnames;
 	PSAux_Service     psaux;
@@ -266,7 +269,7 @@ cid_face_init( FT2_1_3_Stream      stream,
 	psnames = (PSNames_Service)face->psnames;
 	if ( !psnames ) {
 		psnames = (PSNames_Service)FT2_1_3_Get_Module_Interface(
-		              FT2_1_3_FACE_LIBRARY( face ), "psnames" );
+					  FT2_1_3_FACE_LIBRARY( face ), "psnames" );
 
 		face->psnames = psnames;
 	}
@@ -274,7 +277,7 @@ cid_face_init( FT2_1_3_Stream      stream,
 	psaux = (PSAux_Service)face->psaux;
 	if ( !psaux ) {
 		psaux = (PSAux_Service)FT2_1_3_Get_Module_Interface(
-		            FT2_1_3_FACE_LIBRARY( face ), "psaux" );
+					FT2_1_3_FACE_LIBRARY( face ), "psaux" );
 
 		face->psaux = psaux;
 	}
@@ -282,7 +285,7 @@ cid_face_init( FT2_1_3_Stream      stream,
 	pshinter = (PSHinter_Service)face->pshinter;
 	if ( !pshinter ) {
 		pshinter = (PSHinter_Service)FT2_1_3_Get_Module_Interface(
-		               FT2_1_3_FACE_LIBRARY( face ), "pshinter" );
+					   FT2_1_3_FACE_LIBRARY( face ), "pshinter" );
 
 		face->pshinter = pshinter;
 	}
@@ -340,7 +343,7 @@ cid_face_init( FT2_1_3_Stream      stream,
 				}
 
 				root->style_name = ( *full == ' ' ) ? full + 1
-				                   : (char *)"Regular";
+								   : (char *)"Regular";
 			} else {
 				/* do we have a `/FontName'? */
 				if ( face->cid.cid_font_name ) {
@@ -364,7 +367,7 @@ cid_face_init( FT2_1_3_Stream      stream,
 			root->ascender  = (FT2_1_3_Short)( root->bbox.yMax );
 			root->descender = (FT2_1_3_Short)( root->bbox.yMin );
 			root->height    = (FT2_1_3_Short)(
-			                      ( ( root->ascender + root->descender ) * 12 ) / 10 );
+								  ( ( root->ascender + root->descender ) * 12 ) / 10 );
 
 			root->underline_position  = face->cid.font_info.underline_position;
 			root->underline_thickness = face->cid.font_info.underline_thickness;
@@ -417,5 +420,7 @@ cid_driver_done( CID_Driver  driver ) {
 	FT2_1_3_UNUSED( driver );
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

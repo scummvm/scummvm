@@ -36,6 +36,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_cidparse
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*************************************************************************/
@@ -50,9 +52,9 @@
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 cid_parser_new( CID_Parser*    parser,
-                FT2_1_3_Stream      stream,
-                FT2_1_3_Memory      memory,
-                PSAux_Service  psaux ) {
+				FT2_1_3_Stream      stream,
+				FT2_1_3_Memory      memory,
+				PSAux_Service  psaux ) {
 	FT2_1_3_Error  error;
 	FT2_1_3_ULong  base_offset, offset, ps_len;
 	FT2_1_3_Byte   buffer[256 + 10];
@@ -71,7 +73,7 @@ cid_parser_new( CID_Parser*    parser,
 		goto Exit;
 
 	if ( ft_strncmp( (char *)stream->cursor,
-	                 "%!PS-Adobe-3.0 Resource-CIDFont", 31 ) ) {
+					 "%!PS-Adobe-3.0 Resource-CIDFont", 31 ) ) {
 		FT2_1_3_TRACE2(( "[not a valid CID-keyed font]\n" ));
 		error = CID_Err_Unknown_File_Format;
 	}
@@ -117,7 +119,7 @@ Found:
 
 	ps_len = offset - base_offset;
 	if ( FT2_1_3_STREAM_SEEK( base_offset )                    ||
-	        FT2_1_3_FRAME_EXTRACT( ps_len, parser->postscript ) )
+			FT2_1_3_FRAME_EXTRACT( ps_len, parser->postscript ) )
 		goto Exit;
 
 	parser->data_offset    = offset;
@@ -144,5 +146,7 @@ cid_parser_done( CID_Parser*  parser ) {
 	parser->root.funcs.done( &parser->root );
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

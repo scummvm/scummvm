@@ -35,6 +35,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_ciddriver
 
+namespace AGS3 {
+namespace FreeType213 {
 
 static const char*
 cid_get_postscript_name( CID_Face  face ) {
@@ -50,7 +52,7 @@ cid_get_postscript_name( CID_Face  face ) {
 
 static FT2_1_3_Module_Interface
 cid_get_interface( FT2_1_3_Driver         driver,
-                   const FT2_1_3_String*  cid_interface ) {
+				   const FT2_1_3_String*  cid_interface ) {
 	FT2_1_3_UNUSED( driver );
 	FT2_1_3_UNUSED( cid_interface );
 
@@ -106,5 +108,7 @@ const FT2_1_3_Driver_ClassRec  t1cid_driver_class = {
 	(FT2_1_3_Face_GetAdvancesFunc)0,
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

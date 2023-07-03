@@ -66,7 +66,11 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/src/cff/cffobjs.o \
 	lib/freetype-2.1.3/src/cff/cffgload.o \
 	lib/freetype-2.1.3/src/cff/cffcmap.o \
-	lib/freetype-2.1.3/src/cid/type1cid.o \
+	lib/freetype-2.1.3/src/cid/cidparse.o \
+	lib/freetype-2.1.3/src/cid/cidload.o \
+	lib/freetype-2.1.3/src/cid/cidobjs.o \
+	lib/freetype-2.1.3/src/cid/cidriver.o \
+	lib/freetype-2.1.3/src/cid/cidgload.o \
 	lib/freetype-2.1.3/src/gzip/ftgzip.o \
 	lib/freetype-2.1.3/src/pcf/pcf.o \
 	lib/freetype-2.1.3/src/pfr/pfr.o \

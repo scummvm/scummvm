@@ -16,13 +16,15 @@
 /***************************************************************************/
 
 
-#ifndef __CIDGLOAD_H__
-#define __CIDGLOAD_H__
+#ifndef AGS_LIB_FREETYPE_CIDGLOAD_H
+#define AGS_LIB_FREETYPE_CIDGLOAD_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "cidobjs.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -32,20 +34,23 @@ FT2_1_3_BEGIN_HEADER
 /* Compute the maximum advance width of a font through quick parsing */
 FT2_1_3_LOCAL( FT2_1_3_Error )
 cid_face_compute_max_advance( CID_Face  face,
-                              FT2_1_3_Int*   max_advance );
+							  FT2_1_3_Int*   max_advance );
 
 #endif /* 0 */
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 cid_slot_load_glyph( CID_GlyphSlot  glyph,
-                     CID_Size       size,
-                     FT2_1_3_Int         glyph_index,
-                     FT2_1_3_Int32       load_flags );
+					 CID_Size       size,
+					 FT2_1_3_Int         glyph_index,
+					 FT2_1_3_Int32       load_flags );
 
 
 FT2_1_3_END_HEADER
 
-#endif /* __CIDGLOAD_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_CIDGLOAD_H */
 
 
 /* END */

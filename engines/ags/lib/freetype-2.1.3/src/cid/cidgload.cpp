@@ -35,10 +35,12 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_cidgload
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 cid_load_glyph( T1_Decoder  decoder,
-                FT2_1_3_UInt     glyph_index ) {
+				FT2_1_3_UInt     glyph_index ) {
 	CID_Face      face = (CID_Face)decoder->builder.face;
 	CID_FaceInfo  cid  = &face->cid;
 	FT2_1_3_Byte*      p;
@@ -59,9 +61,9 @@ cid_load_glyph( T1_Decoder  decoder,
 
 
 		error = face->root.internal->incremental_interface->funcs->get_glyph_data(
-		            face->root.internal->incremental_interface->object,
-		            glyph_index,
-		            &glyph_data );
+					face->root.internal->incremental_interface->object,
+					glyph_index,
+					&glyph_data );
 		if ( error )
 			goto Exit;
 
@@ -73,12 +75,12 @@ cid_load_glyph( T1_Decoder  decoder,
 			FT2_1_3_ALLOC( charstring, glyph_length );
 			if ( !error )
 				ft_memcpy( charstring, glyph_data.pointer + cid->fd_bytes,
-				           glyph_length );
+						   glyph_length );
 		}
 
 		face->root.internal->incremental_interface->funcs->free_glyph_data(
-		    face->root.internal->incremental_interface->object,
-		    &glyph_data );
+			face->root.internal->incremental_interface->object,
+			&glyph_data );
 
 		if ( error )
 			goto Exit;
@@ -96,8 +98,8 @@ cid_load_glyph( T1_Decoder  decoder,
 
 
 		if ( FT2_1_3_STREAM_SEEK( cid->data_offset + cid->cidmap_offset +
-		                     glyph_index * entry_len )               ||
-		        FT2_1_3_FRAME_ENTER( 2 * entry_len )                         )
+							 glyph_index * entry_len )               ||
+				FT2_1_3_FRAME_ENTER( 2 * entry_len )                         )
 			goto Exit;
 
 		p            = (FT2_1_3_Byte*)stream->cursor;
@@ -105,7 +107,7 @@ cid_load_glyph( T1_Decoder  decoder,
 		off1         = (FT2_1_3_ULong)cid_get_offset( &p, (FT2_1_3_Byte)cid->gd_bytes );
 		p           += cid->fd_bytes;
 		glyph_length = (FT2_1_3_UInt) cid_get_offset(
-		                   &p, (FT2_1_3_Byte)cid->gd_bytes ) - off1;
+						   &p, (FT2_1_3_Byte)cid->gd_bytes ) - off1;
 		FT2_1_3_FRAME_EXIT();
 
 		if ( glyph_length == 0 )
@@ -113,7 +115,7 @@ cid_load_glyph( T1_Decoder  decoder,
 		if ( FT2_1_3_ALLOC( charstring, glyph_length ) )
 			goto Exit;
 		if ( FT2_1_3_STREAM_READ_AT( cid->data_offset + off1,
-		                        charstring, glyph_length ) )
+								charstring, glyph_length ) )
 			goto Exit;
 	}
 
@@ -146,8 +148,8 @@ cid_load_glyph( T1_Decoder  decoder,
 			cid_decrypt( charstring, glyph_length, 4330 );
 
 		error = decoder->funcs.parse_charstrings( decoder,
-		        charstring + cs_offset,
-		        glyph_length - cs_offset  );
+				charstring + cs_offset,
+				glyph_length - cs_offset  );
 	}
 
 	FT2_1_3_FREE( charstring );
@@ -156,15 +158,15 @@ cid_load_glyph( T1_Decoder  decoder,
 
 	/* Incremental fonts can optionally override the metrics. */
 	if ( !error                                       &&
-	        face->root.internal->incremental_interface   &&
-	        face->root.internal->incremental_interface->funcs->get_glyph_metrics ) {
+			face->root.internal->incremental_interface   &&
+			face->root.internal->incremental_interface->funcs->get_glyph_metrics ) {
 		FT2_1_3_Bool                    found = FALSE;
 		FT2_1_3_Incremental_MetricsRec  metrics;
 
 
 		error = face->root.internal->incremental_interface->funcs->get_glyph_metrics(
-		            face->root.internal->incremental_interface->object,
-		            glyph_index, FALSE, &metrics, &found );
+					face->root.internal->incremental_interface->object,
+					glyph_index, FALSE, &metrics, &found );
 		if ( found ) {
 			decoder->builder.left_bearing.x = metrics.bearing_x;
 			decoder->builder.left_bearing.y = metrics.bearing_y;
@@ -203,7 +205,7 @@ Exit:
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 cid_face_compute_max_advance( CID_Face  face,
-                              FT2_1_3_Int*   max_advance ) {
+							  FT2_1_3_Int*   max_advance ) {
 	FT2_1_3_Error       error;
 	T1_DecoderRec  decoder;
 	FT2_1_3_Int         glyph_index;
@@ -215,13 +217,13 @@ cid_face_compute_max_advance( CID_Face  face,
 
 	/* Initialize load decoder */
 	error = psaux->t1_decoder_funcs->init( &decoder,
-	                                       (FT2_1_3_Face)face,
-	                                       0, /* size       */
-	                                       0, /* glyph slot */
-	                                       0, /* glyph names! XXX */
-	                                       0, /* blend == 0 */
-	                                       0, /* hinting == 0 */
-	                                       cid_load_glyph );
+										   (FT2_1_3_Face)face,
+										   0, /* size       */
+										   0, /* glyph slot */
+										   0, /* glyph names! XXX */
+										   0, /* blend == 0 */
+										   0, /* hinting == 0 */
+										   cid_load_glyph );
 	if ( error )
 		return error;
 
@@ -231,7 +233,7 @@ cid_face_compute_max_advance( CID_Face  face,
 	/* for each glyph, parse the glyph charstring and extract */
 	/* the advance width                                      */
 	for ( glyph_index = 0; glyph_index < face->root.num_glyphs;
-	        glyph_index++ ) {
+			glyph_index++ ) {
 		/* now get load the unscaled outline */
 		error = cid_load_glyph( &decoder, glyph_index );
 		/* ignore the error if one occurred - skip to next glyph */
@@ -264,9 +266,9 @@ cid_face_compute_max_advance( CID_Face  face,
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 cid_slot_load_glyph( CID_GlyphSlot  glyph,
-                     CID_Size       size,
-                     FT2_1_3_Int         glyph_index,
-                     FT2_1_3_Int32       load_flags ) {
+					 CID_Size       size,
+					 FT2_1_3_Int         glyph_index,
+					 FT2_1_3_Int32       load_flags ) {
 	FT2_1_3_Error       error;
 	T1_DecoderRec  decoder;
 	CID_Face       face = (CID_Face)glyph->root.face;
@@ -287,24 +289,24 @@ cid_slot_load_glyph( CID_GlyphSlot  glyph,
 	glyph->root.outline.n_contours = 0;
 
 	hinting = FT2_1_3_BOOL( ( load_flags & FT2_1_3_LOAD_NO_SCALE   ) == 0 &&
-	                   ( load_flags & FT2_1_3_LOAD_NO_HINTING ) == 0 );
+					   ( load_flags & FT2_1_3_LOAD_NO_HINTING ) == 0 );
 
 	glyph->root.format = FT2_1_3_GLYPH_FORMAT_OUTLINE;
 
 	{
 		error = psaux->t1_decoder_funcs->init( &decoder,
-		                                       (FT2_1_3_Face)face,
-		                                       (FT2_1_3_Size)size,
-		                                       (FT2_1_3_GlyphSlot)glyph,
-		                                       0, /* glyph names -- XXX */
-		                                       0, /* blend == 0 */
-		                                       hinting,
-		                                       FT2_1_3_LOAD_TARGET_MODE(load_flags),
-		                                       cid_load_glyph );
+											   (FT2_1_3_Face)face,
+											   (FT2_1_3_Size)size,
+											   (FT2_1_3_GlyphSlot)glyph,
+											   0, /* glyph names -- XXX */
+											   0, /* blend == 0 */
+											   hinting,
+											   FT2_1_3_LOAD_TARGET_MODE(load_flags),
+											   cid_load_glyph );
 
 		/* set up the decoder */
 		decoder.builder.no_recurse = FT2_1_3_BOOL(
-		                                 ( ( load_flags & FT2_1_3_LOAD_NO_RECURSE ) != 0 ) );
+										 ( ( load_flags & FT2_1_3_LOAD_NO_RECURSE ) != 0 ) );
 
 		error = cid_load_glyph( &decoder, glyph_index );
 
@@ -359,8 +361,8 @@ cid_slot_load_glyph( CID_GlyphSlot  glyph,
 			FT2_1_3_Outline_Transform( &glyph->root.outline, &font_matrix );
 
 			FT2_1_3_Outline_Translate( &glyph->root.outline,
-			                      font_offset.x,
-			                      font_offset.y );
+								  font_offset.x,
+								  font_offset.y );
 
 			if ( ( load_flags & FT2_1_3_LOAD_NO_SCALE ) == 0 ) {
 				/* scale the outline and the metrics */
@@ -417,5 +419,7 @@ cid_slot_load_glyph( CID_GlyphSlot  glyph,
 	return error;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

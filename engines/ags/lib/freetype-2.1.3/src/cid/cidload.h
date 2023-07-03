@@ -16,14 +16,16 @@
 /***************************************************************************/
 
 
-#ifndef __CIDLOAD_H__
-#define __CIDLOAD_H__
+#ifndef AGS_LIB_FREETYPE_CIDLOAD_H
+#define AGS_LIB_FREETYPE_CIDLOAD_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftstream.h"
 #include "cidparse.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -37,12 +39,12 @@ typedef struct  CID_Loader_ {
 
 FT2_1_3_LOCAL( FT2_1_3_Long )
 cid_get_offset( FT2_1_3_Byte**  start,
-                FT2_1_3_Byte    offsize );
+				FT2_1_3_Byte    offsize );
 
 FT2_1_3_LOCAL( void )
 cid_decrypt( FT2_1_3_Byte*   buffer,
-             FT2_1_3_Offset  length,
-             FT2_1_3_UShort  seed );
+			 FT2_1_3_Offset  length,
+			 FT2_1_3_UShort  seed );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 cid_face_open( CID_Face  face );
@@ -50,7 +52,9 @@ cid_face_open( CID_Face  face );
 
 FT2_1_3_END_HEADER
 
-#endif /* __CIDLOAD_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
+#endif /* AGS_LIB_FREETYPE_CIDLOAD_H */
 
 /* END */

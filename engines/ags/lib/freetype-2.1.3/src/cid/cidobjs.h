@@ -16,8 +16,8 @@
 /***************************************************************************/
 
 
-#ifndef __CIDOBJS_H__
-#define __CIDOBJS_H__
+#ifndef AGS_LIB_FREETYPE_CIDOBJS_H
+#define AGS_LIB_FREETYPE_CIDOBJS_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
@@ -25,6 +25,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftconfig.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/t1types.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -130,10 +132,10 @@ cid_size_reset( CID_Size  size );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 cid_face_init( FT2_1_3_Stream      stream,
-               CID_Face       face,
-               FT2_1_3_Int         face_index,
-               FT2_1_3_Int         num_params,
-               FT2_1_3_Parameter*  params );
+			   CID_Face       face,
+			   FT2_1_3_Int         face_index,
+			   FT2_1_3_Int         num_params,
+			   FT2_1_3_Parameter*  params );
 
 
 FT2_1_3_LOCAL( void )
@@ -150,7 +152,10 @@ cid_driver_done( CID_Driver  driver );
 
 FT2_1_3_END_HEADER
 
-#endif /* __CIDOBJS_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_CIDOBJS_H */
 
 
 /* END */
