@@ -133,12 +133,12 @@ FTC_Manager_Lookup_Face( FTC_Manager  manager,
 
 
 	if ( aface == NULL )
-		return FTC_Err_Bad_Argument;
+		return FT2_1_3_Err_Bad_Argument;
 
 	*aface = NULL;
 
 	if ( !manager )
-		return FTC_Err_Invalid_Cache_Handle;
+		return FT2_1_3_Err_Invalid_Cache_Handle;
 
 	error = FT2_1_3_LruList_Lookup( manager->faces_list,
 							   (FT2_1_3_LruKey)face_id,
@@ -368,7 +368,7 @@ ftc_family_table_alloc( FTC_FamilyTable   table,
 		entry = table->entries + table->count++;
 	} else {
 		FT2_1_3_ERROR(( "ftc_family_table_alloc: internal bug!" ));
-		return FTC_Err_Invalid_Argument;
+		return FT2_1_3_Err_Invalid_Argument;
 	}
 
 	entry->link = FTC_FAMILY_ENTRY_NONE;
@@ -423,7 +423,7 @@ FTC_Manager_New( FT2_1_3_Library          library,
 
 
 	if ( !library )
-		return FTC_Err_Invalid_Library_Handle;
+		return FT2_1_3_Err_Invalid_Library_Handle;
 
 	memory = library->memory;
 
@@ -638,7 +638,7 @@ FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
 FTC_Manager_Register_Cache( FTC_Manager      manager,
 							FTC_Cache_Class  clazz,
 							FTC_Cache       *acache ) {
-	FT2_1_3_Error   error = FTC_Err_Invalid_Argument;
+	FT2_1_3_Error   error = FT2_1_3_Err_Invalid_Argument;
 	FTC_Cache  cache = NULL;
 
 
@@ -655,7 +655,7 @@ FTC_Manager_Register_Cache( FTC_Manager      manager,
 
 		/* return an error if there are too many registered caches */
 		if ( idx >= FTC_MAX_CACHES ) {
-			error = FTC_Err_Too_Many_Caches;
+			error = FT2_1_3_Err_Too_Many_Caches;
 			FT2_1_3_ERROR(( "FTC_Manager_Register_Cache:" ));
 			FT2_1_3_ERROR(( " too many registered caches\n" ));
 			goto Exit;

@@ -220,7 +220,7 @@ ftc_cmap_family_init( FTC_CMapFamily  cfam,
 
 Bad_Descriptor:
 	FT2_1_3_ERROR(( "ftp_cmap_family_init: invalid charmap descriptor\n" ));
-	return FTC_Err_Invalid_Argument;
+	return FT2_1_3_Err_Invalid_Argument;
 }
 
 

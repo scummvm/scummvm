@@ -122,7 +122,7 @@ ftc_image_node_init( FTC_ImageNode   inode,
 					goto Exit;
 				}
 			} else
-				error = FTC_Err_Invalid_Argument;
+				error = FT2_1_3_Err_Invalid_Argument;
 		}
 	}
 
@@ -280,7 +280,7 @@ FTC_ImageCache_Lookup( FTC_ImageCache  cache,
 
 	/* some argument checks are delayed to ftc_cache_lookup */
 	if ( !aglyph )
-		return FTC_Err_Invalid_Argument;
+		return FT2_1_3_Err_Invalid_Argument;
 
 	if ( anode )
 		*anode  = NULL;
@@ -322,7 +322,7 @@ FTC_Image_Cache_Lookup( FTC_Image_Cache  icache,
 
 
 	if ( !desc )
-		return FTC_Err_Invalid_Argument;
+		return FT2_1_3_Err_Invalid_Argument;
 
 	type0.font = desc->font;
 

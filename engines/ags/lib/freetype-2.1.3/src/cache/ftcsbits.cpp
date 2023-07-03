@@ -130,7 +130,7 @@ ftc_sbit_node_load( FTC_SBitNode    snode,
 	if ( gindex <  (FT2_1_3_UInt)gnode->item_start                     ||
 			gindex >= (FT2_1_3_UInt)gnode->item_start + gnode->item_count ) {
 		FT2_1_3_ERROR(( "ftc_sbit_node_load: invalid glyph index" ));
-		return FTC_Err_Invalid_Argument;
+		return FT2_1_3_Err_Invalid_Argument;
 	}
 
 	memory = manager->library->memory;
@@ -431,7 +431,7 @@ FTC_SBitCache_Lookup( FTC_SBitCache   cache,
 
 	/* other argument checks delayed to ftc_cache_lookup */
 	if ( !ansbit )
-		return FTC_Err_Invalid_Argument;
+		return FT2_1_3_Err_Invalid_Argument;
 
 	*ansbit = NULL;
 
@@ -474,7 +474,7 @@ FTC_SBit_Cache_Lookup( FTC_SBit_Cache   cache,
 
 
 	if ( !desc )
-		return FTC_Err_Invalid_Argument;
+		return FT2_1_3_Err_Invalid_Argument;
 
 	type0.font  = desc->font;
 	type0.flags = 0;

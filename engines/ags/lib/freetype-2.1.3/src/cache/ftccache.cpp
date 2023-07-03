@@ -511,7 +511,7 @@ ftc_cache_lookup( FTC_Cache   cache,
 
 
 	if ( !cache || !query || !anode )
-		return FTC_Err_Invalid_Argument;
+		return FT2_1_3_Err_Invalid_Argument;
 
 	*anode = NULL;
 
@@ -575,7 +575,7 @@ Skip:
 				family->fam_index >= cache->manager->families.size ) {
 			FT2_1_3_ERROR((
 						 "ftc_cache_lookup: invalid query (bad 'family' field)\n" ));
-			return FTC_Err_Invalid_Argument;
+			return FT2_1_3_Err_Invalid_Argument;
 		}
 
 		if ( *bucket ) {

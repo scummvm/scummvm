@@ -38,7 +38,7 @@ FT2_1_3_LruList_New( FT2_1_3_LruList_Class  clazz,
 
 
 	if ( !alist || !clazz )
-		return FTC_Err_Invalid_Argument;
+		return FT2_1_3_Err_Invalid_Argument;
 
 	*alist = NULL;
 	if ( !FT2_1_3_ALLOC( list, clazz->list_size ) ) {
@@ -129,7 +129,7 @@ FT2_1_3_LruList_Lookup( FT2_1_3_LruList   list,
 
 
 	if ( !list || !key || !anode )
-		return FTC_Err_Invalid_Argument;
+		return FT2_1_3_Err_Invalid_Argument;
 
 	pnode  = &list->nodes;
 	plast  = pnode;
