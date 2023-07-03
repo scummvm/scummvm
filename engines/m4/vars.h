@@ -32,6 +32,7 @@
 #include "m4/adv_r/adv_inv.h"
 #include "m4/adv_r/adv_player.h"
 #include "m4/adv_r/adv_rails.h"
+#include "m4/adv_r/conv_io.h"
 #include "m4/core/mouse.h"
 #include "m4/fileio/fstream.h"
 #include "m4/fileio/sys_file.h"
@@ -91,6 +92,7 @@ public:
 	MouseInfo _MouseState;
 	Dialog_Globals _dialog;
 	Item_Globals _items;
+	Converstation_Globals _conversations;
 
 	bool _cheating_enabled = false;
 	bool _cheat_keys_enabled = false;

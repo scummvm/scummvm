@@ -15,6 +15,7 @@ MODULE_OBJS = \
 	adv_r/adv_rails.o \
 	adv_r/adv_trigger.o \
 	adv_r/adv_walk.o \
+	adv_r/conv_io.o \
 	adv_r/db_env.o \
 	adv_r/kernel.o \
 	core/cstring.o \
