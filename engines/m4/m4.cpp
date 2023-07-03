@@ -29,6 +29,7 @@
 #include "m4/m4.h"
 #include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_file.h"
+#include "m4/adv_r/conv_io.h"
 #include "m4/gui/hotkeys.h"
 #include "m4/platform/sound.h"
 #include "m4/detection.h"
@@ -101,8 +102,9 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 	if (player_been_sync(s).getCode() != Common::kNoError)
 		return Common::kUnknownError;
 
+	_G(conversations).syncGame(s);
+
 #ifdef TODO
-	conv_restore_game(handle);
 	inv_restore_game(handle);
 
 	if (extra_restore_code_pointer)
