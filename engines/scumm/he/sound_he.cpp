@@ -97,7 +97,7 @@ void SoundHE::modifySound(int sound, int offset, int frequencyShift, int pan, in
 			_mixer->setChannelBalance(_heSoundChannels[chan], scaledPan);
 
 		if (flags & ScummEngine_v70he::HESndFlags::HE_SND_FREQUENCY) {
-			int newFrequency = (_heChannel[chan].frequency * frequencyShift) / HSND_BASE_FREQ_FACTOR;
+			int newFrequency = (_heChannel[chan].frequency * frequencyShift) / HSND_SOUND_FREQ_BASE;
 			if (newFrequency)
 				_mixer->setChannelRate(_heSoundChannels[chan], newFrequency);
 		}

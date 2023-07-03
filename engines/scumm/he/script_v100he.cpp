@@ -1785,9 +1785,10 @@ void ScummEngine_v100he::o100_soundOps() {
 		_heSndStartNewSoundFlag = (SO_SOUND_START == subOp);
 		_heSndSoundId = pop();
 		_heSndOffset = 0;
-		_heSndFrequencyShift = HSND_BASE_FREQ_FACTOR;
+		_heSndFrequencyShift = HSND_SOUND_FREQ_BASE;
 		_heSndChannel = VAR(VAR_SOUND_CHANNEL);
 		_heSndVol = HSND_MAX_VOLUME;
+		_heSndPan = HSND_SOUND_PAN_CENTER;
 		_heSndFlags = 0;
 		break;
 	case SO_SOUND_PAN:
