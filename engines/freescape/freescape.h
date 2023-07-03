@@ -225,6 +225,7 @@ public:
 	virtual void pressedKey(const int keycode);
 	virtual bool onScreenControls(Common::Point mouse);
 	void move(CameraMovement direction, uint8 scale, float deltaTime);
+	void resolveCollisions(Math::Vector3d newPosition);
 	virtual void checkIfStillInArea();
 	void changePlayerHeight(int index);
 	void increaseStepSize();
@@ -275,7 +276,7 @@ public:
 	Common::Array<Common::String> _conditionSources;
 	Common::Array<FCLInstructionVector> _conditions;
 
-	bool checkCollisions(bool executeCode);
+	void runCollisionConditions(Math::Vector3d const lastPosition, Math::Vector3d const newPosition);
 	Math::Vector3d _objExecutingCodeSize;
 	virtual void executeMovementConditions();
 	void executeObjectConditions(GeometricObject *obj, bool shot, bool collided, bool activated);
