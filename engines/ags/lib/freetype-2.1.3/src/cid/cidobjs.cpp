@@ -305,7 +305,7 @@ cid_face_init( FT2_1_3_Stream      stream,
 	/* check the face index */
 	if ( face_index != 0 ) {
 		FT2_1_3_ERROR(( "cid_face_init: invalid face index\n" ));
-		error = CID_Err_Invalid_Argument;
+		error = FT2_1_3_Err_Invalid_Argument;
 		goto Exit;
 	}
 
@@ -400,7 +400,7 @@ FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 cid_driver_init( CID_Driver  driver ) {
 	FT2_1_3_UNUSED( driver );
 
-	return CID_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 

@@ -75,7 +75,7 @@ cid_parser_new( CID_Parser*    parser,
 	if ( ft_strncmp( (char *)stream->cursor,
 					 "%!PS-Adobe-3.0 Resource-CIDFont", 31 ) ) {
 		FT2_1_3_TRACE2(( "[not a valid CID-keyed font]\n" ));
-		error = CID_Err_Unknown_File_Format;
+		error = FT2_1_3_Err_Unknown_File_Format;
 	}
 
 	FT2_1_3_FRAME_EXIT();

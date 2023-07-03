@@ -241,7 +241,7 @@ cid_face_compute_max_advance( CID_Face  face,
 
 	*max_advance = decoder.builder.advance.x;
 
-	return CID_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 

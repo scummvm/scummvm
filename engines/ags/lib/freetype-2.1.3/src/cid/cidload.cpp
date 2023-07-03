@@ -117,7 +117,7 @@ cid_load_keyword( CID_Face        face,
 		if ( parser->num_dict < 0 ) {
 			FT2_1_3_ERROR(( "cid_load_keyword: invalid use of `%s'!\n",
 					   keyword->ident ));
-			error = CID_Err_Syntax_Error;
+			error = FT2_1_3_Err_Syntax_Error;
 			goto Exit;
 		}
 
@@ -160,7 +160,7 @@ parse_font_bbox( CID_Face     face,
 	bbox->xMax = FT2_1_3_RoundFix( temp[2] );
 	bbox->yMax = FT2_1_3_RoundFix( temp[3] );
 
-	return CID_Err_Ok;       /* this is a callback function; */
+	return FT2_1_3_Err_Ok;       /* this is a callback function; */
 	/* we must return an error code */
 }
 
@@ -211,7 +211,7 @@ parse_font_matrix( CID_Face     face,
 		offset->y  = temp[5] >> 16;
 	}
 
-	return CID_Err_Ok;       /* this is a callback function; */
+	return FT2_1_3_Err_Ok;       /* this is a callback function; */
 	/* we must return an error code */
 }
 
@@ -221,7 +221,7 @@ parse_fd_array( CID_Face     face,
 				CID_Parser*  parser ) {
 	CID_FaceInfo  cid    = &face->cid;
 	FT2_1_3_Memory     memory = face->root.memory;
-	FT2_1_3_Error      error  = CID_Err_Ok;
+	FT2_1_3_Error      error  = FT2_1_3_Err_Ok;
 	FT2_1_3_Long       num_dicts;
 
 
