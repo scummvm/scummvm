@@ -213,7 +213,7 @@ hash_rehash( hashtable*  ht,
 			 FT2_1_3_Memory   memory ) {
 	hashnode*  obp = ht->table, *bp, *nbp;
 	int        i, sz = ht->size;
-	FT2_1_3_Error   error = BDF_Err_Ok;
+	FT2_1_3_Error   error = FT2_1_3_Err_Ok;
 
 
 	ht->size <<= 1;
@@ -240,7 +240,7 @@ static FT2_1_3_Error
 hash_init( hashtable*  ht,
 		   FT2_1_3_Memory   memory ) {
 	int       sz = INITIAL_HT_SIZE;
-	FT2_1_3_Error  error = BDF_Err_Ok;
+	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
 
 
 	ht->size  = sz;
@@ -278,7 +278,7 @@ hash_insert( char*       key,
 			 hashtable*  ht,
 			 FT2_1_3_Memory   memory ) {
 	hashnode  nn, *bp = hash_bucket( key, ht );
-	FT2_1_3_Error  error = BDF_Err_Ok;
+	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
 
 
 	nn = *bp;
@@ -391,7 +391,7 @@ _bdf_split( char*          separators,
 	int       mult, final_empty;
 	char      *sp, *ep, *end;
 	char      seps[32];
-	FT2_1_3_Error  error = BDF_Err_Ok;
+	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
 
 
 	/* Initialize the list. */
@@ -405,7 +405,7 @@ _bdf_split( char*          separators,
 	/* empty, the list is split into individual bytes.  We don't need */
 	/* this, so an error is signaled.                                 */
 	if ( separators == 0 || *separators == 0 ) {
-		error = BDF_Err_Invalid_Argument;
+		error = FT2_1_3_Err_Invalid_Argument;
 		goto Exit;
 	}
 
@@ -561,14 +561,14 @@ bdf_internal_readstream( FT2_1_3_Stream  stream,
 						 int       *read_bytes ) {
 	int            rbytes;
 	unsigned long  pos   = stream->pos;
-	FT2_1_3_Error       error = BDF_Err_Ok;
+	FT2_1_3_Error       error = FT2_1_3_Err_Ok;
 
 
 	if ( pos > stream->size ) {
 		FT2_1_3_ERROR(( "bdf_internal_readstream:" ));
 		FT2_1_3_ERROR(( " invalid i/o; pos = 0x%lx, size = 0x%lx\n",
 				   pos, stream->size ));
-		error = BDF_Err_Invalid_Stream_Operation;
+		error = FT2_1_3_Err_Invalid_Stream_Operation;
 		goto Exit;
 	}
 
@@ -603,11 +603,11 @@ _bdf_readstream( FT2_1_3_Stream         stream,
 	char              *ls, *le, *pp, *pe, *hp;
 	char              *buf = 0;
 	FT2_1_3_Memory         memory = stream->memory;
-	FT2_1_3_Error          error = BDF_Err_Ok;
+	FT2_1_3_Error          error = FT2_1_3_Err_Ok;
 
 
 	if ( callback == 0 ) {
-		error = BDF_Err_Invalid_Argument;
+		error = FT2_1_3_Err_Invalid_Argument;
 		goto Exit;
 	}
 
@@ -665,7 +665,7 @@ _bdf_readstream( FT2_1_3_Stream         stream,
 				if ( *ls != '#' && *ls != 0x1a                          &&
 						le > ls                                            &&
 						( error = (*cb)( ls, le - ls, lineno, (void *)&cb,
-										 client_data ) ) != BDF_Err_Ok     )
+										 client_data ) ) != FT2_1_3_Err_Ok     )
 					done = 1;
 				else {
 					ls = ++le;
@@ -904,7 +904,7 @@ bdf_create_property( char*        name,
 	unsigned long    n;
 	bdf_property_t*  p;
 	FT2_1_3_Memory        memory = font->memory;
-	FT2_1_3_Error         error = BDF_Err_Ok;
+	FT2_1_3_Error         error = FT2_1_3_Err_Ok;
 
 
 	/* First check to see if the property has      */
@@ -1036,7 +1036,7 @@ _bdf_add_comment( bdf_font_t*    font,
 				  unsigned long  len ) {
 	char*      cp;
 	FT2_1_3_Memory  memory = font->memory;
-	FT2_1_3_Error   error = BDF_Err_Ok;
+	FT2_1_3_Error   error = FT2_1_3_Err_Ok;
 
 
 	if ( font->comments_len == 0 ) {
@@ -1069,11 +1069,11 @@ _bdf_set_default_spacing( bdf_font_t*     font,
 	char           name[128];
 	_bdf_list_t    list;
 	FT2_1_3_Memory      memory;
-	FT2_1_3_Error       error = BDF_Err_Ok;
+	FT2_1_3_Error       error = FT2_1_3_Err_Ok;
 
 
 	if ( font == 0 || font->name == 0 || font->name[0] == 0 ) {
-		error = BDF_Err_Invalid_Argument;
+		error = FT2_1_3_Err_Invalid_Argument;
 		goto Exit;
 	}
 
@@ -1186,7 +1186,7 @@ _bdf_add_property( bdf_font_t*  font,
 	int             len;
 	bdf_property_t  *prop, *fp;
 	FT2_1_3_Memory       memory = font->memory;
-	FT2_1_3_Error        error = BDF_Err_Ok;
+	FT2_1_3_Error        error = FT2_1_3_Err_Ok;
 
 
 	/* First, check to see if the property already exists in the font. */
@@ -1353,7 +1353,7 @@ _bdf_parse_glyphs( char*          line,
 	bdf_font_t*        font;
 
 	FT2_1_3_Memory          memory;
-	FT2_1_3_Error           error = BDF_Err_Ok;
+	FT2_1_3_Error           error = FT2_1_3_Err_Ok;
 
 	FT2_1_3_UNUSED( lineno );        /* only used in debug mode */
 
@@ -1381,7 +1381,7 @@ _bdf_parse_glyphs( char*          line,
 	if ( !( p->flags & _BDF_GLYPHS ) ) {
 		if ( ft_memcmp( line, "CHARS", 5 ) != 0 ) {
 			FT2_1_3_ERROR(( "_bdf_parse_glyphs: " ERRMSG1, lineno, "CHARS" ));
-			error = BDF_Err_Missing_Chars_Field;
+			error = FT2_1_3_Err_Missing_Chars_Field;
 			goto Exit;
 		}
 
@@ -1457,7 +1457,7 @@ _bdf_parse_glyphs( char*          line,
 		if ( !( p->flags & _BDF_GLYPH ) ) {
 			/* Missing STARTCHAR field. */
 			FT2_1_3_ERROR(( "_bdf_parse_glyphs: " ERRMSG1, lineno, "STARTCHAR" ));
-			error = BDF_Err_Missing_Startchar_Field;
+			error = FT2_1_3_Err_Missing_Startchar_Field;
 			goto Exit;
 		}
 
@@ -1591,7 +1591,7 @@ _bdf_parse_glyphs( char*          line,
 		if ( !( p->flags & _BDF_ENCODING ) ) {
 			/* Missing ENCODING field. */
 			FT2_1_3_ERROR(( "_bdf_parse_glyphs: " ERRMSG1, lineno, "ENCODING" ));
-			error = BDF_Err_Missing_Encoding_Field;
+			error = FT2_1_3_Err_Missing_Encoding_Field;
 			goto Exit;
 		}
 
@@ -1692,7 +1692,7 @@ _bdf_parse_glyphs( char*          line,
 		if ( !( p->flags & _BDF_BBX ) ) {
 			/* Missing BBX field. */
 			FT2_1_3_ERROR(( "_bdf_parse_glyphs: " ERRMSG1, lineno, "BBX" ));
-			error = BDF_Err_Missing_Bbx_Field;
+			error = FT2_1_3_Err_Missing_Bbx_Field;
 			goto Exit;
 		}
 
@@ -1709,7 +1709,7 @@ _bdf_parse_glyphs( char*          line,
 		goto Exit;
 	}
 
-	error = BDF_Err_Invalid_File_Format;
+	error = FT2_1_3_Err_Invalid_File_Format;
 
 Exit:
 	return error;
@@ -1730,7 +1730,7 @@ _bdf_parse_properties( char*          line,
 	char*              value;
 	char               nbuf[128];
 	FT2_1_3_Memory          memory;
-	FT2_1_3_Error           error = BDF_Err_Ok;
+	FT2_1_3_Error           error = FT2_1_3_Err_Ok;
 
 	FT2_1_3_UNUSED( lineno );
 
@@ -1827,7 +1827,7 @@ _bdf_parse_start( char*          line,
 	char               *s;
 
 	FT2_1_3_Memory          memory = NULL;
-	FT2_1_3_Error           error  = BDF_Err_Ok;
+	FT2_1_3_Error           error  = FT2_1_3_Err_Ok;
 
 	FT2_1_3_UNUSED( lineno );            /* only used in debug mode */
 
@@ -1864,7 +1864,7 @@ _bdf_parse_start( char*          line,
 
 		if ( ft_memcmp( line, "STARTFONT", 9 ) != 0 ) {
 			/* No STARTFONT field is a good indication of a problem. */
-			error = BDF_Err_Missing_Startfont_Field;
+			error = FT2_1_3_Err_Missing_Startfont_Field;
 			goto Exit;
 		}
 
@@ -1928,7 +1928,7 @@ _bdf_parse_start( char*          line,
 		if ( !(p->flags & _BDF_SIZE ) ) {
 			/* Missing the SIZE field. */
 			FT2_1_3_ERROR(( "_bdf_parse_start: " ERRMSG1, lineno, "SIZE" ));
-			error = BDF_Err_Missing_Size_Field;
+			error = FT2_1_3_Err_Missing_Size_Field;
 			goto Exit;
 		}
 
@@ -1980,7 +1980,7 @@ _bdf_parse_start( char*          line,
 		if ( !( p->flags & _BDF_FONT_NAME ) ) {
 			/* Missing the FONT field. */
 			FT2_1_3_ERROR(( "_bdf_parse_start: " ERRMSG1, lineno, "FONT" ));
-			error = BDF_Err_Missing_Font_Field;
+			error = FT2_1_3_Err_Missing_Font_Field;
 			goto Exit;
 		}
 
@@ -2023,7 +2023,7 @@ _bdf_parse_start( char*          line,
 		goto Exit;
 	}
 
-	error = BDF_Err_Invalid_File_Format;
+	error = FT2_1_3_Err_Invalid_File_Format;
 
 Exit:
 	return error;
@@ -2046,7 +2046,7 @@ bdf_load_font( FT2_1_3_Stream       stream,
 	_bdf_parse_t   *p;
 
 	FT2_1_3_Memory      memory = extmemory;
-	FT2_1_3_Error       error  = BDF_Err_Ok;
+	FT2_1_3_Error       error  = FT2_1_3_Err_Ok;
 
 
 	if ( FT2_1_3_ALLOC( p, sizeof ( _bdf_parse_t ) ) )
@@ -2150,8 +2150,8 @@ bdf_load_font( FT2_1_3_Stream       stream,
 
 			p->font->comments[p->font->comments_len] = 0;
 		}
-	} else if ( error == BDF_Err_Ok )
-		error = BDF_Err_Invalid_File_Format;
+	} else if ( error == FT2_1_3_Err_Ok )
+		error = FT2_1_3_Err_Invalid_File_Format;
 
 	*font = p->font;
 

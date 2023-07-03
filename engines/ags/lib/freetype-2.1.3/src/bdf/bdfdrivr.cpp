@@ -180,7 +180,7 @@ BDF_Face_Done( BDF_Face  face ) {
 
 	FT2_1_3_TRACE4(( "BDF_Face_Done: done face\n" ));
 
-	return BDF_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 
@@ -190,7 +190,7 @@ BDF_Face_Init( FT2_1_3_Stream      stream,
 			   FT2_1_3_Int         face_index,
 			   FT2_1_3_Int         num_params,
 			   FT2_1_3_Parameter*  params ) {
-	FT2_1_3_Error       error  = BDF_Err_Ok;
+	FT2_1_3_Error       error  = FT2_1_3_Err_Ok;
 	FT2_1_3_Memory      memory = FT2_1_3_FACE_MEMORY( face );
 
 	bdf_font_t*    font;
@@ -210,7 +210,7 @@ BDF_Face_Init( FT2_1_3_Stream      stream,
 	options.font_spacing    = BDF_PROPORTIONAL;
 
 	error = bdf_load_font( stream, memory, &options, &font );
-	if ( error == BDF_Err_Missing_Startfont_Field ) {
+	if ( error == FT2_1_3_Err_Missing_Startfont_Field ) {
 		FT2_1_3_TRACE2(( "[not a valid BDF file]\n" ));
 		goto Fail;
 	} else if ( error )
@@ -420,7 +420,7 @@ Exit:
 
 Fail:
 	BDF_Face_Done( face );
-	return BDF_Err_Unknown_File_Format;
+	return FT2_1_3_Err_Unknown_File_Format;
 }
 
 
@@ -438,9 +438,9 @@ BDF_Set_Pixel_Size( FT2_1_3_Size  size ) {
 		size->metrics.descender = face->bdffont->bbx.descent * ( -64 );
 		size->metrics.height    = face->bdffont->bbx.height << 6;
 
-		return BDF_Err_Ok;
+		return FT2_1_3_Err_Ok;
 	} else
-		return BDF_Err_Invalid_Pixel_Size;
+		return FT2_1_3_Err_Invalid_Pixel_Size;
 }
 
 
@@ -450,7 +450,7 @@ BDF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
 				FT2_1_3_UInt       glyph_index,
 				FT2_1_3_Int32      load_flags ) {
 	BDF_Face        face   = (BDF_Face)FT2_1_3_SIZE_FACE( size );
-	FT2_1_3_Error        error  = BDF_Err_Ok;
+	FT2_1_3_Error        error  = FT2_1_3_Err_Ok;
 	FT2_1_3_Bitmap*      bitmap = &slot->bitmap;
 	bdf_glyph_t     glyph;
 	int             bpp    = face->bdffont->bpp;
@@ -463,7 +463,7 @@ BDF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
 
 
 	if ( !face ) {
-		error = BDF_Err_Invalid_Argument;
+		error = FT2_1_3_Err_Invalid_Argument;
 		goto Exit;
 	}
 
