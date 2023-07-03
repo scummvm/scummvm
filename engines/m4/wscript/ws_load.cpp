@@ -275,6 +275,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 			*chunkSize = SWAP_INT32(*chunkSize);
 			*chunkHash = SWAP_INT32(*chunkHash);
 			chunkSwap = true;
+			// Fall through
 
 		case CHUNK_MACH:
 			// Check the validity of the machine hash number, and clear it
@@ -304,16 +305,16 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 
 			// Update the assetPtr to the beginning of the next chunk
 			parseAssetPtr += *chunkSize - 12;
-
 			break;
 
-			// Chunk is a machine chunk
 		case CHUNK_UQES:
+			// Chunk is a machine chunk
 			// Byte swap the type, size and hash and continue through case CHUNK_SEQU.
 			*chunkType = SWAP_INT32(*chunkType);
 			*chunkSize = SWAP_INT32(*chunkSize);
 			*chunkHash = SWAP_INT32(*chunkHash);
 			chunkSwap = true;
+			// Fall through
 
 		case CHUNK_SEQU:
 			// Check the validity of the sequence hash number, and clear it
@@ -345,13 +346,14 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 			parseAssetPtr += *chunkSize - 12;
 			break;
 
-		// Chunk is a data chunk
 		case CHUNK_ATAD:
+			// Chunk is a data chunk
 			// Byte swap the type, size and hash and continue through case CHUNK_DATA.
 			*chunkType = SWAP_INT32(*chunkType);
 			*chunkSize = SWAP_INT32(*chunkSize);
 			*chunkHash = SWAP_INT32(*chunkHash);
 			chunkSwap = true;
+			// Fall through
 
 		case CHUNK_DATA:
 			// Check the validity of the data block hash number, and clear it
@@ -389,6 +391,7 @@ bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 			*chunkSize = SWAP_INT32(*chunkSize);
 			*chunkHash = SWAP_INT32(*chunkHash);
 			chunkSwap = true;
+			// Fall through
 
 		case CHUNK_CELS:
 			// Check the validity of the cels hash number, and clear it
