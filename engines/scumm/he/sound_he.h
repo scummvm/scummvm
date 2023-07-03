@@ -47,7 +47,9 @@ namespace Scumm {
 #define HSND_MAX_SOUND_VARS       26
 #define HSND_DEFAULT_FREQUENCY    11025
 #define HSND_BASE_FREQ_FACTOR     1024
+#define HSND_SOUND_FREQ_BASE      1024
 #define HSND_MAX_VOLUME           255
+#define HSND_SOUND_PAN_CENTER     64
 #define HSND_FIRST_SPOOLING_SOUND 4000
 
 #define HSND_SBNG_TYPE_ALL 0xF8
