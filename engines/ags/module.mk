@@ -51,7 +51,8 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/src/base/ftsystem.o \
 	lib/freetype-2.1.3/src/base/fttype1.o \
 	lib/freetype-2.1.3/src/base/ftxf86.o \
-	lib/freetype-2.1.3/src/bdf/bdf.o \
+	lib/freetype-2.1.3/src/bdf/bdflib.o \
+	lib/freetype-2.1.3/src/bdf/bdfdrivr.o \
 	lib/freetype-2.1.3/src/cache/ftcache.o \
 	lib/freetype-2.1.3/src/cff/cff.o \
 	lib/freetype-2.1.3/src/cid/type1cid.o \

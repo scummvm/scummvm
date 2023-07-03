@@ -26,8 +26,8 @@
 /*                                                                       */
 /*************************************************************************/
 
-#ifndef __BDFERROR_H__
-#define __BDFERROR_H__
+#ifndef AGS_LIB_FREETYPE_BDFERROR_H
+#define AGS_LIB_FREETYPE_BDFERROR_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftmoderr.h"
 
@@ -38,7 +38,7 @@
 
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/fterrors.h"
 
-#endif /* __BDFERROR_H__ */
+#endif /* AGS_LIB_FREETYPE_BDFERROR_H */
 
 
 /* END */

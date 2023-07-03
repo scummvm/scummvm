@@ -1,9 +1,9 @@
 /*  bdfdrivr.c
 
-    FreeType font driver for bdf files
+	FreeType font driver for bdf files
 
-    Copyright (C) 2001-2002 by
-    Francesco Zappa Nardelli
+	Copyright (C) 2001-2002 by
+	Francesco Zappa Nardelli
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -45,6 +45,8 @@ THE SOFTWARE.
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_bdfdriver
 
+namespace AGS3 {
+namespace FreeType213 {
 
 typedef struct  BDF_CMapRec_ {
 	FT2_1_3_CMapRec        cmap;
@@ -75,7 +77,7 @@ bdf_cmap_done( BDF_CMap  cmap ) {
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 bdf_cmap_char_index( BDF_CMap   cmap,
-                     FT2_1_3_UInt32  charcode ) {
+					 FT2_1_3_UInt32  charcode ) {
 	BDF_encoding_el*  encodings = cmap->encodings;
 	FT2_1_3_UInt           min, max, mid;
 	FT2_1_3_UInt           result = 0;
@@ -108,7 +110,7 @@ bdf_cmap_char_index( BDF_CMap   cmap,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 bdf_cmap_char_next( BDF_CMap    cmap,
-                    FT2_1_3_UInt32  *acharcode ) {
+					FT2_1_3_UInt32  *acharcode ) {
 	BDF_encoding_el*  encodings = cmap->encodings;
 	FT2_1_3_UInt           min, max, mid;
 	FT2_1_3_UInt32         charcode = *acharcode + 1;
@@ -184,10 +186,10 @@ BDF_Face_Done( BDF_Face  face ) {
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 BDF_Face_Init( FT2_1_3_Stream      stream,
-               BDF_Face       face,
-               FT2_1_3_Int         face_index,
-               FT2_1_3_Int         num_params,
-               FT2_1_3_Parameter*  params ) {
+			   BDF_Face       face,
+			   FT2_1_3_Int         face_index,
+			   FT2_1_3_Int         num_params,
+			   FT2_1_3_Parameter*  params ) {
 	FT2_1_3_Error       error  = BDF_Err_Ok;
 	FT2_1_3_Memory      memory = FT2_1_3_FACE_MEMORY( face );
 
@@ -222,24 +224,24 @@ BDF_Face_Init( FT2_1_3_Stream      stream,
 
 
 		FT2_1_3_TRACE4(( "number of glyphs: %d (%d)\n",
-		            font->glyphs_size,
-		            font->glyphs_used ));
+					font->glyphs_size,
+					font->glyphs_used ));
 		FT2_1_3_TRACE4(( "number of unencoded glyphs: %d (%d)\n",
-		            font->unencoded_size,
-		            font->unencoded_used ));
+					font->unencoded_size,
+					font->unencoded_used ));
 
 		root->num_faces  = 1;
 		root->face_index = 0;
 		root->face_flags = FT2_1_3_FACE_FLAG_FIXED_SIZES |
-		                   FT2_1_3_FACE_FLAG_HORIZONTAL  |
-		                   FT2_1_3_FACE_FLAG_FAST_GLYPHS;
+						   FT2_1_3_FACE_FLAG_HORIZONTAL  |
+						   FT2_1_3_FACE_FLAG_FAST_GLYPHS;
 
 		prop = bdf_get_font_property( font, (char *)"SPACING" );
 		if ( prop != NULL )
 			if ( prop->format == BDF_ATOM )
 				if ( prop->value.atom != NULL )
 					if ( ( *(prop->value.atom) == 'M' ) ||
-					        ( *(prop->value.atom) == 'C' ) )
+							( *(prop->value.atom) == 'C' ) )
 						root->face_flags |= FT2_1_3_FACE_FLAG_FIXED_WIDTH;
 
 		/* FZ XXX: TO DO: FT2_1_3_FACE_FLAGS_VERTICAL   */
@@ -251,7 +253,7 @@ BDF_Face_Init( FT2_1_3_Stream      stream,
 			if ( prop->format == BDF_ATOM )
 				if ( prop->value.atom != NULL )
 					if ( ( *(prop->value.atom) == 'O' ) ||
-					        ( *(prop->value.atom) == 'I' ) )
+							( *(prop->value.atom) == 'I' ) )
 						root->style_flags |= FT2_1_3_STYLE_FLAG_ITALIC;
 
 		prop = bdf_get_font_property( font, (char *)"WEIGHT_NAME" );
@@ -303,9 +305,9 @@ BDF_Face_Init( FT2_1_3_Stream      stream,
 				yres = bdf_get_font_property( font, (char *)"RESOLUTION_Y" );
 				if ( yres != NULL ) {
 					FT2_1_3_TRACE4(( "POINT_SIZE: %d  RESOLUTION_Y: %d\n",
-					            prop->value.int32, yres->value.int32 ));
+								prop->value.int32, yres->value.int32 ));
 					root->available_sizes->height =
-					    (FT2_1_3_Short)( prop->value.int32 * yres->value.int32 / 720 );
+						(FT2_1_3_Short)( prop->value.int32 * yres->value.int32 / 720 );
 				}
 			}
 		}
@@ -344,25 +346,25 @@ BDF_Face_Init( FT2_1_3_Stream      stream,
 
 
 			charset_registry =
-			    bdf_get_font_property( font, (char *)"CHARSET_REGISTRY" );
+				bdf_get_font_property( font, (char *)"CHARSET_REGISTRY" );
 			charset_encoding =
-			    bdf_get_font_property( font, (char *)"CHARSET_ENCODING" );
+				bdf_get_font_property( font, (char *)"CHARSET_ENCODING" );
 			if ( ( charset_registry != NULL ) && ( charset_encoding != NULL ) ) {
 				if ( ( charset_registry->format == BDF_ATOM ) &&
-				        ( charset_encoding->format == BDF_ATOM ) &&
-				        ( charset_registry->value.atom != NULL ) &&
-				        ( charset_encoding->value.atom != NULL ) ) {
+						( charset_encoding->format == BDF_ATOM ) &&
+						( charset_registry->value.atom != NULL ) &&
+						( charset_encoding->value.atom != NULL ) ) {
 					if ( FT2_1_3_NEW_ARRAY( face->charset_encoding,
-					                   strlen( charset_encoding->value.atom ) + 1 ) )
+									   strlen( charset_encoding->value.atom ) + 1 ) )
 						goto Exit;
 					if ( FT2_1_3_NEW_ARRAY( face->charset_registry,
-					                   strlen( charset_registry->value.atom ) + 1 ) )
+									   strlen( charset_registry->value.atom ) + 1 ) )
 						goto Exit;
 					ft_strcpy( face->charset_registry, charset_registry->value.atom );
 					ft_strcpy( face->charset_encoding, charset_encoding->value.atom );
 					if ( !ft_strcmp( face->charset_registry, "ISO10646" )     ||
-					        ( !ft_strcmp( face->charset_registry, "ISO8859" ) &&
-					          !ft_strcmp( face->charset_encoding, "1" )       )  )
+							( !ft_strcmp( face->charset_registry, "ISO8859" ) &&
+							  !ft_strcmp( face->charset_encoding, "1" )       )  )
 						unicode_charmap = 1;
 
 					{
@@ -429,7 +431,7 @@ BDF_Set_Pixel_Size( FT2_1_3_Size  size ) {
 
 
 	FT2_1_3_TRACE4(( "rec %d - pres %d\n",
-	            size->metrics.y_ppem, root->available_sizes->height ));
+				size->metrics.y_ppem, root->available_sizes->height ));
 
 	if ( size->metrics.y_ppem == root->available_sizes->height ) {
 		size->metrics.ascender  = face->bdffont->bbx.ascent << 6;
@@ -444,9 +446,9 @@ BDF_Set_Pixel_Size( FT2_1_3_Size  size ) {
 
 static FT2_1_3_Error
 BDF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
-                FT2_1_3_Size       size,
-                FT2_1_3_UInt       glyph_index,
-                FT2_1_3_Int32      load_flags ) {
+				FT2_1_3_Size       size,
+				FT2_1_3_UInt       glyph_index,
+				FT2_1_3_Int32      load_flags ) {
 	BDF_Face        face   = (BDF_Face)FT2_1_3_SIZE_FACE( size );
 	FT2_1_3_Error        error  = BDF_Err_Ok;
 	FT2_1_3_Bitmap*      bitmap = &slot->bitmap;
@@ -562,7 +564,7 @@ BDF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
 			bitmap->num_grays = 256;
 
 			FT2_1_3_MEM_COPY( bitmap->buffer, glyph.bitmap,
-			             bitmap->rows * bitmap->pitch );
+						 bitmap->rows * bitmap->pitch );
 			break;
 		}
 	}
@@ -574,7 +576,7 @@ BDF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
 	slot->metrics.horiAdvance  = glyph.dwidth << 6;
 	slot->metrics.horiBearingX = glyph.bbx.x_offset << 6;
 	slot->metrics.horiBearingY = ( glyph.bbx.y_offset +
-	                               glyph.bbx.height ) << 6;
+								   glyph.bbx.height ) << 6;
 	slot->metrics.width        = bitmap->width << 6;
 	slot->metrics.height       = bitmap->rows << 6;
 
@@ -625,5 +627,7 @@ const FT2_1_3_Driver_ClassRec  bdf_driver_class = {
 	(FT2_1_3_Face_GetAdvancesFunc) 0
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

@@ -22,8 +22,8 @@
  */
 
 
-#ifndef __BDF_H__
-#define __BDF_H__
+#ifndef AGS_LIB_FREETYPE_BDF_H
+#define AGS_LIB_FREETYPE_BDF_H
 
 
 /*
@@ -34,6 +34,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftstream.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -41,11 +43,11 @@ FT2_1_3_BEGIN_HEADER
 /* Imported from bdfP.h */
 
 #define _bdf_glyph_modified( map, e )                 \
-          ( (map)[(e) >> 5] & ( 1 << ( (e) & 31 ) ) )
+		  ( (map)[(e) >> 5] & ( 1 << ( (e) & 31 ) ) )
 #define _bdf_set_glyph_modified( map, e )              \
-          ( (map)[(e) >> 5] |= ( 1 << ( (e) & 31 ) ) )
+		  ( (map)[(e) >> 5] |= ( 1 << ( (e) & 31 ) ) )
 #define _bdf_clear_glyph_modified( map, e )             \
-          ( (map)[(e) >> 5] &= ~( 1 << ( (e) & 31 ) ) )
+		  ( (map)[(e) >> 5] &= ~( 1 << ( (e) & 31 ) ) )
 
 /* end of bdfP.h */
 
@@ -65,13 +67,13 @@ FT2_1_3_BEGIN_HEADER
 #define BDF_CHARCELL         0x20 /* Font has charcell spacing.            */
 
 #define BDF_ALL_SPACING  ( BDF_PROPORTIONAL | \
-                           BDF_MONOWIDTH    | \
-                           BDF_CHARCELL     )
+						   BDF_MONOWIDTH    | \
+						   BDF_CHARCELL     )
 
 #define BDF_DEFAULT_LOAD_OPTIONS  ( BDF_CORRECT_METRICS | \
-                                    BDF_KEEP_COMMENTS   | \
-                                    BDF_KEEP_UNENCODED  | \
-                                    BDF_PROPORTIONAL    )
+									BDF_KEEP_COMMENTS   | \
+									BDF_KEEP_UNENCODED  | \
+									BDF_PROPORTIONAL    )
 
 
 typedef struct  bdf_options_t_ {
@@ -86,9 +88,9 @@ typedef struct  bdf_options_t_ {
 /* Callback function type for unknown configuration options. */
 typedef int
 (*bdf_options_callback_t)( bdf_options_t*  opts,
-                           char**          params,
-                           unsigned long   nparams,
-                           void*           client_data );
+						   char**          params,
+						   unsigned long   nparams,
+						   void*           client_data );
 
 
 /*************************************************************************/
@@ -261,26 +263,28 @@ typedef struct  bdf_font_t_ {
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 bdf_load_font( FT2_1_3_Stream       stream,
-               FT2_1_3_Memory       memory,
-               bdf_options_t*  opts,
-               bdf_font_t*    *font );
+			   FT2_1_3_Memory       memory,
+			   bdf_options_t*  opts,
+			   bdf_font_t*    *font );
 
 FT2_1_3_LOCAL( void )
 bdf_free_font( bdf_font_t*  font );
 
 FT2_1_3_LOCAL( bdf_property_t * )
 bdf_get_property( char*        name,
-                  bdf_font_t*  font );
+				  bdf_font_t*  font );
 
 FT2_1_3_LOCAL( bdf_property_t * )
 bdf_get_font_property( bdf_font_t*  font,
-                       char*        name );
+					   char*        name );
 
 
 FT2_1_3_END_HEADER
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
-#endif /* __BDF_H__ */
+#endif /* AGS_LIB_FREETYPE_BDF_H */
 
 
 /* END */
