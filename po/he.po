@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-02 21:41+0000\n"
+"POT-Creation-Date: 2023-07-03 10:55+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -2862,7 +2862,7 @@ msgstr ""
 msgid "Achievement unlocked!"
 msgstr "נפתח הישג!"
 
-#: engines/advancedDetector.cpp:235
+#: engines/advancedDetector.cpp:237
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr "נתגלה עותק בלתי-חוקי של משחק. אנו לא מספקים תמיכה במקרים שכאלה"
 
