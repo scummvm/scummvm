@@ -2968,6 +2968,7 @@ ft_black_new( FT2_1_3_Memory           memory,
 	FT2_1_3_Error           error;
 	TRaster_Instance*  raster;
 
+	using AGS3::FreeType213::FT2_1_3_Alloc;
 
 	*araster = 0;
 	if ( !FT2_1_3_NEW( raster ) ) {
@@ -2983,6 +2984,8 @@ ft_black_new( FT2_1_3_Memory           memory,
 
 static void
 ft_black_done( TRaster_Instance*  raster ) {
+	using AGS3::FreeType213::FT2_1_3_Free;
+
 	FT2_1_3_Memory  memory = (FT2_1_3_Memory)raster->memory;
 	FT2_1_3_FREE( raster );
 }
