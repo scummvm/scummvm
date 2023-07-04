@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-07-03 19:50+0000\n"
-"PO-Revision-Date: 2023-07-04 15:19+0000\n"
+"PO-Revision-Date: 2023-07-04 16:50+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -210,7 +210,7 @@ msgstr "Handmatige Modus: Stap 2"
 
 #: gui/cloudconnectionwizard.cpp:355
 msgid "Copy the JSON code from the browser here and press Next:"
-msgstr ""
+msgstr "Kopieer de JSON code van de browser hier en druk op Volgende:"
 
 #: gui/cloudconnectionwizard.cpp:357
 msgid "Paste"
@@ -1877,7 +1877,6 @@ msgid "Autosave:"
 msgstr "Auto opslaan:"
 
 #: gui/options.cpp:2631
-#, fuzzy
 msgid "Random seed:"
 msgstr "Random seed:"
 
@@ -2767,7 +2766,7 @@ msgstr "Configuratiebestand fout"
 
 #: dists/android.strings.xml.cpp:35
 msgid "Unable to read ScummVM config file or create a new one!"
-msgstr ""
+msgstr "Kan het ScummVM configuratiebestand niet lezen of creëer een nieuwe!"
 
 #: dists/android.strings.xml.cpp:36
 msgid "Save Path Error"
@@ -2775,7 +2774,7 @@ msgstr "Bewaar Pad Fout"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Unable to create or access default save path!"
-msgstr ""
+msgstr "Kon geen toegang krijgen tot het standaard bewaar pad!"
 
 #: dists/android.strings.xml.cpp:38
 msgid "Icons Path Error"
@@ -2783,13 +2782,15 @@ msgstr "Icoon Pad Fout"
 
 #: dists/android.strings.xml.cpp:39
 msgid "Unable to create or access default icons and shaders path!"
-msgstr ""
+msgstr "Kon geen toegang krijgen tot of aanmaken van het iconen en shaders pad!"
 
 #: dists/android.strings.xml.cpp:40
 msgid ""
 "Unable to access the globally set save path! Please revert to default from "
 "ScummVM Options"
 msgstr ""
+"Kon geen toegang krijgen tot het algemene bewaar pad! Zet deze a.u.b. terug "
+"naar standaard in de ScummVM Opties"
 
 #: dists/android.strings.xml.cpp:41
 msgid "Toggle virtual keyboard"
@@ -2804,11 +2805,11 @@ msgstr "Alt"
 
 #: dists/android.strings.xml.cpp:45
 msgid "Done"
-msgstr ""
+msgstr "Klaar"
 
 #: dists/android.strings.xml.cpp:46
 msgid "Mode change"
-msgstr ""
+msgstr "Modus verandering"
 
 #: dists/android.strings.xml.cpp:47
 msgid "Shift"
@@ -2828,10 +2829,12 @@ msgid ""
 "Please select the *root* of your external (physical) SD card. This is "
 "required for ScummVM to access this path: "
 msgstr ""
+"Selecteer a.u.b. de \"root\" map van uw externe (fysieke) SD card. Dit heeft "
+"ScummVM nodig om toegang te krijgen tot het pad: "
 
 #: dists/android.strings.xml.cpp:51
 msgid "Storage Access Framework Permissions for ScummVM were revoked!"
-msgstr ""
+msgstr "Storage Access Framework rechten van ScummVM zijn teruggetrokken!"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
@@ -3505,7 +3508,7 @@ msgstr "Touchscreen 'Tap Modus' - Zweven (DPad Klik)"
 #: backends/fs/android/android-saf-fs.cpp:696
 #: backends/fs/android/android-saf-fs.cpp:700
 msgid "Add a new folder"
-msgstr ""
+msgstr "Voeg een nieuwe map toe"
 
 #. I18N: This may be displayed in the Android UI used to add a Storage Attach Framework authorization
 #: backends/fs/android/android-saf-fs.cpp:812
@@ -3808,11 +3811,12 @@ msgstr "Rechter Stick Y"
 
 #: backends/keymapper/hardware-input.cpp:281
 msgid "Hat X"
-msgstr ""
+msgstr "Hat X"
 
 #: backends/keymapper/hardware-input.cpp:282
+#, fuzzy
 msgid "Hat Y"
-msgstr ""
+msgstr "Hat Y"
 
 #: backends/keymapper/remap-widget.cpp:295
 #: backends/keymapper/remap-widget.cpp:325
@@ -4262,7 +4266,7 @@ msgstr "In 3D spellen"
 
 #: backends/platform/android/options.cpp:163
 msgid "Select the orientation:"
-msgstr ""
+msgstr "Selecteerd de oriëntatie:"
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
@@ -4272,7 +4276,7 @@ msgstr "Automatisch"
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
 msgid "Portrait"
-msgstr ""
+msgstr "Portret"
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
@@ -4286,7 +4290,7 @@ msgstr "In spellen"
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:189
 msgid "Remove folder authorizations..."
-msgstr ""
+msgstr "Verwijder folder authorisaties..."
 
 #: backends/platform/android/options.cpp:493
 msgid "Remove"
@@ -4314,7 +4318,7 @@ msgstr "Muis-klik-en-sleepmodus"
 
 #: backends/platform/ios7/ios7_options.mm:71
 msgid "Show keyboard function bar"
-msgstr ""
+msgstr "Toon toetenbord functiebalk"
 
 #: backends/platform/ios7/ios7_options.mm:73
 msgid "Controls Help"
@@ -4336,6 +4340,19 @@ msgid ""
 "Pinch gesture: Enables/disables keyboard\n"
 "Keyboard spacebar: Pause"
 msgstr ""
+"Gebaren and besturing:\n"
+"\n"
+"Een vinger tik: Linker muis klik\n"
+"Twee vinger tik: Rechter muis klik\n"
+"Twee vinger dubbele tik: ESC\n"
+"Twee vinger slepen (naar boven): Zet klik en sleep modus aan/uit\n"
+"Twee vinger slepen (links naar rechts): Schakel tussen direct aanraken en "
+"touchpad modus\n"
+"Twee vinger slepen (rechts naar links): Toon/verberg besturing scherm\n"
+"Twee vinger slepen (boven naar onder): Hoofdmenu\n"
+"Drie vinger slepen: Pijltjestoetsen\n"
+"Knijp gebaar: Zet toetsenboard aan/uit\n"
+"Toetsenbord spatiebalk: Pauze"
 
 #: backends/platform/ios7/ios7_options.mm:118
 msgid ""
@@ -5589,7 +5606,7 @@ msgstr "Sensors uitschakelen"
 
 #: engines/freescape/metaengine.cpp:80
 msgid "Sensors will not shoot the player"
-msgstr ""
+msgstr "Sensoren zullen niet op de speler schieten"
 
 #: engines/freescape/metaengine.cpp:90
 msgid "Disable falling"
@@ -6042,7 +6059,7 @@ msgstr "leun Rechts"
 
 #: engines/hpl1/metaengine.cpp:88
 msgid "Jump"
-msgstr ""
+msgstr "Spring"
 
 #. I18N: Action in In Cold Blood
 #: engines/hpl1/metaengine.cpp:89 engines/icb/icb.cpp:119
@@ -6059,16 +6076,17 @@ msgid "Look Mode"
 msgstr "Kijk Modus"
 
 #: engines/hpl1/metaengine.cpp:94
+#, fuzzy
 msgid "Holster"
-msgstr ""
+msgstr "Holster"
 
 #: engines/hpl1/metaengine.cpp:100
 msgid "Notebook"
-msgstr ""
+msgstr "Notitieboek"
 
 #: engines/hpl1/metaengine.cpp:101
 msgid "Personal Notes"
-msgstr ""
+msgstr "Persoonlijke Aantekeningen"
 
 #: engines/hpl1/metaengine.cpp:102
 msgid "Flashlight"
@@ -6076,7 +6094,7 @@ msgstr "Zaklantaarn"
 
 #: engines/hpl1/metaengine.cpp:103
 msgid "Glowstick"
-msgstr ""
+msgstr "Glowstick"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -6123,12 +6141,12 @@ msgstr ""
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:89
 msgid "Fire"
-msgstr ""
+msgstr "Schiet"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
 msgid "Arm"
-msgstr ""
+msgstr "Laden"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:113
@@ -6581,27 +6599,27 @@ msgstr "Escape"
 
 #: engines/mm/mm1/metaengine.cpp:54
 msgid "View Party Member 1"
-msgstr ""
+msgstr "Bekijk Groepslid 1"
 
 #: engines/mm/mm1/metaengine.cpp:55
 msgid "View Party Member 2"
-msgstr ""
+msgstr "Bekijk Groepslid 2"
 
 #: engines/mm/mm1/metaengine.cpp:56
 msgid "View Party Member 3"
-msgstr ""
+msgstr "Bekijk Groepslid 3"
 
 #: engines/mm/mm1/metaengine.cpp:57
 msgid "View Party Member 4"
-msgstr ""
+msgstr "Bekijk Groepslid 4"
 
 #: engines/mm/mm1/metaengine.cpp:58
 msgid "View Party Member 5"
-msgstr ""
+msgstr "Bekijk Groepslid 5"
 
 #: engines/mm/mm1/metaengine.cpp:59
 msgid "View Party Member 6"
-msgstr ""
+msgstr "Bekijk Groepslid 6"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:67
@@ -6631,23 +6649,23 @@ msgstr "Snelle Referentie"
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:77
 msgid "Retreat"
-msgstr ""
+msgstr "Terugtrekken"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
-msgstr ""
+msgstr "Schiet"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:84
 msgid "Delay"
-msgstr ""
+msgstr "Vertragen"
 
 #. I18N: Combat command in Might & Magic 1
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:86 engines/mm/mm1/metaengine.cpp:107
 msgid "Protect"
-msgstr ""
+msgstr "Bescherm"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:94
@@ -6665,7 +6683,7 @@ msgstr "Minikaart aan-/uitzetten"
 
 #: engines/mm/mm1/metaengine.cpp:105
 msgid "Reorder Party"
-msgstr ""
+msgstr "Groep herschikken"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:111
@@ -6688,16 +6706,16 @@ msgstr "Ga naar lokatie"
 
 #: engines/mm/mm1/metaengine.cpp:133 engines/mm/mm1/metaengine.cpp:143
 msgid "Might and Magic 1 - Menus"
-msgstr ""
+msgstr "Might and Magic 1 - Menus"
 
 #: engines/mm/mm1/metaengine.cpp:138
 msgid "Might and Magic 1 - Minimal Keys"
-msgstr ""
+msgstr "Might and Magic 1 - Minimale Toetsen"
 
 #: engines/mm/mm1/metaengine.cpp:144 engines/mm/mm1/metaengine.cpp:150
 #: engines/mm/mm1/metaengine.cpp:156
 msgid "Might and Magic 1 - Party"
-msgstr ""
+msgstr "Might and Magic 1 - Groep"
 
 #: engines/mm/mm1/metaengine.cpp:149
 msgid "Might and Magic 1 - Combat"
