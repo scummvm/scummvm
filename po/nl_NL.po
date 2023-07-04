@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-07-03 19:50+0000\n"
-"PO-Revision-Date: 2023-06-16 18:53+0000\n"
+"PO-Revision-Date: 2023-07-04 15:19+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -99,7 +99,7 @@ msgstr "Selecteren"
 
 #: gui/cloudconnectionwizard.cpp:176
 msgid "Cloud Connection Wizard"
-msgstr ""
+msgstr "Cloud Verbinding Wizard"
 
 #: gui/cloudconnectionwizard.cpp:179
 msgid "Quick mode"
@@ -111,7 +111,7 @@ msgstr "Handmatige modus"
 
 #: gui/cloudconnectionwizard.cpp:183
 msgid "Will ask you to run the Local Webserver"
-msgstr ""
+msgstr "Zal u vragen om de lokale webserver te draaien"
 
 #: gui/cloudconnectionwizard.cpp:185
 msgid "Requires the Local Webserver feature"
@@ -119,13 +119,15 @@ msgstr "Vereist de lokale webserver functie"
 
 #: gui/cloudconnectionwizard.cpp:201
 msgid "Quick Mode: Step 1"
-msgstr ""
+msgstr "Snelle Modus: Stap 1"
 
 #: gui/cloudconnectionwizard.cpp:206
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
 msgstr ""
+"In deze modus moet de lokale webserver draaien,\n"
+"zodat uw browser de data kan doorsturen naar ScummVM"
 
 #: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:3662
 msgid "Stop server"
@@ -149,11 +151,11 @@ msgstr "Draait niet"
 
 #: gui/cloudconnectionwizard.cpp:259
 msgid "Quick Mode: Step 2"
-msgstr ""
+msgstr "Snelle Modus: Stap 2"
 
 #: gui/cloudconnectionwizard.cpp:263
 msgid "Now, open this link in your browser:"
-msgstr ""
+msgstr "Open deze link nu in uw browser:"
 
 #: gui/cloudconnectionwizard.cpp:264 gui/cloudconnectionwizard.cpp:319
 #: gui/message.cpp:218 gui/message.cpp:222
@@ -165,14 +167,16 @@ msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
 msgstr ""
+"Het zal automatisch data doorsturen naar ScummVM\n"
+"en u waarschuwen als er problemen optreden."
 
 #: gui/cloudconnectionwizard.cpp:279
 msgid "Local Webserver address: "
-msgstr ""
+msgstr "Lokale Webserver adres: "
 
 #: gui/cloudconnectionwizard.cpp:295
 msgid "Quick Mode: Success"
-msgstr ""
+msgstr "Snelle Modus: Succes"
 
 #: gui/cloudconnectionwizard.cpp:299 gui/cloudconnectionwizard.cpp:398
 msgid "Your cloud storage has been connected!"
@@ -180,11 +184,11 @@ msgstr "Uw cloud opslag is gekoppeld!"
 
 #: gui/cloudconnectionwizard.cpp:300 gui/cloudconnectionwizard.cpp:399
 msgid "Finish"
-msgstr ""
+msgstr "Klaar"
 
 #: gui/cloudconnectionwizard.cpp:313
 msgid "Manual Mode: Step 1"
-msgstr ""
+msgstr "Handmatige Modus: Stap 1"
 
 #: gui/cloudconnectionwizard.cpp:318
 msgid "Open this link in your browser:"
@@ -196,10 +200,13 @@ msgid ""
 "find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
+"Wanneer het doorsturen van de JSON code naar ScummVM mislukt\n"
+"is het te vinden op de Troubleshooting gedeelte van de pagina,\n"
+"en ga daar verder met de volgende stap."
 
 #: gui/cloudconnectionwizard.cpp:350
 msgid "Manual Mode: Step 2"
-msgstr ""
+msgstr "Handmatige Modus: Stap 2"
 
 #: gui/cloudconnectionwizard.cpp:355
 msgid "Copy the JSON code from the browser here and press Next:"
@@ -215,7 +222,7 @@ msgstr "Plak vanaf klembord"
 
 #: gui/cloudconnectionwizard.cpp:373
 msgid "Manual Mode: Something went wrong"
-msgstr ""
+msgstr "Handmatige Modus: Er ging iets mis"
 
 #: gui/cloudconnectionwizard.cpp:377
 msgid "Cloud storage was not connected."
@@ -223,19 +230,19 @@ msgstr "Cloud opslag was niet gekoppeld."
 
 #: gui/cloudconnectionwizard.cpp:378
 msgid "Make sure the JSON code was copied correctly and retry."
-msgstr ""
+msgstr "Controleer of de JSON code goed gekopieerd was en probeer het nog eens."
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "If that doesn't work, try again from the beginning."
-msgstr ""
+msgstr "Als dat niet werkt, begin dan helemaal opnieuw."
 
 #: gui/cloudconnectionwizard.cpp:380
 msgid "Error message: "
-msgstr ""
+msgstr "Foutmelding: "
 
 #: gui/cloudconnectionwizard.cpp:394
 msgid "Manual Mode: Success"
-msgstr ""
+msgstr "Handmatige Modus: Succes"
 
 #: gui/cloudconnectionwizard.cpp:422
 msgid "Back"
@@ -283,7 +290,7 @@ msgstr "Wacht totdat de huidige opslag klaar is en probeer het opnieuw."
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:530
 msgid "JSON code contents are malformed."
-msgstr ""
+msgstr "JSON code heeft niet het juiste formaat."
 
 #: gui/cloudconnectionwizard.cpp:551 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
@@ -1776,7 +1783,7 @@ msgstr "ScummVM log pad: "
 
 #: gui/options.cpp:2508
 msgid "View"
-msgstr ""
+msgstr "Bekijk"
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2518 gui/options.cpp:3250
@@ -1870,12 +1877,13 @@ msgid "Autosave:"
 msgstr "Auto opslaan:"
 
 #: gui/options.cpp:2631
+#, fuzzy
 msgid "Random seed:"
-msgstr ""
+msgstr "Random seed:"
 
 #: gui/options.cpp:2631
 msgid "Seed for initializing all random number generators"
-msgstr ""
+msgstr "Seed om alle willekeurige nummer generators te initialiseren"
 
 #: gui/options.cpp:2639
 msgid "Debug level:"
@@ -1889,7 +1897,7 @@ msgstr "Geen"
 #. I18N: Debug level 11, all messages
 #: gui/options.cpp:2649
 msgid "11 (all)"
-msgstr ""
+msgstr "11 (alles)"
 
 #: gui/options.cpp:2653
 msgid "Enable Discord integration"
@@ -2488,7 +2496,7 @@ msgstr "Opgeslagen spellen"
 
 #: base/main.cpp:595
 msgid "Bad config file format. overwrite?"
-msgstr ""
+msgstr "Configuratiefile formaat onjuist. Overschrijven?"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:644
@@ -2513,6 +2521,26 @@ msgid ""
 "\n"
 "Steps 2 and 3 need to be done only once for all of your games."
 msgstr ""
+"In deze nieuwe versie van ScummVM Android zijn aanzienlijke aanpassingen "
+"gedaan aan het bestanden toegang systeem om ook moderne versies van het "
+"Android Operating System te ondersteunen.\n"
+"Als u merkt dat bestaande toegevoegde spellen of aangepaste paden het niet "
+"meer doen, pas deze paden dan aan, en gebruik daarbij het SAF systeem om "
+"naar de gewenste locatie te browsen.\n"
+"Dat gaat als volgt:\n"
+"\n"
+"1. Voor elk spel waarvan de data niet gevonden wordt, ga naar het \"Paden\" "
+"tabblad in \"Spel Opties\" en pas het \"Spel pad\"\n"
+"2. In de ScummVM bestanden browser, gebruik \"Ga Omhoog\" totdat u de root "
+"map heeft bereikt. Daar zal u de \"<Voeg een niewe map toe>\" optie vinden.\n"
+"3. Kies die, dan blader en selecteer de \"bovenliggende\" map voor uw "
+"spellen subfolders, bijv. \"SD Card > myGames\". Klik op \"Gebruik deze "
+"folder\".\n"
+"4. Daarna zal er een  nieuwe folder \"myGames\" verschijnen in de \"root\" "
+"folder van de ScummVM browser.\n"
+"5. Blader door deze folder naar uw spel data.\n"
+"\n"
+"Stap 2 en 3 dienen slechts één keer uitgevoerd te worden voor al uw spellen."
 
 #: base/main.cpp:663 base/main.cpp:684
 #: engines/director/lingo/lingo-builtins.cpp:1234
@@ -2525,7 +2553,7 @@ msgstr "Ok"
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:665 base/main.cpp:686
 msgid "Read Later"
-msgstr ""
+msgstr "Later Lezen"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:672
@@ -2543,6 +2571,19 @@ msgid ""
 "the ScummVM browser.\n"
 "  4. Browse through this folder to your game data."
 msgstr ""
+"In deze nieuwe versie van ScummVM Android zijn aanzienlijke aanpassingen "
+"gedaan aan het bestanden toegang systeem om ook moderne versies van het "
+"Android Operating System te ondersteunen.\n"
+"U zult dus SAF moeten instellen om spellen te kunnen toevoegen.\n"
+"\n"
+"1. In de ScummVM bestanden browser, gebruik \"Ga Omhoog\" totdat u de root "
+"map heeft bereikt. Daar zal u de \"<Voeg een niewe map toe>\" optie vinden.\n"
+"2. Kies die, dan blader en selecteer de \"bovenliggende\" map voor uw "
+"spellen subfolders, bijv. \"SD Card > myGames\". Klik op \"Gebruik deze "
+"folder\".\n"
+"3. Daarna zal er een  nieuwe folder \"myGames\" verschijnen in de \"root\" "
+"folder van de ScummVM browser.\n"
+"4. Blader door deze folder naar uw spel data."
 
 #: base/main.cpp:782
 msgid "Error running game:"
@@ -2707,7 +2748,7 @@ msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
 msgid "Graphic adventure game engine"
-msgstr ""
+msgstr "Grafische avonturen spel engine"
 
 #: dists/android.strings.xml.cpp:33
 #: backends/events/default/default-events.cpp:217
@@ -2722,7 +2763,7 @@ msgstr "Stoppen"
 
 #: dists/android.strings.xml.cpp:34
 msgid "Config File Error"
-msgstr ""
+msgstr "Configuratiebestand fout"
 
 #: dists/android.strings.xml.cpp:35
 msgid "Unable to read ScummVM config file or create a new one!"
@@ -4225,10 +4266,8 @@ msgstr ""
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
-#, fuzzy
-#| msgid "Automatic drilling"
 msgid "Automatic"
-msgstr "Automatisch boren"
+msgstr "Automatisch"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
@@ -4237,16 +4276,12 @@ msgstr ""
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
-#, fuzzy
-#| msgid "Escape"
 msgid "Landscape"
-msgstr "Escape"
+msgstr "Landscape"
 
 #: backends/platform/android/options.cpp:175
-#, fuzzy
-#| msgid "In 2D games"
 msgid "In games"
-msgstr "In 2D spellen"
+msgstr "In spellen"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:189
@@ -4902,48 +4937,36 @@ msgstr ""
 "dat sommige geluidssporen niet goed klinken."
 
 #: engines/agos/midi.cpp:316
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition files\n"
-#| "%s and %s. Without these files,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s. Without this file,\n"
 "the music will not sound the same as the original game."
 msgstr ""
-"Kon de AdLib instrument defenitie files niet vinden\n"
-"%s en %s. Zonder deze bestanden,\n"
-"zal de muziek niet hetzelfde klinken als in het originele spel."
+"Kon het AdLib instrument definitie bestand %s niet vinden.\n"
+"Zonder dit bestand zal de muziek niet hetzelfde klinken\n"
+"als in het originele spel."
 
 #: engines/agos/midi.cpp:374
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition files\n"
-#| "%s and %s. Without these files,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s. Without this file,\n"
 "the sound effects will not sound the same as the original game."
 msgstr ""
-"Kon de AdLib instrument defenitie files niet vinden\n"
-"%s en %s. Zonder deze bestanden,\n"
-"zal de muziek niet hetzelfde klinken als in het originele spel."
+"Kon het AdLib instrument definitie bestand\n"
+"%s niet vinden. Zonder dit bestand zullen de \n"
+"geluidseffecten niet hetzelfde klinken als in het originele spel."
 
 #: engines/agos/midi.cpp:453
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition files\n"
-#| "%s and %s. Without these files,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s or %s. Without one of these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
-"Kon de AdLib instrument defenitie files niet vinden\n"
-"%s en %s. Zonder deze bestanden,\n"
+"Kon het AdLib instrument definitie bestand\n"
+"%s of %s niet vinden. Zonder één van deze bestanden\n"
 "zal de muziek niet hetzelfde klinken als in het originele spel."
 
 #: engines/ags/dialogs.cpp:59
