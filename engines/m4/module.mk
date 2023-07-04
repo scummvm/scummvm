@@ -24,6 +24,7 @@ MODULE_OBJS = \
 	core/imath.o \
 	core/mouse.o \
 	core/param.o \
+	core/rooms.o \
 	core/term.o \
 	events/mickey.o \
 	events/mouse_handler.o \
@@ -65,6 +66,7 @@ MODULE_OBJS = \
 	burger/gui/game_menu.o \
 	burger/gui/gui_cheapo.o \
 	burger/gui/interface.o \
+	burger/rooms/section1.o \
 	burger/burger.o \
 	burger/globals.o \
 	burger/hotkeys.o \

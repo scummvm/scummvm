@@ -36,12 +36,13 @@
 
 #include "m4/detection.h"
 #include "m4/vars.h"
+#include "m4/core/rooms.h"
 
 namespace M4 {
 
 struct M4GameDescription;
 
-class M4Engine : public Engine {
+class M4Engine : public Engine, public Sections {
 	enum GamePhase {
 		FirstRun,
 		SectionStartup,
@@ -72,6 +73,8 @@ protected:
 
 public:
 	Graphics::Screen *_screen = nullptr;
+	const Section *_sections = nullptr;
+
 public:
 	M4Engine(OSystem *syst, const ADGameDescription *gameDesc);
 	~M4Engine() override;

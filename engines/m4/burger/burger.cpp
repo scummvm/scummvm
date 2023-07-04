@@ -26,6 +26,11 @@
 namespace M4 {
 namespace Burger {
 
+BurgerEngine::BurgerEngine(OSystem *syst, const ADGameDescription *gameDesc) :
+		M4Engine(syst, gameDesc) {
+	_sections = &_SECTIONS[0];
+}
+
 M4::Vars *BurgerEngine::createVars() {
 	return new Burger::Vars();
 }
