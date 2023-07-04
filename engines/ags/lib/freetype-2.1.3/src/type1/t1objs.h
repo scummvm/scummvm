@@ -16,8 +16,8 @@
 /***************************************************************************/
 
 
-#ifndef __T1OBJS_H__
-#define __T1OBJS_H__
+#ifndef AGS_LIB_FREETYPE_T1OBJS_H
+#define AGS_LIB_FREETYPE_T1OBJS_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
@@ -25,6 +25,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftconfig.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/t1types.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -139,10 +141,10 @@ typedef struct  T1_GlyphSlotRec_ {
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 T1_Face_Init( FT2_1_3_Stream      stream,
-              T1_Face        face,
-              FT2_1_3_Int         face_index,
-              FT2_1_3_Int         num_params,
-              FT2_1_3_Parameter*  params );
+			  T1_Face        face,
+			  FT2_1_3_Int         face_index,
+			  FT2_1_3_Int         num_params,
+			  FT2_1_3_Parameter*  params );
 
 FT2_1_3_LOCAL( void )
 T1_Face_Done( T1_Face  face );
@@ -162,7 +164,10 @@ T1_Driver_Done( T1_Driver  driver );
 
 FT2_1_3_END_HEADER
 
-#endif /* __T1OBJS_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_T1OBJS_H */
 
 
 /* END */

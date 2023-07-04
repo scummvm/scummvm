@@ -42,6 +42,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_t1objs
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*                                                                       */
@@ -61,10 +63,10 @@ T1_Size_Get_Globals_Funcs( T1_Size  size ) {
 
 
 	module = FT2_1_3_Get_Module( size->root.face->driver->root.library,
-	                        "pshinter" );
+							"pshinter" );
 	return ( module && pshinter && pshinter->get_globals_funcs )
-	       ? pshinter->get_globals_funcs( module )
-	       : 0 ;
+		   ? pshinter->get_globals_funcs( module )
+		   : 0 ;
 }
 
 
@@ -95,7 +97,7 @@ T1_Size_Init( T1_Size  size ) {
 
 
 		error = funcs->create( size->root.face->memory,
-		                       &face->type1.private_dict, &globals );
+							   &face->type1.private_dict, &globals );
 		if ( !error )
 			size->root.internal = (FT2_1_3_Size_Internal)(void*)globals;
 	}
@@ -112,9 +114,9 @@ T1_Size_Reset( T1_Size  size ) {
 
 	if ( funcs )
 		error = funcs->set_scale( (PSH_Globals)size->root.internal,
-		                          size->root.metrics.x_scale,
-		                          size->root.metrics.y_scale,
-		                          0, 0 );
+								  size->root.metrics.x_scale,
+								  size->root.metrics.y_scale,
+								  0, 0 );
 	return error;
 }
 
@@ -258,10 +260,10 @@ T1_Face_Done( T1_Face  face ) {
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 T1_Face_Init( FT2_1_3_Stream      stream,
-              T1_Face        face,
-              FT2_1_3_Int         face_index,
-              FT2_1_3_Int         num_params,
-              FT2_1_3_Parameter*  params ) {
+			  T1_Face        face,
+			  FT2_1_3_Int         face_index,
+			  FT2_1_3_Int         num_params,
+			  FT2_1_3_Parameter*  params ) {
 	FT2_1_3_Error          error;
 	PSNames_Service   psnames;
 	PSAux_Service     psaux;
@@ -276,15 +278,15 @@ T1_Face_Init( FT2_1_3_Stream      stream,
 	face->root.num_faces = 1;
 
 	face->psnames = FT2_1_3_Get_Module_Interface( FT2_1_3_FACE_LIBRARY( face ),
-	                "psnames" );
+					"psnames" );
 	psnames = (PSNames_Service)face->psnames;
 
 	face->psaux = FT2_1_3_Get_Module_Interface( FT2_1_3_FACE_LIBRARY( face ),
-	                                       "psaux" );
+										   "psaux" );
 	psaux = (PSAux_Service)face->psaux;
 
 	face->pshinter = FT2_1_3_Get_Module_Interface( FT2_1_3_FACE_LIBRARY( face ),
-	                 "pshinter" );
+					 "pshinter" );
 	pshinter = (PSHinter_Service)face->pshinter;
 
 	/* open the tokenizer, this will also check the font format */
@@ -341,7 +343,7 @@ T1_Face_Init( FT2_1_3_Stream      stream,
 				}
 
 				root->style_name = ( *full == ' ' ? full + 1
-				                     : (char *)"Regular" );
+									 : (char *)"Regular" );
 			} else
 				root->style_name = (char *)"Regular";
 		} else {
@@ -358,7 +360,7 @@ T1_Face_Init( FT2_1_3_Stream      stream,
 			root->style_flags |= FT2_1_3_STYLE_FLAG_ITALIC;
 		if ( face->type1.font_info.weight ) {
 			if ( !ft_strcmp( face->type1.font_info.weight, "Bold"  ) ||
-			        !ft_strcmp( face->type1.font_info.weight, "Black" ) )
+					!ft_strcmp( face->type1.font_info.weight, "Black" ) )
 				root->style_flags |= FT2_1_3_STYLE_FLAG_BOLD;
 		}
 
@@ -378,11 +380,11 @@ T1_Face_Init( FT2_1_3_Stream      stream,
 		root->ascender  = (FT2_1_3_Short)( root->bbox.yMax );
 		root->descender = (FT2_1_3_Short)( root->bbox.yMin );
 		root->height    = (FT2_1_3_Short)(
-		                      ( ( root->ascender - root->descender ) * 12 ) / 10 );
+							  ( ( root->ascender - root->descender ) * 12 ) / 10 );
 
 		/* now compute the maximum advance width */
 		root->max_advance_width =
-		    (FT2_1_3_Short)( root->bbox.xMax );
+			(FT2_1_3_Short)( root->bbox.xMax );
 		{
 			FT2_1_3_Int  max_advance;
 
@@ -511,5 +513,7 @@ T1_Driver_Done( T1_Driver  driver ) {
 	FT2_1_3_UNUSED( driver );
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

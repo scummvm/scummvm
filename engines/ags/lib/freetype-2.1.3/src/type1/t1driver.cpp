@@ -41,12 +41,14 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_t1driver
 
+namespace AGS3 {
+namespace FreeType213 {
 
 static FT2_1_3_Error
 t1_get_glyph_name( T1_Face     face,
-                   FT2_1_3_UInt     glyph_index,
-                   FT2_1_3_Pointer  buffer,
-                   FT2_1_3_UInt     buffer_max ) {
+				   FT2_1_3_UInt     glyph_index,
+				   FT2_1_3_Pointer  buffer,
+				   FT2_1_3_UInt     buffer_max ) {
 	FT2_1_3_String*  gname;
 
 
@@ -86,7 +88,7 @@ t1_get_glyph_name( T1_Face     face,
 /*                                                                       */
 static FT2_1_3_UInt
 t1_get_name_index( T1_Face     face,
-                   FT2_1_3_String*  glyph_name ) {
+				   FT2_1_3_String*  glyph_name ) {
 	FT2_1_3_Int      i;
 	FT2_1_3_String*  gname;
 
@@ -137,7 +139,7 @@ t1_get_ps_name( T1_Face  face ) {
 /*                                                                       */
 static FT2_1_3_Module_Interface
 Get_Interface( FT2_1_3_Driver         driver,
-               const FT2_1_3_String*  t1_interface ) {
+			   const FT2_1_3_String*  t1_interface ) {
 	FT2_1_3_UNUSED( driver );
 	FT2_1_3_UNUSED( t1_interface );
 
@@ -200,9 +202,9 @@ Get_Interface( FT2_1_3_Driver         driver,
 /*                                                                       */
 static FT2_1_3_Error
 Get_Kerning( T1_Face     face,
-             FT2_1_3_UInt     left_glyph,
-             FT2_1_3_UInt     right_glyph,
-             FT2_1_3_Vector*  kerning ) {
+			 FT2_1_3_UInt     left_glyph,
+			 FT2_1_3_UInt     right_glyph,
+			 FT2_1_3_Vector*  kerning ) {
 	T1_AFM*  afm;
 
 
@@ -267,5 +269,7 @@ const FT2_1_3_Driver_ClassRec  t1_driver_class = {
 	(FT2_1_3_Face_GetAdvancesFunc) 0
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

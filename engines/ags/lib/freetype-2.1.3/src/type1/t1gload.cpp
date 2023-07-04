@@ -35,6 +35,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_t1gload
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*************************************************************************/
@@ -55,8 +57,8 @@
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 T1_Parse_Glyph_And_Get_Char_String( T1_Decoder  decoder,
-                                    FT2_1_3_UInt     glyph_index,
-                                    FT2_1_3_Data*    char_string ) {
+									FT2_1_3_UInt     glyph_index,
+									FT2_1_3_Data*    char_string ) {
 	T1_Face   face  = (T1_Face)decoder->builder.face;
 	T1_Font   type1 = &face->type1;
 	FT2_1_3_Error  error = 0;
@@ -71,8 +73,8 @@ T1_Parse_Glyph_And_Get_Char_String( T1_Decoder  decoder,
 	/* callback function.                                     */
 	if ( face->root.internal->incremental_interface )
 		error = face->root.internal->incremental_interface->funcs->get_glyph_data(
-		            face->root.internal->incremental_interface->object,
-		            glyph_index, char_string );
+					face->root.internal->incremental_interface->object,
+					glyph_index, char_string );
 	else
 
 #endif
@@ -85,21 +87,21 @@ T1_Parse_Glyph_And_Get_Char_String( T1_Decoder  decoder,
 
 	if ( !error )
 		error = decoder->funcs.parse_charstrings(
-		            decoder, (FT2_1_3_Byte*)char_string->pointer,
-		            char_string->length );
+					decoder, (FT2_1_3_Byte*)char_string->pointer,
+					char_string->length );
 
 #ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
 
 	/* Incremental fonts can optionally override the metrics. */
 	if ( !error && face->root.internal->incremental_interface                 &&
-	        face->root.internal->incremental_interface->funcs->get_glyph_metrics ) {
+			face->root.internal->incremental_interface->funcs->get_glyph_metrics ) {
 		FT2_1_3_Bool                    found = FALSE;
 		FT2_1_3_Incremental_MetricsRec  metrics;
 
 
 		error = face->root.internal->incremental_interface->funcs->get_glyph_metrics(
-		            face->root.internal->incremental_interface->object,
-		            glyph_index, FALSE, &metrics, &found );
+					face->root.internal->incremental_interface->object,
+					glyph_index, FALSE, &metrics, &found );
 		if ( found ) {
 			decoder->builder.left_bearing.x = metrics.bearing_x;
 			decoder->builder.left_bearing.y = metrics.bearing_y;
@@ -116,10 +118,10 @@ T1_Parse_Glyph_And_Get_Char_String( T1_Decoder  decoder,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 T1_Parse_Glyph( T1_Decoder  decoder,
-                FT2_1_3_UInt     glyph_index ) {
+				FT2_1_3_UInt     glyph_index ) {
 	FT2_1_3_Data   glyph_data;
 	FT2_1_3_Error  error = T1_Parse_Glyph_And_Get_Char_String(
-	                      decoder, glyph_index, &glyph_data );
+						  decoder, glyph_index, &glyph_data );
 
 
 #ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
@@ -129,8 +131,8 @@ T1_Parse_Glyph( T1_Decoder  decoder,
 
 		if ( face->root.internal->incremental_interface )
 			face->root.internal->incremental_interface->funcs->free_glyph_data(
-			    face->root.internal->incremental_interface->object,
-			    &glyph_data );
+				face->root.internal->incremental_interface->object,
+				&glyph_data );
 	}
 #endif
 
@@ -140,7 +142,7 @@ T1_Parse_Glyph( T1_Decoder  decoder,
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 T1_Compute_Max_Advance( T1_Face  face,
-                        FT2_1_3_Int*  max_advance ) {
+						FT2_1_3_Int*  max_advance ) {
 	FT2_1_3_Error       error;
 	T1_DecoderRec  decoder;
 	FT2_1_3_Int         glyph_index;
@@ -152,14 +154,14 @@ T1_Compute_Max_Advance( T1_Face  face,
 
 	/* initialize load decoder */
 	error = psaux->t1_decoder_funcs->init( &decoder,
-	                                       (FT2_1_3_Face)face,
-	                                       0, /* size       */
-	                                       0, /* glyph slot */
-	                                       (FT2_1_3_Byte**)type1->glyph_names,
-	                                       face->blend,
-	                                       0,
-	                                       FT2_1_3_RENDER_MODE_NORMAL,
-	                                       T1_Parse_Glyph );
+										   (FT2_1_3_Face)face,
+										   0, /* size       */
+										   0, /* glyph slot */
+										   (FT2_1_3_Byte**)type1->glyph_names,
+										   face->blend,
+										   0,
+										   FT2_1_3_RENDER_MODE_NORMAL,
+										   T1_Parse_Glyph );
 	if ( error )
 		return error;
 
@@ -206,9 +208,9 @@ T1_Compute_Max_Advance( T1_Face  face,
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 T1_Load_Glyph( T1_GlyphSlot  glyph,
-               T1_Size       size,
-               FT2_1_3_UInt       glyph_index,
-               FT2_1_3_Int32      load_flags ) {
+			   T1_Size       size,
+			   FT2_1_3_UInt       glyph_index,
+			   FT2_1_3_Int32      load_flags ) {
 	FT2_1_3_Error                error;
 	T1_DecoderRec           decoder;
 	T1_Face                 face = (T1_Face)glyph->root.face;
@@ -233,24 +235,24 @@ T1_Load_Glyph( T1_GlyphSlot  glyph,
 	glyph->root.outline.n_contours = 0;
 
 	hinting = FT2_1_3_BOOL( ( load_flags & FT2_1_3_LOAD_NO_SCALE   ) == 0 &&
-	                   ( load_flags & FT2_1_3_LOAD_NO_HINTING ) == 0 );
+					   ( load_flags & FT2_1_3_LOAD_NO_HINTING ) == 0 );
 
 	glyph->root.format = FT2_1_3_GLYPH_FORMAT_OUTLINE;
 
 	error = decoder_funcs->init( &decoder,
-	                             (FT2_1_3_Face)face,
-	                             (FT2_1_3_Size)size,
-	                             (FT2_1_3_GlyphSlot)glyph,
-	                             (FT2_1_3_Byte**)type1->glyph_names,
-	                             face->blend,
-	                             FT2_1_3_BOOL( hinting ),
-	                             FT2_1_3_LOAD_TARGET_MODE(load_flags),
-	                             T1_Parse_Glyph );
+								 (FT2_1_3_Face)face,
+								 (FT2_1_3_Size)size,
+								 (FT2_1_3_GlyphSlot)glyph,
+								 (FT2_1_3_Byte**)type1->glyph_names,
+								 face->blend,
+								 FT2_1_3_BOOL( hinting ),
+								 FT2_1_3_LOAD_TARGET_MODE(load_flags),
+								 T1_Parse_Glyph );
 	if ( error )
 		goto Exit;
 
 	decoder.builder.no_recurse = FT2_1_3_BOOL(
-	                                 ( load_flags & FT2_1_3_LOAD_NO_RECURSE ) != 0 );
+									 ( load_flags & FT2_1_3_LOAD_NO_RECURSE ) != 0 );
 
 	decoder.num_subrs = type1->num_subrs;
 	decoder.subrs     = type1->subrs;
@@ -258,7 +260,7 @@ T1_Load_Glyph( T1_GlyphSlot  glyph,
 
 	/* now load the unscaled outline */
 	error = T1_Parse_Glyph_And_Get_Char_String( &decoder, glyph_index,
-	        &glyph_data );
+			&glyph_data );
 	if ( error )
 		goto Exit;
 	glyph_data_loaded = 1;
@@ -314,8 +316,8 @@ T1_Load_Glyph( T1_GlyphSlot  glyph,
 			FT2_1_3_Outline_Transform( &glyph->root.outline, &font_matrix );
 
 			FT2_1_3_Outline_Translate( &glyph->root.outline,
-			                      font_offset.x,
-			                      font_offset.y );
+								  font_offset.x,
+								  font_offset.y );
 #endif
 
 			if ( ( load_flags & FT2_1_3_LOAD_NO_SCALE ) == 0 ) {
@@ -382,8 +384,8 @@ Exit:
 #ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
 	if ( glyph_data_loaded && face->root.internal->incremental_interface ) {
 		face->root.internal->incremental_interface->funcs->free_glyph_data(
-		    face->root.internal->incremental_interface->object,
-		    &glyph_data );
+			face->root.internal->incremental_interface->object,
+			&glyph_data );
 
 		/* Set the control data to null - it is no longer available if   */
 		/* loaded incrementally.                                         */
@@ -395,5 +397,7 @@ Exit:
 	return error;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

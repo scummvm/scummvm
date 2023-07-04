@@ -53,6 +53,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_t1parse
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*************************************************************************/
@@ -93,8 +95,8 @@ const FT2_1_3_Frame_Field  pfb_tag_fields[] = {
 
 static FT2_1_3_Error
 read_pfb_tag( FT2_1_3_Stream   stream,
-              FT2_1_3_UShort*  tag,
-              FT2_1_3_Long*    size ) {
+			  FT2_1_3_UShort*  tag,
+			  FT2_1_3_Long*    size ) {
 	FT2_1_3_Error  error;
 	PFB_Tag   head;
 
@@ -113,9 +115,9 @@ read_pfb_tag( FT2_1_3_Stream   stream,
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 T1_New_Parser( T1_Parser      parser,
-               FT2_1_3_Stream      stream,
-               FT2_1_3_Memory      memory,
-               PSAux_Service  psaux ) {
+			   FT2_1_3_Stream      stream,
+			   FT2_1_3_Memory      memory,
+			   PSAux_Service  psaux ) {
 	FT2_1_3_Error   error;
 	FT2_1_3_UShort  tag;
 	FT2_1_3_Long    size;
@@ -181,7 +183,7 @@ T1_New_Parser( T1_Parser      parser,
 	} else {
 		/* read segment in memory */
 		if ( FT2_1_3_ALLOC( parser->base_dict, size )     ||
-		        FT2_1_3_STREAM_READ( parser->base_dict, size ) )
+				FT2_1_3_STREAM_READ( parser->base_dict, size ) )
 			goto Exit;
 		parser->base_len = size;
 	}
@@ -190,10 +192,10 @@ T1_New_Parser( T1_Parser      parser,
 	/* or `%!FontType'                                       */
 	{
 		if ( size <= 16                                       ||
-		        ( ft_strncmp( (const char*)parser->base_dict,
-		                      "%!PS-AdobeFont-1", 16 )        &&
-		          ft_strncmp( (const char*)parser->base_dict,
-		                      "%!FontType", 10 )              )  ) {
+				( ft_strncmp( (const char*)parser->base_dict,
+							  "%!PS-AdobeFont-1", 16 )        &&
+				  ft_strncmp( (const char*)parser->base_dict,
+							  "%!FontType", 10 )              )  ) {
 			FT2_1_3_TRACE2(( "[not a Type1 font]\n" ));
 			error = T1_Err_Unknown_File_Format;
 		} else {
@@ -251,7 +253,7 @@ hexa_value( char  c ) {
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 T1_Get_Private_Dict( T1_Parser      parser,
-                     PSAux_Service  psaux ) {
+					 PSAux_Service  psaux ) {
 	FT2_1_3_Stream  stream = parser->stream;
 	FT2_1_3_Memory  memory = parser->root.memory;
 	FT2_1_3_Error   error  = 0;
@@ -292,7 +294,7 @@ T1_Get_Private_Dict( T1_Parser      parser,
 		}
 
 		if ( FT2_1_3_STREAM_SEEK( start_pos )                             ||
-		        FT2_1_3_ALLOC( parser->private_dict, parser->private_len ) )
+				FT2_1_3_ALLOC( parser->private_dict, parser->private_len ) )
 			goto Fail;
 
 		parser->private_len = 0;
@@ -326,7 +328,7 @@ T1_Get_Private_Dict( T1_Parser      parser,
 				/* newline + 4 chars           */
 			{
 				if ( cur[1] == 'e' && cur[2] == 'x' &&
-				        cur[3] == 'e' && cur[4] == 'c' ) {
+						cur[3] == 'e' && cur[4] == 'c' ) {
 					cur += 6; /* we skip the newling after the `eexec' */
 
 					/* XXX: Some fonts use DOS-linefeeds, i.e. \r\n; we need to */
@@ -373,7 +375,7 @@ T1_Get_Private_Dict( T1_Parser      parser,
 		/* we have a case of ASCII storage                                  */
 
 		if ( ( hexa_value( cur[0] ) | hexa_value( cur[1] ) |
-		        hexa_value( cur[2] ) | hexa_value( cur[3] ) ) < 0 )
+				hexa_value( cur[2] ) | hexa_value( cur[3] ) ) < 0 )
 
 			/* binary encoding -- `simply' copy the private dict */
 			FT2_1_3_MEM_COPY( parser->private_dict, cur, size );
@@ -424,5 +426,7 @@ Exit:
 	return error;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

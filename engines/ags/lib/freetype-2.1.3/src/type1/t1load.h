@@ -16,8 +16,8 @@
 /***************************************************************************/
 
 
-#ifndef __T1LOAD_H__
-#define __T1LOAD_H__
+#ifndef AGS_LIB_FREETYPE_T1LOAD_H
+#define AGS_LIB_FREETYPE_T1LOAD_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
@@ -27,6 +27,8 @@
 
 #include "t1parse.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -57,17 +59,17 @@ T1_Open_Face( T1_Face  face );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 T1_Get_Multi_Master( T1_Face           face,
-                     FT2_1_3_Multi_Master*  master );
+					 FT2_1_3_Multi_Master*  master );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 T1_Set_MM_Blend( T1_Face    face,
-                 FT2_1_3_UInt    num_coords,
-                 FT2_1_3_Fixed*  coords );
+				 FT2_1_3_UInt    num_coords,
+				 FT2_1_3_Fixed*  coords );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 T1_Set_MM_Design( T1_Face   face,
-                  FT2_1_3_UInt   num_coords,
-                  FT2_1_3_Long*  coords );
+				  FT2_1_3_UInt   num_coords,
+				  FT2_1_3_Long*  coords );
 
 FT2_1_3_LOCAL( void )
 T1_Done_Blend( T1_Face  face );
@@ -77,7 +79,10 @@ T1_Done_Blend( T1_Face  face );
 
 FT2_1_3_END_HEADER
 
-#endif /* __T1LOAD_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_T1LOAD_H */
 
 
 /* END */

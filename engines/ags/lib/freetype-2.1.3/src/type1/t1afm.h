@@ -16,12 +16,14 @@
 /***************************************************************************/
 
 
-#ifndef __T1AFM_H__
-#define __T1AFM_H__
+#ifndef AGS_LIB_FREETYPE_T1AFM_H
+#define AGS_LIB_FREETYPE_T1AFM_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "t1objs.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -43,22 +45,25 @@ typedef struct  T1_AFM_ {
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 T1_Read_AFM( FT2_1_3_Face    face,
-             FT2_1_3_Stream  stream );
+			 FT2_1_3_Stream  stream );
 
 FT2_1_3_LOCAL( void )
 T1_Done_AFM( FT2_1_3_Memory  memory,
-             T1_AFM*    afm );
+			 T1_AFM*    afm );
 
 FT2_1_3_LOCAL( void )
 T1_Get_Kerning( T1_AFM*     afm,
-                FT2_1_3_UInt     glyph1,
-                FT2_1_3_UInt     glyph2,
-                FT2_1_3_Vector*  kerning );
+				FT2_1_3_UInt     glyph1,
+				FT2_1_3_UInt     glyph2,
+				FT2_1_3_Vector*  kerning );
 
 
 FT2_1_3_END_HEADER
 
-#endif /* __T1AFM_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_T1AFM_H */
 
 
 /* END */

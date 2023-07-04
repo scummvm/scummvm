@@ -31,10 +31,12 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_t1afm
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_LOCAL_DEF( void )
 T1_Done_AFM( FT2_1_3_Memory  memory,
-             T1_AFM*    afm ) {
+			 T1_AFM*    afm ) {
 	FT2_1_3_FREE( afm->kern_pairs );
 	afm->num_pairs = 0;
 	FT2_1_3_FREE( afm );
@@ -45,15 +47,15 @@ T1_Done_AFM( FT2_1_3_Memory  memory,
 #define IS_KERN_PAIR( p )  ( p[0] == 'K' && p[1] == 'P' )
 
 #define IS_ALPHANUM( c )  ( ft_isalnum( c ) || \
-                            c == '_'        || \
-                            c == '.'        )
+							c == '_'        || \
+							c == '.'        )
 
 
 /* read a glyph name and return the equivalent glyph index */
 static FT2_1_3_UInt
 afm_atoindex( FT2_1_3_Byte**  start,
-              FT2_1_3_Byte*   limit,
-              T1_Font    type1 ) {
+			  FT2_1_3_Byte*   limit,
+			  T1_Font    type1 ) {
 	FT2_1_3_Byte*    p = *start;
 	FT2_1_3_PtrDist  len;
 	FT2_1_3_UInt     result = 0;
@@ -62,7 +64,7 @@ afm_atoindex( FT2_1_3_Byte**  start,
 
 	/* skip whitespace */
 	while ( ( *p == ' ' || *p == '\t' || *p == ':' || *p == ';' ) &&
-	        p < limit                                             )
+			p < limit                                             )
 		p++;
 	*start = p;
 
@@ -99,7 +101,7 @@ afm_atoindex( FT2_1_3_Byte**  start,
 /* read an integer */
 static int
 afm_atoi( FT2_1_3_Byte**  start,
-          FT2_1_3_Byte*   limit ) {
+		  FT2_1_3_Byte*   limit ) {
 	FT2_1_3_Byte*  p    = *start;
 	int       sum  = 0;
 	int       sign = 1;
@@ -131,7 +133,7 @@ afm_atoi( FT2_1_3_Byte**  start,
 /* compare two kerning pairs */
 FT2_1_3_CALLBACK_DEF( int )
 compare_kern_pairs( const void*  a,
-                    const void*  b ) {
+					const void*  b ) {
 	T1_Kern_Pair*  pair1 = (T1_Kern_Pair*)a;
 	T1_Kern_Pair*  pair2 = (T1_Kern_Pair*)b;
 
@@ -146,7 +148,7 @@ compare_kern_pairs( const void*  a,
 /* parse an AFM file -- for now, only read the kerning pairs */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 T1_Read_AFM( FT2_1_3_Face    t1_face,
-             FT2_1_3_Stream  stream ) {
+			 FT2_1_3_Stream  stream ) {
 	FT2_1_3_Error       error;
 	FT2_1_3_Memory      memory = stream->memory;
 	FT2_1_3_Byte*       start;
@@ -214,7 +216,7 @@ T1_Read_AFM( FT2_1_3_Face    t1_face,
 
 	/* now, sort the kern pairs according to their glyph indices */
 	ft_qsort( afm->kern_pairs, count, sizeof ( T1_Kern_Pair ),
-	          compare_kern_pairs );
+			  compare_kern_pairs );
 
 Exit:
 	if ( error )
@@ -229,9 +231,9 @@ Exit:
 /* find the kerning for a given glyph pair */
 FT2_1_3_LOCAL_DEF( void )
 T1_Get_Kerning( T1_AFM*     afm,
-                FT2_1_3_UInt     glyph1,
-                FT2_1_3_UInt     glyph2,
-                FT2_1_3_Vector*  kerning ) {
+				FT2_1_3_UInt     glyph1,
+				FT2_1_3_UInt     glyph2,
+				FT2_1_3_Vector*  kerning ) {
 	T1_Kern_Pair  *min, *mid, *max;
 	FT2_1_3_ULong      idx = KERN_INDEX( glyph1, glyph2 );
 
@@ -262,5 +264,7 @@ T1_Get_Kerning( T1_AFM*     afm,
 	kerning->y = 0;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

@@ -16,14 +16,16 @@
 /***************************************************************************/
 
 
-#ifndef __T1PARSE_H__
-#define __T1PARSE_H__
+#ifndef AGS_LIB_FREETYPE_T1PARSE_H
+#define AGS_LIB_FREETYPE_T1PARSE_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/t1types.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftstream.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -76,19 +78,16 @@ typedef struct  T1_ParserRec_ {
 
 
 #define T1_Add_Table( p, i, o, l )  (p)->funcs.add( (p), i, o, l )
-#define T1_Done_Table( p )          \
-          do                        \
-          {                         \
-            if ( (p)->funcs.done )  \
-              (p)->funcs.done( p ); \
-          } while ( 0 )
-#define T1_Release_Table( p )          \
-          do                           \
-          {                            \
-            if ( (p)->funcs.release )  \
-              (p)->funcs.release( p ); \
-          } while ( 0 )
-
+#define T1_Done_Table(p)        \
+	do {                        \
+		if ((p)->funcs.done)    \
+			(p)->funcs.done(p); \
+	} while (0)
+#define T1_Release_Table(p)        \
+	do {                           \
+		if ((p)->funcs.release)    \
+			(p)->funcs.release(p); \
+	} while (0)
 
 #define T1_Skip_Spaces( p )  (p)->root.funcs.skip_spaces( &(p)->root )
 #define T1_Skip_Alpha( p )   (p)->root.funcs.skip_alpha ( &(p)->root )
@@ -97,30 +96,30 @@ typedef struct  T1_ParserRec_ {
 #define T1_ToFixed( p, t )  (p)->root.funcs.to_fixed( &(p)->root, t )
 
 #define T1_ToCoordArray( p, m, c )                           \
-          (p)->root.funcs.to_coord_array( &(p)->root, m, c )
+					(p)->root.funcs.to_coord_array( &(p)->root, m, c )
 #define T1_ToFixedArray( p, m, f, t )                           \
-          (p)->root.funcs.to_fixed_array( &(p)->root, m, f, t )
+					(p)->root.funcs.to_fixed_array( &(p)->root, m, f, t )
 #define T1_ToToken( p, t )                          \
-          (p)->root.funcs.to_token( &(p)->root, t )
+					(p)->root.funcs.to_token( &(p)->root, t )
 #define T1_ToTokenArray( p, t, m, c )                           \
-          (p)->root.funcs.to_token_array( &(p)->root, t, m, c )
+					(p)->root.funcs.to_token_array( &(p)->root, t, m, c )
 
 #define T1_Load_Field( p, f, o, m, pf )                         \
-          (p)->root.funcs.load_field( &(p)->root, f, o, m, pf )
+					(p)->root.funcs.load_field( &(p)->root, f, o, m, pf )
 
 #define T1_Load_Field_Table( p, f, o, m, pf )                         \
-          (p)->root.funcs.load_field_table( &(p)->root, f, o, m, pf )
+					(p)->root.funcs.load_field_table( &(p)->root, f, o, m, pf )
 
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 T1_New_Parser( T1_Parser      parser,
-               FT2_1_3_Stream      stream,
-               FT2_1_3_Memory      memory,
-               PSAux_Service  psaux );
+							 FT2_1_3_Stream      stream,
+							 FT2_1_3_Memory      memory,
+							 PSAux_Service  psaux );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 T1_Get_Private_Dict( T1_Parser      parser,
-                     PSAux_Service  psaux );
+										 PSAux_Service  psaux );
 
 FT2_1_3_LOCAL( void )
 T1_Finalize_Parser( T1_Parser  parser );
@@ -128,7 +127,10 @@ T1_Finalize_Parser( T1_Parser  parser );
 
 FT2_1_3_END_HEADER
 
-#endif /* __T1PARSE_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_T1PARSE_H */
 
 
 /* END */

@@ -16,31 +16,36 @@
 /***************************************************************************/
 
 
-#ifndef __T1GLOAD_H__
-#define __T1GLOAD_H__
+#ifndef AGS_LIB_FREETYPE_T1GLOAD_H
+#define AGS_LIB_FREETYPE_T1GLOAD_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "t1objs.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 T1_Compute_Max_Advance( T1_Face  face,
-                        FT2_1_3_Int*  max_advance );
+						FT2_1_3_Int*  max_advance );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 T1_Load_Glyph( T1_GlyphSlot  glyph,
-               T1_Size       size,
-               FT2_1_3_UInt       glyph_index,
-               FT2_1_3_Int32      load_flags );
+			   T1_Size       size,
+			   FT2_1_3_UInt       glyph_index,
+			   FT2_1_3_Int32      load_flags );
 
 
 FT2_1_3_END_HEADER
 
-#endif /* __T1GLOAD_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_T1GLOAD_H */
 
 
 /* END */
