@@ -673,6 +673,16 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 	case JE_DOWN:
 //		LOGD("JE_DOWN");
 		_touch_pt_down = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
+		// If the cursor was outside the area (because the screen rotated) clip it
+		// to not scroll several times to make the cursor appear in the area
+		// Do not clamp the cursor position while rotating the screen because if the user rotated by mistake
+		// rotating again will see the cursor position preserved
+		if (_touch_pt_down.x > JNI::egl_surface_width) {
+			_touch_pt_down.x = JNI::egl_surface_width;
+		}
+		if (_touch_pt_down.y > JNI::egl_surface_height) {
+			_touch_pt_down.y = JNI::egl_surface_height;
+		}
 		_touch_pt_scroll.x = -1;
 		_touch_pt_scroll.y = -1;
 		break;
