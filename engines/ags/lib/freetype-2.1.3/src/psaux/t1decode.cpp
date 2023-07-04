@@ -36,6 +36,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_t1decode
 
+namespace AGS3 {
+namespace FreeType213 {
 
 typedef enum  T1_Operator_ {
 	op_none = 0,
@@ -121,7 +123,7 @@ const FT2_1_3_Int  t1_args_count[op_max] = {
 /*                                                                       */
 static FT2_1_3_Int
 t1_lookup_glyph_by_stdcharcode( T1_Decoder  decoder,
-                                FT2_1_3_Int      charcode ) {
+								FT2_1_3_Int      charcode ) {
 	FT2_1_3_UInt           n;
 	const FT2_1_3_String*  glyph_name;
 	PSNames_Service   psnames = decoder->psnames;
@@ -132,14 +134,14 @@ t1_lookup_glyph_by_stdcharcode( T1_Decoder  decoder,
 		return -1;
 
 	glyph_name = psnames->adobe_std_strings(
-	                 psnames->adobe_std_encoding[charcode]);
+					 psnames->adobe_std_encoding[charcode]);
 
 	for ( n = 0; n < decoder->num_glyphs; n++ ) {
 		FT2_1_3_String*  name = (FT2_1_3_String*)decoder->glyph_names[n];
 
 
 		if ( name && name[0] == glyph_name[0]  &&
-		        ft_strcmp( name,glyph_name ) == 0 )
+				ft_strcmp( name,glyph_name ) == 0 )
 			return n;
 	}
 
@@ -173,11 +175,11 @@ t1_lookup_glyph_by_stdcharcode( T1_Decoder  decoder,
 /*                                                                       */
 static FT2_1_3_Error
 t1operator_seac( T1_Decoder  decoder,
-                 FT2_1_3_Pos      asb,
-                 FT2_1_3_Pos      adx,
-                 FT2_1_3_Pos      ady,
-                 FT2_1_3_Int      bchar,
-                 FT2_1_3_Int      achar ) {
+				 FT2_1_3_Pos      asb,
+				 FT2_1_3_Pos      adx,
+				 FT2_1_3_Pos      ady,
+				 FT2_1_3_Int      bchar,
+				 FT2_1_3_Int      achar ) {
 	FT2_1_3_Error     error;
 	FT2_1_3_Int       bchar_index, achar_index;
 #if 0
@@ -225,7 +227,7 @@ t1operator_seac( T1_Decoder  decoder,
 		/* subglyph 0 = base character */
 		subg->index = bchar_index;
 		subg->flags = FT2_1_3_SUBGLYPH_FLAG_ARGS_ARE_XY_VALUES |
-		              FT2_1_3_SUBGLYPH_FLAG_USE_MY_METRICS;
+					  FT2_1_3_SUBGLYPH_FLAG_USE_MY_METRICS;
 		subg->arg1  = 0;
 		subg->arg2  = 0;
 		subg++;
@@ -324,8 +326,8 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 t1_decoder_parse_charstrings( T1_Decoder  decoder,
-                              FT2_1_3_Byte*    charstring_base,
-                              FT2_1_3_UInt     charstring_len ) {
+							  FT2_1_3_Byte*    charstring_base,
+							  FT2_1_3_UInt     charstring_len ) {
 	FT2_1_3_Error         error;
 	T1_Decoder_Zone  zone;
 	FT2_1_3_Byte*         ip;
@@ -441,7 +443,7 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 		case 12:
 			if ( ip > limit ) {
 				FT2_1_3_ERROR(( "t1_decoder_parse_charstrings: "
-				           "invalid escape (12+EOF)\n" ));
+						   "invalid escape (12+EOF)\n" ));
 				goto Syntax_Error;
 			}
 
@@ -476,8 +478,8 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 
 			default:
 				FT2_1_3_ERROR(( "t1_decoder_parse_charstrings: "
-				           "invalid escape (12+%d)\n",
-				           ip[-1] ));
+						   "invalid escape (12+%d)\n",
+						   ip[-1] ));
 				goto Syntax_Error;
 			}
 			break;
@@ -485,14 +487,14 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 		case 255:    /* four bytes integer */
 			if ( ip + 4 > limit ) {
 				FT2_1_3_ERROR(( "t1_decoder_parse_charstrings: "
-				           "unexpected EOF in integer\n" ));
+						   "unexpected EOF in integer\n" ));
 				goto Syntax_Error;
 			}
 
 			value = (FT2_1_3_Int32)( ((FT2_1_3_Long)ip[0] << 24) |
-			                    ((FT2_1_3_Long)ip[1] << 16) |
-			                    ((FT2_1_3_Long)ip[2] << 8 ) |
-			                    ip[3] );
+								((FT2_1_3_Long)ip[1] << 16) |
+								((FT2_1_3_Long)ip[2] << 8 ) |
+								ip[3] );
 			ip += 4;
 			break;
 
@@ -514,7 +516,7 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 				}
 			} else {
 				FT2_1_3_ERROR(( "t1_decoder_parse_charstrings: "
-				           "invalid byte (%d)\n", ip[-1] ));
+						   "invalid byte (%d)\n", ip[-1] ));
 				goto Syntax_Error;
 			}
 		}
@@ -549,7 +551,7 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 				decoder->flex_state        = 1;
 				decoder->num_flex_vectors  = 0;
 				if ( start_point( builder, x, y ) ||
-				        check_points( builder, 6 )   )
+						check_points( builder, 6 )   )
 					goto Memory_Error;
 				break;
 
@@ -566,9 +568,9 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 				idx = decoder->num_flex_vectors++;
 				if ( idx > 0 && idx < 7 )
 					add_point( builder,
-					           x,
-					           y,
-					           (FT2_1_3_Byte)( idx == 3 || idx == 6 ) );
+							   x,
+							   y,
+							   (FT2_1_3_Byte)( idx == 3 || idx == 6 ) );
 			}
 			break;
 
@@ -577,19 +579,19 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 					goto Unexpected_OtherSubr;
 
 				if ( decoder->flex_state       == 0 ||
-				        decoder->num_flex_vectors != 7 ) {
+						decoder->num_flex_vectors != 7 ) {
 					FT2_1_3_ERROR(( "t1_decoder_parse_charstrings: "
-					           "unexpected flex end\n" ));
+							   "unexpected flex end\n" ));
 					goto Syntax_Error;
 				}
 
 				/* now consume the remaining `pop pop setcurpoint' */
 				if ( ip + 6 > limit ||
-				        ip[0] != 12 || ip[1] != 17 || /* pop */
-				        ip[2] != 12 || ip[3] != 17 || /* pop */
-				        ip[4] != 12 || ip[5] != 33 ) { /* setcurpoint */
+						ip[0] != 12 || ip[1] != 17 || /* pop */
+						ip[2] != 12 || ip[3] != 17 || /* pop */
+						ip[4] != 12 || ip[5] != 33 ) { /* setcurpoint */
 					FT2_1_3_ERROR(( "t1_decoder_parse_charstrings: "
-					           "invalid flex charstring\n" ));
+							   "invalid flex charstring\n" ));
 					goto Syntax_Error;
 				}
 
@@ -604,7 +606,7 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 				/* eat the following `pop' */
 				if ( ip + 2 > limit ) {
 					FT2_1_3_ERROR(( "t1_decoder_parse_charstrings: "
-					           "invalid escape (12+%d)\n", ip[-1] ));
+							   "invalid escape (12+%d)\n", ip[-1] ));
 					goto Syntax_Error;
 				}
 
@@ -687,7 +689,7 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 			default:
 Unexpected_OtherSubr:
 				FT2_1_3_ERROR(( "t1_decoder_parse_charstrings: "
-				           "invalid othersubr [%d %d]!\n", top[0], top[1] ));
+						   "invalid othersubr [%d %d]!\n", top[0], top[1] ));
 				goto Syntax_Error;
 			}
 			decoder->top = top;
@@ -713,9 +715,9 @@ Unexpected_OtherSubr:
 
 					/* apply hints to the loaded glyph outline now */
 					hinter->apply( hinter->hints,
-					               builder->current,
-					               (PSH_Globals) builder->hints_globals,
-					               decoder->hint_mode );
+								   builder->current,
+								   (PSH_Globals) builder->hints_globals,
+								   decoder->hint_mode );
 				}
 
 				/* add current outline to the glyph slot */
@@ -748,7 +750,7 @@ Unexpected_OtherSubr:
 			case op_seac:
 				/* return immediately after the processing */
 				return t1operator_seac( decoder, top[0], top[1],
-				                        top[2], top[3], top[4] );
+										top[2], top[3], top[4] );
 
 			case op_sbw:
 				FT2_1_3_TRACE4(( " sbw" ));
@@ -797,7 +799,7 @@ Unexpected_OtherSubr:
 				FT2_1_3_TRACE4(( " hvcurveto" ));
 
 				if ( start_point( builder, x, y ) ||
-				        check_points( builder, 3 )   )
+						check_points( builder, 3 )   )
 					goto Memory_Error;
 
 				x += top[0];
@@ -836,7 +838,7 @@ Add_Line:
 				FT2_1_3_TRACE4(( " rcurveto" ));
 
 				if ( start_point( builder, x, y ) ||
-				        check_points( builder, 3 )   )
+						check_points( builder, 3 )   )
 					goto Memory_Error;
 
 				x += top[0];
@@ -856,7 +858,7 @@ Add_Line:
 				FT2_1_3_TRACE4(( " vhcurveto" ));
 
 				if ( start_point( builder, x, y ) ||
-				        check_points( builder, 3 )   )
+						check_points( builder, 3 )   )
 					goto Memory_Error;
 
 				y += top[0];
@@ -906,13 +908,13 @@ Add_Line:
 				idx = top[0];
 				if ( idx < 0 || idx >= (FT2_1_3_Int)decoder->num_subrs ) {
 					FT2_1_3_ERROR(( "t1_decoder_parse_charstrings: "
-					           "invalid subrs index\n" ));
+							   "invalid subrs index\n" ));
 					goto Syntax_Error;
 				}
 
 				if ( zone - decoder->zones >= T1_MAX_SUBRS_CALLS ) {
 					FT2_1_3_ERROR(( "t1_decoder_parse_charstrings: "
-					           "too many nested subrs\n" ));
+							   "too many nested subrs\n" ));
 					goto Syntax_Error;
 				}
 
@@ -938,7 +940,7 @@ Add_Line:
 
 				if ( !zone->base ) {
 					FT2_1_3_ERROR(( "t1_decoder_parse_charstrings: "
-					           "invoking empty subrs!\n" ));
+							   "invoking empty subrs!\n" ));
 					goto Syntax_Error;
 				}
 
@@ -1029,7 +1031,7 @@ Add_Line:
 
 			default:
 				FT2_1_3_ERROR(( "t1_decoder_parse_charstrings: "
-				           "unhandled opcode %d\n", op ));
+						   "unhandled opcode %d\n", op ));
 				goto Syntax_Error;
 			}
 
@@ -1057,7 +1059,7 @@ Memory_Error:
 /* parse a single Type 1 glyph */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 t1_decoder_parse_glyph( T1_Decoder  decoder,
-                        FT2_1_3_UInt     glyph ) {
+						FT2_1_3_UInt     glyph ) {
 	return decoder->parse_callback( decoder, glyph );
 }
 
@@ -1065,14 +1067,14 @@ t1_decoder_parse_glyph( T1_Decoder  decoder,
 /* initialize T1 decoder */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 t1_decoder_init( T1_Decoder           decoder,
-                 FT2_1_3_Face              face,
-                 FT2_1_3_Size              size,
-                 FT2_1_3_GlyphSlot         slot,
-                 FT2_1_3_Byte**            glyph_names,
-                 PS_Blend             blend,
-                 FT2_1_3_Bool              hinting,
-                 FT2_1_3_Render_Mode       hint_mode,
-                 T1_Decoder_Callback  parse_callback ) {
+				 FT2_1_3_Face              face,
+				 FT2_1_3_Size              size,
+				 FT2_1_3_GlyphSlot         slot,
+				 FT2_1_3_Byte**            glyph_names,
+				 PS_Blend             blend,
+				 FT2_1_3_Bool              hinting,
+				 FT2_1_3_Render_Mode       hint_mode,
+				 T1_Decoder_Callback  parse_callback ) {
 	FT2_1_3_MEM_ZERO( decoder, sizeof ( *decoder ) );
 
 	/* retrieve PSNames interface from list of current modules */
@@ -1081,7 +1083,7 @@ t1_decoder_init( T1_Decoder           decoder,
 
 
 		psnames = (PSNames_Service)FT2_1_3_Get_Module_Interface(
-		              FT2_1_3_FACE_LIBRARY(face), "psnames" );
+					  FT2_1_3_FACE_LIBRARY(face), "psnames" );
 		if ( !psnames ) {
 			FT2_1_3_ERROR(( "t1_decoder_init: " ));
 			FT2_1_3_ERROR(( "the `psnames' module is not available\n" ));
@@ -1112,5 +1114,7 @@ t1_decoder_done( T1_Decoder  decoder ) {
 	t1_builder_done( &decoder->builder );
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

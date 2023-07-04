@@ -16,13 +16,16 @@
 /***************************************************************************/
 
 
-#ifndef __T1CMAP_H__
-#define __T1CMAP_H__
+#ifndef AGS_LIB_FREETYPE_T1CMAP_H
+#define AGS_LIB_FREETYPE_T1CMAP_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/t1types.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"
+
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -114,7 +117,10 @@ t1_cmap_unicode_class_rec;
 
 FT2_1_3_END_HEADER
 
-#endif /* __T1CMAP_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_T1CMAP_H */
 
 
 /* END */

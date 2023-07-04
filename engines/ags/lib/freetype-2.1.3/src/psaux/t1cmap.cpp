@@ -20,6 +20,8 @@
 
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*************************************************************************/
@@ -31,7 +33,7 @@
 
 static void
 t1_cmap_std_init( T1_CMapStd  cmap,
-                  FT2_1_3_Int      is_expert ) {
+				  FT2_1_3_Int      is_expert ) {
 	T1_Face          face    = (T1_Face)FT2_1_3_CMAP_FACE( cmap );
 	PSNames_Service  psnames = (PSNames_Service)face->psnames;
 
@@ -40,7 +42,7 @@ t1_cmap_std_init( T1_CMapStd  cmap,
 	cmap->glyph_names   = (const char* const*)face->type1.glyph_names;
 	cmap->sid_to_string = psnames->adobe_std_strings;
 	cmap->code_to_sid   = is_expert ? psnames->adobe_expert_encoding
-	                      : psnames->adobe_std_encoding;
+						  : psnames->adobe_std_encoding;
 
 	FT2_1_3_ASSERT( cmap->code_to_sid != NULL );
 }
@@ -57,7 +59,7 @@ t1_cmap_std_done( T1_CMapStd  cmap ) {
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 t1_cmap_std_char_index( T1_CMapStd  cmap,
-                        FT2_1_3_UInt32   char_code ) {
+						FT2_1_3_UInt32   char_code ) {
 	FT2_1_3_UInt  result = 0;
 
 
@@ -76,7 +78,7 @@ t1_cmap_std_char_index( T1_CMapStd  cmap,
 
 
 			if ( gname && gname[0] == glyph_name[0]  &&
-			        ft_strcmp( gname, glyph_name ) == 0 ) {
+					ft_strcmp( gname, glyph_name ) == 0 ) {
 				result = n;
 				break;
 			}
@@ -89,7 +91,7 @@ t1_cmap_std_char_index( T1_CMapStd  cmap,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 t1_cmap_std_char_next( T1_CMapStd   cmap,
-                       FT2_1_3_UInt32   *pchar_code ) {
+					   FT2_1_3_UInt32   *pchar_code ) {
 	FT2_1_3_UInt    result    = 0;
 	FT2_1_3_UInt32  char_code = *pchar_code + 1;
 
@@ -180,12 +182,12 @@ t1_cmap_custom_done( T1_CMapCustom  cmap ) {
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 t1_cmap_custom_char_index( T1_CMapCustom  cmap,
-                           FT2_1_3_UInt32      char_code ) {
+						   FT2_1_3_UInt32      char_code ) {
 	FT2_1_3_UInt    result = 0;
 
 
 	if ( ( char_code >= cmap->first )                  &&
-	        ( char_code < ( cmap->first + cmap->count ) ) )
+			( char_code < ( cmap->first + cmap->count ) ) )
 		result = cmap->indices[char_code];
 
 	return result;
@@ -194,7 +196,7 @@ t1_cmap_custom_char_index( T1_CMapCustom  cmap,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 t1_cmap_custom_char_next( T1_CMapCustom  cmap,
-                          FT2_1_3_UInt32     *pchar_code ) {
+						  FT2_1_3_UInt32     *pchar_code ) {
 	FT2_1_3_UInt    result = 0;
 	FT2_1_3_UInt32  char_code = *pchar_code;
 
@@ -239,7 +241,7 @@ t1_cmap_custom_class_rec = {
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Int )
 t1_cmap_uni_pair_compare( const void*  pair1,
-                          const void*  pair2 ) {
+						  const void*  pair2 ) {
 	FT2_1_3_UInt32  u1 = ((T1_CMapUniPair)pair1)->unicode;
 	FT2_1_3_UInt32  u2 = ((T1_CMapUniPair)pair2)->unicode;
 
@@ -306,9 +308,9 @@ t1_cmap_unicode_init( T1_CMapUnicode  cmap ) {
 
 			/* sort the pairs table to allow efficient binary searches */
 			ft_qsort( cmap->pairs,
-			          new_count,
-			          sizeof ( T1_CMapUniPairRec ),
-			          t1_cmap_uni_pair_compare );
+					  new_count,
+					  sizeof ( T1_CMapUniPairRec ),
+					  t1_cmap_uni_pair_compare );
 
 			cmap->num_pairs = new_count;
 		}
@@ -330,7 +332,7 @@ t1_cmap_unicode_done( T1_CMapUnicode  cmap ) {
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 t1_cmap_unicode_char_index( T1_CMapUnicode  cmap,
-                            FT2_1_3_UInt32       char_code ) {
+							FT2_1_3_UInt32       char_code ) {
 	FT2_1_3_UInt         min = 0;
 	FT2_1_3_UInt         max = cmap->num_pairs;
 	FT2_1_3_UInt         mid;
@@ -355,7 +357,7 @@ t1_cmap_unicode_char_index( T1_CMapUnicode  cmap,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 t1_cmap_unicode_char_next( T1_CMapUnicode  cmap,
-                           FT2_1_3_UInt32      *pchar_code ) {
+						   FT2_1_3_UInt32      *pchar_code ) {
 	FT2_1_3_UInt    result    = 0;
 	FT2_1_3_UInt32  char_code = *pchar_code + 1;
 
@@ -413,5 +415,7 @@ t1_cmap_unicode_class_rec = {
 	(FT2_1_3_CMap_CharNextFunc) t1_cmap_unicode_char_next
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

@@ -22,6 +22,8 @@
 #include "t1decode.h"
 #include "t1cmap.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_CALLBACK_TABLE_DEF
 const PS_Table_FuncsRec  ps_table_funcs = {
@@ -107,5 +109,7 @@ const FT2_1_3_Module_Class  psaux_module_class = {
 	(FT2_1_3_Module_Requester)  0
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

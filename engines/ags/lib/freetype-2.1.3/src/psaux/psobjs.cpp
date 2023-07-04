@@ -24,6 +24,8 @@
 
 #include "psauxerr.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*************************************************************************/
@@ -55,14 +57,14 @@
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 ps_table_new( PS_Table   table,
-              FT2_1_3_Int     count,
-              FT2_1_3_Memory  memory ) {
+			  FT2_1_3_Int     count,
+			  FT2_1_3_Memory  memory ) {
 	FT2_1_3_Error  error;
 
 
 	table->memory = memory;
 	if ( FT2_1_3_NEW_ARRAY( table->elements, count ) ||
-	        FT2_1_3_NEW_ARRAY( table->lengths,  count ) )
+			FT2_1_3_NEW_ARRAY( table->lengths,  count ) )
 		goto Exit;
 
 	table->max_elems = count;
@@ -84,7 +86,7 @@ Exit:
 
 static void
 shift_elements( PS_Table  table,
-                FT2_1_3_Byte*  old_base ) {
+				FT2_1_3_Byte*  old_base ) {
 	FT2_1_3_Long    delta  = (FT2_1_3_Long)( table->block - old_base );
 	FT2_1_3_Byte**  offset = table->elements;
 	FT2_1_3_Byte**  limit  = offset + table->max_elems;
@@ -99,7 +101,7 @@ shift_elements( PS_Table  table,
 
 static FT2_1_3_Error
 reallocate_t1_table( PS_Table  table,
-                     FT2_1_3_Long   new_size ) {
+					 FT2_1_3_Long   new_size ) {
 	FT2_1_3_Memory  memory   = table->memory;
 	FT2_1_3_Byte*   old_base = table->block;
 	FT2_1_3_Error   error;
@@ -146,9 +148,9 @@ reallocate_t1_table( PS_Table  table,
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 ps_table_add( PS_Table  table,
-              FT2_1_3_Int    idx,
-              void*     object,
-              FT2_1_3_Int    length ) {
+			  FT2_1_3_Int    idx,
+			  void*     object,
+			  FT2_1_3_Int    length ) {
 	if ( idx < 0 || idx > table->max_elems ) {
 		FT2_1_3_ERROR(( "ps_table_add: invalid index\n" ));
 		return PSaux_Err_Invalid_Argument;
@@ -295,7 +297,7 @@ ps_parser_skip_alpha( PS_Parser  parser ) {
 
 FT2_1_3_LOCAL_DEF( void )
 ps_parser_to_token( PS_Parser  parser,
-                    T1_Token   token ) {
+					T1_Token   token ) {
 	FT2_1_3_Byte*  cur;
 	FT2_1_3_Byte*  limit;
 	FT2_1_3_Byte   starter, ender;
@@ -371,9 +373,9 @@ Lookup_Ender:
 
 FT2_1_3_LOCAL_DEF( void )
 ps_parser_to_token_array( PS_Parser  parser,
-                          T1_Token   tokens,
-                          FT2_1_3_UInt    max_tokens,
-                          FT2_1_3_Int*    pnum_tokens ) {
+						  T1_Token   tokens,
+						  FT2_1_3_UInt    max_tokens,
+						  FT2_1_3_Int*    pnum_tokens ) {
 	T1_TokenRec  master;
 
 
@@ -414,15 +416,15 @@ ps_parser_to_token_array( PS_Parser  parser,
 
 static FT2_1_3_Long
 T1Radix( FT2_1_3_Long    radixBase,
-         FT2_1_3_Byte**  cur,
-         FT2_1_3_Byte*   limit ) {
+		 FT2_1_3_Byte**  cur,
+		 FT2_1_3_Byte*   limit ) {
 	FT2_1_3_Long  result = 0;
 	FT2_1_3_Byte  radixEndChar0 =
-	    (FT2_1_3_Byte)( radixBase > 10 ? '9' + 1 : '0' + radixBase );
+		(FT2_1_3_Byte)( radixBase > 10 ? '9' + 1 : '0' + radixBase );
 	FT2_1_3_Byte  radixEndChar1 =
-	    (FT2_1_3_Byte)( 'A' + radixBase - 10 );
+		(FT2_1_3_Byte)( 'A' + radixBase - 10 );
 	FT2_1_3_Byte  radixEndChar2 =
-	    (FT2_1_3_Byte)( 'a' + radixBase - 10 );
+		(FT2_1_3_Byte)( 'a' + radixBase - 10 );
 
 
 	while( *cur < limit ) {
@@ -430,11 +432,11 @@ T1Radix( FT2_1_3_Long    radixBase,
 			result = result * radixBase + (*cur)[0] - '0';
 
 		else if ( radixBase > 10 &&
-		          (*cur)[0] >= 'A' && (*cur)[0] < radixEndChar1 )
+				  (*cur)[0] >= 'A' && (*cur)[0] < radixEndChar1 )
 			result = result * radixBase + ( (*cur)[0] - 'A' + 10 );
 
 		else if ( radixBase > 10 &&
-		          (*cur)[0] >= 'a' && (*cur)[0] < radixEndChar2 )
+				  (*cur)[0] >= 'a' && (*cur)[0] < radixEndChar2 )
 			result = result * radixBase + ( (*cur)[0] - 'a' + 10 );
 
 		else
@@ -449,7 +451,7 @@ T1Radix( FT2_1_3_Long    radixBase,
 
 static FT2_1_3_Long
 t1_toint( FT2_1_3_Byte**  cursor,
-          FT2_1_3_Byte*   limit ) {
+		  FT2_1_3_Byte*   limit ) {
 	FT2_1_3_Long   result = 0;
 	FT2_1_3_Byte*  cur    = *cursor;
 	FT2_1_3_Byte   c      = '\0', d;
@@ -494,8 +496,8 @@ t1_toint( FT2_1_3_Byte**  cursor,
 
 static FT2_1_3_Long
 t1_tofixed( FT2_1_3_Byte**  cursor,
-            FT2_1_3_Byte*   limit,
-            FT2_1_3_Long    power_ten ) {
+			FT2_1_3_Byte*   limit,
+			FT2_1_3_Long    power_ten ) {
 	FT2_1_3_Byte*  cur  = *cursor;
 	FT2_1_3_Long   num, divider, result;
 	FT2_1_3_Int    sign = 0;
@@ -576,9 +578,9 @@ Exit:
 
 static FT2_1_3_Int
 t1_tocoordarray( FT2_1_3_Byte**  cursor,
-                 FT2_1_3_Byte*   limit,
-                 FT2_1_3_Int     max_coords,
-                 FT2_1_3_Short*  coords ) {
+				 FT2_1_3_Byte*   limit,
+				 FT2_1_3_Int     max_coords,
+				 FT2_1_3_Short*  coords ) {
 	FT2_1_3_Byte*  cur   = *cursor;
 	FT2_1_3_Int    count = 0;
 	FT2_1_3_Byte   c, ender;
@@ -632,10 +634,10 @@ Exit:
 
 static FT2_1_3_Int
 t1_tofixedarray( FT2_1_3_Byte**  cursor,
-                 FT2_1_3_Byte*   limit,
-                 FT2_1_3_Int     max_values,
-                 FT2_1_3_Fixed*  values,
-                 FT2_1_3_Int     power_ten ) {
+				 FT2_1_3_Byte*   limit,
+				 FT2_1_3_Int     max_values,
+				 FT2_1_3_Fixed*  values,
+				 FT2_1_3_Int     power_ten ) {
 	FT2_1_3_Byte*  cur   = *cursor;
 	FT2_1_3_Int    count = 0;
 	FT2_1_3_Byte   c, ender;
@@ -690,8 +692,8 @@ Exit:
 
 static FT2_1_3_String*
 t1_tostring( FT2_1_3_Byte**  cursor,
-             FT2_1_3_Byte*   limit,
-             FT2_1_3_Memory  memory ) {
+			 FT2_1_3_Byte*   limit,
+			 FT2_1_3_Memory  memory ) {
 	FT2_1_3_Byte*    cur = *cursor;
 	FT2_1_3_PtrDist  len = 0;
 	FT2_1_3_Int      count;
@@ -747,25 +749,25 @@ t1_tostring( FT2_1_3_Byte**  cursor,
 
 static int
 t1_tobool( FT2_1_3_Byte**  cursor,
-           FT2_1_3_Byte*   limit ) {
+		   FT2_1_3_Byte*   limit ) {
 	FT2_1_3_Byte*  cur    = *cursor;
 	FT2_1_3_Bool   result = 0;
 
 
 	/* return 1 if we find `true', 0 otherwise */
 	if ( cur + 3 < limit &&
-	        cur[0] == 't' &&
-	        cur[1] == 'r' &&
-	        cur[2] == 'u' &&
-	        cur[3] == 'e' ) {
+			cur[0] == 't' &&
+			cur[1] == 'r' &&
+			cur[2] == 'u' &&
+			cur[3] == 'e' ) {
 		result = 1;
 		cur   += 5;
 	} else if ( cur + 4 < limit &&
-	            cur[0] == 'f' &&
-	            cur[1] == 'a' &&
-	            cur[2] == 'l' &&
-	            cur[3] == 's' &&
-	            cur[4] == 'e' ) {
+				cur[0] == 'f' &&
+				cur[1] == 'a' &&
+				cur[2] == 'l' &&
+				cur[3] == 's' &&
+				cur[4] == 'e' ) {
 		result = 0;
 		cur   += 6;
 	}
@@ -778,10 +780,10 @@ t1_tobool( FT2_1_3_Byte**  cursor,
 /* Load a simple field (i.e. non-table) into the current list of objects */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 ps_parser_load_field( PS_Parser       parser,
-                      const T1_Field  field,
-                      void**          objects,
-                      FT2_1_3_UInt         max_objects,
-                      FT2_1_3_ULong*       pflags ) {
+					  const T1_Field  field,
+					  void**          objects,
+					  FT2_1_3_UInt         max_objects,
+					  FT2_1_3_ULong*       pflags ) {
 	T1_TokenRec  token;
 	FT2_1_3_Byte*     cur;
 	FT2_1_3_Byte*     limit;
@@ -927,10 +929,10 @@ Fail:
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 ps_parser_load_field_table( PS_Parser       parser,
-                            const T1_Field  field,
-                            void**          objects,
-                            FT2_1_3_UInt         max_objects,
-                            FT2_1_3_ULong*       pflags ) {
+							const T1_Field  field,
+							void**          objects,
+							FT2_1_3_UInt         max_objects,
+							FT2_1_3_ULong*       pflags ) {
 	T1_TokenRec  elements[T1_MAX_TABLE_ELEMENTS];
 	T1_Token     token;
 	FT2_1_3_Int       num_elements;
@@ -958,7 +960,7 @@ ps_parser_load_field_table( PS_Parser       parser,
 
 	/* we store the elements count */
 	*(FT2_1_3_Byte*)( (FT2_1_3_Byte*)objects[0] + field->count_offset ) =
-	    (FT2_1_3_Byte)num_elements;
+		(FT2_1_3_Byte)num_elements;
 
 	/* we now load each element, adjusting the field.offset on each one */
 	token = elements;
@@ -996,27 +998,27 @@ ps_parser_to_int( PS_Parser  parser ) {
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Fixed )
 ps_parser_to_fixed( PS_Parser  parser,
-                    FT2_1_3_Int     power_ten ) {
+					FT2_1_3_Int     power_ten ) {
 	return t1_tofixed( &parser->cursor, parser->limit, power_ten );
 }
 
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Int )
 ps_parser_to_coord_array( PS_Parser  parser,
-                          FT2_1_3_Int     max_coords,
-                          FT2_1_3_Short*  coords ) {
+						  FT2_1_3_Int     max_coords,
+						  FT2_1_3_Short*  coords ) {
 	return t1_tocoordarray( &parser->cursor, parser->limit,
-	                        max_coords, coords );
+							max_coords, coords );
 }
 
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Int )
 ps_parser_to_fixed_array( PS_Parser  parser,
-                          FT2_1_3_Int     max_values,
-                          FT2_1_3_Fixed*  values,
-                          FT2_1_3_Int     power_ten ) {
+						  FT2_1_3_Int     max_values,
+						  FT2_1_3_Fixed*  values,
+						  FT2_1_3_Int     power_ten ) {
 	return t1_tofixedarray( &parser->cursor, parser->limit,
-	                        max_values, values, power_ten );
+							max_values, values, power_ten );
 }
 
 
@@ -1038,9 +1040,9 @@ T1_ToBool( PS_Parser  parser ) {
 
 FT2_1_3_LOCAL_DEF( void )
 ps_parser_init( PS_Parser  parser,
-                FT2_1_3_Byte*   base,
-                FT2_1_3_Byte*   limit,
-                FT2_1_3_Memory  memory ) {
+				FT2_1_3_Byte*   base,
+				FT2_1_3_Byte*   limit,
+				FT2_1_3_Memory  memory ) {
 	parser->error  = 0;
 	parser->base   = base;
 	parser->limit  = limit;
@@ -1086,10 +1088,10 @@ ps_parser_done( PS_Parser  parser ) {
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( void )
 t1_builder_init( T1_Builder    builder,
-                 FT2_1_3_Face       face,
-                 FT2_1_3_Size       size,
-                 FT2_1_3_GlyphSlot  glyph,
-                 FT2_1_3_Bool       hinting ) {
+				 FT2_1_3_Face       face,
+				 FT2_1_3_Size       size,
+				 FT2_1_3_GlyphSlot  glyph,
+				 FT2_1_3_Bool       hinting ) {
 	builder->path_begun  = 0;
 	builder->load_points = 1;
 
@@ -1156,7 +1158,7 @@ t1_builder_done( T1_Builder  builder ) {
 /* check that there is enough space for `count' more points */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 t1_builder_check_points( T1_Builder  builder,
-                         FT2_1_3_Int      count ) {
+						 FT2_1_3_Int      count ) {
 	return FT2_1_3_GlyphLoader_CheckPoints( builder->loader, count, 0 );
 }
 
@@ -1164,9 +1166,9 @@ t1_builder_check_points( T1_Builder  builder,
 /* add a new point, do not check space */
 FT2_1_3_LOCAL_DEF( void )
 t1_builder_add_point( T1_Builder  builder,
-                      FT2_1_3_Pos      x,
-                      FT2_1_3_Pos      y,
-                      FT2_1_3_Byte     flag ) {
+					  FT2_1_3_Pos      x,
+					  FT2_1_3_Pos      y,
+					  FT2_1_3_Byte     flag ) {
 	FT2_1_3_Outline*  outline = builder->current;
 
 
@@ -1192,8 +1194,8 @@ t1_builder_add_point( T1_Builder  builder,
 /* check space for a new on-curve point, then add it */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 t1_builder_add_point1( T1_Builder  builder,
-                       FT2_1_3_Pos      x,
-                       FT2_1_3_Pos      y ) {
+					   FT2_1_3_Pos      x,
+					   FT2_1_3_Pos      y ) {
 	FT2_1_3_Error  error;
 
 
@@ -1221,7 +1223,7 @@ t1_builder_add_contour( T1_Builder  builder ) {
 	if ( !error ) {
 		if ( outline->n_contours > 0 )
 			outline->contours[outline->n_contours - 1] =
-			    (short)( outline->n_points - 1 );
+				(short)( outline->n_points - 1 );
 
 		outline->n_contours++;
 	}
@@ -1233,8 +1235,8 @@ t1_builder_add_contour( T1_Builder  builder ) {
 /* if a path was begun, add its first on-curve point */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 t1_builder_start_point( T1_Builder  builder,
-                        FT2_1_3_Pos      x,
-                        FT2_1_3_Pos      y ) {
+						FT2_1_3_Pos      x,
+						FT2_1_3_Pos      y ) {
 	FT2_1_3_Error  error = 0;
 
 
@@ -1278,7 +1280,7 @@ t1_builder_close_contour( T1_Builder  builder ) {
 
 	if ( outline->n_contours > 0 )
 		outline->contours[outline->n_contours - 1] =
-		    (short)( outline->n_points - 1 );
+			(short)( outline->n_points - 1 );
 }
 
 
@@ -1292,8 +1294,8 @@ t1_builder_close_contour( T1_Builder  builder ) {
 
 FT2_1_3_LOCAL_DEF( void )
 t1_decrypt( FT2_1_3_Byte*   buffer,
-            FT2_1_3_Offset  length,
-            FT2_1_3_UShort  seed ) {
+			FT2_1_3_Offset  length,
+			FT2_1_3_UShort  seed ) {
 	while ( length > 0 ) {
 		FT2_1_3_Byte  plain;
 
@@ -1305,5 +1307,7 @@ t1_decrypt( FT2_1_3_Byte*   buffer,
 	}
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */
