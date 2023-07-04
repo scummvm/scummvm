@@ -349,12 +349,7 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 		CGRect newFrame = self.frame;
 #if TARGET_OS_IOS
 		UIEdgeInsets inset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets];
-		UIInterfaceOrientation orientation = UIInterfaceOrientationUnknown;
-		if (@available(iOS 13.0, *)) {
-			orientation = [[[self window] windowScene] interfaceOrientation];
-		} else {
-			orientation = [[UIApplication sharedApplication] statusBarOrientation];
-		}
+		UIInterfaceOrientation orientation = [iOS7AppDelegate currentOrientation];
 
 		// The code below adjust the screen size according to what Apple calls
 		// the "safe area". It also cover the cases when the software keyboard

@@ -32,6 +32,10 @@
 + (iOS7AppDelegate *)iOS7AppDelegate;
 + (iPhoneView *)iPhoneView;
 
+#if TARGET_OS_IOS
++ (UIInterfaceOrientation)currentOrientation;
+#endif
+
 @end
 
 #endif
