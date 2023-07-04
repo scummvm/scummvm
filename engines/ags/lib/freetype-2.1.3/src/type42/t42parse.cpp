@@ -141,7 +141,7 @@ t42_parser_init( T42_Parser     parser,
 				 FT2_1_3_Stream      stream,
 				 FT2_1_3_Memory      memory,
 				 PSAux_Service  psaux ) {
-	FT2_1_3_Error  error = T42_Err_Ok;
+	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
 	FT2_1_3_Long   size;
 
 
@@ -196,7 +196,7 @@ t42_parser_init( T42_Parser     parser,
 	if (size <= 17                                    ||
 			( ft_strncmp( (const char*)parser->base_dict,
 						  "%!PS-TrueTypeFont", 17) )      )
-		error = T42_Err_Unknown_File_Format;
+		error = FT2_1_3_Err_Unknown_File_Format;
 	else {
 		parser->root.base   = parser->base_dict;
 		parser->root.cursor = parser->base_dict;
@@ -354,7 +354,7 @@ t42_parse_encoding( T42_Face    face,
 		cur++;
 		if ( cur >= limit ) {
 			FT2_1_3_ERROR(( "t42_parse_encoding: out of bounds!\n" ));
-			parser->root.error = T42_Err_Invalid_File_Format;
+			parser->root.error = FT2_1_3_Err_Invalid_File_Format;
 			return;
 		}
 	}
@@ -483,7 +483,7 @@ t42_parse_encoding( T42_Face    face,
 
 		else {
 			FT2_1_3_ERROR(( "t42_parse_encoding: invalid token!\n" ));
-			parser->root.error = T42_Err_Invalid_File_Format;
+			parser->root.error = FT2_1_3_Err_Invalid_File_Format;
 		}
 	}
 }
@@ -540,7 +540,7 @@ t42_parse_sfnts( T42_Face    face,
 		count = 0;
 	} else {
 		FT2_1_3_ERROR(( "t42_parse_sfnts: can't find begin of sfnts vector!\n" ));
-		error = T42_Err_Invalid_File_Format;
+		error = FT2_1_3_Err_Invalid_File_Format;
 		goto Fail;
 	}
 
@@ -562,7 +562,7 @@ t42_parse_sfnts( T42_Face    face,
 		case '>':
 			if ( !in_string ) {
 				FT2_1_3_ERROR(( "t42_parse_sfnts: found unpaired `>'!\n" ));
-				error = T42_Err_Invalid_File_Format;
+				error = FT2_1_3_Err_Invalid_File_Format;
 				goto Fail;
 			}
 
@@ -582,14 +582,14 @@ t42_parse_sfnts( T42_Face    face,
 				continue;
 			} else {
 				FT2_1_3_ERROR(( "t42_parse_sfnts: found `%' in string!\n" ));
-				error = T42_Err_Invalid_File_Format;
+				error = FT2_1_3_Err_Invalid_File_Format;
 				goto Fail;
 			}
 
 		default:
 			if ( !ft_xdigit( *cur ) || !ft_xdigit( *(cur + 1) ) ) {
 				FT2_1_3_ERROR(( "t42_parse_sfnts: found non-hex characters in string" ));
-				error = T42_Err_Invalid_File_Format;
+				error = FT2_1_3_Err_Invalid_File_Format;
 				goto Fail;
 			}
 
@@ -647,7 +647,7 @@ t42_parse_sfnts( T42_Face    face,
 	}
 
 	/* If control reaches this point, the format was not valid */
-	error = T42_Err_Invalid_File_Format;
+	error = FT2_1_3_Err_Invalid_File_Format;
 
 Fail:
 	parser->root.error = error;
@@ -753,7 +753,7 @@ t42_parse_charstrings( T42_Face    face,
 	/* Index 0 must be a .notdef element */
 	if ( ft_strcmp( (char *)name_table->elements[0], ".notdef" ) ) {
 		FT2_1_3_ERROR(( "t42_parse_charstrings: Index 0 is not `.notdef'!\n" ));
-		error = T42_Err_Invalid_File_Format;
+		error = FT2_1_3_Err_Invalid_File_Format;
 		goto Fail;
 	}
 

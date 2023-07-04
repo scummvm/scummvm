@@ -69,7 +69,7 @@ t42_get_glyph_name( T42_Face    face,
 		((FT2_1_3_Byte*)buffer)[len] = 0;
 	}
 
-	return T42_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 

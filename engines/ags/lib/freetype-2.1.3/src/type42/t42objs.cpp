@@ -57,7 +57,7 @@ T42_Open_Face( T42_Face  face ) {
 	error = t42_parse_dict( face, &loader, parser->base_dict, parser->base_len );
 
 	if ( type1->font_type != 42 ) {
-		error = T42_Err_Unknown_File_Format;
+		error = FT2_1_3_Err_Unknown_File_Format;
 		goto Exit;
 	}
 
@@ -67,7 +67,7 @@ T42_Open_Face( T42_Face  face ) {
 
 	if ( !loader.charstrings.init ) {
 		FT2_1_3_ERROR(( "T42_Open_Face: no charstrings array in face!\n" ));
-		error = T42_Err_Invalid_File_Format;
+		error = FT2_1_3_Err_Invalid_File_Format;
 	}
 
 	loader.charstrings.init  = 0;
@@ -177,7 +177,7 @@ T42_Face_Init( FT2_1_3_Stream      stream,
 	/* check the face index */
 	if ( face_index != 0 ) {
 		FT2_1_3_ERROR(( "T42_Face_Init: invalid face index\n" ));
-		error = T42_Err_Invalid_Argument;
+		error = FT2_1_3_Err_Invalid_Argument;
 		goto Exit;
 	}
 
@@ -408,7 +408,7 @@ T42_Driver_Init( T42_Driver  driver ) {
 	ttmodule = FT2_1_3_Get_Module( FT2_1_3_MODULE(driver)->library, "truetype" );
 	driver->ttclazz = (FT2_1_3_Driver_Class)ttmodule->clazz;
 
-	return T42_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 
@@ -425,7 +425,7 @@ T42_Size_Init( T42_Size  size ) {
 	FT2_1_3_Face   face = size->root.face;
 	T42_Face  t42face = (T42_Face)face;
 	FT2_1_3_Size   ttsize;
-	FT2_1_3_Error  error   = T42_Err_Ok;
+	FT2_1_3_Error  error   = FT2_1_3_Err_Ok;
 
 
 	error = FT2_1_3_New_Size( t42face->ttf_face, &ttsize );
@@ -457,7 +457,7 @@ T42_GlyphSlot_Init( T42_GlyphSlot  slot ) {
 	FT2_1_3_Face       face    = slot->root.face;
 	T42_Face      t42face = (T42_Face)face;
 	FT2_1_3_GlyphSlot  ttslot;
-	FT2_1_3_Error      error   = T42_Err_Ok;
+	FT2_1_3_Error      error   = FT2_1_3_Err_Ok;
 
 
 	if ( face->glyph == NULL ) {
