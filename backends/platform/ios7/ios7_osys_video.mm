@@ -150,9 +150,9 @@ void OSystem_iOS7::setShowKeyboard(bool show) {
 		});
 #endif
 	} else {
-		// Do not hide the keyboard in portrait mode as it is shown automatically and not
+		// If in game, do not hide the keyboard in portrait mode as it is shown automatically and not
 		// just when asked with the kFeatureVirtualKeyboard.
-		if (_screenOrientation == kScreenOrientationLandscape || _screenOrientation == kScreenOrientationFlippedLandscape) {
+		if (_screenOrientation == kScreenOrientationLandscape || _screenOrientation == kScreenOrientationFlippedLandscape || ![[iOS7AppDelegate iPhoneView] isInGame]) {
 			execute_on_main_thread(^ {
 				[[iOS7AppDelegate iPhoneView] hideKeyboard];
 			});
