@@ -137,13 +137,13 @@ fnt_font_load( FNT_Font   font,
 	if ( header->version != 0x200 &&
 			header->version != 0x300 ) {
 		FT2_1_3_TRACE2(( "[not a valid FNT file]\n" ));
-		error = FNT_Err_Unknown_File_Format;
+		error = FT2_1_3_Err_Unknown_File_Format;
 		goto Exit;
 	}
 
 	if ( header->file_type & 1 ) {
 		FT2_1_3_TRACE2(( "[can't handle vector FNT fonts]\n" ));
-		error = FNT_Err_Unknown_File_Format;
+		error = FT2_1_3_Err_Unknown_File_Format;
 		goto Exit;
 	}
 
@@ -193,7 +193,7 @@ fnt_face_get_dll_fonts( FNT_Face  face ) {
 			FT2_1_3_STREAM_READ_FIELDS( winmz_header_fields, &mz_header ) )
 		goto Exit;
 
-	error = FNT_Err_Unknown_File_Format;
+	error = FT2_1_3_Err_Unknown_File_Format;
 	if ( mz_header.magic == WINFNT_MZ_MAGIC ) {
 		/* yes, now look for a NE header in the file */
 		WinNE_HeaderRec  ne_header;
@@ -203,7 +203,7 @@ fnt_face_get_dll_fonts( FNT_Face  face ) {
 				FT2_1_3_STREAM_READ_FIELDS( winne_header_fields, &ne_header ) )
 			goto Exit;
 
-		error = FNT_Err_Unknown_File_Format;
+		error = FT2_1_3_Err_Unknown_File_Format;
 		if ( ne_header.magic == WINFNT_NE_MAGIC ) {
 			/* good, now look in the resource table for each FNT resource */
 			FT2_1_3_ULong   res_offset = mz_header.lfanew +
@@ -244,7 +244,7 @@ fnt_face_get_dll_fonts( FNT_Face  face ) {
 
 			if ( !font_count || !font_offset ) {
 				FT2_1_3_TRACE2(( "this file doesn't contain any FNT resources!\n" ));
-				error = FNT_Err_Unknown_File_Format;
+				error = FT2_1_3_Err_Unknown_File_Format;
 				goto Exit;
 			}
 
@@ -523,7 +523,7 @@ FNT_Size_Set_Pixels( FNT_Size  size ) {
 		}
 	}
 
-	return ( size->font ? FNT_Err_Ok : FNT_Err_Invalid_Pixel_Size );
+	return ( size->font ? FT2_1_3_Err_Ok : FT2_1_3_Err_Invalid_Pixel_Size );
 }
 
 
@@ -545,7 +545,7 @@ FNT_Load_Glyph( FT2_1_3_GlyphSlot  slot,
 
 
 	if ( !font ) {
-		error = FNT_Err_Invalid_Argument;
+		error = FT2_1_3_Err_Invalid_Argument;
 		goto Exit;
 	}
 
