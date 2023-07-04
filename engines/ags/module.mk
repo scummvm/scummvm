@@ -92,7 +92,8 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/src/pshinter/pshalgo3.o \
 	lib/freetype-2.1.3/src/pshinter/pshmod.o \
 	lib/freetype-2.1.3/src/psnames/psmodule.o \
-	lib/freetype-2.1.3/src/raster/raster.o \
+	lib/freetype-2.1.3/src/raster/ftraster.o \
+	lib/freetype-2.1.3/src/raster/ftrend1.o \
 	lib/freetype-2.1.3/src/sfnt/sfnt.o \
 	lib/freetype-2.1.3/src/smooth/smooth.o \
 	lib/freetype-2.1.3/src/truetype/truetype.o \

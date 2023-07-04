@@ -16,14 +16,16 @@
 /***************************************************************************/
 
 
-#ifndef __FTRASTER_H__
-#define __FTRASTER_H__
+#ifndef AGS_LIB_FREETYPE_FTRASTER_H
+#define AGS_LIB_FREETYPE_FTRASTER_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftconfig.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftimage.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -40,7 +42,10 @@ FT2_1_3_EXPORT_VAR( const FT2_1_3_Raster_Funcs )  ft_standard_raster;
 
 FT2_1_3_END_HEADER
 
-#endif /* __FTRASTER_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTRASTER_H */
 
 
 /* END */

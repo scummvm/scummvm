@@ -139,6 +139,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_raster
 
+namespace AGS3 {
+namespace FreeType213 {
 
 #ifdef _STANDALONE_
 
@@ -308,7 +310,7 @@ typedef struct  TBand_ {
 
 
 #define AlignProfileSize \
-          ( ( sizeof ( TProfile ) + sizeof ( long ) - 1 ) / sizeof ( long ) )
+		  ( ( sizeof ( TProfile ) + sizeof ( long ) - 1 ) / sizeof ( long ) )
 
 
 #ifdef TT_STATIC_RASTER
@@ -344,14 +346,14 @@ typedef struct TRaster_Instance_  TRaster_Instance;
 /* prototypes used for sweep function dispatch */
 typedef void
 Function_Sweep_Init( RAS_ARGS Short*  min,
-                     Short*  max );
+					 Short*  max );
 
 typedef void
 Function_Sweep_Span( RAS_ARGS Short       y,
-                     FT2_1_3_F26Dot6  x1,
-                     FT2_1_3_F26Dot6  x2,
-                     PProfile    left,
-                     PProfile    right );
+					 FT2_1_3_F26Dot6  x1,
+					 FT2_1_3_F26Dot6  x2,
+					 PProfile    left,
+					 PProfile    right );
 
 typedef void
 Function_Sweep_Step( RAS_ARG );
@@ -625,7 +627,7 @@ End_Profile( RAS_ARG ) {
 
 	if ( h > 0 ) {
 		FT2_1_3_TRACE6(( "Ending profile %lx, start = %ld, height = %ld\n",
-		            (long)ras.cProfile, ras.cProfile->start, h ));
+					(long)ras.cProfile, ras.cProfile->start, h ));
 
 		oldProfile           = ras.cProfile;
 		ras.cProfile->height = h;
@@ -745,7 +747,7 @@ Finalize_Profile_Table( RAS_ARG ) {
 			}
 
 			if ( Insert_Y_Turn( RAS_VARS bottom )   ||
-			        Insert_Y_Turn( RAS_VARS top + 1 )  )
+					Insert_Y_Turn( RAS_VARS top + 1 )  )
 				return FAILURE;
 
 			p = p->link;
@@ -864,11 +866,11 @@ Split_Cubic( TPoint*  base ) {
 /*                                                                       */
 static Bool
 Line_Up( RAS_ARGS Long  x1,
-         Long  y1,
-         Long  x2,
-         Long  y2,
-         Long  miny,
-         Long  maxy ) {
+		 Long  y1,
+		 Long  x2,
+		 Long  y2,
+		 Long  miny,
+		 Long  maxy ) {
 	Long   Dx, Dy;
 	Int    e1, e2, f1, f2, size;     /* XXX: is `Short' sufficient? */
 	Long   Ix, Rx, Ax;
@@ -984,11 +986,11 @@ Line_Up( RAS_ARGS Long  x1,
 /*                                                                       */
 static Bool
 Line_Down( RAS_ARGS Long  x1,
-           Long  y1,
-           Long  x2,
-           Long  y2,
-           Long  miny,
-           Long  maxy ) {
+		   Long  y1,
+		   Long  x2,
+		   Long  y2,
+		   Long  miny,
+		   Long  maxy ) {
 	Bool  result, fresh;
 
 
@@ -1030,9 +1032,9 @@ typedef void  (*TSplitter)( TPoint*  base );
 /*                                                                       */
 static Bool
 Bezier_Up( RAS_ARGS Int        degree,
-           TSplitter  splitter,
-           Long       miny,
-           Long       maxy ) {
+		   TSplitter  splitter,
+		   Long       miny,
+		   Long       maxy ) {
 	Long   y1, y2, e, e2, e0;
 	Short  f1;
 
@@ -1104,7 +1106,7 @@ Bezier_Up( RAS_ARGS Int        degree,
 				arc += degree;
 			} else {
 				*top++ = arc[degree].x + FMulDiv( arc[0].x-arc[degree].x,
-				                                  e - y1, y2 - y1 );
+												  e - y1, y2 - y1 );
 				arc -= degree;
 				e   += ras.precision;
 			}
@@ -1149,9 +1151,9 @@ Fin:
 /*                                                                       */
 static Bool
 Bezier_Down( RAS_ARGS Int        degree,
-             TSplitter  splitter,
-             Long       miny,
-             Long       maxy ) {
+			 TSplitter  splitter,
+			 Long       miny,
+			 Long       maxy ) {
 	TPoint*  arc = ras.arc;
 	Bool     result, fresh;
 
@@ -1195,7 +1197,7 @@ Bezier_Down( RAS_ARGS Int        degree,
 /*                                                                       */
 static Bool
 Line_To( RAS_ARGS Long  x,
-         Long  y ) {
+		 Long  y ) {
 	/* First, detect a change of direction */
 
 	switch ( ras.state ) {
@@ -1213,7 +1215,7 @@ Line_To( RAS_ARGS Long  x,
 	case Ascending_State:
 		if ( y < ras.lastY ) {
 			if ( End_Profile( RAS_VAR )                   ||
-			        New_Profile( RAS_VARS Descending_State ) )
+					New_Profile( RAS_VARS Descending_State ) )
 				return FAILURE;
 		}
 		break;
@@ -1221,7 +1223,7 @@ Line_To( RAS_ARGS Long  x,
 	case Descending_State:
 		if ( y > ras.lastY ) {
 			if ( End_Profile( RAS_VAR )                  ||
-			        New_Profile( RAS_VARS Ascending_State ) )
+					New_Profile( RAS_VARS Ascending_State ) )
 				return FAILURE;
 		}
 		break;
@@ -1235,13 +1237,13 @@ Line_To( RAS_ARGS Long  x,
 	switch ( ras.state ) {
 	case Ascending_State:
 		if ( Line_Up( RAS_VARS ras.lastX, ras.lastY,
-		              x, y, ras.minY, ras.maxY ) )
+					  x, y, ras.minY, ras.maxY ) )
 			return FAILURE;
 		break;
 
 	case Descending_State:
 		if ( Line_Down( RAS_VARS ras.lastX, ras.lastY,
-		                x, y, ras.minY, ras.maxY ) )
+						x, y, ras.minY, ras.maxY ) )
 			return FAILURE;
 		break;
 
@@ -1281,9 +1283,9 @@ Line_To( RAS_ARGS Long  x,
 /*                                                                       */
 static Bool
 Conic_To( RAS_ARGS Long  cx,
-          Long  cy,
-          Long  x,
-          Long  y ) {
+		  Long  cy,
+		  Long  x,
+		  Long  y ) {
 	Long     y1, y2, y3, x3, ymin, ymax;
 	TStates  state_bez;
 
@@ -1326,7 +1328,7 @@ Conic_To( RAS_ARGS Long  cx,
 			if ( ras.state != state_bez ) {
 				/* finalize current profile if any */
 				if ( ras.state != Unknown_State   &&
-				        End_Profile( RAS_VAR ) )
+						End_Profile( RAS_VAR ) )
 					goto Fail;
 
 				/* create a new profile */
@@ -1383,11 +1385,11 @@ Fail:
 /*                                                                       */
 static Bool
 Cubic_To( RAS_ARGS Long  cx1,
-          Long  cy1,
-          Long  cx2,
-          Long  cy2,
-          Long  x,
-          Long  y ) {
+		  Long  cy1,
+		  Long  cx2,
+		  Long  cy2,
+		  Long  x,
+		  Long  y ) {
 	Long     y1, y2, y3, y4, x4, ymin1, ymax1, ymin2, ymax2;
 	TStates  state_bez;
 
@@ -1440,7 +1442,7 @@ Cubic_To( RAS_ARGS Long  cx1,
 			/* detect a change of direction */
 			if ( ras.state != state_bez ) {
 				if ( ras.state != Unknown_State   &&
-				        End_Profile( RAS_VAR ) )
+						End_Profile( RAS_VAR ) )
 					goto Fail;
 
 				if ( New_Profile( RAS_VARS state_bez ) )
@@ -1469,13 +1471,13 @@ Fail:
 
 #undef  SWAP_
 #define SWAP_( x, y )  do                \
-                       {                 \
-                         Long  swap = x; \
-                                         \
-                                         \
-                         x = y;          \
-                         y = swap;       \
-                       } while ( 0 )
+					   {                 \
+						 Long  swap = x; \
+										 \
+										 \
+						 x = y;          \
+						 y = swap;       \
+					   } while ( 0 )
 
 
 /*************************************************************************/
@@ -1501,8 +1503,8 @@ Fail:
 /*                                                                       */
 static Bool
 Decompose_Curve( RAS_ARGS UShort  first,
-                 UShort  last,
-                 int     flipped ) {
+				 UShort  last,
+				 int     flipped ) {
 	FT2_1_3_Vector   v_last;
 	FT2_1_3_Vector   v_control;
 	FT2_1_3_Vector   v_start;
@@ -1618,7 +1620,7 @@ Do_Conic:
 				v_middle.y = ( v_control.y + y ) / 2;
 
 				if ( Conic_To( RAS_VARS v_control.x, v_control.y,
-				               v_middle.x,  v_middle.y ) )
+							   v_middle.x,  v_middle.y ) )
 					goto Fail;
 
 				v_control.x = x;
@@ -1628,7 +1630,7 @@ Do_Conic:
 			}
 
 			if ( Conic_To( RAS_VARS v_control.x, v_control.y,
-			               v_start.x,   v_start.y ) )
+						   v_start.x,   v_start.y ) )
 				goto Fail;
 
 			goto Close;
@@ -1638,7 +1640,7 @@ Do_Conic:
 
 
 			if ( point + 1 > limit                             ||
-			        FT2_1_3_CURVE_TAG( tags[1] ) != FT2_1_3_CURVE_TAG_CUBIC )
+					FT2_1_3_CURVE_TAG( tags[1] ) != FT2_1_3_CURVE_TAG_CUBIC )
 				goto Invalid_Outline;
 
 			point += 2;
@@ -1728,16 +1730,16 @@ Convert_Glyph( RAS_ARGS int  flipped ) {
 		ras.gProfile = NULL;
 
 		if ( Decompose_Curve( RAS_VARS (unsigned short)start,
-		                      ras.outline.contours[i],
-		                      flipped ) )
+							  ras.outline.contours[i],
+							  flipped ) )
 			return FAILURE;
 
 		start = ras.outline.contours[i] + 1;
 
 		/* We must now see whether the extreme arcs join or not */
 		if ( FRAC( ras.lastY ) == 0 &&
-		        ras.lastY >= ras.minY  &&
-		        ras.lastY <= ras.maxY  )
+				ras.lastY >= ras.minY  &&
+				ras.lastY <= ras.maxY  )
 			if ( ras.gProfile && ras.gProfile->flow == ras.cProfile->flow )
 				ras.top--;
 		/* Note that ras.gProfile can be nil if the contour was too small */
@@ -1788,7 +1790,7 @@ Init_Linked( TProfileList*  l ) {
 /*                                                                       */
 static void
 InsNew( PProfileList  list,
-        PProfile      profile ) {
+		PProfile      profile ) {
 	PProfile  *old, current;
 	Long       x;
 
@@ -1817,7 +1819,7 @@ InsNew( PProfileList  list,
 /*                                                                       */
 static void
 DelOld( PProfileList  list,
-        PProfile      profile ) {
+		PProfile      profile ) {
 	PProfile  *old, current;
 
 
@@ -1902,7 +1904,7 @@ Sort( PProfileList  list ) {
 
 static void
 Vertical_Sweep_Init( RAS_ARGS Short*  min,
-                     Short*  max ) {
+					 Short*  max ) {
 	Long  pitch = ras.target.pitch;
 
 	FT2_1_3_UNUSED( max );
@@ -1920,10 +1922,10 @@ Vertical_Sweep_Init( RAS_ARGS Short*  min,
 
 static void
 Vertical_Sweep_Span( RAS_ARGS Short       y,
-                     FT2_1_3_F26Dot6  x1,
-                     FT2_1_3_F26Dot6  x2,
-                     PProfile    left,
-                     PProfile    right ) {
+					 FT2_1_3_F26Dot6  x1,
+					 FT2_1_3_F26Dot6  x2,
+					 PProfile    left,
+					 PProfile    right ) {
 	Long   e1, e2;
 	int    c1, c2;
 	Byte   f1, f2;
@@ -1981,10 +1983,10 @@ Vertical_Sweep_Span( RAS_ARGS Short       y,
 
 static void
 Vertical_Sweep_Drop( RAS_ARGS Short       y,
-                     FT2_1_3_F26Dot6  x1,
-                     FT2_1_3_F26Dot6  x2,
-                     PProfile    left,
-                     PProfile    right ) {
+					 FT2_1_3_F26Dot6  x1,
+					 FT2_1_3_F26Dot6  x2,
+					 PProfile    left,
+					 PProfile    right ) {
 	Long   e1, e2;
 	Short  c1, f1;
 
@@ -2053,7 +2055,7 @@ Vertical_Sweep_Drop( RAS_ARGS Short       y,
 				f1 = (Short)( e1 &  7 );
 
 				if ( e1 >= 0 && e1 < ras.bWidth                      &&
-				        ras.bTarget[ras.traceOfs + c1] & ( 0x80 >> f1 ) )
+						ras.bTarget[ras.traceOfs + c1] & ( 0x80 >> f1 ) )
 					return;
 
 				if ( ras.dropOutControl == 2 )
@@ -2101,7 +2103,7 @@ Vertical_Sweep_Step( RAS_ARG ) {
 
 static void
 Horizontal_Sweep_Init( RAS_ARGS Short*  min,
-                       Short*  max ) {
+					   Short*  max ) {
 	/* nothing, really */
 	FT2_1_3_UNUSED( raster );
 	FT2_1_3_UNUSED( min );
@@ -2111,10 +2113,10 @@ Horizontal_Sweep_Init( RAS_ARGS Short*  min,
 
 static void
 Horizontal_Sweep_Span( RAS_ARGS Short       y,
-                       FT2_1_3_F26Dot6  x1,
-                       FT2_1_3_F26Dot6  x2,
-                       PProfile    left,
-                       PProfile    right ) {
+					   FT2_1_3_F26Dot6  x1,
+					   FT2_1_3_F26Dot6  x2,
+					   PProfile    left,
+					   PProfile    right ) {
 	Long   e1, e2;
 	PByte  bits;
 	Byte   f1;
@@ -2150,10 +2152,10 @@ Horizontal_Sweep_Span( RAS_ARGS Short       y,
 
 static void
 Horizontal_Sweep_Drop( RAS_ARGS Short       y,
-                       FT2_1_3_F26Dot6  x1,
-                       FT2_1_3_F26Dot6  x2,
-                       PProfile    left,
-                       PProfile    right ) {
+					   FT2_1_3_F26Dot6  x1,
+					   FT2_1_3_F26Dot6  x2,
+					   PProfile    left,
+					   PProfile    right ) {
 	Long   e1, e2;
 	PByte  bits;
 	Byte   f1;
@@ -2205,8 +2207,8 @@ Horizontal_Sweep_Drop( RAS_ARGS Short       y,
 					bits += ( ras.target.rows - 1 ) * ras.target.pitch;
 
 				if ( e1 >= 0              &&
-				        e1 < ras.target.rows &&
-				        *bits & f1 )
+						e1 < ras.target.rows &&
+						*bits & f1 )
 					return;
 
 				if ( ras.dropOutControl == 2 )
@@ -2266,7 +2268,7 @@ Horizontal_Sweep_Step( RAS_ARG ) {
 
 static void
 Vertical_Gray_Sweep_Init( RAS_ARGS Short*  min,
-                          Short*  max ) {
+						  Short*  max ) {
 	Long  pitch, byte_len;
 
 
@@ -2371,10 +2373,10 @@ Vertical_Gray_Sweep_Step( RAS_ARG ) {
 
 static void
 Horizontal_Gray_Sweep_Span( RAS_ARGS Short       y,
-                            FT2_1_3_F26Dot6  x1,
-                            FT2_1_3_F26Dot6  x2,
-                            PProfile    left,
-                            PProfile    right ) {
+							FT2_1_3_F26Dot6  x1,
+							FT2_1_3_F26Dot6  x2,
+							PProfile    left,
+							PProfile    right ) {
 	/* nothing, really */
 	FT2_1_3_UNUSED( raster );
 	FT2_1_3_UNUSED( y );
@@ -2387,10 +2389,10 @@ Horizontal_Gray_Sweep_Span( RAS_ARGS Short       y,
 
 static void
 Horizontal_Gray_Sweep_Drop( RAS_ARGS Short       y,
-                            FT2_1_3_F26Dot6  x1,
-                            FT2_1_3_F26Dot6  x2,
-                            PProfile    left,
-                            PProfile    right ) {
+							FT2_1_3_F26Dot6  x1,
+							FT2_1_3_F26Dot6  x2,
+							PProfile    left,
+							PProfile    right ) {
 	Long   e1, e2;
 	PByte  pixel;
 	Byte   color;
@@ -2538,7 +2540,7 @@ Draw_Sweep( RAS_ARG ) {
 	y_height = 0;
 
 	if ( ras.numTurns > 0 &&
-	        ras.sizeBuff[-ras.numTurns] == min_Y )
+			ras.sizeBuff[-ras.numTurns] == min_Y )
 		ras.numTurns--;
 
 	while ( ras.numTurns > 0 ) {
@@ -2597,7 +2599,7 @@ Draw_Sweep( RAS_ARG ) {
 					e2 = CEILING( x2 );
 
 					if ( ras.dropOutControl != 0                 &&
-					        ( e1 > e2 || e2 == e1 + ras.precision ) ) {
+							( e1 > e2 || e2 == e1 + ras.precision ) ) {
 						/* a drop out was detected */
 
 						P_Left ->X = x1;
@@ -2676,10 +2678,10 @@ Scan_DropOuts:
 			dropouts--;  /* -- this is useful when debugging only */
 #endif
 			ras.Proc_Sweep_Drop( RAS_VARS y,
-			                     P_Left->X,
-			                     P_Right->X,
-			                     P_Left,
-			                     P_Right );
+								 P_Left->X,
+								 P_Right->X,
+								 P_Left,
+								 P_Right );
 		}
 
 		P_Left  = P_Left->link;
@@ -2776,11 +2778,11 @@ Render_Glyph( RAS_ARG ) {
 
 
 	Set_High_Precision( RAS_VARS ras.outline.flags &
-	                    FT2_1_3_OUTLINE_HIGH_PRECISION );
+						FT2_1_3_OUTLINE_HIGH_PRECISION );
 	ras.scale_shift    = ras.precision_shift;
 	ras.dropOutControl = 2;
 	ras.second_pass    = (FT2_1_3_Byte)( !( ras.outline.flags &
-	                                   FT2_1_3_OUTLINE_SINGLE_PASS ) );
+									   FT2_1_3_OUTLINE_SINGLE_PASS ) );
 
 	/* Vertical Sweep */
 	ras.Proc_Sweep_Init = Vertical_Sweep_Init;
@@ -2838,7 +2840,7 @@ Render_Gray_Glyph( RAS_ARG ) {
 
 
 	Set_High_Precision( RAS_VARS ras.outline.flags &
-	                    FT2_1_3_OUTLINE_HIGH_PRECISION );
+						FT2_1_3_OUTLINE_HIGH_PRECISION );
 	ras.scale_shift    = ras.precision_shift + 1;
 	ras.dropOutControl = 2;
 	ras.second_pass    = !( ras.outline.flags & FT2_1_3_OUTLINE_SINGLE_PASS );
@@ -2910,9 +2912,9 @@ ft_black_init( TRaster_Instance*  raster ) {
 		c = ( n & 0x55 ) + ( ( n & 0xAA ) >> 1 );
 
 		c = ( ( c << 6 ) & 0x3000 ) |
-		    ( ( c << 4 ) & 0x0300 ) |
-		    ( ( c << 2 ) & 0x0030 ) |
-		    (c  & 0x0003 );
+			( ( c << 4 ) & 0x0300 ) |
+			( ( c << 2 ) & 0x0030 ) |
+			(c  & 0x0003 );
 
 		raster->count_table[n] = (UInt)c;
 	}
@@ -2938,7 +2940,7 @@ ft_black_init( TRaster_Instance*  raster ) {
 
 static int
 ft_black_new( void*      memory,
-              FT2_1_3_Raster  *araster ) {
+			  FT2_1_3_Raster  *araster ) {
 	static FT2_1_3_RasterRec_  the_raster;
 
 
@@ -2962,7 +2964,7 @@ ft_black_done( FT2_1_3_Raster  raster ) {
 
 static int
 ft_black_new( FT2_1_3_Memory           memory,
-              TRaster_Instance**  araster ) {
+			  TRaster_Instance**  araster ) {
 	FT2_1_3_Error           error;
 	TRaster_Instance*  raster;
 
@@ -2991,8 +2993,8 @@ ft_black_done( TRaster_Instance*  raster ) {
 
 static void
 ft_black_reset( TRaster_Instance*  raster,
-                const char*        pool_base,
-                long               pool_size ) {
+				const char*        pool_base,
+				long               pool_size ) {
 	if ( raster && pool_base && pool_size >= 4096 ) {
 		/* save the pool */
 		raster->buff     = (PLong)pool_base;
@@ -3003,8 +3005,8 @@ ft_black_reset( TRaster_Instance*  raster,
 
 static void
 ft_black_set_mode( TRaster_Instance*  raster,
-                   unsigned long      mode,
-                   const char*        palette ) {
+				   unsigned long      mode,
+				   const char*        palette ) {
 #ifdef FT2_1_3_RASTER_OPTION_ANTI_ALIASING
 
 	if ( mode == FT2_1_3_MAKE_TAG( 'p', 'a', 'l', '5' ) ) {
@@ -3028,7 +3030,7 @@ ft_black_set_mode( TRaster_Instance*  raster,
 
 static int
 ft_black_render( TRaster_Instance*  raster,
-                 FT2_1_3_Raster_Params*  params ) {
+				 FT2_1_3_Raster_Params*  params ) {
 	FT2_1_3_Outline*  outline    = (FT2_1_3_Outline*)params->source;
 	FT2_1_3_Bitmap*   target_map = params->target;
 
@@ -3057,8 +3059,8 @@ ft_black_render( TRaster_Instance*  raster,
 	ras.target   = *target_map;
 
 	return ( ( params->flags & FT2_1_3_RASTER_FLAG_AA )
-	         ? Render_Gray_Glyph( raster )
-	         : Render_Glyph( raster ) );
+			 ? Render_Gray_Glyph( raster )
+			 : Render_Glyph( raster ) );
 }
 
 
@@ -3071,5 +3073,7 @@ const FT2_1_3_Raster_Funcs  ft_standard_raster = {
 	(FT2_1_3_Raster_Done_Func)    ft_black_done
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */
