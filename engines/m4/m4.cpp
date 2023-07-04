@@ -98,30 +98,22 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 	_G(player).syncGame(s);
 	_G(player_info).syncGame(s);
 	g_vars->getGlobals()->syncGame(s);
-
-	if (player_been_sync(s).getCode() != Common::kNoError)
-		return Common::kUnknownError;
-
+	player_been_sync(s);
 	_G(conversations).syncGame(s);
+	_G(inventory)->syncGame(s);
+
+
+	if (s.isLoading()) {
+		// set up variables so everyone knows we've teleported
+		_G(kernel).restore_game = true;
+		_G(game).previous_room = KERNEL_RESTORING_GAME;
 
 #ifdef TODO
-	inv_restore_game(handle);
-
-	if (extra_restore_code_pointer)
-		extra_restore_code_pointer(handle);
-
-	// set up variables so everyone knows we've teleported.
-	kernel.restore_game = true;
-	game.previous_room = KERNEL_RESTORING_GAME;
-
-	if (!game.digi_overall_volume_percent)
-		game.digi_overall_volume_percent = 100;
-	digi_set_overall_volume(game.digi_overall_volume_percent);
-
-	if (!game.midi_overall_volume_percent)
-		game.midi_overall_volume_percent = 100;
-	midi_set_overall_volume(game.midi_overall_volume_percent);
+		digi_set_overall_volume(game.digi_overall_volume_percent);
+		midi_set_overall_volume(game.midi_overall_volume_percent);
 #endif
+	}
+
 	return Common::kNoError;
 }
 

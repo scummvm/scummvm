@@ -24,7 +24,6 @@
 #define M4_ADV_R_CONV_IO_H
 
 #include "common/array.h"
-#include "common/error.h"
 #include "common/serializer.h"
 #include "m4/m4_types.h"
 #include "m4/adv_r/conv.h"
@@ -61,7 +60,7 @@ struct Converstation_Globals {
 	const int32 conv_default_normal_colour = __BLACK;
 
 
-	Common::Error syncGame(Common::Serializer &s);
+	void syncGame(Common::Serializer &s);
 
 	void conv_reset_all();
 	void conv_reset(const char *filename);
