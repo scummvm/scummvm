@@ -28,14 +28,16 @@
 /**************************************************************************/
 
 
-#ifndef __PSHREC_H__
-#define __PSHREC_H__
+#ifndef AGS_LIB_FREETYPE_PSHREC_H
+#define AGS_LIB_FREETYPE_PSHREC_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/pshints.h"
 #include "pshglob.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -139,7 +141,7 @@ typedef struct  PS_HintsRec_ {
 /* initialize hints recorder */
 FT2_1_3_LOCAL( FT2_1_3_Error )
 ps_hints_init( PS_Hints   hints,
-               FT2_1_3_Memory  memory );
+			   FT2_1_3_Memory  memory );
 
 /* finalize hints recorder */
 FT2_1_3_LOCAL( void )
@@ -165,8 +167,10 @@ extern  int      ps_debug_no_vert_hints;
 
 FT2_1_3_END_HEADER
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
-#endif /* __PS_HINTER_RECORD_H__ */
+#endif /* AGS_LIB_FREETYPE_PSHREC_H */
 
 
 /* END */

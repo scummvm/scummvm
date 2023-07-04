@@ -21,6 +21,8 @@
 #include "pshrec.h"
 #include "pshalgo.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /* the Postscript Hinter module structure */
 typedef struct  PS_Hinter_Module_Rec_ {
@@ -108,5 +110,7 @@ const FT2_1_3_Module_Class  pshinter_module_class = {
 	(FT2_1_3_Module_Requester)  0        /* no additional interface for now */
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

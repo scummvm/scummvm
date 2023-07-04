@@ -16,13 +16,15 @@
 /***************************************************************************/
 
 
-#ifndef __PSHGLOB_H__
-#define __PSHGLOB_H__
+#ifndef AGS_LIB_FREETYPE_PSHGLOB_H
+#define AGS_LIB_FREETYPE_PSHGLOB_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/pshints.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -155,14 +157,14 @@ psh_globals_funcs_init( PSH_Globals_FuncsRec*  funcs );
 /* units.  The result is in device pixels (26.6 format).            */
 FT2_1_3_LOCAL( FT2_1_3_Pos )
 psh_dimension_snap_width( PSH_Dimension  dimension,
-                          FT2_1_3_Int         org_width );
+						  FT2_1_3_Int         org_width );
 
 /* snap a stem to one or two blue zones */
 FT2_1_3_LOCAL( void )
 psh_blues_snap_stem( PSH_Blues      blues,
-                     FT2_1_3_Int         stem_top,
-                     FT2_1_3_Int         stem_bot,
-                     PSH_Alignment  alignment );
+					 FT2_1_3_Int         stem_top,
+					 FT2_1_3_Int         stem_bot,
+					 PSH_Alignment  alignment );
 /* */
 
 #ifdef DEBUG_HINTER
@@ -172,8 +174,10 @@ extern PSH_Globals  ps_debug_globals;
 
 FT2_1_3_END_HEADER
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
-#endif /* __PSHGLOB_H__ */
+#endif /* AGS_LIB_FREETYPE_PSHGLOB_H */
 
 
 /* END */

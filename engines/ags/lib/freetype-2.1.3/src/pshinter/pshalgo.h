@@ -16,8 +16,8 @@
 /***************************************************************************/
 
 
-#ifndef __PSHALGO_H__
-#define __PSHALGO_H__
+#ifndef AGS_LIB_FREETYPE_PSHALGO_H
+#define AGS_LIB_FREETYPE_PSHALGO_H
 
 FT2_1_3_BEGIN_HEADER
 
@@ -26,28 +26,28 @@ FT2_1_3_BEGIN_HEADER
 
 #if defined(PSH_ALGORITHM_1)
 
-#  include "pshalgo1.h"
-#  define PS_HINTS_APPLY_FUNC  ps1_hints_apply
+#include "pshalgo1.h"
+#define PS_HINTS_APPLY_FUNC ps1_hints_apply
 
 #elif defined(PSH_ALGORITHM_2)
 
-#  include "pshalgo2.h"
-#  define PS_HINTS_APPLY_FUNC  ps2_hints_apply
+#include "pshalgo2.h"
+#define PS_HINTS_APPLY_FUNC ps2_hints_apply
 
 #elif defined(PSH_ALGORITHM_3)
 
-#  include "pshalgo3.h"
-#  define PS_HINTS_APPLY_FUNC  ps3_hints_apply
+#include "pshalgo3.h"
+#define PS_HINTS_APPLY_FUNC ps3_hints_apply
 
 #else
 
-#  error "invalid Postscript Hinter algorithm selection"
+#error "invalid Postscript Hinter algorithm selection"
 
 #endif
 
 FT2_1_3_END_HEADER
 
-#endif /* __PSHALGO_H__ */
+#endif /* AGS_LIB_FREETYPE_PSHALGO_H */
 
 
 /* END */

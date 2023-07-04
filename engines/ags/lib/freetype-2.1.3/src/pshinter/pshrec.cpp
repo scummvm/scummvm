@@ -26,6 +26,9 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_pshrec
 
+namespace AGS3 {
+namespace FreeType213 {
+
 #ifdef DEBUG_HINTER
 PS_Hints  ps_debug_hints         = 0;
 int       ps_debug_no_horz_hints = 0;
@@ -44,7 +47,7 @@ int       ps_debug_no_vert_hints = 0;
 /* destroy hints table */
 static void
 ps_hint_table_done( PS_Hint_Table  table,
-                    FT2_1_3_Memory      memory ) {
+					FT2_1_3_Memory      memory ) {
 	FT2_1_3_FREE( table->hints );
 	table->num_hints = 0;
 	table->max_hints = 0;
@@ -54,8 +57,8 @@ ps_hint_table_done( PS_Hint_Table  table,
 /* ensure that a table can contain "count" elements */
 static FT2_1_3_Error
 ps_hint_table_ensure( PS_Hint_Table  table,
-                      FT2_1_3_UInt        count,
-                      FT2_1_3_Memory      memory ) {
+					  FT2_1_3_UInt        count,
+					  FT2_1_3_Memory      memory ) {
 	FT2_1_3_UInt   old_max = table->max_hints;
 	FT2_1_3_UInt   new_max = count;
 	FT2_1_3_Error  error   = 0;
@@ -73,8 +76,8 @@ ps_hint_table_ensure( PS_Hint_Table  table,
 
 static FT2_1_3_Error
 ps_hint_table_alloc( PS_Hint_Table  table,
-                     FT2_1_3_Memory      memory,
-                     PS_Hint       *ahint ) {
+					 FT2_1_3_Memory      memory,
+					 PS_Hint       *ahint ) {
 	FT2_1_3_Error  error = 0;
 	FT2_1_3_UInt   count;
 	PS_Hint   hint = 0;
@@ -113,7 +116,7 @@ Exit:
 /* destroy mask */
 static void
 ps_mask_done( PS_Mask    mask,
-              FT2_1_3_Memory  memory ) {
+			  FT2_1_3_Memory  memory ) {
 	FT2_1_3_FREE( mask->bytes );
 	mask->num_bits  = 0;
 	mask->max_bits  = 0;
@@ -124,8 +127,8 @@ ps_mask_done( PS_Mask    mask,
 /* ensure that a mask can contain "count" bits */
 static FT2_1_3_Error
 ps_mask_ensure( PS_Mask    mask,
-                FT2_1_3_UInt    count,
-                FT2_1_3_Memory  memory ) {
+				FT2_1_3_UInt    count,
+				FT2_1_3_Memory  memory ) {
 	FT2_1_3_UInt   old_max = ( mask->max_bits + 7 ) >> 3;
 	FT2_1_3_UInt   new_max = ( count          + 7 ) >> 3;
 	FT2_1_3_Error  error   = 0;
@@ -143,7 +146,7 @@ ps_mask_ensure( PS_Mask    mask,
 /* test a bit value in a given mask */
 static FT2_1_3_Int
 ps_mask_test_bit( PS_Mask  mask,
-                  FT2_1_3_Int   idx ) {
+				  FT2_1_3_Int   idx ) {
 	if ( (FT2_1_3_UInt)idx >= mask->num_bits )
 		return 0;
 
@@ -154,7 +157,7 @@ ps_mask_test_bit( PS_Mask  mask,
 /* clear a given bit */
 static void
 ps_mask_clear_bit( PS_Mask  mask,
-                   FT2_1_3_Int   idx ) {
+				   FT2_1_3_Int   idx ) {
 	FT2_1_3_Byte*  p;
 
 
@@ -169,8 +172,8 @@ ps_mask_clear_bit( PS_Mask  mask,
 /* set a given bit, possibly grow the mask */
 static FT2_1_3_Error
 ps_mask_set_bit( PS_Mask    mask,
-                 FT2_1_3_Int     idx,
-                 FT2_1_3_Memory  memory ) {
+				 FT2_1_3_Int     idx,
+				 FT2_1_3_Memory  memory ) {
 	FT2_1_3_Error  error = 0;
 	FT2_1_3_Byte*  p;
 
@@ -197,7 +200,7 @@ Exit:
 /* destroy mask table */
 static void
 ps_mask_table_done( PS_Mask_Table  table,
-                    FT2_1_3_Memory      memory ) {
+					FT2_1_3_Memory      memory ) {
 	FT2_1_3_UInt  count = table->max_masks;
 	PS_Mask  mask  = table->masks;
 
@@ -214,8 +217,8 @@ ps_mask_table_done( PS_Mask_Table  table,
 /* ensure that a mask table can contain "count" masks */
 static FT2_1_3_Error
 ps_mask_table_ensure( PS_Mask_Table  table,
-                      FT2_1_3_UInt        count,
-                      FT2_1_3_Memory      memory ) {
+					  FT2_1_3_UInt        count,
+					  FT2_1_3_Memory      memory ) {
 	FT2_1_3_UInt   old_max = table->max_masks;
 	FT2_1_3_UInt   new_max = count;
 	FT2_1_3_Error  error   = 0;
@@ -233,8 +236,8 @@ ps_mask_table_ensure( PS_Mask_Table  table,
 /* allocate a new mask in a table */
 static FT2_1_3_Error
 ps_mask_table_alloc( PS_Mask_Table  table,
-                     FT2_1_3_Memory      memory,
-                     PS_Mask       *amask ) {
+					 FT2_1_3_Memory      memory,
+					 PS_Mask       *amask ) {
 	FT2_1_3_UInt   count;
 	FT2_1_3_Error  error = 0;
 	PS_Mask   mask  = 0;
@@ -263,8 +266,8 @@ Exit:
 /* return last hint mask in a table, create one if the table is empty */
 static FT2_1_3_Error
 ps_mask_table_last( PS_Mask_Table  table,
-                    FT2_1_3_Memory      memory,
-                    PS_Mask       *amask ) {
+					FT2_1_3_Memory      memory,
+					PS_Mask       *amask ) {
 	FT2_1_3_Error  error = 0;
 	FT2_1_3_UInt   count;
 	PS_Mask   mask;
@@ -287,10 +290,10 @@ Exit:
 /* set a new mask to a given bit range */
 static FT2_1_3_Error
 ps_mask_table_set_bits( PS_Mask_Table  table,
-                        FT2_1_3_Byte*       source,
-                        FT2_1_3_UInt        bit_pos,
-                        FT2_1_3_UInt        bit_count,
-                        FT2_1_3_Memory      memory ) {
+						FT2_1_3_Byte*       source,
+						FT2_1_3_UInt        bit_pos,
+						FT2_1_3_UInt        bit_count,
+						FT2_1_3_Memory      memory ) {
 	FT2_1_3_Error  error = 0;
 	PS_Mask   mask;
 
@@ -345,8 +348,8 @@ Exit:
 /* test whether two masks in a table intersect */
 static FT2_1_3_Int
 ps_mask_table_test_intersect( PS_Mask_Table  table,
-                              FT2_1_3_Int         index1,
-                              FT2_1_3_Int         index2 ) {
+							  FT2_1_3_Int         index1,
+							  FT2_1_3_Int         index2 ) {
 	PS_Mask   mask1  = table->masks + index1;
 	PS_Mask   mask2  = table->masks + index2;
 	FT2_1_3_Byte*  p1     = mask1->bytes;
@@ -375,9 +378,9 @@ ps_mask_table_test_intersect( PS_Mask_Table  table,
 /* merge two masks, used by ps_mask_table_merge_all */
 static FT2_1_3_Error
 ps_mask_table_merge( PS_Mask_Table  table,
-                     FT2_1_3_Int         index1,
-                     FT2_1_3_Int         index2,
-                     FT2_1_3_Memory      memory ) {
+					 FT2_1_3_Int         index1,
+					 FT2_1_3_Int         index2,
+					 FT2_1_3_Memory      memory ) {
 	FT2_1_3_UInt   temp;
 	FT2_1_3_Error  error = 0;
 
@@ -447,7 +450,7 @@ ps_mask_table_merge( PS_Mask_Table  table,
 		table->num_masks--;
 	} else
 		FT2_1_3_ERROR(( "ps_mask_table_merge: ignoring invalid indices (%d,%d)\n",
-		           index1, index2 ));
+				   index1, index2 ));
 
 Exit:
 	return error;
@@ -459,7 +462,7 @@ Exit:
 /*                                                                 */
 static FT2_1_3_Error
 ps_mask_table_merge_all( PS_Mask_Table  table,
-                         FT2_1_3_Memory      memory ) {
+						 FT2_1_3_Memory      memory ) {
 	FT2_1_3_Int    index1, index2;
 	FT2_1_3_Error  error = 0;
 
@@ -493,7 +496,7 @@ Exit:
 /* finalize a given dimension */
 static void
 ps_dimension_done( PS_Dimension  dimension,
-                   FT2_1_3_Memory     memory ) {
+				   FT2_1_3_Memory     memory ) {
 	ps_mask_table_done( &dimension->counters, memory );
 	ps_mask_table_done( &dimension->masks,    memory );
 	ps_hint_table_done( &dimension->hints,    memory );
@@ -514,8 +517,8 @@ ps_dimension_init( PS_Dimension  dimension ) {
 /* set a bit at a given index in the current hint mask */
 static FT2_1_3_Error
 ps_dimension_set_mask_bit( PS_Dimension  dim,
-                           FT2_1_3_UInt       idx,
-                           FT2_1_3_Memory     memory ) {
+						   FT2_1_3_UInt       idx,
+						   FT2_1_3_Memory     memory ) {
 	PS_Mask  mask;
 	FT2_1_3_Error  error = 0;
 
@@ -536,7 +539,7 @@ Exit:
 /* set the end point in a mask, called from "End" & "Reset" methods */
 static void
 ps_dimension_end_mask( PS_Dimension  dim,
-                       FT2_1_3_UInt       end_point ) {
+					   FT2_1_3_UInt       end_point ) {
 	FT2_1_3_UInt  count = dim->masks.num_masks;
 	PS_Mask  mask;
 
@@ -552,8 +555,8 @@ ps_dimension_end_mask( PS_Dimension  dim,
 /* (called by "Reset" method)                                         */
 static FT2_1_3_Error
 ps_dimension_reset_mask( PS_Dimension  dim,
-                         FT2_1_3_UInt       end_point,
-                         FT2_1_3_Memory     memory ) {
+						 FT2_1_3_UInt       end_point,
+						 FT2_1_3_Memory     memory ) {
 	PS_Mask  mask;
 
 
@@ -568,11 +571,11 @@ ps_dimension_reset_mask( PS_Dimension  dim,
 /* set a new mask, called from the "T2Stem" method */
 static FT2_1_3_Error
 ps_dimension_set_mask_bits( PS_Dimension    dim,
-                            const FT2_1_3_Byte*  source,
-                            FT2_1_3_UInt         source_pos,
-                            FT2_1_3_UInt         source_bits,
-                            FT2_1_3_UInt         end_point,
-                            FT2_1_3_Memory       memory ) {
+							const FT2_1_3_Byte*  source,
+							FT2_1_3_UInt         source_pos,
+							FT2_1_3_UInt         source_bits,
+							FT2_1_3_UInt         end_point,
+							FT2_1_3_Memory       memory ) {
 	FT2_1_3_Error  error = 0;
 
 
@@ -583,7 +586,7 @@ ps_dimension_set_mask_bits( PS_Dimension    dim,
 
 	/* set bits in new mask */
 	error = ps_mask_table_set_bits( &dim->masks, (FT2_1_3_Byte*)source,
-	                                source_pos, source_bits, memory );
+									source_pos, source_bits, memory );
 
 Exit:
 	return error;
@@ -593,10 +596,10 @@ Exit:
 /* add a new single stem (called from "T1Stem" method) */
 static FT2_1_3_Error
 ps_dimension_add_t1stem( PS_Dimension  dim,
-                         FT2_1_3_Int        pos,
-                         FT2_1_3_Int        len,
-                         FT2_1_3_Memory     memory,
-                         FT2_1_3_Int       *aindex ) {
+						 FT2_1_3_Int        pos,
+						 FT2_1_3_Int        len,
+						 FT2_1_3_Memory     memory,
+						 FT2_1_3_Int       *aindex ) {
 	FT2_1_3_Error  error = 0;
 	FT2_1_3_UInt   flags = 0;
 
@@ -659,10 +662,10 @@ Exit:
 /* add a "hstem3/vstem3" counter to our dimension table */
 static FT2_1_3_Error
 ps_dimension_add_counter( PS_Dimension  dim,
-                          FT2_1_3_Int        hint1,
-                          FT2_1_3_Int        hint2,
-                          FT2_1_3_Int        hint3,
-                          FT2_1_3_Memory     memory ) {
+						  FT2_1_3_Int        hint1,
+						  FT2_1_3_Int        hint2,
+						  FT2_1_3_Int        hint3,
+						  FT2_1_3_Memory     memory ) {
 	FT2_1_3_Error  error   = 0;
 	FT2_1_3_UInt   count   = dim->counters.num_masks;
 	PS_Mask   counter = dim->counters.masks;
@@ -672,8 +675,8 @@ ps_dimension_add_counter( PS_Dimension  dim,
 	/* one of these stems here                                */
 	for ( ; count > 0; count--, counter++ ) {
 		if ( ps_mask_test_bit( counter, hint1 ) ||
-		        ps_mask_test_bit( counter, hint2 ) ||
-		        ps_mask_test_bit( counter, hint3 ) )
+				ps_mask_test_bit( counter, hint2 ) ||
+				ps_mask_test_bit( counter, hint3 ) )
 			break;
 	}
 
@@ -705,8 +708,8 @@ Exit:
 /* end of recording session for a given dimension */
 static FT2_1_3_Error
 ps_dimension_end( PS_Dimension  dim,
-                  FT2_1_3_UInt       end_point,
-                  FT2_1_3_Memory     memory ) {
+				  FT2_1_3_UInt       end_point,
+				  FT2_1_3_Memory     memory ) {
 	/* end hint mask table */
 	ps_dimension_end_mask( dim, end_point );
 
@@ -740,7 +743,7 @@ ps_hints_done( PS_Hints  hints ) {
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 ps_hints_init( PS_Hints   hints,
-               FT2_1_3_Memory  memory ) {
+			   FT2_1_3_Memory  memory ) {
 	FT2_1_3_MEM_ZERO( hints, sizeof ( *hints ) );
 	hints->memory = memory;
 	return 0;
@@ -750,7 +753,7 @@ ps_hints_init( PS_Hints   hints,
 /* initialize a hints for a new session */
 static void
 ps_hints_open( PS_Hints      hints,
-               PS_Hint_Type  hint_type ) {
+			   PS_Hint_Type  hint_type ) {
 	switch ( hint_type ) {
 	case PS_HINT_TYPE_1:
 	case PS_HINT_TYPE_2:
@@ -774,14 +777,14 @@ ps_hints_open( PS_Hints      hints,
 /* add one or more stems to the current hints table */
 static void
 ps_hints_stem( PS_Hints  hints,
-               FT2_1_3_Int    dimension,
-               FT2_1_3_UInt   count,
-               FT2_1_3_Long*  stems ) {
+			   FT2_1_3_Int    dimension,
+			   FT2_1_3_UInt   count,
+			   FT2_1_3_Long*  stems ) {
 	if ( !hints->error ) {
 		/* limit "dimension" to 0..1 */
 		if ( dimension < 0 || dimension > 1 ) {
 			FT2_1_3_ERROR(( "ps_hints_stem: invalid dimension (%d) used\n",
-			           dimension ));
+					   dimension ));
 			dimension = ( dimension != 0 );
 		}
 
@@ -798,10 +801,10 @@ ps_hints_stem( PS_Hints  hints,
 
 
 				error = ps_dimension_add_t1stem( dim, stems[0], stems[1],
-				                                 memory, NULL );
+												 memory, NULL );
 				if ( error ) {
 					FT2_1_3_ERROR(( "ps_hints_stem: could not add stem"
-					           " (%d,%d) to hints table\n", stems[0], stems[1] ));
+							   " (%d,%d) to hints table\n", stems[0], stems[1] ));
 
 					hints->error = error;
 					return;
@@ -812,7 +815,7 @@ ps_hints_stem( PS_Hints  hints,
 
 		default:
 			FT2_1_3_ERROR(( "ps_hints_stem: called with invalid hint type (%d)\n",
-			           hints->hint_type ));
+					   hints->hint_type ));
 			break;
 		}
 	}
@@ -822,8 +825,8 @@ ps_hints_stem( PS_Hints  hints,
 /* add one Type1 counter stem to the current hints table */
 static void
 ps_hints_t1stem3( PS_Hints  hints,
-                  FT2_1_3_Int    dimension,
-                  FT2_1_3_Long*  stems ) {
+				  FT2_1_3_Int    dimension,
+				  FT2_1_3_Long*  stems ) {
 	FT2_1_3_Error  error = 0;
 
 
@@ -837,7 +840,7 @@ ps_hints_t1stem3( PS_Hints  hints,
 		/* limit "dimension" to 0..1 */
 		if ( dimension < 0 || dimension > 1 ) {
 			FT2_1_3_ERROR(( "ps_hints_t1stem3: invalid dimension (%d) used\n",
-			           dimension ));
+					   dimension ));
 			dimension = ( dimension != 0 );
 		}
 
@@ -848,14 +851,14 @@ ps_hints_t1stem3( PS_Hints  hints,
 			/* add the three stems to our hints/masks table */
 			for ( count = 0; count < 3; count++, stems += 2 ) {
 				error = ps_dimension_add_t1stem( dim, stems[0], stems[1],
-				                                 memory, &idx[count] );
+												 memory, &idx[count] );
 				if ( error )
 					goto Fail;
 			}
 
 			/* now, add the hints to the counters table */
 			error = ps_dimension_add_counter( dim, idx[0], idx[1], idx[2],
-			                                  memory );
+											  memory );
 			if ( error )
 				goto Fail;
 		} else {
@@ -876,7 +879,7 @@ Fail:
 /* reset hints (only with Type 1 hints) */
 static void
 ps_hints_t1reset( PS_Hints  hints,
-                  FT2_1_3_UInt   end_point ) {
+				  FT2_1_3_UInt   end_point ) {
 	FT2_1_3_Error  error = 0;
 
 
@@ -886,12 +889,12 @@ ps_hints_t1reset( PS_Hints  hints,
 
 		if ( hints->hint_type == PS_HINT_TYPE_1 ) {
 			error = ps_dimension_reset_mask( &hints->dimension[0],
-			                                 end_point, memory );
+											 end_point, memory );
 			if ( error )
 				goto Fail;
 
 			error = ps_dimension_reset_mask( &hints->dimension[1],
-			                                 end_point, memory );
+											 end_point, memory );
 			if ( error )
 				goto Fail;
 		} else {
@@ -910,9 +913,9 @@ Fail:
 /* Type2 "hintmask" operator, add a new hintmask to each direction */
 static void
 ps_hints_t2mask( PS_Hints        hints,
-                 FT2_1_3_UInt         end_point,
-                 FT2_1_3_UInt         bit_count,
-                 const FT2_1_3_Byte*  bytes ) {
+				 FT2_1_3_UInt         end_point,
+				 FT2_1_3_UInt         bit_count,
+				 const FT2_1_3_Byte*  bytes ) {
 	FT2_1_3_Error  error;
 
 
@@ -926,8 +929,8 @@ ps_hints_t2mask( PS_Hints        hints,
 		/* check bit count; must be equal to current total hint count */
 		if ( bit_count !=  count1 + count2 ) {
 			FT2_1_3_ERROR(( "ps_hints_t2mask: "
-			           "called with invalid bitcount %d (instead of %d)\n",
-			           bit_count, count1 + count2 ));
+					   "called with invalid bitcount %d (instead of %d)\n",
+					   bit_count, count1 + count2 ));
 
 			/* simply ignore the operator */
 			return;
@@ -935,12 +938,12 @@ ps_hints_t2mask( PS_Hints        hints,
 
 		/* set-up new horizontal and vertical hint mask now */
 		error = ps_dimension_set_mask_bits( &dim[0], bytes, 0, count1,
-		                                    end_point, memory );
+											end_point, memory );
 		if ( error )
 			goto Fail;
 
 		error = ps_dimension_set_mask_bits( &dim[1], bytes, count1, count2,
-		                                    end_point, memory );
+											end_point, memory );
 		if ( error )
 			goto Fail;
 	}
@@ -953,8 +956,8 @@ Fail:
 
 static void
 ps_hints_t2counter( PS_Hints        hints,
-                    FT2_1_3_UInt         bit_count,
-                    const FT2_1_3_Byte*  bytes ) {
+					FT2_1_3_UInt         bit_count,
+					const FT2_1_3_Byte*  bytes ) {
 	FT2_1_3_Error  error;
 
 
@@ -968,8 +971,8 @@ ps_hints_t2counter( PS_Hints        hints,
 		/* check bit count, must be equal to current total hint count */
 		if ( bit_count !=  count1 + count2 ) {
 			FT2_1_3_ERROR(( "ps_hints_t2counter: "
-			           "called with invalid bitcount %d (instead of %d)\n",
-			           bit_count, count1 + count2 ));
+					   "called with invalid bitcount %d (instead of %d)\n",
+					   bit_count, count1 + count2 ));
 
 			/* simply ignore the operator */
 			return;
@@ -977,12 +980,12 @@ ps_hints_t2counter( PS_Hints        hints,
 
 		/* set-up new horizontal and vertical hint mask now */
 		error = ps_dimension_set_mask_bits( &dim[0], bytes, 0, count1,
-		                                    0, memory );
+											0, memory );
 		if ( error )
 			goto Fail;
 
 		error = ps_dimension_set_mask_bits( &dim[1], bytes, count1, count2,
-		                                    0, memory );
+											0, memory );
 		if ( error )
 			goto Fail;
 	}
@@ -996,7 +999,7 @@ Fail:
 /* end recording session */
 static FT2_1_3_Error
 ps_hints_close( PS_Hints  hints,
-                FT2_1_3_UInt   end_point ) {
+				FT2_1_3_UInt   end_point ) {
 	FT2_1_3_Error  error;
 
 
@@ -1035,8 +1038,8 @@ t1_hints_open( T1_Hints  hints ) {
 
 static void
 t1_hints_stem( T1_Hints  hints,
-               FT2_1_3_Int    dimension,
-               FT2_1_3_Long*  coords ) {
+			   FT2_1_3_Int    dimension,
+			   FT2_1_3_Long*  coords ) {
 	ps_hints_stem( (PS_Hints)hints, dimension, 1, coords );
 }
 
@@ -1070,9 +1073,9 @@ t2_hints_open( T2_Hints  hints ) {
 
 static void
 t2_hints_stems( T2_Hints   hints,
-                FT2_1_3_Int     dimension,
-                FT2_1_3_Int     count,
-                FT2_1_3_Fixed*  coords ) {
+				FT2_1_3_Int     dimension,
+				FT2_1_3_Int     count,
+				FT2_1_3_Fixed*  coords ) {
 	FT2_1_3_Pos  stems[32], y, n, total = count;
 
 
@@ -1113,5 +1116,7 @@ t2_hints_funcs_init( T2_Hints_FuncsRec*  funcs ) {
 	funcs->apply   = (T2_Hints_ApplyFunc)  PS_HINTS_APPLY_FUNC;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

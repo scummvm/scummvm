@@ -16,10 +16,13 @@
 /***************************************************************************/
 
 
-#ifndef __PSHALGO1_H__
-#define __PSHALGO1_H__
+#ifndef AGS_LIB_FREETYPE_PSHALGO1_H
+#define AGS_LIB_FREETYPE_PSHALGO1_H
 
 #include "pshrec.h"
+
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -33,9 +36,9 @@ typedef enum {
 } PSH1_Hint_Flags;
 
 #define psh1_hint_is_active( x )                          \
-          ( ( (x)->flags & PSH1_HINT_FLAG_ACTIVE ) != 0 )
+		  ( ( (x)->flags & PSH1_HINT_FLAG_ACTIVE ) != 0 )
 #define psh1_hint_is_ghost( x )                          \
-          ( ( (x)->flags & PSH1_HINT_FLAG_GHOST ) != 0 )
+		  ( ( (x)->flags & PSH1_HINT_FLAG_GHOST ) != 0 )
 
 #define psh1_hint_activate( x )    (x)->flags |= PSH1_HINT_FLAG_ACTIVE
 #define psh1_hint_deactivate( x )  (x)->flags &= ~PSH1_HINT_FLAG_ACTIVE
@@ -83,9 +86,9 @@ typedef struct  PSH1_Hint_TableRec_ {
 
 extern FT2_1_3_Error
 ps1_hints_apply( PS_Hints        ps_hints,
-                 FT2_1_3_Outline*     outline,
-                 PSH_Globals     globals,
-                 FT2_1_3_Render_Mode  hint_mode );
+				 FT2_1_3_Outline*     outline,
+				 PSH_Globals     globals,
+				 FT2_1_3_Render_Mode  hint_mode );
 
 
 #ifdef DEBUG_HINTER
@@ -93,14 +96,17 @@ extern  PSH1_Hint_Table  ps1_debug_hint_table;
 
 typedef void
 (*PSH1_HintFunc)( PSH1_Hint  hint,
-                  FT2_1_3_Bool    vertical );
+				  FT2_1_3_Bool    vertical );
 
 extern PSH1_HintFunc  ps1_debug_hint_func;
 #endif
 
 FT2_1_3_END_HEADER
 
-#endif /* __PSHALGO1_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_PSHALGO1_H */
 
 
 /* END */

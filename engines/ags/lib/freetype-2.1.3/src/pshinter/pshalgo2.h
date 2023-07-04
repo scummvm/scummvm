@@ -16,14 +16,16 @@
 /***************************************************************************/
 
 
-#ifndef __PSHALGO2_H__
-#define __PSHALGO2_H__
+#ifndef AGS_LIB_FREETYPE_PSHALGO2_H
+#define AGS_LIB_FREETYPE_PSHALGO2_H
 
 
 #include "pshrec.h"
 #include "pshglob.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/fttrigon.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -170,7 +172,7 @@ extern PSH2_Hint_Table  ps2_debug_hint_table;
 
 typedef void
 (*PSH2_HintFunc)( PSH2_Hint  hint,
-                  FT2_1_3_Bool    vertical );
+				  FT2_1_3_Bool    vertical );
 
 extern PSH2_HintFunc    ps2_debug_hint_func;
 
@@ -180,15 +182,17 @@ extern PSH2_Glyph       ps2_debug_glyph;
 
 extern FT2_1_3_Error
 ps2_hints_apply( PS_Hints        ps_hints,
-                 FT2_1_3_Outline*     outline,
-                 PSH_Globals     globals,
-                 FT2_1_3_Render_Mode  hint_mode );
+				 FT2_1_3_Outline*     outline,
+				 PSH_Globals     globals,
+				 FT2_1_3_Render_Mode  hint_mode );
 
 
 FT2_1_3_END_HEADER
 
 
-#endif /* __PSHALGO2_H__ */
+#endif /* AGS_LIB_FREETYPE_PSHALGO2_H */
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

@@ -16,14 +16,16 @@
 /***************************************************************************/
 
 
-#ifndef __PSHALGO3_H__
-#define __PSHALGO3_H__
+#ifndef AGS_LIB_FREETYPE_PSHALGO3_H
+#define AGS_LIB_FREETYPE_PSHALGO3_H
 
 
 #include "pshrec.h"
 #include "pshglob.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/fttrigon.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -179,10 +181,10 @@ typedef struct  PSH3_PointRec_ {
 
 
 #define PSH3_POINT_EQUAL_ORG( a, b )  ( (a)->org_u == (b)->org_u && \
-                                        (a)->org_v == (b)->org_v )
+										(a)->org_v == (b)->org_v )
 
 #define PSH3_POINT_ANGLE( a, b )  FT2_1_3_Atan2( (b)->org_u - (a)->org_u,  \
-                                            (b)->org_v - (a)->org_v )
+											(b)->org_v - (a)->org_v )
 
 typedef struct  PSH3_ContourRec_ {
 	PSH3_Point  start;
@@ -220,7 +222,7 @@ extern PSH3_Hint_Table  ps3_debug_hint_table;
 
 typedef void
 (*PSH3_HintFunc)( PSH3_Hint  hint,
-                  FT2_1_3_Bool    vertical );
+				  FT2_1_3_Bool    vertical );
 
 extern PSH3_HintFunc    ps3_debug_hint_func;
 
@@ -230,15 +232,17 @@ extern PSH3_Glyph       ps3_debug_glyph;
 
 extern FT2_1_3_Error
 ps3_hints_apply( PS_Hints        ps_hints,
-                 FT2_1_3_Outline*     outline,
-                 PSH_Globals     globals,
-                 FT2_1_3_Render_Mode  hint_mode );
+				 FT2_1_3_Outline*     outline,
+				 PSH_Globals     globals,
+				 FT2_1_3_Render_Mode  hint_mode );
 
 
 FT2_1_3_END_HEADER
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
-#endif /* __PSHALGO3_H__ */
+#endif /* AGS_LIB_FREETYPE_PSHALGO3_H */
 
 
 /* END */
