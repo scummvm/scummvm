@@ -236,7 +236,7 @@ BDF_Face_Init( FT2_1_3_Stream      stream,
 						   FT2_1_3_FACE_FLAG_HORIZONTAL  |
 						   FT2_1_3_FACE_FLAG_FAST_GLYPHS;
 
-		prop = bdf_get_font_property( font, (char *)"SPACING" );
+		prop = bdf_get_font_property( font, const_cast<char *>("SPACING") );
 		if ( prop != NULL )
 			if ( prop->format == BDF_ATOM )
 				if ( prop->value.atom != NULL )
@@ -248,7 +248,7 @@ BDF_Face_Init( FT2_1_3_Stream      stream,
 		/* FZ XXX: I need a font to implement this */
 
 		root->style_flags = 0;
-		prop = bdf_get_font_property( font, (char *)"SLANT" );
+		prop = bdf_get_font_property( font, const_cast<char *>("SLANT") );
 		if ( prop != NULL )
 			if ( prop->format == BDF_ATOM )
 				if ( prop->value.atom != NULL )
@@ -256,14 +256,14 @@ BDF_Face_Init( FT2_1_3_Stream      stream,
 							( *(prop->value.atom) == 'I' ) )
 						root->style_flags |= FT2_1_3_STYLE_FLAG_ITALIC;
 
-		prop = bdf_get_font_property( font, (char *)"WEIGHT_NAME" );
+		prop = bdf_get_font_property( font, const_cast<char *>("WEIGHT_NAME") );
 		if ( prop != NULL )
 			if ( prop->format == BDF_ATOM )
 				if ( prop->value.atom != NULL )
 					if ( *(prop->value.atom) == 'B' )
 						root->style_flags |= FT2_1_3_STYLE_FLAG_BOLD;
 
-		prop = bdf_get_font_property( font, (char *)"FAMILY_NAME" );
+		prop = bdf_get_font_property( font, const_cast<char *>("FAMILY_NAME") );
 		if ( ( prop != NULL ) && ( prop->value.atom != NULL ) ) {
 			int  l = ft_strlen( prop->value.atom ) + 1;
 
@@ -274,14 +274,14 @@ BDF_Face_Init( FT2_1_3_Stream      stream,
 		} else
 			root->family_name = 0;
 
-		root->style_name = (char *)"Regular";
+		root->style_name = const_cast<char *>("Regular");
 		if ( root->style_flags & FT2_1_3_STYLE_FLAG_BOLD ) {
 			if ( root->style_flags & FT2_1_3_STYLE_FLAG_ITALIC )
-				root->style_name = (char *)"Bold Italic";
+				root->style_name = const_cast<char *>("Bold Italic");
 			else
-				root->style_name = (char *)"Bold";
+				root->style_name = const_cast<char *>("Bold");
 		} else if ( root->style_flags & FT2_1_3_STYLE_FLAG_ITALIC )
-			root->style_name = (char *)"Italic";
+			root->style_name = const_cast<char *>("Italic");
 
 		root->num_glyphs = font->glyphs_size;     /* unencoded included */
 
@@ -289,20 +289,20 @@ BDF_Face_Init( FT2_1_3_Stream      stream,
 		if ( FT2_1_3_NEW_ARRAY( root->available_sizes, 1 ) )
 			goto Exit;
 
-		prop = bdf_get_font_property( font, (char *)"AVERAGE_WIDTH" );
+		prop = bdf_get_font_property( font, const_cast<char *>("AVERAGE_WIDTH") );
 		if ( ( prop != NULL ) && ( prop->value.int32 >= 10 ) )
 			root->available_sizes->width = (short)( prop->value.int32 / 10 );
 
-		prop = bdf_get_font_property( font, (char *)"PIXEL_SIZE" );
+		prop = bdf_get_font_property( font, const_cast<char *>("PIXEL_SIZE") );
 		if ( prop != NULL )
 			root->available_sizes->height = (short) prop->value.int32;
 		else {
-			prop = bdf_get_font_property( font, (char *)"POINT_SIZE" );
+			prop = bdf_get_font_property( font, const_cast<char *>("POINT_SIZE") );
 			if ( prop != NULL ) {
 				bdf_property_t  *yres;
 
 
-				yres = bdf_get_font_property( font, (char *)"RESOLUTION_Y" );
+				yres = bdf_get_font_property( font, const_cast<char *>("RESOLUTION_Y") );
 				if ( yres != NULL ) {
 					FT2_1_3_TRACE4(( "POINT_SIZE: %d  RESOLUTION_Y: %d\n",
 								prop->value.int32, yres->value.int32 ));
@@ -346,9 +346,9 @@ BDF_Face_Init( FT2_1_3_Stream      stream,
 
 
 			charset_registry =
-				bdf_get_font_property( font, (char *)"CHARSET_REGISTRY" );
+				bdf_get_font_property( font, const_cast<char *>("CHARSET_REGISTRY") );
 			charset_encoding =
-				bdf_get_font_property( font, (char *)"CHARSET_ENCODING" );
+				bdf_get_font_property( font, const_cast<char *>("CHARSET_ENCODING") );
 			if ( ( charset_registry != NULL ) && ( charset_encoding != NULL ) ) {
 				if ( ( charset_registry->format == BDF_ATOM ) &&
 						( charset_encoding->format == BDF_ATOM ) &&
