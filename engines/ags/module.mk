@@ -101,7 +101,8 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/src/sfnt/sfdriver.o \
 	lib/freetype-2.1.3/src/sfnt/ttsbit.o \
 	lib/freetype-2.1.3/src/sfnt/ttpost.o \
-	lib/freetype-2.1.3/src/smooth/smooth.o \
+	lib/freetype-2.1.3/src/smooth/ftgrays.o \
+	lib/freetype-2.1.3/src/smooth/ftsmooth.o \
 	lib/freetype-2.1.3/src/truetype/truetype.o \
 	lib/freetype-2.1.3/src/type1/type1.o \
 	lib/freetype-2.1.3/src/type42/type42.o \

@@ -16,8 +16,8 @@
 /***************************************************************************/
 
 
-#ifndef __FTGRAYS_H__
-#define __FTGRAYS_H__
+#ifndef AGS_LIB_FREETYPE_FTGRAYS_H
+#define AGS_LIB_FREETYPE_FTGRAYS_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,6 +31,8 @@ extern "C" {
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftimage.h"
 #endif
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*                                                                       */
@@ -51,7 +53,10 @@ FT2_1_3_EXPORT_VAR( const FT2_1_3_Raster_Funcs )  ft_grays_raster;
 }
 #endif
 
-#endif /* __FTGRAYS_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_FTGRAYS_H */
 
 
 /* END */

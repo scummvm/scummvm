@@ -96,6 +96,7 @@
 #define FT2_1_3_COMPONENT  trace_smooth
 
 
+
 #define ErrRaster_MemoryOverflow   -4
 
 
@@ -156,6 +157,8 @@
 
 #endif /* _STANDALONE_ */
 
+namespace AGS3 {
+namespace FreeType213 {
 
 #ifndef FT2_1_3_MEM_SET
 #define FT2_1_3_MEM_SET( d, s, c )  ft_memset( d, s, c )
@@ -334,7 +337,7 @@ typedef struct  TRaster_ {
 /*                                                                       */
 static void
 gray_init_cells( RAS_ARG_ void*  buffer,
-                 long            byte_size ) {
+				 long            byte_size ) {
 	ras.cells     = (PCell)buffer;
 	ras.max_cells = byte_size / sizeof ( TCell );
 	ras.num_cells = 0;
@@ -413,7 +416,7 @@ gray_record_cell( RAS_ARG ) {
 /*                                                                       */
 static void
 gray_set_cell( RAS_ARG_ TCoord  ex,
-               TCoord  ey ) {
+			   TCoord  ey ) {
 	int  invalid, record, clean;
 
 
@@ -467,7 +470,7 @@ gray_set_cell( RAS_ARG_ TCoord  ex,
 /*                                                                       */
 static void
 gray_start_cell( RAS_ARG_  TCoord  ex,
-                 TCoord  ey ) {
+				 TCoord  ey ) {
 	if ( ex < ras.min_ex )
 		ex = (TCoord)(ras.min_ex - 1);
 
@@ -488,10 +491,10 @@ gray_start_cell( RAS_ARG_  TCoord  ex,
 /*                                                                       */
 static void
 gray_render_scanline( RAS_ARG_  TCoord  ey,
-                      TPos    x1,
-                      TCoord  y1,
-                      TPos    x2,
-                      TCoord  y2 ) {
+					  TPos    x1,
+					  TCoord  y1,
+					  TPos    x2,
+					  TCoord  y2 ) {
 	TCoord  ex1, ex2, fx1, fx2, delta;
 	long    p, first, dx;
 	int     incr, lift, mod, rem;
@@ -586,7 +589,7 @@ gray_render_scanline( RAS_ARG_  TCoord  ey,
 /*                                                                       */
 static void
 gray_render_line( RAS_ARG_ TPos  to_x,
-                  TPos  to_y ) {
+				  TPos  to_y ) {
 	TCoord  ey1, ey2, fy1, fy2;
 	TPos    dx, dy, x, x2;
 	long    p, first;
@@ -707,8 +710,8 @@ gray_render_line( RAS_ARG_ TPos  to_x,
 
 			x2 = x + delta;
 			gray_render_scanline( RAS_VAR_ ey1, x,
-			                      (TCoord)( ONE_PIXEL - first ), x2,
-			                      (TCoord)first );
+								  (TCoord)( ONE_PIXEL - first ), x2,
+								  (TCoord)first );
 			x = x2;
 
 			ey1 += incr;
@@ -717,8 +720,8 @@ gray_render_line( RAS_ARG_ TPos  to_x,
 	}
 
 	gray_render_scanline( RAS_VAR_ ey1, x,
-	                      (TCoord)( ONE_PIXEL - first ), to_x,
-	                      fy2 );
+						  (TCoord)( ONE_PIXEL - first ), to_x,
+						  fy2 );
 
 End:
 	ras.x       = to_x;
@@ -748,7 +751,7 @@ gray_split_conic( FT2_1_3_Vector*  base ) {
 
 static void
 gray_render_conic( RAS_ARG_ FT2_1_3_Vector*  control,
-                   FT2_1_3_Vector*  to ) {
+				   FT2_1_3_Vector*  to ) {
 	TPos        dx, dy;
 	int         top, level;
 	int*        levels;
@@ -876,8 +879,8 @@ gray_split_cubic( FT2_1_3_Vector*  base ) {
 
 static void
 gray_render_cubic( RAS_ARG_ FT2_1_3_Vector*  control1,
-                   FT2_1_3_Vector*  control2,
-                   FT2_1_3_Vector*  to ) {
+				   FT2_1_3_Vector*  control2,
+				   FT2_1_3_Vector*  to ) {
 	TPos        dx, dy, da, db;
 	int         top, level;
 	int*        levels;
@@ -920,9 +923,9 @@ gray_render_cubic( RAS_ARG_ FT2_1_3_Vector*  control1,
 		to_x  = UPSCALE( to->x );
 		to_y  = UPSCALE( to->y );
 		mid_x = ( ras.x + to_x +
-		          3 * UPSCALE( control1->x + control2->x ) ) / 8;
+				  3 * UPSCALE( control1->x + control2->x ) ) / 8;
 		mid_y = ( ras.y + to_y +
-		          3 * UPSCALE( control1->y + control2->y ) ) / 8;
+				  3 * UPSCALE( control1->y + control2->y ) ) / 8;
 
 		gray_render_line( RAS_VAR_ mid_x, mid_y );
 		gray_render_line( RAS_VAR_ to_x, to_y );
@@ -997,16 +1000,16 @@ Draw: {
 #else /* 1 */
 
 #define LESS_THAN( a, b )  ( (a)->y < (b)->y || \
-                             ( (a)->y == (b)->y && (a)->x < (b)->x ) )
+							 ( (a)->y == (b)->y && (a)->x < (b)->x ) )
 
 #endif /* 1 */
 
 #define SWAP_CELLS( a, b, temp )  do             \
-                                  {              \
-                                    temp = *(a); \
-                                    *(a) = *(b); \
-                                    *(b) = temp; \
-                                  } while ( 0 )
+								  {              \
+									temp = *(a); \
+									*(a) = *(b); \
+									*(b) = temp; \
+								  } while ( 0 )
 #define DEBUG_SORT
 #define QUICK_SORT
 
@@ -1016,7 +1019,7 @@ Draw: {
 /* cells table                                              */
 static void
 gray_shell_sort ( PCell  cells,
-                  int    count ) {
+				  int    count ) {
 	PCell  i, j, limit = cells + count;
 	TCell  temp;
 	int    gap;
@@ -1058,7 +1061,7 @@ gray_shell_sort ( PCell  cells,
 
 static void
 gray_quick_sort( PCell  cells,
-                 int    count ) {
+				 int    count ) {
 	PCell   stack[40];  /* should be enough ;-) */
 	PCell*  top;        /* top of stack */
 	PCell   base, limit;
@@ -1147,7 +1150,7 @@ gray_quick_sort( PCell  cells,
 
 static int
 gray_check_sort( PCell  cells,
-                 int    count ) {
+				 int    count ) {
 	PCell  p, q;
 
 
@@ -1165,7 +1168,7 @@ gray_check_sort( PCell  cells,
 
 static int
 gray_move_to( FT2_1_3_Vector*  to,
-              FT2_1_3_Raster   raster ) {
+			  FT2_1_3_Raster   raster ) {
 	TPos  x, y;
 
 
@@ -1186,17 +1189,17 @@ gray_move_to( FT2_1_3_Vector*  to,
 
 static int
 gray_line_to( FT2_1_3_Vector*  to,
-              FT2_1_3_Raster   raster ) {
+			  FT2_1_3_Raster   raster ) {
 	gray_render_line( (PRaster)raster,
-	                  UPSCALE( to->x ), UPSCALE( to->y ) );
+					  UPSCALE( to->x ), UPSCALE( to->y ) );
 	return 0;
 }
 
 
 static int
 gray_conic_to( FT2_1_3_Vector*  control,
-               FT2_1_3_Vector*  to,
-               FT2_1_3_Raster   raster ) {
+			   FT2_1_3_Vector*  to,
+			   FT2_1_3_Raster   raster ) {
 	gray_render_conic( (PRaster)raster, control, to );
 	return 0;
 }
@@ -1204,9 +1207,9 @@ gray_conic_to( FT2_1_3_Vector*  control,
 
 static int
 gray_cubic_to( FT2_1_3_Vector*  control1,
-               FT2_1_3_Vector*  control2,
-               FT2_1_3_Vector*  to,
-               FT2_1_3_Raster   raster ) {
+			   FT2_1_3_Vector*  control2,
+			   FT2_1_3_Vector*  to,
+			   FT2_1_3_Raster   raster ) {
 	gray_render_cubic( (PRaster)raster, control1, control2, to );
 	return 0;
 }
@@ -1214,9 +1217,9 @@ gray_cubic_to( FT2_1_3_Vector*  control1,
 
 static void
 gray_render_span( int       y,
-                  int       count,
-                  FT2_1_3_Span*  spans,
-                  PRaster   raster ) {
+				  int       count,
+				  FT2_1_3_Span*  spans,
+				  PRaster   raster ) {
 	unsigned char*  p;
 	FT2_1_3_Bitmap*      map = &raster->target;
 
@@ -1268,7 +1271,7 @@ gray_dump_cells( RAS_ARG ) {
 			y = cell->y;
 		}
 		fprintf( stderr, "[%d %d %d]",
-		         cell->x, cell->area, cell->cover );
+				 cell->x, cell->area, cell->cover );
 	}
 	fprintf(stderr, "\n" );
 }
@@ -1278,9 +1281,9 @@ gray_dump_cells( RAS_ARG ) {
 
 static void
 gray_hline( RAS_ARG_ TCoord  x,
-            TCoord  y,
-            TPos    area,
-            int     acount ) {
+			TCoord  y,
+			TPos    area,
+			int     acount ) {
 	FT2_1_3_Span*   span;
 	int        count;
 	int        coverage;
@@ -1317,9 +1320,9 @@ gray_hline( RAS_ARG_ TCoord  x,
 		count = ras.num_gray_spans;
 		span  = ras.gray_spans + count - 1;
 		if ( count > 0                          &&
-		        ras.span_y == y                    &&
-		        (int)span->x + span->len == (int)x &&
-		        span->coverage == coverage ) {
+				ras.span_y == y                    &&
+				(int)span->x + span->len == (int)x &&
+				span->coverage == coverage ) {
 			span->len = (unsigned short)( span->len + acount );
 			return;
 		}
@@ -1327,7 +1330,7 @@ gray_hline( RAS_ARG_ TCoord  x,
 		if ( ras.span_y != y || count >= FT2_1_3_MAX_GRAY_SPANS ) {
 			if ( ras.render_span && count > 0 )
 				ras.render_span( ras.span_y, count, ras.gray_spans,
-				                 ras.render_span_data );
+								 ras.render_span_data );
 			/* ras.render_span( span->y, ras.gray_spans, count ); */
 
 #ifdef DEBUG_GRAYS
@@ -1340,7 +1343,7 @@ gray_hline( RAS_ARG_ TCoord  x,
 				span = ras.gray_spans;
 				for ( n = 0; n < count; n++, span++ )
 					fprintf( stderr, "[%d..%d]:%02x ",
-					         span->x, span->x + span->len - 1, span->coverage );
+							 span->x, span->x + span->len - 1, span->coverage );
 				fprintf( stderr, "\n" );
 			}
 
@@ -1414,13 +1417,13 @@ gray_sweep( RAS_ARG_ FT2_1_3_Bitmap*  target ) {
 			/* draw a gray span between the start cell and the current one */
 			if ( cur->x > x )
 				gray_hline( RAS_VAR_ x, y,
-				            cover * ( ONE_PIXEL * 2 ), cur->x - x );
+							cover * ( ONE_PIXEL * 2 ), cur->x - x );
 		} else {
 			/* draw a gray span until the end of the clipping region */
 			if ( cover && x < ras.max_ex - ras.min_ex )
 				gray_hline( RAS_VAR_ x, y,
-				            cover * ( ONE_PIXEL * 2 ),
-				            (int)( ras.max_ex - x - ras.min_ex ) );
+							cover * ( ONE_PIXEL * 2 ),
+							(int)( ras.max_ex - x - ras.min_ex ) );
 			cover = 0;
 		}
 
@@ -1430,7 +1433,7 @@ gray_sweep( RAS_ARG_ FT2_1_3_Bitmap*  target ) {
 
 	if ( ras.render_span && ras.num_gray_spans > 0 )
 		ras.render_span( ras.span_y, ras.num_gray_spans,
-		                 ras.gray_spans, ras.render_span_data );
+						 ras.gray_spans, ras.render_span_data );
 
 #ifdef DEBUG_GRAYS
 
@@ -1443,7 +1446,7 @@ gray_sweep( RAS_ARG_ FT2_1_3_Bitmap*  target ) {
 		span = ras.gray_spans;
 		for ( n = 0; n < ras.num_gray_spans; n++, span++ )
 			fprintf( stderr, "[%d..%d]:%02x ",
-			         span->x, span->x + span->len - 1, span->coverage );
+					 span->x, span->x + span->len - 1, span->coverage );
 		fprintf( stderr, "\n" );
 	}
 
@@ -1489,8 +1492,8 @@ gray_sweep( RAS_ARG_ FT2_1_3_Bitmap*  target ) {
 /*                                                                       */
 static
 int  FT2_1_3_Outline_Decompose( FT2_1_3_Outline*              outline,
-                           const FT2_1_3_Outline_Funcs*  func_interface,
-                           void*                    user ) {
+						   const FT2_1_3_Outline_Funcs*  func_interface,
+						   void*                    user ) {
 #undef SCALED
 #if 0
 #define SCALED( x )  ( ( (x) << shift ) - delta )
@@ -1634,7 +1637,7 @@ Do_Conic:
 
 
 				if ( point + 1 > limit                             ||
-				        FT2_1_3_CURVE_TAG( tags[1] ) != FT2_1_3_CURVE_TAG_CUBIC )
+						FT2_1_3_CURVE_TAG( tags[1] ) != FT2_1_3_CURVE_TAG_CUBIC )
 					goto Invalid_Outline;
 
 				point += 2;
@@ -1733,7 +1736,7 @@ gray_convert_glyph( RAS_ARG ) {
 	clip = &ras.clip_box;
 
 	if ( ras.max_ex <= clip->xMin || ras.min_ex >= clip->xMax ||
-	        ras.max_ey <= clip->yMin || ras.min_ey >= clip->yMax )
+			ras.max_ey <= clip->yMin || ras.min_ey >= clip->yMax )
 		return 0;
 
 	if ( ras.min_ex < clip->xMin ) ras.min_ex = clip->xMin;
@@ -1794,7 +1797,7 @@ gray_convert_glyph( RAS_ARG ) {
 			error = gray_convert_glyph_inner( RAS_VAR );
 #else
 			error = FT2_1_3_Outline_Decompose( outline, &func_interface, &ras ) ||
-			        gray_record_cell( RAS_VAR );
+					gray_record_cell( RAS_VAR );
 #endif
 
 			if ( !error ) {
@@ -1849,7 +1852,7 @@ gray_convert_glyph( RAS_ARG ) {
 
 extern int
 gray_raster_render( PRaster            raster,
-                    FT2_1_3_Raster_Params*  params ) {
+					FT2_1_3_Raster_Params*  params ) {
 	FT2_1_3_Outline*  outline = (FT2_1_3_Outline*)params->source;
 	FT2_1_3_Bitmap*   target_map = params->target;
 
@@ -1865,12 +1868,12 @@ gray_raster_render( PRaster            raster,
 		return ErrRaster_Invalid_Outline;
 
 	if ( outline->n_points !=
-	        outline->contours[outline->n_contours - 1] + 1 )
+			outline->contours[outline->n_contours - 1] + 1 )
 		return ErrRaster_Invalid_Outline;
 
 	/* if direct mode is not set, we must have a target bitmap */
 	if ( ( params->flags & FT2_1_3_RASTER_FLAG_DIRECT ) == 0 &&
-	        ( !target_map || !target_map->buffer )         )
+			( !target_map || !target_map->buffer )         )
 		return -1;
 
 	/* this version does not support monochrome rendering */
@@ -1934,7 +1937,7 @@ grays_init_gamma( PRaster  raster ) {
 			a = ( x * M_Y + M_X / 2) / M_X;
 		else
 			a = M_Y + ( ( x - M_X ) * ( M_MAX - M_Y ) +
-			            ( M_MAX - M_X ) / 2 ) / ( M_MAX - M_X );
+						( M_MAX - M_X ) / 2 ) / ( M_MAX - M_X );
 
 		raster->gamma[x] = (unsigned char)a;
 	}
@@ -1946,7 +1949,7 @@ grays_init_gamma( PRaster  raster ) {
 
 static int
 gray_raster_new( void*       memory,
-                 FT2_1_3_Raster*  araster ) {
+				 FT2_1_3_Raster*  araster ) {
 	static TRaster  the_raster;
 
 	FT2_1_3_UNUSED( memory );
@@ -1973,7 +1976,7 @@ gray_raster_done( FT2_1_3_Raster  raster ) {
 
 static int
 gray_raster_new( FT2_1_3_Memory   memory,
-                 FT2_1_3_Raster*  araster ) {
+				 FT2_1_3_Raster*  araster ) {
 	FT2_1_3_Error  error;
 	PRaster   raster;
 
@@ -2005,8 +2008,8 @@ gray_raster_done( FT2_1_3_Raster  raster ) {
 
 static void
 gray_raster_reset( FT2_1_3_Raster    raster,
-                   const char*  pool_base,
-                   long         pool_size ) {
+				   const char*  pool_base,
+				   long         pool_size ) {
 	PRaster  rast = (PRaster)raster;
 
 
@@ -2027,5 +2030,7 @@ const FT2_1_3_Raster_Funcs  ft_grays_raster = {
 	(FT2_1_3_Raster_Done_Func)    gray_raster_done
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */
