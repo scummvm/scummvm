@@ -328,7 +328,7 @@ sfnt_init_face( FT2_1_3_Stream      stream,
 	if ( !sfnt ) {
 		sfnt = (SFNT_Service)FT2_1_3_Get_Module_Interface( library, "sfnt" );
 		if ( !sfnt ) {
-			error = SFNT_Err_Invalid_File_Format;
+			error = FT2_1_3_Err_Invalid_File_Format;
 			goto Exit;
 		}
 
@@ -365,7 +365,7 @@ Exit:
 
 #undef  LOAD_
 #define LOAD_( x )  ( ( error = sfnt->load_##x( face, stream ) ) \
-					  != SFNT_Err_Ok )
+					  != FT2_1_3_Err_Ok )
 
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
@@ -462,8 +462,8 @@ sfnt_load_face( FT2_1_3_Stream      stream,
 	/* embedded bitmap support. */
 	if ( sfnt->load_sbits && LOAD_( sbits ) ) {
 		/* return an error if this font file has no outlines */
-		if ( error == SFNT_Err_Table_Missing && has_outline )
-			error = SFNT_Err_Ok;
+		if ( error == FT2_1_3_Err_Table_Missing && has_outline )
+			error = FT2_1_3_Err_Ok;
 		else
 			goto Exit;
 	}

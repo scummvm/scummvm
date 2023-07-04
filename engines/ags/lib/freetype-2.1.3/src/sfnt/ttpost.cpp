@@ -176,7 +176,7 @@ load_format_20( TT_Face    face,
 	/* in this table, so the test for this threshold has been dropped.  */
 
 	if ( num_glyphs > face->root.num_glyphs ) {
-		error = SFNT_Err_Invalid_File_Format;
+		error = FT2_1_3_Err_Invalid_File_Format;
 		goto Exit;
 	}
 
@@ -246,7 +246,7 @@ load_format_20( TT_Face    face,
 		table->glyph_indices = glyph_indices;
 		table->glyph_names   = name_strings;
 	}
-	return SFNT_Err_Ok;
+	return FT2_1_3_Err_Ok;
 
 Fail1: {
 		FT2_1_3_UShort  n;
@@ -281,7 +281,7 @@ load_format_25( TT_Face    face,
 
 	/* check the number of glyphs */
 	if ( num_glyphs > face->root.num_glyphs || num_glyphs > 258 ) {
-		error = SFNT_Err_Invalid_File_Format;
+		error = FT2_1_3_Err_Invalid_File_Format;
 		goto Exit;
 	}
 
@@ -299,7 +299,7 @@ load_format_25( TT_Face    face,
 
 
 			if ( idx < 0 || idx > num_glyphs ) {
-				error = SFNT_Err_Invalid_File_Format;
+				error = FT2_1_3_Err_Invalid_File_Format;
 				goto Fail;
 			}
 		}
@@ -314,7 +314,7 @@ load_format_25( TT_Face    face,
 		table->offsets    = offset_table;
 	}
 
-	return SFNT_Err_Ok;
+	return FT2_1_3_Err_Ok;
 
 Fail:
 	FT2_1_3_FREE( offset_table );
@@ -351,7 +351,7 @@ load_post_names( TT_Face  face ) {
 	else if ( format == 0x00028000L )
 		error = load_format_25( face, stream );
 	else
-		error = SFNT_Err_Invalid_File_Format;
+		error = FT2_1_3_Err_Invalid_File_Format;
 
 	face->postscript_names.loaded = 1;
 
@@ -424,21 +424,23 @@ tt_face_get_ps_name( TT_Face      face,
 	TT_Post_Names    names;
 	FT2_1_3_Fixed         format;
 
+	using AGS3::FreeType213::PSNames_Service;
+
 #ifdef FT2_1_3_CONFIG_OPTION_POSTSCRIPT_NAMES
 	PSNames_Service  psnames;
 #endif
 
 
 	if ( !face )
-		return SFNT_Err_Invalid_Face_Handle;
+		return FT2_1_3_Err_Invalid_Face_Handle;
 
 	if ( idx >= (FT2_1_3_UInt)face->root.num_glyphs )
-		return SFNT_Err_Invalid_Glyph_Index;
+		return FT2_1_3_Err_Invalid_Glyph_Index;
 
 #ifdef FT2_1_3_CONFIG_OPTION_POSTSCRIPT_NAMES
 	psnames = (PSNames_Service)face->psnames;
 	if ( !psnames )
-		return SFNT_Err_Unimplemented_Feature;
+		return FT2_1_3_Err_Unimplemented_Feature;
 #endif
 
 	names = &face->postscript_names;
@@ -489,7 +491,7 @@ tt_face_get_ps_name( TT_Face      face,
 	/* nothing to do for format == 0x00030000L */
 
 End:
-	return SFNT_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 } // End of namespace FreeType213

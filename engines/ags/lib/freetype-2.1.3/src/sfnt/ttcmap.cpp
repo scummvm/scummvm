@@ -133,7 +133,7 @@ tt_face_load_charmap( TT_Face       face,
 
 
 	if ( cmap->loaded )
-		return SFNT_Err_Ok;
+		return FT2_1_3_Err_Ok;
 
 	memory = stream->memory;
 
@@ -378,11 +378,11 @@ tt_face_load_charmap( TT_Face       face,
 		break;
 
 	default:   /* corrupt character mapping table */
-		return SFNT_Err_Invalid_CharMap_Format;
+		return FT2_1_3_Err_Invalid_CharMap_Format;
 
 	}
 
-	return SFNT_Err_Ok;
+	return FT2_1_3_Err_Ok;
 
 Fail:
 	tt_face_free_charmap( face, cmap );
@@ -413,7 +413,7 @@ tt_face_free_charmap( TT_Face       face,
 
 
 	if ( !cmap )
-		return SFNT_Err_Ok;
+		return FT2_1_3_Err_Ok;
 
 	memory = face->root.driver->root.memory;
 
@@ -456,7 +456,7 @@ tt_face_free_charmap( TT_Face       face,
 	}
 
 	cmap->loaded = FALSE;
-	return SFNT_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 

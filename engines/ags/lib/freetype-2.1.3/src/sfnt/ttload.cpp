@@ -124,7 +124,7 @@ tt_face_goto_table( TT_Face    face,
 		if ( FT2_1_3_STREAM_SEEK( table->Offset ) )
 			goto Exit;
 	} else
-		error = SFNT_Err_Table_Missing;
+		error = FT2_1_3_Err_Table_Missing;
 
 Exit:
 	return error;
@@ -329,7 +329,7 @@ tt_face_load_sfnt_header( TT_Face      face,
 
 		/* check face index */
 		if ( face_index >= face->ttc_header.count ) {
-			error = SFNT_Err_Bad_Argument;
+			error = FT2_1_3_Err_Bad_Argument;
 			goto Exit;
 		}
 
@@ -352,7 +352,7 @@ tt_face_load_sfnt_header( TT_Face      face,
 	error = sfnt_dir_check( stream, offset, sfnt->num_tables );
 	if ( error ) {
 		FT2_1_3_TRACE2(( "tt_face_load_sfnt_header: file is not SFNT!\n" ));
-		error = SFNT_Err_Unknown_File_Format;
+		error = FT2_1_3_Err_Unknown_File_Format;
 	}
 
 Exit:
@@ -490,7 +490,7 @@ tt_face_load_any( TT_Face    face,
 		/* look for tag in font directory */
 		table = tt_face_lookup_table( face, tag );
 		if ( !table ) {
-			error = SFNT_Err_Table_Missing;
+			error = FT2_1_3_Err_Table_Missing;
 			goto Exit;
 		}
 
@@ -503,7 +503,7 @@ tt_face_load_any( TT_Face    face,
 	if ( length && *length == 0 ) {
 		*length = size;
 
-		return SFNT_Err_Ok;
+		return FT2_1_3_Err_Ok;
 	}
 
 	if ( length )
@@ -784,7 +784,7 @@ tt_face_load_metrics( TT_Face    face,
 			/* Set number_Of_VMetrics to 0! */
 			FT2_1_3_TRACE2(( "  no vertical header in file.\n" ));
 			face->vertical.number_Of_VMetrics = 0;
-			error = SFNT_Err_Ok;
+			error = FT2_1_3_Err_Ok;
 			goto Exit;
 		}
 
@@ -795,7 +795,7 @@ tt_face_load_metrics( TT_Face    face,
 		error = face->goto_table( face, TTAG_hmtx, stream, &table_len );
 		if ( error ) {
 			FT2_1_3_ERROR(( " no horizontal metrics in file!\n" ));
-			error = SFNT_Err_Hmtx_Table_Missing;
+			error = FT2_1_3_Err_Hmtx_Table_Missing;
 			goto Exit;
 		}
 
@@ -814,8 +814,8 @@ tt_face_load_metrics( TT_Face    face,
 				   vertical ? "Vertical"
 				   : "Horizontal" ));
 
-		error = vertical ? SFNT_Err_Invalid_Vert_Metrics
-				: SFNT_Err_Invalid_Horiz_Metrics;
+		error = vertical ? FT2_1_3_Err_Invalid_Vert_Metrics
+				: FT2_1_3_Err_Invalid_Horiz_Metrics;
 		goto Exit;
 	}
 
@@ -928,7 +928,7 @@ tt_face_load_metrics_header( TT_Face    face,
 		/* we don't find it.                                           */
 		error = face->goto_table( face, TTAG_vhea, stream, 0 );
 		if ( error ) {
-			error = SFNT_Err_Ok;
+			error = FT2_1_3_Err_Ok;
 			goto Exit;
 		}
 
@@ -939,7 +939,7 @@ tt_face_load_metrics_header( TT_Face    face,
 		/* don't find it.                                            */
 		error = face->goto_table( face, TTAG_hhea, stream, 0 );
 		if ( error ) {
-			error = SFNT_Err_Horiz_Header_Missing;
+			error = FT2_1_3_Err_Horiz_Header_Missing;
 			goto Exit;
 		}
 
@@ -1024,7 +1024,7 @@ tt_face_load_names( TT_Face    face,
 	if ( error ) {
 		/* The name table is required so indicate failure. */
 		FT2_1_3_TRACE2(( "is missing!\n" ));
-		error = SFNT_Err_Name_Table_Missing;
+		error = FT2_1_3_Err_Name_Table_Missing;
 		goto Exit;
 	}
 
@@ -1046,7 +1046,7 @@ tt_face_load_names( TT_Face    face,
 
 	if ( storage_start > storage_limit ) {
 		FT2_1_3_ERROR(( "tt_face_load_names: invalid `name' table\n" ));
-		error = SFNT_Err_Name_Table_Missing;
+		error = FT2_1_3_Err_Name_Table_Missing;
 		goto Exit;
 	}
 
@@ -1160,7 +1160,7 @@ tt_face_load_cmap( TT_Face    face,
 	error = face->goto_table( face, TTAG_cmap, stream, &face->cmap_size );
 	if ( error ) {
 		FT2_1_3_TRACE2(( "No `cmap' table in font !\n" ));
-		error = SFNT_Err_CMap_Table_Missing;
+		error = FT2_1_3_Err_CMap_Table_Missing;
 		goto Exit;
 	}
 
@@ -1277,7 +1277,7 @@ tt_face_load_os2( TT_Face    face,
 	if ( error ) {
 		FT2_1_3_TRACE2(( "is missing!\n" ));
 		face->os2.version = 0xFFFFU;
-		error = SFNT_Err_Ok;
+		error = FT2_1_3_Err_Ok;
 		goto Exit;
 	}
 
@@ -1357,7 +1357,7 @@ tt_face_load_postscript( TT_Face    face,
 
 	error = face->goto_table( face, TTAG_post, stream, 0 );
 	if ( error )
-		return SFNT_Err_Post_Table_Missing;
+		return FT2_1_3_Err_Post_Table_Missing;
 
 	if ( FT2_1_3_STREAM_READ_FIELDS( post_fields, post ) )
 		return error;
@@ -1366,7 +1366,7 @@ tt_face_load_postscript( TT_Face    face,
 	/* module (ttpost).                                     */
 	FT2_1_3_TRACE2(( "loaded\n" ));
 
-	return SFNT_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 
@@ -1422,7 +1422,7 @@ tt_face_load_pclt( TT_Face    face,
 	if ( error ) {
 		FT2_1_3_TRACE2(( "missing (optional)\n" ));
 		pclt->Version = 0;
-		return SFNT_Err_Ok;
+		return FT2_1_3_Err_Ok;
 	}
 
 	if ( FT2_1_3_STREAM_READ_FIELDS( pclt_fields, pclt ) )
@@ -1466,7 +1466,7 @@ tt_face_load_gasp( TT_Face    face,
 	/* the gasp table is optional */
 	error = face->goto_table( face, TTAG_gasp, stream, 0 );
 	if ( error )
-		return SFNT_Err_Ok;
+		return FT2_1_3_Err_Ok;
 
 	if ( FT2_1_3_FRAME_ENTER( 4L ) )
 		goto Exit;
@@ -1539,7 +1539,7 @@ tt_face_load_kern( TT_Face    face,
 	/* the kern table is optional; exit silently if it is missing */
 	error = face->goto_table( face, TTAG_kern, stream, 0 );
 	if ( error )
-		return SFNT_Err_Ok;
+		return FT2_1_3_Err_Ok;
 
 	if ( FT2_1_3_FRAME_ENTER( 4L ) )
 		goto Exit;
@@ -1688,7 +1688,7 @@ tt_face_load_hdmx( TT_Face    face,
 	/* this table is optional */
 	error = face->goto_table( face, TTAG_hdmx, stream, 0 );
 	if ( error )
-		return SFNT_Err_Ok;
+		return FT2_1_3_Err_Ok;
 
 	if ( FT2_1_3_FRAME_ENTER( 8L ) )
 		goto Exit;

@@ -349,7 +349,7 @@ Load_SBit_Range( TT_SBit_Range  range,
 		break;
 
 	default:
-		error = SFNT_Err_Invalid_File_Format;
+		error = FT2_1_3_Err_Invalid_File_Format;
 	}
 
 Exit:
@@ -450,7 +450,7 @@ tt_face_load_sbit_strikes( TT_Face    face,
 	if ( version     != 0x00020000L ||
 			num_strikes >= 0x10000L    ) {
 		FT2_1_3_ERROR(( "tt_face_load_sbit_strikes: invalid table version!\n" ));
-		error = SFNT_Err_Invalid_File_Format;
+		error = FT2_1_3_Err_Invalid_File_Format;
 
 		goto Exit;
 	}
@@ -599,18 +599,18 @@ tt_face_set_sbit_strike( TT_Face    face,
 
 	if ( x_ppem < 0 || x_ppem > 255 ||
 			y_ppem < 1 || y_ppem > 255 )
-		return SFNT_Err_Invalid_PPem;
+		return FT2_1_3_Err_Invalid_PPem;
 
 	for ( i = 0; i < face->num_sbit_strikes; i++ ) {
 		if ( ( face->sbit_strikes[i].y_ppem  == y_ppem )    &&
 				( ( x_ppem == 0 )                            ||
 				  ( face->sbit_strikes[i].x_ppem == x_ppem ) ) ) {
 			*astrike_index = i;
-			return SFNT_Err_Ok;
+			return FT2_1_3_Err_Ok;
 		}
 	}
 
-	return SFNT_Err_Invalid_PPem;
+	return FT2_1_3_Err_Invalid_PPem;
 }
 
 
@@ -706,7 +706,7 @@ Fail:
 	*arange        = 0;
 	*aglyph_offset = 0;
 
-	return SFNT_Err_Invalid_Argument;
+	return FT2_1_3_Err_Invalid_Argument;
 }
 
 
@@ -735,7 +735,7 @@ Fail:
 /*                                                                       */
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.  Returns                    */
-/*    SFNT_Err_Invalid_Argument if no sbit exists for the requested      */
+/*    FT2_1_3_Err_Invalid_Argument if no sbit exists for the requested      */
 /*    glyph.                                                             */
 /*                                                                       */
 static FT2_1_3_Error
@@ -762,7 +762,7 @@ find_sbit_image( TT_Face          face,
 
 	*astrike = strike;
 
-	return SFNT_Err_Ok;
+	return FT2_1_3_Err_Ok;
 
 Fail:
 	/* no embedded bitmap for this glyph in face */
@@ -770,7 +770,7 @@ Fail:
 	*astrike       = 0;
 	*aglyph_offset = 0;
 
-	return SFNT_Err_Invalid_Argument;
+	return FT2_1_3_Err_Invalid_Argument;
 }
 
 
@@ -805,7 +805,7 @@ static FT2_1_3_Error
 load_sbit_metrics( FT2_1_3_Stream        stream,
 				   TT_SBit_Range    range,
 				   TT_SBit_Metrics  metrics ) {
-	FT2_1_3_Error  error = SFNT_Err_Ok;
+	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
 
 
 	switch ( range->image_format ) {
@@ -862,7 +862,7 @@ load_sbit_metrics( FT2_1_3_Stream        stream,
 		if ( range->index_format == 2 || range->index_format == 5 )
 			*metrics = range->metrics;
 		else
-			return SFNT_Err_Invalid_File_Format;
+			return FT2_1_3_Err_Invalid_File_Format;
 	}
 
 Exit:
@@ -1080,7 +1080,7 @@ Load_SBit_Single( FT2_1_3_Bitmap*       map,
 	/* check that the source bitmap fits into the target pixmap */
 	if ( x_offset < 0 || x_offset + metrics->width  > map->width ||
 			y_offset < 0 || y_offset + metrics->height > map->rows  ) {
-		error = SFNT_Err_Invalid_Argument;
+		error = FT2_1_3_Err_Invalid_Argument;
 
 		goto Exit;
 	}
@@ -1127,7 +1127,7 @@ Load_SBit_Single( FT2_1_3_Bitmap*       map,
 			break;
 
 		default:  /* invalid format */
-			return SFNT_Err_Invalid_File_Format;
+			return FT2_1_3_Err_Invalid_File_Format;
 		}
 
 		/* Now read data and draw glyph into target pixmap       */
@@ -1203,7 +1203,7 @@ Load_SBit_Image( TT_SBit_Strike   strike,
 			break;
 
 		default:
-			return SFNT_Err_Invalid_File_Format;
+			return FT2_1_3_Err_Invalid_File_Format;
 		}
 
 		size = map->rows * map->pitch;
@@ -1233,7 +1233,7 @@ Load_SBit_Image( TT_SBit_Strike   strike,
 		break;
 
 	default: /* invalid image format */
-		return SFNT_Err_Invalid_File_Format;
+		return FT2_1_3_Err_Invalid_File_Format;
 	}
 
 	/* All right, we have a compound format.  First of all, read */
