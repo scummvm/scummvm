@@ -105,7 +105,7 @@ Globals *g_globals;
 
 static bool checkForSIMDExtensions() {
 #if defined(__x86_64__) || defined(__i686__)
-#ifdef __GNUC__
+#  ifdef __GNUC__
 	int c_ecx, c_edx;
 	asm (".intel_syntax;"
 		 "movq rax,0;"
@@ -117,7 +117,7 @@ static bool checkForSIMDExtensions() {
 		 : "r"
 		 : "eax", "ebx", "ecx", "edx");
 	return c_edx & (1 << 25); // SSE2 extensions bit
-#elif _MSC_VER
+#  elif _MSC_VER
 	int c_ecx, c_edx;
 	__asm
 	{
@@ -127,9 +127,9 @@ static bool checkForSIMDExtensions() {
 		mov c_edx,edx
 	}
 	return c_edx & (1 << 25); // SSE2 extensions bit
-#else
+#  else
 	return false;
-#endif
+#  endif
 #elif defined(__aarch64__)
 	return true;
 #else
