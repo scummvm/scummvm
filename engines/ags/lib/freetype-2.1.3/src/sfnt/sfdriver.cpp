@@ -33,10 +33,12 @@
 #include "ttpost.h"
 #endif
 
+namespace AGS3 {
+namespace FreeType213 {
 
 static void*
 get_sfnt_table( TT_Face      face,
-                FT2_1_3_Sfnt_Tag  tag ) {
+				FT2_1_3_Sfnt_Tag  tag ) {
 	void*  table;
 
 
@@ -82,9 +84,9 @@ get_sfnt_table( TT_Face      face,
 
 static FT2_1_3_Error
 get_sfnt_glyph_name( TT_Face     face,
-                     FT2_1_3_UInt     glyph_index,
-                     FT2_1_3_Pointer  buffer,
-                     FT2_1_3_UInt     buffer_max ) {
+					 FT2_1_3_UInt     glyph_index,
+					 FT2_1_3_Pointer  buffer,
+					 FT2_1_3_UInt     buffer_max ) {
 	FT2_1_3_String*  gname;
 	FT2_1_3_Error    error;
 
@@ -126,13 +128,13 @@ get_sfnt_postscript_name( TT_Face  face ) {
 
 		if ( name->nameID == 6 && name->stringLength > 0 ) {
 			if ( name->platformID == 3     &&
-			        name->encodingID == 1     &&
-			        name->languageID == 0x409 )
+					name->encodingID == 1     &&
+					name->languageID == 0x409 )
 				found_win = n;
 
 			if ( name->platformID == 1 &&
-			        name->encodingID == 0 &&
-			        name->languageID == 0 )
+					name->encodingID == 0 &&
+					name->languageID == 0 )
 				found_apple = n;
 		}
 	}
@@ -151,7 +153,7 @@ get_sfnt_postscript_name( TT_Face  face ) {
 
 
 			if ( FT2_1_3_STREAM_SEEK( name->stringOffset ) ||
-			        FT2_1_3_FRAME_ENTER( name->stringLength ) ) {
+					FT2_1_3_FRAME_ENTER( name->stringLength ) ) {
 				FT2_1_3_FREE( result );
 				name->stringLength = 0;
 				name->stringOffset = 0;
@@ -185,7 +187,7 @@ get_sfnt_postscript_name( TT_Face  face ) {
 
 
 			if ( FT2_1_3_STREAM_SEEK( name->stringOffset ) ||
-			        FT2_1_3_STREAM_READ( result, len )        ) {
+					FT2_1_3_STREAM_READ( result, len )        ) {
 				name->stringOffset = 0;
 				name->stringLength = 0;
 				FT2_1_3_FREE( name->string );
@@ -207,7 +209,7 @@ Exit:
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Module_Interface )
 sfnt_get_interface( FT2_1_3_Module    module,
-                    const char*  module_interface ) {
+					const char*  module_interface ) {
 	FT2_1_3_UNUSED( module );
 
 	if ( ft_strcmp( module_interface, "get_sfnt" ) == 0 )
@@ -311,5 +313,7 @@ const FT2_1_3_Module_Class  sfnt_module_class = {
 	(FT2_1_3_Module_Requester)  sfnt_get_interface
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

@@ -38,11 +38,13 @@
 #define FT2_1_3_COMPONENT  trace_sfobjs
 
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /* convert a UTF-16 name entry to ASCII */
 static FT2_1_3_String*
 tt_name_entry_ascii_from_utf16( TT_NameEntry  entry,
-                                FT2_1_3_Memory     memory ) {
+								FT2_1_3_Memory     memory ) {
 	FT2_1_3_String*  string;
 	FT2_1_3_UInt     len, code, n;
 	FT2_1_3_Byte*    read = (FT2_1_3_Byte*)entry->string;
@@ -70,7 +72,7 @@ tt_name_entry_ascii_from_utf16( TT_NameEntry  entry,
 /* convert a UCS-4 name entry to ASCII */
 static FT2_1_3_String*
 tt_name_entry_ascii_from_ucs4( TT_NameEntry  entry,
-                               FT2_1_3_Memory     memory ) {
+							   FT2_1_3_Memory     memory ) {
 	FT2_1_3_String*  string;
 	FT2_1_3_UInt     len, code, n;
 	FT2_1_3_Byte*    read = (FT2_1_3_Byte*)entry->string;
@@ -98,7 +100,7 @@ tt_name_entry_ascii_from_ucs4( TT_NameEntry  entry,
 /* convert an Apple Roman or symbol name entry to ASCII */
 static FT2_1_3_String*
 tt_name_entry_ascii_from_other( TT_NameEntry  entry,
-                                FT2_1_3_Memory     memory ) {
+								FT2_1_3_Memory     memory ) {
 	FT2_1_3_String*  string;
 	FT2_1_3_UInt     len, code, n;
 	FT2_1_3_Byte*    read = (FT2_1_3_Byte*)entry->string;
@@ -124,7 +126,7 @@ tt_name_entry_ascii_from_other( TT_NameEntry  entry,
 
 
 typedef FT2_1_3_String*  (*TT_NameEntry_ConvertFunc)( TT_NameEntry  entry,
-        FT2_1_3_Memory     memory );
+		FT2_1_3_Memory     memory );
 
 
 /*************************************************************************/
@@ -145,7 +147,7 @@ typedef FT2_1_3_String*  (*TT_NameEntry_ConvertFunc)( TT_NameEntry  entry,
 /*                                                                       */
 static FT2_1_3_String*
 tt_face_get_name( TT_Face    face,
-                  FT2_1_3_UShort  nameid ) {
+				  FT2_1_3_UShort  nameid ) {
 	FT2_1_3_Memory         memory = face->root.memory;
 	FT2_1_3_String*        result = NULL;
 	FT2_1_3_UShort         n;
@@ -243,8 +245,8 @@ tt_face_get_name( TT_Face    face,
 
 
 			if ( FT2_1_3_NEW_ARRAY  ( rec->string, rec->stringLength ) ||
-			        FT2_1_3_STREAM_SEEK( rec->stringOffset )              ||
-			        FT2_1_3_STREAM_READ( rec->string, rec->stringLength ) ) {
+					FT2_1_3_STREAM_SEEK( rec->stringOffset )              ||
+					FT2_1_3_STREAM_READ( rec->string, rec->stringLength ) ) {
 				FT2_1_3_FREE( rec->string );
 				rec->stringLength = 0;
 				result            = NULL;
@@ -262,7 +264,7 @@ Exit:
 
 static FT2_1_3_Encoding
 sfnt_find_encoding( int  platform_id,
-                    int  encoding_id ) {
+					int  encoding_id ) {
 	typedef struct  TEncoding {
 		int          platform_id;
 		int          encoding_id;
@@ -297,7 +299,7 @@ sfnt_find_encoding( int  platform_id,
 	for ( ; cur < limit; cur++ ) {
 		if ( cur->platform_id == platform_id ) {
 			if ( cur->encoding_id == encoding_id ||
-			        cur->encoding_id == -1          )
+					cur->encoding_id == -1          )
 				return cur->encoding;
 		}
 	}
@@ -308,10 +310,10 @@ sfnt_find_encoding( int  platform_id,
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 sfnt_init_face( FT2_1_3_Stream      stream,
-                TT_Face        face,
-                FT2_1_3_Int         face_index,
-                FT2_1_3_Int         num_params,
-                FT2_1_3_Parameter*  params ) {
+				TT_Face        face,
+				FT2_1_3_Int         face_index,
+				FT2_1_3_Int         num_params,
+				FT2_1_3_Parameter*  params ) {
 	FT2_1_3_Error         error;
 	FT2_1_3_Library       library = face->root.driver->root.library;
 	SFNT_Service     sfnt;
@@ -336,7 +338,7 @@ sfnt_init_face( FT2_1_3_Stream      stream,
 
 	if ( !face->psnames ) {
 		face->psnames = (PSNames_Service)
-		                FT2_1_3_Get_Module_Interface( library, "psnames" );
+						FT2_1_3_Get_Module_Interface( library, "psnames" );
 	}
 
 	/* check that we have a valid TrueType file */
@@ -363,15 +365,15 @@ Exit:
 
 #undef  LOAD_
 #define LOAD_( x )  ( ( error = sfnt->load_##x( face, stream ) ) \
-                      != SFNT_Err_Ok )
+					  != SFNT_Err_Ok )
 
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 sfnt_load_face( FT2_1_3_Stream      stream,
-                TT_Face        face,
-                FT2_1_3_Int         face_index,
-                FT2_1_3_Int         num_params,
-                FT2_1_3_Parameter*  params ) {
+				TT_Face        face,
+				FT2_1_3_Int         face_index,
+				FT2_1_3_Int         num_params,
+				FT2_1_3_Parameter*  params ) {
 	FT2_1_3_Error      error;
 	FT2_1_3_Bool       has_outline;
 	FT2_1_3_Bool       is_apple_sbit;
@@ -403,11 +405,11 @@ sfnt_load_face( FT2_1_3_Stream      stream,
 	/* do we have outlines in there? */
 #ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
 	has_outline   = FT2_1_3_BOOL( face->root.internal->incremental_interface != 0 ||
-	                         tt_face_lookup_table( face, TTAG_glyf ) != 0         ||
-	                         tt_face_lookup_table( face, TTAG_CFF ) != 0          );
+							 tt_face_lookup_table( face, TTAG_glyf ) != 0         ||
+							 tt_face_lookup_table( face, TTAG_CFF ) != 0          );
 #else
 	has_outline   = FT2_1_3_BOOL( tt_face_lookup_table( face, TTAG_glyf ) != 0 ||
-	                         tt_face_lookup_table( face, TTAG_CFF ) != 0  );
+							 tt_face_lookup_table( face, TTAG_CFF ) != 0  );
 #endif
 
 	is_apple_sbit = 0;
@@ -469,15 +471,15 @@ sfnt_load_face( FT2_1_3_Stream      stream,
 #endif /* TT_CONFIG_OPTION_EMBEDDED_BITMAPS */
 
 	if ( LOAD_( hdmx )    ||
-	        LOAD_( gasp )    ||
-	        LOAD_( kerning ) ||
-	        LOAD_( pclt )    )
+			LOAD_( gasp )    ||
+			LOAD_( kerning ) ||
+			LOAD_( pclt )    )
 		goto Exit;
 
 	face->root.family_name = tt_face_get_name( face,
-	                         TT_NAME_ID_FONT_FAMILY );
+							 TT_NAME_ID_FONT_FAMILY );
 	face->root.style_name  = tt_face_get_name( face,
-	                         TT_NAME_ID_FONT_SUBFAMILY );
+							 TT_NAME_ID_FONT_SUBFAMILY );
 
 	/* now set up root fields */
 	{
@@ -496,7 +498,7 @@ sfnt_load_face( FT2_1_3_Stream      stream,
 			flags = FT2_1_3_FACE_FLAG_SCALABLE;    /* scalable outlines */
 
 		flags |= FT2_1_3_FACE_FLAG_SFNT      |   /* SFNT file format  */
-		         FT2_1_3_FACE_FLAG_HORIZONTAL;   /* horizontal data   */
+				 FT2_1_3_FACE_FLAG_HORIZONTAL;   /* horizontal data   */
 
 #ifdef TT_CONFIG_OPTION_POSTSCRIPT_NAMES
 		/* might need more polish to detect the presence of a Postscript */
@@ -562,11 +564,11 @@ sfnt_load_face( FT2_1_3_Stream      stream,
 
 
 				charmap->encoding = sfnt_find_encoding( charmap->platform_id,
-				                                        charmap->encoding_id );
+														charmap->encoding_id );
 
 #if 0
 				if ( root->charmap     == NULL &&
-				        charmap->encoding == FT2_1_3_ENCODING_UNICODE ) {
+						charmap->encoding == FT2_1_3_ENCODING_UNICODE ) {
 					/* set 'root->charmap' to the first Unicode encoding we find */
 					root->charmap = charmap;
 				}
@@ -598,10 +600,10 @@ sfnt_load_face( FT2_1_3_Stream      stream,
 
 			for ( n = 0 ; n < face->num_sbit_strikes ; n++ ) {
 				root->available_sizes[n].width =
-				    face->sbit_strikes[n].x_ppem;
+					face->sbit_strikes[n].x_ppem;
 
 				root->available_sizes[n].height =
-				    face->sbit_strikes[n].y_ppem;
+					face->sbit_strikes[n].y_ppem;
 			}
 		} else
 
@@ -661,7 +663,7 @@ sfnt_load_face( FT2_1_3_Stream      stream,
 			root->descender = face->horizontal.Descender;
 
 			root->height    = (FT2_1_3_Short)( root->ascender - root->descender +
-			                              face->horizontal.Line_Gap );
+										  face->horizontal.Line_Gap );
 
 			/* if the line_gap is 0, we add an extra 15% to the text height --  */
 			/* this computation is based on various versions of Times New Roman */
@@ -689,8 +691,8 @@ sfnt_load_face( FT2_1_3_Stream      stream,
 			root->max_advance_width   = face->horizontal.advance_Width_Max;
 
 			root->max_advance_height  = (FT2_1_3_Short)( face->vertical_info
-			                                        ? face->vertical.advance_Height_Max
-			                                        : root->height );
+													? face->vertical.advance_Height_Max
+													: root->height );
 
 			root->underline_position  = face->postscript.underlinePosition;
 			root->underline_thickness = face->postscript.underlineThickness;
@@ -778,5 +780,7 @@ sfnt_done_face( TT_Face  face ) {
 	face->sfnt = 0;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

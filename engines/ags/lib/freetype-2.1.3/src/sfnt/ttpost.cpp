@@ -43,6 +43,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_ttpost
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /* If this configuration macro is defined, we rely on the `PSNames' */
 /* module to grab the glyph names.                                  */
@@ -153,7 +155,7 @@ static const FT2_1_3_String*  tt_post_default_names[258] = {
 
 static FT2_1_3_Error
 load_format_20( TT_Face    face,
-                FT2_1_3_Stream  stream ) {
+				FT2_1_3_Stream  stream ) {
 	FT2_1_3_Memory   memory = stream->memory;
 	FT2_1_3_Error    error;
 
@@ -184,7 +186,7 @@ load_format_20( TT_Face    face,
 
 
 		if ( FT2_1_3_NEW_ARRAY ( glyph_indices, num_glyphs ) ||
-		        FT2_1_3_FRAME_ENTER( num_glyphs * 2L )          )
+				FT2_1_3_FRAME_ENTER( num_glyphs * 2L )          )
 			goto Fail;
 
 		for ( n = 0; n < num_glyphs; n++ )
@@ -226,8 +228,8 @@ load_format_20( TT_Face    face,
 
 
 			if ( FT2_1_3_READ_BYTE  ( len )                    ||
-			        FT2_1_3_NEW_ARRAY( name_strings[n], len + 1 ) ||
-			        FT2_1_3_STREAM_READ  ( name_strings[n], len ) )
+					FT2_1_3_NEW_ARRAY( name_strings[n], len + 1 ) ||
+					FT2_1_3_STREAM_READ  ( name_strings[n], len ) )
 				goto Fail1;
 
 			name_strings[n][len] = '\0';
@@ -265,7 +267,7 @@ Exit:
 
 static FT2_1_3_Error
 load_format_25( TT_Face    face,
-                FT2_1_3_Stream  stream ) {
+				FT2_1_3_Stream  stream ) {
 	FT2_1_3_Memory  memory = stream->memory;
 	FT2_1_3_Error   error;
 
@@ -284,7 +286,7 @@ load_format_25( TT_Face    face,
 	}
 
 	if ( FT2_1_3_ALLOC( offset_table, num_glyphs )       ||
-	        FT2_1_3_STREAM_READ( offset_table, num_glyphs ) )
+			FT2_1_3_STREAM_READ( offset_table, num_glyphs ) )
 		goto Fail;
 
 	/* now check the offset table */
@@ -416,8 +418,8 @@ tt_face_free_ps_names( TT_Face  face ) {
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_get_ps_name( TT_Face      face,
-                     FT2_1_3_UInt      idx,
-                     FT2_1_3_String**  PSname ) {
+					 FT2_1_3_UInt      idx,
+					 FT2_1_3_String**  PSname ) {
 	FT2_1_3_Error         error;
 	TT_Post_Names    names;
 	FT2_1_3_Fixed         format;
@@ -490,5 +492,7 @@ End:
 	return SFNT_Err_Ok;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

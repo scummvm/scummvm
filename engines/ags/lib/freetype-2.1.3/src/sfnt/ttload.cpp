@@ -36,6 +36,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_ttload
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*                                                                       */
@@ -55,17 +57,17 @@
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( TT_Table  )
 tt_face_lookup_table( TT_Face   face,
-                      FT2_1_3_ULong  tag  ) {
+					  FT2_1_3_ULong  tag  ) {
 	TT_Table  entry;
 	TT_Table  limit;
 
 
 	FT2_1_3_TRACE3(( "tt_face_lookup_table: %08p, `%c%c%c%c' -- ",
-	            face,
-	            (FT2_1_3_Char)( tag >> 24 ),
-	            (FT2_1_3_Char)( tag >> 16 ),
-	            (FT2_1_3_Char)( tag >> 8  ),
-	            (FT2_1_3_Char)( tag       ) ));
+				face,
+				(FT2_1_3_Char)( tag >> 24 ),
+				(FT2_1_3_Char)( tag >> 16 ),
+				(FT2_1_3_Char)( tag >> 8  ),
+				(FT2_1_3_Char)( tag       ) ));
 
 	entry = face->dir_tables;
 	limit = entry + face->num_tables;
@@ -107,9 +109,9 @@ tt_face_lookup_table( TT_Face   face,
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_goto_table( TT_Face    face,
-                    FT2_1_3_ULong   tag,
-                    FT2_1_3_Stream  stream,
-                    FT2_1_3_ULong*  length ) {
+					FT2_1_3_ULong   tag,
+					FT2_1_3_Stream  stream,
+					FT2_1_3_ULong*  length ) {
 	TT_Table  table;
 	FT2_1_3_Error  error;
 
@@ -147,8 +149,8 @@ Exit:
 /*                                                                        */
 static FT2_1_3_Error
 sfnt_dir_check( FT2_1_3_Stream  stream,
-                FT2_1_3_ULong   offset,
-                FT2_1_3_UInt    num_tables ) {
+				FT2_1_3_ULong   offset,
+				FT2_1_3_UInt    num_tables ) {
 	FT2_1_3_Error        error;
 	FT2_1_3_UInt         nn, has_head = 0;
 
@@ -174,9 +176,9 @@ sfnt_dir_check( FT2_1_3_Stream  stream,
 
 
 		if ( FT2_1_3_STREAM_SEEK( offset )     ||
-		        FT2_1_3_READ_ULONG ( format_tag ) ||
-		        FT2_1_3_READ_USHORT( num_tables ) ||
-		        FT2_1_3_STREAM_SKIP( 6 )          )
+				FT2_1_3_READ_ULONG ( format_tag ) ||
+				FT2_1_3_READ_USHORT( num_tables ) ||
+				FT2_1_3_STREAM_SKIP( 6 )          )
 			goto Bad_Format;
 
 		if ( offset + 12 + num_tables*16 > stream->size )
@@ -192,7 +194,7 @@ sfnt_dir_check( FT2_1_3_Stream  stream,
 			goto Bad_Format;
 
 		if ( table.Offset + table.Length > stream->size     &&
-		        table.Tag != glyx_tag && table.Tag != locx_tag )
+				table.Tag != glyx_tag && table.Tag != locx_tag )
 			goto Bad_Format;
 
 		if ( table.Tag == TTAG_head ) {
@@ -202,9 +204,9 @@ sfnt_dir_check( FT2_1_3_Stream  stream,
 			has_head = 1;
 
 			if ( table.Length != 0x36                ||
-			        FT2_1_3_STREAM_SEEK( table.Offset + 12 ) ||
-			        FT2_1_3_READ_ULONG( magic )              ||
-			        magic != 0x5F0F3CF5UL               )
+					FT2_1_3_STREAM_SEEK( table.Offset + 12 ) ||
+					FT2_1_3_READ_ULONG( magic )              ||
+					magic != 0x5F0F3CF5UL               )
 				goto Bad_Format;
 
 			if ( FT2_1_3_STREAM_SEEK( offset + 28 + 16*nn ) )
@@ -256,9 +258,9 @@ Bad_Format:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_sfnt_header( TT_Face      face,
-                          FT2_1_3_Stream    stream,
-                          FT2_1_3_Long      face_index,
-                          SFNT_Header  sfnt ) {
+						  FT2_1_3_Stream    stream,
+						  FT2_1_3_Long      face_index,
+						  SFNT_Header  sfnt ) {
 	FT2_1_3_Error   error;
 	FT2_1_3_ULong   format_tag, offset;
 	FT2_1_3_Memory  memory = stream->memory;
@@ -287,7 +289,7 @@ tt_face_load_sfnt_header( TT_Face      face,
 
 
 	FT2_1_3_TRACE2(( "tt_face_load_sfnt_header: %08p, %ld\n",
-	            face, face_index ));
+				face, face_index ));
 
 	face->ttc_header.tag     = 0;
 	face->ttc_header.version = 0;
@@ -317,7 +319,7 @@ tt_face_load_sfnt_header( TT_Face      face,
 
 		/* now read the offsets of each font in the file */
 		if ( FT2_1_3_NEW_ARRAY( face->ttc_header.offsets, face->ttc_header.count ) ||
-		        FT2_1_3_FRAME_ENTER( face->ttc_header.count * 4L )                    )
+				FT2_1_3_FRAME_ENTER( face->ttc_header.count * 4L )                    )
 			goto Exit;
 
 		for ( n = 0; n < face->ttc_header.count; n++ )
@@ -335,7 +337,7 @@ tt_face_load_sfnt_header( TT_Face      face,
 		offset = face->ttc_header.offsets[face_index];
 
 		if ( FT2_1_3_STREAM_SEEK( offset ) ||
-		        FT2_1_3_READ_LONG( format_tag )                             )
+				FT2_1_3_READ_LONG( format_tag )                             )
 			goto Exit;
 	}
 
@@ -382,8 +384,8 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_directory( TT_Face      face,
-                        FT2_1_3_Stream    stream,
-                        SFNT_Header  sfnt ) {
+						FT2_1_3_Stream    stream,
+						SFNT_Header  sfnt ) {
 	FT2_1_3_Error     error;
 	FT2_1_3_Memory    memory = stream->memory;
 
@@ -401,7 +403,7 @@ tt_face_load_directory( TT_Face      face,
 		goto Exit;
 
 	if ( FT2_1_3_STREAM_SEEK( sfnt->offset + 12 )      ||
-	        FT2_1_3_FRAME_ENTER( face->num_tables * 16L ) )
+			FT2_1_3_FRAME_ENTER( face->num_tables * 16L ) )
 		goto Exit;
 
 	entry = face->dir_tables;
@@ -415,12 +417,12 @@ tt_face_load_directory( TT_Face      face,
 		entry->Length   = FT2_1_3_GET_LONG();
 
 		FT2_1_3_TRACE2(( "  %c%c%c%c  -  %08lx  -  %08lx\n",
-		            (FT2_1_3_Char)( entry->Tag >> 24 ),
-		            (FT2_1_3_Char)( entry->Tag >> 16 ),
-		            (FT2_1_3_Char)( entry->Tag >> 8  ),
-		            (FT2_1_3_Char)( entry->Tag       ),
-		            entry->Offset,
-		            entry->Length ));
+					(FT2_1_3_Char)( entry->Tag >> 24 ),
+					(FT2_1_3_Char)( entry->Tag >> 16 ),
+					(FT2_1_3_Char)( entry->Tag >> 8  ),
+					(FT2_1_3_Char)( entry->Tag       ),
+					entry->Offset,
+					entry->Length ));
 	}
 
 	FT2_1_3_FRAME_EXIT();
@@ -474,10 +476,10 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_any( TT_Face    face,
-                  FT2_1_3_ULong   tag,
-                  FT2_1_3_Long    offset,
-                  FT2_1_3_Byte*   buffer,
-                  FT2_1_3_ULong*  length ) {
+				  FT2_1_3_ULong   tag,
+				  FT2_1_3_Long    offset,
+				  FT2_1_3_Byte*   buffer,
+				  FT2_1_3_ULong*  length ) {
 	FT2_1_3_Error   error;
 	FT2_1_3_Stream  stream;
 	TT_Table   table;
@@ -535,8 +537,8 @@ Exit:
 /*                                                                       */
 static FT2_1_3_Error
 tt_face_load_generic_header( TT_Face    face,
-                             FT2_1_3_Stream  stream,
-                             FT2_1_3_ULong   tag ) {
+							 FT2_1_3_Stream  stream,
+							 FT2_1_3_ULong   tag ) {
 	FT2_1_3_Error    error;
 	TT_Header*  header;
 
@@ -569,12 +571,12 @@ tt_face_load_generic_header( TT_Face    face,
 
 
 	FT2_1_3_TRACE2(( "tt_face_load_generic_header: "
-	            "%08p, looking up font table `%c%c%c%c'.\n",
-	            face,
-	            (FT2_1_3_Char)( tag >> 24 ),
-	            (FT2_1_3_Char)( tag >> 16 ),
-	            (FT2_1_3_Char)( tag >> 8  ),
-	            (FT2_1_3_Char)( tag       ) ));
+				"%08p, looking up font table `%c%c%c%c'.\n",
+				face,
+				(FT2_1_3_Char)( tag >> 24 ),
+				(FT2_1_3_Char)( tag >> 16 ),
+				(FT2_1_3_Char)( tag >> 8  ),
+				(FT2_1_3_Char)( tag       ) ));
 
 	error = face->goto_table( face, tag, stream, 0 );
 	if ( error ) {
@@ -598,7 +600,7 @@ Exit:
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_header( TT_Face    face,
-                     FT2_1_3_Stream  stream ) {
+					 FT2_1_3_Stream  stream ) {
 	return tt_face_load_generic_header( face, stream, TTAG_head );
 }
 
@@ -607,7 +609,7 @@ tt_face_load_header( TT_Face    face,
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_bitmap_header( TT_Face    face,
-                            FT2_1_3_Stream  stream ) {
+							FT2_1_3_Stream  stream ) {
 	return tt_face_load_generic_header( face, stream, TTAG_bhed );
 }
 
@@ -632,7 +634,7 @@ tt_face_load_bitmap_header( TT_Face    face,
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_max_profile( TT_Face    face,
-                          FT2_1_3_Stream  stream ) {
+						  FT2_1_3_Stream  stream ) {
 	FT2_1_3_Error        error;
 	TT_MaxProfile*  maxProfile = &face->max_profile;
 
@@ -704,15 +706,15 @@ tt_face_load_max_profile( TT_Face    face,
 		face->root.num_glyphs = maxProfile->numGlyphs;
 
 		face->root.internal->max_points =
-		    (FT2_1_3_UShort)MAX( maxProfile->maxCompositePoints,
-		                    maxProfile->maxPoints );
+			(FT2_1_3_UShort)MAX( maxProfile->maxCompositePoints,
+							maxProfile->maxPoints );
 
 		face->root.internal->max_contours =
-		    (FT2_1_3_Short)MAX( maxProfile->maxCompositeContours,
-		                   maxProfile->maxContours );
+			(FT2_1_3_Short)MAX( maxProfile->maxCompositeContours,
+						   maxProfile->maxContours );
 
 		face->max_components = (FT2_1_3_ULong)maxProfile->maxComponentElements +
-		                       maxProfile->maxComponentDepth;
+							   maxProfile->maxComponentDepth;
 
 		/* XXX: some fonts have maxComponents set to 0; we will */
 		/*      then use 16 of them by default.                 */
@@ -752,8 +754,8 @@ Exit:
 /*                                                                       */
 static FT2_1_3_Error
 tt_face_load_metrics( TT_Face    face,
-                      FT2_1_3_Stream  stream,
-                      FT2_1_3_Bool    vertical ) {
+					  FT2_1_3_Stream  stream,
+					  FT2_1_3_Bool    vertical ) {
 	FT2_1_3_Error   error;
 	FT2_1_3_Memory  memory = stream->memory;
 
@@ -765,8 +767,8 @@ tt_face_load_metrics( TT_Face    face,
 
 
 	FT2_1_3_TRACE2(( "TT_Load_%s_Metrics: %08p\n", vertical ? "Vertical"
-	            : "Horizontal",
-	            face ));
+				: "Horizontal",
+				face ));
 
 	if ( vertical ) {
 		/* The table is optional, quit silently if it wasn't found       */
@@ -809,16 +811,16 @@ tt_face_load_metrics( TT_Face    face,
 
 	if ( num_shorts < 0 ) {
 		FT2_1_3_ERROR(( "TT_Load_%s_Metrics: more metrics than glyphs!\n",
-		           vertical ? "Vertical"
-		           : "Horizontal" ));
+				   vertical ? "Vertical"
+				   : "Horizontal" ));
 
 		error = vertical ? SFNT_Err_Invalid_Vert_Metrics
-		        : SFNT_Err_Invalid_Horiz_Metrics;
+				: SFNT_Err_Invalid_Horiz_Metrics;
 		goto Exit;
 	}
 
 	if ( FT2_1_3_NEW_ARRAY( *longs,  num_longs  ) ||
-	        FT2_1_3_NEW_ARRAY( *shorts, num_shorts ) )
+			FT2_1_3_NEW_ARRAY( *shorts, num_shorts ) )
 		goto Exit;
 
 	if ( FT2_1_3_FRAME_ENTER( table_len ) )
@@ -886,8 +888,8 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_metrics_header( TT_Face    face,
-                             FT2_1_3_Stream  stream,
-                             FT2_1_3_Bool    vertical ) {
+							 FT2_1_3_Stream  stream,
+							 FT2_1_3_Bool    vertical ) {
 	FT2_1_3_Error        error;
 	TT_HoriHeader*  header;
 
@@ -979,7 +981,7 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_names( TT_Face    face,
-                    FT2_1_3_Stream  stream ) {
+					FT2_1_3_Stream  stream ) {
 	FT2_1_3_Error      error;
 	FT2_1_3_Memory     memory = stream->memory;
 	FT2_1_3_ULong      table_pos, table_len;
@@ -1053,7 +1055,7 @@ tt_face_load_names( TT_Face    face,
 	table->numNameRecords = 0;
 
 	if ( FT2_1_3_NEW_ARRAY( table->names, count ) ||
-	        FT2_1_3_FRAME_ENTER( count * 12 )        )
+			FT2_1_3_FRAME_ENTER( count * 12 )        )
 		goto Exit;
 
 	/* Load the name records and determine how much storage is needed */
@@ -1073,7 +1075,7 @@ tt_face_load_names( TT_Face    face,
 			/* check that the name string is within the table */
 			entry->stringOffset += table_pos + table->storageOffset;
 			if ( entry->stringOffset                       < storage_start ||
-			        entry->stringOffset + entry->stringLength > storage_limit ) {
+					entry->stringOffset + entry->stringLength > storage_limit ) {
 				/* invalid entry - ignore it */
 				entry->stringOffset = 0;
 				entry->stringLength = 0;
@@ -1151,7 +1153,7 @@ tt_face_free_names( TT_Face  face ) {
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_cmap( TT_Face    face,
-                   FT2_1_3_Stream  stream ) {
+				   FT2_1_3_Stream  stream ) {
 	FT2_1_3_Error  error;
 
 
@@ -1193,7 +1195,7 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_os2( TT_Face    face,
-                  FT2_1_3_Stream  stream ) {
+				  FT2_1_3_Stream  stream ) {
 	FT2_1_3_Error  error;
 	TT_OS2*   os2;
 
@@ -1329,7 +1331,7 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_postscript( TT_Face    face,
-                         FT2_1_3_Stream  stream ) {
+						 FT2_1_3_Stream  stream ) {
 	FT2_1_3_Error        error;
 	TT_Postscript*  post = &face->postscript;
 
@@ -1386,7 +1388,7 @@ tt_face_load_postscript( TT_Face    face,
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_pclt( TT_Face    face,
-                   FT2_1_3_Stream  stream ) {
+				   FT2_1_3_Stream  stream ) {
 	static const FT2_1_3_Frame_Field  pclt_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  TT_PCLT
@@ -1451,7 +1453,7 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_gasp( TT_Face    face,
-                   FT2_1_3_Stream  stream ) {
+				   FT2_1_3_Stream  stream ) {
 	FT2_1_3_Error   error;
 	FT2_1_3_Memory  memory = stream->memory;
 
@@ -1478,7 +1480,7 @@ tt_face_load_gasp( TT_Face    face,
 	FT2_1_3_TRACE3(( "number of ranges = %d\n", num_ranges ));
 
 	if ( FT2_1_3_NEW_ARRAY( gaspranges, num_ranges ) ||
-	        FT2_1_3_FRAME_ENTER( num_ranges * 4L )      )
+			FT2_1_3_FRAME_ENTER( num_ranges * 4L )      )
 		goto Exit;
 
 	face->gasp.gaspRanges = gaspranges;
@@ -1488,8 +1490,8 @@ tt_face_load_gasp( TT_Face    face,
 		gaspranges[j].gaspFlag = FT2_1_3_GET_USHORT();
 
 		FT2_1_3_TRACE3(( " [max:%d flag:%d]",
-		            gaspranges[j].maxPPEM,
-		            gaspranges[j].gaspFlag ));
+					gaspranges[j].maxPPEM,
+					gaspranges[j].gaspFlag ));
 	}
 	FT2_1_3_TRACE3(( "\n" ));
 
@@ -1503,7 +1505,7 @@ Exit:
 
 FT2_1_3_CALLBACK_DEF( int )
 tt_kern_pair_compare( const void*  a,
-                      const void*  b );
+					  const void*  b );
 
 
 /*************************************************************************/
@@ -1527,7 +1529,7 @@ tt_kern_pair_compare( const void*  a,
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_kern( TT_Face    face,
-                   FT2_1_3_Stream  stream ) {
+				   FT2_1_3_Stream  stream ) {
 	FT2_1_3_Error   error;
 	FT2_1_3_Memory  memory = stream->memory;
 
@@ -1579,7 +1581,7 @@ tt_face_load_kern( TT_Face    face,
 
 			/* allocate array of kerning pairs */
 			if ( FT2_1_3_NEW_ARRAY( face->kern_pairs, num_pairs ) ||
-			        FT2_1_3_FRAME_ENTER( 6L * num_pairs )            )
+					FT2_1_3_FRAME_ENTER( 6L * num_pairs )            )
 				goto Exit;
 
 			pair  = face->kern_pairs;
@@ -1607,7 +1609,7 @@ tt_face_load_kern( TT_Face    face,
 				for ( i = 1; i < num_pairs; i++, pair0++ ) {
 					if ( tt_kern_pair_compare( pair0, pair0 + 1 ) != -1 ) {
 						ft_qsort( (void*)face->kern_pairs, (int)num_pairs,
-						          sizeof ( TT_Kern0_PairRec ), tt_kern_pair_compare );
+								  sizeof ( TT_Kern0_PairRec ), tt_kern_pair_compare );
 						break;
 					}
 				}
@@ -1636,7 +1638,7 @@ Exit:
 
 FT2_1_3_CALLBACK_DEF( int )
 tt_kern_pair_compare( const void*  a,
-                      const void*  b ) {
+					  const void*  b ) {
 	TT_Kern0_Pair  pair1 = (TT_Kern0_Pair)a;
 	TT_Kern0_Pair  pair2 = (TT_Kern0_Pair)b;
 
@@ -1645,7 +1647,7 @@ tt_kern_pair_compare( const void*  a,
 
 
 	return ( index1 < index2 ? -1 :
-	         ( index1 > index2 ?  1 : 0 ));
+			 ( index1 > index2 ?  1 : 0 ));
 }
 
 
@@ -1670,7 +1672,7 @@ tt_kern_pair_compare( const void*  a,
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_hdmx( TT_Face    face,
-                   FT2_1_3_Stream  stream ) {
+				   FT2_1_3_Stream  stream ) {
 	FT2_1_3_Error   error;
 	FT2_1_3_Memory  memory = stream->memory;
 
@@ -1715,11 +1717,11 @@ tt_face_load_hdmx( TT_Face    face,
 		for ( ; cur < limit; cur++ ) {
 			/* read record */
 			if ( FT2_1_3_READ_BYTE( cur->ppem      ) ||
-			        FT2_1_3_READ_BYTE( cur->max_width ) )
+					FT2_1_3_READ_BYTE( cur->max_width ) )
 				goto Exit;
 
 			if ( FT2_1_3_ALLOC( cur->widths, num_glyphs )       ||
-			        FT2_1_3_STREAM_READ( cur->widths, num_glyphs ) )
+					FT2_1_3_STREAM_READ( cur->widths, num_glyphs ) )
 				goto Exit;
 
 			/* skip padding bytes */
@@ -1759,5 +1761,7 @@ tt_face_free_hdmx( TT_Face  face ) {
 	}
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

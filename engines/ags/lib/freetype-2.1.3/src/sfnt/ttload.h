@@ -17,91 +17,93 @@
 /***************************************************************************/
 
 
-#ifndef __TTLOAD_H__
-#define __TTLOAD_H__
+#ifndef AGS_LIB_FREETYPE_TTLOAD_H
+#define AGS_LIB_FREETYPE_TTLOAD_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftstream.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/tttypes.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
 
 FT2_1_3_LOCAL( TT_Table  )
 tt_face_lookup_table( TT_Face   face,
-                      FT2_1_3_ULong  tag );
+					  FT2_1_3_ULong  tag );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_goto_table( TT_Face    face,
-                    FT2_1_3_ULong   tag,
-                    FT2_1_3_Stream  stream,
-                    FT2_1_3_ULong*  length );
+					FT2_1_3_ULong   tag,
+					FT2_1_3_Stream  stream,
+					FT2_1_3_ULong*  length );
 
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_sfnt_header( TT_Face      face,
-                          FT2_1_3_Stream    stream,
-                          FT2_1_3_Long      face_index,
-                          SFNT_Header  sfnt );
+						  FT2_1_3_Stream    stream,
+						  FT2_1_3_Long      face_index,
+						  SFNT_Header  sfnt );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_directory( TT_Face      face,
-                        FT2_1_3_Stream    stream,
-                        SFNT_Header  sfnt );
+						FT2_1_3_Stream    stream,
+						SFNT_Header  sfnt );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_any( TT_Face    face,
-                  FT2_1_3_ULong   tag,
-                  FT2_1_3_Long    offset,
-                  FT2_1_3_Byte*   buffer,
-                  FT2_1_3_ULong*  length );
+				  FT2_1_3_ULong   tag,
+				  FT2_1_3_Long    offset,
+				  FT2_1_3_Byte*   buffer,
+				  FT2_1_3_ULong*  length );
 
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_header( TT_Face    face,
-                     FT2_1_3_Stream  stream );
+					 FT2_1_3_Stream  stream );
 
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_metrics_header( TT_Face    face,
-                             FT2_1_3_Stream  stream,
-                             FT2_1_3_Bool    vertical );
+							 FT2_1_3_Stream  stream,
+							 FT2_1_3_Bool    vertical );
 
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_cmap( TT_Face    face,
-                   FT2_1_3_Stream  stream );
+				   FT2_1_3_Stream  stream );
 
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_max_profile( TT_Face    face,
-                          FT2_1_3_Stream  stream );
+						  FT2_1_3_Stream  stream );
 
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_names( TT_Face    face,
-                    FT2_1_3_Stream  stream );
+					FT2_1_3_Stream  stream );
 
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_os2( TT_Face    face,
-                  FT2_1_3_Stream  stream );
+				  FT2_1_3_Stream  stream );
 
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_postscript( TT_Face    face,
-                         FT2_1_3_Stream  stream );
+						 FT2_1_3_Stream  stream );
 
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_hdmx( TT_Face    face,
-                   FT2_1_3_Stream  stream );
+				   FT2_1_3_Stream  stream );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_pclt( TT_Face    face,
-                   FT2_1_3_Stream  stream );
+				   FT2_1_3_Stream  stream );
 
 FT2_1_3_LOCAL( void )
 tt_face_free_names( TT_Face  face );
@@ -113,25 +115,28 @@ tt_face_free_hdmx ( TT_Face  face );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_kern( TT_Face    face,
-                   FT2_1_3_Stream  stream );
+				   FT2_1_3_Stream  stream );
 
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_gasp( TT_Face    face,
-                   FT2_1_3_Stream  stream );
+				   FT2_1_3_Stream  stream );
 
 #ifdef TT_CONFIG_OPTION_EMBEDDED_BITMAPS
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_bitmap_header( TT_Face    face,
-                            FT2_1_3_Stream  stream );
+							FT2_1_3_Stream  stream );
 
 #endif /* TT_CONFIG_OPTION_EMBEDDED_BITMAPS */
 
 
 FT2_1_3_END_HEADER
 
-#endif /* __TTLOAD_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_TTLOAD_H */
 
 
 /* END */

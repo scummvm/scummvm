@@ -17,22 +17,24 @@
 /***************************************************************************/
 
 
-#ifndef __TTPOST_H__
-#define __TTPOST_H__
+#ifndef AGS_LIB_FREETYPE_TTPOST_H
+#define AGS_LIB_FREETYPE_TTPOST_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftconfig.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/tttypes.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_get_ps_name( TT_Face      face,
-                     FT2_1_3_UInt      idx,
-                     FT2_1_3_String**  PSname );
+					 FT2_1_3_UInt      idx,
+					 FT2_1_3_String**  PSname );
 
 FT2_1_3_LOCAL( void )
 tt_face_free_ps_names( TT_Face  face );
@@ -40,7 +42,10 @@ tt_face_free_ps_names( TT_Face  face );
 
 FT2_1_3_END_HEADER
 
-#endif /* __TTPOST_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_TTPOST_H */
 
 
 /* END */

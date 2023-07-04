@@ -16,20 +16,22 @@
 /***************************************************************************/
 
 
-#ifndef __TTSBIT_H__
-#define __TTSBIT_H__
+#ifndef AGS_LIB_FREETYPE_TTSBIT_H
+#define AGS_LIB_FREETYPE_TTSBIT_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "ttload.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_sbit_strikes( TT_Face    face,
-                           FT2_1_3_Stream  stream );
+						   FT2_1_3_Stream  stream );
 
 FT2_1_3_LOCAL( void )
 tt_face_free_sbit_strikes( TT_Face  face );
@@ -37,23 +39,26 @@ tt_face_free_sbit_strikes( TT_Face  face );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_set_sbit_strike( TT_Face    face,
-                         FT2_1_3_Int     x_ppem,
-                         FT2_1_3_Int     y_ppem,
-                         FT2_1_3_ULong  *astrike_index );
+						 FT2_1_3_Int     x_ppem,
+						 FT2_1_3_Int     y_ppem,
+						 FT2_1_3_ULong  *astrike_index );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_sbit_image( TT_Face              face,
-                         FT2_1_3_ULong             strike_index,
-                         FT2_1_3_UInt              glyph_index,
-                         FT2_1_3_UInt              load_flags,
-                         FT2_1_3_Stream            stream,
-                         FT2_1_3_Bitmap           *map,
-                         TT_SBit_MetricsRec  *metrics );
+						 FT2_1_3_ULong             strike_index,
+						 FT2_1_3_UInt              glyph_index,
+						 FT2_1_3_UInt              load_flags,
+						 FT2_1_3_Stream            stream,
+						 FT2_1_3_Bitmap           *map,
+						 TT_SBit_MetricsRec  *metrics );
 
 
 FT2_1_3_END_HEADER
 
-#endif /* __TTSBIT_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_TTSBIT_H */
 
 
 /* END */

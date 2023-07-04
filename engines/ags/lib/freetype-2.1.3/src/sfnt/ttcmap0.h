@@ -16,14 +16,17 @@
 /***************************************************************************/
 
 
-#ifndef __TTCMAP0_H__
-#define __TTCMAP0_H__
+#ifndef AGS_LIB_FREETYPE_TTCMAP0_H
+#define AGS_LIB_FREETYPE_TTCMAP0_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/tttypes.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
 
+
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -38,7 +41,7 @@ typedef const struct TT_CMap_ClassRec_*  TT_CMap_Class;
 
 typedef FT2_1_3_Error
 (*TT_CMap_ValidateFunc)( FT2_1_3_Byte*      data,
-                         FT2_1_3_Validator  valid );
+						 FT2_1_3_Validator  valid );
 
 typedef struct  TT_CMap_ClassRec_ {
 	FT2_1_3_CMap_ClassRec      clazz;
@@ -65,7 +68,10 @@ tt_face_build_cmaps( TT_Face  face );
 
 FT2_1_3_END_HEADER
 
-#endif /* __TTCMAP0_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_TTCMAP0_H */
 
 
 /* END */

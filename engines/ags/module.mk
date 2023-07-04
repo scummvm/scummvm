@@ -94,7 +94,13 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/src/psnames/psmodule.o \
 	lib/freetype-2.1.3/src/raster/ftraster.o \
 	lib/freetype-2.1.3/src/raster/ftrend1.o \
-	lib/freetype-2.1.3/src/sfnt/sfnt.o \
+	lib/freetype-2.1.3/src/sfnt/ttload.o \
+	lib/freetype-2.1.3/src/sfnt/ttcmap.o \
+	lib/freetype-2.1.3/src/sfnt/ttcmap0.o \
+	lib/freetype-2.1.3/src/sfnt/sfobjs.o \
+	lib/freetype-2.1.3/src/sfnt/sfdriver.o \
+	lib/freetype-2.1.3/src/sfnt/ttsbit.o \
+	lib/freetype-2.1.3/src/sfnt/ttpost.o \
 	lib/freetype-2.1.3/src/smooth/smooth.o \
 	lib/freetype-2.1.3/src/truetype/truetype.o \
 	lib/freetype-2.1.3/src/type1/type1.o \

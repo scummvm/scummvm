@@ -34,6 +34,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_ttcmap
 
+namespace AGS3 {
+namespace FreeType213 {
 
 #define TT_PEEK_SHORT   FT2_1_3_PEEK_SHORT
 #define TT_PEEK_USHORT  FT2_1_3_PEEK_USHORT
@@ -48,7 +50,7 @@
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 tt_cmap_init( TT_CMap   cmap,
-              FT2_1_3_Byte*  table ) {
+			  FT2_1_3_Byte*  table ) {
 	cmap->data = table;
 	return 0;
 }
@@ -80,7 +82,7 @@ tt_cmap_init( TT_CMap   cmap,
 
 FT2_1_3_CALLBACK_DEF( void )
 tt_cmap0_validate( FT2_1_3_Byte*      table,
-                   FT2_1_3_Validator  valid ) {
+				   FT2_1_3_Validator  valid ) {
 	FT2_1_3_Byte*  p      = table + 2;
 	FT2_1_3_UInt   length = TT_NEXT_USHORT( p );
 
@@ -105,7 +107,7 @@ tt_cmap0_validate( FT2_1_3_Byte*      table,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 tt_cmap0_char_index( TT_CMap    cmap,
-                     FT2_1_3_UInt32  char_code ) {
+					 FT2_1_3_UInt32  char_code ) {
 	FT2_1_3_Byte*  table = cmap->data;
 
 
@@ -115,7 +117,7 @@ tt_cmap0_char_index( TT_CMap    cmap,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 tt_cmap0_char_next( TT_CMap     cmap,
-                    FT2_1_3_UInt32  *pchar_code ) {
+					FT2_1_3_UInt32  *pchar_code ) {
 	FT2_1_3_Byte*   table    = cmap->data;
 	FT2_1_3_UInt32  charcode = *pchar_code;
 	FT2_1_3_UInt32  result   = 0;
@@ -243,7 +245,7 @@ const TT_CMap_ClassRec  tt_cmap0_class_rec = {
 
 FT2_1_3_CALLBACK_DEF( void )
 tt_cmap2_validate( FT2_1_3_Byte*      table,
-                   FT2_1_3_Validator  valid ) {
+				   FT2_1_3_Validator  valid ) {
 	FT2_1_3_Byte*  p      = table + 2;           /* skip format */
 	FT2_1_3_UInt   length = TT_PEEK_USHORT( p );
 	FT2_1_3_UInt   n, max_subs;
@@ -329,7 +331,7 @@ tt_cmap2_validate( FT2_1_3_Byte*      table,
 /* NULL on invalid charcode                                  */
 static FT2_1_3_Byte*
 tt_cmap2_get_subheader( FT2_1_3_Byte*   table,
-                        FT2_1_3_UInt32  char_code ) {
+						FT2_1_3_UInt32  char_code ) {
 	FT2_1_3_Byte*  result = NULL;
 
 
@@ -372,7 +374,7 @@ Exit:
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 tt_cmap2_char_index( TT_CMap    cmap,
-                     FT2_1_3_UInt32  char_code ) {
+					 FT2_1_3_UInt32  char_code ) {
 	FT2_1_3_Byte*  table   = cmap->data;
 	FT2_1_3_UInt   result  = 0;
 	FT2_1_3_Byte*  subheader;
@@ -407,7 +409,7 @@ tt_cmap2_char_index( TT_CMap    cmap,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 tt_cmap2_char_next( TT_CMap     cmap,
-                    FT2_1_3_UInt32  *pcharcode ) {
+					FT2_1_3_UInt32  *pcharcode ) {
 	FT2_1_3_Byte*   table    = cmap->data;
 	FT2_1_3_UInt    gindex   = 0;
 	FT2_1_3_UInt32  result   = 0;
@@ -556,7 +558,7 @@ const TT_CMap_ClassRec  tt_cmap2_class_rec = {
 
 FT2_1_3_CALLBACK_DEF( void )
 tt_cmap4_validate( FT2_1_3_Byte*      table,
-                   FT2_1_3_Validator  valid ) {
+				   FT2_1_3_Validator  valid ) {
 	FT2_1_3_Byte*  p      = table + 2;               /* skip format */
 	FT2_1_3_UInt   length = TT_NEXT_USHORT( p );
 	FT2_1_3_Byte   *ends, *starts, *offsets, *deltas, *glyph_ids;
@@ -604,9 +606,9 @@ tt_cmap4_validate( FT2_1_3_Byte*      table,
 		/* `search range' is the greatest power of 2 that is <= num_segs */
 
 		if ( search_range                > num_segs                 ||
-		        search_range * 2            < num_segs                 ||
-		        search_range + range_shift != num_segs                 ||
-		        search_range               != ( 1U << entry_selector ) )
+				search_range * 2            < num_segs                 ||
+				search_range + range_shift != num_segs                 ||
+				search_range               != ( 1U << entry_selector ) )
 			FT2_1_3_INVALID_DATA;
 	}
 
@@ -660,7 +662,7 @@ tt_cmap4_validate( FT2_1_3_Byte*      table,
 
 				/* check that we point within the glyph ids table only */
 				if ( p < glyph_ids                                ||
-				        p + ( end - start + 1 ) * 2 > table + length )
+						p + ( end - start + 1 ) * 2 > table + length )
 					FT2_1_3_INVALID_DATA;
 
 				/* check glyph indices within the segment range */
@@ -683,8 +685,8 @@ tt_cmap4_validate( FT2_1_3_Byte*      table,
 				/* to mean missing glyph in cmap table                    */
 				/*                                                        */
 				if ( valid->level >= FT2_1_3_VALIDATE_PARANOID                     ||
-				        n != num_segs - 1                                        ||
-				        !( start == 0xFFFFU && end == 0xFFFFU && delta == 0x1U ) )
+						n != num_segs - 1                                        ||
+						!( start == 0xFFFFU && end == 0xFFFFU && delta == 0x1U ) )
 					FT2_1_3_INVALID_DATA;
 			}
 
@@ -696,7 +698,7 @@ tt_cmap4_validate( FT2_1_3_Byte*      table,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 tt_cmap4_char_index( TT_CMap    cmap,
-                     FT2_1_3_UInt32  char_code ) {
+					 FT2_1_3_UInt32  char_code ) {
 	FT2_1_3_Byte*  table  = cmap->data;
 	FT2_1_3_UInt   result = 0;
 
@@ -813,7 +815,7 @@ Exit:
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 tt_cmap4_char_next( TT_CMap     cmap,
-                    FT2_1_3_UInt32  *pchar_code ) {
+					FT2_1_3_UInt32  *pchar_code ) {
 	FT2_1_3_Byte*   table     = cmap->data;
 	FT2_1_3_UInt32  result    = 0;
 	FT2_1_3_UInt32  char_code = *pchar_code + 1;
@@ -940,7 +942,7 @@ const TT_CMap_ClassRec  tt_cmap4_class_rec = {
 
 FT2_1_3_CALLBACK_DEF( void )
 tt_cmap6_validate( FT2_1_3_Byte*      table,
-                   FT2_1_3_Validator  valid ) {
+				   FT2_1_3_Validator  valid ) {
 	FT2_1_3_Byte*  p;
 	FT2_1_3_UInt   length, start, count;
 
@@ -974,7 +976,7 @@ tt_cmap6_validate( FT2_1_3_Byte*      table,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 tt_cmap6_char_index( TT_CMap    cmap,
-                     FT2_1_3_UInt32  char_code ) {
+					 FT2_1_3_UInt32  char_code ) {
 	FT2_1_3_Byte*  table  = cmap->data;
 	FT2_1_3_UInt   result = 0;
 	FT2_1_3_Byte*  p      = table + 6;
@@ -993,7 +995,7 @@ tt_cmap6_char_index( TT_CMap    cmap,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 tt_cmap6_char_next( TT_CMap     cmap,
-                    FT2_1_3_UInt32  *pchar_code ) {
+					FT2_1_3_UInt32  *pchar_code ) {
 	FT2_1_3_Byte*   table     = cmap->data;
 	FT2_1_3_UInt32  result    = 0;
 	FT2_1_3_UInt32  char_code = *pchar_code + 1;
@@ -1104,7 +1106,7 @@ const TT_CMap_ClassRec  tt_cmap6_class_rec = {
 
 FT2_1_3_CALLBACK_DEF( void )
 tt_cmap8_validate( FT2_1_3_Byte*      table,
-                   FT2_1_3_Validator  valid ) {
+				   FT2_1_3_Validator  valid ) {
 	FT2_1_3_Byte*   p = table + 4;
 	FT2_1_3_Byte*   is32;
 	FT2_1_3_UInt32  length;
@@ -1188,7 +1190,7 @@ tt_cmap8_validate( FT2_1_3_Byte*      table,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 tt_cmap8_char_index( TT_CMap    cmap,
-                     FT2_1_3_UInt32  char_code ) {
+					 FT2_1_3_UInt32  char_code ) {
 	FT2_1_3_Byte*   table      = cmap->data;
 	FT2_1_3_UInt    result     = 0;
 	FT2_1_3_Byte*   p          = table + 8204;
@@ -1215,7 +1217,7 @@ tt_cmap8_char_index( TT_CMap    cmap,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 tt_cmap8_char_next( TT_CMap     cmap,
-                    FT2_1_3_UInt32  *pchar_code ) {
+					FT2_1_3_UInt32  *pchar_code ) {
 	FT2_1_3_UInt32  result     = 0;
 	FT2_1_3_UInt32  char_code  = *pchar_code + 1;
 	FT2_1_3_UInt    gindex     = 0;
@@ -1296,7 +1298,7 @@ const TT_CMap_ClassRec  tt_cmap8_class_rec = {
 
 FT2_1_3_CALLBACK_DEF( void )
 tt_cmap10_validate( FT2_1_3_Byte*      table,
-                    FT2_1_3_Validator  valid ) {
+					FT2_1_3_Validator  valid ) {
 	FT2_1_3_Byte*  p = table + 4;
 	FT2_1_3_ULong  length, start, count;
 
@@ -1328,7 +1330,7 @@ tt_cmap10_validate( FT2_1_3_Byte*      table,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 tt_cmap10_char_index( TT_CMap    cmap,
-                      FT2_1_3_UInt32  char_code ) {
+					  FT2_1_3_UInt32  char_code ) {
 	FT2_1_3_Byte*   table  = cmap->data;
 	FT2_1_3_UInt    result = 0;
 	FT2_1_3_Byte*   p      = table + 12;
@@ -1347,7 +1349,7 @@ tt_cmap10_char_index( TT_CMap    cmap,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 tt_cmap10_char_next( TT_CMap     cmap,
-                     FT2_1_3_UInt32  *pchar_code ) {
+					 FT2_1_3_UInt32  *pchar_code ) {
 	FT2_1_3_Byte*   table     = cmap->data;
 	FT2_1_3_UInt32  result    = 0;
 	FT2_1_3_UInt32  char_code = *pchar_code + 1;
@@ -1428,7 +1430,7 @@ const TT_CMap_ClassRec  tt_cmap10_class_rec = {
 
 FT2_1_3_CALLBACK_DEF( void )
 tt_cmap12_validate( FT2_1_3_Byte*      table,
-                    FT2_1_3_Validator  valid ) {
+					FT2_1_3_Validator  valid ) {
 	FT2_1_3_Byte*   p;
 	FT2_1_3_ULong   length;
 	FT2_1_3_ULong   num_groups;
@@ -1475,7 +1477,7 @@ tt_cmap12_validate( FT2_1_3_Byte*      table,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 tt_cmap12_char_index( TT_CMap    cmap,
-                      FT2_1_3_UInt32  char_code ) {
+					  FT2_1_3_UInt32  char_code ) {
 	FT2_1_3_UInt    result     = 0;
 	FT2_1_3_Byte*   table      = cmap->data;
 	FT2_1_3_Byte*   p          = table + 12;
@@ -1502,7 +1504,7 @@ tt_cmap12_char_index( TT_CMap    cmap,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 tt_cmap12_char_next( TT_CMap     cmap,
-                     FT2_1_3_UInt32  *pchar_code ) {
+					 FT2_1_3_UInt32  *pchar_code ) {
 	FT2_1_3_Byte*   table      = cmap->data;
 	FT2_1_3_UInt32  result     = 0;
 	FT2_1_3_UInt32  char_code  = *pchar_code + 1;
@@ -1606,7 +1608,7 @@ tt_face_build_cmaps( TT_Face  face ) {
 	if ( TT_NEXT_USHORT( p ) != 0 ) {
 		p -= 2;
 		FT2_1_3_ERROR(( "tt_face_build_cmaps: unsupported `cmap' table format = %d\n",
-		           TT_PEEK_USHORT( p ) ));
+				   TT_PEEK_USHORT( p ) ));
 		return FT2_1_3_Err_Invalid_Table;
 	}
 
@@ -1637,7 +1639,7 @@ tt_face_build_cmaps( TT_Face  face ) {
 
 
 					ft_validator_init( FT2_1_3_VALIDATOR( &valid ), cmap, limit,
-					                   FT2_1_3_VALIDATE_DEFAULT );
+									   FT2_1_3_VALIDATE_DEFAULT );
 
 					valid.num_glyphs = (FT2_1_3_UInt)face->root.num_glyphs;
 
@@ -1660,5 +1662,7 @@ tt_face_build_cmaps( TT_Face  face ) {
 	return 0;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

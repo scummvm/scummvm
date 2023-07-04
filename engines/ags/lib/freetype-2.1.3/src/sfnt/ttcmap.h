@@ -16,28 +16,33 @@
 /***************************************************************************/
 
 
-#ifndef __TTCMAP_H__
-#define __TTCMAP_H__
+#ifndef AGS_LIB_FREETYPE_TTCMAP_H
+#define AGS_LIB_FREETYPE_TTCMAP_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/tttypes.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_load_charmap( TT_Face       face,
-                      TT_CMapTable  cmap,
-                      FT2_1_3_Stream     input );
+					  TT_CMapTable  cmap,
+					  FT2_1_3_Stream     input );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_free_charmap( TT_Face       face,
-                      TT_CMapTable  cmap );
+					  TT_CMapTable  cmap );
 
 
 FT2_1_3_END_HEADER
+
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 #endif /* __TTCMAP_H__ */
 
