@@ -46,7 +46,7 @@ using namespace AGS::Shared;
 // Comment this out if you don't want the console to be clogged with info durning tests
 #define VERBOSE_TEST_GFX
 
-void Test_GfxSpeed(bool opt) {
+void Test_GfxSpeed(bool opt, int blenderModeStart, int blenderModeEnd) {
 	_G(_bitmap_simd_optimizations) = opt;
 #ifdef VERBOSE_TEST_GFX
 	if (opt) printf("SIMD optimizations: true\n");
@@ -68,7 +68,7 @@ void Test_GfxSpeed(bool opt) {
 	for (int dest = 0; dest < 3; dest++) {
 		for (int gfx = 0; gfx < 3; gfx++) {
 			if (dest == 2 && gfx != 2) continue;
-			for (int mode = 0; mode < sizeof(blenderModes) / sizeof(int); mode++) {
+			for (int mode = blenderModeStart; mode <= blenderModeEnd; mode++) {
 				for (int runs = 0; runs < sizeof(benchRuns)/sizeof(int); runs++) {
 					uint32 start, end;
 					_G(_blender_mode) = (AGS3::BlenderMode)blenderModes[mode];
@@ -240,12 +240,16 @@ void Test_GfxTransparency() {
 }
 
 void Test_Gfx() {
-	//Test_GfxTransparency();
+	Test_GfxTransparency();
 	Test_DrawingLoops();
-	//Test_BlenderModes();
-	// This could take a LONG time depending if you don't have SIMD ISA extentions (NEON or x86 atm)
-	//Test_GfxSpeed(false);
-	//Test_GfxSpeed(true);
+	Test_BlenderModes();
+	// This could take a LONG time
+	bool has_simd = _G(_bitmap_simd_optimizations);
+	Test_GfxSpeed(false, 0, kTintLightBlenderMode);
+	if (has_simd) {
+		Test_GfxSpeed(true, 0, kTintLightBlenderMode);
+	}
+	_G(_bitmap_simd_optimizations) = has_simd;
 }
 
 } // namespace AGS3

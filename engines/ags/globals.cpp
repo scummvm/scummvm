@@ -103,10 +103,45 @@ namespace AGS3 {
 
 Globals *g_globals;
 
+static bool checkForSIMDExtensions() {
+#if defined(__x86_64__) || defined(__i686__)
+#ifdef __GNUC__
+	int c_ecx, c_edx;
+	asm (".intel_syntax;"
+		 "movq rax,0;"
+		 "cpuid;"
+		 "mov %0,ecx;"
+		 "mov %1,edx;"
+		 ".att_syntax;"
+		 : "=r" (c_ecx), "=r" (c_edx)
+		 : "r"
+		 : "eax", "ebx", "ecx", "edx");
+	return c_edx & (1 << 25); // SSE2 extensions bit
+#elif _MSC_VER
+	int c_ecx, c_edx;
+	__asm
+	{
+		mov rax,0
+		cpuid
+		mov c_ecx,ecx
+		mov c_edx,edx
+	}
+	return c_edx & (1 << 25); // SSE2 extensions bit
+#else
+	return false;
+#endif
+#elif defined(__aarch64__)
+	return true;
+#else
+	return false;
+#endif
+}
+
 Globals::Globals() {
 	g_globals = this;
 
 	// Allegro globals
+	__bitmap_simd_optimizations = checkForSIMDExtensions();
 	Common::fill((byte *)&_black_palette, (byte *)&_black_palette + PAL_SIZE, 0);
 	Common::fill((byte *)&_current_palette, (byte *)&_current_palette + PAL_SIZE, 0);
 	Common::fill((byte *)&_prev_current_palette, (byte *)&_prev_current_palette + PAL_SIZE, 0);
