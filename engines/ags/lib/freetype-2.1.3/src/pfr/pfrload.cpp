@@ -87,7 +87,7 @@ Exit:
 
 Too_Short:
 	FT2_1_3_ERROR(( "pfr_extra_items_parse: invalid extra items table\n" ));
-	error = PFR_Err_Invalid_Table;
+	error = FT2_1_3_Err_Invalid_Table;
 	goto Exit;
 }
 
@@ -225,7 +225,7 @@ pfr_log_font_load( PFR_LogFont  log_font,
 		goto Exit;
 
 	if ( idx >= num_log_fonts )
-		return PFR_Err_Invalid_Argument;
+		return FT2_1_3_Err_Invalid_Argument;
 
 	if ( FT2_1_3_STREAM_SKIP( idx * 5 ) ||
 			FT2_1_3_READ_USHORT( size )      ||
@@ -312,7 +312,7 @@ Exit:
 
 Too_Short:
 	FT2_1_3_ERROR(( "pfr_log_font_load: invalid logical font table\n" ));
-	error = PFR_Err_Invalid_Table;
+	error = FT2_1_3_Err_Invalid_Table;
 	goto Fail;
 }
 
@@ -406,7 +406,7 @@ Exit:
 	return error;
 
 Too_Short:
-	error = PFR_Err_Invalid_Table;
+	error = FT2_1_3_Err_Invalid_Table;
 	FT2_1_3_ERROR(( "pfr_extra_item_load_bitmap_info: invalid bitmap info table\n" ));
 	goto Exit;
 }
@@ -473,7 +473,7 @@ Exit:
 	return error;
 
 Too_Short:
-	error = PFR_Err_Invalid_Table;
+	error = FT2_1_3_Err_Invalid_Table;
 	FT2_1_3_ERROR(( "pfr_exta_item_load_stem_snaps: invalid stem snaps table\n" ));
 	goto Exit;
 }
@@ -550,7 +550,7 @@ Exit:
 	return error;
 
 Too_Short:
-	error = PFR_Err_Invalid_Table;
+	error = FT2_1_3_Err_Invalid_Table;
 	FT2_1_3_ERROR(( "pfr_extra_item_load_kerning_pairs: "
 			   "invalid kerning pairs table\n" ));
 	goto Exit;
@@ -641,7 +641,7 @@ Exit:
 Too_Short:
 	FT2_1_3_FREE( item );
 
-	error = PFR_Err_Invalid_Table;
+	error = FT2_1_3_Err_Invalid_Table;
 	FT2_1_3_ERROR(( "pfr_extra_item_load_kerning_pairs: "
 			   "invalid kerning pairs table\n" ));
 	goto Exit;
@@ -851,7 +851,7 @@ Exit:
 	return error;
 
 Too_Short:
-	error = PFR_Err_Invalid_Table;
+	error = FT2_1_3_Err_Invalid_Table;
 	FT2_1_3_ERROR(( "pfr_phy_font_load: invalid physical font table\n" ));
 	goto Fail;
 }

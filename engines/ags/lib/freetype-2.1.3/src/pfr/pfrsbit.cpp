@@ -442,7 +442,7 @@ Exit:
 	return error;
 
 Too_Short:
-	error = PFR_Err_Invalid_Table;
+	error = FT2_1_3_Err_Invalid_Table;
 	FT2_1_3_ERROR(( "pfr_load_bitmap_metrics: invalid glyph data\n" ));
 	goto Exit;
 }

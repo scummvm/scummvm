@@ -68,7 +68,7 @@ pfr_face_init( FT2_1_3_Stream      stream,
 
 	if ( !pfr_header_check( &face->header ) ) {
 		FT2_1_3_TRACE4(( "pfr_face_init: not a valid PFR font\n" ));
-		error = PFR_Err_Unknown_File_Format;
+		error = FT2_1_3_Err_Unknown_File_Format;
 		goto Exit;
 	}
 
@@ -91,7 +91,7 @@ pfr_face_init( FT2_1_3_Stream      stream,
 
 	if ( face_index >= face->root.num_faces ) {
 		FT2_1_3_ERROR(( "pfr_face_init: invalid face index\n" ));
-		error = PFR_Err_Invalid_Argument;
+		error = FT2_1_3_Err_Invalid_Argument;
 		goto Exit;
 	}
 

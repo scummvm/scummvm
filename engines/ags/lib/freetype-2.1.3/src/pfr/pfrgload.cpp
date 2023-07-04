@@ -489,7 +489,7 @@ Exit:
 	return error;
 
 Too_Short:
-	error = PFR_Err_Invalid_Table;
+	error = FT2_1_3_Err_Invalid_Table;
 	FT2_1_3_ERROR(( "pfr_glyph_load_simple: invalid glyph data\n" ));
 	goto Exit;
 }
@@ -626,7 +626,7 @@ Exit:
 	return error;
 
 Too_Short:
-	error = PFR_Err_Invalid_Table;
+	error = FT2_1_3_Err_Invalid_Table;
 	FT2_1_3_ERROR(( "pfr_glyph_load_compound: invalid glyph data\n" ));
 	goto Exit;
 }
