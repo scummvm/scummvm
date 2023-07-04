@@ -36,6 +36,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_winfnt
 
+namespace AGS3 {
+namespace FreeType213 {
 
 static
 const FT2_1_3_Frame_Field  winmz_header_fields[] = {
@@ -110,7 +112,7 @@ const FT2_1_3_Frame_Field  winfnt_header_fields[] = {
 
 static void
 fnt_font_done( FNT_Font   font,
-               FT2_1_3_Stream  stream ) {
+			   FT2_1_3_Stream  stream ) {
 	if ( font->fnt_frame )
 		FT2_1_3_FRAME_RELEASE( font->fnt_frame );
 
@@ -121,19 +123,19 @@ fnt_font_done( FNT_Font   font,
 
 static FT2_1_3_Error
 fnt_font_load( FNT_Font   font,
-               FT2_1_3_Stream  stream ) {
+			   FT2_1_3_Stream  stream ) {
 	FT2_1_3_Error       error;
 	WinFNT_Header  header = &font->header;
 
 
 	/* first of all, read the FNT header */
 	if ( FT2_1_3_STREAM_SEEK( font->offset )                   ||
-	        FT2_1_3_STREAM_READ_FIELDS( winfnt_header_fields, header ) )
+			FT2_1_3_STREAM_READ_FIELDS( winfnt_header_fields, header ) )
 		goto Exit;
 
 	/* check header */
 	if ( header->version != 0x200 &&
-	        header->version != 0x300 ) {
+			header->version != 0x300 ) {
 		FT2_1_3_TRACE2(( "[not a valid FNT file]\n" ));
 		error = FNT_Err_Unknown_File_Format;
 		goto Exit;
@@ -151,7 +153,7 @@ fnt_font_load( FNT_Font   font,
 
 	/* this is a FNT file/table, we now extract its frame */
 	if ( FT2_1_3_STREAM_SEEK( font->offset )                         ||
-	        FT2_1_3_FRAME_EXTRACT( header->file_size, font->fnt_frame ) )
+			FT2_1_3_FRAME_EXTRACT( header->file_size, font->fnt_frame ) )
 		goto Exit;
 
 Exit:
@@ -188,7 +190,7 @@ fnt_face_get_dll_fonts( FNT_Face  face ) {
 
 	/* does it begin with a MZ header? */
 	if ( FT2_1_3_STREAM_SEEK( 0 )                                 ||
-	        FT2_1_3_STREAM_READ_FIELDS( winmz_header_fields, &mz_header ) )
+			FT2_1_3_STREAM_READ_FIELDS( winmz_header_fields, &mz_header ) )
 		goto Exit;
 
 	error = FNT_Err_Unknown_File_Format;
@@ -198,14 +200,14 @@ fnt_face_get_dll_fonts( FNT_Face  face ) {
 
 
 		if ( FT2_1_3_STREAM_SEEK( mz_header.lfanew )                  ||
-		        FT2_1_3_STREAM_READ_FIELDS( winne_header_fields, &ne_header ) )
+				FT2_1_3_STREAM_READ_FIELDS( winne_header_fields, &ne_header ) )
 			goto Exit;
 
 		error = FNT_Err_Unknown_File_Format;
 		if ( ne_header.magic == WINFNT_NE_MAGIC ) {
 			/* good, now look in the resource table for each FNT resource */
 			FT2_1_3_ULong   res_offset = mz_header.lfanew +
-			                        ne_header.resource_tab_offset;
+									ne_header.resource_tab_offset;
 
 			FT2_1_3_UShort  size_shift;
 			FT2_1_3_UShort  font_count  = 0;
@@ -213,8 +215,8 @@ fnt_face_get_dll_fonts( FNT_Face  face ) {
 
 
 			if ( FT2_1_3_STREAM_SEEK( res_offset ) ||
-			        FT2_1_3_FRAME_ENTER( ne_header.rname_tab_offset -
-			                        ne_header.resource_tab_offset ) )
+					FT2_1_3_FRAME_ENTER( ne_header.rname_tab_offset -
+									ne_header.resource_tab_offset ) )
 				goto Exit;
 
 			size_shift = FT2_1_3_GET_USHORT_LE();
@@ -232,7 +234,7 @@ fnt_face_get_dll_fonts( FNT_Face  face ) {
 				if ( type_id == 0x8008 ) {
 					font_count  = count;
 					font_offset = (FT2_1_3_ULong)( FT2_1_3_STREAM_POS() + 4 +
-					                          ( stream->cursor - stream->limit ) );
+											  ( stream->cursor - stream->limit ) );
 					break;
 				}
 
@@ -247,7 +249,7 @@ fnt_face_get_dll_fonts( FNT_Face  face ) {
 			}
 
 			if ( FT2_1_3_STREAM_SEEK( font_offset )           ||
-			        FT2_1_3_NEW_ARRAY( face->fonts, font_count ) )
+					FT2_1_3_NEW_ARRAY( face->fonts, font_count ) )
 				goto Exit;
 
 			face->num_fonts = font_count;
@@ -318,7 +320,7 @@ fnt_cmap_init( FNT_CMap  cmap ) {
 
 static FT2_1_3_UInt
 fnt_cmap_char_index( FNT_CMap   cmap,
-                     FT2_1_3_UInt32  char_code ) {
+					 FT2_1_3_UInt32  char_code ) {
 	FT2_1_3_UInt  gindex = 0;
 
 
@@ -332,7 +334,7 @@ fnt_cmap_char_index( FNT_CMap   cmap,
 
 static FT2_1_3_UInt
 fnt_cmap_char_next( FNT_CMap    cmap,
-                    FT2_1_3_UInt32  *pchar_code ) {
+					FT2_1_3_UInt32  *pchar_code ) {
 	FT2_1_3_UInt    gindex = 0;
 	FT2_1_3_UInt32  result = 0;
 	FT2_1_3_UInt32  char_code = *pchar_code + 1;
@@ -381,10 +383,10 @@ FNT_Face_Done( FNT_Face  face ) {
 
 static FT2_1_3_Error
 FNT_Face_Init( FT2_1_3_Stream      stream,
-               FNT_Face       face,
-               FT2_1_3_Int         face_index,
-               FT2_1_3_Int         num_params,
-               FT2_1_3_Parameter*  params ) {
+			   FNT_Face       face,
+			   FT2_1_3_Int         face_index,
+			   FT2_1_3_Int         num_params,
+			   FT2_1_3_Parameter*  params ) {
 	FT2_1_3_Error   error;
 	FT2_1_3_Memory  memory = FT2_1_3_FACE_MEMORY( face );
 
@@ -425,7 +427,7 @@ FNT_Face_Init( FT2_1_3_Stream      stream,
 
 		root->num_faces  = 1;
 		root->face_flags = FT2_1_3_FACE_FLAG_FIXED_SIZES |
-		                   FT2_1_3_FACE_FLAG_HORIZONTAL;
+						   FT2_1_3_FACE_FLAG_HORIZONTAL;
 
 		if ( fonts->header.avg_width == fonts->header.max_width )
 			root->face_flags |= FT2_1_3_FACE_FLAG_FIXED_WIDTH;
@@ -461,9 +463,9 @@ FNT_Face_Init( FT2_1_3_Stream      stream,
 			charmap.face        = root;
 
 			error = FT2_1_3_CMap_New( fnt_cmap_class,
-			                     NULL,
-			                     &charmap,
-			                     NULL );
+								 NULL,
+								 &charmap,
+								 NULL );
 			if ( error )
 				goto Fail;
 
@@ -474,10 +476,10 @@ FNT_Face_Init( FT2_1_3_Stream      stream,
 
 		/* setup remaining flags */
 		root->num_glyphs = fonts->header.last_char -
-		                   fonts->header.first_char + 1;
+						   fonts->header.first_char + 1;
 
 		root->family_name = (FT2_1_3_String*)fonts->fnt_frame +
-		                    fonts->header.face_name_offset;
+							fonts->header.face_name_offset;
 		root->style_name  = (char *)"Regular";
 
 		if ( root->style_flags & FT2_1_3_STYLE_FLAG_BOLD ) {
@@ -515,7 +517,7 @@ FNT_Size_Set_Pixels( FNT_Size  size ) {
 
 			size->root.metrics.ascender  = cur->header.ascent * 64;
 			size->root.metrics.descender = ( cur->header.pixel_height -
-			                                 cur->header.ascent ) * 64;
+											 cur->header.ascent ) * 64;
 			size->root.metrics.height    = cur->header.pixel_height * 64;
 			break;
 		}
@@ -527,9 +529,9 @@ FNT_Size_Set_Pixels( FNT_Size  size ) {
 
 static FT2_1_3_Error
 FNT_Load_Glyph( FT2_1_3_GlyphSlot  slot,
-                FNT_Size      size,
-                FT2_1_3_UInt       glyph_index,
-                FT2_1_3_Int32      load_flags ) {
+				FNT_Size      size,
+				FT2_1_3_UInt       glyph_index,
+				FT2_1_3_Int32      load_flags ) {
 	FNT_Font    font  = size->font;
 	FT2_1_3_Error    error = 0;
 	FT2_1_3_Byte*    p;
@@ -649,5 +651,7 @@ const FT2_1_3_Driver_ClassRec  winfnt_driver_class = {
 	(FT2_1_3_Face_GetAdvancesFunc) 0
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */
