@@ -180,7 +180,7 @@ ps_build_unicode_table( FT2_1_3_Memory     memory,
 		if ( count == 0 ) {
 			FT2_1_3_FREE( table->maps );
 			if ( !error )
-				error = PSnames_Err_Invalid_Argument;  /* no unicode chars here! */
+				error = FT2_1_3_Err_Invalid_Argument;  /* no unicode chars here! */
 		} else
 			/* sort the table in increasing order of unicode values */
 			ft_qsort( table->maps, count, sizeof ( PS_UniMap ), compare_uni_maps );
