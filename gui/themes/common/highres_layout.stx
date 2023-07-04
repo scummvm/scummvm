@@ -325,7 +325,7 @@
 	</dialog>
 
 	<dialog name = 'LauncherGrid' overlays = 'screen'>
-		<layout type = 'vertical' align = 'center' padding = '23, 23, 8, 40'>
+		<layout type = 'vertical' align = 'center' padding = '23, 23, 8, 66'>
 			<widget name = 'Logo'
 					width = '287'
 					height = '80'
@@ -363,6 +363,9 @@
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
+				<widget name = 'IconArea'/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
 				<widget name = 'AddGameButton'
 						height = 'Globals.Button.Height'
 				/>
@@ -381,9 +384,6 @@
 				<widget name = 'QuitButton'
 						height = 'Globals.Button.Height'
 				/>
-			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
-				<widget name = 'IconArea'/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 6, 0' spacing = '2'>
 				<widget name = 'ListSwitch'
