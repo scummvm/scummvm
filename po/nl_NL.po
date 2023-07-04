@@ -3814,7 +3814,6 @@ msgid "Hat X"
 msgstr "Hat X"
 
 #: backends/keymapper/hardware-input.cpp:282
-#, fuzzy
 msgid "Hat Y"
 msgstr "Hat Y"
 
@@ -6076,7 +6075,6 @@ msgid "Look Mode"
 msgstr "Kijk Modus"
 
 #: engines/hpl1/metaengine.cpp:94
-#, fuzzy
 msgid "Holster"
 msgstr "Holster"
 
