@@ -234,7 +234,7 @@ FT2_1_3_Stream_Open( FT2_1_3_Stream    stream,
 	fseek( file, 0, SEEK_SET );
 
 	stream->descriptor.pointer = file;
-	stream->pathname.pointer   = (char*)filepathname;
+	stream->pathname.pointer = const_cast<char *>(filepathname);
 	stream->pos                = 0;
 
 	stream->read  = ft_ansi_stream_io;

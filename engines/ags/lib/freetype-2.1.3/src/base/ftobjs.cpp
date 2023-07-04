@@ -763,7 +763,7 @@ FT2_1_3_New_Face( FT2_1_3_Library   library,
 		return FT2_1_3_Err_Invalid_Argument;
 
 	args.flags    = FT2_1_3_OPEN_PATHNAME;
-	args.pathname = (char*)pathname;
+	args.pathname = const_cast<char *>(pathname);
 
 	return FT2_1_3_Open_Face( library, &args, face_index, aface );
 }
@@ -976,7 +976,7 @@ FT2_1_3_Attach_File( FT2_1_3_Face      face,
 		return FT2_1_3_Err_Invalid_Argument;
 
 	open.flags    = FT2_1_3_OPEN_PATHNAME;
-	open.pathname = (char*)filepathname;
+	open.pathname = const_cast<char *>(filepathname);
 
 	return FT2_1_3_Attach_Stream( face, &open );
 }
@@ -2058,7 +2058,7 @@ FT2_1_3_Add_Module( FT2_1_3_Library              library,
 	/* base initialization */
 	module->library = library;
 	module->memory  = memory;
-	module->clazz   = (FT2_1_3_Module_Class*)clazz;
+	module->clazz = const_cast<FT2_1_3_Module_Class *>(clazz);
 
 	/* check whether the module is a renderer - this must be performed */
 	/* before the normal module initialization                         */

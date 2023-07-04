@@ -37,7 +37,7 @@ FT2_1_3_BASE_DEF( void )
 FT2_1_3_Stream_OpenMemory( FT2_1_3_Stream       stream,
 					  const FT2_1_3_Byte*  base,
 					  FT2_1_3_ULong        size ) {
-	stream->base   = (FT2_1_3_Byte*) base;
+	stream->base = const_cast<FT2_1_3_Byte *>(base);
 	stream->size   = size;
 	stream->pos    = 0;
 	stream->cursor = 0;
