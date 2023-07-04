@@ -28,6 +28,7 @@
 namespace M4 {
 
 #define CACHE_NOT_OVERRIDE_BY_FLAG_PARSE 2
+#define KERNEL_RESTORING_GAME -2
 
 struct Kernel {
 	bool hag_mode = true;

@@ -24,6 +24,7 @@
 #define M4_ADV_R_ADV_INV_H
 
 #include "common/array.h"
+#include "common/serializer.h"
 #include "common/stream.h"
 
 namespace M4 {
@@ -40,6 +41,8 @@ struct InventoryBase {
 
 	InventoryBase() {}
 	virtual ~InventoryBase() {}
+
+	void syncGame(Common::Serializer &s);
 
 	virtual void add(const Common::String &name, const Common::String &verb, int32 sprite, int32 cursor) = 0;
 	virtual void set_scroll(int32 scroll) = 0;
@@ -85,8 +88,7 @@ extern void InsertBP(const char *s, int32 where);
 
 // private
 
-extern void inv_save_game(Common::WriteStream *fp_save);
-extern void inv_restore_game(Common::SeekableReadStream *fp_restore);
+extern void inv_sync_game(Common::Serializer &s);
 
 } // End of namespace M4
 

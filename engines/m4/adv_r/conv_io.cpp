@@ -23,7 +23,7 @@
 
 namespace M4 {
 
-Common::Error Converstation_Globals::syncGame(Common::Serializer &s) {
+void Converstation_Globals::syncGame(Common::Serializer &s) {
 //	FILE *fp = NULL;
 	uint32 val;
 
@@ -37,8 +37,6 @@ Common::Error Converstation_Globals::syncGame(Common::Serializer &s) {
 
 	// Read in the buffer
 	s.syncBytes(&conv_save_buff[0], conv_save_buff.size());
-
-	return Common::kNoError;
 }
 
 void Converstation_Globals::conv_reset_all() {

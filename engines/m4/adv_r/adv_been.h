@@ -23,7 +23,6 @@
 #ifndef M4_ADV_R_ADV_BEEN_H
 #define M4_ADV_R_ADV_BEEN_H
 
-#include "common/error.h"
 #include "common/serializer.h"
 #include "common/stream.h"
 #include "m4/m4_types.h"
@@ -33,7 +32,7 @@ namespace M4 {
 struct Scene_list {
 	int32 total_scenes = 0;
 	int32 tail = 0;
-	int16 *table = nullptr;
+	byte *table = nullptr;
 };
 
 /**
@@ -57,7 +56,7 @@ extern void player_reset_been(void);
 /**
  * Saves/loads player_been information
  */
-extern Common::Error player_been_sync(Common::Serializer &s);
+extern void player_been_sync(Common::Serializer &s);
 
 /**
  * Called whenever player enters a scene

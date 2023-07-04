@@ -27,7 +27,7 @@
 namespace M4 {
 
 bool player_been_init(int16 num_scenes) {
-	_G(scene_list).table = (int16 *)mem_alloc(sizeof(int16) * num_scenes, "been_scenes");
+	_G(scene_list).table = (byte *)mem_alloc(sizeof(byte) * num_scenes, "been_scenes");
 
 	if (!_G(scene_list).table)
 		error_show(FL, 'OOM!', "player_been_init");
@@ -47,41 +47,15 @@ void player_reset_been() {
 	_G(scene_list).tail = 0;
 }
 
-Common::Error player_been_sync(Common::Serializer &s) {
-	uint32 val;
-
-	// Handle chunk identity
-	val = 'BEEN';
-	s.syncAsUint32BE(val);
-	if (s.isLoading() && val != 'BEEN')
-		return Common::kReadingFailed;
-
-	// Handle chunk size
-	val = 4 * sizeof(int32) + sizeof(int16) * _G(scene_list).total_scenes;
-	s.syncAsUint32LE(val);
-
+void player_been_sync(Common::Serializer &s) {
 	// Handle number of scenes
-	val = _G(scene_list).total_scenes;
-	s.syncAsUint32LE(val);
-
-	if ((int)val != _G(scene_list).total_scenes) {
-		// Need to reallocate the scene table
-		_G(scene_list).table = (int16 *)mem_realloc(_G(scene_list).table, val * sizeof(int16), "been_scenes");
-		if (!_G(scene_list).table)
-			return Common::kUnknownError;
-	}
-
-	if (s.isLoading())
-		_G(scene_list).total_scenes = val;
+	s.syncAsUint32LE(_G(scene_list).total_scenes);
 
 	// Handle current tail
 	s.syncAsUint32LE(_G(scene_list).tail);
 
-	// Handle scene list
-	for (int i = 0; i < _G(scene_list).total_scenes; ++i)
-		s.syncAsUint16LE(_G(scene_list).table[i]);
-
-	return Common::kNoError;
+	// Handle scene list table
+	s.syncBytes(_G(scene_list).table, _G(scene_list).total_scenes);
 }
 
 /**

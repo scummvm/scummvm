@@ -28,6 +28,36 @@
 
 namespace M4 {
 
+#define MAX_NAME_LENGTH 40
+
+void InventoryBase::syncGame(Common::Serializer &s) {
+	char invName[MAX_NAME_LENGTH];
+	uint32 inv_size;
+	int32 i;
+
+	inv_size = _tail * MAX_NAME_LENGTH;
+	s.syncAsUint32LE(inv_size);
+	if (s.isLoading()) {
+		assert((inv_size % (MAX_NAME_LENGTH + sizeof(uint32))) == 0);
+		_tail = inv_size / (MAX_NAME_LENGTH + sizeof(uint32));
+	}
+
+	for (i = 0; i < _tail; ++i) {
+		char *objName = _G(inventory)->_objects[i]->name;
+
+		if (s.isLoading()) {
+			s.syncBytes((byte *)invName, MAX_NAME_LENGTH);
+			Common::strcpy_s(objName, MAX_NAME_LENGTH, invName);
+		} else {
+			Common::strcpy_s(invName, MAX_NAME_LENGTH, objName);
+			s.syncBytes((byte *)invName, MAX_NAME_LENGTH);
+		}
+
+		s.syncAsUint32LE(_objects[i]->scene);
+	}
+}
+
+
 bool inv_init(int32 num_objects) {
 	term_message("Fluffing up the backpack", nullptr);
 	int i;
@@ -253,77 +283,6 @@ void MoveBP(char *s, int32 from, int32 to) {
 #else
 	error("TODO: MoveBP");
 #endif
-}
-
-void inv_save_game(Common::WriteStream *fp_save) {
-	char *inv_save_buff = nullptr;
-	uint32 inv_size = 0, index = 0;
-	int32   i;
-
-	if (!fp_save)
-		error_show(FL, 'ISGF');
-
-	inv_size = _G(inventory)->_tail * (40 * sizeof(char) + sizeof(long));
-	fp_save->writeUint32LE(inv_size);
-
-	inv_save_buff = (char *)mem_alloc(inv_size, "inv save buff");
-
-	cstrcpy(inv_save_buff, "\0");
-	for (i = 0; i < _G(inventory)->_tail; i++) {
-		if (cstrlen(_G(inventory)->_objects[i]->name) > 39)
-			error_show(FL, 'ISGF', "inventory name '%s' > 39 chars:", _G(inventory)->_objects[i]->name);
-
-		Common::strcpy_s(&inv_save_buff[index], 256, _G(inventory)->_objects[i]->name);
-		index += 40;
-
-		memcpy(&inv_save_buff[index], &(_G(inventory)->_objects[i]->scene), sizeof(int32));
-		index += sizeof(long);
-	}
-
-	if (fp_save->write(inv_save_buff, inv_size) != inv_size)
-		error_show(FL, 'ISGF', "Could not write save game size.");
-
-	if (inv_save_buff)
-		mem_free(inv_save_buff);
-}
-
-void inv_restore_game(Common::SeekableReadStream *fp_restore) {
-	char *inv_restore_buff = nullptr;
-	uint32 inv_size = 0, index = 0;
-	char *name;
-	int32   scene;
-
-	if (!fp_restore)
-		error_show(FL, 'IRGF', "fp_save is nullptr");
-
-	inv_size = fp_restore->readUint32LE();
-
-	inv_restore_buff = (char *)mem_alloc(inv_size, "inv restore buff");
-	if (!inv_restore_buff)
-		error_show(FL, 'IRGF', "Couldn't alloc game restore buffer");
-
-	if (fp_restore->read(inv_restore_buff, inv_size) != inv_size)
-		error_show(FL, 'IRGF', "Couldn't read restored _G(game).");
-
-	while (index < inv_size) {
-		name = inv_get_name(&inv_restore_buff[index]);
-		if (!name) {
-			term_message("inv_restore unknown object: %s", &inv_restore_buff[index]);
-			index += 40;
-		} else {
-			index += 40;
-			memcpy(&scene, &inv_restore_buff[index], sizeof(int32));
-			index += sizeof(long); //jul21
-			if (!inv_put_thing_in(name, scene)) {
-				error_show(FL, 'IPTI', "could not put '%s' in %d", name, scene);
-			}
-		}
-	}
-
-	if (inv_restore_buff)
-		mem_free(inv_restore_buff);
-
-	_G(inventory)->set_scroll(0);
 }
 
 } // End of namespace M4
