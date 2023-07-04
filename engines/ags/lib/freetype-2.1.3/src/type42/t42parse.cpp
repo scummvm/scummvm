@@ -32,29 +32,31 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_t42
 
+namespace AGS3 {
+namespace FreeType213 {
 
 static void
 t42_parse_font_name( T42_Face    face,
-                     T42_Loader  loader );
+					 T42_Loader  loader );
 
 static void
 t42_parse_font_bbox( T42_Face    face,
-                     T42_Loader  loader );
+					 T42_Loader  loader );
 
 static void
 t42_parse_font_matrix( T42_Face    face,
-                       T42_Loader  loader );
+					   T42_Loader  loader );
 static void
 t42_parse_encoding( T42_Face    face,
-                    T42_Loader  loader );
+					T42_Loader  loader );
 
 static void
 t42_parse_charstrings( T42_Face    face,
-                       T42_Loader  loader );
+					   T42_Loader  loader );
 
 static void
 t42_parse_sfnts( T42_Face    face,
-                 T42_Loader  loader );
+				 T42_Loader  loader );
 
 
 static const
@@ -99,17 +101,17 @@ T1_FieldRec  t42_keywords[] = {
 
 #define T1_Add_Table( p, i, o, l )  (p)->funcs.add( (p), i, o, l )
 #define T1_Done_Table( p )          \
-          do                        \
-          {                         \
-            if ( (p)->funcs.done )  \
-              (p)->funcs.done( p ); \
-          } while ( 0 )
+		  do                        \
+		  {                         \
+			if ( (p)->funcs.done )  \
+			  (p)->funcs.done( p ); \
+		  } while ( 0 )
 #define T1_Release_Table( p )          \
-          do                           \
-          {                            \
-            if ( (p)->funcs.release )  \
-              (p)->funcs.release( p ); \
-          } while ( 0 )
+		  do                           \
+		  {                            \
+			if ( (p)->funcs.release )  \
+			  (p)->funcs.release( p ); \
+		  } while ( 0 )
 
 #define T1_Skip_Spaces( p )  (p)->root.funcs.skip_spaces( &(p)->root )
 #define T1_Skip_Alpha( p )   (p)->root.funcs.skip_alpha ( &(p)->root )
@@ -118,27 +120,27 @@ T1_FieldRec  t42_keywords[] = {
 #define T1_ToFixed( p, t )  (p)->root.funcs.to_fixed( &(p)->root, t )
 
 #define T1_ToCoordArray( p, m, c )                           \
-          (p)->root.funcs.to_coord_array( &(p)->root, m, c )
+		  (p)->root.funcs.to_coord_array( &(p)->root, m, c )
 #define T1_ToFixedArray( p, m, f, t )                           \
-          (p)->root.funcs.to_fixed_array( &(p)->root, m, f, t )
+		  (p)->root.funcs.to_fixed_array( &(p)->root, m, f, t )
 #define T1_ToToken( p, t )                          \
-          (p)->root.funcs.to_token( &(p)->root, t )
+		  (p)->root.funcs.to_token( &(p)->root, t )
 #define T1_ToTokenArray( p, t, m, c )                           \
-          (p)->root.funcs.to_token_array( &(p)->root, t, m, c )
+		  (p)->root.funcs.to_token_array( &(p)->root, t, m, c )
 
 #define T1_Load_Field( p, f, o, m, pf )                         \
-          (p)->root.funcs.load_field( &(p)->root, f, o, m, pf )
+		  (p)->root.funcs.load_field( &(p)->root, f, o, m, pf )
 #define T1_Load_Field_Table( p, f, o, m, pf )                         \
-          (p)->root.funcs.load_field_table( &(p)->root, f, o, m, pf )
+		  (p)->root.funcs.load_field_table( &(p)->root, f, o, m, pf )
 
 
 /********************* Parsing Functions ******************/
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 t42_parser_init( T42_Parser     parser,
-                 FT2_1_3_Stream      stream,
-                 FT2_1_3_Memory      memory,
-                 PSAux_Service  psaux ) {
+				 FT2_1_3_Stream      stream,
+				 FT2_1_3_Memory      memory,
+				 PSAux_Service  psaux ) {
 	FT2_1_3_Error  error = T42_Err_Ok;
 	FT2_1_3_Long   size;
 
@@ -184,7 +186,7 @@ t42_parser_init( T42_Parser     parser,
 	} else {
 		/* read segment in memory */
 		if ( FT2_1_3_ALLOC( parser->base_dict, size )       ||
-		        FT2_1_3_STREAM_READ( parser->base_dict, size ) )
+				FT2_1_3_STREAM_READ( parser->base_dict, size ) )
 			goto Exit;
 
 		parser->base_len = size;
@@ -192,8 +194,8 @@ t42_parser_init( T42_Parser     parser,
 
 	/* Now check font format; we must see `%!PS-TrueTypeFont' */
 	if (size <= 17                                    ||
-	        ( ft_strncmp( (const char*)parser->base_dict,
-	                      "%!PS-TrueTypeFont", 17) )      )
+			( ft_strncmp( (const char*)parser->base_dict,
+						  "%!PS-TrueTypeFont", 17) )      )
 		error = T42_Err_Unknown_File_Format;
 	else {
 		parser->root.base   = parser->base_dict;
@@ -228,10 +230,10 @@ t42_is_alpha( FT2_1_3_Byte  c ) {
 	/*       embedded type1 fonts in PDF documents.                    */
 	/*                                                                 */
 	return ( ft_isalnum( c ) ||
-	         c == '.'        ||
-	         c == '_'        ||
-	         c == '-'        ||
-	         c == '+'        );
+			 c == '.'        ||
+			 c == '_'        ||
+			 c == '-'        ||
+			 c == '+'        );
 }
 
 
@@ -243,7 +245,7 @@ t42_is_space( FT2_1_3_Byte  c ) {
 
 static void
 t42_parse_font_name( T42_Face    face,
-                     T42_Loader  loader ) {
+					 T42_Loader  loader ) {
 	T42_Parser  parser = &loader->parser;
 	FT2_1_3_Error    error;
 	FT2_1_3_Memory   memory = parser->root.memory;
@@ -259,7 +261,7 @@ t42_parse_font_name( T42_Face    face,
 	limit = parser->root.limit;
 
 	if ( cur >= limit - 1              ||
-	        ( *cur != '/' && *cur != '(') )
+			( *cur != '/' && *cur != '(') )
 		return;
 
 	cur++;
@@ -283,7 +285,7 @@ t42_parse_font_name( T42_Face    face,
 
 static void
 t42_parse_font_bbox( T42_Face   face,
-                     T42_Loader  loader ) {
+					 T42_Loader  loader ) {
 	T42_Parser  parser = &loader->parser;
 	FT2_1_3_BBox*    bbox   = &face->type1.font_bbox;
 
@@ -296,7 +298,7 @@ t42_parse_font_bbox( T42_Face   face,
 
 static void
 t42_parse_font_matrix( T42_Face    face,
-                       T42_Loader  loader ) {
+					   T42_Loader  loader ) {
 	T42_Parser  parser = &loader->parser;
 	FT2_1_3_Matrix*  matrix = &face->type1.font_matrix;
 	FT2_1_3_Vector*  offset = &face->type1.font_offset;
@@ -314,7 +316,7 @@ t42_parse_font_matrix( T42_Face    face,
 	/* 1000 (in t1_tofixed, from psobjs.c).                              */
 
 	root->units_per_EM = (FT2_1_3_UShort)( FT2_1_3_DivFix( 1000 * 0x10000L,
-	                                  temp_scale ) >> 16 );
+									  temp_scale ) >> 16 );
 
 	/* we need to scale the values by 1.0/temp_scale */
 	if ( temp_scale != 0x10000L ) {
@@ -339,7 +341,7 @@ t42_parse_font_matrix( T42_Face    face,
 
 static void
 t42_parse_encoding( T42_Face    face,
-                    T42_Loader  loader ) {
+					T42_Loader  loader ) {
 	T42_Parser     parser = &loader->parser;
 	FT2_1_3_Byte*       cur    = parser->root.cursor;
 	FT2_1_3_Byte*       limit  = parser->root.limit;
@@ -375,9 +377,9 @@ t42_parse_encoding( T42_Face    face,
 		/* we use a T1_Table to store our charnames */
 		loader->num_chars = encode->num_chars = count;
 		if ( FT2_1_3_NEW_ARRAY( encode->char_index, count ) ||
-		        FT2_1_3_NEW_ARRAY( encode->char_name,  count ) ||
-		        FT2_1_3_SET_ERROR( psaux->ps_table_funcs->init(
-		                          char_table, count, memory ) ) ) {
+				FT2_1_3_NEW_ARRAY( encode->char_name,  count ) ||
+				FT2_1_3_SET_ERROR( psaux->ps_table_funcs->init(
+								  char_table, count, memory ) ) ) {
 			parser->root.error = error;
 			return;
 		}
@@ -416,9 +418,9 @@ t42_parse_encoding( T42_Face    face,
 			/* we stop when we encounter a `def' */
 			if ( c == 'd' && cur + 3 < limit ) {
 				if ( cur[1] == 'e'       &&
-				        cur[2] == 'f'       &&
-				        t42_is_space( cur[-1] ) &&
-				        t42_is_space( cur[3] )  ) {
+						cur[2] == 'f'       &&
+						t42_is_space( cur[-1] ) &&
+						t42_is_space( cur[3] )  ) {
 					FT2_1_3_TRACE6(( "encoding end\n" ));
 					break;
 				}
@@ -450,7 +452,7 @@ t42_parse_encoding( T42_Face    face,
 					len = (FT2_1_3_Int)( cur2 - cur - 1 );
 
 					parser->root.error = T1_Add_Table( char_table, charcode,
-					                                   cur + 1, len + 1 );
+													   cur + 1, len + 1 );
 					char_table->elements[charcode][len] = '\0';
 					if ( parser->root.error )
 						return;
@@ -468,15 +470,15 @@ t42_parse_encoding( T42_Face    face,
 	/* `ExpertEncoding', or `ISOLatin1Encoding'             */
 	else {
 		if ( cur + 17 < limit                                            &&
-		        ft_strncmp( (const char*)cur, "StandardEncoding", 16 ) == 0 )
+				ft_strncmp( (const char*)cur, "StandardEncoding", 16 ) == 0 )
 			face->type1.encoding_type = T1_ENCODING_TYPE_STANDARD;
 
 		else if ( cur + 15 < limit                                          &&
-		          ft_strncmp( (const char*)cur, "ExpertEncoding", 14 ) == 0 )
+				  ft_strncmp( (const char*)cur, "ExpertEncoding", 14 ) == 0 )
 			face->type1.encoding_type = T1_ENCODING_TYPE_EXPERT;
 
 		else if ( cur + 18 < limit                                             &&
-		          ft_strncmp( (const char*)cur, "ISOLatin1Encoding", 17 ) == 0 )
+				  ft_strncmp( (const char*)cur, "ISOLatin1Encoding", 17 ) == 0 )
 			face->type1.encoding_type = T1_ENCODING_TYPE_ISOLATIN1;
 
 		else {
@@ -516,7 +518,7 @@ Exit:
 
 static void
 t42_parse_sfnts( T42_Face    face,
-                 T42_Loader  loader ) {
+				 T42_Loader  loader ) {
 	T42_Parser  parser = &loader->parser;
 	FT2_1_3_Memory   memory = parser->root.memory;
 	FT2_1_3_Byte*    cur    = parser->root.cursor;
@@ -633,7 +635,7 @@ t42_parse_sfnts( T42_Face    face,
 				face->ttf_size = ttf_size;
 
 				if ( FT2_1_3_REALLOC( face->ttf_data, 12 + 16 * num_tables,
-				                 ttf_size + 1 ) )
+								 ttf_size + 1 ) )
 					goto Fail;
 			}
 		/* No break, fall-through */
@@ -654,7 +656,7 @@ Fail:
 
 static void
 t42_parse_charstrings( T42_Face    face,
-                       T42_Loader  loader ) {
+					   T42_Loader  loader ) {
 	T42_Parser     parser     = &loader->parser;
 	PS_Table       code_table = &loader->charstrings;
 	PS_Table       name_table = &loader->glyph_names;
@@ -675,14 +677,14 @@ t42_parse_charstrings( T42_Face    face,
 	/* initialize tables */
 
 	error = psaux->ps_table_funcs->init( code_table,
-	                                     loader->num_glyphs,
-	                                     memory );
+										 loader->num_glyphs,
+										 memory );
 	if ( error )
 		goto Fail;
 
 	error = psaux->ps_table_funcs->init( name_table,
-	                                     loader->num_glyphs,
-	                                     memory );
+										 loader->num_glyphs,
+										 memory );
 	if ( error )
 		goto Fail;
 
@@ -702,9 +704,9 @@ t42_parse_charstrings( T42_Face    face,
 
 		/* we stop when we find an `end' keyword */
 		if ( *cur   == 'e'   &&
-		        cur + 3 < limit &&
-		        cur[1] == 'n'   &&
-		        cur[2] == 'd'   )
+				cur + 3 < limit &&
+				cur[1] == 'n'   &&
+				cur[2] == 'd'   )
 			break;
 
 		if ( *cur != '/' )
@@ -765,8 +767,8 @@ Fail:
 
 static FT2_1_3_Error
 t42_load_keyword( T42_Face    face,
-                  T42_Loader  loader,
-                  T1_Field    field ) {
+				  T42_Loader  loader,
+				  T1_Field    field ) {
 	FT2_1_3_Error  error;
 	void*     dummy_object;
 	void**    objects;
@@ -794,12 +796,12 @@ t42_load_keyword( T42_Face    face,
 	}
 
 	if ( field->type == T1_FIELD_TYPE_INTEGER_ARRAY ||
-	        field->type == T1_FIELD_TYPE_FIXED_ARRAY   )
+			field->type == T1_FIELD_TYPE_FIXED_ARRAY   )
 		error = T1_Load_Field_Table( &loader->parser, field,
-		                             objects, max_objects, 0 );
+									 objects, max_objects, 0 );
 	else
 		error = T1_Load_Field( &loader->parser, field,
-		                       objects, max_objects, 0 );
+							   objects, max_objects, 0 );
 
 Exit:
 	return error;
@@ -808,14 +810,14 @@ Exit:
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 t42_parse_dict( T42_Face    face,
-                T42_Loader  loader,
-                FT2_1_3_Byte*    base,
-                FT2_1_3_Long     size ) {
+				T42_Loader  loader,
+				FT2_1_3_Byte*    base,
+				FT2_1_3_Long     size ) {
 	T42_Parser  parser = &loader->parser;
 	FT2_1_3_Byte*    cur    = base;
 	FT2_1_3_Byte*    limit  = cur + size;
 	FT2_1_3_UInt     n_keywords = sizeof ( t42_keywords ) /
-	                         sizeof ( t42_keywords[0] );
+							 sizeof ( t42_keywords[0] );
 
 
 	parser->root.cursor = base;
@@ -825,7 +827,7 @@ t42_parse_dict( T42_Face    face,
 	for ( ; cur < limit; cur++ ) {
 		/* look for `FontDirectory', which causes problems on some fonts */
 		if ( *cur == 'F' && cur + 25 < limit                    &&
-		        ft_strncmp( (char*)cur, "FontDirectory", 13 ) == 0 ) {
+				ft_strncmp( (char*)cur, "FontDirectory", 13 ) == 0 ) {
 			FT2_1_3_Byte*  cur2;
 
 
@@ -835,7 +837,7 @@ t42_parse_dict( T42_Face    face,
 
 			/* lookup the `known' keyword */
 			while ( cur < limit && *cur != 'k'           &&
-			        ft_strncmp( (char*)cur, "known", 5 ) )
+					ft_strncmp( (char*)cur, "known", 5 ) )
 				cur++;
 
 			if ( cur < limit ) {
@@ -878,13 +880,13 @@ t42_parse_dict( T42_Face    face,
 						continue;
 
 					if ( ( len == ft_strlen( (const char *)name ) ) &&
-					        ( ft_memcmp( cur, name, len ) == 0 )       ) {
+							( ft_memcmp( cur, name, len ) == 0 )       ) {
 						/* we found it -- run the parsing callback! */
 						parser->root.cursor = cur2;
 						T1_Skip_Spaces( parser );
 						parser->root.error = t42_load_keyword(face,
-						                                      loader,
-						                                      keyword );
+															  loader,
+															  keyword );
 						if ( parser->root.error )
 							return parser->root.error;
 						cur = parser->root.cursor;
@@ -900,7 +902,7 @@ t42_parse_dict( T42_Face    face,
 
 FT2_1_3_LOCAL_DEF( void )
 t42_loader_init( T42_Loader  loader,
-                 T42_Face    face ) {
+				 T42_Face    face ) {
 	FT2_1_3_UNUSED( face );
 
 	FT2_1_3_MEM_ZERO( loader, sizeof ( *loader ) );
@@ -928,5 +930,7 @@ t42_loader_done( T42_Loader  loader ) {
 	t42_parser_done( parser );
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

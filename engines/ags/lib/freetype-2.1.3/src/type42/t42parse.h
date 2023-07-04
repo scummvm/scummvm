@@ -15,13 +15,15 @@
 /***************************************************************************/
 
 
-#ifndef __T42PARSE_H__
-#define __T42PARSE_H__
+#ifndef AGS_LIB_FREETYPE_T42PARSE_H
+#define AGS_LIB_FREETYPE_T42PARSE_H
 
 
 #include "t42objs.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psaux.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -53,9 +55,9 @@ typedef struct  T42_Loader_ {
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 t42_parser_init( T42_Parser     parser,
-                 FT2_1_3_Stream      stream,
-                 FT2_1_3_Memory      memory,
-                 PSAux_Service  psaux );
+				 FT2_1_3_Stream      stream,
+				 FT2_1_3_Memory      memory,
+				 PSAux_Service  psaux );
 
 FT2_1_3_LOCAL( void )
 t42_parser_done( T42_Parser  parser );
@@ -63,14 +65,14 @@ t42_parser_done( T42_Parser  parser );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 t42_parse_dict( T42_Face    face,
-                T42_Loader  loader,
-                FT2_1_3_Byte*    base,
-                FT2_1_3_Long     size );
+				T42_Loader  loader,
+				FT2_1_3_Byte*    base,
+				FT2_1_3_Long     size );
 
 
 FT2_1_3_LOCAL( void )
 t42_loader_init( T42_Loader  loader,
-                 T42_Face    face );
+				 T42_Face    face );
 
 FT2_1_3_LOCAL( void )
 t42_loader_done( T42_Loader  loader );
@@ -80,8 +82,10 @@ t42_loader_done( T42_Loader  loader );
 
 FT2_1_3_END_HEADER
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
-#endif /* __T42PARSE_H__ */
+#endif /* AGS_LIB_FREETYPE_T42PARSE_H */
 
 
 /* END */

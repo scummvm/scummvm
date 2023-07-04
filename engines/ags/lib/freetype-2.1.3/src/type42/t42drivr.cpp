@@ -45,12 +45,14 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_t42
 
+namespace AGS3 {
+namespace FreeType213 {
 
 static FT2_1_3_Error
 t42_get_glyph_name( T42_Face    face,
-                    FT2_1_3_UInt     glyph_index,
-                    FT2_1_3_Pointer  buffer,
-                    FT2_1_3_UInt     buffer_max ) {
+					FT2_1_3_UInt     glyph_index,
+					FT2_1_3_Pointer  buffer,
+					FT2_1_3_UInt     buffer_max ) {
 	FT2_1_3_String*  gname;
 
 
@@ -79,7 +81,7 @@ t42_get_ps_name( T42_Face  face ) {
 
 static FT2_1_3_UInt
 t42_get_name_index( T42_Face    face,
-                    FT2_1_3_String*  glyph_name ) {
+					FT2_1_3_String*  glyph_name ) {
 	FT2_1_3_Int      i;
 	FT2_1_3_String*  gname;
 
@@ -97,7 +99,7 @@ t42_get_name_index( T42_Face    face,
 
 static FT2_1_3_Module_Interface
 T42_Get_Interface( FT2_1_3_Driver         driver,
-                   const FT2_1_3_String*  t42_interface ) {
+				   const FT2_1_3_String*  t42_interface ) {
 	FT2_1_3_UNUSED( driver );
 
 	/* Any additional interface are defined here */
@@ -158,5 +160,7 @@ const FT2_1_3_Driver_ClassRec  t42_driver_class = {
 	(FT2_1_3_Face_GetAdvancesFunc) 0
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

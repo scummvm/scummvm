@@ -15,8 +15,8 @@
 /***************************************************************************/
 
 
-#ifndef __T42OBJS_H__
-#define __T42OBJS_H__
+#ifndef AGS_LIB_FREETYPE_T42OBJS_H
+#define AGS_LIB_FREETYPE_T42OBJS_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/freetype.h"
@@ -28,6 +28,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/pshints.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -62,10 +64,10 @@ typedef struct  T42_DriverRec_ {
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 T42_Face_Init( FT2_1_3_Stream      stream,
-               T42_Face       face,
-               FT2_1_3_Int         face_index,
-               FT2_1_3_Int         num_params,
-               FT2_1_3_Parameter*  params );
+			   T42_Face       face,
+			   FT2_1_3_Int         face_index,
+			   FT2_1_3_Int         num_params,
+			   FT2_1_3_Parameter*  params );
 
 
 FT2_1_3_LOCAL( void )
@@ -78,15 +80,15 @@ T42_Size_Init( T42_Size  size );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 T42_Size_SetChars( T42_Size    size,
-                   FT2_1_3_F26Dot6  char_width,
-                   FT2_1_3_F26Dot6  char_height,
-                   FT2_1_3_UInt     horz_resolution,
-                   FT2_1_3_UInt     vert_resolution );
+				   FT2_1_3_F26Dot6  char_width,
+				   FT2_1_3_F26Dot6  char_height,
+				   FT2_1_3_UInt     horz_resolution,
+				   FT2_1_3_UInt     vert_resolution );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 T42_Size_SetPixels( T42_Size  size,
-                    FT2_1_3_UInt   pixel_width,
-                    FT2_1_3_UInt   pixel_height );
+					FT2_1_3_UInt   pixel_width,
+					FT2_1_3_UInt   pixel_height );
 
 FT2_1_3_LOCAL( void )
 T42_Size_Done( T42_Size  size );
@@ -98,9 +100,9 @@ T42_GlyphSlot_Init( T42_GlyphSlot  slot );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 T42_GlyphSlot_Load( FT2_1_3_GlyphSlot  glyph,
-                    FT2_1_3_Size       size,
-                    FT2_1_3_Int        glyph_index,
-                    FT2_1_3_Int32      load_flags );
+					FT2_1_3_Size       size,
+					FT2_1_3_Int        glyph_index,
+					FT2_1_3_Int32      load_flags );
 
 FT2_1_3_LOCAL( void )
 T42_GlyphSlot_Done( T42_GlyphSlot slot );
@@ -116,8 +118,10 @@ T42_Driver_Done( T42_Driver  driver );
 
 FT2_1_3_END_HEADER
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
-#endif /* __T42OBJS_H__ */
+#endif /* AGS_LIB_FREETYPE_T42OBJS_H */
 
 
 /* END */

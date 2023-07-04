@@ -113,7 +113,9 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/src/type1/t1driver.o \
 	lib/freetype-2.1.3/src/type1/t1gload.o \
 	lib/freetype-2.1.3/src/type1/t1afm.o \
-	lib/freetype-2.1.3/src/type42/type42.o \
+	lib/freetype-2.1.3/src/type42/t42objs.o \
+	lib/freetype-2.1.3/src/type42/t42parse.o \
+	lib/freetype-2.1.3/src/type42/t42drivr.o \
 	lib/freetype-2.1.3/src/winfonts/winfnt.o \
 	lib/std/std.o \
 	lib/system/datetime.o \
