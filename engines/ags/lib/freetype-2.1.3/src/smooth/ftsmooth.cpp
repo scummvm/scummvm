@@ -58,11 +58,11 @@ ft_smooth_transform( FT2_1_3_Renderer   render,
 					 FT2_1_3_GlyphSlot  slot,
 					 FT2_1_3_Matrix*    matrix,
 					 FT2_1_3_Vector*    delta ) {
-	FT2_1_3_Error  error = Smooth_Err_Ok;
+	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
 
 
 	if ( slot->format != render->glyph_format ) {
-		error = Smooth_Err_Invalid_Argument;
+		error = FT2_1_3_Err_Invalid_Argument;
 		goto Exit;
 	}
 
@@ -110,13 +110,13 @@ ft_smooth_render_generic( FT2_1_3_Renderer     render,
 
 	/* check glyph image format */
 	if ( slot->format != render->glyph_format ) {
-		error = Smooth_Err_Invalid_Argument;
+		error = FT2_1_3_Err_Invalid_Argument;
 		goto Exit;
 	}
 
 	/* check mode */
 	if ( mode != required_mode )
-		return Smooth_Err_Cannot_Render_Glyph;
+		return FT2_1_3_Err_Cannot_Render_Glyph;
 
 	outline = &slot->outline;
 

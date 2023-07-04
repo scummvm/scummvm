@@ -151,8 +151,8 @@
 
 #include "ftsmerrs.h"
 
-#define ErrRaster_Invalid_Mode     Smooth_Err_Cannot_Render_Glyph
-#define ErrRaster_Invalid_Outline  Smooth_Err_Invalid_Outline
+#define ErrRaster_Invalid_Mode     FT2_1_3_Err_Cannot_Render_Glyph
+#define ErrRaster_Invalid_Outline  FT2_1_3_Err_Invalid_Outline
 
 
 #endif /* _STANDALONE_ */
