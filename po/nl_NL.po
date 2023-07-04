@@ -230,7 +230,8 @@ msgstr "Cloud opslag was niet gekoppeld."
 
 #: gui/cloudconnectionwizard.cpp:378
 msgid "Make sure the JSON code was copied correctly and retry."
-msgstr "Controleer of de JSON code goed gekopieerd was en probeer het nog eens."
+msgstr ""
+"Controleer of de JSON code goed gekopieerd was en probeer het nog eens."
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "If that doesn't work, try again from the beginning."
@@ -2782,7 +2783,8 @@ msgstr "Icoon Pad Fout"
 
 #: dists/android.strings.xml.cpp:39
 msgid "Unable to create or access default icons and shaders path!"
-msgstr "Kon geen toegang krijgen tot of aanmaken van het iconen en shaders pad!"
+msgstr ""
+"Kon geen toegang krijgen tot of aanmaken van het iconen en shaders pad!"
 
 #: dists/android.strings.xml.cpp:40
 msgid ""
