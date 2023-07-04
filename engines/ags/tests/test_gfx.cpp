@@ -35,6 +35,10 @@
 #include "graphics/managed_surface.h"
 #include "graphics/pixelformat.h"
 
+#ifdef __aarch64__
+#include "ags/lib/allegro/surface_simd_neon.h"
+#endif
+
 namespace AGS3 {
 
 namespace GfxDef = AGS::Shared::GfxDef;
@@ -149,13 +153,13 @@ void Test_BlenderModes() {
 												uint32x4_t src = vdupq_n_u32(srcB | (srcG << 8) | (srcR << 16) | (srcA << 24));
 												uint32x4_t dest = vdupq_n_u32(destB | (destG << 8) | (destR << 16) | (destA << 24));
 												uint32x4_t alphas = vdupq_n_u32(alpha);
-												simdCol = vgetq_lane_u32(dummy.blendPixelSIMD(src, dest, alphas), 0);
+												simdCol = vgetq_lane_u32(blendPixelSIMD(src, dest, alphas), 0);
 											}
 											{
 												uint16x8_t src = vdupq_n_u16((srcB >> 3) | ((srcG >> 2) << 5) | ((srcR >> 3) << 11));
 												uint16x8_t dest = vdupq_n_u16((destB >> 3) | ((destG >> 2) << 5) | ((destR >> 3) << 11));
 												uint16x8_t alphas = vdupq_n_u16((uint16)alpha);
-												simd2bppCol = vgetq_lane_u16(dummy.blendPixelSIMD2Bpp(src, dest, alphas), 0);
+												simd2bppCol = vgetq_lane_u16(blendPixelSIMD2Bpp(src, dest, alphas), 0);
 											}
 #ifdef VERBOSE_TEST_GFX
 											printf("src argb: %d, %d, %d, %d dest argb: %d, %d, %d, %d a: %d\n", srcA, srcR, srcG, srcB, destA, destR, destG, destB, alpha);

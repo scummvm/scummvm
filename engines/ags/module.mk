@@ -24,6 +24,7 @@ MODULE_OBJS = \
 	lib/allegro/math.o \
 	lib/allegro/rotate.o \
 	lib/allegro/surface.o \
+	lib/allegro/surface_simd_neon.o \
 	lib/allegro/system.o \
 	lib/allegro/unicode.o \
 	lib/std/std.o \
