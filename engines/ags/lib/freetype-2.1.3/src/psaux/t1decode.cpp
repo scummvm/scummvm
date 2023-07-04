@@ -197,7 +197,7 @@ t1operator_seac( T1_Decoder  decoder,
 	if ( decoder->glyph_names == 0 ) {
 		FT2_1_3_ERROR(( "t1operator_seac:" ));
 		FT2_1_3_ERROR(( " glyph names table not available in this font!\n" ));
-		return PSaux_Err_Syntax_Error;
+		return FT2_1_3_Err_Syntax_Error;
 	}
 
 	bchar_index = t1_lookup_glyph_by_stdcharcode( decoder, bchar );
@@ -206,7 +206,7 @@ t1operator_seac( T1_Decoder  decoder,
 	if ( bchar_index < 0 || achar_index < 0 ) {
 		FT2_1_3_ERROR(( "t1operator_seac:" ));
 		FT2_1_3_ERROR(( " invalid seac character code arguments\n" ));
-		return PSaux_Err_Syntax_Error;
+		return FT2_1_3_Err_Syntax_Error;
 	}
 
 	/* if we are trying to load a composite glyph, do not load the */
@@ -359,7 +359,7 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 	limit = zone->limit  = charstring_base + charstring_len;
 	ip    = zone->cursor = zone->base;
 
-	error = PSaux_Err_Ok;
+	error = FT2_1_3_Err_Ok;
 
 	x = orig_x = builder->pos_x;
 	y = orig_y = builder->pos_y;
@@ -725,7 +725,7 @@ Unexpected_OtherSubr:
 
 				/* return now! */
 				FT2_1_3_TRACE4(( "\n\n" ));
-				return PSaux_Err_Ok;
+				return FT2_1_3_Err_Ok;
 
 			case op_hsbw:
 				FT2_1_3_TRACE4(( " hsbw" ));
@@ -743,7 +743,7 @@ Unexpected_OtherSubr:
 				/* the glyph's metrics (lsb + advance width), not load the   */
 				/* rest of it; so exit immediately                           */
 				if ( builder->metrics_only )
-					return PSaux_Err_Ok;
+					return FT2_1_3_Err_Ok;
 
 				break;
 
@@ -767,7 +767,7 @@ Unexpected_OtherSubr:
 				/* the glyph's metrics (lsb + advance width), not load the   */
 				/* rest of it; so exit immediately                           */
 				if ( builder->metrics_only )
-					return PSaux_Err_Ok;
+					return FT2_1_3_Err_Ok;
 
 				break;
 
@@ -1046,10 +1046,10 @@ Add_Line:
 	return error;
 
 Syntax_Error:
-	return PSaux_Err_Syntax_Error;
+	return FT2_1_3_Err_Syntax_Error;
 
 Stack_Underflow:
-	return PSaux_Err_Stack_Underflow;
+	return FT2_1_3_Err_Stack_Underflow;
 
 Memory_Error:
 	return builder->error;
@@ -1087,7 +1087,7 @@ t1_decoder_init( T1_Decoder           decoder,
 		if ( !psnames ) {
 			FT2_1_3_ERROR(( "t1_decoder_init: " ));
 			FT2_1_3_ERROR(( "the `psnames' module is not available\n" ));
-			return PSaux_Err_Unimplemented_Feature;
+			return FT2_1_3_Err_Unimplemented_Feature;
 		}
 
 		decoder->psnames = psnames;

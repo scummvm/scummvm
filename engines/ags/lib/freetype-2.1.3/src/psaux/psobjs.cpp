@@ -120,7 +120,7 @@ reallocate_t1_table( PS_Table  table,
 
 	table->capacity = new_size;
 
-	return PSaux_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 
@@ -153,7 +153,7 @@ ps_table_add( PS_Table  table,
 			  FT2_1_3_Int    length ) {
 	if ( idx < 0 || idx > table->max_elems ) {
 		FT2_1_3_ERROR(( "ps_table_add: invalid index\n" ));
-		return PSaux_Err_Invalid_Argument;
+		return FT2_1_3_Err_Invalid_Argument;
 	}
 
 	/* grow the base block if needed */
@@ -187,7 +187,7 @@ ps_table_add( PS_Table  table,
 	FT2_1_3_MEM_COPY( table->block + table->cursor, object, length );
 
 	table->cursor += length;
-	return PSaux_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 
@@ -913,13 +913,13 @@ Store_Integer:
 	FT2_1_3_UNUSED( pflags );
 #endif
 
-	error = PSaux_Err_Ok;
+	error = FT2_1_3_Err_Ok;
 
 Exit:
 	return error;
 
 Fail:
-	error = PSaux_Err_Invalid_File_Format;
+	error = FT2_1_3_Err_Invalid_File_Format;
 	goto Exit;
 }
 
@@ -985,7 +985,7 @@ Exit:
 	return error;
 
 Fail:
-	error = PSaux_Err_Invalid_File_Format;
+	error = FT2_1_3_Err_Invalid_File_Format;
 	goto Exit;
 }
 
@@ -1216,7 +1216,7 @@ t1_builder_add_contour( T1_Builder  builder ) {
 
 	if ( !builder->load_points ) {
 		outline->n_contours++;
-		return PSaux_Err_Ok;
+		return FT2_1_3_Err_Ok;
 	}
 
 	error = FT2_1_3_GlyphLoader_CheckPoints( builder->loader, 0, 1 );
