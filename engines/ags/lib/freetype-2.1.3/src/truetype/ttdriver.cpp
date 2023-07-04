@@ -37,6 +37,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_ttdriver
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*************************************************************************/
@@ -53,7 +55,7 @@
 
 #undef  PAIR_TAG
 #define PAIR_TAG( left, right )  ( ( (FT2_1_3_ULong)left << 16 ) | \
-                                     (FT2_1_3_ULong)right        )
+									 (FT2_1_3_ULong)right        )
 
 
 /*************************************************************************/
@@ -90,14 +92,14 @@
 /*                                                                       */
 static FT2_1_3_Error
 Get_Kerning( TT_Face     face,
-             FT2_1_3_UInt     left_glyph,
-             FT2_1_3_UInt     right_glyph,
-             FT2_1_3_Vector*  kerning ) {
+			 FT2_1_3_UInt     left_glyph,
+			 FT2_1_3_UInt     right_glyph,
+			 FT2_1_3_Vector*  kerning ) {
 	TT_Kern0_Pair  pair;
 
 
 	if ( !face )
-		return TT_Err_Invalid_Face_Handle;
+		return FT2_1_3_Err_Invalid_Face_Handle;
 
 	kerning->x = 0;
 	kerning->y = 0;
@@ -130,7 +132,7 @@ Get_Kerning( TT_Face     face,
 	}
 
 Exit:
-	return TT_Err_Ok;
+	return FT2_1_3_Err_Ok;
 
 Found:
 	kerning->x = pair->value;
@@ -182,10 +184,10 @@ Found:
 /*                                                                       */
 static FT2_1_3_Error
 Set_Char_Sizes( TT_Size     size,
-                FT2_1_3_F26Dot6  char_width,
-                FT2_1_3_F26Dot6  char_height,
-                FT2_1_3_UInt     horz_resolution,
-                FT2_1_3_UInt     vert_resolution ) {
+				FT2_1_3_F26Dot6  char_width,
+				FT2_1_3_F26Dot6  char_height,
+				FT2_1_3_UInt     horz_resolution,
+				FT2_1_3_UInt     vert_resolution ) {
 	FT2_1_3_Size_Metrics*  metrics = &size->root.metrics;
 	TT_Face           face    = (TT_Face)size->root.face;
 	FT2_1_3_Long           dim_x, dim_y;
@@ -243,8 +245,8 @@ Set_Char_Sizes( TT_Size     size,
 /*                                                                       */
 static FT2_1_3_Error
 Set_Pixel_Sizes( TT_Size  size,
-                 FT2_1_3_UInt  pixel_width,
-                 FT2_1_3_UInt  pixel_height ) {
+				 FT2_1_3_UInt  pixel_width,
+				 FT2_1_3_UInt  pixel_height ) {
 	FT2_1_3_UNUSED( pixel_width );
 	FT2_1_3_UNUSED( pixel_height );
 
@@ -287,14 +289,14 @@ Set_Pixel_Sizes( TT_Size  size,
 /*                                                                       */
 static FT2_1_3_Error
 Load_Glyph( TT_GlyphSlot  slot,
-            TT_Size       size,
-            FT2_1_3_UShort     glyph_index,
-            FT2_1_3_Int32      load_flags ) {
+			TT_Size       size,
+			FT2_1_3_UShort     glyph_index,
+			FT2_1_3_Int32      load_flags ) {
 	FT2_1_3_Error  error;
 
 
 	if ( !slot )
-		return TT_Err_Invalid_Slot_Handle;
+		return FT2_1_3_Err_Invalid_Slot_Handle;
 
 	/* check whether we want a scaled outline or bitmap */
 	if ( !size )
@@ -307,7 +309,7 @@ Load_Glyph( TT_GlyphSlot  slot,
 	if ( size ) {
 		/* these two object must have the same parent */
 		if ( size->root.face != slot->face )
-			return TT_Err_Invalid_Face_Handle;
+			return FT2_1_3_Err_Invalid_Face_Handle;
 
 		if ( !size->ttmetrics.valid ) {
 			if ( FT2_1_3_SET_ERROR( tt_size_reset( size ) ) )
@@ -340,9 +342,9 @@ Load_Glyph( TT_GlyphSlot  slot,
 
 static FT2_1_3_Module_Interface
 tt_get_interface( TT_Driver    driver,
-                  const char*  tt_interface ) {
+				  const char*  tt_interface ) {
 	FT2_1_3_Module     sfntd = FT2_1_3_Get_Module( driver->root.root.library,
-	                                     "sfnt" );
+										 "sfnt" );
 	SFNT_Service  sfnt;
 
 
@@ -404,5 +406,7 @@ const FT2_1_3_Driver_ClassRec  tt_driver_class = {
 	(FT2_1_3_Face_GetAdvancesFunc) 0
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

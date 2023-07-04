@@ -44,6 +44,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_ttobjs
 
+namespace AGS3 {
+namespace FreeType213 {
 
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
 
@@ -103,9 +105,9 @@ tt_glyphzone_done( TT_GlyphZone  zone ) {
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_glyphzone_new( FT2_1_3_Memory     memory,
-                  FT2_1_3_UShort     maxPoints,
-                  FT2_1_3_Short      maxContours,
-                  TT_GlyphZone  zone ) {
+				  FT2_1_3_UShort     maxPoints,
+				  FT2_1_3_Short      maxContours,
+				  TT_GlyphZone  zone ) {
 	FT2_1_3_Error  error;
 
 
@@ -116,9 +118,9 @@ tt_glyphzone_new( FT2_1_3_Memory     memory,
 	zone->memory = memory;
 
 	if ( FT2_1_3_NEW_ARRAY( zone->org,      maxPoints * 2 ) ||
-	        FT2_1_3_NEW_ARRAY( zone->cur,      maxPoints * 2 ) ||
-	        FT2_1_3_NEW_ARRAY( zone->tags,     maxPoints     ) ||
-	        FT2_1_3_NEW_ARRAY( zone->contours, maxContours   ) ) {
+			FT2_1_3_NEW_ARRAY( zone->cur,      maxPoints * 2 ) ||
+			FT2_1_3_NEW_ARRAY( zone->tags,     maxPoints     ) ||
+			FT2_1_3_NEW_ARRAY( zone->contours, maxContours   ) ) {
 		tt_glyphzone_done( zone );
 	}
 
@@ -152,10 +154,10 @@ tt_glyphzone_new( FT2_1_3_Memory     memory,
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_init( FT2_1_3_Stream      stream,
-              TT_Face        face,
-              FT2_1_3_Int         face_index,
-              FT2_1_3_Int         num_params,
-              FT2_1_3_Parameter*  params ) {
+			  TT_Face        face,
+			  FT2_1_3_Int         face_index,
+			  FT2_1_3_Int         num_params,
+			  FT2_1_3_Parameter*  params ) {
 	FT2_1_3_Error      error;
 	FT2_1_3_Library    library;
 	SFNT_Service  sfnt;
@@ -177,14 +179,14 @@ tt_face_init( FT2_1_3_Stream      stream,
 
 	/* We must also be able to accept Mac/GX fonts, as well as OT ones */
 	if ( face->format_tag != 0x00010000L &&    /* MS fonts  */
-	        face->format_tag != TTAG_true   ) {   /* Mac fonts */
+			face->format_tag != TTAG_true   ) {   /* Mac fonts */
 		FT2_1_3_TRACE2(( "[not a valid TTF font]\n" ));
 		goto Bad_Format;
 	}
 
 	/* If we are performing a simple font format check, exit immediately */
 	if ( face_index < 0 )
-		return TT_Err_Ok;
+		return FT2_1_3_Err_Ok;
 
 	/* Load font directory */
 	error = sfnt->load_face( stream, face, face_index, num_params, params );
@@ -199,14 +201,14 @@ tt_face_init( FT2_1_3_Stream      stream,
 			error = tt_face_load_loca( face, stream );
 		if ( !error )
 			error = tt_face_load_cvt      ( face, stream ) ||
-			        tt_face_load_fpgm ( face, stream );
+					tt_face_load_fpgm ( face, stream );
 
 #else
 
 		if ( !error )
 			error = tt_face_load_loca( face, stream ) ||
-			        tt_face_load_cvt      ( face, stream ) ||
-			        tt_face_load_fpgm ( face, stream );
+					tt_face_load_cvt      ( face, stream ) ||
+					tt_face_load_fpgm ( face, stream );
 
 #endif
 
@@ -219,7 +221,7 @@ Exit:
 	return error;
 
 Bad_Format:
-	error = TT_Err_Unknown_File_Format;
+	error = FT2_1_3_Err_Unknown_File_Format;
 	goto Exit;
 }
 
@@ -289,7 +291,7 @@ tt_face_done( TT_Face  face ) {
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_size_init( TT_Size  size ) {
-	FT2_1_3_Error  error = TT_Err_Ok;
+	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
 
 
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
@@ -336,9 +338,9 @@ tt_size_init( TT_Size  size ) {
 
 	/* allocate function defs, instruction defs, cvt, and storage area */
 	if ( FT2_1_3_NEW_ARRAY( size->function_defs,    size->max_function_defs    ) ||
-	        FT2_1_3_NEW_ARRAY( size->instruction_defs, size->max_instruction_defs ) ||
-	        FT2_1_3_NEW_ARRAY( size->cvt,              size->cvt_size             ) ||
-	        FT2_1_3_NEW_ARRAY( size->storage,          size->storage_size         ) )
+			FT2_1_3_NEW_ARRAY( size->instruction_defs, size->max_instruction_defs ) ||
+			FT2_1_3_NEW_ARRAY( size->cvt,              size->cvt_size             ) ||
+			FT2_1_3_NEW_ARRAY( size->storage,          size->storage_size         ) )
 
 		goto Fail_Memory;
 
@@ -356,7 +358,7 @@ tt_size_init( TT_Size  size ) {
 
 
 		face->interpreter = (TT_Interpreter)
-		                    library->debug_hooks[FT2_1_3_DEBUG_HOOK_TRUETYPE];
+							library->debug_hooks[FT2_1_3_DEBUG_HOOK_TRUETYPE];
 		if ( !face->interpreter )
 			face->interpreter = (TT_Interpreter)TT_RunIns;
 	}
@@ -368,7 +370,7 @@ tt_size_init( TT_Size  size ) {
 		exec = TT_New_Context( face );
 
 	if ( !exec ) {
-		error = TT_Err_Could_Not_Find_Context;
+		error = FT2_1_3_Err_Could_Not_Find_Context;
 		goto Fail_Memory;
 	}
 
@@ -406,9 +408,9 @@ tt_size_init( TT_Size  size ) {
 
 	/* allow font program execution */
 	TT_Set_CodeRange( exec,
-	                  tt_coderange_font,
-	                  face->font_program,
-	                  face->font_program_size );
+					  tt_coderange_font,
+					  face->font_program,
+					  face->font_program_size );
 
 	/* disable CVT and glyph programs coderange */
 	TT_Clear_CodeRange( exec, tt_coderange_cvt );
@@ -422,7 +424,7 @@ tt_size_init( TT_Size  size ) {
 		if ( error )
 			goto Fail_Exec;
 	} else
-		error = TT_Err_Ok;
+		error = FT2_1_3_Err_Ok;
 
 	TT_Save_Context( exec, size );
 
@@ -517,20 +519,20 @@ tt_size_done( TT_Size  size ) {
 static FT2_1_3_Error
 Reset_Outline_Size( TT_Size  size ) {
 	TT_Face           face;
-	FT2_1_3_Error          error = TT_Err_Ok;
+	FT2_1_3_Error          error = FT2_1_3_Err_Ok;
 
 	FT2_1_3_Size_Metrics*  metrics;
 
 
 	if ( size->ttmetrics.valid )
-		return TT_Err_Ok;
+		return FT2_1_3_Err_Ok;
 
 	face = (TT_Face)size->root.face;
 
 	metrics = &size->root.metrics;
 
 	if ( metrics->x_ppem < 1 || metrics->y_ppem < 1 )
-		return TT_Err_Invalid_PPem;
+		return FT2_1_3_Err_Invalid_PPem;
 
 	/* compute new transformation */
 	if ( metrics->x_ppem >= metrics->y_ppem ) {
@@ -538,26 +540,26 @@ Reset_Outline_Size( TT_Size  size ) {
 		size->ttmetrics.ppem    = metrics->x_ppem;
 		size->ttmetrics.x_ratio = 0x10000L;
 		size->ttmetrics.y_ratio = FT2_1_3_MulDiv( metrics->y_ppem,
-		                                     0x10000L,
-		                                     metrics->x_ppem );
+											 0x10000L,
+											 metrics->x_ppem );
 	} else {
 		size->ttmetrics.scale   = metrics->y_scale;
 		size->ttmetrics.ppem    = metrics->y_ppem;
 		size->ttmetrics.x_ratio = FT2_1_3_MulDiv( metrics->x_ppem,
-		                                     0x10000L,
-		                                     metrics->y_ppem );
+											 0x10000L,
+											 metrics->y_ppem );
 		size->ttmetrics.y_ratio = 0x10000L;
 	}
 
 	/* Compute root ascender, descender, test height, and max_advance */
 	metrics->ascender    = ( FT2_1_3_MulFix( face->root.ascender,
-	                                    metrics->y_scale ) + 32 ) & -64;
+										metrics->y_scale ) + 32 ) & -64;
 	metrics->descender   = ( FT2_1_3_MulFix( face->root.descender,
-	                                    metrics->y_scale ) + 32 ) & -64;
+										metrics->y_scale ) + 32 ) & -64;
 	metrics->height      = ( FT2_1_3_MulFix( face->root.height,
-	                                    metrics->y_scale ) + 32 ) & -64;
+										metrics->y_scale ) + 32 ) & -64;
 	metrics->max_advance = ( FT2_1_3_MulFix( face->root.max_advance_width,
-	                                    metrics->x_scale ) + 32 ) & -64;
+										metrics->x_scale ) + 32 ) & -64;
 
 #ifdef TT_CONFIG_OPTION_EMBEDDED_BITMAPS
 	/* set to `invalid' by default */
@@ -598,14 +600,14 @@ Reset_Outline_Size( TT_Size  size ) {
 		/* debugging instances have their own context */
 
 		if ( !exec )
-			return TT_Err_Could_Not_Find_Context;
+			return FT2_1_3_Err_Could_Not_Find_Context;
 
 		TT_Load_Context( exec, face, size );
 
 		TT_Set_CodeRange( exec,
-		                  tt_coderange_cvt,
-		                  face->cvt_program,
-		                  face->cvt_program_size );
+						  tt_coderange_cvt,
+						  face->cvt_program,
+						  face->cvt_program_size );
 
 		TT_Clear_CodeRange( exec, tt_coderange_glyph );
 
@@ -622,7 +624,7 @@ Reset_Outline_Size( TT_Size  size ) {
 			if ( !size->debug )
 				error = face->interpreter( exec );
 		} else
-			error = TT_Err_Ok;
+			error = FT2_1_3_Err_Ok;
 
 		size->GS = exec->GS;
 		/* save default graphics state */
@@ -661,7 +663,7 @@ End:
 static FT2_1_3_Error
 Reset_SBit_Size( TT_Size  size ) {
 	TT_Face           face;
-	FT2_1_3_Error          error = TT_Err_Ok;
+	FT2_1_3_Error          error = FT2_1_3_Err_Ok;
 
 	FT2_1_3_ULong          strike_index;
 	FT2_1_3_Size_Metrics*  metrics;
@@ -672,7 +674,7 @@ Reset_SBit_Size( TT_Size  size ) {
 	metrics = &size->root.metrics;
 
 	if ( size->strike_index != 0xFFFFU )
-		return TT_Err_Ok;
+		return FT2_1_3_Err_Ok;
 
 	face = (TT_Face)size->root.face;
 	sfnt = (SFNT_Service)face->sfnt;
@@ -680,8 +682,8 @@ Reset_SBit_Size( TT_Size  size ) {
 	sbit_metrics = &size->strike_metrics;
 
 	error = sfnt->set_sbit_strike(face,
-	                              metrics->x_ppem, metrics->y_ppem,
-	                              &strike_index);
+								  metrics->x_ppem, metrics->y_ppem,
+								  &strike_index);
 
 	if ( !error ) {
 		TT_SBit_Strike  strike = face->sbit_strikes + strike_index;
@@ -703,12 +705,12 @@ Reset_SBit_Size( TT_Size  size ) {
 
 		/* XXX: Is this correct? */
 		sbit_metrics->height      = sbit_metrics->ascender -
-		                            sbit_metrics->descender;
+									sbit_metrics->descender;
 
 		/* XXX: Is this correct? */
 		sbit_metrics->max_advance = ( strike->hori.min_origin_SB +
-		                              strike->hori.max_width     +
-		                              strike->hori.min_advance_SB ) << 6;
+									  strike->hori.max_width     +
+									  strike->hori.min_advance_SB ) << 6;
 
 		size->strike_index = strike_index;
 	} else {
@@ -743,7 +745,7 @@ Reset_SBit_Size( TT_Size  size ) {
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_size_reset( TT_Size  size ) {
 	FT2_1_3_Face   face;
-	FT2_1_3_Error  error = TT_Err_Ok;
+	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
 
 
 	face = size->root.face;
@@ -769,7 +771,7 @@ tt_size_reset( TT_Size  size ) {
 #endif /* TT_CONFIG_OPTION_EMBEDDED_BITMAPS */
 
 	if ( face->face_flags & FT2_1_3_FACE_FLAG_SCALABLE )
-		return TT_Err_Ok;
+		return FT2_1_3_Err_Ok;
 	else
 		return error;
 }
@@ -827,5 +829,7 @@ tt_driver_done( TT_Driver  driver ) {
 
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

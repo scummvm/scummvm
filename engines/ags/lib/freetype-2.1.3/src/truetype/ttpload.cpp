@@ -36,6 +36,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_ttpload
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*                                                                       */
@@ -56,7 +58,7 @@
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_loca( TT_Face    face,
-                   FT2_1_3_Stream  stream ) {
+				   FT2_1_3_Stream  stream ) {
 	FT2_1_3_Error   error;
 	FT2_1_3_Memory  memory = stream->memory;
 	FT2_1_3_Short   LongOffsets;
@@ -68,7 +70,7 @@ tt_face_load_loca( TT_Face    face,
 
 	error = face->goto_table( face, TTAG_loca, stream, &table_len );
 	if ( error ) {
-		error = TT_Err_Locations_Missing;
+		error = FT2_1_3_Err_Locations_Missing;
 		goto Exit;
 	}
 
@@ -140,7 +142,7 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_cvt( TT_Face    face,
-                  FT2_1_3_Stream  stream ) {
+				  FT2_1_3_Stream  stream ) {
 	FT2_1_3_Error   error;
 	FT2_1_3_Memory  memory = stream->memory;
 	FT2_1_3_ULong   table_len;
@@ -154,7 +156,7 @@ tt_face_load_cvt( TT_Face    face,
 
 		face->cvt_size = 0;
 		face->cvt      = NULL;
-		error          = TT_Err_Ok;
+		error          = FT2_1_3_Err_Ok;
 
 		goto Exit;
 	}
@@ -203,7 +205,7 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 tt_face_load_fpgm( TT_Face    face,
-                   FT2_1_3_Stream  stream ) {
+				   FT2_1_3_Stream  stream ) {
 	FT2_1_3_Error   error;
 	FT2_1_3_ULong   table_len;
 
@@ -231,7 +233,7 @@ tt_face_load_fpgm( TT_Face    face,
 	if ( error ) {
 		face->cvt_program      = NULL;
 		face->cvt_program_size = 0;
-		error                  = TT_Err_Ok;
+		error                  = FT2_1_3_Err_Ok;
 
 		FT2_1_3_TRACE2(( "is missing!\n" ));
 	} else {
@@ -246,5 +248,7 @@ Exit:
 	return error;
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

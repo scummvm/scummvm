@@ -16,14 +16,16 @@
 /***************************************************************************/
 
 
-#ifndef __TTOBJS_H__
-#define __TTOBJS_H__
+#ifndef AGS_LIB_FREETYPE_TTOBJS_H
+#define AGS_LIB_FREETYPE_TTOBJS_H
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/tttypes.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -111,9 +113,9 @@ tt_glyphzone_done( TT_GlyphZone  zone );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_glyphzone_new( FT2_1_3_Memory     memory,
-                  FT2_1_3_UShort     maxPoints,
-                  FT2_1_3_Short      maxContours,
-                  TT_GlyphZone  zone );
+				  FT2_1_3_UShort     maxPoints,
+				  FT2_1_3_Short      maxContours,
+				  TT_GlyphZone  zone );
 
 #endif /* TT_CONFIG_OPTION_BYTECODE_INTERPRETER */
 
@@ -371,10 +373,10 @@ typedef struct  TT_DriverRec_ {
 /*                                                                       */
 FT2_1_3_LOCAL( FT2_1_3_Error )
 tt_face_init( FT2_1_3_Stream      stream,
-              TT_Face        face,
-              FT2_1_3_Int         face_index,
-              FT2_1_3_Int         num_params,
-              FT2_1_3_Parameter*  params );
+			  TT_Face        face,
+			  FT2_1_3_Int         face_index,
+			  FT2_1_3_Int         num_params,
+			  FT2_1_3_Parameter*  params );
 
 FT2_1_3_LOCAL( void )
 tt_face_done( TT_Face  face );
@@ -407,7 +409,10 @@ tt_driver_done( TT_Driver  driver );
 
 FT2_1_3_END_HEADER
 
-#endif /* __TTOBJS_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_TTOBJS_H */
 
 
 /* END */
