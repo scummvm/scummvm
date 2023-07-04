@@ -92,6 +92,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Fehlerhafte Gehgeschwindigkeit in alten Spielen (z.B. Apprentice) korrigiert.
    - Fehler behoben, der dazu führt, dass violetter Text transparent dargestellt wird.
    - Kleine Änderungen an Debug- und Fehlermeldungen sowie am Code-Styling vorgenommen.
+   - Test-Darstellung verbessert.
 
  CRYOMNI3D:
    - Fehler beim Dateizugriff behoben, der verhindert hat, dass Versailles vollständig durchgespielt werden kann.
