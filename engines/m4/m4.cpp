@@ -81,10 +81,11 @@ void M4Engine::m4_inflight() {
 			midi_stop();
 			kernel_load_game(_G(kernel).restore_slot);
 		}
-#ifdef TODO
+
 		// Start up next section
 		_G(between_rooms) = true;
 		global_section_constructor();
+#ifdef TODO
 		util_exec_function(section_preload_code_pointer);
 		kernel.going = kernel_section_startup();
 		util_exec_function(section_init_code_pointer);

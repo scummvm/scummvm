@@ -19,37 +19,44 @@
  *
  */
 
-#ifndef M4_BURGER_BURGER_H
-#define M4_BURGER_BURGER_H
+#ifndef M4_CORE_ROOMS_H
+#define M4_CORE_ROOMS_H
 
-#include "m4/m4.h"
-#include "m4/burger/rooms/section1.h"
+#include "m4/adv_r/adv.h"
 
 namespace M4 {
-namespace Burger {
 
-class BurgerEngine : public M4Engine {
-private:
-	const Section _SECTIONS[1] = {
-		Rooms::Section1()
-	};
-protected:
-	/**
-	 * Creates the structure that holds all the global variables
-	 */
-	M4::Vars *createVars() override;
-
+class Room {
 public:
-	BurgerEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~BurgerEngine() override {}
-
-	/**
-	 * Show the engine information
-	 */
-	void showEngineInfo() override;
+	Room() {
+	}
+	virtual ~Room() {
+	}
 };
 
-} // namespace Burger
+class Section {
+public:
+	Section() {}
+	virtual ~Section() {}
+
+	virtual void preLoad() {}
+
+	/**
+	 * Used to tell if x,y is over the walker hotspot
+	 */
+	virtual HotSpotRec *walker_spotter(int32 x, int32 y);
+};
+
+class Sections {
+public:
+	const Section *_sections = nullptr;
+	const Section *_activeSection = nullptr;
+public:
+	Sections() {}
+
+	void global_section_constructor();
+};
+
 } // namespace M4
 
 #endif

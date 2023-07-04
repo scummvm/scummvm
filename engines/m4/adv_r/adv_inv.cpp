@@ -30,9 +30,12 @@ namespace M4 {
 
 #define MAX_NAME_LENGTH 40
 
+// TODO: Move more stuff into InventoryBase class
+static char *inv_get_name(const Common::String &itemName);
+
 void InventoryBase::syncGame(Common::Serializer &s) {
 	char invName[MAX_NAME_LENGTH];
-	uint32 inv_size;
+	uint32 inv_size, scene;
 	int32 i;
 
 	inv_size = _tail * MAX_NAME_LENGTH;
@@ -47,13 +50,17 @@ void InventoryBase::syncGame(Common::Serializer &s) {
 
 		if (s.isLoading()) {
 			s.syncBytes((byte *)invName, MAX_NAME_LENGTH);
-			Common::strcpy_s(objName, MAX_NAME_LENGTH, invName);
+			char *item = inv_get_name(invName);
+			assert(item);
+
+			s.syncAsUint32LE(scene);
+			inv_put_thing_in(item, scene);
+
 		} else {
 			Common::strcpy_s(invName, MAX_NAME_LENGTH, objName);
 			s.syncBytes((byte *)invName, MAX_NAME_LENGTH);
 		}
 
-		s.syncAsUint32LE(_objects[i]->scene);
 	}
 }
 

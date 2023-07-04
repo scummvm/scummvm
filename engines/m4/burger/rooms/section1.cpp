@@ -19,37 +19,14 @@
  *
  */
 
-#ifndef M4_BURGER_BURGER_H
-#define M4_BURGER_BURGER_H
-
-#include "m4/m4.h"
 #include "m4/burger/rooms/section1.h"
 
 namespace M4 {
 namespace Burger {
+namespace Rooms {
 
-class BurgerEngine : public M4Engine {
-private:
-	const Section _SECTIONS[1] = {
-		Rooms::Section1()
-	};
-protected:
-	/**
-	 * Creates the structure that holds all the global variables
-	 */
-	M4::Vars *createVars() override;
 
-public:
-	BurgerEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~BurgerEngine() override {}
 
-	/**
-	 * Show the engine information
-	 */
-	void showEngineInfo() override;
-};
-
+} // namespace Rooms
 } // namespace Burger
 } // namespace M4
-
-#endif
