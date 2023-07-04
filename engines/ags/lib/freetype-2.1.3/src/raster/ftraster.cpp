@@ -177,12 +177,12 @@ namespace FreeType213 {
 
 #include "rasterrs.h"
 
-#define Raster_Err_None         Raster_Err_Ok
-#define Raster_Err_Not_Ini      Raster_Err_Raster_Uninitialized
-#define Raster_Err_Overflow     Raster_Err_Raster_Overflow
-#define Raster_Err_Neg_Height   Raster_Err_Raster_Negative_Height
-#define Raster_Err_Invalid      Raster_Err_Invalid_Outline
-#define Raster_Err_Unsupported  Raster_Err_Cannot_Render_Glyph
+#define Raster_Err_None         FT2_1_3_Err_Ok
+#define Raster_Err_Not_Ini      FT2_1_3_Err_Raster_Uninitialized
+#define Raster_Err_Overflow     FT2_1_3_Err_Raster_Overflow
+#define Raster_Err_Neg_Height   FT2_1_3_Err_Raster_Negative_Height
+#define Raster_Err_Invalid      FT2_1_3_Err_Invalid_Outline
+#define Raster_Err_Unsupported  FT2_1_3_Err_Cannot_Render_Glyph
 
 
 #endif /* _STANDALONE_ */
@@ -2815,7 +2815,7 @@ Render_Glyph( RAS_ARG ) {
 			return error;
 	}
 
-	return Raster_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 
@@ -2886,7 +2886,7 @@ Render_Gray_Glyph( RAS_ARG ) {
 			return error;
 	}
 
-	return Raster_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 #else /* !FT2_1_3_RASTER_OPTION_ANTI_ALIASING */
@@ -2895,7 +2895,7 @@ FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 Render_Gray_Glyph( RAS_ARG ) {
 	FT2_1_3_UNUSED_RASTER;
 
-	return Raster_Err_Cannot_Render_Glyph;
+	return FT2_1_3_Err_Cannot_Render_Glyph;
 }
 
 #endif /* !FT2_1_3_RASTER_OPTION_ANTI_ALIASING */

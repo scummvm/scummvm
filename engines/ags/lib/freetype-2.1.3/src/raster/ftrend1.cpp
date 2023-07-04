@@ -37,7 +37,7 @@ ft_raster1_init( FT2_1_3_Renderer  render ) {
 			library->raster_pool,
 			library->raster_pool_size );
 
-	return Raster_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 
@@ -59,11 +59,11 @@ ft_raster1_transform( FT2_1_3_Renderer   render,
 					  FT2_1_3_GlyphSlot  slot,
 					  FT2_1_3_Matrix*    matrix,
 					  FT2_1_3_Vector*    delta ) {
-	FT2_1_3_Error error = Raster_Err_Ok;
+	FT2_1_3_Error error = FT2_1_3_Err_Ok;
 
 
 	if ( slot->format != render->glyph_format ) {
-		error = Raster_Err_Invalid_Argument;
+		error = FT2_1_3_Err_Invalid_Argument;
 		goto Exit;
 	}
 
@@ -108,7 +108,7 @@ ft_raster1_render( FT2_1_3_Renderer     render,
 
 	/* check glyph image format */
 	if ( slot->format != render->glyph_format ) {
-		error = Raster_Err_Invalid_Argument;
+		error = FT2_1_3_Err_Invalid_Argument;
 		goto Exit;
 	}
 
@@ -116,11 +116,11 @@ ft_raster1_render( FT2_1_3_Renderer     render,
 	if ( mode != FT2_1_3_RENDER_MODE_MONO ) {
 		/* raster1 is only capable of producing monochrome bitmaps */
 		if ( render->clazz == &ft_raster1_renderer_class )
-			return Raster_Err_Cannot_Render_Glyph;
+			return FT2_1_3_Err_Cannot_Render_Glyph;
 	} else {
 		/* raster5 is only capable of producing 5-gray-levels bitmaps */
 		if ( render->clazz == &ft_raster5_renderer_class )
-			return Raster_Err_Cannot_Render_Glyph;
+			return FT2_1_3_Err_Cannot_Render_Glyph;
 	}
 
 	outline = &slot->outline;
