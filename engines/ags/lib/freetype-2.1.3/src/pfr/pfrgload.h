@@ -16,17 +16,20 @@
 /***************************************************************************/
 
 
-#ifndef __PFRGLOAD_H__
-#define __PFRGLOAD_H__
+#ifndef AGS_LIB_FREETYPE_PFRGLOAD_H
+#define AGS_LIB_FREETYPE_PFRGLOAD_H
 
 #include "pfrtypes.h"
+
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
 
 FT2_1_3_LOCAL( void )
 pfr_glyph_init( PFR_Glyph       glyph,
-                FT2_1_3_GlyphLoader  loader );
+				FT2_1_3_GlyphLoader  loader );
 
 FT2_1_3_LOCAL( void )
 pfr_glyph_done( PFR_Glyph  glyph );
@@ -34,16 +37,18 @@ pfr_glyph_done( PFR_Glyph  glyph );
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 pfr_glyph_load( PFR_Glyph  glyph,
-                FT2_1_3_Stream  stream,
-                FT2_1_3_ULong   gps_offset,
-                FT2_1_3_ULong   offset,
-                FT2_1_3_ULong   size );
+				FT2_1_3_Stream  stream,
+				FT2_1_3_ULong   gps_offset,
+				FT2_1_3_ULong   offset,
+				FT2_1_3_ULong   size );
 
 
 FT2_1_3_END_HEADER
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
-#endif /* __PFRGLOAD_H__ */
+#endif /* AGS_LIB_FREETYPE_PFRGLOAD_H */
 
 
 /* END */

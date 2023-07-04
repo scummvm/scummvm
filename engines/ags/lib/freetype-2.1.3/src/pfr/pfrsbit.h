@@ -16,21 +16,27 @@
 /***************************************************************************/
 
 
-#ifndef __PFRSBIT_H__
-#define __PFRSBIT_H__
+#ifndef AGS_LIB_FREETYPE_PFRSBIT_H
+#define AGS_LIB_FREETYPE_PFRSBIT_H
 
 #include "pfrobjs.h"
+
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
 FT2_1_3_LOCAL( FT2_1_3_Error )
 pfr_slot_load_bitmap( PFR_Slot  glyph,
-                      PFR_Size  size,
-                      FT2_1_3_UInt   glyph_index );
+					  PFR_Size  size,
+					  FT2_1_3_UInt   glyph_index );
 
 FT2_1_3_END_HEADER
 
-#endif /* __PFR_SBIT_H__ */
+} // End of namespace FreeType213
+} // End of namespace AGS3
+
+#endif /* AGS_LIB_FREETYPE_PFRSBIT_H */
 
 
 /* END */

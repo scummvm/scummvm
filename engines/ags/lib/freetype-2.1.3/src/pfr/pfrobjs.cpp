@@ -29,6 +29,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_pfr
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*************************************************************************/
@@ -49,10 +51,10 @@ pfr_face_done( PFR_Face  face ) {
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 pfr_face_init( FT2_1_3_Stream      stream,
-               PFR_Face       face,
-               FT2_1_3_Int         face_index,
-               FT2_1_3_Int         num_params,
-               FT2_1_3_Parameter*  params ) {
+			   PFR_Face       face,
+			   FT2_1_3_Int         face_index,
+			   FT2_1_3_Int         num_params,
+			   FT2_1_3_Parameter*  params ) {
 	FT2_1_3_Error  error;
 
 	FT2_1_3_UNUSED( num_params );
@@ -76,8 +78,8 @@ pfr_face_init( FT2_1_3_Stream      stream,
 
 
 		error = pfr_log_font_count( stream,
-		                            face->header.log_dir_offset,
-		                            &num_faces );
+									face->header.log_dir_offset,
+									&num_faces );
 		if ( error )
 			goto Exit;
 
@@ -95,16 +97,16 @@ pfr_face_init( FT2_1_3_Stream      stream,
 
 	/* load the face */
 	error = pfr_log_font_load(
-	            &face->log_font, stream, face_index,
-	            face->header.log_dir_offset,
-	            FT2_1_3_BOOL( face->header.phy_font_max_size_high != 0 ) );
+				&face->log_font, stream, face_index,
+				face->header.log_dir_offset,
+				FT2_1_3_BOOL( face->header.phy_font_max_size_high != 0 ) );
 	if ( error )
 		goto Exit;
 
 	/* now load the physical font descriptor */
 	error = pfr_phy_font_load( &face->phy_font, stream,
-	                           face->log_font.phys_offset,
-	                           face->log_font.phys_size );
+							   face->log_font.phys_offset,
+							   face->log_font.phys_size );
 	if ( error )
 		goto Exit;
 
@@ -143,8 +145,8 @@ pfr_face_init( FT2_1_3_Stream      stream,
 		root->ascender     = (FT2_1_3_Short) phy_font->bbox.yMax;
 		root->descender    = (FT2_1_3_Short) phy_font->bbox.yMin;
 		root->height       = (FT2_1_3_Short)
-		                     ( ( ( root->ascender - root->descender ) * 12 )
-		                       / 10 );
+							 ( ( ( root->ascender - root->descender ) * 12 )
+							   / 10 );
 
 		/* now compute maximum advance width */
 		if ( ( phy_font->flags & PFR_PHY_PROPORTIONAL ) == 0 )
@@ -223,9 +225,9 @@ pfr_slot_done( PFR_Slot  slot ) {
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 pfr_slot_load( PFR_Slot  slot,
-               PFR_Size  size,
-               FT2_1_3_UInt   gindex,
-               FT2_1_3_Int32  load_flags ) {
+			   PFR_Size  size,
+			   FT2_1_3_UInt   gindex,
+			   FT2_1_3_Int32  load_flags ) {
 	FT2_1_3_Error     error;
 	PFR_Face     face    = (PFR_Face)slot->root.face;
 	PFR_Char     gchar;
@@ -253,7 +255,7 @@ pfr_slot_load( PFR_Slot  slot,
 
 	/* load the glyph outline (FT2_1_3_LOAD_NO_RECURSE isn't supported) */
 	error = pfr_glyph_load( &slot->glyph, face->root.stream,
-	                        gps_offset, gchar->gps_offset, gchar->gps_size );
+							gps_offset, gchar->gps_offset, gchar->gps_size );
 
 	if ( !error ) {
 		FT2_1_3_BBox            cbox;
@@ -340,9 +342,9 @@ Exit:
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 pfr_face_get_kerning( PFR_Face    face,
-                      FT2_1_3_UInt     glyph1,
-                      FT2_1_3_UInt     glyph2,
-                      FT2_1_3_Vector*  kerning ) {
+					  FT2_1_3_UInt     glyph1,
+					  FT2_1_3_UInt     glyph2,
+					  FT2_1_3_Vector*  kerning ) {
 	FT2_1_3_Error      error;
 	PFR_PhyFont   phy_font = &face->phy_font;
 	PFR_KernItem  item     = phy_font->kern_items;
@@ -371,7 +373,7 @@ Found_Item: {
 
 
 		if ( FT2_1_3_STREAM_SEEK( item->offset )                       ||
-		        FT2_1_3_FRAME_ENTER( item->pair_count * item->pair_size ) )
+				FT2_1_3_FRAME_ENTER( item->pair_count * item->pair_size ) )
 			goto Exit;
 
 		min = 0;
@@ -412,5 +414,8 @@ Found_Item: {
 Exit:
 	return 0;
 }
+
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

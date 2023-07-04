@@ -16,13 +16,15 @@
 /***************************************************************************/
 
 
-#ifndef __PFRCMAP_H__
-#define __PFRCMAP_H__
+#ifndef AGS_LIB_FREETYPE_PFRCMAP_H
+#define AGS_LIB_FREETYPE_PFRCMAP_H
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
 #include "pfrtypes.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
@@ -38,8 +40,10 @@ FT2_1_3_CALLBACK_TABLE const FT2_1_3_CMap_ClassRec  pfr_cmap_class_rec;
 
 FT2_1_3_END_HEADER
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
-#endif /* __PFRCMAP_H__ */
+#endif /* AGS_LIB_FREETYPE_PFRCMAP_H */
 
 
 /* END */

@@ -20,6 +20,8 @@
 #include "pfrobjs.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
 pfr_cmap_init( PFR_CMap  cmap ) {
@@ -54,7 +56,7 @@ pfr_cmap_done( PFR_CMap  cmap ) {
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 pfr_cmap_char_index( PFR_CMap   cmap,
-                     FT2_1_3_UInt32  char_code ) {
+					 FT2_1_3_UInt32  char_code ) {
 	FT2_1_3_UInt   min = 0;
 	FT2_1_3_UInt   max = cmap->num_chars;
 	FT2_1_3_UInt   mid;
@@ -79,7 +81,7 @@ pfr_cmap_char_index( PFR_CMap   cmap,
 
 FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 pfr_cmap_char_next( PFR_CMap    cmap,
-                    FT2_1_3_UInt32  *pchar_code ) {
+					FT2_1_3_UInt32  *pchar_code ) {
 	FT2_1_3_UInt    result    = 0;
 	FT2_1_3_UInt32  char_code = *pchar_code + 1;
 
@@ -141,5 +143,7 @@ pfr_cmap_class_rec = {
 	(FT2_1_3_CMap_CharNextFunc) pfr_cmap_char_next
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

@@ -75,7 +75,12 @@ MODULE_OBJS = \
 	lib/freetype-2.1.3/src/pcf/pcfutil.o \
 	lib/freetype-2.1.3/src/pcf/pcfread.o \
 	lib/freetype-2.1.3/src/pcf/pcfdriver.o \
-	lib/freetype-2.1.3/src/pfr/pfr.o \
+	lib/freetype-2.1.3/src/pfr/pfrload.o \
+	lib/freetype-2.1.3/src/pfr/pfrgload.o \
+	lib/freetype-2.1.3/src/pfr/pfrcmap.o \
+	lib/freetype-2.1.3/src/pfr/pfrobjs.o \
+	lib/freetype-2.1.3/src/pfr/pfrdrivr.o \
+	lib/freetype-2.1.3/src/pfr/pfrsbit.o \
 	lib/freetype-2.1.3/src/psaux/psaux.o \
 	lib/freetype-2.1.3/src/pshinter/pshinter.o \
 	lib/freetype-2.1.3/src/psnames/psmodule.o \

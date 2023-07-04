@@ -26,6 +26,8 @@
 #undef  FT2_1_3_COMPONENT
 #define FT2_1_3_COMPONENT  trace_pfr
 
+namespace AGS3 {
+namespace FreeType213 {
 
 /*************************************************************************/
 /*************************************************************************/
@@ -38,7 +40,7 @@
 
 FT2_1_3_LOCAL_DEF( void )
 pfr_glyph_init( PFR_Glyph       glyph,
-                FT2_1_3_GlyphLoader  loader ) {
+				FT2_1_3_GlyphLoader  loader ) {
 	FT2_1_3_ZERO( glyph );
 
 	glyph->loader     = loader;
@@ -117,7 +119,7 @@ pfr_glyph_start( PFR_Glyph  glyph ) {
 
 static FT2_1_3_Error
 pfr_glyph_line_to( PFR_Glyph   glyph,
-                   FT2_1_3_Vector*  to ) {
+				   FT2_1_3_Vector*  to ) {
 	FT2_1_3_GlyphLoader  loader  = glyph->loader;
 	FT2_1_3_Outline*     outline = &loader->current.outline;
 	FT2_1_3_Error        error;
@@ -143,9 +145,9 @@ pfr_glyph_line_to( PFR_Glyph   glyph,
 
 static FT2_1_3_Error
 pfr_glyph_curve_to( PFR_Glyph   glyph,
-                    FT2_1_3_Vector*  control1,
-                    FT2_1_3_Vector*  control2,
-                    FT2_1_3_Vector*  to ) {
+					FT2_1_3_Vector*  control1,
+					FT2_1_3_Vector*  control2,
+					FT2_1_3_Vector*  to ) {
 	FT2_1_3_GlyphLoader  loader  = glyph->loader;
 	FT2_1_3_Outline*     outline = &loader->current.outline;
 	FT2_1_3_Error        error;
@@ -176,7 +178,7 @@ pfr_glyph_curve_to( PFR_Glyph   glyph,
 
 static FT2_1_3_Error
 pfr_glyph_move_to( PFR_Glyph   glyph,
-                   FT2_1_3_Vector*  to ) {
+				   FT2_1_3_Vector*  to ) {
 	FT2_1_3_GlyphLoader  loader  = glyph->loader;
 	FT2_1_3_Error        error;
 
@@ -219,8 +221,8 @@ pfr_glyph_end( PFR_Glyph  glyph ) {
 /* load a simple glyph */
 static FT2_1_3_Error
 pfr_glyph_load_simple( PFR_Glyph  glyph,
-                       FT2_1_3_Byte*   p,
-                       FT2_1_3_Byte*   limit ) {
+					   FT2_1_3_Byte*   p,
+					   FT2_1_3_Byte*   limit ) {
 	FT2_1_3_Error   error  = 0;
 	FT2_1_3_Memory  memory = glyph->loader->memory;
 	FT2_1_3_UInt    flags, x_count, y_count, i, count, mask;
@@ -261,8 +263,8 @@ pfr_glyph_load_simple( PFR_Glyph  glyph,
 
 
 		if ( FT2_1_3_RENEW_ARRAY( glyph->x_control,
-		                     glyph->max_xy_control,
-		                     new_max ) )
+							 glyph->max_xy_control,
+							 new_max ) )
 			goto Exit;
 
 		glyph->max_xy_control = new_max;
@@ -496,8 +498,8 @@ Too_Short:
 /* load a composite/compound glyph */
 static FT2_1_3_Error
 pfr_glyph_load_compound( PFR_Glyph  glyph,
-                         FT2_1_3_Byte*   p,
-                         FT2_1_3_Byte*   limit ) {
+						 FT2_1_3_Byte*   p,
+						 FT2_1_3_Byte*   limit ) {
 	FT2_1_3_Error        error  = 0;
 	FT2_1_3_GlyphLoader  loader = glyph->loader;
 	FT2_1_3_Memory       memory = loader->memory;
@@ -635,17 +637,17 @@ Too_Short:
 
 static FT2_1_3_Error
 pfr_glyph_load_rec( PFR_Glyph  glyph,
-                    FT2_1_3_Stream  stream,
-                    FT2_1_3_ULong   gps_offset,
-                    FT2_1_3_ULong   offset,
-                    FT2_1_3_ULong   size ) {
+					FT2_1_3_Stream  stream,
+					FT2_1_3_ULong   gps_offset,
+					FT2_1_3_ULong   offset,
+					FT2_1_3_ULong   size ) {
 	FT2_1_3_Error  error;
 	FT2_1_3_Byte*  p;
 	FT2_1_3_Byte*  limit;
 
 
 	if ( FT2_1_3_STREAM_SEEK( gps_offset + offset ) ||
-	        FT2_1_3_FRAME_ENTER( size )                )
+			FT2_1_3_FRAME_ENTER( size )                )
 		goto Exit;
 
 	p     = (FT2_1_3_Byte*)stream->cursor;
@@ -679,8 +681,8 @@ pfr_glyph_load_rec( PFR_Glyph  glyph,
 			old_points = base->n_points;
 
 			error = pfr_glyph_load_rec( glyph, stream, gps_offset,
-			                            subglyph->gps_offset,
-			                            subglyph->gps_size );
+										subglyph->gps_offset,
+										subglyph->gps_size );
 			if ( error )
 				goto Exit;
 
@@ -695,9 +697,9 @@ pfr_glyph_load_rec( PFR_Glyph  glyph,
 
 				for ( i = 0; i < num_points; i++, vec++ ) {
 					vec->x = FT2_1_3_MulFix( vec->x, subglyph->x_scale ) +
-					         subglyph->x_delta;
+							 subglyph->x_delta;
 					vec->y = FT2_1_3_MulFix( vec->y, subglyph->y_scale ) +
-					         subglyph->y_delta;
+							 subglyph->y_delta;
 				}
 			} else {
 				FT2_1_3_Vector*  vec = loader->base.outline.points + old_points;
@@ -728,10 +730,10 @@ Exit:
 
 FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 pfr_glyph_load( PFR_Glyph  glyph,
-                FT2_1_3_Stream  stream,
-                FT2_1_3_ULong   gps_offset,
-                FT2_1_3_ULong   offset,
-                FT2_1_3_ULong   size ) {
+				FT2_1_3_Stream  stream,
+				FT2_1_3_ULong   gps_offset,
+				FT2_1_3_ULong   offset,
+				FT2_1_3_ULong   size ) {
 	/* initialize glyph loader */
 	FT2_1_3_GlyphLoader_Rewind( glyph->loader );
 
@@ -739,5 +741,7 @@ pfr_glyph_load( PFR_Glyph  glyph,
 	return pfr_glyph_load_rec( glyph, stream, gps_offset, offset, size );
 }
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */

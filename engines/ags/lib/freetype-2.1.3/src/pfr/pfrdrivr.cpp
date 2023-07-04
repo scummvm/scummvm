@@ -23,12 +23,14 @@
 #include "pfrdrivr.h"
 #include "pfrobjs.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 static FT2_1_3_Error
 pfr_get_kerning( PFR_Face    face,
-                 FT2_1_3_UInt     left,
-                 FT2_1_3_UInt     right,
-                 FT2_1_3_Vector  *avector ) {
+				 FT2_1_3_UInt     left,
+				 FT2_1_3_UInt     right,
+				 FT2_1_3_Vector  *avector ) {
 	FT2_1_3_Error  error;
 
 	error = pfr_face_get_kerning( face, left, right, avector );
@@ -39,11 +41,11 @@ pfr_get_kerning( PFR_Face    face,
 		if ( phys->outline_resolution != phys->metrics_resolution ) {
 			if ( avector->x != 0 )
 				avector->x = FT2_1_3_MulDiv( avector->x, phys->outline_resolution,
-				                        phys->metrics_resolution );
+										phys->metrics_resolution );
 
 			if ( avector->y != 0 )
 				avector->y = FT2_1_3_MulDiv( avector->x, phys->outline_resolution,
-				                        phys->metrics_resolution );
+										phys->metrics_resolution );
 		}
 	}
 	return error;
@@ -52,8 +54,8 @@ pfr_get_kerning( PFR_Face    face,
 
 static FT2_1_3_Error
 pfr_get_advance( PFR_Face   face,
-                 FT2_1_3_UInt    gindex,
-                 FT2_1_3_Pos    *aadvance ) {
+				 FT2_1_3_UInt    gindex,
+				 FT2_1_3_Pos    *aadvance ) {
 	FT2_1_3_Error     error = FT2_1_3_Err_Bad_Argument;
 
 	*aadvance = 0;
@@ -72,10 +74,10 @@ pfr_get_advance( PFR_Face   face,
 
 static FT2_1_3_Error
 pfr_get_metrics( PFR_Face   face,
-                 FT2_1_3_UInt   *aoutline_resolution,
-                 FT2_1_3_UInt   *ametrics_resolution,
-                 FT2_1_3_Fixed  *ametrics_x_scale,
-                 FT2_1_3_Fixed  *ametrics_y_scale ) {
+				 FT2_1_3_UInt   *aoutline_resolution,
+				 FT2_1_3_UInt   *ametrics_resolution,
+				 FT2_1_3_Fixed  *ametrics_x_scale,
+				 FT2_1_3_Fixed  *ametrics_y_scale ) {
 	PFR_PhyFont  phys  = &face->phy_font;
 	FT2_1_3_Fixed     x_scale, y_scale;
 	FT2_1_3_Size      size = face->root.size;
@@ -91,10 +93,10 @@ pfr_get_metrics( PFR_Face   face,
 
 	if ( size ) {
 		x_scale = FT2_1_3_DivFix( size->metrics.x_ppem << 6,
-		                     phys->metrics_resolution );
+							 phys->metrics_resolution );
 
 		y_scale = FT2_1_3_DivFix( size->metrics.y_ppem << 6,
-		                     phys->metrics_resolution );
+							 phys->metrics_resolution );
 	}
 
 	if ( ametrics_x_scale )
@@ -154,5 +156,7 @@ const FT2_1_3_Driver_ClassRec  pfr_driver_class = {
 	(FT2_1_3_Face_GetAdvancesFunc) 0
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */
