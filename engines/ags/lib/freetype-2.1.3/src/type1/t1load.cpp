@@ -181,7 +181,7 @@ T1_Get_Multi_Master( T1_Face           face,
 	FT2_1_3_Error  error;
 
 
-	error = T1_Err_Invalid_Argument;
+	error = FT2_1_3_Err_Invalid_Argument;
 
 	if ( blend ) {
 		master->num_axis    = blend->num_axis;
@@ -211,11 +211,11 @@ T1_Set_MM_Blend( T1_Face    face,
 	FT2_1_3_UInt   n, m;
 
 
-	error = T1_Err_Invalid_Argument;
+	error = FT2_1_3_Err_Invalid_Argument;
 
 	if ( blend && blend->num_axis == num_coords ) {
 		/* recompute the weight vector from the blend coordinates */
-		error = T1_Err_Ok;
+		error = FT2_1_3_Err_Ok;
 
 		for ( n = 0; n < blend->num_designs; n++ ) {
 			FT2_1_3_Fixed  result = 0x10000L;  /* 1.0 fixed */
@@ -238,7 +238,7 @@ T1_Set_MM_Blend( T1_Face    face,
 			blend->weight_vector[n] = result;
 		}
 
-		error = T1_Err_Ok;
+		error = FT2_1_3_Err_Ok;
 	}
 	return error;
 }
@@ -253,7 +253,7 @@ T1_Set_MM_Design( T1_Face   face,
 	FT2_1_3_UInt   n, p;
 
 
-	error = T1_Err_Invalid_Argument;
+	error = FT2_1_3_Err_Invalid_Argument;
 	if ( blend && blend->num_axis == num_coords ) {
 		/* compute the blend coordinates through the blend design map */
 		FT2_1_3_Fixed  final_blends[T1_MAX_MM_DESIGNS];
@@ -375,7 +375,7 @@ parse_blend_axis_types( T1_Face    face,
 	if ( num_axis <= 0 || num_axis > T1_MAX_MM_AXIS ) {
 		FT2_1_3_ERROR(( "parse_blend_axis_types: incorrect number of axes: %d\n",
 				   num_axis ));
-		error = T1_Err_Invalid_File_Format;
+		error = FT2_1_3_Err_Invalid_File_Format;
 		goto Exit;
 	}
 
@@ -400,7 +400,7 @@ parse_blend_axis_types( T1_Face    face,
 
 		len = token->limit - token->start;
 		if ( len <= 0 ) {
-			error = T1_Err_Invalid_File_Format;
+			error = FT2_1_3_Err_Invalid_File_Format;
 			goto Exit;
 		}
 
@@ -435,7 +435,7 @@ parse_blend_design_positions( T1_Face    face,
 		FT2_1_3_ERROR(( "parse_blend_design_positions:" ));
 		FT2_1_3_ERROR(( " incorrect number of designs: %d\n",
 				   num_designs ));
-		error = T1_Err_Invalid_File_Format;
+		error = FT2_1_3_Err_Invalid_File_Format;
 		goto Exit;
 	}
 
@@ -468,7 +468,7 @@ parse_blend_design_positions( T1_Face    face,
 				blend = face->blend;
 			} else if ( n_axis != num_axis ) {
 				FT2_1_3_ERROR(( "parse_blend_design_positions: incorrect table\n" ));
-				error = T1_Err_Invalid_File_Format;
+				error = FT2_1_3_Err_Invalid_File_Format;
 				goto Exit;
 			}
 
@@ -509,7 +509,7 @@ parse_blend_design_map( T1_Face    face,
 	if ( num_axis <= 0 || num_axis > T1_MAX_MM_AXIS ) {
 		FT2_1_3_ERROR(( "parse_blend_design_map: incorrect number of axes: %d\n",
 				   num_axis ));
-		error = T1_Err_Invalid_File_Format;
+		error = FT2_1_3_Err_Invalid_File_Format;
 		goto Exit;
 	}
 	old_cursor = parser->root.cursor;
@@ -544,7 +544,7 @@ parse_blend_design_map( T1_Face    face,
 		}
 		if ( num_points <= 0 || num_points > T1_MAX_MM_MAP_POINTS ) {
 			FT2_1_3_ERROR(( "parse_blend_design_map: incorrect table\n" ));
-			error = T1_Err_Invalid_File_Format;
+			error = FT2_1_3_Err_Invalid_File_Format;
 			goto Exit;
 		}
 
@@ -582,14 +582,14 @@ parse_weight_vector( T1_Face    face,
 
 	if ( !blend || blend->num_designs == 0 ) {
 		FT2_1_3_ERROR(( "parse_weight_vector: too early!\n" ));
-		error = T1_Err_Invalid_File_Format;
+		error = FT2_1_3_Err_Invalid_File_Format;
 		goto Exit;
 	}
 
 	T1_ToToken( parser, &master );
 	if ( master.type != T1_TOKEN_TYPE_ARRAY ) {
 		FT2_1_3_ERROR(( "parse_weight_vector: incorrect format!\n" ));
-		error = T1_Err_Invalid_File_Format;
+		error = FT2_1_3_Err_Invalid_File_Format;
 		goto Exit;
 	}
 
@@ -771,7 +771,7 @@ read_binary_data( T1_Parser  parser,
 	}
 
 	FT2_1_3_ERROR(( "read_binary_data: invalid size field\n" ));
-	parser->root.error = T1_Err_Invalid_File_Format;
+	parser->root.error = FT2_1_3_Err_Invalid_File_Format;
 	return 0;
 }
 
@@ -903,7 +903,7 @@ parse_encoding( T1_Face    face,
 		cur++;
 		if ( cur >= limit ) {
 			FT2_1_3_ERROR(( "parse_encoding: out of bounds!\n" ));
-			parser->root.error = T1_Err_Invalid_File_Format;
+			parser->root.error = FT2_1_3_Err_Invalid_File_Format;
 			return;
 		}
 	}
@@ -1036,7 +1036,7 @@ parse_encoding( T1_Face    face,
 
 		else {
 			FT2_1_3_ERROR(( "parse_encoding: invalid token!\n" ));
-			parser->root.error = T1_Err_Invalid_File_Format;
+			parser->root.error = FT2_1_3_Err_Invalid_File_Format;
 		}
 	}
 }
@@ -1616,7 +1616,7 @@ T1_Open_Face( T1_Face  face ) {
 #endif
 		if ( !loader.charstrings.init ) {
 			FT2_1_3_ERROR(( "T1_Open_Face: no charstrings array in face!\n" ));
-			error = T1_Err_Invalid_File_Format;
+			error = FT2_1_3_Err_Invalid_File_Format;
 		}
 
 	loader.charstrings.init  = 0;

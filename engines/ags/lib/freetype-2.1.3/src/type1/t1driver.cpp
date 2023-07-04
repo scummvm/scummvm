@@ -65,7 +65,7 @@ t1_get_glyph_name( T1_Face     face,
 		((FT2_1_3_Byte*)buffer)[len] = 0;
 	}
 
-	return T1_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 
@@ -215,7 +215,7 @@ Get_Kerning( T1_Face     face,
 	if ( afm )
 		T1_Get_Kerning( afm, left_glyph, right_glyph, kerning );
 
-	return T1_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 

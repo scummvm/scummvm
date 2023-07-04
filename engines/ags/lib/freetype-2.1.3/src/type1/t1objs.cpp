@@ -301,7 +301,7 @@ T1_Face_Init( FT2_1_3_Stream      stream,
 	/* check the face index */
 	if ( face_index != 0 ) {
 		FT2_1_3_ERROR(( "T1_Face_Init: invalid face index\n" ));
-		error = T1_Err_Invalid_Argument;
+		error = FT2_1_3_Err_Invalid_Argument;
 		goto Exit;
 	}
 
@@ -493,7 +493,7 @@ FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
 T1_Driver_Init( T1_Driver  driver ) {
 	FT2_1_3_UNUSED( driver );
 
-	return T1_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 

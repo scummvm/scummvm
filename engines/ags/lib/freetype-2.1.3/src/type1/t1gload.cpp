@@ -185,7 +185,7 @@ T1_Compute_Max_Advance( T1_Face  face,
 		/* ignore the error if one occured - skip to next glyph */
 	}
 
-	return T1_Err_Ok;
+	return FT2_1_3_Err_Ok;
 }
 
 

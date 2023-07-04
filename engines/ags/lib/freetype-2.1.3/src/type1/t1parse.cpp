@@ -197,7 +197,7 @@ T1_New_Parser( T1_Parser      parser,
 				  ft_strncmp( (const char*)parser->base_dict,
 							  "%!FontType", 10 )              )  ) {
 			FT2_1_3_TRACE2(( "[not a Type1 font]\n" ));
-			error = T1_Err_Unknown_File_Format;
+			error = FT2_1_3_Err_Unknown_File_Format;
 		} else {
 			parser->root.base   = parser->base_dict;
 			parser->root.cursor = parser->base_dict;
@@ -289,7 +289,7 @@ T1_Get_Private_Dict( T1_Parser      parser,
 		if ( parser->private_len == 0 ) {
 			FT2_1_3_ERROR(( "T1_Get_Private_Dict:" ));
 			FT2_1_3_ERROR(( " invalid private dictionary section\n" ));
-			error = T1_Err_Invalid_File_Format;
+			error = FT2_1_3_Err_Invalid_File_Format;
 			goto Fail;
 		}
 
@@ -301,7 +301,7 @@ T1_Get_Private_Dict( T1_Parser      parser,
 		for (;;) {
 			error = read_pfb_tag( stream, &tag, &size );
 			if ( error || tag != 0x8002U ) {
-				error = T1_Err_Ok;
+				error = FT2_1_3_Err_Ok;
 				break;
 			}
 
@@ -343,7 +343,7 @@ T1_Get_Private_Dict( T1_Parser      parser,
 			if ( cur >= limit ) {
 				FT2_1_3_ERROR(( "T1_Get_Private_Dict:" ));
 				FT2_1_3_ERROR(( " could not find `eexec' keyword\n" ));
-				error = T1_Err_Invalid_File_Format;
+				error = FT2_1_3_Err_Invalid_File_Format;
 				goto Exit;
 			}
 		}
