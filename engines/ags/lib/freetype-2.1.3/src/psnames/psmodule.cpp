@@ -25,6 +25,8 @@
 
 #include "psnamerr.h"
 
+namespace AGS3 {
+namespace FreeType213 {
 
 #ifndef FT2_1_3_CONFIG_OPTION_NO_POSTSCRIPT_NAMES
 
@@ -46,8 +48,8 @@ ps_unicode_value( const char*  glyph_name ) {
 	/* if the name begins with `uni', then the glyph name may be a */
 	/* hard-coded unicode character code.                          */
 	if ( glyph_name[0] == 'u' &&
-	        glyph_name[1] == 'n' &&
-	        glyph_name[2] == 'i' ) {
+			glyph_name[1] == 'n' &&
+			glyph_name[2] == 'i' ) {
 		/* determine whether the next four characters following are */
 		/* hexadecimal.                                             */
 
@@ -121,7 +123,7 @@ ps_unicode_value( const char*  glyph_name ) {
 /* ft_qsort callback to sort the unicode map */
 FT2_1_3_CALLBACK_DEF( int )
 compare_uni_maps( const void*  a,
-                  const void*  b ) {
+				  const void*  b ) {
 	PS_UniMap*  map1 = (PS_UniMap*)a;
 	PS_UniMap*  map2 = (PS_UniMap*)b;
 
@@ -133,9 +135,9 @@ compare_uni_maps( const void*  a,
 /* Builds a table that maps Unicode values to glyph indices */
 static FT2_1_3_Error
 ps_build_unicode_table( FT2_1_3_Memory     memory,
-                        FT2_1_3_UInt       num_glyphs,
-                        const char**  glyph_names,
-                        PS_Unicodes*  table ) {
+						FT2_1_3_UInt       num_glyphs,
+						const char**  glyph_names,
+						PS_Unicodes*  table ) {
 	FT2_1_3_Error  error;
 
 
@@ -171,8 +173,8 @@ ps_build_unicode_table( FT2_1_3_Memory     memory,
 		count = (FT2_1_3_UInt)( map - table->maps );
 
 		if ( count > 0 && FT2_1_3_REALLOC( table->maps,
-		                              num_glyphs * sizeof ( PS_UniMap ),
-		                              count * sizeof ( PS_UniMap ) ) )
+									  num_glyphs * sizeof ( PS_UniMap ),
+									  count * sizeof ( PS_UniMap ) ) )
 			count = 0;
 
 		if ( count == 0 ) {
@@ -192,7 +194,7 @@ ps_build_unicode_table( FT2_1_3_Memory     memory,
 
 static FT2_1_3_UInt
 ps_lookup_unicode( PS_Unicodes*  table,
-                   FT2_1_3_ULong      unicode ) {
+				   FT2_1_3_ULong      unicode ) {
 	PS_UniMap  *min, *max, *mid;
 
 
@@ -221,7 +223,7 @@ ps_lookup_unicode( PS_Unicodes*  table,
 
 static FT2_1_3_ULong
 ps_next_unicode( PS_Unicodes*  table,
-                 FT2_1_3_ULong      unicode ) {
+				 FT2_1_3_ULong      unicode ) {
 	PS_UniMap  *min, *max, *mid;
 
 
@@ -330,5 +332,7 @@ const FT2_1_3_Module_Class  psnames_module_class = {
 	(FT2_1_3_Module_Requester)  0
 };
 
+} // End of namespace FreeType213
+} // End of namespace AGS3
 
 /* END */
