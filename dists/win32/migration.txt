@@ -13,6 +13,7 @@ COPYING.txt
 COPYRIGHT.txt
 access.dat
 achievements.dat
+classicmacfonts.dat
 cryo.dat
 cryomni3d.dat
 drascula.dat

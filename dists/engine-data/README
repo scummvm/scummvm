@@ -7,6 +7,12 @@ This file contains game resource data used by the Access engine.
 achievements.dat:
 This file contains Achievements and Statistics IDs and localization from Steam and GOG.
 
+classicmacfonts.dat:
+This file contains fonts used for recreation of Classic Mac OS GUI. To generate it,
+use the following commnand:
+
+  devtools/dumper-companion.py createmacfonts
+
 cryo.dat:
 This file contains a lot of hardcoded tables used by the Cryo engine.
 

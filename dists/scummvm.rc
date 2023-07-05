@@ -28,6 +28,8 @@ gui-icons.dat          FILE    "gui/themes/gui-icons.dat"
 shaders.dat            FILE    "gui/themes/shaders.dat"
 achievements.dat       FILE    "dists/engine-data/achievements.dat"
 encoding.dat           FILE    "dists/engine-data/encoding.dat"
+macgui.dat             FILE    "dists/engine-data/macgui.dat"
+classicmacfonts.dat    FILE    "dists/engine-data/classicmacfonts.dat"
 
 // Engine or feature specific resources
 #ifdef BUILTIN_RESOURCES
@@ -50,7 +52,6 @@ wwwroot.zip            FILE    "dists/networking/wwwroot.zip"
 #ifdef USE_FREETYPE2
 fonts.dat              FILE    "dists/engine-data/fonts.dat"
 #endif
-macgui.dat             FILE    "dists/engine-data/macgui.dat"
 
 #if PLUGIN_ENABLED_STATIC(ACCESS)
 access.dat             FILE    "dists/engine-data/access.dat"
