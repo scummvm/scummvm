@@ -211,7 +211,7 @@ Get_Kerning( T1_Face     face,
 	kerning->x = 0;
 	kerning->y = 0;
 
-	afm = (T1_AFM*)face->afm_data;
+	afm = const_cast<T1_AFM *>(reinterpret_cast<const T1_AFM *>(face->afm_data));
 	if ( afm )
 		T1_Get_Kerning( afm, left_glyph, right_glyph, kerning );
 
