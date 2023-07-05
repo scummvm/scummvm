@@ -84,12 +84,14 @@ void M4Engine::m4_inflight() {
 
 		// Start up next section
 		_G(between_rooms) = true;
-		global_section_constructor();
-#ifdef TODO
-		util_exec_function(section_preload_code_pointer);
-		kernel.going = kernel_section_startup();
-		util_exec_function(section_init_code_pointer);
-#endif
+		global_section_constructor();		// Sets the active section
+		_G(game).going = kernel_section_startup();
+		section_init();
+
+		while (_G(game).section_id == _G(game).new_section && _G(game).going) {
+
+		}
+
 		// TODO
 	}
 }

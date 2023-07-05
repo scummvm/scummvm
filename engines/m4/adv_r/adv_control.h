@@ -28,10 +28,11 @@
 
 namespace M4 {
 
+extern bool kernel_section_startup();
+
 extern void m4FirstRun();
 extern void m4SectionStartup();
 extern void m4LastRun();
-extern void m4SceneLoad();
 extern void m4EndScene();
 
 } // End of namespace M4
