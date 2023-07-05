@@ -267,7 +267,7 @@ T1_Face_Init( FT2_1_3_Stream      stream,
 	FT2_1_3_Error          error;
 	PSNames_Service   psnames;
 	PSAux_Service     psaux;
-	PSHinter_Service  pshinter;
+	// PSHinter_Service  pshinter;
 
 	FT2_1_3_UNUSED( num_params );
 	FT2_1_3_UNUSED( params );
@@ -284,7 +284,7 @@ T1_Face_Init( FT2_1_3_Stream      stream,
 	psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_Interface *>(face->psaux));
 
 	face->pshinter = FT2_1_3_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "pshinter");
-	pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(face->pshinter));
+	// 	pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(face->pshinter));
 
 	/* open the tokenizer, this will also check the font format */
 	error = T1_Open_Face( face );
