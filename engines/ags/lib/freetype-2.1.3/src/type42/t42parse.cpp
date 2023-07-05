@@ -346,8 +346,7 @@ t42_parse_encoding( T42_Face    face,
 	FT2_1_3_Byte*       cur    = parser->root.cursor;
 	FT2_1_3_Byte*       limit  = parser->root.limit;
 
-	PSAux_Service  psaux  = (PSAux_Service)face->psaux;
-
+	PSAux_Service psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));
 
 	/* skip whitespace */
 	while ( t42_is_space( *cur ) ) {
@@ -386,7 +385,7 @@ t42_parse_encoding( T42_Face    face,
 
 		/* We need to `zero' out encoding_table.elements */
 		for ( n = 0; n < count; n++ ) {
-			char*  notdef = (char *)".notdef";
+			char*  notdef = const_cast<char *>(".notdef");
 
 
 			T1_Add_Table( char_table, n, notdef, 8 );
@@ -663,7 +662,7 @@ t42_parse_charstrings( T42_Face    face,
 	FT2_1_3_Memory      memory     = parser->root.memory;
 	FT2_1_3_Error       error;
 
-	PSAux_Service  psaux      = (PSAux_Service)face->psaux;
+	PSAux_Service psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));
 
 	FT2_1_3_Byte*       cur;
 	FT2_1_3_Byte*       limit      = parser->root.limit;
@@ -872,9 +871,8 @@ t42_parse_dict( T42_Face    face,
 
 				/* Loop through all known keywords */
 				for ( i = 0; i < n_keywords; i++ ) {
-					T1_Field  keyword = (T1_Field)&t42_keywords[i];
-					FT2_1_3_Byte   *name   = (FT2_1_3_Byte*)keyword->ident;
-
+					T1_Field keyword = (T1_Field) const_cast<T1_FieldRec *>(&t42_keywords[i]);
+					FT2_1_3_Byte *name = (FT2_1_3_Byte *)const_cast<char *>(keyword->ident);
 
 					if ( !name )
 						continue;
