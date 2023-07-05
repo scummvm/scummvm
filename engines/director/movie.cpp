@@ -155,8 +155,9 @@ void Movie::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
 		stream.readUint16();
 		uint16 itemCount = stream.readUint16();
 		stream.readUint16();
-		uint16 libId = stream.readUint16() - CAST_LIB_OFFSET;
-		debugC(5, kDebugLoading, "Movie::loadCastLibMapping: name: %s, path: %s, itemCount: %d, libId: %d", utf8ToPrintable(name).c_str(), utf8ToPrintable(path).c_str(), itemCount, libId);
+		uint16 libResourceId = stream.readUint16();
+		uint16 libId = i + 1;
+		debugC(5, kDebugLoading, "Movie::loadCastLibMapping: name: %s, path: %s, itemCount: %d, libResourceId: %d, libId: %d", utf8ToPrintable(name).c_str(), utf8ToPrintable(path).c_str(), itemCount, libResourceId, libId);
 		Archive *castArchive = _movieArchive;
 		bool isExternal = !path.empty();
 		if (isExternal) {
@@ -487,8 +488,10 @@ ScriptContext *Movie::getScriptContext(ScriptType type, CastMemberID id) {
 }
 
 Symbol Movie::getHandler(const Common::String &name) {
-	if (_cast->_lingoArchive->functionHandlers.contains(name))
-		return _cast->_lingoArchive->functionHandlers[name];
+	for (auto &it : _casts) {
+		if (it._value->_lingoArchive->functionHandlers.contains(name))
+			return it._value->_lingoArchive->functionHandlers[name];
+	}
 
 	if (_sharedCast && _sharedCast->_lingoArchive->functionHandlers.contains(name))
 		return _sharedCast->_lingoArchive->functionHandlers[name];
