@@ -480,15 +480,15 @@ FNT_Face_Init( FT2_1_3_Stream      stream,
 
 		root->family_name = (FT2_1_3_String*)fonts->fnt_frame +
 							fonts->header.face_name_offset;
-		root->style_name  = (char *)"Regular";
+		root->style_name  = const_cast<char *>("Regular");
 
 		if ( root->style_flags & FT2_1_3_STYLE_FLAG_BOLD ) {
 			if ( root->style_flags & FT2_1_3_STYLE_FLAG_ITALIC )
-				root->style_name = (char *)"Bold Italic";
+				root->style_name = const_cast<char *>("Bold Italic");
 			else
-				root->style_name = (char *)"Bold";
+				root->style_name = const_cast<char *>("Bold");
 		} else if ( root->style_flags & FT2_1_3_STYLE_FLAG_ITALIC )
-			root->style_name = (char *)"Italic";
+			root->style_name = const_cast<char *>("Italic");
 	}
 
 Fail:
