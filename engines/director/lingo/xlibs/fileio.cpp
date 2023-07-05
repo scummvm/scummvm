@@ -222,7 +222,7 @@ void FileIO::m_new(int nargs) {
 		Common::String mask = prefix + "*.txt";
 		dirSeparator = '/';
 
-		GUI::FileBrowserDialog browser(nullptr, "txt", option.equalsIgnoreCase("write") ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str());
+		GUI::FileBrowserDialog browser(nullptr, "txt", option.equalsIgnoreCase("write") ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str(), origpath.c_str());
 		if (browser.runModal() <= 0) {
 			g_lingo->push(Datum(kErrorFileNotFound));
 			return;
