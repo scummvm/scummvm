@@ -944,7 +944,7 @@ FT2_1_3_CALLBACK_DEF( void )
 tt_cmap6_validate( FT2_1_3_Byte*      table,
 				   FT2_1_3_Validator  valid ) {
 	FT2_1_3_Byte*  p;
-	FT2_1_3_UInt   length, start, count;
+	FT2_1_3_UInt   length, /*start,*/ count;
 
 
 	if ( table + 10 > valid->limit )
@@ -954,7 +954,7 @@ tt_cmap6_validate( FT2_1_3_Byte*      table,
 	length = TT_NEXT_USHORT( p );
 
 	p      = table + 6;             /* skip language */
-	start  = TT_NEXT_USHORT( p );
+	//start  = TT_NEXT_USHORT( p );
 	count  = TT_NEXT_USHORT( p );
 
 	if ( table + length > valid->limit || length < 10 + count * 2 )
