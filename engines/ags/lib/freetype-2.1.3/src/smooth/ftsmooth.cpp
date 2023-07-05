@@ -294,7 +294,7 @@ const FT2_1_3_Renderer_Class  ft_smooth_renderer_class = {
 	(FT2_1_3_Renderer_GetCBoxFunc)  ft_smooth_get_cbox,
 	(FT2_1_3_Renderer_SetModeFunc)  ft_smooth_set_mode,
 
-	(FT2_1_3_Raster_Funcs*)    &ft_grays_raster
+	(FT2_1_3_Raster_Funcs*) const_cast<FT2_1_3_Raster_Funcs *>(&ft_grays_raster)
 };
 
 
@@ -322,7 +322,7 @@ const FT2_1_3_Renderer_Class  ft_smooth_lcd_renderer_class = {
 	(FT2_1_3_Renderer_GetCBoxFunc)  ft_smooth_get_cbox,
 	(FT2_1_3_Renderer_SetModeFunc)  ft_smooth_set_mode,
 
-	(FT2_1_3_Raster_Funcs*)    &ft_grays_raster
+	(FT2_1_3_Raster_Funcs*) const_cast<FT2_1_3_Raster_Funcs *>(&ft_grays_raster)
 };
 
 
@@ -351,7 +351,7 @@ const FT2_1_3_Renderer_Class  ft_smooth_lcdv_renderer_class = {
 	(FT2_1_3_Renderer_GetCBoxFunc)  ft_smooth_get_cbox,
 	(FT2_1_3_Renderer_SetModeFunc)  ft_smooth_set_mode,
 
-	(FT2_1_3_Raster_Funcs*)    &ft_grays_raster
+	(FT2_1_3_Raster_Funcs*) const_cast<FT2_1_3_Raster_Funcs *>(&ft_grays_raster)
 };
 
 } // End of namespace FreeType213

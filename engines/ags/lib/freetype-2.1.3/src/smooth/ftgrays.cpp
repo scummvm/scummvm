@@ -2014,7 +2014,7 @@ gray_raster_reset( FT2_1_3_Raster    raster,
 
 
 	if ( raster && pool_base && pool_size >= 4096 )
-		gray_init_cells( rast, (char*)pool_base, pool_size );
+		gray_init_cells(rast, const_cast<char *>(pool_base), pool_size);
 
 	rast->band_size  = (int)( ( pool_size / sizeof ( TCell ) ) / 8 );
 }
