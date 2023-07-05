@@ -220,7 +220,7 @@ const FT2_1_3_Renderer_Class  ft_raster1_renderer_class = {
 	(FT2_1_3_Renderer_GetCBoxFunc)  ft_raster1_get_cbox,
 	(FT2_1_3_Renderer_SetModeFunc)  ft_raster1_set_mode,
 
-	(FT2_1_3_Raster_Funcs*)    &ft_standard_raster
+	(FT2_1_3_Raster_Funcs*) const_cast<FT2_1_3_Raster_Funcs *>(&ft_standard_raster)
 };
 
 
@@ -252,7 +252,7 @@ const FT2_1_3_Renderer_Class  ft_raster5_renderer_class = {
 	(FT2_1_3_Renderer_GetCBoxFunc)  ft_raster1_get_cbox,
 	(FT2_1_3_Renderer_SetModeFunc)  ft_raster1_set_mode,
 
-	(FT2_1_3_Raster_Funcs*)    &ft_standard_raster
+	(FT2_1_3_Raster_Funcs*)  const_cast<FT2_1_3_Raster_Funcs *>(&ft_standard_raster)
 };
 
 } // End of namespace FreeType213

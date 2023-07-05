@@ -3000,7 +3000,7 @@ ft_black_reset( TRaster_Instance*  raster,
 				long               pool_size ) {
 	if ( raster && pool_base && pool_size >= 4096 ) {
 		/* save the pool */
-		raster->buff     = (PLong)pool_base;
+		raster->buff = (PLong) const_cast<char *>(pool_base);
 		raster->sizeBuff = raster->buff + pool_size / sizeof ( Long );
 	}
 }
