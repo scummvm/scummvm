@@ -58,7 +58,7 @@ namespace FreeType213 {
 static PSH_Globals_Funcs
 T1_Size_Get_Globals_Funcs( T1_Size  size ) {
 	T1_Face           face     = (T1_Face)size->root.face;
-	PSHinter_Service  pshinter = (PSHinter_Service)face->pshinter;
+	PSHinter_Service pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(face->pshinter));
 	FT2_1_3_Module         module;
 
 
@@ -140,7 +140,7 @@ T1_GlyphSlot_Init( T1_GlyphSlot  slot ) {
 
 
 	face     = (T1_Face)slot->root.face;
-	pshinter = (PSHinter_Service)face->pshinter;
+	pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(face->pshinter));
 
 	if ( pshinter ) {
 		FT2_1_3_Module  module;
@@ -222,7 +222,7 @@ T1_Face_Done( T1_Face  face ) {
 #ifndef T1_CONFIG_OPTION_NO_AFM
 		/* release afm data if present */
 		if ( face->afm_data )
-			T1_Done_AFM( memory, (T1_AFM*)face->afm_data );
+			T1_Done_AFM(memory, const_cast<T1_AFM *>(reinterpret_cast<const T1_AFM *>(face->afm_data)));
 #endif
 
 		/* release unicode map, if any */
@@ -277,17 +277,14 @@ T1_Face_Init( FT2_1_3_Stream      stream,
 
 	face->root.num_faces = 1;
 
-	face->psnames = FT2_1_3_Get_Module_Interface( FT2_1_3_FACE_LIBRARY( face ),
-					"psnames" );
-	psnames = (PSNames_Service)face->psnames;
+	face->psnames = FT2_1_3_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psnames");
+	psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(face->psnames));
 
-	face->psaux = FT2_1_3_Get_Module_Interface( FT2_1_3_FACE_LIBRARY( face ),
-										   "psaux" );
-	psaux = (PSAux_Service)face->psaux;
+	face->psaux = FT2_1_3_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psaux");
+	psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_Interface *>(face->psaux));
 
-	face->pshinter = FT2_1_3_Get_Module_Interface( FT2_1_3_FACE_LIBRARY( face ),
-					 "pshinter" );
-	pshinter = (PSHinter_Service)face->pshinter;
+	face->pshinter = FT2_1_3_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "pshinter");
+	pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(face->pshinter));
 
 	/* open the tokenizer, this will also check the font format */
 	error = T1_Open_Face( face );
@@ -342,15 +339,14 @@ T1_Face_Init( FT2_1_3_Stream      stream,
 					full++;
 				}
 
-				root->style_name = ( *full == ' ' ? full + 1
-									 : (char *)"Regular" );
+				root->style_name = (*full == ' ' ? full + 1 : const_cast<char *>("Regular"));
 			} else
-				root->style_name = (char *)"Regular";
+				root->style_name = const_cast<char *>("Regular");
 		} else {
 			/* do we have a `/FontName'? */
 			if ( face->type1.font_name ) {
 				root->family_name = face->type1.font_name;
-				root->style_name  = (char *)"Regular";
+				root->style_name = const_cast<char *>("Regular");
 			}
 		}
 
