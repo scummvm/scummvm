@@ -312,6 +312,10 @@ bool AIScriptGenericWalkerC::UpdateAnimation(int *animation, int *frame) {
 			deltaZ = 0.0f;
 		}
 		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptGenericWalkerC::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
+		break;
 	}
 	*frame = _animationFrame;
 	return true;
@@ -331,6 +335,10 @@ bool AIScriptGenericWalkerC::ChangeAnimationMode(int mode) {
 	case kAnimationModeWalk:
 		_animationState = kGenericWalkerCStatesWalk;
 		_animationFrame = 0;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptGenericWalkerC::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 	return true;

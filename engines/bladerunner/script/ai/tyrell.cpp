@@ -190,6 +190,7 @@ bool AIScriptTyrell::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptTyrell::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -244,6 +245,7 @@ bool AIScriptTyrell::ChangeAnimationMode(int mode) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptTyrell::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

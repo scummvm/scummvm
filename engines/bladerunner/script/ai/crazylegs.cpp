@@ -354,6 +354,7 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptCrazylegs::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -491,6 +492,7 @@ bool AIScriptCrazylegs::ChangeAnimationMode(int mode) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptCrazylegs::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

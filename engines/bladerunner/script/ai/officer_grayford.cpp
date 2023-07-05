@@ -1297,6 +1297,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 	default:
 		// Dummy placeholder, kModelAnimationZubenWalking (399) is a Zuben animation
 		*animation = kModelAnimationZubenWalking;
+		debugC(6, kDebugAnimation, "AIScriptOfficerGrayford::UpdateAnimation() - Current _animationState (%d) is a placeholder", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -1632,6 +1633,9 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 
+	default:
+		debugC(6, kDebugAnimation, "AIScriptOfficerGrayford::ChangeAnimationMode(%d) - Target mode is not supported", mode);
+		break;
 	}
 
 	return true;

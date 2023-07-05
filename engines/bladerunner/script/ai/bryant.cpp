@@ -262,6 +262,7 @@ bool AIScriptBryant::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptBryant::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 
@@ -288,6 +289,7 @@ bool AIScriptBryant::ChangeAnimationMode(int mode) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptBryant::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 	return true;

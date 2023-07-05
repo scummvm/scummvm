@@ -1036,7 +1036,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 		*animation = kModelAnimationZubenBashOnDoor;
 		++_animationFrame;
 		if (_animationFrame == 5) {
-			Overlay_Play("ct02over", 1, false, true, 0);
+			Overlay_Play("CT02OVER", 1, false, true, 0);
 		}
 		if (_animationFrame == 6) {
 			Sound_Play(kSfxMTLDOOR2, 40, 0, 0, 50);
@@ -1065,6 +1065,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	default:
 		*animation = kModelAnimationZubenWalking;
+		debugC(6, kDebugAnimation, "AIScriptZuben::UpdateAnimation() - Current _animationState (%d) is default (walking)", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -1258,6 +1259,10 @@ bool AIScriptZuben::ChangeAnimationMode(int mode) {
 		Actor_Set_Targetable(kActorZuben, false);
 		_animationState = 14;
 		_animationFrame = 0;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptZuben::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 	return true;

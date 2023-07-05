@@ -262,6 +262,10 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 		}
 		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptInsectDealer::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
+		break;
 	}
 
 	*frame = _animationFrame;
@@ -331,6 +335,7 @@ bool AIScriptInsectDealer::ChangeAnimationMode(int mode) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptInsectDealer::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

@@ -57,7 +57,8 @@ namespace BladeRunner {
 
 enum DebugLevels {
 	kDebugScript = 1 << 0,
-	kDebugSound = 1 << 1
+	kDebugSound = 1 << 1,
+	kDebugAnimation = 1 << 2
 };
 
 class Actor;

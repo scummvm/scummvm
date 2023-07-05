@@ -165,6 +165,10 @@ bool AIScriptMia::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 2;
 		}
 		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptMia::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
+		break;
 	}
 
 	*frame = _animationFrame;
@@ -206,6 +210,10 @@ bool AIScriptMia::ChangeAnimationMode(int mode) {
 	case 23:
 		_animationFrame = 0;
 		_animationState = 1;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptMia::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

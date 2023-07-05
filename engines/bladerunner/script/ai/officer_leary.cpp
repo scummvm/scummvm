@@ -1142,10 +1142,12 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		}
 		*frame = _animationFrame;
 		return true;
+
 	default:
 		// Dummy placeholder, kModelAnimationZubenWalking (399) is a Zuben animation
 		*animation = kModelAnimationZubenWalking;
 		*frame = _animationFrame;
+		debugC(6, kDebugAnimation, "AIScriptOfficerLeary::UpdateAnimation() - Current _animationState (%d) is a placeholder", _animationState);
 		return true;
 	}
 }
@@ -1479,6 +1481,10 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 	case 58:
 		_animationState = 20;
 		_animationFrame = 0;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptOfficerLeary::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 	return true;

@@ -304,6 +304,7 @@ bool AIScriptRachael::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptRachael::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -376,6 +377,7 @@ bool AIScriptRachael::ChangeAnimationMode(int mode) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptRachael::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

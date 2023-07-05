@@ -154,6 +154,78 @@ Debugger::~Debugger() {
 	}
 }
 
+const struct AnimationsList {
+	Actors actorId;
+	int animationModelIdStart;
+	int animationModelIdEnd;
+	int animationModelIdSpecial; // for characters that use an animation outside their "own" range (eg. kActorGenwalkerA using Bob's Gun)
+	int animationModeMax;
+	int animationStateMax;
+} animationsList[] = {
+	{ kActorMcCoy,             0,  53, -1, 85, 71 },
+	{ kActorSteele,           54,  92, -1, 86, 41 },
+	{ kActorGordo,            93, 133, -1, 84, 39 },
+	{ kActorDektora,         134, 171, -1, 79, 41 },
+	{ kActorGuzza,           172, 207, -1, 61, 32 },
+	{ kActorClovis,          208, 252, -1, 88, 42 },
+	{ kActorLucy,            253, 276, -1, 48, 21 },
+	{ kActorIzo,             277, 311, -1, 48, 35 },
+	{ kActorSadik,           312, 345, -1, 63, 34 },
+	{ kActorLuther,          346, 359, -1, 50, 12 },
+	{ kActorEarlyQ,          360, 387, -1, 85, 28 },
+	{ kActorZuben,           388, 421, -1, 49, 28 },
+	{ kActorGenwalkerA,      422, 437, 440, 4,  3 },
+	{ kActorGenwalkerB,      422, 437, -1,  1,  2 },
+	{ kActorGenwalkerC,      422, 437, -1,  1,  2 },
+	{ kActorHysteriaPatron3, 438, 439, -1, -1,  2 },
+	// skip animations 441-450 that refer to targets in shooting range (which are items kItemPS10Target1 to kItemPS10Target9)
+	{ kActorBaker,           451, 451, -1, -1,  0 },
+	{ kActorCrazylegs,       452, 469, -1, 43, 19 },
+	{ kActorGrigorian,       470, 486, -1, 16,  7 },
+	{ kActorTransient,       487, 505, -1, 89, 19 },
+	{ kActorBulletBob,       506, 525, -1, 88, 16 },
+	{ kActorRunciter,        526, 544, -1, 48, 15 },
+	{ kActorInsectDealer,    545, 554, -1, 23,  8 },
+	{ kActorTyrellGuard,     555, 565, -1, 55, 11 },
+	{ kActorMia,             566, 570, -1, 23,  4 },
+	{ kActorOfficerLeary,    571, 604, -1, 58, 32 },
+	{ kActorOfficerGrayford, 605, 641, -1, 58, 37 },
+	{ kActorHanoi,           642, 660, -1, 78, 20 },
+	{ kActorDeskClerk,       661, 670, -1, 72,  8 },
+	{ kActorHowieLee,        671, 681, -1, 43,  8 },
+	{ kActorFishDealer,      682, 687, -1, 23,  5 },
+	{ kActorKlein,           688, 697, -1, 16,  8 },
+	{ kActorMurray,          698, 704, -1, 15,  6 },
+	{ kActorHawkersBarkeep,  705, 715, -1, 16,  9 },
+	{ kActorHolloway,        716, 721, -1, 15,  7 },
+	{ kActorSergeantWalls,   722, 731, -1, 23,  9 },
+	{ kActorMoraji,          732, 743, -1, 48, 14 },
+	{ kActorPhotographer,    744, 750, -1, 43,  6 },
+	{ kActorRajif,           751, 751, -1,  0,  0 },
+	{ kActorEarlyQBartender, 752, 757, -1, 23,  4 },
+	{ kActorShoeshineMan,    758, 764, -1, 29,  6 },
+	{ kActorTyrell,          765, 772, -1, 15,  6 },
+	{ kActorChew,            773, 787, -1, 48, 13 },
+	{ kActorGaff,            788, 804, -1, 41,  8 },
+	{ kActorBryant,          805, 808, -1, 48,  3 },
+	{ kActorSebastian,       809, 821, -1, 48, 11 },
+	{ kActorRachael,         822, 832, -1, 18,  9 },
+	{ kActorGeneralDoll,     833, 837, -1, 48,  4 },
+	{ kActorIsabella,        838, 845, -1, 17,  9 },
+	{ kActorLeon,            846, 856, -1, 72, 10 },
+	{ kActorFreeSlotA,       857, 862, -1, 48,  8 },
+	{ kActorFreeSlotB,       857, 862, -1, 48,  8 },
+	{ kActorMaggie,          863, 876, -1, 88, 16 },
+	{ kActorHysteriaPatron1, 877, 884, -1, -1, 26 },
+	{ kActorHysteriaPatron2, 885, 892, -1, -1, 29 },
+	{ kActorMutant1,         893, 900, -1, 88, 10 },
+	{ kActorMutant2,         901, 907, -1, 88,  8 },
+	{ kActorMutant3,         908, 917, -1, 88, 11 },
+	{ kActorTaffyPatron,     918, 919, -1, 48,  2 },
+	{ kActorHasan,           920, 930, -1, 16,  6 }
+	// skip animations 931-996 which refer to item models/animations
+};
+
 bool Debugger::cmdAnimation(int argc, const char **argv) {
 	if (argc != 2 && argc != 4) {
 		debugPrintf("Get or set animation mode of the actor.\n");
@@ -182,7 +254,23 @@ bool Debugger::cmdAnimation(int argc, const char **argv) {
 		return false;
 	}
 
-	debugPrintf("actorAnimationMode(%i) = %i, showDamageWhenMoving = %i, inCombat = %i\n", actorId, actor->getAnimationMode(), actor->getFlagDamageAnimIfMoving(), actor->inCombat());
+	int animationState = -1;
+	int animationFrame = -1;
+	int animationStateNext = -1;
+	int animationNext = -1;
+	actor->queryAnimationState(&animationState, &animationFrame, &animationStateNext, &animationNext);
+
+	debugPrintf("actorAnimationMode(%s) = %i, model: %i, goal: %i, state:%i, frame:%i, stateNext: %i, nextModelId: %i, showDamageWhenMoving = %i, inCombat = %i\n",
+	             _vm->_textActorNames->getText(actorId),
+	             actor->getAnimationMode(),
+	             actor->getAnimationId(),
+	             actor->getGoal(),
+	             animationState,
+	             animationFrame,
+	             animationStateNext,
+	             animationNext,
+	             actor->getFlagDamageAnimIfMoving(),
+	             actor->inCombat());
 	return true;
 }
 
@@ -750,8 +838,9 @@ const struct SceneList {
 	{ 4, "TB03", 17, 83 },   { 4, "TB07", 18, 108 }, { 4, "UG01", 74, 86 },   { 4, "UG02", 75, 87 },
 	{ 4, "UG03", 76, 88 },   { 4, "UG04", 77, 89 },  { 4, "UG05", 78, 90 },   { 4, "UG06", 79, 91 },
 	{ 4, "UG07", 80, 92 },   { 4, "UG08", 81, 93 },  { 4, "UG09", 82, 94 },   { 4, "UG10", 83, 95 },
-	{ 4, "UG12", 84, 96 },   { 4, "UG13", 85, 97 },  { 4, "UG14", 86, 98 },   { 4, "UG15", 87, 99 },
-	{ 4, "UG16", 19, 100 },  { 4, "UG17", 88, 101 }, { 4, "UG18", 89, 102 },  { 4, "UG19", 90, 103 },
+	{ 4, "UG12", 84, 96 },   { 4, "UG12", 6, 96 },   { 4, "UG13", 85, 97 },   { 4, "UG14", 86, 98 },
+	{ 4, "UG15", 87, 99 },   { 4, "UG16", 19, 100 }, { 4, "UG17", 88, 101 },  { 4, "UG18", 89, 102 },
+	{ 4, "UG19", 90, 103 },
 
 	{ 0, nullptr, 0, 0 }
 };

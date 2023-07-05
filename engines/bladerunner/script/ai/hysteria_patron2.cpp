@@ -125,6 +125,7 @@ bool AIScriptHysteriaPatron2::UpdateAnimation(int *animation, int *frame) {
 }
 
 bool AIScriptHysteriaPatron2::ChangeAnimationMode(int mode) {
+	debugC(6, kDebugAnimation, "AIScriptHysteriaPatron2::ChangeAnimationMode(%d) - Animation mode change is not supported", mode);
 	return true;
 }
 

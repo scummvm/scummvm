@@ -190,6 +190,7 @@ bool AIScriptMurray::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptMurray::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 
@@ -237,6 +238,10 @@ bool AIScriptMurray::ChangeAnimationMode(int mode) {
 		_animationState = 5;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptMurray::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 
