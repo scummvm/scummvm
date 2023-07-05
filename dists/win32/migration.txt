@@ -10,9 +10,17 @@ COPYING.TINYGL
 COPYING.GLAD
 COPYING.txt
 COPYRIGHT.txt
+access.dat
+achievements.dat
 classicmacfonts.dat
+cryo.dat
+cryomni3d.dat
 drascula.dat
+encoding.dat
+fonts.dat
 freescape.dat
+grim-patch.lab
+gui-icons.dat
 hadesch_translations.dat
 hugo.dat
 kyra.dat
