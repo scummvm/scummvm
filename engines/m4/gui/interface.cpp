@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -20,19 +19,21 @@
  *
  */
 
-#ifndef M4_ADV_R_ADV_CONTROL_H
-#define M4_ADV_R_ADV_CONTROL_H
-
-#include "common/stream.h"
-#include "m4/m4_types.h"
+#include "m4/gui/interface.h"
+#include "m4/vars.h"
 
 namespace M4 {
 
+void Interface::init(int arrow, int wait, int look, int grab, int use) {
+	_arrow = arrow;
+	_wait = wait;
+	_look = look;
+	_grab = grab;
+	_use = use;
+}
 
-extern bool kernel_section_startup();
-extern void player_set_commands_allowed(bool t_or_f);
-extern void track_hotspots_refresh();
+void Interface::showWaitCursor() {
+	mouse_set_sprite(_wait);
+}
 
 } // End of namespace M4
-
-#endif

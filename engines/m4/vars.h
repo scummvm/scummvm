@@ -42,6 +42,7 @@
 #include "m4/gui/gui_item.h"
 #include "m4/gui/gui_mouse.h"
 #include "m4/gui/gui_univ.h"
+#include "m4/gui/interface.h"
 #include "m4/mem/memman.h"
 #include "m4/mem/res.h"
 #include "m4/platform/timer.h"
@@ -76,6 +77,7 @@ public:
 	bool init();
 
 	virtual GlobalVars *getGlobals() = 0;
+	virtual Interface *getInterface() = 0;
 
 	GameControl _game;
 	Kernel _kernel;
@@ -147,6 +149,7 @@ public:
 	const char *_art_base_override = nullptr;
 	bool _use_alternate_attribute_file = false;
 	bool _camera_reacts_to_player = false;
+	bool _set_commands_allowed_since_last_checked = false;
 };
 
 #define _G(X) (g_vars->_##X)

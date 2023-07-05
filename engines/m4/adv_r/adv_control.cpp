@@ -33,44 +33,25 @@ bool kernel_section_startup() {
 	return true;
 }
 
-void m4FirstRun() {
-#if TODO
-	add_hot_keys();
-
-	// restore a game?
-
-	if (!_G(kernel).restore_game)
-		_G(interface).show();
-
-	_G(kernel).going = true;
-#endif
-}
-
-void m4SectionStartup() {
-	// TODO
-}
-
-void m4LastRun() {
-	// TODO
-}
-
-void m4EndScene() {
-	// TODO
-}
-
 void player_set_commands_allowed(bool t_or_f) {
-#ifdef TODO
 	_G(set_commands_allowed_since_last_checked) = true;
 	_G(player).comm_allowed = t_or_f;
 
 	if (t_or_f) {
-		mouse_set_sprite(kArrowCursor); // OK to do something
+		// OK to do something
+		mouse_set_sprite(kArrowCursor);
+		g_vars->getInterface()->cancel_sentence();
+
 		track_hotspots_refresh();
-	} else
-		mouse_set_sprite(waitPointer); // hour glass
-#else
-	error("TODO: player_set_commands_allowed");
-#endif
+
+	} else {
+		// Hour glass
+		g_vars->getInterface()->showWaitCursor();
+	}
+}
+
+void track_hotspots_refresh() {
+	warning("TODO: track_hotspots_refresh");
 }
 
 } // End of namespace M4

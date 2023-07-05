@@ -23,7 +23,7 @@
 #ifndef M4_BURGER_INTERFACE_H
 #define M4_BURGER_INTERFACE_H
 
-#include "m4/m4_types.h"
+#include "m4/gui/interface.h"
 #include "m4/graphics/graphics.h"
 #include "m4/graphics/gr_buff.h"
 #include "m4/burger/gui/gui_cheapo.h"
@@ -32,16 +32,11 @@ namespace M4 {
 namespace Burger {
 namespace GUI {
 
-struct Interface {
+struct Interface : public M4::Interface {
 private:
 	void setup();
 public:
 	int _sprite = 22; // main_interface_sprite;
-	int _arrow = 0;
-	int _wait = 0;
-	int _look = 0;
-	int _grab = 0;
-	int _use = 0;
 	bool _visible = false;
 	bool _shown = false;
 	int _x1 = 0;
@@ -60,8 +55,11 @@ public:
 	GUI::ButtonClass *_btnScrollLeft = nullptr;
 	GUI::ButtonClass *_btnScrollRight = nullptr;
 
-	~Interface();
-	void init(int arrow, int wait, int look, int grab, int use);
+	~Interface() override;
+
+	void init(int arrow, int wait, int look, int grab, int use) override;
+
+	void cancel_sentence() override;
 
 	void show();
 };
