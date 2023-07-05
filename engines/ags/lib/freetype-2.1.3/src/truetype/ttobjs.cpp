@@ -164,7 +164,8 @@ tt_face_init( FT2_1_3_Stream      stream,
 
 
 	library = face->root.driver->root.library;
-	sfnt    = (SFNT_Service)FT2_1_3_Get_Module_Interface( library, "sfnt" );
+	const void *sfnt_tmp = FT2_1_3_Get_Module_Interface(library, "sfnt");
+	sfnt = const_cast<SFNT_Service>(reinterpret_cast<const SFNT_Interface *>(sfnt_tmp));
 	if ( !sfnt )
 		goto Bad_Format;
 

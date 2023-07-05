@@ -350,8 +350,8 @@ tt_get_interface( TT_Driver    driver,
 
 	/* only return the default interface from the SFNT module */
 	if ( sfntd ) {
-		sfnt = (SFNT_Service)( sfntd->clazz->module_interface );
-		if ( sfnt )
+		sfnt = const_cast<SFNT_Service>(reinterpret_cast<const SFNT_Interface *>(sfntd->clazz->module_interface));
+		if (sfnt)
 			return sfnt->get_interface( FT2_1_3_MODULE( driver ), tt_interface );
 	}
 
