@@ -134,8 +134,9 @@ afm_atoi( FT2_1_3_Byte**  start,
 FT2_1_3_CALLBACK_DEF( int )
 compare_kern_pairs( const void*  a,
 					const void*  b ) {
-	T1_Kern_Pair*  pair1 = (T1_Kern_Pair*)a;
-	T1_Kern_Pair*  pair2 = (T1_Kern_Pair*)b;
+
+	T1_Kern_Pair *pair1 = const_cast<T1_Kern_Pair *>(reinterpret_cast<const T1_Kern_Pair *>(a));
+	T1_Kern_Pair *pair2 = const_cast<T1_Kern_Pair *>(reinterpret_cast<const T1_Kern_Pair *>(b));
 
 	FT2_1_3_ULong  index1 = KERN_INDEX( pair1->glyph1, pair1->glyph2 );
 	FT2_1_3_ULong  index2 = KERN_INDEX( pair2->glyph1, pair2->glyph2 );
