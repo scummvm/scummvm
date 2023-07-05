@@ -494,7 +494,7 @@ void FileIO::m_fileName(int nargs) {
 		Common::String prefix = g_director->getTargetName() + '-';
 		Common::String res = *me->_filename;
 		if (res.hasPrefix(prefix)) {
-			res = Common::String(&me->_filename->c_str()[prefix.size() + 1]);
+			res = Common::String(&me->_filename->c_str()[prefix.size()]);
 		}
 
 		g_lingo->push(Datum(res));
