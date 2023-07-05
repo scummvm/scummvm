@@ -599,7 +599,7 @@ _bdf_readstream( FT2_1_3_Stream         stream,
 				 unsigned long    *lno ) {
 	_bdf_line_func_t  cb;
 	unsigned long     lineno;
-	int               n, res, done, refill, bytes, hold;
+	int               n, /* res, */ done, refill, bytes, hold;
 	char              *ls, *le, *pp, *pe, *hp;
 	char              *buf = 0;
 	FT2_1_3_Memory         memory = stream->memory;
@@ -618,7 +618,7 @@ _bdf_readstream( FT2_1_3_Stream         stream,
 	lineno = 1;
 	buf[0] = 0;
 
-	res = done = 0;
+	/* res = */ done = 0;
 	pp = ls = le = buf;
 
 	bytes = 65536L;
@@ -1347,7 +1347,7 @@ _bdf_parse_glyphs( char*          line,
 	unsigned char*     bp;
 	unsigned long      i, slen, nibbles;
 
-	_bdf_line_func_t*  next;
+	/* _bdf_line_func_t  next; */
 	_bdf_parse_t*      p;
 	bdf_glyph_t*       glyph;
 	bdf_font_t*        font;
@@ -1358,7 +1358,7 @@ _bdf_parse_glyphs( char*          line,
 	FT2_1_3_UNUSED( lineno );        /* only used in debug mode */
 
 
-	next = (_bdf_line_func_t *)call_data;
+	/* next = (_bdf_line_func_t *)call_data; */
 	p    = (_bdf_parse_t *)    client_data;
 
 	font   = p->font;
