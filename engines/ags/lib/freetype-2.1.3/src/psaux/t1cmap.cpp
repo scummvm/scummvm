@@ -35,8 +35,7 @@ static void
 t1_cmap_std_init( T1_CMapStd  cmap,
 				  FT2_1_3_Int      is_expert ) {
 	T1_Face          face    = (T1_Face)FT2_1_3_CMAP_FACE( cmap );
-	PSNames_Service  psnames = (PSNames_Service)face->psnames;
-
+	PSNames_Service psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(face->psnames));
 
 	cmap->num_glyphs    = face->type1.num_glyphs;
 	cmap->glyph_names   = (const char* const*)face->type1.glyph_names;
@@ -262,8 +261,7 @@ t1_cmap_unicode_init( T1_CMapUnicode  cmap ) {
 	FT2_1_3_UInt          count;
 	T1_Face          face    = (T1_Face)FT2_1_3_CMAP_FACE( cmap );
 	FT2_1_3_Memory        memory  = FT2_1_3_FACE_MEMORY( face );
-	PSNames_Service  psnames = (PSNames_Service)face->psnames;
-
+	PSNames_Service psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(face->psnames));
 
 	cmap->num_pairs = 0;
 	cmap->pairs     = NULL;
