@@ -54,7 +54,7 @@ namespace FreeType213 {
 
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"
 
-#define MAC_NAME( x )  ( (FT2_1_3_String*)psnames->macintosh_name( x ) )
+#define MAC_NAME( x )  ( const_cast<FT2_1_3_String *>(psnames->macintosh_name( x )) )
 
 
 #else /* FT2_1_3_CONFIG_OPTION_POSTSCRIPT_NAMES */
