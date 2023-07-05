@@ -249,17 +249,16 @@ cff_face_init( FT2_1_3_Stream      stream,
 	FT2_1_3_Bool           pure_cff    = 1;
 	FT2_1_3_Bool           sfnt_format = 0;
 
-
-	sfnt = (SFNT_Service)FT2_1_3_Get_Module_Interface(
-			   face->root.driver->root.library, "sfnt" );
+	const void *tmp_ptr = FT2_1_3_Get_Module_Interface(face->root.driver->root.library, "sfnt");
+	sfnt = const_cast<SFNT_Service>(reinterpret_cast<const SFNT_Interface *>(tmp_ptr));
 	if ( !sfnt )
 		goto Bad_Format;
 
-	psnames = (PSNames_Service)FT2_1_3_Get_Module_Interface(
-				  face->root.driver->root.library, "psnames" );
+	tmp_ptr = FT2_1_3_Get_Module_Interface(face->root.driver->root.library, "psnames");
+	psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(tmp_ptr));
 
-	pshinter = (PSHinter_Service)FT2_1_3_Get_Module_Interface(
-				   face->root.driver->root.library, "pshinter" );
+	tmp_ptr = FT2_1_3_Get_Module_Interface(face->root.driver->root.library, "pshinter");
+	pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(tmp_ptr));
 
 	/* create input stream from resource */
 	if ( FT2_1_3_STREAM_SEEK( 0 ) )
