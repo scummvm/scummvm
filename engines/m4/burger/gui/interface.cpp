@@ -29,16 +29,11 @@ namespace Burger {
 namespace GUI {
 
 void Interface::init(int arrow, int wait, int look, int grab, int use) {
-	_arrow = arrow;
-	_wait = wait;
-	_look = look;
-	_grab = grab;
-	_use = use;
+	M4::Interface::init(arrow, wait, look, grab, use);
 
 	_sprite = series_load("999intr", 22, nullptr);
 	if (_sprite != 22)
 		error_show(FL, 'SLF!');
-
 
 	mouse_set_sprite(wait);
 
@@ -94,6 +89,10 @@ void Interface::setup() {
 	_btnScrollRight = new ButtonClass(RectClass(539, 22, 559, 97), "scroll right", 9, 63, 64, 65, 66);
 	_interfaceBox->add(_btnScrollLeft);
 	_interfaceBox->add(_btnScrollRight);
+}
+
+void Interface::cancel_sentence() {
+	warning("TODO: cancel_sentence");
 }
 
 } // namespace GUI

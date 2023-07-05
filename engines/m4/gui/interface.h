@@ -20,18 +20,33 @@
  *
  */
 
-#ifndef M4_ADV_R_ADV_CONTROL_H
-#define M4_ADV_R_ADV_CONTROL_H
+#ifndef M4_GUI_GUI_INTERFACE_H
+#define M4_GUI_GUI_INTERFACE_H
 
-#include "common/stream.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
 
+class Interface {
+public:
+	int _arrow = 0;
+	int _wait = 0;
+	int _look = 0;
+	int _grab = 0;
+	int _use = 0;
 
-extern bool kernel_section_startup();
-extern void player_set_commands_allowed(bool t_or_f);
-extern void track_hotspots_refresh();
+public:
+	virtual ~Interface() {}
+
+	virtual void init(int arrow, int wait, int look, int grab, int use);
+
+	virtual void cancel_sentence() = 0;
+
+	/**
+	 * Show the wait cursor
+	 */
+	void showWaitCursor();
+};
 
 } // End of namespace M4
 

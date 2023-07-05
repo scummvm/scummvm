@@ -63,6 +63,9 @@ public:
 	GlobalVars *getGlobals() override {
 		return &_globals;
 	}
+	M4::Interface *getInterface() override {
+		return &_interface;
+	}
 };
 
 extern Vars *g_globals;
