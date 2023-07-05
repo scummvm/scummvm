@@ -315,14 +315,12 @@ cid_parse_dict( CID_Face     face,
 				len = (FT2_1_3_Int)( cur2 - cur );
 				if ( len > 0 && len < 22 ) {
 					/* now compare the immediate name to the keyword table */
-					T1_Field  keyword = (T1_Field) cid_field_records;
-
+					T1_Field keyword = const_cast<T1_Field>(cid_field_records);
 
 					for (;;) {
 						FT2_1_3_Byte*  name;
 
-
-						name = (FT2_1_3_Byte*)keyword->ident;
+						name = (FT2_1_3_Byte *)const_cast<char *>(keyword->ident);
 						if ( !name )
 							break;
 
