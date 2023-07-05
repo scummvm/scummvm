@@ -86,9 +86,7 @@ T1_Parse_Glyph_And_Get_Char_String( T1_Decoder  decoder,
 	}
 
 	if ( !error )
-		error = decoder->funcs.parse_charstrings(
-					decoder, (FT2_1_3_Byte*)char_string->pointer,
-					char_string->length );
+		error = decoder->funcs.parse_charstrings(decoder, const_cast<FT2_1_3_Byte *>(char_string->pointer), char_string->length);
 
 #ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
 
@@ -147,8 +145,7 @@ T1_Compute_Max_Advance( T1_Face  face,
 	T1_DecoderRec  decoder;
 	FT2_1_3_Int         glyph_index;
 	T1_Font        type1 = &face->type1;
-	PSAux_Service  psaux = (PSAux_Service)face->psaux;
-
+	PSAux_Service psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));
 
 	*max_advance = 0;
 
@@ -216,7 +213,7 @@ T1_Load_Glyph( T1_GlyphSlot  glyph,
 	T1_Face                 face = (T1_Face)glyph->root.face;
 	FT2_1_3_Bool                 hinting;
 	T1_Font                 type1         = &face->type1;
-	PSAux_Service           psaux         = (PSAux_Service)face->psaux;
+	PSAux_Service psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));
 	const T1_Decoder_Funcs  decoder_funcs = psaux->t1_decoder_funcs;
 
 	FT2_1_3_Matrix               font_matrix;
@@ -374,7 +371,7 @@ T1_Load_Glyph( T1_GlyphSlot  glyph,
 
 		/* Set control data to the glyph charstrings.  Note that this is */
 		/* _not_ zero-terminated.                                        */
-		glyph->root.control_data = (FT2_1_3_Byte*)glyph_data.pointer;
+		glyph->root.control_data = const_cast<FT2_1_3_Byte *>(glyph_data.pointer);
 		glyph->root.control_len  = glyph_data.length;
 	}
 
