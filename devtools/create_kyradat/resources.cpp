@@ -3561,7 +3561,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ kEoBBaseSaveThrwLvlIndex, kEoB2, kPlatformDOS, kTalkieVersion, UNK_LANG, &kEoB2SaveThrwLvlIndexDOSProvider },
 	{ kEoBBaseSaveThrwModDiv, kEoB2, kPlatformDOS, kTalkieVersion, UNK_LANG, &kEoB2SaveThrwModDivDOSProvider },
 	{ kEoBBaseSaveThrwModExt, kEoB2, kPlatformDOS, kTalkieVersion, UNK_LANG, &kEoB2SaveThrwModExtDOSProvider },
-	{ kEoBBaseEnchantedString, kEoB2, kPlatformDOS, kTalkieVersion, UNK_LANG, &kEoB2EnchantedStringDOSProvider },
+	{ kEoBBaseEnchantedString, kEoB2, kPlatformDOS, kTalkieVersion, UNK_LANG, &kEoB2EnchantedStringDOSChineseProvider },
 	{ kEoBBaseMenuStringsSpellNo, kEoB2, kPlatformDOS, kTalkieVersion, UNK_LANG, &kEoB2MenuStringsSpellNoDOSProvider },
 	{ kEoBBaseSpellLevelsMage, kEoB2, kPlatformDOS, kTalkieVersion, UNK_LANG, &kEoB2SpellLevelsMageDOSProvider },
 	{ kEoBBaseSpellLevelsCleric, kEoB2, kPlatformDOS, kTalkieVersion, UNK_LANG, &kEoB2SpellLevelsClericDOSProvider },

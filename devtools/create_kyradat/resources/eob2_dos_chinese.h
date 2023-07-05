@@ -181,6 +181,12 @@ static const char *const kEoB2CursedStringDOSChinese[1] = {
 
 static const StringListProvider kEoB2CursedStringDOSChineseProvider = { ARRAYSIZE(kEoB2CursedStringDOSChinese), kEoB2CursedStringDOSChinese };
 
+static const char *const kEoB2EnchantedStringDOSChinese[1] = {
+	"+%d%s"
+};
+
+static const StringListProvider kEoB2EnchantedStringDOSChineseProvider = { ARRAYSIZE(kEoB2EnchantedStringDOSChinese), kEoB2EnchantedStringDOSChinese };
+
 static const char *const kEoB2MagicObjectStringsDOSChinese[5] = {
 	"\xa7\xc5\xae\x76", /* "巫師"; */
 	"\xaa\xaa\xae\x76", /* "牧師"; */
@@ -192,37 +198,38 @@ static const char *const kEoB2MagicObjectStringsDOSChinese[5] = {
 static const StringListProvider kEoB2MagicObjectStringsDOSChineseProvider = { ARRAYSIZE(kEoB2MagicObjectStringsDOSChinese), kEoB2MagicObjectStringsDOSChinese };
 
 static const char *const kEoB2MagicObjectString5DOSChinese[1] = {
-	"Stick"
+	"\xac\x50\xa4\xf5\xc4\x5f\xa7\xfa", /* "星火寶杖"; */
 };
 
 static const StringListProvider kEoB2MagicObjectString5DOSChineseProvider = { ARRAYSIZE(kEoB2MagicObjectString5DOSChinese), kEoB2MagicObjectString5DOSChinese };
 
-static const char *const kEoB2PatternSuffixDOSChinese[1] = {
-	"%s of %s"
+static const char *const kEoB2PatternSuffixDOSChinese[2] = {
+	"%s""\xaa\xba""%s""\xaa""k""\xb3""N""\xb1\xb2\xb6""b", /* %s的%s法術捲軸 */
+	"%s""\xaa\xba""%s" /* %s的%s */
 };
 
 static const StringListProvider kEoB2PatternSuffixDOSChineseProvider = { ARRAYSIZE(kEoB2PatternSuffixDOSChinese), kEoB2PatternSuffixDOSChinese }; 
 
 static const char *const kEoB2PatternGrFix1DOSChinese[1] = {
-	"%s of %s"
+	"\xa7\xc5\xae""v" /* 巫師 */
 };
 
 static const StringListProvider kEoB2PatternGrFix1DOSChineseProvider = { ARRAYSIZE(kEoB2PatternGrFix1DOSChinese), kEoB2PatternGrFix1DOSChinese };
 
 static const char *const kEoB2PatternGrFix2DOSChinese[1] = {
-	"%s of %s"
+	"\xaa\xaa\xae""v" /* 牧師 */
 };
 
 static const StringListProvider kEoB2PatternGrFix2DOSChineseProvider = { ARRAYSIZE(kEoB2PatternGrFix2DOSChinese), kEoB2PatternGrFix2DOSChinese };
 
 static const char *const kEoB2ValidateArmorStringDOSChinese[1] = {
-	"%s can't wear that type of armor.\r"
+	"%s""\xa4\xa3\xbe""A""\xa6""X""\xac\xef\xc0\xb9""%s.\r", /* %s不適合穿戴%s.\r */
 };
 
 static const StringListProvider kEoB2ValidateArmorStringDOSChineseProvider = { ARRAYSIZE(kEoB2ValidateArmorStringDOSChinese), kEoB2ValidateArmorStringDOSChinese };
 
 static const char *const kEoB2ValidateCursedStringDOSChinese[1] = {
-	"%s cannot release the weapon!  It is cursed!\r"
+	"%s""\xb5""L""\xaa""k""\xa9\xf1\xb6""}""\xb3""o%s,""\xa6""]""\xac\xb0\xa5\xa6\xa4""w""\xb3""Q""\xa4""U""\xb6""A""\xa9""G""\xa4""F!\r" /* %s無法放開這%s,因為它已被下詛咒了!\r */
 };
 
 static const StringListProvider kEoB2ValidateCursedStringDOSChineseProvider = { ARRAYSIZE(kEoB2ValidateCursedStringDOSChinese), kEoB2ValidateCursedStringDOSChinese };
@@ -247,9 +254,9 @@ static const char *const kEoB2WandStringsDOSChinese[1] = {
 static const StringListProvider kEoB2WandStringsDOSChineseProvider = { ARRAYSIZE(kEoB2WandStringsDOSChinese), kEoB2WandStringsDOSChinese };
 
 static const char *const kEoB2ItemMisuseStringsDOSChinese[3] = {
-	"%s can not use this item.\r",
-	"This item automatically used when worn.\r",
-	"This item is not used in this way.\r"
+	"%s\xa4\xa3\xb7""|""\xa8\xcf\xa5\xce\xb3""o""\xb6\xb5\xaa\xab\xab""~.\r", /* %s不會使用這項物品.\r */
+	"\xb3""o""\xaa\xab\xab""~""\xa4""w""\xb8""g""\xb3""Q""\xb8\xcb\xb0""t""\xa6""b""\xa8\xad\xa4""W""\xa8\xcf\xa5\xce\xa4""F.\r", /* 這物品已經被裝配在身上使用了.\r */
+	"\xb3""o""\xb6\xb5\xaa\xab\xab""~""\xa4\xa3\xaf\xe0\xa6""b""\xb3""o""\xb8\xcc\xa8\xcf\xa5\xce"".\r" /* 這項物品不能在這裡使用.\r */
 };
 
 static const StringListProvider kEoB2ItemMisuseStringsDOSChineseProvider = { ARRAYSIZE(kEoB2ItemMisuseStringsDOSChinese), kEoB2ItemMisuseStringsDOSChinese };
@@ -274,14 +281,14 @@ static const char *const kEoB2PotionEffectStringsDOSChinese[8] = {
 static const StringListProvider kEoB2PotionEffectStringsDOSChineseProvider = { ARRAYSIZE(kEoB2PotionEffectStringsDOSChinese), kEoB2PotionEffectStringsDOSChinese };
 
 static const char *const kEoB2YesNoStringsDOSChinese[2] = {
-	"yes",
-	"no"
+	"\xac""O ""\xaa\xba", /* 是 的 */
+	"\xa4\xa3"" ""\xad""n" /* 不 要 */
 };
 
 static const StringListProvider kEoB2YesNoStringsDOSChineseProvider = { ARRAYSIZE(kEoB2YesNoStringsDOSChinese), kEoB2YesNoStringsDOSChinese };
 
 static const char *const kEoB2MoreStringsDOSChinese[1] = {
-	"MORE"
+	"\xc4""~ ""\xc4\xf2" /* 繼 續 */
 };
 
 static const StringListProvider kEoB2MoreStringsDOSChineseProvider = { ARRAYSIZE(kEoB2MoreStringsDOSChinese), kEoB2MoreStringsDOSChinese };
@@ -293,7 +300,7 @@ static const char *const kEoB2NpcMaxStringsDOSChinese[1] = {
 static const StringListProvider kEoB2NpcMaxStringsDOSChineseProvider = { ARRAYSIZE(kEoB2NpcMaxStringsDOSChinese), kEoB2NpcMaxStringsDOSChinese };
 
 static const char *const kEoB2OkStringsDOSChinese[1] = {
-	"OK"
+	"\xa7\xb9\xb2\xa6" /* 完畢 */
 };
 
 static const StringListProvider kEoB2OkStringsDOSChineseProvider = { ARRAYSIZE(kEoB2OkStringsDOSChinese), kEoB2OkStringsDOSChinese };
@@ -305,13 +312,13 @@ static const char *const kEoB2NpcJoinStringsDOSChinese[1] = {
 static const StringListProvider kEoB2NpcJoinStringsDOSChineseProvider = { ARRAYSIZE(kEoB2NpcJoinStringsDOSChinese), kEoB2NpcJoinStringsDOSChinese };
 
 static const char *const kEoB2CancelStringsDOSChinese[1] = {
-	"CANCEL"
+	"\xa7\xb9\xa6\xa8" /* 完成 */
 };
 
 static const StringListProvider kEoB2CancelStringsDOSChineseProvider = { ARRAYSIZE(kEoB2CancelStringsDOSChinese), kEoB2CancelStringsDOSChinese };
 
 static const char *const kEoB2AbortStringsDOSChinese[1] = {
-	"ABORT"
+	"\xa9\xf1"" ""\xb1\xf3" /* 放 棄 */
 };
 
 static const StringListProvider kEoB2AbortStringsDOSChineseProvider = { ARRAYSIZE(kEoB2AbortStringsDOSChinese), kEoB2AbortStringsDOSChinese };
