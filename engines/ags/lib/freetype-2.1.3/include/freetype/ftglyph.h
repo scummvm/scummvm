@@ -104,8 +104,8 @@ typedef struct FT2_1_3_GlyphRec_*  FT2_1_3_Glyph;
 typedef struct  FT2_1_3_GlyphRec_ {
 	FT2_1_3_Library             library;
 	const FT2_1_3_Glyph_Class*  clazz;
-	FT2_1_3_Glyph_Format        format;
-	FT2_1_3_Vector              advance;
+	FT_Glyph_Format        format;
+	FT_Vector              advance;
 
 } FT2_1_3_GlyphRec;
 
@@ -113,19 +113,19 @@ typedef struct  FT2_1_3_GlyphRec_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT2_1_3_BitmapGlyph                                                     */
+/*    FT_BitmapGlyph                                                     */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A handle to an object used to model a bitmap glyph image.  This is */
-/*    a sub-class of @FT2_1_3_Glyph, and a pointer to @FT2_1_3_BitmapGlyphRec.     */
+/*    a sub-class of @FT2_1_3_Glyph, and a pointer to @FT_BitmapGlyphRec.     */
 /*                                                                       */
-typedef struct FT2_1_3_BitmapGlyphRec_*  FT2_1_3_BitmapGlyph;
+typedef struct FT_BitmapGlyphRec_*  FT_BitmapGlyph;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_BitmapGlyphRec                                                  */
+/*    FT_BitmapGlyphRec                                                  */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A structure used for bitmap glyph images.  This really is a        */
@@ -145,20 +145,20 @@ typedef struct FT2_1_3_BitmapGlyphRec_*  FT2_1_3_BitmapGlyph;
 /*    bitmap :: A descriptor for the bitmap.                             */
 /*                                                                       */
 /* <Note>                                                                */
-/*    You can typecast FT2_1_3_Glyph to FT2_1_3_BitmapGlyph if you have            */
+/*    You can typecast FT2_1_3_Glyph to FT_BitmapGlyph if you have            */
 /*    glyph->format == FT2_1_3_GLYPH_FORMAT_BITMAP.  This lets you access     */
 /*    the bitmap's contents easily.                                      */
 /*                                                                       */
 /*    The corresponding pixel buffer is always owned by the BitmapGlyph  */
 /*    and is thus created and destroyed with it.                         */
 /*                                                                       */
-typedef struct  FT2_1_3_BitmapGlyphRec_ {
+typedef struct  FT_BitmapGlyphRec_ {
 	FT2_1_3_GlyphRec  root;
-	FT2_1_3_Int       left;
-	FT2_1_3_Int       top;
-	FT2_1_3_Bitmap    bitmap;
+	FT_Int       left;
+	FT_Int       top;
+	FT_Bitmap    bitmap;
 
-} FT2_1_3_BitmapGlyphRec;
+} FT_BitmapGlyphRec;
 
 
 /*************************************************************************/
@@ -223,7 +223,7 @@ typedef struct  FT2_1_3_OutlineGlyphRec_ {
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Get_Glyph( FT2_1_3_GlyphSlot  slot,
 			  FT2_1_3_Glyph     *aglyph );
 
@@ -246,7 +246,7 @@ FT2_1_3_Get_Glyph( FT2_1_3_GlyphSlot  slot,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Glyph_Copy( FT2_1_3_Glyph   source,
 			   FT2_1_3_Glyph  *target );
 
@@ -276,10 +276,10 @@ FT2_1_3_Glyph_Copy( FT2_1_3_Glyph   source,
 /*    The 2x2 transformation matrix is also applied to the glyph's       */
 /*    advance vector.                                                    */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Glyph_Transform( FT2_1_3_Glyph    glyph,
-					FT2_1_3_Matrix*  matrix,
-					FT2_1_3_Vector*  delta );
+					FT_Matrix*  matrix,
+					FT_Vector*  delta );
 
 /* */
 
@@ -356,8 +356,8 @@ enum {
 
 FT2_1_3_EXPORT( void )
 FT2_1_3_Glyph_Get_CBox( FT2_1_3_Glyph  glyph,
-				   FT2_1_3_UInt   bbox_mode,
-				   FT2_1_3_BBox  *acbox );
+				   FT_UInt   bbox_mode,
+				   FT_BBox  *acbox );
 
 
 /*************************************************************************/
@@ -399,7 +399,7 @@ FT2_1_3_Glyph_Get_CBox( FT2_1_3_Glyph  glyph,
 /*                                                                       */
 /*      {                                                                */
 /*        FT2_1_3_Glyph        glyph;                                         */
-/*        FT2_1_3_BitmapGlyph  glyph_bitmap;                                  */
+/*        FT_BitmapGlyph  glyph_bitmap;                                  */
 /*                                                                       */
 /*                                                                       */
 /*        // load glyph                                                  */
@@ -418,7 +418,7 @@ FT2_1_3_Glyph_Get_CBox( FT2_1_3_Glyph  glyph,
 /*        }                                                              */
 /*                                                                       */
 /*        // access bitmap content by typecasting                        */
-/*        glyph_bitmap = (FT2_1_3_BitmapGlyph)glyph;                          */
+/*        glyph_bitmap = (FT_BitmapGlyph)glyph;                          */
 /*                                                                       */
 /*        // do funny stuff with it, like blitting/drawing               */
 /*        ...                                                            */
@@ -431,11 +431,11 @@ FT2_1_3_Glyph_Get_CBox( FT2_1_3_Glyph  glyph,
 /*    This function will always fail if the glyph's format isn't         */
 /*    scalable.                                                          */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Glyph_To_Bitmap( FT2_1_3_Glyph*       the_glyph,
 					FT2_1_3_Render_Mode  render_mode,
-					FT2_1_3_Vector*      origin,
-					FT2_1_3_Bool         destroy );
+					FT_Vector*      origin,
+					FT_Bool         destroy );
 
 
 /*************************************************************************/
@@ -466,7 +466,7 @@ FT2_1_3_Done_Glyph( FT2_1_3_Glyph  glyph );
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Matrix_Multiply                                                 */
+/*    FT_Matrix_Multiply                                                 */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Performs the matrix operation `b = a*b'.                           */
@@ -481,14 +481,14 @@ FT2_1_3_Done_Glyph( FT2_1_3_Glyph  glyph );
 /*    The result is undefined if either `a' or `b' is zero.              */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_Matrix_Multiply( FT2_1_3_Matrix*  a,
-					FT2_1_3_Matrix*  b );
+FT_Matrix_Multiply( FT_Matrix*  a,
+					FT_Matrix*  b );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Matrix_Invert                                                   */
+/*    FT_Matrix_Invert                                                   */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Inverts a 2x2 matrix.  Returns an error if it can't be inverted.   */
@@ -500,8 +500,8 @@ FT2_1_3_Matrix_Multiply( FT2_1_3_Matrix*  a,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Matrix_Invert( FT2_1_3_Matrix*  matrix );
+FT2_1_3_EXPORT( FT_Error )
+FT_Matrix_Invert( FT_Matrix*  matrix );
 
 
 /* */

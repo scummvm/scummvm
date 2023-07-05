@@ -39,17 +39,17 @@ FT2_1_3_BEGIN_HEADER
 
 
 /* create a new empty hinter object */
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 ah_hinter_new( FT2_1_3_Library  library,
 			   AH_Hinter*  ahinter );
 
 /* Load a hinted glyph in the hinter */
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 ah_hinter_load_glyph( AH_Hinter     hinter,
 					  FT2_1_3_GlyphSlot  slot,
 					  FT2_1_3_Size       size,
-					  FT2_1_3_UInt       glyph_index,
-					  FT2_1_3_Int32      load_flags );
+					  FT_UInt       glyph_index,
+					  FT_Int32      load_flags );
 
 /* finalize a hinter object */
 FT2_1_3_LOCAL( void )
@@ -60,7 +60,7 @@ ah_hinter_done_face_globals( AH_Face_Globals  globals );
 
 FT2_1_3_LOCAL( void )
 ah_hinter_get_global_hints( AH_Hinter  hinter,
-							FT2_1_3_Face    face,
+							FT_Face    face,
 							void**     global_hints,
 							long*      global_len );
 

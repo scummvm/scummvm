@@ -282,7 +282,7 @@ typedef struct TProfile_  TProfile;
 typedef TProfile*         PProfile;
 
 struct  TProfile_ {
-	FT2_1_3_F26Dot6  X;           /* current coordinate during sweep        */
+	FT_F26Dot6  X;           /* current coordinate during sweep        */
 	PProfile    link;        /* link to next profile - various purpose */
 	PLong       offset;      /* start of profile's data in render pool */
 	int         flow;        /* Profile orientation: Asc/Descending    */
@@ -350,8 +350,8 @@ Function_Sweep_Init( RAS_ARGS Short*  min,
 
 typedef void
 Function_Sweep_Span( RAS_ARGS Short       y,
-					 FT2_1_3_F26Dot6  x1,
-					 FT2_1_3_F26Dot6  x2,
+					 FT_F26Dot6  x1,
+					 FT_F26Dot6  x2,
 					 PProfile    left,
 					 PProfile    right );
 
@@ -389,7 +389,7 @@ struct  TRaster_Instance_ {
 	PLong     maxBuff;              /* Profiles buffer size                */
 	PLong     top;                  /* Current cursor in buffer            */
 
-	FT2_1_3_Error  error;
+	FT_Error  error;
 
 	Int       numTurns;             /* number of Y-turns in outline        */
 
@@ -415,7 +415,7 @@ struct  TRaster_Instance_ {
 
 	TStates   state;                /* rendering state                     */
 
-	FT2_1_3_Bitmap   target;             /* description of target bit/pixmap    */
+	FT_Bitmap   target;             /* description of target bit/pixmap    */
 	FT2_1_3_Outline  outline;
 
 	Long      traceOfs;             /* current offset in target bitmap     */
@@ -475,7 +475,7 @@ struct  TRaster_Instance_ {
 #if 0
 	PByte       flags;              /* current flags table                 */
 	PUShort     outs;               /* current outlines table              */
-	FT2_1_3_Vector*  coords;
+	FT_Vector*  coords;
 
 	UShort      nPoints;            /* number of points in current glyph   */
 	Short       nContours;          /* number of contours in current glyph */
@@ -1505,13 +1505,13 @@ static Bool
 Decompose_Curve( RAS_ARGS UShort  first,
 				 UShort  last,
 				 int     flipped ) {
-	FT2_1_3_Vector   v_last;
-	FT2_1_3_Vector   v_control;
-	FT2_1_3_Vector   v_start;
+	FT_Vector   v_last;
+	FT_Vector   v_control;
+	FT_Vector   v_start;
 
-	FT2_1_3_Vector*  points;
-	FT2_1_3_Vector*  point;
-	FT2_1_3_Vector*  limit;
+	FT_Vector*  points;
+	FT_Vector*  point;
+	FT_Vector*  limit;
 	char*       tags;
 
 	unsigned    tag;       /* current point's state           */
@@ -1593,7 +1593,7 @@ Decompose_Curve( RAS_ARGS UShort  first,
 
 Do_Conic:
 			if ( point < limit ) {
-				FT2_1_3_Vector  v_middle;
+				FT_Vector  v_middle;
 				Long       x, y;
 
 
@@ -1922,8 +1922,8 @@ Vertical_Sweep_Init( RAS_ARGS Short*  min,
 
 static void
 Vertical_Sweep_Span( RAS_ARGS Short       y,
-					 FT2_1_3_F26Dot6  x1,
-					 FT2_1_3_F26Dot6  x2,
+					 FT_F26Dot6  x1,
+					 FT_F26Dot6  x2,
 					 PProfile    left,
 					 PProfile    right ) {
 	Long   e1, e2;
@@ -1983,8 +1983,8 @@ Vertical_Sweep_Span( RAS_ARGS Short       y,
 
 static void
 Vertical_Sweep_Drop( RAS_ARGS Short       y,
-					 FT2_1_3_F26Dot6  x1,
-					 FT2_1_3_F26Dot6  x2,
+					 FT_F26Dot6  x1,
+					 FT_F26Dot6  x2,
 					 PProfile    left,
 					 PProfile    right ) {
 	Long   e1, e2;
@@ -2113,8 +2113,8 @@ Horizontal_Sweep_Init( RAS_ARGS Short*  min,
 
 static void
 Horizontal_Sweep_Span( RAS_ARGS Short       y,
-					   FT2_1_3_F26Dot6  x1,
-					   FT2_1_3_F26Dot6  x2,
+					   FT_F26Dot6  x1,
+					   FT_F26Dot6  x2,
 					   PProfile    left,
 					   PProfile    right ) {
 	Long   e1, e2;
@@ -2152,8 +2152,8 @@ Horizontal_Sweep_Span( RAS_ARGS Short       y,
 
 static void
 Horizontal_Sweep_Drop( RAS_ARGS Short       y,
-					   FT2_1_3_F26Dot6  x1,
-					   FT2_1_3_F26Dot6  x2,
+					   FT_F26Dot6  x1,
+					   FT_F26Dot6  x2,
 					   PProfile    left,
 					   PProfile    right ) {
 	Long   e1, e2;
@@ -2373,8 +2373,8 @@ Vertical_Gray_Sweep_Step( RAS_ARG ) {
 
 static void
 Horizontal_Gray_Sweep_Span( RAS_ARGS Short       y,
-							FT2_1_3_F26Dot6  x1,
-							FT2_1_3_F26Dot6  x2,
+							FT_F26Dot6  x1,
+							FT_F26Dot6  x2,
 							PProfile    left,
 							PProfile    right ) {
 	/* nothing, really */
@@ -2389,8 +2389,8 @@ Horizontal_Gray_Sweep_Span( RAS_ARGS Short       y,
 
 static void
 Horizontal_Gray_Sweep_Drop( RAS_ARGS Short       y,
-							FT2_1_3_F26Dot6  x1,
-							FT2_1_3_F26Dot6  x2,
+							FT_F26Dot6  x1,
+							FT_F26Dot6  x2,
 							PProfile    left,
 							PProfile    right ) {
 	Long   e1, e2;
@@ -2772,16 +2772,16 @@ Render_Single_Pass( RAS_ARGS Bool  flipped ) {
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 Render_Glyph( RAS_ARG ) {
-	FT2_1_3_Error  error;
+	FT_Error  error;
 
 
 	Set_High_Precision( RAS_VARS ras.outline.flags &
 						FT2_1_3_OUTLINE_HIGH_PRECISION );
 	ras.scale_shift    = ras.precision_shift;
 	ras.dropOutControl = 2;
-	ras.second_pass    = (FT2_1_3_Byte)( !( ras.outline.flags &
+	ras.second_pass    = (FT_Byte)( !( ras.outline.flags &
 									   FT2_1_3_OUTLINE_SINGLE_PASS ) );
 
 	/* Vertical Sweep */
@@ -2833,10 +2833,10 @@ Render_Glyph( RAS_ARG ) {
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 Render_Gray_Glyph( RAS_ARG ) {
 	Long      pixel_width;
-	FT2_1_3_Error  error;
+	FT_Error  error;
 
 
 	Set_High_Precision( RAS_VARS ras.outline.flags &
@@ -2891,7 +2891,7 @@ Render_Gray_Glyph( RAS_ARG ) {
 
 #else /* !FT2_1_3_RASTER_OPTION_ANTI_ALIASING */
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 Render_Gray_Glyph( RAS_ARG ) {
 	FT2_1_3_UNUSED_RASTER;
 
@@ -2903,8 +2903,8 @@ Render_Gray_Glyph( RAS_ARG ) {
 
 static void
 ft_black_init( TRaster_Instance*  raster ) {
-	FT2_1_3_UInt  n;
-	FT2_1_3_ULong c;
+	FT_UInt  n;
+	FT_ULong c;
 
 
 	/* setup count table */
@@ -2965,7 +2965,7 @@ ft_black_done( FT2_1_3_Raster  raster ) {
 static int
 ft_black_new( FT2_1_3_Memory           memory,
 			  TRaster_Instance**  araster ) {
-	FT2_1_3_Error           error;
+	FT_Error           error;
 	TRaster_Instance*  raster;
 
 	using AGS3::FreeType213::FT2_1_3_Alloc;
@@ -3035,7 +3035,7 @@ static int
 ft_black_render( TRaster_Instance*  raster,
 				 FT2_1_3_Raster_Params*  params ) {
 	FT2_1_3_Outline*  outline    = (FT2_1_3_Outline*)params->source;
-	FT2_1_3_Bitmap*   target_map = params->target;
+	FT_Bitmap*   target_map = params->target;
 
 
 	if ( !raster || !raster->buff || !raster->sizeBuff )

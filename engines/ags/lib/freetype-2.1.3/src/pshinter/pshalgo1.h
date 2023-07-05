@@ -44,15 +44,15 @@ typedef enum {
 #define psh1_hint_deactivate( x )  (x)->flags &= ~PSH1_HINT_FLAG_ACTIVE
 
 typedef struct  PSH1_HintRec_ {
-	FT2_1_3_Int     org_pos;
-	FT2_1_3_Int     org_len;
-	FT2_1_3_Pos     cur_pos;
-	FT2_1_3_Pos     cur_len;
+	FT_Int     org_pos;
+	FT_Int     org_len;
+	FT_Pos     cur_pos;
+	FT_Pos     cur_len;
 
-	FT2_1_3_UInt    flags;
+	FT_UInt    flags;
 
 	PSH1_Hint  parent;
-	FT2_1_3_Int     order;
+	FT_Int     order;
 
 } PSH1_HintRec;
 
@@ -61,21 +61,21 @@ typedef struct  PSH1_HintRec_ {
 /* weak points are interpolated according to their strong */
 /* neighbours                                             */
 typedef struct  PSH1_ZoneRec_ {
-	FT2_1_3_Fixed  scale;
-	FT2_1_3_Fixed  delta;
-	FT2_1_3_Pos    min;
-	FT2_1_3_Pos    max;
+	FT_Fixed  scale;
+	FT_Fixed  delta;
+	FT_Pos    min;
+	FT_Pos    max;
 
 } PSH1_ZoneRec, *PSH1_Zone;
 
 
 typedef struct  PSH1_Hint_TableRec_ {
-	FT2_1_3_UInt        max_hints;
-	FT2_1_3_UInt        num_hints;
+	FT_UInt        max_hints;
+	FT_UInt        num_hints;
 	PSH1_Hint      hints;
 	PSH1_Hint*     sort;
 	PSH1_Hint*     sort_global;
-	FT2_1_3_UInt        num_zones;
+	FT_UInt        num_zones;
 	PSH1_Zone      zones;
 	PSH1_Zone      zone;
 	PS_Mask_Table  hint_masks;
@@ -84,7 +84,7 @@ typedef struct  PSH1_Hint_TableRec_ {
 } PSH1_Hint_TableRec, *PSH1_Hint_Table;
 
 
-extern FT2_1_3_Error
+extern FT_Error
 ps1_hints_apply( PS_Hints        ps_hints,
 				 FT2_1_3_Outline*     outline,
 				 PSH_Globals     globals,
@@ -96,7 +96,7 @@ extern  PSH1_Hint_Table  ps1_debug_hint_table;
 
 typedef void
 (*PSH1_HintFunc)( PSH1_Hint  hint,
-				  FT2_1_3_Bool    vertical );
+				  FT_Bool    vertical );
 
 extern PSH1_HintFunc  ps1_debug_hint_func;
 #endif

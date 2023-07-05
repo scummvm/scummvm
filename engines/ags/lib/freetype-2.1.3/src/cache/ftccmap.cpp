@@ -49,8 +49,8 @@ namespace FreeType213 {
 
 typedef struct  FTC_CMapNodeRec_ {
 	FTC_NodeRec  node;
-	FT2_1_3_UInt32    first;                         /* first character in node */
-	FT2_1_3_UInt16    indices[FTC_CMAP_INDICES_MAX]; /* array of glyph indices  */
+	FT_UInt32    first;                         /* first character in node */
+	FT_UInt16    indices[FTC_CMAP_INDICES_MAX]; /* array of glyph indices  */
 
 } FTC_CMapNodeRec, *FTC_CMapNode;
 
@@ -64,14 +64,14 @@ typedef struct  FTC_CMapNodeRec_ {
 
 /* if (indices[n] == FTC_CMAP_UNKNOWN), we assume that the corresponding */
 /* glyph indices haven't been queried through FT2_1_3_Get_Glyph_Index() yet   */
-#define FTC_CMAP_UNKNOWN  ( (FT2_1_3_UInt16)-1 )
+#define FTC_CMAP_UNKNOWN  ( (FT_UInt16)-1 )
 
 
 /* the charmap query */
 typedef struct  FTC_CMapQueryRec_ {
 	FTC_QueryRec  query;
 	FTC_CMapDesc  desc;
-	FT2_1_3_UInt32     char_code;
+	FT_UInt32     char_code;
 
 } FTC_CMapQueryRec, *FTC_CMapQuery;
 
@@ -82,9 +82,9 @@ typedef struct  FTC_CMapQueryRec_ {
 /* the charmap family */
 typedef struct FTC_CMapFamilyRec_ {
 	FTC_FamilyRec    family;
-	FT2_1_3_UInt32        hash;
+	FT_UInt32        hash;
 	FTC_CMapDescRec  desc;
-	FT2_1_3_UInt          index;
+	FT_UInt          index;
 
 } FTC_CMapFamilyRec, *FTC_CMapFamily;
 
@@ -105,12 +105,12 @@ typedef struct FTC_CMapFamilyRec_ {
 /* no need for specific finalizer; we use "ftc_node_done" directly */
 
 /* initialize a new cmap node */
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 ftc_cmap_node_init( FTC_CMapNode   cnode,
 					FTC_CMapQuery  cquery,
 					FTC_Cache      cache ) {
-	FT2_1_3_UInt32  first;
-	FT2_1_3_UInt    n;
+	FT_UInt32  first;
+	FT_UInt    n;
 	FT2_1_3_UNUSED( cache );
 
 
@@ -126,7 +126,7 @@ ftc_cmap_node_init( FTC_CMapNode   cnode,
 
 
 /* compute the weight of a given cmap node */
-FT2_1_3_CALLBACK_DEF( FT2_1_3_ULong )
+FT2_1_3_CALLBACK_DEF( FT_ULong )
 ftc_cmap_node_weight( FTC_CMapNode  cnode ) {
 	FT2_1_3_UNUSED( cnode );
 
@@ -135,10 +135,10 @@ ftc_cmap_node_weight( FTC_CMapNode  cnode ) {
 
 
 /* compare a cmap node to a given query */
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Bool )
+FT2_1_3_CALLBACK_DEF( FT_Bool )
 ftc_cmap_node_compare( FTC_CMapNode   cnode,
 					   FTC_CMapQuery  cquery ) {
-	FT2_1_3_UInt32  offset = (FT2_1_3_UInt32)( cquery->char_code - cnode->first );
+	FT_UInt32  offset = (FT_UInt32)( cquery->char_code - cnode->first );
 
 
 	return FT2_1_3_BOOL( offset < FTC_CMAP_INDICES_MAX );
@@ -154,15 +154,15 @@ ftc_cmap_node_compare( FTC_CMapNode   cnode,
 /*************************************************************************/
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 ftc_cmap_family_init( FTC_CMapFamily  cfam,
 					  FTC_CMapQuery   cquery,
 					  FTC_Cache       cache ) {
 	FTC_Manager   manager = cache->manager;
 	FTC_CMapDesc  desc = cquery->desc;
-	FT2_1_3_UInt32     hash = 0;
-	FT2_1_3_Error      error;
-	FT2_1_3_Face       face;
+	FT_UInt32     hash = 0;
+	FT_Error      error;
+	FT_Face       face;
 
 
 	/* setup charmap descriptor */
@@ -171,9 +171,9 @@ ftc_cmap_family_init( FTC_CMapFamily  cfam,
 	/* let's see whether the rest is correct too */
 	error = FTC_Manager_Lookup_Face( manager, desc->face_id, &face );
 	if ( !error ) {
-		FT2_1_3_UInt      count = face->num_charmaps;
-		FT2_1_3_UInt      idx   = count;
-		FT2_1_3_CharMap*  cur   = face->charmaps;
+		FT_UInt      count = face->num_charmaps;
+		FT_UInt      idx   = count;
+		FT_CharMap*  cur   = face->charmaps;
 
 
 		switch ( desc->type ) {
@@ -192,8 +192,8 @@ ftc_cmap_family_init( FTC_CMapFamily  cfam,
 
 		case FTC_CMAP_BY_ID:
 			for ( idx = 0; idx < count; idx++, cur++ ) {
-				if ( (FT2_1_3_UInt)cur[0]->platform_id == desc->u.id.platform &&
-						(FT2_1_3_UInt)cur[0]->encoding_id == desc->u.id.encoding ) {
+				if ( (FT_UInt)cur[0]->platform_id == desc->u.id.platform &&
+						(FT_UInt)cur[0]->encoding_id == desc->u.id.encoding ) {
 					hash = ( ( desc->u.id.platform << 8 ) | desc->u.id.encoding ) * 7;
 					break;
 				}
@@ -224,10 +224,10 @@ Bad_Descriptor:
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Bool )
+FT2_1_3_CALLBACK_DEF( FT_Bool )
 ftc_cmap_family_compare( FTC_CMapFamily  cfam,
 						 FTC_CMapQuery   cquery ) {
-	FT2_1_3_Int  result = 0;
+	FT_Int  result = 0;
 
 
 	/* first, compare face id and type */
@@ -295,7 +295,7 @@ const FTC_Cache_ClassRec  ftc_cmap_cache_class = {
 
 /* documentation is in ftccmap.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FTC_CMapCache_New( FTC_Manager     manager,
 				   FTC_CMapCache  *acache ) {
 	return FTC_Manager_Register_Cache(
@@ -326,14 +326,14 @@ FTC_CMapCache_New( FTC_Manager     manager,
 
 /* documentation is in ftccmap.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_UInt )
+FT2_1_3_EXPORT_DEF( FT_UInt )
 FTC_CMapCache_Lookup( FTC_CMapCache  cache,
 					  FTC_CMapDesc   desc,
-					  FT2_1_3_UInt32      char_code ) {
+					  FT_UInt32      char_code ) {
 	FTC_CMapQueryRec  cquery;
 	FTC_CMapNode      node;
-	FT2_1_3_Error          error;
-	FT2_1_3_UInt           gindex = 0;
+	FT_Error          error;
+	FT_UInt           gindex = 0;
 
 
 	if ( !cache || !desc ) {
@@ -348,14 +348,14 @@ FTC_CMapCache_Lookup( FTC_CMapCache  cache,
 								   FTC_QUERY( &cquery ),
 								   (FTC_Node*)&node );
 	if ( !error ) {
-		FT2_1_3_UInt  offset = (FT2_1_3_UInt)( char_code - node->first );
+		FT_UInt  offset = (FT_UInt)( char_code - node->first );
 
 
 		FT2_1_3_ASSERT( offset < FTC_CMAP_INDICES_MAX );
 
 		gindex = node->indices[offset];
 		if ( gindex == FTC_CMAP_UNKNOWN ) {
-			FT2_1_3_Face  face;
+			FT_Face  face;
 
 
 			/* we need to use FT2_1_3_Get_Char_Index */
@@ -365,8 +365,8 @@ FTC_CMapCache_Lookup( FTC_CMapCache  cache,
 											 desc->face_id,
 											 &face );
 			if ( !error ) {
-				FT2_1_3_CharMap  old, cmap  = NULL;
-				FT2_1_3_UInt     cmap_index;
+				FT_CharMap  old, cmap  = NULL;
+				FT_UInt     cmap_index;
 
 
 				/* save old charmap, select new one */
@@ -378,7 +378,7 @@ FTC_CMapCache_Lookup( FTC_CMapCache  cache,
 
 				/* perform lookup */
 				gindex                = FT2_1_3_Get_Char_Index( face, char_code );
-				node->indices[offset] = (FT2_1_3_UInt16)gindex;
+				node->indices[offset] = (FT_UInt16)gindex;
 
 				/* restore old charmap */
 				FT2_1_3_Set_Charmap( face, old );

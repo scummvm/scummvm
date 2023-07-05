@@ -109,10 +109,10 @@ typedef struct  T1_SizeRec_ {
 FT2_1_3_LOCAL( void )
 T1_Size_Done( T1_Size  size );
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 T1_Size_Reset( T1_Size  size );
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 T1_Size_Init( T1_Size  size );
 
 
@@ -127,35 +127,35 @@ T1_Size_Init( T1_Size  size );
 typedef struct  T1_GlyphSlotRec_ {
 	FT2_1_3_GlyphSlotRec  root;
 
-	FT2_1_3_Bool          hint;
-	FT2_1_3_Bool          scaled;
+	FT_Bool          hint;
+	FT_Bool          scaled;
 
-	FT2_1_3_Int           max_points;
-	FT2_1_3_Int           max_contours;
+	FT_Int           max_points;
+	FT_Int           max_contours;
 
-	FT2_1_3_Fixed         x_scale;
-	FT2_1_3_Fixed         y_scale;
+	FT_Fixed         x_scale;
+	FT_Fixed         y_scale;
 
 } T1_GlyphSlotRec;
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 T1_Face_Init( FT2_1_3_Stream      stream,
 			  T1_Face        face,
-			  FT2_1_3_Int         face_index,
-			  FT2_1_3_Int         num_params,
+			  FT_Int         face_index,
+			  FT_Int         num_params,
 			  FT2_1_3_Parameter*  params );
 
 FT2_1_3_LOCAL( void )
 T1_Face_Done( T1_Face  face );
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 T1_GlyphSlot_Init( T1_GlyphSlot  slot );
 
 FT2_1_3_LOCAL( void )
 T1_GlyphSlot_Done( T1_GlyphSlot  slot );
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 T1_Driver_Init( T1_Driver  driver );
 
 FT2_1_3_LOCAL( void )

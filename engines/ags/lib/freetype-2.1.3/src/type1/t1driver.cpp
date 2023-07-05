@@ -44,25 +44,25 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-static FT2_1_3_Error
+static FT_Error
 t1_get_glyph_name( T1_Face     face,
-				   FT2_1_3_UInt     glyph_index,
-				   FT2_1_3_Pointer  buffer,
-				   FT2_1_3_UInt     buffer_max ) {
-	FT2_1_3_String*  gname;
+				   FT_UInt     glyph_index,
+				   FT_Pointer  buffer,
+				   FT_UInt     buffer_max ) {
+	FT_String*  gname;
 
 
 	gname = face->type1.glyph_names[glyph_index];
 
 	if ( buffer_max > 0 ) {
-		FT2_1_3_UInt  len = (FT2_1_3_UInt)( ft_strlen( gname ) );
+		FT_UInt  len = (FT_UInt)( ft_strlen( gname ) );
 
 
 		if (len >= buffer_max)
 			len = buffer_max - 1;
 
 		FT2_1_3_MEM_COPY( buffer, gname, len );
-		((FT2_1_3_Byte*)buffer)[len] = 0;
+		((FT_Byte*)buffer)[len] = 0;
 	}
 
 	return FT2_1_3_Err_Ok;
@@ -86,18 +86,18 @@ t1_get_glyph_name( T1_Face     face,
 /* <Return>                                                              */
 /*    Glyph index.  0 means `undefined character code'.                  */
 /*                                                                       */
-static FT2_1_3_UInt
+static FT_UInt
 t1_get_name_index( T1_Face     face,
-				   FT2_1_3_String*  glyph_name ) {
-	FT2_1_3_Int      i;
-	FT2_1_3_String*  gname;
+				   FT_String*  glyph_name ) {
+	FT_Int      i;
+	FT_String*  gname;
 
 
 	for ( i = 0; i < face->type1.num_glyphs; i++ ) {
 		gname = face->type1.glyph_names[i];
 
 		if ( !ft_strcmp( glyph_name, gname ) )
-			return (FT2_1_3_UInt)i;
+			return (FT_UInt)i;
 	}
 
 	return 0;
@@ -139,7 +139,7 @@ t1_get_ps_name( T1_Face  face ) {
 /*                                                                       */
 static FT2_1_3_Module_Interface
 Get_Interface( FT2_1_3_Driver         driver,
-			   const FT2_1_3_String*  t1_interface ) {
+			   const FT_String*  t1_interface ) {
 	FT2_1_3_UNUSED( driver );
 	FT2_1_3_UNUSED( t1_interface );
 
@@ -200,11 +200,11 @@ Get_Interface( FT2_1_3_Driver         driver,
 /*                                                                       */
 /*    They can be implemented by format-specific interfaces.             */
 /*                                                                       */
-static FT2_1_3_Error
+static FT_Error
 Get_Kerning( T1_Face     face,
-			 FT2_1_3_UInt     left_glyph,
-			 FT2_1_3_UInt     right_glyph,
-			 FT2_1_3_Vector*  kerning ) {
+			 FT_UInt     left_glyph,
+			 FT_UInt     right_glyph,
+			 FT_Vector*  kerning ) {
 	T1_AFM*  afm;
 
 
@@ -248,8 +248,8 @@ const FT2_1_3_Driver_ClassRec  t1_driver_class = {
 	sizeof( T1_SizeRec ),
 	sizeof( T1_GlyphSlotRec ),
 
-	(FT2_1_3_Face_InitFunc)        T1_Face_Init,
-	(FT2_1_3_Face_DoneFunc)        T1_Face_Done,
+	(FT_Face_InitFunc)        T1_Face_Init,
+	(FT_Face_DoneFunc)        T1_Face_Done,
 	(FT2_1_3_Size_InitFunc)        T1_Size_Init,
 	(FT2_1_3_Size_DoneFunc)        T1_Size_Done,
 	(FT2_1_3_Slot_InitFunc)        T1_GlyphSlot_Init,
@@ -260,13 +260,13 @@ const FT2_1_3_Driver_ClassRec  t1_driver_class = {
 	(FT2_1_3_Slot_LoadFunc)        T1_Load_Glyph,
 
 #ifdef T1_CONFIG_OPTION_NO_AFM
-	(FT2_1_3_Face_GetKerningFunc)  0,
-	(FT2_1_3_Face_AttachFunc)      0,
+	(FT_Face_GetKerningFunc)  0,
+	(FT_Face_AttachFunc)      0,
 #else
-	(FT2_1_3_Face_GetKerningFunc)  Get_Kerning,
-	(FT2_1_3_Face_AttachFunc)      T1_Read_AFM,
+	(FT_Face_GetKerningFunc)  Get_Kerning,
+	(FT_Face_AttachFunc)      T1_Read_AFM,
 #endif
-	(FT2_1_3_Face_GetAdvancesFunc) 0
+	(FT_Face_GetAdvancesFunc) 0
 };
 
 } // End of namespace FreeType213

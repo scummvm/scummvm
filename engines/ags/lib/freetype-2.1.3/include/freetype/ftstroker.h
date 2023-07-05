@@ -80,52 +80,52 @@ typedef enum {
 
 /* */
 
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Stroker_New( FT2_1_3_Memory    memory,
 				FT2_1_3_Stroker  *astroker );
 
 FT2_1_3_EXPORT( void )
 FT2_1_3_Stroker_Set( FT2_1_3_Stroker           stroker,
-				FT2_1_3_Fixed             radius,
+				FT_Fixed             radius,
 				FT2_1_3_Stroker_LineCap   line_cap,
 				FT2_1_3_Stroker_LineJoin  line_join,
-				FT2_1_3_Fixed             miter_limit );
+				FT_Fixed             miter_limit );
 
 
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Stroker_ParseOutline( FT2_1_3_Stroker   stroker,
 						 FT2_1_3_Outline*  outline,
-						 FT2_1_3_Bool      opened );
+						 FT_Bool      opened );
 
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Stroker_BeginSubPath( FT2_1_3_Stroker  stroker,
-						 FT2_1_3_Vector*  to,
-						 FT2_1_3_Bool     open );
+						 FT_Vector*  to,
+						 FT_Bool     open );
 
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Stroker_EndSubPath( FT2_1_3_Stroker  stroker );
 
 
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Stroker_LineTo( FT2_1_3_Stroker  stroker,
-				   FT2_1_3_Vector*  to );
+				   FT_Vector*  to );
 
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Stroker_ConicTo( FT2_1_3_Stroker  stroker,
-					FT2_1_3_Vector*  control,
-					FT2_1_3_Vector*  to );
+					FT_Vector*  control,
+					FT_Vector*  to );
 
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Stroker_CubicTo( FT2_1_3_Stroker  stroker,
-					FT2_1_3_Vector*  control1,
-					FT2_1_3_Vector*  control2,
-					FT2_1_3_Vector*  to );
+					FT_Vector*  control1,
+					FT_Vector*  control2,
+					FT_Vector*  to );
 
 
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Stroker_GetCounts( FT2_1_3_Stroker  stroker,
-					  FT2_1_3_UInt    *anum_points,
-					  FT2_1_3_UInt    *anum_contours );
+					  FT_UInt    *anum_points,
+					  FT_UInt    *anum_contours );
 
 FT2_1_3_EXPORT( void )
 FT2_1_3_Stroker_Export( FT2_1_3_Stroker   stroker,

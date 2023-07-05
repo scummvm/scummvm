@@ -87,7 +87,7 @@ typedef FT2_1_3_HashNode*     FT2_1_3_HashLookup;
  *   1 iff the 'keys' in 'node1' and 'node2' are identical.
  *   0 otherwise.
  */
-typedef FT2_1_3_Int  (*FT2_1_3_Hash_EqualFunc)( FT2_1_3_HashNode  node1,
+typedef FT_Int  (*FT2_1_3_Hash_EqualFunc)( FT2_1_3_HashNode  node1,
 																			FT2_1_3_HashNode  node2 );
 
 
@@ -121,9 +121,9 @@ typedef FT2_1_3_Int  (*FT2_1_3_Hash_EqualFunc)( FT2_1_3_HashNode  node1,
  */
 typedef struct FT2_1_3_HashRec_ {
 	FT2_1_3_HashNode*         buckets;
-	FT2_1_3_UInt              p;
-	FT2_1_3_UInt              mask;  /* really maxp-1 */
-	FT2_1_3_Long              slack;
+	FT_UInt              p;
+	FT_UInt              mask;  /* really maxp-1 */
+	FT_Long              slack;
 	FT2_1_3_Hash_EqualFunc    node_equal;
 	FT2_1_3_Memory            memory;
 
@@ -164,7 +164,7 @@ typedef struct FT2_1_3_HashRec_ {
  */
 typedef struct FT2_1_3_HashNodeRec_ {
 	FT2_1_3_HashNode  link;
-	FT2_1_3_UInt32    hash;
+	FT_UInt32    hash;
 
 } FT2_1_3_HashNodeRec;
 
@@ -207,7 +207,7 @@ typedef struct FT2_1_3_HashNodeRec_ {
  *     ....
  *   }
  */
-FT2_1_3_BASE( FT2_1_3_Error )
+FT2_1_3_BASE( FT_Error )
 ft_hash_init( FT2_1_3_Hash              table,
 							FT2_1_3_Hash_EqualFunc  compare,
 							FT2_1_3_Memory            memory );
@@ -334,7 +334,7 @@ ft_hash_lookup( FT2_1_3_Hash      table,
  *       if (error) ....
  *     }
  */
-FT2_1_3_BASE( FT2_1_3_Error )
+FT2_1_3_BASE( FT_Error )
 ft_hash_add( FT2_1_3_Hash        table,
 						 FT2_1_3_HashLookup  lookup,
 						 FT2_1_3_HashNode    new_node );
@@ -379,7 +379,7 @@ ft_hash_add( FT2_1_3_Hash        table,
  *     }
  *   }
  */
-FT2_1_3_BASE( FT2_1_3_Error )
+FT2_1_3_BASE( FT_Error )
 ft_hash_remove( FT2_1_3_Hash        table,
 								FT2_1_3_HashLookup  lookup );
 
@@ -398,7 +398,7 @@ ft_hash_remove( FT2_1_3_Hash        table,
  * @return:
  *   number of elements. 0 if empty
  */
-FT2_1_3_BASE( FT2_1_3_UInt )
+FT2_1_3_BASE( FT_UInt )
 ft_hash_get_size( FT2_1_3_Hash  table );
 
 
@@ -418,7 +418,7 @@ ft_hash_get_size( FT2_1_3_Hash  table );
  * @also:  @ft_hash_foreach
  */
 typedef void  (*FT2_1_3_Hash_ForeachFunc)( const FT2_1_3_HashNode  node,
-																			const FT2_1_3_Pointer   data );
+																			const FT_Pointer   data );
 
 
 /****************************************************************
@@ -440,7 +440,7 @@ typedef void  (*FT2_1_3_Hash_ForeachFunc)( const FT2_1_3_HashNode  node,
 FT2_1_3_BASE( void )
 ft_hash_foreach( FT2_1_3_Hash              table,
 								 FT2_1_3_Hash_ForeachFunc  foreach_func,
-								 const FT2_1_3_Pointer     foreach_data );
+								 const FT_Pointer     foreach_data );
 
 
 
@@ -478,7 +478,7 @@ ft_hash_foreach( FT2_1_3_Hash              table,
 FT2_1_3_BASE( void )
 ft_hash_done( FT2_1_3_Hash              table,
 							FT2_1_3_Hash_ForeachFunc  item_func,
-							const FT2_1_3_Pointer     item_data );
+							const FT_Pointer     item_data );
 
 /* */
 
@@ -489,10 +489,10 @@ ft_hash_done( FT2_1_3_Hash              table,
 
 #define  FT2_1_3_HASH_COMPUTE_INDEX(_table,_hash,_index)                  \
 						 {                                                       \
-							 FT2_1_3_UInt  _mask  = (_table)->mask;                     \
-							 FT2_1_3_UInt  _hash0 = (_hash);                            \
+							 FT_UInt  _mask  = (_table)->mask;                     \
+							 FT_UInt  _hash0 = (_hash);                            \
 																																		 \
-							 (_index) = (FT2_1_3_UInt)( (_hash0) & _mask ) );           \
+							 (_index) = (FT_UInt)( (_hash0) & _mask ) );           \
 							 if ( (_index) < (_table)->p )                         \
 								 (_index) = (FT2_1_3_uInt)( (_hash0) & ( 2*_mask+1 ) );   \
 						 }

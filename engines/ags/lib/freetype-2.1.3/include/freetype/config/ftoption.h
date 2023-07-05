@@ -149,7 +149,7 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 /*       is used in a function declaration, as in                        */
 /*                                                                       */
-/*         FT2_1_3_EXPORT( FT2_1_3_Error )                                         */
+/*         FT2_1_3_EXPORT( FT_Error )                                         */
 /*         FT2_1_3_Init_FreeType( FT2_1_3_Library*  alibrary );                    */
 /*                                                                       */
 /*                                                                       */
@@ -157,7 +157,7 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 /*       is used in a function definition, as in                         */
 /*                                                                       */
-/*         FT2_1_3_EXPORT_DEF( FT2_1_3_Error )                                     */
+/*         FT2_1_3_EXPORT_DEF( FT_Error )                                     */
 /*         FT2_1_3_Init_FreeType( FT2_1_3_Library*  alibrary )                     */
 /*         {                                                             */
 /*           ... some code ...                                           */

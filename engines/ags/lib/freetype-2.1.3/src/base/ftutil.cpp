@@ -48,9 +48,9 @@ namespace FreeType213 {
 
 /* documentation is in ftmemory.h */
 
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 FT2_1_3_Alloc( FT2_1_3_Memory  memory,
-		  FT2_1_3_Long    size,
+		  FT_Long    size,
 		  void*     *P ) {
 	FT2_1_3_ASSERT( P != 0 );
 
@@ -77,10 +77,10 @@ FT2_1_3_Alloc( FT2_1_3_Memory  memory,
 
 /* documentation is in ftmemory.h */
 
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 FT2_1_3_Realloc( FT2_1_3_Memory  memory,
-			FT2_1_3_Long    current,
-			FT2_1_3_Long    size,
+			FT_Long    current,
+			FT_Long    size,
 			void**     P ) {
 	void*  Q;
 
@@ -148,10 +148,10 @@ FT2_1_3_Free( FT2_1_3_Memory  memory,
 
 /* documentation is in ftlist.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_ListNode )
-FT2_1_3_List_Find( FT2_1_3_List  list,
+FT2_1_3_EXPORT_DEF( FT_ListNode )
+FT_List_Find( FT_List  list,
 			  void*    data ) {
-	FT2_1_3_ListNode  cur;
+	FT_ListNode  cur;
 
 
 	cur = list->head;
@@ -162,16 +162,16 @@ FT2_1_3_List_Find( FT2_1_3_List  list,
 		cur = cur->next;
 	}
 
-	return (FT2_1_3_ListNode)0;
+	return (FT_ListNode)0;
 }
 
 
 /* documentation is in ftlist.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_List_Add( FT2_1_3_List      list,
-			 FT2_1_3_ListNode  node ) {
-	FT2_1_3_ListNode  before = list->tail;
+FT_List_Add( FT_List      list,
+			 FT_ListNode  node ) {
+	FT_ListNode  before = list->tail;
 
 
 	node->next = 0;
@@ -189,9 +189,9 @@ FT2_1_3_List_Add( FT2_1_3_List      list,
 /* documentation is in ftlist.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_List_Insert( FT2_1_3_List      list,
-				FT2_1_3_ListNode  node ) {
-	FT2_1_3_ListNode  after = list->head;
+FT_List_Insert( FT_List      list,
+				FT_ListNode  node ) {
+	FT_ListNode  after = list->head;
 
 
 	node->next = after;
@@ -209,9 +209,9 @@ FT2_1_3_List_Insert( FT2_1_3_List      list,
 /* documentation is in ftlist.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_List_Remove( FT2_1_3_List      list,
-				FT2_1_3_ListNode  node ) {
-	FT2_1_3_ListNode  before, after;
+FT_List_Remove( FT_List      list,
+				FT_ListNode  node ) {
+	FT_ListNode  before, after;
 
 
 	before = node->prev;
@@ -232,9 +232,9 @@ FT2_1_3_List_Remove( FT2_1_3_List      list,
 /* documentation is in ftlist.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_List_Up( FT2_1_3_List      list,
-			FT2_1_3_ListNode  node ) {
-	FT2_1_3_ListNode  before, after;
+FT_List_Up( FT_List      list,
+			FT_ListNode  node ) {
+	FT_ListNode  before, after;
 
 
 	before = node->prev;
@@ -260,16 +260,16 @@ FT2_1_3_List_Up( FT2_1_3_List      list,
 
 /* documentation is in ftlist.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
-FT2_1_3_List_Iterate( FT2_1_3_List            list,
-				 FT2_1_3_List_Iterator   iterator,
+FT2_1_3_EXPORT_DEF( FT_Error )
+FT_List_Iterate( FT_List            list,
+				 FT_List_Iterator   iterator,
 				 void*              user ) {
-	FT2_1_3_ListNode  cur   = list->head;
-	FT2_1_3_Error     error = FT2_1_3_Err_Ok;
+	FT_ListNode  cur   = list->head;
+	FT_Error     error = FT2_1_3_Err_Ok;
 
 
 	while ( cur ) {
-		FT2_1_3_ListNode  next = cur->next;
+		FT_ListNode  next = cur->next;
 
 
 		error = iterator( cur, user );
@@ -286,16 +286,16 @@ FT2_1_3_List_Iterate( FT2_1_3_List            list,
 /* documentation is in ftlist.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_List_Finalize( FT2_1_3_List             list,
-				  FT2_1_3_List_Destructor  destroy,
+FT_List_Finalize( FT_List             list,
+				  FT_List_Destructor  destroy,
 				  FT2_1_3_Memory           memory,
 				  void*               user ) {
-	FT2_1_3_ListNode  cur;
+	FT_ListNode  cur;
 
 
 	cur = list->head;
 	while ( cur ) {
-		FT2_1_3_ListNode  next = cur->next;
+		FT_ListNode  next = cur->next;
 		void*        data = cur->data;
 
 

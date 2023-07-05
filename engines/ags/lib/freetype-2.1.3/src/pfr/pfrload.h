@@ -47,41 +47,41 @@ FT2_1_3_BEGIN_HEADER
 
 /* handling extra items */
 
-typedef FT2_1_3_Error (*PFR_ExtraItem_ParseFunc)(FT2_1_3_Byte *p, FT2_1_3_Byte *limit, FT2_1_3_Pointer data);
+typedef FT_Error (*PFR_ExtraItem_ParseFunc)(FT_Byte *p, FT_Byte *limit, FT_Pointer data);
 
 typedef struct  PFR_ExtraItemRec_ {
-	FT2_1_3_UInt                  type;
+	FT_UInt                  type;
 	PFR_ExtraItem_ParseFunc  parser;
 
 } PFR_ExtraItemRec;
 
 typedef const struct PFR_ExtraItemRec_*  PFR_ExtraItem;
 
-FT2_1_3_LOCAL(FT2_1_3_Error)
-pfr_extra_items_skip(FT2_1_3_Byte **pp, FT2_1_3_Byte *limit);
+FT2_1_3_LOCAL(FT_Error)
+pfr_extra_items_skip(FT_Byte **pp, FT_Byte *limit);
 
-FT2_1_3_LOCAL(FT2_1_3_Error)
-pfr_extra_items_parse(FT2_1_3_Byte **pp, FT2_1_3_Byte *limit, PFR_ExtraItem item_list, FT2_1_3_Pointer item_data);
+FT2_1_3_LOCAL(FT_Error)
+pfr_extra_items_parse(FT_Byte **pp, FT_Byte *limit, PFR_ExtraItem item_list, FT_Pointer item_data);
 
 /* load a PFR header */
-FT2_1_3_LOCAL(FT2_1_3_Error)
+FT2_1_3_LOCAL(FT_Error)
 pfr_header_load(PFR_Header header, FT2_1_3_Stream stream);
 
 /* check a PFR header */
-FT2_1_3_LOCAL(FT2_1_3_Bool)
+FT2_1_3_LOCAL(FT_Bool)
 pfr_header_check(PFR_Header header);
 
 /* return number of logical fonts in this file */
-FT2_1_3_LOCAL(FT2_1_3_Error)
-pfr_log_font_count(FT2_1_3_Stream stream, FT2_1_3_UInt32 log_section_offset, FT2_1_3_UInt *acount);
+FT2_1_3_LOCAL(FT_Error)
+pfr_log_font_count(FT2_1_3_Stream stream, FT_UInt32 log_section_offset, FT_UInt *acount);
 
 /* load a pfr logical font entry */
-FT2_1_3_LOCAL(FT2_1_3_Error)
-pfr_log_font_load(PFR_LogFont log_font, FT2_1_3_Stream stream, FT2_1_3_UInt face_index, FT2_1_3_UInt32 section_offset, FT2_1_3_Bool size_increment);
+FT2_1_3_LOCAL(FT_Error)
+pfr_log_font_load(PFR_LogFont log_font, FT2_1_3_Stream stream, FT_UInt face_index, FT_UInt32 section_offset, FT_Bool size_increment);
 
 /* load a physical font entry */
-FT2_1_3_LOCAL(FT2_1_3_Error)
-pfr_phy_font_load(PFR_PhyFont phy_font, FT2_1_3_Stream stream, FT2_1_3_UInt32 offset, FT2_1_3_UInt32 size);
+FT2_1_3_LOCAL(FT_Error)
+pfr_phy_font_load(PFR_PhyFont phy_font, FT2_1_3_Stream stream, FT_UInt32 offset, FT_UInt32 size);
 
 /* finalize a physical font */
 FT2_1_3_LOCAL(void)

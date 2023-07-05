@@ -49,23 +49,23 @@ enum {
 
 
 /* now generate handlers for the most simple fields */
-typedef FT2_1_3_Error  (*CFF_Field_Reader)( CFF_Parser  parser );
+typedef FT_Error  (*CFF_Field_Reader)( CFF_Parser  parser );
 
 typedef struct  CFF_Field_Handler_ {
 	int               kind;
 	int               code;
-	FT2_1_3_UInt           offset;
-	FT2_1_3_Byte           size;
+	FT_UInt           offset;
+	FT_Byte           size;
 	CFF_Field_Reader  reader;
-	FT2_1_3_UInt           array_max;
-	FT2_1_3_UInt           count_offset;
+	FT_UInt           array_max;
+	FT_UInt           count_offset;
 
 } CFF_Field_Handler;
 
 
 FT2_1_3_LOCAL_DEF( void )
 cff_parser_init( CFF_Parser  parser,
-				 FT2_1_3_UInt     code,
+				 FT_UInt     code,
 				 void*       object ) {
 	FT2_1_3_MEM_ZERO( parser, sizeof ( *parser ) );
 
@@ -76,27 +76,27 @@ cff_parser_init( CFF_Parser  parser,
 
 
 /* read an integer */
-static FT2_1_3_Long
-cff_parse_integer( FT2_1_3_Byte*  start,
-				   FT2_1_3_Byte*  limit ) {
-	FT2_1_3_Byte*  p   = start;
-	FT2_1_3_Int    v   = *p++;
-	FT2_1_3_Long   val = 0;
+static FT_Long
+cff_parse_integer( FT_Byte*  start,
+				   FT_Byte*  limit ) {
+	FT_Byte*  p   = start;
+	FT_Int    v   = *p++;
+	FT_Long   val = 0;
 
 
 	if ( v == 28 ) {
 		if ( p + 2 > limit )
 			goto Bad;
 
-		val = (FT2_1_3_Short)( ( (FT2_1_3_Int)p[0] << 8 ) | p[1] );
+		val = (FT_Short)( ( (FT_Int)p[0] << 8 ) | p[1] );
 		p  += 2;
 	} else if ( v == 29 ) {
 		if ( p + 4 > limit )
 			goto Bad;
 
-		val = ( (FT2_1_3_Long)p[0] << 24 ) |
-			  ( (FT2_1_3_Long)p[1] << 16 ) |
-			  ( (FT2_1_3_Long)p[2] <<  8 ) |
+		val = ( (FT_Long)p[0] << 24 ) |
+			  ( (FT_Long)p[1] << 16 ) |
+			  ( (FT_Long)p[2] <<  8 ) |
 			  p[3];
 		p += 4;
 	} else if ( v < 247 ) {
@@ -125,15 +125,15 @@ Bad:
 
 
 /* read a real */
-static FT2_1_3_Fixed
-cff_parse_real( FT2_1_3_Byte*  start,
-				FT2_1_3_Byte*  limit,
-				FT2_1_3_Int    power_ten ) {
-	FT2_1_3_Byte*  p    = start;
-	FT2_1_3_Long   num, divider, result, exp;
-	FT2_1_3_Int    sign = 0, exp_sign = 0;
-	FT2_1_3_UInt   nib;
-	FT2_1_3_UInt   phase;
+static FT_Fixed
+cff_parse_real( FT_Byte*  start,
+				FT_Byte*  limit,
+				FT_Int    power_ten ) {
+	FT_Byte*  p    = start;
+	FT_Long   num, divider, result, exp;
+	FT_Int    sign = 0, exp_sign = 0;
+	FT_UInt   nib;
+	FT_UInt   phase;
 
 
 	result  = 0;
@@ -223,7 +223,7 @@ cff_parse_real( FT2_1_3_Byte*  start,
 		if ( exp_sign )
 			exp = -exp;
 
-		power_ten += (FT2_1_3_Int)exp;
+		power_ten += (FT_Int)exp;
 	}
 
 	/* raise to power of ten if needed */
@@ -261,38 +261,38 @@ Bad:
 
 
 /* read a number, either integer or real */
-static FT2_1_3_Long
-cff_parse_num( FT2_1_3_Byte**  d ) {
+static FT_Long
+cff_parse_num( FT_Byte**  d ) {
 	return ( **d == 30 ? ( cff_parse_real   ( d[0], d[1], 0 ) >> 16 )
 			 :   cff_parse_integer( d[0], d[1] ) );
 }
 
 
 /* read a floating point number, either integer or real */
-static FT2_1_3_Fixed
-cff_parse_fixed( FT2_1_3_Byte**  d ) {
+static FT_Fixed
+cff_parse_fixed( FT_Byte**  d ) {
 	return ( **d == 30 ? cff_parse_real   ( d[0], d[1], 0 )
 			 : cff_parse_integer( d[0], d[1] ) << 16 );
 }
 
 /* read a floating point number, either integer or real, */
 /* but return 1000 times the number read in.             */
-static FT2_1_3_Fixed
-cff_parse_fixed_thousand( FT2_1_3_Byte**  d ) {
+static FT_Fixed
+cff_parse_fixed_thousand( FT_Byte**  d ) {
 	return **d ==
 		   30 ? cff_parse_real     ( d[0], d[1], 3 )
-		   : (FT2_1_3_Fixed)FT2_1_3_MulFix( cff_parse_integer( d[0], d[1] ) << 16, 1000 );
+		   : (FT_Fixed)FT2_1_3_MulFix( cff_parse_integer( d[0], d[1] ) << 16, 1000 );
 }
 
-static FT2_1_3_Error
+static FT_Error
 cff_parse_font_matrix( CFF_Parser  parser ) {
 	CFF_FontRecDict  dict   = (CFF_FontRecDict)parser->object;
-	FT2_1_3_Matrix*       matrix = &dict->font_matrix;
-	FT2_1_3_Vector*       offset = &dict->font_offset;
-	FT2_1_3_UShort*       upm    = &dict->units_per_em;
-	FT2_1_3_Byte**        data   = parser->stack;
-	FT2_1_3_Error         error;
-	FT2_1_3_Fixed         temp;
+	FT_Matrix*       matrix = &dict->font_matrix;
+	FT_Vector*       offset = &dict->font_offset;
+	FT_UShort*       upm    = &dict->units_per_em;
+	FT_Byte**        data   = parser->stack;
+	FT_Error         error;
+	FT_Fixed         temp;
 
 
 	error = FT2_1_3_Err_Stack_Underflow;
@@ -307,7 +307,7 @@ cff_parse_font_matrix( CFF_Parser  parser ) {
 
 		temp = ABS( matrix->yy );
 
-		*upm = (FT2_1_3_UShort)FT2_1_3_DivFix( 0x10000L, FT2_1_3_DivFix( temp, 1000 ) );
+		*upm = (FT_UShort)FT2_1_3_DivFix( 0x10000L, FT2_1_3_DivFix( temp, 1000 ) );
 
 		if ( temp != 0x10000L ) {
 			matrix->xx = FT2_1_3_DivFix( matrix->xx, temp );
@@ -329,12 +329,12 @@ cff_parse_font_matrix( CFF_Parser  parser ) {
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 cff_parse_font_bbox( CFF_Parser  parser ) {
 	CFF_FontRecDict  dict = (CFF_FontRecDict)parser->object;
-	FT2_1_3_BBox*         bbox = &dict->font_bbox;
-	FT2_1_3_Byte**        data = parser->stack;
-	FT2_1_3_Error         error;
+	FT_BBox*         bbox = &dict->font_bbox;
+	FT_Byte**        data = parser->stack;
+	FT_Error         error;
 
 
 	error = FT2_1_3_Err_Stack_Underflow;
@@ -351,11 +351,11 @@ cff_parse_font_bbox( CFF_Parser  parser ) {
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 cff_parse_private_dict( CFF_Parser  parser ) {
 	CFF_FontRecDict  dict = (CFF_FontRecDict)parser->object;
-	FT2_1_3_Byte**        data = parser->stack;
-	FT2_1_3_Error         error;
+	FT_Byte**        data = parser->stack;
+	FT_Error         error;
 
 
 	error = FT2_1_3_Err_Stack_Underflow;
@@ -370,19 +370,19 @@ cff_parse_private_dict( CFF_Parser  parser ) {
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 cff_parse_cid_ros( CFF_Parser  parser ) {
 	CFF_FontRecDict  dict = (CFF_FontRecDict)parser->object;
-	FT2_1_3_Byte**        data = parser->stack;
-	FT2_1_3_Error         error;
+	FT_Byte**        data = parser->stack;
+	FT_Error         error;
 
 
 	error = FT2_1_3_Err_Stack_Underflow;
 
 	if ( parser->top >= parser->stack + 3 ) {
-		dict->cid_registry   = (FT2_1_3_UInt)cff_parse_num ( data++ );
-		dict->cid_ordering   = (FT2_1_3_UInt)cff_parse_num ( data++ );
-		dict->cid_supplement = (FT2_1_3_ULong)cff_parse_num( data );
+		dict->cid_registry   = (FT_UInt)cff_parse_num ( data++ );
+		dict->cid_ordering   = (FT_UInt)cff_parse_num ( data++ );
+		dict->cid_supplement = (FT_ULong)cff_parse_num( data );
 		error = FT2_1_3_Err_Ok;
 	}
 
@@ -443,12 +443,12 @@ static const CFF_Field_Handler  cff_field_handlers[] = {
 };
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 cff_parser_run( CFF_Parser  parser,
-				FT2_1_3_Byte*    start,
-				FT2_1_3_Byte*    limit ) {
-	FT2_1_3_Byte*  p     = start;
-	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
+				FT_Byte*    start,
+				FT_Byte*    limit ) {
+	FT_Byte*  p     = start;
+	FT_Error  error = FT2_1_3_Err_Ok;
 
 
 	parser->top    = parser->stack;
@@ -457,7 +457,7 @@ cff_parser_run( CFF_Parser  parser,
 	parser->cursor = start;
 
 	while ( p < limit ) {
-		FT2_1_3_UInt  v = *p;
+		FT_UInt  v = *p;
 
 
 		if ( v >= 27 && v != 31 ) {
@@ -492,8 +492,8 @@ cff_parser_run( CFF_Parser  parser,
 			/* This is not a number, hence it's an operator.  Compute its code */
 			/* and look for it in our current list.                            */
 
-			FT2_1_3_UInt                   code;
-			FT2_1_3_UInt                   num_args = (FT2_1_3_UInt)
+			FT_UInt                   code;
+			FT_UInt                   num_args = (FT_UInt)
 												 ( parser->top - parser->stack );
 			const CFF_Field_Handler*  field;
 
@@ -511,10 +511,10 @@ cff_parser_run( CFF_Parser  parser,
 			code = code | parser->object_code;
 
 			for ( field = cff_field_handlers; field->kind; field++ ) {
-				if ( field->code == (FT2_1_3_Int)code ) {
+				if ( field->code == (FT_Int)code ) {
 					/* we found our field's handler; read it */
-					FT2_1_3_Long   val;
-					FT2_1_3_Byte*  q = (FT2_1_3_Byte*)parser->object + field->offset;
+					FT_Long   val;
+					FT_Byte*  q = (FT_Byte*)parser->object + field->offset;
 
 
 					/* check that we have enough arguments -- except for */
@@ -535,53 +535,53 @@ cff_parser_run( CFF_Parser  parser,
 Store_Number:
 						switch ( field->size ) {
 						case 1:
-							*(FT2_1_3_Byte*)q = (FT2_1_3_Byte)val;
+							*(FT_Byte*)q = (FT_Byte)val;
 							break;
 
 						case 2:
-							*(FT2_1_3_Short*)q = (FT2_1_3_Short)val;
+							*(FT_Short*)q = (FT_Short)val;
 							break;
 
 						case 4:
-							*(FT2_1_3_Int32*)q = (FT2_1_3_Int)val;
+							*(FT_Int32*)q = (FT_Int)val;
 							break;
 
 						default:  /* for 64-bit systems where long is 8 bytes */
-							*(FT2_1_3_Long*)q = val;
+							*(FT_Long*)q = val;
 						}
 						break;
 
 					case cff_kind_delta: {
-						FT2_1_3_Byte*   qcount = (FT2_1_3_Byte*)parser->object +
+						FT_Byte*   qcount = (FT_Byte*)parser->object +
 											field->count_offset;
 
-						FT2_1_3_Byte**  data = parser->stack;
+						FT_Byte**  data = parser->stack;
 
 
 						if ( num_args > field->array_max )
 							num_args = field->array_max;
 
 						/* store count */
-						*qcount = (FT2_1_3_Byte)num_args;
+						*qcount = (FT_Byte)num_args;
 
 						val = 0;
 						while ( num_args > 0 ) {
 							val += cff_parse_num( data++ );
 							switch ( field->size ) {
 							case 1:
-								*(FT2_1_3_Byte*)q = (FT2_1_3_Byte)val;
+								*(FT_Byte*)q = (FT_Byte)val;
 								break;
 
 							case 2:
-								*(FT2_1_3_Short*)q = (FT2_1_3_Short)val;
+								*(FT_Short*)q = (FT_Short)val;
 								break;
 
 							case 4:
-								*(FT2_1_3_Int32*)q = (FT2_1_3_Int)val;
+								*(FT_Int32*)q = (FT_Int)val;
 								break;
 
 							default:  /* for 64-bit systems */
-								*(FT2_1_3_Long*)q = val;
+								*(FT_Long*)q = val;
 							}
 
 							q += field->size;

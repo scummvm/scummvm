@@ -35,12 +35,12 @@ FT2_1_3_LOCAL( void )
 pfr_glyph_done( PFR_Glyph  glyph );
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 pfr_glyph_load( PFR_Glyph  glyph,
 				FT2_1_3_Stream  stream,
-				FT2_1_3_ULong   gps_offset,
-				FT2_1_3_ULong   offset,
-				FT2_1_3_ULong   size );
+				FT_ULong   gps_offset,
+				FT_ULong   offset,
+				FT_ULong   size );
 
 
 FT2_1_3_END_HEADER

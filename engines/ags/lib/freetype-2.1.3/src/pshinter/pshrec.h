@@ -71,9 +71,9 @@ typedef enum {
 
 /* hint descriptor */
 typedef struct  PS_HintRec_ {
-	FT2_1_3_Int   pos;
-	FT2_1_3_Int   len;
-	FT2_1_3_UInt  flags;
+	FT_Int   pos;
+	FT_Int   len;
+	FT_UInt  flags;
 
 } PS_HintRec;
 
@@ -85,8 +85,8 @@ typedef struct  PS_HintRec_ {
 
 /* hints table descriptor */
 typedef struct  PS_Hint_TableRec_ {
-	FT2_1_3_UInt  num_hints;
-	FT2_1_3_UInt  max_hints;
+	FT_UInt  num_hints;
+	FT_UInt  max_hints;
 	PS_Hint  hints;
 
 } PS_Hint_TableRec, *PS_Hint_Table;
@@ -94,18 +94,18 @@ typedef struct  PS_Hint_TableRec_ {
 
 /* hint and counter mask descriptor */
 typedef struct  PS_MaskRec_ {
-	FT2_1_3_UInt   num_bits;
-	FT2_1_3_UInt   max_bits;
-	FT2_1_3_Byte*  bytes;
-	FT2_1_3_UInt   end_point;
+	FT_UInt   num_bits;
+	FT_UInt   max_bits;
+	FT_Byte*  bytes;
+	FT_UInt   end_point;
 
 } PS_MaskRec, *PS_Mask;
 
 
 /* masks and counters table descriptor */
 typedef struct  PS_Mask_TableRec_ {
-	FT2_1_3_UInt  num_masks;
-	FT2_1_3_UInt  max_masks;
+	FT_UInt  num_masks;
+	FT_UInt  max_masks;
 	PS_Mask  masks;
 
 } PS_Mask_TableRec, *PS_Mask_Table;
@@ -129,8 +129,8 @@ typedef struct  PS_DimensionRec_ {
 /* dimension 1 => Y coordinates + horizontal hints/stems */
 typedef struct  PS_HintsRec_ {
 	FT2_1_3_Memory        memory;
-	FT2_1_3_Error         error;
-	FT2_1_3_UInt32        magic;
+	FT_Error         error;
+	FT_UInt32        magic;
 	PS_Hint_Type     hint_type;
 	PS_DimensionRec  dimension[2];
 
@@ -139,7 +139,7 @@ typedef struct  PS_HintsRec_ {
 /* */
 
 /* initialize hints recorder */
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 ps_hints_init( PS_Hints   hints,
 			   FT2_1_3_Memory  memory );
 

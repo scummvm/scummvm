@@ -31,36 +31,36 @@ FT2_1_3_BEGIN_HEADER
 
 
 typedef struct  WinMZ_HeaderRec_ {
-	FT2_1_3_UShort  magic;
+	FT_UShort  magic;
 	/* skipped content */
-	FT2_1_3_UShort  lfanew;
+	FT_UShort  lfanew;
 
 } WinMZ_HeaderRec;
 
 
 typedef struct  WinNE_HeaderRec_ {
-	FT2_1_3_UShort  magic;
+	FT_UShort  magic;
 	/* skipped content */
-	FT2_1_3_UShort  resource_tab_offset;
-	FT2_1_3_UShort  rname_tab_offset;
+	FT_UShort  resource_tab_offset;
+	FT_UShort  rname_tab_offset;
 
 } WinNE_HeaderRec;
 
 
 typedef struct  WinNameInfoRec_ {
-	FT2_1_3_UShort  offset;
-	FT2_1_3_UShort  length;
-	FT2_1_3_UShort  flags;
-	FT2_1_3_UShort  id;
-	FT2_1_3_UShort  handle;
-	FT2_1_3_UShort  usage;
+	FT_UShort  offset;
+	FT_UShort  length;
+	FT_UShort  flags;
+	FT_UShort  id;
+	FT_UShort  handle;
+	FT_UShort  usage;
 
 } WinNameInfoRec;
 
 
 typedef struct  WinResourceInfoRec_ {
-	FT2_1_3_UShort  type_id;
-	FT2_1_3_UShort  count;
+	FT_UShort  type_id;
+	FT_UShort  count;
 
 } WinResourceInfoRec;
 
@@ -70,54 +70,54 @@ typedef struct  WinResourceInfoRec_ {
 
 
 typedef struct  WinFNT_HeaderRec_ {
-	FT2_1_3_UShort  version;
-	FT2_1_3_ULong   file_size;
-	FT2_1_3_Byte    copyright[60];
-	FT2_1_3_UShort  file_type;
-	FT2_1_3_UShort  nominal_point_size;
-	FT2_1_3_UShort  vertical_resolution;
-	FT2_1_3_UShort  horizontal_resolution;
-	FT2_1_3_UShort  ascent;
-	FT2_1_3_UShort  internal_leading;
-	FT2_1_3_UShort  external_leading;
-	FT2_1_3_Byte    italic;
-	FT2_1_3_Byte    underline;
-	FT2_1_3_Byte    strike_out;
-	FT2_1_3_UShort  weight;
-	FT2_1_3_Byte    charset;
-	FT2_1_3_UShort  pixel_width;
-	FT2_1_3_UShort  pixel_height;
-	FT2_1_3_Byte    pitch_and_family;
-	FT2_1_3_UShort  avg_width;
-	FT2_1_3_UShort  max_width;
-	FT2_1_3_Byte    first_char;
-	FT2_1_3_Byte    last_char;
-	FT2_1_3_Byte    default_char;
-	FT2_1_3_Byte    break_char;
-	FT2_1_3_UShort  bytes_per_row;
-	FT2_1_3_ULong   device_offset;
-	FT2_1_3_ULong   face_name_offset;
-	FT2_1_3_ULong   bits_pointer;
-	FT2_1_3_ULong   bits_offset;
-	FT2_1_3_Byte    reserved;
-	FT2_1_3_ULong   flags;
-	FT2_1_3_UShort  A_space;
-	FT2_1_3_UShort  B_space;
-	FT2_1_3_UShort  C_space;
-	FT2_1_3_UShort  color_table_offset;
-	FT2_1_3_Byte    reserved2[4];
+	FT_UShort  version;
+	FT_ULong   file_size;
+	FT_Byte    copyright[60];
+	FT_UShort  file_type;
+	FT_UShort  nominal_point_size;
+	FT_UShort  vertical_resolution;
+	FT_UShort  horizontal_resolution;
+	FT_UShort  ascent;
+	FT_UShort  internal_leading;
+	FT_UShort  external_leading;
+	FT_Byte    italic;
+	FT_Byte    underline;
+	FT_Byte    strike_out;
+	FT_UShort  weight;
+	FT_Byte    charset;
+	FT_UShort  pixel_width;
+	FT_UShort  pixel_height;
+	FT_Byte    pitch_and_family;
+	FT_UShort  avg_width;
+	FT_UShort  max_width;
+	FT_Byte    first_char;
+	FT_Byte    last_char;
+	FT_Byte    default_char;
+	FT_Byte    break_char;
+	FT_UShort  bytes_per_row;
+	FT_ULong   device_offset;
+	FT_ULong   face_name_offset;
+	FT_ULong   bits_pointer;
+	FT_ULong   bits_offset;
+	FT_Byte    reserved;
+	FT_ULong   flags;
+	FT_UShort  A_space;
+	FT_UShort  B_space;
+	FT_UShort  C_space;
+	FT_UShort  color_table_offset;
+	FT_Byte    reserved2[4];
 
 } WinFNT_HeaderRec, *WinFNT_Header;
 
 
 typedef struct  FNT_FontRec_ {
-	FT2_1_3_ULong          offset;
-	FT2_1_3_Int            size_shift;
+	FT_ULong          offset;
+	FT_Int            size_shift;
 
 	WinFNT_HeaderRec  header;
 
-	FT2_1_3_Byte*          fnt_frame;
-	FT2_1_3_ULong          fnt_size;
+	FT_Byte*          fnt_frame;
+	FT_ULong          fnt_size;
 
 } FNT_FontRec, *FNT_Font;
 
@@ -130,13 +130,13 @@ typedef struct  FNT_SizeRec_ {
 
 
 typedef struct  FNT_FaceRec_ {
-	FT2_1_3_FaceRec     root;
+	FT_FaceRec     root;
 
-	FT2_1_3_UInt        num_fonts;
+	FT_UInt        num_fonts;
 	FNT_Font       fonts;
 
-	FT2_1_3_CharMap     charmap_handle;
-	FT2_1_3_CharMapRec  charmap;  /* a single charmap per face */
+	FT_CharMap     charmap_handle;
+	FT_CharMapRec  charmap;  /* a single charmap per face */
 
 } FNT_FaceRec, *FNT_Face;
 

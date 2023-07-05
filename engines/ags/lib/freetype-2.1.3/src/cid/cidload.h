@@ -32,21 +32,21 @@ FT2_1_3_BEGIN_HEADER
 
 typedef struct  CID_Loader_ {
 	CID_Parser  parser;          /* parser used to read the stream */
-	FT2_1_3_Int      num_chars;       /* number of characters in encoding */
+	FT_Int      num_chars;       /* number of characters in encoding */
 
 } CID_Loader;
 
 
-FT2_1_3_LOCAL( FT2_1_3_Long )
-cid_get_offset( FT2_1_3_Byte**  start,
-				FT2_1_3_Byte    offsize );
+FT2_1_3_LOCAL( FT_Long )
+cid_get_offset( FT_Byte**  start,
+				FT_Byte    offsize );
 
 FT2_1_3_LOCAL( void )
-cid_decrypt( FT2_1_3_Byte*   buffer,
-			 FT2_1_3_Offset  length,
-			 FT2_1_3_UShort  seed );
+cid_decrypt( FT_Byte*   buffer,
+			 FT_Offset  length,
+			 FT_UShort  seed );
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 cid_face_open( CID_Face  face );
 
 

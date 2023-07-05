@@ -76,7 +76,7 @@ FT2_1_3_BEGIN_HEADER
  */
 typedef struct  FTC_ImageTypeRec_ {
 	FTC_FontRec  font;
-	FT2_1_3_Int32     flags;
+	FT_Int32     flags;
 
 } FTC_ImageTypeRec;
 
@@ -123,7 +123,7 @@ typedef struct FTC_ImageCacheRec_*  FTC_ImageCache;
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FTC_ImageCache_New( FTC_Manager      manager,
 					FTC_ImageCache  *acache );
 
@@ -170,10 +170,10 @@ FTC_ImageCache_New( FTC_Manager      manager,
 /*    call to one of the caching sub-system APIs.  Don't assume that it  */
 /*    is persistent!                                                     */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FTC_ImageCache_Lookup( FTC_ImageCache  cache,
 					   FTC_ImageType   type,
-					   FT2_1_3_UInt         gindex,
+					   FT_UInt         gindex,
 					   FT2_1_3_Glyph       *aglyph,
 					   FTC_Node       *anode );
 
@@ -221,7 +221,7 @@ FTC_ImageCache_Lookup( FTC_ImageCache  cache,
 /*                                                                       */
 typedef struct  FTC_Image_Desc_ {
 	FTC_FontRec  font;
-	FT2_1_3_UInt      image_type;
+	FT_UInt      image_type;
 
 } FTC_Image_Desc;
 
@@ -256,7 +256,7 @@ typedef FTC_ImageCache  FTC_Image_Cache;
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FTC_Image_Cache_New( FTC_Manager       manager,
 					 FTC_Image_Cache  *acache );
 
@@ -295,10 +295,10 @@ FTC_Image_Cache_New( FTC_Manager       manager,
 /*                                                                       */
 /*    Use this function to "lock" the glyph as long as it is needed.     */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FTC_Image_Cache_Lookup( FTC_Image_Cache  cache,
 						FTC_Image_Desc*  desc,
-						FT2_1_3_UInt          gindex,
+						FT_UInt          gindex,
 						FT2_1_3_Glyph        *aglyph );
 
 /* */

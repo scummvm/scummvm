@@ -80,7 +80,7 @@ const FT2_1_3_Module_Class*  const ft_default_modules[] = {
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_Add_Default_Modules( FT2_1_3_Library  library ) {
-	FT2_1_3_Error                       error;
+	FT_Error                       error;
 	const FT2_1_3_Module_Class* const*  cur;
 
 
@@ -101,9 +101,9 @@ FT2_1_3_Add_Default_Modules( FT2_1_3_Library  library ) {
 
 /* documentation is in freetype.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_Init_FreeType( FT2_1_3_Library  *alibrary ) {
-	FT2_1_3_Error   error;
+	FT_Error   error;
 	FT2_1_3_Memory  memory;
 
 
@@ -134,7 +134,7 @@ FT2_1_3_Init_FreeType( FT2_1_3_Library  *alibrary ) {
 
 /* documentation is in freetype.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_Done_FreeType( FT2_1_3_Library  library ) {
 	if ( library ) {
 		FT2_1_3_Memory  memory = library->memory;

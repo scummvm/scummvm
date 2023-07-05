@@ -81,12 +81,12 @@ FT2_1_3_BEGIN_HEADER
  *   if the input face is not a PFR, this function will return an error.
  *   However, in all cases, it will return valid values.
  */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Get_PFR_Metrics( FT2_1_3_Face     face,
-					FT2_1_3_UInt    *aoutline_resolution,
-					FT2_1_3_UInt    *ametrics_resolution,
-					FT2_1_3_Fixed   *ametrics_x_scale,
-					FT2_1_3_Fixed   *ametrics_y_scale );
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Get_PFR_Metrics( FT_Face     face,
+					FT_UInt    *aoutline_resolution,
+					FT_UInt    *ametrics_resolution,
+					FT_Fixed   *ametrics_x_scale,
+					FT_Fixed   *ametrics_y_scale );
 
 /**********************************************************************
  *
@@ -114,11 +114,11 @@ FT2_1_3_Get_PFR_Metrics( FT2_1_3_Face     face,
  *    you can use the value of the 'x_scale' and 'y_scale' parameters
  *    returned by @FT2_1_3_Get_PFR_Metrics to scale these to device sub-pixels
  */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Get_PFR_Kerning( FT2_1_3_Face     face,
-					FT2_1_3_UInt     left,
-					FT2_1_3_UInt     right,
-					FT2_1_3_Vector  *avector );
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Get_PFR_Kerning( FT_Face     face,
+					FT_UInt     left,
+					FT_UInt     right,
+					FT_Vector  *avector );
 
 /**********************************************************************
  *
@@ -143,10 +143,10 @@ FT2_1_3_Get_PFR_Kerning( FT2_1_3_Face     face,
  *    you can use the 'x_scale' or 'y_scale' results of @FT2_1_3_Get_PFR_Metrics
  *    to convert the advance to device sub-pixels (i.e. 1/64th of pixels)
  */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Get_PFR_Advance( FT2_1_3_Face    face,
-					FT2_1_3_UInt    gindex,
-					FT2_1_3_Pos    *aadvance );
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Get_PFR_Advance( FT_Face    face,
+					FT_UInt    gindex,
+					FT_Pos    *aadvance );
 
 /* */
 

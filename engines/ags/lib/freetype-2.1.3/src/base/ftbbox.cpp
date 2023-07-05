@@ -34,8 +34,8 @@ namespace AGS3 {
 namespace FreeType213 {
 
 typedef struct  TBBox_Rec_ {
-	FT2_1_3_Vector  last;
-	FT2_1_3_BBox    bbox;
+	FT_Vector  last;
+	FT_BBox    bbox;
 
 } TBBox_Rec;
 
@@ -61,7 +61,7 @@ typedef struct  TBBox_Rec_ {
 /*    Always 0.  Needed for the interface only.                          */
 /*                                                                       */
 static int
-BBox_Move_To( FT2_1_3_Vector*  to,
+BBox_Move_To( FT_Vector*  to,
 			  TBBox_Rec*  user ) {
 	user->last = *to;
 
@@ -96,11 +96,11 @@ BBox_Move_To( FT2_1_3_Vector*  to,
 /*    max :: The address of the current maximum.                         */
 /*                                                                       */
 static void
-BBox_Conic_Check( FT2_1_3_Pos   y1,
-				  FT2_1_3_Pos   y2,
-				  FT2_1_3_Pos   y3,
-				  FT2_1_3_Pos*  min,
-				  FT2_1_3_Pos*  max ) {
+BBox_Conic_Check( FT_Pos   y1,
+				  FT_Pos   y2,
+				  FT_Pos   y3,
+				  FT_Pos*  min,
+				  FT_Pos*  max ) {
 	if ( y1 <= y3 ) {
 		if ( y2 == y1 )               /* Flat arc */
 			goto Suite;
@@ -150,8 +150,8 @@ Suite:
 /*    extremum coordinates, as it is sufficiently fast.                  */
 /*                                                                       */
 static int
-BBox_Conic_To( FT2_1_3_Vector*  control,
-			   FT2_1_3_Vector*  to,
+BBox_Conic_To( FT_Vector*  control,
+			   FT_Vector*  to,
 			   TBBox_Rec*  user ) {
 	/* we don't need to check `to' since it is always an `on' point, thus */
 	/* within the bbox                                                    */
@@ -200,13 +200,13 @@ BBox_Conic_To( FT2_1_3_Vector*  control,
 /*                                                                       */
 #if 0
 static void
-BBox_Cubic_Check( FT2_1_3_Pos   p1,
-				  FT2_1_3_Pos   p2,
-				  FT2_1_3_Pos   p3,
-				  FT2_1_3_Pos   p4,
-				  FT2_1_3_Pos*  min,
-				  FT2_1_3_Pos*  max ) {
-	FT2_1_3_Pos  stack[32*3 + 1], *arc;
+BBox_Cubic_Check( FT_Pos   p1,
+				  FT_Pos   p2,
+				  FT_Pos   p3,
+				  FT_Pos   p4,
+				  FT_Pos*  min,
+				  FT_Pos*  max ) {
+	FT_Pos  stack[32*3 + 1], *arc;
 
 
 	arc = stack;
@@ -217,10 +217,10 @@ BBox_Cubic_Check( FT2_1_3_Pos   p1,
 	arc[3] = p4;
 
 	do {
-		FT2_1_3_Pos  y1 = arc[0];
-		FT2_1_3_Pos  y2 = arc[1];
-		FT2_1_3_Pos  y3 = arc[2];
-		FT2_1_3_Pos  y4 = arc[3];
+		FT_Pos  y1 = arc[0];
+		FT_Pos  y2 = arc[1];
+		FT_Pos  y3 = arc[2];
+		FT_Pos  y4 = arc[3];
 
 
 		if ( y1 == y4 ) {
@@ -262,19 +262,19 @@ Suite:
 #else
 
 static void
-test_cubic_extrema( FT2_1_3_Pos    y1,
-					FT2_1_3_Pos    y2,
-					FT2_1_3_Pos    y3,
-					FT2_1_3_Pos    y4,
-					FT2_1_3_Fixed  u,
-					FT2_1_3_Pos*   min,
-					FT2_1_3_Pos*   max ) {
-	/* FT2_1_3_Pos    a = y4 - 3*y3 + 3*y2 - y1; */
-	FT2_1_3_Pos    b = y3 - 2*y2 + y1;
-	FT2_1_3_Pos    c = y2 - y1;
-	FT2_1_3_Pos    d = y1;
-	FT2_1_3_Pos    y;
-	FT2_1_3_Fixed  uu;
+test_cubic_extrema( FT_Pos    y1,
+					FT_Pos    y2,
+					FT_Pos    y3,
+					FT_Pos    y4,
+					FT_Fixed  u,
+					FT_Pos*   min,
+					FT_Pos*   max ) {
+	/* FT_Pos    a = y4 - 3*y3 + 3*y2 - y1; */
+	FT_Pos    b = y3 - 2*y2 + y1;
+	FT_Pos    c = y2 - y1;
+	FT_Pos    d = y1;
+	FT_Pos    y;
+	FT_Fixed  uu;
 
 	FT2_1_3_UNUSED ( y4 );
 
@@ -302,12 +302,12 @@ test_cubic_extrema( FT2_1_3_Pos    y1,
 
 
 static void
-BBox_Cubic_Check( FT2_1_3_Pos   y1,
-				  FT2_1_3_Pos   y2,
-				  FT2_1_3_Pos   y3,
-				  FT2_1_3_Pos   y4,
-				  FT2_1_3_Pos*  min,
-				  FT2_1_3_Pos*  max ) {
+BBox_Cubic_Check( FT_Pos   y1,
+				  FT_Pos   y2,
+				  FT_Pos   y3,
+				  FT_Pos   y4,
+				  FT_Pos*  min,
+				  FT_Pos*  max ) {
 	/* always compare first and last points */
 	if      ( y1 < *min )  *min = y1;
 	else if ( y1 > *max )  *max = y1;
@@ -328,11 +328,11 @@ BBox_Cubic_Check( FT2_1_3_Pos   y1,
 
 	/* There are some split points.  Find them. */
 	{
-		FT2_1_3_Pos    a = y4 - 3*y3 + 3*y2 - y1;
-		FT2_1_3_Pos    b = y3 - 2*y2 + y1;
-		FT2_1_3_Pos    c = y2 - y1;
-		FT2_1_3_Pos    d;
-		FT2_1_3_Fixed  t;
+		FT_Pos    a = y4 - 3*y3 + 3*y2 - y1;
+		FT_Pos    b = y3 - 2*y2 + y1;
+		FT_Pos    c = y2 - y1;
+		FT_Pos    d;
+		FT_Fixed  t;
 
 
 		/* We need to solve "ax^2+2bx+c" here, without floating points!      */
@@ -347,7 +347,7 @@ BBox_Cubic_Check( FT2_1_3_Pos   y1,
 		/* that their product is held in a "16.16" value.                    */
 		/*                                                                   */
 		{
-			FT2_1_3_ULong  t1, t2;
+			FT_ULong  t1, t2;
 			int       shift = 0;
 
 
@@ -371,10 +371,10 @@ BBox_Cubic_Check( FT2_1_3_Pos   y1,
 			/*   We begin by computing "t1" as the bitwise "or" of the     */
 			/*   absolute values of "a", "b", "c".                         */
 			/*                                                             */
-			t1  = (FT2_1_3_ULong)((a >= 0) ? a : -a );
-			t2  = (FT2_1_3_ULong)((b >= 0) ? b : -b );
+			t1  = (FT_ULong)((a >= 0) ? a : -a );
+			t2  = (FT_ULong)((b >= 0) ? b : -b );
 			t1 |= t2;
-			t2  = (FT2_1_3_ULong)((c >= 0) ? c : -c );
+			t2  = (FT_ULong)((c >= 0) ? c : -c );
 			t1 |= t2;
 
 			/*   Now, the most significant bit of "t1" is sure to be the   */
@@ -445,7 +445,7 @@ BBox_Cubic_Check( FT2_1_3_Pos   y1,
 				test_cubic_extrema( y1, y2, y3, y4, t, min, max );
 			} else {
 				/* there are two solutions; we need to filter them though */
-				d = FT2_1_3_SqrtFixed( (FT2_1_3_Int32)d );
+				d = FT2_1_3_SqrtFixed( (FT_Int32)d );
 				t = - FT2_1_3_DivFix( b - d, a );
 				test_cubic_extrema( y1, y2, y3, y4, t, min, max );
 
@@ -486,9 +486,9 @@ BBox_Cubic_Check( FT2_1_3_Pos   y1,
 /*    extremum coordinates, we subdivise instead.                        */
 /*                                                                       */
 static int
-BBox_Cubic_To( FT2_1_3_Vector*  control1,
-			   FT2_1_3_Vector*  control2,
-			   FT2_1_3_Vector*  to,
+BBox_Cubic_To( FT_Vector*  control1,
+			   FT_Vector*  control2,
+			   FT_Vector*  to,
 			   TBBox_Rec*  user ) {
 	/* we don't need to check `to' since it is always an `on' point, thus */
 	/* within the bbox                                                    */
@@ -521,13 +521,13 @@ BBox_Cubic_To( FT2_1_3_Vector*  control1,
 
 /* documentation is in ftbbox.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_Outline_Get_BBox( FT2_1_3_Outline*  outline,
-					 FT2_1_3_BBox     *abbox ) {
-	FT2_1_3_BBox     cbox;
-	FT2_1_3_BBox     bbox;
-	FT2_1_3_Vector*  vec;
-	FT2_1_3_UShort   n;
+					 FT_BBox     *abbox ) {
+	FT_BBox     cbox;
+	FT_BBox     bbox;
+	FT_Vector*  vec;
+	FT_UShort   n;
 
 
 	if ( !abbox )
@@ -553,8 +553,8 @@ FT2_1_3_Outline_Get_BBox( FT2_1_3_Outline*  outline,
 	vec++;
 
 	for ( n = 1; n < outline->n_points; n++ ) {
-		FT2_1_3_Pos  x = vec->x;
-		FT2_1_3_Pos  y = vec->y;
+		FT_Pos  x = vec->x;
+		FT_Pos  y = vec->y;
 
 
 		/* update control box */
@@ -590,7 +590,7 @@ FT2_1_3_Outline_Get_BBox( FT2_1_3_Outline*  outline,
 			0, 0
 		};
 
-		FT2_1_3_Error   error;
+		FT_Error   error;
 		TBBox_Rec  user;
 
 

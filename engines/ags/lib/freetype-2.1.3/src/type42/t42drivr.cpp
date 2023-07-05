@@ -48,25 +48,25 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-static FT2_1_3_Error
+static FT_Error
 t42_get_glyph_name( T42_Face    face,
-					FT2_1_3_UInt     glyph_index,
-					FT2_1_3_Pointer  buffer,
-					FT2_1_3_UInt     buffer_max ) {
-	FT2_1_3_String*  gname;
+					FT_UInt     glyph_index,
+					FT_Pointer  buffer,
+					FT_UInt     buffer_max ) {
+	FT_String*  gname;
 
 
 	gname = face->type1.glyph_names[glyph_index];
 
 	if ( buffer_max > 0 ) {
-		FT2_1_3_UInt  len = (FT2_1_3_UInt)( ft_strlen( gname ) );
+		FT_UInt  len = (FT_UInt)( ft_strlen( gname ) );
 
 
 		if ( len >= buffer_max )
 			len = buffer_max - 1;
 
 		FT2_1_3_MEM_COPY( buffer, gname, len );
-		((FT2_1_3_Byte*)buffer)[len] = 0;
+		((FT_Byte*)buffer)[len] = 0;
 	}
 
 	return FT2_1_3_Err_Ok;
@@ -79,11 +79,11 @@ t42_get_ps_name( T42_Face  face ) {
 }
 
 
-static FT2_1_3_UInt
+static FT_UInt
 t42_get_name_index( T42_Face    face,
-					FT2_1_3_String*  glyph_name ) {
-	FT2_1_3_Int      i;
-	FT2_1_3_String*  gname;
+					FT_String*  glyph_name ) {
+	FT_Int      i;
+	FT_String*  gname;
 
 
 	for ( i = 0; i < face->type1.num_glyphs; i++ ) {
@@ -99,7 +99,7 @@ t42_get_name_index( T42_Face    face,
 
 static FT2_1_3_Module_Interface
 T42_Get_Interface( FT2_1_3_Driver         driver,
-				   const FT2_1_3_String*  t42_interface ) {
+				   const FT_String*  t42_interface ) {
 	FT2_1_3_UNUSED( driver );
 
 	/* Any additional interface are defined here */
@@ -143,8 +143,8 @@ const FT2_1_3_Driver_ClassRec  t42_driver_class = {
 	sizeof ( T42_SizeRec ),
 	sizeof ( T42_GlyphSlotRec ),
 
-	(FT2_1_3_Face_InitFunc)        T42_Face_Init,
-	(FT2_1_3_Face_DoneFunc)        T42_Face_Done,
+	(FT_Face_InitFunc)        T42_Face_Init,
+	(FT_Face_DoneFunc)        T42_Face_Done,
 	(FT2_1_3_Size_InitFunc)        T42_Size_Init,
 	(FT2_1_3_Size_DoneFunc)        T42_Size_Done,
 	(FT2_1_3_Slot_InitFunc)        T42_GlyphSlot_Init,
@@ -154,10 +154,10 @@ const FT2_1_3_Driver_ClassRec  t42_driver_class = {
 	(FT2_1_3_Size_ResetPixelsFunc) T42_Size_SetPixels,
 	(FT2_1_3_Slot_LoadFunc)        T42_GlyphSlot_Load,
 
-	(FT2_1_3_Face_GetKerningFunc)  0,
-	(FT2_1_3_Face_AttachFunc)      0,
+	(FT_Face_GetKerningFunc)  0,
+	(FT_Face_AttachFunc)      0,
 
-	(FT2_1_3_Face_GetAdvancesFunc) 0
+	(FT_Face_GetAdvancesFunc) 0
 };
 
 } // End of namespace FreeType213

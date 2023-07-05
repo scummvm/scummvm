@@ -23,7 +23,7 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 pfr_cmap_init( PFR_CMap  cmap ) {
 	PFR_Face  face = (PFR_Face)FT2_1_3_CMAP_FACE( cmap );
 
@@ -34,7 +34,7 @@ pfr_cmap_init( PFR_CMap  cmap ) {
 	/* just for safety, check that the character entries are correctly */
 	/* sorted in increasing character code order                       */
 	{
-		FT2_1_3_UInt  n;
+		FT_UInt  n;
 
 
 		for ( n = 1; n < cmap->num_chars; n++ ) {
@@ -54,12 +54,12 @@ pfr_cmap_done( PFR_CMap  cmap ) {
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
+FT2_1_3_CALLBACK_DEF( FT_UInt )
 pfr_cmap_char_index( PFR_CMap   cmap,
-					 FT2_1_3_UInt32  char_code ) {
-	FT2_1_3_UInt   min = 0;
-	FT2_1_3_UInt   max = cmap->num_chars;
-	FT2_1_3_UInt   mid;
+					 FT_UInt32  char_code ) {
+	FT_UInt   min = 0;
+	FT_UInt   max = cmap->num_chars;
+	FT_UInt   mid;
 	PFR_Char  gchar;
 
 
@@ -79,17 +79,17 @@ pfr_cmap_char_index( PFR_CMap   cmap,
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
+FT2_1_3_CALLBACK_DEF( FT_UInt )
 pfr_cmap_char_next( PFR_CMap    cmap,
-					FT2_1_3_UInt32  *pchar_code ) {
-	FT2_1_3_UInt    result    = 0;
-	FT2_1_3_UInt32  char_code = *pchar_code + 1;
+					FT_UInt32  *pchar_code ) {
+	FT_UInt    result    = 0;
+	FT_UInt32  char_code = *pchar_code + 1;
 
 
 Restart: {
-		FT2_1_3_UInt   min = 0;
-		FT2_1_3_UInt   max = cmap->num_chars;
-		FT2_1_3_UInt   mid;
+		FT_UInt   min = 0;
+		FT_UInt   max = cmap->num_chars;
+		FT_UInt   mid;
 		PFR_Char  gchar;
 
 

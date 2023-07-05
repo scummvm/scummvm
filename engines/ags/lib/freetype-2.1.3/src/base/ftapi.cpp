@@ -42,8 +42,8 @@
 
 FT2_1_3_BASE_DEF( void )
 FT2_1_3_New_Memory_Stream( FT2_1_3_Library  library,
-                      FT2_1_3_Byte*    base,
-                      FT2_1_3_ULong    size,
+                      FT_Byte*    base,
+                      FT_ULong    size,
                       FT2_1_3_Stream   stream ) {
 	FT2_1_3_UNUSED( library );
 
@@ -51,54 +51,54 @@ FT2_1_3_New_Memory_Stream( FT2_1_3_Library  library,
 }
 
 
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 FT2_1_3_Seek_Stream( FT2_1_3_Stream  stream,
-                FT2_1_3_ULong   pos ) {
+                FT_ULong   pos ) {
 	return FT2_1_3_Stream_Seek( stream, pos );
 }
 
 
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 FT2_1_3_Skip_Stream( FT2_1_3_Stream  stream,
-                FT2_1_3_Long    distance ) {
+                FT_Long    distance ) {
 	return FT2_1_3_Stream_Skip( stream, distance );
 }
 
 
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 FT2_1_3_Read_Stream( FT2_1_3_Stream  stream,
-                FT2_1_3_Byte*   buffer,
-                FT2_1_3_ULong   count ) {
+                FT_Byte*   buffer,
+                FT_ULong   count ) {
 	return FT2_1_3_Stream_Read( stream, buffer, count );
 }
 
 
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 FT2_1_3_Read_Stream_At( FT2_1_3_Stream  stream,
-                   FT2_1_3_ULong   pos,
-                   FT2_1_3_Byte*   buffer,
-                   FT2_1_3_ULong   count ) {
+                   FT_ULong   pos,
+                   FT_Byte*   buffer,
+                   FT_ULong   count ) {
 	return FT2_1_3_Stream_ReadAt( stream, pos, buffer, count );
 }
 
 
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 FT2_1_3_Extract_Frame( FT2_1_3_Stream  stream,
-                  FT2_1_3_ULong   count,
-                  FT2_1_3_Byte**  pbytes ) {
+                  FT_ULong   count,
+                  FT_Byte**  pbytes ) {
 	return FT2_1_3_Stream_ExtractFrame( stream, count, pbytes );
 }
 
 
 FT2_1_3_BASE_DEF( void )
 FT2_1_3_Release_Frame( FT2_1_3_Stream  stream,
-                  FT2_1_3_Byte**  pbytes ) {
+                  FT_Byte**  pbytes ) {
 	FT2_1_3_Stream_ReleaseFrame( stream, pbytes );
 }
 
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 FT2_1_3_Access_Frame( FT2_1_3_Stream  stream,
-                 FT2_1_3_ULong   count ) {
+                 FT_ULong   count ) {
 	return FT2_1_3_Stream_EnterFrame( stream, count );
 }
 

@@ -85,9 +85,9 @@ cff_size_done( CFF_Size  size ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 cff_size_init( CFF_Size  size ) {
-	FT2_1_3_Error           error = 0;
+	FT_Error           error = 0;
 	PSH_Globals_Funcs  funcs = cff_size_get_globals_funcs( size );
 
 
@@ -106,41 +106,41 @@ cff_size_init( CFF_Size  size ) {
 		/*            synthetize a type1 dictionary on the fly here. */
 
 		{
-			FT2_1_3_UInt  n, count;
+			FT_UInt  n, count;
 
 
 			FT2_1_3_MEM_ZERO( &priv, sizeof ( priv ) );
 
 			count = priv.num_blue_values = cpriv->num_blue_values;
 			for ( n = 0; n < count; n++ )
-				priv.blue_values[n] = (FT2_1_3_Short)cpriv->blue_values[n];
+				priv.blue_values[n] = (FT_Short)cpriv->blue_values[n];
 
 			count = priv.num_other_blues = cpriv->num_other_blues;
 			for ( n = 0; n < count; n++ )
-				priv.other_blues[n] = (FT2_1_3_Short)cpriv->other_blues[n];
+				priv.other_blues[n] = (FT_Short)cpriv->other_blues[n];
 
 			count = priv.num_family_blues = cpriv->num_family_blues;
 			for ( n = 0; n < count; n++ )
-				priv.family_blues[n] = (FT2_1_3_Short)cpriv->family_blues[n];
+				priv.family_blues[n] = (FT_Short)cpriv->family_blues[n];
 
 			count = priv.num_family_other_blues = cpriv->num_family_other_blues;
 			for ( n = 0; n < count; n++ )
-				priv.family_other_blues[n] = (FT2_1_3_Short)cpriv->family_other_blues[n];
+				priv.family_other_blues[n] = (FT_Short)cpriv->family_other_blues[n];
 
 			priv.blue_scale = cpriv->blue_scale;
-			priv.blue_shift = (FT2_1_3_Int)cpriv->blue_shift;
-			priv.blue_fuzz  = (FT2_1_3_Int)cpriv->blue_fuzz;
+			priv.blue_shift = (FT_Int)cpriv->blue_shift;
+			priv.blue_fuzz  = (FT_Int)cpriv->blue_fuzz;
 
-			priv.standard_width[0]  = (FT2_1_3_UShort)cpriv->standard_width;
-			priv.standard_height[0] = (FT2_1_3_UShort)cpriv->standard_height;
+			priv.standard_width[0]  = (FT_UShort)cpriv->standard_width;
+			priv.standard_height[0] = (FT_UShort)cpriv->standard_height;
 
 			count = priv.num_snap_widths = cpriv->num_snap_widths;
 			for ( n = 0; n < count; n++ )
-				priv.snap_widths[n] = (FT2_1_3_Short)cpriv->snap_widths[n];
+				priv.snap_widths[n] = (FT_Short)cpriv->snap_widths[n];
 
 			count = priv.num_snap_heights = cpriv->num_snap_heights;
 			for ( n = 0; n < count; n++ )
-				priv.snap_heights[n] = (FT2_1_3_Short)cpriv->snap_heights[n];
+				priv.snap_heights[n] = (FT_Short)cpriv->snap_heights[n];
 
 			priv.force_bold     = cpriv->force_bold;
 			priv.language_group = cpriv->language_group;
@@ -156,10 +156,10 @@ cff_size_init( CFF_Size  size ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 cff_size_reset( CFF_Size  size ) {
 	PSH_Globals_Funcs  funcs = cff_size_get_globals_funcs( size );
-	FT2_1_3_Error           error = 0;
+	FT_Error           error = 0;
 
 
 	if ( funcs )
@@ -183,7 +183,7 @@ cff_slot_done( CFF_GlyphSlot  slot ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 cff_slot_init( CFF_GlyphSlot  slot ) {
 	CFF_Face          face     = (CFF_Face)slot->root.face;
 	CFF_Font          font     = (CFF_FontRec *)face->extra.data;
@@ -215,12 +215,12 @@ cff_slot_init( CFF_GlyphSlot  slot ) {
 /*                                                                       */
 /*************************************************************************/
 
-static FT2_1_3_String*
+static FT_String*
 cff_strcpy( FT2_1_3_Memory         memory,
-			const FT2_1_3_String*  source ) {
-	FT2_1_3_Error    error;
-	FT2_1_3_String*  result = 0;
-	FT2_1_3_Int      len = (FT2_1_3_Int)ft_strlen( source );
+			const FT_String*  source ) {
+	FT_Error    error;
+	FT_String*  result = 0;
+	FT_Int      len = (FT_Int)ft_strlen( source );
 
 
 	if ( !FT2_1_3_ALLOC( result, len + 1 ) ) {
@@ -236,18 +236,18 @@ cff_strcpy( FT2_1_3_Memory         memory,
 
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 cff_face_init( FT2_1_3_Stream      stream,
 			   CFF_Face       face,
-			   FT2_1_3_Int         face_index,
-			   FT2_1_3_Int         num_params,
+			   FT_Int         face_index,
+			   FT_Int         num_params,
 			   FT2_1_3_Parameter*  params ) {
-	FT2_1_3_Error          error;
+	FT_Error          error;
 	SFNT_Service      sfnt;
 	PSNames_Service   psnames;
 	PSHinter_Service  pshinter;
-	FT2_1_3_Bool           pure_cff    = 1;
-	FT2_1_3_Bool           sfnt_format = 0;
+	FT_Bool           pure_cff    = 1;
+	FT_Bool           sfnt_format = 0;
 
 	const void *tmp_ptr = FT2_1_3_Get_Module_Interface(face->root.driver->root.library, "sfnt");
 	sfnt = const_cast<SFNT_Service>(reinterpret_cast<const SFNT_Interface *>(tmp_ptr));
@@ -315,8 +315,8 @@ cff_face_init( FT2_1_3_Stream      stream,
 	{
 		CFF_Font   cff;
 		FT2_1_3_Memory  memory = face->root.memory;
-		FT2_1_3_Face    root;
-		FT2_1_3_Int32   flags;
+		FT_Face    root;
+		FT_Int32   flags;
 
 
 		if ( FT2_1_3_NEW( cff ) )
@@ -365,9 +365,9 @@ cff_face_init( FT2_1_3_Stream      stream,
 			root->bbox.yMax = ( dict->font_bbox.yMax + 0xFFFFU ) >> 16;
 
 
-			root->ascender  = (FT2_1_3_Short)( root->bbox.yMax );
-			root->descender = (FT2_1_3_Short)( root->bbox.yMin );
-			root->height    = (FT2_1_3_Short)(
+			root->ascender  = (FT_Short)( root->bbox.yMax );
+			root->descender = (FT_Short)( root->bbox.yMin );
+			root->height    = (FT_Short)(
 								  ( ( root->ascender - root->descender ) * 12 ) / 10 );
 
 			if ( dict->units_per_em )
@@ -436,13 +436,13 @@ cff_face_init( FT2_1_3_Stream      stream,
 		/* already.  If an OpenType font contains a Unicode "cmap", we    */
 		/* will use it, whatever be in the CFF part of the file.          */
 		{
-			FT2_1_3_CharMapRec  cmaprec;
-			FT2_1_3_CharMap     cmap;
-			FT2_1_3_UInt        nn;
+			FT_CharMapRec  cmaprec;
+			FT_CharMap     cmap;
+			FT_UInt        nn;
 			CFF_Encoding   encoding = &cff->encoding;
 
 
-			for ( nn = 0; nn < (FT2_1_3_UInt) root->num_charmaps; nn++ ) {
+			for ( nn = 0; nn < (FT_UInt) root->num_charmaps; nn++ ) {
 				cmap = root->charmaps[nn];
 
 				/* Windows Unicode (3,1)? */
@@ -460,12 +460,12 @@ cff_face_init( FT2_1_3_Stream      stream,
 			cmaprec.encoding_id = 1;
 			cmaprec.encoding    = FT2_1_3_ENCODING_UNICODE;
 
-			nn = (FT2_1_3_UInt) root->num_charmaps;
+			nn = (FT_UInt) root->num_charmaps;
 
 			FT2_1_3_CMap_New( &cff_cmap_unicode_class_rec, NULL, &cmaprec, NULL );
 
 			/* if no Unicode charmap was previously selected, select this one */
-			if ( root->charmap == NULL && nn != (FT2_1_3_UInt) root->num_charmaps )
+			if ( root->charmap == NULL && nn != (FT_UInt) root->num_charmaps )
 				root->charmap = root->charmaps[nn];
 
 Skip_Unicode:
@@ -526,7 +526,7 @@ cff_face_done( CFF_Face  face ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 cff_driver_init( CFF_Driver  driver ) {
 	FT2_1_3_UNUSED( driver );
 

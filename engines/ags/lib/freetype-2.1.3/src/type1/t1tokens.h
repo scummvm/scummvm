@@ -70,7 +70,7 @@ T1_FIELD_NUM( "FontType", font_type )
 T1_FIELD_NUM( "StrokeWidth", stroke_width )
 
 #undef  FT2_1_3_STRUCTURE
-#define FT2_1_3_STRUCTURE  FT2_1_3_BBox
+#define FT2_1_3_STRUCTURE  FT_BBox
 #undef  T1CODE
 #define T1CODE        T1_FIELD_LOCATION_BBOX
 

@@ -89,13 +89,13 @@ FT2_1_3_BEGIN_HEADER
 /*    please refer to the TrueType or OpenType specification.            */
 /*                                                                       */
 typedef struct  FT2_1_3_SfntName_ {
-	FT2_1_3_UShort  platform_id;
-	FT2_1_3_UShort  encoding_id;
-	FT2_1_3_UShort  language_id;
-	FT2_1_3_UShort  name_id;
+	FT_UShort  platform_id;
+	FT_UShort  encoding_id;
+	FT_UShort  language_id;
+	FT_UShort  name_id;
 
-	FT2_1_3_Byte*   string;      /* this string is *not* null-terminated! */
-	FT2_1_3_UInt    string_len;  /* in bytes */
+	FT_Byte*   string;      /* this string is *not* null-terminated! */
+	FT_UInt    string_len;  /* in bytes */
 
 } FT2_1_3_SfntName;
 
@@ -114,8 +114,8 @@ typedef struct  FT2_1_3_SfntName_ {
 /* <Return>                                                              */
 /*    The number of strings in the `name' table.                         */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_UInt )
-FT2_1_3_Get_Sfnt_Name_Count( FT2_1_3_Face  face );
+FT2_1_3_EXPORT( FT_UInt )
+FT2_1_3_Get_Sfnt_Name_Count( FT_Face  face );
 
 
 /*************************************************************************/
@@ -145,9 +145,9 @@ FT2_1_3_Get_Sfnt_Name_Count( FT2_1_3_Face  face );
 /*    `name' table entries, then do a loop until you get the right       */
 /*    platform, encoding, and name ID.                                   */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Get_Sfnt_Name( FT2_1_3_Face       face,
-				  FT2_1_3_UInt       idx,
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Get_Sfnt_Name( FT_Face       face,
+				  FT_UInt       idx,
 				  FT2_1_3_SfntName  *aname );
 
 

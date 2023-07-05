@@ -78,7 +78,7 @@ FT2_1_3_BEGIN_HEADER
  *   this function may return "FT2_1_3_Err_Unimplemented" if your build of
  *   FreeType was not compiled with zlib support.
  */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Stream_OpenGzip( FT2_1_3_Stream    stream,
 					FT2_1_3_Stream    source );
 

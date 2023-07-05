@@ -6,7 +6,7 @@
 #define  FT2_1_3_MAGIC_DEATH   0xDEADdead
 #define  FT2_1_3_MAGIC_CLASS   0x12345678
 
-#define  FT2_1_3_TYPE_HASH(x)  (( (FT2_1_3_UInt32)(x) >> 2 )^( (FT2_1_3_UInt32)(x) >> 10 ))
+#define  FT2_1_3_TYPE_HASH(x)  (( (FT_UInt32)(x) >> 2 )^( (FT_UInt32)(x) >> 10 ))
 
 #define  FT2_1_3_OBJECT_CHECK(o)                                  \
            ( FT2_1_3_OBJECT(o)               != NULL           && \
@@ -30,7 +30,7 @@
 /*******************************************************************/
 
 /* forward declaration */
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 ft_metaclass_init( FT2_1_3_MetaClass  meta,
                    FT2_1_3_Library    library );
 
@@ -74,7 +74,7 @@ ft_class_hnode_destroy( FT2_1_3_ClassHNode  node ) {
 }
 
 
-static FT2_1_3_Int
+static FT_Int
 ft_type_equal( FT2_1_3_Type  type1,
                FT2_1_3_Type  type2 ) {
 	if ( type1 == type2 )
@@ -116,7 +116,7 @@ Fail:
 }
 
 
-static FT2_1_3_Int
+static FT_Int
 ft_class_hnode_equal( const FT2_1_3_ClassHNode  node1,
                       const FT2_1_3_ClassHNode  node2 ) {
 	FT2_1_3_Type  type1 = node1->type;
@@ -140,7 +140,7 @@ ft_metaclass_done( FT2_1_3_MetaClass  meta ) {
 }
 
 
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 ft_metaclass_init( FT2_1_3_MetaClass  meta,
                    FT2_1_3_Library    library ) {
 	FT2_1_3_ClassRec*  clazz = (FT2_1_3_ClassRec*) &meta->clazz;
@@ -177,7 +177,7 @@ ft_metaclass_get_class( FT2_1_3_MetaClass  meta,
 	FT2_1_3_Memory          memory;
 	FT2_1_3_ClassRec*       clazz;
 	FT2_1_3_Class           parent;
-	FT2_1_3_Error           error;
+	FT_Error           error;
 
 	keynode.hnode.hash = FT2_1_3_TYPE_HASH( ctype );
 	keynode.type       = ctype;
@@ -280,14 +280,14 @@ Exit:
 
 
 
-FT2_1_3_BASE_DEF( FT2_1_3_Int )
-ft_object_check( FT2_1_3_Pointer  obj ) {
+FT2_1_3_BASE_DEF( FT_Int )
+ft_object_check( FT_Pointer  obj ) {
 	return FT2_1_3_OBJECT_CHECK(obj);
 }
 
 
-FT2_1_3_BASE_DEF( FT2_1_3_Int )
-ft_object_is_a( FT2_1_3_Pointer  obj,
+FT2_1_3_BASE_DEF( FT_Int )
+ft_object_is_a( FT_Pointer  obj,
                 FT2_1_3_Class    clazz ) {
 	if ( FT2_1_3_OBJECT_CHECK(obj) ) {
 		FT2_1_3_Class   c = FT2_1_3_OBJECT__CLASS(obj);
@@ -305,12 +305,12 @@ ft_object_is_a( FT2_1_3_Pointer  obj,
 }
 
 
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 ft_object_create( FT2_1_3_Object  *pobject,
                   FT2_1_3_Class    clazz,
-                  FT2_1_3_Pointer  init_data ) {
+                  FT_Pointer  init_data ) {
 	FT2_1_3_Memory  memory;
-	FT2_1_3_Error   error;
+	FT_Error   error;
 	FT2_1_3_Object  obj;
 
 	FT2_1_3_ASSERT_IS_CLASS(clazz);
@@ -346,13 +346,13 @@ ft_class_find_by_type( FT2_1_3_Type     type,
 }
 
 
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 ft_object_create_from_type( FT2_1_3_Object  *pobject,
                             FT2_1_3_Type     type,
-                            FT2_1_3_Pointer  init_data,
+                            FT_Pointer  init_data,
                             FT2_1_3_Library  library ) {
 	FT2_1_3_Class  clazz;
-	FT2_1_3_Error  error;
+	FT_Error  error;
 
 	clazz = ft_class_find_by_type( type, library );
 	if ( clazz )

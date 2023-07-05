@@ -71,8 +71,8 @@ FT2_1_3_BEGIN_HEADER
  * @note:
  *   This function only works with BDF faces, returning an error otherwise.
  */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Get_BDF_Charset_ID( FT2_1_3_Face       face,
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Get_BDF_Charset_ID( FT_Face       face,
 					   const char*  *acharset_encoding,
 					   const char*  *acharset_registry );
 

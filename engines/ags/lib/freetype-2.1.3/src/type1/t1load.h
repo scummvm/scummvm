@@ -36,40 +36,40 @@ FT2_1_3_BEGIN_HEADER
 typedef struct  T1_Loader_ {
 	T1_ParserRec  parser;          /* parser used to read the stream */
 
-	FT2_1_3_Int        num_chars;       /* number of characters in encoding */
+	FT_Int        num_chars;       /* number of characters in encoding */
 	PS_TableRec   encoding_table;  /* PS_Table used to store the       */
 	/* encoding character names         */
 
-	FT2_1_3_Int        num_glyphs;
+	FT_Int        num_glyphs;
 	PS_TableRec   glyph_names;
 	PS_TableRec   charstrings;
 	PS_TableRec   swap_table;      /* For moving .notdef glyph to index 0. */
 
-	FT2_1_3_Int        num_subrs;
+	FT_Int        num_subrs;
 	PS_TableRec   subrs;
-	FT2_1_3_Bool       fontdata;
+	FT_Bool       fontdata;
 
 } T1_LoaderRec, *T1_Loader;
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 T1_Open_Face( T1_Face  face );
 
 #ifndef T1_CONFIG_OPTION_NO_MM_SUPPORT
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 T1_Get_Multi_Master( T1_Face           face,
 					 FT2_1_3_Multi_Master*  master );
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 T1_Set_MM_Blend( T1_Face    face,
-				 FT2_1_3_UInt    num_coords,
-				 FT2_1_3_Fixed*  coords );
+				 FT_UInt    num_coords,
+				 FT_Fixed*  coords );
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 T1_Set_MM_Design( T1_Face   face,
-				  FT2_1_3_UInt   num_coords,
-				  FT2_1_3_Long*  coords );
+				  FT_UInt   num_coords,
+				  FT_Long*  coords );
 
 FT2_1_3_LOCAL( void )
 T1_Done_Blend( T1_Face  face );

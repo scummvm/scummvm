@@ -2,7 +2,7 @@
 #include FT2_1_3_SYSTEM_MEMORY_H
 
 static FT2_1_3_Memory
-ft_memory_new_default( FT2_1_3_ULong  size ) {
+ft_memory_new_default( FT_ULong  size ) {
 	return (FT2_1_3_Memory) ft_malloc( size );
 }
 

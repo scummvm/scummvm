@@ -40,14 +40,14 @@ FT2_1_3_BEGIN_HEADER
 
 
 typedef struct  BDF_encoding_el_ {
-	FT2_1_3_ULong  enc;
-	FT2_1_3_Short  glyph;
+	FT_ULong  enc;
+	FT_Short  glyph;
 
 } BDF_encoding_el;
 
 
 typedef struct  BDF_FaceRec_ {
-	FT2_1_3_FaceRec        root;
+	FT_FaceRec        root;
 
 	char*             charset_encoding;
 	char*             charset_registry;
@@ -56,8 +56,8 @@ typedef struct  BDF_FaceRec_ {
 
 	BDF_encoding_el*  en_table;
 
-	FT2_1_3_CharMap        charmap_handle;
-	FT2_1_3_CharMapRec     charmap;  /* a single charmap per face */
+	FT_CharMap        charmap_handle;
+	FT_CharMapRec     charmap;  /* a single charmap per face */
 
 } BDF_FaceRec, *BDF_Face;
 

@@ -37,7 +37,7 @@ FT2_1_3_BEGIN_HEADER
 
 
 typedef struct  BDF_Public_FaceRec_ {
-	FT2_1_3_FaceRec  root;
+	FT_FaceRec  root;
 
 	char*       charset_encoding;
 	char*       charset_registry;

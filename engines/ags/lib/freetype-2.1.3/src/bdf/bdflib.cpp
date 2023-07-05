@@ -208,12 +208,12 @@ hash_bucket( char*       key,
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 hash_rehash( hashtable*  ht,
 			 FT2_1_3_Memory   memory ) {
 	hashnode*  obp = ht->table, *bp, *nbp;
 	int        i, sz = ht->size;
-	FT2_1_3_Error   error = FT2_1_3_Err_Ok;
+	FT_Error   error = FT2_1_3_Err_Ok;
 
 
 	ht->size <<= 1;
@@ -236,11 +236,11 @@ Exit:
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 hash_init( hashtable*  ht,
 		   FT2_1_3_Memory   memory ) {
 	int       sz = INITIAL_HT_SIZE;
-	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
+	FT_Error  error = FT2_1_3_Err_Ok;
 
 
 	ht->size  = sz;
@@ -272,13 +272,13 @@ hash_free( hashtable*  ht,
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 hash_insert( char*       key,
 			 void*       data,
 			 hashtable*  ht,
 			 FT2_1_3_Memory   memory ) {
 	hashnode  nn, *bp = hash_bucket( key, ht );
-	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
+	FT_Error  error = FT2_1_3_Err_Ok;
 
 
 	nn = *bp;
@@ -323,7 +323,7 @@ hash_lookup( char*       key,
 
 /* Function type for parsing lines of a BDF font. */
 
-typedef FT2_1_3_Error
+typedef FT_Error
 (*_bdf_line_func_t)( char*          line,
 					 unsigned long  linelen,
 					 unsigned long  lineno,
@@ -370,7 +370,7 @@ typedef struct  _bdf_parse_t_ {
 } _bdf_parse_t;
 
 
-#define setsbit( m, cc )  ( m[(cc) >> 3] |= (FT2_1_3_Byte)( 1 << ( (cc) & 7 ) ) )
+#define setsbit( m, cc )  ( m[(cc) >> 3] |= (FT_Byte)( 1 << ( (cc) & 7 ) ) )
 #define sbitset( m, cc )  ( m[(cc) >> 3]  & ( 1 << ( (cc) & 7 ) ) )
 
 
@@ -382,7 +382,7 @@ static char  empty[1] = { 0 };   /* XXX eliminate this */
 /* Assume the line is NULL-terminated and that the `list' parameter */
 /* was initialized the first time it was used.                      */
 
-static FT2_1_3_Error
+static FT_Error
 _bdf_split( char*          separators,
 			char*          line,
 			unsigned long  linelen,
@@ -391,7 +391,7 @@ _bdf_split( char*          separators,
 	int       mult, final_empty;
 	char      *sp, *ep, *end;
 	char      seps[32];
-	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
+	FT_Error  error = FT2_1_3_Err_Ok;
 
 
 	/* Initialize the list. */
@@ -554,14 +554,14 @@ _bdf_join( int             c,
 
 
 /* High speed file reader that passes each line to a callback. */
-static FT2_1_3_Error
+static FT_Error
 bdf_internal_readstream( FT2_1_3_Stream  stream,
 						 char*      buffer,
 						 int        count,
 						 int       *read_bytes ) {
 	int            rbytes;
 	unsigned long  pos   = stream->pos;
-	FT2_1_3_Error       error = FT2_1_3_Err_Ok;
+	FT_Error       error = FT2_1_3_Err_Ok;
 
 
 	if ( pos > stream->size ) {
@@ -592,7 +592,7 @@ Exit:
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 _bdf_readstream( FT2_1_3_Stream         stream,
 				 _bdf_line_func_t  callback,
 				 void*             client_data,
@@ -603,7 +603,7 @@ _bdf_readstream( FT2_1_3_Stream         stream,
 	char              *ls, *le, *pp, *pe, *hp;
 	char              *buf = 0;
 	FT2_1_3_Memory         memory = stream->memory;
-	FT2_1_3_Error          error = FT2_1_3_Err_Ok;
+	FT_Error          error = FT2_1_3_Err_Ok;
 
 
 	if ( callback == 0 ) {
@@ -897,14 +897,14 @@ by_encoding( const void*  a,
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 bdf_create_property( char*        name,
 					 int          format,
 					 bdf_font_t*  font ) {
 	unsigned long    n;
 	bdf_property_t*  p;
 	FT2_1_3_Memory        memory = font->memory;
-	FT2_1_3_Error         error = FT2_1_3_Err_Ok;
+	FT_Error         error = FT2_1_3_Err_Ok;
 
 
 	/* First check to see if the property has      */
@@ -1030,13 +1030,13 @@ bdf_get_property( char*        name,
 #define ERRMSG3  "[line %ld] Font glyphs corrupted or missing fields.\n"
 
 
-static FT2_1_3_Error
+static FT_Error
 _bdf_add_comment( bdf_font_t*    font,
 				  char*          comment,
 				  unsigned long  len ) {
 	char*      cp;
 	FT2_1_3_Memory  memory = font->memory;
-	FT2_1_3_Error   error = FT2_1_3_Err_Ok;
+	FT_Error   error = FT2_1_3_Err_Ok;
 
 
 	if ( font->comments_len == 0 ) {
@@ -1062,14 +1062,14 @@ Exit:
 
 /* Set the spacing from the font name if it exists, or set it to the */
 /* default specified in the options.                                 */
-static FT2_1_3_Error
+static FT_Error
 _bdf_set_default_spacing( bdf_font_t*     font,
 						  bdf_options_t*  opts ) {
 	unsigned long  len;
 	char           name[128];
 	_bdf_list_t    list;
 	FT2_1_3_Memory      memory;
-	FT2_1_3_Error       error = FT2_1_3_Err_Ok;
+	FT_Error       error = FT2_1_3_Err_Ok;
 
 
 	if ( font == 0 || font->name == 0 || font->name[0] == 0 ) {
@@ -1177,7 +1177,7 @@ _bdf_is_atom( char*          line,
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 _bdf_add_property( bdf_font_t*  font,
 				   char*        name,
 				   char*        value ) {
@@ -1186,7 +1186,7 @@ _bdf_add_property( bdf_font_t*  font,
 	int             len;
 	bdf_property_t  *prop, *fp;
 	FT2_1_3_Memory       memory = font->memory;
-	FT2_1_3_Error        error = FT2_1_3_Err_Ok;
+	FT_Error        error = FT2_1_3_Err_Ok;
 
 
 	/* First, check to see if the property already exists in the font. */
@@ -1336,7 +1336,7 @@ static const unsigned char nibble_mask[8] = {
 
 
 /* Actually parse the glyph info and bitmaps. */
-static FT2_1_3_Error
+static FT_Error
 _bdf_parse_glyphs( char*          line,
 				   unsigned long  linelen,
 				   unsigned long  lineno,
@@ -1353,7 +1353,7 @@ _bdf_parse_glyphs( char*          line,
 	bdf_font_t*        font;
 
 	FT2_1_3_Memory          memory;
-	FT2_1_3_Error           error = FT2_1_3_Err_Ok;
+	FT_Error           error = FT2_1_3_Err_Ok;
 
 	FT2_1_3_UNUSED( lineno );        /* only used in debug mode */
 
@@ -1565,7 +1565,7 @@ _bdf_parse_glyphs( char*          line,
 
 		for ( i = 0, *bp = 0; i < nibbles; i++ ) {
 			c = line[i];
-			*bp = (FT2_1_3_Byte)( ( *bp << 4 ) + a2i[c] );
+			*bp = (FT_Byte)( ( *bp << 4 ) + a2i[c] );
 			if ( i + 1 < nibbles && ( i & 1 ) )
 				*++bp = 0;
 		}
@@ -1618,7 +1618,7 @@ _bdf_parse_glyphs( char*          line,
 
 			glyph->swidth = (unsigned short)FT2_1_3_MulDiv(
 								glyph->dwidth, 72000L,
-								(FT2_1_3_Long)( font->point_size *
+								(FT_Long)( font->point_size *
 										   font->resolution_x ) );
 		}
 
@@ -1665,7 +1665,7 @@ _bdf_parse_glyphs( char*          line,
 			/* Determine the point size of the glyph. */
 			unsigned short  sw = (unsigned short)FT2_1_3_MulDiv(
 									 glyph->dwidth, 72000L,
-									 (FT2_1_3_Long)( font->point_size *
+									 (FT_Long)( font->point_size *
 												font->resolution_x ) );
 
 
@@ -1717,7 +1717,7 @@ Exit:
 
 
 /* Load the font properties. */
-static FT2_1_3_Error
+static FT_Error
 _bdf_parse_properties( char*          line,
 					   unsigned long  linelen,
 					   unsigned long  lineno,
@@ -1730,7 +1730,7 @@ _bdf_parse_properties( char*          line,
 	char*              value;
 	char               nbuf[128];
 	FT2_1_3_Memory          memory;
-	FT2_1_3_Error           error = FT2_1_3_Err_Ok;
+	FT_Error           error = FT2_1_3_Err_Ok;
 
 	FT2_1_3_UNUSED( lineno );
 
@@ -1814,7 +1814,7 @@ Exit:
 
 
 /* Load the font header. */
-static FT2_1_3_Error
+static FT_Error
 _bdf_parse_start( char*          line,
 				  unsigned long  linelen,
 				  unsigned long  lineno,
@@ -1827,7 +1827,7 @@ _bdf_parse_start( char*          line,
 	char               *s;
 
 	FT2_1_3_Memory          memory = NULL;
-	FT2_1_3_Error           error  = FT2_1_3_Err_Ok;
+	FT_Error           error  = FT2_1_3_Err_Ok;
 
 	FT2_1_3_UNUSED( lineno );            /* only used in debug mode */
 
@@ -2037,7 +2037,7 @@ Exit:
 /*************************************************************************/
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 bdf_load_font( FT2_1_3_Stream       stream,
 			   FT2_1_3_Memory       extmemory,
 			   bdf_options_t*  opts,
@@ -2046,7 +2046,7 @@ bdf_load_font( FT2_1_3_Stream       stream,
 	_bdf_parse_t   *p;
 
 	FT2_1_3_Memory      memory = extmemory;
-	FT2_1_3_Error       error  = FT2_1_3_Err_Ok;
+	FT_Error       error  = FT2_1_3_Err_Ok;
 
 
 	if ( FT2_1_3_ALLOC( p, sizeof ( _bdf_parse_t ) ) )

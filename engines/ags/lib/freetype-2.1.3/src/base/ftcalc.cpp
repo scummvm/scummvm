@@ -45,15 +45,15 @@ namespace FreeType213 {
 
 #ifdef FT2_1_3_LONG64
 
-typedef FT2_1_3_INT64  FT2_1_3_Int64;
+typedef FT2_1_3_INT64  FT_Int64;
 
 #else
 
-typedef struct  FT2_1_3_Int64_ {
-	FT2_1_3_UInt32  lo;
-	FT2_1_3_UInt32  hi;
+typedef struct  FT_Int64_ {
+	FT_UInt32  lo;
+	FT_UInt32  hi;
 
-} FT2_1_3_Int64;
+} FT_Int64;
 
 #endif /* FT2_1_3_LONG64 */
 
@@ -73,8 +73,8 @@ typedef struct  FT2_1_3_Int64_ {
 
 /* documentation is in freetype.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Fixed )
-FT2_1_3_RoundFix( FT2_1_3_Fixed  a ) {
+FT2_1_3_EXPORT_DEF( FT_Fixed )
+FT2_1_3_RoundFix( FT_Fixed  a ) {
 	return ( a >= 0 ) ?   ( a + 0x8000L ) & -0x10000L
 		   : -((-a + 0x8000L ) & -0x10000L );
 }
@@ -82,8 +82,8 @@ FT2_1_3_RoundFix( FT2_1_3_Fixed  a ) {
 
 /* documentation is in freetype.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Fixed )
-FT2_1_3_CeilFix( FT2_1_3_Fixed  a ) {
+FT2_1_3_EXPORT_DEF( FT_Fixed )
+FT2_1_3_CeilFix( FT_Fixed  a ) {
 	return ( a >= 0 ) ?   ( a + 0xFFFFL ) & -0x10000L
 		   : -((-a + 0xFFFFL ) & -0x10000L );
 }
@@ -91,8 +91,8 @@ FT2_1_3_CeilFix( FT2_1_3_Fixed  a ) {
 
 /* documentation is in freetype.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Fixed )
-FT2_1_3_FloorFix( FT2_1_3_Fixed  a ) {
+FT2_1_3_EXPORT_DEF( FT_Fixed )
+FT2_1_3_FloorFix( FT_Fixed  a ) {
 	return ( a >= 0 ) ?   a & -0x10000L
 		   : -((-a) & -0x10000L );
 }
@@ -100,14 +100,14 @@ FT2_1_3_FloorFix( FT2_1_3_Fixed  a ) {
 
 /* documentation is in ftcalc.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Int32 )
-FT2_1_3_Sqrt32( FT2_1_3_Int32  x ) {
-	FT2_1_3_ULong  val, root, newroot, mask;
+FT2_1_3_EXPORT_DEF( FT_Int32 )
+FT2_1_3_Sqrt32( FT_Int32  x ) {
+	FT_ULong  val, root, newroot, mask;
 
 
 	root = 0;
 	mask = 0x40000000L;
-	val  = (FT2_1_3_ULong)x;
+	val  = (FT_ULong)x;
 
 	do {
 		newroot = root + mask;
@@ -130,12 +130,12 @@ FT2_1_3_Sqrt32( FT2_1_3_Int32  x ) {
 
 /* documentation is in freetype.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Long )
-FT2_1_3_MulDiv( FT2_1_3_Long  a,
-		   FT2_1_3_Long  b,
-		   FT2_1_3_Long  c ) {
-	FT2_1_3_Int   s;
-	FT2_1_3_Long  d;
+FT2_1_3_EXPORT_DEF( FT_Long )
+FT2_1_3_MulDiv( FT_Long  a,
+		   FT_Long  b,
+		   FT_Long  c ) {
+	FT_Int   s;
+	FT_Long  d;
 
 
 	s = 1;
@@ -152,7 +152,7 @@ FT2_1_3_MulDiv( FT2_1_3_Long  a,
 		s = -s;
 	}
 
-	d = (FT2_1_3_Long)( c > 0 ? ( (FT2_1_3_Int64)a * b + ( c >> 1 ) ) / c
+	d = (FT_Long)( c > 0 ? ( (FT_Int64)a * b + ( c >> 1 ) ) / c
 				   : 0x7FFFFFFFL );
 
 	return ( s > 0 ) ? d : -d;
@@ -161,11 +161,11 @@ FT2_1_3_MulDiv( FT2_1_3_Long  a,
 
 /* documentation is in freetype.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Long )
-FT2_1_3_MulFix( FT2_1_3_Long  a,
-		   FT2_1_3_Long  b ) {
-	FT2_1_3_Int   s = 1;
-	FT2_1_3_Long  c;
+FT2_1_3_EXPORT_DEF( FT_Long )
+FT2_1_3_MulFix( FT_Long  a,
+		   FT_Long  b ) {
+	FT_Int   s = 1;
+	FT_Long  c;
 
 
 	if ( a < 0 ) {
@@ -177,18 +177,18 @@ FT2_1_3_MulFix( FT2_1_3_Long  a,
 		s = -s;
 	}
 
-	c = (FT2_1_3_Long)( ( (FT2_1_3_Int64)a * b + 0x8000 ) >> 16 );
+	c = (FT_Long)( ( (FT_Int64)a * b + 0x8000 ) >> 16 );
 	return ( s > 0 ) ? c : -c ;
 }
 
 
 /* documentation is in freetype.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Long )
-FT2_1_3_DivFix( FT2_1_3_Long  a,
-		   FT2_1_3_Long  b ) {
-	FT2_1_3_Int32   s;
-	FT2_1_3_UInt32  q;
+FT2_1_3_EXPORT_DEF( FT_Long )
+FT2_1_3_DivFix( FT_Long  a,
+		   FT_Long  b ) {
+	FT_Int32   s;
+	FT_UInt32  q;
 
 	s = 1;
 	if ( a < 0 ) {
@@ -205,9 +205,9 @@ FT2_1_3_DivFix( FT2_1_3_Long  a,
 		q = 0x7FFFFFFFL;
 	else
 		/* compute result directly */
-		q = (FT2_1_3_UInt32)( ( ( (FT2_1_3_Int64)a << 16 ) + ( b >> 1 ) ) / b );
+		q = (FT_UInt32)( ( ( (FT_Int64)a << 16 ) + ( b >> 1 ) ) / b );
 
-	return ( s < 0 ? -(FT2_1_3_Long)q : (FT2_1_3_Long)q );
+	return ( s < 0 ? -(FT_Long)q : (FT_Long)q );
 }
 
 
@@ -215,10 +215,10 @@ FT2_1_3_DivFix( FT2_1_3_Long  a,
 
 
 static void
-ft_multo64( FT2_1_3_UInt32  x,
-			FT2_1_3_UInt32  y,
-			FT2_1_3_Int64  *z ) {
-	FT2_1_3_UInt32  lo1, hi1, lo2, hi2, lo, hi, i1, i2;
+ft_multo64( FT_UInt32  x,
+			FT_UInt32  y,
+			FT_Int64  *z ) {
+	FT_UInt32  lo1, hi1, lo2, hi2, lo, hi, i1, i2;
 
 
 	lo1 = x & 0x0000FFFFU;
@@ -233,7 +233,7 @@ ft_multo64( FT2_1_3_UInt32  x,
 
 	/* Check carry overflow of i1 + i2 */
 	i1 += i2;
-	hi += (FT2_1_3_UInt32)( i1 < i2 ) << 16;
+	hi += (FT_UInt32)( i1 < i2 ) << 16;
 
 	hi += i1 >> 16;
 	i1  = i1 << 16;
@@ -247,19 +247,19 @@ ft_multo64( FT2_1_3_UInt32  x,
 }
 
 
-static FT2_1_3_UInt32
-ft_div64by32( FT2_1_3_UInt32  hi,
-			  FT2_1_3_UInt32  lo,
-			  FT2_1_3_UInt32  y ) {
-	FT2_1_3_UInt32  r, q;
-	FT2_1_3_Int     i;
+static FT_UInt32
+ft_div64by32( FT_UInt32  hi,
+			  FT_UInt32  lo,
+			  FT_UInt32  y ) {
+	FT_UInt32  r, q;
+	FT_Int     i;
 
 
 	q = 0;
 	r = hi;
 
 	if ( r >= y )
-		return (FT2_1_3_UInt32)0x7FFFFFFFL;
+		return (FT_UInt32)0x7FFFFFFFL;
 
 	i = 32;
 	do {
@@ -267,7 +267,7 @@ ft_div64by32( FT2_1_3_UInt32  hi,
 		q <<= 1;
 		r  |= lo >> 31;
 
-		if ( r >= (FT2_1_3_UInt32)y ) {
+		if ( r >= (FT_UInt32)y ) {
 			r -= y;
 			q |= 1;
 		}
@@ -281,10 +281,10 @@ ft_div64by32( FT2_1_3_UInt32  hi,
 /* documentation is in ftcalc.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_Add64( FT2_1_3_Int64*  x,
-		  FT2_1_3_Int64*  y,
-		  FT2_1_3_Int64  *z ) {
-	register FT2_1_3_UInt32  lo, hi, max;
+FT2_1_3_Add64( FT_Int64*  x,
+		  FT_Int64*  y,
+		  FT_Int64  *z ) {
+	register FT_UInt32  lo, hi, max;
 
 
 	max = x->lo > y->lo ? x->lo : y->lo;
@@ -298,10 +298,10 @@ FT2_1_3_Add64( FT2_1_3_Int64*  x,
 
 /* documentation is in freetype.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Long )
-FT2_1_3_MulDiv( FT2_1_3_Long  a,
-		   FT2_1_3_Long  b,
-		   FT2_1_3_Long  c ) {
+FT2_1_3_EXPORT_DEF( FT_Long )
+FT2_1_3_MulDiv( FT_Long  a,
+		   FT_Long  b,
+		   FT_Long  c ) {
 	long  s;
 
 
@@ -318,13 +318,13 @@ FT2_1_3_MulDiv( FT2_1_3_Long  a,
 	if ( a <= 46340L && b <= 46340L && c <= 176095L && c > 0 ) {
 		a = ( a * b + ( c >> 1 ) ) / c;
 	} else if ( c > 0 ) {
-		FT2_1_3_Int64  temp, temp2;
+		FT_Int64  temp, temp2;
 
 
 		ft_multo64( a, b, &temp );
 
 		temp2.hi = 0;
-		temp2.lo = (FT2_1_3_UInt32)(c >> 1);
+		temp2.lo = (FT_UInt32)(c >> 1);
 		FT2_1_3_Add64( &temp, &temp2, &temp );
 		a = ft_div64by32( temp.hi, temp.lo, c );
 	} else
@@ -336,11 +336,11 @@ FT2_1_3_MulDiv( FT2_1_3_Long  a,
 
 /* documentation is in freetype.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Long )
-FT2_1_3_MulFix( FT2_1_3_Long  a,
-		   FT2_1_3_Long  b ) {
-	FT2_1_3_Long   s;
-	FT2_1_3_ULong  ua, ub;
+FT2_1_3_EXPORT_DEF( FT_Long )
+FT2_1_3_MulFix( FT_Long  a,
+		   FT_Long  b ) {
+	FT_Long   s;
+	FT_ULong  ua, ub;
 
 
 	if ( a == 0 || b == 0x10000L )
@@ -351,30 +351,30 @@ FT2_1_3_MulFix( FT2_1_3_Long  a,
 	s ^= b;
 	b = ABS(b);
 
-	ua = (FT2_1_3_ULong)a;
-	ub = (FT2_1_3_ULong)b;
+	ua = (FT_ULong)a;
+	ub = (FT_ULong)b;
 
 	if ( ua <= 2048 && ub <= 1048576L ) {
 		ua = ( ua * ub + 0x8000 ) >> 16;
 	} else {
-		FT2_1_3_ULong  al = ua & 0xFFFF;
+		FT_ULong  al = ua & 0xFFFF;
 
 
 		ua = ( ua >> 16 ) * ub +  al * ( ub >> 16 ) +
 			 ( ( al * ( ub & 0xFFFF ) + 0x8000 ) >> 16 );
 	}
 
-	return ( s < 0 ? -(FT2_1_3_Long)ua : (FT2_1_3_Long)ua );
+	return ( s < 0 ? -(FT_Long)ua : (FT_Long)ua );
 }
 
 
 /* documentation is in freetype.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Long )
-FT2_1_3_DivFix( FT2_1_3_Long  a,
-		   FT2_1_3_Long  b ) {
-	FT2_1_3_Int32   s;
-	FT2_1_3_UInt32  q;
+FT2_1_3_EXPORT_DEF( FT_Long )
+FT2_1_3_DivFix( FT_Long  a,
+		   FT_Long  b ) {
+	FT_Int32   s;
+	FT_UInt32  q;
 
 
 	s  = a;
@@ -387,30 +387,30 @@ FT2_1_3_DivFix( FT2_1_3_Long  a,
 		q = 0x7FFFFFFFL;
 	} else if ( ( a >> 16 ) == 0 ) {
 		/* compute result directly */
-		q = (FT2_1_3_UInt32)( (a << 16) + (b >> 1) ) / (FT2_1_3_UInt32)b;
+		q = (FT_UInt32)( (a << 16) + (b >> 1) ) / (FT_UInt32)b;
 	} else {
 		/* we need more bits; we have to do it by hand */
-		FT2_1_3_Int64  temp, temp2;
+		FT_Int64  temp, temp2;
 
-		temp.hi  = (FT2_1_3_Int32) (a >> 16);
-		temp.lo  = (FT2_1_3_UInt32)(a << 16);
+		temp.hi  = (FT_Int32) (a >> 16);
+		temp.lo  = (FT_UInt32)(a << 16);
 		temp2.hi = 0;
-		temp2.lo = (FT2_1_3_UInt32)( b >> 1 );
+		temp2.lo = (FT_UInt32)( b >> 1 );
 		FT2_1_3_Add64( &temp, &temp2, &temp );
 		q = ft_div64by32( temp.hi, temp.lo, b );
 	}
 
-	return ( s < 0 ? -(FT2_1_3_Int32)q : (FT2_1_3_Int32)q );
+	return ( s < 0 ? -(FT_Int32)q : (FT_Int32)q );
 }
 
 
 /* documentation is in ftcalc.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_MulTo64( FT2_1_3_Int32   x,
-			FT2_1_3_Int32   y,
-			FT2_1_3_Int64  *z ) {
-	FT2_1_3_Int32  s;
+FT2_1_3_MulTo64( FT_Int32   x,
+			FT_Int32   y,
+			FT_Int64  *z ) {
+	FT_Int32  s;
 
 
 	s  = x;
@@ -421,7 +421,7 @@ FT2_1_3_MulTo64( FT2_1_3_Int32   x,
 	ft_multo64( x, y, z );
 
 	if ( s < 0 ) {
-		z->lo = (FT2_1_3_UInt32)-(FT2_1_3_Int32)z->lo;
+		z->lo = (FT_UInt32)-(FT_Int32)z->lo;
 		z->hi = ~z->hi + !( z->lo );
 	}
 }
@@ -434,16 +434,16 @@ FT2_1_3_MulTo64( FT2_1_3_Int32   x,
 
 #if 1
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Int32 )
-FT2_1_3_Div64by32( FT2_1_3_Int64*  x,
-			  FT2_1_3_Int32   y ) {
-	FT2_1_3_Int32   s;
-	FT2_1_3_UInt32  q, r, i, lo;
+FT2_1_3_EXPORT_DEF( FT_Int32 )
+FT2_1_3_Div64by32( FT_Int64*  x,
+			  FT_Int32   y ) {
+	FT_Int32   s;
+	FT_UInt32  q, r, i, lo;
 
 
 	s  = x->hi;
 	if ( s < 0 ) {
-		x->lo = (FT2_1_3_UInt32)-(FT2_1_3_Int32)x->lo;
+		x->lo = (FT_UInt32)-(FT_Int32)x->lo;
 		x->hi = ~x->hi + !x->lo;
 	}
 	s ^= y;
@@ -456,13 +456,13 @@ FT2_1_3_Div64by32( FT2_1_3_Int64*  x,
 		else
 			q = 0x7FFFFFFFL;
 
-		return ( s < 0 ? -(FT2_1_3_Int32)q : (FT2_1_3_Int32)q );
+		return ( s < 0 ? -(FT_Int32)q : (FT_Int32)q );
 	}
 
 	r  = x->hi;
 	lo = x->lo;
 
-	if ( r >= (FT2_1_3_UInt32)y ) /* we know y is to be treated as unsigned here */
+	if ( r >= (FT_UInt32)y ) /* we know y is to be treated as unsigned here */
 		return ( s < 0 ? 0x80000001UL : 0x7FFFFFFFUL );
 	/* Return Max/Min Int32 if division overflow. */
 	/* This includes division by zero! */
@@ -472,28 +472,28 @@ FT2_1_3_Div64by32( FT2_1_3_Int64*  x,
 		q <<= 1;
 		r  |= lo >> 31;
 
-		if ( r >= (FT2_1_3_UInt32)y ) {
+		if ( r >= (FT_UInt32)y ) {
 			r -= y;
 			q |= 1;
 		}
 		lo <<= 1;
 	}
 
-	return ( s < 0 ? -(FT2_1_3_Int32)q : (FT2_1_3_Int32)q );
+	return ( s < 0 ? -(FT_Int32)q : (FT_Int32)q );
 }
 
 #else /* 0 */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Int32 )
-FT2_1_3_Div64by32( FT2_1_3_Int64*  x,
-			  FT2_1_3_Int32   y ) {
-	FT2_1_3_Int32   s;
-	FT2_1_3_UInt32  q;
+FT2_1_3_EXPORT_DEF( FT_Int32 )
+FT2_1_3_Div64by32( FT_Int64*  x,
+			  FT_Int32   y ) {
+	FT_Int32   s;
+	FT_UInt32  q;
 
 
 	s  = x->hi;
 	if ( s < 0 ) {
-		x->lo = (FT2_1_3_UInt32)-(FT2_1_3_Int32)x->lo;
+		x->lo = (FT_UInt32)-(FT_Int32)x->lo;
 		x->hi = ~x->hi + !x->lo;
 	}
 	s ^= y;
@@ -506,12 +506,12 @@ FT2_1_3_Div64by32( FT2_1_3_Int64*  x,
 		else
 			q = 0x7FFFFFFFL;
 
-		return ( s < 0 ? -(FT2_1_3_Int32)q : (FT2_1_3_Int32)q );
+		return ( s < 0 ? -(FT_Int32)q : (FT_Int32)q );
 	}
 
 	q = ft_div64by32( x->hi, x->lo, y );
 
-	return ( s < 0 ? -(FT2_1_3_Int32)q : (FT2_1_3_Int32)q );
+	return ( s < 0 ? -(FT_Int32)q : (FT_Int32)q );
 }
 
 #endif /* 0 */
@@ -522,10 +522,10 @@ FT2_1_3_Div64by32( FT2_1_3_Int64*  x,
 
 /* a not-so-fast but working 16.16 fixed point square root function */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Int32 )
-FT2_1_3_SqrtFixed( FT2_1_3_Int32  x ) {
-	FT2_1_3_UInt32  root, rem_hi, rem_lo, test_div;
-	FT2_1_3_Int     count;
+FT2_1_3_EXPORT_DEF( FT_Int32 )
+FT2_1_3_SqrtFixed( FT_Int32  x ) {
+	FT_UInt32  root, rem_hi, rem_lo, test_div;
+	FT_Int     count;
 
 
 	root = 0;
@@ -547,7 +547,7 @@ FT2_1_3_SqrtFixed( FT2_1_3_Int32  x ) {
 		} while ( --count );
 	}
 
-	return (FT2_1_3_Int32)root;
+	return (FT_Int32)root;
 }
 
 } // End of namespace FreeType213

@@ -85,13 +85,13 @@ ftc_image_node_done( FTC_ImageNode  inode,
 
 
 /* initialize a new glyph image node */
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 ftc_image_node_init( FTC_ImageNode   inode,
 					 FTC_GlyphQuery  gquery,
 					 FTC_Cache       cache ) {
 	FTC_ImageFamily  ifam = FTC_IMAGE_FAMILY( gquery->query.family );
-	FT2_1_3_Error         error;
-	FT2_1_3_Face          face;
+	FT_Error         error;
+	FT_Face          face;
 	FT2_1_3_Size          size;
 
 
@@ -105,7 +105,7 @@ ftc_image_node_init( FTC_ImageNode   inode,
 									 &ifam->type.font,
 									 &face, &size );
 	if ( !error ) {
-		FT2_1_3_UInt  gindex = FTC_GLYPH_NODE_GINDEX( inode );
+		FT_UInt  gindex = FTC_GLYPH_NODE_GINDEX( inode );
 
 
 		error = FT2_1_3_Load_Glyph( face, gindex, ifam->type.flags );
@@ -134,18 +134,18 @@ Exit:
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_ULong )
+FT2_1_3_CALLBACK_DEF( FT_ULong )
 ftc_image_node_weight( FTC_ImageNode  inode ) {
-	FT2_1_3_ULong  size  = 0;
+	FT_ULong  size  = 0;
 	FT2_1_3_Glyph  glyph = inode->glyph;
 
 
 	switch ( glyph->format ) {
 	case FT2_1_3_GLYPH_FORMAT_BITMAP: {
-		FT2_1_3_BitmapGlyph  bitg;
+		FT_BitmapGlyph  bitg;
 
 
-		bitg = (FT2_1_3_BitmapGlyph)glyph;
+		bitg = (FT_BitmapGlyph)glyph;
 		size = bitg->bitmap.rows * labs( bitg->bitmap.pitch ) +
 			   sizeof ( *bitg );
 	}
@@ -157,8 +157,8 @@ ftc_image_node_weight( FTC_ImageNode  inode ) {
 
 		outg = (FT2_1_3_OutlineGlyph)glyph;
 		size = outg->outline.n_points *
-			   ( sizeof ( FT2_1_3_Vector ) + sizeof ( FT2_1_3_Byte ) ) +
-			   outg->outline.n_contours * sizeof ( FT2_1_3_Short ) +
+			   ( sizeof ( FT_Vector ) + sizeof ( FT_Byte ) ) +
+			   outg->outline.n_contours * sizeof ( FT_Short ) +
 			   sizeof ( *outg );
 	}
 	break;
@@ -181,13 +181,13 @@ ftc_image_node_weight( FTC_ImageNode  inode ) {
 /*************************************************************************/
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 ftc_image_family_init( FTC_ImageFamily  ifam,
 					   FTC_ImageQuery   iquery,
 					   FTC_Cache        cache ) {
 	FTC_Manager  manager = cache->manager;
-	FT2_1_3_Error     error;
-	FT2_1_3_Face      face;
+	FT_Error     error;
+	FT_Face      face;
 
 
 	ifam->type = iquery->type;
@@ -209,10 +209,10 @@ ftc_image_family_init( FTC_ImageFamily  ifam,
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Bool )
+FT2_1_3_CALLBACK_DEF( FT_Bool )
 ftc_image_family_compare( FTC_ImageFamily  ifam,
 						  FTC_ImageQuery   iquery ) {
-	FT2_1_3_Bool  result;
+	FT_Bool  result;
 
 
 	result = FT2_1_3_BOOL( FTC_IMAGE_TYPE_COMPARE( &ifam->type, &iquery->type ) );
@@ -255,7 +255,7 @@ const FTC_Cache_ClassRec  ftc_image_cache_class = {
 
 /* documentation is in ftcimage.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FTC_ImageCache_New( FTC_Manager      manager,
 					FTC_ImageCache  *acache ) {
 	return FTC_Manager_Register_Cache(
@@ -267,15 +267,15 @@ FTC_ImageCache_New( FTC_Manager      manager,
 
 /* documentation is in ftcimage.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FTC_ImageCache_Lookup( FTC_ImageCache  cache,
 					   FTC_ImageType   type,
-					   FT2_1_3_UInt         gindex,
+					   FT_UInt         gindex,
 					   FT2_1_3_Glyph       *aglyph,
 					   FTC_Node       *anode ) {
 	FTC_ImageQueryRec  iquery;
 	FTC_ImageNode      node;
-	FT2_1_3_Error           error;
+	FT_Error           error;
 
 
 	/* some argument checks are delayed to ftc_cache_lookup */
@@ -306,17 +306,17 @@ FTC_ImageCache_Lookup( FTC_ImageCache  cache,
 
 /* backwards-compatibility functions */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FTC_Image_Cache_New( FTC_Manager       manager,
 					 FTC_Image_Cache  *acache ) {
 	return FTC_ImageCache_New( manager, (FTC_ImageCache*)acache );
 }
 
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FTC_Image_Cache_Lookup( FTC_Image_Cache  icache,
 						FTC_Image_Desc*  desc,
-						FT2_1_3_UInt          gindex,
+						FT_UInt          gindex,
 						FT2_1_3_Glyph        *aglyph ) {
 	FTC_ImageTypeRec  type0;
 
@@ -328,8 +328,8 @@ FTC_Image_Cache_Lookup( FTC_Image_Cache  icache,
 
 	/* convert image type flags to load flags */
 	{
-		FT2_1_3_UInt  load_flags = FT2_1_3_LOAD_DEFAULT;
-		FT2_1_3_UInt  type       = desc->image_type;
+		FT_UInt  load_flags = FT2_1_3_LOAD_DEFAULT;
+		FT_UInt  type       = desc->image_type;
 
 
 		/* determine load flags, depending on the font description's */

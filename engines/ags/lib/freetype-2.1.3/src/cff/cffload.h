@@ -29,43 +29,43 @@ namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
-FT2_1_3_LOCAL( FT2_1_3_UShort )
-cff_get_standard_encoding( FT2_1_3_UInt  charcode );
+FT2_1_3_LOCAL( FT_UShort )
+cff_get_standard_encoding( FT_UInt  charcode );
 
 
-FT2_1_3_LOCAL( FT2_1_3_String* )
+FT2_1_3_LOCAL( FT_String* )
 cff_index_get_name( CFF_Index  idx,
-					FT2_1_3_UInt    element );
+					FT_UInt    element );
 
-FT2_1_3_LOCAL( FT2_1_3_String* )
+FT2_1_3_LOCAL( FT_String* )
 cff_index_get_sid_string( CFF_Index        idx,
-						  FT2_1_3_UInt          sid,
+						  FT_UInt          sid,
 						  PSNames_Service  psnames_interface );
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 cff_index_access_element( CFF_Index  idx,
-						  FT2_1_3_UInt    element,
-						  FT2_1_3_Byte**  pbytes,
-						  FT2_1_3_ULong*  pbyte_len );
+						  FT_UInt    element,
+						  FT_Byte**  pbytes,
+						  FT_ULong*  pbyte_len );
 
 FT2_1_3_LOCAL( void )
 cff_index_forget_element( CFF_Index  idx,
-						  FT2_1_3_Byte**  pbytes );
+						  FT_Byte**  pbytes );
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 cff_font_load( FT2_1_3_Stream  stream,
-			   FT2_1_3_Int     face_index,
+			   FT_Int     face_index,
 			   CFF_Font   font );
 
 FT2_1_3_LOCAL( void )
 cff_font_done( CFF_Font  font );
 
 
-FT2_1_3_LOCAL( FT2_1_3_Byte )
+FT2_1_3_LOCAL( FT_Byte )
 cff_fd_select_get( CFF_FDSelect  select,
-				   FT2_1_3_UInt       glyph_index );
+				   FT_UInt       glyph_index );
 
 
 FT2_1_3_END_HEADER

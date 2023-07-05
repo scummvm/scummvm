@@ -31,10 +31,10 @@ namespace FreeType213 {
 FT2_1_3_BEGIN_HEADER
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 tt_face_get_ps_name( TT_Face      face,
-					 FT2_1_3_UInt      idx,
-					 FT2_1_3_String**  PSname );
+					 FT_UInt      idx,
+					 FT_String**  PSname );
 
 FT2_1_3_LOCAL( void )
 tt_face_free_ps_names( TT_Face  face );

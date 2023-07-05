@@ -129,8 +129,8 @@ ft_debug_init( void ) {
 				p++;
 
 			if ( *p == ':' && p > q ) {
-				FT2_1_3_Int  n, i, len = (FT2_1_3_Int)(p - q);
-				FT2_1_3_Int  level = -1, found = -1;
+				FT_Int  n, i, len = (FT_Int)(p - q);
+				FT_Int  level = -1, found = -1;
 
 
 				for ( n = 0; n < trace_count; n++ ) {

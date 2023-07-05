@@ -28,8 +28,8 @@ namespace FreeType213 {
 
 #ifdef  DEBUG_HINTER
 AH_Hinter  ah_debug_hinter       = NULL;
-FT2_1_3_Bool    ah_debug_disable_horz = 0;
-FT2_1_3_Bool    ah_debug_disable_vert = 0;
+FT_Bool    ah_debug_disable_horz = 0;
+FT_Bool    ah_debug_disable_vert = 0;
 #endif
 
 typedef struct  FT2_1_3_AutoHinterRec_ {
@@ -39,9 +39,9 @@ typedef struct  FT2_1_3_AutoHinterRec_ {
 } FT2_1_3_AutoHinterRec;
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 ft_autohinter_init( FT2_1_3_AutoHinter  module ) {
-	FT2_1_3_Error  error;
+	FT_Error  error;
 
 
 	error = ah_hinter_new( module->root.library, &module->hinter );
@@ -63,12 +63,12 @@ ft_autohinter_done( FT2_1_3_AutoHinter  module ) {
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 ft_autohinter_load_glyph( FT2_1_3_AutoHinter  module,
 						  FT2_1_3_GlyphSlot   slot,
 						  FT2_1_3_Size        size,
-						  FT2_1_3_UInt        glyph_index,
-						  FT2_1_3_Int32       load_flags ) {
+						  FT_UInt        glyph_index,
+						  FT_Int32       load_flags ) {
 	return ah_hinter_load_glyph( module->hinter,
 								 slot, size, glyph_index, load_flags );
 }
@@ -76,7 +76,7 @@ ft_autohinter_load_glyph( FT2_1_3_AutoHinter  module,
 
 FT2_1_3_CALLBACK_DEF( void )
 ft_autohinter_reset_globals( FT2_1_3_AutoHinter  module,
-							 FT2_1_3_Face        face ) {
+							 FT_Face        face ) {
 	FT2_1_3_UNUSED( module );
 
 	if ( face->autohint.data )
@@ -86,7 +86,7 @@ ft_autohinter_reset_globals( FT2_1_3_AutoHinter  module,
 
 FT2_1_3_CALLBACK_DEF( void )
 ft_autohinter_get_globals( FT2_1_3_AutoHinter  module,
-						   FT2_1_3_Face        face,
+						   FT_Face        face,
 						   void**         global_hints,
 						   long*          global_len ) {
 	ah_hinter_get_global_hints( module->hinter, face,

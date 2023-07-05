@@ -38,9 +38,9 @@ namespace FreeType213 {
 /* we do deal with glyph variants by detecting a non-initial dot in    */
 /* the name, as in `A.swash' or `e.final', etc.                        */
 /*                                                                     */
-static FT2_1_3_UInt32
+static FT_UInt32
 ps_unicode_value( const char*  glyph_name ) {
-	FT2_1_3_Int  n;
+	FT_Int  n;
 	char    first = glyph_name[0];
 	char    temp[64];
 
@@ -56,8 +56,8 @@ ps_unicode_value( const char*  glyph_name ) {
 		/* XXX: Add code to deal with ligatures, i.e. glyph names like */
 		/*      `uniXXXXYYYYZZZZ'...                                   */
 
-		FT2_1_3_Int       count;
-		FT2_1_3_ULong     value = 0;
+		FT_Int       count;
+		FT_ULong     value = 0;
 		const char*  p     = glyph_name + 3;
 
 
@@ -132,12 +132,12 @@ compare_uni_maps( const void*  a,
 
 
 /* Builds a table that maps Unicode values to glyph indices */
-static FT2_1_3_Error
+static FT_Error
 ps_build_unicode_table( FT2_1_3_Memory     memory,
-						FT2_1_3_UInt       num_glyphs,
+						FT_UInt       num_glyphs,
 						const char**  glyph_names,
 						PS_Unicodes*  table ) {
-	FT2_1_3_Error  error;
+	FT_Error  error;
 
 
 	/* we first allocate the table */
@@ -145,10 +145,10 @@ ps_build_unicode_table( FT2_1_3_Memory     memory,
 	table->maps     = 0;
 
 	if ( !FT2_1_3_NEW_ARRAY( table->maps, num_glyphs ) ) {
-		FT2_1_3_UInt     n;
-		FT2_1_3_UInt     count;
+		FT_UInt     n;
+		FT_UInt     count;
 		PS_UniMap*  map;
-		FT2_1_3_UInt32   uni_char;
+		FT_UInt32   uni_char;
 
 
 		map = table->maps;
@@ -169,7 +169,7 @@ ps_build_unicode_table( FT2_1_3_Memory     memory,
 		}
 
 		/* now, compress the table a bit */
-		count = (FT2_1_3_UInt)( map - table->maps );
+		count = (FT_UInt)( map - table->maps );
 
 		if ( count > 0 && FT2_1_3_REALLOC( table->maps,
 									  num_glyphs * sizeof ( PS_UniMap ),
@@ -191,9 +191,9 @@ ps_build_unicode_table( FT2_1_3_Memory     memory,
 }
 
 
-static FT2_1_3_UInt
+static FT_UInt
 ps_lookup_unicode( PS_Unicodes*  table,
-				   FT2_1_3_ULong      unicode ) {
+				   FT_ULong      unicode ) {
 	PS_UniMap  *min, *max, *mid;
 
 
@@ -220,9 +220,9 @@ ps_lookup_unicode( PS_Unicodes*  table,
 }
 
 
-static FT2_1_3_ULong
+static FT_ULong
 ps_next_unicode( PS_Unicodes*  table,
-				 FT2_1_3_ULong      unicode ) {
+				 FT_ULong      unicode ) {
 	PS_UniMap  *min, *max, *mid;
 
 
@@ -263,7 +263,7 @@ ps_next_unicode( PS_Unicodes*  table,
 
 
 static const char*
-ps_get_macintosh_name( FT2_1_3_UInt  name_index ) {
+ps_get_macintosh_name( FT_UInt  name_index ) {
 	if ( name_index >= 258 )
 		name_index = 0;
 
@@ -272,7 +272,7 @@ ps_get_macintosh_name( FT2_1_3_UInt  name_index ) {
 
 
 static const char*
-ps_get_standard_strings( FT2_1_3_UInt  sid ) {
+ps_get_standard_strings( FT_UInt  sid ) {
 	return ( sid < NUM_SID_GLYPHS ? sid_standard_names[sid] : 0 );
 }
 

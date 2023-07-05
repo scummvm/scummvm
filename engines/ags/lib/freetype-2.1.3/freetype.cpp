@@ -34,28 +34,28 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_Error Init_FreeType(FT2_1_3_Library *alibrary) {
+FT_Error Init_FreeType(FT2_1_3_Library *alibrary) {
 	return FT2_1_3_Init_FreeType(alibrary);
 }
 
-FT2_1_3_Error Done_FreeType(FT2_1_3_Library library) {
+FT_Error Done_FreeType(FT2_1_3_Library library) {
 	return FT2_1_3_Done_FreeType(library);
 }
 
-FT2_1_3_Error Load_Glyph(FT2_1_3_Face face, FT2_1_3_UInt glyph_index, FT2_1_3_Int32 load_flags) {
+FT_Error Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 load_flags) {
 	return FT2_1_3_Load_Glyph(face, glyph_index, load_flags);
 }
 
-FT2_1_3_Error Get_Glyph(FT2_1_3_GlyphSlot slot, FT2_1_3_Glyph *aglyph) {
+FT_Error Get_Glyph(FT2_1_3_GlyphSlot slot, FT2_1_3_Glyph *aglyph) {
 	return FT2_1_3_Get_Glyph(slot, aglyph);
 }
 
-FT2_1_3_Error Glyph_Copy(FT2_1_3_Glyph source, FT2_1_3_Glyph *target) {
+FT_Error Glyph_Copy(FT2_1_3_Glyph source, FT2_1_3_Glyph *target) {
 	return FT2_1_3_Glyph_Copy(source, target);
 }
 
-FT2_1_3_Error Glyph_To_Bitmap(FT2_1_3_Glyph *the_glyph, FT2_1_3_Render_Mode render_mode,
-		FT2_1_3_Vector *origin, FT2_1_3_Bool destroy) {
+FT_Error Glyph_To_Bitmap(FT2_1_3_Glyph *the_glyph, FT2_1_3_Render_Mode render_mode,
+		FT_Vector *origin, FT_Bool destroy) {
 	return FT2_1_3_Glyph_To_Bitmap(the_glyph, render_mode, origin, destroy);
 }
 
@@ -63,31 +63,31 @@ void Done_Glyph(FT2_1_3_Glyph glyph) {
 	return FT2_1_3_Done_Glyph(glyph);
 }
 
-FT2_1_3_Error Set_Pixel_Sizes(FT2_1_3_Face face, FT2_1_3_UInt pixel_width,
-		FT2_1_3_UInt pixel_height) {
+FT_Error Set_Pixel_Sizes(FT_Face face, FT_UInt pixel_width,
+		FT_UInt pixel_height) {
 	return FT2_1_3_Set_Pixel_Sizes(face, pixel_width, pixel_height);
 }
 
-FT2_1_3_Error New_Face(FT2_1_3_Library library, const char *pathname,
-		FT2_1_3_Long face_index, FT2_1_3_Face *aface) {
+FT_Error New_Face(FT2_1_3_Library library, const char *pathname,
+		FT_Long face_index, FT_Face *aface) {
 	return FT2_1_3_New_Face(library, pathname, face_index, aface);
 }
 
-FT2_1_3_Error New_Memory_Face(FT2_1_3_Library library, const FT2_1_3_Byte *file_base,
-		FT2_1_3_Long file_size, FT2_1_3_Long face_index, FT2_1_3_Face *aface) {
+FT_Error New_Memory_Face(FT2_1_3_Library library, const FT_Byte *file_base,
+		FT_Long file_size, FT_Long face_index, FT_Face *aface) {
 	return FT2_1_3_New_Memory_Face(library, file_base, file_size, face_index, aface);
 }
 
-FT2_1_3_Error Done_Face(FT2_1_3_Face face) {
+FT_Error Done_Face(FT_Face face) {
 	return FT2_1_3_Done_Face(face);
 }
 
-FT2_1_3_UInt Get_Char_Index(FT2_1_3_Face face, FT2_1_3_ULong charcode) {
+FT_UInt Get_Char_Index(FT_Face face, FT_ULong charcode) {
 	return FT2_1_3_Get_Char_Index(face, charcode);
 }
 
-FT2_1_3_Error Get_Kerning(FT2_1_3_Face face, FT2_1_3_UInt left_glyph,
-	FT2_1_3_UInt right_glyph, FT2_1_3_UInt kern_mode, FT2_1_3_Vector *akerning) {
+FT_Error Get_Kerning(FT_Face face, FT_UInt left_glyph,
+	FT_UInt right_glyph, FT_UInt kern_mode, FT_Vector *akerning) {
 	return FT2_1_3_Get_Kerning(face, left_glyph, right_glyph, kern_mode, akerning);
 }
 

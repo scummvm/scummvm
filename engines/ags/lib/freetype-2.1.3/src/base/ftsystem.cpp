@@ -212,7 +212,7 @@ ft_ansi_stream_io( FT2_1_3_Stream       stream,
 
 /* documentation is in ftobjs.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_Stream_Open( FT2_1_3_Stream    stream,
 				const char*  filepathname ) {
 	FILE*  file;
@@ -250,7 +250,7 @@ FT2_1_3_Stream_Open( FT2_1_3_Stream    stream,
 
 #ifdef FT2_1_3_DEBUG_MEMORY
 
-extern FT2_1_3_Int
+extern FT_Int
 ft_mem_debug_init( FT2_1_3_Memory  memory );
 
 extern void

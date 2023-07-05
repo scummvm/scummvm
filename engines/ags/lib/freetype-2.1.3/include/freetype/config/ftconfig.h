@@ -119,18 +119,18 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 /*   Used to guarantee the size of some specific integers.               */
 /*                                                                       */
-typedef signed short    FT2_1_3_Int16;
-typedef unsigned short  FT2_1_3_UInt16;
+typedef signed short    FT_Int16;
+typedef unsigned short  FT_UInt16;
 
 #if FT2_1_3_SIZEOF_INT == 4
 
-typedef signed int      FT2_1_3_Int32;
-typedef unsigned int    FT2_1_3_UInt32;
+typedef signed int      FT_Int32;
+typedef unsigned int    FT_UInt32;
 
 #elif FT2_1_3_SIZEOF_LONG == 4
 
-typedef signed long     FT2_1_3_Int32;
-typedef unsigned long   FT2_1_3_UInt32;
+typedef signed long     FT_Int32;
+typedef unsigned long   FT_UInt32;
 
 #else
 #error "no 32bit type found -- please check your configuration files"

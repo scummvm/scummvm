@@ -83,15 +83,15 @@ const FT2_1_3_Frame_Field  pcf_table_header[] = {
 };
 
 
-static FT2_1_3_Error
+static FT_Error
 pcf_read_TOC( FT2_1_3_Stream  stream,
 			  PCF_Face   face ) {
-	FT2_1_3_Error   error;
+	FT_Error   error;
 	PCF_Toc    toc = &face->toc;
 	PCF_Table  tables;
 
 	FT2_1_3_Memory  memory = FT2_1_3_FACE(face)->memory;
-	FT2_1_3_UInt    n;
+	FT_UInt    n;
 
 
 	if ( FT2_1_3_STREAM_SEEK ( 0 )                          ||
@@ -114,7 +114,7 @@ pcf_read_TOC( FT2_1_3_Stream  stream,
 #if defined( FT2_1_3_DEBUG_LEVEL_TRACE )
 
 	{
-		FT2_1_3_UInt      i, j;
+		FT_UInt      i, j;
 		const char*  name = "?";
 
 
@@ -122,7 +122,7 @@ pcf_read_TOC( FT2_1_3_Stream  stream,
 		tables = face->toc.tables;
 		for ( i = 0; i < toc->count; i++ ) {
 			for( j = 0; j < sizeof ( tableNames ) / sizeof ( tableNames[0] ); j++ )
-				if ( tables[i].type == (FT2_1_3_UInt)( 1 << j ) )
+				if ( tables[i].type == (FT_UInt)( 1 << j ) )
 					name = tableNames[j];
 
 			FT2_1_3_TRACE4(( "Table %d: type=%-6s format=0x%04lX "
@@ -191,11 +191,11 @@ const FT2_1_3_Frame_Field  pcf_compressed_metric_header[] = {
 };
 
 
-static FT2_1_3_Error
+static FT_Error
 pcf_get_metric( FT2_1_3_Stream   stream,
-				FT2_1_3_ULong    format,
+				FT_ULong    format,
 				PCF_Metric  metric ) {
-	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
+	FT_Error  error = FT2_1_3_Err_Ok;
 
 
 	if ( PCF_FORMAT_MATCH( format, PCF_DEFAULT_FORMAT ) ) {
@@ -217,11 +217,11 @@ pcf_get_metric( FT2_1_3_Stream   stream,
 		if ( FT2_1_3_STREAM_READ_FIELDS( pcf_compressed_metric_header, &compr ) )
 			goto Exit;
 
-		metric->leftSideBearing  = (FT2_1_3_Short)( compr.leftSideBearing  - 0x80 );
-		metric->rightSideBearing = (FT2_1_3_Short)( compr.rightSideBearing - 0x80 );
-		metric->characterWidth   = (FT2_1_3_Short)( compr.characterWidth   - 0x80 );
-		metric->ascent           = (FT2_1_3_Short)( compr.ascent           - 0x80 );
-		metric->descent          = (FT2_1_3_Short)( compr.descent          - 0x80 );
+		metric->leftSideBearing  = (FT_Short)( compr.leftSideBearing  - 0x80 );
+		metric->rightSideBearing = (FT_Short)( compr.rightSideBearing - 0x80 );
+		metric->characterWidth   = (FT_Short)( compr.characterWidth   - 0x80 );
+		metric->ascent           = (FT_Short)( compr.ascent           - 0x80 );
+		metric->descent          = (FT_Short)( compr.descent          - 0x80 );
 		metric->attributes       = 0;
 	}
 
@@ -230,15 +230,15 @@ Exit:
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 pcf_seek_to_table_type( FT2_1_3_Stream  stream,
 						PCF_Table  tables,
-						FT2_1_3_Int     ntables,
-						FT2_1_3_ULong   type,
-						FT2_1_3_ULong  *aformat,
-						FT2_1_3_ULong  *asize ) {
-	FT2_1_3_Error  error = 0;
-	FT2_1_3_Int    i;
+						FT_Int     ntables,
+						FT_ULong   type,
+						FT_ULong  *aformat,
+						FT_ULong  *asize ) {
+	FT_Error  error = 0;
+	FT_Int    i;
 
 
 	for ( i = 0; i < ntables; i++ )
@@ -259,11 +259,11 @@ pcf_seek_to_table_type( FT2_1_3_Stream  stream,
 }
 
 
-static FT2_1_3_Bool
+static FT_Bool
 pcf_has_table_type( PCF_Table  tables,
-					FT2_1_3_Int     ntables,
-					FT2_1_3_ULong   type ) {
-	FT2_1_3_Int  i;
+					FT_Int     ntables,
+					FT_ULong   type ) {
+	FT_Int  i;
 
 
 	for ( i = 0; i < ntables; i++ )
@@ -302,9 +302,9 @@ const FT2_1_3_Frame_Field  pcf_property_msb_header[] = {
 
 static PCF_Property
 pcf_find_property( PCF_Face          face,
-				   const FT2_1_3_String*  prop ) {
+				   const FT_String*  prop ) {
 	PCF_Property  properties = face->properties;
-	FT2_1_3_Bool       found      = 0;
+	FT_Bool       found      = 0;
 	int           i;
 
 
@@ -320,17 +320,17 @@ pcf_find_property( PCF_Face          face,
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 pcf_get_properties( FT2_1_3_Stream  stream,
 					PCF_Face   face ) {
 	PCF_ParseProperty  props      = 0;
 	PCF_Property       properties = 0;
-	FT2_1_3_Int             nprops, i;
-	FT2_1_3_ULong           format, size;
-	FT2_1_3_Error           error;
+	FT_Int             nprops, i;
+	FT_ULong           format, size;
+	FT_Error           error;
 	FT2_1_3_Memory          memory     = FT2_1_3_FACE(face)->memory;
-	FT2_1_3_ULong           string_size;
-	FT2_1_3_String*         strings    = 0;
+	FT_ULong           string_size;
+	FT_String*         strings    = 0;
 
 
 	error = pcf_seek_to_table_type( stream,
@@ -394,7 +394,7 @@ pcf_get_properties( FT2_1_3_Stream  stream,
 	if ( FT2_1_3_NEW_ARRAY( strings, string_size ) )
 		goto Bail;
 
-	error = FT2_1_3_Stream_Read( stream, (FT2_1_3_Byte*)strings, string_size );
+	error = FT2_1_3_Stream_Read( stream, (FT_Byte*)strings, string_size );
 	if ( error )
 		goto Bail;
 
@@ -435,13 +435,13 @@ Bail:
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 pcf_get_metrics( FT2_1_3_Stream  stream,
 				 PCF_Face   face ) {
-	FT2_1_3_Error    error    = FT2_1_3_Err_Ok;
+	FT_Error    error    = FT2_1_3_Err_Ok;
 	FT2_1_3_Memory   memory   = FT2_1_3_FACE(face)->memory;
-	FT2_1_3_ULong    format   = 0;
-	FT2_1_3_ULong    size     = 0;
+	FT_ULong    format   = 0;
+	FT_ULong    size     = 0;
 	PCF_Metric  metrics  = 0;
 	int         i;
 	int         nmetrics = -1;
@@ -507,14 +507,14 @@ pcf_get_metrics( FT2_1_3_Stream  stream,
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 pcf_get_bitmaps( FT2_1_3_Stream  stream,
 				 PCF_Face   face ) {
-	FT2_1_3_Error   error  = FT2_1_3_Err_Ok;
+	FT_Error   error  = FT2_1_3_Err_Ok;
 	FT2_1_3_Memory  memory = FT2_1_3_FACE(face)->memory;
-	FT2_1_3_Long*   offsets;
-	FT2_1_3_Long    bitmapSizes[GLYPHPADOPTIONS];
-	FT2_1_3_ULong   format, size;
+	FT_Long*   offsets;
+	FT_Long    bitmapSizes[GLYPHPADOPTIONS];
+	FT_ULong   format, size;
 	int        nbitmaps, i, sizebitmaps = 0;
 	char*      bitmaps;
 
@@ -595,12 +595,12 @@ Bail:
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 pcf_get_encodings( FT2_1_3_Stream  stream,
 				   PCF_Face   face ) {
-	FT2_1_3_Error      error   = FT2_1_3_Err_Ok;
+	FT_Error      error   = FT2_1_3_Err_Ok;
 	FT2_1_3_Memory     memory  = FT2_1_3_FACE(face)->memory;
-	FT2_1_3_ULong      format, size;
+	FT_ULong      format, size;
 	int           firstCol, lastCol;
 	int           firstRow, lastRow;
 	int           nencoding, encodingOffset;
@@ -666,7 +666,7 @@ pcf_get_encodings( FT2_1_3_Stream  stream,
 								 ( ( i % ( lastCol - firstCol + 1 ) ) +
 								   firstCol );
 
-			tmpEncoding[j].glyph = (FT2_1_3_Short)encodingOffset;
+			tmpEncoding[j].glyph = (FT_Short)encodingOffset;
 			j++;
 		}
 
@@ -738,12 +738,12 @@ const FT2_1_3_Frame_Field  pcf_accel_msb_header[] = {
 };
 
 
-static FT2_1_3_Error
+static FT_Error
 pcf_get_accel( FT2_1_3_Stream  stream,
 			   PCF_Face   face,
-			   FT2_1_3_ULong   type ) {
-	FT2_1_3_ULong   format, size;
-	FT2_1_3_Error   error = FT2_1_3_Err_Ok;
+			   FT_ULong   type ) {
+	FT_ULong   format, size;
+	FT_Error   error = FT2_1_3_Err_Ok;
 	PCF_Accel  accel = &face->accel;
 
 
@@ -805,12 +805,12 @@ Bail:
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 pcf_load_font( FT2_1_3_Stream  stream,
 			   PCF_Face   face ) {
-	FT2_1_3_Error   error  = FT2_1_3_Err_Ok;
+	FT_Error   error  = FT2_1_3_Err_Ok;
 	FT2_1_3_Memory  memory = FT2_1_3_FACE(face)->memory;
-	FT2_1_3_Bool    hasBDFAccelerators;
+	FT_Bool    hasBDFAccelerators;
 
 
 	error = pcf_read_TOC( stream, face );
@@ -857,7 +857,7 @@ pcf_load_font( FT2_1_3_Stream  stream,
 
 	/* now construct the face object */
 	{
-		FT2_1_3_Face       root = FT2_1_3_FACE( face );
+		FT_Face       root = FT2_1_3_FACE( face );
 		PCF_Property  prop;
 		int           size_set = 0;
 
@@ -917,7 +917,7 @@ pcf_load_font( FT2_1_3_Stream  stream,
 		prop = pcf_find_property( face, "PIXEL_SIZE" );
 		if ( prop != NULL ) {
 			root->available_sizes->height =
-				root->available_sizes->width  = (FT2_1_3_Short)( prop->value.integer );
+				root->available_sizes->width  = (FT_Short)( prop->value.integer );
 
 			size_set = 1;
 		} else {
@@ -932,11 +932,11 @@ pcf_load_font( FT2_1_3_Stream  stream,
 
 				if ( ( yres != NULL ) && ( xres != NULL ) ) {
 					root->available_sizes->height =
-						(FT2_1_3_Short)( prop->value.integer *
+						(FT_Short)( prop->value.integer *
 									yres->value.integer / 720 );
 
 					root->available_sizes->width =
-						(FT2_1_3_Short)( prop->value.integer *
+						(FT_Short)( prop->value.integer *
 									xres->value.integer / 720 );
 
 					size_set = 1;

@@ -25,7 +25,7 @@
 #endif
 
 
-  static FT2_1_3_Error
+  static FT_Error
   GEN_CACHE_LOOKUP( FTC_Cache   cache,
                     FTC_Query   query,
                     FTC_Node   *anode )
@@ -79,7 +79,7 @@
       hash   = query->hash;
 
       {
-        FT2_1_3_UInt  idx;
+        FT_UInt  idx;
 
 
         idx = hash & cache->mask;
@@ -98,7 +98,7 @@
           goto Normal;
 
         if ( node->hash == hash                            &&
-             (FT2_1_3_UInt)node->fam_index == family->fam_index &&
+             (FT_UInt)node->fam_index == family->fam_index &&
              GEN_CACHE_NODE_COMPARE( node, query, cache )  )
         {
           /* we place the following out of the loop to make it */

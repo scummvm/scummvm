@@ -26,10 +26,10 @@ namespace FreeType213 {
 
 FT2_1_3_BEGIN_HEADER
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 pfr_slot_load_bitmap( PFR_Slot  glyph,
 					  PFR_Size  size,
-					  FT2_1_3_UInt   glyph_index );
+					  FT_UInt   glyph_index );
 
 FT2_1_3_END_HEADER
 

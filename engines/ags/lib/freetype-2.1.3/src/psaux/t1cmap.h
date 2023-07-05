@@ -44,10 +44,10 @@ typedef struct T1_CMapStdRec_*  T1_CMapStd;
 typedef struct  T1_CMapStdRec_ {
 	FT2_1_3_CMapRec                 cmap;
 
-	const FT2_1_3_UShort*           code_to_sid;
+	const FT_UShort*           code_to_sid;
 	PS_Adobe_Std_Strings_Func  sid_to_string;
 
-	FT2_1_3_UInt                    num_glyphs;
+	FT_UInt                    num_glyphs;
 	const char* const*         glyph_names;
 
 } T1_CMapStdRec;
@@ -72,9 +72,9 @@ typedef struct T1_CMapCustomRec_*  T1_CMapCustom;
 
 typedef struct  T1_CMapCustomRec_ {
 	FT2_1_3_CMapRec  cmap;
-	FT2_1_3_UInt     first;
-	FT2_1_3_UInt     count;
-	FT2_1_3_UShort*  indices;
+	FT_UInt     first;
+	FT_UInt     count;
+	FT_UShort*  indices;
 
 } T1_CMapCustomRec;
 
@@ -95,15 +95,15 @@ t1_cmap_custom_class_rec;
 typedef struct T1_CMapUnicodeRec_*  T1_CMapUnicode;
 
 typedef struct  T1_CMapUniPairRec_ {
-	FT2_1_3_UInt32  unicode;
-	FT2_1_3_UInt    gindex;
+	FT_UInt32  unicode;
+	FT_UInt    gindex;
 
 } T1_CMapUniPairRec, *T1_CMapUniPair;
 
 
 typedef struct  T1_CMapUnicodeRec_ {
 	FT2_1_3_CMapRec      cmap;
-	FT2_1_3_UInt         num_pairs;
+	FT_UInt         num_pairs;
 	T1_CMapUniPair  pairs;
 
 } T1_CMapUnicodeRec;

@@ -29,13 +29,13 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-static FT2_1_3_Error
+static FT_Error
 T42_Open_Face( T42_Face  face ) {
 	T42_LoaderRec  loader;
 	T42_Parser     parser;
 	T1_Font        type1 = &face->type1;
 	FT2_1_3_Memory      memory = face->root.memory;
-	FT2_1_3_Error       error;
+	FT_Error       error;
 
 	PSAux_Service psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));
 
@@ -77,15 +77,15 @@ T42_Open_Face( T42_Face  face ) {
 	/* we copy the glyph names `block' and `elements' fields; */
 	/* the `lengths' field must be released later             */
 	type1->glyph_names_block    = loader.glyph_names.block;
-	type1->glyph_names          = (FT2_1_3_String**)loader.glyph_names.elements;
+	type1->glyph_names          = (FT_String**)loader.glyph_names.elements;
 	loader.glyph_names.block    = 0;
 	loader.glyph_names.elements = 0;
 
 	/* we must now build type1.encoding when we have a custom array */
 	if ( type1->encoding_type == T1_ENCODING_TYPE_ARRAY ) {
-		FT2_1_3_Int    charcode, idx, min_char, max_char;
-		FT2_1_3_Byte*  char_name;
-		FT2_1_3_Byte*  glyph_name;
+		FT_Int    charcode, idx, min_char, max_char;
+		FT_Byte*  char_name;
+		FT_Byte*  glyph_name;
 
 
 		/* OK, we do the following: for each element in the encoding   */
@@ -105,10 +105,10 @@ T42_Open_Face( T42_Face  face ) {
 			char_name = loader.encoding_table.elements[charcode];
 			if ( char_name )
 				for ( idx = 0; idx < type1->num_glyphs; idx++ ) {
-					glyph_name = (FT2_1_3_Byte*)type1->glyph_names[idx];
+					glyph_name = (FT_Byte*)type1->glyph_names[idx];
 					if ( ft_strcmp( (const char*)char_name,
 									(const char*)glyph_name ) == 0 ) {
-						type1->encoding.char_index[charcode] = (FT2_1_3_UShort)idx;
+						type1->encoding.char_index[charcode] = (FT_UShort)idx;
 						type1->encoding.char_name [charcode] = (char*)glyph_name;
 
 						/* Change min/max encoded char only if glyph name is */
@@ -136,16 +136,16 @@ Exit:
 /***************** Driver Functions *************/
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 T42_Face_Init( FT2_1_3_Stream      stream,
 			   T42_Face       face,
-			   FT2_1_3_Int         face_index,
-			   FT2_1_3_Int         num_params,
+			   FT_Int         face_index,
+			   FT_Int         num_params,
 			   FT2_1_3_Parameter*  params ) {
-	FT2_1_3_Error          error;
+	FT_Error          error;
 	PSNames_Service   psnames;
 	PSAux_Service     psaux;
-	FT2_1_3_Face           root    = (FT2_1_3_Face)&face->root;
+	FT_Face           root    = (FT_Face)&face->root;
 
 	FT2_1_3_UNUSED( num_params );
 	FT2_1_3_UNUSED( params );
@@ -267,7 +267,7 @@ T42_Face_Init( FT2_1_3_Stream      stream,
 
 	{
 		if ( psnames && psaux ) {
-			FT2_1_3_CharMapRec    charmap;
+			FT_CharMapRec    charmap;
 			T1_CMap_Classes  cmap_classes = psaux->t1_cmap_classes;
 			FT2_1_3_CMap_Class    clazz;
 
@@ -396,7 +396,7 @@ T42_Face_Done( T42_Face  face ) {
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 T42_Driver_Init( T42_Driver  driver ) {
 	FT2_1_3_Module  ttmodule;
 
@@ -416,12 +416,12 @@ T42_Driver_Done( T42_Driver  driver ) {
 
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 T42_Size_Init( T42_Size  size ) {
-	FT2_1_3_Face   face = size->root.face;
+	FT_Face   face = size->root.face;
 	T42_Face  t42face = (T42_Face)face;
 	FT2_1_3_Size   ttsize;
-	FT2_1_3_Error  error   = FT2_1_3_Err_Ok;
+	FT_Error  error   = FT2_1_3_Err_Ok;
 
 
 	error = FT2_1_3_New_Size( t42face->ttf_face, &ttsize );
@@ -435,12 +435,12 @@ T42_Size_Init( T42_Size  size ) {
 
 FT2_1_3_LOCAL_DEF( void )
 T42_Size_Done( T42_Size  size ) {
-	FT2_1_3_Face      face    = size->root.face;
+	FT_Face      face    = size->root.face;
 	T42_Face     t42face = (T42_Face)face;
-	FT2_1_3_ListNode  node;
+	FT_ListNode  node;
 
 
-	node = FT2_1_3_List_Find( &t42face->ttf_face->sizes_list, size->ttsize );
+	node = FT_List_Find( &t42face->ttf_face->sizes_list, size->ttsize );
 	if ( node ) {
 		FT2_1_3_Done_Size( size->ttsize );
 		size->ttsize = NULL;
@@ -448,12 +448,12 @@ T42_Size_Done( T42_Size  size ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 T42_GlyphSlot_Init( T42_GlyphSlot  slot ) {
-	FT2_1_3_Face       face    = slot->root.face;
+	FT_Face       face    = slot->root.face;
 	T42_Face      t42face = (T42_Face)face;
 	FT2_1_3_GlyphSlot  ttslot;
-	FT2_1_3_Error      error   = FT2_1_3_Err_Ok;
+	FT_Error      error   = FT2_1_3_Err_Ok;
 
 
 	if ( face->glyph == NULL ) {
@@ -470,7 +470,7 @@ T42_GlyphSlot_Init( T42_GlyphSlot  slot ) {
 
 FT2_1_3_LOCAL_DEF( void )
 T42_GlyphSlot_Done( T42_GlyphSlot slot ) {
-	FT2_1_3_Face       face    = slot->root.face;
+	FT_Face       face    = slot->root.face;
 	T42_Face      t42face = (T42_Face)face;
 	FT2_1_3_GlyphSlot  cur     = t42face->ttf_face->glyph;
 
@@ -487,13 +487,13 @@ T42_GlyphSlot_Done( T42_GlyphSlot slot ) {
 
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 T42_Size_SetChars( T42_Size    size,
-				   FT2_1_3_F26Dot6  char_width,
-				   FT2_1_3_F26Dot6  char_height,
-				   FT2_1_3_UInt     horz_resolution,
-				   FT2_1_3_UInt     vert_resolution ) {
-	FT2_1_3_Face   face    = size->root.face;
+				   FT_F26Dot6  char_width,
+				   FT_F26Dot6  char_height,
+				   FT_UInt     horz_resolution,
+				   FT_UInt     vert_resolution ) {
+	FT_Face   face    = size->root.face;
 	T42_Face  t42face = (T42_Face)face;
 
 
@@ -507,11 +507,11 @@ T42_Size_SetChars( T42_Size    size,
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 T42_Size_SetPixels( T42_Size  size,
-					FT2_1_3_UInt   pixel_width,
-					FT2_1_3_UInt   pixel_height ) {
-	FT2_1_3_Face   face    = size->root.face;
+					FT_UInt   pixel_width,
+					FT_UInt   pixel_height ) {
+	FT_Face   face    = size->root.face;
 	T42_Face  t42face = (T42_Face)face;
 
 
@@ -553,12 +553,12 @@ ft_glyphslot_clear( FT2_1_3_GlyphSlot  slot ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 T42_GlyphSlot_Load( FT2_1_3_GlyphSlot  glyph,
 					FT2_1_3_Size       size,
-					FT2_1_3_Int        glyph_index,
-					FT2_1_3_Int32      load_flags ) {
-	FT2_1_3_Error         error;
+					FT_Int        glyph_index,
+					FT_Int32      load_flags ) {
+	FT_Error         error;
 	T42_GlyphSlot    t42slot = (T42_GlyphSlot)glyph;
 	T42_Size         t42size = (T42_Size)size;
 	FT2_1_3_Driver_Class  ttclazz = ((T42_Driver)glyph->face->driver)->ttclazz;

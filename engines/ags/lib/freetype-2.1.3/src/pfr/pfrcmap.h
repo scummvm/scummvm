@@ -30,7 +30,7 @@ FT2_1_3_BEGIN_HEADER
 
 typedef struct  PFR_CMapRec_ {
 	FT2_1_3_CMapRec  cmap;
-	FT2_1_3_UInt     num_chars;
+	FT_UInt     num_chars;
 	PFR_Char    chars;
 
 } PFR_CMapRec, *PFR_CMap;

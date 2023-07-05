@@ -32,19 +32,19 @@ namespace FreeType213 {
 /* create a new chunk node, setting its cache index and ref count */
 FT2_1_3_EXPORT_DEF( void )
 ftc_glyph_node_init( FTC_GlyphNode     gnode,
-					 FT2_1_3_UInt           gindex,
+					 FT_UInt           gindex,
 					 FTC_GlyphFamily   gfam ) {
-	FT2_1_3_UInt  len;
-	FT2_1_3_UInt  start = FTC_GLYPH_FAMILY_START( gfam, gindex );
+	FT_UInt  len;
+	FT_UInt  start = FTC_GLYPH_FAMILY_START( gfam, gindex );
 
 
-	gnode->item_start = (FT2_1_3_UShort)start;
+	gnode->item_start = (FT_UShort)start;
 
 	len = gfam->item_total - start;
 	if ( len > gfam->item_count )
 		len = gfam->item_count;
 
-	gnode->item_count = (FT2_1_3_UShort)len;
+	gnode->item_count = (FT_UShort)len;
 	gfam->family.num_nodes++;
 }
 
@@ -60,13 +60,13 @@ ftc_glyph_node_done( FTC_GlyphNode  gnode,
 }
 
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Bool )
+FT2_1_3_EXPORT_DEF( FT_Bool )
 ftc_glyph_node_compare( FTC_GlyphNode   gnode,
 						FTC_GlyphQuery  gquery ) {
-	FT2_1_3_UInt  start = (FT2_1_3_UInt)gnode->item_start;
-	FT2_1_3_UInt  count = (FT2_1_3_UInt)gnode->item_count;
+	FT_UInt  start = (FT_UInt)gnode->item_start;
+	FT_UInt  count = (FT_UInt)gnode->item_count;
 
-	return FT2_1_3_BOOL( (FT2_1_3_UInt)( gquery->gindex - start ) < count );
+	return FT2_1_3_BOOL( (FT_UInt)( gquery->gindex - start ) < count );
 }
 
 
@@ -79,14 +79,14 @@ ftc_glyph_node_compare( FTC_GlyphNode   gnode,
 /*************************************************************************/
 
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 ftc_glyph_family_init( FTC_GlyphFamily  gfam,
-					   FT2_1_3_UInt32        hash,
-					   FT2_1_3_UInt          item_count,
-					   FT2_1_3_UInt          item_total,
+					   FT_UInt32        hash,
+					   FT_UInt          item_count,
+					   FT_UInt          item_total,
 					   FTC_GlyphQuery   gquery,
 					   FTC_Cache        cache ) {
-	FT2_1_3_Error  error;
+	FT_Error  error;
 
 
 	error = ftc_family_init( FTC_FAMILY( gfam ), FTC_QUERY( gquery ), cache );

@@ -14,24 +14,24 @@ typedef struct FT2_1_3_StdStreamRec_ {
 
 
 /* read bytes from a standard stream */
-static FT2_1_3_ULong
+static FT_ULong
 ft_std_stream_read( FT2_1_3_StdStream   stream,
-                    FT2_1_3_Byte*       buffer,
-                    FT2_1_3_ULong       size ) {
+                    FT_Byte*       buffer,
+                    FT_ULong       size ) {
 	long   read_bytes;
 
 	read_bytes = fread( buffer, 1, size, stream->file );
 	if ( read_bytes < 0 )
 		read_bytes = 0;
 
-	return (FT2_1_3_ULong) read_bytes;
+	return (FT_ULong) read_bytes;
 }
 
 
 /* seek the standard stream to a new position */
-static FT2_1_3_Error
+static FT_Error
 ft_std_stream_seek( FT2_1_3_StdStream   stream,
-                    FT2_1_3_ULong       pos ) {
+                    FT_ULong       pos ) {
 	return ( fseek( stream->file, pos, SEEK_SET ) < 0 )
 	       ? FT2_1_3_Err_Stream_Seek
 	       : FT2_1_3_Err_Ok;

@@ -30,7 +30,7 @@
 /*   higher byte indicates in which module the error occurred.           */
 /*                                                                       */
 /*   You can use the macro FT2_1_3_ERROR_BASE(x) macro to extract the generic */
-/*   error code from an FT2_1_3_Error value.                                  */
+/*   error code from an FT_Error value.                                  */
 /*                                                                       */
 /*   The configuration macro FT2_1_3_CONFIG_OPTION_USE_MODULE_ERRORS can be   */
 /*   undefined in ftoption.h in order to make the higher byte always     */

@@ -79,7 +79,7 @@ FT2_1_3_BEGIN_HEADER
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 /* <Notes>                                                               */
-/*    This function can be used to create FT2_1_3_Face abjects from fonts     */
+/*    This function can be used to create FT_Face abjects from fonts     */
 /*    that are installed in the system like so:                          */
 /*                                                                       */
 /*    {                                                                  */
@@ -87,11 +87,11 @@ FT2_1_3_BEGIN_HEADER
 /*      error = FT2_1_3_New_Face_From_FOND( library, fond, 0, &face );        */
 /*    }                                                                  */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_New_Face_From_FOND( FT2_1_3_Library  library,
 					   Handle      fond,
-					   FT2_1_3_Long     face_index,
-					   FT2_1_3_Face    *aface );
+					   FT_Long     face_index,
+					   FT_Face    *aface );
 
 
 /*************************************************************************/
@@ -113,10 +113,10 @@ FT2_1_3_New_Face_From_FOND( FT2_1_3_Library  library,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_GetFile_From_Mac_Name( char*     fontName,
 						  FSSpec*   pathSpec,
-						  FT2_1_3_Long*  face_index );
+						  FT_Long*  face_index );
 
 /* */
 

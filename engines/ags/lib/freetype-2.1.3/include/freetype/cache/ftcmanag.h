@@ -20,9 +20,9 @@
 /*                                                                       */
 /* A cache manager is in charge of the following:                        */
 /*                                                                       */
-/*  - Maintain a mapping between generic FTC_FaceIDs and live FT2_1_3_Face    */
+/*  - Maintain a mapping between generic FTC_FaceIDs and live FT_Face    */
 /*    objects.  The mapping itself is performed through a user-provided  */
-/*    callback.  However, the manager maintains a small cache of FT2_1_3_Face */
+/*    callback.  However, the manager maintains a small cache of FT_Face */
 /*    and FT2_1_3_Size objects in order to speed up things considerably.      */
 /*                                                                       */
 /*  - Manage one or more cache objects.  Each cache is in charge of      */
@@ -93,32 +93,32 @@ FT2_1_3_BEGIN_HEADER
 typedef struct  FTC_FamilyEntryRec_ {
 	FTC_Family  family;
 	FTC_Cache   cache;
-	FT2_1_3_UInt     index;
-	FT2_1_3_UInt     link;
+	FT_UInt     index;
+	FT_UInt     link;
 
 } FTC_FamilyEntryRec, *FTC_FamilyEntry;
 
 
-#define FTC_FAMILY_ENTRY_NONE  ( (FT2_1_3_UInt)-1 )
+#define FTC_FAMILY_ENTRY_NONE  ( (FT_UInt)-1 )
 
 
 typedef struct  FTC_FamilyTableRec_ {
-	FT2_1_3_UInt          count;
-	FT2_1_3_UInt          size;
+	FT_UInt          count;
+	FT_UInt          size;
 	FTC_FamilyEntry  entries;
-	FT2_1_3_UInt          free;
+	FT_UInt          free;
 
 } FTC_FamilyTableRec, *FTC_FamilyTable;
 
 
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 ftc_family_table_alloc( FTC_FamilyTable   table,
 						FT2_1_3_Memory         memory,
 						FTC_FamilyEntry  *aentry );
 
 FT2_1_3_EXPORT( void )
 ftc_family_table_free( FTC_FamilyTable  table,
-					   FT2_1_3_UInt          idx );
+					   FT_UInt          idx );
 
 
 /*************************************************************************/
@@ -132,7 +132,7 @@ ftc_family_table_free( FTC_FamilyTable  table,
 /* <Fields>                                                              */
 /*    library      :: A handle to a FreeType library instance.           */
 /*                                                                       */
-/*    faces_list   :: The lru list of @FT2_1_3_Face objects in the cache.     */
+/*    faces_list   :: The lru list of @FT_Face objects in the cache.     */
 /*                                                                       */
 /*    sizes_list   :: The lru list of @FT2_1_3_Size objects in the cache.     */
 /*                                                                       */
@@ -150,7 +150,7 @@ ftc_family_table_free( FTC_FamilyTable  table,
 /*                                                                       */
 /*    request_face :: User-provided function used to implement a mapping */
 /*                    between abstract @FTC_FaceID values and real       */
-/*                    @FT2_1_3_Face objects.                                  */
+/*                    @FT_Face objects.                                  */
 /*                                                                       */
 /*    families     :: Global table of families.                          */
 /*                                                                       */
@@ -159,15 +159,15 @@ typedef struct  FTC_ManagerRec_ {
 	FT2_1_3_LruList          faces_list;
 	FT2_1_3_LruList          sizes_list;
 
-	FT2_1_3_ULong            max_weight;
-	FT2_1_3_ULong            cur_weight;
+	FT_ULong            max_weight;
+	FT_ULong            cur_weight;
 
-	FT2_1_3_UInt             num_nodes;
+	FT_UInt             num_nodes;
 	FTC_Node            nodes_list;
 
 	FTC_Cache           caches[FTC_MAX_CACHES];
 
-	FT2_1_3_Pointer          request_data;
+	FT_Pointer          request_data;
 	FTC_Face_Requester  request_face;
 
 	FTC_FamilyTableRec  families;
@@ -201,7 +201,7 @@ FTC_Manager_Compress( FTC_Manager  manager );
 
 
 /* this must be used internally for the moment */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FTC_Manager_Register_Cache( FTC_Manager      manager,
 							FTC_Cache_Class  clazz,
 							FTC_Cache       *acache );

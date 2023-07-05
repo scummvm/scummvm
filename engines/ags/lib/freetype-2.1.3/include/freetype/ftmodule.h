@@ -67,7 +67,7 @@ typedef enum  FT2_1_3_Module_Flags_ {
 typedef void
 (*FT2_1_3_Module_Interface)( void );
 
-typedef FT2_1_3_Error
+typedef FT_Error
 (*FT2_1_3_Module_Constructor)( FT2_1_3_Module  module );
 
 typedef void
@@ -110,11 +110,11 @@ typedef FT2_1_3_Module_Interface
 /*                         interface by name.                            */
 /*                                                                       */
 typedef struct  FT2_1_3_Module_Class_ {
-	FT2_1_3_ULong               module_flags;
-	FT2_1_3_Long                module_size;
-	const FT2_1_3_String*       module_name;
-	FT2_1_3_Fixed               module_version;
-	FT2_1_3_Fixed               module_requires;
+	FT_ULong               module_flags;
+	FT_Long                module_size;
+	const FT_String*       module_name;
+	FT_Fixed               module_version;
+	FT_Fixed               module_requires;
 
 	const void*            module_interface;
 
@@ -146,7 +146,7 @@ typedef struct  FT2_1_3_Module_Class_ {
 /*    An error will be returned if a module already exists by that name, */
 /*    or if the module requires a version of FreeType that is too great. */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Add_Module( FT2_1_3_Library              library,
 			   const FT2_1_3_Module_Class*  clazz );
 
@@ -196,7 +196,7 @@ FT2_1_3_Get_Module( FT2_1_3_Library   library,
 /* <Note>                                                                */
 /*    The module object is destroyed by the function in case of success. */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Remove_Module( FT2_1_3_Library  library,
 				  FT2_1_3_Module   module );
 
@@ -220,7 +220,7 @@ FT2_1_3_Remove_Module( FT2_1_3_Library  library,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_New_Library( FT2_1_3_Memory    memory,
 				FT2_1_3_Library  *alibrary );
 
@@ -240,7 +240,7 @@ FT2_1_3_New_Library( FT2_1_3_Memory    memory,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Done_Library( FT2_1_3_Library  library );
 
 
@@ -274,7 +274,7 @@ typedef void
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_Set_Debug_Hook( FT2_1_3_Library         library,
-				   FT2_1_3_UInt            hook_index,
+				   FT_UInt            hook_index,
 				   FT2_1_3_DebugHook_Func  debug_hook );
 
 

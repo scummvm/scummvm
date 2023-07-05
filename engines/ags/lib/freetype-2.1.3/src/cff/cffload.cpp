@@ -32,7 +32,7 @@ namespace AGS3 {
 namespace FreeType213 {
 
 #if 1
-static const FT2_1_3_UShort  cff_isoadobe_charset[229] = {
+static const FT_UShort  cff_isoadobe_charset[229] = {
 	0,
 	1,
 	2,
@@ -264,7 +264,7 @@ static const FT2_1_3_UShort  cff_isoadobe_charset[229] = {
 	228
 };
 
-static const FT2_1_3_UShort  cff_expert_charset[166] = {
+static const FT_UShort  cff_expert_charset[166] = {
 	0,
 	1,
 	229,
@@ -433,7 +433,7 @@ static const FT2_1_3_UShort  cff_expert_charset[166] = {
 	378
 };
 
-static const FT2_1_3_UShort  cff_expertsubset_charset[87] = {
+static const FT_UShort  cff_expertsubset_charset[87] = {
 	0,
 	1,
 	231,
@@ -523,7 +523,7 @@ static const FT2_1_3_UShort  cff_expertsubset_charset[87] = {
 	346
 };
 
-static const FT2_1_3_UShort  cff_standard_encoding[256] = {
+static const FT_UShort  cff_standard_encoding[256] = {
 	0,
 	0,
 	0,
@@ -782,7 +782,7 @@ static const FT2_1_3_UShort  cff_standard_encoding[256] = {
 	0
 };
 
-static const FT2_1_3_UShort  cff_expert_encoding[256] = {
+static const FT_UShort  cff_expert_encoding[256] = {
 	0,
 	0,
 	0,
@@ -1043,9 +1043,9 @@ static const FT2_1_3_UShort  cff_expert_encoding[256] = {
 #endif
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_UShort )
-cff_get_standard_encoding( FT2_1_3_UInt  charcode ) {
-	return  (FT2_1_3_UShort)(charcode < 256 ? cff_standard_encoding[charcode] : 0);
+FT2_1_3_LOCAL_DEF( FT_UShort )
+cff_get_standard_encoding( FT_UInt  charcode ) {
+	return  (FT_UShort)(charcode < 256 ? cff_standard_encoding[charcode] : 0);
 }
 
 
@@ -1060,10 +1060,10 @@ cff_get_standard_encoding( FT2_1_3_UInt  charcode ) {
 
 
 /* read a CFF offset from memory */
-static FT2_1_3_ULong
-cff_get_offset( FT2_1_3_Byte*  p,
-				FT2_1_3_Byte   off_size ) {
-	FT2_1_3_ULong  result;
+static FT_ULong
+cff_get_offset( FT_Byte*  p,
+				FT_Byte   off_size ) {
+	FT_ULong  result;
 
 
 	for ( result = 0; off_size > 0; off_size-- ) {
@@ -1075,13 +1075,13 @@ cff_get_offset( FT2_1_3_Byte*  p,
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 cff_new_index( CFF_Index  idx,
 			   FT2_1_3_Stream  stream,
-			   FT2_1_3_Bool    load ) {
-	FT2_1_3_Error   error;
+			   FT_Bool    load ) {
+	FT_Error   error;
 	FT2_1_3_Memory  memory = stream->memory;
-	FT2_1_3_UShort  count;
+	FT_UShort  count;
 
 
 	FT2_1_3_MEM_ZERO( idx, sizeof ( *idx ) );
@@ -1089,10 +1089,10 @@ cff_new_index( CFF_Index  idx,
 	idx->stream = stream;
 	if ( !FT2_1_3_READ_USHORT( count ) &&
 			count > 0             ) {
-		FT2_1_3_Byte*   p;
-		FT2_1_3_Byte    offsize;
-		FT2_1_3_ULong   data_size;
-		FT2_1_3_ULong*  poff;
+		FT_Byte*   p;
+		FT_Byte    offsize;
+		FT_ULong   data_size;
+		FT_ULong*  poff;
 
 
 		/* there is at least one element; read the offset size,           */
@@ -1103,16 +1103,16 @@ cff_new_index( CFF_Index  idx,
 		idx->stream   = stream;
 		idx->count    = count;
 		idx->off_size = offsize;
-		data_size     = (FT2_1_3_ULong)( count + 1 ) * offsize;
+		data_size     = (FT_ULong)( count + 1 ) * offsize;
 
 		if ( FT2_1_3_NEW_ARRAY( idx->offsets, count + 1 ) ||
 				FT2_1_3_FRAME_ENTER( data_size )             )
 			goto Exit;
 
 		poff = idx->offsets;
-		p    = (FT2_1_3_Byte*)stream->cursor;
+		p    = (FT_Byte*)stream->cursor;
 
-		for ( ; (FT2_1_3_Short)count >= 0; count-- ) {
+		for ( ; (FT_Short)count >= 0; count-- ) {
 			poff[0] = cff_get_offset( p, offsize );
 			poff++;
 			p += offsize;
@@ -1159,13 +1159,13 @@ cff_done_index( CFF_Index  idx ) {
 
 
 /* allocate a table containing pointers to an index's elements */
-static FT2_1_3_Error
+static FT_Error
 cff_index_get_pointers( CFF_Index   idx,
-						FT2_1_3_Byte***  table ) {
-	FT2_1_3_Error   error  = 0;
+						FT_Byte***  table ) {
+	FT_Error   error  = 0;
 	FT2_1_3_Memory  memory = idx->stream->memory;
-	FT2_1_3_ULong   n, offset, old_offset;
-	FT2_1_3_Byte**  t;
+	FT_ULong   n, offset, old_offset;
+	FT_Byte**  t;
 
 
 	*table = 0;
@@ -1188,17 +1188,17 @@ cff_index_get_pointers( CFF_Index   idx,
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 cff_index_access_element( CFF_Index  idx,
-						  FT2_1_3_UInt    element,
-						  FT2_1_3_Byte**  pbytes,
-						  FT2_1_3_ULong*  pbyte_len ) {
-	FT2_1_3_Error  error = 0;
+						  FT_UInt    element,
+						  FT_Byte**  pbytes,
+						  FT_ULong*  pbyte_len ) {
+	FT_Error  error = 0;
 
 
 	if ( idx && idx->count > element ) {
 		/* compute start and end offsets */
-		FT2_1_3_ULong  off1, off2 = 0;
+		FT_ULong  off1, off2 = 0;
 
 
 		off1 = idx->offsets[element];
@@ -1244,7 +1244,7 @@ Exit:
 
 FT2_1_3_LOCAL_DEF( void )
 cff_index_forget_element( CFF_Index  idx,
-						  FT2_1_3_Byte**  pbytes ) {
+						  FT_Byte**  pbytes ) {
 	if ( idx->bytes == 0 ) {
 		FT2_1_3_Stream  stream = idx->stream;
 
@@ -1254,14 +1254,14 @@ cff_index_forget_element( CFF_Index  idx,
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_String* )
+FT2_1_3_LOCAL_DEF( FT_String* )
 cff_index_get_name( CFF_Index  idx,
-					FT2_1_3_UInt    element ) {
+					FT_UInt    element ) {
 	FT2_1_3_Memory   memory = idx->stream->memory;
-	FT2_1_3_Byte*    bytes;
-	FT2_1_3_ULong    byte_len;
-	FT2_1_3_Error    error;
-	FT2_1_3_String*  name = 0;
+	FT_Byte*    bytes;
+	FT_ULong    byte_len;
+	FT_Error    error;
+	FT_String*  name = 0;
 
 
 	error = cff_index_access_element( idx, element, &bytes, &byte_len );
@@ -1279,9 +1279,9 @@ Exit:
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_String* )
+FT2_1_3_LOCAL_DEF( FT_String* )
 cff_index_get_sid_string( CFF_Index        idx,
-						  FT2_1_3_UInt          sid,
+						  FT_UInt          sid,
 						  PSNames_Service  psnames_service ) {
 	/* if it is not a standard string, return it */
 	if ( sid > 390 )
@@ -1289,17 +1289,17 @@ cff_index_get_sid_string( CFF_Index        idx,
 
 	/* that's a standard string, fetch a copy from the PSName module */
 	{
-		FT2_1_3_String*   name       = 0;
+		FT_String*   name       = 0;
 		const char*  adobe_name = psnames_service->adobe_std_strings( sid );
-		FT2_1_3_UInt      len;
+		FT_UInt      len;
 
 
 		if ( adobe_name ) {
 			FT2_1_3_Memory  memory = idx->stream->memory;
-			FT2_1_3_Error   error;
+			FT_Error   error;
 
 
-			len = (FT2_1_3_UInt)ft_strlen( adobe_name );
+			len = (FT_UInt)ft_strlen( adobe_name );
 			if ( !FT2_1_3_ALLOC( name, len + 1 ) ) {
 				FT2_1_3_MEM_COPY( name, adobe_name, len );
 				name[len] = 0;
@@ -1334,14 +1334,14 @@ CFF_Done_FD_Select( CFF_FDSelect  fdselect,
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 CFF_Load_FD_Select( CFF_FDSelect  fdselect,
-					FT2_1_3_UInt       num_glyphs,
+					FT_UInt       num_glyphs,
 					FT2_1_3_Stream     stream,
-					FT2_1_3_ULong      offset ) {
-	FT2_1_3_Error  error;
-	FT2_1_3_Byte   format;
-	FT2_1_3_UInt   num_ranges;
+					FT_ULong      offset ) {
+	FT_Error  error;
+	FT_Byte   format;
+	FT_UInt   num_ranges;
 
 
 	/* read format */
@@ -1376,10 +1376,10 @@ Exit:
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Byte )
+FT2_1_3_LOCAL_DEF( FT_Byte )
 cff_fd_select_get( CFF_FDSelect  fdselect,
-				   FT2_1_3_UInt       glyph_index ) {
-	FT2_1_3_Byte  fd = 0;
+				   FT_UInt       glyph_index ) {
+	FT_Byte  fd = 0;
 
 
 	switch ( fdselect->format ) {
@@ -1389,7 +1389,7 @@ cff_fd_select_get( CFF_FDSelect  fdselect,
 
 	case 3:
 		/* first, compare to cache */
-		if ( (FT2_1_3_UInt)( glyph_index - fdselect->cache_first ) <
+		if ( (FT_UInt)( glyph_index - fdselect->cache_first ) <
 				fdselect->cache_count ) {
 			fd = fdselect->cache_fd;
 			break;
@@ -1397,10 +1397,10 @@ cff_fd_select_get( CFF_FDSelect  fdselect,
 
 		/* then, lookup the ranges array */
 		{
-			FT2_1_3_Byte*  p       = fdselect->data;
-			FT2_1_3_Byte*  p_limit = p + fdselect->data_size;
-			FT2_1_3_Byte   fd2;
-			FT2_1_3_UInt   first, limit;
+			FT_Byte*  p       = fdselect->data;
+			FT_Byte*  p_limit = p + fdselect->data_size;
+			FT_Byte   fd2;
+			FT_UInt   first, limit;
 
 
 			first = FT2_1_3_NEXT_USHORT( p );
@@ -1454,21 +1454,21 @@ cff_charset_done( CFF_Charset  charset,
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 cff_charset_load( CFF_Charset  charset,
-				  FT2_1_3_UInt      num_glyphs,
+				  FT_UInt      num_glyphs,
 				  FT2_1_3_Stream    stream,
-				  FT2_1_3_ULong     base_offset,
-				  FT2_1_3_ULong     offset ) {
+				  FT_ULong     base_offset,
+				  FT_ULong     offset ) {
 	FT2_1_3_Memory  memory     = stream->memory;
-	FT2_1_3_Error   error      = 0;
-	FT2_1_3_UShort  glyph_sid;
+	FT_Error   error      = 0;
+	FT_UShort  glyph_sid;
 
 
 	/* If the the offset is greater than 2, we have to parse the */
 	/* charset table.                                            */
 	if ( offset > 2 ) {
-		FT2_1_3_UInt  j;
+		FT_UInt  j;
 
 
 		charset->offset = base_offset + offset;
@@ -1500,8 +1500,8 @@ cff_charset_load( CFF_Charset  charset,
 
 		case 1:
 		case 2: {
-			FT2_1_3_UInt  nleft;
-			FT2_1_3_UInt  i;
+			FT_UInt  nleft;
+			FT_UInt  i;
 
 
 			j = 1;
@@ -1545,7 +1545,7 @@ cff_charset_load( CFF_Charset  charset,
 
 		charset->offset = offset;  /* record charset type */
 
-		switch ( (FT2_1_3_UInt)offset ) {
+		switch ( (FT_UInt)offset ) {
 		case 0:
 			if ( num_glyphs != 229 ) {
 				FT2_1_3_ERROR(("cff_charset_load: implicit charset not equal to\n"
@@ -1560,7 +1560,7 @@ cff_charset_load( CFF_Charset  charset,
 
 			/* Copy the predefined charset into the allocated memory. */
 			FT2_1_3_MEM_COPY( charset->sids, cff_isoadobe_charset,
-						 num_glyphs * sizeof ( FT2_1_3_UShort ) );
+						 num_glyphs * sizeof ( FT_UShort ) );
 
 			break;
 
@@ -1578,7 +1578,7 @@ cff_charset_load( CFF_Charset  charset,
 
 			/* Copy the predefined charset into the allocated memory.     */
 			FT2_1_3_MEM_COPY( charset->sids, cff_expert_charset,
-						 num_glyphs * sizeof ( FT2_1_3_UShort ) );
+						 num_glyphs * sizeof ( FT_UShort ) );
 
 			break;
 
@@ -1596,7 +1596,7 @@ cff_charset_load( CFF_Charset  charset,
 
 			/* Copy the predefined charset into the allocated memory.     */
 			FT2_1_3_MEM_COPY( charset->sids, cff_expertsubset_charset,
-						 num_glyphs * sizeof ( FT2_1_3_UShort ) );
+						 num_glyphs * sizeof ( FT_UShort ) );
 
 			break;
 
@@ -1631,18 +1631,18 @@ cff_encoding_done( CFF_Encoding  encoding ) {
 
 
 
-static FT2_1_3_Error
+static FT_Error
 cff_encoding_load( CFF_Encoding  encoding,
 				   CFF_Charset   charset,
-				   FT2_1_3_UInt       num_glyphs,
+				   FT_UInt       num_glyphs,
 				   FT2_1_3_Stream     stream,
-				   FT2_1_3_ULong      base_offset,
-				   FT2_1_3_ULong      offset ) {
-	FT2_1_3_Error    error  = 0;
-	FT2_1_3_UInt     count;
-	FT2_1_3_UInt     j;
-	FT2_1_3_UShort   glyph_sid;
-	FT2_1_3_UInt     glyph_code;
+				   FT_ULong      base_offset,
+				   FT_ULong      offset ) {
+	FT_Error    error  = 0;
+	FT_UInt     count;
+	FT_UInt     j;
+	FT_UShort   glyph_sid;
+	FT_UInt     glyph_code;
 
 
 	/* Check for charset->sids.  If we do not have this, we fail. */
@@ -1683,21 +1683,21 @@ cff_encoding_load( CFF_Encoding  encoding,
 
 		switch ( encoding->format & 0x7F ) {
 		case 0: {
-			FT2_1_3_Byte*  p;
+			FT_Byte*  p;
 
 
 			if ( FT2_1_3_FRAME_ENTER( count ) )
 				goto Exit;
 
-			p = (FT2_1_3_Byte*)stream->cursor;
+			p = (FT_Byte*)stream->cursor;
 
 			for ( j = 1; j <= count; j++ ) {
 				glyph_code = *p++;
 
 				/* Make sure j is not too big. */
-				if ( (FT2_1_3_UInt) glyph_code < num_glyphs ) {
+				if ( (FT_UInt) glyph_code < num_glyphs ) {
 					/* Assign code to GID mapping. */
-					encoding->codes[glyph_code] = (FT2_1_3_UShort)j;
+					encoding->codes[glyph_code] = (FT_UShort)j;
 
 					/* Assign code to SID mapping. */
 					encoding->sids[glyph_code] = charset->sids[j];
@@ -1709,9 +1709,9 @@ cff_encoding_load( CFF_Encoding  encoding,
 		break;
 
 		case 1: {
-			FT2_1_3_Byte  nleft;
-			FT2_1_3_UInt  i = 1;
-			FT2_1_3_UInt  k;
+			FT_Byte  nleft;
+			FT_UInt  i = 1;
+			FT_UInt  k;
 
 
 			/* Parse the Format1 ranges. */
@@ -1732,7 +1732,7 @@ cff_encoding_load( CFF_Encoding  encoding,
 					/* Make sure k is not too big. */
 					if ( k < num_glyphs && glyph_code < 256 ) {
 						/* Assign code to GID mapping. */
-						encoding->codes[glyph_code] = (FT2_1_3_UShort)k;
+						encoding->codes[glyph_code] = (FT_UShort)k;
 
 						/* Assign code to SID mapping. */
 						encoding->sids[glyph_code] = charset->sids[k];
@@ -1750,7 +1750,7 @@ cff_encoding_load( CFF_Encoding  encoding,
 
 		/* Parse supplemental encodings, if any. */
 		if ( encoding->format & 0x80 ) {
-			FT2_1_3_UInt  gindex;
+			FT_UInt  gindex;
 
 
 			/* count supplements */
@@ -1773,14 +1773,14 @@ cff_encoding_load( CFF_Encoding  encoding,
 				/* SID glyph_sid.                               */
 				for ( gindex = 0; gindex < num_glyphs; gindex++ ) {
 					if ( charset->sids[gindex] == glyph_sid ) {
-						encoding->codes[glyph_code] = (FT2_1_3_UShort) gindex;
+						encoding->codes[glyph_code] = (FT_UShort) gindex;
 						break;
 					}
 				}
 			}
 		}
 	} else {
-		FT2_1_3_UInt i;
+		FT_UInt i;
 
 
 		/* We take into account the fact a CFF font can use a predefined  */
@@ -1790,18 +1790,18 @@ cff_encoding_load( CFF_Encoding  encoding,
 
 		encoding->count = 256;
 
-		switch ( (FT2_1_3_UInt)offset ) {
+		switch ( (FT_UInt)offset ) {
 		case 0:
 			/* First, copy the code to SID mapping. */
 			FT2_1_3_MEM_COPY( encoding->sids, cff_standard_encoding,
-						 256 * sizeof ( FT2_1_3_UShort ) );
+						 256 * sizeof ( FT_UShort ) );
 
 			goto Populate;
 
 		case 1:
 			/* First, copy the code to SID mapping. */
 			FT2_1_3_MEM_COPY( encoding->sids, cff_expert_encoding,
-						 256 * sizeof ( FT2_1_3_UShort ) );
+						 256 * sizeof ( FT_UShort ) );
 
 Populate:
 			/* Construct code to GID mapping from code to SID mapping */
@@ -1821,7 +1821,7 @@ Populate:
 						encoding->codes[j] = 0;
 						encoding->sids [j] = 0;
 					} else
-						encoding->codes[j] = (FT2_1_3_UShort)i;
+						encoding->codes[j] = (FT_UShort)i;
 				}
 			}
 			break;
@@ -1840,16 +1840,16 @@ Exit:
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 cff_subfont_load( CFF_SubFont  font,
 				  CFF_Index    idx,
-				  FT2_1_3_UInt      font_index,
+				  FT_UInt      font_index,
 				  FT2_1_3_Stream    stream,
-				  FT2_1_3_ULong     base_offset ) {
-	FT2_1_3_Error         error;
+				  FT_ULong     base_offset ) {
+	FT_Error         error;
 	CFF_ParserRec    parser;
-	FT2_1_3_Byte*         dict;
-	FT2_1_3_ULong         dict_len;
+	FT_Byte*         dict;
+	FT_ULong         dict_len;
 	CFF_FontRecDict  top  = &font->font_dict;
 	CFF_Private      priv = &font->private_dict;
 
@@ -1886,8 +1886,8 @@ cff_subfont_load( CFF_SubFont  font,
 		priv->blue_shift       = 7;
 		priv->blue_fuzz        = 1;
 		priv->lenIV            = -1;
-		priv->expansion_factor = (FT2_1_3_Fixed)0.06 * 0x10000L;
-		priv->blue_scale       = (FT2_1_3_Fixed)0.039625 * 0x10000L;
+		priv->expansion_factor = (FT_Fixed)0.06 * 0x10000L;
+		priv->blue_scale       = (FT_Fixed)0.039625 * 0x10000L;
 
 		cff_parser_init( &parser, CFF_CODE_PRIVATE, priv );
 
@@ -1896,8 +1896,8 @@ cff_subfont_load( CFF_SubFont  font,
 			goto Exit;
 
 		error = cff_parser_run( &parser,
-								(FT2_1_3_Byte*)stream->cursor,
-								(FT2_1_3_Byte*)stream->limit );
+								(FT_Byte*)stream->cursor,
+								(FT_Byte*)stream->limit );
 		FT2_1_3_FRAME_EXIT();
 		if ( error )
 			goto Exit;
@@ -1935,9 +1935,9 @@ cff_subfont_done( FT2_1_3_Memory    memory,
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 cff_font_load( FT2_1_3_Stream  stream,
-			   FT2_1_3_Int     face_index,
+			   FT_Int     face_index,
 			   CFF_Font   font ) {
 	static const FT2_1_3_Frame_Field  cff_header_fields[] = {
 #undef  FT2_1_3_STRUCTURE
@@ -1951,9 +1951,9 @@ cff_font_load( FT2_1_3_Stream  stream,
 		FT2_1_3_FRAME_END
 	};
 
-	FT2_1_3_Error         error;
+	FT_Error         error;
 	FT2_1_3_Memory        memory = stream->memory;
-	FT2_1_3_ULong         base_offset;
+	FT_ULong         base_offset;
 	CFF_FontRecDict  dict;
 
 	FT2_1_3_ZERO( font );
@@ -1989,7 +1989,7 @@ cff_font_load( FT2_1_3_Stream  stream,
 
 	/* well, we don't really forget the `disabled' fonts... */
 	font->num_faces = font->name_index.count;
-	if ( face_index >= (FT2_1_3_Int)font->num_faces ) {
+	if ( face_index >= (FT_Int)font->num_faces ) {
 		FT2_1_3_ERROR(( "cff_font_load: incorrect face index = %d\n",
 				   face_index ));
 		error = FT2_1_3_Err_Invalid_Argument;
@@ -2012,7 +2012,7 @@ cff_font_load( FT2_1_3_Stream  stream,
 	if ( dict->cid_registry ) {
 		CFF_IndexRec  fd_index;
 		CFF_SubFont   sub;
-		FT2_1_3_UInt       idx;
+		FT_UInt       idx;
 
 
 		/* this is a CID-keyed font, we must now allocate a table of */
@@ -2049,7 +2049,7 @@ cff_font_load( FT2_1_3_Stream  stream,
 
 		/* now load the FD Select array */
 		error = CFF_Load_FD_Select( &font->fd_select,
-									(FT2_1_3_UInt)dict->cid_count,
+									(FT_UInt)dict->cid_count,
 									stream,
 									base_offset + dict->cid_fd_select_offset );
 
@@ -2113,7 +2113,7 @@ Exit:
 FT2_1_3_LOCAL_DEF( void )
 cff_font_done( CFF_Font  font ) {
 	FT2_1_3_Memory  memory = font->memory;
-	FT2_1_3_UInt    idx;
+	FT_UInt    idx;
 
 
 	cff_done_index( &font->global_subrs_index );

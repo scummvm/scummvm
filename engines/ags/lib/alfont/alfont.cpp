@@ -54,13 +54,13 @@
 namespace AGS3 {
 
 
-using FreeType213::FT2_1_3_Byte;
-using FreeType213::FT2_1_3_Face;
+using FreeType213::FT_Byte;
+using FreeType213::FT_Face;
 using FreeType213::FT2_1_3_Library;
-using FreeType213::FT2_1_3_FaceRec;
+using FreeType213::FT_FaceRec;
 using FreeType213::FT2_1_3_Glyph;
-using FreeType213::FT2_1_3_Bitmap;
-using FreeType213::FT2_1_3_BitmapGlyph;
+using FreeType213::FT_Bitmap;
+using FreeType213::FT_BitmapGlyph;
 
 using FreeType213::FT2_1_3_GLYPH_FORMAT_BITMAP;
 using FreeType213::FT2_1_3_RENDER_MODE_MONO;
@@ -100,7 +100,7 @@ struct _ALFONT_CACHED_GLYPH {
 };
 
 struct ALFONT_FONT {
-	FT2_1_3_Face face;      /* face */
+	FT_Face face;      /* face */
 	int face_h;             /* face height */
 	int real_face_h;        /* real face height */
 	int face_ascender;      /* face ascender */
@@ -140,7 +140,7 @@ const char *alfont_get_name(ALFONT_FONT *f) {
 	if (!f)
 		return "";
 
-	return ((FT2_1_3_FaceRec *)(f->face))->family_name;
+	return ((FT_FaceRec *)(f->face))->family_name;
 }
 
 
@@ -321,9 +321,9 @@ static void _alfont_cache_glyph(ALFONT_FONT *f, int glyph_number) {
 
 		/* render the mono bmp */
 		{
-			FT2_1_3_Bitmap *ft_bmp;
+			FT_Bitmap *ft_bmp;
 			FT2_1_3_Glyph glyph;
-			FT2_1_3_BitmapGlyph bmp_glyph;
+			FT_BitmapGlyph bmp_glyph;
 
 			Glyph_Copy(new_glyph, &glyph);
 
@@ -332,7 +332,7 @@ static void _alfont_cache_glyph(ALFONT_FONT *f, int glyph_number) {
 				Glyph_To_Bitmap(&glyph, ft_render_mode_mono, NULL, 1);
 
 			/* the FT rendered bitmap */
-			bmp_glyph = (FT2_1_3_BitmapGlyph)glyph;
+			bmp_glyph = (FT_BitmapGlyph)glyph;
 			ft_bmp = &bmp_glyph->bitmap;
 
 			/* save only if the bitmap is really 1 bit */
@@ -387,9 +387,9 @@ static void _alfont_cache_glyph(ALFONT_FONT *f, int glyph_number) {
 
 		/* render the aa bmp */
 		{
-			FT2_1_3_Bitmap *ft_bmp;
+			FT_Bitmap *ft_bmp;
 			FT2_1_3_Glyph glyph;
-			FT2_1_3_BitmapGlyph bmp_glyph;
+			FT_BitmapGlyph bmp_glyph;
 
 			Glyph_Copy(new_glyph, &glyph);
 
@@ -398,7 +398,7 @@ static void _alfont_cache_glyph(ALFONT_FONT *f, int glyph_number) {
 				Glyph_To_Bitmap(&glyph, ft_render_mode_normal, NULL, 1);
 
 			/* the FT rendered bitmap */
-			bmp_glyph = (FT2_1_3_BitmapGlyph)glyph;
+			bmp_glyph = (FT_BitmapGlyph)glyph;
 			ft_bmp = &bmp_glyph->bitmap;
 
 			/* save only if the bitmap is really 8 bit */
@@ -694,7 +694,7 @@ ALFONT_FONT *alfont_load_font_from_mem(const char *data, int data_len) {
 	memcpy((void *)font->data, (const void *)data, data_len);
 
 	/* load the font */
-	error = New_Memory_Face(ft_library, (const FT2_1_3_Byte *)font->data, font->data_size, 0, &font->face);
+	error = New_Memory_Face(ft_library, (const FT_Byte *)font->data, font->data_size, 0, &font->face);
 
 	if (error) {
 		free(font->data);
@@ -1159,7 +1159,7 @@ void alfont_textout_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int
 		/* apply kerning */
 #ifdef APPLY_FONT_KERNING
 		if (last_glyph_index) {
-			FT2_1_3_Vector v;
+			FT_Vector v;
 			Get_Kerning(f->face, last_glyph_index, glyph_index, ft_kerning_default, &v);
 			real_x += v.x >> 6;
 			real_y += v.y >> 6;
@@ -2244,7 +2244,7 @@ void alfont_textout_ex(BITMAP * bmp, ALFONT_FONT * f, const char *s, int x, int 
 		/* apply kerning */
 #ifdef APPLY_FONT_KERNING
 		if (last_glyph_index) {
-			FT2_1_3_Vector v;
+			FT_Vector v;
 			Get_Kerning(f->face, last_glyph_index, glyph_index, ft_kerning_default, &v);
 			real_x += v.x >> 6;
 			real_y += v.y >> 6;
@@ -3006,7 +3006,7 @@ int alfont_text_length(ALFONT_FONT * f, const char *str) {
 
 		/* apply kerning */
 		/*if (last_glyph_index) {
-			FT2_1_3_Vector v;
+			FT_Vector v;
 			Get_Kerning(f->face, last_glyph_index, glyph_index, ft_kerning_default, &v);
 			total_length += v.x >> 6;
 		}*/
@@ -3089,7 +3089,7 @@ int alfont_char_length(ALFONT_FONT * f, int character) {
 
 	/* apply kerning */
 	/*if (last_glyph_index) {
-	  FT2_1_3_Vector v;
+	  FT_Vector v;
 	  Get_Kerning(f->face, last_glyph_index, glyph_index, ft_kerning_default, &v);
 	  total_length += v.x >> 6;
 	}*/

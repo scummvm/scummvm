@@ -74,8 +74,8 @@ namespace FreeType213 {
 
 
 typedef struct  PFB_Tag_ {
-	FT2_1_3_UShort  tag;
-	FT2_1_3_Long    size;
+	FT_UShort  tag;
+	FT_Long    size;
 
 } PFB_Tag;
 
@@ -93,11 +93,11 @@ const FT2_1_3_Frame_Field  pfb_tag_fields[] = {
 };
 
 
-static FT2_1_3_Error
+static FT_Error
 read_pfb_tag( FT2_1_3_Stream   stream,
-			  FT2_1_3_UShort*  tag,
-			  FT2_1_3_Long*    size ) {
-	FT2_1_3_Error  error;
+			  FT_UShort*  tag,
+			  FT_Long*    size ) {
+	FT_Error  error;
 	PFB_Tag   head;
 
 
@@ -113,14 +113,14 @@ read_pfb_tag( FT2_1_3_Stream   stream,
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 T1_New_Parser( T1_Parser      parser,
 			   FT2_1_3_Stream      stream,
 			   FT2_1_3_Memory      memory,
 			   PSAux_Service  psaux ) {
-	FT2_1_3_Error   error;
-	FT2_1_3_UShort  tag;
-	FT2_1_3_Long    size;
+	FT_Error   error;
+	FT_UShort  tag;
+	FT_Long    size;
 
 
 	psaux->ps_parser_funcs->init( &parser->root,0, 0, memory );
@@ -173,7 +173,7 @@ T1_New_Parser( T1_Parser      parser,
 
 	/* if it is a memory-based resource, set up pointers */
 	if ( !stream->read ) {
-		parser->base_dict = (FT2_1_3_Byte*)stream->base + stream->pos;
+		parser->base_dict = (FT_Byte*)stream->base + stream->pos;
 		parser->base_len  = size;
 		parser->in_memory = 1;
 
@@ -251,13 +251,13 @@ hexa_value( char  c ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 T1_Get_Private_Dict( T1_Parser      parser,
 					 PSAux_Service  psaux ) {
 	FT2_1_3_Stream  stream = parser->stream;
 	FT2_1_3_Memory  memory = parser->root.memory;
-	FT2_1_3_Error   error  = 0;
-	FT2_1_3_Long    size;
+	FT_Error   error  = 0;
+	FT_Long    size;
 
 
 	if ( parser->in_pfb ) {
@@ -265,8 +265,8 @@ T1_Get_Private_Dict( T1_Parser      parser,
 		/* made of several segments.  We thus first read the number of   */
 		/* segments to compute the total size of the private dictionary  */
 		/* then re-read them into memory.                                */
-		FT2_1_3_Long    start_pos = FT2_1_3_STREAM_POS();
-		FT2_1_3_UShort  tag;
+		FT_Long    start_pos = FT2_1_3_STREAM_POS();
+		FT_UShort  tag;
 
 
 		parser->private_len = 0;
@@ -317,9 +317,9 @@ T1_Get_Private_Dict( T1_Parser      parser,
 		/* dictionary block in the heap.                                 */
 
 		/* first of all, look at the `eexec' keyword */
-		FT2_1_3_Byte*  cur   = parser->base_dict;
-		FT2_1_3_Byte*  limit = cur + parser->base_len;
-		FT2_1_3_Byte   c;
+		FT_Byte*  cur   = parser->base_dict;
+		FT_Byte*  limit = cur + parser->base_len;
+		FT_Byte   c;
 
 
 		for (;;) {
@@ -352,7 +352,7 @@ T1_Get_Private_Dict( T1_Parser      parser,
 		/* dictionary.  We overwrite the base dictionary for disk-based */
 		/* resources and allocate a new block otherwise                 */
 
-		size = (FT2_1_3_Long)( parser->base_len - ( cur - parser->base_dict ) );
+		size = (FT_Long)( parser->base_len - ( cur - parser->base_dict ) );
 
 		if ( parser->in_memory ) {
 			/* note that we allocate one more byte to put a terminating `0' */
@@ -383,8 +383,8 @@ T1_Get_Private_Dict( T1_Parser      parser,
 		else {
 			/* ASCII hexadecimal encoding */
 
-			FT2_1_3_Byte*  write;
-			FT2_1_3_Int    count;
+			FT_Byte*  write;
+			FT_Int    count;
 
 
 			write = parser->private_dict;
@@ -404,7 +404,7 @@ T1_Get_Private_Dict( T1_Parser      parser,
 					break;
 
 				/* otherwise, store byte */
-				*write++ = (FT2_1_3_Byte)( ( hex1 << 4 ) | hexa_value( cur[1] ) );
+				*write++ = (FT_Byte)( ( hex1 << 4 ) | hexa_value( cur[1] ) );
 				count++;
 				cur++;
 			}

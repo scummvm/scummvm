@@ -28,7 +28,7 @@ namespace AGS3 {
 namespace FreeType213 {
 
 /* initialize renderer -- init its raster */
-static FT2_1_3_Error
+static FT_Error
 ft_smooth_init( FT2_1_3_Renderer  render ) {
 	FT2_1_3_Library  library = FT2_1_3_MODULE_LIBRARY( render );
 
@@ -42,10 +42,10 @@ ft_smooth_init( FT2_1_3_Renderer  render ) {
 
 
 /* sets render-specific mode */
-static FT2_1_3_Error
+static FT_Error
 ft_smooth_set_mode( FT2_1_3_Renderer  render,
-					FT2_1_3_ULong     mode_tag,
-					FT2_1_3_Pointer   data ) {
+					FT_ULong     mode_tag,
+					FT_Pointer   data ) {
 	/* we simply pass it to the raster */
 	return render->clazz->raster_class->raster_set_mode( render->raster,
 			mode_tag,
@@ -53,12 +53,12 @@ ft_smooth_set_mode( FT2_1_3_Renderer  render,
 }
 
 /* transform a given glyph image */
-static FT2_1_3_Error
+static FT_Error
 ft_smooth_transform( FT2_1_3_Renderer   render,
 					 FT2_1_3_GlyphSlot  slot,
-					 FT2_1_3_Matrix*    matrix,
-					 FT2_1_3_Vector*    delta ) {
-	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
+					 FT_Matrix*    matrix,
+					 FT_Vector*    delta ) {
+	FT_Error  error = FT2_1_3_Err_Ok;
 
 
 	if ( slot->format != render->glyph_format ) {
@@ -81,7 +81,7 @@ Exit:
 static void
 ft_smooth_get_cbox( FT2_1_3_Renderer   render,
 					FT2_1_3_GlyphSlot  slot,
-					FT2_1_3_BBox*      cbox ) {
+					FT_BBox*      cbox ) {
 	FT2_1_3_MEM_ZERO( cbox, sizeof ( *cbox ) );
 
 	if ( slot->format == render->glyph_format )
@@ -90,19 +90,19 @@ ft_smooth_get_cbox( FT2_1_3_Renderer   render,
 
 
 /* convert a slot's glyph image into a bitmap */
-static FT2_1_3_Error
+static FT_Error
 ft_smooth_render_generic( FT2_1_3_Renderer     render,
 						  FT2_1_3_GlyphSlot    slot,
 						  FT2_1_3_Render_Mode  mode,
-						  FT2_1_3_Vector*      origin,
+						  FT_Vector*      origin,
 						  FT2_1_3_Render_Mode  required_mode,
-						  FT2_1_3_Int          hmul,
-						  FT2_1_3_Int          vmul ) {
-	FT2_1_3_Error     error;
+						  FT_Int          hmul,
+						  FT_Int          vmul ) {
+	FT_Error     error;
 	FT2_1_3_Outline*  outline = NULL;
-	FT2_1_3_BBox      cbox;
-	FT2_1_3_UInt      width, height, pitch;
-	FT2_1_3_Bitmap*   bitmap;
+	FT_BBox      cbox;
+	FT_UInt      width, height, pitch;
+	FT_Bitmap*   bitmap;
 	FT2_1_3_Memory    memory;
 
 	FT2_1_3_Raster_Params  params;
@@ -159,7 +159,7 @@ ft_smooth_render_generic( FT2_1_3_Renderer     render,
 	bitmap->rows       = height;
 	bitmap->pitch      = pitch;
 
-	if ( FT2_1_3_ALLOC( bitmap->buffer, (FT2_1_3_ULong)pitch * height ) )
+	if ( FT2_1_3_ALLOC( bitmap->buffer, (FT_ULong)pitch * height ) )
 		goto Exit;
 
 	slot->flags |= FT2_1_3_GLYPH_OWN_BITMAP;
@@ -174,8 +174,8 @@ ft_smooth_render_generic( FT2_1_3_Renderer     render,
 
 	/* implode outline if needed */
 	{
-		FT2_1_3_Int      n;
-		FT2_1_3_Vector*  vec;
+		FT_Int      n;
+		FT_Vector*  vec;
 
 
 		if ( hmul )
@@ -192,8 +192,8 @@ ft_smooth_render_generic( FT2_1_3_Renderer     render,
 
 	/* deflate outline if needed */
 	{
-		FT2_1_3_Int      n;
-		FT2_1_3_Vector*  vec;
+		FT_Int      n;
+		FT_Vector*  vec;
 
 
 		if ( hmul )
@@ -211,8 +211,8 @@ ft_smooth_render_generic( FT2_1_3_Renderer     render,
 		goto Exit;
 
 	slot->format      = FT2_1_3_GLYPH_FORMAT_BITMAP;
-	slot->bitmap_left = (FT2_1_3_Int)( cbox.xMin >> 6 );
-	slot->bitmap_top  = (FT2_1_3_Int)( cbox.yMax >> 6 );
+	slot->bitmap_left = (FT_Int)( cbox.xMin >> 6 );
+	slot->bitmap_top  = (FT_Int)( cbox.yMax >> 6 );
 
 Exit:
 	if ( outline && origin )
@@ -223,11 +223,11 @@ Exit:
 
 
 /* convert a slot's glyph image into a bitmap */
-static FT2_1_3_Error
+static FT_Error
 ft_smooth_render( FT2_1_3_Renderer     render,
 				  FT2_1_3_GlyphSlot    slot,
 				  FT2_1_3_Render_Mode  mode,
-				  FT2_1_3_Vector*      origin ) {
+				  FT_Vector*      origin ) {
 	return ft_smooth_render_generic( render, slot, mode, origin,
 									 FT2_1_3_RENDER_MODE_NORMAL,
 									 0, 0 );
@@ -235,12 +235,12 @@ ft_smooth_render( FT2_1_3_Renderer     render,
 
 
 /* convert a slot's glyph image into a horizontal LCD bitmap */
-static FT2_1_3_Error
+static FT_Error
 ft_smooth_render_lcd( FT2_1_3_Renderer     render,
 					  FT2_1_3_GlyphSlot    slot,
 					  FT2_1_3_Render_Mode  mode,
-					  FT2_1_3_Vector*      origin ) {
-	FT2_1_3_Error  error;
+					  FT_Vector*      origin ) {
+	FT_Error  error;
 
 	error = ft_smooth_render_generic( render, slot, mode, origin,
 									  FT2_1_3_RENDER_MODE_LCD,
@@ -253,12 +253,12 @@ ft_smooth_render_lcd( FT2_1_3_Renderer     render,
 
 
 /* convert a slot's glyph image into a vertical LCD bitmap */
-static FT2_1_3_Error
+static FT_Error
 ft_smooth_render_lcd_v( FT2_1_3_Renderer     render,
 						FT2_1_3_GlyphSlot    slot,
 						FT2_1_3_Render_Mode  mode,
-						FT2_1_3_Vector*      origin ) {
-	FT2_1_3_Error  error;
+						FT_Vector*      origin ) {
+	FT_Error  error;
 
 	error = ft_smooth_render_generic( render, slot, mode, origin,
 									  FT2_1_3_RENDER_MODE_LCD_V,

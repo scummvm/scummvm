@@ -47,7 +47,7 @@ FT2_1_3_BEGIN_HEADER
 /*    Font format string.  NULL in case of error.                        */
 /*                                                                       */
 FT2_1_3_EXPORT_DEF( const char* )
-FT2_1_3_Get_X11_Font_Format( FT2_1_3_Face  face );
+FT2_1_3_Get_X11_Font_Format( FT_Face  face );
 
 /* */
 

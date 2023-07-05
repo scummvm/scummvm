@@ -40,8 +40,8 @@ typedef struct CFF_CMapStdRec_*  CFF_CMapStd;
 
 typedef struct  CFF_CMapStdRec_ {
 	FT2_1_3_CMapRec  cmap;
-	FT2_1_3_UInt     count;
-	FT2_1_3_UShort*  gids;   /* up to 256 elements */
+	FT_UInt     count;
+	FT_UShort*  gids;   /* up to 256 elements */
 
 } CFF_CMapStdRec;
 
@@ -62,15 +62,15 @@ cff_cmap_encoding_class_rec;
 typedef struct CFF_CMapUnicodeRec_*  CFF_CMapUnicode;
 
 typedef struct  CFF_CMapUniPairRec_ {
-	FT2_1_3_UInt32  unicode;
-	FT2_1_3_UInt    gindex;
+	FT_UInt32  unicode;
+	FT_UInt    gindex;
 
 } CFF_CMapUniPairRec, *CFF_CMapUniPair;
 
 
 typedef struct  CFF_CMapUnicodeRec_ {
 	FT2_1_3_CMapRec       cmap;
-	FT2_1_3_UInt          num_pairs;
+	FT_UInt          num_pairs;
 	CFF_CMapUniPair  pairs;
 
 } CFF_CMapUnicodeRec;

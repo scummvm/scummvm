@@ -48,8 +48,8 @@ typedef struct FT2_1_3_MemoryRec_*   FT2_1_3_Memory;
  * @return:
  *   address of new block. NULL in case of memory exhaustion
  */
-typedef FT2_1_3_Pointer  (*FT2_1_3_Memory_AllocFunc)( FT2_1_3_ULong   size,
-		FT2_1_3_Pointer mem_data );
+typedef FT_Pointer  (*FT2_1_3_Memory_AllocFunc)( FT_ULong   size,
+		FT_Pointer mem_data );
 
 
 /*@**********************************************************************
@@ -65,8 +65,8 @@ typedef FT2_1_3_Pointer  (*FT2_1_3_Memory_AllocFunc)( FT2_1_3_ULong   size,
  *   mem_data :: memory-manager specific optional argument
  *               (see @ft_memory_new)
  */
-typedef void        (*FT2_1_3_Memory_FreeFunc) ( FT2_1_3_Pointer  block,
-		FT2_1_3_Pointer  mem_data );
+typedef void        (*FT2_1_3_Memory_FreeFunc) ( FT_Pointer  block,
+		FT_Pointer  mem_data );
 
 
 /*@**********************************************************************
@@ -83,10 +83,10 @@ typedef void        (*FT2_1_3_Memory_FreeFunc) ( FT2_1_3_Pointer  block,
  *   mem_data :: memory-manager specific optional argument
  *               (see @ft_memory_new)
  */
-typedef FT2_1_3_Pointer  (*FT2_1_3_Memory_ReallocFunc)( FT2_1_3_Pointer   block,
-		FT2_1_3_ULong     new_size,
-		FT2_1_3_ULong     cur_size,
-		FT2_1_3_Pointer   mem_data );
+typedef FT_Pointer  (*FT2_1_3_Memory_ReallocFunc)( FT_Pointer   block,
+		FT_ULong     new_size,
+		FT_ULong     cur_size,
+		FT_Pointer   mem_data );
 
 
 /*@**********************************************************************
@@ -108,9 +108,9 @@ typedef FT2_1_3_Pointer  (*FT2_1_3_Memory_ReallocFunc)( FT2_1_3_Pointer   block,
  * @return:
  *   handle to new memory manager object. NULL in case of failure
  */
-typedef FT2_1_3_Pointer  (*FT2_1_3_Memory_CreateFunc)( FT2_1_3_UInt     size,
-		FT2_1_3_Pointer  init_data,
-		FT2_1_3_Pointer *amem_data );
+typedef FT_Pointer  (*FT2_1_3_Memory_CreateFunc)( FT_UInt     size,
+		FT_Pointer  init_data,
+		FT_Pointer *amem_data );
 
 
 /*@**********************************************************************
@@ -125,7 +125,7 @@ typedef FT2_1_3_Pointer  (*FT2_1_3_Memory_CreateFunc)( FT2_1_3_UInt     size,
  *   mem_data :: option manager-specific argument
  */
 typedef void        (*FT2_1_3_Memory_DestroyFunc)( FT2_1_3_Memory  memory,
-		FT2_1_3_Pointer mem_data );
+		FT_Pointer mem_data );
 
 
 /*@**********************************************************************
@@ -181,7 +181,7 @@ typedef const FT2_1_3_Memory_FuncsRec*  FT2_1_3_Memory_Funcs;
  */
 FT2_1_3_BASE( FT2_1_3_Memory )
 ft_memory_new( FT2_1_3_Memory_Funcs  mem_funcs,
-			   FT2_1_3_Pointer       mem_init_data );
+			   FT_Pointer       mem_init_data );
 
 
 /*@**********************************************************************

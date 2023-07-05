@@ -41,7 +41,7 @@ FT2_1_3_BEGIN_HEADER
  *
  * @description:
  *   A list of valid values for the `platform_id' identifier code in
- *   @FT2_1_3_CharmapRec and @FT2_1_3_SfntName structures.
+ *   @FT_CharmapRec and @FT2_1_3_SfntName structures.
  *
  * @values:
  *   TT_PLATFORM_APPLE_UNICODE ::
@@ -72,7 +72,7 @@ FT2_1_3_BEGIN_HEADER
  *
  *   TT_PLATFORM_ADOBE ::
  *     This value isn't part of any font format specification, but is used
- *     by FreeType to report Adobe-specific charmaps in an @FT2_1_3_CharMapRec
+ *     by FreeType to report Adobe-specific charmaps in an @FT_CharMapRec
  *     structure.  See @TT_ADOBE_ID_XXX.
  */
 

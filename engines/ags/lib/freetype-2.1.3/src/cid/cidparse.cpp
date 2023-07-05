@@ -50,15 +50,15 @@ namespace FreeType213 {
 /*************************************************************************/
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 cid_parser_new( CID_Parser*    parser,
 				FT2_1_3_Stream      stream,
 				FT2_1_3_Memory      memory,
 				PSAux_Service  psaux ) {
-	FT2_1_3_Error  error;
-	FT2_1_3_ULong  base_offset, offset, ps_len;
-	FT2_1_3_Byte   buffer[256 + 10];
-	FT2_1_3_Int    buff_len;
+	FT_Error  error;
+	FT_ULong  base_offset, offset, ps_len;
+	FT_Byte   buffer[256 + 10];
+	FT_Int    buff_len;
 
 
 	FT2_1_3_MEM_ZERO( parser, sizeof ( *parser ) );
@@ -85,8 +85,8 @@ cid_parser_new( CID_Parser*    parser,
 	/* now, read the rest of the file, until we find a `StartData' */
 	buff_len = 256;
 	for (;;) {
-		FT2_1_3_Byte   *p, *limit = buffer + 256;
-		FT2_1_3_ULong  top_position;
+		FT_Byte   *p, *limit = buffer + 256;
+		FT_ULong  top_position;
 
 
 		/* fill input buffer */
@@ -106,7 +106,7 @@ cid_parser_new( CID_Parser*    parser,
 		for ( p = buffer; p < limit; p++ ) {
 			if ( p[0] == 'S' && ft_strncmp( (char*)p, "StartData", 9 ) == 0 ) {
 				/* save offset of binary data after `StartData' */
-				offset = (FT2_1_3_ULong)( top_position - ( limit - p ) + 10 );
+				offset = (FT_ULong)( top_position - ( limit - p ) + 10 );
 				goto Found;
 			}
 		}

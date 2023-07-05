@@ -46,29 +46,29 @@ const FT2_1_3_Outline  null_outline = { 0, 0, 0, 0, 0, 0 };
 
 /* documentation is in ftoutln.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_Outline_Decompose( FT2_1_3_Outline*              outline,
 					  const FT2_1_3_Outline_Funcs*  func_interface,
 					  void*                    user ) {
 #undef SCALED
 #define SCALED( x )  ( ( (x) << shift ) - delta )
 
-	FT2_1_3_Vector   v_last;
-	FT2_1_3_Vector   v_control;
-	FT2_1_3_Vector   v_start;
+	FT_Vector   v_last;
+	FT_Vector   v_control;
+	FT_Vector   v_start;
 
-	FT2_1_3_Vector*  point;
-	FT2_1_3_Vector*  limit;
+	FT_Vector*  point;
+	FT_Vector*  limit;
 	char*       tags;
 
-	FT2_1_3_Error    error;
+	FT_Error    error;
 
-	FT2_1_3_Int   n;         /* index of contour in outline     */
-	FT2_1_3_UInt  first;     /* index of first point in contour */
-	FT2_1_3_Int   tag;       /* current point's state           */
+	FT_Int   n;         /* index of contour in outline     */
+	FT_UInt  first;     /* index of first point in contour */
+	FT_Int   tag;       /* current point's state           */
 
-	FT2_1_3_Int   shift;
-	FT2_1_3_Pos   delta;
+	FT_Int   shift;
+	FT_Pos   delta;
 
 
 	if ( !outline || !func_interface )
@@ -79,7 +79,7 @@ FT2_1_3_Outline_Decompose( FT2_1_3_Outline*              outline,
 	first = 0;
 
 	for ( n = 0; n < outline->n_contours; n++ ) {
-		FT2_1_3_Int  last;  /* index of last point in contour */
+		FT_Int  last;  /* index of last point in contour */
 
 
 		last  = outline->contours[n];
@@ -134,7 +134,7 @@ FT2_1_3_Outline_Decompose( FT2_1_3_Outline*              outline,
 			tag = FT2_1_3_CURVE_TAG( tags[0] );
 			switch ( tag ) {
 			case FT2_1_3_CURVE_TAG_ON: { /* emit a single line_to */
-				FT2_1_3_Vector  vec;
+				FT_Vector  vec;
 
 
 				vec.x = SCALED( point->x );
@@ -152,8 +152,8 @@ FT2_1_3_Outline_Decompose( FT2_1_3_Outline*              outline,
 
 Do_Conic:
 				if ( point < limit ) {
-					FT2_1_3_Vector  vec;
-					FT2_1_3_Vector  v_middle;
+					FT_Vector  vec;
+					FT_Vector  v_middle;
 
 
 					point++;
@@ -188,7 +188,7 @@ Do_Conic:
 				goto Close;
 
 			default: { /* FT2_1_3_CURVE_TAG_CUBIC */
-				FT2_1_3_Vector  vec1, vec2;
+				FT_Vector  vec1, vec2;
 
 
 				if ( point + 1 > limit                             ||
@@ -204,7 +204,7 @@ Do_Conic:
 				vec2.y = SCALED( point[-1].y );
 
 				if ( point <= limit ) {
-					FT2_1_3_Vector  vec;
+					FT_Vector  vec;
 
 
 					vec.x = SCALED( point->x );
@@ -242,12 +242,12 @@ Invalid_Outline:
 }
 
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_Outline_New_Internal( FT2_1_3_Memory    memory,
-						 FT2_1_3_UInt      numPoints,
-						 FT2_1_3_Int       numContours,
+						 FT_UInt      numPoints,
+						 FT_Int       numContours,
 						 FT2_1_3_Outline  *anoutline ) {
-	FT2_1_3_Error  error;
+	FT_Error  error;
 
 
 	if ( !anoutline || !memory )
@@ -260,8 +260,8 @@ FT2_1_3_Outline_New_Internal( FT2_1_3_Memory    memory,
 			FT2_1_3_NEW_ARRAY( anoutline->contours, numContours    ) )
 		goto Fail;
 
-	anoutline->n_points    = (FT2_1_3_UShort)numPoints;
-	anoutline->n_contours  = (FT2_1_3_Short)numContours;
+	anoutline->n_points    = (FT_UShort)numPoints;
+	anoutline->n_contours  = (FT_Short)numContours;
 	anoutline->flags      |= FT2_1_3_OUTLINE_OWNER;
 
 	return FT2_1_3_Err_Ok;
@@ -276,10 +276,10 @@ Fail:
 
 /* documentation is in ftoutln.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_Outline_New( FT2_1_3_Library   library,
-				FT2_1_3_UInt      numPoints,
-				FT2_1_3_Int       numContours,
+				FT_UInt      numPoints,
+				FT_Int       numContours,
 				FT2_1_3_Outline  *anoutline ) {
 	if ( !library )
 		return FT2_1_3_Err_Invalid_Library_Handle;
@@ -291,13 +291,13 @@ FT2_1_3_Outline_New( FT2_1_3_Library   library,
 
 /* documentation is in ftoutln.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_Outline_Check( FT2_1_3_Outline*  outline ) {
 	if ( outline ) {
-		FT2_1_3_Int  n_points   = outline->n_points;
-		FT2_1_3_Int  n_contours = outline->n_contours;
-		FT2_1_3_Int  end0, end;
-		FT2_1_3_Int  n;
+		FT_Int  n_points   = outline->n_points;
+		FT_Int  n_contours = outline->n_contours;
+		FT_Int  end0, end;
+		FT_Int  n;
 
 
 		/* empty glyph? */
@@ -333,10 +333,10 @@ Bad:
 
 /* documentation is in ftoutln.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_Outline_Copy( FT2_1_3_Outline*  source,
 				 FT2_1_3_Outline  *target ) {
-	FT2_1_3_Int  is_owner;
+	FT_Int  is_owner;
 
 
 	if ( !source            || !target            ||
@@ -345,13 +345,13 @@ FT2_1_3_Outline_Copy( FT2_1_3_Outline*  source,
 		return FT2_1_3_Err_Invalid_Argument;
 
 	FT2_1_3_MEM_COPY( target->points, source->points,
-				 source->n_points * sizeof ( FT2_1_3_Vector ) );
+				 source->n_points * sizeof ( FT_Vector ) );
 
 	FT2_1_3_MEM_COPY( target->tags, source->tags,
-				 source->n_points * sizeof ( FT2_1_3_Byte ) );
+				 source->n_points * sizeof ( FT_Byte ) );
 
 	FT2_1_3_MEM_COPY( target->contours, source->contours,
-				 source->n_contours * sizeof ( FT2_1_3_Short ) );
+				 source->n_contours * sizeof ( FT_Short ) );
 
 	/* copy all flags, except the `FT2_1_3_OUTLINE_OWNER' one */
 	is_owner      = target->flags & FT2_1_3_OUTLINE_OWNER;
@@ -364,7 +364,7 @@ FT2_1_3_Outline_Copy( FT2_1_3_Outline*  source,
 }
 
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_Outline_Done_Internal( FT2_1_3_Memory    memory,
 						  FT2_1_3_Outline*  outline ) {
 	if ( outline ) {
@@ -383,7 +383,7 @@ FT2_1_3_Outline_Done_Internal( FT2_1_3_Memory    memory,
 
 /* documentation is in ftoutln.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_Outline_Done( FT2_1_3_Library   library,
 				 FT2_1_3_Outline*  outline ) {
 	/* check for valid `outline' in FT2_1_3_Outline_Done_Internal() */
@@ -399,8 +399,8 @@ FT2_1_3_Outline_Done( FT2_1_3_Library   library,
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_Outline_Get_CBox( FT2_1_3_Outline*  outline,
-					 FT2_1_3_BBox     *acbox ) {
-	FT2_1_3_Pos  xMin, yMin, xMax, yMax;
+					 FT_BBox     *acbox ) {
+	FT_Pos  xMin, yMin, xMax, yMax;
 
 
 	if ( outline && acbox ) {
@@ -410,8 +410,8 @@ FT2_1_3_Outline_Get_CBox( FT2_1_3_Outline*  outline,
 			xMax = 0;
 			yMax = 0;
 		} else {
-			FT2_1_3_Vector*  vec   = outline->points;
-			FT2_1_3_Vector*  limit = vec + outline->n_points;
+			FT_Vector*  vec   = outline->points;
+			FT_Vector*  limit = vec + outline->n_points;
 
 
 			xMin = xMax = vec->x;
@@ -419,7 +419,7 @@ FT2_1_3_Outline_Get_CBox( FT2_1_3_Outline*  outline,
 			vec++;
 
 			for ( ; vec < limit; vec++ ) {
-				FT2_1_3_Pos  x, y;
+				FT_Pos  x, y;
 
 
 				x = vec->x;
@@ -443,10 +443,10 @@ FT2_1_3_Outline_Get_CBox( FT2_1_3_Outline*  outline,
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_Outline_Translate( FT2_1_3_Outline*  outline,
-					  FT2_1_3_Pos       xOffset,
-					  FT2_1_3_Pos       yOffset ) {
-	FT2_1_3_UShort   n;
-	FT2_1_3_Vector*  vec = outline->points;
+					  FT_Pos       xOffset,
+					  FT_Pos       yOffset ) {
+	FT_UShort   n;
+	FT_Vector*  vec = outline->points;
 
 
 	for ( n = 0; n < outline->n_points; n++ ) {
@@ -461,8 +461,8 @@ FT2_1_3_Outline_Translate( FT2_1_3_Outline*  outline,
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_Outline_Reverse( FT2_1_3_Outline*  outline ) {
-	FT2_1_3_UShort  n;
-	FT2_1_3_Int     first, last;
+	FT_UShort  n;
+	FT_Int     first, last;
 
 
 	first = 0;
@@ -472,9 +472,9 @@ FT2_1_3_Outline_Reverse( FT2_1_3_Outline*  outline ) {
 
 		/* reverse point table */
 		{
-			FT2_1_3_Vector*  p = outline->points + first;
-			FT2_1_3_Vector*  q = outline->points + last;
-			FT2_1_3_Vector   swap;
+			FT_Vector*  p = outline->points + first;
+			FT_Vector*  q = outline->points + last;
+			FT_Vector   swap;
 
 
 			while ( p < q ) {
@@ -511,14 +511,14 @@ FT2_1_3_Outline_Reverse( FT2_1_3_Outline*  outline ) {
 
 /* documentation is in ftoutln.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_Outline_Render( FT2_1_3_Library         library,
 				   FT2_1_3_Outline*        outline,
 				   FT2_1_3_Raster_Params*  params ) {
-	FT2_1_3_Error     error;
-	FT2_1_3_Bool      update = 0;
+	FT_Error     error;
+	FT_Bool      update = 0;
 	FT2_1_3_Renderer  renderer;
-	FT2_1_3_ListNode  node;
+	FT_ListNode  node;
 
 
 	if ( !library )
@@ -560,10 +560,10 @@ FT2_1_3_Outline_Render( FT2_1_3_Library         library,
 
 /* documentation is in ftoutln.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_Outline_Get_Bitmap( FT2_1_3_Library   library,
 					   FT2_1_3_Outline*  outline,
-					   FT2_1_3_Bitmap   *abitmap ) {
+					   FT_Bitmap   *abitmap ) {
 	FT2_1_3_Raster_Params  params;
 
 
@@ -587,9 +587,9 @@ FT2_1_3_Outline_Get_Bitmap( FT2_1_3_Library   library,
 /* documentation is in ftoutln.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_Vector_Transform( FT2_1_3_Vector*  vector,
-					 FT2_1_3_Matrix*  matrix ) {
-	FT2_1_3_Pos xz, yz;
+FT_Vector_Transform( FT_Vector*  vector,
+					 FT_Matrix*  matrix ) {
+	FT_Pos xz, yz;
 
 
 	if ( !vector || !matrix )
@@ -610,13 +610,13 @@ FT2_1_3_Vector_Transform( FT2_1_3_Vector*  vector,
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_Outline_Transform( FT2_1_3_Outline*  outline,
-					  FT2_1_3_Matrix*   matrix ) {
-	FT2_1_3_Vector*  vec = outline->points;
-	FT2_1_3_Vector*  limit = vec + outline->n_points;
+					  FT_Matrix*   matrix ) {
+	FT_Vector*  vec = outline->points;
+	FT_Vector*  limit = vec + outline->n_points;
 
 
 	for ( ; vec < limit; vec++ )
-		FT2_1_3_Vector_Transform( vec, matrix );
+		FT_Vector_Transform( vec, matrix );
 }
 
 } // End of namespace FreeType213

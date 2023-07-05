@@ -53,7 +53,7 @@ cid_slot_done( CID_GlyphSlot  slot ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 cid_slot_init( CID_GlyphSlot  slot ) {
 	CID_Face          face;
 	PSHinter_Service  pshinter;
@@ -118,9 +118,9 @@ cid_size_done( CID_Size  size ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 cid_size_init( CID_Size  size ) {
-	FT2_1_3_Error           error = 0;
+	FT_Error           error = 0;
 	PSH_Globals_Funcs  funcs = cid_size_get_globals_funcs( size );
 
 
@@ -140,10 +140,10 @@ cid_size_init( CID_Size  size ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 cid_size_reset( CID_Size  size ) {
 	PSH_Globals_Funcs  funcs = cid_size_get_globals_funcs( size );
-	FT2_1_3_Error           error = 0;
+	FT_Error           error = 0;
 
 
 	if ( funcs )
@@ -186,7 +186,7 @@ cid_face_done( CID_Face  face ) {
 
 		/* release subrs */
 		if ( face->subrs ) {
-			FT2_1_3_Int  n;
+			FT_Int  n;
 
 
 			for ( n = 0; n < cid->num_dicts; n++ ) {
@@ -247,13 +247,13 @@ cid_face_done( CID_Face  face ) {
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 cid_face_init( FT2_1_3_Stream      stream,
 			   CID_Face       face,
-			   FT2_1_3_Int         face_index,
-			   FT2_1_3_Int         num_params,
+			   FT_Int         face_index,
+			   FT_Int         num_params,
 			   FT2_1_3_Parameter*  params ) {
-	FT2_1_3_Error          error;
+	FT_Error          error;
 	PSNames_Service   psnames;
 	PSAux_Service     psaux;
 	PSHinter_Service  pshinter;
@@ -315,7 +315,7 @@ cid_face_init( FT2_1_3_Stream      stream,
 		/* Init the face object fields */
 		/* Now set up root face fields */
 		{
-			FT2_1_3_Face  root = (FT2_1_3_Face)&face->root;
+			FT_Face  root = (FT_Face)&face->root;
 
 
 			root->num_glyphs   = face->cid.cid_count;
@@ -364,9 +364,9 @@ cid_face_init( FT2_1_3_Stream      stream,
 			if ( !root->units_per_EM )
 				root->units_per_EM  = 1000;
 
-			root->ascender  = (FT2_1_3_Short)( root->bbox.yMax );
-			root->descender = (FT2_1_3_Short)( root->bbox.yMin );
-			root->height    = (FT2_1_3_Short)(
+			root->ascender  = (FT_Short)( root->bbox.yMax );
+			root->descender = (FT_Short)( root->bbox.yMin );
+			root->height    = (FT_Short)(
 								  ( ( root->ascender + root->descender ) * 12 ) / 10 );
 
 			root->underline_position  = face->cid.font_info.underline_position;
@@ -396,7 +396,7 @@ Exit:
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 cid_driver_init( CID_Driver  driver ) {
 	FT2_1_3_UNUSED( driver );
 

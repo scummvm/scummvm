@@ -72,8 +72,8 @@ typedef struct FTC_GlyphNodeRec_*  FTC_GlyphNode;
 /*                                                                    */
 typedef struct  FTC_GlyphNodeRec_ {
 	FTC_NodeRec   node;
-	FT2_1_3_UShort     item_count;
-	FT2_1_3_UShort     item_start;
+	FT_UShort     item_count;
+	FT_UShort     item_start;
 
 } FTC_GlyphNodeRec;
 
@@ -84,7 +84,7 @@ typedef struct  FTC_GlyphNodeRec_ {
 
 typedef struct  FTC_GlyphQueryRec_ {
 	FTC_QueryRec  query;
-	FT2_1_3_UInt       gindex;
+	FT_UInt       gindex;
 
 } FTC_GlyphQueryRec, *FTC_GlyphQuery;
 
@@ -95,9 +95,9 @@ typedef struct  FTC_GlyphQueryRec_ {
 /* a glyph set is used to categorize glyphs of a given type */
 typedef struct  FTC_GlyphFamilyRec_ {
 	FTC_FamilyRec  family;
-	FT2_1_3_UInt32      hash;
-	FT2_1_3_UInt        item_total;   /* total number of glyphs in family */
-	FT2_1_3_UInt        item_count;   /* number of glyph items per node   */
+	FT_UInt32      hash;
+	FT_UInt        item_total;   /* total number of glyphs in family */
+	FT_UInt        item_count;   /* number of glyph items per node   */
 
 } FTC_GlyphFamilyRec;
 
@@ -136,7 +136,7 @@ typedef struct  FTC_GlyphFamilyRec_ {
 
 /* retrieve glyph index of glyph node */
 #define FTC_GLYPH_NODE_GINDEX( x )                                 \
-					( (FT2_1_3_UInt)( FTC_GLYPH_NODE( x )->node.hash & 0xFFFF ) )
+					( (FT_UInt)( FTC_GLYPH_NODE( x )->node.hash & 0xFFFF ) )
 
 
 /*************************************************************************/
@@ -149,13 +149,13 @@ typedef struct  FTC_GlyphFamilyRec_ {
 /* must be called by derived FTC_Node_InitFunc routines */
 FT2_1_3_EXPORT( void )
 ftc_glyph_node_init( FTC_GlyphNode    node,
-										 FT2_1_3_UInt          gindex,  /* glyph index for node */
+										 FT_UInt          gindex,  /* glyph index for node */
 										 FTC_GlyphFamily  gfam );
 
 /* returns TRUE iff the query's glyph index correspond to the node;  */
 /* this assumes that the "family" and "hash" fields of the query are */
 /* already correctly set                                             */
-FT2_1_3_EXPORT( FT2_1_3_Bool )
+FT2_1_3_EXPORT( FT_Bool )
 ftc_glyph_node_compare( FTC_GlyphNode   gnode,
 												FTC_GlyphQuery  gquery );
 
@@ -167,11 +167,11 @@ ftc_glyph_node_done( FTC_GlyphNode  node,
 
 /* must be called by derived FTC_Family_InitFunc; */
 /* calls "ftc_family_init"                        */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 ftc_glyph_family_init( FTC_GlyphFamily  gfam,
-											 FT2_1_3_UInt32        hash,
-											 FT2_1_3_UInt          item_count,
-											 FT2_1_3_UInt          item_total,
+											 FT_UInt32        hash,
+											 FT_UInt          item_count,
+											 FT_UInt          item_total,
 											 FTC_GlyphQuery   gquery,
 											 FTC_Cache        cache );
 

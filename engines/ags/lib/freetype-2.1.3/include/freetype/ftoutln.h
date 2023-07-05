@@ -100,7 +100,7 @@ FT2_1_3_BEGIN_HEADER
 /* <Return>                                                              */
 /*    FreeType error code.  0 means sucess.                              */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Outline_Decompose( FT2_1_3_Outline*              outline,
 					  const FT2_1_3_Outline_Funcs*  func_interface,
 					  void*                    user );
@@ -135,17 +135,17 @@ FT2_1_3_Outline_Decompose( FT2_1_3_Outline*              outline,
 /*    The reason why this function takes a `library' parameter is simply */
 /*    to use the library's memory allocator.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Outline_New( FT2_1_3_Library   library,
-				FT2_1_3_UInt      numPoints,
-				FT2_1_3_Int       numContours,
+				FT_UInt      numPoints,
+				FT_Int       numContours,
 				FT2_1_3_Outline  *anoutline );
 
 
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Outline_New_Internal( FT2_1_3_Memory    memory,
-						 FT2_1_3_UInt      numPoints,
-						 FT2_1_3_Int       numContours,
+						 FT_UInt      numPoints,
+						 FT_Int       numContours,
 						 FT2_1_3_Outline  *anoutline );
 
 
@@ -173,12 +173,12 @@ FT2_1_3_Outline_New_Internal( FT2_1_3_Memory    memory,
 /*    The reason why this function takes an `library' parameter is       */
 /*    simply to use FT2_1_3_Free().                                           */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Outline_Done( FT2_1_3_Library   library,
 				 FT2_1_3_Outline*  outline );
 
 
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Outline_Done_Internal( FT2_1_3_Memory    memory,
 						  FT2_1_3_Outline*  outline );
 
@@ -197,7 +197,7 @@ FT2_1_3_Outline_Done_Internal( FT2_1_3_Memory    memory,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Outline_Check( FT2_1_3_Outline*  outline );
 
 
@@ -226,7 +226,7 @@ FT2_1_3_Outline_Check( FT2_1_3_Outline*  outline );
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_Outline_Get_CBox( FT2_1_3_Outline*  outline,
-					 FT2_1_3_BBox     *acbox );
+					 FT_BBox     *acbox );
 
 
 /*************************************************************************/
@@ -247,8 +247,8 @@ FT2_1_3_Outline_Get_CBox( FT2_1_3_Outline*  outline,
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_Outline_Translate( FT2_1_3_Outline*  outline,
-					  FT2_1_3_Pos       xOffset,
-					  FT2_1_3_Pos       yOffset );
+					  FT_Pos       xOffset,
+					  FT_Pos       yOffset );
 
 
 /*************************************************************************/
@@ -270,7 +270,7 @@ FT2_1_3_Outline_Translate( FT2_1_3_Outline*  outline,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Outline_Copy( FT2_1_3_Outline*  source,
 				 FT2_1_3_Outline  *target );
 
@@ -296,7 +296,7 @@ FT2_1_3_Outline_Copy( FT2_1_3_Outline*  source,
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_Outline_Transform( FT2_1_3_Outline*  outline,
-					  FT2_1_3_Matrix*   matrix );
+					  FT_Matrix*   matrix );
 
 
 /*************************************************************************/
@@ -348,10 +348,10 @@ FT2_1_3_Outline_Reverse( FT2_1_3_Outline*  outline );
 /*                                                                       */
 /*    It will use the raster correponding to the default glyph format.   */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Outline_Get_Bitmap( FT2_1_3_Library   library,
 					   FT2_1_3_Outline*  outline,
-					   FT2_1_3_Bitmap   *abitmap );
+					   FT_Bitmap   *abitmap );
 
 
 /*************************************************************************/
@@ -385,7 +385,7 @@ FT2_1_3_Outline_Get_Bitmap( FT2_1_3_Library   library,
 /*    converter is called, which means that the value you give to it is  */
 /*    actually ignored.                                                  */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Outline_Render( FT2_1_3_Library         library,
 				   FT2_1_3_Outline*        outline,
 				   FT2_1_3_Raster_Params*  params );

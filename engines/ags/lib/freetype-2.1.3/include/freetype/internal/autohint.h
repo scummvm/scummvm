@@ -105,7 +105,7 @@ typedef struct FT2_1_3_AutoHinterRec_  *FT2_1_3_AutoHinter;
 /*                                                                       */
 typedef void
 (*FT2_1_3_AutoHinter_GlobalGetFunc)( FT2_1_3_AutoHinter  hinter,
-								FT2_1_3_Face        face,
+								FT_Face        face,
 								void**         global_hints,
 								long*          global_len );
 
@@ -147,7 +147,7 @@ typedef void
 /*                                                                       */
 typedef void
 (*FT2_1_3_AutoHinter_GlobalResetFunc)( FT2_1_3_AutoHinter  hinter,
-								  FT2_1_3_Face        face );
+								  FT_Face        face );
 
 
 /*************************************************************************/
@@ -173,12 +173,12 @@ typedef void
 /*    It will call the font driver with FT2_1_3_Load_Glyph(), with            */
 /*    FT2_1_3_LOAD_NO_SCALE set.                                              */
 /*                                                                       */
-typedef FT2_1_3_Error
+typedef FT_Error
 (*FT2_1_3_AutoHinter_GlyphLoadFunc)( FT2_1_3_AutoHinter  hinter,
 								FT2_1_3_GlyphSlot   slot,
 								FT2_1_3_Size        size,
-								FT2_1_3_UInt        glyph_index,
-								FT2_1_3_Int32       load_flags );
+								FT_UInt        glyph_index,
+								FT_Int32       load_flags );
 
 
 /*************************************************************************/

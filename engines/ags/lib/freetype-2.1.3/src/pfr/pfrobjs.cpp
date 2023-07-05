@@ -49,13 +49,13 @@ pfr_face_done( PFR_Face  face ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 pfr_face_init( FT2_1_3_Stream      stream,
 			   PFR_Face       face,
-			   FT2_1_3_Int         face_index,
-			   FT2_1_3_Int         num_params,
+			   FT_Int         face_index,
+			   FT_Int         num_params,
 			   FT2_1_3_Parameter*  params ) {
-	FT2_1_3_Error  error;
+	FT_Error  error;
 
 	FT2_1_3_UNUSED( num_params );
 	FT2_1_3_UNUSED( params );
@@ -74,7 +74,7 @@ pfr_face_init( FT2_1_3_Stream      stream,
 
 	/* check face index */
 	{
-		FT2_1_3_UInt  num_faces;
+		FT_UInt  num_faces;
 
 
 		error = pfr_log_font_count( stream,
@@ -112,7 +112,7 @@ pfr_face_init( FT2_1_3_Stream      stream,
 
 	/* now, set-up all root face fields */
 	{
-		FT2_1_3_Face      root     = FT2_1_3_FACE( face );
+		FT_Face      root     = FT2_1_3_FACE( face );
 		PFR_PhyFont  phy_font = &face->phy_font;
 
 
@@ -141,19 +141,19 @@ pfr_face_init( FT2_1_3_Stream      stream,
 		root->available_sizes = 0;
 
 		root->bbox         = phy_font->bbox;
-		root->units_per_EM = (FT2_1_3_UShort)phy_font->outline_resolution;
-		root->ascender     = (FT2_1_3_Short) phy_font->bbox.yMax;
-		root->descender    = (FT2_1_3_Short) phy_font->bbox.yMin;
-		root->height       = (FT2_1_3_Short)
+		root->units_per_EM = (FT_UShort)phy_font->outline_resolution;
+		root->ascender     = (FT_Short) phy_font->bbox.yMax;
+		root->descender    = (FT_Short) phy_font->bbox.yMin;
+		root->height       = (FT_Short)
 							 ( ( ( root->ascender - root->descender ) * 12 )
 							   / 10 );
 
 		/* now compute maximum advance width */
 		if ( ( phy_font->flags & PFR_PHY_PROPORTIONAL ) == 0 )
-			root->max_advance_width = (FT2_1_3_Short)phy_font->standard_advance;
+			root->max_advance_width = (FT_Short)phy_font->standard_advance;
 		else {
-			FT2_1_3_Int    max = 0;
-			FT2_1_3_UInt   count = phy_font->num_chars;
+			FT_Int    max = 0;
+			FT_UInt   count = phy_font->num_chars;
 			PFR_Char  gchar = phy_font->chars;
 
 
@@ -162,17 +162,17 @@ pfr_face_init( FT2_1_3_Stream      stream,
 					max = gchar->advance;
 			}
 
-			root->max_advance_width = (FT2_1_3_Short)max;
+			root->max_advance_width = (FT_Short)max;
 		}
 
 		root->max_advance_height = root->height;
 
-		root->underline_position  = (FT2_1_3_Short)( - root->units_per_EM / 10 );
-		root->underline_thickness = (FT2_1_3_Short)(   root->units_per_EM / 30 );
+		root->underline_position  = (FT_Short)( - root->units_per_EM / 10 );
+		root->underline_thickness = (FT_Short)(   root->units_per_EM / 30 );
 
 		/* create charmap */
 		{
-			FT2_1_3_CharMapRec  charmap;
+			FT_CharMapRec  charmap;
 
 
 			charmap.face        = root;
@@ -207,7 +207,7 @@ Exit:
 /*************************************************************************/
 /*************************************************************************/
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 pfr_slot_init( PFR_Slot  slot ) {
 	FT2_1_3_GlyphLoader  loader = slot->root.internal->loader;
 
@@ -223,16 +223,16 @@ pfr_slot_done( PFR_Slot  slot ) {
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 pfr_slot_load( PFR_Slot  slot,
 			   PFR_Size  size,
-			   FT2_1_3_UInt   gindex,
-			   FT2_1_3_Int32  load_flags ) {
-	FT2_1_3_Error     error;
+			   FT_UInt   gindex,
+			   FT_Int32  load_flags ) {
+	FT_Error     error;
 	PFR_Face     face    = (PFR_Face)slot->root.face;
 	PFR_Char     gchar;
 	FT2_1_3_Outline*  outline = &slot->root.outline;
-	FT2_1_3_ULong     gps_offset;
+	FT_ULong     gps_offset;
 
 	if (gindex > 0)
 		gindex--;
@@ -258,11 +258,11 @@ pfr_slot_load( PFR_Slot  slot,
 							gps_offset, gchar->gps_offset, gchar->gps_size );
 
 	if ( !error ) {
-		FT2_1_3_BBox            cbox;
+		FT_BBox            cbox;
 		FT2_1_3_Glyph_Metrics*  metrics = &slot->root.metrics;
-		FT2_1_3_Pos             advance;
-		FT2_1_3_Int             em_metrics, em_outline;
-		FT2_1_3_Bool            scaling;
+		FT_Pos             advance;
+		FT_Int             em_metrics, em_outline;
+		FT_Bool            scaling;
 
 
 		scaling = FT2_1_3_BOOL( ( load_flags & FT2_1_3_LOAD_NO_SCALE ) == 0 );
@@ -301,10 +301,10 @@ pfr_slot_load( PFR_Slot  slot,
 
 		/* scale when needed */
 		if ( scaling ) {
-			FT2_1_3_Int      n;
-			FT2_1_3_Fixed    x_scale = size->root.metrics.x_scale;
-			FT2_1_3_Fixed    y_scale = size->root.metrics.y_scale;
-			FT2_1_3_Vector*  vec     = outline->points;
+			FT_Int      n;
+			FT_Fixed    x_scale = size->root.metrics.x_scale;
+			FT_Fixed    y_scale = size->root.metrics.y_scale;
+			FT_Vector*  vec     = outline->points;
 
 
 			/* scale outline points */
@@ -340,15 +340,15 @@ Exit:
 /*************************************************************************/
 /*************************************************************************/
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 pfr_face_get_kerning( PFR_Face    face,
-					  FT2_1_3_UInt     glyph1,
-					  FT2_1_3_UInt     glyph2,
-					  FT2_1_3_Vector*  kerning ) {
-	FT2_1_3_Error      error;
+					  FT_UInt     glyph1,
+					  FT_UInt     glyph2,
+					  FT_Vector*  kerning ) {
+	FT_Error      error;
 	PFR_PhyFont   phy_font = &face->phy_font;
 	PFR_KernItem  item     = phy_font->kern_items;
-	FT2_1_3_UInt32     idx      = PFR_KERN_INDEX( glyph1, glyph2 );
+	FT_UInt32     idx      = PFR_KERN_INDEX( glyph1, glyph2 );
 
 
 	kerning->x = 0;
@@ -367,9 +367,9 @@ pfr_face_get_kerning( PFR_Face    face,
 
 Found_Item: {
 		/* perform simply binary search within the item */
-		FT2_1_3_UInt    min, mid, max;
+		FT_UInt    min, mid, max;
 		FT2_1_3_Stream  stream = face->root.stream;
-		FT2_1_3_Byte*   p;
+		FT_Byte*   p;
 
 
 		if ( FT2_1_3_STREAM_SEEK( item->offset )                       ||
@@ -379,7 +379,7 @@ Found_Item: {
 		min = 0;
 		max = item->pair_count;
 		while ( min < max ) {
-			FT2_1_3_UInt  char1, char2, charcode;
+			FT_UInt  char1, char2, charcode;
 
 
 			mid = ( min + max ) >> 1;

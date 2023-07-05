@@ -101,7 +101,7 @@ file_spec_from_path( const char*  pathname,
 #else
 
 	Str255    p_path;
-	FT2_1_3_ULong  path_len;
+	FT_ULong  path_len;
 
 
 	/* convert path to a pascal string */
@@ -153,8 +153,8 @@ static void
 create_lwfn_name( char*   ps_name,
                   Str255  lwfn_file_name ) {
 	int       max = 5, count = 0;
-	FT2_1_3_Byte*  p = lwfn_file_name;
-	FT2_1_3_Byte*  q = (FT2_1_3_Byte*)ps_name;
+	FT_Byte*  p = lwfn_file_name;
+	FT_Byte*  q = (FT_Byte*)ps_name;
 
 
 	lwfn_file_name[0] = 0;
@@ -177,7 +177,7 @@ create_lwfn_name( char*   ps_name,
 
 /* Given a file reference, answer its location as a vRefNum
    and a dirID. */
-static FT2_1_3_Error
+static FT_Error
 get_file_location( short           ref_num,
                    short*          v_ref_num,
                    long*           dir_id,
@@ -202,11 +202,11 @@ get_file_location( short           ref_num,
 
 /* Make a file spec for an LWFN file from a FOND resource and
    a file name. */
-static FT2_1_3_Error
+static FT_Error
 make_lwfn_spec( Handle          fond,
                 unsigned char*  file_name,
                 FSSpec*         spec ) {
-	FT2_1_3_Error  error;
+	FT_Error  error;
 	short     ref_num, v_ref_num;
 	long      dir_id;
 	Str255    fond_file_name;
@@ -323,16 +323,16 @@ parse_fond( char*   fond_data,
    PFB parser wants the ASCII header as one chunk, and the LWFN
    chunks are often not organized that way, so we'll glue chunks
    of the same type together. */
-static FT2_1_3_Error
+static FT_Error
 read_lwfn( FT2_1_3_Memory  memory,
            FSSpec*    lwfn_spec,
-           FT2_1_3_Byte**  pfb_data,
-           FT2_1_3_ULong*  size ) {
-	FT2_1_3_Error       error = FT2_1_3_Err_Ok;
+           FT_Byte**  pfb_data,
+           FT_ULong*  size ) {
+	FT_Error       error = FT2_1_3_Err_Ok;
 	short          res_ref, res_id;
 	unsigned char  *buffer, *p, *size_p = NULL;
-	FT2_1_3_ULong       total_size = 0;
-	FT2_1_3_ULong       post_size, pfb_chunk_size;
+	FT_ULong       total_size = 0;
+	FT_ULong       post_size, pfb_chunk_size;
 	Handle         post_data;
 	char           code, last_code;
 
@@ -365,7 +365,7 @@ read_lwfn( FT2_1_3_Memory  memory,
 		last_code = code;
 	}
 
-	if ( FT2_1_3_ALLOC( buffer, (FT2_1_3_Long)total_size ) )
+	if ( FT2_1_3_ALLOC( buffer, (FT_Long)total_size ) )
 		goto Error;
 
 	/* Second pass: append all POST data to the buffer, add PFB fields.
@@ -380,17 +380,17 @@ read_lwfn( FT2_1_3_Memory  memory,
 		if ( post_data == NULL )
 			break;  /* we're done */
 
-		post_size = (FT2_1_3_ULong)GetHandleSize( post_data ) - 2;
+		post_size = (FT_ULong)GetHandleSize( post_data ) - 2;
 		code = (*post_data)[0];
 
 		if ( code != last_code ) {
 			if ( last_code != -1 ) {
 				/* we're done adding a chunk, fill in the size field */
 				if ( size_p != NULL ) {
-					*size_p++ = (FT2_1_3_Byte)(   pfb_chunk_size         & 0xFF );
-					*size_p++ = (FT2_1_3_Byte)( ( pfb_chunk_size >> 8  ) & 0xFF );
-					*size_p++ = (FT2_1_3_Byte)( ( pfb_chunk_size >> 16 ) & 0xFF );
-					*size_p++ = (FT2_1_3_Byte)( ( pfb_chunk_size >> 24 ) & 0xFF );
+					*size_p++ = (FT_Byte)(   pfb_chunk_size         & 0xFF );
+					*size_p++ = (FT_Byte)( ( pfb_chunk_size >> 8  ) & 0xFF );
+					*size_p++ = (FT_Byte)( ( pfb_chunk_size >> 16 ) & 0xFF );
+					*size_p++ = (FT_Byte)( ( pfb_chunk_size >> 24 ) & 0xFF );
 				}
 				pfb_chunk_size = 0;
 			}
@@ -440,13 +440,13 @@ memory_stream_close( FT2_1_3_Stream  stream ) {
 
 
 /* Create a new memory stream from a buffer and a size. */
-static FT2_1_3_Error
+static FT_Error
 new_memory_stream( FT2_1_3_Library           library,
-                   FT2_1_3_Byte*             base,
-                   FT2_1_3_ULong             size,
+                   FT_Byte*             base,
+                   FT_ULong             size,
                    FT2_1_3_Stream_CloseFunc  close,
                    FT2_1_3_Stream           *astream ) {
-	FT2_1_3_Error   error;
+	FT_Error   error;
 	FT2_1_3_Memory  memory;
 	FT2_1_3_Stream  stream;
 
@@ -473,16 +473,16 @@ Exit:
 }
 
 
-/* Create a new FT2_1_3_Face given a buffer and a driver name. */
-static FT2_1_3_Error
+/* Create a new FT_Face given a buffer and a driver name. */
+static FT_Error
 open_face_from_buffer( FT2_1_3_Library  library,
-                       FT2_1_3_Byte*    base,
-                       FT2_1_3_ULong    size,
-                       FT2_1_3_Long     face_index,
+                       FT_Byte*    base,
+                       FT_ULong    size,
+                       FT_Long     face_index,
                        char*       driver_name,
-                       FT2_1_3_Face    *aface ) {
+                       FT_Face    *aface ) {
 	FT2_1_3_Open_Args  args;
-	FT2_1_3_Error      error;
+	FT_Error      error;
 	FT2_1_3_Stream     stream;
 	FT2_1_3_Memory     memory = library->memory;
 
@@ -516,15 +516,15 @@ open_face_from_buffer( FT2_1_3_Library  library,
 }
 
 
-/* Create a new FT2_1_3_Face from a file spec to an LWFN file. */
-static FT2_1_3_Error
+/* Create a new FT_Face from a file spec to an LWFN file. */
+static FT_Error
 FT2_1_3_New_Face_From_LWFN( FT2_1_3_Library  library,
                        FSSpec*     spec,
-                       FT2_1_3_Long     face_index,
-                       FT2_1_3_Face    *aface ) {
-	FT2_1_3_Byte*  pfb_data;
-	FT2_1_3_ULong  pfb_size;
-	FT2_1_3_Error  error;
+                       FT_Long     face_index,
+                       FT_Face    *aface ) {
+	FT_Byte*  pfb_data;
+	FT_ULong  pfb_size;
+	FT_Error  error;
 
 
 	error = read_lwfn( library->memory, spec, &pfb_data, &pfb_size );
@@ -540,16 +540,16 @@ FT2_1_3_New_Face_From_LWFN( FT2_1_3_Library  library,
 }
 
 
-/* Create a new FT2_1_3_Face from an SFNT resource, specified by res ID. */
-static FT2_1_3_Error
+/* Create a new FT_Face from an SFNT resource, specified by res ID. */
+static FT_Error
 FT2_1_3_New_Face_From_SFNT( FT2_1_3_Library  library,
                        short       sfnt_id,
-                       FT2_1_3_Long     face_index,
-                       FT2_1_3_Face    *aface ) {
+                       FT_Long     face_index,
+                       FT_Face    *aface ) {
 	Handle     sfnt = NULL;
-	FT2_1_3_Byte*   sfnt_data;
+	FT_Byte*   sfnt_data;
 	size_t     sfnt_size;
-	FT2_1_3_Error   error = 0;
+	FT_Error   error = 0;
 	FT2_1_3_Memory  memory = library->memory;
 
 
@@ -557,8 +557,8 @@ FT2_1_3_New_Face_From_SFNT( FT2_1_3_Library  library,
 	if ( ResError() )
 		return FT2_1_3_Err_Invalid_Handle;
 
-	sfnt_size = (FT2_1_3_ULong)GetHandleSize( sfnt );
-	if ( FT2_1_3_ALLOC( sfnt_data, (FT2_1_3_Long)sfnt_size ) ) {
+	sfnt_size = (FT_ULong)GetHandleSize( sfnt );
+	if ( FT2_1_3_ALLOC( sfnt_data, (FT_Long)sfnt_size ) ) {
 		ReleaseResource( sfnt );
 		return error;
 	}
@@ -577,13 +577,13 @@ FT2_1_3_New_Face_From_SFNT( FT2_1_3_Library  library,
 }
 
 
-/* Create a new FT2_1_3_Face from a file spec to a suitcase file. */
-static FT2_1_3_Error
+/* Create a new FT_Face from a file spec to a suitcase file. */
+static FT_Error
 FT2_1_3_New_Face_From_Suitcase( FT2_1_3_Library  library,
                            FSSpec*     spec,
-                           FT2_1_3_Long     face_index,
-                           FT2_1_3_Face    *aface ) {
-	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
+                           FT_Long     face_index,
+                           FT_Face    *aface ) {
+	FT_Error  error = FT2_1_3_Err_Ok;
 	short     res_ref, res_index;
 	Handle    fond;
 
@@ -617,13 +617,13 @@ Error:
 
 #if TARGET_API_MAC_CARBON
 
-/* Create a new FT2_1_3_Face from a file spec to a suitcase file. */
-static FT2_1_3_Error
+/* Create a new FT_Face from a file spec to a suitcase file. */
+static FT_Error
 FT2_1_3_New_Face_From_dfont( FT2_1_3_Library  library,
                         FSSpec*     spec,
-                        FT2_1_3_Long     face_index,
-                        FT2_1_3_Face*    aface ) {
-	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
+                        FT_Long     face_index,
+                        FT_Face*    aface ) {
+	FT_Error  error = FT2_1_3_Err_Ok;
 	short     res_ref, res_index;
 	Handle    fond;
 	FSRef     hostContainerRef;
@@ -665,11 +665,11 @@ Error:
 
 /* documentation is in ftmac.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_New_Face_From_FOND( FT2_1_3_Library  library,
                        Handle      fond,
-                       FT2_1_3_Long     face_index,
-                       FT2_1_3_Face    *aface ) {
+                       FT_Long     face_index,
+                       FT_Face    *aface ) {
 	short   sfnt_id, have_sfnt, have_lwfn = 0;
 	Str255  lwfn_file_name;
 	short   fond_id;
@@ -710,10 +710,10 @@ FT2_1_3_New_Face_From_FOND( FT2_1_3_Library  library,
 
 /* documentation is in ftmac.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_GetFile_From_Mac_Name( char*     fontName,
                           FSSpec*   pathSpec,
-                          FT2_1_3_Long*  face_index ) {
+                          FT_Long*  face_index ) {
 	OptionBits            options = kFMUseGlobalScopeOption;
 
 	FMFontFamilyIterator  famIter;
@@ -813,11 +813,11 @@ ResourceForkSize(FSSpec*  spec) {
 /*    accepts pathnames to Mac suitcase files.  For further              */
 /*    documentation see the original FT2_1_3_New_Face() in freetype.h.        */
 /*                                                                       */
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_New_Face( FT2_1_3_Library   library,
              const char*  pathname,
-             FT2_1_3_Long      face_index,
-             FT2_1_3_Face     *aface ) {
+             FT_Long      face_index,
+             FT_Face     *aface ) {
 	FT2_1_3_Open_Args  args;
 	FSSpec        spec;
 	OSType        file_type;

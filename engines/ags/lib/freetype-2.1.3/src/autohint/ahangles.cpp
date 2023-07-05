@@ -66,8 +66,8 @@ const AH_Angle  ah_arctan[1L << AH_ATAN_BITS] = {
 
 
 FT2_1_3_LOCAL_DEF( AH_Angle )
-ah_angle( FT2_1_3_Vector*  v ) {
-	FT2_1_3_Pos    dx, dy;
+ah_angle( FT_Vector*  v ) {
+	FT_Pos    dx, dy;
 	AH_Angle  angle;
 
 
@@ -95,7 +95,7 @@ ah_angle( FT2_1_3_Vector*  v ) {
 	}
 
 	if ( dy < 0 ) {
-		FT2_1_3_Pos  tmp;
+		FT_Pos  tmp;
 
 
 		tmp = dx;

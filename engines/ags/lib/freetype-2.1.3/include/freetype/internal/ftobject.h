@@ -63,7 +63,7 @@ typedef const struct FT2_1_3_TypeRec_*    FT2_1_3_Type;
  */
 typedef struct FT2_1_3_ObjectRec_ {
 	FT2_1_3_Class  clazz;
-	FT2_1_3_Int    ref_count;
+	FT_Int    ref_count;
 
 } FT2_1_3_ObjectRec;
 
@@ -146,8 +146,8 @@ typedef struct FT2_1_3_ObjectRec_ {
  * @return:
  *   error code. 0 means success
  */
-typedef FT2_1_3_Error  (*FT2_1_3_Object_InitFunc)( FT2_1_3_Object   object,
-		FT2_1_3_Pointer  init_data );
+typedef FT_Error  (*FT2_1_3_Object_InitFunc)( FT2_1_3_Object   object,
+		FT_Pointer  init_data );
 
 /**************************************************************
  *
@@ -192,16 +192,16 @@ typedef void  (*FT2_1_3_Object_DoneFunc)( FT2_1_3_Object   object );
  */
 typedef struct FT2_1_3_ClassRec_ {
 	FT2_1_3_ObjectRec        object;
-	FT2_1_3_UInt32           magic;
+	FT_UInt32           magic;
 	FT2_1_3_Class            super;
 	FT2_1_3_Type             type;
 	FT2_1_3_Memory           memory;
 	FT2_1_3_Library          library;
-	FT2_1_3_Pointer          info;
+	FT_Pointer          info;
 
 	FT2_1_3_Object_DoneFunc  class_done;
 
-	FT2_1_3_UInt             obj_size;
+	FT_UInt             obj_size;
 	FT2_1_3_Object_InitFunc  obj_init;
 	FT2_1_3_Object_DoneFunc  obj_done;
 
@@ -306,11 +306,11 @@ typedef struct FT2_1_3_TypeRec_ {
 	const char*         name;
 	FT2_1_3_Type             super;
 
-	FT2_1_3_UInt             class_size;
+	FT_UInt             class_size;
 	FT2_1_3_Object_InitFunc  class_init;
 	FT2_1_3_Object_DoneFunc  class_done;
 
-	FT2_1_3_UInt             obj_size;
+	FT_UInt             obj_size;
 	FT2_1_3_Object_InitFunc  obj_init;
 	FT2_1_3_Object_DoneFunc  obj_done;
 
@@ -341,8 +341,8 @@ typedef struct FT2_1_3_TypeRec_ {
  * @return:
  *   1 iff the handle points to a valid object. 0 otherwise
  */
-FT2_1_3_BASE( FT2_1_3_Int )
-ft_object_check( FT2_1_3_Pointer  obj );
+FT2_1_3_BASE( FT_Int )
+ft_object_check( FT_Pointer  obj );
 
 
 /**************************************************************
@@ -361,8 +361,8 @@ ft_object_check( FT2_1_3_Pointer  obj );
  *   1 iff the handle points to a valid 'clazz' instance. 0
  *   otherwise.
  */
-FT2_1_3_BASE( FT2_1_3_Int )
-ft_object_is_a( FT2_1_3_Pointer  obj,
+FT2_1_3_BASE( FT_Int )
+ft_object_is_a( FT_Pointer  obj,
 				FT2_1_3_Class    clazz );
 
 
@@ -383,10 +383,10 @@ ft_object_is_a( FT2_1_3_Pointer  obj,
  * @return:
  *   error code. 0 means success
  */
-FT2_1_3_BASE( FT2_1_3_Error )
+FT2_1_3_BASE( FT_Error )
 ft_object_create( FT2_1_3_Object  *aobject,
 				  FT2_1_3_Class    clazz,
-				  FT2_1_3_Pointer  init_data );
+				  FT_Pointer  init_data );
 
 
 /**************************************************************
@@ -412,10 +412,10 @@ ft_object_create( FT2_1_3_Object  *aobject,
  *   this is equivalent to calling @ft_class_from_type followed by
  *   @ft_object_create
  */
-FT2_1_3_BASE( FT2_1_3_Error )
+FT2_1_3_BASE( FT_Error )
 ft_object_create_from_type( FT2_1_3_Object  *aobject,
 							FT2_1_3_Type     type,
-							FT2_1_3_Pointer  init_data,
+							FT_Pointer  init_data,
 							FT2_1_3_Library  library );
 
 
@@ -490,7 +490,7 @@ ft_object_create_from_type( FT2_1_3_Object  *aobject,
  * @return:
  *   error code. 0 means success
  */
-FT2_1_3_BASE( FT2_1_3_Error )
+FT2_1_3_BASE( FT_Error )
 ft_class_from_type( FT2_1_3_Class   *aclass,
 					FT2_1_3_Type     type,
 					FT2_1_3_Library  library );
@@ -516,7 +516,7 @@ typedef struct FT2_1_3_MetaClassRec_ {
 
 
 /* initialize meta class */
-FT2_1_3_BASE( FT2_1_3_Error )
+FT2_1_3_BASE( FT_Error )
 ft_metaclass_init( FT2_1_3_MetaClass  meta,
 				   FT2_1_3_Library    library );
 

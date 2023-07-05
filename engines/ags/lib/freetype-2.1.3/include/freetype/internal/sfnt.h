@@ -65,11 +65,11 @@ FT2_1_3_BEGIN_HEADER
 /*    should then call the TT_Load_Face_Func() callback to read the rest */
 /*    of the SFNT tables in the object.                                  */
 /*                                                                       */
-typedef FT2_1_3_Error
+typedef FT_Error
 (*TT_Init_Face_Func)( FT2_1_3_Stream      stream,
 					  TT_Face        face,
-					  FT2_1_3_Int         face_index,
-					  FT2_1_3_Int         num_params,
+					  FT_Int         face_index,
+					  FT_Int         num_params,
 					  FT2_1_3_Parameter*  params );
 
 
@@ -101,11 +101,11 @@ typedef FT2_1_3_Error
 /* <Note>                                                                */
 /*    This function must be called after TT_Init_Face_Func().            */
 /*                                                                       */
-typedef FT2_1_3_Error
+typedef FT_Error
 (*TT_Load_Face_Func)( FT2_1_3_Stream      stream,
 					  TT_Face        face,
-					  FT2_1_3_Int         face_index,
-					  FT2_1_3_Int         num_params,
+					  FT_Int         face_index,
+					  FT_Int         num_params,
 					  FT2_1_3_Parameter*  params );
 
 
@@ -163,10 +163,10 @@ typedef FT2_1_3_Module_Interface
 /*    This function checks that the header is valid by looking at the    */
 /*    values of `search_range', `entry_selector', and `range_shift'.     */
 /*                                                                       */
-typedef FT2_1_3_Error
+typedef FT_Error
 (*TT_Load_SFNT_HeaderRec_Func)( TT_Face      face,
 								FT2_1_3_Stream    stream,
-								FT2_1_3_Long      face_index,
+								FT_Long      face_index,
 								SFNT_Header  sfnt );
 
 
@@ -193,7 +193,7 @@ typedef FT2_1_3_Error
 /*    format tag.  This is the case just after a call to                 */
 /*    TT_Load_Format_Tag().                                              */
 /*                                                                       */
-typedef FT2_1_3_Error
+typedef FT_Error
 (*TT_Load_Directory_Func)( TT_Face      face,
 						   FT2_1_3_Stream    stream,
 						   SFNT_Header  sfnt );
@@ -239,12 +239,12 @@ typedef FT2_1_3_Error
 /* <Return>                                                              */
 /*    TrueType error code.  0 means success.                             */
 /*                                                                       */
-typedef FT2_1_3_Error
+typedef FT_Error
 (*TT_Load_Any_Func)( TT_Face    face,
-					 FT2_1_3_ULong   tag,
-					 FT2_1_3_Long    offset,
-					 FT2_1_3_Byte   *buffer,
-					 FT2_1_3_ULong*  length );
+					 FT_ULong   tag,
+					 FT_Long    offset,
+					 FT_Byte   *buffer,
+					 FT_ULong*  length );
 
 
 /*************************************************************************/
@@ -279,13 +279,13 @@ typedef FT2_1_3_Error
 /*  <Note>                                                               */
 /*    The `map.buffer' field is always freed before the glyph is loaded. */
 /*                                                                       */
-typedef FT2_1_3_Error
+typedef FT_Error
 (*TT_Load_SBit_Image_Func)( TT_Face              face,
-							FT2_1_3_ULong             strike_index,
-							FT2_1_3_UInt              glyph_index,
-							FT2_1_3_UInt              load_flags,
+							FT_ULong             strike_index,
+							FT_UInt              glyph_index,
+							FT_UInt              load_flags,
 							FT2_1_3_Stream            stream,
-							FT2_1_3_Bitmap           *amap,
+							FT_Bitmap           *amap,
 							TT_SBit_MetricsRec  *ametrics );
 
 
@@ -312,11 +312,11 @@ typedef FT2_1_3_Error
 /*    FreeType error code.  0 means success.  Returns an error if no     */
 /*    sbit strike exists for the selected ppem values.                   */
 /*                                                                       */
-typedef FT2_1_3_Error
+typedef FT_Error
 (*TT_Set_SBit_Strike_Func)( TT_Face    face,
-							FT2_1_3_Int     x_ppem,
-							FT2_1_3_Int     y_ppem,
-							FT2_1_3_ULong  *astrike_index );
+							FT_Int     x_ppem,
+							FT_Int     y_ppem,
+							FT_ULong  *astrike_index );
 
 
 /*************************************************************************/
@@ -338,10 +338,10 @@ typedef FT2_1_3_Error
 /* <Output>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-typedef FT2_1_3_Error
+typedef FT_Error
 (*TT_Get_PS_Name_Func)( TT_Face      face,
-						FT2_1_3_UInt      idx,
-						FT2_1_3_String**  PSname );
+						FT_UInt      idx,
+						FT_String**  PSname );
 
 
 /*************************************************************************/
@@ -362,10 +362,10 @@ typedef FT2_1_3_Error
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-typedef FT2_1_3_Error
+typedef FT_Error
 (*TT_Load_Metrics_Func)( TT_Face    face,
 						 FT2_1_3_Stream  stream,
-						 FT2_1_3_Bool    vertical );
+						 FT_Bool    vertical );
 
 
 /*************************************************************************/
@@ -392,7 +392,7 @@ typedef FT2_1_3_Error
 /*    opened).  In case of error, all partially allocated tables are     */
 /*    released.                                                          */
 /*                                                                       */
-typedef FT2_1_3_Error
+typedef FT_Error
 (*TT_CharMap_Load_Func)( TT_Face       face,
 						 TT_CMapTable  cmap,
 						 FT2_1_3_Stream     input );
@@ -414,7 +414,7 @@ typedef FT2_1_3_Error
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-typedef FT2_1_3_Error
+typedef FT_Error
 (*TT_CharMap_Free_Func)( TT_Face       face,
 						 TT_CMapTable  cmap );
 
@@ -439,7 +439,7 @@ typedef FT2_1_3_Error
 /*    The function will use `face->goto_table' to seek the stream to     */
 /*    the start of the table.                                            */
 /*                                                                       */
-typedef FT2_1_3_Error
+typedef FT_Error
 (*TT_Load_Table_Func)( TT_Face    face,
 					   FT2_1_3_Stream  stream );
 

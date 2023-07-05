@@ -15,7 +15,7 @@
 FT2_1_3_BASE_DEF( void )
 ft_hash_done( FT2_1_3_Hash              table,
               FT2_1_3_Hash_ForeachFunc  node_func,
-              const FT2_1_3_Pointer     node_data ) {
+              const FT_Pointer     node_data ) {
 	if ( table ) {
 		FT2_1_3_Memory  memory = table->memory;
 
@@ -32,9 +32,9 @@ ft_hash_done( FT2_1_3_Hash              table,
 }
 
 
-FT2_1_3_BASE_DEF( FT2_1_3_UInt )
+FT2_1_3_BASE_DEF( FT_UInt )
 ft_hash_get_size( FT2_1_3_Hash  table ) {
-	FT2_1_3_UInt  result = 0;
+	FT_UInt  result = 0;
 
 	if ( table )
 		result = (table->p + table->mask + 1)*FT2_1_3_HASH_MAX_LOAD - table->slack;
@@ -44,11 +44,11 @@ ft_hash_get_size( FT2_1_3_Hash  table ) {
 
 
 
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 ft_hash_init( FT2_1_3_Hash            table,
               FT2_1_3_Hash_EqualFunc  equal,
               FT2_1_3_Memory          memory ) {
-	FT2_1_3_Error  error;
+	FT_Error  error;
 
 	table->memory     = memory;
 	table->p          = 0;
@@ -66,8 +66,8 @@ ft_hash_init( FT2_1_3_Hash            table,
 FT2_1_3_BASE_DEF( void )
 ft_hash_foreach( FT2_1_3_Hash              table,
                  FT2_1_3_Hash_ForeachFunc  foreach_func,
-                 const FT2_1_3_Pointer     foreach_data ) {
-	FT2_1_3_UInt       count = table->p + table->mask + 1;
+                 const FT_Pointer     foreach_data ) {
+	FT_UInt       count = table->p + table->mask + 1;
 	FT2_1_3_HashNode*  pnode = table->buckets;
 	FT2_1_3_HashNode   node, next;
 
@@ -86,13 +86,13 @@ ft_hash_foreach( FT2_1_3_Hash              table,
 FT2_1_3_BASE_DEF( FT2_1_3_HashLookup )
 ft_hash_lookup( FT2_1_3_Hash      table,
                 FT2_1_3_HashNode  keynode ) {
-	FT2_1_3_UInt       index;
-	FT2_1_3_UInt32     hash = keynode->hash;
+	FT_UInt       index;
+	FT_UInt32     hash = keynode->hash;
 	FT2_1_3_HashNode   node, *pnode;
 
-	index = (FT2_1_3_UInt)(hash & table->mask);
+	index = (FT_UInt)(hash & table->mask);
 	if ( index < table->p )
-		index = (FT2_1_3_UInt)(hash & (2*table->mask+1));
+		index = (FT_UInt)(hash & (2*table->mask+1));
 
 	pnode = &table->buckets[index];
 	for (;;) {
@@ -112,19 +112,19 @@ ft_hash_lookup( FT2_1_3_Hash      table,
 
 
 
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 ft_hash_add( FT2_1_3_Hash        table,
              FT2_1_3_HashLookup  lookup,
              FT2_1_3_HashNode    new_node ) {
-	FT2_1_3_Error     error = 0;
+	FT_Error     error = 0;
 
 	/* add it to the hash table */
 	new_node->link = *lookup;
 	*lookup        = new_node;
 
 	if ( --table->slack < 0 ) {
-		FT2_1_3_UInt       p     = table->p;
-		FT2_1_3_UInt       mask  = table->mask;
+		FT_UInt       p     = table->p;
+		FT_UInt       mask  = table->mask;
 		FT2_1_3_HashNode   new_list, node, *pnode;
 
 		/* split a single bucket */
@@ -165,12 +165,12 @@ Exit:
 
 
 
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 ft_hash_remove( FT2_1_3_Hash        table,
                 FT2_1_3_HashLookup  lookup ) {
 	FT2_1_3_HashNode  node;
-	FT2_1_3_UInt      num_buckets;
-	FT2_1_3_Error     error = 0;
+	FT_UInt      num_buckets;
+	FT_Error     error = 0;
 
 	FT2_1_3_ASSERT( pnode != NULL && node != NULL );
 
@@ -180,10 +180,10 @@ ft_hash_remove( FT2_1_3_Hash        table,
 
 	num_buckets = ( table->p + table->mask + 1) ;
 
-	if ( ++ table->slack > (FT2_1_3_Long)num_buckets*FT2_1_3_HASH_SUB_LOAD ) {
-		FT2_1_3_UInt       p         = table->p;
-		FT2_1_3_UInt       mask      = table->mask;
-		FT2_1_3_UInt       old_index = p + mask;
+	if ( ++ table->slack > (FT_Long)num_buckets*FT2_1_3_HASH_SUB_LOAD ) {
+		FT_UInt       p         = table->p;
+		FT_UInt       mask      = table->mask;
+		FT_UInt       old_index = p + mask;
 		FT2_1_3_HashNode*  pnode;
 		FT2_1_3_HashNode*  pold;
 

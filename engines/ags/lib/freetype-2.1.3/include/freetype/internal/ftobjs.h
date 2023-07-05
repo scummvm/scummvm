@@ -132,10 +132,10 @@ typedef enum  FT2_1_3_ValidationLevel_ {
 
 /* validator structure */
 typedef struct  FT2_1_3_ValidatorRec_ {
-	const FT2_1_3_Byte*      base;        /* address of table in memory       */
-	const FT2_1_3_Byte*      limit;       /* `base' + sizeof(table) in memory */
+	const FT_Byte*      base;        /* address of table in memory       */
+	const FT_Byte*      limit;       /* `base' + sizeof(table) in memory */
 	FT2_1_3_ValidationLevel  level;       /* validation level                 */
-	FT2_1_3_Error            error;       /* error returned. 0 means success  */
+	FT_Error            error;       /* error returned. 0 means success  */
 
 	ft_jmp_buf          jump_buffer; /* used for exception handling      */
 
@@ -147,11 +147,11 @@ typedef struct  FT2_1_3_ValidatorRec_ {
 
 FT2_1_3_BASE( void )
 ft_validator_init( FT2_1_3_Validator        valid,
-				   const FT2_1_3_Byte*      base,
-				   const FT2_1_3_Byte*      limit,
+				   const FT_Byte*      base,
+				   const FT_Byte*      limit,
 				   FT2_1_3_ValidationLevel  level );
 
-FT2_1_3_BASE( FT2_1_3_Int )
+FT2_1_3_BASE( FT_Int )
 ft_validator_run( FT2_1_3_Validator  valid );
 
 /* Sets the error field in a validator, then calls `longjmp' to return */
@@ -160,7 +160,7 @@ ft_validator_run( FT2_1_3_Validator  valid );
 /*                                                                     */
 FT2_1_3_BASE( void )
 ft_validator_error( FT2_1_3_Validator  valid,
-					FT2_1_3_Error      error );
+					FT_Error      error );
 
 
 /* Calls ft_validate_error.  Assumes that the `valid' local variable */
@@ -204,7 +204,7 @@ typedef const struct FT2_1_3_CMap_ClassRec_*  FT2_1_3_CMap_Class;
 
 /* internal charmap object structure */
 typedef struct  FT2_1_3_CMapRec_ {
-	FT2_1_3_CharMapRec  charmap;
+	FT_CharMapRec  charmap;
 	FT2_1_3_CMap_Class  clazz;
 
 } FT2_1_3_CMapRec;
@@ -220,24 +220,24 @@ typedef struct  FT2_1_3_CMapRec_ {
 
 
 /* class method definitions */
-typedef FT2_1_3_Error
+typedef FT_Error
 (*FT2_1_3_CMap_InitFunc)( FT2_1_3_CMap     cmap,
-					 FT2_1_3_Pointer  init_data );
+					 FT_Pointer  init_data );
 
 typedef void
 (*FT2_1_3_CMap_DoneFunc)( FT2_1_3_CMap  cmap );
 
-typedef FT2_1_3_UInt
+typedef FT_UInt
 (*FT2_1_3_CMap_CharIndexFunc)( FT2_1_3_CMap    cmap,
-						  FT2_1_3_UInt32  char_code );
+						  FT_UInt32  char_code );
 
-typedef FT2_1_3_UInt
+typedef FT_UInt
 (*FT2_1_3_CMap_CharNextFunc)( FT2_1_3_CMap     cmap,
-						 FT2_1_3_UInt32  *achar_code );
+						 FT_UInt32  *achar_code );
 
 
 typedef struct  FT2_1_3_CMap_ClassRec_ {
-	FT2_1_3_UInt                size;
+	FT_UInt                size;
 	FT2_1_3_CMap_InitFunc       init;
 	FT2_1_3_CMap_DoneFunc       done;
 	FT2_1_3_CMap_CharIndexFunc  char_index;
@@ -247,10 +247,10 @@ typedef struct  FT2_1_3_CMap_ClassRec_ {
 
 
 /* create a new charmap and add it to charmap->face */
-FT2_1_3_BASE( FT2_1_3_Error )
+FT2_1_3_BASE( FT_Error )
 FT2_1_3_CMap_New( FT2_1_3_CMap_Class  clazz,
-			 FT2_1_3_Pointer     init_data,
-			 FT2_1_3_CharMap     charmap,
+			 FT_Pointer     init_data,
+			 FT_CharMap     charmap,
 			 FT2_1_3_CMap       *acmap );
 
 /* destroy a charmap (don't remove it from face's list though) */
@@ -261,10 +261,10 @@ FT2_1_3_CMap_Done( FT2_1_3_CMap  cmap );
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_Face_InternalRec                                                */
+/*    FT_Face_InternalRec                                                */
 /*                                                                       */
 /* <Description>                                                         */
-/*    This structure contains the internal fields of each FT2_1_3_Face        */
+/*    This structure contains the internal fields of each FT_Face        */
 /*    object.  These fields may change between different releases of     */
 /*    FreeType.                                                          */
 /*                                                                       */
@@ -307,15 +307,15 @@ FT2_1_3_CMap_Done( FT2_1_3_CMap  cmap );
 /*                        This field exists only if                      */
 /*                        @FT2_1_3_CONFIG_OPTION_INCREMENTAL is defined.      */
 /*                                                                       */
-typedef struct  FT2_1_3_Face_InternalRec_ {
-	FT2_1_3_UShort    max_points;
-	FT2_1_3_Short     max_contours;
+typedef struct  FT_Face_InternalRec_ {
+	FT_UShort    max_points;
+	FT_Short     max_contours;
 
-	FT2_1_3_Matrix    transform_matrix;
-	FT2_1_3_Vector    transform_delta;
-	FT2_1_3_Int       transform_flags;
+	FT_Matrix    transform_matrix;
+	FT_Vector    transform_delta;
+	FT_Int       transform_flags;
 
-	FT2_1_3_UInt32    hint_flags;
+	FT_UInt32    hint_flags;
 
 	const char*  postscript_name;
 
@@ -323,7 +323,7 @@ typedef struct  FT2_1_3_Face_InternalRec_ {
 	FT2_1_3_Incremental_InterfaceRec*  incremental_interface;
 #endif
 
-} FT2_1_3_Face_InternalRec;
+} FT_Face_InternalRec;
 
 
 /*************************************************************************/
@@ -356,9 +356,9 @@ typedef struct  FT2_1_3_Face_InternalRec_ {
 /*                                                                       */
 typedef struct  FT2_1_3_Slot_InternalRec_ {
 	FT2_1_3_GlyphLoader  loader;
-	FT2_1_3_Bool         glyph_transformed;
-	FT2_1_3_Matrix       glyph_matrix;
-	FT2_1_3_Vector       glyph_delta;
+	FT_Bool         glyph_transformed;
+	FT_Matrix       glyph_matrix;
+	FT_Vector       glyph_delta;
 	void*           glyph_hints;
 
 } FT2_1_3_GlyphSlot_InternalRec;
@@ -398,7 +398,7 @@ typedef struct  FT2_1_3_ModuleRec_ {
 	FT2_1_3_Module_Class*  clazz;
 	FT2_1_3_Library        library;
 	FT2_1_3_Memory         memory;
-	FT2_1_3_Generic        generic;
+	FT_Generic        generic;
 
 } FT2_1_3_ModuleRec;
 
@@ -472,7 +472,7 @@ FT2_1_3_Get_Module_Interface( FT2_1_3_Library   library,
 
 /* a few macros used to perform easy typecasts with minimal brain damage */
 
-#define FT2_1_3_FACE( x )          ((FT2_1_3_Face)(x))
+#define FT2_1_3_FACE( x )          ((FT_Face)(x))
 #define FT2_1_3_SIZE( x )          ((FT2_1_3_Size)(x))
 #define FT2_1_3_SLOT( x )          ((FT2_1_3_GlyphSlot)(x))
 
@@ -508,8 +508,8 @@ FT2_1_3_Get_Module_Interface( FT2_1_3_Library   library,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_BASE( FT2_1_3_Error )
-FT2_1_3_New_GlyphSlot( FT2_1_3_Face        face,
+FT2_1_3_BASE( FT_Error )
+FT2_1_3_New_GlyphSlot( FT_Face        face,
 				  FT2_1_3_GlyphSlot  *aslot );
 
 
@@ -545,14 +545,14 @@ FT2_1_3_Done_GlyphSlot( FT2_1_3_GlyphSlot  slot );
 
 #define FT2_1_3_RENDERER( x )      ((FT2_1_3_Renderer)( x ))
 #define FT2_1_3_GLYPH( x )         ((FT2_1_3_Glyph)( x ))
-#define FT2_1_3_BITMAP_GLYPH( x )  ((FT2_1_3_BitmapGlyph)( x ))
+#define FT2_1_3_BITMAP_GLYPH( x )  ((FT_BitmapGlyph)( x ))
 #define FT2_1_3_OUTLINE_GLYPH( x ) ((FT2_1_3_OutlineGlyph)( x ))
 
 
 typedef struct  FT2_1_3_RendererRec_ {
 	FT2_1_3_ModuleRec            root;
 	FT2_1_3_Renderer_Class*      clazz;
-	FT2_1_3_Glyph_Format         glyph_format;
+	FT_Glyph_Format         glyph_format;
 	FT2_1_3_Glyph_Class          glyph_class;
 
 	FT2_1_3_Raster               raster;
@@ -613,7 +613,7 @@ typedef struct  FT2_1_3_DriverRec_ {
 	FT2_1_3_ModuleRec     root;
 	FT2_1_3_Driver_Class  clazz;
 
-	FT2_1_3_ListRec       faces_list;
+	FT_ListRec       faces_list;
 	void*            extensions;
 
 	FT2_1_3_GlyphLoader   glyph_loader;
@@ -685,22 +685,22 @@ typedef struct  FT2_1_3_DriverRec_ {
 typedef struct  FT2_1_3_LibraryRec_ {
 	FT2_1_3_Memory          memory;           /* library's memory manager */
 
-	FT2_1_3_Generic         generic;
+	FT_Generic         generic;
 
-	FT2_1_3_Int             version_major;
-	FT2_1_3_Int             version_minor;
-	FT2_1_3_Int             version_patch;
+	FT_Int             version_major;
+	FT_Int             version_minor;
+	FT_Int             version_patch;
 
-	FT2_1_3_UInt            num_modules;
+	FT_UInt            num_modules;
 	FT2_1_3_Module          modules[FT2_1_3_MAX_MODULES];  /* module objects  */
 
-	FT2_1_3_ListRec         renderers;        /* list of renderers        */
+	FT_ListRec         renderers;        /* list of renderers        */
 	FT2_1_3_Renderer        cur_renderer;     /* current outline renderer */
 	FT2_1_3_Module          auto_hinter;
 
-	FT2_1_3_Byte*           raster_pool;      /* scan-line conversion */
+	FT_Byte*           raster_pool;      /* scan-line conversion */
 	/* render pool          */
-	FT2_1_3_ULong           raster_pool_size; /* size of render pool in bytes */
+	FT_ULong           raster_pool_size; /* size of render pool in bytes */
 
 	FT2_1_3_DebugHook_Func  debug_hooks[4];
 
@@ -711,26 +711,26 @@ typedef struct  FT2_1_3_LibraryRec_ {
 
 FT2_1_3_BASE( FT2_1_3_Renderer )
 FT2_1_3_Lookup_Renderer( FT2_1_3_Library       library,
-					FT2_1_3_Glyph_Format  format,
-					FT2_1_3_ListNode*     node );
+					FT_Glyph_Format  format,
+					FT_ListNode*     node );
 
-FT2_1_3_BASE( FT2_1_3_Error )
+FT2_1_3_BASE( FT_Error )
 FT2_1_3_Render_Glyph_Internal( FT2_1_3_Library      library,
 						  FT2_1_3_GlyphSlot    slot,
 						  FT2_1_3_Render_Mode  render_mode );
 
 typedef const char*
-(*FT2_1_3_Face_GetPostscriptNameFunc)( FT2_1_3_Face  face );
+(*FT_Face_GetPostscriptNameFunc)( FT_Face  face );
 
-typedef FT2_1_3_Error
-(*FT2_1_3_Face_GetGlyphNameFunc)( FT2_1_3_Face     face,
-							 FT2_1_3_UInt     glyph_index,
-							 FT2_1_3_Pointer  buffer,
-							 FT2_1_3_UInt     buffer_max );
+typedef FT_Error
+(*FT_Face_GetGlyphNameFunc)( FT_Face     face,
+							 FT_UInt     glyph_index,
+							 FT_Pointer  buffer,
+							 FT_UInt     buffer_max );
 
-typedef FT2_1_3_UInt
-(*FT2_1_3_Face_GetGlyphNameIndexFunc)( FT2_1_3_Face     face,
-								  FT2_1_3_String*  glyph_name );
+typedef FT_UInt
+(*FT_Face_GetGlyphNameIndexFunc)( FT_Face     face,
+								  FT_String*  glyph_name );
 
 
 #ifndef FT2_1_3_CONFIG_OPTION_NO_DEFAULT_SYSTEM

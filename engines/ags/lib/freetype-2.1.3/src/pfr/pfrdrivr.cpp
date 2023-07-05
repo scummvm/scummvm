@@ -26,12 +26,12 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-static FT2_1_3_Error
+static FT_Error
 pfr_get_kerning( PFR_Face    face,
-				 FT2_1_3_UInt     left,
-				 FT2_1_3_UInt     right,
-				 FT2_1_3_Vector  *avector ) {
-	FT2_1_3_Error  error;
+				 FT_UInt     left,
+				 FT_UInt     right,
+				 FT_Vector  *avector ) {
+	FT_Error  error;
 
 	error = pfr_face_get_kerning( face, left, right, avector );
 	if ( !error ) {
@@ -52,11 +52,11 @@ pfr_get_kerning( PFR_Face    face,
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 pfr_get_advance( PFR_Face   face,
-				 FT2_1_3_UInt    gindex,
-				 FT2_1_3_Pos    *aadvance ) {
-	FT2_1_3_Error     error = FT2_1_3_Err_Bad_Argument;
+				 FT_UInt    gindex,
+				 FT_Pos    *aadvance ) {
+	FT_Error     error = FT2_1_3_Err_Bad_Argument;
 
 	*aadvance = 0;
 	if ( face ) {
@@ -72,14 +72,14 @@ pfr_get_advance( PFR_Face   face,
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 pfr_get_metrics( PFR_Face   face,
-				 FT2_1_3_UInt   *aoutline_resolution,
-				 FT2_1_3_UInt   *ametrics_resolution,
-				 FT2_1_3_Fixed  *ametrics_x_scale,
-				 FT2_1_3_Fixed  *ametrics_y_scale ) {
+				 FT_UInt   *aoutline_resolution,
+				 FT_UInt   *ametrics_resolution,
+				 FT_Fixed  *ametrics_x_scale,
+				 FT_Fixed  *ametrics_y_scale ) {
 	PFR_PhyFont  phys  = &face->phy_font;
-	FT2_1_3_Fixed     x_scale, y_scale;
+	FT_Fixed     x_scale, y_scale;
 	FT2_1_3_Size      size = face->root.size;
 
 	if ( aoutline_resolution )
@@ -140,8 +140,8 @@ const FT2_1_3_Driver_ClassRec  pfr_driver_class = {
 	sizeof( PFR_SizeRec ),
 	sizeof( PFR_SlotRec ),
 
-	(FT2_1_3_Face_InitFunc)        pfr_face_init,
-	(FT2_1_3_Face_DoneFunc)        pfr_face_done,
+	(FT_Face_InitFunc)        pfr_face_init,
+	(FT_Face_DoneFunc)        pfr_face_done,
 	(FT2_1_3_Size_InitFunc)        NULL,
 	(FT2_1_3_Size_DoneFunc)        NULL,
 	(FT2_1_3_Slot_InitFunc)        pfr_slot_init,
@@ -151,9 +151,9 @@ const FT2_1_3_Driver_ClassRec  pfr_driver_class = {
 	(FT2_1_3_Size_ResetPixelsFunc) NULL,
 	(FT2_1_3_Slot_LoadFunc)        pfr_slot_load,
 
-	(FT2_1_3_Face_GetKerningFunc)  pfr_get_kerning,
-	(FT2_1_3_Face_AttachFunc)      0,
-	(FT2_1_3_Face_GetAdvancesFunc) 0
+	(FT_Face_GetKerningFunc)  pfr_get_kerning,
+	(FT_Face_AttachFunc)      0,
+	(FT_Face_GetAdvancesFunc) 0
 };
 
 } // End of namespace FreeType213

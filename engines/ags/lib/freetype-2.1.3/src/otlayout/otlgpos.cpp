@@ -15,7 +15,7 @@ static OTL_ValidateFunc  otl_gpos_validate_funcs[];
 
 static OTL_UInt
 otl_value_length( OTL_UInt  format ) {
-	FT2_1_3_UInt  count;
+	FT_UInt  count;
 
 	count = (( format & 0xAA ) >> 1) + ( format & 0x55 );
 	count = (( count  & 0xCC ) >> 2) + ( count  & 0x33 );
@@ -147,7 +147,7 @@ otl_gpos_lookup1_validate( OTL_Bytes      table,
 	format = OTL_NEXT_USHORT( p );
 	switch ( format ) {
 	case 1: {
-		FT2_1_3_UInt  coverage, value_format;
+		FT_UInt  coverage, value_format;
 
 		OTL_CHECK( 4 );
 		coverage     = OTL_NEXT_USHORT( p );
@@ -159,7 +159,7 @@ otl_gpos_lookup1_validate( OTL_Bytes      table,
 	break;
 
 	case 2: {
-		FT2_1_3_UInt  coverage, value_format, count, len;
+		FT_UInt  coverage, value_format, count, len;
 
 		OTL_CHECK( 6 );
 		coverage     = OTL_NEXT_USHORT( p );

@@ -51,13 +51,13 @@ typedef enum {
 
 
 typedef struct  PSH2_HintRec_ {
-	FT2_1_3_Int     org_pos;
-	FT2_1_3_Int     org_len;
-	FT2_1_3_Pos     cur_pos;
-	FT2_1_3_Pos     cur_len;
-	FT2_1_3_UInt    flags;
+	FT_Int     org_pos;
+	FT_Int     org_len;
+	FT_Pos     cur_pos;
+	FT_Pos     cur_len;
+	FT_UInt    flags;
 	PSH2_Hint  parent;
-	FT2_1_3_Int     order;
+	FT_Int     order;
 
 } PSH2_HintRec;
 
@@ -66,21 +66,21 @@ typedef struct  PSH2_HintRec_ {
 /* weak points are interpolated according to their strong */
 /* neighbours                                             */
 typedef struct  PSH2_ZoneRec_ {
-	FT2_1_3_Fixed  scale;
-	FT2_1_3_Fixed  delta;
-	FT2_1_3_Pos    min;
-	FT2_1_3_Pos    max;
+	FT_Fixed  scale;
+	FT_Fixed  delta;
+	FT_Pos    min;
+	FT_Pos    max;
 
 } PSH2_ZoneRec, *PSH2_Zone;
 
 
 typedef struct  PSH2_Hint_TableRec_ {
-	FT2_1_3_UInt        max_hints;
-	FT2_1_3_UInt        num_hints;
+	FT_UInt        max_hints;
+	FT_UInt        num_hints;
 	PSH2_Hint      hints;
 	PSH2_Hint*     sort;
 	PSH2_Hint*     sort_global;
-	FT2_1_3_UInt        num_zones;
+	FT_UInt        num_zones;
 	PSH2_Zone      zones;
 	PSH2_Zone      zone;
 	PS_Mask_Table  hint_masks;
@@ -112,21 +112,21 @@ typedef struct  PSH2_PointRec_ {
 	PSH2_Point    prev;
 	PSH2_Point    next;
 	PSH2_Contour  contour;
-	FT2_1_3_UInt       flags;
-	FT2_1_3_Char       dir_in;
-	FT2_1_3_Char       dir_out;
+	FT_UInt       flags;
+	FT_Char       dir_in;
+	FT_Char       dir_out;
 	FT2_1_3_Angle      angle_in;
 	FT2_1_3_Angle      angle_out;
 	PSH2_Hint     hint;
-	FT2_1_3_Pos        org_u;
-	FT2_1_3_Pos        cur_u;
+	FT_Pos        org_u;
+	FT_Pos        cur_u;
 #ifdef DEBUG_HINTER
-	FT2_1_3_Pos        org_x;
-	FT2_1_3_Pos        cur_x;
-	FT2_1_3_Pos        org_y;
-	FT2_1_3_Pos        cur_y;
-	FT2_1_3_UInt       flags_x;
-	FT2_1_3_UInt       flags_y;
+	FT_Pos        org_x;
+	FT_Pos        cur_x;
+	FT_Pos        org_y;
+	FT_Pos        cur_y;
+	FT_UInt       flags_x;
+	FT_UInt       flags_y;
 #endif
 
 } PSH2_PointRec;
@@ -143,14 +143,14 @@ typedef struct  PSH2_PointRec_ {
 
 typedef struct  PSH2_ContourRec_ {
 	PSH2_Point  start;
-	FT2_1_3_UInt     count;
+	FT_UInt     count;
 
 } PSH2_ContourRec;
 
 
 typedef struct  PSH2_GlyphRec_ {
-	FT2_1_3_UInt             num_points;
-	FT2_1_3_UInt             num_contours;
+	FT_UInt             num_points;
+	FT_UInt             num_contours;
 
 	PSH2_Point          points;
 	PSH2_Contour        contours;
@@ -160,9 +160,9 @@ typedef struct  PSH2_GlyphRec_ {
 	PSH_Globals         globals;
 	PSH2_Hint_TableRec  hint_tables[2];
 
-	FT2_1_3_Bool             vertical;
-	FT2_1_3_Int              major_dir;
-	FT2_1_3_Int              minor_dir;
+	FT_Bool             vertical;
+	FT_Int              major_dir;
+	FT_Int              minor_dir;
 
 } PSH2_GlyphRec, *PSH2_Glyph;
 
@@ -172,7 +172,7 @@ extern PSH2_Hint_Table  ps2_debug_hint_table;
 
 typedef void
 (*PSH2_HintFunc)( PSH2_Hint  hint,
-				  FT2_1_3_Bool    vertical );
+				  FT_Bool    vertical );
 
 extern PSH2_HintFunc    ps2_debug_hint_func;
 
@@ -180,7 +180,7 @@ extern PSH2_Glyph       ps2_debug_glyph;
 #endif
 
 
-extern FT2_1_3_Error
+extern FT_Error
 ps2_hints_apply( PS_Hints        ps_hints,
 				 FT2_1_3_Outline*     outline,
 				 PSH_Globals     globals,

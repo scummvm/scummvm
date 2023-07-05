@@ -146,17 +146,17 @@ ftc_node_mru_up( FTC_Node     node,
 
 
 /* remove a node from its cache's hash table */
-static FT2_1_3_Error
+static FT_Error
 ftc_node_hash_unlink( FTC_Node   node,
 					  FTC_Cache  cache ) {
-	FT2_1_3_Error   error = 0;
+	FT_Error   error = 0;
 	FTC_Node  *pnode;
-	FT2_1_3_UInt    idx, num_buckets;
+	FT_UInt    idx, num_buckets;
 
 
-	idx = (FT2_1_3_UInt)( node->hash & cache->mask );
+	idx = (FT_UInt)( node->hash & cache->mask );
 	if ( idx < cache->p )
-		idx = (FT2_1_3_UInt)( node->hash & ( 2 * cache->mask + 1 ) );
+		idx = (FT_UInt)( node->hash & ( 2 * cache->mask + 1 ) );
 
 	pnode = cache->buckets + idx;
 
@@ -177,10 +177,10 @@ ftc_node_hash_unlink( FTC_Node   node,
 
 	num_buckets = ( cache->p + cache->mask + 1 );
 
-	if ( ++cache->slack > (FT2_1_3_Long)num_buckets * FTC_HASH_SUB_LOAD ) {
-		FT2_1_3_UInt    p         = cache->p;
-		FT2_1_3_UInt    mask      = cache->mask;
-		FT2_1_3_UInt    old_index = p + mask;
+	if ( ++cache->slack > (FT_Long)num_buckets * FTC_HASH_SUB_LOAD ) {
+		FT_UInt    p         = cache->p;
+		FT_UInt    mask      = cache->mask;
+		FT_UInt    old_index = p + mask;
 		FTC_Node*  pold;
 
 
@@ -219,17 +219,17 @@ Exit:
 
 
 /* add a node to the "top" of its cache's hash table */
-static FT2_1_3_Error
+static FT_Error
 ftc_node_hash_link( FTC_Node   node,
 					FTC_Cache  cache ) {
 	FTC_Node  *pnode;
-	FT2_1_3_UInt    idx;
-	FT2_1_3_Error   error = 0;
+	FT_UInt    idx;
+	FT_Error   error = 0;
 
 
-	idx = (FT2_1_3_UInt)( node->hash & cache->mask );
+	idx = (FT_UInt)( node->hash & cache->mask );
 	if ( idx < cache->p )
-		idx = (FT2_1_3_UInt)( node->hash & (2 * cache->mask + 1 ) );
+		idx = (FT_UInt)( node->hash & (2 * cache->mask + 1 ) );
 
 	pnode = cache->buckets + idx;
 
@@ -237,8 +237,8 @@ ftc_node_hash_link( FTC_Node   node,
 	*pnode     = node;
 
 	if ( --cache->slack < 0 ) {
-		FT2_1_3_UInt    p     = cache->p;
-		FT2_1_3_UInt    mask  = cache->mask;
+		FT_UInt    p     = cache->p;
+		FT_UInt    mask  = cache->mask;
 		FTC_Node   new_list;
 
 
@@ -346,11 +346,11 @@ ftc_node_destroy( FTC_Node     node,
 /*************************************************************************/
 
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 ftc_family_init( FTC_Family  family,
 				 FTC_Query   query,
 				 FTC_Cache   cache ) {
-	FT2_1_3_Error         error;
+	FT_Error         error;
 	FTC_Manager      manager = cache->manager;
 	FT2_1_3_Memory        memory  = manager->library->memory;
 	FTC_FamilyEntry  entry;
@@ -393,11 +393,11 @@ ftc_family_done( FTC_Family  family ) {
 
 
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 ftc_cache_init( FTC_Cache  cache ) {
 	FT2_1_3_Memory        memory = cache->memory;
 	FTC_Cache_Class  clazz  = cache->clazz;
-	FT2_1_3_Error         error;
+	FT_Error         error;
 
 
 	cache->p     = 0;
@@ -443,7 +443,7 @@ ftc_cache_clear( FTC_Cache  cache ) {
 		FTC_Cache_Class  clazz   = cache->clazz;
 		FTC_Manager      manager = cache->manager;
 		FT2_1_3_UFast         i;
-		FT2_1_3_UInt          count;
+		FT_UInt          count;
 
 		count = cache->p + cache->mask + 1;
 
@@ -502,11 +502,11 @@ ftc_cache_done( FTC_Cache  cache ) {
 /* Look up a node in "top" of its cache's hash table. */
 /* If not found, create a new node.                   */
 /*                                                    */
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 ftc_cache_lookup( FTC_Cache   cache,
 				  FTC_Query   query,
 				  FTC_Node   *anode ) {
-	FT2_1_3_Error    error = FT2_1_3_Err_Ok;
+	FT_Error    error = FT2_1_3_Err_Ok;
 	FT2_1_3_LruNode  lru;
 
 
@@ -561,7 +561,7 @@ Skip:
 		FTC_Family  family = (FTC_Family) lru;
 		FT2_1_3_UFast    hash    = query->hash;
 		FTC_Node*   bucket;
-		FT2_1_3_UInt     idx;
+		FT_UInt     idx;
 
 
 		idx = hash & cache->mask;
@@ -592,7 +592,7 @@ Skip:
 					break;
 
 				if ( node->hash == hash                            &&
-						(FT2_1_3_UInt)node->fam_index == family->fam_index &&
+						(FT_UInt)node->fam_index == family->fam_index &&
 						compare( node, query, cache ) ) {
 					/* move to head of bucket list */
 					if ( pnode != bucket ) {
@@ -624,7 +624,7 @@ Skip:
 			if ( FT2_1_3_ALLOC( node, clazz->node_size ) )
 				goto Exit;
 
-			node->fam_index = (FT2_1_3_UShort) family->fam_index;
+			node->fam_index = (FT_UShort) family->fam_index;
 			node->hash      = query->hash;
 			node->ref_count = 0;
 

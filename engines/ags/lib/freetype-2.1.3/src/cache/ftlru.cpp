@@ -27,13 +27,13 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_LruList_New( FT2_1_3_LruList_Class  clazz,
-				FT2_1_3_UInt           max_nodes,
-				FT2_1_3_Pointer        user_data,
+				FT_UInt           max_nodes,
+				FT_Pointer        user_data,
 				FT2_1_3_Memory         memory,
 				FT2_1_3_LruList       *alist ) {
-	FT2_1_3_Error    error;
+	FT_Error    error;
 	FT2_1_3_LruList  list;
 
 
@@ -116,11 +116,11 @@ FT2_1_3_LruList_Reset( FT2_1_3_LruList  list ) {
 }
 
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_LruList_Lookup( FT2_1_3_LruList   list,
 				   FT2_1_3_LruKey    key,
 				   FT2_1_3_LruNode  *anode ) {
-	FT2_1_3_Error          error = 0;
+	FT_Error          error = 0;
 	FT2_1_3_LruNode        node, *pnode;
 	FT2_1_3_LruList_Class  clazz;
 	FT2_1_3_LruNode*       plast;
@@ -276,7 +276,7 @@ FT2_1_3_LruList_Remove( FT2_1_3_LruList  list,
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_LruList_Remove_Selection( FT2_1_3_LruList             list,
 							 FT2_1_3_LruNode_SelectFunc  select_func,
-							 FT2_1_3_Pointer             select_data ) {
+							 FT_Pointer             select_data ) {
 	FT2_1_3_LruNode       *pnode, node;
 	FT2_1_3_LruList_Class  clazz;
 	FT2_1_3_Memory         memory;

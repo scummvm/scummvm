@@ -29,15 +29,15 @@ namespace FreeType213 {
 FT2_1_3_BEGIN_HEADER
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 tt_face_load_loca( TT_Face    face,
 				   FT2_1_3_Stream  stream );
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 tt_face_load_cvt( TT_Face    face,
 				  FT2_1_3_Stream  stream );
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 tt_face_load_fpgm( TT_Face    face,
 				   FT2_1_3_Stream  stream );
 

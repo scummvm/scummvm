@@ -23,10 +23,10 @@ namespace AGS3 {
 namespace FreeType213 {
 
 /* check the format */
-static FT2_1_3_Error
-ft_pfr_check( FT2_1_3_Face           face,
+static FT_Error
+ft_pfr_check( FT_Face           face,
 			  FT2_1_3_PFR_Service   *aservice ) {
-	FT2_1_3_Error  error = FT2_1_3_Err_Bad_Argument;
+	FT_Error  error = FT2_1_3_Err_Bad_Argument;
 
 	if ( face && face->driver ) {
 		FT2_1_3_Module    module = (FT2_1_3_Module) face->driver;
@@ -45,13 +45,13 @@ ft_pfr_check( FT2_1_3_Face           face,
 
 
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
-FT2_1_3_Get_PFR_Metrics( FT2_1_3_Face     face,
-					FT2_1_3_UInt    *aoutline_resolution,
-					FT2_1_3_UInt    *ametrics_resolution,
-					FT2_1_3_Fixed   *ametrics_x_scale,
-					FT2_1_3_Fixed   *ametrics_y_scale ) {
-	FT2_1_3_Error        error;
+FT2_1_3_EXPORT_DEF( FT_Error )
+FT2_1_3_Get_PFR_Metrics( FT_Face     face,
+					FT_UInt    *aoutline_resolution,
+					FT_UInt    *ametrics_resolution,
+					FT_Fixed   *ametrics_x_scale,
+					FT_Fixed   *ametrics_y_scale ) {
+	FT_Error        error;
 	FT2_1_3_PFR_Service  service;
 
 	error = ft_pfr_check( face, &service );
@@ -65,12 +65,12 @@ FT2_1_3_Get_PFR_Metrics( FT2_1_3_Face     face,
 	return error;
 }
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
-FT2_1_3_Get_PFR_Kerning( FT2_1_3_Face     face,
-					FT2_1_3_UInt     left,
-					FT2_1_3_UInt     right,
-					FT2_1_3_Vector  *avector ) {
-	FT2_1_3_Error        error;
+FT2_1_3_EXPORT_DEF( FT_Error )
+FT2_1_3_Get_PFR_Kerning( FT_Face     face,
+					FT_UInt     left,
+					FT_UInt     right,
+					FT_Vector  *avector ) {
+	FT_Error        error;
 	FT2_1_3_PFR_Service  service;
 
 	error = ft_pfr_check( face, &service );
@@ -81,11 +81,11 @@ FT2_1_3_Get_PFR_Kerning( FT2_1_3_Face     face,
 }
 
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
-FT2_1_3_Get_PFR_Advance( FT2_1_3_Face    face,
-					FT2_1_3_UInt    gindex,
-					FT2_1_3_Pos    *aadvance ) {
-	FT2_1_3_Error        error;
+FT2_1_3_EXPORT_DEF( FT_Error )
+FT2_1_3_Get_PFR_Advance( FT_Face    face,
+					FT_UInt    gindex,
+					FT_Pos    *aadvance ) {
+	FT_Error        error;
 	FT2_1_3_PFR_Service  service;
 
 	error = ft_pfr_check( face, &service );

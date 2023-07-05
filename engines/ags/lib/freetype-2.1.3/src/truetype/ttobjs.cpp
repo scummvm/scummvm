@@ -103,12 +103,12 @@ tt_glyphzone_done( TT_GlyphZone  zone ) {
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 tt_glyphzone_new( FT2_1_3_Memory     memory,
-				  FT2_1_3_UShort     maxPoints,
-				  FT2_1_3_Short      maxContours,
+				  FT_UShort     maxPoints,
+				  FT_Short      maxContours,
 				  TT_GlyphZone  zone ) {
-	FT2_1_3_Error  error;
+	FT_Error  error;
 
 
 	if ( maxPoints > 0 )
@@ -152,13 +152,13 @@ tt_glyphzone_new( FT2_1_3_Memory     memory,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_init( FT2_1_3_Stream      stream,
 			  TT_Face        face,
-			  FT2_1_3_Int         face_index,
-			  FT2_1_3_Int         num_params,
+			  FT_Int         face_index,
+			  FT_Int         num_params,
 			  FT2_1_3_Parameter*  params ) {
-	FT2_1_3_Error      error;
+	FT_Error      error;
 	FT2_1_3_Library    library;
 	SFNT_Service  sfnt;
 
@@ -290,19 +290,19 @@ tt_face_done( TT_Face  face ) {
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 tt_size_init( TT_Size  size ) {
-	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
+	FT_Error  error = FT2_1_3_Err_Ok;
 
 
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
 
 	TT_Face    face   = (TT_Face)size->root.face;
 	FT2_1_3_Memory  memory = face->root.memory;
-	FT2_1_3_Int     i;
+	FT_Int     i;
 
 	TT_ExecContext  exec;
-	FT2_1_3_UShort       n_twilight;
+	FT_UShort       n_twilight;
 	TT_MaxProfile*  maxp = &face->max_profile;
 
 
@@ -517,10 +517,10 @@ tt_size_done( TT_Size  size ) {
 /* <Input>                                                               */
 /*    size :: A handle to the target size object.                        */
 /*                                                                       */
-static FT2_1_3_Error
+static FT_Error
 Reset_Outline_Size( TT_Size  size ) {
 	TT_Face           face;
-	FT2_1_3_Error          error = FT2_1_3_Err_Ok;
+	FT_Error          error = FT2_1_3_Err_Ok;
 
 	FT2_1_3_Size_Metrics*  metrics;
 
@@ -571,7 +571,7 @@ Reset_Outline_Size( TT_Size  size ) {
 
 	{
 		TT_ExecContext  exec;
-		FT2_1_3_UInt         i, j;
+		FT_UInt         i, j;
 
 
 		/* Scale the cvt values to the new ppem.          */
@@ -580,7 +580,7 @@ Reset_Outline_Size( TT_Size  size ) {
 			size->cvt[i] = FT2_1_3_MulFix( face->cvt[i], size->ttmetrics.scale );
 
 		/* All twilight points are originally zero */
-		for ( j = 0; j < (FT2_1_3_UInt)size->twilight.n_points; j++ ) {
+		for ( j = 0; j < (FT_UInt)size->twilight.n_points; j++ ) {
 			size->twilight.org[j].x = 0;
 			size->twilight.org[j].y = 0;
 			size->twilight.cur[j].x = 0;
@@ -588,7 +588,7 @@ Reset_Outline_Size( TT_Size  size ) {
 		}
 
 		/* clear storage area */
-		for ( i = 0; i < (FT2_1_3_UInt)size->storage_size; i++ )
+		for ( i = 0; i < (FT_UInt)size->storage_size; i++ )
 			size->storage[i] = 0;
 
 		size->GS = tt_default_graphics_state;
@@ -661,12 +661,12 @@ End:
 /* <Input>                                                               */
 /*    size :: A handle to the target size object.                        */
 /*                                                                       */
-static FT2_1_3_Error
+static FT_Error
 Reset_SBit_Size( TT_Size  size ) {
 	TT_Face           face;
-	FT2_1_3_Error          error = FT2_1_3_Err_Ok;
+	FT_Error          error = FT2_1_3_Err_Ok;
 
-	FT2_1_3_ULong          strike_index;
+	FT_ULong          strike_index;
 	FT2_1_3_Size_Metrics*  metrics;
 	FT2_1_3_Size_Metrics*  sbit_metrics;
 	SFNT_Service      sfnt;
@@ -743,10 +743,10 @@ Reset_SBit_Size( TT_Size  size ) {
 /* <Input>                                                               */
 /*    size :: A handle to the target size object.                        */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 tt_size_reset( TT_Size  size ) {
-	FT2_1_3_Face   face;
-	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
+	FT_Face   face;
+	FT_Error  error = FT2_1_3_Err_Ok;
 
 
 	face = size->root.face;
@@ -792,9 +792,9 @@ tt_size_reset( TT_Size  size ) {
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 tt_driver_init( TT_Driver  driver ) {
-	FT2_1_3_Error  error;
+	FT_Error  error;
 
 
 	/* set `extra' in glyph loader */

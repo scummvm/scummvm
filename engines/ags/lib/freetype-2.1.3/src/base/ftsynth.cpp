@@ -37,7 +37,7 @@
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_GlyphSlot_Oblique( FT2_1_3_GlyphSlot  slot ) {
-	FT2_1_3_Matrix    transform;
+	FT_Matrix    transform;
 	FT2_1_3_Outline*  outline = &slot->outline;
 
 
@@ -73,9 +73,9 @@ FT2_1_3_GlyphSlot_Oblique( FT2_1_3_GlyphSlot  slot ) {
 static int
 ft_test_extrema( FT2_1_3_Outline*  outline,
                  int          n ) {
-	FT2_1_3_Vector  *prev, *cur, *next;
-	FT2_1_3_Pos      product;
-	FT2_1_3_Int      c, first, last;
+	FT_Vector  *prev, *cur, *next;
+	FT_Pos      product;
+	FT_Int      c, first, last;
 
 
 	/* we need to compute the `previous' and `next' point */
@@ -124,8 +124,8 @@ ft_test_extrema( FT2_1_3_Outline*  outline,
 /*                                                                       */
 static int
 ft_get_orientation( FT2_1_3_Outline*  outline ) {
-	FT2_1_3_BBox  box;
-	FT2_1_3_BBox  indices;
+	FT_BBox  box;
+	FT_BBox  indices;
 	int      n, last;
 
 
@@ -144,7 +144,7 @@ ft_get_orientation( FT2_1_3_Outline*  outline ) {
 	last = outline->contours[outline->n_contours - 1];
 
 	for ( n = 0; n <= last; n++ ) {
-		FT2_1_3_Pos  x, y;
+		FT_Pos  x, y;
 
 
 		x = outline->points[n].x;
@@ -192,13 +192,13 @@ Exit:
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_GlyphSlot_Embolden( FT2_1_3_GlyphSlot  slot ) {
-	FT2_1_3_Vector*   points;
-	FT2_1_3_Vector    v_prev, v_first, v_next, v_cur;
-	FT2_1_3_Pos       distance;
+	FT_Vector*   points;
+	FT_Vector    v_prev, v_first, v_next, v_cur;
+	FT_Pos       distance;
 	FT2_1_3_Outline*  outline = &slot->outline;
-	FT2_1_3_Face      face = FT2_1_3_SLOT_FACE( slot );
+	FT_Face      face = FT2_1_3_SLOT_FACE( slot );
 	FT2_1_3_Angle     rotate, angle_in, angle_out;
-	FT2_1_3_Int       c, n, first, orientation;
+	FT_Int       c, n, first, orientation;
 
 
 	/* only embolden outline glyph images */
@@ -224,9 +224,9 @@ FT2_1_3_GlyphSlot_Embolden( FT2_1_3_GlyphSlot  slot ) {
 		v_cur   = v_first;
 
 		for ( n = first; n <= last; n++ ) {
-			FT2_1_3_Pos     d;
-			FT2_1_3_Vector  in, out;
-			FT2_1_3_Fixed   scale;
+			FT_Pos     d;
+			FT_Vector  in, out;
+			FT_Fixed   scale;
 			FT2_1_3_Angle   angle_diff;
 
 
@@ -254,7 +254,7 @@ FT2_1_3_GlyphSlot_Embolden( FT2_1_3_GlyphSlot  slot ) {
 
 			d = FT2_1_3_DivFix( distance, scale );
 
-			FT2_1_3_Vector_From_Polar( &in, d, angle_in + angle_diff/2 - rotate );
+			FT_Vector_From_Polar( &in, d, angle_in + angle_diff/2 - rotate );
 
 			outline->points[n].x = v_cur.x + distance + in.x;
 			outline->points[n].y = v_cur.y + distance + in.y;

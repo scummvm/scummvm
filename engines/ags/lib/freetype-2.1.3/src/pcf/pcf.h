@@ -39,38 +39,38 @@ namespace FreeType213 {
 FT2_1_3_BEGIN_HEADER
 
 typedef struct  PCF_TableRec_ {
-	FT2_1_3_ULong  type;
-	FT2_1_3_ULong  format;
-	FT2_1_3_ULong  size;
-	FT2_1_3_ULong  offset;
+	FT_ULong  type;
+	FT_ULong  format;
+	FT_ULong  size;
+	FT_ULong  offset;
 
 } PCF_TableRec, *PCF_Table;
 
 
 typedef struct  PCF_TocRec_ {
-	FT2_1_3_ULong   version;
-	FT2_1_3_ULong   count;
+	FT_ULong   version;
+	FT_ULong   count;
 	PCF_Table  tables;
 
 } PCF_TocRec, *PCF_Toc;
 
 
 typedef struct  PCF_ParsePropertyRec_ {
-	FT2_1_3_Long  name;
-	FT2_1_3_Byte  isString;
-	FT2_1_3_Long  value;
+	FT_Long  name;
+	FT_Byte  isString;
+	FT_Long  value;
 
 } PCF_ParsePropertyRec, *PCF_ParseProperty;
 
 
 typedef struct  PCF_PropertyRec_ {
-	FT2_1_3_String*  name;
-	FT2_1_3_Byte     isString;
+	FT_String*  name;
+	FT_Byte     isString;
 
 	union {
-		FT2_1_3_String*  atom;
-		FT2_1_3_Long     integer;
-		FT2_1_3_ULong    cardinal;
+		FT_String*  atom;
+		FT_Long     integer;
+		FT_ULong    cardinal;
 
 	} value;
 
@@ -78,38 +78,38 @@ typedef struct  PCF_PropertyRec_ {
 
 
 typedef struct  PCF_Compressed_MetricRec_ {
-	FT2_1_3_Byte  leftSideBearing;
-	FT2_1_3_Byte  rightSideBearing;
-	FT2_1_3_Byte  characterWidth;
-	FT2_1_3_Byte  ascent;
-	FT2_1_3_Byte  descent;
+	FT_Byte  leftSideBearing;
+	FT_Byte  rightSideBearing;
+	FT_Byte  characterWidth;
+	FT_Byte  ascent;
+	FT_Byte  descent;
 
 } PCF_Compressed_MetricRec, *PCF_Compressed_Metric;
 
 
 typedef struct  PCF_MetricRec_ {
-	FT2_1_3_Short  leftSideBearing;
-	FT2_1_3_Short  rightSideBearing;
-	FT2_1_3_Short  characterWidth;
-	FT2_1_3_Short  ascent;
-	FT2_1_3_Short  descent;
-	FT2_1_3_Short  attributes;
-	FT2_1_3_ULong  bits;
+	FT_Short  leftSideBearing;
+	FT_Short  rightSideBearing;
+	FT_Short  characterWidth;
+	FT_Short  ascent;
+	FT_Short  descent;
+	FT_Short  attributes;
+	FT_ULong  bits;
 
 } PCF_MetricRec, *PCF_Metric;
 
 
 typedef struct  PCF_AccelRec_ {
-	FT2_1_3_Byte        noOverlap;
-	FT2_1_3_Byte        constantMetrics;
-	FT2_1_3_Byte        terminalFont;
-	FT2_1_3_Byte        constantWidth;
-	FT2_1_3_Byte        inkInside;
-	FT2_1_3_Byte        inkMetrics;
-	FT2_1_3_Byte        drawDirection;
-	FT2_1_3_Long        fontAscent;
-	FT2_1_3_Long        fontDescent;
-	FT2_1_3_Long        maxOverlap;
+	FT_Byte        noOverlap;
+	FT_Byte        constantMetrics;
+	FT_Byte        terminalFont;
+	FT_Byte        constantWidth;
+	FT_Byte        inkInside;
+	FT_Byte        inkMetrics;
+	FT_Byte        drawDirection;
+	FT_Long        fontAscent;
+	FT_Long        fontDescent;
+	FT_Long        maxOverlap;
 	PCF_MetricRec  minbounds;
 	PCF_MetricRec  maxbounds;
 	PCF_MetricRec  ink_minbounds;
@@ -119,14 +119,14 @@ typedef struct  PCF_AccelRec_ {
 
 
 typedef struct  PCD_EncodingRec_ {
-	FT2_1_3_Long   enc;
-	FT2_1_3_Short  glyph;
+	FT_Long   enc;
+	FT_Short  glyph;
 
 } PCF_EncodingRec, *PCF_Encoding;
 
 
 typedef struct  PCF_FaceRec_ {
-	FT2_1_3_FaceRec     root;
+	FT_FaceRec     root;
 
 	FT2_1_3_StreamRec   gzip_stream;
 	FT2_1_3_Stream      gzip_source;
@@ -140,17 +140,17 @@ typedef struct  PCF_FaceRec_ {
 	int            nprops;
 	PCF_Property   properties;
 
-	FT2_1_3_Long        nmetrics;
+	FT_Long        nmetrics;
 	PCF_Metric     metrics;
-	FT2_1_3_Long        nencodings;
+	FT_Long        nencodings;
 	PCF_Encoding   encodings;
 
-	FT2_1_3_Short       defaultChar;
+	FT_Short       defaultChar;
 
-	FT2_1_3_ULong       bitmapsFormat;
+	FT_ULong       bitmapsFormat;
 
-	FT2_1_3_CharMap     charmap_handle;
-	FT2_1_3_CharMapRec  charmap;  /* a single charmap per face */
+	FT_CharMap     charmap_handle;
+	FT_CharMapRec  charmap;  /* a single charmap per face */
 
 } PCF_FaceRec, *PCF_Face;
 
@@ -217,7 +217,7 @@ typedef struct  PCF_FaceRec_ {
 
 #define GLYPHPADOPTIONS  4 /* I'm not sure about this */
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 pcf_load_font( FT2_1_3_Stream,
 			   PCF_Face );
 

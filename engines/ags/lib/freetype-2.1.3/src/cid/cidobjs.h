@@ -94,7 +94,7 @@ typedef struct CID_CharMapRec_*  CID_CharMap;
 
 typedef struct  CID_SizeRec_ {
 	FT2_1_3_SizeRec  root;
-	FT2_1_3_Bool     valid;
+	FT_Bool     valid;
 
 } CID_SizeRec;
 
@@ -102,11 +102,11 @@ typedef struct  CID_SizeRec_ {
 typedef struct  CID_GlyphSlotRec_ {
 	FT2_1_3_GlyphSlotRec  root;
 
-	FT2_1_3_Bool          hint;
-	FT2_1_3_Bool          scaled;
+	FT_Bool          hint;
+	FT_Bool          scaled;
 
-	FT2_1_3_Fixed         x_scale;
-	FT2_1_3_Fixed         y_scale;
+	FT_Fixed         x_scale;
+	FT_Fixed         y_scale;
 
 } CID_GlyphSlotRec;
 
@@ -114,7 +114,7 @@ typedef struct  CID_GlyphSlotRec_ {
 FT2_1_3_LOCAL( void )
 cid_slot_done( CID_GlyphSlot  slot );
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 cid_slot_init( CID_GlyphSlot   slot );
 
 
@@ -122,19 +122,19 @@ FT2_1_3_LOCAL( void )
 cid_size_done( CID_Size  size );
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 cid_size_init( CID_Size  size );
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 cid_size_reset( CID_Size  size );
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 cid_face_init( FT2_1_3_Stream      stream,
 			   CID_Face       face,
-			   FT2_1_3_Int         face_index,
-			   FT2_1_3_Int         num_params,
+			   FT_Int         face_index,
+			   FT_Int         num_params,
 			   FT2_1_3_Parameter*  params );
 
 
@@ -142,7 +142,7 @@ FT2_1_3_LOCAL( void )
 cid_face_done( CID_Face  face );
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 cid_driver_init( CID_Driver  driver );
 
 

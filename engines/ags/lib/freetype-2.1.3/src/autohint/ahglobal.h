@@ -39,7 +39,7 @@ FT2_1_3_BEGIN_HEADER
 
 
 /* compute global metrics automatically */
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 ah_hinter_compute_globals( AH_Hinter  hinter );
 
 

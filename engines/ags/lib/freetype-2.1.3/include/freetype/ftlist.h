@@ -53,20 +53,20 @@ FT2_1_3_BEGIN_HEADER
 /*    processing using doubly-linked nodes.                              */
 /*                                                                       */
 /* <Order>                                                               */
-/*    FT2_1_3_List                                                            */
-/*    FT2_1_3_ListNode                                                        */
-/*    FT2_1_3_ListRec                                                         */
-/*    FT2_1_3_ListNodeRec                                                     */
+/*    FT_List                                                            */
+/*    FT_ListNode                                                        */
+/*    FT_ListRec                                                         */
+/*    FT_ListNodeRec                                                     */
 /*                                                                       */
-/*    FT2_1_3_List_Add                                                        */
-/*    FT2_1_3_List_Insert                                                     */
-/*    FT2_1_3_List_Find                                                       */
-/*    FT2_1_3_List_Remove                                                     */
-/*    FT2_1_3_List_Up                                                         */
-/*    FT2_1_3_List_Iterate                                                    */
-/*    FT2_1_3_List_Iterator                                                   */
-/*    FT2_1_3_List_Finalize                                                   */
-/*    FT2_1_3_List_Destructor                                                 */
+/*    FT_List_Add                                                        */
+/*    FT_List_Insert                                                     */
+/*    FT_List_Find                                                       */
+/*    FT_List_Remove                                                     */
+/*    FT_List_Up                                                         */
+/*    FT_List_Iterate                                                    */
+/*    FT_List_Iterator                                                   */
+/*    FT_List_Finalize                                                   */
+/*    FT_List_Destructor                                                 */
 /*                                                                       */
 /*************************************************************************/
 
@@ -74,7 +74,7 @@ FT2_1_3_BEGIN_HEADER
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_List_Find                                                       */
+/*    FT_List_Find                                                       */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Finds the list node for a given listed object.                     */
@@ -86,15 +86,15 @@ FT2_1_3_BEGIN_HEADER
 /* <Return>                                                              */
 /*    List node.  NULL if it wasn't found.                               */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_ListNode )
-FT2_1_3_List_Find( FT2_1_3_List  list,
+FT2_1_3_EXPORT( FT_ListNode )
+FT_List_Find( FT_List  list,
 			  void*    data );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_List_Add                                                        */
+/*    FT_List_Add                                                        */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Appends an element to the end of a list.                           */
@@ -104,14 +104,14 @@ FT2_1_3_List_Find( FT2_1_3_List  list,
 /*    node :: The node to append.                                        */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_List_Add( FT2_1_3_List      list,
-			 FT2_1_3_ListNode  node );
+FT_List_Add( FT_List      list,
+			 FT_ListNode  node );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_List_Insert                                                     */
+/*    FT_List_Insert                                                     */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Inserts an element at the head of a list.                          */
@@ -121,14 +121,14 @@ FT2_1_3_List_Add( FT2_1_3_List      list,
 /*    node :: The node to insert.                                        */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_List_Insert( FT2_1_3_List      list,
-				FT2_1_3_ListNode  node );
+FT_List_Insert( FT_List      list,
+				FT_ListNode  node );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_List_Remove                                                     */
+/*    FT_List_Remove                                                     */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Removes a node from a list.  This function doesn't check whether   */
@@ -141,14 +141,14 @@ FT2_1_3_List_Insert( FT2_1_3_List      list,
 /*    list :: A pointer to the parent list.                              */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_List_Remove( FT2_1_3_List      list,
-				FT2_1_3_ListNode  node );
+FT_List_Remove( FT_List      list,
+				FT_ListNode  node );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_List_Up                                                         */
+/*    FT_List_Up                                                         */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Moves a node to the head/top of a list.  Used to maintain LRU      */
@@ -159,34 +159,34 @@ FT2_1_3_List_Remove( FT2_1_3_List      list,
 /*    node :: The node to move.                                          */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_List_Up( FT2_1_3_List      list,
-			FT2_1_3_ListNode  node );
+FT_List_Up( FT_List      list,
+			FT_ListNode  node );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <FuncType>                                                            */
-/*    FT2_1_3_List_Iterator                                                   */
+/*    FT_List_Iterator                                                   */
 /*                                                                       */
 /* <Description>                                                         */
-/*    An FT2_1_3_List iterator function which is called during a list parse   */
-/*    by FT2_1_3_List_Iterate().                                              */
+/*    An FT_List iterator function which is called during a list parse   */
+/*    by FT_List_Iterate().                                              */
 /*                                                                       */
 /* <Input>                                                               */
 /*    node :: The current iteration list node.                           */
 /*                                                                       */
-/*    user :: A typeless pointer passed to FT2_1_3_List_Iterate().            */
+/*    user :: A typeless pointer passed to FT_List_Iterate().            */
 /*            Can be used to point to the iteration's state.             */
 /*                                                                       */
-typedef FT2_1_3_Error
-(*FT2_1_3_List_Iterator)( FT2_1_3_ListNode  node,
+typedef FT_Error
+(*FT_List_Iterator)( FT_ListNode  node,
 					 void*        user );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_List_Iterate                                                    */
+/*    FT_List_Iterate                                                    */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Parses a list and calls a given iterator function on each element. */
@@ -203,20 +203,20 @@ typedef FT2_1_3_Error
 /* <Return>                                                              */
 /*    The result (a FreeType error code) of the last iterator call.      */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_List_Iterate( FT2_1_3_List           list,
-				 FT2_1_3_List_Iterator  iterator,
+FT2_1_3_EXPORT( FT_Error )
+FT_List_Iterate( FT_List           list,
+				 FT_List_Iterator  iterator,
 				 void*             user );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <FuncType>                                                            */
-/*    FT2_1_3_List_Destructor                                                 */
+/*    FT_List_Destructor                                                 */
 /*                                                                       */
 /* <Description>                                                         */
-/*    An FT2_1_3_List iterator function which is called during a list         */
-/*    finalization by FT2_1_3_List_Finalize() to destroy all elements in a    */
+/*    An FT_List iterator function which is called during a list         */
+/*    finalization by FT_List_Finalize() to destroy all elements in a    */
 /*    given list.                                                        */
 /*                                                                       */
 /* <Input>                                                               */
@@ -224,11 +224,11 @@ FT2_1_3_List_Iterate( FT2_1_3_List           list,
 /*                                                                       */
 /*    data   :: The current object to destroy.                           */
 /*                                                                       */
-/*    user   :: A typeless pointer passed to FT2_1_3_List_Iterate().  It can  */
+/*    user   :: A typeless pointer passed to FT_List_Iterate().  It can  */
 /*              be used to point to the iteration's state.               */
 /*                                                                       */
 typedef void
-(*FT2_1_3_List_Destructor)( FT2_1_3_Memory  memory,
+(*FT_List_Destructor)( FT2_1_3_Memory  memory,
 					   void*      data,
 					   void*      user );
 
@@ -236,7 +236,7 @@ typedef void
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_List_Finalize                                                   */
+/*    FT_List_Finalize                                                   */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Destroys all elements in the list as well as the list itself.      */
@@ -253,8 +253,8 @@ typedef void
 /*               argument to the destructor.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_List_Finalize( FT2_1_3_List             list,
-				  FT2_1_3_List_Destructor  destroy,
+FT_List_Finalize( FT_List             list,
+				  FT_List_Destructor  destroy,
 				  FT2_1_3_Memory           memory,
 				  void*               user );
 

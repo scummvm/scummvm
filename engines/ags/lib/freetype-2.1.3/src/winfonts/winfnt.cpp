@@ -121,10 +121,10 @@ fnt_font_done( FNT_Font   font,
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 fnt_font_load( FNT_Font   font,
 			   FT2_1_3_Stream  stream ) {
-	FT2_1_3_Error       error;
+	FT_Error       error;
 	WinFNT_Header  header = &font->header;
 
 
@@ -177,9 +177,9 @@ fnt_face_done_fonts( FNT_Face  face ) {
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 fnt_face_get_dll_fonts( FNT_Face  face ) {
-	FT2_1_3_Error         error;
+	FT_Error         error;
 	FT2_1_3_Stream        stream = FT2_1_3_FACE( face )->stream;
 	FT2_1_3_Memory        memory = FT2_1_3_FACE( face )->memory;
 	WinMZ_HeaderRec  mz_header;
@@ -206,12 +206,12 @@ fnt_face_get_dll_fonts( FNT_Face  face ) {
 		error = FT2_1_3_Err_Unknown_File_Format;
 		if ( ne_header.magic == WINFNT_NE_MAGIC ) {
 			/* good, now look in the resource table for each FNT resource */
-			FT2_1_3_ULong   res_offset = mz_header.lfanew +
+			FT_ULong   res_offset = mz_header.lfanew +
 									ne_header.resource_tab_offset;
 
-			FT2_1_3_UShort  size_shift;
-			FT2_1_3_UShort  font_count  = 0;
-			FT2_1_3_ULong   font_offset = 0;
+			FT_UShort  size_shift;
+			FT_UShort  font_count  = 0;
+			FT_ULong   font_offset = 0;
 
 
 			if ( FT2_1_3_STREAM_SEEK( res_offset ) ||
@@ -222,7 +222,7 @@ fnt_face_get_dll_fonts( FNT_Face  face ) {
 			size_shift = FT2_1_3_GET_USHORT_LE();
 
 			for (;;) {
-				FT2_1_3_UShort  type_id, count;
+				FT_UShort  type_id, count;
 
 
 				type_id = FT2_1_3_GET_USHORT_LE();
@@ -233,7 +233,7 @@ fnt_face_get_dll_fonts( FNT_Face  face ) {
 
 				if ( type_id == 0x8008 ) {
 					font_count  = count;
-					font_offset = (FT2_1_3_ULong)( FT2_1_3_STREAM_POS() + 4 +
+					font_offset = (FT_ULong)( FT2_1_3_STREAM_POS() + 4 +
 											  ( stream->cursor - stream->limit ) );
 					break;
 				}
@@ -254,7 +254,7 @@ fnt_face_get_dll_fonts( FNT_Face  face ) {
 
 			face->num_fonts = font_count;
 
-			if ( FT2_1_3_FRAME_ENTER( (FT2_1_3_Long)font_count * 12 ) )
+			if ( FT2_1_3_FRAME_ENTER( (FT_Long)font_count * 12 ) )
 				goto Exit;
 
 			/* now read the offset and position of each FNT font */
@@ -264,8 +264,8 @@ fnt_face_get_dll_fonts( FNT_Face  face ) {
 
 
 				for ( ; cur < limit; cur++ ) {
-					cur->offset     = (FT2_1_3_ULong)FT2_1_3_GET_USHORT_LE() << size_shift;
-					cur->fnt_size   = (FT2_1_3_ULong)FT2_1_3_GET_USHORT_LE() << size_shift;
+					cur->offset     = (FT_ULong)FT2_1_3_GET_USHORT_LE() << size_shift;
+					cur->fnt_size   = (FT_ULong)FT2_1_3_GET_USHORT_LE() << size_shift;
 					cur->size_shift = size_shift;
 					stream->cursor += 8;
 				}
@@ -299,29 +299,29 @@ Exit:
 
 typedef struct  FNT_CMapRec_ {
 	FT2_1_3_CMapRec  cmap;
-	FT2_1_3_UInt32   first;
-	FT2_1_3_UInt32   count;
+	FT_UInt32   first;
+	FT_UInt32   count;
 
 } FNT_CMapRec, *FNT_CMap;
 
 
-static FT2_1_3_Error
+static FT_Error
 fnt_cmap_init( FNT_CMap  cmap ) {
 	FNT_Face  face = (FNT_Face)FT2_1_3_CMAP_FACE( cmap );
 	FNT_Font  font = face->fonts;
 
 
-	cmap->first = (FT2_1_3_UInt32)  font->header.first_char;
-	cmap->count = (FT2_1_3_UInt32)( font->header.last_char - cmap->first + 1 );
+	cmap->first = (FT_UInt32)  font->header.first_char;
+	cmap->count = (FT_UInt32)( font->header.last_char - cmap->first + 1 );
 
 	return 0;
 }
 
 
-static FT2_1_3_UInt
+static FT_UInt
 fnt_cmap_char_index( FNT_CMap   cmap,
-					 FT2_1_3_UInt32  char_code ) {
-	FT2_1_3_UInt  gindex = 0;
+					 FT_UInt32  char_code ) {
+	FT_UInt  gindex = 0;
 
 
 	char_code -= cmap->first;
@@ -332,12 +332,12 @@ fnt_cmap_char_index( FNT_CMap   cmap,
 }
 
 
-static FT2_1_3_UInt
+static FT_UInt
 fnt_cmap_char_next( FNT_CMap    cmap,
-					FT2_1_3_UInt32  *pchar_code ) {
-	FT2_1_3_UInt    gindex = 0;
-	FT2_1_3_UInt32  result = 0;
-	FT2_1_3_UInt32  char_code = *pchar_code + 1;
+					FT_UInt32  *pchar_code ) {
+	FT_UInt    gindex = 0;
+	FT_UInt32  result = 0;
+	FT_UInt32  char_code = *pchar_code + 1;
 
 
 	if ( char_code <= cmap->first ) {
@@ -381,13 +381,13 @@ FNT_Face_Done( FNT_Face  face ) {
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 FNT_Face_Init( FT2_1_3_Stream      stream,
 			   FNT_Face       face,
-			   FT2_1_3_Int         face_index,
-			   FT2_1_3_Int         num_params,
+			   FT_Int         face_index,
+			   FT_Int         num_params,
 			   FT2_1_3_Parameter*  params ) {
-	FT2_1_3_Error   error;
+	FT_Error   error;
 	FT2_1_3_Memory  memory = FT2_1_3_FACE_MEMORY( face );
 
 	FT2_1_3_UNUSED( num_params );
@@ -417,9 +417,9 @@ FNT_Face_Init( FT2_1_3_Stream      stream,
 	}
 
 	/* all right, one or more fonts were loaded; we now need to */
-	/* fill the root FT2_1_3_Face fields with relevant information   */
+	/* fill the root FT_Face fields with relevant information   */
 	{
-		FT2_1_3_Face   root  = FT2_1_3_FACE( face );
+		FT_Face   root  = FT2_1_3_FACE( face );
 		FNT_Font  fonts = face->fonts;
 		FNT_Font  limit = fonts + face->num_fonts;
 		FNT_Font  cur;
@@ -445,7 +445,7 @@ FNT_Face_Init( FT2_1_3_Stream      stream,
 		root->num_fixed_sizes = face->num_fonts;
 
 		{
-			FT2_1_3_Bitmap_Size*  size = root->available_sizes;
+			FT_Bitmap_Size*  size = root->available_sizes;
 
 
 			for ( cur = fonts; cur < limit; cur++, size++ ) {
@@ -455,7 +455,7 @@ FNT_Face_Init( FT2_1_3_Stream      stream,
 		}
 
 		{
-			FT2_1_3_CharMapRec  charmap;
+			FT_CharMapRec  charmap;
 
 			charmap.encoding    = FT2_1_3_ENCODING_UNICODE;
 			charmap.platform_id = 3;
@@ -478,7 +478,7 @@ FNT_Face_Init( FT2_1_3_Stream      stream,
 		root->num_glyphs = fonts->header.last_char -
 						   fonts->header.first_char + 1;
 
-		root->family_name = (FT2_1_3_String*)fonts->fnt_frame +
+		root->family_name = (FT_String*)fonts->fnt_frame +
 							fonts->header.face_name_offset;
 		root->style_name  = const_cast<char *>("Regular");
 
@@ -500,7 +500,7 @@ Exit:
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 FNT_Size_Set_Pixels( FNT_Size  size ) {
 	/* look up a font corresponding to the current pixel size */
 	FNT_Face  face  = (FNT_Face)FT2_1_3_SIZE_FACE( size );
@@ -527,18 +527,18 @@ FNT_Size_Set_Pixels( FNT_Size  size ) {
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 FNT_Load_Glyph( FT2_1_3_GlyphSlot  slot,
 				FNT_Size      size,
-				FT2_1_3_UInt       glyph_index,
-				FT2_1_3_Int32      load_flags ) {
+				FT_UInt       glyph_index,
+				FT_Int32      load_flags ) {
 	FNT_Font    font  = size->font;
-	FT2_1_3_Error    error = 0;
-	FT2_1_3_Byte*    p;
-	FT2_1_3_Int      len;
-	FT2_1_3_Bitmap*  bitmap = &slot->bitmap;
-	FT2_1_3_ULong    offset;
-	FT2_1_3_Bool     new_format;
+	FT_Error    error = 0;
+	FT_Byte*    p;
+	FT_Int      len;
+	FT_Bitmap*  bitmap = &slot->bitmap;
+	FT_ULong    offset;
+	FT_Bool     new_format;
 
 	FT2_1_3_UNUSED( slot );
 	FT2_1_3_UNUSED( load_flags );
@@ -573,9 +573,9 @@ FNT_Load_Glyph( FT2_1_3_GlyphSlot  slot,
 	/* allocate and build bitmap */
 	{
 		FT2_1_3_Memory  memory = FT2_1_3_FACE_MEMORY( slot->face );
-		FT2_1_3_Int     pitch  = ( bitmap->width + 7 ) >> 3;
-		FT2_1_3_Byte*   column;
-		FT2_1_3_Byte*   write;
+		FT_Int     pitch  = ( bitmap->width + 7 ) >> 3;
+		FT_Byte*   column;
+		FT_Byte*   write;
 
 
 		bitmap->pitch      = pitch;
@@ -585,10 +585,10 @@ FNT_Load_Glyph( FT2_1_3_GlyphSlot  slot,
 		if ( FT2_1_3_ALLOC( bitmap->buffer, pitch * bitmap->rows ) )
 			goto Exit;
 
-		column = (FT2_1_3_Byte*)bitmap->buffer;
+		column = (FT_Byte*)bitmap->buffer;
 
 		for ( ; pitch > 0; pitch--, column++ ) {
-			FT2_1_3_Byte*  limit = p + bitmap->rows;
+			FT_Byte*  limit = p + bitmap->rows;
 
 
 			for ( write = column; p < limit; p++, write += bitmap->pitch )
@@ -606,7 +606,7 @@ FNT_Load_Glyph( FT2_1_3_GlyphSlot  slot,
 	slot->metrics.horiBearingX = 0;
 	slot->metrics.horiBearingY = slot->bitmap_top << 6;
 
-	slot->linearHoriAdvance    = (FT2_1_3_Fixed)bitmap->width << 16;
+	slot->linearHoriAdvance    = (FT_Fixed)bitmap->width << 16;
 	slot->format               = FT2_1_3_GLYPH_FORMAT_BITMAP;
 
 Exit:
@@ -635,8 +635,8 @@ const FT2_1_3_Driver_ClassRec  winfnt_driver_class = {
 	sizeof( FNT_SizeRec ),
 	sizeof( FT2_1_3_GlyphSlotRec ),
 
-	(FT2_1_3_Face_InitFunc)        FNT_Face_Init,
-	(FT2_1_3_Face_DoneFunc)        FNT_Face_Done,
+	(FT_Face_InitFunc)        FNT_Face_Init,
+	(FT_Face_DoneFunc)        FNT_Face_Done,
 	(FT2_1_3_Size_InitFunc)        0,
 	(FT2_1_3_Size_DoneFunc)        0,
 	(FT2_1_3_Slot_InitFunc)        0,
@@ -646,9 +646,9 @@ const FT2_1_3_Driver_ClassRec  winfnt_driver_class = {
 	(FT2_1_3_Size_ResetPixelsFunc) FNT_Size_Set_Pixels,
 	(FT2_1_3_Slot_LoadFunc)        FNT_Load_Glyph,
 
-	(FT2_1_3_Face_GetKerningFunc)  0,
-	(FT2_1_3_Face_AttachFunc)      0,
-	(FT2_1_3_Face_GetAdvancesFunc) 0
+	(FT_Face_GetKerningFunc)  0,
+	(FT_Face_AttachFunc)      0,
+	(FT_Face_GetAdvancesFunc) 0
 };
 
 } // End of namespace FreeType213

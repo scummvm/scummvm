@@ -33,7 +33,7 @@ namespace FreeType213 {
 
 static void
 t1_cmap_std_init( T1_CMapStd  cmap,
-				  FT2_1_3_Int      is_expert ) {
+				  FT_Int      is_expert ) {
 	T1_Face          face    = (T1_Face)FT2_1_3_CMAP_FACE( cmap );
 	PSNames_Service psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(face->psnames));
 
@@ -56,14 +56,14 @@ t1_cmap_std_done( T1_CMapStd  cmap ) {
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
+FT2_1_3_CALLBACK_DEF( FT_UInt )
 t1_cmap_std_char_index( T1_CMapStd  cmap,
-						FT2_1_3_UInt32   char_code ) {
-	FT2_1_3_UInt  result = 0;
+						FT_UInt32   char_code ) {
+	FT_UInt  result = 0;
 
 
 	if ( char_code < 256 ) {
-		FT2_1_3_UInt      code, n;
+		FT_UInt      code, n;
 		const char*  glyph_name;
 
 
@@ -88,11 +88,11 @@ t1_cmap_std_char_index( T1_CMapStd  cmap,
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
+FT2_1_3_CALLBACK_DEF( FT_UInt )
 t1_cmap_std_char_next( T1_CMapStd   cmap,
-					   FT2_1_3_UInt32   *pchar_code ) {
-	FT2_1_3_UInt    result    = 0;
-	FT2_1_3_UInt32  char_code = *pchar_code + 1;
+					   FT_UInt32   *pchar_code ) {
+	FT_UInt    result    = 0;
+	FT_UInt32  char_code = *pchar_code + 1;
 
 
 	while ( char_code < 256 ) {
@@ -110,7 +110,7 @@ Exit:
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 t1_cmap_standard_init( T1_CMapStd  cmap ) {
 	t1_cmap_std_init( cmap, 0 );
 	return 0;
@@ -128,7 +128,7 @@ t1_cmap_standard_class_rec = {
 };
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 t1_cmap_expert_init( T1_CMapStd  cmap ) {
 	t1_cmap_std_init( cmap, 1 );
 	return 0;
@@ -154,14 +154,14 @@ t1_cmap_expert_class_rec = {
 /*************************************************************************/
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 t1_cmap_custom_init( T1_CMapCustom  cmap ) {
 	T1_Face      face     = (T1_Face)FT2_1_3_CMAP_FACE( cmap );
 	T1_Encoding  encoding = &face->type1.encoding;
 
 
 	cmap->first   = encoding->code_first;
-	cmap->count   = (FT2_1_3_UInt)( encoding->code_last - cmap->first + 1 );
+	cmap->count   = (FT_UInt)( encoding->code_last - cmap->first + 1 );
 	cmap->indices = encoding->char_index;
 
 	FT2_1_3_ASSERT( cmap->indices != NULL );
@@ -179,10 +179,10 @@ t1_cmap_custom_done( T1_CMapCustom  cmap ) {
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
+FT2_1_3_CALLBACK_DEF( FT_UInt )
 t1_cmap_custom_char_index( T1_CMapCustom  cmap,
-						   FT2_1_3_UInt32      char_code ) {
-	FT2_1_3_UInt    result = 0;
+						   FT_UInt32      char_code ) {
+	FT_UInt    result = 0;
 
 
 	if ( ( char_code >= cmap->first )                  &&
@@ -193,11 +193,11 @@ t1_cmap_custom_char_index( T1_CMapCustom  cmap,
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
+FT2_1_3_CALLBACK_DEF( FT_UInt )
 t1_cmap_custom_char_next( T1_CMapCustom  cmap,
-						  FT2_1_3_UInt32     *pchar_code ) {
-	FT2_1_3_UInt    result = 0;
-	FT2_1_3_UInt32  char_code = *pchar_code;
+						  FT_UInt32     *pchar_code ) {
+	FT_UInt    result = 0;
+	FT_UInt32  char_code = *pchar_code;
 
 
 	++char_code;
@@ -238,11 +238,11 @@ t1_cmap_custom_class_rec = {
 /*************************************************************************/
 /*************************************************************************/
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Int )
+FT2_1_3_CALLBACK_DEF( FT_Int )
 t1_cmap_uni_pair_compare( const void*  pair1,
 						  const void*  pair2 ) {
-	FT2_1_3_UInt32  u1 = ((T1_CMapUniPair)pair1)->unicode;
-	FT2_1_3_UInt32  u2 = ((T1_CMapUniPair)pair2)->unicode;
+	FT_UInt32  u1 = ((T1_CMapUniPair)pair1)->unicode;
+	FT_UInt32  u2 = ((T1_CMapUniPair)pair2)->unicode;
 
 
 	if ( u1 < u2 )
@@ -255,10 +255,10 @@ t1_cmap_uni_pair_compare( const void*  pair1,
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 t1_cmap_unicode_init( T1_CMapUnicode  cmap ) {
-	FT2_1_3_Error         error;
-	FT2_1_3_UInt          count;
+	FT_Error         error;
+	FT_UInt          count;
 	T1_Face          face    = (T1_Face)FT2_1_3_CMAP_FACE( cmap );
 	FT2_1_3_Memory        memory  = FT2_1_3_FACE_MEMORY( face );
 	PSNames_Service psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(face->psnames));
@@ -269,9 +269,9 @@ t1_cmap_unicode_init( T1_CMapUnicode  cmap ) {
 	count = face->type1.num_glyphs;
 
 	if ( !FT2_1_3_NEW_ARRAY( cmap->pairs, count ) ) {
-		FT2_1_3_UInt         n, new_count;
+		FT_UInt         n, new_count;
 		T1_CMapUniPair  pair;
-		FT2_1_3_UInt32       uni_code;
+		FT_UInt32       uni_code;
 
 
 		pair = cmap->pairs;
@@ -291,7 +291,7 @@ t1_cmap_unicode_init( T1_CMapUnicode  cmap ) {
 			}
 		}
 
-		new_count = (FT2_1_3_UInt)( pair - cmap->pairs );
+		new_count = (FT_UInt)( pair - cmap->pairs );
 		if ( new_count == 0 ) {
 			/* there are no unicode characters in here! */
 			FT2_1_3_FREE( cmap->pairs );
@@ -320,7 +320,7 @@ t1_cmap_unicode_init( T1_CMapUnicode  cmap ) {
 
 FT2_1_3_CALLBACK_DEF( void )
 t1_cmap_unicode_done( T1_CMapUnicode  cmap ) {
-	FT2_1_3_Face    face   = FT2_1_3_CMAP_FACE(cmap);
+	FT_Face    face   = FT2_1_3_CMAP_FACE(cmap);
 	FT2_1_3_Memory  memory = FT2_1_3_FACE_MEMORY(face);
 
 	FT2_1_3_FREE( cmap->pairs );
@@ -328,12 +328,12 @@ t1_cmap_unicode_done( T1_CMapUnicode  cmap ) {
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
+FT2_1_3_CALLBACK_DEF( FT_UInt )
 t1_cmap_unicode_char_index( T1_CMapUnicode  cmap,
-							FT2_1_3_UInt32       char_code ) {
-	FT2_1_3_UInt         min = 0;
-	FT2_1_3_UInt         max = cmap->num_pairs;
-	FT2_1_3_UInt         mid;
+							FT_UInt32       char_code ) {
+	FT_UInt         min = 0;
+	FT_UInt         max = cmap->num_pairs;
+	FT_UInt         mid;
 	T1_CMapUniPair  pair;
 
 
@@ -353,17 +353,17 @@ t1_cmap_unicode_char_index( T1_CMapUnicode  cmap,
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
+FT2_1_3_CALLBACK_DEF( FT_UInt )
 t1_cmap_unicode_char_next( T1_CMapUnicode  cmap,
-						   FT2_1_3_UInt32      *pchar_code ) {
-	FT2_1_3_UInt    result    = 0;
-	FT2_1_3_UInt32  char_code = *pchar_code + 1;
+						   FT_UInt32      *pchar_code ) {
+	FT_UInt    result    = 0;
+	FT_UInt32  char_code = *pchar_code + 1;
 
 
 Restart: {
-		FT2_1_3_UInt         min = 0;
-		FT2_1_3_UInt         max = cmap->num_pairs;
-		FT2_1_3_UInt         mid;
+		FT_UInt         min = 0;
+		FT_UInt         max = cmap->num_pairs;
+		FT_UInt         mid;
 		T1_CMapUniPair  pair;
 
 

@@ -84,9 +84,9 @@ typedef const struct FT2_1_3_Stream_ClassRec_*   FT2_1_3_Stream_Class;
  * @return:
  *   number of bytes effectively read. Must be <= 'size'.
  */
-typedef FT2_1_3_ULong  (*FT2_1_3_Stream_ReadFunc)( FT2_1_3_Stream   stream,
-        FT2_1_3_Byte*    buffer,
-        FT2_1_3_ULong    size );
+typedef FT_ULong  (*FT2_1_3_Stream_ReadFunc)( FT2_1_3_Stream   stream,
+        FT_Byte*    buffer,
+        FT_ULong    size );
 
 
 /*@*******************************************************************
@@ -103,8 +103,8 @@ typedef FT2_1_3_ULong  (*FT2_1_3_Stream_ReadFunc)( FT2_1_3_Stream   stream,
  * @return:
  *   error code. 0 means success
  */
-typedef FT2_1_3_Error  (*FT2_1_3_Stream_SeekFunc)( FT2_1_3_Stream   stream,
-        FT2_1_3_ULong    pos );
+typedef FT_Error  (*FT2_1_3_Stream_SeekFunc)( FT2_1_3_Stream   stream,
+        FT_ULong    pos );
 
 
 /*@*******************************************************************
@@ -156,11 +156,11 @@ typedef struct FT2_1_3_Stream_ClassRec_ {
  */
 typedef struct FT2_1_3_StreamRec_ {
 	FT2_1_3_ObjectRec        object;
-	FT2_1_3_ULong            size;
-	FT2_1_3_ULong            pos;
-	const FT2_1_3_Byte*      base;
-	const FT2_1_3_Byte*      cursor;
-	const FT2_1_3_Byte*      limit;
+	FT_ULong            size;
+	FT_ULong            pos;
+	const FT_Byte*      base;
+	const FT_Byte*      cursor;
+	const FT_Byte*      limit;
 
 } FT2_1_3_StreamRec;
 
@@ -176,12 +176,12 @@ typedef struct FT2_1_3_StreamRec_ {
 /* */
 
 /* create new memory-based stream */
-FT2_1_3_BASE( FT2_1_3_Error )   ft_stream_new_memory( const FT2_1_3_Byte*  stream_base,
-        FT2_1_3_ULong        stream_size,
+FT2_1_3_BASE( FT_Error )   ft_stream_new_memory( const FT_Byte*  stream_base,
+        FT_ULong        stream_size,
         FT2_1_3_Memory       memory,
         FT2_1_3_Stream      *astream );
 
-FT2_1_3_BASE( FT2_1_3_Error )   ft_stream_new_iso( const char*  pathanme,
+FT2_1_3_BASE( FT_Error )   ft_stream_new_iso( const char*  pathanme,
         FT2_1_3_Memory    memory,
         FT2_1_3_Stream   *astream );
 

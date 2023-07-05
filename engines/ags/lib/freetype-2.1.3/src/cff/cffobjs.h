@@ -67,11 +67,11 @@ typedef FT2_1_3_Size  CFF_Size;
 typedef struct  CFF_GlyphSlotRec_ {
 	FT2_1_3_GlyphSlotRec  root;
 
-	FT2_1_3_Bool          hint;
-	FT2_1_3_Bool          scaled;
+	FT_Bool          hint;
+	FT_Bool          scaled;
 
-	FT2_1_3_Fixed         x_scale;
-	FT2_1_3_Fixed         y_scale;
+	FT_Fixed         x_scale;
+	FT_Fixed         y_scale;
 
 } CFF_GlyphSlotRec, *CFF_GlyphSlot;
 
@@ -82,9 +82,9 @@ typedef struct  CFF_GlyphSlotRec_ {
 /* Subglyph transformation record.                                       */
 /*                                                                       */
 typedef struct  CFF_Transform_ {
-	FT2_1_3_Fixed    xx, xy;     /* transformation matrix coefficients */
-	FT2_1_3_Fixed    yx, yy;
-	FT2_1_3_F26Dot6  ox, oy;     /* offsets        */
+	FT_Fixed    xx, xy;     /* transformation matrix coefficients */
+	FT_Fixed    yx, yy;
+	FT_F26Dot6  ox, oy;     /* offsets        */
 
 } CFF_Transform;
 
@@ -108,19 +108,19 @@ typedef struct  CFF_DriverRec_ {
 } CFF_DriverRec;
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 cff_size_init( CFF_Size  size );
 
 FT2_1_3_LOCAL( void )
 cff_size_done( CFF_Size  size );
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 cff_size_reset( CFF_Size  size );
 
 FT2_1_3_LOCAL( void )
 cff_slot_done( CFF_GlyphSlot  slot );
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 cff_slot_init( CFF_GlyphSlot   slot );
 
 
@@ -128,11 +128,11 @@ cff_slot_init( CFF_GlyphSlot   slot );
 /*                                                                       */
 /* Face functions                                                        */
 /*                                                                       */
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 cff_face_init( FT2_1_3_Stream      stream,
 			   CFF_Face       face,
-			   FT2_1_3_Int         face_index,
-			   FT2_1_3_Int         num_params,
+			   FT_Int         face_index,
+			   FT_Int         num_params,
 			   FT2_1_3_Parameter*  params );
 
 FT2_1_3_LOCAL( void )
@@ -143,7 +143,7 @@ cff_face_done( CFF_Face  face );
 /*                                                                       */
 /* Driver functions                                                      */
 /*                                                                       */
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 cff_driver_init( CFF_Driver  driver );
 
 FT2_1_3_LOCAL( void )

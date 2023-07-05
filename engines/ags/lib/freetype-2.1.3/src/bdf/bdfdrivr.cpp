@@ -50,13 +50,13 @@ namespace FreeType213 {
 
 typedef struct  BDF_CMapRec_ {
 	FT2_1_3_CMapRec        cmap;
-	FT2_1_3_UInt           num_encodings;
+	FT_UInt           num_encodings;
 	BDF_encoding_el*  encodings;
 
 } BDF_CMapRec, *BDF_CMap;
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 bdf_cmap_init( BDF_CMap  cmap ) {
 	BDF_Face  face = (BDF_Face)FT2_1_3_CMAP_FACE( cmap );
 
@@ -75,19 +75,19 @@ bdf_cmap_done( BDF_CMap  cmap ) {
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
+FT2_1_3_CALLBACK_DEF( FT_UInt )
 bdf_cmap_char_index( BDF_CMap   cmap,
-					 FT2_1_3_UInt32  charcode ) {
+					 FT_UInt32  charcode ) {
 	BDF_encoding_el*  encodings = cmap->encodings;
-	FT2_1_3_UInt           min, max, mid;
-	FT2_1_3_UInt           result = 0;
+	FT_UInt           min, max, mid;
+	FT_UInt           result = 0;
 
 
 	min = 0;
 	max = cmap->num_encodings;
 
 	while ( min < max ) {
-		FT2_1_3_UInt32  code;
+		FT_UInt32  code;
 
 
 		mid  = ( min + max ) >> 1;
@@ -108,20 +108,20 @@ bdf_cmap_char_index( BDF_CMap   cmap,
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
+FT2_1_3_CALLBACK_DEF( FT_UInt )
 bdf_cmap_char_next( BDF_CMap    cmap,
-					FT2_1_3_UInt32  *acharcode ) {
+					FT_UInt32  *acharcode ) {
 	BDF_encoding_el*  encodings = cmap->encodings;
-	FT2_1_3_UInt           min, max, mid;
-	FT2_1_3_UInt32         charcode = *acharcode + 1;
-	FT2_1_3_UInt           result   = 0;
+	FT_UInt           min, max, mid;
+	FT_UInt32         charcode = *acharcode + 1;
+	FT_UInt           result   = 0;
 
 
 	min = 0;
 	max = cmap->num_encodings;
 
 	while ( min < max ) {
-		FT2_1_3_UInt32  code;
+		FT_UInt32  code;
 
 
 		mid  = ( min + max ) >> 1;
@@ -161,7 +161,7 @@ FT2_1_3_CALLBACK_TABLE_DEF const FT2_1_3_CMap_ClassRec  bdf_cmap_class = {
 
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 BDF_Face_Done( BDF_Face  face ) {
 	FT2_1_3_Memory  memory = FT2_1_3_FACE_MEMORY( face );
 
@@ -184,13 +184,13 @@ BDF_Face_Done( BDF_Face  face ) {
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 BDF_Face_Init( FT2_1_3_Stream      stream,
 			   BDF_Face       face,
-			   FT2_1_3_Int         face_index,
-			   FT2_1_3_Int         num_params,
+			   FT_Int         face_index,
+			   FT_Int         num_params,
 			   FT2_1_3_Parameter*  params ) {
-	FT2_1_3_Error       error  = FT2_1_3_Err_Ok;
+	FT_Error       error  = FT2_1_3_Err_Ok;
 	FT2_1_3_Memory      memory = FT2_1_3_FACE_MEMORY( face );
 
 	bdf_font_t*    font;
@@ -219,7 +219,7 @@ BDF_Face_Init( FT2_1_3_Stream      stream,
 	/* we have a bdf font: let's construct the face object */
 	face->bdffont = font;
 	{
-		FT2_1_3_Face          root = FT2_1_3_FACE( face );
+		FT_Face          root = FT2_1_3_FACE( face );
 		bdf_property_t*  prop = NULL;
 
 
@@ -307,7 +307,7 @@ BDF_Face_Init( FT2_1_3_Stream      stream,
 					FT2_1_3_TRACE4(( "POINT_SIZE: %d  RESOLUTION_Y: %d\n",
 								prop->value.int32, yres->value.int32 ));
 					root->available_sizes->height =
-						(FT2_1_3_Short)( prop->value.int32 * yres->value.int32 / 720 );
+						(FT_Short)( prop->value.int32 * yres->value.int32 / 720 );
 				}
 			}
 		}
@@ -316,7 +316,7 @@ BDF_Face_Init( FT2_1_3_Stream      stream,
 			if ( root->available_sizes->height == 0 ) {
 				/* some fonts have broken SIZE declaration (jiskan24.bdf) */
 				FT2_1_3_ERROR(( "BDF_Face_Init: reading size\n" ));
-				root->available_sizes->width = (FT2_1_3_Short)font->point_size;
+				root->available_sizes->width = (FT_Short)font->point_size;
 			} else
 				root->available_sizes->width = root->available_sizes->height;
 		}
@@ -335,14 +335,14 @@ BDF_Face_Init( FT2_1_3_Stream      stream,
 			for ( n = 0; n < font->glyphs_size; n++ ) {
 				(face->en_table[n]).enc = cur[n].encoding;
 				FT2_1_3_TRACE4(( "idx %d, val 0x%lX\n", n, cur[n].encoding ));
-				(face->en_table[n]).glyph = (FT2_1_3_Short)n;
+				(face->en_table[n]).glyph = (FT_Short)n;
 			}
 		}
 
 		/* charmaps */
 		{
 			bdf_property_t  *charset_registry = 0, *charset_encoding = 0;
-			FT2_1_3_Bool          unicode_charmap  = 0;
+			FT_Bool          unicode_charmap  = 0;
 
 
 			charset_registry =
@@ -368,7 +368,7 @@ BDF_Face_Init( FT2_1_3_Stream      stream,
 						unicode_charmap = 1;
 
 					{
-						FT2_1_3_CharMapRec  charmap;
+						FT_CharMapRec  charmap;
 
 
 						charmap.face        = FT2_1_3_FACE( face );
@@ -398,7 +398,7 @@ BDF_Face_Init( FT2_1_3_Stream      stream,
 			/* otherwise assume Adobe standard encoding */
 
 			{
-				FT2_1_3_CharMapRec  charmap;
+				FT_CharMapRec  charmap;
 
 
 				charmap.face        = FT2_1_3_FACE( face );
@@ -424,10 +424,10 @@ Fail:
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 BDF_Set_Pixel_Size( FT2_1_3_Size  size ) {
 	BDF_Face  face = (BDF_Face)FT2_1_3_SIZE_FACE( size );
-	FT2_1_3_Face   root = FT2_1_3_FACE( face );
+	FT_Face   root = FT2_1_3_FACE( face );
 
 
 	FT2_1_3_TRACE4(( "rec %d - pres %d\n",
@@ -444,14 +444,14 @@ BDF_Set_Pixel_Size( FT2_1_3_Size  size ) {
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 BDF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
 				FT2_1_3_Size       size,
-				FT2_1_3_UInt       glyph_index,
-				FT2_1_3_Int32      load_flags ) {
+				FT_UInt       glyph_index,
+				FT_Int32      load_flags ) {
 	BDF_Face        face   = (BDF_Face)FT2_1_3_SIZE_FACE( size );
-	FT2_1_3_Error        error  = FT2_1_3_Err_Ok;
-	FT2_1_3_Bitmap*      bitmap = &slot->bitmap;
+	FT_Error        error  = FT2_1_3_Err_Ok;
+	FT_Bitmap*      bitmap = &slot->bitmap;
 	bdf_glyph_t     glyph;
 	int             bpp    = face->bdffont->bpp;
 	int             i, j, count;
@@ -503,10 +503,10 @@ BDF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
 
 				/* get the full bytes */
 				for ( j = 0; j < ( bitmap->width >> 2 ); j++ ) {
-					bitmap->buffer[count++] = (FT2_1_3_Byte)( ( *pp & 0xC0 ) >> 6 );
-					bitmap->buffer[count++] = (FT2_1_3_Byte)( ( *pp & 0x30 ) >> 4 );
-					bitmap->buffer[count++] = (FT2_1_3_Byte)( ( *pp & 0x0C ) >> 2 );
-					bitmap->buffer[count++] = (FT2_1_3_Byte)(   *pp & 0x03 );
+					bitmap->buffer[count++] = (FT_Byte)( ( *pp & 0xC0 ) >> 6 );
+					bitmap->buffer[count++] = (FT_Byte)( ( *pp & 0x30 ) >> 4 );
+					bitmap->buffer[count++] = (FT_Byte)( ( *pp & 0x0C ) >> 2 );
+					bitmap->buffer[count++] = (FT_Byte)(   *pp & 0x03 );
 
 					pp++;
 				}
@@ -514,13 +514,13 @@ BDF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
 				/* get remaining pixels (if any) */
 				switch ( bitmap->width & 3 ) {
 				case 3:
-					bitmap->buffer[count++] = (FT2_1_3_Byte)( ( *pp & 0xC0 ) >> 6 );
+					bitmap->buffer[count++] = (FT_Byte)( ( *pp & 0xC0 ) >> 6 );
 				/* fall through */
 				case 2:
-					bitmap->buffer[count++] = (FT2_1_3_Byte)( ( *pp & 0x30 ) >> 4 );
+					bitmap->buffer[count++] = (FT_Byte)( ( *pp & 0x30 ) >> 4 );
 				/* fall through */
 				case 1:
-					bitmap->buffer[count++] = (FT2_1_3_Byte)( ( *pp & 0x0C ) >> 2 );
+					bitmap->buffer[count++] = (FT_Byte)( ( *pp & 0x0C ) >> 2 );
 				/* fall through */
 				case 0:
 					break;
@@ -541,8 +541,8 @@ BDF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
 
 				/* get the full bytes */
 				for ( j = 0; j < ( bitmap->width >> 1 ); j++ ) {
-					bitmap->buffer[count++] = (FT2_1_3_Byte)( ( *pp & 0xF0 ) >> 4 );
-					bitmap->buffer[count++] = (FT2_1_3_Byte)(   *pp & 0x0F );
+					bitmap->buffer[count++] = (FT_Byte)( ( *pp & 0xF0 ) >> 4 );
+					bitmap->buffer[count++] = (FT_Byte)(   *pp & 0x0F );
 
 					pp++;
 				}
@@ -550,7 +550,7 @@ BDF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
 				/* get remaining pixel (if any) */
 				switch ( bitmap->width & 1 ) {
 				case 1:
-					bitmap->buffer[count++] = (FT2_1_3_Byte)( ( *pp & 0xF0 ) >> 4 );
+					bitmap->buffer[count++] = (FT_Byte)( ( *pp & 0xF0 ) >> 4 );
 				/* fall through */
 				case 0:
 					break;
@@ -580,7 +580,7 @@ BDF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
 	slot->metrics.width        = bitmap->width << 6;
 	slot->metrics.height       = bitmap->rows << 6;
 
-	slot->linearHoriAdvance = (FT2_1_3_Fixed)glyph.dwidth << 16;
+	slot->linearHoriAdvance = (FT_Fixed)glyph.dwidth << 16;
 	slot->format            = FT2_1_3_GLYPH_FORMAT_BITMAP;
 	slot->flags             = FT2_1_3_GLYPH_OWN_BITMAP;
 
@@ -610,8 +610,8 @@ const FT2_1_3_Driver_ClassRec  bdf_driver_class = {
 	sizeof ( FT2_1_3_SizeRec ),
 	sizeof ( FT2_1_3_GlyphSlotRec ),
 
-	(FT2_1_3_Face_InitFunc)        BDF_Face_Init,
-	(FT2_1_3_Face_DoneFunc)        BDF_Face_Done,
+	(FT_Face_InitFunc)        BDF_Face_Init,
+	(FT_Face_DoneFunc)        BDF_Face_Done,
 	(FT2_1_3_Size_InitFunc)        0,
 	(FT2_1_3_Size_DoneFunc)        0,
 	(FT2_1_3_Slot_InitFunc)        0,
@@ -622,9 +622,9 @@ const FT2_1_3_Driver_ClassRec  bdf_driver_class = {
 
 	(FT2_1_3_Slot_LoadFunc)        BDF_Glyph_Load,
 
-	(FT2_1_3_Face_GetKerningFunc)  0,
-	(FT2_1_3_Face_AttachFunc)      0,
-	(FT2_1_3_Face_GetAdvancesFunc) 0
+	(FT_Face_GetKerningFunc)  0,
+	(FT_Face_AttachFunc)      0,
+	(FT_Face_GetAdvancesFunc) 0
 };
 
 } // End of namespace FreeType213

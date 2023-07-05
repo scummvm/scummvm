@@ -28,7 +28,7 @@ namespace FreeType213 {
 /* this table was generated for FT2_1_3_PI = 180L << 16, i.e. degrees */
 #define FT2_1_3_TRIG_MAX_ITERS  23
 
-static const FT2_1_3_Fixed
+static const FT_Fixed
 ft_trig_arctan_table[24] = {
 	4157273L, 2949120L, 1740967L, 919879L, 466945L, 234379L, 117304L,
 	58666L, 29335L, 14668L, 7334L, 3667L, 1833L, 917L, 458L, 229L, 115L,
@@ -42,17 +42,17 @@ ft_trig_arctan_table[24] = {
 #ifdef FT2_1_3_CONFIG_HAS_INT64
 
 /* multiply a given value by the CORDIC shrink factor */
-static FT2_1_3_Fixed
-ft_trig_downscale( FT2_1_3_Fixed  val ) {
-	FT2_1_3_Fixed  s;
-	FT2_1_3_Int64  v;
+static FT_Fixed
+ft_trig_downscale( FT_Fixed  val ) {
+	FT_Fixed  s;
+	FT_Int64  v;
 
 
 	s   = val;
 	val = ( val >= 0 ) ? val : -val;
 
-	v   = ( val * (FT2_1_3_Int64)FT2_1_3_TRIG_SCALE ) + 0x100000000UL;
-	val = (FT2_1_3_Fixed)( v >> 32 );
+	v   = ( val * (FT_Int64)FT2_1_3_TRIG_SCALE ) + 0x100000000UL;
+	val = (FT_Fixed)( v >> 32 );
 
 	return ( s >= 0 ) ? val : -val;
 }
@@ -60,17 +60,17 @@ ft_trig_downscale( FT2_1_3_Fixed  val ) {
 #else /* !FT2_1_3_CONFIG_HAS_INT64 */
 
 /* multiply a given value by the CORDIC shrink factor */
-static FT2_1_3_Fixed
-ft_trig_downscale( FT2_1_3_Fixed  val ) {
-	FT2_1_3_Fixed   s;
-	FT2_1_3_UInt32  v1, v2, k1, k2, hi, lo1, lo2, lo3;
+static FT_Fixed
+ft_trig_downscale( FT_Fixed  val ) {
+	FT_Fixed   s;
+	FT_UInt32  v1, v2, k1, k2, hi, lo1, lo2, lo3;
 
 
 	s   = val;
 	val = ( val >= 0 ) ? val : -val;
 
-	v1 = (FT2_1_3_UInt32)val >> 16;
-	v2 = (FT2_1_3_UInt32)val & 0xFFFF;
+	v1 = (FT_UInt32)val >> 16;
+	v2 = (FT_UInt32)val & 0xFFFF;
 
 	k1 = FT2_1_3_TRIG_SCALE >> 16;       /* constant */
 	k2 = FT2_1_3_TRIG_SCALE & 0xFFFF;    /* constant */
@@ -86,7 +86,7 @@ ft_trig_downscale( FT2_1_3_Fixed  val ) {
 	if ( lo1 < lo3 )
 		hi += 0x10000UL;
 
-	val  = (FT2_1_3_Fixed)hi;
+	val  = (FT_Fixed)hi;
 
 	return ( s >= 0 ) ? val : -val;
 }
@@ -94,10 +94,10 @@ ft_trig_downscale( FT2_1_3_Fixed  val ) {
 #endif /* !FT2_1_3_CONFIG_HAS_INT64 */
 
 
-static FT2_1_3_Int
-ft_trig_prenorm( FT2_1_3_Vector*  vec ) {
-	FT2_1_3_Fixed  x, y, z;
-	FT2_1_3_Int    shift;
+static FT_Int
+ft_trig_prenorm( FT_Vector*  vec ) {
+	FT_Fixed  x, y, z;
+	FT_Int    shift;
 
 
 	x = vec->x;
@@ -129,11 +129,11 @@ ft_trig_prenorm( FT2_1_3_Vector*  vec ) {
 
 
 static void
-ft_trig_pseudo_rotate( FT2_1_3_Vector*  vec,
+ft_trig_pseudo_rotate( FT_Vector*  vec,
 					   FT2_1_3_Angle    theta ) {
-	FT2_1_3_Int           i;
-	FT2_1_3_Fixed         x, y, xtemp;
-	const FT2_1_3_Fixed  *arctanptr;
+	FT_Int           i;
+	FT_Fixed         x, y, xtemp;
+	const FT_Fixed  *arctanptr;
 
 
 	x = vec->x;
@@ -189,11 +189,11 @@ ft_trig_pseudo_rotate( FT2_1_3_Vector*  vec,
 
 
 static void
-ft_trig_pseudo_polarize( FT2_1_3_Vector*  vec ) {
-	FT2_1_3_Fixed         theta;
-	FT2_1_3_Fixed         yi, i;
-	FT2_1_3_Fixed         x, y;
-	const FT2_1_3_Fixed  *arctanptr;
+ft_trig_pseudo_polarize( FT_Vector*  vec ) {
+	FT_Fixed         theta;
+	FT_Fixed         yi, i;
+	FT_Fixed         x, y;
+	const FT_Fixed  *arctanptr;
 
 
 	x = vec->x;
@@ -256,9 +256,9 @@ ft_trig_pseudo_polarize( FT2_1_3_Vector*  vec ) {
 
 /* documentation is in fttrigon.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Fixed )
+FT2_1_3_EXPORT_DEF( FT_Fixed )
 FT2_1_3_Cos( FT2_1_3_Angle  angle ) {
-	FT2_1_3_Vector  v;
+	FT_Vector  v;
 
 
 	v.x = FT2_1_3_TRIG_COSCALE >> 2;
@@ -271,7 +271,7 @@ FT2_1_3_Cos( FT2_1_3_Angle  angle ) {
 
 /* documentation is in fttrigon.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Fixed )
+FT2_1_3_EXPORT_DEF( FT_Fixed )
 FT2_1_3_Sin( FT2_1_3_Angle  angle ) {
 	return FT2_1_3_Cos( FT2_1_3_ANGLE_PI2 - angle );
 }
@@ -279,9 +279,9 @@ FT2_1_3_Sin( FT2_1_3_Angle  angle ) {
 
 /* documentation is in fttrigon.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Fixed )
+FT2_1_3_EXPORT_DEF( FT_Fixed )
 FT2_1_3_Tan( FT2_1_3_Angle  angle ) {
-	FT2_1_3_Vector  v;
+	FT_Vector  v;
 
 
 	v.x = FT2_1_3_TRIG_COSCALE >> 2;
@@ -295,9 +295,9 @@ FT2_1_3_Tan( FT2_1_3_Angle  angle ) {
 /* documentation is in fttrigon.h */
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Angle )
-FT2_1_3_Atan2( FT2_1_3_Fixed  dx,
-		  FT2_1_3_Fixed  dy ) {
-	FT2_1_3_Vector  v;
+FT2_1_3_Atan2( FT_Fixed  dx,
+		  FT_Fixed  dy ) {
+	FT_Vector  v;
 
 
 	if ( dx == 0 && dy == 0 )
@@ -315,7 +315,7 @@ FT2_1_3_Atan2( FT2_1_3_Fixed  dx,
 /* documentation is in fttrigon.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_Vector_Unit( FT2_1_3_Vector*  vec,
+FT_Vector_Unit( FT_Vector*  vec,
 				FT2_1_3_Angle    angle ) {
 	vec->x = FT2_1_3_TRIG_COSCALE >> 2;
 	vec->y = 0;
@@ -328,10 +328,10 @@ FT2_1_3_Vector_Unit( FT2_1_3_Vector*  vec,
 /* documentation is in fttrigon.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_Vector_Rotate( FT2_1_3_Vector*  vec,
+FT_Vector_Rotate( FT_Vector*  vec,
 				  FT2_1_3_Angle    angle ) {
-	FT2_1_3_Int     shift;
-	FT2_1_3_Vector  v;
+	FT_Int     shift;
+	FT_Vector  v;
 
 
 	v.x   = vec->x;
@@ -357,10 +357,10 @@ FT2_1_3_Vector_Rotate( FT2_1_3_Vector*  vec,
 
 /* documentation is in fttrigon.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Fixed )
-FT2_1_3_Vector_Length( FT2_1_3_Vector*  vec ) {
-	FT2_1_3_Int     shift;
-	FT2_1_3_Vector  v;
+FT2_1_3_EXPORT_DEF( FT_Fixed )
+FT_Vector_Length( FT_Vector*  vec ) {
+	FT_Int     shift;
+	FT_Vector  v;
 
 
 	v = *vec;
@@ -388,11 +388,11 @@ FT2_1_3_Vector_Length( FT2_1_3_Vector*  vec ) {
 /* documentation is in fttrigon.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_Vector_Polarize( FT2_1_3_Vector*  vec,
-					FT2_1_3_Fixed   *length,
+FT_Vector_Polarize( FT_Vector*  vec,
+					FT_Fixed   *length,
 					FT2_1_3_Angle   *angle ) {
-	FT2_1_3_Int     shift;
-	FT2_1_3_Vector  v;
+	FT_Int     shift;
+	FT_Vector  v;
 
 
 	v = *vec;
@@ -413,13 +413,13 @@ FT2_1_3_Vector_Polarize( FT2_1_3_Vector*  vec,
 /* documentation is in fttrigon.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_Vector_From_Polar( FT2_1_3_Vector*  vec,
-					  FT2_1_3_Fixed    length,
+FT_Vector_From_Polar( FT_Vector*  vec,
+					  FT_Fixed    length,
 					  FT2_1_3_Angle    angle ) {
 	vec->x = length;
 	vec->y = 0;
 
-	FT2_1_3_Vector_Rotate( vec, angle );
+	FT_Vector_Rotate( vec, angle );
 }
 
 

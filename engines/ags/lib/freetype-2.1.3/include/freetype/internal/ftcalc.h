@@ -27,7 +27,7 @@
 FT2_1_3_BEGIN_HEADER
 
 
-FT2_1_3_EXPORT( FT2_1_3_Int32 )  FT2_1_3_SqrtFixed( FT2_1_3_Int32  x );
+FT2_1_3_EXPORT( FT_Int32 )  FT2_1_3_SqrtFixed( FT_Int32  x );
 
 
 #define SQRT_32( x )  FT2_1_3_Sqrt32( x )
@@ -50,8 +50,8 @@ namespace FreeType213 {
 /* <Return>                                                              */
 /*    The result of `sqrt(x)'.                                           */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Int32 )
-FT2_1_3_Sqrt32( FT2_1_3_Int32  x );
+FT2_1_3_EXPORT( FT_Int32 )
+FT2_1_3_Sqrt32( FT_Int32  x );
 
 } // End of namespace FreeType213
 } // End of namespace AGS3
@@ -63,11 +63,11 @@ FT2_1_3_Sqrt32( FT2_1_3_Int32  x );
 /*************************************************************************/
 
 
-#define INT_TO_F26DOT6( x )    ( (FT2_1_3_Long)(x) << 6  )
-#define INT_TO_F2DOT14( x )    ( (FT2_1_3_Long)(x) << 14 )
-#define INT_TO_FIXED( x )      ( (FT2_1_3_Long)(x) << 16 )
-#define F2DOT14_TO_FIXED( x )  ( (FT2_1_3_Long)(x) << 2  )
-#define FLOAT_TO_FIXED( x )    ( (FT2_1_3_Long)( x * 65536.0 ) )
+#define INT_TO_F26DOT6( x )    ( (FT_Long)(x) << 6  )
+#define INT_TO_F2DOT14( x )    ( (FT_Long)(x) << 14 )
+#define INT_TO_FIXED( x )      ( (FT_Long)(x) << 16 )
+#define F2DOT14_TO_FIXED( x )  ( (FT_Long)(x) << 2  )
+#define FLOAT_TO_FIXED( x )    ( (FT_Long)( x * 65536.0 ) )
 
 #define ROUND_F26DOT6( x )     ( x >= 0 ? (    ( (x) + 32 ) & -64 )     \
 										: ( -( ( 32 - (x) ) & -64 ) ) )

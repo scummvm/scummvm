@@ -65,9 +65,9 @@ FT2_1_3_BEGIN_HEADER
 /*    maximum :: The axis's maximum design coordinate.                   */
 /*                                                                       */
 typedef struct  FT2_1_3_MM_Axis_ {
-	FT2_1_3_String*  name;
-	FT2_1_3_Long     minimum;
-	FT2_1_3_Long     maximum;
+	FT_String*  name;
+	FT_Long     minimum;
+	FT_Long     maximum;
 
 } FT2_1_3_MM_Axis;
 
@@ -92,27 +92,27 @@ typedef struct  FT2_1_3_MM_Axis_ {
 /*    axis        :: A table of axis descriptors.                        */
 /*                                                                       */
 typedef struct  FT2_1_3_Multi_Master_ {
-	FT2_1_3_UInt     num_axis;
-	FT2_1_3_UInt     num_designs;
+	FT_UInt     num_axis;
+	FT_UInt     num_designs;
 	FT2_1_3_MM_Axis  axis[T1_MAX_MM_AXIS];
 
 } FT2_1_3_Multi_Master;
 
 /* */
 
-typedef FT2_1_3_Error
-(*FT2_1_3_Get_MM_Func)( FT2_1_3_Face           face,
+typedef FT_Error
+(*FT2_1_3_Get_MM_Func)( FT_Face           face,
 				   FT2_1_3_Multi_Master*  master );
 
-typedef FT2_1_3_Error
-(*FT2_1_3_Set_MM_Design_Func)( FT2_1_3_Face   face,
-						  FT2_1_3_UInt   num_coords,
-						  FT2_1_3_Long*  coords );
+typedef FT_Error
+(*FT2_1_3_Set_MM_Design_Func)( FT_Face   face,
+						  FT_UInt   num_coords,
+						  FT_Long*  coords );
 
-typedef FT2_1_3_Error
-(*FT2_1_3_Set_MM_Blend_Func)( FT2_1_3_Face   face,
-						 FT2_1_3_UInt   num_coords,
-						 FT2_1_3_Long*  coords );
+typedef FT_Error
+(*FT2_1_3_Set_MM_Blend_Func)( FT_Face   face,
+						 FT_UInt   num_coords,
+						 FT_Long*  coords );
 
 
 /*************************************************************************/
@@ -132,8 +132,8 @@ typedef FT2_1_3_Error
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Get_Multi_Master( FT2_1_3_Face           face,
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Get_Multi_Master( FT_Face           face,
 					 FT2_1_3_Multi_Master  *amaster );
 
 
@@ -158,10 +158,10 @@ FT2_1_3_Get_Multi_Master( FT2_1_3_Face           face,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Set_MM_Design_Coordinates( FT2_1_3_Face   face,
-							  FT2_1_3_UInt   num_coords,
-							  FT2_1_3_Long*  coords );
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Set_MM_Design_Coordinates( FT_Face   face,
+							  FT_UInt   num_coords,
+							  FT_Long*  coords );
 
 
 /*************************************************************************/
@@ -186,10 +186,10 @@ FT2_1_3_Set_MM_Design_Coordinates( FT2_1_3_Face   face,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Set_MM_Blend_Coordinates( FT2_1_3_Face    face,
-							 FT2_1_3_UInt    num_coords,
-							 FT2_1_3_Fixed*  coords );
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Set_MM_Blend_Coordinates( FT_Face    face,
+							 FT_UInt    num_coords,
+							 FT_Fixed*  coords );
 
 
 /* */

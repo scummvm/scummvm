@@ -74,13 +74,13 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 /* <Order>                                                               */
 /*    FT2_1_3_Library                                                         */
-/*    FT2_1_3_Face                                                            */
+/*    FT_Face                                                            */
 /*    FT2_1_3_Size                                                            */
 /*    FT2_1_3_GlyphSlot                                                       */
-/*    FT2_1_3_CharMap                                                         */
+/*    FT_CharMap                                                         */
 /*    FT2_1_3_Encoding                                                        */
 /*                                                                       */
-/*    FT2_1_3_FaceRec                                                         */
+/*    FT_FaceRec                                                         */
 /*                                                                       */
 /*    FT2_1_3_FACE_FLAG_SCALABLE                                              */
 /*    FT2_1_3_FACE_FLAG_FIXED_SIZES                                           */
@@ -104,7 +104,7 @@ FT2_1_3_BEGIN_HEADER
 /*    FT2_1_3_Glyph_Metrics                                                   */
 /*    FT2_1_3_SubGlyph                                                        */
 /*                                                                       */
-/*    FT2_1_3_Bitmap_Size                                                     */
+/*    FT_Bitmap_Size                                                     */
 /*                                                                       */
 /*    FT2_1_3_Init_FreeType                                                   */
 /*    FT2_1_3_Done_FreeType                                                   */
@@ -151,7 +151,7 @@ FT2_1_3_BEGIN_HEADER
 /*    FT2_1_3_Get_Glyph_Name                                                  */
 /*    FT2_1_3_Get_Postscript_Name                                             */
 /*                                                                       */
-/*    FT2_1_3_CharMapRec                                                      */
+/*    FT_CharMapRec                                                      */
 /*    FT2_1_3_Select_Charmap                                                  */
 /*    FT2_1_3_Set_Charmap                                                     */
 /*                                                                       */
@@ -186,16 +186,16 @@ FT2_1_3_BEGIN_HEADER
 /*    vertAdvance  :: Vertical advance height.                           */
 /*                                                                       */
 typedef struct  FT2_1_3_Glyph_Metrics_ {
-	FT2_1_3_Pos  width;         /* glyph width  */
-	FT2_1_3_Pos  height;        /* glyph height */
+	FT_Pos  width;         /* glyph width  */
+	FT_Pos  height;        /* glyph height */
 
-	FT2_1_3_Pos  horiBearingX;  /* left side bearing in horizontal layouts */
-	FT2_1_3_Pos  horiBearingY;  /* top side bearing in horizontal layouts  */
-	FT2_1_3_Pos  horiAdvance;   /* advance width for horizontal layout     */
+	FT_Pos  horiBearingX;  /* left side bearing in horizontal layouts */
+	FT_Pos  horiBearingY;  /* top side bearing in horizontal layouts  */
+	FT_Pos  horiAdvance;   /* advance width for horizontal layout     */
 
-	FT2_1_3_Pos  vertBearingX;  /* left side bearing in vertical layouts */
-	FT2_1_3_Pos  vertBearingY;  /* top side bearing in vertical layouts  */
-	FT2_1_3_Pos  vertAdvance;   /* advance height for vertical layout    */
+	FT_Pos  vertBearingX;  /* left side bearing in vertical layouts */
+	FT_Pos  vertBearingY;  /* top side bearing in vertical layouts  */
+	FT_Pos  vertAdvance;   /* advance height for vertical layout    */
 
 } FT2_1_3_Glyph_Metrics;
 
@@ -203,24 +203,24 @@ typedef struct  FT2_1_3_Glyph_Metrics_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_Bitmap_Size                                                     */
+/*    FT_Bitmap_Size                                                     */
 /*                                                                       */
 /* <Description>                                                         */
 /*    An extremely simple structure used to model the size of a bitmap   */
 /*    strike (i.e., a bitmap instance of the font for a given            */
 /*    resolution) in a fixed-size font face.  This is used for the       */
-/*    `available_sizes' field of the FT2_1_3_Face_Properties structure.       */
+/*    `available_sizes' field of the FT_Face_Properties structure.       */
 /*                                                                       */
 /* <Fields>                                                              */
 /*    height :: The character height in pixels.                          */
 /*                                                                       */
 /*    width  :: The character width in pixels.                           */
 /*                                                                       */
-typedef struct  FT2_1_3_Bitmap_Size_ {
-	FT2_1_3_Short  height;
-	FT2_1_3_Short  width;
+typedef struct  FT_Bitmap_Size_ {
+	FT_Short  height;
+	FT_Short  width;
 
-} FT2_1_3_Bitmap_Size;
+} FT_Bitmap_Size;
 
 
 /*************************************************************************/
@@ -293,7 +293,7 @@ typedef struct FT2_1_3_RendererRec_*  FT2_1_3_Renderer;
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT2_1_3_Face                                                            */
+/*    FT_Face                                                            */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A handle to a given typographic face object.  A face object models */
@@ -309,10 +309,10 @@ typedef struct FT2_1_3_RendererRec_*  FT2_1_3_Renderer;
 /*    Use @FT2_1_3_Done_Face to destroy it (along with its slot and sizes).   */
 /*                                                                       */
 /* <Also>                                                                */
-/*    The @FT2_1_3_FaceRec details the publicly accessible fields of a given  */
+/*    The @FT_FaceRec details the publicly accessible fields of a given  */
 /*    face object.                                                       */
 /*                                                                       */
-typedef struct FT2_1_3_FaceRec_*  FT2_1_3_Face;
+typedef struct FT_FaceRec_*  FT_Face;
 
 
 /*************************************************************************/
@@ -323,7 +323,7 @@ typedef struct FT2_1_3_FaceRec_*  FT2_1_3_Face;
 /* <Description>                                                         */
 /*    A handle to a given size object.  Such an object models the data   */
 /*    that depends on the current _resolution_ and _character size_ in a */
-/*    given @FT2_1_3_Face.                                                    */
+/*    given @FT_Face.                                                    */
 /*                                                                       */
 /* <Note>                                                                */
 /*    Each face object owns one or more sizes.  There is however a       */
@@ -364,7 +364,7 @@ typedef struct FT2_1_3_GlyphSlotRec_*  FT2_1_3_GlyphSlot;
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT2_1_3_CharMap                                                         */
+/*    FT_CharMap                                                         */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A handle to a given character map.  A charmap is used to translate */
@@ -376,7 +376,7 @@ typedef struct FT2_1_3_GlyphSlotRec_*  FT2_1_3_GlyphSlot;
 /*    can be "active" and used by @FT2_1_3_Get_Char_Index or @FT2_1_3_Load_Char.   */
 /*                                                                       */
 /*    The list of available charmaps in a face is available through the  */
-/*    "face->num_charmaps" and "face->charmaps" fields of @FT2_1_3_FaceRec.   */
+/*    "face->num_charmaps" and "face->charmaps" fields of @FT_FaceRec.   */
 /*                                                                       */
 /*    The currently active charmap is available as "face->charmap".      */
 /*    You should call @FT2_1_3_Set_Charmap to change it.                      */
@@ -386,7 +386,7 @@ typedef struct FT2_1_3_GlyphSlotRec_*  FT2_1_3_GlyphSlot;
 /*    @FT2_1_3_Open_Face), the library looks for a Unicode charmap within     */
 /*    the list and automatically activates it.                           */
 /*                                                                       */
-typedef struct FT2_1_3_CharMapRec_*  FT2_1_3_CharMap;
+typedef struct FT_CharMapRec_*  FT_CharMap;
 
 
 /*************************************************************************/
@@ -410,10 +410,10 @@ typedef struct FT2_1_3_CharMapRec_*  FT2_1_3_CharMap;
 
 #ifndef FT2_1_3_ENC_TAG
 #define FT2_1_3_ENC_TAG( value, a, b, c, d )         \
-		  value = ( ( (FT2_1_3_UInt32)(a) << 24 ) |  \
-					( (FT2_1_3_UInt32)(b) << 16 ) |  \
-					( (FT2_1_3_UInt32)(c) <<  8 ) |  \
-					  (FT2_1_3_UInt32)(d)         )
+		  value = ( ( (FT_UInt32)(a) << 24 ) |  \
+					( (FT_UInt32)(b) << 16 ) |  \
+					( (FT_UInt32)(c) <<  8 ) |  \
+					  (FT_UInt32)(d)         )
 
 #endif /* FT2_1_3_ENC_TAG */
 
@@ -429,7 +429,7 @@ typedef struct FT2_1_3_CharMapRec_*  FT2_1_3_CharMap;
 /*                                                                       */
 /* <Note>                                                                */
 /*    Because of 32-bit charcodes defined in Unicode (i.e., surrogates), */
-/*    all character codes must be expressed as FT2_1_3_Longs.                 */
+/*    all character codes must be expressed as FT_Longs.                 */
 /*                                                                       */
 /*    The values of this type correspond to specific character           */
 /*    repertories (i.e. charsets), and not to text encoding methods      */
@@ -582,7 +582,7 @@ typedef enum  FT2_1_3_Encoding_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_CharMapRec                                                      */
+/*    FT_CharMapRec                                                      */
 /*                                                                       */
 /* <Description>                                                         */
 /*    The base charmap structure.                                        */
@@ -602,13 +602,13 @@ typedef enum  FT2_1_3_Encoding_ {
 /*                   comes from the TrueType specification and should be */
 /*                   emulated similarly.                                 */
 /*                                                                       */
-typedef struct  FT2_1_3_CharMapRec_ {
-	FT2_1_3_Face      face;
+typedef struct  FT_CharMapRec_ {
+	FT_Face      face;
 	FT2_1_3_Encoding  encoding;
-	FT2_1_3_UShort    platform_id;
-	FT2_1_3_UShort    encoding_id;
+	FT_UShort    platform_id;
+	FT_UShort    encoding_id;
 
-} FT2_1_3_CharMapRec;
+} FT_CharMapRec;
 
 
 /*************************************************************************/
@@ -623,22 +623,22 @@ typedef struct  FT2_1_3_CharMapRec_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT2_1_3_Face_Internal                                                   */
+/*    FT_Face_Internal                                                   */
 /*                                                                       */
 /* <Description>                                                         */
-/*    An opaque handle to an FT2_1_3_Face_InternalRec structure, used to      */
-/*    model private data of a given @FT2_1_3_Face object.                     */
+/*    An opaque handle to an FT_Face_InternalRec structure, used to      */
+/*    model private data of a given @FT_Face object.                     */
 /*                                                                       */
 /*    This structure might change between releases of FreeType 2 and is  */
 /*    not generally available to client applications.                    */
 /*                                                                       */
-typedef struct FT2_1_3_Face_InternalRec_*  FT2_1_3_Face_Internal;
+typedef struct FT_Face_InternalRec_*  FT_Face_Internal;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_FaceRec                                                         */
+/*    FT_FaceRec                                                         */
 /*                                                                       */
 /* <Description>                                                         */
 /*    FreeType root face class structure.  A face object models the      */
@@ -710,7 +710,7 @@ typedef struct FT2_1_3_Face_InternalRec_*  FT2_1_3_Face_Internal;
 /*                           CMap to the face object).                   */
 /*                                                                       */
 /*    generic             :: A field reserved for client uses.  See the  */
-/*                           @FT2_1_3_Generic type description.               */
+/*                           @FT_Generic type description.               */
 /*                                                                       */
 /*    bbox                :: The font bounding box.  Coordinates are     */
 /*                           expressed in font units (see units_per_EM). */
@@ -789,43 +789,43 @@ typedef struct FT2_1_3_Face_InternalRec_*  FT2_1_3_Face_Internal;
 /*                                                                       */
 /*    charmap             :: The current active charmap for this face.   */
 /*                                                                       */
-typedef struct  FT2_1_3_FaceRec_ {
-	FT2_1_3_Long           num_faces;
-	FT2_1_3_Long           face_index;
+typedef struct  FT_FaceRec_ {
+	FT_Long           num_faces;
+	FT_Long           face_index;
 
-	FT2_1_3_Long           face_flags;
-	FT2_1_3_Long           style_flags;
+	FT_Long           face_flags;
+	FT_Long           style_flags;
 
-	FT2_1_3_Long           num_glyphs;
+	FT_Long           num_glyphs;
 
-	FT2_1_3_String*        family_name;
-	FT2_1_3_String*        style_name;
+	FT_String*        family_name;
+	FT_String*        style_name;
 
-	FT2_1_3_Int            num_fixed_sizes;
-	FT2_1_3_Bitmap_Size*   available_sizes;
+	FT_Int            num_fixed_sizes;
+	FT_Bitmap_Size*   available_sizes;
 
-	FT2_1_3_Int            num_charmaps;
-	FT2_1_3_CharMap*       charmaps;
+	FT_Int            num_charmaps;
+	FT_CharMap*       charmaps;
 
-	FT2_1_3_Generic        generic;
+	FT_Generic        generic;
 
 	/*# the following are only relevant to scalable outlines */
-	FT2_1_3_BBox           bbox;
+	FT_BBox           bbox;
 
-	FT2_1_3_UShort         units_per_EM;
-	FT2_1_3_Short          ascender;
-	FT2_1_3_Short          descender;
-	FT2_1_3_Short          height;
+	FT_UShort         units_per_EM;
+	FT_Short          ascender;
+	FT_Short          descender;
+	FT_Short          height;
 
-	FT2_1_3_Short          max_advance_width;
-	FT2_1_3_Short          max_advance_height;
+	FT_Short          max_advance_width;
+	FT_Short          max_advance_height;
 
-	FT2_1_3_Short          underline_position;
-	FT2_1_3_Short          underline_thickness;
+	FT_Short          underline_position;
+	FT_Short          underline_thickness;
 
 	FT2_1_3_GlyphSlot      glyph;
 	FT2_1_3_Size           size;
-	FT2_1_3_CharMap        charmap;
+	FT_CharMap        charmap;
 
 	/*@private begin */
 
@@ -833,16 +833,16 @@ typedef struct  FT2_1_3_FaceRec_ {
 	FT2_1_3_Memory         memory;
 	FT2_1_3_Stream         stream;
 
-	FT2_1_3_ListRec        sizes_list;
+	FT_ListRec        sizes_list;
 
-	FT2_1_3_Generic        autohint;
+	FT_Generic        autohint;
 	void*             extensions;
 
-	FT2_1_3_Face_Internal  internal;
+	FT_Face_Internal  internal;
 
 	/*@private end */
 
-} FT2_1_3_FaceRec;
+} FT_FaceRec;
 
 
 /*************************************************************************/
@@ -852,7 +852,7 @@ typedef struct  FT2_1_3_FaceRec_ {
 /*                                                                       */
 /* <Description>                                                         */
 /*    A list of bit flags used in the 'face_flags' field of the          */
-/*    @FT2_1_3_FaceRec structure.  They inform client applications of         */
+/*    @FT_FaceRec structure.  They inform client applications of         */
 /*    properties of the corresponding face.                              */
 /*                                                                       */
 /* <Values>                                                              */
@@ -864,7 +864,7 @@ typedef struct  FT2_1_3_FaceRec_ {
 /*    FT2_1_3_FACE_FLAG_FIXED_SIZES ::                                        */
 /*      Indicates that the face contains `fixed sizes', i.e., bitmap     */
 /*      strikes for some given pixel sizes.  See the `num_fixed_sizes'   */
-/*      and `available_sizes' fields of @FT2_1_3_FaceRec.                     */
+/*      and `available_sizes' fields of @FT_FaceRec.                     */
 /*                                                                       */
 /*    FT2_1_3_FACE_FLAG_FIXED_WIDTH ::                                        */
 /*      Indicates that the face contains fixed-width characters (like    */
@@ -1017,7 +1017,7 @@ typedef struct  FT2_1_3_FaceRec_ {
 /*                                                                       */
 /* @description:                                                         */
 /*    A macro that returns true whenever a face object contains some     */
-/*    embedded bitmaps.  See the `fixed_sizes' field of the @FT2_1_3_FaceRec  */
+/*    embedded bitmaps.  See the `fixed_sizes' field of the @FT_FaceRec  */
 /*    structure.                                                         */
 /*                                                                       */
 #define FT2_1_3_HAS_FIXED_SIZES( face ) \
@@ -1075,7 +1075,7 @@ typedef struct  FT2_1_3_FaceRec_ {
 /*                                                                       */
 /* <Description>                                                         */
 /*    A list of bit-flags used to indicate the style of a given face.    */
-/*    These are used in the `style_flags' field of @FT2_1_3_FaceRec.          */
+/*    These are used in the `style_flags' field of @FT_FaceRec.          */
 /*                                                                       */
 /* <Values>                                                              */
 /*    FT2_1_3_STYLE_FLAG_ITALIC ::                                            */
@@ -1155,16 +1155,16 @@ typedef struct FT2_1_3_Size_InternalRec_*  FT2_1_3_Size_Internal;
 /*    computations.                                                      */
 /*                                                                       */
 typedef struct  FT2_1_3_Size_Metrics_ {
-	FT2_1_3_UShort  x_ppem;      /* horizontal pixels per EM               */
-	FT2_1_3_UShort  y_ppem;      /* vertical pixels per EM                 */
+	FT_UShort  x_ppem;      /* horizontal pixels per EM               */
+	FT_UShort  y_ppem;      /* vertical pixels per EM                 */
 
-	FT2_1_3_Fixed   x_scale;     /* two scales used to convert font units  */
-	FT2_1_3_Fixed   y_scale;     /* to 26.6 frac. pixel coordinates..      */
+	FT_Fixed   x_scale;     /* two scales used to convert font units  */
+	FT_Fixed   y_scale;     /* to 26.6 frac. pixel coordinates..      */
 
-	FT2_1_3_Pos     ascender;    /* ascender in 26.6 frac. pixels          */
-	FT2_1_3_Pos     descender;   /* descender in 26.6 frac. pixels         */
-	FT2_1_3_Pos     height;      /* text height in 26.6 frac. pixels       */
-	FT2_1_3_Pos     max_advance; /* max horizontal advance, in 26.6 pixels */
+	FT_Pos     ascender;    /* ascender in 26.6 frac. pixels          */
+	FT_Pos     descender;   /* descender in 26.6 frac. pixels         */
+	FT_Pos     height;      /* text height in 26.6 frac. pixels       */
+	FT_Pos     max_advance; /* max horizontal advance, in 26.6 pixels */
 
 } FT2_1_3_Size_Metrics;
 
@@ -1189,8 +1189,8 @@ typedef struct  FT2_1_3_Size_Metrics_ {
 /*    metrics :: Metrics for this size object.  This field is read-only. */
 /*                                                                       */
 typedef struct  FT2_1_3_SizeRec_ {
-	FT2_1_3_Face           face;      /* parent face object              */
-	FT2_1_3_Generic        generic;   /* generic pointer for client uses */
+	FT_Face           face;      /* parent face object              */
+	FT_Generic        generic;   /* generic pointer for client uses */
 	FT2_1_3_Size_Metrics   metrics;   /* size metrics                    */
 	FT2_1_3_Size_Internal  internal;
 
@@ -1353,25 +1353,25 @@ typedef struct FT2_1_3_Slot_InternalRec_*  FT2_1_3_Slot_Internal;
 /*                                                                       */
 typedef struct  FT2_1_3_GlyphSlotRec_ {
 	FT2_1_3_Library        library;
-	FT2_1_3_Face           face;
+	FT_Face           face;
 	FT2_1_3_GlyphSlot      next;
-	FT2_1_3_UInt           flags;
-	FT2_1_3_Generic        generic;
+	FT_UInt           flags;
+	FT_Generic        generic;
 
 	FT2_1_3_Glyph_Metrics  metrics;
-	FT2_1_3_Fixed          linearHoriAdvance;
-	FT2_1_3_Fixed          linearVertAdvance;
-	FT2_1_3_Vector         advance;
+	FT_Fixed          linearHoriAdvance;
+	FT_Fixed          linearVertAdvance;
+	FT_Vector         advance;
 
-	FT2_1_3_Glyph_Format   format;
+	FT_Glyph_Format   format;
 
-	FT2_1_3_Bitmap         bitmap;
-	FT2_1_3_Int            bitmap_left;
-	FT2_1_3_Int            bitmap_top;
+	FT_Bitmap         bitmap;
+	FT_Int            bitmap_left;
+	FT_Int            bitmap_top;
 
 	FT2_1_3_Outline        outline;
 
-	FT2_1_3_UInt           num_subglyphs;
+	FT_UInt           num_subglyphs;
 	FT2_1_3_SubGlyph       subglyphs;
 
 	void*             control_data;
@@ -1408,7 +1408,7 @@ typedef struct  FT2_1_3_GlyphSlotRec_ {
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Init_FreeType( FT2_1_3_Library  *alibrary );
 
 
@@ -1443,9 +1443,9 @@ FT2_1_3_Init_FreeType( FT2_1_3_Library  *alibrary );
 /*                                                                       */
 FT2_1_3_EXPORT( void )
 FT2_1_3_Library_Version( FT2_1_3_Library   library,
-					FT2_1_3_Int      *amajor,
-					FT2_1_3_Int      *aminor,
-					FT2_1_3_Int      *apatch );
+					FT_Int      *amajor,
+					FT_Int      *aminor,
+					FT_Int      *apatch );
 
 
 /*************************************************************************/
@@ -1463,7 +1463,7 @@ FT2_1_3_Library_Version( FT2_1_3_Library   library,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Done_FreeType( FT2_1_3_Library  library );
 
 
@@ -1526,8 +1526,8 @@ typedef enum {
 /*    The id and function of parameters are driver-specific.             */
 /*                                                                       */
 typedef struct  FT2_1_3_Parameter_ {
-	FT2_1_3_ULong    tag;
-	FT2_1_3_Pointer  data;
+	FT_ULong    tag;
+	FT_Pointer  data;
 
 } FT2_1_3_Parameter;
 
@@ -1586,12 +1586,12 @@ typedef struct  FT2_1_3_Parameter_ {
 /*                                                                       */
 typedef struct  FT2_1_3_Open_Args_ {
 	FT2_1_3_Open_Flags              flags;
-	const FT2_1_3_Byte*             memory_base;
-	FT2_1_3_Long                    memory_size;
-	FT2_1_3_String*                 pathname;
+	const FT_Byte*             memory_base;
+	FT_Long                    memory_size;
+	FT_String*                 pathname;
 	FT2_1_3_Stream                  stream;
 	FT2_1_3_Module                  driver;
-	FT2_1_3_Int                     num_params;
+	FT_Int                     num_params;
 	FT2_1_3_Parameter*              params;
 
 } FT2_1_3_Open_Args;
@@ -1634,11 +1634,11 @@ typedef struct  FT2_1_3_Open_Args_ {
 /*    Each new face object created with this function also owns a        */
 /*    default @FT2_1_3_Size object, accessible as `face->size'.               */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_New_Face( FT2_1_3_Library   library,
 			 const char*  filepathname,
-			 FT2_1_3_Long      face_index,
-			 FT2_1_3_Face     *aface );
+			 FT_Long      face_index,
+			 FT_Face     *aface );
 
 
 /*************************************************************************/
@@ -1667,7 +1667,7 @@ FT2_1_3_New_Face( FT2_1_3_Library   library,
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 /* <Note>                                                                */
-/*    The font data bytes are used _directly_ by the @FT2_1_3_Face object.    */
+/*    The font data bytes are used _directly_ by the @FT_Face object.    */
 /*    This means that they are not copied, and that the client is        */
 /*    responsible for releasing/destroying them _after_ the              */
 /*    corresponding call to @FT2_1_3_Done_Face .                              */
@@ -1682,12 +1682,12 @@ FT2_1_3_New_Face( FT2_1_3_Library   library,
 /*    `aface'.  Its return value should be 0 if the font format is       */
 /*    recognized, or non-zero otherwise.                                 */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_New_Memory_Face( FT2_1_3_Library      library,
-					const FT2_1_3_Byte*  file_base,
-					FT2_1_3_Long         file_size,
-					FT2_1_3_Long         face_index,
-					FT2_1_3_Face        *aface );
+					const FT_Byte*  file_base,
+					FT_Long         file_size,
+					FT_Long         face_index,
+					FT_Face        *aface );
 
 
 /*************************************************************************/
@@ -1726,11 +1726,11 @@ FT2_1_3_New_Memory_Face( FT2_1_3_Library      library,
 /*    `*face'.  Its return value should be 0 if the font format is       */
 /*    recognized, or non-zero otherwise.                                 */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Open_Face( FT2_1_3_Library           library,
 			  const FT2_1_3_Open_Args*  args,
-			  FT2_1_3_Long              face_index,
-			  FT2_1_3_Face             *aface );
+			  FT_Long              face_index,
+			  FT_Face             *aface );
 
 
 /*************************************************************************/
@@ -1765,8 +1765,8 @@ FT2_1_3_Open_Face( FT2_1_3_Library           library,
 /*    when invoking this function.  Most drivers simply do not implement */
 /*    file attachments.                                                  */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Attach_File( FT2_1_3_Face      face,
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Attach_File( FT_Face      face,
 				const char*  filepathname );
 
 
@@ -1797,8 +1797,8 @@ FT2_1_3_Attach_File( FT2_1_3_Face      face,
 /*    when invoking this function.  Most drivers simply do not implement */
 /*    file attachments.                                                  */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Attach_Stream( FT2_1_3_Face        face,
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Attach_Stream( FT_Face        face,
 				  FT2_1_3_Open_Args*  parameters );
 
 
@@ -1817,8 +1817,8 @@ FT2_1_3_Attach_Stream( FT2_1_3_Face        face,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Done_Face( FT2_1_3_Face  face );
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Done_Face( FT_Face  face );
 
 
 /*************************************************************************/
@@ -1855,12 +1855,12 @@ FT2_1_3_Done_Face( FT2_1_3_Face  face );
 /*    When dealing with fixed-size faces (i.e., non-scalable formats),   */
 /*    use the function @FT2_1_3_Set_Pixel_Sizes.                              */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Set_Char_Size( FT2_1_3_Face     face,
-				  FT2_1_3_F26Dot6  char_width,
-				  FT2_1_3_F26Dot6  char_height,
-				  FT2_1_3_UInt     horz_resolution,
-				  FT2_1_3_UInt     vert_resolution );
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Set_Char_Size( FT_Face     face,
+				  FT_F26Dot6  char_width,
+				  FT_F26Dot6  char_height,
+				  FT_UInt     horz_resolution,
+				  FT_UInt     vert_resolution );
 
 
 /*************************************************************************/
@@ -1902,10 +1902,10 @@ FT2_1_3_Set_Char_Size( FT2_1_3_Face     face,
 /*    guarantee in any way that you will get glyph bitmaps that all fit  */
 /*    within an 8x8 cell (sometimes even far from it).                   */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Set_Pixel_Sizes( FT2_1_3_Face  face,
-					FT2_1_3_UInt  pixel_width,
-					FT2_1_3_UInt  pixel_height );
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Set_Pixel_Sizes( FT_Face  face,
+					FT_UInt  pixel_width,
+					FT_UInt  pixel_height );
 
 
 /*************************************************************************/
@@ -1942,10 +1942,10 @@ FT2_1_3_Set_Pixel_Sizes( FT2_1_3_Face  face,
 /*    Note that this also transforms the `face.glyph.advance' field, but */
 /*    *not* the values in `face.glyph.metrics'.                          */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Load_Glyph( FT2_1_3_Face   face,
-			   FT2_1_3_UInt   glyph_index,
-			   FT2_1_3_Int32  load_flags );
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Load_Glyph( FT_Face   face,
+			   FT_UInt   glyph_index,
+			   FT_Int32  load_flags );
 
 
 /*************************************************************************/
@@ -1987,10 +1987,10 @@ FT2_1_3_Load_Glyph( FT2_1_3_Face   face,
 /*    Note that this also transforms the `face.glyph.advance' field, but */
 /*    *not* the values in `face.glyph.metrics'.                          */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Load_Char( FT2_1_3_Face   face,
-			  FT2_1_3_ULong  char_code,
-			  FT2_1_3_Int32  load_flags );
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Load_Char( FT_Face   face,
+			  FT_ULong  char_code,
+			  FT_Int32  load_flags );
 
 
 /****************************************************************************
@@ -2134,7 +2134,7 @@ FT2_1_3_Load_Char( FT2_1_3_Face   face,
 
 /* */
 
-#define FT2_1_3_LOAD_TARGET_( x )      ( (FT2_1_3_Int32)( (x) & 15 ) << 16 )
+#define FT2_1_3_LOAD_TARGET_( x )      ( (FT_Int32)( (x) & 15 ) << 16 )
 #define FT2_1_3_LOAD_TARGET_MODE( x )  ( (FT2_1_3_Render_Mode)( ( (x) >> 16 ) & 15 ) )
 
 #define FT2_1_3_LOAD_TARGET_NORMAL     FT2_1_3_LOAD_TARGET_( FT2_1_3_RENDER_MODE_NORMAL )
@@ -2172,9 +2172,9 @@ FT2_1_3_Load_Char( FT2_1_3_Face   face,
 /*    the last call to @FT2_1_3_Set_Char_Sizes or @FT2_1_3_Set_Pixel_Sizes.        */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_Set_Transform( FT2_1_3_Face     face,
-				  FT2_1_3_Matrix*  matrix,
-				  FT2_1_3_Vector*  delta );
+FT2_1_3_Set_Transform( FT_Face     face,
+				  FT_Matrix*  matrix,
+				  FT_Vector*  delta );
 
 
 /*************************************************************************/
@@ -2274,7 +2274,7 @@ typedef enum  FT2_1_3_Render_Mode_ {
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Render_Glyph( FT2_1_3_GlyphSlot    slot,
 				 FT2_1_3_Render_Mode  render_mode );
 
@@ -2375,12 +2375,12 @@ typedef enum  FT2_1_3_Kerning_Mode_ {
 /*    kernings, are out of the scope of this API function -- they can be */
 /*    implemented through format-specific interfaces.                    */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Get_Kerning( FT2_1_3_Face     face,
-				FT2_1_3_UInt     left_glyph,
-				FT2_1_3_UInt     right_glyph,
-				FT2_1_3_UInt     kern_mode,
-				FT2_1_3_Vector  *akerning );
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Get_Kerning( FT_Face     face,
+				FT_UInt     left_glyph,
+				FT_UInt     right_glyph,
+				FT_UInt     kern_mode,
+				FT_Vector  *akerning );
 
 
 /*************************************************************************/
@@ -2419,11 +2419,11 @@ FT2_1_3_Get_Kerning( FT2_1_3_Face     face,
 /*    macro FT2_1_3_CONFIG_OPTION_NO_GLYPH_NAMES is defined in                */
 /*    `include/freetype/config/ftoptions.h'                              */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Get_Glyph_Name( FT2_1_3_Face     face,
-				   FT2_1_3_UInt     glyph_index,
-				   FT2_1_3_Pointer  buffer,
-				   FT2_1_3_UInt     buffer_max );
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Get_Glyph_Name( FT_Face     face,
+				   FT_UInt     glyph_index,
+				   FT_Pointer  buffer,
+				   FT_UInt     buffer_max );
 
 
 /*************************************************************************/
@@ -2446,7 +2446,7 @@ FT2_1_3_Get_Glyph_Name( FT2_1_3_Face     face,
 /*    with it.                                                           */
 /*                                                                       */
 FT2_1_3_EXPORT( const char* )
-FT2_1_3_Get_Postscript_Name( FT2_1_3_Face  face );
+FT2_1_3_Get_Postscript_Name( FT_Face  face );
 
 
 /*************************************************************************/
@@ -2471,8 +2471,8 @@ FT2_1_3_Get_Postscript_Name( FT2_1_3_Face  face );
 /*    This function will return an error if no charmap in the face       */
 /*    corresponds to the encoding queried here.                          */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Select_Charmap( FT2_1_3_Face      face,
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Select_Charmap( FT_Face      face,
 				   FT2_1_3_Encoding  encoding );
 
 
@@ -2499,9 +2499,9 @@ FT2_1_3_Select_Charmap( FT2_1_3_Face      face,
 /*    the face (i.e., if it is not listed in the face->charmaps[]        */
 /*    table).                                                            */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
-FT2_1_3_Set_Charmap( FT2_1_3_Face     face,
-				FT2_1_3_CharMap  charmap );
+FT2_1_3_EXPORT( FT_Error )
+FT2_1_3_Set_Charmap( FT_Face     face,
+				FT_CharMap  charmap );
 
 
 /*************************************************************************/
@@ -2527,9 +2527,9 @@ FT2_1_3_Set_Charmap( FT2_1_3_Face     face,
 /*    indices.  Reason for this behaviour is to assure that index 0 is   */
 /*    never used, representing the missing glyph.                        */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_UInt )
-FT2_1_3_Get_Char_Index( FT2_1_3_Face   face,
-				   FT2_1_3_ULong  charcode );
+FT2_1_3_EXPORT( FT_UInt )
+FT2_1_3_Get_Char_Index( FT_Face   face,
+				   FT_ULong  charcode );
 
 
 /*************************************************************************/
@@ -2558,8 +2558,8 @@ FT2_1_3_Get_Char_Index( FT2_1_3_Face   face,
 /*    should look like this:                                             */
 /*                                                                       */
 /*    {                                                                  */
-/*      FT2_1_3_ULong  charcode;                                              */
-/*      FT2_1_3_UInt   gindex;                                                */
+/*      FT_ULong  charcode;                                              */
+/*      FT_UInt   gindex;                                                */
 /*                                                                       */
 /*                                                                       */
 /*      charcode = FT2_1_3_Get_First_Char( face, &gindex );                   */
@@ -2575,9 +2575,9 @@ FT2_1_3_Get_Char_Index( FT2_1_3_Face   face,
 /*    The result itself can be 0 in two cases: if the charmap is empty   */
 /*    or when the value 0 is the first valid character code.             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_ULong )
-FT2_1_3_Get_First_Char( FT2_1_3_Face   face,
-				   FT2_1_3_UInt  *agindex );
+FT2_1_3_EXPORT( FT_ULong )
+FT2_1_3_Get_First_Char( FT_Face   face,
+				   FT_UInt  *agindex );
 
 
 /*************************************************************************/
@@ -2609,10 +2609,10 @@ FT2_1_3_Get_First_Char( FT2_1_3_Face   face,
 /*    Note that `*agindex' will be set to 0 when there are no more codes */
 /*    in the charmap.                                                    */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_ULong )
-FT2_1_3_Get_Next_Char( FT2_1_3_Face    face,
-				  FT2_1_3_ULong   char_code,
-				  FT2_1_3_UInt   *agindex );
+FT2_1_3_EXPORT( FT_ULong )
+FT2_1_3_Get_Next_Char( FT_Face    face,
+				  FT_ULong   char_code,
+				  FT_UInt   *agindex );
 
 
 /*************************************************************************/
@@ -2632,9 +2632,9 @@ FT2_1_3_Get_Next_Char( FT2_1_3_Face    face,
 /* <Return>                                                              */
 /*    The glyph index.  0 means `undefined character code'.              */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_UInt )
-FT2_1_3_Get_Name_Index( FT2_1_3_Face     face,
-				   FT2_1_3_String*  glyph_name );
+FT2_1_3_EXPORT( FT_UInt )
+FT2_1_3_Get_Name_Index( FT_Face     face,
+				   FT_String*  glyph_name );
 
 
 
@@ -2660,9 +2660,9 @@ FT2_1_3_Get_Name_Index( FT2_1_3_Face     face,
 /*    FT2_1_3_RoundFix                                                        */
 /*    FT2_1_3_CeilFix                                                         */
 /*    FT2_1_3_FloorFix                                                        */
-/*    FT2_1_3_Vector_Transform                                                */
-/*    FT2_1_3_Matrix_Multiply                                                 */
-/*    FT2_1_3_Matrix_Invert                                                   */
+/*    FT_Vector_Transform                                                */
+/*    FT_Matrix_Multiply                                                 */
+/*    FT_Matrix_Invert                                                   */
 /*                                                                       */
 /*************************************************************************/
 
@@ -2690,10 +2690,10 @@ FT2_1_3_Get_Name_Index( FT2_1_3_Face     face,
 /*    divide by zero; it simply returns `MaxInt' or `MinInt' depending   */
 /*    on the signs of `a' and `b'.                                       */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Long )
-FT2_1_3_MulDiv( FT2_1_3_Long  a,
-		   FT2_1_3_Long  b,
-		   FT2_1_3_Long  c );
+FT2_1_3_EXPORT( FT_Long )
+FT2_1_3_MulDiv( FT_Long  a,
+		   FT_Long  b,
+		   FT_Long  c );
 
 
 /*************************************************************************/
@@ -2725,9 +2725,9 @@ FT2_1_3_MulDiv( FT2_1_3_Long  a,
 /*    _second_ argument of this function; this can make a great          */
 /*    difference.                                                        */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Long )
-FT2_1_3_MulFix( FT2_1_3_Long  a,
-		   FT2_1_3_Long  b );
+FT2_1_3_EXPORT( FT_Long )
+FT2_1_3_MulFix( FT_Long  a,
+		   FT_Long  b );
 
 
 /*************************************************************************/
@@ -2753,9 +2753,9 @@ FT2_1_3_MulFix( FT2_1_3_Long  a,
 /*    32 bits, then the division is computed directly.  Otherwise, we    */
 /*    use a specialized version of the old @FT2_1_3_MulDiv64.                 */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Long )
-FT2_1_3_DivFix( FT2_1_3_Long  a,
-		   FT2_1_3_Long  b );
+FT2_1_3_EXPORT( FT_Long )
+FT2_1_3_DivFix( FT_Long  a,
+		   FT_Long  b );
 
 
 /*************************************************************************/
@@ -2772,8 +2772,8 @@ FT2_1_3_DivFix( FT2_1_3_Long  a,
 /* <Return>                                                              */
 /*    The result of `(a + 0x8000) & -0x10000'.                           */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Fixed )
-FT2_1_3_RoundFix( FT2_1_3_Fixed  a );
+FT2_1_3_EXPORT( FT_Fixed )
+FT2_1_3_RoundFix( FT_Fixed  a );
 
 
 /*************************************************************************/
@@ -2791,8 +2791,8 @@ FT2_1_3_RoundFix( FT2_1_3_Fixed  a );
 /* <Return>                                                              */
 /*    The result of `(a + 0x10000 - 1) & -0x10000'.                      */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Fixed )
-FT2_1_3_CeilFix( FT2_1_3_Fixed  a );
+FT2_1_3_EXPORT( FT_Fixed )
+FT2_1_3_CeilFix( FT_Fixed  a );
 
 
 /*************************************************************************/
@@ -2810,14 +2810,14 @@ FT2_1_3_CeilFix( FT2_1_3_Fixed  a );
 /* <Return>                                                              */
 /*    The result of `a & -0x10000'.                                      */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Fixed )
-FT2_1_3_FloorFix( FT2_1_3_Fixed  a );
+FT2_1_3_EXPORT( FT_Fixed )
+FT2_1_3_FloorFix( FT_Fixed  a );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Vector_Transform                                                */
+/*    FT_Vector_Transform                                                */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Transforms a single vector through a 2x2 matrix.                   */
@@ -2832,8 +2832,8 @@ FT2_1_3_FloorFix( FT2_1_3_Fixed  a );
 /*    The result is undefined if either `vector' or `matrix' is invalid. */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_Vector_Transform( FT2_1_3_Vector*  vec,
-					 FT2_1_3_Matrix*  matrix );
+FT_Vector_Transform( FT_Vector*  vec,
+					 FT_Matrix*  matrix );
 
 
 /* */

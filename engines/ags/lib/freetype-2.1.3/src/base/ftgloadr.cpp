@@ -66,11 +66,11 @@ namespace AGS3 {
 namespace FreeType213 {
 
 /* create a new glyph loader */
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 FT2_1_3_GlyphLoader_New( FT2_1_3_Memory        memory,
 					FT2_1_3_GlyphLoader  *aloader ) {
 	FT2_1_3_GlyphLoader  loader;
-	FT2_1_3_Error        error;
+	FT_Error        error;
 
 
 	if ( !FT2_1_3_NEW( loader ) ) {
@@ -148,9 +148,9 @@ FT2_1_3_GlyphLoader_Adjust_Points( FT2_1_3_GlyphLoader  loader ) {
 }
 
 
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 FT2_1_3_GlyphLoader_CreateExtra( FT2_1_3_GlyphLoader  loader ) {
-	FT2_1_3_Error   error;
+	FT_Error   error;
 	FT2_1_3_Memory  memory = loader->memory;
 
 
@@ -177,17 +177,17 @@ FT2_1_3_GlyphLoader_Adjust_Subglyphs( FT2_1_3_GlyphLoader  loader ) {
 /* function reallocates its outline tables if necessary.  Note that it   */
 /* DOESN'T change the number of points within the loader!                */
 /*                                                                       */
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 FT2_1_3_GlyphLoader_CheckPoints( FT2_1_3_GlyphLoader  loader,
-							FT2_1_3_UInt        n_points,
-							FT2_1_3_UInt        n_contours ) {
+							FT_UInt        n_points,
+							FT_UInt        n_contours ) {
 	FT2_1_3_Memory    memory  = loader->memory;
-	FT2_1_3_Error     error   = FT2_1_3_Err_Ok;
+	FT_Error     error   = FT2_1_3_Err_Ok;
 	FT2_1_3_Outline*  base    = &loader->base.outline;
 	FT2_1_3_Outline*  current = &loader->current.outline;
-	FT2_1_3_Bool      adjust  = 1;
+	FT_Bool      adjust  = 1;
 
-	FT2_1_3_UInt      new_max, old_max;
+	FT_UInt      new_max, old_max;
 
 
 	/* check points & tags */
@@ -234,12 +234,12 @@ Exit:
 /* reallocates its subglyphs table if necessary.  Note that it DOES */
 /* NOT change the number of subglyphs within the loader!            */
 /*                                                                  */
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 FT2_1_3_GlyphLoader_CheckSubGlyphs( FT2_1_3_GlyphLoader  loader,
-							   FT2_1_3_UInt         n_subs ) {
+							   FT_UInt         n_subs ) {
 	FT2_1_3_Memory     memory = loader->memory;
-	FT2_1_3_Error      error  = FT2_1_3_Err_Ok;
-	FT2_1_3_UInt       new_max, old_max;
+	FT_Error      error  = FT2_1_3_Err_Ok;
+	FT_UInt       new_max, old_max;
 
 	FT2_1_3_GlyphLoad  base    = &loader->base;
 	FT2_1_3_GlyphLoad  current = &loader->current;
@@ -283,9 +283,9 @@ FT2_1_3_GlyphLoader_Add( FT2_1_3_GlyphLoader  loader ) {
 	FT2_1_3_GlyphLoad  base    = &loader->base;
 	FT2_1_3_GlyphLoad  current = &loader->current;
 
-	FT2_1_3_UInt       n_curr_contours = current->outline.n_contours;
-	FT2_1_3_UInt       n_base_points   = base->outline.n_points;
-	FT2_1_3_UInt       n;
+	FT_UInt       n_curr_contours = current->outline.n_contours;
+	FT_UInt       n_base_points   = base->outline.n_points;
+	FT_UInt       n;
 
 
 	base->outline.n_points =
@@ -305,12 +305,12 @@ FT2_1_3_GlyphLoader_Add( FT2_1_3_GlyphLoader  loader ) {
 }
 
 
-FT2_1_3_BASE_DEF( FT2_1_3_Error )
+FT2_1_3_BASE_DEF( FT_Error )
 FT2_1_3_GlyphLoader_CopyPoints( FT2_1_3_GlyphLoader  target,
 						   FT2_1_3_GlyphLoader  source ) {
-	FT2_1_3_Error  error;
-	FT2_1_3_UInt   num_points   = source->base.outline.n_points;
-	FT2_1_3_UInt   num_contours = source->base.outline.n_contours;
+	FT_Error  error;
+	FT_UInt   num_points   = source->base.outline.n_points;
+	FT_UInt   num_contours = source->base.outline.n_contours;
 
 
 	error = FT2_1_3_GlyphLoader_CheckPoints( target, num_points, num_contours );
@@ -320,7 +320,7 @@ FT2_1_3_GlyphLoader_CopyPoints( FT2_1_3_GlyphLoader  target,
 
 
 		FT2_1_3_MEM_COPY( out->points, in->points,
-					 num_points * sizeof ( FT2_1_3_Vector ) );
+					 num_points * sizeof ( FT_Vector ) );
 		FT2_1_3_MEM_COPY( out->tags, in->tags,
 					 num_points * sizeof ( char ) );
 		FT2_1_3_MEM_COPY( out->contours, in->contours,
@@ -329,7 +329,7 @@ FT2_1_3_GlyphLoader_CopyPoints( FT2_1_3_GlyphLoader  target,
 		/* do we need to copy the extra points? */
 		if ( target->use_extra && source->use_extra )
 			FT2_1_3_MEM_COPY( target->base.extra_points, source->base.extra_points,
-						 num_points * sizeof ( FT2_1_3_Vector ) );
+						 num_points * sizeof ( FT_Vector ) );
 
 		out->n_points   = (short)num_points;
 		out->n_contours = (short)num_contours;

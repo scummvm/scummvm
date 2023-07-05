@@ -69,9 +69,9 @@ FT2_1_3_BEGIN_HEADER
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Outline_Get_BBox(FT2_1_3_Outline *outline,
-						 FT2_1_3_BBox *abbox);
+						 FT_BBox *abbox);
 
 /* */
 

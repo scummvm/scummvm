@@ -47,7 +47,7 @@ ps_hinter_done( PS_Hinter_Module  module ) {
 
 
 /* initialize module, create hints recorder and the interface */
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 ps_hinter_init( PS_Hinter_Module  module ) {
 	FT2_1_3_Memory  memory = module->root.memory;
 

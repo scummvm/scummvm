@@ -64,15 +64,15 @@ typedef struct  T1_ParserRec_ {
 	PS_ParserRec  root;
 	FT2_1_3_Stream     stream;
 
-	FT2_1_3_Byte*      base_dict;
-	FT2_1_3_Long       base_len;
+	FT_Byte*      base_dict;
+	FT_Long       base_len;
 
-	FT2_1_3_Byte*      private_dict;
-	FT2_1_3_Long       private_len;
+	FT_Byte*      private_dict;
+	FT_Long       private_len;
 
-	FT2_1_3_Byte       in_pfb;
-	FT2_1_3_Byte       in_memory;
-	FT2_1_3_Byte       single_block;
+	FT_Byte       in_pfb;
+	FT_Byte       in_memory;
+	FT_Byte       single_block;
 
 } T1_ParserRec, *T1_Parser;
 
@@ -111,13 +111,13 @@ typedef struct  T1_ParserRec_ {
 					(p)->root.funcs.load_field_table( &(p)->root, f, o, m, pf )
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 T1_New_Parser( T1_Parser      parser,
 							 FT2_1_3_Stream      stream,
 							 FT2_1_3_Memory      memory,
 							 PSAux_Service  psaux );
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 T1_Get_Private_Dict( T1_Parser      parser,
 										 PSAux_Service  psaux );
 

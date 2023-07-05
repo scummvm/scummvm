@@ -53,13 +53,13 @@ ah_setup_uv( AH_Outline  outline,
 
 /* AH_OutlineRec functions - they should be typically called in this order */
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 ah_outline_new( FT2_1_3_Memory    memory,
 				AH_Outline*  aoutline );
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 ah_outline_load( AH_Outline  outline,
-				 FT2_1_3_Face     face );
+				 FT_Face     face );
 
 FT2_1_3_LOCAL( void )
 ah_outline_compute_segments( AH_Outline  outline );

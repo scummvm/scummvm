@@ -30,18 +30,18 @@ namespace FreeType213 {
 FT2_1_3_BEGIN_HEADER
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 sfnt_init_face( FT2_1_3_Stream      stream,
 				TT_Face        face,
-				FT2_1_3_Int         face_index,
-				FT2_1_3_Int         num_params,
+				FT_Int         face_index,
+				FT_Int         num_params,
 				FT2_1_3_Parameter*  params );
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 sfnt_load_face( FT2_1_3_Stream      stream,
 				TT_Face        face,
-				FT2_1_3_Int         face_index,
-				FT2_1_3_Int         num_params,
+				FT_Int         face_index,
+				FT_Int         num_params,
 				FT2_1_3_Parameter*  params );
 
 FT2_1_3_LOCAL( void )

@@ -29,22 +29,22 @@ FT2_1_3_BEGIN_HEADER
 
 
 typedef struct  T1_Kern_Pair_ {
-	FT2_1_3_UInt    glyph1;
-	FT2_1_3_UInt    glyph2;
-	FT2_1_3_Vector  kerning;
+	FT_UInt    glyph1;
+	FT_UInt    glyph2;
+	FT_Vector  kerning;
 
 } T1_Kern_Pair;
 
 
 typedef struct  T1_AFM_ {
-	FT2_1_3_Int         num_pairs;
+	FT_Int         num_pairs;
 	T1_Kern_Pair*  kern_pairs;
 
 } T1_AFM;
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
-T1_Read_AFM( FT2_1_3_Face    face,
+FT2_1_3_LOCAL( FT_Error )
+T1_Read_AFM( FT_Face    face,
 			 FT2_1_3_Stream  stream );
 
 FT2_1_3_LOCAL( void )
@@ -53,9 +53,9 @@ T1_Done_AFM( FT2_1_3_Memory  memory,
 
 FT2_1_3_LOCAL( void )
 T1_Get_Kerning( T1_AFM*     afm,
-				FT2_1_3_UInt     glyph1,
-				FT2_1_3_UInt     glyph2,
-				FT2_1_3_Vector*  kerning );
+				FT_UInt     glyph1,
+				FT_UInt     glyph2,
+				FT_Vector*  kerning );
 
 
 FT2_1_3_END_HEADER

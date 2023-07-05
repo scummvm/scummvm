@@ -42,15 +42,15 @@ namespace AGS3 {
 namespace FreeType213 {
 
 /* convert a UTF-16 name entry to ASCII */
-static FT2_1_3_String*
+static FT_String*
 tt_name_entry_ascii_from_utf16( TT_NameEntry  entry,
 								FT2_1_3_Memory     memory ) {
-	FT2_1_3_String*  string;
-	FT2_1_3_UInt     len, code, n;
-	FT2_1_3_Byte*    read = (FT2_1_3_Byte*)entry->string;
+	FT_String*  string;
+	FT_UInt     len, code, n;
+	FT_Byte*    read = (FT_Byte*)entry->string;
 
 
-	len = (FT2_1_3_UInt)entry->stringLength / 2;
+	len = (FT_UInt)entry->stringLength / 2;
 
 	if ( FT2_1_3_MEM_NEW_ARRAY( string, len + 1 ) )
 		return NULL;
@@ -70,21 +70,21 @@ tt_name_entry_ascii_from_utf16( TT_NameEntry  entry,
 
 
 /* convert a UCS-4 name entry to ASCII */
-static FT2_1_3_String*
+static FT_String*
 tt_name_entry_ascii_from_ucs4( TT_NameEntry  entry,
 							   FT2_1_3_Memory     memory ) {
-	FT2_1_3_String*  string;
-	FT2_1_3_UInt     len, code, n;
-	FT2_1_3_Byte*    read = (FT2_1_3_Byte*)entry->string;
+	FT_String*  string;
+	FT_UInt     len, code, n;
+	FT_Byte*    read = (FT_Byte*)entry->string;
 
 
-	len = (FT2_1_3_UInt)entry->stringLength / 4;
+	len = (FT_UInt)entry->stringLength / 4;
 
 	if ( FT2_1_3_MEM_NEW_ARRAY( string, len + 1 ) )
 		return NULL;
 
 	for ( n = 0; n < len; n++ ) {
-		code = (FT2_1_3_UInt)FT2_1_3_NEXT_ULONG( read );
+		code = (FT_UInt)FT2_1_3_NEXT_ULONG( read );
 		if ( code < 32 || code > 127 )
 			code = '?';
 
@@ -98,15 +98,15 @@ tt_name_entry_ascii_from_ucs4( TT_NameEntry  entry,
 
 
 /* convert an Apple Roman or symbol name entry to ASCII */
-static FT2_1_3_String*
+static FT_String*
 tt_name_entry_ascii_from_other( TT_NameEntry  entry,
 								FT2_1_3_Memory     memory ) {
-	FT2_1_3_String*  string;
-	FT2_1_3_UInt     len, code, n;
-	FT2_1_3_Byte*    read = (FT2_1_3_Byte*)entry->string;
+	FT_String*  string;
+	FT_UInt     len, code, n;
+	FT_Byte*    read = (FT_Byte*)entry->string;
 
 
-	len = (FT2_1_3_UInt)entry->stringLength;
+	len = (FT_UInt)entry->stringLength;
 
 	if ( FT2_1_3_MEM_NEW_ARRAY( string, len + 1 ) )
 		return NULL;
@@ -125,7 +125,7 @@ tt_name_entry_ascii_from_other( TT_NameEntry  entry,
 }
 
 
-typedef FT2_1_3_String*  (*TT_NameEntry_ConvertFunc)( TT_NameEntry  entry,
+typedef FT_String*  (*TT_NameEntry_ConvertFunc)( TT_NameEntry  entry,
 		FT2_1_3_Memory     memory );
 
 
@@ -145,16 +145,16 @@ typedef FT2_1_3_String*  (*TT_NameEntry_ConvertFunc)( TT_NameEntry  entry,
 /* <Return>                                                              */
 /*    Character string.  NULL if no name is present.                     */
 /*                                                                       */
-static FT2_1_3_String*
+static FT_String*
 tt_face_get_name( TT_Face    face,
-				  FT2_1_3_UShort  nameid ) {
+				  FT_UShort  nameid ) {
 	FT2_1_3_Memory         memory = face->root.memory;
-	FT2_1_3_String*        result = NULL;
-	FT2_1_3_UShort         n;
+	FT_String*        result = NULL;
+	FT_UShort         n;
 	TT_NameEntryRec*  rec;
-	FT2_1_3_Int            found_apple   = -1;
-	FT2_1_3_Int            found_win     = -1;
-	FT2_1_3_Int            found_unicode = -1;
+	FT_Int            found_apple   = -1;
+	FT_Int            found_win     = -1;
+	FT_Int            found_unicode = -1;
 
 	TT_NameEntry_ConvertFunc  convert;
 
@@ -240,7 +240,7 @@ tt_face_get_name( TT_Face    face,
 
 	if ( rec && convert ) {
 		if ( rec->string == NULL ) {
-			FT2_1_3_Error   error;
+			FT_Error   error;
 			FT2_1_3_Stream  stream = face->name_table.stream;
 
 
@@ -308,13 +308,13 @@ sfnt_find_encoding( int  platform_id,
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 sfnt_init_face( FT2_1_3_Stream      stream,
 				TT_Face        face,
-				FT2_1_3_Int         face_index,
-				FT2_1_3_Int         num_params,
+				FT_Int         face_index,
+				FT_Int         num_params,
 				FT2_1_3_Parameter*  params ) {
-	FT2_1_3_Error         error;
+	FT_Error         error;
 	FT2_1_3_Library       library = face->root.driver->root.library;
 	SFNT_Service     sfnt;
 	SFNT_HeaderRec   sfnt_header;
@@ -370,15 +370,15 @@ Exit:
 					  != FT2_1_3_Err_Ok )
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 sfnt_load_face( FT2_1_3_Stream      stream,
 				TT_Face        face,
-				FT2_1_3_Int         face_index,
-				FT2_1_3_Int         num_params,
+				FT_Int         face_index,
+				FT_Int         num_params,
 				FT2_1_3_Parameter*  params ) {
-	FT2_1_3_Error      error;
-	FT2_1_3_Bool       has_outline;
-	FT2_1_3_Bool       is_apple_sbit;
+	FT_Error      error;
+	FT_Bool       has_outline;
+	FT_Bool       is_apple_sbit;
 
 	SFNT_Service  sfnt = (SFNT_Service)face->sfnt;
 
@@ -485,8 +485,8 @@ sfnt_load_face( FT2_1_3_Stream      stream,
 
 	/* now set up root fields */
 	{
-		FT2_1_3_Face    root = &face->root;
-		FT2_1_3_Int32   flags = 0;
+		FT_Face    root = &face->root;
+		FT_Int32   flags = 0;
 		FT2_1_3_Memory  memory;
 
 
@@ -558,11 +558,11 @@ sfnt_load_face( FT2_1_3_Stream      stream,
 
 		/* set the encoding fields */
 		{
-			FT2_1_3_Int  m;
+			FT_Int  m;
 
 
 			for ( m = 0; m < root->num_charmaps; m++ ) {
-				FT2_1_3_CharMap  charmap = root->charmaps[m];
+				FT_CharMap  charmap = root->charmaps[m];
 
 
 				charmap->encoding = sfnt_find_encoding( charmap->platform_id,
@@ -582,7 +582,7 @@ sfnt_load_face( FT2_1_3_Stream      stream,
 #ifdef TT_CONFIG_OPTION_EMBEDDED_BITMAPS
 
 		if ( face->num_sbit_strikes ) {
-			FT2_1_3_ULong  n;
+			FT_ULong  n;
 
 
 			root->face_flags |= FT2_1_3_FACE_FLAG_FIXED_SIZES;
@@ -664,20 +664,20 @@ sfnt_load_face( FT2_1_3_Stream      stream,
 			root->ascender  = face->horizontal.Ascender;
 			root->descender = face->horizontal.Descender;
 
-			root->height    = (FT2_1_3_Short)( root->ascender - root->descender +
+			root->height    = (FT_Short)( root->ascender - root->descender +
 										  face->horizontal.Line_Gap );
 
 			/* if the line_gap is 0, we add an extra 15% to the text height --  */
 			/* this computation is based on various versions of Times New Roman */
 			if ( face->horizontal.Line_Gap == 0 )
-				root->height = (FT2_1_3_Short)( ( root->height * 115 + 50 ) / 100 );
+				root->height = (FT_Short)( ( root->height * 115 + 50 ) / 100 );
 
 #if 0
 
 			/* some fonts have the OS/2 "sTypoAscender", "sTypoDescender" & */
 			/* "sTypoLineGap" fields set to 0, like ARIALNB.TTF             */
 			if ( face->os2.version != 0xFFFF && root->ascender ) {
-				FT2_1_3_Int  height;
+				FT_Int  height;
 
 
 				root->ascender  =  face->os2.sTypoAscender;
@@ -692,7 +692,7 @@ sfnt_load_face( FT2_1_3_Stream      stream,
 
 			root->max_advance_width   = face->horizontal.advance_Width_Max;
 
-			root->max_advance_height  = (FT2_1_3_Short)( face->vertical_info
+			root->max_advance_height  = (FT_Short)( face->vertical_info
 													? face->vertical.advance_Height_Max
 													: root->height );
 

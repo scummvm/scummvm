@@ -19,7 +19,7 @@
 /*************************************************************************/
 /*                                                                       */
 /* Note: A `raster' is simply a scan-line converter, used to render      */
-/*       FT2_1_3_Outlines into FT2_1_3_Bitmaps.                                    */
+/*       FT2_1_3_Outlines into FT_Bitmaps.                                    */
 /*                                                                       */
 /*************************************************************************/
 
@@ -50,41 +50,41 @@ FT2_1_3_BEGIN_HEADER
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT2_1_3_Pos                                                             */
+/*    FT_Pos                                                             */
 /*                                                                       */
 /* <Description>                                                         */
-/*    The type FT2_1_3_Pos is a 32-bit integer used to store vectorial        */
+/*    The type FT_Pos is a 32-bit integer used to store vectorial        */
 /*    coordinates.  Depending on the context, these can represent        */
 /*    distances in integer font units, or 26.6 fixed float pixel         */
 /*    coordinates.                                                       */
 /*                                                                       */
-typedef signed long  FT2_1_3_Pos;
+typedef signed long  FT_Pos;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_Vector                                                          */
+/*    FT_Vector                                                          */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A simple structure used to store a 2D vector; coordinates are of   */
-/*    the FT2_1_3_Pos type.                                                   */
+/*    the FT_Pos type.                                                   */
 /*                                                                       */
 /* <Fields>                                                              */
 /*    x :: The horizontal coordinate.                                    */
 /*    y :: The vertical coordinate.                                      */
 /*                                                                       */
-typedef struct  FT2_1_3_Vector_ {
-	FT2_1_3_Pos  x;
-	FT2_1_3_Pos  y;
+typedef struct  FT_Vector_ {
+	FT_Pos  x;
+	FT_Pos  y;
 
-} FT2_1_3_Vector;
+} FT_Vector;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_BBox                                                            */
+/*    FT_BBox                                                            */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A structure used to hold an outline's bounding box, i.e., the      */
@@ -100,17 +100,17 @@ typedef struct  FT2_1_3_Vector_ {
 /*                                                                       */
 /*    yMax :: The vertical maximum (top-most).                           */
 /*                                                                       */
-typedef struct  FT2_1_3_BBox_ {
-	FT2_1_3_Pos  xMin, yMin;
-	FT2_1_3_Pos  xMax, yMax;
+typedef struct  FT_BBox_ {
+	FT_Pos  xMin, yMin;
+	FT_Pos  xMax, yMax;
 
-} FT2_1_3_BBox;
+} FT_BBox;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Enum>                                                                */
-/*    FT2_1_3_Pixel_Mode                                                      */
+/*    FT_Pixel_Mode                                                      */
 /*                                                                       */
 /* <Description>                                                         */
 /*    An enumeration type used to describe the format of pixels in a     */
@@ -130,7 +130,7 @@ typedef struct  FT2_1_3_BBox_ {
 /*      An 8-bit bitmap, generally used to represent anti-aliased glyph  */
 /*      images.  Each pixel is stored in one byte.  Note that the number */
 /*      of value "gray" levels is stored in the `num_bytes' field of     */
-/*      the @FT2_1_3_Bitmap structure (it generally is 256).                  */
+/*      the @FT_Bitmap structure (it generally is 256).                  */
 /*                                                                       */
 /*    FT2_1_3_PIXEL_MODE_GRAY2 ::                                             */
 /*      A 2-bit/pixel bitmap, used to represent embedded anti-aliased    */
@@ -154,7 +154,7 @@ typedef struct  FT2_1_3_BBox_ {
 /*      height is three times taller than the original glyph image.      */
 /*      See also @FT2_1_3_RENDER_MODE_LCD_V.                                  */
 /*                                                                       */
-typedef enum  FT2_1_3_Pixel_Mode_ {
+typedef enum  FT_Pixel_Mode_ {
 	FT2_1_3_PIXEL_MODE_NONE = 0,
 	FT2_1_3_PIXEL_MODE_MONO,
 	FT2_1_3_PIXEL_MODE_GRAY,
@@ -165,7 +165,7 @@ typedef enum  FT2_1_3_Pixel_Mode_ {
 
 	FT2_1_3_PIXEL_MODE_MAX      /* do not remove */
 
-} FT2_1_3_Pixel_Mode;
+} FT_Pixel_Mode;
 
 
 /*************************************************************************/
@@ -175,7 +175,7 @@ typedef enum  FT2_1_3_Pixel_Mode_ {
 /*                                                                       */
 /* <Description>                                                         */
 /*    A list of deprecated constants.  Use the corresponding             */
-/*    @FT2_1_3_Pixel_Mode values instead.                                     */
+/*    @FT_Pixel_Mode values instead.                                     */
 /*                                                                       */
 /* <Values>                                                              */
 /*    ft_pixel_mode_none  :: see @FT2_1_3_PIXEL_MODE_NONE                     */
@@ -197,7 +197,7 @@ typedef enum  FT2_1_3_Pixel_Mode_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Enum>                                                                */
-/*    FT2_1_3_Palette_Mode                                                    */
+/*    FT_Palette_Mode                                                    */
 /*                                                                       */
 /* <Description>                                                         */
 /*    THIS TYPE IS DEPRECATED.  DO NOT USE IT!                           */
@@ -216,13 +216,13 @@ typedef enum  FT2_1_3_Pixel_Mode_ {
 /*    As ft_pixel_mode_pal2, pal4 and pal8 are currently unused by       */
 /*    FreeType, these types are not handled by the library itself.       */
 /*                                                                       */
-typedef enum  FT2_1_3_Palette_Mode_ {
+typedef enum  FT_Palette_Mode_ {
 	ft_palette_mode_rgb = 0,
 	ft_palette_mode_rgba,
 
 	ft_palettte_mode_max   /* do not remove */
 
-} FT2_1_3_Palette_Mode;
+} FT_Palette_Mode;
 
 /* */
 
@@ -232,7 +232,7 @@ typedef enum  FT2_1_3_Palette_Mode_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_Bitmap                                                          */
+/*    FT_Bitmap                                                          */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A structure used to describe a bitmap or pixmap to the raster.     */
@@ -280,7 +280,7 @@ typedef enum  FT2_1_3_Palette_Mode_ {
 /*   Note that no font was found presenting such embedded bitmaps, so    */
 /*   this is currently completely unhandled by the library.              */
 /*                                                                       */
-typedef struct  FT2_1_3_Bitmap_ {
+typedef struct  FT_Bitmap_ {
 	int             rows;
 	int             width;
 	int             pitch;
@@ -290,7 +290,7 @@ typedef struct  FT2_1_3_Bitmap_ {
 	char            palette_mode;
 	void*           palette;
 
-} FT2_1_3_Bitmap;
+} FT_Bitmap;
 
 
 /*************************************************************************/
@@ -315,7 +315,7 @@ typedef struct  FT2_1_3_Bitmap_ {
 /*                                                                       */
 /*    n_points   :: The number of points in the outline.                 */
 /*                                                                       */
-/*    points     :: A pointer to an array of `n_points' FT2_1_3_Vector        */
+/*    points     :: A pointer to an array of `n_points' FT_Vector        */
 /*                  elements, giving the outline's point coordinates.    */
 /*                                                                       */
 /*    tags       :: A pointer to an array of `n_points' chars, giving    */
@@ -341,7 +341,7 @@ typedef struct  FT2_1_3_Outline_ {
 	short       n_contours;      /* number of contours in glyph        */
 	short       n_points;        /* number of points in the glyph      */
 
-	FT2_1_3_Vector*  points;          /* the outline's points               */
+	FT_Vector*  points;          /* the outline's points               */
 	char*       tags;            /* the points flags                   */
 	short*      contours;        /* the contour end points             */
 
@@ -489,7 +489,7 @@ typedef enum  FT2_1_3_Outline_Flags_ {
 /*    Error code.  0 means success.                                      */
 /*                                                                       */
 typedef int
-(*FT2_1_3_Outline_MoveToFunc)( FT2_1_3_Vector*  to,
+(*FT2_1_3_Outline_MoveToFunc)( FT_Vector*  to,
 						  void*       user );
 
 #define FT2_1_3_Outline_MoveTo_Func  FT2_1_3_Outline_MoveToFunc
@@ -515,7 +515,7 @@ typedef int
 /*    Error code.  0 means success.                                      */
 /*                                                                       */
 typedef int
-(*FT2_1_3_Outline_LineToFunc)( FT2_1_3_Vector*  to,
+(*FT2_1_3_Outline_LineToFunc)( FT_Vector*  to,
 						  void*       user );
 
 #define  FT2_1_3_Outline_LineTo_Func  FT2_1_3_Outline_LineToFunc
@@ -545,8 +545,8 @@ typedef int
 /*    Error code.  0 means success.                                      */
 /*                                                                       */
 typedef int
-(*FT2_1_3_Outline_ConicToFunc)( FT2_1_3_Vector*  control,
-						   FT2_1_3_Vector*  to,
+(*FT2_1_3_Outline_ConicToFunc)( FT_Vector*  control,
+						   FT_Vector*  to,
 						   void*       user );
 
 #define  FT2_1_3_Outline_ConicTo_Func  FT2_1_3_Outline_ConicToFunc
@@ -576,9 +576,9 @@ typedef int
 /*    Error code.  0 means success.                                      */
 /*                                                                       */
 typedef int
-(*FT2_1_3_Outline_CubicToFunc)( FT2_1_3_Vector*  control1,
-						   FT2_1_3_Vector*  control2,
-						   FT2_1_3_Vector*  to,
+(*FT2_1_3_Outline_CubicToFunc)( FT_Vector*  control1,
+						   FT_Vector*  control2,
+						   FT_Vector*  to,
 						   void*       user );
 
 #define  FT2_1_3_Outline_CubicTo_Func  FT2_1_3_Outline_CubicToFunc
@@ -627,7 +627,7 @@ typedef struct  FT2_1_3_Outline_Funcs_ {
 	FT2_1_3_Outline_CubicToFunc  cubic_to;
 
 	int                     shift;
-	FT2_1_3_Pos                  delta;
+	FT_Pos                  delta;
 
 } FT2_1_3_Outline_Funcs;
 
@@ -643,7 +643,7 @@ typedef struct  FT2_1_3_Outline_Funcs_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Macro>                                                               */
-/*    FT2_1_3_IMAGE_TAG                                                       */
+/*    FT_IMAGE_TAG                                                       */
 /*                                                                       */
 /* <Description>                                                         */
 /*    This macro converts four letter tags into an unsigned long.        */
@@ -653,23 +653,23 @@ typedef struct  FT2_1_3_Outline_Funcs_ {
 /*    should redefine this macro in case of problems to something like   */
 /*    this:                                                              */
 /*                                                                       */
-/*      #define FT2_1_3_IMAGE_TAG( value, _x1, _x2, _x3, _x4 )  (value)       */
+/*      #define FT_IMAGE_TAG( value, _x1, _x2, _x3, _x4 )  (value)       */
 /*                                                                       */
 /*    to get a simple enumeration without assigning special numbers.     */
 /*                                                                       */
-#ifndef FT2_1_3_IMAGE_TAG
-#define FT2_1_3_IMAGE_TAG( value, _x1, _x2, _x3, _x4 )  \
+#ifndef FT_IMAGE_TAG
+#define FT_IMAGE_TAG( value, _x1, _x2, _x3, _x4 )  \
 		  value = ( ( (unsigned long)_x1 << 24 ) | \
 					( (unsigned long)_x2 << 16 ) | \
 					( (unsigned long)_x3 << 8  ) | \
 					  (unsigned long)_x4         )
-#endif /* FT2_1_3_IMAGE_TAG */
+#endif /* FT_IMAGE_TAG */
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Enum>                                                                */
-/*    FT2_1_3_Glyph_Format                                                    */
+/*    FT_Glyph_Format                                                    */
 /*                                                                       */
 /* <Description>                                                         */
 /*    An enumeration type used to describe the format of a given glyph   */
@@ -688,7 +688,7 @@ typedef struct  FT2_1_3_Outline_Funcs_ {
 /*                                                                       */
 /*    FT2_1_3_GLYPH_FORMAT_BITMAP ::                                          */
 /*      The glyph image is a bitmap, and can be described as an          */
-/*      @FT2_1_3_Bitmap.  You generally need to access the `bitmap' field of  */
+/*      @FT_Bitmap.  You generally need to access the `bitmap' field of  */
 /*      the @FT2_1_3_GlyphSlotRec structure to read it.                       */
 /*                                                                       */
 /*    FT2_1_3_GLYPH_FORMAT_OUTLINE ::                                         */
@@ -704,15 +704,15 @@ typedef struct  FT2_1_3_Outline_Funcs_ {
 /*      @FT2_1_3_Outline, but FreeType isn't currently capable of rendering   */
 /*      them correctly.                                                  */
 /*                                                                       */
-typedef enum  FT2_1_3_Glyph_Format_ {
-	FT2_1_3_IMAGE_TAG( FT2_1_3_GLYPH_FORMAT_NONE, 0, 0, 0, 0 ),
+typedef enum  FT_Glyph_Format_ {
+	FT_IMAGE_TAG( FT2_1_3_GLYPH_FORMAT_NONE, 0, 0, 0, 0 ),
 
-	FT2_1_3_IMAGE_TAG( FT2_1_3_GLYPH_FORMAT_COMPOSITE, 'c', 'o', 'm', 'p' ),
-	FT2_1_3_IMAGE_TAG( FT2_1_3_GLYPH_FORMAT_BITMAP,    'b', 'i', 't', 's' ),
-	FT2_1_3_IMAGE_TAG( FT2_1_3_GLYPH_FORMAT_OUTLINE,   'o', 'u', 't', 'l' ),
-	FT2_1_3_IMAGE_TAG( FT2_1_3_GLYPH_FORMAT_PLOTTER,   'p', 'l', 'o', 't' )
+	FT_IMAGE_TAG( FT2_1_3_GLYPH_FORMAT_COMPOSITE, 'c', 'o', 'm', 'p' ),
+	FT_IMAGE_TAG( FT2_1_3_GLYPH_FORMAT_BITMAP,    'b', 'i', 't', 's' ),
+	FT_IMAGE_TAG( FT2_1_3_GLYPH_FORMAT_OUTLINE,   'o', 'u', 't', 'l' ),
+	FT_IMAGE_TAG( FT2_1_3_GLYPH_FORMAT_PLOTTER,   'p', 'l', 'o', 't' )
 
-} FT2_1_3_Glyph_Format;
+} FT_Glyph_Format;
 
 
 /*************************************************************************/
@@ -722,7 +722,7 @@ typedef enum  FT2_1_3_Glyph_Format_ {
 /*                                                                       */
 /* <Description>                                                         */
 /*    A list of decprecated constants.  Use the corresponding            */
-/*    @FT2_1_3_Glyph_Format values instead.                                   */
+/*    @FT_Glyph_Format values instead.                                   */
 /*                                                                       */
 /* <Values>                                                              */
 /*    ft_glyph_format_none      :: see @FT2_1_3_GLYPH_FORMAT_NONE             */
@@ -1031,7 +1031,7 @@ typedef  enum {
 /*    correct drop-out control as defined in the TrueType specification. */
 /*                                                                       */
 typedef struct  FT2_1_3_Raster_Params_ {
-	FT2_1_3_Bitmap*              target;
+	FT_Bitmap*              target;
 	void*                   source;
 	int                     flags;
 	FT2_1_3_SpanFunc             gray_spans;
@@ -1039,7 +1039,7 @@ typedef struct  FT2_1_3_Raster_Params_ {
 	FT2_1_3_Raster_BitTest_Func  bit_test;     /* doesn't work! */
 	FT2_1_3_Raster_BitSet_Func   bit_set;      /* doesn't work! */
 	void*                   user;
-	FT2_1_3_BBox                 clip_box;
+	FT_BBox                 clip_box;
 
 } FT2_1_3_Raster_Params;
 
@@ -1209,7 +1209,7 @@ typedef int
 /*    raster_done   :: The raster destructor.                            */
 /*                                                                       */
 typedef struct  FT2_1_3_Raster_Funcs_ {
-	FT2_1_3_Glyph_Format         glyph_format;
+	FT_Glyph_Format         glyph_format;
 	FT2_1_3_Raster_NewFunc       raster_new;
 	FT2_1_3_Raster_ResetFunc     raster_reset;
 	FT2_1_3_Raster_SetModeFunc   raster_set_mode;

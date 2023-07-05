@@ -61,18 +61,18 @@ typedef struct  CID_Parser_ {
 	PS_ParserRec  root;
 	FT2_1_3_Stream     stream;
 
-	FT2_1_3_Byte*      postscript;
-	FT2_1_3_Long       postscript_len;
+	FT_Byte*      postscript;
+	FT_Long       postscript_len;
 
-	FT2_1_3_ULong      data_offset;
+	FT_ULong      data_offset;
 
 	CID_FaceInfo  cid;
-	FT2_1_3_Int        num_dict;
+	FT_Int        num_dict;
 
 } CID_Parser;
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 cid_parser_new( CID_Parser*    parser,
 				FT2_1_3_Stream      stream,
 				FT2_1_3_Memory      memory,

@@ -42,10 +42,10 @@ const char*  blue_chars[AH_BLUE_MAX] = {
 
 /* simple insertion sort */
 static void
-sort_values( FT2_1_3_Int   count,
-			 FT2_1_3_Pos*  table ) {
-	FT2_1_3_Int  i, j;
-	FT2_1_3_Pos  swap;
+sort_values( FT_Int   count,
+			 FT_Pos*  table ) {
+	FT_Int  i, j;
+	FT_Pos  swap;
 
 
 	for ( i = 1; i < count; i++ ) {
@@ -61,19 +61,19 @@ sort_values( FT2_1_3_Int   count,
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 ah_hinter_compute_blues( AH_Hinter  hinter ) {
 	AH_Blue       blue;
 	AH_Globals    globals = &hinter->globals->design;
-	FT2_1_3_Pos        flats [MAX_TEST_CHARACTERS];
-	FT2_1_3_Pos        rounds[MAX_TEST_CHARACTERS];
-	FT2_1_3_Int        num_flats;
-	FT2_1_3_Int        num_rounds;
+	FT_Pos        flats [MAX_TEST_CHARACTERS];
+	FT_Pos        rounds[MAX_TEST_CHARACTERS];
+	FT_Int        num_flats;
+	FT_Int        num_rounds;
 
-	FT2_1_3_Face       face;
+	FT_Face       face;
 	FT2_1_3_GlyphSlot  glyph;
-	FT2_1_3_Error      error;
-	FT2_1_3_CharMap    charmap;
+	FT_Error      error;
+	FT_CharMap    charmap;
 
 
 	face  = hinter->face;
@@ -97,7 +97,7 @@ ah_hinter_compute_blues( AH_Hinter  hinter ) {
 	for ( blue = AH_BLUE_CAPITAL_TOP; blue < AH_BLUE_MAX; blue++ ) {
 		const char*  p     = blue_chars[blue];
 		const char*  limit = p + MAX_TEST_CHARACTERS;
-		FT2_1_3_Pos       *blue_ref, *blue_shoot;
+		FT_Pos       *blue_ref, *blue_shoot;
 
 
 		AH_LOG(( "blue %3d: ", blue ));
@@ -106,12 +106,12 @@ ah_hinter_compute_blues( AH_Hinter  hinter ) {
 		num_rounds = 0;
 
 		for ( ; p < limit; p++ ) {
-			FT2_1_3_UInt     glyph_index;
-			FT2_1_3_Vector*  extremum;
-			FT2_1_3_Vector*  points;
-			FT2_1_3_Vector*  point_limit;
-			FT2_1_3_Vector*  point;
-			FT2_1_3_Bool     round;
+			FT_UInt     glyph_index;
+			FT_Vector*  extremum;
+			FT_Vector*  points;
+			FT_Vector*  point_limit;
+			FT_Vector*  point;
+			FT_Bool     round;
 
 
 			/* exit if we reach the end of the string */
@@ -121,7 +121,7 @@ ah_hinter_compute_blues( AH_Hinter  hinter ) {
 			AH_LOG(( "`%c'", *p ));
 
 			/* load the character in the face -- skip unknown or empty ones */
-			glyph_index = FT2_1_3_Get_Char_Index( face, (FT2_1_3_UInt)*p );
+			glyph_index = FT2_1_3_Get_Char_Index( face, (FT_UInt)*p );
 			if ( glyph_index == 0 )
 				continue;
 
@@ -152,10 +152,10 @@ ah_hinter_compute_blues( AH_Hinter  hinter ) {
 			/* segment; we first need to find in which contour the extremum */
 			/* lies, then see its previous and next points                  */
 			{
-				FT2_1_3_Int  idx = (FT2_1_3_Int)( extremum - points );
-				FT2_1_3_Int  n;
-				FT2_1_3_Int  first, last, prev, next, end;
-				FT2_1_3_Pos  dist;
+				FT_Int  idx = (FT_Int)( extremum - points );
+				FT_Int  n;
+				FT_Int  first, last, prev, next, end;
+				FT_Pos  dist;
 
 
 				last  = -1;
@@ -246,9 +246,9 @@ ah_hinter_compute_blues( AH_Hinter  hinter ) {
 		/* zones is under its reference position, or the opposite for bottom  */
 		/* zones.  We must thus check everything there and correct the errors */
 		if ( *blue_shoot != *blue_ref ) {
-			FT2_1_3_Pos   ref      = *blue_ref;
-			FT2_1_3_Pos   shoot    = *blue_shoot;
-			FT2_1_3_Bool  over_ref = FT2_1_3_BOOL( shoot > ref );
+			FT_Pos   ref      = *blue_ref;
+			FT_Pos   shoot    = *blue_shoot;
+			FT_Bool  over_ref = FT2_1_3_BOOL( shoot > ref );
 
 
 			if ( AH_IS_TOP_BLUE( blue ) ^ over_ref )
@@ -267,18 +267,18 @@ Exit:
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 ah_hinter_compute_widths( AH_Hinter  hinter ) {
 	/* scan the array of segments in each direction */
 	AH_Outline  outline = hinter->glyph;
 	AH_Segment  segments;
 	AH_Segment  limit;
 	AH_Globals  globals = &hinter->globals->design;
-	FT2_1_3_Pos*     widths;
-	FT2_1_3_Int      dimension;
-	FT2_1_3_Int*     p_num_widths;
-	FT2_1_3_Error    error = 0;
-	FT2_1_3_Pos      edge_distance_threshold = 32000;
+	FT_Pos*     widths;
+	FT_Int      dimension;
+	FT_Int*     p_num_widths;
+	FT_Error    error = 0;
+	FT_Pos      edge_distance_threshold = 32000;
 
 
 	globals->num_widths  = 0;
@@ -289,7 +289,7 @@ ah_hinter_compute_widths( AH_Hinter  hinter ) {
 	/* stem height of the "-", but it wasn't too good.  Moreover, we now */
 	/* have a single character that gives us standard width and height.  */
 	{
-		FT2_1_3_UInt   glyph_index;
+		FT_UInt   glyph_index;
 
 
 		glyph_index = FT2_1_3_Get_Char_Index( hinter->face, 'o' );
@@ -316,14 +316,14 @@ ah_hinter_compute_widths( AH_Hinter  hinter ) {
 	for ( dimension = 1; dimension >= 0; dimension-- ) {
 		AH_Segment  seg = segments;
 		AH_Segment  link;
-		FT2_1_3_Int      num_widths = 0;
+		FT_Int      num_widths = 0;
 
 
 		for ( ; seg < limit; seg++ ) {
 			link = seg->link;
 			/* we only consider stem segments there! */
 			if ( link && link->link == seg && link > seg ) {
-				FT2_1_3_Pos  dist;
+				FT_Pos  dist;
 
 
 				dist = seg->pos - link->pos;
@@ -361,7 +361,7 @@ Exit:
 }
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 ah_hinter_compute_globals( AH_Hinter  hinter ) {
 	return ah_hinter_compute_widths( hinter ) ||
 		   ah_hinter_compute_blues ( hinter );

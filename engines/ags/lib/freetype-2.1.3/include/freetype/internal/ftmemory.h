@@ -59,26 +59,26 @@ FT2_1_3_BEGIN_HEADER
 
 #ifdef FT2_1_3_DEBUG_MEMORY
 
-FT2_1_3_BASE( FT2_1_3_Error )
+FT2_1_3_BASE( FT_Error )
 FT2_1_3_Alloc_Debug( FT2_1_3_Memory    memory,
-				FT2_1_3_Long      size,
+				FT_Long      size,
 				void*       *P,
 				const char*  file_name,
-				FT2_1_3_Long      line_no );
+				FT_Long      line_no );
 
-FT2_1_3_BASE( FT2_1_3_Error )
+FT2_1_3_BASE( FT_Error )
 FT2_1_3_Realloc_Debug( FT2_1_3_Memory    memory,
-				  FT2_1_3_Long      current,
-				  FT2_1_3_Long      size,
+				  FT_Long      current,
+				  FT_Long      size,
 				  void*       *P,
 				  const char*  file_name,
-				  FT2_1_3_Long      line_no );
+				  FT_Long      line_no );
 
 FT2_1_3_BASE( void )
 FT2_1_3_Free_Debug( FT2_1_3_Memory    memory,
-			   FT2_1_3_Pointer   block,
+			   FT_Pointer   block,
 			   const char*  file_name,
-			   FT2_1_3_Long      line_no );
+			   FT_Long      line_no );
 
 #endif
 
@@ -105,9 +105,9 @@ FT2_1_3_Free_Debug( FT2_1_3_Memory    memory,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_BASE( FT2_1_3_Error )
+FT2_1_3_BASE( FT_Error )
 FT2_1_3_Alloc( FT2_1_3_Memory  memory,
-		  FT2_1_3_Long    size,
+		  FT_Long    size,
 		  void*     *P );
 
 
@@ -139,10 +139,10 @@ FT2_1_3_Alloc( FT2_1_3_Memory  memory,
 /*    All callers of FT2_1_3_Realloc() _must_ provide the current block size  */
 /*    as well as the new one.                                            */
 /*                                                                       */
-FT2_1_3_BASE( FT2_1_3_Error )
+FT2_1_3_BASE( FT_Error )
 FT2_1_3_Realloc( FT2_1_3_Memory  memory,
-			FT2_1_3_Long    current,
-			FT2_1_3_Long    size,
+			FT_Long    current,
+			FT_Long    size,
 			void**     P );
 
 

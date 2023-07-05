@@ -73,7 +73,7 @@ typedef enum  T1_Operator_ {
 
 
 static
-const FT2_1_3_Int  t1_args_count[op_max] = {
+const FT_Int  t1_args_count[op_max] = {
 	0, /* none */
 	0, /* endchar */
 	2, /* hsbw */
@@ -121,11 +121,11 @@ const FT2_1_3_Int  t1_args_count[op_max] = {
 /*    A glyph index in the font face.  Returns -1 if the corresponding   */
 /*    glyph wasn't found.                                                */
 /*                                                                       */
-static FT2_1_3_Int
+static FT_Int
 t1_lookup_glyph_by_stdcharcode( T1_Decoder  decoder,
-								FT2_1_3_Int      charcode ) {
-	FT2_1_3_UInt           n;
-	const FT2_1_3_String*  glyph_name;
+								FT_Int      charcode ) {
+	FT_UInt           n;
+	const FT_String*  glyph_name;
 	PSNames_Service   psnames = decoder->psnames;
 
 
@@ -137,7 +137,7 @@ t1_lookup_glyph_by_stdcharcode( T1_Decoder  decoder,
 					 psnames->adobe_std_encoding[charcode]);
 
 	for ( n = 0; n < decoder->num_glyphs; n++ ) {
-		FT2_1_3_String*  name = (FT2_1_3_String*)decoder->glyph_names[n];
+		FT_String*  name = (FT_String*)decoder->glyph_names[n];
 
 
 		if ( name && name[0] == glyph_name[0]  &&
@@ -173,20 +173,20 @@ t1_lookup_glyph_by_stdcharcode( T1_Decoder  decoder,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-static FT2_1_3_Error
+static FT_Error
 t1operator_seac( T1_Decoder  decoder,
-				 FT2_1_3_Pos      asb,
-				 FT2_1_3_Pos      adx,
-				 FT2_1_3_Pos      ady,
-				 FT2_1_3_Int      bchar,
-				 FT2_1_3_Int      achar ) {
-	FT2_1_3_Error     error;
-	FT2_1_3_Int       bchar_index, achar_index;
+				 FT_Pos      asb,
+				 FT_Pos      adx,
+				 FT_Pos      ady,
+				 FT_Int      bchar,
+				 FT_Int      achar ) {
+	FT_Error     error;
+	FT_Int       bchar_index, achar_index;
 #if 0
-	FT2_1_3_Int       n_base_points;
+	FT_Int       n_base_points;
 	FT2_1_3_Outline*  base = decoder->builder.base;
 #endif
-	FT2_1_3_Vector    left_bearing, advance;
+	FT_Vector    left_bearing, advance;
 
 
 	/* seac weirdness */
@@ -324,16 +324,16 @@ Exit:
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 t1_decoder_parse_charstrings( T1_Decoder  decoder,
-							  FT2_1_3_Byte*    charstring_base,
-							  FT2_1_3_UInt     charstring_len ) {
-	FT2_1_3_Error         error;
+							  FT_Byte*    charstring_base,
+							  FT_UInt     charstring_len ) {
+	FT_Error         error;
 	T1_Decoder_Zone  zone;
-	FT2_1_3_Byte*         ip;
-	FT2_1_3_Byte*         limit;
+	FT_Byte*         ip;
+	FT_Byte*         limit;
 	T1_Builder       builder = &decoder->builder;
-	FT2_1_3_Pos           x, y, orig_x, orig_y;
+	FT_Pos           x, y, orig_x, orig_y;
 
 	T1_Hints_Funcs   hinter;
 
@@ -370,9 +370,9 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 
 	/* now, execute loop */
 	while ( ip < limit ) {
-		FT2_1_3_Long*     top   = decoder->top;
+		FT_Long*     top   = decoder->top;
 		T1_Operator  op    = op_none;
-		FT2_1_3_Long      value = 0;
+		FT_Long      value = 0;
 
 
 		/*********************************************************************/
@@ -491,9 +491,9 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 				goto Syntax_Error;
 			}
 
-			value = (FT2_1_3_Int32)( ((FT2_1_3_Long)ip[0] << 24) |
-								((FT2_1_3_Long)ip[1] << 16) |
-								((FT2_1_3_Long)ip[2] << 8 ) |
+			value = (FT_Int32)( ((FT_Long)ip[0] << 24) |
+								((FT_Long)ip[1] << 16) |
+								((FT_Long)ip[2] << 8 ) |
 								ip[3] );
 			ip += 4;
 			break;
@@ -501,7 +501,7 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 		default:
 			if ( ip[-1] >= 32 ) {
 				if ( ip[-1] < 247 )
-					value = (FT2_1_3_Long)ip[-1] - 139;
+					value = (FT_Long)ip[-1] - 139;
 				else {
 					if ( ++ip > limit ) {
 						FT2_1_3_ERROR(( "t1_decoder_parse_charstrings: " ));
@@ -510,9 +510,9 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 					}
 
 					if ( ip[-2] < 251 )
-						value =  ( ( (FT2_1_3_Long)ip[-2] - 247 ) << 8 ) + ip[-1] + 108;
+						value =  ( ( (FT_Long)ip[-2] - 247 ) << 8 ) + ip[-1] + 108;
 					else
-						value = -( ( ( (FT2_1_3_Long)ip[-2] - 251 ) << 8 ) + ip[-1] + 108 );
+						value = -( ( ( (FT_Long)ip[-2] - 251 ) << 8 ) + ip[-1] + 108 );
 				}
 			} else {
 				FT2_1_3_ERROR(( "t1_decoder_parse_charstrings: "
@@ -556,7 +556,7 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 				break;
 
 			case 2: {                   /* add flex vectors */
-				FT2_1_3_Int  idx;
+				FT_Int  idx;
 
 
 				if ( top[0] != 0 )
@@ -570,7 +570,7 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 					add_point( builder,
 							   x,
 							   y,
-							   (FT2_1_3_Byte)( idx == 3 || idx == 6 ) );
+							   (FT_Byte)( idx == 3 || idx == 6 ) );
 			}
 			break;
 
@@ -634,9 +634,9 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 			case 17:
 			case 18: {                  /* multiple masters */
 				PS_Blend  blend = decoder->blend;
-				FT2_1_3_UInt   num_points, nn, mm;
-				FT2_1_3_Long*  delta;
-				FT2_1_3_Long*  values;
+				FT_UInt   num_points, nn, mm;
+				FT_Long*  delta;
+				FT_Long*  values;
 
 
 				if ( !blend ) {
@@ -645,8 +645,8 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 					goto Syntax_Error;
 				}
 
-				num_points = (FT2_1_3_UInt)top[1] - 13 + ( top[1] == 18 );
-				if ( top[0] != (FT2_1_3_Int)( num_points * blend->num_designs ) ) {
+				num_points = (FT_UInt)top[1] - 13 + ( top[1] == 18 );
+				if ( top[0] != (FT_Int)( num_points * blend->num_designs ) ) {
 					FT2_1_3_ERROR(( "t1_decoder_parse_charstrings: " ));
 					FT2_1_3_ERROR(( "incorrect number of mm arguments\n" ));
 					goto Syntax_Error;
@@ -674,7 +674,7 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 				delta  = top + num_points;
 				values = top;
 				for ( nn = 0; nn < num_points; nn++ ) {
-					FT2_1_3_Int  tmp = values[0];
+					FT_Int  tmp = values[0];
 
 
 					for ( mm = 1; mm < blend->num_designs; mm++ )
@@ -694,7 +694,7 @@ Unexpected_OtherSubr:
 			}
 			decoder->top = top;
 		} else { /* general operator */
-			FT2_1_3_Int  num_args = t1_args_count[op];
+			FT_Int  num_args = t1_args_count[op];
 
 
 			if ( top - decoder->stack < num_args )
@@ -900,13 +900,13 @@ Add_Line:
 				break;
 
 			case op_callsubr: {
-				FT2_1_3_Int  idx;
+				FT_Int  idx;
 
 
 				FT2_1_3_TRACE4(( " callsubr" ));
 
 				idx = top[0];
-				if ( idx < 0 || idx >= (FT2_1_3_Int)decoder->num_subrs ) {
+				if ( idx < 0 || idx >= (FT_Int)decoder->num_subrs ) {
 					FT2_1_3_ERROR(( "t1_decoder_parse_charstrings: "
 							   "invalid subrs index\n" ));
 					goto Syntax_Error;
@@ -1012,7 +1012,7 @@ Add_Line:
 
 				/* record vertical counter-controlled hints */
 				if ( hinter ) {
-					FT2_1_3_Pos  dx = orig_x;
+					FT_Pos  dx = orig_x;
 
 
 					top[0] += dx;
@@ -1057,22 +1057,22 @@ Memory_Error:
 
 
 /* parse a single Type 1 glyph */
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 t1_decoder_parse_glyph( T1_Decoder  decoder,
-						FT2_1_3_UInt     glyph ) {
+						FT_UInt     glyph ) {
 	return decoder->parse_callback( decoder, glyph );
 }
 
 
 /* initialize T1 decoder */
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 t1_decoder_init( T1_Decoder           decoder,
-				 FT2_1_3_Face              face,
+				 FT_Face              face,
 				 FT2_1_3_Size              size,
 				 FT2_1_3_GlyphSlot         slot,
-				 FT2_1_3_Byte**            glyph_names,
+				 FT_Byte**            glyph_names,
 				 PS_Blend             blend,
-				 FT2_1_3_Bool              hinting,
+				 FT_Bool              hinting,
 				 FT2_1_3_Render_Mode       hint_mode,
 				 T1_Decoder_Callback  parse_callback ) {
 	FT2_1_3_MEM_ZERO( decoder, sizeof ( *decoder ) );
@@ -1095,7 +1095,7 @@ t1_decoder_init( T1_Decoder           decoder,
 
 	t1_builder_init( &decoder->builder, face, size, slot, hinting );
 
-	decoder->num_glyphs     = (FT2_1_3_UInt)face->num_glyphs;
+	decoder->num_glyphs     = (FT_UInt)face->num_glyphs;
 	decoder->glyph_names    = glyph_names;
 	decoder->hint_flags     = face->internal->hint_flags;
 	decoder->hint_mode      = hint_mode;

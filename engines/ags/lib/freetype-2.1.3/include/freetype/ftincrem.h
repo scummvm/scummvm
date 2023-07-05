@@ -77,9 +77,9 @@ typedef struct FT2_1_3_IncrementalRec_*  FT2_1_3_Incremental;
  *   @FT2_1_3_Incremental_GetGlyphMetricsFunc.
  */
 typedef struct  FT2_1_3_Incremental_MetricsRec_ {
-	FT2_1_3_Long  bearing_x;
-	FT2_1_3_Long  bearing_y;
-	FT2_1_3_Long  advance;
+	FT_Long  bearing_x;
+	FT_Long  bearing_y;
+	FT_Long  advance;
 
 } FT2_1_3_Incremental_MetricsRec, *FT2_1_3_Incremental_Metrics;
 
@@ -124,10 +124,10 @@ typedef struct  FT2_1_3_Incremental_MetricsRec_ {
  *   Nested calls to @FT2_1_3_Incremental_GetGlyphDataFunc can happen for
  *   compound glyphs.
  */
-typedef FT2_1_3_Error
+typedef FT_Error
 (*FT2_1_3_Incremental_GetGlyphDataFunc)( FT2_1_3_Incremental  incremental,
-									FT2_1_3_UInt         glyph_index,
-									FT2_1_3_Data*        adata );
+									FT_UInt         glyph_index,
+									FT_Data*        adata );
 
 
 /***************************************************************************
@@ -150,7 +150,7 @@ typedef FT2_1_3_Error
  */
 typedef void
 (*FT2_1_3_Incremental_FreeGlyphDataFunc)( FT2_1_3_Incremental  incremental,
-									 FT2_1_3_Data*        data );
+									 FT_Data*        data );
 
 
 /***************************************************************************
@@ -183,13 +183,13 @@ typedef void
  *     True if there are metrics at all.
  *
  */
-typedef FT2_1_3_Error
+typedef FT_Error
 (*FT2_1_3_Incremental_GetGlyphMetricsFunc)
 ( FT2_1_3_Incremental              incremental,
-  FT2_1_3_UInt                     glyph_index,
-  FT2_1_3_Bool                     vertical,
+  FT_UInt                     glyph_index,
+  FT_Bool                     vertical,
   FT2_1_3_Incremental_MetricsRec  *ametrics,
-  FT2_1_3_Bool                    *afound );
+  FT_Bool                    *afound );
 
 
 /**************************************************************************

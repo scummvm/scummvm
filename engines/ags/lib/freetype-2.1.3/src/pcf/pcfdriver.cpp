@@ -47,18 +47,18 @@ namespace FreeType213 {
 
 typedef struct  PCF_CMapRec_ {
 	FT2_1_3_CMapRec    cmap;
-	FT2_1_3_UInt       num_encodings;
+	FT_UInt       num_encodings;
 	PCF_Encoding  encodings;
 
 } PCF_CMapRec, *PCF_CMap;
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 pcf_cmap_init( PCF_CMap  cmap ) {
 	PCF_Face  face = (PCF_Face)FT2_1_3_CMAP_FACE( cmap );
 
 
-	cmap->num_encodings = (FT2_1_3_UInt)face->nencodings;
+	cmap->num_encodings = (FT_UInt)face->nencodings;
 	cmap->encodings     = face->encodings;
 
 	return FT2_1_3_Err_Ok;
@@ -72,19 +72,19 @@ pcf_cmap_done( PCF_CMap  cmap ) {
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
+FT2_1_3_CALLBACK_DEF( FT_UInt )
 pcf_cmap_char_index( PCF_CMap   cmap,
-					 FT2_1_3_UInt32  charcode ) {
+					 FT_UInt32  charcode ) {
 	PCF_Encoding  encodings = cmap->encodings;
-	FT2_1_3_UInt       min, max, mid;
-	FT2_1_3_UInt       result = 0;
+	FT_UInt       min, max, mid;
+	FT_UInt       result = 0;
 
 
 	min = 0;
 	max = cmap->num_encodings;
 
 	while ( min < max ) {
-		FT2_1_3_UInt32  code;
+		FT_UInt32  code;
 
 
 		mid  = ( min + max ) >> 1;
@@ -105,20 +105,20 @@ pcf_cmap_char_index( PCF_CMap   cmap,
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
+FT2_1_3_CALLBACK_DEF( FT_UInt )
 pcf_cmap_char_next( PCF_CMap    cmap,
-					FT2_1_3_UInt32  *acharcode ) {
+					FT_UInt32  *acharcode ) {
 	PCF_Encoding  encodings = cmap->encodings;
-	FT2_1_3_UInt       min, max, mid;
-	FT2_1_3_UInt32     charcode = *acharcode + 1;
-	FT2_1_3_UInt       result   = 0;
+	FT_UInt       min, max, mid;
+	FT_UInt32     charcode = *acharcode + 1;
+	FT_UInt       result   = 0;
 
 
 	min = 0;
 	max = cmap->num_encodings;
 
 	while ( min < max ) {
-		FT2_1_3_UInt32  code;
+		FT_UInt32  code;
 
 
 		mid  = ( min + max ) >> 1;
@@ -166,7 +166,7 @@ FT2_1_3_CALLBACK_TABLE_DEF const FT2_1_3_CMap_ClassRec  pcf_cmap_class = {
 #define FT2_1_3_COMPONENT  trace_pcfdriver
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 PCF_Face_Done( PCF_Face  face ) {
 	FT2_1_3_Memory  memory = FT2_1_3_FACE_MEMORY( face );
 
@@ -177,7 +177,7 @@ PCF_Face_Done( PCF_Face  face ) {
 	/* free properties */
 	{
 		PCF_Property  prop = face->properties;
-		FT2_1_3_Int        i;
+		FT_Int        i;
 
 
 		for ( i = 0; i < face->nprops; i++ ) {
@@ -209,13 +209,13 @@ PCF_Face_Done( PCF_Face  face ) {
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 PCF_Face_Init( FT2_1_3_Stream      stream,
 			   PCF_Face       face,
-			   FT2_1_3_Int         face_index,
-			   FT2_1_3_Int         num_params,
+			   FT_Int         face_index,
+			   FT_Int         num_params,
 			   FT2_1_3_Parameter*  params ) {
-	FT2_1_3_Error  error = FT2_1_3_Err_Ok;
+	FT_Error  error = FT2_1_3_Err_Ok;
 
 	FT2_1_3_UNUSED( num_params );
 	FT2_1_3_UNUSED( params );
@@ -224,7 +224,7 @@ PCF_Face_Init( FT2_1_3_Stream      stream,
 
 	error = pcf_load_font( stream, face );
 	if ( error ) {
-		FT2_1_3_Error  error2;
+		FT_Error  error2;
 
 		/* this didn't work, try gzip support !! */
 		error2 = FT2_1_3_Stream_OpenGzip( &face->gzip_stream, stream );
@@ -247,8 +247,8 @@ PCF_Face_Init( FT2_1_3_Stream      stream,
 
 	/* set-up charmap */
 	{
-		FT2_1_3_String  *charset_registry, *charset_encoding;
-		FT2_1_3_Bool     unicode_charmap  = 0;
+		FT_String  *charset_registry, *charset_encoding;
+		FT_Bool     unicode_charmap  = 0;
 
 
 		charset_registry = face->charset_registry;
@@ -263,7 +263,7 @@ PCF_Face_Init( FT2_1_3_Stream      stream,
 		}
 
 		{
-			FT2_1_3_CharMapRec  charmap;
+			FT_CharMapRec  charmap;
 
 
 			charmap.face        = FT2_1_3_FACE( face );
@@ -297,7 +297,7 @@ Fail:
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 PCF_Set_Pixel_Size( FT2_1_3_Size  size ) {
 	PCF_Face face = (PCF_Face)FT2_1_3_SIZE_FACE( size );
 
@@ -324,16 +324,16 @@ PCF_Set_Pixel_Size( FT2_1_3_Size  size ) {
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 PCF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
 				FT2_1_3_Size       size,
-				FT2_1_3_UInt       glyph_index,
-				FT2_1_3_Int32      load_flags ) {
+				FT_UInt       glyph_index,
+				FT_Int32      load_flags ) {
 	PCF_Face    face   = (PCF_Face)FT2_1_3_SIZE_FACE( size );
 	FT2_1_3_Stream   stream = face->root.stream;
-	FT2_1_3_Error    error  = FT2_1_3_Err_Ok;
+	FT_Error    error  = FT2_1_3_Err_Ok;
 	FT2_1_3_Memory   memory = FT2_1_3_FACE( face )->memory;
-	FT2_1_3_Bitmap*  bitmap = &slot->bitmap;
+	FT_Bitmap*  bitmap = &slot->bitmap;
 	PCF_Metric  metric;
 	int         bytes;
 
@@ -422,7 +422,7 @@ PCF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
 								   metric->leftSideBearing ) << 6;
 	slot->metrics.height       = bitmap->rows << 6;
 
-	slot->linearHoriAdvance = (FT2_1_3_Fixed)bitmap->width << 16;
+	slot->linearHoriAdvance = (FT_Fixed)bitmap->width << 16;
 	slot->format            = FT2_1_3_GLYPH_FORMAT_BITMAP;
 	slot->flags             = FT2_1_3_GLYPH_OWN_BITMAP;
 
@@ -454,8 +454,8 @@ const FT2_1_3_Driver_ClassRec  pcf_driver_class = {
 	sizeof( FT2_1_3_SizeRec ),
 	sizeof( FT2_1_3_GlyphSlotRec ),
 
-	(FT2_1_3_Face_InitFunc)        PCF_Face_Init,
-	(FT2_1_3_Face_DoneFunc)        PCF_Face_Done,
+	(FT_Face_InitFunc)        PCF_Face_Init,
+	(FT_Face_DoneFunc)        PCF_Face_Done,
 	(FT2_1_3_Size_InitFunc)        0,
 	(FT2_1_3_Size_DoneFunc)        0,
 	(FT2_1_3_Slot_InitFunc)        0,
@@ -466,9 +466,9 @@ const FT2_1_3_Driver_ClassRec  pcf_driver_class = {
 
 	(FT2_1_3_Slot_LoadFunc)        PCF_Glyph_Load,
 
-	(FT2_1_3_Face_GetKerningFunc)  0,
-	(FT2_1_3_Face_AttachFunc)      0,
-	(FT2_1_3_Face_GetAdvancesFunc) 0
+	(FT_Face_GetKerningFunc)  0,
+	(FT_Face_AttachFunc)      0,
+	(FT_Face_GetAdvancesFunc) 0
 };
 
 } // End of namespace FreeType213

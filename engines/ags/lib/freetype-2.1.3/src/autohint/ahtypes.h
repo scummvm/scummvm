@@ -124,7 +124,7 @@ FT2_1_3_BEGIN_HEADER
 
 
 /* see agangles.h */
-typedef FT2_1_3_Int  AH_Angle;
+typedef FT_Int  AH_Angle;
 
 
 /* hint flags */
@@ -151,7 +151,7 @@ typedef FT2_1_3_Int  AH_Angle;
 #define AH_FLAG_WEAK_INTERPOLATION  256
 #define AH_FLAG_INFLECTION          512
 
-typedef FT2_1_3_Int AH_Flags;
+typedef FT_Int AH_Flags;
 
 
 /* edge hint flags */
@@ -160,7 +160,7 @@ typedef FT2_1_3_Int AH_Flags;
 #define AH_EDGE_SERIF   2
 #define AH_EDGE_DONE    4
 
-typedef FT2_1_3_Int  AH_Edge_Flags;
+typedef FT_Int  AH_Edge_Flags;
 
 
 /* hint directions -- the values are computed so that two vectors are */
@@ -171,7 +171,7 @@ typedef FT2_1_3_Int  AH_Edge_Flags;
 #define AH_DIR_UP      2
 #define AH_DIR_DOWN   -2
 
-typedef FT2_1_3_Int  AH_Direction;
+typedef FT_Int  AH_Direction;
 
 
 typedef struct AH_PointRec_*    AH_Point;
@@ -213,10 +213,10 @@ typedef struct AH_EdgeRec_*     AH_Edge;
 /*                                                                       */
 typedef struct  AH_PointRec_ {
 	AH_Flags      flags;    /* point flags used by hinter */
-	FT2_1_3_Pos        ox, oy;
-	FT2_1_3_Pos        fx, fy;
-	FT2_1_3_Pos        x,  y;
-	FT2_1_3_Pos        u,  v;
+	FT_Pos        ox, oy;
+	FT_Pos        fx, fy;
+	FT_Pos        x,  y;
+	FT_Pos        u,  v;
 
 	AH_Direction  in_dir;   /* direction of inwards vector  */
 	AH_Direction  out_dir;  /* direction of outwards vector */
@@ -276,17 +276,17 @@ typedef struct  AH_SegmentRec_ {
 	AH_Point       last;        /* last point in edge segment              */
 	AH_Point*      contour;     /* ptr to first point of segment's contour */
 
-	FT2_1_3_Pos         pos;         /* position of segment           */
-	FT2_1_3_Pos         min_coord;   /* minimum coordinate of segment */
-	FT2_1_3_Pos         max_coord;   /* maximum coordinate of segment */
+	FT_Pos         pos;         /* position of segment           */
+	FT_Pos         min_coord;   /* minimum coordinate of segment */
+	FT_Pos         max_coord;   /* maximum coordinate of segment */
 
 	AH_Edge        edge;
 	AH_Segment     edge_next;
 
 	AH_Segment     link;        /* link segment               */
 	AH_Segment     serif;       /* primary segment for serifs */
-	FT2_1_3_Pos         num_linked;  /* number of linked segments  */
-	FT2_1_3_Pos         score;
+	FT_Pos         num_linked;  /* number of linked segments  */
+	FT_Pos         score;
 
 } AH_SegmentRec;
 
@@ -335,16 +335,16 @@ typedef struct  AH_EdgeRec_ {
 	AH_Segment     first;
 	AH_Segment     last;
 
-	FT2_1_3_Pos         fpos;
-	FT2_1_3_Pos         opos;
-	FT2_1_3_Pos         pos;
+	FT_Pos         fpos;
+	FT_Pos         opos;
+	FT_Pos         pos;
 
 	AH_Edge        link;
 	AH_Edge        serif;
-	FT2_1_3_Int         num_linked;
+	FT_Int         num_linked;
 
-	FT2_1_3_Int         score;
-	FT2_1_3_Pos*        blue_edge;
+	FT_Int         score;
+	FT_Pos*        blue_edge;
 
 } AH_EdgeRec;
 
@@ -356,28 +356,28 @@ typedef struct  AH_OutlineRec_ {
 	AH_Direction  vert_major_dir;   /* vertical major direction   */
 	AH_Direction  horz_major_dir;   /* horizontal major direction */
 
-	FT2_1_3_Fixed      x_scale;
-	FT2_1_3_Fixed      y_scale;
-	FT2_1_3_Pos        edge_distance_threshold;
+	FT_Fixed      x_scale;
+	FT_Fixed      y_scale;
+	FT_Pos        edge_distance_threshold;
 
-	FT2_1_3_Int        max_points;
-	FT2_1_3_Int        num_points;
+	FT_Int        max_points;
+	FT_Int        num_points;
 	AH_Point      points;
 
-	FT2_1_3_Int        max_contours;
-	FT2_1_3_Int        num_contours;
+	FT_Int        max_contours;
+	FT_Int        num_contours;
 	AH_Point *    contours;
 
-	FT2_1_3_Int        num_hedges;
+	FT_Int        num_hedges;
 	AH_Edge       horz_edges;
 
-	FT2_1_3_Int        num_vedges;
+	FT_Int        num_vedges;
 	AH_Edge       vert_edges;
 
-	FT2_1_3_Int        num_hsegments;
+	FT_Int        num_hsegments;
 	AH_Segment    horz_segments;
 
-	FT2_1_3_Int        num_vsegments;
+	FT_Int        num_vsegments;
 	AH_Segment    vert_segments;
 
 } AH_OutlineRec, *AH_Outline;
@@ -390,13 +390,13 @@ typedef struct  AH_OutlineRec_ {
 #define AH_BLUE_SMALL_MINOR     ( AH_BLUE_SMALL_BOTTOM + 1 )   /* pqgjy    */
 #define AH_BLUE_MAX             ( AH_BLUE_SMALL_MINOR + 1 )
 
-typedef FT2_1_3_Int  AH_Blue;
+typedef FT_Int  AH_Blue;
 
 
 #define AH_HINTER_MONOCHROME  1
 #define AH_HINTER_OPTIMIZE    2
 
-typedef FT2_1_3_Int  AH_Hinter_Flags;
+typedef FT_Int  AH_Hinter_Flags;
 
 
 /*************************************************************************/
@@ -422,16 +422,16 @@ typedef FT2_1_3_Int  AH_Hinter_Flags;
 /*    blue_shoots :: The overshoot positions of blue zones.              */
 /*                                                                       */
 typedef struct  AH_GlobalsRec_ {
-	FT2_1_3_Int  num_widths;
-	FT2_1_3_Int  num_heights;
+	FT_Int  num_widths;
+	FT_Int  num_heights;
 
-	FT2_1_3_Pos  stds[2];
+	FT_Pos  stds[2];
 
-	FT2_1_3_Pos  widths [AH_MAX_WIDTHS];
-	FT2_1_3_Pos  heights[AH_MAX_HEIGHTS];
+	FT_Pos  widths [AH_MAX_WIDTHS];
+	FT_Pos  heights[AH_MAX_HEIGHTS];
 
-	FT2_1_3_Pos  blue_refs  [AH_BLUE_MAX];
-	FT2_1_3_Pos  blue_shoots[AH_BLUE_MAX];
+	FT_Pos  blue_refs  [AH_BLUE_MAX];
+	FT_Pos  blue_shoots[AH_BLUE_MAX];
 
 } AH_GlobalsRec, *AH_Globals;
 
@@ -458,12 +458,12 @@ typedef struct  AH_GlobalsRec_ {
 /*    y_scale :: The current vertical scale.                             */
 /*                                                                       */
 typedef struct  AH_Face_GlobalsRec_ {
-	FT2_1_3_Face     face;
+	FT_Face     face;
 	AH_GlobalsRec  design;
 	AH_GlobalsRec  scaled;
-	FT2_1_3_Fixed    x_scale;
-	FT2_1_3_Fixed    y_scale;
-	FT2_1_3_Bool     control_overshoot;
+	FT_Fixed    x_scale;
+	FT_Fixed    y_scale;
+	FT_Bool     control_overshoot;
 
 } AH_Face_GlobalsRec, *AH_Face_Globals;
 
@@ -472,33 +472,33 @@ typedef struct  AH_HinterRec {
 	FT2_1_3_Memory         memory;
 	AH_Hinter_Flags   flags;
 
-	FT2_1_3_Int            algorithm;
-	FT2_1_3_Face           face;
+	FT_Int            algorithm;
+	FT_Face           face;
 
 	AH_Face_Globals   globals;
 
 	AH_Outline        glyph;
 
 	AH_Loader         loader;
-	FT2_1_3_Vector         pp1;
-	FT2_1_3_Vector         pp2;
+	FT_Vector         pp1;
+	FT_Vector         pp2;
 
-	FT2_1_3_Bool           transformed;
-	FT2_1_3_Vector         trans_delta;
-	FT2_1_3_Matrix         trans_matrix;
+	FT_Bool           transformed;
+	FT_Vector         trans_delta;
+	FT_Matrix         trans_matrix;
 
-	FT2_1_3_Bool           do_horz_hints;     /* disable X hinting            */
-	FT2_1_3_Bool           do_vert_hints;     /* disable Y hinting            */
-	FT2_1_3_Bool           do_horz_snapping;  /* disable X stem size snapping */
-	FT2_1_3_Bool           do_vert_snapping;  /* disable Y stem size snapping */
+	FT_Bool           do_horz_hints;     /* disable X hinting            */
+	FT_Bool           do_vert_hints;     /* disable Y hinting            */
+	FT_Bool           do_horz_snapping;  /* disable X stem size snapping */
+	FT_Bool           do_vert_snapping;  /* disable Y stem size snapping */
 
 } AH_HinterRec, *AH_Hinter;
 
 
 #ifdef  DEBUG_HINTER
 extern AH_Hinter   ah_debug_hinter;
-extern FT2_1_3_Bool     ah_debug_disable_horz;
-extern FT2_1_3_Bool     ah_debug_disable_vert;
+extern FT_Bool     ah_debug_disable_horz;
+extern FT_Bool     ah_debug_disable_vert;
 #else
 #define ah_debug_disable_horz  0
 #define ah_debug_disable_vert  0

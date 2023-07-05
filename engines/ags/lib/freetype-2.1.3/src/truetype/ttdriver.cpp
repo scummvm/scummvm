@@ -54,8 +54,8 @@ namespace FreeType213 {
 
 
 #undef  PAIR_TAG
-#define PAIR_TAG( left, right )  ( ( (FT2_1_3_ULong)left << 16 ) | \
-									 (FT2_1_3_ULong)right        )
+#define PAIR_TAG( left, right )  ( ( (FT_ULong)left << 16 ) | \
+									 (FT_ULong)right        )
 
 
 /*************************************************************************/
@@ -90,11 +90,11 @@ namespace FreeType213 {
 /*                                                                       */
 /*    They can be implemented by format-specific interfaces.             */
 /*                                                                       */
-static FT2_1_3_Error
+static FT_Error
 Get_Kerning( TT_Face     face,
-			 FT2_1_3_UInt     left_glyph,
-			 FT2_1_3_UInt     right_glyph,
-			 FT2_1_3_Vector*  kerning ) {
+			 FT_UInt     left_glyph,
+			 FT_UInt     right_glyph,
+			 FT_Vector*  kerning ) {
 	TT_Kern0_Pair  pair;
 
 
@@ -106,16 +106,16 @@ Get_Kerning( TT_Face     face,
 
 	if ( face->kern_pairs ) {
 		/* there are some kerning pairs in this font file! */
-		FT2_1_3_ULong  search_tag = PAIR_TAG( left_glyph, right_glyph );
-		FT2_1_3_Long   left, right;
+		FT_ULong  search_tag = PAIR_TAG( left_glyph, right_glyph );
+		FT_Long   left, right;
 
 
 		left  = 0;
 		right = face->num_kern_pairs - 1;
 
 		while ( left <= right ) {
-			FT2_1_3_Int    middle = left + ( ( right - left ) >> 1 );
-			FT2_1_3_ULong  cur_pair;
+			FT_Int    middle = left + ( ( right - left ) >> 1 );
+			FT_ULong  cur_pair;
 
 
 			pair     = face->kern_pairs + middle;
@@ -182,15 +182,15 @@ Found:
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-static FT2_1_3_Error
+static FT_Error
 Set_Char_Sizes( TT_Size     size,
-				FT2_1_3_F26Dot6  char_width,
-				FT2_1_3_F26Dot6  char_height,
-				FT2_1_3_UInt     horz_resolution,
-				FT2_1_3_UInt     vert_resolution ) {
+				FT_F26Dot6  char_width,
+				FT_F26Dot6  char_height,
+				FT_UInt     horz_resolution,
+				FT_UInt     vert_resolution ) {
 	FT2_1_3_Size_Metrics*  metrics = &size->root.metrics;
 	TT_Face           face    = (TT_Face)size->root.face;
-	FT2_1_3_Long           dim_x, dim_y;
+	FT_Long           dim_x, dim_y;
 
 
 	/* This bit flag, when set, indicates that the pixel size must be */
@@ -210,8 +210,8 @@ Set_Char_Sizes( TT_Size     size,
 		metrics->x_scale = FT2_1_3_DivFix( dim_x, face->root.units_per_EM );
 		metrics->y_scale = FT2_1_3_DivFix( dim_y, face->root.units_per_EM );
 
-		metrics->x_ppem  = (FT2_1_3_UShort)( dim_x >> 6 );
-		metrics->y_ppem  = (FT2_1_3_UShort)( dim_y >> 6 );
+		metrics->x_ppem  = (FT_UShort)( dim_x >> 6 );
+		metrics->y_ppem  = (FT_UShort)( dim_y >> 6 );
 	}
 
 	size->ttmetrics.valid = FALSE;
@@ -243,10 +243,10 @@ Set_Char_Sizes( TT_Size     size,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-static FT2_1_3_Error
+static FT_Error
 Set_Pixel_Sizes( TT_Size  size,
-				 FT2_1_3_UInt  pixel_width,
-				 FT2_1_3_UInt  pixel_height ) {
+				 FT_UInt  pixel_width,
+				 FT_UInt  pixel_height ) {
 	FT2_1_3_UNUSED( pixel_width );
 	FT2_1_3_UNUSED( pixel_height );
 
@@ -287,12 +287,12 @@ Set_Pixel_Sizes( TT_Size  size,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-static FT2_1_3_Error
+static FT_Error
 Load_Glyph( TT_GlyphSlot  slot,
 			TT_Size       size,
-			FT2_1_3_UShort     glyph_index,
-			FT2_1_3_Int32      load_flags ) {
-	FT2_1_3_Error  error;
+			FT_UShort     glyph_index,
+			FT_Int32      load_flags ) {
+	FT_Error  error;
 
 
 	if ( !slot )
@@ -390,8 +390,8 @@ const FT2_1_3_Driver_ClassRec  tt_driver_class = {
 	sizeof ( FT2_1_3_GlyphSlotRec ),
 
 
-	(FT2_1_3_Face_InitFunc)        tt_face_init,
-	(FT2_1_3_Face_DoneFunc)        tt_face_done,
+	(FT_Face_InitFunc)        tt_face_init,
+	(FT_Face_DoneFunc)        tt_face_done,
 	(FT2_1_3_Size_InitFunc)        tt_size_init,
 	(FT2_1_3_Size_DoneFunc)        tt_size_done,
 	(FT2_1_3_Slot_InitFunc)        0,
@@ -401,9 +401,9 @@ const FT2_1_3_Driver_ClassRec  tt_driver_class = {
 	(FT2_1_3_Size_ResetPixelsFunc) Set_Pixel_Sizes,
 	(FT2_1_3_Slot_LoadFunc)        Load_Glyph,
 
-	(FT2_1_3_Face_GetKerningFunc)  Get_Kerning,
-	(FT2_1_3_Face_AttachFunc)      0,
-	(FT2_1_3_Face_GetAdvancesFunc) 0
+	(FT_Face_GetKerningFunc)  Get_Kerning,
+	(FT_Face_AttachFunc)      0,
+	(FT_Face_GetAdvancesFunc) 0
 };
 
 } // End of namespace FreeType213

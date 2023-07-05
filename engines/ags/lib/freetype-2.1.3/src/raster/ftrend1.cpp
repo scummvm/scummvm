@@ -28,7 +28,7 @@ namespace AGS3 {
 namespace FreeType213 {
 
 /* initialize renderer -- init its raster */
-static FT2_1_3_Error
+static FT_Error
 ft_raster1_init( FT2_1_3_Renderer  render ) {
 	FT2_1_3_Library  library = FT2_1_3_MODULE_LIBRARY( render );
 
@@ -42,10 +42,10 @@ ft_raster1_init( FT2_1_3_Renderer  render ) {
 
 
 /* set render-specific mode */
-static FT2_1_3_Error
+static FT_Error
 ft_raster1_set_mode( FT2_1_3_Renderer  render,
-					 FT2_1_3_ULong     mode_tag,
-					 FT2_1_3_Pointer   data ) {
+					 FT_ULong     mode_tag,
+					 FT_Pointer   data ) {
 	/* we simply pass it to the raster */
 	return render->clazz->raster_class->raster_set_mode( render->raster,
 			mode_tag,
@@ -54,12 +54,12 @@ ft_raster1_set_mode( FT2_1_3_Renderer  render,
 
 
 /* transform a given glyph image */
-static FT2_1_3_Error
+static FT_Error
 ft_raster1_transform( FT2_1_3_Renderer   render,
 					  FT2_1_3_GlyphSlot  slot,
-					  FT2_1_3_Matrix*    matrix,
-					  FT2_1_3_Vector*    delta ) {
-	FT2_1_3_Error error = FT2_1_3_Err_Ok;
+					  FT_Matrix*    matrix,
+					  FT_Vector*    delta ) {
+	FT_Error error = FT2_1_3_Err_Ok;
 
 
 	if ( slot->format != render->glyph_format ) {
@@ -82,7 +82,7 @@ Exit:
 static void
 ft_raster1_get_cbox( FT2_1_3_Renderer   render,
 					 FT2_1_3_GlyphSlot  slot,
-					 FT2_1_3_BBox*      cbox ) {
+					 FT_BBox*      cbox ) {
 	FT2_1_3_MEM_ZERO( cbox, sizeof ( *cbox ) );
 
 	if ( slot->format == render->glyph_format )
@@ -91,16 +91,16 @@ ft_raster1_get_cbox( FT2_1_3_Renderer   render,
 
 
 /* convert a slot's glyph image into a bitmap */
-static FT2_1_3_Error
+static FT_Error
 ft_raster1_render( FT2_1_3_Renderer     render,
 				   FT2_1_3_GlyphSlot    slot,
 				   FT2_1_3_Render_Mode  mode,
-				   FT2_1_3_Vector*      origin ) {
-	FT2_1_3_Error     error;
+				   FT_Vector*      origin ) {
+	FT_Error     error;
 	FT2_1_3_Outline*  outline;
-	FT2_1_3_BBox      cbox;
-	FT2_1_3_UInt      width, height, pitch;
-	FT2_1_3_Bitmap*   bitmap;
+	FT_BBox      cbox;
+	FT_UInt      width, height, pitch;
+	FT_Bitmap*   bitmap;
 	FT2_1_3_Memory    memory;
 
 	FT2_1_3_Raster_Params  params;
@@ -137,8 +137,8 @@ ft_raster1_render( FT2_1_3_Renderer     render,
 	cbox.xMax  = ( cbox.xMax + 63 ) & -64;
 	cbox.yMax  = ( cbox.yMax + 63 ) & -64;
 
-	width  = (FT2_1_3_UInt)( ( cbox.xMax - cbox.xMin ) >> 6 );
-	height = (FT2_1_3_UInt)( ( cbox.yMax - cbox.yMin ) >> 6 );
+	width  = (FT_UInt)( ( cbox.xMax - cbox.xMin ) >> 6 );
+	height = (FT_UInt)( ( cbox.yMax - cbox.yMin ) >> 6 );
 	bitmap = &slot->bitmap;
 	memory = render->root.memory;
 
@@ -163,7 +163,7 @@ ft_raster1_render( FT2_1_3_Renderer     render,
 	bitmap->rows  = height;
 	bitmap->pitch = pitch;
 
-	if ( FT2_1_3_ALLOC( bitmap->buffer, (FT2_1_3_ULong)pitch * height ) )
+	if ( FT2_1_3_ALLOC( bitmap->buffer, (FT_ULong)pitch * height ) )
 		goto Exit;
 
 	slot->flags |= FT2_1_3_GLYPH_OWN_BITMAP;
@@ -188,8 +188,8 @@ ft_raster1_render( FT2_1_3_Renderer     render,
 		goto Exit;
 
 	slot->format      = FT2_1_3_GLYPH_FORMAT_BITMAP;
-	slot->bitmap_left = (FT2_1_3_Int)( cbox.xMin >> 6 );
-	slot->bitmap_top  = (FT2_1_3_Int)( cbox.yMax >> 6 );
+	slot->bitmap_left = (FT_Int)( cbox.xMin >> 6 );
+	slot->bitmap_top  = (FT_Int)( cbox.yMax >> 6 );
 
 Exit:
 	return error;

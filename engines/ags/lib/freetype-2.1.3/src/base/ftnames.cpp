@@ -32,26 +32,26 @@ namespace FreeType213 {
 
 /* documentation is in ftnames.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_UInt )
-FT2_1_3_Get_Sfnt_Name_Count( FT2_1_3_Face  face ) {
+FT2_1_3_EXPORT_DEF( FT_UInt )
+FT2_1_3_Get_Sfnt_Name_Count( FT_Face  face ) {
 	return (face && FT2_1_3_IS_SFNT( face )) ? ((TT_Face)face)->num_names : 0;
 }
 
 
 /* documentation is in ftnames.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
-FT2_1_3_Get_Sfnt_Name( FT2_1_3_Face       face,
-				  FT2_1_3_UInt       idx,
+FT2_1_3_EXPORT_DEF( FT_Error )
+FT2_1_3_Get_Sfnt_Name( FT_Face       face,
+				  FT_UInt       idx,
 				  FT2_1_3_SfntName  *aname ) {
-	FT2_1_3_Error  error = FT2_1_3_Err_Invalid_Argument;
+	FT_Error  error = FT2_1_3_Err_Invalid_Argument;
 
 
 	if ( aname && face && FT2_1_3_IS_SFNT( face ) ) {
 		TT_Face  ttface = (TT_Face)face;
 
 
-		if ( idx < (FT2_1_3_UInt)ttface->num_names ) {
+		if ( idx < (FT_UInt)ttface->num_names ) {
 			TT_NameEntryRec*  entry = ttface->name_table.names + idx;
 
 
@@ -73,7 +73,7 @@ FT2_1_3_Get_Sfnt_Name( FT2_1_3_Face       face,
 			aname->encoding_id = entry->encodingID;
 			aname->language_id = entry->languageID;
 			aname->name_id     = entry->nameID;
-			aname->string      = (FT2_1_3_Byte*)entry->string;
+			aname->string      = (FT_Byte*)entry->string;
 			aname->string_len  = entry->stringLength;
 
 			error = FT2_1_3_Err_Ok;

@@ -62,11 +62,11 @@ typedef struct  T42_DriverRec_ {
 /* */
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 T42_Face_Init( FT2_1_3_Stream      stream,
 			   T42_Face       face,
-			   FT2_1_3_Int         face_index,
-			   FT2_1_3_Int         num_params,
+			   FT_Int         face_index,
+			   FT_Int         num_params,
 			   FT2_1_3_Parameter*  params );
 
 
@@ -74,41 +74,41 @@ FT2_1_3_LOCAL( void )
 T42_Face_Done( T42_Face  face );
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 T42_Size_Init( T42_Size  size );
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 T42_Size_SetChars( T42_Size    size,
-				   FT2_1_3_F26Dot6  char_width,
-				   FT2_1_3_F26Dot6  char_height,
-				   FT2_1_3_UInt     horz_resolution,
-				   FT2_1_3_UInt     vert_resolution );
+				   FT_F26Dot6  char_width,
+				   FT_F26Dot6  char_height,
+				   FT_UInt     horz_resolution,
+				   FT_UInt     vert_resolution );
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 T42_Size_SetPixels( T42_Size  size,
-					FT2_1_3_UInt   pixel_width,
-					FT2_1_3_UInt   pixel_height );
+					FT_UInt   pixel_width,
+					FT_UInt   pixel_height );
 
 FT2_1_3_LOCAL( void )
 T42_Size_Done( T42_Size  size );
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 T42_GlyphSlot_Init( T42_GlyphSlot  slot );
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 T42_GlyphSlot_Load( FT2_1_3_GlyphSlot  glyph,
 					FT2_1_3_Size       size,
-					FT2_1_3_Int        glyph_index,
-					FT2_1_3_Int32      load_flags );
+					FT_Int        glyph_index,
+					FT_Int32      load_flags );
 
 FT2_1_3_LOCAL( void )
 T42_GlyphSlot_Done( T42_GlyphSlot slot );
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 T42_Driver_Init( T42_Driver  driver );
 
 FT2_1_3_LOCAL( void )

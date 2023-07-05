@@ -35,23 +35,23 @@ FT2_1_3_CALLBACK_TABLE
 const T1_Decoder_FuncsRec  t1_decoder_funcs;
 
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 t1_decoder_parse_glyph( T1_Decoder  decoder,
-						FT2_1_3_UInt     glyph_index );
+						FT_UInt     glyph_index );
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 t1_decoder_parse_charstrings( T1_Decoder  decoder,
-							  FT2_1_3_Byte*    base,
-							  FT2_1_3_UInt     len );
+							  FT_Byte*    base,
+							  FT_UInt     len );
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 t1_decoder_init( T1_Decoder           decoder,
-				 FT2_1_3_Face              face,
+				 FT_Face              face,
 				 FT2_1_3_Size              size,
 				 FT2_1_3_GlyphSlot         slot,
-				 FT2_1_3_Byte**            glyph_names,
+				 FT_Byte**            glyph_names,
 				 PS_Blend             blend,
-				 FT2_1_3_Bool              hinting,
+				 FT_Bool              hinting,
 				 FT2_1_3_Render_Mode       hint_mode,
 				 T1_Decoder_Callback  parse_glyph );
 

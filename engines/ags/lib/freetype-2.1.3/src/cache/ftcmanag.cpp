@@ -49,7 +49,7 @@ typedef struct FTC_SizeNodeRec_*  FTC_SizeNode;
 
 typedef struct  FTC_FaceNodeRec_ {
 	FT2_1_3_LruNodeRec  lru;
-	FT2_1_3_Face        face;
+	FT_Face        face;
 
 } FTC_FaceNodeRec;
 
@@ -61,11 +61,11 @@ typedef struct  FTC_SizeNodeRec_ {
 } FTC_SizeNodeRec;
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 ftc_face_node_init( FTC_FaceNode  node,
 					FTC_FaceID    face_id,
 					FTC_Manager   manager ) {
-	FT2_1_3_Error  error;
+	FT_Error  error;
 
 
 	error = manager->request_face( face_id,
@@ -83,9 +83,9 @@ ftc_face_node_init( FTC_FaceNode  node,
 
 
 /* helper function for ftc_face_node_done() */
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Bool )
+FT2_1_3_CALLBACK_DEF( FT_Bool )
 ftc_size_node_select( FTC_SizeNode  node,
-					  FT2_1_3_Face       face ) {
+					  FT_Face       face ) {
 	return FT2_1_3_BOOL( node->size->face == face );
 }
 
@@ -93,7 +93,7 @@ ftc_size_node_select( FTC_SizeNode  node,
 FT2_1_3_CALLBACK_DEF( void )
 ftc_face_node_done( FTC_FaceNode  node,
 					FTC_Manager   manager ) {
-	FT2_1_3_Face  face    = node->face;
+	FT_Face  face    = node->face;
 
 
 	/* we must begin by removing all sizes for the target face */
@@ -124,11 +124,11 @@ const FT2_1_3_LruList_ClassRec  ftc_face_list_class = {
 
 /* documentation is in ftcache.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FTC_Manager_Lookup_Face( FTC_Manager  manager,
 						 FTC_FaceID   face_id,
-						 FT2_1_3_Face     *aface ) {
-	FT2_1_3_Error      error;
+						 FT_Face     *aface ) {
+	FT_Error      error;
 	FTC_FaceNode  node;
 
 
@@ -160,19 +160,19 @@ FTC_Manager_Lookup_Face( FTC_Manager  manager,
 
 
 typedef struct  FTC_SizeQueryRec_ {
-	FT2_1_3_Face  face;
-	FT2_1_3_UInt  width;
-	FT2_1_3_UInt  height;
+	FT_Face  face;
+	FT_UInt  width;
+	FT_UInt  height;
 
 } FTC_SizeQueryRec, *FTC_SizeQuery;
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 ftc_size_node_init( FTC_SizeNode   node,
 					FTC_SizeQuery  query ) {
-	FT2_1_3_Face   face = query->face;
+	FT_Face   face = query->face;
 	FT2_1_3_Size   size;
-	FT2_1_3_Error  error;
+	FT_Error  error;
 
 
 	node->size = NULL;
@@ -200,11 +200,11 @@ ftc_size_node_done( FTC_SizeNode  node ) {
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 ftc_size_node_flush( FTC_SizeNode   node,
 					 FTC_SizeQuery  query ) {
 	FT2_1_3_Size   size = node->size;
-	FT2_1_3_Error  error;
+	FT_Error  error;
 
 
 	if ( size->face == query->face ) {
@@ -224,15 +224,15 @@ ftc_size_node_flush( FTC_SizeNode   node,
 }
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Bool )
+FT2_1_3_CALLBACK_DEF( FT_Bool )
 ftc_size_node_compare( FTC_SizeNode   node,
 					   FTC_SizeQuery  query ) {
 	FT2_1_3_Size  size = node->size;
 
 
 	return FT2_1_3_BOOL( size->face                    == query->face   &&
-					(FT2_1_3_UInt)size->metrics.x_ppem == query->width  &&
-					(FT2_1_3_UInt)size->metrics.y_ppem == query->height );
+					(FT_UInt)size->metrics.x_ppem == query->width  &&
+					(FT_UInt)size->metrics.y_ppem == query->height );
 }
 
 
@@ -252,12 +252,12 @@ const FT2_1_3_LruList_ClassRec  ftc_size_list_class = {
 
 /* documentation is in ftcache.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FTC_Manager_Lookup_Size( FTC_Manager  manager,
 						 FTC_Font     font,
-						 FT2_1_3_Face     *aface,
+						 FT_Face     *aface,
 						 FT2_1_3_Size     *asize ) {
-	FT2_1_3_Error  error;
+	FT_Error  error;
 
 
 	/* check for valid `manager' delayed to FTC_Manager_Lookup_Face() */
@@ -320,18 +320,18 @@ ftc_family_table_done( FTC_FamilyTable  table,
 }
 
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 ftc_family_table_alloc( FTC_FamilyTable   table,
 						FT2_1_3_Memory         memory,
 						FTC_FamilyEntry  *aentry ) {
 	FTC_FamilyEntry  entry;
-	FT2_1_3_Error         error = 0;
+	FT_Error         error = 0;
 
 
 	/* re-allocate table size when needed */
 	if ( table->free == FTC_FAMILY_ENTRY_NONE && table->count >= table->size ) {
-		FT2_1_3_UInt  old_size = table->size;
-		FT2_1_3_UInt  new_size, idx;
+		FT_UInt  old_size = table->size;
+		FT_UInt  new_size, idx;
 
 
 		if ( old_size == 0 )
@@ -381,7 +381,7 @@ ftc_family_table_alloc( FTC_FamilyTable   table,
 
 FT2_1_3_EXPORT_DEF( void )
 ftc_family_table_free( FTC_FamilyTable  table,
-					   FT2_1_3_UInt          idx ) {
+					   FT_UInt          idx ) {
 	/* simply add it to the linked list of free entries */
 	if ( idx < table->count ) {
 		FTC_FamilyEntry  entry = table->entries + idx;
@@ -409,15 +409,15 @@ ftc_family_table_free( FTC_FamilyTable  table,
 
 /* documentation is in ftcache.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FTC_Manager_New( FT2_1_3_Library          library,
-				 FT2_1_3_UInt             max_faces,
-				 FT2_1_3_UInt             max_sizes,
-				 FT2_1_3_ULong            max_bytes,
+				 FT_UInt             max_faces,
+				 FT_UInt             max_sizes,
+				 FT_ULong            max_bytes,
 				 FTC_Face_Requester  requester,
-				 FT2_1_3_Pointer          req_data,
+				 FT_Pointer          req_data,
 				 FTC_Manager        *amanager ) {
-	FT2_1_3_Error     error;
+	FT_Error     error;
 	FT2_1_3_Memory    memory;
 	FTC_Manager  manager = 0;
 
@@ -482,7 +482,7 @@ Exit:
 FT2_1_3_EXPORT_DEF( void )
 FTC_Manager_Done( FTC_Manager  manager ) {
 	FT2_1_3_Memory  memory;
-	FT2_1_3_UInt    idx;
+	FT_UInt    idx;
 
 
 	if ( !manager || !manager->library )
@@ -539,7 +539,7 @@ FTC_Manager_Check( FTC_Manager  manager ) {
 
 	/* check node weights */
 	if ( first ) {
-		FT2_1_3_ULong  weight = 0;
+		FT_ULong  weight = 0;
 
 
 		node = first;
@@ -548,7 +548,7 @@ FTC_Manager_Check( FTC_Manager  manager ) {
 			FTC_FamilyEntry  entry = manager->families.entries + node->fam_index;
 			FTC_Cache     cache;
 
-			if ( (FT2_1_3_UInt)node->fam_index >= manager->families.count ||
+			if ( (FT_UInt)node->fam_index >= manager->families.count ||
 					entry->link              != FTC_FAMILY_ENTRY_NONE  )
 				FT2_1_3_ERROR(( "FTC_Manager_Check: invalid node (family index = %ld\n",
 						   node->fam_index ));
@@ -634,17 +634,17 @@ FTC_Manager_Compress( FTC_Manager  manager ) {
 
 /* documentation is in ftcmanag.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FTC_Manager_Register_Cache( FTC_Manager      manager,
 							FTC_Cache_Class  clazz,
 							FTC_Cache       *acache ) {
-	FT2_1_3_Error   error = FT2_1_3_Err_Invalid_Argument;
+	FT_Error   error = FT2_1_3_Err_Invalid_Argument;
 	FTC_Cache  cache = NULL;
 
 
 	if ( manager && clazz && acache ) {
 		FT2_1_3_Memory  memory = manager->library->memory;
-		FT2_1_3_UInt    idx  = 0;
+		FT_UInt    idx  = 0;
 
 
 		/* check for an empty cache slot in the manager's table */
@@ -696,7 +696,7 @@ Exit:
 FT2_1_3_EXPORT_DEF( void )
 FTC_Node_Unref( FTC_Node     node,
 				FTC_Manager  manager ) {
-	if ( node && (FT2_1_3_UInt)node->fam_index < manager->families.count &&
+	if ( node && (FT_UInt)node->fam_index < manager->families.count &&
 			manager->families.entries[node->fam_index].cache ) {
 		node->ref_count--;
 	}

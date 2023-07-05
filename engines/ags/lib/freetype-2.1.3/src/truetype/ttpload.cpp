@@ -56,13 +56,13 @@ namespace FreeType213 {
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_loca( TT_Face    face,
 				   FT2_1_3_Stream  stream ) {
-	FT2_1_3_Error   error;
+	FT_Error   error;
 	FT2_1_3_Memory  memory = stream->memory;
-	FT2_1_3_Short   LongOffsets;
-	FT2_1_3_ULong   table_len;
+	FT_Short   LongOffsets;
+	FT_ULong   table_len;
 
 
 	FT2_1_3_TRACE2(( "Locations " ));
@@ -75,7 +75,7 @@ tt_face_load_loca( TT_Face    face,
 	}
 
 	if ( LongOffsets != 0 ) {
-		face->num_locations = (FT2_1_3_UShort)( table_len >> 2 );
+		face->num_locations = (FT_UShort)( table_len >> 2 );
 
 		FT2_1_3_TRACE2(( "(32bit offsets): %12d ", face->num_locations ));
 
@@ -86,8 +86,8 @@ tt_face_load_loca( TT_Face    face,
 			goto Exit;
 
 		{
-			FT2_1_3_Long*  loc   = face->glyph_locations;
-			FT2_1_3_Long*  limit = loc + face->num_locations;
+			FT_Long*  loc   = face->glyph_locations;
+			FT_Long*  limit = loc + face->num_locations;
 
 
 			for ( ; loc < limit; loc++ )
@@ -96,7 +96,7 @@ tt_face_load_loca( TT_Face    face,
 
 		FT2_1_3_FRAME_EXIT();
 	} else {
-		face->num_locations = (FT2_1_3_UShort)( table_len >> 1 );
+		face->num_locations = (FT_UShort)( table_len >> 1 );
 
 		FT2_1_3_TRACE2(( "(16bit offsets): %12d ", face->num_locations ));
 
@@ -106,12 +106,12 @@ tt_face_load_loca( TT_Face    face,
 		if ( FT2_1_3_FRAME_ENTER( face->num_locations * 2L ) )
 			goto Exit;
 		{
-			FT2_1_3_Long*  loc   = face->glyph_locations;
-			FT2_1_3_Long*  limit = loc + face->num_locations;
+			FT_Long*  loc   = face->glyph_locations;
+			FT_Long*  limit = loc + face->num_locations;
 
 
 			for ( ; loc < limit; loc++ )
-				*loc = (FT2_1_3_Long)( (FT2_1_3_ULong)FT2_1_3_GET_USHORT() * 2 );
+				*loc = (FT_Long)( (FT_ULong)FT2_1_3_GET_USHORT() * 2 );
 		}
 		FT2_1_3_FRAME_EXIT();
 	}
@@ -140,12 +140,12 @@ Exit:
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_cvt( TT_Face    face,
 				  FT2_1_3_Stream  stream ) {
-	FT2_1_3_Error   error;
+	FT_Error   error;
 	FT2_1_3_Memory  memory = stream->memory;
-	FT2_1_3_ULong   table_len;
+	FT_ULong   table_len;
 
 
 	FT2_1_3_TRACE2(( "CVT " ));
@@ -170,8 +170,8 @@ tt_face_load_cvt( TT_Face    face,
 		goto Exit;
 
 	{
-		FT2_1_3_Short*  cur   = face->cvt;
-		FT2_1_3_Short*  limit = cur + face->cvt_size;
+		FT_Short*  cur   = face->cvt;
+		FT_Short*  limit = cur + face->cvt_size;
 
 
 		for ( ; cur <  limit; cur++ )
@@ -203,11 +203,11 @@ Exit:
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_fpgm( TT_Face    face,
 				   FT2_1_3_Stream  stream ) {
-	FT2_1_3_Error   error;
-	FT2_1_3_ULong   table_len;
+	FT_Error   error;
+	FT_ULong   table_len;
 
 
 	FT2_1_3_TRACE2(( "Font program " ));

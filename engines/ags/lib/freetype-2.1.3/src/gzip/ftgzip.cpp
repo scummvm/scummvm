@@ -85,8 +85,8 @@ static voidpf
 ft_gzip_alloc( FT2_1_3_Memory  memory,
                uInt       items,
                uInt       size ) {
-	FT2_1_3_ULong    sz = (FT2_1_3_ULong)size * items;
-	FT2_1_3_Pointer  p;
+	FT_ULong    sz = (FT_ULong)size * items;
+	FT_Pointer  p;
 
 	FT2_1_3_MEM_ALLOC( p, sz );
 
@@ -137,13 +137,13 @@ typedef struct FT2_1_3_GZipFileRec_ {
 	FT2_1_3_Memory    memory;         /* memory allocator            */
 	z_stream     zstream;        /* zlib input stream           */
 
-	FT2_1_3_ULong     start;          /* starting position, after .gz header */
-	FT2_1_3_Byte      input[ FT2_1_3_GZIP_BUFFER_SIZE ];  /* input read buffer */
+	FT_ULong     start;          /* starting position, after .gz header */
+	FT_Byte      input[ FT2_1_3_GZIP_BUFFER_SIZE ];  /* input read buffer */
 
-	FT2_1_3_Byte      buffer[ FT2_1_3_GZIP_BUFFER_SIZE ];  /* output buffer      */
-	FT2_1_3_ULong     pos;                            /* position in output */
-	FT2_1_3_Byte*     cursor;
-	FT2_1_3_Byte*     limit;
+	FT_Byte      buffer[ FT2_1_3_GZIP_BUFFER_SIZE ];  /* output buffer      */
+	FT_ULong     pos;                            /* position in output */
+	FT_Byte*     cursor;
+	FT_Byte*     limit;
 
 } FT2_1_3_GZipFileRec, *FT2_1_3_GZipFile;
 
@@ -158,10 +158,10 @@ typedef struct FT2_1_3_GZipFileRec_ {
 
 
 /* check and skip .gz header - we don't support "transparent" compression */
-static FT2_1_3_Error
+static FT_Error
 ft_gzip_check_header( FT2_1_3_Stream  stream ) {
-	FT2_1_3_Error  error;
-	FT2_1_3_Byte   head[4];
+	FT_Error  error;
+	FT_Byte   head[4];
 
 	if ( FT2_1_3_STREAM_SEEK( 0 )       ||
 	        FT2_1_3_STREAM_READ( head, 4 ) )
@@ -182,7 +182,7 @@ ft_gzip_check_header( FT2_1_3_Stream  stream ) {
 
 	/* skip the extra field */
 	if ( head[3] & FT2_1_3_GZIP_EXTRA_FIELD ) {
-		FT2_1_3_UInt  len;
+		FT_UInt  len;
 
 		if ( FT2_1_3_READ_USHORT_LE( len ) ||
 		        FT2_1_3_STREAM_SKIP( len )    )
@@ -192,7 +192,7 @@ ft_gzip_check_header( FT2_1_3_Stream  stream ) {
 	/* skip original file name */
 	if ( head[3] & FT2_1_3_GZIP_ORIG_NAME )
 		for (;;) {
-			FT2_1_3_UInt  c;
+			FT_UInt  c;
 
 			if ( FT2_1_3_READ_BYTE( c) )
 				goto Exit;
@@ -204,7 +204,7 @@ ft_gzip_check_header( FT2_1_3_Stream  stream ) {
 	/* skip .gz comment */
 	if ( head[3] & FT2_1_3_GZIP_COMMENT )
 		for (;;) {
-			FT2_1_3_UInt  c;
+			FT_UInt  c;
 
 			if ( FT2_1_3_READ_BYTE( c) )
 				goto Exit;
@@ -224,12 +224,12 @@ Exit:
 
 
 
-static FT2_1_3_Error
+static FT_Error
 ft_gzip_file_init( FT2_1_3_GZipFile   zip,
                    FT2_1_3_Stream     stream,
                    FT2_1_3_Stream     source ) {
 	z_stream*  zstream = &zip->zstream;
-	FT2_1_3_Error   error   = 0;
+	FT_Error   error   = 0;
 
 	zip->stream = stream;
 	zip->source = source;
@@ -289,10 +289,10 @@ ft_gzip_file_done( FT2_1_3_GZipFile  zip ) {
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 ft_gzip_file_reset( FT2_1_3_GZipFile  zip ) {
 	FT2_1_3_Stream  stream = zip->source;
-	FT2_1_3_Error   error;
+	FT_Error   error;
 
 	if ( !FT2_1_3_STREAM_SEEK( zip->start ) ) {
 		z_stream*  zstream = &zip->zstream;
@@ -312,11 +312,11 @@ ft_gzip_file_reset( FT2_1_3_GZipFile  zip ) {
 }
 
 
-static FT2_1_3_Error
+static FT_Error
 ft_gzip_file_fill_input( FT2_1_3_GZipFile  zip ) {
 	z_stream*  zstream = &zip->zstream;
 	FT2_1_3_Stream  stream  = zip->source;
-	FT2_1_3_ULong   size;
+	FT_ULong   size;
 
 	if ( stream->read ) {
 		size = stream->read( stream, stream->pos, zip->input, FT2_1_3_GZIP_BUFFER_SIZE );
@@ -342,10 +342,10 @@ ft_gzip_file_fill_input( FT2_1_3_GZipFile  zip ) {
 
 
 
-static FT2_1_3_Error
+static FT_Error
 ft_gzip_file_fill_output( FT2_1_3_GZipFile  zip ) {
 	z_stream*  zstream = &zip->zstream;
-	FT2_1_3_Error   error   = 0;
+	FT_Error   error   = 0;
 
 	zip->cursor        = zip->buffer;
 	zstream->next_out  = zip->cursor;
@@ -375,14 +375,14 @@ ft_gzip_file_fill_output( FT2_1_3_GZipFile  zip ) {
 
 
 /* fill output buffer, 'count' must be <= FT2_1_3_GZIP_BUFFER_SIZE */
-static FT2_1_3_Error
+static FT_Error
 ft_gzip_file_skip_output( FT2_1_3_GZipFile  zip,
-                          FT2_1_3_ULong     count ) {
-	FT2_1_3_Error   error   = 0;
-	FT2_1_3_ULong   delta;
+                          FT_ULong     count ) {
+	FT_Error   error   = 0;
+	FT_ULong   delta;
 
 	for (;;) {
-		delta = (FT2_1_3_ULong)( zip->limit - zip->cursor );
+		delta = (FT_ULong)( zip->limit - zip->cursor );
 		if ( delta >= count )
 			delta = count;
 
@@ -402,13 +402,13 @@ ft_gzip_file_skip_output( FT2_1_3_GZipFile  zip,
 }
 
 
-static FT2_1_3_ULong
+static FT_ULong
 ft_gzip_file_io( FT2_1_3_GZipFile   zip,
-                 FT2_1_3_ULong      pos,
-                 FT2_1_3_Byte*      buffer,
-                 FT2_1_3_ULong      count ) {
-	FT2_1_3_ULong   result = 0;
-	FT2_1_3_Error   error;
+                 FT_ULong      pos,
+                 FT_Byte*      buffer,
+                 FT_ULong      count ) {
+	FT_ULong   result = 0;
+	FT_Error   error;
 
 	/* reset inflate stream if we're seeking backwards        */
 	/* yes, that's not too efficient, but it saves memory :-) */
@@ -419,7 +419,7 @@ ft_gzip_file_io( FT2_1_3_GZipFile   zip,
 
 	/* skip unwanted bytes */
 	if ( pos > zip->pos ) {
-		error = ft_gzip_file_skip_output( zip, (FT2_1_3_ULong)( pos - zip->pos ) );
+		error = ft_gzip_file_skip_output( zip, (FT_ULong)( pos - zip->pos ) );
 		if (error)
 			goto Exit;
 	}
@@ -429,9 +429,9 @@ ft_gzip_file_io( FT2_1_3_GZipFile   zip,
 
 	/* now read the data */
 	for (;;) {
-		FT2_1_3_ULong   delta;
+		FT_ULong   delta;
 
-		delta = (FT2_1_3_ULong)( zip->limit - zip->cursor );
+		delta = (FT_ULong)( zip->limit - zip->cursor );
 		if ( delta >= count )
 			delta = count;
 
@@ -479,21 +479,21 @@ ft_gzip_stream_close( FT2_1_3_Stream  stream ) {
 }
 
 
-static FT2_1_3_ULong
+static FT_ULong
 ft_gzip_stream_io( FT2_1_3_Stream   stream,
-                   FT2_1_3_ULong    pos,
-                   FT2_1_3_Byte*    buffer,
-                   FT2_1_3_ULong    count ) {
+                   FT_ULong    pos,
+                   FT_Byte*    buffer,
+                   FT_ULong    count ) {
 	FT2_1_3_GZipFile  zip = (FT2_1_3_GZipFile) stream->descriptor.pointer;
 
 	return ft_gzip_file_io( zip, pos, buffer, count );
 }
 
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_Stream_OpenGzip( FT2_1_3_Stream    stream,
                     FT2_1_3_Stream    source ) {
-	FT2_1_3_Error     error;
+	FT_Error     error;
 	FT2_1_3_Memory    memory = source->memory;
 	FT2_1_3_GZipFile  zip;
 
@@ -525,7 +525,7 @@ Exit:
 
 #else  /* !FT2_1_3_CONFIG_OPTION_USE_ZLIB */
 
-FT2_1_3_EXPORT_DEF( AGS3::FreeType213::FT2_1_3_Error )
+FT2_1_3_EXPORT_DEF( AGS3::FreeType213::FT_Error )
 FT2_1_3_Stream_OpenGzip( AGS3::FreeType213::FT2_1_3_Stream    stream,
                     AGS3::FreeType213::FT2_1_3_Stream    source ) {
 	FT2_1_3_UNUSED( stream );

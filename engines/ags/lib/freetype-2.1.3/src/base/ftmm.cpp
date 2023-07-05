@@ -35,10 +35,10 @@ namespace FreeType213 {
 
 /* documentation is in ftmm.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
-FT2_1_3_Get_Multi_Master( FT2_1_3_Face           face,
+FT2_1_3_EXPORT_DEF( FT_Error )
+FT2_1_3_Get_Multi_Master( FT_Face           face,
 					 FT2_1_3_Multi_Master  *amaster ) {
-	FT2_1_3_Error  error;
+	FT_Error  error;
 
 
 	if ( !face )
@@ -63,11 +63,11 @@ FT2_1_3_Get_Multi_Master( FT2_1_3_Face           face,
 
 /* documentation is in ftmm.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
-FT2_1_3_Set_MM_Design_Coordinates( FT2_1_3_Face   face,
-							  FT2_1_3_UInt   num_coords,
-							  FT2_1_3_Long*  coords ) {
-	FT2_1_3_Error  error;
+FT2_1_3_EXPORT_DEF( FT_Error )
+FT2_1_3_Set_MM_Design_Coordinates( FT_Face   face,
+							  FT_UInt   num_coords,
+							  FT_Long*  coords ) {
+	FT_Error  error;
 
 
 	if ( !face )
@@ -92,11 +92,11 @@ FT2_1_3_Set_MM_Design_Coordinates( FT2_1_3_Face   face,
 
 /* documentation is in ftmm.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
-FT2_1_3_Set_MM_Blend_Coordinates( FT2_1_3_Face    face,
-							 FT2_1_3_UInt    num_coords,
-							 FT2_1_3_Fixed*  coords ) {
-	FT2_1_3_Error  error;
+FT2_1_3_EXPORT_DEF( FT_Error )
+FT2_1_3_Set_MM_Blend_Coordinates( FT_Face    face,
+							 FT_UInt    num_coords,
+							 FT_Fixed*  coords ) {
+	FT_Error  error;
 
 
 	if ( !face )

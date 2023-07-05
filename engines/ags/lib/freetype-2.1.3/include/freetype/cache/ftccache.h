@@ -66,9 +66,9 @@ typedef struct  FTC_NodeRec_ {
 	FTC_Node   mru_next;     /* circular mru list pointer           */
 	FTC_Node   mru_prev;     /* circular mru list pointer           */
 	FTC_Node   link;         /* used for hashing                    */
-	FT2_1_3_UInt32  hash;         /* used for hashing too                */
-	FT2_1_3_UShort  fam_index;    /* index of family the node belongs to */
-	FT2_1_3_Short   ref_count;    /* reference count for this node       */
+	FT_UInt32  hash;         /* used for hashing too                */
+	FT_UShort  fam_index;    /* index of family the node belongs to */
+	FT_Short   ref_count;    /* reference count for this node       */
 
 } FTC_NodeRec;
 
@@ -129,8 +129,8 @@ typedef struct  FTC_QueryRec_ {
 typedef struct  FTC_FamilyRec_ {
 	FT2_1_3_LruNodeRec  lru;
 	FTC_Cache      cache;
-	FT2_1_3_UInt        num_nodes;
-	FT2_1_3_UInt        fam_index;
+	FT_UInt        num_nodes;
+	FT_UInt        fam_index;
 
 } FTC_FamilyRec;
 
@@ -147,7 +147,7 @@ typedef struct  FTC_FamilyRec_ {
 /*                                                                       */
 
 /* must be called by any FTC_Node_InitFunc routine */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 ftc_family_init( FTC_Family  family,
 				 FTC_Query   query,
 				 FTC_Cache   cache );
@@ -173,12 +173,12 @@ typedef struct  FTC_CacheRec_ {
 	FT2_1_3_Memory            memory;
 	FTC_Cache_Class      clazz;
 
-	FT2_1_3_UInt              cache_index;  /* in manager's table         */
-	FT2_1_3_Pointer           cache_data;   /* used by cache node methods */
+	FT_UInt              cache_index;  /* in manager's table         */
+	FT_Pointer           cache_data;   /* used by cache node methods */
 
 	FT2_1_3_UFast             p;
 	FT2_1_3_UFast             mask;
-	FT2_1_3_Long              slack;
+	FT_Long              slack;
 	FTC_Node*            buckets;
 
 	FT2_1_3_LruList_ClassRec  family_class;
@@ -192,7 +192,7 @@ typedef struct  FTC_CacheRec_ {
 
 
 /* initialize a given cache */
-typedef FT2_1_3_Error
+typedef FT_Error
 (*FTC_Cache_InitFunc)( FTC_Cache  cache );
 
 /* clear a cache */
@@ -204,12 +204,12 @@ typedef void
 (*FTC_Cache_DoneFunc)( FTC_Cache  cache );
 
 
-typedef FT2_1_3_Error
+typedef FT_Error
 (*FTC_Family_InitFunc)( FTC_Family  family,
 						FTC_Query   query,
 						FTC_Cache   cache );
 
-typedef FT2_1_3_Int
+typedef FT_Int
 (*FTC_Family_CompareFunc)( FTC_Family  family,
 						   FTC_Query   query );
 
@@ -218,20 +218,20 @@ typedef void
 						FTC_Cache   cache );
 
 /* initialize a new cache node */
-typedef FT2_1_3_Error
+typedef FT_Error
 (*FTC_Node_InitFunc)( FTC_Node    node,
-					  FT2_1_3_Pointer  type,
+					  FT_Pointer  type,
 					  FTC_Cache   cache );
 
 /* compute the weight of a given cache node */
-typedef FT2_1_3_ULong
+typedef FT_ULong
 (*FTC_Node_WeightFunc)( FTC_Node   node,
 						FTC_Cache  cache );
 
 /* compare a node to a given key pair */
-typedef FT2_1_3_Bool
+typedef FT_Bool
 (*FTC_Node_CompareFunc)( FTC_Node    node,
-						 FT2_1_3_Pointer  key,
+						 FT_Pointer  key,
 						 FTC_Cache   cache );
 
 /* finalize a given cache node */
@@ -241,17 +241,17 @@ typedef void
 
 
 typedef struct  FTC_Cache_ClassRec_ {
-	FT2_1_3_UInt                 cache_size;
+	FT_UInt                 cache_size;
 	FTC_Cache_InitFunc      cache_init;
 	FTC_Cache_ClearFunc     cache_clear;
 	FTC_Cache_DoneFunc      cache_done;
 
-	FT2_1_3_UInt                 family_size;
+	FT_UInt                 family_size;
 	FTC_Family_InitFunc     family_init;
 	FTC_Family_CompareFunc  family_compare;
 	FTC_Family_DoneFunc     family_done;
 
-	FT2_1_3_UInt                 node_size;
+	FT_UInt                 node_size;
 	FTC_Node_InitFunc       node_init;
 	FTC_Node_WeightFunc     node_weight;
 	FTC_Node_CompareFunc    node_compare;
@@ -281,11 +281,11 @@ FT2_1_3_EXPORT( void )
 ftc_cache_clear( FTC_Cache  cache );
 
 /* initalize the hash table within the cache */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 ftc_cache_init( FTC_Cache  cache );
 
 /* can be called when the key's hash value has been computed */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 ftc_cache_lookup( FTC_Cache  cache,
 				  FTC_Query  query,
 				  FTC_Node  *anode );

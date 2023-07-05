@@ -86,18 +86,18 @@ typedef struct FTC_SBitRec_*  FTC_SBit;
 /*    buffer   :: A pointer to the bitmap pixels.                        */
 /*                                                                       */
 typedef struct  FTC_SBitRec_ {
-	FT2_1_3_Byte   width;
-	FT2_1_3_Byte   height;
-	FT2_1_3_Char   left;
-	FT2_1_3_Char   top;
+	FT_Byte   width;
+	FT_Byte   height;
+	FT_Char   left;
+	FT_Char   top;
 
-	FT2_1_3_Byte   format;
-	FT2_1_3_Byte   max_grays;
-	FT2_1_3_Short  pitch;
-	FT2_1_3_Char   xadvance;
-	FT2_1_3_Char   yadvance;
+	FT_Byte   format;
+	FT_Byte   max_grays;
+	FT_Short  pitch;
+	FT_Char   xadvance;
+	FT_Char   yadvance;
 
-	FT2_1_3_Byte*  buffer;
+	FT_Byte*  buffer;
 
 } FTC_SBitRec;
 
@@ -144,7 +144,7 @@ typedef FTC_SBitCache  FTC_SBit_Cache;
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FTC_SBitCache_New( FTC_Manager     manager,
 				   FTC_SBitCache  *acache );
 
@@ -194,10 +194,10 @@ FTC_SBitCache_New( FTC_Manager     manager,
 /*    call to one of the caching sub-system APIs.  Don't assume that it  */
 /*    is persistent!                                                     */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FTC_SBitCache_Lookup( FTC_SBitCache    cache,
 					  FTC_ImageType    type,
-					  FT2_1_3_UInt          gindex,
+					  FT_UInt          gindex,
 					  FTC_SBit        *sbit,
 					  FTC_Node        *anode );
 
@@ -224,7 +224,7 @@ FTC_SBitCache_Lookup( FTC_SBitCache    cache,
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FTC_SBit_Cache_New( FTC_Manager      manager,
 					FTC_SBit_Cache  *acache );
 
@@ -261,10 +261,10 @@ FTC_SBit_Cache_New( FTC_Manager      manager,
 /*    The descriptor's `buffer' field is set to 0 to indicate a missing  */
 /*    glyph bitmap.                                                      */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Error )
+FT2_1_3_EXPORT( FT_Error )
 FTC_SBit_Cache_Lookup( FTC_SBit_Cache   cache,
 					   FTC_Image_Desc*  desc,
-					   FT2_1_3_UInt          gindex,
+					   FT_UInt          gindex,
 					   FTC_SBit        *sbit );
 
 

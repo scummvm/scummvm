@@ -23,11 +23,11 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Error )
-FT2_1_3_Get_BDF_Charset_ID( FT2_1_3_Face       face,
+FT2_1_3_EXPORT_DEF( FT_Error )
+FT2_1_3_Get_BDF_Charset_ID( FT_Face       face,
 					   const char*  *acharset_encoding,
 					   const char*  *acharset_registry ) {
-	FT2_1_3_Error     error;
+	FT_Error     error;
 	const char*  encoding = NULL;
 	const char*  registry = NULL;
 

@@ -35,7 +35,7 @@ typedef struct  FT2_1_3_FontFormatRec_ {
 
 
 FT2_1_3_EXPORT_DEF( const char* )
-FT2_1_3_Get_X11_Font_Format( FT2_1_3_Face  face ) {
+FT2_1_3_Get_X11_Font_Format( FT_Face  face ) {
 	static const FT2_1_3_FontFormatRec  font_formats[] = {
 		{ "type1",    "Type 1" },
 		{ "truetype", "TrueType" },
@@ -56,8 +56,8 @@ FT2_1_3_Get_X11_Font_Format( FT2_1_3_Face  face ) {
 
 
 		if ( driver->clazz && driver->clazz->module_name ) {
-			FT2_1_3_Int  n;
-			FT2_1_3_Int  count = sizeof( font_formats ) / sizeof ( font_formats[0] );
+			FT_Int  n;
+			FT_Int  count = sizeof( font_formats ) / sizeof ( font_formats[0] );
 
 
 			result = driver->clazz->module_name;

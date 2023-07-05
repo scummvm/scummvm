@@ -52,7 +52,7 @@ cid_get_postscript_name( CID_Face  face ) {
 
 static FT2_1_3_Module_Interface
 cid_get_interface( FT2_1_3_Driver         driver,
-				   const FT2_1_3_String*  cid_interface ) {
+				   const FT_String*  cid_interface ) {
 	FT2_1_3_UNUSED( driver );
 	FT2_1_3_UNUSED( cid_interface );
 
@@ -89,8 +89,8 @@ const FT2_1_3_Driver_ClassRec  t1cid_driver_class = {
 	sizeof( CID_SizeRec ),
 	sizeof( CID_GlyphSlotRec ),
 
-	(FT2_1_3_Face_InitFunc)       cid_face_init,
-	(FT2_1_3_Face_DoneFunc)       cid_face_done,
+	(FT_Face_InitFunc)       cid_face_init,
+	(FT_Face_DoneFunc)       cid_face_done,
 
 	(FT2_1_3_Size_InitFunc)       cid_size_init,
 	(FT2_1_3_Size_DoneFunc)       cid_size_done,
@@ -102,10 +102,10 @@ const FT2_1_3_Driver_ClassRec  t1cid_driver_class = {
 
 	(FT2_1_3_Slot_LoadFunc)       cid_slot_load_glyph,
 
-	(FT2_1_3_Face_GetKerningFunc) 0,
-	(FT2_1_3_Face_AttachFunc)     0,
+	(FT_Face_GetKerningFunc) 0,
+	(FT_Face_AttachFunc)     0,
 
-	(FT2_1_3_Face_GetAdvancesFunc)0,
+	(FT_Face_GetAdvancesFunc)0,
 };
 
 } // End of namespace FreeType213

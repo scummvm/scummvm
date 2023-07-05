@@ -38,18 +38,18 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Error )
+FT2_1_3_CALLBACK_DEF( FT_Error )
 cid_load_glyph( T1_Decoder  decoder,
-				FT2_1_3_UInt     glyph_index ) {
+				FT_UInt     glyph_index ) {
 	CID_Face      face = (CID_Face)decoder->builder.face;
 	CID_FaceInfo  cid  = &face->cid;
-	FT2_1_3_Byte*      p;
-	FT2_1_3_UInt       fd_select;
+	FT_Byte*      p;
+	FT_UInt       fd_select;
 	FT2_1_3_Stream     stream = face->root.stream;
-	FT2_1_3_Error      error  = 0;
-	FT2_1_3_Byte*      charstring = 0;
+	FT_Error      error  = 0;
+	FT_Byte*      charstring = 0;
 	FT2_1_3_Memory     memory = face->root.memory;
-	FT2_1_3_UInt       glyph_length = 0;
+	FT_UInt       glyph_length = 0;
 
 
 #ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
@@ -57,7 +57,7 @@ cid_load_glyph( T1_Decoder  decoder,
 	/* For incremental fonts get the character data using */
 	/* the callback function.                             */
 	if ( face->root.internal->incremental_interface ) {
-		FT2_1_3_Data  glyph_data;
+		FT_Data  glyph_data;
 
 
 		error = face->root.internal->incremental_interface->funcs->get_glyph_data(
@@ -67,8 +67,8 @@ cid_load_glyph( T1_Decoder  decoder,
 		if ( error )
 			goto Exit;
 
-		p         = (FT2_1_3_Byte*)glyph_data.pointer;
-		fd_select = (FT2_1_3_UInt)cid_get_offset( &p, (FT2_1_3_Byte)cid->fd_bytes );
+		p         = (FT_Byte*)glyph_data.pointer;
+		fd_select = (FT_UInt)cid_get_offset( &p, (FT_Byte)cid->fd_bytes );
 
 		if ( glyph_data.length != 0 ) {
 			glyph_length = glyph_data.length - cid->fd_bytes;
@@ -93,8 +93,8 @@ cid_load_glyph( T1_Decoder  decoder,
 		/* For ordinary fonts read the CID font dictionary index */
 		/* and charstring offset from the CIDMap.                */
 	{
-		FT2_1_3_UInt   entry_len = cid->fd_bytes + cid->gd_bytes;
-		FT2_1_3_ULong  off1;
+		FT_UInt   entry_len = cid->fd_bytes + cid->gd_bytes;
+		FT_ULong  off1;
 
 
 		if ( FT2_1_3_STREAM_SEEK( cid->data_offset + cid->cidmap_offset +
@@ -102,12 +102,12 @@ cid_load_glyph( T1_Decoder  decoder,
 				FT2_1_3_FRAME_ENTER( 2 * entry_len )                         )
 			goto Exit;
 
-		p            = (FT2_1_3_Byte*)stream->cursor;
-		fd_select    = (FT2_1_3_UInt) cid_get_offset( &p, (FT2_1_3_Byte)cid->fd_bytes );
-		off1         = (FT2_1_3_ULong)cid_get_offset( &p, (FT2_1_3_Byte)cid->gd_bytes );
+		p            = (FT_Byte*)stream->cursor;
+		fd_select    = (FT_UInt) cid_get_offset( &p, (FT_Byte)cid->fd_bytes );
+		off1         = (FT_ULong)cid_get_offset( &p, (FT_Byte)cid->gd_bytes );
 		p           += cid->fd_bytes;
-		glyph_length = (FT2_1_3_UInt) cid_get_offset(
-						   &p, (FT2_1_3_Byte)cid->gd_bytes ) - off1;
+		glyph_length = (FT_UInt) cid_get_offset(
+						   &p, (FT_Byte)cid->gd_bytes ) - off1;
 		FT2_1_3_FRAME_EXIT();
 
 		if ( glyph_length == 0 )
@@ -123,7 +123,7 @@ cid_load_glyph( T1_Decoder  decoder,
 	{
 		CID_FaceDict  dict;
 		CID_Subrs     cid_subrs = face->subrs + fd_select;
-		FT2_1_3_Int        cs_offset;
+		FT_Int        cs_offset;
 
 
 		/* Set up subrs */
@@ -160,7 +160,7 @@ cid_load_glyph( T1_Decoder  decoder,
 	if ( !error                                       &&
 			face->root.internal->incremental_interface   &&
 			face->root.internal->incremental_interface->funcs->get_glyph_metrics ) {
-		FT2_1_3_Bool                    found = FALSE;
+		FT_Bool                    found = FALSE;
 		FT2_1_3_Incremental_MetricsRec  metrics;
 
 
@@ -203,12 +203,12 @@ Exit:
 /*************************************************************************/
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 cid_face_compute_max_advance( CID_Face  face,
-							  FT2_1_3_Int*   max_advance ) {
-	FT2_1_3_Error       error;
+							  FT_Int*   max_advance ) {
+	FT_Error       error;
 	T1_DecoderRec  decoder;
-	FT2_1_3_Int         glyph_index;
+	FT_Int         glyph_index;
 
 	PSAux_Service  psaux = (PSAux_Service)face->psaux;
 
@@ -217,7 +217,7 @@ cid_face_compute_max_advance( CID_Face  face,
 
 	/* Initialize load decoder */
 	error = psaux->t1_decoder_funcs->init( &decoder,
-										   (FT2_1_3_Face)face,
+										   (FT_Face)face,
 										   0, /* size       */
 										   0, /* glyph slot */
 										   0, /* glyph names! XXX */
@@ -264,19 +264,19 @@ cid_face_compute_max_advance( CID_Face  face,
 /*************************************************************************/
 
 
-FT2_1_3_LOCAL_DEF( FT2_1_3_Error )
+FT2_1_3_LOCAL_DEF( FT_Error )
 cid_slot_load_glyph( CID_GlyphSlot  glyph,
 					 CID_Size       size,
-					 FT2_1_3_Int         glyph_index,
-					 FT2_1_3_Int32       load_flags ) {
-	FT2_1_3_Error       error;
+					 FT_Int         glyph_index,
+					 FT_Int32       load_flags ) {
+	FT_Error       error;
 	T1_DecoderRec  decoder;
 	CID_Face       face = (CID_Face)glyph->root.face;
-	FT2_1_3_Bool        hinting;
+	FT_Bool        hinting;
 
 	PSAux_Service  psaux = (PSAux_Service)face->psaux;
-	FT2_1_3_Matrix      font_matrix;
-	FT2_1_3_Vector      font_offset;
+	FT_Matrix      font_matrix;
+	FT_Vector      font_offset;
 
 
 	if ( load_flags & FT2_1_3_LOAD_NO_RECURSE )
@@ -295,7 +295,7 @@ cid_slot_load_glyph( CID_GlyphSlot  glyph,
 
 	{
 		error = psaux->t1_decoder_funcs->init( &decoder,
-											   (FT2_1_3_Face)face,
+											   (FT_Face)face,
 											   (FT2_1_3_Size)size,
 											   (FT2_1_3_GlyphSlot)glyph,
 											   0, /* glyph names -- XXX */
@@ -337,7 +337,7 @@ cid_slot_load_glyph( CID_GlyphSlot  glyph,
 			internal->glyph_delta          = font_offset;
 			internal->glyph_transformed    = 1;
 		} else {
-			FT2_1_3_BBox            cbox;
+			FT_BBox            cbox;
 			FT2_1_3_Glyph_Metrics*  metrics = &glyph->root.metrics;
 
 
@@ -366,11 +366,11 @@ cid_slot_load_glyph( CID_GlyphSlot  glyph,
 
 			if ( ( load_flags & FT2_1_3_LOAD_NO_SCALE ) == 0 ) {
 				/* scale the outline and the metrics */
-				FT2_1_3_Int       n;
+				FT_Int       n;
 				FT2_1_3_Outline*  cur = decoder.builder.base;
-				FT2_1_3_Vector*   vec = cur->points;
-				FT2_1_3_Fixed     x_scale = glyph->x_scale;
-				FT2_1_3_Fixed     y_scale = glyph->y_scale;
+				FT_Vector*   vec = cur->points;
+				FT_Fixed     x_scale = glyph->x_scale;
+				FT_Fixed     y_scale = glyph->y_scale;
 
 
 				/* First of all, scale the points */

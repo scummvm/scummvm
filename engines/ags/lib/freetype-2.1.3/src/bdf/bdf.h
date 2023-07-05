@@ -261,7 +261,7 @@ typedef struct  bdf_font_t_ {
 /*                                                                       */
 /*************************************************************************/
 
-FT2_1_3_LOCAL( FT2_1_3_Error )
+FT2_1_3_LOCAL( FT_Error )
 bdf_load_font( FT2_1_3_Stream       stream,
 			   FT2_1_3_Memory       memory,
 			   bdf_options_t*  opts,
