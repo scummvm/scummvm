@@ -885,8 +885,8 @@ by_encoding( const void*  a,
 	bdf_glyph_t  *c1, *c2;
 
 
-	c1 = (bdf_glyph_t *)a;
-	c2 = (bdf_glyph_t *)b;
+	c1 = const_cast<bdf_glyph_t *>(static_cast<const bdf_glyph_t *>(a));
+	c2 = const_cast<bdf_glyph_t *>(static_cast<const bdf_glyph_t *>(b));
 
 	if ( c1->encoding < c2->encoding )
 		return -1;
