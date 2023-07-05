@@ -269,7 +269,7 @@
 /*                                                                       */
 /* @description:                                                         */
 /*    A macro used in #include statements to name the file containing    */
-/*    the API used to manage multiple @FT2_1_3_Size objects per face.         */
+/*    the API used to manage multiple @FT_Size objects per face.         */
 /*                                                                       */
 #define FT2_1_3_SIZES_H  "engines/ags/lib/freetype-2.1.3/include/freetype/ftsizes.h"
 

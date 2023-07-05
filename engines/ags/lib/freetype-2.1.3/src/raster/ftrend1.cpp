@@ -30,7 +30,7 @@ namespace FreeType213 {
 /* initialize renderer -- init its raster */
 static FT_Error
 ft_raster1_init( FT2_1_3_Renderer  render ) {
-	FT2_1_3_Library  library = FT2_1_3_MODULE_LIBRARY( render );
+	FT_Library  library = FT2_1_3_MODULE_LIBRARY( render );
 
 
 	render->clazz->raster_class->raster_reset( render->raster,
@@ -56,7 +56,7 @@ ft_raster1_set_mode( FT2_1_3_Renderer  render,
 /* transform a given glyph image */
 static FT_Error
 ft_raster1_transform( FT2_1_3_Renderer   render,
-					  FT2_1_3_GlyphSlot  slot,
+					  FT_GlyphSlot  slot,
 					  FT_Matrix*    matrix,
 					  FT_Vector*    delta ) {
 	FT_Error error = FT2_1_3_Err_Ok;
@@ -81,7 +81,7 @@ Exit:
 /* return the glyph's control box */
 static void
 ft_raster1_get_cbox( FT2_1_3_Renderer   render,
-					 FT2_1_3_GlyphSlot  slot,
+					 FT_GlyphSlot  slot,
 					 FT_BBox*      cbox ) {
 	FT2_1_3_MEM_ZERO( cbox, sizeof ( *cbox ) );
 
@@ -93,7 +93,7 @@ ft_raster1_get_cbox( FT2_1_3_Renderer   render,
 /* convert a slot's glyph image into a bitmap */
 static FT_Error
 ft_raster1_render( FT2_1_3_Renderer     render,
-				   FT2_1_3_GlyphSlot    slot,
+				   FT_GlyphSlot    slot,
 				   FT2_1_3_Render_Mode  mode,
 				   FT_Vector*      origin ) {
 	FT_Error     error;

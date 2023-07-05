@@ -149,7 +149,7 @@ cff_size_init( CFF_Size  size ) {
 
 		error = funcs->create( size->face->memory, &priv, &globals );
 		if ( !error )
-			size->internal = (FT2_1_3_Size_Internal)(void*)globals;
+			size->internal = (FT_Size_Internal)(void*)globals;
 	}
 
 	return error;

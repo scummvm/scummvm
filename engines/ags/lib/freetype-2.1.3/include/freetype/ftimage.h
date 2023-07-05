@@ -689,13 +689,13 @@ typedef struct  FT2_1_3_Outline_Funcs_ {
 /*    FT2_1_3_GLYPH_FORMAT_BITMAP ::                                          */
 /*      The glyph image is a bitmap, and can be described as an          */
 /*      @FT_Bitmap.  You generally need to access the `bitmap' field of  */
-/*      the @FT2_1_3_GlyphSlotRec structure to read it.                       */
+/*      the @FT_GlyphSlotRec structure to read it.                       */
 /*                                                                       */
 /*    FT2_1_3_GLYPH_FORMAT_OUTLINE ::                                         */
 /*      The glyph image is a vertorial outline made of line segments     */
 /*      and Bezier arcs; it can be described as an @FT2_1_3_Outline; you      */
 /*      generally want to access the `outline' field of the              */
-/*      @FT2_1_3_GlyphSlotRec structure to read it.                           */
+/*      @FT_GlyphSlotRec structure to read it.                           */
 /*                                                                       */
 /*    FT2_1_3_GLYPH_FORMAT_PLOTTER ::                                         */
 /*      The glyph image is a vectorial path with no inside/outside       */

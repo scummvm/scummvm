@@ -41,7 +41,7 @@ FT2_1_3_BEGIN_HEADER
 /* create a new glyph object */
 typedef FT_Error
 (*FT2_1_3_Glyph_InitFunc)( FT2_1_3_Glyph      glyph,
-					  FT2_1_3_GlyphSlot  slot );
+					  FT_GlyphSlot  slot );
 
 /* destroys a given glyph object */
 typedef void
@@ -62,7 +62,7 @@ typedef FT_Error
 
 typedef FT_Error
 (*FT2_1_3_Glyph_PrepareFunc)( FT2_1_3_Glyph      glyph,
-						 FT2_1_3_GlyphSlot  slot );
+						 FT_GlyphSlot  slot );
 
 /* deprecated */
 #define FT2_1_3_Glyph_Init_Func       FT2_1_3_Glyph_InitFunc
@@ -87,20 +87,20 @@ struct  FT2_1_3_Glyph_Class_ {
 
 typedef FT_Error
 (*FT2_1_3_Renderer_RenderFunc)( FT2_1_3_Renderer   renderer,
-						   FT2_1_3_GlyphSlot  slot,
+						   FT_GlyphSlot  slot,
 						   FT_UInt       mode,
 						   FT_Vector*    origin );
 
 typedef FT_Error
 (*FT2_1_3_Renderer_TransformFunc)( FT2_1_3_Renderer   renderer,
-							  FT2_1_3_GlyphSlot  slot,
+							  FT_GlyphSlot  slot,
 							  FT_Matrix*    matrix,
 							  FT_Vector*    delta );
 
 
 typedef void
 (*FT2_1_3_Renderer_GetCBoxFunc)( FT2_1_3_Renderer   renderer,
-							FT2_1_3_GlyphSlot  slot,
+							FT_GlyphSlot  slot,
 							FT_BBox*      cbox );
 
 
@@ -180,7 +180,7 @@ typedef struct  FT2_1_3_Renderer_Class_ {
 /*    renderer by its name, use FT2_1_3_Get_Module().                         */
 /*                                                                       */
 FT2_1_3_EXPORT( FT2_1_3_Renderer )
-FT2_1_3_Get_Renderer( FT2_1_3_Library       library,
+FT2_1_3_Get_Renderer( FT_Library       library,
 				 FT_Glyph_Format  format );
 
 
@@ -212,7 +212,7 @@ FT2_1_3_Get_Renderer( FT2_1_3_Library       library,
 /*    This doesn't change the current renderer for other formats.        */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Set_Renderer( FT2_1_3_Library     library,
+FT2_1_3_Set_Renderer( FT_Library     library,
 				 FT2_1_3_Renderer    renderer,
 				 FT_UInt        num_params,
 				 FT2_1_3_Parameter*  parameters );

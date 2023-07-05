@@ -175,8 +175,8 @@ typedef void
 /*                                                                       */
 typedef FT_Error
 (*FT2_1_3_AutoHinter_GlyphLoadFunc)( FT2_1_3_AutoHinter  hinter,
-								FT2_1_3_GlyphSlot   slot,
-								FT2_1_3_Size        size,
+								FT_GlyphSlot   slot,
+								FT_Size        size,
 								FT_UInt        glyph_index,
 								FT_Int32       load_flags );
 

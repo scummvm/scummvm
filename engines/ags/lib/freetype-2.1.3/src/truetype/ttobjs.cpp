@@ -159,7 +159,7 @@ tt_face_init( FT2_1_3_Stream      stream,
 			  FT_Int         num_params,
 			  FT2_1_3_Parameter*  params ) {
 	FT_Error      error;
-	FT2_1_3_Library    library;
+	FT_Library    library;
 	SFNT_Service  sfnt;
 
 
@@ -322,7 +322,7 @@ tt_size_init( TT_Size  size ) {
 
 	/* Set default metrics */
 	{
-		FT2_1_3_Size_Metrics*  metrics  = &size->root.metrics;
+		FT_Size_Metrics*  metrics  = &size->root.metrics;
 		TT_Size_Metrics*  metrics2 = &size->ttmetrics;
 
 
@@ -355,7 +355,7 @@ tt_size_init( TT_Size  size ) {
 
 	/* set `face->interpreter' according to the debug hook present */
 	{
-		FT2_1_3_Library  library = face->root.driver->root.library;
+		FT_Library  library = face->root.driver->root.library;
 
 
 		face->interpreter = (TT_Interpreter)
@@ -386,7 +386,7 @@ tt_size_init( TT_Size  size ) {
 	exec->threshold = 0;
 
 	{
-		FT2_1_3_Size_Metrics*  metrics    = &exec->metrics;
+		FT_Size_Metrics*  metrics    = &exec->metrics;
 		TT_Size_Metrics*  tt_metrics = &exec->tt_metrics;
 
 
@@ -522,7 +522,7 @@ Reset_Outline_Size( TT_Size  size ) {
 	TT_Face           face;
 	FT_Error          error = FT2_1_3_Err_Ok;
 
-	FT2_1_3_Size_Metrics*  metrics;
+	FT_Size_Metrics*  metrics;
 
 
 	if ( size->ttmetrics.valid )
@@ -667,8 +667,8 @@ Reset_SBit_Size( TT_Size  size ) {
 	FT_Error          error = FT2_1_3_Err_Ok;
 
 	FT_ULong          strike_index;
-	FT2_1_3_Size_Metrics*  metrics;
-	FT2_1_3_Size_Metrics*  sbit_metrics;
+	FT_Size_Metrics*  metrics;
+	FT_Size_Metrics*  sbit_metrics;
 	SFNT_Service      sfnt;
 
 

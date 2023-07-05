@@ -212,9 +212,9 @@ t1operator_seac( T1_Decoder  decoder,
 	/* if we are trying to load a composite glyph, do not load the */
 	/* accent character and return the array of subglyphs.         */
 	if ( decoder->builder.no_recurse ) {
-		FT2_1_3_GlyphSlot    glyph  = (FT2_1_3_GlyphSlot)decoder->builder.glyph;
+		FT_GlyphSlot    glyph  = (FT_GlyphSlot)decoder->builder.glyph;
 		FT2_1_3_GlyphLoader  loader = glyph->internal->loader;
-		FT2_1_3_SubGlyph     subg;
+		FT_SubGlyph     subg;
 
 
 		/* reallocate subglyph array if necessary */
@@ -1068,8 +1068,8 @@ t1_decoder_parse_glyph( T1_Decoder  decoder,
 FT2_1_3_LOCAL_DEF( FT_Error )
 t1_decoder_init( T1_Decoder           decoder,
 				 FT_Face              face,
-				 FT2_1_3_Size              size,
-				 FT2_1_3_GlyphSlot         slot,
+				 FT_Size              size,
+				 FT_GlyphSlot         slot,
 				 FT_Byte**            glyph_names,
 				 PS_Blend             blend,
 				 FT_Bool              hinting,

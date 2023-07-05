@@ -123,7 +123,7 @@ typedef struct  FNT_FontRec_ {
 
 
 typedef struct  FNT_SizeRec_ {
-	FT2_1_3_SizeRec  root;
+	FT_SizeRec  root;
 	FNT_Font    font;
 
 } FNT_SizeRec, *FNT_Size;

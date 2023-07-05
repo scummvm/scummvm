@@ -262,13 +262,13 @@ Exit:
 }
 
 
-static FT2_1_3_Encoding
+static FT_Encoding
 sfnt_find_encoding( int  platform_id,
 					int  encoding_id ) {
 	typedef struct  TEncoding_ {
 		int          platform_id;
 		int          encoding_id;
-		FT2_1_3_Encoding  encoding;
+		FT_Encoding  encoding;
 
 	} TEncoding;
 
@@ -315,7 +315,7 @@ sfnt_init_face( FT2_1_3_Stream      stream,
 				FT_Int         num_params,
 				FT2_1_3_Parameter*  params ) {
 	FT_Error         error;
-	FT2_1_3_Library       library = face->root.driver->root.library;
+	FT_Library       library = face->root.driver->root.library;
 	SFNT_Service     sfnt;
 	SFNT_HeaderRec   sfnt_header;
 

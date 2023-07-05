@@ -88,7 +88,7 @@ FT2_1_3_BEGIN_HEADER
 /*    }                                                                  */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_New_Face_From_FOND( FT2_1_3_Library  library,
+FT2_1_3_New_Face_From_FOND( FT_Library  library,
 					   Handle      fond,
 					   FT_Long     face_index,
 					   FT_Face    *aface );

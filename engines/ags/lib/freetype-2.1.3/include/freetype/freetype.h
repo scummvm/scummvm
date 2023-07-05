@@ -73,12 +73,12 @@ FT2_1_3_BEGIN_HEADER
 /*    This section describes the public high-level API of FreeType 2.    */
 /*                                                                       */
 /* <Order>                                                               */
-/*    FT2_1_3_Library                                                         */
+/*    FT_Library                                                         */
 /*    FT_Face                                                            */
-/*    FT2_1_3_Size                                                            */
-/*    FT2_1_3_GlyphSlot                                                       */
+/*    FT_Size                                                            */
+/*    FT_GlyphSlot                                                       */
 /*    FT_CharMap                                                         */
-/*    FT2_1_3_Encoding                                                        */
+/*    FT_Encoding                                                        */
 /*                                                                       */
 /*    FT_FaceRec                                                         */
 /*                                                                       */
@@ -97,18 +97,18 @@ FT2_1_3_BEGIN_HEADER
 /*    FT2_1_3_STYLE_FLAG_BOLD                                                 */
 /*    FT2_1_3_STYLE_FLAG_ITALIC                                               */
 /*                                                                       */
-/*    FT2_1_3_SizeRec                                                         */
-/*    FT2_1_3_Size_Metrics                                                    */
+/*    FT_SizeRec                                                         */
+/*    FT_Size_Metrics                                                    */
 /*                                                                       */
-/*    FT2_1_3_GlyphSlotRec                                                    */
-/*    FT2_1_3_Glyph_Metrics                                                   */
-/*    FT2_1_3_SubGlyph                                                        */
+/*    FT_GlyphSlotRec                                                    */
+/*    FT_Glyph_Metrics                                                   */
+/*    FT_SubGlyph                                                        */
 /*                                                                       */
 /*    FT_Bitmap_Size                                                     */
 /*                                                                       */
 /*    FT2_1_3_Init_FreeType                                                   */
 /*    FT2_1_3_Done_FreeType                                                   */
-/*    FT2_1_3_Library_Version                                                 */
+/*    FT_Library_Version                                                 */
 /*                                                                       */
 /*    FT2_1_3_New_Face                                                        */
 /*    FT2_1_3_Done_Face                                                       */
@@ -161,7 +161,7 @@ FT2_1_3_BEGIN_HEADER
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_Glyph_Metrics                                                   */
+/*    FT_Glyph_Metrics                                                   */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A structure used to model the metrics of a single glyph.  Note     */
@@ -185,7 +185,7 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 /*    vertAdvance  :: Vertical advance height.                           */
 /*                                                                       */
-typedef struct  FT2_1_3_Glyph_Metrics_ {
+typedef struct  FT_Glyph_Metrics_ {
 	FT_Pos  width;         /* glyph width  */
 	FT_Pos  height;        /* glyph height */
 
@@ -197,7 +197,7 @@ typedef struct  FT2_1_3_Glyph_Metrics_ {
 	FT_Pos  vertBearingY;  /* top side bearing in vertical layouts  */
 	FT_Pos  vertAdvance;   /* advance height for vertical layout    */
 
-} FT2_1_3_Glyph_Metrics;
+} FT_Glyph_Metrics;
 
 
 /*************************************************************************/
@@ -234,7 +234,7 @@ typedef struct  FT_Bitmap_Size_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT2_1_3_Library                                                         */
+/*    FT_Library                                                         */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A handle to a FreeType library instance.  Each `library' is        */
@@ -248,7 +248,7 @@ typedef struct  FT_Bitmap_Size_ {
 /*    Library objects are normally created by @FT2_1_3_Init_FreeType, and     */
 /*    destroyed with @FT2_1_3_Done_FreeType.                                  */
 /*                                                                       */
-typedef struct FT2_1_3_LibraryRec_  *FT2_1_3_Library;
+typedef struct FT_LibraryRec_  *FT_Library;
 
 
 /*************************************************************************/
@@ -300,8 +300,8 @@ typedef struct FT2_1_3_RendererRec_*  FT2_1_3_Renderer;
 /*    a given typeface, in a given style.                                */
 /*                                                                       */
 /* <Note>                                                                */
-/*    Each face object also owns a single @FT2_1_3_GlyphSlot object, as well  */
-/*    as one or more @FT2_1_3_Size objects.                                   */
+/*    Each face object also owns a single @FT_GlyphSlot object, as well  */
+/*    as one or more @FT_Size objects.                                   */
 /*                                                                       */
 /*    Use @FT2_1_3_New_Face or @FT2_1_3_Open_Face to create a new face object from */
 /*    a given filepathname or a custom input stream.                     */
@@ -318,7 +318,7 @@ typedef struct FT_FaceRec_*  FT_Face;
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT2_1_3_Size                                                            */
+/*    FT_Size                                                            */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A handle to a given size object.  Such an object models the data   */
@@ -334,16 +334,16 @@ typedef struct FT_FaceRec_*  FT_Face;
 /*    active size of any given face.                                     */
 /*                                                                       */
 /* <Also>                                                                */
-/*    The @FT2_1_3_SizeRec structure details the publicly accessible fields   */
+/*    The @FT_SizeRec structure details the publicly accessible fields   */
 /*    of a given face object.                                            */
 /*                                                                       */
-typedef struct FT2_1_3_SizeRec_*  FT2_1_3_Size;
+typedef struct FT_SizeRec_*  FT_Size;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT2_1_3_GlyphSlot                                                       */
+/*    FT_GlyphSlot                                                       */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A handle to a given `glyph slot'.  A slot is a container where it  */
@@ -356,9 +356,9 @@ typedef struct FT2_1_3_SizeRec_*  FT2_1_3_Size;
 /*    other control information.                                         */
 /*                                                                       */
 /* <Also>                                                                */
-/*    @FT2_1_3_GlyphSlotRec details the publicly accessible glyph fields.     */
+/*    @FT_GlyphSlotRec details the publicly accessible glyph fields.     */
 /*                                                                       */
-typedef struct FT2_1_3_GlyphSlotRec_*  FT2_1_3_GlyphSlot;
+typedef struct FT_GlyphSlotRec_*  FT_GlyphSlot;
 
 
 /*************************************************************************/
@@ -396,7 +396,7 @@ typedef struct FT_CharMapRec_*  FT_CharMap;
 /*                                                                       */
 /* <Description>                                                         */
 /*    This macro converts four letter tags into an unsigned long.  It is */
-/*    used to define "encoding" identifiers (see @FT2_1_3_Encoding).          */
+/*    used to define "encoding" identifiers (see @FT_Encoding).          */
 /*                                                                       */
 /* <Note>                                                                */
 /*    Since many 16bit compilers don't like 32bit enumerations, you      */
@@ -421,7 +421,7 @@ typedef struct FT_CharMapRec_*  FT_CharMap;
 /*************************************************************************/
 /*                                                                       */
 /* <Enum>                                                                */
-/*    FT2_1_3_Encoding                                                        */
+/*    FT_Encoding                                                        */
 /*                                                                       */
 /* <Description>                                                         */
 /*    An enumeration used to specify encodings supported by charmaps.    */
@@ -511,7 +511,7 @@ typedef struct FT_CharMapRec_*  FT_CharMap;
 /*   the font file, for the cases when they are needed, with the Adobe   */
 /*   values as well.                                                     */
 /*                                                                       */
-typedef enum  FT2_1_3_Encoding_ {
+typedef enum  FT_Encoding_ {
 	FT2_1_3_ENC_TAG( FT2_1_3_ENCODING_NONE, 0, 0, 0, 0 ),
 
 	FT2_1_3_ENC_TAG( FT2_1_3_ENCODING_MS_SYMBOL,  's', 'y', 'm', 'b' ),
@@ -532,7 +532,7 @@ typedef enum  FT2_1_3_Encoding_ {
 
 	FT2_1_3_ENC_TAG( FT2_1_3_ENCODING_APPLE_ROMAN, 'a', 'r', 'm', 'n' )
 
-} FT2_1_3_Encoding;
+} FT_Encoding;
 
 
 /*************************************************************************/
@@ -541,7 +541,7 @@ typedef enum  FT2_1_3_Encoding_ {
 /*    ft_encoding_xxx                                                    */
 /*                                                                       */
 /* <Description>                                                         */
-/*    These constants are deprecated; use the corresponding @FT2_1_3_Encoding */
+/*    These constants are deprecated; use the corresponding @FT_Encoding */
 /*    values instead.                                                    */
 /*                                                                       */
 /* <Values>                                                              */
@@ -590,7 +590,7 @@ typedef enum  FT2_1_3_Encoding_ {
 /* <Fields>                                                              */
 /*    face        :: A handle to the parent face object.                 */
 /*                                                                       */
-/*    encoding    :: An @FT2_1_3_Encoding tag identifying the charmap.  Use   */
+/*    encoding    :: An @FT_Encoding tag identifying the charmap.  Use   */
 /*                   this with @FT2_1_3_Select_Charmap.                       */
 /*                                                                       */
 /*    platform_id :: An ID number describing the platform for the        */
@@ -604,7 +604,7 @@ typedef enum  FT2_1_3_Encoding_ {
 /*                                                                       */
 typedef struct  FT_CharMapRec_ {
 	FT_Face      face;
-	FT2_1_3_Encoding  encoding;
+	FT_Encoding  encoding;
 	FT_UShort    platform_id;
 	FT_UShort    encoding_id;
 
@@ -823,8 +823,8 @@ typedef struct  FT_FaceRec_ {
 	FT_Short          underline_position;
 	FT_Short          underline_thickness;
 
-	FT2_1_3_GlyphSlot      glyph;
-	FT2_1_3_Size           size;
+	FT_GlyphSlot      glyph;
+	FT_Size           size;
 	FT_CharMap        charmap;
 
 	/*@private begin */
@@ -1091,13 +1091,13 @@ typedef struct  FT_FaceRec_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT2_1_3_Size_Internal                                                   */
+/*    FT_Size_Internal                                                   */
 /*                                                                       */
 /* <Description>                                                         */
-/*    An opaque handle to an FT2_1_3_Size_InternalRec structure, used to      */
-/*    model private data of a given FT2_1_3_Size object.                      */
+/*    An opaque handle to an FT_Size_InternalRec structure, used to      */
+/*    model private data of a given FT_Size object.                      */
 /*                                                                       */
-typedef struct FT2_1_3_Size_InternalRec_*  FT2_1_3_Size_Internal;
+typedef struct FT_Size_InternalRec_*  FT_Size_Internal;
 
 
 /*************************************************************************/
@@ -1105,7 +1105,7 @@ typedef struct FT2_1_3_Size_InternalRec_*  FT2_1_3_Size_Internal;
 /*                    FreeType base size metrics                         */
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_Size_Metrics                                                    */
+/*    FT_Size_Metrics                                                    */
 /*                                                                       */
 /* <Description>                                                         */
 /*    The size metrics structure returned scaled important distances for */
@@ -1154,7 +1154,7 @@ typedef struct FT2_1_3_Size_InternalRec_*  FT2_1_3_Size_Internal;
 /*    performance hit, it is up to client applications to perform such   */
 /*    computations.                                                      */
 /*                                                                       */
-typedef struct  FT2_1_3_Size_Metrics_ {
+typedef struct  FT_Size_Metrics_ {
 	FT_UShort  x_ppem;      /* horizontal pixels per EM               */
 	FT_UShort  y_ppem;      /* vertical pixels per EM                 */
 
@@ -1166,13 +1166,13 @@ typedef struct  FT2_1_3_Size_Metrics_ {
 	FT_Pos     height;      /* text height in 26.6 frac. pixels       */
 	FT_Pos     max_advance; /* max horizontal advance, in 26.6 pixels */
 
-} FT2_1_3_Size_Metrics;
+} FT_Size_Metrics;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_SizeRec                                                         */
+/*    FT_SizeRec                                                         */
 /*                                                                       */
 /* <Description>                                                         */
 /*    FreeType root size class structure.  A size object models the      */
@@ -1188,19 +1188,19 @@ typedef struct  FT2_1_3_Size_Metrics_ {
 /*                                                                       */
 /*    metrics :: Metrics for this size object.  This field is read-only. */
 /*                                                                       */
-typedef struct  FT2_1_3_SizeRec_ {
+typedef struct  FT_SizeRec_ {
 	FT_Face           face;      /* parent face object              */
 	FT_Generic        generic;   /* generic pointer for client uses */
-	FT2_1_3_Size_Metrics   metrics;   /* size metrics                    */
-	FT2_1_3_Size_Internal  internal;
+	FT_Size_Metrics   metrics;   /* size metrics                    */
+	FT_Size_Internal  internal;
 
-} FT2_1_3_SizeRec;
+} FT_SizeRec;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_SubGlyph                                                        */
+/*    FT_SubGlyph                                                        */
 /*                                                                       */
 /* <Description>                                                         */
 /*    The subglyph structure is an internal object used to describe      */
@@ -1210,7 +1210,7 @@ typedef struct  FT2_1_3_SizeRec_ {
 /*    The subglyph implementation is not part of the high-level API,     */
 /*    hence the forward structure declaration.                           */
 /*                                                                       */
-typedef struct FT2_1_3_SubGlyphRec_*  FT2_1_3_SubGlyph;
+typedef struct FT_SubGlyphRec_*  FT_SubGlyph;
 
 
 /*************************************************************************/
@@ -1220,7 +1220,7 @@ typedef struct FT2_1_3_SubGlyphRec_*  FT2_1_3_SubGlyph;
 /*                                                                       */
 /* <Description>                                                         */
 /*    An opaque handle to an FT2_1_3_Slot_InternalRec structure, used to      */
-/*    model private data of a given FT2_1_3_GlyphSlot object.                 */
+/*    model private data of a given FT_GlyphSlot object.                 */
 /*                                                                       */
 typedef struct FT2_1_3_Slot_InternalRec_*  FT2_1_3_Slot_Internal;
 
@@ -1228,7 +1228,7 @@ typedef struct FT2_1_3_Slot_InternalRec_*  FT2_1_3_Slot_Internal;
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_GlyphSlotRec                                                    */
+/*    FT_GlyphSlotRec                                                    */
 /*                                                                       */
 /* <Description>                                                         */
 /*    FreeType root glyph slot class structure.  A glyph slot is a       */
@@ -1351,14 +1351,14 @@ typedef struct FT2_1_3_Slot_InternalRec_*  FT2_1_3_Slot_Internal;
 /*    position (e.g. coordinates [0,0] on the baseline).  Of course,     */
 /*    `slot->format' is also changed to `FT2_1_3_GLYPH_FORMAT_BITMAP' .       */
 /*                                                                       */
-typedef struct  FT2_1_3_GlyphSlotRec_ {
-	FT2_1_3_Library        library;
+typedef struct  FT_GlyphSlotRec_ {
+	FT_Library        library;
 	FT_Face           face;
-	FT2_1_3_GlyphSlot      next;
+	FT_GlyphSlot      next;
 	FT_UInt           flags;
 	FT_Generic        generic;
 
-	FT2_1_3_Glyph_Metrics  metrics;
+	FT_Glyph_Metrics  metrics;
 	FT_Fixed          linearHoriAdvance;
 	FT_Fixed          linearVertAdvance;
 	FT_Vector         advance;
@@ -1372,7 +1372,7 @@ typedef struct  FT2_1_3_GlyphSlotRec_ {
 	FT2_1_3_Outline        outline;
 
 	FT_UInt           num_subglyphs;
-	FT2_1_3_SubGlyph       subglyphs;
+	FT_SubGlyph       subglyphs;
 
 	void*             control_data;
 	long              control_len;
@@ -1381,7 +1381,7 @@ typedef struct  FT2_1_3_GlyphSlotRec_ {
 
 	FT2_1_3_Slot_Internal  internal;
 
-} FT2_1_3_GlyphSlotRec;
+} FT_GlyphSlotRec;
 
 
 /*************************************************************************/
@@ -1409,13 +1409,13 @@ typedef struct  FT2_1_3_GlyphSlotRec_ {
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Init_FreeType( FT2_1_3_Library  *alibrary );
+FT2_1_3_Init_FreeType( FT_Library  *alibrary );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Library_Version                                                 */
+/*    FT_Library_Version                                                 */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Return the version of the FreeType library being used.  This is    */
@@ -1442,7 +1442,7 @@ FT2_1_3_Init_FreeType( FT2_1_3_Library  *alibrary );
 /*    the library object has been created.                               */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_Library_Version( FT2_1_3_Library   library,
+FT_Library_Version( FT_Library   library,
 					FT_Int      *amajor,
 					FT_Int      *aminor,
 					FT_Int      *apatch );
@@ -1464,7 +1464,7 @@ FT2_1_3_Library_Version( FT2_1_3_Library   library,
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Done_FreeType( FT2_1_3_Library  library );
+FT2_1_3_Done_FreeType( FT_Library  library );
 
 
 /*************************************************************************/
@@ -1632,10 +1632,10 @@ typedef struct  FT2_1_3_Open_Args_ {
 /*    non-zero otherwise.                                                */
 /*                                                                       */
 /*    Each new face object created with this function also owns a        */
-/*    default @FT2_1_3_Size object, accessible as `face->size'.               */
+/*    default @FT_Size object, accessible as `face->size'.               */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_New_Face( FT2_1_3_Library   library,
+FT2_1_3_New_Face( FT_Library   library,
 			 const char*  filepathname,
 			 FT_Long      face_index,
 			 FT_Face     *aface );
@@ -1683,7 +1683,7 @@ FT2_1_3_New_Face( FT2_1_3_Library   library,
 /*    recognized, or non-zero otherwise.                                 */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_New_Memory_Face( FT2_1_3_Library      library,
+FT2_1_3_New_Memory_Face( FT_Library      library,
 					const FT_Byte*  file_base,
 					FT_Long         file_size,
 					FT_Long         face_index,
@@ -1727,7 +1727,7 @@ FT2_1_3_New_Memory_Face( FT2_1_3_Library      library,
 /*    recognized, or non-zero otherwise.                                 */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Open_Face( FT2_1_3_Library           library,
+FT2_1_3_Open_Face( FT_Library           library,
 			  const FT2_1_3_Open_Args*  args,
 			  FT_Long              face_index,
 			  FT_Face             *aface );
@@ -2275,7 +2275,7 @@ typedef enum  FT2_1_3_Render_Mode_ {
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Render_Glyph( FT2_1_3_GlyphSlot    slot,
+FT2_1_3_Render_Glyph( FT_GlyphSlot    slot,
 				 FT2_1_3_Render_Mode  render_mode );
 
 
@@ -2473,7 +2473,7 @@ FT2_1_3_Get_Postscript_Name( FT_Face  face );
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Select_Charmap( FT_Face      face,
-				   FT2_1_3_Encoding  encoding );
+				   FT_Encoding  encoding );
 
 
 /*************************************************************************/

@@ -420,7 +420,7 @@ FT2_1_3_LOCAL_DEF( FT_Error )
 T42_Size_Init( T42_Size  size ) {
 	FT_Face   face = size->root.face;
 	T42_Face  t42face = (T42_Face)face;
-	FT2_1_3_Size   ttsize;
+	FT_Size   ttsize;
 	FT_Error  error   = FT2_1_3_Err_Ok;
 
 
@@ -452,7 +452,7 @@ FT2_1_3_LOCAL_DEF( FT_Error )
 T42_GlyphSlot_Init( T42_GlyphSlot  slot ) {
 	FT_Face       face    = slot->root.face;
 	T42_Face      t42face = (T42_Face)face;
-	FT2_1_3_GlyphSlot  ttslot;
+	FT_GlyphSlot  ttslot;
 	FT_Error      error   = FT2_1_3_Err_Ok;
 
 
@@ -472,7 +472,7 @@ FT2_1_3_LOCAL_DEF( void )
 T42_GlyphSlot_Done( T42_GlyphSlot slot ) {
 	FT_Face       face    = slot->root.face;
 	T42_Face      t42face = (T42_Face)face;
-	FT2_1_3_GlyphSlot  cur     = t42face->ttf_face->glyph;
+	FT_GlyphSlot  cur     = t42face->ttf_face->glyph;
 
 
 	while ( cur ) {
@@ -524,7 +524,7 @@ T42_Size_SetPixels( T42_Size  size,
 
 
 static void
-ft_glyphslot_clear( FT2_1_3_GlyphSlot  slot ) {
+ft_glyphslot_clear( FT_GlyphSlot  slot ) {
 	/* free bitmap if needed */
 	if ( slot->flags & FT2_1_3_GLYPH_OWN_BITMAP ) {
 		FT2_1_3_Memory  memory = FT2_1_3_FACE_MEMORY( slot->face );
@@ -554,8 +554,8 @@ ft_glyphslot_clear( FT2_1_3_GlyphSlot  slot ) {
 
 
 FT2_1_3_LOCAL_DEF( FT_Error )
-T42_GlyphSlot_Load( FT2_1_3_GlyphSlot  glyph,
-					FT2_1_3_Size       size,
+T42_GlyphSlot_Load( FT_GlyphSlot  glyph,
+					FT_Size       size,
 					FT_Int        glyph_index,
 					FT_Int32      load_flags ) {
 	FT_Error         error;

@@ -528,7 +528,7 @@ FNT_Size_Set_Pixels( FNT_Size  size ) {
 
 
 static FT_Error
-FNT_Load_Glyph( FT2_1_3_GlyphSlot  slot,
+FNT_Load_Glyph( FT_GlyphSlot  slot,
 				FNT_Size      size,
 				FT_UInt       glyph_index,
 				FT_Int32      load_flags ) {
@@ -633,17 +633,17 @@ const FT2_1_3_Driver_ClassRec  winfnt_driver_class = {
 
 	sizeof( FNT_FaceRec ),
 	sizeof( FNT_SizeRec ),
-	sizeof( FT2_1_3_GlyphSlotRec ),
+	sizeof( FT_GlyphSlotRec ),
 
 	(FT_Face_InitFunc)        FNT_Face_Init,
 	(FT_Face_DoneFunc)        FNT_Face_Done,
-	(FT2_1_3_Size_InitFunc)        0,
-	(FT2_1_3_Size_DoneFunc)        0,
+	(FT_Size_InitFunc)        0,
+	(FT_Size_DoneFunc)        0,
 	(FT2_1_3_Slot_InitFunc)        0,
 	(FT2_1_3_Slot_DoneFunc)        0,
 
-	(FT2_1_3_Size_ResetPointsFunc) FNT_Size_Set_Pixels,
-	(FT2_1_3_Size_ResetPixelsFunc) FNT_Size_Set_Pixels,
+	(FT_Size_ResetPointsFunc) FNT_Size_Set_Pixels,
+	(FT_Size_ResetPixelsFunc) FNT_Size_Set_Pixels,
 	(FT2_1_3_Slot_LoadFunc)        FNT_Load_Glyph,
 
 	(FT_Face_GetKerningFunc)  0,

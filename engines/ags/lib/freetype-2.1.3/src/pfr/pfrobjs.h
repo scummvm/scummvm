@@ -43,13 +43,13 @@ typedef struct  PFR_FaceRec_ {
 
 
 typedef struct  PFR_SizeRec_ {
-	FT2_1_3_SizeRec  root;
+	FT_SizeRec  root;
 
 } PFR_SizeRec;
 
 
 typedef struct  PFR_SlotRec_ {
-	FT2_1_3_GlyphSlotRec  root;
+	FT_GlyphSlotRec  root;
 	PFR_GlyphRec     glyph;
 
 } PFR_SlotRec;

@@ -59,21 +59,21 @@ enum {
 };
 
 
-typedef struct  FT2_1_3_SubGlyphRec_ {
+typedef struct  FT_SubGlyphRec_ {
 	FT_Int     index;
 	FT_UShort  flags;
 	FT_Int     arg1;
 	FT_Int     arg2;
 	FT_Matrix  transform;
 
-} FT2_1_3_SubGlyphRec;
+} FT_SubGlyphRec;
 
 
 typedef struct  FT2_1_3_GlyphLoadRec_ {
 	FT2_1_3_Outline   outline;       /* outline             */
 	FT_Vector*   extra_points;  /* extra points table  */
 	FT_UInt      num_subglyphs; /* number of subglyphs */
-	FT2_1_3_SubGlyph  subglyphs;     /* subglyphs           */
+	FT_SubGlyph  subglyphs;     /* subglyphs           */
 
 } FT2_1_3_GlyphLoadRec, *FT2_1_3_GlyphLoad;
 

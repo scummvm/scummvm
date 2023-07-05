@@ -51,11 +51,11 @@ FT2_1_3_BEGIN_HEADER
 /* It will probably be completely rewritten in the future */
 /* or even integrated into the library.                   */
 FT2_1_3_EXPORT( void )
-FT2_1_3_GlyphSlot_Embolden( FT2_1_3_GlyphSlot  slot );
+FT_GlyphSlot_Embolden( FT_GlyphSlot  slot );
 
 
 FT2_1_3_EXPORT( void )
-FT2_1_3_GlyphSlot_Oblique( FT2_1_3_GlyphSlot  slot );
+FT_GlyphSlot_Oblique( FT_GlyphSlot  slot );
 
 /* */
 

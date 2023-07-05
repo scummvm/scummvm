@@ -141,9 +141,9 @@ ft_bitmap_copy( FT2_1_3_Memory   memory,
 
 static FT_Error
 ft_bitmap_glyph_init( FT_BitmapGlyph  glyph,
-					  FT2_1_3_GlyphSlot    slot ) {
+					  FT_GlyphSlot    slot ) {
 	FT_Error    error   = FT2_1_3_Err_Ok;
-	FT2_1_3_Library  library = FT2_1_3_GLYPH(glyph)->library;
+	FT_Library  library = FT2_1_3_GLYPH(glyph)->library;
 	FT2_1_3_Memory   memory  = library->memory;
 
 
@@ -225,9 +225,9 @@ const FT2_1_3_Glyph_Class  ft_bitmap_glyph_class = {
 
 static FT_Error
 ft_outline_glyph_init( FT2_1_3_OutlineGlyph  glyph,
-					   FT2_1_3_GlyphSlot     slot ) {
+					   FT_GlyphSlot     slot ) {
 	FT_Error     error   = FT2_1_3_Err_Ok;
-	FT2_1_3_Library   library = FT2_1_3_GLYPH(glyph)->library;
+	FT_Library   library = FT2_1_3_GLYPH(glyph)->library;
 	FT2_1_3_Outline*  source  = &slot->outline;
 	FT2_1_3_Outline*  target  = &glyph->outline;
 
@@ -272,7 +272,7 @@ static FT_Error
 ft_outline_glyph_copy( FT2_1_3_OutlineGlyph  source,
 					   FT2_1_3_OutlineGlyph  target ) {
 	FT_Error    error;
-	FT2_1_3_Library  library = FT2_1_3_GLYPH( source )->library;
+	FT_Library  library = FT2_1_3_GLYPH( source )->library;
 
 
 	error = FT2_1_3_Outline_New( library, source->outline.n_points,
@@ -305,7 +305,7 @@ ft_outline_glyph_bbox( FT2_1_3_OutlineGlyph  glyph,
 
 static FT_Error
 ft_outline_glyph_prepare( FT2_1_3_OutlineGlyph  glyph,
-						  FT2_1_3_GlyphSlot     slot ) {
+						  FT_GlyphSlot     slot ) {
 	slot->format         = FT2_1_3_GLYPH_FORMAT_OUTLINE;
 	slot->outline        = glyph->outline;
 	slot->outline.flags &= ~FT2_1_3_OUTLINE_OWNER;
@@ -336,7 +336,7 @@ const FT2_1_3_Glyph_Class  ft_outline_glyph_class = {
 /*************************************************************************/
 
 static FT_Error
-ft_new_glyph( FT2_1_3_Library             library,
+ft_new_glyph( FT_Library             library,
 			  const FT2_1_3_Glyph_Class*  clazz,
 			  FT2_1_3_Glyph*              aglyph ) {
 	FT2_1_3_Memory  memory = library->memory;
@@ -400,9 +400,9 @@ Exit:
 /* documentation is in ftglyph.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Get_Glyph( FT2_1_3_GlyphSlot  slot,
+FT2_1_3_Get_Glyph( FT_GlyphSlot  slot,
 			  FT2_1_3_Glyph     *aglyph ) {
-	FT2_1_3_Library  library = slot->library;
+	FT_Library  library = slot->library;
 	FT_Error    error;
 	FT2_1_3_Glyph    glyph;
 
@@ -540,7 +540,7 @@ FT2_1_3_Glyph_To_Bitmap( FT2_1_3_Glyph*       the_glyph,
 					FT2_1_3_Render_Mode  render_mode,
 					FT_Vector*      origin,
 					FT_Bool         destroy ) {
-	FT2_1_3_GlyphSlotRec  dummy;
+	FT_GlyphSlotRec  dummy;
 	FT_Error         error = FT2_1_3_Err_Ok;
 	FT2_1_3_Glyph         glyph;
 	FT_BitmapGlyph   bitmap = NULL;

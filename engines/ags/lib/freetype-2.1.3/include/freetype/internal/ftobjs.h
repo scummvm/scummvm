@@ -332,7 +332,7 @@ typedef struct  FT_Face_InternalRec_ {
 /*    FT2_1_3_Slot_InternalRec                                                */
 /*                                                                       */
 /* <Description>                                                         */
-/*    This structure contains the internal fields of each FT2_1_3_GlyphSlot   */
+/*    This structure contains the internal fields of each FT_GlyphSlot   */
 /*    object.  These fields may change between different releases of     */
 /*    FreeType.                                                          */
 /*                                                                       */
@@ -361,7 +361,7 @@ typedef struct  FT2_1_3_Slot_InternalRec_ {
 	FT_Vector       glyph_delta;
 	void*           glyph_hints;
 
-} FT2_1_3_GlyphSlot_InternalRec;
+} FT_GlyphSlot_InternalRec;
 
 
 /*************************************************************************/
@@ -396,7 +396,7 @@ typedef struct  FT2_1_3_Slot_InternalRec_ {
 /*                                                                       */
 typedef struct  FT2_1_3_ModuleRec_ {
 	FT2_1_3_Module_Class*  clazz;
-	FT2_1_3_Library        library;
+	FT_Library        library;
 	FT2_1_3_Memory         memory;
 	FT_Generic        generic;
 
@@ -454,7 +454,7 @@ typedef struct  FT2_1_3_ModuleRec_ {
 /*    which module to look for, and what its interface is :-)            */
 /*                                                                       */
 FT2_1_3_BASE( const void* )
-FT2_1_3_Get_Module_Interface( FT2_1_3_Library   library,
+FT2_1_3_Get_Module_Interface( FT_Library   library,
 						 const char*  mod_name );
 
 
@@ -473,8 +473,8 @@ FT2_1_3_Get_Module_Interface( FT2_1_3_Library   library,
 /* a few macros used to perform easy typecasts with minimal brain damage */
 
 #define FT2_1_3_FACE( x )          ((FT_Face)(x))
-#define FT2_1_3_SIZE( x )          ((FT2_1_3_Size)(x))
-#define FT2_1_3_SLOT( x )          ((FT2_1_3_GlyphSlot)(x))
+#define FT2_1_3_SIZE( x )          ((FT_Size)(x))
+#define FT2_1_3_SLOT( x )          ((FT_GlyphSlot)(x))
 
 #define FT2_1_3_FACE_DRIVER( x )   FT2_1_3_FACE( x )->driver
 #define FT2_1_3_FACE_LIBRARY( x )  FT2_1_3_FACE_DRIVER( x )->root.library
@@ -510,7 +510,7 @@ FT2_1_3_Get_Module_Interface( FT2_1_3_Library   library,
 /*                                                                       */
 FT2_1_3_BASE( FT_Error )
 FT2_1_3_New_GlyphSlot( FT_Face        face,
-				  FT2_1_3_GlyphSlot  *aslot );
+				  FT_GlyphSlot  *aslot );
 
 
 /*************************************************************************/
@@ -527,7 +527,7 @@ FT2_1_3_New_GlyphSlot( FT_Face        face,
 /*    slot :: A handle to a target glyph slot.                           */
 /*                                                                       */
 FT2_1_3_BASE( void )
-FT2_1_3_Done_GlyphSlot( FT2_1_3_GlyphSlot  slot );
+FT2_1_3_Done_GlyphSlot( FT_GlyphSlot  slot );
 
 
 /*************************************************************************/
@@ -641,7 +641,7 @@ typedef struct  FT2_1_3_DriverRec_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_LibraryRec                                                      */
+/*    FT_LibraryRec                                                      */
 /*                                                                       */
 /* <Description>                                                         */
 /*    The FreeType library class.  This is the root of all FreeType      */
@@ -682,7 +682,7 @@ typedef struct  FT2_1_3_DriverRec_ {
 /*                                                                       */
 /*    debug_hooks      :: XXX                                            */
 /*                                                                       */
-typedef struct  FT2_1_3_LibraryRec_ {
+typedef struct  FT_LibraryRec_ {
 	FT2_1_3_Memory          memory;           /* library's memory manager */
 
 	FT_Generic         generic;
@@ -706,17 +706,17 @@ typedef struct  FT2_1_3_LibraryRec_ {
 
 	FT2_1_3_MetaClassRec    meta_class;
 
-} FT2_1_3_LibraryRec;
+} FT_LibraryRec;
 
 
 FT2_1_3_BASE( FT2_1_3_Renderer )
-FT2_1_3_Lookup_Renderer( FT2_1_3_Library       library,
+FT2_1_3_Lookup_Renderer( FT_Library       library,
 					FT_Glyph_Format  format,
 					FT_ListNode*     node );
 
 FT2_1_3_BASE( FT_Error )
-FT2_1_3_Render_Glyph_Internal( FT2_1_3_Library      library,
-						  FT2_1_3_GlyphSlot    slot,
+FT2_1_3_Render_Glyph_Internal( FT_Library      library,
+						  FT_GlyphSlot    slot,
 						  FT2_1_3_Render_Mode  render_mode );
 
 typedef const char*

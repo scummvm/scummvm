@@ -32,19 +32,19 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-extern FT_Error Init_FreeType(FT2_1_3_Library *alibrary);
-extern FT_Error Done_FreeType(FT2_1_3_Library library);
+extern FT_Error Init_FreeType(FT_Library *alibrary);
+extern FT_Error Done_FreeType(FT_Library library);
 extern FT_Error Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 load_flags);
-extern FT_Error Get_Glyph(FT2_1_3_GlyphSlot slot, FT2_1_3_Glyph *aglyph);
+extern FT_Error Get_Glyph(FT_GlyphSlot slot, FT2_1_3_Glyph *aglyph);
 extern FT_Error Glyph_Copy(FT2_1_3_Glyph source, FT2_1_3_Glyph *target);
 extern FT_Error Glyph_To_Bitmap(FT2_1_3_Glyph *the_glyph, FT2_1_3_Render_Mode render_mode,
 	FT_Vector *origin, FT_Bool destroy);
 extern void Done_Glyph(FT2_1_3_Glyph glyph);
 extern FT_Error Set_Pixel_Sizes(FT_Face face, FT_UInt pixel_width,
 	FT_UInt pixel_height);
-extern FT_Error New_Face(FT2_1_3_Library library, const char *pathname,
+extern FT_Error New_Face(FT_Library library, const char *pathname,
 	FT_Long face_index, FT_Face *aface);
-extern FT_Error New_Memory_Face(FT2_1_3_Library library, const FT_Byte *file_base,
+extern FT_Error New_Memory_Face(FT_Library library, const FT_Byte *file_base,
 	FT_Long file_size, FT_Long face_index, FT_Face *aface);
 extern FT_Error Done_Face(FT_Face face);
 extern FT_UInt Get_Char_Index(FT_Face face, FT_ULong charcode);

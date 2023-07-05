@@ -30,7 +30,7 @@ namespace FreeType213 {
 /* initialize renderer -- init its raster */
 static FT_Error
 ft_smooth_init( FT2_1_3_Renderer  render ) {
-	FT2_1_3_Library  library = FT2_1_3_MODULE_LIBRARY( render );
+	FT_Library  library = FT2_1_3_MODULE_LIBRARY( render );
 
 
 	render->clazz->raster_class->raster_reset( render->raster,
@@ -55,7 +55,7 @@ ft_smooth_set_mode( FT2_1_3_Renderer  render,
 /* transform a given glyph image */
 static FT_Error
 ft_smooth_transform( FT2_1_3_Renderer   render,
-					 FT2_1_3_GlyphSlot  slot,
+					 FT_GlyphSlot  slot,
 					 FT_Matrix*    matrix,
 					 FT_Vector*    delta ) {
 	FT_Error  error = FT2_1_3_Err_Ok;
@@ -80,7 +80,7 @@ Exit:
 /* return the glyph's control box */
 static void
 ft_smooth_get_cbox( FT2_1_3_Renderer   render,
-					FT2_1_3_GlyphSlot  slot,
+					FT_GlyphSlot  slot,
 					FT_BBox*      cbox ) {
 	FT2_1_3_MEM_ZERO( cbox, sizeof ( *cbox ) );
 
@@ -92,7 +92,7 @@ ft_smooth_get_cbox( FT2_1_3_Renderer   render,
 /* convert a slot's glyph image into a bitmap */
 static FT_Error
 ft_smooth_render_generic( FT2_1_3_Renderer     render,
-						  FT2_1_3_GlyphSlot    slot,
+						  FT_GlyphSlot    slot,
 						  FT2_1_3_Render_Mode  mode,
 						  FT_Vector*      origin,
 						  FT2_1_3_Render_Mode  required_mode,
@@ -225,7 +225,7 @@ Exit:
 /* convert a slot's glyph image into a bitmap */
 static FT_Error
 ft_smooth_render( FT2_1_3_Renderer     render,
-				  FT2_1_3_GlyphSlot    slot,
+				  FT_GlyphSlot    slot,
 				  FT2_1_3_Render_Mode  mode,
 				  FT_Vector*      origin ) {
 	return ft_smooth_render_generic( render, slot, mode, origin,
@@ -237,7 +237,7 @@ ft_smooth_render( FT2_1_3_Renderer     render,
 /* convert a slot's glyph image into a horizontal LCD bitmap */
 static FT_Error
 ft_smooth_render_lcd( FT2_1_3_Renderer     render,
-					  FT2_1_3_GlyphSlot    slot,
+					  FT_GlyphSlot    slot,
 					  FT2_1_3_Render_Mode  mode,
 					  FT_Vector*      origin ) {
 	FT_Error  error;
@@ -255,7 +255,7 @@ ft_smooth_render_lcd( FT2_1_3_Renderer     render,
 /* convert a slot's glyph image into a vertical LCD bitmap */
 static FT_Error
 ft_smooth_render_lcd_v( FT2_1_3_Renderer     render,
-						FT2_1_3_GlyphSlot    slot,
+						FT_GlyphSlot    slot,
 						FT2_1_3_Render_Mode  mode,
 						FT_Vector*      origin ) {
 	FT_Error  error;

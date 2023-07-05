@@ -101,7 +101,7 @@ typedef struct T1_CharMapRec_*   T1_CharMap;
 /*    Type 1 size record.                                                */
 /*                                                                       */
 typedef struct  T1_SizeRec_ {
-	FT2_1_3_SizeRec  root;
+	FT_SizeRec  root;
 
 } T1_SizeRec;
 
@@ -125,7 +125,7 @@ T1_Size_Init( T1_Size  size );
 /*    Type 1 glyph slot record.                                          */
 /*                                                                       */
 typedef struct  T1_GlyphSlotRec_ {
-	FT2_1_3_GlyphSlotRec  root;
+	FT_GlyphSlotRec  root;
 
 	FT_Bool          hint;
 	FT_Bool          scaled;

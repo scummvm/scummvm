@@ -92,13 +92,13 @@ const FT2_1_3_Driver_ClassRec  t1cid_driver_class = {
 	(FT_Face_InitFunc)       cid_face_init,
 	(FT_Face_DoneFunc)       cid_face_done,
 
-	(FT2_1_3_Size_InitFunc)       cid_size_init,
-	(FT2_1_3_Size_DoneFunc)       cid_size_done,
+	(FT_Size_InitFunc)       cid_size_init,
+	(FT_Size_DoneFunc)       cid_size_done,
 	(FT2_1_3_Slot_InitFunc)       cid_slot_init,
 	(FT2_1_3_Slot_DoneFunc)       cid_slot_done,
 
-	(FT2_1_3_Size_ResetPointsFunc)cid_size_reset,
-	(FT2_1_3_Size_ResetPixelsFunc)cid_size_reset,
+	(FT_Size_ResetPointsFunc)cid_size_reset,
+	(FT_Size_ResetPixelsFunc)cid_size_reset,
 
 	(FT2_1_3_Slot_LoadFunc)       cid_slot_load_glyph,
 

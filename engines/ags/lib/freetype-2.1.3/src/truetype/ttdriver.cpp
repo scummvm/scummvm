@@ -188,7 +188,7 @@ Set_Char_Sizes( TT_Size     size,
 				FT_F26Dot6  char_height,
 				FT_UInt     horz_resolution,
 				FT_UInt     vert_resolution ) {
-	FT2_1_3_Size_Metrics*  metrics = &size->root.metrics;
+	FT_Size_Metrics*  metrics = &size->root.metrics;
 	TT_Face           face    = (TT_Face)size->root.face;
 	FT_Long           dim_x, dim_y;
 
@@ -387,18 +387,18 @@ const FT2_1_3_Driver_ClassRec  tt_driver_class = {
 
 	sizeof ( TT_FaceRec ),
 	sizeof ( TT_SizeRec ),
-	sizeof ( FT2_1_3_GlyphSlotRec ),
+	sizeof ( FT_GlyphSlotRec ),
 
 
 	(FT_Face_InitFunc)        tt_face_init,
 	(FT_Face_DoneFunc)        tt_face_done,
-	(FT2_1_3_Size_InitFunc)        tt_size_init,
-	(FT2_1_3_Size_DoneFunc)        tt_size_done,
+	(FT_Size_InitFunc)        tt_size_init,
+	(FT_Size_DoneFunc)        tt_size_done,
 	(FT2_1_3_Slot_InitFunc)        0,
 	(FT2_1_3_Slot_DoneFunc)        0,
 
-	(FT2_1_3_Size_ResetPointsFunc) Set_Char_Sizes,
-	(FT2_1_3_Size_ResetPixelsFunc) Set_Pixel_Sizes,
+	(FT_Size_ResetPointsFunc) Set_Char_Sizes,
+	(FT_Size_ResetPixelsFunc) Set_Pixel_Sizes,
 	(FT2_1_3_Slot_LoadFunc)        Load_Glyph,
 
 	(FT_Face_GetKerningFunc)  Get_Kerning,

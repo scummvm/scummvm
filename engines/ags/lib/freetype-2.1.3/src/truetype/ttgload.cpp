@@ -456,7 +456,7 @@ TT_Load_Composite_Glyph( TT_Loader  loader ) {
 	FT_Error        error;
 	FT2_1_3_Stream       stream  = loader->stream;
 	FT2_1_3_GlyphLoader  gloader = loader->gloader;
-	FT2_1_3_SubGlyph     subglyph;
+	FT_SubGlyph     subglyph;
 	FT_UInt         num_subglyphs;
 	FT_Int          byte_len = loader->byte_len;
 
@@ -982,7 +982,7 @@ load_truetype_glyph( TT_Loader  loader,
 		/* Now, read each subglyph independently. */
 		{
 			FT_Int       n, num_base_points, num_new_points;
-			FT2_1_3_SubGlyph  subglyph       = 0;
+			FT_SubGlyph  subglyph       = 0;
 
 			FT_UInt      num_subglyphs  = gloader->current.num_subglyphs;
 			FT_UInt      num_base_subgs = gloader->base.num_subglyphs;
@@ -1636,8 +1636,8 @@ TT_Load_Glyph( TT_Size       size,
 	loader.load_flags    = load_flags;
 
 	loader.face   = (FT_Face)face;
-	loader.size   = (FT2_1_3_Size)size;
-	loader.glyph  = (FT2_1_3_GlyphSlot)glyph;
+	loader.size   = (FT_Size)size;
+	loader.glyph  = (FT_GlyphSlot)glyph;
 	loader.stream = stream;
 
 #ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL

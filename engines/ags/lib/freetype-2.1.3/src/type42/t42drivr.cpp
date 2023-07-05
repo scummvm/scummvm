@@ -145,13 +145,13 @@ const FT2_1_3_Driver_ClassRec  t42_driver_class = {
 
 	(FT_Face_InitFunc)        T42_Face_Init,
 	(FT_Face_DoneFunc)        T42_Face_Done,
-	(FT2_1_3_Size_InitFunc)        T42_Size_Init,
-	(FT2_1_3_Size_DoneFunc)        T42_Size_Done,
+	(FT_Size_InitFunc)        T42_Size_Init,
+	(FT_Size_DoneFunc)        T42_Size_Done,
 	(FT2_1_3_Slot_InitFunc)        T42_GlyphSlot_Init,
 	(FT2_1_3_Slot_DoneFunc)        T42_GlyphSlot_Done,
 
-	(FT2_1_3_Size_ResetPointsFunc) T42_Size_SetChars,
-	(FT2_1_3_Size_ResetPixelsFunc) T42_Size_SetPixels,
+	(FT_Size_ResetPointsFunc) T42_Size_SetChars,
+	(FT_Size_ResetPixelsFunc) T42_Size_SetPixels,
 	(FT2_1_3_Slot_LoadFunc)        T42_GlyphSlot_Load,
 
 	(FT_Face_GetKerningFunc)  0,

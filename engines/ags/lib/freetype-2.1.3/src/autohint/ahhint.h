@@ -40,14 +40,14 @@ FT2_1_3_BEGIN_HEADER
 
 /* create a new empty hinter object */
 FT2_1_3_LOCAL( FT_Error )
-ah_hinter_new( FT2_1_3_Library  library,
+ah_hinter_new( FT_Library  library,
 			   AH_Hinter*  ahinter );
 
 /* Load a hinted glyph in the hinter */
 FT2_1_3_LOCAL( FT_Error )
 ah_hinter_load_glyph( AH_Hinter     hinter,
-					  FT2_1_3_GlyphSlot  slot,
-					  FT2_1_3_Size       size,
+					  FT_GlyphSlot  slot,
+					  FT_Size       size,
 					  FT_UInt       glyph_index,
 					  FT_Int32      load_flags );
 

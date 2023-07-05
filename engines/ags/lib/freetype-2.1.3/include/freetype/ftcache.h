@@ -141,12 +141,12 @@ typedef FT_Pointer  FTC_FaceID;
 /*                                                                       */
 /* <Note>                                                                */
 /*    The face requester should not perform funny things on the returned */
-/*    face object, like creating a new @FT2_1_3_Size for it, or setting a     */
+/*    face object, like creating a new @FT_Size for it, or setting a     */
 /*    transformation through @FT2_1_3_Set_Transform!                          */
 /*                                                                       */
 typedef FT_Error
 (*FTC_Face_Requester)( FTC_FaceID  face_id,
-											 FT2_1_3_Library  library,
+											 FT_Library  library,
 											 FT_Pointer  request_data,
 											 FT_Face*    aface );
 
@@ -229,7 +229,7 @@ typedef FTC_FontRec*  FTC_Font;
 /*                                                                       */
 /* <Description>                                                         */
 /*    This object is used to cache one or more @FT_Face objects, along   */
-/*    with corresponding @FT2_1_3_Size objects.                               */
+/*    with corresponding @FT_Size objects.                               */
 /*                                                                       */
 typedef struct FTC_ManagerRec_*  FTC_Manager;
 
@@ -288,7 +288,7 @@ typedef struct FTC_NodeRec_*  FTC_Node;
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FTC_Manager_New( FT2_1_3_Library          library,
+FTC_Manager_New( FT_Library          library,
 								 FT_UInt             max_faces,
 								 FT_UInt             max_sizes,
 								 FT_ULong            max_bytes,
@@ -304,7 +304,7 @@ FTC_Manager_New( FT2_1_3_Library          library,
 /*                                                                       */
 /* <Description>                                                         */
 /*    Empties a given cache manager.  This simply gets rid of all the    */
-/*    currently cached @FT_Face and @FT2_1_3_Size objects within the manager. */
+/*    currently cached @FT_Face and @FT_Size objects within the manager. */
 /*                                                                       */
 /* <InOut>                                                               */
 /*    manager :: A handle to the manager.                                */
@@ -372,7 +372,7 @@ FTC_Manager_Lookup_Face( FTC_Manager  manager,
 /*    FTC_Manager_Lookup_Size                                            */
 /*                                                                       */
 /* <Description>                                                         */
-/*    Retrieves the @FT_Face and @FT2_1_3_Size objects that correspond to a   */
+/*    Retrieves the @FT_Face and @FT_Size objects that correspond to a   */
 /*    given @FTC_SizeID.                                                 */
 /*                                                                       */
 /* <Input>                                                               */
@@ -398,7 +398,7 @@ FTC_Manager_Lookup_Face( FTC_Manager  manager,
 /*    the @FT2_1_3_Set_Transform function) on a returned face!  If you need   */
 /*    to transform glyphs, do it yourself after glyph loading.           */
 /*                                                                       */
-/*    Similarly, the returned @FT2_1_3_Size object is always owned by the     */
+/*    Similarly, the returned @FT_Size object is always owned by the     */
 /*    manager.  You should never try to discard it, and never change its */
 /*    settings with @FT2_1_3_Set_Pixel_Sizes or @FT2_1_3_Set_Char_Size!            */
 /*                                                                       */
@@ -409,7 +409,7 @@ FT2_1_3_EXPORT( FT_Error )
 FTC_Manager_Lookup_Size( FTC_Manager  manager,
 												 FTC_Font     font,
 												 FT_Face     *aface,
-												 FT2_1_3_Size     *asize );
+												 FT_Size     *asize );
 
 
 FT2_1_3_END_HEADER

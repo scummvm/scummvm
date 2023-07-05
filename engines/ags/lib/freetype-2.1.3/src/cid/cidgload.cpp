@@ -296,8 +296,8 @@ cid_slot_load_glyph( CID_GlyphSlot  glyph,
 	{
 		error = psaux->t1_decoder_funcs->init( &decoder,
 											   (FT_Face)face,
-											   (FT2_1_3_Size)size,
-											   (FT2_1_3_GlyphSlot)glyph,
+											   (FT_Size)size,
+											   (FT_GlyphSlot)glyph,
 											   0, /* glyph names -- XXX */
 											   0, /* blend == 0 */
 											   hinting,
@@ -338,7 +338,7 @@ cid_slot_load_glyph( CID_GlyphSlot  glyph,
 			internal->glyph_transformed    = 1;
 		} else {
 			FT_BBox            cbox;
-			FT2_1_3_Glyph_Metrics*  metrics = &glyph->root.metrics;
+			FT_Glyph_Metrics*  metrics = &glyph->root.metrics;
 
 
 			/* copy the _unscaled_ advance width */

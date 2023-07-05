@@ -36,16 +36,16 @@ FT2_1_3_BEGIN_HEADER
 
 /* Type42 size */
 typedef struct  T42_SizeRec_ {
-	FT2_1_3_SizeRec  root;
-	FT2_1_3_Size     ttsize;
+	FT_SizeRec  root;
+	FT_Size     ttsize;
 
 } T42_SizeRec, *T42_Size;
 
 
 /* Type42 slot */
 typedef struct  T42_GlyphSlotRec_ {
-	FT2_1_3_GlyphSlotRec  root;
-	FT2_1_3_GlyphSlot     ttslot;
+	FT_GlyphSlotRec  root;
+	FT_GlyphSlot     ttslot;
 
 } T42_GlyphSlotRec, *T42_GlyphSlot;
 
@@ -99,8 +99,8 @@ T42_GlyphSlot_Init( T42_GlyphSlot  slot );
 
 
 FT2_1_3_LOCAL( FT_Error )
-T42_GlyphSlot_Load( FT2_1_3_GlyphSlot  glyph,
-					FT2_1_3_Size       size,
+T42_GlyphSlot_Load( FT_GlyphSlot  glyph,
+					FT_Size       size,
 					FT_Int        glyph_index,
 					FT_Int32      load_flags );
 

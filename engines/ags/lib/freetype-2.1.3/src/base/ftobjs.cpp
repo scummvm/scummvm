@@ -74,7 +74,7 @@ ft_validator_error( FT2_1_3_Validator  valid,
 /* create a new input stream from a FT2_1_3_Open_Args structure */
 /*                                                         */
 static FT_Error
-ft_input_stream_new( FT2_1_3_Library           library,
+ft_input_stream_new( FT_Library           library,
 					 const FT2_1_3_Open_Args*  args,
 					 FT2_1_3_Stream*           astream ) {
 	FT_Error   error;
@@ -160,7 +160,7 @@ ft_input_stream_free( FT2_1_3_Stream  stream,
 
 
 static FT_Error
-ft_glyphslot_init( FT2_1_3_GlyphSlot  slot ) {
+ft_glyphslot_init( FT_GlyphSlot  slot ) {
 	FT2_1_3_Driver         driver = slot->face->driver;
 	FT2_1_3_Driver_Class   clazz  = driver->clazz;
 	FT2_1_3_Memory         memory = driver->root.memory;
@@ -187,7 +187,7 @@ Exit:
 
 
 static void
-ft_glyphslot_clear( FT2_1_3_GlyphSlot  slot ) {
+ft_glyphslot_clear( FT_GlyphSlot  slot ) {
 	/* free bitmap if needed */
 	if ( slot->flags & FT2_1_3_GLYPH_OWN_BITMAP ) {
 		FT2_1_3_Memory  memory = FT2_1_3_FACE_MEMORY( slot->face );
@@ -222,7 +222,7 @@ ft_glyphslot_clear( FT2_1_3_GlyphSlot  slot ) {
 
 
 static void
-ft_glyphslot_done( FT2_1_3_GlyphSlot  slot ) {
+ft_glyphslot_done( FT_GlyphSlot  slot ) {
 	FT2_1_3_Driver         driver = slot->face->driver;
 	FT2_1_3_Driver_Class   clazz  = driver->clazz;
 	FT2_1_3_Memory         memory = driver->root.memory;
@@ -249,12 +249,12 @@ ft_glyphslot_done( FT2_1_3_GlyphSlot  slot ) {
 
 FT2_1_3_BASE_DEF( FT_Error )
 FT2_1_3_New_GlyphSlot( FT_Face        face,
-				  FT2_1_3_GlyphSlot  *aslot ) {
+				  FT_GlyphSlot  *aslot ) {
 	FT_Error          error;
 	FT2_1_3_Driver         driver;
 	FT2_1_3_Driver_Class   clazz;
 	FT2_1_3_Memory         memory;
-	FT2_1_3_GlyphSlot      slot;
+	FT_GlyphSlot      slot;
 
 
 	if ( !face || !aslot || !face->driver )
@@ -289,12 +289,12 @@ Exit:
 /* documentation is in ftobjs.h */
 
 FT2_1_3_BASE_DEF( void )
-FT2_1_3_Done_GlyphSlot( FT2_1_3_GlyphSlot  slot ) {
+FT2_1_3_Done_GlyphSlot( FT_GlyphSlot  slot ) {
 	if ( slot ) {
 		FT2_1_3_Driver      driver = slot->face->driver;
 		FT2_1_3_Memory      memory = driver->root.memory;
-		FT2_1_3_GlyphSlot*  parent;
-		FT2_1_3_GlyphSlot   cur;
+		FT_GlyphSlot*  parent;
+		FT_GlyphSlot   cur;
 
 
 		/* Remove slot from its parent face's list */
@@ -375,7 +375,7 @@ FT2_1_3_Set_Hint_Flags( FT_Face     face,
 
 
 static FT2_1_3_Renderer
-ft_lookup_glyph_renderer( FT2_1_3_GlyphSlot  slot );
+ft_lookup_glyph_renderer( FT_GlyphSlot  slot );
 
 
 /* documentation is in freetype.h */
@@ -386,8 +386,8 @@ FT2_1_3_Load_Glyph( FT_Face   face,
 			   FT_Int32  load_flags ) {
 	FT_Error      error;
 	FT2_1_3_Driver     driver;
-	FT2_1_3_GlyphSlot  slot;
-	FT2_1_3_Library    library;
+	FT_GlyphSlot  slot;
+	FT_Library    library;
 	FT_Bool       autohint;
 	FT2_1_3_Module     hinter;
 
@@ -483,7 +483,7 @@ Load_Ok:
 	/* compute the linear advance in 16.16 pixels */
 	if ( ( load_flags & FT2_1_3_LOAD_LINEAR_DESIGN ) == 0 ) {
 		FT_UInt           EM      = face->units_per_EM;
-		FT2_1_3_Size_Metrics*  metrics = &face->size->metrics;
+		FT_Size_Metrics*  metrics = &face->size->metrics;
 
 
 		slot->linearHoriAdvance = FT2_1_3_MulDiv( slot->linearHoriAdvance,
@@ -556,7 +556,7 @@ FT2_1_3_Load_Char( FT_Face   face,
 /* destructor for sizes list */
 static void
 destroy_size( FT2_1_3_Memory  memory,
-			  FT2_1_3_Size    size,
+			  FT_Size    size,
 			  FT2_1_3_Driver  driver ) {
 	/* finalize client-specific data */
 	if ( size->generic.finalizer )
@@ -751,7 +751,7 @@ Fail:
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_New_Face( FT2_1_3_Library   library,
+FT2_1_3_New_Face( FT_Library   library,
 			 const char*  pathname,
 			 FT_Long      face_index,
 			 FT_Face     *aface ) {
@@ -774,7 +774,7 @@ FT2_1_3_New_Face( FT2_1_3_Library   library,
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_New_Memory_Face( FT2_1_3_Library      library,
+FT2_1_3_New_Memory_Face( FT_Library      library,
 					const FT_Byte*  file_base,
 					FT_Long         file_size,
 					FT_Long         face_index,
@@ -797,7 +797,7 @@ FT2_1_3_New_Memory_Face( FT2_1_3_Library      library,
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Open_Face( FT2_1_3_Library           library,
+FT2_1_3_Open_Face( FT_Library           library,
 			  const FT2_1_3_Open_Args*  args,
 			  FT_Long              face_index,
 			  FT_Face             *aface ) {
@@ -909,7 +909,7 @@ Success:
 
 	/* now allocate a glyph slot object for the face */
 	{
-		FT2_1_3_GlyphSlot  slot;
+		FT_GlyphSlot  slot;
 
 
 		FT2_1_3_TRACE4(( "FT2_1_3_Open_Face: Creating glyph slot\n" ));
@@ -923,7 +923,7 @@ Success:
 
 	/* finally, allocate a size object for the face */
 	{
-		FT2_1_3_Size  size;
+		FT_Size  size;
 
 
 		FT2_1_3_TRACE4(( "FT2_1_3_Open_Face: Creating size object\n" ));
@@ -1060,13 +1060,13 @@ FT2_1_3_Done_Face( FT_Face  face ) {
 
 FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_New_Size( FT_Face   face,
-			 FT2_1_3_Size  *asize ) {
+			 FT_Size  *asize ) {
 	FT_Error         error;
 	FT2_1_3_Memory        memory;
 	FT2_1_3_Driver        driver;
 	FT2_1_3_Driver_Class  clazz;
 
-	FT2_1_3_Size          size = 0;
+	FT_Size          size = 0;
 	FT_ListNode      node = 0;
 
 
@@ -1117,7 +1117,7 @@ Exit:
 /* documentation is in ftobjs.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Done_Size( FT2_1_3_Size  size ) {
+FT2_1_3_Done_Size( FT_Size  size ) {
 	FT_Error     error;
 	FT2_1_3_Driver    driver;
 	FT2_1_3_Memory    memory;
@@ -1147,7 +1147,7 @@ FT2_1_3_Done_Size( FT2_1_3_Size  size ) {
 		if ( face->size == size ) {
 			face->size = 0;
 			if ( face->sizes_list.head )
-				face->size = (FT2_1_3_Size)(face->sizes_list.head->data);
+				face->size = (FT_Size)(face->sizes_list.head->data);
 		}
 
 		destroy_size( memory, size, driver );
@@ -1160,7 +1160,7 @@ FT2_1_3_Done_Size( FT2_1_3_Size  size ) {
 
 static void
 ft_recompute_scaled_metrics( FT_Face           face,
-							 FT2_1_3_Size_Metrics*  metrics ) {
+							 FT_Size_Metrics*  metrics ) {
 	/* Compute root ascender, descender, test height, and max_advance */
 
 	metrics->ascender    = ( FT2_1_3_MulFix( face->ascender,
@@ -1188,7 +1188,7 @@ FT2_1_3_Set_Char_Size( FT_Face     face,
 	FT_Error          error = FT2_1_3_Err_Ok;
 	FT2_1_3_Driver         driver;
 	FT2_1_3_Driver_Class   clazz;
-	FT2_1_3_Size_Metrics*  metrics;
+	FT_Size_Metrics*  metrics;
 	FT_Long           dim_x, dim_y;
 
 
@@ -1255,7 +1255,7 @@ FT2_1_3_Set_Pixel_Sizes( FT_Face  face,
 	FT_Error          error = FT2_1_3_Err_Ok;
 	FT2_1_3_Driver         driver;
 	FT2_1_3_Driver_Class   clazz;
-	FT2_1_3_Size_Metrics*  metrics = &face->size->metrics;
+	FT_Size_Metrics*  metrics = &face->size->metrics;
 
 
 	if ( !face || !face->size || !face->driver )
@@ -1346,7 +1346,7 @@ FT2_1_3_Get_Kerning( FT_Face     face,
 
 FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_Select_Charmap( FT_Face      face,
-				   FT2_1_3_Encoding  encoding ) {
+				   FT_Encoding  encoding ) {
 	FT_CharMap*  cur;
 	FT_CharMap*  limit;
 
@@ -1655,7 +1655,7 @@ Exit:
 
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Activate_Size( FT2_1_3_Size  size ) {
+FT2_1_3_Activate_Size( FT_Size  size ) {
 	FT_Face  face;
 
 
@@ -1688,7 +1688,7 @@ FT2_1_3_Activate_Size( FT2_1_3_Size  size ) {
 
 /* lookup a renderer by glyph format in the library's list */
 FT2_1_3_BASE_DEF( FT2_1_3_Renderer )
-FT2_1_3_Lookup_Renderer( FT2_1_3_Library       library,
+FT2_1_3_Lookup_Renderer( FT_Library       library,
 					FT_Glyph_Format  format,
 					FT_ListNode*     node ) {
 	FT_ListNode  cur;
@@ -1726,9 +1726,9 @@ Exit:
 
 
 static FT2_1_3_Renderer
-ft_lookup_glyph_renderer( FT2_1_3_GlyphSlot  slot ) {
+ft_lookup_glyph_renderer( FT_GlyphSlot  slot ) {
 	FT_Face      face    = slot->face;
-	FT2_1_3_Library   library = FT2_1_3_FACE_LIBRARY( face );
+	FT_Library   library = FT2_1_3_FACE_LIBRARY( face );
 	FT2_1_3_Renderer  result  = library->cur_renderer;
 
 
@@ -1740,7 +1740,7 @@ ft_lookup_glyph_renderer( FT2_1_3_GlyphSlot  slot ) {
 
 
 static void
-ft_set_current_renderer( FT2_1_3_Library  library ) {
+ft_set_current_renderer( FT_Library  library ) {
 	FT2_1_3_Renderer  renderer;
 
 
@@ -1751,7 +1751,7 @@ ft_set_current_renderer( FT2_1_3_Library  library ) {
 
 static FT_Error
 ft_add_renderer( FT2_1_3_Module  module ) {
-	FT2_1_3_Library   library = module->library;
+	FT_Library   library = module->library;
 	FT2_1_3_Memory    memory  = library->memory;
 	FT_Error     error;
 	FT_ListNode  node;
@@ -1797,7 +1797,7 @@ Exit:
 
 static void
 ft_remove_renderer( FT2_1_3_Module  module ) {
-	FT2_1_3_Library   library = module->library;
+	FT_Library   library = module->library;
 	FT2_1_3_Memory    memory  = library->memory;
 	FT_ListNode  node;
 
@@ -1823,7 +1823,7 @@ ft_remove_renderer( FT2_1_3_Module  module ) {
 /* documentation is in ftrender.h */
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Renderer )
-FT2_1_3_Get_Renderer( FT2_1_3_Library       library,
+FT2_1_3_Get_Renderer( FT_Library       library,
 				 FT_Glyph_Format  format ) {
 	/* test for valid `library' delayed to FT2_1_3_Lookup_Renderer() */
 
@@ -1834,7 +1834,7 @@ FT2_1_3_Get_Renderer( FT2_1_3_Library       library,
 /* documentation is in ftrender.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Set_Renderer( FT2_1_3_Library     library,
+FT2_1_3_Set_Renderer( FT_Library     library,
 				 FT2_1_3_Renderer    renderer,
 				 FT_UInt        num_params,
 				 FT2_1_3_Parameter*  parameters ) {
@@ -1876,8 +1876,8 @@ Exit:
 
 
 FT2_1_3_BASE_DEF( FT_Error )
-FT2_1_3_Render_Glyph_Internal( FT2_1_3_Library      library,
-						  FT2_1_3_GlyphSlot    slot,
+FT2_1_3_Render_Glyph_Internal( FT_Library      library,
+						  FT_GlyphSlot    slot,
 						  FT2_1_3_Render_Mode  render_mode ) {
 	FT_Error     error = FT2_1_3_Err_Ok;
 	FT2_1_3_Renderer  renderer;
@@ -1931,9 +1931,9 @@ FT2_1_3_Render_Glyph_Internal( FT2_1_3_Library      library,
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Render_Glyph( FT2_1_3_GlyphSlot    slot,
+FT2_1_3_Render_Glyph( FT_GlyphSlot    slot,
 				 FT2_1_3_Render_Mode  render_mode ) {
-	FT2_1_3_Library  library;
+	FT_Library  library;
 
 
 	if ( !slot )
@@ -1977,7 +1977,7 @@ static void
 Destroy_Module( FT2_1_3_Module  module ) {
 	FT2_1_3_Memory         memory  = module->memory;
 	FT2_1_3_Module_Class*  clazz   = module->clazz;
-	FT2_1_3_Library        library = module->library;
+	FT_Library        library = module->library;
 
 
 	/* finalize client-data - before anything else */
@@ -2007,7 +2007,7 @@ Destroy_Module( FT2_1_3_Module  module ) {
 /* documentation is in ftmodule.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Add_Module( FT2_1_3_Library              library,
+FT2_1_3_Add_Module( FT_Library              library,
 			   const FT2_1_3_Module_Class*  clazz ) {
 	FT_Error   error;
 	FT2_1_3_Memory  memory;
@@ -2124,7 +2124,7 @@ Fail:
 /* documentation is in ftmodule.h */
 
 FT2_1_3_EXPORT_DEF( FT2_1_3_Module )
-FT2_1_3_Get_Module( FT2_1_3_Library   library,
+FT2_1_3_Get_Module( FT_Library   library,
 			   const char*  module_name ) {
 	FT2_1_3_Module   result = 0;
 	FT2_1_3_Module*  cur;
@@ -2150,7 +2150,7 @@ FT2_1_3_Get_Module( FT2_1_3_Library   library,
 /* documentation is in ftobjs.h */
 
 FT2_1_3_BASE_DEF( const void* )
-FT2_1_3_Get_Module_Interface( FT2_1_3_Library   library,
+FT2_1_3_Get_Module_Interface( FT_Library   library,
 						 const char*  mod_name ) {
 	FT2_1_3_Module  module;
 
@@ -2166,7 +2166,7 @@ FT2_1_3_Get_Module_Interface( FT2_1_3_Library   library,
 /* documentation is in ftmodule.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Remove_Module( FT2_1_3_Library  library,
+FT2_1_3_Remove_Module( FT_Library  library,
 				  FT2_1_3_Module   module ) {
 	/* try to find the module from the table, then remove it from there */
 
@@ -2217,8 +2217,8 @@ FT2_1_3_Remove_Module( FT2_1_3_Library  library,
 
 FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_New_Library( FT2_1_3_Memory    memory,
-				FT2_1_3_Library  *alibrary ) {
-	FT2_1_3_Library  library = 0;
+				FT_Library  *alibrary ) {
+	FT_Library  library = 0;
 	FT_Error    error;
 
 
@@ -2255,7 +2255,7 @@ Fail:
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_Library_Version( FT2_1_3_Library   library,
+FT_Library_Version( FT_Library   library,
 					FT_Int      *amajor,
 					FT_Int      *aminor,
 					FT_Int      *apatch ) {
@@ -2284,7 +2284,7 @@ FT2_1_3_Library_Version( FT2_1_3_Library   library,
 /* documentation is in ftmodule.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Done_Library( FT2_1_3_Library  library ) {
+FT2_1_3_Done_Library( FT_Library  library ) {
 	FT2_1_3_Memory  memory;
 
 
@@ -2330,7 +2330,7 @@ FT2_1_3_Done_Library( FT2_1_3_Library  library ) {
 /* documentation is in ftmodule.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_Set_Debug_Hook( FT2_1_3_Library         library,
+FT2_1_3_Set_Debug_Hook( FT_Library         library,
 				   FT_UInt            hook_index,
 				   FT2_1_3_DebugHook_Func  debug_hook ) {
 	if ( library && debug_hook &&

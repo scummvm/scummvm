@@ -23,7 +23,7 @@
 /*  - Maintain a mapping between generic FTC_FaceIDs and live FT_Face    */
 /*    objects.  The mapping itself is performed through a user-provided  */
 /*    callback.  However, the manager maintains a small cache of FT_Face */
-/*    and FT2_1_3_Size objects in order to speed up things considerably.      */
+/*    and FT_Size objects in order to speed up things considerably.      */
 /*                                                                       */
 /*  - Manage one or more cache objects.  Each cache is in charge of      */
 /*    holding a varying number of `cache nodes'.  Each cache node        */
@@ -134,7 +134,7 @@ ftc_family_table_free( FTC_FamilyTable  table,
 /*                                                                       */
 /*    faces_list   :: The lru list of @FT_Face objects in the cache.     */
 /*                                                                       */
-/*    sizes_list   :: The lru list of @FT2_1_3_Size objects in the cache.     */
+/*    sizes_list   :: The lru list of @FT_Size objects in the cache.     */
 /*                                                                       */
 /*    max_weight   :: The maximum cache pool weight.                     */
 /*                                                                       */
@@ -155,7 +155,7 @@ ftc_family_table_free( FTC_FamilyTable  table,
 /*    families     :: Global table of families.                          */
 /*                                                                       */
 typedef struct  FTC_ManagerRec_ {
-	FT2_1_3_Library          library;
+	FT_Library          library;
 	FT2_1_3_LruList          faces_list;
 	FT2_1_3_LruList          sizes_list;
 

@@ -102,7 +102,7 @@ typedef struct FT2_1_3_GlyphRec_*  FT2_1_3_Glyph;
 /*    advance :: A 16.16 vector that gives the glyph's advance width.    */
 /*                                                                       */
 typedef struct  FT2_1_3_GlyphRec_ {
-	FT2_1_3_Library             library;
+	FT_Library             library;
 	const FT2_1_3_Glyph_Class*  clazz;
 	FT_Glyph_Format        format;
 	FT_Vector              advance;
@@ -224,7 +224,7 @@ typedef struct  FT2_1_3_OutlineGlyphRec_ {
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Get_Glyph( FT2_1_3_GlyphSlot  slot,
+FT2_1_3_Get_Glyph( FT_GlyphSlot  slot,
 			  FT2_1_3_Glyph     *aglyph );
 
 

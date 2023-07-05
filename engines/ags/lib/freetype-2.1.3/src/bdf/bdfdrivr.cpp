@@ -425,7 +425,7 @@ Fail:
 
 
 static FT_Error
-BDF_Set_Pixel_Size( FT2_1_3_Size  size ) {
+BDF_Set_Pixel_Size( FT_Size  size ) {
 	BDF_Face  face = (BDF_Face)FT2_1_3_SIZE_FACE( size );
 	FT_Face   root = FT2_1_3_FACE( face );
 
@@ -445,8 +445,8 @@ BDF_Set_Pixel_Size( FT2_1_3_Size  size ) {
 
 
 static FT_Error
-BDF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
-				FT2_1_3_Size       size,
+BDF_Glyph_Load( FT_GlyphSlot  slot,
+				FT_Size       size,
 				FT_UInt       glyph_index,
 				FT_Int32      load_flags ) {
 	BDF_Face        face   = (BDF_Face)FT2_1_3_SIZE_FACE( size );
@@ -607,18 +607,18 @@ const FT2_1_3_Driver_ClassRec  bdf_driver_class = {
 	},
 
 	sizeof ( BDF_FaceRec ),
-	sizeof ( FT2_1_3_SizeRec ),
-	sizeof ( FT2_1_3_GlyphSlotRec ),
+	sizeof ( FT_SizeRec ),
+	sizeof ( FT_GlyphSlotRec ),
 
 	(FT_Face_InitFunc)        BDF_Face_Init,
 	(FT_Face_DoneFunc)        BDF_Face_Done,
-	(FT2_1_3_Size_InitFunc)        0,
-	(FT2_1_3_Size_DoneFunc)        0,
+	(FT_Size_InitFunc)        0,
+	(FT_Size_DoneFunc)        0,
 	(FT2_1_3_Slot_InitFunc)        0,
 	(FT2_1_3_Slot_DoneFunc)        0,
 
-	(FT2_1_3_Size_ResetPointsFunc) BDF_Set_Pixel_Size,
-	(FT2_1_3_Size_ResetPixelsFunc) BDF_Set_Pixel_Size,
+	(FT_Size_ResetPointsFunc) BDF_Set_Pixel_Size,
+	(FT_Size_ResetPixelsFunc) BDF_Set_Pixel_Size,
 
 	(FT2_1_3_Slot_LoadFunc)        BDF_Glyph_Load,
 

@@ -878,7 +878,7 @@ ah_hinter_done( AH_Hinter  hinter ) {
 
 /* create a new empty hinter object */
 FT2_1_3_LOCAL_DEF( FT_Error )
-ah_hinter_new( FT2_1_3_Library  library,
+ah_hinter_new( FT_Library  library,
 			   AH_Hinter  *ahinter ) {
 	AH_Hinter  hinter = 0;
 	FT2_1_3_Memory  memory = library->memory;
@@ -959,7 +959,7 @@ ah_hinter_load( AH_Hinter  hinter,
 				FT_Int32   load_flags,
 				FT_UInt    depth ) {
 	FT_Face           face     = hinter->face;
-	FT2_1_3_GlyphSlot      slot     = face->glyph;
+	FT_GlyphSlot      slot     = face->glyph;
 	FT2_1_3_Slot_Internal  internal = slot->internal;
 	FT_Fixed          x_scale  = face->size->metrics.x_scale;
 	FT_Fixed          y_scale  = face->size->metrics.y_scale;
@@ -1086,7 +1086,7 @@ ah_hinter_load( AH_Hinter  hinter,
 	case FT2_1_3_GLYPH_FORMAT_COMPOSITE: {
 		FT_UInt      nn, num_subglyphs = slot->num_subglyphs;
 		FT_UInt      num_base_subgs, start_point;
-		FT2_1_3_SubGlyph  subglyph;
+		FT_SubGlyph  subglyph;
 
 
 		start_point   = gloader->base.outline.n_points;
@@ -1097,7 +1097,7 @@ ah_hinter_load( AH_Hinter  hinter,
 			goto Exit;
 
 		FT2_1_3_MEM_COPY( gloader->current.subglyphs, slot->subglyphs,
-					 num_subglyphs * sizeof ( FT2_1_3_SubGlyph ) );
+					 num_subglyphs * sizeof ( FT_SubGlyph ) );
 
 		gloader->current.num_subglyphs = num_subglyphs;
 		num_base_subgs = gloader->base.num_subglyphs;
@@ -1263,8 +1263,8 @@ Exit:
 /* load and hint a given glyph */
 FT2_1_3_LOCAL_DEF( FT_Error )
 ah_hinter_load_glyph( AH_Hinter     hinter,
-					  FT2_1_3_GlyphSlot  slot,
-					  FT2_1_3_Size       size,
+					  FT_GlyphSlot  slot,
+					  FT_Size       size,
 					  FT_UInt       glyph_index,
 					  FT_Int32      load_flags ) {
 	FT_Face          face         = slot->face;

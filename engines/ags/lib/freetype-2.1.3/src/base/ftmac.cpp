@@ -441,7 +441,7 @@ memory_stream_close( FT2_1_3_Stream  stream ) {
 
 /* Create a new memory stream from a buffer and a size. */
 static FT_Error
-new_memory_stream( FT2_1_3_Library           library,
+new_memory_stream( FT_Library           library,
                    FT_Byte*             base,
                    FT_ULong             size,
                    FT2_1_3_Stream_CloseFunc  close,
@@ -475,7 +475,7 @@ Exit:
 
 /* Create a new FT_Face given a buffer and a driver name. */
 static FT_Error
-open_face_from_buffer( FT2_1_3_Library  library,
+open_face_from_buffer( FT_Library  library,
                        FT_Byte*    base,
                        FT_ULong    size,
                        FT_Long     face_index,
@@ -518,7 +518,7 @@ open_face_from_buffer( FT2_1_3_Library  library,
 
 /* Create a new FT_Face from a file spec to an LWFN file. */
 static FT_Error
-FT2_1_3_New_Face_From_LWFN( FT2_1_3_Library  library,
+FT2_1_3_New_Face_From_LWFN( FT_Library  library,
                        FSSpec*     spec,
                        FT_Long     face_index,
                        FT_Face    *aface ) {
@@ -542,7 +542,7 @@ FT2_1_3_New_Face_From_LWFN( FT2_1_3_Library  library,
 
 /* Create a new FT_Face from an SFNT resource, specified by res ID. */
 static FT_Error
-FT2_1_3_New_Face_From_SFNT( FT2_1_3_Library  library,
+FT2_1_3_New_Face_From_SFNT( FT_Library  library,
                        short       sfnt_id,
                        FT_Long     face_index,
                        FT_Face    *aface ) {
@@ -579,7 +579,7 @@ FT2_1_3_New_Face_From_SFNT( FT2_1_3_Library  library,
 
 /* Create a new FT_Face from a file spec to a suitcase file. */
 static FT_Error
-FT2_1_3_New_Face_From_Suitcase( FT2_1_3_Library  library,
+FT2_1_3_New_Face_From_Suitcase( FT_Library  library,
                            FSSpec*     spec,
                            FT_Long     face_index,
                            FT_Face    *aface ) {
@@ -619,7 +619,7 @@ Error:
 
 /* Create a new FT_Face from a file spec to a suitcase file. */
 static FT_Error
-FT2_1_3_New_Face_From_dfont( FT2_1_3_Library  library,
+FT2_1_3_New_Face_From_dfont( FT_Library  library,
                         FSSpec*     spec,
                         FT_Long     face_index,
                         FT_Face*    aface ) {
@@ -666,7 +666,7 @@ Error:
 /* documentation is in ftmac.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_New_Face_From_FOND( FT2_1_3_Library  library,
+FT2_1_3_New_Face_From_FOND( FT_Library  library,
                        Handle      fond,
                        FT_Long     face_index,
                        FT_Face    *aface ) {
@@ -814,7 +814,7 @@ ResourceForkSize(FSSpec*  spec) {
 /*    documentation see the original FT2_1_3_New_Face() in freetype.h.        */
 /*                                                                       */
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_New_Face( FT2_1_3_Library   library,
+FT2_1_3_New_Face( FT_Library   library,
              const char*  pathname,
              FT_Long      face_index,
              FT_Face     *aface ) {

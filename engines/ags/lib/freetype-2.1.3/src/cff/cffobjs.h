@@ -53,7 +53,7 @@ typedef TT_Face  CFF_Face;
 /* <Description>                                                         */
 /*    A handle to an OpenType size object.                               */
 /*                                                                       */
-typedef FT2_1_3_Size  CFF_Size;
+typedef FT_Size  CFF_Size;
 
 
 /*************************************************************************/
@@ -65,7 +65,7 @@ typedef FT2_1_3_Size  CFF_Size;
 /*    A handle to an OpenType glyph slot object.                         */
 /*                                                                       */
 typedef struct  CFF_GlyphSlotRec_ {
-	FT2_1_3_GlyphSlotRec  root;
+	FT_GlyphSlotRec  root;
 
 	FT_Bool          hint;
 	FT_Bool          scaled;

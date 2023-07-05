@@ -65,8 +65,8 @@ ft_autohinter_done( FT2_1_3_AutoHinter  module ) {
 
 FT2_1_3_CALLBACK_DEF( FT_Error )
 ft_autohinter_load_glyph( FT2_1_3_AutoHinter  module,
-						  FT2_1_3_GlyphSlot   slot,
-						  FT2_1_3_Size        size,
+						  FT_GlyphSlot   slot,
+						  FT_Size        size,
 						  FT_UInt        glyph_index,
 						  FT_Int32       load_flags ) {
 	return ah_hinter_load_glyph( module->hinter,

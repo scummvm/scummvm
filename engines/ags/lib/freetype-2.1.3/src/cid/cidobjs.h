@@ -93,14 +93,14 @@ typedef struct CID_CharMapRec_*  CID_CharMap;
 
 
 typedef struct  CID_SizeRec_ {
-	FT2_1_3_SizeRec  root;
+	FT_SizeRec  root;
 	FT_Bool     valid;
 
 } CID_SizeRec;
 
 
 typedef struct  CID_GlyphSlotRec_ {
-	FT2_1_3_GlyphSlotRec  root;
+	FT_GlyphSlotRec  root;
 
 	FT_Bool          hint;
 	FT_Bool          scaled;

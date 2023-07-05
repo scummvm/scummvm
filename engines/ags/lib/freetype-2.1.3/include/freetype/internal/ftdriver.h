@@ -41,34 +41,34 @@ typedef void
 
 
 typedef FT_Error
-(*FT2_1_3_Size_InitFunc)( FT2_1_3_Size  size );
+(*FT_Size_InitFunc)( FT_Size  size );
 
 typedef void
-(*FT2_1_3_Size_DoneFunc)( FT2_1_3_Size  size );
+(*FT_Size_DoneFunc)( FT_Size  size );
 
 
 typedef FT_Error
-(*FT2_1_3_Slot_InitFunc)( FT2_1_3_GlyphSlot  slot );
+(*FT2_1_3_Slot_InitFunc)( FT_GlyphSlot  slot );
 
 typedef void
-(*FT2_1_3_Slot_DoneFunc)( FT2_1_3_GlyphSlot  slot );
+(*FT2_1_3_Slot_DoneFunc)( FT_GlyphSlot  slot );
 
 
 typedef FT_Error
-(*FT2_1_3_Size_ResetPointsFunc)( FT2_1_3_Size     size,
+(*FT_Size_ResetPointsFunc)( FT_Size     size,
 							FT_F26Dot6  char_width,
 							FT_F26Dot6  char_height,
 							FT_UInt     horz_resolution,
 							FT_UInt     vert_resolution );
 
 typedef FT_Error
-(*FT2_1_3_Size_ResetPixelsFunc)( FT2_1_3_Size  size,
+(*FT_Size_ResetPixelsFunc)( FT_Size  size,
 							FT_UInt  pixel_width,
 							FT_UInt  pixel_height );
 
 typedef FT_Error
-(*FT2_1_3_Slot_LoadFunc)( FT2_1_3_GlyphSlot  slot,
-					 FT2_1_3_Size       size,
+(*FT2_1_3_Slot_LoadFunc)( FT_GlyphSlot  slot,
+					 FT_Size       size,
 					 FT_UInt       glyph_index,
 					 FT_Int32      load_flags );
 
@@ -177,14 +177,14 @@ typedef struct  FT2_1_3_Driver_ClassRec_ {
 	FT_Face_InitFunc          init_face;
 	FT_Face_DoneFunc          done_face;
 
-	FT2_1_3_Size_InitFunc          init_size;
-	FT2_1_3_Size_DoneFunc          done_size;
+	FT_Size_InitFunc          init_size;
+	FT_Size_DoneFunc          done_size;
 
 	FT2_1_3_Slot_InitFunc          init_slot;
 	FT2_1_3_Slot_DoneFunc          done_slot;
 
-	FT2_1_3_Size_ResetPointsFunc   set_char_sizes;
-	FT2_1_3_Size_ResetPixelsFunc   set_pixel_sizes;
+	FT_Size_ResetPointsFunc   set_char_sizes;
+	FT_Size_ResetPixelsFunc   set_pixel_sizes;
 
 	FT2_1_3_Slot_LoadFunc          load_glyph;
 

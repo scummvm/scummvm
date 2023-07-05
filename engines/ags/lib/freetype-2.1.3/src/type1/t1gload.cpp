@@ -238,8 +238,8 @@ T1_Load_Glyph( T1_GlyphSlot  glyph,
 
 	error = decoder_funcs->init( &decoder,
 								 (FT_Face)face,
-								 (FT2_1_3_Size)size,
-								 (FT2_1_3_GlyphSlot)glyph,
+								 (FT_Size)size,
+								 (FT_GlyphSlot)glyph,
 								 (FT_Byte**)type1->glyph_names,
 								 face->blend,
 								 FT2_1_3_BOOL( hinting ),
@@ -288,7 +288,7 @@ T1_Load_Glyph( T1_GlyphSlot  glyph,
 			internal->glyph_transformed      = 1;
 		} else {
 			FT_BBox            cbox;
-			FT2_1_3_Glyph_Metrics*  metrics = &glyph->root.metrics;
+			FT_Glyph_Metrics*  metrics = &glyph->root.metrics;
 
 
 			/* copy the _unscaled_ advance width */

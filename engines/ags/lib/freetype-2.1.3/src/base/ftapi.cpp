@@ -41,7 +41,7 @@
 /* backwards compatibility API */
 
 FT2_1_3_BASE_DEF( void )
-FT2_1_3_New_Memory_Stream( FT2_1_3_Library  library,
+FT2_1_3_New_Memory_Stream( FT_Library  library,
                       FT_Byte*    base,
                       FT_ULong    size,
                       FT2_1_3_Stream   stream ) {

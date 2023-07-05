@@ -56,7 +56,7 @@ typedef struct  FTC_FaceNodeRec_ {
 
 typedef struct  FTC_SizeNodeRec_ {
 	FT2_1_3_LruNodeRec  lru;
-	FT2_1_3_Size        size;
+	FT_Size        size;
 
 } FTC_SizeNodeRec;
 
@@ -171,7 +171,7 @@ FT2_1_3_CALLBACK_DEF( FT_Error )
 ftc_size_node_init( FTC_SizeNode   node,
 					FTC_SizeQuery  query ) {
 	FT_Face   face = query->face;
-	FT2_1_3_Size   size;
+	FT_Size   size;
 	FT_Error  error;
 
 
@@ -203,7 +203,7 @@ ftc_size_node_done( FTC_SizeNode  node ) {
 FT2_1_3_CALLBACK_DEF( FT_Error )
 ftc_size_node_flush( FTC_SizeNode   node,
 					 FTC_SizeQuery  query ) {
-	FT2_1_3_Size   size = node->size;
+	FT_Size   size = node->size;
 	FT_Error  error;
 
 
@@ -227,7 +227,7 @@ ftc_size_node_flush( FTC_SizeNode   node,
 FT2_1_3_CALLBACK_DEF( FT_Bool )
 ftc_size_node_compare( FTC_SizeNode   node,
 					   FTC_SizeQuery  query ) {
-	FT2_1_3_Size  size = node->size;
+	FT_Size  size = node->size;
 
 
 	return FT2_1_3_BOOL( size->face                    == query->face   &&
@@ -256,7 +256,7 @@ FT2_1_3_EXPORT_DEF( FT_Error )
 FTC_Manager_Lookup_Size( FTC_Manager  manager,
 						 FTC_Font     font,
 						 FT_Face     *aface,
-						 FT2_1_3_Size     *asize ) {
+						 FT_Size     *asize ) {
 	FT_Error  error;
 
 
@@ -410,7 +410,7 @@ ftc_family_table_free( FTC_FamilyTable  table,
 /* documentation is in ftcache.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FTC_Manager_New( FT2_1_3_Library          library,
+FTC_Manager_New( FT_Library          library,
 				 FT_UInt             max_faces,
 				 FT_UInt             max_sizes,
 				 FT_ULong            max_bytes,

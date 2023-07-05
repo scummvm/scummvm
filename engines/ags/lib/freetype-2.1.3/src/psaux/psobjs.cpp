@@ -1089,8 +1089,8 @@ ps_parser_done( PS_Parser  parser ) {
 FT2_1_3_LOCAL_DEF( void )
 t1_builder_init( T1_Builder    builder,
 				 FT_Face       face,
-				 FT2_1_3_Size       size,
-				 FT2_1_3_GlyphSlot  glyph,
+				 FT_Size       size,
+				 FT_GlyphSlot  glyph,
 				 FT_Bool       hinting ) {
 	builder->path_begun  = 0;
 	builder->load_points = 1;
@@ -1147,7 +1147,7 @@ t1_builder_init( T1_Builder    builder,
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( void )
 t1_builder_done( T1_Builder  builder ) {
-	FT2_1_3_GlyphSlot  glyph = builder->glyph;
+	FT_GlyphSlot  glyph = builder->glyph;
 
 
 	if ( glyph )

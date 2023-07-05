@@ -1587,8 +1587,8 @@ typedef struct TT_ExecContextRec_*  TT_ExecContext;
 /* glyph loader structure */
 typedef struct  TT_LoaderRec_ {
 	FT_Face          face;
-	FT2_1_3_Size          size;
-	FT2_1_3_GlyphSlot     glyph;
+	FT_Size          size;
+	FT_GlyphSlot     glyph;
 	FT2_1_3_GlyphLoader   gloader;
 
 	FT_ULong         load_flags;

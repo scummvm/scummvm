@@ -196,7 +196,7 @@ typedef struct FT2_1_3_ClassRec_ {
 	FT2_1_3_Class            super;
 	FT2_1_3_Type             type;
 	FT2_1_3_Memory           memory;
-	FT2_1_3_Library          library;
+	FT_Library          library;
 	FT_Pointer          info;
 
 	FT2_1_3_Object_DoneFunc  class_done;
@@ -416,7 +416,7 @@ FT2_1_3_BASE( FT_Error )
 ft_object_create_from_type( FT2_1_3_Object  *aobject,
 							FT2_1_3_Type     type,
 							FT_Pointer  init_data,
-							FT2_1_3_Library  library );
+							FT_Library  library );
 
 
 
@@ -493,7 +493,7 @@ ft_object_create_from_type( FT2_1_3_Object  *aobject,
 FT2_1_3_BASE( FT_Error )
 ft_class_from_type( FT2_1_3_Class   *aclass,
 					FT2_1_3_Type     type,
-					FT2_1_3_Library  library );
+					FT_Library  library );
 
 
 /* */
@@ -518,7 +518,7 @@ typedef struct FT2_1_3_MetaClassRec_ {
 /* initialize meta class */
 FT2_1_3_BASE( FT_Error )
 ft_metaclass_init( FT2_1_3_MetaClass  meta,
-				   FT2_1_3_Library    library );
+				   FT_Library    library );
 
 /* finalize meta class - destroy all registered class objects */
 FT2_1_3_BASE( void )

@@ -148,8 +148,8 @@ ps_parser_done( PS_Parser  parser );
 FT2_1_3_LOCAL( void )
 t1_builder_init( T1_Builder    builder,
 				 FT_Face       face,
-				 FT2_1_3_Size       size,
-				 FT2_1_3_GlyphSlot  glyph,
+				 FT_Size       size,
+				 FT_GlyphSlot  glyph,
 				 FT_Bool       hinting );
 
 FT2_1_3_LOCAL( void )

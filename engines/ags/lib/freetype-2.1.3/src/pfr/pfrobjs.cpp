@@ -259,7 +259,7 @@ pfr_slot_load( PFR_Slot  slot,
 
 	if ( !error ) {
 		FT_BBox            cbox;
-		FT2_1_3_Glyph_Metrics*  metrics = &slot->root.metrics;
+		FT_Glyph_Metrics*  metrics = &slot->root.metrics;
 		FT_Pos             advance;
 		FT_Int             em_metrics, em_outline;
 		FT_Bool            scaling;

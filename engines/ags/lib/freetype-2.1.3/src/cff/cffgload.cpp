@@ -645,9 +645,9 @@ cff_operator_seac( CFF_Decoder*  decoder,
 	/* If we are trying to load a composite glyph, do not load the */
 	/* accent character and return the array of subglyphs.         */
 	if ( decoder->builder.no_recurse ) {
-		FT2_1_3_GlyphSlot    glyph  = (FT2_1_3_GlyphSlot)decoder->builder.glyph;
+		FT_GlyphSlot    glyph  = (FT_GlyphSlot)decoder->builder.glyph;
 		FT2_1_3_GlyphLoader  loader = glyph->internal->loader;
-		FT2_1_3_SubGlyph     subg;
+		FT_SubGlyph     subg;
 
 
 		/* reallocate subglyph array if necessary */
@@ -2261,7 +2261,7 @@ cff_slot_load( CFF_GlyphSlot  glyph,
 			internal->glyph_transformed      = 1;
 		} else {
 			FT_BBox            cbox;
-			FT2_1_3_Glyph_Metrics*  metrics = &glyph->root.metrics;
+			FT_Glyph_Metrics*  metrics = &glyph->root.metrics;
 
 
 			/* copy the _unscaled_ advance width */

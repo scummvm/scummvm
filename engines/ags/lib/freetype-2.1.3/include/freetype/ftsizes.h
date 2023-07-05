@@ -51,7 +51,7 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 /* <Description>                                                         */
 /*    When creating a new face object (e.g. with @FT2_1_3_New_Face), an       */
-/*    @FT2_1_3_Size object is automatically created and used to store all     */
+/*    @FT_Size object is automatically created and used to store all     */
 /*    pixel-size dependent information, available in the "face->size"    */
 /*    field.                                                             */
 /*                                                                       */
@@ -94,7 +94,7 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_New_Size( FT_Face   face,
-			 FT2_1_3_Size*  size );
+			 FT_Size*  size );
 
 
 /*************************************************************************/
@@ -112,7 +112,7 @@ FT2_1_3_New_Size( FT_Face   face,
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Done_Size( FT2_1_3_Size  size );
+FT2_1_3_Done_Size( FT_Size  size );
 
 
 /*************************************************************************/
@@ -140,7 +140,7 @@ FT2_1_3_Done_Size( FT2_1_3_Size  size );
 /*    the value of "face->size" to the input size handle.                */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Activate_Size( FT2_1_3_Size  size );
+FT2_1_3_Activate_Size( FT_Size  size );
 
 /* */
 

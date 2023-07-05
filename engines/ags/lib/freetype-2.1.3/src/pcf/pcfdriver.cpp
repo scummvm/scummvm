@@ -298,7 +298,7 @@ Fail:
 
 
 static FT_Error
-PCF_Set_Pixel_Size( FT2_1_3_Size  size ) {
+PCF_Set_Pixel_Size( FT_Size  size ) {
 	PCF_Face face = (PCF_Face)FT2_1_3_SIZE_FACE( size );
 
 
@@ -325,8 +325,8 @@ PCF_Set_Pixel_Size( FT2_1_3_Size  size ) {
 
 
 static FT_Error
-PCF_Glyph_Load( FT2_1_3_GlyphSlot  slot,
-				FT2_1_3_Size       size,
+PCF_Glyph_Load( FT_GlyphSlot  slot,
+				FT_Size       size,
 				FT_UInt       glyph_index,
 				FT_Int32      load_flags ) {
 	PCF_Face    face   = (PCF_Face)FT2_1_3_SIZE_FACE( size );
@@ -451,18 +451,18 @@ const FT2_1_3_Driver_ClassRec  pcf_driver_class = {
 	},
 
 	sizeof( PCF_FaceRec ),
-	sizeof( FT2_1_3_SizeRec ),
-	sizeof( FT2_1_3_GlyphSlotRec ),
+	sizeof( FT_SizeRec ),
+	sizeof( FT_GlyphSlotRec ),
 
 	(FT_Face_InitFunc)        PCF_Face_Init,
 	(FT_Face_DoneFunc)        PCF_Face_Done,
-	(FT2_1_3_Size_InitFunc)        0,
-	(FT2_1_3_Size_DoneFunc)        0,
+	(FT_Size_InitFunc)        0,
+	(FT_Size_DoneFunc)        0,
 	(FT2_1_3_Slot_InitFunc)        0,
 	(FT2_1_3_Slot_DoneFunc)        0,
 
-	(FT2_1_3_Size_ResetPointsFunc) PCF_Set_Pixel_Size,
-	(FT2_1_3_Size_ResetPixelsFunc) PCF_Set_Pixel_Size,
+	(FT_Size_ResetPointsFunc) PCF_Set_Pixel_Size,
+	(FT_Size_ResetPixelsFunc) PCF_Set_Pixel_Size,
 
 	(FT2_1_3_Slot_LoadFunc)        PCF_Glyph_Load,
 

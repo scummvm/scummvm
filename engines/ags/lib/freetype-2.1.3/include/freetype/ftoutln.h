@@ -136,7 +136,7 @@ FT2_1_3_Outline_Decompose( FT2_1_3_Outline*              outline,
 /*    to use the library's memory allocator.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Outline_New( FT2_1_3_Library   library,
+FT2_1_3_Outline_New( FT_Library   library,
 				FT_UInt      numPoints,
 				FT_Int       numContours,
 				FT2_1_3_Outline  *anoutline );
@@ -174,7 +174,7 @@ FT2_1_3_Outline_New_Internal( FT2_1_3_Memory    memory,
 /*    simply to use FT2_1_3_Free().                                           */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Outline_Done( FT2_1_3_Library   library,
+FT2_1_3_Outline_Done( FT_Library   library,
 				 FT2_1_3_Outline*  outline );
 
 
@@ -349,7 +349,7 @@ FT2_1_3_Outline_Reverse( FT2_1_3_Outline*  outline );
 /*    It will use the raster correponding to the default glyph format.   */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Outline_Get_Bitmap( FT2_1_3_Library   library,
+FT2_1_3_Outline_Get_Bitmap( FT_Library   library,
 					   FT2_1_3_Outline*  outline,
 					   FT_Bitmap   *abitmap );
 
@@ -386,7 +386,7 @@ FT2_1_3_Outline_Get_Bitmap( FT2_1_3_Library   library,
 /*    actually ignored.                                                  */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Outline_Render( FT2_1_3_Library         library,
+FT2_1_3_Outline_Render( FT_Library         library,
 				   FT2_1_3_Outline*        outline,
 				   FT2_1_3_Raster_Params*  params );
 

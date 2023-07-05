@@ -385,18 +385,18 @@ const FT2_1_3_Driver_ClassRec  cff_driver_class = {
 
 	/* now the specific driver fields */
 	sizeof( TT_FaceRec ),
-	sizeof( FT2_1_3_SizeRec ),
+	sizeof( FT_SizeRec ),
 	sizeof( CFF_GlyphSlotRec ),
 
 	(FT_Face_InitFunc)       cff_face_init,
 	(FT_Face_DoneFunc)       cff_face_done,
-	(FT2_1_3_Size_InitFunc)       cff_size_init,
-	(FT2_1_3_Size_DoneFunc)       cff_size_done,
+	(FT_Size_InitFunc)       cff_size_init,
+	(FT_Size_DoneFunc)       cff_size_done,
 	(FT2_1_3_Slot_InitFunc)       cff_slot_init,
 	(FT2_1_3_Slot_DoneFunc)       cff_slot_done,
 
-	(FT2_1_3_Size_ResetPointsFunc)cff_size_reset,
-	(FT2_1_3_Size_ResetPixelsFunc)cff_size_reset,
+	(FT_Size_ResetPointsFunc)cff_size_reset,
+	(FT_Size_ResetPixelsFunc)cff_size_reset,
 
 	(FT2_1_3_Slot_LoadFunc)       Load_Glyph,
 

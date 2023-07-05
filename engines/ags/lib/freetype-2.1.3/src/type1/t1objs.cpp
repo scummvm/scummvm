@@ -99,7 +99,7 @@ T1_Size_Init( T1_Size  size ) {
 		error = funcs->create( size->root.face->memory,
 							   &face->type1.private_dict, &globals );
 		if ( !error )
-			size->root.internal = (FT2_1_3_Size_Internal)(void*)globals;
+			size->root.internal = (FT_Size_Internal)(void*)globals;
 	}
 
 	return error;

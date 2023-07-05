@@ -61,10 +61,10 @@ typedef struct TT_SizeRec_*  TT_Size;
 /*    A handle to a TrueType glyph slot object.                          */
 /*                                                                       */
 /* <Note>                                                                */
-/*    This is a direct typedef of FT2_1_3_GlyphSlot, as there is nothing      */
+/*    This is a direct typedef of FT_GlyphSlot, as there is nothing      */
 /*    specific about the TrueType glyph slot.                            */
 /*                                                                       */
-typedef FT2_1_3_GlyphSlot  TT_GlyphSlot;
+typedef FT_GlyphSlot  TT_GlyphSlot;
 
 
 /*************************************************************************/
@@ -303,14 +303,14 @@ typedef struct  TT_Size_Metrics_ {
 /* TrueType size class.                                                  */
 /*                                                                       */
 typedef struct  TT_SizeRec_ {
-	FT2_1_3_SizeRec         root;
+	FT_SizeRec         root;
 
 	TT_Size_Metrics    ttmetrics;
 
 #ifdef TT_CONFIG_OPTION_EMBEDDED_BITMAPS
 
 	FT_UInt            strike_index;    /* 0xFFFF to indicate invalid */
-	FT2_1_3_Size_Metrics    strike_metrics;  /* current strike's metrics   */
+	FT_Size_Metrics    strike_metrics;  /* current strike's metrics   */
 
 #endif
 

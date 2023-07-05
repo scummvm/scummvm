@@ -32,7 +32,7 @@
 /* forward declaration */
 FT2_1_3_BASE_DEF( FT_Error )
 ft_metaclass_init( FT2_1_3_MetaClass  meta,
-                   FT2_1_3_Library    library );
+                   FT_Library    library );
 
 /* forward declaration */
 FT2_1_3_BASE_DEF( void )
@@ -142,7 +142,7 @@ ft_metaclass_done( FT2_1_3_MetaClass  meta ) {
 
 FT2_1_3_BASE_DEF( FT_Error )
 ft_metaclass_init( FT2_1_3_MetaClass  meta,
-                   FT2_1_3_Library    library ) {
+                   FT_Library    library ) {
 	FT2_1_3_ClassRec*  clazz = (FT2_1_3_ClassRec*) &meta->clazz;
 
 	/* the meta-class is its OWN class !! */
@@ -339,7 +339,7 @@ ft_object_create( FT2_1_3_Object  *pobject,
 
 FT2_1_3_BASE_DEF( FT2_1_3_Class )
 ft_class_find_by_type( FT2_1_3_Type     type,
-                       FT2_1_3_Library  library ) {
+                       FT_Library  library ) {
 	FT2_1_3_MetaClass  meta = &library->meta_class;
 
 	return ft_metaclass_get_class( meta, type );
@@ -350,7 +350,7 @@ FT2_1_3_BASE_DEF( FT_Error )
 ft_object_create_from_type( FT2_1_3_Object  *pobject,
                             FT2_1_3_Type     type,
                             FT_Pointer  init_data,
-                            FT2_1_3_Library  library ) {
+                            FT_Library  library ) {
 	FT2_1_3_Class  clazz;
 	FT_Error  error;
 

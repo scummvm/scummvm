@@ -436,8 +436,8 @@ typedef struct  T1_Builder_FuncsRec_ {
 	void
 	(*init)( T1_Builder    builder,
 			 FT_Face       face,
-			 FT2_1_3_Size       size,
-			 FT2_1_3_GlyphSlot  slot,
+			 FT_Size       size,
+			 FT_GlyphSlot  slot,
 			 FT_Bool       hinting );
 
 	void
@@ -512,7 +512,7 @@ typedef struct  T1_Builder_FuncsRec_ {
 typedef struct  T1_BuilderRec_ {
 	FT2_1_3_Memory       memory;
 	FT_Face         face;
-	FT2_1_3_GlyphSlot    glyph;
+	FT_GlyphSlot    glyph;
 	FT2_1_3_GlyphLoader  loader;
 	FT2_1_3_Outline*     base;
 	FT2_1_3_Outline*     current;
@@ -594,8 +594,8 @@ typedef struct  T1_Decoder_FuncsRec_ {
 	FT_Error
 	(*init)( T1_Decoder           decoder,
 			 FT_Face              face,
-			 FT2_1_3_Size              size,
-			 FT2_1_3_GlyphSlot         slot,
+			 FT_Size              size,
+			 FT_GlyphSlot         slot,
 			 FT_Byte**            glyph_names,
 			 PS_Blend             blend,
 			 FT_Bool              hinting,

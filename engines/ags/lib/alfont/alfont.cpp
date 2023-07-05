@@ -56,7 +56,7 @@ namespace AGS3 {
 
 using FreeType213::FT_Byte;
 using FreeType213::FT_Face;
-using FreeType213::FT2_1_3_Library;
+using FreeType213::FT_Library;
 using FreeType213::FT_FaceRec;
 using FreeType213::FT2_1_3_Glyph;
 using FreeType213::FT_Bitmap;
@@ -132,7 +132,7 @@ struct ALFONT_FONT {
 
 /* global vars */
 BITMAP *default_bmp; //Draw Font on default BITMAP;
-static FT2_1_3_Library ft_library;
+static FT_Library ft_library;
 static int alfont_textmode = 0;
 static int alfont_inited = 0;
 

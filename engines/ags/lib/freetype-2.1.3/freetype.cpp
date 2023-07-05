@@ -34,11 +34,11 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-FT_Error Init_FreeType(FT2_1_3_Library *alibrary) {
+FT_Error Init_FreeType(FT_Library *alibrary) {
 	return FT2_1_3_Init_FreeType(alibrary);
 }
 
-FT_Error Done_FreeType(FT2_1_3_Library library) {
+FT_Error Done_FreeType(FT_Library library) {
 	return FT2_1_3_Done_FreeType(library);
 }
 
@@ -46,7 +46,7 @@ FT_Error Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 load_flags) {
 	return FT2_1_3_Load_Glyph(face, glyph_index, load_flags);
 }
 
-FT_Error Get_Glyph(FT2_1_3_GlyphSlot slot, FT2_1_3_Glyph *aglyph) {
+FT_Error Get_Glyph(FT_GlyphSlot slot, FT2_1_3_Glyph *aglyph) {
 	return FT2_1_3_Get_Glyph(slot, aglyph);
 }
 
@@ -68,12 +68,12 @@ FT_Error Set_Pixel_Sizes(FT_Face face, FT_UInt pixel_width,
 	return FT2_1_3_Set_Pixel_Sizes(face, pixel_width, pixel_height);
 }
 
-FT_Error New_Face(FT2_1_3_Library library, const char *pathname,
+FT_Error New_Face(FT_Library library, const char *pathname,
 		FT_Long face_index, FT_Face *aface) {
 	return FT2_1_3_New_Face(library, pathname, face_index, aface);
 }
 
-FT_Error New_Memory_Face(FT2_1_3_Library library, const FT_Byte *file_base,
+FT_Error New_Memory_Face(FT_Library library, const FT_Byte *file_base,
 		FT_Long file_size, FT_Long face_index, FT_Face *aface) {
 	return FT2_1_3_New_Memory_Face(library, file_base, file_size, face_index, aface);
 }

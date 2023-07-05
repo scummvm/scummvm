@@ -123,7 +123,7 @@ ftc_sbit_node_load( FTC_SBitNode    snode,
 	FTC_GlyphNode  gnode = FTC_GLYPH_NODE( snode );
 	FT2_1_3_Memory      memory;
 	FT_Face        face;
-	FT2_1_3_Size        size;
+	FT_Size        size;
 	FTC_SBit       sbit;
 
 
@@ -146,7 +146,7 @@ ftc_sbit_node_load( FTC_SBitNode    snode,
 		error = FT2_1_3_Load_Glyph( face, gindex, sfam->type.flags | FT2_1_3_LOAD_RENDER );
 		if ( !error ) {
 			FT_Int        temp;
-			FT2_1_3_GlyphSlot  slot   = face->glyph;
+			FT_GlyphSlot  slot   = face->glyph;
 			FT_Bitmap*    bitmap = &slot->bitmap;
 			FT_Int        xadvance, yadvance;
 

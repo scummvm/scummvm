@@ -134,7 +134,7 @@ typedef struct  TT_ExecContextRec_ {
 	                   pts,
 	                   twilight;
 
-	FT2_1_3_Size_Metrics    metrics;
+	FT_Size_Metrics    metrics;
 	TT_Size_Metrics    tt_metrics; /* size metrics */
 
 	TT_GraphicsState   GS;         /* current graphics state */

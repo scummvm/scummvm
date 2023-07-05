@@ -36,7 +36,7 @@
 /*************************************************************************/
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_GlyphSlot_Oblique( FT2_1_3_GlyphSlot  slot ) {
+FT_GlyphSlot_Oblique( FT_GlyphSlot  slot ) {
 	FT_Matrix    transform;
 	FT2_1_3_Outline*  outline = &slot->outline;
 
@@ -191,7 +191,7 @@ Exit:
 
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_GlyphSlot_Embolden( FT2_1_3_GlyphSlot  slot ) {
+FT_GlyphSlot_Embolden( FT_GlyphSlot  slot ) {
 	FT_Vector*   points;
 	FT_Vector    v_prev, v_first, v_next, v_cur;
 	FT_Pos       distance;

@@ -80,7 +80,7 @@ pfr_get_metrics( PFR_Face   face,
 				 FT_Fixed  *ametrics_y_scale ) {
 	PFR_PhyFont  phys  = &face->phy_font;
 	FT_Fixed     x_scale, y_scale;
-	FT2_1_3_Size      size = face->root.size;
+	FT_Size      size = face->root.size;
 
 	if ( aoutline_resolution )
 		*aoutline_resolution = phys->outline_resolution;
@@ -142,13 +142,13 @@ const FT2_1_3_Driver_ClassRec  pfr_driver_class = {
 
 	(FT_Face_InitFunc)        pfr_face_init,
 	(FT_Face_DoneFunc)        pfr_face_done,
-	(FT2_1_3_Size_InitFunc)        NULL,
-	(FT2_1_3_Size_DoneFunc)        NULL,
+	(FT_Size_InitFunc)        NULL,
+	(FT_Size_DoneFunc)        NULL,
 	(FT2_1_3_Slot_InitFunc)        pfr_slot_init,
 	(FT2_1_3_Slot_DoneFunc)        pfr_slot_done,
 
-	(FT2_1_3_Size_ResetPointsFunc) NULL,
-	(FT2_1_3_Size_ResetPixelsFunc) NULL,
+	(FT_Size_ResetPointsFunc) NULL,
+	(FT_Size_ResetPixelsFunc) NULL,
 	(FT2_1_3_Slot_LoadFunc)        pfr_slot_load,
 
 	(FT_Face_GetKerningFunc)  pfr_get_kerning,

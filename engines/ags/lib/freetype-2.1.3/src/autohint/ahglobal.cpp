@@ -71,7 +71,7 @@ ah_hinter_compute_blues( AH_Hinter  hinter ) {
 	FT_Int        num_rounds;
 
 	FT_Face       face;
-	FT2_1_3_GlyphSlot  glyph;
+	FT_GlyphSlot  glyph;
 	FT_Error      error;
 	FT_CharMap    charmap;
 

@@ -277,7 +277,7 @@ Fail:
 /* documentation is in ftoutln.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Outline_New( FT2_1_3_Library   library,
+FT2_1_3_Outline_New( FT_Library   library,
 				FT_UInt      numPoints,
 				FT_Int       numContours,
 				FT2_1_3_Outline  *anoutline ) {
@@ -384,7 +384,7 @@ FT2_1_3_Outline_Done_Internal( FT2_1_3_Memory    memory,
 /* documentation is in ftoutln.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Outline_Done( FT2_1_3_Library   library,
+FT2_1_3_Outline_Done( FT_Library   library,
 				 FT2_1_3_Outline*  outline ) {
 	/* check for valid `outline' in FT2_1_3_Outline_Done_Internal() */
 
@@ -512,7 +512,7 @@ FT2_1_3_Outline_Reverse( FT2_1_3_Outline*  outline ) {
 /* documentation is in ftoutln.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Outline_Render( FT2_1_3_Library         library,
+FT2_1_3_Outline_Render( FT_Library         library,
 				   FT2_1_3_Outline*        outline,
 				   FT2_1_3_Raster_Params*  params ) {
 	FT_Error     error;
@@ -561,7 +561,7 @@ FT2_1_3_Outline_Render( FT2_1_3_Library         library,
 /* documentation is in ftoutln.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Outline_Get_Bitmap( FT2_1_3_Library   library,
+FT2_1_3_Outline_Get_Bitmap( FT_Library   library,
 					   FT2_1_3_Outline*  outline,
 					   FT_Bitmap   *abitmap ) {
 	FT2_1_3_Raster_Params  params;

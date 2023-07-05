@@ -133,7 +133,7 @@ cid_size_init( CID_Size  size ) {
 
 		error = funcs->create( size->root.face->memory, priv, &globals );
 		if ( !error )
-			size->root.internal = (FT2_1_3_Size_Internal)(void*)globals;
+			size->root.internal = (FT_Size_Internal)(void*)globals;
 	}
 
 	return error;

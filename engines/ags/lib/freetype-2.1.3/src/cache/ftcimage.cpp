@@ -92,7 +92,7 @@ ftc_image_node_init( FTC_ImageNode   inode,
 	FTC_ImageFamily  ifam = FTC_IMAGE_FAMILY( gquery->query.family );
 	FT_Error         error;
 	FT_Face          face;
-	FT2_1_3_Size          size;
+	FT_Size          size;
 
 
 	/* initialize its inner fields */

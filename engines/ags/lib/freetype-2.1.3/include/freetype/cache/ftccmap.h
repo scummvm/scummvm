@@ -128,7 +128,7 @@ typedef struct  FTC_CMapIdRec_ {
 /*                  index (within a @FT_Face) we want to use.            */
 /*                                                                       */
 /*    u.encoding :: For @FTC_CMAP_BY_ENCODING types, this is the charmap */
-/*                  encoding we want to use. see @FT2_1_3_Encoding.           */
+/*                  encoding we want to use. see @FT_Encoding.           */
 /*                                                                       */
 /*    u.id       :: For @FTC_CMAP_BY_ID types, this is the               */
 /*                  (platform,encoding) pair we want to use. see         */
@@ -140,7 +140,7 @@ typedef struct  FTC_CMapDescRec_ {
 
 	union {
 		FT_UInt        index;
-		FT2_1_3_Encoding    encoding;
+		FT_Encoding    encoding;
 		FTC_CMapIdRec  id;
 
 	} u;
