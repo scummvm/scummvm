@@ -124,9 +124,8 @@ ps_unicode_value( const char*  glyph_name ) {
 FT2_1_3_CALLBACK_DEF( int )
 compare_uni_maps( const void*  a,
 				  const void*  b ) {
-	PS_UniMap*  map1 = (PS_UniMap*)a;
-	PS_UniMap*  map2 = (PS_UniMap*)b;
-
+	PS_UniMap *map1 = const_cast<PS_UniMap *>(static_cast<const PS_UniMap *>(a));
+	PS_UniMap *map2 = const_cast<PS_UniMap *>(static_cast<const PS_UniMap *>(b));
 
 	return ( map1->unicode - map2->unicode );
 }
@@ -324,7 +323,7 @@ const FT2_1_3_Module_Class  psnames_module_class = {
 #ifdef FT2_1_3_CONFIG_OPTION_NO_POSTSCRIPT_NAMES
 	0,
 #else
-	(void*)&psnames_interface,   /* module specific interface */
+	(void *)const_cast<PSNames_Interface *>(&psnames_interface), /* module specific interface */
 #endif
 
 	(FT2_1_3_Module_Constructor)0,
