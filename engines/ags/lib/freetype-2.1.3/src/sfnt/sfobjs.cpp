@@ -265,7 +265,7 @@ Exit:
 static FT2_1_3_Encoding
 sfnt_find_encoding( int  platform_id,
 					int  encoding_id ) {
-	typedef struct  TEncoding {
+	typedef struct  TEncoding_ {
 		int          platform_id;
 		int          encoding_id;
 		FT2_1_3_Encoding  encoding;
