@@ -895,8 +895,7 @@ parse_encoding( T1_Face    face,
 	FT2_1_3_Byte*       cur    = parser->root.cursor;
 	FT2_1_3_Byte*       limit  = parser->root.limit;
 
-	PSAux_Service  psaux  = (PSAux_Service)face->psaux;
-
+	PSAux_Service psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));
 
 	/* skip whitespace */
 	while ( is_space( *cur ) ) {
@@ -939,7 +938,7 @@ parse_encoding( T1_Face    face,
 
 		/* We need to `zero' out encoding_table.elements */
 		for ( n = 0; n < count; n++ ) {
-			char*  notdef = (char *)".notdef";
+			char*  notdef = const_cast<char *>(".notdef");
 
 
 			T1_Add_Table( char_table, n, notdef, 8 );
@@ -1051,7 +1050,7 @@ parse_subrs( T1_Face    face,
 	FT2_1_3_Error       error;
 	FT2_1_3_Int         n;
 
-	PSAux_Service  psaux  = (PSAux_Service)face->psaux;
+	PSAux_Service psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));
 
 
 	if ( loader->num_subrs )
@@ -1144,7 +1143,7 @@ parse_charstrings( T1_Face    face,
 	FT2_1_3_Memory      memory       = parser->root.memory;
 	FT2_1_3_Error       error;
 
-	PSAux_Service  psaux        = (PSAux_Service)face->psaux;
+	PSAux_Service psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));
 
 	FT2_1_3_Byte*       cur;
 	FT2_1_3_Byte*       limit        = parser->root.limit;
@@ -1340,7 +1339,7 @@ parse_charstrings( T1_Face    face,
 
 		/* 0 333 hsbw endchar                                      */
 		FT2_1_3_Byte  notdef_glyph[] = {0x8B, 0xF7, 0xE1, 0x0D, 0x0E};
-		char*    notdef_name    = (char *)".notdef";
+		char*    notdef_name    = const_cast<char *>(".notdef");
 
 
 		error = T1_Add_Table( swap_table, 0,
@@ -1479,14 +1478,14 @@ parse_dict( T1_Face    face,
 				if ( len > 0 && len < 22 ) {
 					{
 						/* now, compare the immediate name to the keyword table */
-						T1_Field  keyword = (T1_Field)t1_keywords;
+						T1_Field  keyword = const_cast<T1_Field>(t1_keywords);
 
 
 						for (;;) {
 							FT2_1_3_Byte*  name;
 
 
-							name = (FT2_1_3_Byte*)keyword->ident;
+							name = (FT2_1_3_Byte*) const_cast<char *>(keyword->ident);
 							if ( !name )
 								break;
 
@@ -1567,7 +1566,7 @@ T1_Open_Face( T1_Face  face ) {
 	T1_Font        type1 = &face->type1;
 	FT2_1_3_Error       error;
 
-	PSAux_Service  psaux = (PSAux_Service)face->psaux;
+	PSAux_Service psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));
 
 
 	t1_init_loader( &loader, face );
@@ -1649,7 +1648,7 @@ T1_Open_Face( T1_Face  face ) {
 		charcode = 0;
 		for ( ; charcode < loader.encoding_table.max_elems; charcode++ ) {
 			type1->encoding.char_index[charcode] = 0;
-			type1->encoding.char_name [charcode] = (char *)".notdef";
+			type1->encoding.char_name [charcode] = const_cast<char *>(".notdef");
 
 			char_name = loader.encoding_table.elements[charcode];
 			if ( char_name )
