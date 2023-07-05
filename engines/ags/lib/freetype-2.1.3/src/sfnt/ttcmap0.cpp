@@ -1300,7 +1300,7 @@ FT2_1_3_CALLBACK_DEF( void )
 tt_cmap10_validate( FT2_1_3_Byte*      table,
 					FT2_1_3_Validator  valid ) {
 	FT2_1_3_Byte*  p = table + 4;
-	FT2_1_3_ULong  length, start, count;
+	FT2_1_3_ULong  length, /*start,*/ count;
 
 
 	if ( table + 20 > valid->limit )
@@ -1308,7 +1308,7 @@ tt_cmap10_validate( FT2_1_3_Byte*      table,
 
 	length = TT_NEXT_ULONG( p );
 	p      = table + 12;
-	start  = TT_NEXT_ULONG( p );
+	// start  = TT_NEXT_ULONG( p );
 	count  = TT_NEXT_ULONG( p );
 
 	if ( table + length > valid->limit || length < 20 + count * 2 )
@@ -1351,7 +1351,7 @@ FT2_1_3_CALLBACK_DEF( FT2_1_3_UInt )
 tt_cmap10_char_next( TT_CMap     cmap,
 					 FT2_1_3_UInt32  *pchar_code ) {
 	FT2_1_3_Byte*   table     = cmap->data;
-	FT2_1_3_UInt32  result    = 0;
+	// FT2_1_3_UInt32  result    = 0;
 	FT2_1_3_UInt32  char_code = *pchar_code + 1;
 	FT2_1_3_UInt    gindex    = 0;
 	FT2_1_3_Byte*   p         = table + 12;
@@ -1369,7 +1369,7 @@ tt_cmap10_char_next( TT_CMap     cmap,
 	for ( ; idx < count; idx++ ) {
 		gindex = TT_NEXT_USHORT( p );
 		if ( gindex != 0 ) {
-			result = char_code;
+			// result = char_code;
 			break;
 		}
 		char_code++;
