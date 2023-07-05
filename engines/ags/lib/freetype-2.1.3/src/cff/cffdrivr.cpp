@@ -231,9 +231,8 @@ cff_get_glyph_name( CFF_Face    face,
 	PSNames_Service  psnames;
 	FT2_1_3_Error         error;
 
-
-	psnames = (PSNames_Service)FT2_1_3_Get_Module_Interface(
-				  face->root.driver->root.library, "psnames" );
+	const void *psnames_tmp = FT2_1_3_Get_Module_Interface(face->root.driver->root.library, "psnames");
+	psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(psnames_tmp));
 
 	if ( !psnames ) {
 		FT2_1_3_ERROR(( "cff_get_glyph_name:" ));
@@ -303,8 +302,8 @@ cff_get_name_index( CFF_Face    face,
 	cff     = (CFF_FontRec *)face->extra.data;
 	charset = &cff->charset;
 
-	psnames = (PSNames_Service)FT2_1_3_Get_Module_Interface(
-				  face->root.driver->root.library, "psnames" );
+	const void *psnames_tmp = FT2_1_3_Get_Module_Interface(face->root.driver->root.library, "psnames");
+	psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(psnames_tmp));
 
 	for ( i = 0; i < cff->num_glyphs; i++ ) {
 		sid = charset->sids[i];
@@ -312,7 +311,7 @@ cff_get_name_index( CFF_Face    face,
 		if ( sid > 390 )
 			name = cff_index_get_name( &cff->string_index, sid - 391 );
 		else
-			name = (FT2_1_3_String *)psnames->adobe_std_strings( sid );
+			name = const_cast<FT2_1_3_String *>(psnames->adobe_std_strings(sid));
 
 		result = ft_strcmp( glyph_name, name );
 
