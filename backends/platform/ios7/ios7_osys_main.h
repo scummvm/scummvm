@@ -101,6 +101,10 @@ public:
 
 	bool touchpadModeEnabled() const;
 
+#if TARGET_OS_IOS
+	void applyOrientationSettings();
+#endif
+
 	uint createOpenGLContext();
 	void destroyOpenGLContext();
 	void refreshScreen() const;
