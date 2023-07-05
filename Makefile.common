@@ -473,7 +473,6 @@ endif
 ifdef USE_FREETYPE2
 DIST_FILES_ENGINEDATA+=fonts.dat
 endif
-DIST_FILES_ENGINEDATA+=macgui.dat
 ifdef ENABLE_GRIM
 DIST_FILES_ENGINEDATA+=grim-patch.lab
 endif
@@ -484,7 +483,9 @@ ifdef ENABLE_MYST3
 DIST_FILES_ENGINEDATA+=myst3.dat
 endif
 DIST_FILES_ENGINEDATA+=achievements.dat
+DIST_FILES_ENGINEDATA+=classicmacfonts.dat
 DIST_FILES_ENGINEDATA+=encoding.dat
+DIST_FILES_ENGINEDATA+=macgui.dat
 DIST_FILES_ENGINEDATA:=$(addprefix $(srcdir)/dists/engine-data/,$(DIST_FILES_ENGINEDATA))
 
 # pred.dic is currently only used for the AGI engine

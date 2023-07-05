@@ -10,6 +10,7 @@ COPYING.TINYGL
 COPYING.GLAD
 COPYING.txt
 COPYRIGHT.txt
+classicmacfonts.dat
 drascula.dat
 freescape.dat
 hadesch_translations.dat
