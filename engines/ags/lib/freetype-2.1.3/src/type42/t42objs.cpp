@@ -37,8 +37,7 @@ T42_Open_Face( T42_Face  face ) {
 	FT2_1_3_Memory      memory = face->root.memory;
 	FT2_1_3_Error       error;
 
-	PSAux_Service  psaux  = (PSAux_Service)face->psaux;
-
+	PSAux_Service psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));
 
 	t42_loader_init( &loader, face );
 
@@ -101,7 +100,7 @@ T42_Open_Face( T42_Face  face ) {
 		charcode = 0;
 		for ( ; charcode < loader.encoding_table.max_elems; charcode++ ) {
 			type1->encoding.char_index[charcode] = 0;
-			type1->encoding.char_name [charcode] = (char *)".notdef";
+			type1->encoding.char_name [charcode] = const_cast<char *>(".notdef");
 
 			char_name = loader.encoding_table.elements[charcode];
 			if ( char_name )
@@ -157,13 +156,11 @@ T42_Face_Init( FT2_1_3_Stream      stream,
 	face->ttf_face       = NULL;
 	face->root.num_faces = 1;
 
-	face->psnames = FT2_1_3_Get_Module_Interface( FT2_1_3_FACE_LIBRARY( face ),
-					"psnames" );
-	psnames = (PSNames_Service)face->psnames;
+	face->psnames = FT2_1_3_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psnames");
+	psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(face->psnames));
 
-	face->psaux = FT2_1_3_Get_Module_Interface( FT2_1_3_FACE_LIBRARY( face ),
-										   "psaux" );
-	psaux = (PSAux_Service)face->psaux;
+	face->psaux = FT2_1_3_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psaux");
+	psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_Interface *>(face->psaux));
 
 	/* open the tokenizer, this will also check the font format */
 	error = T42_Open_Face( face );
@@ -213,15 +210,14 @@ T42_Face_Init( FT2_1_3_Stream      stream,
 				full++;
 			}
 
-			root->style_name = ( *full == ' ' ? full + 1
-								 : (char *)"Regular" );
+			root->style_name = (*full == ' ' ? full + 1 : const_cast<char *>("Regular"));
 		} else
-			root->style_name = (char *)"Regular";
+			root->style_name = const_cast<char *>("Regular");
 	} else {
 		/* do we have a `/FontName'? */
 		if ( face->type1.font_name ) {
 			root->family_name = face->type1.font_name;
-			root->style_name  = (char *)"Regular";
+			root->style_name  = const_cast<char *>("Regular");
 		}
 	}
 
