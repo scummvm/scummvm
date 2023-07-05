@@ -63,7 +63,7 @@ class VQAPlayer {
 	int _frameBeginNext; // The frame to begin from, after current playing loop ends.
 	                     // Does not necessarily reflect current playing loop's start frame
 	int _frameEnd;       // The frame to end at for current playing loop
-	int _loopNext;       // Does not necessarily reflect current playing loop's id
+	int _loopIdTarget;   // Does not necessarily reflect current playing loop's id (for a queue of loops this will have the id of the last one in the queue)
 	                     // Used: - as param for _callbackLoopEnded() (which typically is loopEnded()), but never actually used in there)
 	                     //       - for the MA05 inshot glitch workaround
 	                     // It is set at every setLoop call except for the _loopInitial case (when no video stream is loaded)
@@ -78,7 +78,7 @@ class VQAPlayer {
 
 	int _lastAudioFrameSuccessfullyQueued;
 
-	int _loopInitial;
+	int _loopIdInitial;
 	int _repeatsCountInitial;
 
 	uint32 _frameNextTime;
@@ -87,6 +87,7 @@ class VQAPlayer {
 	Audio::SoundHandle _soundHandle;
 
 	bool   _specialPS15GlitchFix;
+	bool   _specialUG18DoNotRepeatLastLoop;
 
 	void (*_callbackLoopEnded)(void *, int frame, int loopId);
 	void  *_callbackData;
@@ -104,17 +105,18 @@ public:
 		  _frameNext(-1),
 		  _frameBeginNext(-1),
 		  _frameEnd(-1),
-		  _loopNext(-1),
+		  _loopIdTarget(-1),
 		  _repeatsCount(-1),
 		  _repeatsCountQueued(-1),
 		  _frameEndQueued(-1),
 		  _lastAudioFrameSuccessfullyQueued(-1),
-		  _loopInitial(-1),
+		  _loopIdInitial(-1),
 		  _repeatsCountInitial(-1),
 		  _frameNextTime(0),
 		  _hasAudio(false),
 		  _audioStarted(false),
 		  _specialPS15GlitchFix(false),
+		  _specialUG18DoNotRepeatLastLoop(false),
 		  _callbackLoopEnded(nullptr),
 		  _callbackData(nullptr) { }
 
@@ -134,13 +136,15 @@ public:
 	void updateLights(Lights *lights);
 
 	bool setBeginAndEndFrame(int begin, int end, int repeatsCount, int loopSetMode, void(*callback)(void *, int, int), void *callbackData);
-	bool setLoop(int loop, int repeatsCount, int loopSetMode, void(*callback)(void*, int, int), void *callbackData);
+	bool setLoop(int loopId, int repeatsCount, int loopSetMode, void(*callback)(void*, int, int), void *callbackData);
 
 	bool seekToFrame(int frame);
 
 	bool getCurrentBeginAndEndFrame(int frame, int *begin, int *end);
-	int getLoopBeginFrame(int loop);
-	int getLoopEndFrame(int loop);
+	int getLoopBeginFrame(int loopId);
+	int getLoopEndFrame(int loopId);
+
+	int getLoopIdTarget() const { return _loopIdTarget; };
 
 	int getFrameCount() const;
 

@@ -205,6 +205,15 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
 	return true;
 }
 
+void VQADecoder::overrideOffsetXY(uint16 offX, uint16 offY) {
+	_header.offsetX = offX;
+	_header.offsetY = offY;
+	if (_videoTrack != nullptr) {
+		_videoTrack->overrideOffsetXY(offX, offY);
+	}
+};
+
+
 void VQADecoder::decodeVideoFrame(Graphics::Surface *surface, int frame, bool forceDraw) {
 	_decodingFrame = frame;
 	_videoTrack->decodeVideoFrame(surface, forceDraw);
@@ -604,18 +613,20 @@ bool VQADecoder::readLNIN(Common::SeekableReadStream *s, uint32 size) {
 	return true;
 }
 
-bool VQADecoder::getLoopBeginAndEndFrame(int loop, int *begin, int *end) {
+bool VQADecoder::getLoopBeginAndEndFrame(int loopId, int *begin, int *end) {
 	assert(begin && end);
 
-	if (loop < 0 || loop >= _loopInfo.loopCount)
+	if (loopId < 0 || loopId >= _loopInfo.loopCount)
 		return false;
 
-	*begin = _loopInfo.loops[loop].begin;
-	*end   = _loopInfo.loops[loop].end;
+	*begin = _loopInfo.loops[loopId].begin;
+	*end   = _loopInfo.loops[loopId].end;
 
 	return true;
 }
 
+// Note that some video loops (scene loops) share frames (but will have different start frame (or end frame?))
+// Thus this method may not return the "correct" loop here. It will just return the first loop that contains the frame.
 int VQADecoder::getLoopIdFromFrame(int frame) {
 	if (frame >= 0) {
 		for (int loopId = 0; loopId < _loopInfo.loopCount; ++loopId) {
@@ -749,6 +760,11 @@ uint16 VQADecoder::VQAVideoTrack::getHeight() const {
 
 int VQADecoder::VQAVideoTrack::getFrameCount() const {
 	return _numFrames;
+}
+
+void VQADecoder::VQAVideoTrack::overrideOffsetXY(uint16 offX, uint16 offY) {
+	_offsetX = offX;
+	_offsetY = offY;
 }
 
 Common::Rational VQADecoder::VQAVideoTrack::getFrameRate() const {

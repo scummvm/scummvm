@@ -49,6 +49,7 @@ bool VQAPlayer::open() {
 
 #if !BLADERUNNER_ORIGINAL_BUGS
 	_specialPS15GlitchFix = false;
+	_specialUG18DoNotRepeatLastLoop = false;
 	// TB05 has wrong end of a loop and this will load empty zbuffer from next loop, which will lead to broken pathfinding
 	if (_name.equals("TB05_2.VQA")) {
 		_decoder._loopInfo.loops[1].end = 60;
@@ -69,6 +70,13 @@ bool VQAPlayer::open() {
 	} else if (_name.equals("PS15.VQA") || _name.equals("PS15_2.VQA")) {
 		// Fix should be applied in Act 1-3 versions of this background
 		_specialPS15GlitchFix = true;
+	} else if (_name.equals("UG19OVR1.VQA")) {
+		// Original has x: 244, y: 88
+		// This still does not look quite right
+		// TODO What is this overlay supposed to be for?
+		_decoder.overrideOffsetXY(248, 110); 
+	} else if (_name.equals("UG18OVR2.VQA")) {
+		_specialUG18DoNotRepeatLastLoop = true;
 	}
 #endif
 
@@ -79,18 +87,18 @@ bool VQAPlayer::open() {
 	}
 
 	_repeatsCount = 0;
-	_loopNext = -1;
+	_loopIdTarget = -1;
 	_frame = -1;
 	_frameBeginNext = -1;
 	_frameEnd = getFrameCount() - 1;
 	_frameEndQueued = -1;
 	_repeatsCountQueued = -1;
 
-	if (_loopInitial >= 0) {
-		// loopInitial is set to the loop Id value that should play,
+	if (_loopIdInitial >= 0) {
+		// loopIdInitial is set to the loop Id value that should play,
 		// when the SeekableReadStream (_s) is nullptr
 		// see setLoop()
-		setLoop(_loopInitial, _repeatsCountInitial, kLoopSetModeImmediate, nullptr, nullptr);
+		setLoop(_loopIdInitial, _repeatsCountInitial, kLoopSetModeImmediate, nullptr, nullptr);
 	} else {
 		_frameNext = 0;
 		// TODO? Removed as redundant
@@ -178,6 +186,8 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 
 	if ((_repeatsCount > 0 || _repeatsCount == -1) && (_frameNext > _frameEnd)) {
 		int loopEndQueued = _frameEndQueued;
+		bool specialEnqueue = false;
+
 		if (_frameEndQueued != -1) {
 			_frameEnd = _frameEndQueued;
 			_frameEndQueued = -1;
@@ -190,7 +200,7 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 			// The code is similar to Scene::advanceFrame()
 			// This will be done once, since this first loop (loopId 1)
 			// is only executed once before moving on to loopId 2
-			if (_name.equals("MA05_3.VQA") && _loopNext == 1) {
+			if (_name.equals("MA05_3.VQA") && _loopIdTarget == 1) {
 				while (update(false, true, false) != 59) {
 					updateZBuffer(_vm->_zbuffer);
 				}
@@ -199,34 +209,70 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 				//     Scene::loopEnded()
 				//
 				_frameBeginNext = 60;
+			} else if (_name.equals("UG18OVR2.VQA")) {
+				// This overlay has three loops (0,1,2) that
+				// need to be played back to back.
+				// However, then engine can only queue up to two loops.
+				// So in this case, we force enqueuing the final loop explicitly here
+				// loop 0:   0 -  59
+				// loop 1:  60 - 119
+				// loop 2: 120 - 135
+				// 
+				if (_loopIdTarget == 1) {
+					// we just loaded up the previously enqueued loop 1
+					_frameNext = _frameBeginNext;
+					// this also has to be enqueued to be (fake) repeated forever,
+					// (presumably _repeatsCountQueued is also -1),
+					// in order for the code to proceed to the newly queued loop 2 after this one (loop 1) ends
+					_repeatsCount =  -1;
+					if (_callbackLoopEnded != nullptr) {
+						_callbackLoopEnded(_callbackData, 0, _loopIdTarget);
+					}
+					specialEnqueue = true;
+					_loopIdTarget = 2;
+					_frameBeginNext = 120;
+					_frameEndQueued = 135;
+					_repeatsCountQueued = 0;
+				}
 			}
+		} else if (_specialUG18DoNotRepeatLastLoop && _loopIdTarget == 2) {
+			// This extra check is needed to stop the last loop (2) of UG18OVR2.VQA from repeating,
+			// in case we loaded a saved game while the queued loops (1 or 2) were playing.
+			result = -3;
+			// _repeatsCount == 0, so return here at the end of the video, to release the resource
+			return result;
 #endif
 		}
 
-		_frameNext = _frameBeginNext;
+		if (!specialEnqueue) {
+			_frameNext = _frameBeginNext;
 
-		if (loopEndQueued == -1) {
-			if (_repeatsCount != -1) {
-				--_repeatsCount;
-			}
-			//callback for repeat, it is not used in the blade runner
-		} else {
-			_repeatsCount = _repeatsCountQueued;
-			_repeatsCountQueued = -1;
+			if (loopEndQueued == -1) {
+				if (_repeatsCount > 0) {
+					--_repeatsCount;
+				}
+				//callback for repeat, it is not used in the blade runner
+			} else {
+				_repeatsCount = _repeatsCountQueued; // ASDF IS THIS STORED IN SAVED GAME?
+				_repeatsCountQueued = -1;
 
-			if (_callbackLoopEnded != nullptr) {
-				_callbackLoopEnded(_callbackData, 0, _loopNext);
+				if (_callbackLoopEnded != nullptr) {
+					_callbackLoopEnded(_callbackData, 0, _loopIdTarget);
+				}
 			}
 		}
 		result = -1;
+
 	} else if (_frameNext > _frameEnd) {
 		result = -3;
 		// _repeatsCount == 0, so return here at the end of the video, to release the resource
 		return result;
+
 	} else if (useTime && (now - (_frameNextTime - kVqaFrameTimeDiff) < kVqaFrameTimeDiff)) {
 		// Not yet time to move to next frame.
 		// Note, we use unsigned difference to avoid potential time overflow issues
 		result = -1;
+
 	} else if (advanceFrame) {
 		_frame = _frameNext;
 		_decoder.readFrame(_frameNext, kVQAReadVideo);
@@ -345,19 +391,20 @@ void VQAPlayer::updateLights(Lights *lights) {
 	_decoder.decodeLights(lights);
 }
 
-bool VQAPlayer::setLoop(int loop, int repeatsCount, int loopSetMode, void (*callback)(void *, int, int), void *callbackData) {
+bool VQAPlayer::setLoop(int loopId, int repeatsCount, int loopSetMode, void (*callback)(void *, int, int), void *callbackData) {
 	if (_s == nullptr) {
-		_loopInitial = loop;
+		_loopIdInitial = loopId;
 		_repeatsCountInitial = repeatsCount;
 		return true;
 	}
 
+	// TODO IF LOOP IS A "TARGET LOOP ID" then begin and end will get the values for that target (final) loop id
 	int begin, end;
-	if (!_decoder.getLoopBeginAndEndFrame(loop, &begin, &end)) {
+	if (!_decoder.getLoopBeginAndEndFrame(loopId, &begin, &end)) {
 		return false;
 	}
 	if (setBeginAndEndFrame(begin, end, repeatsCount, loopSetMode, callback, callbackData)) {
-		_loopNext = loop;
+		_loopIdTarget = loopId; // TODO ASDF MAYBE SET THIS AS TARGET LOOP!
 		return true;
 	}
 	return false;
@@ -375,7 +422,7 @@ bool VQAPlayer::setBeginAndEndFrame(int begin, int end, int repeatsCount, int lo
 	}
 
 	if (repeatsCount < 0) {
-		repeatsCount = -1;
+		repeatsCount = -1; // loop "forever"
 	}
 
 	if (_repeatsCount == 0 && loopSetMode == kLoopSetModeEnqueue) {
@@ -384,14 +431,14 @@ bool VQAPlayer::setBeginAndEndFrame(int begin, int end, int repeatsCount, int lo
 		loopSetMode = kLoopSetModeImmediate;
 	}
 
-	_frameBeginNext = begin;
+	_frameBeginNext = begin; // TODO ASDF THIS IN THE MULTI QUEUE CASE WILL BE THE BEGIN FRAME OF THE FINAL ITEM IN QUEUE
 
 	if (loopSetMode == kLoopSetModeJustStart) {
 		_repeatsCount = repeatsCount;
 		_frameEnd = end;
 	} else if (loopSetMode == kLoopSetModeEnqueue) {
-		_repeatsCountQueued = repeatsCount;
-		_frameEndQueued = end;
+		_repeatsCountQueued = repeatsCount; // TODO applies only to the last of the queued loops
+		_frameEndQueued = end; // TODO ASDF THIS IN THE MULTI QUEUE CASE WILL BE THE END FRAME OF THE FINAL ITEM IN QUEUE
 	} else if (loopSetMode == kLoopSetModeImmediate) {
 		_repeatsCount = repeatsCount;
 		_frameEnd = end;
@@ -411,24 +458,29 @@ bool VQAPlayer::seekToFrame(int frame) {
 }
 
 bool VQAPlayer::getCurrentBeginAndEndFrame(int frame, int *begin, int *end) {
-	int playingLoop = _decoder.getLoopIdFromFrame(frame);
-	if (playingLoop != -1) {
-		return _decoder.getLoopBeginAndEndFrame(playingLoop, begin, end);
+	// updates the values of begin (frame) and end (frame)
+	// based on the value of the "frame" argument.
+	// First, the current loopId is detemined from the value of the "frame" argument.
+	// TODO ASDF THIS MIGHT BE USEFUL!!! _decoder.getLoopIdFromFrame(frame);
+	// ALSO SEE USE OF THE CURRENT METHOD IN Scene::resume()
+	int playingLoopId = _decoder.getLoopIdFromFrame(frame);
+	if (playingLoopId != -1) {
+		return _decoder.getLoopBeginAndEndFrame(playingLoopId, begin, end);
 	}
 	return false;
 }
 
-int VQAPlayer::getLoopBeginFrame(int loop) {
+int VQAPlayer::getLoopBeginFrame(int loopId) {
 	int begin, end;
-	if (!_decoder.getLoopBeginAndEndFrame(loop, &begin, &end)) {
+	if (!_decoder.getLoopBeginAndEndFrame(loopId, &begin, &end)) {
 		return -1;
 	}
 	return begin;
 }
 
-int VQAPlayer::getLoopEndFrame(int loop) {
+int VQAPlayer::getLoopEndFrame(int loopId) {
 	int begin, end;
-	if (!_decoder.getLoopBeginAndEndFrame(loop, &begin, &end)) {
+	if (!_decoder.getLoopBeginAndEndFrame(loopId, &begin, &end)) {
 		return -1;
 	}
 	return end;
