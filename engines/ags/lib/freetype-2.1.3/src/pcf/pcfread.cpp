@@ -885,15 +885,15 @@ pcf_load_font( FT2_1_3_Stream  stream,
 				if ( *(prop->value.atom) == 'B' )
 					root->style_flags |= FT2_1_3_STYLE_FLAG_BOLD;
 
-		root->style_name = (char *)"Regular";
+		root->style_name = const_cast<char *>("Regular");
 
 		if ( root->style_flags & FT2_1_3_STYLE_FLAG_BOLD ) {
 			if ( root->style_flags & FT2_1_3_STYLE_FLAG_ITALIC )
-				root->style_name = (char *)"Bold Italic";
+				root->style_name = const_cast<char *>("Bold Italic");
 			else
-				root->style_name = (char *)"Bold";
+				root->style_name = const_cast<char *>("Bold");
 		} else if ( root->style_flags & FT2_1_3_STYLE_FLAG_ITALIC )
-			root->style_name = (char *)"Italic";
+			root->style_name = const_cast<char *>("Italic");
 
 		prop = pcf_find_property( face, "FAMILY_NAME" );
 		if ( prop != NULL ) {
