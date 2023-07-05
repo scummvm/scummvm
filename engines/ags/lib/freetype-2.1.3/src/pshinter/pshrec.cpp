@@ -585,8 +585,7 @@ ps_dimension_set_mask_bits( PS_Dimension    dim,
 		goto Exit;
 
 	/* set bits in new mask */
-	error = ps_mask_table_set_bits( &dim->masks, (FT2_1_3_Byte*)source,
-									source_pos, source_bits, memory );
+	error = ps_mask_table_set_bits(&dim->masks, const_cast<FT2_1_3_Byte *>(source), source_pos, source_bits, memory);
 
 Exit:
 	return error;
