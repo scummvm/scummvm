@@ -451,7 +451,7 @@ FT2_1_3_Load_Glyph( FT2_1_3_Face   face,
 		}
 
 		/* load auto-hinted outline */
-		hinting = (FT2_1_3_AutoHinter_Service)hinter->clazz->module_interface;
+		hinting = const_cast<FT2_1_3_AutoHinter_Service>(reinterpret_cast<const FT2_1_3_AutoHinter_ServiceRec_ *>(hinter->clazz->module_interface));
 
 		error   = hinting->load_glyph( (FT2_1_3_AutoHinter)hinter,
 									   slot, face->size,
