@@ -321,7 +321,7 @@ void WinFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) con
 	}
 }
 
-int WinFont::getStyle() {
+int WinFont::getStyle() const {
 	int style = kFontStyleRegular;
 
 	// This has been taken from Wine Source
