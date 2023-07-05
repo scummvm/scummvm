@@ -923,12 +923,12 @@ pcf_load_font( FT2_1_3_Stream  stream,
 		} else {
 			prop = pcf_find_property( face, "POINT_SIZE" );
 			if ( prop != NULL ) {
-				PCF_Property  xres, yres, avgw;
+				PCF_Property  xres, yres/*, avgw */;
 
 
 				xres = pcf_find_property( face, "RESOLUTION_X" );
 				yres = pcf_find_property( face, "RESOLUTION_Y" );
-				avgw = pcf_find_property( face, "AVERAGE_WIDTH" );
+				// avgw = pcf_find_property( face, "AVERAGE_WIDTH" );
 
 				if ( ( yres != NULL ) && ( xres != NULL ) ) {
 					root->available_sizes->height =
