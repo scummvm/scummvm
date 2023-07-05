@@ -267,25 +267,26 @@ cid_face_init( FT2_1_3_Stream      stream,
 	face->root.num_faces = 1;
 
 	psnames = (PSNames_Service)face->psnames;
+	const void *ps_tmp;
 	if ( !psnames ) {
-		psnames = (PSNames_Service)FT2_1_3_Get_Module_Interface(
-					  FT2_1_3_FACE_LIBRARY( face ), "psnames" );
+		ps_tmp = FT2_1_3_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psnames");
+		psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(ps_tmp));
 
 		face->psnames = psnames;
 	}
 
 	psaux = (PSAux_Service)face->psaux;
 	if ( !psaux ) {
-		psaux = (PSAux_Service)FT2_1_3_Get_Module_Interface(
-					FT2_1_3_FACE_LIBRARY( face ), "psaux" );
+		ps_tmp = FT2_1_3_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psaux");
+		psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_Interface *>(ps_tmp));
 
 		face->psaux = psaux;
 	}
 
 	pshinter = (PSHinter_Service)face->pshinter;
 	if ( !pshinter ) {
-		pshinter = (PSHinter_Service)FT2_1_3_Get_Module_Interface(
-					   FT2_1_3_FACE_LIBRARY( face ), "pshinter" );
+		ps_tmp = FT2_1_3_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "pshinter");
+		pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(ps_tmp));
 
 		face->pshinter = pshinter;
 	}
@@ -342,13 +343,12 @@ cid_face_init( FT2_1_3_Stream      stream,
 					full++;
 				}
 
-				root->style_name = ( *full == ' ' ) ? full + 1
-								   : (char *)"Regular";
+				root->style_name = (*full == ' ') ? full + 1 : const_cast<char *>("Regular");
 			} else {
 				/* do we have a `/FontName'? */
 				if ( face->cid.cid_font_name ) {
 					root->family_name = face->cid.cid_font_name;
-					root->style_name  = (char *)"Regular";
+					root->style_name = const_cast<char *>("Regular");
 				}
 			}
 
