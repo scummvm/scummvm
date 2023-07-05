@@ -26,6 +26,13 @@
 
 namespace M4 {
 
+bool kernel_section_startup() {
+	_G(game).previous_section = _G(game).section_id;
+	_G(game).section_id = _G(game).new_section;
+
+	return true;
+}
+
 void m4FirstRun() {
 #if TODO
 	add_hot_keys();
@@ -47,12 +54,23 @@ void m4LastRun() {
 	// TODO
 }
 
-void m4SceneLoad() {
+void m4EndScene() {
 	// TODO
 }
 
-void m4EndScene() {
-	// TODO
+void player_set_commands_allowed(bool t_or_f) {
+#ifdef TODO
+	_G(set_commands_allowed_since_last_checked) = true;
+	_G(player).comm_allowed = t_or_f;
+
+	if (t_or_f) {
+		mouse_set_sprite(kArrowCursor); // OK to do something
+		track_hotspots_refresh();
+	} else
+		mouse_set_sprite(waitPointer); // hour glass
+#else
+	error("TODO: player_set_commands_allowed");
+#endif
 }
 
 } // End of namespace M4

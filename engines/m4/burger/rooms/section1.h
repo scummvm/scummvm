@@ -28,8 +28,18 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Section1 : public Section {
+class DummyRoom : public Room {
 public:
+	DummyRoom() : Room(666) {}
+};
+
+class Section1 : public Section {
+private:
+	Room _ROOMS[1] = {
+		DummyRoom()
+	};
+public:
+	Section1() : Section(&_ROOMS[0], 1) {}
 	virtual ~Section1() {}
 };
 

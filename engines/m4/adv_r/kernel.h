@@ -49,11 +49,11 @@ struct Kernel {
 	int16 first_fade = 0;
 	bool fading_to_grey = false;
 	bool supress_fadeup = false;
+	bool force_restart = false;
 
 	int32 minPalEntry = 0;
 	int32 maxPalEntry = 0;
 
-	bool going = false;						// Game is running OK
 	bool pause = false;
 
 	machine* myWalker = nullptr;

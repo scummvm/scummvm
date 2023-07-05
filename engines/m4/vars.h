@@ -144,6 +144,9 @@ public:
 	bool _inv_suppress_click_sound = false;
 	bool _between_rooms = false;
 	bool _completeWalk = false;
+	const char *_art_base_override = nullptr;
+	bool _use_alternate_attribute_file = false;
+	bool _camera_reacts_to_player = false;
 };
 
 #define _G(X) (g_vars->_##X)

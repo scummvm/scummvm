@@ -28,18 +28,42 @@ namespace M4 {
 
 class Room {
 public:
-	Room() {
+	uint _roomNum;
+public:
+	Room(uint roomNum) : _roomNum(roomNum) {
 	}
 	virtual ~Room() {
 	}
+
+	virtual void preload() {}
+	virtual void init() {}
+	virtual void daemon() {}
+	virtual void pre_parser() {}
+	virtual void parser() {}
+	virtual void error() {}
+	virtual void shutdown() {}
+	virtual void custom_hotspot_which() {}
 };
 
 class Section {
+private:
+	Room *const _rooms;
+	const size_t _roomsCount = 0;
 public:
-	Section() {}
+	Section(Room *rooms, size_t count) : _rooms(rooms), _roomsCount(count) {}
 	virtual ~Section() {}
 
 	virtual void preLoad() {}
+
+	/**
+	 * Section initialization
+	 */
+	virtual void init() {}
+
+	/**
+	 * Iterates through the rooms array to find a given room
+	 */
+	Room *operator[](uint roomNum);
 
 	/**
 	 * Used to tell if x,y is over the walker hotspot
@@ -48,13 +72,51 @@ public:
 };
 
 class Sections {
+private:
+	int32 cameraShiftAmount = 0;
+	int32 cameraShift_vert_Amount = 0;
+	bool shut_down_digi_tracks_between_rooms = true;
+	int32 camera_pan_step = 10;
+
 public:
-	const Section *_sections = nullptr;
-	const Section *_activeSection = nullptr;
+	Section *_sections = nullptr;
+	Section *_activeSection = nullptr;
+	Room *_activeRoom = nullptr;
 public:
 	Sections() {}
 
 	void global_section_constructor();
+	void section_room_constructor();
+
+	void section_init() {
+		_activeSection->init();
+	}
+	void room_preload() {
+		_activeRoom->preload();
+	}
+	void room_init() {
+		_activeRoom->init();
+	}
+	void room_daemon() {
+		_activeRoom->daemon();
+	}
+	void room_pre_parser() {
+		_activeRoom->pre_parser();
+	}
+	void room_parser() {
+		_activeRoom->parser();
+	}
+	void room_error() {
+		_activeRoom->error();
+	}
+	void room_shutdown() {
+		_activeRoom->shutdown();
+	}
+	void custom_hotspot_which() {
+		_activeRoom->custom_hotspot_which();
+	}
+
+	void m4SceneLoad();
 };
 
 } // namespace M4
