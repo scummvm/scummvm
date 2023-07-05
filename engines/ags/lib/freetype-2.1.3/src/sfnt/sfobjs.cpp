@@ -325,8 +325,10 @@ sfnt_init_face( FT2_1_3_Stream      stream,
 
 
 	sfnt = (SFNT_Service)face->sfnt;
+	const void *sfnt_tmp;
 	if ( !sfnt ) {
-		sfnt = (SFNT_Service)FT2_1_3_Get_Module_Interface( library, "sfnt" );
+		sfnt_tmp = FT2_1_3_Get_Module_Interface(library, "sfnt");
+		sfnt = const_cast<SFNT_Service>(reinterpret_cast<const SFNT_Interface *>(sfnt_tmp));
 		if ( !sfnt ) {
 			error = FT2_1_3_Err_Invalid_File_Format;
 			goto Exit;
@@ -337,8 +339,8 @@ sfnt_init_face( FT2_1_3_Stream      stream,
 	}
 
 	if ( !face->psnames ) {
-		face->psnames = (PSNames_Service)
-						FT2_1_3_Get_Module_Interface( library, "psnames" );
+		sfnt_tmp = FT2_1_3_Get_Module_Interface(library, "psnames");
+		face->psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(sfnt_tmp));
 	}
 
 	/* check that we have a valid TrueType file */

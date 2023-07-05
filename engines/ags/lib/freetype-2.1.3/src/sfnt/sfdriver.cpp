@@ -148,7 +148,7 @@ get_sfnt_postscript_name( TT_Face  face ) {
 
 		if ( !FT2_1_3_ALLOC( result, name->stringLength + 1 ) ) {
 			FT2_1_3_Stream   stream = face->name_table.stream;
-			FT2_1_3_String*  r      = (FT2_1_3_String*)result;
+			FT2_1_3_String*  r      = const_cast<FT2_1_3_String *>(result);
 			FT2_1_3_Byte*    p      = (FT2_1_3_Byte*)name->string;
 
 
