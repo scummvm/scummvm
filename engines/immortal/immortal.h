@@ -224,7 +224,7 @@ public:
 	const uint8  kTextLeft    = 8;
 	const uint8  kTextTop     = 4;
 	const uint8  kGaugeX      = 0;
-	const uint8  kGaugeY      = -13;                    // ???
+	const uint8  kGaugeY      = static_cast<uint8>((-13) & 0xff);                    // ???
 	const uint16 kScreenBMW   = 160;                    // Screen BitMap Width?
 	const uint16 kChrW        = 64;
 	const uint16 kChrH        = 32;
