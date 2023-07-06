@@ -456,12 +456,28 @@ bool isAbsolutePath(Common::String &path) {
 	return false;
 }
 
+Common::Path toSafePath(Common::String &path) {
+	// Encode a Director raw path as a platform-independent path.
+	// This needs special care, as Mac filenames allow using '/' in them!
+	// - Scrub the pathname to be relative with the correct dir separator
+	// - Split it into tokens
+	// - Encode each token with punycode_encodefilename
+	// - Join the tokens back together with the default dir separator
+	Common::StringTokenizer pathList(convertPath(path), Common::String(g_director->_dirSeparator));
+	Common::Path result;
+	while (!pathList.empty()) {
+		Common::String token = pathList.nextToken();
+		token = Common::punycode_encodefilename(token);
+		if (!result.empty())
+			result.appendInPlace(Common::String(g_director->_dirSeparator), g_director->_dirSeparator);
+		result.appendInPlace(token);
+	}
+	return result;
+}
+
 Common::String convertPath(Common::String &path) {
 	if (path.empty())
 		return path;
-
-	debugN(9, "%s", recIndent());
-	debug(9, "convertPath(%s)", path.c_str());
 
 	if (!path.contains(':') && !path.contains('\\') && !path.contains('@')) {
 		return path;
@@ -553,6 +569,9 @@ Common::String convert83Path(Common::String &path) {
 }
 
 Common::Path resolvePath(Common::String &path, Common::Path &base, bool directory) {
+	// Path is the raw input from Director. Scrub it to be a clean relative path.
+	path = convertPath(path);
+
 	// Absolute path to the game directory
 	Common::Path gamePath = Common::Path(g_director->getGameDataDir()->getPath());
 	// Absolute path to the game directory + the base search path
@@ -564,8 +583,6 @@ Common::Path resolvePath(Common::String &path, Common::Path &base, bool director
 	// FSNode for the current walk location in the filesystem
 	Common::FSNode filesystem(testPath);
 
-	// Path is the raw input from Director. Scrub it to be a clean relative path.
-	path = convertPath(path);
 	// Split this into a component list for iteration.
 	Common::StringTokenizer directory_list(path, Common::String(g_director->_dirSeparator));
 	// newPath is our final result; construct this based on successful filesystem tests
@@ -574,6 +591,7 @@ Common::Path resolvePath(Common::String &path, Common::Path &base, bool director
 		newPath.appendInPlace(Common::String(g_director->_dirSeparator), g_director->_dirSeparator);
 
 	Common::FSList fslist;
+	bool exists = false;
 	while (!directory_list.empty()) {
 		Common::String token = directory_list.nextToken();
 		Common::String decodedToken = punycode_decodefilename(token);
@@ -586,7 +604,7 @@ Common::Path resolvePath(Common::String &path, Common::Path &base, bool director
 		if (!hasChildren)
 			continue;
 
-		bool exists = false;
+		exists = false;
 		for (auto &i : fslist) {
 			// for each element in the path, choose the first FSNode
 			// with a case-insensitive matching name
@@ -606,14 +624,67 @@ Common::Path resolvePath(Common::String &path, Common::Path &base, bool director
 			}
 		}
 		if (!exists) {
-			debugN(9, "%s", recIndent());
-			debug(9, "resolvePath(): No match found for %s", path.c_str());
-			return Common::Path();
+			break;
 		}
 	}
+
+	if (exists) {
+		debugN(9, "%s", recIndent());
+		debug(9, "resolvePath(): Found filesystem match for %s -> %s", path.c_str(), newPath.toString().c_str());
+		return newPath;
+	}
+
+	// No filesystem match, check caches
+	newPath = toSafePath(path);
+	if (!directory) {
+		// Check SearchMan
+		if (SearchMan.hasFile(newPath)) {
+			debugN(9, "%s", recIndent());
+			debug(9, "resolvePath(): Found SearchMan match for %s -> %s", path.c_str(), newPath.toString().c_str());
+			return newPath;
+		}
+		// Check MacResArchive
+		if (Common::MacResManager::exists(newPath)) {
+			debugN(9, "%s", recIndent());
+			debug(9, "resolvePath(): Found MacResManager match for %s -> %s", path.c_str(), newPath.toString().c_str());
+			return newPath;
+		}
+	} else {
+		// Iterate through every SearchMan file to check for directory matches
+		Common::StringArray srcComponents = newPath.splitComponents();
+		Common::ArchiveMemberList list;
+		SearchMan.listMembers(list);
+		for (auto &it : list) {
+			Common::Path test(it->getName());
+			Common::Path testParent = test.getParent();
+			Common::StringArray destComponents = testParent.splitComponents();
+			if (destComponents[destComponents.size() - 1].empty()) {
+				destComponents.pop_back();
+				testParent = Common::Path::joinComponents(destComponents);
+			}
+			if (srcComponents.size() != destComponents.size()) {
+				continue;
+			}
+			bool match = true;
+			for (int i = 0; i < srcComponents.size(); i++) {
+				Common::String component = Common::punycode_decodefilename(destComponents[i]);
+				if (!component.equalsIgnoreCase(srcComponents[i])) {
+					match = false;
+					break;
+				}
+			}
+			if (match) {
+				debugN(9, "%s", recIndent());
+				debug(9, "resolvePath(): Found SearchMan match for %s -> %s", path.c_str(), testParent.toString().c_str());
+				return testParent;
+			}
+
+		}
+	}
+
 	debugN(9, "%s", recIndent());
-	debug(9, "resolvePath(): Found filesystem match for %s -> %s", path.c_str(), newPath.toString().c_str());
-	return newPath;
+	debug(9, "resolvePath(): No match found for %s", path.c_str());
+	return Common::Path();
 }
 
 Common::Path resolvePartialPath(Common::String &path, Common::Path &base, bool directory) {

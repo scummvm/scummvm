@@ -35,6 +35,7 @@ char *numToCastNum(int num);
 
 bool isAbsolutePath(Common::String &path);
 
+Common::Path toSafePath(Common::String &path);
 Common::String convertPath(Common::String &path);
 
 Common::String unixToMacPath(const Common::String &path);
