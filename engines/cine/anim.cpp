@@ -432,11 +432,11 @@ void freeAnimDataRange(byte startIdx, byte numIdx) {
 		}
 
 		// Make sure last accessed index is in bounds
-		if (startIdx + numIdx > g_cine->_animDataTable.size()) {
+		if (static_cast<uint>(startIdx + numIdx) > g_cine->_animDataTable.size()) {
 			numIdx = (byte)(g_cine->_animDataTable.size() - startIdx);
 		}
 		assert(startIdx < g_cine->_animDataTable.size());
-		assert(startIdx + numIdx <= g_cine->_animDataTable.size());
+		assert(static_cast<uint>(startIdx + numIdx) <= g_cine->_animDataTable.size());
 	}
 
 	for (byte i = 0; i < numIdx; i++) {
