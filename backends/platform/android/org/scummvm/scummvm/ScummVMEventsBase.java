@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.GestureDetector;
+import android.view.HapticFeedbackConstants;
 import android.view.InputDevice;
 //import android.view.inputmethod.InputMethodManager;
 
@@ -73,6 +74,7 @@ public class ScummVMEventsBase implements
 	final protected MouseHelper _mouseHelper;
 	final protected MultitouchHelper _multitouchHelper;
 
+	protected View _currentView;
 	protected int _touchMode;
 
 	// Custom handler code (to avoid mem leaks, see warning "This Handler Class Should Be Static Or Leaks Might Occur”) based on:
@@ -99,7 +101,7 @@ public class ScummVMEventsBase implements
 		}
 	}
 
-	final private ScummVMEventHandler _skeyHandler = new ScummVMEventHandler(this);
+	final private ScummVMEventHandler _handler = new ScummVMEventHandler(this);
 
 //	/**
 //	 * An example getter to provide it to some external class
@@ -126,6 +128,10 @@ public class ScummVMEventsBase implements
 		_longPressTimeout = ViewConfiguration.getLongPressTimeout();
 	}
 
+	final static int MSG_SMENU_LONG_PRESS = 1;
+	final static int MSG_SBACK_LONG_PRESS = 2;
+	final static int MSG_LONG_TOUCH_EVENT = 3;
+
 	private void handleEVHMessage(final Message msg) {
 		if (msg.what == MSG_SMENU_LONG_PRESS) {
 			// this toggles the android keyboard (see showVirtualKeyboard() in ScummVMActivity.java)
@@ -151,6 +157,8 @@ public class ScummVMEventsBase implements
 			                   0,
 			                   0,
 			                   0);
+		} else if (msg.what == MSG_LONG_TOUCH_EVENT) {
+			_currentView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
 		}
 	}
 
@@ -187,7 +195,7 @@ public class ScummVMEventsBase implements
 	}
 
 	public void clearEventHandler() {
-		_skeyHandler.clear();
+		_handler.clear();
 		_multitouchHelper.clearEventHandler();
 	}
 
@@ -208,9 +216,6 @@ public class ScummVMEventsBase implements
 		// we don't manage the GenericMotionEvent
 		return false;
 	}
-
-	final static int MSG_SMENU_LONG_PRESS = 1;
-	final static int MSG_SBACK_LONG_PRESS = 2;
 
 	// OnKeyListener
 	@Override
@@ -233,6 +238,7 @@ public class ScummVMEventsBase implements
 //		}
 //		Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onKEY:::" + keyCode + " Action::" + actionStr); // Called
 
+		_currentView = v;
 		final int action = e.getAction();
 
 		int eventUnicodeChar = e.getUnicodeChar();
@@ -305,12 +311,12 @@ public class ScummVMEventsBase implements
 					typeOfLongPressMessage = MSG_SBACK_LONG_PRESS;
 				}
 
-				final boolean fired = !_skeyHandler.hasMessages(typeOfLongPressMessage);
+				final boolean fired = !_handler.hasMessages(typeOfLongPressMessage);
 
-				_skeyHandler.removeMessages(typeOfLongPressMessage);
+				_handler.removeMessages(typeOfLongPressMessage);
 
 				if (action == KeyEvent.ACTION_DOWN) {
-					_skeyHandler.sendMessageDelayed(_skeyHandler.obtainMessage(typeOfLongPressMessage), _longPressTimeout);
+					_handler.sendMessageDelayed(_handler.obtainMessage(typeOfLongPressMessage), _longPressTimeout);
 					return true;
 				} else if (action != KeyEvent.ACTION_UP) {
 					return true;
@@ -495,6 +501,7 @@ public class ScummVMEventsBase implements
 		//         as noted here:
 		//         https://stackoverflow.com/a/11709964
 
+		_currentView = v;
 		final int action = event.getAction();
 
 		// Get the index of the pointer associated with the action.
@@ -560,6 +567,7 @@ public class ScummVMEventsBase implements
 			// Deal with LINT warning "ScummVMEvents#onTouch should call View#performClick when a click is detected"
 			switch (action) {
 				case MotionEvent.ACTION_UP:
+					_handler.removeMessages(MSG_LONG_TOUCH_EVENT);
 					v.performClick();
 					break;
 				case MotionEvent.ACTION_DOWN:
@@ -594,6 +602,7 @@ public class ScummVMEventsBase implements
 		//										e1.toString(), e2.toString(),
 		//										velocityX, velocityY));
 
+		_handler.removeMessages(MSG_LONG_TOUCH_EVENT);
 		return true;
 	}
 
@@ -605,6 +614,7 @@ public class ScummVMEventsBase implements
 	@Override
 	final public boolean onScroll(MotionEvent e1, MotionEvent e2,
 									float distanceX, float distanceY) {
+		_handler.removeMessages(MSG_LONG_TOUCH_EVENT);
 //		Log.d(ScummVM.LOG_TAG, "onScroll");
 		if (_touchMode != TOUCH_MODE_GAMEPAD) {
 			// typical use:
@@ -618,6 +628,11 @@ public class ScummVMEventsBase implements
 
 	@Override
 	final public void onShowPress(MotionEvent e) {
+		_handler.removeMessages(MSG_LONG_TOUCH_EVENT);
+		// Schedule a Right click notification
+		_handler.sendMessageAtTime(_handler.obtainMessage(MSG_LONG_TOUCH_EVENT, 0, 0), e.getDownTime() + 500);
+		// Middle click
+		_handler.sendMessageAtTime(_handler.obtainMessage(MSG_LONG_TOUCH_EVENT, 1, 0), e.getDownTime() + 1000);
 	}
 
 	@Override
