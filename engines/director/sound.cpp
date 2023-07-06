@@ -370,7 +370,7 @@ void DirectorSound::loadSampleSounds(uint type) {
 	for (auto &it : g_director->_allOpenResFiles) {
 		Common::Array<uint16> idList = g_director->_allSeenResFiles[it]->getResourceIDList(tag);
 		for (uint j = 0; j < idList.size(); j++) {
-			if ((idList[j] & 0xFF) == type) {
+			if (static_cast<uint>(idList[j] & 0xFF) == type) {
 				id = idList[j];
 				archive = g_director->_allSeenResFiles[it];
 				break;
