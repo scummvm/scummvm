@@ -356,11 +356,15 @@ Datum Lingo::findVarV4(int varType, const Datum &id) {
 				warning("BUILDBOT: findVarV4: no call frame");
 				return res;
 			}
-			if (id.asInt() % 6 != 0) {
-				warning("BUILDBOT: findVarV4: invalid var ID %d for var type %d (not divisible by 6)", id.asInt(), varType);
+			int stride = 6;
+			if (g_director->getVersion() >= 500) {
+				stride = 8;
+			}
+			if (id.asInt() % stride != 0) {
+				warning("BUILDBOT: findVarV4: invalid var ID %d for var type %d (not divisible by %d)", id.asInt(), varType, stride);
 				return res;
 			}
-			int varIndex = id.asInt() / 6;
+			int varIndex = id.asInt() / stride;
 			Common::Array<Common::String> *varNames = (varType == 4)
 				? callstack.back()->sp.argNames
 				: callstack.back()->sp.varNames;
@@ -827,6 +831,11 @@ void LC::cb_v4theentitynamepush() {
 	id.u.s = nullptr;
 	id.type = VOID;
 
+	if (!g_lingo->_theEntities.contains(name)) {
+		warning("BUILDBOT: cb_v4theentitynamepush: missing the entity %s", name.c_str());
+		g_lingo->push(Datum());
+		return;
+	}
 	TheEntity *entity = g_lingo->_theEntities[name];
 
 	debugC(3, kDebugLingoExec, "cb_v4theentitynamepush: %s", name.c_str());
