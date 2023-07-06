@@ -697,14 +697,16 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 			size = SWAP_BYTES_32(size);
 		}
 
-		debugC(1, kDebugLoading, "Entry: %s offset %lX tag %s size %d", arr[i].c_str(), long(stream->pos() - 8), tag2str(tag), size);
+		Common::Path path = toSafePath(arr[i]);
+
+		debugC(1, kDebugLoading, "Entry: %s offset %lX tag %s size %d", path.toString().c_str(), long(stream->pos() - 8), tag2str(tag), size);
 
 		Entry entry;
 
 		// subtract 8 since we want to include tag and size as well
 		entry.offset = static_cast<uint32>(stream->pos() - 8);
 		entry.size = size + 8;
-		_files[arr[i]] = entry;
+		_files[path.toString()] = entry;
 
 		// Align size for the next seek.
 		size += (size % 2);
