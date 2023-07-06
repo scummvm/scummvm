@@ -24,6 +24,7 @@
 #define M4_ADV_R_ADV_H
 
 #include "common/textconsole.h"
+#include "m4/adv_r/adv_hotspot.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
@@ -36,7 +37,6 @@ namespace M4 {
 
 #define STR_FADEPAL "fade palette"
 #define STR_RAILNODE "rail node"
-#define STR_HOT_SPOT "hot spot"
 #define STR_PATH_NODE "path node"
 
 enum {
@@ -58,23 +58,6 @@ enum {
 enum KernelTriggerType {
 	KT_PARSE = 1,
 	KT_DAEMON, KT_PREPARSE, KT_EXPIRE, KT_LOOP
-};
-
-
-struct HotSpotRec {
-	int32 ul_x = 0, ul_y = 0, lr_x = 0, lr_y = 0;	// Hotspot screen coordinates
-	int32 feet_x = 0, feet_y = 0;			// Walk-to target for player
-	int8 facing = 0;						// Direction player should face
-	bool active = false;					// Flag if hotspot is active
-	char cursor_number = 0;					// Mouse cursor number
-	char syntax = 0;						// Word syntax
-	int32 vocabID = 0, verbID = 0;			// ids of name and verb
-	char *vocab = nullptr;					// Vocabulary name of hotspot
-	char *verb = nullptr;					// Vocabulary default verb name
-	char *prep = nullptr;					// Preposition
-	char *sprite = nullptr;					// Sprite name
-	int16 hash = 0;							// woodscript sprite hash (runtime only)
-	HotSpotRec *next = nullptr;
 };
 
 struct pathNode {

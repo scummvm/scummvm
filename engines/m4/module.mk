@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	adv_r/adv_control.o \
 	adv_r/adv_file.o \
 	adv_r/adv_game.o \
+	adv_r/adv_hotspot.o \
 	adv_r/adv_inv.o \
 	adv_r/adv_player.o \
 	adv_r/adv_rails.o \
