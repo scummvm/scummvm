@@ -171,6 +171,7 @@ void Text::drawChinese(const Common::U32String &utext) {
 	uint8 color = 0;
 	// TODO: Add more colors
 	switch (_fontResource->getResourceId()) {
+	case 0: // Case to quiet VS C4065 warning
 	default:
 		debug(5, "Unrecognized font resource 0x%x for string %s", _fontResource->getResourceId(), utext.encode().c_str());
 		color = 1;
