@@ -66,6 +66,7 @@ void doDoor(WGame &game, int32 obj) {
 
 	anim = init.Obj[obj].anim[CurPlayer];
 	switch (obj) {
+	case 0: // Quiet VS C4065 warning
 	default:
 		anim = init.Obj[obj].anim[CurPlayer];
 		if (init.Obj[obj].goroom)
