@@ -120,7 +120,7 @@ int InstallerArchive::listMembers(Common::ArchiveMemberList &list) const {
 
 const Common::ArchiveMemberPtr InstallerArchive::getMember(const Common::Path &path) const {
 	Common::String name = path.toString();
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
 }
 
 Common::SeekableReadStream *InstallerArchive::createReadStreamForMember(const Common::Path &path) const {

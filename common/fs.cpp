@@ -27,6 +27,46 @@
 
 namespace Common {
 
+// File-in-directory archive member that captures relative path
+class FSDirectoryFile : public ArchiveMember {
+public:
+	FSDirectoryFile(const Common::Path &pathInDirectory, const FSNode &fsNode);
+
+	SeekableReadStream *createReadStream() const override;
+	String getName() const override;
+	Path getPathInArchive() const override;
+	String getFileName() const override;
+	U32String getDisplayName() const override;
+
+private:
+	Common::Path _pathInDirectory;
+	FSNode _fsNode;
+};
+
+FSDirectoryFile::FSDirectoryFile(const Common::Path &pathInDirectory, const FSNode &fsNode) : _pathInDirectory(pathInDirectory), _fsNode(fsNode) {
+}
+
+SeekableReadStream *FSDirectoryFile::createReadStream() const {
+	return _fsNode.createReadStream();
+}
+
+String FSDirectoryFile::getName() const {
+	return _fsNode.getName();
+}
+
+Path FSDirectoryFile::getPathInArchive() const {
+	return _pathInDirectory;
+}
+
+String FSDirectoryFile::getFileName() const {
+	return _fsNode.getName();
+}
+
+U32String FSDirectoryFile::getDisplayName() const {
+	return _fsNode.getDisplayName();
+}
+
+
 FSNode::FSNode() {
 }
 
@@ -95,6 +135,14 @@ String FSNode::getName() const {
 	assert(_realNode);
 	// We transparently decode any punycode-named files
 	return punycode_decodefilename(_realNode->getName());
+}
+
+String FSNode::getFileName() const {
+	return getName();
+}
+
+Common::Path FSNode::getPathInArchive() const {
+	return getName();
 }
 
 String FSNode::getRealName() const {
@@ -245,7 +293,7 @@ const ArchiveMemberPtr FSDirectory::getMember(const Path &path) const {
 		return ArchiveMemberPtr();
 	}
 
-	return ArchiveMemberPtr(new FSNode(*node));
+	return ArchiveMemberPtr(new FSDirectoryFile(path, *node));
 }
 
 SeekableReadStream *FSDirectory::createReadStreamForMember(const Path &path) const {
@@ -337,14 +385,14 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const Path &patter
 	int matches = 0;
 	for (NodeCache::const_iterator it = _fileCache.begin(); it != _fileCache.end(); ++it) {
 		if (it->_key.matchPattern(pattern)) {
-			list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
+			list.push_back(ArchiveMemberPtr(new FSDirectoryFile(it->_key, it->_value)));
 			matches++;
 		}
 	}
 	if (_includeDirectories) {
 		for (NodeCache::const_iterator it = _subDirCache.begin(); it != _subDirCache.end(); ++it) {
 			if (it->_key.matchPattern(pattern)) {
-				list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
+				list.push_back(ArchiveMemberPtr(new FSDirectoryFile(it->_key, it->_value)));
 				matches++;
 			}
 		}
@@ -362,13 +410,13 @@ int FSDirectory::listMembers(ArchiveMemberList &list) const {
 
 	int files = 0;
 	for (NodeCache::const_iterator it = _fileCache.begin(); it != _fileCache.end(); ++it) {
-		list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
+		list.push_back(ArchiveMemberPtr(new FSDirectoryFile(it->_key, it->_value)));
 		++files;
 	}
 
 	if (_includeDirectories) {
 		for (NodeCache::const_iterator it = _subDirCache.begin(); it != _subDirCache.end(); ++it) {
-			list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
+			list.push_back(ArchiveMemberPtr(new FSDirectoryFile(it->_key, it->_value)));
 			++files;
 		}
 	}

@@ -278,8 +278,7 @@ int InstallShieldCabinet::listMembers(ArchiveMemberList &list) const {
 }
 
 const ArchiveMemberPtr InstallShieldCabinet::getMember(const Path &path) const {
-	String name = path.toString();
-	return ArchiveMemberPtr(new GenericArchiveMember(name, this));
+	return ArchiveMemberPtr(new GenericArchiveMember(path, *this));
 }
 
 SeekableReadStream *InstallShieldCabinet::createReadStreamForMember(const Path &path) const {

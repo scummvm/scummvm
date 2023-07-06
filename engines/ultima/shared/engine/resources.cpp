@@ -65,7 +65,7 @@ bool Resources::hasFile(const Common::Path &path) const {
 
 int Resources::listMembers(Common::ArchiveMemberList &list) const {
 	for (uint idx = 0; idx < _localResources.size(); ++idx) {
-		list.push_back(Common::ArchiveMemberPtr(new Common::GenericArchiveMember(_localResources[idx]._name, this)));
+		list.push_back(Common::ArchiveMemberPtr(new Common::GenericArchiveMember(_localResources[idx]._name, *this)));
 	}
 
 	return _localResources.size();
@@ -76,7 +76,7 @@ const Common::ArchiveMemberPtr Resources::getMember(const Common::Path &path) co
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
 }
 
 Common::SeekableReadStream *Resources::createReadStreamForMember(const Common::Path &path) const {

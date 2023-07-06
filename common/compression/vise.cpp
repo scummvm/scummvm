@@ -54,14 +54,14 @@ private:
 		uint16 containingDirectory;
 
 		Common::String name;
-		Common::String fullPath;
+		Common::Path fullPath;
 	};
 
 	struct DirectoryDesc {
 		uint16 containingDirectory;
 
 		Common::String name;
-		Common::String fullPath;
+		Common::Path fullPath;
 	};
 
 	class ArchiveMember : public Common::ArchiveMember {
@@ -76,6 +76,8 @@ private:
 
 		Common::SeekableReadStream *createReadStream() const override;
 		Common::String getName() const override;
+		Common::Path getPathInArchive() const override;
+		Common::String getFileName() const override;
 
 	private:
 		Common::SeekableReadStream *_archiveStream;
@@ -199,12 +201,25 @@ Common::SeekableReadStream *MacVISEArchive::ArchiveMember::createReadStream() co
 }
 
 Common::String MacVISEArchive::ArchiveMember::getName() const {
+	return getPathInArchive().getLastComponent().toString(':');
+}
+
+Common::Path MacVISEArchive::ArchiveMember::getPathInArchive() const {
 	if (_substreamType == kSubstreamTypeFinderInfo)
-		return _fileDesc->fullPath + ".finf";
+		return _fileDesc->fullPath.append(".finf", ':');
 	else if (_substreamType == kSubstreamTypeResource)
-		return _fileDesc->fullPath + ".rsrc";
+		return _fileDesc->fullPath.append(".rsrc", ':');
 	else
 		return _fileDesc->fullPath;
+}
+
+Common::String MacVISEArchive::ArchiveMember::getFileName() const {
+	if (_substreamType == kSubstreamTypeFinderInfo)
+		return _fileDesc->name + ".finf";
+	else if (_substreamType == kSubstreamTypeResource)
+		return _fileDesc->name + ".rsrc";
+	else
+		return _fileDesc->name;
 }
 
 MacVISEArchive::FileDesc::FileDesc() : type{0, 0, 0, 0}, creator{0, 0, 0, 0}, compressedDataSize(0), uncompressedDataSize(0), compressedResSize(0), uncompressedResSize(0), positionInArchive(0) {
@@ -320,7 +335,7 @@ bool MacVISEArchive::loadCatalog() {
 			if (dirDesc.containingDirectory > _directoryDescs.size())
 				error("VISE 3 containing directory index was invalid");
 
-			dirDesc.fullPath = _directoryDescs[dirDesc.containingDirectory - 1].fullPath + ":" + dirDesc.name;
+			dirDesc.fullPath = _directoryDescs[dirDesc.containingDirectory - 1].fullPath.appendComponent(dirDesc.name);
 		}
 	}
 
@@ -331,7 +346,7 @@ bool MacVISEArchive::loadCatalog() {
 			if (fileDesc.containingDirectory > _directoryDescs.size())
 				error("VISE 3 containing directory index was invalid");
 
-			fileDesc.fullPath = _directoryDescs[fileDesc.containingDirectory - 1].fullPath + ":" + fileDesc.name;
+			fileDesc.fullPath = _directoryDescs[fileDesc.containingDirectory - 1].fullPath.appendComponent(fileDesc.name);
 		}
 	}
 
@@ -339,9 +354,8 @@ bool MacVISEArchive::loadCatalog() {
 }
 
 const MacVISEArchive::FileDesc *MacVISEArchive::getFileDesc(const Common::Path &path) const {
-	Common::String convertedPath = path.toString(':');
 	for (const FileDesc &desc : _fileDescs) {
-		if (desc.fullPath == convertedPath)
+		if (desc.fullPath == path)
 			return &desc;
 	}
 
@@ -396,7 +410,8 @@ char MacVISEArchive::getPathSeparator() const {
 }
 
 bool MacVISEArchive::getFileDescIndex(const Common::Path &path, uint &outIndex, ArchiveMember::SubstreamType &outSubstreamType) const {
-	Common::String convertedPath = path.toString(':');
+	Common::String convertedPath = path.toString(getPathSeparator());
+
 	ArchiveMember::SubstreamType substreamType = ArchiveMember::kSubstreamTypeData;
 	if (convertedPath.hasSuffix(".rsrc")) {
 		substreamType = ArchiveMember::kSubstreamTypeResource;
@@ -406,10 +421,12 @@ bool MacVISEArchive::getFileDescIndex(const Common::Path &path, uint &outIndex, 
 		convertedPath = convertedPath.substr(0, convertedPath.size() - 5);
 	}
 
+	Common::Path filePath(convertedPath, getPathSeparator());
+
 	for (uint descIndex = 0; descIndex < _fileDescs.size(); descIndex++) {
 		const FileDesc &desc = _fileDescs[descIndex];
 
-		if (desc.fullPath == convertedPath) {
+		if (desc.fullPath == filePath) {
 			if (substreamType == ArchiveMember::SubstreamType::kSubstreamTypeData && desc.uncompressedDataSize == 0)
 				return false;
 			if (substreamType == ArchiveMember::SubstreamType::kSubstreamTypeResource && desc.uncompressedResSize == 0)

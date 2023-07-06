@@ -149,7 +149,7 @@ bool NSArchive::hasFile(const Common::Path &path) const {
 
 int NSArchive::listMembers(Common::ArchiveMemberList &list) const {
 	for (uint32 i = 0; i < _numFiles; i++) {
-		list.push_back(Common::SharedPtr<Common::GenericArchiveMember>(new Common::GenericArchiveMember(_archiveDir[i], this)));
+		list.push_back(Common::SharedPtr<Common::GenericArchiveMember>(new Common::GenericArchiveMember(Common::String(_archiveDir[i]), *this)));
 	}
 	return _numFiles;
 }
@@ -163,7 +163,7 @@ const Common::ArchiveMemberPtr NSArchive::getMember(const Common::Path &path) co
 		item = _archiveDir[index];
 	}
 
-	return Common::SharedPtr<Common::GenericArchiveMember>(new Common::GenericArchiveMember(item, this));
+	return Common::SharedPtr<Common::GenericArchiveMember>(new Common::GenericArchiveMember(Common::String(item), *this));
 }
 
 

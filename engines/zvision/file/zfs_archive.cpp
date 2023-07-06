@@ -112,7 +112,7 @@ int ZfsArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int matches = 0;
 
 	for (ZfsEntryHeaderMap::const_iterator it = _entryHeaders.begin(); it != _entryHeaders.end(); ++it) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(it->_value->name, this)));
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(it->_value->name, *this)));
 		matches++;
 	}
 
@@ -124,7 +124,7 @@ const Common::ArchiveMemberPtr ZfsArchive::getMember(const Common::Path &path) c
 	if (!_entryHeaders.contains(name))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
 }
 
 Common::SeekableReadStream *ZfsArchive::createReadStreamForMember(const Common::Path &path) const {

@@ -455,14 +455,13 @@ int Win32ResourceArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int count = 0;
 
 	for (FilenameList::const_iterator i = _files.begin(); i != _files.end(); ++i, ++count)
-		list.push_back(Common::ArchiveMemberPtr(new Common::GenericArchiveMember(*i, this)));
+		list.push_back(Common::ArchiveMemberPtr(new Common::GenericArchiveMember(*i, *this)));
 
 	return count;
 }
 
 const Common::ArchiveMemberPtr Win32ResourceArchive::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *Win32ResourceArchive::createReadStreamForMember(const Common::Path &path) const {

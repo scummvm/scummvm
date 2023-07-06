@@ -47,7 +47,7 @@ int PlainArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int count = 0;
 
 	for (FileMap::const_iterator i = _files.begin(); i != _files.end(); ++i) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, this)));
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, *this)));
 		++count;
 	}
 
@@ -59,7 +59,7 @@ const Common::ArchiveMemberPtr PlainArchive::getMember(const Common::Path &path)
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
 }
 
 Common::SeekableReadStream *PlainArchive::createReadStreamForMember(const Common::Path &path) const {
@@ -106,7 +106,7 @@ int TlkArchive::listMembers(Common::ArchiveMemberList &list) const {
 
 	for (; count < _entryCount; ++count) {
 		const Common::String name = Common::String::format("%08u.AUD", _fileEntries[count * 2 + 0]);
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(name, this)));
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(name, *this)));
 	}
 
 	return count;
@@ -117,7 +117,7 @@ const Common::ArchiveMemberPtr TlkArchive::getMember(const Common::Path &path) c
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
 }
 
 Common::SeekableReadStream *TlkArchive::createReadStreamForMember(const Common::Path &path) const {
@@ -202,7 +202,7 @@ int CachedArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int count = 0;
 
 	for (FileMap::const_iterator i = _files.begin(); i != _files.end(); ++i) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, this)));
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, *this)));
 		++count;
 	}
 
@@ -214,7 +214,7 @@ const Common::ArchiveMemberPtr CachedArchive::getMember(const Common::Path &path
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
 }
 
 Common::SeekableReadStream *CachedArchive::createReadStreamForMember(const Common::Path &path) const {

@@ -80,7 +80,7 @@ bool FileEntryArchive::hasFile(const Common::Path &path) const {
 int FileEntryArchive::listMembers(Common::ArchiveMemberList &list) const {
 	list.clear();
 	for (Common::HashMap<Common::String, FileEntry>::const_iterator it = _index.begin(); it != _index.end(); ++it)
-		list.push_back(Common::ArchiveMemberPtr(new Common::GenericArchiveMember(it->_key, this)));
+		list.push_back(Common::ArchiveMemberPtr(new Common::GenericArchiveMember(it->_key, *this)));
 
 	return list.size();
 }
@@ -90,7 +90,7 @@ const Common::ArchiveMemberPtr FileEntryArchive::getMember(const Common::Path &p
 		return nullptr;
 
 	Common::String name = path.toString();
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
 }
 
 Common::SeekableReadStream *FileEntryArchive::createReadStreamForMember(const Common::Path &path) const {

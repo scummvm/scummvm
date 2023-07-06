@@ -109,7 +109,7 @@ int NGIArchive::listMembers(Common::ArchiveMemberList &list) const {
 
 	NgiHeadersMap::const_iterator it = _headers.begin();
 	for ( ; it != _headers.end(); ++it) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(it->_value->filename, this)));
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(Common::Path(it->_value->filename), *this)));
 		matches++;
 	}
 
@@ -121,7 +121,7 @@ const Common::ArchiveMemberPtr NGIArchive::getMember(const Common::Path &path) c
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
 }
 
 Common::SeekableReadStream *NGIArchive::createReadStreamForMember(const Common::Path &path) const {

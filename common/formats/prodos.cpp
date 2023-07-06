@@ -50,6 +50,14 @@ Common::String ProDOSFile::getName() const {
 	return Common::String(_name);
 }
 
+Common::String ProDOSFile::getFileName() const {
+	return Common::String(_name);
+}
+
+Common::Path ProDOSFile::getPathInArchive() const {
+	return Common::Path(_name);
+}
+
 /* This method is used to get a single block of data from the disk,
  * but is not strictly 512 bytes. This is so that it can get only what
  * it needs when in the final block. It then adds it into the allocated
