@@ -466,7 +466,7 @@ FT2_1_3_Done_Glyph( FT2_1_3_Glyph  glyph );
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Matrix_Multiply                                                 */
+/*    FT2_1_3_Matrix_Multiply                                                 */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Performs the matrix operation `b = a*b'.                           */
@@ -481,14 +481,14 @@ FT2_1_3_Done_Glyph( FT2_1_3_Glyph  glyph );
 /*    The result is undefined if either `a' or `b' is zero.              */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT_Matrix_Multiply( FT_Matrix*  a,
+FT2_1_3_Matrix_Multiply( FT_Matrix*  a,
 					FT_Matrix*  b );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Matrix_Invert                                                   */
+/*    FT2_1_3_Matrix_Invert                                                   */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Inverts a 2x2 matrix.  Returns an error if it can't be inverted.   */
@@ -501,7 +501,7 @@ FT_Matrix_Multiply( FT_Matrix*  a,
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT_Matrix_Invert( FT_Matrix*  matrix );
+FT2_1_3_Matrix_Invert( FT_Matrix*  matrix );
 
 
 /* */

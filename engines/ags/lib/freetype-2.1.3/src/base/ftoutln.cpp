@@ -587,7 +587,7 @@ FT2_1_3_Outline_Get_Bitmap( FT_Library   library,
 /* documentation is in ftoutln.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT_Vector_Transform( FT_Vector*  vector,
+FT2_1_3_Vector_Transform( FT_Vector*  vector,
 					 FT_Matrix*  matrix ) {
 	FT_Pos xz, yz;
 
@@ -616,7 +616,7 @@ FT2_1_3_Outline_Transform( FT2_1_3_Outline*  outline,
 
 
 	for ( ; vec < limit; vec++ )
-		FT_Vector_Transform( vec, matrix );
+		FT2_1_3_Vector_Transform( vec, matrix );
 }
 
 } // End of namespace FreeType213

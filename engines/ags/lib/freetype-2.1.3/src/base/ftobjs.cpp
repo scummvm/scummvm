@@ -509,7 +509,7 @@ Load_Ok:
 							&internal->transform_matrix,
 							&internal->transform_delta );
 			/* transform advance */
-			FT_Vector_Transform( &slot->advance, &internal->transform_matrix );
+			FT2_1_3_Vector_Transform( &slot->advance, &internal->transform_matrix );
 		}
 	}
 
@@ -2255,7 +2255,7 @@ Fail:
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT_Library_Version( FT_Library   library,
+FT2_1_3_Library_Version( FT_Library   library,
 					FT_Int      *amajor,
 					FT_Int      *aminor,
 					FT_Int      *apatch ) {

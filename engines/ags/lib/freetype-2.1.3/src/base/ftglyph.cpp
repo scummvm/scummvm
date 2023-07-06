@@ -58,7 +58,7 @@ namespace FreeType213 {
 /* documentation is in ftglyph.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT_Matrix_Multiply( FT_Matrix*  a,
+FT2_1_3_Matrix_Multiply( FT_Matrix*  a,
 					FT_Matrix*  b ) {
 	FT_Fixed  xx, xy, yx, yy;
 
@@ -81,7 +81,7 @@ FT_Matrix_Multiply( FT_Matrix*  a,
 /* documentation is in ftglyph.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT_Matrix_Invert( FT_Matrix*  matrix ) {
+FT2_1_3_Matrix_Invert( FT_Matrix*  matrix ) {
 	FT_Pos  delta, xx, yy;
 
 
@@ -480,7 +480,7 @@ FT2_1_3_Glyph_Transform( FT2_1_3_Glyph    glyph,
 
 			/* transform advance vector */
 			if ( matrix )
-				FT_Vector_Transform( &glyph->advance, matrix );
+				FT2_1_3_Vector_Transform( &glyph->advance, matrix );
 		} else
 			error = FT2_1_3_Err_Invalid_Glyph_Format;
 	}

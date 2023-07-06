@@ -984,8 +984,8 @@ ah_hinter_load( AH_Hinter  hinter,
 		hinter->trans_delta  = internal->glyph_delta;
 		hinter->trans_matrix = imatrix;
 
-		FT_Matrix_Invert( &imatrix );
-		FT_Vector_Transform( &hinter->trans_delta, &imatrix );
+		FT2_1_3_Matrix_Invert( &imatrix );
+		FT2_1_3_Vector_Transform( &hinter->trans_delta, &imatrix );
 	}
 
 	/* set linear horizontal metrics */
@@ -1151,8 +1151,8 @@ ah_hinter_load( AH_Hinter  hinter,
 
 
 				for ( ; cur < limit; cur++, org++ ) {
-					FT_Vector_Transform( cur, &subglyph->transform );
-					FT_Vector_Transform( org, &subglyph->transform );
+					FT2_1_3_Vector_Transform( cur, &subglyph->transform );
+					FT2_1_3_Vector_Transform( org, &subglyph->transform );
 				}
 			}
 

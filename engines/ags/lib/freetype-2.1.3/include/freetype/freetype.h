@@ -108,7 +108,7 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 /*    FT2_1_3_Init_FreeType                                                   */
 /*    FT2_1_3_Done_FreeType                                                   */
-/*    FT_Library_Version                                                 */
+/*    FT2_1_3_Library_Version                                                 */
 /*                                                                       */
 /*    FT2_1_3_New_Face                                                        */
 /*    FT2_1_3_Done_Face                                                       */
@@ -1415,7 +1415,7 @@ FT2_1_3_Init_FreeType( FT_Library  *alibrary );
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Library_Version                                                 */
+/*    FT2_1_3_Library_Version                                                 */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Return the version of the FreeType library being used.  This is    */
@@ -1442,7 +1442,7 @@ FT2_1_3_Init_FreeType( FT_Library  *alibrary );
 /*    the library object has been created.                               */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT_Library_Version( FT_Library   library,
+FT2_1_3_Library_Version( FT_Library   library,
 					FT_Int      *amajor,
 					FT_Int      *aminor,
 					FT_Int      *apatch );
@@ -2660,9 +2660,9 @@ FT2_1_3_Get_Name_Index( FT_Face     face,
 /*    FT2_1_3_RoundFix                                                        */
 /*    FT2_1_3_CeilFix                                                         */
 /*    FT2_1_3_FloorFix                                                        */
-/*    FT_Vector_Transform                                                */
-/*    FT_Matrix_Multiply                                                 */
-/*    FT_Matrix_Invert                                                   */
+/*    FT2_1_3_Vector_Transform                                                */
+/*    FT2_1_3_Matrix_Multiply                                                 */
+/*    FT2_1_3_Matrix_Invert                                                   */
 /*                                                                       */
 /*************************************************************************/
 
@@ -2817,7 +2817,7 @@ FT2_1_3_FloorFix( FT_Fixed  a );
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_Vector_Transform                                                */
+/*    FT2_1_3_Vector_Transform                                                */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Transforms a single vector through a 2x2 matrix.                   */
@@ -2832,7 +2832,7 @@ FT2_1_3_FloorFix( FT_Fixed  a );
 /*    The result is undefined if either `vector' or `matrix' is invalid. */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT_Vector_Transform( FT_Vector*  vec,
+FT2_1_3_Vector_Transform( FT_Vector*  vec,
 					 FT_Matrix*  matrix );
 
 

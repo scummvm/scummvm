@@ -1038,8 +1038,8 @@ load_truetype_glyph( TT_Loader  loader,
 
 
 					for ( ; cur < limit; cur++, org++ ) {
-						FT_Vector_Transform( cur, &subglyph->transform );
-						FT_Vector_Transform( org, &subglyph->transform );
+						FT2_1_3_Vector_Transform( cur, &subglyph->transform );
+						FT2_1_3_Vector_Transform( org, &subglyph->transform );
 					}
 				}
 
