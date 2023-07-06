@@ -742,7 +742,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			//       This is the reason we use "double tap and move" to emulate that specific behavior.
 			// TODO This might be unwanted "alternate" behavior (better to have it as optional?)
 			// TODO put these time (in milliseconds) values in some option dlg?
-			if (arg3 > 1000) {
+			if (arg3 > 1500) {
 //				LOGD("JE_TAP - arg3 %d --> Middle Mouse Button", arg3);
 				down = Common::EVENT_MBUTTONDOWN;
 				up = Common::EVENT_MBUTTONUP;

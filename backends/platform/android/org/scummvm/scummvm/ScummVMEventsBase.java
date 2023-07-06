@@ -632,7 +632,7 @@ public class ScummVMEventsBase implements
 		// Schedule a Right click notification
 		_handler.sendMessageAtTime(_handler.obtainMessage(MSG_LONG_TOUCH_EVENT, 0, 0), e.getDownTime() + 500);
 		// Middle click
-		_handler.sendMessageAtTime(_handler.obtainMessage(MSG_LONG_TOUCH_EVENT, 1, 0), e.getDownTime() + 1000);
+		_handler.sendMessageAtTime(_handler.obtainMessage(MSG_LONG_TOUCH_EVENT, 1, 0), e.getDownTime() + 1500);
 	}
 
 	@Override
