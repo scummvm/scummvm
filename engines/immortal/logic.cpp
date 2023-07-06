@@ -118,9 +118,9 @@ void ImmortalEngine::logic() {
 			levelDrawAll();
 			updateHitGauge();
 
-			_dim = 0;
+			_dim = false;
 			if ((_level == 0) && (/*_currentLevel.getShowRoom()*/0 == 0) && (_rooms[_currentRoom]->roomLighted() == false) && (/*getNumBullets()*/ 0 == 0)) {
-				_dim += 1;
+				_dim = true;
 			}
 
 			if (_level == 7) {
