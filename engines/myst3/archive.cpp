@@ -275,7 +275,7 @@ Common::String ResourceDescription::getTextData(uint index) const {
 	memset(decrypted, 0, sizeof(decrypted));
 
 	uint8 *out = &decrypted[0];
-	while (cnt / 4 < (_subentry->metadata.size() + 2) && cnt < 89) {
+	while (cnt / 4u < (_subentry->metadata.size() + 2) && cnt < 89) {
 		// XORed text stored in little endian 32 bit words
 		*out++ = (getMiscData(cnt / 4) >> (8 * (3 - (cnt % 4)))) ^ key++;
 		cnt++;
