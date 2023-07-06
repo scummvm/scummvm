@@ -45,23 +45,18 @@ namespace M4 {
 
 extern constexpr uint8 gr_pal_get_ega_color(uint8 myColor);
 
-uint8 *gr_color_createInverseTable(RGB8 *pal, uint8 bitDepth, int begin_color, int end_color);
-void   gr_color_create_ipl5(uint8 *inverseColorTable, char *fname, int room_num);
+void gr_color_create_ipl5(uint8 *inverseColorTable, char *fname, int room_num);
 uint8 *gr_color_load_ipl5(const char *filename, uint8 *inverseColors);
-void   gr_color_set(int32 c);
-byte   gr_color_get_current();
+void gr_color_set(int32 c);
+byte gr_color_get_current();
 
-void  gr_pal_set_range(RGB8 *pal, int first_color, int num_colors);
-void  gr_pal_set(RGB8 *pal);
-void  gr_pal_interface(RGB8 *fixpal);
-void  gr_pal_set_RGB6(RGB8 *entry, int r, int g, int b);
-void  gr_pal_set_RGB8(RGB8 *entry, int r, int g, int b);
-void  gr_pal_set_entry(int32 index, RGB8 *entry);
-void  gr_pal_clear(RGB8 *palette);
+void gr_pal_set_range(RGB8 *pal, int first_color, int num_colors);
+void gr_pal_set(RGB8 *pal);
+void gr_pal_set_RGB8(RGB8 *entry, int r, int g, int b);
+void gr_pal_set_entry(int32 index, RGB8 *entry);
+void gr_pal_clear(RGB8 *palette);
 void gr_pal_clear_range(RGB8 *palette, int first_color, int last_color);
 uint8 gr_pal_find_best_match(RGB8 *pal, uint8 r, uint8 g, uint8 b);
-uint8 gr_pal_find_best_match_by_index(RGB8 *pal, uint8 r, uint8 g, uint8 b, int begin_color, int end_color);
-void  gr_pal_copy(RGB8 *dest, RGB8 *src, uint8 firstIndex, uint8 lastIndex);
 
 } // namespace M4
 
