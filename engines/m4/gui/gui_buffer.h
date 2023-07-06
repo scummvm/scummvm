@@ -34,7 +34,24 @@ namespace M4 {
  */
 extern bool gui_buffer_system_init();
 
+/**
+ * Shutdown any code associated with buffers management
+ */
 extern void gui_buffer_system_shutdown();
+
+/**
+ * Register a Buffer with the view manager by creating a view mananger screen
+ * @param x1		Where the screen should initially be placed, coords relative
+					to the top left hand monitor corner.
+ * @param y1		The screens initial "y" coord
+ * @param scrnFlags	Flags defining the screens: layer, transparency,
+					moveability, etc.
+ * @param evtHandler	A pointer to the procedure to be executed when
+					the view manager registers a keyboard or mouse event
+ * @returns			The success of the call
+ * @remarks			The user is responsible for keeping the Buffer *.
+					Any changes to the contents will be made by the user.
+ */
 extern bool gui_buffer_register(int32 x1, int32 y1, Buffer *myBuf, uint32 scrnFlags, EventHandler evtHandler);
 
 extern bool gui_GrBuff_register(int32 x1, int32 y1, GrBuff *myBuf, uint32 scrnFlags, EventHandler evtHandler);
@@ -44,6 +61,13 @@ extern void gui_buffer_deregister(Buffer *myBuf);
 extern bool gui_GrBuff_register(int32 x1, int32 y1, GrBuff *myBuf, uint32 scrnFlags, EventHandler evtHandler);
 extern void gui_buffer_activate(Buffer *myBuf);
 extern bool gui_buffer_add_key(Buffer *myBuf, long myKey, HotkeyCB cb);
+
+/**
+ * Change which procedure will handle the events sent to the screen, which was
+ * created to managed the Buffer specified.
+ * @param myBuf			The Buffer specified.
+ * @param evtHandler	The new procedure to handle keyboard and mouse events.
+ */
 extern bool gui_buffer_set_event_handler(Buffer *myBuf, EventHandler evtHandler);
 
 } // End of namespace M4
