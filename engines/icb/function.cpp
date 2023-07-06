@@ -3452,7 +3452,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_manual_interact_object(int32 &, i
 
 mcodeFunctionReturnCodes _game_session::fn_cancel_manual_interact_object(int32 &, int32 *) {
 	// Clear the script-forced object interact id.
-	player.cur_interact_id = -1;
+	player.cur_interact_id = (uint32)-1;
 
 	// Calling script can continue.
 	return IR_CONT;
