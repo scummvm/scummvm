@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	vars.o \
 	adv_db_r/db_catalog.o \
 	adv_r/adv_been.o \
+	adv_r/adv_chk.o \
 	adv_r/adv_control.o \
 	adv_r/adv_file.o \
 	adv_r/adv_game.o \

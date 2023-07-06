@@ -150,6 +150,8 @@ public:
 	bool _use_alternate_attribute_file = false;
 	bool _camera_reacts_to_player = false;
 	bool _set_commands_allowed_since_last_checked = false;
+	SceneDef *_myDef = nullptr;
+	Common::String _def_filename;
 };
 
 #define _G(X) (g_vars->_##X)
