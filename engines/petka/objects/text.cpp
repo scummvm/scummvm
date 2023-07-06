@@ -45,14 +45,14 @@ QText::QText(const Common::U32String &text, uint16 textColor, uint16 outlineColo
 	rect.bottom += 4;
 
 	_rect = Common::Rect((640 - rect.width()) / 2, 479 - rect.height(), 639 - (640 - rect.width()) / 2, 479);
-	Graphics::Surface *s = g_vm->resMgr()->getSurface(-2, rect.width(), rect.height());
+	Graphics::Surface *s = g_vm->resMgr()->getSurface((uint32)-2, rect.width(), rect.height());
 
 	drawText(*s, 0, 630, text, textColor, *font, Graphics::kTextAlignCenter);
 	drawOutline(s, outlineColor);
 }
 
 void QText::draw() {
-	const Graphics::Surface *s = g_vm->resMgr()->getSurface(-2);
+	const Graphics::Surface *s = g_vm->resMgr()->getSurface((uint32)-2);
 	if (s) {
 		g_vm->videoSystem()->transBlitFrom(*s, Common::Point((640 - s->w) / 2, 479 - s->h));
 	}
@@ -138,7 +138,7 @@ QTextDescription::QTextDescription(const Common::U32String &desc, uint32 frame) 
 	flc->setFrame(frame);
 
 	const Graphics::Surface *frameS = flc->getCurrentFrame();
-	Graphics::Surface *s = g_vm->resMgr()->getSurface(-2, 640, 480);
+	Graphics::Surface *s = g_vm->resMgr()->getSurface((uint32)-2, 640, 480);
 
 	Graphics::Surface *convS = frameS->convertTo(s->format, flc->getPalette());
 	s->copyRectToSurface(*convS, 0, 0, _rect);
@@ -161,7 +161,7 @@ void QTextDescription::onClick(Common::Point p) {
 void QTextDescription::draw() {
 	QManager *resMgr = g_vm->resMgr();
 	VideoSystem *videoSys = g_vm->videoSystem();
-	Graphics::Surface *s = resMgr->getSurface(-2);
+	Graphics::Surface *s = resMgr->getSurface((uint32)-2);
 	FlicDecoder *flc = resMgr->getFlic(6008);
 
 	for (auto &dirty : videoSys->rects()) {
@@ -195,7 +195,7 @@ QTextChoice::QTextChoice(const Common::Array<Common::U32String> &choices, uint16
 
 	_rect = Common::Rect((640 - w) / 2, 479 - h, 639 - (640 - w) / 2, 479);
 
-	Graphics::Surface *s = g_vm->resMgr()->getSurface(-2, w, h);
+	Graphics::Surface *s = g_vm->resMgr()->getSurface((uint32)-2, w, h);
 
 	int y = 0;
 	for (uint i = 0; i < _choices.size(); ++i) {
@@ -218,7 +218,7 @@ void QTextChoice::onMouseMove(Common::Point p) {
 	}
 
 	if (newChoice != _activeChoice) {
-		Graphics::Surface *s = g_vm->resMgr()->getSurface(-2);
+		Graphics::Surface *s = g_vm->resMgr()->getSurface((uint32)-2);
 		auto *font = g_vm->getTextFont();
 
 		s->fillRect(Common::Rect(s->w, s->h), 0);
