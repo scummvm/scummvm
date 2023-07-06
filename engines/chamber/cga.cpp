@@ -417,7 +417,7 @@ NB! Line must not wrap around the edge
 void cga_DrawVLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 	uint16 ofs;
 	/*pixels are starting from top bits of byte*/
-	uint16 mask = ~(3 << ((CGA_PIXELS_PER_BYTE - 1) * CGA_BITS_PER_PIXEL));
+	uint16 mask = static_cast<uint16>((~(3 << ((CGA_PIXELS_PER_BYTE - 1) * CGA_BITS_PER_PIXEL))) & 0xffff);
 	byte pixel = color << ((CGA_PIXELS_PER_BYTE - 1) * CGA_BITS_PER_PIXEL);
 
 	mask >>= (x % CGA_PIXELS_PER_BYTE) * CGA_BITS_PER_PIXEL;
@@ -444,7 +444,7 @@ NB! Line must not wrap around the edge
 void cga_DrawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 	uint16 ofs;
 	/*pixels are starting from top bits of byte*/
-	uint16 mask = ~(3 << ((CGA_PIXELS_PER_BYTE - 1) * CGA_BITS_PER_PIXEL));
+	uint16 mask = static_cast<uint16>((~(3 << ((CGA_PIXELS_PER_BYTE - 1) * CGA_BITS_PER_PIXEL))) & 0xffff);
 	byte pixel = color << ((CGA_PIXELS_PER_BYTE - 1) * CGA_BITS_PER_PIXEL);
 
 	mask >>= (x % CGA_PIXELS_PER_BYTE) * CGA_BITS_PER_PIXEL;
@@ -458,7 +458,7 @@ void cga_DrawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 		pixel >>= CGA_BITS_PER_PIXEL;
 		if (mask == 0xFF) {
 			ofs++;
-			mask = ~(3 << ((CGA_PIXELS_PER_BYTE - 1) * CGA_BITS_PER_PIXEL));
+			mask = static_cast<uint16>((~(3 << ((CGA_PIXELS_PER_BYTE - 1) * CGA_BITS_PER_PIXEL))) & 0xffff);
 			pixel = color << ((CGA_PIXELS_PER_BYTE - 1) * CGA_BITS_PER_PIXEL);
 		}
 	}
