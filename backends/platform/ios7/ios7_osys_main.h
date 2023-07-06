@@ -103,6 +103,7 @@ public:
 
 #if TARGET_OS_IOS
 	void applyOrientationSettings();
+	void setSupportedScreenOrientation(ScreenOrientation screenOrientation);
 #endif
 
 	uint createOpenGLContext();

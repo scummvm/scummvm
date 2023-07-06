@@ -95,6 +95,8 @@ void OSystem_iOS7::engineInit() {
 	[[iOS7AppDelegate iPhoneView] setIsInGame:YES];
 
 #if TARGET_OS_IOS
+	applyOrientationSettings();
+
 	// Automatically open the keyboard when starting a game and in portrait mode.
 	// This is preferred for text input games and there's a lot of screen space to
 	// utilize for the keyboard anyway.
@@ -116,6 +118,8 @@ void OSystem_iOS7::engineDone() {
 	[[iOS7AppDelegate iPhoneView] setIsInGame:NO];
 
 #if TARGET_OS_IOS
+	applyOrientationSettings();
+
 	// Hide keyboard when going back to launcher
 	execute_on_main_thread(^ {
 		[[iOS7AppDelegate iPhoneView] hideKeyboard];
@@ -159,6 +163,70 @@ void OSystem_iOS7::setShowKeyboard(bool show) {
 		}
 	}
 }
+
+#if TARGET_OS_IOS
+void OSystem_iOS7::setSupportedScreenOrientation(ScreenOrientation screenOrientation) {
+	bool shouldUpdateScreenOrientation = false;
+
+	switch (screenOrientation) {
+	case kScreenOrientationPortrait:
+	case kScreenOrientationFlippedPortrait:
+		[[iOS7AppDelegate iPhoneView] setSupportedScreenOrientations:UIInterfaceOrientationMaskPortrait];
+		if (_screenOrientation != kScreenOrientationPortrait &&
+			_screenOrientation != kScreenOrientationFlippedPortrait) {
+			shouldUpdateScreenOrientation = true;
+		}
+		break;
+	case kScreenOrientationLandscape:
+	case kScreenOrientationFlippedLandscape:
+		[[iOS7AppDelegate iPhoneView] setSupportedScreenOrientations:UIInterfaceOrientationMaskLandscape];
+		if (_screenOrientation != kScreenOrientationLandscape &&
+			_screenOrientation != kScreenOrientationFlippedLandscape) {
+			shouldUpdateScreenOrientation = true;
+		}
+		break;
+	case kScreenOrientationAuto:
+	default:
+		[[iOS7AppDelegate iPhoneView] setSupportedScreenOrientations:UIInterfaceOrientationMaskAll];
+		break;
+	}
+
+#ifdef __IPHONE_16_0
+	if (@available(iOS 16.0, *)) {
+		execute_on_main_thread(^ {
+			[UIViewParentController([iOS7AppDelegate iPhoneView]) setNeedsUpdateOfSupportedInterfaceOrientations];
+		});
+		// We don't end up here if orientation is set to auto.
+		// Also, we won't know for sure if it will select right or left for landscape
+		// orientation, or normal or upside down (most probably normal) for portrait.
+		// The _screenOrientation will be set accordingly when handling the orientationChanged
+		// event so just set it to what we're given for now.
+		_screenOrientation = screenOrientation;
+	} else
+#endif
+	if (shouldUpdateScreenOrientation) {
+		switch (screenOrientation) {
+		case kScreenOrientationPortrait:
+		case kScreenOrientationFlippedPortrait:
+			execute_on_main_thread(^ {
+				[[UIDevice currentDevice] setValue:@(UIInterfaceOrientationPortrait) forKey:@"orientation"];
+				});
+			_screenOrientation = kScreenOrientationPortrait;
+			break;
+		case kScreenOrientationLandscape:
+		case kScreenOrientationFlippedLandscape:
+			execute_on_main_thread(^ {
+			[[UIDevice currentDevice] setValue:@(UIInterfaceOrientationLandscapeRight) forKey:@"orientation"];
+				});
+			_screenOrientation = kScreenOrientationLandscape;
+			break;
+		case kScreenOrientationAuto:
+		default:
+			break;
+		}
+	}
+}
+#endif
 
 bool OSystem_iOS7::isKeyboardShown() const {
 	__block bool isShown = false;

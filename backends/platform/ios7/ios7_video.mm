@@ -456,7 +456,18 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 
 #if TARGET_OS_IOS
 - (void)interfaceOrientationChanged:(UIInterfaceOrientation)orientation {
-	[self addEvent:InternalEvent(kInputOrientationChanged, orientation, 0)];
+	ScreenOrientation screenOrientation;
+	if (orientation == UIInterfaceOrientationPortrait) {
+		screenOrientation = kScreenOrientationPortrait;
+	} else if (orientation == UIInterfaceOrientationPortraitUpsideDown) {
+		screenOrientation = kScreenOrientationFlippedPortrait;
+	} else if (orientation == UIInterfaceOrientationLandscapeRight) {
+		screenOrientation = kScreenOrientationLandscape;
+	} else { // UIInterfaceOrientationLandscapeLeft
+		screenOrientation = kScreenOrientationFlippedLandscape;
+	}
+
+	[self addEvent:InternalEvent(kInputOrientationChanged, screenOrientation, 0)];
 	if (UIInterfaceOrientationIsLandscape(orientation)) {
 		[self hideKeyboard];
 	} else {
