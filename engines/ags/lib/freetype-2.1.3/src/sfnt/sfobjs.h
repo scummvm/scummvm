@@ -35,14 +35,14 @@ sfnt_init_face( FT2_1_3_Stream      stream,
 				TT_Face        face,
 				FT_Int         face_index,
 				FT_Int         num_params,
-				FT2_1_3_Parameter*  params );
+				FT_Parameter*  params );
 
 FT2_1_3_LOCAL( FT_Error )
 sfnt_load_face( FT2_1_3_Stream      stream,
 				TT_Face        face,
 				FT_Int         face_index,
 				FT_Int         num_params,
-				FT2_1_3_Parameter*  params );
+				FT_Parameter*  params );
 
 FT2_1_3_LOCAL( void )
 sfnt_done_face( TT_Face  face );

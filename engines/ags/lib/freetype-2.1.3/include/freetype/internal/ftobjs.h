@@ -329,7 +329,7 @@ typedef struct  FT_Face_InternalRec_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_Slot_InternalRec                                                */
+/*    FT_Slot_InternalRec                                                */
 /*                                                                       */
 /* <Description>                                                         */
 /*    This structure contains the internal fields of each FT_GlyphSlot   */
@@ -354,7 +354,7 @@ typedef struct  FT_Face_InternalRec_ {
 /*                                                                       */
 /*    glyph_hints       :: Format-specific glyph hints management.       */
 /*                                                                       */
-typedef struct  FT2_1_3_Slot_InternalRec_ {
+typedef struct  FT_Slot_InternalRec_ {
 	FT2_1_3_GlyphLoader  loader;
 	FT_Bool         glyph_transformed;
 	FT_Matrix       glyph_matrix;
@@ -380,7 +380,7 @@ typedef struct  FT2_1_3_Slot_InternalRec_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_ModuleRec                                                       */
+/*    FT_ModuleRec                                                       */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A module object instance.                                          */
@@ -394,17 +394,17 @@ typedef struct  FT2_1_3_Slot_InternalRec_ {
 /*                                                                       */
 /*    generic :: A generic structure for user-level extensibility (?).   */
 /*                                                                       */
-typedef struct  FT2_1_3_ModuleRec_ {
-	FT2_1_3_Module_Class*  clazz;
+typedef struct  FT_ModuleRec_ {
+	FT_Module_Class*  clazz;
 	FT_Library        library;
 	FT2_1_3_Memory         memory;
 	FT_Generic        generic;
 
-} FT2_1_3_ModuleRec;
+} FT_ModuleRec;
 
 
-/* typecast an object to a FT2_1_3_Module */
-#define FT2_1_3_MODULE( x )          ((FT2_1_3_Module)( x ))
+/* typecast an object to a FT_Module */
+#define FT2_1_3_MODULE( x )          ((FT_Module)( x ))
 #define FT2_1_3_MODULE_CLASS( x )    FT2_1_3_MODULE( x )->clazz
 #define FT2_1_3_MODULE_LIBRARY( x )  FT2_1_3_MODULE( x )->library
 #define FT2_1_3_MODULE_MEMORY( x )   FT2_1_3_MODULE( x )->memory
@@ -543,23 +543,23 @@ FT2_1_3_Done_GlyphSlot( FT_GlyphSlot  slot );
 /*************************************************************************/
 
 
-#define FT2_1_3_RENDERER( x )      ((FT2_1_3_Renderer)( x ))
+#define FT2_1_3_RENDERER( x )      ((FT_Renderer)( x ))
 #define FT2_1_3_GLYPH( x )         ((FT2_1_3_Glyph)( x ))
 #define FT2_1_3_BITMAP_GLYPH( x )  ((FT_BitmapGlyph)( x ))
 #define FT2_1_3_OUTLINE_GLYPH( x ) ((FT2_1_3_OutlineGlyph)( x ))
 
 
-typedef struct  FT2_1_3_RendererRec_ {
-	FT2_1_3_ModuleRec            root;
-	FT2_1_3_Renderer_Class*      clazz;
+typedef struct  FT_RendererRec_ {
+	FT_ModuleRec            root;
+	FT_Renderer_Class*      clazz;
 	FT_Glyph_Format         glyph_format;
 	FT2_1_3_Glyph_Class          glyph_class;
 
 	FT2_1_3_Raster               raster;
 	FT2_1_3_Raster_Render_Func   raster_render;
-	FT2_1_3_Renderer_RenderFunc  render;
+	FT_Renderer_RenderFunc  render;
 
-} FT2_1_3_RendererRec;
+} FT_RendererRec;
 
 
 /*************************************************************************/
@@ -576,7 +576,7 @@ typedef struct  FT2_1_3_RendererRec_ {
 
 
 /* typecast a module into a driver easily */
-#define FT2_1_3_DRIVER( x )        ((FT2_1_3_Driver)(x))
+#define FT2_1_3_DRIVER( x )        ((FT_Driver)(x))
 
 /* typecast a module as a driver, and get its driver class */
 #define FT2_1_3_DRIVER_CLASS( x )  FT2_1_3_DRIVER( x )->clazz
@@ -585,7 +585,7 @@ typedef struct  FT2_1_3_RendererRec_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_DriverRec                                                       */
+/*    FT_DriverRec                                                       */
 /*                                                                       */
 /* <Description>                                                         */
 /*    The root font driver class.  A font driver is responsible for      */
@@ -609,16 +609,16 @@ typedef struct  FT2_1_3_RendererRec_ {
 /*                     driver.  This object isn't defined for unscalable */
 /*                     formats.                                          */
 /*                                                                       */
-typedef struct  FT2_1_3_DriverRec_ {
-	FT2_1_3_ModuleRec     root;
-	FT2_1_3_Driver_Class  clazz;
+typedef struct  FT_DriverRec_ {
+	FT_ModuleRec     root;
+	FT_Driver_Class  clazz;
 
 	FT_ListRec       faces_list;
 	void*            extensions;
 
 	FT2_1_3_GlyphLoader   glyph_loader;
 
-} FT2_1_3_DriverRec;
+} FT_DriverRec;
 
 
 /*************************************************************************/
@@ -692,11 +692,11 @@ typedef struct  FT_LibraryRec_ {
 	FT_Int             version_patch;
 
 	FT_UInt            num_modules;
-	FT2_1_3_Module          modules[FT2_1_3_MAX_MODULES];  /* module objects  */
+	FT_Module          modules[FT2_1_3_MAX_MODULES];  /* module objects  */
 
 	FT_ListRec         renderers;        /* list of renderers        */
-	FT2_1_3_Renderer        cur_renderer;     /* current outline renderer */
-	FT2_1_3_Module          auto_hinter;
+	FT_Renderer        cur_renderer;     /* current outline renderer */
+	FT_Module          auto_hinter;
 
 	FT_Byte*           raster_pool;      /* scan-line conversion */
 	/* render pool          */
@@ -709,7 +709,7 @@ typedef struct  FT_LibraryRec_ {
 } FT_LibraryRec;
 
 
-FT2_1_3_BASE( FT2_1_3_Renderer )
+FT2_1_3_BASE( FT_Renderer )
 FT2_1_3_Lookup_Renderer( FT_Library       library,
 					FT_Glyph_Format  format,
 					FT_ListNode*     node );
@@ -717,7 +717,7 @@ FT2_1_3_Lookup_Renderer( FT_Library       library,
 FT2_1_3_BASE( FT_Error )
 FT2_1_3_Render_Glyph_Internal( FT_Library      library,
 						  FT_GlyphSlot    slot,
-						  FT2_1_3_Render_Mode  render_mode );
+						  FT_Render_Mode  render_mode );
 
 typedef const char*
 (*FT_Face_GetPostscriptNameFunc)( FT_Face  face );

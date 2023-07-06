@@ -157,7 +157,7 @@ tt_face_init( FT2_1_3_Stream      stream,
 			  TT_Face        face,
 			  FT_Int         face_index,
 			  FT_Int         num_params,
-			  FT2_1_3_Parameter*  params ) {
+			  FT_Parameter*  params ) {
 	FT_Error      error;
 	FT_Library    library;
 	SFNT_Service  sfnt;

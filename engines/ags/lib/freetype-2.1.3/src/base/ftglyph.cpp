@@ -425,7 +425,7 @@ FT2_1_3_Get_Glyph( FT_GlyphSlot  slot,
 
 	else {
 		/* try to find a renderer that supports the glyph image format */
-		FT2_1_3_Renderer  render = FT2_1_3_Lookup_Renderer( library, slot->format, 0 );
+		FT_Renderer  render = FT2_1_3_Lookup_Renderer( library, slot->format, 0 );
 
 
 		if ( render )
@@ -537,7 +537,7 @@ FT2_1_3_Glyph_Get_CBox( FT2_1_3_Glyph  glyph,
 
 FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_Glyph_To_Bitmap( FT2_1_3_Glyph*       the_glyph,
-					FT2_1_3_Render_Mode  render_mode,
+					FT_Render_Mode  render_mode,
 					FT_Vector*      origin,
 					FT_Bool         destroy ) {
 	FT_GlyphSlotRec  dummy;

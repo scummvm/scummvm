@@ -57,9 +57,9 @@ namespace FreeType213 {
 
 #undef  FT2_1_3_USE_MODULE
 #ifdef __cplusplus
-#define FT2_1_3_USE_MODULE( x )  extern "C" const FT2_1_3_Module_Class*  x;
+#define FT2_1_3_USE_MODULE( x )  extern "C" const FT_Module_Class*  x;
 #else
-#define FT2_1_3_USE_MODULE( x )  extern const FT2_1_3_Module_Class*  x;
+#define FT2_1_3_USE_MODULE( x )  extern const FT_Module_Class*  x;
 #endif
 
 
@@ -67,10 +67,10 @@ namespace FreeType213 {
 
 
 #undef  FT2_1_3_USE_MODULE
-#define FT2_1_3_USE_MODULE( x )  (const FT2_1_3_Module_Class*)&x,
+#define FT2_1_3_USE_MODULE( x )  (const FT_Module_Class*)&x,
 
 static
-const FT2_1_3_Module_Class*  const ft_default_modules[] = {
+const FT_Module_Class*  const ft_default_modules[] = {
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/config/ftmodule.h"
 	0
 };
@@ -81,7 +81,7 @@ const FT2_1_3_Module_Class*  const ft_default_modules[] = {
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_Add_Default_Modules( FT_Library  library ) {
 	FT_Error                       error;
-	const FT2_1_3_Module_Class* const*  cur;
+	const FT_Module_Class* const*  cur;
 
 
 	/* test for valid `library' delayed to FT2_1_3_Add_Module() */
@@ -121,9 +121,9 @@ FT2_1_3_Init_FreeType( FT_Library  *alibrary ) {
 
 	error = FT2_1_3_New_Library( memory, alibrary );
 	if ( !error ) {
-		(*alibrary)->version_major = FREETYPE_MAJOR;
-		(*alibrary)->version_minor = FREETYPE_MINOR;
-		(*alibrary)->version_patch = FREETYPE_PATCH;
+		(*alibrary)->version_major = FREETYPE213_MAJOR;
+		(*alibrary)->version_minor = FREETYPE213_MINOR;
+		(*alibrary)->version_patch = FREETYPE213_PATCH;
 
 		FT2_1_3_Add_Default_Modules( *alibrary );
 	}

@@ -59,7 +59,7 @@ static PSH_Globals_Funcs
 T1_Size_Get_Globals_Funcs( T1_Size  size ) {
 	T1_Face           face     = (T1_Face)size->root.face;
 	PSHinter_Service pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(face->pshinter));
-	FT2_1_3_Module         module;
+	FT_Module         module;
 
 
 	module = FT2_1_3_Get_Module( size->root.face->driver->root.library,
@@ -143,7 +143,7 @@ T1_GlyphSlot_Init( T1_GlyphSlot  slot ) {
 	pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(face->pshinter));
 
 	if ( pshinter ) {
-		FT2_1_3_Module  module;
+		FT_Module  module;
 
 
 		module = FT2_1_3_Get_Module( slot->root.face->driver->root.library, "pshinter" );
@@ -263,7 +263,7 @@ T1_Face_Init( FT2_1_3_Stream      stream,
 			  T1_Face        face,
 			  FT_Int         face_index,
 			  FT_Int         num_params,
-			  FT2_1_3_Parameter*  params ) {
+			  FT_Parameter*  params ) {
 	FT_Error          error;
 	PSNames_Service   psnames;
 	PSAux_Service     psaux;

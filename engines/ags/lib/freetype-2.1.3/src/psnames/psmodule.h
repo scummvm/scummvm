@@ -29,7 +29,7 @@ namespace FreeType213 {
 FT2_1_3_BEGIN_HEADER
 
 
-FT2_1_3_EXPORT_VAR( const FT2_1_3_Module_Class )  psnames_module_class;
+FT2_1_3_EXPORT_VAR( const FT_Module_Class )  psnames_module_class;
 
 
 FT2_1_3_END_HEADER

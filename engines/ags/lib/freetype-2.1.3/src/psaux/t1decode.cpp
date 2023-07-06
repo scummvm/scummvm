@@ -1073,7 +1073,7 @@ t1_decoder_init( T1_Decoder           decoder,
 				 FT_Byte**            glyph_names,
 				 PS_Blend             blend,
 				 FT_Bool              hinting,
-				 FT2_1_3_Render_Mode       hint_mode,
+				 FT_Render_Mode       hint_mode,
 				 T1_Decoder_Callback  parse_callback ) {
 	FT2_1_3_MEM_ZERO( decoder, sizeof ( *decoder ) );
 

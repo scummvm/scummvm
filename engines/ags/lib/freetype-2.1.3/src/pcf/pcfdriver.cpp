@@ -214,7 +214,7 @@ PCF_Face_Init( FT2_1_3_Stream      stream,
 			   PCF_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,
-			   FT2_1_3_Parameter*  params ) {
+			   FT_Parameter*  params ) {
 	FT_Error  error = FT2_1_3_Err_Ok;
 
 	FT2_1_3_UNUSED( num_params );
@@ -434,10 +434,10 @@ Exit:
 
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_Driver_ClassRec  pcf_driver_class = {
+const FT_Driver_ClassRec  pcf_driver_class = {
 	{
 		ft_module_font_driver,
-		sizeof ( FT2_1_3_DriverRec ),
+		sizeof ( FT_DriverRec ),
 
 		"pcf",
 		0x10000L,
@@ -445,9 +445,9 @@ const FT2_1_3_Driver_ClassRec  pcf_driver_class = {
 
 		0,
 
-		(FT2_1_3_Module_Constructor)0,
-		(FT2_1_3_Module_Destructor) 0,
-		(FT2_1_3_Module_Requester)  0
+		(FT_Module_Constructor)0,
+		(FT_Module_Destructor) 0,
+		(FT_Module_Requester)  0
 	},
 
 	sizeof( PCF_FaceRec ),

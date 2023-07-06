@@ -1372,7 +1372,7 @@ FT_Error
 ps2_hints_apply( PS_Hints        ps_hints,
 				 FT2_1_3_Outline*     outline,
 				 PSH_Globals     globals,
-				 FT2_1_3_Render_Mode  hint_mode ) {
+				 FT_Render_Mode  hint_mode ) {
 	PSH2_GlyphRec  glyphrec;
 	PSH2_Glyph     glyph = &glyphrec;
 	FT_Error       error;

@@ -33,9 +33,9 @@
 /* new FreeType design, which is able to host several kinds of font      */
 /* drivers.  It starts at 2.0.                                           */
 /*                                                                       */
-#define FREETYPE_MAJOR 2
-#define FREETYPE_MINOR 1
-#define FREETYPE_PATCH 3
+#define FREETYPE213_MAJOR 2
+#define FREETYPE213_MINOR 1
+#define FREETYPE213_PATCH 3
 
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
@@ -114,9 +114,9 @@ FT2_1_3_BEGIN_HEADER
 /*    FT2_1_3_Done_Face                                                       */
 /*    FT2_1_3_New_Memory_Face                                                 */
 /*    FT2_1_3_Open_Face                                                       */
-/*    FT2_1_3_Open_Args                                                       */
-/*    FT2_1_3_Open_Flags                                                      */
-/*    FT2_1_3_Parameter                                                       */
+/*    FT_Open_Args                                                       */
+/*    FT_Open_Flags                                                      */
+/*    FT_Parameter                                                       */
 /*    FT2_1_3_Attach_File                                                     */
 /*    FT2_1_3_Attach_Stream                                                   */
 /*                                                                       */
@@ -145,9 +145,9 @@ FT2_1_3_BEGIN_HEADER
 /*    FT2_1_3_LOAD_PEDANTIC                                                   */
 /*                                                                       */
 /*    FT2_1_3_Render_Glyph                                                    */
-/*    FT2_1_3_Render_Mode                                                     */
+/*    FT_Render_Mode                                                     */
 /*    FT2_1_3_Get_Kerning                                                     */
-/*    FT2_1_3_Kerning_Mode                                                    */
+/*    FT_Kerning_Mode                                                    */
 /*    FT2_1_3_Get_Glyph_Name                                                  */
 /*    FT2_1_3_Get_Postscript_Name                                             */
 /*                                                                       */
@@ -254,32 +254,32 @@ typedef struct FT_LibraryRec_  *FT_Library;
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT2_1_3_Module                                                          */
+/*    FT_Module                                                          */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A handle to a given FreeType module object.  Each module can be a  */
 /*    font driver, a renderer, or anything else that provides services   */
 /*    to the formers.                                                    */
 /*                                                                       */
-typedef struct FT2_1_3_ModuleRec_*  FT2_1_3_Module;
+typedef struct FT_ModuleRec_*  FT_Module;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT2_1_3_Driver                                                          */
+/*    FT_Driver                                                          */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A handle to a given FreeType font driver object.  Each font driver */
 /*    is a special module capable of creating faces from font files.     */
 /*                                                                       */
-typedef struct FT2_1_3_DriverRec_*  FT2_1_3_Driver;
+typedef struct FT_DriverRec_*  FT_Driver;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT2_1_3_Renderer                                                        */
+/*    FT_Renderer                                                        */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A handle to a given FreeType renderer.  A renderer is a special    */
@@ -287,7 +287,7 @@ typedef struct FT2_1_3_DriverRec_*  FT2_1_3_Driver;
 /*    necessary.  Each renderer supports a given glyph image format, and */
 /*    one or more target surface depths.                                 */
 /*                                                                       */
-typedef struct FT2_1_3_RendererRec_*  FT2_1_3_Renderer;
+typedef struct FT_RendererRec_*  FT_Renderer;
 
 
 /*************************************************************************/
@@ -829,7 +829,7 @@ typedef struct  FT_FaceRec_ {
 
 	/*@private begin */
 
-	FT2_1_3_Driver         driver;
+	FT_Driver         driver;
 	FT2_1_3_Memory         memory;
 	FT2_1_3_Stream         stream;
 
@@ -1216,13 +1216,13 @@ typedef struct FT_SubGlyphRec_*  FT_SubGlyph;
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT2_1_3_Slot_Internal                                                   */
+/*    FT_Slot_Internal                                                   */
 /*                                                                       */
 /* <Description>                                                         */
-/*    An opaque handle to an FT2_1_3_Slot_InternalRec structure, used to      */
+/*    An opaque handle to an FT_Slot_InternalRec structure, used to      */
 /*    model private data of a given FT_GlyphSlot object.                 */
 /*                                                                       */
-typedef struct FT2_1_3_Slot_InternalRec_*  FT2_1_3_Slot_Internal;
+typedef struct FT_Slot_InternalRec_*  FT_Slot_Internal;
 
 
 /*************************************************************************/
@@ -1379,7 +1379,7 @@ typedef struct  FT_GlyphSlotRec_ {
 
 	void*             other;
 
-	FT2_1_3_Slot_Internal  internal;
+	FT_Slot_Internal  internal;
 
 } FT_GlyphSlotRec;
 
@@ -1420,8 +1420,8 @@ FT2_1_3_Init_FreeType( FT_Library  *alibrary );
 /* <Description>                                                         */
 /*    Return the version of the FreeType library being used.  This is    */
 /*    useful when dynamically linking to the library, since one cannot   */
-/*    use the macros FT2_1_3_FREETYPE_MAJOR, FT2_1_3_FREETYPE_MINOR, and           */
-/*    FT2_1_3_FREETYPE_PATCH.                                                 */
+/*    use the macros FT2_1_3_FREETYPE213_MAJOR, FT2_1_3_FREETYPE213_MINOR, and           */
+/*    FT2_1_3_FREETYPE213_PATCH.                                                 */
 /*                                                                       */
 /* <Input>                                                               */
 /*    library :: A source library handle.                                */
@@ -1470,11 +1470,11 @@ FT2_1_3_Done_FreeType( FT_Library  library );
 /*************************************************************************/
 /*                                                                       */
 /* <Enum>                                                                */
-/*    FT2_1_3_Open_Flags                                                      */
+/*    FT_Open_Flags                                                      */
 /*                                                                       */
 /* <Description>                                                         */
 /*    An enumeration used to list the bit flags used within the          */
-/*    `flags' field of the @FT2_1_3_Open_Args structure.                      */
+/*    `flags' field of the @FT_Open_Args structure.                      */
 /*                                                                       */
 /* <Fields>                                                              */
 /*    FT2_1_3_OPEN_MEMORY      :: This is a memory-based stream.              */
@@ -1499,7 +1499,7 @@ typedef enum {
 	FT2_1_3_OPEN_DRIVER   = 8,
 	FT2_1_3_OPEN_PARAMS   = 16
 
-} FT2_1_3_Open_Flags;
+} FT_Open_Flags;
 
 #define  FT2_1_3_OPEN_MEMORY    FT2_1_3_OPEN_MEMORY
 #define  FT2_1_3_OPEN_STREAM    FT2_1_3_OPEN_STREAM
@@ -1511,7 +1511,7 @@ typedef enum {
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_Parameter                                                       */
+/*    FT_Parameter                                                       */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A simple structure used to pass more or less generic parameters    */
@@ -1525,17 +1525,17 @@ typedef enum {
 /* <Note>                                                                */
 /*    The id and function of parameters are driver-specific.             */
 /*                                                                       */
-typedef struct  FT2_1_3_Parameter_ {
+typedef struct  FT_Parameter_ {
 	FT_ULong    tag;
 	FT_Pointer  data;
 
-} FT2_1_3_Parameter;
+} FT_Parameter;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_Open_Args                                                       */
+/*    FT_Open_Args                                                       */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A structure used to indicate how to open a new font file/stream.   */
@@ -1584,17 +1584,17 @@ typedef struct  FT2_1_3_Parameter_ {
 /*    `num_params' and `params' will be used.  They are ignored          */
 /*    otherwise.                                                         */
 /*                                                                       */
-typedef struct  FT2_1_3_Open_Args_ {
-	FT2_1_3_Open_Flags              flags;
+typedef struct  FT_Open_Args_ {
+	FT_Open_Flags              flags;
 	const FT_Byte*             memory_base;
 	FT_Long                    memory_size;
 	FT_String*                 pathname;
 	FT2_1_3_Stream                  stream;
-	FT2_1_3_Module                  driver;
+	FT_Module                  driver;
 	FT_Int                     num_params;
-	FT2_1_3_Parameter*              params;
+	FT_Parameter*              params;
 
-} FT2_1_3_Open_Args;
+} FT_Open_Args;
 
 
 /*************************************************************************/
@@ -1697,14 +1697,14 @@ FT2_1_3_New_Memory_Face( FT_Library      library,
 /*                                                                       */
 /* <Description>                                                         */
 /*    Opens a face object from a given resource and typeface index using */
-/*    an `FT2_1_3_Open_Args' structure.  If the face object doesn't exist, it */
+/*    an `FT_Open_Args' structure.  If the face object doesn't exist, it */
 /*    will be created.                                                   */
 /*                                                                       */
 /* <InOut>                                                               */
 /*    library    :: A handle to the library resource.                    */
 /*                                                                       */
 /* <Input>                                                               */
-/*    args       :: A pointer to an `FT2_1_3_Open_Args' structure which must  */
+/*    args       :: A pointer to an `FT_Open_Args' structure which must  */
 /*                  be filled by the caller.                             */
 /*                                                                       */
 /*    face_index :: The index of the face within the resource.  The      */
@@ -1728,7 +1728,7 @@ FT2_1_3_New_Memory_Face( FT_Library      library,
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Open_Face( FT_Library           library,
-			  const FT2_1_3_Open_Args*  args,
+			  const FT_Open_Args*  args,
 			  FT_Long              face_index,
 			  FT_Face             *aface );
 
@@ -1783,7 +1783,7 @@ FT2_1_3_Attach_File( FT_Face      face,
 /*    face       :: The target face object.                              */
 /*                                                                       */
 /* <Input>                                                               */
-/*    parameters :: A pointer to an FT2_1_3_Open_Args structure used to       */
+/*    parameters :: A pointer to an FT_Open_Args structure used to       */
 /*                  describe the input stream to FreeType.               */
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
@@ -1799,7 +1799,7 @@ FT2_1_3_Attach_File( FT_Face      face,
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Attach_Stream( FT_Face        face,
-				  FT2_1_3_Open_Args*  parameters );
+				  FT_Open_Args*  parameters );
 
 
 /*************************************************************************/
@@ -2135,7 +2135,7 @@ FT2_1_3_Load_Char( FT_Face   face,
 /* */
 
 #define FT2_1_3_LOAD_TARGET_( x )      ( (FT_Int32)( (x) & 15 ) << 16 )
-#define FT2_1_3_LOAD_TARGET_MODE( x )  ( (FT2_1_3_Render_Mode)( ( (x) >> 16 ) & 15 ) )
+#define FT2_1_3_LOAD_TARGET_MODE( x )  ( (FT_Render_Mode)( ( (x) >> 16 ) & 15 ) )
 
 #define FT2_1_3_LOAD_TARGET_NORMAL     FT2_1_3_LOAD_TARGET_( FT2_1_3_RENDER_MODE_NORMAL )
 #define FT2_1_3_LOAD_TARGET_LIGHT      FT2_1_3_LOAD_TARGET_( FT2_1_3_RENDER_MODE_LIGHT  )
@@ -2180,7 +2180,7 @@ FT2_1_3_Set_Transform( FT_Face     face,
 /*************************************************************************/
 /*                                                                       */
 /* <Enum>                                                                */
-/*    FT2_1_3_Render_Mode                                                     */
+/*    FT_Render_Mode                                                     */
 /*                                                                       */
 /* <Description>                                                         */
 /*    An enumeration type that lists the render modes supported by       */
@@ -2223,7 +2223,7 @@ FT2_1_3_Set_Transform( FT_Face     face,
 /*   perform this pass. THIS IS STILL EXPERIMENTAL, DO NOT USE FOR NOW   */
 /*   !!                                                                  */
 /*                                                                       */
-typedef enum  FT2_1_3_Render_Mode_ {
+typedef enum  FT_Render_Mode_ {
 	FT2_1_3_RENDER_MODE_NORMAL = 0,
 	FT2_1_3_RENDER_MODE_LIGHT,
 	FT2_1_3_RENDER_MODE_MONO,
@@ -2232,7 +2232,7 @@ typedef enum  FT2_1_3_Render_Mode_ {
 
 	FT2_1_3_RENDER_MODE_MAX
 
-} FT2_1_3_Render_Mode;
+} FT_Render_Mode;
 
 
 /*************************************************************************/
@@ -2242,7 +2242,7 @@ typedef enum  FT2_1_3_Render_Mode_ {
 /*                                                                       */
 /* <Description>                                                         */
 /*    These constats are deprecated.  Use the corresponding              */
-/*    @FT2_1_3_Render_Mode values instead.                                    */
+/*    @FT_Render_Mode values instead.                                    */
 /*                                                                       */
 /* <Values>                                                              */
 /*   ft_render_mode_normal :: see @FT2_1_3_RENDER_MODE_NORMAL                 */
@@ -2268,7 +2268,7 @@ typedef enum  FT2_1_3_Render_Mode_ {
 /*                                                                       */
 /* <Input>                                                               */
 /*    render_mode :: This is the render mode used to render the glyph    */
-/*                   image into a bitmap.  See FT2_1_3_Render_Mode for a list */
+/*                   image into a bitmap.  See FT_Render_Mode for a list */
 /*                   of possible values.                                 */
 /*                                                                       */
 /* <Return>                                                              */
@@ -2276,13 +2276,13 @@ typedef enum  FT2_1_3_Render_Mode_ {
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Render_Glyph( FT_GlyphSlot    slot,
-				 FT2_1_3_Render_Mode  render_mode );
+				 FT_Render_Mode  render_mode );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Enum>                                                                */
-/*    FT2_1_3_Kerning_Mode                                                    */
+/*    FT_Kerning_Mode                                                    */
 /*                                                                       */
 /* <Description>                                                         */
 /*    An enumeration used to specify which kerning values to return in   */
@@ -2298,12 +2298,12 @@ FT2_1_3_Render_Glyph( FT_GlyphSlot    slot,
 /*    FT2_1_3_KERNING_UNSCALED :: Return the kerning vector in original font  */
 /*                           units.                                      */
 /*                                                                       */
-typedef enum  FT2_1_3_Kerning_Mode_ {
+typedef enum  FT_Kerning_Mode_ {
 	FT2_1_3_KERNING_DEFAULT  = 0,
 	FT2_1_3_KERNING_UNFITTED,
 	FT2_1_3_KERNING_UNSCALED
 
-} FT2_1_3_Kerning_Mode;
+} FT_Kerning_Mode;
 
 
 /*************************************************************************/
@@ -2357,7 +2357,7 @@ typedef enum  FT2_1_3_Kerning_Mode_ {
 /*                                                                       */
 /*    right_glyph :: The index of the right glyph in the kern pair.      */
 /*                                                                       */
-/*    kern_mode   :: See @FT2_1_3_Kerning_Mode for more information.          */
+/*    kern_mode   :: See @FT_Kerning_Mode for more information.          */
 /*                   Determines the scale/dimension of the returned      */
 /*                   kerning vector.                                     */
 /*                                                                       */

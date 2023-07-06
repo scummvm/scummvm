@@ -54,7 +54,7 @@ FT_Error Glyph_Copy(FT2_1_3_Glyph source, FT2_1_3_Glyph *target) {
 	return FT2_1_3_Glyph_Copy(source, target);
 }
 
-FT_Error Glyph_To_Bitmap(FT2_1_3_Glyph *the_glyph, FT2_1_3_Render_Mode render_mode,
+FT_Error Glyph_To_Bitmap(FT2_1_3_Glyph *the_glyph, FT_Render_Mode render_mode,
 		FT_Vector *origin, FT_Bool destroy) {
 	return FT2_1_3_Glyph_To_Bitmap(the_glyph, render_mode, origin, destroy);
 }

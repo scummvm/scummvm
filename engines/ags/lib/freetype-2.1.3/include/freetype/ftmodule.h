@@ -48,7 +48,7 @@ FT2_1_3_BEGIN_HEADER
 
 
 /* module bit flags */
-typedef enum  FT2_1_3_Module_Flags_ {
+typedef enum  FT_Module_Flags_ {
 	ft_module_font_driver         = 1,     /* this module is a font driver  */
 	ft_module_renderer            = 2,     /* this module is a renderer     */
 	ft_module_hinter              = 4,     /* this module is a glyph hinter */
@@ -61,27 +61,27 @@ typedef enum  FT2_1_3_Module_Flags_ {
 	ft_module_driver_has_hinter   = 0x400  /* the driver provides its own   */
 									/* hinter                        */
 
-} FT2_1_3_Module_Flags;
+} FT_Module_Flags;
 
 
 typedef void
-(*FT2_1_3_Module_Interface)( void );
+(*FT_Module_Interface)( void );
 
 typedef FT_Error
-(*FT2_1_3_Module_Constructor)( FT2_1_3_Module  module );
+(*FT_Module_Constructor)( FT_Module  module );
 
 typedef void
-(*FT2_1_3_Module_Destructor)( FT2_1_3_Module  module );
+(*FT_Module_Destructor)( FT_Module  module );
 
-typedef FT2_1_3_Module_Interface
-(*FT2_1_3_Module_Requester)( FT2_1_3_Module    module,
+typedef FT_Module_Interface
+(*FT_Module_Requester)( FT_Module    module,
 						const char*  name );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_Module_Class                                                    */
+/*    FT_Module_Class                                                    */
 /*                                                                       */
 /* <Description>                                                         */
 /*    The module class descriptor.                                       */
@@ -109,7 +109,7 @@ typedef FT2_1_3_Module_Interface
 /*    get_interface     :: Queries a given module for a specific         */
 /*                         interface by name.                            */
 /*                                                                       */
-typedef struct  FT2_1_3_Module_Class_ {
+typedef struct  FT_Module_Class_ {
 	FT_ULong               module_flags;
 	FT_Long                module_size;
 	const FT_String*       module_name;
@@ -118,11 +118,11 @@ typedef struct  FT2_1_3_Module_Class_ {
 
 	const void*            module_interface;
 
-	FT2_1_3_Module_Constructor  module_init;
-	FT2_1_3_Module_Destructor   module_done;
-	FT2_1_3_Module_Requester    get_interface;
+	FT_Module_Constructor  module_init;
+	FT_Module_Destructor   module_done;
+	FT_Module_Requester    get_interface;
 
-} FT2_1_3_Module_Class;
+} FT_Module_Class;
 
 
 /*************************************************************************/
@@ -148,7 +148,7 @@ typedef struct  FT2_1_3_Module_Class_ {
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Add_Module( FT_Library              library,
-			   const FT2_1_3_Module_Class*  clazz );
+			   const FT_Module_Class*  clazz );
 
 
 /*************************************************************************/
@@ -171,7 +171,7 @@ FT2_1_3_Add_Module( FT_Library              library,
 /*    You should better be familiar with FreeType internals to know      */
 /*    which module to look for :-)                                       */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Module )
+FT2_1_3_EXPORT( FT_Module )
 FT2_1_3_Get_Module( FT_Library   library,
 			   const char*  module_name );
 
@@ -198,7 +198,7 @@ FT2_1_3_Get_Module( FT_Library   library,
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Remove_Module( FT_Library  library,
-				  FT2_1_3_Module   module );
+				  FT_Module   module );
 
 
 /*************************************************************************/

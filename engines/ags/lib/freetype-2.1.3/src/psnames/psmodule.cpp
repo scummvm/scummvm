@@ -312,9 +312,9 @@ const PSNames_Interface  psnames_interface = {
 
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_Module_Class  psnames_module_class = {
+const FT_Module_Class  psnames_module_class = {
 	0,  /* this is not a font driver, nor a renderer */
-	sizeof ( FT2_1_3_ModuleRec ),
+	sizeof ( FT_ModuleRec ),
 
 	"psnames",  /* driver name                         */
 	0x10000L,   /* driver version                      */
@@ -326,9 +326,9 @@ const FT2_1_3_Module_Class  psnames_module_class = {
 	(void *)const_cast<PSNames_Interface *>(&psnames_interface), /* module specific interface */
 #endif
 
-	(FT2_1_3_Module_Constructor)0,
-	(FT2_1_3_Module_Destructor) 0,
-	(FT2_1_3_Module_Requester)  0
+	(FT_Module_Constructor)0,
+	(FT_Module_Destructor) 0,
+	(FT_Module_Requester)  0
 };
 
 } // End of namespace FreeType213

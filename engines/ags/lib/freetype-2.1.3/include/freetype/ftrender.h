@@ -86,46 +86,46 @@ struct  FT2_1_3_Glyph_Class_ {
 
 
 typedef FT_Error
-(*FT2_1_3_Renderer_RenderFunc)( FT2_1_3_Renderer   renderer,
+(*FT_Renderer_RenderFunc)( FT_Renderer   renderer,
 						   FT_GlyphSlot  slot,
 						   FT_UInt       mode,
 						   FT_Vector*    origin );
 
 typedef FT_Error
-(*FT2_1_3_Renderer_TransformFunc)( FT2_1_3_Renderer   renderer,
+(*FT_Renderer_TransformFunc)( FT_Renderer   renderer,
 							  FT_GlyphSlot  slot,
 							  FT_Matrix*    matrix,
 							  FT_Vector*    delta );
 
 
 typedef void
-(*FT2_1_3_Renderer_GetCBoxFunc)( FT2_1_3_Renderer   renderer,
+(*FT_Renderer_GetCBoxFunc)( FT_Renderer   renderer,
 							FT_GlyphSlot  slot,
 							FT_BBox*      cbox );
 
 
 typedef FT_Error
-(*FT2_1_3_Renderer_SetModeFunc)( FT2_1_3_Renderer  renderer,
+(*FT_Renderer_SetModeFunc)( FT_Renderer  renderer,
 							FT_ULong     mode_tag,
 							FT_Pointer   mode_ptr );
 
 /* deprecated identifiers */
-#define FTRenderer_render  FT2_1_3_Renderer_RenderFunc
-#define FTRenderer_transform  FT2_1_3_Renderer_TransformFunc
-#define FTRenderer_getCBox  FT2_1_3_Renderer_GetCBoxFunc
-#define FTRenderer_setMode  FT2_1_3_Renderer_SetModeFunc
+#define FTRenderer_render  FT_Renderer_RenderFunc
+#define FTRenderer_transform  FT_Renderer_TransformFunc
+#define FTRenderer_getCBox  FT_Renderer_GetCBoxFunc
+#define FTRenderer_setMode  FT_Renderer_SetModeFunc
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_Renderer_Class                                                  */
+/*    FT_Renderer_Class                                                  */
 /*                                                                       */
 /* <Description>                                                         */
 /*    The renderer module class descriptor.                              */
 /*                                                                       */
 /* <Fields>                                                              */
-/*    root         :: The root FT2_1_3_Module_Class fields.                   */
+/*    root         :: The root FT_Module_Class fields.                   */
 /*                                                                       */
 /*    glyph_format :: The glyph image format this renderer handles.      */
 /*                                                                       */
@@ -141,19 +141,19 @@ typedef FT_Error
 /*                    is a pointer to the corresponding raster object,   */
 /*                    if any.                                            */
 /*                                                                       */
-typedef struct  FT2_1_3_Renderer_Class_ {
-	FT2_1_3_Module_Class       root;
+typedef struct  FT_Renderer_Class_ {
+	FT_Module_Class       root;
 
 	FT_Glyph_Format       glyph_format;
 
-	FT2_1_3_Renderer_RenderFunc     render_glyph;
-	FT2_1_3_Renderer_TransformFunc  transform_glyph;
-	FT2_1_3_Renderer_GetCBoxFunc    get_glyph_cbox;
-	FT2_1_3_Renderer_SetModeFunc    set_mode;
+	FT_Renderer_RenderFunc     render_glyph;
+	FT_Renderer_TransformFunc  transform_glyph;
+	FT_Renderer_GetCBoxFunc    get_glyph_cbox;
+	FT_Renderer_SetModeFunc    set_mode;
 
 	FT2_1_3_Raster_Funcs*           raster_class;
 
-} FT2_1_3_Renderer_Class;
+} FT_Renderer_Class;
 
 
 /*************************************************************************/
@@ -179,7 +179,7 @@ typedef struct  FT2_1_3_Renderer_Class_ {
 /*    To add a new renderer, simply use FT2_1_3_Add_Module().  To retrieve a  */
 /*    renderer by its name, use FT2_1_3_Get_Module().                         */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Renderer )
+FT2_1_3_EXPORT( FT_Renderer )
 FT2_1_3_Get_Renderer( FT_Library       library,
 				 FT_Glyph_Format  format );
 
@@ -213,9 +213,9 @@ FT2_1_3_Get_Renderer( FT_Library       library,
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Set_Renderer( FT_Library     library,
-				 FT2_1_3_Renderer    renderer,
+				 FT_Renderer    renderer,
 				 FT_UInt        num_params,
-				 FT2_1_3_Parameter*  parameters );
+				 FT_Parameter*  parameters );
 
 
 /* */

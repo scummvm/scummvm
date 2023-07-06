@@ -35,7 +35,7 @@ FT2_1_3_Get_BDF_Charset_ID( FT_Face       face,
 	error = FT2_1_3_Err_Invalid_Argument;
 
 	if ( face != NULL && face->driver != NULL ) {
-		FT2_1_3_Module  driver = (FT2_1_3_Module) face->driver;
+		FT_Module  driver = (FT_Module) face->driver;
 
 
 		if ( driver->clazz && driver->clazz->module_name         &&

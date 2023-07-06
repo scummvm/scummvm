@@ -167,7 +167,7 @@ typedef struct  CFF_Decoder_ {
 	FT_Byte**          glyph_names;   /* for pure CFF fonts only  */
 	FT_UInt            num_glyphs;    /* number of glyphs in font */
 
-	FT2_1_3_Render_Mode     hint_mode;
+	FT_Render_Mode     hint_mode;
 
 } CFF_Decoder;
 
@@ -178,7 +178,7 @@ cff_decoder_init( CFF_Decoder*    decoder,
 				  CFF_Size        size,
 				  CFF_GlyphSlot   slot,
 				  FT_Bool         hinting,
-				  FT2_1_3_Render_Mode  hint_mode );
+				  FT_Render_Mode  hint_mode );
 
 FT2_1_3_LOCAL( void )
 cff_decoder_prepare( CFF_Decoder*  decoder,

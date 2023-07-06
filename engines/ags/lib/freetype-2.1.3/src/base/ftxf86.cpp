@@ -52,7 +52,7 @@ FT2_1_3_Get_X11_Font_Format( FT_Face  face ) {
 
 
 	if ( face && face->driver ) {
-		FT2_1_3_Module  driver = (FT2_1_3_Module)face->driver;
+		FT_Module  driver = (FT_Module)face->driver;
 
 
 		if ( driver->clazz && driver->clazz->module_name ) {

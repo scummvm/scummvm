@@ -338,19 +338,19 @@ cff_get_name_index( CFF_Face    face,
 /*************************************************************************/
 /*************************************************************************/
 
-static FT2_1_3_Module_Interface
+static FT_Module_Interface
 cff_get_interface( CFF_Driver   driver,
 				   const char*  module_interface ) {
-	FT2_1_3_Module  sfnt;
+	FT_Module  sfnt;
 
 
 #ifndef FT2_1_3_CONFIG_OPTION_NO_GLYPH_NAMES
 
 	if ( ft_strcmp( (const char*)module_interface, "glyph_name" ) == 0 )
-		return (FT2_1_3_Module_Interface)cff_get_glyph_name;
+		return (FT_Module_Interface)cff_get_glyph_name;
 
 	if ( ft_strcmp( (const char*)module_interface, "name_index" ) == 0 )
-		return (FT2_1_3_Module_Interface)cff_get_name_index;
+		return (FT_Module_Interface)cff_get_name_index;
 
 #endif
 
@@ -361,11 +361,11 @@ cff_get_interface( CFF_Driver   driver,
 }
 
 
-/* The FT2_1_3_DriverInterface structure is defined in ftdriver.h. */
+/* The FT_DriverInterface structure is defined in ftdriver.h. */
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_Driver_ClassRec  cff_driver_class = {
-	/* begin with the FT2_1_3_Module_Class fields */
+const FT_Driver_ClassRec  cff_driver_class = {
+	/* begin with the FT_Module_Class fields */
 	{
 		ft_module_font_driver       |
 		ft_module_driver_scalable   |
@@ -378,9 +378,9 @@ const FT2_1_3_Driver_ClassRec  cff_driver_class = {
 
 		0,   /* module-specific interface */
 
-		(FT2_1_3_Module_Constructor)cff_driver_init,
-		(FT2_1_3_Module_Destructor) cff_driver_done,
-		(FT2_1_3_Module_Requester)  cff_get_interface,
+		(FT_Module_Constructor)cff_driver_init,
+		(FT_Module_Destructor) cff_driver_done,
+		(FT_Module_Requester)  cff_get_interface,
 	},
 
 	/* now the specific driver fields */

@@ -313,7 +313,7 @@ sfnt_init_face( FT2_1_3_Stream      stream,
 				TT_Face        face,
 				FT_Int         face_index,
 				FT_Int         num_params,
-				FT2_1_3_Parameter*  params ) {
+				FT_Parameter*  params ) {
 	FT_Error         error;
 	FT_Library       library = face->root.driver->root.library;
 	SFNT_Service     sfnt;
@@ -375,7 +375,7 @@ sfnt_load_face( FT2_1_3_Stream      stream,
 				TT_Face        face,
 				FT_Int         face_index,
 				FT_Int         num_params,
-				FT2_1_3_Parameter*  params ) {
+				FT_Parameter*  params ) {
 	FT_Error      error;
 	FT_Bool       has_outline;
 	FT_Bool       is_apple_sbit;

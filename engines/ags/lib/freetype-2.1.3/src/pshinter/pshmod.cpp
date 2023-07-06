@@ -26,7 +26,7 @@ namespace FreeType213 {
 
 /* the Postscript Hinter module structure */
 typedef struct  PS_Hinter_Module_Rec_ {
-	FT2_1_3_ModuleRec          root;
+	FT_ModuleRec          root;
 	PS_HintsRec           ps_hints;
 
 	PSH_Globals_FuncsRec  globals_funcs;
@@ -68,21 +68,21 @@ ps_hinter_init( PS_Hinter_Module  module ) {
 
 /* returns global hints interface */
 FT2_1_3_CALLBACK_DEF( PSH_Globals_Funcs )
-pshinter_get_globals_funcs( FT2_1_3_Module  module ) {
+pshinter_get_globals_funcs( FT_Module  module ) {
 	return &((PS_Hinter_Module)module)->globals_funcs;
 }
 
 
 /* return Type 1 hints interface */
 FT2_1_3_CALLBACK_DEF( T1_Hints_Funcs )
-pshinter_get_t1_funcs( FT2_1_3_Module  module ) {
+pshinter_get_t1_funcs( FT_Module  module ) {
 	return &((PS_Hinter_Module)module)->t1_funcs;
 }
 
 
 /* return Type 2 hints interface */
 FT2_1_3_CALLBACK_DEF( T2_Hints_Funcs )
-pshinter_get_t2_funcs( FT2_1_3_Module  module ) {
+pshinter_get_t2_funcs( FT_Module  module ) {
 	return &((PS_Hinter_Module)module)->t2_funcs;
 }
 
@@ -96,7 +96,7 @@ const PSHinter_Interface  pshinter_interface = {
 
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_Module_Class  pshinter_module_class = {
+const FT_Module_Class  pshinter_module_class = {
 	0,
 	sizeof ( PS_Hinter_ModuleRec ),
 	"pshinter",
@@ -105,9 +105,9 @@ const FT2_1_3_Module_Class  pshinter_module_class = {
 
 	&pshinter_interface,            /* module-specific interface */
 
-	(FT2_1_3_Module_Constructor)ps_hinter_init,
-	(FT2_1_3_Module_Destructor) ps_hinter_done,
-	(FT2_1_3_Module_Requester)  0        /* no additional interface for now */
+	(FT_Module_Constructor)ps_hinter_init,
+	(FT_Module_Destructor) ps_hinter_done,
+	(FT_Module_Requester)  0        /* no additional interface for now */
 };
 
 } // End of namespace FreeType213

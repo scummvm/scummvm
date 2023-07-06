@@ -284,7 +284,7 @@ typedef FT_Error
 (*T1_Hints_ApplyFunc)( T1_Hints        hints,
 					   FT2_1_3_Outline*     outline,
 					   PSH_Globals     globals,
-					   FT2_1_3_Render_Mode  hint_mode );
+					   FT_Render_Mode  hint_mode );
 
 
 /*************************************************************************/
@@ -564,7 +564,7 @@ typedef FT_Error
 (*T2_Hints_ApplyFunc)( T2_Hints        hints,
 					   FT2_1_3_Outline*     outline,
 					   PSH_Globals     globals,
-					   FT2_1_3_Render_Mode  hint_mode );
+					   FT_Render_Mode  hint_mode );
 
 
 /*************************************************************************/
@@ -607,9 +607,9 @@ typedef struct  T2_Hints_FuncsRec_ {
 
 
 typedef struct  PSHinter_Interface_ {
-	PSH_Globals_Funcs  (*get_globals_funcs)( FT2_1_3_Module  module );
-	T1_Hints_Funcs     (*get_t1_funcs)     ( FT2_1_3_Module  module );
-	T2_Hints_Funcs     (*get_t2_funcs)     ( FT2_1_3_Module  module );
+	PSH_Globals_Funcs  (*get_globals_funcs)( FT_Module  module );
+	T1_Hints_Funcs     (*get_t1_funcs)     ( FT_Module  module );
+	T2_Hints_Funcs     (*get_t2_funcs)     ( FT_Module  module );
 
 } PSHinter_Interface;
 

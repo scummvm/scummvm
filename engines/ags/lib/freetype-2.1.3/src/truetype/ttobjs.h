@@ -358,7 +358,7 @@ typedef struct  TT_SizeRec_ {
 /* TrueType driver class.                                                */
 /*                                                                       */
 typedef struct  TT_DriverRec_ {
-	FT2_1_3_DriverRec     root;
+	FT_DriverRec     root;
 	TT_ExecContext   context;  /* execution context        */
 	TT_GlyphZoneRec  zone;     /* glyph loader points zone */
 
@@ -376,7 +376,7 @@ tt_face_init( FT2_1_3_Stream      stream,
 			  TT_Face        face,
 			  FT_Int         face_index,
 			  FT_Int         num_params,
-			  FT2_1_3_Parameter*  params );
+			  FT_Parameter*  params );
 
 FT2_1_3_LOCAL( void )
 tt_face_done( TT_Face  face );

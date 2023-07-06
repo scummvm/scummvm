@@ -30,7 +30,7 @@ FT2_1_3_BEGIN_HEADER
 
 
 FT2_1_3_CALLBACK_TABLE
-const FT2_1_3_Driver_ClassRec  t1cid_driver_class;
+const FT_Driver_ClassRec  t1cid_driver_class;
 
 
 FT2_1_3_END_HEADER

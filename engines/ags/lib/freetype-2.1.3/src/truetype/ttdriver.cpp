@@ -340,10 +340,10 @@ Load_Glyph( TT_GlyphSlot  slot,
 /*************************************************************************/
 
 
-static FT2_1_3_Module_Interface
+static FT_Module_Interface
 tt_get_interface( TT_Driver    driver,
 				  const char*  tt_interface ) {
-	FT2_1_3_Module     sfntd = FT2_1_3_Get_Module( driver->root.root.library,
+	FT_Module     sfntd = FT2_1_3_Get_Module( driver->root.root.library,
 										 "sfnt" );
 	SFNT_Service  sfnt;
 
@@ -359,10 +359,10 @@ tt_get_interface( TT_Driver    driver,
 }
 
 
-/* The FT2_1_3_DriverInterface structure is defined in ftdriver.h. */
+/* The FT_DriverInterface structure is defined in ftdriver.h. */
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_Driver_ClassRec  tt_driver_class = {
+const FT_Driver_ClassRec  tt_driver_class = {
 	{
 		ft_module_font_driver     |
 		ft_module_driver_scalable |
@@ -380,9 +380,9 @@ const FT2_1_3_Driver_ClassRec  tt_driver_class = {
 
 		(void*)0,        /* driver specific interface */
 
-		(FT2_1_3_Module_Constructor)tt_driver_init,
-		(FT2_1_3_Module_Destructor) tt_driver_done,
-		(FT2_1_3_Module_Requester)  tt_get_interface,
+		(FT_Module_Constructor)tt_driver_init,
+		(FT_Module_Destructor) tt_driver_done,
+		(FT_Module_Requester)  tt_get_interface,
 	},
 
 	sizeof ( TT_FaceRec ),

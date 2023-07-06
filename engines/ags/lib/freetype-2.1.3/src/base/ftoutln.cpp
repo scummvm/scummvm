@@ -517,7 +517,7 @@ FT2_1_3_Outline_Render( FT_Library         library,
 				   FT2_1_3_Raster_Params*  params ) {
 	FT_Error     error;
 	FT_Bool      update = 0;
-	FT2_1_3_Renderer  renderer;
+	FT_Renderer  renderer;
 	FT_ListNode  node;
 
 

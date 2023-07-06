@@ -29,7 +29,7 @@ ft_pfr_check( FT_Face           face,
 	FT_Error  error = FT2_1_3_Err_Bad_Argument;
 
 	if ( face && face->driver ) {
-		FT2_1_3_Module    module = (FT2_1_3_Module) face->driver;
+		FT_Module    module = (FT_Module) face->driver;
 		const char*  name   = module->clazz->module_name;
 
 		if ( name[0] == 'p' &&

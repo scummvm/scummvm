@@ -59,7 +59,7 @@ cff_size_get_globals_funcs( CFF_Size  size ) {
 	CFF_Face          face     = (CFF_Face)size->face;
 	CFF_Font          font     = (CFF_FontRec *)face->extra.data;
 	PSHinter_Service  pshinter = (PSHinter_Service)font->pshinter;
-	FT2_1_3_Module         module;
+	FT_Module         module;
 
 
 	module = FT2_1_3_Get_Module( size->face->driver->root.library,
@@ -191,7 +191,7 @@ cff_slot_init( CFF_GlyphSlot  slot ) {
 
 
 	if ( pshinter ) {
-		FT2_1_3_Module  module;
+		FT_Module  module;
 
 
 		module = FT2_1_3_Get_Module( slot->root.face->driver->root.library,
@@ -241,7 +241,7 @@ cff_face_init( FT2_1_3_Stream      stream,
 			   CFF_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,
-			   FT2_1_3_Parameter*  params ) {
+			   FT_Parameter*  params ) {
 	FT_Error          error;
 	SFNT_Service      sfnt;
 	PSNames_Service   psnames;

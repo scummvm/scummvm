@@ -52,8 +52,8 @@ typedef struct  T42_GlyphSlotRec_ {
 
 /* Type 42 driver */
 typedef struct  T42_DriverRec_ {
-	FT2_1_3_DriverRec     root;
-	FT2_1_3_Driver_Class  ttclazz;
+	FT_DriverRec     root;
+	FT_Driver_Class  ttclazz;
 	void*            extension_component;
 
 } T42_DriverRec, *T42_Driver;
@@ -67,7 +67,7 @@ T42_Face_Init( FT2_1_3_Stream      stream,
 			   T42_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,
-			   FT2_1_3_Parameter*  params );
+			   FT_Parameter*  params );
 
 
 FT2_1_3_LOCAL( void )

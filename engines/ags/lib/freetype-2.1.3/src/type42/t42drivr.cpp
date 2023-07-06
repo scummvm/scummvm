@@ -97,26 +97,26 @@ t42_get_name_index( T42_Face    face,
 }
 
 
-static FT2_1_3_Module_Interface
-T42_Get_Interface( FT2_1_3_Driver         driver,
+static FT_Module_Interface
+T42_Get_Interface( FT_Driver         driver,
 				   const FT_String*  t42_interface ) {
 	FT2_1_3_UNUSED( driver );
 
 	/* Any additional interface are defined here */
 	if (ft_strcmp( (const char*)t42_interface, "glyph_name" ) == 0 )
-		return (FT2_1_3_Module_Interface)t42_get_glyph_name;
+		return (FT_Module_Interface)t42_get_glyph_name;
 
 	if ( ft_strcmp( (const char*)t42_interface, "name_index" ) == 0 )
-		return (FT2_1_3_Module_Interface)t42_get_name_index;
+		return (FT_Module_Interface)t42_get_name_index;
 
 	if ( ft_strcmp( (const char*)t42_interface, "postscript_name" ) == 0 )
-		return (FT2_1_3_Module_Interface)t42_get_ps_name;
+		return (FT_Module_Interface)t42_get_ps_name;
 
 	return 0;
 }
 
 
-const FT2_1_3_Driver_ClassRec  t42_driver_class = {
+const FT_Driver_ClassRec  t42_driver_class = {
 	{
 		ft_module_font_driver      |
 		ft_module_driver_scalable  |
@@ -134,9 +134,9 @@ const FT2_1_3_Driver_ClassRec  t42_driver_class = {
 
 		0,    /* format interface */
 
-		(FT2_1_3_Module_Constructor)T42_Driver_Init,
-		(FT2_1_3_Module_Destructor) T42_Driver_Done,
-		(FT2_1_3_Module_Requester)  T42_Get_Interface,
+		(FT_Module_Constructor)T42_Driver_Init,
+		(FT_Module_Destructor) T42_Driver_Done,
+		(FT_Module_Requester)  T42_Get_Interface,
 	},
 
 	sizeof ( T42_FaceRec ),

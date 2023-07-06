@@ -50,14 +50,14 @@ cid_get_postscript_name( CID_Face  face ) {
 }
 
 
-static FT2_1_3_Module_Interface
-cid_get_interface( FT2_1_3_Driver         driver,
+static FT_Module_Interface
+cid_get_interface( FT_Driver         driver,
 				   const FT_String*  cid_interface ) {
 	FT2_1_3_UNUSED( driver );
 	FT2_1_3_UNUSED( cid_interface );
 
 	if ( ft_strcmp( (const char*)cid_interface, "postscript_name" ) == 0 )
-		return (FT2_1_3_Module_Interface)cid_get_postscript_name;
+		return (FT_Module_Interface)cid_get_postscript_name;
 
 	return 0;
 }
@@ -65,23 +65,23 @@ cid_get_interface( FT2_1_3_Driver         driver,
 
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_Driver_ClassRec  t1cid_driver_class = {
-	/* first of all, the FT2_1_3_Module_Class fields */
+const FT_Driver_ClassRec  t1cid_driver_class = {
+	/* first of all, the FT_Module_Class fields */
 	{
 		ft_module_font_driver       |
 		ft_module_driver_scalable   |
 		ft_module_driver_has_hinter,
 
-		sizeof( FT2_1_3_DriverRec ),
+		sizeof( FT_DriverRec ),
 		"t1cid",   /* module name           */
 		0x10000L,  /* version 1.0 of driver */
 		0x20000L,  /* requires FreeType 2.0 */
 
 		0,
 
-		(FT2_1_3_Module_Constructor)cid_driver_init,
-		(FT2_1_3_Module_Destructor) cid_driver_done,
-		(FT2_1_3_Module_Requester)  cid_get_interface
+		(FT_Module_Constructor)cid_driver_init,
+		(FT_Module_Destructor) cid_driver_done,
+		(FT_Module_Requester)  cid_get_interface
 	},
 
 	/* then the other font drivers fields */

@@ -960,7 +960,7 @@ ah_hinter_load( AH_Hinter  hinter,
 				FT_UInt    depth ) {
 	FT_Face           face     = hinter->face;
 	FT_GlyphSlot      slot     = face->glyph;
-	FT2_1_3_Slot_Internal  internal = slot->internal;
+	FT_Slot_Internal  internal = slot->internal;
 	FT_Fixed          x_scale  = face->size->metrics.x_scale;
 	FT_Fixed          y_scale  = face->size->metrics.y_scale;
 	FT_Error          error;
@@ -1272,7 +1272,7 @@ ah_hinter_load_glyph( AH_Hinter     hinter,
 	FT_Fixed         x_scale      = size->metrics.x_scale;
 	FT_Fixed         y_scale      = size->metrics.y_scale;
 	AH_Face_Globals  face_globals = FACE_GLOBALS( face );
-	FT2_1_3_Render_Mode   hint_mode    = FT2_1_3_LOAD_TARGET_MODE(load_flags);
+	FT_Render_Mode   hint_mode    = FT2_1_3_LOAD_TARGET_MODE(load_flags);
 
 
 	/* first of all, we need to check that we're using the correct face and */

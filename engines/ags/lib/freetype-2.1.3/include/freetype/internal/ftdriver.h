@@ -34,7 +34,7 @@ typedef FT_Error
 					 FT_Face        face,
 					 FT_Int         typeface_index,
 					 FT_Int         num_params,
-					 FT2_1_3_Parameter*  parameters );
+					 FT_Parameter*  parameters );
 
 typedef void
 (*FT_Face_DoneFunc)( FT_Face  face );
@@ -104,7 +104,7 @@ typedef FT_Error
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_Driver_ClassRec                                                 */
+/*    FT_Driver_ClassRec                                                 */
 /*                                                                       */
 /* <Description>                                                         */
 /*    The font driver class.  This structure mostly contains pointers to */
@@ -167,8 +167,8 @@ typedef FT_Error
 /*    Most function pointers, with the exception of `load_glyph' and     */
 /*    `get_char_index' can be set to 0 to indicate a default behaviour.  */
 /*                                                                       */
-typedef struct  FT2_1_3_Driver_ClassRec_ {
-	FT2_1_3_Module_Class           root;
+typedef struct  FT_Driver_ClassRec_ {
+	FT_Module_Class           root;
 
 	FT_Int                    face_object_size;
 	FT_Int                    size_object_size;
@@ -192,7 +192,7 @@ typedef struct  FT2_1_3_Driver_ClassRec_ {
 	FT_Face_AttachFunc        attach_file;
 	FT_Face_GetAdvancesFunc   get_advances;
 
-} FT2_1_3_Driver_ClassRec, *FT2_1_3_Driver_Class;
+} FT_Driver_ClassRec, *FT_Driver_Class;
 
 
 FT2_1_3_END_HEADER

@@ -118,12 +118,12 @@ const FT2_1_3_PFR_ServiceRec  pfr_service_rec = {
 
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_Driver_ClassRec  pfr_driver_class = {
+const FT_Driver_ClassRec  pfr_driver_class = {
 	{
 		ft_module_font_driver      |
 		ft_module_driver_scalable,
 
-		sizeof( FT2_1_3_DriverRec ),
+		sizeof( FT_DriverRec ),
 
 		"pfr",
 		0x10000L,
@@ -131,9 +131,9 @@ const FT2_1_3_Driver_ClassRec  pfr_driver_class = {
 
 		(FT2_1_3_PFR_Service)  &pfr_service_rec,   /* format interface */
 
-		(FT2_1_3_Module_Constructor)NULL,
-		(FT2_1_3_Module_Destructor) NULL,
-		(FT2_1_3_Module_Requester)  NULL
+		(FT_Module_Constructor)NULL,
+		(FT_Module_Destructor) NULL,
+		(FT_Module_Requester)  NULL
 	},
 
 	sizeof( PFR_FaceRec ),

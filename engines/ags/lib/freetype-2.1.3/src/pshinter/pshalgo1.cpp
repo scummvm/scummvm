@@ -690,7 +690,7 @@ FT_Error
 ps1_hints_apply( PS_Hints        ps_hints,
 				 FT2_1_3_Outline*     outline,
 				 PSH_Globals     globals,
-				 FT2_1_3_Render_Mode  hint_mode ) {
+				 FT_Render_Mode  hint_mode ) {
 	PSH1_Hint_TableRec  hints;
 	FT_Error            error = 0;
 	FT_Int              dimension;

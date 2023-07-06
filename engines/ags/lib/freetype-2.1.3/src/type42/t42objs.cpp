@@ -141,7 +141,7 @@ T42_Face_Init( FT2_1_3_Stream      stream,
 			   T42_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,
-			   FT2_1_3_Parameter*  params ) {
+			   FT_Parameter*  params ) {
 	FT_Error          error;
 	PSNames_Service   psnames;
 	PSAux_Service     psaux;
@@ -398,11 +398,11 @@ T42_Face_Done( T42_Face  face ) {
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
 T42_Driver_Init( T42_Driver  driver ) {
-	FT2_1_3_Module  ttmodule;
+	FT_Module  ttmodule;
 
 
 	ttmodule = FT2_1_3_Get_Module( FT2_1_3_MODULE(driver)->library, "truetype" );
-	driver->ttclazz = (FT2_1_3_Driver_Class)ttmodule->clazz;
+	driver->ttclazz = (FT_Driver_Class)ttmodule->clazz;
 
 	return FT2_1_3_Err_Ok;
 }
@@ -561,7 +561,7 @@ T42_GlyphSlot_Load( FT_GlyphSlot  glyph,
 	FT_Error         error;
 	T42_GlyphSlot    t42slot = (T42_GlyphSlot)glyph;
 	T42_Size         t42size = (T42_Size)size;
-	FT2_1_3_Driver_Class  ttclazz = ((T42_Driver)glyph->face->driver)->ttclazz;
+	FT_Driver_Class  ttclazz = ((T42_Driver)glyph->face->driver)->ttclazz;
 
 
 	ft_glyphslot_clear( t42slot->ttslot );

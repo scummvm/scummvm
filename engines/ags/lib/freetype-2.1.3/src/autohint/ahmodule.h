@@ -33,7 +33,7 @@ FT2_1_3_BEGIN_HEADER
 
 
 FT2_1_3_CALLBACK_TABLE
-const FT2_1_3_Module_Class  autohint_module_class;
+const FT_Module_Class  autohint_module_class;
 
 
 FT2_1_3_END_HEADER

@@ -137,30 +137,30 @@ t1_get_ps_name( T1_Face  face ) {
 /*    isn't available (i.e., wasn't compiled in the driver at build      */
 /*    time).                                                             */
 /*                                                                       */
-static FT2_1_3_Module_Interface
-Get_Interface( FT2_1_3_Driver         driver,
+static FT_Module_Interface
+Get_Interface( FT_Driver         driver,
 			   const FT_String*  t1_interface ) {
 	FT2_1_3_UNUSED( driver );
 	FT2_1_3_UNUSED( t1_interface );
 
 	if ( ft_strcmp( (const char*)t1_interface, "glyph_name" ) == 0 )
-		return (FT2_1_3_Module_Interface)t1_get_glyph_name;
+		return (FT_Module_Interface)t1_get_glyph_name;
 
 	if ( ft_strcmp( (const char*)t1_interface, "name_index" ) == 0 )
-		return (FT2_1_3_Module_Interface)t1_get_name_index;
+		return (FT_Module_Interface)t1_get_name_index;
 
 	if ( ft_strcmp( (const char*)t1_interface, "postscript_name" ) == 0 )
-		return (FT2_1_3_Module_Interface)t1_get_ps_name;
+		return (FT_Module_Interface)t1_get_ps_name;
 
 #ifndef T1_CONFIG_OPTION_NO_MM_SUPPORT
 	if ( ft_strcmp( (const char*)t1_interface, "get_mm" ) == 0 )
-		return (FT2_1_3_Module_Interface)T1_Get_Multi_Master;
+		return (FT_Module_Interface)T1_Get_Multi_Master;
 
 	if ( ft_strcmp( (const char*)t1_interface, "set_mm_design") == 0 )
-		return (FT2_1_3_Module_Interface)T1_Set_MM_Design;
+		return (FT_Module_Interface)T1_Set_MM_Design;
 
 	if ( ft_strcmp( (const char*)t1_interface, "set_mm_blend") == 0 )
-		return (FT2_1_3_Module_Interface)T1_Set_MM_Blend;
+		return (FT_Module_Interface)T1_Set_MM_Blend;
 #endif
 	return 0;
 }
@@ -225,13 +225,13 @@ Get_Kerning( T1_Face     face,
 
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_Driver_ClassRec  t1_driver_class = {
+const FT_Driver_ClassRec  t1_driver_class = {
 	{
 		ft_module_font_driver      |
 		ft_module_driver_scalable  |
 		ft_module_driver_has_hinter,
 
-		sizeof( FT2_1_3_DriverRec ),
+		sizeof( FT_DriverRec ),
 
 		"type1",
 		0x10000L,
@@ -239,9 +239,9 @@ const FT2_1_3_Driver_ClassRec  t1_driver_class = {
 
 		0,   /* format interface */
 
-		(FT2_1_3_Module_Constructor)T1_Driver_Init,
-		(FT2_1_3_Module_Destructor) T1_Driver_Done,
-		(FT2_1_3_Module_Requester)  Get_Interface,
+		(FT_Module_Constructor)T1_Driver_Init,
+		(FT_Module_Destructor) T1_Driver_Done,
+		(FT_Module_Requester)  Get_Interface,
 	},
 
 	sizeof( T1_FaceRec ),

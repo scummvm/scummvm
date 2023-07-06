@@ -346,7 +346,7 @@ cff_decoder_init( CFF_Decoder*    decoder,
 				  CFF_Size        size,
 				  CFF_GlyphSlot   slot,
 				  FT_Bool         hinting,
-				  FT2_1_3_Render_Mode  hint_mode ) {
+				  FT_Render_Mode  hint_mode ) {
 	CFF_Font  cff = (CFF_Font)face->extra.data;
 
 
@@ -1683,7 +1683,7 @@ cff_decoder_parse_charstrings( CFF_Decoder*  decoder,
 					hinter->apply( hinter->hints,
 								   builder->current,
 								   (PSH_Globals)builder->hints_globals,
-								   (FT2_1_3_Render_Mode)builder->hint_flags );
+								   (FT_Render_Mode)builder->hint_flags );
 				}
 
 				/* add current outline to the glyph slot */
@@ -2251,7 +2251,7 @@ cff_slot_load( CFF_GlyphSlot  glyph,
 		/* For composite glyphs, return only left side bearing and */
 		/* advance width.                                          */
 		if ( load_flags & FT2_1_3_LOAD_NO_RECURSE ) {
-			FT2_1_3_Slot_Internal  internal = glyph->root.internal;
+			FT_Slot_Internal  internal = glyph->root.internal;
 
 
 			glyph->root.metrics.horiBearingX = decoder.builder.left_bearing.x;

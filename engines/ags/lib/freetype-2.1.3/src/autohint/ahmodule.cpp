@@ -33,7 +33,7 @@ FT_Bool    ah_debug_disable_vert = 0;
 #endif
 
 typedef struct  FT2_1_3_AutoHinterRec_ {
-	FT2_1_3_ModuleRec  root;
+	FT_ModuleRec  root;
 	AH_Hinter     hinter;
 
 } FT2_1_3_AutoHinterRec;
@@ -111,7 +111,7 @@ const FT2_1_3_AutoHinter_ServiceRec  ft_autohinter_service = {
 
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_Module_Class  autohint_module_class = {
+const FT_Module_Class  autohint_module_class = {
 	ft_module_hinter,
 	sizeof ( FT2_1_3_AutoHinterRec ),
 
@@ -121,9 +121,9 @@ const FT2_1_3_Module_Class  autohint_module_class = {
 
 	(const void*) &ft_autohinter_service,
 
-	(FT2_1_3_Module_Constructor)ft_autohinter_init,
-	(FT2_1_3_Module_Destructor) ft_autohinter_done,
-	(FT2_1_3_Module_Requester)  0
+	(FT_Module_Constructor)ft_autohinter_init,
+	(FT_Module_Destructor) ft_autohinter_done,
+	(FT_Module_Requester)  0
 };
 
 } // End of namespace FreeType213

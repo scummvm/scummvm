@@ -62,7 +62,7 @@ typedef struct  BDF_FaceRec_ {
 } BDF_FaceRec, *BDF_Face;
 
 
-FT2_1_3_EXPORT_VAR( const FT2_1_3_Driver_ClassRec )  bdf_driver_class;
+FT2_1_3_EXPORT_VAR( const FT_Driver_ClassRec )  bdf_driver_class;
 
 
 FT2_1_3_END_HEADER

@@ -70,7 +70,7 @@ typedef FT_Error
 					  TT_Face        face,
 					  FT_Int         face_index,
 					  FT_Int         num_params,
-					  FT2_1_3_Parameter*  params );
+					  FT_Parameter*  params );
 
 
 /*************************************************************************/
@@ -106,7 +106,7 @@ typedef FT_Error
 					  TT_Face        face,
 					  FT_Int         face_index,
 					  FT_Int         num_params,
-					  FT2_1_3_Parameter*  params );
+					  FT_Parameter*  params );
 
 
 /*************************************************************************/
@@ -127,8 +127,8 @@ typedef void
 (*TT_Done_Face_Func)( TT_Face  face );
 
 
-typedef FT2_1_3_Module_Interface
-(*SFNT_Get_Interface_Func)( FT2_1_3_Module    module,
+typedef FT_Module_Interface
+(*SFNT_Get_Interface_Func)( FT_Module    module,
 							const char*  func_interface );
 
 

@@ -278,7 +278,7 @@ T1_Load_Glyph( T1_GlyphSlot  glyph,
 		/* for composite glyphs, return only left side bearing and */
 		/* advance width                                           */
 		if ( load_flags & FT2_1_3_LOAD_NO_RECURSE ) {
-			FT2_1_3_Slot_Internal  internal = glyph->root.internal;
+			FT_Slot_Internal  internal = glyph->root.internal;
 
 
 			glyph->root.metrics.horiBearingX = decoder.builder.left_bearing.x;

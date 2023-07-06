@@ -481,7 +481,7 @@ open_face_from_buffer( FT_Library  library,
                        FT_Long     face_index,
                        char*       driver_name,
                        FT_Face    *aface ) {
-	FT2_1_3_Open_Args  args;
+	FT_Open_Args  args;
 	FT_Error      error;
 	FT2_1_3_Stream     stream;
 	FT2_1_3_Memory     memory = library->memory;
@@ -818,7 +818,7 @@ FT2_1_3_New_Face( FT_Library   library,
              const char*  pathname,
              FT_Long      face_index,
              FT_Face     *aface ) {
-	FT2_1_3_Open_Args  args;
+	FT_Open_Args  args;
 	FSSpec        spec;
 	OSType        file_type;
 

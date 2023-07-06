@@ -232,8 +232,8 @@ typedef struct  FT2_1_3_Incremental_FuncsRec_ {
  *
  *     {
  *       FT2_1_3_Incremental_InterfaceRec  inc_int;
- *       FT2_1_3_Parameter                 parameter;
- *       FT2_1_3_Open_Args                 open_args;
+ *       FT_Parameter                 parameter;
+ *       FT_Open_Args                 open_args;
  *
  *
  *       // set up incremental descriptor
@@ -244,8 +244,8 @@ typedef struct  FT2_1_3_Incremental_FuncsRec_ {
  *       parameter.tag  = FT2_1_3_PARAM_TAG_INCREMENTAL;
  *       parameter.data = &inc_int;
  *
- *       // set up FT2_1_3_Open_Args structure
- *       open_args.flags      = (FT2_1_3_Open_Flags)( FT2_1_3_OPEN_PATHNAME |
+ *       // set up FT_Open_Args structure
+ *       open_args.flags      = (FT_Open_Flags)( FT2_1_3_OPEN_PATHNAME |
  *                                               FT2_1_3_OPEN_PARAMS   );
  *       open_args.pathname   = my_font_pathname;
  *       open_args.num_params = 1;
@@ -269,7 +269,7 @@ typedef struct  FT2_1_3_Incremental_InterfaceRec_ {
  *   FT2_1_3_PARAM_TAG_INCREMENTAL
  *
  * @description:
- *   A constant used as the tag of @FT2_1_3_Parameter structures to indicate
+ *   A constant used as the tag of @FT_Parameter structures to indicate
  *   an incremental loading object to be used by FreeType.
  *
  */

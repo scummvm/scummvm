@@ -29,7 +29,7 @@ namespace FreeType213 {
 
 /* initialize renderer -- init its raster */
 static FT_Error
-ft_smooth_init( FT2_1_3_Renderer  render ) {
+ft_smooth_init( FT_Renderer  render ) {
 	FT_Library  library = FT2_1_3_MODULE_LIBRARY( render );
 
 
@@ -43,7 +43,7 @@ ft_smooth_init( FT2_1_3_Renderer  render ) {
 
 /* sets render-specific mode */
 static FT_Error
-ft_smooth_set_mode( FT2_1_3_Renderer  render,
+ft_smooth_set_mode( FT_Renderer  render,
 					FT_ULong     mode_tag,
 					FT_Pointer   data ) {
 	/* we simply pass it to the raster */
@@ -54,7 +54,7 @@ ft_smooth_set_mode( FT2_1_3_Renderer  render,
 
 /* transform a given glyph image */
 static FT_Error
-ft_smooth_transform( FT2_1_3_Renderer   render,
+ft_smooth_transform( FT_Renderer   render,
 					 FT_GlyphSlot  slot,
 					 FT_Matrix*    matrix,
 					 FT_Vector*    delta ) {
@@ -79,7 +79,7 @@ Exit:
 
 /* return the glyph's control box */
 static void
-ft_smooth_get_cbox( FT2_1_3_Renderer   render,
+ft_smooth_get_cbox( FT_Renderer   render,
 					FT_GlyphSlot  slot,
 					FT_BBox*      cbox ) {
 	FT2_1_3_MEM_ZERO( cbox, sizeof ( *cbox ) );
@@ -91,11 +91,11 @@ ft_smooth_get_cbox( FT2_1_3_Renderer   render,
 
 /* convert a slot's glyph image into a bitmap */
 static FT_Error
-ft_smooth_render_generic( FT2_1_3_Renderer     render,
+ft_smooth_render_generic( FT_Renderer     render,
 						  FT_GlyphSlot    slot,
-						  FT2_1_3_Render_Mode  mode,
+						  FT_Render_Mode  mode,
 						  FT_Vector*      origin,
-						  FT2_1_3_Render_Mode  required_mode,
+						  FT_Render_Mode  required_mode,
 						  FT_Int          hmul,
 						  FT_Int          vmul ) {
 	FT_Error     error;
@@ -224,9 +224,9 @@ Exit:
 
 /* convert a slot's glyph image into a bitmap */
 static FT_Error
-ft_smooth_render( FT2_1_3_Renderer     render,
+ft_smooth_render( FT_Renderer     render,
 				  FT_GlyphSlot    slot,
-				  FT2_1_3_Render_Mode  mode,
+				  FT_Render_Mode  mode,
 				  FT_Vector*      origin ) {
 	return ft_smooth_render_generic( render, slot, mode, origin,
 									 FT2_1_3_RENDER_MODE_NORMAL,
@@ -236,9 +236,9 @@ ft_smooth_render( FT2_1_3_Renderer     render,
 
 /* convert a slot's glyph image into a horizontal LCD bitmap */
 static FT_Error
-ft_smooth_render_lcd( FT2_1_3_Renderer     render,
+ft_smooth_render_lcd( FT_Renderer     render,
 					  FT_GlyphSlot    slot,
-					  FT2_1_3_Render_Mode  mode,
+					  FT_Render_Mode  mode,
 					  FT_Vector*      origin ) {
 	FT_Error  error;
 
@@ -254,9 +254,9 @@ ft_smooth_render_lcd( FT2_1_3_Renderer     render,
 
 /* convert a slot's glyph image into a vertical LCD bitmap */
 static FT_Error
-ft_smooth_render_lcd_v( FT2_1_3_Renderer     render,
+ft_smooth_render_lcd_v( FT_Renderer     render,
 						FT_GlyphSlot    slot,
-						FT2_1_3_Render_Mode  mode,
+						FT_Render_Mode  mode,
 						FT_Vector*      origin ) {
 	FT_Error  error;
 
@@ -271,10 +271,10 @@ ft_smooth_render_lcd_v( FT2_1_3_Renderer     render,
 
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_Renderer_Class  ft_smooth_renderer_class = {
+const FT_Renderer_Class  ft_smooth_renderer_class = {
 	{
 		ft_module_renderer,
-		sizeof( FT2_1_3_RendererRec ),
+		sizeof( FT_RendererRec ),
 
 		"smooth",
 		0x10000L,
@@ -282,27 +282,27 @@ const FT2_1_3_Renderer_Class  ft_smooth_renderer_class = {
 
 		0,    /* module specific interface */
 
-		(FT2_1_3_Module_Constructor)ft_smooth_init,
-		(FT2_1_3_Module_Destructor) 0,
-		(FT2_1_3_Module_Requester)  0
+		(FT_Module_Constructor)ft_smooth_init,
+		(FT_Module_Destructor) 0,
+		(FT_Module_Requester)  0
 	},
 
 	FT2_1_3_GLYPH_FORMAT_OUTLINE,
 
-	(FT2_1_3_Renderer_RenderFunc)   ft_smooth_render,
-	(FT2_1_3_Renderer_TransformFunc)ft_smooth_transform,
-	(FT2_1_3_Renderer_GetCBoxFunc)  ft_smooth_get_cbox,
-	(FT2_1_3_Renderer_SetModeFunc)  ft_smooth_set_mode,
+	(FT_Renderer_RenderFunc)   ft_smooth_render,
+	(FT_Renderer_TransformFunc)ft_smooth_transform,
+	(FT_Renderer_GetCBoxFunc)  ft_smooth_get_cbox,
+	(FT_Renderer_SetModeFunc)  ft_smooth_set_mode,
 
 	(FT2_1_3_Raster_Funcs*) const_cast<FT2_1_3_Raster_Funcs *>(&ft_grays_raster)
 };
 
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_Renderer_Class  ft_smooth_lcd_renderer_class = {
+const FT_Renderer_Class  ft_smooth_lcd_renderer_class = {
 	{
 		ft_module_renderer,
-		sizeof( FT2_1_3_RendererRec ),
+		sizeof( FT_RendererRec ),
 
 		"smooth-lcd",
 		0x10000L,
@@ -310,17 +310,17 @@ const FT2_1_3_Renderer_Class  ft_smooth_lcd_renderer_class = {
 
 		0,    /* module specific interface */
 
-		(FT2_1_3_Module_Constructor)ft_smooth_init,
-		(FT2_1_3_Module_Destructor) 0,
-		(FT2_1_3_Module_Requester)  0
+		(FT_Module_Constructor)ft_smooth_init,
+		(FT_Module_Destructor) 0,
+		(FT_Module_Requester)  0
 	},
 
 	FT2_1_3_GLYPH_FORMAT_OUTLINE,
 
-	(FT2_1_3_Renderer_RenderFunc)   ft_smooth_render_lcd,
-	(FT2_1_3_Renderer_TransformFunc)ft_smooth_transform,
-	(FT2_1_3_Renderer_GetCBoxFunc)  ft_smooth_get_cbox,
-	(FT2_1_3_Renderer_SetModeFunc)  ft_smooth_set_mode,
+	(FT_Renderer_RenderFunc)   ft_smooth_render_lcd,
+	(FT_Renderer_TransformFunc)ft_smooth_transform,
+	(FT_Renderer_GetCBoxFunc)  ft_smooth_get_cbox,
+	(FT_Renderer_SetModeFunc)  ft_smooth_set_mode,
 
 	(FT2_1_3_Raster_Funcs*) const_cast<FT2_1_3_Raster_Funcs *>(&ft_grays_raster)
 };
@@ -328,10 +328,10 @@ const FT2_1_3_Renderer_Class  ft_smooth_lcd_renderer_class = {
 
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_Renderer_Class  ft_smooth_lcdv_renderer_class = {
+const FT_Renderer_Class  ft_smooth_lcdv_renderer_class = {
 	{
 		ft_module_renderer,
-		sizeof( FT2_1_3_RendererRec ),
+		sizeof( FT_RendererRec ),
 
 		"smooth-lcdv",
 		0x10000L,
@@ -339,17 +339,17 @@ const FT2_1_3_Renderer_Class  ft_smooth_lcdv_renderer_class = {
 
 		0,    /* module specific interface */
 
-		(FT2_1_3_Module_Constructor)ft_smooth_init,
-		(FT2_1_3_Module_Destructor) 0,
-		(FT2_1_3_Module_Requester)  0
+		(FT_Module_Constructor)ft_smooth_init,
+		(FT_Module_Destructor) 0,
+		(FT_Module_Requester)  0
 	},
 
 	FT2_1_3_GLYPH_FORMAT_OUTLINE,
 
-	(FT2_1_3_Renderer_RenderFunc)   ft_smooth_render_lcd_v,
-	(FT2_1_3_Renderer_TransformFunc)ft_smooth_transform,
-	(FT2_1_3_Renderer_GetCBoxFunc)  ft_smooth_get_cbox,
-	(FT2_1_3_Renderer_SetModeFunc)  ft_smooth_set_mode,
+	(FT_Renderer_RenderFunc)   ft_smooth_render_lcd_v,
+	(FT_Renderer_TransformFunc)ft_smooth_transform,
+	(FT_Renderer_GetCBoxFunc)  ft_smooth_get_cbox,
+	(FT_Renderer_SetModeFunc)  ft_smooth_set_mode,
 
 	(FT2_1_3_Raster_Funcs*) const_cast<FT2_1_3_Raster_Funcs *>(&ft_grays_raster)
 };

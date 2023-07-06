@@ -599,7 +599,7 @@ typedef struct  T1_Decoder_FuncsRec_ {
 			 FT_Byte**            glyph_names,
 			 PS_Blend             blend,
 			 FT_Bool              hinting,
-			 FT2_1_3_Render_Mode       hint_mode,
+			 FT_Render_Mode       hint_mode,
 			 T1_Decoder_Callback  callback );
 
 	void
@@ -641,7 +641,7 @@ typedef struct  T1_DecoderRec_ {
 	PS_Blend             blend;       /* for multiple master support */
 
 	FT_UInt32            hint_flags;
-	FT2_1_3_Render_Mode       hint_mode;
+	FT_Render_Mode       hint_mode;
 
 	T1_Decoder_Callback  parse_callback;
 	T1_Decoder_FuncsRec  funcs;

@@ -433,7 +433,7 @@ FT2_1_3_Glyph_Get_CBox( FT2_1_3_Glyph  glyph,
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Glyph_To_Bitmap( FT2_1_3_Glyph*       the_glyph,
-					FT2_1_3_Render_Mode  render_mode,
+					FT_Render_Mode  render_mode,
 					FT_Vector*      origin,
 					FT_Bool         destroy );
 

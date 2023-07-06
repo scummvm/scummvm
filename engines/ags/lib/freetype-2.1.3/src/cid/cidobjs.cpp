@@ -63,7 +63,7 @@ cid_slot_init( CID_GlyphSlot  slot ) {
 	pshinter = (PSHinter_Service)face->pshinter;
 
 	if ( pshinter ) {
-		FT2_1_3_Module  module;
+		FT_Module  module;
 
 
 		module = FT2_1_3_Get_Module( slot->root.face->driver->root.library,
@@ -92,7 +92,7 @@ static PSH_Globals_Funcs
 cid_size_get_globals_funcs( CID_Size  size ) {
 	CID_Face          face     = (CID_Face)size->root.face;
 	PSHinter_Service  pshinter = (PSHinter_Service)face->pshinter;
-	FT2_1_3_Module         module;
+	FT_Module         module;
 
 
 	module = FT2_1_3_Get_Module( size->root.face->driver->root.library,
@@ -252,7 +252,7 @@ cid_face_init( FT2_1_3_Stream      stream,
 			   CID_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,
-			   FT2_1_3_Parameter*  params ) {
+			   FT_Parameter*  params ) {
 	FT_Error          error;
 	PSNames_Service   psnames;
 	PSAux_Service     psaux;

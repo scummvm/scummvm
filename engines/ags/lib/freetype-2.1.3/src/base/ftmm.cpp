@@ -47,7 +47,7 @@ FT2_1_3_Get_Multi_Master( FT_Face           face,
 	error = FT2_1_3_Err_Invalid_Argument;
 
 	if ( FT2_1_3_HAS_MULTIPLE_MASTERS( face ) ) {
-		FT2_1_3_Driver       driver = face->driver;
+		FT_Driver       driver = face->driver;
 		FT2_1_3_Get_MM_Func  func;
 
 
@@ -76,7 +76,7 @@ FT2_1_3_Set_MM_Design_Coordinates( FT_Face   face,
 	error = FT2_1_3_Err_Invalid_Argument;
 
 	if ( FT2_1_3_HAS_MULTIPLE_MASTERS( face ) ) {
-		FT2_1_3_Driver              driver = face->driver;
+		FT_Driver              driver = face->driver;
 		FT2_1_3_Set_MM_Design_Func  func;
 
 
@@ -105,7 +105,7 @@ FT2_1_3_Set_MM_Blend_Coordinates( FT_Face    face,
 	error = FT2_1_3_Err_Invalid_Argument;
 
 	if ( FT2_1_3_HAS_MULTIPLE_MASTERS( face ) ) {
-		FT2_1_3_Driver             driver = face->driver;
+		FT_Driver             driver = face->driver;
 		FT2_1_3_Set_MM_Blend_Func  func;
 
 

@@ -207,21 +207,21 @@ Exit:
 #endif /* TT_CONFIG_OPTION_POSTSCRIPT_NAMES */
 
 
-FT2_1_3_CALLBACK_DEF( FT2_1_3_Module_Interface )
-sfnt_get_interface( FT2_1_3_Module    module,
+FT2_1_3_CALLBACK_DEF( FT_Module_Interface )
+sfnt_get_interface( FT_Module    module,
 					const char*  module_interface ) {
 	FT2_1_3_UNUSED( module );
 
 	if ( ft_strcmp( module_interface, "get_sfnt" ) == 0 )
-		return (FT2_1_3_Module_Interface)get_sfnt_table;
+		return (FT_Module_Interface)get_sfnt_table;
 
 #ifdef TT_CONFIG_OPTION_POSTSCRIPT_NAMES
 	if ( ft_strcmp( module_interface, "glyph_name" ) == 0 )
-		return (FT2_1_3_Module_Interface)get_sfnt_glyph_name;
+		return (FT_Module_Interface)get_sfnt_glyph_name;
 #endif
 
 	if ( ft_strcmp( module_interface, "postscript_name" ) == 0 )
-		return (FT2_1_3_Module_Interface)get_sfnt_postscript_name;
+		return (FT_Module_Interface)get_sfnt_postscript_name;
 
 	return 0;
 }
@@ -298,9 +298,9 @@ const SFNT_Interface  sfnt_interface = {
 
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_Module_Class  sfnt_module_class = {
+const FT_Module_Class  sfnt_module_class = {
 	0,  /* not a font driver or renderer */
-	sizeof( FT2_1_3_ModuleRec ),
+	sizeof( FT_ModuleRec ),
 
 	"sfnt",     /* driver name                            */
 	0x10000L,   /* driver version 1.0                     */
@@ -308,9 +308,9 @@ const FT2_1_3_Module_Class  sfnt_module_class = {
 
 	(const void*)&sfnt_interface,  /* module specific interface */
 
-	(FT2_1_3_Module_Constructor)0,
-	(FT2_1_3_Module_Destructor) 0,
-	(FT2_1_3_Module_Requester)  sfnt_get_interface
+	(FT_Module_Constructor)0,
+	(FT_Module_Destructor) 0,
+	(FT_Module_Requester)  sfnt_get_interface
 };
 
 } // End of namespace FreeType213

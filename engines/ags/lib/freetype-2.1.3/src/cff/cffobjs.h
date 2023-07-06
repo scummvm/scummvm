@@ -102,7 +102,7 @@ typedef struct  CFF_CharMapRec_ {
 /* TrueType driver class.                                              */
 /*                                                                     */
 typedef struct  CFF_DriverRec_ {
-	FT2_1_3_DriverRec  root;
+	FT_DriverRec  root;
 	void*         extension_component;
 
 } CFF_DriverRec;
@@ -133,7 +133,7 @@ cff_face_init( FT2_1_3_Stream      stream,
 			   CFF_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,
-			   FT2_1_3_Parameter*  params );
+			   FT_Parameter*  params );
 
 FT2_1_3_LOCAL( void )
 cff_face_done( CFF_Face  face );

@@ -95,18 +95,18 @@ const PSAux_Interface  psaux_interface = {
 
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_Module_Class  psaux_module_class = {
+const FT_Module_Class  psaux_module_class = {
 	0,
-	sizeof( FT2_1_3_ModuleRec ),
+	sizeof( FT_ModuleRec ),
 	"psaux",
 	0x10000L,
 	0x20000L,
 
 	&psaux_interface,  /* module-specific interface */
 
-	(FT2_1_3_Module_Constructor)0,
-	(FT2_1_3_Module_Destructor) 0,
-	(FT2_1_3_Module_Requester)  0
+	(FT_Module_Constructor)0,
+	(FT_Module_Destructor) 0,
+	(FT_Module_Requester)  0
 };
 
 } // End of namespace FreeType213

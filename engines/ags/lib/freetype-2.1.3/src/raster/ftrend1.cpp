@@ -29,7 +29,7 @@ namespace FreeType213 {
 
 /* initialize renderer -- init its raster */
 static FT_Error
-ft_raster1_init( FT2_1_3_Renderer  render ) {
+ft_raster1_init( FT_Renderer  render ) {
 	FT_Library  library = FT2_1_3_MODULE_LIBRARY( render );
 
 
@@ -43,7 +43,7 @@ ft_raster1_init( FT2_1_3_Renderer  render ) {
 
 /* set render-specific mode */
 static FT_Error
-ft_raster1_set_mode( FT2_1_3_Renderer  render,
+ft_raster1_set_mode( FT_Renderer  render,
 					 FT_ULong     mode_tag,
 					 FT_Pointer   data ) {
 	/* we simply pass it to the raster */
@@ -55,7 +55,7 @@ ft_raster1_set_mode( FT2_1_3_Renderer  render,
 
 /* transform a given glyph image */
 static FT_Error
-ft_raster1_transform( FT2_1_3_Renderer   render,
+ft_raster1_transform( FT_Renderer   render,
 					  FT_GlyphSlot  slot,
 					  FT_Matrix*    matrix,
 					  FT_Vector*    delta ) {
@@ -80,7 +80,7 @@ Exit:
 
 /* return the glyph's control box */
 static void
-ft_raster1_get_cbox( FT2_1_3_Renderer   render,
+ft_raster1_get_cbox( FT_Renderer   render,
 					 FT_GlyphSlot  slot,
 					 FT_BBox*      cbox ) {
 	FT2_1_3_MEM_ZERO( cbox, sizeof ( *cbox ) );
@@ -92,9 +92,9 @@ ft_raster1_get_cbox( FT2_1_3_Renderer   render,
 
 /* convert a slot's glyph image into a bitmap */
 static FT_Error
-ft_raster1_render( FT2_1_3_Renderer     render,
+ft_raster1_render( FT_Renderer     render,
 				   FT_GlyphSlot    slot,
-				   FT2_1_3_Render_Mode  mode,
+				   FT_Render_Mode  mode,
 				   FT_Vector*      origin ) {
 	FT_Error     error;
 	FT2_1_3_Outline*  outline;
@@ -197,10 +197,10 @@ Exit:
 
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_Renderer_Class  ft_raster1_renderer_class = {
+const FT_Renderer_Class  ft_raster1_renderer_class = {
 	{
 		ft_module_renderer,
-		sizeof( FT2_1_3_RendererRec ),
+		sizeof( FT_RendererRec ),
 
 		"raster1",
 		0x10000L,
@@ -208,17 +208,17 @@ const FT2_1_3_Renderer_Class  ft_raster1_renderer_class = {
 
 		0,    /* module specific interface */
 
-		(FT2_1_3_Module_Constructor)ft_raster1_init,
-		(FT2_1_3_Module_Destructor) 0,
-		(FT2_1_3_Module_Requester)  0
+		(FT_Module_Constructor)ft_raster1_init,
+		(FT_Module_Destructor) 0,
+		(FT_Module_Requester)  0
 	},
 
 	FT2_1_3_GLYPH_FORMAT_OUTLINE,
 
-	(FT2_1_3_Renderer_RenderFunc)   ft_raster1_render,
-	(FT2_1_3_Renderer_TransformFunc)ft_raster1_transform,
-	(FT2_1_3_Renderer_GetCBoxFunc)  ft_raster1_get_cbox,
-	(FT2_1_3_Renderer_SetModeFunc)  ft_raster1_set_mode,
+	(FT_Renderer_RenderFunc)   ft_raster1_render,
+	(FT_Renderer_TransformFunc)ft_raster1_transform,
+	(FT_Renderer_GetCBoxFunc)  ft_raster1_get_cbox,
+	(FT_Renderer_SetModeFunc)  ft_raster1_set_mode,
 
 	(FT2_1_3_Raster_Funcs*) const_cast<FT2_1_3_Raster_Funcs *>(&ft_standard_raster)
 };
@@ -229,10 +229,10 @@ const FT2_1_3_Renderer_Class  ft_raster1_renderer_class = {
 /* used for backwards-compatibility with FT 1.x anyway.              */
 /*                                                                   */
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_Renderer_Class  ft_raster5_renderer_class = {
+const FT_Renderer_Class  ft_raster5_renderer_class = {
 	{
 		ft_module_renderer,
-		sizeof( FT2_1_3_RendererRec ),
+		sizeof( FT_RendererRec ),
 
 		"raster5",
 		0x10000L,
@@ -240,17 +240,17 @@ const FT2_1_3_Renderer_Class  ft_raster5_renderer_class = {
 
 		0,    /* module specific interface */
 
-		(FT2_1_3_Module_Constructor)ft_raster1_init,
-		(FT2_1_3_Module_Destructor) 0,
-		(FT2_1_3_Module_Requester)  0
+		(FT_Module_Constructor)ft_raster1_init,
+		(FT_Module_Destructor) 0,
+		(FT_Module_Requester)  0
 	},
 
 	FT2_1_3_GLYPH_FORMAT_OUTLINE,
 
-	(FT2_1_3_Renderer_RenderFunc)   ft_raster1_render,
-	(FT2_1_3_Renderer_TransformFunc)ft_raster1_transform,
-	(FT2_1_3_Renderer_GetCBoxFunc)  ft_raster1_get_cbox,
-	(FT2_1_3_Renderer_SetModeFunc)  ft_raster1_set_mode,
+	(FT_Renderer_RenderFunc)   ft_raster1_render,
+	(FT_Renderer_TransformFunc)ft_raster1_transform,
+	(FT_Renderer_GetCBoxFunc)  ft_raster1_get_cbox,
+	(FT_Renderer_SetModeFunc)  ft_raster1_set_mode,
 
 	(FT2_1_3_Raster_Funcs*)  const_cast<FT2_1_3_Raster_Funcs *>(&ft_standard_raster)
 };
