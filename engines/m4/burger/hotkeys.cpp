@@ -32,14 +32,14 @@ void escape_key_pressed(void *, void *) {
 	switch (_G(executing)) {
 	case JUST_OVERVIEW:
 		// Stop playing the overview
-		_G(game).going = false;
+		_G(kernel).going = false;
 		break;
 
 	case INTERACTIVE_DEMO:
 	case MAGAZINE_DEMO:
 		if (_G(game).room_id == 901) {
 			// Already on the demo menu screen, so quit game
-			_G(game).going = false;
+			_G(kernel).going = false;
 		} else {
 			// In-game, so go back to demo menu screen
 			_G(game).new_section = 9;
@@ -61,7 +61,7 @@ void escape_key_pressed(void *, void *) {
 
 		case 903:
 			// Quit game
-			_G(game).going = false;
+			_G(kernel).going = false;
 			break;
 
 		default:
