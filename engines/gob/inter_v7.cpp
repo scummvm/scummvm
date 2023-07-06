@@ -1137,7 +1137,7 @@ void Inter_v7::o7_fillRect(OpFuncParams &params) {
 
 			for (int y = 0; y < _vm->_draw->_spriteBottom; y++) {
 				for (int x = 0; x < _vm->_draw->_spriteRight; x++) {
-					if ((colorToReplace & 0xFF) == newSurface->get(x, y).get())
+					if ((colorToReplace & 0xFFu) == newSurface->get(x, y).get())
 						newSurface->putPixel(x, y, _vm->_draw->_backColor);
 				}
 			}
