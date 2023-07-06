@@ -249,7 +249,7 @@ public:
 	 *
 	 * @return Pointer to the stream object, 0 in case of a failure.
 	 */
-	virtual SeekableReadStream *createReadStream() const;
+	SeekableReadStream *createReadStream() const override;
 
 	/**
 	 * Create a WriteStream instance corresponding to the file
