@@ -62,6 +62,7 @@ uint getSizeNextPOT(uint size);
 }
 
 @property (nonatomic, assign) BOOL isInGame;
+@property (nonatomic, assign) UIInterfaceOrientationMask supportedScreenOrientations;
 
 - (id)initWithFrame:(struct CGRect)frame;
 

@@ -59,6 +59,10 @@
 	return currentOrientation;
 }
 
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
+       return [[iOS7AppDelegate iPhoneView] supportedScreenOrientations];
+}
+
 -(void) updateCurrentOrientation {
 	UIInterfaceOrientation interfaceOrientation = [self interfaceOrientation];
 	if (interfaceOrientation != UIInterfaceOrientationUnknown)

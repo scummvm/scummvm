@@ -340,6 +340,10 @@ void OSystem_iOS7::applyBackendSettings() {
 	virtualController(ConfMan.getBool("onscreen_control"));
 	_touchpadModeEnabled = ConfMan.getBool("touchpad_mode");
 	_mouseClickAndDragEnabled = ConfMan.getBool("clickanddrag_mode");
+
+#if TARGET_OS_IOS
+	applyOrientationSettings();
+#endif
 }
 
 #if TARGET_OS_IOS
@@ -358,11 +362,11 @@ void OSystem_iOS7::applyOrientationSettings() {
 
 	Common::String orientation = ConfMan.get(setting);
 	if (orientation == "portrait") {
-		// TODO: Call function to trigger orientation
+		setSupportedScreenOrientation(kScreenOrientationPortrait);
 	} else if (orientation == "landscape") {
-		// TODO: Call function to trigger orientation
+		setSupportedScreenOrientation(kScreenOrientationLandscape);
 	} else {
-		// TODO: Call function to trigger orientation
+		setSupportedScreenOrientation(kScreenOrientationAuto);
 	}
  }
 #endif

@@ -364,23 +364,7 @@ void OSystem_iOS7::handleEvent_mouseEvent(Common::Event &event, int relX, int re
 void  OSystem_iOS7::handleEvent_orientationChanged(int orientation) {
 	//printf("Orientation: %i\n", orientation);
 
-	ScreenOrientation newOrientation;
-	switch (orientation) {
-	case 1:
-		newOrientation = kScreenOrientationPortrait;
-		break;
-	case 2:
-		newOrientation = kScreenOrientationFlippedPortrait;
-		break;
-	case 3:
-		newOrientation = kScreenOrientationLandscape;
-		break;
-	case 4:
-		newOrientation = kScreenOrientationFlippedLandscape;
-		break;
-	default:
-		return;
-	}
+	ScreenOrientation newOrientation = (ScreenOrientation)orientation;
 
 	if (_screenOrientation != newOrientation) {
 		_screenOrientation = newOrientation;
