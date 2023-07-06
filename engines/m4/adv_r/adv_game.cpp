@@ -38,7 +38,6 @@ void GameControl::syncGame(Common::Serializer &s) {
 	s.syncAsUint32LE(digi_overall_volume_percent);
 	s.syncAsUint32LE(midi_overall_volume_percent);
 	s.syncAsByte(camera_pan_instant);
-	s.syncAsByte(going);
 }
 
 } // End of namespace M4

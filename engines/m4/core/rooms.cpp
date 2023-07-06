@@ -56,32 +56,22 @@ void Sections::m4SceneLoad() {
 	player_set_defaults();
 	player_set_commands_allowed(false);		// Also sets "Wait" cursor
 
-	//-------------------- SECTION CONSTRUCTOR and ROOM PRELOAD ------------------
+	// -------------------- SECTION CONSTRUCTOR and ROOM PRELOAD ------------------
+
 	section_room_constructor();
-#ifdef TODO
 	_G(kernel).supress_fadeup = false;
-	HEAPCHECK
-		util_exec_function(room_preload_code_pointer);
-	HEAPCHECK
 
-		// we load the walker now because the head is going to seek for kernel_load_room,
-		// and then it's going to seek to the walker directory, then it's going to seek
-		// all the way back to the room again during the room_init_code_pointer call.
-		// somewhere>roomDir>walkerDir>roomDir
-		// but if we move the call it'll potentially only go somewhere>walkerDir>roomDir
-		// unless they load more walkers. oh well. It'll be faster for *some* rooms.
+	room_preload();
 
-		// Load current player walker set if not pre-loaded
-		if (player.walker_in_this_scene)
-			get_walker();
+	// -------------------- ROOM LOAD ------------------
 
-	//-------------------- ROOM LOAD ------------------
-	intr_cancel_sentence();
-
-	gr_pal_clear_range(master_palette, _G(kernel).first_fade, 255);
+	g_vars->getInterface()->cancel_sentence();
+	gr_pal_clear_range(_G(master_palette), _G(kernel).first_fade, 255);
 
 	term_message("Calling kernel_load_room");
+#ifdef TODO
 	_G(kernel).going = kernel_load_room(_G(kernel).minPalEntry, _G(kernel).maxPalEntry, &currentSceneDef, &screenCodeBuff, &game_bgBuff);
+
 	if (!_G(kernel).going)
 		error_show(FL, 'IMP!');	// this should never ever happen
 

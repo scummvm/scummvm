@@ -43,7 +43,6 @@ struct GameControl {
 	int32 digi_overall_volume_percent = 100;
 	int32 midi_overall_volume_percent = 100;
 	bool camera_pan_instant = false;
-	bool going = false;
 
 	void syncGame(Common::Serializer &s);
 };

@@ -67,6 +67,7 @@ struct Kernel {
 	bool use_debug_monitor = false;
 	bool use_log_file = false;
 	bool track_open_close = false;
+	bool going = false;
 
 	size_t mem_avail() const { return 7999999; }
 };

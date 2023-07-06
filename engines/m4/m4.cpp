@@ -76,7 +76,7 @@ Common::Error M4Engine::run() {
 void M4Engine::m4_inflight() {
 	Hotkeys::add_hot_keys();
 
-	while (_G(game).going) {
+	while (_G(kernel).going) {
 		if (_G(game).previous_room == -2) {
 			midi_stop();
 			kernel_load_game(_G(kernel).restore_slot);
@@ -85,10 +85,10 @@ void M4Engine::m4_inflight() {
 		// Start up next section
 		_G(between_rooms) = true;
 		global_section_constructor();		// Sets the active section
-		_G(game).going = kernel_section_startup();
+		_G(kernel).going = kernel_section_startup();
 		section_init();
 
-		while (_G(game).section_id == _G(game).new_section && _G(game).going) {
+		while (_G(game).section_id == _G(game).new_section && _G(kernel).going) {
 
 		}
 

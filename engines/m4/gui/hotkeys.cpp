@@ -180,7 +180,7 @@ void Hotkeys::adv_enable_system_hot_keys(void) {
 }
 
 void Hotkeys::exit_program(void *, void *) {
-	_G(game).going = false;
+	_G(kernel).going = false;
 }
 
 void Hotkeys::cb_F2(void *, void *) {

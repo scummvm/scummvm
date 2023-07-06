@@ -79,4 +79,16 @@ void  gr_pal_set_entry(int32 index, RGB8 *entry) {
 	g_system->getPaletteManager()->setPalette((const byte *)entry, index, 1);
 }
 
+void gr_pal_clear_range(RGB8 *palette, int first_color, int last_color) {
+	RGB8 x = { 0, 0, 0 };
+
+	for (int i = first_color; i <= last_color; i++) {
+		palette[i].r = 0;
+		palette[i].g = 0;
+		palette[i].b = 0;
+	}
+
+	gr_pal_set_range(palette, first_color, last_color - first_color);
+}
+
 } // namespace M4
