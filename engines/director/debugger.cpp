@@ -395,14 +395,16 @@ bool Debugger::cmdFuncs(int argc, const char **argv) {
 		debugPrintf("  [empty]\n");
 	}
 	debugPrintf("\n");
-	debugPrintf("Cast functions:\n");
-	Cast *cast = movie->getCast();
-	if (cast && cast->_lingoArchive) {
-		debugPrintf("%s", cast->_lingoArchive->formatFunctionList("  ").c_str());
-	} else {
-		debugPrintf("  [empty]\n");
+	for (auto it : *movie->getCasts()) {
+		debugPrintf("Cast %d functions:\n", it._key);
+		Cast *cast = it._value;
+		if (cast && cast->_lingoArchive) {
+			debugPrintf("%s", cast->_lingoArchive->formatFunctionList("  ").c_str());
+		} else {
+			debugPrintf("  [empty]\n");
+		}
+		debugPrintf("\n");
 	}
-	debugPrintf("\n");
 	debugPrintf("Shared cast functions:\n");
 	Cast *sharedCast = movie->getSharedCast();
 	if (sharedCast && sharedCast->_lingoArchive) {
