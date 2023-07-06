@@ -27,15 +27,6 @@
 #include "ags/lib/allegro/color.h"
 #include "common/array.h"
 
-#if defined(__aarch64__)
-// All 64 bit arm v8 or whatevers come with neon extensions, no need to check
-#include <arm_neon.h>
-#elif defined(__x86_64__) || defined(__i686__)
-// Most x86 based processors come with sse2, (which is what intels header has here), but it can use sse4
-// SSE2 support is still checked for at runtime
-#include "ags/lib/NEON_2_SSE.h"
-#endif
-
 namespace AGS3 {
 
 class BITMAP {

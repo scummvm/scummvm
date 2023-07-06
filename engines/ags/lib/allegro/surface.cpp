@@ -112,18 +112,20 @@ void BITMAP::drawInnerGeneric(int yStart, int xStart, uint32_t transColor, uint3
 	const int xDir = horizFlip ? -1 : 1;
 	byte rSrc, gSrc, bSrc, aSrc;
 	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
-	
+
+	// Instead of skipping pixels outside our boundary here, we just clip
+	// our area instead.
 	int xCtrStart = 0, xCtrBppStart = 0, xCtrWidth = dstRect.width();
-	if (xStart + xCtrWidth > destArea.w) {
+	if (xStart + xCtrWidth > destArea.w) { // Clip the right
 		xCtrWidth = destArea.w - xStart;
 	}
-	if (xStart < 0) {
+	if (xStart < 0) { // Clip the left
 		xCtrStart = -xStart;
 		xCtrBppStart = xCtrStart * src.format.bytesPerPixel;
 		xStart = 0;
 	}
 	int destY = yStart, yCtr = 0, srcYCtr = 0, scaleYCtr = 0, yCtrHeight = dstRect.height();
-	if (yStart < 0) {
+	if (yStart < 0) { // Clip the top
 		yCtr = -yStart;
 		destY = 0;
 		if (ScaleThreshold != 0) {
@@ -131,7 +133,7 @@ void BITMAP::drawInnerGeneric(int yStart, int xStart, uint32_t transColor, uint3
 			srcYCtr = scaleYCtr / ScaleThreshold;
 		}
 	}
-	if (yStart + yCtrHeight > destArea.h) {
+	if (yStart + yCtrHeight > destArea.h) { // Clip the bottom
 		yCtrHeight = destArea.h - yStart;
 	}
 
@@ -274,6 +276,7 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	int yStart = (dstRect.top < destRect.top) ? dstRect.top - destRect.top : 0;
 
 #define DRAWINNER(func) func(yStart, xStart, transColor, alphaMask, palette, useTint, sameFormat, src, destArea, horizFlip, vertFlip, skipTrans, srcAlpha, tintRed, tintGreen, tintBlue, dstRect, srcArea, _G(_blender_mode), 0, 0)
+	// Calling drawInnerXXXX with a ScaleThreshold of 0 just does normal un-scaled drawing
 	if (!_G(_bitmap_simd_optimizations)) {
 		DRAWINNER(drawInnerGeneric<0>);
 	} else {
