@@ -1206,7 +1206,7 @@ bool VQADecoder::VQAVideoTrack::decodeFrame(Graphics::Surface *surface) {
 		uint32 dst_y = 0;
 		void  *dstPtr = nullptr;
 
-		assert(_vpointerSize == 2 * (blocks_per_column * blocks_per_line));
+		assert(_vpointerSize == 2u * (blocks_per_column * blocks_per_line));
 		// Create a pointer to the second half of the frame data:
 		const uint8 *srcB = src + (blocks_per_column * blocks_per_line);
 
