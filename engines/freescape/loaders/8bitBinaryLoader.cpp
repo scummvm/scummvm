@@ -529,9 +529,9 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		} else if (!(isDemo() && isCastle()))
 			error("Failed to read an object!");
 	}
-	long int endLastObject = file->pos();
+	int64 endLastObject = file->pos();
 	debugC(1, kFreescapeDebugParser, "Last position %lx", endLastObject);
-	assert(endLastObject == base + cPtr || areaNumber == 192);
+	assert(endLastObject == static_cast<int64>(base + cPtr) || areaNumber == 192);
 	file->seek(base + cPtr);
 	uint8 numConditions = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "%d area conditions at %x of area %d", numConditions, base + cPtr, areaNumber);
