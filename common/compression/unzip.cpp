@@ -1025,7 +1025,7 @@ int ZipArchive::listMembers(ArchiveMemberList &list) const {
 	const unz_s *const archive = (const unz_s *)_zipFile;
 	for (ZipHash::const_iterator i = archive->_hash.begin(), end = archive->_hash.end();
 	     i != end; ++i) {
-		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(i->_key, this)));
+		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(i->_key, *this)));
 		++members;
 	}
 
@@ -1037,7 +1037,7 @@ const ArchiveMemberPtr ZipArchive::getMember(const Path &path) const {
 	if (!hasFile(name))
 		return ArchiveMemberPtr();
 
-	return ArchiveMemberPtr(new GenericArchiveMember(name, this));
+	return ArchiveMemberPtr(new GenericArchiveMember(path, *this));
 }
 
 Common::SharedArchiveContents ZipArchive::readContentsForPath(const Common::String& name) const {

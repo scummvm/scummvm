@@ -387,7 +387,7 @@ const Common::ArchiveMemberPtr Pics::getMember(const Common::Path &path) const {
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
 }
 
 Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::Path &path) const {

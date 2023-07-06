@@ -586,6 +586,8 @@ public:
 
 	Common::SeekableReadStream *createReadStream() const override;
 	Common::String getName() const override;
+	Common::Path getPathInArchive() const override { return getName(); }
+	Common::String getFileName() const override { return getName(); }
 
 	const Common::String &getPath() const;
 

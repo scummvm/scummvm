@@ -279,8 +279,7 @@ int StuffItArchive::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr StuffItArchive::getMember(const Common::Path &path) const {
-	Common::String name = path.toString(':');
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SharedArchiveContents StuffItArchive::readContentsForPath(const Common::String& name) const {

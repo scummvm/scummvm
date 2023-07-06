@@ -308,7 +308,7 @@ int PackageManager::doSearch(Common::ArchiveMemberList &list, const Common::Stri
 				}
 
 				if (!found) {
-					list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(name, (*i)->archive)));
+					list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(name, *(*i)->archive)));
 					debug(9, "> %s", name.c_str());
 				}
 				num++;

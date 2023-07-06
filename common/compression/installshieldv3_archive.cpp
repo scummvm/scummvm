@@ -134,7 +134,7 @@ int InstallShieldV3::listMembers(Common::ArchiveMemberList &list) const {
 
 const Common::ArchiveMemberPtr InstallShieldV3::getMember(const Common::Path &path) const {
 	Common::String name = path.toString();
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
 }
 
 Common::SeekableReadStream *InstallShieldV3::createReadStreamForMember(const Common::Path &path) const {

@@ -58,7 +58,15 @@ class ArchiveMember {
 public:
 	virtual ~ArchiveMember() { }
 	virtual SeekableReadStream *createReadStream() const = 0; /*!< Create a read stream. */
-	virtual String getName() const = 0; /*!< Get the name of the archive member. */
+
+	/**
+	* @deprecated Get the name of the archive member.  This may be a file name or a full path depending on archive type.
+	 *            DEPRECATED: Use getFileName or getPathInArchive instead, which always returns one or the other.
+	 */
+	virtual String getName() const = 0;
+
+	virtual Path getPathInArchive() const = 0; /*!< Get the full path of the archive member relative to the containing archive root. */
+	virtual String getFileName() const = 0; /*!< Get the file name of the archive member relative to its containing directory within the archive. */
 	virtual U32String getDisplayName() const { return getName(); } /*!< Get the display name of the archive member. */
 };
 
@@ -86,12 +94,18 @@ class Archive;
  * is destroyed.
  */
 class GenericArchiveMember : public ArchiveMember {
-	const Archive *_parent;
-	const String _name;
 public:
-	GenericArchiveMember(const String &name, const Archive *parent); /*!< Create a generic archive member that belongs to the @p parent archive. */
-	String getName() const; /*!< Get the name of a generic archive member. */
-	SeekableReadStream *createReadStream() const; /*!< Create a read stream. */
+	GenericArchiveMember(const Common::String &pathStr, const Archive &parent); /*!< Create a generic archive member that belongs to the @p parent archive. */
+	GenericArchiveMember(const Common::Path &path, const Archive &parent); /*!< Create a generic archive member that belongs to the @p parent archive. */
+
+	String getName() const override;        /*!< Get the name of a generic archive member. */
+	Path getPathInArchive() const override;       /*!< Get the full path of the archive member relative to the containing archive root. */
+	String getFileName() const override; /*!< Get the file name of the archive member relative to its containing directory within the archive. */
+	SeekableReadStream *createReadStream() const override; /*!< Create a read stream. */
+
+private:
+	const Archive &_parent;
+	const Common::Path _path;
 };
 
 

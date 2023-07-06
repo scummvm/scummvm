@@ -40,6 +40,8 @@ class BaseFileEntry : public Common::ArchiveMember {
 public:
 	Common::SeekableReadStream *createReadStream() const override;
 	Common::String getName() const override { return _filename; }
+	Common::Path getPathInArchive() const override { return _filename; }
+	Common::String getFileName() const override { return _filename; }
 	uint32 _timeDate2;
 	uint32 _timeDate1;
 	uint32 _flags;

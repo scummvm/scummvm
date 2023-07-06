@@ -474,7 +474,7 @@ int ClickteamInstaller::listMembers(ArchiveMemberList &list) const {
 	for (Common::HashMap<Common::String, ClickteamFileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::const_iterator i = _files.begin(), end = _files.end();
 	     i != end; ++i) {
 		if (!i->_value._isReferenceMissing) {
-			list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(i->_key, this)));
+			list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(i->_key, *this)));
 			++members;
 		}
 	}
@@ -491,7 +491,7 @@ const ArchiveMemberPtr ClickteamInstaller::getMember(const Path &path) const {
 	if (el._isReferenceMissing)
 		return nullptr;
 
-	return Common::SharedPtr<Common::ArchiveMember>(new GenericArchiveMember(el._fileName, this));
+	return Common::SharedPtr<Common::ArchiveMember>(new GenericArchiveMember(el._fileName, *this));
 }
 
 Common::SharedArchiveContents ClickteamInstaller::readContentsForPath(const Common::String& translated) const {
