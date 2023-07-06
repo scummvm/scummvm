@@ -71,6 +71,12 @@ void gr_pal_set(RGB8 *pal) {
 	gr_pal_set_range(pal, 0, 256);
 }
 
+void gr_pal_set_RGB8(RGB8 *entry, int r, int g, int b) {
+	entry->r = (byte)r;
+	entry->g = (byte)g;
+	entry->b = (byte)b;
+}
+
 void gr_pal_set_range(RGB8 *pal, int first_color, int num_colors) {
 	g_system->getPaletteManager()->setPalette((const byte *)pal, first_color, num_colors);
 }
@@ -89,6 +95,48 @@ void gr_pal_clear_range(RGB8 *palette, int first_color, int last_color) {
 	}
 
 	gr_pal_set_range(palette, first_color, last_color - first_color);
+}
+
+uint8 gr_pal_find_best_match(RGB8 *pal, uint8 r, uint8 g, uint8 b) {
+	int i, index = 0, Rdiff, Gdiff, Bdiff;
+	uint32 minDist = 0x7fffffff;
+
+	for (i = 0; i < 256; ++i) {
+		Rdiff = r - pal[i].r;
+		Gdiff = g - pal[i].g;
+		Bdiff = b - pal[i].b;
+		if (Rdiff * Rdiff + Gdiff * Gdiff + Bdiff * Bdiff < (int)minDist) {
+			minDist = Rdiff * Rdiff + Gdiff * Gdiff + Bdiff * Bdiff;
+			index = i;
+		}
+	}
+
+	return (uint8)index;
+}
+
+void gr_pal_reset_ega_colors(RGB8 *pal) {
+#ifdef TODO
+	EGAcolors[0] = gr_pal_find_best_match(pal, 0, 0, 0);		//__BLACK
+	EGAcolors[1] = gr_pal_find_best_match(pal, 0, 0, 255);		//__BLUE
+	EGAcolors[2] = gr_pal_find_best_match(pal, 0, 255, 0);		//__GREEN
+	EGAcolors[3] = gr_pal_find_best_match(pal, 0, 255, 255);	//__CYAN
+	EGAcolors[4] = gr_pal_find_best_match(pal, 255, 0, 0);		//__RED
+	EGAcolors[5] = gr_pal_find_best_match(pal, 255, 0, 255);	//__VIOLET
+	EGAcolors[6] = gr_pal_find_best_match(pal, 168, 84, 84);	//__BROWN
+	EGAcolors[7] = gr_pal_find_best_match(pal, 168, 168, 168);	//__LTGRAY
+	EGAcolors[8] = gr_pal_find_best_match(pal, 84, 84, 84);		//__DKGRAY
+	EGAcolors[9] = gr_pal_find_best_match(pal, 0, 0, 127);		//__LTBLUE
+	EGAcolors[10] = gr_pal_find_best_match(pal, 0, 127, 0);		//__LTGREEN
+	EGAcolors[11] = gr_pal_find_best_match(pal, 0, 127, 127);	//__LTCYAN
+	EGAcolors[12] = gr_pal_find_best_match(pal, 84, 0, 0);		//__LTRED
+	EGAcolors[13] = gr_pal_find_best_match(pal, 84, 0, 0);		//__PINK
+	EGAcolors[14] = gr_pal_find_best_match(pal, 0, 84, 84);		//__YELLOW
+	EGAcolors[15] = gr_pal_find_best_match(pal, 255, 255, 255);	//__WHITE
+#else
+	// TODO: See if this is really needed. It's better if we can keep the
+	// array as constexpr, since arrays use it's constexpr accessor method
+	warning("TODO: gr_pal_reset_ega_colors");
+#endif
 }
 
 } // namespace M4
