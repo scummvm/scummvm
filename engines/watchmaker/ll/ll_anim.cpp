@@ -1441,7 +1441,7 @@ void StartAnim(WGame &game, int32 an) {
 	h->flags = 0;
 	h->CurFrame = 0;
 	h->LastFrame = -3;
-	h->LoopStart = -1;
+	h->LoopStart = (uint16)-1;
 	h->LoopEnd = 0;
 	h->LoopMask = 0;
 	for (a = 0; a < MAX_SUBANIMS; a++) {
