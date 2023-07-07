@@ -66,8 +66,6 @@
 
 namespace M4 {
 
-static ScreenContext *ExtractScreen(void *scrnContent, int32 status);
-
 bool vmng_init() {
 	if (_G(vmng_Initted))
 		return false;
@@ -271,11 +269,7 @@ void vmng_refresh_video(int32 scrnX, int32 scrnY, int32 x1, int32 y1, int32 x2, 
 	g_system->updateScreen();
 }
 
-/**
- * Remove the window from either the active list of windows, or the inactive list,
- * wherever it was found.
- */
-static ScreenContext *ExtractScreen(void *scrnContent, int32 status) {
+ScreenContext *ExtractScreen(void *scrnContent, int32 status) {
 	ScreenContext *myScreen = nullptr, *tempScreen;
 	if (!_G(vmng_Initted))
 		return nullptr;

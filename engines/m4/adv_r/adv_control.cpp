@@ -40,13 +40,13 @@ void player_set_commands_allowed(bool t_or_f) {
 	if (t_or_f) {
 		// OK to do something
 		mouse_set_sprite(kArrowCursor);
-		g_vars->getInterface()->cancel_sentence();
+		_GI().cancel_sentence();
 
 		track_hotspots_refresh();
 
 	} else {
 		// Hour glass
-		g_vars->getInterface()->showWaitCursor();
+		_GI().showWaitCursor();
 	}
 }
 

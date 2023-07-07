@@ -272,6 +272,41 @@ bool MoveScreenDelta(ScreenContext *myScreen, int32 parmX, int32 parmY) {
 	return MoveScreen(myScreen, parmX, parmY, true);
 }
 
+void vmng_screen_to_back(void *scrnContent) {
+	ScreenContext *myScreen, *tempScreen;
+	if ((myScreen = ExtractScreen(scrnContent, SCRN_ANY)) == NULL) return;
+	if (!_G(backScreen)) {
+		myScreen->infront = NULL;
+		myScreen->behind = NULL;
+		_G(frontScreen) = myScreen;
+		_G(backScreen) = myScreen;
+	} else {
+		tempScreen = _G(backScreen);
+		while (tempScreen &&
+			((tempScreen->scrnFlags & SF_LAYER) < (myScreen->scrnFlags & SF_LAYER))) {
+			tempScreen = tempScreen->infront;
+		}
+		if (!tempScreen) {
+			myScreen->infront = NULL;
+			myScreen->behind = _G(frontScreen);
+			_G(frontScreen)->infront = myScreen;
+			_G(frontScreen) = myScreen;
+		} else if (tempScreen == _G(backScreen)) {
+			myScreen->infront = _G(backScreen);
+			myScreen->behind = NULL;
+			_G(backScreen)->behind = myScreen;
+			_G(backScreen) = myScreen;
+		} else {
+			myScreen->infront = tempScreen;
+			myScreen->behind = tempScreen->behind;
+			tempScreen->behind = myScreen;
+			myScreen->behind->infront = myScreen;
+		}
+	}
+
+	RestoreScreens(myScreen->x1, myScreen->y1, myScreen->x2, myScreen->y2);
+}
+
 static bool MoveScreen(ScreenContext *myScreen, int32 parmX, int32 parmY, bool deltaMove) {
 	int32 origX1, origY1, origX2, origY2;
 	if (!_G(vmng_Initted))

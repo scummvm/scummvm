@@ -95,6 +95,43 @@ void Interface::cancel_sentence() {
 	warning("TODO: cancel_sentence");
 }
 
+bool Interface::set_interface_palette(RGB8 *myPalette) {
+	gr_pal_set_RGB8(&myPalette[1], 0, 68, 0);
+	gr_pal_set_RGB8(&myPalette[2], 0, 134, 0);
+	gr_pal_set_RGB8(&myPalette[3], 0, 204, 0);
+	gr_pal_set_RGB8(&myPalette[4], 28, 8, 90);
+	gr_pal_set_RGB8(&myPalette[5], 204, 204, 250);
+	gr_pal_set_RGB8(&myPalette[6], 204, 204, 102);
+	gr_pal_set_RGB8(&myPalette[7], 5, 1, 0);
+	gr_pal_set_RGB8(&myPalette[8], 102, 51, 222);
+	gr_pal_set_RGB8(&myPalette[9], 85, 117, 255);
+	gr_pal_set_RGB8(&myPalette[10], 68, 68, 68);
+	gr_pal_set_RGB8(&myPalette[11], 51, 255, 0);
+	gr_pal_set_RGB8(&myPalette[12], 51, 51, 115);
+	gr_pal_set_RGB8(&myPalette[13], 119, 119, 119);
+	gr_pal_set_RGB8(&myPalette[14], 151, 153, 150);
+	gr_pal_set_RGB8(&myPalette[15], 153, 0, 0);
+	gr_pal_set_RGB8(&myPalette[16], 153, 53, 9);
+	gr_pal_set_RGB8(&myPalette[17], 117, 246, 255);
+	gr_pal_set_RGB8(&myPalette[18], 88, 0, 0);
+	gr_pal_set_RGB8(&myPalette[19], 195, 0, 83);
+	gr_pal_set_RGB8(&myPalette[20], 204, 102, 61);
+	gr_pal_set_RGB8(&myPalette[21], 204, 153, 118);
+	gr_pal_set_RGB8(&myPalette[22], 204, 255, 204);
+	gr_pal_set_RGB8(&myPalette[23], 207, 158, 73);
+	gr_pal_set_RGB8(&myPalette[24], 238, 0, 0);
+	gr_pal_set_RGB8(&myPalette[25], 248, 51, 31);
+	gr_pal_set_RGB8(&myPalette[26], 255, 131, 0);
+	gr_pal_set_RGB8(&myPalette[27], 255, 153, 102);
+	gr_pal_set_RGB8(&myPalette[28], 255, 204, 153);
+	gr_pal_set_RGB8(&myPalette[29], 255, 252, 144);
+	gr_pal_set_RGB8(&myPalette[30], 255, 255, 0);
+	gr_pal_set_RGB8(&myPalette[31], 255, 255, 255);
+	gr_pal_set_range(myPalette, 1, 31);
+
+	return true;
+}
+
 } // namespace GUI
 } // namespace Burger
 } // namespace M4

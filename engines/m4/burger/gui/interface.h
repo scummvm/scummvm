@@ -61,6 +61,8 @@ public:
 
 	void cancel_sentence() override;
 
+	bool set_interface_palette(RGB8 *myPalette) override;
+
 	void show();
 };
 
