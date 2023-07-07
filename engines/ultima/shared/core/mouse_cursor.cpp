@@ -92,8 +92,7 @@ void MouseCursor::setCursor(int cursorId) {
 	}
 
 	// Pass the generated surface onto the ScummVM cursor manager
-	CursorMan.replaceCursor(s.getPixels(), CURSOR_WIDTH, CURSOR_HEIGHT,
-		data._hotspot.x, data._hotspot.y, 0xff);
+	CursorMan.replaceCursor(s, data._hotspot.x, data._hotspot.y, 0xff);
 }
 
 void MouseCursor::show() {

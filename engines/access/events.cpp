@@ -69,8 +69,7 @@ void EventsManager::setCursor(CursorType cursorId) {
 
 	if (cursorId == CURSOR_INVENTORY) {
 		// Set the cursor
-		CursorMan.replaceCursor(_invCursor.getPixels(), _invCursor.w, _invCursor.h,
-			_invCursor.w / 2, _invCursor.h / 2, 0);
+		CursorMan.replaceCursor(_invCursor, _invCursor.w / 2, _invCursor.h / 2, 0);
 	} else {
 		// Get a pointer to the mouse data to use, and get the cursor hotspot
 		const byte *srcP = &_vm->_res->CURSORS[cursorId][0];
@@ -106,8 +105,7 @@ void EventsManager::setCursor(CursorType cursorId) {
 		}
 
 		// Set the cursor
-		CursorMan.replaceCursor(cursorSurface.getPixels(), CURSOR_WIDTH, CURSOR_HEIGHT,
-			hotspotX, hotspotY, 0);
+		CursorMan.replaceCursor(cursorSurface, hotspotX, hotspotY, 0);
 
 		// Free the cursor surface
 		cursorSurface.free();

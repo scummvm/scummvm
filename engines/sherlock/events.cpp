@@ -96,9 +96,9 @@ void Events::setCursor(const Graphics::Surface &src, int hotspotX, int hotspotY)
 
 	if (!IS_3DO) {
 		// PC 8-bit palettized
-		CursorMan.replaceCursor(src.getPixels(), src.w, src.h, hotspotX, hotspotY, 0xff);
+		CursorMan.replaceCursor(src, hotspotX, hotspotY, 0xff);
 	} else if (!_vm->_isScreenDoubled) {
-		CursorMan.replaceCursor(src.getPixels(), src.w, src.h, hotspotX, hotspotY, 0x0000, false, &src.format);
+		CursorMan.replaceCursor(src, hotspotX, hotspotY, 0x0000, false);
 	} else {
 		Graphics::Surface tempSurface;
 		tempSurface.create(2 * src.w, 2 * src.h, src.format);
@@ -115,7 +115,7 @@ void Events::setCursor(const Graphics::Surface &src, int hotspotX, int hotspotY)
 		}
 
 		// 3DO RGB565
-		CursorMan.replaceCursor(tempSurface.getPixels(), tempSurface.w, tempSurface.h, 2 * hotspotX, 2 * hotspotY, 0x0000, false, &src.format);
+		CursorMan.replaceCursor(tempSurface, 2 * hotspotX, 2 * hotspotY, 0x0000, false);
 
 		tempSurface.free();
 	}

@@ -202,7 +202,7 @@ void CursorManager::applyCursor() {
 		transColor = temp.format.RGBToColor(r, g, b);
 	}
 
-	CursorMan.replaceCursor(temp.getPixels(), temp.w, temp.h, hotspot.x, hotspot.y, transColor, false, &temp.format);
+	CursorMan.replaceCursor(temp, hotspot.x, hotspot.y, transColor, false);
 }
 
 void CursorManager::showCursor(bool shouldShow) {
