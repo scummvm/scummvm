@@ -20,6 +20,7 @@
  */
 
 #include "m4/gui/interface.h"
+#include "m4/gui/gui_vmng.h"
 #include "m4/vars.h"
 
 namespace M4 {
@@ -35,5 +36,21 @@ void Interface::init(int arrow, int wait, int look, int grab, int use) {
 void Interface::showWaitCursor() {
 	mouse_set_sprite(_wait);
 }
+
+void Interface::show() {
+	warning("TODO: Interface::show");
+}
+
+void Interface::hide() {
+	if (_shown) {
+		vmng_screen_hide(_G(gameInterfaceBuff));
+		_visible = false;
+	}
+}
+
+void Interface::track_hotspots_refresh() {
+	warning("TODO: track_hotspots_refresh");
+}
+
 
 } // End of namespace M4

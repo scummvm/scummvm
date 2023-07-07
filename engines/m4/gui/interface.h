@@ -29,6 +29,9 @@ namespace M4 {
 
 class Interface {
 public:
+	bool _shown = false;
+	bool _visible = false;
+
 	int _arrow = 0;
 	int _wait = 0;
 	int _look = 0;
@@ -44,10 +47,22 @@ public:
 
 	virtual bool set_interface_palette(RGB8 *myPalette) = 0;
 
+	void track_hotspots_refresh();
+
 	/**
 	 * Show the wait cursor
 	 */
 	void showWaitCursor();
+
+	/**
+	 * Show the interface
+	 */
+	void show();
+
+	/**
+	 * Hide the interface
+	 */
+	void hide();
 };
 
 } // End of namespace M4
