@@ -934,7 +934,7 @@ void Combat::iterateMonsters1() {
 
 void Combat::iterateMonsters1Inner() {
 	Encounter &enc = g_globals->_encounters;
-	Common::String line1 = Common::String::format("|%s| %s",
+	Common::String line1 = Common::String::format("`%s` %s",
 		g_globals->_currCharacter->_name,
 		STRING["spells.casts_spell"].c_str());
 
@@ -1158,7 +1158,7 @@ void Combat::summonLightning() {
 	SpellsState &ss = g_globals->_spellsState;
 
 	if (_destMonsterNum < _attackersCount) {
-		Common::String line1 = Common::String::format("|%s| %s",
+		Common::String line1 = Common::String::format("`%s` %s",
 			g_globals->_currCharacter->_name,
 			STRING["spells.casts_spell"].c_str());
 
@@ -1316,7 +1316,7 @@ void Combat::fireball() {
 	SpellsState &ss = g_globals->_spellsState;
 
 	if (_destMonsterNum < _attackersCount) {
-		Common::String line1 = Common::String::format("|%s| %s",
+		Common::String line1 = Common::String::format("`%s` %s",
 			g_globals->_currCharacter->_name,
 			STRING["spells.casts_spell"].c_str());
 
