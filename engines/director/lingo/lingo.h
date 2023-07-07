@@ -463,6 +463,7 @@ public:
 	void setObjectProp(Datum &obj, Common::String &propName, Datum &d);
 	Datum getTheDate(int field);
 	Datum getTheTime(int field);
+	Datum getTheDeskTopRectList();
 
 private:
 	Common::StringArray _entityNames;
