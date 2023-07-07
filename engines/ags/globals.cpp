@@ -106,27 +106,27 @@ Globals *g_globals;
 static bool checkForSIMDExtensions() {
 #if defined(__x86_64__) || defined(__i686__)
 #  ifdef __GNUC__
-	int c_ecx, c_edx;
-	asm (".intel_syntax;"
-		 "movq rax,0;"
-		 "cpuid;"
-		 "mov %0,ecx;"
-		 "mov %1,edx;"
-		 ".att_syntax;"
-		 : "=r" (c_ecx), "=r" (c_edx)
-		 : "r"
-		 : "eax", "ebx", "ecx", "edx");
-	return c_edx & (1 << 25); // SSE2 extensions bit
+	//int c_ecx, c_edx;
+	//asm ("mov $0, %%eax\n\t"
+	//	 "cpuid\n\t"
+	//	 "mov %%ecx, %0\n\t"
+	//	 "mov %%edx, %1\n\t"
+	//	 : "=rm" (c_ecx), "=rm" (c_edx)
+	//	 :
+	//	 : "eax", "ebx", "ecx", "edx");
+	//return c_edx & (1 << 25); // SSE2 extensions bit
+	return false;
 #  elif _MSC_VER
-	int c_ecx, c_edx;
-	__asm
-	{
-		mov rax,0
-		cpuid
-		mov c_ecx,ecx
-		mov c_edx,edx
-	}
-	return c_edx & (1 << 25); // SSE2 extensions bit
+	//int c_ecx, c_edx;
+	//__asm
+	//{
+	//	mov rax,0
+	//	cpuid
+	//	mov c_ecx,ecx
+	//	mov c_edx,edx
+	//}
+	//return c_edx & (1 << 25); // SSE2 extensions bit
+	return false;
 #  else
 	return false;
 #  endif
