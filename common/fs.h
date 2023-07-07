@@ -79,7 +79,6 @@ private:
 	 */
 	FSNode(AbstractFSNode *realNode);
 
-	String getRealName() const;
 public:
 	/**
 	 * Flag to tell listDir() which kind of files to list.
@@ -168,6 +167,16 @@ public:
 	 * @return The file name.
 	 */
 	virtual String getName() const;
+
+	/**
+	 * Return a string representation of the name of the file, without any
+	 * Punycode transformation. This can be used e.g. by detection code that
+	 * relies on matching the name of a given file. However, it is *not*
+	 * suitable for use with fopen / File::open, nor should it be archived.
+	 *
+	 * @return The file name.
+	 */
+	virtual String getRealName() const;
 
 	/**
 	 * Return a string representation of the file that is suitable for
