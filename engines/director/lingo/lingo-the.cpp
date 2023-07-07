@@ -64,6 +64,7 @@ TheEntity entities[] = {
 	{ kTheCommandDown,		"commandDown",		false, 200, true },	// D2 f
 	{ kTheControlDown,		"controlDown",		false, 200, true },	// D2 f
 	{ kTheDate,				"date",				false, 300, true },	//		D3 f
+	{ kTheDeskTopRectList,	"deskTopRectList",	false, 500, true },	// D5 p
 	{ kTheDoubleClick,		"doubleClick",		false, 200, true },	// D2 f
 	{ kTheExitLock,			"exitLock",			false, 200, false },	// D2 p
 	{ kTheField,			"field",			true,  300, false },	//		D3
@@ -436,6 +437,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheDate:
 		d = getTheDate(field);
+		break;
+	case kTheDeskTopRectList:
+		d = getTheDeskTopRectList();
 		break;
 	case kTheDoubleClick:
 		// Always measured against the last two clicks.
@@ -2062,6 +2066,24 @@ Datum Lingo::getTheTime(int field) {
 	}
 
 	d.u.s = new Common::String(s);
+
+	return d;
+}
+
+Datum Lingo::getTheDeskTopRectList() {
+	// Returns dimensions of each monitor
+	Datum monitorSize;
+	monitorSize.type = RECT;
+	monitorSize.u.farr = new FArray;
+	monitorSize.u.farr->arr.push_back(0);
+	monitorSize.u.farr->arr.push_back(0);
+	monitorSize.u.farr->arr.push_back(g_director->getMacWindowManager()->getWidth());
+	monitorSize.u.farr->arr.push_back(g_director->getMacWindowManager()->getHeight());
+
+	Datum d;
+	d.type = ARRAY;
+	d.u.farr = new FArray;
+	d.u.farr->arr.push_back(monitorSize);
 
 	return d;
 }
