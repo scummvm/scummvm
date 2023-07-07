@@ -593,8 +593,7 @@ Common::Path resolveFSPath(Common::String &path, Common::Path &base, bool direct
 	Common::FSList fslist;
 	bool exists = false;
 	while (!directory_list.empty()) {
-		Common::String token = directory_list.nextToken();
-		Common::String decodedToken = punycode_decodefilename(token);
+		Common::String token = punycode_decodefilename(directory_list.nextToken());
 		fslist.clear();
 		Common::FSNode::ListMode mode = Common::FSNode::kListDirectoriesOnly;
 		if (directory_list.empty() && !directory) {
@@ -608,14 +607,15 @@ Common::Path resolveFSPath(Common::String &path, Common::Path &base, bool direct
 		for (auto &i : fslist) {
 			// for each element in the path, choose the first FSNode
 			// with a case-insensitive matching name
-			if (i.getName().equalsIgnoreCase(decodedToken)) {
+			Common::String decodedName = i.getName();
+			if (decodedName.equalsIgnoreCase(token)) {
 				// If this the final path component, check if we're allowed to match with a directory
 				if (directory_list.empty() && (directory != i.isDirectory())) {
 					continue;
 				}
 
 				exists = true;
-				newPath.appendInPlace(i.getName());
+				newPath.appendInPlace(i.getRealName());
 				if (!directory_list.empty() && !newPath.empty())
 					newPath.appendInPlace(Common::String(g_director->_dirSeparator), g_director->_dirSeparator);
 
@@ -688,7 +688,7 @@ Common::Path resolvePath(Common::String &path, Common::Path &base, bool director
 				continue;
 			}
 			bool match = true;
-			for (int i = 0; i < srcComponents.size(); i++) {
+			for (size_t i = 0; i < srcComponents.size(); i++) {
 				Common::String component = Common::punycode_decodefilename(destComponents[i]);
 				if (!component.equalsIgnoreCase(srcComponents[i])) {
 					match = false;
@@ -711,22 +711,37 @@ Common::Path resolvePath(Common::String &path, Common::Path &base, bool director
 
 Common::Path resolvePartialPath(Common::String &path, Common::Path &base, bool directory, const char **exts) {
 	path = convertPath(path);
-	Common::StringArray tokens = Common::StringTokenizer(path, Common::String(g_director->_dirSeparator)).split();
-
 	Common::Path result;
-	while (tokens.size()) {
-		Common::String subpath;
-		for (uint i = 0; i < tokens.size(); i++) {
-			subpath += tokens[i];
-			if (i < tokens.size() - 1) {
-				subpath += g_director->_dirSeparator;
+
+	Common::StringArray baseTokens = base.splitComponents();
+	bool basesLeft = true;
+	while (basesLeft) {
+		Common::Path testBase = Common::Path::joinComponents(baseTokens);
+
+		// Try removing leading components of the target path
+		Common::StringArray tokens = Common::StringTokenizer(path, Common::String(g_director->_dirSeparator)).split();
+
+		while (tokens.size()) {
+			Common::String subpath;
+			for (uint i = 0; i < tokens.size(); i++) {
+				subpath += tokens[i];
+				if (i < tokens.size() - 1) {
+					subpath += g_director->_dirSeparator;
+				}
 			}
+			result = resolvePath(subpath, testBase, directory, exts);
+			if (!result.empty()) {
+				break;
+			}
+			tokens.remove_at(0);
 		}
-		result = resolvePath(subpath, base, directory, exts);
-		if (!result.empty()) {
+		if (!result.empty())
 			break;
+		if (!baseTokens.size()) {
+			basesLeft = false;
+		} else {
+			baseTokens.pop_back();
 		}
-		tokens.remove_at(0);
 	}
 	return result;
 }
