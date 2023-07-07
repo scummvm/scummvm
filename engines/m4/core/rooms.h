@@ -78,6 +78,8 @@ private:
 	bool shut_down_digi_tracks_between_rooms = true;
 	int32 camera_pan_step = 10;
 
+	void get_ipl();
+
 public:
 	Section *_sections = nullptr;
 	Section *_activeSection = nullptr;

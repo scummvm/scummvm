@@ -22,6 +22,8 @@
 #include "m4/core/rooms.h"
 #include "m4/core/errors.h"
 #include "m4/adv_r/adv_file.h"
+#include "m4/adv_r/db_env.h"
+#include "m4/fileio/extensions.h"
 #include "m4/vars.h"
 
 namespace M4 {
@@ -77,14 +79,9 @@ void Sections::m4SceneLoad() {
 	if (!_G(kernel).going)
 		error_show(FL, 'IMP!');	// this should never ever happen
 
+	get_ipl();
 #ifdef TODO
-		get_ipl();
-
-	// moved above. see explanation there.
-	//	if (player.walker_in_this_scene)
-	//		get_walker();
-
-		// must reset event handler because loading a room re-initalizes gameBuff
+	// Must reset event handler because loading a room re-initalizes gameBuff
 	gui_buffer_set_event_handler((Buffer *)gameDrawBuff, intr_EventHandler);
 
 	_G(kernel).trigger_mode = KT_DAEMON;
@@ -144,6 +141,29 @@ void Sections::m4SceneLoad() {
 
 	//-------------------- PLAY ROOM ------------------
 #endif
+}
+
+void Sections::get_ipl() {
+	if (_G(inverse_pal))
+		delete _G(inverse_pal);
+	_G(inverse_pal) = NULL;
+
+	char *name;
+	Common::String filename;
+
+	name = env_find(_G(currentSceneDef).art_base);
+	if (name) {
+		// Means found in database
+		filename = f_extension_new(name, "ipl");
+
+	} else {
+		// Concat hag mode
+		filename = Common::String::format("%s.IPL", _G(currentSceneDef).art_base);
+	}
+
+	_G(inverse_pal) = new InvPal(filename.c_str());
+	if (!_G(inverse_pal))
+		error_show(FL, 'OOM!', "loading ipl: %s", filename.c_str());
 }
 
 /*------------------------------------------------------------------------*/
