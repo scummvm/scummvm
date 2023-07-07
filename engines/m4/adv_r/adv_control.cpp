@@ -20,6 +20,7 @@
  */
 
 #include "m4/adv_r/adv_control.h"
+#include "m4/adv_r/adv_interface.h"
 #include "m4/core/errors.h"
 #include "m4/mem/memman.h"
 #include "m4/vars.h"
@@ -48,10 +49,6 @@ void player_set_commands_allowed(bool t_or_f) {
 		// Hour glass
 		_GI().showWaitCursor();
 	}
-}
-
-void track_hotspots_refresh() {
-	warning("TODO: track_hotspots_refresh");
 }
 
 } // End of namespace M4

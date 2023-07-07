@@ -20,16 +20,29 @@
  *
  */
 
-#ifndef M4_ADV_R_ADV_CONTROL_H
-#define M4_ADV_R_ADV_CONTROL_H
+#ifndef M4_ADV_R_ADV_INTERFACE_H
+#define M4_ADV_R_ADV_INTERFACE_H
 
-#include "common/stream.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
 
-extern bool kernel_section_startup();
-extern void player_set_commands_allowed(bool t_or_f);
+extern void interface_hide();
+extern void interface_show();
+
+extern void track_hotspots_refresh();
+extern bool intr_EventHandler(void *bufferPtr, int32 eventType, int32 event, int32 x, int32 y, bool *z);
+
+extern void intr_set_verb(char *name);
+extern void intr_set_object(char *name);
+extern void intr_set_prep(char *name);
+extern void intr_set_ind_object(char *name);
+
+extern void intr_cancel_sentence();
+extern void intr_show_sentence();
+
+extern void inter_callback(void *a, void *b);
+extern void inter_inv_button_callback(void *myItem, void *myDlog);
 
 } // End of namespace M4
 
