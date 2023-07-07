@@ -216,7 +216,7 @@ bool SRTParser::parseFile(const char *fname) {
 	return true;
 }
 
-Common::String SRTParser::getSubtitle(uint32 timestamp) {
+Common::String SRTParser::getSubtitle(uint32 timestamp) const {
 	SRTEntry test(0, timestamp, 0, "");
 	SRTEntry *testptr = &test;
 
@@ -299,7 +299,7 @@ void Subtitles::setPadding(uint16 horizontal, uint16 vertical) {
 	_vPad = vertical;
 }
 
-bool Subtitles::drawSubtitle(uint32 timestamp, bool force) {
+bool Subtitles::drawSubtitle(uint32 timestamp, bool force) const {
 	Common::String subtitle;
 	if (_loaded) {
 		subtitle = _srtParser.getSubtitle(timestamp);
@@ -375,7 +375,7 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force) {
 	return true;
 }
 
-void Subtitles::renderSubtitle() {
+void Subtitles::renderSubtitle() const {
 	_surface->fillRect(Common::Rect(0, 0, _surface->w, _surface->h), _transparentColor);
 
 	Common::Array<Common::U32String> lines;
