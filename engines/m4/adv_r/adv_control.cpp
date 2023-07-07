@@ -41,8 +41,7 @@ void player_set_commands_allowed(bool t_or_f) {
 	if (t_or_f) {
 		// OK to do something
 		mouse_set_sprite(kArrowCursor);
-		_GI().cancel_sentence();
-
+		intr_cancel_sentence();
 		track_hotspots_refresh();
 
 	} else {

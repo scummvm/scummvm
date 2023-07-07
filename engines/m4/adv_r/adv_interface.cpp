@@ -25,14 +25,15 @@
 namespace M4 {
 
 void interface_hide() {
-	warning("TODO: interface_hide");
+	_GI().hide();
 }
 
 void interface_show() {
-	warning("TODO: interface_show");
+	_GI().show();
 }
 
 void track_hotspots_refresh() {
+	_GI().track_hotspots_refresh();
 }
 
 bool intr_EventHandler(void *bufferPtr, int32 eventType, int32 event, int32 x, int32 y, bool *z) {
@@ -40,36 +41,8 @@ bool intr_EventHandler(void *bufferPtr, int32 eventType, int32 event, int32 x, i
 	return true;
 }
 
-void intr_set_verb(char *name) {
-	warning("TODO: intr_set_verb");
-}
-
-void intr_set_object(char *name) {
-	warning("TODO: intr_set_object");
-}
-
-void intr_set_prep(char *name) {
-	warning("TODO: intr_set_prep");
-}
-
-void intr_set_ind_object(char *name) {
-	warning("TODO: intr_set_ind_object");
-}
-
 void intr_cancel_sentence() {
 	_GI().cancel_sentence();
-}
-
-void intr_show_sentence() {
-	warning("TODO: inter_inv_button_callback");
-}
-
-void inter_callback(void *a, void *b) {
-	warning("TODO: inter_inv_button_callback");
-}
-
-void inter_inv_button_callback(void *myItem, void *myDlog) {
-	warning("TODO: inter_inv_button_callback");
 }
 
 } // End of namespace M4
