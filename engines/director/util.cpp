@@ -568,7 +568,7 @@ Common::String convert83Path(Common::String &path) {
 	return convPath;
 }
 
-Common::Path resolvePath(Common::String &path, Common::Path &base, bool directory) {
+Common::Path resolveFSPath(Common::String &path, Common::Path &base, bool directory) {
 	// Path is the raw input from Director. Scrub it to be a clean relative path.
 	path = convertPath(path);
 
@@ -630,12 +630,34 @@ Common::Path resolvePath(Common::String &path, Common::Path &base, bool director
 
 	if (exists) {
 		debugN(9, "%s", recIndent());
-		debug(9, "resolvePath(): Found filesystem match for %s -> %s", path.c_str(), newPath.toString().c_str());
+		debug(9, "resolveFSPath(): Found filesystem match for %s -> %s", path.c_str(), newPath.toString().c_str());
 		return newPath;
 	}
 
+	return Common::Path();
+}
+
+Common::Path resolvePath(Common::String &path, Common::Path &base, bool directory, const char **exts) {
+	Common::Path result = resolveFSPath(path, base, directory);
+	if (!result.empty()) {
+		return result;
+	} else if (result.empty() && !directory && exts) {
+		Common::String fileBase = path;
+		if (hasExtension(fileBase))
+			fileBase = fileBase.substr(0, fileBase.size() - 4);
+		for (int i = 0; exts[i]; i++) {
+			Common::String fileExt = fileBase + exts[i];
+			result = resolveFSPath(fileExt, base, directory);
+			if (!result.empty())
+				return result;
+		}
+	}
+
 	// No filesystem match, check caches
-	newPath = toSafePath(path);
+	Common::Path newPath = base;
+	if (!newPath.empty())
+		newPath.appendInPlace(Common::String(g_director->_dirSeparator), g_director->_dirSeparator);
+	newPath.appendInPlace(toSafePath(path));
 	if (!directory) {
 		// Check SearchMan
 		if (SearchMan.hasFile(newPath)) {
@@ -687,7 +709,7 @@ Common::Path resolvePath(Common::String &path, Common::Path &base, bool director
 	return Common::Path();
 }
 
-Common::Path resolvePartialPath(Common::String &path, Common::Path &base, bool directory) {
+Common::Path resolvePartialPath(Common::String &path, Common::Path &base, bool directory, const char **exts) {
 	path = convertPath(path);
 	Common::StringArray tokens = Common::StringTokenizer(path, Common::String(g_director->_dirSeparator)).split();
 
@@ -700,7 +722,7 @@ Common::Path resolvePartialPath(Common::String &path, Common::Path &base, bool d
 				subpath += g_director->_dirSeparator;
 			}
 		}
-		result = resolvePath(subpath, base, directory);
+		result = resolvePath(subpath, base, directory, exts);
 		if (!result.empty()) {
 			break;
 		}
@@ -709,41 +731,41 @@ Common::Path resolvePartialPath(Common::String &path, Common::Path &base, bool d
 	return result;
 }
 
-Common::Path resolvePathWithFuzz(Common::String &path, Common::Path &base, bool directory) {
-	Common::Path result = resolvePath(path, base, directory);
+Common::Path resolvePathWithFuzz(Common::String &path, Common::Path &base, bool directory, const char **exts) {
+	Common::Path result = resolvePath(path, base, directory, exts);
 	if (result.empty()) {
 		// Try again with all non-FAT compatible characters stripped
 		Common::String newPath = stripMacPath(path.c_str());
 		if (newPath != path)
-			result = resolvePath(newPath, base, directory);
+			result = resolvePath(newPath, base, directory, exts);
 	}
 	if (result.empty()) {
 		// Try again with the path horribly disfigured to fit into 8.3 DOS filenames
 		Common::String newPath = convert83Path(path);
 		if (newPath != path)
-			result = resolvePath(newPath, base, directory);
+			result = resolvePath(newPath, base, directory, exts);
 	}
 	return result;
 }
 
-Common::Path resolvePartialPathWithFuzz(Common::String &path, Common::Path &base, bool directory) {
-	Common::Path result = resolvePartialPath(path, base, directory);
+Common::Path resolvePartialPathWithFuzz(Common::String &path, Common::Path &base, bool directory, const char **exts) {
+	Common::Path result = resolvePartialPath(path, base, directory, exts);
 	if (result.empty()) {
 		// Try again with all non-FAT compatible characters stripped
 		Common::String newPath = stripMacPath(path.c_str());
 		if (newPath != path)
-			result = resolvePartialPath(newPath, base, directory);
+			result = resolvePartialPath(newPath, base, directory, exts);
 	}
 	if (result.empty()) {
 		// Try again with the path horribly disfigured to fit into 8.3 DOS filenames
 		Common::String newPath = convert83Path(path);
 		if (newPath != path)
-			result = resolvePartialPath(newPath, base, directory);
+			result = resolvePartialPath(newPath, base, directory, exts);
 	}
 	return result;
 }
 
-Common::Path findPath(Common::String &path, bool currentFolder, bool searchPaths, bool directory) {
+Common::Path findPath(Common::String &path, bool currentFolder, bool searchPaths, bool directory, const char **exts) {
 	Common::Path result, base;
 	debugN(9, "%s", recIndent());
 	debug(9, "findPath(): beginning search for \"%s\"", path.c_str());
@@ -751,7 +773,7 @@ Common::Path findPath(Common::String &path, bool currentFolder, bool searchPaths
 	if (isAbsolutePath(path)) {
 		debugN(9, "%s", recIndent());
 		debug(9, "findPath(): searching absolute path");
-		result = resolvePathWithFuzz(path, base, directory);
+		result = resolvePathWithFuzz(path, base, directory, exts);
 		if (!result.empty()) {
 			debugN(9, "%s", recIndent());
 			debug(9, "findPath(): resolved \"%s\" -> \"%s\"", path.c_str(), result.toString().c_str());
@@ -761,11 +783,11 @@ Common::Path findPath(Common::String &path, bool currentFolder, bool searchPaths
 
 	if (currentFolder) {
 		Common::String currentPath = g_director->getCurrentPath();
-		Common::Path current = resolvePath(currentPath, base, true);
+		Common::Path current = resolvePath(currentPath, base, true, exts);
 		debugN(9, "%s", recIndent());
 		debug(9, "findPath(): searching current folder %s", current.toString().c_str());
 		base = current;
-		result = resolvePartialPathWithFuzz(path, base, directory);
+		result = resolvePartialPathWithFuzz(path, base, directory, exts);
 		if (!result.empty()) {
 			debugN(9, "%s", recIndent());
 			debug(9, "findPath(): resolved \"%s\" -> \"%s\"", path.c_str(), result.toString().c_str());
@@ -777,7 +799,7 @@ Common::Path findPath(Common::String &path, bool currentFolder, bool searchPaths
 	debugN(9, "%s", recIndent());
 	debug(9, "findPath(): searching game root path");
 	base = Common::Path();
-	result = resolvePartialPathWithFuzz(path, base, directory);
+	result = resolvePartialPathWithFuzz(path, base, directory, exts);
 	if (!result.empty()) {
 		debugN(9, "%s", recIndent());
 		debug(9, "findPath(): resolved \"%s\" -> \"%s\"", path.c_str(), result.toString().c_str());
@@ -798,7 +820,7 @@ Common::Path findPath(Common::String &path, bool currentFolder, bool searchPaths
 		}
 		for (auto &searchIn : searchPathList) {
 			base = Common::Path();
-			base = resolvePathWithFuzz(searchIn, base, true);
+			base = resolvePathWithFuzz(searchIn, base, true, exts);
 			if (base.empty()) {
 				debugN(9, "%s", recIndent());
 				debug(9, "findPath(): couldn't resolve search path folder %s, skipping", searchIn.c_str());
@@ -806,7 +828,7 @@ Common::Path findPath(Common::String &path, bool currentFolder, bool searchPaths
 			}
 			debugN(9, "%s", recIndent());
 			debug(9, "findPath(): searching search path folder %s", searchIn.c_str());
-			result = resolvePartialPathWithFuzz(path, base, directory);
+			result = resolvePartialPathWithFuzz(path, base, directory, exts);
 			if (!result.empty()) {
 				debugN(9, "%s", recIndent());
 				debug(9, "findPath(): resolved \"%s\" -> \"%s\"", path.c_str(), result.toString().c_str());
@@ -821,10 +843,6 @@ Common::Path findPath(Common::String &path, bool currentFolder, bool searchPaths
 }
 
 Common::Path findMoviePath(Common::String &path, bool currentFolder, bool searchPaths) {
-	Common::Path result = findPath(path, currentFolder, searchPaths, false);
-	if (!result.empty())
-		return result;
-
 	const char *extsD3[] = { ".MMM", nullptr };
 	const char *extsD4[] = { ".DIR", ".DXR", ".EXE", nullptr };
 	const char *extsD5[] = { ".DIR", ".DXR", ".CST", ".CXT", ".EXE", nullptr };
@@ -841,38 +859,14 @@ Common::Path findMoviePath(Common::String &path, bool currentFolder, bool search
 		exts = extsD5;
 	}
 
-	Common::String fileBase = path;
-	if (hasExtension(fileBase))
-		fileBase = fileBase.substr(0, fileBase.size() - 4);
-
-	for (int i = 0; exts[i]; i++) {
-		Common::String newPath = fileBase + exts[i];
-
-		result = findPath(newPath, currentFolder, searchPaths, false);
-		if (!result.empty())
-			break;
-	}
+	Common::Path result = findPath(path, currentFolder, searchPaths, false, exts);
 	return result;
 }
 
 Common::Path findAudioPath(Common::String &path, bool currentFolder, bool searchPaths) {
-	Common::Path result = findPath(path, currentFolder, searchPaths, false);
-	if (!result.empty())
-		return result;
-
 	const char *exts[] = { ".AIF", ".WAV", nullptr };
 
-	Common::String fileBase = path;
-	if (hasExtension(fileBase))
-		fileBase = fileBase.substr(0, fileBase.size() - 4);
-
-	for (int i = 0; exts[i]; i++) {
-		Common::String newPath = fileBase + exts[i];
-
-		result = findPath(newPath, currentFolder, searchPaths, false);
-		if (!result.empty())
-			break;
-	}
+	Common::Path result = findPath(path, currentFolder, searchPaths, false, exts);
 	return result;
 }
 

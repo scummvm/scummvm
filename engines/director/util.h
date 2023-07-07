@@ -42,11 +42,12 @@ Common::String unixToMacPath(const Common::String &path);
 
 Common::String getPath(Common::String path, Common::String cwd);
 
-Common::Path resolvePath(Common::String &path, Common::Path &base, bool directory);
-Common::Path resolvePartialPath(Common::String &path, Common::Path &base, bool directory);
-Common::Path resolvePathWithFuzz(Common::String &path, Common::Path &base, bool directory);
-Common::Path resolvePartialPathWithFuzz(Common::String &path, Common::Path &base, bool directory);
-Common::Path findPath(Common::String &path, bool currentFolder = true, bool searchPaths = true, bool directory = false);
+Common::Path resolveFSPath(Common::String &path, Common::Path &base, bool directory);
+Common::Path resolvePath(Common::String &path, Common::Path &base, bool directory, const char **exts);
+Common::Path resolvePartialPath(Common::String &path, Common::Path &base, bool directory, const char **exts);
+Common::Path resolvePathWithFuzz(Common::String &path, Common::Path &base, bool directory, const char **exts);
+Common::Path resolvePartialPathWithFuzz(Common::String &path, Common::Path &base, bool directory, const char **exts);
+Common::Path findPath(Common::String &path, bool currentFolder = true, bool searchPaths = true, bool directory = false, const char **exts = nullptr);
 Common::Path findMoviePath(Common::String &path, bool currentFolder = true, bool searchPaths = true);
 Common::Path findAudioPath(Common::String &path, bool currentFolder = true, bool searchPaths = true);
 

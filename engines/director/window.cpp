@@ -491,11 +491,9 @@ Common::Path Window::getSharedCastPath() {
 		}
 	} else if (_vm->getVersion() < 500) {
 		namesToTry.push_back("Shared.dir");
-		namesToTry.push_back("Shared.dxr");
 	} else {
 		// TODO: Does D5 actually support D4-style shared cast?
 		namesToTry.push_back("Shared.cst");
-		namesToTry.push_back("Shared.cxt");
 	}
 
 	Common::Path result;
