@@ -22,8 +22,10 @@
 #include "m4/core/rooms.h"
 #include "m4/core/errors.h"
 #include "m4/adv_r/adv_file.h"
+#include "m4/adv_r/adv_interface.h"
 #include "m4/adv_r/db_env.h"
 #include "m4/fileio/extensions.h"
+#include "m4/gui/gui_buffer.h"
 #include "m4/vars.h"
 
 namespace M4 {
@@ -80,14 +82,14 @@ void Sections::m4SceneLoad() {
 		error_show(FL, 'IMP!');	// this should never ever happen
 
 	get_ipl();
-#ifdef TODO
+
 	// Must reset event handler because loading a room re-initalizes gameBuff
-	gui_buffer_set_event_handler((Buffer *)gameDrawBuff, intr_EventHandler);
+	gui_buffer_set_event_handler((Buffer *)_G(gameDrawBuff), intr_EventHandler);
 
 	_G(kernel).trigger_mode = KT_DAEMON;
 	_G(kernel).call_daemon_every_loop = false;
 	_G(kernel).fade_up_time = 30;
-
+#ifdef TODO
 	if (myInterface) {
 		myInterface->must_redraw_all = true;
 		myInterface->draw(gameInterfaceBuff);
