@@ -548,7 +548,18 @@ ShaderPreset *parsePreset(const Common::String &shaderPreset, Common::SearchSet 
 		}
 	}
 
-	Common::String basePath(Common::firstPathComponents(shaderPreset, '/'));
+	// Unify the path separator slashes to (hopefully) be all in the same direction,
+	// so that firstPathComponents() can return a valid result
+	Common::String basePath[] = { Common::firstPathComponents(Common::normalizePath(Common::Path(shaderPreset, '/').toString('/'), '/'), '/'),
+	                              Common::firstPathComponents(Common::normalizePath(Common::Path(shaderPreset, '\\').toString('\\'), '\\'), '\\') };
+
+	Common::String basePathStr = Common::String(".");
+	for (int j = 0; j < 2; ++j) {
+		if (!basePath[j].empty()) {
+			basePathStr = basePath[j];
+			break;
+		}
+	}
 
 	PresetParser parser;
 	ShaderPreset *shader = parser.parseStream(*stream);
@@ -560,7 +571,7 @@ ShaderPreset *parsePreset(const Common::String &shaderPreset, Common::SearchSet 
 		return nullptr;
 	}
 
-	shader->basePath = basePath;
+	shader->basePath = basePathStr;
 	return shader;
 }
 

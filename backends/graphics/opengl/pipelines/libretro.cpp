@@ -388,7 +388,42 @@ bool LibRetroPipeline::loadTextures(Common::SearchSet &archSet) {
 	for (LibRetro::ShaderPreset::TextureArray::const_iterator
 		 i = _shaderPreset->textures.begin(), end = _shaderPreset->textures.end();
 		 i != end; ++i) {
-		Texture texture = loadTexture(Common::normalizePath(_shaderPreset->basePath + Common::String("/") + i->fileName, '/'), archSet);
+
+		// Unify the path separator slashes to be all in the same direction
+		Common::String fileName[] = { Common::normalizePath(Common::Path(_shaderPreset->basePath, '\\').toString('\\') + Common::String("\\")  + Common::Path(i->fileName, '/').toString('\\'), '\\'),
+		                              Common::normalizePath(Common::Path(_shaderPreset->basePath, '/').toString('/') + Common::String("/") + Common::Path(i->fileName, '/').toString('/'), '/') };
+		Common::SeekableReadStream *stream = nullptr;
+
+		Common::String validFileNameStr;
+
+		// First try SearchMan, then fallback to filesystem
+		for (int j = 0; j < 2; ++j) {
+			if (archSet.hasFile(fileName[j])) {
+				stream = archSet.createReadStreamForMember(fileName[j]);
+				validFileNameStr = fileName[j];
+				break;
+			}
+		}
+
+		if (stream == nullptr) {
+			for (int j = 0; j < 2; ++j) {
+				Common::FSNode fsnode(fileName[j]);
+				if (fsnode.exists() && fsnode.isReadable() && !fsnode.isDirectory()
+				    && (stream = fsnode.createReadStream())) {
+					validFileNameStr = fileName[j];
+					break;
+				}
+			}
+		}
+
+		if (stream == nullptr) {
+			warning("LibRetroPipeline::loadTextures: Invalid file path. Tried: '%s' and '%s'", fileName[0].c_str(), fileName[1].c_str());
+			return false;
+		} else {
+			delete stream;
+		}
+
+		Texture texture = loadTexture(validFileNameStr, archSet);
 		texture.id = i->id;
 
 		if (!texture.textureData || !texture.glTexture) {
@@ -451,19 +486,38 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 	for (LibRetro::ShaderPreset::PassArray::const_iterator
 		 i = _shaderPreset->passes.begin(), end = _shaderPreset->passes.end();
 		 i != end; ++i) {
-		Common::String fileName(Common::normalizePath(_shaderPreset->basePath + Common::String("/") + i->fileName, '/'));
-		Common::SeekableReadStream *stream;
+
+		// Unify the path separator slashes to be all in the same direction
+		// Note that i->fileName is expected to always use '/' (Unix folder separator)
+		Common::String fileName[] = { Common::normalizePath(Common::Path(_shaderPreset->basePath, '\\').toString('\\') + Common::String("\\")  + Common::Path(i->fileName, '/').toString('\\'), '\\'),
+		                              Common::normalizePath(Common::Path(_shaderPreset->basePath, '/').toString('/') + Common::String("/") + Common::Path(i->fileName, '/').toString('/'), '/') };
+		Common::SeekableReadStream *stream = nullptr;
+
+		Common::String validFileNameStr;
 
 		// First try SearchMan, then fallback to filesystem
-		if (archSet.hasFile(fileName)) {
-			stream = archSet.createReadStreamForMember(fileName);
-		} else {
-			Common::FSNode fsnode(fileName);
-			if (!fsnode.exists() || !fsnode.isReadable() || fsnode.isDirectory()
-					|| !(stream = fsnode.createReadStream())) {
-				warning("LibRetroPipeline::loadPasses: Invalid file path '%s'", fileName.c_str());
-				return false;
+		for (int j = 0; j < 2; ++j) {
+			if (archSet.hasFile(fileName[j])) {
+				stream = archSet.createReadStreamForMember(fileName[j]);
+				validFileNameStr = fileName[j];
+				break;
 			}
+		}
+
+		if (stream == nullptr) {
+			for (int j = 0; j < 2; ++j) {
+				Common::FSNode fsnode(fileName[j]);
+				if (fsnode.exists() && fsnode.isReadable() && !fsnode.isDirectory()
+				    && (stream = fsnode.createReadStream())) {
+					validFileNameStr = fileName[j];
+					break;
+				}
+			}
+		}
+
+		if (stream == nullptr) {
+			warning("LibRetroPipeline::loadPasses: Invalid file path. Tried: '%s' and '%s'", fileName[0].c_str(), fileName[1].c_str());
+			return false;
 		}
 
 		Common::Array<char> shaderFileContents;
@@ -474,7 +528,7 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 		delete stream;
 
 		if (!readSuccess) {
-			warning("LibRetroPipeline::loadPasses: Could not read file '%s'", fileName.c_str());
+			warning("LibRetroPipeline::loadPasses: Could not read file '%s'", validFileNameStr.c_str());
 			return false;
 		}
 
@@ -530,7 +584,7 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 			shaderFileStart,
 		};
 
-		if (!shader->loadFromStringsArray(fileName,
+		if (!shader->loadFromStringsArray(validFileNameStr,
 				 ARRAYSIZE(vertexSources), vertexSources,
 				 ARRAYSIZE(fragmentSources), fragmentSources,
 				 g_libretroShaderAttributes)) {
