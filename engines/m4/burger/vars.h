@@ -71,6 +71,7 @@ public:
 extern Vars *g_globals;
 
 #undef _G
+#undef _GI
 #define _G(X) (::M4::Burger::g_globals->_##X)
 #define _GI(X) _G(interface)._##X
 #define VAL(X) _G(_globals)[X]

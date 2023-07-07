@@ -60,6 +60,7 @@ MODULE_OBJS = \
 	mem/res.o \
 	platform/sound.o \
 	platform/timer.o \
+	platform/tile/tile_read.o \
 	wscript/ws_cruncher.o \
 	wscript/ws_hal.o \
 	wscript/ws_load.o \

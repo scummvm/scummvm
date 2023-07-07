@@ -42,6 +42,8 @@ public:
 
 	virtual void cancel_sentence() = 0;
 
+	virtual bool set_interface_palette(RGB8 *myPalette) = 0;
+
 	/**
 	 * Show the wait cursor
 	 */

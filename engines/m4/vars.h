@@ -112,8 +112,10 @@ public:
 	bool _system_shutting_down = false;
 	InventoryBase *_inventory = nullptr;
 	size_t _mem_to_alloc = 0;
-	void *_gameInterfaceBuff = nullptr;
+	GrBuff *_screenCodeBuff = nullptr;
+	GrBuff *_game_bgBuff = nullptr;
 	GrBuff *_gameDrawBuff = nullptr;
+	GrBuff *_gameInterfaceBuff = nullptr;
 	void *_custom_interface_setup = nullptr;
 	void *_custom_interface_button_handler = nullptr;
 	int _global_sound_room = 0;
@@ -152,10 +154,14 @@ public:
 	bool _set_commands_allowed_since_last_checked = false;
 	SceneDef *_myDef = nullptr;
 	Common::String _def_filename;
+	Common::String _currBackgroundFN;
+	Common::String _currCodeFN;
+	ScreenContext *_game_buff_ptr = nullptr;
 };
 
 #define _G(X) (g_vars->_##X)
 #define _GV() g_vars->getGlobals()
+#define _GI() (*g_vars->getInterface())
 
 } // namespace M4
 

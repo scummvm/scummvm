@@ -20,6 +20,8 @@
  */
 
 #include "m4/core/rooms.h"
+#include "m4/core/errors.h"
+#include "m4/adv_r/adv_file.h"
 #include "m4/vars.h"
 
 namespace M4 {
@@ -65,17 +67,17 @@ void Sections::m4SceneLoad() {
 
 	// -------------------- ROOM LOAD ------------------
 
-	g_vars->getInterface()->cancel_sentence();
+	_GI().cancel_sentence();
 	gr_pal_clear_range(_G(master_palette), _G(kernel).first_fade, 255);
 
 	term_message("Calling kernel_load_room");
-#ifdef TODO
-	_G(kernel).going = kernel_load_room(_G(kernel).minPalEntry, _G(kernel).maxPalEntry, &currentSceneDef, &screenCodeBuff, &game_bgBuff);
 
+	_G(kernel).going = kernel_load_room(_G(kernel).minPalEntry, _G(kernel).maxPalEntry,
+		&_G(currentSceneDef), &_G(screenCodeBuff), &_G(game_bgBuff));
 	if (!_G(kernel).going)
 		error_show(FL, 'IMP!');	// this should never ever happen
 
-	HEAPCHECK
+#ifdef TODO
 		get_ipl();
 
 	// moved above. see explanation there.

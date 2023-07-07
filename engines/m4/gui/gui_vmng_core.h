@@ -111,6 +111,12 @@ extern void vmng_screen_dispose(void *scrnContent);  // was DestroyScreen
 
 extern void vmng_refresh_video(int32 scrnX, int32 scrnY, int32 x1, int32 y1, int32 x2, int32 y2, Buffer *srcBuffer);
 
+/**
+ * Remove the window from either the active list of windows, or the inactive list,
+ * wherever it was found.
+ */
+extern ScreenContext *ExtractScreen(void *scrnContent, int32 status);
+
 } // End of namespace M4
 
 #endif

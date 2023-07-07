@@ -114,6 +114,33 @@ uint8 gr_pal_find_best_match(RGB8 *pal, uint8 r, uint8 g, uint8 b) {
 	return (uint8)index;
 }
 
+void gr_pal_interface(RGB8 *fixpal) {
+	if (_GI().set_interface_palette(fixpal))
+		return;
+
+	// Low intesity
+	gr_pal_set_RGB8(&fixpal[0], 0, 0, 0);		// r0 g0 b0		black
+	gr_pal_set_RGB8(&fixpal[1], 0, 0, 168);		// r0 g0 b2		blue
+	gr_pal_set_RGB8(&fixpal[2], 0, 168, 0);		// r0 g2 b0		green
+	gr_pal_set_RGB8(&fixpal[3], 0, 168, 168);	// r0 g2 b2		cyan
+
+	gr_pal_set_RGB8(&fixpal[4], 168, 0, 0);		// r2 g0 b0		red
+	gr_pal_set_RGB8(&fixpal[5], 168, 0, 168);	// r2 g0 b2		violet
+	gr_pal_set_RGB8(&fixpal[6], 168, 92, 0);	// r2 g1 b0		brown
+	gr_pal_set_RGB8(&fixpal[7], 168, 168, 168);	// r2 g2 b2		light grey
+
+	// high intensity
+	gr_pal_set_RGB8(&fixpal[8], 92, 92, 92);	// r1 g1 b1		dark grey
+	gr_pal_set_RGB8(&fixpal[9], 92, 92, 255);	// r1 g1 b2		light blue
+	gr_pal_set_RGB8(&fixpal[10], 92, 255, 92);	// r1 g2 b1		light green
+	gr_pal_set_RGB8(&fixpal[11], 92, 255, 255); // r1 g2 b2		light cyan
+
+	gr_pal_set_RGB8(&fixpal[12], 255, 92, 92);	// r2 g1 b1		light red
+	gr_pal_set_RGB8(&fixpal[13], 255, 92, 255);	// r2 g1 b2		pink
+	gr_pal_set_RGB8(&fixpal[14], 255, 255, 23);	// r2 g2 b1		yellow
+	gr_pal_set_RGB8(&fixpal[15], 255, 255, 255);// r1 g1 b1		white
+}
+
 void gr_pal_reset_ega_colors(RGB8 *pal) {
 #ifdef TODO
 	EGAcolors[0] = gr_pal_find_best_match(pal, 0, 0, 0);		//__BLACK

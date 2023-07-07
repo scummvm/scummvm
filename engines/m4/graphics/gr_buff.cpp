@@ -141,7 +141,7 @@ const byte *gr_buffer_pointer(const Buffer *buf, int32 x, int32 y) {
 	return (byte *)(buf->data + x + (y * buf->stride));
 }
 
-int32 gr_buffer_init(Buffer *buf, char *name, int32 w, int32 h) {
+int32 gr_buffer_init(Buffer *buf, const char *name, int32 w, int32 h) {
 	if (buf->data)
 		error_show(FL, 'BUFR', "buffer_init %s", name);
 

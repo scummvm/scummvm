@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,31 +20,27 @@
  *
  */
 
-#include "m4/adv_r/adv_walk.h"
-#include "m4/core/errors.h"
-#include "m4/core/imath.h"
-#include "m4/vars.h"
+#ifndef M4_PLATFORM_TILE_READ_H
+#define M4_PLATFORM_TILE_READ_H
+
+#include "m4/m4_types.h"
+#include "m4/fileio/sys_file.h"
 
 namespace M4 {
 
-void ws_demand_location(machine *myWalker, int32 x, int32 y) {
-	error("TODO: ws_demand_location");
-}
+/**
+ * Gets some information about a tt file
+ */
+extern void tt_read_header(SysFile *ifp, long *file_x, long *file_y,
+	long *num_x_tiles, long *num_y_tiles, long *tile_x, long *tile_y, RGB8 *pal);
 
-void ws_get_walker_info(machine *myWalker, int32 *x, int32 *y, int32 *s, int32 *layer, int32 *facing) {
-	error("TODO: ws_get_walker_info");
-}
-
-void set_walker_scaling(SceneDef *rdef) {
-	_G(globals)[GLB_MIN_Y] = rdef->back_y << 16;
-	_G(globals)[GLB_MAX_Y] = rdef->front_y << 16;
-	_G(globals)[GLB_MIN_SCALE] = FixedDiv(rdef->back_scale << 16, 100 << 16);
-	_G(globals)[GLB_MAX_SCALE] = FixedDiv(rdef->front_scale << 16, 100 << 16);
-	if (_G(globals)[GLB_MIN_Y] == _G(globals)[GLB_MAX_Y])
-		_G(globals)[GLB_SCALER] = 0;
-	else
-		_G(globals)[GLB_SCALER] = FixedDiv(_G(globals)[GLB_MAX_SCALE] - _G(globals)[GLB_MIN_SCALE], _G(globals)[GLB_MAX_Y] - _G(globals)[GLB_MIN_Y]);
-}
-
+/**
+ * Returns a pointer to an initialized buffer containing the image data.
+ * If an error occurs, out.x contains the error number while out.y is zero,
+ * and out.data is NULL.
+ */
+extern Buffer *tt_read(SysFile *ifp, int index, long tile_x, long tile_y);
 
 } // End of namespace M4
+
+#endif

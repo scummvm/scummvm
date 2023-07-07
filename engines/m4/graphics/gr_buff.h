@@ -61,7 +61,7 @@ public:
 extern int32 gr_buffer_free(Buffer *buf);
 extern byte *gr_buffer_pointer(Buffer *buf, int32 x, int32 y);
 extern const byte *gr_buffer_pointer(const Buffer *buf, int32 x, int32 y);
-extern int32 gr_buffer_init(Buffer *buf, char *name, int32 w, int32 h);
+extern int32 gr_buffer_init(Buffer *buf, const char *name, int32 w, int32 h);
 
 /**
  * Copies a "rectangular" buffer area from "from" to "unto".  Size
