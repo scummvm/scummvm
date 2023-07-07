@@ -389,27 +389,34 @@ bool LibRetroPipeline::loadTextures(Common::SearchSet &archSet) {
 		 i = _shaderPreset->textures.begin(), end = _shaderPreset->textures.end();
 		 i != end; ++i) {
 
-		// Unify the path separator slashes to be all in the same direction
+		// Unify the path separator slashes trying to get a filename with all slashes in the same direction
 		Common::String fileName[] = { Common::normalizePath(Common::Path(_shaderPreset->basePath, '\\').toString('\\') + Common::String("\\")  + Common::Path(i->fileName, '/').toString('\\'), '\\'),
-		                              Common::normalizePath(Common::Path(_shaderPreset->basePath, '/').toString('/') + Common::String("/") + Common::Path(i->fileName, '/').toString('/'), '/') };
+		                              Common::normalizePath(Common::Path(_shaderPreset->basePath, '/').toString('/') + Common::String("/") + Common::Path(i->fileName, '/').toString('/'), '/'),
+		                              "" };
+		// We add an extra candidate entry (will be used only for searching via SearchMan)
+		// which seems to catch the case for some shader dependencies
+		fileName[2] = Common::Path(fileName[0], '\\').toString('/');
+
 		Common::SeekableReadStream *stream = nullptr;
 
 		Common::String validFileNameStr;
 
-		// First try SearchMan, then fallback to filesystem
+		// First try filesystem, then fallback to SearchMan
 		for (int j = 0; j < 2; ++j) {
-			if (archSet.hasFile(fileName[j])) {
-				stream = archSet.createReadStreamForMember(fileName[j]);
+			Common::FSNode fsnode(fileName[j]);
+			if (fsnode.exists() && fsnode.isReadable() && !fsnode.isDirectory()
+			    && (stream = fsnode.createReadStream())) {
 				validFileNameStr = fileName[j];
 				break;
 			}
 		}
 
 		if (stream == nullptr) {
-			for (int j = 0; j < 2; ++j) {
-				Common::FSNode fsnode(fileName[j]);
-				if (fsnode.exists() && fsnode.isReadable() && !fsnode.isDirectory()
-				    && (stream = fsnode.createReadStream())) {
+			// SearchMan searches additionally for the extra potential filename entry,
+			// which seems to work as a fallback
+			for (int j = 0; j < 3; ++j) {
+				if (archSet.hasFile(fileName[j])) {
+					stream = archSet.createReadStreamForMember(fileName[j]);
 					validFileNameStr = fileName[j];
 					break;
 				}
@@ -417,7 +424,7 @@ bool LibRetroPipeline::loadTextures(Common::SearchSet &archSet) {
 		}
 
 		if (stream == nullptr) {
-			warning("LibRetroPipeline::loadTextures: Invalid file path. Tried: '%s' and '%s'", fileName[0].c_str(), fileName[1].c_str());
+			warning("LibRetroPipeline::loadTextures: Invalid file path. Tried: '%s', '%s' and '%s'", fileName[0].c_str(), fileName[1].c_str(), fileName[2].c_str());
 			return false;
 		} else {
 			delete stream;
@@ -487,28 +494,35 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 		 i = _shaderPreset->passes.begin(), end = _shaderPreset->passes.end();
 		 i != end; ++i) {
 
-		// Unify the path separator slashes to be all in the same direction
+		// Unify the path separator slashes trying to get a filename with all slashes in the same direction
 		// Note that i->fileName is expected to always use '/' (Unix folder separator)
 		Common::String fileName[] = { Common::normalizePath(Common::Path(_shaderPreset->basePath, '\\').toString('\\') + Common::String("\\")  + Common::Path(i->fileName, '/').toString('\\'), '\\'),
-		                              Common::normalizePath(Common::Path(_shaderPreset->basePath, '/').toString('/') + Common::String("/") + Common::Path(i->fileName, '/').toString('/'), '/') };
+		                              Common::normalizePath(Common::Path(_shaderPreset->basePath, '/').toString('/') + Common::String("/") + Common::Path(i->fileName, '/').toString('/'), '/'),
+		                              "" };
+		// We add an extra candidate entry (will be used only for searching via SearchMan)
+		// which seems to catch the case for some shader dependencies
+		fileName[2] = Common::Path(fileName[0], '\\').toString('/');
+
 		Common::SeekableReadStream *stream = nullptr;
 
 		Common::String validFileNameStr;
 
-		// First try SearchMan, then fallback to filesystem
+		// First try filesystem, then fallback to SearchMan
 		for (int j = 0; j < 2; ++j) {
-			if (archSet.hasFile(fileName[j])) {
-				stream = archSet.createReadStreamForMember(fileName[j]);
+			Common::FSNode fsnode(fileName[j]);
+			if (fsnode.exists() && fsnode.isReadable() && !fsnode.isDirectory()
+			    && (stream = fsnode.createReadStream())) {
 				validFileNameStr = fileName[j];
 				break;
 			}
 		}
 
 		if (stream == nullptr) {
-			for (int j = 0; j < 2; ++j) {
-				Common::FSNode fsnode(fileName[j]);
-				if (fsnode.exists() && fsnode.isReadable() && !fsnode.isDirectory()
-				    && (stream = fsnode.createReadStream())) {
+			// SearchMan searches additionally for the extra potential filename entry,
+			// which seems to work as a fallback
+			for (int j = 0; j < 3; ++j) {
+				if (archSet.hasFile(fileName[j])) {
+					stream = archSet.createReadStreamForMember(fileName[j]);
 					validFileNameStr = fileName[j];
 					break;
 				}
@@ -516,7 +530,7 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 		}
 
 		if (stream == nullptr) {
-			warning("LibRetroPipeline::loadPasses: Invalid file path. Tried: '%s' and '%s'", fileName[0].c_str(), fileName[1].c_str());
+			warning("LibRetroPipeline::loadPasses: Invalid file path. Tried: '%s', '%s' and '%s'", fileName[0].c_str(), fileName[1].c_str(), fileName[2].c_str());
 			return false;
 		}
 
