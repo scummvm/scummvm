@@ -54,11 +54,6 @@ void Interface::hide() {
 	}
 }
 
-void Interface::track_hotspots_refresh() {
-	warning("TODO: track_hotspots_refresh");
-}
-
-
 void interface_hide() {
 	_GI().hide();
 }

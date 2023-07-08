@@ -50,6 +50,8 @@ public:
 	GUI::ButtonClass *_btnMenu = nullptr;
 	GUI::ButtonClass *_btnScrollLeft = nullptr;
 	GUI::ButtonClass *_btnScrollRight = nullptr;
+	void *_hotspot = nullptr;
+	uint32 _counter = 0;
 
 	Interface();
 	~Interface() override;
@@ -59,6 +61,8 @@ public:
 	void cancel_sentence() override;
 
 	bool set_interface_palette(RGB8 *myPalette) override;
+
+	void track_hotspots_refresh() override;
 
 	bool eventHandler(void *bufferPtr, int32 eventType, int32 event, int32 x, int32 y, bool *z) override;
 

@@ -51,7 +51,7 @@ public:
 
 	virtual bool eventHandler(void *bufferPtr, int32 eventType, int32 event, int32 x, int32 y, bool *z) = 0;
 
-	void track_hotspots_refresh();
+	virtual void track_hotspots_refresh() = 0;
 
 	/**
 	 * Show the interface
