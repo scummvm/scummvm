@@ -155,7 +155,8 @@ void VMenu::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (_lastN != n) {
-			ttsMan->say(_menu[n]->_text, Common::TextToSpeechManager::INTERRUPT);
+			if (ttsMan != nullptr)
+				ttsMan->say(_menu[n]->_text, Common::TextToSpeechManager::INTERRUPT);
 			_lastN = n;
 		}
 
