@@ -20,6 +20,7 @@
  */
 
 #include "m4/adv_r/adv_interface.h"
+#include "m4/gui/gui_buffer.h"
 #include "m4/gui/gui_vmng.h"
 #include "m4/vars.h"
 
@@ -38,7 +39,12 @@ void Interface::showWaitCursor() {
 }
 
 void Interface::show() {
-	warning("TODO: Interface::show");
+	if (!_shown) {
+		gui_GrBuff_register(_x1, _y1, _G(gameInterfaceBuff),
+			SF_DRIFTER | SF_GET_KEY | SF_GET_MOUSE | SF_IMMOVABLE,
+			intr_EventHandler);
+		_shown = true;
+	}
 }
 
 void Interface::hide() {
@@ -66,8 +72,7 @@ void track_hotspots_refresh() {
 }
 
 bool intr_EventHandler(void *bufferPtr, int32 eventType, int32 event, int32 x, int32 y, bool *z) {
-	warning("TODO: intr_EventHandler");
-	return true;
+	return _GI().eventHandler(bufferPtr, eventType, event, x, y, z);
 }
 
 void intr_cancel_sentence() {

@@ -39,10 +39,6 @@ public:
 	int _sprite = 22; // main_interface_sprite;
 	bool _visible = false;
 	bool _shown = false;
-	int _x1 = 0;
-	int _y1 = 374;
-	int _x2 = SCREEN_WIDTH;
-	int _y2 = SCREEN_HEIGHT;
 	GrBuff *_gameInterfaceBuff = nullptr;
 	GUI::InterfaceBox *_interfaceBox = nullptr;
 	GUI::Inventory *_inventory = nullptr;
@@ -55,6 +51,7 @@ public:
 	GUI::ButtonClass *_btnScrollLeft = nullptr;
 	GUI::ButtonClass *_btnScrollRight = nullptr;
 
+	Interface();
 	~Interface() override;
 
 	void init(int arrow, int wait, int look, int grab, int use) override;
@@ -63,7 +60,9 @@ public:
 
 	bool set_interface_palette(RGB8 *myPalette) override;
 
-	void show();
+	bool eventHandler(void *bufferPtr, int32 eventType, int32 event, int32 x, int32 y, bool *z) override;
+
+	void show() override;
 };
 
 } // namespace Interface
