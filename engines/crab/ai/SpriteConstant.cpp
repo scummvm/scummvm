@@ -34,39 +34,39 @@ namespace Crab {
 
 using namespace pyrodactyl::ai;
 
-FlyerConstant::FlyerConstant() : start(10, 40), vel(8.0f, 0.0f) {
-	delay_min = 5000;
-	delay_max = 20000;
+FlyerConstant::FlyerConstant() : _start(10, 40), _vel(8.0f, 0.0f) {
+	_delayMin = 5000;
+	_delayMax = 20000;
 }
 
-void FlyerConstant::Load(rapidxml::xml_node<char> *node) {
+void FlyerConstant::load(rapidxml::xml_node<char> *node) {
 	if (NodeValid("start", node))
-		start.Load(node->first_node("start"));
+		_start.Load(node->first_node("start"));
 
 	if (NodeValid("vel", node))
-		vel.Load(node->first_node("vel"));
+		_vel.Load(node->first_node("vel"));
 
 	if (NodeValid("delay", node)) {
 		auto n = node->first_node("delay");
-		LoadNum(delay_min, "min", n);
-		LoadNum(delay_max, "max", n);
+		LoadNum(_delayMin, "min", n);
+		LoadNum(_delayMax, "max", n);
 	}
 }
 
-SpriteConstant::SpriteConstant() : walk_vel_mod(0.9f, 0.63f) {
-	plane_w = 20;
-	tweening = 0.2f;
+SpriteConstant::SpriteConstant() : _walkVelMod(0.9f, 0.63f) {
+	_planeW = 20;
+	_tweening = 0.2f;
 }
 
-void SpriteConstant::Load(rapidxml::xml_node<char> *node) {
-	LoadNum(plane_w, "plane_width", node);
-	LoadNum(tweening, "tweening", node);
+void SpriteConstant::load(rapidxml::xml_node<char> *node) {
+	LoadNum(_planeW, "plane_width", node);
+	LoadNum(_tweening, "tweening", node);
 
-	if (NodeValid("walk_vel_mod", node))
-		walk_vel_mod.Load(node->first_node("walk_vel_mod"));
+	if (NodeValid("_walkVelMod", node))
+		_walkVelMod.Load(node->first_node("_walkVelMod"));
 
 	if (NodeValid("fly", node))
-		fly.Load(node->first_node("fly"));
+		_fly.load(node->first_node("fly"));
 }
 
 } // End of namespace Crab

@@ -41,36 +41,36 @@ namespace ai {
 // These parameters control aspects of sprites flying across the screen
 struct FlyerConstant {
 	// How far does a flier sprite start from the camera (an offset, not the whole value)
-	Vector2i start;
+	Vector2i _start;
 
 	// The value of the delay for fliers
-	uint32 delay_min, delay_max;
+	uint32 _delayMin, _delayMax;
 
 	// The velocity of fliers
-	Vector2f vel;
+	Vector2f _vel;
 
 	FlyerConstant();
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 };
 
 // These values are used in various sprite related tasks
 struct SpriteConstant {
 	// Plane width decides the maximum difference in sprite Y values that is considered on the same plane
-	int plane_w;
+	int _planeW;
 
 	// Tweening constant controls the acceleration curve of every sprite
-	float tweening;
+	float _tweening;
 
 	// The modifiers of x and y movement speeds
-	Vector2f walk_vel_mod;
+	Vector2f _walkVelMod;
 
 	// Data for flying sprites
-	FlyerConstant fly;
+	FlyerConstant _fly;
 
 	SpriteConstant();
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 };
 } // End of namespace ai
 } // End of namespace pyrodactyl

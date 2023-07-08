@@ -134,7 +134,7 @@ void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
 
 					// Set the timer target for the first time
 					//s.ai_data.walk.timer.Target(sc_default.fly.delay_min + (gRandom.Num() % sc_default.fly.delay_max));
-					s.ai_data._walk._timer.Target(sc_default.fly.delay_max);
+					s.ai_data._walk._timer.Target(sc_default._fly._delayMax);
 
 					fly.push_back(s);
 				}
@@ -204,7 +204,7 @@ void Level::LoadConst(const Common::String &filename) {
 	if (doc.ready()) {
 		rapidxml::xml_node<char> *node = doc.doc()->first_node("constant");
 		if (NodeValid(node))
-			sc_default.Load(node);
+			sc_default.load(node);
 	}
 }
 

@@ -97,17 +97,17 @@ bool Sprite::MoveToLoc(Vector2i &dest, const float &velocity, const SpriteConsta
 
 	// X axis
 	if (b.x + b.w < dest.x)
-		XVel(velocity * sc.walk_vel_mod.x);
+		XVel(velocity * sc._walkVelMod.x);
 	else if (b.x > dest.x)
-		XVel(-velocity * sc.walk_vel_mod.x);
+		XVel(-velocity * sc._walkVelMod.x);
 	else
 		XVel(0.0f);
 
 	// Y axis
 	if (b.y + b.h < dest.y)
-		YVel(velocity * sc.walk_vel_mod.y);
+		YVel(velocity * sc._walkVelMod.y);
 	else if (b.y > dest.y)
-		YVel(-velocity * sc.walk_vel_mod.y);
+		YVel(-velocity * sc._walkVelMod.y);
 	else
 		YVel(0.0f);
 
@@ -128,13 +128,13 @@ bool Sprite::MoveToLocPathfinding(Vector2i &dest, const float &velocity, const S
 		float deltaTime = 1.0f / (float)g_engine->_screenSettings->fps;
 
 		// Project how far we will travel next frame.
-		Vector2f velVec = Vector2f(sc.walk_vel_mod.x * velocity * deltaTime, sc.walk_vel_mod.y * velocity * deltaTime);
+		Vector2f velVec = Vector2f(sc._walkVelMod.x * velocity * deltaTime, sc._walkVelMod.y * velocity * deltaTime);
 
 		if (vecTo.Magnitude() > velVec.Magnitude()) {
 			vecTo.Normalize();
 
-			XVel(vecTo.x * sc.walk_vel_mod.x * velocity);
-			YVel(vecTo.y * sc.walk_vel_mod.y * velocity);
+			XVel(vecTo.x * sc._walkVelMod.x * velocity);
+			YVel(vecTo.y * sc._walkVelMod.y * velocity);
 		} else {
 			XVel(0.0f);
 			YVel(0.0f);
@@ -262,7 +262,7 @@ void Sprite::FlyAround(const Rect &camera, const SpriteConstant &sc) {
 				ai_data._walk._enabled = false;
 
 				// Start the timer, set a semi-random time
-				ai_data._walk._timer.Target(sc.fly.delay_min + (g_engine->getRandomNumber(sc.fly.delay_max)));
+				ai_data._walk._timer.Target(sc._fly._delayMin + (g_engine->getRandomNumber(sc._fly._delayMax)));
 				ai_data._walk._timer.Start();
 			}
 		}
@@ -273,7 +273,7 @@ void Sprite::FlyAround(const Rect &camera, const SpriteConstant &sc) {
 				ai_data._walk._enabled = false;
 
 				// Start the timer, set a semi-random time
-				ai_data._walk._timer.Target(sc.fly.delay_min + (g_engine->getRandomNumber(sc.fly.delay_max)));
+				ai_data._walk._timer.Target(sc._fly._delayMin + (g_engine->getRandomNumber(sc._fly._delayMax)));
 				ai_data._walk._timer.Start();
 			}
 		}
@@ -292,22 +292,22 @@ void Sprite::FlyAround(const Rect &camera, const SpriteConstant &sc) {
 			// Decide if the sprite flies from the left or right of the camera
 			if (g_engine->getRandomNumber(1)) {
 				// Fly in from the right
-				X(camera.x + camera.w + sc.fly.start.x);
-				XVel(-1.0f * sc.fly.vel.x);
+				X(camera.x + camera.w + sc._fly._start.x);
+				XVel(-1.0f * sc._fly._vel.x);
 
 				// Sprite needs to face left
 				dir = DIRECTION_LEFT;
 			} else {
 				// Fly in from the left
-				X(camera.x - W() - sc.fly.start.x);
-				XVel(sc.fly.vel.x);
+				X(camera.x - W() - sc._fly._start.x);
+				XVel(sc._fly._vel.x);
 
 				// Sprite needs to face right
 				dir = DIRECTION_RIGHT;
 			}
 
-			Y(camera.y + sc.fly.start.y + (g_engine->getRandomNumber(camera.h - (2 * sc.fly.start.y))));
-			YVel(sc.fly.vel.y);
+			Y(camera.y + sc._fly._start.y + (g_engine->getRandomNumber(camera.h - (2 * sc._fly._start.y))));
+			YVel(sc._fly._vel.y);
 
 			// Set state to flying
 			ai_data._walk._enabled = true;
