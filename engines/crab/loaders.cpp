@@ -204,7 +204,7 @@ unsigned int Version(const Common::String &filename) {
 
 	XMLDoc doc(filename);
 	if (doc.ready()) {
-		rapidxml::xml_node<char> *node = doc.Doc()->first_node();
+		rapidxml::xml_node<char> *node = doc.doc()->first_node();
 		if (NodeValid(node))
 			LoadNum(version, "version", node);
 	}

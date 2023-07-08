@@ -46,7 +46,7 @@ void TextManager::Init() {
 	// Load the list of fonts
 	XMLDoc font_list(g_engine->_filePath->font);
 	if (font_list.ready()) {
-		rapidxml::xml_node<char> *node = font_list.Doc()->first_node("fonts");
+		rapidxml::xml_node<char> *node = font_list.doc()->first_node("fonts");
 
 		LoadNum(cache_size, "cache_size", node);
 		cache.resize(cache_size);

@@ -69,7 +69,7 @@ void MusicManager::PlayMusic(const MusicKey &id) {
 	if (bg.id != id) {
 		XMLDoc track_list(g_engine->_filePath->sound_music);
 		if (track_list.ready()) {
-			rapidxml::xml_node<char> *node = track_list.Doc()->first_node("music");
+			rapidxml::xml_node<char> *node = track_list.doc()->first_node("music");
 			for (auto n = node->first_node(); n != NULL; n = n->next_sibling()) {
 				rapidxml::xml_attribute<char> *att = n->first_attribute("id");
 				if (att != NULL && id == StringToNumber<MusicKey>(att->value())) {
@@ -137,7 +137,7 @@ bool MusicManager::Load(rapidxml::xml_node<char> *node) {
 	// Load sound effects
 	XMLDoc track_list(g_engine->_filePath->sound_effect);
 	if (track_list.ready()) {
-		rapidxml::xml_node<char> *tnode = track_list.Doc()->first_node("effects");
+		rapidxml::xml_node<char> *tnode = track_list.doc()->first_node("effects");
 		if (NodeValid(tnode)) {
 			LoadNum(notify, "notify", tnode);
 			LoadNum(rep_inc, "rep_inc", tnode);

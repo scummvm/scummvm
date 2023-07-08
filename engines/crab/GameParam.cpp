@@ -71,7 +71,7 @@ void FilePaths::LoadLevel(const Common::String &filename) {
 	level.clear();
 	XMLDoc lev_list(filename);
 	if (lev_list.ready()) {
-		rapidxml::xml_node<char> *node = lev_list.Doc()->first_node("world");
+		rapidxml::xml_node<char> *node = lev_list.doc()->first_node("world");
 
 		for (rapidxml::xml_node<char> *n = node->first_node("loc"); n != NULL; n = n->next_sibling("loc")) {
 			LevelPath l;
@@ -88,7 +88,7 @@ void FilePaths::LoadLevel(const Common::String &filename) {
 void FilePaths::Load(const Common::String &filename) {
 	XMLDoc settings(filename);
 	if (settings.ready()) {
-		rapidxml::xml_node<char> *node = settings.Doc()->first_node("paths");
+		rapidxml::xml_node<char> *node = settings.doc()->first_node("paths");
 
 		if (NodeValid(node) && !loaded) {
 			if (NodeValid("icon", node)) {

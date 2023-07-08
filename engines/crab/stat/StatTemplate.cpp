@@ -39,7 +39,7 @@ using namespace pyrodactyl::stat;
 void StatTemplates::Load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node("templates");
+		rapidxml::xml_node<char> *node = conf.doc()->first_node("templates");
 		for (auto n = node->first_node("stats"); n != NULL; n = n->next_sibling("stats"))
 			collection.push_back(n);
 	}

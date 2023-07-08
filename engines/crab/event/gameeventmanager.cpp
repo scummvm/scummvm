@@ -54,7 +54,7 @@ void Manager::Load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 	if (NodeValid(node)) {
 		XMLDoc conf(node->first_attribute("list")->value());
 		if (conf.ready()) {
-			rapidxml::xml_node<char> *lnode = conf.Doc()->first_node("event_list");
+			rapidxml::xml_node<char> *lnode = conf.doc()->first_node("event_list");
 			for (rapidxml::xml_node<char> *loc = lnode->first_node("loc"); loc != NULL; loc = loc->next_sibling("loc")) {
 				Common::String loc_name;
 				LoadStr(loc_name, "name", loc);
@@ -71,9 +71,9 @@ void Manager::Load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 
 		active_seq = UINT_MAX;
 
-		conf.Load(node->first_attribute("layout")->value());
+		conf.load(node->first_attribute("layout")->value());
 		if (conf.ready()) {
-			rapidxml::xml_node<char> *layout = conf.Doc()->first_node("layout");
+			rapidxml::xml_node<char> *layout = conf.doc()->first_node("layout");
 			if (NodeValid(layout)) {
 				if (NodeValid("character", layout))
 					oh.Load(layout->first_node("character"));

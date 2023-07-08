@@ -40,7 +40,7 @@ using namespace pyrodactyl::people;
 void PersonScreen::Load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node("character");
+		rapidxml::xml_node<char> *node = conf.doc()->first_node("character");
 		if (NodeValid(node)) {
 			if (NodeValid("bg", node))
 				bg.Load(node->first_node("bg"));

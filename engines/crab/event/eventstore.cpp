@@ -53,7 +53,7 @@ void GameEventStore::Load(const Common::String &filename) {
 
 	XMLDoc conf(filename);
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node("store");
+		rapidxml::xml_node<char> *node = conf.doc()->first_node("store");
 
 		if (NodeValid("animations", node)) {
 			rapidxml::xml_node<char> *animnode = node->first_node("animations");

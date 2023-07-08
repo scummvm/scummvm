@@ -37,7 +37,7 @@ using namespace pyrodactyl::ui;
 void ModMenu::Load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node("mod_menu");
+		rapidxml::xml_node<char> *node = conf.doc()->first_node("mod_menu");
 
 		if (NodeValid("bg", node))
 			bg.Load(node->first_node("bg"));

@@ -43,7 +43,7 @@ using namespace pyrodactyl::people;
 void ReplyMenu::Load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node("conversation");
+		rapidxml::xml_node<char> *node = conf.doc()->first_node("conversation");
 		if (NodeValid(node)) {
 			if (NodeValid("tone", node))
 				tone.Load(node->first_node("tone"));

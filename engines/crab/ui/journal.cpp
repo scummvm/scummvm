@@ -42,7 +42,7 @@ using namespace pyrodactyl::ui;
 void Journal::Load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node("objectives");
+		rapidxml::xml_node<char> *node = conf.doc()->first_node("objectives");
 		if (NodeValid(node)) {
 			if (NodeValid("bg", node))
 				bg.Load(node->first_node("bg"));

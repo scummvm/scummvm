@@ -40,7 +40,7 @@ using namespace pyrodactyl::music;
 void OptionMenu::Load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node("option");
+		rapidxml::xml_node<char> *node = conf.doc()->first_node("option");
 		if (NodeValid(node)) {
 			if (NodeValid("bg", node))
 				bg.Load(node->first_node("bg"));

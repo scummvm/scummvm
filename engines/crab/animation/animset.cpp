@@ -37,7 +37,7 @@ using namespace pyrodactyl::anim;
 void AnimSet::Load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node();
+		rapidxml::xml_node<char> *node = conf.doc()->first_node();
 		if (NodeValid(node)) {
 			fight.Load(node);
 			walk.Load(node);

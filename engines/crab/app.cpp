@@ -304,7 +304,7 @@ void App::Run() {
 void App::LoadSettings(const Common::String &filename) {
 	XMLDoc settings(filename);
 	if (settings.ready()) {
-		rapidxml::xml_node<char> *node = settings.Doc()->first_node("settings");
+		rapidxml::xml_node<char> *node = settings.doc()->first_node("settings");
 		if (NodeValid(node)) {
 			// Load the version
 			LoadNum(g_engine->_screenSettings->version, "version", node);

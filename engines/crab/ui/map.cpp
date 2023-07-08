@@ -43,7 +43,7 @@ using namespace pyrodactyl::input;
 void Map::Load(const Common::String &filename, pyrodactyl::event::Info &info) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node("map");
+		rapidxml::xml_node<char> *node = conf.doc()->first_node("map");
 		if (NodeValid(node)) {
 			if (NodeValid("img", node)) {
 				rapidxml::xml_node<char> *imgnode = node->first_node("img");

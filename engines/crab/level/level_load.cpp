@@ -55,7 +55,7 @@ void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
 	Reset();
 	XMLDoc conf(filename);
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node("level");
+		rapidxml::xml_node<char> *node = conf.doc()->first_node("level");
 		if (NodeValid(node)) {
 			Common::String vis;
 			LoadStr(vis, "map", node, false);
@@ -177,7 +177,7 @@ void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
 void Level::LoadMoves(const Common::String &filename) {
 	XMLDoc mov_list(filename);
 	if (mov_list.ready()) {
-		rapidxml::xml_node<char> *node = mov_list.Doc()->first_node("movelist");
+		rapidxml::xml_node<char> *node = mov_list.doc()->first_node("movelist");
 		for (auto n = node->first_node("set"); n != NULL; n = n->next_sibling("set")) {
 			unsigned int pos = anim_set.size();
 
@@ -202,7 +202,7 @@ void Level::LoadMoves(const Common::String &filename) {
 void Level::LoadConst(const Common::String &filename) {
 	XMLDoc doc(filename);
 	if (doc.ready()) {
-		rapidxml::xml_node<char> *node = doc.Doc()->first_node("constant");
+		rapidxml::xml_node<char> *node = doc.doc()->first_node("constant");
 		if (NodeValid(node))
 			sc_default.Load(node);
 	}
