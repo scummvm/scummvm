@@ -125,8 +125,8 @@ bool gui_GrBuff_register(int32 x1, int32 y1, GrBuff *myBuf, uint32 scrnFlags, Ev
 		(RefreshFunc)GrBuff_Show, evtHandler) == nullptr) ? false : true;
 }
 
-bool gui_buffer_set_event_handler(Buffer *myBuf, EventHandler evtHandler) {
-	ScreenContext *myScreen = vmng_screen_find((void *)myBuf, nullptr);
+bool gui_buffer_set_event_handler(void *myBuf, EventHandler evtHandler) {
+	ScreenContext *myScreen = vmng_screen_find(myBuf, nullptr);
 
 	if (myScreen == nullptr)
 		return false;
@@ -135,8 +135,8 @@ bool gui_buffer_set_event_handler(Buffer *myBuf, EventHandler evtHandler) {
 	return true;
 }
 
-void gui_buffer_deregister(Buffer *myBuf) {
-	vmng_screen_dispose((void *)myBuf);
+void gui_buffer_deregister(void *myBuf) {
+	vmng_screen_dispose(myBuf);
 }
 
 void gui_buffer_activate(Buffer *myBuf) {

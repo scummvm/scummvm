@@ -84,7 +84,9 @@ void Sections::m4SceneLoad() {
 	get_ipl();
 
 	// Must reset event handler because loading a room re-initalizes gameBuff
-	gui_buffer_set_event_handler((Buffer *)_G(gameDrawBuff), intr_EventHandler);
+	gui_buffer_set_event_handler(_G(gameDrawBuff), intr_EventHandler);
+
+
 
 	_G(kernel).trigger_mode = KT_DAEMON;
 	_G(kernel).call_daemon_every_loop = false;
