@@ -235,8 +235,9 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 		break;
 
 	case STATE_LOAD:
-		if (g_engine->_loadMenu->HandleEvents(Event)) {
+		if (!g_engine->loadGameDialog())
 			ChangeState(STATE_NORMAL);
+		else {
 			ShouldChangeState = true;
 			NewStateID = GAMESTATE_LOAD_GAME;
 			return;
@@ -511,12 +512,6 @@ void MainMenu::Draw() {
 
 	case STATE_CREDITS:
 		credits.Draw();
-		break;
-
-	case STATE_LOAD:
-		g_engine->_loadMenu->Draw();
-		back.Draw();
-		me_main.Draw();
 		break;
 
 	case STATE_DIFF:
