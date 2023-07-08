@@ -102,6 +102,31 @@ static const PuzzleBoard::PuzzleData puzzleYouthData[] = {
 		true,
 		6, 0,
 		"E S T   J E U N E S S E "
+	},
+	// Hebrew
+	{
+		55,
+		kGameFlag282,
+		431,
+		2,
+		{{3, false}, {4, false}, {0, false}},
+		8,
+		{
+			{'\xF0', 596,  59},
+			{'\xE5', 226,  58},
+			{'\xE4', 113,  74},
+			{'\xE0', 494, 106},
+			{'\xF8', 461, 122},
+			{'\xF2',  76, 155},
+			{'\xFA', 141, 186},
+			{'\0',     0,   0},
+			{'\0',     0,   0},
+			{'\0',     0,   0},
+			{'\0',     0,   0}
+		},
+		true,
+		10, 0,
+		"\xF8 \xF2 \xE5 \xF0 \xE4   \xFA \xE0 "
 	}
 };
 
