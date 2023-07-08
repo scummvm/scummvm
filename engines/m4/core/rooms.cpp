@@ -86,7 +86,8 @@ void Sections::m4SceneLoad() {
 	// Must reset event handler because loading a room re-initalizes gameBuff
 	gui_buffer_set_event_handler(_G(gameDrawBuff), intr_EventHandler);
 
-
+	if (_G(player).walker_in_this_scene)
+		get_walker();
 
 	_G(kernel).trigger_mode = KT_DAEMON;
 	_G(kernel).call_daemon_every_loop = false;
@@ -168,6 +169,13 @@ void Sections::get_ipl() {
 	_G(inverse_pal) = new InvPal(filename.c_str());
 	if (!_G(inverse_pal))
 		error_show(FL, 'OOM!', "loading ipl: %s", filename.c_str());
+}
+
+void Sections::get_walker() {
+	term_message("Loading walker sprites");
+	if (!_GW().walk_load_walker_and_shadow_series())
+		error_show(FL, 'WLOD');
+	ws_walk_init_system();
 }
 
 /*------------------------------------------------------------------------*/

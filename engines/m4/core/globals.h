@@ -28,6 +28,7 @@
 
 namespace M4 {
 
+
 enum {
 	GLB_TIME = 0,
 	GLB_WATCH_DOG = 1,
@@ -74,6 +75,7 @@ enum {
 	GLB_USER_VARS = 17		// 17+ globals for the applications programmer
 };
 
+constexpr int GLB_SHARED_VARS = 256;
 constexpr int GLOB_COUNT = 39;
 
 struct GlobalVars : public Common::Array<int32> {

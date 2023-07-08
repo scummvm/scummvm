@@ -76,7 +76,8 @@ MODULE_OBJS = \
 	burger/hotkeys.o \
 	burger/inventory.o \
 	burger/other.o \
-	burger/vars.o
+	burger/vars.o \
+	burger/walker.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_M4), DYNAMIC_PLUGIN)

@@ -33,7 +33,9 @@
 #include "m4/adv_r/adv_inv.h"
 #include "m4/adv_r/adv_player.h"
 #include "m4/adv_r/adv_rails.h"
+#include "m4/adv_r/adv_walk.h"
 #include "m4/adv_r/conv_io.h"
+#include "m4/core/globals.h"
 #include "m4/core/mouse.h"
 #include "m4/fileio/fstream.h"
 #include "m4/fileio/sys_file.h"
@@ -78,6 +80,7 @@ public:
 
 	virtual GlobalVars *getGlobals() = 0;
 	virtual Interface *getInterface() = 0;
+	virtual Walker *getWalker() = 0;
 
 	GameControl _game;
 	Kernel _kernel;
@@ -120,6 +123,7 @@ public:
 	void *_custom_interface_button_handler = nullptr;
 	int _global_sound_room = 0;
 	bool _please_hyperwalk = false;
+	bool _i_just_hyperwalked = false;
 	void (*_custom_ascii_converter)(char *string) = nullptr;
 	bool _vmng_Initted = false;
 	ScreenContext *_frontScreen = nullptr;
@@ -162,6 +166,7 @@ public:
 #define _G(X) (g_vars->_##X)
 #define _GV() g_vars->getGlobals()
 #define _GI() (*g_vars->getInterface())
+#define _GW() (*g_vars->getWalker())
 
 } // namespace M4
 

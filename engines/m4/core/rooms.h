@@ -79,6 +79,7 @@ private:
 	int32 camera_pan_step = 10;
 
 	void get_ipl();
+	void get_walker();
 
 public:
 	Section *_sections = nullptr;

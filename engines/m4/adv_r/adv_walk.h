@@ -29,7 +29,19 @@
 
 namespace M4 {
 
+class Walker {
+public:
+	virtual ~Walker() {}
+
+	virtual bool walk_load_walker_and_shadow_series() = 0;
+	virtual machine *walk_initialize_walker() = 0;
+};
+
 extern void set_walker_scaling(SceneDef *rdef);
+
+/**
+ * Called every time s/he hits a node
+ */
 extern bool walker_has_walk_finished(machine *sender);
 extern void ws_demand_location(machine *myWalker, int32 x, int32 y);
 extern void ws_demand_facing(machine *myWalker, int32 newFacing);

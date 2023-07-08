@@ -28,6 +28,19 @@
 
 namespace M4 {
 
+enum {
+	NOSEPICK = 0,
+	STARTWALK = 1,
+	WALKSEQ = 2,
+	ENDWALK = 3,
+	DEMAND_FACING = 4,
+	DEMAND_LOCATION = 5,
+	TERMINATE = 6,
+	PLAYER_HIDE = 7,
+	PLAYER_UNHIDE = 8,
+	TURN_TO_FACE = 9
+};
+
 // A message request
 struct msgRequest {
 	msgRequest *nextMsg = nullptr;
