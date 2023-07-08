@@ -345,7 +345,7 @@ void Score::update() {
 			} else {
 				_waitForVideoChannel = 0;
 			}
-		} else if (g_system->getMillis() < _nextFrameTime && !_nextFrame) {
+		} else if (g_system->getMillis() < _nextFrameTime) {
 			keepWaiting = true;
 		}
 
@@ -453,7 +453,7 @@ void Score::update() {
 			if (g_director->_fpsLimit)
 				_currentFrameRate = MIN(g_director->_fpsLimit, _currentFrameRate);
 			_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
-			debugC(5, kDebugLoading, "Score::update(): setting _nextFrameTime to %d based on a framerate of %d", _nextFrameTime, tempo);
+			debugC(5, kDebugLoading, "Score::update(): setting _nextFrameTime to %d based on a framerate of %d", _nextFrameTime, _currentFrameRate);
 		} else {
 			if (tempo == 128) {
 				_waitForClick = true;
