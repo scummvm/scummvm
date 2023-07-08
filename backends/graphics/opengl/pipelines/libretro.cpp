@@ -44,17 +44,26 @@ namespace OpenGL {
 using LibRetro::UniformsMap;
 
 template<typename DecoderType>
-static Graphics::Surface *loadViaImageDecoder(const Common::String &fileName, Common::SearchSet &archSet) {
-	Common::SeekableReadStream *stream;
+static Graphics::Surface *loadViaImageDecoder(const Common::Path &fileName, Common::Archive *container, Common::SearchSet &archSet) {
+	Common::SeekableReadStream *stream = nullptr;
 
-	// First try SearchMan, then fallback to filesystem
-	if (archSet.hasFile(fileName)) {
-		stream = archSet.createReadStreamForMember(fileName);
+	if (container) {
+		// Look first in our current container and fallback on archive set
+		if (container->hasFile(fileName)) {
+			stream = container->createReadStreamForMember(fileName);
+		}
+		if (!stream) {
+			stream = archSet.createReadStreamForMemberNext(fileName, container);
+		}
+		if (!stream) {
+			warning("LibRetroPipeline::loadViaImageDecoder: Invalid file path '%s'", fileName.toString().c_str());
+			return nullptr;
+		}
 	} else {
 		Common::FSNode fsnode(fileName);
 		if (!fsnode.exists() || !fsnode.isReadable() || fsnode.isDirectory()
 				|| !(stream = fsnode.createReadStream())) {
-			warning("LibRetroPipeline::loadViaImageDecoder: Invalid file path '%s'", fileName.c_str());
+			warning("LibRetroPipeline::loadViaImageDecoder: Invalid file path '%s'", fileName.toString().c_str());
 			return nullptr;
 		}
 	}
@@ -80,7 +89,7 @@ static Graphics::Surface *loadViaImageDecoder(const Common::String &fileName, Co
 
 struct ImageLoader {
 	const char *extension;
-	Graphics::Surface *(*load)(const Common::String &fileName, Common::SearchSet &archSet);
+	Graphics::Surface *(*load)(const Common::Path &fileName, Common::Archive *container, Common::SearchSet &archSet);
 };
 
 static const ImageLoader s_imageLoaders[] = {
@@ -388,7 +397,7 @@ bool LibRetroPipeline::loadTextures(Common::SearchSet &archSet) {
 	for (LibRetro::ShaderPreset::TextureArray::const_iterator
 		 i = _shaderPreset->textures.begin(), end = _shaderPreset->textures.end();
 		 i != end; ++i) {
-		Texture texture = loadTexture(Common::normalizePath(_shaderPreset->basePath + Common::String("/") + i->fileName, '/'), archSet);
+		Texture texture = loadTexture(_shaderPreset->basePath.join(i->fileName).normalize(), _shaderPreset->container, archSet);
 		texture.id = i->id;
 
 		if (!texture.textureData || !texture.glTexture) {
@@ -451,17 +460,26 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 	for (LibRetro::ShaderPreset::PassArray::const_iterator
 		 i = _shaderPreset->passes.begin(), end = _shaderPreset->passes.end();
 		 i != end; ++i) {
-		Common::String fileName(Common::normalizePath(_shaderPreset->basePath + Common::String("/") + i->fileName, '/'));
-		Common::SeekableReadStream *stream;
+		Common::Path fileName(_shaderPreset->basePath.join(i->fileName).normalize());
+		Common::SeekableReadStream *stream = nullptr;
 
-		// First try SearchMan, then fallback to filesystem
-		if (archSet.hasFile(fileName)) {
-			stream = archSet.createReadStreamForMember(fileName);
+		if (_shaderPreset->container) {
+			// Look first in our current container and fallback on archive set
+			if (_shaderPreset->container->hasFile(fileName)) {
+				stream = _shaderPreset->container->createReadStreamForMember(fileName);
+			}
+			if (!stream) {
+				stream = archSet.createReadStreamForMemberNext(fileName, _shaderPreset->container);
+			}
+			if (!stream) {
+				warning("LibRetroPipeline::loadPasses: Invalid file path '%s'", fileName.toString().c_str());
+				return false;
+			}
 		} else {
 			Common::FSNode fsnode(fileName);
 			if (!fsnode.exists() || !fsnode.isReadable() || fsnode.isDirectory()
 					|| !(stream = fsnode.createReadStream())) {
-				warning("LibRetroPipeline::loadPasses: Invalid file path '%s'", fileName.c_str());
+				warning("LibRetroPipeline::loadPasses: Invalid file path '%s'", fileName.toString().c_str());
 				return false;
 			}
 		}
@@ -474,7 +492,7 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 		delete stream;
 
 		if (!readSuccess) {
-			warning("LibRetroPipeline::loadPasses: Could not read file '%s'", fileName.c_str());
+			warning("LibRetroPipeline::loadPasses: Could not read file '%s'", fileName.toString().c_str());
 			return false;
 		}
 
@@ -530,7 +548,7 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 			shaderFileStart,
 		};
 
-		if (!shader->loadFromStringsArray(fileName,
+		if (!shader->loadFromStringsArray(fileName.toString(),
 				 ARRAYSIZE(vertexSources), vertexSources,
 				 ARRAYSIZE(fragmentSources), fragmentSources,
 				 g_libretroShaderAttributes)) {
@@ -722,25 +740,26 @@ void LibRetroPipeline::setShaderTexUniforms(const Common::String &prefix, Shader
 	shader->setUniform(prefix + "TextureSize", Math::Vector2d(texture.getWidth(), texture.getHeight()));
 }
 
-LibRetroPipeline::Texture LibRetroPipeline::loadTexture(const Common::String &fileName, Common::SearchSet &archSet) {
+LibRetroPipeline::Texture LibRetroPipeline::loadTexture(const Common::Path &fileName, Common::Archive *container, Common::SearchSet &archSet) {
+	Common::String baseName(fileName.getLastComponent().toString());
 	const char *extension = nullptr;
-	for (int dotPos = fileName.size() - 1; dotPos >= 0; --dotPos) {
-		if (fileName[dotPos] == '.') {
-			extension = fileName.c_str() + dotPos + 1;
+	for (int dotPos = baseName.size() - 1; dotPos >= 0; --dotPos) {
+		if (baseName[dotPos] == '.') {
+			extension = baseName.c_str() + dotPos + 1;
 			break;
 		}
 	}
 
 	if (!extension) {
-		warning("LibRetroPipeline::loadTexture: File name '%s' misses extension", fileName.c_str());
+		warning("LibRetroPipeline::loadTexture: File name '%s' misses extension", fileName.toString().c_str());
 		return Texture();
 	}
 
 	for (const ImageLoader *loader = s_imageLoaders; loader->extension; ++loader) {
 		if (!scumm_stricmp(loader->extension, extension)) {
-			Graphics::Surface *textureData = loader->load(fileName, archSet);
+			Graphics::Surface *textureData = loader->load(fileName, container, archSet);
 			if (!textureData) {
-				warning("LibRetroPipeline::loadTexture: Loader for '%s' could not load file '%s'", loader->extension, fileName.c_str());
+				warning("LibRetroPipeline::loadTexture: Loader for '%s' could not load file '%s'", loader->extension, fileName.toString().c_str());
 				return Texture();
 			}
 
@@ -751,7 +770,7 @@ LibRetroPipeline::Texture LibRetroPipeline::loadTexture(const Common::String &fi
 		}
 	}
 
-	warning("LibRetroPipeline::loadTexture: No loader for file '%s' present", fileName.c_str());
+	warning("LibRetroPipeline::loadTexture: No loader for file '%s' present", fileName.toString().c_str());
 	return Texture();
 }
 
