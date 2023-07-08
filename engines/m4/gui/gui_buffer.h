@@ -56,7 +56,7 @@ extern bool gui_buffer_register(int32 x1, int32 y1, Buffer *myBuf, uint32 scrnFl
 
 extern bool gui_GrBuff_register(int32 x1, int32 y1, GrBuff *myBuf, uint32 scrnFlags, EventHandler evtHandler);
 
-extern void gui_buffer_deregister(Buffer *myBuf);
+extern void gui_buffer_deregister(void *myBuf);
 
 extern bool gui_GrBuff_register(int32 x1, int32 y1, GrBuff *myBuf, uint32 scrnFlags, EventHandler evtHandler);
 extern void gui_buffer_activate(Buffer *myBuf);
@@ -68,7 +68,7 @@ extern bool gui_buffer_add_key(Buffer *myBuf, long myKey, HotkeyCB cb);
  * @param myBuf			The Buffer specified.
  * @param evtHandler	The new procedure to handle keyboard and mouse events.
  */
-extern bool gui_buffer_set_event_handler(Buffer *myBuf, EventHandler evtHandler);
+extern bool gui_buffer_set_event_handler(void *myBuf, EventHandler evtHandler);
 
 } // End of namespace M4
 
