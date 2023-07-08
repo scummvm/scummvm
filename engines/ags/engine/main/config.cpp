@@ -51,6 +51,27 @@ using namespace AGS::Engine;
 // Filename of the default config file, the one found in the game installation
 const char *DefaultConfigFileName = "acsetup.cfg";
 
+// Language-to-translation conversion heuristic data
+const char *TranslationDE[] = { "*german*.tra", 0 };
+const char *TranslationFR[] = { "*french*.tra", 0 };
+const char *TranslationHU[] = { "*hungarian*.tra", 0 };
+const char *TranslationIT[] = { "*italian*.tra", 0 };
+const char *TranslationSP[] = { "*spanish*.tra", 0 };
+const char *TranslationTR[] = { "*turkish*.tra", 0 };
+const struct {
+	const char *language;
+	// file globbing patterns matching candidate translation files
+	const char **translation;
+} LanguageToTranslation[] = {
+	{ "de", TranslationDE },
+	{ "fr", TranslationFR },
+	{ "hu", TranslationHU },
+	{ "it", TranslationIT },
+	{ "sp", TranslationSP },
+	{ "tr", TranslationTR },
+	{ 0, NULL }
+};
+
 WindowSetup parse_window_mode(const String &option, bool as_windowed, WindowSetup def_value) {
 	// "full_window" option means pseudo fullscreen ("borderless fullscreen window")
 	if (!as_windowed && (option.CompareNoCase("full_window") == 0))
@@ -315,10 +336,31 @@ void apply_config(const ConfigTree &cfg) {
 
 		// Translation / localization
 		Common::String translation;
-		if (ConfMan.getActiveDomain()->tryGetVal("translation", translation) && !translation.empty())
-			_GP(usetup).translation = translation;
-		else
-			_GP(usetup).translation = CfgReadString(cfg, "language", "translation");
+		const Common::String config_language = ConfMan.get("language");
+		if (!config_language.empty()) {
+			Common::String path = ConfMan.get("path", ConfMan.getActiveDomainName());
+			Common::FSDirectory dir(path);
+			Common::ArchiveMemberList traFileList;
+
+			for (int i = 0; LanguageToTranslation[i].language; i++) {
+				if (config_language == LanguageToTranslation[i].language) {
+					for (int j = 0; LanguageToTranslation[i].translation[j]; j++) {
+						dir.listMatchingMembers(traFileList, LanguageToTranslation[i].translation[j]);
+						if (!traFileList.empty()) {
+							// Pick the first match, ignore the (unlikely) others
+							translation = traFileList.front()->getName();
+							// remove the ".tra" extension
+							translation.erase(translation.size() - 4);
+							break;
+						}
+					}
+					break;
+				}
+			}
+		}
+		if (translation.empty() && (!ConfMan.getActiveDomain()->tryGetVal("translation", translation) || translation.empty()))
+			translation = CfgReadString(cfg, "language", "translation").GetCStr();
+		_GP(usetup).translation = translation;
 
 		// Resource caches and options
 		_GP(usetup).clear_cache_on_room_change = CfgReadBoolInt(cfg, "misc", "clear_cache_on_room_change", _GP(usetup).clear_cache_on_room_change);
