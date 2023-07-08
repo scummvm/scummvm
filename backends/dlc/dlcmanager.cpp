@@ -37,16 +37,58 @@ DLCManager::DLCManager() {
 }
 
 void DLCManager::init() {
-
+	getAllDLCs(_dlcs);
 }
 
-void DLCManager::initDownload() {
-	// _store->requestDownload();
-	// handle errors
+void DLCManager::getAllDLCs(Common::Array<DLC*>& dlcs) {
+	// if distribution store's API available call it else hardcode
 }
 
-bool DLCManager::getFeatureState(DLC::Feature f) {
-	return false;
+void DLCManager::addDownload(uint32 idx) {
+	_dlcs[idx]->state = kInProgress;
+	_queuedDownloadTasks.push(_dlcs[idx]);
+	if (!_isDLCDownloading) {
+		DLCManager::processDownload();
+	}
+}
+
+void DLCManager::processDownload() {
+	if (!_queuedDownloadTasks.empty()) {
+		if (_dlcs[_queuedDownloadTasks.front()->idx]->state == kInProgress) {
+			_isDLCDownloading = true;
+			_currentDownloadingDLC = _queuedDownloadTasks.front()->id;
+			DLCManager::startDownloadAsync(_queuedDownloadTasks.front()->id, &DLCManager::cb);
+		} else {
+			// state is already cancelled/downloaded -> skip download
+			_queuedDownloadTasks.pop();
+			// process next download in the queue
+			processDownload();
+		}
+	} else {
+		_isDLCDownloading = false;
+	}
+}
+
+void DLCManager::cb() {
+	// if finished successfully
+	_dlcs[_queuedDownloadTasks.front()->idx]->state = kDownloaded;
+	_queuedDownloadTasks.pop();
+	// process next download in the queue
+	DLCManager::processDownload();
+}
+
+bool DLCManager::cancelDownload(uint32 idx) {
+	if (_currentDownloadingDLC == _dlcs[idx]->id) {
+		// if already downloading, interrupt startDownloadAsync
+	} else {
+		// if not started, skip it in processDownload()
+		_dlcs[idx]->state = kCancelled;
+	}
+	return true;
+}
+
+Common::String DLCManager::getCurrentDownloadingDLC() {
+	return _currentDownloadingDLC;
 }
 
 } // End of namespace DLC
