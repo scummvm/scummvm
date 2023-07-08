@@ -35,31 +35,31 @@ namespace Crab {
 using namespace pyrodactyl::anim;
 
 FightMoveEffect::FightMoveEffect() {
-	activate = -1;
-	hit = -1;
-	dmg = 0;
-	stun = 0;
-	hurt = -1;
-	death = -1;
+	_activate = -1;
+	_hit = -1;
+	_dmg = 0;
+	_stun = 0;
+	_hurt = -1;
+	_death = -1;
 }
 
-void FightMoveEffect::Load(rapidxml::xml_node<char> *node) {
-	LoadNum(stun, "stun", node);
-	LoadNum(dmg, "damage", node);
-	LoadNum(hurt, "hurt", node);
-	LoadNum(death, "death", node);
+void FightMoveEffect::load(rapidxml::xml_node<char> *node) {
+	LoadNum(_stun, "stun", node);
+	LoadNum(_dmg, "damage", node);
+	LoadNum(_hurt, "hurt", node);
+	LoadNum(_death, "death", node);
 
 	if (NodeValid("image", node, false))
-		img.Load(node->first_node("image"));
+		_img.Load(node->first_node("image"));
 
 	if (NodeValid("sound", node)) {
 		rapidxml::xml_node<char> *soundnode = node->first_node("sound");
 
-		if (!LoadNum(activate, "activate", soundnode, false))
-			activate = -1;
+		if (!LoadNum(_activate, "activate", soundnode, false))
+			_activate = -1;
 
-		if (!LoadNum(activate, "hit", soundnode, false))
-			activate = -1;
+		if (!LoadNum(_activate, "hit", soundnode, false))
+			_activate = -1;
 	}
 }
 
