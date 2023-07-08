@@ -37,31 +37,38 @@
 namespace Crab {
 
 class XMLDoc {
-	rapidxml::xml_document<char> doc;
-	char *text;
+	rapidxml::xml_document<char> _doc;
+	char *_text;
 
 public:
-	XMLDoc() { text = NULL; }
+	XMLDoc() {
+		_text = NULL;
+	}
+
 	XMLDoc(const Common::String &filename) {
-		text = NULL;
-		Load(filename);
+		_text = NULL;
+		load(filename);
 	}
 
 	XMLDoc(uint8 *data) {
-		text = (char*)data;
-		doc.parse<0>(text);
+		_text = (char*)data;
+		_doc.parse<0>(_text);
 	}
 
-	~XMLDoc() { delete[] text; }
+	~XMLDoc() {
+		delete[] _text;
+	}
 
 	// Load the text from the specified file into the rapidxml format
 	// Each function that references it must parse it there
-	void Load(const Common::String &filename);
+	void load(const Common::String &filename);
 
 	// Check if document is ready for parsing
-	bool ready() const { return text != NULL; }
+	bool ready() const {
+		return _text != NULL;
+	}
 
-	const rapidxml::xml_document<> *Doc() const;
+	const rapidxml::xml_document<> *doc() const;
 };
 
 } // End of namespace Crab

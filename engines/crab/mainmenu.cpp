@@ -45,7 +45,7 @@ using namespace pyrodactyl::ui;
 MainMenu::MainMenu() {
 	XMLDoc conf(g_engine->_filePath->mainmenu_l);
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node("main_menu");
+		rapidxml::xml_node<char> *node = conf.doc()->first_node("main_menu");
 		if (NodeValid(node)) {
 			me_main.Load(node->first_node("main"));
 			logo.Load(node->first_node("logo"));
@@ -63,7 +63,7 @@ MainMenu::MainMenu() {
 			{
 				XMLDoc loadconf(node->first_node("load")->first_attribute("path")->value());
 				if (loadconf.ready()) {
-					rapidxml::xml_node<char> *loadnode = loadconf.Doc()->first_node("load_menu");
+					rapidxml::xml_node<char> *loadnode = loadconf.doc()->first_node("load_menu");
 					if (NodeValid(loadnode))
 						g_engine->_loadMenu->Load(loadnode);
 				}
@@ -72,7 +72,7 @@ MainMenu::MainMenu() {
 			{
 				XMLDoc helpconf(node->first_node("help")->first_attribute("path")->value());
 				if (helpconf.ready()) {
-					rapidxml::xml_node<char> *hnode = helpconf.Doc()->first_node("help");
+					rapidxml::xml_node<char> *hnode = helpconf.doc()->first_node("help");
 					if (NodeValid(hnode))
 						g_engine->_helpScreen->Load(hnode);
 				}

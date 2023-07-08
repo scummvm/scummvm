@@ -55,7 +55,7 @@ SaveFileData::SaveFileData(const Common::String &file) {
 
 		XMLDoc conf(data);
 		if (conf.ready()) {
-			rapidxml::xml_node<char> *node = conf.Doc()->first_node("save");
+			rapidxml::xml_node<char> *node = conf.doc()->first_node("save");
 			if (NodeValid(node)) {
 				LoadStr(diff, "diff", node);
 				LoadStr(loc_id, "loc_id", node);
@@ -75,7 +75,7 @@ ModFileData::ModFileData(const Common::String &file) {
 	if (boost::filesystem::exists(filepath)) {
 		XMLDoc conf(filepath.string());
 		if (conf.ready()) {
-			rapidxml::xml_node<char> *node = conf.Doc()->first_node("config");
+			rapidxml::xml_node<char> *node = conf.doc()->first_node("config");
 			if (NodeValid(node)) {
 				LoadStr(author, "author", node);
 				LoadStr(version, "version", node);

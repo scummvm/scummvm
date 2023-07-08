@@ -57,7 +57,7 @@ void Info::Load(rapidxml::xml_node<char> *node) {
 
 		XMLDoc conf(pnode->first_attribute("list")->value());
 		if (conf.ready()) {
-			rapidxml::xml_node<char> *cnode = conf.Doc()->first_node("characters");
+			rapidxml::xml_node<char> *cnode = conf.doc()->first_node("characters");
 			if (NodeValid(cnode)) {
 				LoadNum(OPINION_MIN, "op_min", cnode);
 				LoadNum(OPINION_MAX, "op_max", cnode);
@@ -83,7 +83,7 @@ void Info::Load(rapidxml::xml_node<char> *node) {
 void Info::LoadPeople(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node("people");
+		rapidxml::xml_node<char> *node = conf.doc()->first_node("people");
 		if (NodeValid(node)) {
 			for (auto n = node->first_node(); n != NULL; n = n->next_sibling()) {
 				Common::String str;

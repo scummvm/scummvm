@@ -37,7 +37,7 @@ using namespace pyrodactyl::ui;
 void DebugConsole::Load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node("debug");
+		rapidxml::xml_node<char> *node = conf.doc()->first_node("debug");
 		if (NodeValid(node)) {
 			if (NodeValid("menu", node))
 				menu.Load(node->first_node("menu"));

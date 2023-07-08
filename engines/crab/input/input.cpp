@@ -156,7 +156,7 @@ void InputManager::Init() {
 void InputManager::Load(const Common::String &filename) {
 	XMLDoc control_list(filename);
 	if (control_list.ready()) {
-		rapidxml::xml_node<char> *node = control_list.Doc()->first_node("controls");
+		rapidxml::xml_node<char> *node = control_list.doc()->first_node("controls");
 		if (NodeValid(node)) {
 			LoadNum(version, "version", node);
 

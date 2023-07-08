@@ -124,9 +124,6 @@ private:
 
 public:
 	Game() : _isInited(false) {}
-	~Game() {
-		warning("Game destructor called");
-	}
 
 	void Init(const Common::String &filename);
 

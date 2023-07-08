@@ -43,7 +43,7 @@ using namespace pyrodactyl::people;
 void Inventory::Load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node("inventory");
+		rapidxml::xml_node<char> *node = conf.doc()->first_node("inventory");
 		if (NodeValid(node)) {
 			if (NodeValid("bg", node))
 				bg.Load(node->first_node("bg"));
@@ -63,7 +63,7 @@ void Inventory::LoadItem(const Common::String &char_id, const Common::String &id
 	Item i;
 	XMLDoc item_list(itemfile);
 	if (item_list.ready()) {
-		rapidxml::xml_node<char> *node = item_list.Doc()->first_node("items");
+		rapidxml::xml_node<char> *node = item_list.doc()->first_node("items");
 		for (auto n = node->first_node("item"); n != NULL; n = n->next_sibling("item")) {
 			Common::String str = n->first_attribute("id")->value();
 			if (id == str) {

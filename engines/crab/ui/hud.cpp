@@ -43,7 +43,7 @@ using namespace pyrodactyl::input;
 void HUD::Load(const Common::String &filename, pyrodactyl::level::TalkNotify &tn, pyrodactyl::level::PlayerDestMarker &pdm) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node("hud");
+		rapidxml::xml_node<char> *node = conf.doc()->first_node("hud");
 		if (NodeValid(node)) {
 			if (NodeValid("bg", node))
 				bg.Load(node->first_node("bg"));

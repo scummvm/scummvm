@@ -64,7 +64,7 @@ TMXMap::TMXMap() {
 void TMXMap::Load(const Common::String &path, Common::String filename) {
 	XMLDoc conf((path + filename));
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node("map");
+		rapidxml::xml_node<char> *node = conf.doc()->first_node("map");
 		if (NodeValid(node)) {
 			LoadNum(tile_rows, "width", node);
 			LoadNum(tile_cols, "height", node);

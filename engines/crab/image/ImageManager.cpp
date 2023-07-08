@@ -50,7 +50,7 @@ void ImageManager::LoadMap(const Common::String &filename, const MapID &mapid) {
 	map[mapid].clear();
 	XMLDoc image_list(filename);
 	if (image_list.ready()) {
-		rapidxml::xml_node<char> *node = image_list.Doc()->first_node("res");
+		rapidxml::xml_node<char> *node = image_list.doc()->first_node("res");
 		for (auto n = node->first_node("image"); n != NULL; n = n->next_sibling("image")) {
 			ImageKey key;
 			if (LoadImgKey(key, "name", n)) {

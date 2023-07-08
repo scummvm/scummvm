@@ -66,7 +66,7 @@ void Game::Init(const Common::String &filename) {
 
 	XMLDoc conf(filename);
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node("config");
+		rapidxml::xml_node<char> *node = conf.doc()->first_node("config");
 
 		info.Load(node);
 
@@ -679,7 +679,7 @@ void Game::LoadState(Common::SeekableReadStream *stream) {
 	XMLDoc conf(dataC);
 
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node("save");
+		rapidxml::xml_node<char> *node = conf.doc()->first_node("save");
 		if (NodeValid(node)) {
 			info.LoadIronMan(node);
 			LoadStr(savefile.ironman, "file", node);

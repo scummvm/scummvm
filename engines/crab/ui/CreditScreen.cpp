@@ -46,7 +46,7 @@ void CreditScreen::Reset() {
 void CreditScreen::Load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
-		rapidxml::xml_node<char> *node = conf.Doc()->first_node("credits");
+		rapidxml::xml_node<char> *node = conf.doc()->first_node("credits");
 
 		if (NodeValid("bg", node))
 			bg.Load(node->first_node("bg"));
