@@ -30,10 +30,11 @@ LibretroTimerManager::LibretroTimerManager(uint32 refresh_rate) {
 }
 
 void LibretroTimerManager::switchThread(void) {
-	_nextSwitchTime =  g_system->getMillis() + _interval;
+	_spentOnMainThread = g_system->getMillis();
 	retro_switch_to_main_thread();
-	_spentOnMainThread = g_system->getMillis() - _nextSwitchTime + _interval;
-	_nextSwitchTime += _interval <= _spentOnMainThread ? _spentOnMainThread + _interval : 0;
+	_spentOnMainThread = g_system->getMillis() - _spentOnMainThread;
+	_nextSwitchTime =  g_system->getMillis() + _interval;
+	handler();
 }
 
 void LibretroTimerManager::checkThread(void) {
