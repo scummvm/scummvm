@@ -134,7 +134,7 @@ public:
 	int X() { return pos.x; }
 	int Y() { return pos.y; }
 
-	void WalkPattern(const pyrodactyl::ai::MovementSet &set) { ai_data.walk = set; }
+	void WalkPattern(const pyrodactyl::ai::MovementSet &set) { ai_data._walk = set; }
 
 	void Move(const pyrodactyl::ai::SpriteConstant &sc);
 
@@ -147,7 +147,7 @@ public:
 	void Stop() {
 		vel.Set();
 		target.Set();
-		ai_data.dest.active = false;
+		ai_data._dest._active = false;
 	}
 	void InputStop() { input.Reset(); }
 

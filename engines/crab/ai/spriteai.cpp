@@ -48,14 +48,14 @@ double Sprite::DistSq(const Sprite &s) {
 // Purpose: Used for player movement
 //------------------------------------------------------------------------
 void Sprite::MoveToDest(pyrodactyl::event::Info &info, const SpriteConstant &sc) {
-	if (ai_data.dest.active) {
+	if (ai_data._dest._active) {
 		int num = 0;
 		info.StatGet(id, pyrodactyl::stat::STAT_SPEED, num);
 		++num;
 		float player_speed = static_cast<float>(num);
 
-		if (MoveToLoc(ai_data.dest, player_speed, sc)) {
-			ai_data.dest.active = false;
+		if (MoveToLoc(ai_data._dest, player_speed, sc)) {
+			ai_data._dest._active = false;
 			XVel(0.0f);
 			YVel(0.0f);
 		}
@@ -63,7 +63,7 @@ void Sprite::MoveToDest(pyrodactyl::event::Info &info, const SpriteConstant &sc)
 }
 
 void Sprite::MoveToDestPathfinding(pyrodactyl::event::Info &info, const SpriteConstant &sc) {
-	if (ai_data.dest.active) {
+	if (ai_data._dest._active) {
 		int num = 0;
 		info.StatGet(id, pyrodactyl::stat::STAT_SPEED, num);
 		++num;
@@ -78,10 +78,10 @@ void Sprite::MoveToDestPathfinding(pyrodactyl::event::Info &info, const SpriteCo
 		// IF there is no solution OR
 		// IF we haven't yet found a solution
 		// THEN stop.
-		if ((MoveToLocPathfinding(ai_data.dest, player_speed, sc) && pathing.solutionFound &&
+		if ((MoveToLocPathfinding(ai_data._dest, player_speed, sc) && pathing.solutionFound &&
 			 pathing.GetImmediateDest() == Vector2i(pathing.destination.x, pathing.destination.y)) ||
 			pathing.noSolution || !pathing.solutionFound) {
-			ai_data.dest.active = false;
+			ai_data._dest._active = false;
 			XVel(0.0f);
 			YVel(0.0f);
 		}
@@ -153,14 +153,14 @@ bool Sprite::MoveToLocPathfinding(Vector2i &dest, const float &velocity, const S
 // Purpose: AI routine for running to the nearest exit, then disappearing
 //------------------------------------------------------------------------
 void Sprite::Flee(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::level::Exit> &area_exit, const SpriteConstant &sc) {
-	switch (ai_data.flee.state) {
+	switch (ai_data._flee._state) {
 	case FLEESTATE_GETNEARESTEXIT: {
 		if (area_exit.empty()) {
 			// No valid exits in the level
-			ai_data.flee.state = FLEESTATE_CANTFLEE;
+			ai_data._flee._state = FLEESTATE_CANTFLEE;
 			break;
 		} else {
-			ai_data.flee.state = FLEESTATE_GETNEARESTEXIT;
+			ai_data._flee._state = FLEESTATE_GETNEARESTEXIT;
 
 			// Standard way to find nearest exit
 			int min_dist = INT_MAX;
@@ -173,18 +173,18 @@ void Sprite::Flee(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::level
 					min_dist = dist;
 
 					// Set the destination of sprite to this exit
-					ai_data.Dest(i.dim.rect.x + i.dim.rect.w / 2, i.dim.rect.y + i.dim.rect.h / 2);
+					ai_data.dest(i.dim.rect.x + i.dim.rect.w / 2, i.dim.rect.y + i.dim.rect.h / 2);
 
-					pathing.SetDestination(Vector2f((float)ai_data.dest.x, (float)ai_data.dest.y));
+					pathing.SetDestination(Vector2f((float)ai_data._dest.x, (float)ai_data._dest.y));
 				}
 			}
 		}
 	} break;
 	case FLEESTATE_RUNTOEXIT: {
 		Rect b = BoundRect();
-		if (b.Contains(ai_data.dest)) {
+		if (b.Contains(ai_data._dest)) {
 			// We have reached the exit, time to make the sprite disappear
-			ai_data.flee.state = FLEESTATE_DISAPPEAR;
+			ai_data._flee._state = FLEESTATE_DISAPPEAR;
 			break;
 		} else {
 			int num = 0;
@@ -193,7 +193,7 @@ void Sprite::Flee(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::level
 			float velocity = static_cast<float>(num);
 
 			// MoveToLoc(ai_data.dest, vel, sc);
-			MoveToLocPathfinding(ai_data.dest, velocity, sc);
+			MoveToLocPathfinding(ai_data._dest, velocity, sc);
 		}
 	} break;
 	case FLEESTATE_DISAPPEAR:
@@ -211,16 +211,16 @@ void Sprite::Attack(pyrodactyl::event::Info &info, Sprite &target_sp, const Spri
 	warning("STUB: Sprite::Attack()");
 
 #if 0
-	switch (ai_data.fight.state) {
+	switch (ai_data.fight._state) {
 	case FIGHTSTATE_GETNEXTMOVE: {
-		ai_data.fight.state = FIGHTSTATE_GETINRANGE;
+		ai_data.fight._state = FIGHTSTATE_GETINRANGE;
 		ai_data.fight.delay.Start();
 
 		unsigned int size = ai_data.fight.attack.size();
 		if (size > 1)
 			anim_set.fight.Next(ai_data.fight.attack[gRandom.Num() % ai_data.fight.attack.size()]);
 		else if (size <= 0)
-			ai_data.fight.state = FIGHTSTATE_CANTFIGHT;
+			ai_data.fight._state = FIGHTSTATE_CANTFIGHT;
 		else
 			anim_set.fight.Next(ai_data.fight.attack[0]);
 	} break;
@@ -237,13 +237,13 @@ void Sprite::Attack(pyrodactyl::event::Info &info, Sprite &target_sp, const Spri
 		FightMove f;
 		if (anim_set.fight.NextMove(f) && FightCollide(target_sp.BoxV(), target_sp.BoundRect(), f.ai.range, sc)) {
 			if (ai_data.fight.delay.Ticks() > f.ai.delay)
-				ai_data.fight.state = FIGHTSTATE_EXECUTEMOVE;
+				ai_data.fight._state = FIGHTSTATE_EXECUTEMOVE;
 		} else if (input.Idle())
 			MoveToDestPathfinding(info, sc);
 	} break;
 	case FIGHTSTATE_EXECUTEMOVE:
 		UpdateMove(anim_set.fight.Next());
-		ai_data.fight.state = FIGHTSTATE_GETNEXTMOVE;
+		ai_data.fight._state = FIGHTSTATE_GETNEXTMOVE;
 		ai_data.fight.delay.Stop();
 		break;
 	default:
@@ -254,40 +254,40 @@ void Sprite::Attack(pyrodactyl::event::Info &info, Sprite &target_sp, const Spri
 
 void Sprite::FlyAround(const Rect &camera, const SpriteConstant &sc) {
 	// Is this sprite flying right now?
-	if (ai_data.walk._enabled) {
+	if (ai_data._walk._enabled) {
 		// We're flying towards the left edge
 		if (XVel() < 0) {
 			// Are we completely out of the left edge of the camera?
 			if (X() < camera.x - W()) {
-				ai_data.walk._enabled = false;
+				ai_data._walk._enabled = false;
 
 				// Start the timer, set a semi-random time
-				ai_data.walk._timer.Target(sc.fly.delay_min + (g_engine->getRandomNumber(sc.fly.delay_max)));
-				ai_data.walk._timer.Start();
+				ai_data._walk._timer.Target(sc.fly.delay_min + (g_engine->getRandomNumber(sc.fly.delay_max)));
+				ai_data._walk._timer.Start();
 			}
 		}
 		// Flying towards the right edge
 		else if (XVel() > 0) {
 			// Are we completely out of the left edge of the camera?
 			if (X() > camera.x + camera.w + W()) {
-				ai_data.walk._enabled = false;
+				ai_data._walk._enabled = false;
 
 				// Start the timer, set a semi-random time
-				ai_data.walk._timer.Target(sc.fly.delay_min + (g_engine->getRandomNumber(sc.fly.delay_max)));
-				ai_data.walk._timer.Start();
+				ai_data._walk._timer.Target(sc.fly.delay_min + (g_engine->getRandomNumber(sc.fly.delay_max)));
+				ai_data._walk._timer.Start();
 			}
 		}
 
 		Move(sc);
 	} else {
 		// Safety condition in case timer isn't running
-		if (!ai_data.walk._timer.Started())
-			ai_data.walk._timer.Start();
+		if (!ai_data._walk._timer.Started())
+			ai_data._walk._timer.Start();
 
 		// Is it time to start flying?
-		if (ai_data.walk._timer.TargetReached()) {
+		if (ai_data._walk._timer.TargetReached()) {
 			// Stop the timer
-			ai_data.walk._timer.Stop();
+			ai_data._walk._timer.Stop();
 
 			// Decide if the sprite flies from the left or right of the camera
 			if (g_engine->getRandomNumber(1)) {
@@ -310,7 +310,7 @@ void Sprite::FlyAround(const Rect &camera, const SpriteConstant &sc) {
 			YVel(sc.fly.vel.y);
 
 			// Set state to flying
-			ai_data.walk._enabled = true;
+			ai_data._walk._enabled = true;
 		}
 	}
 }

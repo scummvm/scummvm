@@ -83,7 +83,7 @@ void Sprite::Load(rapidxml::xml_node<char> *node, Common::Array<Common::String> 
 		if (index < animations.size())
 			anim_set.Load(animations[index]);
 
-		anim_set.fight.ListAttackMoves(ai_data.fight.attack);
+		anim_set.fight.ListAttackMoves(ai_data._fight._attack);
 
 		LoadDirection(dir, node);
 		clip = anim_set.walk.Clip(dir);
@@ -93,7 +93,7 @@ void Sprite::Load(rapidxml::xml_node<char> *node, Common::Array<Common::String> 
 			visible.Load(node->first_node("visible"));
 
 		if (NodeValid("movement", node, false))
-			ai_data.walk.load(node->first_node("movement"));
+			ai_data._walk.load(node->first_node("movement"));
 
 		if (NodeValid("popup", node, false))
 			popup.Load(node->first_node("popup"));
@@ -343,7 +343,7 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 
 	// This is for Diablo style hold-mouse-button-in-direction-of-movement
 	// This is only used if - point and click movement isn't being used, cursor is not inside the hud, the cursor is a normal cursor and the mouse is pressed
-	if (!ai_data.dest.active && !g_engine->_mouse->inside_hud && !g_engine->_mouse->hover && g_engine->_mouse->Pressed()) {
+	if (!ai_data._dest._active && !g_engine->_mouse->inside_hud && !g_engine->_mouse->hover && g_engine->_mouse->Pressed()) {
 		// To find where the click is w.r.t sprite, we need to see where it is being drawn
 		int x = pos.x - camera.x - anim_set.AnchorX(dir), y = pos.y - camera.y - anim_set.AnchorY(dir);
 
@@ -371,22 +371,22 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 		// Disable destination as soon as player presses a direction key
 		// X axis
 		if (g_engine->_inputManager->State(IG_LEFT)) {
-			ai_data.dest.active = false;
+			ai_data._dest._active = false;
 			XVel(-player_speed * sc.walk_vel_mod.x);
 		} else if (g_engine->_inputManager->State(IG_RIGHT)) {
-			ai_data.dest.active = false;
+			ai_data._dest._active = false;
 			XVel(player_speed * sc.walk_vel_mod.x);
-		} else if (!ai_data.dest.active)
+		} else if (!ai_data._dest._active)
 			XVel(0.0f);
 
 		// Y axis
 		if (g_engine->_inputManager->State(IG_UP)) {
-			ai_data.dest.active = false;
+			ai_data._dest._active = false;
 			YVel(-player_speed * sc.walk_vel_mod.y);
 		} else if (g_engine->_inputManager->State(IG_DOWN)) {
-			ai_data.dest.active = false;
+			ai_data._dest._active = false;
 			YVel(player_speed * sc.walk_vel_mod.y);
-		} else if (!ai_data.dest.active)
+		} else if (!ai_data._dest._active)
 			YVel(0.0f);
 
 	}
@@ -409,7 +409,7 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 
 	// This is for Diablo style hold-mouse-button-in-direction-of-movement
 	// This is only used if - point and click movement isn't being used, cursor is not inside the hud, the cursor is a normal cursor and the mouse is pressed
-	if (!ai_data.dest.active && !g_engine->_mouse->inside_hud && !g_engine->_mouse->hover && g_engine->_mouse->Pressed()) {
+	if (!ai_data._dest._active && !g_engine->_mouse->inside_hud && !g_engine->_mouse->hover && g_engine->_mouse->Pressed()) {
 		// To find where the click is w.r.t sprite, we need to see where it is being drawn
 		int x = pos.x - camera.x - anim_set.AnchorX(dir), y = pos.y - camera.y - anim_set.AnchorY(dir);
 
@@ -437,22 +437,22 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 		// Disable destination as soon as player presses a direction key
 		// X axis
 		if (g_engine->_inputManager->State(IG_LEFT)) {
-			ai_data.dest.active = false;
+			ai_data._dest._active = false;
 			XVel(-player_speed * sc.walk_vel_mod.x);
 		} else if (g_engine->_inputManager->State(IG_RIGHT)) {
-			ai_data.dest.active = false;
+			ai_data._dest._active = false;
 			XVel(player_speed * sc.walk_vel_mod.x);
-		} else if (!ai_data.dest.active)
+		} else if (!ai_data._dest._active)
 			XVel(0.0f);
 
 		// Y axis
 		if (g_engine->_inputManager->State(IG_UP)) {
-			ai_data.dest.active = false;
+			ai_data._dest._active = false;
 			YVel(-player_speed * sc.walk_vel_mod.y);
 		} else if (g_engine->_inputManager->State(IG_DOWN)) {
-			ai_data.dest.active = false;
+			ai_data._dest._active = false;
 			YVel(player_speed * sc.walk_vel_mod.y);
-		} else if (!ai_data.dest.active)
+		} else if (!ai_data._dest._active)
 			YVel(0.0f);
 	}
 
@@ -467,7 +467,7 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 // Purpose: Set destination for sprite movement
 //------------------------------------------------------------------------
 void Sprite::SetDestPathfinding(const Vector2i &dest, bool reachable) {
-	ai_data.Dest(dest, true);
+	ai_data.dest(dest, true);
 	pathing.SetDestination(dest, reachable);
 }
 
@@ -479,9 +479,9 @@ void Sprite::Walk(const pyrodactyl::people::PersonState &pst) {
 
 	bool first_x = true;
 
-	if (ai_data.dest.active) {
+	if (ai_data._dest._active) {
 		Rect b = BoundRect();
-		if (pos.x - ai_data.dest.x > -b.w && pos.x - ai_data.dest.x < b.w)
+		if (pos.x - ai_data._dest.x > -b.w && pos.x - ai_data._dest.x < b.w)
 			first_x = false;
 	}
 

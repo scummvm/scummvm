@@ -75,7 +75,7 @@ void Level::Draw(pyrodactyl::event::Info &info) {
 	// Draw the terrain layer
 	g_engine->_imageManager->tileset.Draw(terrain.layer[0], camera, terrain.tile_size, objects[player_index].PosRect(), img);
 
-	Vector2i pos = objects[player_index].ai_data.dest;
+	Vector2i pos = objects[player_index].ai_data._dest;
 	Rect newpos(pos.x - (dest_marker.size.x / 2), pos.y - (dest_marker.size.y / 2), dest_marker.size.x, dest_marker.size.y);
 
 	for (auto l = terrain.layer.begin(); l != terrain.layer.end(); ++l, ++layer_count) {
@@ -111,7 +111,7 @@ void Level::Draw(pyrodactyl::event::Info &info) {
 	// Fliers are drawn above every sprite but below popup text
 	for (auto &i : fly) {
 		// Only draw if it is supposed to be flying
-		if (i.ai_data.walk._enabled)
+		if (i.ai_data._walk._enabled)
 			i.Draw(info, camera);
 	}
 
@@ -140,10 +140,10 @@ void Level::Draw(pyrodactyl::event::Info &info) {
 //------------------------------------------------------------------------
 void Level::DrawObjects(pyrodactyl::event::Info &info) {
 	// Draw player destination marker
-	if (objects[player_index].ai_data.dest.active)
-		dest_marker.Draw(objects[player_index].ai_data.dest, camera);
+	if (objects[player_index].ai_data._dest._active)
+		dest_marker.Draw(objects[player_index].ai_data._dest, camera);
 
-	Vector2i pos = objects[player_index].ai_data.dest;
+	Vector2i pos = objects[player_index].ai_data._dest;
 	Rect newpos(pos.x - (dest_marker.size.x / 2), pos.y - (dest_marker.size.y / 2), dest_marker.size.x, dest_marker.size.y);
 
 	if (terrain.prop.empty()) {
@@ -164,7 +164,7 @@ void Level::DrawObjects(pyrodactyl::event::Info &info) {
 						g_engine->_imageManager->tileset.ForceDraw(*a, camera, terrain.tile_size, objects[player_index].PosRect());
 					}
 
-					if (i.Contains(objects[player_index].ai_data.dest)) {
+					if (i.Contains(objects[player_index].ai_data._dest)) {
 						g_engine->_imageManager->tileset.ForceDraw(*a, camera, terrain.tile_size, newpos);
 					}
 				}
@@ -190,7 +190,7 @@ void Level::DrawObjects(pyrodactyl::event::Info &info) {
 						g_engine->_imageManager->tileset.ForceDraw(*a, camera, terrain.tile_size, objects[player_index].PosRect());
 					}
 
-					if (i.Contains(objects[player_index].ai_data.dest)) {
+					if (i.Contains(objects[player_index].ai_data._dest)) {
 						g_engine->_imageManager->tileset.ForceDraw(*a, camera, terrain.tile_size, newpos);
 					}
 				}

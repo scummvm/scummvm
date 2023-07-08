@@ -40,62 +40,76 @@ namespace Crab {
 // class PathfindingAgent;
 namespace pyrodactyl {
 namespace ai {
+
 // States of a fighting sprite
-enum AIFightState { FIGHTSTATE_GETNEXTMOVE,
-					FIGHTSTATE_GETINRANGE,
-					FIGHTSTATE_EXECUTEMOVE,
-					FIGHTSTATE_CANTFIGHT };
+enum AIFightState {
+	FIGHTSTATE_GETNEXTMOVE,
+	FIGHTSTATE_GETINRANGE,
+	FIGHTSTATE_EXECUTEMOVE,
+	FIGHTSTATE_CANTFIGHT
+};
 
 // States of a fleeing sprite
-enum AIFleeState { FLEESTATE_GETNEARESTEXIT,
-				   FLEESTATE_RUNTOEXIT,
-				   FLEESTATE_DISAPPEAR,
-				   FLEESTATE_CANTFLEE };
+enum AIFleeState {
+	FLEESTATE_GETNEARESTEXIT,
+	FLEESTATE_RUNTOEXIT,
+	FLEESTATE_DISAPPEAR,
+	FLEESTATE_CANTFLEE
+};
 
 struct SpriteAIData {
 	// Data required for fighting
 	struct FightData {
 		// The state of the sprite
-		AIFightState state;
+		AIFightState _state;
 
 		// Used to count down the time NPCs wait before their next move
 		// Usually varies per move which is why we don't load target for it
-		Timer delay;
+		Timer _delay;
 
 		// The list of moves that can be performed while attacking
-		Common::Array<unsigned int> attack;
+		Common::Array<unsigned int> _attack;
 
-		FightData() { state = FIGHTSTATE_GETNEXTMOVE; }
-	} fight;
+		FightData() {
+			_state = FIGHTSTATE_GETNEXTMOVE;
+		}
+	} _fight;
 
 	// The pattern a peaceful sprite walks in
-	MovementSet walk;
+	MovementSet _walk;
 
 	// Data required to flee
 	struct FleeData {
-		AIFleeState state;
+		AIFleeState _state;
 
-		FleeData() { state = FLEESTATE_GETNEARESTEXIT; }
-	} flee;
+		FleeData() {
+			_state = FLEESTATE_GETNEARESTEXIT;
+		}
+	} _flee;
 
 	// The next location the sprite has to reach
 	// PLAYER: Used for adventure game style point-n-click movement
 	// AI: Used for path-finding (usually to the player's location)
 	struct Destination : public Vector2i {
 		// Are we trying to reach the destination?
-		bool active;
+		bool _active;
 
-		Destination() { active = false; }
-	} dest;
+		Destination() {
+			_active = false;
+		}
+	} _dest;
 
 	SpriteAIData() {}
 
-	void Dest(const int &x, const int &y, const bool &Active = true) {
-		dest.x = x;
-		dest.y = y;
-		dest.active = Active;
+	void dest(const int &x, const int &y, const bool &active = true) {
+		_dest.x = x;
+		_dest.y = y;
+		_dest._active = active;
 	}
-	void Dest(const Vector2i &v, const bool &Active = true) { Dest(v.x, v.y, Active); }
+
+	void dest(const Vector2i &v, const bool &active = true) {
+		dest(v.x, v.y, active);
+	}
 };
 } // End of namespace ai
 } // End of namespace pyrodactyl
