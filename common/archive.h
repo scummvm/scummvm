@@ -355,6 +355,8 @@ public:
 
 	const ArchiveMemberPtr getMember(const Path &path) const override;
 
+	const ArchiveMemberPtr getMember(const Path &path, Archive **container) const;
+
 	/**
 	 * Implement createReadStreamForMember from the Archive base class. The current policy is
 	 * opening the first file encountered that matches the name.
