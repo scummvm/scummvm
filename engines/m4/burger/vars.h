@@ -26,6 +26,7 @@
 #include "m4/burger/gui/interface.h"
 #include "m4/burger/inventory.h"
 #include "m4/burger/globals.h"
+#include "m4/burger/walker.h"
 
 namespace M4 {
 namespace Burger {
@@ -50,8 +51,9 @@ protected:
 public:
 	Burger::GlobalVars _globals;
 	GameMode _executing = WHOLE_GAME;
-	int _wilburTerm = 2;
 	GUI::Interface _interface;
+	Burger::Walker _walker;
+	int _wilburTerm = 2;
 	const Common::String _wilbur = "WILBUR";
 	bool _menuSystemInitialized = false;
 	bool _gameMenuFromMain = false;
@@ -66,6 +68,10 @@ public:
 	M4::Interface *getInterface() override {
 		return &_interface;
 	}
+	M4::Walker *getWalker() override {
+		return &_walker;
+	}
+
 };
 
 extern Vars *g_globals;
