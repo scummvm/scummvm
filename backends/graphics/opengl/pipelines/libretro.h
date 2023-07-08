@@ -117,7 +117,7 @@ private:
 		Graphics::Surface *textureData;
 		GLTexture *glTexture;
 	};
-	Texture loadTexture(const Common::String &fileName, Common::SearchSet &archSet);
+	Texture loadTexture(const Common::Path &fileName, Common::Archive *container, Common::SearchSet &archSet);
 
 	typedef Common::Array<Texture> TextureArray;
 	TextureArray _textures;

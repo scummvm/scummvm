@@ -113,7 +113,8 @@ struct ShaderPass {
 };
 
 struct ShaderPreset {
-	Common::String basePath;
+	Common::Archive *container;
+	Common::Path basePath;
 
 	typedef Common::Array<ShaderTexture> TextureArray;
 	TextureArray textures;
