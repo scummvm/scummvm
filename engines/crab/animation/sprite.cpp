@@ -104,17 +104,17 @@ void Sprite::Load(rapidxml::xml_node<char> *node, Common::Array<Common::String> 
 // Purpose: Move along x and y axis
 //------------------------------------------------------------------------
 void Sprite::Move(const SpriteConstant &sc) {
-	if (target.x == 0.0f && (vel.x > -sc.tweening && vel.x < sc.tweening))
+	if (target.x == 0.0f && (vel.x > -sc._tweening && vel.x < sc._tweening))
 		vel.x = 0.0f;
 	else {
-		vel.x += (target.x - vel.x) * sc.tweening;
+		vel.x += (target.x - vel.x) * sc._tweening;
 		pos.x += vel.x;
 	}
 
-	if (target.y == 0.0f && (vel.y > -sc.tweening && vel.y < sc.tweening))
+	if (target.y == 0.0f && (vel.y > -sc._tweening && vel.y < sc._tweening))
 		vel.y = 0.0f;
 	else {
-		vel.y += (target.y - vel.y) * sc.tweening;
+		vel.y += (target.y - vel.y) * sc._tweening;
 		pos.y += vel.y;
 	}
 }
@@ -353,17 +353,17 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 
 		// X axis
 		if (g_engine->_mouse->motion.x > x + w)
-			XVel(player_speed * sc.walk_vel_mod.x);
+			XVel(player_speed * sc._walkVelMod.x);
 		else if (g_engine->_mouse->motion.x < x)
-			XVel(-player_speed * sc.walk_vel_mod.x);
+			XVel(-player_speed * sc._walkVelMod.x);
 		else
 			XVel(0.0f);
 
 		// Y axis
 		if (g_engine->_mouse->motion.y > y + h)
-			YVel(player_speed * sc.walk_vel_mod.y);
+			YVel(player_speed * sc._walkVelMod.y);
 		else if (g_engine->_mouse->motion.y < y)
-			YVel(-player_speed * sc.walk_vel_mod.y);
+			YVel(-player_speed * sc._walkVelMod.y);
 		else
 			YVel(0.0f);
 	} else // Keyboard movement
@@ -372,20 +372,20 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 		// X axis
 		if (g_engine->_inputManager->State(IG_LEFT)) {
 			ai_data._dest._active = false;
-			XVel(-player_speed * sc.walk_vel_mod.x);
+			XVel(-player_speed * sc._walkVelMod.x);
 		} else if (g_engine->_inputManager->State(IG_RIGHT)) {
 			ai_data._dest._active = false;
-			XVel(player_speed * sc.walk_vel_mod.x);
+			XVel(player_speed * sc._walkVelMod.x);
 		} else if (!ai_data._dest._active)
 			XVel(0.0f);
 
 		// Y axis
 		if (g_engine->_inputManager->State(IG_UP)) {
 			ai_data._dest._active = false;
-			YVel(-player_speed * sc.walk_vel_mod.y);
+			YVel(-player_speed * sc._walkVelMod.y);
 		} else if (g_engine->_inputManager->State(IG_DOWN)) {
 			ai_data._dest._active = false;
-			YVel(player_speed * sc.walk_vel_mod.y);
+			YVel(player_speed * sc._walkVelMod.y);
 		} else if (!ai_data._dest._active)
 			YVel(0.0f);
 
@@ -419,17 +419,17 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 
 		// X axis
 		if (g_engine->_mouse->motion.x > x + w)
-			XVel(player_speed * sc.walk_vel_mod.x);
+			XVel(player_speed * sc._walkVelMod.x);
 		else if (g_engine->_mouse->motion.x < x)
-			XVel(-player_speed * sc.walk_vel_mod.x);
+			XVel(-player_speed * sc._walkVelMod.x);
 		else
 			XVel(0.0f);
 
 		// Y axis
 		if (g_engine->_mouse->motion.y > y + h)
-			YVel(player_speed * sc.walk_vel_mod.y);
+			YVel(player_speed * sc._walkVelMod.y);
 		else if (g_engine->_mouse->motion.y < y)
-			YVel(-player_speed * sc.walk_vel_mod.y);
+			YVel(-player_speed * sc._walkVelMod.y);
 		else
 			YVel(0.0f);
 	} else // Keyboard movement
@@ -438,20 +438,20 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 		// X axis
 		if (g_engine->_inputManager->State(IG_LEFT)) {
 			ai_data._dest._active = false;
-			XVel(-player_speed * sc.walk_vel_mod.x);
+			XVel(-player_speed * sc._walkVelMod.x);
 		} else if (g_engine->_inputManager->State(IG_RIGHT)) {
 			ai_data._dest._active = false;
-			XVel(player_speed * sc.walk_vel_mod.x);
+			XVel(player_speed * sc._walkVelMod.x);
 		} else if (!ai_data._dest._active)
 			XVel(0.0f);
 
 		// Y axis
 		if (g_engine->_inputManager->State(IG_UP)) {
 			ai_data._dest._active = false;
-			YVel(-player_speed * sc.walk_vel_mod.y);
+			YVel(-player_speed * sc._walkVelMod.y);
 		} else if (g_engine->_inputManager->State(IG_DOWN)) {
 			ai_data._dest._active = false;
-			YVel(player_speed * sc.walk_vel_mod.y);
+			YVel(player_speed * sc._walkVelMod.y);
 		} else if (!ai_data._dest._active)
 			YVel(0.0f);
 	}
@@ -525,10 +525,10 @@ bool Sprite::FightCollide(Rect hitbox, Rect enemy_bounds, Range &range, const Sp
 		Rect actual_range = RangeRect(bounds, range);
 
 		// The second part is a sanity check so the stray hitbox of a sprite 1000 pixels below does not cause damage
-		if (hitbox.Collide(actual_range) && abs(bounds.y + bounds.h - enemy_bounds.y - enemy_bounds.h) < sc.plane_w)
+		if (hitbox.Collide(actual_range) && abs(bounds.y + bounds.h - enemy_bounds.y - enemy_bounds.h) < sc._planeW)
 			return true;
 	} else {
-		if (hitbox.Collide(bounds) && abs(bounds.y + bounds.h - enemy_bounds.y - enemy_bounds.h) < sc.plane_w)
+		if (hitbox.Collide(bounds) && abs(bounds.y + bounds.h - enemy_bounds.y - enemy_bounds.h) < sc._planeW)
 			return true;
 	}
 
@@ -625,7 +625,7 @@ bool Sprite::DamageValid(Sprite &s, const SpriteConstant &sc) {
 	// Get the y coordinates where these sprites are standing
 	float Y = pos.y + clip.h, SY = s.pos.y + s.clip.h;
 
-	if (abs(Y - SY) < sc.plane_w)
+	if (abs(Y - SY) < sc._planeW)
 		return true;
 
 	return false;
