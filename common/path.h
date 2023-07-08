@@ -208,6 +208,17 @@ public:
 	bool matchPattern(const Path& pattern) const;
 
 	/**
+	 * Normalize path to a canonical form. In particular:
+	 * - trailing separators are removed:  /foo/bar/ -> /foo/bar
+	 * - double separators (= empty components) are removed:   /foo//bar -> /foo/bar
+	 * - dot components are removed:  /foo/./bar -> /foo/bar
+	 * - double dot components are removed:  /foo/baz/../bar -> /foo/bar
+	 *
+	 * @return      the normalized path
+	 */
+	Path normalize() const;
+
+	/**
 	 * Splits into path components. After every component except
 	 * last there is an implied separator. First component is empty
 	 * if path starts with a separator. Last component is empty if
