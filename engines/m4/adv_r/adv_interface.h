@@ -31,6 +31,7 @@ class Interface {
 public:
 	bool _shown = false;
 	bool _visible = false;
+	int _x1 = 0, _y1 = 0, _x2 = 0, _y2 = 0;
 
 	int _arrow = 0;
 	int _wait = 0;
@@ -48,22 +49,24 @@ public:
 
 	virtual bool set_interface_palette(RGB8 *myPalette) = 0;
 
-	void track_hotspots_refresh();
+	virtual bool eventHandler(void *bufferPtr, int32 eventType, int32 event, int32 x, int32 y, bool *z) = 0;
 
-	/**
-	 * Show the wait cursor
-	 */
-	void showWaitCursor();
+	void track_hotspots_refresh();
 
 	/**
 	 * Show the interface
 	 */
-	void show();
+	virtual void show();
 
 	/**
 	 * Hide the interface
 	 */
 	void hide();
+
+	/**
+	 * Show the wait cursor
+	 */
+	void showWaitCursor();
 };
 
 extern void interface_hide();

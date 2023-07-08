@@ -22,11 +22,19 @@
 #include "m4/burger/gui/interface.h"
 #include "m4/core/errors.h"
 #include "m4/graphics/gr_series.h"
+#include "m4/gui/gui_vmng.h"
 #include "m4/burger/vars.h"
 
 namespace M4 {
 namespace Burger {
 namespace GUI {
+
+Interface::Interface() : M4::Interface() {
+	_x1 = 0;
+	_y1 = 374;
+	_x2 = SCREEN_WIDTH;
+	_y2 = SCREEN_HEIGHT;
+}
 
 void Interface::init(int arrow, int wait, int look, int grab, int use) {
 	M4::Interface::init(arrow, wait, look, grab, use);
@@ -58,7 +66,11 @@ Interface::~Interface() {
 }
 
 void Interface::show() {
-	error("TODO: Interface::show");
+	M4::Interface::show();
+	_interfaceBox->_must_redraw_all = true;
+	vmng_screen_show(_G(gameInterfaceBuff));
+	_visible = true;
+	track_hotspots_refresh();
 }
 
 void Interface::setup() {
@@ -129,6 +141,11 @@ bool Interface::set_interface_palette(RGB8 *myPalette) {
 	gr_pal_set_RGB8(&myPalette[31], 255, 255, 255);
 	gr_pal_set_range(myPalette, 1, 31);
 
+	return true;
+}
+
+bool Interface::eventHandler(void *bufferPtr, int32 eventType, int32 event, int32 x, int32 y, bool *z) {
+	warning("TODO: Interface::eventHandler");
 	return true;
 }
 
