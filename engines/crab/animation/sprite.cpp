@@ -93,7 +93,7 @@ void Sprite::Load(rapidxml::xml_node<char> *node, Common::Array<Common::String> 
 			visible.Load(node->first_node("visible"));
 
 		if (NodeValid("movement", node, false))
-			ai_data.walk.Load(node->first_node("movement"));
+			ai_data.walk.load(node->first_node("movement"));
 
 		if (NodeValid("popup", node, false))
 			popup.Load(node->first_node("popup"));

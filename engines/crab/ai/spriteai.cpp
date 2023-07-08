@@ -254,40 +254,40 @@ void Sprite::Attack(pyrodactyl::event::Info &info, Sprite &target_sp, const Spri
 
 void Sprite::FlyAround(const Rect &camera, const SpriteConstant &sc) {
 	// Is this sprite flying right now?
-	if (ai_data.walk.enabled) {
+	if (ai_data.walk._enabled) {
 		// We're flying towards the left edge
 		if (XVel() < 0) {
 			// Are we completely out of the left edge of the camera?
 			if (X() < camera.x - W()) {
-				ai_data.walk.enabled = false;
+				ai_data.walk._enabled = false;
 
 				// Start the timer, set a semi-random time
-				ai_data.walk.timer.Target(sc.fly.delay_min + (g_engine->getRandomNumber(sc.fly.delay_max)));
-				ai_data.walk.timer.Start();
+				ai_data.walk._timer.Target(sc.fly.delay_min + (g_engine->getRandomNumber(sc.fly.delay_max)));
+				ai_data.walk._timer.Start();
 			}
 		}
 		// Flying towards the right edge
 		else if (XVel() > 0) {
 			// Are we completely out of the left edge of the camera?
 			if (X() > camera.x + camera.w + W()) {
-				ai_data.walk.enabled = false;
+				ai_data.walk._enabled = false;
 
 				// Start the timer, set a semi-random time
-				ai_data.walk.timer.Target(sc.fly.delay_min + (g_engine->getRandomNumber(sc.fly.delay_max)));
-				ai_data.walk.timer.Start();
+				ai_data.walk._timer.Target(sc.fly.delay_min + (g_engine->getRandomNumber(sc.fly.delay_max)));
+				ai_data.walk._timer.Start();
 			}
 		}
 
 		Move(sc);
 	} else {
 		// Safety condition in case timer isn't running
-		if (!ai_data.walk.timer.Started())
-			ai_data.walk.timer.Start();
+		if (!ai_data.walk._timer.Started())
+			ai_data.walk._timer.Start();
 
 		// Is it time to start flying?
-		if (ai_data.walk.timer.TargetReached()) {
+		if (ai_data.walk._timer.TargetReached()) {
 			// Stop the timer
-			ai_data.walk.timer.Stop();
+			ai_data.walk._timer.Stop();
 
 			// Decide if the sprite flies from the left or right of the camera
 			if (g_engine->getRandomNumber(1)) {
@@ -310,7 +310,7 @@ void Sprite::FlyAround(const Rect &camera, const SpriteConstant &sc) {
 			YVel(sc.fly.vel.y);
 
 			// Set state to flying
-			ai_data.walk.enabled = true;
+			ai_data.walk._enabled = true;
 		}
 	}
 }
