@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-06 19:47+0000\n"
+"POT-Creation-Date: 2023-07-08 16:50+0000\n"
 "PO-Revision-Date: 2023-05-17 15:40+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -459,7 +459,7 @@ msgstr "Завантаження закінчено, завантажено %d �
 #: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:384
 #: gui/gui-manager.cpp:162 gui/textviewer.cpp:53 gui/unknown-game-dialog.cpp:53
 #: backends/platform/android/options.cpp:492
-#: backends/platform/ios7/ios7_options.mm:131 engines/scumm/help.cpp:123
+#: backends/platform/ios7/ios7_options.mm:182 engines/scumm/help.cpp:123
 #: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
 #: engines/scumm/help.cpp:189 engines/scumm/help.cpp:207
 msgid "Close"
@@ -544,7 +544,8 @@ msgstr ""
 #: gui/options.cpp:3250 audio/null.cpp:45
 #: backends/platform/android/options.cpp:150
 #: backends/platform/android/options.cpp:151
-#: backends/platform/android/options.cpp:179 engines/ags/dialogs.cpp:63
+#: backends/platform/android/options.cpp:179
+#: backends/platform/ios7/ios7_options.mm:101 engines/ags/dialogs.cpp:63
 msgid "<default>"
 msgstr "<за умовчанням>"
 
@@ -1359,7 +1360,7 @@ msgstr "не вдалося змінити режим vsync"
 msgid "the shader could not be changed"
 msgstr "шейдер не може бути змінено"
 
-#: gui/options.cpp:1417 backends/platform/ios7/ios7_options.mm:69
+#: gui/options.cpp:1417 backends/platform/ios7/ios7_options.mm:80
 msgid "Touchpad mouse mode"
 msgstr "Режим тачпаду"
 
@@ -4262,6 +4263,7 @@ msgstr "Оберіть уподобаний режим дотику:"
 
 #: backends/platform/android/options.cpp:134
 #: backends/platform/android/options.cpp:165
+#: backends/platform/ios7/ios7_options.mm:87
 msgid "In menus"
 msgstr "В меню"
 
@@ -4292,11 +4294,14 @@ msgid "In 3D games"
 msgstr "У 3D іграх"
 
 #: backends/platform/android/options.cpp:163
+#: backends/platform/ios7/ios7_options.mm:85
 msgid "Select the orientation:"
 msgstr ""
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
+#: backends/platform/ios7/ios7_options.mm:89
+#: backends/platform/ios7/ios7_options.mm:104
 #, fuzzy
 #| msgid "Automatic drilling"
 msgid "Automatic"
@@ -4304,17 +4309,22 @@ msgstr "Автоматичне свердління"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
+#: backends/platform/ios7/ios7_options.mm:90
+#: backends/platform/ios7/ios7_options.mm:105
 msgid "Portrait"
 msgstr ""
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
+#: backends/platform/ios7/ios7_options.mm:91
+#: backends/platform/ios7/ios7_options.mm:106
 #, fuzzy
 #| msgid "Escape"
 msgid "Landscape"
 msgstr "Втікти"
 
 #: backends/platform/android/options.cpp:175
+#: backends/platform/ios7/ios7_options.mm:97
 #, fuzzy
 #| msgid "In 2D games"
 msgid "In games"
@@ -4341,29 +4351,29 @@ msgstr "Хардварне масштабування (швидко, але ни
 msgid "Software scale (good quality, but slower)"
 msgstr "Програмне масштабування (хороша якість, але повільніше)"
 
-#: backends/platform/ios7/ios7_options.mm:68
+#: backends/platform/ios7/ios7_options.mm:79
 #, fuzzy
 #| msgid "Show On-screen control"
 msgid "Show On-screen control (iOS 15 and later)"
 msgstr "Показувати екранне керування"
 
-#: backends/platform/ios7/ios7_options.mm:70
+#: backends/platform/ios7/ios7_options.mm:81
 #, fuzzy
 #| msgid "Mouse-click-and-drag mode enabled."
 msgid "Mouse-click-and-drag mode"
 msgstr "Режим миші клікнути-та-тягнути увімкнено."
 
-#: backends/platform/ios7/ios7_options.mm:71
+#: backends/platform/ios7/ios7_options.mm:82
 msgid "Show keyboard function bar"
 msgstr ""
 
-#: backends/platform/ios7/ios7_options.mm:73
+#: backends/platform/ios7/ios7_options.mm:109
 #, fuzzy
 #| msgid "Controls"
 msgid "Controls Help"
 msgstr "Керування"
 
-#: backends/platform/ios7/ios7_options.mm:105
+#: backends/platform/ios7/ios7_options.mm:156
 msgid ""
 "Gestures and controls:\n"
 "\n"
@@ -4380,7 +4390,7 @@ msgid ""
 "Keyboard spacebar: Pause"
 msgstr ""
 
-#: backends/platform/ios7/ios7_options.mm:118
+#: backends/platform/ios7/ios7_options.mm:169
 msgid ""
 "Using the Apple TV remote control:\n"
 "\n"
@@ -4396,19 +4406,19 @@ msgid ""
 "Keyboard spacebar: Pause"
 msgstr ""
 
-#: backends/platform/ios7/ios7_osys_events.cpp:459
+#: backends/platform/ios7/ios7_osys_events.cpp:443
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "Режим миші клікнути-та-тягнути увімкнено."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:461
+#: backends/platform/ios7/ios7_osys_events.cpp:445
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "Режим миші клікнути-та-тягнути вимкнено."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:482
+#: backends/platform/ios7/ios7_osys_events.cpp:466
 msgid "Touchpad mode enabled."
 msgstr "Режим тачпаду увімкнено."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:484
+#: backends/platform/ios7/ios7_osys_events.cpp:468
 msgid "Touchpad mode disabled."
 msgstr "Режим тачпаду вимкнено."
 

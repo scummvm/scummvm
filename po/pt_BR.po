@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-06 19:47+0000\n"
+"POT-Creation-Date: 2023-07-08 16:50+0000\n"
 "PO-Revision-Date: 2023-07-03 04:37+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -449,7 +449,7 @@ msgstr "Download concluído, foi(foram) baixado(s) %d pacote(s), %s %S"
 #: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:384
 #: gui/gui-manager.cpp:162 gui/textviewer.cpp:53 gui/unknown-game-dialog.cpp:53
 #: backends/platform/android/options.cpp:492
-#: backends/platform/ios7/ios7_options.mm:131 engines/scumm/help.cpp:123
+#: backends/platform/ios7/ios7_options.mm:182 engines/scumm/help.cpp:123
 #: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
 #: engines/scumm/help.cpp:189 engines/scumm/help.cpp:207
 msgid "Close"
@@ -532,7 +532,8 @@ msgstr "Idioma do jogo. Isto não irá mudar seu jogo de Inglês para Português
 #: gui/options.cpp:3250 audio/null.cpp:45
 #: backends/platform/android/options.cpp:150
 #: backends/platform/android/options.cpp:151
-#: backends/platform/android/options.cpp:179 engines/ags/dialogs.cpp:63
+#: backends/platform/android/options.cpp:179
+#: backends/platform/ios7/ios7_options.mm:101 engines/ags/dialogs.cpp:63
 msgid "<default>"
 msgstr "<padrão>"
 
@@ -1352,7 +1353,7 @@ msgstr "a configuração de sincronização vertical não pôde ser alterada"
 msgid "the shader could not be changed"
 msgstr "o sombreamento não pôde ser alterado"
 
-#: gui/options.cpp:1417 backends/platform/ios7/ios7_options.mm:69
+#: gui/options.cpp:1417 backends/platform/ios7/ios7_options.mm:80
 msgid "Touchpad mouse mode"
 msgstr "Modo de mouse Touchpad"
 
@@ -4240,6 +4241,7 @@ msgstr "Escolha o modo de toque preferido:"
 
 #: backends/platform/android/options.cpp:134
 #: backends/platform/android/options.cpp:165
+#: backends/platform/ios7/ios7_options.mm:87
 msgid "In menus"
 msgstr "Nos menus"
 
@@ -4270,25 +4272,33 @@ msgid "In 3D games"
 msgstr "Em jogos 3D"
 
 #: backends/platform/android/options.cpp:163
+#: backends/platform/ios7/ios7_options.mm:85
 msgid "Select the orientation:"
 msgstr "Selecionar orientação:"
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
+#: backends/platform/ios7/ios7_options.mm:89
+#: backends/platform/ios7/ios7_options.mm:104
 msgid "Automatic"
 msgstr "Automática"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
+#: backends/platform/ios7/ios7_options.mm:90
+#: backends/platform/ios7/ios7_options.mm:105
 msgid "Portrait"
 msgstr "Retrato"
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
+#: backends/platform/ios7/ios7_options.mm:91
+#: backends/platform/ios7/ios7_options.mm:106
 msgid "Landscape"
 msgstr "Paisagem"
 
 #: backends/platform/android/options.cpp:175
+#: backends/platform/ios7/ios7_options.mm:97
 msgid "In games"
 msgstr "Nos jogos"
 
@@ -4313,23 +4323,23 @@ msgstr "Redimensionamento por Hardware (rápido, mas com baixa qualidade)"
 msgid "Software scale (good quality, but slower)"
 msgstr "Redimensionamento por Software (boa qualidade, porém mais lento)"
 
-#: backends/platform/ios7/ios7_options.mm:68
+#: backends/platform/ios7/ios7_options.mm:79
 msgid "Show On-screen control (iOS 15 and later)"
 msgstr "Mostrar controle na tela (iOS 15 ou superior)"
 
-#: backends/platform/ios7/ios7_options.mm:70
+#: backends/platform/ios7/ios7_options.mm:81
 msgid "Mouse-click-and-drag mode"
 msgstr "Modo de clicar e arrastar com o mouse"
 
-#: backends/platform/ios7/ios7_options.mm:71
+#: backends/platform/ios7/ios7_options.mm:82
 msgid "Show keyboard function bar"
 msgstr "Exibir barra de funções do teclado"
 
-#: backends/platform/ios7/ios7_options.mm:73
+#: backends/platform/ios7/ios7_options.mm:109
 msgid "Controls Help"
 msgstr "Ajuda sobre Controles"
 
-#: backends/platform/ios7/ios7_options.mm:105
+#: backends/platform/ios7/ios7_options.mm:156
 msgid ""
 "Gestures and controls:\n"
 "\n"
@@ -4361,7 +4371,7 @@ msgstr ""
 "Gesto de pinça: Ativa/desativa o teclado\n"
 "Barra de espaço do teclado: Pausa"
 
-#: backends/platform/ios7/ios7_options.mm:118
+#: backends/platform/ios7/ios7_options.mm:169
 msgid ""
 "Using the Apple TV remote control:\n"
 "\n"
@@ -4394,19 +4404,19 @@ msgstr ""
 "para baixo\n"
 "Barra de espaço do teclado: Pausa"
 
-#: backends/platform/ios7/ios7_osys_events.cpp:459
+#: backends/platform/ios7/ios7_osys_events.cpp:443
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "Modo clique-e-arraste do mouse ativado."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:461
+#: backends/platform/ios7/ios7_osys_events.cpp:445
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "Modo clique-e-arraste do mouse desativado."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:482
+#: backends/platform/ios7/ios7_osys_events.cpp:466
 msgid "Touchpad mode enabled."
 msgstr "Modo Touchpad ativado."
 
-#: backends/platform/ios7/ios7_osys_events.cpp:484
+#: backends/platform/ios7/ios7_osys_events.cpp:468
 msgid "Touchpad mode disabled."
 msgstr "Modo Touchpad desativado."
 

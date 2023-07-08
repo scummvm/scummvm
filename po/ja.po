@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-06 19:47+0000\n"
+"POT-Creation-Date: 2023-07-08 16:50+0000\n"
 "PO-Revision-Date: 2023-07-02 08:55+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -442,7 +442,7 @@ msgstr "DL完了。%dパック検出しました、%s %S"
 #: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:384
 #: gui/gui-manager.cpp:162 gui/textviewer.cpp:53 gui/unknown-game-dialog.cpp:53
 #: backends/platform/android/options.cpp:492
-#: backends/platform/ios7/ios7_options.mm:131 engines/scumm/help.cpp:123
+#: backends/platform/ios7/ios7_options.mm:182 engines/scumm/help.cpp:123
 #: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
 #: engines/scumm/help.cpp:189 engines/scumm/help.cpp:207
 msgid "Close"
@@ -525,7 +525,8 @@ msgstr "ゲームの言語です。スペイン語版を英語版に変換はし
 #: gui/options.cpp:3250 audio/null.cpp:45
 #: backends/platform/android/options.cpp:150
 #: backends/platform/android/options.cpp:151
-#: backends/platform/android/options.cpp:179 engines/ags/dialogs.cpp:63
+#: backends/platform/android/options.cpp:179
+#: backends/platform/ios7/ios7_options.mm:101 engines/ags/dialogs.cpp:63
 msgid "<default>"
 msgstr "<デフォルト>"
 
@@ -1339,7 +1340,7 @@ msgstr "垂直同期設定を変更できませんでした"
 msgid "the shader could not be changed"
 msgstr "シェーダーを変更できませんでした"
 
-#: gui/options.cpp:1417 backends/platform/ios7/ios7_options.mm:69
+#: gui/options.cpp:1417 backends/platform/ios7/ios7_options.mm:80
 msgid "Touchpad mouse mode"
 msgstr "タッチパッドマウスモード"
 
@@ -4177,6 +4178,7 @@ msgstr "好みのタッチモードを選択："
 
 #: backends/platform/android/options.cpp:134
 #: backends/platform/android/options.cpp:165
+#: backends/platform/ios7/ios7_options.mm:87
 msgid "In menus"
 msgstr "メニューで"
 
@@ -4207,25 +4209,33 @@ msgid "In 3D games"
 msgstr "3Dゲームで"
 
 #: backends/platform/android/options.cpp:163
+#: backends/platform/ios7/ios7_options.mm:85
 msgid "Select the orientation:"
 msgstr "オリエンテーションを選択："
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
+#: backends/platform/ios7/ios7_options.mm:89
+#: backends/platform/ios7/ios7_options.mm:104
 msgid "Automatic"
 msgstr "オート"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
+#: backends/platform/ios7/ios7_options.mm:90
+#: backends/platform/ios7/ios7_options.mm:105
 msgid "Portrait"
 msgstr "ポートレート"
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
+#: backends/platform/ios7/ios7_options.mm:91
+#: backends/platform/ios7/ios7_options.mm:106
 msgid "Landscape"
 msgstr "風景"
 
 #: backends/platform/android/options.cpp:175
+#: backends/platform/ios7/ios7_options.mm:97
 msgid "In games"
 msgstr "ゲーム内"
 
@@ -4250,23 +4260,23 @@ msgstr "ハードウェアスケーリング(高速・低画質)"
 msgid "Software scale (good quality, but slower)"
 msgstr "ソフトウェアスケーリング(低速・高画質)"
 
-#: backends/platform/ios7/ios7_options.mm:68
+#: backends/platform/ios7/ios7_options.mm:79
 msgid "Show On-screen control (iOS 15 and later)"
 msgstr "画面上コントロールを表示(iOS 15以上)"
 
-#: backends/platform/ios7/ios7_options.mm:70
+#: backends/platform/ios7/ios7_options.mm:81
 msgid "Mouse-click-and-drag mode"
 msgstr "クリック&ドラッグモード"
 
-#: backends/platform/ios7/ios7_options.mm:71
+#: backends/platform/ios7/ios7_options.mm:82
 msgid "Show keyboard function bar"
 msgstr "キーボード機能バーを表示"
 
-#: backends/platform/ios7/ios7_options.mm:73
+#: backends/platform/ios7/ios7_options.mm:109
 msgid "Controls Help"
 msgstr "操作ヘルプ"
 
-#: backends/platform/ios7/ios7_options.mm:105
+#: backends/platform/ios7/ios7_options.mm:156
 msgid ""
 "Gestures and controls:\n"
 "\n"
@@ -4295,7 +4305,7 @@ msgstr ""
 "ピンチ：キーボード有効化/無効化の切替\n"
 "スペースキー：ポーズ"
 
-#: backends/platform/ios7/ios7_options.mm:118
+#: backends/platform/ios7/ios7_options.mm:169
 msgid ""
 "Using the Apple TV remote control:\n"
 "\n"
@@ -4323,19 +4333,19 @@ msgstr ""
 "タッチエリア下部にタッチ：下矢印キー\n"
 "スペースキー：ポーズ"
 
-#: backends/platform/ios7/ios7_osys_events.cpp:459
+#: backends/platform/ios7/ios7_osys_events.cpp:443
 msgid "Mouse-click-and-drag mode enabled."
 msgstr "クリック&ドラッグモードが有効になりました。"
 
-#: backends/platform/ios7/ios7_osys_events.cpp:461
+#: backends/platform/ios7/ios7_osys_events.cpp:445
 msgid "Mouse-click-and-drag mode disabled."
 msgstr "クリック&ドラッグモードが無効になりました。"
 
-#: backends/platform/ios7/ios7_osys_events.cpp:482
+#: backends/platform/ios7/ios7_osys_events.cpp:466
 msgid "Touchpad mode enabled."
 msgstr "タッチパッド操作が有効になりました。"
 
-#: backends/platform/ios7/ios7_osys_events.cpp:484
+#: backends/platform/ios7/ios7_osys_events.cpp:468
 msgid "Touchpad mode disabled."
 msgstr "タッチパッド操作が無効になりました。"
 
