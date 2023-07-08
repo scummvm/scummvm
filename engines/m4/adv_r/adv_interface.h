@@ -27,6 +27,45 @@
 
 namespace M4 {
 
+class Interface {
+public:
+	bool _shown = false;
+	bool _visible = false;
+
+	int _arrow = 0;
+	int _wait = 0;
+	int _look = 0;
+	int _grab = 0;
+	int _use = 0;
+
+public:
+	virtual ~Interface() {
+	}
+
+	virtual void init(int arrow, int wait, int look, int grab, int use);
+
+	virtual void cancel_sentence() = 0;
+
+	virtual bool set_interface_palette(RGB8 *myPalette) = 0;
+
+	void track_hotspots_refresh();
+
+	/**
+	 * Show the wait cursor
+	 */
+	void showWaitCursor();
+
+	/**
+	 * Show the interface
+	 */
+	void show();
+
+	/**
+	 * Hide the interface
+	 */
+	void hide();
+};
+
 extern void interface_hide();
 extern void interface_show();
 
