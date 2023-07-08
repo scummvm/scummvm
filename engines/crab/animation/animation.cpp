@@ -36,30 +36,30 @@ using namespace pyrodactyl::image;
 using namespace pyrodactyl::anim;
 
 Animation::Animation(rapidxml::xml_node<char> *node) {
-	LoadNum(length, "length", node);
+	LoadNum(_length, "length", node);
 	for (auto n = node->first_node("frame"); n != NULL; n = n->next_sibling("frame"))
-		frame.push_back(n);
+		_frame.push_back(n);
 }
 
-void Animation::Draw() {
-	uint32 timestamp = timer.Ticks();
-	for (auto i = frame.begin(); i != frame.end(); ++i)
+void Animation::draw() {
+	uint32 timestamp = _timer.Ticks();
+	for (auto i = _frame.begin(); i != _frame.end(); ++i)
 		i->Draw(timestamp);
 }
 
-bool Animation::InternalEvents(DrawType &game_draw) {
-	uint32 timestamp = timer.Ticks();
-	for (auto i = frame.begin(); i != frame.end(); ++i) {
+bool Animation::internalEvents(DrawType &gameDraw) {
+	uint32 timestamp = _timer.Ticks();
+	for (auto i = _frame.begin(); i != _frame.end(); ++i) {
 		DrawType result = i->InternalEvents(timestamp);
 		// if (result != DRAW_SAME)
-		game_draw = result;
+		gameDraw = result;
 	}
 
-	return timer.Ticks() >= length;
+	return _timer.Ticks() >= _length;
 }
 
-void Animation::Reset() {
-	for (auto i = frame.begin(); i != frame.end(); ++i)
+void Animation::reset() {
+	for (auto i = _frame.begin(); i != _frame.end(); ++i)
 		i->Reset();
 }
 
