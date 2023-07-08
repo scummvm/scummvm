@@ -88,14 +88,11 @@
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
 	[super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-
-	[coordinator animateAlongsideTransition:nil completion:^(id<UIViewControllerTransitionCoordinatorContext> context) {
-		UIInterfaceOrientation orientationAfter = [self interfaceOrientation];
-		if (orientationAfter != UIInterfaceOrientationUnknown && orientationAfter != currentOrientation) {
-			currentOrientation = orientationAfter;
-			[[iOS7AppDelegate iPhoneView] interfaceOrientationChanged:currentOrientation];
-		}
-	}];
+	UIInterfaceOrientation orientationAfter = [self interfaceOrientation];
+	if (orientationAfter != UIInterfaceOrientationUnknown && orientationAfter != currentOrientation) {
+		currentOrientation = orientationAfter;
+		[[iOS7AppDelegate iPhoneView] interfaceOrientationChanged:currentOrientation];
+	}
 }
 #endif
 
