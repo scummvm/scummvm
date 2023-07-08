@@ -27,7 +27,9 @@
 
 namespace AGS3 {
 
-
+inline __m128i simd2BppTo4Bpp(__m64 pixels) {
+    
+}
 
 } // namespace AGS3
 
