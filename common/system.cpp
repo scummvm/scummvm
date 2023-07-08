@@ -37,6 +37,7 @@
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/fs/fs-factory.h"
 #include "backends/timer/default/default-timer.h"
+#include "backends/dlc/store.h"
 
 OSystem *g_system = nullptr;
 
