@@ -170,6 +170,17 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 
+	// Spanish (older) - reported in TRAC #14490
+	{
+		"peril",
+		0,
+		AD_ENTRY1s("PPTP.ORB", "e9bc2eca6526c1b2f0047dc3f1c815d2", 634841166),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NOMIDI)
+	},
+
 	// Spanish
 	{
 		"peril",
