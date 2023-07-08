@@ -198,18 +198,6 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		NULL
 	},
 	{
-		"scummvm_consecutive_screen_updates",
-		"Disabilita aggiornamenti schermo consecutivi",
-		NULL,
-		"Mentre libretro si basa su FPS costante, ScummVM può aggiornare lo schermo indipentendemente dal framerate impostato. Di default tutti gli aggiornamenti schermo consecutivi di ScummVM vengono catturati e processati nella stessa chiamata a retro_run, migliorando l'accuratezza (es. effetti nei titoli dell'intro di Legend of Kyrandia) ma aumentando il tempo di esecuzione di quel loop retro_run. Se questa opzione è abilitata solo l'ultimo aggiornamento schermo di una serie consecutiva sarà mostrato. Se 'Consenti inaccuratezze di timing' è abilitato, questa impostazione sarà ignorata e abilitata internamente.",
-		NULL,
-		NULL,
-                {
-			{NULL, NULL},
-		},
-		NULL
-        },
-	{
 		"scummvm_allow_timing_inaccuracies",
 		"Consenti inaccuratezze di timing",
 		NULL,

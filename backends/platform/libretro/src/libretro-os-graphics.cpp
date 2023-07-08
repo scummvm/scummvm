@@ -301,14 +301,9 @@ void OSystem_libretro::updateScreen() {
 		}
 	}
 
-	/* Switch directly to main thread in case of consecutive updateScreen, to avoid losing frames.
-	Non consecutive updateScreen are covered by thread switches triggered by pollEvent or delayMillis. */
-	if (! timing_inaccuracies_is_enabled() && consecutive_screen_updates_is_enabled()) {
-		if (_threadSwitchCaller & THREAD_SWITCH_UPDATE) {
-			((LibretroTimerManager *)_timerManager)->switchThread();
-		} else {
-			_threadSwitchCaller = THREAD_SWITCH_UPDATE;
-		}
+	if (! timing_inaccuracies_is_enabled()) {
+		_threadSwitchCaller = THREAD_SWITCH_UPDATE;
+		((LibretroTimerManager *)_timerManager)->checkThread();
 	}
 }
 

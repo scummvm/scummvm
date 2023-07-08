@@ -78,7 +78,6 @@ static float mouse_speed = 1.0f;
 static float gamepad_acceleration_time = 0.2f;
 
 static bool timing_inaccuracies_enabled = false;
-static bool consecutive_screen_updates = false;
 
 char cmd_params[20][200];
 char cmd_params_num;
@@ -150,12 +149,6 @@ static void retro_audio_buff_status_cb(bool active, unsigned occupancy, bool und
 }
 
 static void increase_performance() {
-	if (!(performance_switch & PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES)) {
-		performance_switch |= PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES;
-		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Disable consecutive screen updates' enabled.\n");
-		return;
-	}
-
 	if (!(performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES)) {
 		performance_switch |= PERF_SWITCH_ENABLE_TIMING_INACCURACIES;
 		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Allow Timing Inaccuracies' enabled.\n");
@@ -171,13 +164,6 @@ static void increase_accuracy() {
 	if (performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES) {
 		performance_switch &= ~PERF_SWITCH_ENABLE_TIMING_INACCURACIES;
 		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Allow Timing Inaccuracies' disabled.\n");
-		return;
-	}
-
-
-	if (performance_switch & PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES) {
-		performance_switch &= ~PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES;
-		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Disable consecutive screen updates' disabled.\n");
 		return;
 	}
 }
@@ -287,14 +273,6 @@ static void update_variables(void) {
 			performance_switch = 0;
 	}
 
-	var.key = "scummvm_consecutive_screen_updates";
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		if (strcmp(var.value, "enabled") == 0) {
-			consecutive_screen_updates = false;
-		} else
-			consecutive_screen_updates = true;
-	}
-
 	if (!(audio_status & AUDIO_STATUS_BUFFER_SUPPORT)) {
 		if (frameskip_type > 1) {
 			log_cb(RETRO_LOG_WARN, "Selected frameskip mode not available.\n");
@@ -321,13 +299,6 @@ bool timing_inaccuracies_is_enabled(){
 		return (performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES);
 	else
 		return timing_inaccuracies_enabled;
-}
-
-bool consecutive_screen_updates_is_enabled(){
-	if (performance_switch & PERF_SWITCH_ON)
-		return !(performance_switch & PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES);
-	else
-		return consecutive_screen_updates;
 }
 
 void init_command_params(void) {

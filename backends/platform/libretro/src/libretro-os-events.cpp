@@ -38,7 +38,6 @@ Common::List<Common::Event> OSystem_libretro::_events;
 bool OSystem_libretro::pollEvent(Common::Event &event) {
 	_threadSwitchCaller = THREAD_SWITCH_POLL;
 	((LibretroTimerManager *)_timerManager)->checkThread();
-	((LibretroTimerManager *)_timerManager)->handler();
 	if (!_events.empty()) {
 		event = _events.front();
 		_events.pop_front();
@@ -97,8 +96,6 @@ void OSystem_libretro::delayMillis(uint msecs) {
 			elapsed_time = getMillis() - start_time;
 		}
 	}
-
-	((LibretroTimerManager *)_timerManager)->handler();
 }
 
 Common::MutexInternal *OSystem_libretro::createMutex(void) {

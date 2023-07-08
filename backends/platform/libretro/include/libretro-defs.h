@@ -34,8 +34,7 @@
 #define PERF_SWITCH_FRAMESKIP_EVENTS                    REFRESH_RATE / 2
 #define PERF_SWITCH_ON                                  (1 << 0)
 #define PERF_SWITCH_ENABLE_TIMING_INACCURACIES          (1 << 1)
-#define PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES  (1 << 2)
-#define PERF_SWITCH_OVER                                (1 << 3)
+#define PERF_SWITCH_OVER                                (1 << 2)
 #define PERF_SWITCH_RESET_THRESHOLD                     60
 #define PERF_SWITCH_RESET_REST                          REFRESH_RATE * 30
 
