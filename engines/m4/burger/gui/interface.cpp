@@ -105,7 +105,17 @@ void Interface::setup() {
 }
 
 void Interface::cancel_sentence() {
-	warning("TODO: cancel_sentence");
+	_textField->set_string(" ");
+	_G(player).need_to_walk = false;
+	_G(player).ready_to_walk = false;
+	_G(player).command_ready = false;
+
+	_pointer1 = nullptr;
+	_pointer2 = nullptr;
+	_pointer3 = nullptr;
+	_flag1 = false;
+
+	track_hotspots_refresh();
 }
 
 bool Interface::set_interface_palette(RGB8 *myPalette) {

@@ -52,6 +52,10 @@ public:
 	GUI::ButtonClass *_btnScrollRight = nullptr;
 	void *_hotspot = nullptr;
 	uint32 _counter = 0;
+	void *_pointer1 = nullptr;
+	void *_pointer2 = nullptr;
+	void *_pointer3 = nullptr;
+	bool _flag1 = false;
 
 	Interface();
 	~Interface() override;
