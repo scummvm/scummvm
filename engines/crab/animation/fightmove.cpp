@@ -47,7 +47,7 @@ void FightMove::Load(rapidxml::xml_node<char> *node) {
 		unlock.Load(node->first_node("unlock"));
 
 	if (NodeValid("effect", node))
-		eff.Load(node->first_node("effect"));
+		eff.load(node->first_node("effect"));
 
 	if (NodeValid("ai", node, false))
 		ai.Load(node->first_node("ai"));
