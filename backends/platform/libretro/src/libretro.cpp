@@ -87,8 +87,6 @@ int adjusted_RES_H = 0;
 
 static uint32 current_frame = 0;
 static uint8 frameskip_no;
-static uint8 min_auto_frameskip = 0;
-static uint8 min_auto_frameskip_count = 0;
 static uint8 frameskip_type;
 static uint8 frameskip_threshold;
 static uint32 frameskip_counter = 0;
@@ -173,8 +171,6 @@ void reset_performance_tuner() {
 		performance_switch = PERF_SWITCH_ON;
 		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: reset.\n");
 	}
-	min_auto_frameskip = 0;
-	min_auto_frameskip_count = 0;
 }
 
 void retro_osd_notification(const char* msg) {
@@ -288,8 +284,6 @@ static void update_variables(void) {
 	}
 
 	if (old_frameskip_type != frameskip_type) {
-		min_auto_frameskip = 0;
-		min_auto_frameskip_count = 0;
 		audio_status |= AUDIO_STATUS_UPDATE_LATENCY;
 	}
 }
@@ -730,14 +724,8 @@ void retro_run(void) {
 		delayMillis call in ScummVM thread. */
 		do {
 			/* Determine frameskip need based on settings */
-			if ((frameskip_type == 2) || (performance_switch & PERF_SWITCH_ON)) {
+			if ((frameskip_type == 2) || (performance_switch & PERF_SWITCH_ON))
 				skip_frame = (audio_status & AUDIO_STATUS_BUFFER_UNDERRUN);
-				if (skip_frame)
-					min_auto_frameskip_count = min_auto_frameskip;
-				else if (min_auto_frameskip_count) {
-					skip_frame = min_auto_frameskip_count--;
-				}
-			}
 			else if (frameskip_type == 1)
 				skip_frame = !(current_frame % frameskip_no == 0);
 			else if (frameskip_type == 3)
@@ -757,14 +745,10 @@ void retro_run(void) {
 			} else if (skip_frame) {
 				frameskip_counter++;
 				/* Performance counter */
-				if (((performance_switch & PERF_SWITCH_ON) && !(performance_switch & PERF_SWITCH_OVER)) || ((frameskip_type == 2 || (performance_switch & PERF_SWITCH_ON)) && min_auto_frameskip < MIN_AUTO_FRAMESKIP_MAX)) {
+				if ((performance_switch & PERF_SWITCH_ON) && !(performance_switch & PERF_SWITCH_OVER)) {
 					frameskip_events += frameskip_counter;
 					if (frameskip_events > PERF_SWITCH_FRAMESKIP_EVENTS) {
-						if ((frameskip_type == 2 || (performance_switch & PERF_SWITCH_ON)) && min_auto_frameskip < MIN_AUTO_FRAMESKIP_MAX) {
-							min_auto_frameskip++;
-							log_cb(RETRO_LOG_DEBUG, "Auto frameskip: minimum frameskip number set to %d.\n", min_auto_frameskip + 1);
-						} else if ((performance_switch & PERF_SWITCH_ON) && !(performance_switch & PERF_SWITCH_OVER))
-							increase_performance();
+						increase_performance();
 						frameskip_events = 0;
 						perf_ref_frame = current_frame;
 						perf_ref_audio_buff_occupancy = 0;
@@ -773,17 +757,12 @@ void retro_run(void) {
 			}
 
 			/* Performance tuner reset if average buffer occupacy is above the required threshold again */
-			if (!skip_frame && (((performance_switch & PERF_SWITCH_ON) && performance_switch > PERF_SWITCH_ON) || ((frameskip_type == 2 || (performance_switch & PERF_SWITCH_ON)) && min_auto_frameskip))) {
+			if (!skip_frame && (performance_switch & PERF_SWITCH_ON) && performance_switch > PERF_SWITCH_ON) {
 				perf_ref_audio_buff_occupancy += retro_audio_buff_occupancy;
 				if ((current_frame - perf_ref_frame) % (PERF_SWITCH_RESET_REST) == 0) {
 					uint32 avg_audio_buff_occupancy = perf_ref_audio_buff_occupancy / (current_frame + 1 - perf_ref_frame);
 					if (avg_audio_buff_occupancy > PERF_SWITCH_RESET_THRESHOLD || avg_audio_buff_occupancy == retro_audio_buff_occupancy)
-						if ((performance_switch & PERF_SWITCH_ON) && performance_switch > PERF_SWITCH_ON)
-							increase_accuracy();
-						else if ((frameskip_type == 2 || (performance_switch & PERF_SWITCH_ON)) && min_auto_frameskip) {
-							min_auto_frameskip--;
-							log_cb(RETRO_LOG_DEBUG, "Auto frameskip: minimum frameskip number set to %d.\n", min_auto_frameskip + 1);
-						}
+						increase_accuracy();
 					perf_ref_frame = current_frame - 1;
 					perf_ref_audio_buff_occupancy = 0;
 					frameskip_events = 0;
