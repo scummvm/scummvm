@@ -70,7 +70,8 @@ Common::Error Window::loadInitialMovie() {
 	probeResources(_mainArchive);
 
 	// Load multiple-resources based executable file (Projector)
-	ProjectorArchive *multiArchive = new ProjectorArchive(_vm->getRawEXEName());
+	Common::String rawEXE = _vm->getRawEXEName();
+	ProjectorArchive *multiArchive = new ProjectorArchive(findPath(rawEXE));
 	if (multiArchive->isLoaded()) {
 		// A valid projector archive, add to SearchMan
 		SearchMan.add(_vm->getRawEXEName(), multiArchive);
@@ -552,7 +553,7 @@ void Window::loadStartMovieXLibs() {
 	g_lingo->openXLib("SerialPort", kXObj);
 }
 
-ProjectorArchive::ProjectorArchive(Common::String path)
+ProjectorArchive::ProjectorArchive(Common::Path path)
 	: _path(path), _files() {
 
 	// Buffer 100K into memory
@@ -571,10 +572,9 @@ ProjectorArchive::ProjectorArchive(Common::String path)
 Common::SeekableReadStream *ProjectorArchive::createBufferedReadStream() {
 	const uint32 READ_BUFFER_SIZE = 1024 * 100;
 
-	Common::Path path(_path, g_director->_dirSeparator);
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(path);
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(_path);
 	if (!stream) {
-		warning("ProjectorArchive::createBufferedReadStream(): Cannot open %s", path.toString().c_str());
+		warning("ProjectorArchive::createBufferedReadStream(): Cannot open %s", _path.toString().c_str());
 		return nullptr;
 	}
 
@@ -611,7 +611,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 	stream->seek(rifxOffset);
 	tag = stream->readUint32BE();
 
-	debugC(1, kDebugLoading, "File: %s off: 0x%x, tag: %s rifx: 0x%x", _path.c_str(), off, tag2str(tag), rifxOffset);
+	debugC(1, kDebugLoading, "File: %s off: 0x%x, tag: %s rifx: 0x%x", _path.toString().c_str(), off, tag2str(tag), rifxOffset);
 
 	// Try to locate the very next Dict tag(byte-by-byte)
 	tag = stream->readUint32BE();

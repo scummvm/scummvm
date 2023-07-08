@@ -161,7 +161,7 @@ protected:
 
 class ProjectorArchive : public Common::Archive {
 public:
-	ProjectorArchive(Common::String path);
+	ProjectorArchive(Common::Path path);
 	~ProjectorArchive() override;
 
 	bool hasFile(const Common::Path &path) const override;
@@ -179,7 +179,7 @@ private:
 	};
 	typedef Common::HashMap<Common::String, Entry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
 	FileMap _files;
-	Common::String _path;
+	Common::Path _path;
 
 	bool _isLoaded;
 };
