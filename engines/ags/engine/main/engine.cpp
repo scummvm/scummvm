@@ -24,7 +24,6 @@
 //
 
 #include "ags/lib/allegro/color.h"
-#include "ags/lib/std/chrono.h"
 #include "ags/shared/core/platform.h"
 #include "ags/lib/allegro.h" // allegro_install and _exit
 #include "ags/engine/ac/asset_helper.h"
@@ -73,7 +72,6 @@
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/error.h"
-#include "ags/shared/util/file.h"
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/ags.h"

@@ -21,6 +21,7 @@
 
 #include "ags/shared/debugging/out.h"
 #include "common/scummsys.h"
+#include "common/debug.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/gfx/gfx_def.h"
 //#include "ags/shared/debugging/assert.h"
@@ -36,7 +37,11 @@
 #include "graphics/pixelformat.h"
 
 #ifdef __aarch64__
+#define OPT_NEON
 #include "ags/lib/allegro/surface_simd_neon.h"
+#elif defined(__x86_64__) || defined(__i686__)
+#define OPT_SSE
+#include "ags/lib/allegro/surface_simd_sse.h"
 #endif
 
 namespace AGS3 {
@@ -44,17 +49,14 @@ namespace AGS3 {
 namespace GfxDef = AGS::Shared::GfxDef;
 using namespace AGS::Shared;
 
-// This is so that it debug info can be printed
-// If there is a better way of doing this, please change it
-#undef printf
 // Comment this out if you don't want the console to be clogged with info durning tests
 #define VERBOSE_TEST_GFX
 
 void Test_GfxSpeed(bool opt, int blenderModeStart, int blenderModeEnd) {
 	_G(_bitmap_simd_optimizations) = opt;
 #ifdef VERBOSE_TEST_GFX
-	if (opt) printf("SIMD optimizations: true\n");
-	else printf("SIMD optmizations: false\n");
+	if (opt) debug("SIMD optimizations: true\n");
+	else debug("SIMD optmizations: false\n");
 #endif
 	Bitmap *benchgfx32 = BitmapHelper::CreateBitmap(100, 100, 32);
 	Bitmap *benchgfx16 = BitmapHelper::CreateBitmapCopy(benchgfx32, 16);
@@ -62,7 +64,7 @@ void Test_GfxSpeed(bool opt, int blenderModeStart, int blenderModeEnd) {
 	Bitmap *dest32 = BitmapHelper::CreateBitmap(100, 100, 32);
 	Bitmap *dest16 = BitmapHelper::CreateBitmap(100, 100, 16);
 	Bitmap *dest8 = BitmapHelper::CreateBitmap(100, 100, 8);
-	Debug::Printf(kDbgMsg_Info, "%d %d %d %d %d %d", benchgfx32, benchgfx16, benchgfx8, dest32, dest16, dest8);
+	debug("%d %d %d %d %d %d", benchgfx32, benchgfx16, benchgfx8, dest32, dest16, dest8);
 	int benchRuns[] = {1000, 10000, 100000};
 	int blenderModes[] = {kRgbToRgbBlender, kSourceAlphaBlender, kArgbToArgbBlender, kOpaqueBlenderMode, kTintLightBlenderMode};
 	const char *modeNames[] = {"RGB to RGB", "Source Alpha", "ARGB to ARGB", "Opaque", "Tint with Light"};
@@ -77,22 +79,22 @@ void Test_GfxSpeed(bool opt, int blenderModeStart, int blenderModeEnd) {
 					uint32 start, end;
 					_G(_blender_mode) = (AGS3::BlenderMode)blenderModes[mode];
 #ifdef VERBOSE_TEST_GFX
-					if (runs == 2) printf("Dest: %d bpp, Gfx: %d bpp, Blender: %s, Stretched: false, Iters: %d\n", bpps[dest], bpps[gfx], modeNames[mode], benchRuns[runs]);
+					if (runs == 2) debug("Dest: %d bpp, Gfx: %d bpp, Blender: %s, Stretched: false, Iters: %d\n", bpps[dest], bpps[gfx], modeNames[mode], benchRuns[runs]);
 #endif
 					start = std::chrono::high_resolution_clock::now();
 					for (int i = 0; i < benchRuns[runs]; i++)
 						destinations[dest]->Blit(graphics[gfx], 0, 0, kBitmap_Transparency);
 					end = std::chrono::high_resolution_clock::now();
 #ifdef VERBOSE_TEST_GFX
-					if (runs == 2) printf("exec time (mills): %u\n\n", end - start);
-					if (runs == 2) printf("Dest: %d bpp, Gfx: %d bpp, Blender: %s, Stretched: true, Iters: %d\n", bpps[dest], bpps[gfx], modeNames[mode], benchRuns[runs]);
+					if (runs == 2) debug("exec time (mills): %u\n\n", end - start);
+					if (runs == 2) debug("Dest: %d bpp, Gfx: %d bpp, Blender: %s, Stretched: true, Iters: %d\n", bpps[dest], bpps[gfx], modeNames[mode], benchRuns[runs]);
 #endif
 					start = std::chrono::high_resolution_clock::now();
 					for (int i = 0; i < benchRuns[runs]; i++)
 						destinations[dest]->StretchBlt(graphics[gfx], Rect(0, 0, 99, 99), kBitmap_Transparency);
 					end = std::chrono::high_resolution_clock::now();
 #ifdef VERBOSE_TEST_GFX
-					if (runs == 2) printf("exec time (mills): %u\n\n", end - start);
+					if (runs == 2) debug("exec time (mills): %u\n\n", end - start);
 #endif
 				}
 			}
@@ -150,37 +152,49 @@ void Test_BlenderModes() {
 											r16 >>= 3; g16 >>= 2; b16 >>= 3;
 											control2bppCol = b16 | (g16 << 5) | (r16 << 11);
 											{
+#ifdef OPT_NEON
 												uint32x4_t src = vdupq_n_u32(srcB | (srcG << 8) | (srcR << 16) | (srcA << 24));
 												uint32x4_t dest = vdupq_n_u32(destB | (destG << 8) | (destR << 16) | (destA << 24));
 												uint32x4_t alphas = vdupq_n_u32(alpha);
 												simdCol = vgetq_lane_u32(blendPixelSIMD(src, dest, alphas), 0);
+#else
+												//__m128i src = _mm_set1_epi32(srcB | (srcG << 8) | (srcR << 16) | (srcA << 24));
+												//__m128i dest = _mm_set1_epi32(destB | (destG << 8) | (destR << 16) | (destA << 24));
+												//__m128i alphas = _mm_set1_epi32(alpha);
+												//simdCol = _mm_extract_epi32();
+												simdCol = controlCol; // Not implemented yet
+#endif
 											}
 											{
+#ifdef OPT_NEON
 												uint16x8_t src = vdupq_n_u16((srcB >> 3) | ((srcG >> 2) << 5) | ((srcR >> 3) << 11));
 												uint16x8_t dest = vdupq_n_u16((destB >> 3) | ((destG >> 2) << 5) | ((destR >> 3) << 11));
 												uint16x8_t alphas = vdupq_n_u16((uint16)alpha);
 												simd2bppCol = vgetq_lane_u16(blendPixelSIMD2Bpp(src, dest, alphas), 0);
+#else
+												simd2bppCol = control2bppCol; // Not implemented yet
+#endif
 											}
 #ifdef VERBOSE_TEST_GFX
-											printf("src argb: %d, %d, %d, %d dest argb: %d, %d, %d, %d a: %d\n", srcA, srcR, srcG, srcB, destA, destR, destG, destB, alpha);
+											debug("src argb: %d, %d, %d, %d dest argb: %d, %d, %d, %d a: %d\n", srcA, srcR, srcG, srcB, destA, destR, destG, destB, alpha);
 #endif
 											switch ((BlenderMode)blenderMode) {
-												case kSourceAlphaBlender: printf("blenderMode: kSourceAlphaBlender\n"); break;
-												case kArgbToArgbBlender: printf("blenderMode: kArgbToArgbBlender\n"); break;
-												case kArgbToRgbBlender: printf("blenderMode: kArgbToRgbBlender\n"); break;
-												case kRgbToArgbBlender: printf("blenderMode: kRgbToArgbBlender\n"); break;
-												case kRgbToRgbBlender: printf("blenderMode: kRgbToRgbBlender\n"); break;
-												case kAlphaPreservedBlenderMode: printf("blenderMode: kAlphaPreservedBlenderMode\n"); break;
-												case kOpaqueBlenderMode: printf("blenderMode: kOpaqueBlenderMode\n"); break;
-												case kAdditiveBlenderMode: printf("blenderMode: kAdditiveBlenderMode\n"); break;
-												case kTintBlenderMode: printf("blenderMode: kTintBlenderMode\n"); break;
-												case kTintLightBlenderMode: printf("blenderMode: kTintLightBlenderMode\n"); break;
+												case kSourceAlphaBlender: debug("blenderMode: kSourceAlphaBlender\n"); break;
+												case kArgbToArgbBlender: debug("blenderMode: kArgbToArgbBlender\n"); break;
+												case kArgbToRgbBlender: debug("blenderMode: kArgbToRgbBlender\n"); break;
+												case kRgbToArgbBlender: debug("blenderMode: kRgbToArgbBlender\n"); break;
+												case kRgbToRgbBlender: debug("blenderMode: kRgbToRgbBlender\n"); break;
+												case kAlphaPreservedBlenderMode: debug("blenderMode: kAlphaPreservedBlenderMode\n"); break;
+												case kOpaqueBlenderMode: debug("blenderMode: kOpaqueBlenderMode\n"); break;
+												case kAdditiveBlenderMode: debug("blenderMode: kAdditiveBlenderMode\n"); break;
+												case kTintBlenderMode: debug("blenderMode: kTintBlenderMode\n"); break;
+												case kTintLightBlenderMode: debug("blenderMode: kTintLightBlenderMode\n"); break;
 											}
 #ifdef VERBOSE_TEST_GFX
-											printf("controlCol %x argb: %d, %d, %d, %d\n", controlCol, a, r, g, b);
-											printf("simdCol %x argb: %d, %d, %d, %d\n", simdCol, (simdCol >> 24), ((simdCol >> 16) & 0xff), ((simdCol >> 8) & 0xff), (simdCol & 0xff));
-											printf("control2bppCol %x rgb: %d, %d, %d\n", control2bppCol, r16, g16, b16);
-											printf("simd2bppCol %x rgb: %d, %d, %d\n\n", simd2bppCol, (simd2bppCol >> 11), ((simd2bppCol >> 5) & 0x3f), (simd2bppCol & 0x1f));
+											debug("controlCol %x argb: %d, %d, %d, %d\n", controlCol, a, r, g, b);
+											debug("simdCol %x argb: %d, %d, %d, %d\n", simdCol, (simdCol >> 24), ((simdCol >> 16) & 0xff), ((simdCol >> 8) & 0xff), (simdCol & 0xff));
+											debug("control2bppCol %x rgb: %d, %d, %d\n", control2bppCol, r16, g16, b16);
+											debug("simd2bppCol %x rgb: %d, %d, %d\n\n", simd2bppCol, (simd2bppCol >> 11), ((simd2bppCol >> 5) & 0x3f), (simd2bppCol & 0x1f));
 #endif
 											int tolerance, tolerance16;
 											switch ((BlenderMode)blenderMode) {
@@ -245,6 +259,7 @@ void Test_GfxTransparency() {
 
 void Test_Gfx() {
 	Test_GfxTransparency();
+#if defined(OPT_NEON) || defined(OPT_SSE)
 	Test_DrawingLoops();
 	Test_BlenderModes();
 	// This could take a LONG time
@@ -254,6 +269,7 @@ void Test_Gfx() {
 		Test_GfxSpeed(true, 0, kTintLightBlenderMode);
 	}
 	_G(_bitmap_simd_optimizations) = has_simd;
+#endif
 }
 
 } // namespace AGS3
