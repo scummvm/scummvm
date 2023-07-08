@@ -95,6 +95,7 @@ static uint8 frameskip_events = 0;
 static uint8 audio_status = AUDIO_STATUS_MUTE;
 
 static unsigned retro_audio_buff_occupancy = 0;
+static uint8 retro_audio_buff_underrun_threshold = 25;
 
 static uint8 performance_switch = 0;
 static uint32 perf_ref_frame = 0;
@@ -138,7 +139,7 @@ static void retro_audio_buff_status_cb(bool active, unsigned occupancy, bool und
 	else
 		audio_status &= ~AUDIO_STATUS_BUFFER_ACTIVE;
 
-	if (underrun_likely)
+	if (occupancy < retro_audio_buff_underrun_threshold)
 		audio_status |= AUDIO_STATUS_BUFFER_UNDERRUN;
 	else
 		audio_status &= ~AUDIO_STATUS_BUFFER_UNDERRUN;
@@ -703,6 +704,8 @@ void retro_run(void) {
 
 		audio_latency = (uint32)((8.0f * frame_time_msec) + 0.5f);
 		audio_latency = (audio_latency + 0x1F) & ~0x1F;
+
+		retro_audio_buff_underrun_threshold = frame_time_msec * 100 / audio_latency;
 
 		/* This can only be called from within retro_run() */
 		environ_cb(RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY, &audio_latency);
