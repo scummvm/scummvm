@@ -22,6 +22,7 @@
 #include "m4/burger/gui/interface.h"
 #include "m4/core/errors.h"
 #include "m4/graphics/gr_series.h"
+#include "m4/gui/gui_event.h"
 #include "m4/gui/gui_vmng.h"
 #include "m4/burger/vars.h"
 
@@ -142,6 +143,15 @@ bool Interface::set_interface_palette(RGB8 *myPalette) {
 	gr_pal_set_range(myPalette, 1, 31);
 
 	return true;
+}
+
+void Interface::track_hotspots_refresh() {
+	_hotspot = nullptr;
+	--_counter;
+
+	bool z = false;
+	eventHandler(_G(gameInterfaceBuff), EVENT_MOUSE, 1,
+		_G(MouseState).CursorColumn, _G(MouseState).CursorRow, &z);
 }
 
 bool Interface::eventHandler(void *bufferPtr, int32 eventType, int32 event, int32 x, int32 y, bool *z) {
