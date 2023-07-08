@@ -23,25 +23,37 @@
 #define DLC_DLCMANAGER_H
 
 #include "common/str.h"
+#include "common/str-array.h"
+#include "common/queue.h"
 #include "common/singleton.h"
 #include "backends/dlc/store.h"
 
 namespace DLC {
 
-enum Feature {
-	kInProgress
+enum State {
+	kAvailable,
+	kInProgress,
+	kDownloaded,
+	kCancelled
+};
+
+struct DLC {
+	Common::String name;
+	Common::String id;
+	uint32 size;
+	uint32 idx;
+	State state;
 };
 
 class DLCManager : public Common::Singleton<DLCManager> {
 
-	struct DLCDesc {
-		Common::String name;
-		Common::String description;
-		uint32 size;
-		uint32 game_id;
-	};
+	Common::Array<DLC*> _dlcs;
+	Common::Queue<DLC*> _queuedDownloadTasks;
 
 	Store* _store;
+
+	bool _isDLCDownloading = false;
+	Common::String _currentDownloadingDLC;
 
 public:
 	DLCManager();
@@ -49,18 +61,29 @@ public:
 
 	void init();
 
-	DLCDesc getDLCList();
+	// Runs only once in init()
+	void getAllDLCs(Common::Array<DLC*>& dlcs);
 
-	void initDownload();
+	// Requested by GUI to show all available DLCs in simple list view
+	Common::U32StringArray getDLCList();
 
-	void cancelDownload();
+	// Add download task to queue, runs on click download button, 
+	void addDownload(uint32 idx);
 
-	bool getFeatureState(DLC::Feature f);
-	void setFeatureState(DLC::Feature f, bool enable);
+	bool cancelDownload(uint32 idx);
 
-	void getPercentDownloaded();
+	void processDownload();
 
-	uint32 getInProgressGame();
+	// Returns the % download progress of current downloading game
+	uint32 downloadProgress();
+
+	Common::String getCurrentDownloadingDLC();
+
+	// Callback function for startDownloadAsync
+	void cb();
+
+	void startDownloadAsync(Common::String id, void(DLCManager::*callback)()) {}
+
 };
 
 #define DLCMan        DLC::DLCManager::instance()
