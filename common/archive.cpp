@@ -279,17 +279,25 @@ int SearchSet::listMembers(ArchiveMemberList &list) const {
 	return matches;
 }
 
-const ArchiveMemberPtr SearchSet::getMember(const Path &path) const {
+const ArchiveMemberPtr SearchSet::getMember(const Path &path, Archive **container) const {
 	if (path.empty())
 		return ArchiveMemberPtr();
 
 	ArchiveNodeList::const_iterator it = _list.begin();
 	for (; it != _list.end(); ++it) {
-		if (it->_arc->hasFile(path))
+		if (it->_arc->hasFile(path)) {
+			if (container) {
+				*container = it->_arc;
+			}
 			return it->_arc->getMember(path);
+		}
 	}
 
 	return ArchiveMemberPtr();
+}
+
+const ArchiveMemberPtr SearchSet::getMember(const Path &path) const {
+	return getMember(path, nullptr);
 }
 
 SeekableReadStream *SearchSet::createReadStreamForMember(const Path &path) const {
