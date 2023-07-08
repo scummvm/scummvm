@@ -111,7 +111,7 @@ void Level::Draw(pyrodactyl::event::Info &info) {
 	// Fliers are drawn above every sprite but below popup text
 	for (auto &i : fly) {
 		// Only draw if it is supposed to be flying
-		if (i.ai_data.walk.enabled)
+		if (i.ai_data.walk._enabled)
 			i.Draw(info, camera);
 	}
 

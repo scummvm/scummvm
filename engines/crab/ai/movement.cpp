@@ -37,26 +37,26 @@ using namespace pyrodactyl::ai;
 //------------------------------------------------------------------------
 // Purpose: Walk in preset paths
 //------------------------------------------------------------------------
-void MovementSet::Load(rapidxml::xml_node<char> *node) {
-	enabled = true;
-	LoadBool(repeat, "repeat", node);
+void MovementSet::load(rapidxml::xml_node<char> *node) {
+	_enabled = true;
+	LoadBool(_repeat, "repeat", node);
 	for (auto n = node->first_node("walk"); n != NULL; n = n->next_sibling("walk"))
-		path.push_back(n);
+		_path.push_back(n);
 }
 
 //------------------------------------------------------------------------
 // Purpose: To make the AI patrol/wait along certain points
 //------------------------------------------------------------------------
-bool MovementSet::InternalEvents(const Rect rect) {
-	if (enabled) {
+bool MovementSet::internalEvents(const Rect rect) {
+	if (_enabled) {
 		// If we are at the current waypoint, get to the next waypoint
-		if (path[cur].target.Collide(rect)) {
-			cur = (cur + 1) % path.size();
-			timer.Start();
+		if (_path[_cur]._target.Collide(rect)) {
+			_cur = (_cur + 1) % _path.size();
+			_timer.Start();
 		}
 
 		// Wait according to the delay value in the node
-		if (timer.Ticks() >= path[cur].delay)
+		if (_timer.Ticks() >= _path[_cur]._delay)
 			return true;
 	}
 
