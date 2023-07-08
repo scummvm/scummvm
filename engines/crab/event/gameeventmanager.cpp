@@ -280,7 +280,7 @@ void Manager::InternalEvents(Info &info, Level &level, Common::Array<EventResult
 				using namespace pyrodactyl::anim;
 
 				DrawType draw_val = DRAW_SAME;
-				if (g_engine->_eventStore->anim[cur_event->special].InternalEvents(draw_val))
+				if (g_engine->_eventStore->anim[cur_event->special].internalEvents(draw_val))
 					event_map[info.CurLocID()].NextEvent(active_seq, info, level.PlayerID(), result, end_seq);
 
 				if (draw_val == DRAW_STOP)
@@ -319,7 +319,7 @@ void Manager::Draw(Info &info, HUD &hud, Level &level) {
 	if (event_map.contains(info.CurLocID()) > 0 && event_map[info.CurLocID()].EventInProgress(active_seq)) {
 		switch (cur_event->type) {
 		case EVENT_ANIM:
-			g_engine->_eventStore->anim[cur_event->special].Draw();
+			g_engine->_eventStore->anim[cur_event->special].draw();
 			break;
 		case EVENT_DIALOG:
 			g_engine->_imageManager->DimScreen();
@@ -373,7 +373,7 @@ void Manager::CalcActiveSeq(Info &info, Level &level, const Rect &camera) {
 
 		switch (cur_event->type) {
 		case EVENT_ANIM:
-			g_engine->_eventStore->anim[cur_event->special].Start();
+			g_engine->_eventStore->anim[cur_event->special].start();
 			break;
 		case EVENT_REPLY:
 			reply.Cache(info, g_engine->_eventStore->con[cur_event->special]);

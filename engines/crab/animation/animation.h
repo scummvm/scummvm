@@ -42,25 +42,28 @@ namespace pyrodactyl {
 namespace anim {
 class Animation {
 	// All the frames are updated simultaneously rather than sequentially
-	Common::Array<AnimationFrame> frame;
+	Common::Array<AnimationFrame> _frame;
 
 	// Length of the entire animation in milliseconds
-	uint32 length;
+	uint32 _length;
 
 	// Keep track of the time
-	Timer timer;
+	Timer _timer;
 
 public:
-	Animation() { length = 0; }
+	Animation() {
+		_length = 0;
+	}
+
 	Animation(rapidxml::xml_node<char> *node);
 
-	void Draw();
-	void Reset();
+	void draw();
+	void reset();
 
-	bool InternalEvents(DrawType &game_draw);
-	void Start() {
-		Reset();
-		timer.Start();
+	bool internalEvents(DrawType &gameDraw);
+	void start() {
+		reset();
+		_timer.Start();
 	}
 };
 } // End of namespace anim
