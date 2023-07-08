@@ -31,6 +31,8 @@
 #ifndef CRAB_FILEMENU_H
 #define CRAB_FILEMENU_H
 
+#include "common/savefile.h"
+
 #include "crab/crab.h"
 #include "crab/ui/FileData.h"
 #include "crab/ui/ImageData.h"
@@ -111,6 +113,21 @@ public:
 
 	void ScanDir() {
 		warning("STUB: FileMenu::ScanDir()");
+
+		Common::String res = "CRAB_*";
+		res += g_engine->_filePath->save_ext;
+		Common::StringArray saves = g_engine->getSaveFileManager()->listSavefiles(res);
+
+		slot_info.clear();
+		menu.Clear();
+
+		unsigned int count_slot = 0, count_menu = 0;
+		for (const Common::String& save : saves) {
+			slot_info.push_back(FileType(save));
+			menu.Add(count_slot, count_menu);
+		}
+
+		menu.AssignPaths();
 
 #if 0
 		using namespace boost::filesystem;
