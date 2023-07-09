@@ -2339,11 +2339,11 @@ bool KeyboardMessengerModifier::checkKeyEventTrigger(Runtime *runtime, Common::E
 		return false;
 
 	if (_keyModCommand) {
-		if (runtime->getPlatform() == kProjectPlatformWindows) {
+		if (runtime->getProject()->getPlatform() == kProjectPlatformWindows) {
 			// Windows projects check "alt"
 			if ((keyEvt.flags & Common::KBD_ALT) == 0)
 				return false;
-		} else if (runtime->getPlatform() == kProjectPlatformMacintosh) {
+		} else if (runtime->getProject()->getPlatform() == kProjectPlatformMacintosh) {
 			if ((keyEvt.flags & Common::KBD_META) == 0)
 				return false;
 		}
@@ -2377,7 +2377,7 @@ bool KeyboardMessengerModifier::checkKeyEventTrigger(Runtime *runtime, Common::E
 		break;
 	case Common::KEYCODE_F1:
 		// Windows projects map F1 to "help"
-		if (runtime->getPlatform() == kProjectPlatformWindows)
+		if (runtime->getProject()->getPlatform() == kProjectPlatformWindows)
 			resolvedType = kHelp;
 		break;
 	case Common::KEYCODE_BACKSPACE:

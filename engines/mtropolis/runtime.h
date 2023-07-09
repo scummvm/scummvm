@@ -1651,8 +1651,6 @@ public:
 
 	void setVolume(double volume);
 
-	ProjectPlatform getPlatform() const;
-
 	void onMouseDown(int32 x, int32 y, Actions::MouseButton mButton);
 	void onMouseMove(int32 x, int32 y);
 	void onMouseUp(int32 x, int32 y, Actions::MouseButton mButton);
@@ -1929,8 +1927,6 @@ private:
 	bool _mouseFocusFlags[Actions::kMouseButtonCount];
 
 	Common::WeakPtr<Window> _keyFocusWindow;
-
-	ProjectPlatform _platform;
 
 	Common::SharedPtr<SystemInterface> _systemInterface;
 	Common::SharedPtr<WorldManagerInterface> _worldManagerInterface;
@@ -2438,6 +2434,7 @@ public:
 	const SubtitleTables &getSubtitles() const;
 
 	MTropolisVersions::MTropolisVersion guessVersion() const;
+	ProjectPlatform getPlatform() const;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Project"; }
@@ -2553,6 +2550,7 @@ private:
 	SubtitleTables _subtitles;
 
 	MTropolisVersions::MTropolisVersion _guessedVersion;
+	ProjectPlatform _platform;
 };
 
 class Section : public Structural {
