@@ -79,13 +79,7 @@ public:
 	void showOverlay(bool inGUI) override;
 	void hideOverlay() override;
 	bool isOverlayVisible() const override { return _overlayVisible; }
-	Graphics::PixelFormat getOverlayFormat() const override {
-#ifndef DISABLE_FANCY_THEMES
-		return _tt ? PIXELFORMAT_RGB121 : PIXELFORMAT_RGB332;
-#else
-		return PIXELFORMAT_RGB121;
-#endif
-	}
+	Graphics::PixelFormat getOverlayFormat() const override;
 	void clearOverlay() override;
 	void grabOverlay(Graphics::Surface &surface) const override;
 	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
@@ -105,10 +99,6 @@ public:
 	Common::Keymap *getKeymap() const;
 
 protected:
-	const Graphics::PixelFormat PIXELFORMAT_CLUT8 = Graphics::PixelFormat::createFormatCLUT8();
-	const Graphics::PixelFormat PIXELFORMAT_RGB332 = Graphics::PixelFormat(1, 3, 3, 2, 0, 5, 2, 0, 0);
-	const Graphics::PixelFormat PIXELFORMAT_RGB121 = Graphics::PixelFormat(1, 1, 2, 1, 0, 3, 1, 0, 0);
-
 	typedef void* (*AtariMemAlloc)(size_t bytes);
 	typedef void (*AtariMemFree)(void *ptr);
 
@@ -157,7 +147,10 @@ private:
 	int16 getMaximumScreenHeight() const { return 480; }
 	int16 getMaximumScreenWidth() const { return _tt ? 320 : (_vgaMonitor ? 640 : 640*1.2); }
 
+	template <bool directRendering>
 	bool updateScreenInternal(const Graphics::Surface &srcSurface);
+
+	inline int getBitsPerPixel(const Graphics::PixelFormat &format) const;
 
 	virtual AtariMemAlloc getStRamAllocFunc() const {
 		return [](size_t bytes) { return (void*)Mxalloc(bytes, MX_STRAM); };
@@ -166,16 +159,19 @@ private:
 		return [](void *ptr) { Mfree(ptr); };
 	}
 
-	virtual void copyRectToSurface(Graphics::Surface &dstSurface,
-								   const Graphics::Surface &srcSurface, int destX, int destY,
+	virtual void copyRectToSurface(Graphics::Surface &dstSurface, int dstBitsPerPixel, const Graphics::Surface &srcSurface,
+								   int destX, int destY,
 								   const Common::Rect &subRect) const {
 		dstSurface.copyRectToSurface(srcSurface, destX, destY, subRect);
 	}
-	virtual void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface, const Graphics::Surface &srcSurface,
-										  int destX, int destY, const Common::Rect &subRect, uint32 key,
+	virtual void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface, int dstBitsPerPixel, const Graphics::Surface &srcSurface,
+										  int destX, int destY,
+										  const Common::Rect &subRect, uint32 key,
 										  const Graphics::Surface &bgSurface, const byte srcPalette[256*3]) const {
 		convertRectToSurfaceWithKey(dstSurface, srcSurface, destX, destY, subRect, key, srcPalette);
 	}
+
+	virtual Common::Rect alignRect(int x, int y, int w, int h) const = 0;
 
 	void cursorPositionChanged() {
 		if (_overlayVisible) {
@@ -259,7 +255,8 @@ private:
 		~Screen();
 
 		void reset(int width, int height, int bitsPerPixel);
-		void addDirtyRect(const Graphics::Surface &srcSurface, Common::Rect rect);
+		// must be called before any rectangle drawing
+		void addDirtyRect(const Graphics::Surface &srcSurface, const Common::Rect &rect);
 
 		void clearDirtyRects() {
 			dirtyRects.clear();

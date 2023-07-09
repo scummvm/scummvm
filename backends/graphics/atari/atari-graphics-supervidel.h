@@ -80,6 +80,10 @@ private:
 		return [](void *ptr) { Mfree((uintptr)ptr & 0x00FFFFFF); };
 	}
 
+	Common::Rect alignRect(int x, int y, int w, int h) const override {
+		return Common::Rect(x, y, x + w, y + h);
+	}
+
 	static long hasSvRamBoosted() {
 		register long ret __asm__ ("d0") = 0;
 

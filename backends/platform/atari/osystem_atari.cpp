@@ -291,7 +291,9 @@ uint32 OSystem_Atari::getMillis(bool skipRecord) {
 
 void OSystem_Atari::delayMillis(uint msecs) {
 	const uint32 threshold = getMillis() + msecs;
-	while (getMillis() < threshold);
+	while (getMillis() < threshold) {
+		update();
+	}
 }
 
 void OSystem_Atari::getTimeAndDate(TimeDate &td, bool skipRecord) const {
@@ -391,7 +393,14 @@ Common::String OSystem_Atari::getDefaultConfigFileName() {
 }
 
 void OSystem_Atari::update() {
-	((DefaultTimerManager *)_timerManager)->checkTimers();
+	// FIXME: SCI MIDI calls delayMillis() from a timer leading to an infitite recursion loop here
+	const Common::ConfigManager::Domain *activeDomain = ConfMan.getActiveDomain();
+	if (!activeDomain || activeDomain->getValOrDefault("engineid") != "sci" || !_inTimer) {
+		_inTimer = true;
+		((DefaultTimerManager *)_timerManager)->checkTimers();
+		_inTimer = false;
+	}
+
 	if (_useNullMixer)
 		((NullMixerManager *)_mixerManager)->update();
 	else

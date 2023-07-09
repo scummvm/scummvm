@@ -66,7 +66,7 @@ AtariMixerManager::~AtariMixerManager() {
 }
 
 void AtariMixerManager::init() {
-	long cookie;
+    long cookie, stfa = 0;
 	bool useDevconnectReturnValue = Getcookie(C__SND, &cookie) == C_FOUND && (cookie & SND_EXT) != 0;
 
 	int clk;
@@ -75,8 +75,61 @@ void AtariMixerManager::init() {
 		error("Sound system is locked");
 
 	// try XBIOS APIs which do not set SND_EXT in _SND
-	useDevconnectReturnValue |= (Getcookie(C_STFA, &cookie) == C_FOUND);	// STFA
+    useDevconnectReturnValue |= (Getcookie(C_STFA, &stfa) == C_FOUND);	// STFA
 	useDevconnectReturnValue |= (Getcookie(C_McSn, &cookie) == C_FOUND);	// X-SOUND, MacSound
+
+    bool forceSoundCmd = false;
+    if (stfa) {
+        // see http://removers.free.fr/softs/stfa.php#STFA
+        struct STFA_control {
+            uint16 sound_enable;
+            uint16 sound_control;
+            uint16 sound_output;
+            uint32 sound_start;
+            uint32 sound_current;
+            uint32 sound_end;
+            uint16 version;
+            uint32 old_vbl;
+            uint32 old_timerA;
+            uint32 old_mfp_status;
+            uint32 stfa_vbl;
+            uint32 drivers_list;
+            uint32 play_stop;
+            uint16 timer_a_setting;
+            uint32 set_frequency;
+            uint16 frequency_treshold;
+            uint32 custom_freq_table;
+            int16 stfa_on_off;
+            uint32 new_drivers_list;
+            uint32 old_bit_2_of_cookie_snd;
+            uint32 it;
+        } __attribute__((packed));
+
+        STFA_control *stfaControl = (STFA_control *)stfa;
+        if (stfaControl->version < 0x0200) {
+            error("Your STFA version is too old, please upgrade to at least 2.00");
+        }
+        if (stfaControl->stfa_on_off == -1) {
+            // emulating 16-bit playback, force TT frequencies
+            enum {
+                MCH_ST = 0,
+                MCH_STE,
+                MCH_TT,
+                MCH_FALCON,
+                MCH_CLONE,
+                MCH_ARANYM
+            };
+
+            long mch = MCH_ST<<16;
+            Getcookie(C__MCH, &mch);
+            mch >>= 16;
+
+            if (mch == MCH_TT) {
+                debug("Forcing STE/TT compatible frequency");
+                forceSoundCmd = true;
+            }
+        }
+    }
 
 	// reset connection matrix (and other settings)
 	Sndstatus(SND_RESET);
@@ -118,7 +171,7 @@ void AtariMixerManager::init() {
 	}
 
 	// first try to use Devconnect() with a Falcon prescaler
-	if (Devconnect(DMAPLAY, DAC, CLK25M, clk, NO_SHAKE) != 0) {
+    if (forceSoundCmd || Devconnect(DMAPLAY, DAC, CLK25M, clk, NO_SHAKE) != 0) {
 		// the return value is broken on Falcon
 		if (useDevconnectReturnValue) {
 			if (Devconnect(DMAPLAY, DAC, CLK25M, CLKOLD, NO_SHAKE) == 0) {

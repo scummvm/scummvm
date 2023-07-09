@@ -64,28 +64,25 @@ public:
 	}
 
 private:
-	void copyRectToSurface(Graphics::Surface &dstSurface,
-						   const Graphics::Surface &srcSurface, int destX, int destY,
+	void copyRectToSurface(Graphics::Surface &dstSurface, int dstBitsPerPixel, const Graphics::Surface &srcSurface,
+						   int destX, int destY,
 						   const Common::Rect &subRect) const override {
 		// 'pChunkyEnd' is a delicate parameter: the c2p routine compares it to the address register
 		// used for pixel reading; two common mistakes:
 		// 1. (subRect.left, subRect.bottom) = beginning of the next line *including the offset*
 		// 2. (subRect.right, subRect.bottom) = even worse, end of the *next* line, not current one
-		const byte *pChunky       = (const byte *)srcSurface.getBasePtr(subRect.left, subRect.top);
-		const byte *pChunkyEnd    = (const byte *)srcSurface.getBasePtr(subRect.right, subRect.bottom-1);
+		const byte *pChunky    = (const byte *)srcSurface.getBasePtr(subRect.left, subRect.top);
+		const byte *pChunkyEnd = (const byte *)srcSurface.getBasePtr(subRect.right, subRect.bottom-1);
 
-		const uint32 bitsPerPixel = dstSurface.format.isCLUT8() || dstSurface.format == PIXELFORMAT_RGB332 ? 8 : 4;
-		const uint32 screenPitch  = dstSurface.pitch * bitsPerPixel/8;
+        byte *pScreen = (byte *)dstSurface.getPixels() + destY * dstSurface.pitch + destX * dstBitsPerPixel/8;
 
-		byte *pScreen = (byte *)dstSurface.getPixels() + destY * screenPitch + destX * bitsPerPixel/8;
-
-		if (bitsPerPixel == 8) {
+		if (dstBitsPerPixel == 8) {
 			if (srcSurface.pitch == subRect.width()) {
 				if (srcSurface.pitch == dstSurface.pitch) {
 					asm_c2p1x1_8(pChunky, pChunkyEnd, pScreen);
 					return;
 				} else if (srcSurface.pitch == dstSurface.pitch/2) {
-					asm_c2p1x1_8_tt(pChunky, pChunkyEnd, pScreen, screenPitch);
+                    asm_c2p1x1_8_tt(pChunky, pChunkyEnd, pScreen, dstSurface.pitch);
 					return;
 				}
 			}
@@ -95,10 +92,9 @@ private:
 				subRect.width(),
 				srcSurface.pitch,
 				pScreen,
-				screenPitch);
+                dstSurface.pitch);
 		} else {
-			// compare unmodified dst pitch
-			if (srcSurface.pitch == subRect.width() && srcSurface.pitch == dstSurface.pitch) {
+            if (srcSurface.pitch == subRect.width() && srcSurface.pitch/2 == dstSurface.pitch) {
 				asm_c2p1x1_4(pChunky, pChunkyEnd, pScreen);
 				return;
 			}
@@ -108,23 +104,15 @@ private:
 				subRect.width(),
 				srcSurface.pitch,
 				pScreen,
-				screenPitch);
+                dstSurface.pitch);
 		}
 	}
 
-	void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface, const Graphics::Surface &srcSurface,
-								  int destX, int destY, const Common::Rect &subRect, uint32 key,
+	void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface, int dstBitsPerPixel, const Graphics::Surface &srcSurface,
+								  int destX, int destY,
+								  const Common::Rect &subRect, uint32 key,
 								  const Graphics::Surface &bgSurface, const byte srcPalette[256*3]) const override {
-		Common::Rect backgroundRect(destX, destY, destX + subRect.width(), destY + subRect.height());
-
-		// ensure that background's left and right lie on a 16px boundary and double the width if needed
-		backgroundRect.moveTo(backgroundRect.left & 0xfff0, backgroundRect.top);
-
-		const int deltaX = destX - backgroundRect.left;
-
-		backgroundRect.right = (backgroundRect.right + deltaX + 15) & 0xfff0;
-		if (backgroundRect.right > bgSurface.w)
-			backgroundRect.right = bgSurface.w;
+		const Common::Rect backgroundRect = alignRect(destX, destY, subRect.width(), subRect.height());
 
 		static Graphics::Surface cachedSurface;
 
@@ -141,13 +129,16 @@ private:
 		cachedSurface.copyRectToSurface(bgSurface, 0, 0, backgroundRect);
 
 		// copy cursor
-		convertRectToSurfaceWithKey(cachedSurface, srcSurface, deltaX, 0, subRect, key, srcPalette);
+		convertRectToSurfaceWithKey(cachedSurface, srcSurface, destX - backgroundRect.left, 0, subRect, key, srcPalette);
 
 		copyRectToSurface(
-			dstSurface,
-			cachedSurface,
+			dstSurface, dstBitsPerPixel, cachedSurface,
 			backgroundRect.left, backgroundRect.top,
 			Common::Rect(cachedSurface.w, cachedSurface.h));
+	}
+
+	Common::Rect alignRect(int x, int y, int w, int h) const override {
+		return Common::Rect(x & 0xfff0, y, (x + w + 15) & 0xfff0, y + h);
 	}
 };
 

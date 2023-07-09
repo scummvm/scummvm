@@ -262,10 +262,10 @@ or "FM_medium_quality=true" into scummvm.ini if you want to experiment with a
 better quality synthesis, otherwise the lowest quality will be used (applies
 for MAME OPL only).
 
-On the TT, in 95% of cases it makes sense to use ScummVM only if you own a
+On the TT, in most cases it makes sense to use ScummVM only if you own a
 native MIDI synthesizer (like mt32-pi: https://github.com/dwhinham/mt32-pi).
-MIDI emulation is out of question and STFA is usually slow to mix samples, too
-=> stick with games with MIDI sounds or at least don't install/enable STFA.
+MIDI emulation is out of question and STFA takes a good chunk of CPU time for
+downsampling to 8-bit resolution which could be utilized elsewhere.
 
 CD music slows everything down
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -342,6 +342,9 @@ Known issues
 - when run on TT, screen contains horizontal black lines. That is due to the
   fact that TT offers only 320x480 in 256 colours. Possibly fixable by a Timer
   B interrupt.
+
+- horizontal screen shaking doesn't work on TT because TT Shifter doesn't
+  support fine scrolling.
 
 - tooltips in overlay are sometimes drawn with corrupted background.
 
