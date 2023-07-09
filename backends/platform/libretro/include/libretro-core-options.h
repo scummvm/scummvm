@@ -294,6 +294,20 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"disabled"
 	},
 	{
+		"scummvm_samplerate",
+		"Sample rate",
+		NULL,
+		"Set core sample rate. Changing this setting will erset the core.",
+		NULL,
+		"timing",
+		{
+			{ "48000 Hz", NULL },
+			{ "44100 Hz", NULL },
+			{ NULL, NULL },
+		},
+		"48000"
+	},
+	{
 		"scummvm_auto_performance_tuner",
 		"Auto performance tuner",
 		NULL,

@@ -250,6 +250,16 @@ static void update_variables(void) {
 	} else
 		frame_rate = DEFAULT_REFRESH_RATE;
 
+	var.key = "scummvm_samplerate";
+	var.value = NULL;
+	uint16 old_sample_rate = sample_rate;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		char sample_rate_var[6] = {0};
+		strncpy(sample_rate_var, var.value, 5);
+		sample_rate = atoi(sample_rate_var);
+	} else
+		sample_rate = DEFAULT_SAMPLE_RATE;
+
 	var.key = "scummvm_frameskip_threshold";
 	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
 		frameskip_threshold = (uint8)strtol(var.value, NULL, 10);
@@ -300,9 +310,9 @@ static void update_variables(void) {
 		}
 	}
 
-	if (old_frameskip_type != frameskip_type || old_frame_rate != frame_rate) {
+	if (old_frameskip_type != frameskip_type || old_frame_rate != frame_rate || old_sample_rate != sample_rate) {
 		audio_status |= AUDIO_STATUS_UPDATE_LATENCY;
-		if (old_frame_rate != frame_rate) {
+		if (old_frame_rate != frame_rate || old_sample_rate != sample_rate) {
 			audio_buffer_init(sample_rate, (uint16) frame_rate);
 			if (g_system)
 				audio_status |= AUDIO_STATUS_UPDATE_AV_INFO;
@@ -478,7 +488,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info) {
 	info->geometry.max_height = RES_H;
 	info->geometry.aspect_ratio = 4.0f / 3.0f;
 	info->timing.fps = frame_rate;
-	info->timing.sample_rate = SAMPLE_RATE;
+	info->timing.sample_rate = sample_rate;
 }
 
 const char * retro_get_system_dir(void){
@@ -725,7 +735,7 @@ void retro_run(void) {
 		info.geometry.max_height = RES_H;
 		info.geometry.aspect_ratio = 4.0f / 3.0f;
 		info.timing.fps = frame_rate;
-		info.timing.sample_rate = SAMPLE_RATE;
+		info.timing.sample_rate = sample_rate;
 		environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO , &info);
 	}
 

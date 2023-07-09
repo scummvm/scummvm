@@ -83,7 +83,8 @@ void OSystem_libretro::initBackend() {
 #else
 	_overlay.create(RES_W_OVERLAY, RES_H_OVERLAY, Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
 #endif
-	_mixer = new Audio::MixerImpl(SAMPLE_RATE);
+	_mixer = new Audio::MixerImpl(sample_rate);
+	log_cb(RETRO_LOG_DEBUG,"Mixer set up at %dHz\n", sample_rate);
 
 	_timerManager = new LibretroTimerManager(frame_rate);
 

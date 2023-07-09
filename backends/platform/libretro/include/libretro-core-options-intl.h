@@ -223,6 +223,18 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		NULL
 	},
 	{
+		"scummvm_samplerate",
+		"Frequenza di campionamento",
+		NULL,
+		"Imposta la frequenza di campionamento. Il cambio di questa impostazione causerà il reset del core.",
+		NULL,
+		"timing",
+		{
+			{ NULL, NULL },
+		},
+		NULL
+	},
+	{
 		"scummvm_auto_performance_tuner",
 		"Regolazione automatica performance",
 		NULL,

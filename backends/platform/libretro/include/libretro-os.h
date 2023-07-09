@@ -37,6 +37,7 @@ extern bool timing_inaccuracies_is_enabled(void);
 extern void reset_performance_tuner(void);
 extern void retro_osd_notification(const char* msg);
 extern float frame_rate;
+extern uint16 sample_rate;
 extern const char * retro_get_system_dir(void);
 extern const char * retro_get_save_dir(void);
 
