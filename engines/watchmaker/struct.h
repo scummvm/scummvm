@@ -458,18 +458,28 @@ struct SDDBitmap {
 	}
 };
 
-enum class FontKind;
 struct SDDText {
-	SDDText() = default;
+	SDDText() {
+		reset();
+	}
+
 	SDDText(const char *_text, FontKind _font, FontColor _color, int32 _tnum) : font(_font),
 																			color(_color),
 																			tnum(_tnum) {
 		Common::strlcpy(this->text, _text, sizeof(this->text));
 	}
-	char text[MAX_STRING_LEN] = {};
-	FontKind font; // TODO: Move elsewhere so we can initalize
+
+	void reset() {
+		for(uint i = 0; i < ARRAYSIZE(text); i++) text[i] = '\0';
+		font = FontKind::Standard;
+		color = FontColor::WHITE_FONT;
+		tnum = 0;
+	}
+
+	char text[MAX_STRING_LEN];
+	FontKind font;
 	FontColor color;
-	int32 tnum = 0;
+	int32 tnum;
 };
 
 struct SScript {
