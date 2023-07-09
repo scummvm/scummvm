@@ -510,6 +510,9 @@ void Score::update() {
 		// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
 	}
 
+	for (uint ch = 0; ch < _channels.size(); ch++)
+		*_currentFrame->_sprites[ch] = *_channels[ch]->_sprite;
+
 	loadFrame(_curFrameNumber);
 	// Window is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell, p.100)
 	renderFrame(_curFrameNumber);
