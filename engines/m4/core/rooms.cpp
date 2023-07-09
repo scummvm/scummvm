@@ -92,25 +92,20 @@ void Sections::m4SceneLoad() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 	_G(kernel).call_daemon_every_loop = false;
 	_G(kernel).fade_up_time = 30;
-#ifdef TODO
-	if (myInterface) {
-		myInterface->must_redraw_all = true;
-		myInterface->draw(gameInterfaceBuff);
-	}
 
 	//-------------------- GLOBAL ROOM INIT and ROOM INIT ------------------
 
 	player_set_commands_allowed(false);
-	set_commands_allowed_since_last_checked = false;
-
+	_G(set_commands_allowed_since_last_checked) = false;
 	_G(between_rooms) = false;
 
-	global_room_init();	// supplied by game programmer
-	player.walker_trigger = -1;
+	room_init();
+#ifdef TODO
+	_G(player).walker_trigger = -1;
 
-	if (game.previous_room == KERNEL_RESTORING_GAME)
+	if (_G(game).previous_room == KERNEL_RESTORING_GAME)
 	{
-		if (player.walker_in_this_scene) {
+		if (_G(player).walker_in_this_scene) {
 			// if restoring game, restore player position and facing
 			player_demand_location(player_info.x, player_info.y);
 			player_demand_facing(player_info.facing);
@@ -123,9 +118,9 @@ void Sections::m4SceneLoad() {
 	term_message("calling room_init_code");
 	util_exec_function(room_init_code_pointer);
 
-	if (game.previous_room == KERNEL_RESTORING_GAME) {
+	if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
 		interface_show();
-		game.previous_room = -1;
+		_G(game).previous_room = -1;
 	}
 
 	// init for fade up screen
@@ -134,14 +129,14 @@ void Sections::m4SceneLoad() {
 		pal_fade_init(&master_palette[0], _G(kernel).first_fade, 255, 100, _G(kernel).fade_up_time, 32765);      // 30 ticks
 	}
 
-	if (!set_commands_allowed_since_last_checked)
+	if (!_G(set_commands_allowed_since_last_checked))
 		player_set_commands_allowed(true);
 
-	if (player_been_here(game.room_id))
-		player.been_here_before = true;
+	if (player_been_here(_G(game).room_id))
+		_G(player).been_here_before = true;
 	else {
-		player.been_here_before = false;
-		player_enters_scene(game.room_id);
+		_G(player).been_here_before = false;
+		player_enters_scene(_G(game).room_id);
 	}
 
 	//-------------------- PLAY ROOM ------------------

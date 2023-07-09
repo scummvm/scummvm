@@ -80,6 +80,7 @@ extern Vars *g_globals;
 #undef _GI
 #define _G(X) (::M4::Burger::g_globals->_##X)
 #define _GI(X) _G(interface)._##X
+#define _GINT() _G(interface)
 #define VAL(X) _G(_globals)[X]
 
 } // namespace Burger
