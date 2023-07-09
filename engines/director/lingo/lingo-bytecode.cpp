@@ -627,7 +627,14 @@ void LC::cb_thepush() {
 			g_lingo->push(g_lingo->_state->me.u.obj->getProp(name));
 			return;
 		}
-		warning("cb_thepush: me object has no property '%s'", name.c_str());
+
+		if (name == "me") {
+			// Special case: push the me object itself
+			g_lingo->push(g_lingo->_state->me);
+			return;
+		}
+
+		warning("cb_thepush: me object has no property '%s', type: %d", name.c_str(), g_lingo->_state->me.type);
 	} else {
 		warning("cb_thepush: no me object");
 	}
