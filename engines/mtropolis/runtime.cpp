@@ -4255,7 +4255,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	: _system(system), _mixer(mixer), _saveProvider(saveProvider), _loadProvider(loadProvider),
 	  _nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
 	  _displayWidth(1024), _displayHeight(768), _realTime(0), _realTimeBase(0), _playTime(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
-	  _lastFrameCursor(nullptr), _lastFrameMouseVisible(false), _defaultCursor(new DefaultCursorGraphic()), _platform(kProjectPlatformUnknown),
+	  _lastFrameCursor(nullptr), _lastFrameMouseVisible(false), _defaultCursor(new DefaultCursorGraphic()),
 	  _cachedMousePosition(Common::Point(0, 0)), _realMousePosition(Common::Point(0, 0)), _trackedMouseOutside(false),
 	  _forceCursorRefreshOnce(true), _autoResetCursor(false), _haveModifierOverrideCursor(false), _haveCursorElement(false), _sceneGraphChanged(false), _isQuitting(false),
 	  _collisionCheckTime(0), /*_elementCursorUpdateTime(0), */_defaultVolumeState(true), _activeSceneTransitionEffect(nullptr), _sceneTransitionStartTime(0), _sceneTransitionEndTime(0),
@@ -5938,10 +5938,6 @@ void Runtime::setVolume(double volume) {
 	mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, static_cast<int>(volume * Audio::Mixer::kMaxMixerVolume));
 }
 
-ProjectPlatform Runtime::getPlatform() const {
-	return _platform;
-}
-
 void Runtime::onMouseDown(int32 x, int32 y, Actions::MouseButton mButton) {
 	_realMousePosition.x = x;
 	_realMousePosition.y = y;
@@ -6927,7 +6923,8 @@ Project::AssetDesc::AssetDesc() : typeCode(0), id(0), streamID(0), filePosition(
 Project::Project(Runtime *runtime)
 	: Structural(runtime), _projectFormat(Data::kProjectFormatUnknown), _isBigEndian(false),
 	  _haveGlobalObjectInfo(false), _haveProjectStructuralDef(false), _playMediaSignaller(new PlayMediaSignaller()),
-	  _keyboardEventSignaller(new KeyboardEventSignaller()), _guessedVersion(MTropolisVersions::kMTropolisVersion1_0) {
+	  _keyboardEventSignaller(new KeyboardEventSignaller()), _guessedVersion(MTropolisVersions::kMTropolisVersion1_0),
+	  _platform(kProjectPlatformUnknown) {
 }
 
 Project::~Project() {
@@ -6957,6 +6954,7 @@ void Project::loadFromDescription(const ProjectDescription &desc, const Hacks &h
 	_resources = desc.getResources();
 	_cursorGraphics = desc.getCursorGraphics();
 	_subtitles = desc.getSubtitles();
+	_platform = desc.getPlatform();
 
 	debug(1, "Loading new project...");
 
@@ -7449,6 +7447,10 @@ const SubtitleTables &Project::getSubtitles() const {
 
 MTropolisVersions::MTropolisVersion Project::guessVersion() const {
 	return _guessedVersion;
+}
+
+ProjectPlatform Project::getPlatform() const {
+	return _platform;
 }
 
 void Project::loadPresentationSettings(const Data::PresentationSettings &presentationSettings) {
