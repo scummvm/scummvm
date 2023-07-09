@@ -19,11 +19,11 @@
  *
  */
 
-#include "m4/burger/digi.h"
-#include "m4/burger/vars.h"
+#include "m4/platform/sound/digi.h"
+#include "m4/vars.h"
 
 namespace M4 {
-namespace Burger {
+namespace Sound {
 
 void Digi::preload_sounds(const char **names) {
 	if (!_names.empty()) {
@@ -52,5 +52,5 @@ void Digi::unload(const Common::String &name) {
 	warning("TODO: Digi::unload");
 }
 
-} // namespace Burger
+} // namespace Sound
 } // namespace M4

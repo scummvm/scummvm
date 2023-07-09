@@ -24,7 +24,6 @@
 
 #include "m4/vars.h"
 #include "m4/burger/gui/interface.h"
-#include "m4/burger/digi.h"
 #include "m4/burger/inventory.h"
 #include "m4/burger/globals.h"
 #include "m4/burger/series_player.h"
@@ -51,7 +50,6 @@ protected:
 	void initialize_game() override;
 
 public:
-	Digi _digi;
 	Burger::GlobalVars _globals;
 	GameMode _executing = WHOLE_GAME;
 	GUI::Interface _interface;
