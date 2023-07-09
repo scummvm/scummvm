@@ -26,7 +26,7 @@ class LibretroTimerManager : public DefaultTimerManager {
 	uint32 _nextSwitchTime;
 	uint32 _spentOnMainThread;
 public:
-	LibretroTimerManager(uint32 refresh_rate = REFRESH_RATE);
+	LibretroTimerManager(uint32 refresh_rate);
 	~LibretroTimerManager(void) {};
 	void switchThread(void);
 	void checkThread(void);

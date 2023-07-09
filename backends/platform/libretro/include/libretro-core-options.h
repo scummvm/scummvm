@@ -277,6 +277,23 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"disabled"
 	},
 	{
+		"scummvm_framerate",
+		"Frame rate cap",
+		NULL,
+		"Set core frame rate upper limit. Changing this setting will reset the core.",
+		NULL,
+		"timing",
+		{
+			{ "disabled", NULL },
+			{ "60 Hz", NULL },
+			{ "50 Hz", NULL },
+			{ "30 Hz", NULL },
+			{ "25 Hz", NULL },
+			{ NULL, NULL },
+		},
+		"disabled"
+	},
+	{
 		"scummvm_auto_performance_tuner",
 		"Auto performance tuner",
 		NULL,

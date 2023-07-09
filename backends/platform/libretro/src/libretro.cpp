@@ -101,8 +101,8 @@ static uint8 performance_switch = 0;
 static uint32 perf_ref_frame = 0;
 static uint32 perf_ref_audio_buff_occupancy = 0;
 
-float frame_rate;
-static uint16 samples_per_frame = 0;                // length in samples per frame
+float frame_rate = 0;
+static uint16 samples_per_frame = 0;               // length in samples per frame
 static size_t samples_per_frame_buffer_size = 0;
 
 static int16_t *sound_buffer = NULL;       // pointer to output buffer
@@ -234,6 +234,20 @@ static void update_variables(void) {
 			timing_inaccuracies_enabled = true;
 	}
 
+	var.key = "scummvm_framerate";
+	var.value = NULL;
+	float old_frame_rate = frame_rate;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		if (strcmp(var.value, "disabled") == 0)
+			frame_rate = environ_cb(RETRO_ENVIRONMENT_GET_TARGET_REFRESH_RATE, &frame_rate) ? frame_rate : DEFAULT_REFRESH_RATE;
+		else {
+			char frame_rate_var[3] = {0};
+			strncpy(frame_rate_var, var.value, 2);
+			frame_rate = (float)atof(frame_rate_var);
+		}
+	} else
+		frame_rate = DEFAULT_REFRESH_RATE;
+
 	var.key = "scummvm_frameskip_threshold";
 	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
 		frameskip_threshold = (uint8)strtol(var.value, NULL, 10);
@@ -284,8 +298,13 @@ static void update_variables(void) {
 		}
 	}
 
-	if (old_frameskip_type != frameskip_type) {
+	if (old_frameskip_type != frameskip_type || old_frame_rate != frame_rate) {
 		audio_status |= AUDIO_STATUS_UPDATE_LATENCY;
+		if (old_frame_rate != frame_rate) {
+			audio_buffer_init(sample_rate, (uint16) frame_rate);
+			if (g_system)
+				audio_status |= AUDIO_STATUS_UPDATE_AV_INFO;
+		}
 	}
 }
 
@@ -503,9 +522,7 @@ void retro_init(void) {
 	struct retro_audio_buffer_status_callback buf_status_cb;
 	buf_status_cb.callback = retro_audio_buff_status_cb;
 	audio_status = environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK, &buf_status_cb) ? (audio_status | AUDIO_STATUS_BUFFER_SUPPORT) : (audio_status & ~AUDIO_STATUS_BUFFER_SUPPORT);
-	frame_rate = environ_cb(RETRO_ENVIRONMENT_GET_TARGET_REFRESH_RATE, &frame_rate) ? frame_rate : REFRESH_RATE;
 
-	audio_buffer_init(SAMPLE_RATE, (uint16) frame_rate);
 	update_variables();
 
 	init_command_params();
@@ -698,6 +715,18 @@ void retro_run(void) {
 		update_variables();
 	}
 
+	if (audio_status & AUDIO_STATUS_UPDATE_AV_INFO){
+		struct retro_system_av_info info;
+		info.geometry.base_width = RES_W;
+		info.geometry.base_height = RES_H;
+		info.geometry.max_width = RES_W;
+		info.geometry.max_height = RES_H;
+		info.geometry.aspect_ratio = 4.0f / 3.0f;
+		info.timing.fps = frame_rate;
+		info.timing.sample_rate = SAMPLE_RATE;
+		environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO , &info);
+	}
+
 	if (audio_status & AUDIO_STATUS_UPDATE_LATENCY){
 		uint32 audio_latency;
 		float frame_time_msec = 1000.0f / frame_rate;
@@ -711,6 +740,13 @@ void retro_run(void) {
 		environ_cb(RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY, &audio_latency);
 		audio_status &= ~AUDIO_STATUS_UPDATE_LATENCY;
 	}
+
+	if (audio_status & AUDIO_STATUS_UPDATE_AV_INFO){
+		audio_status &= ~AUDIO_STATUS_UPDATE_AV_INFO;
+		retro_reset();
+		return;
+	}
+
 
 	/* Setting RA's video or audio driver to null will disable video/audio bits */
 	int audio_video_enable = 0;

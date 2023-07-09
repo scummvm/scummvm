@@ -19,8 +19,8 @@
 #define LIBRETRO_DEFS_H
 
 #define SAMPLE_RATE     48000
-#define REFRESH_RATE    60
-#define FRAMESKIP_MAX   REFRESH_RATE / 2
+#define DEFAULT_REFRESH_RATE    60
+#define FRAMESKIP_MAX           DEFAULT_REFRESH_RATE / 2
 
 // Audio status
 #define AUDIO_STATUS_MUTE               (1 << 0)
@@ -28,14 +28,15 @@
 #define AUDIO_STATUS_BUFFER_ACTIVE      (1 << 2)
 #define AUDIO_STATUS_BUFFER_UNDERRUN    (1 << 3)
 #define AUDIO_STATUS_UPDATE_LATENCY     (1 << 4)
+#define AUDIO_STATUS_UPDATE_AV_INFO	(1 << 5)
 
 // Performance switcher
-#define PERF_SWITCH_FRAMESKIP_EVENTS                    REFRESH_RATE / 2
+#define PERF_SWITCH_FRAMESKIP_EVENTS                    DEFAULT_REFRESH_RATE / 2
 #define PERF_SWITCH_ON                                  (1 << 0)
 #define PERF_SWITCH_ENABLE_TIMING_INACCURACIES          (1 << 1)
 #define PERF_SWITCH_OVER                                (1 << 2)
 #define PERF_SWITCH_RESET_THRESHOLD                     60
-#define PERF_SWITCH_RESET_REST                          REFRESH_RATE * 30
+#define PERF_SWITCH_RESET_REST                          DEFAULT_REFRESH_RATE * 30
 
 // Thread switch caller
 #define THREAD_SWITCH_POLL              (1 << 0)

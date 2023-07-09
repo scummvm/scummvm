@@ -209,6 +209,19 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		},
 		NULL
 	},
+
+	{
+		"scummvm_framerate",
+		"Tetto frequenza dei fotogrammi",
+		NULL,
+		"Imposta il limite superiore della frequenza dei fotogrammi. Il cambio di questa impostazione causerà il reset del core.",
+		NULL,
+		"timing",
+		{
+			{ NULL, NULL },
+		},
+		NULL
+	},
 	{
 		"scummvm_auto_performance_tuner",
 		"Regolazione automatica performance",
