@@ -50,7 +50,7 @@ public:
 	static void freeBlock(MpalHandle handle);
 	static void destroyItem(MpalHandle handle);
 	static uint32 getSize(MpalHandle handle);
-	static byte *lockItem(MpalHandle handle);
+	static void *lockItem(MpalHandle handle);
 	static void unlockItem(MpalHandle handle);
 };
 

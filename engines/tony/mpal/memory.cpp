@@ -102,7 +102,7 @@ void MemoryManager::destroyItem(MpalHandle handle) {
 /**
  * Locks an item for access
  */
-byte *MemoryManager::lockItem(MpalHandle handle) {
+void *MemoryManager::lockItem(MpalHandle handle) {
 	MemoryItem *item = (MemoryItem *)handle;
 	assert(item->_id == BLOCK_ID);
 	++item->_lockCount;
