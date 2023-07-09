@@ -103,6 +103,8 @@ public:
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 	void disable(Runtime *runtime) override;
 
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
+
 	bool load(const PlugInModifierLoaderContext &context, const Data::MTI::PrintModifier &data);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE

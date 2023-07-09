@@ -1,3 +1,4 @@
 engines/mtropolis/metaengine.cpp
 engines/mtropolis/saveload.cpp
 engines/mtropolis/mtropolis.cpp
+engines/mtropolis/plugin/mti.cpp
