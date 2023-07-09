@@ -135,6 +135,10 @@ void Room::init_series_players() {
 	_G(seriesPlayers).clear();
 }
 
+void Room::parser_code() {
+	warning("TODO: global_parser_code");
+}
+
 } // namespace Rooms
 } // namespace Burger
 } // namespace M4
