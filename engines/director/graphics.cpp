@@ -133,7 +133,7 @@ void DirectorEngine::loadDefaultPalettes() {
 
 PaletteV4 *DirectorEngine::getPalette(const CastMemberID &id) {
 	if (!_loadedPalettes.contains(id)) {
-		warning("DirectorEngine::getPalette(): Palette %s not found", id.asString().c_str());
+		warning("DirectorEngine::getPalette(): Palette %s not found, hash %x", id.asString().c_str(), id.hash());
 		return nullptr;
 	}
 
@@ -147,6 +147,8 @@ void DirectorEngine::addPalette(CastMemberID &id, byte *palette, int length) {
 	} else if (_loadedPalettes.contains(id)) {
 		delete[] _loadedPalettes[id].palette;
 	}
+
+	debugC(3, kDebugLoading, "DirectorEngine::addPalette(): Registered palette %s of size %d, hash: %x", id.asString().c_str(), length, id.hash());
 
 	_loadedPalettes[id] = PaletteV4(id, palette, length);
 }
@@ -397,7 +399,7 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 			*dst = src == (int)p->colorBlack ? p->backColor : *dst;
 		} else {
 			// AND dst palette index with the inverse of src.
-			// Originally designed for 1-bit mode so that 
+			// Originally designed for 1-bit mode so that
 			// black pixels would be invisible until they were
 			// over a black background, showing as white.
 			*dst = *dst & ~src;
