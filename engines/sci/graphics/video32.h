@@ -169,6 +169,12 @@ protected:
 	void setDrawRect(const int16 x, const int16 y, const int16 width, const int16 height);
 
 	/**
+	 * Sets the subtitle position according to the draw rect and overlay size.
+	 * 
+	 */
+	void setSubtitlePosition() const;
+
+	/**
 	 * The rectangle where the video will be drawn, in screen coordinates.
 	 */
 	Common::Rect _drawRect;
@@ -186,7 +192,7 @@ protected:
 	const Graphics::Surface* _currentFrame;
 
 
-	Video::Subtitles _subtitles;
+	mutable Video::Subtitles _subtitles;
 
 #ifdef USE_RGB_COLOR
 	/**
