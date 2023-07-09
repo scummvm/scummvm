@@ -33,6 +33,8 @@ namespace Tony {
 
 namespace MPAL {
 
+static const size_t EXPR_LENGTH_SIZE = alignof(max_align_t);
+
 /**
  * Duplicate a mathematical expression.
  *
@@ -44,13 +46,13 @@ static void *duplicateExpression(MpalHandle h) {
 
 	orig = (byte *)globalLock(h);
 
-	int num = *(byte *)orig;
-	LpExpression one = (LpExpression)(orig+1);
+	int num = *orig;
+	LpExpression one = (LpExpression)(orig + EXPR_LENGTH_SIZE);
 
-	clone = (byte *)globalAlloc(GMEM_FIXED, sizeof(Expression) * num + 1);
-	LpExpression two = (LpExpression)(clone + 1);
+	clone = (byte *)globalAlloc(GMEM_FIXED, sizeof(Expression) * num + EXPR_LENGTH_SIZE);
+	LpExpression two = (LpExpression)(clone + EXPR_LENGTH_SIZE);
 
-	memcpy(clone, orig, sizeof(Expression) * num + 1);
+	memcpy(clone, orig, sizeof(Expression) * num + EXPR_LENGTH_SIZE);
 
 	for (int i = 0; i < num; i++) {
 		if (one->_type == ELT_PARENTH) {
@@ -146,7 +148,7 @@ static void solve(LpExpression one, int num) {
  */
 static int evaluateAndFreeExpression(void *expr) {
 	int num = *(byte *)expr;
-	LpExpression one = (LpExpression)((byte *)expr + 1);
+	LpExpression one = (LpExpression)((byte *)expr + EXPR_LENGTH_SIZE);
 
 	// 1) Substitutions of variables
 	LpExpression cur = one;
@@ -191,14 +193,14 @@ const byte *parseExpression(const byte *lpBuf, const Common::UnalignedPtr<MpalHa
 	if (num == 0)
 		return NULL;
 
-	h.store(globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, num * sizeof(Expression) + 1));
+	h.store(globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, num * sizeof(Expression) + EXPR_LENGTH_SIZE));
 	if (h.load() == NULL)
 		return NULL;
 
 	start = (byte *)globalLock(h.load());
 	*start = num;
 
-	LpExpression cur = (LpExpression)(start + 1);
+	LpExpression cur = (LpExpression)(start + EXPR_LENGTH_SIZE);
 
 	for (uint32 i = 0;i < num; i++) {
 		cur->_type = *(lpBuf);
@@ -213,6 +215,7 @@ const byte *parseExpression(const byte *lpBuf, const Common::UnalignedPtr<MpalHa
 			break;
 
 		case ELT_VAR:
+			// As name is a byte, there is no alignment rule
 			cur->_val._name = (char *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, (*lpBuf) + 1);
 			if (cur->_val._name == NULL)
 				return NULL;
@@ -279,8 +282,8 @@ bool compareExpressions(MpalHandle h1, MpalHandle h2) {
 		return false;
 	}
 
-	LpExpression one = (LpExpression)(e1 + 1);
-	LpExpression two = (LpExpression)(e2 + 1);
+	LpExpression one = (LpExpression)(e1 + EXPR_LENGTH_SIZE);
+	LpExpression two = (LpExpression)(e2 + EXPR_LENGTH_SIZE);
 
 	for (int i = 0; i < num1; i++) {
 		if (one->_type != two->_type || (i != num1 - 1 && one->_symbol != two->_symbol)) {
@@ -336,7 +339,7 @@ bool compareExpressions(MpalHandle h1, MpalHandle h2) {
 void freeExpression(MpalHandle h) {
 	byte *data = (byte *)globalLock(h);
 	int num = *data;
-	LpExpression cur = (LpExpression)(data + 1);
+	LpExpression cur = (LpExpression)(data + EXPR_LENGTH_SIZE);
 
 	for (int i = 0; i < num; ++i, ++cur) {
 		switch (cur->_type) {
