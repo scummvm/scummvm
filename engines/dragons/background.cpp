@@ -329,7 +329,7 @@ uint16 ScaleLayer::getScale(uint16 y) {
 	short yBand;
 	uint uVar1;
 	short local_v0_368;
-	int iVar3;
+//	int iVar3;
 	short lowerYBandIdx;
 	ScaleBand *pSVar4;
 	short upperYBandIdx;
