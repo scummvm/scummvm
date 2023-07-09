@@ -5091,7 +5091,7 @@ void doT2D(WGame &game) {
 			                        t2dWin[i].bt[j].tnum = 0;
 			                    }*/
 		}
-		memset(t2dWin, 0, sizeof(t2dWin));
+		for (uint k = 0; k < ARRAYSIZE(t2dWin); k++) t2dWin[k].reset();
 		memset(WinActive, 0, sizeof(WinActive));
 
 		switch (bT2DActive) {

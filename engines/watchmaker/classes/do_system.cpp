@@ -881,7 +881,7 @@ void doSystem(WGame &game) {
 
 			time = t3dCurTime;
 			if (time >= 1300) time -= 1200;
-			sprintf(RoomInfo.fullstring, "%s, %d.%02dam", RoomInfo.name, time / 100, time - (time / 100) * 100);
+			snprintf(RoomInfo.fullstring, sizeof(RoomInfo.fullstring), "%s, %2d.%02dam", RoomInfo.name, time / 100, time - (time / 100) * 100);
 
 			rGetScreenInfos((unsigned int *)&width, (unsigned int *)&height, (unsigned int *)&bpp);
 			game._fonts.getTextDim(RoomInfo.fullstring, RoomInfo.f, &RoomInfo.dx, &RoomInfo.dy);

@@ -567,7 +567,7 @@ struct STitoliCoda {
 
 struct SRoomInfo {
 	char name[64] = {};            //nome della stanza
-	char fullstring[64 + 16] = {}; //stringa con ora
+	char fullstring[64 + 16 + 1] = {}; //stringa con ora
 	int32 px = 0, py = 0;         //posizione
 	int32 dx = 0, dy = 0;         //dimensione totale
 	int32 _dx = 0, _dy = 0;       //dimensione della stringa attuale
