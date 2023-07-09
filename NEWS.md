@@ -27,8 +27,20 @@ For a more comprehensive changelog of the latest experimental code, see:
  CRYOMNI3D:
    - Fixed files access preventing to finish Versailles.
 
+ FREESCAPE:
+   - Added OpenGL shaders renderer.
+   - Games are loading original images from the data files.
+   - Refactored and expanded detection tables for Driller and other unsupported games.
+   - Reimplemented object/player collisions to be more robust.
+
  HDB:
    - Fixed bug with inability to pick up red envelope with keyboard.
+
+ HYPNO:
+   - Support rendering Korean font for Wetlands.
+
+ Private:
+   - Dropped 16bit engine requirement.
 
  SAGA2:
    - Fixed crash when hovering over certain spells.
