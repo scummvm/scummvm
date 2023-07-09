@@ -355,7 +355,7 @@ typedef struct  FT_Face_InternalRec_ {
 /*    glyph_hints       :: Format-specific glyph hints management.       */
 /*                                                                       */
 typedef struct  FT_Slot_InternalRec_ {
-	FT2_1_3_GlyphLoader  loader;
+	FT_GlyphLoader  loader;
 	FT_Bool         glyph_transformed;
 	FT_Matrix       glyph_matrix;
 	FT_Vector       glyph_delta;
@@ -544,16 +544,16 @@ FT2_1_3_Done_GlyphSlot( FT_GlyphSlot  slot );
 
 
 #define FT2_1_3_RENDERER( x )      ((FT_Renderer)( x ))
-#define FT2_1_3_GLYPH( x )         ((FT2_1_3_Glyph)( x ))
+#define FT2_1_3_GLYPH( x )         ((FT_Glyph)( x ))
 #define FT2_1_3_BITMAP_GLYPH( x )  ((FT_BitmapGlyph)( x ))
-#define FT2_1_3_OUTLINE_GLYPH( x ) ((FT2_1_3_OutlineGlyph)( x ))
+#define FT2_1_3_OUTLINE_GLYPH( x ) ((FT_OutlineGlyph)( x ))
 
 
 typedef struct  FT_RendererRec_ {
 	FT_ModuleRec            root;
 	FT_Renderer_Class*      clazz;
 	FT_Glyph_Format         glyph_format;
-	FT2_1_3_Glyph_Class          glyph_class;
+	FT_Glyph_Class          glyph_class;
 
 	FT2_1_3_Raster               raster;
 	FT2_1_3_Raster_Render_Func   raster_render;
@@ -616,7 +616,7 @@ typedef struct  FT_DriverRec_ {
 	FT_ListRec       faces_list;
 	void*            extensions;
 
-	FT2_1_3_GlyphLoader   glyph_loader;
+	FT_GlyphLoader   glyph_loader;
 
 } FT_DriverRec;
 
@@ -669,7 +669,7 @@ typedef struct  FT_DriverRec_ {
 /*                                                                       */
 /*    cur_renderer     :: The current outline renderer.  This is a       */
 /*                        shortcut used to avoid parsing the list on     */
-/*                        each call to FT2_1_3_Outline_Render().  It is a     */
+/*                        each call to FT_Outline_Render().  It is a     */
 /*                        handle to the current renderer for the         */
 /*                        FT2_1_3_GLYPH_FORMAT_OUTLINE format.                */
 /*                                                                       */

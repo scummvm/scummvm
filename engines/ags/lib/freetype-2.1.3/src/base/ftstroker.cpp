@@ -462,7 +462,7 @@ Fail:
 
 static void
 ft_stroke_border_export( FT2_1_3_StrokeBorder  border,
-                         FT2_1_3_Outline*      outline ) {
+                         FT_Outline*      outline ) {
 	/* copy point locations */
 	FT2_1_3_MEM_COPY( outline->points + outline->n_points,
 	             border->points,
@@ -501,7 +501,7 @@ ft_stroke_border_export( FT2_1_3_StrokeBorder  border,
 
 	outline->n_points  = (short)( outline->n_points + border->num_points );
 
-	FT2_1_3_ASSERT( FT2_1_3_Outline_Check( outline ) == 0 );
+	FT2_1_3_ASSERT( FT_Outline_Check( outline ) == 0 );
 }
 
 
@@ -1253,7 +1253,7 @@ Exit:
 
 FT2_1_3_EXPORT_DEF( void )
 FT2_1_3_Stroker_Export( FT2_1_3_Stroker   stroker,
-                   FT2_1_3_Outline*  outline ) {
+                   FT_Outline*  outline ) {
 	if ( stroker->valid ) {
 		ft_stroke_border_export( stroker->borders+0, outline );
 		ft_stroke_border_export( stroker->borders+1, outline );

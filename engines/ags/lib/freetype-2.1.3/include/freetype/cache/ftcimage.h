@@ -18,7 +18,7 @@
 
 /*************************************************************************/
 /*                                                                       */
-/* Each image cache really manages FT2_1_3_Glyph objects.                     */
+/* Each image cache really manages FT_Glyph objects.                     */
 /*                                                                       */
 /*************************************************************************/
 
@@ -144,7 +144,7 @@ FTC_ImageCache_New( FTC_Manager      manager,
 /*    gindex :: The glyph index to retrieve.                             */
 /*                                                                       */
 /* <Output>                                                              */
-/*    aglyph :: The corresponding @FT2_1_3_Glyph object.  0 in case of        */
+/*    aglyph :: The corresponding @FT_Glyph object.  0 in case of        */
 /*              failure.                                                 */
 /*                                                                       */
 /*    anode  :: Used to return the address of of the corresponding cache */
@@ -157,16 +157,16 @@ FTC_ImageCache_New( FTC_Manager      manager,
 /* <Note>                                                                */
 /*    The returned glyph is owned and managed by the glyph image cache.  */
 /*    Never try to transform or discard it manually!  You can however    */
-/*    create a copy with @FT2_1_3_Glyph_Copy and modify the new one.          */
+/*    create a copy with @FT_Glyph_Copy and modify the new one.          */
 /*                                                                       */
 /*    If "anode" is _not_ NULL, it receives the address of the cache     */
 /*    node containing the glyph image, after increasing its reference    */
-/*    count.  This ensures that the node (as well as the FT2_1_3_Glyph) will  */
+/*    count.  This ensures that the node (as well as the FT_Glyph) will  */
 /*    always be kept in the cache until you call @FTC_Node_Unref to      */
 /*    "release" it.                                                      */
 /*                                                                       */
 /*    If "anode" is NULL, the cache node is left unchanged, which means  */
-/*    that the FT2_1_3_Glyph could be flushed out of the cache on the next    */
+/*    that the FT_Glyph could be flushed out of the cache on the next    */
 /*    call to one of the caching sub-system APIs.  Don't assume that it  */
 /*    is persistent!                                                     */
 /*                                                                       */
@@ -174,7 +174,7 @@ FT2_1_3_EXPORT( FT_Error )
 FTC_ImageCache_Lookup( FTC_ImageCache  cache,
 					   FTC_ImageType   type,
 					   FT_UInt         gindex,
-					   FT2_1_3_Glyph       *aglyph,
+					   FT_Glyph       *aglyph,
 					   FTC_Node       *anode );
 
 /* */
@@ -277,7 +277,7 @@ FTC_Image_Cache_New( FTC_Manager       manager,
 /*    gindex :: The glyph index to retrieve.                             */
 /*                                                                       */
 /* <Output>                                                              */
-/*    aglyph :: The corresponding @FT2_1_3_Glyph object.  0 in case of        */
+/*    aglyph :: The corresponding @FT_Glyph object.  0 in case of        */
 /*              failure.                                                 */
 /*                                                                       */
 /* <Return>                                                              */
@@ -286,7 +286,7 @@ FTC_Image_Cache_New( FTC_Manager       manager,
 /* <Note>                                                                */
 /*    The returned glyph is owned and managed by the glyph image cache.  */
 /*    Never try to transform or discard it manually!  You can however    */
-/*    create a copy with @FT2_1_3_Glyph_Copy and modify the new one.          */
+/*    create a copy with @FT_Glyph_Copy and modify the new one.          */
 /*                                                                       */
 /*    Because the glyph image cache limits the total amount of memory    */
 /*    taken by the glyphs it holds, the returned glyph might disappear   */
@@ -299,7 +299,7 @@ FT2_1_3_EXPORT( FT_Error )
 FTC_Image_Cache_Lookup( FTC_Image_Cache  cache,
 						FTC_Image_Desc*  desc,
 						FT_UInt          gindex,
-						FT2_1_3_Glyph        *aglyph );
+						FT_Glyph        *aglyph );
 
 /* */
 

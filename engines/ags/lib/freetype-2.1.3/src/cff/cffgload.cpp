@@ -236,13 +236,13 @@ cff_builder_init( CFF_Builder*   builder,
 	builder->memory = face->root.memory;
 
 	if ( glyph ) {
-		FT2_1_3_GlyphLoader  loader = glyph->root.internal->loader;
+		FT_GlyphLoader  loader = glyph->root.internal->loader;
 
 
 		builder->loader  = loader;
 		builder->base    = &loader->base.outline;
 		builder->current = &loader->current.outline;
-		FT2_1_3_GlyphLoader_Rewind( loader );
+		FT_GlyphLoader_Rewind( loader );
 
 		builder->hint_flags    = FT2_1_3_FACE(face)->internal->hint_flags;
 		builder->hints_globals = 0;
@@ -394,7 +394,7 @@ cff_decoder_prepare( CFF_Decoder*  decoder,
 static FT_Error
 check_points( CFF_Builder*  builder,
 			  FT_Int        count ) {
-	return FT2_1_3_GlyphLoader_CheckPoints( builder->loader, count, 0 );
+	return FT_GlyphLoader_CheckPoints( builder->loader, count, 0 );
 }
 
 
@@ -404,7 +404,7 @@ cff_builder_add_point( CFF_Builder*  builder,
 					   FT_Pos        x,
 					   FT_Pos        y,
 					   FT_Byte       flag ) {
-	FT2_1_3_Outline*  outline = builder->current;
+	FT_Outline*  outline = builder->current;
 
 
 	if ( builder->load_points ) {
@@ -442,7 +442,7 @@ cff_builder_add_point1( CFF_Builder*  builder,
 /* check room for a new contour, then add it */
 static FT_Error
 cff_builder_add_contour( CFF_Builder*  builder ) {
-	FT2_1_3_Outline*  outline = builder->current;
+	FT_Outline*  outline = builder->current;
 	FT_Error     error;
 
 
@@ -451,7 +451,7 @@ cff_builder_add_contour( CFF_Builder*  builder ) {
 		return FT2_1_3_Err_Ok;
 	}
 
-	error = FT2_1_3_GlyphLoader_CheckPoints( builder->loader, 0, 1 );
+	error = FT_GlyphLoader_CheckPoints( builder->loader, 0, 1 );
 	if ( !error ) {
 		if ( outline->n_contours > 0 )
 			outline->contours[outline->n_contours - 1] =
@@ -487,7 +487,7 @@ cff_builder_start_point( CFF_Builder*  builder,
 /* close the current contour */
 static void
 cff_builder_close_contour( CFF_Builder*  builder ) {
-	FT2_1_3_Outline*  outline = builder->current;
+	FT_Outline*  outline = builder->current;
 
 
 	/* XXXX: We must not include the last point in the path if it */
@@ -613,7 +613,7 @@ cff_operator_seac( CFF_Decoder*  decoder,
 				   FT_Int        achar ) {
 	FT_Error     error;
 	FT_Int       bchar_index, achar_index, n_base_points;
-	FT2_1_3_Outline*  base = decoder->builder.base;
+	FT_Outline*  base = decoder->builder.base;
 	TT_Face      face = decoder->builder.face;
 	FT_Vector    left_bearing, advance;
 	FT_Byte*     charstring;
@@ -646,12 +646,12 @@ cff_operator_seac( CFF_Decoder*  decoder,
 	/* accent character and return the array of subglyphs.         */
 	if ( decoder->builder.no_recurse ) {
 		FT_GlyphSlot    glyph  = (FT_GlyphSlot)decoder->builder.glyph;
-		FT2_1_3_GlyphLoader  loader = glyph->internal->loader;
+		FT_GlyphLoader  loader = glyph->internal->loader;
 		FT_SubGlyph     subg;
 
 
 		/* reallocate subglyph array if necessary */
-		error = FT2_1_3_GlyphLoader_CheckSubGlyphs( loader, 2 );
+		error = FT_GlyphLoader_CheckSubGlyphs( loader, 2 );
 		if ( error )
 			goto Exit;
 
@@ -723,13 +723,13 @@ cff_operator_seac( CFF_Decoder*  decoder,
 
 	/* Finally, move the accent. */
 	if ( decoder->builder.load_points ) {
-		FT2_1_3_Outline  dummy;
+		FT_Outline  dummy;
 
 
 		dummy.n_points = (short)( base->n_points - n_base_points );
 		dummy.points   = base->points   + n_base_points;
 
-		FT2_1_3_Outline_Translate( &dummy, adx, ady );
+		FT_Outline_Translate( &dummy, adx, ady );
 	}
 
 Exit:
@@ -1687,7 +1687,7 @@ cff_decoder_parse_charstrings( CFF_Decoder*  decoder,
 				}
 
 				/* add current outline to the glyph slot */
-				FT2_1_3_GlyphLoader_Add( builder->loader );
+				FT_GlyphLoader_Add( builder->loader );
 
 				/* return now! */
 				FT2_1_3_TRACE4(( "\n\n" ));
@@ -2285,16 +2285,16 @@ cff_slot_load( CFF_GlyphSlot  glyph,
 			glyph->root.outline.flags |= FT2_1_3_OUTLINE_REVERSE_FILL;
 
 			/* apply the font matrix */
-			FT2_1_3_Outline_Transform( &glyph->root.outline, &font_matrix );
+			FT_Outline_Transform( &glyph->root.outline, &font_matrix );
 
-			FT2_1_3_Outline_Translate( &glyph->root.outline,
+			FT_Outline_Translate( &glyph->root.outline,
 								  font_offset.x,
 								  font_offset.y );
 
 			if ( ( load_flags & FT2_1_3_LOAD_NO_SCALE ) == 0 ) {
 				/* scale the outline and the metrics */
 				FT_Int       n;
-				FT2_1_3_Outline*  cur     = &glyph->root.outline;
+				FT_Outline*  cur     = &glyph->root.outline;
 				FT_Vector*   vec     = cur->points;
 				FT_Fixed     x_scale = glyph->x_scale;
 				FT_Fixed     y_scale = glyph->y_scale;
@@ -2307,7 +2307,7 @@ cff_slot_load( CFF_GlyphSlot  glyph,
 						vec->y = FT2_1_3_MulFix( vec->y, y_scale );
 					}
 
-				FT2_1_3_Outline_Get_CBox( &glyph->root.outline, &cbox );
+				FT_Outline_Get_CBox( &glyph->root.outline, &cbox );
 
 				/* Then scale the metrics */
 				metrics->horiAdvance  = FT2_1_3_MulFix( metrics->horiAdvance,  x_scale );
@@ -2326,7 +2326,7 @@ cff_slot_load( CFF_GlyphSlot  glyph,
 			}
 
 			/* compute the other metrics */
-			FT2_1_3_Outline_Get_CBox( &glyph->root.outline, &cbox );
+			FT_Outline_Get_CBox( &glyph->root.outline, &cbox );
 
 			/* grid fit the bounding box if necessary */
 			if ( hinting ) {

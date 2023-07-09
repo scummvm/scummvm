@@ -416,7 +416,7 @@ struct  TRaster_Instance_ {
 	TStates   state;                /* rendering state                     */
 
 	FT_Bitmap   target;             /* description of target bit/pixmap    */
-	FT2_1_3_Outline  outline;
+	FT_Outline  outline;
 
 	Long      traceOfs;             /* current offset in target bitmap     */
 	Long      traceG;               /* current offset in target pixmap     */
@@ -3034,7 +3034,7 @@ ft_black_set_mode( TRaster_Instance*  raster,
 static int
 ft_black_render( TRaster_Instance*  raster,
 				 FT2_1_3_Raster_Params*  params ) {
-	FT2_1_3_Outline*  outline    = (FT2_1_3_Outline*)params->source;
+	FT_Outline*  outline    = (FT_Outline*)params->source;
 	FT_Bitmap*   target_map = params->target;
 
 

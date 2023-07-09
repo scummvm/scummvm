@@ -2,7 +2,7 @@
 /*                                                                         */
 /*  ftcglyph.c                                                             */
 /*                                                                         */
-/*    FreeType Glyph Image (FT2_1_3_Glyph) cache (body).                        */
+/*    FreeType Glyph Image (FT_Glyph) cache (body).                        */
 /*                                                                         */
 /*  Copyright 2000-2001 by                                                 */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */

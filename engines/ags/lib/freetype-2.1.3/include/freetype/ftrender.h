@@ -40,48 +40,48 @@ FT2_1_3_BEGIN_HEADER
 
 /* create a new glyph object */
 typedef FT_Error
-(*FT2_1_3_Glyph_InitFunc)( FT2_1_3_Glyph      glyph,
+(*FT_Glyph_InitFunc)( FT_Glyph      glyph,
 					  FT_GlyphSlot  slot );
 
 /* destroys a given glyph object */
 typedef void
-(*FT2_1_3_Glyph_DoneFunc)( FT2_1_3_Glyph  glyph );
+(*FT_Glyph_DoneFunc)( FT_Glyph  glyph );
 
 typedef void
-(*FT2_1_3_Glyph_TransformFunc)( FT2_1_3_Glyph    glyph,
+(*FT_Glyph_TransformFunc)( FT_Glyph    glyph,
 						   FT_Matrix*  matrix,
 						   FT_Vector*  delta );
 
 typedef void
-(*FT2_1_3_Glyph_GetBBoxFunc)( FT2_1_3_Glyph  glyph,
+(*FT_Glyph_GetBBoxFunc)( FT_Glyph  glyph,
 						 FT_BBox*  abbox );
 
 typedef FT_Error
-(*FT2_1_3_Glyph_CopyFunc)( FT2_1_3_Glyph   source,
-					  FT2_1_3_Glyph   target );
+(*FT_Glyph_CopyFunc)( FT_Glyph   source,
+					  FT_Glyph   target );
 
 typedef FT_Error
-(*FT2_1_3_Glyph_PrepareFunc)( FT2_1_3_Glyph      glyph,
+(*FT_Glyph_PrepareFunc)( FT_Glyph      glyph,
 						 FT_GlyphSlot  slot );
 
 /* deprecated */
-#define FT2_1_3_Glyph_Init_Func       FT2_1_3_Glyph_InitFunc
-#define FT2_1_3_Glyph_Done_Func       FT2_1_3_Glyph_DoneFunc
-#define FT2_1_3_Glyph_Transform_Func  FT2_1_3_Glyph_TransformFunc
-#define FT2_1_3_Glyph_BBox_Func       FT2_1_3_Glyph_GetBBoxFunc
-#define FT2_1_3_Glyph_Copy_Func       FT2_1_3_Glyph_CopyFunc
-#define FT2_1_3_Glyph_Prepare_Func    FT2_1_3_Glyph_PrepareFunc
+#define FT_Glyph_Init_Func       FT_Glyph_InitFunc
+#define FT_Glyph_Done_Func       FT_Glyph_DoneFunc
+#define FT_Glyph_Transform_Func  FT_Glyph_TransformFunc
+#define FT_Glyph_BBox_Func       FT_Glyph_GetBBoxFunc
+#define FT_Glyph_Copy_Func       FT_Glyph_CopyFunc
+#define FT_Glyph_Prepare_Func    FT_Glyph_PrepareFunc
 
 
-struct  FT2_1_3_Glyph_Class_ {
+struct  FT_Glyph_Class_ {
 	FT_Long                 glyph_size;
 	FT_Glyph_Format         glyph_format;
-	FT2_1_3_Glyph_InitFunc       glyph_init;
-	FT2_1_3_Glyph_DoneFunc       glyph_done;
-	FT2_1_3_Glyph_CopyFunc       glyph_copy;
-	FT2_1_3_Glyph_TransformFunc  glyph_transform;
-	FT2_1_3_Glyph_GetBBoxFunc    glyph_bbox;
-	FT2_1_3_Glyph_PrepareFunc    glyph_prepare;
+	FT_Glyph_InitFunc       glyph_init;
+	FT_Glyph_DoneFunc       glyph_done;
+	FT_Glyph_CopyFunc       glyph_copy;
+	FT_Glyph_TransformFunc  glyph_transform;
+	FT_Glyph_GetBBoxFunc    glyph_bbox;
+	FT_Glyph_PrepareFunc    glyph_prepare;
 };
 
 

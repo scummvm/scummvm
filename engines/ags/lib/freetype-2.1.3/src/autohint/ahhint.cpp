@@ -1189,13 +1189,13 @@ ah_hinter_load( AH_Hinter  hinter,
 			}
 
 			{
-				FT2_1_3_Outline  dummy = gloader->base.outline;
+				FT_Outline  dummy = gloader->base.outline;
 
 
 				dummy.points  += num_base_points;
 				dummy.n_points = (short)num_new_points;
 
-				FT2_1_3_Outline_Translate( &dummy, x, y );
+				FT_Outline_Translate( &dummy, x, y );
 			}
 		}
 	}
@@ -1213,14 +1213,14 @@ Hint_Metrics:
 
 		/* transform the hinted outline if needed */
 		if ( hinter->transformed )
-			FT2_1_3_Outline_Transform( &gloader->base.outline, &hinter->trans_matrix );
+			FT_Outline_Transform( &gloader->base.outline, &hinter->trans_matrix );
 
 		/* we must translate our final outline by -pp1.x, and compute */
 		/* the new metrics                                            */
 		if ( hinter->pp1.x )
-			FT2_1_3_Outline_Translate( &gloader->base.outline, -hinter->pp1.x, 0 );
+			FT_Outline_Translate( &gloader->base.outline, -hinter->pp1.x, 0 );
 
-		FT2_1_3_Outline_Get_CBox( &gloader->base.outline, &bbox );
+		FT_Outline_Get_CBox( &gloader->base.outline, &bbox );
 		bbox.xMin &= -64;
 		bbox.yMin &= -64;
 		bbox.xMax  = ( bbox.xMax + 63 ) & -64;

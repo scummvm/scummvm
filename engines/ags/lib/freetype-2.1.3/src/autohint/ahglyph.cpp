@@ -158,7 +158,7 @@ ah_compute_direction( FT_Pos  dx,
 /* this function is used by ah_get_orientation (see below) to test */
 /* the fill direction of a given bbox extrema                      */
 static FT_Int
-ah_test_extrema( FT2_1_3_Outline*  outline,
+ah_test_extrema( FT_Outline*  outline,
 				 FT_Int       n ) {
 	FT_Vector  *prev, *cur, *next;
 	FT_Pos      product;
@@ -212,7 +212,7 @@ ah_test_extrema( FT2_1_3_Outline*  outline,
 /* The function returns either 1 or -1.                                  */
 /*                                                                       */
 static FT_Int
-ah_get_orientation( FT2_1_3_Outline*  outline ) {
+ah_get_orientation( FT_Outline*  outline ) {
 	FT_BBox  box;
 	FT_Int   indices_xMin, indices_yMin, indices_xMax, indices_yMax;
 	FT_Int   n, last;
@@ -372,7 +372,7 @@ ah_outline_load( AH_Outline  outline,
 				 FT_Face     face ) {
 	FT2_1_3_Memory    memory       = outline->memory;
 	FT_Error     error        = FT2_1_3_Err_Ok;
-	FT2_1_3_Outline*  source       = &face->glyph->outline;
+	FT_Outline*  source       = &face->glyph->outline;
 	FT_Int       num_points   = source->n_points;
 	FT_Int       num_contours = source->n_contours;
 	AH_Point     points;
@@ -425,7 +425,7 @@ ah_outline_load( AH_Outline  outline,
 	outline->num_hsegments = 0;
 	outline->num_vsegments = 0;
 
-	/* We can't rely on the value of `FT2_1_3_Outline.flags' to know the fill  */
+	/* We can't rely on the value of `FT_Outline.flags' to know the fill  */
 	/* direction used for a glyph, given that some fonts are broken (e.g. */
 	/* the Arphic ones). We thus recompute it each time we need to.       */
 	/*                                                                    */

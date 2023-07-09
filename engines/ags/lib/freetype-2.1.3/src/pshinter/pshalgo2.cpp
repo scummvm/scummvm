@@ -642,7 +642,7 @@ psh2_hint_table_tune_coord( PSH2_Hint_Table  table,
 /* the function only works in a single dimension..       */
 static void
 psh2_hint_table_tune_outline( PSH2_Hint_Table  table,
-							  FT2_1_3_Outline*      outline,
+							  FT_Outline*      outline,
 							  PSH_Globals      globals,
 							  FT_Int           dimension )
 
@@ -789,7 +789,7 @@ psh2_compute_dir( FT_Pos  dx,
 
 static FT_Error
 psh2_glyph_init( PSH2_Glyph   glyph,
-				 FT2_1_3_Outline*  outline,
+				 FT_Outline*  outline,
 				 PS_Hints     ps_hints,
 				 PSH_Globals  globals ) {
 	FT_Error   error;
@@ -1370,7 +1370,7 @@ Next_Contour:
 
 FT_Error
 ps2_hints_apply( PS_Hints        ps_hints,
-				 FT2_1_3_Outline*     outline,
+				 FT_Outline*     outline,
 				 PSH_Globals     globals,
 				 FT_Render_Mode  hint_mode ) {
 	PSH2_GlyphRec  glyphrec;

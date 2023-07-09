@@ -184,7 +184,7 @@ t1operator_seac( T1_Decoder  decoder,
 	FT_Int       bchar_index, achar_index;
 #if 0
 	FT_Int       n_base_points;
-	FT2_1_3_Outline*  base = decoder->builder.base;
+	FT_Outline*  base = decoder->builder.base;
 #endif
 	FT_Vector    left_bearing, advance;
 
@@ -213,12 +213,12 @@ t1operator_seac( T1_Decoder  decoder,
 	/* accent character and return the array of subglyphs.         */
 	if ( decoder->builder.no_recurse ) {
 		FT_GlyphSlot    glyph  = (FT_GlyphSlot)decoder->builder.glyph;
-		FT2_1_3_GlyphLoader  loader = glyph->internal->loader;
+		FT_GlyphLoader  loader = glyph->internal->loader;
 		FT_SubGlyph     subg;
 
 
 		/* reallocate subglyph array if necessary */
-		error = FT2_1_3_GlyphLoader_CheckSubGlyphs( loader, 2 );
+		error = FT_GlyphLoader_CheckSubGlyphs( loader, 2 );
 		if ( error )
 			goto Exit;
 
@@ -250,7 +250,7 @@ t1operator_seac( T1_Decoder  decoder,
 	/* First load `bchar' in builder */
 	/* now load the unscaled outline */
 
-	FT2_1_3_GlyphLoader_Prepare( decoder->builder.loader );  /* prepare loader */
+	FT_GlyphLoader_Prepare( decoder->builder.loader );  /* prepare loader */
 
 	error = t1_decoder_parse_glyph( decoder, bchar_index );
 	if ( error )
@@ -288,13 +288,13 @@ t1operator_seac( T1_Decoder  decoder,
 #if 0
 	/* Finally, move the accent */
 	if ( decoder->builder.load_points ) {
-		FT2_1_3_Outline  dummy;
+		FT_Outline  dummy;
 
 
 		dummy.n_points = (short)( base->n_points - n_base_points );
 		dummy.points   = base->points + n_base_points;
 
-		FT2_1_3_Outline_Translate( &dummy, adx - asb, ady );
+		FT_Outline_Translate( &dummy, adx - asb, ady );
 	}
 #else
 	decoder->builder.pos_x = 0;
@@ -721,7 +721,7 @@ Unexpected_OtherSubr:
 				}
 
 				/* add current outline to the glyph slot */
-				FT2_1_3_GlyphLoader_Add( builder->loader );
+				FT_GlyphLoader_Add( builder->loader );
 
 				/* return now! */
 				FT2_1_3_TRACE4(( "\n\n" ));

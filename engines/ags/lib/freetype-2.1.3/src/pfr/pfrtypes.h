@@ -322,7 +322,7 @@ typedef struct  PFR_GlyphRec_ {
 	FT_UInt           max_subs;
 	PFR_SubGlyphRec*  subs;
 
-	FT2_1_3_GlyphLoader    loader;
+	FT_GlyphLoader    loader;
 	FT_Bool           path_begun;
 
 } PFR_GlyphRec, *PFR_Glyph;

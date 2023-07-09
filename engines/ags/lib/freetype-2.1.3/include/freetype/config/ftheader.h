@@ -420,7 +420,7 @@
 /*    A macro used in #include statements to name the file containing    */
 /*    the `glyph image' API of the FreeType 2 cache sub-system.          */
 /*                                                                       */
-/*    It is used to define a cache for @FT2_1_3_Glyph elements.  You can also */
+/*    It is used to define a cache for @FT_Glyph elements.  You can also */
 /*    see the API defined in @FT2_1_3_CACHE_SMALL_BITMAPS_H if you only need  */
 /*    to store small glyph bitmaps, as it will use less memory.          */
 /*                                                                       */

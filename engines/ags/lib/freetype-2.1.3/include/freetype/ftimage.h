@@ -19,7 +19,7 @@
 /*************************************************************************/
 /*                                                                       */
 /* Note: A `raster' is simply a scan-line converter, used to render      */
-/*       FT2_1_3_Outlines into FT_Bitmaps.                                    */
+/*       FT_Outlines into FT_Bitmaps.                                    */
 /*                                                                       */
 /*************************************************************************/
 
@@ -304,7 +304,7 @@ typedef struct  FT_Bitmap_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_Outline                                                         */
+/*    FT_Outline                                                         */
 /*                                                                       */
 /* <Description>                                                         */
 /*    This structure is used to describe an outline to the scan-line     */
@@ -335,9 +335,9 @@ typedef struct  FT_Bitmap_ {
 /*                                                                       */
 /*    flags      :: A set of bit flags used to characterize the outline  */
 /*                  and give hints to the scan-converter and hinter on   */
-/*                  how to convert/grid-fit it.  See FT2_1_3_Outline_Flags.   */
+/*                  how to convert/grid-fit it.  See FT_Outline_Flags.   */
 /*                                                                       */
-typedef struct  FT2_1_3_Outline_ {
+typedef struct  FT_Outline_ {
 	short       n_contours;      /* number of contours in glyph        */
 	short       n_points;        /* number of points in the glyph      */
 
@@ -347,13 +347,13 @@ typedef struct  FT2_1_3_Outline_ {
 
 	int         flags;           /* outline masks                      */
 
-} FT2_1_3_Outline;
+} FT_Outline;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Enum>                                                                */
-/*   FT2_1_3_Outline_Flags                                                    */
+/*   FT_Outline_Flags                                                    */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A simple type used to enumerates the flags in an outline's         */
@@ -410,7 +410,7 @@ typedef struct  FT2_1_3_Outline_ {
 /*                                 completely ignored by a given         */
 /*                                 scan-converter.                       */
 /*                                                                       */
-typedef enum  FT2_1_3_Outline_Flags_ {
+typedef enum  FT_Outline_Flags_ {
 	FT2_1_3_OUTLINE_NONE            = 0,
 	FT2_1_3_OUTLINE_OWNER           = 1,
 	FT2_1_3_OUTLINE_EVEN_ODD_FILL   = 2,
@@ -419,7 +419,7 @@ typedef enum  FT2_1_3_Outline_Flags_ {
 	FT2_1_3_OUTLINE_HIGH_PRECISION  = 256,
 	FT2_1_3_OUTLINE_SINGLE_PASS     = 512
 
-} FT2_1_3_Outline_Flags;
+} FT_Outline_Flags;
 
 
 /*************************************************************************
@@ -471,7 +471,7 @@ typedef enum  FT2_1_3_Outline_Flags_ {
 /*************************************************************************/
 /*                                                                       */
 /* <FuncType>                                                            */
-/*    FT2_1_3_Outline_MoveToFunc                                              */
+/*    FT_Outline_MoveToFunc                                              */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A function pointer type used to describe the signature of a `move  */
@@ -489,15 +489,15 @@ typedef enum  FT2_1_3_Outline_Flags_ {
 /*    Error code.  0 means success.                                      */
 /*                                                                       */
 typedef int
-(*FT2_1_3_Outline_MoveToFunc)( FT_Vector*  to,
+(*FT_Outline_MoveToFunc)( FT_Vector*  to,
 						  void*       user );
 
-#define FT2_1_3_Outline_MoveTo_Func  FT2_1_3_Outline_MoveToFunc
+#define FT_Outline_MoveTo_Func  FT_Outline_MoveToFunc
 
 /*************************************************************************/
 /*                                                                       */
 /* <FuncType>                                                            */
-/*    FT2_1_3_Outline_LineToFunc                                              */
+/*    FT_Outline_LineToFunc                                              */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A function pointer type used to describe the signature of a `line  */
@@ -515,15 +515,15 @@ typedef int
 /*    Error code.  0 means success.                                      */
 /*                                                                       */
 typedef int
-(*FT2_1_3_Outline_LineToFunc)( FT_Vector*  to,
+(*FT_Outline_LineToFunc)( FT_Vector*  to,
 						  void*       user );
 
-#define  FT2_1_3_Outline_LineTo_Func  FT2_1_3_Outline_LineToFunc
+#define  FT_Outline_LineTo_Func  FT_Outline_LineToFunc
 
 /*************************************************************************/
 /*                                                                       */
 /* <FuncType>                                                            */
-/*    FT2_1_3_Outline_ConicToFunc                                             */
+/*    FT_Outline_ConicToFunc                                             */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A function pointer type use to describe the signature of a `conic  */
@@ -545,16 +545,16 @@ typedef int
 /*    Error code.  0 means success.                                      */
 /*                                                                       */
 typedef int
-(*FT2_1_3_Outline_ConicToFunc)( FT_Vector*  control,
+(*FT_Outline_ConicToFunc)( FT_Vector*  control,
 						   FT_Vector*  to,
 						   void*       user );
 
-#define  FT2_1_3_Outline_ConicTo_Func  FT2_1_3_Outline_ConicToFunc
+#define  FT_Outline_ConicTo_Func  FT_Outline_ConicToFunc
 
 /*************************************************************************/
 /*                                                                       */
 /* <FuncType>                                                            */
-/*    FT2_1_3_Outline_CubicToFunc                                             */
+/*    FT_Outline_CubicToFunc                                             */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A function pointer type used to describe the signature of a `cubic */
@@ -576,18 +576,18 @@ typedef int
 /*    Error code.  0 means success.                                      */
 /*                                                                       */
 typedef int
-(*FT2_1_3_Outline_CubicToFunc)( FT_Vector*  control1,
+(*FT_Outline_CubicToFunc)( FT_Vector*  control1,
 						   FT_Vector*  control2,
 						   FT_Vector*  to,
 						   void*       user );
 
-#define  FT2_1_3_Outline_CubicTo_Func  FT2_1_3_Outline_CubicToFunc
+#define  FT_Outline_CubicTo_Func  FT_Outline_CubicToFunc
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_Outline_Funcs                                                   */
+/*    FT_Outline_Funcs                                                   */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A structure to hold various function pointers used during outline  */
@@ -620,16 +620,16 @@ typedef int
 /*    Set the value of `shift' and `delta' to 0 to get the original      */
 /*    point coordinates.                                                 */
 /*                                                                       */
-typedef struct  FT2_1_3_Outline_Funcs_ {
-	FT2_1_3_Outline_MoveToFunc   move_to;
-	FT2_1_3_Outline_LineToFunc   line_to;
-	FT2_1_3_Outline_ConicToFunc  conic_to;
-	FT2_1_3_Outline_CubicToFunc  cubic_to;
+typedef struct  FT_Outline_Funcs_ {
+	FT_Outline_MoveToFunc   move_to;
+	FT_Outline_LineToFunc   line_to;
+	FT_Outline_ConicToFunc  conic_to;
+	FT_Outline_CubicToFunc  cubic_to;
 
 	int                     shift;
 	FT_Pos                  delta;
 
-} FT2_1_3_Outline_Funcs;
+} FT_Outline_Funcs;
 
 
 /*************************************************************************/
@@ -693,7 +693,7 @@ typedef struct  FT2_1_3_Outline_Funcs_ {
 /*                                                                       */
 /*    FT2_1_3_GLYPH_FORMAT_OUTLINE ::                                         */
 /*      The glyph image is a vertorial outline made of line segments     */
-/*      and Bezier arcs; it can be described as an @FT2_1_3_Outline; you      */
+/*      and Bezier arcs; it can be described as an @FT_Outline; you      */
 /*      generally want to access the `outline' field of the              */
 /*      @FT_GlyphSlotRec structure to read it.                           */
 /*                                                                       */
@@ -701,7 +701,7 @@ typedef struct  FT2_1_3_Outline_Funcs_ {
 /*      The glyph image is a vectorial path with no inside/outside       */
 /*      contours.  Some Type 1 fonts, like those in the Hershey family,  */
 /*      contain glyphs in this format.  These are described as           */
-/*      @FT2_1_3_Outline, but FreeType isn't currently capable of rendering   */
+/*      @FT_Outline, but FreeType isn't currently capable of rendering   */
 /*      them correctly.                                                  */
 /*                                                                       */
 typedef enum  FT_Glyph_Format_ {
@@ -993,7 +993,7 @@ typedef  enum {
 /*    target      :: The target bitmap.                                  */
 /*                                                                       */
 /*    source      :: A pointer to the source glyph image (e.g. an        */
-/*                   FT2_1_3_Outline).                                        */
+/*                   FT_Outline).                                        */
 /*                                                                       */
 /*    flags       :: The rendering flags.                                */
 /*                                                                       */
@@ -1170,7 +1170,7 @@ typedef int
 /* <Note>                                                                */
 /*    The exact format of the source image depends on the raster's glyph */
 /*    format defined in its FT2_1_3_Raster_Funcs structure.  It can be an     */
-/*    FT2_1_3_Outline or anything else in order to support a large array of   */
+/*    FT_Outline or anything else in order to support a large array of   */
 /*    glyph formats.                                                     */
 /*                                                                       */
 /*    Note also that the render function can fail and return a           */

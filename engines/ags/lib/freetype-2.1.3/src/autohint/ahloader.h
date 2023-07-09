@@ -22,7 +22,7 @@
 /*************************************************************************/
 /*                                                                       */
 /* This defines the AH_GlyphLoader type; it is simply a typedef to       */
-/* FT2_1_3_GlyphLoader.                                                       */
+/* FT_GlyphLoader.                                                       */
 /*                                                                       */
 /*************************************************************************/
 
@@ -38,19 +38,19 @@ FT2_1_3_BEGIN_HEADER
 
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftgloadr.h"
 
-#define AH_Load    FT2_1_3_GlyphLoad
-#define AH_Loader  FT2_1_3_GlyphLoader
+#define AH_Load    FT_GlyphLoad
+#define AH_Loader  FT_GlyphLoader
 
-#define ah_loader_new              FT2_1_3_GlyphLoader_New
-#define ah_loader_done             FT2_1_3_GlyphLoader_Done
-#define ah_loader_reset            FT2_1_3_GlyphLoader_Reset
-#define ah_loader_rewind           FT2_1_3_GlyphLoader_Rewind
-#define ah_loader_create_extra     FT2_1_3_GlyphLoader_CreateExtra
-#define ah_loader_check_points     FT2_1_3_GlyphLoader_CheckPoints
-#define ah_loader_check_subglyphs  FT2_1_3_GlyphLoader_CheckSubGlyphs
-#define ah_loader_prepare          FT2_1_3_GlyphLoader_Prepare
-#define ah_loader_add              FT2_1_3_GlyphLoader_Add
-#define ah_loader_copy_points      FT2_1_3_GlyphLoader_CopyPoints
+#define ah_loader_new              FT_GlyphLoader_New
+#define ah_loader_done             FT_GlyphLoader_Done
+#define ah_loader_reset            FT_GlyphLoader_Reset
+#define ah_loader_rewind           FT_GlyphLoader_Rewind
+#define ah_loader_create_extra     FT_GlyphLoader_CreateExtra
+#define ah_loader_check_points     FT_GlyphLoader_CheckPoints
+#define ah_loader_check_subglyphs  FT_GlyphLoader_CheckSubGlyphs
+#define ah_loader_prepare          FT_GlyphLoader_Prepare
+#define ah_loader_add              FT_GlyphLoader_Add
+#define ah_loader_copy_points      FT_GlyphLoader_CopyPoints
 
 
 FT2_1_3_END_HEADER

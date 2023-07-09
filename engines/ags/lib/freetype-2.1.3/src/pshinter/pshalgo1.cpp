@@ -334,7 +334,7 @@ ps_simple_scale( PSH1_Hint_Table  table,
 FT2_1_3_LOCAL_DEF( FT_Error )
 psh1_hint_table_optimize( PSH1_Hint_Table  table,
 						  PSH_Globals      globals,
-						  FT2_1_3_Outline*      outline,
+						  FT_Outline*      outline,
 						  FT_Int           vertical ) {
 	PSH_Dimension  dim   = &globals->dimension[vertical];
 	FT_Fixed       scale = dim->scale_mult;
@@ -613,7 +613,7 @@ psh1_hint_table_tune_coord( PSH1_Hint_Table  table,
 /* The function only works in a single dimension.         */
 static void
 psh1_hint_table_tune_outline( PSH1_Hint_Table  table,
-							  FT2_1_3_Outline*      outline,
+							  FT_Outline*      outline,
 							  PSH_Globals      globals,
 							  FT_Int           vertical )
 
@@ -688,7 +688,7 @@ psh1_hint_table_tune_outline( PSH1_Hint_Table  table,
 
 FT_Error
 ps1_hints_apply( PS_Hints        ps_hints,
-				 FT2_1_3_Outline*     outline,
+				 FT_Outline*     outline,
 				 PSH_Globals     globals,
 				 FT_Render_Mode  hint_mode ) {
 	PSH1_Hint_TableRec  hints;

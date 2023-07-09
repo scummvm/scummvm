@@ -94,7 +94,7 @@ FT2_1_3_Stroker_Set( FT2_1_3_Stroker           stroker,
 
 FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_Stroker_ParseOutline( FT2_1_3_Stroker   stroker,
-						 FT2_1_3_Outline*  outline,
+						 FT_Outline*  outline,
 						 FT_Bool      opened );
 
 FT2_1_3_EXPORT( FT_Error )
@@ -129,7 +129,7 @@ FT2_1_3_Stroker_GetCounts( FT2_1_3_Stroker  stroker,
 
 FT2_1_3_EXPORT( void )
 FT2_1_3_Stroker_Export( FT2_1_3_Stroker   stroker,
-				   FT2_1_3_Outline*  outline );
+				   FT_Outline*  outline );
 
 FT2_1_3_EXPORT( void )
 FT2_1_3_Stroker_Done( FT2_1_3_Stroker  stroker );

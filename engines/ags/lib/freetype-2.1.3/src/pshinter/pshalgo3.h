@@ -201,7 +201,7 @@ typedef struct  PSH3_GlyphRec_ {
 	PSH3_Contour        contours;
 
 	FT2_1_3_Memory           memory;
-	FT2_1_3_Outline*         outline;
+	FT_Outline*         outline;
 	PSH_Globals         globals;
 	PSH3_Hint_TableRec  hint_tables[2];
 
@@ -232,7 +232,7 @@ extern PSH3_Glyph       ps3_debug_glyph;
 
 extern FT_Error
 ps3_hints_apply( PS_Hints        ps_hints,
-				 FT2_1_3_Outline*     outline,
+				 FT_Outline*     outline,
 				 PSH_Globals     globals,
 				 FT_Render_Mode  hint_mode );
 

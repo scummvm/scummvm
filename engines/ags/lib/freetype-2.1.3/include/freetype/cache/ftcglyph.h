@@ -22,7 +22,7 @@
 /*            implement an abstract glyph cache class.  You need to      */
 /*            provide additional logic to implement a complete cache.    */
 /*            For example, see `ftcimage.h' and `ftcimage.c' which       */
-/*            implement a FT2_1_3_Glyph cache based on this code.             */
+/*            implement a FT_Glyph cache based on this code.             */
 /*                                                                       */
 /*************************************************************************/
 

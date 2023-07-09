@@ -305,7 +305,7 @@ typedef struct  TRaster_ {
 	FT_Vector   bez_stack[32 * 3 + 1];
 	int         lev_stack[32];
 
-	FT2_1_3_Outline  outline;
+	FT_Outline  outline;
 	FT_Bitmap   target;
 	FT_BBox     clip_box;
 
@@ -353,7 +353,7 @@ gray_init_cells( RAS_ARG_ void*  buffer,
 /*                                                                       */
 static void
 gray_compute_cbox( RAS_ARG ) {
-	FT2_1_3_Outline*  outline = &ras.outline;
+	FT_Outline*  outline = &ras.outline;
 	FT_Vector*   vec     = outline->points;
 	FT_Vector*   limit   = vec + outline->n_points;
 
@@ -1467,7 +1467,7 @@ gray_sweep( RAS_ARG_ FT_Bitmap*  target ) {
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Outline_Decompose                                               */
+/*    FT_Outline_Decompose                                               */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Walks over an outline's structure to decompose it into individual  */
@@ -1491,8 +1491,8 @@ gray_sweep( RAS_ARG_ FT_Bitmap*  target ) {
 /*    Error code.  0 means sucess.                                       */
 /*                                                                       */
 static
-int  FT2_1_3_Outline_Decompose( FT2_1_3_Outline*              outline,
-						   const FT2_1_3_Outline_Funcs*  func_interface,
+int  FT_Outline_Decompose( FT_Outline*              outline,
+						   const FT_Outline_Funcs*  func_interface,
 						   void*                    user ) {
 #undef SCALED
 #if 0
@@ -1698,11 +1698,11 @@ typedef struct  TBand_ {
 static int
 gray_convert_glyph_inner( RAS_ARG ) {
 	static
-	const FT2_1_3_Outline_Funcs  func_interface = {
-		(FT2_1_3_Outline_MoveTo_Func) gray_move_to,
-		(FT2_1_3_Outline_LineTo_Func) gray_line_to,
-		(FT2_1_3_Outline_ConicTo_Func)gray_conic_to,
-		(FT2_1_3_Outline_CubicTo_Func)gray_cubic_to,
+	const FT_Outline_Funcs  func_interface = {
+		(FT_Outline_MoveTo_Func) gray_move_to,
+		(FT_Outline_LineTo_Func) gray_line_to,
+		(FT_Outline_ConicTo_Func)gray_conic_to,
+		(FT_Outline_CubicTo_Func)gray_cubic_to,
 		0,
 		0
 	};
@@ -1710,7 +1710,7 @@ gray_convert_glyph_inner( RAS_ARG ) {
 	volatile int  error = 0;
 
 	if ( ft_setjmp( ras.jump_buffer ) == 0 ) {
-		error = FT2_1_3_Outline_Decompose( &ras.outline, &func_interface, &ras );
+		error = FT_Outline_Decompose( &ras.outline, &func_interface, &ras );
 		gray_record_cell( RAS_VAR );
 	} else {
 		error = ErrRaster_MemoryOverflow;
@@ -1796,7 +1796,7 @@ gray_convert_glyph( RAS_ARG ) {
 #if 1
 			error = gray_convert_glyph_inner( RAS_VAR );
 #else
-			error = FT2_1_3_Outline_Decompose( outline, &func_interface, &ras ) ||
+			error = FT_Outline_Decompose( outline, &func_interface, &ras ) ||
 					gray_record_cell( RAS_VAR );
 #endif
 
@@ -1853,7 +1853,7 @@ gray_convert_glyph( RAS_ARG ) {
 extern int
 gray_raster_render( PRaster            raster,
 					FT2_1_3_Raster_Params*  params ) {
-	FT2_1_3_Outline*  outline = (FT2_1_3_Outline*)params->source;
+	FT_Outline*  outline = (FT_Outline*)params->source;
 	FT_Bitmap*   target_map = params->target;
 
 

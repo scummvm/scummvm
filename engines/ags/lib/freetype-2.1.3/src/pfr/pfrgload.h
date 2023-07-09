@@ -29,7 +29,7 @@ FT2_1_3_BEGIN_HEADER
 
 FT2_1_3_LOCAL( void )
 pfr_glyph_init( PFR_Glyph       glyph,
-				FT2_1_3_GlyphLoader  loader );
+				FT_GlyphLoader  loader );
 
 FT2_1_3_LOCAL( void )
 pfr_glyph_done( PFR_Glyph  glyph );

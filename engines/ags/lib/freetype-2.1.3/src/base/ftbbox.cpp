@@ -47,7 +47,7 @@ typedef struct  TBBox_Rec_ {
 /*                                                                       */
 /* <Description>                                                         */
 /*    This function is used as a `move_to' and `line_to' emitter during  */
-/*    FT2_1_3_Outline_Decompose().  It simply records the destination point   */
+/*    FT_Outline_Decompose().  It simply records the destination point   */
 /*    in `user->last'; no further computations are necessary since we    */
 /*    the cbox as the starting bbox which must be refined.               */
 /*                                                                       */
@@ -522,7 +522,7 @@ BBox_Cubic_To( FT_Vector*  control1,
 /* documentation is in ftbbox.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Outline_Get_BBox( FT2_1_3_Outline*  outline,
+FT_Outline_Get_BBox( FT_Outline*  outline,
 					 FT_BBox     *abbox ) {
 	FT_BBox     cbox;
 	FT_BBox     bbox;
@@ -582,11 +582,11 @@ FT2_1_3_Outline_Get_BBox( FT2_1_3_Outline*  outline,
 		/* the two boxes are different, now walk over the outline to */
 		/* get the Bezier arc extrema.                               */
 
-		static const FT2_1_3_Outline_Funcs  bbox_interface = {
-			(FT2_1_3_Outline_MoveTo_Func) BBox_Move_To,
-			(FT2_1_3_Outline_LineTo_Func) BBox_Move_To,
-			(FT2_1_3_Outline_ConicTo_Func)BBox_Conic_To,
-			(FT2_1_3_Outline_CubicTo_Func)BBox_Cubic_To,
+		static const FT_Outline_Funcs  bbox_interface = {
+			(FT_Outline_MoveTo_Func) BBox_Move_To,
+			(FT_Outline_LineTo_Func) BBox_Move_To,
+			(FT_Outline_ConicTo_Func)BBox_Conic_To,
+			(FT_Outline_CubicTo_Func)BBox_Cubic_To,
 			0, 0
 		};
 
@@ -596,7 +596,7 @@ FT2_1_3_Outline_Get_BBox( FT2_1_3_Outline*  outline,
 
 		user.bbox = bbox;
 
-		error = FT2_1_3_Outline_Decompose( outline, &bbox_interface, &user );
+		error = FT_Outline_Decompose( outline, &bbox_interface, &user );
 		if ( error )
 			return error;
 

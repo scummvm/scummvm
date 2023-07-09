@@ -27,10 +27,10 @@
 namespace AGS3 {
 namespace FreeType213 {
 
-/* the FT2_1_3_Glyph image node type */
+/* the FT_Glyph image node type */
 typedef struct  FTC_ImageNodeRec_ {
 	FTC_GlyphNodeRec  gnode;
-	FT2_1_3_Glyph          glyph;
+	FT_Glyph          glyph;
 
 } FTC_ImageNodeRec, *FTC_ImageNode;
 
@@ -113,7 +113,7 @@ ftc_image_node_init( FTC_ImageNode   inode,
 			if ( face->glyph->format == FT2_1_3_GLYPH_FORMAT_BITMAP  ||
 					face->glyph->format == FT2_1_3_GLYPH_FORMAT_OUTLINE ) {
 				/* ok, copy it */
-				FT2_1_3_Glyph  glyph;
+				FT_Glyph  glyph;
 
 
 				error = FT2_1_3_Get_Glyph( face->glyph, &glyph );
@@ -137,7 +137,7 @@ Exit:
 FT2_1_3_CALLBACK_DEF( FT_ULong )
 ftc_image_node_weight( FTC_ImageNode  inode ) {
 	FT_ULong  size  = 0;
-	FT2_1_3_Glyph  glyph = inode->glyph;
+	FT_Glyph  glyph = inode->glyph;
 
 
 	switch ( glyph->format ) {
@@ -152,10 +152,10 @@ ftc_image_node_weight( FTC_ImageNode  inode ) {
 	break;
 
 	case FT2_1_3_GLYPH_FORMAT_OUTLINE: {
-		FT2_1_3_OutlineGlyph  outg;
+		FT_OutlineGlyph  outg;
 
 
-		outg = (FT2_1_3_OutlineGlyph)glyph;
+		outg = (FT_OutlineGlyph)glyph;
 		size = outg->outline.n_points *
 			   ( sizeof ( FT_Vector ) + sizeof ( FT_Byte ) ) +
 			   outg->outline.n_contours * sizeof ( FT_Short ) +
@@ -271,7 +271,7 @@ FT2_1_3_EXPORT_DEF( FT_Error )
 FTC_ImageCache_Lookup( FTC_ImageCache  cache,
 					   FTC_ImageType   type,
 					   FT_UInt         gindex,
-					   FT2_1_3_Glyph       *aglyph,
+					   FT_Glyph       *aglyph,
 					   FTC_Node       *anode ) {
 	FTC_ImageQueryRec  iquery;
 	FTC_ImageNode      node;
@@ -317,7 +317,7 @@ FT2_1_3_EXPORT_DEF( FT_Error )
 FTC_Image_Cache_Lookup( FTC_Image_Cache  icache,
 						FTC_Image_Desc*  desc,
 						FT_UInt          gindex,
-						FT2_1_3_Glyph        *aglyph ) {
+						FT_Glyph        *aglyph ) {
 	FTC_ImageTypeRec  type0;
 
 

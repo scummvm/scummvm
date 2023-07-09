@@ -68,10 +68,10 @@ ft_raster1_transform( FT_Renderer   render,
 	}
 
 	if ( matrix )
-		FT2_1_3_Outline_Transform( &slot->outline, matrix );
+		FT_Outline_Transform( &slot->outline, matrix );
 
 	if ( delta )
-		FT2_1_3_Outline_Translate( &slot->outline, delta->x, delta->y );
+		FT_Outline_Translate( &slot->outline, delta->x, delta->y );
 
 Exit:
 	return error;
@@ -86,7 +86,7 @@ ft_raster1_get_cbox( FT_Renderer   render,
 	FT2_1_3_MEM_ZERO( cbox, sizeof ( *cbox ) );
 
 	if ( slot->format == render->glyph_format )
-		FT2_1_3_Outline_Get_CBox( &slot->outline, cbox );
+		FT_Outline_Get_CBox( &slot->outline, cbox );
 }
 
 
@@ -97,7 +97,7 @@ ft_raster1_render( FT_Renderer     render,
 				   FT_Render_Mode  mode,
 				   FT_Vector*      origin ) {
 	FT_Error     error;
-	FT2_1_3_Outline*  outline;
+	FT_Outline*  outline;
 	FT_BBox      cbox;
 	FT_UInt      width, height, pitch;
 	FT_Bitmap*   bitmap;
@@ -127,10 +127,10 @@ ft_raster1_render( FT_Renderer     render,
 
 	/* translate the outline to the new origin if needed */
 	if ( origin )
-		FT2_1_3_Outline_Translate( outline, origin->x, origin->y );
+		FT_Outline_Translate( outline, origin->x, origin->y );
 
 	/* compute the control box, and grid fit it */
-	FT2_1_3_Outline_Get_CBox( outline, &cbox );
+	FT_Outline_Get_CBox( outline, &cbox );
 
 	cbox.xMin &= -64;
 	cbox.yMin &= -64;
@@ -169,7 +169,7 @@ ft_raster1_render( FT_Renderer     render,
 	slot->flags |= FT2_1_3_GLYPH_OWN_BITMAP;
 
 	/* translate outline to render it into the bitmap */
-	FT2_1_3_Outline_Translate( outline, -cbox.xMin, -cbox.yMin );
+	FT_Outline_Translate( outline, -cbox.xMin, -cbox.yMin );
 
 	/* set up parameters */
 	params.target = bitmap;
@@ -182,7 +182,7 @@ ft_raster1_render( FT_Renderer     render,
 	/* render outline into the bitmap */
 	error = render->raster_render( render->raster, &params );
 
-	FT2_1_3_Outline_Translate( outline, cbox.xMin, cbox.yMin );
+	FT_Outline_Translate( outline, cbox.xMin, cbox.yMin );
 
 	if ( error )
 		goto Exit;

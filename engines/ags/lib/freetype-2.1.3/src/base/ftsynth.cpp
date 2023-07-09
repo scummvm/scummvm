@@ -38,7 +38,7 @@
 FT2_1_3_EXPORT_DEF( void )
 FT_GlyphSlot_Oblique( FT_GlyphSlot  slot ) {
 	FT_Matrix    transform;
-	FT2_1_3_Outline*  outline = &slot->outline;
+	FT_Outline*  outline = &slot->outline;
 
 
 	/* only oblique outline glyphs */
@@ -56,7 +56,7 @@ FT_GlyphSlot_Oblique( FT_GlyphSlot  slot ) {
 	transform.xy = 0x06000L;
 	transform.yy = 0x10000L;
 
-	FT2_1_3_Outline_Transform( outline, &transform );
+	FT_Outline_Transform( outline, &transform );
 }
 
 
@@ -71,7 +71,7 @@ FT_GlyphSlot_Oblique( FT_GlyphSlot  slot ) {
 
 
 static int
-ft_test_extrema( FT2_1_3_Outline*  outline,
+ft_test_extrema( FT_Outline*  outline,
                  int          n ) {
 	FT_Vector  *prev, *cur, *next;
 	FT_Pos      product;
@@ -123,7 +123,7 @@ ft_test_extrema( FT2_1_3_Outline*  outline,
 /* The function returns either 1 or -1.                                  */
 /*                                                                       */
 static int
-ft_get_orientation( FT2_1_3_Outline*  outline ) {
+ft_get_orientation( FT_Outline*  outline ) {
 	FT_BBox  box;
 	FT_BBox  indices;
 	int      n, last;
@@ -195,7 +195,7 @@ FT_GlyphSlot_Embolden( FT_GlyphSlot  slot ) {
 	FT_Vector*   points;
 	FT_Vector    v_prev, v_first, v_next, v_cur;
 	FT_Pos       distance;
-	FT2_1_3_Outline*  outline = &slot->outline;
+	FT_Outline*  outline = &slot->outline;
 	FT_Face      face = FT2_1_3_SLOT_FACE( slot );
 	FT2_1_3_Angle     rotate, angle_in, angle_out;
 	FT_Int       c, n, first, orientation;

@@ -86,7 +86,7 @@ typedef struct  PSH1_Hint_TableRec_ {
 
 extern FT_Error
 ps1_hints_apply( PS_Hints        ps_hints,
-				 FT2_1_3_Outline*     outline,
+				 FT_Outline*     outline,
 				 PSH_Globals     globals,
 				 FT_Render_Mode  hint_mode );
 

@@ -58,7 +58,7 @@ using FreeType213::FT_Byte;
 using FreeType213::FT_Face;
 using FreeType213::FT_Library;
 using FreeType213::FT_FaceRec;
-using FreeType213::FT2_1_3_Glyph;
+using FreeType213::FT_Glyph;
 using FreeType213::FT_Bitmap;
 using FreeType213::FT_BitmapGlyph;
 
@@ -309,7 +309,7 @@ static void _alfont_cache_glyph(ALFONT_FONT *f, int glyph_number) {
 
 	/* if glyph not cached yet */
 	if (!f->cached_glyphs[glyph_number].is_cached) {
-		FT2_1_3_Glyph new_glyph;
+		FT_Glyph new_glyph;
 		/* load the font glyph */
 		Load_Glyph(f->face, glyph_number, FT2_1_3_LOAD_DEFAULT);
 		Get_Glyph(f->face->glyph, &new_glyph);
@@ -322,7 +322,7 @@ static void _alfont_cache_glyph(ALFONT_FONT *f, int glyph_number) {
 		/* render the mono bmp */
 		{
 			FT_Bitmap *ft_bmp;
-			FT2_1_3_Glyph glyph;
+			FT_Glyph glyph;
 			FT_BitmapGlyph bmp_glyph;
 
 			Glyph_Copy(new_glyph, &glyph);
@@ -388,7 +388,7 @@ static void _alfont_cache_glyph(ALFONT_FONT *f, int glyph_number) {
 		/* render the aa bmp */
 		{
 			FT_Bitmap *ft_bmp;
-			FT2_1_3_Glyph glyph;
+			FT_Glyph glyph;
 			FT_BitmapGlyph bmp_glyph;
 
 			Glyph_Copy(new_glyph, &glyph);

@@ -179,7 +179,7 @@ translate_array( FT_UInt     n,
 
 static void
 tt_prepare_zone( TT_GlyphZone  zone,
-				 FT2_1_3_GlyphLoad  load,
+				 FT_GlyphLoad  load,
 				 FT_UInt       start_point,
 				 FT_UInt       start_contour ) {
 	zone->n_points   = (FT_UShort)( load->outline.n_points - start_point );
@@ -265,9 +265,9 @@ FT2_1_3_CALLBACK_DEF( FT_Error )
 TT_Load_Simple_Glyph( TT_Loader  load ) {
 	FT_Error        error;
 	FT2_1_3_Stream       stream     = load->stream;
-	FT2_1_3_GlyphLoader  gloader    = load->gloader;
+	FT_GlyphLoader  gloader    = load->gloader;
 	FT_Int          n_contours = load->n_contours;
-	FT2_1_3_Outline*     outline;
+	FT_Outline*     outline;
 	TT_Face         face       = (TT_Face)load->face;
 	TT_GlyphSlot    slot       = (TT_GlyphSlot)load->glyph;
 	FT_UShort       n_ins;
@@ -293,7 +293,7 @@ TT_Load_Simple_Glyph( TT_Loader  load ) {
 		if ( n_contours > 0 )
 			n_points = cur[-1] + 1;
 
-		error = FT2_1_3_GlyphLoader_CheckPoints( gloader, n_points + 2, 0 );
+		error = FT_GlyphLoader_CheckPoints( gloader, n_points + 2, 0 );
 		if ( error )
 			goto Fail;
 
@@ -455,7 +455,7 @@ FT2_1_3_CALLBACK_DEF( FT_Error )
 TT_Load_Composite_Glyph( TT_Loader  loader ) {
 	FT_Error        error;
 	FT2_1_3_Stream       stream  = loader->stream;
-	FT2_1_3_GlyphLoader  gloader = loader->gloader;
+	FT_GlyphLoader  gloader = loader->gloader;
 	FT_SubGlyph     subglyph;
 	FT_UInt         num_subglyphs;
 	FT_Int          byte_len = loader->byte_len;
@@ -468,7 +468,7 @@ TT_Load_Composite_Glyph( TT_Loader  loader ) {
 
 
 		/* check that we can load a new subglyph */
-		error = FT2_1_3_GlyphLoader_CheckSubGlyphs( gloader, num_subglyphs + 1 );
+		error = FT_GlyphLoader_CheckSubGlyphs( gloader, num_subglyphs + 1 );
 		if ( error )
 			goto Fail;
 
@@ -580,8 +580,8 @@ TT_Init_Glyph_Loading( TT_Face  face ) {
 static FT_Error
 TT_Process_Simple_Glyph( TT_Loader  load,
 						 FT_Bool    debug ) {
-	FT2_1_3_GlyphLoader  gloader  = load->gloader;
-	FT2_1_3_Outline*     outline  = &gloader->current.outline;
+	FT_GlyphLoader  gloader  = load->gloader;
+	FT_Outline*     outline  = &gloader->current.outline;
 	FT_UInt         n_points = outline->n_points;
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
 	FT_UInt         n_ins;
@@ -719,7 +719,7 @@ load_truetype_glyph( TT_Loader  loader,
 	FT_Int          contours_count;
 	FT_UInt         num_points, count;
 	FT_Fixed        x_scale, y_scale;
-	FT2_1_3_GlyphLoader  gloader = loader->gloader;
+	FT_GlyphLoader  gloader = loader->gloader;
 	FT_Bool         opened_frame = 0;
 
 #ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
@@ -897,7 +897,7 @@ load_truetype_glyph( TT_Loader  loader,
 
 	if ( contours_count >= 0 ) {
 		/* check that we can add the contours to the glyph */
-		error = FT2_1_3_GlyphLoader_CheckPoints( gloader, 0, contours_count );
+		error = FT_GlyphLoader_CheckPoints( gloader, 0, contours_count );
 		if ( error )
 			goto Fail;
 
@@ -924,7 +924,7 @@ load_truetype_glyph( TT_Loader  loader,
 		if ( error )
 			goto Fail;
 
-		FT2_1_3_GlyphLoader_Add( gloader );
+		FT_GlyphLoader_Add( gloader );
 
 		/* Note: We could have put the simple loader source there */
 		/*       but the code is fat enough already :-)           */
@@ -966,7 +966,7 @@ load_truetype_glyph( TT_Loader  loader,
 		/*                                                               */
 		if ( loader->load_flags & FT2_1_3_LOAD_NO_RECURSE ) {
 			/* set up remaining glyph fields */
-			FT2_1_3_GlyphLoader_Add( gloader );
+			FT_GlyphLoader_Add( gloader );
 
 			glyph->num_subglyphs = gloader->base.num_subglyphs;
 			glyph->format        = FT2_1_3_GLYPH_FORMAT_COMPOSITE;
@@ -988,7 +988,7 @@ load_truetype_glyph( TT_Loader  loader,
 			FT_UInt      num_base_subgs = gloader->base.num_subglyphs;
 
 
-			FT2_1_3_GlyphLoader_Add( gloader );
+			FT_GlyphLoader_Add( gloader );
 
 			for ( n = 0; n < (FT_Int)num_subglyphs; n++ ) {
 				FT_Vector  pp1, pp2;
@@ -1296,13 +1296,13 @@ compute_glyph_metrics( TT_Loader   loader,
 		glyph->outline.flags &= ~FT2_1_3_OUTLINE_SINGLE_PASS;
 
 		/* copy outline to our glyph slot */
-		FT2_1_3_GlyphLoader_CopyPoints( glyph->internal->loader, loader->gloader );
+		FT_GlyphLoader_CopyPoints( glyph->internal->loader, loader->gloader );
 		glyph->outline = glyph->internal->loader->base.outline;
 
 		/* translate array so that (0,0) is the glyph's origin */
-		FT2_1_3_Outline_Translate( &glyph->outline, -loader->pp1.x, 0 );
+		FT_Outline_Translate( &glyph->outline, -loader->pp1.x, 0 );
 
-		FT2_1_3_Outline_Get_CBox( &glyph->outline, &bbox );
+		FT_Outline_Get_CBox( &glyph->outline, &bbox );
 
 		if ( IS_HINTED( loader->load_flags ) ) {
 			/* grid-fit the bounding box */
@@ -1599,12 +1599,12 @@ TT_Load_Glyph( TT_Size       size,
 
 	/* update the glyph zone bounds */
 	{
-		FT2_1_3_GlyphLoader  gloader = FT2_1_3_FACE_DRIVER(face)->glyph_loader;
+		FT_GlyphLoader  gloader = FT2_1_3_FACE_DRIVER(face)->glyph_loader;
 
 
 		loader.gloader = gloader;
 
-		FT2_1_3_GlyphLoader_Rewind( gloader );
+		FT_GlyphLoader_Rewind( gloader );
 
 		tt_prepare_zone( &loader.zone, &gloader->base, 0, 0 );
 		tt_prepare_zone( &loader.base, &gloader->base, 0, 0 );

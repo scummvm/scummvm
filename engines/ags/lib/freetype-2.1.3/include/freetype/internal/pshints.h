@@ -282,7 +282,7 @@ typedef FT_Error
 /*                                                                       */
 typedef FT_Error
 (*T1_Hints_ApplyFunc)( T1_Hints        hints,
-					   FT2_1_3_Outline*     outline,
+					   FT_Outline*     outline,
 					   PSH_Globals     globals,
 					   FT_Render_Mode  hint_mode );
 
@@ -562,7 +562,7 @@ typedef FT_Error
 /*                                                                       */
 typedef FT_Error
 (*T2_Hints_ApplyFunc)( T2_Hints        hints,
-					   FT2_1_3_Outline*     outline,
+					   FT_Outline*     outline,
 					   PSH_Globals     globals,
 					   FT_Render_Mode  hint_mode );
 

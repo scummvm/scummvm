@@ -209,7 +209,7 @@ Exit:
 
 FT2_1_3_LOCAL_DEF( FT_Error )
 pfr_slot_init( PFR_Slot  slot ) {
-	FT2_1_3_GlyphLoader  loader = slot->root.internal->loader;
+	FT_GlyphLoader  loader = slot->root.internal->loader;
 
 	pfr_glyph_init( &slot->glyph, loader );
 
@@ -231,7 +231,7 @@ pfr_slot_load( PFR_Slot  slot,
 	FT_Error     error;
 	PFR_Face     face    = (PFR_Face)slot->root.face;
 	PFR_Char     gchar;
-	FT2_1_3_Outline*  outline = &slot->root.outline;
+	FT_Outline*  outline = &slot->root.outline;
 	FT_ULong     gps_offset;
 
 	if (gindex > 0)
@@ -319,7 +319,7 @@ pfr_slot_load( PFR_Slot  slot,
 		}
 
 		/* compute the rest of the metrics */
-		FT2_1_3_Outline_Get_CBox( outline, &cbox );
+		FT_Outline_Get_CBox( outline, &cbox );
 
 		metrics->width        = cbox.xMax - cbox.xMin;
 		metrics->height       = cbox.yMax - cbox.yMin;

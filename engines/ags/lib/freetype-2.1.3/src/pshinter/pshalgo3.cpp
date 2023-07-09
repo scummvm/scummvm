@@ -823,7 +823,7 @@ psh3_glyph_save_points( PSH3_Glyph  glyph,
 
 static FT_Error
 psh3_glyph_init( PSH3_Glyph   glyph,
-				 FT2_1_3_Outline*  outline,
+				 FT_Outline*  outline,
 				 PS_Hints     ps_hints,
 				 PSH_Globals  globals ) {
 	FT_Error   error;
@@ -1518,7 +1518,7 @@ Next_Contour:
 
 FT_Error
 ps3_hints_apply( PS_Hints        ps_hints,
-				 FT2_1_3_Outline*     outline,
+				 FT_Outline*     outline,
 				 PSH_Globals     globals,
 				 FT_Render_Mode  hint_mode ) {
 	PSH3_GlyphRec  glyphrec;

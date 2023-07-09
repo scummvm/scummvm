@@ -1369,7 +1369,7 @@ typedef struct  FT_GlyphSlotRec_ {
 	FT_Int            bitmap_left;
 	FT_Int            bitmap_top;
 
-	FT2_1_3_Outline        outline;
+	FT_Outline        outline;
 
 	FT_UInt           num_subglyphs;
 	FT_SubGlyph       subglyphs;

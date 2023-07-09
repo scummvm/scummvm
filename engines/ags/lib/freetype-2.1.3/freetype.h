@@ -35,11 +35,11 @@ namespace FreeType213 {
 extern FT_Error Init_FreeType(FT_Library *alibrary);
 extern FT_Error Done_FreeType(FT_Library library);
 extern FT_Error Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 load_flags);
-extern FT_Error Get_Glyph(FT_GlyphSlot slot, FT2_1_3_Glyph *aglyph);
-extern FT_Error Glyph_Copy(FT2_1_3_Glyph source, FT2_1_3_Glyph *target);
-extern FT_Error Glyph_To_Bitmap(FT2_1_3_Glyph *the_glyph, FT_Render_Mode render_mode,
+extern FT_Error Get_Glyph(FT_GlyphSlot slot, FT_Glyph *aglyph);
+extern FT_Error Glyph_Copy(FT_Glyph source, FT_Glyph *target);
+extern FT_Error Glyph_To_Bitmap(FT_Glyph *the_glyph, FT_Render_Mode render_mode,
 	FT_Vector *origin, FT_Bool destroy);
-extern void Done_Glyph(FT2_1_3_Glyph glyph);
+extern void Done_Glyph(FT_Glyph glyph);
 extern FT_Error Set_Pixel_Sizes(FT_Face face, FT_UInt pixel_width,
 	FT_UInt pixel_height);
 extern FT_Error New_Face(FT_Library library, const char *pathname,

@@ -41,14 +41,14 @@ namespace AGS3 {
 namespace FreeType213 {
 
 static
-const FT2_1_3_Outline  null_outline = { 0, 0, 0, 0, 0, 0 };
+const FT_Outline  null_outline = { 0, 0, 0, 0, 0, 0 };
 
 
 /* documentation is in ftoutln.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Outline_Decompose( FT2_1_3_Outline*              outline,
-					  const FT2_1_3_Outline_Funcs*  func_interface,
+FT_Outline_Decompose( FT_Outline*              outline,
+					  const FT_Outline_Funcs*  func_interface,
 					  void*                    user ) {
 #undef SCALED
 #define SCALED( x )  ( ( (x) << shift ) - delta )
@@ -243,10 +243,10 @@ Invalid_Outline:
 
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Outline_New_Internal( FT2_1_3_Memory    memory,
+FT_Outline_New_Internal( FT2_1_3_Memory    memory,
 						 FT_UInt      numPoints,
 						 FT_Int       numContours,
-						 FT2_1_3_Outline  *anoutline ) {
+						 FT_Outline  *anoutline ) {
 	FT_Error  error;
 
 
@@ -268,7 +268,7 @@ FT2_1_3_Outline_New_Internal( FT2_1_3_Memory    memory,
 
 Fail:
 	anoutline->flags |= FT2_1_3_OUTLINE_OWNER;
-	FT2_1_3_Outline_Done_Internal( memory, anoutline );
+	FT_Outline_Done_Internal( memory, anoutline );
 
 	return error;
 }
@@ -277,14 +277,14 @@ Fail:
 /* documentation is in ftoutln.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Outline_New( FT_Library   library,
+FT_Outline_New( FT_Library   library,
 				FT_UInt      numPoints,
 				FT_Int       numContours,
-				FT2_1_3_Outline  *anoutline ) {
+				FT_Outline  *anoutline ) {
 	if ( !library )
 		return FT2_1_3_Err_Invalid_Library_Handle;
 
-	return FT2_1_3_Outline_New_Internal( library->memory, numPoints,
+	return FT_Outline_New_Internal( library->memory, numPoints,
 									numContours, anoutline );
 }
 
@@ -292,7 +292,7 @@ FT2_1_3_Outline_New( FT_Library   library,
 /* documentation is in ftoutln.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Outline_Check( FT2_1_3_Outline*  outline ) {
+FT_Outline_Check( FT_Outline*  outline ) {
 	if ( outline ) {
 		FT_Int  n_points   = outline->n_points;
 		FT_Int  n_contours = outline->n_contours;
@@ -334,8 +334,8 @@ Bad:
 /* documentation is in ftoutln.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Outline_Copy( FT2_1_3_Outline*  source,
-				 FT2_1_3_Outline  *target ) {
+FT_Outline_Copy( FT_Outline*  source,
+				 FT_Outline  *target ) {
 	FT_Int  is_owner;
 
 
@@ -365,8 +365,8 @@ FT2_1_3_Outline_Copy( FT2_1_3_Outline*  source,
 
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Outline_Done_Internal( FT2_1_3_Memory    memory,
-						  FT2_1_3_Outline*  outline ) {
+FT_Outline_Done_Internal( FT2_1_3_Memory    memory,
+						  FT_Outline*  outline ) {
 	if ( outline ) {
 		if ( outline->flags & FT2_1_3_OUTLINE_OWNER ) {
 			FT2_1_3_FREE( outline->points   );
@@ -384,21 +384,21 @@ FT2_1_3_Outline_Done_Internal( FT2_1_3_Memory    memory,
 /* documentation is in ftoutln.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Outline_Done( FT_Library   library,
-				 FT2_1_3_Outline*  outline ) {
-	/* check for valid `outline' in FT2_1_3_Outline_Done_Internal() */
+FT_Outline_Done( FT_Library   library,
+				 FT_Outline*  outline ) {
+	/* check for valid `outline' in FT_Outline_Done_Internal() */
 
 	if ( !library )
 		return FT2_1_3_Err_Invalid_Library_Handle;
 
-	return FT2_1_3_Outline_Done_Internal( library->memory, outline );
+	return FT_Outline_Done_Internal( library->memory, outline );
 }
 
 
 /* documentation is in ftoutln.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_Outline_Get_CBox( FT2_1_3_Outline*  outline,
+FT_Outline_Get_CBox( FT_Outline*  outline,
 					 FT_BBox     *acbox ) {
 	FT_Pos  xMin, yMin, xMax, yMax;
 
@@ -442,7 +442,7 @@ FT2_1_3_Outline_Get_CBox( FT2_1_3_Outline*  outline,
 /* documentation is in ftoutln.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_Outline_Translate( FT2_1_3_Outline*  outline,
+FT_Outline_Translate( FT_Outline*  outline,
 					  FT_Pos       xOffset,
 					  FT_Pos       yOffset ) {
 	FT_UShort   n;
@@ -460,7 +460,7 @@ FT2_1_3_Outline_Translate( FT2_1_3_Outline*  outline,
 /* documentation is in ftoutln.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_Outline_Reverse( FT2_1_3_Outline*  outline ) {
+FT_Outline_Reverse( FT_Outline*  outline ) {
 	FT_UShort  n;
 	FT_Int     first, last;
 
@@ -512,8 +512,8 @@ FT2_1_3_Outline_Reverse( FT2_1_3_Outline*  outline ) {
 /* documentation is in ftoutln.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Outline_Render( FT_Library         library,
-				   FT2_1_3_Outline*        outline,
+FT_Outline_Render( FT_Library         library,
+				   FT_Outline*        outline,
 				   FT2_1_3_Raster_Params*  params ) {
 	FT_Error     error;
 	FT_Bool      update = 0;
@@ -561,8 +561,8 @@ FT2_1_3_Outline_Render( FT_Library         library,
 /* documentation is in ftoutln.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Outline_Get_Bitmap( FT_Library   library,
-					   FT2_1_3_Outline*  outline,
+FT_Outline_Get_Bitmap( FT_Library   library,
+					   FT_Outline*  outline,
 					   FT_Bitmap   *abitmap ) {
 	FT2_1_3_Raster_Params  params;
 
@@ -570,7 +570,7 @@ FT2_1_3_Outline_Get_Bitmap( FT_Library   library,
 	if ( !abitmap )
 		return FT2_1_3_Err_Invalid_Argument;
 
-	/* other checks are delayed to FT2_1_3_Outline_Render() */
+	/* other checks are delayed to FT_Outline_Render() */
 
 	params.target = abitmap;
 	params.flags  = 0;
@@ -580,7 +580,7 @@ FT2_1_3_Outline_Get_Bitmap( FT_Library   library,
 			abitmap->pixel_mode == FT2_1_3_PIXEL_MODE_LCD_V )
 		params.flags |= FT2_1_3_RASTER_FLAG_AA;
 
-	return FT2_1_3_Outline_Render( library, outline, &params );
+	return FT_Outline_Render( library, outline, &params );
 }
 
 
@@ -609,7 +609,7 @@ FT2_1_3_Vector_Transform( FT_Vector*  vector,
 /* documentation is in ftoutln.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_Outline_Transform( FT2_1_3_Outline*  outline,
+FT_Outline_Transform( FT_Outline*  outline,
 					  FT_Matrix*   matrix ) {
 	FT_Vector*  vec = outline->points;
 	FT_Vector*  limit = vec + outline->n_points;

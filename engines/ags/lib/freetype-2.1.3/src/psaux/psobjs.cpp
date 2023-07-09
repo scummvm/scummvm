@@ -1100,13 +1100,13 @@ t1_builder_init( T1_Builder    builder,
 	builder->memory = face->memory;
 
 	if ( glyph ) {
-		FT2_1_3_GlyphLoader  loader = glyph->internal->loader;
+		FT_GlyphLoader  loader = glyph->internal->loader;
 
 
 		builder->loader  = loader;
 		builder->base    = &loader->base.outline;
 		builder->current = &loader->current.outline;
-		FT2_1_3_GlyphLoader_Rewind( loader );
+		FT_GlyphLoader_Rewind( loader );
 
 		builder->hints_globals = size->internal;
 		builder->hints_funcs   = 0;
@@ -1159,7 +1159,7 @@ t1_builder_done( T1_Builder  builder ) {
 FT2_1_3_LOCAL_DEF( FT_Error )
 t1_builder_check_points( T1_Builder  builder,
 						 FT_Int      count ) {
-	return FT2_1_3_GlyphLoader_CheckPoints( builder->loader, count, 0 );
+	return FT_GlyphLoader_CheckPoints( builder->loader, count, 0 );
 }
 
 
@@ -1169,7 +1169,7 @@ t1_builder_add_point( T1_Builder  builder,
 					  FT_Pos      x,
 					  FT_Pos      y,
 					  FT_Byte     flag ) {
-	FT2_1_3_Outline*  outline = builder->current;
+	FT_Outline*  outline = builder->current;
 
 
 	if ( builder->load_points ) {
@@ -1210,7 +1210,7 @@ t1_builder_add_point1( T1_Builder  builder,
 /* check room for a new contour, then add it */
 FT2_1_3_LOCAL_DEF( FT_Error )
 t1_builder_add_contour( T1_Builder  builder ) {
-	FT2_1_3_Outline*  outline = builder->current;
+	FT_Outline*  outline = builder->current;
 	FT_Error     error;
 
 
@@ -1219,7 +1219,7 @@ t1_builder_add_contour( T1_Builder  builder ) {
 		return FT2_1_3_Err_Ok;
 	}
 
-	error = FT2_1_3_GlyphLoader_CheckPoints( builder->loader, 0, 1 );
+	error = FT_GlyphLoader_CheckPoints( builder->loader, 0, 1 );
 	if ( !error ) {
 		if ( outline->n_contours > 0 )
 			outline->contours[outline->n_contours - 1] =
@@ -1254,7 +1254,7 @@ t1_builder_start_point( T1_Builder  builder,
 /* close the current contour */
 FT2_1_3_LOCAL_DEF( void )
 t1_builder_close_contour( T1_Builder  builder ) {
-	FT2_1_3_Outline*  outline = builder->current;
+	FT_Outline*  outline = builder->current;
 
 
 	/* XXXX: We must not include the last point in the path if it */

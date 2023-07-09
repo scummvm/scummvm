@@ -2,7 +2,7 @@
 /*                                                                         */
 /*  ftoutln.h                                                              */
 /*                                                                         */
-/*    Support for the FT2_1_3_Outline type used to store glyph shapes of        */
+/*    Support for the FT_Outline type used to store glyph shapes of        */
 /*    most scalable font formats (specification).                          */
 /*                                                                         */
 /*  Copyright 1996-2001, 2002 by                                           */
@@ -47,28 +47,28 @@ FT2_1_3_BEGIN_HEADER
 /*    transformed, and converted into bitmaps and pixmaps.               */
 /*                                                                       */
 /* <Order>                                                               */
-/*    FT2_1_3_Outline                                                         */
-/*    FT2_1_3_Outline_Flags                                                   */
-/*    FT2_1_3_Outline_New                                                     */
-/*    FT2_1_3_Outline_Done                                                    */
-/*    FT2_1_3_Outline_Copy                                                    */
-/*    FT2_1_3_Outline_Translate                                               */
-/*    FT2_1_3_Outline_Transform                                               */
-/*    FT2_1_3_Outline_Reverse                                                 */
-/*    FT2_1_3_Outline_Check                                                   */
+/*    FT_Outline                                                         */
+/*    FT_Outline_Flags                                                   */
+/*    FT_Outline_New                                                     */
+/*    FT_Outline_Done                                                    */
+/*    FT_Outline_Copy                                                    */
+/*    FT_Outline_Translate                                               */
+/*    FT_Outline_Transform                                               */
+/*    FT_Outline_Reverse                                                 */
+/*    FT_Outline_Check                                                   */
 /*                                                                       */
-/*    FT2_1_3_Outline_Get_CBox                                                */
-/*    FT2_1_3_Outline_Get_BBox                                                */
+/*    FT_Outline_Get_CBox                                                */
+/*    FT_Outline_Get_BBox                                                */
 /*                                                                       */
-/*    FT2_1_3_Outline_Get_Bitmap                                              */
-/*    FT2_1_3_Outline_Render                                                  */
+/*    FT_Outline_Get_Bitmap                                              */
+/*    FT_Outline_Render                                                  */
 /*                                                                       */
-/*    FT2_1_3_Outline_Decompose                                               */
-/*    FT2_1_3_Outline_Funcs                                                   */
-/*    FT2_1_3_Outline_MoveTo_Func                                             */
-/*    FT2_1_3_Outline_LineTo_Func                                             */
-/*    FT2_1_3_Outline_ConicTo_Func                                            */
-/*    FT2_1_3_Outline_CubicTo_Func                                            */
+/*    FT_Outline_Decompose                                               */
+/*    FT_Outline_Funcs                                                   */
+/*    FT_Outline_MoveTo_Func                                             */
+/*    FT_Outline_LineTo_Func                                             */
+/*    FT_Outline_ConicTo_Func                                            */
+/*    FT_Outline_CubicTo_Func                                            */
 /*                                                                       */
 /*************************************************************************/
 
@@ -76,7 +76,7 @@ FT2_1_3_BEGIN_HEADER
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Outline_Decompose                                               */
+/*    FT_Outline_Decompose                                               */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Walks over an outline's structure to decompose it into individual  */
@@ -101,15 +101,15 @@ FT2_1_3_BEGIN_HEADER
 /*    FreeType error code.  0 means sucess.                              */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Outline_Decompose( FT2_1_3_Outline*              outline,
-					  const FT2_1_3_Outline_Funcs*  func_interface,
+FT_Outline_Decompose( FT_Outline*              outline,
+					  const FT_Outline_Funcs*  func_interface,
 					  void*                    user );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Outline_New                                                     */
+/*    FT_Outline_New                                                     */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Creates a new outline of a given size.                             */
@@ -136,26 +136,26 @@ FT2_1_3_Outline_Decompose( FT2_1_3_Outline*              outline,
 /*    to use the library's memory allocator.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Outline_New( FT_Library   library,
+FT_Outline_New( FT_Library   library,
 				FT_UInt      numPoints,
 				FT_Int       numContours,
-				FT2_1_3_Outline  *anoutline );
+				FT_Outline  *anoutline );
 
 
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Outline_New_Internal( FT2_1_3_Memory    memory,
+FT_Outline_New_Internal( FT2_1_3_Memory    memory,
 						 FT_UInt      numPoints,
 						 FT_Int       numContours,
-						 FT2_1_3_Outline  *anoutline );
+						 FT_Outline  *anoutline );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Outline_Done                                                    */
+/*    FT_Outline_Done                                                    */
 /*                                                                       */
 /* <Description>                                                         */
-/*    Destroys an outline created with FT2_1_3_Outline_New().                 */
+/*    Destroys an outline created with FT_Outline_New().                 */
 /*                                                                       */
 /* <Input>                                                               */
 /*    library :: A handle of the library object used to allocate the     */
@@ -174,19 +174,19 @@ FT2_1_3_Outline_New_Internal( FT2_1_3_Memory    memory,
 /*    simply to use FT2_1_3_Free().                                           */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Outline_Done( FT_Library   library,
-				 FT2_1_3_Outline*  outline );
+FT_Outline_Done( FT_Library   library,
+				 FT_Outline*  outline );
 
 
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Outline_Done_Internal( FT2_1_3_Memory    memory,
-						  FT2_1_3_Outline*  outline );
+FT_Outline_Done_Internal( FT2_1_3_Memory    memory,
+						  FT_Outline*  outline );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Outline_Check                                                   */
+/*    FT_Outline_Check                                                   */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Check the contents of an outline descriptor.                       */
@@ -198,13 +198,13 @@ FT2_1_3_Outline_Done_Internal( FT2_1_3_Memory    memory,
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Outline_Check( FT2_1_3_Outline*  outline );
+FT_Outline_Check( FT_Outline*  outline );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Outline_Get_CBox                                                */
+/*    FT_Outline_Get_CBox                                                */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Returns an outline's `control box'.  The control box encloses all  */
@@ -225,14 +225,14 @@ FT2_1_3_Outline_Check( FT2_1_3_Outline*  outline );
 /*    acbox   :: The outline's control box.                              */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_Outline_Get_CBox( FT2_1_3_Outline*  outline,
+FT_Outline_Get_CBox( FT_Outline*  outline,
 					 FT_BBox     *acbox );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Outline_Translate                                               */
+/*    FT_Outline_Translate                                               */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Applies a simple translation to the points of an outline.          */
@@ -246,7 +246,7 @@ FT2_1_3_Outline_Get_CBox( FT2_1_3_Outline*  outline,
 /*    yOffset :: The vertical offset.                                    */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_Outline_Translate( FT2_1_3_Outline*  outline,
+FT_Outline_Translate( FT_Outline*  outline,
 					  FT_Pos       xOffset,
 					  FT_Pos       yOffset );
 
@@ -254,7 +254,7 @@ FT2_1_3_Outline_Translate( FT2_1_3_Outline*  outline,
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Outline_Copy                                                    */
+/*    FT_Outline_Copy                                                    */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Copies an outline into another one.  Both objects must have the    */
@@ -271,14 +271,14 @@ FT2_1_3_Outline_Translate( FT2_1_3_Outline*  outline,
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Outline_Copy( FT2_1_3_Outline*  source,
-				 FT2_1_3_Outline  *target );
+FT_Outline_Copy( FT_Outline*  source,
+				 FT_Outline  *target );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Outline_Transform                                               */
+/*    FT_Outline_Transform                                               */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Applies a simple 2x2 matrix to all of an outline's points.  Useful */
@@ -291,18 +291,18 @@ FT2_1_3_Outline_Copy( FT2_1_3_Outline*  source,
 /*    matrix  :: A pointer to the transformation matrix.                 */
 /*                                                                       */
 /* <Note>                                                                */
-/*    You can use FT2_1_3_Outline_Translate() if you need to translate the    */
+/*    You can use FT_Outline_Translate() if you need to translate the    */
 /*    outline's points.                                                  */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_Outline_Transform( FT2_1_3_Outline*  outline,
+FT_Outline_Transform( FT_Outline*  outline,
 					  FT_Matrix*   matrix );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Outline_Reverse                                                 */
+/*    FT_Outline_Reverse                                                 */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Reverses the drawing direction of an outline.  This is used to     */
@@ -319,13 +319,13 @@ FT2_1_3_Outline_Transform( FT2_1_3_Outline*  outline,
 /*    knows what it is doing.                                            */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_Outline_Reverse( FT2_1_3_Outline*  outline );
+FT_Outline_Reverse( FT_Outline*  outline );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Outline_Get_Bitmap                                              */
+/*    FT_Outline_Get_Bitmap                                              */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Renders an outline within a bitmap.  The outline's image is simply */
@@ -349,15 +349,15 @@ FT2_1_3_Outline_Reverse( FT2_1_3_Outline*  outline );
 /*    It will use the raster correponding to the default glyph format.   */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Outline_Get_Bitmap( FT_Library   library,
-					   FT2_1_3_Outline*  outline,
+FT_Outline_Get_Bitmap( FT_Library   library,
+					   FT_Outline*  outline,
 					   FT_Bitmap   *abitmap );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Outline_Render                                                  */
+/*    FT_Outline_Render                                                  */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Renders an outline within a bitmap using the current scan-convert. */
@@ -386,8 +386,8 @@ FT2_1_3_Outline_Get_Bitmap( FT_Library   library,
 /*    actually ignored.                                                  */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Outline_Render( FT_Library         library,
-				   FT2_1_3_Outline*        outline,
+FT_Outline_Render( FT_Library         library,
+				   FT_Outline*        outline,
 				   FT2_1_3_Raster_Params*  params );
 
 

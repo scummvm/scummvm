@@ -310,9 +310,9 @@ T1_Load_Glyph( T1_GlyphSlot  glyph,
 
 #if 1
 			/* apply the font matrix, if any */
-			FT2_1_3_Outline_Transform( &glyph->root.outline, &font_matrix );
+			FT_Outline_Transform( &glyph->root.outline, &font_matrix );
 
-			FT2_1_3_Outline_Translate( &glyph->root.outline,
+			FT_Outline_Translate( &glyph->root.outline,
 								  font_offset.x,
 								  font_offset.y );
 #endif
@@ -320,7 +320,7 @@ T1_Load_Glyph( T1_GlyphSlot  glyph,
 			if ( ( load_flags & FT2_1_3_LOAD_NO_SCALE ) == 0 ) {
 				/* scale the outline and the metrics */
 				FT_Int       n;
-				FT2_1_3_Outline*  cur = decoder.builder.base;
+				FT_Outline*  cur = decoder.builder.base;
 				FT_Vector*   vec = cur->points;
 				FT_Fixed     x_scale = glyph->x_scale;
 				FT_Fixed     y_scale = glyph->y_scale;
@@ -333,7 +333,7 @@ T1_Load_Glyph( T1_GlyphSlot  glyph,
 						vec->y = FT2_1_3_MulFix( vec->y, y_scale );
 					}
 
-				FT2_1_3_Outline_Get_CBox( &glyph->root.outline, &cbox );
+				FT_Outline_Get_CBox( &glyph->root.outline, &cbox );
 
 				/* Then scale the metrics */
 				metrics->horiAdvance  = FT2_1_3_MulFix( metrics->horiAdvance,  x_scale );
@@ -352,7 +352,7 @@ T1_Load_Glyph( T1_GlyphSlot  glyph,
 			}
 
 			/* compute the other metrics */
-			FT2_1_3_Outline_Get_CBox( &glyph->root.outline, &cbox );
+			FT_Outline_Get_CBox( &glyph->root.outline, &cbox );
 
 			/* grid fit the bounding box if necessary */
 			if ( hinting ) {

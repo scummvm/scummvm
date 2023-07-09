@@ -176,7 +176,7 @@ ft_glyphslot_init( FT_GlyphSlot  slot ) {
 	slot->internal = internal;
 
 	if ( FT2_1_3_DRIVER_USES_OUTLINES( driver ) )
-		error = FT2_1_3_GlyphLoader_New( memory, &internal->loader );
+		error = FT_GlyphLoader_New( memory, &internal->loader );
 
 	if ( !error && clazz->init_slot )
 		error = clazz->init_slot( slot );
@@ -237,7 +237,7 @@ ft_glyphslot_done( FT_GlyphSlot  slot ) {
 
 	/* free glyph loader */
 	if ( FT2_1_3_DRIVER_USES_OUTLINES( driver ) ) {
-		FT2_1_3_GlyphLoader_Done( slot->internal->loader );
+		FT_GlyphLoader_Done( slot->internal->loader );
 		slot->internal->loader = 0;
 	}
 
@@ -465,7 +465,7 @@ FT2_1_3_Load_Glyph( FT_Face   face,
 			goto Exit;
 
 		/* check that the loaded outline is correct */
-		error = FT2_1_3_Outline_Check( &slot->outline );
+		error = FT_Outline_Check( &slot->outline );
 		if ( error )
 			goto Exit;
 	}
@@ -647,7 +647,7 @@ Destroy_Driver( FT_Driver  driver ) {
 
 	/* check whether we need to drop the driver's glyph loader */
 	if ( FT2_1_3_DRIVER_USES_OUTLINES( driver ) )
-		FT2_1_3_GlyphLoader_Done( driver->glyph_loader );
+		FT_GlyphLoader_Done( driver->glyph_loader );
 }
 
 
@@ -2081,7 +2081,7 @@ FT2_1_3_Add_Module( FT_Library              library,
 
 		driver->clazz = (FT_Driver_Class)module->clazz;
 		if ( FT2_1_3_DRIVER_USES_OUTLINES( driver ) ) {
-			error = FT2_1_3_GlyphLoader_New( memory, &driver->glyph_loader );
+			error = FT_GlyphLoader_New( memory, &driver->glyph_loader );
 			if ( error )
 				goto Fail;
 		}
@@ -2105,7 +2105,7 @@ Fail:
 
 
 		if ( FT2_1_3_DRIVER_USES_OUTLINES( driver ) )
-			FT2_1_3_GlyphLoader_Done( driver->glyph_loader );
+			FT_GlyphLoader_Done( driver->glyph_loader );
 	}
 
 	if ( FT2_1_3_MODULE_IS_RENDERER( module ) ) {

@@ -1589,7 +1589,7 @@ typedef struct  TT_LoaderRec_ {
 	FT_Face          face;
 	FT_Size          size;
 	FT_GlyphSlot     glyph;
-	FT2_1_3_GlyphLoader   gloader;
+	FT_GlyphLoader   gloader;
 
 	FT_ULong         load_flags;
 	FT_UInt          glyph_index;

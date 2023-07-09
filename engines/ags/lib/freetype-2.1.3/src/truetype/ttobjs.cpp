@@ -798,7 +798,7 @@ tt_driver_init( TT_Driver  driver ) {
 
 
 	/* set `extra' in glyph loader */
-	error = FT2_1_3_GlyphLoader_CreateExtra( FT2_1_3_DRIVER( driver )->glyph_loader );
+	error = FT_GlyphLoader_CreateExtra( FT2_1_3_DRIVER( driver )->glyph_loader );
 
 	return error;
 }

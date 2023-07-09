@@ -51,7 +51,7 @@ FT2_1_3_BEGIN_HEADER
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Outline_Get_BBox                                                */
+/*    FT_Outline_Get_BBox                                                */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Computes the exact bounding box of an outline.  This is slower     */
@@ -70,7 +70,7 @@ FT2_1_3_BEGIN_HEADER
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Outline_Get_BBox(FT2_1_3_Outline *outline,
+FT_Outline_Get_BBox(FT_Outline *outline,
 						 FT_BBox *abbox);
 
 /* */

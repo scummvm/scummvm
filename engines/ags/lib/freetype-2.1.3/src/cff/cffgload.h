@@ -92,9 +92,9 @@ typedef struct  CFF_Builder_ {
 	FT2_1_3_Memory       memory;
 	TT_Face         face;
 	CFF_GlyphSlot   glyph;
-	FT2_1_3_GlyphLoader  loader;
-	FT2_1_3_Outline*     base;
-	FT2_1_3_Outline*     current;
+	FT_GlyphLoader  loader;
+	FT_Outline*     base;
+	FT_Outline*     current;
 
 	FT_Vector       last;
 

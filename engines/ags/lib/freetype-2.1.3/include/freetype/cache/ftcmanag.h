@@ -28,7 +28,7 @@
 /*  - Manage one or more cache objects.  Each cache is in charge of      */
 /*    holding a varying number of `cache nodes'.  Each cache node        */
 /*    represents a minimal amount of individually accessible cached      */
-/*    data.  For example, a cache node can be an FT2_1_3_Glyph image          */
+/*    data.  For example, a cache node can be an FT_Glyph image          */
 /*    containing a vector outline, or some glyph metrics, or anything    */
 /*    else.                                                              */
 /*                                                                       */

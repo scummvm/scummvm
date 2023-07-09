@@ -513,9 +513,9 @@ typedef struct  T1_BuilderRec_ {
 	FT2_1_3_Memory       memory;
 	FT_Face         face;
 	FT_GlyphSlot    glyph;
-	FT2_1_3_GlyphLoader  loader;
-	FT2_1_3_Outline*     base;
-	FT2_1_3_Outline*     current;
+	FT_GlyphLoader  loader;
+	FT_Outline*     base;
+	FT_Outline*     current;
 
 	FT_Vector       last;
 
