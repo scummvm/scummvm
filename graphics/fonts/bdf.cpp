@@ -773,9 +773,6 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 		return nullptr;
 	}
 
-	// This is approximate and may not be ideal for all fonts!
-	const int scaleCenterYRelativeToBaseline = -1;
-
 	Graphics::Surface srcSurf;
 	srcSurf.create(MAX(src->getFontSize() * 2, newSize * 2), MAX(src->getFontSize() * 2, newSize * 2), PixelFormat::createFormatCLUT8());
 	int dstGraySize = newSize * 20 * newSize;
@@ -854,7 +851,6 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 		int ccc = 'L';
 #endif
 		if (src->_data.bitmaps[i]) {
-			int grayLevel = 10; //box.height * box.width / 3;
 			int dstPitch = (box.width + 7) / 8 ;
 			const int bytes = dstPitch * box.height;
 			bitmaps[i] = new byte[bytes + 1];
