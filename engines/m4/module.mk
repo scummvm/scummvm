@@ -73,6 +73,7 @@ MODULE_OBJS = \
 	burger/rooms/room.o \
 	burger/rooms/section1.o \
 	burger/burger.o \
+	burger/digi.o \
 	burger/globals.o \
 	burger/hotkeys.o \
 	burger/inventory.o \
