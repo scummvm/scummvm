@@ -301,7 +301,7 @@ void OSystem_libretro::updateScreen() {
 		}
 	}
 
-	if (! timing_inaccuracies_is_enabled()) {
+	if (! timing_inaccuracies_is_enabled() && !_overlayInGUI) {
 		_threadSwitchCaller = THREAD_SWITCH_UPDATE;
 		((LibretroTimerManager *)_timerManager)->checkThread();
 	}
