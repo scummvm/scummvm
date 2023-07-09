@@ -40,6 +40,7 @@ public:
 	virtual void daemon() {}
 	virtual void pre_parser() {}
 	virtual void parser() {}
+	virtual void parser_code() {}
 	virtual void error() {}
 	virtual void shutdown() {}
 	virtual void custom_hotspot_which() {}
@@ -69,6 +70,8 @@ public:
 	 * Used to tell if x,y is over the walker hotspot
 	 */
 	virtual HotSpotRec *walker_spotter(int32 x, int32 y);
+
+	virtual void daemon_code() {}
 };
 
 class Sections {
@@ -94,6 +97,10 @@ public:
 	void section_init() {
 		_activeSection->init();
 	}
+	void daemon_code() {
+		_activeSection->daemon_code();
+	}
+
 	void room_preload() {
 		_activeRoom->preload();
 	}
@@ -108,6 +115,9 @@ public:
 	}
 	void room_parser() {
 		_activeRoom->parser();
+	}
+	void parser_code() {
+		_activeRoom->parser_code();
 	}
 	void room_error() {
 		_activeRoom->error();

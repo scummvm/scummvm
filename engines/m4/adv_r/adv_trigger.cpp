@@ -22,8 +22,13 @@
 #include "m4/adv_r/adv_trigger.h"
 #include "m4/core/errors.h"
 #include "m4/vars.h"
+#include "m4/m4.h"
 
 namespace M4 {
+
+#define _GT(X) _G(triggers)._##X
+
+static bool kernel_trigger_dispatchx(int32 trigger_num);
 
 int32 kernel_trigger_create(int32 trigger_num) {
 	int32 new_trigger;
@@ -31,7 +36,7 @@ int32 kernel_trigger_create(int32 trigger_num) {
 	if (trigger_num < 0)
 		return (trigger_num);
 
-	if (trigger_num > 0xffff) {		// if room changed, this is an invalid trigger 
+	if (trigger_num > 0xffff) {		// If room changed, this is an invalid trigger 
 		error_show(FL, 'BADT', "bad trigger. %ld > 0xffff", trigger_num);
 	}
 
@@ -40,10 +45,149 @@ int32 kernel_trigger_create(int32 trigger_num) {
 	return new_trigger;
 }
 
+bool kernel_trigger_dispatch_now(int32 trigger_num) {
+	return kernel_trigger_dispatchx(kernel_trigger_create(trigger_num));
+}
+
 bool kernel_trigger_dispatch(int32 trigger) {
-	error("TODO: kernel_trigger_dispatch");
+	if (trigger == -1 || trigger == 65535 || _G(between_rooms))
+		return true;
+
+	_GT(sound_trigger_q)[_GT(q_end)++] = trigger;
+	if (_GT(q_end) == _GT(q_start))
+		error_show(FL, 'QOVF');
+
 	return true;
 }
 
+void cisco_dispatch_triggers() {
+	for (int i = 0; i < _GT(q_end); ++i) {
+		kernel_trigger_dispatchx(_GT(sound_trigger_q)[i]);
+	}
+
+	_GT(q_end) = 0;
+}
+
+void cisco_clear_triggers() {
+	_GT(q_end) = _GT(q_start) = 0;
+}
+
+/**
+ * Dispatches a trigger.
+ * @returns		Returns true if the trigger was handled. If the trigger is for
+ * a different room that current room_id, returns false. If no trigger_mode was
+ * attached to the trigger, returns false
+ */
+static bool kernel_trigger_dispatchx(int32 trigger_num) {
+	if (_G(between_rooms))
+		return true;
+
+	KernelTriggerType old_trigger_mode = _G(kernel).trigger_mode;
+	int32 old_trigger = _G(kernel).trigger;
+	bool result = false;
+
+	if (trigger_num < 0)
+		return false;
+
+	if (((trigger_num >> 16) & 0xfff) != _G(game).room_id) {		// if room changed, this is an invalid trigger 
+		term_message("orphan scene trigger:mode: %ld, scene: %ld, trigger: %ld",
+			trigger_num >> 28, (trigger_num >> 16) & 0xffff, trigger_num & 0xffff);
+		return false;
+	}
+
+	_G(kernel).trigger = trigger_num & 0xffff;	// If no command in Q, must be here because of code
+
+	switch (trigger_num >> 28) {
+	case KT_PREPARSE:
+		if (_G(kernel).trigger >= 32000)
+			break;
+		_G(kernel).trigger_mode = KT_PREPARSE;
+
+		g_engine->room_pre_parser();
+		result = true;
+		break;
+
+	case KT_PARSE:
+		if (_G(kernel).trigger >= 32000)
+			break;
+		_G(kernel).trigger_mode = KT_PARSE;
+		_G(player).command_ready = true;
+		g_engine->room_parser();
+
+		if (_G(player).command_ready) {
+			g_engine->parser_code();
+		}
+		result = true;
+		break;
+
+	case KT_DAEMON:
+		g_engine->daemon_code();
+		result = true;
+		break;
+
+	default:
+		term_message("orphan mode trigger: mode: %ld, scene: %ld, trigger: %ld",
+			trigger_num >> 28, (trigger_num >> 16) & 0xffff, trigger_num & 0xffff);
+		result = false;
+		break;
+	}
+
+	_G(kernel).trigger_mode = old_trigger_mode;
+	_G(kernel).trigger = old_trigger;
+	return result;
+}
+
+void kernel_timing_trigger(int32 ticks, int16 trigger, char * /*name*/) {
+	if (ticks < 0)
+		error_show(FL, 'TICK');
+
+	int32 done_time = ticks + timer_read_60();
+	_GT(time_q)[_GT(time_q_end)] = done_time;
+	_GT(time_trigger_q)[_GT(time_q_end)] = kernel_trigger_create(trigger);
+	++_GT(time_q_end);
+	if (_GT(time_q_end) == MAX_TIMERS)
+		error_show(FL, 'QOVF');
+
+	// bubble the new entry up in the q to its proper place
+
+	for (int32 iter = _GT(time_q_end) - 1; iter > 0; iter--) {
+		if (_GT(time_q)[iter] < _GT(time_q)[iter - 1]) {
+			int32 temp = _GT(time_q)[iter];
+			_GT(time_q)[iter] = _GT(time_q)[iter - 1];
+			_GT(time_q)[iter - 1] = temp;
+
+			temp = _GT(time_trigger_q)[iter];
+			_GT(time_trigger_q)[iter] = _GT(time_trigger_q)[iter - 1];
+			_GT(time_trigger_q)[iter - 1] = temp;
+		}
+	}
+}
+
+void kernel_service_timing_trigger_q() {
+	// Dispatch pending timing triggers
+	int32 iter = 0;
+	int32 now = timer_read_60();
+
+	while (iter < _GT(time_q_end) && _GT(time_q)[iter] <= now)
+	{
+		kernel_trigger_dispatch(_GT(time_trigger_q)[iter]);
+		++iter;
+	}
+	if (!iter)
+		return;
+
+	// Remove dispatched triggers from the q
+	int32 total = iter;
+	int32 dispatched = iter;
+	iter = 0;
+	while (dispatched < _GT(time_q_end)) {
+		_GT(time_q)[iter] = _GT(time_q)[dispatched];
+		_GT(time_trigger_q)[iter] = _GT(time_trigger_q)[dispatched];
+		++iter;
+		++dispatched;
+	}
+
+	_GT(time_q_end) -= total;
+}
 
 } // End of namespace M4

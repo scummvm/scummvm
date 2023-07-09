@@ -33,6 +33,7 @@
 #include "m4/adv_r/adv_inv.h"
 #include "m4/adv_r/adv_player.h"
 #include "m4/adv_r/adv_rails.h"
+#include "m4/adv_r/adv_trigger.h"
 #include "m4/adv_r/adv_walk.h"
 #include "m4/adv_r/conv_io.h"
 #include "m4/core/globals.h"
@@ -98,6 +99,7 @@ public:
 	Dialog_Globals _dialog;
 	Item_Globals _items;
 	Converstation_Globals _conversations;
+	Triggers _triggers;
 
 	bool _cheating_enabled = false;
 	bool _cheat_keys_enabled = false;

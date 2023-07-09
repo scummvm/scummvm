@@ -27,7 +27,29 @@
 
 namespace M4 {
 
+constexpr int MAX_TIMERS = 32;
+
+struct Triggers {
+	int32 _time_q[MAX_TIMERS];
+	int32 _time_trigger_q[MAX_TIMERS];
+	int32 _time_q_end = 0;
+
+	int32 _sound_trigger_q[MAX_TIMERS];
+	int32 _q_start = 0;
+	int32 _q_end = 0;
+};
+
+/**
+ * Create a new trigger
+ * Trigger usage:
+ * [31-28][27-16][15-0]
+ *   |        |      |
+ *   |        |      +--- trigger_num (0 - 0xffff)
+ *   |        +--- room_id (0 - 4096) (0 - 0xfff)
+ *   +--- trigger_mode (0-16)
+ */
 extern int32 kernel_trigger_create(int32 trigger_num);
+
 extern int32 kernel_trigger_create_mode(int32 trigger_num, int32 desired_mode);
 extern bool kernel_trigger_dispatch(int32 trigger_num);
 extern bool kernel_trigger_dispatch_now(int32 trigger_num);
