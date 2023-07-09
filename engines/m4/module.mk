@@ -70,6 +70,7 @@ MODULE_OBJS = \
 	burger/gui/game_menu.o \
 	burger/gui/gui_cheapo.o \
 	burger/gui/interface.o \
+	burger/rooms/room.o \
 	burger/rooms/section1.o \
 	burger/burger.o \
 	burger/globals.o \

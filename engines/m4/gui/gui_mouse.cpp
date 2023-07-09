@@ -308,4 +308,12 @@ void gui_mouse_refresh() {
 	warning("TODO: gui_mouse_refresh");
 }
 
+void mouse_hide() {
+	vmng_screen_hide(_G(mouseScreenSource));
+}
+
+void mouse_show() {
+	vmng_screen_show(_G(mouseScreenSource));
+}
+
 } // End of namespace M4

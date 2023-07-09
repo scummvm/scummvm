@@ -164,7 +164,7 @@ public:
 };
 
 #define _G(X) (g_vars->_##X)
-#define _GV() g_vars->getGlobals()
+#define _GV() (*g_vars->getGlobals())
 #define _GI() (*g_vars->getInterface())
 #define _GW() (*g_vars->getWalker())
 

@@ -19,28 +19,25 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION1_H
-#define M4_BURGER_ROOMS_SECTION1_H
+#ifndef M4_BURGER_ROOMS_ROOM_H
+#define M4_BURGER_ROOMS_ROOM_H
 
-#include "m4/burger/rooms/room.h"
+#include "m4/core/rooms.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class DummyRoom : public Rooms::Room {
-public:
-	DummyRoom() : Rooms::Room(666) {}
-};
-
-class Section1 : public Section {
+class Room : public M4::Room {
 private:
-	Room _ROOMS[1] = {
-		DummyRoom()
-	};
+	void init_series_players();
+
 public:
-	Section1() : Section(&_ROOMS[0], 1) {}
-	virtual ~Section1() {}
+	Room(uint roomNum) : M4::Room(roomNum) {}
+	~Room() override {}
+
+	void init() override;
+	void shutdown() override;
 };
 
 } // namespace Rooms
