@@ -20,29 +20,19 @@
  *
  */
 
-#ifndef M4_BURGER_DIGI_H
-#define M4_BURGER_DIGI_H
+#ifndef M4_SOUND_PLATFORM_MIDI_H
+#define M4_SOUND_PLATFORM_MIDI_H
 
-#include "common/str-array.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
-namespace Burger {
+namespace Sound {
 
-class Digi {
-private:
-	Common::StringArray _names;
-
-private:
-	void preload(const Common::String &name, int roomNum);
-	void unload(const Common::String &name);
-
+class Midi {
 public:
-	void preload_sounds(const char **names);
-	void unload_sounds();
 };
 
-} // namespace Burger
+} // namespace Sound
 } // namespace M4
 
 #endif

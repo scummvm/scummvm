@@ -49,6 +49,8 @@
 #include "m4/mem/memman.h"
 #include "m4/mem/res.h"
 #include "m4/platform/timer.h"
+#include "m4/platform/sound/digi.h"
+#include "m4/platform/sound/midi.h"
 #include "m4/wscript/wscript.h"
 
 namespace M4 {
@@ -100,6 +102,8 @@ public:
 	Item_Globals _items;
 	Converstation_Globals _conversations;
 	Triggers _triggers;
+	Sound::Digi _digi;
+	Sound::Midi _midi;
 
 	bool _cheating_enabled = false;
 	bool _cheat_keys_enabled = false;

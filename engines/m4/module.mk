@@ -60,6 +60,8 @@ MODULE_OBJS = \
 	mem/res.o \
 	platform/sound.o \
 	platform/timer.o \
+	platform/sound/digi.o \
+	platform/sound/midi.o \
 	platform/tile/tile_read.o \
 	wscript/ws_cruncher.o \
 	wscript/ws_hal.o \
@@ -74,7 +76,6 @@ MODULE_OBJS = \
 	burger/rooms/section.o \
 	burger/rooms/section1.o \
 	burger/burger.o \
-	burger/digi.o \
 	burger/globals.o \
 	burger/hotkeys.o \
 	burger/inventory.o \
