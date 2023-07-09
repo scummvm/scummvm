@@ -695,7 +695,7 @@ void AdvancedMetaEngineDetection::dumpDetectionEntries() const {
 			if (md5Prefix != "" && md5.find(':') == Common::String::npos)
 				key = md5Prefix + md5;
 
-			printf("\trom ( name \"%s\" size %ld md5-%d %s )\n", escapeString(fname).c_str(), fsize, _md5Bytes, key.c_str());
+			printf("\trom ( name \"%s\" size %lld md5-%d %s )\n", escapeString(fname).c_str(), static_cast<long long int>(fsize), _md5Bytes, key.c_str());
 		}
 		printf(")\n\n"); // Closing for 'game ('
 	}
