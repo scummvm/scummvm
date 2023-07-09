@@ -121,6 +121,21 @@ bool VideoPlayer::endHQVideo() {
 	return false;
 }
 
+void VideoPlayer::setSubtitlePosition() const {
+	const int16 overlayHeight = g_system->getOverlayHeight(),
+				overlayWidth = g_system->getOverlayWidth(),
+				drawHeight = _drawRect.height(),
+				drawWidth = _drawRect.width();
+	_subtitles.setBBox(
+		Common::Rect(
+			(_drawRect.left + 20) * overlayWidth / drawWidth,
+			(_drawRect.bottom - 80) * overlayHeight / drawHeight,
+			(_drawRect.right - 20)  * overlayWidth / drawWidth,
+			(_drawRect.bottom - 10) * overlayHeight / drawHeight
+		)
+	);
+}
+
 VideoPlayer::EventFlags VideoPlayer::playUntilEvent(const EventFlags flags, const uint32 maxSleepMs) {
 	// Flushing all the keyboard and mouse events out of the event manager keeps
 	// events queued from before the start of playback from accidentally
@@ -132,9 +147,7 @@ VideoPlayer::EventFlags VideoPlayer::playUntilEvent(const EventFlags flags, cons
 	EventFlags stopFlag = kEventFlagNone;
 
 	if (_subtitles.isLoaded()) {
-		const int16 h = g_system->getOverlayHeight(),
-			        w = g_system->getOverlayWidth();
-		_subtitles.setBBox(Common::Rect(20, h - 120, w - 20, h - 20));
+		setSubtitlePosition();
 		_subtitles.setColor(0xff, 0xff, 0xff);
 		_subtitles.setFont("FreeSans.ttf");
 
@@ -286,6 +299,8 @@ void VideoPlayer::renderFrame(const Graphics::Surface &nextFrame) const {
 	g_system->copyRectToScreen(convertedFrame->getPixels(), convertedFrame->pitch, _drawRect.left, _drawRect.top, _drawRect.width(), _drawRect.height());
 	g_sci->_gfxFrameout->updateScreen();
 
+	if (_subtitles.isLoaded())
+		setSubtitlePosition();
 	_subtitles.drawSubtitle(_decoder->getTime(), true);
 
 	if (freeConvertedFrame) {
