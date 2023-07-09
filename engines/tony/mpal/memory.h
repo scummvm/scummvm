@@ -35,7 +35,7 @@ struct MemoryItem {
 	uint32 _id;
 	uint32 _size;
 	int _lockCount;
-	byte _data[1];
+	alignas(max_align_t) byte _data[1];
 
 	// Casting for access to data
 	operator void *() { return &_data[0]; }
