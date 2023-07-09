@@ -19,49 +19,29 @@
  *
  */
 
-#include "m4/burger/rooms/room.h"
+#include "m4/burger/series_player.h"
 #include "m4/burger/vars.h"
 
 namespace M4 {
 namespace Burger {
-namespace Rooms {
 
-void Room::init() {
-	int roomId = _G(game).room_id;
+void SeriesPlayers::clear() {
+	term_message("Initializing %d series_players...", MAX_SERIES_PLAYERS);
 
-	if (roomId <= 800)
-		_GINT().show();
-	else
-		_GINT().hide();
-
-	// Disable commands for certain rooms
-	if (roomId == 201 || roomId == 301 || roomId == 306 || roomId == 307 ||
-			roomId == 401 || roomId == 501 || roomId == 511 || roomId == 512 ||
-			roomId == 513 || roomId == 601 || roomId == 605 || roomId == 606 ||
-			roomId == 608 || roomId == 609 || roomId == 610 || roomId == 801 ||
-			roomId == 902) {
-		player_set_commands_allowed(false);
-	}
-
-	if (roomId >= 950 || roomId == 902)
-		mouse_hide();
-	else
-		mouse_show();
-
-	// Do stuff that needs to be done each time a scene is started
-	init_series_players();
-
-	// TODO: Further room init
+	for (int i = 0; i < MAX_SERIES_PLAYERS; ++i)
+		_players[i].clear();
 }
 
-void Room::shutdown() {
-	_GV()[298] = 0;
+void seriesPlayer::clear() {
+	break_list = nullptr;
+	series_machine = nullptr;
+	shadow_machine = nullptr;
+	series = -1;
+	shadow_series = -1;
+	index = -1;
+	name = nullptr;
+	in_use = false;
 }
 
-void Room::init_series_players() {
-	_G(seriesPlayers).clear();
-}
-
-} // namespace Rooms
 } // namespace Burger
 } // namespace M4
