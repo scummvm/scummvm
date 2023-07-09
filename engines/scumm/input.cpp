@@ -1038,7 +1038,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 				waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
 			} while (ks.ascii == '+' || ks.ascii == '-');
 
-			if (_game.version > 6)
+			if (_game.version > 6 || _game.platform == Common::Platform::kPlatformFMTowns)
 				clearBanner();
 
 			pt.clear();
