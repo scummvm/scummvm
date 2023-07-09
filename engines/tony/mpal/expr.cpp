@@ -75,7 +75,7 @@ static void *duplicateExpression(MpalHandle h) {
 	return clone;
 }
 
-static int Compute(int a, int b, byte symbol) {
+static int32 Compute(int32 a, int32 b, byte symbol) {
 	switch (symbol) {
 	case OP_MUL:
 		return a * b;
@@ -153,7 +153,7 @@ static void solve(LpExpression one, int num) {
  * @param expr				Pointer to an expression duplicated by DuplicateExpression
  * @returns		Value
  */
-static int evaluateAndFreeExpression(void *expr) {
+static int32 evaluateAndFreeExpression(void *expr) {
 	int num = *(byte *)expr;
 	LpExpression one = (LpExpression)((byte *)expr + EXPR_LENGTH_SIZE);
 
@@ -177,7 +177,7 @@ static int evaluateAndFreeExpression(void *expr) {
 
 	// 3) algebraic resolution
 	solve(one, num);
-	int val = one->_val._num;
+	int32 val = one->_val._num;
 	globalDestroy(expr);
 
 	return val;
@@ -260,9 +260,9 @@ const byte *parseExpression(const byte *lpBuf, const Common::UnalignedPtr<MpalHa
  * @param h					Handle to the expression
  * @returns		Numeric value
  */
-int evaluateExpression(MpalHandle h) {
+int32 evaluateExpression(MpalHandle h) {
 	lockVar();
-	int ret = evaluateAndFreeExpression(duplicateExpression(h));
+	int32 ret = evaluateAndFreeExpression(duplicateExpression(h));
 	unlockVar();
 
 	return ret;
