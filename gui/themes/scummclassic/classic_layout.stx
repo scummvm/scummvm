@@ -39,6 +39,7 @@
 
 		<def var = 'SaveLoadChooser.ExtInfo.Visible' value = '1'/>
 		<def var = 'RecorderDialog.ExtInfo.Visible' value = '1'/>
+		<def var = 'ImageAlbum.ImageInset' value = '16' scalable = 'yes' />
 
 		<def var = 'OnScreenDialog.ShowPics' value = '0'/>
 
@@ -2189,6 +2190,34 @@
 						type = 'Button'
 				/>
 				<widget name = 'Host'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'ImageAlbum' overlays = 'screen' inset = '8' shading = 'dim'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' align = 'center'> 
+			<widget name = 'Title' height = 'Globals.Line.Height'/>
+			<widget name = 'ImageContainer' />
+			<layout type = 'horizontal' padding = '0, 0, 16, 0'>
+				<widget name = 'Prev'
+						type = 'Button'
+				/>
+				<widget name = 'ImageNumber'
+					width = '50'
+					height = 'Globals.Line.Height'
+					textalign = 'center'
+					/>
+				<widget name = 'Next'
+						type = 'Button'
+				/>
+				<space/>
+				<widget name = 'Save'
+						type = 'Button'
+				/>
+				<space size = '16'/>
+				<widget name = 'Close'
 						type = 'Button'
 				/>
 			</layout>
