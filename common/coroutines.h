@@ -307,7 +307,7 @@ struct PROCESS {
 	int sleepTime;      ///< Number of scheduler cycles to sleep.
 	uint32 pid;         ///< Process ID.
 	uint32 pidWaiting[CORO_MAX_PID_WAITING];    ///< Process ID(s) that the process is currently waiting on.
-	char param[CORO_PARAM_SIZE];    ///< Process-specific information.
+	alignas(max_align_t) char param[CORO_PARAM_SIZE];    ///< Process-specific information.
 };
 typedef PROCESS *PPROCESS;
 
