@@ -102,10 +102,12 @@ static uint32 perf_ref_frame = 0;
 static uint32 perf_ref_audio_buff_occupancy = 0;
 
 float frame_rate = 0;
+uint16 sample_rate = 0;
 static uint16 samples_per_frame = 0;               // length in samples per frame
 static size_t samples_per_frame_buffer_size = 0;
 
-static int16_t *sound_buffer = NULL;       // pointer to output buffer
+static int16_t *sound_buffer = NULL;               // pointer to output buffer
+static int16_t *sound_buffer_empty = NULL;         // pointer to zeroed output buffer, to regulate GUI FPS
 
 static void log_scummvm_exit_code(void) {
 	if (retro_get_scummvm_res() == Common::kNoError)
@@ -119,15 +121,15 @@ static void log_scummvm_exit_code(void) {
 static void audio_buffer_init(uint16 sample_rate, uint16 frame_rate) {
 	samples_per_frame = sample_rate / frame_rate;
 
-	samples_per_frame_buffer_size = samples_per_frame << 1 * sizeof(int16_t);
+	samples_per_frame_buffer_size = samples_per_frame << sizeof(int16_t);
 
-	if (sound_buffer)
-		sound_buffer = (int16_t *)realloc(sound_buffer, samples_per_frame_buffer_size);
-	else
-		sound_buffer = (int16_t *)malloc(samples_per_frame_buffer_size);
-	if (sound_buffer)
+	sound_buffer = sound_buffer ? (int16_t *)realloc(sound_buffer, samples_per_frame_buffer_size) : (int16_t *)malloc(samples_per_frame_buffer_size);
+	sound_buffer_empty = sound_buffer_empty ? (int16_t *)realloc(sound_buffer_empty, samples_per_frame_buffer_size) : (int16_t *)malloc(samples_per_frame_buffer_size);
+
+	if (sound_buffer && sound_buffer_empty) {
 		memset(sound_buffer, 0, samples_per_frame_buffer_size);
-	else
+		memset(sound_buffer_empty, 0, samples_per_frame_buffer_size);
+	} else
 		log_cb(RETRO_LOG_ERROR, "audio_buffer_init error.\n");
 
 	audio_status |= AUDIO_STATUS_UPDATE_LATENCY;
@@ -829,17 +831,9 @@ void retro_run(void) {
 				video_cb(screen.getPixels(), screen.w, screen.h, screen.pitch);
 			}
 
-#if defined(_3DS)
-			/* Hack: 3DS will produce static noise
-			 * unless we manually send a zeroed
-			 * audio buffer when no samples are
-			 * available (i.e. when the overlay
-			 * is shown) */
-			if (audio_status & AUDIO_STATUS_MUTE) {
-				audio_buffer_init(SAMPLE_RATE, (uint16) frame_rate);
-			}
-#endif
-			if (!(audio_status & AUDIO_STATUS_MUTE))
+			if (audio_status & AUDIO_STATUS_MUTE)
+				audio_batch_cb((int16_t *) sound_buffer_empty, samples_per_frame_buffer_size >> sizeof(int16_t));
+			else
 				audio_batch_cb((int16_t *) sound_buffer, samples_count);
 
 			current_frame++;
