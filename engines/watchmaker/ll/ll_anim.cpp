@@ -1693,8 +1693,9 @@ void ContinueAnim(Init &init, int32 an) {
 void StopObjAnim(WGame &game, int32 obj) {
 	if (!obj) return;
 
-	if ((obj == ocCURPLAYER) || (obj == ocBOTH))
+	if (obj == ocCURPLAYER) {
 		obj = ocDARRELL + CurPlayer;
+	}
 
 	Init &init = game.init;
 //	Se esiste gia' un'animazione sullo stesso oggetto base, la termina

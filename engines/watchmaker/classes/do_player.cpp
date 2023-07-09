@@ -134,7 +134,7 @@ void doPlayer(WGame &game) {
 			if (Player)
 				Player->Walk.NumPathNodes = Player->Walk.CurrentStep = Player->Walk.NumSteps = bNotSkippableWalk = 0;
 
-			if ((!bDialogActive) || (TimeWalk == CurPlayer + ocDARRELL) || (TimeWalk == ocBOTH))
+			if ((!bDialogActive) || (TimeWalk == CurPlayer + ocDARRELL) || (TimeWalk == ocCURPLAYER))
 				_vm->_messageSystem.addWaitingMsgs(MP_WAIT_ACT);
 
 			if (TheMessage->event == ME_PLAYERGOTOEXAMINE)
