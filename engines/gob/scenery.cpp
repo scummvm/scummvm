@@ -433,6 +433,7 @@ int16 Scenery::loadAnim(char search) {
 	resId = _vm->_game->_script->readInt16();
 
 	if (search) {
+		sceneryIndex = 10;
 		for (i = 0; i < 10; i++) {
 			if ((_animPictCount[i] != 0) && (_animResId[i] == resId)) {
 				_vm->_game->_script->skip(8 * _animPictCount[i]);
