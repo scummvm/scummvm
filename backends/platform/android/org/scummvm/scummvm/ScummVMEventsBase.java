@@ -158,7 +158,9 @@ public class ScummVMEventsBase implements
 			                   0,
 			                   0);
 		} else if (msg.what == MSG_LONG_TOUCH_EVENT) {
-			_currentView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+			if (!_multitouchHelper.isMultitouchMode()) {
+				_currentView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+			}
 		}
 	}
 
@@ -393,7 +395,7 @@ public class ScummVMEventsBase implements
 		case KeyEvent.KEYCODE_DPAD_RIGHT:
 		case KeyEvent.KEYCODE_DPAD_CENTER:
 			// NOTE 1 For now, we're handling DPAD keys as JE_GAMEPAD events, regardless the source InputDevice
-			//        We delegate these keypresses to ScummVM's keymapper as JOYSTICK_BUTTON_DPAD presses. 
+			//        We delegate these keypresses to ScummVM's keymapper as JOYSTICK_BUTTON_DPAD presses.
 			//        (JOYSTICK_BUTTON_DPAD_UP, JOYSTICK_BUTTON_DPAD_DOWN, JOYSTICK_BUTTON_DPAD_LEFT, JOYSTICK_BUTTON_DPAD_RIGHT and JOYSTICK_BUTTON_DPAD_CENTER)
 			//        By default mapped to virtual mouse (VMOUSE).
 			//        As virtual mouse, cursor may be too fast/hard to control, so it's recommended to set and use a VMOUSESLOW binding too,
@@ -578,6 +580,7 @@ public class ScummVMEventsBase implements
 
 			// check if the event can be handled as a multitouch event
 			if (_multitouchHelper.handleMotionEvent(event)) {
+				_handler.removeMessages(MSG_LONG_TOUCH_EVENT);
 				return true;
 			}
 
