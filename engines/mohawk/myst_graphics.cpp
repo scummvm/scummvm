@@ -223,6 +223,11 @@ void MystGraphics::applyImagePatches(uint16 id, const MohawkSurface *mhkSurface)
 
 		fixSurf.free();
 	}
+
+	// Fix map picture with inverted colors in Myst ME Polish version
+	if (id == 9934 && _vm->isGameVariant(GF_ME) && _vm->getLanguage() == Common::PL_POL) {
+		mhkSurface->getSurface()->convertToInPlace(Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 0, 24));
+	}
 }
 
 void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest) {
