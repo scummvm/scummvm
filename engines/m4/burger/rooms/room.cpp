@@ -51,6 +51,79 @@ void Room::init() {
 	// Do stuff that needs to be done each time a scene is started
 	init_series_players();
 
+	// Preload digi sounds
+	if (_G(player).walker_in_this_scene) {
+		switch (roomId) {
+		case 102:
+		case 103:
+		case 105:
+		case 134:
+		case 135:
+		case 143:
+		case 174:
+		case 175:
+		case 176:
+		case 304:
+		case 505:
+		case 506:
+		case 507:
+		case 509:
+		case 602:
+		case 603:
+		case 604:
+		case 612:
+		{
+			static const char *NAMES[] = {
+				"fs_wood1", "fs_wood2", "fs_wood3", "fs_wood4", "fs_wood5", nullptr
+			};
+			_G(digi).preload_sounds(NAMES);
+			break;
+		}
+
+		case 106:
+		case 139:
+		case 144:
+		case 145:
+		case 302:
+		case 303:
+		case 305:
+		{
+			static const char *NAMES[] = {
+				"fs_dirt1", "fs_dirt2", "fs_dirt3", "fs_dirt4", "fs_dirt5", nullptr
+			};
+			_G(digi).preload_sounds(NAMES);
+			break;
+		}
+
+		case 310:
+		case 311:
+		case 312:
+		case 313:
+		case 314:
+		case 315:
+		case 316:
+		case 317:
+		case 318:
+		case 319:
+		{
+			static const char *NAMES[] = {
+				"fs_mine1", "fs_mine2", "fs_mine3", "fs_mine4", "fs_mine5", nullptr
+			};
+			_G(digi).preload_sounds(NAMES);
+			break;
+		}
+
+		default:
+		{
+			static const char *NAMES[] = {
+				"fs_hard1", "fs_hard2", "fs_hard3", "fs_hard4", "fs_hard5", nullptr
+			};
+			_G(digi).preload_sounds(NAMES);
+			break;
+		}
+		}
+	}
+
 	// TODO: Further room init
 }
 
