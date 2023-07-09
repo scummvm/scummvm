@@ -444,6 +444,8 @@ bool Cast::loadConfig() {
 			// with the builtin palettes starting from -1.
 			if (_defaultPalette.member <= 0)
 				_defaultPalette.member -= 1;
+			else
+				_defaultPalette.castLib = DEFAULT_CAST_LIB;
 			for (int i = 0; i < 0x08; i++) {
 				stream->readByte();
 			}
