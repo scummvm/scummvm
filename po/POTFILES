@@ -37,6 +37,7 @@ common/rendermode.cpp
 common/translation.cpp
 common/updates.cpp
 common/util.cpp
+common/formats/formatinfo.cpp
 
 dists/android.strings.xml.cpp
 dists/org.scummvm.scummvm.metainfo.xml.cpp
