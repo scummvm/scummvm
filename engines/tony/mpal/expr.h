@@ -74,7 +74,7 @@ typedef struct {
 		int _num;        // Identifier (if type == ELT_NUMBER)
 		char *_name;     // Variable name (if type == ELT_VAR)
 		MpalHandle _son; // Handle expressions (if type == ELT_PARENTH)
-		byte *_pson;     // Handle lockato (if type == ELT_PARENTH2)
+		void *_pson;     // Handle lockato (if type == ELT_PARENTH2)
 	} _val;
 
 	byte _symbol;        // Mathematic symbols (see #define OP_*)

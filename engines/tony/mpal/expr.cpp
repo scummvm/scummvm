@@ -39,7 +39,7 @@ namespace MPAL {
  * @param h				Handle to the original expression
  * @retruns		Pointer to the cloned expression
  */
-static byte *duplicateExpression(MpalHandle h) {
+static void *duplicateExpression(MpalHandle h) {
 	byte *orig, *clone;
 
 	orig = (byte *)globalLock(h);
@@ -144,9 +144,9 @@ static void solve(LpExpression one, int num) {
  * @param expr				Pointer to an expression duplicated by DuplicateExpression
  * @returns		Value
  */
-static int evaluateAndFreeExpression(byte *expr) {
-	int num = *expr;
-	LpExpression one = (LpExpression)(expr + 1);
+static int evaluateAndFreeExpression(void *expr) {
+	int num = *(byte *)expr;
+	LpExpression one = (LpExpression)((byte *)expr + 1);
 
 	// 1) Substitutions of variables
 	LpExpression cur = one;
@@ -185,7 +185,7 @@ static int evaluateAndFreeExpression(byte *expr) {
 const byte *parseExpression(const byte *lpBuf, const Common::UnalignedPtr<MpalHandle> &h) {
 	byte *start;
 
-	uint32 num = *lpBuf;
+	byte num = *lpBuf;
 	lpBuf++;
 
 	if (num == 0)
@@ -196,7 +196,7 @@ const byte *parseExpression(const byte *lpBuf, const Common::UnalignedPtr<MpalHa
 		return NULL;
 
 	start = (byte *)globalLock(h.load());
-	*start = (byte)num;
+	*start = num;
 
 	LpExpression cur = (LpExpression)(start + 1);
 
@@ -270,8 +270,8 @@ bool compareExpressions(MpalHandle h1, MpalHandle h2) {
 	e1 = (byte *)globalLock(h1);
 	e2 = (byte *)globalLock(h2);
 
-	int num1 = *(byte *)e1;
-	int num2 = *(byte *)e2;
+	int num1 = *e1;
+	int num2 = *e2;
 
 	if (num1 != num2) {
 		globalUnlock(h1);
