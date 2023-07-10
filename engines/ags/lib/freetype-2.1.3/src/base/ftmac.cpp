@@ -47,7 +47,7 @@
   - If there is a Type 1 font available (as a separate 'LWFN' file),
     read its data into memory, massage it slightly so it becomes
     PFB data, wrap it into a memory stream, load the Type 1 driver
-    and delegate the rest of the work to it by calling FT2_1_3_Open_Face().
+    and delegate the rest of the work to it by calling FT_Open_Face().
     (XXX TODO: after this has been done, the kerning data from the FOND
     resource should be appended to the face: On the Mac there are usually
     no AFM files available.  However, this is tricky since we need to map
@@ -55,7 +55,7 @@
 
   - If there is a TrueType font (an 'sfnt' resource), read it into
     memory, wrap it into a memory stream, load the TrueType driver
-    and delegate the rest of the work to it, by calling FT2_1_3_Open_Face().
+    and delegate the rest of the work to it, by calling FT_Open_Face().
 */
 
 
@@ -504,7 +504,7 @@ open_face_from_buffer( FT_Library  library,
 		args.driver = FT_Get_Module( library, driver_name );
 	}
 
-	error = FT2_1_3_Open_Face( library, &args, face_index, aface );
+	error = FT_Open_Face( library, &args, face_index, aface );
 	if ( error == FT2_1_3_Err_Ok )
 		(*aface)->face_flags &= ~FT2_1_3_FACE_FLAG_EXTERNAL_STREAM;
 	else {
@@ -823,7 +823,7 @@ FT2_1_3_New_Face( FT_Library   library,
 	OSType        file_type;
 
 
-	/* test for valid `library' and `aface' delayed to FT2_1_3_Open_Face() */
+	/* test for valid `library' and `aface' delayed to FT_Open_Face() */
 	if ( !pathname )
 		return FT2_1_3_Err_Invalid_Argument;
 
@@ -853,7 +853,7 @@ FT2_1_3_New_Face( FT_Library   library,
 	/* let it fall through to normal loader (.ttf, .otf, etc.) */
 	args.flags    = FT2_1_3_OPEN_PATHNAME;
 	args.pathname = (char*)pathname;
-	return FT2_1_3_Open_Face( library, &args, face_index, aface );
+	return FT_Open_Face( library, &args, face_index, aface );
 }
 
 

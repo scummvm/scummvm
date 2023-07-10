@@ -536,7 +536,7 @@ Exit:
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Load_Char( FT_Face   face,
+FT_Load_Char( FT_Face   face,
 			  FT_ULong  char_code,
 			  FT_Int32  load_flags ) {
 	FT_UInt  glyph_index;
@@ -657,7 +657,7 @@ Destroy_Driver( FT_Driver  driver ) {
 /*    open_face                                                          */
 /*                                                                       */
 /* <Description>                                                         */
-/*    This function does some work for FT2_1_3_Open_Face().                   */
+/*    This function does some work for FT_Open_Face().                   */
 /*                                                                       */
 static FT_Error
 open_face( FT_Driver      driver,
@@ -758,14 +758,14 @@ FT2_1_3_New_Face( FT_Library   library,
 	FT_Open_Args  args;
 
 
-	/* test for valid `library' and `aface' delayed to FT2_1_3_Open_Face() */
+	/* test for valid `library' and `aface' delayed to FT_Open_Face() */
 	if ( !pathname )
 		return FT2_1_3_Err_Invalid_Argument;
 
 	args.flags    = FT2_1_3_OPEN_PATHNAME;
 	args.pathname = const_cast<char *>(pathname);
 
-	return FT2_1_3_Open_Face( library, &args, face_index, aface );
+	return FT_Open_Face( library, &args, face_index, aface );
 }
 
 //#endif  /* !FT2_1_3_MACINTOSH */
@@ -782,7 +782,7 @@ FT2_1_3_New_Memory_Face( FT_Library      library,
 	FT_Open_Args  args;
 
 
-	/* test for valid `library' and `face' delayed to FT2_1_3_Open_Face() */
+	/* test for valid `library' and `face' delayed to FT_Open_Face() */
 	if ( !file_base )
 		return FT2_1_3_Err_Invalid_Argument;
 
@@ -790,14 +790,14 @@ FT2_1_3_New_Memory_Face( FT_Library      library,
 	args.memory_base = file_base;
 	args.memory_size = file_size;
 
-	return FT2_1_3_Open_Face( library, &args, face_index, aface );
+	return FT_Open_Face( library, &args, face_index, aface );
 }
 
 
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Open_Face( FT_Library           library,
+FT_Open_Face( FT_Library           library,
 			  const FT_Open_Args*  args,
 			  FT_Long              face_index,
 			  FT_Face             *aface ) {
@@ -892,7 +892,7 @@ Fail2:
 	}
 
 Success:
-	FT2_1_3_TRACE4(( "FT2_1_3_Open_Face: New face object, adding to list\n" ));
+	FT2_1_3_TRACE4(( "FT_Open_Face: New face object, adding to list\n" ));
 
 	/* set the FT2_1_3_FACE_FLAG_EXTERNAL_STREAM bit for FT2_1_3_Done_Face */
 	if ( external_stream )
@@ -912,7 +912,7 @@ Success:
 		FT_GlyphSlot  slot;
 
 
-		FT2_1_3_TRACE4(( "FT2_1_3_Open_Face: Creating glyph slot\n" ));
+		FT2_1_3_TRACE4(( "FT_Open_Face: Creating glyph slot\n" ));
 
 		error = FT_New_GlyphSlot( face, &slot );
 		if ( error )
@@ -926,7 +926,7 @@ Success:
 		FT_Size  size;
 
 
-		FT2_1_3_TRACE4(( "FT2_1_3_Open_Face: Creating size object\n" ));
+		FT2_1_3_TRACE4(( "FT_Open_Face: Creating size object\n" ));
 
 		error = FT_New_Size( face, &size );
 		if ( error )
@@ -956,7 +956,7 @@ Fail:
 	FT2_1_3_Done_Face( face );
 
 Exit:
-	FT2_1_3_TRACE4(( "FT2_1_3_Open_Face: Return %d\n", error ));
+	FT2_1_3_TRACE4(( "FT_Open_Face: Return %d\n", error ));
 
 	return error;
 }
@@ -965,12 +965,12 @@ Exit:
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Attach_File( FT_Face      face,
+FT_Attach_File( FT_Face      face,
 				const char*  filepathname ) {
 	FT_Open_Args  open;
 
 
-	/* test for valid `face' delayed to FT2_1_3_Attach_Stream() */
+	/* test for valid `face' delayed to FT_Attach_Stream() */
 
 	if ( !filepathname )
 		return FT2_1_3_Err_Invalid_Argument;
@@ -978,14 +978,14 @@ FT2_1_3_Attach_File( FT_Face      face,
 	open.flags    = FT2_1_3_OPEN_PATHNAME;
 	open.pathname = const_cast<char *>(filepathname);
 
-	return FT2_1_3_Attach_Stream( face, &open );
+	return FT_Attach_Stream( face, &open );
 }
 
 
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Attach_Stream( FT_Face        face,
+FT_Attach_Stream( FT_Face        face,
 				  FT_Open_Args*  parameters ) {
 	FT_Stream  stream;
 	FT_Error   error;
@@ -1007,7 +1007,7 @@ FT2_1_3_Attach_Stream( FT_Face        face,
 	if ( error )
 		goto Exit;
 
-	/* we implement FT2_1_3_Attach_Stream in each driver through the */
+	/* we implement FT_Attach_Stream in each driver through the */
 	/* `attach_file' interface                                  */
 
 	error = FT2_1_3_Err_Unimplemented_Feature;
@@ -1345,7 +1345,7 @@ FT2_1_3_Get_Kerning( FT_Face     face,
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Select_Charmap( FT_Face      face,
+FT_Select_Charmap( FT_Face      face,
 				   FT_Encoding  encoding ) {
 	FT_CharMap*  cur;
 	FT_CharMap*  limit;
@@ -1374,7 +1374,7 @@ FT2_1_3_Select_Charmap( FT_Face      face,
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Set_Charmap( FT_Face     face,
+FT_Set_Charmap( FT_Face     face,
 				FT_CharMap  charmap ) {
 	FT_CharMap*  cur;
 	FT_CharMap*  limit;
@@ -1535,7 +1535,7 @@ FT2_1_3_Get_Next_Char( FT_Face   face,
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( FT_UInt )
-FT2_1_3_Get_Name_Index( FT_Face     face,
+FT_Get_Name_Index( FT_Face     face,
 				   FT_String*  glyph_name ) {
 	FT_UInt  result = 0;
 
@@ -1601,7 +1601,7 @@ FT_Get_Glyph_Name( FT_Face     face,
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( const char* )
-FT2_1_3_Get_Postscript_Name( FT_Face  face ) {
+FT_Get_Postscript_Name( FT_Face  face ) {
 	const char*  result = NULL;
 
 
@@ -2255,7 +2255,7 @@ Fail:
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_Library_Version( FT_Library   library,
+FT_Library_Version( FT_Library   library,
 					FT_Int      *amajor,
 					FT_Int      *aminor,
 					FT_Int      *apatch ) {

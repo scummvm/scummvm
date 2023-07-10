@@ -83,7 +83,7 @@ ah_hinter_compute_blues( AH_Hinter  hinter ) {
 	charmap = face->charmap;
 
 	/* do we have a Unicode charmap in there? */
-	error = FT2_1_3_Select_Charmap( face, FT2_1_3_ENCODING_UNICODE );
+	error = FT_Select_Charmap( face, FT2_1_3_ENCODING_UNICODE );
 	if ( error )
 		goto Exit;
 
@@ -259,7 +259,7 @@ ah_hinter_compute_blues( AH_Hinter  hinter ) {
 	}
 
 	/* reset original face charmap */
-	FT2_1_3_Set_Charmap( face, charmap );
+	FT_Set_Charmap( face, charmap );
 	error = 0;
 
 Exit:

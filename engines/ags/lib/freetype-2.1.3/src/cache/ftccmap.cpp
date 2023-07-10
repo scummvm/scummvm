@@ -374,14 +374,14 @@ FTC_CMapCache_Lookup( FTC_CMapCache  cache,
 				cmap_index = FTC_CMAP_FAMILY( FTC_QUERY( &cquery )->family )->index;
 				cmap       = face->charmaps[cmap_index];
 
-				FT2_1_3_Set_Charmap( face, cmap );
+				FT_Set_Charmap( face, cmap );
 
 				/* perform lookup */
 				gindex                = FT2_1_3_Get_Char_Index( face, char_code );
 				node->indices[offset] = (FT_UInt16)gindex;
 
 				/* restore old charmap */
-				FT2_1_3_Set_Charmap( face, old );
+				FT_Set_Charmap( face, old );
 			}
 		}
 	}

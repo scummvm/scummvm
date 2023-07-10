@@ -194,7 +194,7 @@ typedef struct FT_OutlineGlyphRec_*  FT_OutlineGlyph;
 /*                                                                       */
 /*    As the outline is extracted from a glyph slot, its coordinates are */
 /*    expressed normally in 26.6 pixels, unless the flag                 */
-/*    FT2_1_3_LOAD_NO_SCALE was used in FT2_1_3_Load_Glyph() or FT2_1_3_Load_Char().    */
+/*    FT2_1_3_LOAD_NO_SCALE was used in FT2_1_3_Load_Glyph() or FT_Load_Char().    */
 /*                                                                       */
 /*    The outline's tables are always owned by the object and are        */
 /*    destroyed with it.                                                 */
@@ -403,7 +403,7 @@ FT_Glyph_Get_CBox( FT_Glyph  glyph,
 /*                                                                       */
 /*                                                                       */
 /*        // load glyph                                                  */
-/*        error = FT2_1_3_Load_Char( face, glyph_index, FT2_1_3_LOAD_DEFAUT );     */
+/*        error = FT_Load_Char( face, glyph_index, FT2_1_3_LOAD_DEFAUT );     */
 /*                                                                       */
 /*        // extract glyph image                                         */
 /*        error = FT_Get_Glyph( face->glyph, &glyph );                   */

@@ -91,7 +91,7 @@ typedef struct  FT_Incremental_MetricsRec_ {
  *
  * @description:
  *   A function called by FreeType to access a given glyph's data bytes
- *   during @FT2_1_3_Load_Glyph or @FT2_1_3_Load_Char if incremental loading is
+ *   during @FT2_1_3_Load_Glyph or @FT_Load_Char if incremental loading is
  *   enabled.
  *
  *   Note that the format of the glyph's data bytes depends on the font
@@ -226,7 +226,7 @@ typedef struct  FT_Incremental_FuncsRec_ {
  *   FT_Incremental_InterfaceRec
  *
  * @description:
- *   A structure to be used with @FT2_1_3_Open_Face to indicate that the user
+ *   A structure to be used with @FT_Open_Face to indicate that the user
  *   wants to support incremental glyph loading.  You should use it with
  *   @FT2_1_3_PARAM_TAG_INCREMENTAL as in the following example:
  *
@@ -252,7 +252,7 @@ typedef struct  FT_Incremental_FuncsRec_ {
  *       open_args.params     = &parameter; // we use one optional argument
  *
  *       // open the font
- *       error = FT2_1_3_Open_Face( library, &open_args, index, &face );
+ *       error = FT_Open_Face( library, &open_args, index, &face );
  *       ...
  *     }
  */

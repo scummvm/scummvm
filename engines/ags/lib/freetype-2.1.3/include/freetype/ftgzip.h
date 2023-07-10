@@ -70,7 +70,7 @@ FT2_1_3_BEGIN_HEADER
  *   process each time seeking backwards is needed within the stream
  *
  *   in certain builds of the library, gzip compression recognition is
- *   automatic when calling @FT2_1_3_New_Face or @FT2_1_3_Open_Face. This means that
+ *   automatic when calling @FT2_1_3_New_Face or @FT_Open_Face. This means that
  *   if no font driver is capable of handling the raw compressed file,
  *   the library will try to open a gzip stream from it and re-open
  *   the face with it.
