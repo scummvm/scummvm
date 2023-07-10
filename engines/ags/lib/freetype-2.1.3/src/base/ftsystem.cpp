@@ -262,7 +262,7 @@ ft_mem_debug_done( FT_Memory  memory );
 /* documentation is in ftobjs.h */
 
 FT2_1_3_EXPORT_DEF( FT_Memory )
-FT2_1_3_New_Memory( void ) {
+FT_New_Memory( void ) {
 	FT_Memory  memory;
 
 
@@ -284,7 +284,7 @@ FT2_1_3_New_Memory( void ) {
 /* documentation is in ftobjs.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_Done_Memory( FT_Memory  memory ) {
+FT_Done_Memory( FT_Memory  memory ) {
 #ifdef FT2_1_3_DEBUG_MEMORY
 	ft_mem_debug_done( memory );
 #endif

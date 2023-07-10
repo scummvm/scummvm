@@ -110,7 +110,7 @@ FT2_1_3_Init_FreeType( FT_Library  *alibrary ) {
 	/* First of all, allocate a new system object -- this function is part */
 	/* of the system-specific component, i.e. `ftsystem.c'.                */
 
-	memory = FT2_1_3_New_Memory();
+	memory = FT_New_Memory();
 	if ( !memory ) {
 		FT2_1_3_ERROR(( "FT2_1_3_Init_FreeType: cannot find memory manager\n" ));
 		return FT2_1_3_Err_Unimplemented_Feature;
@@ -144,7 +144,7 @@ FT2_1_3_Done_FreeType( FT_Library  library ) {
 		FT_Done_Library( library );
 
 		/* discard memory manager */
-		FT2_1_3_Done_Memory( memory );
+		FT_Done_Memory( memory );
 	}
 
 	return FT2_1_3_Err_Ok;

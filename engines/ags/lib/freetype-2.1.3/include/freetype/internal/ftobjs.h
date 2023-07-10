@@ -738,7 +738,7 @@ typedef FT_UInt
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_New_Memory                                                      */
+/*    FT_New_Memory                                                      */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Creates a new memory object.                                       */
@@ -747,13 +747,13 @@ typedef FT_UInt
 /*    A pointer to the new memory object.  0 in case of error.           */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Memory )
-FT2_1_3_New_Memory( void );
+FT_New_Memory( void );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Done_Memory                                                     */
+/*    FT_Done_Memory                                                     */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Discards memory manager.                                           */
@@ -762,7 +762,7 @@ FT2_1_3_New_Memory( void );
 /*    memory :: A handle to the memory manager.                          */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_Done_Memory( FT_Memory  memory );
+FT_Done_Memory( FT_Memory  memory );
 
 #endif /* !FT2_1_3_CONFIG_OPTION_NO_DEFAULT_SYSTEM */
 
