@@ -510,8 +510,12 @@ void Score::update() {
 		// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
 	}
 
+#if 0
+	// FIXME: TODO: This so far brings more problems than fixes
 	for (uint ch = 0; ch < _channels.size(); ch++)
-		*_currentFrame->_sprites[ch] = *_channels[ch]->_sprite;
+		if (_channels[ch]->_sprite->_puppet || _channels[ch]->_sprite->_autoPuppet)
+			*_currentFrame->_sprites[ch] = *_channels[ch]->_sprite;
+#endif
 
 	loadFrame(_curFrameNumber);
 	// Window is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell, p.100)
