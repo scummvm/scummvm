@@ -50,7 +50,7 @@ AnimationFrame::AnimationFrame(rapidxml::xml_node<char> *node) : eff(node) {
 }
 
 void AnimationFrame::Reset() {
-	switch (eff.type) {
+	switch (eff._type) {
 	case FADE_IN:
 		col.a = 0;
 		break;
@@ -83,20 +83,20 @@ void AnimationFrame::Draw(const uint32 &timestamp) {
 DrawType AnimationFrame::InternalEvents(const uint32 &timestamp) {
 
 	// Vary alpha according to the effect values in the variation time frame
-	if (timestamp >= eff.start && timestamp <= eff.finish) {
+	if (timestamp >= eff._start && timestamp <= eff._finish) {
 		// These equations courtesy of linear algebra
-		switch (eff.type) {
+		switch (eff._type) {
 		case FADE_IN:
-			col.a = (255 * (timestamp - eff.start)) / (eff.finish - eff.start);
+			col.a = (255 * (timestamp - eff._start)) / (eff._finish - eff._start);
 			break;
 		case FADE_OUT:
-			col.a = (255 * (eff.finish - timestamp)) / (eff.finish - eff.start);
+			col.a = (255 * (eff._finish - timestamp)) / (eff._finish - eff._start);
 			break;
 		default:
 			break;
 		}
 
-		return eff.draw_game;
+		return eff._drawGame;
 	}
 
 	return DRAW_SAME;
