@@ -271,7 +271,7 @@ public:
 	void drawInner2Bpp(int yStart, int xStart, uint32 transColor, uint32 alphaMask, PALETTE palette, bool useTint, bool sameFormat, const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea, bool horizFlip, bool vertFlip, bool skipTrans, int srcAlpha, int tintRed, int tintGreen, int tintBlue, const Common::Rect &dstRect, const Common::Rect &srcArea, const BlenderMode blenderMode, int scaleX, int scaleY);
 	template<int ScaleThreshold>
 	void drawInner1Bpp(int yStart, int xStart, uint32 transColor, uint32 alphaMask, PALETTE palette, bool useTint, bool sameFormat, const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea, bool horizFlip, bool vertFlip, bool skipTrans, int srcAlpha, int tintRed, int tintGreen, int tintBlue, const Common::Rect &dstRect, const Common::Rect &srcArea, const BlenderMode blenderMode, int scaleX, int scaleY);
-	template<int ScaleThreshold>
+	template<int DestBytesPerPixel, int SrcBytesPerPixel, int ScaleThreshold>
 	void drawInnerGeneric(int yStart, int xStart, uint32 transColor, uint32 alphaMask, PALETTE palette, bool useTint, bool sameFormat, const ::Graphics::ManagedSurface &src, ::Graphics::Surface &destArea, bool horizFlip, bool vertFlip, bool skipTrans, int srcAlpha, int tintRed, int tintGreen, int tintBlue, const Common::Rect &dstRect, const Common::Rect &srcArea, const BlenderMode blenderMode, int scaleX, int scaleY);
 	
 	inline uint32 getColor(const byte *data, byte bpp) const {
