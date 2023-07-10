@@ -50,7 +50,7 @@ void FightMove::load(rapidxml::xml_node<char> *node) {
 		_eff.load(node->first_node("effect"));
 
 	if (nodeValid("ai", node, false))
-		_ai.Load(node->first_node("ai"));
+		_ai.load(node->first_node("ai"));
 }
 
 } // End of namespace Crab

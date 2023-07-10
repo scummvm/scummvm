@@ -46,33 +46,33 @@ enum AIMoveType {
 
 struct FightMoveAIData {
 	// Can this move be used by AI to attack
-	AIMoveType type;
+	AIMoveType _type;
 
 	// The range of the move
-	Range range;
+	Range _range;
 
 	// The AI delays executing the move by this long
-	unsigned int delay;
+	unsigned int _delay;
 
 	FightMoveAIData() {
-		type = MOVE_NONE;
-		delay = 0;
+		_type = MOVE_NONE;
+		_delay = 0;
 	}
 
-	void Load(rapidxml::xml_node<char> *node) {
-		if (!loadNum(delay, "delay", node, false))
-			delay = 0;
+	void load(rapidxml::xml_node<char> *node) {
+		if (!loadNum(_delay, "delay", node, false))
+			_delay = 0;
 
-		range.Load(node->first_node("range"));
+		_range.Load(node->first_node("range"));
 
 		Common::String str;
 		loadStr(str, "type", node, false);
 		if (str == "attack")
-			type = MOVE_ATTACK;
+			_type = MOVE_ATTACK;
 		else if (str == "defend")
-			type = MOVE_DEFEND;
+			_type = MOVE_DEFEND;
 		else
-			type = MOVE_NONE;
+			_type = MOVE_NONE;
 	}
 };
 } // End of namespace anim
