@@ -558,12 +558,12 @@ void Sprite::AssignFrame() {
 	if (anim_set._fight.CurFrame(faf, dir)) {
 		clip = faf._clip;
 		BoxV(faf._boxV);
-		BoxD(faf.box_d);
+		BoxD(faf._boxD);
 
-		pos.x += faf.delta.x;
-		pos.y += faf.delta.y;
+		pos.x += faf._delta.x;
+		pos.y += faf._delta.y;
 
-		input.state = faf.state;
+		input.state = faf._state;
 	}
 }
 
@@ -577,7 +577,7 @@ void Sprite::UpdateMove(const FightAnimationType &combo) {
 		else {
 			FightAnimFrame faf;
 			if (anim_set._fight.CurFrame(faf, dir))
-				if (faf.branch)
+				if (faf._branch)
 					ForceUpdateMove(combo);
 		}
 	}

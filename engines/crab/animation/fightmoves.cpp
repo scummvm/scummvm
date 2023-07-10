@@ -88,8 +88,8 @@ bool FightMoves::CurFrame(FightAnimFrame &faf, const Direction &d) {
 	// Check validity of current move
 	if (cur >= 0 && (unsigned int)cur < move.size()) {
 		// Check validity of current frame
-		if (frame_cur < frame_total && frame_cur < move[cur].frames[d].frame.size()) {
-			faf = move[cur].frames[d].frame[frame_cur];
+		if (frame_cur < frame_total && frame_cur < move[cur].frames[d]._frame.size()) {
+			faf = move[cur].frames[d]._frame[frame_cur];
 			return true;
 		}
 	}
@@ -104,10 +104,10 @@ FrameUpdateResult FightMoves::UpdateFrame(const Direction &d) {
 	// Check validity of current move
 	if (cur >= 0 && (unsigned int)cur < move.size()) {
 		// Check validity of current frame
-		if (frame_cur < frame_total && frame_cur < move[cur].frames[d].frame.size()) {
+		if (frame_cur < frame_total && frame_cur < move[cur].frames[d]._frame.size()) {
 			// Has the current frame finished playing?
 			// OR Is this the first frame of the move?
-			if (timer.Ticks() >= move[cur].frames[d].frame[frame_cur]._repeat || start) {
+			if (timer.Ticks() >= move[cur].frames[d]._frame[frame_cur]._repeat || start) {
 				frame_cur++;
 				timer.Start();
 				start = false;
@@ -158,10 +158,10 @@ bool FightMoves::ForceUpdate(const unsigned int &index, pyrodactyl::input::Fight
 
 	if ((unsigned int)cur < move.size()) {
 		if (move[cur].unlock.Result()) {
-			frame_total = move[cur].frames[d].frame.size();
+			frame_total = move[cur].frames[d]._frame.size();
 			if (frame_total > 0) {
 				input = move[cur].input;
-				input.state = move[cur].frames[d].frame[0].state;
+				input.state = move[cur].frames[d]._frame[0]._state;
 			} else
 				input.Reset();
 
@@ -191,7 +191,7 @@ void FightMoves::Evaluate(pyrodactyl::event::Info &info) {
 bool FightMoves::Flip(TextureFlipType &flip, Direction d) {
 	// Check validity of current move
 	if (ValidMove()) {
-		flip = move[cur].frames[d].flip;
+		flip = move[cur].frames[d]._flip;
 		return true;
 	}
 

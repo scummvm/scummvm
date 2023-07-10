@@ -94,7 +94,7 @@ public:
 	bool Empty() { return move.empty(); }
 
 	bool Flip(TextureFlipType &flip, Direction d);
-	const ShadowOffset &Shadow(Direction d) { return move[cur].frames[d].shadow; }
+	const ShadowOffset &Shadow(Direction d) { return move[cur].frames[d]._shadow; }
 
 	void Next(int val) { next = val; }
 	int Next() { return next; }
