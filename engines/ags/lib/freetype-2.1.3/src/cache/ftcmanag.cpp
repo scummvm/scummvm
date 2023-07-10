@@ -48,14 +48,14 @@ typedef struct FTC_SizeNodeRec_*  FTC_SizeNode;
 
 
 typedef struct  FTC_FaceNodeRec_ {
-	FT2_1_3_LruNodeRec  lru;
+	FT_LruNodeRec  lru;
 	FT_Face        face;
 
 } FTC_FaceNodeRec;
 
 
 typedef struct  FTC_SizeNodeRec_ {
-	FT2_1_3_LruNodeRec  lru;
+	FT_LruNodeRec  lru;
 	FT_Size        size;
 
 } FTC_SizeNodeRec;
@@ -98,8 +98,8 @@ ftc_face_node_done( FTC_FaceNode  node,
 
 	/* we must begin by removing all sizes for the target face */
 	/* from the manager's list                                 */
-	FT2_1_3_LruList_Remove_Selection( manager->sizes_list,
-								 (FT2_1_3_LruNode_SelectFunc)ftc_size_node_select,
+	FT_LruList_Remove_Selection( manager->sizes_list,
+								 (FT_LruNode_SelectFunc)ftc_size_node_select,
 								 face );
 
 	/* all right, we can discard the face now */
@@ -109,16 +109,16 @@ ftc_face_node_done( FTC_FaceNode  node,
 
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_LruList_ClassRec  ftc_face_list_class = {
-	sizeof ( FT2_1_3_LruListRec ),
-	(FT2_1_3_LruList_InitFunc)0,
-	(FT2_1_3_LruList_DoneFunc)0,
+const FT_LruList_ClassRec  ftc_face_list_class = {
+	sizeof ( FT_LruListRec ),
+	(FT_LruList_InitFunc)0,
+	(FT_LruList_DoneFunc)0,
 
 	sizeof ( FTC_FaceNodeRec ),
-	(FT2_1_3_LruNode_InitFunc)   ftc_face_node_init,
-	(FT2_1_3_LruNode_DoneFunc)   ftc_face_node_done,
-	(FT2_1_3_LruNode_FlushFunc)  0,  /* no flushing needed                      */
-	(FT2_1_3_LruNode_CompareFunc)0,  /* direct comparison of FTC_FaceID handles */
+	(FT_LruNode_InitFunc)   ftc_face_node_init,
+	(FT_LruNode_DoneFunc)   ftc_face_node_done,
+	(FT_LruNode_FlushFunc)  0,  /* no flushing needed                      */
+	(FT_LruNode_CompareFunc)0,  /* direct comparison of FTC_FaceID handles */
 };
 
 
@@ -140,9 +140,9 @@ FTC_Manager_Lookup_Face( FTC_Manager  manager,
 	if ( !manager )
 		return FT2_1_3_Err_Invalid_Cache_Handle;
 
-	error = FT2_1_3_LruList_Lookup( manager->faces_list,
-							   (FT2_1_3_LruKey)face_id,
-							   (FT2_1_3_LruNode*)&node );
+	error = FT_LruList_Lookup( manager->faces_list,
+							   (FT_LruKey)face_id,
+							   (FT_LruNode*)&node );
 	if ( !error )
 		*aface = node->face;
 
@@ -237,16 +237,16 @@ ftc_size_node_compare( FTC_SizeNode   node,
 
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_LruList_ClassRec  ftc_size_list_class = {
-	sizeof ( FT2_1_3_LruListRec ),
-	(FT2_1_3_LruList_InitFunc)0,
-	(FT2_1_3_LruList_DoneFunc)0,
+const FT_LruList_ClassRec  ftc_size_list_class = {
+	sizeof ( FT_LruListRec ),
+	(FT_LruList_InitFunc)0,
+	(FT_LruList_DoneFunc)0,
 
 	sizeof ( FTC_SizeNodeRec ),
-	(FT2_1_3_LruNode_InitFunc)   ftc_size_node_init,
-	(FT2_1_3_LruNode_DoneFunc)   ftc_size_node_done,
-	(FT2_1_3_LruNode_FlushFunc)  ftc_size_node_flush,
-	(FT2_1_3_LruNode_CompareFunc)ftc_size_node_compare
+	(FT_LruNode_InitFunc)   ftc_size_node_init,
+	(FT_LruNode_DoneFunc)   ftc_size_node_done,
+	(FT_LruNode_FlushFunc)  ftc_size_node_flush,
+	(FT_LruNode_CompareFunc)ftc_size_node_compare
 };
 
 
@@ -277,9 +277,9 @@ FTC_Manager_Lookup_Size( FTC_Manager  manager,
 		query.width  = font->pix_width;
 		query.height = font->pix_height;
 
-		error = FT2_1_3_LruList_Lookup( manager->sizes_list,
-								   (FT2_1_3_LruKey)&query,
-								   (FT2_1_3_LruNode*)&node );
+		error = FT_LruList_Lookup( manager->sizes_list,
+								   (FT_LruKey)&query,
+								   (FT_LruNode*)&node );
 		if ( !error ) {
 			/* select the size as the current one for this face */
 			FT_Activate_Size( node->size );
@@ -439,7 +439,7 @@ FTC_Manager_New( FT_Library          library,
 	if ( max_bytes == 0 )
 		max_bytes = FTC_MAX_BYTES_DEFAULT;
 
-	error = FT2_1_3_LruList_New( &ftc_face_list_class,
+	error = FT_LruList_New( &ftc_face_list_class,
 							max_faces,
 							manager,
 							memory,
@@ -447,7 +447,7 @@ FTC_Manager_New( FT_Library          library,
 	if ( error )
 		goto Exit;
 
-	error = FT2_1_3_LruList_New( &ftc_size_list_class,
+	error = FT_LruList_New( &ftc_size_list_class,
 							max_sizes,
 							manager,
 							memory,
@@ -468,8 +468,8 @@ FTC_Manager_New( FT_Library          library,
 
 Exit:
 	if ( error && manager ) {
-		FT2_1_3_LruList_Destroy( manager->faces_list );
-		FT2_1_3_LruList_Destroy( manager->sizes_list );
+		FT_LruList_Destroy( manager->faces_list );
+		FT_LruList_Destroy( manager->sizes_list );
 		FT2_1_3_FREE( manager );
 	}
 
@@ -506,10 +506,10 @@ FTC_Manager_Done( FTC_Manager  manager ) {
 	ftc_family_table_done( &manager->families, memory );
 
 	/* discard faces and sizes */
-	FT2_1_3_LruList_Destroy( manager->faces_list );
+	FT_LruList_Destroy( manager->faces_list );
 	manager->faces_list = 0;
 
-	FT2_1_3_LruList_Destroy( manager->sizes_list );
+	FT_LruList_Destroy( manager->sizes_list );
 	manager->sizes_list = 0;
 
 	FT2_1_3_FREE( manager );
@@ -521,8 +521,8 @@ FTC_Manager_Done( FTC_Manager  manager ) {
 FT2_1_3_EXPORT_DEF( void )
 FTC_Manager_Reset( FTC_Manager  manager ) {
 	if ( manager ) {
-		FT2_1_3_LruList_Reset( manager->sizes_list );
-		FT2_1_3_LruList_Reset( manager->faces_list );
+		FT_LruList_Reset( manager->sizes_list );
+		FT_LruList_Reset( manager->faces_list );
 	}
 	/* XXX: FIXME: flush the caches? */
 }
@@ -568,7 +568,7 @@ FTC_Manager_Check( FTC_Manager  manager ) {
 
 	/* check circular list */
 	if ( first ) {
-		FT2_1_3_UFast  count = 0;
+		FT_UFast  count = 0;
 
 
 		node = first;

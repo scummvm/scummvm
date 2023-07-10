@@ -120,7 +120,7 @@ typedef struct  FTC_GlyphFamilyRec_ {
 
 /* compute a glyph request's hash value */
 #define FTC_GLYPH_FAMILY_HASH(gfam, gindex)                 \
-	((FT2_1_3_UFast)((FTC_GLYPH_FAMILY(gfam)->hash << 16) | \
+	((FT_UFast)((FTC_GLYPH_FAMILY(gfam)->hash << 16) | \
 					 (FTC_GLYPH_FAMILY_CHUNK(gfam, gindex) & 0xFFFF)))
 
 /* must be called in an FTC_Family_CompareFunc to update the query */

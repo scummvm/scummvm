@@ -28,13 +28,13 @@ namespace AGS3 {
 namespace FreeType213 {
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_LruList_New( FT2_1_3_LruList_Class  clazz,
+FT_LruList_New( FT_LruList_Class  clazz,
 				FT_UInt           max_nodes,
 				FT_Pointer        user_data,
 				FT_Memory         memory,
-				FT2_1_3_LruList       *alist ) {
+				FT_LruList       *alist ) {
 	FT_Error    error;
-	FT2_1_3_LruList  list;
+	FT_LruList  list;
 
 
 	if ( !alist || !clazz )
@@ -66,9 +66,9 @@ FT2_1_3_LruList_New( FT2_1_3_LruList_Class  clazz,
 
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_LruList_Destroy( FT2_1_3_LruList  list ) {
+FT_LruList_Destroy( FT_LruList  list ) {
 	FT_Memory         memory;
-	FT2_1_3_LruList_Class  clazz;
+	FT_LruList_Class  clazz;
 
 
 	if ( !list )
@@ -77,7 +77,7 @@ FT2_1_3_LruList_Destroy( FT2_1_3_LruList  list ) {
 	memory = list->memory;
 	clazz  = list->clazz;
 
-	FT2_1_3_LruList_Reset( list );
+	FT_LruList_Reset( list );
 
 	if ( clazz->list_done )
 		clazz->list_done( list );
@@ -87,9 +87,9 @@ FT2_1_3_LruList_Destroy( FT2_1_3_LruList  list ) {
 
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_LruList_Reset( FT2_1_3_LruList  list ) {
-	FT2_1_3_LruNode        node;
-	FT2_1_3_LruList_Class  clazz;
+FT_LruList_Reset( FT_LruList  list ) {
+	FT_LruNode        node;
+	FT_LruList_Class  clazz;
 	FT_Memory         memory;
 
 
@@ -101,7 +101,7 @@ FT2_1_3_LruList_Reset( FT2_1_3_LruList  list ) {
 	memory = list->memory;
 
 	while ( node ) {
-		FT2_1_3_LruNode  next = node->next;
+		FT_LruNode  next = node->next;
 
 
 		if ( clazz->node_done )
@@ -117,14 +117,14 @@ FT2_1_3_LruList_Reset( FT2_1_3_LruList  list ) {
 
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_LruList_Lookup( FT2_1_3_LruList   list,
-				   FT2_1_3_LruKey    key,
-				   FT2_1_3_LruNode  *anode ) {
+FT_LruList_Lookup( FT_LruList   list,
+				   FT_LruKey    key,
+				   FT_LruNode  *anode ) {
 	FT_Error          error = 0;
-	FT2_1_3_LruNode        node, *pnode;
-	FT2_1_3_LruList_Class  clazz;
-	FT2_1_3_LruNode*       plast;
-	FT2_1_3_LruNode        result = NULL;
+	FT_LruNode        node, *pnode;
+	FT_LruList_Class  clazz;
+	FT_LruNode*       plast;
+	FT_LruNode        result = NULL;
 	FT_Memory         memory;
 
 
@@ -182,7 +182,7 @@ FT2_1_3_LruList_Lookup( FT2_1_3_LruList   list,
 	if ( list->max_nodes > 0 && list->num_nodes >= list->max_nodes ) {
 		/* this list list is full; we will now flush */
 		/* the oldest node, if there's one!          */
-		FT2_1_3_LruNode  last = *plast;
+		FT_LruNode  last = *plast;
 
 
 		if ( last ) {
@@ -242,9 +242,9 @@ Exit:
 
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_LruList_Remove( FT2_1_3_LruList  list,
-				   FT2_1_3_LruNode  node ) {
-	FT2_1_3_LruNode  *pnode;
+FT_LruList_Remove( FT_LruList  list,
+				   FT_LruNode  node ) {
+	FT_LruNode  *pnode;
 
 
 	if ( !list || !node )
@@ -254,7 +254,7 @@ FT2_1_3_LruList_Remove( FT2_1_3_LruList  list,
 	for (;;) {
 		if ( *pnode == node ) {
 			FT_Memory         memory = list->memory;
-			FT2_1_3_LruList_Class  clazz  = list->clazz;
+			FT_LruList_Class  clazz  = list->clazz;
 
 
 			*pnode     = node->next;
@@ -274,11 +274,11 @@ FT2_1_3_LruList_Remove( FT2_1_3_LruList  list,
 
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_LruList_Remove_Selection( FT2_1_3_LruList             list,
-							 FT2_1_3_LruNode_SelectFunc  select_func,
+FT_LruList_Remove_Selection( FT_LruList             list,
+							 FT_LruNode_SelectFunc  select_func,
 							 FT_Pointer             select_data ) {
-	FT2_1_3_LruNode       *pnode, node;
-	FT2_1_3_LruList_Class  clazz;
+	FT_LruNode       *pnode, node;
+	FT_LruList_Class  clazz;
 	FT_Memory         memory;
 
 

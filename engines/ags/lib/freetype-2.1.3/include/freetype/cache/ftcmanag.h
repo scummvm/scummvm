@@ -156,8 +156,8 @@ ftc_family_table_free( FTC_FamilyTable  table,
 /*                                                                       */
 typedef struct  FTC_ManagerRec_ {
 	FT_Library          library;
-	FT2_1_3_LruList          faces_list;
-	FT2_1_3_LruList          sizes_list;
+	FT_LruList          faces_list;
+	FT_LruList          sizes_list;
 
 	FT_ULong            max_weight;
 	FT_ULong            cur_weight;

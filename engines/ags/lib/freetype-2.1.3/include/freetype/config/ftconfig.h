@@ -139,13 +139,13 @@ typedef unsigned long   FT_UInt32;
 /* now, lookup for an integer type that is at least 32 bits */
 #if FT2_1_3_SIZEOF_INT >= 4
 
-typedef int            FT2_1_3_Fast;
-typedef unsigned int   FT2_1_3_UFast;
+typedef int            FT_Fast;
+typedef unsigned int   FT_UFast;
 
 #elif FT2_1_3_SIZEOF_LONG >= 4
 
-typedef long           FT2_1_3_Fast;
-typedef unsigned long  FT2_1_3_UFast;
+typedef long           FT_Fast;
+typedef unsigned long  FT_UFast;
 
 #endif
 

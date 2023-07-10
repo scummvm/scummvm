@@ -89,7 +89,7 @@ typedef struct FTC_ImageTypeRec_*   FTC_ImageType;
 			(d1)->flags == (d2)->flags                   )
 
 #define FTC_IMAGE_TYPE_HASH( d )                    \
-		  (FT2_1_3_UFast)( FTC_FONT_HASH( &(d)->font ) ^ \
+		  (FT_UFast)( FTC_FONT_HASH( &(d)->font ) ^ \
 					  ( (d)->flags << 4 )         )
 
 

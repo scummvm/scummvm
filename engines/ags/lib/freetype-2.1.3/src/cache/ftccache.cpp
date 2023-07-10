@@ -54,7 +54,7 @@ ftc_node_done( FTC_Node   node,
 
 	/* remove from parent set table - eventually destroy the set */
 	if ( --family->num_nodes == 0 )
-		FT2_1_3_LruList_Remove( cache->families, (FT2_1_3_LruNode) family );
+		FT_LruList_Remove( cache->families, (FT_LruNode) family );
 }
 
 
@@ -409,20 +409,20 @@ ftc_cache_init( FTC_Cache  cache ) {
 
 	/* now, initialize the lru list of families for this cache */
 	if ( clazz->family_size > 0 ) {
-		FT2_1_3_LruList_ClassRec*  lru_class = &cache->family_class;
+		FT_LruList_ClassRec*  lru_class = &cache->family_class;
 
 
-		lru_class->list_size = sizeof( FT2_1_3_LruListRec );
+		lru_class->list_size = sizeof( FT_LruListRec );
 		lru_class->list_init = NULL;
 		lru_class->list_done = NULL;
 
 		lru_class->node_size    = clazz->family_size;
-		lru_class->node_init    = (FT2_1_3_LruNode_InitFunc)   clazz->family_init;
-		lru_class->node_done    = (FT2_1_3_LruNode_DoneFunc)   clazz->family_done;
-		lru_class->node_flush   = (FT2_1_3_LruNode_FlushFunc)  NULL;
-		lru_class->node_compare = (FT2_1_3_LruNode_CompareFunc)clazz->family_compare;
+		lru_class->node_init    = (FT_LruNode_InitFunc)   clazz->family_init;
+		lru_class->node_done    = (FT_LruNode_DoneFunc)   clazz->family_done;
+		lru_class->node_flush   = (FT_LruNode_FlushFunc)  NULL;
+		lru_class->node_compare = (FT_LruNode_CompareFunc)clazz->family_compare;
 
-		error = FT2_1_3_LruList_New( (FT2_1_3_LruList_Class) lru_class,
+		error = FT_LruList_New( (FT_LruList_Class) lru_class,
 								0,    /* max items == 0 => unbounded list */
 								cache,
 								memory,
@@ -442,7 +442,7 @@ ftc_cache_clear( FTC_Cache  cache ) {
 		FT_Memory        memory  = cache->memory;
 		FTC_Cache_Class  clazz   = cache->clazz;
 		FTC_Manager      manager = cache->manager;
-		FT2_1_3_UFast         i;
+		FT_UFast         i;
 		FT_UInt          count;
 
 		count = cache->p + cache->mask + 1;
@@ -474,7 +474,7 @@ ftc_cache_clear( FTC_Cache  cache ) {
 
 		/* destroy the families */
 		if ( cache->families )
-			FT2_1_3_LruList_Reset( cache->families );
+			FT_LruList_Reset( cache->families );
 	}
 }
 
@@ -492,7 +492,7 @@ ftc_cache_done( FTC_Cache  cache ) {
 		cache->slack = 0;
 
 		if ( cache->families ) {
-			FT2_1_3_LruList_Destroy( cache->families );
+			FT_LruList_Destroy( cache->families );
 			cache->families = NULL;
 		}
 	}
@@ -507,7 +507,7 @@ ftc_cache_lookup( FTC_Cache   cache,
 				  FTC_Query   query,
 				  FTC_Node   *anode ) {
 	FT_Error    error = FT2_1_3_Err_Ok;
-	FT2_1_3_LruNode  lru;
+	FT_LruNode  lru;
 
 
 	if ( !cache || !query || !anode )
@@ -521,15 +521,15 @@ ftc_cache_lookup( FTC_Cache   cache,
 	/* XXX: we break encapsulation for the sake of speed! */
 	{
 		/* first of all, find the relevant family */
-		FT2_1_3_LruList              list    = cache->families;
-		FT2_1_3_LruNode              fam, *pfam;
-		FT2_1_3_LruNode_CompareFunc  compare = list->clazz->node_compare;
+		FT_LruList              list    = cache->families;
+		FT_LruNode              fam, *pfam;
+		FT_LruNode_CompareFunc  compare = list->clazz->node_compare;
 
 		pfam = &list->nodes;
 		for (;;) {
 			fam = *pfam;
 			if ( fam == NULL ) {
-				error = FT2_1_3_LruList_Lookup( list, query, &lru );
+				error = FT_LruList_Lookup( list, query, &lru );
 				if ( error )
 					goto Exit;
 
@@ -559,7 +559,7 @@ Skip:
 
 	{
 		FTC_Family  family = (FTC_Family) lru;
-		FT2_1_3_UFast    hash    = query->hash;
+		FT_UFast    hash    = query->hash;
 		FTC_Node*   bucket;
 		FT_UInt     idx;
 

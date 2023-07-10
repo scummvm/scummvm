@@ -109,7 +109,7 @@ ftc_node_destroy( FTC_Node     node,
 /*                                                                       */
 typedef struct  FTC_QueryRec_ {
 	FTC_Family  family;
-	FT2_1_3_UFast    hash;
+	FT_UFast    hash;
 
 } FTC_QueryRec;
 
@@ -127,7 +127,7 @@ typedef struct  FTC_QueryRec_ {
 /*************************************************************************/
 
 typedef struct  FTC_FamilyRec_ {
-	FT2_1_3_LruNodeRec  lru;
+	FT_LruNodeRec  lru;
 	FTC_Cache      cache;
 	FT_UInt        num_nodes;
 	FT_UInt        fam_index;
@@ -176,13 +176,13 @@ typedef struct  FTC_CacheRec_ {
 	FT_UInt              cache_index;  /* in manager's table         */
 	FT_Pointer           cache_data;   /* used by cache node methods */
 
-	FT2_1_3_UFast             p;
-	FT2_1_3_UFast             mask;
+	FT_UFast             p;
+	FT_UFast             mask;
 	FT_Long              slack;
 	FTC_Node*            buckets;
 
-	FT2_1_3_LruList_ClassRec  family_class;
-	FT2_1_3_LruList           families;
+	FT_LruList_ClassRec  family_class;
+	FT_LruList           families;
 
 } FTC_CacheRec;
 

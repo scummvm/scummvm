@@ -30,9 +30,9 @@
                     FTC_Query   query,
                     FTC_Node   *anode )
   {
-    FT2_1_3_LruNode  lru;
+    FT_LruNode  lru;
     FTC_Family  family;
-    FT2_1_3_UFast    hash;
+    FT_UFast    hash;
 
 
     query->hash   = 0;
@@ -41,8 +41,8 @@
     /* XXX: we break encapsulation for the sake of speed! */
     {
       /* first of all, find the relevant family */
-      FT2_1_3_LruList  list  = cache->families;
-      FT2_1_3_LruNode  fam, *pfam;
+      FT_LruList  list  = cache->families;
+      FT_LruNode  fam, *pfam;
 
 
       pfam = &list->nodes;
