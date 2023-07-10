@@ -1,4 +1,5 @@
-#if defined(__x86_64__) || defined(__i686__) || defined(_M_X86) || defined(_M_X64)
+#include "ags/lib/allegro/surface_simd_sse.h"
+#ifdef AGS_LIB_ALLEGRO_SURFACE_SIMD_SSE_IMPL
 
 #include "ags/lib/allegro/gfx.h"
 #include "ags/lib/allegro/color.h"
@@ -7,8 +8,6 @@
 #include "ags/globals.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
-
-#include "ags/lib/allegro/surface_simd_sse.h"
 
 namespace AGS3 {
 

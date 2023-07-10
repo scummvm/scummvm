@@ -1,4 +1,6 @@
-#if defined(__aarch64__) || defined(_M_ARM64)
+#include "ags/lib/allegro/surface_simd_neon.h"
+
+#ifdef AGS_LIB_ALLEGRO_SURFACE_SIMD_NEON_IMPL
 
 #include "ags/lib/allegro/gfx.h"
 #include "ags/lib/allegro/color.h"
@@ -7,8 +9,6 @@
 #include "ags/globals.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
-
-#include "ags/lib/allegro/surface_simd_neon.h"
 
 namespace AGS3 {
 
