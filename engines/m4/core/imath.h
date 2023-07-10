@@ -56,7 +56,7 @@ frac16 imath_ranged_rand16(frac16 a, frac16 b);
 
 frac16 dist2d(int32 x1, int32 y1, int32 x2, int32 y2);
 frac16 SqrtF16(frac16 n);
-//frac16 ArcTan(frac16 x, frac16 y);
+frac16 ArcTan(frac16 x, frac16 y);
 
 uint16 HighWord(uint32 n);
 uint16 LowWord(uint32 n);

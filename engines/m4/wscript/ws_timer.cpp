@@ -27,18 +27,18 @@ namespace M4 {
 static void dispose_timeRequest(onTimeReq *timeReq);
 
 bool ws_InitWSTimer(void) {
-	_G(firstTimeReq) = nullptr;
+	_GWS(firstTimeReq) = nullptr;
 	return true;
 }
 
 void ws_KillTime() {
 	onTimeReq *tempTime;
 
-	tempTime = _G(firstTimeReq);
+	tempTime = _GWS(firstTimeReq);
 	while (tempTime) {
-		_G(firstTimeReq) = _G(firstTimeReq)->next;
+		_GWS(firstTimeReq) = _GWS(firstTimeReq)->next;
 		dispose_timeRequest(tempTime);
-		tempTime = _G(firstTimeReq);
+		tempTime = _GWS(firstTimeReq);
 	}
 }
 
@@ -47,5 +47,18 @@ static void dispose_timeRequest(onTimeReq *timeReq) {
 		mem_free(timeReq);
 	}
 }
+
+void ws_MakeOnTimeReq(int32 wakeUpTime, machine *myXM, int32 pcOffset, int32 pcCount) {
+	error("TODO: ws_MakeOnTimeReq");
+}
+
+void ws_CancelOnTimeReqs(machine *m) {
+	error("TODO: ws_CancelOnTimeReqs");
+}
+
+void ws_CheckTimeReqs(int32 curTime) {
+	error("TODO: ws_CheckTimeReqs");
+}
+
 
 } // End of namespace M4

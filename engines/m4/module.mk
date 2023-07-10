@@ -29,6 +29,7 @@ MODULE_OBJS = \
 	core/param.o \
 	core/rooms.o \
 	core/term.o \
+	dbg/dbg_wscript.o \
 	events/mickey.o \
 	events/mouse_handler.o \
 	fileio/extensions.o \
@@ -45,6 +46,7 @@ MODULE_OBJS = \
 	graphics/gr_series.o \
 	graphics/graphics.o \
 	graphics/krn_pal.o \
+	graphics/rend.o \
 	gui/gui_buffer.o \
 	gui/gui_dialog.o \
 	gui/gui_item.o \
@@ -69,6 +71,7 @@ MODULE_OBJS = \
 	wscript/ws_machine.o \
 	wscript/ws_timer.o \
 	wscript/wscript.o \
+	wscript/wst_regs.o \
 	burger/gui/game_menu.o \
 	burger/gui/gui_cheapo.o \
 	burger/gui/interface.o \

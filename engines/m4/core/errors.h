@@ -27,9 +27,11 @@
 namespace M4 {
 
 #define FL __FILE__,__LINE__
+#define ERROR_FILE "error.m4"
 
 extern void error_show(const char *filename, uint32 line, quadchar errorcode, const char *fmt, ...);
 extern void error_show(const char *filename, uint32 line, quadchar errorcode);
+extern void error_look_up(quadchar errorcode, char *result_string);
 
 } // namespace M4
 

@@ -24,6 +24,7 @@
 #include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_been.h"
 #include "m4/core/errors.h"
+#include "m4/dbg/debug.h"
 #include "m4/graphics/gr_pal.h"
 #include "m4/gui/gui_buffer.h"
 #include "m4/gui/gui_dialog.h"
@@ -47,6 +48,7 @@ Vars::~Vars() {
 	game_systems_shutdown();
 
 	sysfile_shutdown();
+	f_stream_Shutdown();
 	player_been_shutdown();
 	gui_system_shutdown();
 	gui_buffer_system_shutdown();
@@ -54,6 +56,7 @@ Vars::~Vars() {
 	mem_stash_shutdown();
 	param_shutdown();
 	woodscript_shutdown();
+	dbg_ws_shutdown();
 
 	g_vars = nullptr;
 }
@@ -79,6 +82,14 @@ bool Vars::init() {
 		error_show(FL, 'FNF!', "show script");
 	if (!LoadWSAssets("stream script", &_master_palette[0]))
 		error_show(FL, 'FNF!', "stream script");
+
+	grab_fonts();
+	gr_font_set(_font_inter);
+
+	if (_cheat_keys_enabled) {
+		if (!dbg_ws_init(_kernel.start_up_with_dbg_ws, _font_tiny_prop, _globals))
+			error(FL, 'DWIF');
+	}
 
 	main_cold_data_init();
 	create_mouse_watch_dialog();

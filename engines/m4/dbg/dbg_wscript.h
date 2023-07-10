@@ -19,45 +19,30 @@
  *
  */
 
-#include "m4/adv_r/adv_control.h"
-#include "m4/adv_r/adv_interface.h"
-#include "m4/core/errors.h"
-#include "m4/mem/memman.h"
-#include "m4/vars.h"
+#ifndef M4_DBG_DBG_WSCRIPT_H
+#define M4_DBG_DBG_WSCRIPT_H
+
+#include "common/stream.h"
+#include "m4/m4_types.h"
+#include "m4/dbg/dbg_defs.h"
+#include "m4/graphics/gr_font.h"
+#include "m4/wscript/ws_machine.h"
 
 namespace M4 {
 
-bool kernel_section_startup() {
-	_G(game).previous_section = _G(game).section_id;
-	_G(game).section_id = _G(game).new_section;
+extern bool dbg_ws_init(bool showTheScreen, Font *useThisFont, frac16 *theGlobals);
+extern void dbg_ws_shutdown();
+extern void dbg_ws_update();
 
-	return true;
-}
+extern void dbg_LaunchSequence(Anim8 *myAnim8);
+extern void dbg_DebugWSMach(machine *m, bool debug);
+extern void dbg_DebugNextCycle();
+extern void dbg_RemoveWSMach(machine *m);
+extern void dbg_SetCurrMachInstr(machine *m, int32 pcOffset);
+extern void dbg_SetCurrSequInstr(Anim8 *myAnim8, int32 compareCCR);
+extern void dbg_WSError(Common::WriteStream *logFile, machine *m, int32 errorType,
+	const char *errDesc, const char *errMsg, int32 pcOffset);
 
-void player_set_commands_allowed(bool t_or_f) {
-	_G(set_commands_allowed_since_last_checked) = true;
-	_G(player).comm_allowed = t_or_f;
+} // namespace M4
 
-	if (t_or_f) {
-		// OK to do something
-		mouse_set_sprite(kArrowCursor);
-		intr_cancel_sentence();
-		track_hotspots_refresh();
-
-	} else {
-		// Hour glass
-		_GI().showWaitCursor();
-	}
-}
-
-void game_pause(bool flag) {
-	if (flag) {
-		_G(kernel).pause = true;
-		PauseEngines();
-	} else {
-		_G(kernel).pause = false;
-		UnpauseEngines();
-	}
-}
-
-} // End of namespace M4
+#endif

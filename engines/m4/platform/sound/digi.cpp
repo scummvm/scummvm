@@ -52,5 +52,36 @@ void Digi::unload(const Common::String &name) {
 	warning("TODO: Digi::unload");
 }
 
+void Digi::task() {
+	warning("TODO: Digi::task");
+}
+
+int32 Digi::play(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num) {
+	error("TODO: Digi::play");
+	return 0;
+}
+
+int32 Digi::play_loop(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num) {
+	error("TODO: Digi::play_loop");
+	return 0;
+}
+
+void Digi::read_another_chunk() {
+	warning("TODO: Digi::read_another_chunk");
+}
+
 } // namespace Sound
+
+int32 digi_play(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num) {
+	return _G(digi).play(name, channel, vol, trigger, room_num);
+}
+
+int32 digi_play_loop(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num) {
+	return _G(digi).play_loop(name, channel, vol, trigger, room_num);
+}
+
+void digi_read_another_chunk() {
+	return _G(digi).read_another_chunk();
+}
+
 } // namespace M4

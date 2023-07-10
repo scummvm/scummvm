@@ -51,4 +51,8 @@ void DisposeHandle(MemHandle handle) {
 	free(handle);
 }
 
+uint32 MaxMem(Size *growBytes) {
+	return 7999999;
+}
+
 } // namespace M4

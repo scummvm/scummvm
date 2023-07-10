@@ -28,6 +28,7 @@
 namespace M4 {
 
 typedef void **MemHandle;
+typedef int32 Size;
 
 inline void HLock(Handle h) {}
 inline void HUnLock(Handle h) {}
@@ -42,6 +43,7 @@ extern MemHandle MakeNewHandle(size_t size, const Common::String &);
 extern bool mem_ReallocateHandle(MemHandle h, size_t size, const Common::String &name);
 extern MemHandle NewHandle(size_t size, const Common::String &);
 extern void DisposeHandle(MemHandle handle);
+extern uint32 MaxMem(Size *growBytes);
 
 } // namespace M4
 

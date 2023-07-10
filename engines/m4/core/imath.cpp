@@ -117,6 +117,21 @@ frac16 SqrtF16(frac16 n) {
 	return (frac16)r;
 }
 
+#define DIV_128_PI	0x28be61
+
+frac16 ArcTan(frac16 x, frac16 y) {
+	double	floatX, floatY, result;
+	frac16	fracResult;
+
+	floatX = (float)(x >> 16) + (float)((float)(x & 0xffff) / (float)65536);
+	floatY = (float)(y >> 16) + (float)((float)(y & 0xffff) / (float)65536);
+	result = atan2(floatY, floatX);
+	fracResult = (((int32)(floor(result))) << 16) + (int32)(floor((result - floor(result)) * 65536));
+	fracResult = MulSF16(fracResult, DIV_128_PI);
+	if (fracResult < 0) fracResult += 0x1000000;
+	return fracResult;
+}
+
 uint16 HighWord(uint32 n) {
 	return (uint16)(n >> 16);
 }

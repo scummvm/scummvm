@@ -25,5 +25,18 @@
 namespace M4 {
 namespace Sound {
 
+void Midi::task() {
+	warning("TODO: Midi::task");
+}
+
+void Midi::loop() {
+	warning("TODO: Midi::loop");
+}
+
 } // namespace Sound
+
+void midi_loop() {
+	_G(midi).loop();
+}
+
 } // namespace M4

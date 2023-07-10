@@ -27,6 +27,12 @@
 
 namespace M4 {
 
+constexpr uint32 FORWARD = 0;
+constexpr uint32 PINGPONG = 1;
+constexpr uint32 BACKWARD = 2;
+constexpr uint32 STICK = 4;
+constexpr uint32 NO_TOSS = 8;
+
 extern int32 series_load(const char *seriesName, int32 assetIndex, RGB8 *myPal);
 extern void series_unload(int32 assetIndex);
 extern bool series_draw_sprite(int32 spriteHash, int32 index, Buffer *destBuff, int32 x, int32 y);

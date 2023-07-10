@@ -40,9 +40,27 @@ private:
 public:
 	void preload_sounds(const char **names);
 	void unload_sounds();
+	void task();
+
+	// digi_play and digi_play_loop play a particular sound file in a given channel,
+	// at a particular volume. The room_num parameter tells us what directory the sound
+	// is stored in (all sounds are AIFFs). Trigger is an integer that is fed into
+	// kernel_dispatch_trigger when the sound has finished playing
+	// If the sound has been preloaded it will be played from memory, otherwise it will
+	// be streamed from disk
+
+	int32 play(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num = -1);
+	int32 play_loop(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num = -1);
+
+	void read_another_chunk();
 };
 
 } // namespace Sound
+
+extern int32 digi_play(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num = -1);
+extern int32 digi_play_loop(const char *name, int32 channel, int32 vol, int32 trigger, int32 room_num = -1);
+extern void digi_read_another_chunk();
+
 } // namespace M4
 
 #endif

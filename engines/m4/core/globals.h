@@ -76,7 +76,6 @@ enum {
 };
 
 constexpr int GLB_SHARED_VARS = 256;
-constexpr int GLOB_COUNT = 39;
 
 struct GlobalVars : public Common::Array<int32> {
 	void syncGame(Common::Serializer &s);

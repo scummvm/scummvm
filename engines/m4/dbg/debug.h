@@ -19,45 +19,9 @@
  *
  */
 
-#include "m4/adv_r/adv_control.h"
-#include "m4/adv_r/adv_interface.h"
-#include "m4/core/errors.h"
-#include "m4/mem/memman.h"
-#include "m4/vars.h"
+#ifndef M4_DBG_DEBUG_H
+#define M4_DBG_DEBUG_H
 
-namespace M4 {
+#include "m4/dbg/dbg_wscript.h"
 
-bool kernel_section_startup() {
-	_G(game).previous_section = _G(game).section_id;
-	_G(game).section_id = _G(game).new_section;
-
-	return true;
-}
-
-void player_set_commands_allowed(bool t_or_f) {
-	_G(set_commands_allowed_since_last_checked) = true;
-	_G(player).comm_allowed = t_or_f;
-
-	if (t_or_f) {
-		// OK to do something
-		mouse_set_sprite(kArrowCursor);
-		intr_cancel_sentence();
-		track_hotspots_refresh();
-
-	} else {
-		// Hour glass
-		_GI().showWaitCursor();
-	}
-}
-
-void game_pause(bool flag) {
-	if (flag) {
-		_G(kernel).pause = true;
-		PauseEngines();
-	} else {
-		_G(kernel).pause = false;
-		UnpauseEngines();
-	}
-}
-
-} // End of namespace M4
+#endif

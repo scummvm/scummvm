@@ -30,9 +30,14 @@ namespace Sound {
 
 class Midi {
 public:
+	void task();
+	void loop();
 };
 
 } // namespace Sound
+
+extern void midi_loop();
+
 } // namespace M4
 
 #endif

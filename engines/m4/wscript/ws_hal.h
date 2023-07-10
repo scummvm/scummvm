@@ -24,17 +24,47 @@
 #define M4_WSCRIPT_WS_HAL_H
 
 #include "m4/wscript/ws_machine.h"
+#include "m4/wscript/ws_cruncher.h"
 
 namespace M4 {
 
+#define CCB_SKIP			0x0001
+#define CCB_HIDE			0x0002
+#define CCB_REDRAW			0x0004
+#define CCB_STREAM			0x0008
+#define CCB_DISC_STREAM		0x0010
+
+#define CCB_NO_DRAW			(CCB_SKIP | CCB_HIDE)
+
+#define ERR_INTERNAL		0
+#define ERR_SEQU			1
+#define ERR_MACH			2
+
 struct WSHal_Globals {
 	RectList *_deadRectList;
-	int32 _pcOffsetOld;
 };
 
 extern bool ws_InitHAL();
 extern void ws_KillHAL();
+
+extern void ws_DoDisplay(Buffer *background, int16 *depth_table, GrBuff *screenCodeBuff,
+	uint8 *myPalette, uint8 *ICT, bool updateVideo);
+extern void ws_hal_RefreshWoodscriptBuffer(cruncher *myCruncher, Buffer *background, int16 *depth_table, GrBuff *screenCodes, uint8 *myPalette, uint8 *ICT);
+extern void GetBezCoeffs(frac16 *ctrlPoints, frac16 *coeffs);
+extern void GetBezPoint(frac16 *x, frac16 *y, frac16 *coeffs, frac16 tVal);
+extern bool InitCCB(CCB *myCCB);
+extern void HideCCB(CCB *myCCB);
+extern void ShowCCB(CCB *myCCB);
+//extern void SetLastCCB(CCB *myCCB);
+extern void MoveCCB(CCB *myCCB, frac16 deltaX, frac16 deltaY);
 extern void KillCCB(CCB *myCCB, bool restoreFlag);
+extern void Cel_msr(Anim8 *myAnim8);
+extern void ws_OverrideCrunchTime(machine *m);
+
+extern bool CheckAddr();
+extern void ws_Error(machine *m, int32 errorType, quadchar errorCode, const char *errMsg);
+extern void ws_DumpMachine(machine *m);
+extern void ws_LogErrorMsg(char *sourceFile, int32 lineNum, char *fmt, ...);
 
 } // End of namespace M4
 

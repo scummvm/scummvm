@@ -42,6 +42,7 @@
 #include "m4/fileio/sys_file.h"
 #include "m4/graphics/gr_color.h"
 #include "m4/graphics/gr_font.h"
+#include "m4/graphics/krn_pal.h"
 #include "m4/gui/gui_dialog.h"
 #include "m4/gui/gui_item.h"
 #include "m4/gui/gui_mouse.h"
@@ -61,7 +62,7 @@ class Vars;
 
 extern Vars *g_vars;
 
-class Vars : public Mouse_Globals, public WS_Globals, public Timer_Globals {
+class Vars : public Mouse_Globals, public Timer_Globals {
 private:
 	void game_systems_initialize(byte flags);
 	void game_systems_shutdown();
@@ -101,9 +102,11 @@ public:
 	Dialog_Globals _dialog;
 	Item_Globals _items;
 	Converstation_Globals _conversations;
+	WS_Globals _ws;
 	Triggers _triggers;
 	Sound::Digi _digi;
 	Sound::Midi _midi;
+	KernelPal_Globals _krnPal;
 
 	bool _cheating_enabled = false;
 	bool _cheat_keys_enabled = false;
@@ -173,6 +176,7 @@ public:
 #define _GV() (*g_vars->getGlobals())
 #define _GI() (*g_vars->getInterface())
 #define _GW() (*g_vars->getWalker())
+#define _GWS(X) _G(ws)._##X
 
 } // namespace M4
 

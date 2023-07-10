@@ -30,6 +30,7 @@ namespace M4 {
 
 extern bool kernel_section_startup();
 extern void player_set_commands_allowed(bool t_or_f);
+extern void game_pause(bool flag);
 
 } // End of namespace M4
 

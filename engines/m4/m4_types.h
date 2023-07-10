@@ -26,6 +26,8 @@
 
 namespace M4 {
 
+#define MAX_STRING_SIZE 144
+#define MAX_STRING_LEN 144
 #define MAX_FILENAME_SIZE 144
 #define MIN_VIDEO_X 0
 #define MIN_VIDEO_Y 0
