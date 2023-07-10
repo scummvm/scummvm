@@ -133,14 +133,14 @@ Exit:
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF const FT2_1_3_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
 pfr_cmap_class_rec = {
 	sizeof ( PFR_CMapRec ),
 
-	(FT2_1_3_CMap_InitFunc)     pfr_cmap_init,
-	(FT2_1_3_CMap_DoneFunc)     pfr_cmap_done,
-	(FT2_1_3_CMap_CharIndexFunc)pfr_cmap_char_index,
-	(FT2_1_3_CMap_CharNextFunc) pfr_cmap_char_next
+	(FT_CMap_InitFunc)     pfr_cmap_init,
+	(FT_CMap_DoneFunc)     pfr_cmap_done,
+	(FT_CMap_CharIndexFunc)pfr_cmap_char_index,
+	(FT_CMap_CharNextFunc) pfr_cmap_char_next
 };
 
 } // End of namespace FreeType213

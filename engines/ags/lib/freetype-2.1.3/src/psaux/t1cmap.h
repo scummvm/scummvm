@@ -42,7 +42,7 @@ FT2_1_3_BEGIN_HEADER
 typedef struct T1_CMapStdRec_*  T1_CMapStd;
 
 typedef struct  T1_CMapStdRec_ {
-	FT2_1_3_CMapRec                 cmap;
+	FT_CMapRec                 cmap;
 
 	const FT_UShort*           code_to_sid;
 	PS_Adobe_Std_Strings_Func  sid_to_string;
@@ -53,10 +53,10 @@ typedef struct  T1_CMapStdRec_ {
 } T1_CMapStdRec;
 
 
-FT2_1_3_CALLBACK_TABLE const FT2_1_3_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE const FT_CMap_ClassRec
 t1_cmap_standard_class_rec;
 
-FT2_1_3_CALLBACK_TABLE const FT2_1_3_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE const FT_CMap_ClassRec
 t1_cmap_expert_class_rec;
 
 
@@ -71,7 +71,7 @@ t1_cmap_expert_class_rec;
 typedef struct T1_CMapCustomRec_*  T1_CMapCustom;
 
 typedef struct  T1_CMapCustomRec_ {
-	FT2_1_3_CMapRec  cmap;
+	FT_CMapRec  cmap;
 	FT_UInt     first;
 	FT_UInt     count;
 	FT_UShort*  indices;
@@ -79,7 +79,7 @@ typedef struct  T1_CMapCustomRec_ {
 } T1_CMapCustomRec;
 
 
-FT2_1_3_CALLBACK_TABLE const FT2_1_3_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE const FT_CMap_ClassRec
 t1_cmap_custom_class_rec;
 
 
@@ -102,14 +102,14 @@ typedef struct  T1_CMapUniPairRec_ {
 
 
 typedef struct  T1_CMapUnicodeRec_ {
-	FT2_1_3_CMapRec      cmap;
+	FT_CMapRec      cmap;
 	FT_UInt         num_pairs;
 	T1_CMapUniPair  pairs;
 
 } T1_CMapUnicodeRec;
 
 
-FT2_1_3_CALLBACK_TABLE const FT2_1_3_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE const FT_CMap_ClassRec
 t1_cmap_unicode_class_rec;
 
 /* */

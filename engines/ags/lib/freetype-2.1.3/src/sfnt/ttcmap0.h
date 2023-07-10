@@ -31,7 +31,7 @@ namespace FreeType213 {
 FT2_1_3_BEGIN_HEADER
 
 typedef struct  TT_CMapRec_ {
-	FT2_1_3_CMapRec  cmap;
+	FT_CMapRec  cmap;
 	FT_Byte*    data;           /* pointer to in-memory cmap table */
 
 } TT_CMapRec, *TT_CMap;
@@ -41,10 +41,10 @@ typedef const struct TT_CMap_ClassRec_*  TT_CMap_Class;
 
 typedef FT_Error
 (*TT_CMap_ValidateFunc)( FT_Byte*      data,
-						 FT2_1_3_Validator  valid );
+						 FT_Validator  valid );
 
 typedef struct  TT_CMap_ClassRec_ {
-	FT2_1_3_CMap_ClassRec      clazz;
+	FT_CMap_ClassRec      clazz;
 	FT_UInt               format;
 	TT_CMap_ValidateFunc  validate;
 
@@ -52,7 +52,7 @@ typedef struct  TT_CMap_ClassRec_ {
 
 
 typedef struct  TT_ValidatorRec_ {
-	FT2_1_3_ValidatorRec  validator;
+	FT_ValidatorRec  validator;
 	FT_UInt          num_glyphs;
 
 } TT_ValidatorRec, *TT_Validator;

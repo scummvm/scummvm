@@ -49,7 +49,7 @@ namespace AGS3 {
 namespace FreeType213 {
 
 typedef struct  BDF_CMapRec_ {
-	FT2_1_3_CMapRec        cmap;
+	FT_CMapRec        cmap;
 	FT_UInt           num_encodings;
 	BDF_encoding_el*  encodings;
 
@@ -150,12 +150,12 @@ Exit:
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF const FT2_1_3_CMap_ClassRec  bdf_cmap_class = {
+FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec  bdf_cmap_class = {
 	sizeof( BDF_CMapRec ),
-	(FT2_1_3_CMap_InitFunc)     bdf_cmap_init,
-	(FT2_1_3_CMap_DoneFunc)     bdf_cmap_done,
-	(FT2_1_3_CMap_CharIndexFunc)bdf_cmap_char_index,
-	(FT2_1_3_CMap_CharNextFunc) bdf_cmap_char_next
+	(FT_CMap_InitFunc)     bdf_cmap_init,
+	(FT_CMap_DoneFunc)     bdf_cmap_done,
+	(FT_CMap_CharIndexFunc)bdf_cmap_char_index,
+	(FT_CMap_CharNextFunc) bdf_cmap_char_next
 };
 
 
@@ -382,7 +382,7 @@ BDF_Face_Init( FT_Stream      stream,
 							charmap.encoding_id = 1;
 						}
 
-						error = FT2_1_3_CMap_New( &bdf_cmap_class, NULL, &charmap, NULL );
+						error = FT_CMap_New( &bdf_cmap_class, NULL, &charmap, NULL );
 
 #if 0
 						/* Select default charmap */
@@ -406,7 +406,7 @@ BDF_Face_Init( FT_Stream      stream,
 				charmap.platform_id = 7;
 				charmap.encoding_id = 0;
 
-				error = FT2_1_3_CMap_New( &bdf_cmap_class, NULL, &charmap, NULL );
+				error = FT_CMap_New( &bdf_cmap_class, NULL, &charmap, NULL );
 
 				/* Select default charmap */
 				if (root->num_charmaps)

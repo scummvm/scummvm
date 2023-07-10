@@ -94,7 +94,7 @@ FT2_1_3_BEGIN_HEADER
 /*************************************************************************/
 
 /* handle to a validation object */
-typedef struct FT2_1_3_ValidatorRec_*  FT2_1_3_Validator;
+typedef struct FT_ValidatorRec_*  FT_Validator;
 
 
 /*************************************************************************/
@@ -122,44 +122,44 @@ typedef struct FT2_1_3_ValidatorRec_*  FT2_1_3_Validator;
 /*   level anyway but it can be useful for certain tools like font       */
 /*   editors/converters.                                                 */
 /*                                                                       */
-typedef enum  FT2_1_3_ValidationLevel_ {
+typedef enum  FT_ValidationLevel_ {
 	FT2_1_3_VALIDATE_DEFAULT = 0,
 	FT2_1_3_VALIDATE_TIGHT,
 	FT2_1_3_VALIDATE_PARANOID
 
-} FT2_1_3_ValidationLevel;
+} FT_ValidationLevel;
 
 
 /* validator structure */
-typedef struct  FT2_1_3_ValidatorRec_ {
+typedef struct  FT_ValidatorRec_ {
 	const FT_Byte*      base;        /* address of table in memory       */
 	const FT_Byte*      limit;       /* `base' + sizeof(table) in memory */
-	FT2_1_3_ValidationLevel  level;       /* validation level                 */
+	FT_ValidationLevel  level;       /* validation level                 */
 	FT_Error            error;       /* error returned. 0 means success  */
 
 	ft_jmp_buf          jump_buffer; /* used for exception handling      */
 
-} FT2_1_3_ValidatorRec;
+} FT_ValidatorRec;
 
 
-#define FT2_1_3_VALIDATOR( x )  ((FT2_1_3_Validator)( x ))
+#define FT2_1_3_VALIDATOR( x )  ((FT_Validator)( x ))
 
 
 FT2_1_3_BASE( void )
-ft_validator_init( FT2_1_3_Validator        valid,
+ft_validator_init( FT_Validator        valid,
 				   const FT_Byte*      base,
 				   const FT_Byte*      limit,
-				   FT2_1_3_ValidationLevel  level );
+				   FT_ValidationLevel  level );
 
 FT2_1_3_BASE( FT_Int )
-ft_validator_run( FT2_1_3_Validator  valid );
+ft_validator_run( FT_Validator  valid );
 
 /* Sets the error field in a validator, then calls `longjmp' to return */
 /* to high-level caller.  Using `setjmp/longjmp' avoids many stupid    */
 /* error checks within the validation routines.                        */
 /*                                                                     */
 FT2_1_3_BASE( void )
-ft_validator_error( FT2_1_3_Validator  valid,
+ft_validator_error( FT_Validator  valid,
 					FT_Error      error );
 
 
@@ -197,20 +197,20 @@ ft_validator_error( FT2_1_3_Validator  valid,
 /*************************************************************************/
 
 /* handle to internal charmap object */
-typedef struct FT2_1_3_CMapRec_*              FT2_1_3_CMap;
+typedef struct FT_CMapRec_*              FT_CMap;
 
 /* handle to charmap class structure */
-typedef const struct FT2_1_3_CMap_ClassRec_*  FT2_1_3_CMap_Class;
+typedef const struct FT_CMap_ClassRec_*  FT_CMap_Class;
 
 /* internal charmap object structure */
-typedef struct  FT2_1_3_CMapRec_ {
+typedef struct  FT_CMapRec_ {
 	FT_CharMapRec  charmap;
-	FT2_1_3_CMap_Class  clazz;
+	FT_CMap_Class  clazz;
 
-} FT2_1_3_CMapRec;
+} FT_CMapRec;
 
 /* typecase any pointer to a charmap handle */
-#define FT2_1_3_CMAP( x )              ((FT2_1_3_CMap)( x ))
+#define FT2_1_3_CMAP( x )              ((FT_CMap)( x ))
 
 /* obvious macros */
 #define FT2_1_3_CMAP_PLATFORM_ID( x )  FT2_1_3_CMAP( x )->charmap.platform_id
@@ -221,41 +221,41 @@ typedef struct  FT2_1_3_CMapRec_ {
 
 /* class method definitions */
 typedef FT_Error
-(*FT2_1_3_CMap_InitFunc)( FT2_1_3_CMap     cmap,
+(*FT_CMap_InitFunc)( FT_CMap     cmap,
 					 FT_Pointer  init_data );
 
 typedef void
-(*FT2_1_3_CMap_DoneFunc)( FT2_1_3_CMap  cmap );
+(*FT_CMap_DoneFunc)( FT_CMap  cmap );
 
 typedef FT_UInt
-(*FT2_1_3_CMap_CharIndexFunc)( FT2_1_3_CMap    cmap,
+(*FT_CMap_CharIndexFunc)( FT_CMap    cmap,
 						  FT_UInt32  char_code );
 
 typedef FT_UInt
-(*FT2_1_3_CMap_CharNextFunc)( FT2_1_3_CMap     cmap,
+(*FT_CMap_CharNextFunc)( FT_CMap     cmap,
 						 FT_UInt32  *achar_code );
 
 
-typedef struct  FT2_1_3_CMap_ClassRec_ {
+typedef struct  FT_CMap_ClassRec_ {
 	FT_UInt                size;
-	FT2_1_3_CMap_InitFunc       init;
-	FT2_1_3_CMap_DoneFunc       done;
-	FT2_1_3_CMap_CharIndexFunc  char_index;
-	FT2_1_3_CMap_CharNextFunc   char_next;
+	FT_CMap_InitFunc       init;
+	FT_CMap_DoneFunc       done;
+	FT_CMap_CharIndexFunc  char_index;
+	FT_CMap_CharNextFunc   char_next;
 
-} FT2_1_3_CMap_ClassRec;
+} FT_CMap_ClassRec;
 
 
 /* create a new charmap and add it to charmap->face */
 FT2_1_3_BASE( FT_Error )
-FT2_1_3_CMap_New( FT2_1_3_CMap_Class  clazz,
+FT_CMap_New( FT_CMap_Class  clazz,
 			 FT_Pointer     init_data,
 			 FT_CharMap     charmap,
-			 FT2_1_3_CMap       *acmap );
+			 FT_CMap       *acmap );
 
 /* destroy a charmap (don't remove it from face's list though) */
 FT2_1_3_BASE( void )
-FT2_1_3_CMap_Done( FT2_1_3_CMap  cmap );
+FT_CMap_Done( FT_CMap  cmap );
 
 
 /*************************************************************************/
@@ -491,7 +491,7 @@ FT_Get_Module_Interface( FT_Library   library,
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_New_GlyphSlot                                                   */
+/*    FT_New_GlyphSlot                                                   */
 /*                                                                       */
 /* <Description>                                                         */
 /*    It is sometimes useful to have more than one glyph slot for a      */
@@ -509,7 +509,7 @@ FT_Get_Module_Interface( FT_Library   library,
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_BASE( FT_Error )
-FT2_1_3_New_GlyphSlot( FT_Face        face,
+FT_New_GlyphSlot( FT_Face        face,
 				  FT_GlyphSlot  *aslot );
 
 

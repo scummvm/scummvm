@@ -410,7 +410,7 @@ T1_Face_Init( FT_Stream      stream,
 		if ( psnames && psaux ) {
 			FT_CharMapRec    charmap;
 			T1_CMap_Classes  cmap_classes = psaux->t1_cmap_classes;
-			FT2_1_3_CMap_Class    clazz;
+			FT_CMap_Class    clazz;
 
 
 			charmap.face = root;
@@ -420,7 +420,7 @@ T1_Face_Init( FT_Stream      stream,
 			charmap.encoding_id = 1;
 			charmap.encoding    = FT2_1_3_ENCODING_UNICODE;
 
-			FT2_1_3_CMap_New( cmap_classes->unicode, NULL, &charmap, NULL );
+			FT_CMap_New( cmap_classes->unicode, NULL, &charmap, NULL );
 
 			/* now, generate an Adobe Standard encoding when appropriate */
 			charmap.platform_id = 7;
@@ -456,7 +456,7 @@ T1_Face_Init( FT_Stream      stream,
 			}
 
 			if ( clazz )
-				FT2_1_3_CMap_New( clazz, NULL, &charmap, NULL );
+				FT_CMap_New( clazz, NULL, &charmap, NULL );
 
 #if 0
 			/* Select default charmap */

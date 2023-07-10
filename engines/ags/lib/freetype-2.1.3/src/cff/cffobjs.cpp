@@ -462,7 +462,7 @@ cff_face_init( FT_Stream      stream,
 
 			nn = (FT_UInt) root->num_charmaps;
 
-			FT2_1_3_CMap_New( &cff_cmap_unicode_class_rec, NULL, &cmaprec, NULL );
+			FT_CMap_New( &cff_cmap_unicode_class_rec, NULL, &cmaprec, NULL );
 
 			/* if no Unicode charmap was previously selected, select this one */
 			if ( root->charmap == NULL && nn != (FT_UInt) root->num_charmaps )
@@ -470,7 +470,7 @@ cff_face_init( FT_Stream      stream,
 
 Skip_Unicode:
 			if ( encoding->count > 0 ) {
-				FT2_1_3_CMap_Class  clazz;
+				FT_CMap_Class  clazz;
 
 
 				cmaprec.face        = root;
@@ -490,7 +490,7 @@ Skip_Unicode:
 					clazz               = &cff_cmap_encoding_class_rec;
 				}
 
-				FT2_1_3_CMap_New( clazz, NULL, &cmaprec, NULL );
+				FT_CMap_New( clazz, NULL, &cmaprec, NULL );
 			}
 
 		}

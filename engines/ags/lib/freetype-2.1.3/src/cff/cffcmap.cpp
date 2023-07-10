@@ -94,14 +94,14 @@ cff_cmap_encoding_char_next( CFF_CMapStd   cmap,
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF const FT2_1_3_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
 cff_cmap_encoding_class_rec = {
 	sizeof ( CFF_CMapStdRec ),
 
-	(FT2_1_3_CMap_InitFunc)     cff_cmap_encoding_init,
-	(FT2_1_3_CMap_DoneFunc)     cff_cmap_encoding_done,
-	(FT2_1_3_CMap_CharIndexFunc)cff_cmap_encoding_char_index,
-	(FT2_1_3_CMap_CharNextFunc) cff_cmap_encoding_char_next
+	(FT_CMap_InitFunc)     cff_cmap_encoding_init,
+	(FT_CMap_DoneFunc)     cff_cmap_encoding_done,
+	(FT_CMap_CharIndexFunc)cff_cmap_encoding_char_index,
+	(FT_CMap_CharNextFunc) cff_cmap_encoding_char_next
 };
 
 
@@ -287,14 +287,14 @@ Exit:
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF const FT2_1_3_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
 cff_cmap_unicode_class_rec = {
 	sizeof ( CFF_CMapUnicodeRec ),
 
-	(FT2_1_3_CMap_InitFunc)     cff_cmap_unicode_init,
-	(FT2_1_3_CMap_DoneFunc)     cff_cmap_unicode_done,
-	(FT2_1_3_CMap_CharIndexFunc)cff_cmap_unicode_char_index,
-	(FT2_1_3_CMap_CharNextFunc) cff_cmap_unicode_char_next
+	(FT_CMap_InitFunc)     cff_cmap_unicode_init,
+	(FT_CMap_DoneFunc)     cff_cmap_unicode_done,
+	(FT_CMap_CharIndexFunc)cff_cmap_unicode_char_index,
+	(FT_CMap_CharNextFunc) cff_cmap_unicode_char_next
 };
 
 } // End of namespace FreeType213

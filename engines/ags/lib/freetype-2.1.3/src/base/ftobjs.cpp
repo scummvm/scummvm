@@ -29,10 +29,10 @@ namespace AGS3 {
 namespace FreeType213 {
 
 FT2_1_3_BASE_DEF( void )
-ft_validator_init( FT2_1_3_Validator        valid,
+ft_validator_init( FT_Validator        valid,
 				   const FT_Byte*      base,
 				   const FT_Byte*      limit,
-				   FT2_1_3_ValidationLevel  level ) {
+				   FT_ValidationLevel  level ) {
 	valid->base  = base;
 	valid->limit = limit;
 	valid->level = level;
@@ -41,7 +41,7 @@ ft_validator_init( FT2_1_3_Validator        valid,
 
 
 FT2_1_3_BASE_DEF( FT_Int )
-ft_validator_run( FT2_1_3_Validator  valid ) {
+ft_validator_run( FT_Validator  valid ) {
 	int  result;
 
 
@@ -51,7 +51,7 @@ ft_validator_run( FT2_1_3_Validator  valid ) {
 
 
 FT2_1_3_BASE_DEF( void )
-ft_validator_error( FT2_1_3_Validator  valid,
+ft_validator_error( FT_Validator  valid,
 					FT_Error      error ) {
 	valid->error = error;
 	ft_longjmp( valid->jump_buffer, 1 );
@@ -248,7 +248,7 @@ ft_glyphslot_done( FT_GlyphSlot  slot ) {
 /* documentation is in ftobjs.h */
 
 FT2_1_3_BASE_DEF( FT_Error )
-FT2_1_3_New_GlyphSlot( FT_Face        face,
+FT_New_GlyphSlot( FT_Face        face,
 				  FT_GlyphSlot  *aslot ) {
 	FT_Error          error;
 	FT_Driver         driver;
@@ -266,7 +266,7 @@ FT2_1_3_New_GlyphSlot( FT_Face        face,
 	clazz  = driver->clazz;
 	memory = driver->root.memory;
 
-	FT2_1_3_TRACE4(( "FT2_1_3_New_GlyphSlot: Creating new slot object\n" ));
+	FT2_1_3_TRACE4(( "FT_New_GlyphSlot: Creating new slot object\n" ));
 	if ( !FT2_1_3_ALLOC( slot, clazz->slot_object_size ) ) {
 		slot->face = face;
 
@@ -281,7 +281,7 @@ FT2_1_3_New_GlyphSlot( FT_Face        face,
 	}
 
 Exit:
-	FT2_1_3_TRACE4(( "FT2_1_3_New_GlyphSlot: Return %d\n", error ));
+	FT2_1_3_TRACE4(( "FT_New_GlyphSlot: Return %d\n", error ));
 	return error;
 }
 
@@ -605,10 +605,10 @@ destroy_face( FT_Memory  memory,
 
 
 		for ( n = 0; n < face->num_charmaps; n++ ) {
-			FT2_1_3_CMap  cmap = FT2_1_3_CMAP( face->charmaps[n] );
+			FT_CMap  cmap = FT2_1_3_CMAP( face->charmaps[n] );
 
 
-			FT2_1_3_CMap_Done( cmap );
+			FT_CMap_Done( cmap );
 
 			face->charmaps[n] = NULL;
 		}
@@ -914,7 +914,7 @@ Success:
 
 		FT2_1_3_TRACE4(( "FT2_1_3_Open_Face: Creating glyph slot\n" ));
 
-		error = FT2_1_3_New_GlyphSlot( face, &slot );
+		error = FT_New_GlyphSlot( face, &slot );
 		if ( error )
 			goto Fail;
 
@@ -1400,9 +1400,9 @@ FT2_1_3_Set_Charmap( FT_Face     face,
 
 
 FT2_1_3_BASE_DEF( void )
-FT2_1_3_CMap_Done( FT2_1_3_CMap  cmap ) {
+FT_CMap_Done( FT_CMap  cmap ) {
 	if ( cmap ) {
-		FT2_1_3_CMap_Class  clazz  = cmap->clazz;
+		FT_CMap_Class  clazz  = cmap->clazz;
 		FT_Face        face   = cmap->charmap.face;
 		FT_Memory      memory = FT2_1_3_FACE_MEMORY(face);
 
@@ -1416,14 +1416,14 @@ FT2_1_3_CMap_Done( FT2_1_3_CMap  cmap ) {
 
 
 FT2_1_3_BASE_DEF( FT_Error )
-FT2_1_3_CMap_New( FT2_1_3_CMap_Class   clazz,
+FT_CMap_New( FT_CMap_Class   clazz,
 			 FT_Pointer      init_data,
 			 FT_CharMap      charmap,
-			 FT2_1_3_CMap        *acmap ) {
+			 FT_CMap        *acmap ) {
 	FT_Error   error = 0;
 	FT_Face    face;
 	FT_Memory  memory;
-	FT2_1_3_CMap    cmap;
+	FT_CMap    cmap;
 
 
 	if ( clazz == NULL || charmap == NULL || charmap->face == NULL )
@@ -1458,7 +1458,7 @@ Exit:
 	return error;
 
 Fail:
-	FT2_1_3_CMap_Done( cmap );
+	FT_CMap_Done( cmap );
 	cmap = NULL;
 	goto Exit;
 }
@@ -1473,7 +1473,7 @@ FT2_1_3_Get_Char_Index( FT_Face   face,
 
 
 	if ( face && face->charmap ) {
-		FT2_1_3_CMap  cmap = FT2_1_3_CMAP( face->charmap );
+		FT_CMap  cmap = FT2_1_3_CMAP( face->charmap );
 
 
 		result = cmap->clazz->char_index( cmap, charcode );
@@ -1517,7 +1517,7 @@ FT2_1_3_Get_Next_Char( FT_Face   face,
 
 	if ( face && face->charmap ) {
 		FT_UInt32  code = (FT_UInt32)charcode;
-		FT2_1_3_CMap    cmap = FT2_1_3_CMAP( face->charmap );
+		FT_CMap    cmap = FT2_1_3_CMAP( face->charmap );
 
 
 		gindex = cmap->clazz->char_next( cmap, &code );

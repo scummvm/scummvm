@@ -269,7 +269,7 @@ T42_Face_Init( FT_Stream      stream,
 		if ( psnames && psaux ) {
 			FT_CharMapRec    charmap;
 			T1_CMap_Classes  cmap_classes = psaux->t1_cmap_classes;
-			FT2_1_3_CMap_Class    clazz;
+			FT_CMap_Class    clazz;
 
 
 			charmap.face = root;
@@ -279,7 +279,7 @@ T42_Face_Init( FT_Stream      stream,
 			charmap.encoding_id = 1;
 			charmap.encoding    = FT2_1_3_ENCODING_UNICODE;
 
-			FT2_1_3_CMap_New( cmap_classes->unicode, NULL, &charmap, NULL );
+			FT_CMap_New( cmap_classes->unicode, NULL, &charmap, NULL );
 
 			/* now, generate an Adobe Standard encoding when appropriate */
 			charmap.platform_id = 7;
@@ -315,7 +315,7 @@ T42_Face_Init( FT_Stream      stream,
 			}
 
 			if ( clazz )
-				FT2_1_3_CMap_New( clazz, NULL, &charmap, NULL );
+				FT_CMap_New( clazz, NULL, &charmap, NULL );
 
 #if 0
 			/* Select default charmap */
@@ -460,7 +460,7 @@ T42_GlyphSlot_Init( T42_GlyphSlot  slot ) {
 		/* First glyph slot for this face */
 		slot->ttslot = t42face->ttf_face->glyph;
 	} else {
-		error = FT2_1_3_New_GlyphSlot( t42face->ttf_face, &ttslot );
+		error = FT_New_GlyphSlot( t42face->ttf_face, &ttslot );
 		slot->ttslot = ttslot;
 	}
 

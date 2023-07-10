@@ -298,7 +298,7 @@ Exit:
 
 
 typedef struct  FNT_CMapRec_ {
-	FT2_1_3_CMapRec  cmap;
+	FT_CMapRec  cmap;
 	FT_UInt32   first;
 	FT_UInt32   count;
 
@@ -356,16 +356,16 @@ fnt_cmap_char_next( FNT_CMap    cmap,
 }
 
 
-static FT2_1_3_CMap_ClassRec  fnt_cmap_class_rec = {
+static FT_CMap_ClassRec  fnt_cmap_class_rec = {
 	sizeof ( FNT_CMapRec ),
 
-	(FT2_1_3_CMap_InitFunc)     fnt_cmap_init,
-	(FT2_1_3_CMap_DoneFunc)     NULL,
-	(FT2_1_3_CMap_CharIndexFunc)fnt_cmap_char_index,
-	(FT2_1_3_CMap_CharNextFunc) fnt_cmap_char_next
+	(FT_CMap_InitFunc)     fnt_cmap_init,
+	(FT_CMap_DoneFunc)     NULL,
+	(FT_CMap_CharIndexFunc)fnt_cmap_char_index,
+	(FT_CMap_CharNextFunc) fnt_cmap_char_next
 };
 
-static FT2_1_3_CMap_Class  fnt_cmap_class = &fnt_cmap_class_rec;
+static FT_CMap_Class  fnt_cmap_class = &fnt_cmap_class_rec;
 
 
 
@@ -462,7 +462,7 @@ FNT_Face_Init( FT_Stream      stream,
 			charmap.encoding_id = 1;
 			charmap.face        = root;
 
-			error = FT2_1_3_CMap_New( fnt_cmap_class,
+			error = FT_CMap_New( fnt_cmap_class,
 								 NULL,
 								 &charmap,
 								 NULL );

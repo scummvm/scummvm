@@ -660,10 +660,10 @@ typedef struct  T1_DecoderRec_ {
 typedef const struct T1_CMap_ClassesRec_*  T1_CMap_Classes;
 
 typedef struct T1_CMap_ClassesRec_ {
-	FT2_1_3_CMap_Class  standard;
-	FT2_1_3_CMap_Class  expert;
-	FT2_1_3_CMap_Class  custom;
-	FT2_1_3_CMap_Class  unicode;
+	FT_CMap_Class  standard;
+	FT_CMap_Class  expert;
+	FT_CMap_Class  custom;
+	FT_CMap_Class  unicode;
 
 } T1_CMap_ClassesRec;
 

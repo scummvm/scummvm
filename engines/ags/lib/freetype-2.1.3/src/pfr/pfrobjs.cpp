@@ -180,7 +180,7 @@ pfr_face_init( FT_Stream      stream,
 			charmap.encoding_id = 1;
 			charmap.encoding    = FT2_1_3_ENCODING_UNICODE;
 
-			FT2_1_3_CMap_New( &pfr_cmap_class_rec, NULL, &charmap, NULL );
+			FT_CMap_New( &pfr_cmap_class_rec, NULL, &charmap, NULL );
 
 #if 0
 			/* Select default charmap */

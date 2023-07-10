@@ -117,14 +117,14 @@ t1_cmap_standard_init( T1_CMapStd  cmap ) {
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF const FT2_1_3_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
 t1_cmap_standard_class_rec = {
 	sizeof ( T1_CMapStdRec ),
 
-	(FT2_1_3_CMap_InitFunc)     t1_cmap_standard_init,
-	(FT2_1_3_CMap_DoneFunc)     t1_cmap_std_done,
-	(FT2_1_3_CMap_CharIndexFunc)t1_cmap_std_char_index,
-	(FT2_1_3_CMap_CharNextFunc) t1_cmap_std_char_next
+	(FT_CMap_InitFunc)     t1_cmap_standard_init,
+	(FT_CMap_DoneFunc)     t1_cmap_std_done,
+	(FT_CMap_CharIndexFunc)t1_cmap_std_char_index,
+	(FT_CMap_CharNextFunc) t1_cmap_std_char_next
 };
 
 
@@ -134,14 +134,14 @@ t1_cmap_expert_init( T1_CMapStd  cmap ) {
 	return 0;
 }
 
-FT2_1_3_CALLBACK_TABLE_DEF const FT2_1_3_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
 t1_cmap_expert_class_rec = {
 	sizeof ( T1_CMapStdRec ),
 
-	(FT2_1_3_CMap_InitFunc)     t1_cmap_expert_init,
-	(FT2_1_3_CMap_DoneFunc)     t1_cmap_std_done,
-	(FT2_1_3_CMap_CharIndexFunc)t1_cmap_std_char_index,
-	(FT2_1_3_CMap_CharNextFunc) t1_cmap_std_char_next
+	(FT_CMap_InitFunc)     t1_cmap_expert_init,
+	(FT_CMap_DoneFunc)     t1_cmap_std_done,
+	(FT_CMap_CharIndexFunc)t1_cmap_std_char_index,
+	(FT_CMap_CharNextFunc) t1_cmap_std_char_next
 };
 
 
@@ -219,14 +219,14 @@ Exit:
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF const FT2_1_3_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
 t1_cmap_custom_class_rec = {
 	sizeof ( T1_CMapCustomRec ),
 
-	(FT2_1_3_CMap_InitFunc)     t1_cmap_custom_init,
-	(FT2_1_3_CMap_DoneFunc)     t1_cmap_custom_done,
-	(FT2_1_3_CMap_CharIndexFunc)t1_cmap_custom_char_index,
-	(FT2_1_3_CMap_CharNextFunc) t1_cmap_custom_char_next
+	(FT_CMap_InitFunc)     t1_cmap_custom_init,
+	(FT_CMap_DoneFunc)     t1_cmap_custom_done,
+	(FT_CMap_CharIndexFunc)t1_cmap_custom_char_index,
+	(FT_CMap_CharNextFunc) t1_cmap_custom_char_next
 };
 
 
@@ -403,14 +403,14 @@ Exit:
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF const FT2_1_3_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec
 t1_cmap_unicode_class_rec = {
 	sizeof ( T1_CMapUnicodeRec ),
 
-	(FT2_1_3_CMap_InitFunc)     t1_cmap_unicode_init,
-	(FT2_1_3_CMap_DoneFunc)     t1_cmap_unicode_done,
-	(FT2_1_3_CMap_CharIndexFunc)t1_cmap_unicode_char_index,
-	(FT2_1_3_CMap_CharNextFunc) t1_cmap_unicode_char_next
+	(FT_CMap_InitFunc)     t1_cmap_unicode_init,
+	(FT_CMap_DoneFunc)     t1_cmap_unicode_done,
+	(FT_CMap_CharIndexFunc)t1_cmap_unicode_char_index,
+	(FT_CMap_CharNextFunc) t1_cmap_unicode_char_next
 };
 
 } // End of namespace FreeType213

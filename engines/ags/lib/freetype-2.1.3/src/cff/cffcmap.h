@@ -39,14 +39,14 @@ FT2_1_3_BEGIN_HEADER
 typedef struct CFF_CMapStdRec_*  CFF_CMapStd;
 
 typedef struct  CFF_CMapStdRec_ {
-	FT2_1_3_CMapRec  cmap;
+	FT_CMapRec  cmap;
 	FT_UInt     count;
 	FT_UShort*  gids;   /* up to 256 elements */
 
 } CFF_CMapStdRec;
 
 
-FT2_1_3_CALLBACK_TABLE const FT2_1_3_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE const FT_CMap_ClassRec
 cff_cmap_encoding_class_rec;
 
 
@@ -69,14 +69,14 @@ typedef struct  CFF_CMapUniPairRec_ {
 
 
 typedef struct  CFF_CMapUnicodeRec_ {
-	FT2_1_3_CMapRec       cmap;
+	FT_CMapRec       cmap;
 	FT_UInt          num_pairs;
 	CFF_CMapUniPair  pairs;
 
 } CFF_CMapUnicodeRec;
 
 
-FT2_1_3_CALLBACK_TABLE const FT2_1_3_CMap_ClassRec
+FT2_1_3_CALLBACK_TABLE const FT_CMap_ClassRec
 cff_cmap_unicode_class_rec;
 
 

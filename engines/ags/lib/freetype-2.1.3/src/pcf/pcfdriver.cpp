@@ -46,7 +46,7 @@ namespace AGS3 {
 namespace FreeType213 {
 
 typedef struct  PCF_CMapRec_ {
-	FT2_1_3_CMapRec    cmap;
+	FT_CMapRec    cmap;
 	FT_UInt       num_encodings;
 	PCF_Encoding  encodings;
 
@@ -147,12 +147,12 @@ Exit:
 }
 
 
-FT2_1_3_CALLBACK_TABLE_DEF const FT2_1_3_CMap_ClassRec  pcf_cmap_class = {
+FT2_1_3_CALLBACK_TABLE_DEF const FT_CMap_ClassRec  pcf_cmap_class = {
 	sizeof( PCF_CMapRec ),
-	(FT2_1_3_CMap_InitFunc)     pcf_cmap_init,
-	(FT2_1_3_CMap_DoneFunc)     pcf_cmap_done,
-	(FT2_1_3_CMap_CharIndexFunc)pcf_cmap_char_index,
-	(FT2_1_3_CMap_CharNextFunc) pcf_cmap_char_next
+	(FT_CMap_InitFunc)     pcf_cmap_init,
+	(FT_CMap_DoneFunc)     pcf_cmap_done,
+	(FT_CMap_CharIndexFunc)pcf_cmap_char_index,
+	(FT_CMap_CharNextFunc) pcf_cmap_char_next
 };
 
 
@@ -277,7 +277,7 @@ PCF_Face_Init( FT_Stream      stream,
 				charmap.encoding_id = 1;
 			}
 
-			error = FT2_1_3_CMap_New( &pcf_cmap_class, NULL, &charmap, NULL );
+			error = FT_CMap_New( &pcf_cmap_class, NULL, &charmap, NULL );
 
 #if 0
 			/* Select default charmap */
