@@ -59,7 +59,7 @@ public:
 	ReplyMenu() { spacing = 20; }
 	~ReplyMenu() {}
 
-	void Load(const Common::String &filename);
+	void load(const Common::String &filename);
 
 	int HandleEvents(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat,
 					 const Common::String &cur_id, PersonHandler &oh, const Common::Event &Event);

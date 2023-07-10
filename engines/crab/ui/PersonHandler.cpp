@@ -37,36 +37,36 @@ using namespace pyrodactyl::text;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::people;
 
-void PersonHandler::Load(rapidxml::xml_node<char> *node) {
+void PersonHandler::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("dialog", node))
-		dlbox.Load(node->first_node("dialog"));
+		dlbox.load(node->first_node("dialog"));
 
 	if (nodeValid("opinion", node)) {
 		rapidxml::xml_node<char> *opnode = node->first_node("opinion");
 
 		if (nodeValid("friendship", opnode))
-			opinion[OPI_LIKE].Load(opnode->first_node("friendship"));
+			opinion[OPI_LIKE].load(opnode->first_node("friendship"));
 
 		if (nodeValid("respect", opnode))
-			opinion[OPI_RESPECT].Load(opnode->first_node("respect"));
+			opinion[OPI_RESPECT].load(opnode->first_node("respect"));
 
 		if (nodeValid("fear", opnode))
-			opinion[OPI_FEAR].Load(opnode->first_node("fear"));
+			opinion[OPI_FEAR].load(opnode->first_node("fear"));
 	}
 
 	if (nodeValid("image", node)) {
 		rapidxml::xml_node<char> *imgnode = node->first_node("image");
-		img.Load(imgnode);
+		img.load(imgnode);
 
 		if (nodeValid("sprite_align", imgnode))
-			sprite_align.Load(imgnode->first_node("sprite_align"));
+			sprite_align.load(imgnode->first_node("sprite_align"));
 	}
 
 	if (nodeValid("name", node))
-		name.Load(node->first_node("name"));
+		name.load(node->first_node("name"));
 
 	if (nodeValid("journal", node))
-		jb.Load(node->first_node("journal"));
+		jb.load(node->first_node("journal"));
 }
 
 void PersonHandler::Draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameEvent *Event, const Common::String &person_id,

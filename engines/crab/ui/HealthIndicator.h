@@ -60,7 +60,7 @@ public:
 	}
 	~HealthIndicator() {}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	void Draw(int num);
 };
 } // End of namespace ui

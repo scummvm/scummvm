@@ -170,7 +170,7 @@ public:
 	void CalcProperties(pyrodactyl::event::Info &info);
 
 	// Loading function
-	void Load(const Common::String &filename, pyrodactyl::event::Info &info, pyrodactyl::event::TriggerSet &game_over,
+	void load(const Common::String &filename, pyrodactyl::event::Info &info, pyrodactyl::event::TriggerSet &game_over,
 			  const int &player_x = -1, const int &player_y = -1);
 
 	// One time load called first-time

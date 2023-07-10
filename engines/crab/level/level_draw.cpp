@@ -56,7 +56,7 @@ void Level::PreDraw() {
 	if (layer_count <= terrain.sprite_layer)
 		PreDrawObjects(surf);
 
-	img.Load(surf);
+	img.load(surf);
 	delete surf;
 }
 

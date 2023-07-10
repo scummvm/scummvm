@@ -34,15 +34,15 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
-void ChapterIntro::Load(rapidxml::xml_node<char> *node) {
+void ChapterIntro::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("dialog", node))
-		dialog.Load(node->first_node("dialog"));
+		dialog.load(node->first_node("dialog"));
 
 	if (nodeValid("image", node))
-		pos.Load(node->first_node("image"));
+		pos.load(node->first_node("image"));
 
 	if (nodeValid("trait", node))
-		traits.Load(node->first_node("trait"));
+		traits.load(node->first_node("trait"));
 }
 
 bool ChapterIntro::HandleEvents(Common::Event &Event) {

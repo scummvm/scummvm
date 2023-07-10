@@ -72,7 +72,7 @@ public:
 	}
 	~MusicManager() {}
 
-	bool Load(rapidxml::xml_node<char> *node);
+	bool load(rapidxml::xml_node<char> *node);
 
 	void PlayMusic(const MusicKey &id);
 	void PlayEffect(const ChunkKey &id, const int &loops);

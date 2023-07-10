@@ -35,11 +35,11 @@ namespace Crab {
 
 using namespace pyrodactyl::ui;
 
-bool ParagraphData::Load(rapidxml::xml_node<char> *node, Rect *parent, const bool &echo) {
+bool ParagraphData::load(rapidxml::xml_node<char> *node, Rect *parent, const bool &echo) {
 	if (nodeValid("line", node))
-		line.Load(node->first_node("line"));
+		line.load(node->first_node("line"));
 
-	return TextData::Load(node, parent, echo);
+	return TextData::load(node, parent, echo);
 }
 
 void ParagraphData::Draw(const Common::String &val, const int &XOffset, const int &YOffset) {

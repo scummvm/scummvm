@@ -35,7 +35,7 @@ namespace Crab {
 
 using namespace pyrodactyl::event;
 
-void TriggerSet::Load(rapidxml::xml_node<char> *node) {
+void TriggerSet::load(rapidxml::xml_node<char> *node) {
 	for (rapidxml::xml_node<char> *n = node->first_node("trigger"); n != NULL; n = n->next_sibling("trigger")) {
 		Trigger t(n);
 		statement.push_back(t);

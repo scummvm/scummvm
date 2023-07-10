@@ -44,12 +44,12 @@ struct Range {
 
 	Range() { valid = false; }
 
-	void Load(rapidxml::xml_node<char> *node) {
+	void load(rapidxml::xml_node<char> *node) {
 		if (nodeValid(node, false)) {
-			val[DIRECTION_DOWN].Load(node->first_node("down"));
-			val[DIRECTION_UP].Load(node->first_node("up"));
-			val[DIRECTION_LEFT].Load(node->first_node("left"));
-			val[DIRECTION_RIGHT].Load(node->first_node("right"));
+			val[DIRECTION_DOWN].load(node->first_node("down"));
+			val[DIRECTION_UP].load(node->first_node("up"));
+			val[DIRECTION_LEFT].load(node->first_node("left"));
+			val[DIRECTION_RIGHT].load(node->first_node("right"));
 
 			valid = true;
 		} else

@@ -57,18 +57,18 @@ Button::Button() {
 //------------------------------------------------------------------------
 // Purpose: Load a new Button from a file
 //------------------------------------------------------------------------
-void Button::Load(rapidxml::xml_node<char> *node, const bool &echo) {
-	img.Load(node, echo);
-	Element::Load(node, img.normal, echo);
+void Button::load(rapidxml::xml_node<char> *node, const bool &echo) {
+	img.load(node, echo);
+	Element::load(node, img.normal, echo);
 
 	loadNum(se_click, "click", node, echo);
 	loadNum(se_hover, "hover", node, echo);
 
 	if (nodeValid("hotkey", node, false))
-		hotkey.Load(node->first_node("hotkey"));
+		hotkey.load(node->first_node("hotkey"));
 
-	tooltip.Load(node->first_node("tooltip"), this);
-	caption.Load(node->first_node("caption"), this);
+	tooltip.load(node->first_node("tooltip"), this);
+	caption.load(node->first_node("caption"), this);
 
 	visible = true;
 	canmove = false;

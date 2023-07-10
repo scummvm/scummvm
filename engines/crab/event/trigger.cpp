@@ -34,7 +34,7 @@ namespace Crab {
 
 using namespace pyrodactyl::event;
 
-void Trigger::Load(rapidxml::xml_node<char> *node) {
+void Trigger::load(rapidxml::xml_node<char> *node) {
 	Common::String ty;
 	loadStr(ty, "type", node);
 

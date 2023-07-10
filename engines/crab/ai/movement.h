@@ -49,7 +49,7 @@ struct MovementSet {
 		uint32 _delay;
 
 		Movement(rapidxml::xml_node<char> *node) {
-			_target.Load(node);
+			_target.load(node);
 			loadNum(_delay, "delay", node);
 		}
 	};

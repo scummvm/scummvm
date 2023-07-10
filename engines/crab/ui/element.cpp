@@ -52,14 +52,14 @@ void Element::Init(const int &X, const int &Y, const Align &align_x, const Align
 	}
 }
 
-void Element::BasicLoad(rapidxml::xml_node<char> *node, const bool &echo) {
-	raw.Load(node, echo);
+void Element::Basicload(rapidxml::xml_node<char> *node, const bool &echo) {
+	raw.load(node, echo);
 	loadAlign(align.x, node, echo, "align_x");
 	loadAlign(align.y, node, echo, "align_y");
 }
 
-void Element::Load(rapidxml::xml_node<char> *node, ImageKey img, const bool &echo) {
-	BasicLoad(node, echo);
+void Element::load(rapidxml::xml_node<char> *node, ImageKey img, const bool &echo) {
+	Basicload(node, echo);
 
 	if (node->first_attribute("w") == NULL)
 		w = g_engine->_imageManager->GetTexture(img).W();
@@ -74,8 +74,8 @@ void Element::Load(rapidxml::xml_node<char> *node, ImageKey img, const bool &ech
 	SetUI();
 }
 
-void Element::Load(rapidxml::xml_node<char> *node, Rect *parent, const bool &echo) {
-	BasicLoad(node, echo);
+void Element::load(rapidxml::xml_node<char> *node, Rect *parent, const bool &echo) {
+	Basicload(node, echo);
 	loadNum(w, "w", node, false);
 	loadNum(h, "h", node, false);
 	SetUI(parent);

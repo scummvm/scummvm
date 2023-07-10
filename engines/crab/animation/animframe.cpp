@@ -35,7 +35,7 @@ namespace Crab {
 using namespace pyrodactyl::anim;
 
 void AnimFrame::load(rapidxml::xml_node<char> *node, const Rect &VBOX, const uint32 &rep, const int &AX, const int &AY) {
-	_clip.Load(node);
+	_clip.load(node);
 
 	if (rep == 0)
 		loadNum(_repeat, "repeat", node);
@@ -44,7 +44,7 @@ void AnimFrame::load(rapidxml::xml_node<char> *node, const Rect &VBOX, const uin
 
 	if (AX == 0.0f && AY == 0.0f) {
 		if (nodeValid("anchor", node, false))
-			_anchor.Load(node->first_node("anchor"));
+			_anchor.load(node->first_node("anchor"));
 	} else {
 		_anchor.x = AX;
 		_anchor.y = AY;
@@ -52,7 +52,7 @@ void AnimFrame::load(rapidxml::xml_node<char> *node, const Rect &VBOX, const uin
 
 	if (VBOX.w == 0 || VBOX.h == 0) {
 		if (nodeValid("box_v", node))
-			_boxV.Load(node->first_node("box_v"));
+			_boxV.load(node->first_node("box_v"));
 	} else
 		_boxV = VBOX;
 }
@@ -66,13 +66,13 @@ void AnimationFrames::load(rapidxml::xml_node<char> *node) {
 	loadBool(_random, "random", node, false);
 
 	if (nodeValid("anchor", node, false))
-		_anchor.Load(node->first_node("anchor"));
+		_anchor.load(node->first_node("anchor"));
 
 	if (nodeValid("box_v", node))
-		_boxV.Load(node->first_node("box_v"));
+		_boxV.load(node->first_node("box_v"));
 
 	if (nodeValid("shadow", node)) {
-		_shadow.Load(node->first_node("shadow"));
+		_shadow.load(node->first_node("shadow"));
 		_shadow.valid = true;
 	}
 

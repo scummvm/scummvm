@@ -35,15 +35,15 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
-void ProgressBar::Load(rapidxml::xml_node<char> *node) {
-	ClipButton::Load(node);
+void ProgressBar::load(rapidxml::xml_node<char> *node) {
+	ClipButton::load(node);
 	loadNum(notify_rate, "notify", node);
 
 	if (nodeValid("effect", node)) {
 		rapidxml::xml_node<char> *effnode = node->first_node("effect");
 		loadImgKey(inc, "inc", effnode);
 		loadImgKey(dec, "dec", effnode);
-		offset.Load(effnode);
+		offset.load(effnode);
 	}
 
 	if (nodeValid("desc", node)) {

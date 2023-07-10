@@ -72,7 +72,7 @@ struct PopUp {
 		next = -1;
 		Reset();
 	}
-	PopUp(rapidxml::xml_node<char> *node) : PopUp() { Load(node); }
+	PopUp(rapidxml::xml_node<char> *node) : PopUp() { load(node); }
 
 	void Reset() {
 		show = false;
@@ -81,7 +81,7 @@ struct PopUp {
 		duration.Stop();
 	}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	void Draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop, const Rect &camera);
 
 	// return true if we should proceed to next event, false otherwise
@@ -113,7 +113,7 @@ struct PopUpCollection {
 		return false;
 	}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
 	void InternalEvents(pyrodactyl::event::Info &info, const Common::String &player_id,
 						Common::Array<pyrodactyl::event::EventResult> &result, Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq);

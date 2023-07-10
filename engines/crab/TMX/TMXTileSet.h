@@ -73,10 +73,10 @@ struct TileSet {
 	TileSet() { Init(); }
 	TileSet(const Common::String &path, rapidxml::xml_node<char> *node) {
 		Init();
-		Load(path, node);
+		load(path, node);
 	}
 
-	void Load(const Common::String &path, rapidxml::xml_node<char> *node);
+	void load(const Common::String &path, rapidxml::xml_node<char> *node);
 	void Draw(const Vector2i &pos, const TileInfo &tile);
 	void PreDraw(const Vector2i &pos, const TileInfo &tile, Graphics::ManagedSurface *surf);
 };
@@ -95,7 +95,7 @@ public:
 
 	void Reset();
 
-	void Load(const Common::String &path, rapidxml::xml_node<char> *node);
+	void load(const Common::String &path, rapidxml::xml_node<char> *node);
 	void Draw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos, pyrodactyl::image::Image &img);
 	void PreDraw(MapLayer &layer, const Vector2i &tile_size, Graphics::ManagedSurface *surf);
 	void ForceDraw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos);

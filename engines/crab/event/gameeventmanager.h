@@ -88,7 +88,7 @@ public:
 	~Manager() {}
 
 	void Init();
-	void Load(rapidxml::xml_node<char> *node, pyrodactyl::ui::ParagraphData &popup);
+	void load(rapidxml::xml_node<char> *node, pyrodactyl::ui::ParagraphData &popup);
 
 	void Draw(Info &info, pyrodactyl::ui::HUD &hud, pyrodactyl::level::Level &level);
 

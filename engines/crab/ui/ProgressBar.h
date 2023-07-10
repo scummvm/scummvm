@@ -103,7 +103,7 @@ public:
 		changed = false;
 		type = NONE;
 	}
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
 	void Draw(const int &value, const int &max);
 	void Effect(const int &value, const int &prev);

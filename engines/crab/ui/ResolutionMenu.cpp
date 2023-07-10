@@ -37,19 +37,19 @@ using namespace pyrodactyl::image;
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::ui;
 
-void ResolutionMenu::Load(rapidxml::xml_node<char> *node) {
-	cancel.Load(node->first_node("cancel"));
-	change.Load(node->first_node("change"));
-	custom.Load(node->first_node("custom"));
+void ResolutionMenu::load(rapidxml::xml_node<char> *node) {
+	cancel.load(node->first_node("cancel"));
+	change.load(node->first_node("change"));
+	custom.load(node->first_node("custom"));
 
-	info.Load(node->first_node("info"));
+	info.load(node->first_node("info"));
 	def_info = info.text;
 
 	if (nodeValid("reference", node))
-		ref.Load(node->first_node("reference"));
+		ref.load(node->first_node("reference"));
 
 	if (nodeValid("inc", node)) {
-		inc.Load(node->first_node("inc"));
+		inc.load(node->first_node("inc"));
 		loadNum(columns, "columns", node->first_node("inc"));
 	}
 

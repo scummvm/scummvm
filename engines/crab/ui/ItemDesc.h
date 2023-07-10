@@ -50,12 +50,12 @@ public:
 	ItemDesc() {}
 	~ItemDesc() {}
 
-	void Load(rapidxml::xml_node<char> *node) {
+	void load(rapidxml::xml_node<char> *node) {
 		if (nodeValid("name", node))
-			name.Load(node->first_node("name"));
+			name.load(node->first_node("name"));
 
 		if (nodeValid("desc", node))
-			desc.Load(node->first_node("desc"));
+			desc.load(node->first_node("desc"));
 	}
 
 	void Draw(pyrodactyl::item::Item &item) {

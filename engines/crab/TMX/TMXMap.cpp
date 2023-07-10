@@ -61,7 +61,7 @@ TMXMap::TMXMap() {
 // Purpose: Load stuff via a .tmx file set to xml storage (no compression)
 //------------------------------------------------------------------------
 
-void TMXMap::Load(const Common::String &path, Common::String filename) {
+void TMXMap::load(const Common::String &path, Common::String filename) {
 	XMLDoc conf((path + filename));
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("map");
@@ -99,7 +99,7 @@ void TMXMap::Load(const Common::String &path, Common::String filename) {
 			path_rows = (int)ceil((float)w / (float)path_size.x + .5f); // Adding .5 before casting in order to round up (SZ)
 			path_cols = (int)ceil((float)h / (float)path_size.y + .5f);
 
-			g_engine->_imageManager->tileset.Load(path, node);
+			g_engine->_imageManager->tileset.load(path, node);
 
 			// Reset the layer at which sprites are drawn
 			sprite_layer = 0;
@@ -114,7 +114,7 @@ void TMXMap::Load(const Common::String &path, Common::String filename) {
 				if (name == "layer" || name == "imagelayer") // Is this a tile or an image layer
 				{
 					MapLayer l;
-					l.Load(path, groupnode);
+					l.load(path, groupnode);
 					l.pos.x *= tile_size.x;
 					l.pos.y *= tile_size.y;
 					l.pos.w *= tile_size.x;
@@ -138,17 +138,17 @@ void TMXMap::Load(const Common::String &path, Common::String filename) {
 					} else if (group_name == "walk") {
 						auto n = groupnode->first_node("object");
 						if (n != NULL)
-							area_walk.Load(n, true, "x", "y", "width", "height");
+							area_walk.load(n, true, "x", "y", "width", "height");
 					} else if (group_name == "no_walk") {
 						for (auto n = groupnode->first_node("object"); n != NULL; n = n->next_sibling("object")) {
 							Shape s;
-							s.Load(n);
+							s.load(n);
 							area_nowalk.push_back(s);
 						}
 					} else if (group_name == "trigger") {
 						for (auto n = groupnode->first_node("object"); n != NULL; n = n->next_sibling("object")) {
 							Shape s;
-							s.Load(n);
+							s.load(n);
 
 							unsigned int pos = area_trig.size();
 							loadNum(pos, "name", n);
@@ -161,13 +161,13 @@ void TMXMap::Load(const Common::String &path, Common::String filename) {
 					} else if (group_name == "stairs") {
 						for (auto n = groupnode->first_node("object"); n != NULL; n = n->next_sibling("object")) {
 							pyrodactyl::level::Stairs s;
-							s.Load(n);
+							s.load(n);
 							area_stairs.push_back(s);
 						}
 					} else if (group_name == "music") {
 						for (auto n = groupnode->first_node("object"); n != NULL; n = n->next_sibling("object")) {
 							pyrodactyl::level::MusicArea ma;
-							ma.Load(n);
+							ma.load(n);
 							area_music.push_back(ma);
 						}
 					} else if (group_name == "sprites")
@@ -190,7 +190,7 @@ void TMXMap::Load(const Common::String &path, Common::String filename) {
 //	for (auto n = node->first_node("object"); n != NULL; n = n->next_sibling("object"), ++pos)
 //	{
 //		Vector2i start;
-//		start.Load(n);
+//		start.load(n);
 //
 //		rapidxml::xml_node<char> *linenode = n->first_node("polyline");
 //		if (linenode != NULL)

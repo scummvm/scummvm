@@ -40,20 +40,20 @@ using namespace pyrodactyl::music;
 using namespace pyrodactyl::event;
 using namespace pyrodactyl::people;
 
-void ReplyMenu::Load(const Common::String &filename) {
+void ReplyMenu::load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("conversation");
 		if (nodeValid(node)) {
 			if (nodeValid("tone", node))
-				tone.Load(node->first_node("tone"));
+				tone.load(node->first_node("tone"));
 
 			if (nodeValid("reply", node)) {
 				rapidxml::xml_node<char> *replynode = node->first_node("reply");
-				Menu<ReplyButton>::Load(replynode->first_node("menu"));
+				Menu<ReplyButton>::load(replynode->first_node("menu"));
 				tone.value.resize(element.size());
 
-				bg.Load(replynode->first_node("bg"));
+				bg.load(replynode->first_node("bg"));
 				loadNum(spacing, "spacing", replynode);
 			}
 		}

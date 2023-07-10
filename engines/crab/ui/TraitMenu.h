@@ -72,7 +72,7 @@ public:
 	void Reset() { select = -1; }
 	void Clear();
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	void Draw(const pyrodactyl::people::Person *obj);
 
 	void HandleEvents(pyrodactyl::people::Person *obj, const Common::Event &Event);

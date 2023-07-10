@@ -95,11 +95,11 @@ public:
 	}
 
 	// Load the image
-	bool Load(const Common::String &path);
-	bool Load(rapidxml::xml_node<char> *node, const char *name);
-	bool Load(Graphics::Surface *surface);
-	bool Load(Graphics::ManagedSurface *surface);
-	bool Load(const Image &image, Rect *clip, const TextureFlipType &flip);
+	bool load(const Common::String &path);
+	bool load(rapidxml::xml_node<char> *node, const char *name);
+	bool load(Graphics::Surface *surface);
+	bool load(Graphics::ManagedSurface *surface);
+	bool load(const Image &image, Rect *clip, const TextureFlipType &flip);
 
 
 	// Draw the openGL texture

@@ -53,7 +53,7 @@ void TextManager::Init() {
 		oldest = 0;
 
 		if (nodeValid(node->first_node("padding")))
-			pad_bg.Load(node->first_node("padding"));
+			pad_bg.load(node->first_node("padding"));
 
 		for (auto n = node->first_node("font"); n != NULL; n = n->next_sibling("font")) {
 			rapidxml::xml_attribute<char> *id, *path, *size;
@@ -76,7 +76,7 @@ void TextManager::Init() {
 		}
 	}
 
-	colpool.Load(g_engine->_filePath->colors);
+	colpool.load(g_engine->_filePath->colors);
 }
 
 void TextManager::Reset() {
@@ -163,7 +163,7 @@ void TextManager::Draw(const int &x, const int &y, const Common::String &text, c
 		cache[pos].col = color;
 		cache[pos].font = fontk;
 
-		cache[pos].img.Load(surf);
+		cache[pos].img.load(surf);
 
 		delete surf;
 #if 0

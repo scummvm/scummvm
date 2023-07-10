@@ -49,7 +49,7 @@ public:
 
 	void Init(const HoverInfo &h, const int &XOffset = 0, const int &YOffset = 0);
 
-	void Load(rapidxml::xml_node<char> *node, Rect *parent = NULL);
+	void load(rapidxml::xml_node<char> *node, Rect *parent = NULL);
 	void Draw(const int &XOffset = 0, const int &YOffset = 0);
 };
 } // End of namespace ui

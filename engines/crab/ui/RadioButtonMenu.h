@@ -49,12 +49,12 @@ public:
 	RadioButtonMenu() { select = 0; }
 	~RadioButtonMenu() {}
 
-	void Load(rapidxml::xml_node<char> *node) {
+	void load(rapidxml::xml_node<char> *node) {
 		if (nodeValid("desc", node))
-			desc.Load(node->first_node("desc"));
+			desc.load(node->first_node("desc"));
 
 		if (nodeValid("menu", node))
-			Menu::Load(node->first_node("menu"));
+			Menu::load(node->first_node("menu"));
 	}
 
 	void Draw(const int &XOffset = 0, const int &YOffset = 0) {

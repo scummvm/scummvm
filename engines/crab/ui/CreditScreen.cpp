@@ -43,54 +43,54 @@ void CreditScreen::Reset() {
 	speed.cur = speed.slow;
 }
 
-void CreditScreen::Load(const Common::String &filename) {
+void CreditScreen::load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("credits");
 
 		if (nodeValid("bg", node))
-			bg.Load(node->first_node("bg"));
+			bg.load(node->first_node("bg"));
 
 		if (nodeValid("h", node))
-			heading.Load(node->first_node("h"));
+			heading.load(node->first_node("h"));
 
 		if (nodeValid("p", node))
-			paragraph.Load(node->first_node("p"));
+			paragraph.load(node->first_node("p"));
 
 		if (nodeValid("logo", node))
-			logo.Load(node->first_node("logo"));
+			logo.load(node->first_node("logo"));
 
 		if (nodeValid("website", node))
-			website.Load(node->first_node("website"), false);
+			website.load(node->first_node("website"), false);
 
 		if (nodeValid("twitter", node))
-			twitter.Load(node->first_node("twitter"), false);
+			twitter.load(node->first_node("twitter"), false);
 
 		if (nodeValid("twitter", node))
-			back.Load(node->first_node("back"));
+			back.load(node->first_node("back"));
 
 		if (nodeValid("fast", node)) {
 			rapidxml::xml_node<char> *fnode = node->first_node("fast");
-			fast.Load(fnode);
+			fast.load(fnode);
 			loadNum(speed.fast, "val", fnode);
 		}
 
 		if (nodeValid("slow", node)) {
 			rapidxml::xml_node<char> *snode = node->first_node("slow");
-			slow.Load(snode);
+			slow.load(snode);
 			loadNum(speed.slow, "val", snode);
 		}
 
 		if (nodeValid("reverse", node)) {
 			rapidxml::xml_node<char> *rnode = node->first_node("reverse");
-			reverse.Load(rnode);
+			reverse.load(rnode);
 			loadNum(speed.reverse, "val", rnode);
 		}
 
 		speed.cur = speed.slow;
 
 		if (nodeValid("pause", node))
-			pause.Load(node->first_node("pause"));
+			pause.load(node->first_node("pause"));
 
 		if (nodeValid("text", node)) {
 			rapidxml::xml_node<char> *tnode = node->first_node("text");

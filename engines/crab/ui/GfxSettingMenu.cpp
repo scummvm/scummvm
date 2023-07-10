@@ -38,29 +38,29 @@ using namespace pyrodactyl::ui;
 //------------------------------------------------------------------------
 // Purpose: Load components from file
 //------------------------------------------------------------------------
-void GfxSettingMenu::Load(rapidxml::xml_node<char> *node) {
+void GfxSettingMenu::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("resolution", node))
-		resolution.Load(node->first_node("resolution"));
+		resolution.load(node->first_node("resolution"));
 
 	if (nodeValid("fullscreen", node))
-		fullscreen.Load(node->first_node("fullscreen"));
+		fullscreen.load(node->first_node("fullscreen"));
 
 	if (nodeValid("vsync", node))
-		vsync.Load(node->first_node("vsync"));
+		vsync.load(node->first_node("vsync"));
 
 	if (nodeValid("border", node))
-		border.Load(node->first_node("border"));
+		border.load(node->first_node("border"));
 
 	if (nodeValid("quality", node)) {
 		rapidxml::xml_node<char> *qnode = node->first_node("quality");
-		quality.Load(qnode);
+		quality.load(qnode);
 
 		if (nodeValid("message", qnode))
-			notice_quality.Load(qnode->first_node("message"), &quality);
+			notice_quality.load(qnode->first_node("message"), &quality);
 	}
 
 	if (nodeValid("brightness", node))
-		brightness.Load(node->first_node("brightness"), 0, 100, g_engine->_screenSettings->gamma * 100);
+		brightness.load(node->first_node("brightness"), 0, 100, g_engine->_screenSettings->gamma * 100);
 }
 
 //------------------------------------------------------------------------

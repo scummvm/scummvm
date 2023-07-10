@@ -55,7 +55,7 @@ public:
 	GeneralSettingMenu() {}
 	~GeneralSettingMenu() {}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
 	void HandleEvents(const Common::Event &Event);
 #if 0

@@ -36,14 +36,14 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
-void GameOverMenu::Load(rapidxml::xml_node<char> *node) {
+void GameOverMenu::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
 		if (nodeValid("bg", node))
-			bg.Load(node->first_node("bg"));
+			bg.load(node->first_node("bg"));
 
 		if (nodeValid("title", node)) {
 			rapidxml::xml_node<char> *tinode = node->first_node("title");
-			title.Load(tinode);
+			title.load(tinode);
 
 			for (auto n = tinode->first_node("quote"); n != NULL; n = n->next_sibling("quote")) {
 				Common::String str;
@@ -52,7 +52,7 @@ void GameOverMenu::Load(rapidxml::xml_node<char> *node) {
 			}
 		}
 
-		menu.Load(node->first_node("menu"));
+		menu.load(node->first_node("menu"));
 	}
 }
 

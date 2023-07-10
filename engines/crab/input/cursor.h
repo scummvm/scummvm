@@ -82,7 +82,7 @@ public:
 
 	void Reset();
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	void HandleEvents(const Common::Event &event);
 
 	void Draw();

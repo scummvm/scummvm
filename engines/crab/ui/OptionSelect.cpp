@@ -36,11 +36,11 @@ namespace Crab {
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::ui;
 
-void OptionSelect::Load(rapidxml::xml_node<char> *node) {
+void OptionSelect::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
-		option.data.Load(node);
-		prev.Load(node->first_node("prev"));
-		next.Load(node->first_node("next"));
+		option.data.load(node);
+		prev.load(node->first_node("prev"));
+		next.load(node->first_node("next"));
 		cur = 0;
 
 		option.text.clear();

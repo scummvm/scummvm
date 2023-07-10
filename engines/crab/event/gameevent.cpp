@@ -42,7 +42,7 @@ GameEvent::GameEvent() {
 	state = PST_NORMAL;
 }
 
-void GameEvent::Load(rapidxml::xml_node<char> *node) {
+void GameEvent::load(rapidxml::xml_node<char> *node) {
 	if (!LoadEventID(id, "id", node))
 		id = 0;
 
@@ -73,7 +73,7 @@ void GameEvent::Load(rapidxml::xml_node<char> *node) {
 		special = 0;
 	}
 
-	trig.Load(node);
+	trig.load(node);
 
 	next.clear();
 	for (rapidxml::xml_node<char> *i = node->first_node("next"); i != NULL; i = i->next_sibling("next"))
@@ -83,7 +83,7 @@ void GameEvent::Load(rapidxml::xml_node<char> *node) {
 	effect.clear();
 	for (rapidxml::xml_node<char> *it = node->first_node("effect"); it != NULL; it = it->next_sibling("effect")) {
 		Effect e;
-		e.Load(it);
+		e.load(it);
 		effect.push_back(e);
 	}
 }

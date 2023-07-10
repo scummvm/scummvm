@@ -55,7 +55,7 @@ bool App::Init() {
 #endif
 
 	// Load paths for important files
-	g_engine->_filePath->Load("res/paths.xml");
+	g_engine->_filePath->load("res/paths.xml");
 
 	// Initialize Steam
 	// SteamAPI_Init();
@@ -98,7 +98,7 @@ bool App::Init() {
 		return false;
 
 	// Set the window icon
-	SDL_Surface *icon = IMG_Load(g_engine->_filePath->icon.c_str());
+	SDL_Surface *icon = IMG_load(g_engine->_filePath->icon.c_str());
 	SDL_SetWindowIcon(gWindow, icon);
 	SDL_FreeSurface(icon);
 
@@ -311,11 +311,11 @@ void App::LoadSettings(const Common::String &filename) {
 
 			// Load screen settings
 			if (nodeValid("screen", node))
-				g_engine->_screenSettings->Load(node->first_node("screen"));
+				g_engine->_screenSettings->load(node->first_node("screen"));
 
 			// Start the sound subsystem
 #if 0
-			g_engine->_musicManager->Load(node);
+			g_engine->_musicManager->load(node);
 #endif
 		}
 	}

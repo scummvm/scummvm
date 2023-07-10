@@ -37,22 +37,22 @@ using namespace pyrodactyl::event;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::people;
 
-void PersonScreen::Load(const Common::String &filename) {
+void PersonScreen::load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("character");
 		if (nodeValid(node)) {
 			if (nodeValid("bg", node))
-				bg.Load(node->first_node("bg"));
+				bg.load(node->first_node("bg"));
 
 			if (nodeValid("name", node))
-				name.Load(node->first_node("name"));
+				name.load(node->first_node("name"));
 
 			if (nodeValid("img", node))
-				img.Load(node->first_node("img"));
+				img.load(node->first_node("img"));
 
 			if (nodeValid("menu", node))
-				menu.Load(node->first_node("menu"));
+				menu.load(node->first_node("menu"));
 		}
 	}
 }

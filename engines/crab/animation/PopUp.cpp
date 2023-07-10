@@ -38,9 +38,9 @@ using namespace pyrodactyl::event;
 //------------------------------------------------------------------------
 // Purpose: Load from xml
 //------------------------------------------------------------------------
-void PopUp::Load(rapidxml::xml_node<char> *node) {
-	duration.Load(node, "duration", false);
-	delay.Load(node, "delay");
+void PopUp::load(rapidxml::xml_node<char> *node) {
+	duration.load(node, "duration", false);
+	delay.load(node, "delay");
 	loadStr(text, "text", node);
 	loadNum(next, "next", node);
 
@@ -49,17 +49,17 @@ void PopUp::Load(rapidxml::xml_node<char> *node) {
 	if (end)
 		next = -1;
 
-	visible.Load(node);
+	visible.load(node);
 
 	effect.clear();
 	for (rapidxml::xml_node<char> *n = node->first_node("effect"); n != NULL; n = n->next_sibling("effect")) {
 		Effect e;
-		e.Load(n);
+		e.load(n);
 		effect.push_back(e);
 	}
 }
 
-void PopUpCollection::Load(rapidxml::xml_node<char> *node) {
+void PopUpCollection::load(rapidxml::xml_node<char> *node) {
 	loadBool(loop, "loop", node);
 	for (auto n = node->first_node("dialog"); n != NULL; n = n->next_sibling("dialog"))
 		element.push_back(n);

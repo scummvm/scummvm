@@ -34,7 +34,7 @@ namespace Crab {
 
 using namespace pyrodactyl::ui;
 
-void MapData::Load(rapidxml::xml_node<char> *node) {
+void MapData::load(rapidxml::xml_node<char> *node) {
 	loadStr(path_bg, "bg", node);
 	loadStr(path_overlay, "overlay", node);
 }
@@ -70,7 +70,7 @@ void MapData::LoadState(rapidxml::xml_node<char> *node) {
 		rapidxml::xml_node<char> *clipnode = node->first_node("clip");
 		for (rapidxml::xml_node<char> *n = clipnode->first_node("rect"); n != NULL; n = n->next_sibling("rect")) {
 			Rect r;
-			r.Load(n);
+			r.load(n);
 			reveal.push_back(r);
 		}
 	}
@@ -81,7 +81,7 @@ void MapData::LoadState(rapidxml::xml_node<char> *node) {
 		for (rapidxml::xml_node<char> *n = destnode->first_node("pos"); n != NULL; n = n->next_sibling("pos")) {
 			MarkerData md;
 			loadStr(md.name, "name", n);
-			md.pos.Load(n);
+			md.pos.load(n);
 			dest.push_back(md);
 		}
 	}

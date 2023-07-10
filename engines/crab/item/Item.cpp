@@ -41,7 +41,7 @@ using namespace pyrodactyl::people;
 //------------------------------------------------------------------------
 // Purpose: Load
 //------------------------------------------------------------------------
-void Item::Load(rapidxml::xml_node<char> *node) {
+void Item::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
 		loadStr(id, "id", node);
 		loadStr(name, "name", node);
@@ -52,7 +52,7 @@ void Item::Load(rapidxml::xml_node<char> *node) {
 		bonus.clear();
 		for (auto n = node->first_node("bonus"); n != NULL; n = n->next_sibling("bonus")) {
 			Bonus b;
-			b.Load(n);
+			b.load(n);
 			bonus.push_back(b);
 		}
 	}

@@ -41,10 +41,10 @@ FlyerConstant::FlyerConstant() : _start(10, 40), _vel(8.0f, 0.0f) {
 
 void FlyerConstant::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("start", node))
-		_start.Load(node->first_node("start"));
+		_start.load(node->first_node("start"));
 
 	if (nodeValid("vel", node))
-		_vel.Load(node->first_node("vel"));
+		_vel.load(node->first_node("vel"));
 
 	if (nodeValid("delay", node)) {
 		auto n = node->first_node("delay");
@@ -63,7 +63,7 @@ void SpriteConstant::load(rapidxml::xml_node<char> *node) {
 	loadNum(_tweening, "tweening", node);
 
 	if (nodeValid("_walkVelMod", node))
-		_walkVelMod.Load(node->first_node("_walkVelMod"));
+		_walkVelMod.load(node->first_node("_walkVelMod"));
 
 	if (nodeValid("fly", node))
 		_fly.load(node->first_node("fly"));

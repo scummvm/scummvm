@@ -35,7 +35,7 @@ namespace Crab {
 
 using namespace pyrodactyl::ui;
 
-void TraitMenu::Load(rapidxml::xml_node<char> *node) {
+void TraitMenu::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("dim", node)) {
 		rapidxml::xml_node<char> *dimnode = node->first_node("dim");
 		loadNum(rows, "rows", dimnode);
@@ -44,13 +44,13 @@ void TraitMenu::Load(rapidxml::xml_node<char> *node) {
 	}
 
 	if (nodeValid("ref", node))
-		ref.Load(node->first_node("ref"));
+		ref.load(node->first_node("ref"));
 
 	if (nodeValid("inc", node))
-		inc.Load(node->first_node("inc"));
+		inc.load(node->first_node("inc"));
 
 	if (nodeValid("desc", node))
-		desc.Load(node->first_node("desc"));
+		desc.load(node->first_node("desc"));
 
 	for (unsigned int i = 0; i < size; ++i) {
 		TraitButton b;

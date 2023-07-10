@@ -50,33 +50,33 @@ QuestMenu::QuestMenu() {
 //------------------------------------------------------------------------
 // Purpose: Load layout from file
 //------------------------------------------------------------------------
-void QuestMenu::Load(rapidxml::xml_node<char> *node) {
+void QuestMenu::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
 		if (nodeValid("menu", node))
-			menu.Load(node->first_node("menu"));
+			menu.load(node->first_node("menu"));
 
 		if (nodeValid("tab", node)) {
 			rapidxml::xml_node<char> *tabnode = node->first_node("tab");
 			loadNum(font, "font", tabnode);
 			loadAlign(align, tabnode);
-			off_title.Load(tabnode);
-			off_unread.Load(tabnode->first_node("unread"));
+			off_title.load(tabnode);
+			off_unread.load(tabnode->first_node("unread"));
 
 			if (nodeValid("normal", tabnode)) {
 				rapidxml::xml_node<char> *nornode = tabnode->first_node("normal");
-				img_n.Load(nornode);
+				img_n.load(nornode);
 				//loadColor(col_n, nornode);
 			}
 
 			if (nodeValid("select", tabnode)) {
 				rapidxml::xml_node<char> *selnode = tabnode->first_node("select");
-				img_s.Load(selnode);
+				img_s.load(selnode);
 				//loadColor(col_s, selnode);
 			}
 		}
 
 		if (nodeValid("text", node))
-			text.Load(node->first_node("text"));
+			text.load(node->first_node("text"));
 	}
 }
 

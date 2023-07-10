@@ -74,7 +74,7 @@ public:
 		w = 0;
 		h = 0;
 	}
-	bool Load(rapidxml::xml_node<char> *node);
+	bool load(rapidxml::xml_node<char> *node);
 };
 
 // Currently we just use one general purpose layer object instead of multiple inherited classes and stuff
@@ -105,7 +105,7 @@ public:
 		type = LAYER_NORMAL;
 		collide = false;
 	}
-	bool Load(const Common::String &path, rapidxml::xml_node<char> *node);
+	bool load(const Common::String &path, rapidxml::xml_node<char> *node);
 };
 } // End of namespace TMX
 

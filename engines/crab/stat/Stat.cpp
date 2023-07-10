@@ -69,20 +69,20 @@ const char *StatTypeToString(const StatType &val) {
 
 using namespace pyrodactyl::stat;
 
-void Stat::Load(rapidxml::xml_node<char> *node) {
+void Stat::load(rapidxml::xml_node<char> *node) {
 	loadNum(cur, "cur", node);
 	loadNum(def, "def", node);
 	loadNum(min, "min", node);
 	loadNum(max, "max", node);
 }
 
-void StatGroup::Load(rapidxml::xml_node<char> *node) {
-	val[STAT_HEALTH].Load(node->first_node(STATNAME_HEALTH));
-	val[STAT_ATTACK].Load(node->first_node(STATNAME_ATTACK));
-	val[STAT_DEFENSE].Load(node->first_node(STATNAME_DEFENSE));
-	val[STAT_SPEED].Load(node->first_node(STATNAME_SPEED));
-	/*val[STAT_CHARISMA].Load(node->first_node(STATNAME_CHARISMA));
-	val[STAT_INTELLIGENCE].Load(node->first_node(STATNAME_INTELLIGENCE));*/
+void StatGroup::load(rapidxml::xml_node<char> *node) {
+	val[STAT_HEALTH].load(node->first_node(STATNAME_HEALTH));
+	val[STAT_ATTACK].load(node->first_node(STATNAME_ATTACK));
+	val[STAT_DEFENSE].load(node->first_node(STATNAME_DEFENSE));
+	val[STAT_SPEED].load(node->first_node(STATNAME_SPEED));
+	/*val[STAT_CHARISMA].load(node->first_node(STATNAME_CHARISMA));
+	val[STAT_INTELLIGENCE].load(node->first_node(STATNAME_INTELLIGENCE));*/
 }
 
 void StatGroup::Change(const StatType &type, const int &change) {

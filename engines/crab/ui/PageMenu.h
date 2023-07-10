@@ -139,27 +139,27 @@ public:
 		info += NumberToString(menu.size());
 	}
 
-	void Load(rapidxml::xml_node<char> *node) {
+	void load(rapidxml::xml_node<char> *node) {
 		using namespace pyrodactyl::input;
 		if (nodeValid(node)) {
 			if (nodeValid("prev", node)) {
-				prev.Load(node->first_node("prev"));
+				prev.load(node->first_node("prev"));
 				prev.hotkey.Set(IU_PREV);
 			}
 
 			if (nodeValid("next", node)) {
-				next.Load(node->first_node("next"));
+				next.load(node->first_node("next"));
 				next.hotkey.Set(IU_NEXT);
 			}
 
 			if (nodeValid("reference", node))
-				ref.Load(node->first_node("reference"));
+				ref.load(node->first_node("reference"));
 
 			if (nodeValid("inc", node))
-				inc.Load(node->first_node("inc"));
+				inc.load(node->first_node("inc"));
 
 			if (nodeValid("status", node))
-				status.Load(node->first_node("status"));
+				status.load(node->first_node("status"));
 
 			if (nodeValid("dim", node)) {
 				rapidxml::xml_node<char> *dimnode = node->first_node("dim");

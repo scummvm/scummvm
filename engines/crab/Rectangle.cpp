@@ -32,7 +32,7 @@
 
 namespace Crab {
 
-bool Rect::Load(rapidxml::xml_node<char> *node, const bool &echo, const Common::String &x_name, const Common::String &y_name,
+bool Rect::load(rapidxml::xml_node<char> *node, const bool &echo, const Common::String &x_name, const Common::String &y_name,
 				const Common::String &w_name, const Common::String &h_name) {
 	return loadNum(x, x_name, node, echo) && loadNum(y, y_name, node, echo) && loadNum(w, w_name, node, echo) && loadNum(h, h_name, node, echo);
 }

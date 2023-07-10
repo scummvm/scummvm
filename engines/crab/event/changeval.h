@@ -52,9 +52,9 @@ struct ChangeVal {
 		val[OPI_FEAR] = 0;
 	}
 
-	ChangeVal(rapidxml::xml_node<char> *node) : ChangeVal() { Load(node); }
+	ChangeVal(rapidxml::xml_node<char> *node) : ChangeVal() { load(node); }
 
-	void Load(rapidxml::xml_node<char> *node) {
+	void load(rapidxml::xml_node<char> *node) {
 		using namespace pyrodactyl::people;
 		loadStr(id, "id", node);
 		loadNum(val[OPI_LIKE], "like", node);

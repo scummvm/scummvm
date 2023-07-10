@@ -34,8 +34,8 @@ namespace Crab {
 
 using namespace pyrodactyl::level;
 
-void Exit::Load(rapidxml::xml_node<char> *node) {
-	dim.Load(node);
+void Exit::load(rapidxml::xml_node<char> *node) {
+	dim.load(node);
 	loadStr(name, "name", node);
 
 	if (nodeValid("properties", node)) {

@@ -63,7 +63,7 @@ public:
 
 	const char *Name();
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
 	bool HandleEvents(const Common::Event &Event);
 

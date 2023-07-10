@@ -32,12 +32,12 @@
 
 namespace Crab {
 
-void Shape::Load(rapidxml::xml_node<char> *node, const bool &echo) {
+void Shape::load(rapidxml::xml_node<char> *node, const bool &echo) {
 	if (nodeValid("polygon", node, echo)) {
 		type = SHAPE_POLYGON;
-		poly.Load(node, rect);
+		poly.load(node, rect);
 	} else {
-		rect.Load(node, echo, "x", "y", "width", "height");
+		rect.load(node, echo, "x", "y", "width", "height");
 		if (nodeValid("ellipse", node, echo))
 			type = SHAPE_ELLIPSE;
 		else

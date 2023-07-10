@@ -66,7 +66,7 @@ public:
 	}
 	~Slider() {}
 
-	void Load(rapidxml::xml_node<char> *node, const int &Min, const int &Max, const int &Val);
+	void load(rapidxml::xml_node<char> *node, const int &Min, const int &Max, const int &Val);
 
 	bool HandleEvents(const Common::Event &Event);
 #if 0

@@ -106,7 +106,7 @@ struct Effect {
 	Effect() { type = EFF_VAR; }
 	~Effect() {}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	bool Execute(pyrodactyl::event::Info &info, const Common::String &player_id,
 				 Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq);
 

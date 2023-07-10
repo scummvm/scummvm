@@ -77,7 +77,7 @@ public:
 		lines_per_page = 10;
 	}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
 	// Reset the value of current page
 	void Reset() { current_page = 0; }

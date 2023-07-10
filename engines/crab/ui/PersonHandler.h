@@ -57,7 +57,7 @@ class PersonHandler {
 			y = ALIGN_RIGHT;
 		}
 
-		void Load(rapidxml::xml_node<char> *node, const bool &echo = true) {
+		void load(rapidxml::xml_node<char> *node, const bool &echo = true) {
 			loadAlign(x, node, echo, "align_x");
 			loadAlign(y, node, echo, "align_y");
 		}
@@ -87,7 +87,7 @@ public:
 
 	void Reset(const Common::String &id);
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
 	// Handle events for the three opinion bars and journal - used in both dialog box and reply events
 	bool HandleCommonEvents(const Common::Event &Event);

@@ -40,7 +40,7 @@ using namespace pyrodactyl::input;
 //------------------------------------------------------------------------
 // Purpose: Load stuff that can't be modified by the user
 //------------------------------------------------------------------------
-void Map::Load(const Common::String &filename, pyrodactyl::event::Info &info) {
+void Map::load(const Common::String &filename, pyrodactyl::event::Info &info) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("map");
@@ -54,7 +54,7 @@ void Map::Load(const Common::String &filename, pyrodactyl::event::Info &info) {
 			}
 
 			if (nodeValid("fg", node))
-				fg.Load(node->first_node("fg"));
+				fg.load(node->first_node("fg"));
 
 			if (nodeValid("dim", node)) {
 				loadNum(camera.w, "x", node->first_node("dim"));
@@ -62,22 +62,22 @@ void Map::Load(const Common::String &filename, pyrodactyl::event::Info &info) {
 			}
 
 			if (nodeValid("pos", node))
-				pos.Load(node->first_node("pos"));
+				pos.load(node->first_node("pos"));
 
 			if (nodeValid("scroll", node))
-				scroll.Load(node->first_node("scroll"));
+				scroll.load(node->first_node("scroll"));
 
 			if (nodeValid("marker", node))
-				marker.Load(node->first_node("marker"));
+				marker.load(node->first_node("marker"));
 
 			if (nodeValid("title", node))
-				title.Load(node->first_node("title"));
+				title.load(node->first_node("title"));
 
 			if (nodeValid("locations", node))
-				travel.Load(node->first_node("locations"));
+				travel.load(node->first_node("locations"));
 
 			if (nodeValid("overlay", node))
-				bu_overlay.Load(node->first_node("overlay"));
+				bu_overlay.load(node->first_node("overlay"));
 		}
 	}
 
@@ -389,8 +389,8 @@ void Map::SetImage(const unsigned int &val, const bool &force) {
 		img_bg.Delete();
 		img_overlay.Delete();
 
-		img_bg.Load(map[cur].path_bg);
-		img_overlay.Load(map[cur].path_overlay);
+		img_bg.load(map[cur].path_bg);
+		img_overlay.load(map[cur].path_overlay);
 
 		size.x = img_bg.W();
 		size.y = img_bg.H();

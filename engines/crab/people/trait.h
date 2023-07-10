@@ -62,11 +62,11 @@ struct Trait {
 		img = 0;
 		unread = true;
 	}
-	Trait(rapidxml::xml_node<char> *node) { Load(node); }
+	Trait(rapidxml::xml_node<char> *node) { load(node); }
 	~Trait() {}
 
 	void Clear();
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *rootname);
 };
 } // End of namespace people

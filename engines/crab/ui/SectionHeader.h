@@ -61,7 +61,7 @@ public:
 	}
 	~SectionHeader() {}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
 	void Draw(const int &XOffset = 0, const int &YOffset = 0);
 	void Draw(const Common::String &str, const int &XOffset = 0, const int &YOffset = 0);

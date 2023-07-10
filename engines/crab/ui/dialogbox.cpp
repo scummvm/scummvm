@@ -45,16 +45,16 @@ using namespace pyrodactyl::input;
 //------------------------------------------------------------------------
 // Purpose: Load stuff
 //------------------------------------------------------------------------
-void GameDialogBox::Load(rapidxml::xml_node<char> *node) {
+void GameDialogBox::load(rapidxml::xml_node<char> *node) {
 	loadImgKey(bg, "bg", node);
 	loadImgKey(bg_p, "bg_p", node);
-	pos.Load(node, bg);
+	pos.load(node, bg);
 
 	if (nodeValid("text", node))
-		text.Load(node->first_node("text"), &pos);
+		text.load(node->first_node("text"), &pos);
 
 	if (nodeValid("button", node))
-		button.Load(node->first_node("button"));
+		button.load(node->first_node("button"));
 }
 
 //------------------------------------------------------------------------

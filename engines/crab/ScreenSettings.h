@@ -147,7 +147,7 @@ public:
 	void SetGamma() { }//SDL_SetWindowBrightness(gWindow, gamma); }
 	void SetMouseTrap();
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 };
 

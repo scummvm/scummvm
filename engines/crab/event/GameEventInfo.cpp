@@ -49,11 +49,11 @@ using namespace pyrodactyl::event;
 //------------------------------------------------------------------------
 // Purpose: Load from xml
 //------------------------------------------------------------------------
-void Info::Load(rapidxml::xml_node<char> *node) {
+void Info::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("people", node)) {
 		rapidxml::xml_node<char> *pnode = node->first_node("people");
 
-		stem.Load(pnode->first_attribute("templates")->value());
+		stem.load(pnode->first_attribute("templates")->value());
 
 		XMLDoc conf(pnode->first_attribute("list")->value());
 		if (conf.ready()) {
@@ -69,11 +69,11 @@ void Info::Load(rapidxml::xml_node<char> *node) {
 	}
 
 	if (nodeValid("objective", node))
-		journal.Load(node->first_node("objective")->first_attribute("layout")->value());
+		journal.load(node->first_node("objective")->first_attribute("layout")->value());
 
 	if (nodeValid("inventory", node)) {
 		rapidxml::xml_node<char> *inode = node->first_node("inventory");
-		inv.Load(inode->first_attribute("layout")->value());
+		inv.load(inode->first_attribute("layout")->value());
 	}
 
 	CurLocID(node->first_node("level")->first_attribute("start")->value());
@@ -88,7 +88,7 @@ void Info::LoadPeople(const Common::String &filename) {
 			for (auto n = node->first_node(); n != NULL; n = n->next_sibling()) {
 				Common::String str;
 				loadStr(str, "id", n);
-				people[str].Load(n, stem);
+				people[str].load(n, stem);
 			}
 		}
 	}

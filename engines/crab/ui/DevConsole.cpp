@@ -34,31 +34,31 @@ namespace Crab {
 
 using namespace pyrodactyl::ui;
 
-void DebugConsole::Load(const Common::String &filename) {
+void DebugConsole::load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("debug");
 		if (nodeValid(node)) {
 			if (nodeValid("menu", node))
-				menu.Load(node->first_node("menu"));
+				menu.load(node->first_node("menu"));
 
 			if (nodeValid("variable", node)) {
 				rapidxml::xml_node<char> *varnode = node->first_node("variable");
 
 				if (nodeValid("bg", varnode))
-					bg.Load(varnode->first_node("bg"));
+					bg.load(varnode->first_node("bg"));
 
 				if (nodeValid("check", varnode))
-					check.Load(varnode->first_node("check"));
+					check.load(varnode->first_node("check"));
 
 				if (nodeValid("back", varnode))
-					back.Load(varnode->first_node("back"));
+					back.load(varnode->first_node("back"));
 
 				if (nodeValid("value", varnode))
-					value.Load(varnode->first_node("value"));
+					value.load(varnode->first_node("value"));
 
 				if (nodeValid("text", varnode))
-					text_field.Load(varnode->first_node("text"));
+					text_field.load(varnode->first_node("text"));
 			}
 		}
 	}

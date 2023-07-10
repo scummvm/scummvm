@@ -34,20 +34,20 @@ namespace Crab {
 
 using namespace pyrodactyl::ui;
 
-void ModMenu::Load(const Common::String &filename) {
+void ModMenu::load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("mod_menu");
 
 		if (nodeValid("bg", node))
-			bg.Load(node->first_node("bg"));
+			bg.load(node->first_node("bg"));
 
 		if (nodeValid("menu", node))
-			menu.Load(node->first_node("menu"));
+			menu.load(node->first_node("menu"));
 
 		if (nodeValid("preview", node)) {
 			auto prnode = node->first_node("preview");
-			img.pos.Load(prnode);
+			img.pos.load(prnode);
 			loadStr(img.no_preview_path, "path", prnode);
 		}
 
@@ -55,20 +55,20 @@ void ModMenu::Load(const Common::String &filename) {
 			rapidxml::xml_node<char> *offnode = node->first_node("offset");
 
 			// Stuff displayed on the slot button
-			td_b[DATA_SAVENAME].Load(offnode->first_node("mod_name"));
-			td_b[DATA_LASTMODIFIED].Load(offnode->first_node("last_modified"));
+			td_b[DATA_SAVENAME].load(offnode->first_node("mod_name"));
+			td_b[DATA_LASTMODIFIED].load(offnode->first_node("last_modified"));
 
 			// Stuff displayed when you hover over a slot button
-			td_h[DATA_AUTHOR].Load(offnode->first_node("author"));
-			td_h[DATA_VERSION].Load(offnode->first_node("version"));
-			td_h[DATA_INFO].Load(offnode->first_node("info"));
-			td_h[DATA_WEBSITE].Load(offnode->first_node("website"));
+			td_h[DATA_AUTHOR].load(offnode->first_node("author"));
+			td_h[DATA_VERSION].load(offnode->first_node("version"));
+			td_h[DATA_INFO].load(offnode->first_node("info"));
+			td_h[DATA_WEBSITE].load(offnode->first_node("website"));
 
 			// Titles for the stuff displayed when you hover over a slot button
-			hov[DATA_AUTHOR].Load(offnode->first_node("author_title"));
-			hov[DATA_VERSION].Load(offnode->first_node("info_title"));
-			hov[DATA_INFO].Load(offnode->first_node("version_title"));
-			hov[DATA_WEBSITE].Load(offnode->first_node("website_title"));
+			hov[DATA_AUTHOR].load(offnode->first_node("author_title"));
+			hov[DATA_VERSION].load(offnode->first_node("info_title"));
+			hov[DATA_INFO].load(offnode->first_node("version_title"));
+			hov[DATA_WEBSITE].load(offnode->first_node("website_title"));
 		}
 
 		extension = g_engine->_filePath->mod_ext;
@@ -114,8 +114,8 @@ void ModMenu::Draw() {
 		if (!img.loaded || prev_hover != i) {
 			img.loaded = true;
 			prev_hover = i;
-			if (!img.preview.Load(slot_info[i].preview))
-				img.preview.Load(img.no_preview_path);
+			if (!img.preview.load(slot_info[i].preview))
+				img.preview.load(img.no_preview_path);
 		}
 
 		hover = true;

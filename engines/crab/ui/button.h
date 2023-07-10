@@ -64,7 +64,7 @@ struct ButtonImage {
 		hover = 0;
 	}
 
-	void Load(rapidxml::xml_node<char> *node, const bool &echo = true) {
+	void load(rapidxml::xml_node<char> *node, const bool &echo = true) {
 		if (nodeValid(node)) {
 			loadImgKey(normal, "img_b", node, echo);
 			loadImgKey(select, "img_s", node, echo);
@@ -109,7 +109,7 @@ public:
 	void Reset();
 	void SetUI(Rect *parent = NULL);
 
-	void Load(rapidxml::xml_node<char> *node, const bool &echo = true);
+	void load(rapidxml::xml_node<char> *node, const bool &echo = true);
 	void Init(const Button &ref, const int &XOffset = 0, const int &YOffset = 0);
 
 	void Img(Button &b) { img = b.img; }

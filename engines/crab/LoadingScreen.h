@@ -43,7 +43,7 @@ class LoadingScreen {
 		// The background image
 		pyrodactyl::image::Image bg;
 
-		Screen(rapidxml::xml_node<char> *node) { bg.Load(node, "bg"); }
+		Screen(rapidxml::xml_node<char> *node) { bg.load(node, "bg"); }
 		void Delete() { bg.Delete(); }
 		void Draw() { bg.Draw((g_engine->_screenSettings->cur.w - bg.W()) / 2, (g_engine->_screenSettings->cur.h - bg.H()) / 2); }
 	};
@@ -65,7 +65,7 @@ public:
 		cur = g_engine->getRandomNumber(screen.size() - 1);
 	}
 
-	void Load();
+	void load();
 	void Draw();
 	void Dim();
 	void Quit();

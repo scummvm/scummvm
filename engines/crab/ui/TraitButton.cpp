@@ -42,11 +42,11 @@ void TraitButton::Init(const TraitButton &ref, const int &XOffset, const int &YO
 	offset = ref.offset;
 }
 
-void TraitButton::Load(rapidxml::xml_node<char> *node, const bool &echo) {
-	StateButton::Load(node, echo);
+void TraitButton::load(rapidxml::xml_node<char> *node, const bool &echo) {
+	StateButton::load(node, echo);
 
 	if (nodeValid("offset", node))
-		offset.Load(node->first_node("offset"), echo);
+		offset.load(node->first_node("offset"), echo);
 }
 
 void TraitButton::Draw(const int &XOffset, const int &YOffset, Rect *clip) {

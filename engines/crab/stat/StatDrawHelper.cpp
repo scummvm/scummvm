@@ -37,15 +37,15 @@ using namespace pyrodactyl::text;
 using namespace pyrodactyl::stat;
 using namespace pyrodactyl::people;
 
-void StatInfo::Load(rapidxml::xml_node<char> *node) {
+void StatInfo::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
 		loadBool(active, "active", node);
-		desc.Load(node->first_node("info"));
+		desc.load(node->first_node("info"));
 		loadStr(text, "text", node->first_node("info"));
 
 		if (nodeValid("value", node)) {
 			rapidxml::xml_node<char> *valuenode = node->first_node("value");
-			dim.Load(valuenode);
+			dim.load(valuenode);
 			loadImgKey(full, "full", valuenode);
 			loadImgKey(empty, "empty", valuenode);
 		}
@@ -65,14 +65,14 @@ void StatInfo::Draw(const int &val, const int &max) {
 	}
 }
 
-void StatDrawHelper::Load(rapidxml::xml_node<char> *node) {
+void StatDrawHelper::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
-		info[STAT_HEALTH].Load(node->first_node(STATNAME_HEALTH));
-		info[STAT_ATTACK].Load(node->first_node(STATNAME_ATTACK));
-		info[STAT_DEFENSE].Load(node->first_node(STATNAME_DEFENSE));
-		info[STAT_SPEED].Load(node->first_node(STATNAME_SPEED));
-		/*info[STAT_CHARISMA].Load(node->first_node(STATNAME_CHARISMA));
-		info[STAT_INTELLIGENCE].Load(node->first_node(STATNAME_INTELLIGENCE));*/
+		info[STAT_HEALTH].load(node->first_node(STATNAME_HEALTH));
+		info[STAT_ATTACK].load(node->first_node(STATNAME_ATTACK));
+		info[STAT_DEFENSE].load(node->first_node(STATNAME_DEFENSE));
+		info[STAT_SPEED].load(node->first_node(STATNAME_SPEED));
+		/*info[STAT_CHARISMA].load(node->first_node(STATNAME_CHARISMA));
+		info[STAT_INTELLIGENCE].load(node->first_node(STATNAME_INTELLIGENCE));*/
 	}
 }
 

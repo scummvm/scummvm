@@ -67,7 +67,7 @@ public:
 	}
 	~GameDialogBox() {}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
 	void Draw(pyrodactyl::event::Info &info, Common::String &message);
 	void Draw(const bool &player);

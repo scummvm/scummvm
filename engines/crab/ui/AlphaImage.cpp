@@ -37,8 +37,8 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
-void AlphaImage::Load(rapidxml::xml_node<char> *node, const bool &echo) {
-	pos.Load(node, echo);
+void AlphaImage::load(rapidxml::xml_node<char> *node, const bool &echo) {
+	pos.load(node, echo);
 	loadImgKey(img, "img", node, echo);
 
 	loadNum(alpha.min, "min", node);

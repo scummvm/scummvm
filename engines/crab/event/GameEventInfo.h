@@ -122,7 +122,7 @@ public:
 		player_img = 0;
 		TalkKeyDown = false;
 	}
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
 	// Person related stuff
 	void Type(const Common::String &id, const pyrodactyl::people::PersonType &val);

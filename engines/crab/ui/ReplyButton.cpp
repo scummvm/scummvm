@@ -37,8 +37,8 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::image;
 
-void ReplyButton::Load(rapidxml::xml_node<char> *node) {
-	Button::Load(node);
+void ReplyButton::load(rapidxml::xml_node<char> *node) {
+	Button::load(node);
 	orig = *this;
 
 	if (nodeValid("text", node)) {
@@ -51,7 +51,7 @@ void ReplyButton::Load(rapidxml::xml_node<char> *node) {
 		loadAlign(align, tenode);
 
 		if (nodeValid("line_size", tenode))
-			line_size.Load(tenode->first_node("line_size"));
+			line_size.load(tenode->first_node("line_size"));
 	}
 }
 

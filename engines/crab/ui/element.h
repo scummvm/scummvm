@@ -50,7 +50,7 @@ class Element : public Rect {
 		Align x, y;
 	} align;
 
-	void BasicLoad(rapidxml::xml_node<char> *node, const bool &echo = true);
+	void Basicload(rapidxml::xml_node<char> *node, const bool &echo = true);
 
 public:
 	Element() {
@@ -71,10 +71,10 @@ public:
 	}
 
 	// The parent is the object inside which the element exists
-	void Load(rapidxml::xml_node<char> *node, ImageKey img, const bool &echo = true);
+	void load(rapidxml::xml_node<char> *node, ImageKey img, const bool &echo = true);
 
 	// The parent is the object inside which the element exists
-	void Load(rapidxml::xml_node<char> *node, Rect *parent = NULL, const bool &echo = true);
+	void load(rapidxml::xml_node<char> *node, Rect *parent = NULL, const bool &echo = true);
 
 	void SetUI(Rect *parent = NULL);
 };

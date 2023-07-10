@@ -238,11 +238,11 @@ public:
 	//------------------------------------------------------------------------
 	// Purpose: Load the menu from a file
 	//------------------------------------------------------------------------
-	void Load(rapidxml::xml_node<char> *node) {
+	void load(rapidxml::xml_node<char> *node) {
 		if (nodeValid(node)) {
 			for (auto n = node->first_node(); n != NULL; n = n->next_sibling()) {
 				T b;
-				b.Load(n);
+				b.load(n);
 				element.push_back(b);
 			}
 

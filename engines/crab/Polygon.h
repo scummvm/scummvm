@@ -65,10 +65,10 @@ public:
 	Common::Array<Vector2f> edge;
 
 	Polygon2D() {}
-	Polygon2D(rapidxml::xml_node<char> *node, Rect &bounds) { Load(node, bounds); }
+	Polygon2D(rapidxml::xml_node<char> *node, Rect &bounds) { load(node, bounds); }
 
 	// Returns the approximate axis aligned bounding box of the polygon
-	void Load(rapidxml::xml_node<char> *node, Rect &bounds);
+	void load(rapidxml::xml_node<char> *node, Rect &bounds);
 
 	void SetEdge();
 

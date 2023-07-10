@@ -54,7 +54,7 @@ struct Rect {
 		h = H;
 	}
 
-	bool Load(rapidxml::xml_node<char> *node, const bool &echo = true, const Common::String &x_name = "x",
+	bool load(rapidxml::xml_node<char> *node, const bool &echo = true, const Common::String &x_name = "x",
 			  const Common::String &y_name = "y", const Common::String &w_name = "w", const Common::String &h_name = "h");
 
 	// Is this rectangle colliding with another rectangle?

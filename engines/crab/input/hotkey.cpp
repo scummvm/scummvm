@@ -35,7 +35,7 @@ namespace Crab {
 
 using namespace pyrodactyl::input;
 
-void HotKey::Load(rapidxml::xml_node<char> *node) {
+void HotKey::load(rapidxml::xml_node<char> *node) {
 	loadEnum(input, "input", node);
 
 	name = g_engine->_inputManager->GetAssociatedKey(input);

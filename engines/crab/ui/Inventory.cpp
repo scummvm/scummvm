@@ -40,21 +40,21 @@ using namespace pyrodactyl::people;
 //------------------------------------------------------------------------
 // Purpose: Load layout
 //------------------------------------------------------------------------
-void Inventory::Load(const Common::String &filename) {
+void Inventory::load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("inventory");
 		if (nodeValid(node)) {
 			if (nodeValid("bg", node))
-				bg.Load(node->first_node("bg"));
+				bg.load(node->first_node("bg"));
 
-			collection.Load(node->first_node("items"));
+			collection.load(node->first_node("items"));
 
 			/*if (nodeValid("stats", node))
-				helper.Load(node->first_node("stats"));*/
+				helper.load(node->first_node("stats"));*/
 
 			if (nodeValid("money", node))
-				money.Load(node->first_node("money"));
+				money.load(node->first_node("money"));
 		}
 	}
 }
@@ -67,7 +67,7 @@ void Inventory::LoadItem(const Common::String &char_id, const Common::String &id
 		for (auto n = node->first_node("item"); n != NULL; n = n->next_sibling("item")) {
 			Common::String str = n->first_attribute("id")->value();
 			if (id == str) {
-				i.Load(n);
+				i.load(n);
 				AddItem(char_id, i);
 				break;
 			}

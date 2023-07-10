@@ -36,8 +36,8 @@ using namespace pyrodactyl::text;
 using namespace pyrodactyl::level;
 using namespace pyrodactyl::image;
 
-void TalkNotify::Load(rapidxml::xml_node<char> *node) {
-	offset.Load(node);
+void TalkNotify::load(rapidxml::xml_node<char> *node) {
+	offset.load(node);
 	loadNum(font, "font", node);
 	loadAlign(align, node);
 	loadNum(col, "col", node);

@@ -38,31 +38,31 @@ using namespace pyrodactyl::image;
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::input;
 
-void KeyBindMenu::Load(rapidxml::xml_node<char> *node) {
+void KeyBindMenu::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
 		if (nodeValid("menu", node)) {
 			rapidxml::xml_node<char> *menode = node->first_node("menu");
 
 			if (nodeValid("primary", menode))
-				prim.Load(menode->first_node("primary"));
+				prim.load(menode->first_node("primary"));
 
 			if (nodeValid("alt", menode))
-				alt.Load(menode->first_node("alt"));
+				alt.load(menode->first_node("alt"));
 
 			if (nodeValid("prompt", menode))
-				prompt.Load(menode->first_node("prompt"));
+				prompt.load(menode->first_node("prompt"));
 
 			if (nodeValid("inc", menode))
-				inc.Load(menode->first_node("inc"));
+				inc.load(menode->first_node("inc"));
 
 			if (nodeValid("dim", menode))
-				dim.Load(menode->first_node("dim"));
+				dim.load(menode->first_node("dim"));
 
 			if (nodeValid("divide", menode))
-				divide.Load(menode->first_node("divide"));
+				divide.load(menode->first_node("divide"));
 
 			if (nodeValid("desc", menode))
-				desc.Load(menode->first_node("desc"));
+				desc.load(menode->first_node("desc"));
 		}
 
 		// Initialize the menus
@@ -70,7 +70,7 @@ void KeyBindMenu::Load(rapidxml::xml_node<char> *node) {
 		InitMenu(CON_UI);
 
 		if (nodeValid("controls", node))
-			sel_controls.Load(node->first_node("controls"));
+			sel_controls.load(node->first_node("controls"));
 	}
 }
 

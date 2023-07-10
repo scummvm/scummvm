@@ -57,7 +57,7 @@ public:
 	}
 
 	SDL_Color &Get(const int &num);
-	void Load(const Common::String &filename);
+	void load(const Common::String &filename);
 };
 } // End of namespace text
 } // End of namespace pyrodactyl

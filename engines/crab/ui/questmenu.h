@@ -74,7 +74,7 @@ public:
 	QuestMenu();
 	~QuestMenu() {}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	void Draw(Button &bu_map);
 
 	bool HandleEvents(Button &bu_map, Common::String &map_title, const Common::Event &Event);

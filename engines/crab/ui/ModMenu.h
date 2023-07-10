@@ -43,7 +43,7 @@ public:
 	ModMenu() {}
 	~ModMenu() {}
 
-	void Load(const Common::String &filename);
+	void load(const Common::String &filename);
 
 	bool HandleEvents(const Common::Event &Event);
 #if 0

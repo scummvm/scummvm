@@ -105,7 +105,7 @@ public:
 	void Reset();
 	bool DisableHotkeys() { return keybind.DisableHotkeys(); }
 
-	void Load(const Common::String &filename);
+	void load(const Common::String &filename);
 	void Draw(Button &back);
 	bool HandleEvents(Button &back, const Common::Event &Event);
 #if 0

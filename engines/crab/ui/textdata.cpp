@@ -36,9 +36,9 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 
-bool TextData::Load(rapidxml::xml_node<char> *node, Rect *parent, const bool &echo) {
+bool TextData::load(rapidxml::xml_node<char> *node, Rect *parent, const bool &echo) {
 	if (nodeValid(node, echo)) {
-		Element::Load(node, parent, echo);
+		Element::load(node, parent, echo);
 		LoadFontKey(font, "font", node);
 		loadNum(col, "color", node);
 		loadAlign(align, node, false);
