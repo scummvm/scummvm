@@ -665,7 +665,7 @@ void Sprite::TakeDamage(Info &info, Sprite &s) {
 
 	FightMove f;
 	if (s.anim_set._fight.CurMove(f) && info.PersonValid(s.ID()) && info.PersonValid(id)) {
-		int dmg = -1 * (f.eff._dmg + info.PersonGet(s.ID()).stat.val[STAT_ATTACK].cur - info.PersonGet(id).stat.val[STAT_DEFENSE].cur);
+		int dmg = -1 * (f._eff._dmg + info.PersonGet(s.ID()).stat.val[STAT_ATTACK].cur - info.PersonGet(id).stat.val[STAT_DEFENSE].cur);
 		if (dmg >= 0)
 			dmg = -1;
 
@@ -675,13 +675,13 @@ void Sprite::TakeDamage(Info &info, Sprite &s) {
 		info.StatGet(id, STAT_HEALTH, health);
 
 		// Play death animation if dead, hurt animation otherwise
-		if (health <= 0 && f.eff._death != -1)
-			ForceUpdateMove(f.eff._death);
-		else if (f.eff._hurt != -1)
-			ForceUpdateMove(f.eff._hurt);
+		if (health <= 0 && f._eff._death != -1)
+			ForceUpdateMove(f._eff._death);
+		else if (f._eff._hurt != -1)
+			ForceUpdateMove(f._eff._hurt);
 
-		g_engine->_musicManager->PlayEffect(f.eff._hit, 0);
-		img_eff = f.eff._img;
+		g_engine->_musicManager->PlayEffect(f._eff._hit, 0);
+		img_eff = f._eff._img;
 	}
 
 	Stop();
