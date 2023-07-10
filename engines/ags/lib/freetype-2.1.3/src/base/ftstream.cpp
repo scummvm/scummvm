@@ -596,7 +596,7 @@ Fail:
 
 FT2_1_3_BASE_DEF( FT_Error )
 FT_Stream_ReadFields( FT_Stream              stream,
-					  const FT2_1_3_Frame_Field*  fields,
+					  const FT_Frame_Field*  fields,
 					  void*                  structure ) {
 	FT_Error  error;
 	FT_Bool   frame_accessed = 0;

@@ -595,11 +595,11 @@ FT2_1_3_Vector_Transform( FT_Vector*  vector,
 	if ( !vector || !matrix )
 		return;
 
-	xz = FT2_1_3_MulFix( vector->x, matrix->xx ) +
-		 FT2_1_3_MulFix( vector->y, matrix->xy );
+	xz = FT_MulFix( vector->x, matrix->xx ) +
+		 FT_MulFix( vector->y, matrix->xy );
 
-	yz = FT2_1_3_MulFix( vector->x, matrix->yx ) +
-		 FT2_1_3_MulFix( vector->y, matrix->yy );
+	yz = FT_MulFix( vector->x, matrix->yx ) +
+		 FT_MulFix( vector->y, matrix->yy );
 
 	vector->x = xz;
 	vector->y = yz;

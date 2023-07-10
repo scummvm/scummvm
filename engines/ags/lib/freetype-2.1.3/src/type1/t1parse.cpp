@@ -85,7 +85,7 @@ typedef struct  PFB_Tag_ {
 
 
 static
-const FT2_1_3_Frame_Field  pfb_tag_fields[] = {
+const FT_Frame_Field  pfb_tag_fields[] = {
 	FT2_1_3_FRAME_START( 6 ),
 	FT2_1_3_FRAME_USHORT ( tag ),
 	FT2_1_3_FRAME_LONG_LE( size ),

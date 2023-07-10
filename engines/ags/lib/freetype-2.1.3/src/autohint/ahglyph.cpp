@@ -185,11 +185,11 @@ ah_test_extrema( FT_Outline*  outline,
 		first = last + 1;
 	}
 
-	product = FT2_1_3_MulDiv( cur->x  - prev->x,  /* in.x  */
+	product = FT_MulDiv( cur->x  - prev->x,  /* in.x  */
 						 next->y - cur->y,   /* out.y */
 						 0x40 )
 			  -
-			  FT2_1_3_MulDiv( cur->y  - prev->y,  /* in.y  */
+			  FT_MulDiv( cur->y  - prev->y,  /* in.y  */
 						 next->x - cur->x,   /* out.x */
 						 0x40 );
 
@@ -461,8 +461,8 @@ ah_outline_load( AH_Outline  outline,
 			for ( point = points; point < point_limit; vec++, point++ ) {
 				point->fx = vec->x;
 				point->fy = vec->y;
-				point->ox = point->x = FT2_1_3_MulFix( vec->x, x_scale );
-				point->oy = point->y = FT2_1_3_MulFix( vec->y, y_scale );
+				point->ox = point->x = FT_MulFix( vec->x, x_scale );
+				point->oy = point->y = FT_MulFix( vec->y, y_scale );
 
 				point->flags = 0;
 			}
@@ -1115,7 +1115,7 @@ ah_outline_compute_edges( AH_Outline  outline ) {
 		/*                                                                   */
 		/*********************************************************************/
 
-		edge_distance_threshold = FT2_1_3_MulFix( outline->edge_distance_threshold,
+		edge_distance_threshold = FT_MulFix( outline->edge_distance_threshold,
 											 scale );
 		if ( edge_distance_threshold > 64 / 4 )
 			edge_distance_threshold = 64 / 4;
@@ -1134,7 +1134,7 @@ ah_outline_compute_edges( AH_Outline  outline ) {
 				if ( dist < 0 )
 					dist = -dist;
 
-				dist = FT2_1_3_MulFix( dist, scale );
+				dist = FT_MulFix( dist, scale );
 				if ( dist < edge_distance_threshold ) {
 					found = edge;
 					break;
@@ -1157,7 +1157,7 @@ ah_outline_compute_edges( AH_Outline  outline ) {
 				edge->first    = seg;
 				edge->last     = seg;
 				edge->fpos     = seg->pos;
-				edge->opos     = edge->pos = FT2_1_3_MulFix( seg->pos, scale );
+				edge->opos     = edge->pos = FT_MulFix( seg->pos, scale );
 				seg->edge_next = seg;
 			} else {
 				/* if an edge was found, simply add the segment to the edge's */
@@ -1357,7 +1357,7 @@ ah_outline_compute_blue_edges( AH_Outline       outline,
 
 			blue_active[blue] = 0;
 
-			if ( FT2_1_3_MulFix( dist, y_scale ) < 48 ) {
+			if ( FT_MulFix( dist, y_scale ) < 48 ) {
 				blue_active[blue] = 1;
 				check = 1;
 			}
@@ -1376,7 +1376,7 @@ ah_outline_compute_blue_edges( AH_Outline       outline,
 
 
 		/* compute the initial threshold as a fraction of the EM size */
-		best_dist = FT2_1_3_MulFix( face_globals->face->units_per_EM / 40, y_scale );
+		best_dist = FT_MulFix( face_globals->face->units_per_EM / 40, y_scale );
 		if ( best_dist > 64 / 4 )
 			best_dist = 64 / 4;
 
@@ -1406,7 +1406,7 @@ ah_outline_compute_blue_edges( AH_Outline       outline,
 				if ( dist < 0 )
 					dist = -dist;
 
-				dist = FT2_1_3_MulFix( dist, y_scale );
+				dist = FT_MulFix( dist, y_scale );
 				if ( dist < best_dist ) {
 					best_dist = dist;
 					best_blue = blue_pos;
@@ -1425,7 +1425,7 @@ ah_outline_compute_blue_edges( AH_Outline       outline,
 						if ( dist < 0 )
 							dist = -dist;
 
-						dist = FT2_1_3_MulFix( dist, y_scale );
+						dist = FT_MulFix( dist, y_scale );
 						if ( dist < best_dist ) {
 							best_dist = dist;
 							best_blue = blue_pos;

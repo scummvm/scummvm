@@ -475,7 +475,7 @@ optim_compute_tensions( AH_Optimizer*  optimizer ) {
 		else
 			tension = ( tension << 10 ) / width;
 
-		tension = -sign * FT2_1_3_MulFix( tension, optimizer->tension_scale );
+		tension = -sign * FT_MulFix( tension, optimizer->tension_scale );
 		spring->tension = tension;
 
 		/* now, distribute tension among the englobing stems, if they */

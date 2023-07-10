@@ -24,7 +24,7 @@
 
 #include "engines/ags/lib/freetype-2.1.3/include/ft2build.h"
 #include "ftraster.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftcalc.h"   /* for FT2_1_3_MulDiv only */
+#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftcalc.h"   /* for FT_MulDiv only */
 
 
 /*************************************************************************/
@@ -199,9 +199,9 @@ namespace FreeType213 {
 #define FMulDiv( a, b, c )  ( (a) * (b) / (c) )
 
 /* On the other hand, SMulDiv means `Slow MulDiv', and is used typically */
-/* for clipping computations.  It simply uses the FT2_1_3_MulDiv() function   */
+/* for clipping computations.  It simply uses the FT_MulDiv() function   */
 /* defined in `ftcalc.h'.                                                */
-#define SMulDiv  FT2_1_3_MulDiv
+#define SMulDiv  FT_MulDiv
 
 /* The rasterizer is a very general purpose component; please leave */
 /* the following redefinitions there (you never know your target    */

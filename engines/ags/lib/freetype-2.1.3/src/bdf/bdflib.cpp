@@ -1616,7 +1616,7 @@ _bdf_parse_glyphs( char*          line,
 			/* the scalable width from the device width.                      */
 			FT2_1_3_TRACE2(( "_bdf_parse_glyphs: " ACMSG9, lineno ));
 
-			glyph->swidth = (unsigned short)FT2_1_3_MulDiv(
+			glyph->swidth = (unsigned short)FT_MulDiv(
 								glyph->dwidth, 72000L,
 								(FT_Long)( font->point_size *
 										   font->resolution_x ) );
@@ -1663,7 +1663,7 @@ _bdf_parse_glyphs( char*          line,
 		/* value if necessary.                                            */
 		if ( p->opts->correct_metrics != 0 ) {
 			/* Determine the point size of the glyph. */
-			unsigned short  sw = (unsigned short)FT2_1_3_MulDiv(
+			unsigned short  sw = (unsigned short)FT_MulDiv(
 									 glyph->dwidth, 72000L,
 									 (FT_Long)( font->point_size *
 												font->resolution_x ) );

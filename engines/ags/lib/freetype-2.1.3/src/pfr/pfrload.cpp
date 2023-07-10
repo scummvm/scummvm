@@ -100,7 +100,7 @@ Too_Short:
 /*************************************************************************/
 /*************************************************************************/
 
-static const FT2_1_3_Frame_Field  pfr_header_fields[] = {
+static const FT_Frame_Field  pfr_header_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  PFR_HeaderRec
 

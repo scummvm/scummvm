@@ -285,7 +285,7 @@ pfr_slot_load( PFR_Slot  slot,
 		em_outline = face->phy_font.outline_resolution;
 
 		if ( em_metrics != em_outline )
-			advance = FT2_1_3_MulDiv( advance, em_outline, em_metrics );
+			advance = FT_MulDiv( advance, em_outline, em_metrics );
 
 		if ( face->phy_font.flags & PFR_PHY_VERTICAL )
 			metrics->vertAdvance = advance;
@@ -309,13 +309,13 @@ pfr_slot_load( PFR_Slot  slot,
 
 			/* scale outline points */
 			for ( n = 0; n < outline->n_points; n++, vec++ ) {
-				vec->x = FT2_1_3_MulFix( vec->x, x_scale );
-				vec->y = FT2_1_3_MulFix( vec->y, y_scale );
+				vec->x = FT_MulFix( vec->x, x_scale );
+				vec->y = FT_MulFix( vec->y, y_scale );
 			}
 
 			/* scale the advance */
-			metrics->horiAdvance = FT2_1_3_MulFix( metrics->horiAdvance, x_scale );
-			metrics->vertAdvance = FT2_1_3_MulFix( metrics->vertAdvance, y_scale );
+			metrics->horiAdvance = FT_MulFix( metrics->horiAdvance, x_scale );
+			metrics->vertAdvance = FT_MulFix( metrics->vertAdvance, y_scale );
 		}
 
 		/* compute the rest of the metrics */

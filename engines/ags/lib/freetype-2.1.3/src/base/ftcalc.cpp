@@ -26,7 +26,7 @@
 /*                                                                       */
 /* Implementing basic computation routines.                              */
 /*                                                                       */
-/* FT2_1_3_MulDiv(), FT2_1_3_MulFix(), FT2_1_3_DivFix(), FT2_1_3_RoundFix(), FT2_1_3_CeilFix(),   */
+/* FT_MulDiv(), FT_MulFix(), FT2_1_3_DivFix(), FT2_1_3_RoundFix(), FT2_1_3_CeilFix(),   */
 /* and FT2_1_3_FloorFix() are declared in freetype.h.                         */
 /*                                                                       */
 /*************************************************************************/
@@ -101,7 +101,7 @@ FT2_1_3_FloorFix( FT_Fixed  a ) {
 /* documentation is in ftcalc.h */
 
 FT2_1_3_EXPORT_DEF( FT_Int32 )
-FT2_1_3_Sqrt32( FT_Int32  x ) {
+FT_Sqrt32( FT_Int32  x ) {
 	FT_ULong  val, root, newroot, mask;
 
 
@@ -131,7 +131,7 @@ FT2_1_3_Sqrt32( FT_Int32  x ) {
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( FT_Long )
-FT2_1_3_MulDiv( FT_Long  a,
+FT_MulDiv( FT_Long  a,
 		   FT_Long  b,
 		   FT_Long  c ) {
 	FT_Int   s;
@@ -162,7 +162,7 @@ FT2_1_3_MulDiv( FT_Long  a,
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( FT_Long )
-FT2_1_3_MulFix( FT_Long  a,
+FT_MulFix( FT_Long  a,
 		   FT_Long  b ) {
 	FT_Int   s = 1;
 	FT_Long  c;
@@ -299,7 +299,7 @@ FT2_1_3_Add64( FT_Int64*  x,
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( FT_Long )
-FT2_1_3_MulDiv( FT_Long  a,
+FT_MulDiv( FT_Long  a,
 		   FT_Long  b,
 		   FT_Long  c ) {
 	long  s;
@@ -337,7 +337,7 @@ FT2_1_3_MulDiv( FT_Long  a,
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( FT_Long )
-FT2_1_3_MulFix( FT_Long  a,
+FT_MulFix( FT_Long  a,
 		   FT_Long  b ) {
 	FT_Long   s;
 	FT_ULong  ua, ub;
@@ -523,7 +523,7 @@ FT2_1_3_Div64by32( FT_Int64*  x,
 /* a not-so-fast but working 16.16 fixed point square root function */
 
 FT2_1_3_EXPORT_DEF( FT_Int32 )
-FT2_1_3_SqrtFixed( FT_Int32  x ) {
+FT_SqrtFixed( FT_Int32  x ) {
 	FT_UInt32  root, rem_hi, rem_lo, test_div;
 	FT_Int     count;
 

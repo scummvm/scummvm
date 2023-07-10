@@ -177,7 +177,7 @@ blit_sbit( FT_Bitmap*  target,
 }
 
 
-const FT2_1_3_Frame_Field  sbit_metrics_fields[] = {
+const FT_Frame_Field  sbit_metrics_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  TT_SBit_MetricsRec
 
@@ -382,7 +382,7 @@ tt_face_load_sbit_strikes( TT_Face    face,
 	FT_ULong   num_strikes;
 	FT_ULong   table_base;
 
-	const FT2_1_3_Frame_Field  sbit_line_metrics_fields[] = {
+	const FT_Frame_Field  sbit_line_metrics_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  TT_SBit_LineMetricsRec
 
@@ -404,7 +404,7 @@ tt_face_load_sbit_strikes( TT_Face    face,
 		FT2_1_3_FRAME_END
 	};
 
-	const FT2_1_3_Frame_Field  strike_start_fields[] = {
+	const FT_Frame_Field  strike_start_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  TT_SBit_StrikeRec
 
@@ -416,7 +416,7 @@ tt_face_load_sbit_strikes( TT_Face    face,
 		FT2_1_3_FRAME_END
 	};
 
-	const FT2_1_3_Frame_Field  strike_end_fields[] = {
+	const FT_Frame_Field  strike_end_fields[] = {
 		/* no FT2_1_3_FRAME_START */
 		FT2_1_3_FRAME_USHORT( start_glyph ),
 		FT2_1_3_FRAME_USHORT( end_glyph ),
@@ -816,7 +816,7 @@ load_sbit_metrics( FT_Stream        stream,
 	{
 		TT_SBit_SmallMetricsRec  smetrics;
 
-		const FT2_1_3_Frame_Field  sbit_small_metrics_fields[] = {
+		const FT_Frame_Field  sbit_small_metrics_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  TT_SBit_SmallMetricsRec
 

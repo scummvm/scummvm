@@ -58,7 +58,7 @@ namespace AGS3 {
 namespace FreeType213 {
 
 static
-const FT2_1_3_Frame_Field  pcf_toc_header[] = {
+const FT_Frame_Field  pcf_toc_header[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  PCF_TocRec
 
@@ -70,7 +70,7 @@ const FT2_1_3_Frame_Field  pcf_toc_header[] = {
 
 
 static
-const FT2_1_3_Frame_Field  pcf_table_header[] = {
+const FT_Frame_Field  pcf_table_header[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  PCF_TableRec
 
@@ -145,7 +145,7 @@ Exit:
 
 
 static
-const FT2_1_3_Frame_Field  pcf_metric_header[] = {
+const FT_Frame_Field  pcf_metric_header[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  PCF_MetricRec
 
@@ -161,7 +161,7 @@ const FT2_1_3_Frame_Field  pcf_metric_header[] = {
 
 
 static
-const FT2_1_3_Frame_Field  pcf_metric_msb_header[] = {
+const FT_Frame_Field  pcf_metric_msb_header[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  PCF_MetricRec
 
@@ -177,7 +177,7 @@ const FT2_1_3_Frame_Field  pcf_metric_msb_header[] = {
 
 
 static
-const FT2_1_3_Frame_Field  pcf_compressed_metric_header[] = {
+const FT_Frame_Field  pcf_compressed_metric_header[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  PCF_Compressed_MetricRec
 
@@ -199,7 +199,7 @@ pcf_get_metric( FT_Stream   stream,
 
 
 	if ( PCF_FORMAT_MATCH( format, PCF_DEFAULT_FORMAT ) ) {
-		const FT2_1_3_Frame_Field*  fields;
+		const FT_Frame_Field*  fields;
 
 
 		/* parsing normal metrics */
@@ -275,7 +275,7 @@ pcf_has_table_type( PCF_Table  tables,
 
 
 static
-const FT2_1_3_Frame_Field  pcf_property_header[] = {
+const FT_Frame_Field  pcf_property_header[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  PCF_ParsePropertyRec
 
@@ -288,7 +288,7 @@ const FT2_1_3_Frame_Field  pcf_property_header[] = {
 
 
 static
-const FT2_1_3_Frame_Field  pcf_property_msb_header[] = {
+const FT_Frame_Field  pcf_property_msb_header[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  PCF_ParsePropertyRec
 
@@ -697,7 +697,7 @@ Bail:
 
 
 static
-const FT2_1_3_Frame_Field  pcf_accel_header[] = {
+const FT_Frame_Field  pcf_accel_header[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  PCF_AccelRec
 
@@ -718,7 +718,7 @@ const FT2_1_3_Frame_Field  pcf_accel_header[] = {
 
 
 static
-const FT2_1_3_Frame_Field  pcf_accel_msb_header[] = {
+const FT_Frame_Field  pcf_accel_msb_header[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  PCF_AccelRec
 

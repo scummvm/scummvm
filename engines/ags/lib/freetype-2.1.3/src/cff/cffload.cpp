@@ -1939,7 +1939,7 @@ FT2_1_3_LOCAL_DEF( FT_Error )
 cff_font_load( FT_Stream  stream,
 			   FT_Int     face_index,
 			   CFF_Font   font ) {
-	static const FT2_1_3_Frame_Field  cff_header_fields[] = {
+	static const FT_Frame_Field  cff_header_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  CFF_FontRec
 

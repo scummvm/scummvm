@@ -66,10 +66,10 @@ FT_Matrix_Multiply( FT_Matrix*  a,
 	if ( !a || !b )
 		return;
 
-	xx = FT2_1_3_MulFix( a->xx, b->xx ) + FT2_1_3_MulFix( a->xy, b->yx );
-	xy = FT2_1_3_MulFix( a->xx, b->xy ) + FT2_1_3_MulFix( a->xy, b->yy );
-	yx = FT2_1_3_MulFix( a->yx, b->xx ) + FT2_1_3_MulFix( a->yy, b->yx );
-	yy = FT2_1_3_MulFix( a->yx, b->xy ) + FT2_1_3_MulFix( a->yy, b->yy );
+	xx = FT_MulFix( a->xx, b->xx ) + FT_MulFix( a->xy, b->yx );
+	xy = FT_MulFix( a->xx, b->xy ) + FT_MulFix( a->xy, b->yy );
+	yx = FT_MulFix( a->yx, b->xx ) + FT_MulFix( a->yy, b->yx );
+	yy = FT_MulFix( a->yx, b->xy ) + FT_MulFix( a->yy, b->yy );
 
 	b->xx = xx;
 	b->xy = xy;
@@ -89,8 +89,8 @@ FT_Matrix_Invert( FT_Matrix*  matrix ) {
 		return FT2_1_3_Err_Invalid_Argument;
 
 	/* compute discriminant */
-	delta = FT2_1_3_MulFix( matrix->xx, matrix->yy ) -
-			FT2_1_3_MulFix( matrix->xy, matrix->yx );
+	delta = FT_MulFix( matrix->xx, matrix->yy ) -
+			FT_MulFix( matrix->xy, matrix->yx );
 
 	if ( !delta )
 		return FT2_1_3_Err_Invalid_Argument;  /* matrix can't be inverted */

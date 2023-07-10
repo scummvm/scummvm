@@ -572,7 +572,7 @@ ah_hinter_align_strong_points( AH_Hinter  hinter ) {
 					}
 
 					/* assert( before && after && before != after ) */
-					u = before->pos + FT2_1_3_MulDiv( fu - before->fpos,
+					u = before->pos + FT_MulDiv( fu - before->fpos,
 												 after->pos - before->pos,
 												 after->fpos - before->fpos );
 				}
@@ -652,7 +652,7 @@ ah_iup_interp( AH_Point  p1,
 			else if ( u >= v2 )
 				u += d2;
 			else
-				u = ref1->u + FT2_1_3_MulDiv( u - v1, ref2->u - ref1->u, v2 - v1 );
+				u = ref1->u + FT_MulDiv( u - v1, ref2->u - ref1->u, v2 - v1 );
 
 			p->u = u;
 		}
@@ -665,7 +665,7 @@ ah_iup_interp( AH_Point  p1,
 			else if ( u >= v1 )
 				u += d1;
 			else
-				u = ref1->u + FT2_1_3_MulDiv( u - v1, ref2->u - ref1->u, v2 - v1 );
+				u = ref1->u + FT_MulDiv( u - v1, ref2->u - ref1->u, v2 - v1 );
 
 			p->u = u;
 		}
@@ -809,10 +809,10 @@ ah_hinter_scale_globals( AH_Hinter  hinter,
 
 	/* scale the standard widths & heights */
 	for ( n = 0; n < design->num_widths; n++ )
-		scaled->widths[n] = FT2_1_3_MulFix( design->widths[n], x_scale );
+		scaled->widths[n] = FT_MulFix( design->widths[n], x_scale );
 
 	for ( n = 0; n < design->num_heights; n++ )
-		scaled->heights[n] = FT2_1_3_MulFix( design->heights[n], y_scale );
+		scaled->heights[n] = FT_MulFix( design->heights[n], y_scale );
 
 	scaled->stds[0] = ( design->num_widths  > 0 ) ? scaled->widths[0]  : 32000;
 	scaled->stds[1] = ( design->num_heights > 0 ) ? scaled->heights[0] : 32000;
@@ -826,7 +826,7 @@ ah_hinter_scale_globals( AH_Hinter  hinter,
 		delta2 = delta;
 		if ( delta < 0 )
 			delta2 = -delta2;
-		delta2 = FT2_1_3_MulFix( delta2, y_scale );
+		delta2 = FT_MulFix( delta2, y_scale );
 
 		if ( delta2 < 32 )
 			delta2 = 0;
@@ -839,7 +839,7 @@ ah_hinter_scale_globals( AH_Hinter  hinter,
 			delta2 = -delta2;
 
 		scaled->blue_refs[n] =
-			( FT2_1_3_MulFix( design->blue_refs[n], y_scale ) + 32 ) & -64;
+			( FT_MulFix( design->blue_refs[n], y_scale ) + 32 ) & -64;
 		scaled->blue_shoots[n] = scaled->blue_refs[n] + delta2;
 	}
 
@@ -1029,7 +1029,7 @@ ah_hinter_load( AH_Hinter  hinter,
 		/* compute original phantom points */
 		hinter->pp1.x = 0;
 		hinter->pp1.y = 0;
-		hinter->pp2.x = FT2_1_3_MulFix( slot->metrics.horiAdvance, x_scale );
+		hinter->pp2.x = FT_MulFix( slot->metrics.horiAdvance, x_scale );
 		hinter->pp2.y = 0;
 
 		/* be sure to check for spacing glyphs */
@@ -1181,8 +1181,8 @@ ah_hinter_load( AH_Hinter  hinter,
 				x = p1->x - p2->x;
 				y = p1->y - p2->y;
 			} else {
-				x = FT2_1_3_MulFix( subglyph->arg1, x_scale );
-				y = FT2_1_3_MulFix( subglyph->arg2, y_scale );
+				x = FT_MulFix( subglyph->arg1, x_scale );
+				y = FT_MulFix( subglyph->arg2, y_scale );
 
 				x = ( x + 32 ) & -64;
 				y = ( y + 32 ) & -64;
@@ -1236,7 +1236,7 @@ Hint_Metrics:
 		if ( !FT2_1_3_IS_FIXED_WIDTH( slot->face ) )
 			slot->metrics.horiAdvance = hinter->pp2.x - hinter->pp1.x;
 		else
-			slot->metrics.horiAdvance = FT2_1_3_MulFix( slot->metrics.horiAdvance,
+			slot->metrics.horiAdvance = FT_MulFix( slot->metrics.horiAdvance,
 												   x_scale );
 
 		slot->metrics.horiAdvance = ( slot->metrics.horiAdvance + 32 ) & -64;

@@ -40,7 +40,7 @@ namespace AGS3 {
 namespace FreeType213 {
 
 static
-const FT2_1_3_Frame_Field  winmz_header_fields[] = {
+const FT_Frame_Field  winmz_header_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  WinMZ_HeaderRec
 
@@ -52,7 +52,7 @@ const FT2_1_3_Frame_Field  winmz_header_fields[] = {
 };
 
 static
-const FT2_1_3_Frame_Field  winne_header_fields[] = {
+const FT_Frame_Field  winne_header_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  WinNE_HeaderRec
 
@@ -65,7 +65,7 @@ const FT2_1_3_Frame_Field  winne_header_fields[] = {
 };
 
 static
-const FT2_1_3_Frame_Field  winfnt_header_fields[] = {
+const FT_Frame_Field  winfnt_header_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  WinFNT_HeaderRec
 

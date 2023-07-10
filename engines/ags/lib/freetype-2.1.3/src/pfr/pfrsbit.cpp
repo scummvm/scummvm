@@ -569,7 +569,7 @@ Found_Strike:
 		FT_Byte*  p;
 
 
-		advance = FT2_1_3_MulDiv( size->root.metrics.x_ppem << 8,
+		advance = FT_MulDiv( size->root.metrics.x_ppem << 8,
 							 character->advance,
 							 phys->metrics_resolution );
 

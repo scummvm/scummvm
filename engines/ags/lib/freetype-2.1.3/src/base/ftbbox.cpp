@@ -116,7 +116,7 @@ BBox_Conic_Check( FT_Pos   y1,
 		}
 	}
 
-	y1 = y3 = y1 - FT2_1_3_MulDiv( y2 - y1, y2 - y1, y1 - 2*y2 + y3 );
+	y1 = y3 = y1 - FT_MulDiv( y2 - y1, y2 - y1, y1 - 2*y2 + y3 );
 
 Suite:
 	if ( y1 < *min ) *min = y1;
@@ -292,8 +292,8 @@ test_cubic_extrema( FT_Pos    y1,
 	/*   P(u) = b*u^2 + 2c*u + d            */
 
 	if ( u > 0 && u < 0x10000L ) {
-		uu = FT2_1_3_MulFix( u, u );
-		y  = d + FT2_1_3_MulFix( c, 2*u ) + FT2_1_3_MulFix( b, uu );
+		uu = FT_MulFix( u, u );
+		y  = d + FT_MulFix( c, 2*u ) + FT_MulFix( b, uu );
 
 		if ( y < *min ) *min = y;
 		if ( y > *max ) *max = y;
@@ -339,7 +339,7 @@ BBox_Cubic_Check( FT_Pos   y1,
 		/* The trick is to normalize to a different representation in order  */
 		/* to use our 16.16 fixed point routines.                            */
 		/*                                                                   */
-		/* We compute FT2_1_3_MulFix(b,b) and FT2_1_3_MulFix(a,c) after the            */
+		/* We compute FT_MulFix(b,b) and FT_MulFix(a,c) after the            */
 		/* the normalization.  These values must fit into a single 16.16     */
 		/* value.                                                            */
 		/*                                                                   */
@@ -435,7 +435,7 @@ BBox_Cubic_Check( FT_Pos   y1,
 			}
 		} else {
 			/* solve the equation now */
-			d = FT2_1_3_MulFix( b, b ) - FT2_1_3_MulFix( a, c );
+			d = FT_MulFix( b, b ) - FT_MulFix( a, c );
 			if ( d < 0 )
 				return;
 
@@ -445,7 +445,7 @@ BBox_Cubic_Check( FT_Pos   y1,
 				test_cubic_extrema( y1, y2, y3, y4, t, min, max );
 			} else {
 				/* there are two solutions; we need to filter them though */
-				d = FT2_1_3_SqrtFixed( (FT_Int32)d );
+				d = FT_SqrtFixed( (FT_Int32)d );
 				t = - FT2_1_3_DivFix( b - d, a );
 				test_cubic_extrema( y1, y2, y3, y4, t, min, max );
 

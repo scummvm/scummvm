@@ -233,7 +233,7 @@ T1_Set_MM_Blend( T1_Face    face,
 				if ( ( n & ( 1 << m ) ) == 0 )
 					factor = 0x10000L - factor;
 
-				result = FT2_1_3_MulFix( result, factor );
+				result = FT_MulFix( result, factor );
 			}
 			blend->weight_vector[n] = result;
 		}
@@ -294,7 +294,7 @@ T1_Set_MM_Design( T1_Face   face,
 				the_blend = blends[map->num_points - 1];
 
 			else
-				the_blend = FT2_1_3_MulDiv( design         - designs[before],
+				the_blend = FT_MulDiv( design         - designs[before],
 									   blends [after] - blends [before],
 									   designs[after] - designs[before] );
 

@@ -97,11 +97,11 @@ ft_test_extrema( FT_Outline*  outline,
 		first = last + 1;
 	}
 
-	product = FT2_1_3_MulDiv( cur->x - prev->x,   /* in.x  */
+	product = FT_MulDiv( cur->x - prev->x,   /* in.x  */
 	                     next->y - cur->y,   /* out.y */
 	                     0x40 )
 	          -
-	          FT2_1_3_MulDiv( cur->y - prev->y,   /* in.y  */
+	          FT_MulDiv( cur->y - prev->y,   /* in.y  */
 	                     next->x - cur->x,   /* out.x */
 	                     0x40 );
 
@@ -206,7 +206,7 @@ FT_GlyphSlot_Embolden( FT_GlyphSlot  slot ) {
 		return;
 
 	/* compute control distance */
-	distance = FT2_1_3_MulFix( face->units_per_EM / 60,
+	distance = FT_MulFix( face->units_per_EM / 60,
 	                      face->size->metrics.y_scale );
 
 	orientation = ft_get_orientation( outline );

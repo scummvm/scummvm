@@ -27,10 +27,10 @@
 FT2_1_3_BEGIN_HEADER
 
 
-FT2_1_3_EXPORT( FT_Int32 )  FT2_1_3_SqrtFixed( FT_Int32  x );
+FT2_1_3_EXPORT( FT_Int32 )  FT_SqrtFixed( FT_Int32  x );
 
 
-#define SQRT_32( x )  FT2_1_3_Sqrt32( x )
+#define SQRT_32( x )  FT_Sqrt32( x )
 
 namespace AGS3 {
 namespace FreeType213 {
@@ -38,7 +38,7 @@ namespace FreeType213 {
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Sqrt32                                                          */
+/*    FT_Sqrt32                                                          */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Computes the square root of an Int32 integer (which will be        */
@@ -51,14 +51,14 @@ namespace FreeType213 {
 /*    The result of `sqrt(x)'.                                           */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Int32 )
-FT2_1_3_Sqrt32( FT_Int32  x );
+FT_Sqrt32( FT_Int32  x );
 
 } // End of namespace FreeType213
 } // End of namespace AGS3
 
 /*************************************************************************/
 /*                                                                       */
-/* FT2_1_3_MulDiv() and FT2_1_3_MulFix() are declared in freetype.h.               */
+/* FT_MulDiv() and FT_MulFix() are declared in freetype.h.               */
 /*                                                                       */
 /*************************************************************************/
 

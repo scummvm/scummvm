@@ -369,8 +369,8 @@ ps3_simple_scale( PSH3_Hint_Table  table,
 	for ( count = 0; count < table->max_hints; count++ ) {
 		hint = table->hints + count;
 
-		hint->cur_pos = FT2_1_3_MulFix( hint->org_pos, scale ) + delta;
-		hint->cur_len = FT2_1_3_MulFix( hint->org_len, scale );
+		hint->cur_pos = FT_MulFix( hint->org_pos, scale ) + delta;
+		hint->cur_len = FT_MulFix( hint->org_len, scale );
 
 		if ( ps3_debug_hint_func )
 			ps3_debug_hint_func( hint, dimension );
@@ -405,8 +405,8 @@ psh3_hint_align( PSH3_Hint    hint,
 
 
 	if ( !psh3_hint_is_fitted( hint ) ) {
-		FT_Pos  pos = FT2_1_3_MulFix( hint->org_pos, scale ) + delta;
-		FT_Pos  len = FT2_1_3_MulFix( hint->org_len, scale );
+		FT_Pos  pos = FT_MulFix( hint->org_pos, scale ) + delta;
+		FT_Pos  len = FT_MulFix( hint->org_len, scale );
 
 		FT_Int            do_snapping;
 		FT_Pos            fit_len;
@@ -473,7 +473,7 @@ psh3_hint_align( PSH3_Hint    hint,
 				par_cur_center = parent->cur_pos + ( parent->cur_len >> 1 );
 				cur_org_center = hint->org_pos   + ( hint->org_len   >> 1 );
 
-				cur_delta = FT2_1_3_MulFix( cur_org_center - par_org_center, scale );
+				cur_delta = FT_MulFix( cur_org_center - par_org_center, scale );
 				pos       = par_cur_center + cur_delta - ( len >> 1 );
 			}
 
@@ -1261,15 +1261,15 @@ psh3_glyph_interpolate_strong_points( PSH3_Glyph  glyph,
 					delta = point->org_u - hint->org_pos;
 
 					if ( delta <= 0 )
-						point->cur_u = hint->cur_pos + FT2_1_3_MulFix( delta, scale );
+						point->cur_u = hint->cur_pos + FT_MulFix( delta, scale );
 
 					else if ( delta >= hint->org_len )
 						point->cur_u = hint->cur_pos + hint->cur_len +
-									   FT2_1_3_MulFix( delta - hint->org_len, scale );
+									   FT_MulFix( delta - hint->org_len, scale );
 
 					else if ( hint->org_len > 0 )
 						point->cur_u = hint->cur_pos +
-									   FT2_1_3_MulDiv( delta, hint->cur_len,
+									   FT_MulDiv( delta, hint->cur_len,
 												  hint->org_len );
 					else
 						point->cur_u = hint->cur_pos;
@@ -1353,12 +1353,12 @@ psh3_glyph_interpolate_normal_points( PSH3_Glyph  glyph,
 					/* we are before the first strong point coordinate; */
 					/* simply translate the point                       */
 					point->cur_u = after->cur_u +
-								   FT2_1_3_MulFix( point->org_u - after->org_u, scale );
+								   FT_MulFix( point->org_u - after->org_u, scale );
 				} else if ( !after ) {
 					/* we are after the last strong point coordinate; */
 					/* simply translate the point                     */
 					point->cur_u = before->cur_u +
-								   FT2_1_3_MulFix( point->org_u - before->org_u, scale );
+								   FT_MulFix( point->org_u - before->org_u, scale );
 				} else {
 					if ( diff_before == 0 )
 						point->cur_u = before->cur_u;
@@ -1368,7 +1368,7 @@ psh3_glyph_interpolate_normal_points( PSH3_Glyph  glyph,
 
 					else
 						point->cur_u = before->cur_u +
-									   FT2_1_3_MulDiv( u - before->org_u,
+									   FT_MulDiv( u - before->org_u,
 												  after->cur_u - before->cur_u,
 												  after->org_u - before->org_u );
 				}
@@ -1417,11 +1417,11 @@ psh3_glyph_interpolate_other_points( PSH3_Glyph  glyph,
 		/* simply scale and eventually translate the contour points  */
 		if ( fit_count < 2 ) {
 			if ( fit_count == 1 )
-				delta = first->cur_u - FT2_1_3_MulFix( first->org_u, scale );
+				delta = first->cur_u - FT_MulFix( first->org_u, scale );
 
 			for ( point = start; point < next; point++ )
 				if ( point != first )
-					point->cur_u = FT2_1_3_MulFix( point->org_u, scale ) + delta;
+					point->cur_u = FT_MulFix( point->org_u, scale ) + delta;
 
 			goto Next_Contour;
 		}
@@ -1481,13 +1481,13 @@ psh3_glyph_interpolate_other_points( PSH3_Glyph  glyph,
 
 					if ( org_ac <= 0 ) {
 						/* on the left of the interpolation zone */
-						cur_c = cur_a + FT2_1_3_MulFix( org_ac, scale );
+						cur_c = cur_a + FT_MulFix( org_ac, scale );
 					} else if ( org_ac >= org_ab ) {
 						/* on the right on the interpolation zone */
-						cur_c = cur_a + cur_ab + FT2_1_3_MulFix( org_ac - org_ab, scale );
+						cur_c = cur_a + cur_ab + FT_MulFix( org_ac - org_ab, scale );
 					} else {
 						/* within the interpolation zone */
-						cur_c = cur_a + FT2_1_3_MulFix( org_ac, scale_ab );
+						cur_c = cur_a + FT_MulFix( org_ac, scale_ab );
 					}
 
 					point->cur_u = cur_c;

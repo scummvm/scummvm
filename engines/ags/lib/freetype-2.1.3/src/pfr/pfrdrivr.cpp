@@ -40,11 +40,11 @@ pfr_get_kerning( PFR_Face    face,
 		/* convert from metrics to outline units when necessary */
 		if ( phys->outline_resolution != phys->metrics_resolution ) {
 			if ( avector->x != 0 )
-				avector->x = FT2_1_3_MulDiv( avector->x, phys->outline_resolution,
+				avector->x = FT_MulDiv( avector->x, phys->outline_resolution,
 										phys->metrics_resolution );
 
 			if ( avector->y != 0 )
-				avector->y = FT2_1_3_MulDiv( avector->x, phys->outline_resolution,
+				avector->y = FT_MulDiv( avector->x, phys->outline_resolution,
 										phys->metrics_resolution );
 		}
 	}

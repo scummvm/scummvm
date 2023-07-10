@@ -30,8 +30,8 @@
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
 
 
-#define TT_MULFIX  FT2_1_3_MulFix
-#define TT_MULDIV  FT2_1_3_MulDiv
+#define TT_MULFIX  FT_MulFix
+#define TT_MULDIV  FT_MulDiv
 #define TT_INT64   FT_Int64
 
 /*************************************************************************/
@@ -2251,16 +2251,16 @@ Normalize( EXEC_OP_ FT_F26Dot6      Vx,
 			return SUCCESS;
 		}
 
-		R->x = (FT_F2Dot14)FT2_1_3_MulDiv( Vx, 0x4000L, W );
-		R->y = (FT_F2Dot14)FT2_1_3_MulDiv( Vy, 0x4000L, W );
+		R->x = (FT_F2Dot14)FT_MulDiv( Vx, 0x4000L, W );
+		R->y = (FT_F2Dot14)FT_MulDiv( Vy, 0x4000L, W );
 
 		return SUCCESS;
 	}
 
 	W = TT_VecLen( Vx, Vy );
 
-	Vx = FT2_1_3_MulDiv( Vx, 0x4000L, W );
-	Vy = FT2_1_3_MulDiv( Vy, 0x4000L, W );
+	Vx = FT_MulDiv( Vx, 0x4000L, W );
+	Vy = FT_MulDiv( Vy, 0x4000L, W );
 
 	W = Vx * Vx + Vy * Vy;
 

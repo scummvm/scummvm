@@ -56,7 +56,7 @@ FT2_1_3_BEGIN_HEADER
 #define FT2_1_3_FRAME_OP_BYTES  6  /* read a bytes sequence */
 
 
-typedef enum  FT2_1_3_Frame_Op_ {
+typedef enum  FT_Frame_Op_ {
 	ft_frame_end       = 0,
 	ft_frame_start     = FT2_1_3_MAKE_FRAME_OP( FT2_1_3_FRAME_OP_START, 0, 0 ),
 
@@ -81,18 +81,18 @@ typedef enum  FT2_1_3_Frame_Op_ {
 	ft_frame_bytes     = FT2_1_3_MAKE_FRAME_OP( FT2_1_3_FRAME_OP_BYTES, 0, 0 ),
 	ft_frame_skip      = FT2_1_3_MAKE_FRAME_OP( FT2_1_3_FRAME_OP_BYTES, 0, 1 )
 
-} FT2_1_3_Frame_Op;
+} FT_Frame_Op;
 
 
-typedef struct  FT2_1_3_Frame_Field_ {
+typedef struct  FT_Frame_Field_ {
 	FT_Byte    value;
 	FT_Byte    size;
 	FT_UShort  offset;
 
-} FT2_1_3_Frame_Field;
+} FT_Frame_Field;
 
 
-/* Construct an FT2_1_3_Frame_Field out of a structure type and a field name. */
+/* Construct an FT_Frame_Field out of a structure type and a field name. */
 /* The structure type must be set in the FT2_1_3_STRUCTURE macro before       */
 /* calling the FT2_1_3_FRAME_START() macro.                                   */
 /*                                                                       */
@@ -445,10 +445,10 @@ FT_Stream_ReadLongLE( FT_Stream  stream,
 					  FT_Error*  error );
 
 /* Read a structure from a stream.  The structure must be described */
-/* by an array of FT2_1_3_Frame_Field records.                           */
+/* by an array of FT_Frame_Field records.                           */
 FT2_1_3_BASE( FT_Error )
 FT_Stream_ReadFields( FT_Stream              stream,
-					  const FT2_1_3_Frame_Field*  fields,
+					  const FT_Frame_Field*  fields,
 					  void*                  structure );
 
 

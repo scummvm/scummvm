@@ -32,15 +32,15 @@ FT_Bool    ah_debug_disable_horz = 0;
 FT_Bool    ah_debug_disable_vert = 0;
 #endif
 
-typedef struct  FT2_1_3_AutoHinterRec_ {
+typedef struct  FT_AutoHinterRec_ {
 	FT_ModuleRec  root;
 	AH_Hinter     hinter;
 
-} FT2_1_3_AutoHinterRec;
+} FT_AutoHinterRec;
 
 
 FT2_1_3_CALLBACK_DEF( FT_Error )
-ft_autohinter_init( FT2_1_3_AutoHinter  module ) {
+ft_autohinter_init( FT_AutoHinter  module ) {
 	FT_Error  error;
 
 
@@ -54,7 +54,7 @@ ft_autohinter_init( FT2_1_3_AutoHinter  module ) {
 
 
 FT2_1_3_CALLBACK_DEF( void )
-ft_autohinter_done( FT2_1_3_AutoHinter  module ) {
+ft_autohinter_done( FT_AutoHinter  module ) {
 	ah_hinter_done( module->hinter );
 
 #ifdef DEBUG_HINTER
@@ -64,7 +64,7 @@ ft_autohinter_done( FT2_1_3_AutoHinter  module ) {
 
 
 FT2_1_3_CALLBACK_DEF( FT_Error )
-ft_autohinter_load_glyph( FT2_1_3_AutoHinter  module,
+ft_autohinter_load_glyph( FT_AutoHinter  module,
 						  FT_GlyphSlot   slot,
 						  FT_Size        size,
 						  FT_UInt        glyph_index,
@@ -75,7 +75,7 @@ ft_autohinter_load_glyph( FT2_1_3_AutoHinter  module,
 
 
 FT2_1_3_CALLBACK_DEF( void )
-ft_autohinter_reset_globals( FT2_1_3_AutoHinter  module,
+ft_autohinter_reset_globals( FT_AutoHinter  module,
 							 FT_Face        face ) {
 	FT2_1_3_UNUSED( module );
 
@@ -85,7 +85,7 @@ ft_autohinter_reset_globals( FT2_1_3_AutoHinter  module,
 
 
 FT2_1_3_CALLBACK_DEF( void )
-ft_autohinter_get_globals( FT2_1_3_AutoHinter  module,
+ft_autohinter_get_globals( FT_AutoHinter  module,
 						   FT_Face        face,
 						   void**         global_hints,
 						   long*          global_len ) {
@@ -95,14 +95,14 @@ ft_autohinter_get_globals( FT2_1_3_AutoHinter  module,
 
 
 FT2_1_3_CALLBACK_DEF( void )
-ft_autohinter_done_globals( FT2_1_3_AutoHinter  module,
+ft_autohinter_done_globals( FT_AutoHinter  module,
 							void*          global_hints ) {
 	ah_hinter_done_global_hints( module->hinter, global_hints );
 }
 
 
 FT2_1_3_CALLBACK_TABLE_DEF
-const FT2_1_3_AutoHinter_ServiceRec  ft_autohinter_service = {
+const FT_AutoHinter_ServiceRec  ft_autohinter_service = {
 	ft_autohinter_reset_globals,
 	ft_autohinter_get_globals,
 	ft_autohinter_done_globals,
@@ -113,7 +113,7 @@ const FT2_1_3_AutoHinter_ServiceRec  ft_autohinter_service = {
 FT2_1_3_CALLBACK_TABLE_DEF
 const FT_Module_Class  autohint_module_class = {
 	ft_module_hinter,
-	sizeof ( FT2_1_3_AutoHinterRec ),
+	sizeof ( FT_AutoHinterRec ),
 
 	"autohinter",
 	0x10000L,   /* version 1.0 of the autohinter  */

@@ -2654,8 +2654,8 @@ FT2_1_3_Get_Name_Index( FT_Face     face,
 /*    computations on 16.16 fixed-float numbers or 2d vectors.           */
 /*                                                                       */
 /* <Order>                                                               */
-/*    FT2_1_3_MulDiv                                                          */
-/*    FT2_1_3_MulFix                                                          */
+/*    FT_MulDiv                                                          */
+/*    FT_MulFix                                                          */
 /*    FT2_1_3_DivFix                                                          */
 /*    FT2_1_3_RoundFix                                                        */
 /*    FT2_1_3_CeilFix                                                         */
@@ -2670,7 +2670,7 @@ FT2_1_3_Get_Name_Index( FT_Face     face,
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_MulDiv                                                          */
+/*    FT_MulDiv                                                          */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A very simple function used to perform the computation `(a*b)/c'   */
@@ -2691,7 +2691,7 @@ FT2_1_3_Get_Name_Index( FT_Face     face,
 /*    on the signs of `a' and `b'.                                       */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Long )
-FT2_1_3_MulDiv( FT_Long  a,
+FT_MulDiv( FT_Long  a,
 		   FT_Long  b,
 		   FT_Long  c );
 
@@ -2699,7 +2699,7 @@ FT2_1_3_MulDiv( FT_Long  a,
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_MulFix                                                          */
+/*    FT_MulFix                                                          */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A very simple function used to perform the computation             */
@@ -2726,7 +2726,7 @@ FT2_1_3_MulDiv( FT_Long  a,
 /*    difference.                                                        */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Long )
-FT2_1_3_MulFix( FT_Long  a,
+FT_MulFix( FT_Long  a,
 		   FT_Long  b );
 
 
@@ -2751,7 +2751,7 @@ FT2_1_3_MulFix( FT_Long  a,
 /* <Note>                                                                */
 /*    The optimization for FT2_1_3_DivFix() is simple: If (a << 16) fits in   */
 /*    32 bits, then the division is computed directly.  Otherwise, we    */
-/*    use a specialized version of the old @FT2_1_3_MulDiv64.                 */
+/*    use a specialized version of the old @FT_MulDiv64.                 */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Long )
 FT2_1_3_DivFix( FT_Long  a,

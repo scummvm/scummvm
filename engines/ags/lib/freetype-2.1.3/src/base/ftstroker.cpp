@@ -344,7 +344,7 @@ ft_stroke_border_arcto( FT2_1_3_StrokeBorder  border,
 		b.y += center->y;
 
 		/* compute first and second control points */
-		length = FT2_1_3_MulDiv( radius, FT_Sin(theta)*4,
+		length = FT_MulDiv( radius, FT_Sin(theta)*4,
 		                    (0x10000L + FT_Cos(theta))*3 );
 
 		FT_Vector_From_Polar( &a2, length, angle + rotate );
@@ -676,7 +676,7 @@ ft_stroker_inside( FT_Stroker  stroker,
 	phi = stroker->angle_in + theta;
 
 	thcos  = FT_Cos( theta );
-	sigma  = FT2_1_3_MulFix( stroker->miter_limit, thcos );
+	sigma  = FT_MulFix( stroker->miter_limit, thcos );
 
 	if ( sigma < 0x10000L ) {
 		FT_Vector_From_Polar( &delta, stroker->radius, stroker->angle_out + rotate );
@@ -724,7 +724,7 @@ ft_stroker_outside( FT_Stroker  stroker,
 			theta = theta/2;
 
 		thcos  = FT_Cos( theta );
-		sigma  = FT2_1_3_MulFix( stroker->miter_limit, thcos );
+		sigma  = FT_MulFix( stroker->miter_limit, thcos );
 
 		if ( sigma >= 0x10000L )
 			miter = 0;
@@ -736,13 +736,13 @@ ft_stroker_outside( FT_Stroker  stroker,
 			FT_Fixed  length;
 
 			/* compute middle point */
-			FT_Vector_From_Polar( &middle, FT2_1_3_MulFix( radius, stroker->miter_limit ),
+			FT_Vector_From_Polar( &middle, FT_MulFix( radius, stroker->miter_limit ),
 			                      phi );
 			middle.x += stroker->center.x;
 			middle.y += stroker->center.y;
 
 			/* compute first angle point */
-			length = FT2_1_3_MulFix( radius, FT2_1_3_DivFix( 0x10000L - sigma,
+			length = FT_MulFix( radius, FT2_1_3_DivFix( 0x10000L - sigma,
 			                                       ft_pos_abs( FT_Sin( theta ) ) ) );
 
 			FT_Vector_From_Polar( &delta, length, phi + rotate );

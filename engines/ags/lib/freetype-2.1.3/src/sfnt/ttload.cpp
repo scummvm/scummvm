@@ -157,7 +157,7 @@ sfnt_dir_check( FT_Stream  stream,
 	const FT_ULong  glyx_tag = FT2_1_3_MAKE_TAG( 'g', 'l', 'y', 'x' );
 	const FT_ULong  locx_tag = FT2_1_3_MAKE_TAG( 'l', 'o', 'c', 'x' );
 
-	static const FT2_1_3_Frame_Field  sfnt_dir_entry_fields[] = {
+	static const FT_Frame_Field  sfnt_dir_entry_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  TT_TableRec
 
@@ -265,7 +265,7 @@ tt_face_load_sfnt_header( TT_Face      face,
 	FT_ULong   format_tag, offset;
 	FT_Memory  memory = stream->memory;
 
-	static const FT2_1_3_Frame_Field  sfnt_header_fields[] = {
+	static const FT_Frame_Field  sfnt_header_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  SFNT_HeaderRec
 
@@ -277,7 +277,7 @@ tt_face_load_sfnt_header( TT_Face      face,
 		FT2_1_3_FRAME_END
 	};
 
-	static const FT2_1_3_Frame_Field  ttc_header_fields[] = {
+	static const FT_Frame_Field  ttc_header_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  TTC_HeaderRec
 
@@ -542,7 +542,7 @@ tt_face_load_generic_header( TT_Face    face,
 	FT_Error    error;
 	TT_Header*  header;
 
-	static const FT2_1_3_Frame_Field  header_fields[] = {
+	static const FT_Frame_Field  header_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  TT_Header
 
@@ -638,7 +638,7 @@ tt_face_load_max_profile( TT_Face    face,
 	FT_Error        error;
 	TT_MaxProfile*  maxProfile = &face->max_profile;
 
-	const FT2_1_3_Frame_Field  maxp_fields[] = {
+	const FT_Frame_Field  maxp_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  TT_MaxProfile
 
@@ -648,7 +648,7 @@ tt_face_load_max_profile( TT_Face    face,
 		FT2_1_3_FRAME_END
 	};
 
-	const FT2_1_3_Frame_Field  maxp_fields_extra[] = {
+	const FT_Frame_Field  maxp_fields_extra[] = {
 		FT2_1_3_FRAME_START( 26 ),
 		FT2_1_3_FRAME_USHORT( maxPoints ),
 		FT2_1_3_FRAME_USHORT( maxContours ),
@@ -893,7 +893,7 @@ tt_face_load_metrics_header( TT_Face    face,
 	FT_Error        error;
 	TT_HoriHeader*  header;
 
-	const FT2_1_3_Frame_Field  metrics_header_fields[] = {
+	const FT_Frame_Field  metrics_header_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  TT_HoriHeader
 
@@ -989,7 +989,7 @@ tt_face_load_names( TT_Face    face,
 	FT_UInt       count;
 	TT_NameTable  table;
 
-	static const FT2_1_3_Frame_Field  name_table_fields[] = {
+	static const FT_Frame_Field  name_table_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  TT_NameTableRec
 
@@ -1000,7 +1000,7 @@ tt_face_load_names( TT_Face    face,
 		FT2_1_3_FRAME_END
 	};
 
-	static const FT2_1_3_Frame_Field  name_record_fields[] = {
+	static const FT_Frame_Field  name_record_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  TT_NameEntryRec
 
@@ -1199,7 +1199,7 @@ tt_face_load_os2( TT_Face    face,
 	FT_Error  error;
 	TT_OS2*   os2;
 
-	const FT2_1_3_Frame_Field  os2_fields[] = {
+	const FT_Frame_Field  os2_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  TT_OS2
 
@@ -1250,14 +1250,14 @@ tt_face_load_os2( TT_Face    face,
 		FT2_1_3_FRAME_END
 	};
 
-	const FT2_1_3_Frame_Field  os2_fields_extra[] = {
+	const FT_Frame_Field  os2_fields_extra[] = {
 		FT2_1_3_FRAME_START( 8 ),
 		FT2_1_3_FRAME_ULONG( ulCodePageRange1 ),
 		FT2_1_3_FRAME_ULONG( ulCodePageRange2 ),
 		FT2_1_3_FRAME_END
 	};
 
-	const FT2_1_3_Frame_Field  os2_fields_extra2[] = {
+	const FT_Frame_Field  os2_fields_extra2[] = {
 		FT2_1_3_FRAME_START( 10 ),
 		FT2_1_3_FRAME_SHORT ( sxHeight ),
 		FT2_1_3_FRAME_SHORT ( sCapHeight ),
@@ -1335,7 +1335,7 @@ tt_face_load_postscript( TT_Face    face,
 	FT_Error        error;
 	TT_Postscript*  post = &face->postscript;
 
-	static const FT2_1_3_Frame_Field  post_fields[] = {
+	static const FT_Frame_Field  post_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  TT_Postscript
 
@@ -1389,7 +1389,7 @@ tt_face_load_postscript( TT_Face    face,
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_pclt( TT_Face    face,
 				   FT_Stream  stream ) {
-	static const FT2_1_3_Frame_Field  pclt_fields[] = {
+	static const FT_Frame_Field  pclt_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  TT_PCLT
 
