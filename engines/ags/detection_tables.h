@@ -3982,6 +3982,11 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("gobliiins5-4", "Gobliiins5-Part4.exe", "t:1f2401479d4104539d54a4d11a713044", 352414577),
 	// Bugfix release  2023-05-14
 	GAME_ENTRY("gobliiins5-3", "Gobliiins5-Part3.exe", "t:a6d99497f108311308e812b5ba904d95", 176342992),
+	// Bugfix release  2023-07-10
+	GAME_ENTRY("gobliiins5-1", "Gobliiins5-Part1.ags", "41513db1bd8870e43426b9e94bb26ad1", 171731727),
+	GAME_ENTRY("gobliiins5-2", "Gobliiins5-Part2.ags", "9c1582a2901b8478b838f0b098fa7624", 141154654),
+	GAME_ENTRY("gobliiins5-3", "Gobliiins5-Part3.ags", "b90879328ece625cb99b40bd447b4fef", 173235765),
+	GAME_ENTRY("gobliiins5-4", "Gobliiins5-Part4.ags", "6cbe31cdb90c190465a340db7a748f57", 349305694),
 	GAME_ENTRY_EN_STEAM("goldenwake", "a-golden-wake.exe", "dbe281d93c914899886e77c09c3c65ec", 130844360), // Linux & Mac
 	GAME_ENTRY_EN_STEAM("goldenwake", "a-golden-wake.exe", "e7080df9729aae2a0097b752198f3cca", 130846774),
 	GAME_ENTRY_EN_STEAM("goldenwake", "a-golden-wake.exe", "409b71f7b73f30bef5098c6449505c1a", 130929070),  // Windows
