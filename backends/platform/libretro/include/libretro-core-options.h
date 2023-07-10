@@ -297,7 +297,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"scummvm_samplerate",
 		"Sample rate",
 		NULL,
-		"Set core sample rate. Changing this setting will erset the core.",
+		"Set core sample rate. Changing this setting will reset the core.",
 		NULL,
 		"timing",
 		{
