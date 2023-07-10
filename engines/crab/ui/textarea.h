@@ -73,7 +73,7 @@ public:
 	bool HandleEvents(const SDL_Event &Event, bool numbers_only = false);
 #endif
 
-	void Draw();
+	void draw();
 
 	void SetUI() {
 		title.SetUI();

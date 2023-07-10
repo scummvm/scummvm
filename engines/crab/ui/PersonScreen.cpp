@@ -78,18 +78,18 @@ void PersonScreen::InternalEvents() {
 		cur_sp->DialogUpdateClip(PST_NORMAL);
 }
 
-void PersonScreen::Draw(pyrodactyl::event::Info &info, const Common::String &id) {
-	bg.Draw();
+void PersonScreen::draw(pyrodactyl::event::Info &info, const Common::String &id) {
+	bg.draw();
 
 	if (info.PersonValid(id)) {
-		name.Draw(info.PersonGet(id).name);
-		menu.Draw(&info.PersonGet(id));
+		name.draw(info.PersonGet(id).name);
+		menu.draw(&info.PersonGet(id));
 	} else
-		menu.Draw(nullptr);
+		menu.draw(nullptr);
 
 	if (cur_sp != nullptr) {
 		Rect clip = cur_sp->DialogClip(PST_NORMAL);
-		g_engine->_imageManager->Draw(img.x, img.y, cur_sp->Img(), &clip);
+		g_engine->_imageManager->draw(img.x, img.y, cur_sp->Img(), &clip);
 	}
 }
 

@@ -246,15 +246,15 @@ public:
 	}
 #endif
 
-	void Draw() {
-		status.Draw(info);
-		menu[current_page].Draw();
+	void draw() {
+		status.draw(info);
+		menu[current_page].draw();
 
 		if (current_page > 0)
-			prev.Draw();
+			prev.draw();
 
 		if (current_page < menu.size() - 1)
-			next.Draw();
+			next.draw();
 	}
 };
 

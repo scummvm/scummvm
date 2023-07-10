@@ -64,7 +64,7 @@ void QuestText::load(rapidxml::xml_node<char> *node) {
 		status.load(node->first_node("status"));
 }
 
-void QuestText::Draw(pyrodactyl::event::Quest &q) {
+void QuestText::draw(pyrodactyl::event::Quest &q) {
 	// First, we must scan and find the part of the quest text we should draw
 
 	// Assign default values to start and stop
@@ -108,13 +108,13 @@ void QuestText::Draw(pyrodactyl::event::Quest &q) {
 	status.text = (NumberToString(current_page + 1) + " of " + NumberToString(total_page));
 
 	// Now, start drawing the quest
-	status.Draw();
+	status.draw();
 
 	if (current_page > 0)
-		prev.Draw();
+		prev.draw();
 
 	if (current_page < total_page - 1)
-		next.Draw();
+		next.draw();
 
 	// Draw the current page of quest text
 	if (!q.text.empty()) {
@@ -122,13 +122,13 @@ void QuestText::Draw(pyrodactyl::event::Quest &q) {
 		int count = 0;
 
 		for (unsigned int i = start; i < (unsigned int)stop; ++i) {
-			img.Draw(inc.x * count, inc.y * count);
+			img.draw(inc.x * count, inc.y * count);
 
 			// Draw first entry in selected color, and older quest entries in standard color
 			if (i == 0)
-				g_engine->_textManager->Draw(x, y, q.text[i], col_s, font, align, line.x, line.y);
+				g_engine->_textManager->draw(x, y, q.text[i], col_s, font, align, line.x, line.y);
 			else
-				ParagraphData::Draw(q.text[i], inc.x * count, inc.y * count);
+				ParagraphData::draw(q.text[i], inc.x * count, inc.y * count);
 
 			// Count is reduced extra by the amount of lines it takes for the message to be drawn
 			count += (q.text[i].size() / line.x) + 1;

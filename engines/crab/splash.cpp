@@ -78,8 +78,8 @@ void Splash::InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 //------------------------------------------------------------------------
 // Purpose: Drawing function
 //------------------------------------------------------------------------
-void Splash::Draw() {
-	background.Draw(x, y);
+void Splash::draw() {
+	background.draw(x, y);
 	first_run = false;
 }
 

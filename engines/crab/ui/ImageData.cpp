@@ -46,11 +46,11 @@ void ImageData::load(rapidxml::xml_node<char> *node, const bool &echo) {
 	Element::load(node, key, echo);
 }
 
-void ImageData::Draw(const int &XOffset, const int &YOffset) {
+void ImageData::draw(const int &XOffset, const int &YOffset) {
 	if (crop)
-		g_engine->_imageManager->Draw(x + XOffset, y + YOffset, key, &clip);
+		g_engine->_imageManager->draw(x + XOffset, y + YOffset, key, &clip);
 	else
-		g_engine->_imageManager->Draw(x + XOffset, y + YOffset, key);
+		g_engine->_imageManager->draw(x + XOffset, y + YOffset, key);
 }
 
 } // End of namespace Crab

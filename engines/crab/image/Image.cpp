@@ -119,7 +119,7 @@ bool Image::load(const Image &image, Rect *clip, const TextureFlipType &flip) {
 //------------------------------------------------------------------------
 // Purpose: Draw a texture to the screen without cropping
 //------------------------------------------------------------------------
-void Image::Draw(const int &x, const int &y, Common::Rect *clip, const TextureFlipType &flip) {
+void Image::draw(const int &x, const int &y, Common::Rect *clip, const TextureFlipType &flip) {
 
 	Common::Rect srcRect;
 	if (clip != NULL) {
@@ -186,7 +186,7 @@ Graphics::Surface* Image::rotate(const Graphics::ManagedSurface &src, ImageRotat
 	return dest;
 }
 
-void Image::Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &flip, Graphics::ManagedSurface *surf) {
+void Image::draw(const int &x, const int &y, Rect *clip, const TextureFlipType &flip, Graphics::ManagedSurface *surf) {
 	if (surf == NULL)
 		surf = g_engine->_screen;
 

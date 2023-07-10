@@ -49,8 +49,8 @@ void ClipButton::load(rapidxml::xml_node<char> *node, const bool &echo) {
 	}
 }
 
-void ClipButton::Draw(const int &XOffset, const int &YOffset) {
-	Button::Draw(XOffset, YOffset, &clip);
+void ClipButton::draw(const int &XOffset, const int &YOffset) {
+	Button::draw(XOffset, YOffset, &clip);
 }
 
 } // End of namespace Crab

@@ -53,7 +53,7 @@ void ProgressBar::load(rapidxml::xml_node<char> *node) {
 	}
 }
 
-void ProgressBar::Draw(const int &value, const int &max) {
+void ProgressBar::draw(const int &value, const int &max) {
 	// We don't want divide by zero errors
 	if (max == 0)
 		return;
@@ -68,21 +68,21 @@ void ProgressBar::Draw(const int &value, const int &max) {
 	// If we don't have to draw animations for changing value, just draw the bar
 	if (!changed) {
 		clip.w = (g_engine->_imageManager->GetTexture(img.normal).W() * value) / max;
-		ClipButton::Draw();
+		ClipButton::draw();
 	} else {
 		clip.w = (g_engine->_imageManager->GetTexture(img.normal).W() * cur) / max;
-		ClipButton::Draw();
+		ClipButton::draw();
 
 		switch (type) {
 		case INCREASE:
-			g_engine->_imageManager->Draw(x + clip.w + offset.x, y + offset.y, inc);
+			g_engine->_imageManager->draw(x + clip.w + offset.x, y + offset.y, inc);
 			if (timer.TargetReached()) {
 				cur++;
 				timer.Start();
 			}
 			break;
 		case DECREASE:
-			g_engine->_imageManager->Draw(x + clip.w + offset.x, y + offset.y, dec);
+			g_engine->_imageManager->draw(x + clip.w + offset.x, y + offset.y, dec);
 			if (timer.TargetReached()) {
 				cur--;
 				timer.Start();

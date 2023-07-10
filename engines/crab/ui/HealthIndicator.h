@@ -61,7 +61,7 @@ public:
 	~HealthIndicator() {}
 
 	void load(rapidxml::xml_node<char> *node);
-	void Draw(int num);
+	void draw(int num);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

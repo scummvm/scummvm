@@ -67,7 +67,7 @@ public:
 	~ReplyButton() {}
 
 	void load(rapidxml::xml_node<char> *node);
-	void Draw(const int &XOffset = 0, const int &YOffset = 0);
+	void draw(const int &XOffset = 0, const int &YOffset = 0);
 
 	// Used to calculate size and set the string
 	// Spacing is the minimum space between buttons added in case of overflow

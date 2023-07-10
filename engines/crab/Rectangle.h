@@ -83,7 +83,7 @@ struct Rect {
 	void Flip(const TextureFlipType &flip, const Vector2i &axis);
 
 	// Draw the borders of the rectangle
-	void Draw(const int &XOffset = 0, const int &YOffset = 0, const uint8 &r = 0, const uint8 &g = 0, const uint8 &b = 0, const uint8 &a = 255);
+	void draw(const int &XOffset = 0, const int &YOffset = 0, const uint8 &r = 0, const uint8 &g = 0, const uint8 &b = 0, const uint8 &a = 255);
 
 	// Check if a rectangle is the same as another
 	bool operator==(const Rect &r) { return r.x == x && r.y == y && r.w == w && r.h == h; }

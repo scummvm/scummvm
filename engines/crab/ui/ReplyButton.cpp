@@ -55,14 +55,14 @@ void ReplyButton::load(rapidxml::xml_node<char> *node) {
 	}
 }
 
-void ReplyButton::Draw(const int &XOffset, const int &YOffset) {
+void ReplyButton::draw(const int &XOffset, const int &YOffset) {
 	if (visible) {
 		if (mousepressed)
-			g_engine->_textManager->Draw(x + XOffset, y + YOffset, text, col_s, font, align, line_size.x, line_size.y);
+			g_engine->_textManager->draw(x + XOffset, y + YOffset, text, col_s, font, align, line_size.x, line_size.y);
 		else if (hover_mouse || hover_key)
-			g_engine->_textManager->Draw(x + XOffset, y + YOffset, text, col_h, font, align, line_size.x, line_size.y);
+			g_engine->_textManager->draw(x + XOffset, y + YOffset, text, col_h, font, align, line_size.x, line_size.y);
 		else
-			g_engine->_textManager->Draw(x + XOffset, y + YOffset, text, col_b, font, align, line_size.x, line_size.y);
+			g_engine->_textManager->draw(x + XOffset, y + YOffset, text, col_b, font, align, line_size.x, line_size.y);
 	}
 }
 

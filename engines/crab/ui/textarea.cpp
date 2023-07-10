@@ -127,9 +127,9 @@ bool TextArea::HandleEvents(const SDL_Event &Event, bool numbers_only) {
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void TextArea::Draw() {
-	title.Draw();
-	TextData::Draw(text + "_");
+void TextArea::draw() {
+	title.draw();
+	TextData::draw(text + "_");
 }
 
 } // End of namespace Crab

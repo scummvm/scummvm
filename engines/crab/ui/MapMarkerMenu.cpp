@@ -60,7 +60,7 @@ void MapMarkerMenu::load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void MapMarkerMenu::Draw(const Element &pos, const Vector2i &player_pos, const Rect &camera) {
+void MapMarkerMenu::draw(const Element &pos, const Vector2i &player_pos, const Rect &camera) {
 	// Calculate all offsets
 	Vector2i offset_p(pos.x + player_pos.x + offset.player.x - camera.x, pos.y + player_pos.y + offset.player.y - camera.y);
 	Vector2i offset_m(pos.x - camera.x + offset.marker.x, pos.y - camera.y + offset.marker.y);

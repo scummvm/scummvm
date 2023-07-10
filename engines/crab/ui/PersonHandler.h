@@ -102,7 +102,7 @@ public:
 
 	void InternalEvents(const pyrodactyl::people::PersonState &state, pyrodactyl::anim::Sprite *s);
 
-	void Draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameEvent *Event, const Common::String &person_id,
+	void draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameEvent *Event, const Common::String &person_id,
 			  const bool &player, pyrodactyl::anim::Sprite *s = nullptr);
 
 	void OpinionChange(pyrodactyl::event::Info &info, const Common::String &id,

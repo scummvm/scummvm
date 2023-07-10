@@ -89,7 +89,7 @@ public:
 	// Calculate the projection of a polygon on an axis and returns it as a [min, max] interval
 	void Project(const Vector2f &axis, float &min, float &max) const;
 
-	void Draw(const int &XOffset = 0, const int &YOffset = 0,
+	void draw(const int &XOffset = 0, const int &YOffset = 0,
 			  const uint8 &r = 0, const uint8 &g = 0, const uint8 &b = 0.0f, const uint8 &a = 255);
 };
 

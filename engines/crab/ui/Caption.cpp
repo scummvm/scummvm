@@ -50,12 +50,12 @@ void Caption::load(rapidxml::xml_node<char> *node, Rect *parent) {
 	}
 }
 
-void Caption::Draw(bool selected, const int &XOffset, const int &YOffset) {
+void Caption::draw(bool selected, const int &XOffset, const int &YOffset) {
 	if (enabled) {
 		if (selected)
 			TextData::DrawColor(text, col_s, XOffset, YOffset);
 		else
-			TextData::Draw(text, XOffset, YOffset);
+			TextData::draw(text, XOffset, YOffset);
 	}
 }
 

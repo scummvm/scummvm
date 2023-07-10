@@ -43,14 +43,14 @@ void PauseMenu::load(rapidxml::xml_node<char> *node) {
 		bg.load(node->first_node("bg"));
 }
 
-bool PauseMenu::Draw(Button &back) {
+bool PauseMenu::draw(Button &back) {
 	switch (state) {
 	case STATE_NORMAL:
-		bg.Draw();
-		menu.Draw();
+		bg.draw();
+		menu.draw();
 		break;
 	case STATE_OPTION:
-		g_engine->_optionMenu->Draw(back);
+		g_engine->_optionMenu->draw(back);
 		return true;
 	default:
 		break;

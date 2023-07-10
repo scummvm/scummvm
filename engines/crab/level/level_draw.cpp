@@ -63,7 +63,7 @@ void Level::PreDraw() {
 //------------------------------------------------------------------------
 // Purpose: Draw the level
 //------------------------------------------------------------------------
-void Level::Draw(pyrodactyl::event::Info &info) {
+void Level::draw(pyrodactyl::event::Info &info) {
 	SetCamera();
 	SortObjectsToDraw();
 
@@ -73,7 +73,7 @@ void Level::Draw(pyrodactyl::event::Info &info) {
 	unsigned int layer_count = 0u;
 
 	// Draw the terrain layer
-	g_engine->_imageManager->tileset.Draw(terrain.layer[0], camera, terrain.tile_size, objects[player_index].PosRect(), img);
+	g_engine->_imageManager->tileset.draw(terrain.layer[0], camera, terrain.tile_size, objects[player_index].PosRect(), img);
 
 	Vector2i pos = objects[player_index].ai_data._dest;
 	Rect newpos(pos.x - (dest_marker.size.x / 2), pos.y - (dest_marker.size.y / 2), dest_marker.size.x, dest_marker.size.y);
@@ -85,7 +85,7 @@ void Level::Draw(pyrodactyl::event::Info &info) {
 			if ((unsigned int)b->layer > layer_count) // We don't have any sprites to draw at this layer
 				break;
 			else if ((unsigned int)b->layer == layer_count && b->Visible())
-				b->Draw(info, camera);
+				b->draw(info, camera);
 		}
 
 		// Draw the normal sprites if this is the layer for it
@@ -101,7 +101,7 @@ void Level::Draw(pyrodactyl::event::Info &info) {
 		if ((unsigned int)b->layer > layer_count) // We don't have any sprites to draw at this layer
 			break;
 		else if ((unsigned int)b->layer >= layer_count && b->Visible())
-			b->Draw(info, camera);
+			b->draw(info, camera);
 	}
 
 	// This is to ensure we don't miss out on drawing sprites
@@ -112,7 +112,7 @@ void Level::Draw(pyrodactyl::event::Info &info) {
 	for (auto &i : fly) {
 		// Only draw if it is supposed to be flying
 		if (i.ai_data._walk._enabled)
-			i.Draw(info, camera);
+			i.draw(info, camera);
 	}
 
 	// Draw popup text over all level layers
@@ -126,7 +126,7 @@ void Level::Draw(pyrodactyl::event::Info &info) {
 				//(a) hovered over by the mouse, OR
 				//(b) are in talk range and don't have popup text over their head
 				if (i.hover || (info.LastPerson() == i.ID() && !i.PopupShow()))
-					talk_notify.Draw(info, i, camera);
+					talk_notify.draw(info, i, camera);
 			}
 		}
 	}
@@ -141,7 +141,7 @@ void Level::Draw(pyrodactyl::event::Info &info) {
 void Level::DrawObjects(pyrodactyl::event::Info &info) {
 	// Draw player destination marker
 	if (objects[player_index].ai_data._dest._active)
-		dest_marker.Draw(objects[player_index].ai_data._dest, camera);
+		dest_marker.draw(objects[player_index].ai_data._dest, camera);
 
 	Vector2i pos = objects[player_index].ai_data._dest;
 	Rect newpos(pos.x - (dest_marker.size.x / 2), pos.y - (dest_marker.size.y / 2), dest_marker.size.x, dest_marker.size.y);
@@ -149,7 +149,7 @@ void Level::DrawObjects(pyrodactyl::event::Info &info) {
 	if (terrain.prop.empty()) {
 		for (auto &entry : obj_seq) {
 			if (entry.second->Visible() && LayerVisible(entry.second))
-				entry.second->Draw(info, camera);
+				entry.second->draw(info, camera);
 		}
 	} else {
 		auto a = terrain.prop.begin();
@@ -159,7 +159,7 @@ void Level::DrawObjects(pyrodactyl::event::Info &info) {
 			auto obj = b->second;
 			if (a->pos.y + a->pos.h < obj->Y() + obj->H()) {
 				for (auto &i : a->boundRect) {
-					i.Draw(-camera.x, -camera.y, 128, 128, 0, 255);
+					i.draw(-camera.x, -camera.y, 128, 128, 0, 255);
 					if (i.Collide(objects[player_index].PosRect())) {
 						g_engine->_imageManager->tileset.ForceDraw(*a, camera, terrain.tile_size, objects[player_index].PosRect());
 					}
@@ -171,7 +171,7 @@ void Level::DrawObjects(pyrodactyl::event::Info &info) {
 				++a;
 			} else {
 				if (obj->Visible() && LayerVisible(obj))
-					obj->Draw(info, camera);
+					obj->draw(info, camera);
 				++b;
 			}
 		}
@@ -180,12 +180,12 @@ void Level::DrawObjects(pyrodactyl::event::Info &info) {
 			for (; b != obj_seq.end(); ++b) {
 				auto obj = b->second;
 				if (obj->Visible() && LayerVisible(obj))
-					obj->Draw(info, camera);
+					obj->draw(info, camera);
 			}
 		} else if (b == obj_seq.end()) {
 			for (; a != terrain.prop.end(); ++a) {
 				for (auto &i : a->boundRect) {
-					i.Draw(-camera.x, -camera.y, 128, 128, 0, 255);
+					i.draw(-camera.x, -camera.y, 128, 128, 0, 255);
 					if (i.Collide(objects[player_index].PosRect())) {
 						g_engine->_imageManager->tileset.ForceDraw(*a, camera, terrain.tile_size, objects[player_index].PosRect());
 					}

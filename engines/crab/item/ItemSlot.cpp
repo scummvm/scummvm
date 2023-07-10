@@ -103,11 +103,11 @@ void ItemSlot::LoadState(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void ItemSlot::Draw() {
-	StateButton::Draw();
+void ItemSlot::draw() {
+	StateButton::draw();
 
 	if (!empty)
-		item.Draw(x, y);
+		item.draw(x, y);
 
 	if (unread)
 		g_engine->_imageManager->NotifyDraw(x + w, y);

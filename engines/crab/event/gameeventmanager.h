@@ -90,7 +90,7 @@ public:
 	void Init();
 	void load(rapidxml::xml_node<char> *node, pyrodactyl::ui::ParagraphData &popup);
 
-	void Draw(Info &info, pyrodactyl::ui::HUD &hud, pyrodactyl::level::Level &level);
+	void draw(Info &info, pyrodactyl::ui::HUD &hud, pyrodactyl::level::Level &level);
 
 	// cur_per is also updated here
 	void InternalEvents(Info &info, pyrodactyl::level::Level &level, Common::Array<EventResult> &result);

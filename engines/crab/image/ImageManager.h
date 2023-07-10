@@ -97,9 +97,9 @@ public:
 	Image &GetTexture(const ImageKey &id);
 	bool ValidTexture(const ImageKey &id);
 
-	void Draw(const int &x, const int &y, const ImageKey &id,
+	void draw(const int &x, const int &y, const ImageKey &id,
 			  Common::Rect *clip = NULL, const TextureFlipType &flip = FLIP_NONE);
-	void Draw(const int &x, const int &y, const ImageKey &id,
+	void draw(const int &x, const int &y, const ImageKey &id,
 			  Rect *clip, const TextureFlipType &flip = FLIP_NONE);
 
 	void DimScreen();
@@ -108,7 +108,7 @@ public:
 	// Draw the notification icon
 	void NotifyDraw(const int &x, const int &y) {
 		auto *k = &GetTexture(notify);
-		Draw(x - k->W() / 2, y - k->H() / 2, notify);
+		draw(x - k->W() / 2, y - k->H() / 2, notify);
 	}
 };
 

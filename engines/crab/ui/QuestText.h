@@ -86,7 +86,7 @@ public:
 #if 0
 	void HandleEvents(pyrodactyl::event::Quest &q, const SDL_Event &Event);
 #endif
-	void Draw(pyrodactyl::event::Quest &q);
+	void draw(pyrodactyl::event::Quest &q);
 
 	void SetUI();
 };

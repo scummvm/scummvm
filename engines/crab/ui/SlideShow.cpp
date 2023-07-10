@@ -66,15 +66,15 @@ void SlideShow::load(rapidxml::xml_node<char> *node) {
 	}
 }
 
-void SlideShow::Draw() {
-	bg.Draw();
-	img.Draw(pos.x, pos.y);
+void SlideShow::draw() {
+	bg.draw();
+	img.draw(pos.x, pos.y);
 
 	if (index > 0)
-		prev.Draw();
+		prev.draw();
 
 	if (index < path.size() - 1)
-		next.Draw();
+		next.draw();
 }
 
 void SlideShow::HandleEvents(const Common::Event &Event) {

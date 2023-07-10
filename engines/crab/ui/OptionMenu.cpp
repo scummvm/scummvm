@@ -103,55 +103,55 @@ void OptionMenu::Reset() {
 		menu.element[i].State(i == STATE_GENERAL);
 }
 
-void OptionMenu::Draw(Button &back) {
+void OptionMenu::draw(Button &back) {
 	if (state < STATE_ENTER_W) {
-		bg.Draw();
+		bg.draw();
 
 		switch (state) {
 		case STATE_GENERAL:
-			general.Draw();
+			general.draw();
 			break;
 		case STATE_GRAPHICS:
-			gfx.Draw();
+			gfx.draw();
 			break;
 		case STATE_KEYBOARD:
-			keybind.Draw();
+			keybind.draw();
 			break;
 		case STATE_CONTROLLER:
-			conbind.Draw();
+			conbind.draw();
 			break;
 		default:
 			break;
 		}
 
-		menu.Draw();
-		back.Draw();
+		menu.draw();
+		back.draw();
 	} else {
-		questionbox.Draw();
+		questionbox.draw();
 
 		switch (state) {
 		case STATE_ENTER_W:
-			prompt_w.Draw();
+			prompt_w.draw();
 			break;
 		case STATE_ENTER_H:
-			prompt_h.Draw();
+			prompt_h.draw();
 			break;
 		case STATE_CONFIRM:
-			notice_res.Draw();
-			countdown.Draw(NumberToString(timer.RemainingTicks() / 1000));
+			notice_res.draw();
+			countdown.draw(NumberToString(timer.RemainingTicks() / 1000));
 			break;
 		default:
 			break;
 		}
 
-		accept.Draw();
-		cancel.Draw();
+		accept.draw();
+		cancel.draw();
 	}
 }
 
 bool OptionMenu::HandleEvents(Button &back, const Common::Event &Event) {
 	if (state < STATE_ENTER_W) {
-		bg.Draw();
+		bg.draw();
 
 		switch (state) {
 		case STATE_GENERAL:
@@ -176,7 +176,7 @@ bool OptionMenu::HandleEvents(Button &back, const Common::Event &Event) {
 
 		return HandleTabs(back, Event);
 	} else {
-		questionbox.Draw();
+		questionbox.draw();
 
 		switch (state) {
 		case STATE_ENTER_W:
@@ -218,8 +218,8 @@ bool OptionMenu::HandleEvents(Button &back, const Common::Event &Event) {
 			break;
 		}
 
-		accept.Draw();
-		cancel.Draw();
+		accept.draw();
+		cancel.draw();
 	}
 
 	return false;
@@ -234,7 +234,7 @@ bool OptionMenu::HandleTabs(Button &back, const Common::Event &Event) {
 #if 0
 bool OptionMenu::HandleEvents(Button &back, const SDL_Event &Event) {
 	if (state < STATE_ENTER_W) {
-		bg.Draw();
+		bg.draw();
 
 		switch (state) {
 		case STATE_GENERAL:
@@ -259,7 +259,7 @@ bool OptionMenu::HandleEvents(Button &back, const SDL_Event &Event) {
 
 		return HandleTabs(back, Event);
 	} else {
-		questionbox.Draw();
+		questionbox.draw();
 
 		switch (state) {
 		case STATE_ENTER_W:
@@ -301,8 +301,8 @@ bool OptionMenu::HandleEvents(Button &back, const SDL_Event &Event) {
 			break;
 		}
 
-		accept.Draw();
-		cancel.Draw();
+		accept.draw();
+		cancel.draw();
 	}
 
 	return false;

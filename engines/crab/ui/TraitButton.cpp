@@ -49,11 +49,11 @@ void TraitButton::load(rapidxml::xml_node<char> *node, const bool &echo) {
 		offset.load(node->first_node("offset"), echo);
 }
 
-void TraitButton::Draw(const int &XOffset, const int &YOffset, Rect *clip) {
+void TraitButton::draw(const int &XOffset, const int &YOffset, Rect *clip) {
 	if (trait_img != 0)
-		g_engine->_imageManager->Draw(x + offset.x, y + offset.y, trait_img);
+		g_engine->_imageManager->draw(x + offset.x, y + offset.y, trait_img);
 
-	StateButton::Draw(XOffset, YOffset, clip);
+	StateButton::draw(XOffset, YOffset, clip);
 }
 
 void TraitButton::Cache(const pyrodactyl::people::Trait &trait) {

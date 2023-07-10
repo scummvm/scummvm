@@ -55,7 +55,7 @@ public:
 	}
 
 	void load(rapidxml::xml_node<char> *node);
-	void Draw(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s, const Rect &camera);
+	void draw(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s, const Rect &camera);
 };
 } // End of namespace level
 } // End of namespace pyrodactyl

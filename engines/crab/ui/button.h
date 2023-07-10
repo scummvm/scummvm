@@ -116,7 +116,7 @@ public:
 	void Img(ButtonImage &image) { img = image; }
 	ButtonImage Img() { return img; }
 
-	void Draw(const int &XOffset = 0, const int &YOffset = 0, Rect *clip = NULL);
+	void draw(const int &XOffset = 0, const int &YOffset = 0, Rect *clip = NULL);
 
 	ButtonAction HandleEvents(const Common::Event &Event, const int &XOffset = 0, const int &YOffset = 0);
 #if 0

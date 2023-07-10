@@ -49,12 +49,12 @@ bool TextData::load(rapidxml::xml_node<char> *node, Rect *parent, const bool &ec
 	return false;
 }
 
-void TextData::Draw(const Common::String &val, const int &XOffset, const int &YOffset) {
-	g_engine->_textManager->Draw(x + XOffset, y + YOffset, val, col, font, align, background);
+void TextData::draw(const Common::String &val, const int &XOffset, const int &YOffset) {
+	g_engine->_textManager->draw(x + XOffset, y + YOffset, val, col, font, align, background);
 }
 
 void TextData::DrawColor(const Common::String &val, const int &color, const int &XOffset, const int &YOffset) {
-	g_engine->_textManager->Draw(x + XOffset, y + YOffset, val, color, font, align, background);
+	g_engine->_textManager->draw(x + XOffset, y + YOffset, val, color, font, align, background);
 }
 
 } // End of namespace Crab

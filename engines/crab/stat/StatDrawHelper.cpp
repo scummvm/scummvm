@@ -52,16 +52,16 @@ void StatInfo::load(rapidxml::xml_node<char> *node) {
 	}
 }
 
-void StatInfo::Draw(const int &val, const int &max) {
+void StatInfo::draw(const int &val, const int &max) {
 	if (active) {
 		using namespace pyrodactyl::image;
-		desc.Draw(text);
+		desc.draw(text);
 
 		int i = 0;
 		for (; i < val; ++i)
-			g_engine->_imageManager->Draw(dim.x + i * dim.w, dim.y + i * dim.h, full);
+			g_engine->_imageManager->draw(dim.x + i * dim.w, dim.y + i * dim.h, full);
 		for (; i < max; ++i)
-			g_engine->_imageManager->Draw(dim.x + i * dim.w, dim.y + i * dim.h, empty);
+			g_engine->_imageManager->draw(dim.x + i * dim.w, dim.y + i * dim.h, empty);
 	}
 }
 
@@ -78,7 +78,7 @@ void StatDrawHelper::load(rapidxml::xml_node<char> *node) {
 
 void StatDrawHelper::DrawInfo(const Person &obj) {
 	for (int i = 0; i < STAT_TOTAL; i++)
-		info[i].Draw(obj.stat.val[i].cur, obj.stat.val[i].max);
+		info[i].draw(obj.stat.val[i].cur, obj.stat.val[i].max);
 }
 
 } // End of namespace Crab

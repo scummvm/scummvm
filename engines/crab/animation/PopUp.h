@@ -82,7 +82,7 @@ struct PopUp {
 	}
 
 	void load(rapidxml::xml_node<char> *node);
-	void Draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop, const Rect &camera);
+	void draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop, const Rect &camera);
 
 	// return true if we should proceed to next event, false otherwise
 	bool InternalEvents(pyrodactyl::event::Info &info, const Common::String &player_id,
@@ -118,7 +118,7 @@ struct PopUpCollection {
 	void InternalEvents(pyrodactyl::event::Info &info, const Common::String &player_id,
 						Common::Array<pyrodactyl::event::EventResult> &result, Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq);
 
-	void Draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop, const Rect &camera);
+	void draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop, const Rect &camera);
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl

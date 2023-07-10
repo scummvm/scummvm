@@ -137,19 +137,19 @@ bool CreditScreen::HandleEvents(SDL_Event &Event) {
 }
 #endif
 
-void CreditScreen::Draw() {
-	bg.Draw();
+void CreditScreen::draw() {
+	bg.draw();
 
-	slow.Draw();
-	fast.Draw();
-	pause.Draw();
-	reverse.Draw();
+	slow.draw();
+	fast.draw();
+	pause.draw();
+	reverse.draw();
 
-	logo.Draw();
-	twitter.Draw();
-	website.Draw();
+	logo.draw();
+	twitter.draw();
+	website.draw();
 
-	back.Draw();
+	back.draw();
 
 	cur.y = start.y;
 
@@ -159,9 +159,9 @@ void CreditScreen::Draw() {
 		if (i->heading) {
 			cur.y += heading.inc;
 			if (cur.y > -30 && cur.y < g_engine->_screenSettings->cur.h + 40) // Only draw text if it is actually visible on screen
-				g_engine->_textManager->Draw(cur.x, cur.y, i->text, heading.color, heading.font, heading.align);
+				g_engine->_textManager->draw(cur.x, cur.y, i->text, heading.color, heading.font, heading.align);
 		} else if (cur.y > -30 && cur.y < g_engine->_screenSettings->cur.h + 40)
-			g_engine->_textManager->Draw(cur.x, cur.y, i->text, paragraph.color, paragraph.font, paragraph.align);
+			g_engine->_textManager->draw(cur.x, cur.y, i->text, paragraph.color, paragraph.font, paragraph.align);
 
 		// If our cur value has reached below the screen, simply exit the loop as we won't draw anything else
 		if (cur.y > g_engine->_screenSettings->cur.h + 40)

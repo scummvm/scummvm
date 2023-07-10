@@ -51,16 +51,16 @@ void LoadingScreen::load() {
 	}
 }
 
-void LoadingScreen::Draw() {
+void LoadingScreen::draw() {
 	// Change to a random screen
 	Change();
 
 	// Draw the current screen
 	if (cur < screen.size())
-		screen[cur].Draw();
+		screen[cur].draw();
 
 	// Draw the loading text
-	text.Draw((g_engine->_screenSettings->cur.w - text.W()) / 2, (g_engine->_screenSettings->cur.h - text.H()) / 2);
+	text.draw((g_engine->_screenSettings->cur.w - text.W()) / 2, (g_engine->_screenSettings->cur.h - text.H()) / 2);
 
 	g_engine->_screen->update();
 

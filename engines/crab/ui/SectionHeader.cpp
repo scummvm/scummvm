@@ -76,18 +76,18 @@ void SectionHeader::load(rapidxml::xml_node<char> *node) {
 
 }
 
-void SectionHeader::Draw(const int &XOffset, const int &YOffset) {
-	Draw(text, XOffset, YOffset);
+void SectionHeader::draw(const int &XOffset, const int &YOffset) {
+	draw(text, XOffset, YOffset);
 }
 
-void SectionHeader::Draw(const Common::String &str, const int &XOffset, const int &YOffset) {
+void SectionHeader::draw(const Common::String &str, const int &XOffset, const int &YOffset) {
 	if (draw_l)
-		g_engine->_imageManager->Draw(left.x + XOffset, left.y + YOffset, img);
+		g_engine->_imageManager->draw(left.x + XOffset, left.y + YOffset, img);
 
 	if (draw_r)
-		g_engine->_imageManager->Draw(right.x + XOffset, right.y + YOffset, img, (Rect*)NULL, FLIP_X);
+		g_engine->_imageManager->draw(right.x + XOffset, right.y + YOffset, img, (Rect*)NULL, FLIP_X);
 
-	TextData::Draw(str, XOffset, YOffset);
+	TextData::draw(str, XOffset, YOffset);
 }
 
 } // End of namespace Crab

@@ -73,7 +73,7 @@ public:
 #endif
 
 	void InternalEvents();
-	void Draw(pyrodactyl::event::Info &info, const Common::String &id);
+	void draw(pyrodactyl::event::Info &info, const Common::String &id);
 
 	void SetUI();
 };

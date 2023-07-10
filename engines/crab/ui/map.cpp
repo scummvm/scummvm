@@ -89,10 +89,10 @@ void Map::load(const Common::String &filename, pyrodactyl::event::Info &info) {
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void Map::Draw(pyrodactyl::event::Info &info) {
+void Map::draw(pyrodactyl::event::Info &info) {
 
 	// The map graphic is clipped to fit inside the UI
-	img_bg.Draw(pos.x, pos.y, &camera);
+	img_bg.draw(pos.x, pos.y, &camera);
 
 	if (overlay) {
 		// The overlay needs to be clipped as well, so we must find the intersection of the camera and the clip itself
@@ -127,21 +127,21 @@ void Map::Draw(pyrodactyl::event::Info &info) {
 			if (Y + r.h > pos.y + camera.h)
 				r.h = pos.y + camera.h - Y;
 
-			img_overlay.Draw(X, Y, &r);
+			img_overlay.draw(X, Y, &r);
 		}
 	}
 
-	travel.Draw(camera.x - pos.x, camera.y - pos.y);
+	travel.draw(camera.x - pos.x, camera.y - pos.y);
 
-	fg.Draw();
-	bu_overlay.Draw();
+	fg.draw();
+	bu_overlay.draw();
 
 	title.text = info.CurLocName();
-	title.Draw();
+	title.draw();
 
-	marker.Draw(pos, player_pos, camera);
+	marker.draw(pos, player_pos, camera);
 
-	scroll.Draw();
+	scroll.draw();
 }
 
 //------------------------------------------------------------------------

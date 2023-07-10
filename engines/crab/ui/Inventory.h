@@ -70,7 +70,7 @@ public:
 	bool HasItem(const Common::String &char_id, const Common::String &container, const Common::String &item_id);
 
 	void load(const Common::String &filename);
-	void Draw(pyrodactyl::people::Person &obj, const int &money_val);
+	void draw(pyrodactyl::people::Person &obj, const int &money_val);
 
 	void HandleEvents(const Common::String &char_id, const Common::Event &Event);
 #if 0

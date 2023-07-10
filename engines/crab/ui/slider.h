@@ -74,7 +74,7 @@ public:
 	bool HandleEvents(const SDL_Event &Event);
 #endif
 
-	void Draw();
+	void draw();
 
 	int Value() { return value; }
 	void Value(const int val);

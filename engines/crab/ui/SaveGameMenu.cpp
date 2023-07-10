@@ -112,17 +112,17 @@ bool GameSaveMenu::HandleEvents(const Common::Event &Event) {
 	return false;
 }
 
-void GameSaveMenu::Draw() {
-	bg.Draw();
-	menu.Draw();
+void GameSaveMenu::draw() {
+	bg.draw();
+	menu.draw();
 	for (auto i = menu.Index(), count = 0u; i < menu.IndexPlusOne() && i < slot_info.size(); i++, count++) {
 		float base_x = menu.BaseX(count), base_y = menu.BaseY(count);
-		td_b[DATA_LASTMODIFIED].Draw(slot_info[i].last_modified, base_x, base_y);
+		td_b[DATA_LASTMODIFIED].draw(slot_info[i].last_modified, base_x, base_y);
 
 		if (i == (unsigned int)index && state == STATE_NAME)
-			ta_name.Draw();
+			ta_name.draw();
 		else
-			td_b[DATA_SAVENAME].Draw(slot_info[i].name, base_x, base_y);
+			td_b[DATA_SAVENAME].draw(slot_info[i].name, base_x, base_y);
 	}
 
 	DrawHover();

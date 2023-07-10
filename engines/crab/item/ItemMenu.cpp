@@ -98,12 +98,12 @@ void ItemMenu::HandleEvents(const SDL_Event &Event, const int &XOffset, const in
 //------------------------------------------------------------------------
 // Purpose: Draw the slot backgrounds first, then the items
 //------------------------------------------------------------------------
-void ItemMenu::Draw(ItemDesc &item_info) {
+void ItemMenu::draw(ItemDesc &item_info) {
 	if (select_index != -1)
-		item_info.Draw(element[select_index].item);
+		item_info.draw(element[select_index].item);
 
 	for (auto i = element.begin(); i != element.end(); ++i)
-		i->Draw();
+		i->draw();
 }
 
 //------------------------------------------------------------------------

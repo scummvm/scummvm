@@ -54,14 +54,14 @@ void OptionSelect::load(rapidxml::xml_node<char> *node) {
 	}
 }
 
-void OptionSelect::Draw() {
-	option.Draw(cur);
+void OptionSelect::draw() {
+	option.draw(cur);
 
 	if (cur > 0)
-		prev.Draw();
+		prev.draw();
 
 	if ((unsigned int)cur < option.text.size() - 1)
-		next.Draw();
+		next.draw();
 }
 
 bool OptionSelect::HandleEvents(const Common::Event &Event) {

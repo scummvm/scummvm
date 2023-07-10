@@ -61,7 +61,7 @@ public:
 	~Splash();
 	void HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {}
 	void InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID);
-	void Draw();
+	void draw();
 	void SetUI();
 
 	// We don't need to save game state here

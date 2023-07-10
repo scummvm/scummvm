@@ -138,12 +138,12 @@ int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const Common::Str
 }
 #endif
 
-void ReplyMenu::Draw() {
-	bg.Draw();
-	tone.Draw(hover_index);
+void ReplyMenu::draw() {
+	bg.draw();
+	tone.draw(hover_index);
 
 	// Draw the reply options
-	Menu<ReplyButton>::Draw();
+	Menu<ReplyButton>::draw();
 }
 
 void ReplyMenu::Cache(Info &info, ConversationData &dat) {

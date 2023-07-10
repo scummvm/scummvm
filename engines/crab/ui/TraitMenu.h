@@ -73,7 +73,7 @@ public:
 	void Clear();
 
 	void load(rapidxml::xml_node<char> *node);
-	void Draw(const pyrodactyl::people::Person *obj);
+	void draw(const pyrodactyl::people::Person *obj);
 
 	void HandleEvents(pyrodactyl::people::Person *obj, const Common::Event &Event);
 #if 0

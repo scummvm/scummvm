@@ -45,13 +45,13 @@ void ToggleButton::load(rapidxml::xml_node<char> *node) {
 		offset.load(node->first_node("offset"));
 }
 
-void ToggleButton::Draw(const int &XOffset, const int &YOffset, Rect *clip) {
-	Button::Draw(XOffset, YOffset, clip);
+void ToggleButton::draw(const int &XOffset, const int &YOffset, Rect *clip) {
+	Button::draw(XOffset, YOffset, clip);
 
 	if (state)
-		g_engine->_imageManager->Draw(x + offset.x, y + offset.y, on);
+		g_engine->_imageManager->draw(x + offset.x, y + offset.y, on);
 	else
-		g_engine->_imageManager->Draw(x + offset.x, y + offset.y, off);
+		g_engine->_imageManager->draw(x + offset.x, y + offset.y, off);
 }
 
 ButtonAction ToggleButton::HandleEvents(const Common::Event &Event, const int &XOffset, const int &YOffset) {

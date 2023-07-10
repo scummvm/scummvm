@@ -45,9 +45,9 @@ class OptionSelect {
 		Common::Array<Common::String> text;
 		TextData data;
 
-		void Draw(const int &index) {
+		void draw(const int &index) {
 			if (index >= 0 && (unsigned int)index < text.size())
-				data.Draw(text[index]);
+				data.draw(text[index]);
 		}
 	} option;
 
@@ -63,7 +63,7 @@ public:
 	}
 	void load(rapidxml::xml_node<char> *node);
 
-	void Draw();
+	void draw();
 
 	bool HandleEvents(const Common::Event &Event);
 #if 0

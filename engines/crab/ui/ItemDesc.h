@@ -58,9 +58,9 @@ public:
 			desc.load(node->first_node("desc"));
 	}
 
-	void Draw(pyrodactyl::item::Item &item) {
-		name.Draw(item.name);
-		desc.Draw(item.desc);
+	void draw(pyrodactyl::item::Item &item) {
+		name.draw(item.name);
+		desc.draw(item.desc);
 	}
 
 	void SetUI() {

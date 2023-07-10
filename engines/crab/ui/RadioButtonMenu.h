@@ -57,9 +57,9 @@ public:
 			Menu::load(node->first_node("menu"));
 	}
 
-	void Draw(const int &XOffset = 0, const int &YOffset = 0) {
-		desc.Draw(XOffset, YOffset);
-		Menu::Draw(XOffset, YOffset);
+	void draw(const int &XOffset = 0, const int &YOffset = 0) {
+		desc.draw(XOffset, YOffset);
+		Menu::draw(XOffset, YOffset);
 	}
 
 	int HandleEvents(const Common::Event &Event, const int &XOffset = 0, const int &YOffset = 0) {

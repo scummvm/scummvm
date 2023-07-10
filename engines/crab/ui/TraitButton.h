@@ -53,7 +53,7 @@ public:
 	void Init(const TraitButton &ref, const int &XOffset = 0, const int &YOffset = 0);
 	void load(rapidxml::xml_node<char> *node, const bool &echo = true);
 
-	void Draw(const int &XOffset = 0, const int &YOffset = 0, Rect *clip = NULL);
+	void draw(const int &XOffset = 0, const int &YOffset = 0, Rect *clip = NULL);
 
 	void Cache(const pyrodactyl::people::Trait &trait);
 	void Empty();

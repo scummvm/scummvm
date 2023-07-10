@@ -107,7 +107,7 @@ void Rect::Flip(const TextureFlipType &flip, const Vector2i &axis) {
 		y = 2 * axis.y - y - h;
 }
 
-void Rect::Draw(const int &XOffset, const int &YOffset, const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a) {
+void Rect::draw(const int &XOffset, const int &YOffset, const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a) {
 	int X = x + XOffset, Y = y + YOffset;
 
 	DrawLine(X, Y, X + w, Y, r, g, b, a);

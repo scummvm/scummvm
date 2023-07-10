@@ -63,8 +63,8 @@ public:
 
 	void load(rapidxml::xml_node<char> *node);
 
-	void Draw(const int &XOffset = 0, const int &YOffset = 0);
-	void Draw(const Common::String &str, const int &XOffset = 0, const int &YOffset = 0);
+	void draw(const int &XOffset = 0, const int &YOffset = 0);
+	void draw(const Common::String &str, const int &XOffset = 0, const int &YOffset = 0);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

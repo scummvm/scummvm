@@ -95,7 +95,7 @@ public:
 	~Journal() {}
 
 	void load(const Common::String &filename);
-	void Draw(const Common::String &id);
+	void draw(const Common::String &id);
 
 	// Return true if "go to map" is selected
 	bool HandleEvents(const Common::String &id, const Common::Event &Event);

@@ -87,9 +87,9 @@ void ItemCollection::HandleEvents(const Common::String &char_id, const SDL_Event
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void ItemCollection::Draw(const Common::String &char_id) {
+void ItemCollection::draw(const Common::String &char_id) {
 	if (item.contains(char_id) > 0)
-		item[char_id].Draw(item_info);
+		item[char_id].draw(item_info);
 }
 
 //------------------------------------------------------------------------

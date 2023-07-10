@@ -69,8 +69,8 @@ public:
 
 	void load(rapidxml::xml_node<char> *node);
 
-	void Draw(pyrodactyl::event::Info &info, Common::String &message);
-	void Draw(const bool &player);
+	void draw(pyrodactyl::event::Info &info, Common::String &message);
+	void draw(const bool &player);
 
 	bool HandleEvents(const Common::Event &Event);
 

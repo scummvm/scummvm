@@ -44,7 +44,7 @@ void ImageEffect::load(rapidxml::xml_node<char> *node) {
 
 void ImageEffect::draw(const int &xOffset, const int &yOffset) {
 	if (_visible)
-		g_engine->_imageManager->Draw(x + xOffset, y + yOffset, _img);
+		g_engine->_imageManager->draw(x + xOffset, y + yOffset, _img);
 }
 
 } // End of namespace Crab

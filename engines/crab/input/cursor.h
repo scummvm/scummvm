@@ -85,7 +85,7 @@ public:
 	void load(rapidxml::xml_node<char> *node);
 	void HandleEvents(const Common::Event &event);
 
-	void Draw();
+	void draw();
 	bool Pressed() { return pressed; }
 };
 

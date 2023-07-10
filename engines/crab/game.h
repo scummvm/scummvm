@@ -135,7 +135,7 @@ public:
 	void HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &NewStateID);
 #endif
 	void InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID);
-	void Draw();
+	void draw();
 
 	void LoadState(Common::SeekableReadStream *stream);
 

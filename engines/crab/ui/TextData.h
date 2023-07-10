@@ -57,7 +57,7 @@ public:
 	bool load(rapidxml::xml_node<char> *node, Rect *parent = NULL, const bool &echo = true);
 
 	// Plain drawing
-	void Draw(const Common::String &val, const int &XOffset = 0, const int &YOffset = 0);
+	void draw(const Common::String &val, const int &XOffset = 0, const int &YOffset = 0);
 
 	// Draw with a different color
 	void DrawColor(const Common::String &val, const int &color, const int &XOffset = 0, const int &YOffset = 0);

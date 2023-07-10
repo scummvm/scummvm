@@ -81,12 +81,12 @@ void TileSetGroup::load(const Common::String &path, rapidxml::xml_node<char> *no
 	}
 }
 
-void TileSet::Draw(const Vector2i &pos, const TileInfo &tile) {
+void TileSet::draw(const Vector2i &pos, const TileInfo &tile) {
 	if (tile.gid != 0) {
 		clip.x = ((tile.gid - first_gid) % total_cols) * tile_w;
 		clip.y = ((tile.gid - first_gid) / total_cols) * tile_h;
 
-		img.Draw(pos.x, pos.y, &clip, tile.flip);
+		img.draw(pos.x, pos.y, &clip, tile.flip);
 	}
 }
 
@@ -95,7 +95,7 @@ void TileSet::PreDraw(const Vector2i &pos, const TileInfo &tile, Graphics::Manag
 		clip.x = ((tile.gid - first_gid) % total_cols) * tile_w;
 		clip.y = ((tile.gid - first_gid) / total_cols) * tile_h;
 
-		img.Draw(pos.x, pos.y, &clip, tile.flip, surf);
+		img.draw(pos.x, pos.y, &clip, tile.flip, surf);
 	}
 }
 
@@ -174,7 +174,7 @@ void TileSetGroup::ForceDraw(MapLayer &layer, const Rect &camera, const Vector2i
 		for (int y = start.y; y < finish.y; ++y) {
 			for (int i = tileset.size() - 1; i >= 0; --i)
 				if (layer.tile[x][y].gid >= tileset[i].first_gid) {
-					tileset[i].Draw(v, layer.tile[x][y]);
+					tileset[i].draw(v, layer.tile[x][y]);
 					break;
 				}
 
@@ -186,9 +186,9 @@ void TileSetGroup::ForceDraw(MapLayer &layer, const Rect &camera, const Vector2i
 	}
 }
 
-void TileSetGroup::Draw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos, pyrodactyl::image::Image &img) {
+void TileSetGroup::draw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos, pyrodactyl::image::Image &img) {
 	if (layer.type == LAYER_IMAGE)
-		layer.img.Draw(-1.0f * camera.x * layer.rate.x, -1.0f * camera.y * layer.rate.y);
+		layer.img.draw(-1.0f * camera.x * layer.rate.x, -1.0f * camera.y * layer.rate.y);
 	else if (layer.type == LAYER_PARALLAX) {
 		// The row and column we start drawing at
 		start.x = 0;
@@ -205,7 +205,7 @@ void TileSetGroup::Draw(MapLayer &layer, const Rect &camera, const Vector2i &til
 			for (int y = start.y; y < finish.y; ++y) {
 				for (int i = tileset.size() - 1; i >= 0; --i)
 					if (layer.tile[x][y].gid >= tileset[i].first_gid) {
-						tileset[i].Draw(v, layer.tile[x][y]);
+						tileset[i].draw(v, layer.tile[x][y]);
 						break;
 					}
 

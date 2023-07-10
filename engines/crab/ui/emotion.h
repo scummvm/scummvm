@@ -50,7 +50,7 @@ struct EmotionIndicator {
 	EmotionIndicator() {}
 
 	void load(rapidxml::xml_node<char> *node);
-	void Draw(const int &select);
+	void draw(const int &select);
 	void SetUI();
 };
 } // End of namespace ui

@@ -91,7 +91,7 @@ public:
 #endif
 
 	// Returns true if inside options menu, false otherwise
-	bool Draw(Button &back);
+	bool draw(Button &back);
 
 	void Reset() { state = STATE_NORMAL; }
 	void ScanDir() { save.ScanDir(); }

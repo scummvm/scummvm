@@ -90,13 +90,13 @@ bool Inventory::HasItem(const Common::String &char_id, const Common::String &con
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void Inventory::Draw(Person &obj, const int &money_val) {
-	bg.Draw();
+void Inventory::draw(Person &obj, const int &money_val) {
+	bg.draw();
 	// helper.DrawInfo(obj);
-	collection.Draw(obj.id /*, helper*/);
+	collection.draw(obj.id /*, helper*/);
 
 	money.caption.text = NumberToString(money_val);
-	money.Draw();
+	money.draw();
 }
 
 //------------------------------------------------------------------------

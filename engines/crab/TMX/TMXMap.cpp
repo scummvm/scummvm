@@ -252,24 +252,24 @@ void TMXMap::DrawDebug(const Rect &camera) {
 	using namespace pyrodactyl::text;
 
 	for (auto i = area_trig.begin(); i != area_trig.end(); ++i)
-		i->Draw(-camera.x, -camera.y, 0, 0, 254, 254);
+		i->draw(-camera.x, -camera.y, 0, 0, 254, 254);
 
 	for (auto i = area_exit.begin(); i != area_exit.end(); ++i)
-		i->dim.Draw(-camera.x, -camera.y, 0, 254, 254, 254);
+		i->dim.draw(-camera.x, -camera.y, 0, 254, 254, 254);
 
 	for (auto i = prop.begin(); i != prop.end(); ++i)
-		i->pos.Draw(-camera.x, -camera.y, 254, 0, 254, 254);
+		i->pos.draw(-camera.x, -camera.y, 254, 0, 254, 254);
 
 	for (auto i = area_nowalk.begin(); i != area_nowalk.end(); ++i)
-		i->Draw(-camera.x, -camera.y, 254, 0, 0, 254);
+		i->draw(-camera.x, -camera.y, 254, 0, 0, 254);
 
 	for (auto i = area_music.begin(); i != area_music.end(); ++i)
-		i->Draw(-camera.x, -camera.y, 254, 254, 0, 254);
+		i->draw(-camera.x, -camera.y, 254, 254, 0, 254);
 
 	for (auto i = area_stairs.begin(); i != area_stairs.end(); ++i) {
-		i->Draw(-camera.x, -camera.y, 0, 254, 0, 254);
-		//g_engine->_textManager->Draw(i->rect.x - camera.x + 100, i->rect.y - camera.y, NumberToString(i->modifier.x), 0);
-		//g_engine->_textManager->Draw(i->rect.x - camera.x + 200, i->rect.y - camera.y, NumberToString(i->modifier.y), 0);
+		i->draw(-camera.x, -camera.y, 0, 254, 0, 254);
+		//g_engine->_textManager->draw(i->rect.x - camera.x + 100, i->rect.y - camera.y, NumberToString(i->modifier.x), 0);
+		//g_engine->_textManager->draw(i->rect.x - camera.x + 200, i->rect.y - camera.y, NumberToString(i->modifier.y), 0);
 	}
 
 	// Draw the pathfinding grid (SZ)
@@ -278,17 +278,17 @@ void TMXMap::DrawDebug(const Rect &camera) {
 	for(int y = 0; y < grid->GetDimensions().y; ++y)
 	{
 	if(grid->GetNodeAtCoords(x, y)->GetMovementCost() < 0.0f)
-	grid->GetNodeAtCoords(x, y)->GetRect().Draw(-camera.x, -camera.y, 0, 0, 0, 254);
+	grid->GetNodeAtCoords(x, y)->GetRect().draw(-camera.x, -camera.y, 0, 0, 0, 254);
 	else
-	grid->GetNodeAtCoords(x, y)->GetRect().Draw(-camera.x, -camera.y, 200, 200, 0, 254);
+	grid->GetNodeAtCoords(x, y)->GetRect().draw(-camera.x, -camera.y, 200, 200, 0, 254);
 	}
 	}*/
 
 	for (auto i = layer.begin(); i != layer.end(); ++i)
-		i->pos.Draw(-camera.x, -camera.y, 254, 216, 0);
+		i->pos.draw(-camera.x, -camera.y, 254, 216, 0);
 
-	area_walk.Draw(-camera.x, -camera.y, 254, 254, 254, 254);
-	// g_engine->_textManager->Draw(0, 200, NumberToString(sprite_layer), 0);
+	area_walk.draw(-camera.x, -camera.y, 254, 254, 254, 254);
+	// g_engine->_textManager->draw(0, 200, NumberToString(sprite_layer), 0);
 
 	// Use this if you want to draw poly lines in debug
 	/*bool start = true;
@@ -305,8 +305,8 @@ void TMXMap::DrawDebug(const Rect &camera) {
 
 	DrawLine(prev.x - camera.x, prev.y - camera.y, j->x - camera.x, j->y - camera.y, 0, 0, 0, 254);
 
-	g_engine->_textManager->Draw(j->x - camera.x + 100, j->y - camera.y, NumberToString(j->x), 0);
-	g_engine->_textManager->Draw(j->x - camera.x + 200, j->y - camera.y, NumberToString(j->y), 0);
+	g_engine->_textManager->draw(j->x - camera.x + 100, j->y - camera.y, NumberToString(j->x), 0);
+	g_engine->_textManager->draw(j->x - camera.x + 200, j->y - camera.y, NumberToString(j->y), 0);
 
 	prev = *j;
 	}

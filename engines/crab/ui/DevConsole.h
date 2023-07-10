@@ -64,7 +64,7 @@ public:
 	bool RestrictInput() { return (state == STATE_VAR || menu.HoverIndex() != -1); }
 
 	void load(const Common::String &filename);
-	void Draw(pyrodactyl::event::Info &info);
+	void draw(pyrodactyl::event::Info &info);
 
 #if 0
 	void HandleEvents(const SDL_Event &Event);

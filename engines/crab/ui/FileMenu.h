@@ -221,13 +221,13 @@ public:
 	}
 #endif
 
-	void Draw() {
-		bg.Draw();
-		menu.Draw();
+	void draw() {
+		bg.draw();
+		menu.draw();
 		for (auto i = menu.Index(), count = 0u; i < menu.IndexPlusOne() && i < slot_info.size(); i++, count++) {
 			auto base_x = menu.BaseX(count), base_y = menu.BaseY(count);
-			td_b[DATA_SAVENAME].Draw(slot_info[i].name, base_x, base_y);
-			td_b[DATA_LASTMODIFIED].Draw(slot_info[i].last_modified, base_x, base_y);
+			td_b[DATA_SAVENAME].draw(slot_info[i].name, base_x, base_y);
+			td_b[DATA_LASTMODIFIED].draw(slot_info[i].last_modified, base_x, base_y);
 		}
 
 		DrawHover();
@@ -245,15 +245,15 @@ public:
 			}
 
 			hover = true;
-			img.preview.Draw(img.pos.x, img.pos.y);
+			img.preview.draw(img.pos.x, img.pos.y);
 
-			td_h[DATA_LOCNAME].Draw(slot_info[i].loc_name);
-			td_h[DATA_DIFFICULTY].Draw(slot_info[i].diff);
-			td_h[DATA_TIMEPLAYED].Draw(slot_info[i].time);
-			td_h[DATA_PLAYERNAME].Draw(slot_info[i].char_name);
+			td_h[DATA_LOCNAME].draw(slot_info[i].loc_name);
+			td_h[DATA_DIFFICULTY].draw(slot_info[i].diff);
+			td_h[DATA_TIMEPLAYED].draw(slot_info[i].time);
+			td_h[DATA_PLAYERNAME].draw(slot_info[i].char_name);
 
 			for (int num = 0; num < DATA_HOVER_TOTAL; ++num)
-				hov[num].Draw();
+				hov[num].draw();
 		} else if (hover)
 			Reset();
 	}

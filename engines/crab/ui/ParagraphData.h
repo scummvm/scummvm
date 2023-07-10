@@ -47,7 +47,7 @@ public:
 
 	bool load(rapidxml::xml_node<char> *node, Rect *parent = NULL, const bool &echo = true);
 
-	void Draw(const Common::String &val, const int &XOffset = 0, const int &YOffset = 0);
+	void draw(const Common::String &val, const int &XOffset = 0, const int &YOffset = 0);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

@@ -105,7 +105,7 @@ public:
 	HUDSignal HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event);
 #endif
 
-	void Draw(pyrodactyl::event::Info &info, const Common::String &id);
+	void draw(pyrodactyl::event::Info &info, const Common::String &id);
 
 	// Set the tooltips for the buttons in the menu
 	// The tooltips are of the style <Name> (<Hotkey>), with Name being provided by the xml

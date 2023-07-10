@@ -122,8 +122,8 @@ void QuestMenu::Marker(const Common::String &title, const bool &val) {
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void QuestMenu::Draw(Button &bu_map) {
-	menu.Draw();
+void QuestMenu::draw(Button &bu_map) {
+	menu.draw();
 
 	using namespace pyrodactyl::text;
 	for (auto i = menu.Index(), count = 0u; i < menu.IndexPlusOne() && i < quest.size(); i++, count++) {
@@ -131,21 +131,21 @@ void QuestMenu::Draw(Button &bu_map) {
 
 		// Only draw in _s color if we are on the same button and page
 		if ((unsigned int)sel_bu == count && (unsigned int)sel_page == menu.CurrentPage())
-			g_engine->_textManager->Draw(base_x + off_title.x, base_y + off_title.y, quest[i].title, col_s, font, align);
+			g_engine->_textManager->draw(base_x + off_title.x, base_y + off_title.y, quest[i].title, col_s, font, align);
 		else
-			g_engine->_textManager->Draw(base_x + off_title.x, base_y + off_title.y, quest[i].title, col_n, font, align);
+			g_engine->_textManager->draw(base_x + off_title.x, base_y + off_title.y, quest[i].title, col_n, font, align);
 
 		if (quest[i].unread) {
 			using namespace pyrodactyl::image;
-			g_engine->_imageManager->Draw(base_x + off_unread.x, base_y + off_unread.y, g_engine->_imageManager->notify);
+			g_engine->_imageManager->draw(base_x + off_unread.x, base_y + off_unread.y, g_engine->_imageManager->notify);
 		}
 	}
 
 	if (sel_quest >= 0 && (unsigned int)sel_quest < quest.size()) {
-		text.Draw(quest[sel_quest]);
+		text.draw(quest[sel_quest]);
 
 		if (quest[sel_quest].marker)
-			bu_map.Draw();
+			bu_map.draw();
 	}
 }
 

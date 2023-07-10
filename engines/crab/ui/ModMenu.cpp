@@ -99,13 +99,13 @@ bool ModMenu::HandleEvents(const SDL_Event &Event) {
 }
 #endif
 
-void ModMenu::Draw() {
-	bg.Draw();
-	menu.Draw();
+void ModMenu::draw() {
+	bg.draw();
+	menu.draw();
 	for (auto i = menu.Index(), count = 0u; i < menu.IndexPlusOne() && i < slot_info.size(); i++, count++) {
 		auto base_x = menu.BaseX(count), base_y = menu.BaseY(count);
-		td_b[DATA_SAVENAME].Draw(slot_info[i].name, base_x, base_y);
-		td_b[DATA_LASTMODIFIED].Draw(slot_info[i].last_modified, base_x, base_y);
+		td_b[DATA_SAVENAME].draw(slot_info[i].name, base_x, base_y);
+		td_b[DATA_LASTMODIFIED].draw(slot_info[i].last_modified, base_x, base_y);
 	}
 
 	if (menu.HoverIndex() >= 0) {
@@ -119,15 +119,15 @@ void ModMenu::Draw() {
 		}
 
 		hover = true;
-		img.preview.Draw(img.pos.x, img.pos.y);
+		img.preview.draw(img.pos.x, img.pos.y);
 
-		td_h[DATA_AUTHOR].Draw(slot_info[i].author);
-		td_h[DATA_VERSION].Draw(slot_info[i].version);
-		td_h[DATA_INFO].Draw(slot_info[i].info);
-		td_h[DATA_WEBSITE].Draw(slot_info[i].website);
+		td_h[DATA_AUTHOR].draw(slot_info[i].author);
+		td_h[DATA_VERSION].draw(slot_info[i].version);
+		td_h[DATA_INFO].draw(slot_info[i].info);
+		td_h[DATA_WEBSITE].draw(slot_info[i].website);
 
 		for (int num = 0; num < DATA_HOVER_TOTAL; ++num)
-			hov[num].Draw();
+			hov[num].draw();
 	} else if (hover)
 		Reset();
 }

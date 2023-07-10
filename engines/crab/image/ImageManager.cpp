@@ -144,17 +144,17 @@ bool ImageManager::ValidTexture(const ImageKey &id) {
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void ImageManager::Draw(const int &x, const int &y, const ImageKey &id, Common::Rect *clip,
+void ImageManager::draw(const int &x, const int &y, const ImageKey &id, Common::Rect *clip,
 						const TextureFlipType &flip) {
-	GetTexture(id).Draw(x, y, clip, flip);
+	GetTexture(id).draw(x, y, clip, flip);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void ImageManager::Draw(const int &x, const int &y, const ImageKey &id, Rect *clip,
+void ImageManager::draw(const int &x, const int &y, const ImageKey &id, Rect *clip,
 						const TextureFlipType &flip) {
-	GetTexture(id).Draw(x, y, clip, flip);
+	GetTexture(id).draw(x, y, clip, flip);
 }
 
 //------------------------------------------------------------------------

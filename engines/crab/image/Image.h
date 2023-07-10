@@ -103,8 +103,8 @@ public:
 
 
 	// Draw the openGL texture
-	void Draw(const int &x, const int &y, Common::Rect *clip = NULL, const TextureFlipType &flip = FLIP_NONE);
-	void Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &flip = FLIP_NONE, Graphics::ManagedSurface *surf = NULL);
+	void draw(const int &x, const int &y, Common::Rect *clip = NULL, const TextureFlipType &flip = FLIP_NONE);
+	void draw(const int &x, const int &y, Rect *clip, const TextureFlipType &flip = FLIP_NONE, Graphics::ManagedSurface *surf = NULL);
 	void FastDraw(const int &x, const int &y, Rect *clip = NULL);
 
 	// Delete the openGL texture

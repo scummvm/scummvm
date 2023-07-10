@@ -64,7 +64,7 @@ void AnimationFrame::reset() {
 }
 
 void AnimationFrame::draw(const uint32 &timestamp) {
-	warning("STUB: AnimationFrame::Draw()");
+	warning("STUB: AnimationFrame::draw()");
 
 #if 0
 	// Only draw the frame in the specified duration
@@ -74,8 +74,8 @@ void AnimationFrame::draw(const uint32 &timestamp) {
 		SDL_SetRenderDrawColor(gRenderer, col.r, col.g, col.b, col.a);
 		SDL_RenderFillRect(gRenderer, NULL);
 
-		g_engine->_imageManager->Draw(x, y, img);
-		text.Draw();
+		g_engine->_imageManager->draw(x, y, img);
+		text.draw();
 	}
 #endif
 }
