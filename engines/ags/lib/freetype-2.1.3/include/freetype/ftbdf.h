@@ -48,7 +48,7 @@ FT2_1_3_BEGIN_HEADER
 /**********************************************************************
  *
  * @function:
- *    FT2_1_3_Get_BDF_Charset_ID
+ *    FT_Get_BDF_Charset_ID
  *
  * @description:
  *    Retrieves a BDF font character set identity, according to
@@ -72,7 +72,7 @@ FT2_1_3_BEGIN_HEADER
  *   This function only works with BDF faces, returning an error otherwise.
  */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Get_BDF_Charset_ID( FT_Face       face,
+FT_Get_BDF_Charset_ID( FT_Face       face,
 					   const char*  *acharset_encoding,
 					   const char*  *acharset_registry );
 

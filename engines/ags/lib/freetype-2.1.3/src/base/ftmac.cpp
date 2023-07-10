@@ -607,7 +607,7 @@ FT2_1_3_New_Face_From_Suitcase( FT_Library  library,
 		goto Error;
 	}
 
-	error = FT2_1_3_New_Face_From_FOND( library, fond, face_index, aface );
+	error = FT_New_Face_From_FOND( library, fond, face_index, aface );
 
 Error:
 	CloseResFile( res_ref );
@@ -653,7 +653,7 @@ FT2_1_3_New_Face_From_dfont( FT_Library  library,
 		goto Error;
 	}
 
-	error = FT2_1_3_New_Face_From_FOND( library, fond, face_index, aface );
+	error = FT_New_Face_From_FOND( library, fond, face_index, aface );
 
 Error:
 	CloseResFile( res_ref );
@@ -666,7 +666,7 @@ Error:
 /* documentation is in ftmac.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_New_Face_From_FOND( FT_Library  library,
+FT_New_Face_From_FOND( FT_Library  library,
                        Handle      fond,
                        FT_Long     face_index,
                        FT_Face    *aface ) {
@@ -711,7 +711,7 @@ FT2_1_3_New_Face_From_FOND( FT_Library  library,
 /* documentation is in ftmac.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_GetFile_From_Mac_Name( char*     fontName,
+FT_GetFile_From_Mac_Name( char*     fontName,
                           FSSpec*   pathSpec,
                           FT_Long*  face_index ) {
 	OptionBits            options = kFMUseGlobalScopeOption;

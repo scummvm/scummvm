@@ -58,7 +58,7 @@ FT2_1_3_BEGIN_HEADER
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_New_Face_From_FOND                                              */
+/*    FT_New_Face_From_FOND                                              */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Creates a new face object from an FOND resource.                   */
@@ -84,11 +84,11 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 /*    {                                                                  */
 /*      fond = GetResource( 'FOND', fontName );                          */
-/*      error = FT2_1_3_New_Face_From_FOND( library, fond, 0, &face );        */
+/*      error = FT_New_Face_From_FOND( library, fond, 0, &face );        */
 /*    }                                                                  */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_New_Face_From_FOND( FT_Library  library,
+FT_New_Face_From_FOND( FT_Library  library,
 					   Handle      fond,
 					   FT_Long     face_index,
 					   FT_Face    *aface );
@@ -97,7 +97,7 @@ FT2_1_3_New_Face_From_FOND( FT_Library  library,
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_GetFile_From_Mac_Name                                           */
+/*    FT_GetFile_From_Mac_Name                                           */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Returns an FSSpec for the disk file containing the named font.     */
@@ -114,7 +114,7 @@ FT2_1_3_New_Face_From_FOND( FT_Library  library,
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_GetFile_From_Mac_Name( char*     fontName,
+FT_GetFile_From_Mac_Name( char*     fontName,
 						  FSSpec*   pathSpec,
 						  FT_Long*  face_index );
 
