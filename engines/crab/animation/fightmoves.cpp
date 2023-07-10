@@ -145,7 +145,7 @@ void FightMoves::listAttackMoves(Common::Array<unsigned int> &list) {
 	list.clear();
 	unsigned int pos = 0;
 	for (auto i = _move.begin(); i != _move.end(); ++i, ++pos)
-		if (i->_ai.type == MOVE_ATTACK)
+		if (i->_ai._type == MOVE_ATTACK)
 			list.push_back(pos);
 }
 

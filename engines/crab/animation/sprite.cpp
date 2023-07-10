@@ -273,10 +273,10 @@ void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera) {
 		FightMove fm;
 		if (anim_set._fight.nextMove(fm)) {
 			Rect actual_range;
-			actual_range.x = bounds.x + fm._ai.range.val[dir].x;
-			actual_range.y = bounds.y + fm._ai.range.val[dir].y;
-			actual_range.w = fm._ai.range.val[dir].w;
-			actual_range.h = fm._ai.range.val[dir].h;
+			actual_range.x = bounds.x + fm._ai._range.val[dir].x;
+			actual_range.y = bounds.y + fm._ai._range.val[dir].y;
+			actual_range.w = fm._ai._range.val[dir].w;
+			actual_range.h = fm._ai._range.val[dir].h;
 
 			actual_range.Draw(-camera.x, -camera.y, 255, 0, 255);
 		}
