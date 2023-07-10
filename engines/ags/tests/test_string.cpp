@@ -142,16 +142,16 @@ void Test_String() {
 		size_t find8 = s5.FindCharReverse('x');
 		size_t find9 = s1.FindChar('i', 2);
 		size_t find10 = s1.FindCharReverse('i', 12);
-		assert(find1 == 5);
-		assert(find2 == 13);
-		assert(find3 == -1);
-		assert(find4 == -1);
-		assert(find5 == 19);
-		assert(find6 == 0);
-		assert(find7 == -1);
-		assert(find8 == -1);
-		assert(find9 == 10);
-		assert(find10 == 10);
+		assert(find1 == 5LLU);
+		assert(find2 == 13LLU);
+		assert(find3 == -1LLU);
+		assert(find4 == -1LLU);
+		assert(find5 == 19LLU);
+		assert(find6 == 0LLU);
+		assert(find7 == -1LLU);
+		assert(find8 == -1LLU);
+		assert(find9 == 10LLU);
+		assert(find10 == 10LLU);
 	}
 
 	// Test GetAt

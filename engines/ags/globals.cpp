@@ -113,7 +113,6 @@ static bool checkForSIMDExtensions() {
 		 : "=rm" (extensions)
 		 :
 		 : "eax", "ebx", "ecx", "edx");
-	debug("extensions_bits: %ux\n", extensions);
 	return extensions & (1 << 26); // SSE2 extensions bit
 #  elif _MSC_VER
 	uint32 extensions;

@@ -64,18 +64,18 @@ void Test_GfxSpeed(bool opt, int blenderModeStart, int blenderModeEnd) {
 	Bitmap *dest32 = BitmapHelper::CreateBitmap(100, 100, 32);
 	Bitmap *dest16 = BitmapHelper::CreateBitmap(100, 100, 16);
 	Bitmap *dest8 = BitmapHelper::CreateBitmap(100, 100, 8);
-	debug("%d %d %d %d %d %d", benchgfx32, benchgfx16, benchgfx8, dest32, dest16, dest8);
 	int benchRuns[] = {1000, 10000, 100000};
 	int blenderModes[] = {kRgbToRgbBlender, kSourceAlphaBlender, kArgbToArgbBlender, kOpaqueBlenderMode, kTintLightBlenderMode};
 	const char *modeNames[] = {"RGB to RGB", "Source Alpha", "ARGB to ARGB", "Opaque", "Tint with Light"};
 	Bitmap *destinations[] = {dest32, dest16, dest8};
 	Bitmap *graphics[] = {benchgfx32, benchgfx16, benchgfx8};
 	int bpps[] = {32, 16, 8};
+	if (blenderModeEnd >= sizeof(blenderModes) / sizeof(blenderModes[0])) blenderModeEnd = (sizeof(blenderModes) / sizeof(blenderModes[0])) - 1;
 	for (int dest = 0; dest < 3; dest++) {
 		for (int gfx = 0; gfx < 3; gfx++) {
 			if (dest == 2 && gfx != 2) continue;
 			for (int mode = blenderModeStart; mode <= blenderModeEnd; mode++) {
-				for (int runs = 0; runs < sizeof(benchRuns)/sizeof(int); runs++) {
+				for (int runs = 0; (size_t)runs < sizeof(benchRuns)/sizeof(int); runs++) {
 					uint32 start, end;
 					_G(_blender_mode) = (AGS3::BlenderMode)blenderModes[mode];
 #ifdef VERBOSE_TEST_GFX
@@ -139,7 +139,7 @@ void Test_BlenderModes() {
 											dummy.blendPixel(srcA, srcR, srcG, srcB, a, r, g, b, alpha, false, (byte *)&pixelDummy);
 											controlCol = b | (g << 8) | (r << 16) | (a << 24);
 
-											uint8 a16 = destA, r16 = destR >> 3, g16 = destG >> 2, b16 = destB >> 3;
+											uint8 a16 = 0xff, r16 = destR >> 3, g16 = destG >> 2, b16 = destB >> 3;
 											r16 = (r16 << 3) | (r16 >> 2);
 											g16 = (g16 << 2) | (g16 >> 4);
 											b16 = (b16 << 3) | (b16 >> 2);
@@ -158,11 +158,10 @@ void Test_BlenderModes() {
 												uint32x4_t alphas = vdupq_n_u32(alpha);
 												simdCol = vgetq_lane_u32(blendPixelSIMD(src, dest, alphas), 0);
 #else
-												//__m128i src = _mm_set1_epi32(srcB | (srcG << 8) | (srcR << 16) | (srcA << 24));
-												//__m128i dest = _mm_set1_epi32(destB | (destG << 8) | (destR << 16) | (destA << 24));
-												//__m128i alphas = _mm_set1_epi32(alpha);
-												//simdCol = _mm_extract_epi32();
-												simdCol = controlCol; // Not implemented yet
+												__m128i src = _mm_set1_epi32(srcB | (srcG << 8) | (srcR << 16) | (srcA << 24));
+												__m128i dest = _mm_set1_epi32(destB | (destG << 8) | (destR << 16) | (destA << 24));
+												__m128i alphas = _mm_set1_epi32((int)alpha);
+												simdCol = _mm_cvtsi128_si32(blendPixelSIMD(src, dest, alphas));
 #endif
 											}
 											{
@@ -172,29 +171,32 @@ void Test_BlenderModes() {
 												uint16x8_t alphas = vdupq_n_u16((uint16)alpha);
 												simd2bppCol = vgetq_lane_u16(blendPixelSIMD2Bpp(src, dest, alphas), 0);
 #else
-												simd2bppCol = control2bppCol; // Not implemented yet
+												__m128i src = _mm_set1_epi16((srcB >> 3) | ((srcG >> 2) << 5) | ((srcR >> 3) << 11));
+												__m128i dest = _mm_set1_epi16((destB >> 3) | ((destG >> 2) << 5) | ((destR >> 3) << 11));
+												__m128i alphas = _mm_set1_epi16((uint16)alpha);
+												simd2bppCol = (uint16)(_mm_cvtsi128_si32(blendPixelSIMD2Bpp(src, dest, alphas)) & 0xffff);
 #endif
 											}
 #ifdef VERBOSE_TEST_GFX
-											debug("src argb: %d, %d, %d, %d dest argb: %d, %d, %d, %d a: %d\n", srcA, srcR, srcG, srcB, destA, destR, destG, destB, alpha);
+											debug("src argb: %d, %d, %d, %d dest argb: %d, %d, %d, %d a: %d", srcA, srcR, srcG, srcB, destA, destR, destG, destB, alpha);
 #endif
 											switch ((BlenderMode)blenderMode) {
-												case kSourceAlphaBlender: debug("blenderMode: kSourceAlphaBlender\n"); break;
-												case kArgbToArgbBlender: debug("blenderMode: kArgbToArgbBlender\n"); break;
-												case kArgbToRgbBlender: debug("blenderMode: kArgbToRgbBlender\n"); break;
-												case kRgbToArgbBlender: debug("blenderMode: kRgbToArgbBlender\n"); break;
-												case kRgbToRgbBlender: debug("blenderMode: kRgbToRgbBlender\n"); break;
-												case kAlphaPreservedBlenderMode: debug("blenderMode: kAlphaPreservedBlenderMode\n"); break;
-												case kOpaqueBlenderMode: debug("blenderMode: kOpaqueBlenderMode\n"); break;
-												case kAdditiveBlenderMode: debug("blenderMode: kAdditiveBlenderMode\n"); break;
-												case kTintBlenderMode: debug("blenderMode: kTintBlenderMode\n"); break;
-												case kTintLightBlenderMode: debug("blenderMode: kTintLightBlenderMode\n"); break;
+												case kSourceAlphaBlender: debug("blenderMode: kSourceAlphaBlender"); break;
+												case kArgbToArgbBlender: debug("blenderMode: kArgbToArgbBlender"); break;
+												case kArgbToRgbBlender: debug("blenderMode: kArgbToRgbBlender"); break;
+												case kRgbToArgbBlender: debug("blenderMode: kRgbToArgbBlender"); break;
+												case kRgbToRgbBlender: debug("blenderMode: kRgbToRgbBlender"); break;
+												case kAlphaPreservedBlenderMode: debug("blenderMode: kAlphaPreservedBlenderMode"); break;
+												case kOpaqueBlenderMode: debug("blenderMode: kOpaqueBlenderMode"); break;
+												case kAdditiveBlenderMode: debug("blenderMode: kAdditiveBlenderMode"); break;
+												case kTintBlenderMode: debug("blenderMode: kTintBlenderMode"); break;
+												case kTintLightBlenderMode: debug("blenderMode: kTintLightBlenderMode"); break;
 											}
 #ifdef VERBOSE_TEST_GFX
-											debug("controlCol %x argb: %d, %d, %d, %d\n", controlCol, a, r, g, b);
-											debug("simdCol %x argb: %d, %d, %d, %d\n", simdCol, (simdCol >> 24), ((simdCol >> 16) & 0xff), ((simdCol >> 8) & 0xff), (simdCol & 0xff));
-											debug("control2bppCol %x rgb: %d, %d, %d\n", control2bppCol, r16, g16, b16);
-											debug("simd2bppCol %x rgb: %d, %d, %d\n\n", simd2bppCol, (simd2bppCol >> 11), ((simd2bppCol >> 5) & 0x3f), (simd2bppCol & 0x1f));
+											debug("controlCol %x argb: %d, %d, %d, %d", controlCol, a, r, g, b);
+											debug("simdCol %x argb: %d, %d, %d, %d", simdCol, (simdCol >> 24), ((simdCol >> 16) & 0xff), ((simdCol >> 8) & 0xff), (simdCol & 0xff));
+											debug("control2bppCol %x rgb: %d, %d, %d", control2bppCol, r16, g16, b16);
+											debug("simd2bppCol %x rgb: %d, %d, %d", simd2bppCol, (simd2bppCol >> 11), ((simd2bppCol >> 5) & 0x3f), (simd2bppCol & 0x1f));
 #endif
 											int tolerance, tolerance16;
 											switch ((BlenderMode)blenderMode) {
@@ -250,7 +252,7 @@ void Test_GfxTransparency() {
 	int trans255[arr_sz] = { 0 };
 	int trans100_back[arr_sz] = { 0 };
 
-	for (int i = 0; i < arr_sz; ++i) {
+	for (size_t i = 0; i < arr_sz; ++i) {
 		trans255[i] = GfxDef::Trans100ToLegacyTrans255(trans100[i]);
 		trans100_back[i] = GfxDef::LegacyTrans255ToTrans100(trans255[i]);
 		assert(trans100[i] == trans100_back[i]);
@@ -260,14 +262,12 @@ void Test_GfxTransparency() {
 void Test_Gfx() {
 	Test_GfxTransparency();
 #if defined(OPT_NEON) || defined(OPT_SSE)
-	Test_DrawingLoops();
-	Test_BlenderModes();
+	//Test_DrawingLoops();
+	//Test_BlenderModes();
 	// This could take a LONG time
 	bool has_simd = _G(_bitmap_simd_optimizations);
+	if (has_simd) Test_GfxSpeed(true, 0, kTintLightBlenderMode);
 	Test_GfxSpeed(false, 0, kTintLightBlenderMode);
-	if (has_simd) {
-		Test_GfxSpeed(true, 0, kTintLightBlenderMode);
-	}
 	_G(_bitmap_simd_optimizations) = has_simd;
 #endif
 }

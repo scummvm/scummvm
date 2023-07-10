@@ -22,6 +22,10 @@
 #define AGS_LIB_ALLEGRO_SURFACE_SIMD_NEON_H
 #ifdef __aarch64__
 
+#ifndef AGS_LIB_ALLEGRO_SURFACE_SIMD_IMPL
+#define AGS_LIB_ALLEGRO_SURFACE_SIMD_IMPL
+#endif
+
 #include <arm_neon.h>
 #include "ags/lib/allegro/surface.h"
 
@@ -399,13 +403,15 @@ inline uint16x8_t blendPixelSIMD2Bpp(uint16x8_t srcCols, uint16x8_t destCols, ui
 template<int DestBytesPerPixel, int SrcBytesPerPixel>
 inline void drawPixelSIMD(byte *destPtr, const byte *srcP2, uint32x4_t tint, uint32x4_t alphas, uint32x4_t maskedAlphas, uint32x4_t transColors, int xDir, int xCtrBpp, int srcAlpha, int skipTrans, bool horizFlip, bool useTint, uint32x4_t skipMask) {
 	uint32x4_t srcCols, destCol;
-	if (SrcBytesPerPixel == 4) {
+
+	if (DestBytesPerPixel == 4)
 		destCol = vld1q_u32((uint32 *)destPtr);
-		srcCols = vld1q_u32((const uint32 *)(srcP2 + xDir * xCtrBpp));
-	} else {
+	else
 		destCol = simd2BppTo4Bpp(vld1_u16((uint16 *)destPtr));
+	if (SrcBytesPerPixel == 4)
+		srcCols = vld1q_u32((const uint32 *)(srcP2 + xDir * xCtrBpp));
+	else
 		srcCols = simd2BppTo4Bpp(vld1_u16((const uint16 *)(srcP2 + xDir * xCtrBpp)));
-	}
 	// we do this here because we need to check if we should skip the pixel before we blend it
 	uint32x4_t mask1 = skipTrans ? vceqq_u32(vandq_u32(srcCols, maskedAlphas), transColors) : vmovq_n_u32(0);
 	mask1 = vorrq_u32(mask1, skipMask);
