@@ -48,7 +48,7 @@ namespace FreeType213 {
 /*                                                                       */
 /* It is not necessary to do any error checking for the                  */
 /* allocation-related functions.  This will be done by the higher level  */
-/* routines like FT2_1_3_Alloc() or FT2_1_3_Realloc().                             */
+/* routines like FT_Alloc() or FT_Realloc().                             */
 /*                                                                       */
 /*************************************************************************/
 

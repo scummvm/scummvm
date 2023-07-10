@@ -569,7 +569,7 @@ ft_mem_debug_done( FT_Memory  memory ) {
 
 
 FT2_1_3_BASE_DEF( FT_Error )
-FT2_1_3_Alloc_Debug( FT_Memory    memory,
+FT_Alloc_Debug( FT_Memory    memory,
 				FT_Long      size,
 				void*       *P,
 				const char*  file_name,
@@ -581,12 +581,12 @@ FT2_1_3_Alloc_Debug( FT_Memory    memory,
 		table->file_name = file_name;
 		table->line_no   = line_no;
 	}
-	return FT2_1_3_Alloc( memory, size, P );
+	return FT_Alloc( memory, size, P );
 }
 
 
 FT2_1_3_BASE_DEF( FT_Error )
-FT2_1_3_Realloc_Debug( FT_Memory    memory,
+FT_Realloc_Debug( FT_Memory    memory,
 				  FT_Long      current,
 				  FT_Long      size,
 				  void*       *P,
@@ -599,12 +599,12 @@ FT2_1_3_Realloc_Debug( FT_Memory    memory,
 		table->file_name = file_name;
 		table->line_no   = line_no;
 	}
-	return FT2_1_3_Realloc( memory, current, size, P );
+	return FT_Realloc( memory, current, size, P );
 }
 
 
 FT2_1_3_BASE_DEF( void )
-FT2_1_3_Free_Debug( FT_Memory    memory,
+FT_Free_Debug( FT_Memory    memory,
 			   FT_Pointer   block,
 			   const char*  file_name,
 			   FT_Long      line_no ) {
@@ -615,7 +615,7 @@ FT2_1_3_Free_Debug( FT_Memory    memory,
 		table->file_name = file_name;
 		table->line_no   = line_no;
 	}
-	FT2_1_3_Free( memory, (void **)block );
+	FT_Free( memory, (void **)block );
 }
 
 } // End of namespace FreeType213

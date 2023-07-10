@@ -171,7 +171,7 @@ FT_Outline_New_Internal( FT_Memory    memory,
 /*    descriptor will be released.                                       */
 /*                                                                       */
 /*    The reason why this function takes an `library' parameter is       */
-/*    simply to use FT2_1_3_Free().                                           */
+/*    simply to use FT_Free().                                           */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
 FT_Outline_Done( FT_Library   library,

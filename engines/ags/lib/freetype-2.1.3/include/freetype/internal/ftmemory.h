@@ -60,14 +60,14 @@ FT2_1_3_BEGIN_HEADER
 #ifdef FT2_1_3_DEBUG_MEMORY
 
 FT2_1_3_BASE( FT_Error )
-FT2_1_3_Alloc_Debug( FT_Memory    memory,
+FT_Alloc_Debug( FT_Memory    memory,
 				FT_Long      size,
 				void*       *P,
 				const char*  file_name,
 				FT_Long      line_no );
 
 FT2_1_3_BASE( FT_Error )
-FT2_1_3_Realloc_Debug( FT_Memory    memory,
+FT_Realloc_Debug( FT_Memory    memory,
 				  FT_Long      current,
 				  FT_Long      size,
 				  void*       *P,
@@ -75,7 +75,7 @@ FT2_1_3_Realloc_Debug( FT_Memory    memory,
 				  FT_Long      line_no );
 
 FT2_1_3_BASE( void )
-FT2_1_3_Free_Debug( FT_Memory    memory,
+FT_Free_Debug( FT_Memory    memory,
 			   FT_Pointer   block,
 			   const char*  file_name,
 			   FT_Long      line_no );
@@ -86,7 +86,7 @@ FT2_1_3_Free_Debug( FT_Memory    memory,
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Alloc                                                           */
+/*    FT_Alloc                                                           */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Allocates a new block of memory.  The returned area is always      */
@@ -106,7 +106,7 @@ FT2_1_3_Free_Debug( FT_Memory    memory,
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_BASE( FT_Error )
-FT2_1_3_Alloc( FT_Memory  memory,
+FT_Alloc( FT_Memory  memory,
 		  FT_Long    size,
 		  void*     *P );
 
@@ -114,7 +114,7 @@ FT2_1_3_Alloc( FT_Memory  memory,
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Realloc                                                         */
+/*    FT_Realloc                                                         */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Reallocates a block of memory pointed to by `*P' to `Size' bytes   */
@@ -136,11 +136,11 @@ FT2_1_3_Alloc( FT_Memory  memory,
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 /* <Note>                                                                */
-/*    All callers of FT2_1_3_Realloc() _must_ provide the current block size  */
+/*    All callers of FT_Realloc() _must_ provide the current block size  */
 /*    as well as the new one.                                            */
 /*                                                                       */
 FT2_1_3_BASE( FT_Error )
-FT2_1_3_Realloc( FT_Memory  memory,
+FT_Realloc( FT_Memory  memory,
 			FT_Long    current,
 			FT_Long    size,
 			void**     P );
@@ -149,10 +149,10 @@ FT2_1_3_Realloc( FT_Memory  memory,
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Free                                                            */
+/*    FT_Free                                                            */
 /*                                                                       */
 /* <Description>                                                         */
-/*    Releases a given block of memory allocated through FT2_1_3_Alloc().     */
+/*    Releases a given block of memory allocated through FT_Alloc().     */
 /*                                                                       */
 /* <Input>                                                               */
 /*    memory :: A handle to a given `memory object' which handles        */
@@ -170,7 +170,7 @@ FT2_1_3_Realloc( FT_Memory  memory,
 /*    drivers.                                                           */
 /*                                                                       */
 FT2_1_3_BASE( void )
-FT2_1_3_Free( FT_Memory  memory,
+FT_Free( FT_Memory  memory,
 		 void**     P );
 
 
@@ -196,28 +196,28 @@ FT2_1_3_Free( FT_Memory  memory,
 #ifdef FT2_1_3_DEBUG_MEMORY
 
 #define FT2_1_3_MEM_ALLOC( _pointer_, _size_ )                            \
-		  FT2_1_3_Alloc_Debug( memory, _size_,                            \
+		  FT_Alloc_Debug( memory, _size_,                            \
 						  (void**)&(_pointer_), __FILE__, __LINE__ )
 
 #define FT2_1_3_MEM_REALLOC( _pointer_, _current_, _size_ )                 \
-		  FT2_1_3_Realloc_Debug( memory, _current_, _size_,                 \
+		  FT_Realloc_Debug( memory, _current_, _size_,                 \
 							(void**)&(_pointer_), __FILE__, __LINE__ )
 
 #define FT2_1_3_MEM_FREE( _pointer_ )                                            \
-		  FT2_1_3_Free_Debug( memory, (void**)&(_pointer_), __FILE__, __LINE__ )
+		  FT_Free_Debug( memory, (void**)&(_pointer_), __FILE__, __LINE__ )
 
 
 #else  /* !FT2_1_3_DEBUG_MEMORY */
 
 
 #define FT2_1_3_MEM_ALLOC( _pointer_, _size_ )                  \
-		  FT2_1_3_Alloc( memory, _size_, (void**)&(_pointer_) )
+		  FT_Alloc( memory, _size_, (void**)&(_pointer_) )
 
 #define FT2_1_3_MEM_FREE( _pointer_ )                  \
-		  FT2_1_3_Free( memory, (void**)&(_pointer_) )
+		  FT_Free( memory, (void**)&(_pointer_) )
 
 #define FT2_1_3_MEM_REALLOC( _pointer_, _current_, _size_ )                  \
-		  FT2_1_3_Realloc( memory, _current_, _size_, (void**)&(_pointer_) )
+		  FT_Realloc( memory, _current_, _size_, (void**)&(_pointer_) )
 
 
 #endif /* !FT2_1_3_DEBUG_MEMORY */

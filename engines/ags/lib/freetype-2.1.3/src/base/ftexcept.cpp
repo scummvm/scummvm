@@ -27,7 +27,7 @@ ft_cleanup_stack_done( FT_CleanupStack  stack ) {
 
 		stack->chunk = chunk->link;
 
-		FT2_1_3_Free( chunk, memory );
+		FT_Free( chunk, memory );
 	}
 
 	stack->memory = NULL;

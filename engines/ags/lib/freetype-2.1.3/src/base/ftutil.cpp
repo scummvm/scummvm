@@ -49,7 +49,7 @@ namespace FreeType213 {
 /* documentation is in ftmemory.h */
 
 FT2_1_3_BASE_DEF( FT_Error )
-FT2_1_3_Alloc( FT_Memory  memory,
+FT_Alloc( FT_Memory  memory,
 		  FT_Long    size,
 		  void*     *P ) {
 	FT2_1_3_ASSERT( P != 0 );
@@ -57,7 +57,7 @@ FT2_1_3_Alloc( FT_Memory  memory,
 	if ( size > 0 ) {
 		*P = memory->alloc( memory, size );
 		if ( !*P ) {
-			FT2_1_3_ERROR(( "FT2_1_3_Alloc:" ));
+			FT2_1_3_ERROR(( "FT_Alloc:" ));
 			FT2_1_3_ERROR(( " Out of memory? (%ld requested)\n",
 					   size ));
 
@@ -67,7 +67,7 @@ FT2_1_3_Alloc( FT_Memory  memory,
 	} else
 		*P = NULL;
 
-	FT2_1_3_TRACE7(( "FT2_1_3_Alloc:" ));
+	FT2_1_3_TRACE7(( "FT_Alloc:" ));
 	FT2_1_3_TRACE7(( " size = %ld, block = 0x%08p, ref = 0x%08p\n",
 				size, *P, P ));
 
@@ -78,7 +78,7 @@ FT2_1_3_Alloc( FT_Memory  memory,
 /* documentation is in ftmemory.h */
 
 FT2_1_3_BASE_DEF( FT_Error )
-FT2_1_3_Realloc( FT_Memory  memory,
+FT_Realloc( FT_Memory  memory,
 			FT_Long    current,
 			FT_Long    size,
 			void**     P ) {
@@ -87,13 +87,13 @@ FT2_1_3_Realloc( FT_Memory  memory,
 
 	FT2_1_3_ASSERT( P != 0 );
 
-	/* if the original pointer is NULL, call FT2_1_3_Alloc() */
+	/* if the original pointer is NULL, call FT_Alloc() */
 	if ( !*P )
-		return FT2_1_3_Alloc( memory, size, P );
+		return FT_Alloc( memory, size, P );
 
 	/* if the new block if zero-sized, clear the current one */
 	if ( size <= 0 ) {
-		FT2_1_3_Free( memory, P );
+		FT_Free( memory, P );
 		return FT2_1_3_Err_Ok;
 	}
 
@@ -108,7 +108,7 @@ FT2_1_3_Realloc( FT_Memory  memory,
 	return FT2_1_3_Err_Ok;
 
 Fail:
-	FT2_1_3_ERROR(( "FT2_1_3_Realloc:" ));
+	FT2_1_3_ERROR(( "FT_Realloc:" ));
 	FT2_1_3_ERROR(( " Failed (current %ld, requested %ld)\n",
 			   current, size ));
 	return FT2_1_3_Err_Out_Of_Memory;
@@ -118,9 +118,9 @@ Fail:
 /* documentation is in ftmemory.h */
 
 FT2_1_3_BASE_DEF( void )
-FT2_1_3_Free( FT_Memory  memory,
+FT_Free( FT_Memory  memory,
 		 void**     P ) {
-	FT2_1_3_TRACE7(( "FT2_1_3_Free:" ));
+	FT2_1_3_TRACE7(( "FT_Free:" ));
 	FT2_1_3_TRACE7(( " Freeing block 0x%08p, ref 0x%08p\n",
 				P, P ? *P : (void*)0 ));
 
