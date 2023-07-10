@@ -73,7 +73,7 @@ void PersonScreen::HandleEvents(pyrodactyl::event::Info &info, const Common::Str
 }
 #endif
 
-void PersonScreen::InternalEvents() {
+void PersonScreen::internalEvents() {
 	if (cur_sp != nullptr)
 		cur_sp->DialogUpdateClip(PST_NORMAL);
 }

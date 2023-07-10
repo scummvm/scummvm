@@ -108,7 +108,7 @@ void HUD::draw(pyrodactyl::event::Info &info, const Common::String &id) {
 //#endif
 }
 
-void HUD::InternalEvents(bool ShowMap) {
+void HUD::internalEvents(bool ShowMap) {
 	menu.element[HS_MAP].visible = ShowMap;
 
 	if (timer.TargetReached()) {

@@ -269,7 +269,7 @@ void Manager::HandleEvents(Info &info, const Common::String &player_id, SDL_Even
 //------------------------------------------------------------------------
 // Purpose: Internal Events
 //------------------------------------------------------------------------
-void Manager::InternalEvents(Info &info, Level &level, Common::Array<EventResult> &result) {
+void Manager::internalEvents(Info &info, Level &level, Common::Array<EventResult> &result) {
 	if (event_map.contains(info.CurLocID()) > 0) {
 		if (event_map[info.CurLocID()].EventInProgress(active_seq)) {
 			switch (cur_event->type) {
@@ -303,14 +303,14 @@ void Manager::InternalEvents(Info &info, Level &level, Common::Array<EventResult
 
 			EndSequence(info.CurLocID());
 		} else {
-			event_map[info.CurLocID()].InternalEvents(info);
+			event_map[info.CurLocID()].internalEvents(info);
 			CalcActiveSeq(info, level, level.Camera());
 		}
 	}
 }
 
 void Manager::UpdateDialogBox(Info &info, Level &level) {
-	oh.InternalEvents(cur_event->state, cur_sp);
+	oh.internalEvents(cur_event->state, cur_sp);
 }
 //------------------------------------------------------------------------
 // Purpose: Draw

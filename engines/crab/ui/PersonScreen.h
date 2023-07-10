@@ -72,7 +72,7 @@ public:
 	void HandleEvents(pyrodactyl::event::Info &info, const Common::String &id, const SDL_Event &Event);
 #endif
 
-	void InternalEvents();
+	void internalEvents();
 	void draw(pyrodactyl::event::Info &info, const Common::String &id);
 
 	void SetUI();

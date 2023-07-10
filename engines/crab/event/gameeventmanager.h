@@ -93,7 +93,7 @@ public:
 	void draw(Info &info, pyrodactyl::ui::HUD &hud, pyrodactyl::level::Level &level);
 
 	// cur_per is also updated here
-	void InternalEvents(Info &info, pyrodactyl::level::Level &level, Common::Array<EventResult> &result);
+	void internalEvents(Info &info, pyrodactyl::level::Level &level, Common::Array<EventResult> &result);
 
 	void HandleEvents(Info &info, const Common::String &player_id, Common::Event &Event,
 					  pyrodactyl::ui::HUD &hud, pyrodactyl::level::Level &level, Common::Array<EventResult> &result);

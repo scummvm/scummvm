@@ -326,7 +326,7 @@ void Map::Move(const SDL_Event &Event) {
 //------------------------------------------------------------------------
 // Purpose: Internal Events
 //------------------------------------------------------------------------
-void Map::InternalEvents(pyrodactyl::event::Info &info) {
+void Map::internalEvents(pyrodactyl::event::Info &info) {
 	// The map overlay and button state should be in sync
 	bu_overlay.state = overlay;
 
@@ -337,7 +337,7 @@ void Map::InternalEvents(pyrodactyl::event::Info &info) {
 	for (auto &i : travel.element)
 		i.visible = i.x >= camera.x && i.y >= camera.y;
 
-	marker.InternalEvents(pos, player_pos, camera, bounds);
+	marker.internalEvents(pos, player_pos, camera, bounds);
 }
 
 //------------------------------------------------------------------------

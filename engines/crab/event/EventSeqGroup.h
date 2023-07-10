@@ -60,7 +60,7 @@ public:
 	void NextEvent(const unsigned int &id, Info &info, const Common::String &player_id, Common::Array<EventResult> &result,
 				   Common::Array<EventSeqInfo> &end_seq, const int choice = -1);
 
-	void InternalEvents(Info &info);
+	void internalEvents(Info &info);
 
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 	void LoadState(rapidxml::xml_node<char> *node);

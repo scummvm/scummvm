@@ -200,7 +200,7 @@ void App::Run() {
 		}
 
 		// Do state InternalEvents
-		CurrentState->InternalEvents(ShouldChangeState, NextStateID);
+		CurrentState->internalEvents(ShouldChangeState, NextStateID);
 
 #if 0
 		while (SDL_PollEvent(&Event)) {

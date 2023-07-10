@@ -66,7 +66,7 @@ public:
 	GameEvent *CurrentEvent() { return &events[cur]; }
 
 	// See if we should trigger any event
-	void InternalEvents(pyrodactyl::event::Info &info);
+	void internalEvents(pyrodactyl::event::Info &info);
 	void NextEvent(Info &info, const Common::String &player_id, Common::Array<EventResult> &result,
 				   Common::Array<EventSeqInfo> &end_seq, int NextEventChoice = -1);
 

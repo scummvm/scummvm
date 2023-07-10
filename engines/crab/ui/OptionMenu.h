@@ -111,7 +111,7 @@ public:
 #if 0
 	bool HandleEvents(Button &back, const SDL_Event &Event);
 #endif
-	void InternalEvents();
+	void internalEvents();
 
 	void SetUI();
 	void SaveState();

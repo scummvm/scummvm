@@ -44,10 +44,10 @@ using namespace pyrodactyl::event;
 //------------------------------------------------------------------------
 // Purpose: Let the level tick along and notify if we go into an exit
 //------------------------------------------------------------------------
-LevelResult Level::InternalEvents(Info &info, Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq, bool EventInProgress) {
+LevelResult Level::internalEvents(Info &info, Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq, bool EventInProgress) {
 	LevelResult l_result;
 
-	// input.InternalEvents();
+	// input.internalEvents();
 	CalcTrigCollide(info);
 
 	if (terrain.CollideWithExit(objects[player_index].BoundRect(), l_result)) {
@@ -146,7 +146,7 @@ void Level::Think(Info &info, Common::Array<EventResult> &result,
 					i->MoveToDestPathfinding(info, sc_default);
 				}
 
-				i->InternalEvents(info, PlayerID(), result, end_seq);
+				i->internalEvents(info, PlayerID(), result, end_seq);
 				MoveObject(info, *i);
 			}
 

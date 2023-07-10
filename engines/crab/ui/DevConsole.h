@@ -69,7 +69,7 @@ public:
 #if 0
 	void HandleEvents(const SDL_Event &Event);
 #endif
-	void InternalEvents();
+	void internalEvents();
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

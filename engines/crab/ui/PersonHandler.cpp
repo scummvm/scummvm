@@ -146,7 +146,7 @@ bool PersonHandler::HandleDlboxEvents(const SDL_Event &Event) {
 }
 #endif
 
-void PersonHandler::InternalEvents(const pyrodactyl::people::PersonState &state, pyrodactyl::anim::Sprite *s) {
+void PersonHandler::internalEvents(const pyrodactyl::people::PersonState &state, pyrodactyl::anim::Sprite *s) {
 	if (s != NULL)
 		s->DialogUpdateClip(state);
 }

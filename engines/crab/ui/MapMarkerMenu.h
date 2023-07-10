@@ -91,7 +91,7 @@ public:
 #if 0
 	void HandleEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, const SDL_Event &Event);
 #endif
-	void InternalEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, Rect bounds);
+	void internalEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, Rect bounds);
 
 	void SetUI();
 };

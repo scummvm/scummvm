@@ -128,7 +128,7 @@ public:
 #if 0
 	void HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &NewStateID);
 #endif
-	void InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID);
+	void internalEvents(bool &ShouldChangeState, GameStateID &NewStateID);
 
 	void draw();
 

@@ -57,9 +57,9 @@ void EventSeqGroup::NextEvent(const unsigned int &id, Info &info, const Common::
 	return seq[id].NextEvent(info, player_id, result, end_seq, choice);
 }
 
-void EventSeqGroup::InternalEvents(Info &info) {
+void EventSeqGroup::internalEvents(Info &info) {
 	for (auto it = seq.begin(); it != seq.end(); ++it)
-		it->_value.InternalEvents(info);
+		it->_value.internalEvents(info);
 }
 
 bool EventSeqGroup::ActiveSeq(unsigned int &active_seq) {

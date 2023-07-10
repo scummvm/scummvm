@@ -122,7 +122,7 @@ void DebugConsole::HandleEvents(const SDL_Event &Event) {
 }
 #endif
 
-void DebugConsole::InternalEvents() {
+void DebugConsole::internalEvents() {
 }
 
 } // End of namespace Crab

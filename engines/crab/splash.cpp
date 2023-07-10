@@ -59,7 +59,7 @@ Splash::~Splash() {
 //------------------------------------------------------------------------
 // Purpose: Event/Input Independent InternalEvents
 //------------------------------------------------------------------------
-void Splash::InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
+void Splash::internalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 	if (first_run == false) {
 		g_engine->_loadingScreen->load();
 		g_engine->_imageManager->Init();

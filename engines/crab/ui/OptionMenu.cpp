@@ -367,10 +367,10 @@ bool OptionMenu::HandleTabs(Button &back, const SDL_Event &Event) {
 }
 #endif
 
-void OptionMenu::InternalEvents() {
+void OptionMenu::internalEvents() {
 	// Since these states can be changed at any time, we just update it regularly
-	gfx.InternalEvents();
-	general.InternalEvents();
+	gfx.internalEvents();
+	general.internalEvents();
 
 	if (state == STATE_CONFIRM && timer.TargetReached()) {
 		g_engine->_screenSettings->RestoreBackup();
