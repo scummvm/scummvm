@@ -39,72 +39,72 @@ using namespace pyrodactyl::event;
 // Purpose: Load from xml
 //------------------------------------------------------------------------
 void PopUp::load(rapidxml::xml_node<char> *node) {
-	duration.load(node, "duration", false);
-	delay.load(node, "delay");
-	loadStr(text, "text", node);
-	loadNum(next, "next", node);
+	_duration.load(node, "duration", false);
+	_delay.load(node, "delay");
+	loadStr(_text, "text", node);
+	loadNum(_next, "next", node);
 
 	bool end = false;
 	loadBool(end, "end", node, false);
 	if (end)
-		next = -1;
+		_next = -1;
 
-	visible.load(node);
+	_visible.load(node);
 
-	effect.clear();
+	_effect.clear();
 	for (rapidxml::xml_node<char> *n = node->first_node("effect"); n != NULL; n = n->next_sibling("effect")) {
 		Effect e;
 		e.load(n);
-		effect.push_back(e);
+		_effect.push_back(e);
 	}
 }
 
 void PopUpCollection::load(rapidxml::xml_node<char> *node) {
-	loadBool(loop, "loop", node);
+	loadBool(_loop, "loop", node);
 	for (auto n = node->first_node("dialog"); n != NULL; n = n->next_sibling("dialog"))
-		element.push_back(n);
+		_element.push_back(n);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Internal events
 //------------------------------------------------------------------------
-bool PopUp::internalEvents(pyrodactyl::event::Info &info, const Common::String &player_id,
-						   Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq) {
-	if (visible.Evaluate(info) || started_show) {
-		if (delay.TargetReached()) {
-			if (duration.TargetReached(g_engine->_screenSettings->text_speed)) {
-				show = false;
+bool PopUp::internalEvents(pyrodactyl::event::Info &info, const Common::String &playerId,
+						   Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &endSeq) {
+	if (_visible.Evaluate(info) || _startedShow) {
+		if (_delay.TargetReached()) {
+			if (_duration.TargetReached(g_engine->_screenSettings->text_speed)) {
+				_show = false;
 
-				for (auto &i : effect)
-					i.Execute(info, player_id, result, end_seq);
+				for (auto &i : _effect)
+					i.Execute(info, playerId, result, endSeq);
 
 				return true;
 			} else {
-				started_show = true;
-				show = true;
+				_startedShow = true;
+				_show = true;
 			}
 		} else
-			show = false;
+			_show = false;
 	} else
-		show = false;
+		_show = false;
 
 	return false;
 }
 
-void PopUpCollection::internalEvents(pyrodactyl::event::Info &info, const Common::String &player_id,
-									 Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq) {
-	if (cur >= 0 && (unsigned int)cur < element.size()) {
-		if (element[cur].internalEvents(info, player_id, result, end_seq)) {
-			if (element[cur].next <= 0 || (unsigned int)element[cur].next >= element.size()) {
+void PopUpCollection::internalEvents(pyrodactyl::event::Info &info, const Common::String &playerId,
+									 Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &endSeq) {
+	if (_cur >= 0 && (unsigned int)_cur < _element.size()) {
+		if (_element[_cur].internalEvents(info, playerId, result, endSeq)) {
+			if (_element[_cur]._next <= 0 || (unsigned int)_element[_cur]._next >= _element.size()) {
 				// This means that this popup is the "end" node, we must loop back to start or end this
-				if (loop) {
-					cur = 0;
-					element[cur].Reset();
+				if (_loop) {
+					_cur = 0;
+					_element[_cur].reset();
 				} else
-					cur = -1;
+					_cur = -1;
 			} else {
-				cur = element[cur].next;
-				element[cur].Reset();
+				_cur = _element[_cur]._next;
+				_element[_cur].reset();
 			}
 		}
 	}
@@ -114,19 +114,19 @@ void PopUpCollection::internalEvents(pyrodactyl::event::Info &info, const Common
 // Purpose: Draw functions
 //------------------------------------------------------------------------
 void PopUp::draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop, const Rect &camera) {
-	if (show) {
+	if (_show) {
 		if (x + pop.x < camera.w / 3)
-			g_engine->_textManager->draw(x + pop.x, y + pop.y, text, pop.col, pop.font, ALIGN_LEFT, pop.line.x, pop.line.y, true);
+			g_engine->_textManager->draw(x + pop.x, y + pop.y, _text, pop.col, pop.font, ALIGN_LEFT, pop.line.x, pop.line.y, true);
 		else if (x + pop.x > (2 * camera.w) / 3)
-			g_engine->_textManager->draw(x + pop.x, y + pop.y, text, pop.col, pop.font, ALIGN_RIGHT, pop.line.x, pop.line.y, true);
+			g_engine->_textManager->draw(x + pop.x, y + pop.y, _text, pop.col, pop.font, ALIGN_RIGHT, pop.line.x, pop.line.y, true);
 		else
-			g_engine->_textManager->draw(x + pop.x, y + pop.y, text, pop.col, pop.font, ALIGN_CENTER, pop.line.x, pop.line.y, true);
+			g_engine->_textManager->draw(x + pop.x, y + pop.y, _text, pop.col, pop.font, ALIGN_CENTER, pop.line.x, pop.line.y, true);
 	}
 }
 
 void PopUpCollection::draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop, const Rect &camera) {
-	if (cur >= 0 && (unsigned int)cur < element.size())
-		element[cur].draw(x, y, pop, camera);
+	if (_cur >= 0 && (unsigned int)_cur < _element.size())
+		_element[_cur].draw(x, y, pop, camera);
 }
 
 } // End of namespace Crab
