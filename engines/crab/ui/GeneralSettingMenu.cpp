@@ -41,26 +41,26 @@ using namespace pyrodactyl::music;
 // Purpose: Load components from file
 //------------------------------------------------------------------------
 void GeneralSettingMenu::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid("volume", node)) {
+	if (nodeValid("volume", node)) {
 		rapidxml::xml_node<char> *musnode = node->first_node("volume");
 
-		if (NodeValid("desc", musnode))
+		if (nodeValid("desc", musnode))
 			notice_volume.Load(musnode->first_node("desc"));
 
-	//	if (NodeValid("music", musnode))
+	//	if (nodeValid("music", musnode))
 	//		vol_music.Load(musnode->first_node("music"), 0, MIX_MAX_VOLUME, g_engine->_musicManager->VolMusic());
 
-	//	if (NodeValid("effects", musnode))
+	//	if (nodeValid("effects", musnode))
 	//		vol_effects.Load(musnode->first_node("effects"), 0, MIX_MAX_VOLUME, g_engine->_musicManager->VolEffects());
 	}
 
-	if (NodeValid("mouse_trap", node))
+	if (nodeValid("mouse_trap", node))
 		mouse_trap.Load(node->first_node("mouse_trap"));
 
-	if (NodeValid("save_on_exit", node))
+	if (nodeValid("save_on_exit", node))
 		save_on_exit.Load(node->first_node("save_on_exit"));
 
-	if (NodeValid("text_speed", node))
+	if (nodeValid("text_speed", node))
 		text_speed.Load(node->first_node("text_speed"));
 
 	// Sync popup text value with actual value

@@ -44,8 +44,8 @@ struct Bonus {
 	int val;
 
 	void Load(rapidxml::xml_node<char> *node) {
-		LoadStatType(type, node);
-		LoadNum(val, "val", node);
+		loadStatType(type, node);
+		loadNum(val, "val", node);
 	}
 };
 } // End of namespace stat

@@ -44,16 +44,16 @@ void Inventory::Load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("inventory");
-		if (NodeValid(node)) {
-			if (NodeValid("bg", node))
+		if (nodeValid(node)) {
+			if (nodeValid("bg", node))
 				bg.Load(node->first_node("bg"));
 
 			collection.Load(node->first_node("items"));
 
-			/*if (NodeValid("stats", node))
+			/*if (nodeValid("stats", node))
 				helper.Load(node->first_node("stats"));*/
 
-			if (NodeValid("money", node))
+			if (nodeValid("money", node))
 				money.Load(node->first_node("money"));
 		}
 	}
@@ -121,7 +121,7 @@ void Inventory::HandleEvents(const Common::String &char_id, const SDL_Event &Eve
 // Purpose: Load and save items
 //------------------------------------------------------------------------
 void Inventory::LoadState(rapidxml::xml_node<char> *node) {
-	if (NodeValid("items", node))
+	if (nodeValid("items", node))
 		collection.LoadState(node->first_node("items"));
 }
 

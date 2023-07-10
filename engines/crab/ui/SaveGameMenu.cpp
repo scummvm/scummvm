@@ -36,7 +36,7 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::input;
 
 void GameSaveMenu::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid("name", node))
+	if (nodeValid("name", node))
 		ta_name.Load(node->first_node("name"));
 
 	FileMenu<SaveFileData>::Load(node);

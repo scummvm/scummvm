@@ -42,12 +42,12 @@ using namespace pyrodactyl::people;
 // Purpose: Load
 //------------------------------------------------------------------------
 void Item::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid(node)) {
-		LoadStr(id, "id", node);
-		LoadStr(name, "name", node);
-		LoadStr(type, "type", node);
-		LoadStr(desc, "desc", node);
-		LoadImgKey(img, "img", node);
+	if (nodeValid(node)) {
+		loadStr(id, "id", node);
+		loadStr(name, "name", node);
+		loadStr(type, "type", node);
+		loadStr(desc, "desc", node);
+		loadImgKey(img, "img", node);
 
 		bonus.clear();
 		for (auto n = node->first_node("bonus"); n != NULL; n = n->next_sibling("bonus")) {

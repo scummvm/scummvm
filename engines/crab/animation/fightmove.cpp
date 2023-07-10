@@ -40,16 +40,16 @@ void FightMove::Load(rapidxml::xml_node<char> *node) {
 	frames[DIRECTION_LEFT].load(node->first_node("left"));
 	frames[DIRECTION_RIGHT].load(node->first_node("right"));
 
-	if (NodeValid("input", node))
+	if (nodeValid("input", node))
 		input.Load(node->first_node("input"));
 
-	if (NodeValid("unlock", node, false))
+	if (nodeValid("unlock", node, false))
 		unlock.Load(node->first_node("unlock"));
 
-	if (NodeValid("effect", node))
+	if (nodeValid("effect", node))
 		eff.load(node->first_node("effect"));
 
-	if (NodeValid("ai", node, false))
+	if (nodeValid("ai", node, false))
 		ai.Load(node->first_node("ai"));
 }
 

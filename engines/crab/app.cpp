@@ -305,12 +305,12 @@ void App::LoadSettings(const Common::String &filename) {
 	XMLDoc settings(filename);
 	if (settings.ready()) {
 		rapidxml::xml_node<char> *node = settings.doc()->first_node("settings");
-		if (NodeValid(node)) {
+		if (nodeValid(node)) {
 			// Load the version
-			LoadNum(g_engine->_screenSettings->version, "version", node);
+			loadNum(g_engine->_screenSettings->version, "version", node);
 
 			// Load screen settings
-			if (NodeValid("screen", node))
+			if (nodeValid("screen", node))
 				g_engine->_screenSettings->Load(node->first_node("screen"));
 
 			// Start the sound subsystem

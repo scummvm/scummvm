@@ -36,20 +36,20 @@ namespace Crab {
 using namespace pyrodactyl::item;
 
 void StatPreview::Load(rapidxml::xml_node<char> *node) {
-	LoadBool(enabled, "enabled", node);
+	loadBool(enabled, "enabled", node);
 
-	if (NodeValid("stat", node)) {
+	if (nodeValid("stat", node)) {
 		rapidxml::xml_node<char> *snode = node->first_node("stat");
 		stat.Load(snode);
-		LoadNum(inc_s.x, "w", snode);
-		LoadNum(inc_s.y, "h", snode);
+		loadNum(inc_s.x, "w", snode);
+		loadNum(inc_s.y, "h", snode);
 	}
 
-	if (NodeValid("unit", node)) {
+	if (nodeValid("unit", node)) {
 		rapidxml::xml_node<char> *snode = node->first_node("unit");
 		unit.Load(snode);
-		LoadNum(inc_u.x, "w", snode);
-		LoadNum(inc_u.y, "h", snode);
+		loadNum(inc_u.x, "w", snode);
+		loadNum(inc_u.y, "h", snode);
 	}
 }
 

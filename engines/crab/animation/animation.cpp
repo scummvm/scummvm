@@ -36,7 +36,7 @@ using namespace pyrodactyl::image;
 using namespace pyrodactyl::anim;
 
 Animation::Animation(rapidxml::xml_node<char> *node) {
-	LoadNum(_length, "length", node);
+	loadNum(_length, "length", node);
 	for (auto n = node->first_node("frame"); n != NULL; n = n->next_sibling("frame"))
 		_frame.push_back(n);
 }

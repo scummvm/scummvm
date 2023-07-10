@@ -53,7 +53,7 @@ void ImageManager::LoadMap(const Common::String &filename, const MapID &mapid) {
 		rapidxml::xml_node<char> *node = image_list.doc()->first_node("res");
 		for (auto n = node->first_node("image"); n != NULL; n = n->next_sibling("image")) {
 			ImageKey key;
-			if (LoadImgKey(key, "name", n)) {
+			if (loadImgKey(key, "name", n)) {
 				// Load different images depending on image quality setting
 				// Check if there is a low quality image specified for the asset id
 				// if yes, load it  - if no, just load the higher quality one
@@ -62,10 +62,10 @@ void ImageManager::LoadMap(const Common::String &filename, const MapID &mapid) {
 				Common::String path;
 
 				if (!g_engine->_screenSettings->quality)
-					valid = LoadStr(path, "path_low", n, false);
+					valid = loadStr(path, "path_low", n, false);
 
 				if (!valid)
-					valid = LoadStr(path, "path", n, false);
+					valid = loadStr(path, "path", n, false);
 
 				if (valid)
 					map[mapid][key].Load(path);
@@ -77,7 +77,7 @@ void ImageManager::LoadMap(const Common::String &filename, const MapID &mapid) {
 			}
 		}
 
-		if (NodeValid("mouse", node, false)) {
+		if (nodeValid("mouse", node, false)) {
 			using namespace pyrodactyl::input;
 			g_engine->_mouse->Quit();
 			g_engine->_mouse->Load(node->first_node("mouse"));

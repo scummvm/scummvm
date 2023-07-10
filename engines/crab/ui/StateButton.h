@@ -43,10 +43,10 @@ struct StateButtonImage {
 
 	StateButtonImage() {}
 	StateButtonImage(rapidxml::xml_node<char> *node) {
-		if (NodeValid("normal", node))
+		if (nodeValid("normal", node))
 			normal.Load(node->first_node("normal"));
 
-		if (NodeValid("select", node, false))
+		if (nodeValid("select", node, false))
 			select.Load(node->first_node("select"));
 		else
 			select = normal;

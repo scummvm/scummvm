@@ -45,7 +45,7 @@ void TraitButton::Init(const TraitButton &ref, const int &XOffset, const int &YO
 void TraitButton::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 	StateButton::Load(node, echo);
 
-	if (NodeValid("offset", node))
+	if (nodeValid("offset", node))
 		offset.Load(node->first_node("offset"), echo);
 }
 

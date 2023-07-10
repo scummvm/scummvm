@@ -195,7 +195,7 @@ public:
 	void IronMan(const bool &val) { ironman = val; }
 	void LoadIronMan(rapidxml::xml_node<char> *node) {
 		Common::String str;
-		LoadStr(str, "diff", node);
+		loadStr(str, "diff", node);
 		ironman = (str == "Iron Man");
 	}
 

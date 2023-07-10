@@ -34,7 +34,7 @@ namespace Crab {
 
 bool Rect::Load(rapidxml::xml_node<char> *node, const bool &echo, const Common::String &x_name, const Common::String &y_name,
 				const Common::String &w_name, const Common::String &h_name) {
-	return LoadNum(x, x_name, node, echo) && LoadNum(y, y_name, node, echo) && LoadNum(w, w_name, node, echo) && LoadNum(h, h_name, node, echo);
+	return loadNum(x, x_name, node, echo) && loadNum(y, y_name, node, echo) && loadNum(w, w_name, node, echo) && loadNum(h, h_name, node, echo);
 }
 
 bool Rect::Collide(Rect box) {

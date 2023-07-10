@@ -48,7 +48,7 @@ void ItemSlot::Load(rapidxml::xml_node<char> *node) {
 	if (node->first_attribute("slot") == NULL)
 		no_type = true;
 	else {
-		LoadStr(item_type, "slot", node);
+		loadStr(item_type, "slot", node);
 		no_type = false;
 	}
 
@@ -82,7 +82,7 @@ void ItemSlot::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char>
 		child = doc.allocate_node(rapidxml::node_element, "storage");
 
 	item.SaveState(doc, child);
-	SaveBool(unread, "unread", doc, child);
+	saveBool(unread, "unread", doc, child);
 
 	root->append_node(child);
 }
@@ -92,7 +92,7 @@ void ItemSlot::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char>
 //------------------------------------------------------------------------
 void ItemSlot::LoadState(rapidxml::xml_node<char> *node) {
 	item.Load(node);
-	LoadBool(unread, "unread", node);
+	loadBool(unread, "unread", node);
 
 	if (item.id == "")
 		empty = true;

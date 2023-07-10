@@ -35,15 +35,15 @@ namespace Crab {
 using namespace TMX;
 
 bool Layer::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid(node))
-		return LoadStr(name, "name", node) && LoadNum(w, "width", node) && LoadNum(h, "height", node);
+	if (nodeValid(node))
+		return loadStr(name, "name", node) && loadNum(w, "width", node) && loadNum(h, "height", node);
 
 	return false;
 }
 
 bool MapLayer::Load(const Common::String &path, rapidxml::xml_node<char> *node) {
 	if (Layer::Load(node)) {
-		if (NodeValid("image", node, false)) {
+		if (nodeValid("image", node, false)) {
 			type = LAYER_IMAGE;
 			rapidxml::xml_node<char> *imgnode = node->first_node("image");
 
@@ -69,10 +69,10 @@ bool MapLayer::Load(const Common::String &path, rapidxml::xml_node<char> *node) 
 		// load properties associated with the layer, such as:
 		//  Is it a prop layer or not? If yes, the prop dimensions
 		//  The rate of scrolling of the layer, used for parallax scrolling
-		if (NodeValid("properties", node, false)) {
+		if (nodeValid("properties", node, false)) {
 			Common::String n, v;
 			for (auto p = node->first_node("properties")->first_node("property"); p != NULL; p = p->next_sibling("property")) {
-				if (LoadStr(n, "name", p) && LoadStr(v, "value", p)) {
+				if (loadStr(n, "name", p) && loadStr(v, "value", p)) {
 					if (n == "prop" && v == "true")
 						type = LAYER_PROP;
 					else if (n == "autohide" && v == "true")

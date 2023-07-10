@@ -40,14 +40,14 @@ using namespace pyrodactyl::image;
 void SectionHeader::Load(rapidxml::xml_node<char> *node) {
 
 	if (TextData::Load(node, NULL, false)) {
-		LoadStr(text, "text", node);
+		loadStr(text, "text", node);
 		text.insertChar(' ', 0);
 		text += " ";
 
-		LoadImgKey(img, "img", node);
+		loadImgKey(img, "img", node);
 
-		LoadBool(draw_l, "left", node);
-		LoadBool(draw_r, "right", node);
+		loadBool(draw_l, "left", node);
+		loadBool(draw_r, "right", node);
 
 		Graphics::ManagedSurface *surf = g_engine->_textManager->RenderTextBlended(font, text, col);
 

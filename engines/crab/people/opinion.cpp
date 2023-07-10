@@ -48,9 +48,9 @@ Opinion::Opinion() {
 }
 
 void Opinion::Load(rapidxml::xml_node<char> *node) {
-	LoadNum(val[OPI_LIKE], "like", node);
-	LoadNum(val[OPI_FEAR], "fear", node);
-	LoadNum(val[OPI_RESPECT], "respect", node);
+	loadNum(val[OPI_LIKE], "like", node);
+	loadNum(val[OPI_FEAR], "fear", node);
+	loadNum(val[OPI_RESPECT], "respect", node);
 }
 
 void Opinion::Change(const OpinionType &type, const int &change) {

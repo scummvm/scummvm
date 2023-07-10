@@ -39,29 +39,29 @@ using namespace pyrodactyl::text;
 using namespace pyrodactyl::input;
 
 void KeyBindMenu::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid(node)) {
-		if (NodeValid("menu", node)) {
+	if (nodeValid(node)) {
+		if (nodeValid("menu", node)) {
 			rapidxml::xml_node<char> *menode = node->first_node("menu");
 
-			if (NodeValid("primary", menode))
+			if (nodeValid("primary", menode))
 				prim.Load(menode->first_node("primary"));
 
-			if (NodeValid("alt", menode))
+			if (nodeValid("alt", menode))
 				alt.Load(menode->first_node("alt"));
 
-			if (NodeValid("prompt", menode))
+			if (nodeValid("prompt", menode))
 				prompt.Load(menode->first_node("prompt"));
 
-			if (NodeValid("inc", menode))
+			if (nodeValid("inc", menode))
 				inc.Load(menode->first_node("inc"));
 
-			if (NodeValid("dim", menode))
+			if (nodeValid("dim", menode))
 				dim.Load(menode->first_node("dim"));
 
-			if (NodeValid("divide", menode))
+			if (nodeValid("divide", menode))
 				divide.Load(menode->first_node("divide"));
 
-			if (NodeValid("desc", menode))
+			if (nodeValid("desc", menode))
 				desc.Load(menode->first_node("desc"));
 		}
 
@@ -69,7 +69,7 @@ void KeyBindMenu::Load(rapidxml::xml_node<char> *node) {
 		InitMenu(CON_GAME);
 		InitMenu(CON_UI);
 
-		if (NodeValid("controls", node))
+		if (nodeValid("controls", node))
 			sel_controls.Load(node->first_node("controls"));
 	}
 }

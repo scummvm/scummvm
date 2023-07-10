@@ -48,11 +48,11 @@ void TextManager::Init() {
 	if (font_list.ready()) {
 		rapidxml::xml_node<char> *node = font_list.doc()->first_node("fonts");
 
-		LoadNum(cache_size, "cache_size", node);
+		loadNum(cache_size, "cache_size", node);
 		cache.resize(cache_size);
 		oldest = 0;
 
-		if (NodeValid(node->first_node("padding")))
+		if (nodeValid(node->first_node("padding")))
 			pad_bg.Load(node->first_node("padding"));
 
 		for (auto n = node->first_node("font"); n != NULL; n = n->next_sibling("font")) {

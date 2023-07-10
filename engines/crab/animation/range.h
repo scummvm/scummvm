@@ -45,7 +45,7 @@ struct Range {
 	Range() { valid = false; }
 
 	void Load(rapidxml::xml_node<char> *node) {
-		if (NodeValid(node, false)) {
+		if (nodeValid(node, false)) {
 			val[DIRECTION_DOWN].Load(node->first_node("down"));
 			val[DIRECTION_UP].Load(node->first_node("up"));
 			val[DIRECTION_LEFT].Load(node->first_node("left"));

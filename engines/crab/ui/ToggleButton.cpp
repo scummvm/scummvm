@@ -38,10 +38,10 @@ using namespace pyrodactyl::image;
 
 void ToggleButton::Load(rapidxml::xml_node<char> *node) {
 	Button::Load(node);
-	LoadImgKey(on, "on", node);
-	LoadImgKey(off, "off", node);
+	loadImgKey(on, "on", node);
+	loadImgKey(off, "off", node);
 
-	if (NodeValid("offset", node))
+	if (nodeValid("offset", node))
 		offset.Load(node->first_node("offset"));
 }
 

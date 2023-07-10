@@ -37,7 +37,7 @@ using namespace pyrodactyl::text;
 using namespace pyrodactyl::ui;
 
 void OptionSelect::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid(node)) {
+	if (nodeValid(node)) {
 		option.data.Load(node);
 		prev.Load(node->first_node("prev"));
 		next.Load(node->first_node("next"));
@@ -46,11 +46,11 @@ void OptionSelect::Load(rapidxml::xml_node<char> *node) {
 		option.text.clear();
 		for (auto n = node->first_node("option"); n != NULL; n = n->next_sibling("option")) {
 			Common::String s;
-			LoadStr(s, "name", n);
+			loadStr(s, "name", n);
 			option.text.push_back(s);
 		}
 
-		LoadBool(usekeyboard, "keyboard", node, false);
+		loadBool(usekeyboard, "keyboard", node, false);
 	}
 }
 

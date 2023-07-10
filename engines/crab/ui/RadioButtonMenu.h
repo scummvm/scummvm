@@ -50,10 +50,10 @@ public:
 	~RadioButtonMenu() {}
 
 	void Load(rapidxml::xml_node<char> *node) {
-		if (NodeValid("desc", node))
+		if (nodeValid("desc", node))
 			desc.Load(node->first_node("desc"));
 
-		if (NodeValid("menu", node))
+		if (nodeValid("menu", node))
 			Menu::Load(node->first_node("menu"));
 	}
 

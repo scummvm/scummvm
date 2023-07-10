@@ -83,9 +83,9 @@ class KeyBindMenu {
 		}
 
 		void Load(rapidxml::xml_node<char> *node) {
-			if (NodeValid(node)) {
-				LoadStr(text, "text", node);
-				LoadNum(col, "color", node);
+			if (nodeValid(node)) {
+				loadStr(text, "text", node);
+				loadNum(col, "color", node);
 			}
 		}
 

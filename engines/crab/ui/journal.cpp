@@ -43,17 +43,17 @@ void Journal::Load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("objectives");
-		if (NodeValid(node)) {
-			if (NodeValid("bg", node))
+		if (nodeValid(node)) {
+			if (nodeValid("bg", node))
 				bg.Load(node->first_node("bg"));
 
-			if (NodeValid("map", node))
+			if (nodeValid("map", node))
 				bu_map.Load(node->first_node("map"));
 
-			if (NodeValid("category", node))
+			if (nodeValid("category", node))
 				category.Load(node->first_node("category"));
 
-			if (NodeValid("quest_list", node))
+			if (nodeValid("quest_list", node))
 				ref.Load(node->first_node("quest_list"));
 
 			category.UseKeyboard(true);
@@ -278,7 +278,7 @@ void Journal::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> 
 void Journal::LoadState(rapidxml::xml_node<char> *node) {
 	for (rapidxml::xml_node<char> *n = node->first_node("journal"); n != NULL; n = n->next_sibling("journal")) {
 		Common::String id;
-		LoadStr(id, "id", n);
+		loadStr(id, "id", n);
 
 		Init(id);
 

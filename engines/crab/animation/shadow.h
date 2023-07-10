@@ -52,7 +52,7 @@ struct ShadowData {
 	ShadowData() : size(1, 1) { img = 0; }
 
 	void Load(rapidxml::xml_node<char> *node) {
-		LoadImgKey(img, "img", node);
+		loadImgKey(img, "img", node);
 		offset.Load(node);
 
 		using namespace pyrodactyl::image;

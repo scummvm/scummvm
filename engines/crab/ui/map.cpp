@@ -44,39 +44,39 @@ void Map::Load(const Common::String &filename, pyrodactyl::event::Info &info) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("map");
-		if (NodeValid(node)) {
-			if (NodeValid("img", node)) {
+		if (nodeValid(node)) {
+			if (nodeValid("img", node)) {
 				rapidxml::xml_node<char> *imgnode = node->first_node("img");
-				LoadNum(speed, "speed", imgnode);
+				loadNum(speed, "speed", imgnode);
 
 				for (auto n = imgnode->first_node("map"); n != NULL; n = n->next_sibling("map"))
 					map.push_back(n);
 			}
 
-			if (NodeValid("fg", node))
+			if (nodeValid("fg", node))
 				fg.Load(node->first_node("fg"));
 
-			if (NodeValid("dim", node)) {
-				LoadNum(camera.w, "x", node->first_node("dim"));
-				LoadNum(camera.h, "y", node->first_node("dim"));
+			if (nodeValid("dim", node)) {
+				loadNum(camera.w, "x", node->first_node("dim"));
+				loadNum(camera.h, "y", node->first_node("dim"));
 			}
 
-			if (NodeValid("pos", node))
+			if (nodeValid("pos", node))
 				pos.Load(node->first_node("pos"));
 
-			if (NodeValid("scroll", node))
+			if (nodeValid("scroll", node))
 				scroll.Load(node->first_node("scroll"));
 
-			if (NodeValid("marker", node))
+			if (nodeValid("marker", node))
 				marker.Load(node->first_node("marker"));
 
-			if (NodeValid("title", node))
+			if (nodeValid("title", node))
 				title.Load(node->first_node("title"));
 
-			if (NodeValid("locations", node))
+			if (nodeValid("locations", node))
 				travel.Load(node->first_node("locations"));
 
-			if (NodeValid("overlay", node))
+			if (nodeValid("overlay", node))
 				bu_overlay.Load(node->first_node("overlay"));
 		}
 	}
@@ -472,7 +472,7 @@ void Map::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *roo
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "map");
 
 	child->append_attribute(doc.allocate_attribute("cur", gStrPool->Get(cur)));
-	SaveBool(overlay, "overlay", doc, child);
+	saveBool(overlay, "overlay", doc, child);
 
 	for (auto r = map.begin(); r != map.end(); ++r) {
 		rapidxml::xml_node<char> *child_data = doc.allocate_node(rapidxml::node_element, "data");
@@ -484,12 +484,12 @@ void Map::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *roo
 }
 
 void Map::LoadState(rapidxml::xml_node<char> *node) {
-	if (NodeValid("map", node)) {
+	if (nodeValid("map", node)) {
 		rapidxml::xml_node<char> *mapnode = node->first_node("map");
-		LoadBool(overlay, "overlay", mapnode);
+		loadBool(overlay, "overlay", mapnode);
 
 		int val = cur;
-		LoadNum(val, "cur", mapnode);
+		loadNum(val, "cur", mapnode);
 
 		auto r = map.begin();
 		for (rapidxml::xml_node<char> *n = mapnode->first_node("data"); n != NULL && r != map.end(); n = n->next_sibling("data"), ++r)

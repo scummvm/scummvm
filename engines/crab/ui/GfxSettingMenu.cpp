@@ -39,27 +39,27 @@ using namespace pyrodactyl::ui;
 // Purpose: Load components from file
 //------------------------------------------------------------------------
 void GfxSettingMenu::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid("resolution", node))
+	if (nodeValid("resolution", node))
 		resolution.Load(node->first_node("resolution"));
 
-	if (NodeValid("fullscreen", node))
+	if (nodeValid("fullscreen", node))
 		fullscreen.Load(node->first_node("fullscreen"));
 
-	if (NodeValid("vsync", node))
+	if (nodeValid("vsync", node))
 		vsync.Load(node->first_node("vsync"));
 
-	if (NodeValid("border", node))
+	if (nodeValid("border", node))
 		border.Load(node->first_node("border"));
 
-	if (NodeValid("quality", node)) {
+	if (nodeValid("quality", node)) {
 		rapidxml::xml_node<char> *qnode = node->first_node("quality");
 		quality.Load(qnode);
 
-		if (NodeValid("message", qnode))
+		if (nodeValid("message", qnode))
 			notice_quality.Load(qnode->first_node("message"), &quality);
 	}
 
-	if (NodeValid("brightness", node))
+	if (nodeValid("brightness", node))
 		brightness.Load(node->first_node("brightness"), 0, 100, g_engine->_screenSettings->gamma * 100);
 }
 

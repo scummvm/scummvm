@@ -70,10 +70,10 @@ const char *StatTypeToString(const StatType &val) {
 using namespace pyrodactyl::stat;
 
 void Stat::Load(rapidxml::xml_node<char> *node) {
-	LoadNum(cur, "cur", node);
-	LoadNum(def, "def", node);
-	LoadNum(min, "min", node);
-	LoadNum(max, "max", node);
+	loadNum(cur, "cur", node);
+	loadNum(def, "def", node);
+	loadNum(min, "min", node);
+	loadNum(max, "max", node);
 }
 
 void StatGroup::Load(rapidxml::xml_node<char> *node) {

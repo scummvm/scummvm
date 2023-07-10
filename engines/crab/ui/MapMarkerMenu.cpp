@@ -38,19 +38,19 @@ using namespace pyrodactyl::ui;
 // Purpose: Load
 //------------------------------------------------------------------------
 void MapMarkerMenu::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid("ref", node))
+	if (nodeValid("ref", node))
 		ref.Load(node->first_node("ref"));
 
-	if (NodeValid("player", node))
+	if (nodeValid("player", node))
 		player.Load(node->first_node("player"));
 
-	if (NodeValid("offset", node)) {
+	if (nodeValid("offset", node)) {
 		rapidxml::xml_node<char> *offnode = node->first_node("offset");
 
-		if (NodeValid("marker", offnode))
+		if (nodeValid("marker", offnode))
 			offset.marker.Load(offnode->first_node("marker"));
 
-		if (NodeValid("player", offnode))
+		if (nodeValid("player", offnode))
 			offset.player.Load(offnode->first_node("player"));
 	}
 

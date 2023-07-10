@@ -56,21 +56,21 @@ Sprite::Sprite() : img_size(1, 1), vel_mod(1.0f, 1.0f) {
 void Sprite::Load(rapidxml::xml_node<char> *node, Common::Array<Common::String> &animations) {
 	using namespace pyrodactyl::image;
 
-	if (NodeValid(node)) {
-		LoadStr(id, "id", node);
+	if (nodeValid(node)) {
+		loadStr(id, "id", node);
 
 		// The amount by which the sprite x,y should be multiplied
 		int multiply = 1;
-		LoadNum(multiply, "multiply", node, false);
+		loadNum(multiply, "multiply", node, false);
 
-		LoadNum(pos.x, "x", node);
-		LoadNum(pos.y, "y", node);
+		loadNum(pos.x, "x", node);
+		loadNum(pos.y, "y", node);
 
 		pos.x *= multiply;
 		pos.y *= multiply;
 
-		LoadImgKey(image, "img", node);
-		LoadNum(layer, "layer", node, false);
+		loadImgKey(image, "img", node);
+		loadNum(layer, "layer", node, false);
 
 		Image dat;
 		g_engine->_imageManager->GetTexture(image, dat);
@@ -78,24 +78,24 @@ void Sprite::Load(rapidxml::xml_node<char> *node, Common::Array<Common::String> 
 		img_size.y = dat.H();
 
 		unsigned int index = 0;
-		LoadNum(index, "moveset", node);
+		loadNum(index, "moveset", node);
 
 		if (index < animations.size())
 			anim_set.load(animations[index]);
 
 		anim_set._fight.ListAttackMoves(ai_data._fight._attack);
 
-		LoadDirection(dir, node);
+		loadDirection(dir, node);
 		clip = anim_set._walk.Clip(dir);
 		box_v = anim_set._walk.BoxV(dir);
 
-		if (NodeValid("visible", node, false))
+		if (nodeValid("visible", node, false))
 			visible.Load(node->first_node("visible"));
 
-		if (NodeValid("movement", node, false))
+		if (nodeValid("movement", node, false))
 			ai_data._walk.load(node->first_node("movement"));
 
-		if (NodeValid("popup", node, false))
+		if (nodeValid("popup", node, false))
 			popup.Load(node->first_node("popup"));
 	}
 }
@@ -739,8 +739,8 @@ void Sprite::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *
 // Purpose: Load all sprite positions from save file
 //------------------------------------------------------------------------
 void Sprite::LoadState(rapidxml::xml_node<char> *node) {
-	LoadNum(pos.x, "x", node);
-	LoadNum(pos.y, "y", node);
+	loadNum(pos.x, "x", node);
+	loadNum(pos.y, "y", node);
 }
 
 } // End of namespace Crab

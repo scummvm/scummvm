@@ -65,23 +65,23 @@ void TMXMap::Load(const Common::String &path, Common::String filename) {
 	XMLDoc conf((path + filename));
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("map");
-		if (NodeValid(node)) {
-			LoadNum(tile_rows, "width", node);
-			LoadNum(tile_cols, "height", node);
-			LoadNum(tile_size.x, "tilewidth", node);
-			LoadNum(tile_size.y, "tileheight", node);
+		if (nodeValid(node)) {
+			loadNum(tile_rows, "width", node);
+			loadNum(tile_cols, "height", node);
+			loadNum(tile_size.x, "tilewidth", node);
+			loadNum(tile_size.y, "tileheight", node);
 
 			// Pathfinding info load
 			path_size.x = 0;
 			path_size.y = 0;
 
-			LoadNum(path_size.x, "pathwidth", node);
-			LoadNum(path_size.y, "pathheight", node);
+			loadNum(path_size.x, "pathwidth", node);
+			loadNum(path_size.y, "pathheight", node);
 
 			// Load costs...Not sure if this is right. (SZ)
-			LoadNum(movementCosts.open, "opencost", node);
-			LoadNum(movementCosts.no_walk, "nowalkcost", node);
-			LoadNum(movementCosts.stairs, "stairscost", node);
+			loadNum(movementCosts.open, "opencost", node);
+			loadNum(movementCosts.no_walk, "nowalkcost", node);
+			loadNum(movementCosts.stairs, "stairscost", node);
 
 			// if(path_size.x == 0)
 			//	path_size.x = tile_size.x;
@@ -129,7 +129,7 @@ void TMXMap::Load(const Common::String &path, Common::String filename) {
 				} else if (name == "objectgroup") // Is this an object layer
 				{
 					Common::String group_name;
-					LoadStr(group_name, "name", groupnode);
+					loadStr(group_name, "name", groupnode);
 					if (group_name == "exit") {
 						for (auto n = groupnode->first_node("object"); n != NULL; n = n->next_sibling("object")) {
 							pyrodactyl::level::Exit le(n);
@@ -151,7 +151,7 @@ void TMXMap::Load(const Common::String &path, Common::String filename) {
 							s.Load(n);
 
 							unsigned int pos = area_trig.size();
-							LoadNum(pos, "name", n);
+							loadNum(pos, "name", n);
 
 							if (area_trig.size() <= pos)
 								area_trig.resize(pos + 1);
@@ -196,7 +196,7 @@ void TMXMap::Load(const Common::String &path, Common::String filename) {
 //		if (linenode != NULL)
 //		{
 //			Common::String points, x, y;
-//			LoadStr(points, "points", linenode);
+//			loadStr(points, "points", linenode);
 //
 //			path.resize(pos + 1);
 //			bool comma = false;

@@ -60,13 +60,13 @@ struct FightMoveAIData {
 	}
 
 	void Load(rapidxml::xml_node<char> *node) {
-		if (!LoadNum(delay, "delay", node, false))
+		if (!loadNum(delay, "delay", node, false))
 			delay = 0;
 
 		range.Load(node->first_node("range"));
 
 		Common::String str;
-		LoadStr(str, "type", node, false);
+		loadStr(str, "type", node, false);
 		if (str == "attack")
 			type = MOVE_ATTACK;
 		else if (str == "defend")

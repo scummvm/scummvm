@@ -51,19 +51,19 @@ void Manager::Init() {
 // Purpose: Load this
 //------------------------------------------------------------------------
 void Manager::Load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
-	if (NodeValid(node)) {
+	if (nodeValid(node)) {
 		XMLDoc conf(node->first_attribute("list")->value());
 		if (conf.ready()) {
 			rapidxml::xml_node<char> *lnode = conf.doc()->first_node("event_list");
 			for (rapidxml::xml_node<char> *loc = lnode->first_node("loc"); loc != NULL; loc = loc->next_sibling("loc")) {
 				Common::String loc_name;
-				LoadStr(loc_name, "name", loc);
+				loadStr(loc_name, "name", loc);
 
 				for (auto n = loc->first_node("file"); n != NULL; n = n->next_sibling("file")) {
 					unsigned int id;
 					Common::String path;
-					LoadNum(id, "name", n);
-					LoadStr(path, "path", n);
+					loadNum(id, "name", n);
+					loadStr(path, "path", n);
 					event_map[loc_name].AddSeq(id, path);
 				}
 			}
@@ -74,14 +74,14 @@ void Manager::Load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 		conf.load(node->first_attribute("layout")->value());
 		if (conf.ready()) {
 			rapidxml::xml_node<char> *layout = conf.doc()->first_node("layout");
-			if (NodeValid(layout)) {
-				if (NodeValid("character", layout))
+			if (nodeValid(layout)) {
+				if (nodeValid("character", layout))
 					oh.Load(layout->first_node("character"));
 
-				if (NodeValid("popup", layout))
+				if (nodeValid("popup", layout))
 					popup.Load(layout->first_node("popup"));
 
-				if (NodeValid("intro", layout))
+				if (nodeValid("intro", layout))
 					intro.Load(layout->first_node("intro"));
 			}
 		}

@@ -48,9 +48,9 @@ struct LevelPath {
 	LevelPath() : layout(""), asset(""), name("") {}
 
 	void Load(rapidxml::xml_node<char> *node) {
-		LoadStr(name, "name", node);
-		LoadStr(layout, "layout", node);
-		LoadStr(asset, "res", node);
+		loadStr(name, "name", node);
+		loadStr(layout, "layout", node);
+		loadStr(asset, "res", node);
 	}
 };
 

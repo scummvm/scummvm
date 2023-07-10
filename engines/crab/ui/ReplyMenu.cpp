@@ -44,17 +44,17 @@ void ReplyMenu::Load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("conversation");
-		if (NodeValid(node)) {
-			if (NodeValid("tone", node))
+		if (nodeValid(node)) {
+			if (nodeValid("tone", node))
 				tone.Load(node->first_node("tone"));
 
-			if (NodeValid("reply", node)) {
+			if (nodeValid("reply", node)) {
 				rapidxml::xml_node<char> *replynode = node->first_node("reply");
 				Menu<ReplyButton>::Load(replynode->first_node("menu"));
 				tone.value.resize(element.size());
 
 				bg.Load(replynode->first_node("bg"));
-				LoadNum(spacing, "spacing", replynode);
+				loadNum(spacing, "spacing", replynode);
 			}
 		}
 	}

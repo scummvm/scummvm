@@ -53,8 +53,8 @@ public:
 	void Load(rapidxml::xml_node<char> *node) {
 		Button::Load(node);
 
-		LoadStr(loc, "id", node);
-		if (NodeValid("unlock", node, false))
+		loadStr(loc, "id", node);
+		if (nodeValid("unlock", node, false))
 			unlock.Load(node->first_node("unlock"));
 	}
 };

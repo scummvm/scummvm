@@ -58,8 +58,8 @@ class PersonHandler {
 		}
 
 		void Load(rapidxml::xml_node<char> *node, const bool &echo = true) {
-			LoadAlign(x, node, echo, "align_x");
-			LoadAlign(y, node, echo, "align_y");
+			loadAlign(x, node, echo, "align_x");
+			loadAlign(y, node, echo, "align_y");
 		}
 	} sprite_align;
 

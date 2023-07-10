@@ -158,19 +158,19 @@ public:
 	}
 
 	void Load(rapidxml::xml_node<char> *node) {
-		if (NodeValid("bg", node))
+		if (nodeValid("bg", node))
 			bg.Load(node->first_node("bg"));
 
-		if (NodeValid("menu", node))
+		if (nodeValid("menu", node))
 			menu.Load(node->first_node("menu"));
 
-		if (NodeValid("preview", node)) {
+		if (nodeValid("preview", node)) {
 			auto prnode = node->first_node("preview");
 			img.pos.Load(prnode);
-			LoadStr(img.no_preview_path, "path", prnode);
+			loadStr(img.no_preview_path, "path", prnode);
 		}
 
-		if (NodeValid("offset", node)) {
+		if (nodeValid("offset", node)) {
 			rapidxml::xml_node<char> *offnode = node->first_node("offset");
 
 			// Stuff displayed on the slot button

@@ -38,9 +38,9 @@ using namespace pyrodactyl::image;
 
 void TalkNotify::Load(rapidxml::xml_node<char> *node) {
 	offset.Load(node);
-	LoadNum(font, "font", node);
-	LoadAlign(align, node);
-	LoadNum(col, "col", node);
+	loadNum(font, "font", node);
+	loadAlign(align, node);
+	loadNum(col, "col", node);
 }
 
 void TalkNotify::Draw(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s, const Rect &camera) {

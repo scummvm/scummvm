@@ -43,14 +43,14 @@ using namespace pyrodactyl::input;
 
 void TextArea::Load(rapidxml::xml_node<char> *node) {
 	if (TextData::Load(node)) {
-		LoadStr(text, "text", node);
-		LoadNum(size, "size", node);
+		loadStr(text, "text", node);
+		loadNum(size, "size", node);
 
-		LoadNum(se_entry, "entry", node);
-		LoadNum(se_erase, "erase", node);
-		LoadNum(se_accept, "accept", node);
+		loadNum(se_entry, "entry", node);
+		loadNum(se_erase, "erase", node);
+		loadNum(se_accept, "accept", node);
 
-		if (NodeValid("caption", node))
+		if (nodeValid("caption", node))
 			title.Load(node->first_node("caption"), this);
 	}
 }

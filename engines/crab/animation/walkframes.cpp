@@ -40,16 +40,16 @@ using namespace pyrodactyl::people;
 // Purpose: Loader Function
 //------------------------------------------------------------------------
 void WalkFrames::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid("stand", node))
+	if (nodeValid("stand", node))
 		set[WT_STAND].Load(node->first_node("stand"));
 
-	if (NodeValid("walk", node))
+	if (nodeValid("walk", node))
 		set[WT_WALK].Load(node->first_node("walk"));
 
-	if (NodeValid("fight", node))
+	if (nodeValid("fight", node))
 		set[WT_FIGHT].Load(node->first_node("fight"));
 
-	if (NodeValid("ko", node))
+	if (nodeValid("ko", node))
 		set[WT_KO].Load(node->first_node("ko"));
 }
 

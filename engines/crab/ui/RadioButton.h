@@ -47,7 +47,7 @@ public:
 
 	void Load(rapidxml::xml_node<char> *node) {
 		ToggleButton::Load(node);
-		LoadNum(val, "val", node);
+		loadNum(val, "val", node);
 	}
 };
 } // End of namespace ui

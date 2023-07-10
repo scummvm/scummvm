@@ -38,14 +38,14 @@ void LoadingScreen::Load() {
 	XMLDoc doc(filename);
 	if (doc.ready()) {
 		rapidxml::xml_node<char> *node = doc.doc()->first_node("loading");
-		if (NodeValid(node)) {
-			if (NodeValid("screens", node)) {
+		if (nodeValid(node)) {
+			if (nodeValid("screens", node)) {
 				rapidxml::xml_node<char> *scrnode = node->first_node("screens");
 				for (auto n = scrnode->first_node("screen"); n != NULL; n = n->next_sibling("screen"))
 					screen.push_back(n);
 			}
 
-			if (NodeValid("text", node))
+			if (nodeValid("text", node))
 				text.Load(node->first_node("text"), "img");
 		}
 	}

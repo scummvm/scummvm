@@ -37,7 +37,7 @@ using namespace pyrodactyl::image;
 using namespace pyrodactyl::level;
 
 void PlayerDestMarker::Load(rapidxml::xml_node<char> *node) {
-	LoadImgKey(img, "dest", node);
+	loadImgKey(img, "dest", node);
 	size.x = g_engine->_imageManager->GetTexture(img).W();
 	size.y = g_engine->_imageManager->GetTexture(img).H();
 }

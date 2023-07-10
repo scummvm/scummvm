@@ -65,10 +65,10 @@ struct ButtonImage {
 	}
 
 	void Load(rapidxml::xml_node<char> *node, const bool &echo = true) {
-		if (NodeValid(node)) {
-			LoadImgKey(normal, "img_b", node, echo);
-			LoadImgKey(select, "img_s", node, echo);
-			LoadImgKey(hover, "img_h", node, echo);
+		if (nodeValid(node)) {
+			loadImgKey(normal, "img_b", node, echo);
+			loadImgKey(select, "img_s", node, echo);
+			loadImgKey(hover, "img_h", node, echo);
 		}
 	}
 

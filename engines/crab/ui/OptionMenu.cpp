@@ -41,54 +41,54 @@ void OptionMenu::Load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("option");
-		if (NodeValid(node)) {
-			if (NodeValid("bg", node))
+		if (nodeValid(node)) {
+			if (nodeValid("bg", node))
 				bg.Load(node->first_node("bg"));
 
-			if (NodeValid("state", node)) {
+			if (nodeValid("state", node)) {
 				menu.Load(node->first_node("state"));
 
 				if (!menu.element.empty())
 					menu.element[0].State(true);
 			}
 
-			if (NodeValid("keybind", node))
+			if (nodeValid("keybind", node))
 				keybind.Load(node->first_node("keybind"));
 
-			if (NodeValid("controller", node))
+			if (nodeValid("controller", node))
 				conbind.Load(node->first_node("controller"));
 
-			if (NodeValid("graphics", node))
+			if (nodeValid("graphics", node))
 				gfx.Load(node->first_node("graphics"));
 
-			if (NodeValid("general", node))
+			if (nodeValid("general", node))
 				general.Load(node->first_node("general"));
 
-			if (NodeValid("change", node)) {
+			if (nodeValid("change", node)) {
 				rapidxml::xml_node<char> *chanode = node->first_node("change");
 
-				if (NodeValid("accept", chanode))
+				if (nodeValid("accept", chanode))
 					accept.Load(chanode->first_node("accept"));
 
-				if (NodeValid("cancel", chanode))
+				if (nodeValid("cancel", chanode))
 					cancel.Load(chanode->first_node("cancel"));
 
-				if (NodeValid("message", chanode))
+				if (nodeValid("message", chanode))
 					notice_res.Load(chanode->first_node("message"));
 
-				if (NodeValid("width", chanode))
+				if (nodeValid("width", chanode))
 					prompt_w.Load(chanode->first_node("width"));
 
-				if (NodeValid("height", chanode))
+				if (nodeValid("height", chanode))
 					prompt_h.Load(chanode->first_node("height"));
 
-				if (NodeValid("countdown", chanode)) {
+				if (nodeValid("countdown", chanode)) {
 					rapidxml::xml_node<char> *counode = chanode->first_node("countdown");
 					countdown.Load(counode);
 					timer.Load(counode, "time");
 				}
 
-				if (NodeValid("bg", chanode))
+				if (nodeValid("bg", chanode))
 					questionbox.Load(chanode->first_node("bg"));
 			}
 		}

@@ -41,11 +41,11 @@ using namespace pyrodactyl::event;
 void PopUp::Load(rapidxml::xml_node<char> *node) {
 	duration.Load(node, "duration", false);
 	delay.Load(node, "delay");
-	LoadStr(text, "text", node);
-	LoadNum(next, "next", node);
+	loadStr(text, "text", node);
+	loadNum(next, "next", node);
 
 	bool end = false;
-	LoadBool(end, "end", node, false);
+	loadBool(end, "end", node, false);
 	if (end)
 		next = -1;
 
@@ -60,7 +60,7 @@ void PopUp::Load(rapidxml::xml_node<char> *node) {
 }
 
 void PopUpCollection::Load(rapidxml::xml_node<char> *node) {
-	LoadBool(loop, "loop", node);
+	loadBool(loop, "loop", node);
 	for (auto n = node->first_node("dialog"); n != NULL; n = n->next_sibling("dialog"))
 		element.push_back(n);
 }

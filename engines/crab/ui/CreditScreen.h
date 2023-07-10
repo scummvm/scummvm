@@ -78,10 +78,10 @@ class CreditScreen {
 		}
 
 		void Load(rapidxml::xml_node<char> *node) {
-			LoadNum(inc, "inc", node);
-			LoadNum(color, "color", node);
+			loadNum(inc, "inc", node);
+			loadNum(color, "color", node);
 			LoadFontKey(font, "font", node);
-			LoadAlign(align, node);
+			loadAlign(align, node);
 		}
 	} heading, paragraph;
 

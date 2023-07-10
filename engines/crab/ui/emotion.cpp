@@ -36,7 +36,7 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::event;
 
 void EmotionIndicator::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid("text", node))
+	if (nodeValid("text", node))
 		text.Load(node->first_node("text"));
 }
 

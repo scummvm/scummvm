@@ -39,11 +39,11 @@ using namespace pyrodactyl::image;
 
 void AlphaImage::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 	pos.Load(node, echo);
-	LoadImgKey(img, "img", node, echo);
+	loadImgKey(img, "img", node, echo);
 
-	LoadNum(alpha.min, "min", node);
-	LoadNum(alpha.max, "max", node);
-	LoadNum(alpha.change, "inc", node);
+	loadNum(alpha.min, "min", node);
+	loadNum(alpha.max, "max", node);
+	loadNum(alpha.change, "inc", node);
 
 	alpha.cur = alpha.max; //alpha.cur = alpha.min + gRandom.Num() % (alpha.max - alpha.min - 1);
 }

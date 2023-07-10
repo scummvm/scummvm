@@ -50,7 +50,7 @@ struct MovementSet {
 
 		Movement(rapidxml::xml_node<char> *node) {
 			_target.Load(node);
-			LoadNum(_delay, "delay", node);
+			loadNum(_delay, "delay", node);
 		}
 	};
 

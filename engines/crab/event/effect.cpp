@@ -39,7 +39,7 @@ using namespace pyrodactyl::music;
 
 void Effect::Load(rapidxml::xml_node<char> *node) {
 	Common::String ty;
-	LoadStr(ty, "type", node);
+	loadStr(ty, "type", node);
 
 	// Should we throw a warning about missing fields? Depends on the type of effect
 	bool echo_op = true, echo_sub = true, echo_val = true;
@@ -101,9 +101,9 @@ void Effect::Load(rapidxml::xml_node<char> *node) {
 	} else
 		type = EFF_VAR;
 
-	LoadStr(subject, "subject", node, echo_sub);
-	LoadStr(operation, "operation", node, echo_op);
-	LoadStr(val, "val", node, echo_val);
+	loadStr(subject, "subject", node, echo_sub);
+	loadStr(operation, "operation", node, echo_op);
+	loadStr(val, "val", node, echo_val);
 }
 
 void Effect::ChangeOpinion(pyrodactyl::event::Info &info, pyrodactyl::people::OpinionType opType) {

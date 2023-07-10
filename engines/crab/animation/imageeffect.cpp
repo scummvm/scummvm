@@ -36,8 +36,8 @@ namespace Crab {
 using namespace pyrodactyl::anim;
 
 void ImageEffect::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid(node, false)) {
-		if (LoadImgKey(img, "img", node) && LoadXY(x, y, node))
+	if (nodeValid(node, false)) {
+		if (loadImgKey(img, "img", node) && loadXY(x, y, node))
 			visible = true;
 	}
 }

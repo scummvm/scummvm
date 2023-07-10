@@ -59,18 +59,18 @@ void Cursor::Reset() {
 // Purpose: Reset all values
 //------------------------------------------------------------------------
 void Cursor::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid("normal", node)) {
+	if (nodeValid("normal", node)) {
 		rapidxml::xml_node<char> *nornode = node->first_node("normal");
 		img.Load(nornode, "img");
 		img_s.Load(nornode, "img_s");
 	}
 
-	if (NodeValid("hover", node)) {
+	if (nodeValid("hover", node)) {
 		rapidxml::xml_node<char> *hovnode = node->first_node("hover");
 		img_hover.Load(hovnode, "img");
 		img_hover_s.Load(hovnode, "img_s");
 
-		if (NodeValid("offset", hovnode))
+		if (nodeValid("offset", hovnode))
 			hover_offset.Load(hovnode->first_node("offset"));
 	}
 }

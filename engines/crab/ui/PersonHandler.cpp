@@ -38,34 +38,34 @@ using namespace pyrodactyl::image;
 using namespace pyrodactyl::people;
 
 void PersonHandler::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid("dialog", node))
+	if (nodeValid("dialog", node))
 		dlbox.Load(node->first_node("dialog"));
 
-	if (NodeValid("opinion", node)) {
+	if (nodeValid("opinion", node)) {
 		rapidxml::xml_node<char> *opnode = node->first_node("opinion");
 
-		if (NodeValid("friendship", opnode))
+		if (nodeValid("friendship", opnode))
 			opinion[OPI_LIKE].Load(opnode->first_node("friendship"));
 
-		if (NodeValid("respect", opnode))
+		if (nodeValid("respect", opnode))
 			opinion[OPI_RESPECT].Load(opnode->first_node("respect"));
 
-		if (NodeValid("fear", opnode))
+		if (nodeValid("fear", opnode))
 			opinion[OPI_FEAR].Load(opnode->first_node("fear"));
 	}
 
-	if (NodeValid("image", node)) {
+	if (nodeValid("image", node)) {
 		rapidxml::xml_node<char> *imgnode = node->first_node("image");
 		img.Load(imgnode);
 
-		if (NodeValid("sprite_align", imgnode))
+		if (nodeValid("sprite_align", imgnode))
 			sprite_align.Load(imgnode->first_node("sprite_align"));
 	}
 
-	if (NodeValid("name", node))
+	if (nodeValid("name", node))
 		name.Load(node->first_node("name"));
 
-	if (NodeValid("journal", node))
+	if (nodeValid("journal", node))
 		jb.Load(node->first_node("journal"));
 }
 

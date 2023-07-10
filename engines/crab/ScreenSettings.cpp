@@ -40,18 +40,18 @@ Graphics::Surface *gRendererSurface = nullptr;
 //SDL_Window *gWindow = nullptr;
 
 void ScreenSettings::Load(rapidxml::xml_node<char> *node) {
-	LoadNum(cur.w, "w", node);
-	LoadNum(cur.h, "h", node);
-	LoadNum(fps, "fps", node);
-	LoadNum(gamma, "gamma", node);
-	LoadNum(text_speed, "text_speed", node);
+	loadNum(cur.w, "w", node);
+	loadNum(cur.h, "h", node);
+	loadNum(fps, "fps", node);
+	loadNum(gamma, "gamma", node);
+	loadNum(text_speed, "text_speed", node);
 
-	LoadBool(vsync, "vsync", node);
-	LoadBool(border, "border", node);
-	LoadBool(fullscreen, "fullscreen", node);
-	LoadBool(save_on_exit, "save_on_exit", node);
-	LoadBool(mouse_trap, "mouse_trap", node);
-	LoadBool(quality, "quality", node);
+	loadBool(vsync, "vsync", node);
+	loadBool(border, "border", node);
+	loadBool(fullscreen, "fullscreen", node);
+	loadBool(save_on_exit, "save_on_exit", node);
+	loadBool(mouse_trap, "mouse_trap", node);
+	loadBool(quality, "quality", node);
 
 	SetVideoFlags();
 	CreateBackup();
@@ -154,12 +154,12 @@ void ScreenSettings::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node
 	child->append_attribute(doc.allocate_attribute("gamma", gStrPool->FGet(gamma)));
 	child->append_attribute(doc.allocate_attribute("text_speed", gStrPool->FGet(text_speed)));
 
-	SaveBool(vsync, "vsync", doc, child);
-	SaveBool(border, "border", doc, child);
-	SaveBool(fullscreen, "fullscreen", doc, child);
-	SaveBool(save_on_exit, "save_on_exit", doc, child);
-	SaveBool(quality, "quality", doc, child);
-	SaveBool(mouse_trap, "mouse_trap", doc, child);
+	saveBool(vsync, "vsync", doc, child);
+	saveBool(border, "border", doc, child);
+	saveBool(fullscreen, "fullscreen", doc, child);
+	saveBool(save_on_exit, "save_on_exit", doc, child);
+	saveBool(quality, "quality", doc, child);
+	saveBool(mouse_trap, "mouse_trap", doc, child);
 
 	root->append_node(child);
 	CreateBackup();

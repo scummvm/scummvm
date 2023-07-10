@@ -36,19 +36,19 @@ using namespace pyrodactyl::image;
 using namespace pyrodactyl::input;
 
 void SlideShow::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid(node)) {
-		if (NodeValid("pos", node))
+	if (nodeValid(node)) {
+		if (nodeValid("pos", node))
 			pos.Load(node->first_node("pos"));
 
-		if (NodeValid("bg", node))
+		if (nodeValid("bg", node))
 			bg.Load(node->first_node("bg"));
 
-		if (NodeValid("prev", node)) {
+		if (nodeValid("prev", node)) {
 			prev.Load(node->first_node("prev"));
 			prev.hotkey.Set(IU_PREV);
 		}
 
-		if (NodeValid("next", node)) {
+		if (nodeValid("next", node)) {
 			next.Load(node->first_node("next"));
 			next.hotkey.Set(IU_NEXT);
 		}
@@ -56,13 +56,13 @@ void SlideShow::Load(rapidxml::xml_node<char> *node) {
 		path.clear();
 		for (auto n = node->first_node("slide"); n != NULL; n = n->next_sibling("slide")) {
 			Common::String p;
-			LoadStr(p, "path", n);
+			loadStr(p, "path", n);
 			path.push_back(p);
 		}
 
 		index = 0;
 
-		LoadBool(usekeyboard, "keyboard", node, false);
+		loadBool(usekeyboard, "keyboard", node, false);
 	}
 }
 

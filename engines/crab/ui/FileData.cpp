@@ -56,13 +56,13 @@ SaveFileData::SaveFileData(const Common::String &file) {
 		XMLDoc conf(data);
 		if (conf.ready()) {
 			rapidxml::xml_node<char> *node = conf.doc()->first_node("save");
-			if (NodeValid(node)) {
-				LoadStr(diff, "diff", node);
-				LoadStr(loc_id, "loc_id", node);
-				LoadStr(loc_name, "loc_name", node);
-				LoadStr(char_name, "char_name", node);
-				LoadStr(time, "time", node);
-				LoadStr(preview, "preview", node);
+			if (nodeValid(node)) {
+				loadStr(diff, "diff", node);
+				loadStr(loc_id, "loc_id", node);
+				loadStr(loc_name, "loc_name", node);
+				loadStr(char_name, "char_name", node);
+				loadStr(time, "time", node);
+				loadStr(preview, "preview", node);
 				blank = false;
 			}
 		}
@@ -76,12 +76,12 @@ ModFileData::ModFileData(const Common::String &file) {
 		XMLDoc conf(filepath.string());
 		if (conf.ready()) {
 			rapidxml::xml_node<char> *node = conf.doc()->first_node("config");
-			if (NodeValid(node)) {
-				LoadStr(author, "author", node);
-				LoadStr(version, "version", node);
-				LoadStr(info, "info", node);
-				LoadStr(website, "website", node);
-				LoadStr(preview, "preview", node);
+			if (nodeValid(node)) {
+				loadStr(author, "author", node);
+				loadStr(version, "version", node);
+				loadStr(info, "info", node);
+				loadStr(website, "website", node);
+				loadStr(preview, "preview", node);
 			}
 		}
 	}

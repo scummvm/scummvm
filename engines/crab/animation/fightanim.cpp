@@ -40,39 +40,39 @@ using namespace pyrodactyl::anim;
 void FightAnimFrame::load(rapidxml::xml_node<char> *node, const Rect &VBOX, const uint32 &rep, const int &AX, const int &AY) {
 	AnimFrame::load(node, VBOX, rep, AX, AY);
 
-	if (NodeValid("box_d", node, false))
+	if (nodeValid("box_d", node, false))
 		_boxD.Load(node->first_node("box_d"));
 
-	if (NodeValid("shift", node, false))
+	if (nodeValid("shift", node, false))
 		_delta.Load(node->first_node("shift"));
 
-	if (!LoadNum(_state, "state", node, false))
+	if (!loadNum(_state, "state", node, false))
 		_state = 0;
 
-	LoadBool(_branch, "branch", node, false);
+	loadBool(_branch, "branch", node, false);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Load a fighting move
 //------------------------------------------------------------------------
 void FightAnimFrames::load(rapidxml::xml_node<char> *node) {
-	LoadTextureFlipType(_flip, node);
+	loadTextureFlipType(_flip, node);
 
-	if (!LoadNum(_repeat, "repeat", node, false))
+	if (!loadNum(_repeat, "repeat", node, false))
 		_repeat = 0;
 
-	if (NodeValid("anchor", node, false))
+	if (nodeValid("anchor", node, false))
 		_anchor.Load(node->first_node("anchor"));
 
-	if (NodeValid("box_v", node))
+	if (nodeValid("box_v", node))
 		_boxV.Load(node->first_node("box_v"));
 
-	if (NodeValid("shadow", node)) {
+	if (nodeValid("shadow", node)) {
 		_shadow.Load(node->first_node("shadow"));
 		_shadow.valid = true;
 	}
 
-	if (NodeValid("frames", node)) {
+	if (nodeValid("frames", node)) {
 		_frame.clear();
 		rapidxml::xml_node<char> *framenode = node->first_node("frames");
 		for (auto n = framenode->first_node("frame"); n != NULL; n = n->next_sibling("frame")) {

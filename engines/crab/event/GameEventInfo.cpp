@@ -50,7 +50,7 @@ using namespace pyrodactyl::event;
 // Purpose: Load from xml
 //------------------------------------------------------------------------
 void Info::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid("people", node)) {
+	if (nodeValid("people", node)) {
 		rapidxml::xml_node<char> *pnode = node->first_node("people");
 
 		stem.Load(pnode->first_attribute("templates")->value());
@@ -58,9 +58,9 @@ void Info::Load(rapidxml::xml_node<char> *node) {
 		XMLDoc conf(pnode->first_attribute("list")->value());
 		if (conf.ready()) {
 			rapidxml::xml_node<char> *cnode = conf.doc()->first_node("characters");
-			if (NodeValid(cnode)) {
-				LoadNum(OPINION_MIN, "op_min", cnode);
-				LoadNum(OPINION_MAX, "op_max", cnode);
+			if (nodeValid(cnode)) {
+				loadNum(OPINION_MIN, "op_min", cnode);
+				loadNum(OPINION_MAX, "op_max", cnode);
 
 				for (auto n = cnode->first_node("group"); n != NULL; n = n->next_sibling("group"))
 					LoadPeople(n->value());
@@ -68,10 +68,10 @@ void Info::Load(rapidxml::xml_node<char> *node) {
 		}
 	}
 
-	if (NodeValid("objective", node))
+	if (nodeValid("objective", node))
 		journal.Load(node->first_node("objective")->first_attribute("layout")->value());
 
-	if (NodeValid("inventory", node)) {
+	if (nodeValid("inventory", node)) {
 		rapidxml::xml_node<char> *inode = node->first_node("inventory");
 		inv.Load(inode->first_attribute("layout")->value());
 	}
@@ -84,10 +84,10 @@ void Info::LoadPeople(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("people");
-		if (NodeValid(node)) {
+		if (nodeValid(node)) {
 			for (auto n = node->first_node(); n != NULL; n = n->next_sibling()) {
 				Common::String str;
-				LoadStr(str, "id", n);
+				loadStr(str, "id", n);
 				people[str].Load(n, stem);
 			}
 		}
@@ -346,10 +346,10 @@ void Info::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 
 	rapidxml::xml_node<char> *child_unr = doc.allocate_node(rapidxml::node_element, "unread");
 
-	SaveBool(unread.inventory, "inventory", doc, child_unr);
-	SaveBool(unread.journal, "journal", doc, child_unr);
-	SaveBool(unread.trait, "trait", doc, child_unr);
-	SaveBool(unread.map, "map", doc, child_unr);
+	saveBool(unread.inventory, "inventory", doc, child_unr);
+	saveBool(unread.journal, "journal", doc, child_unr);
+	saveBool(unread.trait, "trait", doc, child_unr);
+	saveBool(unread.map, "map", doc, child_unr);
 
 	root->append_node(child_unr);
 
@@ -372,23 +372,23 @@ void Info::LoadState(rapidxml::xml_node<char> *node) {
 
 	for (rapidxml::xml_node<char> *p = node->first_node("object"); p != NULL; p = p->next_sibling("object")) {
 		Common::String id;
-		LoadStr(id, "id", p);
+		loadStr(id, "id", p);
 		people[id].LoadState(p);
 	}
 
-	if (NodeValid("unread", node)) {
+	if (nodeValid("unread", node)) {
 		rapidxml::xml_node<char> *unrnode = node->first_node("unread");
-		LoadBool(unread.inventory, "inventory", unrnode);
-		LoadBool(unread.journal, "journal", unrnode);
-		LoadBool(unread.trait, "trait", unrnode);
-		LoadBool(unread.map, "map", unrnode);
+		loadBool(unread.inventory, "inventory", unrnode);
+		loadBool(unread.journal, "journal", unrnode);
+		loadBool(unread.trait, "trait", unrnode);
+		loadBool(unread.map, "map", unrnode);
 	}
 
-	if (NodeValid("img", node))
-		LoadNum(player_img, "index", node->first_node("img"));
+	if (nodeValid("img", node))
+		loadNum(player_img, "index", node->first_node("img"));
 
-	if (NodeValid("money", node))
-		LoadStr(money_var, "var", node->first_node("money"));
+	if (nodeValid("money", node))
+		loadStr(money_var, "var", node->first_node("money"));
 
 	journal.LoadState(node);
 	inv.LoadState(node);
