@@ -300,7 +300,7 @@ bool ScriptCompiler::parseHexNumber(const Common::String &token, uint start, uin
 		else if (c >= 'a' && c <= 'f')
 			num += static_cast<uint32>(c - 'a' + 0xa);
 		else if (c >= 'A' && c <= 'F')
-			num += static_cast<uint32>(c - 'a' + 0xa);
+			num += static_cast<uint32>(c - 'A' + 0xa);
 		else
 			return false;
 	}
