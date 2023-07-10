@@ -34,76 +34,76 @@ namespace Crab {
 
 using namespace pyrodactyl::anim;
 
-void AnimFrame::Load(rapidxml::xml_node<char> *node, const Rect &VBOX, const uint32 &rep, const int &AX, const int &AY) {
-	clip.Load(node);
+void AnimFrame::load(rapidxml::xml_node<char> *node, const Rect &VBOX, const uint32 &rep, const int &AX, const int &AY) {
+	_clip.Load(node);
 
 	if (rep == 0)
-		LoadNum(repeat, "repeat", node);
+		LoadNum(_repeat, "repeat", node);
 	else
-		repeat = rep;
+		_repeat = rep;
 
 	if (AX == 0.0f && AY == 0.0f) {
 		if (NodeValid("anchor", node, false))
-			anchor.Load(node->first_node("anchor"));
+			_anchor.Load(node->first_node("anchor"));
 	} else {
-		anchor.x = AX;
-		anchor.y = AY;
+		_anchor.x = AX;
+		_anchor.y = AY;
 	}
 
 	if (VBOX.w == 0 || VBOX.h == 0) {
 		if (NodeValid("box_v", node))
-			box_v.Load(node->first_node("box_v"));
+			_boxV.Load(node->first_node("box_v"));
 	} else
-		box_v = VBOX;
+		_boxV = VBOX;
 }
 
-void AnimationFrames::Load(rapidxml::xml_node<char> *node) {
-	LoadTextureFlipType(flip, node);
+void AnimationFrames::load(rapidxml::xml_node<char> *node) {
+	LoadTextureFlipType(_flip, node);
 
-	if (!LoadNum(repeat, "repeat", node, false))
-		repeat = 0;
+	if (!LoadNum(_repeat, "repeat", node, false))
+		_repeat = 0;
 
-	LoadBool(random, "random", node, false);
+	LoadBool(_random, "random", node, false);
 
 	if (NodeValid("anchor", node, false))
-		anchor.Load(node->first_node("anchor"));
+		_anchor.Load(node->first_node("anchor"));
 
 	if (NodeValid("box_v", node))
-		box_v.Load(node->first_node("box_v"));
+		_boxV.Load(node->first_node("box_v"));
 
 	if (NodeValid("shadow", node)) {
-		shadow.Load(node->first_node("shadow"));
-		shadow.valid = true;
+		_shadow.Load(node->first_node("shadow"));
+		_shadow.valid = true;
 	}
 
 	if (NodeValid("frames", node)) {
-		frame.clear();
+		_frame.clear();
 		rapidxml::xml_node<char> *framenode = node->first_node("frames");
 		for (auto n = framenode->first_node("frame"); n != NULL; n = n->next_sibling("frame")) {
 			AnimFrame af;
-			af.Load(n, box_v, repeat, anchor.x, anchor.y);
-			frame.push_back(af);
+			af.load(n, _boxV, _repeat, _anchor.x, _anchor.y);
+			_frame.push_back(af);
 		}
 	}
 
 	if (random)
-		current_clip = g_engine->getRandomNumber(frame.size() - 1);
+		_currentClip = g_engine->getRandomNumber(_frame.size() - 1);
 	else
-		current_clip = 0;
+		_currentClip = 0;
 }
 
-bool AnimationFrames::UpdateClip() {
-	if (current_clip < frame.size()) {
-		current_clip = (current_clip + 1) % frame.size();
+bool AnimationFrames::updateClip() {
+	if (_currentClip < _frame.size()) {
+		_currentClip = (_currentClip + 1) % _frame.size();
 		return true;
 	} else
-		current_clip = 0;
+		_currentClip = 0;
 
 	return false;
 }
 
-const AnimFrame &AnimationFrames::CurrentFrame() {
-	return frame[current_clip];
+const AnimFrame &AnimationFrames::currentFrame() {
+	return _frame[_currentClip];
 }
 
 } // End of namespace Crab

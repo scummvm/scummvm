@@ -52,10 +52,10 @@ class WalkFrames {
 		AnimationFrames frames[DIRECTION_TOTAL];
 
 		void Load(rapidxml::xml_node<char> *node) {
-			frames[DIRECTION_DOWN].Load(node->first_node("down"));
-			frames[DIRECTION_UP].Load(node->first_node("up"));
-			frames[DIRECTION_LEFT].Load(node->first_node("left"));
-			frames[DIRECTION_RIGHT].Load(node->first_node("right"));
+			frames[DIRECTION_DOWN].load(node->first_node("down"));
+			frames[DIRECTION_UP].load(node->first_node("up"));
+			frames[DIRECTION_LEFT].load(node->first_node("left"));
+			frames[DIRECTION_RIGHT].load(node->first_node("right"));
 		}
 	};
 
@@ -87,14 +87,14 @@ public:
 	WalkAnimType Type() { return cur; }
 	bool Type(const Vector2f &vel, Direction &dir, const pyrodactyl::people::PersonState &pst, const bool &first_x);
 
-	const Rect &Clip(Direction d) { return set[cur].frames[d].CurrentFrame().clip; }
-	const Rect &BoxV(Direction d) { return set[cur].frames[d].CurrentFrame().box_v; }
-	const TextureFlipType &Flip(Direction d) { return set[cur].frames[d].flip; }
+	const Rect &Clip(Direction d) { return set[cur].frames[d].currentFrame()._clip; }
+	const Rect &BoxV(Direction d) { return set[cur].frames[d].currentFrame()._boxV; }
+	const TextureFlipType &Flip(Direction d) { return set[cur].frames[d]._flip; }
 
-	const ShadowOffset &Shadow(Direction d) { return set[cur].frames[d].shadow; }
+	const ShadowOffset &Shadow(Direction d) { return set[cur].frames[d]._shadow; }
 
-	int AnchorX(Direction d) { return set[cur].frames[d].CurrentFrame().anchor.x; }
-	int AnchorY(Direction d) { return set[cur].frames[d].CurrentFrame().anchor.y; }
+	int AnchorX(Direction d) { return set[cur].frames[d].currentFrame()._anchor.x; }
+	int AnchorY(Direction d) { return set[cur].frames[d].currentFrame()._anchor.y; }
 
 	// Dialog box related
 	Rect DialogClip(const pyrodactyl::people::PersonState &state);

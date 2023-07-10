@@ -72,7 +72,7 @@ const ShadowOffset &AnimSet::Shadow(const Direction &dir) {
 int AnimSet::AnchorX(const Direction &dir) {
 	FightAnimFrame faf;
 	if (fight.CurFrame(faf, dir))
-		return faf.anchor.x;
+		return faf._anchor.x;
 
 	return walk.AnchorX(dir);
 }
@@ -80,7 +80,7 @@ int AnimSet::AnchorX(const Direction &dir) {
 int AnimSet::AnchorY(const Direction &dir) {
 	FightAnimFrame faf;
 	if (fight.CurFrame(faf, dir))
-		return faf.anchor.y;
+		return faf._anchor.y;
 
 	return walk.AnchorY(dir);
 }
