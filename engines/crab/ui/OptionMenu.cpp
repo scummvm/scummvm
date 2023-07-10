@@ -338,7 +338,7 @@ bool OptionMenu::HandleTabs(Button &back, const SDL_Event &Event) {
 		case 4:
 			// Save settings to file
 			g_engine->_inputManager->Save();
-			SaveState();
+			saveState();
 			general.CreateBackup();
 			g_engine->_screenSettings->CreateBackup();
 			return true;
@@ -380,8 +380,8 @@ void OptionMenu::internalEvents() {
 	}
 }
 
-void OptionMenu::SaveState() {
-	warning("STUB: OptionMenu::SaveState()");
+void OptionMenu::saveState() {
+	warning("STUB: OptionMenu::saveState()");
 
 #if 0
 	rapidxml::xml_document<char> doc;
@@ -394,8 +394,8 @@ void OptionMenu::SaveState() {
 
 	// root node
 	rapidxml::xml_node<char> *root = doc.allocate_node(rapidxml::node_element, "settings");
-	g_engine->_screenSettings->SaveState(doc, root);
-	g_engine->_musicManager->SaveState(doc, root);
+	g_engine->_screenSettings->saveState(doc, root);
+	g_engine->_musicManager->saveState(doc, root);
 
 	doc.append_node(root);
 	Common::String xml_as_string;

@@ -162,7 +162,7 @@ void InputManager::load(const Common::String &filename) {
 
 			int i = 0;
 			for (auto n = node->first_node(); n != NULL && i < IT_TOTAL; n = n->next_sibling(), ++i)
-				iv[i].LoadState(n);
+				iv[i].loadState(n);
 		}
 	}
 }
@@ -267,7 +267,7 @@ void InputManager::Save() {
 	rapidxml::xml_node<char> *root = doc.allocate_node(rapidxml::node_element, "controls");
 	root->append_attribute(doc.allocate_attribute("version", gStrPool->Get(version)));
 	for (int i = 0; i < IT_TOTAL; i++)
-		iv[i].SaveState(doc, root, "i");
+		iv[i].saveState(doc, root, "i");
 
 	doc.append_node(root);
 	Common::String xml_as_string;

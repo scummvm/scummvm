@@ -113,8 +113,8 @@ public:
 	// Prepare a new character's journal
 	void Init(const Common::String &id);
 
-	void SaveState(rapidxml::xml_document<char> &doc, rapidxml::xml_node<char> *root);
-	void LoadState(rapidxml::xml_node<char> *node);
+	void saveState(rapidxml::xml_document<char> &doc, rapidxml::xml_node<char> *root);
+	void loadState(rapidxml::xml_node<char> *node);
 
 	void SetUI();
 };

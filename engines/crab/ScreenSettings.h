@@ -148,7 +148,7 @@ public:
 	void SetMouseTrap();
 
 	void load(rapidxml::xml_node<char> *node);
-	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
+	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 };
 
 }

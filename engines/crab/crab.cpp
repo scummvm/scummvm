@@ -161,7 +161,7 @@ Common::Error CrabEngine::saveGameState(int slot, const Common::String &desc, bo
 	if (!saveFile)
 		return Common::kWritingFailed;
 
-	_app->GetGame()->SaveState(saveFile);
+	_app->GetGame()->saveState(saveFile);
 	getMetaEngine()->appendExtendedSave(saveFile, getTotalPlayTime(), desc, isAutosave);
 
 	saveFile->finalize();
@@ -178,7 +178,7 @@ Common::Error CrabEngine::loadGameState(int slot) {
 	if (!saveFile)
 		return Common::kReadingFailed;
 
-	_app->GetGame()->LoadState(saveFile);
+	_app->GetGame()->loadState(saveFile);
 	ExtendedSavegameHeader header;
 	if (MetaEngine::readSavegameHeader(saveFile, &header))
 		setTotalPlayTime(header.playtime);

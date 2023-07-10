@@ -116,7 +116,7 @@ void Rect::draw(const int &XOffset, const int &YOffset, const uint8 &r, const ui
 	DrawLine(X, Y + h, X + w, Y + h, r, g, b, a);
 }
 
-void Rect::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name) {
+void Rect::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, name);
 	child->append_attribute(doc.allocate_attribute("x", gStrPool->Get(x)));
 	child->append_attribute(doc.allocate_attribute("y", gStrPool->Get(y)));

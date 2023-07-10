@@ -409,11 +409,11 @@ bool Manager::EventInProgress() {
 //------------------------------------------------------------------------
 // Purpose: Save the state of the object
 //------------------------------------------------------------------------
-void Manager::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+void Manager::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	for (auto i = event_map.begin(); i != event_map.end(); ++i) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "loc");
 		child->append_attribute(doc.allocate_attribute("name", i->_key.c_str()));
-		i->_value.SaveState(doc, child);
+		i->_value.saveState(doc, child);
 		root->append_node(child);
 	}
 }
@@ -421,12 +421,12 @@ void Manager::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> 
 //------------------------------------------------------------------------
 // Purpose: Load the state of the object
 //------------------------------------------------------------------------
-void Manager::LoadState(rapidxml::xml_node<char> *node) {
+void Manager::loadState(rapidxml::xml_node<char> *node) {
 	for (auto n = node->first_node("loc"); n != NULL; n = n->next_sibling("loc")) {
 		if (n->first_attribute("name") != NULL) {
 			Common::String name = n->first_attribute("name")->value();
 			if (event_map.contains(name) > 0)
-				event_map[name].LoadState(n);
+				event_map[name].loadState(n);
 		}
 	}
 }

@@ -88,8 +88,8 @@ public:
 	// Requires: id of the character, the name of the container and name of the item
 	bool Has(const Common::String &char_id, const Common::String &container, const Common::String &item_id);
 
-	void LoadState(rapidxml::xml_node<char> *node);
-	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
+	void loadState(rapidxml::xml_node<char> *node);
+	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 
 	void SetUI();
 };

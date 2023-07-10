@@ -73,7 +73,7 @@ void ItemSlot::Init(const ItemSlot &ref, const int &XOffset, const int &YOffset)
 //------------------------------------------------------------------------
 // Purpose: Save state to file
 //------------------------------------------------------------------------
-void ItemSlot::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+void ItemSlot::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	rapidxml::xml_node<char> *child;
 
 	if (category == SLOT_EQUIP)
@@ -81,7 +81,7 @@ void ItemSlot::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char>
 	else
 		child = doc.allocate_node(rapidxml::node_element, "storage");
 
-	item.SaveState(doc, child);
+	item.saveState(doc, child);
 	saveBool(unread, "unread", doc, child);
 
 	root->append_node(child);
@@ -90,7 +90,7 @@ void ItemSlot::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char>
 //------------------------------------------------------------------------
 // Purpose: Load state from file
 //------------------------------------------------------------------------
-void ItemSlot::LoadState(rapidxml::xml_node<char> *node) {
+void ItemSlot::loadState(rapidxml::xml_node<char> *node) {
 	item.load(node);
 	loadBool(unread, "unread", node);
 

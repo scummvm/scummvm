@@ -93,8 +93,8 @@ public:
 
 	void Select(const int &quest_index);
 
-	void SaveState(rapidxml::xml_document<char> &doc, rapidxml::xml_node<char> *root, const char *name);
-	void LoadState(rapidxml::xml_node<char> *node);
+	void saveState(rapidxml::xml_document<char> &doc, rapidxml::xml_node<char> *root, const char *name);
+	void loadState(rapidxml::xml_node<char> *node);
 
 	void SetUI();
 };

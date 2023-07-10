@@ -40,7 +40,7 @@ Quest::Quest(const Common::String &Title, const Common::String &Text, const bool
 	marker = Marker;
 }
 
-void Quest::LoadState(rapidxml::xml_node<char> *node) {
+void Quest::loadState(rapidxml::xml_node<char> *node) {
 	loadStr(title, "title", node);
 	loadBool(unread, "unread", node);
 	loadBool(marker, "marker", node);
@@ -49,7 +49,7 @@ void Quest::LoadState(rapidxml::xml_node<char> *node) {
 		text.push_back(n->value());
 }
 
-void Quest::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+void Quest::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "quest");
 	child->append_attribute(doc.allocate_attribute("title", title.c_str()));
 

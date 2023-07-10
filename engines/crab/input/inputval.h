@@ -78,13 +78,13 @@ public:
 #endif
 		}
 
-		void LoadState(rapidxml::xml_node<char> *node) {
+		void loadState(rapidxml::xml_node<char> *node) {
 			//loadEnum(id, "id", node);
 			loadNum(val, "val", node);
 			loadBool(greater, "greater", node);
 		}
 
-		void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+		void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 			rapidxml::xml_node<char> *child;
 			child = doc.allocate_node(rapidxml::node_element, "axis");
 
@@ -105,8 +105,8 @@ public:
 	const bool Equals(const SDL_ControllerAxisEvent &Event);
 #endif
 
-	void LoadState(rapidxml::xml_node<char> *node);
-	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *title);
+	void loadState(rapidxml::xml_node<char> *node);
+	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *title);
 };
 } // End of namespace input
 } // End of namespace pyrodactyl

@@ -57,8 +57,8 @@ struct Quest {
 	}
 	Quest(const Common::String &Title, const Common::String &Text, const bool &Unread, const bool &Marker);
 
-	void LoadState(rapidxml::xml_node<char> *node);
-	void SaveState(rapidxml::xml_document<char> &doc, rapidxml::xml_node<char> *root);
+	void loadState(rapidxml::xml_node<char> *node);
+	void saveState(rapidxml::xml_document<char> &doc, rapidxml::xml_node<char> *root);
 };
 } // End of namespace event
 } // End of namespace pyrodactyl

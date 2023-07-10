@@ -63,8 +63,8 @@ struct MapData {
 	void load(rapidxml::xml_node<char> *node);
 	void DestAdd(const Common::String &name, const int &x, const int &y);
 
-	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
-	void LoadState(rapidxml::xml_node<char> *node);
+	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
+	void loadState(rapidxml::xml_node<char> *node);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

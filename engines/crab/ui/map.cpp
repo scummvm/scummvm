@@ -468,7 +468,7 @@ void Map::DestDel(const Common::String &name) {
 //------------------------------------------------------------------------
 // Purpose: Save and load object state
 //------------------------------------------------------------------------
-void Map::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+void Map::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "map");
 
 	child->append_attribute(doc.allocate_attribute("cur", gStrPool->Get(cur)));
@@ -476,14 +476,14 @@ void Map::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *roo
 
 	for (auto r = map.begin(); r != map.end(); ++r) {
 		rapidxml::xml_node<char> *child_data = doc.allocate_node(rapidxml::node_element, "data");
-		r->SaveState(doc, child_data);
+		r->saveState(doc, child_data);
 		child->append_node(child_data);
 	}
 
 	root->append_node(child);
 }
 
-void Map::LoadState(rapidxml::xml_node<char> *node) {
+void Map::loadState(rapidxml::xml_node<char> *node) {
 	if (nodeValid("map", node)) {
 		rapidxml::xml_node<char> *mapnode = node->first_node("map");
 		loadBool(overlay, "overlay", mapnode);
@@ -493,7 +493,7 @@ void Map::LoadState(rapidxml::xml_node<char> *node) {
 
 		auto r = map.begin();
 		for (rapidxml::xml_node<char> *n = mapnode->first_node("data"); n != NULL && r != map.end(); n = n->next_sibling("data"), ++r)
-			r->LoadState(n);
+			r->loadState(n);
 
 		SetImage(val, true);
 	}

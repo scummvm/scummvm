@@ -65,7 +65,7 @@ struct Item {
 	void load(rapidxml::xml_node<char> *node);
 	void draw(const int &x, const int &y);
 
-	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
+	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 };
 } // End of namespace item
 } // End of namespace pyrodactyl

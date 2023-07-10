@@ -243,13 +243,13 @@ void QuestMenu::Select(const int &quest_index) {
 //------------------------------------------------------------------------
 // Purpose: Save state to file
 //------------------------------------------------------------------------
-void QuestMenu::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name) {
+void QuestMenu::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, name);
 
 	saveBool(unread, "unread", doc, child);
 
 	for (auto q = quest.begin(); q != quest.end(); ++q)
-		q->SaveState(doc, child);
+		q->saveState(doc, child);
 
 	root->append_node(child);
 }
@@ -257,13 +257,13 @@ void QuestMenu::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char
 //------------------------------------------------------------------------
 // Purpose: Load state from file
 //------------------------------------------------------------------------
-void QuestMenu::LoadState(rapidxml::xml_node<char> *node) {
+void QuestMenu::loadState(rapidxml::xml_node<char> *node) {
 	loadBool(unread, "unread", node);
 
 	quest.clear();
 	for (auto n = node->first_node("quest"); n != NULL; n = n->next_sibling("quest")) {
 		Quest q;
-		q.LoadState(n);
+		q.loadState(n);
 		quest.push_back(q);
 		menu.Add();
 	}

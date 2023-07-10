@@ -729,7 +729,7 @@ void Sprite::internalEvents(Info &info, const Common::String &player_id, Common:
 //------------------------------------------------------------------------
 // Purpose: Save all sprite positions to save file
 //------------------------------------------------------------------------
-void Sprite::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+void Sprite::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	root->append_attribute(doc.allocate_attribute("id", id.c_str()));
 	root->append_attribute(doc.allocate_attribute("x", gStrPool->Get(pos.x)));
 	root->append_attribute(doc.allocate_attribute("y", gStrPool->Get(pos.y)));
@@ -738,7 +738,7 @@ void Sprite::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *
 //------------------------------------------------------------------------
 // Purpose: Load all sprite positions from save file
 //------------------------------------------------------------------------
-void Sprite::LoadState(rapidxml::xml_node<char> *node) {
+void Sprite::loadState(rapidxml::xml_node<char> *node) {
 	loadNum(pos.x, "x", node);
 	loadNum(pos.y, "y", node);
 }

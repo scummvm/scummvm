@@ -54,7 +54,7 @@ struct Stat {
 	void Validate();
 
 	void load(rapidxml::xml_node<char> *node);
-	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name);
+	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name);
 };
 
 struct StatGroup {
