@@ -156,9 +156,9 @@ public:
 	}
 	Rect Camera() { return camera; }
 
-	void PlayerStop() { objects[player_index].Stop(); }
+	void PlayerStop() { objects[player_index].stop(); }
 
-	const Common::String &PlayerID() { return objects[player_index].ID(); }
+	const Common::String &PlayerID() { return objects[player_index].id(); }
 	void PlayerID(const Common::String &ID, const int &X, const int &Y);
 
 	void ShowMap(bool val) { showmap.normal = val; }

@@ -44,7 +44,7 @@ using namespace pyrodactyl::input;
 // Purpose: Used to sort background sprites
 //------------------------------------------------------------------------
 bool CompSpriteLayer(const Sprite &a, const Sprite &b) {
-	return (a.layer < b.layer);
+	return (a._layer < b._layer);
 }
 
 //------------------------------------------------------------------------
@@ -106,8 +106,8 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 					if (str == "player") {
 						player_index = objects.size();
 						if (player_x != -1 && player_y != -1) {
-							s.X(player_x);
-							s.Y(player_y);
+							s.x(player_x);
+							s.y(player_y);
 						}
 					}
 
@@ -134,7 +134,7 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 
 					// Set the timer target for the first time
 					//s.ai_data.walk.timer.Target(sc_default.fly.delay_min + (gRandom.Num() % sc_default.fly.delay_max));
-					s.ai_data._walk._timer.Target(sc_default._fly._delayMax);
+					s._aiData._walk._timer.Target(sc_default._fly._delayMax);
 
 					fly.push_back(s);
 				}
@@ -158,7 +158,7 @@ void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 				Trigger t;
 				t.type = TRIG_STAT;
 				t.target = STATNAME_HEALTH;
-				t.subject = objects[player_index].ID();
+				t.subject = objects[player_index].id();
 				t.operation = "<";
 				t.val = "1";
 				game_over.Add(t);

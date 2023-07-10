@@ -55,186 +55,243 @@ namespace anim {
 class Sprite {
 protected:
 	// Used to sync sprite to character
-	Common::String id;
+	Common::String _id;
 
 	// The position of the sprite
-	Vector2i pos;
+	Vector2i _pos;
 
 	// The velocity of the sprite, target velocity is our maximum velocity
-	Vector2f vel, target;
+	Vector2f _vel, _target;
 
 	// The image of the sprite and it's dimensions
-	ImageKey image;
-	Vector2i img_size;
+	ImageKey _image;
+	Vector2i _imgSize;
 
 	// Clip is the portion of the sprite map to be drawn
-	Rect clip;
+	Rect _clip;
 
 	// The hit boxes of the character - v is vulnerable hit box, d is damage hit box
-	Rect box_v, box_d;
+	Rect _boxV, _boxD;
 
 	// The direction the sprite is facing
-	Direction dir;
+	Direction _dir;
 
 	// The currently playing image effect
-	ImageEffect img_eff;
+	ImageEffect _imgEff;
 
 	// The complete animation set for the sprite
-	AnimSet anim_set;
+	AnimSet _animSet;
 
 	// The conditions for sprite visibility
-	pyrodactyl::event::TriggerSet visible;
+	pyrodactyl::event::TriggerSet _visible;
 
 	// Current sprite combo and input for the sprite
-	pyrodactyl::input::FightInput input;
+	pyrodactyl::input::FightInput _input;
 
 	// Have we done damage for this frame - used to avoid repeated damage for the same frame
-	bool damage_done;
+	bool _damageDone;
 
 	// Dialog shown without events
-	PopUpCollection popup;
+	PopUpCollection _popup;
 
 protected:
-	void ResetFrame(const pyrodactyl::people::PersonState &pst);
-	bool FightCollide(Rect hitbox, Rect enemy_bounds, Range &range, const pyrodactyl::ai::SpriteConstant &sc);
-	bool DamageValid(Sprite &s, const pyrodactyl::ai::SpriteConstant &sc);
+	void resetFrame(const pyrodactyl::people::PersonState &pst);
+	bool fightCollide(Rect hitbox, Rect enemy_bounds, Range &range, const pyrodactyl::ai::SpriteConstant &sc);
+	bool damageValid(Sprite &s, const pyrodactyl::ai::SpriteConstant &sc);
 
-	void Clip(const Rect &rect) { clip = rect; }
-	void BoxV(const Rect &rect) { box_v = rect; }
-	void BoxD(const Rect &rect) { box_d = rect; }
+	void clip(const Rect &rect) { _clip = rect; }
+	void boxV(const Rect &rect) { _boxV = rect; }
+	void boxD(const Rect &rect) { _boxD = rect; }
 
 public:
 	// The AI data for the sprite
-	pyrodactyl::ai::SpriteAIData ai_data;
-	PathfindingAgent pathing;
+	pyrodactyl::ai::SpriteAIData _aiData;
+	PathfindingAgent _pathing;
 
 	// The modifier applied to the sprite velocity
-	Vector2f vel_mod;
+	Vector2f _velMod;
 
 	// The layer associated with the sprite (used to show/hide sprite according to auto hide layers)
-	int layer;
+	int _layer;
 
 	// Is the mouse hovering over this sprite?
-	bool hover;
+	bool _hover;
 
 	// The list of collisions currently taking place with the sprite
-	Common::List<CollisionData> collide_data;
+	Common::List<CollisionData> _collideData;
 
 	Sprite();
-	~Sprite() { pathing.reset(); }
 
-	void Visible(bool val) { visible.Result(val); }
-	bool Visible() { return visible.Result(); }
+	~Sprite() {
+		_pathing.reset();
+	}
 
-	void CalcProperties(pyrodactyl::event::Info &info);
+	void visible(bool val) {
+		_visible.Result(val);
+	}
 
-	void X(int X) { pos.x = X; }
-	void Y(int Y) { pos.y = Y; }
+	bool visible() {
+		return _visible.Result();
+	}
 
-	int X() { return pos.x; }
-	int Y() { return pos.y; }
+	void calcProperties(pyrodactyl::event::Info &info);
 
-	void WalkPattern(const pyrodactyl::ai::MovementSet &set) { ai_data._walk = set; }
+	void x(int X) {
+		_pos.x = X;
+	}
 
-	void Move(const pyrodactyl::ai::SpriteConstant &sc);
+	void y(int Y) {
+		_pos.y = Y;
+	}
+
+	int x() {
+		return _pos.x;
+	}
+
+	int y() {
+		return _pos.y;
+	}
+
+	void walkPattern(const pyrodactyl::ai::MovementSet &set) {
+		_aiData._walk = set;
+	}
+
+	void move(const pyrodactyl::ai::SpriteConstant &sc);
 
 	// Resolve collisions for polygons we want to be outside of
-	void ResolveCollide();
+	void resolveCollide();
 
 	// Resolve collisions for the walk rectangle
-	void ResolveInside(Rect collider);
+	void resolveInside(Rect collider);
 
-	void Stop() {
-		vel.Set();
-		target.Set();
-		ai_data._dest._active = false;
+	void stop() {
+		_vel.Set();
+		_target.Set();
+		_aiData._dest._active = false;
 	}
-	void InputStop() { input.reset(); }
+	void inputStop() {
+		_input.reset();
+	}
 
-	void XVel(const float &val) { target.x = val * vel_mod.x; }
-	void YVel(const float &val) { target.y = val * vel_mod.y; }
+	void xVel(const float &val) {
+		_target.x = val * _velMod.x;
+	}
+	void yVel(const float &val) {
+		_target.y = val * _velMod.y;
+	}
 
-	float XVel() { return vel.x; }
-	float YVel() { return vel.y; }
-	Vector2f Vel() { return vel; }
+	float xVel() {
+		return _vel.x;
+	}
 
-	const Common::String &ID() { return id; }
+	float yVel() {
+		return _vel.y;
+	}
 
-	int W() { return clip.w; }
-	int H() { return clip.h; }
+	Vector2f vel() {
+		return _vel;
+	}
 
-	const ImageKey &Img() { return image; }
-	Rect DialogClip(const pyrodactyl::people::PersonState &state) { return anim_set._walk.DialogClip(state); }
-	void DialogUpdateClip(const pyrodactyl::people::PersonState &state) { anim_set._walk.UpdateClip(state); }
+	const Common::String &id() {
+		return _id;
+	}
 
-	bool PopupShow() { return popup.show(); }
+	int w() {
+		return _clip.w;
+	}
 
-	Rect BoundRect();
-	Rect BoxV();
-	Rect BoxD();
-	Rect PosRect();
-	Rect RangeRect(const Rect &bounds, const Range &range);
-	Vector2i CamFocus();
+	int h() {
+		return _clip.h;
+	}
 
-	double DistSq(const Sprite &s);
-	void EffectImg(bool vis) { img_eff._visible = vis; }
-	bool LastFrame() { return anim_set._fight.lastFrame(); }
+	const ImageKey &img() {
+		return _image;
+	}
 
-	bool TakingDamage(Sprite &sp, const pyrodactyl::ai::SpriteConstant &sc);
-	void TakeDamage(pyrodactyl::event::Info &info, Sprite &s);
-	void ExchangeDamage(pyrodactyl::event::Info &info, Sprite &s, const pyrodactyl::ai::SpriteConstant &sc);
+	Rect dialogClip(const pyrodactyl::people::PersonState &state) {
+		return _animSet._walk.DialogClip(state);
+	}
+
+	void dialogUpdateClip(const pyrodactyl::people::PersonState &state) {
+		_animSet._walk.UpdateClip(state);
+	}
+
+	bool popupShow() {
+		return _popup.show();
+	}
+
+	Rect boundRect();
+	Rect boxV();
+	Rect boxD();
+	Rect posRect();
+	Rect rangeRect(const Rect &bounds, const Range &range);
+	Vector2i camFocus();
+
+	double distSq(const Sprite &s);
+
+	void effectImg(bool vis) {
+		_imgEff._visible = vis;
+	}
+
+	bool lastFrame() {
+		return _animSet._fight.lastFrame();
+	}
+
+	bool takingDamage(Sprite &sp, const pyrodactyl::ai::SpriteConstant &sc);
+	void takeDamage(pyrodactyl::event::Info &info, Sprite &s);
+	void exchangeDamage(pyrodactyl::event::Info &info, Sprite &s, const pyrodactyl::ai::SpriteConstant &sc);
 
 	void load(rapidxml::xml_node<char> *node, Common::Array<Common::String> &animations);
 	void internalEvents(pyrodactyl::event::Info &info, const Common::String &player_id,
 						Common::Array<pyrodactyl::event::EventResult> &result, Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq);
 
 	void draw(pyrodactyl::event::Info &info, const Rect &camera);
-	void DrawPopup(pyrodactyl::ui::ParagraphData &pop, const Rect &camera);
+	void drawPopup(pyrodactyl::ui::ParagraphData &pop, const Rect &camera);
 
-	void Walk(const bool &reset);
-	void Walk(const pyrodactyl::people::PersonState &pst);
+	void walk(const bool &reset);
+	void walk(const pyrodactyl::people::PersonState &pst);
 
-	void UpdateFrame(const pyrodactyl::people::PersonState &pst, const bool &repeat = false);
-	void AssignFrame();
+	void updateFrame(const pyrodactyl::people::PersonState &pst, const bool &repeat = false);
+	void assignFrame();
 
-	void UpdateMove(const pyrodactyl::input::FightAnimationType &combo);
-	void ForceUpdateMove(const pyrodactyl::input::FightAnimationType &combo);
+	void updateMove(const pyrodactyl::input::FightAnimationType &combo);
+	void forceUpdateMove(const pyrodactyl::input::FightAnimationType &combo);
 
-	void UpdateMove(const unsigned int &index);
-	void ForceUpdateMove(const unsigned int &index);
+	void updateMove(const unsigned int &index);
+	void forceUpdateMove(const unsigned int &index);
 
 	// Set sprite destination
-	void SetDestPathfinding(const Vector2i &dest, bool reachable = true);
+	void setDestPathfinding(const Vector2i &dest, bool reachable = true);
 
 	// Used for sprite movement controlled by player input (usually the player sprite)
-	void HandleEvents(pyrodactyl::event::Info &info, const Rect &camera, const pyrodactyl::ai::SpriteConstant &sc, const Common::Event &Event);
+	void handleEvents(pyrodactyl::event::Info &info, const Rect &camera, const pyrodactyl::ai::SpriteConstant &sc, const Common::Event &Event);
 #if 0
 	void HandleEvents(pyrodactyl::event::Info &info, const Rect &camera, const pyrodactyl::ai::SpriteConstant &sc, const SDL_Event &Event);
 #endif
 
 	// This is for sprites with valid object ids
-	void Animate(pyrodactyl::event::Info &info);
+	void animate(pyrodactyl::event::Info &info);
 
 	// This is for objects without valid ids - like <background> and <fly> sprites
-	void Animate(const pyrodactyl::people::PersonState &pst);
+	void animate(const pyrodactyl::people::PersonState &pst);
 
 	// AI behavior routine for sprites attacking the player
-	void Attack(pyrodactyl::event::Info &info, Sprite &target_sp, const pyrodactyl::ai::SpriteConstant &sc);
+	void attack(pyrodactyl::event::Info &info, Sprite &targetSp, const pyrodactyl::ai::SpriteConstant &sc);
 
 	// AI behavior routine for sprites running away from the player
 	// Requires every exit in the level be accessible
-	void Flee(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::level::Exit> &area_exit, const pyrodactyl::ai::SpriteConstant &sc);
+	void flee(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::level::Exit> &areaExit, const pyrodactyl::ai::SpriteConstant &sc);
 
 	// Used for sprites that fly across semi randomly on the screen
-	void FlyAround(const Rect &camera, const pyrodactyl::ai::SpriteConstant &sc);
+	void flyAround(const Rect &camera, const pyrodactyl::ai::SpriteConstant &sc);
 
 	// Used for the player destination movement
-	void MoveToDest(pyrodactyl::event::Info &info, const pyrodactyl::ai::SpriteConstant &sc);
-	void MoveToDestPathfinding(pyrodactyl::event::Info &info, const pyrodactyl::ai::SpriteConstant &sc);
+	void moveToDest(pyrodactyl::event::Info &info, const pyrodactyl::ai::SpriteConstant &sc);
+	void moveToDestPathfinding(pyrodactyl::event::Info &info, const pyrodactyl::ai::SpriteConstant &sc);
 
 	// Used for AI movement - returns true if at the destination, false otherwise
-	bool MoveToLoc(Vector2i &dest, const float &vel, const pyrodactyl::ai::SpriteConstant &sc);
-	bool MoveToLocPathfinding(Vector2i &dest, const float &vel, const pyrodactyl::ai::SpriteConstant &sc);
+	bool moveToLoc(Vector2i &dest, const float &vel, const pyrodactyl::ai::SpriteConstant &sc);
+	bool moveToLocPathfinding(Vector2i &dest, const float &vel, const pyrodactyl::ai::SpriteConstant &sc);
 
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 	void loadState(rapidxml::xml_node<char> *node);
