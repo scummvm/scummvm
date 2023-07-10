@@ -97,11 +97,11 @@ struct Anim8 {
 	Anim8 *behind = nullptr;
 	Anim8 *myParent = nullptr;		// The parent anim8
 	int32 sequHash = 0;				// The current sequence Hash = 0;
-	Handle sequHandle = nullptr;	// The sequence Handle
+	MemHandle sequHandle = nullptr;	// The sequence Handle
 	int32 pcOffset = 0;				// The offset into the sequence of the current PC
 	CCB *myCCB = nullptr;
 	int32 dataHash = 0;				// The array of data
-	Handle dataHandle = nullptr;
+	MemHandle dataHandle = nullptr;
 	int32 dataOffset = 0;
 	int32 startTime = 0;
 	int32 switchTime = 0;
@@ -125,7 +125,7 @@ struct machine {
 	uint32 myHash = 0;
 	uint32 machID = 0;
 	char *machName = nullptr;
-	Handle machHandle = 0;
+	MemHandle machHandle = 0;
 	int32 machInstrOffset = 0;
 	int32 stateTableOffset = 0;
 	int32 curState = 0;
@@ -134,7 +134,7 @@ struct machine {
 	Anim8 *myAnim8 = nullptr;
 	Anim8 *parentAnim8 = nullptr;
 	int32 dataHash = 0;
-	Handle dataHandle = 0;
+	MemHandle dataHandle = 0;
 	int32 dataOffset = 0;
 	int32 targetCount = 0;
 	struct machine *msgReplyXM = nullptr;
@@ -168,17 +168,35 @@ struct WSMachine_Globals {
 
 	// Used for processing pCodes
 	frac16 *_ws_globals = nullptr;
+	void *_addrExists = nullptr;
 };
 
 extern bool ws_Initialize(frac16 *theGlobals);
 extern void ws_Shutdown();
-extern void TerminateMachinesByHash(int32 machHash);
+extern void PauseEngines();
+extern void UnpauseEngines();
+extern void AddPauseTime(int32 myTime);
+
+void CycleEngines(Buffer *cleanBackground, int16 *depth_table, GrBuff *screenCodes,
+	uint8 *myPalette, uint8 *ICT, bool updateVideo);
+void ws_RefreshWoodscriptBuffer(Buffer *cleanBackground, int16 *depth_table, GrBuff *screenCodes, uint8 *myPalette, uint8 *ICT);
+
+void TerminateMachine(machine *m);
+void TerminateMachinesByHash(uint32 machHash);
+bool VerifyMachineExists(machine *m);
+int32 ws_KillMachines();
+void ws_StepWhile(machine *m, int32 pcOffset, int32 pcCount);
+void IntoTheState(machine *m);
+machine *TriggerMachineByHash(int32 myHash, Anim8 *parentAnim8, int32 dataHash, int32 dataRow, MessageCB CintrMsg, bool debug, const char *machName);
 
 /**
  * This proc is what allows a machine to send a message to another machine(s)
  */
 extern void SendWSMessage(uint32 msgHash, frac16 msgValue, machine *recvM,
 	uint32 machHash, machine *sendM, int32 msgCount);
+
+#define kernel_spawn_machine(name,hash,callback) TriggerMachineByHash(hash, NULL, -1, -1, callback, FALSE, (char*)name)
+#define kernel_terminate_machine(m) TerminateMachine(m)
 
 } // End of namespace M4
 

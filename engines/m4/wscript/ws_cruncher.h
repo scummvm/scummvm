@@ -28,6 +28,38 @@
 
 namespace M4 {
 
+#define OP_INSTR			0xfe000000
+#define OP_FORMAT1			0x01c00000
+#define OP_FORMAT2			0x00380000
+#define OP_FORMAT3			0x00070000
+#define OP_HIGH_DATA		0xffff0000
+#define OP_LOW_DATA			0x0000ffff
+#define OP_DATA_SIGN		0x8000
+#define OP_DATA_VALUE		0x7fff
+
+#define FMT_NOTHING			0
+#define FMT_LOCAL_SRC		1
+#define FMT_GLOBAL_SRC		2
+#define FMT_INT15			3
+#define FMT_4_11			4
+#define FMT_7_8				5
+#define FMT_11_4			6
+#define FMT_15_0			7
+#define REG_SET_IDX			0x0fff
+#define REG_SET_IDX_REG		0x8000
+#define LOCAL_FMT			0x7000
+#define LOCAL_FMT_PARENT	0x0000
+#define LOCAL_FMT_REG		0x1000
+#define LOCAL_FMT_DATA		0x2000
+
+#define BRANCH_BR			0
+#define BRANCH_BLT			1
+#define BRANCH_BLE			2
+#define BRANCH_BE			3
+#define BRANCH_BNE			4
+#define BRANCH_BGE			5
+#define BRANCH_BGT			6
+
 struct EOSreq {
 	EOSreq *next = nullptr;
 	EOSreq *prev = nullptr;
@@ -70,9 +102,28 @@ struct WSCruncher_Globals {
 };
 
 extern int32 *ws_GetDataFormats();
-
 extern bool ws_InitCruncher();
 extern void ws_KillCruncher();
+
+extern Anim8 *ws_AddAnim8ToCruncher(machine *m, int32 sequHash);
+
+/**
+ * This procedure assumes a machine has a slot with it's own memory
+ */
+extern bool ws_ChangeAnim8Program(machine *m, int32 newSequHash);
+
+/**
+ * This procedure flags the anim8 slot as empty
+ */
+extern void ws_RemoveAnim8FromCruncher(Anim8 *myAnim8);
+
+extern bool ws_PauseAnim8(Anim8 *myAnim8);
+extern bool ws_ResumeAnim8(Anim8 *myAnim8);
+extern int32 ws_PreProcessPcode(uint32 **PC, Anim8 *myAnim8);
+extern void ws_CrunchAnim8s(int16 *depth_table);
+extern void ws_CrunchEOSreqs();
+extern bool ws_OnEndSeqRequest(Anim8 *myAnim8, int32 pcOffset, int32 pcCount);
+extern void ws_CancelOnEndSeq(Anim8 *myAnim8);
 
 } // End of namespace M4
 

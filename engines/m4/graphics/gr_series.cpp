@@ -47,4 +47,10 @@ bool series_show_frame(int32 spriteHash, int32 index, Buffer *destBuff, int32 x,
 	return series_draw_sprite(spriteHash, index, destBuff, x, y);
 }
 
+machine *series_play_xy(char *seriesName, int32 loopCount, uint32 flags,
+		int32 x, int32 y, int32 s, int32 layer, int32 frameRate, int16 triggerNum) {
+	error("TODO: series_play_xy");
+	return nullptr;
+}
+
 } // namespace M4

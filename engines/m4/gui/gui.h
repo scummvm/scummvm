@@ -29,8 +29,8 @@
 namespace M4 {
 
 struct M4sprite {
-	struct M4sprite *next;
-	struct M4sprite *prev;
+	M4sprite *next;
+	M4sprite *prev;
 	int32 x;
 	int32 y;
 	int32 w;
@@ -39,7 +39,7 @@ struct M4sprite {
 	int32 yOffset;
 	uint8 encoding;
 	uint8 *data;
-	Handle sourceHandle;
+	MemHandle sourceHandle;
 	int32 sourceOffset;
 };
 
@@ -60,7 +60,7 @@ struct RectList {
 };
 
 struct matte {
-	struct matte *nextMatte;
+	matte *nextMatte;
 	void *myScreen;
 	int32 x1;
 	int32 y1;
