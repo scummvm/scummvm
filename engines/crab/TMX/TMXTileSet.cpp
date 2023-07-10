@@ -65,7 +65,7 @@ void TileSet::load(const Common::String &path, rapidxml::xml_node<char> *node) {
 		total_cols = 1;
 }
 
-void TileSetGroup::Reset() {
+void TileSetGroup::reset() {
 	for (auto i = tileset.begin(); i != tileset.end(); ++i)
 		i->img.Delete();
 
@@ -73,7 +73,7 @@ void TileSetGroup::Reset() {
 }
 
 void TileSetGroup::load(const Common::String &path, rapidxml::xml_node<char> *node) {
-	Reset();
+	reset();
 	for (auto n = node->first_node("tileset"); n != NULL; n = n->next_sibling("tileset")) {
 		TileSet t;
 		t.load(path, n);

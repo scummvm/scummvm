@@ -36,7 +36,7 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 
-void CreditScreen::Reset() {
+void CreditScreen::reset() {
 	start.x = g_engine->_screenSettings->cur.w / 2 - 150;
 	start.y = g_engine->_screenSettings->cur.h + 20;
 	cur.x = start.x;

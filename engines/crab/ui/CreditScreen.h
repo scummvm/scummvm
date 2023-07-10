@@ -108,11 +108,11 @@ class CreditScreen {
 	Button back, website, twitter;
 
 public:
-	CreditScreen() { Reset(); }
+	CreditScreen() { reset(); }
 	~CreditScreen() {}
 
 	void load(const Common::String &filename);
-	void Reset();
+	void reset();
 
 	bool HandleEvents(Common::Event &Event);
 #if 0

@@ -102,12 +102,12 @@ class KeyBindMenu {
 
 public:
 	KeyBindMenu() {
-		Reset();
+		reset();
 		choice = -1;
 	}
 	~KeyBindMenu() {}
 
-	void Reset() { state = STATE_NORMAL; }
+	void reset() { state = STATE_NORMAL; }
 
 #if 0
 	void SwapKey(const SDL_Scancode &find);

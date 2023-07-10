@@ -50,7 +50,7 @@ struct Stat {
 		def = 1;
 	}
 
-	void Reset() { cur = def; }
+	void reset() { cur = def; }
 	void Validate();
 
 	void load(rapidxml::xml_node<char> *node);

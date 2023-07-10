@@ -143,10 +143,10 @@ public:
 	// A full rendered image of the level
 	pyrodactyl::image::Image img;
 
-	Level() : player_index(0) { Reset(); }
-	~Level() { Reset(); }
+	Level() : player_index(0) { reset(); }
+	~Level() { reset(); }
 
-	void Reset();
+	void reset();
 
 	void Camera(int x, int y, int w, int h) {
 		camera.x = x;

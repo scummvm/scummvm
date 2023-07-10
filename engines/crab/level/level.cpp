@@ -45,12 +45,12 @@ using namespace pyrodactyl::event;
 // Purpose: We re-use the same level object each time
 // this function cleans up everything to make it good as new (get it)
 //------------------------------------------------------------------------
-void Level::Reset() {
+void Level::reset() {
 	if (player_index > 0 && objects.size() > player_index)
 		objects[player_index].pathing.shutdown();
 
 	player_index = 0;
-	terrain.Reset();
+	terrain.reset();
 
 	objects.clear();
 	obj_seq.clear();

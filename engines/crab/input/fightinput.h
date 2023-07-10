@@ -64,8 +64,8 @@ struct FightInput {
 	// The sprite state, used to have different moves trigger from the same move
 	unsigned int state;
 
-	FightInput() { Reset(); }
-	void Reset() {
+	FightInput() { reset(); }
+	void reset() {
 		type = FA_IDLE;
 		state = 0;
 	}

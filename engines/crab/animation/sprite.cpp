@@ -604,13 +604,13 @@ void Sprite::ForceUpdateMove(const unsigned int &index) {
 		Stop();
 		AssignFrame();
 	} else
-		input.Reset();
+		input.reset();
 }
 //------------------------------------------------------------------------
 // Purpose: Reset the frame info of the sprite
 //------------------------------------------------------------------------
 void Sprite::ResetFrame(const pyrodactyl::people::PersonState &pst) {
-	input.Reset();
+	input.reset();
 	Walk(true);
 	anim_set._fight.reset();
 

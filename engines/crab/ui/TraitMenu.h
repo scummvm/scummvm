@@ -69,7 +69,7 @@ public:
 	}
 	~TraitMenu() {}
 
-	void Reset() { select = -1; }
+	void reset() { select = -1; }
 	void Clear();
 
 	void load(rapidxml::xml_node<char> *node);

@@ -52,7 +52,7 @@ bool CompSpriteLayer(const Sprite &a, const Sprite &b) {
 //------------------------------------------------------------------------
 void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 				 pyrodactyl::event::TriggerSet &game_over, const int &player_x, const int &player_y) {
-	Reset();
+	reset();
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("level");

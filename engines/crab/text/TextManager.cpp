@@ -79,7 +79,7 @@ void TextManager::Init() {
 	colpool.load(g_engine->_filePath->colors);
 }
 
-void TextManager::Reset() {
+void TextManager::reset() {
 	cache.clear();
 	cache.resize(cache_size);
 }

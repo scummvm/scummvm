@@ -163,7 +163,7 @@ bool QuestMenu::HandleEvents(Button &bu_map, Common::String &map_title, const Co
 		sel_quest = menu.Index() + sel_bu;
 
 		quest[sel_quest].unread = false;
-		text.Reset();
+		text.reset();
 
 		menu.Image(sel_bu, sel_page, img_s);
 	}
@@ -197,7 +197,7 @@ bool QuestMenu::HandleEvents(Button &bu_map, Common::String &map_title, const SD
 		sel_quest = menu.Index() + sel_bu;
 
 		quest[sel_quest].unread = false;
-		text.Reset();
+		text.reset();
 
 		menu.Image(sel_bu, sel_page, img_s);
 	}
@@ -234,7 +234,7 @@ void QuestMenu::Select(const int &quest_index) {
 		sel_bu = quest_index % menu.ElementsPerPage();
 
 		quest[quest_index].unread = false;
-		text.Reset();
+		text.reset();
 
 		menu.Image(sel_bu, sel_page, img_s);
 	}

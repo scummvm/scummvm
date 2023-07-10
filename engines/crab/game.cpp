@@ -220,7 +220,7 @@ void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameState
 
 					if (!game_over.Empty() && game_over.Evaluate(info)) {
 						state = STATE_LOSE_MENU;
-						hud.gom.Reset();
+						hud.gom.reset();
 						return;
 					}
 
@@ -376,7 +376,7 @@ void Game::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &
 
 					if (!game_over.Empty() && game_over.Evaluate(info)) {
 						state = STATE_LOSE_MENU;
-						hud.gom.Reset();
+						hud.gom.reset();
 						return;
 					}
 
@@ -652,7 +652,7 @@ void Game::ApplyResult(LevelResult result) {
 		return;
 	case LR_GAMEOVER:
 		state = STATE_LOSE_MENU;
-		hud.gom.Reset();
+		hud.gom.reset();
 		break;
 	default:
 		break;
@@ -830,7 +830,7 @@ void Game::ToggleState(const State &s) {
 
 	// This is because game is the first state, the rest are in order
 	hud.State(state - 1);
-	hud.pause.Reset();
+	hud.pause.reset();
 
 	// Only load help screen image if we have to
 	if (state == STATE_HELP)

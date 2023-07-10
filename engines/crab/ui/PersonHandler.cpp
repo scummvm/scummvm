@@ -171,12 +171,12 @@ void PersonHandler::OpinionChange(pyrodactyl::event::Info &info, const Common::S
 	}
 }
 
-void PersonHandler::Reset(const Common::String &id) {
+void PersonHandler::reset(const Common::String &id) {
 	if (prev != id) {
 		using namespace pyrodactyl::people;
-		opinion[OPI_LIKE].Reset();
-		opinion[OPI_RESPECT].Reset();
-		opinion[OPI_FEAR].Reset();
+		opinion[OPI_LIKE].reset();
+		opinion[OPI_RESPECT].reset();
+		opinion[OPI_FEAR].reset();
 	}
 }
 

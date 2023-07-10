@@ -93,7 +93,7 @@ class TileSetGroup {
 public:
 	TileSetGroup() {}
 
-	void Reset();
+	void reset();
 
 	void load(const Common::String &path, rapidxml::xml_node<char> *node);
 	void draw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos, pyrodactyl::image::Image &img);

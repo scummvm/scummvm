@@ -95,8 +95,8 @@ void OptionMenu::load(const Common::String &filename) {
 	}
 }
 
-void OptionMenu::Reset() {
-	keybind.Reset();
+void OptionMenu::reset() {
+	keybind.reset();
 	state = STATE_GENERAL;
 
 	for (unsigned i = 0; i < menu.element.size(); ++i)
@@ -311,7 +311,7 @@ bool OptionMenu::HandleEvents(Button &back, const SDL_Event &Event) {
 
 bool OptionMenu::HandleTabs(Button &back, const SDL_Event &Event) {
 	if (back.HandleEvents(Event) == BUAC_LCLICK) {
-		Reset();
+		reset();
 		return true;
 	}
 

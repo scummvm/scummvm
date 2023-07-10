@@ -60,8 +60,8 @@ public:
 	GameOverMenu(void) { cur = 0; }
 	~GameOverMenu(void) {}
 
-	void Reset() {
-	warning("STUB: GameOverMenu::Reset()");
+	void reset() {
+	warning("STUB: GameOverMenu::reset()");
 #if 0
 		cur = gRandom.Num() % quote.size();
 #endif

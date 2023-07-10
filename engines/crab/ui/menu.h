@@ -223,11 +223,11 @@ public:
 	}
 	~Menu() {}
 
-	void Reset() {
+	void reset() {
 		latest_input = MOUSE;
 		hover_index = -1;
 		for (auto b = element.begin(); b != element.end(); ++b)
-			b->Reset();
+			b->reset();
 	}
 
 	void SetUI() {
@@ -264,7 +264,7 @@ public:
 			// We have accepted a menu option using the keyboard
 			if (result != -1) {
 				// Reset the menu state
-				Reset();
+				reset();
 				g_engine->_inputManager->SetKeyBindingMode(pyrodactyl::input::KBM_GAME);
 				return result;
 			}
@@ -283,7 +283,7 @@ public:
 			// We clicked on a button using the mouse
 			if (it->HandleEvents(Event, XOffset, YOffset) == BUAC_LCLICK) {
 				// Reset the menu state
-				Reset();
+				reset();
 				g_engine->_inputManager->SetKeyBindingMode(pyrodactyl::input::KBM_GAME);
 				return i;
 			}
@@ -321,7 +321,7 @@ public:
 			// We have accepted a menu option using the keyboard
 			if (result != -1) {
 				// Reset the menu state
-				Reset();
+				reset();
 				return result;
 			}
 		}
@@ -339,7 +339,7 @@ public:
 			// We clicked on a button using the mouse
 			if (it->HandleEvents(Event, XOffset, YOffset) == BUAC_LCLICK) {
 				// Reset the menu state
-				Reset();
+				reset();
 				return i;
 			}
 

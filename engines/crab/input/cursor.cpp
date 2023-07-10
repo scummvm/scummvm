@@ -41,7 +41,7 @@ using namespace pyrodactyl::input;
 //------------------------------------------------------------------------
 // Purpose: Reset all values
 //------------------------------------------------------------------------
-void Cursor::Reset() {
+void Cursor::reset() {
 	motion.x = 0;
 	motion.y = 0;
 

@@ -189,7 +189,7 @@ void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameS
 				break;
 			case 6:
 				ChangeState(STATE_CREDITS);
-				credits.Reset();
+				credits.reset();
 				break;
 			case 7:
 				ShouldChangeState = true;
@@ -324,7 +324,7 @@ void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 				break;
 			case 6:
 				ChangeState(STATE_CREDITS);
-				credits.Reset();
+				credits.reset();
 				break;
 			case 7:
 				ShouldChangeState = true;

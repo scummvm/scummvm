@@ -80,7 +80,7 @@ public:
 		img_hover_s.Delete();
 	}
 
-	void Reset();
+	void reset();
 
 	void load(rapidxml::xml_node<char> *node);
 	void HandleEvents(const Common::Event &event);

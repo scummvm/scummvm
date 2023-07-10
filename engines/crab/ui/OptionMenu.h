@@ -102,7 +102,7 @@ public:
 	}
 	~OptionMenu(void) {}
 
-	void Reset();
+	void reset();
 	bool DisableHotkeys() { return keybind.DisableHotkeys(); }
 
 	void load(const Common::String &filename);
