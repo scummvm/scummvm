@@ -100,7 +100,7 @@ public:
 	bool HandleDlboxEvents(const SDL_Event &Event);
 #endif
 
-	void InternalEvents(const pyrodactyl::people::PersonState &state, pyrodactyl::anim::Sprite *s);
+	void internalEvents(const pyrodactyl::people::PersonState &state, pyrodactyl::anim::Sprite *s);
 
 	void draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameEvent *Event, const Common::String &person_id,
 			  const bool &player, pyrodactyl::anim::Sprite *s = nullptr);

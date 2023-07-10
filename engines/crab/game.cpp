@@ -466,20 +466,20 @@ void Game::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &
 //------------------------------------------------------------------------
 // Purpose: InternalEvents
 //------------------------------------------------------------------------
-void Game::InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
+void Game::internalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 	switch (state) {
 	case STATE_GAME:
-		hud.InternalEvents(level.ShowMap());
+		hud.internalEvents(level.ShowMap());
 		event_res.clear();
 
 		{
 			// HACK: Since sequences can only be ended in GameEventManager, we use this empty array
 			// to get effects to work for levels
 			Common::Array<pyrodactyl::event::EventSeqInfo> end_seq;
-			ApplyResult(level.InternalEvents(info, event_res, end_seq, gem.EventInProgress()));
+			ApplyResult(level.internalEvents(info, event_res, end_seq, gem.EventInProgress()));
 		}
 
-		gem.InternalEvents(info, level, event_res);
+		gem.internalEvents(info, level, event_res);
 		info.TalkKeyDown = false;
 
 		if (ApplyResult())
@@ -487,10 +487,10 @@ void Game::InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 
 		break;
 	case STATE_MAP:
-		map.InternalEvents(info);
+		map.internalEvents(info);
 		break;
 	case STATE_CHARACTER:
-		gem.per.InternalEvents();
+		gem.per.internalEvents();
 		break;
 	default:
 		break;

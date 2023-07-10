@@ -77,7 +77,7 @@ public:
 	void draw(const int &XOffset = 0, const int &YOffset = 0);
 
 	// This is used to vary the alpha
-	void InternalEvents();
+	void internalEvents();
 
 	void SetUI() { pos.SetUI(); }
 };

@@ -420,13 +420,13 @@ void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 //------------------------------------------------------------------------
 // Purpose: Internal Events
 //------------------------------------------------------------------------
-void MainMenu::InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
+void MainMenu::internalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 	// Make the lights flicker
 	for (auto &i : lights)
-		i.InternalEvents();
+		i.internalEvents();
 
 	if (state == STATE_OPTIONS)
-		g_engine->_optionMenu->InternalEvents();
+		g_engine->_optionMenu->internalEvents();
 }
 
 //------------------------------------------------------------------------

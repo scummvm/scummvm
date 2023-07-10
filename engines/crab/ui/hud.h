@@ -93,7 +93,7 @@ public:
 	}
 	~HUD() {}
 
-	void InternalEvents(bool ShowMap);
+	void internalEvents(bool ShowMap);
 	void PlayerImg(const StateButtonImage &img) { menu.element[HS_CHAR].Img(img); }
 
 	void State(const int &val);

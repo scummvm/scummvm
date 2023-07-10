@@ -62,7 +62,7 @@ public:
 	void HandleEvents(const SDL_Event &Event);
 #endif
 
-	void InternalEvents();
+	void internalEvents();
 
 	void draw();
 	void SetUI();

@@ -125,7 +125,7 @@ public:
 #if 0
 	bool HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event);
 #endif
-	void InternalEvents(pyrodactyl::event::Info &info);
+	void internalEvents(pyrodactyl::event::Info &info);
 
 	void Center(const Vector2i &pos);
 	void Move(const Common::Event &Event);

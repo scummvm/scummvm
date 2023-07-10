@@ -68,7 +68,7 @@ void PopUpCollection::load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 // Purpose: Internal events
 //------------------------------------------------------------------------
-bool PopUp::InternalEvents(pyrodactyl::event::Info &info, const Common::String &player_id,
+bool PopUp::internalEvents(pyrodactyl::event::Info &info, const Common::String &player_id,
 						   Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq) {
 	if (visible.Evaluate(info) || started_show) {
 		if (delay.TargetReached()) {
@@ -91,10 +91,10 @@ bool PopUp::InternalEvents(pyrodactyl::event::Info &info, const Common::String &
 	return false;
 }
 
-void PopUpCollection::InternalEvents(pyrodactyl::event::Info &info, const Common::String &player_id,
+void PopUpCollection::internalEvents(pyrodactyl::event::Info &info, const Common::String &player_id,
 									 Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq) {
 	if (cur >= 0 && (unsigned int)cur < element.size()) {
-		if (element[cur].InternalEvents(info, player_id, result, end_seq)) {
+		if (element[cur].internalEvents(info, player_id, result, end_seq)) {
 			if (element[cur].next <= 0 || (unsigned int)element[cur].next >= element.size()) {
 				// This means that this popup is the "end" node, we must loop back to start or end this
 				if (loop) {

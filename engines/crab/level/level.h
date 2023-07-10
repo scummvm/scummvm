@@ -193,7 +193,7 @@ public:
 #if 0
 	void HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event);
 #endif
-	LevelResult InternalEvents(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event::EventResult> &result,
+	LevelResult internalEvents(pyrodactyl::event::Info &info, Common::Array<pyrodactyl::event::EventResult> &result,
 							   Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq, bool EventInProgress);
 
 	void PreDraw();

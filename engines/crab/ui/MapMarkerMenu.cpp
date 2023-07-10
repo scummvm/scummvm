@@ -125,7 +125,7 @@ void MapMarkerMenu::HandleEvents(const Element &pos, const Vector2i &player_pos,
 //------------------------------------------------------------------------
 // Purpose: Internal Events
 //------------------------------------------------------------------------
-void MapMarkerMenu::InternalEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, Rect bounds) {
+void MapMarkerMenu::internalEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, Rect bounds) {
 	// Find if the player marker is visible or not
 	{
 		Rect r(pos.x + player_pos.x - offset.marker.x - camera.x,

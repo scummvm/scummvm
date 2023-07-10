@@ -722,8 +722,8 @@ void Sprite::ExchangeDamage(Info &info, Sprite &s, const SpriteConstant &sc) {
 //------------------------------------------------------------------------
 // Purpose: Update status of ambient dialog via popup object
 //------------------------------------------------------------------------
-void Sprite::InternalEvents(Info &info, const Common::String &player_id, Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq) {
-	popup.InternalEvents(info, player_id, result, end_seq);
+void Sprite::internalEvents(Info &info, const Common::String &player_id, Common::Array<EventResult> &result, Common::Array<EventSeqInfo> &end_seq) {
+	popup.internalEvents(info, player_id, result, end_seq);
 }
 
 //------------------------------------------------------------------------

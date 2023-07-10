@@ -121,7 +121,7 @@ void GeneralSettingMenu::HandleEvents(const SDL_Event &Event) {
 //------------------------------------------------------------------------
 // Purpose: Sync our buttons with screen settings
 //------------------------------------------------------------------------
-void GeneralSettingMenu::InternalEvents() {
+void GeneralSettingMenu::internalEvents() {
 	save_on_exit.state = g_engine->_screenSettings->save_on_exit;
 	mouse_trap.state = g_engine->_screenSettings->mouse_trap;
 }

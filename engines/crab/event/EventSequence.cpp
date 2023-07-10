@@ -52,7 +52,7 @@ void EventSequence::load(const Common::String &filename) {
 //------------------------------------------------------------------------
 // Purpose: Check for events happening
 //------------------------------------------------------------------------
-void EventSequence::InternalEvents(pyrodactyl::event::Info &info) {
+void EventSequence::internalEvents(pyrodactyl::event::Info &info) {
 	for (auto nxe = next.begin(); nxe != next.end(); ++nxe)
 		if (*nxe < events.size()) {
 			if (events[*nxe].trig.Evaluate(info)) {
