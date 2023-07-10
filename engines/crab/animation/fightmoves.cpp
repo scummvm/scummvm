@@ -38,43 +38,43 @@ using namespace pyrodactyl::anim;
 // Purpose: Constructor
 //------------------------------------------------------------------------
 FightMoves::FightMoves() {
-	cur = -1;
-	next = -1;
-	start = false;
+	_cur = -1;
+	_next = -1;
+	_start = false;
 
-	frame_cur = 0;
-	frame_total = 0;
+	_frameCur = 0;
+	_frameTotal = 0;
 
-	move.clear();
-	timer.Start();
+	_move.clear();
+	_timer.Start();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Load from file
 //------------------------------------------------------------------------
-void FightMoves::Load(rapidxml::xml_node<char> *node) {
+void FightMoves::load(rapidxml::xml_node<char> *node) {
 	for (auto n = node->first_node("move"); n != NULL; n = n->next_sibling("move")) {
 		FightMove fm;
 		fm.load(n);
-		move.push_back(fm);
+		_move.push_back(fm);
 	}
 }
 
 //------------------------------------------------------------------------
 // Purpose: Return current or next move
 //------------------------------------------------------------------------
-bool FightMoves::CurMove(FightMove &fm) {
-	if (cur >= 0 && (unsigned int)cur < move.size()) {
-		fm = move[cur];
+bool FightMoves::curMove(FightMove &fm) {
+	if (_cur >= 0 && (unsigned int)_cur < _move.size()) {
+		fm = _move[_cur];
 		return true;
 	}
 
 	return false;
 }
 
-bool FightMoves::NextMove(FightMove &fm) {
-	if (next >= 0 && (unsigned int)next < move.size()) {
-		fm = move[next];
+bool FightMoves::nextMove(FightMove &fm) {
+	if (_next >= 0 && (unsigned int)_next < _move.size()) {
+		fm = _move[_next];
 		return true;
 	}
 
@@ -84,12 +84,12 @@ bool FightMoves::NextMove(FightMove &fm) {
 //------------------------------------------------------------------------
 // Purpose: Get the current frame of the sprite
 //------------------------------------------------------------------------
-bool FightMoves::CurFrame(FightAnimFrame &faf, const Direction &d) {
+bool FightMoves::curFrame(FightAnimFrame &faf, const Direction &d) {
 	// Check validity of current move
-	if (cur >= 0 && (unsigned int)cur < move.size()) {
+	if (_cur >= 0 && (unsigned int)_cur < _move.size()) {
 		// Check validity of current frame
-		if (frame_cur < frame_total && frame_cur < move[cur]._frames[d]._frame.size()) {
-			faf = move[cur]._frames[d]._frame[frame_cur];
+		if (_frameCur < _frameTotal && _frameCur < _move[_cur]._frames[d]._frame.size()) {
+			faf = _move[_cur]._frames[d]._frame[_frameCur];
 			return true;
 		}
 	}
@@ -100,17 +100,17 @@ bool FightMoves::CurFrame(FightAnimFrame &faf, const Direction &d) {
 //------------------------------------------------------------------------
 // Purpose: Update frame
 //------------------------------------------------------------------------
-FrameUpdateResult FightMoves::UpdateFrame(const Direction &d) {
+FrameUpdateResult FightMoves::updateFrame(const Direction &d) {
 	// Check validity of current move
-	if (cur >= 0 && (unsigned int)cur < move.size()) {
+	if (_cur >= 0 && (unsigned int)_cur < _move.size()) {
 		// Check validity of current frame
-		if (frame_cur < frame_total && frame_cur < move[cur]._frames[d]._frame.size()) {
+		if (_frameCur < _frameTotal && _frameCur < _move[_cur]._frames[d]._frame.size()) {
 			// Has the current frame finished playing?
 			// OR Is this the first frame of the move?
-			if (timer.Ticks() >= move[cur]._frames[d]._frame[frame_cur]._repeat || start) {
-				frame_cur++;
-				timer.Start();
-				start = false;
+			if (_timer.Ticks() >= _move[_cur]._frames[d]._frame[_frameCur]._repeat || _start) {
+				_frameCur++;
+				_timer.Start();
+				_start = false;
 
 				return FUR_SUCCESS;
 			} else
@@ -124,14 +124,14 @@ FrameUpdateResult FightMoves::UpdateFrame(const Direction &d) {
 //------------------------------------------------------------------------
 // Purpose: Find a move corresponding to the input and sprite state
 //------------------------------------------------------------------------
-unsigned int FightMoves::FindMove(const pyrodactyl::input::FightAnimationType &type, const int &state) {
+unsigned int FightMoves::findMove(const pyrodactyl::input::FightAnimationType &type, const int &state) {
 	unsigned int pos = 0;
-	for (auto i = move.begin(); i != move.end(); ++i, ++pos)
+	for (auto i = _move.begin(); i != _move.end(); ++i, ++pos)
 		if (i->_input.type == type && i->_input.state == (unsigned int)state)
 			return pos;
 
 	pos = 0;
-	for (auto i = move.begin(); i != move.end(); ++i, ++pos)
+	for (auto i = _move.begin(); i != _move.end(); ++i, ++pos)
 		if (i->_input.type == type && i->_input.state == SPRITE_STATE_OVERRIDE)
 			return pos;
 
@@ -141,10 +141,10 @@ unsigned int FightMoves::FindMove(const pyrodactyl::input::FightAnimationType &t
 //------------------------------------------------------------------------
 // Purpose: Function for AI
 //------------------------------------------------------------------------
-void FightMoves::ListAttackMoves(Common::Array<unsigned int> &list) {
+void FightMoves::listAttackMoves(Common::Array<unsigned int> &list) {
 	list.clear();
 	unsigned int pos = 0;
-	for (auto i = move.begin(); i != move.end(); ++i, ++pos)
+	for (auto i = _move.begin(); i != _move.end(); ++i, ++pos)
 		if (i->_ai.type == MOVE_ATTACK)
 			list.push_back(pos);
 }
@@ -152,46 +152,46 @@ void FightMoves::ListAttackMoves(Common::Array<unsigned int> &list) {
 //------------------------------------------------------------------------
 // Purpose: Force update to a new move
 //------------------------------------------------------------------------
-bool FightMoves::ForceUpdate(const unsigned int &index, pyrodactyl::input::FightInput &input, const Direction &d) {
-	frame_cur = 0;
-	cur = index;
+bool FightMoves::forceUpdate(const unsigned int &index, pyrodactyl::input::FightInput &input, const Direction &d) {
+	_frameCur = 0;
+	_cur = index;
 
-	if ((unsigned int)cur < move.size()) {
-		if (move[cur]._unlock.Result()) {
-			frame_total = move[cur]._frames[d]._frame.size();
-			if (frame_total > 0) {
-				input = move[cur]._input;
-				input.state = move[cur]._frames[d]._frame[0]._state;
+	if ((unsigned int)_cur < _move.size()) {
+		if (_move[_cur]._unlock.Result()) {
+			_frameTotal = _move[_cur]._frames[d]._frame.size();
+			if (_frameTotal > 0) {
+				input = _move[_cur]._input;
+				input.state = _move[_cur]._frames[d]._frame[0]._state;
 			} else
 				input.Reset();
 
-			timer.Start();
-			start = true;
-			g_engine->_musicManager->PlayEffect(move[cur]._eff._activate, 0);
+			_timer.Start();
+			_start = true;
+			g_engine->_musicManager->PlayEffect(_move[_cur]._eff._activate, 0);
 			return true;
 		}
 	}
 
-	cur = 0;
-	frame_total = 0;
+	_cur = 0;
+	_frameTotal = 0;
 	return false;
 }
 
 //------------------------------------------------------------------------
 // Purpose: Set unlock status
 //------------------------------------------------------------------------
-void FightMoves::Evaluate(pyrodactyl::event::Info &info) {
-	for (auto i = move.begin(); i != move.end(); ++i)
+void FightMoves::evaluate(pyrodactyl::event::Info &info) {
+	for (auto i = _move.begin(); i != _move.end(); ++i)
 		i->_unlock.Evaluate(info);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Find which style to flip the texture in
 //------------------------------------------------------------------------
-bool FightMoves::Flip(TextureFlipType &flip, Direction d) {
+bool FightMoves::flip(TextureFlipType &flip, Direction d) {
 	// Check validity of current move
-	if (ValidMove()) {
-		flip = move[cur]._frames[d]._flip;
+	if (validMove()) {
+		flip = _move[_cur]._frames[d]._flip;
 		return true;
 	}
 

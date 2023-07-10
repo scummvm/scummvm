@@ -39,7 +39,7 @@ void AnimSet::load(const Common::String &filename) {
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node();
 		if (nodeValid(node)) {
-			_fight.Load(node);
+			_fight.load(node);
 			_walk.Load(node);
 
 			if (nodeValid("bounds", node))
@@ -56,22 +56,22 @@ void AnimSet::load(const Common::String &filename) {
 
 TextureFlipType AnimSet::flip(const Direction &dir) {
 	TextureFlipType ret;
-	if (_fight.Flip(ret, dir))
+	if (_fight.flip(ret, dir))
 		return ret;
 
 	return _walk.Flip(dir);
 }
 
 const ShadowOffset &AnimSet::shadow(const Direction &dir) {
-	if (_fight.ValidMove())
-		return _fight.Shadow(dir);
+	if (_fight.validMove())
+		return _fight.shadow(dir);
 
 	return _walk.Shadow(dir);
 }
 
 int AnimSet::anchorX(const Direction &dir) {
 	FightAnimFrame faf;
-	if (_fight.CurFrame(faf, dir))
+	if (_fight.curFrame(faf, dir))
 		return faf._anchor.x;
 
 	return _walk.AnchorX(dir);
@@ -79,7 +79,7 @@ int AnimSet::anchorX(const Direction &dir) {
 
 int AnimSet::anchorY(const Direction &dir) {
 	FightAnimFrame faf;
-	if (_fight.CurFrame(faf, dir))
+	if (_fight.curFrame(faf, dir))
 		return faf._anchor.y;
 
 	return _walk.AnchorY(dir);
