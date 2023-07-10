@@ -219,10 +219,10 @@ Rect Sprite::PosRect() {
 // Used for enemy sprite to find their required spot to attack the player
 Rect Sprite::RangeRect(const Rect &bounds, const Range &range) {
 	Rect rect;
-	rect.x = bounds.x + range.val[dir].x;
-	rect.y = bounds.y + range.val[dir].y;
-	rect.w = range.val[dir].w;
-	rect.h = range.val[dir].h;
+	rect.x = bounds.x + range._val[dir].x;
+	rect.y = bounds.y + range._val[dir].y;
+	rect.w = range._val[dir].w;
+	rect.h = range._val[dir].h;
 
 	return rect;
 }
@@ -247,16 +247,16 @@ void Sprite::draw(pyrodactyl::event::Info &info, const Rect &camera) {
 
 	// Draw the shadow image relative to the bottom center of the sprite
 	ShadowOffset sh = anim_set.shadow(dir);
-	if (sh.valid) {
+	if (sh._valid) {
 		// Draw using custom offset
-		g_engine->_imageManager->draw(x + clip.w / 2 - anim_set._shadow.size.x + sh.x,
-						   y + clip.h - anim_set._shadow.size.y + sh.y,
-						   anim_set._shadow.img);
+		g_engine->_imageManager->draw(x + clip.w / 2 - anim_set._shadow._size.x + sh.x,
+						   y + clip.h - anim_set._shadow._size.y + sh.y,
+						   anim_set._shadow._img);
 	} else {
 		// Draw using default offset
-		g_engine->_imageManager->draw(x + clip.w / 2 - anim_set._shadow.size.x + anim_set._shadow.offset.x,
-						   y + clip.h - anim_set._shadow.size.y + anim_set._shadow.offset.y,
-						   anim_set._shadow.img);
+		g_engine->_imageManager->draw(x + clip.w / 2 - anim_set._shadow._size.x + anim_set._shadow._offset.x,
+						   y + clip.h - anim_set._shadow._size.y + anim_set._shadow._offset.y,
+						   anim_set._shadow._img);
 	}
 
 	g_engine->_imageManager->draw(x, y, image, &clip, anim_set.flip(dir));
@@ -273,10 +273,10 @@ void Sprite::draw(pyrodactyl::event::Info &info, const Rect &camera) {
 		FightMove fm;
 		if (anim_set._fight.nextMove(fm)) {
 			Rect actual_range;
-			actual_range.x = bounds.x + fm._ai._range.val[dir].x;
-			actual_range.y = bounds.y + fm._ai._range.val[dir].y;
-			actual_range.w = fm._ai._range.val[dir].w;
-			actual_range.h = fm._ai._range.val[dir].h;
+			actual_range.x = bounds.x + fm._ai._range._val[dir].x;
+			actual_range.y = bounds.y + fm._ai._range._val[dir].y;
+			actual_range.w = fm._ai._range._val[dir].w;
+			actual_range.h = fm._ai._range._val[dir].h;
 
 			actual_range.draw(-camera.x, -camera.y, 255, 0, 255);
 		}
@@ -521,7 +521,7 @@ void Sprite::Animate(const pyrodactyl::people::PersonState &pst) {
 bool Sprite::FightCollide(Rect hitbox, Rect enemy_bounds, Range &range, const SpriteConstant &sc) {
 	Rect bounds = BoundRect();
 
-	if (range.valid) {
+	if (range._valid) {
 		Rect actual_range = RangeRect(bounds, range);
 
 		// The second part is a sanity check so the stray hitbox of a sprite 1000 pixels below does not cause damage

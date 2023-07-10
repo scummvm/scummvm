@@ -73,7 +73,7 @@ void AnimationFrames::load(rapidxml::xml_node<char> *node) {
 
 	if (nodeValid("shadow", node)) {
 		_shadow.load(node->first_node("shadow"));
-		_shadow.valid = true;
+		_shadow._valid = true;
 	}
 
 	if (nodeValid("frames", node)) {

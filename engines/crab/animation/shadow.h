@@ -41,25 +41,27 @@ namespace pyrodactyl {
 namespace anim {
 struct ShadowData {
 	// The image of the sprite's shadow
-	ImageKey img;
+	ImageKey _img;
 
 	// Size of image
-	Vector2i size;
+	Vector2i _size;
 
 	// The default shadow offset
-	Vector2i offset;
+	Vector2i _offset;
 
-	ShadowData() : size(1, 1) { img = 0; }
+	ShadowData() : _size(1, 1) {
+		_img = 0;
+	}
 
 	void load(rapidxml::xml_node<char> *node) {
-		loadImgKey(img, "img", node);
-		offset.load(node);
+		loadImgKey(_img, "img", node);
+		_offset.load(node);
 
 		using namespace pyrodactyl::image;
 		Image dat;
-		g_engine->_imageManager->GetTexture(img, dat);
-		size.x = dat.W() / 2;
-		size.y = dat.H() / 2;
+		g_engine->_imageManager->GetTexture(_img, dat);
+		_size.x = dat.W() / 2;
+		_size.y = dat.H() / 2;
 	}
 };
 
@@ -67,9 +69,11 @@ struct ShadowData {
 class ShadowOffset : public Vector2i {
 public:
 	// Only use this offset if this is true
-	bool valid;
+	bool _valid;
 
-	ShadowOffset() { valid = false; }
+	ShadowOffset() {
+		_valid = false;
+	}
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
