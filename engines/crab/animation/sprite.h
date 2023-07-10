@@ -167,7 +167,7 @@ public:
 	Rect DialogClip(const pyrodactyl::people::PersonState &state) { return anim_set._walk.DialogClip(state); }
 	void DialogUpdateClip(const pyrodactyl::people::PersonState &state) { anim_set._walk.UpdateClip(state); }
 
-	bool PopupShow() { return popup.Show(); }
+	bool PopupShow() { return popup.show(); }
 
 	Rect BoundRect();
 	Rect BoxV();

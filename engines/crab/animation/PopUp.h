@@ -45,69 +45,72 @@ namespace pyrodactyl {
 namespace anim {
 struct PopUp {
 	// The total time the popup stays on the screen
-	Timer duration;
+	Timer _duration;
 
 	// The time we wait before showing the trigger for the first time
-	Timer delay;
+	Timer _delay;
 
 	// Should we draw this or not? (Decided by internal events)
-	bool show;
+	bool _show;
 
 	// Popups with "talk key pressed" condition need to be shown once the key is pressed
-	bool started_show;
+	bool _startedShow;
 
 	// Triggers for when you only want to display this in certain conditions
-	pyrodactyl::event::TriggerSet visible;
+	pyrodactyl::event::TriggerSet _visible;
 
 	// Effects for changing variables and other related stuff
-	Common::Array<pyrodactyl::event::Effect> effect;
+	Common::Array<pyrodactyl::event::Effect> _effect;
 
 	// The text displayed
-	Common::String text;
+	Common::String _text;
 
 	// The next popup we should go to, negative values means the end
-	int next;
+	int _next;
 
 	PopUp() {
-		next = -1;
-		Reset();
+		_next = -1;
+		reset();
 	}
-	PopUp(rapidxml::xml_node<char> *node) : PopUp() { load(node); }
 
-	void Reset() {
-		show = false;
-		started_show = false;
-		delay.Stop();
-		duration.Stop();
+	PopUp(rapidxml::xml_node<char> *node) : PopUp() {
+		load(node);
+	}
+
+	void reset() {
+		_show = false;
+		_startedShow = false;
+		_delay.Stop();
+		_duration.Stop();
 	}
 
 	void load(rapidxml::xml_node<char> *node);
 	void draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop, const Rect &camera);
 
 	// return true if we should proceed to next event, false otherwise
-	bool internalEvents(pyrodactyl::event::Info &info, const Common::String &player_id,
-						Common::Array<pyrodactyl::event::EventResult> &result, Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq);
+	bool internalEvents(pyrodactyl::event::Info &info, const Common::String &playerId,
+						Common::Array<pyrodactyl::event::EventResult> &result, Common::Array<pyrodactyl::event::EventSeqInfo> &endSeq);
 };
 
 struct PopUpCollection {
 	// Collection of environmental dialog
-	Common::Array<PopUp> element;
+	Common::Array<PopUp> _element;
 
 	// The current dialog being played
-	int cur;
+	int _cur;
 
 	// true if dialog needs to loop, false otherwise
-	bool loop;
+	bool _loop;
 
 	PopUpCollection() {
-		cur = 0;
-		loop = true;
+		_cur = 0;
+		_loop = true;
 	}
 
 	// Return true if any of the popup dialog is visible, false otherwise
-	bool Show() {
-		for (auto &i : element)
-			if (i.show)
+	bool show() {
+		for (auto &i : _element)
+			if (i._show)
 				return true;
 
 		return false;
@@ -115,8 +118,8 @@ struct PopUpCollection {
 
 	void load(rapidxml::xml_node<char> *node);
 
-	void internalEvents(pyrodactyl::event::Info &info, const Common::String &player_id,
-						Common::Array<pyrodactyl::event::EventResult> &result, Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq);
+	void internalEvents(pyrodactyl::event::Info &info, const Common::String &playerId,
+						Common::Array<pyrodactyl::event::EventResult> &result, Common::Array<pyrodactyl::event::EventSeqInfo> &endSeq);
 
 	void draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop, const Rect &camera);
 };
