@@ -101,21 +101,21 @@ void Button::Reset() {
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void Button::Draw(const int &XOffset, const int &YOffset, Rect *clip) {
+void Button::draw(const int &XOffset, const int &YOffset, Rect *clip) {
 	if (visible) {
 		if (mousepressed) {
-			g_engine->_imageManager->Draw(x + XOffset, y + YOffset, img.select, clip);
+			g_engine->_imageManager->draw(x + XOffset, y + YOffset, img.select, clip);
 
-			tooltip.Draw(XOffset, YOffset);
-			caption.Draw(true, XOffset, YOffset);
+			tooltip.draw(XOffset, YOffset);
+			caption.draw(true, XOffset, YOffset);
 		} else if (hover_mouse || hover_key) {
-			g_engine->_imageManager->Draw(x + XOffset, y + YOffset, img.hover, clip);
+			g_engine->_imageManager->draw(x + XOffset, y + YOffset, img.hover, clip);
 
-			tooltip.Draw(XOffset, YOffset);
-			caption.Draw(true, XOffset, YOffset);
+			tooltip.draw(XOffset, YOffset);
+			caption.draw(true, XOffset, YOffset);
 		} else {
-			g_engine->_imageManager->Draw(x + XOffset, y + YOffset, img.normal, clip);
-			caption.Draw(false, XOffset, YOffset);
+			g_engine->_imageManager->draw(x + XOffset, y + YOffset, img.normal, clip);
+			caption.draw(false, XOffset, YOffset);
 		}
 	}
 }
@@ -123,14 +123,14 @@ void Button::Draw(const int &XOffset, const int &YOffset, Rect *clip) {
 void Button::ImageCaptionOnlyDraw(const int &XOffset, const int &YOffset, Rect *clip) {
 	if (visible) {
 		if (mousepressed) {
-			g_engine->_imageManager->Draw(x + XOffset, y + YOffset, img.select, clip);
-			caption.Draw(true, XOffset, YOffset);
+			g_engine->_imageManager->draw(x + XOffset, y + YOffset, img.select, clip);
+			caption.draw(true, XOffset, YOffset);
 		} else if (hover_mouse || hover_key) {
-			g_engine->_imageManager->Draw(x + XOffset, y + YOffset, img.hover, clip);
-			caption.Draw(true, XOffset, YOffset);
+			g_engine->_imageManager->draw(x + XOffset, y + YOffset, img.hover, clip);
+			caption.draw(true, XOffset, YOffset);
 		} else {
-			g_engine->_imageManager->Draw(x + XOffset, y + YOffset, img.normal, clip);
-			caption.Draw(false, XOffset, YOffset);
+			g_engine->_imageManager->draw(x + XOffset, y + YOffset, img.normal, clip);
+			caption.draw(false, XOffset, YOffset);
 		}
 	}
 }
@@ -138,7 +138,7 @@ void Button::ImageCaptionOnlyDraw(const int &XOffset, const int &YOffset, Rect *
 void Button::HoverInfoOnlyDraw(const int &XOffset, const int &YOffset, Rect *clip) {
 	if (visible) {
 		if (mousepressed || hover_mouse || hover_key)
-			tooltip.Draw(XOffset, YOffset);
+			tooltip.draw(XOffset, YOffset);
 	}
 }
 

@@ -66,25 +66,25 @@ void GfxSettingMenu::load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 // Purpose: Draw stuff
 //------------------------------------------------------------------------
-void GfxSettingMenu::Draw() {
+void GfxSettingMenu::draw() {
 	// Window border doesn't matter if you are in fullscreen
 	if (!g_engine->_screenSettings->fullscreen)
-		border.Draw();
+		border.draw();
 
 	// Draw toggle buttons
-	brightness.Draw();
-	fullscreen.Draw();
-	vsync.Draw();
+	brightness.draw();
+	fullscreen.draw();
+	vsync.draw();
 
 	// Quality and resolution can only be changed in the main menu
 	if (!g_engine->_screenSettings->in_game) {
 		// Tree quality button
-		quality.Draw();
+		quality.draw();
 	} else
-		notice_quality.Draw(); // Notice about quality settings
+		notice_quality.draw(); // Notice about quality settings
 
 	// Draw resolution menu
-	resolution.Draw();
+	resolution.draw();
 }
 
 //------------------------------------------------------------------------

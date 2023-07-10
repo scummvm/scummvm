@@ -115,7 +115,7 @@ void Game::Init(const Common::String &filename) {
 
 bool Game::LoadLevel(const Common::String &id, int player_x, int player_y) {
 	if (g_engine->_filePath->level.contains(id)) {
-		g_engine->_loadingScreen->Draw();
+		g_engine->_loadingScreen->draw();
 
 		// Load the assets local to this level
 		// If the filename is same as the previous one, skip loading
@@ -499,67 +499,67 @@ void Game::InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void Game::Draw() {
+void Game::draw() {
 	if (gem.draw_game)
-		level.Draw(info);
+		level.draw(info);
 	else
 		g_engine->_imageManager->BlackScreen();
 	switch (state) {
 	case STATE_GAME:
 		if (gem.EventInProgress())
-			gem.Draw(info, hud, level);
+			gem.draw(info, hud, level);
 		else
-			hud.Draw(info, level.PlayerID());
+			hud.draw(info, level.PlayerID());
 		break;
 	case STATE_PAUSE:
 		g_engine->_imageManager->DimScreen();
-		hud.pause.Draw(hud.back);
-		hud.Draw(info, level.PlayerID());
+		hud.pause.draw(hud.back);
+		hud.draw(info, level.PlayerID());
 		break;
 	case STATE_MAP:
 		g_engine->_imageManager->DimScreen();
-		map.Draw(info);
-		hud.Draw(info, level.PlayerID());
-		hud.back.Draw();
+		map.draw(info);
+		hud.draw(info, level.PlayerID());
+		hud.back.draw();
 		break;
 	case STATE_JOURNAL:
 		g_engine->_imageManager->DimScreen();
-		info.journal.Draw(level.PlayerID());
-		hud.Draw(info, level.PlayerID());
-		hud.back.Draw();
+		info.journal.draw(level.PlayerID());
+		hud.draw(info, level.PlayerID());
+		hud.back.draw();
 		break;
 	case STATE_CHARACTER:
 		g_engine->_imageManager->DimScreen();
-		gem.per.Draw(info, level.PlayerID());
-		hud.Draw(info, level.PlayerID());
-		hud.back.Draw();
+		gem.per.draw(info, level.PlayerID());
+		hud.draw(info, level.PlayerID());
+		hud.back.draw();
 		break;
 	case STATE_INVENTORY:
 		g_engine->_imageManager->DimScreen();
 		info.InvDraw(level.PlayerID());
-		hud.Draw(info, level.PlayerID());
-		hud.back.Draw();
+		hud.draw(info, level.PlayerID());
+		hud.back.draw();
 		break;
 	case STATE_HELP:
 		g_engine->_imageManager->DimScreen();
-		g_engine->_helpScreen->Draw();
-		hud.back.Draw();
-		hud.Draw(info, level.PlayerID());
+		g_engine->_helpScreen->draw();
+		hud.back.draw();
+		hud.draw(info, level.PlayerID());
 		break;
 	case STATE_LOSE_MENU:
-		hud.gom.Draw();
+		hud.gom.draw();
 		break;
 	case STATE_LOSE_LOAD:
-		g_engine->_loadMenu->Draw();
-		hud.back.Draw();
+		g_engine->_loadMenu->draw();
+		hud.back.draw();
 		break;
 	default:
 		break;
 	}
 
 	if (GameDebug)
-		debug_console.Draw(info);
-	g_engine->_mouse->Draw();
+		debug_console.draw(info);
+	g_engine->_mouse->draw();
 }
 
 //------------------------------------------------------------------------

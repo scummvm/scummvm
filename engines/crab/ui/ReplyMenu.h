@@ -68,7 +68,7 @@ public:
 					 const Common::String &cur_id, PersonHandler &oh, const SDL_Event &Event);
 #endif
 
-	void Draw();
+	void draw();
 	void Cache(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat);
 
 	void SetUI();

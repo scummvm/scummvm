@@ -50,7 +50,7 @@ public:
 	void Init(const HoverInfo &h, const int &XOffset = 0, const int &YOffset = 0);
 
 	void load(rapidxml::xml_node<char> *node, Rect *parent = NULL);
-	void Draw(const int &XOffset = 0, const int &YOffset = 0);
+	void draw(const int &XOffset = 0, const int &YOffset = 0);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

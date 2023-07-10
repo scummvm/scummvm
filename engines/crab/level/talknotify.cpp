@@ -43,7 +43,7 @@ void TalkNotify::load(rapidxml::xml_node<char> *node) {
 	loadNum(col, "col", node);
 }
 
-void TalkNotify::Draw(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s, const Rect &camera) {
+void TalkNotify::draw(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s, const Rect &camera) {
 	Rect rect = s.PosRect();
 
 	// Find position to draw name (over the sprite's top edge)
@@ -54,7 +54,7 @@ void TalkNotify::Draw(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s
 	// Find the sprite name
 	Common::String text = info.GetName(s.ID());
 
-	g_engine->_textManager->Draw(pos.x - camera.x, pos.y - camera.y, text, col, font, align, true);
+	g_engine->_textManager->draw(pos.x - camera.x, pos.y - camera.y, text, col, font, align, true);
 }
 
 } // End of namespace Crab

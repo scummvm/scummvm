@@ -67,7 +67,7 @@ public:
 #endif
 	void InternalEvents();
 
-	void Draw();
+	void draw();
 	void SetUI();
 
 	void SetInfo() { resolution.SetInfo(); }

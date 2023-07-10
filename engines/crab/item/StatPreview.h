@@ -51,7 +51,7 @@ struct StatPreview {
 	StatPreview() { enabled = false; }
 
 	void load(rapidxml::xml_node<char> *node);
-	void Draw(Item &item, pyrodactyl::stat::StatDrawHelper &helper);
+	void draw(Item &item, pyrodactyl::stat::StatDrawHelper &helper);
 };
 } // End of namespace item
 } // End of namespace pyrodactyl

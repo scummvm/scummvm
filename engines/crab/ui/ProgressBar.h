@@ -105,7 +105,7 @@ public:
 	}
 	void load(rapidxml::xml_node<char> *node);
 
-	void Draw(const int &value, const int &max);
+	void draw(const int &value, const int &max);
 	void Effect(const int &value, const int &prev);
 };
 } // End of namespace ui

@@ -115,8 +115,8 @@ void Item::StatChange(Person &obj, bool increase) {
 			obj.stat.Change(i->type, -i->val);
 }
 
-void Item::Draw(const int &x, const int &y) {
-	g_engine->_imageManager->Draw(x, y, img);
+void Item::draw(const int &x, const int &y) {
+	g_engine->_imageManager->draw(x, y, img);
 }
 
 } // End of namespace Crab

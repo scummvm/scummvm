@@ -113,20 +113,20 @@ void PopUpCollection::InternalEvents(pyrodactyl::event::Info &info, const Common
 //------------------------------------------------------------------------
 // Purpose: Draw functions
 //------------------------------------------------------------------------
-void PopUp::Draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop, const Rect &camera) {
+void PopUp::draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop, const Rect &camera) {
 	if (show) {
 		if (x + pop.x < camera.w / 3)
-			g_engine->_textManager->Draw(x + pop.x, y + pop.y, text, pop.col, pop.font, ALIGN_LEFT, pop.line.x, pop.line.y, true);
+			g_engine->_textManager->draw(x + pop.x, y + pop.y, text, pop.col, pop.font, ALIGN_LEFT, pop.line.x, pop.line.y, true);
 		else if (x + pop.x > (2 * camera.w) / 3)
-			g_engine->_textManager->Draw(x + pop.x, y + pop.y, text, pop.col, pop.font, ALIGN_RIGHT, pop.line.x, pop.line.y, true);
+			g_engine->_textManager->draw(x + pop.x, y + pop.y, text, pop.col, pop.font, ALIGN_RIGHT, pop.line.x, pop.line.y, true);
 		else
-			g_engine->_textManager->Draw(x + pop.x, y + pop.y, text, pop.col, pop.font, ALIGN_CENTER, pop.line.x, pop.line.y, true);
+			g_engine->_textManager->draw(x + pop.x, y + pop.y, text, pop.col, pop.font, ALIGN_CENTER, pop.line.x, pop.line.y, true);
 	}
 }
 
-void PopUpCollection::Draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop, const Rect &camera) {
+void PopUpCollection::draw(const int &x, const int &y, pyrodactyl::ui::ParagraphData &pop, const Rect &camera) {
 	if (cur >= 0 && (unsigned int)cur < element.size())
-		element[cur].Draw(x, y, pop, camera);
+		element[cur].draw(x, y, pop, camera);
 }
 
 } // End of namespace Crab

@@ -77,7 +77,7 @@ public:
 
 	bool Contains(const Vector2i &pos);
 
-	void Draw(const int &XOffset = 0, const int &YOffset = 0,
+	void draw(const int &XOffset = 0, const int &YOffset = 0,
 			  const uint8 &r = 0, const uint8 &g = 0, const uint8 &b = 0, const uint8 &a = 255);
 };
 

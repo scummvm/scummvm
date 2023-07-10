@@ -64,23 +64,23 @@ void DebugConsole::load(const Common::String &filename) {
 	}
 }
 
-void DebugConsole::Draw(pyrodactyl::event::Info &info) {
+void DebugConsole::draw(pyrodactyl::event::Info &info) {
 	switch (state) {
 	case STATE_NORMAL:
-		menu.Draw();
+		menu.draw();
 		break;
 	case STATE_VAR:
-		bg.Draw();
-		check.Draw();
-		back.Draw();
-		text_field.Draw();
+		bg.draw();
+		check.draw();
+		back.draw();
+		text_field.draw();
 
 		{
 			int temp = 0;
 			if (info.VarGet(var_name, temp))
-				value.Draw(NumberToString(temp));
+				value.draw(NumberToString(temp));
 			else
-				value.Draw("Does not exist.");
+				value.draw("Does not exist.");
 		}
 		break;
 

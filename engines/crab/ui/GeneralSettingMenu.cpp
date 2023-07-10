@@ -129,18 +129,18 @@ void GeneralSettingMenu::InternalEvents() {
 //------------------------------------------------------------------------
 // Purpose: Draw stuff
 //------------------------------------------------------------------------
-void GeneralSettingMenu::Draw() {
+void GeneralSettingMenu::draw() {
 	// Draw volume sliders
-	notice_volume.Draw();
-	vol_music.Draw();
-	vol_effects.Draw();
+	notice_volume.draw();
+	vol_music.draw();
+	vol_effects.draw();
 
 	// Draw the auto-save on exit option
-	save_on_exit.Draw();
-	mouse_trap.Draw();
+	save_on_exit.draw();
+	mouse_trap.draw();
 
 	// Text speed radio button menu
-	text_speed.Draw();
+	text_speed.draw();
 }
 
 //------------------------------------------------------------------------

@@ -77,7 +77,7 @@ public:
 #endif
 
 	void Init(const Common::String &char_id);
-	void Draw(const Common::String &char_id);
+	void draw(const Common::String &char_id);
 
 	// Requires: id of the character, the item information
 	void Add(const Common::String &char_id, Item &item_data);

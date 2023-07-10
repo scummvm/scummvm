@@ -49,9 +49,9 @@ void HoverInfo::load(rapidxml::xml_node<char> *node, Rect *parent) {
 	}
 }
 
-void HoverInfo::Draw(const int &XOffset, const int &YOffset) {
+void HoverInfo::draw(const int &XOffset, const int &YOffset) {
 	if (enabled)
-		TextData::Draw(text, XOffset, YOffset);
+		TextData::draw(text, XOffset, YOffset);
 }
 
 } // End of namespace Crab

@@ -198,7 +198,7 @@ public:
 
 	void PreDraw();
 	void PreDrawObjects(Graphics::ManagedSurface *surf);
-	void Draw(pyrodactyl::event::Info &info);
+	void draw(pyrodactyl::event::Info &info);
 
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 	void LoadState(rapidxml::xml_node<char> *node);

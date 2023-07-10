@@ -143,9 +143,9 @@ Graphics::ManagedSurface *TextManager::RenderTextBlended(const FontKey &fKey, co
 //------------------------------------------------------------------------
 // Purpose: Draw text
 //------------------------------------------------------------------------
-void TextManager::Draw(const int &x, const int &y, const Common::String &text, const int &color,
+void TextManager::draw(const int &x, const int &y, const Common::String &text, const int &color,
 					   const FontKey &fontk, const Align &align, const bool &background) {
-	//warning("STUB: TextManager::Draw()");
+	//warning("STUB: TextManager::draw()");
 
 	if (text == " ") return;
 
@@ -193,7 +193,7 @@ void TextManager::Draw(const int &x, const int &y, const Common::String &text, c
 #if 0
 			SDL_RenderFillRect(gRenderer, &rect);
 #endif
-			cache[pos].img.Draw(x, y);
+			cache[pos].img.draw(x, y);
 		} else if (align == ALIGN_CENTER) {
 			rect.x = x - cache[pos].img.W() / 2 - pad_bg.x;
 			rect.y = y - cache[pos].img.H() / 2 - pad_bg.y;
@@ -202,7 +202,7 @@ void TextManager::Draw(const int &x, const int &y, const Common::String &text, c
 #if 0
 			SDL_RenderFillRect(gRenderer, &rect);
 #endif
-			cache[pos].img.Draw(x - cache[pos].img.W() / 2, y - cache[pos].img.H() / 2);
+			cache[pos].img.draw(x - cache[pos].img.W() / 2, y - cache[pos].img.H() / 2);
 		} else {
 			rect.x = x - cache[pos].img.W() - pad_bg.x;
 			rect.y = y - pad_bg.y;
@@ -211,22 +211,22 @@ void TextManager::Draw(const int &x, const int &y, const Common::String &text, c
 #if 0
 			SDL_RenderFillRect(gRenderer, &rect);
 #endif
-			cache[pos].img.Draw(x - cache[pos].img.W(), y);
+			cache[pos].img.draw(x - cache[pos].img.W(), y);
 		}
 
 		surf.free();
 
 	} else {
 		if (align == ALIGN_LEFT)
-			cache[pos].img.Draw(x, y);
+			cache[pos].img.draw(x, y);
 		else if (align == ALIGN_CENTER)
-			cache[pos].img.Draw(x - cache[pos].img.W() / 2, y - cache[pos].img.H() / 2);
+			cache[pos].img.draw(x - cache[pos].img.W() / 2, y - cache[pos].img.H() / 2);
 		else
-			cache[pos].img.Draw(x - cache[pos].img.W(), y);
+			cache[pos].img.draw(x - cache[pos].img.W(), y);
 	}
 }
 
-void TextManager::Draw(const int &x, int y, const Common::String &text, const int &color, const FontKey &fKey, const Align &align,
+void TextManager::draw(const int &x, int y, const Common::String &text, const int &color, const FontKey &fKey, const Align &align,
 					   const unsigned int &line_width, const unsigned int &line_height, const bool &background) {
 	for (unsigned int start_pos = 0, len = text.size(); start_pos < len; y += line_height) {
 		unsigned int end_pos = start_pos + 1;
@@ -259,7 +259,7 @@ void TextManager::Draw(const int &x, int y, const Common::String &text, const in
 			start_pos += line_width;
 		}
 
-		Draw(x, y, word, color, fKey, align, background);
+		draw(x, y, word, color, fKey, align, background);
 	}
 }
 

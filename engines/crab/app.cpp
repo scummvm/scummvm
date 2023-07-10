@@ -252,7 +252,7 @@ void App::Run() {
 		}
 
 		// Do state Drawing
-		CurrentState->Draw();
+		CurrentState->draw();
 
 #if 0
 		if (GameDebug) {
@@ -264,7 +264,7 @@ void App::Run() {
 				++fpscount;
 
 			if (CurrentStateID >= 0)
-				g_engine->_textManager->Draw(0, 0, NumberToString(fpsval), 0);
+				g_engine->_textManager->draw(0, 0, NumberToString(fpsval), 0);
 		}
 #endif
 		if (g_system->getMillis() - lasts > 1000) {
@@ -275,7 +275,7 @@ void App::Run() {
 				++fpscount;
 
 			if (CurrentStateID >= 0)
-				g_engine->_textManager->Draw(0, 0, NumberToString(fpsval).c_str(), 0);
+				g_engine->_textManager->draw(0, 0, NumberToString(fpsval).c_str(), 0);
 		//const Graphics::ManagedSurface *s = g_engine->_renderSurface;
 		//g_system->copyRectToScreen(s->getPixels(), s->pitch, 0, 0, s->w, s->h);
 		g_engine->_screen->update();

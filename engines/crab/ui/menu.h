@@ -367,9 +367,9 @@ public:
 	//------------------------------------------------------------------------
 	// Purpose: Draw the menu
 	//------------------------------------------------------------------------
-	void Draw(const int &XOffset = 0, const int &YOffset = 0) {
+	void draw(const int &XOffset = 0, const int &YOffset = 0) {
 		for (auto it = element.begin(); it != element.end(); ++it)
-			it->Draw(XOffset, YOffset);
+			it->draw(XOffset, YOffset);
 	}
 
 	//------------------------------------------------------------------------

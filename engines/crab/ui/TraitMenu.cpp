@@ -65,23 +65,23 @@ void TraitMenu::load(rapidxml::xml_node<char> *node) {
 	menu.AssignPaths();
 }
 
-void TraitMenu::Draw(const pyrodactyl::people::Person *obj) {
+void TraitMenu::draw(const pyrodactyl::people::Person *obj) {
 	if (obj != nullptr) {
 		auto i = menu.element.begin();
 		for (auto t = obj->trait.begin(); t != obj->trait.end() && i != menu.element.end(); ++t, ++i) {
-			i->Draw();
+			i->draw();
 			if (t->unread)
 				g_engine->_imageManager->NotifyDraw(i->x + i->w, i->y);
 		}
 
 		for (; i != menu.element.end(); ++i)
-			i->Draw();
+			i->draw();
 
 		if (select > -1 && (unsigned int)select < obj->trait.size())
-			desc.Draw(obj->trait[select].desc);
+			desc.draw(obj->trait[select].desc);
 	} else
 		for (auto &i : menu.element)
-			i.Draw();
+			i.draw();
 }
 
 void TraitMenu::HandleEvents(pyrodactyl::people::Person *obj, const Common::Event &Event) {

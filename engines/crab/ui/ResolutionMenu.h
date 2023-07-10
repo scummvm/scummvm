@@ -69,7 +69,7 @@ public:
 	~ResolutionMenu(void) {}
 
 	void load(rapidxml::xml_node<char> *node);
-	void Draw();
+	void draw();
 
 	// Return 1 if one of resolution buttons is pressed, 2 if custom button is pressed, 0 otherwise
 	int HandleEvents(const Common::Event &Event);

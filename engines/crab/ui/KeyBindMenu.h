@@ -122,7 +122,7 @@ public:
 #endif
 	void SetCaption();
 
-	void Draw();
+	void draw();
 	void SetUI();
 };
 } // End of namespace ui

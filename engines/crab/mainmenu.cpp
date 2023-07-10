@@ -479,75 +479,75 @@ void MainMenu::ChangeState(MenuState ms, const bool &start) {
 //------------------------------------------------------------------------
 // Purpose: Drawing function
 //------------------------------------------------------------------------
-void MainMenu::Draw() {
-	bg.Draw();
+void MainMenu::draw() {
+	bg.draw();
 
 	for (auto &i : lights)
-		i.Draw();
+		i.draw();
 
 	switch (state) {
 	case STATE_NORMAL:
 		// Draw the logo
-		logo.Draw();
+		logo.draw();
 
 		// Draw the game name and mod path if a mod is loaded
 		if (g_engine->_filePath->mod_cur != "res/default.xml") {
-			g_engine->_textManager->Draw(g_engine->_screenSettings->cur.w / 2, g_engine->_screenSettings->cur.h / 2, "Unrest", 0, 0, ALIGN_CENTER);
-			//g_engine->_textManager->Draw(g_engine->_screenSettings->cur.w / 2, g_engine->_screenSettings->cur.h / 2 + 50, g_engine->_filePath->mod_cur, 5, 1, ALIGN_CENTER);
+			g_engine->_textManager->draw(g_engine->_screenSettings->cur.w / 2, g_engine->_screenSettings->cur.h / 2, "Unrest", 0, 0, ALIGN_CENTER);
+			//g_engine->_textManager->draw(g_engine->_screenSettings->cur.w / 2, g_engine->_screenSettings->cur.h / 2 + 50, g_engine->_filePath->mod_cur, 5, 1, ALIGN_CENTER);
 		}
 
-		me_main.Draw();
+		me_main.draw();
 
 #ifdef UNREST_DEMO
-		g_engine->_textManager->Draw(logo.x + logo.w, logo.y + logo.h / 2, "Demo", 0, 0, ALIGN_CENTER);
-		steam.Draw();
-		direct.Draw();
+		g_engine->_textManager->draw(logo.x + logo.w, logo.y + logo.h / 2, "Demo", 0, 0, ALIGN_CENTER);
+		steam.draw();
+		direct.draw();
 #endif
 		break;
 
 	case STATE_OPTIONS:
-		g_engine->_optionMenu->Draw(back);
-		me_main.Draw();
+		g_engine->_optionMenu->draw(back);
+		me_main.draw();
 		break;
 
 	case STATE_CREDITS:
-		credits.Draw();
+		credits.draw();
 		break;
 
 	case STATE_DIFF:
-		diff.bg.Draw();
-		diff.heading.Draw();
-		diff.menu.Draw();
-		back.Draw();
-		me_main.Draw();
+		diff.bg.draw();
+		diff.heading.draw();
+		diff.menu.draw();
+		back.draw();
+		me_main.draw();
 		break;
 
 	case STATE_SAVENAME:
-		bg_save.Draw();
-		warning.Draw();
-		save.Draw();
-		accept.Draw();
-		cancel.Draw();
-		me_main.Draw();
+		bg_save.draw();
+		warning.draw();
+		save.draw();
+		accept.draw();
+		cancel.draw();
+		me_main.draw();
 		break;
 
 	case STATE_MOD:
-		mod.Draw();
-		back.Draw();
-		me_main.Draw();
+		mod.draw();
+		back.draw();
+		me_main.draw();
 		break;
 
 	case STATE_HELP:
-		g_engine->_helpScreen->Draw();
-		back.Draw();
-		me_main.Draw();
+		g_engine->_helpScreen->draw();
+		back.draw();
+		me_main.draw();
 		break;
 
 	default:
 		break;
 	}
 
-	g_engine->_mouse->Draw();
+	g_engine->_mouse->draw();
 }
 
 void MainMenu::SetUI() {

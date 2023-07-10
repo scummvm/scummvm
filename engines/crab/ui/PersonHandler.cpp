@@ -69,10 +69,10 @@ void PersonHandler::load(rapidxml::xml_node<char> *node) {
 		jb.load(node->first_node("journal"));
 }
 
-void PersonHandler::Draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameEvent *Event, const Common::String &person_id,
+void PersonHandler::draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameEvent *Event, const Common::String &person_id,
 						 const bool &player, pyrodactyl::anim::Sprite *s) {
 	// Draw the dialog box background
-	dlbox.Draw(player);
+	dlbox.draw(player);
 
 	if (s != NULL) {
 		Rect r = s->DialogClip(Event->state);
@@ -88,24 +88,24 @@ void PersonHandler::Draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameE
 		else if (sprite_align.y == ALIGN_RIGHT)
 			y -= r.h;
 
-		g_engine->_imageManager->Draw(x, y, s->Img(), &r);
+		g_engine->_imageManager->draw(x, y, s->Img(), &r);
 	}
 
 	if (info.PersonValid(person_id)) {
-		name.Draw(info.PersonGet(person_id).name);
+		name.draw(info.PersonGet(person_id).name);
 
 		if (!player) {
-			opinion[OPI_LIKE].Draw(info.PersonGet(person_id).opinion.val[OPI_LIKE], OPINION_MAX);
-			opinion[OPI_RESPECT].Draw(info.PersonGet(person_id).opinion.val[OPI_RESPECT], OPINION_MAX);
-			opinion[OPI_FEAR].Draw(info.PersonGet(person_id).opinion.val[OPI_FEAR], OPINION_MAX);
+			opinion[OPI_LIKE].draw(info.PersonGet(person_id).opinion.val[OPI_LIKE], OPINION_MAX);
+			opinion[OPI_RESPECT].draw(info.PersonGet(person_id).opinion.val[OPI_RESPECT], OPINION_MAX);
+			opinion[OPI_FEAR].draw(info.PersonGet(person_id).opinion.val[OPI_FEAR], OPINION_MAX);
 		}
 	}
 
 	// Draw the journal button
-	jb.Draw();
+	jb.draw();
 
 	// Draw the dialog box text
-	dlbox.Draw(info, Event->dialog);
+	dlbox.draw(info, Event->dialog);
 }
 
 bool PersonHandler::HandleCommonEvents(const Common::Event &Event) {

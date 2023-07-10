@@ -79,17 +79,17 @@ void ResolutionMenu::load(rapidxml::xml_node<char> *node) {
 	AssignPaths();
 }
 
-void ResolutionMenu::Draw() {
-	info.Draw();
+void ResolutionMenu::draw() {
+	info.draw();
 
 	switch (state) {
 	case STATE_NORMAL:
-		change.Draw();
+		change.draw();
 		break;
 	case STATE_CHANGE:
-		Menu::Draw();
-		cancel.Draw();
-		custom.Draw();
+		Menu::draw();
+		cancel.draw();
+		custom.draw();
 		break;
 	default:
 		break;

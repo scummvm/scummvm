@@ -109,10 +109,10 @@ public:
 	SDL_Surface *RenderTextBlended(const FontKey &font, const Common::String &text, const int &color);
 #endif
 
-	void Draw(const int &x, const int &y, const Common::String &text, const int &color,
+	void draw(const int &x, const int &y, const Common::String &text, const int &color,
 			  const FontKey &font = 0, const Align &align = ALIGN_LEFT, const bool &background = false);
 
-	void Draw(const int &x, int y, const Common::String &text, const int &color, const FontKey &font, const Align &align,
+	void draw(const int &x, int y, const Common::String &text, const int &color, const FontKey &font, const Align &align,
 			  const unsigned int &line_width, const unsigned int &line_height, const bool &background = false);
 };
 

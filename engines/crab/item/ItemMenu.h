@@ -64,7 +64,7 @@ public:
 
 	int HoverIndex() { return hover_index; }
 
-	void Draw(pyrodactyl::ui::ItemDesc &item_info);
+	void draw(pyrodactyl::ui::ItemDesc &item_info);
 	/*pyrodactyl::people::Person &obj, pyrodactyl::stat::StatDrawHelper &helper*/
 
 	void Init(const ItemSlot &ref, const Vector2i &inc, const unsigned int &rows,

@@ -106,9 +106,9 @@ void Journal::Select(const Common::String &id, const int &choice) {
 //------------------------------------------------------------------------
 // Purpose: Draw stuff
 //------------------------------------------------------------------------
-void Journal::Draw(const Common::String &id) {
-	bg.Draw();
-	category.Draw();
+void Journal::draw(const Common::String &id) {
+	bg.draw();
+	category.draw();
 
 	// Always find valid journal group first
 	for (auto &jo : journal)
@@ -119,7 +119,7 @@ void Journal::Draw(const Common::String &id) {
 					g_engine->_imageManager->NotifyDraw(i->x + i->w, i->y);
 
 			if (select >= 0 && select < JE_TOTAL)
-				jo.menu[select].Draw(bu_map);
+				jo.menu[select].draw(bu_map);
 
 			break;
 		}

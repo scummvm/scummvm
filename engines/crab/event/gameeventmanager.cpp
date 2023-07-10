@@ -315,7 +315,7 @@ void Manager::UpdateDialogBox(Info &info, Level &level) {
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void Manager::Draw(Info &info, HUD &hud, Level &level) {
+void Manager::draw(Info &info, HUD &hud, Level &level) {
 	if (event_map.contains(info.CurLocID()) > 0 && event_map[info.CurLocID()].EventInProgress(active_seq)) {
 		switch (cur_event->type) {
 		case EVENT_ANIM:
@@ -324,32 +324,32 @@ void Manager::Draw(Info &info, HUD &hud, Level &level) {
 		case EVENT_DIALOG:
 			g_engine->_imageManager->DimScreen();
 			if (oh.show_journal) {
-				info.journal.Draw(level.PlayerID());
-				hud.back.Draw();
+				info.journal.draw(level.PlayerID());
+				hud.back.draw();
 			} else
-				oh.Draw(info, cur_event, cur_event->title, player, cur_sp);
+				oh.draw(info, cur_event, cur_event->title, player, cur_sp);
 			break;
 		case EVENT_REPLY:
 			g_engine->_imageManager->DimScreen();
 			if (oh.show_journal) {
-				info.journal.Draw(level.PlayerID());
-				hud.back.Draw();
+				info.journal.draw(level.PlayerID());
+				hud.back.draw();
 			} else {
-				oh.Draw(info, cur_event, cur_event->title, player, cur_sp);
-				reply.Draw();
+				oh.draw(info, cur_event, cur_event->title, player, cur_sp);
+				reply.draw();
 			}
 			break;
 		case EVENT_TEXT:
-			oh.Draw(info, cur_event, cur_event->title, player, cur_sp);
-			textin.Draw();
+			oh.draw(info, cur_event, cur_event->title, player, cur_sp);
+			textin.draw();
 			break;
 		case EVENT_SPLASH:
 			g_engine->_imageManager->DimScreen();
 			if (intro.show_traits) {
-				per.Draw(info, cur_event->title);
-				hud.back.Draw();
+				per.draw(info, cur_event->title);
+				hud.back.draw();
 			} else
-				intro.Draw(info, cur_event->dialog, cur_sp, cur_event->state);
+				intro.draw(info, cur_event->dialog, cur_sp, cur_event->state);
 
 			break;
 		default:

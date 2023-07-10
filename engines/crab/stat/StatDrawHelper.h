@@ -55,7 +55,7 @@ struct StatInfo {
 	}
 
 	void load(rapidxml::xml_node<char> *node);
-	void Draw(const int &val, const int &max);
+	void draw(const int &val, const int &max);
 };
 
 class StatDrawHelper {

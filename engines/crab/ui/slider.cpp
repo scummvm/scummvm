@@ -117,10 +117,10 @@ bool Slider::HandleEvents(const SDL_Event &Event) {
 }
 #endif
 
-void Slider::Draw() {
-	bar.Draw();
-	caption.Draw(false);
-	knob.Draw();
+void Slider::draw() {
+	bar.draw();
+	caption.draw(false);
+	knob.draw();
 }
 
 void Slider::Value(const int val) {

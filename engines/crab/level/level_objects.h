@@ -58,7 +58,7 @@ struct PlayerDestMarker {
 	PlayerDestMarker() { img = 0; }
 
 	void load(rapidxml::xml_node<char> *node);
-	void Draw(const Vector2i &pos, const Rect &camera);
+	void draw(const Vector2i &pos, const Rect &camera);
 };
 } // End of namespace level
 } // End of namespace pyrodactyl

@@ -67,9 +67,9 @@ void AlphaImage::InternalEvents() {
 		g_engine->_imageManager->GetTexture(img).Alpha(alpha.cur);
 }
 
-void AlphaImage::Draw(const int &XOffset, const int &YOffset) {
+void AlphaImage::draw(const int &XOffset, const int &YOffset) {
 	if (g_engine->_imageManager->ValidTexture(img))
-		g_engine->_imageManager->GetTexture(img).Draw(pos.x + XOffset, pos.y + YOffset);
+		g_engine->_imageManager->GetTexture(img).draw(pos.x + XOffset, pos.y + YOffset);
 }
 
 } // End of namespace Crab

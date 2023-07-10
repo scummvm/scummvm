@@ -64,7 +64,7 @@ public:
 
 	void InternalEvents();
 
-	void Draw();
+	void draw();
 	void SetUI();
 
 	void CreateBackup() {

@@ -82,27 +82,27 @@ void HUD::load(const Common::String &filename, pyrodactyl::level::TalkNotify &tn
 	}
 }
 
-void HUD::Draw(pyrodactyl::event::Info &info, const Common::String &id) {
-	bg.Draw();
-	menu.Draw();
+void HUD::draw(pyrodactyl::event::Info &info, const Common::String &id) {
+	bg.draw();
+	menu.draw();
 
 	if (info.unread.journal) {
-		g_engine->_imageManager->Draw(menu.element[HS_JOURNAL].x + menu.element[HS_JOURNAL].w - clip.w / 2,
+		g_engine->_imageManager->draw(menu.element[HS_JOURNAL].x + menu.element[HS_JOURNAL].w - clip.w / 2,
 						   menu.element[HS_JOURNAL].y - clip.h / 2, notify_anim, &clip);
 	}
 
 	if (info.unread.inventory) {
-		g_engine->_imageManager->Draw(menu.element[HS_INV].x + menu.element[HS_INV].w - clip.w / 2,
+		g_engine->_imageManager->draw(menu.element[HS_INV].x + menu.element[HS_INV].w - clip.w / 2,
 						   menu.element[HS_INV].y - clip.h / 2, notify_anim, &clip);
 	}
 
 	if (info.unread.trait) {
-		g_engine->_imageManager->Draw(menu.element[HS_CHAR].x + menu.element[HS_CHAR].w - clip.w / 2,
+		g_engine->_imageManager->draw(menu.element[HS_CHAR].x + menu.element[HS_CHAR].w - clip.w / 2,
 						   menu.element[HS_CHAR].y - clip.h / 2, notify_anim, &clip);
 	}
 
 	if (info.unread.map) {
-		g_engine->_imageManager->Draw(menu.element[HS_MAP].x + menu.element[HS_MAP].w - clip.w / 2,
+		g_engine->_imageManager->draw(menu.element[HS_MAP].x + menu.element[HS_MAP].w - clip.w / 2,
 						   menu.element[HS_MAP].y - clip.h / 2, notify_anim, &clip);
 	}
 //#endif

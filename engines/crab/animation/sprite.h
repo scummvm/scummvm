@@ -188,7 +188,7 @@ public:
 	void InternalEvents(pyrodactyl::event::Info &info, const Common::String &player_id,
 						Common::Array<pyrodactyl::event::EventResult> &result, Common::Array<pyrodactyl::event::EventSeqInfo> &end_seq);
 
-	void Draw(pyrodactyl::event::Info &info, const Rect &camera);
+	void draw(pyrodactyl::event::Info &info, const Rect &camera);
 	void DrawPopup(pyrodactyl::ui::ParagraphData &pop, const Rect &camera);
 
 	void Walk(const bool &reset);

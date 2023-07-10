@@ -66,12 +66,12 @@ int GameOverMenu::HandleEvents(const SDL_Event &Event) {
 }
 #endif
 
-void GameOverMenu::Draw() {
-	bg.Draw();
+void GameOverMenu::draw() {
+	bg.draw();
 	if (cur < quote.size())
-		title.Draw(quote[cur]);
+		title.draw(quote[cur]);
 
-	menu.Draw();
+	menu.draw();
 }
 
 void GameOverMenu::SetUI() {

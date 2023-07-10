@@ -121,7 +121,7 @@ void Cursor::HandleEvents(const Common::Event &event) {
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void Cursor::Draw() {
+void Cursor::draw() {
 	uint8 oldState = state;
 	state = (hover ? 1 : 0) | (pressed << 1);
 

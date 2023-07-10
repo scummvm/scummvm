@@ -239,7 +239,7 @@ Vector2i Sprite::CamFocus() {
 //------------------------------------------------------------------------
 // Purpose: Draw the sprite
 //------------------------------------------------------------------------
-void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera) {
+void Sprite::draw(pyrodactyl::event::Info &info, const Rect &camera) {
 	using namespace pyrodactyl::image;
 	using namespace pyrodactyl::text;
 
@@ -249,26 +249,26 @@ void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera) {
 	ShadowOffset sh = anim_set.shadow(dir);
 	if (sh.valid) {
 		// Draw using custom offset
-		g_engine->_imageManager->Draw(x + clip.w / 2 - anim_set._shadow.size.x + sh.x,
+		g_engine->_imageManager->draw(x + clip.w / 2 - anim_set._shadow.size.x + sh.x,
 						   y + clip.h - anim_set._shadow.size.y + sh.y,
 						   anim_set._shadow.img);
 	} else {
 		// Draw using default offset
-		g_engine->_imageManager->Draw(x + clip.w / 2 - anim_set._shadow.size.x + anim_set._shadow.offset.x,
+		g_engine->_imageManager->draw(x + clip.w / 2 - anim_set._shadow.size.x + anim_set._shadow.offset.x,
 						   y + clip.h - anim_set._shadow.size.y + anim_set._shadow.offset.y,
 						   anim_set._shadow.img);
 	}
 
-	g_engine->_imageManager->Draw(x, y, image, &clip, anim_set.flip(dir));
+	g_engine->_imageManager->draw(x, y, image, &clip, anim_set.flip(dir));
 	img_eff.draw(x, y);
 
 	if (GameDebug) {
 		// Nice boxes for the frames and box_v, box_d
 		Rect bounds = BoundRect(), vul = BoxV(), dmg = BoxD(), debugpos = PosRect();
-		bounds.Draw(-camera.x, -camera.y);
-		debugpos.Draw(-camera.x, -camera.y, 255, 255, 255);
-		dmg.Draw(-camera.x, -camera.y, 255, 0, 0);
-		vul.Draw(-camera.x, -camera.y, 0, 0, 255);
+		bounds.draw(-camera.x, -camera.y);
+		debugpos.draw(-camera.x, -camera.y, 255, 255, 255);
+		dmg.draw(-camera.x, -camera.y, 255, 0, 0);
+		vul.draw(-camera.x, -camera.y, 0, 0, 255);
 
 		FightMove fm;
 		if (anim_set._fight.nextMove(fm)) {
@@ -278,17 +278,17 @@ void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera) {
 			actual_range.w = fm._ai._range.val[dir].w;
 			actual_range.h = fm._ai._range.val[dir].h;
 
-			actual_range.Draw(-camera.x, -camera.y, 255, 0, 255);
+			actual_range.draw(-camera.x, -camera.y, 255, 0, 255);
 		}
 
 		/*int health = 0;
 		info.StatGet(id, pyrodactyl::stat::STAT_HEALTH, health);
-		g_engine->_textManager->Draw(x + 60.0f, y - 100.0f, NumberToString(health), 0);
+		g_engine->_textManager->draw(x + 60.0f, y - 100.0f, NumberToString(health), 0);
 
 		pyrodactyl::people::PersonState state = info.State(id);
-		g_engine->_textManager->Draw(x, y - 60.0f, NumberToString(state), 0);
+		g_engine->_textManager->draw(x, y - 60.0f, NumberToString(state), 0);
 
-		g_engine->_textManager->Draw(x + 120.0f, y - 60.0f, NumberToString(ai_data.dest.y), 0);*/
+		g_engine->_textManager->draw(x + 120.0f, y - 60.0f, NumberToString(ai_data.dest.y), 0);*/
 
 		if (pathing.m_vSolution.size() > 0) {
 			for (auto iter = pathing.m_vSolution.begin(); iter != pathing.m_vSolution.end(); ++iter) {
@@ -301,25 +301,25 @@ void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera) {
 				}
 
 				if (nextToWall)
-					(*iter)->GetRect().Draw(-camera.x, -camera.y, 0, 0, 0, 254);
+					(*iter)->GetRect().draw(-camera.x, -camera.y, 0, 0, 0, 254);
 				else
-					(*iter)->GetRect().Draw(-camera.x, -camera.y, 200, 200, 0, 254);
+					(*iter)->GetRect().draw(-camera.x, -camera.y, 200, 200, 0, 254);
 			}
 
-			pathing.m_pGoalTile->GetRect().Draw(-camera.x, -camera.y, 0, 0, 200, 254);
-			pathing.m_pStartTile->GetRect().Draw(-camera.x, -camera.y, 0, 200, 0, 254);
+			pathing.m_pGoalTile->GetRect().draw(-camera.x, -camera.y, 0, 0, 200, 254);
+			pathing.m_pStartTile->GetRect().draw(-camera.x, -camera.y, 0, 200, 0, 254);
 
 			// Draw adjacencies to the goal tile.
 			/*	for(auto neighbor = pathing.m_pGoalTile->neighborNodes.begin(); neighbor != pathing.m_pGoalTile->neighborNodes.end(); ++neighbor)
 				{
-				(*neighbor)->GetRect().Draw(-camera.x, -camera.y, 200, 0, 0, 254);
+				(*neighbor)->GetRect().draw(-camera.x, -camera.y, 200, 0, 0, 254);
 				}*/
 		}
 		Rect destinationRect = Rect((int)pathing.destination.x - 5,
 									(int)pathing.destination.y - 5,
 									10,
 									10);
-		destinationRect.Draw(-camera.x, -camera.y, 0, 200, 0, 254);
+		destinationRect.draw(-camera.x, -camera.y, 0, 200, 0, 254);
 	}
 }
 
@@ -328,7 +328,7 @@ void Sprite::DrawPopup(pyrodactyl::ui::ParagraphData &pop, const Rect &camera) {
 	int x = pos.x - camera.x - anim_set.anchorX(dir) + (anim_set._bounds.w / 2);
 	int y = pos.y - camera.y - anim_set.anchorY(dir);
 
-	popup.Draw(x, y, pop, camera);
+	popup.draw(x, y, pop, camera);
 }
 
 //------------------------------------------------------------------------

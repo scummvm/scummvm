@@ -61,16 +61,16 @@ bool ChapterIntro::HandleEvents(SDL_Event &Event) {
 }
 #endif
 
-void ChapterIntro::Draw(pyrodactyl::event::Info &info, Common::String &text,
+void ChapterIntro::draw(pyrodactyl::event::Info &info, Common::String &text,
 						pyrodactyl::anim::Sprite *cur_sp, const pyrodactyl::people::PersonState &state) {
-	dialog.Draw(false);
-	dialog.Draw(info, text);
+	dialog.draw(false);
+	dialog.draw(info, text);
 
-	traits.Draw();
+	traits.draw();
 
 	if (cur_sp != nullptr) {
 		Rect clip = cur_sp->DialogClip(state);
-		g_engine->_imageManager->Draw(pos.x, pos.y, cur_sp->Img(), &clip);
+		g_engine->_imageManager->draw(pos.x, pos.y, cur_sp->Img(), &clip);
 	}
 }
 

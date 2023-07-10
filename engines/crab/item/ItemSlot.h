@@ -78,7 +78,7 @@ public:
 	void Init(const ItemSlot &ref, const int &XOffset = 0, const int &YOffset = 0);
 	void load(rapidxml::xml_node<char> *node);
 
-	void Draw();
+	void draw();
 
 	pyrodactyl::ui::ButtonAction HandleEvents(const Common::Event &Event, const int &XOffset = 0, const int &YOffset = 0);
 #if 0

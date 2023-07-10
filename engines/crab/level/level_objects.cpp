@@ -42,8 +42,8 @@ void PlayerDestMarker::load(rapidxml::xml_node<char> *node) {
 	size.y = g_engine->_imageManager->GetTexture(img).H();
 }
 
-void PlayerDestMarker::Draw(const Vector2i &pos, const Rect &camera) {
-	g_engine->_imageManager->Draw(pos.x - (size.x / 2) - camera.x, pos.y - (size.y / 2) - camera.y, img);
+void PlayerDestMarker::draw(const Vector2i &pos, const Rect &camera) {
+	g_engine->_imageManager->draw(pos.x - (size.x / 2) - camera.x, pos.y - (size.y / 2) - camera.y, img);
 }
 
 } // End of namespace Crab

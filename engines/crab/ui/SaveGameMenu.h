@@ -69,7 +69,7 @@ public:
 #if 0
 	bool HandleEvents(const SDL_Event &Event);
 #endif
-	void Draw();
+	void draw();
 
 	void SetUI();
 };
