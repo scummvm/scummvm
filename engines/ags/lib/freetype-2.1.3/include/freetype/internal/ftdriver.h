@@ -48,10 +48,10 @@ typedef void
 
 
 typedef FT_Error
-(*FT2_1_3_Slot_InitFunc)( FT_GlyphSlot  slot );
+(*FT_Slot_InitFunc)( FT_GlyphSlot  slot );
 
 typedef void
-(*FT2_1_3_Slot_DoneFunc)( FT_GlyphSlot  slot );
+(*FT_Slot_DoneFunc)( FT_GlyphSlot  slot );
 
 
 typedef FT_Error
@@ -67,7 +67,7 @@ typedef FT_Error
 							FT_UInt  pixel_height );
 
 typedef FT_Error
-(*FT2_1_3_Slot_LoadFunc)( FT_GlyphSlot  slot,
+(*FT_Slot_LoadFunc)( FT_GlyphSlot  slot,
 					 FT_Size       size,
 					 FT_UInt       glyph_index,
 					 FT_Int32      load_flags );
@@ -83,7 +83,7 @@ typedef FT_Long
 
 typedef FT_Error
 (*FT_Face_GetKerningFunc)( FT_Face     face,
-						   FT_UInt     leFT2_1_3_glyph,
+						   FT_UInt     left_glyph,
 						   FT_UInt     right_glyph,
 						   FT_Vector*  kerning );
 
@@ -180,13 +180,13 @@ typedef struct  FT_Driver_ClassRec_ {
 	FT_Size_InitFunc          init_size;
 	FT_Size_DoneFunc          done_size;
 
-	FT2_1_3_Slot_InitFunc          init_slot;
-	FT2_1_3_Slot_DoneFunc          done_slot;
+	FT_Slot_InitFunc          init_slot;
+	FT_Slot_DoneFunc          done_slot;
 
 	FT_Size_ResetPointsFunc   set_char_sizes;
 	FT_Size_ResetPixelsFunc   set_pixel_sizes;
 
-	FT2_1_3_Slot_LoadFunc          load_glyph;
+	FT_Slot_LoadFunc          load_glyph;
 
 	FT_Face_GetKerningFunc    get_kerning;
 	FT_Face_AttachFunc        attach_file;

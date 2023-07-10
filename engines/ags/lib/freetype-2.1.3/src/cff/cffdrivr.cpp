@@ -392,13 +392,13 @@ const FT_Driver_ClassRec  cff_driver_class = {
 	(FT_Face_DoneFunc)       cff_face_done,
 	(FT_Size_InitFunc)       cff_size_init,
 	(FT_Size_DoneFunc)       cff_size_done,
-	(FT2_1_3_Slot_InitFunc)       cff_slot_init,
-	(FT2_1_3_Slot_DoneFunc)       cff_slot_done,
+	(FT_Slot_InitFunc)       cff_slot_init,
+	(FT_Slot_DoneFunc)       cff_slot_done,
 
 	(FT_Size_ResetPointsFunc)cff_size_reset,
 	(FT_Size_ResetPixelsFunc)cff_size_reset,
 
-	(FT2_1_3_Slot_LoadFunc)       Load_Glyph,
+	(FT_Slot_LoadFunc)       Load_Glyph,
 
 	(FT_Face_GetKerningFunc) Get_Kerning,
 	(FT_Face_AttachFunc)     0,

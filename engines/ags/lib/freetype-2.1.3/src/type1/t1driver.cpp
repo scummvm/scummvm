@@ -252,12 +252,12 @@ const FT_Driver_ClassRec  t1_driver_class = {
 	(FT_Face_DoneFunc)        T1_Face_Done,
 	(FT_Size_InitFunc)        T1_Size_Init,
 	(FT_Size_DoneFunc)        T1_Size_Done,
-	(FT2_1_3_Slot_InitFunc)        T1_GlyphSlot_Init,
-	(FT2_1_3_Slot_DoneFunc)        T1_GlyphSlot_Done,
+	(FT_Slot_InitFunc)        T1_GlyphSlot_Init,
+	(FT_Slot_DoneFunc)        T1_GlyphSlot_Done,
 
 	(FT_Size_ResetPointsFunc) T1_Size_Reset,
 	(FT_Size_ResetPixelsFunc) T1_Size_Reset,
-	(FT2_1_3_Slot_LoadFunc)        T1_Load_Glyph,
+	(FT_Slot_LoadFunc)        T1_Load_Glyph,
 
 #ifdef T1_CONFIG_OPTION_NO_AFM
 	(FT_Face_GetKerningFunc)  0,

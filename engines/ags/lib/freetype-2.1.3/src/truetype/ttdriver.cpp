@@ -394,12 +394,12 @@ const FT_Driver_ClassRec  tt_driver_class = {
 	(FT_Face_DoneFunc)        tt_face_done,
 	(FT_Size_InitFunc)        tt_size_init,
 	(FT_Size_DoneFunc)        tt_size_done,
-	(FT2_1_3_Slot_InitFunc)        0,
-	(FT2_1_3_Slot_DoneFunc)        0,
+	(FT_Slot_InitFunc)        0,
+	(FT_Slot_DoneFunc)        0,
 
 	(FT_Size_ResetPointsFunc) Set_Char_Sizes,
 	(FT_Size_ResetPixelsFunc) Set_Pixel_Sizes,
-	(FT2_1_3_Slot_LoadFunc)        Load_Glyph,
+	(FT_Slot_LoadFunc)        Load_Glyph,
 
 	(FT_Face_GetKerningFunc)  Get_Kerning,
 	(FT_Face_AttachFunc)      0,

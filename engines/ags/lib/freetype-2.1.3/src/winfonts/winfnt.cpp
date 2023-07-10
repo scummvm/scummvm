@@ -639,12 +639,12 @@ const FT_Driver_ClassRec  winfnt_driver_class = {
 	(FT_Face_DoneFunc)        FNT_Face_Done,
 	(FT_Size_InitFunc)        0,
 	(FT_Size_DoneFunc)        0,
-	(FT2_1_3_Slot_InitFunc)        0,
-	(FT2_1_3_Slot_DoneFunc)        0,
+	(FT_Slot_InitFunc)        0,
+	(FT_Slot_DoneFunc)        0,
 
 	(FT_Size_ResetPointsFunc) FNT_Size_Set_Pixels,
 	(FT_Size_ResetPixelsFunc) FNT_Size_Set_Pixels,
-	(FT2_1_3_Slot_LoadFunc)        FNT_Load_Glyph,
+	(FT_Slot_LoadFunc)        FNT_Load_Glyph,
 
 	(FT_Face_GetKerningFunc)  0,
 	(FT_Face_AttachFunc)      0,

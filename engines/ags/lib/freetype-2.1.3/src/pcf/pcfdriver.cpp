@@ -458,13 +458,13 @@ const FT_Driver_ClassRec  pcf_driver_class = {
 	(FT_Face_DoneFunc)        PCF_Face_Done,
 	(FT_Size_InitFunc)        0,
 	(FT_Size_DoneFunc)        0,
-	(FT2_1_3_Slot_InitFunc)        0,
-	(FT2_1_3_Slot_DoneFunc)        0,
+	(FT_Slot_InitFunc)        0,
+	(FT_Slot_DoneFunc)        0,
 
 	(FT_Size_ResetPointsFunc) PCF_Set_Pixel_Size,
 	(FT_Size_ResetPixelsFunc) PCF_Set_Pixel_Size,
 
-	(FT2_1_3_Slot_LoadFunc)        PCF_Glyph_Load,
+	(FT_Slot_LoadFunc)        PCF_Glyph_Load,
 
 	(FT_Face_GetKerningFunc)  0,
 	(FT_Face_AttachFunc)      0,

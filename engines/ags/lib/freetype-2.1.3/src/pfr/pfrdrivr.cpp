@@ -144,12 +144,12 @@ const FT_Driver_ClassRec  pfr_driver_class = {
 	(FT_Face_DoneFunc)        pfr_face_done,
 	(FT_Size_InitFunc)        NULL,
 	(FT_Size_DoneFunc)        NULL,
-	(FT2_1_3_Slot_InitFunc)        pfr_slot_init,
-	(FT2_1_3_Slot_DoneFunc)        pfr_slot_done,
+	(FT_Slot_InitFunc)        pfr_slot_init,
+	(FT_Slot_DoneFunc)        pfr_slot_done,
 
 	(FT_Size_ResetPointsFunc) NULL,
 	(FT_Size_ResetPixelsFunc) NULL,
-	(FT2_1_3_Slot_LoadFunc)        pfr_slot_load,
+	(FT_Slot_LoadFunc)        pfr_slot_load,
 
 	(FT_Face_GetKerningFunc)  pfr_get_kerning,
 	(FT_Face_AttachFunc)      0,

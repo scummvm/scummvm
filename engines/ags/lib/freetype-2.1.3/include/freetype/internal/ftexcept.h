@@ -63,11 +63,11 @@ FT2_1_3_BASE( FT_CleanupItem )
 ft_cleanup_stack_peek( FT_CleanupStack  stack );
 
 FT2_1_3_BASE( void )
-FT_xhandler_enter( FT_XHandler  xhandler,
+ft_xhandler_enter( FT_XHandler  xhandler,
 				   FT_Memory    memory );
 
 FT2_1_3_BASE( void )
-FT_xhandler_exit( FT_XHandler  xhandler );
+ft_xhandler_exit( FT_XHandler  xhandler );
 
 
 FT2_1_3_BASE( void )
