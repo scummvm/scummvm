@@ -107,7 +107,7 @@ FrameUpdateResult FightMoves::UpdateFrame(const Direction &d) {
 		if (frame_cur < frame_total && frame_cur < move[cur].frames[d].frame.size()) {
 			// Has the current frame finished playing?
 			// OR Is this the first frame of the move?
-			if (timer.Ticks() >= move[cur].frames[d].frame[frame_cur].repeat || start) {
+			if (timer.Ticks() >= move[cur].frames[d].frame[frame_cur]._repeat || start) {
 				frame_cur++;
 				timer.Start();
 				start = false;

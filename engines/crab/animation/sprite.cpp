@@ -556,8 +556,8 @@ void Sprite::UpdateFrame(const pyrodactyl::people::PersonState &pst, const bool 
 void Sprite::AssignFrame() {
 	FightAnimFrame faf;
 	if (anim_set.fight.CurFrame(faf, dir)) {
-		clip = faf.clip;
-		BoxV(faf.box_v);
+		clip = faf._clip;
+		BoxV(faf._boxV);
 		BoxD(faf.box_d);
 
 		pos.x += faf.delta.x;

@@ -57,16 +57,16 @@ void WalkFrames::Load(rapidxml::xml_node<char> *node) {
 // Purpose: Used for walking inside levels
 //------------------------------------------------------------------------
 bool WalkFrames::UpdateClip(Direction d, bool reset) {
-	if (timer.Ticks() > set[cur].frames[d].CurrentFrame().repeat || reset) {
+	if (timer.Ticks() > set[cur].frames[d].currentFrame()._repeat || reset) {
 		timer.Start();
-		return set[cur].frames[d].UpdateClip();
+		return set[cur].frames[d].updateClip();
 	}
 
 	return false;
 }
 
 void WalkFrames::ResetClip(Direction d) {
-	set[cur].frames[d].Reset();
+	set[cur].frames[d].reset();
 	timer.Start();
 }
 
@@ -77,19 +77,19 @@ void WalkFrames::UpdateClip(WalkAnimType type, Direction d) {
 	if (!timer.Started())
 		timer.Start();
 
-	if (timer.Ticks() > set[type].frames[d].CurrentFrame().repeat) {
-		set[type].frames[d].UpdateClip();
+	if (timer.Ticks() > set[type].frames[d].currentFrame()._repeat) {
+		set[type].frames[d].updateClip();
 		timer.Start();
 	}
 }
 
 Rect WalkFrames::DialogClip(const PersonState &state) {
 	if (state == PST_FIGHT)
-		return set[WT_FIGHT].frames[DIRECTION_DOWN].CurrentFrame().clip;
+		return set[WT_FIGHT].frames[DIRECTION_DOWN].currentFrame()._clip;
 	else if (state == PST_KO)
-		return set[WT_KO].frames[DIRECTION_DOWN].CurrentFrame().clip;
+		return set[WT_KO].frames[DIRECTION_DOWN].currentFrame()._clip;
 
-	return set[WT_STAND].frames[DIRECTION_DOWN].CurrentFrame().clip;
+	return set[WT_STAND].frames[DIRECTION_DOWN].currentFrame()._clip;
 }
 
 void WalkFrames::UpdateClip(const PersonState &state) {

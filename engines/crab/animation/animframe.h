@@ -42,65 +42,69 @@ namespace pyrodactyl {
 namespace anim {
 struct AnimFrame {
 	// Portion of sprite to show
-	Rect clip;
+	Rect _clip;
 
 	// The duration for which the frame must be repeated on screen
-	uint32 repeat;
+	uint32 _repeat;
 
 	// The anchor point of the frame
-	Vector2i anchor;
+	Vector2i _anchor;
 
 	// The vulnerable hit box for this frame
-	Rect box_v;
+	Rect _boxV;
 
-	AnimFrame() { repeat = 0; }
+	AnimFrame() {
+		_repeat = 0;
+	}
 
-	void Load(rapidxml::xml_node<char> *node, const Rect &VBOX,
+	void load(rapidxml::xml_node<char> *node, const Rect &VBOX,
 			  const uint32 &REP = 0, const int &AX = 0, const int &AY = 0);
 };
 
 class AnimationFrames {
 	// The global vulnerable hit box for all the frames
 	// If the W or H of this is 0, then use individual frame values
-	Rect box_v;
+	Rect _boxV;
 
 public:
 	// The frames for the animation
-	Common::Array<AnimFrame> frame;
+	Common::Array<AnimFrame> _frame;
 
-	// The current clip
-	unsigned int current_clip;
+	// The currentClip
+	unsigned int _currentClip;
 
 	// Should we flip the images in the frame rectangle?
-	TextureFlipType flip;
+	TextureFlipType _flip;
 
 	// The global repeat value for all the frames
 	// If this is 0, then use individual frame values
-	uint32 repeat;
+	uint32 _repeat;
 
 	// The global anchor value for all the frames
 	// If this is 0, then use individual frame values
-	Vector2i anchor;
+	Vector2i _anchor;
 
 	// true if animation starts at a random frame
 	// used for idle animations so that every sprite doesn't animate in sync
-	bool random;
+	bool _random;
 
 	// Does this set of animation frames need a specific shadow offset?
-	ShadowOffset shadow;
+	ShadowOffset _shadow;
 
 	AnimationFrames() {
-		Reset();
-		flip = FLIP_NONE;
-		repeat = 0;
-		random = false;
+		reset();
+		_flip = FLIP_NONE;
+		_repeat = 0;
+		_random = false;
 	}
-	void Reset() { current_clip = 0; }
+	void reset() {
+		_currentClip = 0;
+	}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
-	bool UpdateClip();
-	const AnimFrame &CurrentFrame();
+	bool updateClip();
+	const AnimFrame &currentFrame();
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
