@@ -53,7 +53,7 @@ FT2_1_3_BEGIN_HEADER
  * @type: FT_Stream
  *
  * @description:
- *   handle to an input stream object. These are also @FT2_1_3_Object handles
+ *   handle to an input stream object. These are also @FT_Object handles
  */
 typedef struct FT_StreamRec_*    FT_Stream;
 

@@ -704,7 +704,7 @@ typedef struct  FT_LibraryRec_ {
 
 	FT_DebugHook_Func  debug_hooks[4];
 
-	FT2_1_3_MetaClassRec    meta_class;
+	FT_MetaClassRec    meta_class;
 
 } FT_LibraryRec;
 

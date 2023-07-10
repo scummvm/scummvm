@@ -12,28 +12,28 @@ FT2_1_3_BEGIN_HEADER
 
 /**************************************************************
  *
- * @type: FT2_1_3_Object
+ * @type: FT_Object
  *
  * @description:
  *   handle to a FreeType Object. See @FT_ObjectRec
  */
-typedef struct FT_ObjectRec_*        FT2_1_3_Object;
+typedef struct FT_ObjectRec_*        FT_Object;
 
 
 /**************************************************************
  *
- * @type: FT2_1_3_Class
+ * @type: FT_Class
  *
  * @description:
  *   handle to a constant class handle to a FreeType Object.
  *
- *   Note that a class is itself a @FT2_1_3_Object and are dynamically
+ *   Note that a class is itself a @FT_Object and are dynamically
  *   allocated on the heap.
  *
  * @also:
- *  @FT_ClassRec, @FT2_1_3_Object, @FT_ObjectRec, @FT_Type, @FT_TypeRec
+ *  @FT_ClassRec, @FT_Object, @FT_ObjectRec, @FT_Type, @FT_TypeRec
  */
-typedef const struct FT_ClassRec_*   FT2_1_3_Class;
+typedef const struct FT_ClassRec_*   FT_Class;
 
 
 /**************************************************************
@@ -42,7 +42,7 @@ typedef const struct FT_ClassRec_*   FT2_1_3_Class;
  *
  * @description:
  *   handle to a constant structure (of type @FT_TypeRec) used
- *   to describe a given @FT2_1_3_Class type to the FreeType object
+ *   to describe a given @FT_Class type to the FreeType object
  *   sub-system.
  */
 typedef const struct FT_TypeRec_*    FT_Type;
@@ -54,7 +54,7 @@ typedef const struct FT_TypeRec_*    FT_Type;
  * @struct: FT_ObjectRec
  *
  * @description:
- *   a structure describing the root fields of all @FT2_1_3_Object
+ *   a structure describing the root fields of all @FT_Object
  *   class instances in FreeType
  *
  * @fields:
@@ -62,7 +62,7 @@ typedef const struct FT_TypeRec_*    FT_Type;
  *   ref_count :: object's reference count. Starts at 1
  */
 typedef struct FT_ObjectRec_ {
-	FT2_1_3_Class  clazz;
+	FT_Class  clazz;
 	FT_Int    ref_count;
 
 } FT_ObjectRec;
@@ -73,10 +73,10 @@ typedef struct FT_ObjectRec_ {
  * @macro: FT2_1_3_OBJECT (x)
  *
  * @description:
- *   a useful macro to type-cast anything to a @FT2_1_3_Object
+ *   a useful macro to type-cast anything to a @FT_Object
  *   handle. No check performed..
  */
-#define  FT2_1_3_OBJECT(x)    ((FT2_1_3_Object)(x))
+#define  FT2_1_3_OBJECT(x)    ((FT_Object)(x))
 
 
 /**************************************************************
@@ -85,9 +85,9 @@ typedef struct FT_ObjectRec_ {
  *
  * @description:
  *   a useful macro to type-cast anything to a pointer to
- *   @FT2_1_3_Object handle.
+ *   @FT_Object handle.
  */
-#define  FT2_1_3_OBJECT_P(x)  ((FT2_1_3_Object*)(x))
+#define  FT2_1_3_OBJECT_P(x)  ((FT_Object*)(x))
 
 
 /**************************************************************
@@ -134,7 +134,7 @@ typedef struct FT_ObjectRec_ {
 
 /**************************************************************
  *
- * @functype: FT2_1_3_Object_InitFunc
+ * @functype: FT_Object_InitFunc
  *
  * @description:
  *   a function used to initialize a new object
@@ -146,12 +146,12 @@ typedef struct FT_ObjectRec_ {
  * @return:
  *   error code. 0 means success
  */
-typedef FT_Error  (*FT2_1_3_Object_InitFunc)( FT2_1_3_Object   object,
+typedef FT_Error  (*FT_Object_InitFunc)( FT_Object   object,
 		FT_Pointer  init_data );
 
 /**************************************************************
  *
- * @functype: FT2_1_3_Object_DoneFunc
+ * @functype: FT_Object_DoneFunc
  *
  * @description:
  *   a function used to finalize a given object
@@ -159,7 +159,7 @@ typedef FT_Error  (*FT2_1_3_Object_InitFunc)( FT2_1_3_Object   object,
  * @input:
  *   object    :: handle to target object
  */
-typedef void  (*FT2_1_3_Object_DoneFunc)( FT2_1_3_Object   object );
+typedef void  (*FT_Object_DoneFunc)( FT_Object   object );
 
 
 /**************************************************************
@@ -193,17 +193,17 @@ typedef void  (*FT2_1_3_Object_DoneFunc)( FT2_1_3_Object   object );
 typedef struct FT_ClassRec_ {
 	FT_ObjectRec        object;
 	FT_UInt32           magic;
-	FT2_1_3_Class            super;
+	FT_Class            super;
 	FT_Type             type;
 	FT_Memory           memory;
 	FT_Library          library;
 	FT_Pointer          info;
 
-	FT2_1_3_Object_DoneFunc  class_done;
+	FT_Object_DoneFunc  class_done;
 
 	FT_UInt             obj_size;
-	FT2_1_3_Object_InitFunc  obj_init;
-	FT2_1_3_Object_DoneFunc  obj_done;
+	FT_Object_InitFunc  obj_init;
+	FT_Object_DoneFunc  obj_done;
 
 } FT_ClassRec;
 
@@ -216,7 +216,7 @@ typedef struct FT_ClassRec_ {
  *   a useful macro to convert anything to a class handle
  *   without checks
  */
-#define  FT2_1_3_CLASS(x)    ((FT2_1_3_Class)(x))
+#define  FT2_1_3_CLASS(x)    ((FT_Class)(x))
 
 
 /**************************************************************
@@ -227,7 +227,7 @@ typedef struct FT_ClassRec_ {
  *   a useful macro to convert anything to a pointer to a class
  *   handle without checks
  */
-#define  FT2_1_3_CLASS_P(x)  ((FT2_1_3_Class*)(x))
+#define  FT2_1_3_CLASS_P(x)  ((FT_Class*)(x))
 
 
 /**************************************************************
@@ -307,12 +307,12 @@ typedef struct FT_TypeRec_ {
 	FT_Type             super;
 
 	FT_UInt             class_size;
-	FT2_1_3_Object_InitFunc  class_init;
-	FT2_1_3_Object_DoneFunc  class_done;
+	FT_Object_InitFunc  class_init;
+	FT_Object_DoneFunc  class_done;
 
 	FT_UInt             obj_size;
-	FT2_1_3_Object_InitFunc  obj_init;
-	FT2_1_3_Object_DoneFunc  obj_done;
+	FT_Object_InitFunc  obj_init;
+	FT_Object_DoneFunc  obj_done;
 
 } FT_TypeRec;
 
@@ -333,7 +333,7 @@ typedef struct FT_TypeRec_ {
  * @function: ft_object_check
  *
  * @description:
- *   checks that a handle points to a valid @FT2_1_3_Object
+ *   checks that a handle points to a valid @FT_Object
  *
  * @input:
  *   obj :: handle/pointer
@@ -350,7 +350,7 @@ ft_object_check( FT_Pointer  obj );
  * @function: ft_object_is_a
  *
  * @description:
- *   checks that a handle points to a valid @FT2_1_3_Object that
+ *   checks that a handle points to a valid @FT_Object that
  *   is an instance of a given class (or of any of its sub-classes)
  *
  * @input:
@@ -363,7 +363,7 @@ ft_object_check( FT_Pointer  obj );
  */
 FT2_1_3_BASE( FT_Int )
 ft_object_is_a( FT_Pointer  obj,
-				FT2_1_3_Class    clazz );
+				FT_Class    clazz );
 
 
 /**************************************************************
@@ -384,8 +384,8 @@ ft_object_is_a( FT_Pointer  obj,
  *   error code. 0 means success
  */
 FT2_1_3_BASE( FT_Error )
-ft_object_create( FT2_1_3_Object  *aobject,
-				  FT2_1_3_Class    clazz,
+ft_object_create( FT_Object  *aobject,
+				  FT_Class    clazz,
 				  FT_Pointer  init_data );
 
 
@@ -413,7 +413,7 @@ ft_object_create( FT2_1_3_Object  *aobject,
  *   @ft_object_create
  */
 FT2_1_3_BASE( FT_Error )
-ft_object_create_from_type( FT2_1_3_Object  *aobject,
+ft_object_create_from_type( FT_Object  *aobject,
 							FT_Type     type,
 							FT_Pointer  init_data,
 							FT_Library  library );
@@ -491,7 +491,7 @@ ft_object_create_from_type( FT2_1_3_Object  *aobject,
  *   error code. 0 means success
  */
 FT2_1_3_BASE( FT_Error )
-ft_class_from_type( FT2_1_3_Class   *aclass,
+ft_class_from_type( FT_Class   *aclass,
 					FT_Type     type,
 					FT_Library  library );
 
@@ -499,30 +499,30 @@ ft_class_from_type( FT2_1_3_Class   *aclass,
 /* */
 
 
-typedef struct FT2_1_3_ClassHNodeRec_*  FT2_1_3_ClassHNode;
+typedef struct FT_ClassHNodeRec_*  FT_ClassHNode;
 
-typedef struct FT2_1_3_ClassHNodeRec_ {
+typedef struct FT_ClassHNodeRec_ {
 	FT_HashNodeRec  hnode;
 	FT_Type         type;
-	FT2_1_3_Class        clazz;
+	FT_Class        clazz;
 
-} FT2_1_3_ClassHNodeRec;
+} FT_ClassHNodeRec;
 
-typedef struct FT2_1_3_MetaClassRec_ {
+typedef struct FT_MetaClassRec_ {
 	FT_ClassRec   clazz;         /* the meta-class is a class itself */
 	FT_HashRec    type_to_class; /* the type => class hash table */
 
-} FT2_1_3_MetaClassRec, *FT2_1_3_MetaClass;
+} FT_MetaClassRec, *FT_MetaClass;
 
 
 /* initialize meta class */
 FT2_1_3_BASE( FT_Error )
-ft_metaclass_init( FT2_1_3_MetaClass  meta,
+ft_metaclass_init( FT_MetaClass  meta,
 				   FT_Library    library );
 
 /* finalize meta class - destroy all registered class objects */
 FT2_1_3_BASE( void )
-ft_metaclass_done( FT2_1_3_MetaClass  meta );
+ft_metaclass_done( FT_MetaClass  meta );
 
 /* */
 

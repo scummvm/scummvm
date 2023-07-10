@@ -130,7 +130,7 @@ typedef struct FT_MemoryRec_ {
 #define  FT2_1_3_MEMORY__FREE(x)        FT2_1_3_MEMORY(x)->mem_free
 #define  FT2_1_3_MEMORY__REALLOC(x)     FT2_1_3_MEMORY(x)->mem_funcs->mem_realloc
 #define  FT2_1_3_MEMORY__CLEANUP(x)     (&FT2_1_3_MEMORY(x)->cleanup_stack)
-#define  FT2_1_3_MEMORY__META_CLASS(x)  ((FT2_1_3_MetaClass)(FT2_1_3_MEMORY(x)->meta_class))
+#define  FT2_1_3_MEMORY__META_CLASS(x)  ((FT_MetaClass)(FT2_1_3_MEMORY(x)->meta_class))
 
 
 /**************************************************************************/

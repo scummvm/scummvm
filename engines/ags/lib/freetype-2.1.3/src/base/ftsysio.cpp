@@ -101,7 +101,7 @@ static const FT_TypeRec  ft_std_stream_type;
 FT2_1_3_EXPORT_DEF( FT_Stream )
 ft_std_stream_new( FT_Memory    memory,
                    const char*  pathname ) {
-	FT2_1_3_Class  clazz;
+	FT_Class  clazz;
 
 	clazz = ft_class_from_type( memory, &ft_std_stream_type );
 
@@ -113,7 +113,7 @@ FT2_1_3_EXPORT_DEF( void )
 ft_std_stream_create( FT_Memory    memory,
                       const char*  pathname,
                       FT_Stream*   astream ) {
-	FT2_1_3_Class  clazz;
+	FT_Class  clazz;
 
 	clazz = ft_class_from_type( memory, &ft_std_stream_type );
 
