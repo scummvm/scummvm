@@ -86,8 +86,8 @@ void Sprite::load(rapidxml::xml_node<char> *node, Common::Array<Common::String> 
 		_animSet._fight.listAttackMoves(_aiData._fight._attack);
 
 		loadDirection(_dir, node);
-		_clip = _animSet._walk.Clip(_dir);
-		_boxV = _animSet._walk.BoxV(_dir);
+		_clip = _animSet._walk.clip(_dir);
+		_boxV = _animSet._walk.boxV(_dir);
 
 		if (nodeValid("visible", node, false))
 			_visible.load(node->first_node("visible"));
@@ -485,18 +485,18 @@ void Sprite::walk(const pyrodactyl::people::PersonState &pst) {
 			firstX = false;
 	}
 
-	bool reset = _animSet._walk.Type(_vel, _dir, pst, firstX);
+	bool reset = _animSet._walk.type(_vel, _dir, pst, firstX);
 
 	if (reset)
-		_animSet._walk.ResetClip(_dir);
+		_animSet._walk.resetClip(_dir);
 
 	walk(reset);
 }
 
 void Sprite::walk(const bool &reset) {
-	if (_animSet._walk.UpdateClip(_dir, reset)) {
-		_clip = _animSet._walk.Clip(_dir);
-		_boxV = _animSet._walk.BoxV(_dir);
+	if (_animSet._walk.updateClip(_dir, reset)) {
+		_clip = _animSet._walk.clip(_dir);
+		_boxV = _animSet._walk.boxV(_dir);
 	}
 }
 
