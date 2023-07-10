@@ -34,55 +34,55 @@ namespace Crab {
 
 using namespace pyrodactyl::anim;
 
-void AnimSet::Load(const Common::String &filename) {
+void AnimSet::load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node();
 		if (NodeValid(node)) {
-			fight.Load(node);
-			walk.Load(node);
+			_fight.Load(node);
+			_walk.Load(node);
 
 			if (NodeValid("bounds", node))
-				bounds.Load(node->first_node("bounds"));
+				_bounds.Load(node->first_node("bounds"));
 
 			if (NodeValid("shadow", node))
-				shadow.Load(node->first_node("shadow"));
+				_shadow.Load(node->first_node("shadow"));
 
 			if (NodeValid("focus", node))
-				focus.Load(node->first_node("focus"));
+				_focus.Load(node->first_node("focus"));
 		}
 	}
 }
 
-TextureFlipType AnimSet::Flip(const Direction &dir) {
+TextureFlipType AnimSet::flip(const Direction &dir) {
 	TextureFlipType ret;
-	if (fight.Flip(ret, dir))
+	if (_fight.Flip(ret, dir))
 		return ret;
 
-	return walk.Flip(dir);
+	return _walk.Flip(dir);
 }
 
-const ShadowOffset &AnimSet::Shadow(const Direction &dir) {
-	if (fight.ValidMove())
-		return fight.Shadow(dir);
+const ShadowOffset &AnimSet::shadow(const Direction &dir) {
+	if (_fight.ValidMove())
+		return _fight.Shadow(dir);
 
-	return walk.Shadow(dir);
+	return _walk.Shadow(dir);
 }
 
-int AnimSet::AnchorX(const Direction &dir) {
+int AnimSet::anchorX(const Direction &dir) {
 	FightAnimFrame faf;
-	if (fight.CurFrame(faf, dir))
+	if (_fight.CurFrame(faf, dir))
 		return faf._anchor.x;
 
-	return walk.AnchorX(dir);
+	return _walk.AnchorX(dir);
 }
 
-int AnimSet::AnchorY(const Direction &dir) {
+int AnimSet::anchorY(const Direction &dir) {
 	FightAnimFrame faf;
-	if (fight.CurFrame(faf, dir))
+	if (_fight.CurFrame(faf, dir))
 		return faf._anchor.y;
 
-	return walk.AnchorY(dir);
+	return _walk.AnchorY(dir);
 }
 
 } // End of namespace Crab

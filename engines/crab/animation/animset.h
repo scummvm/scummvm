@@ -43,29 +43,29 @@ namespace anim {
 // Container for all the possible animations an object can have
 struct AnimSet {
 	// The frames relevant to fighting moves
-	FightMoves fight;
+	FightMoves _fight;
 
 	// The frames relevant to walking animations
-	WalkFrames walk;
+	WalkFrames _walk;
 
 	// The bounding box of the character used for level collision
-	Rect bounds;
+	Rect _bounds;
 
 	// The sprite shadow
-	ShadowData shadow;
+	ShadowData _shadow;
 
 	// The camera focus point
-	Vector2i focus;
+	Vector2i _focus;
 
 	AnimSet() {}
 
-	void Load(const Common::String &filename);
+	void load(const Common::String &filename);
 
-	TextureFlipType Flip(const Direction &dir);
-	const ShadowOffset &Shadow(const Direction &dir);
+	TextureFlipType flip(const Direction &dir);
+	const ShadowOffset &shadow(const Direction &dir);
 
-	int AnchorX(const Direction &dir);
-	int AnchorY(const Direction &dir);
+	int anchorX(const Direction &dir);
+	int anchorY(const Direction &dir);
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl

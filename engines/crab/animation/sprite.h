@@ -164,8 +164,8 @@ public:
 	int H() { return clip.h; }
 
 	const ImageKey &Img() { return image; }
-	Rect DialogClip(const pyrodactyl::people::PersonState &state) { return anim_set.walk.DialogClip(state); }
-	void DialogUpdateClip(const pyrodactyl::people::PersonState &state) { anim_set.walk.UpdateClip(state); }
+	Rect DialogClip(const pyrodactyl::people::PersonState &state) { return anim_set._walk.DialogClip(state); }
+	void DialogUpdateClip(const pyrodactyl::people::PersonState &state) { anim_set._walk.UpdateClip(state); }
 
 	bool PopupShow() { return popup.Show(); }
 
@@ -178,7 +178,7 @@ public:
 
 	double DistSq(const Sprite &s);
 	void EffectImg(bool vis) { img_eff.visible = vis; }
-	bool LastFrame() { return anim_set.fight.LastFrame(); }
+	bool LastFrame() { return anim_set._fight.LastFrame(); }
 
 	bool TakingDamage(Sprite &sp, const pyrodactyl::ai::SpriteConstant &sc);
 	void TakeDamage(pyrodactyl::event::Info &info, Sprite &s);
