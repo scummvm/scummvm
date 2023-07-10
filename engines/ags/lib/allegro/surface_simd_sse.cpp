@@ -1,4 +1,4 @@
-#if defined(__x86_64__) || defined(__i686__)
+#if defined(__x86_64__) || defined(__i686__) || defined(_M_X86) || defined(_M_X64)
 
 #include "ags/lib/allegro/gfx.h"
 #include "ags/lib/allegro/color.h"

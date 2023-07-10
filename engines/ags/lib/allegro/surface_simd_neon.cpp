@@ -1,4 +1,4 @@
-#ifdef __aarch64__
+#if defined(__aarch64__) || defined(_M_ARM64)
 
 #include "ags/lib/allegro/gfx.h"
 #include "ags/lib/allegro/color.h"

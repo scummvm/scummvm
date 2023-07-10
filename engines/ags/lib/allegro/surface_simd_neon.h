@@ -20,13 +20,14 @@
  */
 #ifndef AGS_LIB_ALLEGRO_SURFACE_SIMD_NEON_H
 #define AGS_LIB_ALLEGRO_SURFACE_SIMD_NEON_H
-#ifdef __aarch64__
+#if defined(__aarch64__) || defined(_M_ARM64)
 
 #ifndef AGS_LIB_ALLEGRO_SURFACE_SIMD_IMPL
 #define AGS_LIB_ALLEGRO_SURFACE_SIMD_IMPL
 #endif
 
 #include <arm_neon.h>
+#include "ags/globals.h"
 #include "ags/lib/allegro/surface.h"
 
 namespace AGS3 {
