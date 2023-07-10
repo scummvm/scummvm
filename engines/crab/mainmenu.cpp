@@ -550,35 +550,35 @@ void MainMenu::draw() {
 	g_engine->_mouse->draw();
 }
 
-void MainMenu::SetUI() {
-	me_main.SetUI();
-	logo.SetUI();
+void MainMenu::setUI() {
+	me_main.setUI();
+	logo.setUI();
 
-	back.SetUI();
-	g_engine->_optionMenu->SetUI();
-	mod.SetUI();
-	g_engine->_loadMenu->SetUI();
-	g_engine->_helpScreen->SetUI();
-	credits.SetUI();
+	back.setUI();
+	g_engine->_optionMenu->setUI();
+	mod.setUI();
+	g_engine->_loadMenu->setUI();
+	g_engine->_helpScreen->setUI();
+	credits.setUI();
 
-	accept.SetUI();
-	cancel.SetUI();
+	accept.setUI();
+	cancel.setUI();
 
-	bg.SetUI();
+	bg.setUI();
 	for (auto &i : lights)
-		i.SetUI();
+		i.setUI();
 
-	diff.menu.SetUI();
-	diff.bg.SetUI();
-	diff.heading.SetUI();
+	diff.menu.setUI();
+	diff.bg.setUI();
+	diff.heading.setUI();
 
-	save.SetUI();
-	warning.SetUI();
-	bg_save.SetUI();
+	save.setUI();
+	warning.setUI();
+	bg_save.setUI();
 
 #ifdef UNREST_DEMO
-	steam.SetUI();
-	direct.SetUI();
+	steam.setUI();
+	direct.setUI();
 #endif
 }
 

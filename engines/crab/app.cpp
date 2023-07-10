@@ -247,7 +247,7 @@ void App::Run() {
 
 		// Do we have to reposition our interface?
 		if (g_engine->_screenSettings->change_interface) {
-			CurrentState->SetUI();
+			CurrentState->setUI();
 			g_engine->_screenSettings->change_interface = false;
 		}
 

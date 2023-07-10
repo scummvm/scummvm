@@ -65,7 +65,7 @@ public:
 	void internalEvents();
 
 	void draw();
-	void SetUI();
+	void setUI();
 
 	void CreateBackup() {
 		vol_music.CreateBackup();

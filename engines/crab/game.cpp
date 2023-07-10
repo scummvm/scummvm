@@ -875,16 +875,16 @@ void Game::CreateSaveGame(const SaveGameType &savetype) {
 #endif
 }
 
-void Game::SetUI() {
-	map.SetUI();
-	hud.SetUI();
+void Game::setUI() {
+	map.setUI();
+	hud.setUI();
 
-	g_engine->_loadMenu->SetUI();
-	g_engine->_optionMenu->SetUI();
+	g_engine->_loadMenu->setUI();
+	g_engine->_optionMenu->setUI();
 
-	gem.SetUI();
-	info.SetUI();
-	level.SetUI();
+	gem.setUI();
+	info.setUI();
+	level.setUI();
 }
 
 } // End of namespace Crab

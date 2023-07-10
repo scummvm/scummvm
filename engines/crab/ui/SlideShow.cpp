@@ -122,11 +122,11 @@ void SlideShow::Refresh() {
 #endif
 }
 
-void SlideShow::SetUI() {
-	pos.SetUI();
-	bg.SetUI();
-	prev.SetUI();
-	next.SetUI();
+void SlideShow::setUI() {
+	pos.setUI();
+	bg.setUI();
+	prev.setUI();
+	next.setUI();
 }
 
 } // End of namespace Crab

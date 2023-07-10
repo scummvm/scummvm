@@ -166,7 +166,7 @@ void Level::PlayerID(const Common::String &ID, const int &X, const int &Y) {
 //------------------------------------------------------------------------
 // Purpose: Rearrange stuff after resolution change
 //------------------------------------------------------------------------
-void Level::SetUI() {
+void Level::setUI() {
 	camera.w = g_engine->_screenSettings->cur.w;
 	camera.h = g_engine->_screenSettings->cur.h;
 	SetCamera();

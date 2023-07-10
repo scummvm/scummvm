@@ -121,7 +121,7 @@ public:
 	// True if we are in game, false otherwise
 	bool in_game;
 
-	// Set to true when we have to call SetUI() for rearranging UI after a resolution change
+	// Set to true when we have to call setUI() for rearranging UI after a resolution change
 	bool change_interface;
 
 	// The version of the settings

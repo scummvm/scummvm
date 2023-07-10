@@ -91,7 +91,7 @@ public:
 	void loadState(rapidxml::xml_node<char> *node);
 	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 
-	void SetUI();
+	void setUI();
 };
 } // End of namespace item
 } // End of namespace pyrodactyl

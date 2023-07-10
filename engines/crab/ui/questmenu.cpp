@@ -272,9 +272,9 @@ void QuestMenu::loadState(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 // Purpose: Reposition UI elements
 //------------------------------------------------------------------------
-void QuestMenu::SetUI() {
-	menu.SetUI();
-	text.SetUI();
+void QuestMenu::setUI() {
+	menu.setUI();
+	text.setUI();
 }
 
 } // End of namespace Crab

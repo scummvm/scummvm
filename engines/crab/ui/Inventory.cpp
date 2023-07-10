@@ -134,10 +134,10 @@ void Inventory::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char
 //------------------------------------------------------------------------
 // Purpose: Set UI positions after screen size change
 //------------------------------------------------------------------------
-void Inventory::SetUI() {
-	bg.SetUI();
-	collection.SetUI();
-	money.SetUI();
+void Inventory::setUI() {
+	bg.setUI();
+	collection.setUI();
+	money.setUI();
 }
 
 } // End of namespace Crab

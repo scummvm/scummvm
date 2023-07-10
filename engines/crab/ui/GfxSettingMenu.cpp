@@ -174,16 +174,16 @@ void GfxSettingMenu::internalEvents() {
 //------------------------------------------------------------------------
 // Purpose: Rearrange UI when resolution changes
 //------------------------------------------------------------------------
-void GfxSettingMenu::SetUI() {
-	resolution.SetUI();
+void GfxSettingMenu::setUI() {
+	resolution.setUI();
 
-	fullscreen.SetUI();
-	vsync.SetUI();
-	border.SetUI();
-	quality.SetUI();
+	fullscreen.setUI();
+	vsync.setUI();
+	border.setUI();
+	quality.setUI();
 
-	notice_quality.SetUI();
-	brightness.SetUI();
+	notice_quality.setUI();
+	brightness.setUI();
 }
 
 } // End of namespace Crab

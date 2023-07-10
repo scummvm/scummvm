@@ -82,7 +82,7 @@ public:
 
 	void ItemFile(const Common::String &filename) { itemfile = filename; }
 
-	void SetUI();
+	void setUI();
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

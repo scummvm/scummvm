@@ -133,7 +133,7 @@ public:
 	void draw();
 
 	void ChangeState(MenuState ms, const bool &start = false);
-	void SetUI();
+	void setUI();
 
 	// We don't need to save game state here
 	void AutoSave() {}

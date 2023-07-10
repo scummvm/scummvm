@@ -90,9 +90,9 @@ public:
 	}
 #endif
 
-	void SetUI() {
-		Menu::SetUI();
-		desc.SetUI();
+	void setUI() {
+		Menu::setUI();
+		desc.setUI();
 	}
 };
 } // End of namespace ui

@@ -82,7 +82,7 @@ public:
 	void CreateBackup() { backup = value; }
 	void RestoreBackup() { Value(backup); }
 
-	void SetUI();
+	void setUI();
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

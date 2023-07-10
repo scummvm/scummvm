@@ -44,7 +44,7 @@ Splash::Splash() {
 	// Load the background
 	background.load("res/gfx/pyrodactyl.png");
 
-	SetUI();
+	setUI();
 	load_complete = false;
 	first_run = true;
 }
@@ -86,7 +86,7 @@ void Splash::draw() {
 //------------------------------------------------------------------------
 // Purpose: Reset UI position
 //------------------------------------------------------------------------
-void Splash::SetUI() {
+void Splash::setUI() {
 	warning("ScreenSettings cur w : %d h : %d", g_engine->_screenSettings->cur.w, g_engine->_screenSettings->cur.h);
 	x = (g_engine->_screenSettings->cur.w - background.W()) / 2;
 	y = (g_engine->_screenSettings->cur.h - background.H()) / 2;

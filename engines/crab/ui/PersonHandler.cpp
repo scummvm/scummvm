@@ -180,14 +180,14 @@ void PersonHandler::reset(const Common::String &id) {
 	}
 }
 
-void PersonHandler::SetUI() {
-	img.SetUI();
-	name.SetUI();
-	dlbox.SetUI();
-	jb.SetUI();
+void PersonHandler::setUI() {
+	img.setUI();
+	name.setUI();
+	dlbox.setUI();
+	jb.setUI();
 
 	for (auto i = 0; i < pyrodactyl::people::OPI_TOTAL; ++i)
-		opinion[i].SetUI();
+		opinion[i].setUI();
 }
 
 } // End of namespace Crab

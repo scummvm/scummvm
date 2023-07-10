@@ -184,10 +184,10 @@ bool PauseMenu::DisableHotkeys() {
 	return (state == STATE_SAVE && save.DisableHotkeys()) || (state == STATE_OPTION && g_engine->_optionMenu->DisableHotkeys());
 }
 
-void PauseMenu::SetUI() {
-	bg.SetUI();
-	menu.SetUI();
-	save.SetUI();
+void PauseMenu::setUI() {
+	bg.setUI();
+	menu.setUI();
+	save.setUI();
 }
 
 } // End of namespace Crab

@@ -47,8 +47,8 @@ void EmotionIndicator::draw(const int &select) {
 		}
 }
 
-void EmotionIndicator::SetUI() {
-	text.SetUI();
+void EmotionIndicator::setUI() {
+	text.setUI();
 }
 
 } // End of namespace Crab

@@ -230,9 +230,9 @@ public:
 			b->reset();
 	}
 
-	void SetUI() {
+	void setUI() {
 		for (auto i = element.begin(); i != element.end(); ++i)
-			i->SetUI();
+			i->setUI();
 	}
 
 	//------------------------------------------------------------------------

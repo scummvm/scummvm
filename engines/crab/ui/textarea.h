@@ -75,9 +75,9 @@ public:
 
 	void draw();
 
-	void SetUI() {
-		title.SetUI();
-		TextData::SetUI();
+	void setUI() {
+		title.setUI();
+		TextData::setUI();
 	}
 };
 } // End of namespace ui

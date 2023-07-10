@@ -177,18 +177,18 @@ void CreditScreen::draw() {
 		start.y = INT_MIN + 10;
 }
 
-void CreditScreen::SetUI() {
-	bg.SetUI();
-	back.SetUI();
+void CreditScreen::setUI() {
+	bg.setUI();
+	back.setUI();
 
-	slow.SetUI();
-	fast.SetUI();
-	pause.SetUI();
-	reverse.SetUI();
+	slow.setUI();
+	fast.setUI();
+	pause.setUI();
+	reverse.setUI();
 
-	logo.SetUI();
-	twitter.SetUI();
-	website.SetUI();
+	logo.setUI();
+	twitter.setUI();
+	website.setUI();
 }
 
 } // End of namespace Crab

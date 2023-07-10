@@ -74,10 +74,10 @@ void GameOverMenu::draw() {
 	menu.draw();
 }
 
-void GameOverMenu::SetUI() {
-	bg.SetUI();
-	title.SetUI();
-	menu.SetUI();
+void GameOverMenu::setUI() {
+	bg.setUI();
+	title.setUI();
+	menu.setUI();
 }
 
 } // End of namespace Crab

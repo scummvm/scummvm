@@ -79,7 +79,7 @@ public:
 	// This is used to vary the alpha
 	void internalEvents();
 
-	void SetUI() { pos.SetUI(); }
+	void setUI() { pos.setUI(); }
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

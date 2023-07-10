@@ -272,18 +272,18 @@ public:
 		return false;
 	}
 
-	void SetUI() {
-		bg.SetUI();
-		menu.SetUI();
+	void setUI() {
+		bg.setUI();
+		menu.setUI();
 		ScanDir();
-		img.pos.SetUI();
+		img.pos.setUI();
 
 		for (int i = 0; i < DATA_BUTTON_TOTAL; ++i)
-			td_b[i].SetUI();
+			td_b[i].setUI();
 
 		for (int i = 0; i < DATA_HOVER_TOTAL; ++i) {
-			td_h[i].SetUI();
-			hov[i].SetUI();
+			td_h[i].setUI();
+			hov[i].setUI();
 		}
 	}
 };

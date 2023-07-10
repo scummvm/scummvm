@@ -71,17 +71,17 @@ void Element::load(rapidxml::xml_node<char> *node, ImageKey img, const bool &ech
 	else
 		loadNum(h, "h", node);
 
-	SetUI();
+	setUI();
 }
 
 void Element::load(rapidxml::xml_node<char> *node, Rect *parent, const bool &echo) {
 	Basicload(node, echo);
 	loadNum(w, "w", node, false);
 	loadNum(h, "h", node, false);
-	SetUI(parent);
+	setUI(parent);
 }
 
-void Element::SetUI(Rect *parent) {
+void Element::setUI(Rect *parent) {
 	if (parent == NULL) {
 		switch (align.x) {
 		case ALIGN_CENTER:

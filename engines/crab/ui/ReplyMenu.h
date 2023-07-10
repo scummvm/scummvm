@@ -71,7 +71,7 @@ public:
 	void draw();
 	void Cache(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat);
 
-	void SetUI();
+	void setUI();
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

@@ -397,9 +397,9 @@ void Info::loadState(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 // Purpose: Calculate UI positions after change in screen size
 //------------------------------------------------------------------------
-void Info::SetUI() {
-	journal.SetUI();
-	inv.SetUI();
+void Info::setUI() {
+	journal.setUI();
+	inv.setUI();
 }
 
 } // End of namespace Crab

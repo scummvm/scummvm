@@ -113,7 +113,7 @@ public:
 #endif
 	void internalEvents();
 
-	void SetUI();
+	void setUI();
 	void saveState();
 };
 

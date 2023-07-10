@@ -88,7 +88,7 @@ public:
 #endif
 	void draw(pyrodactyl::event::Quest &q);
 
-	void SetUI();
+	void setUI();
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

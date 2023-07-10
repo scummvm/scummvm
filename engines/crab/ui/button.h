@@ -107,7 +107,7 @@ public:
 	Button();
 	~Button() {}
 	void reset();
-	void SetUI(Rect *parent = NULL);
+	void setUI(Rect *parent = NULL);
 
 	void load(rapidxml::xml_node<char> *node, const bool &echo = true);
 	void Init(const Button &ref, const int &XOffset = 0, const int &YOffset = 0);

@@ -414,26 +414,26 @@ void OptionMenu::saveState() {
 #endif
 }
 
-void OptionMenu::SetUI() {
-	bg.SetUI();
-	menu.SetUI();
+void OptionMenu::setUI() {
+	bg.setUI();
+	menu.setUI();
 
-	keybind.SetUI();
-	conbind.SetUI();
+	keybind.setUI();
+	conbind.setUI();
 
-	gfx.SetUI();
-	general.SetUI();
+	gfx.setUI();
+	general.setUI();
 
-	notice_res.SetUI();
+	notice_res.setUI();
 
-	countdown.SetUI();
-	questionbox.SetUI();
+	countdown.setUI();
+	questionbox.setUI();
 
-	prompt_w.SetUI();
-	prompt_h.SetUI();
+	prompt_w.setUI();
+	prompt_h.setUI();
 
-	accept.SetUI();
-	cancel.SetUI();
+	accept.setUI();
+	cancel.setUI();
 }
 
 } // End of namespace Crab

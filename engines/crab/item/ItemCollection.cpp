@@ -146,11 +146,11 @@ void ItemCollection::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node
 //------------------------------------------------------------------------
 // Purpose: Reset UI elements when resolution changes
 //------------------------------------------------------------------------
-void ItemCollection::SetUI() {
-	item_info.SetUI();
+void ItemCollection::setUI() {
+	item_info.setUI();
 
 	for (auto i = item.begin(); i != item.end(); ++i)
-		i->_value.SetUI();
+		i->_value.setUI();
 }
 
 } // End of namespace Crab

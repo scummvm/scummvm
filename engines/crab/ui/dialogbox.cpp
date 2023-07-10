@@ -97,10 +97,10 @@ bool GameDialogBox::HandleEvents(const SDL_Event &Event) {
 
 
 
-void GameDialogBox::SetUI() {
-	pos.SetUI();
-	text.SetUI(&pos);
-	button.SetUI();
+void GameDialogBox::setUI() {
+	pos.setUI();
+	text.setUI(&pos);
+	button.setUI();
 }
 
 } // End of namespace Crab

@@ -111,7 +111,7 @@ public:
 	// The tooltips are of the style <Name> (<Hotkey>), with Name being provided by the xml
 	void SetTooltip();
 
-	void SetUI();
+	void setUI();
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

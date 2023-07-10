@@ -163,14 +163,14 @@ void ResolutionMenu::SetInfo() {
 	info.text += NumberToString(g_engine->_screenSettings->cur.h);
 }
 
-void ResolutionMenu::SetUI() {
-	cancel.SetUI();
-	change.SetUI();
-	custom.SetUI();
+void ResolutionMenu::setUI() {
+	cancel.setUI();
+	change.setUI();
+	custom.setUI();
 
-	info.SetUI();
-	ref.SetUI();
-	ButtonMenu::SetUI();
+	info.setUI();
+	ref.setUI();
+	ButtonMenu::setUI();
 }
 
 } // End of namespace Crab

@@ -51,7 +51,7 @@ struct EmotionIndicator {
 
 	void load(rapidxml::xml_node<char> *node);
 	void draw(const int &select);
-	void SetUI();
+	void setUI();
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
