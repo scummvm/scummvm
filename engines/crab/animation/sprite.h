@@ -178,7 +178,7 @@ public:
 
 	double DistSq(const Sprite &s);
 	void EffectImg(bool vis) { img_eff.visible = vis; }
-	bool LastFrame() { return anim_set._fight.LastFrame(); }
+	bool LastFrame() { return anim_set._fight.lastFrame(); }
 
 	bool TakingDamage(Sprite &sp, const pyrodactyl::ai::SpriteConstant &sc);
 	void TakeDamage(pyrodactyl::event::Info &info, Sprite &s);

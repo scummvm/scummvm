@@ -40,66 +40,92 @@ namespace Crab {
 
 namespace pyrodactyl {
 namespace anim {
-enum FrameUpdateResult { FUR_FAIL,
-						 FUR_WAIT,
-						 FUR_SUCCESS };
+enum FrameUpdateResult {
+	FUR_FAIL,
+	FUR_WAIT,
+	FUR_SUCCESS
+};
 
 // This state value indicates that the move should execute regardless of actual sprite state
 const unsigned int SPRITE_STATE_OVERRIDE = std::numeric_limits<unsigned int>::max();
 
 class FightMoves {
 	// The fighting moves of a sprite
-	Common::Array<FightMove> move;
+	Common::Array<FightMove> _move;
 
 	// The currently selected move
-	int cur;
+	int _cur;
 
 	// For AI - the move about to be executed
-	int next;
+	int _next;
 
 	// The timer used for playing animations
-	Timer timer;
+	Timer _timer;
 
 	// We need to instantly show the new frame for a move that has started
-	bool start;
+	bool _start;
 
 	// The current frame and total frames
-	unsigned int frame_cur, frame_total;
+	unsigned int _frameCur, _frameTotal;
 
 public:
 	FightMoves();
+
 	~FightMoves() {}
-	void Reset() { cur = -1; }
 
-	void Load(rapidxml::xml_node<char> *node);
+	void reset() {
+		_cur = -1;
+	}
 
-	bool CurMove(FightMove &fm);
-	bool NextMove(FightMove &fm);
+	void load(rapidxml::xml_node<char> *node);
 
-	FrameUpdateResult UpdateFrame(const Direction &d);
-	bool CurFrame(FightAnimFrame &faf, const Direction &d);
+	bool curMove(FightMove &fm);
+	bool nextMove(FightMove &fm);
 
-	unsigned int FindMove(const pyrodactyl::input::FightAnimationType &type, const int &state);
+	FrameUpdateResult updateFrame(const Direction &d);
+	bool curFrame(FightAnimFrame &faf, const Direction &d);
 
-	void ListAttackMoves(Common::Array<unsigned int> &list);
+	unsigned int findMove(const pyrodactyl::input::FightAnimationType &type, const int &state);
 
-	bool ForceUpdate(const unsigned int &index, pyrodactyl::input::FightInput &input, const Direction &d);
+	void listAttackMoves(Common::Array<unsigned int> &list);
 
-	bool LastFrame() { return frame_cur >= frame_total; }
-	void FrameIndex(unsigned int val) { frame_cur = val; }
+	bool forceUpdate(const unsigned int &index, pyrodactyl::input::FightInput &input, const Direction &d);
 
-	void CurCombo(pyrodactyl::input::FightInput &input) { input = move[cur].input; }
+	bool lastFrame() {
+		return _frameCur >= _frameTotal;
+	}
 
-	bool ValidMove() { return cur >= 0 && (unsigned int)cur < move.size(); }
-	bool Empty() { return move.empty(); }
+	void frameIndex(unsigned int val) {
+		_frameCur = val;
+	}
 
-	bool Flip(TextureFlipType &flip, Direction d);
-	const ShadowOffset &Shadow(Direction d) { return move[cur].frames[d]._shadow; }
+	void curCombo(pyrodactyl::input::FightInput &input) {
+		input = _move[_cur]._input;
+	}
 
-	void Next(int val) { next = val; }
-	int Next() { return next; }
+	bool validMove() {
+		return _cur >= 0 && (unsigned int)_cur < _move.size();
+	}
 
-	void Evaluate(pyrodactyl::event::Info &info);
+	bool empty() {
+		return _move.empty();
+	}
+
+	bool flip(TextureFlipType &flip, Direction d);
+
+	const ShadowOffset &shadow(Direction d) {
+		return _move[_cur]._frames[d]._shadow;
+	}
+
+	void next(int val) {
+		_next = val;
+	}
+
+	int next() {
+		return _next;
+	}
+
+	void evaluate(pyrodactyl::event::Info &info);
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl

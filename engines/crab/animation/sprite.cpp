@@ -83,7 +83,7 @@ void Sprite::Load(rapidxml::xml_node<char> *node, Common::Array<Common::String> 
 		if (index < animations.size())
 			anim_set.load(animations[index]);
 
-		anim_set._fight.ListAttackMoves(ai_data._fight._attack);
+		anim_set._fight.listAttackMoves(ai_data._fight._attack);
 
 		loadDirection(dir, node);
 		clip = anim_set._walk.Clip(dir);
@@ -271,12 +271,12 @@ void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera) {
 		vul.Draw(-camera.x, -camera.y, 0, 0, 255);
 
 		FightMove fm;
-		if (anim_set._fight.NextMove(fm)) {
+		if (anim_set._fight.nextMove(fm)) {
 			Rect actual_range;
-			actual_range.x = bounds.x + fm.ai.range.val[dir].x;
-			actual_range.y = bounds.y + fm.ai.range.val[dir].y;
-			actual_range.w = fm.ai.range.val[dir].w;
-			actual_range.h = fm.ai.range.val[dir].h;
+			actual_range.x = bounds.x + fm._ai.range.val[dir].x;
+			actual_range.y = bounds.y + fm._ai.range.val[dir].y;
+			actual_range.w = fm._ai.range.val[dir].w;
+			actual_range.h = fm._ai.range.val[dir].h;
 
 			actual_range.Draw(-camera.x, -camera.y, 255, 0, 255);
 		}
@@ -539,7 +539,7 @@ bool Sprite::FightCollide(Rect hitbox, Rect enemy_bounds, Range &range, const Sp
 // Purpose: Update the frame info of the sprite
 //------------------------------------------------------------------------
 void Sprite::UpdateFrame(const pyrodactyl::people::PersonState &pst, const bool &repeat) {
-	FrameUpdateResult res = anim_set._fight.UpdateFrame(dir);
+	FrameUpdateResult res = anim_set._fight.updateFrame(dir);
 	if (res == FUR_SUCCESS) {
 		AssignFrame();
 	} else if (res == FUR_FAIL) {
@@ -549,13 +549,13 @@ void Sprite::UpdateFrame(const pyrodactyl::people::PersonState &pst, const bool 
 		if (repeat == false)
 			ResetFrame(pst);
 		else
-			anim_set._fight.FrameIndex(0);
+			anim_set._fight.frameIndex(0);
 	}
 }
 
 void Sprite::AssignFrame() {
 	FightAnimFrame faf;
-	if (anim_set._fight.CurFrame(faf, dir)) {
+	if (anim_set._fight.curFrame(faf, dir)) {
 		clip = faf._clip;
 		BoxV(faf._boxV);
 		BoxD(faf._boxD);
@@ -576,7 +576,7 @@ void Sprite::UpdateMove(const FightAnimationType &combo) {
 			ForceUpdateMove(combo);
 		else {
 			FightAnimFrame faf;
-			if (anim_set._fight.CurFrame(faf, dir))
+			if (anim_set._fight.curFrame(faf, dir))
 				if (faf._branch)
 					ForceUpdateMove(combo);
 		}
@@ -584,7 +584,7 @@ void Sprite::UpdateMove(const FightAnimationType &combo) {
 }
 
 void Sprite::ForceUpdateMove(const FightAnimationType &combo) {
-	unsigned int index = anim_set._fight.FindMove(combo, input.state);
+	unsigned int index = anim_set._fight.findMove(combo, input.state);
 	ForceUpdateMove(index);
 }
 
@@ -597,9 +597,9 @@ void Sprite::UpdateMove(const unsigned int &index) {
 }
 
 void Sprite::ForceUpdateMove(const unsigned int &index) {
-	if (anim_set._fight.ForceUpdate(index, input, dir)) {
+	if (anim_set._fight.forceUpdate(index, input, dir)) {
 		// This sets the sprite input to the current move input
-		anim_set._fight.CurCombo(input);
+		anim_set._fight.curCombo(input);
 
 		Stop();
 		AssignFrame();
@@ -612,7 +612,7 @@ void Sprite::ForceUpdateMove(const unsigned int &index) {
 void Sprite::ResetFrame(const pyrodactyl::people::PersonState &pst) {
 	input.Reset();
 	Walk(true);
-	anim_set._fight.Reset();
+	anim_set._fight.reset();
 
 	box_d.w = 0;
 	box_d.h = 0;
@@ -636,7 +636,7 @@ bool Sprite::DamageValid(Sprite &s, const SpriteConstant &sc) {
 //------------------------------------------------------------------------
 void Sprite::CalcProperties(Info &info) {
 	visible.Evaluate(info);
-	anim_set._fight.Evaluate(info);
+	anim_set._fight.evaluate(info);
 }
 
 //------------------------------------------------------------------------
@@ -664,7 +664,7 @@ void Sprite::TakeDamage(Info &info, Sprite &s) {
 	using namespace pyrodactyl::music;
 
 	FightMove f;
-	if (s.anim_set._fight.CurMove(f) && info.PersonValid(s.ID()) && info.PersonValid(id)) {
+	if (s.anim_set._fight.curMove(f) && info.PersonValid(s.ID()) && info.PersonValid(id)) {
 		int dmg = -1 * (f._eff._dmg + info.PersonGet(s.ID()).stat.val[STAT_ATTACK].cur - info.PersonGet(id).stat.val[STAT_DEFENSE].cur);
 		if (dmg >= 0)
 			dmg = -1;
