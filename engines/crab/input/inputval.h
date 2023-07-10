@@ -79,9 +79,9 @@ public:
 		}
 
 		void LoadState(rapidxml::xml_node<char> *node) {
-			//LoadEnum(id, "id", node);
-			LoadNum(val, "val", node);
-			LoadBool(greater, "greater", node);
+			//loadEnum(id, "id", node);
+			loadNum(val, "val", node);
+			loadBool(greater, "greater", node);
 		}
 
 		void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
@@ -91,7 +91,7 @@ public:
 			//child->append_attribute(doc.allocate_attribute("id", gStrPool->Get(id)));
 			child->append_attribute(doc.allocate_attribute("val", gStrPool->Get(val)));
 
-			SaveBool(greater, "greater", doc, child);
+			saveBool(greater, "greater", doc, child);
 
 			root->append_node(child);
 		}

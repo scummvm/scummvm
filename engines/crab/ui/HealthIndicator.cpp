@@ -36,14 +36,14 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 
 void HealthIndicator::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid(node)) {
-		LoadXY(x, y, node);
+	if (nodeValid(node)) {
+		loadXY(x, y, node);
 
 		for (auto n = node->first_node("img"); n != NULL; n = n->next_sibling("img")) {
 			HealthImage hi;
-			LoadImgKey(hi.normal, "normal", n);
-			LoadImgKey(hi.glow, "glow", n);
-			LoadNum(hi.val, "val", n);
+			loadImgKey(hi.normal, "normal", n);
+			loadImgKey(hi.glow, "glow", n);
+			loadNum(hi.val, "val", n);
 
 			img.push_back(hi);
 		}

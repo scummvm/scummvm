@@ -157,8 +157,8 @@ void InputManager::Load(const Common::String &filename) {
 	XMLDoc control_list(filename);
 	if (control_list.ready()) {
 		rapidxml::xml_node<char> *node = control_list.doc()->first_node("controls");
-		if (NodeValid(node)) {
-			LoadNum(version, "version", node);
+		if (nodeValid(node)) {
+			loadNum(version, "version", node);
 
 			int i = 0;
 			for (auto n = node->first_node(); n != NULL && i < IT_TOTAL; n = n->next_sibling(), ++i)

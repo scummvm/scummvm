@@ -56,10 +56,10 @@ struct ChangeVal {
 
 	void Load(rapidxml::xml_node<char> *node) {
 		using namespace pyrodactyl::people;
-		LoadStr(id, "id", node);
-		LoadNum(val[OPI_LIKE], "like", node);
-		LoadNum(val[OPI_RESPECT], "respect", node);
-		LoadNum(val[OPI_FEAR], "fear", node);
+		loadStr(id, "id", node);
+		loadNum(val[OPI_LIKE], "like", node);
+		loadNum(val[OPI_RESPECT], "respect", node);
+		loadNum(val[OPI_FEAR], "fear", node);
 	}
 };
 } // End of namespace event

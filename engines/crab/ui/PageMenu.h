@@ -141,30 +141,30 @@ public:
 
 	void Load(rapidxml::xml_node<char> *node) {
 		using namespace pyrodactyl::input;
-		if (NodeValid(node)) {
-			if (NodeValid("prev", node)) {
+		if (nodeValid(node)) {
+			if (nodeValid("prev", node)) {
 				prev.Load(node->first_node("prev"));
 				prev.hotkey.Set(IU_PREV);
 			}
 
-			if (NodeValid("next", node)) {
+			if (nodeValid("next", node)) {
 				next.Load(node->first_node("next"));
 				next.hotkey.Set(IU_NEXT);
 			}
 
-			if (NodeValid("reference", node))
+			if (nodeValid("reference", node))
 				ref.Load(node->first_node("reference"));
 
-			if (NodeValid("inc", node))
+			if (nodeValid("inc", node))
 				inc.Load(node->first_node("inc"));
 
-			if (NodeValid("status", node))
+			if (nodeValid("status", node))
 				status.Load(node->first_node("status"));
 
-			if (NodeValid("dim", node)) {
+			if (nodeValid("dim", node)) {
 				rapidxml::xml_node<char> *dimnode = node->first_node("dim");
-				LoadNum(rows, "rows", dimnode);
-				LoadNum(cols, "cols", dimnode);
+				loadNum(rows, "rows", dimnode);
+				loadNum(cols, "cols", dimnode);
 				elements_per_page = rows * cols;
 			}
 		}

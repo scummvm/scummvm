@@ -71,41 +71,41 @@ void Game::Init(const Common::String &filename) {
 		info.Load(node);
 
 		Common::String path;
-		if (NodeValid("level", node)) {
-			LoadStr(path, "list", node->first_node("level"));
+		if (nodeValid("level", node)) {
+			loadStr(path, "list", node->first_node("level"));
 			g_engine->_filePath->LoadLevel(path);
 		}
 
-		if (NodeValid("hud", node)) {
-			LoadStr(path, "layout", node->first_node("hud"));
+		if (nodeValid("hud", node)) {
+			loadStr(path, "layout", node->first_node("hud"));
 			hud.Load(path, level.talk_notify, level.dest_marker);
 		}
 
-		if (NodeValid("sprite", node)) {
-			LoadStr(path, "animation", node->first_node("sprite"));
+		if (nodeValid("sprite", node)) {
+			loadStr(path, "animation", node->first_node("sprite"));
 			level.LoadMoves(path);
 
-			LoadStr(path, "constant", node->first_node("sprite"));
+			loadStr(path, "constant", node->first_node("sprite"));
 			level.LoadConst(path);
 		}
 
-		if (NodeValid("event", node)) {
+		if (nodeValid("event", node)) {
 			gem.Load(node->first_node("event"), pop_default);
 
-			LoadStr(path, "store", node->first_node("event"));
+			loadStr(path, "store", node->first_node("event"));
 			g_engine->_eventStore->Load(path);
 		}
 
-		if (NodeValid("map", node)) {
-			LoadStr(path, "layout", node->first_node("map"));
+		if (nodeValid("map", node)) {
+			loadStr(path, "layout", node->first_node("map"));
 			map.Load(path, info);
 		}
 
-		if (NodeValid("save", node))
+		if (nodeValid("save", node))
 			savefile.Load(node->first_node("save"));
 
-		if (NodeValid("debug", node)) {
-			LoadStr(path, "layout", node->first_node("debug"));
+		if (nodeValid("debug", node)) {
+			loadStr(path, "layout", node->first_node("debug"));
 			debug_console.Load(path);
 		}
 	}
@@ -680,33 +680,33 @@ void Game::LoadState(Common::SeekableReadStream *stream) {
 
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("save");
-		if (NodeValid(node)) {
+		if (nodeValid(node)) {
 			info.LoadIronMan(node);
-			LoadStr(savefile.ironman, "file", node);
+			loadStr(savefile.ironman, "file", node);
 			hud.pause.UpdateMode(info.IronMan());
 
-			if (NodeValid("events", node))
+			if (nodeValid("events", node))
 				gem.LoadState(node->first_node("events"));
 
-			if (NodeValid("info", node))
+			if (nodeValid("info", node))
 				info.LoadState(node->first_node("info"));
 
-			if (NodeValid("map", node))
+			if (nodeValid("map", node))
 				map.LoadState(node->first_node("map"));
 
 			PlayerImg();
 
 			Common::String loc;
-			LoadStr(loc, "loc_id", node);
+			loadStr(loc, "loc_id", node);
 			LoadLevel(loc);
 
-			if (NodeValid("level", node))
+			if (nodeValid("level", node))
 				level.LoadState(node->first_node("level"));
 
 			gem.per.Cache(info, level.PlayerID(), level);
 
 			Common::String playtime;
-			LoadStr(playtime, "time", node);
+			loadStr(playtime, "time", node);
 			clock.Start(playtime);
 		}
 	}

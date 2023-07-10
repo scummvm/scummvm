@@ -37,16 +37,16 @@ using namespace pyrodactyl::image;
 
 void ProgressBar::Load(rapidxml::xml_node<char> *node) {
 	ClipButton::Load(node);
-	LoadNum(notify_rate, "notify", node);
+	loadNum(notify_rate, "notify", node);
 
-	if (NodeValid("effect", node)) {
+	if (nodeValid("effect", node)) {
 		rapidxml::xml_node<char> *effnode = node->first_node("effect");
-		LoadImgKey(inc, "inc", effnode);
-		LoadImgKey(dec, "dec", effnode);
+		loadImgKey(inc, "inc", effnode);
+		loadImgKey(dec, "dec", effnode);
 		offset.Load(effnode);
 	}
 
-	if (NodeValid("desc", node)) {
+	if (nodeValid("desc", node)) {
 		rapidxml::xml_node<char> *descnode = node->first_node("desc");
 		for (rapidxml::xml_node<char> *n = descnode->first_node("above"); n != NULL; n = n->next_sibling("above"))
 			ct.push_back(n);

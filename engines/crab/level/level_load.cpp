@@ -56,27 +56,27 @@ void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("level");
-		if (NodeValid(node)) {
+		if (nodeValid(node)) {
 			Common::String vis;
-			LoadStr(vis, "map", node, false);
+			loadStr(vis, "map", node, false);
 			if (vis == "false")
 				showmap.Set(false);
 			else
 				showmap.Set(true);
 
-			if (NodeValid("preview", node))
-				LoadStr(preview_path, "path", node->first_node("preview"));
+			if (nodeValid("preview", node))
+				loadStr(preview_path, "path", node->first_node("preview"));
 
-			if (NodeValid("music", node)) {
-				LoadNum(music.id, "id", node->first_node("music"));
+			if (nodeValid("music", node)) {
+				loadNum(music.id, "id", node->first_node("music"));
 				g_engine->_musicManager->PlayMusic(music.id);
 			}
 
-			if (NodeValid("map", node)) {
+			if (nodeValid("map", node)) {
 				rapidxml::xml_node<char> *mapnode = node->first_node("map");
 				Common::String path, tmxfile;
-				LoadStr(path, "path", mapnode);
-				LoadStr(tmxfile, "file", mapnode);
+				loadStr(path, "path", mapnode);
+				loadStr(tmxfile, "file", mapnode);
 
 				terrain.Load(path, tmxfile);
 
@@ -85,17 +85,17 @@ void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
 
 				terrain.grid = &pathfindingGrid;
 
-				if (NodeValid("loc", mapnode))
+				if (nodeValid("loc", mapnode))
 					map_loc.Load(mapnode->first_node("loc"));
 
-				if (NodeValid("clip", mapnode)) {
+				if (nodeValid("clip", mapnode)) {
 					rapidxml::xml_node<char> *clipnode = mapnode->first_node("clip");
-					LoadNum(map_clip.id, "id", clipnode);
+					loadNum(map_clip.id, "id", clipnode);
 					map_clip.rect.Load(clipnode);
 				}
 			}
 
-			if (NodeValid("sprites", node)) {
+			if (nodeValid("sprites", node)) {
 				rapidxml::xml_node<char> *spritenode = node->first_node("sprites");
 				int count = 0;
 				for (auto n = spritenode->first_node(); n != NULL; n = n->next_sibling(), ++count) {
@@ -115,7 +115,7 @@ void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
 				}
 			}
 
-			if (NodeValid("background", node)) {
+			if (nodeValid("background", node)) {
 				rapidxml::xml_node<char> *spritenode = node->first_node("background");
 				for (auto n = spritenode->first_node(); n != NULL; n = n->next_sibling()) {
 					Sprite s;
@@ -126,7 +126,7 @@ void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
 				Common::sort(background.begin(), background.end(), CompSpriteLayer);
 			}
 
-			if (NodeValid("fly", node)) {
+			if (nodeValid("fly", node)) {
 				rapidxml::xml_node<char> *spritenode = node->first_node("fly");
 				for (auto n = spritenode->first_node(); n != NULL; n = n->next_sibling()) {
 					Sprite s;
@@ -140,17 +140,17 @@ void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
 				}
 			}
 
-			if (NodeValid("movement", node)) {
+			if (nodeValid("movement", node)) {
 				rapidxml::xml_node<char> *movnode = node->first_node("movement");
 				for (auto n = movnode->first_node("set"); n != NULL; n = n->next_sibling("set"))
 					move_set.push_back(n);
 			}
 
-			if (NodeValid("popup", node, false))
+			if (nodeValid("popup", node, false))
 				pop.Load(node->first_node("popup"));
 
 			game_over.Clear();
-			if (NodeValid("game_over", node, false))
+			if (nodeValid("game_over", node, false))
 				game_over.Load(node->first_node("game_over"));
 			else if (player_index < objects.size()) {
 				// The default lose condition is the death of the player
@@ -181,17 +181,17 @@ void Level::LoadMoves(const Common::String &filename) {
 		for (auto n = node->first_node("set"); n != NULL; n = n->next_sibling("set")) {
 			unsigned int pos = anim_set.size();
 
-			LoadNum(pos, "id", n);
+			loadNum(pos, "id", n);
 			if (pos >= anim_set.size())
 				anim_set.resize(pos + 1);
 
 			// See if there is an alternate moveset for low quality setting
 			// If no, just load the regular one
 			if (!g_engine->_screenSettings->quality) {
-				if (!LoadStr(anim_set[pos], "path_low", n))
-					LoadStr(anim_set[pos], "path", n);
+				if (!loadStr(anim_set[pos], "path_low", n))
+					loadStr(anim_set[pos], "path", n);
 			} else
-				LoadStr(anim_set[pos], "path", n);
+				loadStr(anim_set[pos], "path", n);
 		}
 	}
 }
@@ -203,7 +203,7 @@ void Level::LoadConst(const Common::String &filename) {
 	XMLDoc doc(filename);
 	if (doc.ready()) {
 		rapidxml::xml_node<char> *node = doc.doc()->first_node("constant");
-		if (NodeValid(node))
+		if (nodeValid(node))
 			sc_default.load(node);
 	}
 }
@@ -225,7 +225,7 @@ void Level::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *r
 // Purpose: Load all sprite positions from save file
 //------------------------------------------------------------------------
 void Level::LoadState(rapidxml::xml_node<char> *node) {
-	LoadNum(player_index, "player_index", node);
+	loadNum(player_index, "player_index", node);
 
 	auto i = objects.begin();
 	for (auto *n = node->first_node("sprite"); n != NULL && i != objects.end(); n = n->next_sibling("sprite"), ++i)

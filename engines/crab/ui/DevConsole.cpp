@@ -38,26 +38,26 @@ void DebugConsole::Load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("debug");
-		if (NodeValid(node)) {
-			if (NodeValid("menu", node))
+		if (nodeValid(node)) {
+			if (nodeValid("menu", node))
 				menu.Load(node->first_node("menu"));
 
-			if (NodeValid("variable", node)) {
+			if (nodeValid("variable", node)) {
 				rapidxml::xml_node<char> *varnode = node->first_node("variable");
 
-				if (NodeValid("bg", varnode))
+				if (nodeValid("bg", varnode))
 					bg.Load(varnode->first_node("bg"));
 
-				if (NodeValid("check", varnode))
+				if (nodeValid("check", varnode))
 					check.Load(varnode->first_node("check"));
 
-				if (NodeValid("back", varnode))
+				if (nodeValid("back", varnode))
 					back.Load(varnode->first_node("back"));
 
-				if (NodeValid("value", varnode))
+				if (nodeValid("value", varnode))
 					value.Load(varnode->first_node("value"));
 
-				if (NodeValid("text", varnode))
+				if (nodeValid("text", varnode))
 					text_field.Load(varnode->first_node("text"));
 			}
 		}

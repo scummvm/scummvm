@@ -37,10 +37,10 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
 void ImageData::Load(rapidxml::xml_node<char> *node, const bool &echo) {
-	LoadImgKey(key, "img", node, echo);
-	LoadBool(crop, "crop", node, false);
+	loadImgKey(key, "img", node, echo);
+	loadBool(crop, "crop", node, false);
 
-	if (NodeValid("clip", node, false))
+	if (nodeValid("clip", node, false))
 		clip.Load(node->first_node("clip"));
 
 	Element::Load(node, key, echo);

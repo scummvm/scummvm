@@ -40,22 +40,22 @@ using namespace pyrodactyl::ui;
 // Purpose: Load the reference information
 //------------------------------------------------------------------------
 void ItemCollection::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid("info", node))
+	if (nodeValid("info", node))
 		item_info.Load(node->first_node("info"));
 
-	if (NodeValid("ref", node))
+	if (nodeValid("ref", node))
 		ref.Load(node->first_node("ref"));
 
-	if (NodeValid("inc", node))
+	if (nodeValid("inc", node))
 		inc.Load(node->first_node("inc"));
 
-	if (NodeValid("dim", node)) {
+	if (nodeValid("dim", node)) {
 		rapidxml::xml_node<char> *dimnode = node->first_node("dim");
-		LoadNum(rows, "rows", dimnode);
-		LoadNum(cols, "cols", dimnode);
+		loadNum(rows, "rows", dimnode);
+		loadNum(cols, "cols", dimnode);
 	}
 
-	LoadBool(usekeyboard, "keyboard", node);
+	loadBool(usekeyboard, "keyboard", node);
 }
 
 //------------------------------------------------------------------------

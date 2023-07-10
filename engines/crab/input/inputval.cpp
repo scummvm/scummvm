@@ -52,12 +52,12 @@ void InputVal::LoadState(rapidxml::xml_node<char> *node) {
 	warning("STUB: InputVal::LoadState()");
 
 #if 0
-	LoadStr(name, "name", node);
-	LoadEnum(key, "key", node);
-	LoadEnum(alt, "alt", node);
-	LoadEnum(c_bu, "bu", node);
+	loadStr(name, "name", node);
+	loadEnum(key, "key", node);
+	loadEnum(alt, "alt", node);
+	loadEnum(c_bu, "bu", node);
 
-	if (NodeValid("axis", node, false))
+	if (nodeValid("axis", node, false))
 		c_ax.LoadState(node->first_node("axis"));
 #endif
 }

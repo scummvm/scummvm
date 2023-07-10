@@ -45,7 +45,7 @@ namespace Crab {
 typedef unsigned int EventID;
 
 // Just map loading function to number load
-#define LoadEventID LoadNum
+#define LoadEventID loadNum
 
 namespace pyrodactyl {
 namespace event {

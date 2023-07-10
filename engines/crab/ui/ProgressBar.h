@@ -77,10 +77,10 @@ class ProgressBar : public ClipButton {
 
 		CaptionText() { val = 0; }
 		CaptionText(rapidxml::xml_node<char> *node) {
-			if (!LoadNum(val, "val", node))
+			if (!loadNum(val, "val", node))
 				val = 0;
 
-			if (!LoadStr(text, "text", node))
+			if (!loadStr(text, "text", node))
 				text = "";
 		}
 	};

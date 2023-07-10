@@ -50,12 +50,12 @@ void StateButton::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 	col_normal.col = caption.col;
 	col_normal.col_s = caption.col_s;
 
-	if (NodeValid("select", node, false)) {
+	if (nodeValid("select", node, false)) {
 		rapidxml::xml_node<char> *selnode = node->first_node("select");
 
 		img_set.select.Load(selnode, echo);
-		LoadNum(col_select.col, "color", selnode);
-		LoadNum(col_select.col_s, "color_s", selnode);
+		loadNum(col_select.col, "color", selnode);
+		loadNum(col_select.col_s, "color_s", selnode);
 	} else {
 		img_set.select = img;
 		col_select.col = caption.col;

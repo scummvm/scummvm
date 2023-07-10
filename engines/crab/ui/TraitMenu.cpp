@@ -36,20 +36,20 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 
 void TraitMenu::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid("dim", node)) {
+	if (nodeValid("dim", node)) {
 		rapidxml::xml_node<char> *dimnode = node->first_node("dim");
-		LoadNum(rows, "rows", dimnode);
-		LoadNum(cols, "cols", dimnode);
+		loadNum(rows, "rows", dimnode);
+		loadNum(cols, "cols", dimnode);
 		size = rows * cols;
 	}
 
-	if (NodeValid("ref", node))
+	if (nodeValid("ref", node))
 		ref.Load(node->first_node("ref"));
 
-	if (NodeValid("inc", node))
+	if (nodeValid("inc", node))
 		inc.Load(node->first_node("inc"));
 
-	if (NodeValid("desc", node))
+	if (nodeValid("desc", node))
 		desc.Load(node->first_node("desc"));
 
 	for (unsigned int i = 0; i < size; ++i) {
@@ -59,7 +59,7 @@ void TraitMenu::Load(rapidxml::xml_node<char> *node) {
 	}
 
 	bool usekey = false;
-	LoadBool(usekey, "keyboard", node);
+	loadBool(usekey, "keyboard", node);
 	menu.UseKeyboard(usekey);
 
 	menu.AssignPaths();

@@ -41,16 +41,16 @@ void ReplyButton::Load(rapidxml::xml_node<char> *node) {
 	Button::Load(node);
 	orig = *this;
 
-	if (NodeValid("text", node)) {
+	if (nodeValid("text", node)) {
 		rapidxml::xml_node<char> *tenode = node->first_node("text");
 
-		LoadColor(col_b, tenode->first_node("col_b"));
-		LoadColor(col_s, tenode->first_node("col_s"));
-		LoadColor(col_h, tenode->first_node("col_h"));
-		LoadNum(font, "font", tenode);
-		LoadAlign(align, tenode);
+		loadColor(col_b, tenode->first_node("col_b"));
+		loadColor(col_s, tenode->first_node("col_s"));
+		loadColor(col_h, tenode->first_node("col_h"));
+		loadNum(font, "font", tenode);
+		loadAlign(align, tenode);
 
-		if (NodeValid("line_size", tenode))
+		if (nodeValid("line_size", tenode))
 			line_size.Load(tenode->first_node("line_size"));
 	}
 }

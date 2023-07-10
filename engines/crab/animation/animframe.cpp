@@ -38,12 +38,12 @@ void AnimFrame::load(rapidxml::xml_node<char> *node, const Rect &VBOX, const uin
 	_clip.Load(node);
 
 	if (rep == 0)
-		LoadNum(_repeat, "repeat", node);
+		loadNum(_repeat, "repeat", node);
 	else
 		_repeat = rep;
 
 	if (AX == 0.0f && AY == 0.0f) {
-		if (NodeValid("anchor", node, false))
+		if (nodeValid("anchor", node, false))
 			_anchor.Load(node->first_node("anchor"));
 	} else {
 		_anchor.x = AX;
@@ -51,32 +51,32 @@ void AnimFrame::load(rapidxml::xml_node<char> *node, const Rect &VBOX, const uin
 	}
 
 	if (VBOX.w == 0 || VBOX.h == 0) {
-		if (NodeValid("box_v", node))
+		if (nodeValid("box_v", node))
 			_boxV.Load(node->first_node("box_v"));
 	} else
 		_boxV = VBOX;
 }
 
 void AnimationFrames::load(rapidxml::xml_node<char> *node) {
-	LoadTextureFlipType(_flip, node);
+	loadTextureFlipType(_flip, node);
 
-	if (!LoadNum(_repeat, "repeat", node, false))
+	if (!loadNum(_repeat, "repeat", node, false))
 		_repeat = 0;
 
-	LoadBool(_random, "random", node, false);
+	loadBool(_random, "random", node, false);
 
-	if (NodeValid("anchor", node, false))
+	if (nodeValid("anchor", node, false))
 		_anchor.Load(node->first_node("anchor"));
 
-	if (NodeValid("box_v", node))
+	if (nodeValid("box_v", node))
 		_boxV.Load(node->first_node("box_v"));
 
-	if (NodeValid("shadow", node)) {
+	if (nodeValid("shadow", node)) {
 		_shadow.Load(node->first_node("shadow"));
 		_shadow.valid = true;
 	}
 
-	if (NodeValid("frames", node)) {
+	if (nodeValid("frames", node)) {
 		_frame.clear();
 		rapidxml::xml_node<char> *framenode = node->first_node("frames");
 		for (auto n = framenode->first_node("frame"); n != NULL; n = n->next_sibling("frame")) {

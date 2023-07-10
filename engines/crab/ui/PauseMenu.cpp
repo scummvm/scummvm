@@ -39,7 +39,7 @@ void PauseMenu::Load(rapidxml::xml_node<char> *node) {
 	menu.Load(node->first_node("menu"));
 	save.Load(node->first_node("save"));
 
-	if (NodeValid("bg", node))
+	if (nodeValid("bg", node))
 		bg.Load(node->first_node("bg"));
 }
 

@@ -48,51 +48,51 @@ void CreditScreen::Load(const Common::String &filename) {
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("credits");
 
-		if (NodeValid("bg", node))
+		if (nodeValid("bg", node))
 			bg.Load(node->first_node("bg"));
 
-		if (NodeValid("h", node))
+		if (nodeValid("h", node))
 			heading.Load(node->first_node("h"));
 
-		if (NodeValid("p", node))
+		if (nodeValid("p", node))
 			paragraph.Load(node->first_node("p"));
 
-		if (NodeValid("logo", node))
+		if (nodeValid("logo", node))
 			logo.Load(node->first_node("logo"));
 
-		if (NodeValid("website", node))
+		if (nodeValid("website", node))
 			website.Load(node->first_node("website"), false);
 
-		if (NodeValid("twitter", node))
+		if (nodeValid("twitter", node))
 			twitter.Load(node->first_node("twitter"), false);
 
-		if (NodeValid("twitter", node))
+		if (nodeValid("twitter", node))
 			back.Load(node->first_node("back"));
 
-		if (NodeValid("fast", node)) {
+		if (nodeValid("fast", node)) {
 			rapidxml::xml_node<char> *fnode = node->first_node("fast");
 			fast.Load(fnode);
-			LoadNum(speed.fast, "val", fnode);
+			loadNum(speed.fast, "val", fnode);
 		}
 
-		if (NodeValid("slow", node)) {
+		if (nodeValid("slow", node)) {
 			rapidxml::xml_node<char> *snode = node->first_node("slow");
 			slow.Load(snode);
-			LoadNum(speed.slow, "val", snode);
+			loadNum(speed.slow, "val", snode);
 		}
 
-		if (NodeValid("reverse", node)) {
+		if (nodeValid("reverse", node)) {
 			rapidxml::xml_node<char> *rnode = node->first_node("reverse");
 			reverse.Load(rnode);
-			LoadNum(speed.reverse, "val", rnode);
+			loadNum(speed.reverse, "val", rnode);
 		}
 
 		speed.cur = speed.slow;
 
-		if (NodeValid("pause", node))
+		if (nodeValid("pause", node))
 			pause.Load(node->first_node("pause"));
 
-		if (NodeValid("text", node)) {
+		if (nodeValid("text", node)) {
 			rapidxml::xml_node<char> *tnode = node->first_node("text");
 			for (rapidxml::xml_node<char> *n = tnode->first_node(); n != NULL; n = n->next_sibling()) {
 				CreditText t;

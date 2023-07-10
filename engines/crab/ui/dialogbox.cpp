@@ -46,14 +46,14 @@ using namespace pyrodactyl::input;
 // Purpose: Load stuff
 //------------------------------------------------------------------------
 void GameDialogBox::Load(rapidxml::xml_node<char> *node) {
-	LoadImgKey(bg, "bg", node);
-	LoadImgKey(bg_p, "bg_p", node);
+	loadImgKey(bg, "bg", node);
+	loadImgKey(bg_p, "bg_p", node);
 	pos.Load(node, bg);
 
-	if (NodeValid("text", node))
+	if (nodeValid("text", node))
 		text.Load(node->first_node("text"), &pos);
 
-	if (NodeValid("button", node))
+	if (nodeValid("button", node))
 		button.Load(node->first_node("button"));
 }
 

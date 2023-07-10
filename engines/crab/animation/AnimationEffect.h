@@ -71,13 +71,13 @@ struct AnimationEffect {
 	}
 
 	AnimationEffect(rapidxml::xml_node<char> *node) {
-		if (NodeValid("effect", node)) {
+		if (nodeValid("effect", node)) {
 			rapidxml::xml_node<char> *effnode = node->first_node("effect");
-			LoadNum(_start, "start", effnode);
-			LoadNum(_finish, "finish", effnode);
+			loadNum(_start, "start", effnode);
+			loadNum(_finish, "finish", effnode);
 
 			Common::String str;
-			LoadStr(str, "type", effnode);
+			loadStr(str, "type", effnode);
 			if (str == "fade_in")
 				_type = FADE_IN;
 			else if (str == "fade_out")
@@ -85,7 +85,7 @@ struct AnimationEffect {
 			else
 				_type = FADE_NONE;
 
-			LoadStr(str, "game_draw", effnode);
+			loadStr(str, "game_draw", effnode);
 			if (str == "start")
 				_drawGame = DRAW_START;
 			else if (str == "stop")

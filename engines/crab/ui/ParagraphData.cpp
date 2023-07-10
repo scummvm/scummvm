@@ -36,7 +36,7 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 
 bool ParagraphData::Load(rapidxml::xml_node<char> *node, Rect *parent, const bool &echo) {
-	if (NodeValid("line", node))
+	if (nodeValid("line", node))
 		line.Load(node->first_node("line"));
 
 	return TextData::Load(node, parent, echo);

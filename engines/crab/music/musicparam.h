@@ -68,8 +68,8 @@ struct MusicData {
 
 	void Load(rapidxml::xml_node<char> *node) {
 #if 0
-		LoadNum(id, "id", node);
-		LoadNum(fade_in_duration, "fade_in", node);
+		loadNum(id, "id", node);
+		loadNum(fade_in_duration, "fade_in", node);
 
 		if (track != nullptr)
 			Mix_FreeMusic(track);

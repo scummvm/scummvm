@@ -93,10 +93,10 @@ private:
 		SaveFile() : auto_1("AutoSave 1"), auto_2("AutoSave 2"), auto_quit("AutoSave"), quick("Quick Save") { auto_slot = false; }
 
 		void Load(rapidxml::xml_node<char> *node) {
-			LoadStr(auto_1, "auto_1", node);
-			LoadStr(auto_2, "auto_2", node);
-			LoadStr(auto_quit, "quit", node);
-			LoadStr(quick, "quick", node);
+			loadStr(auto_1, "auto_1", node);
+			loadStr(auto_2, "auto_2", node);
+			loadStr(auto_quit, "quit", node);
+			loadStr(quick, "quick", node);
 		}
 	} savefile;
 

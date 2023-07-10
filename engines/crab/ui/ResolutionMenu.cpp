@@ -45,21 +45,21 @@ void ResolutionMenu::Load(rapidxml::xml_node<char> *node) {
 	info.Load(node->first_node("info"));
 	def_info = info.text;
 
-	if (NodeValid("reference", node))
+	if (nodeValid("reference", node))
 		ref.Load(node->first_node("reference"));
 
-	if (NodeValid("inc", node)) {
+	if (nodeValid("inc", node)) {
 		inc.Load(node->first_node("inc"));
-		LoadNum(columns, "columns", node->first_node("inc"));
+		loadNum(columns, "columns", node->first_node("inc"));
 	}
 
-	if (NodeValid("options", node)) {
+	if (nodeValid("options", node)) {
 		int count_slot = 0;
 		rapidxml::xml_node<char> *resnode = node->first_node("options");
 		for (auto n = resnode->first_node("res"); n != NULL; n = n->next_sibling("res"), count_slot++) {
 			Dimension d;
-			LoadNum(d.w, "x", n);
-			LoadNum(d.h, "y", n);
+			loadNum(d.w, "x", n);
+			loadNum(d.h, "y", n);
 
 			if (g_engine->_screenSettings->ValidDimension(d)) {
 				dim.push_back(d);
@@ -75,7 +75,7 @@ void ResolutionMenu::Load(rapidxml::xml_node<char> *node) {
 
 	SetInfo();
 
-	LoadBool(use_keyboard, "keyboard", node, false);
+	loadBool(use_keyboard, "keyboard", node, false);
 	AssignPaths();
 }
 

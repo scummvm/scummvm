@@ -42,8 +42,8 @@ namespace Crab {
 // We use this object as the key for all fonts
 typedef unsigned int FontKey;
 
-// Since we use unsigned int as a key for images, our LoadImgKey function is LoadNum
-#define LoadFontKey LoadNum
+// Since we use unsigned int as a key for images, our loadImgKey function is loadNum
+#define LoadFontKey loadNum
 
 namespace pyrodactyl {
 namespace text {

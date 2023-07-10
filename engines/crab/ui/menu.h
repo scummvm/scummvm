@@ -239,14 +239,14 @@ public:
 	// Purpose: Load the menu from a file
 	//------------------------------------------------------------------------
 	void Load(rapidxml::xml_node<char> *node) {
-		if (NodeValid(node)) {
+		if (nodeValid(node)) {
 			for (auto n = node->first_node(); n != NULL; n = n->next_sibling()) {
 				T b;
 				b.Load(n);
 				element.push_back(b);
 			}
 
-			LoadBool(use_keyboard, "keyboard", node, false);
+			loadBool(use_keyboard, "keyboard", node, false);
 			AssignPaths();
 		}
 	}

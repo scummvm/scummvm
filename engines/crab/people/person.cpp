@@ -43,48 +43,48 @@ Person::Person() {
 }
 
 void Person::Load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTemplates &stem) {
-	if (NodeValid(node)) {
-		LoadStr(id, "id", node);
-		LoadStr(name, "name", node);
-		// LoadImgKey(pic, "img", node);
+	if (nodeValid(node)) {
+		loadStr(id, "id", node);
+		loadStr(name, "name", node);
+		// loadImgKey(pic, "img", node);
 
-		if (NodeValid("opinion", node))
+		if (nodeValid("opinion", node))
 			opinion.Load(node->first_node("opinion"));
 
 		if (node->first_attribute("type") != NULL) {
 			Common::String t;
-			LoadStr(t, "type", node);
+			loadStr(t, "type", node);
 			type = StringToPersonType(t);
 		} else
 			type = PE_NEUTRAL;
 
 		if (node->first_attribute("state") != NULL) {
 			Common::String s;
-			LoadStr(s, "state", node);
+			loadStr(s, "state", node);
 			state = StringToPersonState(s);
 		} else
 			state = PST_NORMAL;
 
 		if (node->first_attribute("journal_name") != NULL) {
-			LoadStr(journal_name, "journal_name", node);
+			loadStr(journal_name, "journal_name", node);
 			alt_journal_name = true;
 		} else
 			alt_journal_name = false;
 
-		if (NodeValid("stats", node)) {
+		if (nodeValid("stats", node)) {
 			rapidxml::xml_node<char> *statnode = node->first_node("stats");
 			if (statnode->first_attribute("template") == NULL) {
 				stat.Load(statnode);
 			} else {
 				int index = 0;
-				LoadNum(index, "template", statnode);
+				loadNum(index, "template", statnode);
 				if (index >= 0 && (unsigned int)index < stem.collection.size())
 					for (int i = 0; i < STAT_TOTAL; i++)
 						stat.val[i] = stem.collection[index].val[i];
 			}
 		}
 
-		if (NodeValid("traits", node, false)) {
+		if (nodeValid("traits", node, false)) {
 			rapidxml::xml_node<char> *traitnode = node->first_node("traits");
 			for (auto n = traitnode->first_node("trait"); n != NULL; n = n->next_sibling("trait"))
 				trait.push_back(n);
@@ -130,17 +130,17 @@ void Person::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *
 }
 
 void Person::LoadState(rapidxml::xml_node<char> *node) {
-	LoadStr(id, "id", node);
-	LoadStr(name, "name", node);
-	LoadEnum(state, "state", node);
+	loadStr(id, "id", node);
+	loadStr(name, "name", node);
+	loadEnum(state, "state", node);
 
-	if (NodeValid("opinion", node))
+	if (nodeValid("opinion", node))
 		opinion.Load(node->first_node("opinion"));
 
-	if (NodeValid("stats", node))
+	if (nodeValid("stats", node))
 		stat.Load(node->first_node("stats"));
 
-	if (NodeValid("traits", node, false)) {
+	if (nodeValid("traits", node, false)) {
 		rapidxml::xml_node<char> *traitnode = node->first_node("traits");
 
 		trait.clear();

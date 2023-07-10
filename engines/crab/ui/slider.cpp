@@ -38,7 +38,7 @@ using namespace pyrodactyl::image;
 using namespace pyrodactyl::input;
 
 void Slider::Load(rapidxml::xml_node<char> *node, const int &Min, const int &Max, const int &Val) {
-	if (NodeValid(node)) {
+	if (nodeValid(node)) {
 		knob.Load(node->first_node("knob"), false);
 		bar.Load(node->first_node("bar"));
 

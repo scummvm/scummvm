@@ -51,31 +51,31 @@ QuestMenu::QuestMenu() {
 // Purpose: Load layout from file
 //------------------------------------------------------------------------
 void QuestMenu::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid(node)) {
-		if (NodeValid("menu", node))
+	if (nodeValid(node)) {
+		if (nodeValid("menu", node))
 			menu.Load(node->first_node("menu"));
 
-		if (NodeValid("tab", node)) {
+		if (nodeValid("tab", node)) {
 			rapidxml::xml_node<char> *tabnode = node->first_node("tab");
-			LoadNum(font, "font", tabnode);
-			LoadAlign(align, tabnode);
+			loadNum(font, "font", tabnode);
+			loadAlign(align, tabnode);
 			off_title.Load(tabnode);
 			off_unread.Load(tabnode->first_node("unread"));
 
-			if (NodeValid("normal", tabnode)) {
+			if (nodeValid("normal", tabnode)) {
 				rapidxml::xml_node<char> *nornode = tabnode->first_node("normal");
 				img_n.Load(nornode);
-				//LoadColor(col_n, nornode);
+				//loadColor(col_n, nornode);
 			}
 
-			if (NodeValid("select", tabnode)) {
+			if (nodeValid("select", tabnode)) {
 				rapidxml::xml_node<char> *selnode = tabnode->first_node("select");
 				img_s.Load(selnode);
-				//LoadColor(col_s, selnode);
+				//loadColor(col_s, selnode);
 			}
 		}
 
-		if (NodeValid("text", node))
+		if (nodeValid("text", node))
 			text.Load(node->first_node("text"));
 	}
 }
@@ -246,7 +246,7 @@ void QuestMenu::Select(const int &quest_index) {
 void QuestMenu::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, name);
 
-	SaveBool(unread, "unread", doc, child);
+	saveBool(unread, "unread", doc, child);
 
 	for (auto q = quest.begin(); q != quest.end(); ++q)
 		q->SaveState(doc, child);
@@ -258,7 +258,7 @@ void QuestMenu::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char
 // Purpose: Load state from file
 //------------------------------------------------------------------------
 void QuestMenu::LoadState(rapidxml::xml_node<char> *node) {
-	LoadBool(unread, "unread", node);
+	loadBool(unread, "unread", node);
 
 	quest.clear();
 	for (auto n = node->first_node("quest"); n != NULL; n = n->next_sibling("quest")) {

@@ -37,12 +37,12 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 
 bool TextData::Load(rapidxml::xml_node<char> *node, Rect *parent, const bool &echo) {
-	if (NodeValid(node, echo)) {
+	if (nodeValid(node, echo)) {
 		Element::Load(node, parent, echo);
 		LoadFontKey(font, "font", node);
-		LoadNum(col, "color", node);
-		LoadAlign(align, node, false);
-		LoadBool(background, "background", node, false);
+		loadNum(col, "color", node);
+		loadAlign(align, node, false);
+		loadBool(background, "background", node, false);
 		return true;
 	}
 

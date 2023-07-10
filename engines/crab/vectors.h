@@ -52,7 +52,7 @@ public:
 	}
 
 	bool Load(rapidxml::xml_node<char> *node, const bool &echo = true) {
-		return LoadNum(x, "x", node, echo) && LoadNum(y, "y", node, echo);
+		return loadNum(x, "x", node, echo) && loadNum(y, "y", node, echo);
 	}
 
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name) {
@@ -110,7 +110,7 @@ public:
 		y = Y;
 		z = Z;
 	}
-	bool Load(rapidxml::xml_node<char> *node) { return LoadXYZ<T>(x, y, z, node); }
+	bool Load(rapidxml::xml_node<char> *node) { return loadXYZ<T>(x, y, z, node); }
 
 	// operators
 	void operator+=(const Vector3D &v) {

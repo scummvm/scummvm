@@ -38,16 +38,16 @@ using namespace pyrodactyl::stat;
 using namespace pyrodactyl::people;
 
 void StatInfo::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid(node)) {
-		LoadBool(active, "active", node);
+	if (nodeValid(node)) {
+		loadBool(active, "active", node);
 		desc.Load(node->first_node("info"));
-		LoadStr(text, "text", node->first_node("info"));
+		loadStr(text, "text", node->first_node("info"));
 
-		if (NodeValid("value", node)) {
+		if (nodeValid("value", node)) {
 			rapidxml::xml_node<char> *valuenode = node->first_node("value");
 			dim.Load(valuenode);
-			LoadImgKey(full, "full", valuenode);
-			LoadImgKey(empty, "empty", valuenode);
+			loadImgKey(full, "full", valuenode);
+			loadImgKey(empty, "empty", valuenode);
 		}
 	}
 }
@@ -66,7 +66,7 @@ void StatInfo::Draw(const int &val, const int &max) {
 }
 
 void StatDrawHelper::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid(node)) {
+	if (nodeValid(node)) {
 		info[STAT_HEALTH].Load(node->first_node(STATNAME_HEALTH));
 		info[STAT_ATTACK].Load(node->first_node(STATNAME_ATTACK));
 		info[STAT_DEFENSE].Load(node->first_node(STATNAME_DEFENSE));

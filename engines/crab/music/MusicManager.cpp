@@ -109,13 +109,13 @@ bool MusicManager::Load(rapidxml::xml_node<char> *node) {
 	// Initialize music parameters
 	int volume_mus = 100, volume_eff = 100;
 
-	if (NodeValid("sound", node)) {
+	if (nodeValid("sound", node)) {
 		rapidxml::xml_node<char> *volnode = node->first_node("sound");
-		LoadNum(volume_mus, "music", volnode);
-		LoadNum(volume_eff, "effects", volnode);
-		LoadNum(freq, "frequency", volnode);
-		LoadNum(channels, "channels", volnode);
-		LoadNum(chunksize, "chunk_size", volnode);
+		loadNum(volume_mus, "music", volnode);
+		loadNum(volume_eff, "effects", volnode);
+		loadNum(freq, "frequency", volnode);
+		loadNum(channels, "channels", volnode);
+		loadNum(chunksize, "chunk_size", volnode);
 	}
 
 	// Start up audio
@@ -138,10 +138,10 @@ bool MusicManager::Load(rapidxml::xml_node<char> *node) {
 	XMLDoc track_list(g_engine->_filePath->sound_effect);
 	if (track_list.ready()) {
 		rapidxml::xml_node<char> *tnode = track_list.doc()->first_node("effects");
-		if (NodeValid(tnode)) {
-			LoadNum(notify, "notify", tnode);
-			LoadNum(rep_inc, "rep_inc", tnode);
-			LoadNum(rep_dec, "rep_dec", tnode);
+		if (nodeValid(tnode)) {
+			loadNum(notify, "notify", tnode);
+			loadNum(rep_inc, "rep_inc", tnode);
+			loadNum(rep_dec, "rep_dec", tnode);
 
 			for (auto n = tnode->first_node(); n != NULL; n = n->next_sibling()) {
 				rapidxml::xml_attribute<char> *id = n->first_attribute("id"), *path = n->first_attribute("path");

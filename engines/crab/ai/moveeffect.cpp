@@ -44,21 +44,21 @@ FightMoveEffect::FightMoveEffect() {
 }
 
 void FightMoveEffect::load(rapidxml::xml_node<char> *node) {
-	LoadNum(_stun, "stun", node);
-	LoadNum(_dmg, "damage", node);
-	LoadNum(_hurt, "hurt", node);
-	LoadNum(_death, "death", node);
+	loadNum(_stun, "stun", node);
+	loadNum(_dmg, "damage", node);
+	loadNum(_hurt, "hurt", node);
+	loadNum(_death, "death", node);
 
-	if (NodeValid("image", node, false))
+	if (nodeValid("image", node, false))
 		_img.Load(node->first_node("image"));
 
-	if (NodeValid("sound", node)) {
+	if (nodeValid("sound", node)) {
 		rapidxml::xml_node<char> *soundnode = node->first_node("sound");
 
-		if (!LoadNum(_activate, "activate", soundnode, false))
+		if (!loadNum(_activate, "activate", soundnode, false))
 			_activate = -1;
 
-		if (!LoadNum(_activate, "hit", soundnode, false))
+		if (!loadNum(_activate, "hit", soundnode, false))
 			_activate = -1;
 	}
 }

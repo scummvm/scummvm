@@ -71,7 +71,7 @@ void Polygon2D::Load(rapidxml::xml_node<char> *node, Rect &bounds) {
 	rapidxml::xml_node<char> *polynode = node->first_node("polygon");
 	if (polynode != NULL) {
 		Common::String points, x, y;
-		LoadStr(points, "points", polynode);
+		loadStr(points, "points", polynode);
 
 		bool comma = false;
 		for (auto i = points.begin(); i != points.end(); ++i) {

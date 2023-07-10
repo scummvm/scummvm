@@ -35,14 +35,14 @@ namespace Crab {
 using namespace pyrodactyl::event;
 
 void ReplyChoice::Load(rapidxml::xml_node<char> *node) {
-	LoadStr(text, "text", node);
-	LoadNum(tone, "tone", node);
-	LoadNum(nextid, "next", node);
+	loadStr(text, "text", node);
+	loadNum(tone, "tone", node);
+	loadNum(nextid, "next", node);
 
-	if (NodeValid("unlock", node, false))
+	if (nodeValid("unlock", node, false))
 		unlock.Load(node->first_node("unlock"));
 
-	if (NodeValid("change", node, false))
+	if (nodeValid("change", node, false))
 		for (auto n = node->first_node("change"); n != NULL; n = n->next_sibling("change"))
 			change.push_back(n);
 }

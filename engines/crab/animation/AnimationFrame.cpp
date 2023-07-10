@@ -38,12 +38,12 @@ using namespace pyrodactyl::anim;
 
 AnimationFrame::AnimationFrame(rapidxml::xml_node<char> *node) : _eff(node) {
 	Vector2i::Load(node);
-	LoadImgKey(_img, "img", node);
-	LoadNum(_start, "start", node);
-	LoadNum(_finish, "finish", node);
-	//LoadColor(col, node);
+	loadImgKey(_img, "img", node);
+	loadNum(_start, "start", node);
+	loadNum(_finish, "finish", node);
+	//loadColor(col, node);
 
-	if (NodeValid("text", node, false))
+	if (nodeValid("text", node, false))
 		_text.Load(node->first_node("text"));
 
 	reset();

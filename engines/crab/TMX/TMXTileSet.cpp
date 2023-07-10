@@ -37,19 +37,19 @@ namespace Crab {
 using namespace TMX;
 
 void TileSet::Load(const Common::String &path, rapidxml::xml_node<char> *node) {
-	if (NodeValid(node)) {
-		LoadNum(first_gid, "firstgid", node);
-		LoadStr(name, "name", node);
-		LoadNum(tile_w, "tilewidth", node);
-		LoadNum(tile_h, "tileheight", node);
+	if (nodeValid(node)) {
+		loadNum(first_gid, "firstgid", node);
+		loadStr(name, "name", node);
+		loadNum(tile_w, "tilewidth", node);
+		loadNum(tile_h, "tileheight", node);
 
 		clip.w = tile_w;
 		clip.h = tile_h;
 
-		if (NodeValid("image", node)) {
+		if (nodeValid("image", node)) {
 			rapidxml::xml_node<char> *imgnode = node->first_node("image");
 			Common::String filename;
-			LoadStr(filename, "source", imgnode);
+			loadStr(filename, "source", imgnode);
 			loc = path + filename;
 
 			img.Load(loc);

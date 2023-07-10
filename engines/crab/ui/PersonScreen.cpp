@@ -41,17 +41,17 @@ void PersonScreen::Load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("character");
-		if (NodeValid(node)) {
-			if (NodeValid("bg", node))
+		if (nodeValid(node)) {
+			if (nodeValid("bg", node))
 				bg.Load(node->first_node("bg"));
 
-			if (NodeValid("name", node))
+			if (nodeValid("name", node))
 				name.Load(node->first_node("name"));
 
-			if (NodeValid("img", node))
+			if (nodeValid("img", node))
 				img.Load(node->first_node("img"));
 
-			if (NodeValid("menu", node))
+			if (nodeValid("menu", node))
 				menu.Load(node->first_node("menu"));
 		}
 	}

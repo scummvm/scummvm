@@ -41,7 +41,7 @@ void ColorPool::Load(const Common::String &filename) {
 		rapidxml::xml_node<char> *node = col_list.doc()->first_node("colors");
 		for (rapidxml::xml_node<char> *n = node->first_node("color"); n != NULL; n = n->next_sibling("color")) {
 			SDL_Color c;
-			LoadColor(c, n);
+			loadColor(c, n);
 			pool.push_back(c);
 		}
 	}

@@ -36,7 +36,7 @@ using namespace pyrodactyl::event;
 
 void GameEventStore::AddConv(rapidxml::xml_node<char> *node, unsigned int &index) {
 	ConversationData c;
-	if (NodeValid("talk", node))
+	if (nodeValid("talk", node))
 		c.Load(node->first_node("talk"));
 
 	index = con.size();
@@ -55,28 +55,28 @@ void GameEventStore::Load(const Common::String &filename) {
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("store");
 
-		if (NodeValid("animations", node)) {
+		if (nodeValid("animations", node)) {
 			rapidxml::xml_node<char> *animnode = node->first_node("animations");
 			for (auto n = animnode->first_node("anim"); n != NULL; n = n->next_sibling("anim"))
 				anim.push_back(n);
 		}
 
-		if (NodeValid("tones", node)) {
+		if (nodeValid("tones", node)) {
 			rapidxml::xml_node<char> *tonenode = node->first_node("tones");
 			for (auto n = tonenode->first_node("tone"); n != NULL; n = n->next_sibling("tone")) {
 				ToneData dat;
-				LoadStr(dat.text, "text", n);
+				loadStr(dat.text, "text", n);
 				tone.push_back(dat);
 			}
 		}
 
-		if (NodeValid("images", node)) {
+		if (nodeValid("images", node)) {
 			rapidxml::xml_node<char> *imgnode = node->first_node("images");
 			for (auto n = imgnode->first_node("img"); n != NULL; n = n->next_sibling("img"))
 				img.push_back(n);
 		}
 
-		if (NodeValid("traits", node)) {
+		if (nodeValid("traits", node)) {
 			rapidxml::xml_node<char> *traitnode = node->first_node("traits");
 			for (auto n = traitnode->first_node("trait"); n != NULL; n = n->next_sibling("trait"))
 				trait.push_back(n);

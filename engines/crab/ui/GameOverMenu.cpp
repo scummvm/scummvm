@@ -37,17 +37,17 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
 void GameOverMenu::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid(node)) {
-		if (NodeValid("bg", node))
+	if (nodeValid(node)) {
+		if (nodeValid("bg", node))
 			bg.Load(node->first_node("bg"));
 
-		if (NodeValid("title", node)) {
+		if (nodeValid("title", node)) {
 			rapidxml::xml_node<char> *tinode = node->first_node("title");
 			title.Load(tinode);
 
 			for (auto n = tinode->first_node("quote"); n != NULL; n = n->next_sibling("quote")) {
 				Common::String str;
-				LoadStr(str, "text", n);
+				loadStr(str, "text", n);
 				quote.push_back(str);
 			}
 		}

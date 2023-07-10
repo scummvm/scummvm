@@ -78,7 +78,7 @@ void FilePaths::LoadLevel(const Common::String &filename) {
 			l.Load(n);
 
 			Common::String id;
-			LoadStr(id, "id", n);
+			loadStr(id, "id", n);
 
 			level[id] = l;
 		}
@@ -90,59 +90,59 @@ void FilePaths::Load(const Common::String &filename) {
 	if (settings.ready()) {
 		rapidxml::xml_node<char> *node = settings.doc()->first_node("paths");
 
-		if (NodeValid(node) && !loaded) {
-			if (NodeValid("icon", node)) {
+		if (nodeValid(node) && !loaded) {
+			if (nodeValid("icon", node)) {
 				rapidxml::xml_node<char> *iconode = node->first_node("icon");
 				icon = iconode->value();
 			}
 
-			if (NodeValid("common", node)) {
+			if (nodeValid("common", node)) {
 				rapidxml::xml_node<char> *commonnode = node->first_node("common");
 				common = commonnode->value();
 			}
 
-			if (NodeValid("font", node)) {
+			if (nodeValid("font", node)) {
 				rapidxml::xml_node<char> *fontnode = node->first_node("font");
 				font = fontnode->value();
 			}
 
-			if (NodeValid("shader", node)) {
+			if (nodeValid("shader", node)) {
 				rapidxml::xml_node<char> *shadnode = node->first_node("shader");
 				shaders = shadnode->value();
 			}
 
-			if (NodeValid("color", node)) {
+			if (nodeValid("color", node)) {
 				rapidxml::xml_node<char> *colnode = node->first_node("color");
 				colors = colnode->value();
 			}
 
-			if (NodeValid("mod", node)) {
+			if (nodeValid("mod", node)) {
 				rapidxml::xml_node<char> *modnode = node->first_node("mod");
-				LoadStr(mod_path, "path", modnode);
-				LoadStr(mod_ext, "ext", modnode);
-				LoadStr(mod_cur, "cur", modnode);
+				loadStr(mod_path, "path", modnode);
+				loadStr(mod_ext, "ext", modnode);
+				loadStr(mod_cur, "cur", modnode);
 			}
 
-			if (NodeValid("main_menu", node)) {
+			if (nodeValid("main_menu", node)) {
 				rapidxml::xml_node<char> *menunode = node->first_node("main_menu");
-				LoadStr(mainmenu_l, "l", menunode);
-				LoadStr(mainmenu_r, "r", menunode);
+				loadStr(mainmenu_l, "l", menunode);
+				loadStr(mainmenu_r, "r", menunode);
 				current_r = mainmenu_r;
 			}
 
-			if (NodeValid("sound", node)) {
+			if (nodeValid("sound", node)) {
 				rapidxml::xml_node<char> *soundnode = node->first_node("sound");
-				LoadStr(sound_effect, "effect", soundnode);
-				LoadStr(sound_music, "music", soundnode);
+				loadStr(sound_effect, "effect", soundnode);
+				loadStr(sound_music, "music", soundnode);
 			}
 
-			if (NodeValid("save", node)) {
+			if (nodeValid("save", node)) {
 				rapidxml::xml_node<char> *savenode = node->first_node("save");
-				LoadStr(save_dir, "dir", savenode);
-				LoadStr(save_ext, "ext", savenode);
+				loadStr(save_dir, "dir", savenode);
+				loadStr(save_ext, "ext", savenode);
 
 				Common::String custom_path;
-				if (LoadStr(custom_path, "custom", savenode)) {
+				if (loadStr(custom_path, "custom", savenode)) {
 #if 0
 					using namespace boost::filesystem;
 

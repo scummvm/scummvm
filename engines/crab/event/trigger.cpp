@@ -36,7 +36,7 @@ using namespace pyrodactyl::event;
 
 void Trigger::Load(rapidxml::xml_node<char> *node) {
 	Common::String ty;
-	LoadStr(ty, "type", node);
+	loadStr(ty, "type", node);
 
 	// Should we throw a warning about missing fields? Depends on the type of trigger
 	bool echo_op = true, echo_tar = false, echo_sub = true;
@@ -66,19 +66,19 @@ void Trigger::Load(rapidxml::xml_node<char> *node) {
 	} else
 		type = TRIG_VAR;
 
-	LoadStr(target, "target", node, echo_tar);
-	LoadStr(subject, "subject", node, echo_sub);
-	LoadStr(operation, "operation", node, echo_op);
-	LoadStr(val, "val", node);
+	loadStr(target, "target", node, echo_tar);
+	loadStr(subject, "subject", node, echo_sub);
+	loadStr(operation, "operation", node, echo_op);
+	loadStr(val, "val", node);
 
 	Common::String str;
-	LoadStr(str, "rel", node, false);
+	loadStr(str, "rel", node, false);
 	if (str == "or")
 		rel = OP_OR;
 	else
 		rel = OP_AND;
 
-	LoadStr(str, "prefix", node, false);
+	loadStr(str, "prefix", node, false);
 	if (str == "!")
 		negate = true;
 	else

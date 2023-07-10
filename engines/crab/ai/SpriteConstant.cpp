@@ -40,16 +40,16 @@ FlyerConstant::FlyerConstant() : _start(10, 40), _vel(8.0f, 0.0f) {
 }
 
 void FlyerConstant::load(rapidxml::xml_node<char> *node) {
-	if (NodeValid("start", node))
+	if (nodeValid("start", node))
 		_start.Load(node->first_node("start"));
 
-	if (NodeValid("vel", node))
+	if (nodeValid("vel", node))
 		_vel.Load(node->first_node("vel"));
 
-	if (NodeValid("delay", node)) {
+	if (nodeValid("delay", node)) {
 		auto n = node->first_node("delay");
-		LoadNum(_delayMin, "min", n);
-		LoadNum(_delayMax, "max", n);
+		loadNum(_delayMin, "min", n);
+		loadNum(_delayMax, "max", n);
 	}
 }
 
@@ -59,13 +59,13 @@ SpriteConstant::SpriteConstant() : _walkVelMod(0.9f, 0.63f) {
 }
 
 void SpriteConstant::load(rapidxml::xml_node<char> *node) {
-	LoadNum(_planeW, "plane_width", node);
-	LoadNum(_tweening, "tweening", node);
+	loadNum(_planeW, "plane_width", node);
+	loadNum(_tweening, "tweening", node);
 
-	if (NodeValid("_walkVelMod", node))
+	if (nodeValid("_walkVelMod", node))
 		_walkVelMod.Load(node->first_node("_walkVelMod"));
 
-	if (NodeValid("fly", node))
+	if (nodeValid("fly", node))
 		_fly.load(node->first_node("fly"));
 }
 

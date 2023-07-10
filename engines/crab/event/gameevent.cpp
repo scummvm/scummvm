@@ -46,12 +46,12 @@ void GameEvent::Load(rapidxml::xml_node<char> *node) {
 	if (!LoadEventID(id, "id", node))
 		id = 0;
 
-	LoadStr(title, "title", node);
-	LoadStr(dialog, "dialog", node);
-	LoadEnum(state, "state", node, false);
+	loadStr(title, "title", node);
+	loadStr(dialog, "dialog", node);
+	loadEnum(state, "state", node, false);
 
 	Common::String Type;
-	LoadStr(Type, "type", node);
+	loadStr(Type, "type", node);
 
 	if (Type == "dlg") {
 		type = EVENT_DIALOG;
@@ -61,7 +61,7 @@ void GameEvent::Load(rapidxml::xml_node<char> *node) {
 		g_engine->_eventStore->AddConv(node, special);
 	} else if (Type == "animation") {
 		type = EVENT_ANIM;
-		LoadNum(special, "anim", node);
+		loadNum(special, "anim", node);
 	} else if (Type == "silent") {
 		type = EVENT_SILENT;
 		special = 0;

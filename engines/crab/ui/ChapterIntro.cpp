@@ -35,13 +35,13 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
 void ChapterIntro::Load(rapidxml::xml_node<char> *node) {
-	if (NodeValid("dialog", node))
+	if (nodeValid("dialog", node))
 		dialog.Load(node->first_node("dialog"));
 
-	if (NodeValid("image", node))
+	if (nodeValid("image", node))
 		pos.Load(node->first_node("image"));
 
-	if (NodeValid("trait", node))
+	if (nodeValid("trait", node))
 		traits.Load(node->first_node("trait"));
 }
 

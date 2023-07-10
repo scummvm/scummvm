@@ -46,7 +46,7 @@ MainMenu::MainMenu() {
 	XMLDoc conf(g_engine->_filePath->mainmenu_l);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("main_menu");
-		if (NodeValid(node)) {
+		if (nodeValid(node)) {
 			me_main.Load(node->first_node("main"));
 			logo.Load(node->first_node("logo"));
 
@@ -64,7 +64,7 @@ MainMenu::MainMenu() {
 				XMLDoc loadconf(node->first_node("load")->first_attribute("path")->value());
 				if (loadconf.ready()) {
 					rapidxml::xml_node<char> *loadnode = loadconf.doc()->first_node("load_menu");
-					if (NodeValid(loadnode))
+					if (nodeValid(loadnode))
 						g_engine->_loadMenu->Load(loadnode);
 				}
 			}
@@ -73,18 +73,18 @@ MainMenu::MainMenu() {
 				XMLDoc helpconf(node->first_node("help")->first_attribute("path")->value());
 				if (helpconf.ready()) {
 					rapidxml::xml_node<char> *hnode = helpconf.doc()->first_node("help");
-					if (NodeValid(hnode))
+					if (nodeValid(hnode))
 						g_engine->_helpScreen->Load(hnode);
 				}
 			}
 
-			if (NodeValid("scene", node)) {
+			if (nodeValid("scene", node)) {
 				rapidxml::xml_node<char> *snode = node->first_node("scene");
 
-				if (NodeValid("bg", snode))
+				if (nodeValid("bg", snode))
 					bg.Load(snode->first_node("bg"));
 
-				if (NodeValid("lights", snode)) {
+				if (nodeValid("lights", snode)) {
 					rapidxml::xml_node<char> *lnode = snode->first_node("lights");
 
 					for (rapidxml::xml_node<char> *n = lnode->first_node("img"); n != NULL; n = n->next_sibling("img"))
@@ -92,50 +92,50 @@ MainMenu::MainMenu() {
 				}
 			}
 
-			if (NodeValid("difficulty", node)) {
+			if (nodeValid("difficulty", node)) {
 				rapidxml::xml_node<char> *dinode = node->first_node("difficulty");
 
-				if (NodeValid("bg", dinode))
+				if (nodeValid("bg", dinode))
 					diff.bg.Load(dinode->first_node("bg"));
 
-				if (NodeValid("menu", dinode))
+				if (nodeValid("menu", dinode))
 					diff.menu.Load(dinode->first_node("menu"));
 
-				if (NodeValid("heading", dinode))
+				if (nodeValid("heading", dinode))
 					diff.heading.Load(dinode->first_node("heading"));
 			}
 
-			if (NodeValid("prompt", node)) {
+			if (nodeValid("prompt", node)) {
 				rapidxml::xml_node<char> *prnode = node->first_node("prompt");
 
 				save.Load(prnode);
 
-				if (NodeValid("warning", prnode))
+				if (nodeValid("warning", prnode))
 					warning.Load(prnode->first_node("warning"));
 
-				if (NodeValid("bg", prnode))
+				if (nodeValid("bg", prnode))
 					bg_save.Load(prnode->first_node("bg"));
 
-				if (NodeValid("accept", prnode))
+				if (nodeValid("accept", prnode))
 					accept.Load(prnode->first_node("accept"));
 
-				if (NodeValid("cancel", prnode))
+				if (nodeValid("cancel", prnode))
 					cancel.Load(prnode->first_node("cancel"));
 			}
 
-			if (NodeValid("music", node)) {
-				LoadNum(music_key.normal, "normal", node->first_node("music"));
-				LoadNum(music_key.credits, "credits", node->first_node("music"));
+			if (nodeValid("music", node)) {
+				loadNum(music_key.normal, "normal", node->first_node("music"));
+				loadNum(music_key.credits, "credits", node->first_node("music"));
 			}
 
 #ifdef UNREST_DEMO
-			if (NodeValid("demo", node)) {
+			if (nodeValid("demo", node)) {
 				rapidxml::xml_node<char> *denode = node->first_node("demo");
 
-				if (NodeValid("steam", denode))
+				if (nodeValid("steam", denode))
 					steam.Load(denode->first_node("steam"));
 
-				if (NodeValid("direct", denode))
+				if (nodeValid("direct", denode))
 					direct.Load(denode->first_node("direct"));
 			}
 #endif

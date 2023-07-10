@@ -58,7 +58,7 @@ struct TileInfo {
 
 	TileInfo(rapidxml::xml_node<char> *node) {
 		// Load the gid of the tile
-		if (!LoadNum(gid, "gid", node))
+		if (!loadNum(gid, "gid", node))
 			gid = 0;
 
 		bool horizontal = (gid & FlippedHorizontallyFlag) != 0;

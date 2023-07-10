@@ -35,8 +35,8 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 
 void MapData::Load(rapidxml::xml_node<char> *node) {
-	LoadStr(path_bg, "bg", node);
-	LoadStr(path_overlay, "overlay", node);
+	loadStr(path_bg, "bg", node);
+	loadStr(path_overlay, "overlay", node);
 }
 
 void MapData::DestAdd(const Common::String &name, const int &x, const int &y) {
@@ -66,7 +66,7 @@ void MapData::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> 
 
 void MapData::LoadState(rapidxml::xml_node<char> *node) {
 	reveal.clear();
-	if (NodeValid("clip", node)) {
+	if (nodeValid("clip", node)) {
 		rapidxml::xml_node<char> *clipnode = node->first_node("clip");
 		for (rapidxml::xml_node<char> *n = clipnode->first_node("rect"); n != NULL; n = n->next_sibling("rect")) {
 			Rect r;
@@ -76,11 +76,11 @@ void MapData::LoadState(rapidxml::xml_node<char> *node) {
 	}
 
 	dest.clear();
-	if (NodeValid("dest", node)) {
+	if (nodeValid("dest", node)) {
 		rapidxml::xml_node<char> *destnode = node->first_node("dest");
 		for (rapidxml::xml_node<char> *n = destnode->first_node("pos"); n != NULL; n = n->next_sibling("pos")) {
 			MarkerData md;
-			LoadStr(md.name, "name", n);
+			loadStr(md.name, "name", n);
 			md.pos.Load(n);
 			dest.push_back(md);
 		}

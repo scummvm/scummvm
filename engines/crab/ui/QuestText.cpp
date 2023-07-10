@@ -39,28 +39,28 @@ using namespace pyrodactyl::input;
 
 void QuestText::Load(rapidxml::xml_node<char> *node) {
 	ParagraphData::Load(node);
-	LoadNum(col_s, "color_s", node);
+	loadNum(col_s, "color_s", node);
 
-	if (NodeValid("line", node))
-		LoadNum(lines_per_page, "page", node->first_node("line"));
+	if (nodeValid("line", node))
+		loadNum(lines_per_page, "page", node->first_node("line"));
 
-	if (NodeValid("inc", node))
+	if (nodeValid("inc", node))
 		inc.Load(node->first_node("inc"));
 
-	if (NodeValid("img", node))
+	if (nodeValid("img", node))
 		img.Load(node->first_node("img"));
 
-	if (NodeValid("prev", node)) {
+	if (nodeValid("prev", node)) {
 		prev.Load(node->first_node("prev"));
 		prev.hotkey.Set(IU_PAGE_PREV);
 	}
 
-	if (NodeValid("next", node)) {
+	if (nodeValid("next", node)) {
 		next.Load(node->first_node("next"));
 		next.hotkey.Set(IU_PAGE_NEXT);
 	}
 
-	if (NodeValid("status", node))
+	if (nodeValid("status", node))
 		status.Load(node->first_node("status"));
 }
 
