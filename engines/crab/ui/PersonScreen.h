@@ -75,7 +75,7 @@ public:
 	void internalEvents();
 	void draw(pyrodactyl::event::Info &info, const Common::String &id);
 
-	void SetUI();
+	void setUI();
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

@@ -180,10 +180,10 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 		element[element_count].visible = false;
 }
 
-void ReplyMenu::SetUI() {
-	Menu<ReplyButton>::SetUI();
-	bg.SetUI();
-	tone.SetUI();
+void ReplyMenu::setUI() {
+	Menu<ReplyButton>::setUI();
+	bg.setUI();
+	tone.setUI();
 }
 
 } // End of namespace Crab

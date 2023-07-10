@@ -166,12 +166,12 @@ void QuestText::HandleEvents(pyrodactyl::event::Quest &q, const SDL_Event &Event
 }
 #endif
 
-void QuestText::SetUI() {
-	ParagraphData::SetUI();
-	img.SetUI();
-	prev.SetUI();
-	next.SetUI();
-	status.SetUI();
+void QuestText::setUI() {
+	ParagraphData::setUI();
+	img.setUI();
+	prev.setUI();
+	next.setUI();
+	status.setUI();
 }
 
 } // End of namespace Crab

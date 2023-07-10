@@ -128,9 +128,9 @@ void GameSaveMenu::draw() {
 	DrawHover();
 }
 
-void GameSaveMenu::SetUI() {
-	FileMenu<SaveFileData>::SetUI();
-	ta_name.SetUI();
+void GameSaveMenu::setUI() {
+	FileMenu<SaveFileData>::setUI();
+	ta_name.setUI();
 }
 
 } // End of namespace Crab

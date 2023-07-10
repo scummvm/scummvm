@@ -171,13 +171,13 @@ void HUD::SetTooltip() {
 	menu.element[HS_PAUSE].tooltip.text = tooltip[HS_PAUSE] + " (" + g_engine->_inputManager->GetAssociatedKey(IG_PAUSE) + ")";
 }
 
-void HUD::SetUI() {
-	bg.SetUI();
-	menu.SetUI();
+void HUD::setUI() {
+	bg.setUI();
+	menu.setUI();
 
-	gom.SetUI();
-	pause.SetUI();
-	back.SetUI();
+	gom.setUI();
+	pause.setUI();
+	back.setUI();
 }
 
 } // End of namespace Crab

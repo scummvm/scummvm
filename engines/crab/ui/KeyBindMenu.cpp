@@ -225,18 +225,18 @@ void KeyBindMenu::SwapKey(const SDL_Scancode &find) {
 }
 #endif
 
-void KeyBindMenu::SetUI() {
+void KeyBindMenu::setUI() {
 	menu[CON_GAME].Clear();
 	menu[CON_UI].Clear();
 
 	// Initialize the menus
-	prim.SetUI();
-	alt.SetUI();
+	prim.setUI();
+	alt.setUI();
 	InitMenu(CON_GAME);
 	InitMenu(CON_UI);
 
-	desc.SetUI();
-	sel_controls.SetUI();
+	desc.setUI();
+	sel_controls.setUI();
 }
 
 } // End of namespace Crab

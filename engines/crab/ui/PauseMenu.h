@@ -102,7 +102,7 @@ public:
 	// This is done because esc is both the "go back on menu level" and the pause key
 	bool ShowLevel() { return state == STATE_NORMAL; }
 
-	void SetUI();
+	void setUI();
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

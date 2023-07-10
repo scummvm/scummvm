@@ -79,7 +79,7 @@ public:
 
 	void SetInfo();
 
-	void SetUI();
+	void setUI();
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

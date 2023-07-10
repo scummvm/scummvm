@@ -157,14 +157,14 @@ void GeneralSettingMenu::RestoreBackup() {
 //------------------------------------------------------------------------
 // Purpose: Set UI positioned on screen size change
 //------------------------------------------------------------------------
-void GeneralSettingMenu::SetUI() {
-	save_on_exit.SetUI();
-	mouse_trap.SetUI();
+void GeneralSettingMenu::setUI() {
+	save_on_exit.setUI();
+	mouse_trap.setUI();
 
-	vol_music.SetUI();
-	vol_effects.SetUI();
+	vol_music.setUI();
+	vol_effects.setUI();
 
-	text_speed.SetUI();
+	text_speed.setUI();
 }
 
 } // End of namespace Crab

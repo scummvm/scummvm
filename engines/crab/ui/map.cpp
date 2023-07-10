@@ -502,16 +502,16 @@ void Map::loadState(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 // Purpose: Reset the UI positions in response to change in resolution
 //------------------------------------------------------------------------
-void Map::SetUI() {
-	pos.SetUI();
-	fg.SetUI();
+void Map::setUI() {
+	pos.setUI();
+	fg.setUI();
 
-	travel.SetUI();
-	marker.SetUI();
+	travel.setUI();
+	marker.setUI();
 
-	bu_overlay.SetUI();
-	scroll.SetUI();
-	title.SetUI();
+	bu_overlay.setUI();
+	scroll.setUI();
+	title.setUI();
 
 	CalcBounds();
 }

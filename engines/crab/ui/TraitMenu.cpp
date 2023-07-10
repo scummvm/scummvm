@@ -133,10 +133,10 @@ void TraitMenu::Clear() {
 		e->Empty();
 }
 
-void TraitMenu::SetUI() {
-	ref.SetUI();
-	desc.SetUI();
-	menu.SetUI();
+void TraitMenu::setUI() {
+	ref.setUI();
+	desc.setUI();
+	menu.setUI();
 }
 
 } // End of namespace Crab

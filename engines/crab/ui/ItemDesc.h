@@ -63,9 +63,9 @@ public:
 		desc.draw(item.desc);
 	}
 
-	void SetUI() {
-		name.SetUI();
-		desc.SetUI();
+	void setUI() {
+		name.setUI();
+		desc.setUI();
 	}
 };
 } // End of namespace ui

@@ -62,7 +62,7 @@ public:
 	void HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {}
 	void internalEvents(bool &ShouldChangeState, GameStateID &NewStateID);
 	void draw();
-	void SetUI();
+	void setUI();
 
 	// We don't need to save game state here
 	void AutoSave() {}

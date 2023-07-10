@@ -144,7 +144,7 @@ public:
 
 	void AutoSave() { CreateSaveGame(SAVEGAME_EXIT); }
 
-	void SetUI();
+	void setUI();
 };
 
 } // End of namespace Crab

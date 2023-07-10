@@ -102,11 +102,11 @@ void PersonScreen::Cache(Info &info, const Common::String &id, pyrodactyl::level
 		menu.Clear();
 }
 
-void PersonScreen::SetUI() {
-	bg.SetUI();
-	name.SetUI();
-	img.SetUI();
-	menu.SetUI();
+void PersonScreen::setUI() {
+	bg.setUI();
+	name.setUI();
+	img.setUI();
+	menu.setUI();
 }
 
 } // End of namespace Crab

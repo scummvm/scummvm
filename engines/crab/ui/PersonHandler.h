@@ -108,7 +108,7 @@ public:
 	void OpinionChange(pyrodactyl::event::Info &info, const Common::String &id,
 					   const pyrodactyl::people::OpinionType &type, const int &val);
 
-	void SetUI();
+	void setUI();
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

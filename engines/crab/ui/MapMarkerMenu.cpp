@@ -151,9 +151,9 @@ void MapMarkerMenu::internalEvents(const Element &pos, const Vector2i &player_po
 //------------------------------------------------------------------------
 // Purpose: Reposition UI
 //------------------------------------------------------------------------
-void MapMarkerMenu::SetUI() {
-	player.SetUI();
-	menu.SetUI();
+void MapMarkerMenu::setUI() {
+	player.setUI();
+	menu.setUI();
 }
 
 } // End of namespace Crab

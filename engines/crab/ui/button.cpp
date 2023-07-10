@@ -244,11 +244,11 @@ ButtonAction Button::HandleEvents(const SDL_Event &Event, const int &XOffset, co
 }
 #endif
 
-void Button::SetUI(Rect *parent) {
-	Element::SetUI(parent);
+void Button::setUI(Rect *parent) {
+	Element::setUI(parent);
 
-	tooltip.SetUI(this);
-	caption.SetUI(this);
+	tooltip.setUI(this);
+	caption.setUI(this);
 }
 
 } // End of namespace Crab

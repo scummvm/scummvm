@@ -93,7 +93,7 @@ public:
 #endif
 	void internalEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, Rect bounds);
 
-	void SetUI();
+	void setUI();
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

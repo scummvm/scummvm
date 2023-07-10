@@ -81,7 +81,7 @@ public:
 #endif
 
 	void Cache(const pyrodactyl::people::Person &obj);
-	void SetUI();
+	void setUI();
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

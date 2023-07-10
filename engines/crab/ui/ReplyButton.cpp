@@ -84,7 +84,7 @@ void ReplyButton::Cache(const Common::String &val, const int &spacing, const int
 	y = orig.y;
 	w = width;
 	h = height * lines;
-	SetUI(parent);
+	setUI(parent);
 
 	if (orig.y < bottom_edge)
 		y = bottom_edge + spacing;

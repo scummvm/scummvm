@@ -434,11 +434,11 @@ void Manager::loadState(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 // Purpose: Function called when window size is changed to adjust UI
 //------------------------------------------------------------------------
-void Manager::SetUI() {
-	oh.SetUI();
-	reply.SetUI();
-	textin.SetUI();
-	per.SetUI();
+void Manager::setUI() {
+	oh.setUI();
+	reply.setUI();
+	textin.setUI();
+	per.setUI();
 }
 
 } // End of namespace Crab

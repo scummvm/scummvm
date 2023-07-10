@@ -296,14 +296,14 @@ void Journal::loadState(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 // Purpose: Adjust UI elements
 //------------------------------------------------------------------------
-void Journal::SetUI() {
-	bg.SetUI();
-	category.SetUI();
-	ref.SetUI();
+void Journal::setUI() {
+	bg.setUI();
+	category.setUI();
+	ref.setUI();
 
 	for (auto &m : journal)
 		for (auto i = 0; i < JE_TOTAL; ++i)
-			m.menu[i].SetUI();
+			m.menu[i].setUI();
 }
 
 } // End of namespace Crab

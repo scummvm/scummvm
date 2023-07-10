@@ -109,10 +109,10 @@ bool OptionSelect::HandleEvents(const SDL_Event &Event) {
 }
 #endif
 
-void OptionSelect::SetUI() {
-	option.data.SetUI();
-	prev.SetUI();
-	next.SetUI();
+void OptionSelect::setUI() {
+	option.data.setUI();
+	prev.setUI();
+	next.setUI();
 }
 
 } // End of namespace Crab

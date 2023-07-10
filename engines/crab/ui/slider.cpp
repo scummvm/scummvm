@@ -134,10 +134,10 @@ void Slider::Value(const int val) {
 	knob.x = bar.x + ((bar.w - knob.w) * (value - min)) / (max - min);
 }
 
-void Slider::SetUI() {
-	bar.SetUI();
-	knob.SetUI();
-	caption.SetUI(&bar);
+void Slider::setUI() {
+	bar.setUI();
+	knob.setUI();
+	caption.setUI(&bar);
 
 	knob.x = bar.x + ((bar.w - knob.w) * value / (max - min));
 	knob.y = bar.y;

@@ -76,7 +76,7 @@ public:
 	// The parent is the object inside which the element exists
 	void load(rapidxml::xml_node<char> *node, Rect *parent = NULL, const bool &echo = true);
 
-	void SetUI(Rect *parent = NULL);
+	void setUI(Rect *parent = NULL);
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

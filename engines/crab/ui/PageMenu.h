@@ -123,14 +123,14 @@ public:
 			m->UseKeyboard(val);
 	}
 
-	void SetUI() {
-		prev.SetUI();
-		next.SetUI();
-		ref.SetUI();
-		status.SetUI();
+	void setUI() {
+		prev.setUI();
+		next.setUI();
+		ref.setUI();
+		status.setUI();
 
 		for (auto m = menu.begin(); m != menu.end(); ++m)
-			m->SetUI();
+			m->setUI();
 	}
 
 	void UpdateInfo() {
