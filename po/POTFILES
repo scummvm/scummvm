@@ -10,6 +10,7 @@ gui/error.cpp
 gui/filebrowser-dialog.cpp
 gui/fluidsynth-dialog.cpp
 gui/gui-manager.cpp
+gui/imagealbum-dialog.cpp
 gui/launcher.cpp
 gui/massadd.cpp
 gui/message.cpp
