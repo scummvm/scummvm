@@ -502,7 +502,7 @@ ft_class_from_type( FT2_1_3_Class   *aclass,
 typedef struct FT2_1_3_ClassHNodeRec_*  FT2_1_3_ClassHNode;
 
 typedef struct FT2_1_3_ClassHNodeRec_ {
-	FT2_1_3_HashNodeRec  hnode;
+	FT_HashNodeRec  hnode;
 	FT_Type         type;
 	FT2_1_3_Class        clazz;
 
@@ -510,7 +510,7 @@ typedef struct FT2_1_3_ClassHNodeRec_ {
 
 typedef struct FT2_1_3_MetaClassRec_ {
 	FT_ClassRec   clazz;         /* the meta-class is a class itself */
-	FT2_1_3_HashRec    type_to_class; /* the type => class hash table */
+	FT_HashRec    type_to_class; /* the type => class hash table */
 
 } FT2_1_3_MetaClassRec, *FT2_1_3_MetaClass;
 

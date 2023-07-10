@@ -131,7 +131,7 @@ FT2_1_3_BASE_DEF( void )
 ft_metaclass_done( FT2_1_3_MetaClass  meta ) {
 	/* clear all classes */
 	ft_hash_done( &meta->type_to_class,
-	              (FT2_1_3_Hash_ForeachFunc) ft_class_hnode_destroy,
+	              (FT_Hash_ForeachFunc) ft_class_hnode_destroy,
 	              NULL );
 
 	meta->clazz.object.clazz     = NULL;
@@ -161,7 +161,7 @@ ft_metaclass_init( FT2_1_3_MetaClass  meta,
 	clazz->obj_done         = NULL;
 
 	return ft_hash_init( &meta->type_to_class,
-	                     (FT2_1_3_Hash_EqualFunc) ft_class_hnode_equal,
+	                     (FT_Hash_EqualFunc) ft_class_hnode_equal,
 	                     library->memory );
 }
 
@@ -183,7 +183,7 @@ ft_metaclass_get_class( FT2_1_3_MetaClass  meta,
 	keynode.type       = ctype;
 
 	pnode = (FT2_1_3_ClassHNode*) ft_hash_lookup( &meta->type_to_class,
-	        (FT2_1_3_HashNode) &keynode );
+	        (FT_HashNode) &keynode );
 	node  = *pnode;
 	if ( node != NULL ) {
 		clazz = (FT_ClassRec*) node->clazz;

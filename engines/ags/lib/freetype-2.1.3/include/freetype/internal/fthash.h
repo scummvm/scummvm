@@ -22,7 +22,7 @@
  *  the table is frequently resized..
  *
  *
- *  Note that the use of the FT2_1_3_Hash type is rather unusual in order
+ *  Note that the use of the FT_Hash type is rather unusual in order
  *  to be as generic and efficient as possible. See the comments in the
  *  following definitions for more details.
  */
@@ -40,41 +40,41 @@ FT2_1_3_BEGIN_HEADER
 
 /***********************************************************
  *
- * @type: FT2_1_3_Hash
+ * @type: FT_Hash
  *
  * @description:
- *   handle to a @FT2_1_3_HashRec structure used to model a
+ *   handle to a @FT_HashRec structure used to model a
  *   dynamic hash table
  */
-typedef struct FT2_1_3_HashRec_*      FT2_1_3_Hash;
+typedef struct FT_HashRec_*      FT_Hash;
 
 
 /***********************************************************
  *
- * @type: FT2_1_3_HashNode
+ * @type: FT_HashNode
  *
  * @description:
- *   handle to a @FT2_1_3_HashNodeRec structure used to model a
+ *   handle to a @FT_HashNodeRec structure used to model a
  *   single node of a hash table
  */
-typedef struct FT2_1_3_HashNodeRec_*  FT2_1_3_HashNode;
+typedef struct FT_HashNodeRec_*  FT_HashNode;
 
 
 /***********************************************************
  *
- * @type: FT2_1_3_HashLookup
+ * @type: FT_HashLookup
  *
  * @description:
- *   handle to a @FT2_1_3_HashNode pointer. This is returned by
+ *   handle to a @FT_HashNode pointer. This is returned by
  *   the @ft_hash_lookup function and can later be used by
  *   @ft_hash_add or @ft_hash_remove
  */
-typedef FT2_1_3_HashNode*     FT2_1_3_HashLookup;
+typedef FT_HashNode*     FT_HashLookup;
 
 
 /***********************************************************
  *
- * @type: FT2_1_3_Hash_EqualFunc
+ * @type: FT_Hash_EqualFunc
  *
  * @description:
  *   a function used to compare two nodes of the hash table
@@ -87,13 +87,13 @@ typedef FT2_1_3_HashNode*     FT2_1_3_HashLookup;
  *   1 iff the 'keys' in 'node1' and 'node2' are identical.
  *   0 otherwise.
  */
-typedef FT_Int  (*FT2_1_3_Hash_EqualFunc)( FT2_1_3_HashNode  node1,
-																			FT2_1_3_HashNode  node2 );
+typedef FT_Int  (*FT_Hash_EqualFunc)( FT_HashNode  node1,
+																			FT_HashNode  node2 );
 
 
 /***********************************************************
  *
- * @struct: FT2_1_3_HashRec
+ * @struct: FT_HashRec
  *
  * @description:
  *   a structure used to model a dynamic hash table.
@@ -119,20 +119,20 @@ typedef FT_Int  (*FT2_1_3_Hash_EqualFunc)( FT2_1_3_HashNode  node1,
  *   You can grab the hash table size by calling
  *   '@ft_hash_get_size'.
  */
-typedef struct FT2_1_3_HashRec_ {
-	FT2_1_3_HashNode*         buckets;
+typedef struct FT_HashRec_ {
+	FT_HashNode*         buckets;
 	FT_UInt              p;
 	FT_UInt              mask;  /* really maxp-1 */
 	FT_Long              slack;
-	FT2_1_3_Hash_EqualFunc    node_equal;
+	FT_Hash_EqualFunc    node_equal;
 	FT_Memory            memory;
 
-} FT2_1_3_HashRec;
+} FT_HashRec;
 
 
 /***********************************************************
  *
- * @struct: FT2_1_3_HashNodeRec
+ * @struct: FT_HashNodeRec
  *
  * @description:
  *   a structure used to model the root fields of a dynamic
@@ -154,7 +154,7 @@ typedef struct FT2_1_3_HashRec_ {
  *   {
  *     typedef struct MyNodeRec_
  *     {
- *       FT2_1_3_HashNodeRec  hnode;
+ *       FT_HashNodeRec  hnode;
  *       const char*     key;
  *       int             value;
  *
@@ -162,11 +162,11 @@ typedef struct FT2_1_3_HashRec_ {
  *   }
  *
  */
-typedef struct FT2_1_3_HashNodeRec_ {
-	FT2_1_3_HashNode  link;
+typedef struct FT_HashNodeRec_ {
+	FT_HashNode  link;
 	FT_UInt32    hash;
 
-} FT2_1_3_HashNodeRec;
+} FT_HashNodeRec;
 
 
 /****************************************************************
@@ -203,13 +203,13 @@ typedef struct FT2_1_3_HashNodeRec_ {
  *
  *     ....
  *
- *     ft_hash_init( &hash, (FT2_1_3_Hash_EqualFunc) my_compare, memory );
+ *     ft_hash_init( &hash, (FT_Hash_EqualFunc) my_compare, memory );
  *     ....
  *   }
  */
 FT2_1_3_BASE( FT_Error )
-ft_hash_init( FT2_1_3_Hash              table,
-							FT2_1_3_Hash_EqualFunc  compare,
+ft_hash_init( FT_Hash              table,
+							FT_Hash_EqualFunc  compare,
 							FT_Memory            memory );
 
 
@@ -245,7 +245,7 @@ ft_hash_init( FT2_1_3_Hash              table,
  *     // maps a string to an integer with a hash table
  *     // returns -1 in case of failure
  *     //
- *     int  my_lookup( FT2_1_3_Hash      table,
+ *     int  my_lookup( FT_Hash      table,
  *                     const char*  key )
  *     {
  *       MyNode*    pnode;
@@ -269,9 +269,9 @@ ft_hash_init( FT2_1_3_Hash              table,
  *     }
  *   }
  */
-FT2_1_3_BASE_DEF( FT2_1_3_HashLookup )
-ft_hash_lookup( FT2_1_3_Hash      table,
-								FT2_1_3_HashNode  keynode );
+FT2_1_3_BASE_DEF( FT_HashLookup )
+ft_hash_lookup( FT_Hash      table,
+								FT_HashNode  keynode );
 
 
 /****************************************************************
@@ -299,7 +299,7 @@ ft_hash_lookup( FT2_1_3_Hash      table,
  *   {
  *     // sets the value corresponding to a given string key
  *     //
- *     void  my_set( FT2_1_3_Hash      table,
+ *     void  my_set( FT_Hash      table,
  *                   const char*  key,
  *                   int          value )
  *     {
@@ -335,9 +335,9 @@ ft_hash_lookup( FT2_1_3_Hash      table,
  *     }
  */
 FT2_1_3_BASE( FT_Error )
-ft_hash_add( FT2_1_3_Hash        table,
-						 FT2_1_3_HashLookup  lookup,
-						 FT2_1_3_HashNode    new_node );
+ft_hash_add( FT_Hash        table,
+						 FT_HashLookup  lookup,
+						 FT_HashNode    new_node );
 
 
 /****************************************************************
@@ -358,7 +358,7 @@ ft_hash_add( FT2_1_3_Hash        table,
  *   {
  *     // sets the value corresponding to a given string key
  *     //
- *     void  my_remove( FT2_1_3_Hash      table,
+ *     void  my_remove( FT_Hash      table,
  *                      const char*  key )
  *     {
  *       MyNodeRec  noderec;
@@ -380,8 +380,8 @@ ft_hash_add( FT2_1_3_Hash        table,
  *   }
  */
 FT2_1_3_BASE( FT_Error )
-ft_hash_remove( FT2_1_3_Hash        table,
-								FT2_1_3_HashLookup  lookup );
+ft_hash_remove( FT_Hash        table,
+								FT_HashLookup  lookup );
 
 
 
@@ -399,25 +399,25 @@ ft_hash_remove( FT2_1_3_Hash        table,
  *   number of elements. 0 if empty
  */
 FT2_1_3_BASE( FT_UInt )
-ft_hash_get_size( FT2_1_3_Hash  table );
+ft_hash_get_size( FT_Hash  table );
 
 
 
 /****************************************************************
  *
- * @functype: FT2_1_3_Hash_ForeachFunc
+ * @functype: FT_Hash_ForeachFunc
  *
  * @description:
  *   a function used to iterate over all elements of a given
  *   hash table
  *
  * @input:
- *   node :: handle to target @FT2_1_3_HashNodeRec node structure
+ *   node :: handle to target @FT_HashNodeRec node structure
  *   data :: optional argument to iteration routine
  *
  * @also:  @ft_hash_foreach
  */
-typedef void  (*FT2_1_3_Hash_ForeachFunc)( const FT2_1_3_HashNode  node,
+typedef void  (*FT_Hash_ForeachFunc)( const FT_HashNode  node,
 																			const FT_Pointer   data );
 
 
@@ -438,8 +438,8 @@ typedef void  (*FT2_1_3_Hash_ForeachFunc)( const FT2_1_3_HashNode  node,
  *   hash table. See the example given for @ft_hash_done
  */
 FT2_1_3_BASE( void )
-ft_hash_foreach( FT2_1_3_Hash              table,
-								 FT2_1_3_Hash_ForeachFunc  foreach_func,
+ft_hash_foreach( FT_Hash              table,
+								 FT_Hash_ForeachFunc  foreach_func,
 								 const FT_Pointer     foreach_data );
 
 
@@ -469,15 +469,15 @@ ft_hash_foreach( FT2_1_3_Hash              table,
  *       free( node );
  *     }
  *
- *     static void  my_done( FT2_1_3_Hash  table )
+ *     static void  my_done( FT_Hash  table )
  *     {
- *       ft_hash_done( table, (FT2_1_3_Hash_ForeachFunc) my_node_clear, NULL );
+ *       ft_hash_done( table, (FT_Hash_ForeachFunc) my_node_clear, NULL );
  *     }
  *   }
  */
 FT2_1_3_BASE( void )
-ft_hash_done( FT2_1_3_Hash              table,
-							FT2_1_3_Hash_ForeachFunc  item_func,
+ft_hash_done( FT_Hash              table,
+							FT_Hash_ForeachFunc  item_func,
 							const FT_Pointer     item_data );
 
 /* */
@@ -494,7 +494,7 @@ ft_hash_done( FT2_1_3_Hash              table,
 																																		 \
 							 (_index) = (FT_UInt)( (_hash0) & _mask ) );           \
 							 if ( (_index) < (_table)->p )                         \
-								 (_index) = (FT2_1_3_uInt)( (_hash0) & ( 2*_mask+1 ) );   \
+								 (_index) = (FT_UInt)( (_hash0) & ( 2*_mask+1 ) );   \
 						 }
 
 
