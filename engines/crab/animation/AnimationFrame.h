@@ -52,34 +52,35 @@ struct SDL_Color {
 
 struct AnimationFrame : public Vector2i {
 	// The image drawn in this frame
-	ImageKey img;
+	ImageKey _img;
 
 	// This is the time in we draw the frame milliseconds relative to the start of the entire animation
-	uint32 start, finish;
+	uint32 _start, _finish;
 
 	// The effect applied to the image
-	AnimationEffect eff;
+	AnimationEffect _eff;
 
 	// In case we want to display any words during the animation
-	pyrodactyl::ui::HoverInfo text;
+	pyrodactyl::ui::HoverInfo _text;
 
 	// The color drawn on the screen
-	SDL_Color col;
+	SDL_Color _col;
 
 	AnimationFrame() {
-		img = 0;
-		start = 0;
-		finish = 0;
-		col.r = 0;
-		col.g = 0;
-		col.b = 0;
-		col.a = 255;
+		_img = 0;
+		_start = 0;
+		_finish = 0;
+		_col.r = 0;
+		_col.g = 0;
+		_col.b = 0;
+		_col.a = 255;
 	}
+
 	AnimationFrame(rapidxml::xml_node<char> *node);
 
-	void Reset();
-	void Draw(const uint32 &timestamp);
-	DrawType InternalEvents(const uint32 &timestamp);
+	void reset();
+	void draw(const uint32 &timestamp);
+	DrawType internalEvents(const uint32 &timestamp);
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl

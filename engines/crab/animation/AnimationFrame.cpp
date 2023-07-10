@@ -36,34 +36,34 @@ namespace Crab {
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::anim;
 
-AnimationFrame::AnimationFrame(rapidxml::xml_node<char> *node) : eff(node) {
+AnimationFrame::AnimationFrame(rapidxml::xml_node<char> *node) : _eff(node) {
 	Vector2i::Load(node);
-	LoadImgKey(img, "img", node);
-	LoadNum(start, "start", node);
-	LoadNum(finish, "finish", node);
+	LoadImgKey(_img, "img", node);
+	LoadNum(_start, "start", node);
+	LoadNum(_finish, "finish", node);
 	//LoadColor(col, node);
 
 	if (NodeValid("text", node, false))
-		text.Load(node->first_node("text"));
+		_text.Load(node->first_node("text"));
 
-	Reset();
+	reset();
 }
 
-void AnimationFrame::Reset() {
-	switch (eff._type) {
+void AnimationFrame::reset() {
+	switch (_eff._type) {
 	case FADE_IN:
-		col.a = 0;
+		_col.a = 0;
 		break;
 	case FADE_OUT:
-		col.a = 255;
+		_col.a = 255;
 		break;
 	default:
-		col.a = 255;
+		_col.a = 255;
 		break;
 	}
 }
 
-void AnimationFrame::Draw(const uint32 &timestamp) {
+void AnimationFrame::draw(const uint32 &timestamp) {
 	warning("STUB: AnimationFrame::Draw()");
 
 #if 0
@@ -80,23 +80,23 @@ void AnimationFrame::Draw(const uint32 &timestamp) {
 #endif
 }
 
-DrawType AnimationFrame::InternalEvents(const uint32 &timestamp) {
+DrawType AnimationFrame::internalEvents(const uint32 &timestamp) {
 
 	// Vary alpha according to the effect values in the variation time frame
-	if (timestamp >= eff._start && timestamp <= eff._finish) {
+	if (timestamp >= _eff._start && timestamp <= _eff._finish) {
 		// These equations courtesy of linear algebra
-		switch (eff._type) {
+		switch (_eff._type) {
 		case FADE_IN:
-			col.a = (255 * (timestamp - eff._start)) / (eff._finish - eff._start);
+			_col.a = (255 * (timestamp - _eff._start)) / (_eff._finish - _eff._start);
 			break;
 		case FADE_OUT:
-			col.a = (255 * (eff._finish - timestamp)) / (eff._finish - eff._start);
+			_col.a = (255 * (_eff._finish - timestamp)) / (_eff._finish - _eff._start);
 			break;
 		default:
 			break;
 		}
 
-		return eff._drawGame;
+		return _eff._drawGame;
 	}
 
 	return DRAW_SAME;
