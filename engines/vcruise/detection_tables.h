@@ -343,7 +343,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		{
 			"schizm",
 			"English Digital",
-			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+			AD_ENTRY3s("Schizm.exe", "8b77c96b51f0c1d676d7a9ff29f06250", 381240,
 					   "0001_a.wav", "374d93abc3422840623acc618ecb2b1e", 1553784,
 					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
 			Common::UNK_LANG,
@@ -358,7 +358,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		{
 			"schizm",
 			"German Digital",
-			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+			AD_ENTRY3s("Schizm.exe", "8b77c96b51f0c1d676d7a9ff29f06250", 381240,
 					   "0001_a.wav", "f2b7eccfb1e9af0282b541c5eac66cc7", 1613240,
 					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
 			Common::UNK_LANG,
@@ -373,7 +373,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		{
 			"schizm",
 			"Spanish Digital",
-			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+			AD_ENTRY3s("Schizm.exe", "8b77c96b51f0c1d676d7a9ff29f06250", 381240,
 					   "0001_a.wav", "7a398f17e847a46de629a09fa6178b00", 1409560,
 					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
 			Common::UNK_LANG,
@@ -388,7 +388,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		{
 			"schizm",
 			"French Digital",
-			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+			AD_ENTRY3s("Schizm.exe", "8b77c96b51f0c1d676d7a9ff29f06250", 381240,
 					   "0001_a.wav", "cd46a5df85a879bf293871b5911abcc3", 1305470,
 					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
 			Common::UNK_LANG,
@@ -403,7 +403,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		{
 			"schizm",
 			"Hungarian Digital",
-			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+			AD_ENTRY3s("Schizm.exe", "8b77c96b51f0c1d676d7a9ff29f06250", 381240,
 					   "0001_a.wav", "9838f59fce21ba3a1eecc3d84c5be8b1", 1502674,
 					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
 			Common::UNK_LANG,
@@ -418,7 +418,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		{
 			"schizm",
 			"Italian Digital",
-			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+			AD_ENTRY3s("Schizm.exe", "8b77c96b51f0c1d676d7a9ff29f06250", 381240,
 					   "0001_a.wav", "6d8e4b97710b858525d9965ef1e627ab", 1280506,
 					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
 			Common::UNK_LANG,
@@ -433,7 +433,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		{
 			"schizm",
 			"Polish Digital",
-			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+			AD_ENTRY3s("Schizm.exe", "8b77c96b51f0c1d676d7a9ff29f06250", 381240,
 					   "0001_a.wav", "4fc0053f66657e416b69419106d238a5", 1592106,
 					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
 			Common::UNK_LANG,
@@ -448,7 +448,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		{
 			"schizm",
 			"Russian Digital",
-			AD_ENTRY3s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544,
+			AD_ENTRY3s("Schizm.exe", "8b77c96b51f0c1d676d7a9ff29f06250", 381240,
 					   "0001_a.wav", "ba8fc041a92f1afceee35bdbb84eb2cd", 1427794,
 					   "Speech10.txt", "88fdaab90be33bca88db423e1acda8c3", 63697),
 			Common::UNK_LANG,
