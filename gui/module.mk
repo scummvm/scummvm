@@ -43,6 +43,7 @@ MODULE_OBJS := \
 	widgets/groupedlist.o \
 	widgets/list.o \
 	widgets/popup.o \
+	widgets/richtext.o \
 	widgets/scrollbar.o \
 	widgets/scrollcontainer.o \
 	widgets/tab.o

@@ -73,7 +73,8 @@ enum {
 	kTabWidget			= 'TABW',
 	kGraphicsWidget		= 'GFXW',
 	kContainerWidget	= 'CTNR',
-	kScrollContainerWidget = 'SCTR'
+	kScrollContainerWidget = 'SCTR',
+	kRichTextWidget		= 'RTXT',
 };
 
 enum {
