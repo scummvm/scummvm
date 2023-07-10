@@ -24,7 +24,8 @@
 #include <TargetConditionals.h>
 #endif
 
-#if (defined(__aarch64__) || defined(_M_ARM64)) && (!defined(__APPLE__) || defined(TARGET_OS_MAC))
+#if !defined(TARGET_OS_SIMULATOR) || TARGET_OS_SIMULATOR != 1 // Appeasing iOS/Iphone simultator?
+#if defined(__aarch64__)
 
 #ifndef AGS_LIB_ALLEGRO_SURFACE_SIMD_IMPL
 #define AGS_LIB_ALLEGRO_SURFACE_SIMD_IMPL
@@ -471,4 +472,5 @@ inline void drawPixelSIMD2Bpp(byte *destPtr, const byte *srcP2, uint16x8_t tint,
 } // namespace AGS3
 
 #endif /* __aarch64__ */
+#endif /* Make it so that IOS and IPHONE SIM are not used with NEON */
 #endif /* AGS_LIB_ALLEGRO_SURFACE_SIMD_NEON */
