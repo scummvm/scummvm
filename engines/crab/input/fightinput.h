@@ -73,7 +73,7 @@ struct FightInput {
 	bool operator==(const FightInput &input) { return type == input.type && state == input.state; }
 	bool Idle() { return type == FA_IDLE; }
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
 	FightAnimationType HandleEvents(const Common::Event &Event);
 #if 0

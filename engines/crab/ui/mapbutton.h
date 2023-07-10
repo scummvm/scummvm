@@ -50,12 +50,12 @@ public:
 	MapButton() {}
 	~MapButton() {}
 
-	void Load(rapidxml::xml_node<char> *node) {
-		Button::Load(node);
+	void load(rapidxml::xml_node<char> *node) {
+		Button::load(node);
 
 		loadStr(loc, "id", node);
 		if (nodeValid("unlock", node, false))
-			unlock.Load(node->first_node("unlock"));
+			unlock.load(node->first_node("unlock"));
 	}
 };
 

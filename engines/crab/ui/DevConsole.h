@@ -63,7 +63,7 @@ public:
 	// Only restrict input when we're in variable state
 	bool RestrictInput() { return (state == STATE_VAR || menu.HoverIndex() != -1); }
 
-	void Load(const Common::String &filename);
+	void load(const Common::String &filename);
 	void Draw(pyrodactyl::event::Info &info);
 
 #if 0

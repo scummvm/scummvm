@@ -54,7 +54,7 @@ struct StatInfo {
 		empty = 0;
 	}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	void Draw(const int &val, const int &max);
 };
 
@@ -65,7 +65,7 @@ public:
 	StatDrawHelper() {}
 	~StatDrawHelper() {}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	void DrawInfo(const pyrodactyl::people::Person &obj);
 
 	const Common::String &Name(const StatType &type) { return info[type].text; }

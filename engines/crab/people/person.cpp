@@ -42,14 +42,14 @@ Person::Person() {
 	trig.clear();
 }
 
-void Person::Load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTemplates &stem) {
+void Person::load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTemplates &stem) {
 	if (nodeValid(node)) {
 		loadStr(id, "id", node);
 		loadStr(name, "name", node);
 		// loadImgKey(pic, "img", node);
 
 		if (nodeValid("opinion", node))
-			opinion.Load(node->first_node("opinion"));
+			opinion.load(node->first_node("opinion"));
 
 		if (node->first_attribute("type") != NULL) {
 			Common::String t;
@@ -74,7 +74,7 @@ void Person::Load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTe
 		if (nodeValid("stats", node)) {
 			rapidxml::xml_node<char> *statnode = node->first_node("stats");
 			if (statnode->first_attribute("template") == NULL) {
-				stat.Load(statnode);
+				stat.load(statnode);
 			} else {
 				int index = 0;
 				loadNum(index, "template", statnode);
@@ -135,10 +135,10 @@ void Person::LoadState(rapidxml::xml_node<char> *node) {
 	loadEnum(state, "state", node);
 
 	if (nodeValid("opinion", node))
-		opinion.Load(node->first_node("opinion"));
+		opinion.load(node->first_node("opinion"));
 
 	if (nodeValid("stats", node))
-		stat.Load(node->first_node("stats"));
+		stat.load(node->first_node("stats"));
 
 	if (nodeValid("traits", node, false)) {
 		rapidxml::xml_node<char> *traitnode = node->first_node("traits");

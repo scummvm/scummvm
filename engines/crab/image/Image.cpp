@@ -39,7 +39,7 @@ using namespace pyrodactyl::image;
 //------------------------------------------------------------------------
 // Purpose: Load a texture
 //------------------------------------------------------------------------
-bool Image::Load(Graphics::Surface *surface) {
+bool Image::load(Graphics::Surface *surface) {
 	Delete();
 
 	texture->create(surface->w, surface->h, surface->format);
@@ -49,7 +49,7 @@ bool Image::Load(Graphics::Surface *surface) {
 	return true;
 }
 
-bool Image::Load(Graphics::ManagedSurface *surface) {
+bool Image::load(Graphics::ManagedSurface *surface) {
 	Delete();
 	texture = new Graphics::ManagedSurface(*surface);
 	w = surface->w;
@@ -57,7 +57,7 @@ bool Image::Load(Graphics::ManagedSurface *surface) {
 	return true;
 }
 
-bool Image::Load(const Common::String &path) {
+bool Image::load(const Common::String &path) {
 	// Get rid of preexisting texture
 	Delete();
 
@@ -73,21 +73,21 @@ bool Image::Load(const Common::String &path) {
 
 		file.close();
 
-		warning("Image::Load() Image Texture(%s): w: %d h: %d", path.c_str(), w, h);
+		warning("Image::load() Image Texture(%s): w: %d h: %d", path.c_str(), w, h);
 
 	}
 
 	return texture != nullptr;
 }
 
-bool Image::Load(rapidxml::xml_node<char> *node, const char *name) {
+bool Image::load(rapidxml::xml_node<char> *node, const char *name) {
 	if (node->first_attribute(name) != NULL)
-		return Load(node->first_attribute(name)->value());
+		return load(node->first_attribute(name)->value());
 
 	return false;
 }
 
-bool Image::Load(const Image &image, Rect *clip, const TextureFlipType &flip) {
+bool Image::load(const Image &image, Rect *clip, const TextureFlipType &flip) {
 	Delete();
 
 	Common::Rect srcRect(0, 0, w, h);

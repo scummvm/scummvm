@@ -41,8 +41,8 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::input;
 
-void TextArea::Load(rapidxml::xml_node<char> *node) {
-	if (TextData::Load(node)) {
+void TextArea::load(rapidxml::xml_node<char> *node) {
+	if (TextData::load(node)) {
 		loadStr(text, "text", node);
 		loadNum(size, "size", node);
 
@@ -51,7 +51,7 @@ void TextArea::Load(rapidxml::xml_node<char> *node) {
 		loadNum(se_accept, "accept", node);
 
 		if (nodeValid("caption", node))
-			title.Load(node->first_node("caption"), this);
+			title.load(node->first_node("caption"), this);
 	}
 }
 

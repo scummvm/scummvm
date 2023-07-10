@@ -44,10 +44,10 @@ struct StateButtonImage {
 	StateButtonImage() {}
 	StateButtonImage(rapidxml::xml_node<char> *node) {
 		if (nodeValid("normal", node))
-			normal.Load(node->first_node("normal"));
+			normal.load(node->first_node("normal"));
 
 		if (nodeValid("select", node, false))
-			select.Load(node->first_node("select"));
+			select.load(node->first_node("select"));
 		else
 			select = normal;
 	}
@@ -76,7 +76,7 @@ public:
 	~StateButton() {}
 
 	void Init(const StateButton &ref, const int &XOffset = 0, const int &YOffset = 0);
-	void Load(rapidxml::xml_node<char> *node, const bool &echo = true);
+	void load(rapidxml::xml_node<char> *node, const bool &echo = true);
 
 	// The state of the button - false is original image, true is second image
 	void State(const bool val);

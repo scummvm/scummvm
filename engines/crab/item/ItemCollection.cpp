@@ -39,15 +39,15 @@ using namespace pyrodactyl::ui;
 //------------------------------------------------------------------------
 // Purpose: Load the reference information
 //------------------------------------------------------------------------
-void ItemCollection::Load(rapidxml::xml_node<char> *node) {
+void ItemCollection::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("info", node))
-		item_info.Load(node->first_node("info"));
+		item_info.load(node->first_node("info"));
 
 	if (nodeValid("ref", node))
-		ref.Load(node->first_node("ref"));
+		ref.load(node->first_node("ref"));
 
 	if (nodeValid("inc", node))
-		inc.Load(node->first_node("inc"));
+		inc.load(node->first_node("inc"));
 
 	if (nodeValid("dim", node)) {
 		rapidxml::xml_node<char> *dimnode = node->first_node("dim");

@@ -66,7 +66,7 @@ public:
 	}
 	~TextArea(void) {}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
 	bool HandleEvents(const Common::Event &Event, bool numbers_only = false);
 #if 0

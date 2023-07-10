@@ -35,7 +35,7 @@ namespace Crab {
 
 using namespace pyrodactyl::input;
 
-void FightInput::Load(rapidxml::xml_node<char> *node) {
+void FightInput::load(rapidxml::xml_node<char> *node) {
 	loadEnum(type, "type", node);
 	loadNum(state, "state", node);
 }

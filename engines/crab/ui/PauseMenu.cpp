@@ -35,12 +35,12 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
-void PauseMenu::Load(rapidxml::xml_node<char> *node) {
-	menu.Load(node->first_node("menu"));
-	save.Load(node->first_node("save"));
+void PauseMenu::load(rapidxml::xml_node<char> *node) {
+	menu.load(node->first_node("menu"));
+	save.load(node->first_node("save"));
 
 	if (nodeValid("bg", node))
-		bg.Load(node->first_node("bg"));
+		bg.load(node->first_node("bg"));
 }
 
 bool PauseMenu::Draw(Button &back) {

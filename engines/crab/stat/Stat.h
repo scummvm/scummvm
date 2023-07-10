@@ -53,7 +53,7 @@ struct Stat {
 	void Reset() { cur = def; }
 	void Validate();
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name);
 };
 
@@ -62,12 +62,12 @@ struct StatGroup {
 	Stat val[STAT_TOTAL];
 
 	StatGroup() {}
-	StatGroup(rapidxml::xml_node<char> *node) { Load(node); }
+	StatGroup(rapidxml::xml_node<char> *node) { load(node); }
 
 	void Change(const pyrodactyl::stat::StatType &type, const int &change);
 	void Set(const pyrodactyl::stat::StatType &type, const int &val);
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 };
 
 StatType StringToStatType(const Common::String &val);

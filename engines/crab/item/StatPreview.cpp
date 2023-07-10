@@ -35,19 +35,19 @@ namespace Crab {
 
 using namespace pyrodactyl::item;
 
-void StatPreview::Load(rapidxml::xml_node<char> *node) {
+void StatPreview::load(rapidxml::xml_node<char> *node) {
 	loadBool(enabled, "enabled", node);
 
 	if (nodeValid("stat", node)) {
 		rapidxml::xml_node<char> *snode = node->first_node("stat");
-		stat.Load(snode);
+		stat.load(snode);
 		loadNum(inc_s.x, "w", snode);
 		loadNum(inc_s.y, "h", snode);
 	}
 
 	if (nodeValid("unit", node)) {
 		rapidxml::xml_node<char> *snode = node->first_node("unit");
-		unit.Load(snode);
+		unit.load(snode);
 		loadNum(inc_u.x, "w", snode);
 		loadNum(inc_u.y, "h", snode);
 	}

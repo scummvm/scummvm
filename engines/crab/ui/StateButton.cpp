@@ -43,8 +43,8 @@ void StateButton::Init(const StateButton &ref, const int &XOffset, const int &YO
 	col_select = ref.col_select;
 }
 
-void StateButton::Load(rapidxml::xml_node<char> *node, const bool &echo) {
-	Button::Load(node, echo);
+void StateButton::load(rapidxml::xml_node<char> *node, const bool &echo) {
+	Button::load(node, echo);
 
 	img_set.normal = img;
 	col_normal.col = caption.col;
@@ -53,7 +53,7 @@ void StateButton::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 	if (nodeValid("select", node, false)) {
 		rapidxml::xml_node<char> *selnode = node->first_node("select");
 
-		img_set.select.Load(selnode, echo);
+		img_set.select.load(selnode, echo);
 		loadNum(col_select.col, "color", selnode);
 		loadNum(col_select.col_s, "color_s", selnode);
 	} else {

@@ -43,7 +43,7 @@ struct Bonus {
 	StatType type;
 	int val;
 
-	void Load(rapidxml::xml_node<char> *node) {
+	void load(rapidxml::xml_node<char> *node) {
 		loadStatType(type, node);
 		loadNum(val, "val", node);
 	}

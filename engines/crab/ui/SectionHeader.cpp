@@ -37,9 +37,9 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::image;
 
-void SectionHeader::Load(rapidxml::xml_node<char> *node) {
+void SectionHeader::load(rapidxml::xml_node<char> *node) {
 
-	if (TextData::Load(node, NULL, false)) {
+	if (TextData::load(node, NULL, false)) {
 		loadStr(text, "text", node);
 		text.insertChar(' ', 0);
 		text += " ";

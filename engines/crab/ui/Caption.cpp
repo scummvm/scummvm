@@ -42,8 +42,8 @@ void Caption::Init(const Caption &c, const int &XOffset, const int &YOffset) {
 	y += YOffset;
 }
 
-void Caption::Load(rapidxml::xml_node<char> *node, Rect *parent) {
-	if (TextData::Load(node, parent, false)) {
+void Caption::load(rapidxml::xml_node<char> *node, Rect *parent) {
+	if (TextData::load(node, parent, false)) {
 		loadStr(text, "text", node);
 		loadNum(col_s, "color_s", node, false);
 		enabled = true;

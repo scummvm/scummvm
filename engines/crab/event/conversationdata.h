@@ -60,9 +60,9 @@ struct ReplyChoice {
 		tone = 0;
 		nextid = 0;
 	}
-	ReplyChoice(rapidxml::xml_node<char> *node) : ReplyChoice() { Load(node); }
+	ReplyChoice(rapidxml::xml_node<char> *node) : ReplyChoice() { load(node); }
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 };
 
 struct ConversationData {
@@ -71,7 +71,7 @@ struct ConversationData {
 
 	ConversationData() {}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 };
 } // End of namespace event
 } // End of namespace pyrodactyl

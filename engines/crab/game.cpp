@@ -68,7 +68,7 @@ void Game::Init(const Common::String &filename) {
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("config");
 
-		info.Load(node);
+		info.load(node);
 
 		Common::String path;
 		if (nodeValid("level", node)) {
@@ -78,7 +78,7 @@ void Game::Init(const Common::String &filename) {
 
 		if (nodeValid("hud", node)) {
 			loadStr(path, "layout", node->first_node("hud"));
-			hud.Load(path, level.talk_notify, level.dest_marker);
+			hud.load(path, level.talk_notify, level.dest_marker);
 		}
 
 		if (nodeValid("sprite", node)) {
@@ -90,23 +90,23 @@ void Game::Init(const Common::String &filename) {
 		}
 
 		if (nodeValid("event", node)) {
-			gem.Load(node->first_node("event"), pop_default);
+			gem.load(node->first_node("event"), pop_default);
 
 			loadStr(path, "store", node->first_node("event"));
-			g_engine->_eventStore->Load(path);
+			g_engine->_eventStore->load(path);
 		}
 
 		if (nodeValid("map", node)) {
 			loadStr(path, "layout", node->first_node("map"));
-			map.Load(path, info);
+			map.load(path, info);
 		}
 
 		if (nodeValid("save", node))
-			savefile.Load(node->first_node("save"));
+			savefile.load(node->first_node("save"));
 
 		if (nodeValid("debug", node)) {
 			loadStr(path, "layout", node->first_node("debug"));
-			debug_console.Load(path);
+			debug_console.load(path);
 		}
 	}
 
@@ -126,7 +126,7 @@ bool Game::LoadLevel(const Common::String &id, int player_x, int player_y) {
 
 		// Load the level itself
 		level.pop = pop_default;
-		level.Load(g_engine->_filePath->level[id].layout, info, game_over, player_x, player_y);
+		level.load(g_engine->_filePath->level[id].layout, info, game_over, player_x, player_y);
 
 		// Set the current location
 		info.CurLocID(id);

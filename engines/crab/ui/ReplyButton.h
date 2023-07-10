@@ -66,7 +66,7 @@ public:
 	}
 	~ReplyButton() {}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	void Draw(const int &XOffset = 0, const int &YOffset = 0);
 
 	// Used to calculate size and set the string

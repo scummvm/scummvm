@@ -46,7 +46,7 @@ public:
 	ClipButton() {}
 	~ClipButton() {}
 
-	void Load(rapidxml::xml_node<char> *node, const bool &echo = true);
+	void load(rapidxml::xml_node<char> *node, const bool &echo = true);
 	void Draw(const int &XOffset = 0, const int &YOffset = 0);
 };
 } // End of namespace ui

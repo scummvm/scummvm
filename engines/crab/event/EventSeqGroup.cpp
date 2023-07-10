@@ -41,7 +41,7 @@ void EventSeqGroup::EndSeq(const unsigned int &id) {
 }
 
 void EventSeqGroup::AddSeq(const unsigned int &id, Common::String &path) {
-	seq[id].Load(path);
+	seq[id].load(path);
 }
 
 bool EventSeqGroup::EventInProgress(const unsigned int &id) {

@@ -36,14 +36,14 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
-void ImageData::Load(rapidxml::xml_node<char> *node, const bool &echo) {
+void ImageData::load(rapidxml::xml_node<char> *node, const bool &echo) {
 	loadImgKey(key, "img", node, echo);
 	loadBool(crop, "crop", node, false);
 
 	if (nodeValid("clip", node, false))
-		clip.Load(node->first_node("clip"));
+		clip.load(node->first_node("clip"));
 
-	Element::Load(node, key, echo);
+	Element::load(node, key, echo);
 }
 
 void ImageData::Draw(const int &XOffset, const int &YOffset) {

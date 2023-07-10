@@ -34,8 +34,8 @@ namespace Crab {
 
 using namespace pyrodactyl::level;
 
-void MusicArea::Load(rapidxml::xml_node<char> *node, const bool &echo) {
-	Shape::Load(node, echo);
+void MusicArea::load(rapidxml::xml_node<char> *node, const bool &echo) {
+	Shape::load(node, echo);
 
 	if (nodeValid("properties", node, echo)) {
 		auto pnode = node->first_node("properties");

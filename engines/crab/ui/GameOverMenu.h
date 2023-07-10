@@ -67,7 +67,7 @@ public:
 #endif
 	}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
 	int HandleEvents(const Common::Event &Event);
 #if 0

@@ -72,7 +72,7 @@ public:
 	Shape() { type = SHAPE_RECT; }
 	~Shape() {}
 
-	void Load(rapidxml::xml_node<char> *node, const bool &echo = true);
+	void load(rapidxml::xml_node<char> *node, const bool &echo = true);
 	CollisionData Collide(Rect box);
 
 	bool Contains(const Vector2i &pos);

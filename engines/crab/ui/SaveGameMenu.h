@@ -63,7 +63,7 @@ public:
 	void ScanDir();
 	bool DisableHotkeys() { return state == STATE_NAME; }
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
 	bool HandleEvents(const Common::Event &Event);
 #if 0

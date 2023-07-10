@@ -76,7 +76,7 @@ public:
 	~ItemSlot() {}
 
 	void Init(const ItemSlot &ref, const int &XOffset = 0, const int &YOffset = 0);
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
 	void Draw();
 

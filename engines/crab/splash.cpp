@@ -42,7 +42,7 @@ namespace Crab {
 //------------------------------------------------------------------------
 Splash::Splash() {
 	// Load the background
-	background.Load("res/gfx/pyrodactyl.png");
+	background.load("res/gfx/pyrodactyl.png");
 
 	SetUI();
 	load_complete = false;
@@ -61,7 +61,7 @@ Splash::~Splash() {
 //------------------------------------------------------------------------
 void Splash::InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 	if (first_run == false) {
-		g_engine->_loadingScreen->Load();
+		g_engine->_loadingScreen->load();
 		g_engine->_imageManager->Init();
 		g_engine->_textManager->Init();
 		load_complete = true;

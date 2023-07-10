@@ -66,7 +66,7 @@ struct MusicData {
 		fade_in_duration = 100;
 	}
 
-	void Load(rapidxml::xml_node<char> *node) {
+	void load(rapidxml::xml_node<char> *node) {
 #if 0
 		loadNum(id, "id", node);
 		loadNum(fade_in_duration, "fade_in", node);

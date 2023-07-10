@@ -68,11 +68,11 @@ class AlphaImage {
 
 public:
 	AlphaImage() {}
-	AlphaImage(rapidxml::xml_node<char> *node) { Load(node); }
+	AlphaImage(rapidxml::xml_node<char> *node) { load(node); }
 
 	~AlphaImage() {}
 
-	void Load(rapidxml::xml_node<char> *node, const bool &echo = true);
+	void load(rapidxml::xml_node<char> *node, const bool &echo = true);
 
 	void Draw(const int &XOffset = 0, const int &YOffset = 0);
 

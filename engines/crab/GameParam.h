@@ -47,7 +47,7 @@ struct LevelPath {
 
 	LevelPath() : layout(""), asset(""), name("") {}
 
-	void Load(rapidxml::xml_node<char> *node) {
+	void load(rapidxml::xml_node<char> *node) {
 		loadStr(name, "name", node);
 		loadStr(layout, "layout", node);
 		loadStr(asset, "res", node);
@@ -93,7 +93,7 @@ struct FilePaths {
 	bool loaded;
 
 	FilePaths();
-	void Load(const Common::String &filename);
+	void load(const Common::String &filename);
 	void LoadLevel(const Common::String &filename);
 };
 

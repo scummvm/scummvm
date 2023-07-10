@@ -37,59 +37,59 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::music;
 
-void OptionMenu::Load(const Common::String &filename) {
+void OptionMenu::load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("option");
 		if (nodeValid(node)) {
 			if (nodeValid("bg", node))
-				bg.Load(node->first_node("bg"));
+				bg.load(node->first_node("bg"));
 
 			if (nodeValid("state", node)) {
-				menu.Load(node->first_node("state"));
+				menu.load(node->first_node("state"));
 
 				if (!menu.element.empty())
 					menu.element[0].State(true);
 			}
 
 			if (nodeValid("keybind", node))
-				keybind.Load(node->first_node("keybind"));
+				keybind.load(node->first_node("keybind"));
 
 			if (nodeValid("controller", node))
-				conbind.Load(node->first_node("controller"));
+				conbind.load(node->first_node("controller"));
 
 			if (nodeValid("graphics", node))
-				gfx.Load(node->first_node("graphics"));
+				gfx.load(node->first_node("graphics"));
 
 			if (nodeValid("general", node))
-				general.Load(node->first_node("general"));
+				general.load(node->first_node("general"));
 
 			if (nodeValid("change", node)) {
 				rapidxml::xml_node<char> *chanode = node->first_node("change");
 
 				if (nodeValid("accept", chanode))
-					accept.Load(chanode->first_node("accept"));
+					accept.load(chanode->first_node("accept"));
 
 				if (nodeValid("cancel", chanode))
-					cancel.Load(chanode->first_node("cancel"));
+					cancel.load(chanode->first_node("cancel"));
 
 				if (nodeValid("message", chanode))
-					notice_res.Load(chanode->first_node("message"));
+					notice_res.load(chanode->first_node("message"));
 
 				if (nodeValid("width", chanode))
-					prompt_w.Load(chanode->first_node("width"));
+					prompt_w.load(chanode->first_node("width"));
 
 				if (nodeValid("height", chanode))
-					prompt_h.Load(chanode->first_node("height"));
+					prompt_h.load(chanode->first_node("height"));
 
 				if (nodeValid("countdown", chanode)) {
 					rapidxml::xml_node<char> *counode = chanode->first_node("countdown");
-					countdown.Load(counode);
-					timer.Load(counode, "time");
+					countdown.load(counode);
+					timer.load(counode, "time");
 				}
 
 				if (nodeValid("bg", chanode))
-					questionbox.Load(chanode->first_node("bg"));
+					questionbox.load(chanode->first_node("bg"));
 			}
 		}
 	}

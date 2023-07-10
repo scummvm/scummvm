@@ -40,16 +40,16 @@ void AnimSet::load(const Common::String &filename) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node();
 		if (nodeValid(node)) {
 			_fight.load(node);
-			_walk.Load(node);
+			_walk.load(node);
 
 			if (nodeValid("bounds", node))
-				_bounds.Load(node->first_node("bounds"));
+				_bounds.load(node->first_node("bounds"));
 
 			if (nodeValid("shadow", node))
-				_shadow.Load(node->first_node("shadow"));
+				_shadow.load(node->first_node("shadow"));
 
 			if (nodeValid("focus", node))
-				_focus.Load(node->first_node("focus"));
+				_focus.load(node->first_node("focus"));
 		}
 	}
 }

@@ -39,22 +39,22 @@ using namespace pyrodactyl::ui;
 //------------------------------------------------------------------------
 // Purpose: Load game
 //------------------------------------------------------------------------
-void Journal::Load(const Common::String &filename) {
+void Journal::load(const Common::String &filename) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("objectives");
 		if (nodeValid(node)) {
 			if (nodeValid("bg", node))
-				bg.Load(node->first_node("bg"));
+				bg.load(node->first_node("bg"));
 
 			if (nodeValid("map", node))
-				bu_map.Load(node->first_node("map"));
+				bu_map.load(node->first_node("map"));
 
 			if (nodeValid("category", node))
-				category.Load(node->first_node("category"));
+				category.load(node->first_node("category"));
 
 			if (nodeValid("quest_list", node))
-				ref.Load(node->first_node("quest_list"));
+				ref.load(node->first_node("quest_list"));
 
 			category.UseKeyboard(true);
 		}

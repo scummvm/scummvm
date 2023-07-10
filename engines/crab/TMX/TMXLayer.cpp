@@ -34,21 +34,21 @@ namespace Crab {
 
 using namespace TMX;
 
-bool Layer::Load(rapidxml::xml_node<char> *node) {
+bool Layer::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node))
 		return loadStr(name, "name", node) && loadNum(w, "width", node) && loadNum(h, "height", node);
 
 	return false;
 }
 
-bool MapLayer::Load(const Common::String &path, rapidxml::xml_node<char> *node) {
-	if (Layer::Load(node)) {
+bool MapLayer::load(const Common::String &path, rapidxml::xml_node<char> *node) {
+	if (Layer::load(node)) {
 		if (nodeValid("image", node, false)) {
 			type = LAYER_IMAGE;
 			rapidxml::xml_node<char> *imgnode = node->first_node("image");
 
 			if (imgnode->first_attribute("source") != NULL)
-				img.Load((path + imgnode->first_attribute("source")->value()));
+				img.load((path + imgnode->first_attribute("source")->value()));
 		} else {
 			type = LAYER_NORMAL;
 			int i = 0;

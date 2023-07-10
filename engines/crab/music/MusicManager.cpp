@@ -73,7 +73,7 @@ void MusicManager::PlayMusic(const MusicKey &id) {
 			for (auto n = node->first_node(); n != NULL; n = n->next_sibling()) {
 				rapidxml::xml_attribute<char> *att = n->first_attribute("id");
 				if (att != NULL && id == StringToNumber<MusicKey>(att->value())) {
-					bg.Load(n);
+					bg.load(n);
 					break;
 				}
 			}
@@ -102,8 +102,8 @@ void MusicManager::PlayEffect(const ChunkKey &id, const int &loops) {
 //------------------------------------------------------------------------
 // Purpose: Initialize the music subsystem (currently SDL_mixer) and load sound effects
 //------------------------------------------------------------------------
-bool MusicManager::Load(rapidxml::xml_node<char> *node) {
-	warning("STUB: MusicManager::Load()");
+bool MusicManager::load(rapidxml::xml_node<char> *node) {
+	warning("STUB: MusicManager::load()");
 
 #if 0
 	// Initialize music parameters

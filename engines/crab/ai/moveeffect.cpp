@@ -50,7 +50,7 @@ void FightMoveEffect::load(rapidxml::xml_node<char> *node) {
 	loadNum(_death, "death", node);
 
 	if (nodeValid("image", node, false))
-		_img.Load(node->first_node("image"));
+		_img.load(node->first_node("image"));
 
 	if (nodeValid("sound", node)) {
 		rapidxml::xml_node<char> *soundnode = node->first_node("sound");

@@ -39,18 +39,18 @@ using namespace pyrodactyl::people;
 //------------------------------------------------------------------------
 // Purpose: Loader Function
 //------------------------------------------------------------------------
-void WalkFrames::Load(rapidxml::xml_node<char> *node) {
+void WalkFrames::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("stand", node))
-		set[WT_STAND].Load(node->first_node("stand"));
+		set[WT_STAND].load(node->first_node("stand"));
 
 	if (nodeValid("walk", node))
-		set[WT_WALK].Load(node->first_node("walk"));
+		set[WT_WALK].load(node->first_node("walk"));
 
 	if (nodeValid("fight", node))
-		set[WT_FIGHT].Load(node->first_node("fight"));
+		set[WT_FIGHT].load(node->first_node("fight"));
 
 	if (nodeValid("ko", node))
-		set[WT_KO].Load(node->first_node("ko"));
+		set[WT_KO].load(node->first_node("ko"));
 }
 
 //------------------------------------------------------------------------

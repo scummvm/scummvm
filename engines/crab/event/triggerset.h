@@ -49,7 +49,7 @@ class TriggerSet {
 public:
 	TriggerSet() { result = true; }
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	bool Evaluate(pyrodactyl::event::Info &info);
 	void Add(const Trigger &t);
 

@@ -35,7 +35,7 @@ namespace Crab {
 
 using namespace pyrodactyl::ui;
 
-void HealthIndicator::Load(rapidxml::xml_node<char> *node) {
+void HealthIndicator::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
 		loadXY(x, y, node);
 

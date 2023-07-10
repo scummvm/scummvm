@@ -50,7 +50,7 @@ bool CompSpriteLayer(const Sprite &a, const Sprite &b) {
 //------------------------------------------------------------------------
 // Purpose: Load the level
 //------------------------------------------------------------------------
-void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
+void Level::load(const Common::String &filename, pyrodactyl::event::Info &info,
 				 pyrodactyl::event::TriggerSet &game_over, const int &player_x, const int &player_y) {
 	Reset();
 	XMLDoc conf(filename);
@@ -78,7 +78,7 @@ void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
 				loadStr(path, "path", mapnode);
 				loadStr(tmxfile, "file", mapnode);
 
-				terrain.Load(path, tmxfile);
+				terrain.load(path, tmxfile);
 
 				// Remember to load the terrain data before constructing the pathfinding grid
 				pathfindingGrid.SetupNodes(terrain);
@@ -86,12 +86,12 @@ void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
 				terrain.grid = &pathfindingGrid;
 
 				if (nodeValid("loc", mapnode))
-					map_loc.Load(mapnode->first_node("loc"));
+					map_loc.load(mapnode->first_node("loc"));
 
 				if (nodeValid("clip", mapnode)) {
 					rapidxml::xml_node<char> *clipnode = mapnode->first_node("clip");
 					loadNum(map_clip.id, "id", clipnode);
-					map_clip.rect.Load(clipnode);
+					map_clip.rect.load(clipnode);
 				}
 			}
 
@@ -100,7 +100,7 @@ void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
 				int count = 0;
 				for (auto n = spritenode->first_node(); n != NULL; n = n->next_sibling(), ++count) {
 					Sprite s;
-					s.Load(n, anim_set);
+					s.load(n, anim_set);
 
 					Common::String str = n->name();
 					if (str == "player") {
@@ -119,7 +119,7 @@ void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
 				rapidxml::xml_node<char> *spritenode = node->first_node("background");
 				for (auto n = spritenode->first_node(); n != NULL; n = n->next_sibling()) {
 					Sprite s;
-					s.Load(n, anim_set);
+					s.load(n, anim_set);
 					background.push_back(s);
 				}
 
@@ -130,7 +130,7 @@ void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
 				rapidxml::xml_node<char> *spritenode = node->first_node("fly");
 				for (auto n = spritenode->first_node(); n != NULL; n = n->next_sibling()) {
 					Sprite s;
-					s.Load(n, anim_set);
+					s.load(n, anim_set);
 
 					// Set the timer target for the first time
 					//s.ai_data.walk.timer.Target(sc_default.fly.delay_min + (gRandom.Num() % sc_default.fly.delay_max));
@@ -147,11 +147,11 @@ void Level::Load(const Common::String &filename, pyrodactyl::event::Info &info,
 			}
 
 			if (nodeValid("popup", node, false))
-				pop.Load(node->first_node("popup"));
+				pop.load(node->first_node("popup"));
 
 			game_over.Clear();
 			if (nodeValid("game_over", node, false))
-				game_over.Load(node->first_node("game_over"));
+				game_over.load(node->first_node("game_over"));
 			else if (player_index < objects.size()) {
 				// The default lose condition is the death of the player
 				using namespace pyrodactyl::event;

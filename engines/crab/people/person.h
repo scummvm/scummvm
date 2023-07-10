@@ -78,7 +78,7 @@ struct Person {
 	Common::Array<Trait> trait;
 
 	Person();
-	void Load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTemplates &stem);
+	void load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTemplates &stem);
 
 	void Reset();
 	void Validate();

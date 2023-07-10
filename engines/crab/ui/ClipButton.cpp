@@ -36,11 +36,11 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
-void ClipButton::Load(rapidxml::xml_node<char> *node, const bool &echo) {
-	Button::Load(node, echo);
+void ClipButton::load(rapidxml::xml_node<char> *node, const bool &echo) {
+	Button::load(node, echo);
 
 	if (nodeValid("clip", node, false))
-		clip.Load(node->first_node("clip"));
+		clip.load(node->first_node("clip"));
 	else {
 		clip.x = 0;
 		clip.y = 0;

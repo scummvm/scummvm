@@ -83,7 +83,7 @@ public:
 		menu.element[PS_LOAD - 1].visible = !ironman;
 	}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
 	PauseSignal HandleEvents(const Common::Event &Event, Button &back);
 #if 0

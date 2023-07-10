@@ -109,7 +109,7 @@ const int InputManager::Equals(const InputType &val, const SDL_Event &Event) {
 void InputManager::Init() {
 
 	const Common::String DEFAULT_FILENAME = "res/controls.xml";
-	Load(DEFAULT_FILENAME);
+	load(DEFAULT_FILENAME);
 
 	//g_engine->getEventManager()->getKeymapper()->cleanupGameKeymaps();
 
@@ -134,15 +134,15 @@ void InputManager::Init() {
 
 	if (!is_regular_file(filename)) {
 		// The other file does not exist, just use the default file
-		Load(DEFAULT_FILENAME);
+		load(DEFAULT_FILENAME);
 	} else {
 		// We are using the other file, check if it is up to date or not
 		if (Version(DEFAULT_FILENAME) > Version(filename)) {
 			// The game has been updated to a different control scheme, use the default file
-			Load(DEFAULT_FILENAME);
+			load(DEFAULT_FILENAME);
 		} else {
 			// The version set by the player is fine, just use that
-			Load(filename);
+			load(filename);
 		}
 	}
 
@@ -153,7 +153,7 @@ void InputManager::Init() {
 //------------------------------------------------------------------------
 // Purpose: Load key & controller binding settings from file
 //------------------------------------------------------------------------
-void InputManager::Load(const Common::String &filename) {
+void InputManager::load(const Common::String &filename) {
 	XMLDoc control_list(filename);
 	if (control_list.ready()) {
 		rapidxml::xml_node<char> *node = control_list.doc()->first_node("controls");

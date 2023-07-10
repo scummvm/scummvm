@@ -51,7 +51,7 @@ class WalkFrames {
 	struct WalkFrameSet {
 		AnimationFrames frames[DIRECTION_TOTAL];
 
-		void Load(rapidxml::xml_node<char> *node) {
+		void load(rapidxml::xml_node<char> *node) {
 			frames[DIRECTION_DOWN].load(node->first_node("down"));
 			frames[DIRECTION_UP].load(node->first_node("up"));
 			frames[DIRECTION_LEFT].load(node->first_node("left"));
@@ -78,7 +78,7 @@ public:
 	}
 	~WalkFrames() {}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
 	bool UpdateClip(Direction d, bool reset);
 	void ResetClip(Direction d);

@@ -37,31 +37,31 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::input;
 
-void QuestText::Load(rapidxml::xml_node<char> *node) {
-	ParagraphData::Load(node);
+void QuestText::load(rapidxml::xml_node<char> *node) {
+	ParagraphData::load(node);
 	loadNum(col_s, "color_s", node);
 
 	if (nodeValid("line", node))
 		loadNum(lines_per_page, "page", node->first_node("line"));
 
 	if (nodeValid("inc", node))
-		inc.Load(node->first_node("inc"));
+		inc.load(node->first_node("inc"));
 
 	if (nodeValid("img", node))
-		img.Load(node->first_node("img"));
+		img.load(node->first_node("img"));
 
 	if (nodeValid("prev", node)) {
-		prev.Load(node->first_node("prev"));
+		prev.load(node->first_node("prev"));
 		prev.hotkey.Set(IU_PAGE_PREV);
 	}
 
 	if (nodeValid("next", node)) {
-		next.Load(node->first_node("next"));
+		next.load(node->first_node("next"));
 		next.hotkey.Set(IU_PAGE_NEXT);
 	}
 
 	if (nodeValid("status", node))
-		status.Load(node->first_node("status"));
+		status.load(node->first_node("status"));
 }
 
 void QuestText::Draw(pyrodactyl::event::Quest &q) {

@@ -46,7 +46,7 @@ public:
 	Stairs() : modifier(1.0f, 1.0f) {}
 	~Stairs() {}
 
-	void Load(rapidxml::xml_node<char> *node, const bool &echo = true);
+	void load(rapidxml::xml_node<char> *node, const bool &echo = true);
 };
 } // End of namespace level
 } // End of namespace pyrodactyl

@@ -47,7 +47,7 @@ Timer::Timer() {
 	started = false;
 }
 
-void Timer::Load(rapidxml::xml_node<char> *node, const Common::String &name, const bool &echo) {
+void Timer::load(rapidxml::xml_node<char> *node, const Common::String &name, const bool &echo) {
 	target_valid = loadNum(target_ticks, name, node, echo);
 }
 

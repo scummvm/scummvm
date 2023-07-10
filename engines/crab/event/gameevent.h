@@ -85,10 +85,10 @@ struct GameEvent {
 	Common::Array<EventID> next;
 
 	GameEvent();
-	GameEvent(rapidxml::xml_node<char> *node) : GameEvent() { Load(node); }
+	GameEvent(rapidxml::xml_node<char> *node) : GameEvent() { load(node); }
 	~GameEvent() {}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 };
 } // End of namespace event
 } // End of namespace pyrodactyl

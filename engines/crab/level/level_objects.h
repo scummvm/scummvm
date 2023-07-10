@@ -57,7 +57,7 @@ struct PlayerDestMarker {
 
 	PlayerDestMarker() { img = 0; }
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	void Draw(const Vector2i &pos, const Rect &camera);
 };
 } // End of namespace level

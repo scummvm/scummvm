@@ -67,7 +67,7 @@ public:
 		target_ticks = val;
 	}
 
-	void Load(rapidxml::xml_node<char> *node, const Common::String &name, const bool &echo = true);
+	void load(rapidxml::xml_node<char> *node, const Common::String &name, const bool &echo = true);
 
 	// The various clock actions
 	void Start();

@@ -62,7 +62,7 @@ struct Item {
 	void Clear();
 	void StatChange(pyrodactyl::people::Person &obj, bool increase);
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	void Draw(const int &x, const int &y);
 
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);

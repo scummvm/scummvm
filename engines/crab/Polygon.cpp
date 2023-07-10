@@ -58,9 +58,9 @@ void Polygon2D::AddPoint(const Vector2f &ref, const Common::String &x, const Com
 	point.push_back(p);
 }
 
-void Polygon2D::Load(rapidxml::xml_node<char> *node, Rect &bounds) {
+void Polygon2D::load(rapidxml::xml_node<char> *node, Rect &bounds) {
 	Vector2f ref;
-	ref.Load(node);
+	ref.load(node);
 
 	// Converting a polygon to an axis aligned bounding box is easy - just record the minimum and maximum values of x and y
 	// for the vertices of the polygon, then minimum = top left corner, max - min = dimensions

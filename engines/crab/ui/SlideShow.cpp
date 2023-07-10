@@ -35,21 +35,21 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::input;
 
-void SlideShow::Load(rapidxml::xml_node<char> *node) {
+void SlideShow::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node)) {
 		if (nodeValid("pos", node))
-			pos.Load(node->first_node("pos"));
+			pos.load(node->first_node("pos"));
 
 		if (nodeValid("bg", node))
-			bg.Load(node->first_node("bg"));
+			bg.load(node->first_node("bg"));
 
 		if (nodeValid("prev", node)) {
-			prev.Load(node->first_node("prev"));
+			prev.load(node->first_node("prev"));
 			prev.hotkey.Set(IU_PREV);
 		}
 
 		if (nodeValid("next", node)) {
-			next.Load(node->first_node("next"));
+			next.load(node->first_node("next"));
 			next.hotkey.Set(IU_NEXT);
 		}
 
@@ -118,7 +118,7 @@ void SlideShow::Refresh() {
 	img.Delete();
 
 	if (index >= 0 && index < path.size())
-		img.Load(path[index]);
+		img.load(path[index]);
 #endif
 }
 

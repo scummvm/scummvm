@@ -57,10 +57,10 @@ struct MapData {
 	Common::Array<MarkerData> dest;
 
 	MapData() {}
-	MapData(rapidxml::xml_node<char> *node) { Load(node); }
+	MapData(rapidxml::xml_node<char> *node) { load(node); }
 	~MapData() {}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	void DestAdd(const Common::String &name, const int &x, const int &y);
 
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);

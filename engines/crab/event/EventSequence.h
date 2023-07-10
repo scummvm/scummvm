@@ -74,7 +74,7 @@ public:
 	void EventInProgress(bool val) { event_in_progress = val; }
 
 	// Load and save
-	void Load(const Common::String &filename);
+	void load(const Common::String &filename);
 
 	void SaveState(rapidxml::xml_document<char> &doc, rapidxml::xml_node<char> *root, const char *name);
 	void LoadState(rapidxml::xml_node<char> *node);

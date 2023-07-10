@@ -37,21 +37,21 @@ using namespace pyrodactyl::ui;
 //------------------------------------------------------------------------
 // Purpose: Load
 //------------------------------------------------------------------------
-void MapMarkerMenu::Load(rapidxml::xml_node<char> *node) {
+void MapMarkerMenu::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("ref", node))
-		ref.Load(node->first_node("ref"));
+		ref.load(node->first_node("ref"));
 
 	if (nodeValid("player", node))
-		player.Load(node->first_node("player"));
+		player.load(node->first_node("player"));
 
 	if (nodeValid("offset", node)) {
 		rapidxml::xml_node<char> *offnode = node->first_node("offset");
 
 		if (nodeValid("marker", offnode))
-			offset.marker.Load(offnode->first_node("marker"));
+			offset.marker.load(offnode->first_node("marker"));
 
 		if (nodeValid("player", offnode))
-			offset.player.Load(offnode->first_node("player"));
+			offset.player.load(offnode->first_node("player"));
 	}
 
 	menu.UseKeyboard(true);

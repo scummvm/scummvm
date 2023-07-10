@@ -75,7 +75,7 @@ void FilePaths::LoadLevel(const Common::String &filename) {
 
 		for (rapidxml::xml_node<char> *n = node->first_node("loc"); n != NULL; n = n->next_sibling("loc")) {
 			LevelPath l;
-			l.Load(n);
+			l.load(n);
 
 			Common::String id;
 			loadStr(id, "id", n);
@@ -85,7 +85,7 @@ void FilePaths::LoadLevel(const Common::String &filename) {
 	}
 }
 
-void FilePaths::Load(const Common::String &filename) {
+void FilePaths::load(const Common::String &filename) {
 	XMLDoc settings(filename);
 	if (settings.ready()) {
 		rapidxml::xml_node<char> *node = settings.doc()->first_node("paths");
@@ -151,7 +151,7 @@ void FilePaths::Load(const Common::String &filename) {
 						appdata = custom_path;
 					}
 #endif
-					warning("In FilePaths::Load(), customPath : %s", custom_path.c_str());
+					warning("In FilePaths::load(), customPath : %s", custom_path.c_str());
 				}
 			}
 

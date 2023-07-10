@@ -35,11 +35,11 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::input;
 
-void GameSaveMenu::Load(rapidxml::xml_node<char> *node) {
+void GameSaveMenu::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("name", node))
-		ta_name.Load(node->first_node("name"));
+		ta_name.load(node->first_node("name"));
 
-	FileMenu<SaveFileData>::Load(node);
+	FileMenu<SaveFileData>::load(node);
 }
 
 void GameSaveMenu::AddButton(const Common::String &p, unsigned int &slot_index, unsigned int &menu_index) {

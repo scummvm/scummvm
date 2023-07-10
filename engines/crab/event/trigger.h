@@ -67,9 +67,9 @@ struct Trigger {
 		rel = OP_AND;
 		negate = false;
 	}
-	Trigger(rapidxml::xml_node<char> *node) { Load(node); }
+	Trigger(rapidxml::xml_node<char> *node) { load(node); }
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	bool Evaluate(pyrodactyl::event::Info &info);
 
 	bool Evaluate(int lhs, int rhs);

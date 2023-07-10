@@ -51,7 +51,7 @@ public:
 	~TraitButton() {}
 
 	void Init(const TraitButton &ref, const int &XOffset = 0, const int &YOffset = 0);
-	void Load(rapidxml::xml_node<char> *node, const bool &echo = true);
+	void load(rapidxml::xml_node<char> *node, const bool &echo = true);
 
 	void Draw(const int &XOffset = 0, const int &YOffset = 0, Rect *clip = NULL);
 

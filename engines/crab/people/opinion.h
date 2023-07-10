@@ -62,7 +62,7 @@ struct Opinion {
 	void Set(const OpinionType &type, const int &val);
 	void Validate(const OpinionType &type);
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 };
 } // End of namespace people

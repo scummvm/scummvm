@@ -69,7 +69,7 @@ public:
 	}
 	~ItemCollection() {}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
 	void HandleEvents(const Common::String &char_id, const Common::Event &Event);
 #if 0

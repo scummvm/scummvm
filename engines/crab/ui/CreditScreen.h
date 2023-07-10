@@ -77,7 +77,7 @@ class CreditScreen {
 			align = ALIGN_CENTER;
 		}
 
-		void Load(rapidxml::xml_node<char> *node) {
+		void load(rapidxml::xml_node<char> *node) {
 			loadNum(inc, "inc", node);
 			loadNum(color, "color", node);
 			LoadFontKey(font, "font", node);
@@ -111,7 +111,7 @@ public:
 	CreditScreen() { Reset(); }
 	~CreditScreen() {}
 
-	void Load(const Common::String &filename);
+	void load(const Common::String &filename);
 	void Reset();
 
 	bool HandleEvents(Common::Event &Event);

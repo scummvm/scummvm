@@ -46,9 +46,9 @@ struct Exit {
 	Vector2i entry;
 
 	Exit() : entry(-1, -1) {}
-	Exit(rapidxml::xml_node<char> *node) { Load(node); }
+	Exit(rapidxml::xml_node<char> *node) { load(node); }
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 };
 } // End of namespace level
 } // End of namespace pyrodactyl

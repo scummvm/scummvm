@@ -42,8 +42,8 @@ using namespace pyrodactyl::people;
 //------------------------------------------------------------------------
 // Purpose: Load
 //------------------------------------------------------------------------
-void ItemSlot::Load(rapidxml::xml_node<char> *node) {
-	StateButton::Load(node);
+void ItemSlot::load(rapidxml::xml_node<char> *node) {
+	StateButton::load(node);
 
 	if (node->first_attribute("slot") == NULL)
 		no_type = true;
@@ -91,7 +91,7 @@ void ItemSlot::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char>
 // Purpose: Load state from file
 //------------------------------------------------------------------------
 void ItemSlot::LoadState(rapidxml::xml_node<char> *node) {
-	item.Load(node);
+	item.load(node);
 	loadBool(unread, "unread", node);
 
 	if (item.id == "")

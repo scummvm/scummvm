@@ -42,8 +42,8 @@ void HoverInfo::Init(const HoverInfo &hInfo, const int &XOffset, const int &YOff
 	y += YOffset;
 }
 
-void HoverInfo::Load(rapidxml::xml_node<char> *node, Rect *parent) {
-	if (TextData::Load(node, parent, false)) {
+void HoverInfo::load(rapidxml::xml_node<char> *node, Rect *parent) {
+	if (TextData::load(node, parent, false)) {
 		loadStr(text, "text", node);
 		enabled = true;
 	}

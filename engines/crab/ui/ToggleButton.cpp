@@ -36,13 +36,13 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
-void ToggleButton::Load(rapidxml::xml_node<char> *node) {
-	Button::Load(node);
+void ToggleButton::load(rapidxml::xml_node<char> *node) {
+	Button::load(node);
 	loadImgKey(on, "on", node);
 	loadImgKey(off, "off", node);
 
 	if (nodeValid("offset", node))
-		offset.Load(node->first_node("offset"));
+		offset.load(node->first_node("offset"));
 }
 
 void ToggleButton::Draw(const int &XOffset, const int &YOffset, Rect *clip) {

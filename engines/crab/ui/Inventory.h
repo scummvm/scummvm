@@ -69,7 +69,7 @@ public:
 	void DelItem(const Common::String &char_id, const Common::String &item_id);
 	bool HasItem(const Common::String &char_id, const Common::String &container, const Common::String &item_id);
 
-	void Load(const Common::String &filename);
+	void load(const Common::String &filename);
 	void Draw(pyrodactyl::people::Person &obj, const int &money_val);
 
 	void HandleEvents(const Common::String &char_id, const Common::Event &Event);

@@ -68,7 +68,7 @@ void ImageManager::LoadMap(const Common::String &filename, const MapID &mapid) {
 					valid = loadStr(path, "path", n, false);
 
 				if (valid)
-					map[mapid][key].Load(path);
+					map[mapid][key].load(path);
 				else
 					error("ImageManager::LoadMap : Unable to load image id %u from %s!", key, path.c_str());
 #if 0
@@ -80,7 +80,7 @@ void ImageManager::LoadMap(const Common::String &filename, const MapID &mapid) {
 		if (nodeValid("mouse", node, false)) {
 			using namespace pyrodactyl::input;
 			g_engine->_mouse->Quit();
-			g_engine->_mouse->Load(node->first_node("mouse"));
+			g_engine->_mouse->load(node->first_node("mouse"));
 		}
 	}
 }
@@ -107,7 +107,7 @@ void ImageManager::AddTexture(const ImageKey &id, Graphics::Surface *surface, in
 	if (map[mapindex].contains(id))
 		FreeTexture(id, mapindex);
 
-	map[mapindex][id].Load(surface);
+	map[mapindex][id].load(surface);
 #if 0
 	SDL_FreeSurface(surface);
 #endif

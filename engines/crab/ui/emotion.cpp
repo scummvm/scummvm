@@ -35,9 +35,9 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::event;
 
-void EmotionIndicator::Load(rapidxml::xml_node<char> *node) {
+void EmotionIndicator::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid("text", node))
-		text.Load(node->first_node("text"));
+		text.load(node->first_node("text"));
 }
 
 void EmotionIndicator::Draw(const int &select) {

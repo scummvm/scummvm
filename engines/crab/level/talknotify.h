@@ -54,7 +54,7 @@ public:
 		align = ALIGN_CENTER;
 	}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 	void Draw(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s, const Rect &camera);
 };
 } // End of namespace level

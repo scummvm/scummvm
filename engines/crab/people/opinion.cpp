@@ -47,7 +47,7 @@ Opinion::Opinion() {
 	val[OPI_RESPECT] = 0;
 }
 
-void Opinion::Load(rapidxml::xml_node<char> *node) {
+void Opinion::load(rapidxml::xml_node<char> *node) {
 	loadNum(val[OPI_LIKE], "like", node);
 	loadNum(val[OPI_FEAR], "fear", node);
 	loadNum(val[OPI_RESPECT], "respect", node);

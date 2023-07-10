@@ -37,10 +37,10 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::input;
 
-void Slider::Load(rapidxml::xml_node<char> *node, const int &Min, const int &Max, const int &Val) {
+void Slider::load(rapidxml::xml_node<char> *node, const int &Min, const int &Max, const int &Val) {
 	if (nodeValid(node)) {
-		knob.Load(node->first_node("knob"), false);
-		bar.Load(node->first_node("bar"));
+		knob.load(node->first_node("knob"), false);
+		bar.load(node->first_node("bar"));
 
 		knob.y = bar.y;
 		knob.w = g_engine->_imageManager->GetTexture(knob.img.normal).W();
@@ -51,7 +51,7 @@ void Slider::Load(rapidxml::xml_node<char> *node, const int &Min, const int &Max
 		max = Max;
 		Value(Val);
 
-		caption.Load(node->first_node("caption"), &bar);
+		caption.load(node->first_node("caption"), &bar);
 	}
 
 	CreateBackup();

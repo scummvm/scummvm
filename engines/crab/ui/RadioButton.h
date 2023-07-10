@@ -45,8 +45,8 @@ public:
 	RadioButton() { val = 0.0f; }
 	~RadioButton() {}
 
-	void Load(rapidxml::xml_node<char> *node) {
-		ToggleButton::Load(node);
+	void load(rapidxml::xml_node<char> *node) {
+		ToggleButton::load(node);
 		loadNum(val, "val", node);
 	}
 };

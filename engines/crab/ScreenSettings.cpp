@@ -39,7 +39,7 @@ Graphics::Surface *gRendererSurface = nullptr;
 // Our global window object
 //SDL_Window *gWindow = nullptr;
 
-void ScreenSettings::Load(rapidxml::xml_node<char> *node) {
+void ScreenSettings::load(rapidxml::xml_node<char> *node) {
 	loadNum(cur.w, "w", node);
 	loadNum(cur.h, "h", node);
 	loadNum(fps, "fps", node);

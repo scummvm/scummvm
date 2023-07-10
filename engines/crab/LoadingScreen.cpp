@@ -33,7 +33,7 @@
 
 namespace Crab {
 
-void LoadingScreen::Load() {
+void LoadingScreen::load() {
 	const Common::String &filename = "res/layout/loading.xml";
 	XMLDoc doc(filename);
 	if (doc.ready()) {
@@ -46,7 +46,7 @@ void LoadingScreen::Load() {
 			}
 
 			if (nodeValid("text", node))
-				text.Load(node->first_node("text"), "img");
+				text.load(node->first_node("text"), "img");
 		}
 	}
 }

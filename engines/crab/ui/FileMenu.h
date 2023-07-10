@@ -157,16 +157,16 @@ public:
 #endif
 	}
 
-	void Load(rapidxml::xml_node<char> *node) {
+	void load(rapidxml::xml_node<char> *node) {
 		if (nodeValid("bg", node))
-			bg.Load(node->first_node("bg"));
+			bg.load(node->first_node("bg"));
 
 		if (nodeValid("menu", node))
-			menu.Load(node->first_node("menu"));
+			menu.load(node->first_node("menu"));
 
 		if (nodeValid("preview", node)) {
 			auto prnode = node->first_node("preview");
-			img.pos.Load(prnode);
+			img.pos.load(prnode);
 			loadStr(img.no_preview_path, "path", prnode);
 		}
 
@@ -174,20 +174,20 @@ public:
 			rapidxml::xml_node<char> *offnode = node->first_node("offset");
 
 			// Stuff displayed on the slot button
-			td_b[DATA_SAVENAME].Load(offnode->first_node("save_name"));
-			td_b[DATA_LASTMODIFIED].Load(offnode->first_node("last_modified"));
+			td_b[DATA_SAVENAME].load(offnode->first_node("save_name"));
+			td_b[DATA_LASTMODIFIED].load(offnode->first_node("last_modified"));
 
 			// Stuff displayed when you hover over a slot button
-			td_h[DATA_LOCNAME].Load(offnode->first_node("loc_name"));
-			td_h[DATA_DIFFICULTY].Load(offnode->first_node("difficulty"));
-			td_h[DATA_TIMEPLAYED].Load(offnode->first_node("time_played"));
-			td_h[DATA_PLAYERNAME].Load(offnode->first_node("player_name"));
+			td_h[DATA_LOCNAME].load(offnode->first_node("loc_name"));
+			td_h[DATA_DIFFICULTY].load(offnode->first_node("difficulty"));
+			td_h[DATA_TIMEPLAYED].load(offnode->first_node("time_played"));
+			td_h[DATA_PLAYERNAME].load(offnode->first_node("player_name"));
 
 			// Titles for the stuff displayed when you hover over a slot button
-			hov[DATA_LOCNAME].Load(offnode->first_node("loc_name_title"));
-			hov[DATA_DIFFICULTY].Load(offnode->first_node("difficulty_title"));
-			hov[DATA_TIMEPLAYED].Load(offnode->first_node("time_played_title"));
-			hov[DATA_PLAYERNAME].Load(offnode->first_node("player_name_title"));
+			hov[DATA_LOCNAME].load(offnode->first_node("loc_name_title"));
+			hov[DATA_DIFFICULTY].load(offnode->first_node("difficulty_title"));
+			hov[DATA_TIMEPLAYED].load(offnode->first_node("time_played_title"));
+			hov[DATA_PLAYERNAME].load(offnode->first_node("player_name_title"));
 		}
 
 		extension = g_engine->_filePath->save_ext;
@@ -240,8 +240,8 @@ public:
 			if (!img.loaded || prev_hover != i) {
 				img.loaded = true;
 				prev_hover = i;
-				if (!img.preview.Load(slot_info[i].preview))
-					img.preview.Load(img.no_preview_path);
+				if (!img.preview.load(slot_info[i].preview))
+					img.preview.load(img.no_preview_path);
 			}
 
 			hover = true;

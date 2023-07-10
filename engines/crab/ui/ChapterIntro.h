@@ -56,7 +56,7 @@ public:
 
 	ChapterIntro() { show_traits = false; }
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 
 	bool HandleEvents(Common::Event &Event);
 #if 0

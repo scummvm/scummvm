@@ -37,7 +37,7 @@ namespace Crab {
 using namespace pyrodactyl::event;
 using namespace pyrodactyl::music;
 
-void Effect::Load(rapidxml::xml_node<char> *node) {
+void Effect::load(rapidxml::xml_node<char> *node) {
 	Common::String ty;
 	loadStr(ty, "type", node);
 

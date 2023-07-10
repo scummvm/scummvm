@@ -63,7 +63,7 @@ struct FightMoveAIData {
 		if (!loadNum(_delay, "delay", node, false))
 			_delay = 0;
 
-		_range.Load(node->first_node("range"));
+		_range.load(node->first_node("range"));
 
 		Common::String str;
 		loadStr(str, "type", node, false);

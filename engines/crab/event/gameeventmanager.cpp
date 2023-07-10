@@ -50,7 +50,7 @@ void Manager::Init() {
 //------------------------------------------------------------------------
 // Purpose: Load this
 //------------------------------------------------------------------------
-void Manager::Load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
+void Manager::load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 	if (nodeValid(node)) {
 		XMLDoc conf(node->first_attribute("list")->value());
 		if (conf.ready()) {
@@ -76,19 +76,19 @@ void Manager::Load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 			rapidxml::xml_node<char> *layout = conf.doc()->first_node("layout");
 			if (nodeValid(layout)) {
 				if (nodeValid("character", layout))
-					oh.Load(layout->first_node("character"));
+					oh.load(layout->first_node("character"));
 
 				if (nodeValid("popup", layout))
-					popup.Load(layout->first_node("popup"));
+					popup.load(layout->first_node("popup"));
 
 				if (nodeValid("intro", layout))
-					intro.Load(layout->first_node("intro"));
+					intro.load(layout->first_node("intro"));
 			}
 		}
 
-		reply.Load(node->first_attribute("conversation")->value());
+		reply.load(node->first_attribute("conversation")->value());
 
-		per.Load(node->first_attribute("char")->value());
+		per.load(node->first_attribute("char")->value());
 	}
 }
 

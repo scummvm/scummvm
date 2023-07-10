@@ -37,13 +37,13 @@ using namespace pyrodactyl::event;
 void GameEventStore::AddConv(rapidxml::xml_node<char> *node, unsigned int &index) {
 	ConversationData c;
 	if (nodeValid("talk", node))
-		c.Load(node->first_node("talk"));
+		c.load(node->first_node("talk"));
 
 	index = con.size();
 	con.push_back(c);
 }
 
-void GameEventStore::Load(const Common::String &filename) {
+void GameEventStore::load(const Common::String &filename) {
 
 	// Request current user stats from Steam
 	// m_pSteamUserStats = SteamUserStats();

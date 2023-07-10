@@ -41,10 +41,10 @@ void FightAnimFrame::load(rapidxml::xml_node<char> *node, const Rect &VBOX, cons
 	AnimFrame::load(node, VBOX, rep, AX, AY);
 
 	if (nodeValid("box_d", node, false))
-		_boxD.Load(node->first_node("box_d"));
+		_boxD.load(node->first_node("box_d"));
 
 	if (nodeValid("shift", node, false))
-		_delta.Load(node->first_node("shift"));
+		_delta.load(node->first_node("shift"));
 
 	if (!loadNum(_state, "state", node, false))
 		_state = 0;
@@ -62,13 +62,13 @@ void FightAnimFrames::load(rapidxml::xml_node<char> *node) {
 		_repeat = 0;
 
 	if (nodeValid("anchor", node, false))
-		_anchor.Load(node->first_node("anchor"));
+		_anchor.load(node->first_node("anchor"));
 
 	if (nodeValid("box_v", node))
-		_boxV.Load(node->first_node("box_v"));
+		_boxV.load(node->first_node("box_v"));
 
 	if (nodeValid("shadow", node)) {
-		_shadow.Load(node->first_node("shadow"));
+		_shadow.load(node->first_node("shadow"));
 		_shadow.valid = true;
 	}
 

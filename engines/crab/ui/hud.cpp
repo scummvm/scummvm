@@ -40,35 +40,35 @@ using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::input;
 
-void HUD::Load(const Common::String &filename, pyrodactyl::level::TalkNotify &tn, pyrodactyl::level::PlayerDestMarker &pdm) {
+void HUD::load(const Common::String &filename, pyrodactyl::level::TalkNotify &tn, pyrodactyl::level::PlayerDestMarker &pdm) {
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.doc()->first_node("hud");
 		if (nodeValid(node)) {
 			if (nodeValid("bg", node))
-				bg.Load(node->first_node("bg"));
+				bg.load(node->first_node("bg"));
 
 			if (nodeValid("tray", node))
-				menu.Load(node->first_node("tray"));
+				menu.load(node->first_node("tray"));
 
-			pause.Load(node->first_node("pause"));
-			gom.Load(node->first_node("game_over"));
-			back.Load(node->first_node("back"));
-			// health.Load(node->first_node("health"));
+			pause.load(node->first_node("pause"));
+			gom.load(node->first_node("game_over"));
+			back.load(node->first_node("back"));
+			// health.load(node->first_node("health"));
 
 			if (nodeValid("notify", node)) {
 				rapidxml::xml_node<char> *notifynode = node->first_node("notify");
 
 				loadImgKey(g_engine->_imageManager->notify, "img", notifynode);
-				tn.Load(notifynode);
-				pdm.Load(notifynode);
+				tn.load(notifynode);
+				pdm.load(notifynode);
 
 				if (nodeValid("anim", notifynode)) {
 					rapidxml::xml_node<char> *animnode = notifynode->first_node("anim");
 					loadImgKey(notify_anim, "img", animnode);
-					clip.Load(animnode);
+					clip.load(animnode);
 
-					timer.Load(animnode, "delay");
+					timer.load(animnode, "delay");
 					timer.Start();
 				}
 			}

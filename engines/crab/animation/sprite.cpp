@@ -53,7 +53,7 @@ Sprite::Sprite() : img_size(1, 1), vel_mod(1.0f, 1.0f) {
 //------------------------------------------------------------------------
 // Purpose: Load sprite from XML and animations from the index of all animation files
 //------------------------------------------------------------------------
-void Sprite::Load(rapidxml::xml_node<char> *node, Common::Array<Common::String> &animations) {
+void Sprite::load(rapidxml::xml_node<char> *node, Common::Array<Common::String> &animations) {
 	using namespace pyrodactyl::image;
 
 	if (nodeValid(node)) {
@@ -90,13 +90,13 @@ void Sprite::Load(rapidxml::xml_node<char> *node, Common::Array<Common::String> 
 		box_v = anim_set._walk.BoxV(dir);
 
 		if (nodeValid("visible", node, false))
-			visible.Load(node->first_node("visible"));
+			visible.load(node->first_node("visible"));
 
 		if (nodeValid("movement", node, false))
 			ai_data._walk.load(node->first_node("movement"));
 
 		if (nodeValid("popup", node, false))
-			popup.Load(node->first_node("popup"));
+			popup.load(node->first_node("popup"));
 	}
 }
 
