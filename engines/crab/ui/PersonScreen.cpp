@@ -75,7 +75,7 @@ void PersonScreen::HandleEvents(pyrodactyl::event::Info &info, const Common::Str
 
 void PersonScreen::internalEvents() {
 	if (cur_sp != nullptr)
-		cur_sp->DialogUpdateClip(PST_NORMAL);
+		cur_sp->dialogUpdateClip(PST_NORMAL);
 }
 
 void PersonScreen::draw(pyrodactyl::event::Info &info, const Common::String &id) {
@@ -88,8 +88,8 @@ void PersonScreen::draw(pyrodactyl::event::Info &info, const Common::String &id)
 		menu.draw(nullptr);
 
 	if (cur_sp != nullptr) {
-		Rect clip = cur_sp->DialogClip(PST_NORMAL);
-		g_engine->_imageManager->draw(img.x, img.y, cur_sp->Img(), &clip);
+		Rect clip = cur_sp->dialogClip(PST_NORMAL);
+		g_engine->_imageManager->draw(img.x, img.y, cur_sp->img(), &clip);
 	}
 }
 

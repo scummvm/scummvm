@@ -49,24 +49,24 @@ bool Level::ContainsClick(const Common::String &id, const Common::Event &Event) 
 	// If mouse is moved and is hovering on the specified sprite (id), set hover = true
 	if (Event.type == Common::EVENT_MOUSEMOVE) {
 		for (auto &i : objects) {
-			Rect r = i.PosRect();
+			Rect r = i.posRect();
 
 			if (r.Contains(g_engine->_mouse->motion.x + camera.x, g_engine->_mouse->motion.y + camera.y)) {
 				// This is to show the sprite's name on top of their head
-				i.hover = true;
+				i._hover = true;
 
 				// This is to update the mouse cursor only if we're in talking range of a sprite
-				if (i.ID() == id)
+				if (i.id() == id)
 					g_engine->_mouse->hover = true;
 			} else
-				i.hover = false;
+				i._hover = false;
 		}
 
 		return false;
 	} else if (g_engine->_mouse->Pressed()) {
 		for (auto &i : objects) {
-			if (i.ID() == id) {
-				Rect r = i.PosRect();
+			if (i.id() == id) {
+				Rect r = i.posRect();
 				if (r.Contains(g_engine->_mouse->button.x + camera.x, g_engine->_mouse->button.y + camera.y)) {
 					g_engine->_mouse->hover = true;
 					return true;
@@ -86,7 +86,7 @@ bool Level::ContainsClick(const Common::String &id, const SDL_Event &Event) {
 	// If mouse is moved and is hovering on the specified sprite (id), set hover = true
 	if (Event.type == SDL_MOUSEMOTION) {
 		for (auto &i : objects) {
-			Rect r = i.PosRect();
+			Rect r = i.posRect();
 
 			if (r.Contains(g_engine->_mouse->motion.x + camera.x, g_engine->_mouse->motion.y + camera.y)) {
 				// This is to show the sprite's name on top of their head
@@ -103,7 +103,7 @@ bool Level::ContainsClick(const Common::String &id, const SDL_Event &Event) {
 	} else if (g_engine->_mouse->Pressed()) {
 		for (auto &i : objects) {
 			if (i.ID() == id) {
-				Rect r = i.PosRect();
+				Rect r = i.posRect();
 				if (r.Contains(g_engine->_mouse->button.x + camera.x, g_engine->_mouse->button.y + camera.y)) {
 					g_engine->_mouse->hover = true;
 					return true;
@@ -119,11 +119,11 @@ bool Level::ContainsClick(const Common::String &id, const SDL_Event &Event) {
 // Purpose: Find if a layer is visible (used only for objects with layers associated with them)
 //------------------------------------------------------------------------
 bool Level::LayerVisible(Sprite *obj) {
-	if (obj->layer < 0)
+	if (obj->_layer < 0)
 		return true;
 
-	if ((unsigned int)obj->layer < terrain.layer.size())
-		return terrain.layer[obj->layer].collide;
+	if ((unsigned int)obj->_layer < terrain.layer.size())
+		return terrain.layer[obj->_layer].collide;
 
 	return false;
 }
@@ -134,8 +134,8 @@ bool Level::LayerVisible(Sprite *obj) {
 //------------------------------------------------------------------------
 void Level::CalcTrigCollide(Info &info) {
 	for (auto i = objects.begin(); i != objects.end(); ++i)
-		if (info.PersonValid(i->ID()))
-			terrain.CollideWithTrigger(i->BoundRect(), info.PersonGet(i->ID()).trig);
+		if (info.PersonValid(i->id()))
+			terrain.CollideWithTrigger(i->boundRect(), info.PersonGet(i->id()).trig);
 }
 
 //------------------------------------------------------------------------
@@ -144,16 +144,16 @@ void Level::CalcTrigCollide(Info &info) {
 //------------------------------------------------------------------------
 bool Level::CollidingWithObject(Info &info, Common::String &id) {
 	// Clip and Bounding rectangle of player
-	Rect p_pos = objects[player_index].PosRect(), p_bound = objects[player_index].BoundRect();
+	Rect p_pos = objects[player_index].posRect(), p_bound = objects[player_index].boundRect();
 
 	unsigned int index = 0;
 	for (auto i = objects.begin(); i != objects.end(); ++i, ++index) {
-		if (i->Visible() && player_index != index && info.State(i->ID()) == PST_NORMAL) {
+		if (i->visible() && player_index != index && info.State(i->id()) == PST_NORMAL) {
 			// Clip and bounding rectangles for the NPC sprite
-			Rect i_pos = i->PosRect(), i_bound = i->BoundRect();
+			Rect i_pos = i->posRect(), i_bound = i->boundRect();
 
 			if (p_pos.Collide(i_pos) || i_pos.Contains(p_pos) || p_bound.Collide(i_bound) || i_bound.Contains(p_bound)) {
-				id = i->ID();
+				id = i->id();
 				return true;
 			}
 		}
@@ -167,11 +167,11 @@ bool Level::CollidingWithObject(Info &info, Common::String &id) {
 // id is set to the id of colliding object
 //------------------------------------------------------------------------
 bool Level::CollidingWithLevel(Info &info, Sprite &s) {
-	terrain.CollideWithNoWalk(s.BoundRect(), s.collide_data);
+	terrain.CollideWithNoWalk(s.boundRect(), s._collideData);
 
-	terrain.CollideWithStairs(s.BoundRect(), s.vel_mod);
+	terrain.CollideWithStairs(s.boundRect(), s._velMod);
 
-	if (terrain.CollideWithMusic(s.BoundRect(), music)) {
+	if (terrain.CollideWithMusic(s.boundRect(), music)) {
 		if (music.track)
 			g_engine->_musicManager->PlayMusic(music.id);
 		else
@@ -179,7 +179,7 @@ bool Level::CollidingWithLevel(Info &info, Sprite &s) {
 	}
 
 	// If we are colliding with something, return true
-	return !s.collide_data.empty();
+	return !s._collideData.empty();
 }
 
 } // End of namespace Crab

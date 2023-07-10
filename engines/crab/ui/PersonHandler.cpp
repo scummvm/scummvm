@@ -75,7 +75,7 @@ void PersonHandler::draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameE
 	dlbox.draw(player);
 
 	if (s != NULL) {
-		Rect r = s->DialogClip(Event->state);
+		Rect r = s->dialogClip(Event->state);
 		int x = img.x, y = img.y;
 
 		if (sprite_align.x == ALIGN_CENTER)
@@ -88,7 +88,7 @@ void PersonHandler::draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameE
 		else if (sprite_align.y == ALIGN_RIGHT)
 			y -= r.h;
 
-		g_engine->_imageManager->draw(x, y, s->Img(), &r);
+		g_engine->_imageManager->draw(x, y, s->img(), &r);
 	}
 
 	if (info.PersonValid(person_id)) {
@@ -148,7 +148,7 @@ bool PersonHandler::HandleDlboxEvents(const SDL_Event &Event) {
 
 void PersonHandler::internalEvents(const pyrodactyl::people::PersonState &state, pyrodactyl::anim::Sprite *s) {
 	if (s != NULL)
-		s->DialogUpdateClip(state);
+		s->dialogUpdateClip(state);
 }
 
 void PersonHandler::OpinionChange(pyrodactyl::event::Info &info, const Common::String &id, const pyrodactyl::people::OpinionType &type, const int &val) {

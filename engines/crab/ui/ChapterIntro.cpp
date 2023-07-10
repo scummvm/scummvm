@@ -69,8 +69,8 @@ void ChapterIntro::draw(pyrodactyl::event::Info &info, Common::String &text,
 	traits.draw();
 
 	if (cur_sp != nullptr) {
-		Rect clip = cur_sp->DialogClip(state);
-		g_engine->_imageManager->draw(pos.x, pos.y, cur_sp->Img(), &clip);
+		Rect clip = cur_sp->dialogClip(state);
+		g_engine->_imageManager->draw(pos.x, pos.y, cur_sp->img(), &clip);
 	}
 }
 

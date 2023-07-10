@@ -605,9 +605,9 @@ bool Game::ApplyResult() {
 			break;
 		case ER_MOVE:
 			for (auto &o : level.objects) {
-				if (i->val == o.ID()) {
-					o.X(i->x);
-					o.Y(i->y);
+				if (i->val == o.id()) {
+					o.x(i->x);
+					o.y(i->y);
 					break;
 				}
 			}

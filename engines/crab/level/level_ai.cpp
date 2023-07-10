@@ -50,7 +50,7 @@ LevelResult Level::internalEvents(Info &info, Common::Array<EventResult> &result
 	// input.internalEvents();
 	CalcTrigCollide(info);
 
-	if (terrain.CollideWithExit(objects[player_index].BoundRect(), l_result)) {
+	if (terrain.CollideWithExit(objects[player_index].boundRect(), l_result)) {
 		if (PlayerInCombat(info)) {
 			inside_exit = true;
 		} else if (inside_exit == false) {
@@ -89,38 +89,38 @@ void Level::Think(Info &info, Common::Array<EventResult> &result,
 	unsigned int index = 0;
 	for (auto i = objects.begin(); i != objects.end(); ++i, ++index) {
 		// Only bother if the sprite is visible
-		if (i->Visible()) {
+		if (i->visible()) {
 			// TODO: Find a place where this should be initialized... (SZ)
-			if (i->pathing.grid == NULL)
-				i->pathing.initialize(&pathfindingGrid);
+			if (i->_pathing.grid == NULL)
+				i->_pathing.initialize(&pathfindingGrid);
 
 			// If a sprite is dead, nothing else matters
-			if (info.State(i->ID()) == PST_DYING) {
-				if (i->LastFrame()) {
-					info.StatSet(i->ID(), STAT_HEALTH, 0);
-					info.State(i->ID(), PST_KO);
-					i->EffectImg(false);
-					i->InputStop();
+			if (info.State(i->id()) == PST_DYING) {
+				if (i->lastFrame()) {
+					info.StatSet(i->id(), STAT_HEALTH, 0);
+					info.State(i->id(), PST_KO);
+					i->effectImg(false);
+					i->inputStop();
 				}
-			} else if (info.State(i->ID()) != PST_KO) {
-				Rect boundRect = i->BoundRect();
+			} else if (info.State(i->id()) != PST_KO) {
+				Rect boundRect = i->boundRect();
 
-				i->pathing.SetPosition(Vector2f((float)(boundRect.x + boundRect.w / 2), (float)boundRect.y + boundRect.h / 2));
-				i->pathing.Update(0);
+				i->_pathing.SetPosition(Vector2f((float)(boundRect.x + boundRect.w / 2), (float)boundRect.y + boundRect.h / 2));
+				i->_pathing.Update(0);
 
 				// For the AI sprites
 				if (index != player_index) {
-					switch (info.State(i->ID())) {
+					switch (info.State(i->id())) {
 					case PST_FIGHT: {
 						// Only attack if the player is alive
-						if (info.State(objects[player_index].ID()) < PST_KO)
-							i->Attack(info, objects[player_index], sc_default);
+						if (info.State(objects[player_index].id()) < PST_KO)
+							i->attack(info, objects[player_index], sc_default);
 					} break;
 					case PST_FLEE:
-						i->Flee(info, terrain.area_exit, sc_default);
+						i->flee(info, terrain.area_exit, sc_default);
 						break;
 					case PST_NORMAL:
-						if (i->TakingDamage(objects[player_index], sc_default)) {
+						if (i->takingDamage(objects[player_index], sc_default)) {
 							if (first_hit) {
 								BattleAlert(info);
 								first_hit = false;
@@ -134,35 +134,35 @@ void Level::Think(Info &info, Common::Array<EventResult> &result,
 					}
 
 					// Only do this if the player is alive
-					if (info.State(objects[player_index].ID()) < PST_KO)
-						objects[player_index].ExchangeDamage(info, *i, sc_default);
+					if (info.State(objects[player_index].id()) < PST_KO)
+						objects[player_index].exchangeDamage(info, *i, sc_default);
 				} else {
 					// For the player sprite
-					boundRect = i->BoundRect();
+					boundRect = i->boundRect();
 
-					i->pathing.SetPosition(Vector2f((float)(boundRect.x + boundRect.w / 2), (float)boundRect.y + boundRect.h / 2));
-					i->pathing.Update(0);
+					i->_pathing.SetPosition(Vector2f((float)(boundRect.x + boundRect.w / 2), (float)boundRect.y + boundRect.h / 2));
+					i->_pathing.Update(0);
 
-					i->MoveToDestPathfinding(info, sc_default);
+					i->moveToDestPathfinding(info, sc_default);
 				}
 
 				i->internalEvents(info, PlayerID(), result, end_seq);
 				MoveObject(info, *i);
 			}
 
-			i->Animate(info);
+			i->animate(info);
 		}
 	}
 
 	// Background sprites don't move
 	for (auto &i : background)
-		i.Animate(PST_NORMAL);
+		i.animate(PST_NORMAL);
 
 	// Flier sprites fly across the screen from left to right or vice versa
 	// The movement is semi-random
 	for (auto &i : fly) {
-		i.FlyAround(camera, sc_default);
-		i.Animate(PST_NORMAL);
+		i.flyAround(camera, sc_default);
+		i.animate(PST_NORMAL);
 	}
 }
 
@@ -172,14 +172,14 @@ void Level::Think(Info &info, Common::Array<EventResult> &result,
 void Level::BattleAlert(Info &info) {
 	unsigned int index = 0;
 	for (auto i = objects.begin(); i != objects.end(); ++i, ++index) {
-		if (index != player_index && i->Visible() && info.State(i->ID()) != PST_KO) {
-			switch (info.Type(i->ID())) {
+		if (index != player_index && i->visible() && info.State(i->id()) != PST_KO) {
+			switch (info.Type(i->id())) {
 			case PE_NEUTRAL:
 			case PE_HOSTILE:
-				info.State(i->ID(), PST_FIGHT);
+				info.State(i->id(), PST_FIGHT);
 				break;
 			case PE_COWARD:
-				info.State(i->ID(), PST_FLEE);
+				info.State(i->id(), PST_FLEE);
 				break;
 			default:
 				break;
@@ -193,15 +193,15 @@ void Level::BattleAlert(Info &info) {
 //------------------------------------------------------------------------
 void Level::MoveObject(Info &info, pyrodactyl::anim::Sprite &s) {
 	// Update x,y coordinates according to velocity
-	s.Move(sc_default);
+	s.move(sc_default);
 
 	// First check collision with objects and forbidden areas inside a level
 	if (CollidingWithLevel(info, s))
-		s.ResolveCollide();
+		s.resolveCollide();
 
 	// Finally see if we are inside the overall level bounds
-	if (!terrain.InsideWalk(s.BoundRect()))
-		s.ResolveInside(terrain.AreaWalk());
+	if (!terrain.InsideWalk(s.boundRect()))
+		s.resolveInside(terrain.AreaWalk());
 }
 
 //------------------------------------------------------------------------
@@ -210,7 +210,7 @@ void Level::MoveObject(Info &info, pyrodactyl::anim::Sprite &s) {
 bool Level::PlayerInCombat(Info &info) {
 	unsigned int index = 0;
 	for (auto i = objects.begin(); i != objects.end(); ++i, ++index)
-		if (index != player_index && info.State(i->ID()) == PST_FIGHT && i->Visible())
+		if (index != player_index && info.State(i->id()) == PST_FIGHT && i->visible())
 			return true;
 
 	return false;

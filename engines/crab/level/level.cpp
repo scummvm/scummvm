@@ -47,7 +47,7 @@ using namespace pyrodactyl::event;
 //------------------------------------------------------------------------
 void Level::reset() {
 	if (player_index > 0 && objects.size() > player_index)
-		objects[player_index].pathing.shutdown();
+		objects[player_index]._pathing.shutdown();
 
 	player_index = 0;
 	terrain.reset();
@@ -74,7 +74,7 @@ void Level::reset() {
 pyrodactyl::anim::Sprite *Level::GetSprite(const Common::String &id) {
 	int count = 0;
 	for (auto i = objects.begin(); i != objects.end(); ++i, ++count)
-		if (i->ID() == id)
+		if (i->id() == id)
 			return &objects[count];
 
 	return NULL;
@@ -85,7 +85,7 @@ pyrodactyl::anim::Sprite *Level::GetSprite(const Common::String &id) {
 //------------------------------------------------------------------------
 void Level::CalcProperties(Info &info) {
 	for (auto i = objects.begin(); i != objects.end(); ++i)
-		i->CalcProperties(info);
+		i->calcProperties(info);
 }
 
 //------------------------------------------------------------------------
@@ -101,18 +101,18 @@ void Level::HandleEvents(Info &info, const Common::Event &Event) {
 				dest.x += camera.x;
 				dest.y += camera.y;
 
-				Rect b = objects[player_index].BoundRect();
+				Rect b = objects[player_index].boundRect();
 				b.w /= 2;
 				b.h /= 2;
 				b.x = dest.x - b.w / 2;
 				b.y = dest.y - b.h / 2;
 
-				objects[player_index].SetDestPathfinding(dest, !terrain.InsideNoWalk(dest));
+				objects[player_index].setDestPathfinding(dest, !terrain.InsideNoWalk(dest));
 			}
 		}
 	}
 
-	objects[player_index].HandleEvents(info, camera, sc_default, Event);
+	objects[player_index].handleEvents(info, camera, sc_default, Event);
 }
 
 #if 0
@@ -150,13 +150,13 @@ void Level::HandleEvents(Info &info, const SDL_Event &Event) {
 void Level::PlayerID(const Common::String &ID, const int &X, const int &Y) {
 	int index = 0;
 	for (auto i = objects.begin(); i != objects.end(); ++i, ++index) {
-		if (i->ID() == ID) {
+		if (i->id() == ID) {
 			player_index = index;
 
 			if (X != -1)
-				i->X(X);
+				i->x(X);
 			if (Y != -1)
-				i->Y(Y);
+				i->y(Y);
 
 			break;
 		}
