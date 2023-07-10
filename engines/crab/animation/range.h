@@ -39,21 +39,23 @@ namespace Crab {
 namespace pyrodactyl {
 namespace anim {
 struct Range {
-	bool valid;
-	Rect val[DIRECTION_TOTAL];
+	bool _valid;
+	Rect _val[DIRECTION_TOTAL];
 
-	Range() { valid = false; }
+	Range() {
+		_valid = false;
+	}
 
 	void load(rapidxml::xml_node<char> *node) {
 		if (nodeValid(node, false)) {
-			val[DIRECTION_DOWN].load(node->first_node("down"));
-			val[DIRECTION_UP].load(node->first_node("up"));
-			val[DIRECTION_LEFT].load(node->first_node("left"));
-			val[DIRECTION_RIGHT].load(node->first_node("right"));
+			_val[DIRECTION_DOWN].load(node->first_node("down"));
+			_val[DIRECTION_UP].load(node->first_node("up"));
+			_val[DIRECTION_LEFT].load(node->first_node("left"));
+			_val[DIRECTION_RIGHT].load(node->first_node("right"));
 
-			valid = true;
+			_valid = true;
 		} else
-			valid = false;
+			_valid = false;
 	}
 };
 } // End of namespace anim
