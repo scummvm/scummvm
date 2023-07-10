@@ -41,24 +41,24 @@ namespace anim {
 // All info for a single fighting move in all four directions
 struct FightMove {
 	// Frames for all four directions
-	FightAnimFrames frames[DIRECTION_TOTAL];
+	FightAnimFrames _frames[DIRECTION_TOTAL];
 
 	// The input required
-	pyrodactyl::input::FightInput input;
+	pyrodactyl::input::FightInput _input;
 
 	// The conditions to unlock this move for player use
-	pyrodactyl::event::TriggerSet unlock;
+	pyrodactyl::event::TriggerSet _unlock;
 
 	// The effects of this move - hurt animation, sound effect and so on
-	FightMoveEffect eff;
+	FightMoveEffect _eff;
 
 	// The data needed by an AI sprite to execute this move
-	FightMoveAIData ai;
+	FightMoveAIData _ai;
 
 	FightMove() {}
 	~FightMove() {}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl

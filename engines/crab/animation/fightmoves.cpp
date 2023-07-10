@@ -55,7 +55,7 @@ FightMoves::FightMoves() {
 void FightMoves::Load(rapidxml::xml_node<char> *node) {
 	for (auto n = node->first_node("move"); n != NULL; n = n->next_sibling("move")) {
 		FightMove fm;
-		fm.Load(n);
+		fm.load(n);
 		move.push_back(fm);
 	}
 }
@@ -88,8 +88,8 @@ bool FightMoves::CurFrame(FightAnimFrame &faf, const Direction &d) {
 	// Check validity of current move
 	if (cur >= 0 && (unsigned int)cur < move.size()) {
 		// Check validity of current frame
-		if (frame_cur < frame_total && frame_cur < move[cur].frames[d]._frame.size()) {
-			faf = move[cur].frames[d]._frame[frame_cur];
+		if (frame_cur < frame_total && frame_cur < move[cur]._frames[d]._frame.size()) {
+			faf = move[cur]._frames[d]._frame[frame_cur];
 			return true;
 		}
 	}
@@ -104,10 +104,10 @@ FrameUpdateResult FightMoves::UpdateFrame(const Direction &d) {
 	// Check validity of current move
 	if (cur >= 0 && (unsigned int)cur < move.size()) {
 		// Check validity of current frame
-		if (frame_cur < frame_total && frame_cur < move[cur].frames[d]._frame.size()) {
+		if (frame_cur < frame_total && frame_cur < move[cur]._frames[d]._frame.size()) {
 			// Has the current frame finished playing?
 			// OR Is this the first frame of the move?
-			if (timer.Ticks() >= move[cur].frames[d]._frame[frame_cur]._repeat || start) {
+			if (timer.Ticks() >= move[cur]._frames[d]._frame[frame_cur]._repeat || start) {
 				frame_cur++;
 				timer.Start();
 				start = false;
@@ -127,12 +127,12 @@ FrameUpdateResult FightMoves::UpdateFrame(const Direction &d) {
 unsigned int FightMoves::FindMove(const pyrodactyl::input::FightAnimationType &type, const int &state) {
 	unsigned int pos = 0;
 	for (auto i = move.begin(); i != move.end(); ++i, ++pos)
-		if (i->input.type == type && i->input.state == (unsigned int)state)
+		if (i->_input.type == type && i->_input.state == (unsigned int)state)
 			return pos;
 
 	pos = 0;
 	for (auto i = move.begin(); i != move.end(); ++i, ++pos)
-		if (i->input.type == type && i->input.state == SPRITE_STATE_OVERRIDE)
+		if (i->_input.type == type && i->_input.state == SPRITE_STATE_OVERRIDE)
 			return pos;
 
 	return SPRITE_STATE_OVERRIDE;
@@ -145,7 +145,7 @@ void FightMoves::ListAttackMoves(Common::Array<unsigned int> &list) {
 	list.clear();
 	unsigned int pos = 0;
 	for (auto i = move.begin(); i != move.end(); ++i, ++pos)
-		if (i->ai.type == MOVE_ATTACK)
+		if (i->_ai.type == MOVE_ATTACK)
 			list.push_back(pos);
 }
 
@@ -157,17 +157,17 @@ bool FightMoves::ForceUpdate(const unsigned int &index, pyrodactyl::input::Fight
 	cur = index;
 
 	if ((unsigned int)cur < move.size()) {
-		if (move[cur].unlock.Result()) {
-			frame_total = move[cur].frames[d]._frame.size();
+		if (move[cur]._unlock.Result()) {
+			frame_total = move[cur]._frames[d]._frame.size();
 			if (frame_total > 0) {
-				input = move[cur].input;
-				input.state = move[cur].frames[d]._frame[0]._state;
+				input = move[cur]._input;
+				input.state = move[cur]._frames[d]._frame[0]._state;
 			} else
 				input.Reset();
 
 			timer.Start();
 			start = true;
-			g_engine->_musicManager->PlayEffect(move[cur].eff._activate, 0);
+			g_engine->_musicManager->PlayEffect(move[cur]._eff._activate, 0);
 			return true;
 		}
 	}
@@ -182,7 +182,7 @@ bool FightMoves::ForceUpdate(const unsigned int &index, pyrodactyl::input::Fight
 //------------------------------------------------------------------------
 void FightMoves::Evaluate(pyrodactyl::event::Info &info) {
 	for (auto i = move.begin(); i != move.end(); ++i)
-		i->unlock.Evaluate(info);
+		i->_unlock.Evaluate(info);
 }
 
 //------------------------------------------------------------------------
@@ -191,7 +191,7 @@ void FightMoves::Evaluate(pyrodactyl::event::Info &info) {
 bool FightMoves::Flip(TextureFlipType &flip, Direction d) {
 	// Check validity of current move
 	if (ValidMove()) {
-		flip = move[cur].frames[d]._flip;
+		flip = move[cur]._frames[d]._flip;
 		return true;
 	}
 

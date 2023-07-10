@@ -34,23 +34,23 @@ namespace Crab {
 
 using namespace pyrodactyl::anim;
 
-void FightMove::Load(rapidxml::xml_node<char> *node) {
-	frames[DIRECTION_DOWN].load(node->first_node("down"));
-	frames[DIRECTION_UP].load(node->first_node("up"));
-	frames[DIRECTION_LEFT].load(node->first_node("left"));
-	frames[DIRECTION_RIGHT].load(node->first_node("right"));
+void FightMove::load(rapidxml::xml_node<char> *node) {
+	_frames[DIRECTION_DOWN].load(node->first_node("down"));
+	_frames[DIRECTION_UP].load(node->first_node("up"));
+	_frames[DIRECTION_LEFT].load(node->first_node("left"));
+	_frames[DIRECTION_RIGHT].load(node->first_node("right"));
 
 	if (nodeValid("input", node))
-		input.Load(node->first_node("input"));
+		_input.Load(node->first_node("input"));
 
 	if (nodeValid("unlock", node, false))
-		unlock.Load(node->first_node("unlock"));
+		_unlock.Load(node->first_node("unlock"));
 
 	if (nodeValid("effect", node))
-		eff.load(node->first_node("effect"));
+		_eff.load(node->first_node("effect"));
 
 	if (nodeValid("ai", node, false))
-		ai.Load(node->first_node("ai"));
+		_ai.Load(node->first_node("ai"));
 }
 
 } // End of namespace Crab
