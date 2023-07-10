@@ -25,6 +25,9 @@
 #ifndef AGS_LIB_ALLEGRO_SURFACE_SIMD_IMPL
 #define AGS_LIB_ALLEGRO_SURFACE_SIMD_IMPL
 #endif
+#ifndef AGS_LIB_ALLEGRO_SURFACE_SIMD_SSE_IMPL
+#define AGS_LIB_ALLEGRO_SURFACE_SIMD_SSE_IMPL
+#endif
 
 #include <immintrin.h>
 #include "ags/globals.h"
@@ -154,13 +157,13 @@ inline __m128i rgbBlendSIMD(__m128i srcCols, __m128i destCols, __m128i alphas, b
 
 inline __m128i argbBlendSIMD(__m128i srcCols, __m128i destCols) {
 	__m128 srcA = _mm_cvtepi32_ps(_mm_srli_epi32(srcCols, 24));
-	srcA = _mm_mul_ps(srcA, _mm_set1_ps(1.0 / 255.0));
+	srcA = _mm_mul_ps(srcA, _mm_set1_ps(1.0f / 255.0f));
 	__m128 srcR = _mm_cvtepi32_ps(_mm_and_si128(_mm_srli_epi32(srcCols, 16), _mm_set1_epi32(0xff)));
 	__m128 srcG = _mm_cvtepi32_ps(_mm_and_si128(_mm_srli_epi32(srcCols, 8), _mm_set1_epi32(0xff)));
 	__m128 srcB = _mm_cvtepi32_ps(_mm_and_si128(srcCols, _mm_set1_epi32(0xff)));
 
 	__m128 destA = _mm_cvtepi32_ps(_mm_srli_epi32(destCols, 24));
-	destA = _mm_mul_ps(destA, _mm_set1_ps(1.0 / 255.0));
+	destA = _mm_mul_ps(destA, _mm_set1_ps(1.0f / 255.0f));
 	__m128 destR = _mm_cvtepi32_ps(_mm_and_si128(_mm_srli_epi32(destCols, 16), _mm_set1_epi32(0xff)));
 	__m128 destG = _mm_cvtepi32_ps(_mm_and_si128(_mm_srli_epi32(destCols, 8), _mm_set1_epi32(0xff)));
 	__m128 destB = _mm_cvtepi32_ps(_mm_and_si128(destCols, _mm_set1_epi32(0xff)));
@@ -204,13 +207,13 @@ inline __m128i blendTintSpriteSIMD(__m128i srcCols, __m128i destCols, __m128i al
 
 	// do the transformation (we don't actually need alpha at all)
 	__m128 ddr, ddg, ddb;
-	ddr = _mm_mul_ps(_mm_cvtepi32_ps(_mm_and_si128(_mm_srli_epi32(destCols, 16), _mm_set1_epi32(0xff))), _mm_set1_ps(1.0 / 255.0));
-	ddg = _mm_mul_ps(_mm_cvtepi32_ps(_mm_and_si128(_mm_srli_epi32(destCols, 8), _mm_set1_epi32(0xff))), _mm_set1_ps(1.0 / 255.0));
-	ddb = _mm_mul_ps(_mm_cvtepi32_ps(_mm_and_si128(destCols, _mm_set1_epi32(0xff))), _mm_set1_ps(1.0 / 255.0));
+	ddr = _mm_mul_ps(_mm_cvtepi32_ps(_mm_and_si128(_mm_srli_epi32(destCols, 16), _mm_set1_epi32(0xff))), _mm_set1_ps(1.0f / 255.0f));
+	ddg = _mm_mul_ps(_mm_cvtepi32_ps(_mm_and_si128(_mm_srli_epi32(destCols, 8), _mm_set1_epi32(0xff))), _mm_set1_ps(1.0f / 255.0f));
+	ddb = _mm_mul_ps(_mm_cvtepi32_ps(_mm_and_si128(destCols, _mm_set1_epi32(0xff))), _mm_set1_ps(1.0f / 255.0f));
 	__m128 ssr, ssg, ssb;
-	ssr = _mm_mul_ps(_mm_cvtepi32_ps(_mm_and_si128(_mm_srli_epi32(srcCols, 16), _mm_set1_epi32(0xff))), _mm_set1_ps(1.0 / 255.0));
-	ssg = _mm_mul_ps(_mm_cvtepi32_ps(_mm_and_si128(_mm_srli_epi32(srcCols, 8), _mm_set1_epi32(0xff))), _mm_set1_ps(1.0 / 255.0));
-	ssb = _mm_mul_ps(_mm_cvtepi32_ps(_mm_and_si128(srcCols, _mm_set1_epi32(0xff))), _mm_set1_ps(1.0 / 255.0));
+	ssr = _mm_mul_ps(_mm_cvtepi32_ps(_mm_and_si128(_mm_srli_epi32(srcCols, 16), _mm_set1_epi32(0xff))), _mm_set1_ps(1.0f / 255.0f));
+	ssg = _mm_mul_ps(_mm_cvtepi32_ps(_mm_and_si128(_mm_srli_epi32(srcCols, 8), _mm_set1_epi32(0xff))), _mm_set1_ps(1.0f / 255.0f));
+	ssb = _mm_mul_ps(_mm_cvtepi32_ps(_mm_and_si128(srcCols, _mm_set1_epi32(0xff))), _mm_set1_ps(1.0f / 255.0f));
 
 	// Get the maxes and mins (needed for HSV->RGB and visa-versa)
 	__m128 dmaxes = _mm_max_ps(ddr, _mm_max_ps(ddg, ddb));
@@ -218,24 +221,24 @@ inline __m128i blendTintSpriteSIMD(__m128i srcCols, __m128i destCols, __m128i al
 	__m128 smins = _mm_min_ps(ssr, _mm_min_ps(ssg, ssb));
 
 	// This is here to stop from dividing by 0
-	const __m128 eplison0 = _mm_set1_ps(0.0000001);
+	const __m128 eplison0 = _mm_set1_ps(0.0000001f);
 
 	__m128 chroma = _mm_max_ps(_mm_sub_ps(smaxes, smins), eplison0);
 
 	// RGB to HSV is a piecewise function, so we compute each part of the function first...
 	__m128 hr, hg, hb, hue;
 	hr = _mm_div_ps(_mm_sub_ps(ssg, ssb), chroma);
-	hr = _mm_sub_ps(hr, _mm_mul_ps(_mm_cvtepi32_ps(_mm_cvtps_epi32(_mm_mul_ps(hr, _mm_set1_ps(1.0 / 6.0)))), _mm_set1_ps(6.0)));
-	hr = _mm_add_ps(hr, _mm_and_ps(_mm_cmplt_ps(hr, _mm_setzero_ps()), _mm_set1_ps(6.0)));
-	hg = _mm_add_ps(_mm_div_ps(_mm_sub_ps(ssb, ssr), chroma), _mm_set1_ps(2.0));
+	hr = _mm_sub_ps(hr, _mm_mul_ps(_mm_cvtepi32_ps(_mm_cvtps_epi32(_mm_mul_ps(hr, _mm_set1_ps(1.0f / 6.0f)))), _mm_set1_ps(6.0f)));
+	hr = _mm_add_ps(hr, _mm_and_ps(_mm_cmplt_ps(hr, _mm_setzero_ps()), _mm_set1_ps(6.0f)));
+	hg = _mm_add_ps(_mm_div_ps(_mm_sub_ps(ssb, ssr), chroma), _mm_set1_ps(2.0f));
 	hg = _mm_max_ps(hg, _mm_setzero_ps());
-	hb = _mm_add_ps(_mm_div_ps(_mm_sub_ps(ssr, ssg), chroma), _mm_set1_ps(4.0));
+	hb = _mm_add_ps(_mm_div_ps(_mm_sub_ps(ssr, ssg), chroma), _mm_set1_ps(4.0f));
 	hb = _mm_max_ps(hb, _mm_setzero_ps());
 
 	// And then compute which one will be used based on criteria
-	__m128 hrfactors = _mm_and_ps(_mm_and_ps(_mm_cmpeq_ps(ssr, smaxes), _mm_cmpneq_ps(ssr, ssb)), _mm_set1_ps(1.0));
-	__m128 hgfactors = _mm_and_ps(_mm_and_ps(_mm_cmpeq_ps(ssg, smaxes), _mm_cmpneq_ps(ssg, ssr)), _mm_set1_ps(1.0));
-	__m128 hbfactors = _mm_and_ps(_mm_and_ps(_mm_cmpeq_ps(ssb, smaxes), _mm_cmpneq_ps(ssb, ssg)), _mm_set1_ps(1.0));
+	__m128 hrfactors = _mm_and_ps(_mm_and_ps(_mm_cmpeq_ps(ssr, smaxes), _mm_cmpneq_ps(ssr, ssb)), _mm_set1_ps(1.0f));
+	__m128 hgfactors = _mm_and_ps(_mm_and_ps(_mm_cmpeq_ps(ssg, smaxes), _mm_cmpneq_ps(ssg, ssr)), _mm_set1_ps(1.0f));
+	__m128 hbfactors = _mm_and_ps(_mm_and_ps(_mm_cmpeq_ps(ssb, smaxes), _mm_cmpneq_ps(ssb, ssg)), _mm_set1_ps(1.0f));
 	hue = _mm_mul_ps(hr, hrfactors);
 	hue = _mm_add_ps(hue, _mm_mul_ps(hg, hgfactors));
 	hue = _mm_add_ps(hue, _mm_mul_ps(hb, hbfactors));
@@ -243,7 +246,7 @@ inline __m128i blendTintSpriteSIMD(__m128i srcCols, __m128i destCols, __m128i al
 	// Mess with the light like the original function
 	__m128 val = dmaxes;
 	if (light) {
-		val = _mm_sub_ps(val, _mm_sub_ps(_mm_set1_ps(1.0), _mm_mul_ps(_mm_cvtepi32_ps(alphas), _mm_set1_ps(1.0 / 250.0))));
+		val = _mm_sub_ps(val, _mm_sub_ps(_mm_set1_ps(1.0f), _mm_mul_ps(_mm_cvtepi32_ps(alphas), _mm_set1_ps(1.0f / 250.0f))));
 		val = _mm_max_ps(val, _mm_setzero_ps());
 	}
 		
@@ -251,13 +254,13 @@ inline __m128i blendTintSpriteSIMD(__m128i srcCols, __m128i destCols, __m128i al
 	// the hue and saturation come from the source (tint) color, and the value comes from
 	// the destinaion (real source) color
 	chroma = _mm_mul_ps(val, _mm_div_ps(_mm_sub_ps(smaxes, smins), _mm_add_ps(smaxes, eplison0)));
-	__m128 hprime_mod2 = _mm_mul_ps(hue, _mm_set1_ps(1.0 / 2.0));
-	hprime_mod2 = _mm_mul_ps(_mm_sub_ps(hprime_mod2, _mm_cvtepi32_ps(_mm_cvtps_epi32(_mm_sub_ps(hprime_mod2, _mm_set1_ps(0.5))))), _mm_set1_ps(2.0));
+	__m128 hprime_mod2 = _mm_mul_ps(hue, _mm_set1_ps(1.0f / 2.0f));
+	hprime_mod2 = _mm_mul_ps(_mm_sub_ps(hprime_mod2, _mm_cvtepi32_ps(_mm_cvtps_epi32(_mm_sub_ps(hprime_mod2, _mm_set1_ps(0.5))))), _mm_set1_ps(2.0f));
 	__m128 x = _mm_mul_ps(chroma, _mm_sub_ps(_mm_set1_ps(1), _mm_and_ps(_mm_castsi128_ps(_mm_set1_epi32(0x7fffffff)), _mm_sub_ps(hprime_mod2, _mm_set1_ps(1)))));
-	//float32x4_t x = vmulq_f32(chroma, vsubq_f32(vmovq_n_f32(1.0), vabsq_f32(vsubq_f32(hprime_mod2, vmovq_n_f32(1.0)))));
+	//float32x4_t x = vmulq_f32(chroma, vsubq_f32(vmovq_n_f32(1.0f), vabsq_f32(vsubq_f32(hprime_mod2, vmovq_n_f32(1.0f)))));
 	__m128i hprime_rounded = _mm_cvtps_epi32(_mm_sub_ps(hue, _mm_set1_ps(0.5)));
-	__m128i x_int = _mm_cvtps_epi32(_mm_mul_ps(x, _mm_set1_ps(255.0)));
-	__m128i c_int = _mm_cvtps_epi32(_mm_mul_ps(chroma, _mm_set1_ps(255.0)));
+	__m128i x_int = _mm_cvtps_epi32(_mm_mul_ps(x, _mm_set1_ps(255.0f)));
+	__m128i c_int = _mm_cvtps_epi32(_mm_mul_ps(chroma, _mm_set1_ps(255.0f)));
 
 	// Again HSV->RGB is also a piecewise function
 	__m128i val0 = _mm_or_si128(_mm_slli_epi32(x_int, 8), _mm_slli_epi32(c_int, 16));
@@ -277,7 +280,7 @@ inline __m128i blendTintSpriteSIMD(__m128i srcCols, __m128i destCols, __m128i al
 	__m128i final = _mm_or_si128(val0, _mm_or_si128(val1, _mm_or_si128(val2, _mm_or_si128(val3, _mm_or_si128(val4, val5)))));
 
 	// add the minimums back in
-	__m128i val_add = _mm_cvtps_epi32(_mm_mul_ps(_mm_sub_ps(val, chroma), _mm_set1_ps(255.0)));
+	__m128i val_add = _mm_cvtps_epi32(_mm_mul_ps(_mm_sub_ps(val, chroma), _mm_set1_ps(255.0f)));
 	val_add = _mm_or_si128(val_add, _mm_or_si128(_mm_slli_epi32(val_add, 8), _mm_or_si128(_mm_slli_epi32(val_add, 16), _mm_and_si128(destCols, _mm_set1_epi32(0xff000000)))));
 	final = _mm_add_epi32(final, val_add);
 	return final;

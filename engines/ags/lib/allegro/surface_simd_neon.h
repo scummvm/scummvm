@@ -20,10 +20,17 @@
  */
 #ifndef AGS_LIB_ALLEGRO_SURFACE_SIMD_NEON_H
 #define AGS_LIB_ALLEGRO_SURFACE_SIMD_NEON_H
-#if defined(__aarch64__) || defined(_M_ARM64)
+#ifdef __APPLE__ // Appeasing iOS
+#include <TargetConditionals.h>
+#endif
+
+#if (defined(__aarch64__) || defined(_M_ARM64)) && (!defined(__APPLE__) || defined(TARGET_OS_MAC))
 
 #ifndef AGS_LIB_ALLEGRO_SURFACE_SIMD_IMPL
 #define AGS_LIB_ALLEGRO_SURFACE_SIMD_IMPL
+#endif
+#ifndef AGS_LIB_ALLEGRO_SURFACE_SIMD_NEON_IMPL
+#define AGS_LIB_ALLEGRO_SURFACE_SIMD_NEON_IMPL
 #endif
 
 #include <arm_neon.h>
