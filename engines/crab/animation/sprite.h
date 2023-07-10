@@ -177,7 +177,7 @@ public:
 	Vector2i CamFocus();
 
 	double DistSq(const Sprite &s);
-	void EffectImg(bool vis) { img_eff.visible = vis; }
+	void EffectImg(bool vis) { img_eff._visible = vis; }
 	bool LastFrame() { return anim_set._fight.lastFrame(); }
 
 	bool TakingDamage(Sprite &sp, const pyrodactyl::ai::SpriteConstant &sc);

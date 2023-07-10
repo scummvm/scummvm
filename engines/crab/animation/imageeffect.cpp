@@ -35,16 +35,16 @@ namespace Crab {
 
 using namespace pyrodactyl::anim;
 
-void ImageEffect::Load(rapidxml::xml_node<char> *node) {
+void ImageEffect::load(rapidxml::xml_node<char> *node) {
 	if (nodeValid(node, false)) {
-		if (loadImgKey(img, "img", node) && loadXY(x, y, node))
-			visible = true;
+		if (loadImgKey(_img, "img", node) && loadXY(x, y, node))
+			_visible = true;
 	}
 }
 
-void ImageEffect::Draw(const int &XOffset, const int &YOffset) {
-	if (visible)
-		g_engine->_imageManager->Draw(x + XOffset, y + YOffset, img);
+void ImageEffect::draw(const int &xOffset, const int &yOffset) {
+	if (_visible)
+		g_engine->_imageManager->Draw(x + xOffset, y + yOffset, _img);
 }
 
 } // End of namespace Crab

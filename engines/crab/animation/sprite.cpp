@@ -260,7 +260,7 @@ void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera) {
 	}
 
 	g_engine->_imageManager->Draw(x, y, image, &clip, anim_set.flip(dir));
-	img_eff.Draw(x, y);
+	img_eff.draw(x, y);
 
 	if (GameDebug) {
 		// Nice boxes for the frames and box_v, box_d
@@ -475,7 +475,7 @@ void Sprite::SetDestPathfinding(const Vector2i &dest, bool reachable) {
 // Purpose: Walking animation
 //------------------------------------------------------------------------
 void Sprite::Walk(const pyrodactyl::people::PersonState &pst) {
-	img_eff.visible = false;
+	img_eff._visible = false;
 
 	bool first_x = true;
 

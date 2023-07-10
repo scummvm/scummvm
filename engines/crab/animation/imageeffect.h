@@ -39,16 +39,16 @@ namespace Crab {
 namespace pyrodactyl {
 namespace anim {
 struct ImageEffect : public Vector2i {
-	ImageKey img;
-	bool visible;
+	ImageKey _img;
+	bool _visible;
 
 	ImageEffect() {
-		visible = false;
-		img = 0;
+		_visible = false;
+		_img = 0;
 	}
 
-	void Load(rapidxml::xml_node<char> *node);
-	void Draw(const int &XOffset, const int &YOffset);
+	void load(rapidxml::xml_node<char> *node);
+	void draw(const int &xOffset, const int &yOffset);
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
