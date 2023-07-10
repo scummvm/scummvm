@@ -73,7 +73,7 @@ bool EventSeqGroup::ActiveSeq(unsigned int &active_seq) {
 	return false;
 }
 
-void EventSeqGroup::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+void EventSeqGroup::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	for (auto i = end.begin(); i != end.end(); ++i) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "end");
 		child->value(gStrPool->Get(*i));
@@ -81,10 +81,10 @@ void EventSeqGroup::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<
 	}
 
 	for (auto i = seq.begin(); i != seq.end(); ++i)
-		i->_value.SaveState(doc, root, gStrPool->Get(i->_key));
+		i->_value.saveState(doc, root, gStrPool->Get(i->_key));
 }
 
-void EventSeqGroup::LoadState(rapidxml::xml_node<char> *node) {
+void EventSeqGroup::loadState(rapidxml::xml_node<char> *node) {
 	for (rapidxml::xml_node<char> *i = node->first_node("end"); i != NULL; i = i->next_sibling("end"))
 		EndSeq(StringToNumber<unsigned int>(i->value()));
 
@@ -92,7 +92,7 @@ void EventSeqGroup::LoadState(rapidxml::xml_node<char> *node) {
 		if (n->first_attribute("name") != NULL) {
 			unsigned int id = StringToNumber<unsigned int>(n->first_attribute("name")->value());
 			if (seq.contains(id) > 0)
-				seq[id].LoadState(n);
+				seq[id].loadState(n);
 		}
 }
 

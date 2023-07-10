@@ -48,8 +48,8 @@ InputVal::InputVal() {
 //------------------------------------------------------------------------
 // Purpose: Load input values
 //------------------------------------------------------------------------
-void InputVal::LoadState(rapidxml::xml_node<char> *node) {
-	warning("STUB: InputVal::LoadState()");
+void InputVal::loadState(rapidxml::xml_node<char> *node) {
+	warning("STUB: InputVal::loadState()");
 
 #if 0
 	loadStr(name, "name", node);
@@ -58,15 +58,15 @@ void InputVal::LoadState(rapidxml::xml_node<char> *node) {
 	loadEnum(c_bu, "bu", node);
 
 	if (nodeValid("axis", node, false))
-		c_ax.LoadState(node->first_node("axis"));
+		c_ax.loadState(node->first_node("axis"));
 #endif
 }
 
 //------------------------------------------------------------------------
 // Purpose: Save them
 //------------------------------------------------------------------------
-void InputVal::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *title) {
-	warning("STUB: InputVal::SaveState()");
+void InputVal::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *title) {
+	warning("STUB: InputVal::saveState()");
 
 #if 0
 	rapidxml::xml_node<char> *child;
@@ -78,7 +78,7 @@ void InputVal::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char>
 	child->append_attribute(doc.allocate_attribute("bu", gStrPool.Get(c_bu)));
 
 	if (c_ax.id != SDL_CONTROLLER_AXIS_INVALID)
-		c_ax.SaveState(doc, child);
+		c_ax.saveState(doc, child);
 
 	root->append_node(child);
 #endif

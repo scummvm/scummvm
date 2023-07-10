@@ -47,10 +47,10 @@ void MapData::DestAdd(const Common::String &name, const int &x, const int &y) {
 	dest.push_back(md);
 }
 
-void MapData::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+void MapData::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	rapidxml::xml_node<char> *child_clip = doc.allocate_node(rapidxml::node_element, "clip");
 	for (auto c = reveal.begin(); c != reveal.end(); ++c)
-		c->SaveState(doc, child_clip, "rect");
+		c->saveState(doc, child_clip, "rect");
 	root->append_node(child_clip);
 
 	rapidxml::xml_node<char> *child_dest = doc.allocate_node(rapidxml::node_element, "dest");
@@ -64,7 +64,7 @@ void MapData::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> 
 	root->append_node(child_dest);
 }
 
-void MapData::LoadState(rapidxml::xml_node<char> *node) {
+void MapData::loadState(rapidxml::xml_node<char> *node) {
 	reveal.clear();
 	if (nodeValid("clip", node)) {
 		rapidxml::xml_node<char> *clipnode = node->first_node("clip");

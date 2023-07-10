@@ -662,7 +662,7 @@ void Game::ApplyResult(LevelResult result) {
 //------------------------------------------------------------------------
 // Purpose: Save/load game
 //------------------------------------------------------------------------
-void Game::LoadState(Common::SeekableReadStream *stream) {
+void Game::loadState(Common::SeekableReadStream *stream) {
 	if (!_isInited)
 		LoadGame();
 
@@ -686,13 +686,13 @@ void Game::LoadState(Common::SeekableReadStream *stream) {
 			hud.pause.UpdateMode(info.IronMan());
 
 			if (nodeValid("events", node))
-				gem.LoadState(node->first_node("events"));
+				gem.loadState(node->first_node("events"));
 
 			if (nodeValid("info", node))
-				info.LoadState(node->first_node("info"));
+				info.loadState(node->first_node("info"));
 
 			if (nodeValid("map", node))
-				map.LoadState(node->first_node("map"));
+				map.loadState(node->first_node("map"));
 
 			PlayerImg();
 
@@ -701,7 +701,7 @@ void Game::LoadState(Common::SeekableReadStream *stream) {
 			LoadLevel(loc);
 
 			if (nodeValid("level", node))
-				level.LoadState(node->first_node("level"));
+				level.loadState(node->first_node("level"));
 
 			gem.per.Cache(info, level.PlayerID(), level);
 
@@ -714,7 +714,7 @@ void Game::LoadState(Common::SeekableReadStream *stream) {
 //------------------------------------------------------------------------
 // Purpose: Write game state to file
 //------------------------------------------------------------------------
-void Game::SaveState(Common::SeekableWriteStream *stream) {
+void Game::saveState(Common::SeekableWriteStream *stream) {
 	rapidxml::xml_document<char> doc;
 
 	// xml declaration
@@ -758,19 +758,19 @@ void Game::SaveState(Common::SeekableWriteStream *stream) {
 	root->append_attribute(doc.allocate_attribute("time", playtime.c_str()));
 
 	rapidxml::xml_node<char> *child_gem = doc.allocate_node(rapidxml::node_element, "events");
-	gem.SaveState(doc, child_gem);
+	gem.saveState(doc, child_gem);
 	root->append_node(child_gem);
 
 	rapidxml::xml_node<char> *child_info = doc.allocate_node(rapidxml::node_element, "info");
-	info.SaveState(doc, child_info);
+	info.saveState(doc, child_info);
 	root->append_node(child_info);
 
 	rapidxml::xml_node<char> *child_map = doc.allocate_node(rapidxml::node_element, "map");
-	map.SaveState(doc, child_map);
+	map.saveState(doc, child_map);
 	root->append_node(child_map);
 
 	rapidxml::xml_node<char> *child_level = doc.allocate_node(rapidxml::node_element, "level");
-	level.SaveState(doc, child_level);
+	level.saveState(doc, child_level);
 	root->append_node(child_level);
 
 	Common::String xml_as_string;
@@ -846,27 +846,27 @@ void Game::CreateSaveGame(const SaveGameType &savetype) {
 #if 0
 	// Disregard type in iron man mode, we only save to one file
 	if (info.IronMan())
-		SaveState(savefile.ironman, true);
+		saveState(savefile.ironman, true);
 	else {
 		switch (savetype) {
 		case SAVEGAME_NORMAL:
-			SaveState(hud.pause.SaveFile(), false);
+			saveState(hud.pause.SaveFile(), false);
 			break;
 
 		case SAVEGAME_EVENT:
 			if (savefile.auto_slot)
-				SaveState(savefile.auto_2, true);
+				saveState(savefile.auto_2, true);
 			else
-				SaveState(savefile.auto_1, true);
+				saveState(savefile.auto_1, true);
 
 			savefile.auto_slot = !savefile.auto_slot;
 			break;
 
 		case SAVEGAME_EXIT:
-			SaveState(savefile.auto_quit, true);
+			saveState(savefile.auto_quit, true);
 			break;
 		case SAVEGAME_QUICK:
-			SaveState(savefile.quick, true);
+			saveState(savefile.quick, true);
 			break;
 		default:
 			break;

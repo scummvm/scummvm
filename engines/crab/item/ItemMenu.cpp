@@ -55,18 +55,18 @@ void ItemMenu::Init(const ItemSlot &ref, const Vector2i &inc, const unsigned int
 //------------------------------------------------------------------------
 // Purpose: Load items from file
 //------------------------------------------------------------------------
-void ItemMenu::LoadState(rapidxml::xml_node<char> *node) {
+void ItemMenu::loadState(rapidxml::xml_node<char> *node) {
 	unsigned int count = 0;
 	for (auto n = node->first_node(); n != NULL && count < element.size(); n = n->next_sibling(), ++count)
-		element[count].LoadState(n);
+		element[count].loadState(n);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Save to file
 //------------------------------------------------------------------------
-void ItemMenu::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+void ItemMenu::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	for (auto i = element.begin(); i != element.end(); ++i)
-		i->SaveState(doc, root);
+		i->saveState(doc, root);
 }
 
 //------------------------------------------------------------------------

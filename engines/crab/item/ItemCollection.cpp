@@ -124,21 +124,21 @@ bool ItemCollection::Has(const Common::String &char_id, const Common::String &co
 //------------------------------------------------------------------------
 // Purpose: Load items from save file
 //------------------------------------------------------------------------
-void ItemCollection::LoadState(rapidxml::xml_node<char> *node) {
+void ItemCollection::loadState(rapidxml::xml_node<char> *node) {
 	for (auto n = node->first_node(); n != NULL; n = n->next_sibling()) {
 		// Add all characters in the save file, whether we have them in the inventory or not
 		Init(n->name());
-		item[n->name()].LoadState(n);
+		item[n->name()].loadState(n);
 	}
 }
 
 //------------------------------------------------------------------------
 // Purpose: Write items to save file
 //------------------------------------------------------------------------
-void ItemCollection::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+void ItemCollection::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	for (auto i = item.begin(); i != item.end(); ++i) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, i->_key.c_str());
-		i->_value.SaveState(doc, child);
+		i->_value.saveState(doc, child);
 		root->append_node(child);
 	}
 }

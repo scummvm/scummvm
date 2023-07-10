@@ -155,8 +155,8 @@ bool MusicManager::load(rapidxml::xml_node<char> *node) {
 	return true;
 }
 
-void MusicManager::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-	warning("STUB: MusicManager::SaveState()");
+void MusicManager::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+	warning("STUB: MusicManager::saveState()");
 
 #if 0
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "sound");

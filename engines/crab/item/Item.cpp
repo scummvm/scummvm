@@ -71,7 +71,7 @@ void Item::Clear() {
 //------------------------------------------------------------------------
 // Purpose: Save and load state
 //------------------------------------------------------------------------
-void Item::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+void Item::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	root->append_attribute(doc.allocate_attribute("id", id.c_str()));
 	root->append_attribute(doc.allocate_attribute("name", name.c_str()));
 	root->append_attribute(doc.allocate_attribute("type", type.c_str()));

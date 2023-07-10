@@ -89,7 +89,7 @@ struct Rect {
 	bool operator==(const Rect &r) { return r.x == x && r.y == y && r.w == w && r.h == h; }
 
 	// Save to file
-	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name);
+	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name);
 };
 
 } // End of namespace Crab

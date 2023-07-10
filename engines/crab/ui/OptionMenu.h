@@ -114,7 +114,7 @@ public:
 	void internalEvents();
 
 	void SetUI();
-	void SaveState();
+	void saveState();
 };
 
 } // End of namespace ui

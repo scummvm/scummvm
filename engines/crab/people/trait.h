@@ -67,7 +67,7 @@ struct Trait {
 
 	void Clear();
 	void load(rapidxml::xml_node<char> *node);
-	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *rootname);
+	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *rootname);
 };
 } // End of namespace people
 } // End of namespace pyrodactyl

@@ -63,7 +63,7 @@ struct Opinion {
 	void Validate(const OpinionType &type);
 
 	void load(rapidxml::xml_node<char> *node);
-	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
+	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 };
 } // End of namespace people
 } // End of namespace pyrodactyl

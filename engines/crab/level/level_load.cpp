@@ -211,12 +211,12 @@ void Level::LoadConst(const Common::String &filename) {
 //------------------------------------------------------------------------
 // Purpose: Save all sprite positions to save file
 //------------------------------------------------------------------------
-void Level::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+void Level::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	root->append_attribute(doc.allocate_attribute("player_index", gStrPool->Get(player_index)));
 
 	for (auto &i : objects) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "sprite");
-		i.SaveState(doc, child);
+		i.saveState(doc, child);
 		root->append_node(child);
 	}
 }
@@ -224,12 +224,12 @@ void Level::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *r
 //------------------------------------------------------------------------
 // Purpose: Load all sprite positions from save file
 //------------------------------------------------------------------------
-void Level::LoadState(rapidxml::xml_node<char> *node) {
+void Level::loadState(rapidxml::xml_node<char> *node) {
 	loadNum(player_index, "player_index", node);
 
 	auto i = objects.begin();
 	for (auto *n = node->first_node("sprite"); n != NULL && i != objects.end(); n = n->next_sibling("sprite"), ++i)
-		i->LoadState(n);
+		i->loadState(n);
 }
 
 } // End of namespace Crab

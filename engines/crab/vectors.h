@@ -55,8 +55,8 @@ public:
 		return loadNum(x, "x", node, echo) && loadNum(y, "y", node, echo);
 	}
 
-	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name) {
-		warning("STUB: Vector2D::SaveState()");
+	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name) {
+		warning("STUB: Vector2D::saveState()");
 #if 0
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, name);
 		child->append_attribute(doc.allocate_attribute("x", gStrPool->Get((int)x)));

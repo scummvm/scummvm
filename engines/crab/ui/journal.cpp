@@ -261,21 +261,21 @@ void Journal::Open(const Common::String &id, const JournalCategory &Category, co
 //------------------------------------------------------------------------
 // Purpose: Load save game stuff
 //------------------------------------------------------------------------
-void Journal::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+void Journal::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	for (auto &m : journal) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "journal");
 		child->append_attribute(doc.allocate_attribute("id", m.id.c_str()));
 
-		m.menu[JE_CUR].SaveState(doc, child, JE_CUR_NAME);
-		m.menu[JE_DONE].SaveState(doc, child, JE_DONE_NAME);
-		m.menu[JE_PEOPLE].SaveState(doc, child, JE_PEOPLE_NAME);
-		m.menu[JE_LOCATION].SaveState(doc, child, JE_LOCATION_NAME);
-		m.menu[JE_HISTORY].SaveState(doc, child, JE_HISTORY_NAME);
+		m.menu[JE_CUR].saveState(doc, child, JE_CUR_NAME);
+		m.menu[JE_DONE].saveState(doc, child, JE_DONE_NAME);
+		m.menu[JE_PEOPLE].saveState(doc, child, JE_PEOPLE_NAME);
+		m.menu[JE_LOCATION].saveState(doc, child, JE_LOCATION_NAME);
+		m.menu[JE_HISTORY].saveState(doc, child, JE_HISTORY_NAME);
 		root->append_node(child);
 	}
 }
 
-void Journal::LoadState(rapidxml::xml_node<char> *node) {
+void Journal::loadState(rapidxml::xml_node<char> *node) {
 	for (rapidxml::xml_node<char> *n = node->first_node("journal"); n != NULL; n = n->next_sibling("journal")) {
 		Common::String id;
 		loadStr(id, "id", n);
@@ -284,11 +284,11 @@ void Journal::LoadState(rapidxml::xml_node<char> *node) {
 
 		for (auto &i : journal)
 			if (i.id == id) {
-				i.menu[JE_CUR].LoadState(n->first_node(JE_CUR_NAME));
-				i.menu[JE_DONE].LoadState(n->first_node(JE_DONE_NAME));
-				i.menu[JE_PEOPLE].LoadState(n->first_node(JE_PEOPLE_NAME));
-				i.menu[JE_LOCATION].LoadState(n->first_node(JE_LOCATION_NAME));
-				i.menu[JE_HISTORY].LoadState(n->first_node(JE_HISTORY_NAME));
+				i.menu[JE_CUR].loadState(n->first_node(JE_CUR_NAME));
+				i.menu[JE_DONE].loadState(n->first_node(JE_DONE_NAME));
+				i.menu[JE_PEOPLE].loadState(n->first_node(JE_PEOPLE_NAME));
+				i.menu[JE_LOCATION].loadState(n->first_node(JE_LOCATION_NAME));
+				i.menu[JE_HISTORY].loadState(n->first_node(JE_HISTORY_NAME));
 			}
 	}
 }

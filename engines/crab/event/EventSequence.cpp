@@ -111,7 +111,7 @@ void EventSequence::NextEvent(pyrodactyl::event::Info &info, const Common::Strin
 //------------------------------------------------------------------------
 // Purpose: Save the state of the object
 //------------------------------------------------------------------------
-void EventSequence::SaveState(rapidxml::xml_document<char> &doc, rapidxml::xml_node<char> *root, const char *name) {
+void EventSequence::saveState(rapidxml::xml_document<char> &doc, rapidxml::xml_node<char> *root, const char *name) {
 	rapidxml::xml_node<char> *seqnode = doc.allocate_node(rapidxml::node_element, "set");
 
 	// Write current event id and name to node
@@ -131,7 +131,7 @@ void EventSequence::SaveState(rapidxml::xml_document<char> &doc, rapidxml::xml_n
 //------------------------------------------------------------------------
 // Purpose: Load the state of the object
 //------------------------------------------------------------------------
-void EventSequence::LoadState(rapidxml::xml_node<char> *node) {
+void EventSequence::loadState(rapidxml::xml_node<char> *node) {
 	rapidxml::xml_attribute<char> *curid = node->first_attribute("current");
 	if (curid != NULL)
 		cur = StringToNumber<unsigned int>(curid->value());

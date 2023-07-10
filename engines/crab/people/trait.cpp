@@ -59,7 +59,7 @@ void Trait::Clear() {
 //------------------------------------------------------------------------
 // Purpose: Save and load state
 //------------------------------------------------------------------------
-void Trait::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *rootname) {
+void Trait::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *rootname) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, rootname);
 	child->append_attribute(doc.allocate_attribute("id", gStrPool->Get(id)));
 	child->append_attribute(doc.allocate_attribute("name", name.c_str()));

@@ -77,8 +77,8 @@ public:
 	void HandleEvents(const Common::String &char_id, const SDL_Event &Event);
 #endif
 
-	void LoadState(rapidxml::xml_node<char> *node);
-	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
+	void loadState(rapidxml::xml_node<char> *node);
+	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 
 	void ItemFile(const Common::String &filename) { itemfile = filename; }
 

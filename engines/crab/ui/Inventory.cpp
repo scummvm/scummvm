@@ -120,14 +120,14 @@ void Inventory::HandleEvents(const Common::String &char_id, const SDL_Event &Eve
 //------------------------------------------------------------------------
 // Purpose: Load and save items
 //------------------------------------------------------------------------
-void Inventory::LoadState(rapidxml::xml_node<char> *node) {
+void Inventory::loadState(rapidxml::xml_node<char> *node) {
 	if (nodeValid("items", node))
-		collection.LoadState(node->first_node("items"));
+		collection.loadState(node->first_node("items"));
 }
 
-void Inventory::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+void Inventory::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "items");
-	collection.SaveState(doc, child);
+	collection.saveState(doc, child);
 	root->append_node(child);
 }
 

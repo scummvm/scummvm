@@ -141,7 +141,7 @@ public:
 
 	}
 
-	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
+	void saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 
 	void FreeMusic();
 	void FreeChunk();

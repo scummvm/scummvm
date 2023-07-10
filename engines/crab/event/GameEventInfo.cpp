@@ -330,8 +330,8 @@ Common::String Info::GetName(const Common::String &id) {
 //------------------------------------------------------------------------
 // Purpose: Save and load object state
 //------------------------------------------------------------------------
-void Info::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
-	warning("Info::SaveState()");
+void Info::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+	warning("Info::saveState()");
 
 #if 0
 	for (auto v = var.begin(); v != var.end(); ++v) {
@@ -342,7 +342,7 @@ void Info::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 	}
 
 	for (auto p = people.begin(); p != people.end(); ++p)
-		p->second.SaveState(doc, root);
+		p->second.saveState(doc, root);
 
 	rapidxml::xml_node<char> *child_unr = doc.allocate_node(rapidxml::node_element, "unread");
 
@@ -361,19 +361,19 @@ void Info::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 	child_money->append_attribute(doc.allocate_attribute("var", money_var.c_str()));
 	root->append_node(child_money);
 
-	journal.SaveState(doc, root);
-	inv.SaveState(doc, root);
+	journal.saveState(doc, root);
+	inv.saveState(doc, root);
 #endif
 }
 
-void Info::LoadState(rapidxml::xml_node<char> *node) {
+void Info::loadState(rapidxml::xml_node<char> *node) {
 	for (rapidxml::xml_node<char> *v = node->first_node("var"); v != NULL; v = v->next_sibling("var"))
 		var[v->first_attribute("id")->value()] = StringToNumber<int>(v->first_attribute("val")->value());
 
 	for (rapidxml::xml_node<char> *p = node->first_node("object"); p != NULL; p = p->next_sibling("object")) {
 		Common::String id;
 		loadStr(id, "id", p);
-		people[id].LoadState(p);
+		people[id].loadState(p);
 	}
 
 	if (nodeValid("unread", node)) {
@@ -390,8 +390,8 @@ void Info::LoadState(rapidxml::xml_node<char> *node) {
 	if (nodeValid("money", node))
 		loadStr(money_var, "var", node->first_node("money"));
 
-	journal.LoadState(node);
-	inv.LoadState(node);
+	journal.loadState(node);
+	inv.loadState(node);
 }
 
 //------------------------------------------------------------------------

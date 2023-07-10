@@ -102,7 +102,7 @@ void Person::Validate() {
 		stat.val[i].Validate();
 }
 
-void Person::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+void Person::saveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "object");
 	child->append_attribute(doc.allocate_attribute("id", id.c_str()));
 	child->append_attribute(doc.allocate_attribute("name", name.c_str()));
@@ -110,26 +110,26 @@ void Person::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *
 	unsigned int val = static_cast<unsigned int>(state);
 	child->append_attribute(doc.allocate_attribute("state", gStrPool->Get(val)));
 
-	opinion.SaveState(doc, child);
+	opinion.saveState(doc, child);
 
 	rapidxml::xml_node<char> *child_s = doc.allocate_node(rapidxml::node_element, "stats");
-	stat.val[STAT_HEALTH].SaveState(doc, child_s, STATNAME_HEALTH);
-	stat.val[STAT_ATTACK].SaveState(doc, child_s, STATNAME_ATTACK);
-	stat.val[STAT_DEFENSE].SaveState(doc, child_s, STATNAME_DEFENSE);
-	stat.val[STAT_SPEED].SaveState(doc, child_s, STATNAME_SPEED);
-	/*stat.val[STAT_CHARISMA].SaveState(doc, child_s, STATNAME_CHARISMA);
-	stat.val[STAT_INTELLIGENCE].SaveState(doc, child_s, STATNAME_INTELLIGENCE);*/
+	stat.val[STAT_HEALTH].saveState(doc, child_s, STATNAME_HEALTH);
+	stat.val[STAT_ATTACK].saveState(doc, child_s, STATNAME_ATTACK);
+	stat.val[STAT_DEFENSE].saveState(doc, child_s, STATNAME_DEFENSE);
+	stat.val[STAT_SPEED].saveState(doc, child_s, STATNAME_SPEED);
+	/*stat.val[STAT_CHARISMA].saveState(doc, child_s, STATNAME_CHARISMA);
+	stat.val[STAT_INTELLIGENCE].saveState(doc, child_s, STATNAME_INTELLIGENCE);*/
 	child->append_node(child_s);
 
 	rapidxml::xml_node<char> *child_t = doc.allocate_node(rapidxml::node_element, "traits");
 	for (auto &i : trait)
-		i.SaveState(doc, child_t, "trait");
+		i.saveState(doc, child_t, "trait");
 	child->append_node(child_t);
 
 	root->append_node(child);
 }
 
-void Person::LoadState(rapidxml::xml_node<char> *node) {
+void Person::loadState(rapidxml::xml_node<char> *node) {
 	loadStr(id, "id", node);
 	loadStr(name, "name", node);
 	loadEnum(state, "state", node);
