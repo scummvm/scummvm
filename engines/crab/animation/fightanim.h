@@ -46,24 +46,24 @@ namespace anim {
 // A single frame of a fighting move
 struct FightAnimFrame : public AnimFrame {
 	// The hit box of the player WITH RESPECT TO the sprite bounding box
-	//_v is the vulnerable hit box, _d is the damage hit box
-	Rect box_d;
+	//boxV is the vulnerable hit box, boxD is the damage hit box
+	Rect _boxD;
 
 	// The displacement in the position caused by the frame
-	Vector2i delta;
+	Vector2i _delta;
 
 	// The sprite state for the duration of the frame
-	unsigned int state;
+	unsigned int _state;
 
 	// Can we cancel/branch to another move from this frame?
-	bool branch;
+	bool _branch;
 
 	FightAnimFrame() {
-		state = 0;
-		branch = false;
+		_state = 0;
+		_branch = false;
 	}
 
-	void Load(rapidxml::xml_node<char> *node, const Rect &VBOX,
+	void load(rapidxml::xml_node<char> *node, const Rect &VBOX,
 			  const uint32 &REP = 0, const int &AX = 0, const int &AY = 0);
 };
 
@@ -71,37 +71,39 @@ struct FightAnimFrame : public AnimFrame {
 class FightAnimFrames {
 	// The global vulnerable hit box for all the frames
 	// If the W or H of this is 0, then use individual frame values
-	Rect box_v;
+	Rect _boxV;
 
 public:
 	// The individual frames for each direction
-	Common::Array<FightAnimFrame> frame;
+	Common::Array<FightAnimFrame> _frame;
 
-	// The current clip
-	unsigned int current_clip;
+	// The currentClip
+	unsigned int _currentClip;
 
 	// Should we flip the images in the frame rectangle?
-	TextureFlipType flip;
+	TextureFlipType _flip;
 
 	// The amount of time in milliseconds each animation frame needs to be on screen
 	// If this is zero then use the value in each individual frame
-	uint32 repeat;
+	uint32 _repeat;
 
 	// The global anchor value for all the frames
 	// If this is 0, then use individual frame values
-	Vector2i anchor;
+	Vector2i _anchor;
 
 	// Does this set of animation frames need a specific shadow offset?
-	ShadowOffset shadow;
+	ShadowOffset _shadow;
 
 	FightAnimFrames() {
-		Reset();
-		flip = FLIP_NONE;
-		repeat = 0;
+		reset();
+		_flip = FLIP_NONE;
+		_repeat = 0;
 	}
-	void Reset() { current_clip = 0; }
+	void reset() {
+		_currentClip = 0;
+	}
 
-	void Load(rapidxml::xml_node<char> *node);
+	void load(rapidxml::xml_node<char> *node);
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl

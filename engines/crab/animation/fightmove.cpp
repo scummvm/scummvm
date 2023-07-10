@@ -35,10 +35,10 @@ namespace Crab {
 using namespace pyrodactyl::anim;
 
 void FightMove::Load(rapidxml::xml_node<char> *node) {
-	frames[DIRECTION_DOWN].Load(node->first_node("down"));
-	frames[DIRECTION_UP].Load(node->first_node("up"));
-	frames[DIRECTION_LEFT].Load(node->first_node("left"));
-	frames[DIRECTION_RIGHT].Load(node->first_node("right"));
+	frames[DIRECTION_DOWN].load(node->first_node("down"));
+	frames[DIRECTION_UP].load(node->first_node("up"));
+	frames[DIRECTION_LEFT].load(node->first_node("left"));
+	frames[DIRECTION_RIGHT].load(node->first_node("right"));
 
 	if (NodeValid("input", node))
 		input.Load(node->first_node("input"));
