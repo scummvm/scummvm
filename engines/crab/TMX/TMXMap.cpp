@@ -231,8 +231,8 @@ void TMXMap::load(const Common::String &path, Common::String filename) {
 //------------------------------------------------------------------------
 // Purpose: Clear all data from the level
 //------------------------------------------------------------------------
-void TMXMap::Reset() {
-	g_engine->_imageManager->tileset.Reset();
+void TMXMap::reset() {
+	g_engine->_imageManager->tileset.reset();
 	layer.clear();
 
 	area_nowalk.clear();

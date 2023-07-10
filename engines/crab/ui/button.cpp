@@ -52,7 +52,7 @@ Button::Button() {
 	se_click = -1;
 	se_hover = -1;
 	hover_prev = false;
-	Reset();
+	reset();
 }
 //------------------------------------------------------------------------
 // Purpose: Load a new Button from a file
@@ -72,7 +72,7 @@ void Button::load(rapidxml::xml_node<char> *node, const bool &echo) {
 
 	visible = true;
 	canmove = false;
-	Reset();
+	reset();
 }
 //------------------------------------------------------------------------
 // Purpose: Load a new Button
@@ -88,12 +88,12 @@ void Button::Init(const Button &ref, const int &XOffset, const int &YOffset) {
 
 	visible = true;
 	canmove = false;
-	Reset();
+	reset();
 }
 //------------------------------------------------------------------------
 // Purpose: Reset the button
 //------------------------------------------------------------------------
-void Button::Reset() {
+void Button::reset() {
 	mousepressed = false;
 	hover_mouse = false;
 	hover_key = false;
@@ -174,7 +174,7 @@ ButtonAction Button::HandleEvents(const Common::Event &Event, const int &XOffset
 			if (dim.Contains(g_engine->_mouse->button.x, g_engine->_mouse->button.y))
 				mousepressed = true;
 		} else if ((Event.type == Common::EVENT_LBUTTONUP || Event.type == Common::EVENT_RBUTTONUP) && mousepressed) {
-			Reset();
+			reset();
 			if (dim.Contains(g_engine->_mouse->button.x, g_engine->_mouse->button.y)) {
 				mousepressed = false;
 				if (Event.type == Common::EVENT_LBUTTONUP) {
@@ -225,7 +225,7 @@ ButtonAction Button::HandleEvents(const SDL_Event &Event, const int &XOffset, co
 			if (dim.Contains(g_engine->_mouse->button.x, g_engine->_mouse->button.y))
 				mousepressed = true;
 		} else if (Event.type == SDL_MOUSEBUTTONUP && mousepressed) {
-			Reset();
+			reset();
 			if (dim.Contains(g_engine->_mouse->button.x, g_engine->_mouse->button.y)) {
 				mousepressed = false;
 				if (Event.button.button == SDL_BUTTON_LEFT) {

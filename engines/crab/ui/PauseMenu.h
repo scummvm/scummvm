@@ -93,7 +93,7 @@ public:
 	// Returns true if inside options menu, false otherwise
 	bool draw(Button &back);
 
-	void Reset() { state = STATE_NORMAL; }
+	void reset() { state = STATE_NORMAL; }
 	void ScanDir() { save.ScanDir(); }
 	Common::String SaveFile() { return save.SelectedPath(); }
 	bool DisableHotkeys();

@@ -149,7 +149,7 @@ public:
 		target.Set();
 		ai_data._dest._active = false;
 	}
-	void InputStop() { input.Reset(); }
+	void InputStop() { input.reset(); }
 
 	void XVel(const float &val) { target.x = val * vel_mod.x; }
 	void YVel(const float &val) { target.y = val * vel_mod.y; }

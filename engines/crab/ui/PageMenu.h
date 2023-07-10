@@ -71,9 +71,9 @@ public:
 	}
 	~PageMenu() {}
 
-	void Reset() {
+	void reset() {
 		for (auto m = menu.begin(); m != menu.end(); ++m)
-			m->Reset();
+			m->reset();
 	}
 
 	void Clear() {

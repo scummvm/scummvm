@@ -100,7 +100,7 @@ public:
 
 	void Init();
 	void Quit();
-	void Reset();
+	void reset();
 
 
 	Graphics::Font *GetFont(const FontKey &fontid) { return font[fontid]; }

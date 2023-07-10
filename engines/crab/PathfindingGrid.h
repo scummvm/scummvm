@@ -67,7 +67,7 @@ public:
 	PathfindingGrid(void);
 	~PathfindingGrid(void);
 
-	void Reset();
+	void reset();
 
 	void SetupNodes(TMX::TMXMap map);
 

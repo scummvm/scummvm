@@ -101,7 +101,7 @@ PauseSignal PauseMenu::HandleEvents(const Common::Event &Event, Button &back) {
 		break;
 	case STATE_OPTION:
 		if (g_engine->_optionMenu->HandleEvents(back, Event)) {
-			g_engine->_optionMenu->Reset();
+			g_engine->_optionMenu->reset();
 			state = STATE_NORMAL;
 		}
 		break;
@@ -162,7 +162,7 @@ PauseSignal PauseMenu::HandleEvents(const SDL_Event &Event, Button &back) {
 		break;
 	case STATE_OPTION:
 		if (g_engine->_optionMenu->HandleEvents(back, Event)) {
-			g_engine->_optionMenu->Reset();
+			g_engine->_optionMenu->reset();
 			state = STATE_NORMAL;
 		}
 		break;

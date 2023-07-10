@@ -163,7 +163,7 @@ bool FightMoves::forceUpdate(const unsigned int &index, pyrodactyl::input::Fight
 				input = _move[_cur]._input;
 				input.state = _move[_cur]._frames[d]._frame[0]._state;
 			} else
-				input.Reset();
+				input.reset();
 
 			_timer.Start();
 			_start = true;

@@ -49,10 +49,10 @@ PathfindingGrid::PathfindingGrid(void) {
 }
 
 PathfindingGrid::~PathfindingGrid(void) {
-	Reset();
+	reset();
 }
 
-void PathfindingGrid::Reset() {
+void PathfindingGrid::reset() {
 	for (int x = 0; x < dimensions.x; ++x) {
 		delete[] nodes[x];
 	}
@@ -69,7 +69,7 @@ void PathfindingGrid::Reset() {
 
 void PathfindingGrid::SetupNodes(TMXMap map) {
 	// delete nodes if they exist
-	Reset();
+	reset();
 
 	dimensions.x = map.path_rows; // Logically, this is incorrect but it matches the format of cols and rows used elsewhere (SZ)
 	dimensions.y = map.path_cols;

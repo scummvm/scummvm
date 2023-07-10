@@ -96,7 +96,7 @@ bool GameSaveMenu::HandleEvents(const Common::Event &Event) {
 
 			selected = ta_name.text;
 			state = STATE_NORMAL;
-			Reset();
+			reset();
 			g_engine->_inputManager->SetKeyBindingMode(KBM_GAME);
 			return true;
 		}

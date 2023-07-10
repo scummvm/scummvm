@@ -365,7 +365,7 @@ void Manager::CalcActiveSeq(Info &info, Level &level, const Rect &camera) {
 	if (event_map[info.CurLocID()].ActiveSeq(active_seq)) {
 		// Set all the pointers to the new values
 		cur_event = event_map[info.CurLocID()].CurEvent(active_seq);
-		oh.Reset(cur_event->title);
+		oh.reset(cur_event->title);
 		cur_sp = level.GetSprite(cur_event->title);
 
 		// The player character's dialog is drawn a bit differently compared to others

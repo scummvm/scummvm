@@ -101,7 +101,7 @@ public:
 		if (img.loaded)
 			img.preview.Delete();
 	}
-	void Reset() {
+	void reset() {
 		if (img.loaded)
 			img.preview.Delete();
 		img.loaded = false;
@@ -198,9 +198,9 @@ public:
 	bool HandleEvents(const Common::Event &Event) {
 		int choice = menu.HandleEvents(Event);
 		if (choice >= 0) {
-			menu.Reset();
+			menu.reset();
 			selected = slot_info[menu.Index() + choice].path;
-			Reset();
+			reset();
 			return true;
 		}
 
@@ -211,9 +211,9 @@ public:
 	bool HandleEvents(const SDL_Event &Event) {
 		int choice = menu.HandleEvents(Event);
 		if (choice >= 0) {
-			menu.Reset();
+			menu.reset();
 			selected = slot_info[menu.Index() + choice].path;
-			Reset();
+			reset();
 			return true;
 		}
 
@@ -255,7 +255,7 @@ public:
 			for (int num = 0; num < DATA_HOVER_TOTAL; ++num)
 				hov[num].draw();
 		} else if (hover)
-			Reset();
+			reset();
 	}
 
 	bool Empty() {

@@ -85,7 +85,7 @@ public:
 	PersonHandler() { show_journal = false; }
 	~PersonHandler() {}
 
-	void Reset(const Common::String &id);
+	void reset(const Common::String &id);
 
 	void load(rapidxml::xml_node<char> *node);
 

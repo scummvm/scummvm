@@ -80,7 +80,7 @@ struct Person {
 	Person();
 	void load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTemplates &stem);
 
-	void Reset();
+	void reset();
 	void Validate();
 
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);

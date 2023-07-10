@@ -92,9 +92,9 @@ void Person::load(rapidxml::xml_node<char> *node, const pyrodactyl::stat::StatTe
 	}
 }
 
-void Person::Reset() {
+void Person::reset() {
 	for (auto i = 0; i < STAT_TOTAL; ++i)
-		stat.val[i].Reset();
+		stat.val[i].reset();
 }
 
 void Person::Validate() {

@@ -130,7 +130,7 @@ Common::Error CrabEngine::run() {
 	_screenSettings = new ScreenSettings();
 
 	CursorMan.showMouse(true);
-	_mouse->Reset();
+	_mouse->reset();
 
 	_inputManager->Init();
 	_inputManager->PopulateKeyTable();

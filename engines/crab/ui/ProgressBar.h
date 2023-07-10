@@ -94,12 +94,12 @@ public:
 		inc = 0;
 		dec = 0;
 		notify_rate = 5;
-		Reset();
+		reset();
 	}
 	~ProgressBar() {}
 
 	// Reset the effect
-	void Reset() {
+	void reset() {
 		changed = false;
 		type = NONE;
 	}

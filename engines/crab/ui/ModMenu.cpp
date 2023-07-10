@@ -129,7 +129,7 @@ void ModMenu::draw() {
 		for (int num = 0; num < DATA_HOVER_TOTAL; ++num)
 			hov[num].draw();
 	} else if (hover)
-		Reset();
+		reset();
 }
 
 } // End of namespace Crab
