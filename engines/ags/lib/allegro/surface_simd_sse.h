@@ -20,13 +20,14 @@
  */
 #ifndef AGS_LIB_ALLEGRO_SURFACE_SIMD_SSE_H
 #define AGS_LIB_ALLEGRO_SURFACE_SIMD_SSE_H
-#if defined(__x86_64__) || defined(__i686__)
+#if defined(__x86_64__) || defined(__i686__) || defined(_M_X86) || defined(_M_X64)
 
 #ifndef AGS_LIB_ALLEGRO_SURFACE_SIMD_IMPL
 #define AGS_LIB_ALLEGRO_SURFACE_SIMD_IMPL
 #endif
 
 #include <immintrin.h>
+#include "ags/globals.h"
 #include "ags/lib/allegro/surface.h"
 
 namespace AGS3 {
