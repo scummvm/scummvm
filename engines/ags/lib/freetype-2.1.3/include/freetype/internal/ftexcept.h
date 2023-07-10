@@ -23,55 +23,55 @@ FT2_1_3_BEGIN_HEADER
 
 
 
-typedef struct FT2_1_3_CleanupItemRec_ {
+typedef struct FT_CleanupItemRec_ {
 	FT_Pointer      item;
-	FT2_1_3_CleanupFunc  item_func;
+	FT_CleanupFunc  item_func;
 	FT_Pointer      item_data;
 
-} FT2_1_3_CleanupItemRec;
+} FT_CleanupItemRec;
 
-typedef struct FT2_1_3_CleanupChunkRec_*   FT2_1_3_CleanupChunk;
+typedef struct FT_CleanupChunkRec_*   FT_CleanupChunk;
 
-typedef struct FT2_1_3_CleanupChunkRec_ {
-	FT2_1_3_CleanupChunk    link;
-	FT2_1_3_CleanupItemRec  items[ FT2_1_3_CLEANUP_CHUNK_SIZE ];
+typedef struct FT_CleanupChunkRec_ {
+	FT_CleanupChunk    link;
+	FT_CleanupItemRec  items[ FT2_1_3_CLEANUP_CHUNK_SIZE ];
 
-} FT2_1_3_CleanupChunkRec;
+} FT_CleanupChunkRec;
 
 
-typedef struct FT2_1_3_CleanupStackRec_ {
-	FT2_1_3_CleanupItem     top;
-	FT2_1_3_CleanupItem     limit;
-	FT2_1_3_CleanupChunk    chunk;
-	FT2_1_3_CleanupChunkRec chunk_0;  /* avoids stupid dynamic allocation */
+typedef struct FT_CleanupStackRec_ {
+	FT_CleanupItem     top;
+	FT_CleanupItem     limit;
+	FT_CleanupChunk    chunk;
+	FT_CleanupChunkRec chunk_0;  /* avoids stupid dynamic allocation */
 	FT_Memory          memory;
 
-} FT2_1_3_CleanupStackRec, *FT2_1_3_CleanupStack;
+} FT_CleanupStackRec, *FT_CleanupStack;
 
 
 FT2_1_3_BASE( void )
-FT2_1_3_cleanup_stack_push( FT2_1_3_CleanupStack  stack,
+ft_cleanup_stack_push( FT_CleanupStack  stack,
 					   FT_Pointer       item,
-					   FT2_1_3_CleanupFunc   item_func,
+					   FT_CleanupFunc   item_func,
 					   FT_Pointer       item_data );
 
 FT2_1_3_BASE( void )
-FT2_1_3_cleanup_stack_pop( FT2_1_3_CleanupStack   stack,
+ft_cleanup_stack_pop( FT_CleanupStack   stack,
 					  FT_Int            destroy );
 
-FT2_1_3_BASE( FT2_1_3_CleanupItem )
-FT2_1_3_cleanup_stack_peek( FT2_1_3_CleanupStack  stack );
+FT2_1_3_BASE( FT_CleanupItem )
+ft_cleanup_stack_peek( FT_CleanupStack  stack );
 
 FT2_1_3_BASE( void )
-FT2_1_3_xhandler_enter( FT2_1_3_XHandler  xhandler,
+FT_xhandler_enter( FT_XHandler  xhandler,
 				   FT_Memory    memory );
 
 FT2_1_3_BASE( void )
-FT2_1_3_xhandler_exit( FT2_1_3_XHandler  xhandler );
+FT_xhandler_exit( FT_XHandler  xhandler );
 
 
 FT2_1_3_BASE( void )
-FT2_1_3_cleanup_throw( FT2_1_3_CleanupStack  stack,
+ft_cleanup_throw( FT_CleanupStack  stack,
 				  FT_Error         error );
 
 FT2_1_3_END_HEADER

@@ -3,7 +3,7 @@
 
 
 FT2_1_3_BASE_DEF( void )
-ft_cleanup_stack_init( FT2_1_3_CleanupStack  stack,
+ft_cleanup_stack_init( FT_CleanupStack  stack,
                        FT_Memory        memory ) {
 	stack->chunk = &stack->chunk_0;
 	stack->top   = stack->chunk->items;
@@ -16,9 +16,9 @@ ft_cleanup_stack_init( FT2_1_3_CleanupStack  stack,
 
 
 FT2_1_3_BASE_DEF( void )
-ft_cleanup_stack_done( FT2_1_3_CleanupStack  stack ) {
+ft_cleanup_stack_done( FT_CleanupStack  stack ) {
 	FT_Memory        memory = stack->memory;
-	FT2_1_3_CleanupChunk  chunk, next;
+	FT_CleanupChunk  chunk, next;
 
 	for (;;) {
 		chunk = stack->chunk;
@@ -36,11 +36,11 @@ ft_cleanup_stack_done( FT2_1_3_CleanupStack  stack ) {
 
 
 FT2_1_3_BASE_DEF( void )
-ft_cleanup_stack_push( FT2_1_3_CleanupStack  stack,
+ft_cleanup_stack_push( FT_CleanupStack  stack,
                        FT_Pointer       item,
-                       FT2_1_3_CleanupFunc   item_func,
+                       FT_CleanupFunc   item_func,
                        FT_Pointer       item_data ) {
-	FT2_1_3_CleanupItem  top;
+	FT_CleanupItem  top;
 
 
 	FT2_1_3_ASSERT( stack && stack->chunk && stack->top );
@@ -55,7 +55,7 @@ ft_cleanup_stack_push( FT2_1_3_CleanupStack  stack,
 	top ++;
 
 	if ( top == stack->limit ) {
-		FT2_1_3_CleanupChunk  chunk;
+		FT_CleanupChunk  chunk;
 
 		chunk = FT2_1_3_QAlloc( sizeof(*chunk), stack->memory );
 
@@ -71,16 +71,16 @@ ft_cleanup_stack_push( FT2_1_3_CleanupStack  stack,
 
 
 FT2_1_3_BASE_DEF( void )
-ft_cleanup_stack_pop( FT2_1_3_CleanupStack   stack,
+ft_cleanup_stack_pop( FT_CleanupStack   stack,
                       FT_Int            destroy ) {
-	FT2_1_3_CleanupItem  top;
+	FT_CleanupItem  top;
 
 
 	FT2_1_3_ASSERT( stack && stack->chunk && stack->top );
 	top = stack->top;
 
 	if ( top == stack->chunk->items ) {
-		FT2_1_3_CleanupChunk  chunk;
+		FT_CleanupChunk  chunk;
 
 		chunk = stack->chunk;
 
@@ -111,10 +111,10 @@ ft_cleanup_stack_pop( FT2_1_3_CleanupStack   stack,
 
 
 
-FT2_1_3_BASE_DEF( FT2_1_3_CleanupItem )
-ft_cleanup_stack_peek( FT2_1_3_CleanupStack  stack ) {
-	FT2_1_3_CleanupItem   top;
-	FT2_1_3_CleanupChunk  chunk;
+FT2_1_3_BASE_DEF( FT_CleanupItem )
+ft_cleanup_stack_peek( FT_CleanupStack  stack ) {
+	FT_CleanupItem   top;
+	FT_CleanupChunk  chunk;
 
 
 	FT2_1_3_ASSERT( stack && stack->chunk && stack->top );
@@ -136,9 +136,9 @@ ft_cleanup_stack_peek( FT2_1_3_CleanupStack  stack ) {
 
 
 FT2_1_3_BASE_DEF( void )
-ft_xhandler_enter( FT2_1_3_XHandler  xhandler,
+ft_xhandler_enter( FT_XHandler  xhandler,
                    FT_Memory    memory ) {
-	FT2_1_3_CleanupStack  stack = FT2_1_3_MEMORY__CLEANUP(memory);
+	FT_CleanupStack  stack = FT2_1_3_MEMORY__CLEANUP(memory);
 
 	xhandler->previous = stack->xhandler;
 	xhandler->cleanup  = stack->top;
@@ -149,8 +149,8 @@ ft_xhandler_enter( FT2_1_3_XHandler  xhandler,
 
 
 FT2_1_3_BASE_DEF( void )
-ft_xhandler_exit( FT2_1_3_XHandler  xhandler ) {
-	FT2_1_3_CleanupStack  stack = FT2_1_3_MEMORY__CLEANUP(memory);
+ft_xhandler_exit( FT_XHandler  xhandler ) {
+	FT_CleanupStack  stack = FT2_1_3_MEMORY__CLEANUP(memory);
 
 	stack->xhandler    = xhandler->previous;
 	xhandler->previous = NULL;
@@ -161,9 +161,9 @@ ft_xhandler_exit( FT2_1_3_XHandler  xhandler ) {
 
 
 FT2_1_3_BASE_DEF( void )
-ft_cleanup_throw( FT2_1_3_CleanupStack  stack,
+ft_cleanup_throw( FT_CleanupStack  stack,
                   FT_Error         error ) {
-	FT2_1_3_XHandler  xhandler = stack->xhandler;
+	FT_XHandler  xhandler = stack->xhandler;
 
 	if ( xhandler == NULL ) {
 		/* no exception handler was registered. this  */

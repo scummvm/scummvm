@@ -84,7 +84,7 @@ extern int  FT2_1_3_trace_levels[trace_count];
 #define FT2_1_3_TRACE(level, varformat)                       \
 	do {                                                      \
 		if (FT2_1_3_trace_levels[FT2_1_3_COMPONENT] >= level) \
-			FT2_1_3_Message varformat;                        \
+			FT_Message varformat;                        \
 	} while (0)
 
 #else /* !FT2_1_3_DEBUG_LEVEL_TRACE */
@@ -120,7 +120,7 @@ extern int  FT2_1_3_trace_levels[trace_count];
 
 #ifdef FT2_1_3_DEBUG_LEVEL_ERROR
 
-#define FT2_1_3_ERROR( varformat )  FT2_1_3_Message  varformat
+#define FT2_1_3_ERROR( varformat )  FT_Message  varformat
 
 #else  /* !FT2_1_3_DEBUG_LEVEL_ERROR */
 
@@ -140,7 +140,7 @@ extern int  FT2_1_3_trace_levels[trace_count];
 #define FT2_1_3_ASSERT(condition)                                     \
 	do {                                                              \
 		if (!(condition))                                             \
-			FT2_1_3_Panic("assertion failed on line %d of file %s\n", \
+			FT_Panic("assertion failed on line %d of file %s\n", \
 						  __LINE__, __FILE__);                        \
 	} while (0)
 
@@ -153,7 +153,7 @@ extern int  FT2_1_3_trace_levels[trace_count];
 
 /*************************************************************************/
 /*                                                                       */
-/*  Define 'FT2_1_3_Message' and 'FT2_1_3_Panic' when needed                       */
+/*  Define 'FT_Message' and 'FT_Panic' when needed                       */
 /*                                                                       */
 /*************************************************************************/
 
@@ -163,17 +163,17 @@ extern int  FT2_1_3_trace_levels[trace_count];
 
 /* print a message */
 FT2_1_3_EXPORT( void )
-FT2_1_3_Message( const char*  fmt, ... );
+FT_Message( const char*  fmt, ... );
 
 /* print a message and exit */
 FT2_1_3_EXPORT( void )
-FT2_1_3_Panic( const char*  fmt, ... );
+FT_Panic( const char*  fmt, ... );
 
 #endif /* FT2_1_3_DEBUG_LEVEL_ERROR */
 
 
 FT2_1_3_BASE( void )
-FT2_1_3_debug_init( void );
+ft_debug_init( void );
 
 
 #if defined( _MSC_VER )      /* Visual C++ (and Intel C++) */

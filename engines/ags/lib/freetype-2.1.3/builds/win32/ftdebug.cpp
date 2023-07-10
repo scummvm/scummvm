@@ -51,7 +51,7 @@
 #include <windows.h>
 
 FT2_1_3_EXPORT_DEF(void)
-FT2_1_3_Message(const char *fmt, ...) {
+FT_Message(const char *fmt, ...) {
 	static char buf[8192];
 	va_list ap;
 
@@ -62,7 +62,7 @@ FT2_1_3_Message(const char *fmt, ...) {
 }
 
 FT2_1_3_EXPORT_DEF(void)
-FT2_1_3_Panic(const char *fmt, ...) {
+FT_Panic(const char *fmt, ...) {
 	static char buf[8192];
 	va_list ap;
 
@@ -107,7 +107,7 @@ static const char *FT2_1_3_trace_toggles[trace_count + 1] = {
 /* runtime errors), and 6 means _very_ verbose.                          */
 /*                                                                       */
 FT2_1_3_BASE_DEF(void)
-FT2_1_3_debug_init(void) {
+ft_debug_init(void) {
 	const char *ft2_debug = getenv("FT2_DEBUG");
 
 	if (ft2_debug) {
@@ -166,7 +166,7 @@ FT2_1_3_debug_init(void) {
 #else /* !FT2_1_3_DEBUG_LEVEL_TRACE */
 
 FT2_1_3_BASE_DEF(void)
-FT2_1_3_debug_init(void) {
+ft_debug_init(void) {
 	/* nothing */
 }
 

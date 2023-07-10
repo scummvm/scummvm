@@ -49,7 +49,7 @@
 #if defined( FT2_1_3_DEBUG_LEVEL_ERROR )
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_Message( const char*  fmt, ... ) {
+FT_Message( const char*  fmt, ... ) {
 	va_list  ap;
 
 
@@ -60,7 +60,7 @@ FT2_1_3_Message( const char*  fmt, ... ) {
 
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_Panic( const char*  fmt, ... ) {
+FT_Panic( const char*  fmt, ... ) {
 	va_list  ap;
 
 
