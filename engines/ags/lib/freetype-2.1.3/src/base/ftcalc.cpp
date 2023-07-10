@@ -26,7 +26,7 @@
 /*                                                                       */
 /* Implementing basic computation routines.                              */
 /*                                                                       */
-/* FT_MulDiv(), FT_MulFix(), FT2_1_3_DivFix(), FT2_1_3_RoundFix(), FT2_1_3_CeilFix(),   */
+/* FT_MulDiv(), FT2_1_3_MulFix(), FT2_1_3_DivFix(), FT2_1_3_RoundFix(), FT2_1_3_CeilFix(),   */
 /* and FT2_1_3_FloorFix() are declared in freetype.h.                         */
 /*                                                                       */
 /*************************************************************************/
@@ -162,7 +162,7 @@ FT_MulDiv( FT_Long  a,
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( FT_Long )
-FT_MulFix( FT_Long  a,
+FT2_1_3_MulFix( FT_Long  a,
 		   FT_Long  b ) {
 	FT_Int   s = 1;
 	FT_Long  c;
@@ -337,7 +337,7 @@ FT_MulDiv( FT_Long  a,
 /* documentation is in freetype.h */
 
 FT2_1_3_EXPORT_DEF( FT_Long )
-FT_MulFix( FT_Long  a,
+FT2_1_3_MulFix( FT_Long  a,
 		   FT_Long  b ) {
 	FT_Long   s;
 	FT_ULong  ua, ub;

@@ -58,7 +58,7 @@ FT_Sqrt32( FT_Int32  x );
 
 /*************************************************************************/
 /*                                                                       */
-/* FT_MulDiv() and FT_MulFix() are declared in freetype.h.               */
+/* FT_MulDiv() and FT2_1_3_MulFix() are declared in freetype.h.               */
 /*                                                                       */
 /*************************************************************************/
 

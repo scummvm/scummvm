@@ -206,7 +206,7 @@ FT_GlyphSlot_Embolden( FT_GlyphSlot  slot ) {
 		return;
 
 	/* compute control distance */
-	distance = FT_MulFix( face->units_per_EM / 60,
+	distance = FT2_1_3_MulFix( face->units_per_EM / 60,
 	                      face->size->metrics.y_scale );
 
 	orientation = ft_get_orientation( outline );

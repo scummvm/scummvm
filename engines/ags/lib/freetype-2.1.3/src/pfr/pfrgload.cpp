@@ -696,9 +696,9 @@ pfr_glyph_load_rec( PFR_Glyph  glyph,
 
 
 				for ( i = 0; i < num_points; i++, vec++ ) {
-					vec->x = FT_MulFix( vec->x, subglyph->x_scale ) +
+					vec->x = FT2_1_3_MulFix( vec->x, subglyph->x_scale ) +
 							 subglyph->x_delta;
-					vec->y = FT_MulFix( vec->y, subglyph->y_scale ) +
+					vec->y = FT2_1_3_MulFix( vec->y, subglyph->y_scale ) +
 							 subglyph->y_delta;
 				}
 			} else {

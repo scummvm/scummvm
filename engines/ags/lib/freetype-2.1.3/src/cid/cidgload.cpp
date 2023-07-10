@@ -376,18 +376,18 @@ cid_slot_load_glyph( CID_GlyphSlot  glyph,
 				/* First of all, scale the points */
 				if ( !hinting )
 					for ( n = cur->n_points; n > 0; n--, vec++ ) {
-						vec->x = FT_MulFix( vec->x, x_scale );
-						vec->y = FT_MulFix( vec->y, y_scale );
+						vec->x = FT2_1_3_MulFix( vec->x, x_scale );
+						vec->y = FT2_1_3_MulFix( vec->y, y_scale );
 					}
 
 				FT_Outline_Get_CBox( &glyph->root.outline, &cbox );
 
 				/* Then scale the metrics */
-				metrics->horiAdvance  = FT_MulFix( metrics->horiAdvance,  x_scale );
-				metrics->vertAdvance  = FT_MulFix( metrics->vertAdvance,  y_scale );
+				metrics->horiAdvance  = FT2_1_3_MulFix( metrics->horiAdvance,  x_scale );
+				metrics->vertAdvance  = FT2_1_3_MulFix( metrics->vertAdvance,  y_scale );
 
-				metrics->vertBearingX = FT_MulFix( metrics->vertBearingX, x_scale );
-				metrics->vertBearingY = FT_MulFix( metrics->vertBearingY, y_scale );
+				metrics->vertBearingX = FT2_1_3_MulFix( metrics->vertBearingX, x_scale );
+				metrics->vertBearingY = FT2_1_3_MulFix( metrics->vertBearingY, y_scale );
 
 				if ( hinting ) {
 					metrics->horiAdvance = ( metrics->horiAdvance + 32 ) & -64;

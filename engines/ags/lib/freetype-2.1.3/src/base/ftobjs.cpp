@@ -1163,16 +1163,16 @@ ft_recompute_scaled_metrics( FT_Face           face,
 							 FT_Size_Metrics*  metrics ) {
 	/* Compute root ascender, descender, test height, and max_advance */
 
-	metrics->ascender    = ( FT_MulFix( face->ascender,
+	metrics->ascender    = ( FT2_1_3_MulFix( face->ascender,
 										metrics->y_scale ) + 32 ) & -64;
 
-	metrics->descender   = ( FT_MulFix( face->descender,
+	metrics->descender   = ( FT2_1_3_MulFix( face->descender,
 										metrics->y_scale ) + 32 ) & -64;
 
-	metrics->height      = ( FT_MulFix( face->height,
+	metrics->height      = ( FT2_1_3_MulFix( face->height,
 										metrics->y_scale ) + 32 ) & -64;
 
-	metrics->max_advance = ( FT_MulFix( face->max_advance_width,
+	metrics->max_advance = ( FT2_1_3_MulFix( face->max_advance_width,
 										metrics->x_scale ) + 32 ) & -64;
 }
 
@@ -1327,8 +1327,8 @@ FT2_1_3_Get_Kerning( FT_Face     face,
 											akerning );
 		if ( !error ) {
 			if ( kern_mode != FT2_1_3_KERNING_UNSCALED ) {
-				akerning->x = FT_MulFix( akerning->x, face->size->metrics.x_scale );
-				akerning->y = FT_MulFix( akerning->y, face->size->metrics.y_scale );
+				akerning->x = FT2_1_3_MulFix( akerning->x, face->size->metrics.x_scale );
+				akerning->y = FT2_1_3_MulFix( akerning->y, face->size->metrics.y_scale );
 
 				if ( kern_mode != FT2_1_3_KERNING_UNFITTED ) {
 					akerning->x = ( akerning->x + 32 ) & -64;

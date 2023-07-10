@@ -2655,7 +2655,7 @@ FT2_1_3_Get_Name_Index( FT_Face     face,
 /*                                                                       */
 /* <Order>                                                               */
 /*    FT_MulDiv                                                          */
-/*    FT_MulFix                                                          */
+/*    FT2_1_3_MulFix                                                          */
 /*    FT2_1_3_DivFix                                                          */
 /*    FT2_1_3_RoundFix                                                        */
 /*    FT2_1_3_CeilFix                                                         */
@@ -2699,7 +2699,7 @@ FT_MulDiv( FT_Long  a,
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT_MulFix                                                          */
+/*    FT2_1_3_MulFix                                                          */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A very simple function used to perform the computation             */
@@ -2726,7 +2726,7 @@ FT_MulDiv( FT_Long  a,
 /*    difference.                                                        */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Long )
-FT_MulFix( FT_Long  a,
+FT2_1_3_MulFix( FT_Long  a,
 		   FT_Long  b );
 
 

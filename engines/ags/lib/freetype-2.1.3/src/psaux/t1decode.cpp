@@ -678,7 +678,7 @@ t1_decoder_parse_charstrings( T1_Decoder  decoder,
 
 
 					for ( mm = 1; mm < blend->num_designs; mm++ )
-						tmp += FT_MulFix( *delta++, blend->weight_vector[mm] );
+						tmp += FT2_1_3_MulFix( *delta++, blend->weight_vector[mm] );
 
 					*values++ = tmp;
 				}

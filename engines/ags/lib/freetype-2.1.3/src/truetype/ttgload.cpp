@@ -638,8 +638,8 @@ TT_Process_Simple_Glyph( TT_Loader  load,
 
 		/* first scale the glyph points */
 		for ( ; vec < limit; vec++ ) {
-			vec->x = FT_MulFix( vec->x, x_scale );
-			vec->y = FT_MulFix( vec->y, y_scale );
+			vec->x = FT2_1_3_MulFix( vec->x, x_scale );
+			vec->y = FT2_1_3_MulFix( vec->y, y_scale );
 		}
 	}
 
@@ -846,7 +846,7 @@ load_truetype_glyph( TT_Loader  loader,
 		loader->pp2.x = loader->advance;
 
 		if ( ( loader->load_flags & FT2_1_3_LOAD_NO_SCALE ) == 0 )
-			loader->pp2.x = FT_MulFix( loader->pp2.x, x_scale );
+			loader->pp2.x = FT2_1_3_MulFix( loader->pp2.x, x_scale );
 
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
 
@@ -885,8 +885,8 @@ load_truetype_glyph( TT_Loader  loader,
 	loader->pp2.y = 0;
 
 	if ( ( loader->load_flags & FT2_1_3_LOAD_NO_SCALE ) == 0 ) {
-		loader->pp1.x = FT_MulFix( loader->pp1.x, x_scale );
-		loader->pp2.x = FT_MulFix( loader->pp2.x, x_scale );
+		loader->pp1.x = FT2_1_3_MulFix( loader->pp1.x, x_scale );
+		loader->pp2.x = FT2_1_3_MulFix( loader->pp2.x, x_scale );
 	}
 
 	/***********************************************************************/
@@ -1103,8 +1103,8 @@ load_truetype_glyph( TT_Loader  loader,
 							m *= 2;
 						if ( c - d <= 33 && c - d >= -33 )
 							n *= 2;
-						x = FT_MulFix( x, m );
-						y = FT_MulFix( y, n );
+						x = FT2_1_3_MulFix( x, m );
+						y = FT2_1_3_MulFix( y, n );
 
 #else /* 0 */
 
@@ -1113,26 +1113,26 @@ load_truetype_glyph( TT_Loader  loader,
 						/* This algorithm is a guess and works much better than the above.       */
 						/*                                                                       */
 						int  mac_xscale = FT_SqrtFixed(
-											  FT_MulFix( subglyph->transform.xx,
+											  FT2_1_3_MulFix( subglyph->transform.xx,
 														 subglyph->transform.xx ) +
-											  FT_MulFix( subglyph->transform.xy,
+											  FT2_1_3_MulFix( subglyph->transform.xy,
 														 subglyph->transform.xy) );
 						int  mac_yscale = FT_SqrtFixed(
-											  FT_MulFix( subglyph->transform.yy,
+											  FT2_1_3_MulFix( subglyph->transform.yy,
 														 subglyph->transform.yy ) +
-											  FT_MulFix( subglyph->transform.yx,
+											  FT2_1_3_MulFix( subglyph->transform.yx,
 														 subglyph->transform.yx ) );
 
 
-						x = FT_MulFix( x, mac_xscale );
-						y = FT_MulFix( y, mac_yscale );
+						x = FT2_1_3_MulFix( x, mac_xscale );
+						y = FT2_1_3_MulFix( y, mac_yscale );
 #endif /* 0 */
 
 					}
 
 					if ( !( loader->load_flags & FT2_1_3_LOAD_NO_SCALE ) ) {
-						x = FT_MulFix( x, x_scale );
-						y = FT_MulFix( y, y_scale );
+						x = FT2_1_3_MulFix( x, x_scale );
+						y = FT2_1_3_MulFix( y, y_scale );
 
 						if ( subglyph->flags & ROUND_XY_TO_GRID ) {
 							x = ( x + 32 ) & -64;
@@ -1419,9 +1419,9 @@ compute_glyph_metrics( TT_Loader   loader,
 
 		/* scale the metrics */
 		if ( !( loader->load_flags & FT2_1_3_LOAD_NO_SCALE ) ) {
-			top     = FT_MulFix( top_bearing + loader->bbox.yMax, y_scale )
+			top     = FT2_1_3_MulFix( top_bearing + loader->bbox.yMax, y_scale )
 					  - bbox.yMax;
-			advance = FT_MulFix( advance_height, y_scale );
+			advance = FT2_1_3_MulFix( advance_height, y_scale );
 		} else {
 			top     = top_bearing + loader->bbox.yMax - bbox.yMax;
 			advance = advance_height;

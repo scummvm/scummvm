@@ -281,7 +281,7 @@ static FT_Fixed
 cff_parse_fixed_thousand( FT_Byte**  d ) {
 	return **d ==
 		   30 ? cff_parse_real     ( d[0], d[1], 3 )
-		   : (FT_Fixed)FT_MulFix( cff_parse_integer( d[0], d[1] ) << 16, 1000 );
+		   : (FT_Fixed)FT2_1_3_MulFix( cff_parse_integer( d[0], d[1] ) << 16, 1000 );
 }
 
 static FT_Error

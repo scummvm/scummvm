@@ -309,13 +309,13 @@ pfr_slot_load( PFR_Slot  slot,
 
 			/* scale outline points */
 			for ( n = 0; n < outline->n_points; n++, vec++ ) {
-				vec->x = FT_MulFix( vec->x, x_scale );
-				vec->y = FT_MulFix( vec->y, y_scale );
+				vec->x = FT2_1_3_MulFix( vec->x, x_scale );
+				vec->y = FT2_1_3_MulFix( vec->y, y_scale );
 			}
 
 			/* scale the advance */
-			metrics->horiAdvance = FT_MulFix( metrics->horiAdvance, x_scale );
-			metrics->vertAdvance = FT_MulFix( metrics->vertAdvance, y_scale );
+			metrics->horiAdvance = FT2_1_3_MulFix( metrics->horiAdvance, x_scale );
+			metrics->vertAdvance = FT2_1_3_MulFix( metrics->vertAdvance, y_scale );
 		}
 
 		/* compute the rest of the metrics */

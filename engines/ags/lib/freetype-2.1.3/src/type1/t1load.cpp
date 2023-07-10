@@ -233,7 +233,7 @@ T1_Set_MM_Blend( T1_Face    face,
 				if ( ( n & ( 1 << m ) ) == 0 )
 					factor = 0x10000L - factor;
 
-				result = FT_MulFix( result, factor );
+				result = FT2_1_3_MulFix( result, factor );
 			}
 			blend->weight_vector[n] = result;
 		}
