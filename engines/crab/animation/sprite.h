@@ -209,11 +209,11 @@ public:
 	}
 
 	Rect dialogClip(const pyrodactyl::people::PersonState &state) {
-		return _animSet._walk.DialogClip(state);
+		return _animSet._walk.dialogClip(state);
 	}
 
 	void dialogUpdateClip(const pyrodactyl::people::PersonState &state) {
-		_animSet._walk.UpdateClip(state);
+		_animSet._walk.updateClip(state);
 	}
 
 	bool popupShow() {

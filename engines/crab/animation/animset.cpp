@@ -59,14 +59,14 @@ TextureFlipType AnimSet::flip(const Direction &dir) {
 	if (_fight.flip(ret, dir))
 		return ret;
 
-	return _walk.Flip(dir);
+	return _walk.flip(dir);
 }
 
 const ShadowOffset &AnimSet::shadow(const Direction &dir) {
 	if (_fight.validMove())
 		return _fight.shadow(dir);
 
-	return _walk.Shadow(dir);
+	return _walk.shadow(dir);
 }
 
 int AnimSet::anchorX(const Direction &dir) {
@@ -74,7 +74,7 @@ int AnimSet::anchorX(const Direction &dir) {
 	if (_fight.curFrame(faf, dir))
 		return faf._anchor.x;
 
-	return _walk.AnchorX(dir);
+	return _walk.anchorX(dir);
 }
 
 int AnimSet::anchorY(const Direction &dir) {
@@ -82,7 +82,7 @@ int AnimSet::anchorY(const Direction &dir) {
 	if (_fight.curFrame(faf, dir))
 		return faf._anchor.y;
 
-	return _walk.AnchorY(dir);
+	return _walk.anchorY(dir);
 }
 
 } // End of namespace Crab

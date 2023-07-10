@@ -41,11 +41,13 @@ namespace Crab {
 
 namespace pyrodactyl {
 namespace anim {
-enum WalkAnimType { WT_STAND,
-					WT_WALK,
-					WT_FIGHT,
-					WT_KO,
-					WT_TOTAL };
+enum WalkAnimType {
+	WT_STAND,
+	WT_WALK,
+	WT_FIGHT,
+	WT_KO,
+	WT_TOTAL
+};
 
 class WalkFrames {
 	struct WalkFrameSet {
@@ -60,45 +62,66 @@ class WalkFrames {
 	};
 
 	// The walking animations of the sprite
-	WalkFrameSet set[WT_TOTAL];
+	WalkFrameSet _set[WT_TOTAL];
 
 	// The current walking animation
-	WalkAnimType cur;
+	WalkAnimType _cur;
 
 	// The timers used for animation playing
-	Timer timer;
+	Timer _timer;
 
 	// Dialog box related
-	void UpdateClip(WalkAnimType type, Direction d);
+	void updateClip(WalkAnimType type, Direction d);
 
 public:
 	WalkFrames() {
-		cur = WT_STAND;
-		timer.Start();
+		_cur = WT_STAND;
+		_timer.Start();
 	}
 	~WalkFrames() {}
 
 	void load(rapidxml::xml_node<char> *node);
 
-	bool UpdateClip(Direction d, bool reset);
-	void ResetClip(Direction d);
+	bool updateClip(Direction d, bool reset);
+	void resetClip(Direction d);
 
-	void Type(WalkAnimType type) { cur = type; }
-	WalkAnimType Type() { return cur; }
-	bool Type(const Vector2f &vel, Direction &dir, const pyrodactyl::people::PersonState &pst, const bool &first_x);
+	void type(WalkAnimType type) {
+		_cur = type;
+	}
 
-	const Rect &Clip(Direction d) { return set[cur].frames[d].currentFrame()._clip; }
-	const Rect &BoxV(Direction d) { return set[cur].frames[d].currentFrame()._boxV; }
-	const TextureFlipType &Flip(Direction d) { return set[cur].frames[d]._flip; }
+	WalkAnimType type() {
+		return _cur;
+	}
 
-	const ShadowOffset &Shadow(Direction d) { return set[cur].frames[d]._shadow; }
+	bool type(const Vector2f &vel, Direction &dir, const pyrodactyl::people::PersonState &pst, const bool &first_x);
 
-	int AnchorX(Direction d) { return set[cur].frames[d].currentFrame()._anchor.x; }
-	int AnchorY(Direction d) { return set[cur].frames[d].currentFrame()._anchor.y; }
+	const Rect &clip(Direction d) {
+		return _set[_cur].frames[d].currentFrame()._clip;
+	}
+
+	const Rect &boxV(Direction d) {
+		return _set[_cur].frames[d].currentFrame()._boxV;
+	}
+
+	const TextureFlipType &flip(Direction d) {
+		return _set[_cur].frames[d]._flip;
+	}
+
+	const ShadowOffset &shadow(Direction d) {
+		return _set[_cur].frames[d]._shadow;
+	}
+
+	int anchorX(Direction d) {
+		return _set[_cur].frames[d].currentFrame()._anchor.x;
+	}
+
+	int anchorY(Direction d) {
+		return _set[_cur].frames[d].currentFrame()._anchor.y;
+	}
 
 	// Dialog box related
-	Rect DialogClip(const pyrodactyl::people::PersonState &state);
-	void UpdateClip(const pyrodactyl::people::PersonState &state);
+	Rect dialogClip(const pyrodactyl::people::PersonState &state);
+	void updateClip(const pyrodactyl::people::PersonState &state);
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
