@@ -379,7 +379,7 @@ TT_Clear_CodeRange( TT_ExecContext  exec,
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
 TT_Destroy_Context( TT_ExecContext  exec,
-                    FT2_1_3_Memory       memory ) {
+                    FT_Memory       memory ) {
 	/* free composite load stack */
 	FT2_1_3_FREE( exec->loadStack );
 	exec->loadSize = 0;
@@ -431,7 +431,7 @@ TT_Destroy_Context( TT_ExecContext  exec,
 static FT_Error
 Init_Context( TT_ExecContext  exec,
               TT_Face         face,
-              FT2_1_3_Memory       memory ) {
+              FT_Memory       memory ) {
 	FT_Error  error;
 
 
@@ -496,7 +496,7 @@ Fail_Memory:
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 static FT_Error
-Update_Max( FT2_1_3_Memory  memory,
+Update_Max( FT_Memory  memory,
             FT_ULong*  size,
             FT_Long    multiplier,
             void**     buff,
@@ -746,7 +746,7 @@ FT2_1_3_EXPORT_DEF( TT_ExecContext )
 TT_New_Context( TT_Face  face ) {
 	TT_Driver       driver;
 	TT_ExecContext  exec;
-	FT2_1_3_Memory       memory;
+	FT_Memory       memory;
 
 
 	if ( !face )

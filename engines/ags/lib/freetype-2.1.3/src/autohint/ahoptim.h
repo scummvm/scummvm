@@ -78,7 +78,7 @@ typedef struct AH_Configuration_ {
 
 
 typedef struct  AH_Optimizer_ {
-	FT2_1_3_Memory         memory;
+	FT_Memory         memory;
 	AH_Outline        outline;
 
 	FT_Int            num_hstems;
@@ -114,7 +114,7 @@ typedef struct  AH_Optimizer_ {
 int
 AH_Optimizer_Init( AH_Optimizer*  optimizer,
                    AH_Outline     outline,
-                   FT2_1_3_Memory      memory );
+                   FT_Memory      memory );
 
 
 /* compute optimal outline */

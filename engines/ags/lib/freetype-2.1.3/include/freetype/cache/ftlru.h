@@ -90,7 +90,7 @@ typedef struct  FT2_1_3_LruNodeRec_ {
 
 /* the list structure */
 typedef struct  FT2_1_3_LruListRec_ {
-	FT2_1_3_Memory         memory;
+	FT_Memory         memory;
 	FT2_1_3_LruList_Class  clazz;
 	FT2_1_3_LruNode        nodes;
 	FT_UInt           max_nodes;
@@ -167,7 +167,7 @@ FT2_1_3_EXPORT( FT_Error )
 FT2_1_3_LruList_New( FT2_1_3_LruList_Class  clazz,
 				FT_UInt           max_elements,
 				FT_Pointer        user_data,
-				FT2_1_3_Memory         memory,
+				FT_Memory         memory,
 				FT2_1_3_LruList       *alist );
 
 FT2_1_3_EXPORT( void )

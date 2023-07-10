@@ -58,7 +58,7 @@ namespace FreeType213 {
 FT2_1_3_LOCAL_DEF( FT_Error )
 ps_table_new( PS_Table   table,
 			  FT_Int     count,
-			  FT2_1_3_Memory  memory ) {
+			  FT_Memory  memory ) {
 	FT_Error  error;
 
 
@@ -102,7 +102,7 @@ shift_elements( PS_Table  table,
 static FT_Error
 reallocate_t1_table( PS_Table  table,
 					 FT_Long   new_size ) {
-	FT2_1_3_Memory  memory   = table->memory;
+	FT_Memory  memory   = table->memory;
 	FT_Byte*   old_base = table->block;
 	FT_Error   error;
 
@@ -209,7 +209,7 @@ ps_table_add( PS_Table  table,
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( void )
 ps_table_done( PS_Table  table ) {
-	FT2_1_3_Memory  memory = table->memory;
+	FT_Memory  memory = table->memory;
 	FT_Error   error;
 	FT_Byte*   old_base = table->block;
 
@@ -232,7 +232,7 @@ ps_table_done( PS_Table  table ) {
 
 FT2_1_3_LOCAL_DEF( void )
 ps_table_release( PS_Table  table ) {
-	FT2_1_3_Memory  memory = table->memory;
+	FT_Memory  memory = table->memory;
 
 
 	if ( (FT_ULong)table->init == 0xDEADBEEFUL ) {
@@ -693,7 +693,7 @@ Exit:
 static FT_String*
 t1_tostring( FT_Byte**  cursor,
 			 FT_Byte*   limit,
-			 FT2_1_3_Memory  memory ) {
+			 FT_Memory  memory ) {
 	FT_Byte*    cur = *cursor;
 	FT_PtrDist  len = 0;
 	FT_Int      count;
@@ -865,7 +865,7 @@ Store_Integer:
 			break;
 
 		case T1_FIELD_TYPE_STRING: {
-			FT2_1_3_Memory  memory = parser->memory;
+			FT_Memory  memory = parser->memory;
 			FT_UInt    len    = (FT_UInt)( limit - cur );
 
 
@@ -1042,7 +1042,7 @@ FT2_1_3_LOCAL_DEF( void )
 ps_parser_init( PS_Parser  parser,
 				FT_Byte*   base,
 				FT_Byte*   limit,
-				FT2_1_3_Memory  memory ) {
+				FT_Memory  memory ) {
 	parser->error  = 0;
 	parser->base   = base;
 	parser->limit  = limit;

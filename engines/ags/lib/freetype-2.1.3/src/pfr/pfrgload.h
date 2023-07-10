@@ -37,7 +37,7 @@ pfr_glyph_done( PFR_Glyph  glyph );
 
 FT2_1_3_LOCAL( FT_Error )
 pfr_glyph_load( PFR_Glyph  glyph,
-				FT2_1_3_Stream  stream,
+				FT_Stream  stream,
 				FT_ULong   gps_offset,
 				FT_ULong   offset,
 				FT_ULong   size );

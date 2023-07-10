@@ -4,7 +4,7 @@
 
 FT2_1_3_BASE_DEF( void )
 ft_cleanup_stack_init( FT2_1_3_CleanupStack  stack,
-                       FT2_1_3_Memory        memory ) {
+                       FT_Memory        memory ) {
 	stack->chunk = &stack->chunk_0;
 	stack->top   = stack->chunk->items;
 	stack->limit = stack->top + FT2_1_3_CLEANUP_CHUNK_SIZE;
@@ -17,7 +17,7 @@ ft_cleanup_stack_init( FT2_1_3_CleanupStack  stack,
 
 FT2_1_3_BASE_DEF( void )
 ft_cleanup_stack_done( FT2_1_3_CleanupStack  stack ) {
-	FT2_1_3_Memory        memory = stack->memory;
+	FT_Memory        memory = stack->memory;
 	FT2_1_3_CleanupChunk  chunk, next;
 
 	for (;;) {
@@ -137,7 +137,7 @@ ft_cleanup_stack_peek( FT2_1_3_CleanupStack  stack ) {
 
 FT2_1_3_BASE_DEF( void )
 ft_xhandler_enter( FT2_1_3_XHandler  xhandler,
-                   FT2_1_3_Memory    memory ) {
+                   FT_Memory    memory ) {
 	FT2_1_3_CleanupStack  stack = FT2_1_3_MEMORY__CLEANUP(memory);
 
 	xhandler->previous = stack->xhandler;

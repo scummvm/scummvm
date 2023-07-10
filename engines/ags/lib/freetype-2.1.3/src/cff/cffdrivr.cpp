@@ -225,13 +225,13 @@ cff_get_glyph_name( CFF_Face    face,
 					FT_Pointer  buffer,
 					FT_UInt     buffer_max ) {
 	CFF_Font         font   = (CFF_Font)face->extra.data;
-	FT2_1_3_Memory        memory = FT2_1_3_FACE_MEMORY( face );
+	FT_Memory        memory = FT2_1_3_FACE_MEMORY( face );
 	FT_String*       gname;
 	FT_UShort        sid;
 	PSNames_Service  psnames;
 	FT_Error         error;
 
-	const void *psnames_tmp = FT2_1_3_Get_Module_Interface(face->root.driver->root.library, "psnames");
+	const void *psnames_tmp = FT_Get_Module_Interface(face->root.driver->root.library, "psnames");
 	psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(psnames_tmp));
 
 	if ( !psnames ) {
@@ -292,7 +292,7 @@ cff_get_name_index( CFF_Face    face,
 	CFF_Font         cff;
 	CFF_Charset      charset;
 	PSNames_Service  psnames;
-	FT2_1_3_Memory        memory = FT2_1_3_FACE_MEMORY( face );
+	FT_Memory        memory = FT2_1_3_FACE_MEMORY( face );
 	FT_String*       name;
 	FT_UShort        sid;
 	FT_UInt          i;
@@ -302,7 +302,7 @@ cff_get_name_index( CFF_Face    face,
 	cff     = (CFF_FontRec *)face->extra.data;
 	charset = &cff->charset;
 
-	const void *psnames_tmp = FT2_1_3_Get_Module_Interface(face->root.driver->root.library, "psnames");
+	const void *psnames_tmp = FT_Get_Module_Interface(face->root.driver->root.library, "psnames");
 	psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(psnames_tmp));
 
 	for ( i = 0; i < cff->num_glyphs; i++ ) {
@@ -355,7 +355,7 @@ cff_get_interface( CFF_Driver   driver,
 #endif
 
 	/* we simply pass our request to the `sfnt' module */
-	sfnt = FT2_1_3_Get_Module( driver->root.root.library, "sfnt" );
+	sfnt = FT_Get_Module( driver->root.root.library, "sfnt" );
 
 	return sfnt ? sfnt->clazz->get_interface( sfnt, module_interface ) : 0;
 }

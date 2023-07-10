@@ -133,7 +133,7 @@ compare_uni_maps( const void*  a,
 
 /* Builds a table that maps Unicode values to glyph indices */
 static FT_Error
-ps_build_unicode_table( FT2_1_3_Memory     memory,
+ps_build_unicode_table( FT_Memory     memory,
 						FT_UInt       num_glyphs,
 						const char**  glyph_names,
 						PS_Unicodes*  table ) {

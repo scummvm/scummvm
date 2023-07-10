@@ -131,7 +131,7 @@ cid_size_reset( CID_Size  size );
 
 
 FT2_1_3_LOCAL( FT_Error )
-cid_face_init( FT2_1_3_Stream      stream,
+cid_face_init( FT_Stream      stream,
 			   CID_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,

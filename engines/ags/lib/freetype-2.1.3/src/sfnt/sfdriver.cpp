@@ -38,7 +38,7 @@ namespace FreeType213 {
 
 static void*
 get_sfnt_table( TT_Face      face,
-				FT2_1_3_Sfnt_Tag  tag ) {
+				FT_Sfnt_Tag  tag ) {
 	void*  table;
 
 
@@ -140,14 +140,14 @@ get_sfnt_postscript_name( TT_Face  face ) {
 	}
 
 	if ( found_win != -1 ) {
-		FT2_1_3_Memory         memory = face->root.memory;
+		FT_Memory         memory = face->root.memory;
 		TT_NameEntryRec*  name   = face->name_table.names + found_win;
 		FT_UInt           len    = name->stringLength / 2;
 		FT_Error          error;
 
 
 		if ( !FT2_1_3_ALLOC( result, name->stringLength + 1 ) ) {
-			FT2_1_3_Stream   stream = face->name_table.stream;
+			FT_Stream   stream = face->name_table.stream;
 			FT_String*  r      = const_cast<FT_String *>(result);
 			FT_Byte*    p      = (FT_Byte*)name->string;
 
@@ -176,14 +176,14 @@ get_sfnt_postscript_name( TT_Face  face ) {
 	}
 
 	if ( found_apple != -1 ) {
-		FT2_1_3_Memory         memory = face->root.memory;
+		FT_Memory         memory = face->root.memory;
 		TT_NameEntryRec*  name   = face->name_table.names + found_apple;
 		FT_UInt           len    = name->stringLength;
 		FT_Error          error;
 
 
 		if ( !FT2_1_3_ALLOC( result, len + 1 ) ) {
-			FT2_1_3_Stream  stream = face->name_table.stream;
+			FT_Stream  stream = face->name_table.stream;
 
 
 			if ( FT2_1_3_STREAM_SEEK( name->stringOffset ) ||

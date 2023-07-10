@@ -55,7 +55,7 @@ cff_index_forget_element( CFF_Index  idx,
 
 
 FT2_1_3_LOCAL( FT_Error )
-cff_font_load( FT2_1_3_Stream  stream,
+cff_font_load( FT_Stream  stream,
 			   FT_Int     face_index,
 			   CFF_Font   font );
 

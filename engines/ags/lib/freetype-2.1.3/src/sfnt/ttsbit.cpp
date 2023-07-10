@@ -214,7 +214,7 @@ const FT2_1_3_Frame_Field  sbit_metrics_fields[] = {
 /*                                                                       */
 static FT_Error
 Load_SBit_Const_Metrics( TT_SBit_Range  range,
-						 FT2_1_3_Stream      stream ) {
+						 FT_Stream      stream ) {
 	FT_Error  error;
 
 
@@ -245,11 +245,11 @@ Load_SBit_Const_Metrics( TT_SBit_Range  range,
 /*                                                                       */
 static FT_Error
 Load_SBit_Range_Codes( TT_SBit_Range  range,
-					   FT2_1_3_Stream      stream,
+					   FT_Stream      stream,
 					   FT_Bool        load_offsets ) {
 	FT_Error   error;
 	FT_ULong   count, n, size;
-	FT2_1_3_Memory  memory = stream->memory;
+	FT_Memory  memory = stream->memory;
 
 
 	if ( FT2_1_3_READ_ULONG( count ) )
@@ -304,9 +304,9 @@ Exit:
 /*                                                                       */
 static FT_Error
 Load_SBit_Range( TT_SBit_Range  range,
-				 FT2_1_3_Stream      stream ) {
+				 FT_Stream      stream ) {
 	FT_Error   error;
-	FT2_1_3_Memory  memory = stream->memory;
+	FT_Memory  memory = stream->memory;
 
 
 	switch( range->index_format ) {
@@ -375,9 +375,9 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_sbit_strikes( TT_Face    face,
-						   FT2_1_3_Stream  stream ) {
+						   FT_Stream  stream ) {
 	FT_Error   error  = 0;
-	FT2_1_3_Memory  memory = stream->memory;
+	FT_Memory  memory = stream->memory;
 	FT_Fixed   version;
 	FT_ULong   num_strikes;
 	FT_ULong   table_base;
@@ -561,7 +561,7 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( void )
 tt_face_free_sbit_strikes( TT_Face  face ) {
-	FT2_1_3_Memory       memory       = face->root.memory;
+	FT_Memory       memory       = face->root.memory;
 	TT_SBit_Strike  strike       = face->sbit_strikes;
 	TT_SBit_Strike  strike_limit = strike + face->num_sbit_strikes;
 
@@ -802,7 +802,7 @@ Fail:
 /*    function exit.                                                     */
 /*                                                                       */
 static FT_Error
-load_sbit_metrics( FT2_1_3_Stream        stream,
+load_sbit_metrics( FT_Stream        stream,
 				   TT_SBit_Range    range,
 				   TT_SBit_Metrics  metrics ) {
 	FT_Error  error = FT2_1_3_Err_Ok;
@@ -1073,7 +1073,7 @@ Load_SBit_Single( FT_Bitmap*       map,
 				  FT_Int           pix_bits,
 				  FT_UShort        image_format,
 				  TT_SBit_Metrics  metrics,
-				  FT2_1_3_Stream        stream ) {
+				  FT_Stream        stream ) {
 	FT_Error  error;
 
 
@@ -1156,9 +1156,9 @@ Load_SBit_Image( TT_SBit_Strike   strike,
 				 FT_Bitmap*       map,
 				 FT_Int           x_offset,
 				 FT_Int           y_offset,
-				 FT2_1_3_Stream        stream,
+				 FT_Stream        stream,
 				 TT_SBit_Metrics  metrics ) {
-	FT2_1_3_Memory  memory = stream->memory;
+	FT_Memory  memory = stream->memory;
 	FT_Error   error;
 
 
@@ -1226,7 +1226,7 @@ Load_SBit_Image( TT_SBit_Strike   strike,
 								 range->image_format, metrics, stream );
 
 	case 8:  /* compound format */
-		FT2_1_3_Stream_Skip( stream, 1L );
+		FT_Stream_Skip( stream, 1L );
 	/* fallthrough */
 
 	case 9:
@@ -1339,11 +1339,11 @@ tt_face_load_sbit_image( TT_Face              face,
 						 FT_ULong             strike_index,
 						 FT_UInt              glyph_index,
 						 FT_UInt              load_flags,
-						 FT2_1_3_Stream            stream,
+						 FT_Stream            stream,
 						 FT_Bitmap           *map,
 						 TT_SBit_MetricsRec  *metrics ) {
 	FT_Error        error;
-	FT2_1_3_Memory       memory = stream->memory;
+	FT_Memory       memory = stream->memory;
 	FT_ULong        ebdt_pos, glyph_offset;
 
 	TT_SBit_Strike  strike;

@@ -50,7 +50,7 @@ pfr_face_done( PFR_Face  face ) {
 
 
 FT2_1_3_LOCAL_DEF( FT_Error )
-pfr_face_init( FT2_1_3_Stream      stream,
+pfr_face_init( FT_Stream      stream,
 			   PFR_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,
@@ -368,7 +368,7 @@ pfr_face_get_kerning( PFR_Face    face,
 Found_Item: {
 		/* perform simply binary search within the item */
 		FT_UInt    min, mid, max;
-		FT2_1_3_Stream  stream = face->root.stream;
+		FT_Stream  stream = face->root.stream;
 		FT_Byte*   p;
 
 

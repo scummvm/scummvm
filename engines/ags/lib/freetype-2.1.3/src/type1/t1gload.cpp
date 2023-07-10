@@ -94,7 +94,7 @@ T1_Parse_Glyph_And_Get_Char_String( T1_Decoder  decoder,
 	if ( !error && face->root.internal->incremental_interface                 &&
 			face->root.internal->incremental_interface->funcs->get_glyph_metrics ) {
 		FT_Bool                    found = FALSE;
-		FT2_1_3_Incremental_MetricsRec  metrics;
+		FT_Incremental_MetricsRec  metrics;
 
 
 		error = face->root.internal->incremental_interface->funcs->get_glyph_metrics(

@@ -53,7 +53,7 @@ psh1_hint_overlap( PSH1_Hint  hint1,
 /* destroy hints table */
 static void
 psh1_hint_table_done( PSH1_Hint_Table  table,
-					  FT2_1_3_Memory        memory ) {
+					  FT_Memory        memory ) {
 	FT2_1_3_FREE( table->zones );
 	table->num_zones = 0;
 	table->zone      = 0;
@@ -159,7 +159,7 @@ psh1_hint_table_init( PSH1_Hint_Table  table,
 					  PS_Hint_Table    hints,
 					  PS_Mask_Table    hint_masks,
 					  PS_Mask_Table    counter_masks,
-					  FT2_1_3_Memory        memory ) {
+					  FT_Memory        memory ) {
 	FT_UInt   count = hints->num_hints;
 	FT_Error  error;
 

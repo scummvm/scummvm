@@ -62,7 +62,7 @@ T1_Size_Get_Globals_Funcs( T1_Size  size ) {
 	FT_Module         module;
 
 
-	module = FT2_1_3_Get_Module( size->root.face->driver->root.library,
+	module = FT_Get_Module( size->root.face->driver->root.library,
 							"pshinter" );
 	return ( module && pshinter && pshinter->get_globals_funcs )
 		   ? pshinter->get_globals_funcs( module )
@@ -146,7 +146,7 @@ T1_GlyphSlot_Init( T1_GlyphSlot  slot ) {
 		FT_Module  module;
 
 
-		module = FT2_1_3_Get_Module( slot->root.face->driver->root.library, "pshinter" );
+		module = FT_Get_Module( slot->root.face->driver->root.library, "pshinter" );
 		if (module) {
 			T1_Hints_Funcs  funcs;
 
@@ -178,7 +178,7 @@ T1_GlyphSlot_Init( T1_GlyphSlot  slot ) {
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( void )
 T1_Face_Done( T1_Face  face ) {
-	FT2_1_3_Memory  memory;
+	FT_Memory  memory;
 	T1_Font    type1 = &face->type1;
 
 
@@ -259,7 +259,7 @@ T1_Face_Done( T1_Face  face ) {
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
-T1_Face_Init( FT2_1_3_Stream      stream,
+T1_Face_Init( FT_Stream      stream,
 			  T1_Face        face,
 			  FT_Int         face_index,
 			  FT_Int         num_params,
@@ -277,13 +277,13 @@ T1_Face_Init( FT2_1_3_Stream      stream,
 
 	face->root.num_faces = 1;
 
-	face->psnames = FT2_1_3_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psnames");
+	face->psnames = FT_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psnames");
 	psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(face->psnames));
 
-	face->psaux = FT2_1_3_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psaux");
+	face->psaux = FT_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psaux");
 	psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_Interface *>(face->psaux));
 
-	face->pshinter = FT2_1_3_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "pshinter");
+	face->pshinter = FT_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "pshinter");
 	// 	pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(face->pshinter));
 
 	/* open the tokenizer, this will also check the font format */

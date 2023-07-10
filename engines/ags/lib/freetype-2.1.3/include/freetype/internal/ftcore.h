@@ -81,7 +81,7 @@ typedef struct FT2_1_3_CleanupStackRec_ {
 	FT2_1_3_CleanupItem     limit;
 	FT2_1_3_CleanupChunk    chunk;
 	FT2_1_3_CleanupChunkRec chunk_0;  /* avoids stupid dynamic allocation */
-	FT2_1_3_Memory          memory;
+	FT_Memory          memory;
 
 } FT2_1_3_CleanupStackRec, *FT2_1_3_CleanupStack;
 
@@ -113,19 +113,19 @@ FT2_1_3_cleanup_throw( FT2_1_3_CleanupStack  stack,
 /**************************************************************************/
 /**************************************************************************/
 
-typedef struct FT2_1_3_MemoryRec_ {
-	FT2_1_3_Memory_AllocFunc     mem_alloc;   /* shortcut to funcs->mem_alloc */
-	FT2_1_3_Memory_FreeFunc      mem_free;    /* shortcut to funcs->mem_free  */
+typedef struct FT_MemoryRec_ {
+	FT_Memory_AllocFunc     mem_alloc;   /* shortcut to funcs->mem_alloc */
+	FT_Memory_FreeFunc      mem_free;    /* shortcut to funcs->mem_free  */
 	FT_Pointer              mem_data;
-	const FT2_1_3_Memory_Funcs   mem_funcs;
+	const FT_Memory_Funcs   mem_funcs;
 
 	FT2_1_3_CleanupStackRec      cleanup_stack;
 	FT_Pointer              meta_class;
 
-} FT2_1_3_MemoryRec;
+} FT_MemoryRec;
 
 
-#define  FT2_1_3_MEMORY(x)  ((FT2_1_3_Memory)(x))
+#define  FT2_1_3_MEMORY(x)  ((FT_Memory)(x))
 #define  FT2_1_3_MEMORY__ALLOC(x)       FT2_1_3_MEMORY(x)->mem_alloc
 #define  FT2_1_3_MEMORY__FREE(x)        FT2_1_3_MEMORY(x)->mem_free
 #define  FT2_1_3_MEMORY__REALLOC(x)     FT2_1_3_MEMORY(x)->mem_funcs->mem_realloc
@@ -166,7 +166,7 @@ typedef struct FT2_1_3_XHandlerRec_ {
 
 FT2_1_3_BASE( void )
 FT2_1_3_xhandler_enter( FT2_1_3_XHandler  xhandler,
-				   FT2_1_3_Memory    memory );
+				   FT_Memory    memory );
 
 FT2_1_3_BASE( void )
 FT2_1_3_xhandler_exit( FT2_1_3_XHandler  xhandler );

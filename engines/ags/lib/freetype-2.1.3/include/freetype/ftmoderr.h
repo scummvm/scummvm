@@ -78,7 +78,7 @@
 #endif
 
 #define FT2_1_3_MODERR_START_LIST  enum {
-#define FT2_1_3_MODERR_END_LIST    FT2_1_3_Mod_Err_Max };
+#define FT2_1_3_MODERR_END_LIST    FT_Mod_Err_Max };
 
 #ifdef __cplusplus
 #define FT2_1_3_NEED_EXTERN_C

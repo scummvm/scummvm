@@ -69,7 +69,7 @@ namespace FreeType213 {
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( void )
 tt_glyphzone_done( TT_GlyphZone  zone ) {
-	FT2_1_3_Memory  memory = zone->memory;
+	FT_Memory  memory = zone->memory;
 
 
 	FT2_1_3_FREE( zone->contours );
@@ -104,7 +104,7 @@ tt_glyphzone_done( TT_GlyphZone  zone ) {
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
-tt_glyphzone_new( FT2_1_3_Memory     memory,
+tt_glyphzone_new( FT_Memory     memory,
 				  FT_UShort     maxPoints,
 				  FT_Short      maxContours,
 				  TT_GlyphZone  zone ) {
@@ -153,7 +153,7 @@ tt_glyphzone_new( FT2_1_3_Memory     memory,
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
-tt_face_init( FT2_1_3_Stream      stream,
+tt_face_init( FT_Stream      stream,
 			  TT_Face        face,
 			  FT_Int         face_index,
 			  FT_Int         num_params,
@@ -164,7 +164,7 @@ tt_face_init( FT2_1_3_Stream      stream,
 
 
 	library = face->root.driver->root.library;
-	const void *sfnt_tmp = FT2_1_3_Get_Module_Interface(library, "sfnt");
+	const void *sfnt_tmp = FT_Get_Module_Interface(library, "sfnt");
 	sfnt = const_cast<SFNT_Service>(reinterpret_cast<const SFNT_Interface *>(sfnt_tmp));
 	if ( !sfnt )
 		goto Bad_Format;
@@ -240,8 +240,8 @@ Bad_Format:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( void )
 tt_face_done( TT_Face  face ) {
-	FT2_1_3_Memory     memory = face->root.memory;
-	FT2_1_3_Stream     stream = face->root.stream;
+	FT_Memory     memory = face->root.memory;
+	FT_Stream     stream = face->root.stream;
 
 	SFNT_Service  sfnt   = (SFNT_Service)face->sfnt;
 
@@ -298,7 +298,7 @@ tt_size_init( TT_Size  size ) {
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
 
 	TT_Face    face   = (TT_Face)size->root.face;
-	FT2_1_3_Memory  memory = face->root.memory;
+	FT_Memory  memory = face->root.memory;
 	FT_Int     i;
 
 	TT_ExecContext  exec;
@@ -469,7 +469,7 @@ tt_size_done( TT_Size  size ) {
 
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
 
-	FT2_1_3_Memory  memory = size->root.face->memory;
+	FT_Memory  memory = size->root.face->memory;
 
 
 	if ( size->debug ) {

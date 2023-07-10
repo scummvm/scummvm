@@ -65,7 +65,7 @@ typedef struct  PS_Table_FuncsRec_ {
 	FT_Error
 	(*init)( PS_Table   table,
 			 FT_Int     count,
-			 FT2_1_3_Memory  memory );
+			 FT_Memory  memory );
 
 	void
 	(*done)( PS_Table  table );
@@ -125,7 +125,7 @@ typedef struct  PS_TableRec_ {
 	FT_Byte**          elements;       /* addresses of table elements */
 	FT_Int*            lengths;        /* lengths of table elements   */
 
-	FT2_1_3_Memory          memory;
+	FT_Memory          memory;
 	PS_Table_FuncsRec  funcs;
 
 } PS_TableRec;
@@ -307,7 +307,7 @@ typedef struct  PS_Parser_FuncsRec_ {
 	(*init)( PS_Parser  parser,
 			 FT_Byte*   base,
 			 FT_Byte*   limit,
-			 FT2_1_3_Memory  memory );
+			 FT_Memory  memory );
 
 	void
 	(*done)( PS_Parser  parser );
@@ -384,7 +384,7 @@ typedef struct  PS_ParserRec_ {
 	FT_Byte*   base;
 	FT_Byte*   limit;
 	FT_Error   error;
-	FT2_1_3_Memory  memory;
+	FT_Memory  memory;
 
 	PS_Parser_FuncsRec  funcs;
 
@@ -510,7 +510,7 @@ typedef struct  T1_Builder_FuncsRec_ {
 /*    funcs        :: An array of function pointers for the builder.     */
 /*                                                                       */
 typedef struct  T1_BuilderRec_ {
-	FT2_1_3_Memory       memory;
+	FT_Memory       memory;
 	FT_Face         face;
 	FT_GlyphSlot    glyph;
 	FT_GlyphLoader  loader;

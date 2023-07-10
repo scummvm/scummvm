@@ -101,9 +101,9 @@ ft_raster1_render( FT_Renderer     render,
 	FT_BBox      cbox;
 	FT_UInt      width, height, pitch;
 	FT_Bitmap*   bitmap;
-	FT2_1_3_Memory    memory;
+	FT_Memory    memory;
 
-	FT2_1_3_Raster_Params  params;
+	FT_Raster_Params  params;
 
 
 	/* check glyph image format */
@@ -220,7 +220,7 @@ const FT_Renderer_Class  ft_raster1_renderer_class = {
 	(FT_Renderer_GetCBoxFunc)  ft_raster1_get_cbox,
 	(FT_Renderer_SetModeFunc)  ft_raster1_set_mode,
 
-	(FT2_1_3_Raster_Funcs*) const_cast<FT2_1_3_Raster_Funcs *>(&ft_standard_raster)
+	(FT_Raster_Funcs*) const_cast<FT_Raster_Funcs *>(&ft_standard_raster)
 };
 
 
@@ -252,7 +252,7 @@ const FT_Renderer_Class  ft_raster5_renderer_class = {
 	(FT_Renderer_GetCBoxFunc)  ft_raster1_get_cbox,
 	(FT_Renderer_SetModeFunc)  ft_raster1_set_mode,
 
-	(FT2_1_3_Raster_Funcs*)  const_cast<FT2_1_3_Raster_Funcs *>(&ft_standard_raster)
+	(FT_Raster_Funcs*)  const_cast<FT_Raster_Funcs *>(&ft_standard_raster)
 };
 
 } // End of namespace FreeType213

@@ -168,7 +168,7 @@ FT2_1_3_CALLBACK_TABLE_DEF const FT2_1_3_CMap_ClassRec  pcf_cmap_class = {
 
 FT2_1_3_CALLBACK_DEF( FT_Error )
 PCF_Face_Done( PCF_Face  face ) {
-	FT2_1_3_Memory  memory = FT2_1_3_FACE_MEMORY( face );
+	FT_Memory  memory = FT2_1_3_FACE_MEMORY( face );
 
 
 	FT2_1_3_FREE( face->encodings );
@@ -201,7 +201,7 @@ PCF_Face_Done( PCF_Face  face ) {
 
 	/* close gzip stream if any */
 	if ( face->root.stream == &face->gzip_stream ) {
-		FT2_1_3_Stream_Close( &face->gzip_stream );
+		FT_Stream_Close( &face->gzip_stream );
 		face->root.stream = face->gzip_source;
 	}
 
@@ -210,7 +210,7 @@ PCF_Face_Done( PCF_Face  face ) {
 
 
 FT2_1_3_CALLBACK_DEF( FT_Error )
-PCF_Face_Init( FT2_1_3_Stream      stream,
+PCF_Face_Init( FT_Stream      stream,
 			   PCF_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,
@@ -227,7 +227,7 @@ PCF_Face_Init( FT2_1_3_Stream      stream,
 		FT_Error  error2;
 
 		/* this didn't work, try gzip support !! */
-		error2 = FT2_1_3_Stream_OpenGzip( &face->gzip_stream, stream );
+		error2 = FT_Stream_OpenGzip( &face->gzip_stream, stream );
 		if ( error2 == FT2_1_3_Err_Unimplemented_Feature )
 			goto Fail;
 
@@ -330,9 +330,9 @@ PCF_Glyph_Load( FT_GlyphSlot  slot,
 				FT_UInt       glyph_index,
 				FT_Int32      load_flags ) {
 	PCF_Face    face   = (PCF_Face)FT2_1_3_SIZE_FACE( size );
-	FT2_1_3_Stream   stream = face->root.stream;
+	FT_Stream   stream = face->root.stream;
 	FT_Error    error  = FT2_1_3_Err_Ok;
-	FT2_1_3_Memory   memory = FT2_1_3_FACE( face )->memory;
+	FT_Memory   memory = FT2_1_3_FACE( face )->memory;
 	FT_Bitmap*  bitmap = &slot->bitmap;
 	PCF_Metric  metric;
 	int         bytes;

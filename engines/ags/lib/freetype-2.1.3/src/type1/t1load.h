@@ -59,7 +59,7 @@ T1_Open_Face( T1_Face  face );
 
 FT2_1_3_LOCAL( FT_Error )
 T1_Get_Multi_Master( T1_Face           face,
-					 FT2_1_3_Multi_Master*  master );
+					 FT_Multi_Master*  master );
 
 FT2_1_3_LOCAL( FT_Error )
 T1_Set_MM_Blend( T1_Face    face,

@@ -210,7 +210,7 @@ typedef struct  PFR_KernPairRec_ {
 /************************************************************************/
 
 typedef struct  PFR_PhyFontRec_ {
-	FT2_1_3_Memory          memory;
+	FT_Memory          memory;
 	FT_UInt32          offset;
 
 	FT_UInt            font_ref_number;

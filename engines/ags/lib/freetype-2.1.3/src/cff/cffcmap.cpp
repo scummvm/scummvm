@@ -135,7 +135,7 @@ cff_cmap_unicode_init( CFF_CMapUnicode  cmap ) {
 	FT_Error         error;
 	FT_UInt          count;
 	TT_Face          face    = (TT_Face)FT2_1_3_CMAP_FACE( cmap );
-	FT2_1_3_Memory        memory  = FT2_1_3_FACE_MEMORY( face );
+	FT_Memory        memory  = FT2_1_3_FACE_MEMORY( face );
 	CFF_Font         cff     = (CFF_Font)face->extra.data;
 	CFF_Charset      charset = &cff->charset;
 	PSNames_Service  psnames = (PSNames_Service)cff->psnames;
@@ -204,7 +204,7 @@ cff_cmap_unicode_init( CFF_CMapUnicode  cmap ) {
 FT2_1_3_CALLBACK_DEF( void )
 cff_cmap_unicode_done( CFF_CMapUnicode  cmap ) {
 	FT_Face    face   = FT2_1_3_CMAP_FACE( cmap );
-	FT2_1_3_Memory  memory = FT2_1_3_FACE_MEMORY( face );
+	FT_Memory  memory = FT2_1_3_FACE_MEMORY( face );
 
 
 	FT2_1_3_FREE( cmap->pairs );

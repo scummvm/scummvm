@@ -56,7 +56,7 @@ typedef struct  PFR_SlotRec_ {
 
 
 FT2_1_3_LOCAL( FT_Error )
-pfr_face_init( FT2_1_3_Stream      stream,
+pfr_face_init( FT_Stream      stream,
 			   PFR_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,

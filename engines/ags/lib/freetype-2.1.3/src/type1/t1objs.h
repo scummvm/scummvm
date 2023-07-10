@@ -140,7 +140,7 @@ typedef struct  T1_GlyphSlotRec_ {
 
 
 FT2_1_3_LOCAL( FT_Error )
-T1_Face_Init( FT2_1_3_Stream      stream,
+T1_Face_Init( FT_Stream      stream,
 			  T1_Face        face,
 			  FT_Int         face_index,
 			  FT_Int         num_params,

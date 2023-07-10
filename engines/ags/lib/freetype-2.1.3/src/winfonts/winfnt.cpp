@@ -112,7 +112,7 @@ const FT2_1_3_Frame_Field  winfnt_header_fields[] = {
 
 static void
 fnt_font_done( FNT_Font   font,
-			   FT2_1_3_Stream  stream ) {
+			   FT_Stream  stream ) {
 	if ( font->fnt_frame )
 		FT2_1_3_FRAME_RELEASE( font->fnt_frame );
 
@@ -123,7 +123,7 @@ fnt_font_done( FNT_Font   font,
 
 static FT_Error
 fnt_font_load( FNT_Font   font,
-			   FT2_1_3_Stream  stream ) {
+			   FT_Stream  stream ) {
 	FT_Error       error;
 	WinFNT_Header  header = &font->header;
 
@@ -163,8 +163,8 @@ Exit:
 
 static void
 fnt_face_done_fonts( FNT_Face  face ) {
-	FT2_1_3_Memory  memory = FT2_1_3_FACE( face )->memory;
-	FT2_1_3_Stream  stream = FT2_1_3_FACE( face )->stream;
+	FT_Memory  memory = FT2_1_3_FACE( face )->memory;
+	FT_Stream  stream = FT2_1_3_FACE( face )->stream;
 	FNT_Font   cur    = face->fonts;
 	FNT_Font   limit  = cur + face->num_fonts;
 
@@ -180,8 +180,8 @@ fnt_face_done_fonts( FNT_Face  face ) {
 static FT_Error
 fnt_face_get_dll_fonts( FNT_Face  face ) {
 	FT_Error         error;
-	FT2_1_3_Stream        stream = FT2_1_3_FACE( face )->stream;
-	FT2_1_3_Memory        memory = FT2_1_3_FACE( face )->memory;
+	FT_Stream        stream = FT2_1_3_FACE( face )->stream;
+	FT_Memory        memory = FT2_1_3_FACE( face )->memory;
 	WinMZ_HeaderRec  mz_header;
 
 
@@ -371,7 +371,7 @@ static FT2_1_3_CMap_Class  fnt_cmap_class = &fnt_cmap_class_rec;
 
 static void
 FNT_Face_Done( FNT_Face  face ) {
-	FT2_1_3_Memory  memory = FT2_1_3_FACE_MEMORY( face );
+	FT_Memory  memory = FT2_1_3_FACE_MEMORY( face );
 
 
 	fnt_face_done_fonts( face );
@@ -382,13 +382,13 @@ FNT_Face_Done( FNT_Face  face ) {
 
 
 static FT_Error
-FNT_Face_Init( FT2_1_3_Stream      stream,
+FNT_Face_Init( FT_Stream      stream,
 			   FNT_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,
 			   FT_Parameter*  params ) {
 	FT_Error   error;
-	FT2_1_3_Memory  memory = FT2_1_3_FACE_MEMORY( face );
+	FT_Memory  memory = FT2_1_3_FACE_MEMORY( face );
 
 	FT2_1_3_UNUSED( num_params );
 	FT2_1_3_UNUSED( params );
@@ -572,7 +572,7 @@ FNT_Load_Glyph( FT_GlyphSlot  slot,
 
 	/* allocate and build bitmap */
 	{
-		FT2_1_3_Memory  memory = FT2_1_3_FACE_MEMORY( slot->face );
+		FT_Memory  memory = FT2_1_3_FACE_MEMORY( slot->face );
 		FT_Int     pitch  = ( bitmap->width + 7 ) >> 3;
 		FT_Byte*   column;
 		FT_Byte*   write;

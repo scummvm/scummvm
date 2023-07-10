@@ -32,7 +32,7 @@ FT2_1_3_BEGIN_HEADER
 FT2_1_3_LOCAL( FT_Error )
 tt_face_load_charmap( TT_Face       face,
 					  TT_CMapTable  cmap,
-					  FT2_1_3_Stream     input );
+					  FT_Stream     input );
 
 FT2_1_3_LOCAL( FT_Error )
 tt_face_free_charmap( TT_Face       face,

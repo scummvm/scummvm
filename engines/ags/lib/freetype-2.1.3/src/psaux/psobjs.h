@@ -51,7 +51,7 @@ const T1_Builder_FuncsRec  t1_builder_funcs;
 FT2_1_3_LOCAL( FT_Error )
 ps_table_new( PS_Table   table,
 			  FT_Int     count,
-			  FT2_1_3_Memory  memory );
+			  FT_Memory  memory );
 
 FT2_1_3_LOCAL( FT_Error )
 ps_table_add( PS_Table  table,
@@ -131,7 +131,7 @@ FT2_1_3_LOCAL( void )
 ps_parser_init( PS_Parser  parser,
 				FT_Byte*   base,
 				FT_Byte*   limit,
-				FT2_1_3_Memory  memory );
+				FT_Memory  memory );
 
 FT2_1_3_LOCAL( void )
 ps_parser_done( PS_Parser  parser );

@@ -49,7 +49,7 @@ namespace FreeType213 {
 /* documentation is in ftmemory.h */
 
 FT2_1_3_BASE_DEF( FT_Error )
-FT2_1_3_Alloc( FT2_1_3_Memory  memory,
+FT2_1_3_Alloc( FT_Memory  memory,
 		  FT_Long    size,
 		  void*     *P ) {
 	FT2_1_3_ASSERT( P != 0 );
@@ -78,7 +78,7 @@ FT2_1_3_Alloc( FT2_1_3_Memory  memory,
 /* documentation is in ftmemory.h */
 
 FT2_1_3_BASE_DEF( FT_Error )
-FT2_1_3_Realloc( FT2_1_3_Memory  memory,
+FT2_1_3_Realloc( FT_Memory  memory,
 			FT_Long    current,
 			FT_Long    size,
 			void**     P ) {
@@ -118,7 +118,7 @@ Fail:
 /* documentation is in ftmemory.h */
 
 FT2_1_3_BASE_DEF( void )
-FT2_1_3_Free( FT2_1_3_Memory  memory,
+FT2_1_3_Free( FT_Memory  memory,
 		 void**     P ) {
 	FT2_1_3_TRACE7(( "FT2_1_3_Free:" ));
 	FT2_1_3_TRACE7(( " Freeing block 0x%08p, ref 0x%08p\n",
@@ -288,7 +288,7 @@ FT_List_Iterate( FT_List            list,
 FT2_1_3_EXPORT_DEF( void )
 FT_List_Finalize( FT_List             list,
 				  FT_List_Destructor  destroy,
-				  FT2_1_3_Memory           memory,
+				  FT_Memory           memory,
 				  void*               user ) {
 	FT_ListNode  cur;
 

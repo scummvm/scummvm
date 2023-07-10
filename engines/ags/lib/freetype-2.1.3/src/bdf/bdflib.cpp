@@ -210,7 +210,7 @@ hash_bucket( char*       key,
 
 static FT_Error
 hash_rehash( hashtable*  ht,
-			 FT2_1_3_Memory   memory ) {
+			 FT_Memory   memory ) {
 	hashnode*  obp = ht->table, *bp, *nbp;
 	int        i, sz = ht->size;
 	FT_Error   error = FT2_1_3_Err_Ok;
@@ -238,7 +238,7 @@ Exit:
 
 static FT_Error
 hash_init( hashtable*  ht,
-		   FT2_1_3_Memory   memory ) {
+		   FT_Memory   memory ) {
 	int       sz = INITIAL_HT_SIZE;
 	FT_Error  error = FT2_1_3_Err_Ok;
 
@@ -258,7 +258,7 @@ Exit:
 
 static void
 hash_free( hashtable*  ht,
-		   FT2_1_3_Memory   memory ) {
+		   FT_Memory   memory ) {
 	if ( ht != 0 ) {
 		int        i, sz = ht->size;
 		hashnode*  bp = ht->table;
@@ -276,7 +276,7 @@ static FT_Error
 hash_insert( char*       key,
 			 void*       data,
 			 hashtable*  ht,
-			 FT2_1_3_Memory   memory ) {
+			 FT_Memory   memory ) {
 	hashnode  nn, *bp = hash_bucket( key, ht );
 	FT_Error  error = FT2_1_3_Err_Ok;
 
@@ -365,7 +365,7 @@ typedef struct  _bdf_parse_t_ {
 	unsigned long   have[2048];
 	_bdf_list_t     list;
 
-	FT2_1_3_Memory       memory;
+	FT_Memory       memory;
 
 } _bdf_parse_t;
 
@@ -387,7 +387,7 @@ _bdf_split( char*          separators,
 			char*          line,
 			unsigned long  linelen,
 			_bdf_list_t*   list,
-			FT2_1_3_Memory      memory ) {
+			FT_Memory      memory ) {
 	int       mult, final_empty;
 	char      *sp, *ep, *end;
 	char      seps[32];
@@ -555,7 +555,7 @@ _bdf_join( int             c,
 
 /* High speed file reader that passes each line to a callback. */
 static FT_Error
-bdf_internal_readstream( FT2_1_3_Stream  stream,
+bdf_internal_readstream( FT_Stream  stream,
 						 char*      buffer,
 						 int        count,
 						 int       *read_bytes ) {
@@ -593,7 +593,7 @@ Exit:
 
 
 static FT_Error
-_bdf_readstream( FT2_1_3_Stream         stream,
+_bdf_readstream( FT_Stream         stream,
 				 _bdf_line_func_t  callback,
 				 void*             client_data,
 				 unsigned long    *lno ) {
@@ -602,7 +602,7 @@ _bdf_readstream( FT2_1_3_Stream         stream,
 	int               n, /* res, */ done, refill, bytes, hold;
 	char              *ls, *le, *pp, *pe, *hp;
 	char              *buf = 0;
-	FT2_1_3_Memory         memory = stream->memory;
+	FT_Memory         memory = stream->memory;
 	FT_Error          error = FT2_1_3_Err_Ok;
 
 
@@ -903,7 +903,7 @@ bdf_create_property( char*        name,
 					 bdf_font_t*  font ) {
 	unsigned long    n;
 	bdf_property_t*  p;
-	FT2_1_3_Memory        memory = font->memory;
+	FT_Memory        memory = font->memory;
 	FT_Error         error = FT2_1_3_Err_Ok;
 
 
@@ -1035,7 +1035,7 @@ _bdf_add_comment( bdf_font_t*    font,
 				  char*          comment,
 				  unsigned long  len ) {
 	char*      cp;
-	FT2_1_3_Memory  memory = font->memory;
+	FT_Memory  memory = font->memory;
 	FT_Error   error = FT2_1_3_Err_Ok;
 
 
@@ -1068,7 +1068,7 @@ _bdf_set_default_spacing( bdf_font_t*     font,
 	unsigned long  len;
 	char           name[128];
 	_bdf_list_t    list;
-	FT2_1_3_Memory      memory;
+	FT_Memory      memory;
 	FT_Error       error = FT2_1_3_Err_Ok;
 
 
@@ -1185,7 +1185,7 @@ _bdf_add_property( bdf_font_t*  font,
 	hashnode        hn;
 	int             len;
 	bdf_property_t  *prop, *fp;
-	FT2_1_3_Memory       memory = font->memory;
+	FT_Memory       memory = font->memory;
 	FT_Error        error = FT2_1_3_Err_Ok;
 
 
@@ -1352,7 +1352,7 @@ _bdf_parse_glyphs( char*          line,
 	bdf_glyph_t*       glyph;
 	bdf_font_t*        font;
 
-	FT2_1_3_Memory          memory;
+	FT_Memory          memory;
 	FT_Error           error = FT2_1_3_Err_Ok;
 
 	FT2_1_3_UNUSED( lineno );        /* only used in debug mode */
@@ -1729,7 +1729,7 @@ _bdf_parse_properties( char*          line,
 	char*              name;
 	char*              value;
 	char               nbuf[128];
-	FT2_1_3_Memory          memory;
+	FT_Memory          memory;
 	FT_Error           error = FT2_1_3_Err_Ok;
 
 	FT2_1_3_UNUSED( lineno );
@@ -1826,7 +1826,7 @@ _bdf_parse_start( char*          line,
 	bdf_font_t*        font;
 	char               *s;
 
-	FT2_1_3_Memory          memory = NULL;
+	FT_Memory          memory = NULL;
 	FT_Error           error  = FT2_1_3_Err_Ok;
 
 	FT2_1_3_UNUSED( lineno );            /* only used in debug mode */
@@ -2038,14 +2038,14 @@ Exit:
 
 
 FT2_1_3_LOCAL_DEF( FT_Error )
-bdf_load_font( FT2_1_3_Stream       stream,
-			   FT2_1_3_Memory       extmemory,
+bdf_load_font( FT_Stream       stream,
+			   FT_Memory       extmemory,
 			   bdf_options_t*  opts,
 			   bdf_font_t*    *font ) {
 	unsigned long  lineno;
 	_bdf_parse_t   *p;
 
-	FT2_1_3_Memory      memory = extmemory;
+	FT_Memory      memory = extmemory;
 	FT_Error       error  = FT2_1_3_Err_Ok;
 
 
@@ -2170,7 +2170,7 @@ bdf_free_font( bdf_font_t*  font ) {
 	bdf_property_t*  prop;
 	unsigned long    i;
 	bdf_glyph_t*     glyphs;
-	FT2_1_3_Memory        memory;
+	FT_Memory        memory;
 
 
 	if ( font == 0 )

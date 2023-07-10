@@ -53,7 +53,7 @@ FT2_1_3_BEGIN_HEADER
 /*    bytes       :: If the index is loaded in memory, its bytes.        */
 /*                                                                       */
 typedef struct  CFF_IndexRec_ {
-	FT2_1_3_Stream  stream;
+	FT_Stream  stream;
 	FT_UInt    count;
 	FT_Byte    off_size;
 	FT_ULong   data_offset;
@@ -199,8 +199,8 @@ typedef struct  CFF_SubFontRec_ {
 
 
 typedef struct  CFF_FontRec_ {
-	FT2_1_3_Stream        stream;
-	FT2_1_3_Memory        memory;
+	FT_Stream        stream;
+	FT_Memory        memory;
 	FT_UInt          num_faces;
 	FT_UInt          num_glyphs;
 

@@ -45,10 +45,10 @@ cid_load_glyph( T1_Decoder  decoder,
 	CID_FaceInfo  cid  = &face->cid;
 	FT_Byte*      p;
 	FT_UInt       fd_select;
-	FT2_1_3_Stream     stream = face->root.stream;
+	FT_Stream     stream = face->root.stream;
 	FT_Error      error  = 0;
 	FT_Byte*      charstring = 0;
-	FT2_1_3_Memory     memory = face->root.memory;
+	FT_Memory     memory = face->root.memory;
 	FT_UInt       glyph_length = 0;
 
 
@@ -161,7 +161,7 @@ cid_load_glyph( T1_Decoder  decoder,
 			face->root.internal->incremental_interface   &&
 			face->root.internal->incremental_interface->funcs->get_glyph_metrics ) {
 		FT_Bool                    found = FALSE;
-		FT2_1_3_Incremental_MetricsRec  metrics;
+		FT_Incremental_MetricsRec  metrics;
 
 
 		error = face->root.internal->incremental_interface->funcs->get_glyph_metrics(

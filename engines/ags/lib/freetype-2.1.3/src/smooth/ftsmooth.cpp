@@ -103,9 +103,9 @@ ft_smooth_render_generic( FT_Renderer     render,
 	FT_BBox      cbox;
 	FT_UInt      width, height, pitch;
 	FT_Bitmap*   bitmap;
-	FT2_1_3_Memory    memory;
+	FT_Memory    memory;
 
-	FT2_1_3_Raster_Params  params;
+	FT_Raster_Params  params;
 
 
 	/* check glyph image format */
@@ -294,7 +294,7 @@ const FT_Renderer_Class  ft_smooth_renderer_class = {
 	(FT_Renderer_GetCBoxFunc)  ft_smooth_get_cbox,
 	(FT_Renderer_SetModeFunc)  ft_smooth_set_mode,
 
-	(FT2_1_3_Raster_Funcs*) const_cast<FT2_1_3_Raster_Funcs *>(&ft_grays_raster)
+	(FT_Raster_Funcs*) const_cast<FT_Raster_Funcs *>(&ft_grays_raster)
 };
 
 
@@ -322,7 +322,7 @@ const FT_Renderer_Class  ft_smooth_lcd_renderer_class = {
 	(FT_Renderer_GetCBoxFunc)  ft_smooth_get_cbox,
 	(FT_Renderer_SetModeFunc)  ft_smooth_set_mode,
 
-	(FT2_1_3_Raster_Funcs*) const_cast<FT2_1_3_Raster_Funcs *>(&ft_grays_raster)
+	(FT_Raster_Funcs*) const_cast<FT_Raster_Funcs *>(&ft_grays_raster)
 };
 
 
@@ -351,7 +351,7 @@ const FT_Renderer_Class  ft_smooth_lcdv_renderer_class = {
 	(FT_Renderer_GetCBoxFunc)  ft_smooth_get_cbox,
 	(FT_Renderer_SetModeFunc)  ft_smooth_set_mode,
 
-	(FT2_1_3_Raster_Funcs*) const_cast<FT2_1_3_Raster_Funcs *>(&ft_grays_raster)
+	(FT_Raster_Funcs*) const_cast<FT_Raster_Funcs *>(&ft_grays_raster)
 };
 
 } // End of namespace FreeType213

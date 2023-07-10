@@ -44,7 +44,7 @@ typedef struct FT2_1_3_CleanupStackRec_ {
 	FT2_1_3_CleanupItem     limit;
 	FT2_1_3_CleanupChunk    chunk;
 	FT2_1_3_CleanupChunkRec chunk_0;  /* avoids stupid dynamic allocation */
-	FT2_1_3_Memory          memory;
+	FT_Memory          memory;
 
 } FT2_1_3_CleanupStackRec, *FT2_1_3_CleanupStack;
 
@@ -64,7 +64,7 @@ FT2_1_3_cleanup_stack_peek( FT2_1_3_CleanupStack  stack );
 
 FT2_1_3_BASE( void )
 FT2_1_3_xhandler_enter( FT2_1_3_XHandler  xhandler,
-				   FT2_1_3_Memory    memory );
+				   FT_Memory    memory );
 
 FT2_1_3_BASE( void )
 FT2_1_3_xhandler_exit( FT2_1_3_XHandler  xhandler );

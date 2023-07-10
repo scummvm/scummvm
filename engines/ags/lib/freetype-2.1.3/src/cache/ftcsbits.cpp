@@ -80,7 +80,7 @@ typedef struct  FTC_SBitFamilyRec_ {
 static FT_Error
 ftc_sbit_copy_bitmap( FTC_SBit    sbit,
 					  FT_Bitmap*  bitmap,
-					  FT2_1_3_Memory   memory ) {
+					  FT_Memory   memory ) {
 	FT_Error  error;
 	FT_Int    pitch = bitmap->pitch;
 	FT_ULong  size;
@@ -103,7 +103,7 @@ ftc_sbit_node_done( FTC_SBitNode  snode,
 					FTC_Cache     cache ) {
 	FTC_SBit   sbit   = snode->sbits;
 	FT_UInt    count  = FTC_GLYPH_NODE( snode )->item_count;
-	FT2_1_3_Memory  memory = cache->memory;
+	FT_Memory  memory = cache->memory;
 
 
 	for ( ; count > 0; sbit++, count-- )
@@ -121,7 +121,7 @@ ftc_sbit_node_load( FTC_SBitNode    snode,
 					FT_ULong       *asize ) {
 	FT_Error       error;
 	FTC_GlyphNode  gnode = FTC_GLYPH_NODE( snode );
-	FT2_1_3_Memory      memory;
+	FT_Memory      memory;
 	FT_Face        face;
 	FT_Size        size;
 	FTC_SBit       sbit;

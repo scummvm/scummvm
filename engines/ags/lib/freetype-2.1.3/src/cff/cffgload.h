@@ -89,7 +89,7 @@ FT2_1_3_BEGIN_HEADER
 /*    hints_globals :: Auxiliary pointer for hinting.                    */
 /*                                                                       */
 typedef struct  CFF_Builder_ {
-	FT2_1_3_Memory       memory;
+	FT_Memory       memory;
 	TT_Face         face;
 	CFF_GlyphSlot   glyph;
 	FT_GlyphLoader  loader;

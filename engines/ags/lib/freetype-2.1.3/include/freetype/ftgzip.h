@@ -45,7 +45,7 @@ FT2_1_3_BEGIN_HEADER
 
 /************************************************************************
  *
- * @type: FT2_1_3_Stream_OpenGzip
+ * @type: FT_Stream_OpenGzip
  *
  * @description:
  *   open a new stream to parse gzip-compressed font files. This is
@@ -62,8 +62,8 @@ FT2_1_3_BEGIN_HEADER
  * @note:
  *   the source stream must be opened _before_ calling this function.
  *
- *   calling @FT2_1_3_Stream_Close on the new stream will *not* call
- *   @FT2_1_3_Stream_Close on the source stream. None of the stream objects
+ *   calling @FT_Stream_Close on the new stream will *not* call
+ *   @FT_Stream_Close on the source stream. None of the stream objects
  *   will be released to the heap.
  *
  *   the stream implementation is very basic, and resets the decompression
@@ -79,8 +79,8 @@ FT2_1_3_BEGIN_HEADER
  *   FreeType was not compiled with zlib support.
  */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Stream_OpenGzip( FT2_1_3_Stream    stream,
-					FT2_1_3_Stream    source );
+FT_Stream_OpenGzip( FT_Stream    stream,
+					FT_Stream    source );
 
 /* */
 

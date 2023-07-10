@@ -549,19 +549,19 @@ typedef enum {
 
 	sfnt_max   /* don't remove */
 
-} FT2_1_3_Sfnt_Tag;
+} FT_Sfnt_Tag;
 
 
 /* internal use only */
 typedef void*
-(*FT2_1_3_Get_Sfnt_Table_Func)( FT_Face      face,
-						   FT2_1_3_Sfnt_Tag  tag );
+(*FT_Get_Sfnt_Table_Func)( FT_Face      face,
+						   FT_Sfnt_Tag  tag );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Get_Sfnt_Table                                                  */
+/*    FT_Get_Sfnt_Table                                                  */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Returns a pointer to a given SFNT table within a face.             */
@@ -580,12 +580,12 @@ typedef void*
 /*    The table is owned by the face object and disappears with it.      */
 /*                                                                       */
 /*    This function is only useful to access SFNT tables that are loaded */
-/*    by the sfnt/truetype/opentype drivers.  See FT2_1_3_Sfnt_Tag for a      */
+/*    by the sfnt/truetype/opentype drivers.  See FT_Sfnt_Tag for a      */
 /*    list.                                                              */
 /*                                                                       */
 FT2_1_3_EXPORT( void* )
-FT2_1_3_Get_Sfnt_Table( FT_Face      face,
-				   FT2_1_3_Sfnt_Tag  tag );
+FT_Get_Sfnt_Table( FT_Face      face,
+				   FT_Sfnt_Tag  tag );
 
 
 /* */

@@ -34,7 +34,7 @@ T42_Open_Face( T42_Face  face ) {
 	T42_LoaderRec  loader;
 	T42_Parser     parser;
 	T1_Font        type1 = &face->type1;
-	FT2_1_3_Memory      memory = face->root.memory;
+	FT_Memory      memory = face->root.memory;
 	FT_Error       error;
 
 	PSAux_Service psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));
@@ -137,7 +137,7 @@ Exit:
 
 
 FT2_1_3_LOCAL_DEF( FT_Error )
-T42_Face_Init( FT2_1_3_Stream      stream,
+T42_Face_Init( FT_Stream      stream,
 			   T42_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,
@@ -156,10 +156,10 @@ T42_Face_Init( FT2_1_3_Stream      stream,
 	face->ttf_face       = NULL;
 	face->root.num_faces = 1;
 
-	face->psnames = FT2_1_3_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psnames");
+	face->psnames = FT_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psnames");
 	psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(face->psnames));
 
-	face->psaux = FT2_1_3_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psaux");
+	face->psaux = FT_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psaux");
 	psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_Interface *>(face->psaux));
 
 	/* open the tokenizer, this will also check the font format */
@@ -234,7 +234,7 @@ T42_Face_Init( FT2_1_3_Stream      stream,
 	if ( error )
 		goto Exit;
 
-	FT2_1_3_Done_Size( face->ttf_face->size );
+	FT_Done_Size( face->ttf_face->size );
 
 	/* Ignore info in FontInfo dictionary and use the info from the  */
 	/* loaded TTF font.  The PostScript interpreter also ignores it. */
@@ -333,7 +333,7 @@ FT2_1_3_LOCAL_DEF( void )
 T42_Face_Done( T42_Face  face ) {
 	T1_Font      type1;
 	PS_FontInfo  info;
-	FT2_1_3_Memory    memory;
+	FT_Memory    memory;
 
 
 	if ( face ) {
@@ -401,7 +401,7 @@ T42_Driver_Init( T42_Driver  driver ) {
 	FT_Module  ttmodule;
 
 
-	ttmodule = FT2_1_3_Get_Module( FT2_1_3_MODULE(driver)->library, "truetype" );
+	ttmodule = FT_Get_Module( FT2_1_3_MODULE(driver)->library, "truetype" );
 	driver->ttclazz = (FT_Driver_Class)ttmodule->clazz;
 
 	return FT2_1_3_Err_Ok;
@@ -424,10 +424,10 @@ T42_Size_Init( T42_Size  size ) {
 	FT_Error  error   = FT2_1_3_Err_Ok;
 
 
-	error = FT2_1_3_New_Size( t42face->ttf_face, &ttsize );
+	error = FT_New_Size( t42face->ttf_face, &ttsize );
 	size->ttsize = ttsize;
 
-	FT2_1_3_Activate_Size( ttsize );
+	FT_Activate_Size( ttsize );
 
 	return error;
 }
@@ -442,7 +442,7 @@ T42_Size_Done( T42_Size  size ) {
 
 	node = FT_List_Find( &t42face->ttf_face->sizes_list, size->ttsize );
 	if ( node ) {
-		FT2_1_3_Done_Size( size->ttsize );
+		FT_Done_Size( size->ttsize );
 		size->ttsize = NULL;
 	}
 }
@@ -477,7 +477,7 @@ T42_GlyphSlot_Done( T42_GlyphSlot slot ) {
 
 	while ( cur ) {
 		if ( cur == slot->ttslot ) {
-			FT2_1_3_Done_GlyphSlot( slot->ttslot );
+			FT_Done_GlyphSlot( slot->ttslot );
 			break;
 		}
 
@@ -497,7 +497,7 @@ T42_Size_SetChars( T42_Size    size,
 	T42_Face  t42face = (T42_Face)face;
 
 
-	FT2_1_3_Activate_Size(size->ttsize);
+	FT_Activate_Size(size->ttsize);
 
 	return FT2_1_3_Set_Char_Size( t42face->ttf_face,
 							 char_width,
@@ -515,7 +515,7 @@ T42_Size_SetPixels( T42_Size  size,
 	T42_Face  t42face = (T42_Face)face;
 
 
-	FT2_1_3_Activate_Size(size->ttsize);
+	FT_Activate_Size(size->ttsize);
 
 	return FT2_1_3_Set_Pixel_Sizes( t42face->ttf_face,
 							   pixel_width,
@@ -527,7 +527,7 @@ static void
 ft_glyphslot_clear( FT_GlyphSlot  slot ) {
 	/* free bitmap if needed */
 	if ( slot->flags & FT2_1_3_GLYPH_OWN_BITMAP ) {
-		FT2_1_3_Memory  memory = FT2_1_3_FACE_MEMORY( slot->face );
+		FT_Memory  memory = FT2_1_3_FACE_MEMORY( slot->face );
 
 
 		FT2_1_3_FREE( slot->bitmap.buffer );

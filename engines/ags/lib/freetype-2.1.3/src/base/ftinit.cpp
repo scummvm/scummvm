@@ -20,7 +20,7 @@
 /*  The purpose of this file is to implement the following two           */
 /*  functions:                                                           */
 /*                                                                       */
-/*  FT2_1_3_Add_Default_Modules():                                            */
+/*  FT_Add_Default_Modules():                                            */
 /*     This function is used to add the set of default modules to a      */
 /*     fresh new library object.  The set is taken from the header file  */
 /*     `freetype/config/ftmodule.h'.  See the document `FreeType 2.0     */
@@ -79,16 +79,16 @@ const FT_Module_Class*  const ft_default_modules[] = {
 /* documentation is in ftmodule.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_Add_Default_Modules( FT_Library  library ) {
+FT_Add_Default_Modules( FT_Library  library ) {
 	FT_Error                       error;
 	const FT_Module_Class* const*  cur;
 
 
-	/* test for valid `library' delayed to FT2_1_3_Add_Module() */
+	/* test for valid `library' delayed to FT_Add_Module() */
 
 	cur = ft_default_modules;
 	while ( *cur ) {
-		error = FT2_1_3_Add_Module( library, *cur );
+		error = FT_Add_Module( library, *cur );
 		/* notify errors, but don't stop */
 		if ( error ) {
 			FT2_1_3_ERROR(( "FT2_1_3_Add_Default_Module: Cannot install `%s', error = 0x%x\n",
@@ -104,7 +104,7 @@ FT2_1_3_Add_Default_Modules( FT_Library  library ) {
 FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_Init_FreeType( FT_Library  *alibrary ) {
 	FT_Error   error;
-	FT2_1_3_Memory  memory;
+	FT_Memory  memory;
 
 
 	/* First of all, allocate a new system object -- this function is part */
@@ -119,13 +119,13 @@ FT2_1_3_Init_FreeType( FT_Library  *alibrary ) {
 	/* build a library out of it, then fill it with the set of */
 	/* default drivers.                                        */
 
-	error = FT2_1_3_New_Library( memory, alibrary );
+	error = FT_New_Library( memory, alibrary );
 	if ( !error ) {
 		(*alibrary)->version_major = FREETYPE213_MAJOR;
 		(*alibrary)->version_minor = FREETYPE213_MINOR;
 		(*alibrary)->version_patch = FREETYPE213_PATCH;
 
-		FT2_1_3_Add_Default_Modules( *alibrary );
+		FT_Add_Default_Modules( *alibrary );
 	}
 
 	return error;
@@ -137,11 +137,11 @@ FT2_1_3_Init_FreeType( FT_Library  *alibrary ) {
 FT2_1_3_EXPORT_DEF( FT_Error )
 FT2_1_3_Done_FreeType( FT_Library  library ) {
 	if ( library ) {
-		FT2_1_3_Memory  memory = library->memory;
+		FT_Memory  memory = library->memory;
 
 
 		/* Discard the library object */
-		FT2_1_3_Done_Library( library );
+		FT_Done_Library( library );
 
 		/* discard memory manager */
 		FT2_1_3_Done_Memory( memory );

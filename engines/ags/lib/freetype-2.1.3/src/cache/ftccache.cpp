@@ -187,7 +187,7 @@ ftc_node_hash_unlink( FTC_Node   node,
 		FT2_1_3_ASSERT( old_index >= FTC_HASH_INITIAL_SIZE );
 
 		if ( p == 0 ) {
-			FT2_1_3_Memory  memory = cache->memory;
+			FT_Memory  memory = cache->memory;
 
 
 			cache->mask >>= 1;
@@ -264,7 +264,7 @@ ftc_node_hash_link( FTC_Node   node,
 		cache->slack += FTC_HASH_MAX_LOAD;
 
 		if ( p >= mask ) {
-			FT2_1_3_Memory  memory = cache->memory;
+			FT_Memory  memory = cache->memory;
 
 
 			if ( FT2_1_3_RENEW_ARRAY( cache->buckets,
@@ -290,7 +290,7 @@ Exit:
 FT2_1_3_EXPORT_DEF( void )
 ftc_node_destroy( FTC_Node     node,
 				  FTC_Manager  manager ) {
-	FT2_1_3_Memory        memory  = manager->library->memory;
+	FT_Memory        memory  = manager->library->memory;
 	FTC_Cache        cache;
 	FTC_FamilyEntry  entry;
 	FTC_Cache_Class  clazz;
@@ -352,7 +352,7 @@ ftc_family_init( FTC_Family  family,
 				 FTC_Cache   cache ) {
 	FT_Error         error;
 	FTC_Manager      manager = cache->manager;
-	FT2_1_3_Memory        memory  = manager->library->memory;
+	FT_Memory        memory  = manager->library->memory;
 	FTC_FamilyEntry  entry;
 
 
@@ -395,7 +395,7 @@ ftc_family_done( FTC_Family  family ) {
 
 FT2_1_3_EXPORT_DEF( FT_Error )
 ftc_cache_init( FTC_Cache  cache ) {
-	FT2_1_3_Memory        memory = cache->memory;
+	FT_Memory        memory = cache->memory;
 	FTC_Cache_Class  clazz  = cache->clazz;
 	FT_Error         error;
 
@@ -439,7 +439,7 @@ Exit:
 FT2_1_3_EXPORT_DEF( void )
 ftc_cache_clear( FTC_Cache  cache ) {
 	if ( cache ) {
-		FT2_1_3_Memory        memory  = cache->memory;
+		FT_Memory        memory  = cache->memory;
 		FTC_Cache_Class  clazz   = cache->clazz;
 		FTC_Manager      manager = cache->manager;
 		FT2_1_3_UFast         i;
@@ -482,7 +482,7 @@ ftc_cache_clear( FTC_Cache  cache ) {
 FT2_1_3_EXPORT_DEF( void )
 ftc_cache_done( FTC_Cache  cache ) {
 	if ( cache ) {
-		FT2_1_3_Memory  memory = cache->memory;
+		FT_Memory  memory = cache->memory;
 
 
 		ftc_cache_clear( cache );
@@ -617,7 +617,7 @@ Skip:
 		{
 			FTC_Cache_Class  clazz   = cache->clazz;
 			FTC_Manager      manager = cache->manager;
-			FT2_1_3_Memory        memory  = cache->memory;
+			FT_Memory        memory  = cache->memory;
 			FTC_Node         node;
 
 

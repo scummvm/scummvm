@@ -2940,8 +2940,8 @@ ft_black_init( TRaster_Instance*  raster ) {
 
 static int
 ft_black_new( void*      memory,
-			  FT2_1_3_Raster  *araster ) {
-	static FT2_1_3_RasterRec_  the_raster;
+			  FT_Raster  *araster ) {
+	static FT_RasterRec_  the_raster;
 
 
 	*araster = &the_raster;
@@ -2953,7 +2953,7 @@ ft_black_new( void*      memory,
 
 
 static void
-ft_black_done( FT2_1_3_Raster  raster ) {
+ft_black_done( FT_Raster  raster ) {
 	/* nothing */
 	raster->init = 0;
 }
@@ -2963,7 +2963,7 @@ ft_black_done( FT2_1_3_Raster  raster ) {
 
 
 static int
-ft_black_new( FT2_1_3_Memory           memory,
+ft_black_new( FT_Memory           memory,
 			  TRaster_Instance**  araster ) {
 	FT_Error           error;
 	TRaster_Instance*  raster;
@@ -2986,7 +2986,7 @@ static void
 ft_black_done( TRaster_Instance*  raster ) {
 	using AGS3::FreeType213::FT2_1_3_Free;
 
-	FT2_1_3_Memory  memory = (FT2_1_3_Memory)raster->memory;
+	FT_Memory  memory = (FT_Memory)raster->memory;
 	FT2_1_3_FREE( raster );
 }
 
@@ -3033,7 +3033,7 @@ ft_black_set_mode( TRaster_Instance*  raster,
 
 static int
 ft_black_render( TRaster_Instance*  raster,
-				 FT2_1_3_Raster_Params*  params ) {
+				 FT_Raster_Params*  params ) {
 	FT_Outline*  outline    = (FT_Outline*)params->source;
 	FT_Bitmap*   target_map = params->target;
 
@@ -3067,13 +3067,13 @@ ft_black_render( TRaster_Instance*  raster,
 }
 
 
-const FT2_1_3_Raster_Funcs  ft_standard_raster = {
+const FT_Raster_Funcs  ft_standard_raster = {
 	FT2_1_3_GLYPH_FORMAT_OUTLINE,
-	(FT2_1_3_Raster_New_Func)     ft_black_new,
-	(FT2_1_3_Raster_Reset_Func)   ft_black_reset,
-	(FT2_1_3_Raster_Set_Mode_Func)ft_black_set_mode,
-	(FT2_1_3_Raster_Render_Func)  ft_black_render,
-	(FT2_1_3_Raster_Done_Func)    ft_black_done
+	(FT_Raster_New_Func)     ft_black_new,
+	(FT_Raster_Reset_Func)   ft_black_reset,
+	(FT_Raster_Set_Mode_Func)ft_black_set_mode,
+	(FT_Raster_Render_Func)  ft_black_render,
+	(FT_Raster_Done_Func)    ft_black_done
 };
 
 } // End of namespace FreeType213

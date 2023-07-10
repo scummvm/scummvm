@@ -33,7 +33,7 @@ namespace FreeType213 {
 /* documentation is in ftnames.h */
 
 FT2_1_3_EXPORT_DEF( FT_UInt )
-FT2_1_3_Get_Sfnt_Name_Count( FT_Face  face ) {
+FT_Get_Sfnt_Name_Count( FT_Face  face ) {
 	return (face && FT2_1_3_IS_SFNT( face )) ? ((TT_Face)face)->num_names : 0;
 }
 
@@ -41,9 +41,9 @@ FT2_1_3_Get_Sfnt_Name_Count( FT_Face  face ) {
 /* documentation is in ftnames.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Get_Sfnt_Name( FT_Face       face,
+FT_Get_Sfnt_Name( FT_Face       face,
 				  FT_UInt       idx,
-				  FT2_1_3_SfntName  *aname ) {
+				  FT_SfntName  *aname ) {
 	FT_Error  error = FT2_1_3_Err_Invalid_Argument;
 
 
@@ -57,8 +57,8 @@ FT2_1_3_Get_Sfnt_Name( FT_Face       face,
 
 			/* load name on demand */
 			if ( entry->stringLength > 0 && entry->string == NULL ) {
-				FT2_1_3_Memory  memory = face->memory;
-				FT2_1_3_Stream  stream = face->stream;
+				FT_Memory  memory = face->memory;
+				FT_Stream  stream = face->stream;
 
 
 				if ( FT2_1_3_NEW_ARRAY  ( entry->string, entry->stringLength ) ||

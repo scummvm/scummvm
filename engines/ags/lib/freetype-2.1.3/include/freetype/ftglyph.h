@@ -77,7 +77,7 @@ typedef struct FT_Glyph_Class_  FT_Glyph_Class;
 /*                                                                       */
 /* <Note>                                                                */
 /*    Glyph objects are not owned by the library.  You must thus release */
-/*    them manually (through @FT2_1_3_Done_Glyph) _before_ calling            */
+/*    them manually (through @FT_Done_Glyph) _before_ calling            */
 /*    @FT2_1_3_Done_FreeType.                                                 */
 /*                                                                       */
 typedef struct FT_GlyphRec_*  FT_Glyph;
@@ -209,7 +209,7 @@ typedef struct  FT_OutlineGlyphRec_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Get_Glyph                                                       */
+/*    FT_Get_Glyph                                                       */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A function used to extract a glyph image from a slot.              */
@@ -224,7 +224,7 @@ typedef struct  FT_OutlineGlyphRec_ {
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Get_Glyph( FT_GlyphSlot  slot,
+FT_Get_Glyph( FT_GlyphSlot  slot,
 			  FT_Glyph     *aglyph );
 
 
@@ -406,7 +406,7 @@ FT_Glyph_Get_CBox( FT_Glyph  glyph,
 /*        error = FT2_1_3_Load_Char( face, glyph_index, FT2_1_3_LOAD_DEFAUT );     */
 /*                                                                       */
 /*        // extract glyph image                                         */
-/*        error = FT2_1_3_Get_Glyph( face->glyph, &glyph );                   */
+/*        error = FT_Get_Glyph( face->glyph, &glyph );                   */
 /*                                                                       */
 /*        // convert to a bitmap (default render mode + destroy old)     */
 /*        if ( glyph->format != FT2_1_3_GLYPH_FORMAT_BITMAP )                 */
@@ -424,7 +424,7 @@ FT_Glyph_Get_CBox( FT_Glyph  glyph,
 /*        ...                                                            */
 /*                                                                       */
 /*        // discard glyph image (bitmap or not)                         */
-/*        FT2_1_3_Done_Glyph( glyph );                                        */
+/*        FT_Done_Glyph( glyph );                                        */
 /*      }                                                                */
 /*                                                                       */
 /*                                                                       */
@@ -441,7 +441,7 @@ FT_Glyph_To_Bitmap( FT_Glyph*       the_glyph,
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Done_Glyph                                                      */
+/*    FT_Done_Glyph                                                      */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Destroys a given glyph.                                            */
@@ -450,7 +450,7 @@ FT_Glyph_To_Bitmap( FT_Glyph*       the_glyph,
 /*    glyph :: A handle to the target glyph object.                      */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_Done_Glyph( FT_Glyph  glyph );
+FT_Done_Glyph( FT_Glyph  glyph );
 
 
 /* other helpful functions */
@@ -466,7 +466,7 @@ FT2_1_3_Done_Glyph( FT_Glyph  glyph );
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Matrix_Multiply                                                 */
+/*    FT_Matrix_Multiply                                                 */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Performs the matrix operation `b = a*b'.                           */
@@ -481,14 +481,14 @@ FT2_1_3_Done_Glyph( FT_Glyph  glyph );
 /*    The result is undefined if either `a' or `b' is zero.              */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_Matrix_Multiply( FT_Matrix*  a,
+FT_Matrix_Multiply( FT_Matrix*  a,
 					FT_Matrix*  b );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Matrix_Invert                                                   */
+/*    FT_Matrix_Invert                                                   */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Inverts a 2x2 matrix.  Returns an error if it can't be inverted.   */
@@ -501,7 +501,7 @@ FT2_1_3_Matrix_Multiply( FT_Matrix*  a,
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Matrix_Invert( FT_Matrix*  matrix );
+FT_Matrix_Invert( FT_Matrix*  matrix );
 
 
 /* */

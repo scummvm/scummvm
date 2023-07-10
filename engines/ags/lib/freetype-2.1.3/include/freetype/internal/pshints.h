@@ -43,7 +43,7 @@ FT2_1_3_BEGIN_HEADER
 typedef struct PSH_GlobalsRec_*  PSH_Globals;
 
 typedef FT_Error
-(*PSH_Globals_NewFunc)( FT2_1_3_Memory     memory,
+(*PSH_Globals_NewFunc)( FT_Memory     memory,
 						T1_Private*   private_dict,
 						PSH_Globals*  aglobals );
 

@@ -537,7 +537,7 @@ psh_blues_snap_stem( PSH_Blues      blues,
 static void
 psh_globals_destroy( PSH_Globals  globals ) {
 	if ( globals ) {
-		FT2_1_3_Memory  memory;
+		FT_Memory  memory;
 
 
 		memory = globals->memory;
@@ -559,7 +559,7 @@ psh_globals_destroy( PSH_Globals  globals ) {
 
 
 static FT_Error
-psh_globals_new( FT2_1_3_Memory     memory,
+psh_globals_new( FT_Memory     memory,
 				 T1_Private*   priv,
 				 PSH_Globals  *aglobals ) {
 	PSH_Globals  globals;

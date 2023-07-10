@@ -129,7 +129,7 @@ cff_slot_init( CFF_GlyphSlot   slot );
 /* Face functions                                                        */
 /*                                                                       */
 FT2_1_3_LOCAL( FT_Error )
-cff_face_init( FT2_1_3_Stream      stream,
+cff_face_init( FT_Stream      stream,
 			   CFF_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,

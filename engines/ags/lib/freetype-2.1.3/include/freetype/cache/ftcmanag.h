@@ -113,7 +113,7 @@ typedef struct  FTC_FamilyTableRec_ {
 
 FT2_1_3_EXPORT( FT_Error )
 ftc_family_table_alloc( FTC_FamilyTable   table,
-						FT2_1_3_Memory         memory,
+						FT_Memory         memory,
 						FTC_FamilyEntry  *aentry );
 
 FT2_1_3_EXPORT( void )

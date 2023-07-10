@@ -1082,7 +1082,7 @@ t1_decoder_init( T1_Decoder           decoder,
 		PSNames_Service  psnames = 0;
 
 
-		psnames = (PSNames_Service)FT2_1_3_Get_Module_Interface(
+		psnames = (PSNames_Service)FT_Get_Module_Interface(
 					  FT2_1_3_FACE_LIBRARY(face), "psnames" );
 		if ( !psnames ) {
 			FT2_1_3_ERROR(( "t1_decoder_init: " ));

@@ -110,7 +110,7 @@ tt_face_lookup_table( TT_Face   face,
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_goto_table( TT_Face    face,
 					FT_ULong   tag,
-					FT2_1_3_Stream  stream,
+					FT_Stream  stream,
 					FT_ULong*  length ) {
 	TT_Table  table;
 	FT_Error  error;
@@ -148,7 +148,7 @@ Exit:
 /* Type 42 fonts, and will generally be invalid.                          */
 /*                                                                        */
 static FT_Error
-sfnt_dir_check( FT2_1_3_Stream  stream,
+sfnt_dir_check( FT_Stream  stream,
 				FT_ULong   offset,
 				FT_UInt    num_tables ) {
 	FT_Error        error;
@@ -258,12 +258,12 @@ Bad_Format:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_sfnt_header( TT_Face      face,
-						  FT2_1_3_Stream    stream,
+						  FT_Stream    stream,
 						  FT_Long      face_index,
 						  SFNT_Header  sfnt ) {
 	FT_Error   error;
 	FT_ULong   format_tag, offset;
-	FT2_1_3_Memory  memory = stream->memory;
+	FT_Memory  memory = stream->memory;
 
 	static const FT2_1_3_Frame_Field  sfnt_header_fields[] = {
 #undef  FT2_1_3_STRUCTURE
@@ -384,10 +384,10 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_directory( TT_Face      face,
-						FT2_1_3_Stream    stream,
+						FT_Stream    stream,
 						SFNT_Header  sfnt ) {
 	FT_Error     error;
-	FT2_1_3_Memory    memory = stream->memory;
+	FT_Memory    memory = stream->memory;
 
 	TT_TableRec  *entry, *limit;
 
@@ -481,7 +481,7 @@ tt_face_load_any( TT_Face    face,
 				  FT_Byte*   buffer,
 				  FT_ULong*  length ) {
 	FT_Error   error;
-	FT2_1_3_Stream  stream;
+	FT_Stream  stream;
 	TT_Table   table;
 	FT_ULong   size;
 
@@ -537,7 +537,7 @@ Exit:
 /*                                                                       */
 static FT_Error
 tt_face_load_generic_header( TT_Face    face,
-							 FT2_1_3_Stream  stream,
+							 FT_Stream  stream,
 							 FT_ULong   tag ) {
 	FT_Error    error;
 	TT_Header*  header;
@@ -600,7 +600,7 @@ Exit:
 
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_header( TT_Face    face,
-					 FT2_1_3_Stream  stream ) {
+					 FT_Stream  stream ) {
 	return tt_face_load_generic_header( face, stream, TTAG_head );
 }
 
@@ -609,7 +609,7 @@ tt_face_load_header( TT_Face    face,
 
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_bitmap_header( TT_Face    face,
-							FT2_1_3_Stream  stream ) {
+							FT_Stream  stream ) {
 	return tt_face_load_generic_header( face, stream, TTAG_bhed );
 }
 
@@ -634,7 +634,7 @@ tt_face_load_bitmap_header( TT_Face    face,
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_max_profile( TT_Face    face,
-						  FT2_1_3_Stream  stream ) {
+						  FT_Stream  stream ) {
 	FT_Error        error;
 	TT_MaxProfile*  maxProfile = &face->max_profile;
 
@@ -754,10 +754,10 @@ Exit:
 /*                                                                       */
 static FT_Error
 tt_face_load_metrics( TT_Face    face,
-					  FT2_1_3_Stream  stream,
+					  FT_Stream  stream,
 					  FT_Bool    vertical ) {
 	FT_Error   error;
-	FT2_1_3_Memory  memory = stream->memory;
+	FT_Memory  memory = stream->memory;
 
 	FT_ULong   table_len;
 	FT_Long    num_shorts, num_longs, num_shorts_checked;
@@ -888,7 +888,7 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_metrics_header( TT_Face    face,
-							 FT2_1_3_Stream  stream,
+							 FT_Stream  stream,
 							 FT_Bool    vertical ) {
 	FT_Error        error;
 	TT_HoriHeader*  header;
@@ -981,9 +981,9 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_names( TT_Face    face,
-					FT2_1_3_Stream  stream ) {
+					FT_Stream  stream ) {
 	FT_Error      error;
-	FT2_1_3_Memory     memory = stream->memory;
+	FT_Memory     memory = stream->memory;
 	FT_ULong      table_pos, table_len;
 	FT_ULong      storage_start, storage_limit;
 	FT_UInt       count;
@@ -1113,7 +1113,7 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( void )
 tt_face_free_names( TT_Face  face ) {
-	FT2_1_3_Memory     memory = face->root.driver->root.memory;
+	FT_Memory     memory = face->root.driver->root.memory;
 	TT_NameTable  table  = &face->name_table;
 	TT_NameEntry  entry  = table->names;
 	FT_UInt       count  = table->numNameRecords;
@@ -1153,7 +1153,7 @@ tt_face_free_names( TT_Face  face ) {
 
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_cmap( TT_Face    face,
-				   FT2_1_3_Stream  stream ) {
+				   FT_Stream  stream ) {
 	FT_Error  error;
 
 
@@ -1195,7 +1195,7 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_os2( TT_Face    face,
-				  FT2_1_3_Stream  stream ) {
+				  FT_Stream  stream ) {
 	FT_Error  error;
 	TT_OS2*   os2;
 
@@ -1331,7 +1331,7 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_postscript( TT_Face    face,
-						 FT2_1_3_Stream  stream ) {
+						 FT_Stream  stream ) {
 	FT_Error        error;
 	TT_Postscript*  post = &face->postscript;
 
@@ -1388,7 +1388,7 @@ tt_face_load_postscript( TT_Face    face,
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_pclt( TT_Face    face,
-				   FT2_1_3_Stream  stream ) {
+				   FT_Stream  stream ) {
 	static const FT2_1_3_Frame_Field  pclt_fields[] = {
 #undef  FT2_1_3_STRUCTURE
 #define FT2_1_3_STRUCTURE  TT_PCLT
@@ -1453,9 +1453,9 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_gasp( TT_Face    face,
-				   FT2_1_3_Stream  stream ) {
+				   FT_Stream  stream ) {
 	FT_Error   error;
-	FT2_1_3_Memory  memory = stream->memory;
+	FT_Memory  memory = stream->memory;
 
 	FT_UInt        j,num_ranges;
 	TT_GaspRange   gaspranges;
@@ -1529,9 +1529,9 @@ tt_kern_pair_compare( const void*  a,
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_kern( TT_Face    face,
-				   FT2_1_3_Stream  stream ) {
+				   FT_Stream  stream ) {
 	FT_Error   error;
-	FT2_1_3_Memory  memory = stream->memory;
+	FT_Memory  memory = stream->memory;
 
 	FT_UInt    n, num_tables;
 
@@ -1672,9 +1672,9 @@ tt_kern_pair_compare( const void*  a,
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_hdmx( TT_Face    face,
-				   FT2_1_3_Stream  stream ) {
+				   FT_Stream  stream ) {
 	FT_Error   error;
-	FT2_1_3_Memory  memory = stream->memory;
+	FT_Memory  memory = stream->memory;
 
 	TT_Hdmx    hdmx = &face->hdmx;
 	FT_Long    num_glyphs;
@@ -1750,7 +1750,7 @@ FT2_1_3_LOCAL_DEF( void )
 tt_face_free_hdmx( TT_Face  face ) {
 	if ( face ) {
 		FT_Int     n;
-		FT2_1_3_Memory  memory = face->root.driver->root.memory;
+		FT_Memory  memory = face->root.driver->root.memory;
 
 
 		for ( n = 0; n < face->hdmx.num_records; n++ )

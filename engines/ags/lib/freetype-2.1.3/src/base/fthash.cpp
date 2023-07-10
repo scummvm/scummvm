@@ -17,7 +17,7 @@ ft_hash_done( FT2_1_3_Hash              table,
               FT2_1_3_Hash_ForeachFunc  node_func,
               const FT_Pointer     node_data ) {
 	if ( table ) {
-		FT2_1_3_Memory  memory = table->memory;
+		FT_Memory  memory = table->memory;
 
 		if ( node_func )
 			ft_hash_foreach( table, node_func, node_data );
@@ -47,7 +47,7 @@ ft_hash_get_size( FT2_1_3_Hash  table ) {
 FT2_1_3_BASE_DEF( FT_Error )
 ft_hash_init( FT2_1_3_Hash            table,
               FT2_1_3_Hash_EqualFunc  equal,
-              FT2_1_3_Memory          memory ) {
+              FT_Memory          memory ) {
 	FT_Error  error;
 
 	table->memory     = memory;
@@ -148,7 +148,7 @@ ft_hash_add( FT2_1_3_Hash        table,
 		table->slack += FT2_1_3_HASH_MAX_LOAD;
 
 		if ( p >= mask ) {
-			FT2_1_3_Memory  memory = table->memory;
+			FT_Memory  memory = table->memory;
 
 
 			if (FT2_1_3_RENEW_ARRAY( table->buckets, (mask+1)*2, (mask+1)*4 ))
@@ -191,7 +191,7 @@ ft_hash_remove( FT2_1_3_Hash        table,
 			goto Exit;
 
 		if ( p == 0 ) {
-			FT2_1_3_Memory  memory = table->memory;
+			FT_Memory  memory = table->memory;
 
 			table->mask >>= 1;
 			p             = table->mask;

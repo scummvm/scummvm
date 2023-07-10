@@ -225,7 +225,7 @@ typedef struct  bdf_font_t_ {
 	unsigned short   modified;       /* Boolean indicating font modified.   */
 	unsigned short   bpp;            /* Bits per pixel.                     */
 
-	FT2_1_3_Memory        memory;
+	FT_Memory        memory;
 
 	bdf_property_t*  user_props;
 	unsigned long    nuser_props;
@@ -262,8 +262,8 @@ typedef struct  bdf_font_t_ {
 /*************************************************************************/
 
 FT2_1_3_LOCAL( FT_Error )
-bdf_load_font( FT2_1_3_Stream       stream,
-			   FT2_1_3_Memory       memory,
+bdf_load_font( FT_Stream       stream,
+			   FT_Memory       memory,
 			   bdf_options_t*  opts,
 			   bdf_font_t*    *font );
 

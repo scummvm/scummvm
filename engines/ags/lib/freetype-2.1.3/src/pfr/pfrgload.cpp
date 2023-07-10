@@ -52,7 +52,7 @@ pfr_glyph_init( PFR_Glyph       glyph,
 
 FT2_1_3_LOCAL_DEF( void )
 pfr_glyph_done( PFR_Glyph  glyph ) {
-	FT2_1_3_Memory  memory = glyph->loader->memory;
+	FT_Memory  memory = glyph->loader->memory;
 
 
 	FT2_1_3_FREE( glyph->x_control );
@@ -224,7 +224,7 @@ pfr_glyph_load_simple( PFR_Glyph  glyph,
 					   FT_Byte*   p,
 					   FT_Byte*   limit ) {
 	FT_Error   error  = 0;
-	FT2_1_3_Memory  memory = glyph->loader->memory;
+	FT_Memory  memory = glyph->loader->memory;
 	FT_UInt    flags, x_count, y_count, i, count, mask;
 	FT_Int     x;
 
@@ -502,7 +502,7 @@ pfr_glyph_load_compound( PFR_Glyph  glyph,
 						 FT_Byte*   limit ) {
 	FT_Error        error  = 0;
 	FT_GlyphLoader  loader = glyph->loader;
-	FT2_1_3_Memory       memory = loader->memory;
+	FT_Memory       memory = loader->memory;
 	PFR_SubGlyph    subglyph;
 	FT_UInt         flags, i, count, org_count;
 	FT_Int          x_pos, y_pos;
@@ -637,7 +637,7 @@ Too_Short:
 
 static FT_Error
 pfr_glyph_load_rec( PFR_Glyph  glyph,
-					FT2_1_3_Stream  stream,
+					FT_Stream  stream,
 					FT_ULong   gps_offset,
 					FT_ULong   offset,
 					FT_ULong   size ) {
@@ -730,7 +730,7 @@ Exit:
 
 FT2_1_3_LOCAL_DEF( FT_Error )
 pfr_glyph_load( PFR_Glyph  glyph,
-				FT2_1_3_Stream  stream,
+				FT_Stream  stream,
 				FT_ULong   gps_offset,
 				FT_ULong   offset,
 				FT_ULong   size ) {

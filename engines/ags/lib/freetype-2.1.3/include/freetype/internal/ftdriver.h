@@ -30,7 +30,7 @@ FT2_1_3_BEGIN_HEADER
 
 
 typedef FT_Error
-(*FT_Face_InitFunc)( FT2_1_3_Stream      stream,
+(*FT_Face_InitFunc)( FT_Stream      stream,
 					 FT_Face        face,
 					 FT_Int         typeface_index,
 					 FT_Int         num_params,
@@ -90,7 +90,7 @@ typedef FT_Error
 
 typedef FT_Error
 (*FT_Face_AttachFunc)( FT_Face    face,
-					   FT2_1_3_Stream  stream );
+					   FT_Stream  stream );
 
 
 typedef FT_Error

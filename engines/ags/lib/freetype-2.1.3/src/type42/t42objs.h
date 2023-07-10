@@ -63,7 +63,7 @@ typedef struct  T42_DriverRec_ {
 
 
 FT2_1_3_LOCAL( FT_Error )
-T42_Face_Init( FT2_1_3_Stream      stream,
+T42_Face_Init( FT_Stream      stream,
 			   T42_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,

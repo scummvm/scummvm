@@ -57,11 +57,11 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 /*    It is however possible to create more sizes for a given face,      */
 /*    mostly in order to manage several character pixel sizes of the     */
-/*    same font family and style.  See @FT2_1_3_New_Size and @FT2_1_3_Done_Size.   */
+/*    same font family and style.  See @FT_New_Size and @FT_Done_Size.   */
 /*                                                                       */
 /*    Note that @FT2_1_3_Set_Pixel_Sizes and @FT2_1_3_Set_Char_Size only           */
 /*    modify the contents of the current "active" size; you thus need    */
-/*    to use @FT2_1_3_Activate_Size to change it.                             */
+/*    to use @FT_Activate_Size to change it.                             */
 /*                                                                       */
 /*    99% of applications won't need the functions provided here,        */
 /*    especially if they use the caching sub-system, so be cautious      */
@@ -73,7 +73,7 @@ FT2_1_3_BEGIN_HEADER
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_New_Size                                                        */
+/*    FT_New_Size                                                        */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Creates a new size object from a given face object.                */
@@ -88,19 +88,19 @@ FT2_1_3_BEGIN_HEADER
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 /* <Note>                                                                */
-/*    You need to call @FT2_1_3_Activate_Size in order to select the new size */
+/*    You need to call @FT_Activate_Size in order to select the new size */
 /*    for upcoming calls to @FT2_1_3_Set_Pixel_Sizes, @FT2_1_3_Set_Char_Size,      */
 /*    @FT2_1_3_Load_Glyph, @FT2_1_3_Load_Char, etc.                                */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_New_Size( FT_Face   face,
+FT_New_Size( FT_Face   face,
 			 FT_Size*  size );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Done_Size                                                       */
+/*    FT_Done_Size                                                       */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Discards a given size object.                                      */
@@ -112,17 +112,17 @@ FT2_1_3_New_Size( FT_Face   face,
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Done_Size( FT_Size  size );
+FT_Done_Size( FT_Size  size );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Activate_Size                                                   */
+/*    FT_Activate_Size                                                   */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Even though it is possible to create several size objects for a    */
-/*    given face (see @FT2_1_3_New_Size for details), functions like          */
+/*    given face (see @FT_New_Size for details), functions like          */
 /*    @FT2_1_3_Load_Glyph or @FT2_1_3_Load_Char only use the last-created one to   */
 /*    determine the "current character pixel size".                      */
 /*                                                                       */
@@ -140,7 +140,7 @@ FT2_1_3_Done_Size( FT_Size  size );
 /*    the value of "face->size" to the input size handle.                */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Activate_Size( FT_Size  size );
+FT_Activate_Size( FT_Size  size );
 
 /* */
 

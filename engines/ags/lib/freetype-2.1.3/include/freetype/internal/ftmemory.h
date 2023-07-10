@@ -60,14 +60,14 @@ FT2_1_3_BEGIN_HEADER
 #ifdef FT2_1_3_DEBUG_MEMORY
 
 FT2_1_3_BASE( FT_Error )
-FT2_1_3_Alloc_Debug( FT2_1_3_Memory    memory,
+FT2_1_3_Alloc_Debug( FT_Memory    memory,
 				FT_Long      size,
 				void*       *P,
 				const char*  file_name,
 				FT_Long      line_no );
 
 FT2_1_3_BASE( FT_Error )
-FT2_1_3_Realloc_Debug( FT2_1_3_Memory    memory,
+FT2_1_3_Realloc_Debug( FT_Memory    memory,
 				  FT_Long      current,
 				  FT_Long      size,
 				  void*       *P,
@@ -75,7 +75,7 @@ FT2_1_3_Realloc_Debug( FT2_1_3_Memory    memory,
 				  FT_Long      line_no );
 
 FT2_1_3_BASE( void )
-FT2_1_3_Free_Debug( FT2_1_3_Memory    memory,
+FT2_1_3_Free_Debug( FT_Memory    memory,
 			   FT_Pointer   block,
 			   const char*  file_name,
 			   FT_Long      line_no );
@@ -106,7 +106,7 @@ FT2_1_3_Free_Debug( FT2_1_3_Memory    memory,
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_BASE( FT_Error )
-FT2_1_3_Alloc( FT2_1_3_Memory  memory,
+FT2_1_3_Alloc( FT_Memory  memory,
 		  FT_Long    size,
 		  void*     *P );
 
@@ -140,7 +140,7 @@ FT2_1_3_Alloc( FT2_1_3_Memory  memory,
 /*    as well as the new one.                                            */
 /*                                                                       */
 FT2_1_3_BASE( FT_Error )
-FT2_1_3_Realloc( FT2_1_3_Memory  memory,
+FT2_1_3_Realloc( FT_Memory  memory,
 			FT_Long    current,
 			FT_Long    size,
 			void**     P );
@@ -170,7 +170,7 @@ FT2_1_3_Realloc( FT2_1_3_Memory  memory,
 /*    drivers.                                                           */
 /*                                                                       */
 FT2_1_3_BASE( void )
-FT2_1_3_Free( FT2_1_3_Memory  memory,
+FT2_1_3_Free( FT_Memory  memory,
 		 void**     P );
 
 

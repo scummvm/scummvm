@@ -209,7 +209,7 @@ TT_Access_Glyph_Frame( TT_Loader  loader,
 					   FT_ULong   offset,
 					   FT_UInt    byte_count ) {
 	FT_Error   error;
-	FT2_1_3_Stream  stream = loader->stream;
+	FT_Stream  stream = loader->stream;
 
 	/* for non-debug mode */
 	FT2_1_3_UNUSED( glyph_index );
@@ -227,7 +227,7 @@ TT_Access_Glyph_Frame( TT_Loader  loader,
 
 FT2_1_3_CALLBACK_DEF( void )
 TT_Forget_Glyph_Frame( TT_Loader  loader ) {
-	FT2_1_3_Stream  stream = loader->stream;
+	FT_Stream  stream = loader->stream;
 
 
 	FT2_1_3_FRAME_EXIT();
@@ -236,7 +236,7 @@ TT_Forget_Glyph_Frame( TT_Loader  loader ) {
 
 FT2_1_3_CALLBACK_DEF( FT_Error )
 TT_Load_Glyph_Header( TT_Loader  loader ) {
-	FT2_1_3_Stream  stream   = loader->stream;
+	FT_Stream  stream   = loader->stream;
 	FT_Int     byte_len = loader->byte_len - 10;
 
 
@@ -264,7 +264,7 @@ TT_Load_Glyph_Header( TT_Loader  loader ) {
 FT2_1_3_CALLBACK_DEF( FT_Error )
 TT_Load_Simple_Glyph( TT_Loader  load ) {
 	FT_Error        error;
-	FT2_1_3_Stream       stream     = load->stream;
+	FT_Stream       stream     = load->stream;
 	FT_GlyphLoader  gloader    = load->gloader;
 	FT_Int          n_contours = load->n_contours;
 	FT_Outline*     outline;
@@ -454,7 +454,7 @@ Invalid_Outline:
 FT2_1_3_CALLBACK_DEF( FT_Error )
 TT_Load_Composite_Glyph( TT_Loader  loader ) {
 	FT_Error        error;
-	FT2_1_3_Stream       stream  = loader->stream;
+	FT_Stream       stream  = loader->stream;
 	FT_GlyphLoader  gloader = loader->gloader;
 	FT_SubGlyph     subglyph;
 	FT_UInt         num_subglyphs;
@@ -710,7 +710,7 @@ load_truetype_glyph( TT_Loader  loader,
 					 FT_UInt    glyph_index ) {
 
 #ifdef TT_CONFIG_OPTION_BYTECODE_INTERPRETER
-	FT2_1_3_Stream       stream = loader->stream;
+	FT_Stream       stream = loader->stream;
 #endif
 
 	FT_Error        error;
@@ -723,7 +723,7 @@ load_truetype_glyph( TT_Loader  loader,
 	FT_Bool         opened_frame = 0;
 
 #ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
-	struct FT2_1_3_StreamRec_  inc_stream;
+	struct FT_StreamRec_  inc_stream;
 	FT_Data               glyph_data;
 	FT_Bool               glyph_data_loaded = 0;
 #endif
@@ -758,7 +758,7 @@ load_truetype_glyph( TT_Loader  loader,
 		/* overriding metrics for this glyph.                       */
 		if ( face->root.internal->incremental_interface &&
 				face->root.internal->incremental_interface->funcs->get_glyph_metrics ) {
-			FT2_1_3_Incremental_MetricsRec  m;
+			FT_Incremental_MetricsRec  m;
 
 
 			error = face->root.internal->incremental_interface->funcs->get_glyph_metrics(
@@ -818,7 +818,7 @@ load_truetype_glyph( TT_Loader  loader,
 		count             = glyph_data.length;
 
 		FT2_1_3_MEM_ZERO( &inc_stream, sizeof ( inc_stream ) );
-		FT2_1_3_Stream_OpenMemory( &inc_stream,
+		FT_Stream_OpenMemory( &inc_stream,
 							  glyph_data.pointer, glyph_data.length );
 
 		loader->stream = &inc_stream;
@@ -1361,7 +1361,7 @@ compute_glyph_metrics( TT_Loader   loader,
 		/* overriding metrics for this glyph.                       */
 		if ( face->root.internal->incremental_interface &&
 				face->root.internal->incremental_interface->funcs->get_glyph_metrics ) {
-			FT2_1_3_Incremental_MetricsRec  m;
+			FT_Incremental_MetricsRec  m;
 			FT_Error                   error =
 				face->root.internal->incremental_interface->funcs->get_glyph_metrics(
 					face->root.internal->incremental_interface->object,
@@ -1501,7 +1501,7 @@ TT_Load_Glyph( TT_Size       size,
 			   FT_Int32      load_flags ) {
 	SFNT_Service  sfnt;
 	TT_Face       face;
-	FT2_1_3_Stream     stream;
+	FT_Stream     stream;
 	FT_Error      error;
 	TT_LoaderRec  loader;
 

@@ -20,22 +20,22 @@ FT2_1_3_BEGIN_HEADER
 
 /*@**********************************************************************
  *
- * @type: FT2_1_3_Memory
+ * @type: FT_Memory
  *
  * @description:
  *   opaque handle to a memory manager handle. Note that since FreeType
- *   2.2, the memory manager structure FT2_1_3_MemoryRec is hidden to client
+ *   2.2, the memory manager structure FT_MemoryRec is hidden to client
  *   applications.
  *
  *   however, you can still define custom allocators easily using the
  *   @ft_memory_new API
  */
-typedef struct FT2_1_3_MemoryRec_*   FT2_1_3_Memory;
+typedef struct FT_MemoryRec_*   FT_Memory;
 
 
 /*@**********************************************************************
  *
- * @functype: FT2_1_3_Memory_AllocFunc
+ * @functype: FT_Memory_AllocFunc
  *
  * @description:
  *   a function used to allocate a block of memory.
@@ -48,30 +48,30 @@ typedef struct FT2_1_3_MemoryRec_*   FT2_1_3_Memory;
  * @return:
  *   address of new block. NULL in case of memory exhaustion
  */
-typedef FT_Pointer  (*FT2_1_3_Memory_AllocFunc)( FT_ULong   size,
+typedef FT_Pointer  (*FT_Memory_AllocFunc)( FT_ULong   size,
 		FT_Pointer mem_data );
 
 
 /*@**********************************************************************
  *
- * @functype: FT2_1_3_Memory_FreeFunc
+ * @functype: FT_Memory_FreeFunc
  *
  * @description:
  *   a function used to release a block of memory created through
- *   @FT2_1_3_Memory_AllocFunc or @FT2_1_3_Memory_ReallocFunc
+ *   @FT_Memory_AllocFunc or @FT_Memory_ReallocFunc
  *
  * @input:
  *   block    :: address of target memory block. cannot be NULL !!
  *   mem_data :: memory-manager specific optional argument
  *               (see @ft_memory_new)
  */
-typedef void        (*FT2_1_3_Memory_FreeFunc) ( FT_Pointer  block,
+typedef void        (*FT_Memory_FreeFunc) ( FT_Pointer  block,
 		FT_Pointer  mem_data );
 
 
 /*@**********************************************************************
  *
- * @functype: FT2_1_3_Memory_ReallocFunc
+ * @functype: FT_Memory_ReallocFunc
  *
  * @description:
  *   a function used to reallocate a memory block.
@@ -83,7 +83,7 @@ typedef void        (*FT2_1_3_Memory_FreeFunc) ( FT_Pointer  block,
  *   mem_data :: memory-manager specific optional argument
  *               (see @ft_memory_new)
  */
-typedef FT_Pointer  (*FT2_1_3_Memory_ReallocFunc)( FT_Pointer   block,
+typedef FT_Pointer  (*FT_Memory_ReallocFunc)( FT_Pointer   block,
 		FT_ULong     new_size,
 		FT_ULong     cur_size,
 		FT_Pointer   mem_data );
@@ -91,10 +91,10 @@ typedef FT_Pointer  (*FT2_1_3_Memory_ReallocFunc)( FT_Pointer   block,
 
 /*@**********************************************************************
  *
- * @functype: FT2_1_3_Memory_CreateFunc
+ * @functype: FT_Memory_CreateFunc
  *
  * @description:
- *   a function used to create a @FT2_1_3_Memory object to model a
+ *   a function used to create a @FT_Memory object to model a
  *   memory manager
  *
  * @input:
@@ -108,29 +108,29 @@ typedef FT_Pointer  (*FT2_1_3_Memory_ReallocFunc)( FT_Pointer   block,
  * @return:
  *   handle to new memory manager object. NULL in case of failure
  */
-typedef FT_Pointer  (*FT2_1_3_Memory_CreateFunc)( FT_UInt     size,
+typedef FT_Pointer  (*FT_Memory_CreateFunc)( FT_UInt     size,
 		FT_Pointer  init_data,
 		FT_Pointer *amem_data );
 
 
 /*@**********************************************************************
  *
- * @functype: FT2_1_3_Memory_DestroyFunc
+ * @functype: FT_Memory_DestroyFunc
  *
  * @description:
- *   a function used to destroy a given @FT2_1_3_Memory manager
+ *   a function used to destroy a given @FT_Memory manager
  *
  * @input:
  *   memory   :: target memory manager handle
  *   mem_data :: option manager-specific argument
  */
-typedef void        (*FT2_1_3_Memory_DestroyFunc)( FT2_1_3_Memory  memory,
+typedef void        (*FT_Memory_DestroyFunc)( FT_Memory  memory,
 		FT_Pointer mem_data );
 
 
 /*@**********************************************************************
  *
- * @struct: FT2_1_3_Memory_FuncsRec
+ * @struct: FT_Memory_FuncsRec
  *
  * @description:
  *   a function used to hold all methods of a given memory manager
@@ -143,25 +143,25 @@ typedef void        (*FT2_1_3_Memory_DestroyFunc)( FT2_1_3_Memory  memory,
  *   mem_create  :: manager creation routine
  *   mem_destroy :: manager destruction routine
  */
-typedef struct FT2_1_3_Memory_FuncsRec_ {
-	FT2_1_3_Memory_AllocFunc     mem_alloc;
-	FT2_1_3_Memory_FreeFunc      mem_free;
-	FT2_1_3_Memory_ReallocFunc   mem_realloc;
-	FT2_1_3_Memory_CreateFunc    mem_create;
-	FT2_1_3_Memory_DestroyFunc   mem_destroy;
+typedef struct FT_Memory_FuncsRec_ {
+	FT_Memory_AllocFunc     mem_alloc;
+	FT_Memory_FreeFunc      mem_free;
+	FT_Memory_ReallocFunc   mem_realloc;
+	FT_Memory_CreateFunc    mem_create;
+	FT_Memory_DestroyFunc   mem_destroy;
 
-} FT2_1_3_Memory_FuncsRec, *FT2_1_3_Memory_Funcs;
+} FT_Memory_FuncsRec, *FT_Memory_Funcs;
 
 
 /*@**********************************************************************
  *
- * @type: FT2_1_3_Memory_Funcs
+ * @type: FT_Memory_Funcs
  *
  * @description:
- *   a pointer to a constant @FT2_1_3_Memory_FuncsRec structure used to
+ *   a pointer to a constant @FT_Memory_FuncsRec structure used to
  *   describe a given memory manager implementation.
  */
-typedef const FT2_1_3_Memory_FuncsRec*  FT2_1_3_Memory_Funcs;
+typedef const FT_Memory_FuncsRec*  FT_Memory_Funcs;
 
 
 /*@**********************************************************************
@@ -174,13 +174,13 @@ typedef const FT2_1_3_Memory_FuncsRec*  FT2_1_3_Memory_Funcs;
  * @input:
  *   mem_funcs     :: handle to memory manager implementation descriptor
  *   mem_init_data :: optional initialisation argument, passed to
- *                    @FT2_1_3_Memory_CreateFunc
+ *                    @FT_Memory_CreateFunc
  *
  * @return:
  *   new memory manager handle. NULL in case of failure
  */
-FT2_1_3_BASE( FT2_1_3_Memory )
-ft_memory_new( FT2_1_3_Memory_Funcs  mem_funcs,
+FT2_1_3_BASE( FT_Memory )
+ft_memory_new( FT_Memory_Funcs  mem_funcs,
 			   FT_Pointer       mem_init_data );
 
 
@@ -195,7 +195,7 @@ ft_memory_new( FT2_1_3_Memory_Funcs  mem_funcs,
  *   memory :: handle to target memory manager
  */
 FT2_1_3_BASE( void )
-ft_memory_destroy( FT2_1_3_Memory  memory );
+ft_memory_destroy( FT_Memory  memory );
 
 /* */
 

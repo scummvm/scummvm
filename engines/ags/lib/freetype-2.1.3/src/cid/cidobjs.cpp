@@ -66,7 +66,7 @@ cid_slot_init( CID_GlyphSlot  slot ) {
 		FT_Module  module;
 
 
-		module = FT2_1_3_Get_Module( slot->root.face->driver->root.library,
+		module = FT_Get_Module( slot->root.face->driver->root.library,
 								"pshinter" );
 		if ( module ) {
 			T1_Hints_Funcs  funcs;
@@ -95,7 +95,7 @@ cid_size_get_globals_funcs( CID_Size  size ) {
 	FT_Module         module;
 
 
-	module = FT2_1_3_Get_Module( size->root.face->driver->root.library,
+	module = FT_Get_Module( size->root.face->driver->root.library,
 							"pshinter" );
 	return ( module && pshinter && pshinter->get_globals_funcs )
 		   ? pshinter->get_globals_funcs( module )
@@ -174,7 +174,7 @@ cid_size_reset( CID_Size  size ) {
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( void )
 cid_face_done( CID_Face  face ) {
-	FT2_1_3_Memory  memory;
+	FT_Memory  memory;
 
 
 	if ( face ) {
@@ -248,7 +248,7 @@ cid_face_done( CID_Face  face ) {
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
-cid_face_init( FT2_1_3_Stream      stream,
+cid_face_init( FT_Stream      stream,
 			   CID_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,
@@ -269,7 +269,7 @@ cid_face_init( FT2_1_3_Stream      stream,
 	psnames = (PSNames_Service)face->psnames;
 	const void *ps_tmp;
 	if ( !psnames ) {
-		ps_tmp = FT2_1_3_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psnames");
+		ps_tmp = FT_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psnames");
 		psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(ps_tmp));
 
 		face->psnames = psnames;
@@ -277,7 +277,7 @@ cid_face_init( FT2_1_3_Stream      stream,
 
 	psaux = (PSAux_Service)face->psaux;
 	if ( !psaux ) {
-		ps_tmp = FT2_1_3_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psaux");
+		ps_tmp = FT_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "psaux");
 		psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_Interface *>(ps_tmp));
 
 		face->psaux = psaux;
@@ -285,7 +285,7 @@ cid_face_init( FT2_1_3_Stream      stream,
 
 	pshinter = (PSHinter_Service)face->pshinter;
 	if ( !pshinter ) {
-		ps_tmp = FT2_1_3_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "pshinter");
+		ps_tmp = FT_Get_Module_Interface(FT2_1_3_FACE_LIBRARY(face), "pshinter");
 		pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(ps_tmp));
 
 		face->pshinter = pshinter;

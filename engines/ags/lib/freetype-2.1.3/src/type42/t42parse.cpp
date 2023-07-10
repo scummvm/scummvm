@@ -138,8 +138,8 @@ T1_FieldRec  t42_keywords[] = {
 
 FT2_1_3_LOCAL_DEF( FT_Error )
 t42_parser_init( T42_Parser     parser,
-				 FT2_1_3_Stream      stream,
-				 FT2_1_3_Memory      memory,
+				 FT_Stream      stream,
+				 FT_Memory      memory,
 				 PSAux_Service  psaux ) {
 	FT_Error  error = FT2_1_3_Err_Ok;
 	FT_Long   size;
@@ -213,7 +213,7 @@ Exit:
 
 FT2_1_3_LOCAL_DEF( void )
 t42_parser_done( T42_Parser  parser ) {
-	FT2_1_3_Memory  memory = parser->root.memory;
+	FT_Memory  memory = parser->root.memory;
 
 
 	/* free the base dictionary only when we have a disk stream */
@@ -248,7 +248,7 @@ t42_parse_font_name( T42_Face    face,
 					 T42_Loader  loader ) {
 	T42_Parser  parser = &loader->parser;
 	FT_Error    error;
-	FT2_1_3_Memory   memory = parser->root.memory;
+	FT_Memory   memory = parser->root.memory;
 	FT_Int      len;
 	FT_Byte*    cur;
 	FT_Byte*    cur2;
@@ -364,7 +364,7 @@ t42_parse_encoding( T42_Face    face,
 		T1_Encoding  encode     = &face->type1.encoding;
 		FT_Int       count, n;
 		PS_Table     char_table = &loader->encoding_table;
-		FT2_1_3_Memory    memory     = parser->root.memory;
+		FT_Memory    memory     = parser->root.memory;
 		FT_Error     error;
 
 
@@ -519,7 +519,7 @@ static void
 t42_parse_sfnts( T42_Face    face,
 				 T42_Loader  loader ) {
 	T42_Parser  parser = &loader->parser;
-	FT2_1_3_Memory   memory = parser->root.memory;
+	FT_Memory   memory = parser->root.memory;
 	FT_Byte*    cur    = parser->root.cursor;
 	FT_Byte*    limit  = parser->root.limit;
 	FT_Error    error;
@@ -659,7 +659,7 @@ t42_parse_charstrings( T42_Face    face,
 	T42_Parser     parser     = &loader->parser;
 	PS_Table       code_table = &loader->charstrings;
 	PS_Table       name_table = &loader->glyph_names;
-	FT2_1_3_Memory      memory     = parser->root.memory;
+	FT_Memory      memory     = parser->root.memory;
 	FT_Error       error;
 
 	PSAux_Service psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));

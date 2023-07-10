@@ -112,7 +112,7 @@ FT2_1_3_LOCAL( void )
 tt_glyphzone_done( TT_GlyphZone  zone );
 
 FT2_1_3_LOCAL( FT_Error )
-tt_glyphzone_new( FT2_1_3_Memory     memory,
+tt_glyphzone_new( FT_Memory     memory,
 				  FT_UShort     maxPoints,
 				  FT_Short      maxContours,
 				  TT_GlyphZone  zone );
@@ -372,7 +372,7 @@ typedef struct  TT_DriverRec_ {
 /* Face functions                                                        */
 /*                                                                       */
 FT2_1_3_LOCAL( FT_Error )
-tt_face_init( FT2_1_3_Stream      stream,
+tt_face_init( FT_Stream      stream,
 			  TT_Face        face,
 			  FT_Int         face_index,
 			  FT_Int         num_params,

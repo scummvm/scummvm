@@ -170,7 +170,7 @@ ftc_family_done( FTC_Family  family );
 /* each cache really implements a dynamic hash table to manage its nodes */
 typedef struct  FTC_CacheRec_ {
 	FTC_Manager          manager;
-	FT2_1_3_Memory            memory;
+	FT_Memory            memory;
 	FTC_Cache_Class      clazz;
 
 	FT_UInt              cache_index;  /* in manager's table         */

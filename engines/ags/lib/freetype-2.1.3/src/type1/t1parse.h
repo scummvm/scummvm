@@ -62,7 +62,7 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 typedef struct  T1_ParserRec_ {
 	PS_ParserRec  root;
-	FT2_1_3_Stream     stream;
+	FT_Stream     stream;
 
 	FT_Byte*      base_dict;
 	FT_Long       base_len;
@@ -113,8 +113,8 @@ typedef struct  T1_ParserRec_ {
 
 FT2_1_3_LOCAL( FT_Error )
 T1_New_Parser( T1_Parser      parser,
-							 FT2_1_3_Stream      stream,
-							 FT2_1_3_Memory      memory,
+							 FT_Stream      stream,
+							 FT_Memory      memory,
 							 PSAux_Service  psaux );
 
 FT2_1_3_LOCAL( FT_Error )

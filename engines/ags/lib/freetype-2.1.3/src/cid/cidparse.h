@@ -59,7 +59,7 @@ FT2_1_3_BEGIN_HEADER
 /*                                                                       */
 typedef struct  CID_Parser_ {
 	PS_ParserRec  root;
-	FT2_1_3_Stream     stream;
+	FT_Stream     stream;
 
 	FT_Byte*      postscript;
 	FT_Long       postscript_len;
@@ -74,8 +74,8 @@ typedef struct  CID_Parser_ {
 
 FT2_1_3_LOCAL( FT_Error )
 cid_parser_new( CID_Parser*    parser,
-				FT2_1_3_Stream      stream,
-				FT2_1_3_Memory      memory,
+				FT_Stream      stream,
+				FT_Memory      memory,
 				PSAux_Service  psaux );
 
 FT2_1_3_LOCAL( void )

@@ -36,8 +36,8 @@ namespace FreeType213 {
 /* documentation is in ftmm.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Get_Multi_Master( FT_Face           face,
-					 FT2_1_3_Multi_Master  *amaster ) {
+FT_Get_Multi_Master( FT_Face           face,
+					 FT_Multi_Master  *amaster ) {
 	FT_Error  error;
 
 
@@ -48,10 +48,10 @@ FT2_1_3_Get_Multi_Master( FT_Face           face,
 
 	if ( FT2_1_3_HAS_MULTIPLE_MASTERS( face ) ) {
 		FT_Driver       driver = face->driver;
-		FT2_1_3_Get_MM_Func  func;
+		FT_Get_MM_Func  func;
 
 
-		func = (FT2_1_3_Get_MM_Func)driver->root.clazz->get_interface(
+		func = (FT_Get_MM_Func)driver->root.clazz->get_interface(
 				   FT2_1_3_MODULE( driver ), "get_mm" );
 		if ( func )
 			error = func( face, amaster );
@@ -64,7 +64,7 @@ FT2_1_3_Get_Multi_Master( FT_Face           face,
 /* documentation is in ftmm.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Set_MM_Design_Coordinates( FT_Face   face,
+FT_Set_MM_Design_Coordinates( FT_Face   face,
 							  FT_UInt   num_coords,
 							  FT_Long*  coords ) {
 	FT_Error  error;
@@ -77,10 +77,10 @@ FT2_1_3_Set_MM_Design_Coordinates( FT_Face   face,
 
 	if ( FT2_1_3_HAS_MULTIPLE_MASTERS( face ) ) {
 		FT_Driver              driver = face->driver;
-		FT2_1_3_Set_MM_Design_Func  func;
+		FT_Set_MM_Design_Func  func;
 
 
-		func = (FT2_1_3_Set_MM_Design_Func)driver->root.clazz->get_interface(
+		func = (FT_Set_MM_Design_Func)driver->root.clazz->get_interface(
 				   FT2_1_3_MODULE( driver ), "set_mm_design" );
 		if ( func )
 			error = func( face, num_coords, coords );
@@ -93,7 +93,7 @@ FT2_1_3_Set_MM_Design_Coordinates( FT_Face   face,
 /* documentation is in ftmm.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Set_MM_Blend_Coordinates( FT_Face    face,
+FT_Set_MM_Blend_Coordinates( FT_Face    face,
 							 FT_UInt    num_coords,
 							 FT_Fixed*  coords ) {
 	FT_Error  error;
@@ -106,10 +106,10 @@ FT2_1_3_Set_MM_Blend_Coordinates( FT_Face    face,
 
 	if ( FT2_1_3_HAS_MULTIPLE_MASTERS( face ) ) {
 		FT_Driver             driver = face->driver;
-		FT2_1_3_Set_MM_Blend_Func  func;
+		FT_Set_MM_Blend_Func  func;
 
 
-		func = (FT2_1_3_Set_MM_Blend_Func)driver->root.clazz->get_interface(
+		func = (FT_Set_MM_Blend_Func)driver->root.clazz->get_interface(
 				   FT2_1_3_MODULE( driver ), "set_mm_blend" );
 		if ( func )
 			error = func( face, num_coords, coords );

@@ -498,7 +498,7 @@ pfr_slot_load_bitmap( PFR_Slot  glyph,
 					  FT_UInt   glyph_index ) {
 	FT_Error     error;
 	PFR_Face     face   = (PFR_Face) glyph->root.face;
-	FT2_1_3_Stream    stream = face->root.stream;
+	FT_Stream    stream = face->root.stream;
 	PFR_PhyFont  phys   = &face->phy_font;
 	FT_ULong     gps_offset;
 	FT_ULong     gps_size;
@@ -608,7 +608,7 @@ Found_Strike:
 
 			/* Allocate and read bitmap data */
 			{
-				FT2_1_3_Memory  memory = face->root.memory;
+				FT_Memory  memory = face->root.memory;
 				FT_Long    len    = glyph->root.bitmap.pitch * ysize;
 
 

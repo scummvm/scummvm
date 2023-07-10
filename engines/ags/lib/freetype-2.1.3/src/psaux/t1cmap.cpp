@@ -260,7 +260,7 @@ t1_cmap_unicode_init( T1_CMapUnicode  cmap ) {
 	FT_Error         error;
 	FT_UInt          count;
 	T1_Face          face    = (T1_Face)FT2_1_3_CMAP_FACE( cmap );
-	FT2_1_3_Memory        memory  = FT2_1_3_FACE_MEMORY( face );
+	FT_Memory        memory  = FT2_1_3_FACE_MEMORY( face );
 	PSNames_Service psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(face->psnames));
 
 	cmap->num_pairs = 0;
@@ -321,7 +321,7 @@ t1_cmap_unicode_init( T1_CMapUnicode  cmap ) {
 FT2_1_3_CALLBACK_DEF( void )
 t1_cmap_unicode_done( T1_CMapUnicode  cmap ) {
 	FT_Face    face   = FT2_1_3_CMAP_FACE(cmap);
-	FT2_1_3_Memory  memory = FT2_1_3_FACE_MEMORY(face);
+	FT_Memory  memory = FT2_1_3_FACE_MEMORY(face);
 
 	FT2_1_3_FREE( cmap->pairs );
 	cmap->num_pairs = 0;

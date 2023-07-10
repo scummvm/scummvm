@@ -143,7 +143,7 @@ FT_Outline_New( FT_Library   library,
 
 
 FT2_1_3_EXPORT( FT_Error )
-FT_Outline_New_Internal( FT2_1_3_Memory    memory,
+FT_Outline_New_Internal( FT_Memory    memory,
 						 FT_UInt      numPoints,
 						 FT_Int       numContours,
 						 FT_Outline  *anoutline );
@@ -179,7 +179,7 @@ FT_Outline_Done( FT_Library   library,
 
 
 FT2_1_3_EXPORT( FT_Error )
-FT_Outline_Done_Internal( FT2_1_3_Memory    memory,
+FT_Outline_Done_Internal( FT_Memory    memory,
 						  FT_Outline*  outline );
 
 
@@ -361,7 +361,7 @@ FT_Outline_Get_Bitmap( FT_Library   library,
 /*                                                                       */
 /* <Description>                                                         */
 /*    Renders an outline within a bitmap using the current scan-convert. */
-/*    This functions uses an FT2_1_3_Raster_Params structure as an argument,  */
+/*    This functions uses an FT_Raster_Params structure as an argument,  */
 /*    allowing advanced features like direct composition, translucency,  */
 /*    etc.                                                               */
 /*                                                                       */
@@ -371,14 +371,14 @@ FT_Outline_Get_Bitmap( FT_Library   library,
 /*    outline :: A pointer to the source outline descriptor.             */
 /*                                                                       */
 /* <InOut>                                                               */
-/*    params  :: A pointer to a FT2_1_3_Raster_Params structure used to       */
+/*    params  :: A pointer to a FT_Raster_Params structure used to       */
 /*               describe the rendering operation.                       */
 /*                                                                       */
 /* <Return>                                                              */
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 /* <Note>                                                                */
-/*    You should know what you are doing and how FT2_1_3_Raster_Params works  */
+/*    You should know what you are doing and how FT_Raster_Params works  */
 /*    to use this function.                                              */
 /*                                                                       */
 /*    The field `params.source' will be set to `outline' before the scan */
@@ -388,7 +388,7 @@ FT_Outline_Get_Bitmap( FT_Library   library,
 FT2_1_3_EXPORT( FT_Error )
 FT_Outline_Render( FT_Library         library,
 				   FT_Outline*        outline,
-				   FT2_1_3_Raster_Params*  params );
+				   FT_Raster_Params*  params );
 
 
 /* */

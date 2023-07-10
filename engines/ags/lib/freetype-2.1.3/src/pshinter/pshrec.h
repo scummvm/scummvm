@@ -128,7 +128,7 @@ typedef struct  PS_DimensionRec_ {
 /* dimension 0 => X coordinates + vertical hints/stems   */
 /* dimension 1 => Y coordinates + horizontal hints/stems */
 typedef struct  PS_HintsRec_ {
-	FT2_1_3_Memory        memory;
+	FT_Memory        memory;
 	FT_Error         error;
 	FT_UInt32        magic;
 	PS_Hint_Type     hint_type;
@@ -141,7 +141,7 @@ typedef struct  PS_HintsRec_ {
 /* initialize hints recorder */
 FT2_1_3_LOCAL( FT_Error )
 ps_hints_init( PS_Hints   hints,
-			   FT2_1_3_Memory  memory );
+			   FT_Memory  memory );
 
 /* finalize hints recorder */
 FT2_1_3_LOCAL( void )

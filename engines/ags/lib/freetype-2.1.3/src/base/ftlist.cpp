@@ -181,7 +181,7 @@ FT_List_Iterate( FT_List            list,
 FT2_1_3_EXPORT_DEF( void )
 FT_List_Finalize( FT_List             list,
                   FT_List_Destructor  destroy,
-                  FT2_1_3_Memory           memory,
+                  FT_Memory           memory,
                   void*               user ) {
 	FT_ListNode  cur;
 

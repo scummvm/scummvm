@@ -40,7 +40,7 @@ ft_metaclass_done( FT2_1_3_MetaClass  meta );
 
 
 /* class type for the meta-class itself */
-static const FT2_1_3_TypeRec  ft_meta_class_type = {
+static const FT_TypeRec  ft_meta_class_type = {
 	"FT2.MetaClass",
 	NULL,
 
@@ -48,7 +48,7 @@ static const FT2_1_3_TypeRec  ft_meta_class_type = {
 	(FT2_1_3_Object_InitFunc)  ft_metaclass_init,
 	(FT2_1_3_Object_DoneFunc)  ft_metaclass_done,
 
-	sizeof( FT2_1_3_ClassRec ),
+	sizeof( FT_ClassRec ),
 	(FT2_1_3_Object_InitFunc)  NULL,
 	(FT2_1_3_Object_DoneFunc)  NULL
 };
@@ -60,7 +60,7 @@ static const FT2_1_3_TypeRec  ft_meta_class_type = {
 static void
 ft_class_hnode_destroy( FT2_1_3_ClassHNode  node ) {
 	FT2_1_3_Class   clazz  = node->clazz;
-	FT2_1_3_Memory  memory = clazz->memory;
+	FT_Memory  memory = clazz->memory;
 
 	if ( clazz->class_done )
 		clazz->class_done( (FT2_1_3_Object) clazz );
@@ -75,8 +75,8 @@ ft_class_hnode_destroy( FT2_1_3_ClassHNode  node ) {
 
 
 static FT_Int
-ft_type_equal( FT2_1_3_Type  type1,
-               FT2_1_3_Type  type2 ) {
+ft_type_equal( FT_Type  type1,
+               FT_Type  type2 ) {
 	if ( type1 == type2 )
 		goto Ok;
 
@@ -119,8 +119,8 @@ Fail:
 static FT_Int
 ft_class_hnode_equal( const FT2_1_3_ClassHNode  node1,
                       const FT2_1_3_ClassHNode  node2 ) {
-	FT2_1_3_Type  type1 = node1->type;
-	FT2_1_3_Type  type2 = node2->type;
+	FT_Type  type1 = node1->type;
+	FT_Type  type2 = node2->type;
 
 	/* comparing the pointers should work in 99% of cases */
 	return ( type1 == type2 ) ? 1 : ft_type_equal( type1, type2 );
@@ -143,7 +143,7 @@ ft_metaclass_done( FT2_1_3_MetaClass  meta ) {
 FT2_1_3_BASE_DEF( FT_Error )
 ft_metaclass_init( FT2_1_3_MetaClass  meta,
                    FT_Library    library ) {
-	FT2_1_3_ClassRec*  clazz = (FT2_1_3_ClassRec*) &meta->clazz;
+	FT_ClassRec*  clazz = (FT_ClassRec*) &meta->clazz;
 
 	/* the meta-class is its OWN class !! */
 	clazz->object.clazz     = (FT2_1_3_Class) clazz;
@@ -156,7 +156,7 @@ ft_metaclass_init( FT2_1_3_MetaClass  meta,
 
 	clazz->class_done       = (FT2_1_3_Object_DoneFunc) ft_metaclass_done;
 
-	clazz->obj_size         = sizeof( FT2_1_3_ClassRec );
+	clazz->obj_size         = sizeof( FT_ClassRec );
 	clazz->obj_init         = NULL;
 	clazz->obj_done         = NULL;
 
@@ -172,10 +172,10 @@ ft_metaclass_init( FT2_1_3_MetaClass  meta,
 /*                                                        */
 static FT2_1_3_Class
 ft_metaclass_get_class( FT2_1_3_MetaClass  meta,
-                        FT2_1_3_Type       ctype ) {
+                        FT_Type       ctype ) {
 	FT2_1_3_ClassHNodeRec   keynode, *node, **pnode;
-	FT2_1_3_Memory          memory;
-	FT2_1_3_ClassRec*       clazz;
+	FT_Memory          memory;
+	FT_ClassRec*       clazz;
 	FT2_1_3_Class           parent;
 	FT_Error           error;
 
@@ -186,7 +186,7 @@ ft_metaclass_get_class( FT2_1_3_MetaClass  meta,
 	        (FT2_1_3_HashNode) &keynode );
 	node  = *pnode;
 	if ( node != NULL ) {
-		clazz = (FT2_1_3_ClassRec*) node->clazz;
+		clazz = (FT_ClassRec*) node->clazz;
 		goto Exit;
 	}
 
@@ -203,7 +203,7 @@ ft_metaclass_get_class( FT2_1_3_MetaClass  meta,
 	if ( !FT2_1_3_NEW( node ) ) {
 		if ( !FT2_1_3_ALLOC( clazz, ctype->class_size ) ) {
 			if ( parent )
-				FT2_1_3_MEM_COPY( (FT2_1_3_ClassRec*)clazz, parent, parent->type->class_size );
+				FT2_1_3_MEM_COPY( (FT_ClassRec*)clazz, parent, parent->type->class_size );
 
 			clazz->object.clazz     = (FT2_1_3_Class) meta;
 			clazz->object.ref_count = 1;
@@ -233,7 +233,7 @@ ft_metaclass_get_class( FT2_1_3_MetaClass  meta,
 
 			/* find class initializer, if any */
 			{
-				FT2_1_3_Type             ztype = ctype;
+				FT_Type             ztype = ctype;
 				FT2_1_3_Object_InitFunc  cinit = NULL;
 
 				do {
@@ -309,7 +309,7 @@ FT2_1_3_BASE_DEF( FT_Error )
 ft_object_create( FT2_1_3_Object  *pobject,
                   FT2_1_3_Class    clazz,
                   FT_Pointer  init_data ) {
-	FT2_1_3_Memory  memory;
+	FT_Memory  memory;
 	FT_Error   error;
 	FT2_1_3_Object  obj;
 
@@ -338,7 +338,7 @@ ft_object_create( FT2_1_3_Object  *pobject,
 
 
 FT2_1_3_BASE_DEF( FT2_1_3_Class )
-ft_class_find_by_type( FT2_1_3_Type     type,
+ft_class_find_by_type( FT_Type     type,
                        FT_Library  library ) {
 	FT2_1_3_MetaClass  meta = &library->meta_class;
 
@@ -348,7 +348,7 @@ ft_class_find_by_type( FT2_1_3_Type     type,
 
 FT2_1_3_BASE_DEF( FT_Error )
 ft_object_create_from_type( FT2_1_3_Object  *pobject,
-                            FT2_1_3_Type     type,
+                            FT_Type     type,
                             FT_Pointer  init_data,
                             FT_Library  library ) {
 	FT2_1_3_Class  clazz;

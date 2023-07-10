@@ -163,7 +163,7 @@ FT2_1_3_CALLBACK_TABLE_DEF const FT2_1_3_CMap_ClassRec  bdf_cmap_class = {
 
 FT2_1_3_CALLBACK_DEF( FT_Error )
 BDF_Face_Done( BDF_Face  face ) {
-	FT2_1_3_Memory  memory = FT2_1_3_FACE_MEMORY( face );
+	FT_Memory  memory = FT2_1_3_FACE_MEMORY( face );
 
 
 	bdf_free_font( face->bdffont );
@@ -185,13 +185,13 @@ BDF_Face_Done( BDF_Face  face ) {
 
 
 FT2_1_3_CALLBACK_DEF( FT_Error )
-BDF_Face_Init( FT2_1_3_Stream      stream,
+BDF_Face_Init( FT_Stream      stream,
 			   BDF_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,
 			   FT_Parameter*  params ) {
 	FT_Error       error  = FT2_1_3_Err_Ok;
-	FT2_1_3_Memory      memory = FT2_1_3_FACE_MEMORY( face );
+	FT_Memory      memory = FT2_1_3_FACE_MEMORY( face );
 
 	bdf_font_t*    font;
 	bdf_options_t  options;
@@ -457,7 +457,7 @@ BDF_Glyph_Load( FT_GlyphSlot  slot,
 	int             i, j, count;
 	unsigned char   *p, *pp;
 
-	FT2_1_3_Memory       memory = face->bdffont->memory;
+	FT_Memory       memory = face->bdffont->memory;
 
 	FT2_1_3_UNUSED( load_flags );
 

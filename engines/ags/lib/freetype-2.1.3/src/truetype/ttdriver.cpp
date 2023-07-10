@@ -343,7 +343,7 @@ Load_Glyph( TT_GlyphSlot  slot,
 static FT_Module_Interface
 tt_get_interface( TT_Driver    driver,
 				  const char*  tt_interface ) {
-	FT_Module     sfntd = FT2_1_3_Get_Module( driver->root.root.library,
+	FT_Module     sfntd = FT_Get_Module( driver->root.root.library,
 										 "sfnt" );
 	SFNT_Service  sfnt;
 

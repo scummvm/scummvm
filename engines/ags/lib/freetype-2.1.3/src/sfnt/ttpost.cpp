@@ -155,8 +155,8 @@ static const FT_String*  tt_post_default_names[258] = {
 
 static FT_Error
 load_format_20( TT_Face    face,
-				FT2_1_3_Stream  stream ) {
-	FT2_1_3_Memory   memory = stream->memory;
+				FT_Stream  stream ) {
+	FT_Memory   memory = stream->memory;
 	FT_Error    error;
 
 	FT_Int      num_glyphs;
@@ -267,8 +267,8 @@ Exit:
 
 static FT_Error
 load_format_25( TT_Face    face,
-				FT2_1_3_Stream  stream ) {
-	FT2_1_3_Memory  memory = stream->memory;
+				FT_Stream  stream ) {
+	FT_Memory  memory = stream->memory;
 	FT_Error   error;
 
 	FT_Int     num_glyphs;
@@ -326,7 +326,7 @@ Exit:
 
 static FT_Error
 load_post_names( TT_Face  face ) {
-	FT2_1_3_Stream  stream;
+	FT_Stream  stream;
 	FT_Error   error;
 	FT_Fixed   format;
 
@@ -362,7 +362,7 @@ Exit:
 
 FT2_1_3_LOCAL_DEF( void )
 tt_face_free_ps_names( TT_Face  face ) {
-	FT2_1_3_Memory      memory = face->root.memory;
+	FT_Memory      memory = face->root.memory;
 	TT_Post_Names  names  = &face->postscript_names;
 	FT_Fixed       format;
 

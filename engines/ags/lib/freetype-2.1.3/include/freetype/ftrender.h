@@ -151,7 +151,7 @@ typedef struct  FT_Renderer_Class_ {
 	FT_Renderer_GetCBoxFunc    get_glyph_cbox;
 	FT_Renderer_SetModeFunc    set_mode;
 
-	FT2_1_3_Raster_Funcs*           raster_class;
+	FT_Raster_Funcs*           raster_class;
 
 } FT_Renderer_Class;
 
@@ -159,7 +159,7 @@ typedef struct  FT_Renderer_Class_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Get_Renderer                                                    */
+/*    FT_Get_Renderer                                                    */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Retrieves the current renderer for a given glyph format.           */
@@ -176,18 +176,18 @@ typedef struct  FT_Renderer_Class_ {
 /*    An error will be returned if a module already exists by that name, */
 /*    or if the module requires a version of FreeType that is too great. */
 /*                                                                       */
-/*    To add a new renderer, simply use FT2_1_3_Add_Module().  To retrieve a  */
-/*    renderer by its name, use FT2_1_3_Get_Module().                         */
+/*    To add a new renderer, simply use FT_Add_Module().  To retrieve a  */
+/*    renderer by its name, use FT_Get_Module().                         */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Renderer )
-FT2_1_3_Get_Renderer( FT_Library       library,
+FT_Get_Renderer( FT_Library       library,
 				 FT_Glyph_Format  format );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Set_Renderer                                                    */
+/*    FT_Set_Renderer                                                    */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Sets the current renderer to use, and set additional mode.         */
@@ -212,7 +212,7 @@ FT2_1_3_Get_Renderer( FT_Library       library,
 /*    This doesn't change the current renderer for other formats.        */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Set_Renderer( FT_Library     library,
+FT_Set_Renderer( FT_Library     library,
 				 FT_Renderer    renderer,
 				 FT_UInt        num_params,
 				 FT_Parameter*  parameters );

@@ -309,10 +309,10 @@ typedef struct  TRaster_ {
 	FT_Bitmap   target;
 	FT_BBox     clip_box;
 
-	FT2_1_3_Span     gray_spans[FT2_1_3_MAX_GRAY_SPANS];
+	FT_Span     gray_spans[FT2_1_3_MAX_GRAY_SPANS];
 	int         num_gray_spans;
 
-	FT2_1_3_Raster_Span_Func  render_span;
+	FT_Raster_Span_Func  render_span;
 	void*                render_span_data;
 	int                  span_y;
 
@@ -1168,7 +1168,7 @@ gray_check_sort( PCell  cells,
 
 static int
 gray_move_to( FT_Vector*  to,
-			  FT2_1_3_Raster   raster ) {
+			  FT_Raster   raster ) {
 	TPos  x, y;
 
 
@@ -1189,7 +1189,7 @@ gray_move_to( FT_Vector*  to,
 
 static int
 gray_line_to( FT_Vector*  to,
-			  FT2_1_3_Raster   raster ) {
+			  FT_Raster   raster ) {
 	gray_render_line( (PRaster)raster,
 					  UPSCALE( to->x ), UPSCALE( to->y ) );
 	return 0;
@@ -1199,7 +1199,7 @@ gray_line_to( FT_Vector*  to,
 static int
 gray_conic_to( FT_Vector*  control,
 			   FT_Vector*  to,
-			   FT2_1_3_Raster   raster ) {
+			   FT_Raster   raster ) {
 	gray_render_conic( (PRaster)raster, control, to );
 	return 0;
 }
@@ -1209,7 +1209,7 @@ static int
 gray_cubic_to( FT_Vector*  control1,
 			   FT_Vector*  control2,
 			   FT_Vector*  to,
-			   FT2_1_3_Raster   raster ) {
+			   FT_Raster   raster ) {
 	gray_render_cubic( (PRaster)raster, control1, control2, to );
 	return 0;
 }
@@ -1218,7 +1218,7 @@ gray_cubic_to( FT_Vector*  control1,
 static void
 gray_render_span( int       y,
 				  int       count,
-				  FT2_1_3_Span*  spans,
+				  FT_Span*  spans,
 				  PRaster   raster ) {
 	unsigned char*  p;
 	FT_Bitmap*      map = &raster->target;
@@ -1284,7 +1284,7 @@ gray_hline( RAS_ARG_ TCoord  x,
 			TCoord  y,
 			TPos    area,
 			int     acount ) {
-	FT2_1_3_Span*   span;
+	FT_Span*   span;
 	int        count;
 	int        coverage;
 
@@ -1439,7 +1439,7 @@ gray_sweep( RAS_ARG_ FT_Bitmap*  target ) {
 
 	{
 		int       n;
-		FT2_1_3_Span*  span;
+		FT_Span*  span;
 
 
 		fprintf( stderr, "y=%3d ", ras.span_y );
@@ -1852,7 +1852,7 @@ gray_convert_glyph( RAS_ARG ) {
 
 extern int
 gray_raster_render( PRaster            raster,
-					FT2_1_3_Raster_Params*  params ) {
+					FT_Raster_Params*  params ) {
 	FT_Outline*  outline = (FT_Outline*)params->source;
 	FT_Bitmap*   target_map = params->target;
 
@@ -1903,11 +1903,11 @@ gray_raster_render( PRaster            raster,
 	if ( target_map )
 		ras.target = *target_map;
 
-	ras.render_span      = (FT2_1_3_Raster_Span_Func)gray_render_span;
+	ras.render_span      = (FT_Raster_Span_Func)gray_render_span;
 	ras.render_span_data = &ras;
 
 	if ( params->flags & FT2_1_3_RASTER_FLAG_DIRECT ) {
-		ras.render_span      = (FT2_1_3_Raster_Span_Func)params->gray_spans;
+		ras.render_span      = (FT_Raster_Span_Func)params->gray_spans;
 		ras.render_span_data = params->user;
 	}
 
@@ -1949,13 +1949,13 @@ grays_init_gamma( PRaster  raster ) {
 
 static int
 gray_raster_new( void*       memory,
-				 FT2_1_3_Raster*  araster ) {
+				 FT_Raster*  araster ) {
 	static TRaster  the_raster;
 
 	FT2_1_3_UNUSED( memory );
 
 
-	*araster = (FT2_1_3_Raster)&the_raster;
+	*araster = (FT_Raster)&the_raster;
 	FT2_1_3_MEM_ZERO( &the_raster, sizeof ( the_raster ) );
 
 #ifdef GRAYS_USE_GAMMA
@@ -1967,7 +1967,7 @@ gray_raster_new( void*       memory,
 
 
 static void
-gray_raster_done( FT2_1_3_Raster  raster ) {
+gray_raster_done( FT_Raster  raster ) {
 	/* nothing */
 	FT2_1_3_UNUSED( raster );
 }
@@ -1975,8 +1975,8 @@ gray_raster_done( FT2_1_3_Raster  raster ) {
 #else /* _STANDALONE_ */
 
 static int
-gray_raster_new( FT2_1_3_Memory   memory,
-				 FT2_1_3_Raster*  araster ) {
+gray_raster_new( FT_Memory   memory,
+				 FT_Raster*  araster ) {
 	FT_Error  error;
 	PRaster   raster;
 
@@ -1984,7 +1984,7 @@ gray_raster_new( FT2_1_3_Memory   memory,
 	*araster = 0;
 	if ( !FT2_1_3_ALLOC( raster, sizeof ( TRaster ) ) ) {
 		raster->memory = memory;
-		*araster = (FT2_1_3_Raster)raster;
+		*araster = (FT_Raster)raster;
 
 #ifdef GRAYS_USE_GAMMA
 		grays_init_gamma( raster );
@@ -1996,8 +1996,8 @@ gray_raster_new( FT2_1_3_Memory   memory,
 
 
 static void
-gray_raster_done( FT2_1_3_Raster  raster ) {
-	FT2_1_3_Memory  memory = (FT2_1_3_Memory)((PRaster)raster)->memory;
+gray_raster_done( FT_Raster  raster ) {
+	FT_Memory  memory = (FT_Memory)((PRaster)raster)->memory;
 
 
 	FT2_1_3_FREE( raster );
@@ -2007,7 +2007,7 @@ gray_raster_done( FT2_1_3_Raster  raster ) {
 
 
 static void
-gray_raster_reset( FT2_1_3_Raster    raster,
+gray_raster_reset( FT_Raster    raster,
 				   const char*  pool_base,
 				   long         pool_size ) {
 	PRaster  rast = (PRaster)raster;
@@ -2020,14 +2020,14 @@ gray_raster_reset( FT2_1_3_Raster    raster,
 }
 
 
-const FT2_1_3_Raster_Funcs  ft_grays_raster = {
+const FT_Raster_Funcs  ft_grays_raster = {
 	FT2_1_3_GLYPH_FORMAT_OUTLINE,
 
-	(FT2_1_3_Raster_New_Func)     gray_raster_new,
-	(FT2_1_3_Raster_Reset_Func)   gray_raster_reset,
-	(FT2_1_3_Raster_Set_Mode_Func)0,
-	(FT2_1_3_Raster_Render_Func)  gray_raster_render,
-	(FT2_1_3_Raster_Done_Func)    gray_raster_done
+	(FT_Raster_New_Func)     gray_raster_new,
+	(FT_Raster_Reset_Func)   gray_raster_reset,
+	(FT_Raster_Set_Mode_Func)0,
+	(FT_Raster_Render_Func)  gray_raster_render,
+	(FT_Raster_Done_Func)    gray_raster_done
 };
 
 } // End of namespace FreeType213

@@ -100,7 +100,7 @@ t1_allocate_blend( T1_Face  face,
 				   FT_UInt  num_designs,
 				   FT_UInt  num_axis ) {
 	PS_Blend   blend;
-	FT2_1_3_Memory  memory = face->root.memory;
+	FT_Memory  memory = face->root.memory;
 	FT_Error   error  = 0;
 
 
@@ -175,7 +175,7 @@ Fail:
 
 FT2_1_3_LOCAL_DEF( FT_Error )
 T1_Get_Multi_Master( T1_Face           face,
-					 FT2_1_3_Multi_Master*  master ) {
+					 FT_Multi_Master*  master ) {
 	PS_Blend  blend = face->blend;
 	FT_UInt   n;
 	FT_Error  error;
@@ -188,7 +188,7 @@ T1_Get_Multi_Master( T1_Face           face,
 		master->num_designs = blend->num_designs;
 
 		for ( n = 0; n < blend->num_axis; n++ ) {
-			FT2_1_3_MM_Axis*   axis = master->axis + n;
+			FT_MM_Axis*   axis = master->axis + n;
 			PS_DesignMap  map = blend->design_map + n;
 
 
@@ -311,7 +311,7 @@ Found:
 
 FT2_1_3_LOCAL_DEF( void )
 T1_Done_Blend( T1_Face  face ) {
-	FT2_1_3_Memory  memory = face->root.memory;
+	FT_Memory  memory = face->root.memory;
 	PS_Blend   blend  = face->blend;
 
 
@@ -366,7 +366,7 @@ parse_blend_axis_types( T1_Face    face,
 	FT_Int       n, num_axis;
 	FT_Error     error = 0;
 	PS_Blend     blend;
-	FT2_1_3_Memory    memory;
+	FT_Memory    memory;
 
 
 	/* take an array of objects */
@@ -502,7 +502,7 @@ parse_blend_design_map( T1_Face    face,
 	FT_Int       n, num_axis;
 	FT_Byte*     old_cursor;
 	FT_Byte*     old_limit;
-	FT2_1_3_Memory    memory = face->root.memory;
+	FT_Memory    memory = face->root.memory;
 
 
 	T1_ToTokenArray( parser, axis_tokens, T1_MAX_MM_AXIS, &num_axis );
@@ -785,7 +785,7 @@ parse_font_name( T1_Face    face,
 				 T1_Loader  loader ) {
 	T1_Parser   parser = &loader->parser;
 	FT_Error    error;
-	FT2_1_3_Memory   memory = parser->root.memory;
+	FT_Memory   memory = parser->root.memory;
 	FT_PtrDist  len;
 	FT_Byte*    cur;
 	FT_Byte*    cur2;
@@ -913,7 +913,7 @@ parse_encoding( T1_Face    face,
 		T1_Encoding  encode     = &face->type1.encoding;
 		FT_Int       count, n;
 		PS_Table     char_table = &loader->encoding_table;
-		FT2_1_3_Memory    memory     = parser->root.memory;
+		FT_Memory    memory     = parser->root.memory;
 		FT_Error     error;
 
 
@@ -1046,7 +1046,7 @@ parse_subrs( T1_Face    face,
 			 T1_Loader  loader ) {
 	T1_Parser      parser = &loader->parser;
 	PS_Table       table  = &loader->subrs;
-	FT2_1_3_Memory      memory = parser->root.memory;
+	FT_Memory      memory = parser->root.memory;
 	FT_Error       error;
 	FT_Int         n;
 
@@ -1140,7 +1140,7 @@ parse_charstrings( T1_Face    face,
 	PS_Table       code_table   = &loader->charstrings;
 	PS_Table       name_table   = &loader->glyph_names;
 	PS_Table       swap_table   = &loader->swap_table;
-	FT2_1_3_Memory      memory       = parser->root.memory;
+	FT_Memory      memory       = parser->root.memory;
 	FT_Error       error;
 
 	PSAux_Service psaux = const_cast<PSAux_Service>(reinterpret_cast<const PSAux_ServiceRec_ *>(face->psaux));

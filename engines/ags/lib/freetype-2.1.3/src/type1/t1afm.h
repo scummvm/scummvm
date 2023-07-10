@@ -45,10 +45,10 @@ typedef struct  T1_AFM_ {
 
 FT2_1_3_LOCAL( FT_Error )
 T1_Read_AFM( FT_Face    face,
-			 FT2_1_3_Stream  stream );
+			 FT_Stream  stream );
 
 FT2_1_3_LOCAL( void )
-T1_Done_AFM( FT2_1_3_Memory  memory,
+T1_Done_AFM( FT_Memory  memory,
 			 T1_AFM*    afm );
 
 FT2_1_3_LOCAL( void )

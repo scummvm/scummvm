@@ -146,7 +146,7 @@ static const FT2_1_3_Frame_Field  pfr_header_fields[] = {
 
 FT2_1_3_LOCAL_DEF( FT_Error )
 pfr_header_load( PFR_Header  header,
-				 FT2_1_3_Stream   stream ) {
+				 FT_Stream   stream ) {
 	FT_Error   error;
 
 
@@ -188,7 +188,7 @@ pfr_header_check( PFR_Header  header ) {
 
 
 FT2_1_3_LOCAL_DEF( FT_Error )
-pfr_log_font_count( FT2_1_3_Stream  stream,
+pfr_log_font_count( FT_Stream  stream,
 					FT_UInt32  section_offset,
 					FT_UInt   *acount ) {
 	FT_Error   error;
@@ -209,7 +209,7 @@ Exit:
 
 FT2_1_3_LOCAL_DEF( FT_Error )
 pfr_log_font_load( PFR_LogFont  log_font,
-				   FT2_1_3_Stream    stream,
+				   FT_Stream    stream,
 				   FT_UInt      idx,
 				   FT_UInt32    section_offset,
 				   FT_Bool      size_increment ) {
@@ -331,7 +331,7 @@ FT2_1_3_CALLBACK_DEF( FT_Error )
 pfr_extra_item_load_bitmap_info( FT_Byte*     p,
 								 FT_Byte*     limit,
 								 PFR_PhyFont  phy_font ) {
-	FT2_1_3_Memory   memory = phy_font->memory;
+	FT_Memory   memory = phy_font->memory;
 	PFR_Strike  strike;
 	FT_UInt     flags0;
 	FT_UInt     n, count, size1;
@@ -418,7 +418,7 @@ pfr_extra_item_load_font_id( FT_Byte*     p,
 							 FT_Byte*     limit,
 							 PFR_PhyFont  phy_font ) {
 	FT_Error   error  = 0;
-	FT2_1_3_Memory  memory = phy_font->memory;
+	FT_Memory  memory = phy_font->memory;
 	FT_UInt    len    = (FT_UInt)( limit - p );
 
 
@@ -445,7 +445,7 @@ pfr_extra_item_load_stem_snaps( FT_Byte*     p,
 	FT_UInt    count, num_vert, num_horz;
 	FT_Int*    snaps;
 	FT_Error   error  = 0;
-	FT2_1_3_Memory  memory = phy_font->memory;
+	FT_Memory  memory = phy_font->memory;
 
 
 	if ( phy_font->vertical.stem_snaps != NULL )
@@ -492,7 +492,7 @@ pfr_extra_item_load_kerning_pairs( FT_Byte*     p,
 	FT_UInt       num_pairs;
 	PFR_KernPair  pairs;
 	FT_Error      error  = 0;
-	FT2_1_3_Memory     memory = phy_font->memory;
+	FT_Memory     memory = phy_font->memory;
 
 
 	/* allocate a new kerning item */
@@ -565,7 +565,7 @@ pfr_extra_item_load_kerning_pairs( FT_Byte*     p,
 								   PFR_PhyFont  phy_font ) {
 	PFR_KernItem  item;
 	FT_Error      error  = 0;
-	FT2_1_3_Memory     memory = phy_font->memory;
+	FT_Memory     memory = phy_font->memory;
 
 
 	FT2_1_3_TRACE2(( "pfr_extra_item_load_kerning_pairs()\n" ));
@@ -660,7 +660,7 @@ static const PFR_ExtraItemRec  pfr_phy_font_extra_items[] = {
 
 FT2_1_3_LOCAL_DEF( void )
 pfr_phy_font_done( PFR_PhyFont  phy_font,
-				   FT2_1_3_Memory    memory ) {
+				   FT_Memory    memory ) {
 	if ( phy_font->font_id )
 		FT2_1_3_FREE( phy_font->font_id );
 
@@ -701,11 +701,11 @@ pfr_phy_font_done( PFR_PhyFont  phy_font,
 
 FT2_1_3_LOCAL_DEF( FT_Error )
 pfr_phy_font_load( PFR_PhyFont  phy_font,
-				   FT2_1_3_Stream    stream,
+				   FT_Stream    stream,
 				   FT_UInt32    offset,
 				   FT_UInt32    size ) {
 	FT_Error   error;
-	FT2_1_3_Memory  memory = stream->memory;
+	FT_Memory  memory = stream->memory;
 	FT_UInt    flags, num_aux;
 	FT_Byte*   p;
 	FT_Byte*   limit;

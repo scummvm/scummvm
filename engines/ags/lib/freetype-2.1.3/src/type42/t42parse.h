@@ -29,7 +29,7 @@ FT2_1_3_BEGIN_HEADER
 
 typedef struct  T42_ParserRec_ {
 	PS_ParserRec  root;
-	FT2_1_3_Stream     stream;
+	FT_Stream     stream;
 
 	FT_Byte*      base_dict;
 	FT_Int        base_len;
@@ -55,8 +55,8 @@ typedef struct  T42_Loader_ {
 
 FT2_1_3_LOCAL( FT_Error )
 t42_parser_init( T42_Parser     parser,
-				 FT2_1_3_Stream      stream,
-				 FT2_1_3_Memory      memory,
+				 FT_Stream      stream,
+				 FT_Memory      memory,
 				 PSAux_Service  psaux );
 
 FT2_1_3_LOCAL( void )

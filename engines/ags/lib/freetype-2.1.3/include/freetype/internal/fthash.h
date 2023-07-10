@@ -125,7 +125,7 @@ typedef struct FT2_1_3_HashRec_ {
 	FT_UInt              mask;  /* really maxp-1 */
 	FT_Long              slack;
 	FT2_1_3_Hash_EqualFunc    node_equal;
-	FT2_1_3_Memory            memory;
+	FT_Memory            memory;
 
 } FT2_1_3_HashRec;
 
@@ -210,7 +210,7 @@ typedef struct FT2_1_3_HashNodeRec_ {
 FT2_1_3_BASE( FT_Error )
 ft_hash_init( FT2_1_3_Hash              table,
 							FT2_1_3_Hash_EqualFunc  compare,
-							FT2_1_3_Memory            memory );
+							FT_Memory            memory );
 
 
 /****************************************************************

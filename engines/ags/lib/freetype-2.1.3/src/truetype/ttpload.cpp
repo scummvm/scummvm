@@ -58,9 +58,9 @@ namespace FreeType213 {
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_loca( TT_Face    face,
-				   FT2_1_3_Stream  stream ) {
+				   FT_Stream  stream ) {
 	FT_Error   error;
-	FT2_1_3_Memory  memory = stream->memory;
+	FT_Memory  memory = stream->memory;
 	FT_Short   LongOffsets;
 	FT_ULong   table_len;
 
@@ -142,9 +142,9 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_cvt( TT_Face    face,
-				  FT2_1_3_Stream  stream ) {
+				  FT_Stream  stream ) {
 	FT_Error   error;
-	FT2_1_3_Memory  memory = stream->memory;
+	FT_Memory  memory = stream->memory;
 	FT_ULong   table_len;
 
 
@@ -205,7 +205,7 @@ Exit:
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_fpgm( TT_Face    face,
-				   FT2_1_3_Stream  stream ) {
+				   FT_Stream  stream ) {
 	FT_Error   error;
 	FT_ULong   table_len;
 

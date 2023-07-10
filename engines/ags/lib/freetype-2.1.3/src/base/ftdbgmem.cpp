@@ -66,11 +66,11 @@ typedef struct  FT2_1_3_MemTableRec_ {
 	const char*      file_name;
 	FT_Long          line_no;
 
-	FT2_1_3_Memory        memory;
+	FT_Memory        memory;
 	FT_Pointer       memory_user;
-	FT2_1_3_Alloc_Func    alloc;
-	FT2_1_3_Free_Func     free;
-	FT2_1_3_Realloc_Func  realloc;
+	FT_Alloc_Func    alloc;
+	FT_Free_Func     free;
+	FT_Realloc_Func  realloc;
 
 } FT2_1_3_MemTableRec;
 
@@ -154,7 +154,7 @@ ft_mem_closest_prime( FT_ULong  num ) {
 static FT_Pointer
 ft_mem_table_alloc( FT2_1_3_MemTable  table,
 					FT_Long      size ) {
-	FT2_1_3_Memory   memory = table->memory;
+	FT_Memory   memory = table->memory;
 	FT_Pointer  block;
 
 
@@ -169,7 +169,7 @@ ft_mem_table_alloc( FT2_1_3_MemTable  table,
 static void
 ft_mem_table_free( FT2_1_3_MemTable  table,
 				   FT_Pointer   block ) {
-	FT2_1_3_Memory  memory = table->memory;
+	FT_Memory  memory = table->memory;
 
 
 	memory->user = table->memory_user;
@@ -225,7 +225,7 @@ ft_mem_table_resize( FT2_1_3_MemTable  table ) {
 
 
 static FT2_1_3_MemTable
-ft_mem_table_new( FT2_1_3_Memory  memory ) {
+ft_mem_table_new( FT_Memory  memory ) {
 	FT2_1_3_MemTable  table;
 
 
@@ -438,7 +438,7 @@ ft_mem_table_remove( FT2_1_3_MemTable  table,
 
 
 extern FT_Pointer
-ft_mem_debug_alloc( FT2_1_3_Memory  memory,
+ft_mem_debug_alloc( FT_Memory  memory,
 					FT_Long    size ) {
 	FT2_1_3_MemTable  table = (FT2_1_3_MemTable)memory->user;
 	FT_Byte*     block;
@@ -459,7 +459,7 @@ ft_mem_debug_alloc( FT2_1_3_Memory  memory,
 
 
 extern void
-ft_mem_debug_free( FT2_1_3_Memory   memory,
+ft_mem_debug_free( FT_Memory   memory,
 				   FT_Pointer  block ) {
 	FT2_1_3_MemTable  table = (FT2_1_3_MemTable)memory->user;
 
@@ -478,7 +478,7 @@ ft_mem_debug_free( FT2_1_3_Memory   memory,
 
 
 extern FT_Pointer
-ft_mem_debug_realloc( FT2_1_3_Memory   memory,
+ft_mem_debug_realloc( FT_Memory   memory,
 					  FT_Long     cur_size,
 					  FT_Long     new_size,
 					  FT_Pointer  block ) {
@@ -533,7 +533,7 @@ ft_mem_debug_realloc( FT2_1_3_Memory   memory,
 
 
 extern FT_Int
-ft_mem_debug_init( FT2_1_3_Memory  memory ) {
+ft_mem_debug_init( FT_Memory  memory ) {
 	FT2_1_3_MemTable  table;
 	FT_Int       result = 0;
 
@@ -553,7 +553,7 @@ ft_mem_debug_init( FT2_1_3_Memory  memory ) {
 
 
 extern void
-ft_mem_debug_done( FT2_1_3_Memory  memory ) {
+ft_mem_debug_done( FT_Memory  memory ) {
 	FT2_1_3_MemTable  table = (FT2_1_3_MemTable)memory->user;
 
 
@@ -569,7 +569,7 @@ ft_mem_debug_done( FT2_1_3_Memory  memory ) {
 
 
 FT2_1_3_BASE_DEF( FT_Error )
-FT2_1_3_Alloc_Debug( FT2_1_3_Memory    memory,
+FT2_1_3_Alloc_Debug( FT_Memory    memory,
 				FT_Long      size,
 				void*       *P,
 				const char*  file_name,
@@ -586,7 +586,7 @@ FT2_1_3_Alloc_Debug( FT2_1_3_Memory    memory,
 
 
 FT2_1_3_BASE_DEF( FT_Error )
-FT2_1_3_Realloc_Debug( FT2_1_3_Memory    memory,
+FT2_1_3_Realloc_Debug( FT_Memory    memory,
 				  FT_Long      current,
 				  FT_Long      size,
 				  void*       *P,
@@ -604,7 +604,7 @@ FT2_1_3_Realloc_Debug( FT2_1_3_Memory    memory,
 
 
 FT2_1_3_BASE_DEF( void )
-FT2_1_3_Free_Debug( FT2_1_3_Memory    memory,
+FT2_1_3_Free_Debug( FT_Memory    memory,
 			   FT_Pointer   block,
 			   const char*  file_name,
 			   FT_Long      line_no ) {

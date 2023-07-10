@@ -320,7 +320,7 @@ typedef struct  TT_NameTableRec_ {
 	FT_UInt           numNameRecords;
 	FT_UInt           storageOffset;
 	TT_NameEntryRec*  names;
-	FT2_1_3_Stream         stream;
+	FT_Stream         stream;
 
 } TT_NameTableRec, *TT_NameTable;
 
@@ -1157,7 +1157,7 @@ typedef struct TT_LoaderRec_*  TT_Loader;
 typedef FT_Error
 (*TT_Loader_GotoTableFunc)( TT_Face    face,
                             FT_ULong   tag,
-                            FT2_1_3_Stream  stream,
+                            FT_Stream  stream,
                             FT_ULong*  length );
 
 
@@ -1566,7 +1566,7 @@ typedef struct  TT_FaceRec_ {
 /*     contours     :: The contours end points.                          */
 /*                                                                       */
 typedef struct  TT_GlyphZoneRec_ {
-	FT2_1_3_Memory   memory;
+	FT_Memory   memory;
 	FT_UShort   max_points;
 	FT_UShort   max_contours;
 	FT_UShort   n_points;   /* number of points in zone    */
@@ -1594,7 +1594,7 @@ typedef struct  TT_LoaderRec_ {
 	FT_ULong         load_flags;
 	FT_UInt          glyph_index;
 
-	FT2_1_3_Stream        stream;
+	FT_Stream        stream;
 	FT_Int           byte_len;
 
 	FT_Short         n_contours;

@@ -130,7 +130,7 @@ ft_trig_prenorm( FT_Vector*  vec ) {
 
 static void
 ft_trig_pseudo_rotate( FT_Vector*  vec,
-					   FT2_1_3_Angle    theta ) {
+					   FT_Angle    theta ) {
 	FT_Int           i;
 	FT_Fixed         x, y, xtemp;
 	const FT_Fixed  *arctanptr;
@@ -257,7 +257,7 @@ ft_trig_pseudo_polarize( FT_Vector*  vec ) {
 /* documentation is in fttrigon.h */
 
 FT2_1_3_EXPORT_DEF( FT_Fixed )
-FT2_1_3_Cos( FT2_1_3_Angle  angle ) {
+FT_Cos( FT_Angle  angle ) {
 	FT_Vector  v;
 
 
@@ -272,15 +272,15 @@ FT2_1_3_Cos( FT2_1_3_Angle  angle ) {
 /* documentation is in fttrigon.h */
 
 FT2_1_3_EXPORT_DEF( FT_Fixed )
-FT2_1_3_Sin( FT2_1_3_Angle  angle ) {
-	return FT2_1_3_Cos( FT2_1_3_ANGLE_PI2 - angle );
+FT_Sin( FT_Angle  angle ) {
+	return FT_Cos( FT2_1_3_ANGLE_PI2 - angle );
 }
 
 
 /* documentation is in fttrigon.h */
 
 FT2_1_3_EXPORT_DEF( FT_Fixed )
-FT2_1_3_Tan( FT2_1_3_Angle  angle ) {
+FT_Tan( FT_Angle  angle ) {
 	FT_Vector  v;
 
 
@@ -294,8 +294,8 @@ FT2_1_3_Tan( FT2_1_3_Angle  angle ) {
 
 /* documentation is in fttrigon.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Angle )
-FT2_1_3_Atan2( FT_Fixed  dx,
+FT2_1_3_EXPORT_DEF( FT_Angle )
+FT_Atan2( FT_Fixed  dx,
 		  FT_Fixed  dy ) {
 	FT_Vector  v;
 
@@ -316,7 +316,7 @@ FT2_1_3_Atan2( FT_Fixed  dx,
 
 FT2_1_3_EXPORT_DEF( void )
 FT_Vector_Unit( FT_Vector*  vec,
-				FT2_1_3_Angle    angle ) {
+				FT_Angle    angle ) {
 	vec->x = FT2_1_3_TRIG_COSCALE >> 2;
 	vec->y = 0;
 	ft_trig_pseudo_rotate( vec, angle );
@@ -329,7 +329,7 @@ FT_Vector_Unit( FT_Vector*  vec,
 
 FT2_1_3_EXPORT_DEF( void )
 FT_Vector_Rotate( FT_Vector*  vec,
-				  FT2_1_3_Angle    angle ) {
+				  FT_Angle    angle ) {
 	FT_Int     shift;
 	FT_Vector  v;
 
@@ -390,7 +390,7 @@ FT_Vector_Length( FT_Vector*  vec ) {
 FT2_1_3_EXPORT_DEF( void )
 FT_Vector_Polarize( FT_Vector*  vec,
 					FT_Fixed   *length,
-					FT2_1_3_Angle   *angle ) {
+					FT_Angle   *angle ) {
 	FT_Int     shift;
 	FT_Vector  v;
 
@@ -415,7 +415,7 @@ FT_Vector_Polarize( FT_Vector*  vec,
 FT2_1_3_EXPORT_DEF( void )
 FT_Vector_From_Polar( FT_Vector*  vec,
 					  FT_Fixed    length,
-					  FT2_1_3_Angle    angle ) {
+					  FT_Angle    angle ) {
 	vec->x = length;
 	vec->y = 0;
 
@@ -425,10 +425,10 @@ FT_Vector_From_Polar( FT_Vector*  vec,
 
 /* documentation is in fttrigon.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Angle )
-FT2_1_3_Angle_Diff( FT2_1_3_Angle  angle1,
-			   FT2_1_3_Angle  angle2 ) {
-	FT2_1_3_Angle  delta = angle2 - angle1;
+FT2_1_3_EXPORT_DEF( FT_Angle )
+FT_Angle_Diff( FT_Angle  angle1,
+			   FT_Angle  angle2 ) {
+	FT_Angle  delta = angle2 - angle1;
 
 	delta %= FT2_1_3_ANGLE_2PI;
 

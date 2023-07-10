@@ -5,7 +5,7 @@
 
 /* the ISO/ANSI standard stream object */
 typedef struct FT2_1_3_StdStreamRec_ {
-	FT2_1_3_StreamRec  stream;
+	FT_StreamRec  stream;
 	FILE*         file;
 	const char*   pathname;
 
@@ -73,20 +73,20 @@ ft_std_stream_init( FT2_1_3_StdStream  stream,
 
 
 static void
-ft_std_stream_class_init( FT2_1_3_ClassRec*  _clazz ) {
-	FT2_1_3_StreamClassRec*  clazz = FT2_1_3_STREAM_CLASS(_clazz);
+ft_std_stream_class_init( FT_ClassRec*  _clazz ) {
+	FT_StreamClassRec*  clazz = FT2_1_3_STREAM_CLASS(_clazz);
 
-	clazz->stream_read = (FT2_1_3_Stream_ReadFunc) ft_std_stream_read;
-	clazz->stream_seek = (FT2_1_3_Stream_SeekFunc) ft_std_stream_seek;
+	clazz->stream_read = (FT_Stream_ReadFunc) ft_std_stream_read;
+	clazz->stream_seek = (FT_Stream_SeekFunc) ft_std_stream_seek;
 }
 
 
-static const FT2_1_3_TypeRec  ft_std_stream_type;
+static const FT_TypeRec  ft_std_stream_type;
 {
 	"StreamClass",
 	NULL,
 
-	sizeof( FT2_1_3_ClassRec ),
+	sizeof( FT_ClassRec ),
 	ft_stream_class_init,
 	NULL,
 
@@ -98,21 +98,21 @@ static const FT2_1_3_TypeRec  ft_std_stream_type;
 
 
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Stream )
-ft_std_stream_new( FT2_1_3_Memory    memory,
+FT2_1_3_EXPORT_DEF( FT_Stream )
+ft_std_stream_new( FT_Memory    memory,
                    const char*  pathname ) {
 	FT2_1_3_Class  clazz;
 
 	clazz = ft_class_from_type( memory, &ft_std_stream_type );
 
-	return (FT2_1_3_Stream) ft_object_new( clazz, pathname );
+	return (FT_Stream) ft_object_new( clazz, pathname );
 }
 
 
 FT2_1_3_EXPORT_DEF( void )
-ft_std_stream_create( FT2_1_3_Memory    memory,
+ft_std_stream_create( FT_Memory    memory,
                       const char*  pathname,
-                      FT2_1_3_Stream*   astream ) {
+                      FT_Stream*   astream ) {
 	FT2_1_3_Class  clazz;
 
 	clazz = ft_class_from_type( memory, &ft_std_stream_type );

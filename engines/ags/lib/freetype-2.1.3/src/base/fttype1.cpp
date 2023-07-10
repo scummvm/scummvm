@@ -27,7 +27,7 @@ namespace FreeType213 {
 /* documentation is in t1tables.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Get_PS_Font_Info( FT_Face          face,
+FT_Get_PS_Font_Info( FT_Face          face,
 					 PS_FontInfoRec*  afont_info ) {
 	PS_FontInfo  font_info = NULL;
 	FT_Error     error     = FT2_1_3_Err_Invalid_Argument;
@@ -57,7 +57,7 @@ FT2_1_3_Get_PS_Font_Info( FT_Face          face,
 /* documentation is in t1tables.h */
 
 FT2_1_3_EXPORT_DEF( FT_Int )
-FT2_1_3_Has_PS_Glyph_Names( FT_Face  face ) {
+FT_Has_PS_Glyph_Names( FT_Face  face ) {
 	FT_Int       result = 0;
 	const char*  driver_name;
 

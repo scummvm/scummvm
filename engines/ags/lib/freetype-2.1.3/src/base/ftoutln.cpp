@@ -243,7 +243,7 @@ Invalid_Outline:
 
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT_Outline_New_Internal( FT2_1_3_Memory    memory,
+FT_Outline_New_Internal( FT_Memory    memory,
 						 FT_UInt      numPoints,
 						 FT_Int       numContours,
 						 FT_Outline  *anoutline ) {
@@ -365,7 +365,7 @@ FT_Outline_Copy( FT_Outline*  source,
 
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT_Outline_Done_Internal( FT2_1_3_Memory    memory,
+FT_Outline_Done_Internal( FT_Memory    memory,
 						  FT_Outline*  outline ) {
 	if ( outline ) {
 		if ( outline->flags & FT2_1_3_OUTLINE_OWNER ) {
@@ -514,7 +514,7 @@ FT_Outline_Reverse( FT_Outline*  outline ) {
 FT2_1_3_EXPORT_DEF( FT_Error )
 FT_Outline_Render( FT_Library         library,
 				   FT_Outline*        outline,
-				   FT2_1_3_Raster_Params*  params ) {
+				   FT_Raster_Params*  params ) {
 	FT_Error     error;
 	FT_Bool      update = 0;
 	FT_Renderer  renderer;
@@ -552,7 +552,7 @@ FT_Outline_Render( FT_Library         library,
 	/* if we changed the current renderer for the glyph image format */
 	/* we need to select it as the next current one                  */
 	if ( !error && update && renderer )
-		FT2_1_3_Set_Renderer( library, renderer, 0, 0 );
+		FT_Set_Renderer( library, renderer, 0, 0 );
 
 	return error;
 }
@@ -564,7 +564,7 @@ FT2_1_3_EXPORT_DEF( FT_Error )
 FT_Outline_Get_Bitmap( FT_Library   library,
 					   FT_Outline*  outline,
 					   FT_Bitmap   *abitmap ) {
-	FT2_1_3_Raster_Params  params;
+	FT_Raster_Params  params;
 
 
 	if ( !abitmap )

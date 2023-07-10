@@ -46,7 +46,7 @@ namespace FreeType213 {
 #define FT2_1_3_EXPORT_VAR( x )  extern  x
 #endif
 
-FT2_1_3_EXPORT_VAR( const FT2_1_3_Raster_Funcs )  ft_grays_raster;
+FT2_1_3_EXPORT_VAR( const FT_Raster_Funcs )  ft_grays_raster;
 
 
 #ifdef __cplusplus

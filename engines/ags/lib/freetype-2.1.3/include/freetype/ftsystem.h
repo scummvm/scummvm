@@ -58,19 +58,19 @@ FT2_1_3_BEGIN_HEADER
 /*************************************************************************/
 /*                                                                       */
 /* @type:                                                                */
-/*    FT2_1_3_Memory                                                          */
+/*    FT_Memory                                                          */
 /*                                                                       */
 /* @description:                                                         */
 /*    A handle to a given memory manager object, defined with a          */
-/*    @FT2_1_3_MemoryRec structure.                                           */
+/*    @FT_MemoryRec structure.                                           */
 /*                                                                       */
-typedef struct FT2_1_3_MemoryRec_*  FT2_1_3_Memory;
+typedef struct FT_MemoryRec_*  FT_Memory;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @functype:                                                            */
-/*    FT2_1_3_Alloc_Func                                                      */
+/*    FT_Alloc_Func                                                      */
 /*                                                                       */
 /* @description:                                                         */
 /*    A function used to allocate `size' bytes from `memory'.            */
@@ -84,14 +84,14 @@ typedef struct FT2_1_3_MemoryRec_*  FT2_1_3_Memory;
 /*    Address of new memory block.  0 in case of failure.                */
 /*                                                                       */
 typedef void*
-(*FT2_1_3_Alloc_Func)( FT2_1_3_Memory  memory,
+(*FT_Alloc_Func)( FT_Memory  memory,
 				  long       size );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @functype:                                                            */
-/*    FT2_1_3_Free_Func                                                       */
+/*    FT_Free_Func                                                       */
 /*                                                                       */
 /* @description:                                                         */
 /*    A function used to release a given block of memory.                */
@@ -102,14 +102,14 @@ typedef void*
 /*    block  :: The address of the target memory block.                  */
 /*                                                                       */
 typedef void
-(*FT2_1_3_Free_Func)( FT2_1_3_Memory  memory,
+(*FT_Free_Func)( FT_Memory  memory,
 				 void*      block );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @functype:                                                            */
-/*    FT2_1_3_Realloc_Func                                                    */
+/*    FT_Realloc_Func                                                    */
 /*                                                                       */
 /* @description:                                                         */
 /*    a function used to re-allocate a given block of memory.            */
@@ -130,7 +130,7 @@ typedef void
 /*   In case of error, the old block must still be available.            */
 /*                                                                       */
 typedef void*
-(*FT2_1_3_Realloc_Func)( FT2_1_3_Memory  memory,
+(*FT_Realloc_Func)( FT_Memory  memory,
 					long       cur_size,
 					long       new_size,
 					void*      block );
@@ -139,7 +139,7 @@ typedef void*
 /*************************************************************************/
 /*                                                                       */
 /* @struct:                                                              */
-/*    FT2_1_3_MemoryRec                                                       */
+/*    FT_MemoryRec                                                       */
 /*                                                                       */
 /* @description:                                                         */
 /*    A structure used to describe a given memory manager to FreeType 2. */
@@ -153,11 +153,11 @@ typedef void*
 /*                                                                       */
 /*    realloc :: A pointer type to a reallocation function.              */
 /*                                                                       */
-struct  FT2_1_3_MemoryRec_ {
+struct  FT_MemoryRec_ {
 	void*            user;
-	FT2_1_3_Alloc_Func    alloc;
-	FT2_1_3_Free_Func     free;
-	FT2_1_3_Realloc_Func  realloc;
+	FT_Alloc_Func    alloc;
+	FT_Free_Func     free;
+	FT_Realloc_Func  realloc;
 };
 
 
@@ -171,34 +171,34 @@ struct  FT2_1_3_MemoryRec_ {
 /*************************************************************************/
 /*                                                                       */
 /* @type:                                                                */
-/*    FT2_1_3_Stream                                                          */
+/*    FT_Stream                                                          */
 /*                                                                       */
 /* @description:                                                         */
 /*    A handle to an input stream.                                       */
 /*                                                                       */
-typedef struct FT2_1_3_StreamRec_*  FT2_1_3_Stream;
+typedef struct FT_StreamRec_*  FT_Stream;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @struct:                                                              */
-/*    FT2_1_3_StreamDesc                                                      */
+/*    FT_StreamDesc                                                      */
 /*                                                                       */
 /* @description:                                                         */
 /*    A union type used to store either a long or a pointer.  This is    */
 /*    used to store a file descriptor or a FILE* in an input stream.     */
 /*                                                                       */
-typedef union  FT2_1_3_StreamDesc_ {
+typedef union  FT_StreamDesc_ {
 	long   value;
 	void*  pointer;
 
-} FT2_1_3_StreamDesc;
+} FT_StreamDesc;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @functype:                                                            */
-/*    FT2_1_3_Stream_IoFunc                                                   */
+/*    FT_Stream_IoFunc                                                   */
 /*                                                                       */
 /* @description:                                                         */
 /*    A function used to seek and read data from a given input stream.   */
@@ -220,7 +220,7 @@ typedef union  FT2_1_3_StreamDesc_ {
 /*    with a `count' of 0.                                               */
 /*                                                                       */
 typedef unsigned long
-(*FT2_1_3_Stream_IoFunc)( FT2_1_3_Stream       stream,
+(*FT_Stream_IoFunc)( FT_Stream       stream,
 					 unsigned long   offset,
 					 unsigned char*  buffer,
 					 unsigned long   count );
@@ -229,7 +229,7 @@ typedef unsigned long
 /*************************************************************************/
 /*                                                                       */
 /* @functype:                                                            */
-/*    FT2_1_3_Stream_CloseFunc                                                */
+/*    FT_Stream_CloseFunc                                                */
 /*                                                                       */
 /* @description:                                                         */
 /*    A function used to close a given input stream.                     */
@@ -238,13 +238,13 @@ typedef unsigned long
 /*   stream :: A handle to the target stream.                            */
 /*                                                                       */
 typedef void
-(*FT2_1_3_Stream_CloseFunc)( FT2_1_3_Stream  stream );
+(*FT_Stream_CloseFunc)( FT_Stream  stream );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* @struct:                                                              */
-/*    FT2_1_3_StreamRec                                                       */
+/*    FT_StreamRec                                                       */
 /*                                                                       */
 /* @description:                                                         */
 /*   A structure used to describe an input stream.                       */
@@ -280,21 +280,21 @@ typedef void
 /*   limit      :: This field is set and used internally by FreeType     */
 /*                 when parsing frames.                                  */
 /*                                                                       */
-typedef struct  FT2_1_3_StreamRec_ {
+typedef struct  FT_StreamRec_ {
 	unsigned char*       base;
 	unsigned long        size;
 	unsigned long        pos;
 
-	FT2_1_3_StreamDesc        descriptor;
-	FT2_1_3_StreamDesc        pathname;
-	FT2_1_3_Stream_IoFunc     read;
-	FT2_1_3_Stream_CloseFunc  close;
+	FT_StreamDesc        descriptor;
+	FT_StreamDesc        pathname;
+	FT_Stream_IoFunc     read;
+	FT_Stream_CloseFunc  close;
 
-	FT2_1_3_Memory            memory;
+	FT_Memory            memory;
 	unsigned char*       cursor;
 	unsigned char*       limit;
 
-} FT2_1_3_StreamRec;
+} FT_StreamRec;
 
 
 /* */

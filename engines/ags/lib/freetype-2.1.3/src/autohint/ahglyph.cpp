@@ -288,7 +288,7 @@ Exit:
 /*    Creates a new and empty AH_OutlineRec object.                      */
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( FT_Error )
-ah_outline_new( FT2_1_3_Memory    memory,
+ah_outline_new( FT_Memory    memory,
 				AH_Outline*  aoutline ) {
 	FT_Error     error;
 	AH_Outline   outline;
@@ -313,7 +313,7 @@ ah_outline_new( FT2_1_3_Memory    memory,
 /*                                                                       */
 FT2_1_3_LOCAL_DEF( void )
 ah_outline_done( AH_Outline  outline ) {
-	FT2_1_3_Memory memory = outline->memory;
+	FT_Memory memory = outline->memory;
 
 
 	FT2_1_3_FREE( outline->horz_edges );
@@ -370,7 +370,7 @@ ah_outline_save( AH_Outline  outline,
 FT2_1_3_LOCAL_DEF( FT_Error )
 ah_outline_load( AH_Outline  outline,
 				 FT_Face     face ) {
-	FT2_1_3_Memory    memory       = outline->memory;
+	FT_Memory    memory       = outline->memory;
 	FT_Error     error        = FT2_1_3_Err_Ok;
 	FT_Outline*  source       = &face->glyph->outline;
 	FT_Int       num_points   = source->n_points;

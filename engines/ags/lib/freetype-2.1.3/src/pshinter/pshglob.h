@@ -129,7 +129,7 @@ typedef struct  PSH_BluesRec_ {
 /* dimension 0 => X coordinates + vertical hints/stems   */
 /* dimension 1 => Y coordinates + horizontal hints/stems */
 typedef struct  PSH_GlobalsRec_ {
-	FT2_1_3_Memory         memory;
+	FT_Memory         memory;
 	PSH_DimensionRec  dimension[2];
 	PSH_BluesRec      blues;
 

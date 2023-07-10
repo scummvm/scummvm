@@ -79,7 +79,7 @@ typedef struct  FT_GlyphLoadRec_ {
 
 
 typedef struct  FT_GlyphLoaderRec_ {
-	FT2_1_3_Memory        memory;
+	FT_Memory        memory;
 	FT_UInt          max_points;
 	FT_UInt          max_contours;
 	FT_UInt          max_subglyphs;
@@ -95,7 +95,7 @@ typedef struct  FT_GlyphLoaderRec_ {
 
 /* create new empty glyph loader */
 FT2_1_3_BASE( FT_Error )
-FT_GlyphLoader_New( FT2_1_3_Memory        memory,
+FT_GlyphLoader_New( FT_Memory        memory,
                     FT_GlyphLoader  *aloader );
 
 /* add an extra points table to a glyph loader */

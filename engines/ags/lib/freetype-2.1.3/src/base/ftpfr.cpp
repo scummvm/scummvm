@@ -46,7 +46,7 @@ ft_pfr_check( FT_Face           face,
 
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Get_PFR_Metrics( FT_Face     face,
+FT_Get_PFR_Metrics( FT_Face     face,
 					FT_UInt    *aoutline_resolution,
 					FT_UInt    *ametrics_resolution,
 					FT_Fixed   *ametrics_x_scale,
@@ -66,7 +66,7 @@ FT2_1_3_Get_PFR_Metrics( FT_Face     face,
 }
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Get_PFR_Kerning( FT_Face     face,
+FT_Get_PFR_Kerning( FT_Face     face,
 					FT_UInt     left,
 					FT_UInt     right,
 					FT_Vector  *avector ) {
@@ -82,7 +82,7 @@ FT2_1_3_Get_PFR_Kerning( FT_Face     face,
 
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Get_PFR_Advance( FT_Face    face,
+FT_Get_PFR_Advance( FT_Face    face,
 					FT_UInt    gindex,
 					FT_Pos    *aadvance ) {
 	FT_Error        error;

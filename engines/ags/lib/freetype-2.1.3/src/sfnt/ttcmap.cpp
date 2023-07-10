@@ -112,9 +112,9 @@ code_to_next10( TT_CMapTable  charmap,
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_load_charmap( TT_Face       face,
 					  TT_CMapTable  cmap,
-					  FT2_1_3_Stream     stream ) {
+					  FT_Stream     stream ) {
 	FT_Error     error;
-	FT2_1_3_Memory    memory;
+	FT_Memory    memory;
 	FT_UShort    num_SH, num_Seg, i;
 	FT_ULong     j, n;
 
@@ -409,7 +409,7 @@ Fail:
 FT2_1_3_LOCAL_DEF( FT_Error )
 tt_face_free_charmap( TT_Face       face,
 					  TT_CMapTable  cmap ) {
-	FT2_1_3_Memory  memory;
+	FT_Memory  memory;
 
 
 	if ( !cmap )

@@ -320,7 +320,7 @@ typedef struct  FT_Face_InternalRec_ {
 	const char*  postscript_name;
 
 #ifdef FT2_1_3_CONFIG_OPTION_INCREMENTAL
-	FT2_1_3_Incremental_InterfaceRec*  incremental_interface;
+	FT_Incremental_InterfaceRec*  incremental_interface;
 #endif
 
 } FT_Face_InternalRec;
@@ -397,7 +397,7 @@ typedef struct  FT_Slot_InternalRec_ {
 typedef struct  FT_ModuleRec_ {
 	FT_Module_Class*  clazz;
 	FT_Library        library;
-	FT2_1_3_Memory         memory;
+	FT_Memory         memory;
 	FT_Generic        generic;
 
 } FT_ModuleRec;
@@ -435,7 +435,7 @@ typedef struct  FT_ModuleRec_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Get_Module_Interface                                            */
+/*    FT_Get_Module_Interface                                            */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Finds a module and returns its specific interface as a typeless    */
@@ -454,7 +454,7 @@ typedef struct  FT_ModuleRec_ {
 /*    which module to look for, and what its interface is :-)            */
 /*                                                                       */
 FT2_1_3_BASE( const void* )
-FT2_1_3_Get_Module_Interface( FT_Library   library,
+FT_Get_Module_Interface( FT_Library   library,
 						 const char*  mod_name );
 
 
@@ -516,7 +516,7 @@ FT2_1_3_New_GlyphSlot( FT_Face        face,
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Done_GlyphSlot                                                  */
+/*    FT_Done_GlyphSlot                                                  */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Destroys a given glyph slot.  Remember however that all slots are  */
@@ -527,7 +527,7 @@ FT2_1_3_New_GlyphSlot( FT_Face        face,
 /*    slot :: A handle to a target glyph slot.                           */
 /*                                                                       */
 FT2_1_3_BASE( void )
-FT2_1_3_Done_GlyphSlot( FT_GlyphSlot  slot );
+FT_Done_GlyphSlot( FT_GlyphSlot  slot );
 
 
 /*************************************************************************/
@@ -555,8 +555,8 @@ typedef struct  FT_RendererRec_ {
 	FT_Glyph_Format         glyph_format;
 	FT_Glyph_Class          glyph_class;
 
-	FT2_1_3_Raster               raster;
-	FT2_1_3_Raster_Render_Func   raster_render;
+	FT_Raster               raster;
+	FT_Raster_Render_Func   raster_render;
 	FT_Renderer_RenderFunc  render;
 
 } FT_RendererRec;
@@ -645,8 +645,8 @@ typedef struct  FT_DriverRec_ {
 /*                                                                       */
 /* <Description>                                                         */
 /*    The FreeType library class.  This is the root of all FreeType      */
-/*    data.  Use FT2_1_3_New_Library() to create a library object, and        */
-/*    FT2_1_3_Done_Library() to discard it and all child objects.             */
+/*    data.  Use FT_New_Library() to create a library object, and        */
+/*    FT_Done_Library() to discard it and all child objects.             */
 /*                                                                       */
 /* <Fields>                                                              */
 /*    memory           :: The library's memory object.  Manages memory   */
@@ -658,7 +658,7 @@ typedef struct  FT_DriverRec_ {
 /*    num_modules      :: The number of modules currently registered     */
 /*                        within this library.  This is set to 0 for new */
 /*                        libraries.  New modules are added through the  */
-/*                        FT2_1_3_Add_Module() API function.                  */
+/*                        FT_Add_Module() API function.                  */
 /*                                                                       */
 /*    modules          :: A table used to store handles to the currently */
 /*                        registered modules. Note that each font driver */
@@ -683,7 +683,7 @@ typedef struct  FT_DriverRec_ {
 /*    debug_hooks      :: XXX                                            */
 /*                                                                       */
 typedef struct  FT_LibraryRec_ {
-	FT2_1_3_Memory          memory;           /* library's memory manager */
+	FT_Memory          memory;           /* library's memory manager */
 
 	FT_Generic         generic;
 
@@ -702,7 +702,7 @@ typedef struct  FT_LibraryRec_ {
 	/* render pool          */
 	FT_ULong           raster_pool_size; /* size of render pool in bytes */
 
-	FT2_1_3_DebugHook_Func  debug_hooks[4];
+	FT_DebugHook_Func  debug_hooks[4];
 
 	FT2_1_3_MetaClassRec    meta_class;
 
@@ -746,7 +746,7 @@ typedef FT_UInt
 /* <Return>                                                              */
 /*    A pointer to the new memory object.  0 in case of error.           */
 /*                                                                       */
-FT2_1_3_EXPORT( FT2_1_3_Memory )
+FT2_1_3_EXPORT( FT_Memory )
 FT2_1_3_New_Memory( void );
 
 
@@ -762,7 +762,7 @@ FT2_1_3_New_Memory( void );
 /*    memory :: A handle to the memory manager.                          */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_Done_Memory( FT2_1_3_Memory  memory );
+FT2_1_3_Done_Memory( FT_Memory  memory );
 
 #endif /* !FT2_1_3_CONFIG_OPTION_NO_DEFAULT_SYSTEM */
 
@@ -774,7 +774,7 @@ FT2_1_3_Done_Memory( FT2_1_3_Memory  memory );
 /* FT2_1_3_Set_Raster() API.                                                  */
 
 #ifndef FT2_1_3_NO_DEFAULT_RASTER
-FT2_1_3_EXPORT_VAR( FT2_1_3_Raster_Funcs )  ft_default_raster;
+FT2_1_3_EXPORT_VAR( FT_Raster_Funcs )  ft_default_raster;
 #endif
 
 

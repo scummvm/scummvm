@@ -128,7 +128,7 @@ typedef struct  FT_Module_Class_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Add_Module                                                      */
+/*    FT_Add_Module                                                      */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Adds a new module to a given library instance.                     */
@@ -147,14 +147,14 @@ typedef struct  FT_Module_Class_ {
 /*    or if the module requires a version of FreeType that is too great. */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Add_Module( FT_Library              library,
+FT_Add_Module( FT_Library              library,
 			   const FT_Module_Class*  clazz );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Get_Module                                                      */
+/*    FT_Get_Module                                                      */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Finds a module by its name.                                        */
@@ -172,14 +172,14 @@ FT2_1_3_Add_Module( FT_Library              library,
 /*    which module to look for :-)                                       */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Module )
-FT2_1_3_Get_Module( FT_Library   library,
+FT_Get_Module( FT_Library   library,
 			   const char*  module_name );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Remove_Module                                                   */
+/*    FT_Remove_Module                                                   */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Removes a given module from a library instance.                    */
@@ -197,14 +197,14 @@ FT2_1_3_Get_Module( FT_Library   library,
 /*    The module object is destroyed by the function in case of success. */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Remove_Module( FT_Library  library,
+FT_Remove_Module( FT_Library  library,
 				  FT_Module   module );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_New_Library                                                     */
+/*    FT_New_Library                                                     */
 /*                                                                       */
 /* <Description>                                                         */
 /*    This function is used to create a new FreeType library instance    */
@@ -221,14 +221,14 @@ FT2_1_3_Remove_Module( FT_Library  library,
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_New_Library( FT2_1_3_Memory    memory,
+FT_New_Library( FT_Memory    memory,
 				FT_Library  *alibrary );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Done_Library                                                    */
+/*    FT_Done_Library                                                    */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Discards a given library object.  This closes all drivers and      */
@@ -241,18 +241,18 @@ FT2_1_3_New_Library( FT2_1_3_Memory    memory,
 /*    FreeType error code.  0 means success.                             */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Done_Library( FT_Library  library );
+FT_Done_Library( FT_Library  library );
 
 
 
 typedef void
-(*FT2_1_3_DebugHook_Func)( void*  arg );
+(*FT_DebugHook_Func)( void*  arg );
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Set_Debug_Hook                                                  */
+/*    FT_Set_Debug_Hook                                                  */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Sets a debug hook function for debugging the interpreter of a font */
@@ -273,27 +273,27 @@ typedef void
 /*    the TrueType and the Type 1 interpreter) are defined.              */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_Set_Debug_Hook( FT_Library         library,
+FT_Set_Debug_Hook( FT_Library         library,
 				   FT_UInt            hook_index,
-				   FT2_1_3_DebugHook_Func  debug_hook );
+				   FT_DebugHook_Func  debug_hook );
 
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Add_Default_Modules                                             */
+/*    FT_Add_Default_Modules                                             */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Adds the set of default drivers to a given library object.         */
 /*    This is only useful when you create a library object with          */
-/*    FT2_1_3_New_Library() (usually to plug a custom memory manager).        */
+/*    FT_New_Library() (usually to plug a custom memory manager).        */
 /*                                                                       */
 /* <InOut>                                                               */
 /*    library :: A handle to a new library object.                       */
 /*                                                                       */
 FT2_1_3_EXPORT( void )
-FT2_1_3_Add_Default_Modules( FT_Library  library );
+FT_Add_Default_Modules( FT_Library  library );
 
 
 /* */

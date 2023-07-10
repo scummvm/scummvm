@@ -44,7 +44,7 @@ namespace FreeType213 {
 /* convert a UTF-16 name entry to ASCII */
 static FT_String*
 tt_name_entry_ascii_from_utf16( TT_NameEntry  entry,
-								FT2_1_3_Memory     memory ) {
+								FT_Memory     memory ) {
 	FT_String*  string;
 	FT_UInt     len, code, n;
 	FT_Byte*    read = (FT_Byte*)entry->string;
@@ -72,7 +72,7 @@ tt_name_entry_ascii_from_utf16( TT_NameEntry  entry,
 /* convert a UCS-4 name entry to ASCII */
 static FT_String*
 tt_name_entry_ascii_from_ucs4( TT_NameEntry  entry,
-							   FT2_1_3_Memory     memory ) {
+							   FT_Memory     memory ) {
 	FT_String*  string;
 	FT_UInt     len, code, n;
 	FT_Byte*    read = (FT_Byte*)entry->string;
@@ -100,7 +100,7 @@ tt_name_entry_ascii_from_ucs4( TT_NameEntry  entry,
 /* convert an Apple Roman or symbol name entry to ASCII */
 static FT_String*
 tt_name_entry_ascii_from_other( TT_NameEntry  entry,
-								FT2_1_3_Memory     memory ) {
+								FT_Memory     memory ) {
 	FT_String*  string;
 	FT_UInt     len, code, n;
 	FT_Byte*    read = (FT_Byte*)entry->string;
@@ -126,7 +126,7 @@ tt_name_entry_ascii_from_other( TT_NameEntry  entry,
 
 
 typedef FT_String*  (*TT_NameEntry_ConvertFunc)( TT_NameEntry  entry,
-		FT2_1_3_Memory     memory );
+		FT_Memory     memory );
 
 
 /*************************************************************************/
@@ -148,7 +148,7 @@ typedef FT_String*  (*TT_NameEntry_ConvertFunc)( TT_NameEntry  entry,
 static FT_String*
 tt_face_get_name( TT_Face    face,
 				  FT_UShort  nameid ) {
-	FT2_1_3_Memory         memory = face->root.memory;
+	FT_Memory         memory = face->root.memory;
 	FT_String*        result = NULL;
 	FT_UShort         n;
 	TT_NameEntryRec*  rec;
@@ -241,7 +241,7 @@ tt_face_get_name( TT_Face    face,
 	if ( rec && convert ) {
 		if ( rec->string == NULL ) {
 			FT_Error   error;
-			FT2_1_3_Stream  stream = face->name_table.stream;
+			FT_Stream  stream = face->name_table.stream;
 
 
 			if ( FT2_1_3_NEW_ARRAY  ( rec->string, rec->stringLength ) ||
@@ -309,7 +309,7 @@ sfnt_find_encoding( int  platform_id,
 
 
 FT2_1_3_LOCAL_DEF( FT_Error )
-sfnt_init_face( FT2_1_3_Stream      stream,
+sfnt_init_face( FT_Stream      stream,
 				TT_Face        face,
 				FT_Int         face_index,
 				FT_Int         num_params,
@@ -327,7 +327,7 @@ sfnt_init_face( FT2_1_3_Stream      stream,
 	sfnt = (SFNT_Service)face->sfnt;
 	const void *sfnt_tmp;
 	if ( !sfnt ) {
-		sfnt_tmp = FT2_1_3_Get_Module_Interface(library, "sfnt");
+		sfnt_tmp = FT_Get_Module_Interface(library, "sfnt");
 		sfnt = const_cast<SFNT_Service>(reinterpret_cast<const SFNT_Interface *>(sfnt_tmp));
 		if ( !sfnt ) {
 			error = FT2_1_3_Err_Invalid_File_Format;
@@ -339,7 +339,7 @@ sfnt_init_face( FT2_1_3_Stream      stream,
 	}
 
 	if ( !face->psnames ) {
-		sfnt_tmp = FT2_1_3_Get_Module_Interface(library, "psnames");
+		sfnt_tmp = FT_Get_Module_Interface(library, "psnames");
 		face->psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(sfnt_tmp));
 	}
 
@@ -371,7 +371,7 @@ Exit:
 
 
 FT2_1_3_LOCAL_DEF( FT_Error )
-sfnt_load_face( FT2_1_3_Stream      stream,
+sfnt_load_face( FT_Stream      stream,
 				TT_Face        face,
 				FT_Int         face_index,
 				FT_Int         num_params,
@@ -487,7 +487,7 @@ sfnt_load_face( FT2_1_3_Stream      stream,
 	{
 		FT_Face    root = &face->root;
 		FT_Int32   flags = 0;
-		FT2_1_3_Memory  memory;
+		FT_Memory  memory;
 
 
 		memory = root->memory;
@@ -714,7 +714,7 @@ Exit:
 
 FT2_1_3_LOCAL_DEF( void )
 sfnt_done_face( TT_Face  face ) {
-	FT2_1_3_Memory     memory = face->root.memory;
+	FT_Memory     memory = face->root.memory;
 	SFNT_Service  sfnt   = (SFNT_Service)face->sfnt;
 
 
@@ -741,7 +741,7 @@ sfnt_done_face( TT_Face  face ) {
 	face->num_tables = 0;
 
 	{
-		FT2_1_3_Stream  stream = FT2_1_3_FACE_STREAM( face );
+		FT_Stream  stream = FT2_1_3_FACE_STREAM( face );
 
 
 		/* simply release the 'cmap' table frame */

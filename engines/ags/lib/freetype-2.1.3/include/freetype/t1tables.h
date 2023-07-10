@@ -321,7 +321,7 @@ typedef CID_FaceInfoRec  CID_Info;
 /************************************************************************
  *
  * @function:
- *    FT2_1_3_Has_PS_Glyph_Names
+ *    FT_Has_PS_Glyph_Names
  *
  * @description:
  *    Return true if a given face provides reliable Postscript glyph
@@ -330,7 +330,7 @@ typedef CID_FaceInfoRec  CID_Info;
  *    glyph name tables.
  *
  *    When this function returns true, the caller is sure that the glyph
- *    names returned by @FT2_1_3_Get_Glyph_Name are reliable.
+ *    names returned by @FT_Get_Glyph_Name are reliable.
  *
  * @input:
  *    face ::
@@ -340,13 +340,13 @@ typedef CID_FaceInfoRec  CID_Info;
  *    Boolean.  True if glyph names are reliable.
  */
 FT2_1_3_EXPORT( FT_Int )
-FT2_1_3_Has_PS_Glyph_Names( FT_Face  face );
+FT_Has_PS_Glyph_Names( FT_Face  face );
 
 
 /************************************************************************
  *
  * @function:
- *    FT2_1_3_Get_PS_Font_Info
+ *    FT_Get_PS_Font_Info
  *
  * @description:
  *    Retrieve the @PS_FontInfoRec structure corresponding to a given
@@ -371,7 +371,7 @@ FT2_1_3_Has_PS_Glyph_Names( FT_Face  face );
  *    return the @FT2_1_3_Err_Invalid_Argument error code.
  */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Get_PS_Font_Info( FT_Face          face,
+FT_Get_PS_Font_Info( FT_Face          face,
 					 PS_FontInfoRec  *afont_info );
 
 /* */

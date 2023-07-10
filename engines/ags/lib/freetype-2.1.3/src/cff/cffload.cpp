@@ -1077,10 +1077,10 @@ cff_get_offset( FT_Byte*  p,
 
 static FT_Error
 cff_new_index( CFF_Index  idx,
-			   FT2_1_3_Stream  stream,
+			   FT_Stream  stream,
 			   FT_Bool    load ) {
 	FT_Error   error;
-	FT2_1_3_Memory  memory = stream->memory;
+	FT_Memory  memory = stream->memory;
 	FT_UShort  count;
 
 
@@ -1145,8 +1145,8 @@ Exit:
 static void
 cff_done_index( CFF_Index  idx ) {
 	if ( idx->stream ) {
-		FT2_1_3_Stream  stream = idx->stream;
-		FT2_1_3_Memory  memory = stream->memory;
+		FT_Stream  stream = idx->stream;
+		FT_Memory  memory = stream->memory;
 
 
 		if ( idx->bytes )
@@ -1163,7 +1163,7 @@ static FT_Error
 cff_index_get_pointers( CFF_Index   idx,
 						FT_Byte***  table ) {
 	FT_Error   error  = 0;
-	FT2_1_3_Memory  memory = idx->stream->memory;
+	FT_Memory  memory = idx->stream->memory;
 	FT_ULong   n, offset, old_offset;
 	FT_Byte**  t;
 
@@ -1222,7 +1222,7 @@ cff_index_access_element( CFF_Index  idx,
 				*pbytes = idx->bytes + off1 - 1;
 			} else {
 				/* this index is still on disk/file, access it through a frame */
-				FT2_1_3_Stream  stream = idx->stream;
+				FT_Stream  stream = idx->stream;
 
 
 				if ( FT2_1_3_STREAM_SEEK( idx->data_offset + off1 - 1 ) ||
@@ -1246,7 +1246,7 @@ FT2_1_3_LOCAL_DEF( void )
 cff_index_forget_element( CFF_Index  idx,
 						  FT_Byte**  pbytes ) {
 	if ( idx->bytes == 0 ) {
-		FT2_1_3_Stream  stream = idx->stream;
+		FT_Stream  stream = idx->stream;
 
 
 		FT2_1_3_FRAME_RELEASE( *pbytes );
@@ -1257,7 +1257,7 @@ cff_index_forget_element( CFF_Index  idx,
 FT2_1_3_LOCAL_DEF( FT_String* )
 cff_index_get_name( CFF_Index  idx,
 					FT_UInt    element ) {
-	FT2_1_3_Memory   memory = idx->stream->memory;
+	FT_Memory   memory = idx->stream->memory;
 	FT_Byte*    bytes;
 	FT_ULong    byte_len;
 	FT_Error    error;
@@ -1295,7 +1295,7 @@ cff_index_get_sid_string( CFF_Index        idx,
 
 
 		if ( adobe_name ) {
-			FT2_1_3_Memory  memory = idx->stream->memory;
+			FT_Memory  memory = idx->stream->memory;
 			FT_Error   error;
 
 
@@ -1324,7 +1324,7 @@ cff_index_get_sid_string( CFF_Index        idx,
 
 static void
 CFF_Done_FD_Select( CFF_FDSelect  fdselect,
-					FT2_1_3_Stream     stream ) {
+					FT_Stream     stream ) {
 	if ( fdselect->data )
 		FT2_1_3_FRAME_RELEASE( fdselect->data );
 
@@ -1337,7 +1337,7 @@ CFF_Done_FD_Select( CFF_FDSelect  fdselect,
 static FT_Error
 CFF_Load_FD_Select( CFF_FDSelect  fdselect,
 					FT_UInt       num_glyphs,
-					FT2_1_3_Stream     stream,
+					FT_Stream     stream,
 					FT_ULong      offset ) {
 	FT_Error  error;
 	FT_Byte   format;
@@ -1444,8 +1444,8 @@ cff_fd_select_get( CFF_FDSelect  fdselect,
 
 static void
 cff_charset_done( CFF_Charset  charset,
-				  FT2_1_3_Stream    stream ) {
-	FT2_1_3_Memory  memory = stream->memory;
+				  FT_Stream    stream ) {
+	FT_Memory  memory = stream->memory;
 
 
 	FT2_1_3_FREE( charset->sids );
@@ -1457,10 +1457,10 @@ cff_charset_done( CFF_Charset  charset,
 static FT_Error
 cff_charset_load( CFF_Charset  charset,
 				  FT_UInt      num_glyphs,
-				  FT2_1_3_Stream    stream,
+				  FT_Stream    stream,
 				  FT_ULong     base_offset,
 				  FT_ULong     offset ) {
-	FT2_1_3_Memory  memory     = stream->memory;
+	FT_Memory  memory     = stream->memory;
 	FT_Error   error      = 0;
 	FT_UShort  glyph_sid;
 
@@ -1635,7 +1635,7 @@ static FT_Error
 cff_encoding_load( CFF_Encoding  encoding,
 				   CFF_Charset   charset,
 				   FT_UInt       num_glyphs,
-				   FT2_1_3_Stream     stream,
+				   FT_Stream     stream,
 				   FT_ULong      base_offset,
 				   FT_ULong      offset ) {
 	FT_Error    error  = 0;
@@ -1844,7 +1844,7 @@ static FT_Error
 cff_subfont_load( CFF_SubFont  font,
 				  CFF_Index    idx,
 				  FT_UInt      font_index,
-				  FT2_1_3_Stream    stream,
+				  FT_Stream    stream,
 				  FT_ULong     base_offset ) {
 	FT_Error         error;
 	CFF_ParserRec    parser;
@@ -1926,7 +1926,7 @@ Exit:
 
 
 static void
-cff_subfont_done( FT2_1_3_Memory    memory,
+cff_subfont_done( FT_Memory    memory,
 				  CFF_SubFont  subfont ) {
 	if ( subfont ) {
 		cff_done_index( &subfont->local_subrs_index );
@@ -1936,7 +1936,7 @@ cff_subfont_done( FT2_1_3_Memory    memory,
 
 
 FT2_1_3_LOCAL_DEF( FT_Error )
-cff_font_load( FT2_1_3_Stream  stream,
+cff_font_load( FT_Stream  stream,
 			   FT_Int     face_index,
 			   CFF_Font   font ) {
 	static const FT2_1_3_Frame_Field  cff_header_fields[] = {
@@ -1952,7 +1952,7 @@ cff_font_load( FT2_1_3_Stream  stream,
 	};
 
 	FT_Error         error;
-	FT2_1_3_Memory        memory = stream->memory;
+	FT_Memory        memory = stream->memory;
 	FT_ULong         base_offset;
 	CFF_FontRecDict  dict;
 
@@ -2112,7 +2112,7 @@ Exit:
 
 FT2_1_3_LOCAL_DEF( void )
 cff_font_done( CFF_Font  font ) {
-	FT2_1_3_Memory  memory = font->memory;
+	FT_Memory  memory = font->memory;
 	FT_UInt    idx;
 
 

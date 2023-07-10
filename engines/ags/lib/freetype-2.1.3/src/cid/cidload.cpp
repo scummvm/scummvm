@@ -220,7 +220,7 @@ FT2_1_3_CALLBACK_DEF( FT_Error )
 parse_fd_array( CID_Face     face,
 				CID_Parser*  parser ) {
 	CID_FaceInfo  cid    = &face->cid;
-	FT2_1_3_Memory     memory = face->root.memory;
+	FT_Memory     memory = face->root.memory;
 	FT_Error      error  = FT2_1_3_Err_Ok;
 	FT_Long       num_dicts;
 
@@ -361,8 +361,8 @@ cid_parse_dict( CID_Face     face,
 static FT_Error
 cid_read_subrs( CID_Face  face ) {
 	CID_FaceInfo  cid    = &face->cid;
-	FT2_1_3_Memory     memory = face->root.memory;
-	FT2_1_3_Stream     stream = face->root.stream;
+	FT_Memory     memory = face->root.memory;
+	FT_Stream     stream = face->root.stream;
 	FT_Error      error;
 	FT_Int        n;
 	CID_Subrs     subr;

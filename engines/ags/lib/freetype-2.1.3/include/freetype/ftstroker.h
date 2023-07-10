@@ -11,17 +11,17 @@ FT2_1_3_BEGIN_HEADER
 
 /*@*************************************************************
  *
- * @type: FT2_1_3_Stroker
+ * @type: FT_Stroker
  *
  * @description:
  *    opaque handler to a path stroker object
  */
-typedef struct FT2_1_3_StrokerRec_*    FT2_1_3_Stroker;
+typedef struct FT_StrokerRec_*    FT_Stroker;
 
 
 /*@*************************************************************
  *
- * @enum: FT2_1_3_Stroker_LineJoin
+ * @enum: FT_Stroker_LineJoin
  *
  * @description:
  *    these values determine how two joining lines are rendered
@@ -47,12 +47,12 @@ typedef enum {
 	FT2_1_3_STROKER_LINEJOIN_BEVEL,
 	FT2_1_3_STROKER_LINEJOIN_MITER
 
-} FT2_1_3_Stroker_LineJoin;
+} FT_Stroker_LineJoin;
 
 
 /*@*************************************************************
  *
- * @enum: FT2_1_3_Stroker_LineCap
+ * @enum: FT_Stroker_LineCap
  *
  * @description:
  *    these values determine how the end of opened sub-paths are
@@ -76,63 +76,63 @@ typedef enum {
 	FT2_1_3_STROKER_LINECAP_ROUND,
 	FT2_1_3_STROKER_LINECAP_SQUARE
 
-} FT2_1_3_Stroker_LineCap;
+} FT_Stroker_LineCap;
 
 /* */
 
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Stroker_New( FT2_1_3_Memory    memory,
-				FT2_1_3_Stroker  *astroker );
+FT_Stroker_New( FT_Memory    memory,
+				FT_Stroker  *astroker );
 
 FT2_1_3_EXPORT( void )
-FT2_1_3_Stroker_Set( FT2_1_3_Stroker           stroker,
+FT_Stroker_Set( FT_Stroker           stroker,
 				FT_Fixed             radius,
-				FT2_1_3_Stroker_LineCap   line_cap,
-				FT2_1_3_Stroker_LineJoin  line_join,
+				FT_Stroker_LineCap   line_cap,
+				FT_Stroker_LineJoin  line_join,
 				FT_Fixed             miter_limit );
 
 
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Stroker_ParseOutline( FT2_1_3_Stroker   stroker,
+FT_Stroker_ParseOutline( FT_Stroker   stroker,
 						 FT_Outline*  outline,
 						 FT_Bool      opened );
 
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Stroker_BeginSubPath( FT2_1_3_Stroker  stroker,
+FT_Stroker_BeginSubPath( FT_Stroker  stroker,
 						 FT_Vector*  to,
 						 FT_Bool     open );
 
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Stroker_EndSubPath( FT2_1_3_Stroker  stroker );
+FT_Stroker_EndSubPath( FT_Stroker  stroker );
 
 
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Stroker_LineTo( FT2_1_3_Stroker  stroker,
+FT_Stroker_LineTo( FT_Stroker  stroker,
 				   FT_Vector*  to );
 
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Stroker_ConicTo( FT2_1_3_Stroker  stroker,
+FT_Stroker_ConicTo( FT_Stroker  stroker,
 					FT_Vector*  control,
 					FT_Vector*  to );
 
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Stroker_CubicTo( FT2_1_3_Stroker  stroker,
+FT_Stroker_CubicTo( FT_Stroker  stroker,
 					FT_Vector*  control1,
 					FT_Vector*  control2,
 					FT_Vector*  to );
 
 
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Stroker_GetCounts( FT2_1_3_Stroker  stroker,
+FT_Stroker_GetCounts( FT_Stroker  stroker,
 					  FT_UInt    *anum_points,
 					  FT_UInt    *anum_contours );
 
 FT2_1_3_EXPORT( void )
-FT2_1_3_Stroker_Export( FT2_1_3_Stroker   stroker,
+FT_Stroker_Export( FT_Stroker   stroker,
 				   FT_Outline*  outline );
 
 FT2_1_3_EXPORT( void )
-FT2_1_3_Stroker_Done( FT2_1_3_Stroker  stroker );
+FT_Stroker_Done( FT_Stroker  stroker );
 
 
 FT2_1_3_END_HEADER

@@ -52,8 +52,8 @@ namespace FreeType213 {
 
 FT2_1_3_LOCAL_DEF( FT_Error )
 cid_parser_new( CID_Parser*    parser,
-				FT2_1_3_Stream      stream,
-				FT2_1_3_Memory      memory,
+				FT_Stream      stream,
+				FT_Memory      memory,
 				PSAux_Service  psaux ) {
 	FT_Error  error;
 	FT_ULong  base_offset, offset, ps_len;
@@ -138,7 +138,7 @@ FT2_1_3_LOCAL_DEF( void )
 cid_parser_done( CID_Parser*  parser ) {
 	/* always free the private dictionary */
 	if ( parser->postscript ) {
-		FT2_1_3_Stream  stream = parser->stream;
+		FT_Stream  stream = parser->stream;
 
 
 		FT2_1_3_FRAME_RELEASE( parser->postscript );

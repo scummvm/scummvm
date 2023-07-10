@@ -84,13 +84,13 @@ const FT2_1_3_Frame_Field  pcf_table_header[] = {
 
 
 static FT_Error
-pcf_read_TOC( FT2_1_3_Stream  stream,
+pcf_read_TOC( FT_Stream  stream,
 			  PCF_Face   face ) {
 	FT_Error   error;
 	PCF_Toc    toc = &face->toc;
 	PCF_Table  tables;
 
-	FT2_1_3_Memory  memory = FT2_1_3_FACE(face)->memory;
+	FT_Memory  memory = FT2_1_3_FACE(face)->memory;
 	FT_UInt    n;
 
 
@@ -192,7 +192,7 @@ const FT2_1_3_Frame_Field  pcf_compressed_metric_header[] = {
 
 
 static FT_Error
-pcf_get_metric( FT2_1_3_Stream   stream,
+pcf_get_metric( FT_Stream   stream,
 				FT_ULong    format,
 				PCF_Metric  metric ) {
 	FT_Error  error = FT2_1_3_Err_Ok;
@@ -231,7 +231,7 @@ Exit:
 
 
 static FT_Error
-pcf_seek_to_table_type( FT2_1_3_Stream  stream,
+pcf_seek_to_table_type( FT_Stream  stream,
 						PCF_Table  tables,
 						FT_Int     ntables,
 						FT_ULong   type,
@@ -321,14 +321,14 @@ pcf_find_property( PCF_Face          face,
 
 
 static FT_Error
-pcf_get_properties( FT2_1_3_Stream  stream,
+pcf_get_properties( FT_Stream  stream,
 					PCF_Face   face ) {
 	PCF_ParseProperty  props      = 0;
 	PCF_Property       properties = 0;
 	FT_Int             nprops, i;
 	FT_ULong           format, size;
 	FT_Error           error;
-	FT2_1_3_Memory          memory     = FT2_1_3_FACE(face)->memory;
+	FT_Memory          memory     = FT2_1_3_FACE(face)->memory;
 	FT_ULong           string_size;
 	FT_String*         strings    = 0;
 
@@ -379,7 +379,7 @@ pcf_get_properties( FT2_1_3_Stream  stream,
 	/*                                                                   */
 	if ( nprops & 3 ) {
 		i = 4 - ( nprops & 3 );
-		FT2_1_3_Stream_Skip( stream, i );
+		FT_Stream_Skip( stream, i );
 	}
 
 	if ( PCF_BYTE_ORDER( format ) == MSBFirst )
@@ -394,7 +394,7 @@ pcf_get_properties( FT2_1_3_Stream  stream,
 	if ( FT2_1_3_NEW_ARRAY( strings, string_size ) )
 		goto Bail;
 
-	error = FT2_1_3_Stream_Read( stream, (FT_Byte*)strings, string_size );
+	error = FT_Stream_Read( stream, (FT_Byte*)strings, string_size );
 	if ( error )
 		goto Bail;
 
@@ -436,10 +436,10 @@ Bail:
 
 
 static FT_Error
-pcf_get_metrics( FT2_1_3_Stream  stream,
+pcf_get_metrics( FT_Stream  stream,
 				 PCF_Face   face ) {
 	FT_Error    error    = FT2_1_3_Err_Ok;
-	FT2_1_3_Memory   memory   = FT2_1_3_FACE(face)->memory;
+	FT_Memory   memory   = FT2_1_3_FACE(face)->memory;
 	FT_ULong    format   = 0;
 	FT_ULong    size     = 0;
 	PCF_Metric  metrics  = 0;
@@ -508,10 +508,10 @@ pcf_get_metrics( FT2_1_3_Stream  stream,
 
 
 static FT_Error
-pcf_get_bitmaps( FT2_1_3_Stream  stream,
+pcf_get_bitmaps( FT_Stream  stream,
 				 PCF_Face   face ) {
 	FT_Error   error  = FT2_1_3_Err_Ok;
-	FT2_1_3_Memory  memory = FT2_1_3_FACE(face)->memory;
+	FT_Memory  memory = FT2_1_3_FACE(face)->memory;
 	FT_Long*   offsets;
 	FT_Long    bitmapSizes[GLYPHPADOPTIONS];
 	FT_ULong   format, size;
@@ -528,7 +528,7 @@ pcf_get_bitmaps( FT2_1_3_Stream  stream,
 	if ( error )
 		return error;
 
-	error = FT2_1_3_Stream_EnterFrame( stream, 8 );
+	error = FT_Stream_EnterFrame( stream, 8 );
 	if ( error )
 		return error;
 
@@ -538,7 +538,7 @@ pcf_get_bitmaps( FT2_1_3_Stream  stream,
 	else
 		nbitmaps  = FT2_1_3_GET_ULONG_LE();
 
-	FT2_1_3_Stream_ExitFrame( stream );
+	FT_Stream_ExitFrame( stream );
 
 	if ( !PCF_FORMAT_MATCH( format, PCF_DEFAULT_FORMAT ) )
 		return FT2_1_3_Err_Invalid_File_Format;
@@ -596,10 +596,10 @@ Bail:
 
 
 static FT_Error
-pcf_get_encodings( FT2_1_3_Stream  stream,
+pcf_get_encodings( FT_Stream  stream,
 				   PCF_Face   face ) {
 	FT_Error      error   = FT2_1_3_Err_Ok;
-	FT2_1_3_Memory     memory  = FT2_1_3_FACE(face)->memory;
+	FT_Memory     memory  = FT2_1_3_FACE(face)->memory;
 	FT_ULong      format, size;
 	int           firstCol, lastCol;
 	int           firstRow, lastRow;
@@ -617,7 +617,7 @@ pcf_get_encodings( FT2_1_3_Stream  stream,
 	if ( error )
 		return error;
 
-	error = FT2_1_3_Stream_EnterFrame( stream, 14 );
+	error = FT_Stream_EnterFrame( stream, 14 );
 	if ( error )
 		return error;
 
@@ -637,7 +637,7 @@ pcf_get_encodings( FT2_1_3_Stream  stream,
 		face->defaultChar = FT2_1_3_GET_SHORT_LE();
 	}
 
-	FT2_1_3_Stream_ExitFrame( stream );
+	FT_Stream_ExitFrame( stream );
 
 	if ( !PCF_FORMAT_MATCH( format, PCF_DEFAULT_FORMAT ) )
 		return FT2_1_3_Err_Invalid_File_Format;
@@ -650,7 +650,7 @@ pcf_get_encodings( FT2_1_3_Stream  stream,
 	if ( FT2_1_3_NEW_ARRAY( tmpEncoding, nencoding ) )
 		return FT2_1_3_Err_Out_Of_Memory;
 
-	error = FT2_1_3_Stream_EnterFrame( stream, 2 * nencoding );
+	error = FT_Stream_EnterFrame( stream, 2 * nencoding );
 	if ( error )
 		goto Bail;
 
@@ -673,7 +673,7 @@ pcf_get_encodings( FT2_1_3_Stream  stream,
 		FT2_1_3_TRACE4(( "enc n. %d ; Uni %ld ; Glyph %d\n",
 					i, tmpEncoding[j - 1].enc, encodingOffset ));
 	}
-	FT2_1_3_Stream_ExitFrame( stream );
+	FT_Stream_ExitFrame( stream );
 
 	if ( FT2_1_3_NEW_ARRAY( encoding, j ) )
 		goto Bail;
@@ -739,7 +739,7 @@ const FT2_1_3_Frame_Field  pcf_accel_msb_header[] = {
 
 
 static FT_Error
-pcf_get_accel( FT2_1_3_Stream  stream,
+pcf_get_accel( FT_Stream  stream,
 			   PCF_Face   face,
 			   FT_ULong   type ) {
 	FT_ULong   format, size;
@@ -806,10 +806,10 @@ Bail:
 
 
 FT2_1_3_LOCAL_DEF( FT_Error )
-pcf_load_font( FT2_1_3_Stream  stream,
+pcf_load_font( FT_Stream  stream,
 			   PCF_Face   face ) {
 	FT_Error   error  = FT2_1_3_Err_Ok;
-	FT2_1_3_Memory  memory = FT2_1_3_FACE(face)->memory;
+	FT_Memory  memory = FT2_1_3_FACE(face)->memory;
 	FT_Bool    hasBDFAccelerators;
 
 

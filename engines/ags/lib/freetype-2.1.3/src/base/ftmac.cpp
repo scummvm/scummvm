@@ -324,7 +324,7 @@ parse_fond( char*   fond_data,
    chunks are often not organized that way, so we'll glue chunks
    of the same type together. */
 static FT_Error
-read_lwfn( FT2_1_3_Memory  memory,
+read_lwfn( FT_Memory  memory,
            FSSpec*    lwfn_spec,
            FT_Byte**  pfb_data,
            FT_ULong*  size ) {
@@ -427,8 +427,8 @@ Error:
 /* Finalizer for a memory stream; gets called by FT2_1_3_Done_Face().
    It frees the memory it uses. */
 static void
-memory_stream_close( FT2_1_3_Stream  stream ) {
-	FT2_1_3_Memory  memory = stream->memory;
+memory_stream_close( FT_Stream  stream ) {
+	FT_Memory  memory = stream->memory;
 
 
 	FT2_1_3_FREE( stream->base );
@@ -444,11 +444,11 @@ static FT_Error
 new_memory_stream( FT_Library           library,
                    FT_Byte*             base,
                    FT_ULong             size,
-                   FT2_1_3_Stream_CloseFunc  close,
-                   FT2_1_3_Stream           *astream ) {
+                   FT_Stream_CloseFunc  close,
+                   FT_Stream           *astream ) {
 	FT_Error   error;
-	FT2_1_3_Memory  memory;
-	FT2_1_3_Stream  stream;
+	FT_Memory  memory;
+	FT_Stream  stream;
 
 
 	if ( !library )
@@ -462,7 +462,7 @@ new_memory_stream( FT_Library           library,
 	if ( FT2_1_3_NEW( stream ) )
 		goto Exit;
 
-	FT2_1_3_Stream_OpenMemory( stream, base, size );
+	FT_Stream_OpenMemory( stream, base, size );
 
 	stream->close = close;
 
@@ -483,8 +483,8 @@ open_face_from_buffer( FT_Library  library,
                        FT_Face    *aface ) {
 	FT_Open_Args  args;
 	FT_Error      error;
-	FT2_1_3_Stream     stream;
-	FT2_1_3_Memory     memory = library->memory;
+	FT_Stream     stream;
+	FT_Memory     memory = library->memory;
 
 
 	error = new_memory_stream( library,
@@ -501,14 +501,14 @@ open_face_from_buffer( FT_Library  library,
 	args.stream = stream;
 	if ( driver_name ) {
 		args.flags = args.flags | FT2_1_3_OPEN_DRIVER;
-		args.driver = FT2_1_3_Get_Module( library, driver_name );
+		args.driver = FT_Get_Module( library, driver_name );
 	}
 
 	error = FT2_1_3_Open_Face( library, &args, face_index, aface );
 	if ( error == FT2_1_3_Err_Ok )
 		(*aface)->face_flags &= ~FT2_1_3_FACE_FLAG_EXTERNAL_STREAM;
 	else {
-		FT2_1_3_Stream_CloseFunc( stream );
+		FT_Stream_CloseFunc( stream );
 		FT2_1_3_FREE( stream );
 	}
 
@@ -550,7 +550,7 @@ FT2_1_3_New_Face_From_SFNT( FT_Library  library,
 	FT_Byte*   sfnt_data;
 	size_t     sfnt_size;
 	FT_Error   error = 0;
-	FT2_1_3_Memory  memory = library->memory;
+	FT_Memory  memory = library->memory;
 
 
 	sfnt = GetResource( 'sfnt', sfnt_id );

@@ -114,7 +114,7 @@ typedef struct  TT_CallRec_ {
 typedef struct  TT_ExecContextRec_ {
 	TT_Face            face;
 	TT_Size            size;
-	FT2_1_3_Memory          memory;
+	FT_Memory          memory;
 
 	/* instructions state */
 
@@ -266,7 +266,7 @@ TT_Done_Context( TT_ExecContext  exec );
 
 FT2_1_3_LOCAL( FT_Error )
 TT_Destroy_Context( TT_ExecContext  exec,
-                    FT2_1_3_Memory       memory );
+                    FT_Memory       memory );
 
 FT2_1_3_LOCAL( FT_Error )
 TT_Load_Context( TT_ExecContext  exec,

@@ -48,7 +48,7 @@ FT2_1_3_BEGIN_HEADER
 /**********************************************************************
  *
  * @function:
- *    FT2_1_3_Get_PFR_Metrics
+ *    FT_Get_PFR_Metrics
  *
  * @description:
  *    returns the outline and metrics resolutions of a given PFR
@@ -82,7 +82,7 @@ FT2_1_3_BEGIN_HEADER
  *   However, in all cases, it will return valid values.
  */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Get_PFR_Metrics( FT_Face     face,
+FT_Get_PFR_Metrics( FT_Face     face,
 					FT_UInt    *aoutline_resolution,
 					FT_UInt    *ametrics_resolution,
 					FT_Fixed   *ametrics_x_scale,
@@ -91,7 +91,7 @@ FT2_1_3_Get_PFR_Metrics( FT_Face     face,
 /**********************************************************************
  *
  * @function:
- *    FT2_1_3_Get_PFR_Kerning
+ *    FT_Get_PFR_Kerning
  *
  * @description:
  *    returns the kerning pair corresponding to two glyphs in
@@ -112,10 +112,10 @@ FT2_1_3_Get_PFR_Metrics( FT_Face     face,
  *    mode, which always return distances converted to outline units.
  *
  *    you can use the value of the 'x_scale' and 'y_scale' parameters
- *    returned by @FT2_1_3_Get_PFR_Metrics to scale these to device sub-pixels
+ *    returned by @FT_Get_PFR_Metrics to scale these to device sub-pixels
  */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Get_PFR_Kerning( FT_Face     face,
+FT_Get_PFR_Kerning( FT_Face     face,
 					FT_UInt     left,
 					FT_UInt     right,
 					FT_Vector  *avector );
@@ -123,7 +123,7 @@ FT2_1_3_Get_PFR_Kerning( FT_Face     face,
 /**********************************************************************
  *
  * @function:
- *    FT2_1_3_Get_PFR_Advance
+ *    FT_Get_PFR_Advance
  *
  * @description:
  *    returns a given glyph advance, expressed in original metrics units,
@@ -140,11 +140,11 @@ FT2_1_3_Get_PFR_Kerning( FT_Face     face,
  *    error code. 0 means success
  *
  * @note:
- *    you can use the 'x_scale' or 'y_scale' results of @FT2_1_3_Get_PFR_Metrics
+ *    you can use the 'x_scale' or 'y_scale' results of @FT_Get_PFR_Metrics
  *    to convert the advance to device sub-pixels (i.e. 1/64th of pixels)
  */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Get_PFR_Advance( FT_Face    face,
+FT_Get_PFR_Advance( FT_Face    face,
 					FT_UInt    gindex,
 					FT_Pos    *aadvance );
 

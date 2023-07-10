@@ -35,7 +35,7 @@ namespace AGS3 {
 namespace FreeType213 {
 
 FT2_1_3_LOCAL_DEF( void )
-T1_Done_AFM( FT2_1_3_Memory  memory,
+T1_Done_AFM( FT_Memory  memory,
 			 T1_AFM*    afm ) {
 	FT2_1_3_FREE( afm->kern_pairs );
 	afm->num_pairs = 0;
@@ -149,9 +149,9 @@ compare_kern_pairs( const void*  a,
 /* parse an AFM file -- for now, only read the kerning pairs */
 FT2_1_3_LOCAL_DEF( FT_Error )
 T1_Read_AFM( FT_Face    t1_face,
-			 FT2_1_3_Stream  stream ) {
+			 FT_Stream  stream ) {
 	FT_Error       error;
-	FT2_1_3_Memory      memory = stream->memory;
+	FT_Memory      memory = stream->memory;
 	FT_Byte*       start;
 	FT_Byte*       limit;
 	FT_Byte*       p;

@@ -58,7 +58,7 @@ psh3_hint_overlap( PSH3_Hint  hint1,
 /* destroy hints table */
 static void
 psh3_hint_table_done( PSH3_Hint_Table  table,
-					  FT2_1_3_Memory        memory ) {
+					  FT_Memory        memory ) {
 	FT2_1_3_FREE( table->zones );
 	table->num_zones = 0;
 	table->zone      = 0;
@@ -159,7 +159,7 @@ psh3_hint_table_init( PSH3_Hint_Table  table,
 					  PS_Hint_Table    hints,
 					  PS_Mask_Table    hint_masks,
 					  PS_Mask_Table    counter_masks,
-					  FT2_1_3_Memory        memory ) {
+					  FT_Memory        memory ) {
 	FT_UInt   count = hints->num_hints;
 	FT_Error  error;
 
@@ -630,8 +630,8 @@ psh3_glyph_compute_inflections( PSH3_Glyph  glyph ) {
 
 	for ( n = 0; n < glyph->num_contours; n++ ) {
 		PSH3_Point  first, start, end, before, after;
-		FT2_1_3_Angle    angle_in, angle_seg, angle_out;
-		FT2_1_3_Angle    diff_in, diff_out;
+		FT_Angle    angle_in, angle_seg, angle_out;
+		FT_Angle    diff_in, diff_out;
 		FT_Int      finished = 0;
 
 
@@ -668,7 +668,7 @@ psh3_glyph_compute_inflections( PSH3_Glyph  glyph ) {
 		} while ( angle_in == angle_seg );
 
 		first   = start;
-		diff_in = FT2_1_3_Angle_Diff( angle_in, angle_seg );
+		diff_in = FT_Angle_Diff( angle_in, angle_seg );
 
 		/* now, process all segments in the contour */
 		do {
@@ -687,7 +687,7 @@ psh3_glyph_compute_inflections( PSH3_Glyph  glyph ) {
 
 			} while ( angle_out == angle_seg );
 
-			diff_out = FT2_1_3_Angle_Diff( angle_seg, angle_out );
+			diff_out = FT_Angle_Diff( angle_seg, angle_out );
 
 			if ( ( diff_in ^ diff_out ) < 0 ) {
 				/* diff_in and diff_out have different signs, we have */
@@ -718,7 +718,7 @@ Skip:
 
 static void
 psh3_glyph_done( PSH3_Glyph  glyph ) {
-	FT2_1_3_Memory  memory = glyph->memory;
+	FT_Memory  memory = glyph->memory;
 
 
 	psh3_hint_table_done( &glyph->hint_tables[1], memory );
@@ -827,7 +827,7 @@ psh3_glyph_init( PSH3_Glyph   glyph,
 				 PS_Hints     ps_hints,
 				 PSH_Globals  globals ) {
 	FT_Error   error;
-	FT2_1_3_Memory  memory;
+	FT_Memory  memory;
 
 
 	/* clear all fields */
@@ -914,11 +914,11 @@ psh3_glyph_init( PSH3_Glyph   glyph,
 				if ( point->dir_in == point->dir_out )
 					point->flags |= PSH3_POINT_SMOOTH;
 			} else {
-				FT2_1_3_Angle  angle_in, angle_out, diff;
+				FT_Angle  angle_in, angle_out, diff;
 
 
-				angle_in  = FT2_1_3_Atan2( dxi, dyi );
-				angle_out = FT2_1_3_Atan2( dxo, dyo );
+				angle_in  = FT_Atan2( dxi, dyi );
+				angle_out = FT_Atan2( dxo, dyo );
 
 				diff = angle_in - angle_out;
 				if ( diff < 0 )
@@ -1525,7 +1525,7 @@ ps3_hints_apply( PS_Hints        ps_hints,
 	PSH3_Glyph     glyph = &glyphrec;
 	FT_Error       error;
 #ifdef DEBUG_HINTER
-	FT2_1_3_Memory      memory;
+	FT_Memory      memory;
 #endif
 	FT_Int         dimension;
 

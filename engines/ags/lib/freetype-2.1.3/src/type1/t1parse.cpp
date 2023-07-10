@@ -94,7 +94,7 @@ const FT2_1_3_Frame_Field  pfb_tag_fields[] = {
 
 
 static FT_Error
-read_pfb_tag( FT2_1_3_Stream   stream,
+read_pfb_tag( FT_Stream   stream,
 			  FT_UShort*  tag,
 			  FT_Long*    size ) {
 	FT_Error  error;
@@ -115,8 +115,8 @@ read_pfb_tag( FT2_1_3_Stream   stream,
 
 FT2_1_3_LOCAL_DEF( FT_Error )
 T1_New_Parser( T1_Parser      parser,
-			   FT2_1_3_Stream      stream,
-			   FT2_1_3_Memory      memory,
+			   FT_Stream      stream,
+			   FT_Memory      memory,
 			   PSAux_Service  psaux ) {
 	FT_Error   error;
 	FT_UShort  tag;
@@ -215,7 +215,7 @@ Exit:
 
 FT2_1_3_LOCAL_DEF( void )
 T1_Finalize_Parser( T1_Parser  parser ) {
-	FT2_1_3_Memory  memory = parser->root.memory;
+	FT_Memory  memory = parser->root.memory;
 
 
 	/* always free the private dictionary */
@@ -254,8 +254,8 @@ hexa_value( char  c ) {
 FT2_1_3_LOCAL_DEF( FT_Error )
 T1_Get_Private_Dict( T1_Parser      parser,
 					 PSAux_Service  psaux ) {
-	FT2_1_3_Stream  stream = parser->stream;
-	FT2_1_3_Memory  memory = parser->root.memory;
+	FT_Stream  stream = parser->stream;
+	FT_Memory  memory = parser->root.memory;
 	FT_Error   error  = 0;
 	FT_Long    size;
 

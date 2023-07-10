@@ -70,7 +70,7 @@ namespace FreeType213 {
 /*    The address of newly allocated block.                              */
 /*                                                                       */
 FT2_1_3_CALLBACK_DEF( void* )
-ft_alloc( FT2_1_3_Memory  memory,
+ft_alloc( FT_Memory  memory,
 		  long       size ) {
 	FT2_1_3_UNUSED( memory );
 
@@ -99,7 +99,7 @@ ft_alloc( FT2_1_3_Memory  memory,
 /*    The address of the reallocated memory block.                       */
 /*                                                                       */
 FT2_1_3_CALLBACK_DEF( void* )
-ft_realloc( FT2_1_3_Memory  memory,
+ft_realloc( FT_Memory  memory,
 			long       cur_size,
 			long       new_size,
 			void*      block ) {
@@ -124,7 +124,7 @@ ft_realloc( FT2_1_3_Memory  memory,
 /*    block   :: The address of block in memory to be freed.             */
 /*                                                                       */
 FT2_1_3_CALLBACK_DEF( void )
-ft_free( FT2_1_3_Memory  memory,
+ft_free( FT_Memory  memory,
 		 void*      block ) {
 	FT2_1_3_UNUSED( memory );
 
@@ -165,7 +165,7 @@ ft_free( FT2_1_3_Memory  memory,
 /*    stream :: A pointer to the stream object.                          */
 /*                                                                       */
 FT2_1_3_CALLBACK_DEF( void )
-ft_ansi_stream_close( FT2_1_3_Stream  stream ) {
+ft_ansi_stream_close( FT_Stream  stream ) {
 	fclose( STREAM_FILE( stream ) );
 
 	stream->descriptor.pointer = NULL;
@@ -195,7 +195,7 @@ ft_ansi_stream_close( FT2_1_3_Stream  stream ) {
 /*    The number of bytes actually read.                                 */
 /*                                                                       */
 FT2_1_3_CALLBACK_DEF( unsigned long )
-ft_ansi_stream_io( FT2_1_3_Stream       stream,
+ft_ansi_stream_io( FT_Stream       stream,
 				   unsigned long   offset,
 				   unsigned char*  buffer,
 				   unsigned long   count ) {
@@ -213,7 +213,7 @@ ft_ansi_stream_io( FT2_1_3_Stream       stream,
 /* documentation is in ftobjs.h */
 
 FT2_1_3_EXPORT_DEF( FT_Error )
-FT2_1_3_Stream_Open( FT2_1_3_Stream    stream,
+FT_Stream_Open( FT_Stream    stream,
 				const char*  filepathname ) {
 	FILE*  file;
 
@@ -223,7 +223,7 @@ FT2_1_3_Stream_Open( FT2_1_3_Stream    stream,
 
 	file = fopen( filepathname, "rb" );
 	if ( !file ) {
-		FT2_1_3_ERROR(( "FT2_1_3_Stream_Open:" ));
+		FT2_1_3_ERROR(( "FT_Stream_Open:" ));
 		FT2_1_3_ERROR(( " could not open `%s'\n", filepathname ));
 
 		return FT2_1_3_Err_Cannot_Open_Resource;
@@ -240,7 +240,7 @@ FT2_1_3_Stream_Open( FT2_1_3_Stream    stream,
 	stream->read  = ft_ansi_stream_io;
 	stream->close = ft_ansi_stream_close;
 
-	FT2_1_3_TRACE1(( "FT2_1_3_Stream_Open:" ));
+	FT2_1_3_TRACE1(( "FT_Stream_Open:" ));
 	FT2_1_3_TRACE1(( " opened `%s' (%d bytes) successfully\n",
 				filepathname, stream->size ));
 
@@ -251,22 +251,22 @@ FT2_1_3_Stream_Open( FT2_1_3_Stream    stream,
 #ifdef FT2_1_3_DEBUG_MEMORY
 
 extern FT_Int
-ft_mem_debug_init( FT2_1_3_Memory  memory );
+ft_mem_debug_init( FT_Memory  memory );
 
 extern void
-ft_mem_debug_done( FT2_1_3_Memory  memory );
+ft_mem_debug_done( FT_Memory  memory );
 
 #endif
 
 
 /* documentation is in ftobjs.h */
 
-FT2_1_3_EXPORT_DEF( FT2_1_3_Memory )
+FT2_1_3_EXPORT_DEF( FT_Memory )
 FT2_1_3_New_Memory( void ) {
-	FT2_1_3_Memory  memory;
+	FT_Memory  memory;
 
 
-	memory = (FT2_1_3_Memory)malloc( sizeof ( *memory ) );
+	memory = (FT_Memory)malloc( sizeof ( *memory ) );
 	if ( memory ) {
 		memory->user    = 0;
 		memory->alloc   = ft_alloc;
@@ -284,7 +284,7 @@ FT2_1_3_New_Memory( void ) {
 /* documentation is in ftobjs.h */
 
 FT2_1_3_EXPORT_DEF( void )
-FT2_1_3_Done_Memory( FT2_1_3_Memory  memory ) {
+FT2_1_3_Done_Memory( FT_Memory  memory ) {
 #ifdef FT2_1_3_DEBUG_MEMORY
 	ft_mem_debug_done( memory );
 #endif

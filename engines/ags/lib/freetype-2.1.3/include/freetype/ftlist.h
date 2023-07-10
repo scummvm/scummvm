@@ -228,7 +228,7 @@ FT_List_Iterate( FT_List           list,
 /*              be used to point to the iteration's state.               */
 /*                                                                       */
 typedef void
-(*FT_List_Destructor)( FT2_1_3_Memory  memory,
+(*FT_List_Destructor)( FT_Memory  memory,
 					   void*      data,
 					   void*      user );
 
@@ -255,7 +255,7 @@ typedef void
 FT2_1_3_EXPORT( void )
 FT_List_Finalize( FT_List             list,
 				  FT_List_Destructor  destroy,
-				  FT2_1_3_Memory           memory,
+				  FT_Memory           memory,
 				  void*               user );
 
 

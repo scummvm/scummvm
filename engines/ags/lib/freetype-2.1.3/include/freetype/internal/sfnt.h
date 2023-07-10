@@ -66,7 +66,7 @@ FT2_1_3_BEGIN_HEADER
 /*    of the SFNT tables in the object.                                  */
 /*                                                                       */
 typedef FT_Error
-(*TT_Init_Face_Func)( FT2_1_3_Stream      stream,
+(*TT_Init_Face_Func)( FT_Stream      stream,
 					  TT_Face        face,
 					  FT_Int         face_index,
 					  FT_Int         num_params,
@@ -102,7 +102,7 @@ typedef FT_Error
 /*    This function must be called after TT_Init_Face_Func().            */
 /*                                                                       */
 typedef FT_Error
-(*TT_Load_Face_Func)( FT2_1_3_Stream      stream,
+(*TT_Load_Face_Func)( FT_Stream      stream,
 					  TT_Face        face,
 					  FT_Int         face_index,
 					  FT_Int         num_params,
@@ -165,7 +165,7 @@ typedef FT_Module_Interface
 /*                                                                       */
 typedef FT_Error
 (*TT_Load_SFNT_HeaderRec_Func)( TT_Face      face,
-								FT2_1_3_Stream    stream,
+								FT_Stream    stream,
 								FT_Long      face_index,
 								SFNT_Header  sfnt );
 
@@ -195,7 +195,7 @@ typedef FT_Error
 /*                                                                       */
 typedef FT_Error
 (*TT_Load_Directory_Func)( TT_Face      face,
-						   FT2_1_3_Stream    stream,
+						   FT_Stream    stream,
 						   SFNT_Header  sfnt );
 
 
@@ -284,7 +284,7 @@ typedef FT_Error
 							FT_ULong             strike_index,
 							FT_UInt              glyph_index,
 							FT_UInt              load_flags,
-							FT2_1_3_Stream            stream,
+							FT_Stream            stream,
 							FT_Bitmap           *amap,
 							TT_SBit_MetricsRec  *ametrics );
 
@@ -364,7 +364,7 @@ typedef FT_Error
 /*                                                                       */
 typedef FT_Error
 (*TT_Load_Metrics_Func)( TT_Face    face,
-						 FT2_1_3_Stream  stream,
+						 FT_Stream  stream,
 						 FT_Bool    vertical );
 
 
@@ -395,7 +395,7 @@ typedef FT_Error
 typedef FT_Error
 (*TT_CharMap_Load_Func)( TT_Face       face,
 						 TT_CMapTable  cmap,
-						 FT2_1_3_Stream     input );
+						 FT_Stream     input );
 
 
 /*************************************************************************/
@@ -441,7 +441,7 @@ typedef FT_Error
 /*                                                                       */
 typedef FT_Error
 (*TT_Load_Table_Func)( TT_Face    face,
-					   FT2_1_3_Stream  stream );
+					   FT_Stream  stream );
 
 
 /*************************************************************************/

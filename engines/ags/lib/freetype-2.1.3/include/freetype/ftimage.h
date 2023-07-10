@@ -781,19 +781,19 @@ typedef enum  FT_Glyph_Format_ {
 /*************************************************************************/
 /*                                                                       */
 /* <Type>                                                                */
-/*    FT2_1_3_Raster                                                          */
+/*    FT_Raster                                                          */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A handle (pointer) to a raster object.  Each object can be used    */
 /*    independently to convert an outline into a bitmap or pixmap.       */
 /*                                                                       */
-typedef struct FT2_1_3_RasterRec_*  FT2_1_3_Raster;
+typedef struct FT_RasterRec_*  FT_Raster;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_Span                                                            */
+/*    FT_Span                                                            */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A structure used to model a single span of gray (or black) pixels  */
@@ -810,24 +810,24 @@ typedef struct FT2_1_3_RasterRec_*  FT2_1_3_Raster;
 /*                                                                       */
 /* <Note>                                                                */
 /*    This structure is used by the span drawing callback type named     */
-/*    FT2_1_3_SpanFunc which takes the y-coordinate of the span as a          */
+/*    FT_SpanFunc which takes the y-coordinate of the span as a          */
 /*    a parameter.                                                       */
 /*                                                                       */
 /*    The coverage value is always between 0 and 255, even if the number */
 /*    of gray levels have been set through FT2_1_3_Set_Gray_Levels().         */
 /*                                                                       */
-typedef struct  FT2_1_3_Span_ {
+typedef struct  FT_Span_ {
 	short           x;
 	unsigned short  len;
 	unsigned char   coverage;
 
-} FT2_1_3_Span;
+} FT_Span;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <FuncType>                                                            */
-/*    FT2_1_3_SpanFunc                                                        */
+/*    FT_SpanFunc                                                        */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A function used as a call-back by the anti-aliased renderer in     */
@@ -861,18 +861,18 @@ typedef struct  FT2_1_3_Span_ {
 /*    only for those scanlines that do have `gray' pixels on them.       */
 /*                                                                       */
 typedef void
-(*FT2_1_3_SpanFunc)( int       y,
+(*FT_SpanFunc)( int       y,
 				int       count,
-				FT2_1_3_Span*  spans,
+				FT_Span*  spans,
 				void*     user );
 
-#define FT2_1_3_Raster_Span_Func   FT2_1_3_SpanFunc
+#define FT_Raster_Span_Func   FT_SpanFunc
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <FuncType>                                                            */
-/*    FT2_1_3_Raster_BitTest_Func                                             */
+/*    FT_Raster_BitTest_Func                                             */
 /*                                                                       */
 /* <Description>                                                         */
 /*    THIS TYPE IS DEPRECATED.  DO NOT USE IT.                           */
@@ -893,7 +893,7 @@ typedef void
 /*   1 if the pixel is `set', 0 otherwise.                               */
 /*                                                                       */
 typedef int
-(*FT2_1_3_Raster_BitTest_Func)( int    y,
+(*FT_Raster_BitTest_Func)( int    y,
 						   int    x,
 						   void*  user );
 
@@ -901,7 +901,7 @@ typedef int
 /*************************************************************************/
 /*                                                                       */
 /* <FuncType>                                                            */
-/*    FT2_1_3_Raster_BitSet_Func                                              */
+/*    FT_Raster_BitSet_Func                                              */
 /*                                                                       */
 /* <Description>                                                         */
 /*    THIS TYPE IS DEPRECATED.  DO NOT USE IT.                           */
@@ -921,7 +921,7 @@ typedef int
 /*    1 if the pixel is `set', 0 otherwise.                              */
 /*                                                                       */
 typedef void
-(*FT2_1_3_Raster_BitSet_Func)( int    y,
+(*FT_Raster_BitSet_Func)( int    y,
 						  int    x,
 						  void*  user );
 
@@ -929,11 +929,11 @@ typedef void
 /*************************************************************************/
 /*                                                                       */
 /* <Enum>                                                                */
-/*    FT2_1_3_Raster_Flag                                                     */
+/*    FT_Raster_Flag                                                     */
 /*                                                                       */
 /* <Description>                                                         */
 /*    An enumeration to list the bit flags as used in the `flags' field  */
-/*    of a FT2_1_3_Raster_Params structure.                                   */
+/*    of a FT_Raster_Params structure.                                   */
 /*                                                                       */
 /* <Values>                                                              */
 /*    FT2_1_3_RASTER_FLAG_DEFAULT :: This value is 0.                         */
@@ -958,7 +958,7 @@ typedef void
 /*    FT2_1_3_RASTER_FLAG_CLIP    :: This flag is only used in direct         */
 /*                              rendering mode.  If set, the output will */
 /*                              be clipped to a box specified in the     */
-/*                              "clip_box" field of the FT2_1_3_Raster_Params */
+/*                              "clip_box" field of the FT_Raster_Params */
 /*                              structure.                               */
 /*                                                                       */
 /*                              Note that by default, the glyph bitmap   */
@@ -972,7 +972,7 @@ typedef  enum {
 	FT2_1_3_RASTER_FLAG_DIRECT  = 2,
 	FT2_1_3_RASTER_FLAG_CLIP    = 4
 
-} FT2_1_3_Raster_Flag;
+} FT_Raster_Flag;
 
 #define ft_raster_flag_default  FT2_1_3_RASTER_FLAG_DEFAULT
 #define ft_raster_flag_aa       FT2_1_3_RASTER_FLAG_AA
@@ -983,7 +983,7 @@ typedef  enum {
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_Raster_Params                                                   */
+/*    FT_Raster_Params                                                   */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A structure to hold the arguments used by a raster's render        */
@@ -1030,24 +1030,24 @@ typedef  enum {
 /*    rendering a monochrome bitmap, as they are crucial to implement    */
 /*    correct drop-out control as defined in the TrueType specification. */
 /*                                                                       */
-typedef struct  FT2_1_3_Raster_Params_ {
+typedef struct  FT_Raster_Params_ {
 	FT_Bitmap*              target;
 	void*                   source;
 	int                     flags;
-	FT2_1_3_SpanFunc             gray_spans;
-	FT2_1_3_SpanFunc             black_spans;
-	FT2_1_3_Raster_BitTest_Func  bit_test;     /* doesn't work! */
-	FT2_1_3_Raster_BitSet_Func   bit_set;      /* doesn't work! */
+	FT_SpanFunc             gray_spans;
+	FT_SpanFunc             black_spans;
+	FT_Raster_BitTest_Func  bit_test;     /* doesn't work! */
+	FT_Raster_BitSet_Func   bit_set;      /* doesn't work! */
 	void*                   user;
 	FT_BBox                 clip_box;
 
-} FT2_1_3_Raster_Params;
+} FT_Raster_Params;
 
 
 /*************************************************************************/
 /*                                                                       */
 /* <FuncType>                                                            */
-/*    FT2_1_3_Raster_NewFunc                                                  */
+/*    FT_Raster_NewFunc                                                  */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A function used to create a new raster object.                     */
@@ -1064,20 +1064,20 @@ typedef struct  FT2_1_3_Raster_Params_ {
 /* <Note>                                                                */
 /*    The `memory' parameter is a typeless pointer in order to avoid     */
 /*    un-wanted dependencies on the rest of the FreeType code.  In       */
-/*    practice, it is a FT2_1_3_Memory, i.e., a handle to the standard        */
+/*    practice, it is a FT_Memory, i.e., a handle to the standard        */
 /*    FreeType memory allocator.  However, this field can be completely  */
 /*    ignored by a given raster implementation.                          */
 /*                                                                       */
 typedef int
-(*FT2_1_3_Raster_NewFunc)( void*       memory,
-					  FT2_1_3_Raster*  raster );
+(*FT_Raster_NewFunc)( void*       memory,
+					  FT_Raster*  raster );
 
-#define  FT2_1_3_Raster_New_Func    FT2_1_3_Raster_NewFunc
+#define  FT_Raster_New_Func    FT_Raster_NewFunc
 
 /*************************************************************************/
 /*                                                                       */
 /* <FuncType>                                                            */
-/*    FT2_1_3_Raster_DoneFunc                                                 */
+/*    FT_Raster_DoneFunc                                                 */
 /*                                                                       */
 /* <Description>                                                         */
 /*    A function used to destroy a given raster object.                  */
@@ -1086,14 +1086,14 @@ typedef int
 /*    raster :: A handle to the raster object.                           */
 /*                                                                       */
 typedef void
-(*FT2_1_3_Raster_DoneFunc)( FT2_1_3_Raster  raster );
+(*FT_Raster_DoneFunc)( FT_Raster  raster );
 
-#define  FT2_1_3_Raster_Done_Func   FT2_1_3_Raster_DoneFunc
+#define  FT_Raster_Done_Func   FT_Raster_DoneFunc
 
 /*************************************************************************/
 /*                                                                       */
 /* <FuncType>                                                            */
-/*    FT2_1_3_Raster_ResetFunc                                                */
+/*    FT_Raster_ResetFunc                                                */
 /*                                                                       */
 /* <Description>                                                         */
 /*    FreeType provides an area of memory called the `render pool',      */
@@ -1118,16 +1118,16 @@ typedef void
 /*    recommended for efficiency purposes.                               */
 /*                                                                       */
 typedef void
-(*FT2_1_3_Raster_ResetFunc)( FT2_1_3_Raster       raster,
+(*FT_Raster_ResetFunc)( FT_Raster       raster,
 						unsigned char*  pool_base,
 						unsigned long   pool_size );
 
-#define  FT2_1_3_Raster_Reset_Func   FT2_1_3_Raster_ResetFunc
+#define  FT_Raster_Reset_Func   FT_Raster_ResetFunc
 
 /*************************************************************************/
 /*                                                                       */
 /* <FuncType>                                                            */
-/*    FT2_1_3_Raster_SetModeFunc                                              */
+/*    FT_Raster_SetModeFunc                                              */
 /*                                                                       */
 /* <Description>                                                         */
 /*    This function is a generic facility to change modes or attributes  */
@@ -1143,16 +1143,16 @@ typedef void
 /*    args   :: A pointer to the new mode/property to use.               */
 /*                                                                       */
 typedef int
-(*FT2_1_3_Raster_SetModeFunc)( FT2_1_3_Raster      raster,
+(*FT_Raster_SetModeFunc)( FT_Raster      raster,
 						  unsigned long  mode,
 						  void*          args );
 
-#define  FT2_1_3_Raster_Set_Mode_Func  FT2_1_3_Raster_SetModeFunc
+#define  FT_Raster_Set_Mode_Func  FT_Raster_SetModeFunc
 
 /*************************************************************************/
 /*                                                                       */
 /* <FuncType>                                                            */
-/*    FT2_1_3_Raster_RenderFunc                                               */
+/*    FT_Raster_RenderFunc                                               */
 /*                                                                       */
 /* <Description>                                                         */
 /*   Invokes a given raster to scan-convert a given glyph image into a   */
@@ -1161,7 +1161,7 @@ typedef int
 /* <Input>                                                               */
 /*    raster :: A handle to the raster object.                           */
 /*                                                                       */
-/*    params :: A pointer to a FT2_1_3_Raster_Params structure used to store  */
+/*    params :: A pointer to a FT_Raster_Params structure used to store  */
 /*              the rendering parameters.                                */
 /*                                                                       */
 /* <Return>                                                              */
@@ -1169,7 +1169,7 @@ typedef int
 /*                                                                       */
 /* <Note>                                                                */
 /*    The exact format of the source image depends on the raster's glyph */
-/*    format defined in its FT2_1_3_Raster_Funcs structure.  It can be an     */
+/*    format defined in its FT_Raster_Funcs structure.  It can be an     */
 /*    FT_Outline or anything else in order to support a large array of   */
 /*    glyph formats.                                                     */
 /*                                                                       */
@@ -1184,15 +1184,15 @@ typedef int
 /*         composition).                                                 */
 /*                                                                       */
 typedef int
-(*FT2_1_3_Raster_RenderFunc)( FT2_1_3_Raster          raster,
-						 FT2_1_3_Raster_Params*  params );
+(*FT_Raster_RenderFunc)( FT_Raster          raster,
+						 FT_Raster_Params*  params );
 
-#define  FT2_1_3_Raster_Render_Func    FT2_1_3_Raster_RenderFunc
+#define  FT_Raster_Render_Func    FT_Raster_RenderFunc
 
 /*************************************************************************/
 /*                                                                       */
 /* <Struct>                                                              */
-/*    FT2_1_3_Raster_Funcs                                                    */
+/*    FT_Raster_Funcs                                                    */
 /*                                                                       */
 /* <Description>                                                         */
 /*   A structure used to describe a given raster class to the library.   */
@@ -1208,15 +1208,15 @@ typedef int
 /*                                                                       */
 /*    raster_done   :: The raster destructor.                            */
 /*                                                                       */
-typedef struct  FT2_1_3_Raster_Funcs_ {
+typedef struct  FT_Raster_Funcs_ {
 	FT_Glyph_Format         glyph_format;
-	FT2_1_3_Raster_NewFunc       raster_new;
-	FT2_1_3_Raster_ResetFunc     raster_reset;
-	FT2_1_3_Raster_SetModeFunc   raster_set_mode;
-	FT2_1_3_Raster_RenderFunc    raster_render;
-	FT2_1_3_Raster_DoneFunc      raster_done;
+	FT_Raster_NewFunc       raster_new;
+	FT_Raster_ResetFunc     raster_reset;
+	FT_Raster_SetModeFunc   raster_set_mode;
+	FT_Raster_RenderFunc    raster_render;
+	FT_Raster_DoneFunc      raster_done;
 
-} FT2_1_3_Raster_Funcs;
+} FT_Raster_Funcs;
 
 
 /* */

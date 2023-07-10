@@ -62,7 +62,7 @@ cff_size_get_globals_funcs( CFF_Size  size ) {
 	FT_Module         module;
 
 
-	module = FT2_1_3_Get_Module( size->face->driver->root.library,
+	module = FT_Get_Module( size->face->driver->root.library,
 							"pshinter" );
 	return ( module && pshinter && pshinter->get_globals_funcs )
 		   ? pshinter->get_globals_funcs( module )
@@ -194,7 +194,7 @@ cff_slot_init( CFF_GlyphSlot  slot ) {
 		FT_Module  module;
 
 
-		module = FT2_1_3_Get_Module( slot->root.face->driver->root.library,
+		module = FT_Get_Module( slot->root.face->driver->root.library,
 								"pshinter" );
 		if ( module ) {
 			T2_Hints_Funcs  funcs;
@@ -216,7 +216,7 @@ cff_slot_init( CFF_GlyphSlot  slot ) {
 /*************************************************************************/
 
 static FT_String*
-cff_strcpy( FT2_1_3_Memory         memory,
+cff_strcpy( FT_Memory         memory,
 			const FT_String*  source ) {
 	FT_Error    error;
 	FT_String*  result = 0;
@@ -237,7 +237,7 @@ cff_strcpy( FT2_1_3_Memory         memory,
 
 
 FT2_1_3_LOCAL_DEF( FT_Error )
-cff_face_init( FT2_1_3_Stream      stream,
+cff_face_init( FT_Stream      stream,
 			   CFF_Face       face,
 			   FT_Int         face_index,
 			   FT_Int         num_params,
@@ -249,15 +249,15 @@ cff_face_init( FT2_1_3_Stream      stream,
 	FT_Bool           pure_cff    = 1;
 	FT_Bool           sfnt_format = 0;
 
-	const void *tmp_ptr = FT2_1_3_Get_Module_Interface(face->root.driver->root.library, "sfnt");
+	const void *tmp_ptr = FT_Get_Module_Interface(face->root.driver->root.library, "sfnt");
 	sfnt = const_cast<SFNT_Service>(reinterpret_cast<const SFNT_Interface *>(tmp_ptr));
 	if ( !sfnt )
 		goto Bad_Format;
 
-	tmp_ptr = FT2_1_3_Get_Module_Interface(face->root.driver->root.library, "psnames");
+	tmp_ptr = FT_Get_Module_Interface(face->root.driver->root.library, "psnames");
 	psnames = const_cast<PSNames_Service>(reinterpret_cast<const PSNames_Interface *>(tmp_ptr));
 
-	tmp_ptr = FT2_1_3_Get_Module_Interface(face->root.driver->root.library, "pshinter");
+	tmp_ptr = FT_Get_Module_Interface(face->root.driver->root.library, "pshinter");
 	pshinter = const_cast<PSHinter_Service>(reinterpret_cast<const PSHinter_Interface *>(tmp_ptr));
 
 	/* create input stream from resource */
@@ -314,7 +314,7 @@ cff_face_init( FT2_1_3_Stream      stream,
 	/* now load and parse the CFF table in the file */
 	{
 		CFF_Font   cff;
-		FT2_1_3_Memory  memory = face->root.memory;
+		FT_Memory  memory = face->root.memory;
 		FT_Face    root;
 		FT_Int32   flags;
 
@@ -507,7 +507,7 @@ Bad_Format:
 
 FT2_1_3_LOCAL_DEF( void )
 cff_face_done( CFF_Face  face ) {
-	FT2_1_3_Memory     memory = face->root.memory;
+	FT_Memory     memory = face->root.memory;
 	SFNT_Service  sfnt   = (SFNT_Service)face->sfnt;
 
 

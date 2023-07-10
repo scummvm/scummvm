@@ -859,7 +859,7 @@ ah_hinter_align( AH_Hinter  hinter ) {
 FT2_1_3_LOCAL_DEF( void )
 ah_hinter_done( AH_Hinter  hinter ) {
 	if ( hinter ) {
-		FT2_1_3_Memory  memory = hinter->memory;
+		FT_Memory  memory = hinter->memory;
 
 
 		ah_loader_done( hinter->loader );
@@ -881,7 +881,7 @@ FT2_1_3_LOCAL_DEF( FT_Error )
 ah_hinter_new( FT_Library  library,
 			   AH_Hinter  *ahinter ) {
 	AH_Hinter  hinter = 0;
-	FT2_1_3_Memory  memory = library->memory;
+	FT_Memory  memory = library->memory;
 	FT_Error   error;
 
 
@@ -917,7 +917,7 @@ ah_hinter_new_face_globals( AH_Hinter   hinter,
 							FT_Face     face,
 							AH_Globals  globals ) {
 	FT_Error         error;
-	FT2_1_3_Memory        memory = hinter->memory;
+	FT_Memory        memory = hinter->memory;
 	AH_Face_Globals  face_globals;
 
 
@@ -946,7 +946,7 @@ Exit:
 FT2_1_3_LOCAL_DEF( void )
 ah_hinter_done_face_globals( AH_Face_Globals  globals ) {
 	FT_Face    face   = globals->face;
-	FT2_1_3_Memory  memory = face->memory;
+	FT_Memory  memory = face->memory;
 
 
 	FT2_1_3_FREE( globals );
@@ -984,7 +984,7 @@ ah_hinter_load( AH_Hinter  hinter,
 		hinter->trans_delta  = internal->glyph_delta;
 		hinter->trans_matrix = imatrix;
 
-		FT2_1_3_Matrix_Invert( &imatrix );
+		FT_Matrix_Invert( &imatrix );
 		FT2_1_3_Vector_Transform( &hinter->trans_delta, &imatrix );
 	}
 
@@ -1338,7 +1338,7 @@ ah_hinter_get_global_hints( AH_Hinter  hinter,
 							void**     global_hints,
 							long*      global_len ) {
 	AH_Globals  globals = 0;
-	FT2_1_3_Memory   memory  = hinter->memory;
+	FT_Memory   memory  = hinter->memory;
 	FT_Error    error;
 
 
@@ -1370,7 +1370,7 @@ Fail:
 FT2_1_3_LOCAL_DEF( void )
 ah_hinter_done_global_hints( AH_Hinter  hinter,
 							 void*      global_hints ) {
-	FT2_1_3_Memory  memory = hinter->memory;
+	FT_Memory  memory = hinter->memory;
 
 
 	FT2_1_3_FREE( global_hints );

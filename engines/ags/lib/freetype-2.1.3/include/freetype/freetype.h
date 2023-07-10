@@ -148,7 +148,7 @@ FT2_1_3_BEGIN_HEADER
 /*    FT_Render_Mode                                                     */
 /*    FT2_1_3_Get_Kerning                                                     */
 /*    FT_Kerning_Mode                                                    */
-/*    FT2_1_3_Get_Glyph_Name                                                  */
+/*    FT_Get_Glyph_Name                                                  */
 /*    FT2_1_3_Get_Postscript_Name                                             */
 /*                                                                       */
 /*    FT_CharMapRec                                                      */
@@ -241,8 +241,8 @@ typedef struct  FT_Bitmap_Size_ {
 /*    completely independent from the others; it is the `root' of a set  */
 /*    of objects like fonts, faces, sizes, etc.                          */
 /*                                                                       */
-/*    It also embeds a memory manager (see @FT2_1_3_Memory), as well as a     */
-/*    scan-line converter object (see @FT2_1_3_Raster).                       */
+/*    It also embeds a memory manager (see @FT_Memory), as well as a     */
+/*    scan-line converter object (see @FT_Raster).                       */
 /*                                                                       */
 /* <Note>                                                                */
 /*    Library objects are normally created by @FT2_1_3_Init_FreeType, and     */
@@ -330,7 +330,7 @@ typedef struct FT_FaceRec_*  FT_Face;
 /*    single _active_ size for the face at any time that will be used by */
 /*    functions like @FT2_1_3_Load_Glyph, @FT2_1_3_Get_Kerning, etc.               */
 /*                                                                       */
-/*    You can use the @FT2_1_3_Activate_Size API to change the current        */
+/*    You can use the @FT_Activate_Size API to change the current        */
 /*    active size of any given face.                                     */
 /*                                                                       */
 /* <Also>                                                                */
@@ -830,8 +830,8 @@ typedef struct  FT_FaceRec_ {
 	/*@private begin */
 
 	FT_Driver         driver;
-	FT2_1_3_Memory         memory;
-	FT2_1_3_Stream         stream;
+	FT_Memory         memory;
+	FT_Stream         stream;
 
 	FT_ListRec        sizes_list;
 
@@ -898,7 +898,7 @@ typedef struct  FT_FaceRec_ {
 /*                                                                       */
 /*    FT2_1_3_FACE_FLAG_GLYPH_NAMES ::                                        */
 /*      Indicates that the font contains glyph names that can be         */
-/*      retrieved through @FT2_1_3_Get_Glyph_Names.  Note that some TrueType  */
+/*      retrieved through @FT_Get_Glyph_Names.  Note that some TrueType  */
 /*      fonts contain broken glyph name tables.  Use the function        */
 /*      @FT2_1_3_Has_PS_Glyph_Name when needed.                               */
 /*                                                                       */
@@ -1047,7 +1047,7 @@ typedef struct  FT_FaceRec_ {
 /*                                                                       */
 /* @description:                                                         */
 /*    A macro that returns true whenever a face object contains some     */
-/*    glyph names that can be accessed through @FT2_1_3_Get_Glyph_Names.      */
+/*    glyph names that can be accessed through @FT_Get_Glyph_Names.      */
 /*                                                                       */
 #define FT2_1_3_HAS_GLYPH_NAMES( face ) \
 		  ( face->face_flags & FT2_1_3_FACE_FLAG_GLYPH_NAMES )
@@ -1589,7 +1589,7 @@ typedef struct  FT_Open_Args_ {
 	const FT_Byte*             memory_base;
 	FT_Long                    memory_size;
 	FT_String*                 pathname;
-	FT2_1_3_Stream                  stream;
+	FT_Stream                  stream;
 	FT_Module                  driver;
 	FT_Int                     num_params;
 	FT_Parameter*              params;
@@ -2386,7 +2386,7 @@ FT2_1_3_Get_Kerning( FT_Face     face,
 /*************************************************************************/
 /*                                                                       */
 /* <Function>                                                            */
-/*    FT2_1_3_Get_Glyph_Name                                                  */
+/*    FT_Get_Glyph_Name                                                  */
 /*                                                                       */
 /* <Description>                                                         */
 /*    Retrieves the ASCII name of a given glyph in a face.  This only    */
@@ -2420,7 +2420,7 @@ FT2_1_3_Get_Kerning( FT_Face     face,
 /*    `include/freetype/config/ftoptions.h'                              */
 /*                                                                       */
 FT2_1_3_EXPORT( FT_Error )
-FT2_1_3_Get_Glyph_Name( FT_Face     face,
+FT_Get_Glyph_Name( FT_Face     face,
 				   FT_UInt     glyph_index,
 				   FT_Pointer  buffer,
 				   FT_UInt     buffer_max );
@@ -2661,8 +2661,8 @@ FT2_1_3_Get_Name_Index( FT_Face     face,
 /*    FT2_1_3_CeilFix                                                         */
 /*    FT2_1_3_FloorFix                                                        */
 /*    FT2_1_3_Vector_Transform                                                */
-/*    FT2_1_3_Matrix_Multiply                                                 */
-/*    FT2_1_3_Matrix_Invert                                                   */
+/*    FT_Matrix_Multiply                                                 */
+/*    FT_Matrix_Invert                                                   */
 /*                                                                       */
 /*************************************************************************/
 

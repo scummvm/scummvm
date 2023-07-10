@@ -40,8 +40,8 @@ FT2_1_3_BEGIN_HEADER
 
 typedef struct  PCF_Public_FaceRec_ {
 	FT_FaceRec    root;
-	FT2_1_3_StreamRec  gzip_stream;
-	FT2_1_3_Stream     gzip_source;
+	FT_StreamRec  gzip_stream;
+	FT_Stream     gzip_source;
 
 	char*         charset_encoding;
 	char*         charset_registry;

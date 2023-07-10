@@ -115,8 +115,8 @@ typedef struct  PSH2_PointRec_ {
 	FT_UInt       flags;
 	FT_Char       dir_in;
 	FT_Char       dir_out;
-	FT2_1_3_Angle      angle_in;
-	FT2_1_3_Angle      angle_out;
+	FT_Angle      angle_in;
+	FT_Angle      angle_out;
 	PSH2_Hint     hint;
 	FT_Pos        org_u;
 	FT_Pos        cur_u;
@@ -155,7 +155,7 @@ typedef struct  PSH2_GlyphRec_ {
 	PSH2_Point          points;
 	PSH2_Contour        contours;
 
-	FT2_1_3_Memory           memory;
+	FT_Memory           memory;
 	FT_Outline*         outline;
 	PSH_Globals         globals;
 	PSH2_Hint_TableRec  hint_tables[2];

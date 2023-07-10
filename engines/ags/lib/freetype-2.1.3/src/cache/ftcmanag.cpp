@@ -75,7 +75,7 @@ ftc_face_node_init( FTC_FaceNode  node,
 	if ( !error ) {
 		/* destroy initial size object; it will be re-created later */
 		if ( node->face->size )
-			FT2_1_3_Done_Size( node->face->size );
+			FT_Done_Size( node->face->size );
 	}
 
 	return error;
@@ -176,14 +176,14 @@ ftc_size_node_init( FTC_SizeNode   node,
 
 
 	node->size = NULL;
-	error = FT2_1_3_New_Size( face, &size );
+	error = FT_New_Size( face, &size );
 	if ( !error ) {
-		FT2_1_3_Activate_Size( size );
+		FT_Activate_Size( size );
 		error = FT2_1_3_Set_Pixel_Sizes( query->face,
 									query->width,
 									query->height );
 		if ( error )
-			FT2_1_3_Done_Size( size );
+			FT_Done_Size( size );
 		else
 			node->size = size;
 	}
@@ -194,7 +194,7 @@ ftc_size_node_init( FTC_SizeNode   node,
 FT2_1_3_CALLBACK_DEF( void )
 ftc_size_node_done( FTC_SizeNode  node ) {
 	if ( node->size ) {
-		FT2_1_3_Done_Size( node->size );
+		FT_Done_Size( node->size );
 		node->size = NULL;
 	}
 }
@@ -208,14 +208,14 @@ ftc_size_node_flush( FTC_SizeNode   node,
 
 
 	if ( size->face == query->face ) {
-		FT2_1_3_Activate_Size( size );
+		FT_Activate_Size( size );
 		error = FT2_1_3_Set_Pixel_Sizes( query->face, query->width, query->height );
 		if ( error ) {
-			FT2_1_3_Done_Size( size );
+			FT_Done_Size( size );
 			node->size = NULL;
 		}
 	} else {
-		FT2_1_3_Done_Size( size );
+		FT_Done_Size( size );
 		node->size = NULL;
 
 		error = ftc_size_node_init( node, query );
@@ -282,7 +282,7 @@ FTC_Manager_Lookup_Size( FTC_Manager  manager,
 								   (FT2_1_3_LruNode*)&node );
 		if ( !error ) {
 			/* select the size as the current one for this face */
-			FT2_1_3_Activate_Size( node->size );
+			FT_Activate_Size( node->size );
 
 			if ( asize )
 				*asize = node->size;
@@ -312,7 +312,7 @@ ftc_family_table_init( FTC_FamilyTable  table ) {
 
 static void
 ftc_family_table_done( FTC_FamilyTable  table,
-					   FT2_1_3_Memory        memory ) {
+					   FT_Memory        memory ) {
 	FT2_1_3_FREE( table->entries );
 	table->free  = 0;
 	table->count = 0;
@@ -322,7 +322,7 @@ ftc_family_table_done( FTC_FamilyTable  table,
 
 FT2_1_3_EXPORT_DEF( FT_Error )
 ftc_family_table_alloc( FTC_FamilyTable   table,
-						FT2_1_3_Memory         memory,
+						FT_Memory         memory,
 						FTC_FamilyEntry  *aentry ) {
 	FTC_FamilyEntry  entry;
 	FT_Error         error = 0;
@@ -418,7 +418,7 @@ FTC_Manager_New( FT_Library          library,
 				 FT_Pointer          req_data,
 				 FTC_Manager        *amanager ) {
 	FT_Error     error;
-	FT2_1_3_Memory    memory;
+	FT_Memory    memory;
 	FTC_Manager  manager = 0;
 
 
@@ -481,7 +481,7 @@ Exit:
 
 FT2_1_3_EXPORT_DEF( void )
 FTC_Manager_Done( FTC_Manager  manager ) {
-	FT2_1_3_Memory  memory;
+	FT_Memory  memory;
 	FT_UInt    idx;
 
 
@@ -643,7 +643,7 @@ FTC_Manager_Register_Cache( FTC_Manager      manager,
 
 
 	if ( manager && clazz && acache ) {
-		FT2_1_3_Memory  memory = manager->library->memory;
+		FT_Memory  memory = manager->library->memory;
 		FT_UInt    idx  = 0;
 
 

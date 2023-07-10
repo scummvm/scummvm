@@ -128,8 +128,8 @@ typedef struct  PCD_EncodingRec_ {
 typedef struct  PCF_FaceRec_ {
 	FT_FaceRec     root;
 
-	FT2_1_3_StreamRec   gzip_stream;
-	FT2_1_3_Stream      gzip_source;
+	FT_StreamRec   gzip_stream;
+	FT_Stream      gzip_source;
 
 	char*          charset_encoding;
 	char*          charset_registry;
@@ -218,7 +218,7 @@ typedef struct  PCF_FaceRec_ {
 #define GLYPHPADOPTIONS  4 /* I'm not sure about this */
 
 FT2_1_3_LOCAL( FT_Error )
-pcf_load_font( FT2_1_3_Stream,
+pcf_load_font( FT_Stream,
 			   PCF_Face );
 
 

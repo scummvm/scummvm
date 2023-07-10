@@ -67,7 +67,7 @@ namespace FreeType213 {
 
 /* create a new glyph loader */
 FT2_1_3_BASE_DEF( FT_Error )
-FT_GlyphLoader_New( FT2_1_3_Memory        memory,
+FT_GlyphLoader_New( FT_Memory        memory,
 					FT_GlyphLoader  *aloader ) {
 	FT_GlyphLoader  loader;
 	FT_Error        error;
@@ -100,7 +100,7 @@ FT_GlyphLoader_Rewind( FT_GlyphLoader  loader ) {
 /* and starts from zero                               */
 FT2_1_3_BASE_DEF( void )
 FT_GlyphLoader_Reset( FT_GlyphLoader  loader ) {
-	FT2_1_3_Memory memory = loader->memory;
+	FT_Memory memory = loader->memory;
 
 
 	FT2_1_3_FREE( loader->base.outline.points );
@@ -121,7 +121,7 @@ FT_GlyphLoader_Reset( FT_GlyphLoader  loader ) {
 FT2_1_3_BASE_DEF( void )
 FT_GlyphLoader_Done( FT_GlyphLoader  loader ) {
 	if ( loader ) {
-		FT2_1_3_Memory memory = loader->memory;
+		FT_Memory memory = loader->memory;
 
 
 		FT_GlyphLoader_Reset( loader );
@@ -151,7 +151,7 @@ FT_GlyphLoader_Adjust_Points( FT_GlyphLoader  loader ) {
 FT2_1_3_BASE_DEF( FT_Error )
 FT_GlyphLoader_CreateExtra( FT_GlyphLoader  loader ) {
 	FT_Error   error;
-	FT2_1_3_Memory  memory = loader->memory;
+	FT_Memory  memory = loader->memory;
 
 
 	if ( !FT2_1_3_NEW_ARRAY( loader->base.extra_points, loader->max_points ) ) {
@@ -181,7 +181,7 @@ FT2_1_3_BASE_DEF( FT_Error )
 FT_GlyphLoader_CheckPoints( FT_GlyphLoader  loader,
 							FT_UInt        n_points,
 							FT_UInt        n_contours ) {
-	FT2_1_3_Memory    memory  = loader->memory;
+	FT_Memory    memory  = loader->memory;
 	FT_Error     error   = FT2_1_3_Err_Ok;
 	FT_Outline*  base    = &loader->base.outline;
 	FT_Outline*  current = &loader->current.outline;
@@ -237,7 +237,7 @@ Exit:
 FT2_1_3_BASE_DEF( FT_Error )
 FT_GlyphLoader_CheckSubGlyphs( FT_GlyphLoader  loader,
 							   FT_UInt         n_subs ) {
-	FT2_1_3_Memory     memory = loader->memory;
+	FT_Memory     memory = loader->memory;
 	FT_Error      error  = FT2_1_3_Err_Ok;
 	FT_UInt       new_max, old_max;
 

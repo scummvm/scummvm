@@ -351,7 +351,7 @@ typedef struct  AH_EdgeRec_ {
 
 /* an outline as seen by the hinter */
 typedef struct  AH_OutlineRec_ {
-	FT2_1_3_Memory     memory;
+	FT_Memory     memory;
 
 	AH_Direction  vert_major_dir;   /* vertical major direction   */
 	AH_Direction  horz_major_dir;   /* horizontal major direction */
@@ -469,7 +469,7 @@ typedef struct  AH_Face_GlobalsRec_ {
 
 
 typedef struct  AH_HinterRec {
-	FT2_1_3_Memory         memory;
+	FT_Memory         memory;
 	AH_Hinter_Flags   flags;
 
 	FT_Int            algorithm;

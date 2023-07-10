@@ -197,7 +197,7 @@ FT_GlyphSlot_Embolden( FT_GlyphSlot  slot ) {
 	FT_Pos       distance;
 	FT_Outline*  outline = &slot->outline;
 	FT_Face      face = FT2_1_3_SLOT_FACE( slot );
-	FT2_1_3_Angle     rotate, angle_in, angle_out;
+	FT_Angle     rotate, angle_in, angle_out;
 	FT_Int       c, n, first, orientation;
 
 
@@ -227,7 +227,7 @@ FT_GlyphSlot_Embolden( FT_GlyphSlot  slot ) {
 			FT_Pos     d;
 			FT_Vector  in, out;
 			FT_Fixed   scale;
-			FT2_1_3_Angle   angle_diff;
+			FT_Angle   angle_diff;
 
 
 			if ( n < last ) v_next = points[n + 1];
@@ -240,10 +240,10 @@ FT_GlyphSlot_Embolden( FT_GlyphSlot  slot ) {
 			out.x = v_next.x - v_cur.x;
 			out.y = v_next.y - v_cur.y;
 
-			angle_in   = FT2_1_3_Atan2( in.x, in.y );
-			angle_out  = FT2_1_3_Atan2( out.x, out.y );
-			angle_diff = FT2_1_3_Angle_Diff( angle_in, angle_out );
-			scale      = FT2_1_3_Cos( angle_diff/2 );
+			angle_in   = FT_Atan2( in.x, in.y );
+			angle_out  = FT_Atan2( out.x, out.y );
+			angle_diff = FT_Angle_Diff( angle_in, angle_out );
+			scale      = FT_Cos( angle_diff/2 );
 
 			if ( scale < 0x400L && scale > -0x400L ) {
 				if ( scale >= 0 )

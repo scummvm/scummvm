@@ -41,7 +41,7 @@ FT2_1_3_BEGIN_HEADER
  *
  * @description:
  *   A list of valid values for the `platform_id' identifier code in
- *   @FT_CharmapRec and @FT2_1_3_SfntName structures.
+ *   @FT_CharmapRec and @FT_SfntName structures.
  *
  * @values:
  *   TT_PLATFORM_APPLE_UNICODE ::

@@ -63,7 +63,7 @@ typedef struct  FTC_CMapNodeRec_ {
 		  ( (cfam)->hash + ( (cquery)->char_code / FTC_CMAP_INDICES_MAX ) )
 
 /* if (indices[n] == FTC_CMAP_UNKNOWN), we assume that the corresponding */
-/* glyph indices haven't been queried through FT2_1_3_Get_Glyph_Index() yet   */
+/* glyph indices haven't been queried through FT_Get_Glyph_Index() yet   */
 #define FTC_CMAP_UNKNOWN  ( (FT_UInt16)-1 )
 
 

@@ -218,7 +218,7 @@ FT2_1_3_BEGIN_HEADER
 
 /*************************************************************************/
 /*                                                                       */
-/* Allow the use of FT2_1_3_Incremental_Interface to load typefaces that      */
+/* Allow the use of FT_Incremental_Interface to load typefaces that      */
 /* contain no glyph data, but supply it via a callback function.         */
 /* This allows FreeType to be used with the PostScript language, using   */
 /* the GhostScript interpreter.                                          */

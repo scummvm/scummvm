@@ -168,7 +168,7 @@ static int
 optim_compute_stems( AH_Optimizer*  optimizer ) {
 	AH_Outline  outline = optimizer->outline;
 	FT_Fixed    scale;
-	FT2_1_3_Memory   memory  = optimizer->memory;
+	FT_Memory   memory  = optimizer->memory;
 	FT_Error    error   = 0;
 	FT_Int      dimension;
 	AH_Edge     edges;
@@ -348,7 +348,7 @@ static int
 optim_compute_springs( AH_Optimizer*  optimizer ) {
 	/* basically, a spring exists between two stems if most of their */
 	/* surface is aligned                                            */
-	FT2_1_3_Memory    memory  = optimizer->memory;
+	FT_Memory    memory  = optimizer->memory;
 
 	AH_Stem*     stems;
 	AH_Stem*     stem_limit;
@@ -740,7 +740,7 @@ optim_compute( AH_Optimizer*  optimizer ) {
 void
 AH_Optimizer_Done( AH_Optimizer*  optimizer ) {
 	if ( optimizer ) {
-		FT2_1_3_Memory  memory = optimizer->memory;
+		FT_Memory  memory = optimizer->memory;
 
 
 		FT2_1_3_FREE( optimizer->horz_stems );
@@ -756,7 +756,7 @@ AH_Optimizer_Done( AH_Optimizer*  optimizer ) {
 int
 AH_Optimizer_Init( AH_Optimizer*  optimizer,
                    AH_Outline     outline,
-                   FT2_1_3_Memory      memory ) {
+                   FT_Memory      memory ) {
 	FT_Error  error;
 
 

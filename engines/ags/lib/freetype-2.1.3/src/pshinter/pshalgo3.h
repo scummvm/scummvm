@@ -162,8 +162,8 @@ typedef struct  PSH3_PointRec_ {
 	FT_UInt       flags2;
 	FT_Char       dir_in;
 	FT_Char       dir_out;
-	FT2_1_3_Angle      angle_in;
-	FT2_1_3_Angle      angle_out;
+	FT_Angle      angle_in;
+	FT_Angle      angle_out;
 	PSH3_Hint     hint;
 	FT_Pos        org_u;
 	FT_Pos        org_v;
@@ -183,7 +183,7 @@ typedef struct  PSH3_PointRec_ {
 #define PSH3_POINT_EQUAL_ORG( a, b )  ( (a)->org_u == (b)->org_u && \
 										(a)->org_v == (b)->org_v )
 
-#define PSH3_POINT_ANGLE( a, b )  FT2_1_3_Atan2( (b)->org_u - (a)->org_u,  \
+#define PSH3_POINT_ANGLE( a, b )  FT_Atan2( (b)->org_u - (a)->org_u,  \
 											(b)->org_v - (a)->org_v )
 
 typedef struct  PSH3_ContourRec_ {
@@ -200,7 +200,7 @@ typedef struct  PSH3_GlyphRec_ {
 	PSH3_Point          points;
 	PSH3_Contour        contours;
 
-	FT2_1_3_Memory           memory;
+	FT_Memory           memory;
 	FT_Outline*         outline;
 	PSH_Globals         globals;
 	PSH3_Hint_TableRec  hint_tables[2];

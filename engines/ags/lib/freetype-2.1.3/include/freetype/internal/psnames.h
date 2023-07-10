@@ -157,7 +157,7 @@ typedef struct  PS_Unicodes_ {
 
 
 typedef FT_Error
-(*PS_Build_Unicodes_Func)( FT2_1_3_Memory     memory,
+(*PS_Build_Unicodes_Func)( FT_Memory     memory,
 						   FT_UInt       num_glyphs,
 						   const char**  glyph_names,
 						   PS_Unicodes*  unicodes );

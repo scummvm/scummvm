@@ -131,7 +131,7 @@ Suite:
 /*                                                                       */
 /* <Description>                                                         */
 /*    This function is used as a `conic_to' emitter during               */
-/*    FT2_1_3_Raster_Decompose().  It checks a conic Bezier curve with the    */
+/*    FT_Raster_Decompose().  It checks a conic Bezier curve with the    */
 /*    current bounding box, and computes its extrema if necessary to     */
 /*    update it.                                                         */
 /*                                                                       */
@@ -466,7 +466,7 @@ BBox_Cubic_Check( FT_Pos   y1,
 /*                                                                       */
 /* <Description>                                                         */
 /*    This function is used as a `cubic_to' emitter during               */
-/*    FT2_1_3_Raster_Decompose().  It checks a cubic Bezier curve with the    */
+/*    FT_Raster_Decompose().  It checks a cubic Bezier curve with the    */
 /*    current bounding box, and computes its extrema if necessary to     */
 /*    update it.                                                         */
 /*                                                                       */
