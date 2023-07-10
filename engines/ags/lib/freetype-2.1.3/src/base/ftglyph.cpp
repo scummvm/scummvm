@@ -425,7 +425,7 @@ FT_Get_Glyph( FT_GlyphSlot  slot,
 
 	else {
 		/* try to find a renderer that supports the glyph image format */
-		FT_Renderer  render = FT2_1_3_Lookup_Renderer( library, slot->format, 0 );
+		FT_Renderer  render = FT_Lookup_Renderer( library, slot->format, 0 );
 
 
 		if ( render )
@@ -553,7 +553,7 @@ FT_Glyph_To_Bitmap( FT_Glyph*       the_glyph,
 		goto Bad;
 
 	/* we render the glyph into a glyph bitmap using a `dummy' glyph slot */
-	/* then calling FT2_1_3_Render_Glyph_Internal()                            */
+	/* then calling FT_Render_Glyph_Internal()                            */
 
 	glyph = *the_glyph;
 	if ( !glyph )
@@ -589,7 +589,7 @@ FT_Glyph_To_Bitmap( FT_Glyph*       the_glyph,
 	/* prepare dummy slot for rendering */
 	error = clazz->glyph_prepare( glyph, &dummy );
 	if ( !error )
-		error = FT2_1_3_Render_Glyph_Internal( glyph->library, &dummy, render_mode );
+		error = FT_Render_Glyph_Internal( glyph->library, &dummy, render_mode );
 
 #if 0
 	if ( !destroy && origin ) {

@@ -544,7 +544,7 @@ FT_Outline_Render( FT_Library         library,
 
 		/* now, look for another renderer that supports the same */
 		/* format                                                */
-		renderer = FT2_1_3_Lookup_Renderer( library, FT2_1_3_GLYPH_FORMAT_OUTLINE,
+		renderer = FT_Lookup_Renderer( library, FT2_1_3_GLYPH_FORMAT_OUTLINE,
 									   &node );
 		update   = 1;
 	}

@@ -710,12 +710,12 @@ typedef struct  FT_LibraryRec_ {
 
 
 FT2_1_3_BASE( FT_Renderer )
-FT2_1_3_Lookup_Renderer( FT_Library       library,
+FT_Lookup_Renderer( FT_Library       library,
 					FT_Glyph_Format  format,
 					FT_ListNode*     node );
 
 FT2_1_3_BASE( FT_Error )
-FT2_1_3_Render_Glyph_Internal( FT_Library      library,
+FT_Render_Glyph_Internal( FT_Library      library,
 						  FT_GlyphSlot    slot,
 						  FT_Render_Mode  render_mode );
 

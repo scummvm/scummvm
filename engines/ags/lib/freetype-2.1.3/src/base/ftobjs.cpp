@@ -1688,7 +1688,7 @@ FT_Activate_Size( FT_Size  size ) {
 
 /* lookup a renderer by glyph format in the library's list */
 FT2_1_3_BASE_DEF( FT_Renderer )
-FT2_1_3_Lookup_Renderer( FT_Library       library,
+FT_Lookup_Renderer( FT_Library       library,
 					FT_Glyph_Format  format,
 					FT_ListNode*     node ) {
 	FT_ListNode  cur;
@@ -1733,7 +1733,7 @@ ft_lookup_glyph_renderer( FT_GlyphSlot  slot ) {
 
 
 	if ( !result || result->glyph_format != slot->format )
-		result = FT2_1_3_Lookup_Renderer( library, slot->format, 0 );
+		result = FT_Lookup_Renderer( library, slot->format, 0 );
 
 	return result;
 }
@@ -1744,7 +1744,7 @@ ft_set_current_renderer( FT_Library  library ) {
 	FT_Renderer  renderer;
 
 
-	renderer = FT2_1_3_Lookup_Renderer( library, FT2_1_3_GLYPH_FORMAT_OUTLINE, 0 );
+	renderer = FT_Lookup_Renderer( library, FT2_1_3_GLYPH_FORMAT_OUTLINE, 0 );
 	library->cur_renderer = renderer;
 }
 
@@ -1825,9 +1825,9 @@ ft_remove_renderer( FT_Module  module ) {
 FT2_1_3_EXPORT_DEF( FT_Renderer )
 FT_Get_Renderer( FT_Library       library,
 				 FT_Glyph_Format  format ) {
-	/* test for valid `library' delayed to FT2_1_3_Lookup_Renderer() */
+	/* test for valid `library' delayed to FT_Lookup_Renderer() */
 
-	return FT2_1_3_Lookup_Renderer( library, format, 0 );
+	return FT_Lookup_Renderer( library, format, 0 );
 }
 
 
@@ -1876,7 +1876,7 @@ Exit:
 
 
 FT2_1_3_BASE_DEF( FT_Error )
-FT2_1_3_Render_Glyph_Internal( FT_Library      library,
+FT_Render_Glyph_Internal( FT_Library      library,
 						  FT_GlyphSlot    slot,
 						  FT_Render_Mode  render_mode ) {
 	FT_Error     error = FT2_1_3_Err_Ok;
@@ -1898,7 +1898,7 @@ FT2_1_3_Render_Glyph_Internal( FT_Library      library,
 			renderer = library->cur_renderer;
 			node     = library->renderers.head;
 		} else
-			renderer = FT2_1_3_Lookup_Renderer( library, slot->format, &node );
+			renderer = FT_Lookup_Renderer( library, slot->format, &node );
 
 		error = FT2_1_3_Err_Unimplemented_Feature;
 		while ( renderer ) {
@@ -1913,7 +1913,7 @@ FT2_1_3_Render_Glyph_Internal( FT_Library      library,
 
 			/* now, look for another renderer that supports the same */
 			/* format.                                               */
-			renderer = FT2_1_3_Lookup_Renderer( library, slot->format, &node );
+			renderer = FT_Lookup_Renderer( library, slot->format, &node );
 			update   = 1;
 		}
 
@@ -1941,7 +1941,7 @@ FT2_1_3_Render_Glyph( FT_GlyphSlot    slot,
 
 	library = FT2_1_3_FACE_LIBRARY( slot->face );
 
-	return FT2_1_3_Render_Glyph_Internal( library, slot, render_mode );
+	return FT_Render_Glyph_Internal( library, slot, render_mode );
 }
 
 
