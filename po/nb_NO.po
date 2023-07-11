@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-07-08 19:01+0000\n"
+"POT-Creation-Date: 2023-07-11 12:36+0000\n"
 "PO-Revision-Date: 2023-06-15 17:40+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -6311,24 +6311,24 @@ msgstr ""
 msgid "Eye of Beholder support is not compiled in"
 msgstr "Eye of Beholder-støtte er ikke innkompilert"
 
-#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:472
+#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:496
 #: engines/ultima/ultima4/metaengine.cpp:224
 #: engines/ultima/ultima8/metaengine.cpp:145
 msgid "Interact via Left Click"
 msgstr "Samhandle med venstreklikk"
 
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:473
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:497
 #: engines/ultima/ultima4/metaengine.cpp:230
 #: engines/ultima/ultima8/metaengine.cpp:151
 msgid "Interact via Right Click"
 msgstr "Samhandle med høyreklikk"
 
-#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:480
+#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:504
 #: engines/twine/metaengine.cpp:380
 msgid "Move Forward"
 msgstr "Beveg Fremover"
 
-#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:481
+#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:505
 msgid "Move Back"
 msgstr "Beveg Bakover"
 
@@ -6340,13 +6340,13 @@ msgstr "Gå til venstre"
 msgid "Move Right"
 msgstr "Gå til høyre"
 
-#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:484
+#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:508
 #: engines/mm/mm1/metaengine.cpp:97 engines/pegasus/pegasus.cpp:2739
 #: engines/twine/metaengine.cpp:401 engines/zvision/metaengine.cpp:209
 msgid "Turn Left"
 msgstr "Svin til Venstre"
 
-#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:485
+#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:509
 #: engines/mm/mm1/metaengine.cpp:98 engines/pegasus/pegasus.cpp:2746
 #: engines/twine/metaengine.cpp:394 engines/zvision/metaengine.cpp:215
 msgid "Turn Right"
@@ -6392,40 +6392,40 @@ msgstr "Formelnivå 5"
 msgid "Spell Level 6"
 msgstr "Formelnivå 6"
 
-#: engines/kyra/engine/lol.cpp:476
+#: engines/kyra/engine/lol.cpp:500
 msgid "Attack 1"
 msgstr "Angrep 1"
 
-#: engines/kyra/engine/lol.cpp:477
+#: engines/kyra/engine/lol.cpp:501
 msgid "Attack 2"
 msgstr "Angrep 2"
 
-#: engines/kyra/engine/lol.cpp:478
+#: engines/kyra/engine/lol.cpp:502
 msgid "Attack 3"
 msgstr "Angrep 3"
 
-#: engines/kyra/engine/lol.cpp:479 engines/mm/mm1/metaengine.cpp:103
+#: engines/kyra/engine/lol.cpp:503 engines/mm/mm1/metaengine.cpp:103
 msgid "Show Map"
 msgstr "Vis kart"
 
-#: engines/kyra/engine/lol.cpp:482
+#: engines/kyra/engine/lol.cpp:506
 msgid "Slide Left"
 msgstr "Skli mot Venstre"
 
-#: engines/kyra/engine/lol.cpp:483
+#: engines/kyra/engine/lol.cpp:507
 msgid "Slide Right"
 msgstr "Skli mot Høyre"
 
 #. I18N: Action of hero party in Might & Magic 1
-#: engines/kyra/engine/lol.cpp:486 engines/mm/mm1/metaengine.cpp:109
+#: engines/kyra/engine/lol.cpp:510 engines/mm/mm1/metaengine.cpp:109
 msgid "Rest"
 msgstr "Hvil"
 
-#: engines/kyra/engine/lol.cpp:487
+#: engines/kyra/engine/lol.cpp:511
 msgid "Options"
 msgstr "Valg"
 
-#: engines/kyra/engine/lol.cpp:488
+#: engines/kyra/engine/lol.cpp:512
 msgid "Choose Spell"
 msgstr "Velg Trolldom"
 
