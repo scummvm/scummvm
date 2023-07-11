@@ -490,6 +490,8 @@ void LM::m_put(int nargs) {
 // Other
 
 void LM::m_perform(int nargs) {
+	bool allowRetVal = g_lingo->pop().asInt() != 0; // Pop allowRetVal that should be used for the LC::Call
+
 	// Lingo doesn't seem to bother cloning the object when
 	// mNew is called with mPerform
 	Datum d(g_lingo->_state->me);
@@ -498,7 +500,12 @@ void LM::m_perform(int nargs) {
 	Symbol funcSym = me->getMethod(*methodName.u.s);
 	// Object methods expect the first argument to be the object
 	g_lingo->_stack.insert_at(g_lingo->_stack.size() - nargs + 1, d);
-	LC::call(funcSym, nargs, true);
+	LC::call(funcSym, nargs, allowRetVal);
+
+	if (allowRetVal) {
+		// If the method expects a return value, push dummy on stack
+		g_lingo->pushVoid();
+	}
 }
 
 // XObject

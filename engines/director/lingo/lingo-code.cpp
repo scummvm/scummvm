@@ -1645,6 +1645,11 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 			// Pushing an entire stack frame is not necessary
 			Datum retMe = g_lingo->_state->me;
 			g_lingo->_state->me = target;
+
+			// WORKAROUND: m_Perform needs to know if value should be returned or not (to create a new context frames for handles)
+			if (funcSym.name->equals("perform"))
+				g_lingo->push(Datum(allowRetVal));
+
 			(*funcSym.u.bltin)(nargs);
 			g_lingo->_state->me = retMe;
 		} else {
