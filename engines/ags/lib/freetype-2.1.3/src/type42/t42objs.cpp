@@ -18,8 +18,8 @@
 #include "t42objs.h"
 #include "t42parse.h"
 #include "t42error.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftstream.h"
+#include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
+#include "engines/ags/lib/freetype-2.1.3/ftstream.h"
 #include "engines/ags/lib/freetype-2.1.3/ftlist.h"
 
 

@@ -43,7 +43,7 @@
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include "engines/ags/lib/freetype-2.1.3/freetype.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
+#include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 
 
 #if defined( FT2_1_3_DEBUG_LEVEL_ERROR )
@@ -84,7 +84,7 @@ int  ft_trace_levels[trace_count];
 #define FT2_1_3_TRACE_DEF(x)  #x ,
 
 static const char*  ft_trace_toggles[trace_count + 1] = {
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/fttrace.h"
+#include "engines/ags/lib/freetype-2.1.3/fttrace.h"
 	NULL
 };
 

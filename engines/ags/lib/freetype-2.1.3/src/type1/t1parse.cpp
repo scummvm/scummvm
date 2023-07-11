@@ -34,9 +34,9 @@
 
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftcalc.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftstream.h"
+#include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
+#include "engines/ags/lib/freetype-2.1.3/ftcalc.h"
+#include "engines/ags/lib/freetype-2.1.3/ftstream.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psaux.h"
 
 #include "t1parse.h"

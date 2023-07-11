@@ -29,7 +29,7 @@ THE SOFTWARE.
 #define AGS_LIB_FREETYPE_BDFDRIVR_H
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdriver.h"
+#include "engines/ags/lib/freetype-2.1.3/ftdriver.h"
 
 #include "bdf.h"
 

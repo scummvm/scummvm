@@ -30,8 +30,8 @@ THE SOFTWARE.
 
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdriver.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftstream.h"
+#include "engines/ags/lib/freetype-2.1.3/ftdriver.h"
+#include "engines/ags/lib/freetype-2.1.3/ftstream.h"
 
 namespace AGS3 {
 namespace FreeType213 {

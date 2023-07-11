@@ -20,7 +20,7 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftcache.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftlru.h"
 #include "engines/ags/lib/freetype-2.1.3/ftlist.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
+#include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
 
 #include "ftcerror.h"
 

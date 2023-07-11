@@ -1,8 +1,8 @@
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include "engines/ags/lib/freetype-2.1.3/ftstroker.h"
 #include "engines/ags/lib/freetype-2.1.3/fttrigon.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftmemory.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
+#include "engines/ags/lib/freetype-2.1.3/ftmemory.h"
+#include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 
 /***************************************************************************/
 /***************************************************************************/

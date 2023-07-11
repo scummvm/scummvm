@@ -22,7 +22,7 @@
 #include "pfrcmap.h"
 #include "pfrsbit.h"
 #include "engines/ags/lib/freetype-2.1.3/ftoutln.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
+#include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 
 #include "pfrerror.h"
 

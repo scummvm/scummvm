@@ -54,7 +54,7 @@ FT2_1_3_BEGIN_HEADER
 
 /* defining the enumeration */
 typedef enum {
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/fttrace.h"
+#include "engines/ags/lib/freetype-2.1.3/fttrace.h"
 	trace_count
 
 } FT2_1_3_Trace;

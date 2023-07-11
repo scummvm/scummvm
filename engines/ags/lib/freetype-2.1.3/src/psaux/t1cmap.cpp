@@ -18,7 +18,7 @@
 
 #include "t1cmap.h"
 
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
+#include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 
 namespace AGS3 {
 namespace FreeType213 {

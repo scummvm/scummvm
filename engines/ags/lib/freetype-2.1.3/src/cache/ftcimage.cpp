@@ -20,7 +20,7 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/ftcache.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftcimage.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/cache/ftcglyph.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftmemory.h"
+#include "engines/ags/lib/freetype-2.1.3/ftmemory.h"
 
 #include "ftcerror.h"
 

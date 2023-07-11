@@ -24,7 +24,7 @@
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include "ftraster.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftcalc.h"   /* for FT_MulDiv only */
+#include "engines/ags/lib/freetype-2.1.3/ftcalc.h"   /* for FT_MulDiv only */
 
 
 /*************************************************************************/
@@ -172,8 +172,8 @@ namespace FreeType213 {
 #else /* _STANDALONE_ */
 
 
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"        /* for FT2_1_3_TRACE() and FT2_1_3_ERROR() */
+#include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
+#include "engines/ags/lib/freetype-2.1.3/ftdebug.h"        /* for FT2_1_3_TRACE() and FT2_1_3_ERROR() */
 
 #include "rasterrs.h"
 

@@ -23,8 +23,8 @@
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/t1tables.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/t1types.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/t42types.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdriver.h"
+#include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
+#include "engines/ags/lib/freetype-2.1.3/ftdriver.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/psnames.h"
 #include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/pshints.h"
 

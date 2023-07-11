@@ -18,8 +18,8 @@
 
 #include "engines/ags/lib/freetype-2.1.3/ft213build.h"
 #include "engines/ags/lib/freetype-2.1.3/freetype.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftobjs.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
+#include "engines/ags/lib/freetype-2.1.3/ftobjs.h"
+#include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 #include "pshrec.h"
 #include "pshalgo.h"
 

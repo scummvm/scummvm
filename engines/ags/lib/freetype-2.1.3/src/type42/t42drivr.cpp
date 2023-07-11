@@ -39,7 +39,7 @@
 #include "t42drivr.h"
 #include "t42objs.h"
 #include "t42error.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftdebug.h"
+#include "engines/ags/lib/freetype-2.1.3/ftdebug.h"
 
 
 #undef  FT2_1_3_COMPONENT

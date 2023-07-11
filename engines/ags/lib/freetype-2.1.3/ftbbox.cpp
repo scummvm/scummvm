@@ -28,7 +28,7 @@
 #include "engines/ags/lib/freetype-2.1.3/ftbbox.h"
 #include "engines/ags/lib/freetype-2.1.3/ftimage.h"
 #include "engines/ags/lib/freetype-2.1.3/ftoutln.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftcalc.h"
+#include "engines/ags/lib/freetype-2.1.3/ftcalc.h"
 
 namespace AGS3 {
 namespace FreeType213 {

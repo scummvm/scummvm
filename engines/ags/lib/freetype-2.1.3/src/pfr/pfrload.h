@@ -20,7 +20,7 @@
 #define AGS_LIB_FREETYPE_PFRLOAD_H
 
 #include "pfrobjs.h"
-#include "engines/ags/lib/freetype-2.1.3/include/freetype/internal/ftstream.h"
+#include "engines/ags/lib/freetype-2.1.3/ftstream.h"
 
 namespace AGS3 {
 namespace FreeType213 {
