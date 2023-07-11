@@ -62,6 +62,8 @@ struct StripTable {
 	int zrun[120];		// FIXME: Why only 120 here?
 };
 
+static const byte bitMasks[9] = { 0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF };
+
 enum {
 	kNoDelay = 0,
 	// This should actually be 3 in all games using it;
@@ -2471,8 +2473,6 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 	// The following few lines more or less duplicate decompressBitmap(), only
 	// for an area spanning multiple strips. In particular, the codecs 13 & 14
 	// in decompressBitmap call drawStripHE()
-	_decomp_shr = code % 10;
-	_decomp_mask = 0xFF >> (8 - _decomp_shr);
 
 	switch (code) {
 	case BMCOMP_NMAJMIN_H4:
@@ -2480,6 +2480,8 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 	case BMCOMP_NMAJMIN_H6:
 	case BMCOMP_NMAJMIN_H7:
 	case BMCOMP_NMAJMIN_H8:
+		_decomp_shr = code - BMCOMP_NMAJMIN_H0; // Bits per pixel
+		_decomp_mask = bitMasks[_decomp_shr];
 		drawStripHE(dst, vs->pitch, bmap_ptr, vs->w, vs->h, false);
 		break;
 	case BMCOMP_NMAJMIN_HT4:
@@ -2487,7 +2489,9 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 	case BMCOMP_NMAJMIN_HT6:
 	case BMCOMP_NMAJMIN_HT7:
 	case BMCOMP_NMAJMIN_HT8:
-		drawStripHE(dst, vs->pitch, bmap_ptr, vs->w, vs->h, true);
+		_decomp_shr = code - BMCOMP_NMAJMIN_HT0; // Bits per pixel
+		_decomp_mask = bitMasks[_decomp_shr];
+		drawStripHE(dst, vs->pitch, bmap_ptr, vs->w, vs->h, false);
 		break;
 	case BMCOMP_SOLID_COLOR_FILL:
 		fill(dst, vs->pitch, *bmap_ptr, vs->w, vs->h, vs->format.bytesPerPixel);
