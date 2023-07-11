@@ -202,9 +202,9 @@ void OpenGLRenderer::renderPlayerShoot(byte color, const Common::Point position,
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderZX) {
 		r = g = b = 255;
 	} else {
-		r = g = b = 0;
-		glEnable(GL_COLOR_LOGIC_OP);
-		glLogicOp(GL_INVERT);
+		r = g = b = 255;
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
 	}
 
 	glDisable(GL_DEPTH_TEST);
@@ -230,7 +230,7 @@ void OpenGLRenderer::renderPlayerShoot(byte color, const Common::Point position,
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glLineWidth(1);
 
-	glDisable(GL_COLOR_LOGIC_OP);
+	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 }
