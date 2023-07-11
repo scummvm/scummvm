@@ -139,16 +139,18 @@ void Sections::m4SceneLoad() {
 	if (!_G(set_commands_allowed_since_last_checked))
 		player_set_commands_allowed(true);
 
-	if (player_been_here(_G(game).room_id)) {
-		_G(player).been_here_before = true;
-	} else {
-		_G(player).been_here_before = false;
-		player_enters_scene(_G(game).room_id);
-	}
-
 	//-------------------- PLAY ROOM ------------------
 
 	term_message("Off to the races -- %d", timer_read_60());
+}
+
+void Sections::m4SceneRun() {
+	game_control_cycle();
+
+	if (!player_been_here(_G(game).room_id))
+		player_enters_scene(_G(game).room_id);
+
+
 }
 
 void Sections::get_ipl() {
@@ -179,6 +181,10 @@ void Sections::get_walker() {
 	if (!_GW().walk_load_walker_and_shadow_series())
 		error_show(FL, 'WLOD');
 	ws_walk_init_system();
+}
+
+void Sections::game_control_cycle() {
+	// TODO
 }
 
 /*------------------------------------------------------------------------*/

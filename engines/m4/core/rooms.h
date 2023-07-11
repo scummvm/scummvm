@@ -85,6 +85,8 @@ private:
 	void get_ipl();
 	void get_walker();
 
+	void game_control_cycle();
+
 public:
 	Section *_sections = nullptr;
 	Section *_activeSection = nullptr;
@@ -131,6 +133,7 @@ public:
 	}
 
 	void m4SceneLoad();
+	void m4SceneRun();
 };
 
 } // namespace M4
